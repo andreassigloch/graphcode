@@ -1,0 +1,45 @@
+{
+  "name": "@sigloch/graphcode",
+  "version": "0.1.0-carve-out",
+  "description": "Claude Code Sidecar Harness — Graph Operations + MCP Tools + Hook System",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./harness": {
+      "import": "./dist/harness.js",
+      "types": "./dist/harness.d.ts"
+    },
+    "./mcp": {
+      "import": "./dist/mcp-tools.js",
+      "types": "./dist/mcp-tools.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage",
+    "lint": "eslint src --ext .ts,.tsx",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@sigloch/contracts": "workspace:*",
+    "@sigloch/graph-api-core": "workspace:*",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.5.0",
+    "vitest": "^2.0.0",
+    "eslint": "^9.0.0"
+  },
+  "keywords": ["graphcode", "harness", "mcp", "graph-operations", "claude-code"],
+  "author": "sigloch-consulting",
+  "license": "MIT"
+}
