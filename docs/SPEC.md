@@ -75,17 +75,33 @@ mutate(commands):
 **3-Tier (F10, `unified-model-interface` §4):** auto-apply / suggest / block — gesteuert über
 Confidence/Severity. Confidence-Metadaten am Result (R1) speisen die Tier-Entscheidung.
 
-## 4. Lokale Persistenz (impl)
+## 4. Lokale Persistenz (impl) — Single Kuzu-Owner
 
 - `.graphcode/kuzu/` — Kuzu-DB, per-Repo, persistent (kein `:memory:`), **gitignored** (Artefakt).
 - `.graphcode/hooks/` — Hook-Handler/State.
+- **Single Kuzu-Owner per Repo (L1-Verstärkung):** Kuzu ist single-writer **ohne** Multi-Prozess-
+  Safety (lock-file-Konflikt sobald ein 2. Prozess dasselbe DB-Verzeichnis öffnet). **Genau ein
+  Host-Prozess** besitzt `.graphcode/kuzu`; alle anderen Consumer (Agent, Dashboard) erreichen den
+  Graphen **über den Host**, nie mit einem zweiten DB-Handle. Reads/Writes *innerhalb* des
+  Owner-Prozesses sind multi-thread-safe.
 - Graph-Artefakt commit-fähig halten via deterministischem Codec (§2.4) + conflict-free
   Merge-Strategie (R2).
 
-## 5. Transport (impl)
+## 5. Transport & Topologie (impl) — Host + zwei Client-Kanäle
 
-**Nur MCP-stdio** (verriegelt). Kein Express-REST im Core. SSE/WS nur als Bridge↔Viewer (außerhalb
-graphcode-core). → Konflikt mit governance §4 „REST (P2)" / CR-195c, siehe §8 Drift D2.
+graphcode ist **headless** und wird in einen **Host-Prozess eingebettet** (aimprove-Dashboard,
+CLI-Sidecar oder P2 Tauri). Der Host ist der **Single Kuzu-Owner** (§4) und exponiert zwei
+Client-Kanäle — beide Schreibpfade laufen durch **dasselbe `mutate()`-Gate**:
+
+| Kanal | Consumer | Ziel | Lock |
+|---|---|---|---|
+| **MCP-stdio** | Claude Code (LLM-Agent) | Agent nutzt Graph statt grep (Ziel a) | MCP-stdio (verriegelt) |
+| **SSE/WS-Bridge** | Browser-Dashboard | Live Q-Status-Viz, gleiche DB online (Ziel b) | SSE/WS Bridge↔Viewer (verriegelt) |
+
+**Kein Express-REST/HTTP im Harness-Core.** HTTP/SSE-WS ist Sache des **Host/Bridge**, nicht des
+Harness — Lock **bestätigt** (nicht geöffnet). Das Live-Dashboard ist Kuzu-safe, weil es **über
+den Host** liest (single-process multi-thread reads während writes), nicht via zweitem DB-Handle.
+P3 (VPS): Dashboard = Remote-Client der Bridge — die Single-Owner-Regel bleibt.
 
 ## 6. Test-Strategie (impl, = governance §6 Checkpoint)
 
@@ -104,10 +120,11 @@ zu konkretisieren (CR-GC-100).
 
 | # | Punkt | Aktion |
 |---|---|---|
-| **D1** | `harness.ts` definiert `HarnessConfigSchema`/`MutateCommandSchema`/`MutateResultSchema` **lokal neu** — parallel zur SSOT in contracts/graph-api-core | Aus `@sigloch/contracts/se` importieren, lokale Defs löschen (keine parallelen Pfade) — CR-GC-100 |
-| **D2** | Transport-Konflikt: SSOT verriegelt **MCP-stdio only**, governance §4/CR-195c nennen REST/ExpressTransport | Governance-Review: REST streichen oder Lock mit Spike öffnen (bok-Entscheidung) |
+| **D1** *(entschieden, deferred)* | `harness.ts` definiert `HarnessConfig`/`MutateCommand`/`MutateResult` **lokal** — parallel zur SSOT | **Entschieden:** nach `@sigloch/contracts` verschieben (eigener `harness`-Export, **nicht** `/se`-Ontologie) + importieren, lokale Defs löschen. **Blockiert auf D5** → erste Aufgabe in CR-GC-100 |
+| **D2** *(gelöst)* | Transport: REST vs. MCP-Lock | **Gelöst:** Harness headless (MCP-stdio + in-process); HTTP/SSE-WS via Host/Bridge (§5). Lock **bestätigt**; governance §4/CR-195c umgeschrieben |
 | **D3** | `mutate()`/`evaluateRules()`/`bindToolsToHarness()` sind Stubs | Carve-Out aus aimprove → CR-GC-100/101 |
-| **D4** | §6-Checkpoint unsigned → CR-GC-100→103 gated | Governance-Guardian zeichnet ab, dann CRs in `docs/cr/open/` |
+| **D4** *(done)* | §6-Checkpoint | **Abgezeichnet 2026-06-13**; CR-GC-100→103 offen in `docs/cr/open/` |
+| **D5** *(blocker)* | graphcode `workspace:*`-Deps unauflösbar — Standalone-Repo, kein sigloch-modules-Package; kein `node_modules`, `tsc` nicht lauffähig | Build-Setup entscheiden (Monorepo-Package vs. versionierte/file-Deps) + `npm install` + `tsc` grün **vor** Code — CR-GC-100 Task 0 |
 | **R1–R4** | Empfehlungen aus graphify-Vergleich | `docs/RECOMMENDATIONS.md` → falten in CR-GC-100/102/103 |
 
 ---
