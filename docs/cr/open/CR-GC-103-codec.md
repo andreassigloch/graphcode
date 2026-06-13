@@ -1,7 +1,8 @@
 # CR-GC-103 — GraphCode Format-E Codec
 
 **Status:** Open · **Modul:** `src/codec.ts` · **Prio:** 1a · **Stand:** 2026-06-13
-**Dependency:** CR-195a (SE-Descriptor ✓) · **Spec:** `docs/SPEC.md` §2.4 · bok `2yR-36-codec-spec.md` · R3
+**Dependency:** CR-195a (SE-Descriptor ✓) · **Spec:** `docs/SPEC.md` §2.4 · bok `2yR-36-codec-spec.md`
+**Requirements:** R3 (deterministische Serialisierung) · R5 (Format-E-Diff-Dialekt + 1:N-Grouping; implicit-add verwerfen) — `docs/RECOMMENDATIONS.md`
 
 ## Ziel
 

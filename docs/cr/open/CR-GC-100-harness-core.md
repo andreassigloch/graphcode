@@ -2,6 +2,7 @@
 
 **Status:** Open · **Modul:** `src/harness.ts` · **Prio:** 1a · **Stand:** 2026-06-13
 **Dependency:** CR-195b (KuzuAdapter ✓) · **Spec:** `docs/SPEC.md` §2.1, §3, §4 · bok governance §1–§3
+**Requirements:** R1 (Confidence-Metadaten am MutateResult → 3-Tier-Gate) — `docs/RECOMMENDATIONS.md`
 
 ## Ziel
 

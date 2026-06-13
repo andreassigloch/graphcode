@@ -1,7 +1,8 @@
 # CR-GC-102 — GraphCode Hook-System
 
 **Status:** Open · **Modul:** `src/hooks.ts` · **Prio:** 1a · **Stand:** 2026-06-13
-**Dependency:** CR-GC-100 · **Spec:** `docs/SPEC.md` §2.3 · bok governance §2.3 · `docs/RECOMMENDATIONS.md` R2
+**Dependency:** CR-GC-100 · **Spec:** `docs/SPEC.md` §2.3 · bok governance §2.3
+**Requirements:** R2 (Auto-Rebuild/Persist + Merge) · R11 (version-keyed Cache + Dirty-Flag → Kuzu-Version) — `docs/RECOMMENDATIONS.md`
 
 ## Ziel
 
