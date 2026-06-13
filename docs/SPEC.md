@@ -147,12 +147,13 @@ Store · all-ephemeral-Cache→Layering. Reflexion/Skill-Library/Embeddings = ou
 **Korrektur:** Die „74% Token-Reduktion" ist in graphengine **unbelegt** (nur Doc-Strings, nie
 gemessen) — nicht als belegte Zahl zitieren; bei Bedarf real auf Kuzu-Graph messen.
 
-**Local-LLM-Pfad (H3):** Für ein kleines Context-Fenster zusätzlich **R12–R14** (aus
-`headroom-ai`-Analyse, `bok/docs/research/headroom-ai-evaluation.md`): Subset-Scoring übergroßer
-`graph_query`-Ergebnisse + reversibles Retrieve (Originale in Kuzu) + Cache-Prefix-Alignment —
-alle **deterministisch, kein Modell-Call**. `headroom-ai` selbst **nicht** als Dependency (Python-
-Proxy + SQLite widersprechen headless-TS/ein-Kuzu); nur die Muster nachbauen. Erwartung auf dichten
-Graph-Daten ~20–35%, nicht 60–95%.
+**Local-LLM-Pfad (H3):** Für ein kleines Context-Fenster gilt **Query-Precision statt Kompression**
+(R12–R14, `bok/docs/research/headroom-ai-evaluation.md`): **R12** — `graph_impact()`/typisierte
+Traversierung liefert *exakt* den nötigen Kontext (statt große Ergebnisse zu komprimieren); **R13**
+— progressive Query-Expansion (Tiefe 1 + Cursor → `graph_expand` on demand, Kuzu-Re-Traversierung,
+kein Originals-Store); **R14** — Prompt-Cache-Prefix-Hygiene (stabile Onto+Rules zuerst). Alle
+deterministisch, kein Modell-Call. `headroom-ai` **nicht** als Dependency (Python-Proxy + SQLite vs.
+headless-TS/ein-Kuzu); nur Muster nachbauen.
 
 ---
 **Verwandt:** `README.md` (Carve-Out-Strategie) · `docs/RECOMMENDATIONS.md` · bok SSOT (§1).

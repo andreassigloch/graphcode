@@ -45,18 +45,20 @@ nicht als belegte Zahl verwenden; bei Bedarf real auf Kuzu-Graph messen.
 ## Aus headroom-ai-Vergleich (R12–R14) — Prompt-Compression für Local-LLM
 
 headroom-ai = **inspire-only** (npm = Thin-Client zu Python-Proxy; Engine ist Python — Adoption =
-Python-Sidecar + SQLite-Store, widerspricht headless-TS/ein-Kuzu). Muster in TS nachbauen.
-Analyse: `bok/docs/research/headroom-ai-evaluation.md`. Alle drei sind **deterministisch (kein
-Modell-Call)** → tauglich für **Local-LLM** (kleines Fenster, H3 / governance §9).
+Python-Sidecar + SQLite-Store, widerspricht headless-TS/ein-Kuzu). Analyse:
+`bok/docs/research/headroom-ai-evaluation.md`. **Prinzip:** der Graph-Wert ist **präzise Retrieval
+(Impact-Analyse)**, nicht Post-hoc-Kompression — Kompression großer Dumps ist Symptom einer
+ungenauen Query. R12/R13 = Query-Konzept schärfen; R14 = Cache-Hygiene. Deterministisch (kein
+Modell-Call) → tauglich für **Local-LLM** (kleines Fenster, H3 / governance §9).
 
 | # | Empfehlung | Quelle | Wohin |
 |---|---|---|---|
-| R12 | **[MCP]** SmartCrusher-**Subset-Scoring** für übergroße `graph_query`-Ergebnisse: Items nach 5 Dim scoren (first/last · Errors 100% · Anomalien · BM25-Query-Relevanz) → **Teilmenge + Retrieve-Handle** statt Truncation; schema-erhaltend | headroom SmartCrusher | CR-GC-101 |
-| R13 | **[MCP]** CCR-**Reversibilität**: stabilen Handle in der Slice-Antwort + `graph_retrieve(handle, query?)`-Tool, **Originale in Kuzu** (NICHT separater SQLite-Store) → macht R7-Slicing reversibel/pull-on-demand | headroom CCR | CR-GC-101 (schärft R7) |
-| R14 | **[Bridge/prompt]** CacheAligner: dynamische Tokens (Datum, Session-ID) aus dem System-Prefix ans Ende schieben → byte-identischer, cachebarer Prefix | headroom CacheAligner | schärft R8 |
+| R12 | **[MCP] Query-Precision statt Kompression:** `graph_impact()` / typisierte Traversierung liefert **exakt** den nötigen Kontext (Blast-Radius) — statt große Ergebnisse zu komprimieren. Verschärft Ziel a + R6 (`graph_query`). Kompression nur Fallback für ungenaue Queries. | eigenes Prinzip (headroom-SmartCrusher **verworfen**) | CR-GC-101 (Query-Konzept) |
+| R13 | **[MCP] Progressive Query-Expansion:** präzise Query liefert Tiefe 1 + **Cursor/Handle**; Agent zieht den nächsten Ring **on demand** via `graph_expand(handle, branch, depth+1)` = tiefere **Kuzu-Re-Traversierung**. Kein Originals-Store, keine Dekompression. | CCR-Muster, auf Query umgedeutet | CR-GC-101 (schärft R7) |
+| R14 | **[prompt-cache] Prefix-Hygiene:** stabile Onto+Rules **zuerst** → Cache-Breakpoint → volatile Tokens (Datum/Repo-State/Task) **zuletzt** → identischer Prefix = Cache-Hit | headroom CacheAligner | schärft R8 |
 
-**Kalibrierung:** Auf unseren dichten Daten (Format-E-Rows, Tool-Args) ~**20–35%** Reduktion,
-**nicht** 60–95% (das gilt nur für Logs/HTML/verbose JSON).
+**Hinweis R14:** primär **Cloud-Claude** Cost/Latency-Win (Prefix-Cache billed-cheaper); Local-LLM
+nur wenn die Runtime KV/Prefix-Cache hat (llama.cpp/vLLM: Latenz, kein Billing).
 
 ## Nicht tun (Scope-Abgrenzung)
 
