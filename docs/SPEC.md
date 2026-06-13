@@ -125,8 +125,30 @@ zu konkretisieren (CR-GC-100).
 | **D3** | `mutate()`/`evaluateRules()`/`bindToolsToHarness()` sind Stubs | Carve-Out aus aimprove → CR-GC-100/101 |
 | **D4** *(done)* | §6-Checkpoint | **Abgezeichnet 2026-06-13**; CR-GC-100→103 offen in `docs/cr/open/` |
 | **D5** *(blocker)* | graphcode `workspace:*`-Deps unauflösbar — Standalone-Repo, kein sigloch-modules-Package; kein `node_modules`, `tsc` nicht lauffähig | Build-Setup entscheiden (Monorepo-Package vs. versionierte/file-Deps) + `npm install` + `tsc` grün **vor** Code — CR-GC-100 Task 0 |
-| **R1–R4** | Empfehlungen aus graphify-Vergleich | `docs/RECOMMENDATIONS.md` → falten in CR-GC-100/102/103 |
+| **R1–R11** | Empfehlungen aus graphify + graphengine | `docs/RECOMMENDATIONS.md` → CR-GC-100/101/102/103 + CR-195c |
+
+---
+
+## 9. graphengine-Effizienz-Erbe (Prompt-Reduktion + Streaming)
+
+**Kein Widerspruch zur Architektur — komplementär** (Analyse:
+`bok/docs/research/graphengine-efficiency.md`, code-belegt). graphengine liefert das *Effizienz*-
+Substrat, graphcode die *Governance*; sie treffen sich an Format-E (bereits verriegelt).
+
+**Erben (R5–R11):** Format-E-**Diff**-Dialekt (R5) · `graph_query` Anti-grep-Tool = **Ziel a** (R6) ·
+Sub-Graph-**Slicing** als Context-Primitive — und *verdrahten*, was graphengine versäumte (R7) ·
+Prompt-Cache **nur** Onto+Rules, nicht den Live-Graph (R8) · versioned Diff-**Broadcast** = **Ziel b** (R9) ·
+**Stream-Gate** `<operations>` (Prosa live, Diff atomar, R10) · version-keyed Response-Cache (R11).
+
+**Legacy/Out — Widersprüche, aufgelöst per „Muster behalten, Impl verwerfen":** Neo4j→Kuzu ·
+Canvas/Terminal-UI→headless · WS-Write-Hub→read-only Bridge · In-Memory-Map-SSOT→Kuzu *ist* der
+Store · all-ephemeral-Cache→Layering. Reflexion/Skill-Library/Embeddings = out-of-scope Prio 1a.
+
+**Korrektur:** Die „74% Token-Reduktion" ist in graphengine **unbelegt** (nur Doc-Strings, nie
+gemessen) — nicht als belegte Zahl zitieren; bei Bedarf real auf Kuzu-Graph messen.
 
 ---
 **Verwandt:** `README.md` (Carve-Out-Strategie) · `docs/RECOMMENDATIONS.md` · bok SSOT (§1).
+**Abgrenzung & Modul-Sharing:** bok `konzept/aise-family-architecture.md` §5c (graphcode vs.
+aise-Nachfolger) + `konzept/shared-vs-specific-modules.md` (A4-Diagramm: shared/specific + Self-Learning).
 ARCHITECTURE/MCP-TOOLS/HOOKS/INTEGRATION (README-Struktur) werden bei Reife aus §2 ausgegliedert.
