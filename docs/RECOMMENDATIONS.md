@@ -42,6 +42,22 @@ Dashboard · **[hook]** mutate-Gate.
 **Wichtig:** Die „**74% Token-Reduktion**" ist in graphengine **nirgends gemessen** (nur Doc-Strings) —
 nicht als belegte Zahl verwenden; bei Bedarf real auf Kuzu-Graph messen.
 
+## Aus headroom-ai-Vergleich (R12–R14) — Prompt-Compression für Local-LLM
+
+headroom-ai = **inspire-only** (npm = Thin-Client zu Python-Proxy; Engine ist Python — Adoption =
+Python-Sidecar + SQLite-Store, widerspricht headless-TS/ein-Kuzu). Muster in TS nachbauen.
+Analyse: `bok/docs/research/headroom-ai-evaluation.md`. Alle drei sind **deterministisch (kein
+Modell-Call)** → tauglich für **Local-LLM** (kleines Fenster, H3 / governance §9).
+
+| # | Empfehlung | Quelle | Wohin |
+|---|---|---|---|
+| R12 | **[MCP]** SmartCrusher-**Subset-Scoring** für übergroße `graph_query`-Ergebnisse: Items nach 5 Dim scoren (first/last · Errors 100% · Anomalien · BM25-Query-Relevanz) → **Teilmenge + Retrieve-Handle** statt Truncation; schema-erhaltend | headroom SmartCrusher | CR-GC-101 |
+| R13 | **[MCP]** CCR-**Reversibilität**: stabilen Handle in der Slice-Antwort + `graph_retrieve(handle, query?)`-Tool, **Originale in Kuzu** (NICHT separater SQLite-Store) → macht R7-Slicing reversibel/pull-on-demand | headroom CCR | CR-GC-101 (schärft R7) |
+| R14 | **[Bridge/prompt]** CacheAligner: dynamische Tokens (Datum, Session-ID) aus dem System-Prefix ans Ende schieben → byte-identischer, cachebarer Prefix | headroom CacheAligner | schärft R8 |
+
+**Kalibrierung:** Auf unseren dichten Daten (Format-E-Rows, Tool-Args) ~**20–35%** Reduktion,
+**nicht** 60–95% (das gilt nur für Logs/HTML/verbose JSON).
+
 ## Nicht tun (Scope-Abgrenzung)
 
 - ❌ **Keine** tree-sitter/AST-Extraktion in graphcode — das ist Slicer-Aufgabe (graphify Prio 2).
@@ -51,6 +67,7 @@ nicht als belegte Zahl verwenden; bei Bedarf real auf Kuzu-Graph messen.
 - ❌ **Kein** Canvas/Terminal-UI (`src/canvas`, `src/terminal-ui`, `ink`/`react`) — graphcode ist headless.
 - ❌ **Kein** WS-Write-Hub — Bridge ist read-only; Inbound-Mutations deaktivieren, Writes nur via MCP→`mutate()`.
 - ❌ **Kein** In-Memory-Map-SSOT / `agentdb`-Pkg / Reflexion / Skill-Library / Embeddings — Kuzu *ist* der Store; Rest out-of-scope Prio 1a.
+- ❌ **`headroom-ai` nicht als Dependency** — npm = Thin-Client zu Python-Proxy (`:8787`) + SQLite-Originals-Store + Cloud-Option; widerspricht headless-TS / ein-Kuzu / local-governed. Nur Muster R12–R14 in TS nachbauen.
 
 ## Verriegelung
 

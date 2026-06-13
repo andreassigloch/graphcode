@@ -147,6 +147,13 @@ Store · all-ephemeral-Cache→Layering. Reflexion/Skill-Library/Embeddings = ou
 **Korrektur:** Die „74% Token-Reduktion" ist in graphengine **unbelegt** (nur Doc-Strings, nie
 gemessen) — nicht als belegte Zahl zitieren; bei Bedarf real auf Kuzu-Graph messen.
 
+**Local-LLM-Pfad (H3):** Für ein kleines Context-Fenster zusätzlich **R12–R14** (aus
+`headroom-ai`-Analyse, `bok/docs/research/headroom-ai-evaluation.md`): Subset-Scoring übergroßer
+`graph_query`-Ergebnisse + reversibles Retrieve (Originale in Kuzu) + Cache-Prefix-Alignment —
+alle **deterministisch, kein Modell-Call**. `headroom-ai` selbst **nicht** als Dependency (Python-
+Proxy + SQLite widersprechen headless-TS/ein-Kuzu); nur die Muster nachbauen. Erwartung auf dichten
+Graph-Daten ~20–35%, nicht 60–95%.
+
 ---
 **Verwandt:** `README.md` (Carve-Out-Strategie) · `docs/RECOMMENDATIONS.md` · bok SSOT (§1).
 **Abgrenzung & Modul-Sharing:** bok `konzept/aise-family-architecture.md` §5c (graphcode vs.
