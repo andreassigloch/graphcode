@@ -243,6 +243,7 @@ req('REQ-conflict-free-merge', 'Conflict-free Graph-Merge', 'FUNC-merge-nodes: B
 req('REQ-schema-version-migration', 'Schema-Versions-Migration', 'FUNC-migrate-schema: bei Version-Bump re-validieren/migrieren, Violations berichten, Version mitführen.', ['functional']);
 req('REQ-interactive-capture-suggest', 'Interaktive Erfassung im suggest-Tier', 'FCHAIN-capture: NL→Format-E agent-seitig (REQ-no-extraction); Resultat im suggest-Tier durchs Gate, Review vor Persist.', ['functional']);
 req('REQ-interface-schema', 'Interface trägt ein Datenformat (SCHEMA)', 'Jeder FLOW (Interface) hat ein SCHEMA (Layer 2, Datenformat) — referenziert @sigloch/contracts Zod. Code-Precondition: ohne Datenvertrag rät der Agent das Format. (3-Schichten-Interface-Modell)', ['non-functional']);
+req('REQ-dashboard-ontology-sync', 'Dashboard/Readiness nutzt SE-Ontologie + V3_RULES', 'Das Dashboard/Readiness-Scorer MUSS gegen @sigloch/contracts Ontologie + V3_RULES evaluieren (via harness.evaluateRules, L2) — nicht die aimprove-Vorgänger-Regeln (rules 2.0.0, BQ-06/BQ-02 INCOSE). Heutige 155 BQ-Warnungen messen unsere REQs gegen eine Fremd-Regelbasis; nach Adoption echte Familie-Compliance. (NEXT REQ 2026-06-17)', ['functional']);
 req('REQ-interface-change-escalation', 'Interface-Änderung nur per Eskalation', 'Ein Realisierungs-Agent darf ein Interface (FLOW/SCHEMA) NICHT direkt mutieren. Bei Bedarf: (a) Notwendigkeit prüfen (sonst im Vertrag bleiben, Tech-Debt vermeiden); (b) CR an Facilitating-Agent + Boundary pausieren; (c) graph_impact(FLOW) Impact-Analyse; (d) Gate-Entscheidung (versionierte FLOW-Mutation / reject); (e) Dependents re-scopen/sequenzieren. Erhält conflict-free Parallelität; Interface-Drift zentral + gegatet.', ['functional']);
 
 // ── CR (open change requests) ──
@@ -254,6 +255,7 @@ cr('CR-GC-103', 'Format-E Codec', 'MOD-codec', 'Deterministischer Format-E-Codec
 cr('CR-GC-104', 'Skills/Prompts-Modul', 'MOD-skills', 'MOD-skills (.claude/skills/) + prompt-realisierte FUNC-render-views. Why: Skills/Prompts sind reale, zu managende Dateien = Modul; Allokation dorthin = prompt-realisiert (Skills = Funktionen). (docs/cr/open/CR-GC-104)');
 cr('CR-GC-105', 'Architektur-Verfeinerung', 'MOD-mcp-tools', 'Kunden-Aktoren (Systems Engineer, Vibe Coder) + Realisierungs-Agent-Reframing; Interface-Eskalations-Prozess (FCHAIN + REQ + Facilitating-Agent); fehlende FCHAINs für efficient-testing + reduced-llm. Why: Mensch=Architektur/Nutzen, Agent=Realisierung; Interface-Drift kontrolliert; jeder UC ein Szenario. (docs/cr/open/CR-GC-105)');
 cr('CR-GC-106', 'Interface-Schemas', 'MOD-codec', '9 SCHEMA-Knoten (→ @sigloch/contracts Zod) + FLOW→SCHEMA für alle 28 Interfaces; REQ-interface-schema. Why: Datenvertrag = Code-Precondition (schema-before-code), schließt Readiness-Dimension schema=0. (docs/cr/open/CR-GC-106)');
+cr('CR-GC-107', 'Dashboard auf SE-Ontologie', 'MOD-harness', 'Readiness/Scorer nutzt @sigloch/contracts V3_RULES (via harness.evaluateRules) statt Vorgänger-BQ-Regeln (2.0.0). Why: heutige Readiness teils fremd-gemessen (155 BQ-Warnungen); nach Adoption echte Familie-Compliance. NEXT. (docs/cr/open/CR-GC-107)');
 const crReqs = {
   'CR-GC-100': ['REQ-one-gate-per-repo', 'REQ-rule-enforcement', 'REQ-confidence-tier', 'REQ-single-kuzu-owner', 'REQ-disk-persistence', 'REQ-import-se-ontology', 'REQ-harness-schema-in-contracts', 'REQ-buildable-standalone'],
   'CR-GC-101': ['REQ-single-transport', 'REQ-query-precision', 'REQ-subgraph-slicing', 'REQ-cache-layering', 'REQ-progressive-expansion', 'REQ-mcp-tool-registry', 'REQ-mcp-gate-symmetry', 'REQ-audit-trail'],
@@ -262,6 +264,7 @@ const crReqs = {
   'CR-GC-104': ['REQ-doc-export'],
   'CR-GC-105': ['REQ-interface-change-escalation', 'REQ-impact-based-testing', 'REQ-small-model-viable'],
   'CR-GC-106': ['REQ-interface-schema'],
+  'CR-GC-107': ['REQ-dashboard-ontology-sync'],
 };
 
 // ── TEST (capability acceptance gates) ──
@@ -280,6 +283,7 @@ test('TEST-doc-export', 'Doc-Re-Export-Test', 'exportMarkdown deterministisch (b
 test('TEST-responsiveness', 'Responsiveness-Test (<0,2s)', 'Draft-Apply + betroffener-Subgraph-Check antwortet < 0,2s (ohne LLM). (FCHAIN-apply-gate NFR)');
 test('TEST-interface-escalation', 'Interface-Eskalations-Test', 'Direkter FLOW-Mutationsversuch eines Realisierungs-Agenten wird abgelehnt; nur der Eskalationspfad (CR an Facilitating-Agent → graph_impact → Gate) ändert ein Interface. (FCHAIN-interface-escalation)');
 test('TEST-interface-schema', 'Interface-Schema-Test', 'Jeder FLOW hat ein SCHEMA (relation); ein FLOW ohne Datenformat ist ein Readiness-Blocker. (REQ-interface-schema)', 'inspection');
+test('TEST-dashboard-ontology-sync', 'Dashboard-Ontologie-Test', 'Readiness/Violations stammen aus @sigloch/contracts V3_RULES (Rule-IDs == contracts), keine Vorgänger-BQ-Regeln; valide Familie-REQs werfen keine BQ-Warnungen. (REQ-dashboard-ontology-sync)', 'analysis');
 
 // ════════════════════════════════ TRACES ════════════════════════════════
 // SYS → MOD
@@ -299,6 +303,8 @@ tr('MOD-hooks', 'REQ-hook-order-deterministic', 'satisfy');
 tr('MOD-hooks', 'REQ-versioned-cache', 'satisfy');
 // UC → REQ (compose) — interface-escalation is a code-quality requirement
 tr('UC-code-quality', 'REQ-interface-change-escalation', 'compose');
+// UC → REQ (compose) — dashboard-ontology-sync is a code-quality/governance concern (no UC-live-graph-view; it's FUNC-emit-update-event under code-quality)
+tr('UC-code-quality', 'REQ-dashboard-ontology-sync', 'compose');
 
 // LAYER 1 — Customer UCs
 for (const u of UCS) {
@@ -406,6 +412,7 @@ const testReqs = {
   'TEST-doc-export': ['REQ-doc-export'], 'TEST-responsiveness': ['REQ-responsiveness'],
   'TEST-interface-escalation': ['REQ-interface-change-escalation'],
   'TEST-interface-schema': ['REQ-interface-schema'],
+  'TEST-dashboard-ontology-sync': ['REQ-dashboard-ontology-sync'],
 };
 for (const [t, reqs] of Object.entries(testReqs)) for (const r of reqs) tr(t, r, 'verify');
 // CR → REQ (relation)

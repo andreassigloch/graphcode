@@ -767,6 +767,17 @@
       ]
     },
     {
+      "id": "REQ-dashboard-ontology-sync",
+      "type": "REQ",
+      "name": "Dashboard/Readiness nutzt SE-Ontologie + V3_RULES",
+      "description": "Das Dashboard/Readiness-Scorer MUSS gegen @sigloch/contracts Ontologie + V3_RULES evaluieren (via harness.evaluateRules, L2) — nicht die aimprove-Vorgänger-Regeln (rules 2.0.0, BQ-06/BQ-02 INCOSE). Heutige 155 BQ-Warnungen messen unsere REQs gegen eine Fremd-Regelbasis; nach Adoption echte Familie-Compliance. (NEXT REQ 2026-06-17)",
+      "status": "open",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-interface-change-escalation",
       "type": "REQ",
       "name": "Interface-Änderung nur per Eskalation",
@@ -848,6 +859,17 @@
       "type": "CR",
       "name": "Interface-Schemas",
       "description": "9 SCHEMA-Knoten (→ @sigloch/contracts Zod) + FLOW→SCHEMA für alle 28 Interfaces; REQ-interface-schema. Why: Datenvertrag = Code-Precondition (schema-before-code), schließt Readiness-Dimension schema=0. (docs/cr/open/CR-GC-106)",
+      "status": "open",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "attributes": {
+        "status": "open"
+      }
+    },
+    {
+      "id": "CR-GC-107",
+      "type": "CR",
+      "name": "Dashboard auf SE-Ontologie",
+      "description": "Readiness/Scorer nutzt @sigloch/contracts V3_RULES (via harness.evaluateRules) statt Vorgänger-BQ-Regeln (2.0.0). Why: heutige Readiness teils fremd-gemessen (155 BQ-Warnungen); nach Adoption echte Familie-Compliance. NEXT. (docs/cr/open/CR-GC-107)",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "attributes": {
@@ -988,6 +1010,15 @@
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "method": "inspection"
+    },
+    {
+      "id": "TEST-dashboard-ontology-sync",
+      "type": "TEST",
+      "name": "Dashboard-Ontologie-Test",
+      "description": "Readiness/Violations stammen aus @sigloch/contracts V3_RULES (Rule-IDs == contracts), keine Vorgänger-BQ-Regeln; valide Familie-REQs werfen keine BQ-Warnungen. (REQ-dashboard-ontology-sync)",
+      "status": "open",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "method": "analysis"
     },
     {
       "id": "UC-code-quality",
@@ -1887,6 +1918,13 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "CR-GC-107",
+      "target": "MOD-harness",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
       "source": "SYS-graphcode",
       "target": "MOD-harness",
       "type": "compose",
@@ -2099,6 +2137,13 @@
     {
       "source": "UC-code-quality",
       "target": "REQ-interface-change-escalation",
+      "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "UC-code-quality",
+      "target": "REQ-dashboard-ontology-sync",
       "type": "compose",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
@@ -3903,6 +3948,13 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "TEST-dashboard-ontology-sync",
+      "target": "REQ-dashboard-ontology-sync",
+      "type": "verify",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
       "source": "CR-GC-100",
       "target": "REQ-one-gate-per-repo",
       "type": "relation",
@@ -4122,6 +4174,13 @@
     {
       "source": "CR-GC-106",
       "target": "REQ-interface-schema",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-107",
+      "target": "REQ-dashboard-ontology-sync",
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
