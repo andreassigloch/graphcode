@@ -2118,7 +2118,7 @@
       "id": "CR-GC-112",
       "type": "CR",
       "name": "CLI graphcode init|update|remove",
-      "description": "Neues Projekt scaffolden (.graphcode/, Seed-Import). (docs/cr/open/CR-GC-112)",
+      "description": "Neues Projekt scaffolden (.graphcode/, Seed-Import). (docs/cr/open/CR-GC-112) MVP: init eines NEUEN Mitglieds = leerer/Template-Graph + .mcp.json (graphcode mcp) + Guardrails + Deps.",
       "status": "open",
       "created_at": "2026-06-17T00:00:00.000Z"
     },
@@ -2167,6 +2167,70 @@
       "type": "CR",
       "name": "Cleanup stale-at-all Knoten",
       "description": "Dual-Status-Bug (5 CRs), TEST-harness-install, REQ-dashboard-ontology-sync-Status. (docs/cr/open/CR-GC-118)",
+      "status": "open",
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "id": "REQ-agent-agnostic",
+      "type": "REQ",
+      "name": "Agent-agnostische MCP-Surface",
+      "description": "Die MCP-stdio-Surface ist agent-agnostisch: Claude Code UND OpenCode (und jeder MCP-Client) treiben dieselbe Harness durchs selbe Gate; keine client-spezifischen Annahmen. (CLAUDE.md verriegelt: OpenCode-executed, Claude Code = ein Client)",
+      "status": "draft",
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "id": "ACTOR-opencode",
+      "type": "ACTOR",
+      "name": "OpenCode — headless Execution-Runtime",
+      "description": "OpenCode-Sidecar (BYOK): headless Agent-Runtime, agent-agnostischer MCP-stdio-Client; treibt Spec/Impl autonom. graphcode ist OpenCode-executed (verriegelt). Claude Code = der interaktive Zwillings-Client.",
+      "status": "draft",
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-119",
+      "type": "CR",
+      "name": "Query-Layer: Cypher, korrekte Impact-Richtung (KNOW statt guess)",
+      "description": "graph_impact/expand/elements über Kuzu-Cypher statt TS-BFS; korrekte Blast-Radius-Richtung (eingehende Caller/Traces/Tests); TS-Mirror als Read-Pfad retiren. Major target: die richtigen Elemente WISSEN (Graph), nicht raten (grep). (SP-1/SP-2)",
+      "status": "open",
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-120",
+      "type": "CR",
+      "name": "Batch-Seed/Import (UNWIND) — Scale",
+      "description": "Per-Node/Edge-MERGE ist O(langsam): 10k Edges = 51s gemessen (SP-2). UNWIND-Batch-Insert → Seed/Import sub-Sekunde, damit 10k-Knoten real wird.",
+      "status": "open",
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-121",
+      "type": "CR",
+      "name": "Distribution: npx-Paket, self-contained, agent-agnostic",
+      "description": "graphcode als npm-Paket mit bin `npx @sigloch/graphcode init|update|remove`; versionierte (nicht file:) Deps fürs Publish; in beliebigem Fremd-Repo lauffähig. Voraussetzung fürs „neues Repo anlegen\".",
+      "status": "open",
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-122",
+      "type": "CR",
+      "name": "New-Member Bootstrap durchs Gate (Format-E Cold-Start)",
+      "description": "Leeren Graphen eines NEUEN Familie-Mitglieds ausschließlich durchs mutate()-Gate befüllen (Quelle Format-E, kein Direct-Write); Cold-Start mit Template-SYS. Realisiert TEST-bootstrap.",
+      "status": "open",
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-123",
+      "type": "CR",
+      "name": "MVP E2E-Acceptance: bootstrap → spec → KNOW-query → implement → re-export",
+      "description": "End-to-End-Validierung der MVP-Definition: in einem Wegwerf-Repo ein neues Mitglied bootstrappen, ein paar Knoten durchs Gate spec’en, beweisen dass graph_impact die RICHTIGEN Elemente liefert (nicht grep), einen Knoten implementieren, re-exportieren. Realisiert die UC-Tests.",
+      "status": "open",
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-124",
+      "type": "CR",
+      "name": "OpenCode-Execution: agent-agnostic 2nd client, headless BYOK",
+      "description": "graphcode headless von OpenCode getrieben (BYOK), als zweiter MCP-stdio-Client neben Claude Code — beweist die agent-agnostische + headless Claim (verriegelt: OpenCode-executed).",
       "status": "open",
       "created_at": "2026-06-17T00:00:00.000Z"
     }
@@ -5115,6 +5179,216 @@
     {
       "source": "CR-GC-103",
       "target": "FUNC-decode",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "SYS-graphcode",
+      "target": "REQ-agent-agnostic",
+      "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "MOD-mcp-tools",
+      "target": "REQ-agent-agnostic",
+      "type": "satisfy",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "ACTOR-opencode",
+      "target": "UC-code-quality",
+      "type": "io",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "ACTOR-opencode",
+      "target": "UC-token-efficiency",
+      "type": "io",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-119",
+      "target": "MS-3-mvp-readiness",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-119",
+      "target": "MOD-mcp-tools",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-119",
+      "target": "MOD-harness",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-119",
+      "target": "REQ-query-precision",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-119",
+      "target": "REQ-progressive-expansion",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-120",
+      "target": "MS-3-mvp-readiness",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-120",
+      "target": "MOD-harness",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-120",
+      "target": "FUNC-import",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-120",
+      "target": "REQ-bootstrap-through-gate",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-121",
+      "target": "MS-3-mvp-readiness",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-121",
+      "target": "MOD-cli",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-121",
+      "target": "REQ-npx-distribution",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-121",
+      "target": "REQ-self-contained-dist",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-121",
+      "target": "REQ-repo-install",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-122",
+      "target": "MS-3-mvp-readiness",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-122",
+      "target": "FUNC-import",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-122",
+      "target": "REQ-bootstrap-through-gate",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-123",
+      "target": "MS-3-mvp-readiness",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-123",
+      "target": "UC-code-quality",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-123",
+      "target": "UC-token-efficiency",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-123",
+      "target": "UC-efficient-testing",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-123",
+      "target": "UC-reduced-llm",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-124",
+      "target": "MS-3-mvp-readiness",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-124",
+      "target": "MOD-mcp-tools",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-124",
+      "target": "REQ-agent-agnostic",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-124",
+      "target": "REQ-single-transport",
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-17T00:00:00.000Z"
