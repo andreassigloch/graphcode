@@ -1,7 +1,7 @@
 # CR-GC-114: Host + SSE/WS-Bridge (Single Kuzu Owner)
 
-**Status:** Open · **Milestone:** `MS-3-mvp-readiness` (Phase 2) · **Datum:** 2026-06-17 · **Max Files:** 5
-**Graph (SSOT):** Spec lebt im Graphen — dieser CR realisiert: `MS-3-mvp-readiness`, `MOD-host-bridge`, `REQ-readonly-bridge`, `REQ-versioned-broadcast`, `REQ-mutation-emits-event`.
+**Status:** Open · **Milestone:** `MS-4-mvp2` (Phase 2) · **Datum:** 2026-06-17 · **Max Files:** 5
+**Graph (SSOT):** Spec lebt im Graphen — dieser CR realisiert: `MS-4-mvp2`, `MOD-host-bridge`, `REQ-readonly-bridge`, `REQ-versioned-broadcast`, `REQ-mutation-emits-event`.
 Siehe `docs/graph/graphcode.graph.json`. Diese Datei ist nur Pointer, nicht autoritativ.
 
 ## Problem / Scope

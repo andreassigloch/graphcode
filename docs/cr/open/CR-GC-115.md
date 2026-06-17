@@ -1,7 +1,7 @@
 # CR-GC-115: Dashboard-Viewer-App (Hybrid)
 
-**Status:** Open · **Milestone:** `MS-3-mvp-readiness` (Phase 2) · **Datum:** 2026-06-17 · **Max Files:** 5
-**Graph (SSOT):** Spec lebt im Graphen — dieser CR realisiert: `MS-3-mvp-readiness`, `MOD-dashboard`, `UC-live-graph-view`, `REQ-dashboard-ontology-sync`.
+**Status:** Open · **Milestone:** `MS-4-mvp2` (Phase 2) · **Datum:** 2026-06-17 · **Max Files:** 5
+**Graph (SSOT):** Spec lebt im Graphen — dieser CR realisiert: `MS-4-mvp2`, `MOD-dashboard`, `UC-live-graph-view`, `REQ-dashboard-ontology-sync`.
 Siehe `docs/graph/graphcode.graph.json`. Diese Datei ist nur Pointer, nicht autoritativ.
 
 ## Problem / Scope

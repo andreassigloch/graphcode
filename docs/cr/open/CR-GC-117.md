@@ -1,7 +1,7 @@
 # CR-GC-117: Modell-Hygiene: V3_RULES-Violations schließen
 
-**Status:** Open · **Milestone:** `MS-3-mvp-readiness` (Phase 3) · **Datum:** 2026-06-17 · **Max Files:** 5
-**Graph (SSOT):** Spec lebt im Graphen — dieser CR realisiert: `MS-3-mvp-readiness`, `REQ-rule-enforcement`, `REQ-graph-is-ssot`.
+**Status:** Open · **Milestone:** `MS-4-mvp2` (Phase 3) · **Datum:** 2026-06-17 · **Max Files:** 5
+**Graph (SSOT):** Spec lebt im Graphen — dieser CR realisiert: `MS-4-mvp2`, `REQ-rule-enforcement`, `REQ-graph-is-ssot`.
 Siehe `docs/graph/graphcode.graph.json`. Diese Datei ist nur Pointer, nicht autoritativ.
 
 ## Problem / Scope

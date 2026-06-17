@@ -2233,6 +2233,30 @@
       "description": "graphcode headless von OpenCode getrieben (BYOK), als zweiter MCP-stdio-Client neben Claude Code — beweist die agent-agnostische + headless Claim (verriegelt: OpenCode-executed).",
       "status": "open",
       "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "id": "MS-4-mvp2",
+      "type": "MS",
+      "name": "M4: MVP-2 (Dashboard, OpenCode, Scale)",
+      "description": "Fast-follow nach MVP-1: Live-Dashboard (host-bridge + viewer + views→core), OpenCode-Execution (agent-agnostic 2nd client), Batch-Seed (Scale), Readiness-Modell-Definition, Housekeeping. Hängt von MS-3.",
+      "status": "draft",
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "id": "REQ-readiness-model",
+      "type": "REQ",
+      "name": "Readiness-Modell definiert (Phase/Impl/INCOSE)",
+      "description": "Phase-Readiness (SRR/PDR/CDR/TRR), Implementation-Readiness-Gates (SAR/FCA/SVR/FRR) und INCOSE-Artifacts MÜSSEN für graphcode klar definiert sein — gegen @sigloch/contracts V3_RULES + die MS-Meilensteine + Element-Status, NICHT die aimprove-BQ-Heuristik. Heute unscharf/geerbt. Gate für Dashboard-Panels (CR-115) und Views (CR-110/116).",
+      "status": "draft",
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-125",
+      "type": "CR",
+      "name": "Readiness-Modell definieren & realisieren (Phase/Impl/INCOSE)",
+      "description": "Definiert was Phase-Readiness/Impl-Readiness-Gates/INCOSE-Artifacts in graphcode-Begriffen bedeuten (V3_RULES + MS + Status), dann als Scorer/View realisieren. Subsumiert die offene INCOSE-Scope-Frage (voll vs. lean). Voraussetzung für CR-110/115/116. (docs/cr/open/CR-GC-125)",
+      "status": "open",
+      "created_at": "2026-06-17T00:00:00.000Z"
     }
   ],
   "traces": [
@@ -4835,7 +4859,7 @@
     },
     {
       "source": "CR-GC-109",
-      "target": "MS-3-mvp-readiness",
+      "target": "MS-4-mvp2",
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-17T00:00:00.000Z"
@@ -4856,7 +4880,7 @@
     },
     {
       "source": "CR-GC-110",
-      "target": "MS-3-mvp-readiness",
+      "target": "MS-4-mvp2",
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-17T00:00:00.000Z"
@@ -4996,7 +5020,7 @@
     },
     {
       "source": "CR-GC-114",
-      "target": "MS-3-mvp-readiness",
+      "target": "MS-4-mvp2",
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-17T00:00:00.000Z"
@@ -5031,7 +5055,7 @@
     },
     {
       "source": "CR-GC-115",
-      "target": "MS-3-mvp-readiness",
+      "target": "MS-4-mvp2",
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-17T00:00:00.000Z"
@@ -5059,7 +5083,7 @@
     },
     {
       "source": "CR-GC-116",
-      "target": "MS-3-mvp-readiness",
+      "target": "MS-4-mvp2",
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-17T00:00:00.000Z"
@@ -5080,7 +5104,7 @@
     },
     {
       "source": "CR-GC-117",
-      "target": "MS-3-mvp-readiness",
+      "target": "MS-4-mvp2",
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-17T00:00:00.000Z"
@@ -5101,7 +5125,7 @@
     },
     {
       "source": "CR-GC-118",
-      "target": "MS-3-mvp-readiness",
+      "target": "MS-4-mvp2",
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-17T00:00:00.000Z"
@@ -5248,7 +5272,7 @@
     },
     {
       "source": "CR-GC-120",
-      "target": "MS-3-mvp-readiness",
+      "target": "MS-4-mvp2",
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-17T00:00:00.000Z"
@@ -5367,7 +5391,7 @@
     },
     {
       "source": "CR-GC-124",
-      "target": "MS-3-mvp-readiness",
+      "target": "MS-4-mvp2",
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-17T00:00:00.000Z"
@@ -5389,6 +5413,48 @@
     {
       "source": "CR-GC-124",
       "target": "REQ-single-transport",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "MS-4-mvp2",
+      "target": "MS-3-mvp-readiness",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "SYS-graphcode",
+      "target": "REQ-readiness-model",
+      "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "MS-4-mvp2",
+      "target": "REQ-readiness-model",
+      "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-125",
+      "target": "MS-4-mvp2",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-125",
+      "target": "REQ-readiness-model",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-125",
+      "target": "MOD-dashboard",
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-17T00:00:00.000Z"

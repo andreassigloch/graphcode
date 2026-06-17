@@ -1,6 +1,6 @@
 # CR-GC-120: Batch-Seed/Import (UNWIND) — Scale
 
-**Status:** Open · **Milestone:** `MS-3-mvp-readiness` (Phase 1) · **Datum:** 2026-06-17 · **Max Files:** 5
+**Status:** Open · **Milestone:** `MS-4-mvp2` (Phase 1) · **Datum:** 2026-06-17 · **Max Files:** 5
 **Graph (SSOT):** realisiert `MOD-harness`, `FUNC-import`, `REQ-bootstrap-through-gate`. Spec lebt im Graphen (`docs/graph/graphcode.graph.json`); diese Datei = Pointer.
 
 ## Problem / Scope

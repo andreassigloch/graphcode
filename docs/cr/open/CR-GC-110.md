@@ -1,7 +1,7 @@
 # CR-GC-110: views.ts → graph-api-core; BQ-Regel-Fork retiren
 
-**Status:** Open · **Milestone:** `MS-3-mvp-readiness` (Phase 0) · **Datum:** 2026-06-17 · **Max Files:** 5
-**Graph (SSOT):** Spec lebt im Graphen — dieser CR realisiert: `MS-3-mvp-readiness`, `REQ-shared-views-no-fork`, `FUNC-render-views`, `MOD-docs`.
+**Status:** Open · **Milestone:** `MS-4-mvp2` (Phase 0) · **Datum:** 2026-06-17 · **Max Files:** 5
+**Graph (SSOT):** Spec lebt im Graphen — dieser CR realisiert: `MS-4-mvp2`, `REQ-shared-views-no-fork`, `FUNC-render-views`, `MOD-docs`.
 Siehe `docs/graph/graphcode.graph.json`. Diese Datei ist nur Pointer, nicht autoritativ.
 
 ## Problem / Scope
