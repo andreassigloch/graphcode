@@ -29,8 +29,8 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@sigloch/contracts": "workspace:*",
-    "@sigloch/graph-api-core": "workspace:*",
+    "@sigloch/contracts": "file:../sigloch-modules/packages/contracts",
+    "@sigloch/graph-api-core": "file:../sigloch-modules/packages/graph-api-core",
     "zod": "^4.0.0"
   },
   "devDependencies": {

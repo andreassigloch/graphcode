@@ -83,6 +83,10 @@ schema('SCHEMA-cli-command', 'CliCommand', 'npx-CLI Kommando + Ergebnis.',
 schema('SCHEMA-markdown-view', 'MarkdownView', 'Generierte human-readable View mit GENERATED-Header.',
   "z.object({ view: z.string(), markdown: z.string(), generated: z.literal(true) })");
 
+// ── MS (Milestones) — M1 Spezifikation (Gate: IRR) → M2 Coding & V&V ──
+el('MS-1-specification', 'MS', 'M1: Spezifikation', 'Modell (UC/REQ/FUNC/Architektur/Interfaces/Tests) + ADR-001 + CR-Spezifikationen. Abschluss-Gate: IRR (Internal Readiness Review, docs/project/irr.md).');
+el('MS-2-coding-vv', 'MS', 'M2: Coding & V&V', 'Realisierung der Module (CR-GC-100..103, 107) + Verifikation/Validierung (Tests, Benchmark). Start nach IRR-Freigabe.');
+
 // ════════════════════════════════ LAYER 1 — CUSTOMER USE CASES ════════════════════════════════
 const UCS = [
   { id: 'UC-code-quality', name: 'Exzellente, governte Code-Qualität',
@@ -435,6 +439,15 @@ tr('UC-token-efficiency', 'REQ-benchmark-harness', 'compose');
 tr('UC-code-quality', 'REQ-quality-metric', 'compose');
 tr('TEST-token-efficiency', 'REQ-benchmark-harness', 'verify');
 tr('TEST-code-quality', 'REQ-quality-metric', 'verify');
+
+// ── MS wiring: M1 composes the spec UCs; M2 depends on M1; CRs assigned to milestones ──
+['UC-code-quality', 'UC-efficient-testing', 'UC-token-efficiency', 'UC-reduced-llm'].forEach(u => tr('MS-1-specification', u, 'compose'));
+tr('MS-2-coding-vv', 'MS-1-specification', 'relation'); // depends-on
+const crMs = {
+  'CR-GC-104': 'MS-1-specification', 'CR-GC-105': 'MS-1-specification', 'CR-GC-106': 'MS-1-specification', 'CR-GC-108': 'MS-1-specification',
+  'CR-GC-100': 'MS-2-coding-vv', 'CR-GC-101': 'MS-2-coding-vv', 'CR-GC-102': 'MS-2-coding-vv', 'CR-GC-103': 'MS-2-coding-vv', 'CR-GC-107': 'MS-2-coding-vv',
+};
+for (const [c, m] of Object.entries(crMs)) tr(c, m, 'relation');
 
 // TEST → REQ (verify)
 const testReqs = {

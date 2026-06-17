@@ -228,6 +228,22 @@
       }
     },
     {
+      "id": "MS-1-specification",
+      "type": "MS",
+      "name": "M1: Spezifikation",
+      "description": "Modell (UC/REQ/FUNC/Architektur/Interfaces/Tests) + ADR-001 + CR-Spezifikationen. Abschluss-Gate: IRR (Internal Readiness Review, docs/project/irr.md).",
+      "status": "reviewed",
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "id": "MS-2-coding-vv",
+      "type": "MS",
+      "name": "M2: Coding & V&V",
+      "description": "Realisierung der Module (CR-GC-100..103, 107) + Verifikation/Validierung (Tests, Benchmark). Start nach IRR-Freigabe.",
+      "status": "reviewed",
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
       "id": "REQ-single-store",
       "type": "REQ",
       "name": "Ein Store: Kuzu",
@@ -3979,6 +3995,104 @@
       "source": "TEST-code-quality",
       "target": "REQ-quality-metric",
       "type": "verify",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "MS-1-specification",
+      "target": "UC-code-quality",
+      "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "MS-1-specification",
+      "target": "UC-efficient-testing",
+      "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "MS-1-specification",
+      "target": "UC-token-efficiency",
+      "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "MS-1-specification",
+      "target": "UC-reduced-llm",
+      "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "MS-2-coding-vv",
+      "target": "MS-1-specification",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-104",
+      "target": "MS-1-specification",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-105",
+      "target": "MS-1-specification",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-106",
+      "target": "MS-1-specification",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-108",
+      "target": "MS-1-specification",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-100",
+      "target": "MS-2-coding-vv",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-101",
+      "target": "MS-2-coding-vv",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-102",
+      "target": "MS-2-coding-vv",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-103",
+      "target": "MS-2-coding-vv",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-107",
+      "target": "MS-2-coding-vv",
+      "type": "relation",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
     },
