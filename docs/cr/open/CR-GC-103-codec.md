@@ -1,28 +1,27 @@
-# CR-GC-103 — GraphCode Format-E Codec
+# CR-GC-103: Format-E Codec — deterministisch, commit-/merge-arm
 
-**Status:** Open · **Modul:** `src/codec.ts` · **Prio:** 1a · **Stand:** 2026-06-13
-**Dependency:** CR-195a (SE-Descriptor ✓) · **Spec:** `docs/SPEC.md` §2.4 · bok `2yR-36-codec-spec.md`
-**Requirements:** R3 (deterministische Serialisierung) · R5 (Format-E-Diff-Dialekt + 1:N-Grouping; implicit-add verwerfen) — `docs/RECOMMENDATIONS.md`
+**Status:** Open · **Datum:** 2026-06-17 · **Modul:** `src/codec.ts` (Graph: `MOD-codec`)
+**Refs:** ADR-001 §3 (Codec-Baseline) · bok `2yR-36-codec-spec.md` · `@sigloch/graph-api-core` (FormatECodec)
+**Graph:** `CR-GC-103 -relation→ MOD-codec` (+ REQs unten) · **Dependency:** CR-195a (SE-Descriptor ✓) · **Max Files:** 5
 
-## Ziel
+## Problem (Why)
+Der governte Graph muss als **commit-fähiges, merge-armes** Artefakt serialisierbar sein (`docs/graph/*.json`):
+nur mit **deterministischer** Serialisierung sind git-Diffs/Merges conflict-free (`UC-graph-merge`), und nur mit
+Validierung gegen `SE_DESCRIPTOR` bleibt der Graph ontologie-konform. Ein paralleler Codec bräche L1.
 
-`GraphCodeCodec`: `encode` / `decode` zwischen `OntologyGraph` und Format-E-JSON, Validierung
-gegen SE-Ontologie. Baseline = aimproves Codec + `merge_nodes` (bok 2yR-36).
+## Entscheidung
+Baseline = aimprove-Codec + `merge_nodes` (bok 2yR-36); **genau EIN Codec** (Parity = contracts, L1).
+Stabile Sortierung von Nodes/Edges/Keys → zwei Encodes byte-identisch. Diff-Dialekt (+/-/~/M) mit
+`<operations><base_snapshot>ID@version`; implicit-add **verwerfen** (Gate muss laut scheitern).
 
-## Tasks
+## Scope (realisiert vorhandene Graph-Knoten)
+FUNC: `FUNC-encode`, `FUNC-decode` (→ `MOD-codec`); Round-Trip = `FCHAIN-codec-roundtrip`.
+REQ: `REQ-deterministic-serialization`, `REQ-roundtrip-conformance`, `REQ-formatE-diff-dialect`,
+`REQ-codec-validation`, `REQ-formatE-parity`.
 
-- `encode(graph)` / `decode(json)` auf Basis der `FormatECodec`-Baseline aus `@sigloch/graph-api-core`
-  + `@sigloch/contracts` (kein paralleler Codec — L1).
-- **R3 — Deterministische Serialisierung** (stabile Sortierung von Nodes/Edges/Keys) → commit- und
-  merge-arm (speist CR-GC-102 R2).
-- Validierung gegen `SE_DESCRIPTOR` (ElementType/TraceType/TRACE_PATTERNS).
+## Akzeptanzkriterien (Graph: TEST-Knoten)
+`TEST-roundtrip` grün (`decode(encode(g))==g`, rasentraktor-Fixture, L3; zwei Encodes byte-identisch) ·
+ungültige Typen → Validierungsfehler (kein silent pass).
 
-## Gate (Acceptance)
-
-- [ ] Round-Trip `decode(encode(g)) == g` (modulo Whitespace) — rasentraktor-Fixture (L3/Conformance).
-- [ ] Serialisierung deterministisch: zwei Encodes desselben Graphen == byte-identisch.
-- [ ] Ungültige Typen → Validierungsfehler (kein silent pass).
-
-## Drift-Locks
-
-L1 (Format-E-Parity = contracts-Baseline, ein Codec) · L3 (Round-Trip-Conformance in CI).
+## Dependencies
+CR-195a (SE-Descriptor ✓). Speist CR-GC-102 (R2 Merge).

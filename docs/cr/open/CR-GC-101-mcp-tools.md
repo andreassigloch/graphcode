@@ -1,34 +1,26 @@
-# CR-GC-101 — GraphCode MCP-Tools
+# CR-GC-101: MCP-Tools — Graph statt grep (Ziel a)
 
-**Status:** Open · **Modul:** `src/mcp-tools.ts` · **Prio:** 1a · **Stand:** 2026-06-13
-**Dependency:** CR-GC-100 · **Spec:** `docs/SPEC.md` §2.2, §5 · bok governance §2.4
-**Requirements:** R6 (graph_query = anti-grep) · R7 (Sub-Graph-Slicing) · R8 (Cache-Layering) · R12 (Query-Precision/Impact) · R13 (progressive Expansion) — `docs/RECOMMENDATIONS.md`
+**Status:** Open · **Datum:** 2026-06-17 · **Modul:** `src/mcp-tools.ts` (Graph: `MOD-mcp-tools`)
+**Refs:** ADR-001 §4 AD-4 (Query-Precision), §3 (MCP-stdio) · bok `graphcode-governance.md` §2.4
+**Graph:** `CR-GC-101 -relation→ MOD-mcp-tools` (+ REQs unten) · **Dependency:** CR-GC-100 · **Max Files:** 5
 
-## Ziel
+## Problem (Why)
+Der Agent soll den **governten Graphen statt grep** nutzen (Ziel a): präziser Blast-Radius statt Volltext-Dump —
+das ist der Token-/LLM-Effizienz-Hebel (`UC-token-efficiency`, `UC-reduced-llm`). Ohne MCP-Surface bleibt der
+Graph für Claude Code unerreichbar; ohne Gate-Symmetrie (L2) entstünde ein zweiter Schreibpfad.
 
-MCP-Tool-Registry + Bindung an die Harness-Instanz, über **MCP-stdio** (Claude-Code-native).
-Kanal 1 der Host-Topologie (SPEC §5): der Agent nutzt den Graphen statt grep (Ziel a).
+## Entscheidung
+MCP-stdio-Registry, an die Harness gebunden (`bindToolsToHarness`); **kein direkter Kuzu-Zugriff im Tool**.
+`graph_mutate` == in-process `mutate()` (identische Violations, L2). Query-Precision-Tools liefern Format-E-Slices.
 
-## Tasks
+## Scope (realisiert vorhandene Graph-Knoten)
+FUNC: `FUNC-graph-impact`, `FUNC-graph-expand` (→ `MOD-mcp-tools`); Registry-Tools read/`graph_mutate`/rules/audit.
+REQ: `REQ-mcp-tool-registry`, `REQ-mcp-gate-symmetry`, `REQ-query-precision`, `REQ-subgraph-slicing`,
+`REQ-progressive-expansion`, `REQ-cache-layering`, `REQ-audit-trail`, `REQ-single-transport`.
 
-- **Registry** (SPEC §2.2): `graph_elements` / `graph_get_node` / `graph_get_edges` (read),
-  `graph_mutate` (write, durchs Gate), `rules_evaluate` / `rules_get_violations`,
-  `audit_trail` / `audit_stats`.
-- **`bindToolsToHarness(harness)`** — jedes Tool ruft `harness.mutate/loadGraph/evaluateRules`.
-  Kein direkter Kuzu-Zugriff im Tool.
-- **MCP-stdio-Transport** verdrahten (kein HTTP/REST im Harness-Core — L2 MCP-Symmetrie).
-- **Query-Precision-Tools (R6/R12/R13 · Ziel a):** `graph_impact(elementId, depth?)` → exakt der
-  Blast-Radius (Caller/Traces/Tests) als **Format-E**; `graph_expand(handle, branch, depth+1)` →
-  progressive On-Demand-Vertiefung (Kuzu-Re-Traversierung, **kein** Originals-Store);
-  `pruneToFit(maxTokens)`-Budget (R7). **Query-Precision statt Result-Kompression.**
+## Akzeptanzkriterien (Graph: TEST-Knoten)
+`TEST-mcp-symmetry` grün (MCP-Pfad == in-process, identisches Violations-Dict) ·
+`TEST-impact-subgraph` grün (`graph_impact` nur betroffener Subgraph, kein Full-Dump) · `graph_elements` read-only.
 
-## Gate (Acceptance)
-
-- [ ] Tool-invoke-Tests (MCP-stdio): `graph_mutate` läuft durchs selbe Gate wie `harness.mutate`.
-- [ ] `graph_elements` read-only, keine Mutation.
-- [ ] Violations-Dict identisch zwischen MCP-Pfad und in-process-Pfad (L2).
-- [ ] `graph_impact` liefert nur den betroffenen Subgraphen (kein Full-Dump); `graph_expand` vertieft on-demand.
-
-## Drift-Locks
-
-L2 (MCP-Symmetrie: MCP `graph_mutate` == in-process `mutate()`, gleiche Semantik/Violations).
+## Dependencies
+CR-GC-100 (Harness/Gate).

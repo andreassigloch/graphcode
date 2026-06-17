@@ -1,28 +1,27 @@
-# CR-GC-102 — GraphCode Hook-System
+# CR-GC-102: Hook-System — pre-commit / post-apply / nightly
 
-**Status:** Open · **Modul:** `src/hooks.ts` · **Prio:** 1a · **Stand:** 2026-06-13
-**Dependency:** CR-GC-100 · **Spec:** `docs/SPEC.md` §2.3 · bok governance §2.3
-**Requirements:** R2 (Auto-Rebuild/Persist + Merge) · R11 (version-keyed Cache + Dirty-Flag → Kuzu-Version) — `docs/RECOMMENDATIONS.md`
+**Status:** Open · **Datum:** 2026-06-17 · **Modul:** `src/hooks.ts` (Graph: `MOD-hooks`)
+**Refs:** ADR-001 §4 (Learning-Emission, Live-Event) · bok `graphcode-governance.md` §2.3
+**Graph:** `CR-GC-102 -relation→ MOD-hooks` (+ REQs unten) · **Dependency:** CR-GC-100 · **Max Files:** 5
 
-## Ziel
+## Problem (Why)
+Das Gate braucht Erweiterungspunkte: Validierung **vor** dem Write (pre-commit), Emission/Cleanup **nach** dem
+Apply (post-apply → Live-Update-Event fürs Dashboard + Trajectory für die Learning-Engine), und Aggregation
+(nightly). Ohne deterministische, blockierbare Hooks fehlt die Kopplung an Viewer (Ziel b) und Learning.
 
-`HookSystem` mit drei Extension-Points: `pre-commit` (Validierung vor Write), `post-apply`
-(Emission/Cleanup), `nightly-batch` (Aggregation/Learning-Trigger).
+## Entscheidung
+Drei Extension-Points mit **stabiler Ausführungsreihenfolge** (L3); `preCommitTimeout` (default 5000ms).
+post-apply emittiert **genau ein** Live-Update-Event (SSE invalidate) — alle Write-Pfade einheitlich, keine
+parallelen Pfade. Trajectory/Outcome append-only nach `.aimprove/*.jsonl` (Format stabil, L1).
 
-## Tasks
+## Scope (realisiert vorhandene Graph-Knoten)
+FUNC: `FUNC-emit-trajectory`, `FUNC-emit-update-event` (→ `MOD-hooks`).
+REQ: `REQ-hook-extension-points`, `REQ-precommit-timeout`, `REQ-hook-order-deterministic`,
+`REQ-trajectory-emit`, `REQ-mutation-emits-event`, `REQ-versioned-cache`, `REQ-auto-persist-merge`.
 
-- `registerHook(type, handler)` + `runPreCommitHooks` / `runPostApplyHooks` / `scheduleNightlyBatch`.
-- Storage `.graphcode/hooks/`, `preCommitTimeout` (default 5000 ms).
-- **post-apply → learning-engine**: Trajectory/Outcome append-only nach `.aimprove/*.jsonl`.
-- **R2 — Auto-Rebuild/-Persist bei Commit** + conflict-free Merge-Strategie fürs Graph-Artefakt
-  (zusammen mit deterministischem Codec aus CR-GC-103).
+## Akzeptanzkriterien (Graph: TEST-Knoten)
+`TEST-live-view` grün (jede Mutation → genau ein Event, korrekte domains) ·
+`TEST-learning-emit` grün (append-only, Format stabil) · pre-commit kann Mutation blocken · Hook-Order deterministisch.
 
-## Gate (Acceptance)
-
-- [ ] Hook-Exec-Tests: pre-commit kann Mutation blocken; post-apply läuft nach erfolgreichem Apply.
-- [ ] learning-engine-Emit: Trajectory-Datei wird append-only geschrieben (Format stabil, L1).
-- [ ] Hook-Ausführungsreihenfolge deterministisch (L3).
-
-## Drift-Locks
-
-L3 (Hook-Execution-Order stabil) · L1 (Trajectory/Outcome-Format stabil).
+## Dependencies
+CR-GC-100 (Harness/Gate).

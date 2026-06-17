@@ -3,3 +3,8 @@ dist/
 *.tsbuildinfo
 .graphcode/
 .DS_Store
+
+# local artifacts (predecessor data dir, vector db, scratch data)
+.aimprove/
+data/
+*.db

@@ -1,36 +1,27 @@
-# CR-GC-100 — GraphCode Harness Core
+# CR-GC-100: Harness Core — Apply-Gate auf Kuzu
 
-**Status:** Open · **Modul:** `src/harness.ts` · **Prio:** 1a · **Stand:** 2026-06-13
-**Dependency:** CR-195b (KuzuAdapter ✓) · **Spec:** `docs/SPEC.md` §2.1, §3, §4 · bok governance §1–§3
-**Requirements:** R1 (Confidence-Metadaten am MutateResult → 3-Tier-Gate) — `docs/RECOMMENDATIONS.md`
+**Status:** Open · **Datum:** 2026-06-17 · **Modul:** `src/harness.ts` (Graph: `MOD-harness`)
+**Refs:** ADR-001 §3 (Bracket: one-gate/Kuzu), §6 · bok `graphcode-governance.md` §2–3, `2yR-35-store-spec.md`
+**Graph:** `CR-GC-100 -relation→ MOD-harness` (+ REQs unten) · **Max Files:** 5
 
-## Ziel
+## Problem (Why)
+Der Apply-Gate ist der Kern: jede Edit (Mensch *oder* KI) MUSS durch dasselbe `mutate()` (L1). Heute Stub —
+graphcode läuft auf dem Vorgänger (`src/graph-server.js`, Express+JSON), der die verriegelten Constraints
+(Kuzu, Disk-Persistenz, V3_RULES) **verletzt**. Ohne lauffähiges Gate auf Kuzu ist keine Realisierung real.
 
-`GraphCodeHarness` lauffähig: `loadGraph` / `saveGraph` / `mutate` / `evaluateRules` / `close`
-gegen lokalen Kuzu, mit dem Apply-Gate (L1/L2).
+## Entscheidung
+Gate-Ablauf = `FCHAIN-apply-gate` (pre-commit → apply → `evaluateRules(V3_RULES)` → saveGraph → post-apply → emit).
+Single Kuzu-Owner (bok 2yR-35). Harness-Schemas nach `@sigloch/contracts` (D1). Kein lokaler Rule-Parser (L2).
 
-## Tasks
+## Scope (realisiert vorhandene Graph-Knoten — nicht hier neu auflisten)
+FUNC: `FUNC-mutate`, `FUNC-evaluate-rules`, `FUNC-save-graph`, `FUNC-emit-trajectory` (→ `MOD-harness`).
+REQ: `REQ-buildable-standalone` (D5-Blocker, **Task 0**), `REQ-harness-schema-in-contracts` (D1),
+`REQ-one-gate-per-repo`, `REQ-rule-enforcement`, `REQ-confidence-tier`, `REQ-single-kuzu-owner`,
+`REQ-disk-persistence`, `REQ-import-se-ontology`.
 
-- **Task 0 — Build-Setup (Blocker D5):** graphcode baufähig machen. `workspace:*`-Deps auflösen
-  (Entscheidung: Monorepo-Package in sigloch-modules **oder** versionierte/file-Deps im
-  Standalone-Repo). `npm install` + `tsc --noEmit` grün **vor** jedem Code.
-- **Task 1 — D1 Schema-SSOT:** `HarnessConfig` / `MutateCommand` / `MutateResult` aus `harness.ts`
-  nach `@sigloch/contracts` (eigener `harness`-Export, **nicht** `/se`) verschieben, dort
-  Version-Bump, in `harness.ts` importieren, lokale Defs löschen (keine parallelen Pfade).
-- **Task 2 — `mutate()` Apply-Gate** (SPEC §3): pre-commit-Hooks → in-memory apply →
-  `evaluateRules()` gegen `contracts/se` `V3_RULES` (L2, kein lokaler Parser) → `saveGraph` falls
-  keine error-Violations → post-apply-Hooks → Trajectory-Emit.
-- **Task 3 — Single Kuzu-Owner** (SPEC §4): genau ein Host öffnet `.graphcode/kuzu`; multi-thread
-  reads/writes im Owner; kein 2. DB-Handle.
-- **Task 4 — R1 Confidence:** `MutateResult` trägt Confidence/Tier-Feld (auto/suggest/block).
+## Akzeptanzkriterien (Graph: TEST-Knoten)
+`TEST-mutate-gate` grün (applied + Violations + block bei error-Severity) · `tsc`+`npm test` grün ·
+Disk-Kuzu (kein `:memory:`) · D1 erledigt (grep: keine lokalen Schema-Defs in `harness.ts`).
 
-## Gate (Acceptance)
-
-- [ ] `tsc` + `npm test` grün; Server/Harness instanziiert gegen Disk-Kuzu (kein `:memory:`).
-- [ ] Unit: `mutate()` wendet an, gibt Violations zurück, blockt bei error-Severity.
-- [ ] `evaluateRules()` nutzt `V3_RULES` (Assertion: Rule-IDs == contracts).
-- [ ] D1 erledigt: keine lokalen Schema-Defs mehr in `harness.ts` (grep leer).
-
-## Drift-Locks
-
-L1 (ein Gate/Repo, ein Kuzu-Owner) · L2 (V3_RULES, kein paralleler Parser).
+## Dependencies
+CR-195b (KuzuAdapter ✓). **Blocker:** `REQ-buildable-standalone` (D5) zuerst lösen.
