@@ -6,13 +6,13 @@
  * (BQ-2.0.0 / INCOSE-style BQ-06/BQ-02).
  *
  * Assertions (per acceptance node in graphcode.graph.json):
- *   (1) Every violation ruleId from the real 196-element graph is a member of
+ *   (1) Every violation ruleId from the full SSOT graph is a member of
  *       SE_DESCRIPTOR.rules.map(r => r.id)  — contracts rule-IDs only.
  *   (2) No ruleId matches /^BQ-/i           — foreign BQ rules absent.
  *   (3) scoreReadiness() returns a numeric compliance score in [0, 1].
  *   (4) violationsByRule keys are a subset of family rule-IDs.
  *
- * Uses real disk Kuzu (temp dir), seeds the real 196-element graph, no mocks,
+ * Uses real disk Kuzu (temp dir), seeds the full SSOT graph, no mocks,
  * no :memory:. Temp dir is cleaned up in afterEach.
  */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
@@ -49,7 +49,7 @@ describe('TEST-dashboard-ontology-sync: readiness is family-measured, not BQ-mea
     // repoRoot = real repo so seedFromJson finds docs/graph/graphcode.graph.json
     harness = new GraphCodeHarness(makeConfig(REPO_ROOT), storage);
     await harness.initialize();
-    // Seed the real 196-element graph.
+    // Seed the full SSOT graph.
     await harness.seedFromJson();
   });
 
@@ -89,7 +89,7 @@ describe('TEST-dashboard-ontology-sync: readiness is family-measured, not BQ-mea
     expect(typeof report.compliance.score).toBe('number');
     expect(report.compliance.score).toBeGreaterThanOrEqual(0);
     expect(report.compliance.score).toBeLessThanOrEqual(1);
-    expect(report.compliance.totalElements).toBe(196);
+    expect(report.compliance.totalElements).toBe(harness.getGraph().nodes.length);
     console.log(
       `Compliance: ${(report.compliance.score * 100).toFixed(1)}% ` +
       `(${report.compliance.elementsWithErrors} of ${report.compliance.totalElements} elements have errors)`,

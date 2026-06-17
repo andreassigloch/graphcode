@@ -1,7 +1,7 @@
 /**
  * TEST-roundtrip — acceptance test for GraphCodeCodec (CR-GC-103).
  *
- * Fixture: SSOT graph docs/graph/graphcode.graph.json (196 nodes, 352 edges).
+ * Fixture: SSOT graph docs/graph/graphcode.graph.json (full SSOT graph).
  * This is a stronger fixture than rasentraktor because it exercises the full
  * SE ontology in production shape (all 12 node types, complex attribute values,
  * descriptions with special chars).
@@ -153,7 +153,7 @@ function normalize(g: Graph): Graph {
 // Tests
 // ---------------------------------------------------------------------------
 
-describe('TEST-roundtrip: GraphCodeCodec (SSOT fixture — 196 nodes, 352 edges)', () => {
+describe('TEST-roundtrip: GraphCodeCodec (SSOT fixture)', () => {
   let codec: GraphCodeCodec;
   let fixture: Graph;
   let encoded1: string;

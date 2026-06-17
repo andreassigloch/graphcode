@@ -1,7 +1,7 @@
 /**
  * TEST-impact-subgraph — graph_impact returns ONLY the affected subgraph (REQ-query-precision / R6 / R12).
  *
- * Seeds the real graphcode.graph.json (196 nodes, 352 edges) into a disk Kuzu harness.
+ * Seeds the real graphcode.graph.json (full SSOT graph) into a disk Kuzu harness.
  * Calls graph_impact on a node that has known dependents (MOD-harness, which has multiple
  * outgoing edges in the graph). Asserts:
  *   (a) the returned slice contains the root node itself;
@@ -72,9 +72,9 @@ describe('TEST-impact-subgraph: graph_impact precision (R6/R12)', () => {
       depth: 1,
     });
 
-    // The full graph has 196 nodes; a depth-1 subgraph of MOD-harness must be smaller
+    // a depth-1 subgraph of MOD-harness must be smaller
     expect(nodeCount).toBeLessThan(fullNodeCount);
-    // Edge count must also be less than the full 352
+    // Edge count must also be less than the full graph
     expect(edgeCount).toBeLessThan(fullGraph.edges.length);
   });
 
@@ -128,8 +128,8 @@ describe('TEST-impact-subgraph: graph_impact precision (R6/R12)', () => {
 
     // Must return only REQ nodes
     expect(nodes.every((n: { type: string }) => n.type === 'REQ')).toBe(true);
-    // And must be a subset of the full 196 nodes
-    expect(total).toBeLessThan(196);
+    // And must be a subset of the full graph (count derived live, not hardcoded)
+    expect(total).toBeLessThan(harness.getGraph().nodes.length);
     expect(total).toBeGreaterThan(0);
   });
 

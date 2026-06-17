@@ -1314,83 +1314,93 @@
       "type": "FUNC",
       "name": "mutate(commands)",
       "description": "Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "status": "done",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "updated_at": "2026-06-17T00:00:00.000Z"
     },
     {
       "id": "FUNC-evaluate-rules",
       "type": "FUNC",
       "name": "evaluateRules()",
       "description": "Regel-Engine gegen V3_RULES; Violations {ruleId,severity,elementId}; kein lokaler Parser (L2).",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "status": "done",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "updated_at": "2026-06-17T00:00:00.000Z"
     },
     {
       "id": "FUNC-save-graph",
       "type": "FUNC",
       "name": "saveGraph(graph)",
       "description": "Persistiert in-memory Graph nach Disk-Kuzu, falls keine error-Violations. (SPEC §3.4, §4)",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "status": "done",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "updated_at": "2026-06-17T00:00:00.000Z"
     },
     {
       "id": "FUNC-emit-trajectory",
       "type": "FUNC",
       "name": "emitTrajectory()",
       "description": "post-apply append-only Trajectory/Outcome nach .aimprove/*.jsonl. (CR-GC-102)",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "status": "done",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "updated_at": "2026-06-17T00:00:00.000Z"
     },
     {
       "id": "FUNC-emit-update-event",
       "type": "FUNC",
       "name": "emitUpdateEvent(domains)",
       "description": "Live-Update-Event (SSE invalidate) bei jeder Mutation; Basis des read-only Dashboards. (R9)",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "status": "done",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "updated_at": "2026-06-17T00:00:00.000Z"
     },
     {
       "id": "FUNC-encode",
       "type": "FUNC",
       "name": "encode(graph)",
       "description": "Deterministische Format-E-Serialisierung (stabile Sortierung), Diff-Dialekt. (CR-GC-103, R3/R5)",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "status": "done",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "updated_at": "2026-06-17T00:00:00.000Z"
     },
     {
       "id": "FUNC-decode",
       "type": "FUNC",
       "name": "decode(json)",
       "description": "Format-E → OntologyGraph, Validierung gegen SE_DESCRIPTOR. (CR-GC-103)",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "status": "done",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "updated_at": "2026-06-17T00:00:00.000Z"
     },
     {
       "id": "FUNC-graph-impact",
       "type": "FUNC",
       "name": "graph_impact(id, depth?)",
       "description": "Exakter Blast-Radius (Caller/Traces/Tests) als Format-E. (CR-GC-101, R6/R12)",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "status": "done",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "updated_at": "2026-06-17T00:00:00.000Z"
     },
     {
       "id": "FUNC-graph-expand",
       "type": "FUNC",
       "name": "graph_expand(handle, branch, depth+1)",
       "description": "Progressive On-Demand-Kuzu-Re-Traversierung; kein Originals-Store. (CR-GC-101, R13)",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "status": "done",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "updated_at": "2026-06-17T00:00:00.000Z"
     },
     {
       "id": "FUNC-import",
       "type": "FUNC",
       "name": "importGraph(formatE, mode)",
       "description": "Format-E-Bulk-Import (replace/merge) ausschließlich durchs Gate; Cold-Start aus graphify/Slicer-Output.",
-      "status": "reviewed",
+      "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "attributes": {
         "operatingMode": "bootstrap"
-      }
+      },
+      "updated_at": "2026-06-17T00:00:00.000Z"
     },
     {
       "id": "FUNC-merge-nodes",
@@ -2031,6 +2041,134 @@
       "description": "Generierte Markdown-View, z.B. architecture-graph.md.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "id": "MS-3-mvp-readiness",
+      "type": "MS",
+      "name": "M3: MVP Readiness",
+      "description": "Realisiert die spezifizierten-aber-unrealisierten Knoten (CLI, MCP-Server, Re-Exporter, Views) + das Live-Dashboard (Hybrid: graphcode-owned, komponiert aus @sigloch/graph-renderer + dashboard-shell + graph-api-express+SSE, V3_RULES-gescort). Schließt F4/F5/F6. (Diskussion 2026-06-17)",
+      "status": "draft",
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "id": "UC-live-graph-view",
+      "type": "UC",
+      "name": "Live-Graph-View (Ziel b)",
+      "description": "Read-only Live-Dashboard: jede Mutation aktualisiert die Ansicht ohne Reload (SSE invalidate), Readiness/INCOSE-Gates gegen contracts V3_RULES (nicht BQ-2.0.0). Über den Host (Single-Kuzu-Owner), kein 2. DB-Handle.",
+      "status": "draft",
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "id": "MOD-host-bridge",
+      "type": "MOD",
+      "name": "host-bridge — SSE/WS Bridge",
+      "description": "Host-Prozess (Single Kuzu Owner) exponiert graph-api-express + SSE-Route, verdrahtet an harness.onUpdateEvent. Versioned Diff-Broadcast an den Live-Viewer. Kein Express-REST im Core — die Bridge ist Host-Sache. (SPEC §5)",
+      "status": "draft",
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "id": "MOD-dashboard",
+      "type": "MOD",
+      "name": "dashboard — Live-Viewer-App",
+      "description": "graphcode-owned Dashboard-App, komponiert aus @sigloch/graph-renderer (Cytoscape) + dashboard-shell, konsumiert die Host-Bridge. Readiness/INCOSE-Panels gegen V3_RULES (CR-GC-107-Scorer). Hybrid-Entscheidung 2026-06-17.",
+      "status": "draft",
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "id": "REQ-live-event-in-contracts",
+      "type": "REQ",
+      "name": "Live-Event-Contract in @sigloch/contracts",
+      "description": "LiveUpdateEvent/UpdateDomain (heute nur graphcode src/emit.ts) als Zod-Schema nach @sigloch/contracts publishen, damit Dashboard/Bridge denselben Vertrag importieren (kein Fork). Analog D1.",
+      "status": "draft",
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "id": "REQ-shared-views-no-fork",
+      "type": "REQ",
+      "name": "Geteilte View-Berechnung, kein Regel-Fork",
+      "description": "views.ts (testmatrix/FMEA/RTM/IRR/NFR/arch…) aus aimprove → @sigloch/graph-api-core; lokalen BQ-Regel-Fork (aimpro/src/contracts/se) retiren oder via Familie-Review nach contracts migrieren (Drift-Lock L1/L2).",
+      "status": "draft",
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-109",
+      "type": "CR",
+      "name": "Live-Event + View-Contract → contracts",
+      "description": "Publish LiveUpdateEvent/View-Vertrag nach @sigloch/contracts (Phase 0). (docs/cr/open/CR-GC-109)",
+      "status": "open",
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-110",
+      "type": "CR",
+      "name": "views.ts → graph-api-core; BQ-Fork retiren",
+      "description": "Geteilte View-Berechnung nach core; aimprove-Regel-Fork auflösen (Phase 0). (docs/cr/open/CR-GC-110)",
+      "status": "open",
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-111",
+      "type": "CR",
+      "name": "MCP-stdio-Server + bin (graphcode mcp)",
+      "description": "bindToolsToHarness an StdioServer, gate-symmetrisch (L2); .mcp.json + Hooks neu verdrahten. (docs/cr/open/CR-GC-111)",
+      "status": "open",
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-112",
+      "type": "CR",
+      "name": "CLI graphcode init|update|remove",
+      "description": "Neues Projekt scaffolden (.graphcode/, Seed-Import). (docs/cr/open/CR-GC-112)",
+      "status": "open",
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-113",
+      "type": "CR",
+      "name": "Graph→Markdown Re-Exporter",
+      "description": "Kuzu/Graph → commit-fähige docs (SSOT-Round-Trip); ersetzt Hand-Edits. (docs/cr/open/CR-GC-113)",
+      "status": "open",
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-114",
+      "type": "CR",
+      "name": "Host + SSE/WS-Bridge",
+      "description": "Single-Kuzu-Owner-Host + SSE-Route an onUpdateEvent (Live-Viewer-Feed). (docs/cr/open/CR-GC-114)",
+      "status": "open",
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-115",
+      "type": "CR",
+      "name": "Dashboard-Viewer-App (Hybrid)",
+      "description": "graph-renderer + shell, V3_RULES-gescort; aimprove-Komponenten repointen. (docs/cr/open/CR-GC-115)",
+      "status": "open",
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-116",
+      "type": "CR",
+      "name": "Views/Skills an Live-Graph verdrahten",
+      "description": "7 tote localhost:3001-Views auf MCP/Bridge umstellen + IRR-View ergänzen. (docs/cr/open/CR-GC-116)",
+      "status": "open",
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-117",
+      "type": "CR",
+      "name": "Modell-Hygiene: V3_RULES-Violations schließen",
+      "description": "61 R-01 (verify-Traces) + 14 RD-01 auflösen → Readiness ~0. (docs/cr/open/CR-GC-117)",
+      "status": "open",
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-118",
+      "type": "CR",
+      "name": "Cleanup stale-at-all Knoten",
+      "description": "Dual-Status-Bug (5 CRs), TEST-harness-install, REQ-dashboard-ontology-sync-Status. (docs/cr/open/CR-GC-118)",
+      "status": "open",
+      "created_at": "2026-06-17T00:00:00.000Z"
     }
   ],
   "traces": [
@@ -4497,6 +4635,489 @@
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "MS-3-mvp-readiness",
+      "target": "MS-2-coding-vv",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "MS-3-mvp-readiness",
+      "target": "UC-live-graph-view",
+      "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "MS-3-mvp-readiness",
+      "target": "REQ-live-event-in-contracts",
+      "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "MS-3-mvp-readiness",
+      "target": "REQ-shared-views-no-fork",
+      "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "SYS-graphcode",
+      "target": "UC-live-graph-view",
+      "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "ACTOR-dashboard",
+      "target": "UC-live-graph-view",
+      "type": "io",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "ACTOR-developer",
+      "target": "UC-live-graph-view",
+      "type": "io",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "UC-live-graph-view",
+      "target": "REQ-mutation-emits-event",
+      "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "UC-live-graph-view",
+      "target": "REQ-versioned-broadcast",
+      "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "UC-live-graph-view",
+      "target": "REQ-readonly-bridge",
+      "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "UC-live-graph-view",
+      "target": "REQ-dashboard-ontology-sync",
+      "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-emit-update-event",
+      "target": "UC-live-graph-view",
+      "type": "satisfy",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-render-views",
+      "target": "UC-live-graph-view",
+      "type": "satisfy",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "SYS-graphcode",
+      "target": "MOD-host-bridge",
+      "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "SYS-graphcode",
+      "target": "MOD-dashboard",
+      "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "REQ-readonly-bridge",
+      "target": "MOD-host-bridge",
+      "type": "allocate",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "REQ-versioned-broadcast",
+      "target": "MOD-host-bridge",
+      "type": "allocate",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "REQ-dashboard-ontology-sync",
+      "target": "MOD-dashboard",
+      "type": "allocate",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-render-views",
+      "target": "MOD-dashboard",
+      "type": "allocate",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-109",
+      "target": "MS-3-mvp-readiness",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-109",
+      "target": "REQ-live-event-in-contracts",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-109",
+      "target": "REQ-versioned-broadcast",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-110",
+      "target": "MS-3-mvp-readiness",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-110",
+      "target": "REQ-shared-views-no-fork",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-110",
+      "target": "FUNC-render-views",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-110",
+      "target": "MOD-docs",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-111",
+      "target": "MS-3-mvp-readiness",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-111",
+      "target": "MOD-cli",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-111",
+      "target": "REQ-mcp-tool-registry",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-111",
+      "target": "REQ-mcp-gate-symmetry",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-111",
+      "target": "REQ-single-transport",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-112",
+      "target": "MS-3-mvp-readiness",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-112",
+      "target": "MOD-cli",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-112",
+      "target": "FUNC-harness-cli",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-112",
+      "target": "REQ-pre-harness-cli",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-112",
+      "target": "REQ-post-harness-cli",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-113",
+      "target": "MS-3-mvp-readiness",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-113",
+      "target": "MOD-docs",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-113",
+      "target": "FUNC-export-markdown",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-113",
+      "target": "REQ-doc-export",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-113",
+      "target": "REQ-pre-export-markdown",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-113",
+      "target": "REQ-post-export-markdown",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-114",
+      "target": "MS-3-mvp-readiness",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-114",
+      "target": "MOD-host-bridge",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-114",
+      "target": "REQ-readonly-bridge",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-114",
+      "target": "REQ-versioned-broadcast",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-114",
+      "target": "REQ-mutation-emits-event",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-115",
+      "target": "MS-3-mvp-readiness",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-115",
+      "target": "MOD-dashboard",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-115",
+      "target": "UC-live-graph-view",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-115",
+      "target": "REQ-dashboard-ontology-sync",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-116",
+      "target": "MS-3-mvp-readiness",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-116",
+      "target": "MOD-skills",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-116",
+      "target": "FUNC-render-views",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-117",
+      "target": "MS-3-mvp-readiness",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-117",
+      "target": "REQ-rule-enforcement",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-117",
+      "target": "REQ-graph-is-ssot",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-118",
+      "target": "MS-3-mvp-readiness",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-118",
+      "target": "REQ-graph-is-ssot",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-100",
+      "target": "FUNC-mutate",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-100",
+      "target": "FUNC-evaluate-rules",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-100",
+      "target": "FUNC-save-graph",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-100",
+      "target": "FUNC-import",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-101",
+      "target": "FUNC-graph-impact",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-101",
+      "target": "FUNC-graph-expand",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-102",
+      "target": "FUNC-emit-trajectory",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-102",
+      "target": "FUNC-emit-update-event",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-103",
+      "target": "FUNC-encode",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-103",
+      "target": "FUNC-decode",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
     }
   ]
 }

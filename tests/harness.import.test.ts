@@ -45,11 +45,12 @@ describe('bootstrap import of the materialized graph', () => {
     rmSync(tmp, { recursive: true, force: true });
   });
 
-  it('loads all 196 elements and 352 traces into disk Kuzu and round-trips', async () => {
+  it('loads the full SSOT graph into disk Kuzu and round-trips', async () => {
     const json = JSON.parse(readFileSync(GRAPH_JSON, 'utf8')) as { elements: unknown[]; traces: unknown[] };
     const expectedNodes = json.elements.length;
     const expectedEdges = json.traces.length;
-    expect(expectedNodes).toBe(196);
+    // Counts derived from the SSOT file — robust to graph growth, no magic numbers.
+    expect(expectedNodes).toBeGreaterThan(0);
 
     const counts = await harness.seedFromJson();
     expect(counts.nodes).toBe(expectedNodes);

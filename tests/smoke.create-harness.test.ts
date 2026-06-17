@@ -41,9 +41,10 @@ describe('smoke: createHarness production path', () => {
   });
 
   it('wires disk Kuzu, seeds the SSOT, gate-mutates, and emits by default', async () => {
-    // Seed the 196-element SSOT into the factory-owned disk store.
+    // Seed the SSOT into the factory-owned disk store; expected count derived from the file.
+    const expectedNodes = (JSON.parse(readFileSync(REAL_GRAPH, 'utf8')) as { elements: unknown[] }).elements.length;
     const seeded = await harness.seedFromJson();
-    expect(seeded.nodes).toBe(196);
+    expect(seeded.nodes).toBe(expectedNodes);
     expect(existsSync(join(repoRoot, '.graphcode/kuzu'))).toBe(true);
 
     // Dogfood the one Apply-Gate: update a node status through mutate() (L1).
