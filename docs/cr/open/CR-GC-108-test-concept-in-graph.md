@@ -11,7 +11,7 @@ und eine **messbare Qualitätsdefinition** — aber als **Requirement**, nicht a
 
 ## Entscheidung
 1. **Test-Konzept = View:** jeder TEST-Knoten trägt `attributes.{level, tool, constraint}` (Testpyramide,
-   Testinfrastruktur, Abdeckung sind daraus ableitbar). `docs/project/test-concept.md` ist GENERATED
+   Testinfrastruktur, Abdeckung sind daraus ableitbar). `docs/views/test-concept.md` ist GENERATED
    (se-view-testconcept / FUNC-render-views), nicht hand-gepflegt.
 2. **`REQ-benchmark-harness`** (UC-token-efficiency): Setting graphcode-vs-classic, 2 LLMs, Token-Counter +
    Quality-Scorer. **Nur Requirement** — Harness-Bau ist eine spätere Realisierungs-CR.
@@ -20,7 +20,7 @@ und eine **messbare Qualitätsdefinition** — aber als **Requirement**, nicht a
 ## Scope (Graph)
 - TEST-Attribute level/tool/constraint (20 TESTs); Pyramide/Infra/Coverage als View ableitbar.
 - `+REQ-benchmark-harness` (verify ← TEST-token-efficiency), `+REQ-quality-metric` (verify ← TEST-code-quality).
-- `docs/project/test-concept.md` als GENERATED-View (Demonstration der Rekonstruierbarkeit).
+- `docs/views/test-concept.md` als GENERATED-View (Demonstration der Rekonstruierbarkeit).
 
 ## Akzeptanzkriterien
 - TEST-Knoten tragen level/tool/constraint; Testpyramide/CVE/Coverage aus dem Graph ableitbar.

@@ -26,7 +26,7 @@ arbeiten auf Architektur-/Nutzen-Ebene und **delegieren Realisierung** an gegate
 - `+FCHAIN-impact-testing` (UC-efficient-testing; compose `FUNC-graph-impact`; satisfy REQ-impact-based-testing).
 - `+FCHAIN-modelfree-gate` (UC-reduced-llm; compose `FUNC-mutate`+`FUNC-evaluate-rules`; satisfy REQ-small-model-viable + REQ-graceful-degradation).
 - `+TEST-interface-escalation` (verify REQ-interface-change-escalation).
-- Re-render `docs/graph/architecture-graph.md §3` → alle 4 UCs × FCHAINs.
+- Re-render `docs/views/architecture-graph.md §3` → alle 4 UCs × FCHAINs.
 
 ## Akzeptanzkriterien
 - Jeder UC hat ≥1 FCHAIN; `TEST-interface-escalation -verify→ REQ-interface-change-escalation`.

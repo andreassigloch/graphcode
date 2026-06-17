@@ -235,7 +235,7 @@
       "id": "MS-1-specification",
       "type": "MS",
       "name": "M1: Spezifikation",
-      "description": "Modell (UC/REQ/FUNC/Architektur/Interfaces/Tests) + ADR-001 + CR-Spezifikationen. Abschluss-Gate: IRR (Internal Readiness Review, docs/project/irr.md).",
+      "description": "Modell (UC/REQ/FUNC/Architektur/Interfaces/Tests) + ADR-001 + CR-Spezifikationen. Abschluss-Gate: IRR (Internal Readiness Review, docs/records/irr.md).",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z"
     },
@@ -2286,8 +2286,9 @@
       "type": "CR",
       "name": "Docs-Taxonomie — Views vs Records",
       "description": "+REQ-docs-taxonomy (Litmus-Test) + mechanischer Rename-Sweep docs/project → docs/{views,records}. Why: graph-is-ssot interessiert nur „aus dem Graphen reproduzierbar?\". (docs/cr/open/CR-GC-119-docs-views-vs-records)",
-      "status": "open",
-      "created_at": "2026-06-17T00:00:00.000Z"
+      "status": "done",
+      "created_at": "2026-06-17T00:00:00.000Z",
+      "updated_at": "2026-06-17T00:00:00.000Z"
     }
   ],
   "traces": [

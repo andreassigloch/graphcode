@@ -3,7 +3,7 @@ name: se-view:implplan
 description: Show implementation plan structure and milestone status
 ---
 
-Read `docs/project/implementation-plan.md` and present a structured summary:
+Read `docs/views/implementation-plan.md` and present a structured summary:
 
 ## 1. Meilenstein-Status (Gate Reviews)
 

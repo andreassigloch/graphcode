@@ -84,7 +84,7 @@ schema('SCHEMA-markdown-view', 'MarkdownView', 'Generierte human-readable View m
   "z.object({ view: z.string(), markdown: z.string(), generated: z.literal(true) })");
 
 // ── MS (Milestones) — M1 Spezifikation (Gate: IRR) → M2 Coding & V&V ──
-el('MS-1-specification', 'MS', 'M1: Spezifikation', 'Modell (UC/REQ/FUNC/Architektur/Interfaces/Tests) + ADR-001 + CR-Spezifikationen. Abschluss-Gate: IRR (Internal Readiness Review, docs/project/irr.md).');
+el('MS-1-specification', 'MS', 'M1: Spezifikation', 'Modell (UC/REQ/FUNC/Architektur/Interfaces/Tests) + ADR-001 + CR-Spezifikationen. Abschluss-Gate: IRR (Internal Readiness Review, docs/records/irr.md).');
 el('MS-2-coding-vv', 'MS', 'M2: Coding & V&V', 'Realisierung der Module (CR-GC-100..103, 107) + Verifikation/Validierung (Tests, Benchmark). Start nach IRR-Freigabe.');
 
 // ════════════════════════════════ LAYER 1 — CUSTOMER USE CASES ════════════════════════════════

@@ -1,6 +1,6 @@
 # CR-GC-119: Docs-Taxonomie — Views vs Records (`+REQ-docs-taxonomy`)
 
-**Status:** Open · **Datum:** 2026-06-17 · **Modul:** Modell + `MOD-docs` · **Refs:** ADR-001 (AD-1/AD-8), REQ-graph-is-ssot, REQ-doc-export
+**Status:** Done (2026-06-17) · **Modul:** Modell + `MOD-docs` · **Refs:** ADR-001 (AD-1/AD-8), REQ-graph-is-ssot, REQ-doc-export
 **Graph:** `+REQ-docs-taxonomy` (Constraint) + `+TEST-docs-taxonomy` · **Max Files:** mechanischer Rename-Sweep (Ausnahme zur 5-Datei-Regel)
 
 ## Problem (Why)

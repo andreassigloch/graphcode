@@ -3,7 +3,7 @@ name: se-view:testconcept
 description: Show test concept structure and coverage status
 ---
 
-Read `docs/project/test-concept.md` and present a structured summary:
+Read `docs/views/test-concept.md` and present a structured summary:
 
 ## 1. Testpyramide
 

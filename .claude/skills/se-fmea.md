@@ -3,11 +3,11 @@ name: se-fmea
 description: Perform a state-of-the-art FMEA (AIAG-VDA 7-step) on a system, subsystem, or component and integrate findings into the SE-graph + spec
 ---
 
-Conduct a Failure Mode and Effects Analysis following the **AIAG-VDA FMEA Handbook (2019)** 7-step method, mapped onto this project's SE-ontology graph. Output is `docs/project/failure-mode-analysis.md` plus a CR that integrates derived requirements into the graph.
+Conduct a Failure Mode and Effects Analysis following the **AIAG-VDA FMEA Handbook (2019)** 7-step method, mapped onto this project's SE-ontology graph. Output is `docs/records/failure-mode-analysis.md` plus a CR that integrates derived requirements into the graph.
 
 **Scope argument:** the user names the analysis target (whole system, a module e.g. `BlockModule.MD.002`, or a component e.g. `ACS712`). If unscoped, ask for it — do not guess.
 
-Reference exemplar (existing, RPN-based — upgrade it to AP, do not copy verbatim): `docs/project/failure-mode-analysis.md`, integrated via `docs/cr/done/CR-FMEA-001-failure-mode-requirements.md`.
+Reference exemplar (existing, RPN-based — upgrade it to AP, do not copy verbatim): `docs/records/failure-mode-analysis.md`, integrated via `docs/cr/done/CR-FMEA-001-failure-mode-requirements.md`.
 
 ---
 
@@ -54,7 +54,7 @@ Reference exemplar (existing, RPN-based — upgrade it to AP, do not copy verbat
 - State the **residual risk** intent: which mitigations lower O (prevention) vs. D (detection).
 
 ### Step 7 — Documentation of Results
-- Write `docs/project/failure-mode-analysis.md` with sections:
+- Write `docs/records/failure-mode-analysis.md` with sections:
   1. Zusammenfassung (count of FMs + Top-3 AP-High risks)
   2. Fehlermodi im Detail (`FM-NN`, the Step-4 entries)
   3. Risikomatrix (AP-sorted, Step 5)
