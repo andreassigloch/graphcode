@@ -67,8 +67,8 @@
     {
       "id": "ACTOR-claude-code",
       "type": "ACTOR",
-      "name": "Claude Code (LLM-Agent)",
-      "description": "MCP-stdio-Client; nutzt den Graphen statt grep (Ziel a). (SPEC §5 Kanal 1)",
+      "name": "Claude Code — Realisierungs-Agent",
+      "description": "Realisierungs-Agent unter graphcode-Kontrolle (OpenCode-executed); MCP-stdio-Client; nutzt den Graphen statt grep (Ziel a). Delegierte HOW-Ebene. (SPEC §5 Kanal 1)",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z"
     },
@@ -101,6 +101,30 @@
       "type": "ACTOR",
       "name": "graphify (Slicer)",
       "description": "Externes Slicer-System; produziert Format-E aus großen Code/Docs zum Import. graphcode extrahiert NICHT selbst (REQ-no-extraction).",
+      "status": "reviewed",
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "id": "ACTOR-systems-engineer",
+      "type": "ACTOR",
+      "name": "Systems Engineer",
+      "description": "Kunde: arbeitet auf Architektur-/Nutzen-Ebene (UC/REQ/FUNC/FCHAIN), delegiert Realisierung an gegatete Agenten. Die WAS-Ebene.",
+      "status": "reviewed",
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "id": "ACTOR-vibe-coder",
+      "type": "ACTOR",
+      "name": "Vibe Coder",
+      "description": "Kunde: denkt in Architektur + Kundennutzen, delegiert Code-Realisierung an graphcode-kontrollierte Agenten. Die WAS-Ebene.",
+      "status": "reviewed",
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "id": "ACTOR-facilitating-agent",
+      "type": "ACTOR",
+      "name": "Facilitating Agent — Architekt",
+      "description": "Gegateter Agent mit Architektur-Autorität: bearbeitet Interface-Änderungs-Eskalationen — Impact-Analyse, Gate-Entscheidung, Dependents koordinieren.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z"
     },
@@ -633,6 +657,17 @@
       ]
     },
     {
+      "id": "REQ-interface-change-escalation",
+      "type": "REQ",
+      "name": "Interface-Änderung nur per Eskalation",
+      "description": "Ein Realisierungs-Agent darf ein Interface (FLOW/SCHEMA) NICHT direkt mutieren. Bei Bedarf: (a) Notwendigkeit prüfen (sonst im Vertrag bleiben, Tech-Debt vermeiden); (b) CR an Facilitating-Agent + Boundary pausieren; (c) graph_impact(FLOW) Impact-Analyse; (d) Gate-Entscheidung (versionierte FLOW-Mutation / reject); (e) Dependents re-scopen/sequenzieren. Erhält conflict-free Parallelität; Interface-Drift zentral + gegatet.",
+      "status": "open",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "CR-GC-100",
       "type": "CR",
       "name": "Harness Core",
@@ -681,6 +716,17 @@
       "type": "CR",
       "name": "Skills/Prompts-Modul",
       "description": "MOD-skills (.claude/skills/) + prompt-realisierte FUNC-render-views. Why: Skills/Prompts sind reale, zu managende Dateien = Modul; Allokation dorthin = prompt-realisiert (Skills = Funktionen). (docs/cr/open/CR-GC-104)",
+      "status": "open",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "attributes": {
+        "status": "open"
+      }
+    },
+    {
+      "id": "CR-GC-105",
+      "type": "CR",
+      "name": "Architektur-Verfeinerung",
+      "description": "Kunden-Aktoren (Systems Engineer, Vibe Coder) + Realisierungs-Agent-Reframing; Interface-Eskalations-Prozess (FCHAIN + REQ + Facilitating-Agent); fehlende FCHAINs für efficient-testing + reduced-llm. Why: Mensch=Architektur/Nutzen, Agent=Realisierung; Interface-Drift kontrolliert; jeder UC ein Szenario. (docs/cr/open/CR-GC-105)",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "attributes": {
@@ -800,6 +846,15 @@
       "type": "TEST",
       "name": "Responsiveness-Test (<0,2s)",
       "description": "Draft-Apply + betroffener-Subgraph-Check antwortet < 0,2s (ohne LLM). (FCHAIN-apply-gate NFR)",
+      "status": "open",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "method": "test"
+    },
+    {
+      "id": "TEST-interface-escalation",
+      "type": "TEST",
+      "name": "Interface-Eskalations-Test",
+      "description": "Direkter FLOW-Mutationsversuch eines Realisierungs-Agenten wird abgelehnt; nur der Eskalationspfad (CR an Facilitating-Agent → graph_impact → Gate) ändert ein Interface. (FCHAIN-interface-escalation)",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "method": "test"
@@ -1337,6 +1392,96 @@
       ]
     },
     {
+      "id": "FCHAIN-impact-testing",
+      "type": "FCHAIN",
+      "name": "Impact-basierte Testauswahl",
+      "description": "Geändertes Element → graph_impact → exakt betroffene TEST-Knoten → bottom-up ausführen (REQ-Tests → FCHAIN → UC).",
+      "status": "reviewed",
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "id": "REQ-pre-impact-testing",
+      "type": "REQ",
+      "name": "Precondition: Impact-basierte Testauswahl",
+      "description": "Geändertes Element bekannt; Graph geladen.",
+      "status": "open",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "kinds": [
+        "precondition"
+      ]
+    },
+    {
+      "id": "REQ-post-impact-testing",
+      "type": "REQ",
+      "name": "Postcondition: Impact-basierte Testauswahl",
+      "description": "Genau die betroffenen Tests ausgewählt (bottom-up); nicht betroffene ausgelassen.",
+      "status": "open",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "kinds": [
+        "postcondition"
+      ]
+    },
+    {
+      "id": "FCHAIN-modelfree-gate",
+      "type": "FCHAIN",
+      "name": "Modellfreier Gate-Betrieb",
+      "description": "Gate + Regeln laufen deterministisch ohne Modell-Call (mutate + evaluateRules); kleine/lokale LLMs tragfähig.",
+      "status": "reviewed",
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "id": "REQ-pre-modelfree-gate",
+      "type": "REQ",
+      "name": "Precondition: Modellfreier Gate-Betrieb",
+      "description": "MutateCommands liegen vor; LLM-Sidecar evtl. nicht erreichbar.",
+      "status": "open",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "kinds": [
+        "precondition"
+      ]
+    },
+    {
+      "id": "REQ-post-modelfree-gate",
+      "type": "REQ",
+      "name": "Postcondition: Modellfreier Gate-Betrieb",
+      "description": "Apply + Regelprüfung deterministisch, kein Modell-Call; nur LLM-Zusatzfeatures degradieren.",
+      "status": "open",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "kinds": [
+        "postcondition"
+      ]
+    },
+    {
+      "id": "FCHAIN-interface-escalation",
+      "type": "FCHAIN",
+      "name": "Interface-Änderungs-Eskalation",
+      "description": "Agent erkennt nötige Interface-Änderung → Notwendigkeitsprüfung → CR an Facilitating-Agent → graph_impact(FLOW) → Gate-Entscheidung → Dependents re-scopen. Interface = FLOW ist bindend.",
+      "status": "reviewed",
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "id": "REQ-pre-interface-escalation",
+      "type": "REQ",
+      "name": "Precondition: Interface-Änderungs-Eskalation",
+      "description": "Realisierungs-Agent stellt fest: bestehender FLOW-Vertrag reicht nicht.",
+      "status": "open",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "kinds": [
+        "precondition"
+      ]
+    },
+    {
+      "id": "REQ-post-interface-escalation",
+      "type": "REQ",
+      "name": "Postcondition: Interface-Änderungs-Eskalation",
+      "description": "Interface NICHT direkt mutiert; eskaliert, impact-analysiert, gegatet, Dependents sequenziert — oder verworfen (im Vertrag bleiben).",
+      "status": "open",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "kinds": [
+        "postcondition"
+      ]
+    },
+    {
       "id": "FLOW-mutate-cmd",
       "type": "FLOW",
       "name": "Mutate-Command",
@@ -1598,6 +1743,13 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "CR-GC-105",
+      "target": "MOD-mcp-tools",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
       "source": "SYS-graphcode",
       "target": "MOD-harness",
       "type": "compose",
@@ -1801,6 +1953,13 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "UC-code-quality",
+      "target": "REQ-interface-change-escalation",
+      "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
       "source": "SYS-graphcode",
       "target": "UC-code-quality",
       "type": "compose",
@@ -1818,6 +1977,20 @@
       "source": "UC-code-quality",
       "target": "REQ-structure-driven",
       "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "ACTOR-systems-engineer",
+      "target": "UC-code-quality",
+      "type": "io",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "ACTOR-vibe-coder",
+      "target": "UC-code-quality",
+      "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
     },
@@ -1850,6 +2023,13 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "ACTOR-facilitating-agent",
+      "target": "UC-code-quality",
+      "type": "io",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
       "source": "TEST-code-quality",
       "target": "REQ-code-governed-quality",
       "type": "verify",
@@ -1867,6 +2047,20 @@
       "source": "UC-efficient-testing",
       "target": "REQ-impact-based-testing",
       "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "ACTOR-systems-engineer",
+      "target": "UC-efficient-testing",
+      "type": "io",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "ACTOR-vibe-coder",
+      "target": "UC-efficient-testing",
+      "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
     },
@@ -1895,6 +2089,20 @@
       "source": "UC-token-efficiency",
       "target": "REQ-precise-context",
       "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "ACTOR-systems-engineer",
+      "target": "UC-token-efficiency",
+      "type": "io",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "ACTOR-vibe-coder",
+      "target": "UC-token-efficiency",
+      "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
     },
@@ -1930,6 +2138,20 @@
       "source": "UC-reduced-llm",
       "target": "REQ-small-model-viable",
       "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "ACTOR-systems-engineer",
+      "target": "UC-reduced-llm",
+      "type": "io",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "ACTOR-vibe-coder",
+      "target": "UC-reduced-llm",
+      "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
     },
@@ -2683,6 +2905,132 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "UC-efficient-testing",
+      "target": "FCHAIN-impact-testing",
+      "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FCHAIN-impact-testing",
+      "target": "FUNC-graph-impact",
+      "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FCHAIN-impact-testing",
+      "target": "REQ-impact-based-testing",
+      "type": "satisfy",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FCHAIN-impact-testing",
+      "target": "REQ-pre-impact-testing",
+      "type": "satisfy",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FCHAIN-impact-testing",
+      "target": "REQ-post-impact-testing",
+      "type": "satisfy",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "UC-reduced-llm",
+      "target": "FCHAIN-modelfree-gate",
+      "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FCHAIN-modelfree-gate",
+      "target": "FUNC-mutate",
+      "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FCHAIN-modelfree-gate",
+      "target": "FUNC-evaluate-rules",
+      "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FCHAIN-modelfree-gate",
+      "target": "REQ-small-model-viable",
+      "type": "satisfy",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FCHAIN-modelfree-gate",
+      "target": "REQ-graceful-degradation",
+      "type": "satisfy",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FCHAIN-modelfree-gate",
+      "target": "REQ-pre-modelfree-gate",
+      "type": "satisfy",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FCHAIN-modelfree-gate",
+      "target": "REQ-post-modelfree-gate",
+      "type": "satisfy",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "UC-code-quality",
+      "target": "FCHAIN-interface-escalation",
+      "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FCHAIN-interface-escalation",
+      "target": "FUNC-graph-impact",
+      "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FCHAIN-interface-escalation",
+      "target": "FUNC-mutate",
+      "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FCHAIN-interface-escalation",
+      "target": "REQ-interface-change-escalation",
+      "type": "satisfy",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FCHAIN-interface-escalation",
+      "target": "REQ-pre-interface-escalation",
+      "type": "satisfy",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FCHAIN-interface-escalation",
+      "target": "REQ-post-interface-escalation",
+      "type": "satisfy",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
       "source": "ACTOR-claude-code",
       "target": "FLOW-mutate-cmd",
       "type": "io",
@@ -3201,6 +3549,13 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "TEST-interface-escalation",
+      "target": "REQ-interface-change-escalation",
+      "type": "verify",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
       "source": "CR-GC-100",
       "target": "REQ-one-gate-per-repo",
       "type": "relation",
@@ -3392,6 +3747,27 @@
     {
       "source": "CR-GC-104",
       "target": "REQ-doc-export",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-105",
+      "target": "REQ-interface-change-escalation",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-105",
+      "target": "REQ-impact-based-testing",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-105",
+      "target": "REQ-small-model-viable",
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"

@@ -1,6 +1,6 @@
 # GraphCode — Architektur-Graph
 
-> ⚠️ **GENERATED aus `docs/graph/graphcode.graph.json` (SSOT)** — Stand 2026-06-17 (156 Elemente / 252 Traces).
+> ⚠️ **GENERATED aus `docs/graph/graphcode.graph.json` (SSOT)** — Stand 2026-06-17 (176 Elemente / 295 Traces).
 > Nicht hand-editieren; bei Modelländerung neu rendern (manueller Vorgriff auf `FUNC-export-markdown` / `UC-doc-export`).
 > Layering: UC (Kundennutzen) ← FUNC (satisfy) · UC → FCHAIN → FUNC (compose) · FUNC → FLOW → FUNC (io) · FUNC → MOD (allocate).
 >
@@ -97,9 +97,9 @@ flowchart LR
   style FUNCS fill:#fef3c7,stroke:#f59e0b
 ```
 
-## 3. Behavioral View — Use-Case-Funktionsketten (FCHAIN)
+## 3. Behavioral View — alle Use Cases × FCHAINs
 
-`UC -compose→ FCHAIN -compose→ FUNC`. Verhaltens-Szenarien pro Nutzen.
+`UC -compose→ FCHAIN -compose→ FUNC` (1:N). **Jeder UC hat jetzt ≥1 Szenario;** `code-quality` hat 4.
 
 ```mermaid
 flowchart LR
@@ -113,14 +113,63 @@ flowchart LR
     subgraph FC4["FCHAIN-capture"]
       d1["decode"] --> d2["mutate suggest-Tier"]
     end
+    subgraph FC7["FCHAIN-interface-escalation"]
+      e1["graph_impact"] --> e2["mutate gated"]
+    end
   end
   subgraph UCt["UC-token-efficiency"]
     subgraph FC2["FCHAIN-agent-query"]
       b1["graph_impact"] --> b2["graph_expand on-demand"]
     end
   end
+  subgraph UCe["UC-efficient-testing"]
+    subgraph FC5["FCHAIN-impact-testing"]
+      f1["graph_impact"] --> f2["affected tests bottom-up"]
+    end
+  end
+  subgraph UCl["UC-reduced-llm"]
+    subgraph FC6["FCHAIN-modelfree-gate"]
+      g1["mutate"] --> g2["evaluateRules — kein Modell-Call"]
+    end
+  end
   style UCq fill:#d1fae5,stroke:#10b981
   style UCt fill:#fef3c7,stroke:#f59e0b
+  style UCe fill:#dbeafe,stroke:#3b82f6
+  style UCl fill:#fce7f3,stroke:#ec4899
+```
+
+## 3a. Altitude — wer auf welcher Ebene arbeitet
+
+Kunden (Systems Engineer, Vibe Coder) besitzen das **WAS** (UC/Architektur/Nutzen); gegatete Agenten besitzen das **WIE** (Realisierung durchs Gate).
+
+```mermaid
+flowchart TB
+  SE["Systems Engineer"] --> ARCH["WAS — UC · REQ · FUNC · FCHAIN"]
+  VC["Vibe Coder"] --> ARCH
+  ARCH -->|delegiert| REAL["WIE — Realisierung Code"]
+  RA["Realisierungs-Agent<br/>Claude Code / OpenCode"] --> REAL
+  REAL -->|jede Edit| GATE["mutate-Gate"]
+  FA["Facilitating Agent<br/>Architekt"] -->|Interface-Eskalation| GATE
+  style ARCH fill:#d1fae5,stroke:#10b981
+  style REAL fill:#dbeafe,stroke:#3b82f6
+  style GATE fill:#fef9c3,stroke:#ca8a04
+```
+
+## 3b. Interface-Eskalation — der eine Pfad, der ein Interface ändern darf
+
+Interfaces (FLOW) sind bindend. Direkte FLOW-Mutation durch einen Realisierungs-Agenten ist verboten; nur dieser eskalierte, gegatete Pfad ändert ein Interface.
+
+```mermaid
+flowchart LR
+  RA["Realisierungs-Agent"] -->|a nicht nötig| STAY["im Vertrag bleiben"]
+  RA -->|a notwendig| CR["b CR an Facilitating-Agent<br/>Boundary pausieren"]
+  CR --> FA["Facilitating Agent"]
+  FA -->|c| IMP["graph_impact FLOW<br/>alle Dependents"]
+  IMP -->|d| GATE["Gate-Entscheidung<br/>versionierte FLOW-Mutation / reject"]
+  GATE -->|e accept| COORD["Dependents re-scopen + sequenzieren"]
+  GATE -->|e reject| STAY
+  style GATE fill:#fef9c3,stroke:#ca8a04
+  style STAY fill:#e5e7eb,stroke:#6b7280
 ```
 
 ## 4. Datenfluss — Funktionen verketten via FLOW

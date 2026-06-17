@@ -53,11 +53,14 @@ el('MOD-docs', 'MOD', 'docs — Markdown-Re-Exporter', 'App-spezifisches Renderi
 el('MOD-skills', 'MOD', 'skills/prompts — agent-realisierte Funktionen', 'App-spezifisches Modul: .claude/skills/ (+ Prompts) — Skill-/Prompt-Definitionen als agent-ausgeführte Funktionen (z.B. se-view-* Graph→Markdown-Views). Lifecycle via FUNC-harness-cli. Allokation hierher = prompt-realisiert (vs. code-realisiert in den übrigen MODs). Beweis: Skills = Funktionen.');
 
 // ── ACTOR ──
-el('ACTOR-claude-code', 'ACTOR', 'Claude Code (LLM-Agent)', 'MCP-stdio-Client; nutzt den Graphen statt grep (Ziel a). (SPEC §5 Kanal 1)');
+el('ACTOR-claude-code', 'ACTOR', 'Claude Code — Realisierungs-Agent', 'Realisierungs-Agent unter graphcode-Kontrolle (OpenCode-executed); MCP-stdio-Client; nutzt den Graphen statt grep (Ziel a). Delegierte HOW-Ebene. (SPEC §5 Kanal 1)');
 el('ACTOR-dashboard', 'ACTOR', 'Browser-Dashboard', 'SSE/WS read-only Viewer; Live-Q-Status-Visualisierung (Ziel b). (SPEC §5 Kanal 2)');
 el('ACTOR-learning-engine', 'ACTOR', 'Learning-Engine', 'Consumer der post-apply/nightly Trajectory-/Outcome-Emissionen. (SPEC §2.3)');
 el('ACTOR-developer', 'ACTOR', 'Entwickler / Repo-Owner', 'Kunde/Nutzer: will exzellente Code-Qualität bei effizientem Testen und minimalem Token-/LLM-Aufwand.');
 el('ACTOR-graphify', 'ACTOR', 'graphify (Slicer)', 'Externes Slicer-System; produziert Format-E aus großen Code/Docs zum Import. graphcode extrahiert NICHT selbst (REQ-no-extraction).');
+el('ACTOR-systems-engineer', 'ACTOR', 'Systems Engineer', 'Kunde: arbeitet auf Architektur-/Nutzen-Ebene (UC/REQ/FUNC/FCHAIN), delegiert Realisierung an gegatete Agenten. Die WAS-Ebene.');
+el('ACTOR-vibe-coder', 'ACTOR', 'Vibe Coder', 'Kunde: denkt in Architektur + Kundennutzen, delegiert Code-Realisierung an graphcode-kontrollierte Agenten. Die WAS-Ebene.');
+el('ACTOR-facilitating-agent', 'ACTOR', 'Facilitating Agent — Architekt', 'Gegateter Agent mit Architektur-Autorität: bearbeitet Interface-Änderungs-Eskalationen — Impact-Analyse, Gate-Entscheidung, Dependents koordinieren.');
 
 // ════════════════════════════════ LAYER 1 — CUSTOMER USE CASES ════════════════════════════════
 const UCS = [
@@ -67,22 +70,22 @@ const UCS = [
       { id: 'REQ-code-governed-quality', name: 'Gate-validierte, driftfreie Qualität', kind: 'functional', desc: 'Jede Code-/Modell-Änderung ist gate-validiert (SE-Ontologie + V3_RULES), konsistent und driftfrei — kein ungeprüfter Schreibpfad.' },
       { id: 'REQ-structure-driven', name: 'Struktur-getrieben (Schema-first)', kind: 'non-functional', desc: 'Architektur/Interfaces/Integration/Tests werden strikt aus dem governten Graph abgeleitet (Schema-first), nicht ad-hoc.' },
     ],
-    actors: ['ACTOR-developer', 'ACTOR-claude-code', 'ACTOR-dashboard', 'ACTOR-graphify'],
+    actors: ['ACTOR-systems-engineer', 'ACTOR-vibe-coder', 'ACTOR-developer', 'ACTOR-claude-code', 'ACTOR-dashboard', 'ACTOR-graphify', 'ACTOR-facilitating-agent'],
     test: { id: 'TEST-code-quality', req: 'REQ-code-governed-quality', name: 'Code-Quality-Gate-Test', desc: 'Regelverletzende Änderung wird vom Gate geblockt; konformer Graph bleibt driftfrei.' } },
   { id: 'UC-efficient-testing', name: 'Effizientes, impact-basiertes Testen',
     desc: 'Als Entwickler will ich nur die richtigen Tests laufen lassen: der Impact-/Abhängigkeitsgraph bestimmt das selektive Testset; „erledigt" = „nachgewiesen".',
     reqs: [{ id: 'REQ-impact-based-testing', name: 'Selektives Testset via Impact', kind: 'functional', desc: 'Testset wird aus dem Impact-/Abhängigkeitsgraph bestimmt (richtige Tests statt alle); Coverage = nachgewiesen.' }],
-    actors: ['ACTOR-developer'],
+    actors: ['ACTOR-systems-engineer', 'ACTOR-vibe-coder', 'ACTOR-developer'],
     test: { id: 'TEST-efficient-testing', req: 'REQ-impact-based-testing', name: 'Impact-Testset-Test', desc: 'graph_impact(geänderter Knoten) liefert genau die betroffenen TEST-Knoten; nicht betroffene sind nicht im Set.' } },
   { id: 'UC-token-efficiency', name: 'Minimaler Token-Verbrauch',
     desc: 'Als Nutzer/Agent will ich minimalen Token-Verbrauch: präziser Query-Kontext (exakter Blast-Radius/Slice) statt grep-Dump oder Result-Kompression.',
     reqs: [{ id: 'REQ-precise-context', name: 'Präziser Kontext statt grep-Dump', kind: 'non-functional', desc: 'Kontext = exakter Blast-Radius/Sub-Graph-Slice (Format-E) statt grep-Dump/Result-Kompression.' }],
-    actors: ['ACTOR-developer', 'ACTOR-claude-code'],
+    actors: ['ACTOR-systems-engineer', 'ACTOR-vibe-coder', 'ACTOR-developer', 'ACTOR-claude-code'],
     test: { id: 'TEST-token-efficiency', req: 'REQ-precise-context', name: 'Token-Budget-Test', desc: 'graph_impact-Kontext ist messbar kleiner als ein Volltext-/grep-Dump desselben Scopes (Token-Count-Assertion).' } },
   { id: 'UC-reduced-llm', name: 'Reduzierte LLM-Anforderungen',
     desc: 'Als Nutzer will ich mit kleinen/lokalen LLMs auskommen: deterministische, modellfreie Gates/Regeln + Query-Precision senken den Modell-Bedarf.',
     reqs: [{ id: 'REQ-small-model-viable', name: 'Kleine/lokale LLMs tragfähig', kind: 'non-functional', desc: 'Deterministische, modellfreie Gates/Regeln + Query-Precision halten kleine/lokale LLMs tragfähig; Kern läuft ohne LLM (degraded).' }],
-    actors: ['ACTOR-developer', 'ACTOR-claude-code', 'ACTOR-learning-engine'],
+    actors: ['ACTOR-systems-engineer', 'ACTOR-vibe-coder', 'ACTOR-developer', 'ACTOR-claude-code', 'ACTOR-learning-engine'],
     test: { id: 'TEST-reduced-llm', req: 'REQ-small-model-viable', name: 'Modellfrei-Gate-Test', desc: 'Gate/Regel-Evaluation läuft ohne Modell-Call (localReachable=false) deterministisch; nur LLM-Zusatzfeatures degradieren.' } },
 ];
 
@@ -151,6 +154,21 @@ const CHAINS = [
     nfr: ['REQ-interactive-capture-suggest'],
     pre: 'NL/Text-Eingang (chat-tauglich) + Agent verfügbar.',
     post: 'Format-E-Kandidaten im suggest-Tier durchs Gate; kein auto-apply; Review vor Persist.' },
+  { id: 'FCHAIN-impact-testing', name: 'Impact-basierte Testauswahl', ownerUC: 'UC-efficient-testing',
+    desc: 'Geändertes Element → graph_impact → exakt betroffene TEST-Knoten → bottom-up ausführen (REQ-Tests → FCHAIN → UC).',
+    steps: ['FUNC-graph-impact'], nfr: ['REQ-impact-based-testing'],
+    pre: 'Geändertes Element bekannt; Graph geladen.',
+    post: 'Genau die betroffenen Tests ausgewählt (bottom-up); nicht betroffene ausgelassen.' },
+  { id: 'FCHAIN-modelfree-gate', name: 'Modellfreier Gate-Betrieb', ownerUC: 'UC-reduced-llm',
+    desc: 'Gate + Regeln laufen deterministisch ohne Modell-Call (mutate + evaluateRules); kleine/lokale LLMs tragfähig.',
+    steps: ['FUNC-mutate', 'FUNC-evaluate-rules'], nfr: ['REQ-small-model-viable', 'REQ-graceful-degradation'],
+    pre: 'MutateCommands liegen vor; LLM-Sidecar evtl. nicht erreichbar.',
+    post: 'Apply + Regelprüfung deterministisch, kein Modell-Call; nur LLM-Zusatzfeatures degradieren.' },
+  { id: 'FCHAIN-interface-escalation', name: 'Interface-Änderungs-Eskalation', ownerUC: 'UC-code-quality',
+    desc: 'Agent erkennt nötige Interface-Änderung → Notwendigkeitsprüfung → CR an Facilitating-Agent → graph_impact(FLOW) → Gate-Entscheidung → Dependents re-scopen. Interface = FLOW ist bindend.',
+    steps: ['FUNC-graph-impact', 'FUNC-mutate'], nfr: ['REQ-interface-change-escalation'],
+    pre: 'Realisierungs-Agent stellt fest: bestehender FLOW-Vertrag reicht nicht.',
+    post: 'Interface NICHT direkt mutiert; eskaliert, impact-analysiert, gegatet, Dependents sequenziert — oder verworfen (im Vertrag bleiben).' },
 ];
 
 // ════════════════════════════════ REQUIREMENTS ════════════════════════════════
@@ -203,6 +221,7 @@ req('REQ-bootstrap-through-gate', 'Erstbefüllung nur durchs Gate', 'FUNC-import
 req('REQ-conflict-free-merge', 'Conflict-free Graph-Merge', 'FUNC-merge-nodes: Branch-/Multi-Dev-Merge conflict-free (deterministische Serialisierung + merge_nodes).', ['functional']);
 req('REQ-schema-version-migration', 'Schema-Versions-Migration', 'FUNC-migrate-schema: bei Version-Bump re-validieren/migrieren, Violations berichten, Version mitführen.', ['functional']);
 req('REQ-interactive-capture-suggest', 'Interaktive Erfassung im suggest-Tier', 'FCHAIN-capture: NL→Format-E agent-seitig (REQ-no-extraction); Resultat im suggest-Tier durchs Gate, Review vor Persist.', ['functional']);
+req('REQ-interface-change-escalation', 'Interface-Änderung nur per Eskalation', 'Ein Realisierungs-Agent darf ein Interface (FLOW/SCHEMA) NICHT direkt mutieren. Bei Bedarf: (a) Notwendigkeit prüfen (sonst im Vertrag bleiben, Tech-Debt vermeiden); (b) CR an Facilitating-Agent + Boundary pausieren; (c) graph_impact(FLOW) Impact-Analyse; (d) Gate-Entscheidung (versionierte FLOW-Mutation / reject); (e) Dependents re-scopen/sequenzieren. Erhält conflict-free Parallelität; Interface-Drift zentral + gegatet.', ['functional']);
 
 // ── CR (open change requests) ──
 const cr = (id, name, mod, why) => { el(id, 'CR', name, why, { status: 'open', attributes: { status: 'open' } }); tr(id, mod, 'relation'); };
@@ -211,12 +230,14 @@ cr('CR-GC-101', 'MCP-Tools', 'MOD-mcp-tools', 'MCP-stdio-Surface: Agent nutzt Gr
 cr('CR-GC-102', 'Hook-System', 'MOD-hooks', 'pre-commit/post-apply/nightly Extension-Points; Live-Event + Trajectory-Emission. Why: Kopplung an Dashboard (Ziel b) + Learning-Engine; deterministisch + blockierbar. (docs/cr/open/CR-GC-102)');
 cr('CR-GC-103', 'Format-E Codec', 'MOD-codec', 'Deterministischer Format-E-Codec (encode/decode), commit-/merge-arm, Validierung gegen SE_DESCRIPTOR. Why: conflict-free git-Merge + Ontologie-Konformität; genau EIN Codec (L1). (docs/cr/open/CR-GC-103)');
 cr('CR-GC-104', 'Skills/Prompts-Modul', 'MOD-skills', 'MOD-skills (.claude/skills/) + prompt-realisierte FUNC-render-views. Why: Skills/Prompts sind reale, zu managende Dateien = Modul; Allokation dorthin = prompt-realisiert (Skills = Funktionen). (docs/cr/open/CR-GC-104)');
+cr('CR-GC-105', 'Architektur-Verfeinerung', 'MOD-mcp-tools', 'Kunden-Aktoren (Systems Engineer, Vibe Coder) + Realisierungs-Agent-Reframing; Interface-Eskalations-Prozess (FCHAIN + REQ + Facilitating-Agent); fehlende FCHAINs für efficient-testing + reduced-llm. Why: Mensch=Architektur/Nutzen, Agent=Realisierung; Interface-Drift kontrolliert; jeder UC ein Szenario. (docs/cr/open/CR-GC-105)');
 const crReqs = {
   'CR-GC-100': ['REQ-one-gate-per-repo', 'REQ-rule-enforcement', 'REQ-confidence-tier', 'REQ-single-kuzu-owner', 'REQ-disk-persistence', 'REQ-import-se-ontology', 'REQ-harness-schema-in-contracts', 'REQ-buildable-standalone'],
   'CR-GC-101': ['REQ-single-transport', 'REQ-query-precision', 'REQ-subgraph-slicing', 'REQ-cache-layering', 'REQ-progressive-expansion', 'REQ-mcp-tool-registry', 'REQ-mcp-gate-symmetry', 'REQ-audit-trail'],
   'CR-GC-102': ['REQ-trajectory-emit', 'REQ-auto-persist-merge', 'REQ-hook-extension-points', 'REQ-precommit-timeout', 'REQ-hook-order-deterministic', 'REQ-versioned-cache'],
   'CR-GC-103': ['REQ-deterministic-serialization', 'REQ-roundtrip-conformance', 'REQ-formatE-diff-dialect', 'REQ-codec-validation', 'REQ-formatE-parity'],
   'CR-GC-104': ['REQ-doc-export'],
+  'CR-GC-105': ['REQ-interface-change-escalation', 'REQ-impact-based-testing', 'REQ-small-model-viable'],
 };
 
 // ── TEST (capability acceptance gates) ──
@@ -233,6 +254,7 @@ test('TEST-schema-migration', 'Schema-Migrations-Test', 'Version-Bump → Graph 
 test('TEST-capture', 'Interaktive-Erfassung-Test', 'Agent-Kandidaten laufen im suggest-Tier durchs Gate (kein auto-apply). (FCHAIN-capture)');
 test('TEST-doc-export', 'Doc-Re-Export-Test', 'exportMarkdown deterministisch (byte-identisch) + spiegelt Graph; GENERATED-Header. (FUNC-export-markdown)');
 test('TEST-responsiveness', 'Responsiveness-Test (<0,2s)', 'Draft-Apply + betroffener-Subgraph-Check antwortet < 0,2s (ohne LLM). (FCHAIN-apply-gate NFR)');
+test('TEST-interface-escalation', 'Interface-Eskalations-Test', 'Direkter FLOW-Mutationsversuch eines Realisierungs-Agenten wird abgelehnt; nur der Eskalationspfad (CR an Facilitating-Agent → graph_impact → Gate) ändert ein Interface. (FCHAIN-interface-escalation)');
 
 // ════════════════════════════════ TRACES ════════════════════════════════
 // SYS → MOD
@@ -250,6 +272,8 @@ tr('MOD-hooks', 'REQ-hook-extension-points', 'satisfy');
 tr('MOD-hooks', 'REQ-precommit-timeout', 'satisfy');
 tr('MOD-hooks', 'REQ-hook-order-deterministic', 'satisfy');
 tr('MOD-hooks', 'REQ-versioned-cache', 'satisfy');
+// UC → REQ (compose) — interface-escalation is a code-quality requirement
+tr('UC-code-quality', 'REQ-interface-change-escalation', 'compose');
 
 // LAYER 1 — Customer UCs
 for (const u of UCS) {
@@ -341,6 +365,7 @@ const testReqs = {
   'TEST-learning-emit': ['REQ-trajectory-emit'], 'TEST-bootstrap': ['REQ-bootstrap-through-gate'], 'TEST-merge': ['REQ-conflict-free-merge'],
   'TEST-schema-migration': ['REQ-schema-version-migration'], 'TEST-capture': ['REQ-interactive-capture-suggest'],
   'TEST-doc-export': ['REQ-doc-export'], 'TEST-responsiveness': ['REQ-responsiveness'],
+  'TEST-interface-escalation': ['REQ-interface-change-escalation'],
 };
 for (const [t, reqs] of Object.entries(testReqs)) for (const r of reqs) tr(t, r, 'verify');
 // CR → REQ (relation)
