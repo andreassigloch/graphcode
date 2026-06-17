@@ -22,7 +22,8 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc --watch",
-    "test": "vitest",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
     "lint": "eslint src --ext .ts,.tsx",
@@ -31,6 +32,8 @@
   "dependencies": {
     "@sigloch/contracts": "file:../sigloch-modules/packages/contracts",
     "@sigloch/graph-api-core": "file:../sigloch-modules/packages/graph-api-core",
+    "@sigloch/graph-cypher-wasm": "file:../sigloch-modules/packages/graph-cypher-wasm",
+    "kuzu-wasm": "^0.11.3",
     "zod": "^4.0.0"
   },
   "devDependencies": {

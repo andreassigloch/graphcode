@@ -1,6 +1,6 @@
 # CR-GC-102: Hook-System — pre-commit / post-apply / nightly
 
-**Status:** Open · **Datum:** 2026-06-17 · **Modul:** `src/hooks.ts` (Graph: `MOD-hooks`)
+**Status:** Done (2026-06-17) · **Modul:** `src/hooks.ts` (Graph: `MOD-hooks`)
 **Refs:** ADR-001 §4 (Learning-Emission, Live-Event) · bok `graphcode-governance.md` §2.3
 **Graph:** `CR-GC-102 -relation→ MOD-hooks` (+ REQs unten) · **Dependency:** CR-GC-100 · **Max Files:** 5
 

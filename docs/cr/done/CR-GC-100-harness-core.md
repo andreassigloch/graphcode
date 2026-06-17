@@ -1,6 +1,6 @@
 # CR-GC-100: Harness Core — Apply-Gate auf Kuzu
 
-**Status:** Open · **Datum:** 2026-06-17 · **Modul:** `src/harness.ts` (Graph: `MOD-harness`)
+**Status:** Done (2026-06-17) · **Modul:** `src/harness.ts` (Graph: `MOD-harness`)
 **Refs:** ADR-001 §3 (Bracket: one-gate/Kuzu), §6 · bok `graphcode-governance.md` §2–3, `2yR-35-store-spec.md`
 **Graph:** `CR-GC-100 -relation→ MOD-harness` (+ REQs unten) · **Max Files:** 5
 

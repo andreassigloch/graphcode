@@ -1,6 +1,6 @@
 # CR-GC-103: Format-E Codec — deterministisch, commit-/merge-arm
 
-**Status:** Open · **Datum:** 2026-06-17 · **Modul:** `src/codec.ts` (Graph: `MOD-codec`)
+**Status:** Done (2026-06-17) · **Modul:** `src/codec.ts` (Graph: `MOD-codec`)
 **Refs:** ADR-001 §3 (Codec-Baseline) · bok `2yR-36-codec-spec.md` · `@sigloch/graph-api-core` (FormatECodec)
 **Graph:** `CR-GC-103 -relation→ MOD-codec` (+ REQs unten) · **Dependency:** CR-195a (SE-Descriptor ✓) · **Max Files:** 5
 

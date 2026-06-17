@@ -13,32 +13,36 @@
       "type": "MOD",
       "name": "harness.ts — GraphCodeHarness",
       "description": "Apply-Gate: loadGraph/saveGraph/mutate/evaluateRules/close gegen lokalen Kuzu. (SPEC §2.1)",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "status": "done",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "updated_at": "2026-06-17T00:00:00.000Z"
     },
     {
       "id": "MOD-mcp-tools",
       "type": "MOD",
       "name": "mcp-tools.ts — MCP-Registry",
       "description": "MCP-stdio Tool-Registry, an die Harness gebunden; read/write/query Tools. (SPEC §2.2)",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "status": "done",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "updated_at": "2026-06-17T00:00:00.000Z"
     },
     {
       "id": "MOD-hooks",
       "type": "MOD",
       "name": "hooks.ts — HookSystem",
       "description": "pre-commit / post-apply / nightly-batch Extension-Points. (SPEC §2.3)",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "status": "done",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "updated_at": "2026-06-17T00:00:00.000Z"
     },
     {
       "id": "MOD-codec",
       "type": "MOD",
       "name": "codec.ts — GraphCodeCodec",
       "description": "Format-E ↔ OntologyGraph, deterministische Serialisierung, Validierung gegen SE-Ontologie. (SPEC §2.4)",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "status": "done",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "updated_at": "2026-06-17T00:00:00.000Z"
     },
     {
       "id": "MOD-cli",
@@ -240,8 +244,9 @@
       "type": "MS",
       "name": "M2: Coding & V&V",
       "description": "Realisierung der Module (CR-GC-100..103, 107) + Verifikation/Validierung (Tests, Benchmark). Start nach IRR-Freigabe.",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "status": "done",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "updated_at": "2026-06-17T00:00:00.000Z"
     },
     {
       "id": "REQ-single-store",
@@ -831,44 +836,48 @@
       "type": "CR",
       "name": "Harness Core",
       "description": "Apply-Gate (mutate → V3_RULES → Disk-Kuzu) lauffähig statt Stub; löst D5/D1. Why: jede Edit durch EIN Gate (L1); der Vorgänger (Express+JSON) verletzt Kuzu/Disk/Rules-Constraints. (docs/cr/open/CR-GC-100)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "attributes": {
         "status": "open"
-      }
+      },
+      "updated_at": "2026-06-17T00:00:00.000Z"
     },
     {
       "id": "CR-GC-101",
       "type": "CR",
       "name": "MCP-Tools",
       "description": "MCP-stdio-Surface: Agent nutzt Graph statt grep (Ziel a), graph_impact/expand, Gate-Symmetrie (L2). Why: präziser Blast-Radius = Token-/LLM-Effizienz; ohne MCP kein Agent-Zugriff. (docs/cr/open/CR-GC-101)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "attributes": {
         "status": "open"
-      }
+      },
+      "updated_at": "2026-06-17T00:00:00.000Z"
     },
     {
       "id": "CR-GC-102",
       "type": "CR",
       "name": "Hook-System",
       "description": "pre-commit/post-apply/nightly Extension-Points; Live-Event + Trajectory-Emission. Why: Kopplung an Dashboard (Ziel b) + Learning-Engine; deterministisch + blockierbar. (docs/cr/open/CR-GC-102)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "attributes": {
         "status": "open"
-      }
+      },
+      "updated_at": "2026-06-17T00:00:00.000Z"
     },
     {
       "id": "CR-GC-103",
       "type": "CR",
       "name": "Format-E Codec",
       "description": "Deterministischer Format-E-Codec (encode/decode), commit-/merge-arm, Validierung gegen SE_DESCRIPTOR. Why: conflict-free git-Merge + Ontologie-Konformität; genau EIN Codec (L1). (docs/cr/open/CR-GC-103)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "attributes": {
         "status": "open"
-      }
+      },
+      "updated_at": "2026-06-17T00:00:00.000Z"
     },
     {
       "id": "CR-GC-104",
@@ -908,11 +917,12 @@
       "type": "CR",
       "name": "Dashboard auf SE-Ontologie",
       "description": "Readiness/Scorer nutzt @sigloch/contracts V3_RULES (via harness.evaluateRules) statt Vorgänger-BQ-Regeln (2.0.0). Why: heutige Readiness teils fremd-gemessen (155 BQ-Warnungen); nach Adoption echte Familie-Compliance. NEXT. (docs/cr/open/CR-GC-107)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "attributes": {
         "status": "open"
-      }
+      },
+      "updated_at": "2026-06-17T00:00:00.000Z"
     },
     {
       "id": "CR-GC-108",
@@ -930,56 +940,60 @@
       "type": "TEST",
       "name": "mutate()-Gate Unit-Test",
       "description": "mutate() wendet an, gibt Violations zurück, blockt bei error-Severity. (FCHAIN-apply-gate)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "method": "test",
       "attributes": {
         "level": "integration",
         "tool": "vitest",
         "constraint": "Disk-Kuzu"
-      }
+      },
+      "updated_at": "2026-06-17T00:00:00.000Z"
     },
     {
       "id": "TEST-mcp-symmetry",
       "type": "TEST",
       "name": "MCP-Symmetrie-Test",
       "description": "MCP graph_mutate == in-process mutate(): identische Semantik/Violations. (FCHAIN-apply-gate, L2)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "method": "test",
       "attributes": {
         "level": "integration",
         "tool": "vitest",
         "constraint": "MCP==in-process"
-      }
+      },
+      "updated_at": "2026-06-17T00:00:00.000Z"
     },
     {
       "id": "TEST-roundtrip",
       "type": "TEST",
       "name": "Format-E Round-Trip Conformance",
       "description": "decode(encode(g))==g; zwei Encodes byte-identisch. (FCHAIN-codec-roundtrip)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "method": "test",
       "attributes": {
         "level": "conformance",
         "tool": "vitest",
         "constraint": "rasentraktor fixture (L3)"
-      }
+      },
+      "updated_at": "2026-06-17T00:00:00.000Z"
     },
     {
       "id": "TEST-impact-subgraph",
       "type": "TEST",
       "name": "graph_impact Subgraph-Test",
       "description": "graph_impact liefert nur den betroffenen Subgraphen (kein Full-Dump). (FCHAIN-agent-query)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "method": "test",
       "attributes": {
         "level": "integration",
         "tool": "vitest",
         "constraint": "no full-dump"
-      }
+      },
+      "updated_at": "2026-06-17T00:00:00.000Z"
     },
     {
       "id": "TEST-harness-install",
@@ -1000,28 +1014,30 @@
       "type": "TEST",
       "name": "Live-Update-Event-Test",
       "description": "Jede Mutation emittiert genau ein Live-Update-Event (korrekte domains); Dashboard ohne Reload. (FUNC-emit-update-event)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "method": "test",
       "attributes": {
         "level": "integration",
         "tool": "vitest",
         "constraint": "one event per mutation"
-      }
+      },
+      "updated_at": "2026-06-17T00:00:00.000Z"
     },
     {
       "id": "TEST-learning-emit",
       "type": "TEST",
       "name": "Learning-Emission-Test",
       "description": "post-apply schreibt Trajectory/Outcome append-only, Format stabil. (FUNC-emit-trajectory)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "method": "test",
       "attributes": {
         "level": "integration",
         "tool": "vitest",
         "constraint": "append-only jsonl"
-      }
+      },
+      "updated_at": "2026-06-17T00:00:00.000Z"
     },
     {
       "id": "TEST-bootstrap",
@@ -1140,14 +1156,15 @@
       "type": "TEST",
       "name": "Dashboard-Ontologie-Test",
       "description": "Readiness/Violations stammen aus @sigloch/contracts V3_RULES (Rule-IDs == contracts), keine Vorgänger-BQ-Regeln; valide Familie-REQs werfen keine BQ-Warnungen. (REQ-dashboard-ontology-sync)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "method": "analysis",
       "attributes": {
         "level": "analysis",
         "tool": "rule-id compare",
         "constraint": "rule-ids == contracts"
-      }
+      },
+      "updated_at": "2026-06-17T00:00:00.000Z"
     },
     {
       "id": "UC-code-quality",

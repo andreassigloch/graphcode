@@ -1,6 +1,6 @@
 # CR-GC-107: Dashboard/Readiness auf SE-Ontologie adoptieren (NEXT)
 
-**Status:** Open (next) · **Datum:** 2026-06-17 · **Modul:** `src/harness.ts` (`MOD-harness`) + Host/Dashboard
+**Status:** Done (2026-06-17) · **Modul:** `src/harness.ts` (`MOD-harness`) + Host/Dashboard
 **Refs:** ADR-001 §3 (SE-Ontologie + V3_RULES aus contracts), Readiness-Analyse 2026-06-17 · **Max Files:** 5
 
 ## Problem (Why)

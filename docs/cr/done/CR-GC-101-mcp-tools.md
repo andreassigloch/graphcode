@@ -1,6 +1,6 @@
 # CR-GC-101: MCP-Tools — Graph statt grep (Ziel a)
 
-**Status:** Open · **Datum:** 2026-06-17 · **Modul:** `src/mcp-tools.ts` (Graph: `MOD-mcp-tools`)
+**Status:** Done (2026-06-17) · **Modul:** `src/mcp-tools.ts` (Graph: `MOD-mcp-tools`)
 **Refs:** ADR-001 §4 AD-4 (Query-Precision), §3 (MCP-stdio) · bok `graphcode-governance.md` §2.4
 **Graph:** `CR-GC-101 -relation→ MOD-mcp-tools` (+ REQs unten) · **Dependency:** CR-GC-100 · **Max Files:** 5
 
