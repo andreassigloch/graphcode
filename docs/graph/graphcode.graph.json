@@ -129,6 +129,105 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "id": "SCHEMA-mutate-command",
+      "type": "SCHEMA",
+      "name": "MutateCommand",
+      "description": "Edit-Operation durch das Gate. @sigloch/contracts harness (D1).",
+      "status": "reviewed",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "attributes": {
+        "zodDefinition": "z.object({ op: z.enum(['add','update','delete']), target: z.enum(['node','edge']), element: z.unknown(), consumerType: z.string() })"
+      }
+    },
+    {
+      "id": "SCHEMA-mutate-result",
+      "type": "SCHEMA",
+      "name": "MutateResult",
+      "description": "Apply-Ergebnis + Violations + Confidence/Tier. @sigloch/contracts harness (D1).",
+      "status": "reviewed",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "attributes": {
+        "zodDefinition": "z.object({ success: z.boolean(), applied: z.number(), violations: z.array(z.object({ ruleId: z.string(), severity: z.enum(['error','warning','info']), elementId: z.string(), msg: z.string() })), confidence: z.number().optional(), tier: z.enum(['auto','suggest','block']).optional() })"
+      }
+    },
+    {
+      "id": "SCHEMA-ontology-graph",
+      "type": "SCHEMA",
+      "name": "OntologyGraph",
+      "description": "Elements (13 ElementTypes) + Traces (7 TraceTypes). @sigloch/contracts/se.",
+      "status": "reviewed",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "attributes": {
+        "zodDefinition": "z.object({ elements: z.array(z.object({ id: z.string(), type: ElementType, name: z.string(), description: z.string() })), traces: z.array(z.object({ source: z.string(), target: z.string(), type: TraceType })) })"
+      }
+    },
+    {
+      "id": "SCHEMA-format-e",
+      "type": "SCHEMA",
+      "name": "Format-E",
+      "description": "Kompaktes Snapshot-/Diff-Format. @sigloch/contracts/se.",
+      "status": "reviewed",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "attributes": {
+        "zodDefinition": "z.object({ nodes: z.array(z.string()), edges: z.array(z.string()), operations: z.array(z.enum(['+','-','~','M'])).optional(), baseSnapshot: z.string().optional() })"
+      }
+    },
+    {
+      "id": "SCHEMA-trajectory",
+      "type": "SCHEMA",
+      "name": "Trajectory/Outcome",
+      "description": "append-only Lern-Emission. @sigloch/learning-core.",
+      "status": "reviewed",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "attributes": {
+        "zodDefinition": "z.object({ step: z.string(), action: z.string(), outcome: z.string(), ts: z.string() })"
+      }
+    },
+    {
+      "id": "SCHEMA-update-event",
+      "type": "SCHEMA",
+      "name": "UpdateEvent",
+      "description": "SSE invalidate Event.",
+      "status": "reviewed",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "attributes": {
+        "zodDefinition": "z.object({ type: z.literal('invalidate'), domains: z.array(z.enum(['graph','rules','readiness','suggestions'])), version: z.number() })"
+      }
+    },
+    {
+      "id": "SCHEMA-query-params",
+      "type": "SCHEMA",
+      "name": "QueryParams",
+      "description": "Query-/Request-Parameter.",
+      "status": "reviewed",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "attributes": {
+        "zodDefinition": "z.object({ elementId: z.string().optional(), depth: z.number().optional(), branch: z.string().optional(), cursor: z.string().optional(), view: z.string().optional() })"
+      }
+    },
+    {
+      "id": "SCHEMA-cli-command",
+      "type": "SCHEMA",
+      "name": "CliCommand",
+      "description": "npx-CLI Kommando + Ergebnis.",
+      "status": "reviewed",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "attributes": {
+        "zodDefinition": "z.object({ command: z.enum(['init','update','remove']), repoPath: z.string(), result: z.string().optional() })"
+      }
+    },
+    {
+      "id": "SCHEMA-markdown-view",
+      "type": "SCHEMA",
+      "name": "MarkdownView",
+      "description": "Generierte human-readable View mit GENERATED-Header.",
+      "status": "reviewed",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "attributes": {
+        "zodDefinition": "z.object({ view: z.string(), markdown: z.string(), generated: z.literal(true) })"
+      }
+    },
+    {
       "id": "REQ-single-store",
       "type": "REQ",
       "name": "Ein Store: Kuzu",
@@ -657,6 +756,17 @@
       ]
     },
     {
+      "id": "REQ-interface-schema",
+      "type": "REQ",
+      "name": "Interface trägt ein Datenformat (SCHEMA)",
+      "description": "Jeder FLOW (Interface) hat ein SCHEMA (Layer 2, Datenformat) — referenziert @sigloch/contracts Zod. Code-Precondition: ohne Datenvertrag rät der Agent das Format. (3-Schichten-Interface-Modell)",
+      "status": "open",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "kinds": [
+        "non-functional"
+      ]
+    },
+    {
       "id": "REQ-interface-change-escalation",
       "type": "REQ",
       "name": "Interface-Änderung nur per Eskalation",
@@ -727,6 +837,17 @@
       "type": "CR",
       "name": "Architektur-Verfeinerung",
       "description": "Kunden-Aktoren (Systems Engineer, Vibe Coder) + Realisierungs-Agent-Reframing; Interface-Eskalations-Prozess (FCHAIN + REQ + Facilitating-Agent); fehlende FCHAINs für efficient-testing + reduced-llm. Why: Mensch=Architektur/Nutzen, Agent=Realisierung; Interface-Drift kontrolliert; jeder UC ein Szenario. (docs/cr/open/CR-GC-105)",
+      "status": "open",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "attributes": {
+        "status": "open"
+      }
+    },
+    {
+      "id": "CR-GC-106",
+      "type": "CR",
+      "name": "Interface-Schemas",
+      "description": "9 SCHEMA-Knoten (→ @sigloch/contracts Zod) + FLOW→SCHEMA für alle 28 Interfaces; REQ-interface-schema. Why: Datenvertrag = Code-Precondition (schema-before-code), schließt Readiness-Dimension schema=0. (docs/cr/open/CR-GC-106)",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "attributes": {
@@ -858,6 +979,15 @@
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "method": "test"
+    },
+    {
+      "id": "TEST-interface-schema",
+      "type": "TEST",
+      "name": "Interface-Schema-Test",
+      "description": "Jeder FLOW hat ein SCHEMA (relation); ein FLOW ohne Datenformat ist ein Readiness-Blocker. (REQ-interface-schema)",
+      "status": "open",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "method": "inspection"
     },
     {
       "id": "UC-code-quality",
@@ -1750,6 +1880,13 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "CR-GC-106",
+      "target": "MOD-codec",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
       "source": "SYS-graphcode",
       "target": "MOD-harness",
       "type": "compose",
@@ -1885,6 +2022,13 @@
     {
       "source": "SYS-graphcode",
       "target": "REQ-harness-schema-in-contracts",
+      "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "SYS-graphcode",
+      "target": "REQ-interface-schema",
       "type": "compose",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
@@ -3430,6 +3574,202 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "FLOW-mutate-cmd",
+      "target": "SCHEMA-mutate-command",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-violations",
+      "target": "SCHEMA-mutate-result",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-suggest-result",
+      "target": "SCHEMA-mutate-result",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-bootstrap-result",
+      "target": "SCHEMA-mutate-result",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-draft-graph",
+      "target": "SCHEMA-ontology-graph",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-committed-graph",
+      "target": "SCHEMA-ontology-graph",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-parsed-graph",
+      "target": "SCHEMA-ontology-graph",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-graph-state",
+      "target": "SCHEMA-ontology-graph",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-migrated-graph",
+      "target": "SCHEMA-ontology-graph",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-merged-graph",
+      "target": "SCHEMA-ontology-graph",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-capture-draft",
+      "target": "SCHEMA-ontology-graph",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-branch-graphs",
+      "target": "SCHEMA-ontology-graph",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-formatE-artifact",
+      "target": "SCHEMA-format-e",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-formatE-candidates",
+      "target": "SCHEMA-format-e",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-bulk-formatE",
+      "target": "SCHEMA-format-e",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-impact-subgraph",
+      "target": "SCHEMA-format-e",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-expanded-subgraph",
+      "target": "SCHEMA-format-e",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-trajectory",
+      "target": "SCHEMA-trajectory",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-live-event",
+      "target": "SCHEMA-update-event",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-query-request",
+      "target": "SCHEMA-query-params",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-expand-request",
+      "target": "SCHEMA-query-params",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-export-request",
+      "target": "SCHEMA-query-params",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-view-request",
+      "target": "SCHEMA-query-params",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-version-bump",
+      "target": "SCHEMA-query-params",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-cli-command",
+      "target": "SCHEMA-cli-command",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-install-result",
+      "target": "SCHEMA-cli-command",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-markdown-docs",
+      "target": "SCHEMA-markdown-view",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-rendered-view",
+      "target": "SCHEMA-markdown-view",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
       "source": "TEST-mutate-gate",
       "target": "REQ-one-gate-per-repo",
       "type": "verify",
@@ -3551,6 +3891,13 @@
     {
       "source": "TEST-interface-escalation",
       "target": "REQ-interface-change-escalation",
+      "type": "verify",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-interface-schema",
+      "target": "REQ-interface-schema",
       "type": "verify",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
@@ -3768,6 +4115,13 @@
     {
       "source": "CR-GC-105",
       "target": "REQ-small-model-viable",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-106",
+      "target": "REQ-interface-schema",
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"

@@ -62,6 +62,27 @@ el('ACTOR-systems-engineer', 'ACTOR', 'Systems Engineer', 'Kunde: arbeitet auf A
 el('ACTOR-vibe-coder', 'ACTOR', 'Vibe Coder', 'Kunde: denkt in Architektur + Kundennutzen, delegiert Code-Realisierung an graphcode-kontrollierte Agenten. Die WAS-Ebene.');
 el('ACTOR-facilitating-agent', 'ACTOR', 'Facilitating Agent — Architekt', 'Gegateter Agent mit Architektur-Autorität: bearbeitet Interface-Änderungs-Eskalationen — Impact-Analyse, Gate-Entscheidung, Dependents koordinieren.');
 
+// ── SCHEMA (Interface-Datenformate, Layer 2; zodDefinition referenziert @sigloch/contracts) ──
+const schema = (id, name, description, zodDefinition) => el(id, 'SCHEMA', name, description, { attributes: { zodDefinition } });
+schema('SCHEMA-mutate-command', 'MutateCommand', 'Edit-Operation durch das Gate. @sigloch/contracts harness (D1).',
+  "z.object({ op: z.enum(['add','update','delete']), target: z.enum(['node','edge']), element: z.unknown(), consumerType: z.string() })");
+schema('SCHEMA-mutate-result', 'MutateResult', 'Apply-Ergebnis + Violations + Confidence/Tier. @sigloch/contracts harness (D1).',
+  "z.object({ success: z.boolean(), applied: z.number(), violations: z.array(z.object({ ruleId: z.string(), severity: z.enum(['error','warning','info']), elementId: z.string(), msg: z.string() })), confidence: z.number().optional(), tier: z.enum(['auto','suggest','block']).optional() })");
+schema('SCHEMA-ontology-graph', 'OntologyGraph', 'Elements (13 ElementTypes) + Traces (7 TraceTypes). @sigloch/contracts/se.',
+  "z.object({ elements: z.array(z.object({ id: z.string(), type: ElementType, name: z.string(), description: z.string() })), traces: z.array(z.object({ source: z.string(), target: z.string(), type: TraceType })) })");
+schema('SCHEMA-format-e', 'Format-E', 'Kompaktes Snapshot-/Diff-Format. @sigloch/contracts/se.',
+  "z.object({ nodes: z.array(z.string()), edges: z.array(z.string()), operations: z.array(z.enum(['+','-','~','M'])).optional(), baseSnapshot: z.string().optional() })");
+schema('SCHEMA-trajectory', 'Trajectory/Outcome', 'append-only Lern-Emission. @sigloch/learning-core.',
+  "z.object({ step: z.string(), action: z.string(), outcome: z.string(), ts: z.string() })");
+schema('SCHEMA-update-event', 'UpdateEvent', 'SSE invalidate Event.',
+  "z.object({ type: z.literal('invalidate'), domains: z.array(z.enum(['graph','rules','readiness','suggestions'])), version: z.number() })");
+schema('SCHEMA-query-params', 'QueryParams', 'Query-/Request-Parameter.',
+  "z.object({ elementId: z.string().optional(), depth: z.number().optional(), branch: z.string().optional(), cursor: z.string().optional(), view: z.string().optional() })");
+schema('SCHEMA-cli-command', 'CliCommand', 'npx-CLI Kommando + Ergebnis.',
+  "z.object({ command: z.enum(['init','update','remove']), repoPath: z.string(), result: z.string().optional() })");
+schema('SCHEMA-markdown-view', 'MarkdownView', 'Generierte human-readable View mit GENERATED-Header.',
+  "z.object({ view: z.string(), markdown: z.string(), generated: z.literal(true) })");
+
 // ════════════════════════════════ LAYER 1 — CUSTOMER USE CASES ════════════════════════════════
 const UCS = [
   { id: 'UC-code-quality', name: 'Exzellente, governte Code-Qualität',
@@ -221,6 +242,7 @@ req('REQ-bootstrap-through-gate', 'Erstbefüllung nur durchs Gate', 'FUNC-import
 req('REQ-conflict-free-merge', 'Conflict-free Graph-Merge', 'FUNC-merge-nodes: Branch-/Multi-Dev-Merge conflict-free (deterministische Serialisierung + merge_nodes).', ['functional']);
 req('REQ-schema-version-migration', 'Schema-Versions-Migration', 'FUNC-migrate-schema: bei Version-Bump re-validieren/migrieren, Violations berichten, Version mitführen.', ['functional']);
 req('REQ-interactive-capture-suggest', 'Interaktive Erfassung im suggest-Tier', 'FCHAIN-capture: NL→Format-E agent-seitig (REQ-no-extraction); Resultat im suggest-Tier durchs Gate, Review vor Persist.', ['functional']);
+req('REQ-interface-schema', 'Interface trägt ein Datenformat (SCHEMA)', 'Jeder FLOW (Interface) hat ein SCHEMA (Layer 2, Datenformat) — referenziert @sigloch/contracts Zod. Code-Precondition: ohne Datenvertrag rät der Agent das Format. (3-Schichten-Interface-Modell)', ['non-functional']);
 req('REQ-interface-change-escalation', 'Interface-Änderung nur per Eskalation', 'Ein Realisierungs-Agent darf ein Interface (FLOW/SCHEMA) NICHT direkt mutieren. Bei Bedarf: (a) Notwendigkeit prüfen (sonst im Vertrag bleiben, Tech-Debt vermeiden); (b) CR an Facilitating-Agent + Boundary pausieren; (c) graph_impact(FLOW) Impact-Analyse; (d) Gate-Entscheidung (versionierte FLOW-Mutation / reject); (e) Dependents re-scopen/sequenzieren. Erhält conflict-free Parallelität; Interface-Drift zentral + gegatet.', ['functional']);
 
 // ── CR (open change requests) ──
@@ -231,6 +253,7 @@ cr('CR-GC-102', 'Hook-System', 'MOD-hooks', 'pre-commit/post-apply/nightly Exten
 cr('CR-GC-103', 'Format-E Codec', 'MOD-codec', 'Deterministischer Format-E-Codec (encode/decode), commit-/merge-arm, Validierung gegen SE_DESCRIPTOR. Why: conflict-free git-Merge + Ontologie-Konformität; genau EIN Codec (L1). (docs/cr/open/CR-GC-103)');
 cr('CR-GC-104', 'Skills/Prompts-Modul', 'MOD-skills', 'MOD-skills (.claude/skills/) + prompt-realisierte FUNC-render-views. Why: Skills/Prompts sind reale, zu managende Dateien = Modul; Allokation dorthin = prompt-realisiert (Skills = Funktionen). (docs/cr/open/CR-GC-104)');
 cr('CR-GC-105', 'Architektur-Verfeinerung', 'MOD-mcp-tools', 'Kunden-Aktoren (Systems Engineer, Vibe Coder) + Realisierungs-Agent-Reframing; Interface-Eskalations-Prozess (FCHAIN + REQ + Facilitating-Agent); fehlende FCHAINs für efficient-testing + reduced-llm. Why: Mensch=Architektur/Nutzen, Agent=Realisierung; Interface-Drift kontrolliert; jeder UC ein Szenario. (docs/cr/open/CR-GC-105)');
+cr('CR-GC-106', 'Interface-Schemas', 'MOD-codec', '9 SCHEMA-Knoten (→ @sigloch/contracts Zod) + FLOW→SCHEMA für alle 28 Interfaces; REQ-interface-schema. Why: Datenvertrag = Code-Precondition (schema-before-code), schließt Readiness-Dimension schema=0. (docs/cr/open/CR-GC-106)');
 const crReqs = {
   'CR-GC-100': ['REQ-one-gate-per-repo', 'REQ-rule-enforcement', 'REQ-confidence-tier', 'REQ-single-kuzu-owner', 'REQ-disk-persistence', 'REQ-import-se-ontology', 'REQ-harness-schema-in-contracts', 'REQ-buildable-standalone'],
   'CR-GC-101': ['REQ-single-transport', 'REQ-query-precision', 'REQ-subgraph-slicing', 'REQ-cache-layering', 'REQ-progressive-expansion', 'REQ-mcp-tool-registry', 'REQ-mcp-gate-symmetry', 'REQ-audit-trail'],
@@ -238,6 +261,7 @@ const crReqs = {
   'CR-GC-103': ['REQ-deterministic-serialization', 'REQ-roundtrip-conformance', 'REQ-formatE-diff-dialect', 'REQ-codec-validation', 'REQ-formatE-parity'],
   'CR-GC-104': ['REQ-doc-export'],
   'CR-GC-105': ['REQ-interface-change-escalation', 'REQ-impact-based-testing', 'REQ-small-model-viable'],
+  'CR-GC-106': ['REQ-interface-schema'],
 };
 
 // ── TEST (capability acceptance gates) ──
@@ -255,12 +279,13 @@ test('TEST-capture', 'Interaktive-Erfassung-Test', 'Agent-Kandidaten laufen im s
 test('TEST-doc-export', 'Doc-Re-Export-Test', 'exportMarkdown deterministisch (byte-identisch) + spiegelt Graph; GENERATED-Header. (FUNC-export-markdown)');
 test('TEST-responsiveness', 'Responsiveness-Test (<0,2s)', 'Draft-Apply + betroffener-Subgraph-Check antwortet < 0,2s (ohne LLM). (FCHAIN-apply-gate NFR)');
 test('TEST-interface-escalation', 'Interface-Eskalations-Test', 'Direkter FLOW-Mutationsversuch eines Realisierungs-Agenten wird abgelehnt; nur der Eskalationspfad (CR an Facilitating-Agent → graph_impact → Gate) ändert ein Interface. (FCHAIN-interface-escalation)');
+test('TEST-interface-schema', 'Interface-Schema-Test', 'Jeder FLOW hat ein SCHEMA (relation); ein FLOW ohne Datenformat ist ein Readiness-Blocker. (REQ-interface-schema)', 'inspection');
 
 // ════════════════════════════════ TRACES ════════════════════════════════
 // SYS → MOD
 ['MOD-harness', 'MOD-mcp-tools', 'MOD-hooks', 'MOD-codec', 'MOD-cli', 'MOD-docs', 'MOD-skills'].forEach(m => tr('SYS-graphcode', m, 'compose'));
 // SYS → REQ (system-level constraints + governance)
-['REQ-single-store', 'REQ-single-transport', 'REQ-single-kuzu-owner', 'REQ-disk-persistence', 'REQ-import-se-ontology', 'REQ-no-extraction', 'REQ-readonly-bridge', 'REQ-graph-is-ssot', 'REQ-frame-binding', 'REQ-graceful-degradation', 'REQ-store-recovery', 'REQ-buildable-standalone', 'REQ-harness-schema-in-contracts']
+['REQ-single-store', 'REQ-single-transport', 'REQ-single-kuzu-owner', 'REQ-disk-persistence', 'REQ-import-se-ontology', 'REQ-no-extraction', 'REQ-readonly-bridge', 'REQ-graph-is-ssot', 'REQ-frame-binding', 'REQ-graceful-degradation', 'REQ-store-recovery', 'REQ-buildable-standalone', 'REQ-harness-schema-in-contracts', 'REQ-interface-schema']
   .forEach(r => tr('SYS-graphcode', r, 'compose'));
 tr('SYS-graphcode', 'REQ-graceful-degradation', 'satisfy');
 // MOD → REQ (module-level NFR / infrastructure)
@@ -357,6 +382,20 @@ pipe([{ node: 'ACTOR-developer' }, { flow: 'FLOW-export-request', name: 'Export-
 pipe([{ node: 'ACTOR-developer' }, { flow: 'FLOW-view-request', name: 'View-Request', desc: 'Welche View gerendert werden soll (arch/status/...).' },
   { node: 'FUNC-render-views' }, { flow: 'FLOW-rendered-view', name: 'Rendered-View', desc: 'Generierte Markdown-View, z.B. architecture-graph.md.' }, { node: 'ACTOR-developer' }]);
 
+// ── FLOW → SCHEMA (relation): jedes Interface trägt ein Datenformat (PDR Layer 2) ──
+const flowSchema = {
+  'FLOW-mutate-cmd': 'SCHEMA-mutate-command',
+  'FLOW-violations': 'SCHEMA-mutate-result', 'FLOW-suggest-result': 'SCHEMA-mutate-result', 'FLOW-bootstrap-result': 'SCHEMA-mutate-result',
+  'FLOW-draft-graph': 'SCHEMA-ontology-graph', 'FLOW-committed-graph': 'SCHEMA-ontology-graph', 'FLOW-parsed-graph': 'SCHEMA-ontology-graph', 'FLOW-graph-state': 'SCHEMA-ontology-graph', 'FLOW-migrated-graph': 'SCHEMA-ontology-graph', 'FLOW-merged-graph': 'SCHEMA-ontology-graph', 'FLOW-capture-draft': 'SCHEMA-ontology-graph', 'FLOW-branch-graphs': 'SCHEMA-ontology-graph',
+  'FLOW-formatE-artifact': 'SCHEMA-format-e', 'FLOW-formatE-candidates': 'SCHEMA-format-e', 'FLOW-bulk-formatE': 'SCHEMA-format-e', 'FLOW-impact-subgraph': 'SCHEMA-format-e', 'FLOW-expanded-subgraph': 'SCHEMA-format-e',
+  'FLOW-trajectory': 'SCHEMA-trajectory',
+  'FLOW-live-event': 'SCHEMA-update-event',
+  'FLOW-query-request': 'SCHEMA-query-params', 'FLOW-expand-request': 'SCHEMA-query-params', 'FLOW-export-request': 'SCHEMA-query-params', 'FLOW-view-request': 'SCHEMA-query-params', 'FLOW-version-bump': 'SCHEMA-query-params',
+  'FLOW-cli-command': 'SCHEMA-cli-command', 'FLOW-install-result': 'SCHEMA-cli-command',
+  'FLOW-markdown-docs': 'SCHEMA-markdown-view', 'FLOW-rendered-view': 'SCHEMA-markdown-view',
+};
+for (const [f, s] of Object.entries(flowSchema)) tr(f, s, 'relation');
+
 // TEST → REQ (verify)
 const testReqs = {
   'TEST-mutate-gate': ['REQ-one-gate-per-repo', 'REQ-rule-enforcement'], 'TEST-mcp-symmetry': ['REQ-mcp-gate-symmetry', 'REQ-one-gate-per-repo'],
@@ -366,6 +405,7 @@ const testReqs = {
   'TEST-schema-migration': ['REQ-schema-version-migration'], 'TEST-capture': ['REQ-interactive-capture-suggest'],
   'TEST-doc-export': ['REQ-doc-export'], 'TEST-responsiveness': ['REQ-responsiveness'],
   'TEST-interface-escalation': ['REQ-interface-change-escalation'],
+  'TEST-interface-schema': ['REQ-interface-schema'],
 };
 for (const [t, reqs] of Object.entries(testReqs)) for (const r of reqs) tr(t, r, 'verify');
 // CR → REQ (relation)
