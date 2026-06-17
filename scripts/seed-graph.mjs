@@ -1,4 +1,10 @@
-// GraphCode SE graph — BOOTSTRAP / INPUT (run once).
+// ⛔⛔ STALE BOOTSTRAP — DO NOT RUN. Disabled by the guard below. ⛔⛔
+// The SSOT is docs/graph/graphcode.graph.json (LIVE — 226+ elements). This script
+// only reproduces the original ~196-element bootstrap and WILL CLOBBER the SSOT,
+// destroying MS-3/MS-4 and all later graph work. Retired by CR-GC-113 (Kuzu→JSON
+// re-exporter). The graph is edited via the harness gate / direct SSOT edits — never here.
+//
+// GraphCode SE graph — BOOTSTRAP / INPUT (historical, run-once 2026-06-16).
 //
 // Governance: the materialized graph (docs/graph/graphcode.graph.json) and the
 // live harness are the SINGLE POINT OF TRUTH. This script, docs/SPEC.md and
@@ -16,6 +22,19 @@
 import { writeFileSync, mkdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+
+// ── GUARD ──────────────────────────────────────────────────────────────────
+// Refuse to run: this stale bootstrap would overwrite the live SSOT
+// (docs/graph/graphcode.graph.json) and wipe all post-bootstrap graph work.
+if (process.env.GRAPHCODE_ALLOW_SEED !== '1') {
+  console.error(
+    '\n⛔ seed-graph.mjs is DISABLED — stale bootstrap; running it CLOBBERS the live\n' +
+    '   SSOT at docs/graph/graphcode.graph.json (226+ elements) back to ~196.\n' +
+    '   Do NOT run it. Edit the graph via the harness gate / direct SSOT edits;\n' +
+    '   JSON re-export comes from CR-GC-113. Intentional override only:\n' +
+    '     GRAPHCODE_ALLOW_SEED=1 node scripts/seed-graph.mjs\n');
+  process.exit(1);
+}
 
 const TS = '2026-06-16T00:00:00.000Z';
 const API = process.env.GRAPH_API || 'http://localhost:3001';
