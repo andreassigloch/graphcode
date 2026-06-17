@@ -52,7 +52,15 @@
       "id": "MOD-docs",
       "type": "MOD",
       "name": "docs — Markdown-Re-Exporter",
-      "description": "App-spezifisches Rendering: Graph → Markdown-Views (deterministisch, GENERATED-Header). (UC-doc-export)",
+      "description": "App-spezifisches Rendering: Graph → Markdown-Views (deterministisch, GENERATED-Header). (REQ-doc-export, code-realisiert, target)",
+      "status": "reviewed",
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "id": "MOD-skills",
+      "type": "MOD",
+      "name": "skills/prompts — agent-realisierte Funktionen",
+      "description": "App-spezifisches Modul: .claude/skills/ (+ Prompts) — Skill-/Prompt-Definitionen als agent-ausgeführte Funktionen (z.B. se-view-* Graph→Markdown-Views). Lifecycle via FUNC-harness-cli. Allokation hierher = prompt-realisiert (vs. code-realisiert in den übrigen MODs). Beweis: Skills = Funktionen.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z"
     },
@@ -669,6 +677,17 @@
       }
     },
     {
+      "id": "CR-GC-104",
+      "type": "CR",
+      "name": "Skills/Prompts-Modul",
+      "description": "MOD-skills (.claude/skills/) + prompt-realisierte FUNC-render-views. Why: Skills/Prompts sind reale, zu managende Dateien = Modul; Allokation dorthin = prompt-realisiert (Skills = Funktionen). (docs/cr/open/CR-GC-104)",
+      "status": "open",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "attributes": {
+        "status": "open"
+      }
+    },
+    {
       "id": "TEST-mutate-gate",
       "type": "TEST",
       "name": "mutate()-Gate Unit-Test",
@@ -1034,6 +1053,14 @@
       "attributes": {
         "operatingMode": "export"
       }
+    },
+    {
+      "id": "FUNC-render-views",
+      "type": "FUNC",
+      "name": "render graph→markdown views",
+      "description": "PROMPT-realisierter Graph→Markdown-Renderer via se-view-Skills (.claude/skills/se-view-*); erzeugt z.B. architecture-graph.md. Interim-Realisierung von REQ-doc-export, bis FUNC-export-markdown (code, MOD-docs) gebaut ist. Beweis: Skills = Funktionen (Allokation an MOD-skills = prompt-realisiert).",
+      "status": "reviewed",
+      "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
       "id": "REQ-pre-import",
@@ -1516,6 +1543,22 @@
       "description": "Generierte Markdown-Views (GENERATED-Header).",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "id": "FLOW-view-request",
+      "type": "FLOW",
+      "name": "View-Request",
+      "description": "Welche View gerendert werden soll (arch/status/...).",
+      "status": "reviewed",
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "id": "FLOW-rendered-view",
+      "type": "FLOW",
+      "name": "Rendered-View",
+      "description": "Generierte Markdown-View, z.B. architecture-graph.md.",
+      "status": "reviewed",
+      "created_at": "2026-06-16T00:00:00.000Z"
     }
   ],
   "traces": [
@@ -1543,6 +1586,13 @@
     {
       "source": "CR-GC-103",
       "target": "MOD-codec",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-104",
+      "target": "MOD-skills",
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
@@ -1585,6 +1635,13 @@
     {
       "source": "SYS-graphcode",
       "target": "MOD-docs",
+      "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "SYS-graphcode",
+      "target": "MOD-skills",
       "type": "compose",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
@@ -2318,6 +2375,27 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "FUNC-render-views",
+      "target": "UC-code-quality",
+      "type": "satisfy",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-render-views",
+      "target": "REQ-doc-export",
+      "type": "satisfy",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-render-views",
+      "target": "MOD-skills",
+      "type": "allocate",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
       "source": "FUNC-import",
       "target": "REQ-pre-import",
       "type": "satisfy",
@@ -2976,6 +3054,34 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "ACTOR-developer",
+      "target": "FLOW-view-request",
+      "type": "io",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-view-request",
+      "target": "FUNC-render-views",
+      "type": "io",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-render-views",
+      "target": "FLOW-rendered-view",
+      "type": "io",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-rendered-view",
+      "target": "ACTOR-developer",
+      "type": "io",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
       "source": "TEST-mutate-gate",
       "target": "REQ-one-gate-per-repo",
       "type": "verify",
@@ -3279,6 +3385,13 @@
     {
       "source": "CR-GC-103",
       "target": "REQ-formatE-parity",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-104",
+      "target": "REQ-doc-export",
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"

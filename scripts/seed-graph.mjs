@@ -49,7 +49,8 @@ el('MOD-mcp-tools', 'MOD', 'mcp-tools.ts — MCP-Registry', 'MCP-stdio Tool-Regi
 el('MOD-hooks', 'MOD', 'hooks.ts — HookSystem', 'pre-commit / post-apply / nightly-batch Extension-Points. (SPEC §2.3)');
 el('MOD-codec', 'MOD', 'codec.ts — GraphCodeCodec', 'Format-E ↔ OntologyGraph, deterministische Serialisierung, Validierung gegen SE-Ontologie. (SPEC §2.4)');
 el('MOD-cli', 'MOD', 'cli — npx-Distribution & Lifecycle', 'bin `npx @sigloch/graphcode init|update|remove`: self-contained Installer. App-spezifisch. (REQ-npx-distribution)');
-el('MOD-docs', 'MOD', 'docs — Markdown-Re-Exporter', 'App-spezifisches Rendering: Graph → Markdown-Views (deterministisch, GENERATED-Header). (UC-doc-export)');
+el('MOD-docs', 'MOD', 'docs — Markdown-Re-Exporter', 'App-spezifisches Rendering: Graph → Markdown-Views (deterministisch, GENERATED-Header). (REQ-doc-export, code-realisiert, target)');
+el('MOD-skills', 'MOD', 'skills/prompts — agent-realisierte Funktionen', 'App-spezifisches Modul: .claude/skills/ (+ Prompts) — Skill-/Prompt-Definitionen als agent-ausgeführte Funktionen (z.B. se-view-* Graph→Markdown-Views). Lifecycle via FUNC-harness-cli. Allokation hierher = prompt-realisiert (vs. code-realisiert in den übrigen MODs). Beweis: Skills = Funktionen.');
 
 // ── ACTOR ──
 el('ACTOR-claude-code', 'ACTOR', 'Claude Code (LLM-Agent)', 'MCP-stdio-Client; nutzt den Graphen statt grep (Ziel a). (SPEC §5 Kanal 1)');
@@ -116,6 +117,8 @@ const OPS = [
     desc: 'npx-CLI Lifecycle: scaffolds/aktualisiert/entfernt .graphcode/, .claude/hooks, .mcp.json, Controller — idempotent, self-contained.', mode: 'lifecycle', pre: 'Repo vorhanden, npx/Node verfügbar.', post: 'Artefakte installiert/aktualisiert/restlos entfernt; idempotent; Store bei Update erhalten.' },
   { id: 'FUNC-export-markdown', name: 'exportMarkdown(graph, view)', mod: 'MOD-docs', uc: ['UC-code-quality'], reqs: ['REQ-doc-export'],
     desc: 'Rendert Graph (View: spec/architecture/cr-list/references) deterministisch nach Markdown mit GENERATED-Header.', mode: 'export', pre: 'Aktueller Graph (SSOT) geladen; View gewählt.', post: 'Deterministische Markdown-Views mit GENERATED-Header; nie hand-editiert.' },
+  { id: 'FUNC-render-views', name: 'render graph→markdown views', mod: 'MOD-skills', uc: ['UC-code-quality'], reqs: ['REQ-doc-export'],
+    desc: 'PROMPT-realisierter Graph→Markdown-Renderer via se-view-Skills (.claude/skills/se-view-*); erzeugt z.B. architecture-graph.md. Interim-Realisierung von REQ-doc-export, bis FUNC-export-markdown (code, MOD-docs) gebaut ist. Beweis: Skills = Funktionen (Allokation an MOD-skills = prompt-realisiert).' },
 ];
 // atomic capabilities that carry pre/post directly on the FUNC
 const ATOMIC_PREPOST = ['FUNC-import', 'FUNC-merge-nodes', 'FUNC-migrate-schema', 'FUNC-harness-cli', 'FUNC-export-markdown',
@@ -207,11 +210,13 @@ cr('CR-GC-100', 'Harness Core', 'MOD-harness', 'Apply-Gate (mutate → V3_RULES 
 cr('CR-GC-101', 'MCP-Tools', 'MOD-mcp-tools', 'MCP-stdio-Surface: Agent nutzt Graph statt grep (Ziel a), graph_impact/expand, Gate-Symmetrie (L2). Why: präziser Blast-Radius = Token-/LLM-Effizienz; ohne MCP kein Agent-Zugriff. (docs/cr/open/CR-GC-101)');
 cr('CR-GC-102', 'Hook-System', 'MOD-hooks', 'pre-commit/post-apply/nightly Extension-Points; Live-Event + Trajectory-Emission. Why: Kopplung an Dashboard (Ziel b) + Learning-Engine; deterministisch + blockierbar. (docs/cr/open/CR-GC-102)');
 cr('CR-GC-103', 'Format-E Codec', 'MOD-codec', 'Deterministischer Format-E-Codec (encode/decode), commit-/merge-arm, Validierung gegen SE_DESCRIPTOR. Why: conflict-free git-Merge + Ontologie-Konformität; genau EIN Codec (L1). (docs/cr/open/CR-GC-103)');
+cr('CR-GC-104', 'Skills/Prompts-Modul', 'MOD-skills', 'MOD-skills (.claude/skills/) + prompt-realisierte FUNC-render-views. Why: Skills/Prompts sind reale, zu managende Dateien = Modul; Allokation dorthin = prompt-realisiert (Skills = Funktionen). (docs/cr/open/CR-GC-104)');
 const crReqs = {
   'CR-GC-100': ['REQ-one-gate-per-repo', 'REQ-rule-enforcement', 'REQ-confidence-tier', 'REQ-single-kuzu-owner', 'REQ-disk-persistence', 'REQ-import-se-ontology', 'REQ-harness-schema-in-contracts', 'REQ-buildable-standalone'],
   'CR-GC-101': ['REQ-single-transport', 'REQ-query-precision', 'REQ-subgraph-slicing', 'REQ-cache-layering', 'REQ-progressive-expansion', 'REQ-mcp-tool-registry', 'REQ-mcp-gate-symmetry', 'REQ-audit-trail'],
   'CR-GC-102': ['REQ-trajectory-emit', 'REQ-auto-persist-merge', 'REQ-hook-extension-points', 'REQ-precommit-timeout', 'REQ-hook-order-deterministic', 'REQ-versioned-cache'],
   'CR-GC-103': ['REQ-deterministic-serialization', 'REQ-roundtrip-conformance', 'REQ-formatE-diff-dialect', 'REQ-codec-validation', 'REQ-formatE-parity'],
+  'CR-GC-104': ['REQ-doc-export'],
 };
 
 // ── TEST (capability acceptance gates) ──
@@ -231,7 +236,7 @@ test('TEST-responsiveness', 'Responsiveness-Test (<0,2s)', 'Draft-Apply + betrof
 
 // ════════════════════════════════ TRACES ════════════════════════════════
 // SYS → MOD
-['MOD-harness', 'MOD-mcp-tools', 'MOD-hooks', 'MOD-codec', 'MOD-cli', 'MOD-docs'].forEach(m => tr('SYS-graphcode', m, 'compose'));
+['MOD-harness', 'MOD-mcp-tools', 'MOD-hooks', 'MOD-codec', 'MOD-cli', 'MOD-docs', 'MOD-skills'].forEach(m => tr('SYS-graphcode', m, 'compose'));
 // SYS → REQ (system-level constraints + governance)
 ['REQ-single-store', 'REQ-single-transport', 'REQ-single-kuzu-owner', 'REQ-disk-persistence', 'REQ-import-se-ontology', 'REQ-no-extraction', 'REQ-readonly-bridge', 'REQ-graph-is-ssot', 'REQ-frame-binding', 'REQ-graceful-degradation', 'REQ-store-recovery', 'REQ-buildable-standalone', 'REQ-harness-schema-in-contracts']
   .forEach(r => tr('SYS-graphcode', r, 'compose'));
@@ -325,6 +330,8 @@ pipe([{ node: 'ACTOR-developer' }, { flow: 'FLOW-cli-command', name: 'CLI-Comman
   { node: 'FUNC-harness-cli' }, { flow: 'FLOW-install-result', name: 'Install-Result', desc: 'Scaffold-/Update-/Remove-Ergebnis.' }, { node: 'ACTOR-developer' }]);
 pipe([{ node: 'ACTOR-developer' }, { flow: 'FLOW-export-request', name: 'Export-Request', desc: 'View-Auswahl (spec/architecture/cr-list/references).' },
   { node: 'FUNC-export-markdown' }, { flow: 'FLOW-markdown-docs', name: 'Markdown-Docs', desc: 'Generierte Markdown-Views (GENERATED-Header).' }, { node: 'ACTOR-developer' }]);
+pipe([{ node: 'ACTOR-developer' }, { flow: 'FLOW-view-request', name: 'View-Request', desc: 'Welche View gerendert werden soll (arch/status/...).' },
+  { node: 'FUNC-render-views' }, { flow: 'FLOW-rendered-view', name: 'Rendered-View', desc: 'Generierte Markdown-View, z.B. architecture-graph.md.' }, { node: 'ACTOR-developer' }]);
 
 // TEST → REQ (verify)
 const testReqs = {

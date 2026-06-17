@@ -39,13 +39,17 @@ graph TB
       subgraph CLI["MOD-cli<br/>npx-Distribution & Lifecycle"]
         Fcli["graphcode init / update / remove"]
       end
-      subgraph DOC["MOD-docs<br/>Markdown-Re-Exporter"]
+      subgraph DOC["MOD-docs<br/>Markdown-Re-Exporter — code/target"]
         Fexport["exportMarkdown"]
+      end
+      subgraph SK["MOD-skills<br/>Skills/Prompts — prompt-realisiert"]
+        Frender["render markdown views"]
       end
     end
   end
   style RT fill:#dbeafe,stroke:#3b82f6
   style APP fill:#f3e8ff,stroke:#8b5cf6
+  style SK fill:#faf5ff,stroke:#8b5cf6
   style H fill:#eff6ff,stroke:#3b82f6
   style M fill:#eff6ff,stroke:#3b82f6
   style HK fill:#eff6ff,stroke:#3b82f6
