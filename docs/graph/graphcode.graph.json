@@ -778,6 +778,28 @@
       ]
     },
     {
+      "id": "REQ-benchmark-harness",
+      "type": "REQ",
+      "name": "Benchmark-Harness (graphcode vs classic)",
+      "description": "Setting zum Vergleich graphcode-Modus vs. Claude-Code-classic über eine fixe Task-Suite, 2 LLMs (groß + klein/lokal), mit Token-Counter + Quality-Scorer. Liefert task×mode×LLM → {tokens, success, quality} und belegt token-efficiency + reduced-llm + code-quality. NUR Requirement — Harness-Bau ist Realisierung (eigene CR).",
+      "status": "open",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-quality-metric",
+      "type": "REQ",
+      "name": "Messbare Code-/Tool-Qualität",
+      "description": "Qualität = graph-eigene Metriken: (1) 0 error-Violations am Commit, (2) REQ→TEST-Traceability-Coverage, (3) keine Drift bei Re-Eval; gegen classic messbar. Definiert, was „exzellente Code-Qualität\" (UC-code-quality) bedeutet — kein Vibe.",
+      "status": "open",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "kinds": [
+        "non-functional"
+      ]
+    },
+    {
       "id": "REQ-interface-change-escalation",
       "type": "REQ",
       "name": "Interface-Änderung nur per Eskalation",
@@ -877,13 +899,29 @@
       }
     },
     {
+      "id": "CR-GC-108",
+      "type": "CR",
+      "name": "Test-Konzept im Graph + Benchmark-REQ",
+      "description": "TEST-Metadaten (level/tool/constraint) am Graph → test-concept.md als View rekonstruierbar (se-view-testconcept); REQ-benchmark-harness + REQ-quality-metric (nur definiert, nicht gebaut). Why: Test-Konzept ist eine View, kein Hand-Doc; Benchmark-Bau ist Realisierung. (docs/cr/open/CR-GC-108)",
+      "status": "open",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "attributes": {
+        "status": "open"
+      }
+    },
+    {
       "id": "TEST-mutate-gate",
       "type": "TEST",
       "name": "mutate()-Gate Unit-Test",
       "description": "mutate() wendet an, gibt Violations zurück, blockt bei error-Severity. (FCHAIN-apply-gate)",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "method": "test"
+      "method": "test",
+      "attributes": {
+        "level": "integration",
+        "tool": "vitest",
+        "constraint": "Disk-Kuzu"
+      }
     },
     {
       "id": "TEST-mcp-symmetry",
@@ -892,7 +930,12 @@
       "description": "MCP graph_mutate == in-process mutate(): identische Semantik/Violations. (FCHAIN-apply-gate, L2)",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "method": "test"
+      "method": "test",
+      "attributes": {
+        "level": "integration",
+        "tool": "vitest",
+        "constraint": "MCP==in-process"
+      }
     },
     {
       "id": "TEST-roundtrip",
@@ -901,7 +944,12 @@
       "description": "decode(encode(g))==g; zwei Encodes byte-identisch. (FCHAIN-codec-roundtrip)",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "method": "test"
+      "method": "test",
+      "attributes": {
+        "level": "conformance",
+        "tool": "vitest",
+        "constraint": "rasentraktor fixture (L3)"
+      }
     },
     {
       "id": "TEST-impact-subgraph",
@@ -910,7 +958,12 @@
       "description": "graph_impact liefert nur den betroffenen Subgraphen (kein Full-Dump). (FCHAIN-agent-query)",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "method": "test"
+      "method": "test",
+      "attributes": {
+        "level": "integration",
+        "tool": "vitest",
+        "constraint": "no full-dump"
+      }
     },
     {
       "id": "TEST-harness-install",
@@ -919,7 +972,12 @@
       "description": "Install → Controller → /api/health 200 + Dashboard 200. 2026-06-13 (aimprove-init.sh). NICHT self-contained (AIMPRO_ROOT).",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "method": "demonstration"
+      "method": "demonstration",
+      "attributes": {
+        "level": "smoke",
+        "tool": "bash",
+        "constraint": "health 200"
+      }
     },
     {
       "id": "TEST-live-view",
@@ -928,7 +986,12 @@
       "description": "Jede Mutation emittiert genau ein Live-Update-Event (korrekte domains); Dashboard ohne Reload. (FUNC-emit-update-event)",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "method": "test"
+      "method": "test",
+      "attributes": {
+        "level": "integration",
+        "tool": "vitest",
+        "constraint": "one event per mutation"
+      }
     },
     {
       "id": "TEST-learning-emit",
@@ -937,7 +1000,12 @@
       "description": "post-apply schreibt Trajectory/Outcome append-only, Format stabil. (FUNC-emit-trajectory)",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "method": "test"
+      "method": "test",
+      "attributes": {
+        "level": "integration",
+        "tool": "vitest",
+        "constraint": "append-only jsonl"
+      }
     },
     {
       "id": "TEST-bootstrap",
@@ -946,7 +1014,12 @@
       "description": "Format-E-Import befüllt leeren Graphen ausschließlich durchs Gate; Direct-Write schlägt fehl. (FUNC-import)",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "method": "test"
+      "method": "test",
+      "attributes": {
+        "level": "integration",
+        "tool": "vitest",
+        "constraint": "gate-only import"
+      }
     },
     {
       "id": "TEST-merge",
@@ -955,7 +1028,12 @@
       "description": "Zwei Branch-Änderungen mergen conflict-free; keine verlorenen Knoten/Traces. (FUNC-merge-nodes)",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "method": "test"
+      "method": "test",
+      "attributes": {
+        "level": "integration",
+        "tool": "vitest",
+        "constraint": "conflict-free"
+      }
     },
     {
       "id": "TEST-schema-migration",
@@ -964,7 +1042,12 @@
       "description": "Version-Bump → Graph re-validiert/migriert, Violations berichtet, Version aktualisiert. (FUNC-migrate-schema)",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "method": "test"
+      "method": "test",
+      "attributes": {
+        "level": "integration",
+        "tool": "vitest",
+        "constraint": "version bump"
+      }
     },
     {
       "id": "TEST-capture",
@@ -973,7 +1056,12 @@
       "description": "Agent-Kandidaten laufen im suggest-Tier durchs Gate (kein auto-apply). (FCHAIN-capture)",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "method": "test"
+      "method": "test",
+      "attributes": {
+        "level": "integration",
+        "tool": "vitest",
+        "constraint": "suggest-tier"
+      }
     },
     {
       "id": "TEST-doc-export",
@@ -982,7 +1070,12 @@
       "description": "exportMarkdown deterministisch (byte-identisch) + spiegelt Graph; GENERATED-Header. (FUNC-export-markdown)",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "method": "test"
+      "method": "test",
+      "attributes": {
+        "level": "conformance",
+        "tool": "vitest",
+        "constraint": "deterministic + GENERATED header"
+      }
     },
     {
       "id": "TEST-responsiveness",
@@ -991,7 +1084,12 @@
       "description": "Draft-Apply + betroffener-Subgraph-Check antwortet < 0,2s (ohne LLM). (FCHAIN-apply-gate NFR)",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "method": "test"
+      "method": "test",
+      "attributes": {
+        "level": "performance",
+        "tool": "benchmark",
+        "constraint": "<0,2s, no LLM"
+      }
     },
     {
       "id": "TEST-interface-escalation",
@@ -1000,7 +1098,12 @@
       "description": "Direkter FLOW-Mutationsversuch eines Realisierungs-Agenten wird abgelehnt; nur der Eskalationspfad (CR an Facilitating-Agent → graph_impact → Gate) ändert ein Interface. (FCHAIN-interface-escalation)",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "method": "test"
+      "method": "test",
+      "attributes": {
+        "level": "integration",
+        "tool": "vitest",
+        "constraint": "direct FLOW mutation rejected"
+      }
     },
     {
       "id": "TEST-interface-schema",
@@ -1009,7 +1112,12 @@
       "description": "Jeder FLOW hat ein SCHEMA (relation); ein FLOW ohne Datenformat ist ein Readiness-Blocker. (REQ-interface-schema)",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "method": "inspection"
+      "method": "inspection",
+      "attributes": {
+        "level": "inspection",
+        "tool": "jq/grep",
+        "constraint": "every FLOW relation SCHEMA"
+      }
     },
     {
       "id": "TEST-dashboard-ontology-sync",
@@ -1018,7 +1126,12 @@
       "description": "Readiness/Violations stammen aus @sigloch/contracts V3_RULES (Rule-IDs == contracts), keine Vorgänger-BQ-Regeln; valide Familie-REQs werfen keine BQ-Warnungen. (REQ-dashboard-ontology-sync)",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "method": "analysis"
+      "method": "analysis",
+      "attributes": {
+        "level": "analysis",
+        "tool": "rule-id compare",
+        "constraint": "rule-ids == contracts"
+      }
     },
     {
       "id": "UC-code-quality",
@@ -1057,7 +1170,12 @@
       "description": "Regelverletzende Änderung wird vom Gate geblockt; konformer Graph bleibt driftfrei.",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "method": "test"
+      "method": "test",
+      "attributes": {
+        "level": "acceptance",
+        "tool": "harness + benchmark",
+        "constraint": "Disk-Kuzu, V3_RULES; vs classic"
+      }
     },
     {
       "id": "UC-efficient-testing",
@@ -1085,7 +1203,12 @@
       "description": "graph_impact(geänderter Knoten) liefert genau die betroffenen TEST-Knoten; nicht betroffene sind nicht im Set.",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "method": "test"
+      "method": "test",
+      "attributes": {
+        "level": "acceptance",
+        "tool": "graph_impact assertion",
+        "constraint": "precision/recall vs full run"
+      }
     },
     {
       "id": "UC-token-efficiency",
@@ -1113,7 +1236,12 @@
       "description": "graph_impact-Kontext ist messbar kleiner als ein Volltext-/grep-Dump desselben Scopes (Token-Count-Assertion).",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "method": "test"
+      "method": "test",
+      "attributes": {
+        "level": "acceptance",
+        "tool": "benchmark + token counter",
+        "constraint": "graphcode vs classic; <50% tokens"
+      }
     },
     {
       "id": "UC-reduced-llm",
@@ -1141,7 +1269,12 @@
       "description": "Gate/Regel-Evaluation läuft ohne Modell-Call (localReachable=false) deterministisch; nur LLM-Zusatzfeatures degradieren.",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "method": "test"
+      "method": "test",
+      "attributes": {
+        "level": "acceptance",
+        "tool": "benchmark, 2 LLMs",
+        "constraint": "small/local LLM succeeds"
+      }
     },
     {
       "id": "FUNC-mutate",
@@ -1920,6 +2053,13 @@
     {
       "source": "CR-GC-107",
       "target": "MOD-harness",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-108",
+      "target": "MOD-docs",
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
@@ -3815,6 +3955,34 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "UC-token-efficiency",
+      "target": "REQ-benchmark-harness",
+      "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "UC-code-quality",
+      "target": "REQ-quality-metric",
+      "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-token-efficiency",
+      "target": "REQ-benchmark-harness",
+      "type": "verify",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-code-quality",
+      "target": "REQ-quality-metric",
+      "type": "verify",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
       "source": "TEST-mutate-gate",
       "target": "REQ-one-gate-per-repo",
       "type": "verify",
@@ -4181,6 +4349,20 @@
     {
       "source": "CR-GC-107",
       "target": "REQ-dashboard-ontology-sync",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-108",
+      "target": "REQ-benchmark-harness",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-108",
+      "target": "REQ-quality-metric",
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"

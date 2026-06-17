@@ -244,6 +244,8 @@ req('REQ-schema-version-migration', 'Schema-Versions-Migration', 'FUNC-migrate-s
 req('REQ-interactive-capture-suggest', 'Interaktive Erfassung im suggest-Tier', 'FCHAIN-capture: NL→Format-E agent-seitig (REQ-no-extraction); Resultat im suggest-Tier durchs Gate, Review vor Persist.', ['functional']);
 req('REQ-interface-schema', 'Interface trägt ein Datenformat (SCHEMA)', 'Jeder FLOW (Interface) hat ein SCHEMA (Layer 2, Datenformat) — referenziert @sigloch/contracts Zod. Code-Precondition: ohne Datenvertrag rät der Agent das Format. (3-Schichten-Interface-Modell)', ['non-functional']);
 req('REQ-dashboard-ontology-sync', 'Dashboard/Readiness nutzt SE-Ontologie + V3_RULES', 'Das Dashboard/Readiness-Scorer MUSS gegen @sigloch/contracts Ontologie + V3_RULES evaluieren (via harness.evaluateRules, L2) — nicht die aimprove-Vorgänger-Regeln (rules 2.0.0, BQ-06/BQ-02 INCOSE). Heutige 155 BQ-Warnungen messen unsere REQs gegen eine Fremd-Regelbasis; nach Adoption echte Familie-Compliance. (NEXT REQ 2026-06-17)', ['functional']);
+req('REQ-benchmark-harness', 'Benchmark-Harness (graphcode vs classic)', 'Setting zum Vergleich graphcode-Modus vs. Claude-Code-classic über eine fixe Task-Suite, 2 LLMs (groß + klein/lokal), mit Token-Counter + Quality-Scorer. Liefert task×mode×LLM → {tokens, success, quality} und belegt token-efficiency + reduced-llm + code-quality. NUR Requirement — Harness-Bau ist Realisierung (eigene CR).', ['functional']);
+req('REQ-quality-metric', 'Messbare Code-/Tool-Qualität', 'Qualität = graph-eigene Metriken: (1) 0 error-Violations am Commit, (2) REQ→TEST-Traceability-Coverage, (3) keine Drift bei Re-Eval; gegen classic messbar. Definiert, was „exzellente Code-Qualität" (UC-code-quality) bedeutet — kein Vibe.', ['non-functional']);
 req('REQ-interface-change-escalation', 'Interface-Änderung nur per Eskalation', 'Ein Realisierungs-Agent darf ein Interface (FLOW/SCHEMA) NICHT direkt mutieren. Bei Bedarf: (a) Notwendigkeit prüfen (sonst im Vertrag bleiben, Tech-Debt vermeiden); (b) CR an Facilitating-Agent + Boundary pausieren; (c) graph_impact(FLOW) Impact-Analyse; (d) Gate-Entscheidung (versionierte FLOW-Mutation / reject); (e) Dependents re-scopen/sequenzieren. Erhält conflict-free Parallelität; Interface-Drift zentral + gegatet.', ['functional']);
 
 // ── CR (open change requests) ──
@@ -256,6 +258,7 @@ cr('CR-GC-104', 'Skills/Prompts-Modul', 'MOD-skills', 'MOD-skills (.claude/skill
 cr('CR-GC-105', 'Architektur-Verfeinerung', 'MOD-mcp-tools', 'Kunden-Aktoren (Systems Engineer, Vibe Coder) + Realisierungs-Agent-Reframing; Interface-Eskalations-Prozess (FCHAIN + REQ + Facilitating-Agent); fehlende FCHAINs für efficient-testing + reduced-llm. Why: Mensch=Architektur/Nutzen, Agent=Realisierung; Interface-Drift kontrolliert; jeder UC ein Szenario. (docs/cr/open/CR-GC-105)');
 cr('CR-GC-106', 'Interface-Schemas', 'MOD-codec', '9 SCHEMA-Knoten (→ @sigloch/contracts Zod) + FLOW→SCHEMA für alle 28 Interfaces; REQ-interface-schema. Why: Datenvertrag = Code-Precondition (schema-before-code), schließt Readiness-Dimension schema=0. (docs/cr/open/CR-GC-106)');
 cr('CR-GC-107', 'Dashboard auf SE-Ontologie', 'MOD-harness', 'Readiness/Scorer nutzt @sigloch/contracts V3_RULES (via harness.evaluateRules) statt Vorgänger-BQ-Regeln (2.0.0). Why: heutige Readiness teils fremd-gemessen (155 BQ-Warnungen); nach Adoption echte Familie-Compliance. NEXT. (docs/cr/open/CR-GC-107)');
+cr('CR-GC-108', 'Test-Konzept im Graph + Benchmark-REQ', 'MOD-docs', 'TEST-Metadaten (level/tool/constraint) am Graph → test-concept.md als View rekonstruierbar (se-view-testconcept); REQ-benchmark-harness + REQ-quality-metric (nur definiert, nicht gebaut). Why: Test-Konzept ist eine View, kein Hand-Doc; Benchmark-Bau ist Realisierung. (docs/cr/open/CR-GC-108)');
 const crReqs = {
   'CR-GC-100': ['REQ-one-gate-per-repo', 'REQ-rule-enforcement', 'REQ-confidence-tier', 'REQ-single-kuzu-owner', 'REQ-disk-persistence', 'REQ-import-se-ontology', 'REQ-harness-schema-in-contracts', 'REQ-buildable-standalone'],
   'CR-GC-101': ['REQ-single-transport', 'REQ-query-precision', 'REQ-subgraph-slicing', 'REQ-cache-layering', 'REQ-progressive-expansion', 'REQ-mcp-tool-registry', 'REQ-mcp-gate-symmetry', 'REQ-audit-trail'],
@@ -265,6 +268,7 @@ const crReqs = {
   'CR-GC-105': ['REQ-interface-change-escalation', 'REQ-impact-based-testing', 'REQ-small-model-viable'],
   'CR-GC-106': ['REQ-interface-schema'],
   'CR-GC-107': ['REQ-dashboard-ontology-sync'],
+  'CR-GC-108': ['REQ-benchmark-harness', 'REQ-quality-metric'],
 };
 
 // ── TEST (capability acceptance gates) ──
@@ -401,6 +405,36 @@ const flowSchema = {
   'FLOW-markdown-docs': 'SCHEMA-markdown-view', 'FLOW-rendered-view': 'SCHEMA-markdown-view',
 };
 for (const [f, s] of Object.entries(flowSchema)) tr(f, s, 'relation');
+
+// ── Test-Konzept im Graph: TEST-Metadaten (level/tool/constraint) → als View rekonstruierbar ──
+const testMeta = {
+  'TEST-code-quality': { level: 'acceptance', tool: 'harness + benchmark', constraint: 'Disk-Kuzu, V3_RULES; vs classic' },
+  'TEST-efficient-testing': { level: 'acceptance', tool: 'graph_impact assertion', constraint: 'precision/recall vs full run' },
+  'TEST-token-efficiency': { level: 'acceptance', tool: 'benchmark + token counter', constraint: 'graphcode vs classic; <50% tokens' },
+  'TEST-reduced-llm': { level: 'acceptance', tool: 'benchmark, 2 LLMs', constraint: 'small/local LLM succeeds' },
+  'TEST-mutate-gate': { level: 'integration', tool: 'vitest', constraint: 'Disk-Kuzu' },
+  'TEST-mcp-symmetry': { level: 'integration', tool: 'vitest', constraint: 'MCP==in-process' },
+  'TEST-roundtrip': { level: 'conformance', tool: 'vitest', constraint: 'rasentraktor fixture (L3)' },
+  'TEST-impact-subgraph': { level: 'integration', tool: 'vitest', constraint: 'no full-dump' },
+  'TEST-harness-install': { level: 'smoke', tool: 'bash', constraint: 'health 200' },
+  'TEST-live-view': { level: 'integration', tool: 'vitest', constraint: 'one event per mutation' },
+  'TEST-learning-emit': { level: 'integration', tool: 'vitest', constraint: 'append-only jsonl' },
+  'TEST-bootstrap': { level: 'integration', tool: 'vitest', constraint: 'gate-only import' },
+  'TEST-merge': { level: 'integration', tool: 'vitest', constraint: 'conflict-free' },
+  'TEST-schema-migration': { level: 'integration', tool: 'vitest', constraint: 'version bump' },
+  'TEST-capture': { level: 'integration', tool: 'vitest', constraint: 'suggest-tier' },
+  'TEST-doc-export': { level: 'conformance', tool: 'vitest', constraint: 'deterministic + GENERATED header' },
+  'TEST-responsiveness': { level: 'performance', tool: 'benchmark', constraint: '<0,2s, no LLM' },
+  'TEST-interface-escalation': { level: 'integration', tool: 'vitest', constraint: 'direct FLOW mutation rejected' },
+  'TEST-interface-schema': { level: 'inspection', tool: 'jq/grep', constraint: 'every FLOW relation SCHEMA' },
+  'TEST-dashboard-ontology-sync': { level: 'analysis', tool: 'rule-id compare', constraint: 'rule-ids == contracts' },
+};
+for (const e of E) if (e.type === 'TEST' && testMeta[e.id]) e.attributes = { ...(e.attributes || {}), ...testMeta[e.id] };
+// benchmark + quality-metric: composed by their UC, verified by the matching acceptance test
+tr('UC-token-efficiency', 'REQ-benchmark-harness', 'compose');
+tr('UC-code-quality', 'REQ-quality-metric', 'compose');
+tr('TEST-token-efficiency', 'REQ-benchmark-harness', 'verify');
+tr('TEST-code-quality', 'REQ-quality-metric', 'verify');
 
 // TEST → REQ (verify)
 const testReqs = {
