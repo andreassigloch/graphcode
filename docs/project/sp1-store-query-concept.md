@@ -40,7 +40,7 @@ Concretely:
 **Committed JSON = durable SSOT (git) → seeds → on-disk Kuzu = single live store + Cypher query engine → deterministic re-export back to JSON.** Agent reads = precise Cypher subgraphs. Rule-eval = transient full load. No persistent TS mirror.
 
 ## 6. Corrective CRs (graph-first, under MS-3)
-- **CR-GC-119 (new)** — Query layer → Kuzu Cypher with correct impact direction; retire TS-BFS + persistent mirror; strengthen `TEST-impact-subgraph` to assert the dependent set. Realizes `REQ-query-precision`, `REQ-progressive-expansion` (currently *violated*), touches `MOD-mcp-tools` + `MOD-harness`.
+- **CR-GC-126 (new)** — Query layer → Kuzu Cypher with correct impact direction; retire TS-BFS + persistent mirror; strengthen `TEST-impact-subgraph` to assert the dependent set. Realizes `REQ-query-precision`, `REQ-progressive-expansion` (currently *violated*), touches `MOD-mcp-tools` + `MOD-harness`.
 - **CR-GC-113** — re-exporter (already planned) becomes the single Kuzu→JSON sync path (`REQ-auto-persist-merge`).
 - Seed-perf (UNWIND batch) — noted, non-blocking; revisit only if `init` time matters.
 
