@@ -2516,7 +2516,7 @@
       "id": "TEST-mcp-export-guard",
       "type": "TEST",
       "name": "MCP-Export-Guard-Test",
-      "description": "graph_export: (a) leerer Graph -> refuse, (b) wuerde committetes Element droppen -> refuse + Datei unangetastet, (c) force:true -> overwrite; Fresh-File-Export weiterhin gruen. (CR-GC-202)",
+      "description": "MCP graph_export-Guard, drei Faelle: (a) leerer Graph wird verweigert, (b) Drop eines committeten Elements wird verweigert und die Datei bleibt unangetastet, (c) force:true ueberschreibt; Fresh-File-Export bleibt gruen. (CR-GC-202)",
       "status": "open",
       "created_at": "2026-06-18T00:00:00.000Z"
     },
