@@ -17,7 +17,7 @@
  *   3. A foreign repo installs the packed tarball from scratch and runs the bin
  *      (`--help` + `init`) with NO sigloch source tree present — fully self-contained.
  */
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { describe, it, expect, beforeAll } from 'vitest';
 import { execFileSync } from 'node:child_process';
 import {
   mkdtempSync,
