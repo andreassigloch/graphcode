@@ -39,7 +39,6 @@ async function main(): Promise<void> {
       // stdout stays reserved for the MCP transport — report on stderr.
       process.stderr.write(`graphcode ${command}: ${JSON.stringify(result, null, 2)}\n`);
       process.exit(0);
-      return;
     }
     case undefined:
     case '-h':
