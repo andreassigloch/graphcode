@@ -2371,6 +2371,21 @@
         "tool": "vitest",
         "constraint": "Disk-Kuzu, no mocks, end-to-end"
       }
+    },
+    {
+      "id": "TEST-mcp-export",
+      "type": "TEST",
+      "name": "MCP-Export-Test",
+      "description": "graph_export serialisiert den live In-Memory-Graphen via exportGraphJson/exportMarkdown und schreibt docs/graph + docs/views unter den Repo-Root — schließt die Agent-Loop ueber MCP. (CR-GC-127)",
+      "status": "done",
+      "created_at": "2026-06-18T00:00:00.000Z",
+      "method": "test",
+      "attributes": {
+        "level": "integration",
+        "tool": "vitest",
+        "constraint": "agent-loop-closed-over-mcp"
+      },
+      "updated_at": "2026-06-18T00:00:00.000Z"
     }
   ],
   "traces": [
@@ -5718,6 +5733,13 @@
       "source": "TEST-mvp-e2e",
       "target": "REQ-small-model-viable",
       "type": "verify"
+    },
+    {
+      "source": "TEST-mcp-export",
+      "target": "REQ-doc-export",
+      "type": "verify",
+      "weight": 1,
+      "created_at": "2026-06-18T00:00:00.000Z"
     }
   ]
 }

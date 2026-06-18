@@ -94,6 +94,16 @@ export class GraphCodeHarness {
     return this.storage;
   }
 
+  /** Repo root this harness owns (the `.graphcode/` workspace + `docs/` sync target). */
+  getRepoRoot(): string {
+    return this.config.repoRoot;
+  }
+
+  /** The graph scope (workspaceId/systemId) this harness owns. */
+  getScope(): HarnessConfig['scope'] {
+    return this.config.scope;
+  }
+
   /**
    * Exact blast-radius (REQ-query-precision): the DEPENDENTS of `rootId` —
    * incoming edges, computed in Kuzu as `(m)-[*1..depth]->(root)`. Changing the

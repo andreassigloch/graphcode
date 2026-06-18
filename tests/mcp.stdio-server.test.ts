@@ -84,6 +84,7 @@ describe('TEST-mcp-stdio-server: registry served over the MCP protocol', () => {
       'audit_trail',
       'graph_elements',
       'graph_expand',
+      'graph_export',
       'graph_get_edges',
       'graph_get_node',
       'graph_impact',

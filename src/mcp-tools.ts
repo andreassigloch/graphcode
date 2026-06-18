@@ -16,12 +16,15 @@
  * @author andreas@siglochconsulting
  */
 
+import { join, dirname } from 'node:path';
+import { mkdirSync, writeFileSync } from 'node:fs';
 import { z } from 'zod/v4';
 import type { ZodType } from 'zod/v4';
 import type { GraphCodeHarness } from './harness.js';
 import type { Graph, GraphNode, GraphEdge, AuditLog, AuditEntry } from '@sigloch/graph-api-core';
 import { FormatECodec, SE_DESCRIPTOR, InMemoryAuditLog } from '@sigloch/graph-api-core';
 import { type MutateCommand, type MutateResult, type RuleViolation } from '@sigloch/contracts/harness';
+import { exportGraphJson, exportMarkdown, MarkdownViewSchema, MARKDOWN_VIEWS, VIEW_FILENAMES } from './exporter.js';
 
 // ---------------------------------------------------------------------------
 // Public types
@@ -87,6 +90,11 @@ const GraphExpandInputSchema = z.object({
   handle: z.string().describe('Node uid returned by a previous graph_impact or graph_expand call'),
   branch: z.enum(['callers', 'traces', 'tests', 'all']).default('all'),
   depth: z.number().int().positive().default(2).describe('Depth for this expansion (usually prior_depth + 1)'),
+});
+
+const GraphExportInputSchema = z.object({
+  name: z.string().optional().describe('Base filename for the graph JSON (default: scope.systemId)'),
+  views: z.array(MarkdownViewSchema).optional().describe('Markdown views to render (default: all)'),
 });
 
 // ---------------------------------------------------------------------------
@@ -333,6 +341,54 @@ export function bindToolsToHarness(
   };
 
   // ---------------------------------------------------------------------------
+  // EXPORT tool — the agent-facing re-export sync path (CR-GC-113 over MCP).
+  // Serializes the LIVE in-memory graph (full fidelity) — the only place that
+  // holds it across the session — to commit-able docs under the repo root.
+  // ---------------------------------------------------------------------------
+
+  const graph_export: MCPTool<
+    z.infer<typeof GraphExportInputSchema>,
+    {
+      graphJson: { path: string; bytes: number; nodes: number; edges: number };
+      views: Array<{ view: string; path: string; bytes: number }>;
+    }
+  > = {
+    name: 'graph_export',
+    description:
+      'Re-export the live governed graph to commit-able docs — the single sync path (CR-GC-113). ' +
+      'Writes canonical docs/graph/<name>.graph.json plus deterministic docs/views/*.md (GENERATED header) ' +
+      'under the repo root, from the live in-memory graph (full fidelity). Closes the agent loop: ' +
+      'spec → impact → implement → export. Returns the written paths and byte sizes.',
+    inputSchema: GraphExportInputSchema,
+    async handler(input) {
+      const graph = harness.getGraph();
+      const repoRoot = harness.getRepoRoot();
+      const name = input.name ?? harness.getScope().systemId;
+
+      const json = exportGraphJson(graph);
+      const jsonRel = join('docs', 'graph', `${name}.graph.json`);
+      const jsonAbs = join(repoRoot, jsonRel);
+      mkdirSync(dirname(jsonAbs), { recursive: true });
+      writeFileSync(jsonAbs, json);
+
+      const views = input.views ?? MARKDOWN_VIEWS;
+      const written = views.map((v) => {
+        const md = exportMarkdown(graph, v);
+        const rel = join('docs', 'views', VIEW_FILENAMES[v]);
+        const abs = join(repoRoot, rel);
+        mkdirSync(dirname(abs), { recursive: true });
+        writeFileSync(abs, md);
+        return { view: v, path: rel, bytes: Buffer.byteLength(md) };
+      });
+
+      return {
+        graphJson: { path: jsonRel, bytes: Buffer.byteLength(json), nodes: graph.nodes.length, edges: graph.edges.length },
+        views: written,
+      };
+    },
+  };
+
+  // ---------------------------------------------------------------------------
   // Registry
   // ---------------------------------------------------------------------------
 
@@ -347,5 +403,6 @@ export function bindToolsToHarness(
     audit_stats,
     graph_impact,
     graph_expand,
+    graph_export,
   };
 }
