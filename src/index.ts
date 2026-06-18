@@ -41,6 +41,10 @@ export { GraphCodeCodec } from './codec.js';
 export { scoreReadiness, computeReadiness, getFamilyRuleIds } from './readiness.js';
 export type { ReadinessReport, ReadinessDimension } from './readiness.js';
 
+// CLI scaffold lifecycle (CR-GC-112) — self-contained `init|update|remove` installer (MOD-cli).
+export { scaffold, CliCommandSchema, InstallResultSchema } from './scaffold.js';
+export type { CliCommand, InstallResult } from './scaffold.js';
+
 export type {
   HarnessConfig,
   MutateCommand,

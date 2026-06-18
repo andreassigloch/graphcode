@@ -1434,11 +1434,12 @@
       "type": "FUNC",
       "name": "graphcode init|update|remove",
       "description": "npx-CLI Lifecycle: scaffolds/aktualisiert/entfernt .graphcode/, .claude/hooks, .mcp.json, Controller — idempotent, self-contained.",
-      "status": "reviewed",
+      "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "attributes": {
         "operatingMode": "lifecycle"
-      }
+      },
+      "updated_at": "2026-06-18T00:00:00.000Z"
     },
     {
       "id": "FUNC-export-markdown",
@@ -1530,22 +1531,24 @@
       "type": "REQ",
       "name": "Precondition: graphcode init|update|remove",
       "description": "Repo vorhanden, npx/Node verfügbar.",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
         "precondition"
-      ]
+      ],
+      "updated_at": "2026-06-18T00:00:00.000Z"
     },
     {
       "id": "REQ-post-harness-cli",
       "type": "REQ",
       "name": "Postcondition: graphcode init|update|remove",
       "description": "Artefakte installiert/aktualisiert/restlos entfernt; idempotent; Store bei Update erhalten.",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
         "postcondition"
-      ]
+      ],
+      "updated_at": "2026-06-18T00:00:00.000Z"
     },
     {
       "id": "REQ-pre-export-markdown",
@@ -2307,6 +2310,21 @@
         "level": "integration",
         "tool": "vitest",
         "constraint": "single-transport-mcp-stdio"
+      },
+      "updated_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "id": "TEST-cli-scaffold",
+      "type": "TEST",
+      "name": "CLI-Scaffold-Test",
+      "description": "graphcode init|update|remove against a mkdtemp temp repo (real node:fs): init scaffolds .graphcode/ + .mcp.json (npx form) + GRAPHCODE.md + package.json dep, idempotent re-run is byte-stable, update preserves the .graphcode/kuzu store, remove deletes all artifacts restlos. No localhost/Controller path. (CR-GC-112)",
+      "status": "done",
+      "created_at": "2026-06-18T00:00:00.000Z",
+      "method": "test",
+      "attributes": {
+        "level": "integration",
+        "tool": "vitest",
+        "constraint": "self-contained-idempotent"
       },
       "updated_at": "2026-06-18T00:00:00.000Z"
     }
@@ -5563,6 +5581,48 @@
     {
       "source": "TEST-mcp-stdio-server",
       "target": "REQ-mcp-gate-symmetry",
+      "type": "verify",
+      "weight": 1,
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-cli-scaffold",
+      "target": "REQ-repo-install",
+      "type": "verify",
+      "weight": 1,
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-cli-scaffold",
+      "target": "REQ-repo-update",
+      "type": "verify",
+      "weight": 1,
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-cli-scaffold",
+      "target": "REQ-repo-uninstall",
+      "type": "verify",
+      "weight": 1,
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-cli-scaffold",
+      "target": "REQ-install-idempotent",
+      "type": "verify",
+      "weight": 1,
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-cli-scaffold",
+      "target": "REQ-pre-harness-cli",
+      "type": "verify",
+      "weight": 1,
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-cli-scaffold",
+      "target": "REQ-post-harness-cli",
       "type": "verify",
       "weight": 1,
       "created_at": "2026-06-18T00:00:00.000Z"
