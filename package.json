@@ -22,26 +22,35 @@
       "types": "./dist/mcp-tools.d.ts"
     }
   },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "build": "tsc",
+    "bundle": "node esbuild.config.mjs",
     "watch": "tsc --watch",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
     "lint": "eslint src --ext .ts,.tsx",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "prepack": "npm run build && npm run bundle"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
-    "@sigloch/contracts": "file:../sigloch-modules/packages/contracts",
-    "@sigloch/graph-api-core": "file:../sigloch-modules/packages/graph-api-core",
-    "@sigloch/graph-cypher-wasm": "file:../sigloch-modules/packages/graph-cypher-wasm",
     "kuzu-wasm": "^0.11.3",
     "zod": "^4.0.0"
   },
   "devDependencies": {
+    "@sigloch/contracts": "file:../sigloch-modules/packages/contracts",
+    "@sigloch/graph-api-core": "file:../sigloch-modules/packages/graph-api-core",
+    "@sigloch/graph-cypher-wasm": "file:../sigloch-modules/packages/graph-cypher-wasm",
     "@types/node": "^22.0.0",
+    "esbuild": "^0.21.5",
     "eslint": "^9.0.0",
     "typescript": "^5.5.0",
     "vitest": "^2.0.0"

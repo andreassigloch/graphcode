@@ -49,8 +49,9 @@
       "type": "MOD",
       "name": "cli — npx-Distribution & Lifecycle",
       "description": "bin `npx @sigloch/graphcode init|update|remove`: self-contained Installer. App-spezifisch. (REQ-npx-distribution)",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "status": "done",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "updated_at": "2026-06-18T00:00:00.000Z"
     },
     {
       "id": "MOD-docs",
@@ -522,11 +523,12 @@
       "type": "REQ",
       "name": "Ein-Kommando-Installation",
       "description": "Installation der Harness in ein beliebiges Repo mit einem Kommando: scaffolds .graphcode/, .claude/hooks, .mcp.json, Controller.",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
         "functional"
-      ]
+      ],
+      "updated_at": "2026-06-18T00:00:00.000Z"
     },
     {
       "id": "REQ-repo-update",
@@ -566,33 +568,36 @@
       "type": "REQ",
       "name": "Self-contained Distribution",
       "description": "Zielprojekt darf NICHT von einer Kopie des aimprove-Quellbaums abhängen; Distribution self-contained (versionierte Deps). Blockiert auf D5 + CR-GC-100..103.",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
         "non-functional"
-      ]
+      ],
+      "updated_at": "2026-06-18T00:00:00.000Z"
     },
     {
       "id": "REQ-npx-distribution",
       "type": "REQ",
       "name": "npx-CLI als Distribution",
       "description": "Distribution als npm-Paket mit bin `npx @sigloch/graphcode init|update|remove`. GATED auf REQ-buildable-standalone + CR-GC-100..103.",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
         "functional"
-      ]
+      ],
+      "updated_at": "2026-06-18T00:00:00.000Z"
     },
     {
       "id": "REQ-buildable-standalone",
       "type": "REQ",
       "name": "Standalone baufähig (D5)",
       "description": "CR-GC-100 Task 0 / SPEC §8 D5 (Blocker): workspace:*-Deps auflösen (versionierte/file-Deps), npm install + tsc --noEmit grün — vor jedem Code.",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
         "non-functional"
-      ]
+      ],
+      "updated_at": "2026-06-18T00:00:00.000Z"
     },
     {
       "id": "REQ-harness-schema-in-contracts",
@@ -2337,6 +2342,15 @@
         "tool": "vitest",
         "constraint": "self-contained-idempotent"
       },
+      "updated_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "id": "TEST-distribution",
+      "type": "TEST",
+      "name": "Self-contained npx distribution (automated)",
+      "description": "tests/distribution.test.ts: esbuild bundle inlines all @sigloch/* into dist/cli.js+index.js (registry externals kept, shebang preserved); published manifest has zero file:/@sigloch runtime deps; real npm pack → foreign npm install → bin runs init/--help without the sigloch source tree. Self-contained (CR-GC-121).",
+      "status": "done",
+      "created_at": "2026-06-18T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z"
     }
   ],
@@ -5634,6 +5648,34 @@
     {
       "source": "TEST-cli-scaffold",
       "target": "REQ-post-harness-cli",
+      "type": "verify",
+      "weight": 1,
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-distribution",
+      "target": "REQ-npx-distribution",
+      "type": "verify",
+      "weight": 1,
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-distribution",
+      "target": "REQ-self-contained-dist",
+      "type": "verify",
+      "weight": 1,
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-distribution",
+      "target": "REQ-repo-install",
+      "type": "verify",
+      "weight": 1,
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-distribution",
+      "target": "REQ-buildable-standalone",
       "type": "verify",
       "weight": 1,
       "created_at": "2026-06-18T00:00:00.000Z"
