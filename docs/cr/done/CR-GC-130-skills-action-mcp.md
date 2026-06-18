@@ -1,6 +1,6 @@
 # CR-GC-130: adopt the action skills (fmea/review/status) to MCP
 
-**Status:** Open · **Milestone:** `MS-3-mvp-readiness` (skills completion) · **Datum:** 2026-06-18 · **Max Files:** 5
+**Status:** Done · **Milestone:** `MS-3-mvp-readiness` (skills completion) · **Datum:** 2026-06-18 · **Max Files:** 5
 **Graph (SSOT):** realizes `MOD-skills` (functional, prompt-realized) for the action skills. Pointer — derive acceptance from the graph (`MOD-skills`, the prompt-realized FUNCs).
 
 ## Problem (Why)

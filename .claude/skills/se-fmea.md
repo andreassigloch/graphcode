@@ -5,7 +5,7 @@ description: Perform a state-of-the-art FMEA (AIAG-VDA 7-step) on a system, subs
 
 Conduct a Failure Mode and Effects Analysis following the **AIAG-VDA FMEA Handbook (2019)** 7-step method, mapped onto this project's SE-ontology graph. Output is `docs/records/failure-mode-analysis.md` plus a CR that integrates derived requirements into the graph.
 
-**Scope argument:** the user names the analysis target (whole system, a module e.g. `BlockModule.MD.002`, or a component e.g. `ACS712`). If unscoped, ask for it — do not guess.
+**Scope argument:** the user names the analysis target (whole system, a module e.g. a `MOD` node, or a component e.g. `ACS712`). If unscoped, ask for it — do not guess.
 
 Reference exemplar (existing, RPN-based — upgrade it to AP, do not copy verbatim): `docs/records/failure-mode-analysis.md`, integrated via `docs/cr/done/CR-FMEA-001-failure-mode-requirements.md`.
 
@@ -16,16 +16,19 @@ Reference exemplar (existing, RPN-based — upgrade it to AP, do not copy verbat
 ### Step 1 — Planning & Preparation
 - Define scope, boundary, and what is in/out of scope (e.g. COTS locomotives = out of scope).
 - State the basis: domain-fault research (search authoritative sources for the domain — forums, datasheets, app notes) **plus** component-specific analysis driven by the actual BOM (`docs/project/bom-*.md`) and spec (`docs/project/specification.md`).
-- List the graph elements in scope (SY/UC/FN/MD).
+- List the graph elements in scope (SYS/UC/FUNC/MOD).
 
 ### Step 2 — Structure Analysis
-- Walk the graph's `compose` hierarchy for the scoped target: `SY → UC → FC → FN` and `MD → MD`.
-- Query: `curl -sf ${GRAPH_API:-http://localhost:3001}/api/graph/query` to get the current structure. Do NOT invent elements — analyze what exists.
+- Walk the graph's `compose` hierarchy for the scoped target: `SYS → UC → FCHAIN → FUNC` and `MOD → MOD`.
+- Query the live structure over MCP — do NOT invent elements, analyze what exists:
+  - `graph_impact` `{ "id": "<scoped-target-uid>", "depth": 2 }` for the blast-radius slice around the target (Format-E),
+  - `graph_elements` `{ "type": "SYS" }` (and `"UC"` / `"FUNC"` / `"MOD"`) to enumerate the in-scope nodes,
+  - `graph_get_edges` `{ "edgeType": "compose" }` to walk the parent→child hierarchy; deepen a single branch on demand with `graph_expand`.
 - Produce a structure tree (system → subsystem → component/function element).
 
 ### Step 3 — Function Analysis
 - For each FN/MD in scope, state its intended function (what it must do, with measurable acceptance where the spec defines it).
-- Link functions to the requirements they `satisfy` (FN→REQ edges already in graph).
+- Link functions to the requirements they `satisfy` (FUNC→REQ edges already in graph; query via `graph_get_edges` `{ "edgeType": "satisfy" }`).
 
 ### Step 4 — Failure Analysis
 - For each function, derive the **failure chain**: Failure Effect (FE, on system/user) ← Failure Mode (FM, how the function fails) ← Failure Cause (FC, root cause).
@@ -69,13 +72,14 @@ Reference exemplar (existing, RPN-based — upgrade it to AP, do not copy verbat
 
 The FMEA is not done until findings live in the graph, not just the document.
 
-1. **Derive requirements** from AP-High/Medium mitigations. Each becomes an `RQ` node. Check the graph first for ID collisions (`+` is not idempotent — see CLAUDE.md). Use the next free `RQ.NNN`.
-2. **Apply to graph** via `POST ${GRAPH_API:-http://localhost:3001}/api/graph/apply` (Format-E). For each new RQ add:
-   - the node with `@rationale` (the FMEA finding) and `@kind` (functional|non-functional),
-   - a `satisfy` edge from the responsible `FUNC` (which function is RESPONSIBLE, not merely related),
-   - a `verify` edge from a `TEST` (R-01: every REQ must have ≥1 verify).
-3. **Check the response** for `applied`/`rejected` — the API silently drops invalid nodes/edges (see CLAUDE.md "Stilles Verwerfen").
-4. **Check violations:** `GET ${GRAPH_API:-http://localhost:3001}/api/graph/violations` — resolve any new R-01/R-02 gaps.
+1. **Derive requirements** from AP-High/Medium mitigations. Each becomes a `REQ` node. Check the graph first for ID collisions via `graph_get_node` `{ "uid": "<candidate>" }` (uids are not idempotent — a re-add is a collision). Use the next free `REQ-NNN`.
+2. **Apply to graph** via `graph_mutate` with a single `MutateCommand[]` batch — every write goes through the Apply-Gate (L2). For each new `REQ` add:
+   - an `add-node` for the `REQ`, with the FMEA finding in `attributes.rationale` and the requirement kind in `attributes.kinds` (e.g. `["risk"]` for a hazard, `["mitigation"]` for a countermeasure, or `["functional"]` / `["non-functional"]`),
+   - an `add-edge` `satisfy` from the responsible `FUNC` → the `REQ` (which function is RESPONSIBLE, not merely related),
+   - an `add-edge` `verify` from a `TEST` → the `REQ` (R-01: every REQ must have ≥1 verify).
+   Example: `graph_mutate` `{ "commands": [ { "op": "add-node", "node": { "uid": "REQ-NNN", "type": "REQ", "name": "...", "description": "...", "attributes": { "rationale": "<FMEA finding>", "kinds": ["risk"] } } }, { "op": "add-edge", "edge": { "sourceId": "FUNC-...", "targetId": "REQ-NNN", "edgeType": "satisfy", "attributes": {} } }, { "op": "add-edge", "edge": { "sourceId": "TEST-...", "targetId": "REQ-NNN", "edgeType": "verify", "attributes": {} } } ] }`.
+3. **Check the result.** `graph_mutate` returns `{ success, tier, appliedCommands, violations }`. The gate **BLOCKS the whole batch** if it would introduce a new **error-severity** violation (`tier: "block"`, `success: false`) — it does NOT silently drop nodes/edges. Read `violations`, fix the batch (e.g. add the missing `verify`), and re-apply.
+4. **Check violations:** `rules_get_violations` — resolve any new R-01/R-02 gaps.
 5. **Open a CR** `docs/cr/open/CR-FMEA-NNN-<desc>.md` listing the new RQs, affected spec sections, and acceptance criteria (mirror `CR-FMEA-001`). Patch `specification.md` sections named in the Step-7 impact table. If the SE-schema (ElementType/TraceType/rules) changed, bump the version in `@sigloch/contracts/se/index.ts`.
 6. On completion, `git mv` the CR `open/ → done/` and commit `feat: FMEA findings for <scope> (CR-FMEA-NNN)`.
 
@@ -87,4 +91,4 @@ The FMEA is not done until findings live in the graph, not just the document.
 - **No symptom-fixes.** Mitigations address root causes (Step 4 FC), consistent with the project's Root-Cause-Debugging rule.
 - **Real sources only.** Cite datasheets/measurements; mark engineering estimates as such. Never fabricate figures.
 - **NFRs are system-wide** — do not allocate a cross-cutting failure (EMV, brownout) to a single FN if it affects the whole system (see CLAUDE.md graph rules).
-- Every FM must trace to an in-graph FN/MD; every derived RQ must end up in the graph with satisfy + verify.
+- Every FM must trace to an in-graph FUNC/MOD; every derived REQ must end up in the graph with satisfy + verify.
