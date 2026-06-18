@@ -170,6 +170,7 @@
 | `CR-GC-124` | relation | `REQ-agent-agnostic` |
 | `CR-GC-124` | relation | `REQ-single-transport` |
 | `CR-GC-125` | relation | `MOD-dashboard` |
+| `CR-GC-125` | relation | `MOD-mcp-tools` |
 | `CR-GC-125` | relation | `MS-4-mvp2` |
 | `CR-GC-125` | relation | `REQ-readiness-model` |
 | `CR-GC-126` | relation | `MOD-harness` |
@@ -386,6 +387,7 @@
 | `MOD-mcp-tools` | satisfy | `REQ-agent-agnostic` |
 | `MOD-mcp-tools` | satisfy | `REQ-export-no-clobber` |
 | `MOD-mcp-tools` | satisfy | `REQ-mcp-tool-registry` |
+| `MOD-mcp-tools` | satisfy | `REQ-readiness-model` |
 | `MOD-mcp-tools` | satisfy | `REQ-single-transport` |
 | `MS-1-specification` | compose | `UC-code-quality` |
 | `MS-1-specification` | compose | `UC-efficient-testing` |
@@ -479,6 +481,7 @@
 | `TEST-mvp-e2e` | verify | `REQ-precise-context` |
 | `TEST-mvp-e2e` | verify | `REQ-small-model-viable` |
 | `TEST-no-direct-graph-write` | verify | `REQ-gate-only-writes` |
+| `TEST-readiness-model` | verify | `REQ-readiness-model` |
 | `TEST-reduced-llm` | verify | `REQ-small-model-viable` |
 | `TEST-responsiveness` | verify | `REQ-responsiveness` |
 | `TEST-roundtrip` | verify | `REQ-deterministic-serialization` |

@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Alle Elemente nach Typ, sortiert nach uid. Deterministisch generiert.
 
-Elemente: 244 · Traces: 500
+Elemente: 245 · Traces: 503
 
 
 ## ACTOR
@@ -223,7 +223,7 @@ Elemente: 244 · Traces: 500
 | `REQ-progressive-expansion` | Progressive Query-Expansion | done | graph_expand vertieft on-demand (Kuzu-Re-Traversierung, kein Originals-Store). (R13) |
 | `REQ-quality-metric` | Messbare Code-/Tool-Qualität | open | Qualität = graph-eigene Metriken: (1) 0 error-Violations am Commit, (2) REQ→TEST-Traceability-Coverage, (3) keine Drift bei Re-Eval; gegen classic messbar. Definiert, was „exzellente Code-Qualität" (UC-code-quality) bedeutet — kein Vibe. |
 | `REQ-query-precision` | Query-Precision statt Kompression | done | graph_impact liefert exakten Blast-Radius als Format-E (Anti-grep, Ziel a). (R6/R12) |
-| `REQ-readiness-model` | Readiness-Modell definiert (Phase/Impl/INCOSE) | draft | Phase-Readiness (SRR/PDR/CDR/TRR), Implementation-Readiness-Gates (SAR/FCA/SVR/FRR) und INCOSE-Artifacts MÜSSEN für graphcode klar definiert sein — gegen @sigloch/contracts V3_RULES + die MS-Meilensteine + Element-Status, NICHT die aimprove-BQ-Heuristik. Heute unscharf/geerbt. Gate für Dashboard-Panels (CR-115) und Views (CR-110/116). |
+| `REQ-readiness-model` | Readiness-Modell definiert (Phase/Impl/INCOSE) | done | Readiness-Modell fuer graphcode, definiert gegen @sigloch/contracts V3_RULES + die MS-Meilensteine + Element-Status (keine aimprove-BQ-Heuristik). INCOSE-Scope LEAN: der gegatete Graph ist das einzige SE-Artefakt. Phase-Readiness SRR/PDR/CDR/TRR ist eine disjunkte, vollstaendige Partition der 15 Element-Regeln; Implementation-Readiness SAR/FCA/SVR/FRR bindet die Meilenstein-Tiers MS-1..4 (ready wenn zugeordnete CRs done + Scope fehlerfrei) und deckt die 2 MS-Regeln ab. Realisiert im Scorer src/readiness.ts, exponiert ueber graph_readiness. (CR-GC-125) |
 | `REQ-readonly-bridge` | Read-only Bridge | open | Bridge read-only; keine Inbound-Mutations, Writes nur via MCP→mutate(). (RECOMMENDATIONS) |
 | `REQ-repo-install` | Ein-Kommando-Installation | done | Installation der Harness in ein beliebiges Repo mit einem Kommando: scaffolds .graphcode/, .claude/hooks, .mcp.json, Controller. |
 | `REQ-repo-uninstall` | Restlose Deinstallation | open | Deinstallation entfernt alle installierten Artefakte ohne Residuen. |
@@ -295,6 +295,7 @@ Elemente: 244 · Traces: 500
 | `TEST-mutate-gate` | mutate()-Gate Unit-Test | done | mutate() wendet an, gibt Violations zurück, blockt bei error-Severity. (FCHAIN-apply-gate) |
 | `TEST-mvp-e2e` | MVP-1 E2E Acceptance | done | End-to-End-Akzeptanz des MVP-1-Loops: neues Mitglied bootstrappen, Knoten durchs Gate spec’en, graph_impact liefert exakt den Blast-Radius (KNOW statt grep), Knoten implementieren, re-exportieren. Disk-Kuzu, keine Mocks. (CR-GC-123) |
 | `TEST-no-direct-graph-write` | No-Direct-Graph-Write-Test | open | Direkter Edit/Write auf den committeten SSOT wird von der Harness verweigert; graph_mutate (MCP) gelingt + ist gate-validiert; CI verwirft hand-editiertes (Nicht-Export) JSON. (CR-GC-201) |
+| `TEST-readiness-model` | Readiness-Modell-Test | done | Acceptance-Test fuer das Readiness-Modell: INCOSE-Scope lean, Phase-Gates SRR/PDR/CDR/TRR als disjunkte und vollstaendige Partition der V3_RULES, Impl-Gates SAR/FCA/SVR/FRR aus MS + CR-Status; deterministische Unit-Faelle + SSOT-Integration, niemals BQ. (CR-GC-125) |
 | `TEST-reduced-llm` | Modellfrei-Gate-Test | open | Gate/Regel-Evaluation läuft ohne Modell-Call (localReachable=false) deterministisch; nur LLM-Zusatzfeatures degradieren. |
 | `TEST-responsiveness` | Responsiveness-Test (<0,2s) | open | Draft-Apply + betroffener-Subgraph-Check antwortet < 0,2s (ohne LLM). (FCHAIN-apply-gate NFR) |
 | `TEST-roundtrip` | Format-E Round-Trip Conformance | done | decode(encode(g))==g; zwei Encodes byte-identisch. (FCHAIN-codec-roundtrip) |

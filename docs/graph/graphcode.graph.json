@@ -2275,9 +2275,12 @@
       "id": "REQ-readiness-model",
       "type": "REQ",
       "name": "Readiness-Modell definiert (Phase/Impl/INCOSE)",
-      "description": "Phase-Readiness (SRR/PDR/CDR/TRR), Implementation-Readiness-Gates (SAR/FCA/SVR/FRR) und INCOSE-Artifacts MÜSSEN für graphcode klar definiert sein — gegen @sigloch/contracts V3_RULES + die MS-Meilensteine + Element-Status, NICHT die aimprove-BQ-Heuristik. Heute unscharf/geerbt. Gate für Dashboard-Panels (CR-115) und Views (CR-110/116).",
-      "status": "draft",
-      "created_at": "2026-06-17T00:00:00.000Z"
+      "description": "Readiness-Modell fuer graphcode, definiert gegen @sigloch/contracts V3_RULES + die MS-Meilensteine + Element-Status (keine aimprove-BQ-Heuristik). INCOSE-Scope LEAN: der gegatete Graph ist das einzige SE-Artefakt. Phase-Readiness SRR/PDR/CDR/TRR ist eine disjunkte, vollstaendige Partition der 15 Element-Regeln; Implementation-Readiness SAR/FCA/SVR/FRR bindet die Meilenstein-Tiers MS-1..4 (ready wenn zugeordnete CRs done + Scope fehlerfrei) und deckt die 2 MS-Regeln ab. Realisiert im Scorer src/readiness.ts, exponiert ueber graph_readiness. (CR-GC-125)",
+      "status": "done",
+      "created_at": "2026-06-17T00:00:00.000Z",
+      "kinds": [
+        "functional"
+      ]
     },
     {
       "id": "CR-GC-125",
@@ -2526,6 +2529,14 @@
       "name": "graph_export refuse-to-clobber guard",
       "description": "Empty- + Net-Deletion-Guard im MCP graph_export, force:true Opt-in; spiegelt die Guards von scripts/export-graph.mjs, macht Drift laut statt still. (docs/cr/open/CR-GC-202)",
       "status": "open",
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "id": "TEST-readiness-model",
+      "type": "TEST",
+      "name": "Readiness-Modell-Test",
+      "description": "Acceptance-Test fuer das Readiness-Modell: INCOSE-Scope lean, Phase-Gates SRR/PDR/CDR/TRR als disjunkte und vollstaendige Partition der V3_RULES, Impl-Gates SAR/FCA/SVR/FRR aus MS + CR-Status; deterministische Unit-Faelle + SSOT-Integration, niemals BQ. (CR-GC-125)",
+      "status": "done",
       "created_at": "2026-06-18T00:00:00.000Z"
     }
   ],
@@ -6019,6 +6030,27 @@
       "source": "MS-4-mvp2",
       "target": "REQ-shared-views-no-fork",
       "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-readiness-model",
+      "target": "REQ-readiness-model",
+      "type": "verify",
+      "weight": 1,
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "MOD-mcp-tools",
+      "target": "REQ-readiness-model",
+      "type": "satisfy",
+      "weight": 1,
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-125",
+      "target": "MOD-mcp-tools",
+      "type": "relation",
       "weight": 1,
       "created_at": "2026-06-18T00:00:00.000Z"
     }

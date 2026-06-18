@@ -445,10 +445,13 @@ export function bindToolsToHarness(
   const graph_readiness: MCPTool<z.infer<typeof GraphReadinessInputSchema>, ReadinessReport> = {
     name: 'graph_readiness',
     description:
-      'Score family readiness of the live governed graph (FUNC-score-readiness / CR-GC-107). ' +
+      'Score family readiness of the live governed graph (FUNC-score-readiness / CR-GC-107 + CR-GC-125). ' +
       'Returns the ReadinessReport: compliance dimension (fraction of elements with no error-severity ' +
-      'violation), violationsByRule (keyed by contracts rule-ID — R-/RD-, never BQ-*), the sorted raw ' +
-      'violations, and computedAt. Read-only; derived from harness.evaluateRules() (L2 gate).',
+      'violation); incoseScope (graphcode = lean); phaseGates SRR/PDR/CDR/TRR (INCOSE technical reviews, ' +
+      'a disjoint partition of the element-level V3_RULES); implGates SAR/FCA/SVR/FRR (milestone tiers ' +
+      'MS-1..4, ready iff assigned CRs are done + scope error-clean); violationsByRule (keyed by contracts ' +
+      'rule-ID — R-/RD-/MS-, never BQ-*); the sorted raw violations; and computedAt. Read-only; derived ' +
+      'from harness.evaluateRules() (L2 gate) + the MS nodes + element status.',
     inputSchema: GraphReadinessInputSchema,
     async handler(_input) {
       return scoreReadiness(harness);
