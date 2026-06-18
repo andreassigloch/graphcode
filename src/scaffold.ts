@@ -22,11 +22,13 @@
  *
  * @author andreas@siglochconsulting
  */
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import {
   existsSync,
   mkdirSync,
   readFileSync,
+  readdirSync,
   writeFileSync,
   rmSync,
 } from 'node:fs';
@@ -42,6 +44,27 @@ const PACKAGE_RANGE = '^0.1.0';
 const GRAPHCODE_DIR = '.graphcode';
 const MCP_CONFIG = '.mcp.json';
 const GUARDRAILS_FILE = 'GRAPHCODE.md';
+/** Where the SE skills land in the target repo (and ship from in this package). */
+const SKILLS_DIR = join('.claude', 'skills');
+
+/**
+ * The `.claude/skills/` directory shipped INSIDE this package, resolved relative to
+ * this module so it works both in dev (`src/scaffold.ts` → repo root) and bundled
+ * (`dist/cli.js` / `dist/index.js` → package root). The skills are listed in
+ * package.json `files`, so the npm tarball carries them (REQ-self-contained-dist).
+ */
+function packagedSkillsDir(): string {
+  return join(dirname(fileURLToPath(import.meta.url)), '..', SKILLS_DIR);
+}
+
+/** The `se-*.md` skill files this package ships (empty if the dir is absent). */
+function shippedSkillFiles(): string[] {
+  const dir = packagedSkillsDir();
+  if (!existsSync(dir)) return [];
+  return readdirSync(dir)
+    .filter((f) => f.startsWith('se-') && f.endsWith('.md'))
+    .sort();
+}
 
 /** `CliCommand` (SCHEMA-cli-command) — the npx-CLI verbs this installer dispatches. */
 export const CliCommandSchema = z.enum(['init', 'update', 'remove']);
@@ -86,6 +109,7 @@ function guardrailsContent(): string {
     '  Never edited by hand; the store inits lazily on first `graphcode mcp`.',
     '- `.mcp.json` — tells the agent host (Claude Code, OpenCode, …) to launch the',
     `  server via \`npx -y ${PACKAGE_NAME} mcp\`.`,
+    '- `.claude/skills/se-*.md` — the SE skills (fmea/review/status + the views), MCP-driven.',
     '',
     '## Rules',
     '',
@@ -167,6 +191,43 @@ function removeArtifact(abs: string, rel: string, res: InstallResult): void {
 }
 
 /**
+ * Copy the package's shipped `se-*.md` skills into the target repo's `.claude/skills/`.
+ * Idempotent (byte-identical re-write = `preserved`). The se-* skills are now MCP-driven
+ * (CR-GC-130/131/132); without this a freshly-init'd member repo has none of them.
+ */
+function installSkills(repoRoot: string, res: InstallResult): void {
+  const srcDir = packagedSkillsDir();
+  const files = shippedSkillFiles();
+  if (files.length === 0) return; // skills not packaged — substrate still installs.
+  const destDir = join(repoRoot, SKILLS_DIR);
+  mkdirSync(destDir, { recursive: true });
+  for (const f of files) {
+    const content = readFileSync(join(srcDir, f), 'utf8');
+    writeArtifact(join(destDir, f), join(SKILLS_DIR, f), content, res);
+  }
+}
+
+/**
+ * Remove the graphcode-shipped skills restlos — only the `se-*.md` files this package
+ * owns (never a member's own skills). Prune `.claude/skills` / `.claude` only when WE
+ * emptied them.
+ */
+function removeSkills(repoRoot: string, res: InstallResult): void {
+  const destDir = join(repoRoot, SKILLS_DIR);
+  if (!existsSync(destDir)) return;
+  for (const f of shippedSkillFiles()) {
+    removeArtifact(join(destDir, f), join(SKILLS_DIR, f), res);
+  }
+  if (readdirSync(destDir).length === 0) {
+    rmSync(destDir, { recursive: true, force: true });
+    const claudeDir = join(repoRoot, '.claude');
+    if (existsSync(claudeDir) && readdirSync(claudeDir).length === 0) {
+      rmSync(claudeDir, { recursive: true, force: true });
+    }
+  }
+}
+
+/**
  * Scaffold the harness into `opts.repoRoot`.
  *
  * - `init`   : create `.graphcode/`, write `.mcp.json` + guardrails, register the
@@ -205,6 +266,7 @@ export async function scaffold(
       }
       writeArtifact(mcpAbs, MCP_CONFIG, mcpConfigContent(), res);
       writeArtifact(guardrailsAbs, GUARDRAILS_FILE, guardrailsContent(), res);
+      installSkills(repoRoot, res);
       registerDependency(repoRoot, res);
       return res;
     }
@@ -221,6 +283,7 @@ export async function scaffold(
       }
       writeArtifact(mcpAbs, MCP_CONFIG, mcpConfigContent(), res);
       writeArtifact(guardrailsAbs, GUARDRAILS_FILE, guardrailsContent(), res);
+      installSkills(repoRoot, res);
       registerDependency(repoRoot, res);
       return res;
     }
@@ -230,6 +293,7 @@ export async function scaffold(
       removeArtifact(graphcodeAbs, GRAPHCODE_DIR + '/', res);
       removeArtifact(mcpAbs, MCP_CONFIG, res);
       removeArtifact(guardrailsAbs, GUARDRAILS_FILE, res);
+      removeSkills(repoRoot, res);
       unregisterDependency(repoRoot, res);
       return res;
     }

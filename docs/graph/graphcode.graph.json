@@ -2431,6 +2431,21 @@
         "constraint": "skills-off-dead-api-on-mcp"
       },
       "updated_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "id": "TEST-scaffold-skills",
+      "type": "TEST",
+      "name": "Scaffold-Installs-Skills-Test",
+      "description": "graphcode init/update kopiert die 9 mitgelieferten .claude/skills/se-*.md in das Ziel-Repo, remove entfernt sie restlos (nur die graphcode-eigenen); end-to-end ueber den gepackten Tarball in einem Fremd-Repo verifiziert. Schliesst die MOD-skills/CR-GC-104-Drift: FUNC-harness-cli managt .claude/skills/. (CR-GC-133)",
+      "status": "done",
+      "created_at": "2026-06-18T00:00:00.000Z",
+      "method": "test",
+      "attributes": {
+        "level": "integration",
+        "tool": "vitest",
+        "constraint": "skills-shipped-and-scaffolded"
+      },
+      "updated_at": "2026-06-18T00:00:00.000Z"
     }
   ],
   "traces": [
@@ -5803,6 +5818,13 @@
     {
       "source": "TEST-skills-mcp",
       "target": "REQ-doc-export",
+      "type": "verify",
+      "weight": 1,
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-scaffold-skills",
+      "target": "REQ-repo-install",
       "type": "verify",
       "weight": 1,
       "created_at": "2026-06-18T00:00:00.000Z"

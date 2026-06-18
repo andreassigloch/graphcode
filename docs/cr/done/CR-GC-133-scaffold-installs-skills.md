@@ -1,6 +1,6 @@
 # CR-GC-133: scaffold installs the SE skills into the target repo
 
-**Status:** Open · **Milestone:** `MS-3-mvp-readiness` (skills completion) · **Datum:** 2026-06-18 · **Max Files:** 5
+**Status:** Done · **Milestone:** `MS-3-mvp-readiness` (skills completion) · **Datum:** 2026-06-18 · **Max Files:** 5
 **Graph (SSOT):** refines `FUNC-harness-cli` (`MOD-cli`) to manage `.claude/skills/` per `MOD-skills` / CR-GC-104; adds `TEST-scaffold-skills`. Pointer — derive acceptance from the graph.
 
 ## Problem (Why)

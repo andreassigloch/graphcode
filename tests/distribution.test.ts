@@ -142,6 +142,9 @@ describe('TEST-distribution: self-contained npx distribution', () => {
         expect(existsSync(join(foreign, '.mcp.json'))).toBe(true);
         expect(existsSync(join(foreign, '.graphcode'))).toBe(true);
         expect(existsSync(join(foreign, 'GRAPHCODE.md'))).toBe(true);
+        // CR-GC-133: the SE skills ship in the tarball and init copies them in — proven
+        // end-to-end through a real foreign install (skills resolved relative to the bundle).
+        expect(existsSync(join(foreign, '.claude', 'skills', 'se-fmea.md'))).toBe(true);
         const mcp = JSON.parse(readFileSync(join(foreign, '.mcp.json'), 'utf8')) as {
           mcpServers: { graphcode: { command: string; args: string[] } };
         };

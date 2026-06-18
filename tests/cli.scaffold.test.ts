@@ -17,12 +17,18 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { mkdtempSync, rmSync, existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { readdirSync } from 'node:fs';
 import { scaffold, InstallResultSchema, CliCommandSchema } from '../src/scaffold.js';
 import { KUZU_DIR } from '../src/index.js';
 
 const MCP = '.mcp.json';
 const GUARDRAILS = 'GRAPHCODE.md';
 const PKG = '@sigloch/graphcode';
+const SKILLS_DIR = join('.claude', 'skills');
+/** The se-*.md skills this package ships — the source of truth the scaffold copies from. */
+const SHIPPED_SKILLS = readdirSync(join(__dirname, '..', '.claude', 'skills'))
+  .filter((f) => f.startsWith('se-') && f.endsWith('.md'))
+  .sort();
 
 describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
   let repo: string;
@@ -64,6 +70,23 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
     expect(res.removed).toEqual([]);
   });
 
+  it('init installs the MCP-driven SE skills (CR-GC-133)', async () => {
+    expect(SHIPPED_SKILLS.length).toBe(9); // the 9 se-* skills migrated in CR-GC-130/131/132.
+    const res = await scaffold('init', { repoRoot: repo });
+
+    // Every shipped skill lands in the target repo, byte-identical to the source.
+    for (const f of SHIPPED_SKILLS) {
+      const dest = join(repo, SKILLS_DIR, f);
+      expect(existsSync(dest)).toBe(true);
+      expect(readFileSync(dest, 'utf8')).toBe(
+        readFileSync(join(__dirname, '..', '.claude', 'skills', f), 'utf8'),
+      );
+      expect(res.created).toContain(join(SKILLS_DIR, f));
+    }
+    // No stray files in the scaffolded skills dir.
+    expect(readdirSync(join(repo, SKILLS_DIR)).sort()).toEqual(SHIPPED_SKILLS);
+  });
+
   it('init is idempotent — second run is stable, nothing duplicated/corrupted (REQ-install-idempotent)', async () => {
     await scaffold('init', { repoRoot: repo });
     const mcpAfterFirst = readFileSync(join(repo, MCP), 'utf8');
@@ -80,11 +103,17 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
     const occurrences = Object.keys(pkg.dependencies).filter((k) => k === PKG).length;
     expect(occurrences).toBe(1);
 
-    // Second run created nothing new; everything is preserved.
+    // Second run created nothing new; everything is preserved — including every skill.
     expect(second.created).toEqual([]);
     expect(second.updated).toEqual([]);
     expect(second.preserved).toEqual(
-      expect.arrayContaining(['.graphcode/', MCP, GUARDRAILS, 'package.json']),
+      expect.arrayContaining([
+        '.graphcode/',
+        MCP,
+        GUARDRAILS,
+        'package.json',
+        ...SHIPPED_SKILLS.map((f) => join(SKILLS_DIR, f)),
+      ]),
     );
   });
 
@@ -127,12 +156,33 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
     expect(existsSync(join(repo, MCP))).toBe(false);
     expect(existsSync(join(repo, GUARDRAILS))).toBe(false);
 
+    // Skills removed restlos; the emptied `.claude/skills` + `.claude` are pruned too.
+    for (const f of SHIPPED_SKILLS) {
+      expect(existsSync(join(repo, SKILLS_DIR, f))).toBe(false);
+      expect(res.removed).toContain(join(SKILLS_DIR, f));
+    }
+    expect(existsSync(join(repo, '.claude'))).toBe(false);
+
     // Dependency stripped from package.json (the file itself stays).
     const pkg = JSON.parse(readFileSync(join(repo, 'package.json'), 'utf8'));
     expect(pkg.dependencies?.[PKG]).toBeUndefined();
 
     expect(res.action).toBe('remove');
     expect(res.removed).toEqual(expect.arrayContaining(['.graphcode/', MCP, GUARDRAILS]));
+  });
+
+  it('remove preserves a member\'s own non-graphcode skills (only se-* are ours)', async () => {
+    await scaffold('init', { repoRoot: repo });
+    // A skill the member authored — graphcode must NOT delete it.
+    const own = join(repo, SKILLS_DIR, 'my-own-skill.md');
+    writeFileSync(own, '# mine\n', 'utf8');
+
+    await scaffold('remove', { repoRoot: repo });
+
+    // Our se-* skills are gone; the member's skill (and the dir) survive.
+    expect(existsSync(join(repo, SKILLS_DIR, SHIPPED_SKILLS[0]))).toBe(false);
+    expect(existsSync(own)).toBe(true);
+    expect(existsSync(join(repo, SKILLS_DIR))).toBe(true);
   });
 
   it('remove is idempotent — a clean repo removes nothing without erroring', async () => {
