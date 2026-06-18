@@ -3,38 +3,22 @@ name: se-view:implplan
 description: Show implementation plan structure and milestone status
 ---
 
-Read `docs/views/implementation-plan.md` and present a structured summary:
+Render the implementation plan from the live graph — the graph is the SSOT; graphcode has no view endpoint, the agent renders it. Fetch over MCP:
 
-## 1. Meilenstein-Status (Gate Reviews)
+1. `graph_elements` `{ "type": "MS" }` — milestones and their `status` (draft / open / done).
+2. `graph_elements` `{ "type": "CR" }` — change requests and their `status` (open / done).
+3. `graph_get_edges` `{ "edgeType": "relation" }` — CR→MS assignments and MS→MS `depends-on` links (read each edge `label`).
+4. `graph_get_edges` `{ "edgeType": "compose" }` — the FUNC/REQ/UC each MS includes (its scope).
 
-For each milestone (M0-M8):
-- Entry: vorheriger Meilenstein
-- CRs: zugeordnete Change Requests mit Reihenfolge-Constraints
-- Nachweis: IT-Testdatei(en) + verifizierte RQs (aus test-concept.md §3)
-- Status: OFFEN / IN ARBEIT / GRUEN (basierend auf CR-Status in docs/cr/)
+Present a structured summary:
 
-## 2. Abhaengigkeitsgraph
+## 1. Meilenstein-Status
+Per `MS`: entry milestone (its `depends-on` predecessor), assigned CRs (CR→MS relation) with their status, included REQ/FUNC/UC (compose), and a status of OFFEN / IN ARBEIT / GRÜN derived from the MS status plus the share of its CRs that are done.
 
-Render the mermaid graph showing CR-Dependencies AND milestone gate chain.
+## 2. Abhängigkeitsgraph
+A Mermaid `graph LR` of CR→MS assignments and the MS→MS `depends-on` gate chain. Keep node labels free of `(`, `)`, and `|` — those blank the whole diagram; use uids or plain names.
 
 ## 3. Abdeckung
+Roll-up: which FUNC / MOD / REQ / UC are assigned to a milestone (via MS `compose`), and which are unassigned (the gaps).
 
-Summarize coverage tables: FN/MD/FL/SC/UC → Meilenstein + CR.
-Highlight gaps (elements without milestone assignment).
-
-## Dokumentaufbau (normativ)
-
-| Sektion | Inhalt | Normativ? |
-|---------|--------|-----------|
-| 1. Meilensteine (Gate Reviews) | M0-M8 Tabelle + CR-Details pro Meilenstein | Ja (Single Source of Truth fuer Meilensteine) |
-| 2. Abhaengigkeitsgraph | Mermaid: CR-Abhaengigkeiten + Milestone-Gate-Kette | Ja |
-| 3. Abdeckungscheck | FN/MD/FL/SC/UC → Meilenstein/CR Zuordnung | Ja (Vollstaendigkeitspruefung) |
-
-**Regeln:**
-- Verifikationskriterien leben NUR im test-concept.md (keine Doppelpflege)
-- Risiken/Mitigationen gehoeren in die einzelnen CRs oder ins test-concept, nicht hierher
-- Prosa nur als HTML-Kommentare (Lesehilfe, nicht normativ)
-- Jeder Meilenstein verweist auf IT-Tests + RQs im test-concept
-- Neue CRs muessen einem Meilenstein zugeordnet werden
-- Neue Meilensteine brauchen einen IT-Test-Block im test-concept
-- Phasen existieren nicht als eigenstaendiges Konzept — die Meilensteine SIND die Phasen
+Derive everything from the graph queries above — do not read a hand-maintained plan doc.

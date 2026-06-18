@@ -1,6 +1,6 @@
 # CR-GC-132: adopt view skills B (testmatrix/testconcept/implplan) + skills conformance
 
-**Status:** Open · **Milestone:** `MS-3-mvp-readiness` (skills completion) · **Datum:** 2026-06-18 · **Max Files:** 5
+**Status:** Done · **Milestone:** `MS-3-mvp-readiness` (skills completion) · **Datum:** 2026-06-18 · **Max Files:** 5
 **Graph (SSOT):** realizes `MOD-skills` (functional) for the remaining views + adds `TEST-skills-mcp`; marks `MOD-skills` done. Pointer — derive acceptance from the graph.
 
 ## Problem (Why)

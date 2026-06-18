@@ -67,8 +67,9 @@
       "type": "MOD",
       "name": "skills/prompts — agent-realisierte Funktionen",
       "description": "App-spezifisches Modul: .claude/skills/ (+ Prompts) — Skill-/Prompt-Definitionen als agent-ausgeführte Funktionen (z.B. se-view-* Graph→Markdown-Views). Lifecycle via FUNC-harness-cli. Allokation hierher = prompt-realisiert (vs. code-realisiert in den übrigen MODs). Beweis: Skills = Funktionen.",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "status": "done",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "updated_at": "2026-06-18T00:00:00.000Z"
     },
     {
       "id": "ACTOR-claude-code",
@@ -2413,6 +2414,21 @@
         "level": "integration",
         "tool": "vitest",
         "constraint": "readiness-reachable-over-mcp"
+      },
+      "updated_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "id": "TEST-skills-mcp",
+      "type": "TEST",
+      "name": "Skills-MCP-Conformance-Test",
+      "description": "Alle 9 .claude/skills/se-*.md sind MCP-getrieben: 0 Treffer fuer die abgeschaltete localhost:3001-API (/api/graph, /api/dashboard, GRAPH_API) und jedes Skill referenziert >=1 Tool aus der Live-Registry. \"done = verifiziert\" fuer die prompt-realisierten FUNCs von MOD-skills (se-view-* → REQ-doc-export). (CR-GC-132)",
+      "status": "done",
+      "created_at": "2026-06-18T00:00:00.000Z",
+      "method": "test",
+      "attributes": {
+        "level": "integration",
+        "tool": "vitest",
+        "constraint": "skills-off-dead-api-on-mcp"
       },
       "updated_at": "2026-06-18T00:00:00.000Z"
     }
@@ -5780,6 +5796,13 @@
     {
       "source": "TEST-mcp-readiness",
       "target": "REQ-mcp-tool-registry",
+      "type": "verify",
+      "weight": 1,
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-skills-mcp",
+      "target": "REQ-doc-export",
       "type": "verify",
       "weight": 1,
       "created_at": "2026-06-18T00:00:00.000Z"
