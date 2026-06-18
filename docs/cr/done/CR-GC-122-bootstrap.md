@@ -1,6 +1,6 @@
 # CR-GC-122: New-Member Bootstrap durchs Gate (Format-E Cold-Start)
 
-**Status:** Open · **Milestone:** `MS-3-mvp-readiness` (Phase 1) · **Datum:** 2026-06-17 · **Max Files:** 5
+**Status:** Done · **Closed:** 2026-06-18 · **Milestone:** `MS-3-mvp-readiness` (Phase 1) · **Datum:** 2026-06-17 · **Max Files:** 5
 **Graph (SSOT):** realisiert `FUNC-import`, `REQ-bootstrap-through-gate`. Spec lebt im Graphen (`docs/graph/graphcode.graph.json`); diese Datei = Pointer.
 
 ## Problem / Scope
