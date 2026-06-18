@@ -1,6 +1,6 @@
 # CR-GC-131: adopt view skills A (arch/nfr/trade) to MCP
 
-**Status:** Open · **Milestone:** `MS-3-mvp-readiness` (skills completion) · **Datum:** 2026-06-18 · **Max Files:** 3
+**Status:** Done · **Milestone:** `MS-3-mvp-readiness` (skills completion) · **Datum:** 2026-06-18 · **Max Files:** 3
 **Graph (SSOT):** realizes `MOD-skills` (functional) for `FUNC-render-views` on these views. Pointer — derive acceptance from the graph.
 
 ## Problem (Why)
