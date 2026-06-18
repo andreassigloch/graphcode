@@ -1,6 +1,6 @@
 # CR-GC-113: Graph→Markdown Re-Exporter
 
-**Status:** Open · **Milestone:** `MS-3-mvp-readiness` (Phase 1) · **Datum:** 2026-06-17 · **Max Files:** 5
+**Status:** Done · **Closed:** 2026-06-18 · **Milestone:** `MS-3-mvp-readiness` (Phase 1) · **Datum:** 2026-06-17 · **Max Files:** 5
 **Graph (SSOT):** Spec lebt im Graphen — dieser CR realisiert: `MS-3-mvp-readiness`, `MOD-docs`, `FUNC-export-markdown`, `REQ-doc-export`, `REQ-pre-export-markdown`, `REQ-post-export-markdown`.
 Siehe `docs/graph/graphcode.graph.json`. Diese Datei ist nur Pointer, nicht autoritativ.
 
