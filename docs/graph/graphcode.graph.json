@@ -806,7 +806,7 @@
       "type": "REQ",
       "name": "Dashboard/Readiness nutzt SE-Ontologie + V3_RULES",
       "description": "Das Dashboard/Readiness-Scorer MUSS gegen @sigloch/contracts Ontologie + V3_RULES evaluieren (via harness.evaluateRules, L2) — nicht die aimprove-Vorgänger-Regeln (rules 2.0.0, BQ-06/BQ-02 INCOSE). Heutige 155 BQ-Warnungen messen unsere REQs gegen eine Fremd-Regelbasis; nach Adoption echte Familie-Compliance. (NEXT REQ 2026-06-17)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
         "functional"
@@ -2076,7 +2076,7 @@
       "type": "MS",
       "name": "M3: MVP Readiness",
       "description": "Realisiert die spezifizierten-aber-unrealisierten Knoten (CLI, MCP-Server, Re-Exporter, Views) + das Live-Dashboard (Hybrid: graphcode-owned, komponiert aus @sigloch/graph-renderer + dashboard-shell + graph-api-express+SSE, V3_RULES-gescort). Schließt F4/F5/F6. (Diskussion 2026-06-17)",
-      "status": "draft",
+      "status": "done",
       "created_at": "2026-06-17T00:00:00.000Z"
     },
     {
@@ -2140,7 +2140,7 @@
       "type": "CR",
       "name": "MCP-stdio-Server + bin (graphcode mcp)",
       "description": "bindToolsToHarness an StdioServer, gate-symmetrisch (L2); .mcp.json + Hooks neu verdrahten. (docs/cr/open/CR-GC-111)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-17T00:00:00.000Z"
     },
     {
@@ -2148,7 +2148,7 @@
       "type": "CR",
       "name": "CLI graphcode init|update|remove",
       "description": "Neues Projekt scaffolden (.graphcode/, Seed-Import). (docs/cr/open/CR-GC-112) MVP: init eines NEUEN Mitglieds = leerer/Template-Graph + .mcp.json (graphcode mcp) + Guardrails + Deps.",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-17T00:00:00.000Z"
     },
     {
@@ -2156,7 +2156,7 @@
       "type": "CR",
       "name": "Graph→Markdown Re-Exporter",
       "description": "Kuzu/Graph → commit-fähige docs (SSOT-Round-Trip); ersetzt Hand-Edits. (docs/cr/open/CR-GC-113)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-17T00:00:00.000Z"
     },
     {
@@ -2220,7 +2220,7 @@
       "type": "CR",
       "name": "Query-Layer: Cypher, korrekte Impact-Richtung (KNOW statt guess)",
       "description": "graph_impact/expand/elements über Kuzu-Cypher statt TS-BFS; korrekte Blast-Radius-Richtung (eingehende Caller/Traces/Tests); TS-Mirror als Read-Pfad retiren. Major target: die richtigen Elemente WISSEN (Graph), nicht raten (grep). (SP-1/SP-2)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-17T00:00:00.000Z"
     },
     {
@@ -2236,7 +2236,7 @@
       "type": "CR",
       "name": "Distribution: npx-Paket, self-contained, agent-agnostic",
       "description": "graphcode als npm-Paket mit bin `npx @sigloch/graphcode init|update|remove`; versionierte (nicht file:) Deps fürs Publish; in beliebigem Fremd-Repo lauffähig. Voraussetzung fürs „neues Repo anlegen\".",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-17T00:00:00.000Z"
     },
     {
@@ -2244,7 +2244,7 @@
       "type": "CR",
       "name": "New-Member Bootstrap durchs Gate (Format-E Cold-Start)",
       "description": "Leeren Graphen eines NEUEN Familie-Mitglieds ausschließlich durchs mutate()-Gate befüllen (Quelle Format-E, kein Direct-Write); Cold-Start mit Template-SYS. Realisiert TEST-bootstrap.",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-17T00:00:00.000Z"
     },
     {
@@ -2252,7 +2252,7 @@
       "type": "CR",
       "name": "MVP E2E-Acceptance: bootstrap → spec → KNOW-query → implement → re-export",
       "description": "End-to-End-Validierung der MVP-Definition: in einem Wegwerf-Repo ein neues Mitglied bootstrappen, ein paar Knoten durchs Gate spec’en, beweisen dass graph_impact die RICHTIGEN Elemente liefert (nicht grep), einen Knoten implementieren, re-exportieren. Realisiert die UC-Tests.",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-17T00:00:00.000Z"
     },
     {
@@ -2446,6 +2446,87 @@
         "constraint": "skills-shipped-and-scaffolded"
       },
       "updated_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "id": "REQ-graph-integrity",
+      "type": "REQ",
+      "name": "Graph-Integritaet: ein Validator",
+      "description": "Ein Validierungs-Pfad: GraphCodeCodec.validate() erkennt zusaetzlich doppelte UIDs (nodeTypeMap dedupt heute still) + referenzielle Integritaet; kein inline validPairs-Klon ausserhalb des Codecs (keine parallelen Pfade). (CR-GC-200)",
+      "status": "open",
+      "created_at": "2026-06-18T00:00:00.000Z",
+      "kinds": [
+        "non-functional"
+      ]
+    },
+    {
+      "id": "TEST-graph-integrity",
+      "type": "TEST",
+      "name": "Graph-Integritaets-Test",
+      "description": "validate() flaggt doppelte UIDs + alles bisher Abgedeckte (Typen, Edge-Pairs, referenzielle Integritaet); Integritaets-Test delegiert an validate(). (CR-GC-200)",
+      "status": "open",
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-200",
+      "type": "CR",
+      "name": "Single graph-validator - uniqueness + de-dup",
+      "description": "Ein Validierungs-Pfad: validate() erkennt doppelte UIDs; kein hand-gerollter validPairs-Klon in src/scripts/tests. (docs/cr/open/CR-GC-200)",
+      "status": "open",
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "id": "REQ-gate-only-writes",
+      "type": "REQ",
+      "name": "Gate-only Graph-Writes",
+      "description": "Agent kann den SSOT nicht hand-editieren; jeder Write durch graph_mutate (mutate-Gate, L1). Deny-Rule + PreToolUse-Hook auf Edit/Write von docs/graph/*.graph.json + .graphcode/kuzu; JSON ist generierter Export, Live-Truth ist Kuzu. (CR-GC-201)",
+      "status": "open",
+      "created_at": "2026-06-18T00:00:00.000Z",
+      "kinds": [
+        "non-functional"
+      ]
+    },
+    {
+      "id": "TEST-no-direct-graph-write",
+      "type": "TEST",
+      "name": "No-Direct-Graph-Write-Test",
+      "description": "Direkter Edit/Write auf den committeten SSOT wird von der Harness verweigert; graph_mutate (MCP) gelingt + ist gate-validiert; CI verwirft hand-editiertes (Nicht-Export) JSON. (CR-GC-201)",
+      "status": "open",
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-201",
+      "type": "CR",
+      "name": "Enforce gate-only graph writes",
+      "description": "Deny direkte SSOT-Edits (Deny-Rule + PreToolUse-Hook); landet MIT CR-111/CR-113, sonst alle Graph-Edits blockiert. (docs/cr/open/CR-GC-201)",
+      "status": "open",
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "id": "REQ-export-no-clobber",
+      "type": "REQ",
+      "name": "Export refuse-to-clobber",
+      "description": "graph_export verweigert, wenn es committete Elemente/Traces droppen wuerde: Empty-Guard (0 Elemente) + Net-Deletion-Guard (Diff gegen committetes JSON); force:true als explizites Opt-in fuer beabsichtigte Loeschungen. Sicherheitsnetz gegen stale/parallel-writer Clobber. (CR-GC-202)",
+      "status": "open",
+      "created_at": "2026-06-18T00:00:00.000Z",
+      "kinds": [
+        "non-functional"
+      ]
+    },
+    {
+      "id": "TEST-mcp-export-guard",
+      "type": "TEST",
+      "name": "MCP-Export-Guard-Test",
+      "description": "graph_export: (a) leerer Graph -> refuse, (b) wuerde committetes Element droppen -> refuse + Datei unangetastet, (c) force:true -> overwrite; Fresh-File-Export weiterhin gruen. (CR-GC-202)",
+      "status": "open",
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-202",
+      "type": "CR",
+      "name": "graph_export refuse-to-clobber guard",
+      "description": "Empty- + Net-Deletion-Guard im MCP graph_export, force:true Opt-in; spiegelt die Guards von scripts/export-graph.mjs, macht Drift laut statt still. (docs/cr/open/CR-GC-202)",
+      "status": "open",
+      "created_at": "2026-06-18T00:00:00.000Z"
     }
   ],
   "traces": [
@@ -4921,27 +5002,6 @@
       "created_at": "2026-06-17T00:00:00.000Z"
     },
     {
-      "source": "MS-3-mvp-readiness",
-      "target": "UC-live-graph-view",
-      "type": "compose",
-      "weight": 1,
-      "created_at": "2026-06-17T00:00:00.000Z"
-    },
-    {
-      "source": "MS-3-mvp-readiness",
-      "target": "REQ-live-event-in-contracts",
-      "type": "compose",
-      "weight": 1,
-      "created_at": "2026-06-17T00:00:00.000Z"
-    },
-    {
-      "source": "MS-3-mvp-readiness",
-      "target": "REQ-shared-views-no-fork",
-      "type": "compose",
-      "weight": 1,
-      "created_at": "2026-06-17T00:00:00.000Z"
-    },
-    {
       "source": "SYS-graphcode",
       "target": "UC-live-graph-view",
       "type": "compose",
@@ -5826,6 +5886,139 @@
       "source": "TEST-scaffold-skills",
       "target": "REQ-repo-install",
       "type": "verify",
+      "weight": 1,
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "REQ-graph-is-ssot",
+      "target": "REQ-graph-integrity",
+      "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-graph-integrity",
+      "target": "REQ-graph-integrity",
+      "type": "verify",
+      "weight": 1,
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "MOD-codec",
+      "target": "REQ-graph-integrity",
+      "type": "satisfy",
+      "weight": 1,
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-200",
+      "target": "MS-3-mvp-readiness",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-200",
+      "target": "REQ-graph-integrity",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-200",
+      "target": "MOD-codec",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "REQ-one-gate-per-repo",
+      "target": "REQ-gate-only-writes",
+      "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-no-direct-graph-write",
+      "target": "REQ-gate-only-writes",
+      "type": "verify",
+      "weight": 1,
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-201",
+      "target": "MS-3-mvp-readiness",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-201",
+      "target": "REQ-gate-only-writes",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "REQ-graph-is-ssot",
+      "target": "REQ-export-no-clobber",
+      "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-mcp-export-guard",
+      "target": "REQ-export-no-clobber",
+      "type": "verify",
+      "weight": 1,
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "MOD-mcp-tools",
+      "target": "REQ-export-no-clobber",
+      "type": "satisfy",
+      "weight": 1,
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-202",
+      "target": "MS-3-mvp-readiness",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-202",
+      "target": "REQ-export-no-clobber",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-202",
+      "target": "MOD-mcp-tools",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "MS-4-mvp2",
+      "target": "UC-live-graph-view",
+      "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "MS-4-mvp2",
+      "target": "REQ-live-event-in-contracts",
+      "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "MS-4-mvp2",
+      "target": "REQ-shared-views-no-fork",
+      "type": "compose",
       "weight": 1,
       "created_at": "2026-06-18T00:00:00.000Z"
     }
