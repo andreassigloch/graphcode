@@ -79,9 +79,55 @@ export class GraphCodeHarness {
     return this.graph;
   }
 
-  /** Read-only view of the current in-memory graph. */
+  /** Read-only view of the current in-memory graph (gate working copy only). */
   getGraph(): Graph {
     return this.graph;
+  }
+
+  /**
+   * The single Kuzu-backed store. Read queries (impact/expand/elements) route
+   * through here so the agent KNOWS the right elements via a graph query — not
+   * a TS-BFS over the in-memory mirror. The in-memory `graph` stays reserved for
+   * the gate's rule-eval on the working copy during mutate().
+   */
+  getStore(): StorageAdapter {
+    return this.storage;
+  }
+
+  /**
+   * Exact blast-radius (REQ-query-precision): the DEPENDENTS of `rootId` —
+   * incoming edges, computed in Kuzu as `(m)-[*1..depth]->(root)`. Changing the
+   * root impacts the nodes that point INTO it (TEST -verify-> REQ, MOD -realize-> REQ).
+   */
+  async impact(rootId: string, depth: number): Promise<Graph> {
+    return this.storage.getSubgraph(rootId, depth, 'in');
+  }
+
+  /**
+   * Direction-aware on-demand deepening (REQ-progressive-expansion) via Kuzu
+   * re-traversal — no originals store. `callers` = incoming (dependents),
+   * `all` = both directions; trace/test branches use the full neighbourhood and
+   * are filtered to the relevant edge types by the caller.
+   */
+  async subgraph(rootId: string, depth: number, direction: 'in' | 'out' | 'both'): Promise<Graph> {
+    return this.storage.getSubgraph(rootId, depth, direction);
+  }
+
+  /** List nodes from the Kuzu store (REQ-query-precision: slice, never a full dump). */
+  async listElements(filter: { type?: string; search?: string }): Promise<GraphNode[]> {
+    const { nodes } = await this.storage.loadGraph(this.config.scope);
+    let result = nodes;
+    if (filter.type) result = result.filter((n) => n.type === filter.type);
+    if (filter.search) {
+      const q = filter.search.toLowerCase();
+      result = result.filter(
+        (n) =>
+          n.uid.toLowerCase().includes(q) ||
+          n.name.toLowerCase().includes(q) ||
+          (n.description ?? '').toLowerCase().includes(q),
+      );
+    }
+    return result;
   }
 
   /**

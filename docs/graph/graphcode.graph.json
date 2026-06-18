@@ -364,11 +364,12 @@
       "type": "REQ",
       "name": "Query-Precision statt Kompression",
       "description": "graph_impact liefert exakten Blast-Radius als Format-E (Anti-grep, Ziel a). (R6/R12)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
         "functional"
-      ]
+      ],
+      "updated_at": "2026-06-18T00:00:00.000Z"
     },
     {
       "id": "REQ-subgraph-slicing",
@@ -386,11 +387,12 @@
       "type": "REQ",
       "name": "Progressive Query-Expansion",
       "description": "graph_expand vertieft on-demand (Kuzu-Re-Traversierung, kein Originals-Store). (R13)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
         "functional"
-      ]
+      ],
+      "updated_at": "2026-06-18T00:00:00.000Z"
     },
     {
       "id": "REQ-cache-layering",

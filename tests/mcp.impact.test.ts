@@ -144,3 +144,101 @@ describe('TEST-impact-subgraph: graph_impact precision (R6/R12)', () => {
     expect(harness.getGraph().nodes.length).toBe(before);
   });
 });
+
+/**
+ * Direction-precision fixture (CR-GC-126): blast-radius = DEPENDENTS = INCOMING edges,
+ * computed in Kuzu via `(m)-[*1..d]->(root)`. Seeds a tiny graph on disk Kuzu:
+ *   TEST-A -verify->  REQ-A    (dependent of REQ-A, incoming)
+ *   MOD-A  -satisfy-> REQ-A    (dependent of REQ-A, incoming)
+ *   REQ-A  -allocate-> MOD-DEP (pure OUTGOING dependency of REQ-A — NOT impacted)
+ *   TEST-B -verify->  REQ-B    (unrelated component)
+ * Asserts graph_impact(REQ-A) returns EXACTLY {REQ-A, TEST-A, MOD-A}, excluding the
+ * outgoing dependency (MOD-DEP) and the unrelated component (REQ-B, TEST-B).
+ */
+describe('TEST-impact-subgraph: graph_impact direction = dependents/incoming (CR-GC-126)', () => {
+  let tmp: string;
+  let harness: GraphCodeHarness;
+
+  const fixture = {
+    elements: [
+      { id: 'REQ-A', type: 'REQ', name: 'Req A', description: 'root under test' },
+      { id: 'TEST-A', type: 'TEST', name: 'Test A', description: 'verifies REQ-A' },
+      { id: 'MOD-A', type: 'MOD', name: 'Mod A', description: 'satisfies REQ-A' },
+      { id: 'MOD-DEP', type: 'MOD', name: 'Mod Dep', description: 'pure outgoing dependency of REQ-A' },
+      { id: 'REQ-B', type: 'REQ', name: 'Req B', description: 'unrelated component' },
+      { id: 'TEST-B', type: 'TEST', name: 'Test B', description: 'verifies REQ-B' },
+    ],
+    traces: [
+      { source: 'TEST-A', target: 'REQ-A', type: 'verify' }, // incoming dependent
+      { source: 'MOD-A', target: 'REQ-A', type: 'satisfy' }, // incoming dependent
+      { source: 'REQ-A', target: 'MOD-DEP', type: 'allocate' }, // OUTGOING dependency
+      { source: 'TEST-B', target: 'REQ-B', type: 'verify' }, // unrelated
+    ],
+  };
+
+  beforeEach(async () => {
+    tmp = mkdtempSync(join(tmpdir(), 'graphcode-impact-dir-'));
+    const kuzuPath = join(tmp, 'kuzu');
+    const storage = new KuzuAdapter({ ontology: SE_DESCRIPTOR, path: kuzuPath });
+    harness = new GraphCodeHarness(makeConfig(tmp), storage);
+    await harness.initialize();
+    // Bootstrap import (not a gated mutate) — seeds the disk Kuzu store directly.
+    await harness.importGraph(fixture);
+  });
+
+  afterEach(async () => {
+    await harness.close();
+    rmSync(tmp, { recursive: true, force: true });
+  });
+
+  function uidsFromFormatE(formatE: string): Set<string> {
+    // Format-E lists each node uid; recover the set by membership probing the fixture uids.
+    const all = fixture.elements.map((e) => e.id);
+    return new Set(all.filter((uid) => formatE.includes(uid)));
+  }
+
+  it('graph_impact(REQ-A) returns EXACTLY the dependent set {REQ-A, TEST-A, MOD-A} (incoming)', async () => {
+    const registry = bindToolsToHarness(harness);
+    const { rootId, nodeCount, formatE } = await registry['graph_impact'].handler({ id: 'REQ-A', depth: 1 });
+
+    expect(rootId).toBe('REQ-A');
+    const present = uidsFromFormatE(formatE);
+    // Exact set + direction: root + its incoming dependents only.
+    expect(present).toEqual(new Set(['REQ-A', 'TEST-A', 'MOD-A']));
+    expect(nodeCount).toBe(3);
+  });
+
+  it('graph_impact(REQ-A) EXCLUDES the pure outgoing dependency (MOD-DEP)', async () => {
+    const registry = bindToolsToHarness(harness);
+    const { formatE } = await registry['graph_impact'].handler({ id: 'REQ-A', depth: 1 });
+    expect(uidsFromFormatE(formatE).has('MOD-DEP')).toBe(false);
+  });
+
+  it('graph_impact(REQ-A) EXCLUDES the unrelated component (REQ-B, TEST-B)', async () => {
+    const registry = bindToolsToHarness(harness);
+    const { formatE } = await registry['graph_impact'].handler({ id: 'REQ-A', depth: 1 });
+    const present = uidsFromFormatE(formatE);
+    expect(present.has('REQ-B')).toBe(false);
+    expect(present.has('TEST-B')).toBe(false);
+  });
+
+  it('graph_expand(REQ-A, branch=callers) = incoming dependents only (matches impact direction)', async () => {
+    const registry = bindToolsToHarness(harness);
+    const { formatE } = await registry['graph_expand'].handler({ handle: 'REQ-A', branch: 'callers', depth: 1 });
+    const present = uidsFromFormatE(formatE);
+    expect(present).toEqual(new Set(['REQ-A', 'TEST-A', 'MOD-A']));
+    expect(present.has('MOD-DEP')).toBe(false);
+  });
+
+  it('graph_expand(REQ-A, branch=all) includes BOTH dependents and the outgoing dependency', async () => {
+    const registry = bindToolsToHarness(harness);
+    const { formatE } = await registry['graph_expand'].handler({ handle: 'REQ-A', branch: 'all', depth: 1 });
+    const present = uidsFromFormatE(formatE);
+    // both-direction: dependents (in) + dependency (out)
+    expect(present.has('TEST-A')).toBe(true);
+    expect(present.has('MOD-A')).toBe(true);
+    expect(present.has('MOD-DEP')).toBe(true);
+    // still excludes the unrelated component
+    expect(present.has('REQ-B')).toBe(false);
+  });
+});

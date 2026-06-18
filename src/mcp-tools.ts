@@ -90,106 +90,23 @@ const GraphExpandInputSchema = z.object({
 });
 
 // ---------------------------------------------------------------------------
-// Subgraph helpers (pure, in-memory — no second Kuzu handle)
+// Branch → edge-type filter for graph_expand. trace/test branches keep the full
+// Kuzu neighbourhood but prune to the relevant edge types (and the nodes those
+// edges touch). callers/all are pure-direction and need no edge filtering.
 // ---------------------------------------------------------------------------
 
-/**
- * Walk the in-memory Graph BFS outward from `rootId` up to `depth` hops.
- * "Outward" here means: edges WHERE sourceId === visited OR targetId === visited,
- * capturing both callers (incoming) and dependents (outgoing).
- *
- * For impact we want: the root + nodes that DEPEND ON it (outgoing edges from root)
- * AND nodes that CALL it (incoming edges into root) within `depth`.
- */
-function computeSubgraph(graph: Graph, rootId: string, depth: number): Graph {
-  const visitedNodes = new Set<string>();
-  const frontier = new Set<string>([rootId]);
+const TRACE_EDGE_TYPES = new Set(['trace', 'traces', 'TRACE']);
+const TEST_EDGE_TYPES = new Set(['verify', 'test', 'VERIFY', 'TEST']);
 
-  for (let d = 0; d < depth; d++) {
-    const next = new Set<string>();
-    for (const nid of frontier) {
-      visitedNodes.add(nid);
-      // Outgoing edges (nid → target)
-      for (const e of graph.edges) {
-        if (e.sourceId === nid && !visitedNodes.has(e.targetId)) next.add(e.targetId);
-        if (e.targetId === nid && !visitedNodes.has(e.sourceId)) next.add(e.sourceId);
-      }
-    }
-    for (const nid of next) frontier.add(nid);
+/** Keep only edges of the given types and the nodes incident to them (root always kept). */
+function filterByEdgeTypes(graph: Graph, rootId: string, types: Set<string>): Graph {
+  const edges: GraphEdge[] = graph.edges.filter((e) => types.has(e.edgeType));
+  const keep = new Set<string>([rootId]);
+  for (const e of edges) {
+    keep.add(e.sourceId);
+    keep.add(e.targetId);
   }
-  // Drain remaining frontier into visited
-  for (const nid of frontier) visitedNodes.add(nid);
-
-  const nodes: GraphNode[] = graph.nodes.filter((n) => visitedNodes.has(n.uid));
-  const edges: GraphEdge[] = graph.edges.filter(
-    (e) => visitedNodes.has(e.sourceId) && visitedNodes.has(e.targetId),
-  );
-  return { nodes, edges };
-}
-
-/**
- * Walk a specific branch direction from `handleId` up to `depth` hops.
- * Used by graph_expand for on-demand progressive deepening.
- */
-function computeDirectionalSubgraph(
-  graph: Graph,
-  handleId: string,
-  branch: 'callers' | 'traces' | 'tests' | 'all',
-  depth: number,
-): Graph {
-  // Determine which edge types to follow per branch
-  const tracerEdgeTypes = new Set(['trace', 'traces', 'TRACE']);
-  const testEdgeTypes = new Set(['verify', 'test', 'VERIFY', 'TEST']);
-
-  const shouldFollow = (e: GraphEdge, currentId: string): string | null => {
-    switch (branch) {
-      case 'callers':
-        // Incoming edges into currentId
-        return e.targetId === currentId ? e.sourceId : null;
-      case 'traces':
-        // Trace-typed edges
-        if (tracerEdgeTypes.has(e.edgeType)) {
-          if (e.sourceId === currentId) return e.targetId;
-          if (e.targetId === currentId) return e.sourceId;
-        }
-        return null;
-      case 'tests':
-        // Verify/test-typed edges
-        if (testEdgeTypes.has(e.edgeType)) {
-          if (e.sourceId === currentId) return e.targetId;
-          if (e.targetId === currentId) return e.sourceId;
-        }
-        return null;
-      case 'all':
-      default:
-        if (e.sourceId === currentId) return e.targetId;
-        if (e.targetId === currentId) return e.sourceId;
-        return null;
-    }
-  };
-
-  const visitedNodes = new Set<string>([handleId]);
-  let frontier = new Set<string>([handleId]);
-
-  for (let d = 0; d < depth; d++) {
-    const next = new Set<string>();
-    for (const nid of frontier) {
-      for (const e of graph.edges) {
-        const neighbor = shouldFollow(e, nid);
-        if (neighbor !== null && !visitedNodes.has(neighbor)) {
-          next.add(neighbor);
-          visitedNodes.add(neighbor);
-        }
-      }
-    }
-    frontier = next;
-    if (frontier.size === 0) break;
-  }
-
-  const nodes = graph.nodes.filter((n) => visitedNodes.has(n.uid));
-  const edges = graph.edges.filter(
-    (e) => visitedNodes.has(e.sourceId) && visitedNodes.has(e.targetId),
-  );
+  const nodes: GraphNode[] = graph.nodes.filter((n) => keep.has(n.uid));
   return { nodes, edges };
 }
 
@@ -240,17 +157,8 @@ export function bindToolsToHarness(
     description: 'List graph elements (nodes) with optional type/search filter. Returns a slice, not a full dump.',
     inputSchema: GraphElementsInputSchema,
     async handler(input) {
-      let nodes = harness.getGraph().nodes;
-      if (input.type) nodes = nodes.filter((n) => n.type === input.type);
-      if (input.search) {
-        const q = input.search.toLowerCase();
-        nodes = nodes.filter(
-          (n) =>
-            n.uid.toLowerCase().includes(q) ||
-            n.name.toLowerCase().includes(q) ||
-            (n.description ?? '').toLowerCase().includes(q),
-        );
-      }
+      // Cypher-backed listing via the Kuzu store (KNOW, not grep over the mirror).
+      const nodes = await harness.listElements({ type: input.type, search: input.search });
       const total = nodes.length;
       return { nodes: nodes.slice(0, input.limit), total };
     },
@@ -380,13 +288,13 @@ export function bindToolsToHarness(
   > = {
     name: 'graph_impact',
     description:
-      'Compute the exact blast-radius (FUNC-graph-impact / R6 / R12): ' +
-      'returns the root node + its callers, traces, and tests within `depth` hops ' +
-      'as a Format-E slice. Never returns the full graph (anti-grep).',
+      'Compute the exact blast-radius (FUNC-graph-impact / R6 / R12) via Kuzu Cypher: ' +
+      'returns the root node + its DEPENDENTS (incoming edges — callers/traces/tests that ' +
+      'point INTO root) within `depth` hops as a Format-E slice. Never the full graph (anti-grep).',
     inputSchema: GraphImpactInputSchema,
     async handler(input) {
-      const graph = harness.getGraph();
-      const subgraph = computeSubgraph(graph, input.id, input.depth);
+      // Blast-radius = dependents = INCOMING edges, computed in Kuzu (not TS-BFS).
+      const subgraph = await harness.impact(input.id, input.depth);
       const formatE = codec.serialize(subgraph);
       return {
         rootId: input.id,
@@ -403,13 +311,17 @@ export function bindToolsToHarness(
   > = {
     name: 'graph_expand',
     description:
-      'Progressively deepen one branch on demand via in-memory Kuzu re-traversal (FUNC-graph-expand / R13). ' +
-      'Pass the node uid as `handle`, the branch direction, and the new depth. ' +
-      'No originals store — traversal is recomputed from the live in-memory graph.',
+      'Progressively deepen one branch on demand via Kuzu Cypher re-traversal (FUNC-graph-expand / R13). ' +
+      'Pass the node uid as `handle`, the branch (callers=incoming dependents, traces, tests, all=both ' +
+      'directions), and the new depth. No originals store — recomputed from the live Kuzu store.',
     inputSchema: GraphExpandInputSchema,
     async handler(input) {
-      const graph = harness.getGraph();
-      const subgraph = computeDirectionalSubgraph(graph, input.handle, input.branch, input.depth);
+      // callers = incoming dependents; all/traces/tests = full neighbourhood (both),
+      // with traces/tests pruned to the relevant edge types afterwards.
+      const direction = input.branch === 'callers' ? 'in' : 'both';
+      let subgraph = await harness.subgraph(input.handle, input.depth, direction);
+      if (input.branch === 'traces') subgraph = filterByEdgeTypes(subgraph, input.handle, TRACE_EDGE_TYPES);
+      else if (input.branch === 'tests') subgraph = filterByEdgeTypes(subgraph, input.handle, TEST_EDGE_TYPES);
       const formatE = codec.serialize(subgraph);
       return {
         handle: input.handle,
