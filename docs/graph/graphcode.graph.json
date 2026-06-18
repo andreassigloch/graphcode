@@ -1186,8 +1186,9 @@
       "type": "UC",
       "name": "Exzellente, governte Code-Qualität",
       "description": "Als Entwickler will ich exzellente, konsistente Code-Qualität: jede Änderung (Mensch/KI) ist ontologie-/regel-konform und driftet nicht — Architektur/Interfaces/Integration/Tests strikt aus dem governten Graph getrieben.",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "status": "done",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "updated_at": "2026-06-18T00:00:00.000Z"
     },
     {
       "id": "REQ-code-governed-quality",
@@ -1230,8 +1231,9 @@
       "type": "UC",
       "name": "Effizientes, impact-basiertes Testen",
       "description": "Als Entwickler will ich nur die richtigen Tests laufen lassen: der Impact-/Abhängigkeitsgraph bestimmt das selektive Testset; „erledigt\" = „nachgewiesen\".",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "status": "done",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "updated_at": "2026-06-18T00:00:00.000Z"
     },
     {
       "id": "REQ-impact-based-testing",
@@ -1263,8 +1265,9 @@
       "type": "UC",
       "name": "Minimaler Token-Verbrauch",
       "description": "Als Nutzer/Agent will ich minimalen Token-Verbrauch: präziser Query-Kontext (exakter Blast-Radius/Slice) statt grep-Dump oder Result-Kompression.",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "status": "done",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "updated_at": "2026-06-18T00:00:00.000Z"
     },
     {
       "id": "REQ-precise-context",
@@ -1296,8 +1299,9 @@
       "type": "UC",
       "name": "Reduzierte LLM-Anforderungen",
       "description": "Als Nutzer will ich mit kleinen/lokalen LLMs auskommen: deterministische, modellfreie Gates/Regeln + Query-Precision senken den Modell-Bedarf.",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "status": "done",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "updated_at": "2026-06-18T00:00:00.000Z"
     },
     {
       "id": "REQ-small-model-viable",
@@ -2352,6 +2356,21 @@
       "status": "done",
       "created_at": "2026-06-18T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "id": "TEST-mvp-e2e",
+      "type": "TEST",
+      "name": "MVP-1 E2E Acceptance",
+      "description": "End-to-End-Akzeptanz des MVP-1-Loops: neues Mitglied bootstrappen, Knoten durchs Gate spec’en, graph_impact liefert exakt den Blast-Radius (KNOW statt grep), Knoten implementieren, re-exportieren. Disk-Kuzu, keine Mocks. (CR-GC-123)",
+      "status": "done",
+      "method": "test",
+      "created_at": "2026-06-18T00:00:00.000Z",
+      "updated_at": "2026-06-18T00:00:00.000Z",
+      "attributes": {
+        "level": "e2e",
+        "tool": "vitest",
+        "constraint": "Disk-Kuzu, no mocks, end-to-end"
+      }
     }
   ],
   "traces": [
@@ -5679,6 +5698,26 @@
       "type": "verify",
       "weight": 1,
       "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-mvp-e2e",
+      "target": "REQ-code-governed-quality",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-mvp-e2e",
+      "target": "REQ-precise-context",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-mvp-e2e",
+      "target": "REQ-impact-based-testing",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-mvp-e2e",
+      "target": "REQ-small-model-viable",
+      "type": "verify"
     }
   ]
 }
