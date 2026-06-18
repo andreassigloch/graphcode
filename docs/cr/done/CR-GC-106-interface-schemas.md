@@ -1,6 +1,6 @@
 # CR-GC-106: Interface-Schemas — `FLOW → SCHEMA` (Code-Readiness)
 
-**Status:** Open · **Datum:** 2026-06-17 · **Modul:** Modell (graph) · **Refs:** ADR-001, `@sigloch/contracts`
+**Status:** Done · **Closed:** 2026-06-18 · **Datum:** 2026-06-17 · **Modul:** Modell (graph) · **Refs:** ADR-001, `@sigloch/contracts`
 **Graph:** 9 `SCHEMA` + 28 `FLOW -relation→ SCHEMA` · **Max Files:** 5
 
 ## Problem (Why)

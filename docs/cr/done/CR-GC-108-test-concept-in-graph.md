@@ -1,6 +1,6 @@
 # CR-GC-108: Test-Konzept im Graph + Benchmark-REQ
 
-**Status:** Open · **Datum:** 2026-06-17 · **Modul:** Modell + `MOD-docs` · **Refs:** se-view-testconcept, ADR-001
+**Status:** Done · **Closed:** 2026-06-18 · **Datum:** 2026-06-17 · **Modul:** Modell + `MOD-docs` · **Refs:** se-view-testconcept, ADR-001
 **Graph:** TEST-Attribute (level/tool/constraint) + 2 REQ · **Max Files:** 5
 
 ## Problem (Why)
