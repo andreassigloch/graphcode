@@ -17,7 +17,7 @@
  */
 
 import { join, dirname } from 'node:path';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync, existsSync, readFileSync } from 'node:fs';
 import { z } from 'zod/v4';
 import type { ZodType } from 'zod/v4';
 import type { GraphCodeHarness } from './harness.js';
@@ -96,6 +96,14 @@ const GraphExpandInputSchema = z.object({
 const GraphExportInputSchema = z.object({
   name: z.string().optional().describe('Base filename for the graph JSON (default: scope.systemId)'),
   views: z.array(MarkdownViewSchema).optional().describe('Markdown views to render (default: all)'),
+  force: z
+    .boolean()
+    .default(false)
+    .describe(
+      'Override the refuse-to-clobber guard. By default the export ABORTS if it would delete ' +
+        'elements/traces present in the committed SSOT JSON but missing from the live graph (stale ' +
+        'process / parallel writer). Set true only for intentional deletions.',
+    ),
 });
 
 const GraphReadinessInputSchema = z.looseObject({});
@@ -361,7 +369,9 @@ export function bindToolsToHarness(
       'Re-export the live governed graph to commit-able docs — the single sync path (CR-GC-113). ' +
       'Writes canonical docs/graph/<name>.graph.json plus deterministic docs/views/*.md (GENERATED header) ' +
       'under the repo root, from the live in-memory graph (full fidelity). Closes the agent loop: ' +
-      'spec → impact → implement → export. Returns the written paths and byte sizes.',
+      'spec → impact → implement → export. REFUSES to clobber: aborts if the live graph is empty, or if ' +
+      'the write would drop elements/traces present in the committed SSOT (stale process / parallel ' +
+      'writer) unless force:true. Returns the written paths and byte sizes.',
     inputSchema: GraphExportInputSchema,
     async handler(input) {
       const graph = harness.getGraph();
@@ -371,6 +381,40 @@ export function bindToolsToHarness(
       const json = exportGraphJson(graph);
       const jsonRel = join('docs', 'graph', `${name}.graph.json`);
       const jsonAbs = join(repoRoot, jsonRel);
+
+      // Refuse-to-clobber (parallels scripts/export-graph.mjs guards): a stale
+      // long-running server or a parallel writer can hold a graph that is BEHIND
+      // the committed SSOT. Blindly overwriting then silently DROPS committed
+      // elements/traces (observed: a stale export deleted CR-GC-133). Guard 1:
+      // never write an empty graph over a populated SSOT. Guard 2: abort if the
+      // export would remove anything the committed file still has, unless `force`.
+      if (graph.nodes.length === 0) {
+        throw new Error(
+          `graph_export refused: live graph has 0 elements — refusing to overwrite ${jsonRel} with an empty graph.`,
+        );
+      }
+      if (!input.force && existsSync(jsonAbs)) {
+        const committed = JSON.parse(readFileSync(jsonAbs, 'utf8')) as {
+          elements?: Array<{ id: string }>;
+          traces?: Array<{ source: string; target: string; type: string }>;
+        };
+        const liveNodeIds = new Set(graph.nodes.map((n) => n.uid));
+        const liveEdgeKeys = new Set(graph.edges.map((e) => `${e.sourceId}>${e.edgeType}>${e.targetId}`));
+        const droppedNodes = (committed.elements ?? []).map((e) => e.id).filter((id) => !liveNodeIds.has(id));
+        const droppedEdges = (committed.traces ?? [])
+          .map((t) => `${t.source}>${t.type}>${t.target}`)
+          .filter((k) => !liveEdgeKeys.has(k));
+        if (droppedNodes.length || droppedEdges.length) {
+          throw new Error(
+            `graph_export refused: would delete ${droppedNodes.length} element(s) + ${droppedEdges.length} trace(s) ` +
+              `present in committed ${jsonRel} but missing from the live graph — likely a stale process or a ` +
+              `parallel sync. Re-seed the live graph from the committed SSOT first, or pass force:true for an ` +
+              `intentional deletion. Dropped elements: ${droppedNodes.slice(0, 10).join(', ')}` +
+              `${droppedNodes.length > 10 ? ` …(+${droppedNodes.length - 10})` : ''}.`,
+          );
+        }
+      }
+
       mkdirSync(dirname(jsonAbs), { recursive: true });
       writeFileSync(jsonAbs, json);
 
