@@ -1,7 +1,7 @@
 # GraphCode — Implementation Spec (Initial, v0.1)
 
 > ⚠️ **INPUT ONLY (Bootstrap) — seit 2026-06-14.** Die **SSOT ist der Graph**
-> (`docs/graph/graphcode.graph.json`, geladen via `scripts/seed-graph.mjs`, live in der Harness).
+> (`docs/graph/graphcode.graph.json`, live in der Harness; Re-Export via `scripts/export-graph.mjs`, CR-GC-113).
 > Dieses Dokument ist historischer Input und **nicht mehr autoritativ**. Modelländerungen
 > erfolgen am Graph (mutate/import), dann Re-Export — **nicht** hier. Siehe `REQ-graph-is-ssot`.
 

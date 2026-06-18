@@ -42,7 +42,7 @@ Diese werden **nicht** hier entschieden; Rationale + Detail liegen in bok:
 
 | # | Entscheidung | Why (kurz) |
 |---|---|---|
-| **AD-1** | **Graph-first Self-Hosting:** graphcode modelliert sich selbst; SSOT = `docs/graph/graphcode.graph.json` (via `scripts/seed-graph.mjs`). `docs/*.md` = **INPUT-ONLY**. | Dogfooding der eigenen Value-Prop; eine Quelle, kein Doc-Drift. |
+| **AD-1** | **Graph-first Self-Hosting:** graphcode modelliert sich selbst; SSOT = `docs/graph/graphcode.graph.json` (Re-Export via `scripts/export-graph.mjs`, CR-GC-113). `docs/*.md` = **INPUT-ONLY**. | Dogfooding der eigenen Value-Prop; eine Quelle, kein Doc-Drift. |
 | **AD-2** | **Frame ist bindend** (`REQ-frame-binding`): Struktur+Interfaces sind für die Realisierung verriegelt. Ergänzung nur, wenn sie in vordefinierte Boxen passt (FUNC/FLOW/REQ/TEST an bestehendem MOD/UC). | Realisierung soll detaillieren, nicht neue Boxen wachsen lassen. |
 | **AD-3** | **3-SSOT-Modell:** bok (Bracket-Rationale) · Graph (Modell) · **CR** (Change+Why). **Kein app-lokaler ADR-Series.** | ADR-Series + CR-Audit = zwei Quellen = kein SSOT. |
 | **AD-4** | **Customer-View-Altitude:** UC = Kundennutzen (4: code-quality, efficient-testing, token-efficiency, reduced-llm); FUNC verketten **nur via FLOW**; pre/post = REQ (`ReqKind`); FCHAIN = Szenario. | UC ist das *Warum* (Nutzen), nicht die Funktionsdefinition; Daten-Fluss-Modellierung statt Call-Graph. |
@@ -87,4 +87,4 @@ Diese werden **nicht** hier entschieden; Rationale + Detail liegen in bok:
 - **bok:** `2yR-SSOT-stand-und-ziel.md`, `2yR-35-store-spec.md`, `2yR-36-codec-spec.md`,
   `governance/graphcode-governance.md`, `konzept/aise-family-architecture.md`, `governance/REPO-BOUNDARY.md`
 - **CLAUDE.md:** `~/.claude/CLAUDE.md` (CR-Konzept, Test-Disziplin) · `graphcode/CLAUDE.md` (Carve-Out, CR-GC-Sequenz)
-- **Graph:** `docs/graph/graphcode.graph.json` · Generator: `scripts/seed-graph.mjs` · Historischer Input: `docs/SPEC.md`, `docs/RECOMMENDATIONS.md`
+- **Graph:** `docs/graph/graphcode.graph.json` · Re-Exporter: `scripts/export-graph.mjs` (CR-GC-113) · Historischer Input (Bootstrap, retired): `docs/SPEC.md`, `docs/RECOMMENDATIONS.md`

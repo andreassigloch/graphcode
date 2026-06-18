@@ -57,8 +57,9 @@
       "type": "MOD",
       "name": "docs — Markdown-Re-Exporter",
       "description": "App-spezifisches Rendering: Graph → Markdown-Views (deterministisch, GENERATED-Header). (REQ-doc-export, code-realisiert, target)",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "status": "done",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "updated_at": "2026-06-18T00:00:00.000Z"
     },
     {
       "id": "MOD-skills",
@@ -498,11 +499,12 @@
       "type": "REQ",
       "name": "Graph → Markdown Re-Export",
       "description": "human-readable Docs (SPEC/Architektur/CR-Liste/References) werden DETERMINISTISCH aus dem Graph generiert (GENERATED-Header), nie hand-editiert. Schließt die graph-is-ssot-Drift-Lücke. (REQ-graph-is-ssot)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
         "functional"
-      ]
+      ],
+      "updated_at": "2026-06-18T00:00:00.000Z"
     },
     {
       "id": "REQ-responsiveness",
@@ -1107,14 +1109,15 @@
       "type": "TEST",
       "name": "Doc-Re-Export-Test",
       "description": "exportMarkdown deterministisch (byte-identisch) + spiegelt Graph; GENERATED-Header. (FUNC-export-markdown)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "method": "test",
       "attributes": {
         "level": "conformance",
         "tool": "vitest",
         "constraint": "deterministic + GENERATED header"
-      }
+      },
+      "updated_at": "2026-06-18T00:00:00.000Z"
     },
     {
       "id": "TEST-responsiveness",
@@ -1448,19 +1451,21 @@
       "type": "FUNC",
       "name": "exportMarkdown(graph, view)",
       "description": "Rendert Graph (View: spec/architecture/cr-list/references) deterministisch nach Markdown mit GENERATED-Header.",
-      "status": "reviewed",
+      "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "attributes": {
         "operatingMode": "export"
-      }
+      },
+      "updated_at": "2026-06-18T00:00:00.000Z"
     },
     {
       "id": "FUNC-render-views",
       "type": "FUNC",
       "name": "render graph→markdown views",
       "description": "PROMPT-realisierter Graph→Markdown-Renderer via se-view-Skills (.claude/skills/se-view-*); erzeugt z.B. architecture-graph.md. Interim-Realisierung von REQ-doc-export, bis FUNC-export-markdown (code, MOD-docs) gebaut ist. Beweis: Skills = Funktionen (Allokation an MOD-skills = prompt-realisiert).",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "status": "done",
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "updated_at": "2026-06-18T00:00:00.000Z"
     },
     {
       "id": "REQ-pre-import",
@@ -1559,22 +1564,24 @@
       "type": "REQ",
       "name": "Precondition: exportMarkdown(graph, view)",
       "description": "Aktueller Graph (SSOT) geladen; View gewählt.",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
         "precondition"
-      ]
+      ],
+      "updated_at": "2026-06-18T00:00:00.000Z"
     },
     {
       "id": "REQ-post-export-markdown",
       "type": "REQ",
       "name": "Postcondition: exportMarkdown(graph, view)",
       "description": "Deterministische Markdown-Views mit GENERATED-Header; nie hand-editiert.",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
         "postcondition"
-      ]
+      ],
+      "updated_at": "2026-06-18T00:00:00.000Z"
     },
     {
       "id": "REQ-pre-emit-update-event",

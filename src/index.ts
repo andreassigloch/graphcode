@@ -37,6 +37,17 @@ export type { UpdateDomain, LiveUpdateEvent, TrajectoryEntry, RegisterEmittersOp
 // Format-E codec (CR-GC-103) — deterministic, commit-/merge-safe round-trip.
 export { GraphCodeCodec } from './codec.js';
 
+// Graph→Markdown/JSON re-exporter (CR-GC-113, MOD-docs) — the single SSOT sync
+// path: render the live in-memory graph back into commit-able docs.
+export {
+  exportGraphJson,
+  exportMarkdown,
+  MarkdownViewSchema,
+  MARKDOWN_VIEWS,
+  VIEW_FILENAMES,
+} from './exporter.js';
+export type { MarkdownView } from './exporter.js';
+
 // New-member bootstrap (CR-GC-122) — fill an EMPTY member graph from ungoverned
 // Format-E THROUGH the gate (FUNC-import / REQ-bootstrap-through-gate). Distinct
 // from harness.seedFromJson() (a direct load of the already-governed SSOT).
