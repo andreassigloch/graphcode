@@ -1,166 +1,99 @@
-# GraphCode — Claude Code Sidecar Harness
+# GraphCode — governed graph substrate for coding agents
 
-**GraphCode** = Harness für Familie (Prio 1a), splittet aus aimprove.
+**GraphCode** is a headless harness that gives a coding agent (Claude Code, OpenCode, …) a
+**governed graph** of a project's model — requirements, tests, modules, traces — behind an
+**MCP-stdio** surface. The agent **KNOWS** the elements to touch from a precise graph query
+instead of guessing them with grep. Code stays as text in the repo; the **model lives in the graph**.
 
-**Purpose:** Claude Code Sidecar + Local GraphService + MCP-Tools + Hook-System.
+- **IS:** Bridge + Store + MCP tools + Apply-Gate. Agent-agnostic, OpenCode-executed, one Kuzu store per repo.
+- **IS NOT:** a generator (→ aimprove), a learning engine (→ learning-core), a viewer/dashboard, or an extractor (→ graphify).
 
-## Current Phase: Carve-Out
+## Quick start — set up GraphCode in a new repo
 
-**Prio 0:** Arbeitsfähigkeit in aktueller Config
-1. `aimprove-harness` läuft im aimpro-Verzeichnis
-2. **→ Kopie der Harness-Core-Features hierher**
-3. **→ Refactor: Harness-Funktionalität extrahieren** (nicht: Generator, nicht: Learning-Engine, nur: Graph Operations + Hooks)
+Run this **inside the target repository** (the new family member you're building):
 
-## Structure (Building)
-
-```
-graphcode/
-├── README.md                    (dieser Datei)
-├── package.json                 (TBD: Dependencies)
-├── tsconfig.json                (TBD: TypeScript config)
-│
-├── src/
-│   ├── index.ts                 (Export + Harness entrypoint)
-│   ├── harness.ts               (Core Harness Logic)
-│   ├── graph-service.ts         (Local GraphService wrapper)
-│   ├── mcp-tools.ts             (MCP Tool Suite: graph_*, rules_*, etc.)
-│   ├── hooks.ts                 (Pre-commit, Post-apply, Nightly Batch)
-│   └── codec.ts                 (Format-E Codec bridge to contracts)
-│
-├── tests/
-│   ├── harness.test.ts          (Harness Core)
-│   ├── graph-service.test.ts    (GraphService mutations)
-│   └── mcp-tools.test.ts        (MCP Tool functionality)
-│
-└── docs/
-    ├── ARCHITECTURE.md          (Design: Harness vs. aimprove split)
-    ├── MCP-TOOLS.md             (Graph_* Tools spec)
-    ├── HOOKS.md                 (Pre/Post/Nightly)
-    └── INTEGRATION.md           (How aimprove uses GraphCode)
+```bash
+npx @sigloch/graphcode init
 ```
 
-## Carve-Out Strategy
+`init` is self-contained and idempotent. It scaffolds:
 
-**Source:** `/Users/Andreas/Developer/dev/aimpro/src/` (aimprove-harness code)
-
-**Identify & Extract (Prio 0):**
-
-1. **Graph Operations (harness-core)**
-   - `loadGraph()` — DB read
-   - `saveGraph()` — DB write
-   - `mutate(command)` — Apply mutations (with Gate validation)
-   - Dependencies: `@sigloch/graph-api-core`, `@sigloch/contracts/se`
-
-2. **MCP Tools (transport-abstraction)**
-   - `graph_elements()` — Read
-   - `graph_mutate()` — Write with Gate
-   - `rules_evaluate()` — Rule-check
-   - `audit_trail()` — History
-   - Transport: MCP-stdio (Claude Code native)
-
-3. **Hooks System (extension-points)**
-   - `pre-commit` — Validation before write
-   - `post-apply` — Notification/cleanup after mutation
-   - `nightly-batch` — Learning/aggregation trigger
-   - Storage: File-based (`.graphcode/hooks/`)
-
-4. **Local Storage (Kuzu only, no HTTP)**
-   - KuzuAdapter from @sigloch/graph-api-core
-   - Persistence: Repo-local `.graphcode/kuzu/`
-   - No multi-tenant, no auth (Claude Code = local)
-
-**Separate from GraphCode (stays in aimprove):**
-- Generator logic (F1–F15 pipelines)
-- Orchestrator (Observe/Evaluate/Distill/Inject/Monitor)
-- Learning-Engine (Trajectory/Outcome emission)
-- Dashboard (optional UI)
-
-## Key Design Decisions
-
-| Decision | Rationale | Implication |
+| Artifact | Purpose | Commit? |
 |---|---|---|
-| **Repo-centric (1 instance/repo)** | Claude Code runs per project, not centralized | Harness instantiated on CLI start, not daemon |
-| **MCP-stdio only (initial)** | Claude Code native, zero HTTP setup | aimprove can HTTP-wrap it later (P2) |
-| **Kuzu + local persistence** | Permanent, queryable, no `:memory:` | `.graphcode/kuzu/` is artifact (gitignore) |
-| **No learning-logic here** | Learning = separate module (learning-core, Prio 5) | Harness emits Trajectory/Outcome files, not trains |
-| **Hooks extensible** | Other tools/agents can hook in | Pre/Post/Nightly = plugin-points |
+| `.mcp.json` | tells the agent host to launch `npx @sigloch/graphcode mcp` | ✅ commit |
+| `.graphcode/` | the per-repo Kuzu store (`.graphcode/kuzu`), created lazily on first run | ❌ gitignore |
+| `GRAPHCODE.md` | guardrails for agents working in the repo | ✅ commit |
+| `package.json` | gains the `@sigloch/graphcode` dependency | ✅ commit |
 
-## Building Blocks (From aimprove)
+Then add `.graphcode/` to `.gitignore` and **reload your agent host** (Claude Code / OpenCode) so it
+picks up `.mcp.json`. The agent will see a `graphcode` MCP server exposing the tools below.
 
-### 1. Harness Core (`harness.ts`)
-```typescript
-export class GraphCodeHarness {
-  constructor(repoPath: string, kuzu?: KuzuAdapter) { }
-  
-  // Graph operations (from aimprove GraphService)
-  loadGraph(): Promise<OntologyGraph> { }
-  saveGraph(elements, traces): Promise<void> { }
-  mutate(command: MutateCommand): Promise<MutateResult> { } // with Gate
-  
-  // Hooks
-  registerHook(type: 'pre-commit' | 'post-apply' | 'nightly-batch', handler): void { }
-  
-  // Cleanup
-  close(): Promise<void> { }
-}
+**Lifecycle:**
+
+```bash
+npx @sigloch/graphcode update   # refresh .mcp.json + GRAPHCODE.md, PRESERVE the store
+npx @sigloch/graphcode remove   # remove all scaffolded artifacts (restlos)
 ```
 
-### 2. MCP Tools (`mcp-tools.ts`)
-```typescript
-export const MCP_TOOLS = {
-  graph_elements: { ... },        // read-only
-  graph_mutate: { ... },          // with Gate
-  rules_evaluate: { ... },         // validate
-  audit_trail: { ... },            // history
-};
+## The agent loop (over MCP)
+
+Once the server is running, the agent drives the whole loop through MCP tools — every write goes
+through the **one Apply-Gate** (`mutate()`): rule-checked, author-logged, blocked on new violations.
+
+1. **Spec** — `graph_mutate` adds requirements/tests/modules + traces through the gate. A REQ with no
+   verifying TEST (or unresolved by a MOD) is **rejected** — drift can't land.
+2. **KNOW, not grep** — `graph_impact(id)` returns the *exact* blast-radius (the incoming dependents:
+   the tests and modules that touch the changed node) as a bounded Format-E slice, never a full dump.
+   `graph_expand` deepens one branch on demand.
+3. **Implement** — `graph_mutate` updates node status as code lands; the change persists to disk Kuzu.
+4. **Re-export** — `graph_export` serializes the live graph to commit-able docs: canonical
+   `docs/graph/<member>.graph.json` (the SSOT) + deterministic `docs/views/*.md` (GENERATED headers).
+   This is the single sync path — never hand-edit the graph JSON.
+
+The member name (`<member>.graph.json`) is derived from the repo's `package.json` name (unscoped),
+falling back to the repo directory name.
+
+### MCP tools
+
+| Tool | Role |
+|---|---|
+| `graph_elements`, `graph_get_node`, `graph_get_edges` | read slices of the graph |
+| `graph_impact`, `graph_expand` | precise blast-radius / progressive deepening (KNOW) |
+| `graph_mutate` | the write path — through the Apply-Gate (human or AI, same gate) |
+| `graph_export` | re-export the live graph to `docs/graph` + `docs/views` |
+| `rules_evaluate`, `rules_get_violations` | run the SE rules (`V3_RULES`) read-only |
+| `audit_trail`, `audit_stats` | mutation history (every gate write logged) |
+
+## Local development (this repo)
+
+```bash
+npm install        # resolves the @sigloch/* workspace (file:) deps
+npm run build      # tsc → dist/
+npm test           # vitest — real disk Kuzu, no mocks
+npm run bundle     # esbuild → self-contained dist (for publish; runs on prepack)
 ```
 
-### 3. Hooks System (`hooks.ts`)
-```typescript
-export class HookSystem {
-  registerHook(type, handler): void { }
-  runPreCommitHooks(data): Promise<HookResult> { }
-  runPostApplyHooks(result): Promise<void> { }
-  scheduleNightlyBatch(handler): void { }  // cron-ish
-}
-```
+## Constraints (locked — see `bok/docs/research/2-Year-Review/2yR-SSOT-stand-und-ziel.md`)
 
-## Testing Strategy
-
-- **Unit:** Harness Core (mutations, Gate validation)
-- **Integration:** MCP Tools + local Kuzu
-- **Conformance:** Format-E codec round-trip
-- **E2E:** Claude Code CLI integration (after aimprove imports)
-
-## Next Step for User
-
-1. **Copy current aimprove-harness code** → `/Users/Andreas/Developer/dev/graphcode/src/`
-2. **Identify harness-only files** (not generator/learning/dashboard)
-3. **Build GraphCode locally** (npm install, npm run build)
-4. **Test harness-core** (unit tests on Graph operations)
-5. **Start aimprove refactor** (import GraphCode instead of inline harness)
-
-→ First milestone: **Harness lauffähig** (CR-195 sequence)
-
----
+- **One store = Kuzu**, embedded, single-writer, on disk (`.graphcode/kuzu`) — never `:memory:`.
+- **One transport = MCP-stdio** — no Express/REST in the core.
+- **One Apply-Gate = `mutate()`** — every edit (human or AI) goes through it; the author is only logged.
+- **SE ontology + `V3_RULES` from `@sigloch/contracts/se`** — imported, never forked. A new
+  ElementType/TraceType/rule requires a family review + version bump.
 
 ## Governance SSOT (canonical — in bok, do not copy here)
 
 GraphCode follows the No-Duplication model (`bok/docs/governance/REPO-BOUNDARY.md`):
-the spec lives in **bok**; this repo links to it and owns the **implementation + its CRs**.
+the spec lives in **bok**; this repo links to it and owns the **implementation + its CRs** (`docs/cr/`).
+The graph SSOT for graphcode's own model is `docs/graph/graphcode.graph.json`.
 
 | Topic | Canonical source |
 |---|---|
-| Full spec (modules, Zod-Interfaces, Drift-Locks, Design-Decisions) | `bok/docs/governance/graphcode-governance.md` |
-| Carve-Out CR-Plan (CR-GC-100→103) | `bok/docs/governance/graphcode-governance.md` §5 — **gated** hinter §6 Checkpoint (unsigned) |
-| Drift-Locks L1–L4 (GraphCode-Enforcement) | `bok/docs/governance/graphcode-governance.md` §3 |
-| Schnittstellen-Matrix (Consumers) | `bok/docs/governance/USAGE-MATRIX.md` |
-| Familie-Architektur | `bok/docs/konzept/aise-family-architecture.md` |
-
-**CRs:** werden in `graphcode/docs/cr/open/` geöffnet, sobald der §6 Governance-Checkpoint
-abgezeichnet ist (CR-Lokalität: GraphCode-CRs leben hier, nicht in bok).
+| Full spec (modules, Zod interfaces, Drift-Locks, design decisions) | `bok/docs/governance/graphcode-governance.md` |
+| Drift-Locks L1–L4 | `bok/docs/governance/graphcode-governance.md` §3 |
+| Interface matrix (consumers) | `bok/docs/governance/USAGE-MATRIX.md` |
+| Family architecture | `bok/docs/konzept/aise-family-architecture.md` |
 
 ---
 
-**Owner:** Governance-Guardian + Harness-Lead (TBD)  
 **Repository:** /Users/andreas/Developer/dev/graphcode/

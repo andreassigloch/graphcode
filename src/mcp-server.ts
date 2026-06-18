@@ -14,6 +14,8 @@
  *
  * @author andreas@siglochconsulting
  */
+import { readFileSync } from 'node:fs';
+import { basename, join } from 'node:path';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import type { ZodObject, ZodRawShape } from 'zod/v4';
@@ -69,9 +71,12 @@ export async function serveStdio(opts?: {
   scope?: HarnessConfig['scope'];
 }): Promise<void> {
   const repoRoot = opts?.repoRoot ?? process.cwd();
+  // Derive the member identity from the repo so graph_export et al. default to a
+  // repo-specific name (e.g. auth-service.graph.json), not the generic 'graphcode'.
+  const member = deriveMemberName(repoRoot);
   const harness = await createHarness({
     repoRoot,
-    scope: opts?.scope ?? { workspaceId: SERVER_NAME, systemId: SERVER_NAME },
+    scope: opts?.scope ?? { workspaceId: member, systemId: member },
   });
   await harness.initialize();
   if (harness.getGraph().nodes.length === 0) {
@@ -88,4 +93,24 @@ export async function serveStdio(opts?: {
 /** Extract the raw Zod shape a `z.object`/`z.looseObject` was built from. */
 function rawShapeOf(tool: MCPTool): ZodRawShape {
   return (tool.inputSchema as unknown as ZodObject<ZodRawShape>).shape ?? {};
+}
+
+/**
+ * Derive the family-member identity for the repo being served: the unscoped
+ * `package.json` name (e.g. `@acme/auth-service` → `auth-service`), else the repo
+ * directory name, else `graphcode`. Used as the harness scope so re-export and
+ * other tools default to a repo-specific name instead of the generic fallback.
+ */
+export function deriveMemberName(repoRoot: string): string {
+  try {
+    const pkg = JSON.parse(readFileSync(join(repoRoot, 'package.json'), 'utf8')) as { name?: unknown };
+    if (typeof pkg.name === 'string' && pkg.name.trim()) {
+      const unscoped = pkg.name.includes('/') ? pkg.name.slice(pkg.name.lastIndexOf('/') + 1) : pkg.name;
+      const clean = unscoped.trim().replace(/[^a-zA-Z0-9._-]/g, '-').replace(/^-+|-+$/g, '');
+      if (clean) return clean;
+    }
+  } catch {
+    // No/invalid package.json — fall through to the directory name.
+  }
+  return basename(repoRoot) || SERVER_NAME;
 }
