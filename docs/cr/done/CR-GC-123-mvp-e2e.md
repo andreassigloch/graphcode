@@ -1,6 +1,6 @@
 # CR-GC-123: MVP E2E-Acceptance: bootstrap → spec → KNOW-query → implement → re-export
 
-**Status:** Open · **Milestone:** `MS-3-mvp-readiness` (Phase 3) · **Datum:** 2026-06-17 · **Max Files:** 5
+**Status:** Done · **Closed:** 2026-06-18 · **Milestone:** `MS-3-mvp-readiness` (Phase 3) · **Datum:** 2026-06-17 · **Max Files:** 5
 **Graph (SSOT):** realisiert `UC-code-quality`, `UC-token-efficiency`, `UC-efficient-testing`, `UC-reduced-llm`. Spec lebt im Graphen (`docs/graph/graphcode.graph.json`); diese Datei = Pointer.
 
 ## Problem / Scope
