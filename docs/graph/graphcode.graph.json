@@ -742,11 +742,12 @@
       "type": "REQ",
       "name": "Erstbefüllung nur durchs Gate",
       "description": "FUNC-import: Erstbefüllung ausschließlich über das mutate()-Gate; Quelle = Format-E; kein Direct-Write.",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
         "functional"
-      ]
+      ],
+      "updated_at": "2026-06-18T00:00:00.000Z"
     },
     {
       "id": "REQ-conflict-free-merge",
@@ -1049,14 +1050,15 @@
       "type": "TEST",
       "name": "Cold-Start-Import-Test",
       "description": "Format-E-Import befüllt leeren Graphen ausschließlich durchs Gate; Direct-Write schlägt fehl. (FUNC-import)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "method": "test",
       "attributes": {
         "level": "integration",
         "tool": "vitest",
         "constraint": "gate-only import"
-      }
+      },
+      "updated_at": "2026-06-18T00:00:00.000Z"
     },
     {
       "id": "TEST-merge",
@@ -1465,22 +1467,24 @@
       "type": "REQ",
       "name": "Precondition: importGraph(formatE, mode)",
       "description": "Leerer/zu befüllender Repo-Graph; Format-E-Quelle (graphify/Import) liegt vor.",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
         "precondition"
-      ]
+      ],
+      "updated_at": "2026-06-18T00:00:00.000Z"
     },
     {
       "id": "REQ-post-import",
       "type": "REQ",
       "name": "Postcondition: importGraph(formatE, mode)",
       "description": "Graph durchs Gate befüllt; kein Direct-Write; Violations berichtet.",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
         "postcondition"
-      ]
+      ],
+      "updated_at": "2026-06-18T00:00:00.000Z"
     },
     {
       "id": "REQ-pre-merge-nodes",
