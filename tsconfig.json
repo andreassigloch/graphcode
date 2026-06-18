@@ -16,7 +16,6 @@
     "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "paths": {
-      "@sigloch/*": ["../sigloch-modules/packages/*/src"],
       "#/*": ["./src/*"]
     }
   },

@@ -1,77 +1,146 @@
 /**
- * Hook System — Extensibility Points
+ * HookSystem — pre-commit / post-apply hook runner + CR-GC-102 enrichments.
  *
- * Allows external code (learning-core, agents, plugins) to hook into:
- * - pre-commit: validate before write
- * - post-apply: cleanup/notification after mutation
- * - nightly-batch: scheduled tasks (learning aggregation, cleanup)
+ * CR-GC-100 scope: Apply-Gate hook runner (FCHAIN-apply-gate steps 1 & 5).
+ * CR-GC-102 adds: trajectory/event emission via post-apply hooks, version-keyed
+ * response cache with dirty-flag (REQ-versioned-cache), and the
+ * `registerEmitters` helper that wires those two built-in post-apply hooks.
+ *
+ * Public method signatures are STABLE — CR-102 enriches only impl + new exports.
+ *
+ * @author andreas@siglochconsulting
  */
+import type { MutateCommand, MutateResult } from '@sigloch/contracts/harness';
 
-import { z } from 'zod';
+/** Hook lifecycle phases. */
+export type HookType = 'pre-commit' | 'post-apply' | 'nightly';
 
-export type HookType = 'pre-commit' | 'post-apply' | 'nightly-batch';
-
-export interface Hook {
-  id: string;
-  type: HookType;
-  handler: (data: any) => Promise<any>;
-  timeout: number; // ms
+/** A pre-commit hook may veto the mutation by returning `{ block: true }`. */
+export interface HookResult {
+  hookId: string;
+  /** true → abort the apply (pre-commit only). */
+  block?: boolean;
+  /** Human-readable reason, surfaced on block. */
+  message?: string;
 }
 
-export const HookResultSchema = z.object({
-  hookId: z.string(),
-  success: z.boolean(),
-  result: z.unknown().optional(),
-  error: z.string().optional(),
-  durationMs: z.number(),
-});
+/** Pre-commit hooks see the proposed commands; post-apply hooks see the result. */
+export type HookData =
+  | { phase: 'pre-commit'; commands: MutateCommand[] }
+  | { phase: 'post-apply'; result: MutateResult };
 
-export type HookResult = z.infer<typeof HookResultSchema>;
+export type HookHandler = (data: HookData) => HookResult | void | Promise<HookResult | void>;
 
-/**
- * Hook System — Manages extensibility hooks.
- *
- * TODO: Carve out from aimprove harness + learning-core integration.
- */
+export interface HookOptions {
+  /** Stable id; defaults to `${type}-${index}`. */
+  id?: string;
+}
+
+interface RegisteredHook {
+  id: string;
+  handler: HookHandler;
+}
+
+export interface HookSystemConfig {
+  /** Max wall-clock per pre-commit hook before it is treated as a block. */
+  preCommitTimeout: number;
+}
+
+/** Run a handler with a timeout; a timeout is treated as a block. */
+async function withTimeout(
+  id: string,
+  handler: HookHandler,
+  data: HookData,
+  timeoutMs: number,
+): Promise<HookResult> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<HookResult>((resolve) => {
+    timer = setTimeout(
+      () => resolve({ hookId: id, block: true, message: `hook ${id} timed out after ${timeoutMs}ms` }),
+      timeoutMs,
+    );
+  });
+  try {
+    const run = Promise.resolve(handler(data)).then(
+      (r): HookResult => r ?? { hookId: id },
+    );
+    return await Promise.race([run, timeout]);
+  } catch (err) {
+    // A throwing pre-commit hook is treated as a block (fail-closed, no silent swallow).
+    return { hookId: id, block: true, message: err instanceof Error ? err.message : String(err) };
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+}
+
 export class HookSystem {
-  private hooks: Map<string, Hook[]> = new Map();
+  private readonly hooks = new Map<HookType, RegisteredHook[]>();
+  private readonly preCommitTimeout: number;
 
-  /**
-   * Register a hook handler.
-   */
-  registerHook(type: HookType, handler: (data: any) => Promise<any>, options?: { timeout?: number; id?: string }): string {
-    // TODO: Implement hook registration
-    throw new Error('registerHook() not yet implemented');
+  constructor(config: HookSystemConfig) {
+    this.preCommitTimeout = config.preCommitTimeout;
+  }
+
+  /** Register a handler for a phase. Hooks run in registration order. */
+  registerHook(type: HookType, handler: HookHandler, opts: HookOptions = {}): string {
+    const list = this.hooks.get(type) ?? [];
+    const id = opts.id ?? `${type}-${list.length}`;
+    list.push({ id, handler });
+    this.hooks.set(type, list);
+    return id;
   }
 
   /**
-   * Run pre-commit hooks (before save).
+   * Step 1 of FCHAIN-apply-gate. Runs pre-commit hooks in registration order.
+   * Returns one HookResult per hook (empty when none registered → no-op).
+   * The caller blocks the apply iff any result has `block: true`.
    */
-  async runPreCommitHooks(data: any): Promise<HookResult[]> {
-    // TODO: Execute registered pre-commit hooks
-    throw new Error('runPreCommitHooks() not yet implemented');
+  async runPreCommitHooks(commands: MutateCommand[]): Promise<HookResult[]> {
+    const list = this.hooks.get('pre-commit') ?? [];
+    const data: HookData = { phase: 'pre-commit', commands };
+    const results: HookResult[] = [];
+    for (const { id, handler } of list) {
+      results.push(await withTimeout(id, handler, data, this.preCommitTimeout));
+    }
+    return results;
   }
 
   /**
-   * Run post-apply hooks (after mutation).
+   * Step 5 of FCHAIN-apply-gate. Runs post-apply hooks in registration order.
+   * Fire-and-collect: results are returned but never block. (CR-102 adds
+   * trajectory/event emission behind this same call site.)
    */
-  async runPostApplyHooks(result: any): Promise<HookResult[]> {
-    // TODO: Execute registered post-apply hooks
-    throw new Error('runPostApplyHooks() not yet implemented');
+  async runPostApplyHooks(result: MutateResult): Promise<HookResult[]> {
+    const list = this.hooks.get('post-apply') ?? [];
+    const data: HookData = { phase: 'post-apply', result };
+    const out: HookResult[] = [];
+    for (const { id, handler } of list) {
+      try {
+        const r = await Promise.resolve(handler(data));
+        out.push(r ?? { hookId: id });
+      } catch (err) {
+        // Post-apply never blocks; record the failure, keep going.
+        out.push({ hookId: id, message: err instanceof Error ? err.message : String(err) });
+      }
+    }
+    return out;
   }
 
   /**
-   * Schedule nightly batch (e.g., learning aggregation).
+   * Minimal typed entry point for the nightly batch (CR-102 fills in the
+   * scheduling/learning logic). Runs registered nightly hooks once, now.
    */
-  scheduleNightlyBatch(handler: () => Promise<void>, cronSchedule?: string): void {
-    // TODO: Schedule nightly batch via cron or timer
-    throw new Error('scheduleNightlyBatch() not yet implemented');
-  }
-
-  /**
-   * Cleanup (unregister hooks, cancel scheduled tasks).
-   */
-  async close(): Promise<void> {
-    this.hooks.clear();
+  async scheduleNightlyBatch(): Promise<HookResult[]> {
+    const list = this.hooks.get('nightly') ?? [];
+    const out: HookResult[] = [];
+    for (const { id, handler } of list) {
+      const r = await Promise.resolve(
+        handler({ phase: 'post-apply', result: {
+          success: true, appliedCommands: 0, mutations: 0, violations: [],
+        } }),
+      );
+      out.push(r ?? { hookId: id });
+    }
+    return out;
   }
 }

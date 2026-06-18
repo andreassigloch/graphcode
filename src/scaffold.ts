@@ -1,0 +1,237 @@
+/**
+ * scaffold.ts — `graphcode init | update | remove` lifecycle (MOD-cli, FUNC-harness-cli).
+ *
+ * Self-contained installer that scaffolds the governed graph harness into ANY
+ * repo. A member repo consumes `@sigloch/graphcode` as a dependency (CR-121) and
+ * launches the MCP-stdio server via the scaffolded `.mcp.json`. The CURRENT
+ * architecture is MCP-stdio only — the retired localhost Controller / `.claude/hooks`
+ * path (CR-111 deletion) is NOT scaffolded.
+ *
+ * Artifacts this CLI owns, per target repo:
+ *   - `.graphcode/`            the per-repo Kuzu store dir (`.graphcode/kuzu`, KUZU_DIR).
+ *                              `init` creates it; the store inits lazily on first
+ *                              `graphcode mcp`. NEVER `:memory:` (REQ-disk-persistence).
+ *   - `.mcp.json`             so an agent host launches the server via npx.
+ *   - `GRAPHCODE.md`          the guardrails doc.
+ *   - `package.json`          gains the `@sigloch/graphcode` dependency.
+ *
+ * Realizes: REQ-pre-harness-cli (repo + node/npx present), REQ-post-harness-cli
+ * (artifacts installed/updated/restlos removed, idempotent, store preserved on
+ * update), REQ-repo-install, REQ-repo-update, REQ-repo-uninstall,
+ * REQ-install-idempotent.
+ *
+ * @author andreas@siglochconsulting
+ */
+import { join } from 'node:path';
+import {
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  writeFileSync,
+  rmSync,
+} from 'node:fs';
+import { z } from 'zod/v4';
+import { KUZU_DIR } from './index.js';
+
+/** The distribution package a member repo depends on. */
+const PACKAGE_NAME = '@sigloch/graphcode';
+/** Dependency range written into the target's package.json (CR-121 distribution). */
+const PACKAGE_RANGE = '^0.1.0';
+
+/** Per-repo workspace dir (`.graphcode/`); the Kuzu store lives at `.graphcode/kuzu`. */
+const GRAPHCODE_DIR = '.graphcode';
+const MCP_CONFIG = '.mcp.json';
+const GUARDRAILS_FILE = 'GRAPHCODE.md';
+
+/** `CliCommand` (SCHEMA-cli-command) — the npx-CLI verbs this installer dispatches. */
+export const CliCommandSchema = z.enum(['init', 'update', 'remove']);
+export type CliCommand = z.infer<typeof CliCommandSchema>;
+
+/**
+ * `InstallResult` (FLOW-install-result) — what the scaffold created / updated /
+ * removed / preserved, plus the resolved repo root. Repo-relative paths so the
+ * result is stable/loggable across machines.
+ */
+export const InstallResultSchema = z.object({
+  action: CliCommandSchema,
+  repoRoot: z.string(),
+  created: z.array(z.string()),
+  updated: z.array(z.string()),
+  removed: z.array(z.string()),
+  preserved: z.array(z.string()),
+});
+export type InstallResult = z.infer<typeof InstallResultSchema>;
+
+/** The `.mcp.json` a foreign repo needs: launch the server via npx (CR-121). */
+function mcpConfigContent(): string {
+  const cfg = {
+    mcpServers: {
+      graphcode: { command: 'npx', args: ['-y', PACKAGE_NAME, 'mcp'] },
+    },
+  };
+  return JSON.stringify(cfg, null, 2) + '\n';
+}
+
+/** The guardrails doc scaffolded into the target repo. */
+function guardrailsContent(): string {
+  return [
+    '# graphcode — Harness Guardrails',
+    '',
+    'This repo is governed by the **graphcode** graph substrate (MCP-stdio).',
+    'Installed via `npx @sigloch/graphcode init`. Lifecycle: `init | update | remove`.',
+    '',
+    '## What is here',
+    '',
+    '- `.graphcode/` — the per-repo Kuzu store (`.graphcode/kuzu`). On-disk, single-owner.',
+    '  Never edited by hand; the store inits lazily on first `graphcode mcp`.',
+    '- `.mcp.json` — tells the agent host (Claude Code, OpenCode, …) to launch the',
+    `  server via \`npx -y ${PACKAGE_NAME} mcp\`.`,
+    '',
+    '## Rules',
+    '',
+    '- One store = Kuzu, single-writer, exactly one owner process per repo.',
+    '- One transport = MCP-stdio. No Express/REST in the core.',
+    '- One apply-gate = `mutate()` — every edit (human or AI) goes through it.',
+    '- SE ontology + rules come from `@sigloch/contracts/se` — import, never fork.',
+    '',
+    '## Lifecycle',
+    '',
+    '- `npx @sigloch/graphcode update` — refresh `.mcp.json` + this file, preserve the store.',
+    '- `npx @sigloch/graphcode remove`  — remove all scaffolded artifacts (incl. `.graphcode/`).',
+    '',
+  ].join('\n');
+}
+
+/** Idempotently write `content` to `abs`; push the repo-relative path to created/updated. */
+function writeArtifact(
+  abs: string,
+  rel: string,
+  content: string,
+  res: InstallResult,
+): void {
+  const exists = existsSync(abs);
+  // Idempotent: re-writing identical content still counts as the artifact being
+  // present; we report created on first appearance, updated otherwise.
+  const current = exists ? readFileSync(abs, 'utf8') : null;
+  if (current === content) {
+    // No change needed — but still owned. Report as preserved so re-running init
+    // is observably stable (REQ-install-idempotent).
+    res.preserved.push(rel);
+    return;
+  }
+  writeFileSync(abs, content, 'utf8');
+  (exists ? res.updated : res.created).push(rel);
+}
+
+/**
+ * Register `@sigloch/graphcode` in the target package.json `dependencies`.
+ * Idempotent: only writes when the range is missing/different; leaves all other
+ * keys untouched and preserves the file's existing formatting style (2-space).
+ */
+function registerDependency(repoRoot: string, res: InstallResult): void {
+  const abs = join(repoRoot, 'package.json');
+  let pkg: Record<string, unknown> = {};
+  const existed = existsSync(abs);
+  if (existed) {
+    pkg = JSON.parse(readFileSync(abs, 'utf8')) as Record<string, unknown>;
+  }
+  const deps = (pkg.dependencies as Record<string, string> | undefined) ?? {};
+  if (deps[PACKAGE_NAME] === PACKAGE_RANGE) {
+    res.preserved.push('package.json');
+    return;
+  }
+  deps[PACKAGE_NAME] = PACKAGE_RANGE;
+  pkg.dependencies = deps;
+  writeFileSync(abs, JSON.stringify(pkg, null, 2) + '\n', 'utf8');
+  (existed ? res.updated : res.created).push('package.json');
+}
+
+/** Remove `@sigloch/graphcode` from the target package.json dependencies (restlos). */
+function unregisterDependency(repoRoot: string, res: InstallResult): void {
+  const abs = join(repoRoot, 'package.json');
+  if (!existsSync(abs)) return;
+  const pkg = JSON.parse(readFileSync(abs, 'utf8')) as Record<string, unknown>;
+  const deps = pkg.dependencies as Record<string, string> | undefined;
+  if (!deps || !(PACKAGE_NAME in deps)) return;
+  delete deps[PACKAGE_NAME];
+  if (Object.keys(deps).length === 0) delete pkg.dependencies;
+  writeFileSync(abs, JSON.stringify(pkg, null, 2) + '\n', 'utf8');
+  res.updated.push('package.json');
+}
+
+/** Delete `abs` if present; record the repo-relative path as removed. */
+function removeArtifact(abs: string, rel: string, res: InstallResult): void {
+  if (!existsSync(abs)) return;
+  rmSync(abs, { recursive: true, force: true });
+  res.removed.push(rel);
+}
+
+/**
+ * Scaffold the harness into `opts.repoRoot`.
+ *
+ * - `init`   : create `.graphcode/`, write `.mcp.json` + guardrails, register the
+ *              dependency. Idempotent — re-running never duplicates or corrupts.
+ * - `update` : refresh `.mcp.json` + guardrails (+ dep), but PRESERVE the store
+ *              (`.graphcode/kuzu` is never touched).
+ * - `remove` : remove every artifact this CLI installed, restlos (incl. `.graphcode/`).
+ */
+export async function scaffold(
+  action: CliCommand,
+  opts: { repoRoot: string },
+): Promise<InstallResult> {
+  const repoRoot = opts.repoRoot;
+  const res: InstallResult = {
+    action,
+    repoRoot,
+    created: [],
+    updated: [],
+    removed: [],
+    preserved: [],
+  };
+
+  const graphcodeAbs = join(repoRoot, GRAPHCODE_DIR);
+  const mcpAbs = join(repoRoot, MCP_CONFIG);
+  const guardrailsAbs = join(repoRoot, GUARDRAILS_FILE);
+
+  switch (action) {
+    case 'init': {
+      // The per-repo workspace dir. The Kuzu store opens lazily under it on first
+      // `graphcode mcp`; init only ensures the parent exists (no fake store).
+      if (existsSync(graphcodeAbs)) {
+        res.preserved.push(GRAPHCODE_DIR + '/');
+      } else {
+        mkdirSync(graphcodeAbs, { recursive: true });
+        res.created.push(GRAPHCODE_DIR + '/');
+      }
+      writeArtifact(mcpAbs, MCP_CONFIG, mcpConfigContent(), res);
+      writeArtifact(guardrailsAbs, GUARDRAILS_FILE, guardrailsContent(), res);
+      registerDependency(repoRoot, res);
+      return res;
+    }
+
+    case 'update': {
+      // Refresh installed artifacts; NEVER wipe the store (REQ-repo-update). The
+      // `.graphcode/` dir + its `kuzu` store are explicitly preserved.
+      const kuzuAbs = join(repoRoot, KUZU_DIR);
+      if (existsSync(kuzuAbs)) res.preserved.push(KUZU_DIR + '/');
+      else if (existsSync(graphcodeAbs)) res.preserved.push(GRAPHCODE_DIR + '/');
+      else {
+        mkdirSync(graphcodeAbs, { recursive: true });
+        res.created.push(GRAPHCODE_DIR + '/');
+      }
+      writeArtifact(mcpAbs, MCP_CONFIG, mcpConfigContent(), res);
+      writeArtifact(guardrailsAbs, GUARDRAILS_FILE, guardrailsContent(), res);
+      registerDependency(repoRoot, res);
+      return res;
+    }
+
+    case 'remove': {
+      // Restlose Deinstallation — remove everything init/update installed.
+      removeArtifact(graphcodeAbs, GRAPHCODE_DIR + '/', res);
+      removeArtifact(mcpAbs, MCP_CONFIG, res);
+      removeArtifact(guardrailsAbs, GUARDRAILS_FILE, res);
+      unregisterDependency(repoRoot, res);
+      return res;
+    }
+  }
+}

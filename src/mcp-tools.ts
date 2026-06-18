@@ -1,56 +1,408 @@
 /**
- * MCP Tool Suite — Graph Operations via Claude Code
+ * mcp-tools.ts — MCP Tool Registry for graphcode (MOD-mcp-tools).
  *
- * Extracted from aimprove-harness MCP exports.
- * Transport: MCP-stdio (Claude Code native)
+ * Realizes:
+ *   - REQ-mcp-tool-registry    : read/write/rules/audit/query tools
+ *   - REQ-mcp-gate-symmetry    : graph_mutate delegates to harness.mutate() — identical semantics (L2)
+ *   - REQ-query-precision      : graph_impact returns exact blast-radius as Format-E slice, no full dump
+ *   - REQ-subgraph-slicing     : sub-graph slice is the context primitive
+ *   - REQ-progressive-expansion: graph_expand deepens via in-memory re-traversal (no originals store)
+ *   - REQ-audit-trail          : audit_trail / audit_stats over InMemoryAuditLog
+ *   - REQ-single-transport     : NO HTTP server added — stdio transport wiring is the MCP host's job.
  *
- * Tool categories:
- * - graph_* — Graph read/write
- * - rules_* — Rule evaluation
- * - audit_* — History/audit-trail
+ * Usage: const registry = bindToolsToHarness(harness, auditLog);
+ *        // Then hand the registry to your MCP stdio server (out of scope here).
+ *
+ * @author andreas@siglochconsulting
  */
 
-import { z } from 'zod';
+import { join, dirname } from 'node:path';
+import { mkdirSync, writeFileSync } from 'node:fs';
+import { z } from 'zod/v4';
+import type { ZodType } from 'zod/v4';
+import type { GraphCodeHarness } from './harness.js';
+import type { Graph, GraphNode, GraphEdge, AuditLog, AuditEntry } from '@sigloch/graph-api-core';
+import { FormatECodec, SE_DESCRIPTOR, InMemoryAuditLog } from '@sigloch/graph-api-core';
+import { type MutateCommand, type MutateResult, type RuleViolation } from '@sigloch/contracts/harness';
+import { exportGraphJson, exportMarkdown, MarkdownViewSchema, MARKDOWN_VIEWS, VIEW_FILENAMES } from './exporter.js';
 
-/**
- * Tool registry type.
- */
-export interface MCPToolRegistry {
-  // Graph read
-  graph_elements: any; // { name, description, inputSchema, handler }
-  graph_get_node: any;
-  graph_get_edges: any;
+// ---------------------------------------------------------------------------
+// Public types
+// ---------------------------------------------------------------------------
 
-  // Graph write
-  graph_mutate: any; // { name, description, inputSchema, handler } → MutateCommand
-
-  // Rules
-  rules_evaluate: any;
-  rules_get_violations: any;
-
-  // Audit
-  audit_trail: any;
-  audit_stats: any;
+export interface MCPTool<TInput = unknown, TOutput = unknown> {
+  name: string;
+  description: string;
+  inputSchema: ZodType<TInput>;
+  handler: (input: TInput) => Promise<TOutput>;
 }
 
-/**
- * MCP_TOOLS exported to Claude Code.
- *
- * TODO: Carve out from aimprove harness MCP exports.
- * Each tool = { name, description, inputSchema, handler }
- */
-export const MCP_TOOLS: Partial<MCPToolRegistry> = {
-  // graph_elements: { ... },
-  // graph_mutate: { ... },
-  // rules_evaluate: { ... },
-  // etc.
-};
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type MCPToolRegistry = Record<string, MCPTool<any, any>>;
+
+// ---------------------------------------------------------------------------
+// Input schemas
+// ---------------------------------------------------------------------------
+
+const GraphElementsInputSchema = z.object({
+  type: z.string().optional().describe('Filter by node type (e.g. REQ, TEST, MOD)'),
+  search: z.string().optional().describe('Substring search against uid, name, description'),
+  limit: z.number().int().positive().default(100),
+});
+
+const GraphGetNodeInputSchema = z.object({
+  uid: z.string().describe('Node uid'),
+});
+
+const GraphGetEdgesInputSchema = z.object({
+  uid: z.string().optional().describe('Filter edges incident to this node'),
+  edgeType: z.string().optional().describe('Filter by edge type'),
+  direction: z.enum(['in', 'out', 'both']).default('both'),
+});
+
+const GraphMutateInputSchema = z.object({
+  // commands is validated by harness.mutate() via MutateCommandSchema internally.
+  // We accept any array here to avoid cross-Zod-version schema composition issues (D1).
+  commands: z.array(z.unknown()).min(1),
+  consumerId: z.string().default('mcp-client'),
+});
+
+const RulesEvaluateInputSchema = z.looseObject({});
+
+const RulesGetViolationsInputSchema = z.object({
+  severity: z.enum(['error', 'warning', 'info']).optional(),
+});
+
+const AuditTrailInputSchema = z.object({
+  consumerId: z.string().optional(),
+  since: z.string().optional().describe('ISO 8601 timestamp lower bound'),
+  limit: z.number().int().positive().default(50),
+});
+
+const AuditStatsInputSchema = z.looseObject({});
+
+const GraphImpactInputSchema = z.object({
+  id: z.string().describe('Root node uid to compute blast-radius from'),
+  depth: z.number().int().nonnegative().default(1).describe('Traversal depth; 1 = direct neighbors'),
+});
+
+const GraphExpandInputSchema = z.object({
+  handle: z.string().describe('Node uid returned by a previous graph_impact or graph_expand call'),
+  branch: z.enum(['callers', 'traces', 'tests', 'all']).default('all'),
+  depth: z.number().int().positive().default(2).describe('Depth for this expansion (usually prior_depth + 1)'),
+});
+
+const GraphExportInputSchema = z.object({
+  name: z.string().optional().describe('Base filename for the graph JSON (default: scope.systemId)'),
+  views: z.array(MarkdownViewSchema).optional().describe('Markdown views to render (default: all)'),
+});
+
+// ---------------------------------------------------------------------------
+// Branch → edge-type filter for graph_expand. trace/test branches keep the full
+// Kuzu neighbourhood but prune to the relevant edge types (and the nodes those
+// edges touch). callers/all are pure-direction and need no edge filtering.
+// ---------------------------------------------------------------------------
+
+const TRACE_EDGE_TYPES = new Set(['trace', 'traces', 'TRACE']);
+const TEST_EDGE_TYPES = new Set(['verify', 'test', 'VERIFY', 'TEST']);
+
+/** Keep only edges of the given types and the nodes incident to them (root always kept). */
+function filterByEdgeTypes(graph: Graph, rootId: string, types: Set<string>): Graph {
+  const edges: GraphEdge[] = graph.edges.filter((e) => types.has(e.edgeType));
+  const keep = new Set<string>([rootId]);
+  for (const e of edges) {
+    keep.add(e.sourceId);
+    keep.add(e.targetId);
+  }
+  const nodes: GraphNode[] = graph.nodes.filter((n) => keep.has(n.uid));
+  return { nodes, edges };
+}
+
+// ---------------------------------------------------------------------------
+// Factory
+// ---------------------------------------------------------------------------
 
 /**
- * Helper to bind tools to a harness instance.
+ * Bind all MCP tools to a live `GraphCodeHarness` instance.
+ * Optionally pass an existing `AuditLog`; defaults to a fresh `InMemoryAuditLog`.
+ *
+ * Returns an `MCPToolRegistry` — a named map of tools that a MCP stdio host can
+ * enumerate and dispatch. The stdio server itself is the host's concern (single-
+ * transport constraint: no HTTP added here).
  */
-export function bindToolsToHarness(harness: any): MCPToolRegistry {
-  // TODO: Implement tool binding
-  // Each tool calls harness.mutate(), harness.loadGraph(), harness.evaluateRules()
-  throw new Error('bindToolsToHarness() not yet implemented');
+export function bindToolsToHarness(
+  harness: GraphCodeHarness,
+  auditLog: AuditLog = new InMemoryAuditLog(),
+): MCPToolRegistry {
+  const codec = new FormatECodec(SE_DESCRIPTOR);
+  let _graphVersion = 0;
+
+  // Helper to record an audit entry after a mutation
+  async function recordAudit(
+    consumerId: string,
+    result: MutateResult,
+  ): Promise<void> {
+    _graphVersion += 1;
+    const entry: AuditEntry = {
+      id: `audit-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      timestamp: new Date().toISOString(),
+      consumerId,
+      consumerType: 'agent',
+      operation: 'mutate',
+      result: result.success ? 'applied' : 'rejected',
+      violations: result.violations as import('@sigloch/graph-api-core').RuleViolation[],
+      graphVersion: _graphVersion,
+    };
+    await auditLog.record(entry);
+  }
+
+  // ---------------------------------------------------------------------------
+  // READ tools
+  // ---------------------------------------------------------------------------
+
+  const graph_elements: MCPTool<z.infer<typeof GraphElementsInputSchema>, { nodes: GraphNode[]; total: number }> = {
+    name: 'graph_elements',
+    description: 'List graph elements (nodes) with optional type/search filter. Returns a slice, not a full dump.',
+    inputSchema: GraphElementsInputSchema,
+    async handler(input) {
+      // Cypher-backed listing via the Kuzu store (KNOW, not grep over the mirror).
+      const nodes = await harness.listElements({ type: input.type, search: input.search });
+      const total = nodes.length;
+      return { nodes: nodes.slice(0, input.limit), total };
+    },
+  };
+
+  const graph_get_node: MCPTool<z.infer<typeof GraphGetNodeInputSchema>, { node: GraphNode | null }> = {
+    name: 'graph_get_node',
+    description: 'Get a single graph node by uid.',
+    inputSchema: GraphGetNodeInputSchema,
+    async handler(input) {
+      const node = harness.getGraph().nodes.find((n) => n.uid === input.uid) ?? null;
+      return { node };
+    },
+  };
+
+  const graph_get_edges: MCPTool<z.infer<typeof GraphGetEdgesInputSchema>, { edges: GraphEdge[]; total: number }> = {
+    name: 'graph_get_edges',
+    description: 'Get edges, optionally filtered by incident node uid, edge type, or direction.',
+    inputSchema: GraphGetEdgesInputSchema,
+    async handler(input) {
+      let edges = harness.getGraph().edges;
+      if (input.uid) {
+        const uid = input.uid;
+        const dir = input.direction;
+        edges = edges.filter((e) => {
+          if (dir === 'out') return e.sourceId === uid;
+          if (dir === 'in') return e.targetId === uid;
+          return e.sourceId === uid || e.targetId === uid;
+        });
+      }
+      if (input.edgeType) {
+        const et = input.edgeType;
+        edges = edges.filter((e) => e.edgeType === et);
+      }
+      return { edges, total: edges.length };
+    },
+  };
+
+  // ---------------------------------------------------------------------------
+  // WRITE tool — gate symmetry (L2): delegates to harness.mutate(), no bypass
+  // ---------------------------------------------------------------------------
+
+  const graph_mutate: MCPTool<z.infer<typeof GraphMutateInputSchema>, MutateResult> = {
+    name: 'graph_mutate',
+    description:
+      'Apply a batch of graph mutations through the Apply-Gate (L2). ' +
+      'Every write goes through harness.mutate() — identical semantics to in-process calls. ' +
+      'No direct Kuzu access; blocked by rules identical to any in-process mutation.',
+    inputSchema: GraphMutateInputSchema,
+    async handler(input) {
+      // L2: identical semantics — delegate straight to the gate, no bypass.
+      // Cast: MCP transports deserialize commands as plain objects; harness.mutate()
+      // validates internally via MutateCommandSchema.
+      const result = await harness.mutate(input.commands as MutateCommand[]);
+      await recordAudit(input.consumerId, result);
+      return result;
+    },
+  };
+
+  // ---------------------------------------------------------------------------
+  // RULES tools
+  // ---------------------------------------------------------------------------
+
+  const rules_evaluate: MCPTool<z.infer<typeof RulesEvaluateInputSchema>, { violations: RuleViolation[] }> = {
+    name: 'rules_evaluate',
+    description: 'Evaluate V3_RULES against the current in-memory graph. Read-only; does not mutate.',
+    inputSchema: RulesEvaluateInputSchema,
+    async handler(_input) {
+      return { violations: harness.evaluateRules() };
+    },
+  };
+
+  const rules_get_violations: MCPTool<
+    z.infer<typeof RulesGetViolationsInputSchema>,
+    { violations: RuleViolation[]; total: number }
+  > = {
+    name: 'rules_get_violations',
+    description: 'Return current rule violations, optionally filtered by severity.',
+    inputSchema: RulesGetViolationsInputSchema,
+    async handler(input) {
+      let violations = harness.evaluateRules();
+      if (input.severity) violations = violations.filter((v) => v.severity === input.severity);
+      return { violations, total: violations.length };
+    },
+  };
+
+  // ---------------------------------------------------------------------------
+  // AUDIT tools
+  // ---------------------------------------------------------------------------
+
+  const audit_trail: MCPTool<z.infer<typeof AuditTrailInputSchema>, { entries: AuditEntry[] }> = {
+    name: 'audit_trail',
+    description: 'Return mutation history entries from the audit log.',
+    inputSchema: AuditTrailInputSchema,
+    async handler(input) {
+      const entries = await auditLog.query({
+        consumerId: input.consumerId,
+        since: input.since,
+        limit: input.limit,
+      });
+      return { entries };
+    },
+  };
+
+  const audit_stats: MCPTool<
+    z.infer<typeof AuditStatsInputSchema>,
+    { totalEntries: number; applied: number; rejected: number; graphVersion: number }
+  > = {
+    name: 'audit_stats',
+    description: 'Aggregate stats from the audit log: counts of applied vs. rejected mutations.',
+    inputSchema: AuditStatsInputSchema,
+    async handler(_input) {
+      const all = await auditLog.query({});
+      const applied = all.filter((e) => e.result === 'applied').length;
+      const rejected = all.filter((e) => e.result === 'rejected').length;
+      return { totalEntries: all.length, applied, rejected, graphVersion: _graphVersion };
+    },
+  };
+
+  // ---------------------------------------------------------------------------
+  // QUERY-PRECISION tools (R6/R12/R7/R13)
+  // ---------------------------------------------------------------------------
+
+  const graph_impact: MCPTool<
+    z.infer<typeof GraphImpactInputSchema>,
+    { formatE: string; nodeCount: number; edgeCount: number; rootId: string }
+  > = {
+    name: 'graph_impact',
+    description:
+      'Compute the exact blast-radius (FUNC-graph-impact / R6 / R12) via Kuzu Cypher: ' +
+      'returns the root node + its DEPENDENTS (incoming edges — callers/traces/tests that ' +
+      'point INTO root) within `depth` hops as a Format-E slice. Never the full graph (anti-grep).',
+    inputSchema: GraphImpactInputSchema,
+    async handler(input) {
+      // Blast-radius = dependents = INCOMING edges, computed in Kuzu (not TS-BFS).
+      const subgraph = await harness.impact(input.id, input.depth);
+      const formatE = codec.serialize(subgraph);
+      return {
+        rootId: input.id,
+        nodeCount: subgraph.nodes.length,
+        edgeCount: subgraph.edges.length,
+        formatE,
+      };
+    },
+  };
+
+  const graph_expand: MCPTool<
+    z.infer<typeof GraphExpandInputSchema>,
+    { formatE: string; nodeCount: number; edgeCount: number; handle: string }
+  > = {
+    name: 'graph_expand',
+    description:
+      'Progressively deepen one branch on demand via Kuzu Cypher re-traversal (FUNC-graph-expand / R13). ' +
+      'Pass the node uid as `handle`, the branch (callers=incoming dependents, traces, tests, all=both ' +
+      'directions), and the new depth. No originals store — recomputed from the live Kuzu store.',
+    inputSchema: GraphExpandInputSchema,
+    async handler(input) {
+      // callers = incoming dependents; all/traces/tests = full neighbourhood (both),
+      // with traces/tests pruned to the relevant edge types afterwards.
+      const direction = input.branch === 'callers' ? 'in' : 'both';
+      let subgraph = await harness.subgraph(input.handle, input.depth, direction);
+      if (input.branch === 'traces') subgraph = filterByEdgeTypes(subgraph, input.handle, TRACE_EDGE_TYPES);
+      else if (input.branch === 'tests') subgraph = filterByEdgeTypes(subgraph, input.handle, TEST_EDGE_TYPES);
+      const formatE = codec.serialize(subgraph);
+      return {
+        handle: input.handle,
+        nodeCount: subgraph.nodes.length,
+        edgeCount: subgraph.edges.length,
+        formatE,
+      };
+    },
+  };
+
+  // ---------------------------------------------------------------------------
+  // EXPORT tool — the agent-facing re-export sync path (CR-GC-113 over MCP).
+  // Serializes the LIVE in-memory graph (full fidelity) — the only place that
+  // holds it across the session — to commit-able docs under the repo root.
+  // ---------------------------------------------------------------------------
+
+  const graph_export: MCPTool<
+    z.infer<typeof GraphExportInputSchema>,
+    {
+      graphJson: { path: string; bytes: number; nodes: number; edges: number };
+      views: Array<{ view: string; path: string; bytes: number }>;
+    }
+  > = {
+    name: 'graph_export',
+    description:
+      'Re-export the live governed graph to commit-able docs — the single sync path (CR-GC-113). ' +
+      'Writes canonical docs/graph/<name>.graph.json plus deterministic docs/views/*.md (GENERATED header) ' +
+      'under the repo root, from the live in-memory graph (full fidelity). Closes the agent loop: ' +
+      'spec → impact → implement → export. Returns the written paths and byte sizes.',
+    inputSchema: GraphExportInputSchema,
+    async handler(input) {
+      const graph = harness.getGraph();
+      const repoRoot = harness.getRepoRoot();
+      const name = input.name ?? harness.getScope().systemId;
+
+      const json = exportGraphJson(graph);
+      const jsonRel = join('docs', 'graph', `${name}.graph.json`);
+      const jsonAbs = join(repoRoot, jsonRel);
+      mkdirSync(dirname(jsonAbs), { recursive: true });
+      writeFileSync(jsonAbs, json);
+
+      const views = input.views ?? MARKDOWN_VIEWS;
+      const written = views.map((v) => {
+        const md = exportMarkdown(graph, v);
+        const rel = join('docs', 'views', VIEW_FILENAMES[v]);
+        const abs = join(repoRoot, rel);
+        mkdirSync(dirname(abs), { recursive: true });
+        writeFileSync(abs, md);
+        return { view: v, path: rel, bytes: Buffer.byteLength(md) };
+      });
+
+      return {
+        graphJson: { path: jsonRel, bytes: Buffer.byteLength(json), nodes: graph.nodes.length, edges: graph.edges.length },
+        views: written,
+      };
+    },
+  };
+
+  // ---------------------------------------------------------------------------
+  // Registry
+  // ---------------------------------------------------------------------------
+
+  return {
+    graph_elements,
+    graph_get_node,
+    graph_get_edges,
+    graph_mutate,
+    rules_evaluate,
+    rules_get_violations,
+    audit_trail,
+    audit_stats,
+    graph_impact,
+    graph_expand,
+    graph_export,
+  };
 }

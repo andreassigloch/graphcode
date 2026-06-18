@@ -1,5 +1,10 @@
 # GraphCode — Empfehlungen (graphify- + graphengine-Vergleiche)
 
+> ⚠️ **INPUT ONLY (Bootstrap) — seit 2026-06-14.** Die **SSOT ist der Graph**
+> (`docs/graph/graphcode.graph.json`). R1–R14 sind als Requirements in den Graph
+> reverse-engineered (siehe `REQ-*` + CR→REQ-`relation`-Traces). Dieses Dokument ist
+> historischer Input und **nicht mehr autoritativ**. Siehe `REQ-graph-is-ssot`.
+
 **Stand:** 2026-06-13
 **Volle Analysen (SSOT):** `bok/docs/research/graphify-comparison.md` (R1–R4) ·
 `bok/docs/research/graphengine-efficiency.md` (R5–R11)
