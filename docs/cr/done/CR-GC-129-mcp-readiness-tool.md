@@ -1,6 +1,6 @@
 # CR-GC-129: graph_readiness MCP tool — expose readiness over the agent surface
 
-**Status:** Open · **Milestone:** `MS-3-mvp-readiness` (skills completion) · **Datum:** 2026-06-18 · **Max Files:** 4
+**Status:** Done · **Milestone:** `MS-3-mvp-readiness` (skills completion) · **Datum:** 2026-06-18 · **Max Files:** 4
 **Graph (SSOT):** touches `MOD-mcp-tools`; exposes `scoreReadiness` (CR-GC-107, `MOD-readiness`) over MCP. Realizes the MCP-reachability of family readiness. Pointer — derive acceptance from the graph.
 
 ## Problem (Why)

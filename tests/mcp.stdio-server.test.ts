@@ -89,6 +89,7 @@ describe('TEST-mcp-stdio-server: registry served over the MCP protocol', () => {
       'graph_get_node',
       'graph_impact',
       'graph_mutate',
+      'graph_readiness',
       'rules_evaluate',
       'rules_get_violations',
     ]);

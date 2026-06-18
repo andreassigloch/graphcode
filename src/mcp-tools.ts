@@ -25,6 +25,7 @@ import type { Graph, GraphNode, GraphEdge, AuditLog, AuditEntry } from '@sigloch
 import { FormatECodec, SE_DESCRIPTOR, InMemoryAuditLog } from '@sigloch/graph-api-core';
 import { type MutateCommand, type MutateResult, type RuleViolation } from '@sigloch/contracts/harness';
 import { exportGraphJson, exportMarkdown, MarkdownViewSchema, MARKDOWN_VIEWS, VIEW_FILENAMES } from './exporter.js';
+import { scoreReadiness, type ReadinessReport } from './readiness.js';
 
 // ---------------------------------------------------------------------------
 // Public types
@@ -96,6 +97,8 @@ const GraphExportInputSchema = z.object({
   name: z.string().optional().describe('Base filename for the graph JSON (default: scope.systemId)'),
   views: z.array(MarkdownViewSchema).optional().describe('Markdown views to render (default: all)'),
 });
+
+const GraphReadinessInputSchema = z.looseObject({});
 
 // ---------------------------------------------------------------------------
 // Branch → edge-type filter for graph_expand. trace/test branches keep the full
@@ -389,6 +392,26 @@ export function bindToolsToHarness(
   };
 
   // ---------------------------------------------------------------------------
+  // READINESS tool — exposes the family compliance score (CR-GC-107 / MOD-readiness)
+  // over the agent surface. se-review / se-status read it instead of the retired
+  // GET /api/graph/readiness. Delegates to scoreReadiness(harness) → evaluateRules()
+  // (L2 gate) so the score is driven by contracts V3_RULES (R-/RD-), never foreign BQ-*.
+  // ---------------------------------------------------------------------------
+
+  const graph_readiness: MCPTool<z.infer<typeof GraphReadinessInputSchema>, ReadinessReport> = {
+    name: 'graph_readiness',
+    description:
+      'Score family readiness of the live governed graph (FUNC-score-readiness / CR-GC-107). ' +
+      'Returns the ReadinessReport: compliance dimension (fraction of elements with no error-severity ' +
+      'violation), violationsByRule (keyed by contracts rule-ID — R-/RD-, never BQ-*), the sorted raw ' +
+      'violations, and computedAt. Read-only; derived from harness.evaluateRules() (L2 gate).',
+    inputSchema: GraphReadinessInputSchema,
+    async handler(_input) {
+      return scoreReadiness(harness);
+    },
+  };
+
+  // ---------------------------------------------------------------------------
   // Registry
   // ---------------------------------------------------------------------------
 
@@ -404,5 +427,6 @@ export function bindToolsToHarness(
     graph_impact,
     graph_expand,
     graph_export,
+    graph_readiness,
   };
 }
