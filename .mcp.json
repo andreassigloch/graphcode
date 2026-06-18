@@ -1,12 +1,8 @@
 {
   "mcpServers": {
-    "graph-server": {
+    "graphcode": {
       "command": "node",
-      "args": [".claude/mcp-graph-server.js"],
-      "env": {
-        "GRAPH_API": "http://localhost:3001",
-        "GRAPH_PORT": "3001"
-      }
+      "args": ["dist/cli.js", "mcp"]
     }
   }
 }

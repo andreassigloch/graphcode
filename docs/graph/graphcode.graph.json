@@ -264,11 +264,12 @@
       "type": "REQ",
       "name": "Ein Transport: MCP-stdio",
       "description": "Genau ein Transport = MCP-stdio; kein Express-REST/HTTP im Harness-Core. (SPEC §0, §5)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
         "non-functional"
-      ]
+      ],
+      "updated_at": "2026-06-18T00:00:00.000Z"
     },
     {
       "id": "REQ-one-gate-per-repo",
@@ -605,22 +606,24 @@
       "type": "REQ",
       "name": "MCP-Tool-Registry an Harness gebunden",
       "description": "CR-GC-101: Registry graph_elements/get_node/get_edges (read), graph_mutate (write durchs Gate), rules_evaluate/get_violations, audit_trail/stats — via bindToolsToHarness.",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
         "functional"
-      ]
+      ],
+      "updated_at": "2026-06-18T00:00:00.000Z"
     },
     {
       "id": "REQ-mcp-gate-symmetry",
       "type": "REQ",
       "name": "MCP-Gate-Symmetrie (L2)",
       "description": "CR-GC-101 L2: MCP graph_mutate == in-process mutate() — identische Semantik, identisches Violations-Dict (end-to-end).",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
         "non-functional"
-      ]
+      ],
+      "updated_at": "2026-06-18T00:00:00.000Z"
     },
     {
       "id": "REQ-audit-trail",
@@ -2289,6 +2292,21 @@
       "status": "done",
       "created_at": "2026-06-17T00:00:00.000Z",
       "updated_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "id": "TEST-mcp-stdio-server",
+      "type": "TEST",
+      "name": "MCP-stdio-Server-Test",
+      "description": "Registry served over the real MCP protocol (linked transport + disk Kuzu): listTools enumerates all tools, graph_mutate==mutate() incl. R-01 BLOCK, graph_impact bounded slice. (CR-GC-111)",
+      "status": "done",
+      "created_at": "2026-06-18T00:00:00.000Z",
+      "method": "test",
+      "attributes": {
+        "level": "integration",
+        "tool": "vitest",
+        "constraint": "single-transport-mcp-stdio"
+      },
+      "updated_at": "2026-06-18T00:00:00.000Z"
     }
   ],
   "traces": [
@@ -5525,6 +5543,27 @@
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-mcp-stdio-server",
+      "target": "REQ-mcp-tool-registry",
+      "type": "verify",
+      "weight": 1,
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-mcp-stdio-server",
+      "target": "REQ-single-transport",
+      "type": "verify",
+      "weight": 1,
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-mcp-stdio-server",
+      "target": "REQ-mcp-gate-symmetry",
+      "type": "verify",
+      "weight": 1,
+      "created_at": "2026-06-18T00:00:00.000Z"
     }
   ]
 }

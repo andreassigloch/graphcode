@@ -10,9 +10,10 @@
  */
 import { join, dirname } from 'node:path';
 import { mkdirSync } from 'node:fs';
+import { z } from 'zod/v4';
 import { KuzuAdapter } from '@sigloch/graph-cypher-wasm';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import { HarnessConfigSchema, type HarnessConfig } from '@sigloch/contracts/harness';
+import { HarnessConfigSchema } from '@sigloch/contracts/harness';
 import { GraphCodeHarness } from './harness.js';
 import { HookSystem } from './hooks.js';
 import { registerEmitters } from './emit.js';
@@ -24,6 +25,10 @@ export type { HookType, HookResult, HookData, HookHandler, HookOptions, HookSyst
 // MCP-stdio tool surface (CR-GC-101) — graph instead of grep, gate-symmetric writes.
 export { bindToolsToHarness } from './mcp-tools.js';
 export type { MCPTool, MCPToolRegistry } from './mcp-tools.js';
+
+// MCP-stdio server (CR-GC-111) — bind the registry to @modelcontextprotocol/sdk
+// over stdio (REQ-single-transport); `graphcode mcp` (src/cli.ts) is the entry.
+export { bindRegistryToMcpServer, buildMcpServer, serveStdio } from './mcp-server.js';
 
 // Hook emission (CR-GC-102) — live-update event + append-only trajectory + version cache.
 export { registerEmitters, computeDomains, makeUpdateEventHook, makeTrajectoryHook, ResponseCache } from './emit.js';
@@ -58,7 +63,7 @@ export const KUZU_DIR = '.graphcode/kuzu';
  * broadcast; the harness core stays headless (no HTTP).
  */
 export async function createHarness(
-  config: HarnessConfig,
+  config: z.input<typeof HarnessConfigSchema>,
   opts?: { onUpdateEvent?: (event: import('./emit.js').LiveUpdateEvent) => void },
 ): Promise<GraphCodeHarness> {
   const cfg = HarnessConfigSchema.parse(config);
