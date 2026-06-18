@@ -1,6 +1,6 @@
 # CR-GC-104: Skills/Prompts als Modul — `MOD-skills`
 
-**Status:** Open · **Datum:** 2026-06-17 · **Modul:** `.claude/skills/` (Graph: `MOD-skills`)
+**Status:** Done · **Datum:** 2026-06-17 · **Abschluss:** 2026-06-18 · **Modul:** `.claude/skills/` (Graph: `MOD-skills`)
 **Refs:** ADR-001 §4 AD-6 (app-spezifische Module) · Diskussion „Skills = Funktionen" (2026-06-17)
 **Graph:** `CR-GC-104 -relation→ MOD-skills` · **Max Files:** 5
 
@@ -28,3 +28,11 @@ FLOW `view-request`/`rendered-view`. Lifecycle: `FUNC-harness-cli` scaffolded/ak
 
 ## Dependencies
 Keine (additive Modell-Verfeinerung, innerhalb des Frames / vordefinierter Boxen).
+
+## Abschluss (2026-06-18)
+Modellierung war längst im Graph (`MOD-skills`, `FUNC-render-views` + `compose`/`allocate`/`satisfy`-Traces).
+Offen blieb nur der Funktionsnachweis „Skills = Funktionen" — erbracht durch CR-GC-130/131/132: alle 9
+`se-*`-Skills laufen jetzt über die MCP-Surface (nicht die abgeschaltete `localhost:3001`-API), verifiziert
+durch `tests/skills.mcp-conformance.test.ts` (`TEST-skills-mcp`). `MOD-skills` → `done` (CR-GC-132).
+Das veraltete Akzeptanzkriterium „`node scripts/seed-graph.mjs` HTTP 200" ist obsolet (Skript gelöscht);
+abgelöst durch `tests/graph-integrity.test.ts` (keine dangling/invalid Traces, kanonische Serialisierung).
