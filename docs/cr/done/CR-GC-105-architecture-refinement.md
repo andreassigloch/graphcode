@@ -1,6 +1,6 @@
 # CR-GC-105: Architektur-Verfeinerung — Kunden-Aktoren, Interface-Eskalation, UC×FCHAIN
 
-**Status:** Open · **Datum:** 2026-06-17 · **Modul:** Modell (graph) · **Refs:** ADR-001, Diskussion 2026-06-17
+**Status:** Done · **Closed:** 2026-06-18 · **Datum:** 2026-06-17 · **Modul:** Modell (graph) · **Refs:** ADR-001, Diskussion 2026-06-17
 **Graph:** mehrere Knoten/Traces (siehe Scope) · **Max Files:** 5
 
 ## Problem (Why)
