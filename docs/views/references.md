@@ -133,6 +133,7 @@
 | `CR-GC-114` | relation | `REQ-mutation-emits-event` |
 | `CR-GC-114` | relation | `REQ-readonly-bridge` |
 | `CR-GC-114` | relation | `REQ-versioned-broadcast` |
+| `CR-GC-115` | relation | `FUNC-render-artifacts` |
 | `CR-GC-115` | relation | `FUNC-render-graph` |
 | `CR-GC-115` | relation | `FUNC-render-impact` |
 | `CR-GC-115` | relation | `FUNC-render-impl-gates` |
@@ -375,6 +376,8 @@
 | `FUNC-mutate` | satisfy | `REQ-confidence-tier` |
 | `FUNC-mutate` | satisfy | `REQ-one-gate-per-repo` |
 | `FUNC-mutate` | satisfy | `UC-code-quality` |
+| `FUNC-render-artifacts` | allocate | `MOD-dashboard` |
+| `FUNC-render-artifacts` | satisfy | `UC-live-graph-view` |
 | `FUNC-render-graph` | allocate | `MOD-dashboard` |
 | `FUNC-render-graph` | satisfy | `UC-live-graph-view` |
 | `FUNC-render-impact` | allocate | `MOD-dashboard` |

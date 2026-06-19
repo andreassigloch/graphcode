@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Alle Elemente nach Typ, sortiert nach uid. Deterministisch generiert.
 
-Elemente: 252 · Traces: 524
+Elemente: 253 · Traces: 527
 
 
 ## ACTOR
@@ -120,6 +120,7 @@ Elemente: 252 · Traces: 524
 | `FUNC-merge-nodes` | mergeNodes(graph) | reviewed | Conflict-free Merge via merge_nodes + deterministischer Serialisierung; keine verlorenen Knoten/Traces. |
 | `FUNC-migrate-schema` | migrateSchema(from, to) | reviewed | Re-Validierung + Migration des Graphen bei ONTOLOGY/RULES_VERSION-Bump; Version am Artefakt mitgeführt. |
 | `FUNC-mutate` | mutate(commands) | done | Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3) |
+| `FUNC-render-artifacts` | renderArtifactReadiness(views) | draft | INCOSE-Artifact-Panel: Readiness je Dokument/View (Testmatrix, FMEA, RTM, ImplPlan, IntPlan, ChangeLog, ConOps, IRR, NFR, ICD) aus dem Query-Layer (graph_query views) + graph_readiness. Repoint der aimprove ArtifactReadiness. Die offene View-Liste (RTM, IntPlan, ChangeLog, ConOps, IRR, ICD ohne se-view-Skill) ist genau der Rest-Scope von CR-GC-116. (CR-GC-115) |
 | `FUNC-render-graph` | renderGraph(elements, traces) | draft | Live-Cytoscape-Graph der gegateten Knoten/Traces mit Violation-Overlay, gerendert via @sigloch/graph-renderer. Datenquelle: graph_elements + graph_get_edges + rules_get_violations. Repoint der aimprove OntologyView/GraphOverview. (CR-GC-115) |
 | `FUNC-render-impact` | renderImpactPanel(id) | draft | Impact-Panel on-demand: exakter Blast-Radius via graph_impact statt gespeicherter aimprove-Impact-Assessments (Learning). Repoint der aimprove ImpactView auf die Live-Quelle. (CR-GC-115) |
 | `FUNC-render-impl-gates` | renderImplGates(report) | draft | Impl-Gates-Panel: SAR/FCA/SVR/FRR + CR/MS-Burndown aus graph_readiness.implGates und den MS/CR-Knoten. Repoint der aimprove ImplGates + CrBurndown. (CR-GC-115) |

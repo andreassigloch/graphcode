@@ -2603,6 +2603,14 @@
         "tool": "vitest",
         "constraint": "viewer exposes no write path"
       }
+    },
+    {
+      "id": "FUNC-render-artifacts",
+      "type": "FUNC",
+      "name": "renderArtifactReadiness(views)",
+      "description": "INCOSE-Artifact-Panel: Readiness je Dokument/View (Testmatrix, FMEA, RTM, ImplPlan, IntPlan, ChangeLog, ConOps, IRR, NFR, ICD) aus dem Query-Layer (graph_query views) + graph_readiness. Repoint der aimprove ArtifactReadiness. Die offene View-Liste (RTM, IntPlan, ChangeLog, ConOps, IRR, ICD ohne se-view-Skill) ist genau der Rest-Scope von CR-GC-116. (CR-GC-115)",
+      "status": "draft",
+      "created_at": "2026-06-19T00:00:00.000Z"
     }
   ],
   "traces": [
@@ -6262,6 +6270,27 @@
     {
       "source": "CR-GC-115",
       "target": "REQ-dashboard-readonly",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-render-artifacts",
+      "target": "UC-live-graph-view",
+      "type": "satisfy",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-render-artifacts",
+      "target": "MOD-dashboard",
+      "type": "allocate",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-115",
+      "target": "FUNC-render-artifacts",
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-19T00:00:00.000Z"

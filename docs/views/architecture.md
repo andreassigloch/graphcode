@@ -23,6 +23,7 @@
 | `FUNC-merge-nodes` | FUNC | mergeNodes(graph) |
 | `FUNC-migrate-schema` | FUNC | migrateSchema(from, to) |
 | `FUNC-mutate` | FUNC | mutate(commands) |
+| `FUNC-render-artifacts` | FUNC | renderArtifactReadiness(views) |
 | `FUNC-render-graph` | FUNC | renderGraph(elements, traces) |
 | `FUNC-render-impact` | FUNC | renderImpactPanel(id) |
 | `FUNC-render-impl-gates` | FUNC | renderImplGates(report) |
@@ -58,6 +59,7 @@
 | `FUNC-merge-nodes` | `MOD-codec` |
 | `FUNC-migrate-schema` | `MOD-harness` |
 | `FUNC-mutate` | `MOD-harness` |
+| `FUNC-render-artifacts` | `MOD-dashboard` |
 | `FUNC-render-graph` | `MOD-dashboard` |
 | `FUNC-render-impact` | `MOD-dashboard` |
 | `FUNC-render-impl-gates` | `MOD-dashboard` |
