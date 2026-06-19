@@ -11,6 +11,7 @@
 | uid | type | name |
 |---|---|---|
 | `FUNC-decode` | FUNC | decode(json) |
+| `FUNC-deduce-tests` | FUNC | graph_tests(changeSet) |
 | `FUNC-emit-trajectory` | FUNC | emitTrajectory() |
 | `FUNC-emit-update-event` | FUNC | emitUpdateEvent(domains) |
 | `FUNC-encode` | FUNC | encode(graph) |
@@ -49,6 +50,7 @@
 | function | module |
 |---|---|
 | `FUNC-decode` | `MOD-codec` |
+| `FUNC-deduce-tests` | `MOD-mcp-tools` |
 | `FUNC-emit-trajectory` | `MOD-hooks` |
 | `FUNC-emit-update-event` | `MOD-hooks` |
 | `FUNC-encode` | `MOD-codec` |
@@ -78,4 +80,5 @@
 | `REQ-readiness-transparent` | `MOD-dashboard` |
 | `REQ-readonly-bridge` | `MOD-host-bridge` |
 | `REQ-real-health-check` | `MOD-host-bridge` |
+| `REQ-test-runnable-binding` | `MOD-mcp-tools` |
 | `REQ-versioned-broadcast` | `MOD-host-bridge` |

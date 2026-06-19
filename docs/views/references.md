@@ -190,6 +190,10 @@
 | `CR-GC-126` | relation | `MS-3-mvp-readiness` |
 | `CR-GC-126` | relation | `REQ-progressive-expansion` |
 | `CR-GC-126` | relation | `REQ-query-precision` |
+| `CR-GC-134` | relation | `FUNC-deduce-tests` |
+| `CR-GC-134` | relation | `MS-4-mvp2` |
+| `CR-GC-134` | relation | `REQ-test-runnable-binding` |
+| `CR-GC-134` | relation | `UC-efficient-testing` |
 | `CR-GC-200` | relation | `MOD-codec` |
 | `CR-GC-200` | relation | `MOD-harness` |
 | `CR-GC-200` | relation | `MS-3-mvp-readiness` |
@@ -301,6 +305,8 @@
 | `FUNC-decode` | satisfy | `REQ-codec-validation` |
 | `FUNC-decode` | satisfy | `REQ-roundtrip-conformance` |
 | `FUNC-decode` | satisfy | `UC-code-quality` |
+| `FUNC-deduce-tests` | allocate | `MOD-mcp-tools` |
+| `FUNC-deduce-tests` | satisfy | `UC-efficient-testing` |
 | `FUNC-emit-trajectory` | allocate | `MOD-hooks` |
 | `FUNC-emit-trajectory` | io | `FLOW-trajectory` |
 | `FUNC-emit-trajectory` | satisfy | `REQ-post-emit-trajectory` |
@@ -440,6 +446,7 @@
 | `REQ-readiness-transparent` | allocate | `MOD-dashboard` |
 | `REQ-readonly-bridge` | allocate | `MOD-host-bridge` |
 | `REQ-real-health-check` | allocate | `MOD-host-bridge` |
+| `REQ-test-runnable-binding` | allocate | `MOD-mcp-tools` |
 | `REQ-versioned-broadcast` | allocate | `MOD-host-bridge` |
 | `SYS-graphcode` | compose | `MOD-cli` |
 | `SYS-graphcode` | compose | `MOD-codec` |
@@ -527,6 +534,7 @@
 | `TEST-scaffold-skills` | verify | `REQ-repo-install` |
 | `TEST-schema-migration` | verify | `REQ-schema-version-migration` |
 | `TEST-skills-mcp` | verify | `REQ-doc-export` |
+| `TEST-test-runnable-binding` | verify | `REQ-test-runnable-binding` |
 | `TEST-token-efficiency` | verify | `REQ-benchmark-harness` |
 | `TEST-token-efficiency` | verify | `REQ-precise-context` |
 | `UC-code-quality` | compose | `FCHAIN-apply-gate` |
@@ -540,6 +548,7 @@
 | `UC-code-quality` | compose | `REQ-structure-driven` |
 | `UC-efficient-testing` | compose | `FCHAIN-impact-testing` |
 | `UC-efficient-testing` | compose | `REQ-impact-based-testing` |
+| `UC-efficient-testing` | compose | `REQ-test-runnable-binding` |
 | `UC-live-graph-view` | compose | `REQ-artifact-freshness` |
 | `UC-live-graph-view` | compose | `REQ-dashboard-ontology-sync` |
 | `UC-live-graph-view` | compose | `REQ-dashboard-readonly` |

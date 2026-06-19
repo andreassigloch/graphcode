@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Alle Elemente nach Typ, sortiert nach uid. Deterministisch generiert.
 
-Elemente: 261 · Traces: 545
+Elemente: 265 · Traces: 554
 
 
 ## ACTOR
@@ -54,6 +54,7 @@ Elemente: 261 · Traces: 545
 | `CR-GC-124` | OpenCode-Execution: agent-agnostic 2nd client, headless BYOK | open | graphcode headless von OpenCode getrieben (BYOK), als zweiter MCP-stdio-Client neben Claude Code — beweist die agent-agnostische + headless Claim (verriegelt: OpenCode-executed). |
 | `CR-GC-125` | Readiness-Modell definieren & realisieren (Phase/Impl/INCOSE) | done | Definiert was Phase-Readiness/Impl-Readiness-Gates/INCOSE-Artifacts in graphcode-Begriffen bedeuten (V3_RULES + MS + Status), dann als Scorer/View realisieren. Subsumiert die offene INCOSE-Scope-Frage (voll vs. lean). Voraussetzung für CR-110/115/116. (docs/cr/open/CR-GC-125) |
 | `CR-GC-126` | Query-Layer: Cypher, korrekte Impact-Richtung (KNOW statt guess) | done | graph_impact/expand/elements über Kuzu-Cypher statt TS-BFS; korrekte Blast-Radius-Richtung (eingehende Caller/Traces/Tests); TS-Mirror als Read-Pfad retiren. Major target: die richtigen Elemente WISSEN (Graph), nicht raten (grep). (SP-1/SP-2) |
+| `CR-GC-134` | Bottom-up Test-Deduktion (graph_tests) | open | graph_tests(changeSet) leitet aus einer Aenderung via graph_impact genau das betroffene TEST-Set ab und emittiert ein selektives Run-Kommando (Zeit/Token-Ersparnis + Qualitaet). Realisiert UC-efficient-testing + REQ-test-runnable-binding; braucht testRef am TEST-Element in @sigloch/contracts (Familie-weit, Minor-Version-Bump, Drift-Lock L1/L2). Kein Parallelpfad: kapselt graph_impact. (docs/cr/open/CR-GC-134) |
 | `CR-GC-200` | Single graph-validator - uniqueness + de-dup | open | Ein Validierungs-Pfad: validate() erkennt doppelte UIDs; kein hand-gerollter validPairs-Klon in src/scripts/tests. (docs/cr/open/CR-GC-200) |
 | `CR-GC-201` | Enforce gate-only graph writes | open | Deny direkte SSOT-Edits (Deny-Rule + PreToolUse-Hook); landet MIT CR-111/CR-113, sonst alle Graph-Edits blockiert. (docs/cr/open/CR-GC-201) |
 | `CR-GC-202` | graph_export refuse-to-clobber guard | open | Empty- + Net-Deletion-Guard im MCP graph_export, force:true Opt-in; spiegelt die Guards von scripts/export-graph.mjs, macht Drift laut statt still. (docs/cr/open/CR-GC-202) |
@@ -108,6 +109,7 @@ Elemente: 261 · Traces: 545
 | uid | name | status | description |
 |---|---|---|---|
 | `FUNC-decode` | decode(json) | done | Format-E → OntologyGraph, Validierung gegen SE_DESCRIPTOR. (CR-GC-103) |
+| `FUNC-deduce-tests` | graph_tests(changeSet) | draft | Bottom-up Test-Deduktion: mappt eine Aenderung (geaenderte Knoten-IDs oder git-diff zu Knoten) via graph_impact auf die betroffenen TEST-Knoten, loest jeden ueber testRef zu seinem lauffaehigen Artefakt auf und emittiert das minimale selektive Run-Kommando + Coverage. Kapselt graph_impact, kein Parallelpfad. (CR-GC-134) |
 | `FUNC-emit-trajectory` | emitTrajectory() | done | post-apply append-only Trajectory/Outcome nach .aimprove/*.jsonl. (CR-GC-102) |
 | `FUNC-emit-update-event` | emitUpdateEvent(domains) | done | Live-Update-Event (SSE invalidate) bei jeder Mutation; Basis des read-only Dashboards. (R9) |
 | `FUNC-encode` | encode(graph) | done | Deterministische Format-E-Serialisierung (stabile Sortierung), Diff-Dialekt. (CR-GC-103, R3/R5) |
@@ -253,6 +255,7 @@ Elemente: 261 · Traces: 545
 | `REQ-store-recovery` | Store-Recovery (Recovery-Modus) | open | CONSTRAINT (ConOps): Recovery bei Kuzu Lock-Konflikt / abgestürztem Owner / korruptem Store — Lock-Erkennung + sicherer Re-Open. |
 | `REQ-structure-driven` | Struktur-getrieben (Schema-first) | open | Architektur/Interfaces/Integration/Tests werden strikt aus dem governten Graph abgeleitet (Schema-first), nicht ad-hoc. |
 | `REQ-subgraph-slicing` | Sub-Graph-Slicing | open | Sub-Graph-Slicing + pruneToFit(maxTokens) als Context-Primitive. (R7) |
+| `REQ-test-runnable-binding` | TEST hat lauffaehige Bindung (testRef) | open | Jeder TEST-Knoten traegt einen testRef (Datei plus Case, tool, level), sodass ein impacted TEST-Knoten deterministisch zu einem lauffaehigen Artefakt aufgeloest werden kann. Familie-weit: testRef wird Teil des TEST-Element-Schemas in @sigloch/contracts/se (Minor-Version-Bump). |
 | `REQ-trajectory-emit` | Trajectory/Outcome-Emission | open | post-apply/nightly: Trajectory/Outcome append-only nach .aimprove/*.jsonl, Format stabil. (CR-GC-102, L1) |
 | `REQ-versioned-broadcast` | Versioned Diff-Broadcast | open | Versioned Diff-Broadcast an Dashboard (read-only, Late-Joiner-Cache). (R9) |
 | `REQ-versioned-cache` | Version-keyed Cache + Dirty-Flag (R11) | open | CR-GC-102 R11: version-keyed Response-Cache + Dirty-Flag → auf Kuzu-Version mappen. |
@@ -318,6 +321,7 @@ Elemente: 261 · Traces: 545
 | `TEST-scaffold-skills` | Scaffold-Installs-Skills-Test | done | graphcode init/update kopiert die 9 mitgelieferten .claude/skills/se-*.md in das Ziel-Repo, remove entfernt sie restlos (nur die graphcode-eigenen); end-to-end ueber den gepackten Tarball in einem Fremd-Repo verifiziert. Schliesst die MOD-skills/CR-GC-104-Drift: FUNC-harness-cli managt .claude/skills/. (CR-GC-133) |
 | `TEST-schema-migration` | Schema-Migrations-Test | open | Version-Bump → Graph re-validiert/migriert, Violations berichtet, Version aktualisiert. (FUNC-migrate-schema) |
 | `TEST-skills-mcp` | Skills-MCP-Conformance-Test | done | Alle 9 .claude/skills/se-*.md sind MCP-getrieben: 0 Treffer fuer die abgeschaltete localhost:3001-API (/api/graph, /api/dashboard, GRAPH_API) und jedes Skill referenziert >=1 Tool aus der Live-Registry. "done = verifiziert" fuer die prompt-realisierten FUNCs von MOD-skills (se-view-* → REQ-doc-export). (CR-GC-132) |
+| `TEST-test-runnable-binding` | TestRef-Aufloesungs-Test | open | Ein impacted TEST-Knoten wird ueber testRef eindeutig zu einer lauffaehigen Datei plus Case aufgeloest; graph_tests erzeugt daraus ein selektives Run-Kommando, das nur die betroffenen Tests enthaelt. (REQ-test-runnable-binding) |
 | `TEST-token-efficiency` | Token-Budget-Test | open | graph_impact-Kontext ist messbar kleiner als ein Volltext-/grep-Dump desselben Scopes (Token-Count-Assertion). |
 
 ## UC

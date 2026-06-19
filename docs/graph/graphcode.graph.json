@@ -2687,6 +2687,42 @@
       "status": "open",
       "created_at": "2026-06-19T00:00:00.000Z",
       "method": "test"
+    },
+    {
+      "id": "CR-GC-134",
+      "type": "CR",
+      "name": "Bottom-up Test-Deduktion (graph_tests)",
+      "description": "graph_tests(changeSet) leitet aus einer Aenderung via graph_impact genau das betroffene TEST-Set ab und emittiert ein selektives Run-Kommando (Zeit/Token-Ersparnis + Qualitaet). Realisiert UC-efficient-testing + REQ-test-runnable-binding; braucht testRef am TEST-Element in @sigloch/contracts (Familie-weit, Minor-Version-Bump, Drift-Lock L1/L2). Kein Parallelpfad: kapselt graph_impact. (docs/cr/open/CR-GC-134)",
+      "status": "open",
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "id": "FUNC-deduce-tests",
+      "type": "FUNC",
+      "name": "graph_tests(changeSet)",
+      "description": "Bottom-up Test-Deduktion: mappt eine Aenderung (geaenderte Knoten-IDs oder git-diff zu Knoten) via graph_impact auf die betroffenen TEST-Knoten, loest jeden ueber testRef zu seinem lauffaehigen Artefakt auf und emittiert das minimale selektive Run-Kommando + Coverage. Kapselt graph_impact, kein Parallelpfad. (CR-GC-134)",
+      "status": "draft",
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "id": "REQ-test-runnable-binding",
+      "type": "REQ",
+      "name": "TEST hat lauffaehige Bindung (testRef)",
+      "description": "Jeder TEST-Knoten traegt einen testRef (Datei plus Case, tool, level), sodass ein impacted TEST-Knoten deterministisch zu einem lauffaehigen Artefakt aufgeloest werden kann. Familie-weit: testRef wird Teil des TEST-Element-Schemas in @sigloch/contracts/se (Minor-Version-Bump).",
+      "status": "open",
+      "created_at": "2026-06-19T00:00:00.000Z",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "TEST-test-runnable-binding",
+      "type": "TEST",
+      "name": "TestRef-Aufloesungs-Test",
+      "description": "Ein impacted TEST-Knoten wird ueber testRef eindeutig zu einer lauffaehigen Datei plus Case aufgeloest; graph_tests erzeugt daraus ein selektives Run-Kommando, das nur die betroffenen Tests enthaelt. (REQ-test-runnable-binding)",
+      "status": "open",
+      "created_at": "2026-06-19T00:00:00.000Z",
+      "method": "test"
     }
   ],
   "traces": [
@@ -6493,6 +6529,69 @@
     {
       "source": "CR-GC-115",
       "target": "REQ-artifact-freshness",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-deduce-tests",
+      "target": "UC-efficient-testing",
+      "type": "satisfy",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-deduce-tests",
+      "target": "MOD-mcp-tools",
+      "type": "allocate",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "UC-efficient-testing",
+      "target": "REQ-test-runnable-binding",
+      "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "REQ-test-runnable-binding",
+      "target": "MOD-mcp-tools",
+      "type": "allocate",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-test-runnable-binding",
+      "target": "REQ-test-runnable-binding",
+      "type": "verify",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-134",
+      "target": "FUNC-deduce-tests",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-134",
+      "target": "REQ-test-runnable-binding",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-134",
+      "target": "UC-efficient-testing",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-134",
+      "target": "MS-4-mvp2",
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-19T00:00:00.000Z"
