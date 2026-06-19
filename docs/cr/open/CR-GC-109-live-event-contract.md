@@ -7,6 +7,9 @@ Siehe `docs/graph/graphcode.graph.json`. Diese Datei ist nur Pointer, nicht auto
 ## Problem / Scope
 Publish LiveUpdateEvent/UpdateDomain (heute nur graphcode src/emit.ts) als Zod-Schema nach contracts, damit Dashboard/Bridge denselben Vertrag importieren (kein Fork, analog D1).
 
+## Spec-Knoten ergänzt (2026-06-19)
+`REQ-live-event-in-contracts` draft→open + `TEST-live-event-contract` (verify, R-01 geschlossen).
+
 ## Akzeptanz
 Realisierte Graph-Knoten auf `done`; zugehörige TEST-Knoten grün; `npm run build` + `npm test` grün.
 

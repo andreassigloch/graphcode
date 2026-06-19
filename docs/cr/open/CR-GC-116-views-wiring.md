@@ -7,6 +7,9 @@ Siehe `docs/graph/graphcode.graph.json`. Diese Datei ist nur Pointer, nicht auto
 ## Problem / Scope
 Die 7 toten localhost:3001-Views (.claude/skills/se-view-*) auf MCP/Bridge umstellen; fehlende IRR-View ergänzen.
 
+## Spec-Knoten ergänzt (2026-06-19)
+Prämisse „7 tote localhost:3001-Views" ist **erledigt** (CR-130/131/132 migrierten alle se-view-Skills auf MCP, `TEST-skills-mcp` grün). Rest-Scope = die 6 fehlenden Artifact-Views: `FUNC-view-irr` (Initial Risk Review — die in CR-116 genannte fehlende IRR-View), `FUNC-view-rtm`, `FUNC-view-intplan`, `FUNC-view-changelog`, `FUNC-view-conops`, `FUNC-view-icd` (alle satisfy `REQ-doc-export`, allocate `MOD-skills`) — exakt die im CR-GC-115-Dashboard roten INCOSE-Artifacts.
+
 ## Akzeptanz
 Realisierte Graph-Knoten auf `done`; zugehörige TEST-Knoten grün; `npm run build` + `npm test` grün.
 

@@ -10,6 +10,7 @@
 
 | uid | type | name |
 |---|---|---|
+| `FUNC-broadcast-diff` | FUNC | broadcastDiff(version) |
 | `FUNC-decode` | FUNC | decode(json) |
 | `FUNC-deduce-tests` | FUNC | graph_tests(changeSet) |
 | `FUNC-emit-trajectory` | FUNC | emitTrajectory() |
@@ -20,10 +21,12 @@
 | `FUNC-graph-expand` | FUNC | graph_expand(handle, branch, depth+1) |
 | `FUNC-graph-impact` | FUNC | graph_impact(id, depth?) |
 | `FUNC-harness-cli` | FUNC | graphcode init/update/remove |
+| `FUNC-health-endpoint` | FUNC | healthEndpoint() |
 | `FUNC-import` | FUNC | importGraph(formatE, mode) |
 | `FUNC-merge-nodes` | FUNC | mergeNodes(graph) |
 | `FUNC-migrate-schema` | FUNC | migrateSchema(from, to) |
 | `FUNC-mutate` | FUNC | mutate(commands) |
+| `FUNC-own-kuzu-host` | FUNC | ownKuzu() |
 | `FUNC-render-artifacts` | FUNC | renderArtifactReadiness(views) |
 | `FUNC-render-graph` | FUNC | renderGraph(elements, traces) |
 | `FUNC-render-health` | FUNC | renderHealth() |
@@ -33,7 +36,15 @@
 | `FUNC-render-recommendations` | FUNC | renderImprovementMeasures() |
 | `FUNC-render-views` | FUNC | render graph→markdown views |
 | `FUNC-save-graph` | FUNC | saveGraph(graph) |
+| `FUNC-serve-sse` | FUNC | serveSSE() |
+| `FUNC-serve-stdio` | FUNC | serveStdio() |
 | `FUNC-subscribe-updates` | FUNC | subscribeUpdates() |
+| `FUNC-view-changelog` | FUNC | se-view-changelog (Change Log) |
+| `FUNC-view-conops` | FUNC | se-view-conops (ConOps) |
+| `FUNC-view-icd` | FUNC | se-view-icd (ICD) |
+| `FUNC-view-intplan` | FUNC | se-view-intplan (Integrations-/Testplan) |
+| `FUNC-view-irr` | FUNC | se-view-irr (Initial Risk Review) |
+| `FUNC-view-rtm` | FUNC | se-view-rtm (RTM) |
 | `MOD-cli` | MOD | cli — npx-Distribution & Lifecycle |
 | `MOD-codec` | MOD | codec.ts — GraphCodeCodec |
 | `MOD-dashboard` | MOD | dashboard — Live-Viewer-App |
@@ -49,6 +60,7 @@
 
 | function | module |
 |---|---|
+| `FUNC-broadcast-diff` | `MOD-host-bridge` |
 | `FUNC-decode` | `MOD-codec` |
 | `FUNC-deduce-tests` | `MOD-mcp-tools` |
 | `FUNC-emit-trajectory` | `MOD-hooks` |
@@ -59,10 +71,12 @@
 | `FUNC-graph-expand` | `MOD-mcp-tools` |
 | `FUNC-graph-impact` | `MOD-mcp-tools` |
 | `FUNC-harness-cli` | `MOD-cli` |
+| `FUNC-health-endpoint` | `MOD-host-bridge` |
 | `FUNC-import` | `MOD-harness` |
 | `FUNC-merge-nodes` | `MOD-codec` |
 | `FUNC-migrate-schema` | `MOD-harness` |
 | `FUNC-mutate` | `MOD-harness` |
+| `FUNC-own-kuzu-host` | `MOD-host-bridge` |
 | `FUNC-render-artifacts` | `MOD-dashboard` |
 | `FUNC-render-graph` | `MOD-dashboard` |
 | `FUNC-render-health` | `MOD-dashboard` |
@@ -73,7 +87,15 @@
 | `FUNC-render-views` | `MOD-dashboard` |
 | `FUNC-render-views` | `MOD-skills` |
 | `FUNC-save-graph` | `MOD-harness` |
+| `FUNC-serve-sse` | `MOD-host-bridge` |
+| `FUNC-serve-stdio` | `MOD-mcp-tools` |
 | `FUNC-subscribe-updates` | `MOD-dashboard` |
+| `FUNC-view-changelog` | `MOD-skills` |
+| `FUNC-view-conops` | `MOD-skills` |
+| `FUNC-view-icd` | `MOD-skills` |
+| `FUNC-view-intplan` | `MOD-skills` |
+| `FUNC-view-irr` | `MOD-skills` |
+| `FUNC-view-rtm` | `MOD-skills` |
 | `REQ-artifact-freshness` | `MOD-dashboard` |
 | `REQ-dashboard-ontology-sync` | `MOD-dashboard` |
 | `REQ-dashboard-readonly` | `MOD-dashboard` |

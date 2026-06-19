@@ -6,6 +6,9 @@
 ## Problem / Scope
 graphcode headless von OpenCode getrieben (BYOK), als zweiter MCP-stdio-Client neben Claude Code — beweist die agent-agnostische + headless Claim (verriegelt: OpenCode-executed).
 
+## Spec-Knoten ergänzt (2026-06-19)
+`FUNC-serve-stdio` (satisfy `REQ-agent-agnostic` + `REQ-single-transport`, allocate `MOD-mcp-tools`) — die headless MCP-stdio-Bedienung für den agent-agnostischen 2nd-Client. `REQ-agent-agnostic` draft→open + `TEST-agent-agnostic` (R-01 geschlossen).
+
 ## Akzeptanz
 Realisierte Graph-Knoten auf `done`; zugehörige TEST-Knoten grün; `npm run build` + `npm test` grün.
 

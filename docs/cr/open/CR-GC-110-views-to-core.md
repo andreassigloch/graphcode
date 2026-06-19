@@ -7,6 +7,9 @@ Siehe `docs/graph/graphcode.graph.json`. Diese Datei ist nur Pointer, nicht auto
 ## Problem / Scope
 View-Berechnung (testmatrix/FMEA/RTM/IRR/NFR/arch…) aus aimprove/learning-engine/graph nach @sigloch/graph-api-core; lokalen BQ-Fork (aimpro/src/contracts/se) auflösen/migrieren — Familie-Review (Drift-Lock L1/L2).
 
+## Spec-Knoten ergänzt (2026-06-19)
+`REQ-shared-views-no-fork` draft→open + `TEST-shared-views-no-fork` (verify, R-01 geschlossen).
+
 ## Akzeptanz
 Realisierte Graph-Knoten auf `done`; zugehörige TEST-Knoten grün; `npm run build` + `npm test` grün.
 

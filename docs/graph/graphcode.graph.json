@@ -2108,7 +2108,7 @@
       "type": "REQ",
       "name": "Live-Event-Contract in @sigloch/contracts",
       "description": "LiveUpdateEvent/UpdateDomain (heute nur graphcode src/emit.ts) als Zod-Schema nach @sigloch/contracts publishen, damit Dashboard/Bridge denselben Vertrag importieren (kein Fork). Analog D1.",
-      "status": "draft",
+      "status": "open",
       "created_at": "2026-06-17T00:00:00.000Z"
     },
     {
@@ -2116,7 +2116,7 @@
       "type": "REQ",
       "name": "Geteilte View-Berechnung, kein Regel-Fork",
       "description": "views.ts (testmatrix/FMEA/RTM/IRR/NFR/arch…) aus aimprove → @sigloch/graph-api-core; lokalen BQ-Regel-Fork (aimpro/src/contracts/se) retiren oder via Familie-Review nach contracts migrieren (Drift-Lock L1/L2).",
-      "status": "draft",
+      "status": "open",
       "created_at": "2026-06-17T00:00:00.000Z"
     },
     {
@@ -2204,7 +2204,7 @@
       "type": "REQ",
       "name": "Agent-agnostische MCP-Surface",
       "description": "Die MCP-stdio-Surface ist agent-agnostisch: Claude Code UND OpenCode (und jeder MCP-Client) treiben dieselbe Harness durchs selbe Gate; keine client-spezifischen Annahmen. (CLAUDE.md verriegelt: OpenCode-executed, Claude Code = ein Client)",
-      "status": "draft",
+      "status": "open",
       "created_at": "2026-06-17T00:00:00.000Z"
     },
     {
@@ -2720,6 +2720,139 @@
       "type": "TEST",
       "name": "TestRef-Aufloesungs-Test",
       "description": "Ein impacted TEST-Knoten wird ueber testRef eindeutig zu einer lauffaehigen Datei plus Case aufgeloest; graph_tests erzeugt daraus ein selektives Run-Kommando, das nur die betroffenen Tests enthaelt. (REQ-test-runnable-binding)",
+      "status": "open",
+      "created_at": "2026-06-19T00:00:00.000Z",
+      "method": "test"
+    },
+    {
+      "id": "FUNC-serve-sse",
+      "type": "FUNC",
+      "name": "serveSSE()",
+      "description": "Host-Prozess exponiert die SSE/WS-Route und leitet harness.onUpdateEvent read-only an die Live-Viewer weiter. Kein Express-REST im Core. (CR-GC-114)",
+      "status": "draft",
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "id": "FUNC-broadcast-diff",
+      "type": "FUNC",
+      "name": "broadcastDiff(version)",
+      "description": "Versionierter Diff-Broadcast mit Late-Joiner-Cache an die Viewer; jede Mutation erhoeht die Version. (CR-GC-114)",
+      "status": "draft",
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "id": "FUNC-own-kuzu-host",
+      "type": "FUNC",
+      "name": "ownKuzu()",
+      "description": "Der Host-Prozess ist der einzige Kuzu-Owner pro Repo; die Bridge haelt kein zweites DB-Handle. (CR-GC-114)",
+      "status": "draft",
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "id": "FUNC-health-endpoint",
+      "type": "FUNC",
+      "name": "healthEndpoint()",
+      "description": "Echter Funktions-Health: Store erreichbar, Gate funktional, Ontology/Rules/Contracts-Versionen, LLM/BYOK-Readiness. Quelle des Dashboard-FUNC-render-health. (CR-GC-114)",
+      "status": "draft",
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "id": "FUNC-serve-stdio",
+      "type": "FUNC",
+      "name": "serveStdio()",
+      "description": "Bindet die MCP-Tool-Registry headless an einen stdio-Transport; jeder Agent (Claude Code oder OpenCode, BYOK) ist ein gleichwertiger Client. Beweist agent-agnostisch + headless. (CR-GC-124)",
+      "status": "draft",
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "id": "FUNC-view-irr",
+      "type": "FUNC",
+      "name": "se-view-irr (Initial Risk Review)",
+      "description": "Prompt-realisierte View: Initial Risk Review aus risk-getaggten REQs (mitigated/spiked). Schliesst die fehlende IRR-Artifact-View des Dashboards. (CR-GC-116)",
+      "status": "draft",
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "id": "FUNC-view-rtm",
+      "type": "FUNC",
+      "name": "se-view-rtm (RTM)",
+      "description": "Prompt-realisierte View: Requirements Traceability Matrix aus satisfy/verify-Traces je REQ. (CR-GC-116)",
+      "status": "draft",
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "id": "FUNC-view-intplan",
+      "type": "FUNC",
+      "name": "se-view-intplan (Integrations-/Testplan)",
+      "description": "Prompt-realisierte View: Integrations-/Testplan aus MS plus verify-Status. (CR-GC-116)",
+      "status": "draft",
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "id": "FUNC-view-changelog",
+      "type": "FUNC",
+      "name": "se-view-changelog (Change Log)",
+      "description": "Prompt-realisierte View: Change Log aus CR-Knoten mit Rationale und Status. (CR-GC-116)",
+      "status": "draft",
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "id": "FUNC-view-conops",
+      "type": "FUNC",
+      "name": "se-view-conops (ConOps)",
+      "description": "Prompt-realisierte View: Concept of Operations aus UC plus ACTOR (operatingMode). (CR-GC-116)",
+      "status": "draft",
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "id": "FUNC-view-icd",
+      "type": "FUNC",
+      "name": "se-view-icd (ICD)",
+      "description": "Prompt-realisierte View: Interface Control Document aus FLOW zu SCHEMA. (CR-GC-116)",
+      "status": "draft",
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "id": "TEST-live-event-contract",
+      "type": "TEST",
+      "name": "Live-Event-Contract-Test",
+      "description": "LiveUpdateEvent/UpdateDomain sind als Zod-Schema in @sigloch/contracts publiziert und werden von Dashboard und Bridge importiert (kein Fork). (REQ-live-event-in-contracts)",
+      "status": "open",
+      "created_at": "2026-06-19T00:00:00.000Z",
+      "method": "test"
+    },
+    {
+      "id": "TEST-shared-views-no-fork",
+      "type": "TEST",
+      "name": "Shared-Views-No-Fork-Test",
+      "description": "Die View-Berechnung liegt in @sigloch/graph-api-core; kein lokaler BQ-Regel-Fork (aimpro/src/contracts/se) mehr referenziert. (REQ-shared-views-no-fork)",
+      "status": "open",
+      "created_at": "2026-06-19T00:00:00.000Z",
+      "method": "test"
+    },
+    {
+      "id": "TEST-readonly-bridge",
+      "type": "TEST",
+      "name": "Readonly-Bridge-Test",
+      "description": "Die Bridge akzeptiert keine Inbound-Mutation; ein Schreibversuch ueber die Bridge wird abgelehnt, Writes gehen nur durch MCP mutate(). (REQ-readonly-bridge)",
+      "status": "open",
+      "created_at": "2026-06-19T00:00:00.000Z",
+      "method": "test"
+    },
+    {
+      "id": "TEST-graph-is-ssot",
+      "type": "TEST",
+      "name": "Graph-is-SSOT-Test",
+      "description": "Der committete graphcode.graph.json ist deterministischer Export des Kuzu-Stores; Hand-Edit wird erkannt und verworfen, Views tragen GENERATED-Header. (REQ-graph-is-ssot)",
+      "status": "open",
+      "created_at": "2026-06-19T00:00:00.000Z",
+      "method": "test"
+    },
+    {
+      "id": "TEST-agent-agnostic",
+      "type": "TEST",
+      "name": "Agent-Agnostic-Test",
+      "description": "Dieselbe MCP-Registry wird von zwei Clients (Claude Code und OpenCode headless BYOK) ueber stdio identisch bedient; gleiche Tools, gleiche Gate-Semantik. (REQ-agent-agnostic)",
       "status": "open",
       "created_at": "2026-06-19T00:00:00.000Z",
       "method": "test"
@@ -6592,6 +6725,279 @@
     {
       "source": "CR-GC-134",
       "target": "MS-4-mvp2",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-serve-sse",
+      "target": "REQ-readonly-bridge",
+      "type": "satisfy",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-serve-sse",
+      "target": "MOD-host-bridge",
+      "type": "allocate",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-broadcast-diff",
+      "target": "REQ-versioned-broadcast",
+      "type": "satisfy",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-broadcast-diff",
+      "target": "MOD-host-bridge",
+      "type": "allocate",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-own-kuzu-host",
+      "target": "REQ-single-kuzu-owner",
+      "type": "satisfy",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-own-kuzu-host",
+      "target": "MOD-host-bridge",
+      "type": "allocate",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-health-endpoint",
+      "target": "REQ-real-health-check",
+      "type": "satisfy",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-health-endpoint",
+      "target": "MOD-host-bridge",
+      "type": "allocate",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-serve-stdio",
+      "target": "REQ-agent-agnostic",
+      "type": "satisfy",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-serve-stdio",
+      "target": "REQ-single-transport",
+      "type": "satisfy",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-serve-stdio",
+      "target": "MOD-mcp-tools",
+      "type": "allocate",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-live-event-contract",
+      "target": "REQ-live-event-in-contracts",
+      "type": "verify",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-shared-views-no-fork",
+      "target": "REQ-shared-views-no-fork",
+      "type": "verify",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-readonly-bridge",
+      "target": "REQ-readonly-bridge",
+      "type": "verify",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-graph-is-ssot",
+      "target": "REQ-graph-is-ssot",
+      "type": "verify",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-agent-agnostic",
+      "target": "REQ-agent-agnostic",
+      "type": "verify",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-view-irr",
+      "target": "REQ-doc-export",
+      "type": "satisfy",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-view-irr",
+      "target": "MOD-skills",
+      "type": "allocate",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-view-rtm",
+      "target": "REQ-doc-export",
+      "type": "satisfy",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-view-rtm",
+      "target": "MOD-skills",
+      "type": "allocate",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-view-intplan",
+      "target": "REQ-doc-export",
+      "type": "satisfy",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-view-intplan",
+      "target": "MOD-skills",
+      "type": "allocate",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-view-changelog",
+      "target": "REQ-doc-export",
+      "type": "satisfy",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-view-changelog",
+      "target": "MOD-skills",
+      "type": "allocate",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-view-conops",
+      "target": "REQ-doc-export",
+      "type": "satisfy",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-view-conops",
+      "target": "MOD-skills",
+      "type": "allocate",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-view-icd",
+      "target": "REQ-doc-export",
+      "type": "satisfy",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-view-icd",
+      "target": "MOD-skills",
+      "type": "allocate",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-114",
+      "target": "FUNC-serve-sse",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-114",
+      "target": "FUNC-broadcast-diff",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-114",
+      "target": "FUNC-own-kuzu-host",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-114",
+      "target": "FUNC-health-endpoint",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-124",
+      "target": "FUNC-serve-stdio",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-116",
+      "target": "FUNC-view-irr",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-116",
+      "target": "FUNC-view-rtm",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-116",
+      "target": "FUNC-view-intplan",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-116",
+      "target": "FUNC-view-changelog",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-116",
+      "target": "FUNC-view-conops",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-116",
+      "target": "FUNC-view-icd",
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-19T00:00:00.000Z"

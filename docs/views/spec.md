@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Alle Elemente nach Typ, sortiert nach uid. Deterministisch generiert.
 
-Elemente: 265 · Traces: 554
+Elemente: 281 · Traces: 593
 
 
 ## ACTOR
@@ -108,6 +108,7 @@ Elemente: 265 · Traces: 554
 
 | uid | name | status | description |
 |---|---|---|---|
+| `FUNC-broadcast-diff` | broadcastDiff(version) | draft | Versionierter Diff-Broadcast mit Late-Joiner-Cache an die Viewer; jede Mutation erhoeht die Version. (CR-GC-114) |
 | `FUNC-decode` | decode(json) | done | Format-E → OntologyGraph, Validierung gegen SE_DESCRIPTOR. (CR-GC-103) |
 | `FUNC-deduce-tests` | graph_tests(changeSet) | draft | Bottom-up Test-Deduktion: mappt eine Aenderung (geaenderte Knoten-IDs oder git-diff zu Knoten) via graph_impact auf die betroffenen TEST-Knoten, loest jeden ueber testRef zu seinem lauffaehigen Artefakt auf und emittiert das minimale selektive Run-Kommando + Coverage. Kapselt graph_impact, kein Parallelpfad. (CR-GC-134) |
 | `FUNC-emit-trajectory` | emitTrajectory() | done | post-apply append-only Trajectory/Outcome nach .aimprove/*.jsonl. (CR-GC-102) |
@@ -118,10 +119,12 @@ Elemente: 265 · Traces: 554
 | `FUNC-graph-expand` | graph_expand(handle, branch, depth+1) | done | Progressive On-Demand-Kuzu-Re-Traversierung; kein Originals-Store. (CR-GC-101, R13) |
 | `FUNC-graph-impact` | graph_impact(id, depth?) | done | Exakter Blast-Radius (Caller/Traces/Tests) als Format-E. (CR-GC-101, R6/R12) |
 | `FUNC-harness-cli` | graphcode init/update/remove | done | npx-CLI Lifecycle: scaffolds/aktualisiert/entfernt .graphcode/, .claude/hooks, .mcp.json, Controller — idempotent, self-contained. |
+| `FUNC-health-endpoint` | healthEndpoint() | draft | Echter Funktions-Health: Store erreichbar, Gate funktional, Ontology/Rules/Contracts-Versionen, LLM/BYOK-Readiness. Quelle des Dashboard-FUNC-render-health. (CR-GC-114) |
 | `FUNC-import` | importGraph(formatE, mode) | done | Format-E-Bulk-Import (replace/merge) ausschließlich durchs Gate; Cold-Start aus graphify/Slicer-Output. |
 | `FUNC-merge-nodes` | mergeNodes(graph) | reviewed | Conflict-free Merge via merge_nodes + deterministischer Serialisierung; keine verlorenen Knoten/Traces. |
 | `FUNC-migrate-schema` | migrateSchema(from, to) | reviewed | Re-Validierung + Migration des Graphen bei ONTOLOGY/RULES_VERSION-Bump; Version am Artefakt mitgeführt. |
 | `FUNC-mutate` | mutate(commands) | done | Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3) |
+| `FUNC-own-kuzu-host` | ownKuzu() | draft | Der Host-Prozess ist der einzige Kuzu-Owner pro Repo; die Bridge haelt kein zweites DB-Handle. (CR-GC-114) |
 | `FUNC-render-artifacts` | renderArtifactReadiness(views) | draft | INCOSE-Artifact-Panel: Readiness je Dokument/View (Testmatrix, FMEA, RTM, ImplPlan, IntPlan, ChangeLog, ConOps, IRR, NFR, ICD) aus dem Query-Layer (graph_query views) + graph_readiness. Repoint der aimprove ArtifactReadiness. Die offene View-Liste (RTM, IntPlan, ChangeLog, ConOps, IRR, ICD ohne se-view-Skill) ist genau der Rest-Scope von CR-GC-116. (CR-GC-115) |
 | `FUNC-render-graph` | renderGraph(elements, traces) | draft | Pluggbarer Live-Graph-Mount-Slot im Dashboard. Datenquelle: graph_elements + graph_get_edges + rules_get_violations (nur V3_RULES, kein BQ). Der konkrete Cytoscape-Renderer (@sigloch/graph-renderer) wird hier eingehaengt und ist das naechste aise-family-Projekt (graph-view-edit), nicht in graphcode gebaut. aimproves OntologyView rendert keinen Node-Link-Graph (nur Histogramme). (CR-GC-115) |
 | `FUNC-render-health` | renderHealth() | draft | Echter Funktions-Health-Check, kein Prozess-Liveness-Licht: Kuzu-Store erreichbar, Apply-Gate funktional, Ontology/Rules/Contracts-Versionen, LLM/BYOK-Readiness (OpenCode, fuer spaeter). aimprove-spezifische Felder (Sessions/Patterns) entfernt. Quelle: Host-Bridge Health-Endpoint. (CR-GC-115) |
@@ -131,7 +134,15 @@ Elemente: 265 · Traces: 554
 | `FUNC-render-recommendations` | renderImprovementMeasures() | draft | Top-N hoechstbewertete Verbesserungsmassnahmen, deterministisch aus Graph-Defiziten abgeleitet (fehlende verify-Traces R-01, Orphans RD-01, Blast-Radius via graph_impact), nach Severity/Impact sortiert. Behalten aus aimprove TOP-Empfehlungen, aber graph-deduziert statt Learning-Vorschlag (kein Generator). (CR-GC-115) |
 | `FUNC-render-views` | render graph→markdown views | done | PROMPT-realisierter Graph→Markdown-Renderer via se-view-Skills (.claude/skills/se-view-*); erzeugt z.B. architecture-graph.md. Interim-Realisierung von REQ-doc-export, bis FUNC-export-markdown (code, MOD-docs) gebaut ist. Beweis: Skills = Funktionen (Allokation an MOD-skills = prompt-realisiert). |
 | `FUNC-save-graph` | saveGraph(graph) | done | Persistiert in-memory Graph nach Disk-Kuzu, falls keine error-Violations. (SPEC §3.4, §4) |
+| `FUNC-serve-sse` | serveSSE() | draft | Host-Prozess exponiert die SSE/WS-Route und leitet harness.onUpdateEvent read-only an die Live-Viewer weiter. Kein Express-REST im Core. (CR-GC-114) |
+| `FUNC-serve-stdio` | serveStdio() | draft | Bindet die MCP-Tool-Registry headless an einen stdio-Transport; jeder Agent (Claude Code oder OpenCode, BYOK) ist ein gleichwertiger Client. Beweist agent-agnostisch + headless. (CR-GC-124) |
 | `FUNC-subscribe-updates` | subscribeUpdates() | draft | SSE-Client: bei jedem Live-Update-Event (invalidate) werden die betroffenen Domains nachgeladen, ohne Reload. Gegenstueck zu emitUpdateEvent, konsumiert FLOW-live-event ueber die Host-Bridge. (CR-GC-115) |
+| `FUNC-view-changelog` | se-view-changelog (Change Log) | draft | Prompt-realisierte View: Change Log aus CR-Knoten mit Rationale und Status. (CR-GC-116) |
+| `FUNC-view-conops` | se-view-conops (ConOps) | draft | Prompt-realisierte View: Concept of Operations aus UC plus ACTOR (operatingMode). (CR-GC-116) |
+| `FUNC-view-icd` | se-view-icd (ICD) | draft | Prompt-realisierte View: Interface Control Document aus FLOW zu SCHEMA. (CR-GC-116) |
+| `FUNC-view-intplan` | se-view-intplan (Integrations-/Testplan) | draft | Prompt-realisierte View: Integrations-/Testplan aus MS plus verify-Status. (CR-GC-116) |
+| `FUNC-view-irr` | se-view-irr (Initial Risk Review) | draft | Prompt-realisierte View: Initial Risk Review aus risk-getaggten REQs (mitigated/spiked). Schliesst die fehlende IRR-Artifact-View des Dashboards. (CR-GC-116) |
+| `FUNC-view-rtm` | se-view-rtm (RTM) | draft | Prompt-realisierte View: Requirements Traceability Matrix aus satisfy/verify-Traces je REQ. (CR-GC-116) |
 
 ## MOD
 
@@ -160,7 +171,7 @@ Elemente: 265 · Traces: 554
 
 | uid | name | status | description |
 |---|---|---|---|
-| `REQ-agent-agnostic` | Agent-agnostische MCP-Surface | draft | Die MCP-stdio-Surface ist agent-agnostisch: Claude Code UND OpenCode (und jeder MCP-Client) treiben dieselbe Harness durchs selbe Gate; keine client-spezifischen Annahmen. (CLAUDE.md verriegelt: OpenCode-executed, Claude Code = ein Client) |
+| `REQ-agent-agnostic` | Agent-agnostische MCP-Surface | open | Die MCP-stdio-Surface ist agent-agnostisch: Claude Code UND OpenCode (und jeder MCP-Client) treiben dieselbe Harness durchs selbe Gate; keine client-spezifischen Annahmen. (CLAUDE.md verriegelt: OpenCode-executed, Claude Code = ein Client) |
 | `REQ-artifact-freshness` | Artifact-Ampel-Semantik gruen gelb rot | open | Dokumente und Prozessschritte sind gruen wenn live aus dem aktuellen Graph abgeleitet, gelb wenn ein materialisiertes Doc existiert aber der Graph sich seither geaendert hat (stale), rot wenn noch nicht existent. |
 | `REQ-audit-trail` | Audit-Trail / History | open | CR-GC-101: audit_trail/audit_stats liefern Mutations-History/Statistik. |
 | `REQ-auto-persist-merge` | Auto-Persist + conflict-free Merge | open | Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Artefakt. (R2) |
@@ -195,7 +206,7 @@ Elemente: 265 · Traces: 554
 | `REQ-interactive-capture-suggest` | Interaktive Erfassung im suggest-Tier | open | FCHAIN-capture: NL→Format-E agent-seitig (REQ-no-extraction); Resultat im suggest-Tier durchs Gate, Review vor Persist. |
 | `REQ-interface-change-escalation` | Interface-Änderung nur per Eskalation | open | Ein Realisierungs-Agent darf ein Interface (FLOW/SCHEMA) NICHT direkt mutieren. Bei Bedarf: (a) Notwendigkeit prüfen (sonst im Vertrag bleiben, Tech-Debt vermeiden); (b) CR an Facilitating-Agent + Boundary pausieren; (c) graph_impact(FLOW) Impact-Analyse; (d) Gate-Entscheidung (versionierte FLOW-Mutation / reject); (e) Dependents re-scopen/sequenzieren. Erhält conflict-free Parallelität; Interface-Drift zentral + gegatet. |
 | `REQ-interface-schema` | Interface trägt ein Datenformat (SCHEMA) | open | Jeder FLOW (Interface) hat ein SCHEMA (Layer 2, Datenformat) — referenziert @sigloch/contracts Zod. Code-Precondition: ohne Datenvertrag rät der Agent das Format. (3-Schichten-Interface-Modell) |
-| `REQ-live-event-in-contracts` | Live-Event-Contract in @sigloch/contracts | draft | LiveUpdateEvent/UpdateDomain (heute nur graphcode src/emit.ts) als Zod-Schema nach @sigloch/contracts publishen, damit Dashboard/Bridge denselben Vertrag importieren (kein Fork). Analog D1. |
+| `REQ-live-event-in-contracts` | Live-Event-Contract in @sigloch/contracts | open | LiveUpdateEvent/UpdateDomain (heute nur graphcode src/emit.ts) als Zod-Schema nach @sigloch/contracts publishen, damit Dashboard/Bridge denselben Vertrag importieren (kein Fork). Analog D1. |
 | `REQ-mcp-gate-symmetry` | MCP-Gate-Symmetrie (L2) | done | CR-GC-101 L2: MCP graph_mutate == in-process mutate() — identische Semantik, identisches Violations-Dict (end-to-end). |
 | `REQ-mcp-tool-registry` | MCP-Tool-Registry an Harness gebunden | done | CR-GC-101: Registry graph_elements/get_node/get_edges (read), graph_mutate (write durchs Gate), rules_evaluate/get_violations, audit_trail/stats — via bindToolsToHarness. |
 | `REQ-mutation-emits-event` | Mutation emittiert Live-Update-Event | open | CONSTRAINT: Jede Graph-Mutation MUSS ein Live-Update-Event emittieren (SSE invalidate, domains graph/rules/readiness/suggestions). Beleg: aimprove import emittiert keins → Dashboard-Lag ~90s. Fix: alle Write-Pfade einheitlich. |
@@ -247,7 +258,7 @@ Elemente: 265 · Traces: 554
 | `REQ-rule-enforcement` | Regel-Enforcement (V3_RULES) | open | evaluateRules() gegen V3_RULES; error-Severity blockt den Apply. (L2) |
 | `REQ-schema-version-migration` | Schema-Versions-Migration | open | FUNC-migrate-schema: bei Version-Bump re-validieren/migrieren, Violations berichten, Version mitführen. |
 | `REQ-self-contained-dist` | Self-contained Distribution | done | Zielprojekt darf NICHT von einer Kopie des aimprove-Quellbaums abhängen; Distribution self-contained (versionierte Deps). Blockiert auf D5 + CR-GC-100..103. |
-| `REQ-shared-views-no-fork` | Geteilte View-Berechnung, kein Regel-Fork | draft | views.ts (testmatrix/FMEA/RTM/IRR/NFR/arch…) aus aimprove → @sigloch/graph-api-core; lokalen BQ-Regel-Fork (aimpro/src/contracts/se) retiren oder via Familie-Review nach contracts migrieren (Drift-Lock L1/L2). |
+| `REQ-shared-views-no-fork` | Geteilte View-Berechnung, kein Regel-Fork | open | views.ts (testmatrix/FMEA/RTM/IRR/NFR/arch…) aus aimprove → @sigloch/graph-api-core; lokalen BQ-Regel-Fork (aimpro/src/contracts/se) retiren oder via Familie-Review nach contracts migrieren (Drift-Lock L1/L2). |
 | `REQ-single-kuzu-owner` | Single Kuzu-Owner | open | Genau ein Host-Prozess besitzt .graphcode/kuzu (single-writer; kein 2. DB-Handle). (SPEC §4, L1) |
 | `REQ-single-store` | Ein Store: Kuzu | open | Genau ein Store = Kuzu (embedded native+WASM, Cypher). Kein Neo4j. (SPEC §0) |
 | `REQ-single-transport` | Ein Transport: MCP-stdio | done | Genau ein Transport = MCP-stdio; kein Express-REST/HTTP im Harness-Core. (SPEC §0, §5) |
@@ -284,6 +295,7 @@ Elemente: 265 · Traces: 554
 
 | uid | name | status | description |
 |---|---|---|---|
+| `TEST-agent-agnostic` | Agent-Agnostic-Test | open | Dieselbe MCP-Registry wird von zwei Clients (Claude Code und OpenCode headless BYOK) ueber stdio identisch bedient; gleiche Tools, gleiche Gate-Semantik. (REQ-agent-agnostic) |
 | `TEST-artifact-freshness` | Artifact-Freshness-Test | open | Ein Artifact ist gruen bei Graph-Ableitung, gelb bei materialisiertem aber veraltetem Doc (Graph neuer als Doc), rot wenn fehlend. (REQ-artifact-freshness) |
 | `TEST-bootstrap` | Cold-Start-Import-Test | done | Format-E-Import befüllt leeren Graphen ausschließlich durchs Gate; Direct-Write schlägt fehl. (FUNC-import) |
 | `TEST-capture` | Interaktive-Erfassung-Test | open | Agent-Kandidaten laufen im suggest-Tier durchs Gate (kein auto-apply). (FCHAIN-capture) |
@@ -296,11 +308,13 @@ Elemente: 265 · Traces: 554
 | `TEST-docs-taxonomy` | Docs-Taxonomie-Inspektion | open | Views reproduzierbar & GENERATED-headered; records durable; kein docs/project mehr. (verify REQ-docs-taxonomy) |
 | `TEST-efficient-testing` | Impact-Testset-Test | open | graph_impact(geänderter Knoten) liefert genau die betroffenen TEST-Knoten; nicht betroffene sind nicht im Set. |
 | `TEST-graph-integrity` | Graph-Integritaets-Test | open | validate() flaggt doppelte UIDs + alles bisher Abgedeckte (Typen, Edge-Pairs, referenzielle Integritaet); Integritaets-Test delegiert an validate(). (CR-GC-200) |
+| `TEST-graph-is-ssot` | Graph-is-SSOT-Test | open | Der committete graphcode.graph.json ist deterministischer Export des Kuzu-Stores; Hand-Edit wird erkannt und verworfen, Views tragen GENERATED-Header. (REQ-graph-is-ssot) |
 | `TEST-harness-install` | Harness-Install Smoke (durchgeführt) | open | Install → Controller → /api/health 200 + Dashboard 200. 2026-06-13 (aimprove-init.sh). NICHT self-contained (AIMPRO_ROOT). |
 | `TEST-impact-subgraph` | graph_impact Subgraph-Test | done | graph_impact liefert nur den betroffenen Subgraphen (kein Full-Dump). (FCHAIN-agent-query) |
 | `TEST-interface-escalation` | Interface-Eskalations-Test | open | Direkter FLOW-Mutationsversuch eines Realisierungs-Agenten wird abgelehnt; nur der Eskalationspfad (CR an Facilitating-Agent → graph_impact → Gate) ändert ein Interface. (FCHAIN-interface-escalation) |
 | `TEST-interface-schema` | Interface-Schema-Test | open | Jeder FLOW hat ein SCHEMA (relation); ein FLOW ohne Datenformat ist ein Readiness-Blocker. (REQ-interface-schema) |
 | `TEST-learning-emit` | Learning-Emission-Test | done | post-apply schreibt Trajectory/Outcome append-only, Format stabil. (FUNC-emit-trajectory) |
+| `TEST-live-event-contract` | Live-Event-Contract-Test | open | LiveUpdateEvent/UpdateDomain sind als Zod-Schema in @sigloch/contracts publiziert und werden von Dashboard und Bridge importiert (kein Fork). (REQ-live-event-in-contracts) |
 | `TEST-live-view` | Live-Update-Event-Test | done | Jede Mutation emittiert genau ein Live-Update-Event (korrekte domains); Dashboard ohne Reload. (FUNC-emit-update-event) |
 | `TEST-mcp-export` | MCP-Export-Test | done | graph_export serialisiert den live In-Memory-Graphen via exportGraphJson/exportMarkdown und schreibt docs/graph + docs/views unter den Repo-Root — schließt die Agent-Loop ueber MCP. (CR-GC-127) |
 | `TEST-mcp-export-guard` | MCP-Export-Guard-Test | open | MCP graph_export-Guard, drei Faelle: (a) leerer Graph wird verweigert, (b) Drop eines committeten Elements wird verweigert und die Datei bleibt unangetastet, (c) force:true ueberschreibt; Fresh-File-Export bleibt gruen. (CR-GC-202) |
@@ -314,12 +328,14 @@ Elemente: 265 · Traces: 554
 | `TEST-no-direct-graph-write` | No-Direct-Graph-Write-Test | open | Direkter Edit/Write auf den committeten SSOT wird von der Harness verweigert; graph_mutate (MCP) gelingt + ist gate-validiert; CI verwirft hand-editiertes (Nicht-Export) JSON. (CR-GC-201) |
 | `TEST-readiness-model` | Readiness-Modell-Test | done | Acceptance-Test fuer das Readiness-Modell: INCOSE-Scope lean, Phase-Gates SRR/PDR/CDR/TRR als disjunkte und vollstaendige Partition der V3_RULES, Impl-Gates SAR/FCA/SVR/FRR aus MS + CR-Status; deterministische Unit-Faelle + SSOT-Integration, niemals BQ. (CR-GC-125) |
 | `TEST-readiness-transparent` | Readiness-Transparenz-Test | open | graph_readiness liefert pro Gate die Blocking-Liste (CRs/Tests/UCs/Violations); die Summe der Blocker erklaert den Score deterministisch. (REQ-readiness-transparent) |
+| `TEST-readonly-bridge` | Readonly-Bridge-Test | open | Die Bridge akzeptiert keine Inbound-Mutation; ein Schreibversuch ueber die Bridge wird abgelehnt, Writes gehen nur durch MCP mutate(). (REQ-readonly-bridge) |
 | `TEST-real-health-check` | Health-Funktionscheck-Test | open | Der Health-Report enthaelt Store-, Gate-, Versions- und LLM-Readiness-Status und faellt bei Store- oder Gate-Ausfall auf nicht-ok, nicht nur bei Prozess-Stop. (REQ-real-health-check) |
 | `TEST-reduced-llm` | Modellfrei-Gate-Test | open | Gate/Regel-Evaluation läuft ohne Modell-Call (localReachable=false) deterministisch; nur LLM-Zusatzfeatures degradieren. |
 | `TEST-responsiveness` | Responsiveness-Test (<0,2s) | open | Draft-Apply + betroffener-Subgraph-Check antwortet < 0,2s (ohne LLM). (FCHAIN-apply-gate NFR) |
 | `TEST-roundtrip` | Format-E Round-Trip Conformance | done | decode(encode(g))==g; zwei Encodes byte-identisch. (FCHAIN-codec-roundtrip) |
 | `TEST-scaffold-skills` | Scaffold-Installs-Skills-Test | done | graphcode init/update kopiert die 9 mitgelieferten .claude/skills/se-*.md in das Ziel-Repo, remove entfernt sie restlos (nur die graphcode-eigenen); end-to-end ueber den gepackten Tarball in einem Fremd-Repo verifiziert. Schliesst die MOD-skills/CR-GC-104-Drift: FUNC-harness-cli managt .claude/skills/. (CR-GC-133) |
 | `TEST-schema-migration` | Schema-Migrations-Test | open | Version-Bump → Graph re-validiert/migriert, Violations berichtet, Version aktualisiert. (FUNC-migrate-schema) |
+| `TEST-shared-views-no-fork` | Shared-Views-No-Fork-Test | open | Die View-Berechnung liegt in @sigloch/graph-api-core; kein lokaler BQ-Regel-Fork (aimpro/src/contracts/se) mehr referenziert. (REQ-shared-views-no-fork) |
 | `TEST-skills-mcp` | Skills-MCP-Conformance-Test | done | Alle 9 .claude/skills/se-*.md sind MCP-getrieben: 0 Treffer fuer die abgeschaltete localhost:3001-API (/api/graph, /api/dashboard, GRAPH_API) und jedes Skill referenziert >=1 Tool aus der Live-Registry. "done = verifiziert" fuer die prompt-realisierten FUNCs von MOD-skills (se-view-* → REQ-doc-export). (CR-GC-132) |
 | `TEST-test-runnable-binding` | TestRef-Aufloesungs-Test | open | Ein impacted TEST-Knoten wird ueber testRef eindeutig zu einer lauffaehigen Datei plus Case aufgeloest; graph_tests erzeugt daraus ein selektives Run-Kommando, das nur die betroffenen Tests enthaelt. (REQ-test-runnable-binding) |
 | `TEST-token-efficiency` | Token-Budget-Test | open | graph_impact-Kontext ist messbar kleiner als ein Volltext-/grep-Dump desselben Scopes (Token-Count-Assertion). |
