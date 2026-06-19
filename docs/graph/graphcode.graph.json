@@ -898,7 +898,7 @@
       "type": "CR",
       "name": "Skills/Prompts-Modul",
       "description": "MOD-skills (.claude/skills/) + prompt-realisierte FUNC-render-views. Why: Skills/Prompts sind reale, zu managende Dateien = Modul; Allokation dorthin = prompt-realisiert (Skills = Funktionen). (docs/cr/open/CR-GC-104)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "attributes": {
         "status": "open"
@@ -909,7 +909,7 @@
       "type": "CR",
       "name": "Architektur-Verfeinerung",
       "description": "Kunden-Aktoren (Systems Engineer, Vibe Coder) + Realisierungs-Agent-Reframing; Interface-Eskalations-Prozess (FCHAIN + REQ + Facilitating-Agent); fehlende FCHAINs für efficient-testing + reduced-llm. Why: Mensch=Architektur/Nutzen, Agent=Realisierung; Interface-Drift kontrolliert; jeder UC ein Szenario. (docs/cr/open/CR-GC-105)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "attributes": {
         "status": "open"
@@ -920,7 +920,7 @@
       "type": "CR",
       "name": "Interface-Schemas",
       "description": "9 SCHEMA-Knoten (→ @sigloch/contracts Zod) + FLOW→SCHEMA für alle 28 Interfaces; REQ-interface-schema. Why: Datenvertrag = Code-Precondition (schema-before-code), schließt Readiness-Dimension schema=0. (docs/cr/open/CR-GC-106)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "attributes": {
         "status": "open"
@@ -943,7 +943,7 @@
       "type": "CR",
       "name": "Test-Konzept im Graph + Benchmark-REQ",
       "description": "TEST-Metadaten (level/tool/constraint) am Graph → test-concept.md als View rekonstruierbar (se-view-testconcept); REQ-benchmark-harness + REQ-quality-metric (nur definiert, nicht gebaut). Why: Test-Konzept ist eine View, kein Hand-Doc; Benchmark-Bau ist Realisierung. (docs/cr/open/CR-GC-108)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "attributes": {
         "status": "open"
@@ -2287,7 +2287,7 @@
       "type": "CR",
       "name": "Readiness-Modell definieren & realisieren (Phase/Impl/INCOSE)",
       "description": "Definiert was Phase-Readiness/Impl-Readiness-Gates/INCOSE-Artifacts in graphcode-Begriffen bedeuten (V3_RULES + MS + Status), dann als Scorer/View realisieren. Subsumiert die offene INCOSE-Scope-Frage (voll vs. lean). Voraussetzung für CR-110/115/116. (docs/cr/open/CR-GC-125)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-17T00:00:00.000Z"
     },
     {
