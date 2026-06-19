@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Alle Elemente nach Typ, sortiert nach uid. Deterministisch generiert.
 
-Elemente: 245 · Traces: 503
+Elemente: 245 · Traces: 504
 
 
 ## ACTOR
@@ -172,7 +172,7 @@ Elemente: 245 · Traces: 503
 | `REQ-frame-binding` | Frame ist bindend für Realisierung | open | Beschluss 2026-06-16: Die in diesem Graph definierte Struktur + Interfaces (6 MOD, 4 Customer-UC, FUNC/FCHAIN/FLOW/REQ + SE-Ontologie/TRACE_PATTERNS) sind BINDEND für die Realisierung. Ergänzungen NUR, wenn sie in die vordefinierten Boxen passen (neue FUNC/FLOW/REQ/TEST an bestehendem MOD/UC durchs Gate). Strukturelle Änderungen — neues sigloch-modules-Shared, neuer ElementType/TraceType, neue Customer-UC/MOD — brauchen Familie-Review. |
 | `REQ-gate-only-writes` | Gate-only Graph-Writes | open | Agent kann den SSOT nicht hand-editieren; jeder Write durch graph_mutate (mutate-Gate, L1). Deny-Rule + PreToolUse-Hook auf Edit/Write von docs/graph/*.graph.json + .graphcode/kuzu; JSON ist generierter Export, Live-Truth ist Kuzu. (CR-GC-201) |
 | `REQ-graceful-degradation` | Betrieb ohne LLM (Degraded-Modus) | open | CONSTRAINT (ConOps): Harness voll funktionsfähig bei nicht erreichbarem LLM-Sidecar — Gate/Regeln deterministisch, kein Modell-Call. |
-| `REQ-graph-integrity` | Graph-Integritaet: ein Validator | open | Ein Validierungs-Pfad: GraphCodeCodec.validate() erkennt zusaetzlich doppelte UIDs (nodeTypeMap dedupt heute still) + referenzielle Integritaet; kein inline validPairs-Klon ausserhalb des Codecs (keine parallelen Pfade). (CR-GC-200) |
+| `REQ-graph-integrity` | Graph-Integritaet: ein Validator | open | Ein Validierungs-Pfad an EINEM Punkt (Gate): GraphCodeCodec.validate() erkennt zusaetzlich doppelte UIDs (nodeTypeMap dedupt heute still) + referenzielle Integritaet + valide Edge-Paare; kein inline validPairs-Klon ausserhalb des Codecs (keine parallelen Pfade). Das Apply-Gate ruft validate() VOR persist() auf (gleicher contracts-SSOT, Delta-Semantik), sodass kein strukturell-ungueltiges Edge den Store erreicht und Kuzu-DDL + Export-Check zu Backstops werden. (CR-GC-200) |
 | `REQ-graph-is-ssot` | Graph ist Single Point of Truth | open | Der materialisierte Graph + die Live-Harness sind SSOT. docs/*.md sind historischer Input (Bootstrap). Modelländerungen am Graph (mutate/import), dann Re-Export. (2026-06-14) |
 | `REQ-harness-schema-in-contracts` | Harness-Schemas in contracts (D1) | open | CR-GC-100 Task 1 / D1: HarnessConfig/MutateCommand/MutateResult nach @sigloch/contracts (eigener harness-Export, NICHT /se), importieren, lokale Defs löschen. |
 | `REQ-hook-extension-points` | Drei Hook-Extension-Points | open | CR-GC-102: registerHook(type, handler) + runPreCommitHooks/runPostApplyHooks/scheduleNightlyBatch; Storage .graphcode/hooks/. |

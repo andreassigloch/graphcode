@@ -2454,7 +2454,7 @@
       "id": "REQ-graph-integrity",
       "type": "REQ",
       "name": "Graph-Integritaet: ein Validator",
-      "description": "Ein Validierungs-Pfad: GraphCodeCodec.validate() erkennt zusaetzlich doppelte UIDs (nodeTypeMap dedupt heute still) + referenzielle Integritaet; kein inline validPairs-Klon ausserhalb des Codecs (keine parallelen Pfade). (CR-GC-200)",
+      "description": "Ein Validierungs-Pfad an EINEM Punkt (Gate): GraphCodeCodec.validate() erkennt zusaetzlich doppelte UIDs (nodeTypeMap dedupt heute still) + referenzielle Integritaet + valide Edge-Paare; kein inline validPairs-Klon ausserhalb des Codecs (keine parallelen Pfade). Das Apply-Gate ruft validate() VOR persist() auf (gleicher contracts-SSOT, Delta-Semantik), sodass kein strukturell-ungueltiges Edge den Store erreicht und Kuzu-DDL + Export-Check zu Backstops werden. (CR-GC-200)",
       "status": "open",
       "created_at": "2026-06-18T00:00:00.000Z",
       "kinds": [
@@ -6053,6 +6053,13 @@
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-200",
+      "target": "MOD-harness",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
     }
   ]
 }

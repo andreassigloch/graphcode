@@ -179,6 +179,7 @@
 | `CR-GC-126` | relation | `REQ-progressive-expansion` |
 | `CR-GC-126` | relation | `REQ-query-precision` |
 | `CR-GC-200` | relation | `MOD-codec` |
+| `CR-GC-200` | relation | `MOD-harness` |
 | `CR-GC-200` | relation | `MS-3-mvp-readiness` |
 | `CR-GC-200` | relation | `REQ-graph-integrity` |
 | `CR-GC-201` | relation | `MS-3-mvp-readiness` |
