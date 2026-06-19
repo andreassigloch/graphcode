@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Alle Elemente nach Typ, sortiert nach uid. Deterministisch generiert.
 
-Elemente: 245 · Traces: 504
+Elemente: 252 · Traces: 524
 
 
 ## ACTOR
@@ -120,8 +120,13 @@ Elemente: 245 · Traces: 504
 | `FUNC-merge-nodes` | mergeNodes(graph) | reviewed | Conflict-free Merge via merge_nodes + deterministischer Serialisierung; keine verlorenen Knoten/Traces. |
 | `FUNC-migrate-schema` | migrateSchema(from, to) | reviewed | Re-Validierung + Migration des Graphen bei ONTOLOGY/RULES_VERSION-Bump; Version am Artefakt mitgeführt. |
 | `FUNC-mutate` | mutate(commands) | done | Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3) |
+| `FUNC-render-graph` | renderGraph(elements, traces) | draft | Live-Cytoscape-Graph der gegateten Knoten/Traces mit Violation-Overlay, gerendert via @sigloch/graph-renderer. Datenquelle: graph_elements + graph_get_edges + rules_get_violations. Repoint der aimprove OntologyView/GraphOverview. (CR-GC-115) |
+| `FUNC-render-impact` | renderImpactPanel(id) | draft | Impact-Panel on-demand: exakter Blast-Radius via graph_impact statt gespeicherter aimprove-Impact-Assessments (Learning). Repoint der aimprove ImpactView auf die Live-Quelle. (CR-GC-115) |
+| `FUNC-render-impl-gates` | renderImplGates(report) | draft | Impl-Gates-Panel: SAR/FCA/SVR/FRR + CR/MS-Burndown aus graph_readiness.implGates und den MS/CR-Knoten. Repoint der aimprove ImplGates + CrBurndown. (CR-GC-115) |
+| `FUNC-render-readiness` | renderReadinessPanel(report) | draft | Readiness-Panel: Compliance + Phase-Gates SRR/PDR/CDR/TRR aus graph_readiness (V3_RULES, lean INCOSE). Repoint der aimprove StatusSection-Readiness-Bars + GateView. (CR-GC-115) |
 | `FUNC-render-views` | render graph→markdown views | done | PROMPT-realisierter Graph→Markdown-Renderer via se-view-Skills (.claude/skills/se-view-*); erzeugt z.B. architecture-graph.md. Interim-Realisierung von REQ-doc-export, bis FUNC-export-markdown (code, MOD-docs) gebaut ist. Beweis: Skills = Funktionen (Allokation an MOD-skills = prompt-realisiert). |
 | `FUNC-save-graph` | saveGraph(graph) | done | Persistiert in-memory Graph nach Disk-Kuzu, falls keine error-Violations. (SPEC §3.4, §4) |
+| `FUNC-subscribe-updates` | subscribeUpdates() | draft | SSE-Client: bei jedem Live-Update-Event (invalidate) werden die betroffenen Domains nachgeladen, ohne Reload. Gegenstueck zu emitUpdateEvent, konsumiert FLOW-live-event ueber die Host-Bridge. (CR-GC-115) |
 
 ## MOD
 
@@ -162,6 +167,7 @@ Elemente: 245 · Traces: 504
 | `REQ-confidence-tier` | Confidence/Tier am MutateResult | open | MutateResult trägt Confidence/Tier (auto-apply/suggest/block); speist 3-Tier-Gate. (R1) |
 | `REQ-conflict-free-merge` | Conflict-free Graph-Merge | open | FUNC-merge-nodes: Branch-/Multi-Dev-Merge conflict-free (deterministische Serialisierung + merge_nodes). |
 | `REQ-dashboard-ontology-sync` | Dashboard/Readiness nutzt SE-Ontologie + V3_RULES | done | Das Dashboard/Readiness-Scorer MUSS gegen @sigloch/contracts Ontologie + V3_RULES evaluieren (via harness.evaluateRules, L2) — nicht die aimprove-Vorgänger-Regeln (rules 2.0.0, BQ-06/BQ-02 INCOSE). Heutige 155 BQ-Warnungen messen unsere REQs gegen eine Fremd-Regelbasis; nach Adoption echte Familie-Compliance. (NEXT REQ 2026-06-17) |
+| `REQ-dashboard-readonly` | Dashboard strikt read-only | open | CONSTRAINT: Der Viewer ist strikt read-only. Kein Write-Pfad aus dem Browser (kein mutate/analyze/optimize/nightly-Trigger), kein Projekt-Switching (Single-Repo-Owner, CR-195e), Konsum nur ueber die Host-Bridge. Beleg: aimprove-Dashboard mischte Generator/Optimizer-Trigger ein; graphcode ist Harness-only. |
 | `REQ-deterministic-serialization` | Deterministische Serialisierung | open | Stabile Sortierung → commit-/merge-arm; zwei Encodes byte-identisch. (R3) |
 | `REQ-disk-persistence` | Disk-Persistenz | open | Persistenz auf Disk (.graphcode/kuzu/), kein :memory:. (SPEC §4) |
 | `REQ-doc-export` | Graph → Markdown Re-Export | done | human-readable Docs (SPEC/Architektur/CR-Liste/References) werden DETERMINISTISCH aus dem Graph generiert (GENERATED-Header), nie hand-editiert. Schließt die graph-is-ssot-Drift-Lücke. (REQ-graph-is-ssot) |
@@ -274,6 +280,7 @@ Elemente: 245 · Traces: 504
 | `TEST-cli-scaffold` | CLI-Scaffold-Test | done | graphcode init/update/remove against a mkdtemp temp repo (real node:fs): init scaffolds .graphcode/ + .mcp.json (npx form) + GRAPHCODE.md + package.json dep, idempotent re-run is byte-stable, update preserves the .graphcode/kuzu store, remove deletes all artifacts restlos. No localhost/Controller path. (CR-GC-112) |
 | `TEST-code-quality` | Code-Quality-Gate-Test | open | Regelverletzende Änderung wird vom Gate geblockt; konformer Graph bleibt driftfrei. |
 | `TEST-dashboard-ontology-sync` | Dashboard-Ontologie-Test | done | Readiness/Violations stammen aus @sigloch/contracts V3_RULES (Rule-IDs == contracts), keine Vorgänger-BQ-Regeln; valide Familie-REQs werfen keine BQ-Warnungen. (REQ-dashboard-ontology-sync) |
+| `TEST-dashboard-readonly` | Dashboard-Readonly-Test | open | Der Viewer exponiert keinen Write- oder Trigger-Pfad und oeffnet kein zweites DB-Handle: nur Reads ueber die Host-Bridge, alle Writes gehen durch MCP mutate(). (REQ-dashboard-readonly) |
 | `TEST-distribution` | Self-contained npx distribution (automated) | done | tests/distribution.test.ts: esbuild bundle inlines all @sigloch/* into dist/cli.js+index.js (registry externals kept, shebang preserved); published manifest has zero file:/@sigloch runtime deps; real npm pack → foreign npm install → bin runs init/--help without the sigloch source tree. Self-contained (CR-GC-121). |
 | `TEST-doc-export` | Doc-Re-Export-Test | done | exportMarkdown deterministisch (byte-identisch) + spiegelt Graph; GENERATED-Header. (FUNC-export-markdown) |
 | `TEST-docs-taxonomy` | Docs-Taxonomie-Inspektion | open | Views reproduzierbar & GENERATED-headered; records durable; kein docs/project mehr. (verify REQ-docs-taxonomy) |

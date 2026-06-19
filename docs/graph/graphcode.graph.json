@@ -2538,6 +2538,71 @@
       "description": "Acceptance-Test fuer das Readiness-Modell: INCOSE-Scope lean, Phase-Gates SRR/PDR/CDR/TRR als disjunkte und vollstaendige Partition der V3_RULES, Impl-Gates SAR/FCA/SVR/FRR aus MS + CR-Status; deterministische Unit-Faelle + SSOT-Integration, niemals BQ. (CR-GC-125)",
       "status": "done",
       "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "id": "FUNC-render-graph",
+      "type": "FUNC",
+      "name": "renderGraph(elements, traces)",
+      "description": "Live-Cytoscape-Graph der gegateten Knoten/Traces mit Violation-Overlay, gerendert via @sigloch/graph-renderer. Datenquelle: graph_elements + graph_get_edges + rules_get_violations. Repoint der aimprove OntologyView/GraphOverview. (CR-GC-115)",
+      "status": "draft",
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "id": "FUNC-render-readiness",
+      "type": "FUNC",
+      "name": "renderReadinessPanel(report)",
+      "description": "Readiness-Panel: Compliance + Phase-Gates SRR/PDR/CDR/TRR aus graph_readiness (V3_RULES, lean INCOSE). Repoint der aimprove StatusSection-Readiness-Bars + GateView. (CR-GC-115)",
+      "status": "draft",
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "id": "FUNC-render-impl-gates",
+      "type": "FUNC",
+      "name": "renderImplGates(report)",
+      "description": "Impl-Gates-Panel: SAR/FCA/SVR/FRR + CR/MS-Burndown aus graph_readiness.implGates und den MS/CR-Knoten. Repoint der aimprove ImplGates + CrBurndown. (CR-GC-115)",
+      "status": "draft",
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "id": "FUNC-render-impact",
+      "type": "FUNC",
+      "name": "renderImpactPanel(id)",
+      "description": "Impact-Panel on-demand: exakter Blast-Radius via graph_impact statt gespeicherter aimprove-Impact-Assessments (Learning). Repoint der aimprove ImpactView auf die Live-Quelle. (CR-GC-115)",
+      "status": "draft",
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "id": "FUNC-subscribe-updates",
+      "type": "FUNC",
+      "name": "subscribeUpdates()",
+      "description": "SSE-Client: bei jedem Live-Update-Event (invalidate) werden die betroffenen Domains nachgeladen, ohne Reload. Gegenstueck zu emitUpdateEvent, konsumiert FLOW-live-event ueber die Host-Bridge. (CR-GC-115)",
+      "status": "draft",
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "id": "REQ-dashboard-readonly",
+      "type": "REQ",
+      "name": "Dashboard strikt read-only",
+      "description": "CONSTRAINT: Der Viewer ist strikt read-only. Kein Write-Pfad aus dem Browser (kein mutate/analyze/optimize/nightly-Trigger), kein Projekt-Switching (Single-Repo-Owner, CR-195e), Konsum nur ueber die Host-Bridge. Beleg: aimprove-Dashboard mischte Generator/Optimizer-Trigger ein; graphcode ist Harness-only.",
+      "status": "open",
+      "created_at": "2026-06-19T00:00:00.000Z",
+      "kinds": [
+        "negative"
+      ]
+    },
+    {
+      "id": "TEST-dashboard-readonly",
+      "type": "TEST",
+      "name": "Dashboard-Readonly-Test",
+      "description": "Der Viewer exponiert keinen Write- oder Trigger-Pfad und oeffnet kein zweites DB-Handle: nur Reads ueber die Host-Bridge, alle Writes gehen durch MCP mutate(). (REQ-dashboard-readonly)",
+      "status": "open",
+      "created_at": "2026-06-19T00:00:00.000Z",
+      "method": "test",
+      "attributes": {
+        "level": "integration",
+        "tool": "vitest",
+        "constraint": "viewer exposes no write path"
+      }
     }
   ],
   "traces": [
@@ -6057,6 +6122,146 @@
     {
       "source": "CR-GC-200",
       "target": "MOD-harness",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-render-graph",
+      "target": "UC-live-graph-view",
+      "type": "satisfy",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-render-graph",
+      "target": "MOD-dashboard",
+      "type": "allocate",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-render-readiness",
+      "target": "UC-live-graph-view",
+      "type": "satisfy",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-render-readiness",
+      "target": "MOD-dashboard",
+      "type": "allocate",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-render-impl-gates",
+      "target": "UC-live-graph-view",
+      "type": "satisfy",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-render-impl-gates",
+      "target": "MOD-dashboard",
+      "type": "allocate",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-render-impact",
+      "target": "UC-live-graph-view",
+      "type": "satisfy",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-render-impact",
+      "target": "MOD-dashboard",
+      "type": "allocate",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-subscribe-updates",
+      "target": "UC-live-graph-view",
+      "type": "satisfy",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-subscribe-updates",
+      "target": "MOD-dashboard",
+      "type": "allocate",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-live-event",
+      "target": "FUNC-subscribe-updates",
+      "type": "io",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "UC-live-graph-view",
+      "target": "REQ-dashboard-readonly",
+      "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "REQ-dashboard-readonly",
+      "target": "MOD-dashboard",
+      "type": "allocate",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-dashboard-readonly",
+      "target": "REQ-dashboard-readonly",
+      "type": "verify",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-115",
+      "target": "FUNC-render-graph",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-115",
+      "target": "FUNC-render-readiness",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-115",
+      "target": "FUNC-render-impl-gates",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-115",
+      "target": "FUNC-render-impact",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-115",
+      "target": "FUNC-subscribe-updates",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-115",
+      "target": "REQ-dashboard-readonly",
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-19T00:00:00.000Z"

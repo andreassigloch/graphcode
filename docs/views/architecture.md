@@ -23,8 +23,13 @@
 | `FUNC-merge-nodes` | FUNC | mergeNodes(graph) |
 | `FUNC-migrate-schema` | FUNC | migrateSchema(from, to) |
 | `FUNC-mutate` | FUNC | mutate(commands) |
+| `FUNC-render-graph` | FUNC | renderGraph(elements, traces) |
+| `FUNC-render-impact` | FUNC | renderImpactPanel(id) |
+| `FUNC-render-impl-gates` | FUNC | renderImplGates(report) |
+| `FUNC-render-readiness` | FUNC | renderReadinessPanel(report) |
 | `FUNC-render-views` | FUNC | render graph→markdown views |
 | `FUNC-save-graph` | FUNC | saveGraph(graph) |
+| `FUNC-subscribe-updates` | FUNC | subscribeUpdates() |
 | `MOD-cli` | MOD | cli — npx-Distribution & Lifecycle |
 | `MOD-codec` | MOD | codec.ts — GraphCodeCodec |
 | `MOD-dashboard` | MOD | dashboard — Live-Viewer-App |
@@ -53,9 +58,15 @@
 | `FUNC-merge-nodes` | `MOD-codec` |
 | `FUNC-migrate-schema` | `MOD-harness` |
 | `FUNC-mutate` | `MOD-harness` |
+| `FUNC-render-graph` | `MOD-dashboard` |
+| `FUNC-render-impact` | `MOD-dashboard` |
+| `FUNC-render-impl-gates` | `MOD-dashboard` |
+| `FUNC-render-readiness` | `MOD-dashboard` |
 | `FUNC-render-views` | `MOD-dashboard` |
 | `FUNC-render-views` | `MOD-skills` |
 | `FUNC-save-graph` | `MOD-harness` |
+| `FUNC-subscribe-updates` | `MOD-dashboard` |
 | `REQ-dashboard-ontology-sync` | `MOD-dashboard` |
+| `REQ-dashboard-readonly` | `MOD-dashboard` |
 | `REQ-readonly-bridge` | `MOD-host-bridge` |
 | `REQ-versioned-broadcast` | `MOD-host-bridge` |

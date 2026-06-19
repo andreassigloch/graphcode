@@ -133,9 +133,15 @@
 | `CR-GC-114` | relation | `REQ-mutation-emits-event` |
 | `CR-GC-114` | relation | `REQ-readonly-bridge` |
 | `CR-GC-114` | relation | `REQ-versioned-broadcast` |
+| `CR-GC-115` | relation | `FUNC-render-graph` |
+| `CR-GC-115` | relation | `FUNC-render-impact` |
+| `CR-GC-115` | relation | `FUNC-render-impl-gates` |
+| `CR-GC-115` | relation | `FUNC-render-readiness` |
+| `CR-GC-115` | relation | `FUNC-subscribe-updates` |
 | `CR-GC-115` | relation | `MOD-dashboard` |
 | `CR-GC-115` | relation | `MS-4-mvp2` |
 | `CR-GC-115` | relation | `REQ-dashboard-ontology-sync` |
+| `CR-GC-115` | relation | `REQ-dashboard-readonly` |
 | `CR-GC-115` | relation | `UC-live-graph-view` |
 | `CR-GC-116` | relation | `FUNC-render-views` |
 | `CR-GC-116` | relation | `MOD-skills` |
@@ -257,6 +263,7 @@
 | `FLOW-install-result` | io | `ACTOR-developer` |
 | `FLOW-install-result` | relation | `SCHEMA-cli-command` |
 | `FLOW-live-event` | io | `ACTOR-dashboard` |
+| `FLOW-live-event` | io | `FUNC-subscribe-updates` |
 | `FLOW-live-event` | relation | `SCHEMA-update-event` |
 | `FLOW-markdown-docs` | io | `ACTOR-developer` |
 | `FLOW-markdown-docs` | relation | `SCHEMA-markdown-view` |
@@ -368,6 +375,14 @@
 | `FUNC-mutate` | satisfy | `REQ-confidence-tier` |
 | `FUNC-mutate` | satisfy | `REQ-one-gate-per-repo` |
 | `FUNC-mutate` | satisfy | `UC-code-quality` |
+| `FUNC-render-graph` | allocate | `MOD-dashboard` |
+| `FUNC-render-graph` | satisfy | `UC-live-graph-view` |
+| `FUNC-render-impact` | allocate | `MOD-dashboard` |
+| `FUNC-render-impact` | satisfy | `UC-live-graph-view` |
+| `FUNC-render-impl-gates` | allocate | `MOD-dashboard` |
+| `FUNC-render-impl-gates` | satisfy | `UC-live-graph-view` |
+| `FUNC-render-readiness` | allocate | `MOD-dashboard` |
+| `FUNC-render-readiness` | satisfy | `UC-live-graph-view` |
 | `FUNC-render-views` | allocate | `MOD-dashboard` |
 | `FUNC-render-views` | allocate | `MOD-skills` |
 | `FUNC-render-views` | io | `FLOW-rendered-view` |
@@ -378,6 +393,8 @@
 | `FUNC-save-graph` | io | `FLOW-committed-graph` |
 | `FUNC-save-graph` | satisfy | `REQ-disk-persistence` |
 | `FUNC-save-graph` | satisfy | `UC-code-quality` |
+| `FUNC-subscribe-updates` | allocate | `MOD-dashboard` |
+| `FUNC-subscribe-updates` | satisfy | `UC-live-graph-view` |
 | `MOD-codec` | satisfy | `REQ-graph-integrity` |
 | `MOD-harness` | satisfy | `REQ-single-kuzu-owner` |
 | `MOD-harness` | satisfy | `REQ-single-store` |
@@ -402,6 +419,7 @@
 | `MS-4-mvp2` | compose | `UC-live-graph-view` |
 | `MS-4-mvp2` | relation | `MS-3-mvp-readiness` |
 | `REQ-dashboard-ontology-sync` | allocate | `MOD-dashboard` |
+| `REQ-dashboard-readonly` | allocate | `MOD-dashboard` |
 | `REQ-graph-is-ssot` | compose | `REQ-docs-taxonomy` |
 | `REQ-graph-is-ssot` | compose | `REQ-export-no-clobber` |
 | `REQ-graph-is-ssot` | compose | `REQ-graph-integrity` |
@@ -450,6 +468,7 @@
 | `TEST-code-quality` | verify | `REQ-code-governed-quality` |
 | `TEST-code-quality` | verify | `REQ-quality-metric` |
 | `TEST-dashboard-ontology-sync` | verify | `REQ-dashboard-ontology-sync` |
+| `TEST-dashboard-readonly` | verify | `REQ-dashboard-readonly` |
 | `TEST-distribution` | verify | `REQ-buildable-standalone` |
 | `TEST-distribution` | verify | `REQ-npx-distribution` |
 | `TEST-distribution` | verify | `REQ-repo-install` |
@@ -504,6 +523,7 @@
 | `UC-efficient-testing` | compose | `FCHAIN-impact-testing` |
 | `UC-efficient-testing` | compose | `REQ-impact-based-testing` |
 | `UC-live-graph-view` | compose | `REQ-dashboard-ontology-sync` |
+| `UC-live-graph-view` | compose | `REQ-dashboard-readonly` |
 | `UC-live-graph-view` | compose | `REQ-mutation-emits-event` |
 | `UC-live-graph-view` | compose | `REQ-readonly-bridge` |
 | `UC-live-graph-view` | compose | `REQ-versioned-broadcast` |
