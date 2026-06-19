@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Alle Elemente nach Typ, sortiert nach uid. Deterministisch generiert.
 
-Elemente: 253 · Traces: 527
+Elemente: 261 · Traces: 545
 
 
 ## ACTOR
@@ -121,10 +121,12 @@ Elemente: 253 · Traces: 527
 | `FUNC-migrate-schema` | migrateSchema(from, to) | reviewed | Re-Validierung + Migration des Graphen bei ONTOLOGY/RULES_VERSION-Bump; Version am Artefakt mitgeführt. |
 | `FUNC-mutate` | mutate(commands) | done | Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3) |
 | `FUNC-render-artifacts` | renderArtifactReadiness(views) | draft | INCOSE-Artifact-Panel: Readiness je Dokument/View (Testmatrix, FMEA, RTM, ImplPlan, IntPlan, ChangeLog, ConOps, IRR, NFR, ICD) aus dem Query-Layer (graph_query views) + graph_readiness. Repoint der aimprove ArtifactReadiness. Die offene View-Liste (RTM, IntPlan, ChangeLog, ConOps, IRR, ICD ohne se-view-Skill) ist genau der Rest-Scope von CR-GC-116. (CR-GC-115) |
-| `FUNC-render-graph` | renderGraph(elements, traces) | draft | Live-Cytoscape-Graph der gegateten Knoten/Traces mit Violation-Overlay, gerendert via @sigloch/graph-renderer. Datenquelle: graph_elements + graph_get_edges + rules_get_violations. Repoint der aimprove OntologyView/GraphOverview. (CR-GC-115) |
+| `FUNC-render-graph` | renderGraph(elements, traces) | draft | Pluggbarer Live-Graph-Mount-Slot im Dashboard. Datenquelle: graph_elements + graph_get_edges + rules_get_violations (nur V3_RULES, kein BQ). Der konkrete Cytoscape-Renderer (@sigloch/graph-renderer) wird hier eingehaengt und ist das naechste aise-family-Projekt (graph-view-edit), nicht in graphcode gebaut. aimproves OntologyView rendert keinen Node-Link-Graph (nur Histogramme). (CR-GC-115) |
+| `FUNC-render-health` | renderHealth() | draft | Echter Funktions-Health-Check, kein Prozess-Liveness-Licht: Kuzu-Store erreichbar, Apply-Gate funktional, Ontology/Rules/Contracts-Versionen, LLM/BYOK-Readiness (OpenCode, fuer spaeter). aimprove-spezifische Felder (Sessions/Patterns) entfernt. Quelle: Host-Bridge Health-Endpoint. (CR-GC-115) |
 | `FUNC-render-impact` | renderImpactPanel(id) | draft | Impact-Panel on-demand: exakter Blast-Radius via graph_impact statt gespeicherter aimprove-Impact-Assessments (Learning). Repoint der aimprove ImpactView auf die Live-Quelle. (CR-GC-115) |
-| `FUNC-render-impl-gates` | renderImplGates(report) | draft | Impl-Gates-Panel: SAR/FCA/SVR/FRR + CR/MS-Burndown aus graph_readiness.implGates und den MS/CR-Knoten. Repoint der aimprove ImplGates + CrBurndown. (CR-GC-115) |
+| `FUNC-render-impl-gates` | renderImplGates(report) | draft | Impl-Gates-Panel: SAR/FCA/SVR/FRR + CR/MS-Burndown aus graph_readiness.implGates und den MS/CR-Knoten. In aimprove nie verdrahtet (0/9, 0/20, 0/4); graphcode macht die Query transparent: jedes Gate zeigt seine Blocking-Elemente als Drill-down. Repoint der aimprove ImplGates + CrBurndown. (CR-GC-115) |
 | `FUNC-render-readiness` | renderReadinessPanel(report) | draft | Readiness-Panel: Compliance + Phase-Gates SRR/PDR/CDR/TRR aus graph_readiness (V3_RULES, lean INCOSE). Repoint der aimprove StatusSection-Readiness-Bars + GateView. (CR-GC-115) |
+| `FUNC-render-recommendations` | renderImprovementMeasures() | draft | Top-N hoechstbewertete Verbesserungsmassnahmen, deterministisch aus Graph-Defiziten abgeleitet (fehlende verify-Traces R-01, Orphans RD-01, Blast-Radius via graph_impact), nach Severity/Impact sortiert. Behalten aus aimprove TOP-Empfehlungen, aber graph-deduziert statt Learning-Vorschlag (kein Generator). (CR-GC-115) |
 | `FUNC-render-views` | render graph→markdown views | done | PROMPT-realisierter Graph→Markdown-Renderer via se-view-Skills (.claude/skills/se-view-*); erzeugt z.B. architecture-graph.md. Interim-Realisierung von REQ-doc-export, bis FUNC-export-markdown (code, MOD-docs) gebaut ist. Beweis: Skills = Funktionen (Allokation an MOD-skills = prompt-realisiert). |
 | `FUNC-save-graph` | saveGraph(graph) | done | Persistiert in-memory Graph nach Disk-Kuzu, falls keine error-Violations. (SPEC §3.4, §4) |
 | `FUNC-subscribe-updates` | subscribeUpdates() | draft | SSE-Client: bei jedem Live-Update-Event (invalidate) werden die betroffenen Domains nachgeladen, ohne Reload. Gegenstueck zu emitUpdateEvent, konsumiert FLOW-live-event ueber die Host-Bridge. (CR-GC-115) |
@@ -157,6 +159,7 @@ Elemente: 253 · Traces: 527
 | uid | name | status | description |
 |---|---|---|---|
 | `REQ-agent-agnostic` | Agent-agnostische MCP-Surface | draft | Die MCP-stdio-Surface ist agent-agnostisch: Claude Code UND OpenCode (und jeder MCP-Client) treiben dieselbe Harness durchs selbe Gate; keine client-spezifischen Annahmen. (CLAUDE.md verriegelt: OpenCode-executed, Claude Code = ein Client) |
+| `REQ-artifact-freshness` | Artifact-Ampel-Semantik gruen gelb rot | open | Dokumente und Prozessschritte sind gruen wenn live aus dem aktuellen Graph abgeleitet, gelb wenn ein materialisiertes Doc existiert aber der Graph sich seither geaendert hat (stale), rot wenn noch nicht existent. |
 | `REQ-audit-trail` | Audit-Trail / History | open | CR-GC-101: audit_trail/audit_stats liefern Mutations-History/Statistik. |
 | `REQ-auto-persist-merge` | Auto-Persist + conflict-free Merge | open | Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Artefakt. (R2) |
 | `REQ-benchmark-harness` | Benchmark-Harness (graphcode vs classic) | open | Setting zum Vergleich graphcode-Modus vs. Claude-Code-classic über eine fixe Task-Suite, 2 LLMs (groß + klein/lokal), mit Token-Counter + Quality-Scorer. Liefert task×mode×LLM → {tokens, success, quality} und belegt token-efficiency + reduced-llm + code-quality. NUR Requirement — Harness-Bau ist Realisierung (eigene CR). |
@@ -231,7 +234,9 @@ Elemente: 253 · Traces: 527
 | `REQ-quality-metric` | Messbare Code-/Tool-Qualität | open | Qualität = graph-eigene Metriken: (1) 0 error-Violations am Commit, (2) REQ→TEST-Traceability-Coverage, (3) keine Drift bei Re-Eval; gegen classic messbar. Definiert, was „exzellente Code-Qualität" (UC-code-quality) bedeutet — kein Vibe. |
 | `REQ-query-precision` | Query-Precision statt Kompression | done | graph_impact liefert exakten Blast-Radius als Format-E (Anti-grep, Ziel a). (R6/R12) |
 | `REQ-readiness-model` | Readiness-Modell definiert (Phase/Impl/INCOSE) | done | Readiness-Modell fuer graphcode, definiert gegen @sigloch/contracts V3_RULES + die MS-Meilensteine + Element-Status (keine aimprove-BQ-Heuristik). INCOSE-Scope LEAN: der gegatete Graph ist das einzige SE-Artefakt. Phase-Readiness SRR/PDR/CDR/TRR ist eine disjunkte, vollstaendige Partition der 15 Element-Regeln; Implementation-Readiness SAR/FCA/SVR/FRR bindet die Meilenstein-Tiers MS-1..4 (ready wenn zugeordnete CRs done + Scope fehlerfrei) und deckt die 2 MS-Regeln ab. Realisiert im Scorer src/readiness.ts, exponiert ueber graph_readiness. (CR-GC-125) |
+| `REQ-readiness-transparent` | Readiness-Query transparent | open | Jedes Phase- und Impl-Gate exponiert seine Blocking-Elemente (welche CRs, Tests, UCs, Violations den Score druecken), sodass der Score auditierbar ist und keine Black-Box. In aimprove waren die Impl-Gates nie verdrahtet (0/9, 0/20, 0/4); graphcode macht die Herleitung transparent. |
 | `REQ-readonly-bridge` | Read-only Bridge | open | Bridge read-only; keine Inbound-Mutations, Writes nur via MCP→mutate(). (RECOMMENDATIONS) |
+| `REQ-real-health-check` | Health = echter Funktionscheck | open | Der Health-Endpoint prueft Store-Erreichbarkeit, Gate-Funktion, Ontology/Rules/Contracts-Versionen und LLM/BYOK-Readiness, nicht nur Prozess-Liveness. aimprove-spezifische Felder (Sessions/Patterns) sind kein Health-Signal und werden entfernt. |
 | `REQ-repo-install` | Ein-Kommando-Installation | done | Installation der Harness in ein beliebiges Repo mit einem Kommando: scaffolds .graphcode/, .claude/hooks, .mcp.json, Controller. |
 | `REQ-repo-uninstall` | Restlose Deinstallation | open | Deinstallation entfernt alle installierten Artefakte ohne Residuen. |
 | `REQ-repo-update` | Update ohne Datenverlust | open | Update aktualisiert installierte Artefakte/Pfade, ohne den lokalen Graph-Store (.graphcode/) zu verlieren. |
@@ -276,6 +281,7 @@ Elemente: 253 · Traces: 527
 
 | uid | name | status | description |
 |---|---|---|---|
+| `TEST-artifact-freshness` | Artifact-Freshness-Test | open | Ein Artifact ist gruen bei Graph-Ableitung, gelb bei materialisiertem aber veraltetem Doc (Graph neuer als Doc), rot wenn fehlend. (REQ-artifact-freshness) |
 | `TEST-bootstrap` | Cold-Start-Import-Test | done | Format-E-Import befüllt leeren Graphen ausschließlich durchs Gate; Direct-Write schlägt fehl. (FUNC-import) |
 | `TEST-capture` | Interaktive-Erfassung-Test | open | Agent-Kandidaten laufen im suggest-Tier durchs Gate (kein auto-apply). (FCHAIN-capture) |
 | `TEST-cli-scaffold` | CLI-Scaffold-Test | done | graphcode init/update/remove against a mkdtemp temp repo (real node:fs): init scaffolds .graphcode/ + .mcp.json (npx form) + GRAPHCODE.md + package.json dep, idempotent re-run is byte-stable, update preserves the .graphcode/kuzu store, remove deletes all artifacts restlos. No localhost/Controller path. (CR-GC-112) |
@@ -304,6 +310,8 @@ Elemente: 253 · Traces: 527
 | `TEST-mvp-e2e` | MVP-1 E2E Acceptance | done | End-to-End-Akzeptanz des MVP-1-Loops: neues Mitglied bootstrappen, Knoten durchs Gate spec’en, graph_impact liefert exakt den Blast-Radius (KNOW statt grep), Knoten implementieren, re-exportieren. Disk-Kuzu, keine Mocks. (CR-GC-123) |
 | `TEST-no-direct-graph-write` | No-Direct-Graph-Write-Test | open | Direkter Edit/Write auf den committeten SSOT wird von der Harness verweigert; graph_mutate (MCP) gelingt + ist gate-validiert; CI verwirft hand-editiertes (Nicht-Export) JSON. (CR-GC-201) |
 | `TEST-readiness-model` | Readiness-Modell-Test | done | Acceptance-Test fuer das Readiness-Modell: INCOSE-Scope lean, Phase-Gates SRR/PDR/CDR/TRR als disjunkte und vollstaendige Partition der V3_RULES, Impl-Gates SAR/FCA/SVR/FRR aus MS + CR-Status; deterministische Unit-Faelle + SSOT-Integration, niemals BQ. (CR-GC-125) |
+| `TEST-readiness-transparent` | Readiness-Transparenz-Test | open | graph_readiness liefert pro Gate die Blocking-Liste (CRs/Tests/UCs/Violations); die Summe der Blocker erklaert den Score deterministisch. (REQ-readiness-transparent) |
+| `TEST-real-health-check` | Health-Funktionscheck-Test | open | Der Health-Report enthaelt Store-, Gate-, Versions- und LLM-Readiness-Status und faellt bei Store- oder Gate-Ausfall auf nicht-ok, nicht nur bei Prozess-Stop. (REQ-real-health-check) |
 | `TEST-reduced-llm` | Modellfrei-Gate-Test | open | Gate/Regel-Evaluation läuft ohne Modell-Call (localReachable=false) deterministisch; nur LLM-Zusatzfeatures degradieren. |
 | `TEST-responsiveness` | Responsiveness-Test (<0,2s) | open | Draft-Apply + betroffener-Subgraph-Check antwortet < 0,2s (ohne LLM). (FCHAIN-apply-gate NFR) |
 | `TEST-roundtrip` | Format-E Round-Trip Conformance | done | decode(encode(g))==g; zwei Encodes byte-identisch. (FCHAIN-codec-roundtrip) |

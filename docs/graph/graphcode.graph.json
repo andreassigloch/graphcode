@@ -2543,7 +2543,7 @@
       "id": "FUNC-render-graph",
       "type": "FUNC",
       "name": "renderGraph(elements, traces)",
-      "description": "Live-Cytoscape-Graph der gegateten Knoten/Traces mit Violation-Overlay, gerendert via @sigloch/graph-renderer. Datenquelle: graph_elements + graph_get_edges + rules_get_violations. Repoint der aimprove OntologyView/GraphOverview. (CR-GC-115)",
+      "description": "Pluggbarer Live-Graph-Mount-Slot im Dashboard. Datenquelle: graph_elements + graph_get_edges + rules_get_violations (nur V3_RULES, kein BQ). Der konkrete Cytoscape-Renderer (@sigloch/graph-renderer) wird hier eingehaengt und ist das naechste aise-family-Projekt (graph-view-edit), nicht in graphcode gebaut. aimproves OntologyView rendert keinen Node-Link-Graph (nur Histogramme). (CR-GC-115)",
       "status": "draft",
       "created_at": "2026-06-19T00:00:00.000Z"
     },
@@ -2559,7 +2559,7 @@
       "id": "FUNC-render-impl-gates",
       "type": "FUNC",
       "name": "renderImplGates(report)",
-      "description": "Impl-Gates-Panel: SAR/FCA/SVR/FRR + CR/MS-Burndown aus graph_readiness.implGates und den MS/CR-Knoten. Repoint der aimprove ImplGates + CrBurndown. (CR-GC-115)",
+      "description": "Impl-Gates-Panel: SAR/FCA/SVR/FRR + CR/MS-Burndown aus graph_readiness.implGates und den MS/CR-Knoten. In aimprove nie verdrahtet (0/9, 0/20, 0/4); graphcode macht die Query transparent: jedes Gate zeigt seine Blocking-Elemente als Drill-down. Repoint der aimprove ImplGates + CrBurndown. (CR-GC-115)",
       "status": "draft",
       "created_at": "2026-06-19T00:00:00.000Z"
     },
@@ -2611,6 +2611,82 @@
       "description": "INCOSE-Artifact-Panel: Readiness je Dokument/View (Testmatrix, FMEA, RTM, ImplPlan, IntPlan, ChangeLog, ConOps, IRR, NFR, ICD) aus dem Query-Layer (graph_query views) + graph_readiness. Repoint der aimprove ArtifactReadiness. Die offene View-Liste (RTM, IntPlan, ChangeLog, ConOps, IRR, ICD ohne se-view-Skill) ist genau der Rest-Scope von CR-GC-116. (CR-GC-115)",
       "status": "draft",
       "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "id": "FUNC-render-recommendations",
+      "type": "FUNC",
+      "name": "renderImprovementMeasures()",
+      "description": "Top-N hoechstbewertete Verbesserungsmassnahmen, deterministisch aus Graph-Defiziten abgeleitet (fehlende verify-Traces R-01, Orphans RD-01, Blast-Radius via graph_impact), nach Severity/Impact sortiert. Behalten aus aimprove TOP-Empfehlungen, aber graph-deduziert statt Learning-Vorschlag (kein Generator). (CR-GC-115)",
+      "status": "draft",
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "id": "FUNC-render-health",
+      "type": "FUNC",
+      "name": "renderHealth()",
+      "description": "Echter Funktions-Health-Check, kein Prozess-Liveness-Licht: Kuzu-Store erreichbar, Apply-Gate funktional, Ontology/Rules/Contracts-Versionen, LLM/BYOK-Readiness (OpenCode, fuer spaeter). aimprove-spezifische Felder (Sessions/Patterns) entfernt. Quelle: Host-Bridge Health-Endpoint. (CR-GC-115)",
+      "status": "draft",
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "id": "REQ-real-health-check",
+      "type": "REQ",
+      "name": "Health = echter Funktionscheck",
+      "description": "Der Health-Endpoint prueft Store-Erreichbarkeit, Gate-Funktion, Ontology/Rules/Contracts-Versionen und LLM/BYOK-Readiness, nicht nur Prozess-Liveness. aimprove-spezifische Felder (Sessions/Patterns) sind kein Health-Signal und werden entfernt.",
+      "status": "open",
+      "created_at": "2026-06-19T00:00:00.000Z",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-readiness-transparent",
+      "type": "REQ",
+      "name": "Readiness-Query transparent",
+      "description": "Jedes Phase- und Impl-Gate exponiert seine Blocking-Elemente (welche CRs, Tests, UCs, Violations den Score druecken), sodass der Score auditierbar ist und keine Black-Box. In aimprove waren die Impl-Gates nie verdrahtet (0/9, 0/20, 0/4); graphcode macht die Herleitung transparent.",
+      "status": "open",
+      "created_at": "2026-06-19T00:00:00.000Z",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-artifact-freshness",
+      "type": "REQ",
+      "name": "Artifact-Ampel-Semantik gruen gelb rot",
+      "description": "Dokumente und Prozessschritte sind gruen wenn live aus dem aktuellen Graph abgeleitet, gelb wenn ein materialisiertes Doc existiert aber der Graph sich seither geaendert hat (stale), rot wenn noch nicht existent.",
+      "status": "open",
+      "created_at": "2026-06-19T00:00:00.000Z",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "TEST-real-health-check",
+      "type": "TEST",
+      "name": "Health-Funktionscheck-Test",
+      "description": "Der Health-Report enthaelt Store-, Gate-, Versions- und LLM-Readiness-Status und faellt bei Store- oder Gate-Ausfall auf nicht-ok, nicht nur bei Prozess-Stop. (REQ-real-health-check)",
+      "status": "open",
+      "created_at": "2026-06-19T00:00:00.000Z",
+      "method": "test"
+    },
+    {
+      "id": "TEST-readiness-transparent",
+      "type": "TEST",
+      "name": "Readiness-Transparenz-Test",
+      "description": "graph_readiness liefert pro Gate die Blocking-Liste (CRs/Tests/UCs/Violations); die Summe der Blocker erklaert den Score deterministisch. (REQ-readiness-transparent)",
+      "status": "open",
+      "created_at": "2026-06-19T00:00:00.000Z",
+      "method": "test"
+    },
+    {
+      "id": "TEST-artifact-freshness",
+      "type": "TEST",
+      "name": "Artifact-Freshness-Test",
+      "description": "Ein Artifact ist gruen bei Graph-Ableitung, gelb bei materialisiertem aber veraltetem Doc (Graph neuer als Doc), rot wenn fehlend. (REQ-artifact-freshness)",
+      "status": "open",
+      "created_at": "2026-06-19T00:00:00.000Z",
+      "method": "test"
     }
   ],
   "traces": [
@@ -6291,6 +6367,132 @@
     {
       "source": "CR-GC-115",
       "target": "FUNC-render-artifacts",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-render-recommendations",
+      "target": "UC-live-graph-view",
+      "type": "satisfy",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-render-recommendations",
+      "target": "MOD-dashboard",
+      "type": "allocate",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-render-health",
+      "target": "UC-live-graph-view",
+      "type": "satisfy",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-render-health",
+      "target": "MOD-dashboard",
+      "type": "allocate",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "UC-live-graph-view",
+      "target": "REQ-real-health-check",
+      "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "REQ-real-health-check",
+      "target": "MOD-host-bridge",
+      "type": "allocate",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "UC-live-graph-view",
+      "target": "REQ-readiness-transparent",
+      "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "REQ-readiness-transparent",
+      "target": "MOD-dashboard",
+      "type": "allocate",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "UC-live-graph-view",
+      "target": "REQ-artifact-freshness",
+      "type": "compose",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "REQ-artifact-freshness",
+      "target": "MOD-dashboard",
+      "type": "allocate",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-real-health-check",
+      "target": "REQ-real-health-check",
+      "type": "verify",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-readiness-transparent",
+      "target": "REQ-readiness-transparent",
+      "type": "verify",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-artifact-freshness",
+      "target": "REQ-artifact-freshness",
+      "type": "verify",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-115",
+      "target": "FUNC-render-recommendations",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-115",
+      "target": "FUNC-render-health",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-115",
+      "target": "REQ-real-health-check",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-115",
+      "target": "REQ-readiness-transparent",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-115",
+      "target": "REQ-artifact-freshness",
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-19T00:00:00.000Z"

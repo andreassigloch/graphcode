@@ -25,9 +25,11 @@
 | `FUNC-mutate` | FUNC | mutate(commands) |
 | `FUNC-render-artifacts` | FUNC | renderArtifactReadiness(views) |
 | `FUNC-render-graph` | FUNC | renderGraph(elements, traces) |
+| `FUNC-render-health` | FUNC | renderHealth() |
 | `FUNC-render-impact` | FUNC | renderImpactPanel(id) |
 | `FUNC-render-impl-gates` | FUNC | renderImplGates(report) |
 | `FUNC-render-readiness` | FUNC | renderReadinessPanel(report) |
+| `FUNC-render-recommendations` | FUNC | renderImprovementMeasures() |
 | `FUNC-render-views` | FUNC | render graph→markdown views |
 | `FUNC-save-graph` | FUNC | saveGraph(graph) |
 | `FUNC-subscribe-updates` | FUNC | subscribeUpdates() |
@@ -61,14 +63,19 @@
 | `FUNC-mutate` | `MOD-harness` |
 | `FUNC-render-artifacts` | `MOD-dashboard` |
 | `FUNC-render-graph` | `MOD-dashboard` |
+| `FUNC-render-health` | `MOD-dashboard` |
 | `FUNC-render-impact` | `MOD-dashboard` |
 | `FUNC-render-impl-gates` | `MOD-dashboard` |
 | `FUNC-render-readiness` | `MOD-dashboard` |
+| `FUNC-render-recommendations` | `MOD-dashboard` |
 | `FUNC-render-views` | `MOD-dashboard` |
 | `FUNC-render-views` | `MOD-skills` |
 | `FUNC-save-graph` | `MOD-harness` |
 | `FUNC-subscribe-updates` | `MOD-dashboard` |
+| `REQ-artifact-freshness` | `MOD-dashboard` |
 | `REQ-dashboard-ontology-sync` | `MOD-dashboard` |
 | `REQ-dashboard-readonly` | `MOD-dashboard` |
+| `REQ-readiness-transparent` | `MOD-dashboard` |
 | `REQ-readonly-bridge` | `MOD-host-bridge` |
+| `REQ-real-health-check` | `MOD-host-bridge` |
 | `REQ-versioned-broadcast` | `MOD-host-bridge` |
