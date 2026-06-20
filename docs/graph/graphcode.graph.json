@@ -2291,6 +2291,15 @@
       "updated_at": "2026-06-18T00:00:00.000Z"
     },
     {
+      "id": "TEST-cache",
+      "type": "TEST",
+      "name": "Cache-Layering-Test",
+      "description": "Version-keyed Response-Cache + Dirty-Flag mappt auf Kuzu-Version; nur Onto+Rules stabil gecached, nie mit Live-Graph gemischt (Prefix-Hygiene). (CR-GC-102 R8/R11)",
+      "status": "open",
+      "level": "integration",
+      "tool": "vitest"
+    },
+    {
       "id": "TEST-capture",
       "type": "TEST",
       "name": "Interaktive-Erfassung-Test",
@@ -2442,6 +2451,15 @@
         "tool": "bash",
         "constraint": "health 200"
       }
+    },
+    {
+      "id": "TEST-hooks",
+      "type": "TEST",
+      "name": "Hook-Extension-Points-Test",
+      "description": "registerHook + runPreCommitHooks/runPostApplyHooks/scheduleNightlyBatch; pre-commit-Hook blockt eine Mutation; preCommitTimeout (default 5000ms) greift; Execution-Order deterministisch. (CR-GC-102)",
+      "status": "open",
+      "level": "integration",
+      "tool": "vitest"
     },
     {
       "id": "TEST-impact-subgraph",
@@ -2789,6 +2807,15 @@
         "constraint": "skills-off-dead-api-on-mcp"
       },
       "updated_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "id": "TEST-store-recovery",
+      "type": "TEST",
+      "name": "Store-Recovery-Test",
+      "description": "Kuzu Lock-Konflikt / abgestuerzter Owner / korrupter Store: Lock-Erkennung + sicherer Re-Open; kein zweites DB-Handle. (ConOps Recovery)",
+      "status": "open",
+      "level": "integration",
+      "tool": "vitest"
     },
     {
       "id": "TEST-test-runnable-binding",
@@ -4366,6 +4393,11 @@
     },
     {
       "source": "FCHAIN-apply-gate",
+      "target": "REQ-code-governed-quality",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-apply-gate",
       "target": "REQ-mcp-gate-symmetry",
       "type": "satisfy",
       "weight": 1,
@@ -4412,6 +4444,11 @@
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FCHAIN-capture",
+      "target": "REQ-no-extraction",
+      "type": "satisfy"
     },
     {
       "source": "FCHAIN-capture",
@@ -5038,6 +5075,11 @@
     },
     {
       "source": "FUNC-deduce-tests",
+      "target": "REQ-test-runnable-binding",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-deduce-tests",
       "target": "UC-efficient-testing",
       "type": "satisfy",
       "weight": 1,
@@ -5098,6 +5140,11 @@
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-emit-update-event",
+      "target": "REQ-live-event-in-contracts",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-emit-update-event",
@@ -5605,10 +5652,8 @@
     },
     {
       "source": "FUNC-mutate",
-      "target": "REQ-one-gate-per-repo",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "target": "REQ-gate-only-writes",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-mutate",
@@ -5637,6 +5682,11 @@
       "type": "allocate",
       "weight": 1,
       "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-render-artifacts",
+      "target": "REQ-artifact-freshness",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-render-artifacts",
@@ -5707,6 +5757,11 @@
       "type": "allocate",
       "weight": 1,
       "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-render-readiness",
+      "target": "REQ-readiness-transparent",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-render-readiness",
@@ -5933,11 +5988,56 @@
       "created_at": "2026-06-19T00:00:00.000Z"
     },
     {
+      "source": "MOD-cli",
+      "target": "REQ-buildable-standalone",
+      "type": "satisfy"
+    },
+    {
       "source": "MOD-codec",
       "target": "REQ-graph-integrity",
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "MOD-codec",
+      "target": "REQ-interface-schema",
+      "type": "satisfy"
+    },
+    {
+      "source": "MOD-dashboard",
+      "target": "REQ-dashboard-ontology-sync",
+      "type": "satisfy"
+    },
+    {
+      "source": "MOD-dashboard",
+      "target": "REQ-dashboard-readonly",
+      "type": "satisfy"
+    },
+    {
+      "source": "MOD-dashboard",
+      "target": "REQ-shared-views-no-fork",
+      "type": "satisfy"
+    },
+    {
+      "source": "MOD-docs",
+      "target": "REQ-docs-taxonomy",
+      "type": "satisfy"
+    },
+    {
+      "source": "MOD-harness",
+      "target": "REQ-harness-schema-in-contracts",
+      "type": "satisfy"
+    },
+    {
+      "source": "MOD-harness",
+      "target": "REQ-import-se-ontology",
+      "type": "satisfy"
+    },
+    {
+      "source": "MOD-harness",
+      "target": "REQ-quality-metric",
+      "type": "satisfy"
     },
     {
       "source": "MOD-harness",
@@ -5952,6 +6052,11 @@
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "MOD-harness",
+      "target": "REQ-store-recovery",
+      "type": "satisfy"
     },
     {
       "source": "MOD-hooks",
@@ -6389,10 +6494,25 @@
     },
     {
       "source": "SYS-graphcode",
+      "target": "REQ-benchmark-harness",
+      "type": "satisfy"
+    },
+    {
+      "source": "SYS-graphcode",
+      "target": "REQ-frame-binding",
+      "type": "satisfy"
+    },
+    {
+      "source": "SYS-graphcode",
       "target": "REQ-graceful-degradation",
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "SYS-graphcode",
+      "target": "REQ-structure-driven",
+      "type": "satisfy"
     },
     {
       "source": "TEST-agent-agnostic",
@@ -6416,11 +6536,46 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "TEST-bootstrap",
+      "target": "REQ-post-import",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-bootstrap",
+      "target": "REQ-pre-import",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-cache",
+      "target": "REQ-cache-layering",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-cache",
+      "target": "REQ-versioned-cache",
+      "type": "verify"
+    },
+    {
       "source": "TEST-capture",
       "target": "REQ-interactive-capture-suggest",
       "type": "verify",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-capture",
+      "target": "REQ-no-extraction",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-capture",
+      "target": "REQ-post-capture",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-capture",
+      "target": "REQ-pre-capture",
+      "type": "verify"
     },
     {
       "source": "TEST-cli-scaffold",
@@ -6473,10 +6628,20 @@
     },
     {
       "source": "TEST-code-quality",
+      "target": "REQ-frame-binding",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-code-quality",
       "target": "REQ-quality-metric",
       "type": "verify",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-code-quality",
+      "target": "REQ-structure-driven",
+      "type": "verify"
     },
     {
       "source": "TEST-dashboard-ontology-sync",
@@ -6484,6 +6649,11 @@
       "type": "verify",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-dashboard-ontology-sync",
+      "target": "REQ-import-se-ontology",
+      "type": "verify"
     },
     {
       "source": "TEST-dashboard-readonly",
@@ -6528,6 +6698,16 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "TEST-doc-export",
+      "target": "REQ-post-export-markdown",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-doc-export",
+      "target": "REQ-pre-export-markdown",
+      "type": "verify"
+    },
+    {
       "source": "TEST-docs-taxonomy",
       "target": "REQ-docs-taxonomy",
       "type": "verify",
@@ -6540,6 +6720,16 @@
       "type": "verify",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-efficient-testing",
+      "target": "REQ-post-impact-testing",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-efficient-testing",
+      "target": "REQ-pre-impact-testing",
+      "type": "verify"
     },
     {
       "source": "TEST-graph-integrity",
@@ -6563,11 +6753,46 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "TEST-hooks",
+      "target": "REQ-hook-extension-points",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-hooks",
+      "target": "REQ-hook-order-deterministic",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-hooks",
+      "target": "REQ-precommit-timeout",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-impact-subgraph",
+      "target": "REQ-post-agent-query",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-impact-subgraph",
+      "target": "REQ-pre-agent-query",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-impact-subgraph",
+      "target": "REQ-progressive-expansion",
+      "type": "verify"
+    },
+    {
       "source": "TEST-impact-subgraph",
       "target": "REQ-query-precision",
       "type": "verify",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-impact-subgraph",
+      "target": "REQ-subgraph-slicing",
+      "type": "verify"
     },
     {
       "source": "TEST-interface-escalation",
@@ -6577,11 +6802,31 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "TEST-interface-escalation",
+      "target": "REQ-post-interface-escalation",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-interface-escalation",
+      "target": "REQ-pre-interface-escalation",
+      "type": "verify"
+    },
+    {
       "source": "TEST-interface-schema",
       "target": "REQ-interface-schema",
       "type": "verify",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-learning-emit",
+      "target": "REQ-post-emit-trajectory",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-learning-emit",
+      "target": "REQ-pre-emit-trajectory",
+      "type": "verify"
     },
     {
       "source": "TEST-learning-emit",
@@ -6603,6 +6848,16 @@
       "type": "verify",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-live-view",
+      "target": "REQ-post-emit-update-event",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-live-view",
+      "target": "REQ-pre-emit-update-event",
+      "type": "verify"
     },
     {
       "source": "TEST-live-view",
@@ -6634,6 +6889,11 @@
     },
     {
       "source": "TEST-mcp-stdio-server",
+      "target": "REQ-audit-trail",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-mcp-stdio-server",
       "target": "REQ-mcp-gate-symmetry",
       "type": "verify",
       "weight": 1,
@@ -6652,6 +6912,11 @@
       "type": "verify",
       "weight": 1,
       "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-mcp-symmetry",
+      "target": "REQ-harness-schema-in-contracts",
+      "type": "verify"
     },
     {
       "source": "TEST-mcp-symmetry",
@@ -6676,10 +6941,30 @@
     },
     {
       "source": "TEST-merge",
+      "target": "REQ-auto-persist-merge",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-merge",
       "target": "REQ-conflict-free-merge",
       "type": "verify",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-merge",
+      "target": "REQ-post-merge-nodes",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-merge",
+      "target": "REQ-pre-merge-nodes",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-mutate-gate",
+      "target": "REQ-confidence-tier",
+      "type": "verify"
     },
     {
       "source": "TEST-mutate-gate",
@@ -6687,6 +6972,16 @@
       "type": "verify",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-mutate-gate",
+      "target": "REQ-post-apply-gate",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-mutate-gate",
+      "target": "REQ-pre-apply-gate",
+      "type": "verify"
     },
     {
       "source": "TEST-mutate-gate",
@@ -6702,12 +6997,27 @@
     },
     {
       "source": "TEST-mvp-e2e",
+      "target": "REQ-disk-persistence",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-mvp-e2e",
       "target": "REQ-impact-based-testing",
       "type": "verify"
     },
     {
       "source": "TEST-mvp-e2e",
       "target": "REQ-precise-context",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-mvp-e2e",
+      "target": "REQ-single-kuzu-owner",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-mvp-e2e",
+      "target": "REQ-single-store",
       "type": "verify"
     },
     {
@@ -6752,6 +7062,21 @@
     },
     {
       "source": "TEST-reduced-llm",
+      "target": "REQ-graceful-degradation",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-reduced-llm",
+      "target": "REQ-post-modelfree-gate",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-reduced-llm",
+      "target": "REQ-pre-modelfree-gate",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-reduced-llm",
       "target": "REQ-small-model-viable",
       "type": "verify",
       "weight": 1,
@@ -6766,10 +7091,35 @@
     },
     {
       "source": "TEST-roundtrip",
+      "target": "REQ-codec-validation",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-roundtrip",
       "target": "REQ-deterministic-serialization",
       "type": "verify",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-roundtrip",
+      "target": "REQ-formatE-diff-dialect",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-roundtrip",
+      "target": "REQ-formatE-parity",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-roundtrip",
+      "target": "REQ-post-codec-roundtrip",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-roundtrip",
+      "target": "REQ-pre-codec-roundtrip",
+      "type": "verify"
     },
     {
       "source": "TEST-roundtrip",
@@ -6784,6 +7134,16 @@
       "type": "verify",
       "weight": 1,
       "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-schema-migration",
+      "target": "REQ-post-migrate-schema",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-schema-migration",
+      "target": "REQ-pre-migrate-schema",
+      "type": "verify"
     },
     {
       "source": "TEST-schema-migration",
@@ -6805,6 +7165,11 @@
       "type": "verify",
       "weight": 1,
       "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-store-recovery",
+      "target": "REQ-store-recovery",
+      "type": "verify"
     },
     {
       "source": "TEST-test-runnable-binding",

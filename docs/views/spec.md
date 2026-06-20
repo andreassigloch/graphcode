@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Alle Elemente nach Typ, sortiert nach uid. Deterministisch generiert.
 
-Elemente: 281 · Traces: 593
+Elemente: 284 · Traces: 661
 
 
 ## ACTOR
@@ -298,6 +298,7 @@ Elemente: 281 · Traces: 593
 | `TEST-agent-agnostic` | Agent-Agnostic-Test | open | Dieselbe MCP-Registry wird von zwei Clients (Claude Code und OpenCode headless BYOK) ueber stdio identisch bedient; gleiche Tools, gleiche Gate-Semantik. (REQ-agent-agnostic) |
 | `TEST-artifact-freshness` | Artifact-Freshness-Test | open | Ein Artifact ist gruen bei Graph-Ableitung, gelb bei materialisiertem aber veraltetem Doc (Graph neuer als Doc), rot wenn fehlend. (REQ-artifact-freshness) |
 | `TEST-bootstrap` | Cold-Start-Import-Test | done | Format-E-Import befüllt leeren Graphen ausschließlich durchs Gate; Direct-Write schlägt fehl. (FUNC-import) |
+| `TEST-cache` | Cache-Layering-Test | open | Version-keyed Response-Cache + Dirty-Flag mappt auf Kuzu-Version; nur Onto+Rules stabil gecached, nie mit Live-Graph gemischt (Prefix-Hygiene). (CR-GC-102 R8/R11) |
 | `TEST-capture` | Interaktive-Erfassung-Test | open | Agent-Kandidaten laufen im suggest-Tier durchs Gate (kein auto-apply). (FCHAIN-capture) |
 | `TEST-cli-scaffold` | CLI-Scaffold-Test | done | graphcode init/update/remove against a mkdtemp temp repo (real node:fs): init scaffolds .graphcode/ + .mcp.json (npx form) + GRAPHCODE.md + package.json dep, idempotent re-run is byte-stable, update preserves the .graphcode/kuzu store, remove deletes all artifacts restlos. No localhost/Controller path. (CR-GC-112) |
 | `TEST-code-quality` | Code-Quality-Gate-Test | open | Regelverletzende Änderung wird vom Gate geblockt; konformer Graph bleibt driftfrei. |
@@ -310,6 +311,7 @@ Elemente: 281 · Traces: 593
 | `TEST-graph-integrity` | Graph-Integritaets-Test | open | validate() flaggt doppelte UIDs + alles bisher Abgedeckte (Typen, Edge-Pairs, referenzielle Integritaet); Integritaets-Test delegiert an validate(). (CR-GC-200) |
 | `TEST-graph-is-ssot` | Graph-is-SSOT-Test | open | Der committete graphcode.graph.json ist deterministischer Export des Kuzu-Stores; Hand-Edit wird erkannt und verworfen, Views tragen GENERATED-Header. (REQ-graph-is-ssot) |
 | `TEST-harness-install` | Harness-Install Smoke (durchgeführt) | open | Install → Controller → /api/health 200 + Dashboard 200. 2026-06-13 (aimprove-init.sh). NICHT self-contained (AIMPRO_ROOT). |
+| `TEST-hooks` | Hook-Extension-Points-Test | open | registerHook + runPreCommitHooks/runPostApplyHooks/scheduleNightlyBatch; pre-commit-Hook blockt eine Mutation; preCommitTimeout (default 5000ms) greift; Execution-Order deterministisch. (CR-GC-102) |
 | `TEST-impact-subgraph` | graph_impact Subgraph-Test | done | graph_impact liefert nur den betroffenen Subgraphen (kein Full-Dump). (FCHAIN-agent-query) |
 | `TEST-interface-escalation` | Interface-Eskalations-Test | open | Direkter FLOW-Mutationsversuch eines Realisierungs-Agenten wird abgelehnt; nur der Eskalationspfad (CR an Facilitating-Agent → graph_impact → Gate) ändert ein Interface. (FCHAIN-interface-escalation) |
 | `TEST-interface-schema` | Interface-Schema-Test | open | Jeder FLOW hat ein SCHEMA (relation); ein FLOW ohne Datenformat ist ein Readiness-Blocker. (REQ-interface-schema) |
@@ -337,6 +339,7 @@ Elemente: 281 · Traces: 593
 | `TEST-schema-migration` | Schema-Migrations-Test | open | Version-Bump → Graph re-validiert/migriert, Violations berichtet, Version aktualisiert. (FUNC-migrate-schema) |
 | `TEST-shared-views-no-fork` | Shared-Views-No-Fork-Test | open | Die View-Berechnung liegt in @sigloch/graph-api-core; kein lokaler BQ-Regel-Fork (aimpro/src/contracts/se) mehr referenziert. (REQ-shared-views-no-fork) |
 | `TEST-skills-mcp` | Skills-MCP-Conformance-Test | done | Alle 9 .claude/skills/se-*.md sind MCP-getrieben: 0 Treffer fuer die abgeschaltete localhost:3001-API (/api/graph, /api/dashboard, GRAPH_API) und jedes Skill referenziert >=1 Tool aus der Live-Registry. "done = verifiziert" fuer die prompt-realisierten FUNCs von MOD-skills (se-view-* → REQ-doc-export). (CR-GC-132) |
+| `TEST-store-recovery` | Store-Recovery-Test | open | Kuzu Lock-Konflikt / abgestuerzter Owner / korrupter Store: Lock-Erkennung + sicherer Re-Open; kein zweites DB-Handle. (ConOps Recovery) |
 | `TEST-test-runnable-binding` | TestRef-Aufloesungs-Test | open | Ein impacted TEST-Knoten wird ueber testRef eindeutig zu einer lauffaehigen Datei plus Case aufgeloest; graph_tests erzeugt daraus ein selektives Run-Kommando, das nur die betroffenen Tests enthaelt. (REQ-test-runnable-binding) |
 | `TEST-token-efficiency` | Token-Budget-Test | open | graph_impact-Kontext ist messbar kleiner als ein Volltext-/grep-Dump desselben Scopes (Token-Count-Assertion). |
 
