@@ -214,6 +214,7 @@
 | `CR-GC-202` | relation | `MOD-mcp-tools` |
 | `CR-GC-202` | relation | `MS-3-mvp-readiness` |
 | `CR-GC-202` | relation | `REQ-export-no-clobber` |
+| `CR-GC-203` | relation | `MS-4-mvp2` |
 | `FCHAIN-agent-query` | compose | `FUNC-graph-expand` |
 | `FCHAIN-agent-query` | compose | `FUNC-graph-impact` |
 | `FCHAIN-agent-query` | satisfy | `REQ-post-agent-query` |

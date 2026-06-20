@@ -354,6 +354,14 @@
       "created_at": "2026-06-18T00:00:00.000Z"
     },
     {
+      "id": "CR-GC-203",
+      "type": "CR",
+      "name": "Violation-resolution ergonomics & SSOT tooling",
+      "description": "DX/tooling: surface fix_hint+candidate_targets through rules_get_violations (harness.runRules drops them today); graph_readiness summary mode (86k-char overflow); ranked R-01 candidates; in-process graph_reseed tool; se-close-violations skill; REQ-with-test authoring invariant (intrinsic proof) + close the seedFromJson/importGraph gate-bypass so no REQ enters without a verify-traced TEST. Remedial items 1-5 clear accrued unverified REQs; item 6 prevents accrual. Tooling/DX, not a code-quality claim. (CR-GC-203)",
+      "status": "open",
+      "created_at": "2026-06-20T00:00:00.000Z"
+    },
+    {
       "id": "FCHAIN-agent-query",
       "type": "FCHAIN",
       "name": "Agent-Graph-Query (Impact + progressive Expansion)",
@@ -4327,6 +4335,12 @@
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-203",
+      "target": "MS-4-mvp2",
+      "type": "relation",
+      "label": "assigned-to"
     },
     {
       "source": "FCHAIN-agent-query",
