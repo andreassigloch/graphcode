@@ -79,4 +79,22 @@ describe('TEST-violation-context: rules tools surface fix_hint + candidate_targe
     expect(r01?.fixHint).toBeTruthy();
     expect((r01?.context as Ctx)?.candidate_targets?.length).toBeGreaterThan(0);
   });
+
+  // CR-GC-203 item 3 — candidates are RANKED by token overlap, top hit usually correct.
+  it('ranks the most relevant TEST first (REQ-bootstrap -> TEST-bootstrap)', async () => {
+    await harness.importGraph({
+      elements: [
+        { id: 'REQ-bootstrap', type: 'REQ', name: 'Bootstrap requirement', description: 'bootstrap the store from committed JSON' },
+        { id: 'TEST-bootstrap', type: 'TEST', name: 'Bootstrap seed test', description: 'verifies bootstrap seeding' },
+        { id: 'TEST-codec', type: 'TEST', name: 'Codec roundtrip', description: 'format-e serialize/parse' },
+      ],
+      traces: [],
+    });
+    const tools = bindToolsToHarness(harness);
+    const { violations } = await tools.rules_get_violations.handler({ severity: 'error' });
+    const r01 = violations.find((v) => v.ruleId === 'R-01' && v.elementId === 'REQ-bootstrap');
+    const candidates = (r01!.context as Ctx).candidate_targets ?? [];
+    // Highest id/name/description token overlap ('bootstrap') ranks first.
+    expect(candidates[0]?.id).toBe('TEST-bootstrap');
+  });
 });
