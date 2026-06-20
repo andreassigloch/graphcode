@@ -19,27 +19,18 @@
 
 import { appendFile, mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
-import type { MutateResult } from '@sigloch/contracts/harness';
+import type { MutateResult, UpdateDomain, LiveUpdateEvent } from '@sigloch/contracts/harness';
 import type { HookSystem } from './hooks.js';
 import type { HookData, HookResult } from './hooks.js';
 
 // ---------------------------------------------------------------------------
-// LiveUpdateEvent — shape of the event emitted to the SSE sink.
+// LiveUpdateEvent — the SSE invalidation contract is defined ONCE in
+// @sigloch/contracts/harness (CR-GC-109), so the dashboard/host-bridge import
+// the same Zod schema this harness emits (no fork, analog D1). Re-exported for
+// graphcode-local consumers; runtime validation lives in LiveUpdateEventSchema.
 // ---------------------------------------------------------------------------
 
-/** Domains affected by a mutation (superset; always at least ['graph']). */
-export type UpdateDomain = 'graph' | 'rules' | 'readiness' | 'suggestions';
-
-/**
- * Emitted once per mutation via the `onEvent` sink.
- * Consumers (SSE handler) serialise this as an `invalidate` event.
- */
-export interface LiveUpdateEvent {
-  type: 'invalidate';
-  domains: UpdateDomain[];
-  /** ISO timestamp of when the event was produced. */
-  ts: string;
-}
+export type { UpdateDomain, LiveUpdateEvent };
 
 // ---------------------------------------------------------------------------
 // TrajectoryEntry — stable JSONL schema (REQ-trajectory-emit L1).

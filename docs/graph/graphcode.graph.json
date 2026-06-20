@@ -163,7 +163,7 @@
       "type": "CR",
       "name": "Live-Event + View-Contract → contracts",
       "description": "Publish LiveUpdateEvent/View-Vertrag nach @sigloch/contracts (Phase 0). (docs/cr/open/CR-GC-109)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-17T00:00:00.000Z"
     },
     {
@@ -1440,7 +1440,7 @@
       "type": "REQ",
       "name": "Live-Event-Contract in @sigloch/contracts",
       "description": "LiveUpdateEvent/UpdateDomain (heute nur graphcode src/emit.ts) als Zod-Schema nach @sigloch/contracts publishen, damit Dashboard/Bridge denselben Vertrag importieren (kein Fork). Analog D1.",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-17T00:00:00.000Z"
     },
     {
@@ -2514,7 +2514,7 @@
       "type": "TEST",
       "name": "Live-Event-Contract-Test",
       "description": "LiveUpdateEvent/UpdateDomain sind als Zod-Schema in @sigloch/contracts publiziert und werden von Dashboard und Bridge importiert (kein Fork). (REQ-live-event-in-contracts)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
       "method": "test"
     },
