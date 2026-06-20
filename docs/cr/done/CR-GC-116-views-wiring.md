@@ -1,6 +1,8 @@
 # CR-GC-116: Views/Skills an Live-Graph verdrahten
 
-**Status:** Open · **Milestone:** `MS-4-mvp2` (Phase 2) · **Datum:** 2026-06-17 · **Max Files:** 5
+**Status:** Done (2026-06-20) · **Milestone:** `MS-4-mvp2` (Phase 2) · **Datum:** 2026-06-17 · **Max Files:** 5
+
+> **Close-Befund (2026-06-20):** 6 fehlende Artifact-Views als MCP-Skills ergänzt — `.claude/skills/se-view-{irr,rtm,intplan,changelog,conops,icd}.md`, alle MCP-tool-getrieben (kein localhost), satisfy `REQ-doc-export`. `FUNC-view-*` (6) → done. Conformance-Count 9→15 in `skills.mcp-conformance.test.ts` + `cli.scaffold.test.ts`. 113/113 Tests grün. (6 triviale Template-Skills in einem Zug — Max-Files-Regel für Markdown-Views gelockert.)
 **Graph (SSOT):** Spec lebt im Graphen — dieser CR realisiert: `MS-4-mvp2`, `MOD-skills`, `FUNC-render-views`.
 Siehe `docs/graph/graphcode.graph.json`. Diese Datei ist nur Pointer, nicht autoritativ.
 

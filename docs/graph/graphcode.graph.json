@@ -219,7 +219,7 @@
       "type": "CR",
       "name": "Views/Skills an Live-Graph verdrahten",
       "description": "7 tote localhost:3001-Views auf MCP/Bridge umstellen + IRR-View ergänzen. (docs/cr/open/CR-GC-116)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-17T00:00:00.000Z"
     },
     {
@@ -284,7 +284,7 @@
       "type": "CR",
       "name": "OpenCode-Execution: agent-agnostic 2nd client, headless BYOK",
       "description": "graphcode headless von OpenCode getrieben (BYOK), als zweiter MCP-stdio-Client neben Claude Code — beweist die agent-agnostische + headless Claim (verriegelt: OpenCode-executed).",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-17T00:00:00.000Z"
     },
     {
@@ -872,7 +872,7 @@
       "type": "FUNC",
       "name": "serveStdio()",
       "description": "Bindet die MCP-Tool-Registry headless an einen stdio-Transport; jeder Agent (Claude Code oder OpenCode, BYOK) ist ein gleichwertiger Client. Beweist agent-agnostisch + headless. (CR-GC-124)",
-      "status": "draft",
+      "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z"
     },
     {
@@ -888,7 +888,7 @@
       "type": "FUNC",
       "name": "se-view-changelog (Change Log)",
       "description": "Prompt-realisierte View: Change Log aus CR-Knoten mit Rationale und Status. (CR-GC-116)",
-      "status": "draft",
+      "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z"
     },
     {
@@ -896,7 +896,7 @@
       "type": "FUNC",
       "name": "se-view-conops (ConOps)",
       "description": "Prompt-realisierte View: Concept of Operations aus UC plus ACTOR (operatingMode). (CR-GC-116)",
-      "status": "draft",
+      "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z"
     },
     {
@@ -904,7 +904,7 @@
       "type": "FUNC",
       "name": "se-view-icd (ICD)",
       "description": "Prompt-realisierte View: Interface Control Document aus FLOW zu SCHEMA. (CR-GC-116)",
-      "status": "draft",
+      "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z"
     },
     {
@@ -912,7 +912,7 @@
       "type": "FUNC",
       "name": "se-view-intplan (Integrations-/Testplan)",
       "description": "Prompt-realisierte View: Integrations-/Testplan aus MS plus verify-Status. (CR-GC-116)",
-      "status": "draft",
+      "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z"
     },
     {
@@ -920,7 +920,7 @@
       "type": "FUNC",
       "name": "se-view-irr (Initial Risk Review)",
       "description": "Prompt-realisierte View: Initial Risk Review aus risk-getaggten REQs (mitigated/spiked). Schliesst die fehlende IRR-Artifact-View des Dashboards. (CR-GC-116)",
-      "status": "draft",
+      "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z"
     },
     {
@@ -928,7 +928,7 @@
       "type": "FUNC",
       "name": "se-view-rtm (RTM)",
       "description": "Prompt-realisierte View: Requirements Traceability Matrix aus satisfy/verify-Traces je REQ. (CR-GC-116)",
-      "status": "draft",
+      "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z"
     },
     {
@@ -1048,7 +1048,7 @@
       "type": "REQ",
       "name": "Agent-agnostische MCP-Surface",
       "description": "Die MCP-stdio-Surface ist agent-agnostisch: Claude Code UND OpenCode (und jeder MCP-Client) treiben dieselbe Harness durchs selbe Gate; keine client-spezifischen Annahmen. (CLAUDE.md verriegelt: OpenCode-executed, Claude Code = ein Client)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-17T00:00:00.000Z"
     },
     {
@@ -2252,7 +2252,7 @@
       "type": "TEST",
       "name": "Agent-Agnostic-Test",
       "description": "Dieselbe MCP-Registry wird von zwei Clients (Claude Code und OpenCode headless BYOK) ueber stdio identisch bedient; gleiche Tools, gleiche Gate-Semantik. (REQ-agent-agnostic)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
       "method": "test"
     },

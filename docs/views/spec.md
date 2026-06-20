@@ -43,7 +43,7 @@ Elemente: 284 · Traces: 664
 | `CR-GC-113` | Graph→Markdown Re-Exporter | done | Kuzu/Graph → commit-fähige docs (SSOT-Round-Trip); ersetzt Hand-Edits. (docs/cr/open/CR-GC-113) |
 | `CR-GC-114` | Host + SSE/WS-Bridge | open | Single-Kuzu-Owner-Host + SSE-Route an onUpdateEvent (Live-Viewer-Feed). (docs/cr/open/CR-GC-114) |
 | `CR-GC-115` | Dashboard-Viewer-App (Hybrid) | open | graph-renderer + shell, V3_RULES-gescort; aimprove-Komponenten repointen. (docs/cr/open/CR-GC-115) |
-| `CR-GC-116` | Views/Skills an Live-Graph verdrahten | open | 7 tote localhost:3001-Views auf MCP/Bridge umstellen + IRR-View ergänzen. (docs/cr/open/CR-GC-116) |
+| `CR-GC-116` | Views/Skills an Live-Graph verdrahten | done | 7 tote localhost:3001-Views auf MCP/Bridge umstellen + IRR-View ergänzen. (docs/cr/open/CR-GC-116) |
 | `CR-GC-117` | Modell-Hygiene: V3_RULES-Violations schließen | done | 61 R-01 (verify-Traces) + 14 RD-01 auflösen → Readiness ~0. (docs/cr/open/CR-GC-117) |
 | `CR-GC-118` | Cleanup stale-at-all Knoten | done | Dual-Status-Bug (5 CRs), TEST-harness-install, REQ-dashboard-ontology-sync-Status. (docs/cr/open/CR-GC-118) |
 | `CR-GC-119` | Docs-Taxonomie — Views vs Records | done | +REQ-docs-taxonomy (Litmus-Test) + mechanischer Rename-Sweep docs/project → docs/{views,records}. Why: graph-is-ssot interessiert nur „aus dem Graphen reproduzierbar?". (docs/cr/open/CR-GC-119-docs-views-vs-records) |
@@ -51,7 +51,7 @@ Elemente: 284 · Traces: 664
 | `CR-GC-121` | Distribution: npx-Paket, self-contained, agent-agnostic | done | graphcode als npm-Paket mit bin `npx @sigloch/graphcode init/update/remove`; versionierte (nicht file:) Deps fürs Publish; in beliebigem Fremd-Repo lauffähig. Voraussetzung fürs „neues Repo anlegen". |
 | `CR-GC-122` | New-Member Bootstrap durchs Gate (Format-E Cold-Start) | done | Leeren Graphen eines NEUEN Familie-Mitglieds ausschließlich durchs mutate()-Gate befüllen (Quelle Format-E, kein Direct-Write); Cold-Start mit Template-SYS. Realisiert TEST-bootstrap. |
 | `CR-GC-123` | MVP E2E-Acceptance: bootstrap → spec → KNOW-query → implement → re-export | done | End-to-End-Validierung der MVP-Definition: in einem Wegwerf-Repo ein neues Mitglied bootstrappen, ein paar Knoten durchs Gate spec’en, beweisen dass graph_impact die RICHTIGEN Elemente liefert (nicht grep), einen Knoten implementieren, re-exportieren. Realisiert die UC-Tests. |
-| `CR-GC-124` | OpenCode-Execution: agent-agnostic 2nd client, headless BYOK | open | graphcode headless von OpenCode getrieben (BYOK), als zweiter MCP-stdio-Client neben Claude Code — beweist die agent-agnostische + headless Claim (verriegelt: OpenCode-executed). |
+| `CR-GC-124` | OpenCode-Execution: agent-agnostic 2nd client, headless BYOK | done | graphcode headless von OpenCode getrieben (BYOK), als zweiter MCP-stdio-Client neben Claude Code — beweist die agent-agnostische + headless Claim (verriegelt: OpenCode-executed). |
 | `CR-GC-125` | Readiness-Modell definieren & realisieren (Phase/Impl/INCOSE) | done | Definiert was Phase-Readiness/Impl-Readiness-Gates/INCOSE-Artifacts in graphcode-Begriffen bedeuten (V3_RULES + MS + Status), dann als Scorer/View realisieren. Subsumiert die offene INCOSE-Scope-Frage (voll vs. lean). Voraussetzung für CR-110/115/116. (docs/cr/open/CR-GC-125) |
 | `CR-GC-126` | Query-Layer: Cypher, korrekte Impact-Richtung (KNOW statt guess) | done | graph_impact/expand/elements über Kuzu-Cypher statt TS-BFS; korrekte Blast-Radius-Richtung (eingehende Caller/Traces/Tests); TS-Mirror als Read-Pfad retiren. Major target: die richtigen Elemente WISSEN (Graph), nicht raten (grep). (SP-1/SP-2) |
 | `CR-GC-134` | Bottom-up Test-Deduktion (graph_tests) | open | graph_tests(changeSet) leitet aus einer Aenderung via graph_impact genau das betroffene TEST-Set ab und emittiert ein selektives Run-Kommando (Zeit/Token-Ersparnis + Qualitaet). Realisiert UC-efficient-testing + REQ-test-runnable-binding; braucht testRef am TEST-Element in @sigloch/contracts (Familie-weit, Minor-Version-Bump, Drift-Lock L1/L2). Kein Parallelpfad: kapselt graph_impact. (docs/cr/open/CR-GC-134) |
@@ -136,14 +136,14 @@ Elemente: 284 · Traces: 664
 | `FUNC-render-views` | render graph→markdown views | done | PROMPT-realisierter Graph→Markdown-Renderer via se-view-Skills (.claude/skills/se-view-*); erzeugt z.B. architecture-graph.md. Interim-Realisierung von REQ-doc-export, bis FUNC-export-markdown (code, MOD-docs) gebaut ist. Beweis: Skills = Funktionen (Allokation an MOD-skills = prompt-realisiert). |
 | `FUNC-save-graph` | saveGraph(graph) | done | Persistiert in-memory Graph nach Disk-Kuzu, falls keine error-Violations. (SPEC §3.4, §4) |
 | `FUNC-serve-sse` | serveSSE() | draft | Host-Prozess exponiert die SSE/WS-Route und leitet harness.onUpdateEvent read-only an die Live-Viewer weiter. Kein Express-REST im Core. (CR-GC-114) |
-| `FUNC-serve-stdio` | serveStdio() | draft | Bindet die MCP-Tool-Registry headless an einen stdio-Transport; jeder Agent (Claude Code oder OpenCode, BYOK) ist ein gleichwertiger Client. Beweist agent-agnostisch + headless. (CR-GC-124) |
+| `FUNC-serve-stdio` | serveStdio() | done | Bindet die MCP-Tool-Registry headless an einen stdio-Transport; jeder Agent (Claude Code oder OpenCode, BYOK) ist ein gleichwertiger Client. Beweist agent-agnostisch + headless. (CR-GC-124) |
 | `FUNC-subscribe-updates` | subscribeUpdates() | draft | SSE-Client: bei jedem Live-Update-Event (invalidate) werden die betroffenen Domains nachgeladen, ohne Reload. Gegenstueck zu emitUpdateEvent, konsumiert FLOW-live-event ueber die Host-Bridge. (CR-GC-115) |
-| `FUNC-view-changelog` | se-view-changelog (Change Log) | draft | Prompt-realisierte View: Change Log aus CR-Knoten mit Rationale und Status. (CR-GC-116) |
-| `FUNC-view-conops` | se-view-conops (ConOps) | draft | Prompt-realisierte View: Concept of Operations aus UC plus ACTOR (operatingMode). (CR-GC-116) |
-| `FUNC-view-icd` | se-view-icd (ICD) | draft | Prompt-realisierte View: Interface Control Document aus FLOW zu SCHEMA. (CR-GC-116) |
-| `FUNC-view-intplan` | se-view-intplan (Integrations-/Testplan) | draft | Prompt-realisierte View: Integrations-/Testplan aus MS plus verify-Status. (CR-GC-116) |
-| `FUNC-view-irr` | se-view-irr (Initial Risk Review) | draft | Prompt-realisierte View: Initial Risk Review aus risk-getaggten REQs (mitigated/spiked). Schliesst die fehlende IRR-Artifact-View des Dashboards. (CR-GC-116) |
-| `FUNC-view-rtm` | se-view-rtm (RTM) | draft | Prompt-realisierte View: Requirements Traceability Matrix aus satisfy/verify-Traces je REQ. (CR-GC-116) |
+| `FUNC-view-changelog` | se-view-changelog (Change Log) | done | Prompt-realisierte View: Change Log aus CR-Knoten mit Rationale und Status. (CR-GC-116) |
+| `FUNC-view-conops` | se-view-conops (ConOps) | done | Prompt-realisierte View: Concept of Operations aus UC plus ACTOR (operatingMode). (CR-GC-116) |
+| `FUNC-view-icd` | se-view-icd (ICD) | done | Prompt-realisierte View: Interface Control Document aus FLOW zu SCHEMA. (CR-GC-116) |
+| `FUNC-view-intplan` | se-view-intplan (Integrations-/Testplan) | done | Prompt-realisierte View: Integrations-/Testplan aus MS plus verify-Status. (CR-GC-116) |
+| `FUNC-view-irr` | se-view-irr (Initial Risk Review) | done | Prompt-realisierte View: Initial Risk Review aus risk-getaggten REQs (mitigated/spiked). Schliesst die fehlende IRR-Artifact-View des Dashboards. (CR-GC-116) |
+| `FUNC-view-rtm` | se-view-rtm (RTM) | done | Prompt-realisierte View: Requirements Traceability Matrix aus satisfy/verify-Traces je REQ. (CR-GC-116) |
 
 ## MOD
 
@@ -172,7 +172,7 @@ Elemente: 284 · Traces: 664
 
 | uid | name | status | description |
 |---|---|---|---|
-| `REQ-agent-agnostic` | Agent-agnostische MCP-Surface | open | Die MCP-stdio-Surface ist agent-agnostisch: Claude Code UND OpenCode (und jeder MCP-Client) treiben dieselbe Harness durchs selbe Gate; keine client-spezifischen Annahmen. (CLAUDE.md verriegelt: OpenCode-executed, Claude Code = ein Client) |
+| `REQ-agent-agnostic` | Agent-agnostische MCP-Surface | done | Die MCP-stdio-Surface ist agent-agnostisch: Claude Code UND OpenCode (und jeder MCP-Client) treiben dieselbe Harness durchs selbe Gate; keine client-spezifischen Annahmen. (CLAUDE.md verriegelt: OpenCode-executed, Claude Code = ein Client) |
 | `REQ-artifact-freshness` | Artifact-Ampel-Semantik gruen gelb rot | open | Dokumente und Prozessschritte sind gruen wenn live aus dem aktuellen Graph abgeleitet, gelb wenn ein materialisiertes Doc existiert aber der Graph sich seither geaendert hat (stale), rot wenn noch nicht existent. |
 | `REQ-audit-trail` | Audit-Trail / History | open | CR-GC-101: audit_trail/audit_stats liefern Mutations-History/Statistik. |
 | `REQ-auto-persist-merge` | Auto-Persist + conflict-free Merge | open | Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Artefakt. (R2) |
@@ -296,7 +296,7 @@ Elemente: 284 · Traces: 664
 
 | uid | name | status | description |
 |---|---|---|---|
-| `TEST-agent-agnostic` | Agent-Agnostic-Test | open | Dieselbe MCP-Registry wird von zwei Clients (Claude Code und OpenCode headless BYOK) ueber stdio identisch bedient; gleiche Tools, gleiche Gate-Semantik. (REQ-agent-agnostic) |
+| `TEST-agent-agnostic` | Agent-Agnostic-Test | done | Dieselbe MCP-Registry wird von zwei Clients (Claude Code und OpenCode headless BYOK) ueber stdio identisch bedient; gleiche Tools, gleiche Gate-Semantik. (REQ-agent-agnostic) |
 | `TEST-artifact-freshness` | Artifact-Freshness-Test | open | Ein Artifact ist gruen bei Graph-Ableitung, gelb bei materialisiertem aber veraltetem Doc (Graph neuer als Doc), rot wenn fehlend. (REQ-artifact-freshness) |
 | `TEST-bootstrap` | Cold-Start-Import-Test | done | Format-E-Import befüllt leeren Graphen ausschließlich durchs Gate; Direct-Write schlägt fehl. (FUNC-import) |
 | `TEST-cache` | Cache-Layering-Test | open | Version-keyed Response-Cache + Dirty-Flag mappt auf Kuzu-Version; nur Onto+Rules stabil gecached, nie mit Live-Graph gemischt (Prefix-Hygiene). (CR-GC-102 R8/R11) |
