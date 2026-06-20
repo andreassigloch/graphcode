@@ -231,7 +231,10 @@ export class GraphCodeHarness {
    * elements → GraphNode (uid=id, type, name, description, attributes=rest),
    * traces   → GraphEdge (sourceId=source, targetId=target, edgeType=type).
    */
-  async importGraph(ontology: OntologyJson): Promise<{ nodes: number; edges: number }> {
+  async importGraph(
+    ontology: OntologyJson,
+    opts?: { rejectUnverifiedReqs?: boolean },
+  ): Promise<{ nodes: number; edges: number; unverifiedReqs: string[] }> {
     const nodes: GraphNode[] = ontology.elements.map((e) => {
       const { id, type, name, description, ...rest } = e;
       return {
@@ -246,17 +249,38 @@ export class GraphCodeHarness {
       const { source, target, type, ...rest } = t;
       return { sourceId: source, targetId: target, edgeType: type, attributes: rest };
     });
+
+    // REQ-with-test invariant (CR-GC-203 item 6): bulk import bypasses the gate's
+    // R-01 check, so a REQ without a verify-traced TEST could enter silently (how
+    // the historical unverified REQs landed). SURFACE every such REQ here so the
+    // bypass is never silent; `rejectUnverifiedReqs` makes it a hard refusal for
+    // untrusted imports. The self-seed loads the already-governed committed graph
+    // (spec-green) so it flags nothing — and must NOT reject, or bootstrap would
+    // deadlock on any future accrued debt (see bootstrap.ts).
+    const verifiedReqs = new Set(edges.filter((e) => e.edgeType === 'verify').map((e) => e.targetId));
+    const unverifiedReqs = nodes.filter((n) => n.type === 'REQ' && !verifiedReqs.has(n.uid)).map((n) => n.uid);
+    if (opts?.rejectUnverifiedReqs && unverifiedReqs.length > 0) {
+      throw new Error(
+        `Import rejected: ${unverifiedReqs.length} REQ(s) without a verify-traced TEST ` +
+          `(${unverifiedReqs.join(', ')}). Author each REQ together with a concept-level TEST + verify ` +
+          `trace — the REQ-with-test invariant holds on every write path (CR-GC-203 item 6).`,
+      );
+    }
+
     await this.storage.saveNodes(nodes);
     await this.storage.saveEdges(edges);
     this.graph = { nodes, edges };
-    return { nodes: nodes.length, edges: edges.length };
+    return { nodes: nodes.length, edges: edges.length, unverifiedReqs };
   }
 
   /** Load + import the materialized graph JSON from `<repoRoot>/docs/graph/`. */
-  async seedFromJson(relPath = 'docs/graph/graphcode.graph.json'): Promise<{ nodes: number; edges: number }> {
+  async seedFromJson(
+    relPath = 'docs/graph/graphcode.graph.json',
+    opts?: { rejectUnverifiedReqs?: boolean },
+  ): Promise<{ nodes: number; edges: number; unverifiedReqs: string[] }> {
     const abs = join(this.config.repoRoot, relPath);
     const raw = await readFile(abs, 'utf8');
-    return this.importGraph(JSON.parse(raw) as OntologyJson);
+    return this.importGraph(JSON.parse(raw) as OntologyJson, opts);
   }
 
   /**

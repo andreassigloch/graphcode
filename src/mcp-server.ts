@@ -82,7 +82,17 @@ export async function serveStdio(opts?: {
   await harness.initialize();
   if (harness.getGraph().nodes.length === 0) {
     try {
-      await harness.seedFromJson();
+      const seeded = await harness.seedFromJson();
+      // REQ-with-test invariant (CR-GC-203 item 6): the seed bypasses the gate,
+      // so surface — never silently swallow — any REQ that entered without a
+      // verify-traced TEST. (We flag rather than reject so bootstrap can't
+      // deadlock on accrued debt.)
+      if (seeded.unverifiedReqs.length > 0) {
+        process.stderr.write(
+          `[graphcode] WARNING: ${seeded.unverifiedReqs.length} imported REQ(s) lack a verify-traced ` +
+            `TEST (R-01): ${seeded.unverifiedReqs.join(', ')}. Author a concept-level TEST + verify trace.\n`,
+        );
+      }
     } catch {
       // No committed graph in this repo yet — serve the empty store.
     }
