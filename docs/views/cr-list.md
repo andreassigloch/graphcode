@@ -18,7 +18,7 @@
 | `CR-GC-107` | Dashboard auf SE-Ontologie | done | Readiness/Scorer nutzt @sigloch/contracts V3_RULES (via harness.evaluateRules) statt Vorgänger-BQ-Regeln (2.0.0). Why: heutige Readiness teils fremd-gemessen (155 BQ-Warnungen); nach Adoption echte Familie-Compliance. NEXT. (docs/cr/open/CR-GC-107) |
 | `CR-GC-108` | Test-Konzept im Graph + Benchmark-REQ | done | TEST-Metadaten (level/tool/constraint) am Graph → test-concept.md als View rekonstruierbar (se-view-testconcept); REQ-benchmark-harness + REQ-quality-metric (nur definiert, nicht gebaut). Why: Test-Konzept ist eine View, kein Hand-Doc; Benchmark-Bau ist Realisierung. (docs/cr/open/CR-GC-108) |
 | `CR-GC-109` | Live-Event + View-Contract → contracts | open | Publish LiveUpdateEvent/View-Vertrag nach @sigloch/contracts (Phase 0). (docs/cr/open/CR-GC-109) |
-| `CR-GC-110` | views.ts → graph-api-core; BQ-Fork retiren | open | Geteilte View-Berechnung nach core; aimprove-Regel-Fork auflösen (Phase 0). (docs/cr/open/CR-GC-110) |
+| `CR-GC-110` | views.ts → graph-api-core; BQ-Fork retiren | done | Geteilte View-Berechnung nach core; aimprove-Regel-Fork auflösen (Phase 0). (docs/cr/open/CR-GC-110) |
 | `CR-GC-111` | MCP-stdio-Server + bin (graphcode mcp) | done | bindToolsToHarness an StdioServer, gate-symmetrisch (L2); .mcp.json + Hooks neu verdrahten. (docs/cr/open/CR-GC-111) |
 | `CR-GC-112` | CLI graphcode init/update/remove | done | Neues Projekt scaffolden (.graphcode/, Seed-Import). (docs/cr/open/CR-GC-112) MVP: init eines NEUEN Mitglieds = leerer/Template-Graph + .mcp.json (graphcode mcp) + Guardrails + Deps. |
 | `CR-GC-113` | Graph→Markdown Re-Exporter | done | Kuzu/Graph → commit-fähige docs (SSOT-Round-Trip); ersetzt Hand-Edits. (docs/cr/open/CR-GC-113) |
