@@ -22,6 +22,7 @@ import type { ZodObject, ZodRawShape } from 'zod/v4';
 import type { AuditLog } from '@sigloch/graph-api-core';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 import { createHarness, type GraphCodeHarness } from './index.js';
+import { exportGraphJson } from './exporter.js';
 import { bindToolsToHarness, type MCPTool, type MCPToolRegistry } from './mcp-tools.js';
 
 // Identity advertised to MCP clients during the initialize handshake. Kept in
@@ -84,6 +85,27 @@ export async function serveStdio(opts?: {
       await harness.seedFromJson();
     } catch {
       // No committed graph in this repo yet — serve the empty store.
+    }
+  } else {
+    // Store already seeded → it is the runtime SSOT (REQ-graph-is-ssot). The
+    // committed JSON is its generated export; under CR-GC-201 (gate-only writes)
+    // the JSON can change ONLY via graph_export, so it must never drift ahead of
+    // the store. We do NOT auto-reseed here (that would clobber un-exported gate
+    // mutations) — we WARN, so a stale store or a pending export is visible
+    // instead of silently served (the failure mode that froze the store at an
+    // old snapshot). To adopt a newer committed JSON: stop the server, remove
+    // .graphcode/kuzu*, restart (seed-on-empty re-imports it).
+    try {
+      const committed = readFileSync(join(repoRoot, 'docs/graph/graphcode.graph.json'), 'utf8');
+      if (exportGraphJson(harness.getGraph()) !== committed) {
+        process.stderr.write(
+          '[graphcode] WARN: Kuzu store differs from docs/graph/graphcode.graph.json — ' +
+          'either run graph_export (store has un-exported mutations) or re-seed ' +
+          '(committed JSON is newer: stop, rm .graphcode/kuzu*, restart).\n',
+        );
+      }
+    } catch {
+      // No committed JSON to compare against — nothing to warn about.
     }
   }
   const server = buildMcpServer(harness);

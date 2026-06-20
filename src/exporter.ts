@@ -73,14 +73,25 @@ function edgeToTrace(edge: GraphEdge): Record<string, unknown> {
  * Reconstruct the committed JSON shape `{ elements, traces }` from a Graph and
  * serialize CANONICALLY (`JSON.stringify(obj, null, 2) + "\n"`).
  *
- * DETERMINISTIC: node/edge order is the graph's array order (the gate appends,
- * never reorders), attribute order is preserved by importGraph; two calls on the
- * same graph produce byte-identical output. This is the exact inverse of
- * `GraphCodeHarness.importGraph`, so import→export of the SSOT is byte-identical.
+ * DETERMINISTIC and SOURCE-ORDER-INDEPENDENT (REQ-deterministic-serialization R3):
+ * elements are sorted by uid, traces by (source, type, target). Attribute key
+ * order is preserved by importGraph / the Kuzu `attrs_json` round-trip. This makes
+ * the export byte-identical whether the graph came from the committed JSON, the
+ * gate's in-memory array, or a reload from the Kuzu SSOT — the precondition for
+ * CR-GC-201's provenance check (committed JSON == export(store)).
  */
 export function exportGraphJson(graph: Graph): string {
-  const elements = graph.nodes.map(nodeToElement);
-  const traces = graph.edges.map(edgeToTrace);
+  const elements = [...graph.nodes]
+    .sort((a, b) => a.uid.localeCompare(b.uid))
+    .map(nodeToElement);
+  const traces = [...graph.edges]
+    .sort(
+      (a, b) =>
+        a.sourceId.localeCompare(b.sourceId) ||
+        a.edgeType.localeCompare(b.edgeType) ||
+        a.targetId.localeCompare(b.targetId),
+    )
+    .map(edgeToTrace);
   return JSON.stringify({ elements, traces }, null, 2) + '\n';
 }
 

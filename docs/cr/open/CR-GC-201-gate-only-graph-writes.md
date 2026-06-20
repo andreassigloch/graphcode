@@ -22,3 +22,15 @@ A direct `Edit`/`Write` to the SSOT is denied by the harness; `graph_mutate` (MC
 
 ## Dependencies
 CR-GC-111 (MCP server / `graph_mutate`), CR-GC-113 (Kuzu→JSON exporter).
+
+## Implementation (landed 2026-06-20, branch `loop-test`)
+Surfaced while debugging a live↔committed drift (Kuzu frozen at a 245-element snapshot while the JSON had been hand-edited up to 281). Root cause = exactly this CR not being enforced. Fixes:
+
+1. **Deny-hook** — `.claude/settings.json` `PreToolUse` (matcher `Edit|Write|MultiEdit`) → `.claude/hooks/deny-graph-write.sh`: blocks any write to `docs/graph/*.graph.json` or `.graphcode/kuzu*` (exit 2 + redirect to `graph_mutate`). Verified against both SSOT paths and normal source/views.
+2. **Lossless Kuzu SSOT (prerequisite, was broken).** Kuzu reload silently dropped `created_at`/`kinds`/**all edge attributes** (only declared columns persisted) — so "JSON = export(store)" was impossible. Added the `attrs_json` catch-all column on every node+rel table and adapter serialize/parse (`@sigloch/graph-cypher-wasm` v0.2.0). Round-trip now keeps 281 nodes + 593 edges + all attrs (arrays/timestamps included).
+3. **Deterministic export** — `exportGraphJson` now sorts elements by uid and traces by (source,type,target), so `export(Kuzu-reload) === export(committed)` **byte-identical** regardless of Kuzu row order (REQ-deterministic-serialization R3). Committed JSON re-canonicalized (pure reorder, data identical).
+4. **Drift warning** — `mcp-server.ts` warns (does not auto-reseed/clobber) when the seeded store differs from the committed JSON, so a stale store / pending export is visible instead of silently served (the failure mode that froze the store).
+
+**Provenance proof:** `graph_export` from the live store reproduces the committed JSON byte-for-byte. Tests: graphcode 110/110, graph-cypher-wasm 27/27.
+
+**Open follow-ups:** scaffold the deny-hook into target repos via `graphcode init/update` (FUNC-harness-cli); wire a literal CI provenance job (today enforced by `exporter.test.ts` + `export-graph.mjs` guard). Graph node `CR-GC-201` status flip + `TEST-no-direct-graph-write` wiring done via the gate in the spec pass.
