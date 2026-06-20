@@ -68,6 +68,30 @@ export type { CliCommand, InstallResult } from './scaffold.js';
 export { HostBridge, serveHost } from './host.js';
 export type { HostBridgeOptions, HealthPayload } from './host.js';
 
+// Headless dashboard data-layer (CR-GC-115, MOD-dashboard) — pure read-only
+// shapers over the MCP tools; the external graph-view-edit renderer consumes
+// these view-models and fills the FUNC-render-graph mount-slot.
+export {
+  readinessPanel,
+  recommendationsPanel,
+  artifactsPanel,
+  artifactFreshness,
+  impactPanel,
+  healthPanel,
+  panelsForEvent,
+} from './panels.js';
+export type {
+  ReadinessPanel,
+  GatePanel,
+  RecommendationsPanel,
+  RecommendationItem,
+  ArtifactsPanel,
+  ArtifactStatus,
+  Freshness,
+  ImpactPanel,
+  HealthPanel,
+} from './panels.js';
+
 export type {
   HarnessConfig,
   MutateCommand,

@@ -211,7 +211,7 @@
       "type": "CR",
       "name": "Dashboard-Viewer-App (Hybrid)",
       "description": "graph-renderer + shell, V3_RULES-gescort; aimprove-Komponenten repointen. (docs/cr/open/CR-GC-115)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-17T00:00:00.000Z"
     },
     {
@@ -790,7 +790,7 @@
       "type": "FUNC",
       "name": "renderArtifactReadiness(views)",
       "description": "INCOSE-Artifact-Panel: Readiness je Dokument/View (Testmatrix, FMEA, RTM, ImplPlan, IntPlan, ChangeLog, ConOps, IRR, NFR, ICD) aus dem Query-Layer (graph_query views) + graph_readiness. Repoint der aimprove ArtifactReadiness. Die offene View-Liste (RTM, IntPlan, ChangeLog, ConOps, IRR, ICD ohne se-view-Skill) ist genau der Rest-Scope von CR-GC-116. (CR-GC-115)",
-      "status": "draft",
+      "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z"
     },
     {
@@ -798,7 +798,7 @@
       "type": "FUNC",
       "name": "renderGraph(elements, traces)",
       "description": "Pluggbarer Live-Graph-Mount-Slot im Dashboard. Datenquelle: graph_elements + graph_get_edges + rules_get_violations (nur V3_RULES, kein BQ). Der konkrete Cytoscape-Renderer (@sigloch/graph-renderer) wird hier eingehaengt und ist das naechste aise-family-Projekt (graph-view-edit), nicht in graphcode gebaut. aimproves OntologyView rendert keinen Node-Link-Graph (nur Histogramme). (CR-GC-115)",
-      "status": "draft",
+      "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z"
     },
     {
@@ -806,7 +806,7 @@
       "type": "FUNC",
       "name": "renderHealth()",
       "description": "Echter Funktions-Health-Check, kein Prozess-Liveness-Licht: Kuzu-Store erreichbar, Apply-Gate funktional, Ontology/Rules/Contracts-Versionen, LLM/BYOK-Readiness (OpenCode, fuer spaeter). aimprove-spezifische Felder (Sessions/Patterns) entfernt. Quelle: Host-Bridge Health-Endpoint. (CR-GC-115)",
-      "status": "draft",
+      "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z"
     },
     {
@@ -814,7 +814,7 @@
       "type": "FUNC",
       "name": "renderImpactPanel(id)",
       "description": "Impact-Panel on-demand: exakter Blast-Radius via graph_impact statt gespeicherter aimprove-Impact-Assessments (Learning). Repoint der aimprove ImpactView auf die Live-Quelle. (CR-GC-115)",
-      "status": "draft",
+      "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z"
     },
     {
@@ -822,7 +822,7 @@
       "type": "FUNC",
       "name": "renderImplGates(report)",
       "description": "Impl-Gates-Panel: SAR/FCA/SVR/FRR + CR/MS-Burndown aus graph_readiness.implGates und den MS/CR-Knoten. In aimprove nie verdrahtet (0/9, 0/20, 0/4); graphcode macht die Query transparent: jedes Gate zeigt seine Blocking-Elemente als Drill-down. Repoint der aimprove ImplGates + CrBurndown. (CR-GC-115)",
-      "status": "draft",
+      "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z"
     },
     {
@@ -830,7 +830,7 @@
       "type": "FUNC",
       "name": "renderReadinessPanel(report)",
       "description": "Readiness-Panel: Compliance + Phase-Gates SRR/PDR/CDR/TRR aus graph_readiness (V3_RULES, lean INCOSE). Repoint der aimprove StatusSection-Readiness-Bars + GateView. (CR-GC-115)",
-      "status": "draft",
+      "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z"
     },
     {
@@ -838,7 +838,7 @@
       "type": "FUNC",
       "name": "renderImprovementMeasures()",
       "description": "Top-N hoechstbewertete Verbesserungsmassnahmen, deterministisch aus Graph-Defiziten abgeleitet (fehlende verify-Traces R-01, Orphans RD-01, Blast-Radius via graph_impact), nach Severity/Impact sortiert. Behalten aus aimprove TOP-Empfehlungen, aber graph-deduziert statt Learning-Vorschlag (kein Generator). (CR-GC-115)",
-      "status": "draft",
+      "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z"
     },
     {
@@ -880,7 +880,7 @@
       "type": "FUNC",
       "name": "subscribeUpdates()",
       "description": "SSE-Client: bei jedem Live-Update-Event (invalidate) werden die betroffenen Domains nachgeladen, ohne Reload. Gegenstueck zu emitUpdateEvent, konsumiert FLOW-live-event ueber die Host-Bridge. (CR-GC-115)",
-      "status": "draft",
+      "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z"
     },
     {
@@ -954,7 +954,7 @@
       "type": "MOD",
       "name": "dashboard — Live-Viewer-App",
       "description": "graphcode-owned Dashboard-App, komponiert aus @sigloch/graph-renderer (Cytoscape) + dashboard-shell, konsumiert die Host-Bridge. Readiness/INCOSE-Panels gegen V3_RULES (CR-GC-107-Scorer). Hybrid-Entscheidung 2026-06-17.",
-      "status": "draft",
+      "status": "done",
       "created_at": "2026-06-17T00:00:00.000Z"
     },
     {
@@ -1056,7 +1056,7 @@
       "type": "REQ",
       "name": "Artifact-Ampel-Semantik gruen gelb rot",
       "description": "Dokumente und Prozessschritte sind gruen wenn live aus dem aktuellen Graph abgeleitet, gelb wenn ein materialisiertes Doc existiert aber der Graph sich seither geaendert hat (stale), rot wenn noch nicht existent.",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
       "kinds": [
         "functional"
@@ -1197,7 +1197,7 @@
       "type": "REQ",
       "name": "Dashboard strikt read-only",
       "description": "CONSTRAINT: Der Viewer ist strikt read-only. Kein Write-Pfad aus dem Browser (kein mutate/analyze/optimize/nightly-Trigger), kein Projekt-Switching (Single-Repo-Owner, CR-195e), Konsum nur ueber die Host-Bridge. Beleg: aimprove-Dashboard mischte Generator/Optimizer-Trigger ein; graphcode ist Harness-only.",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
       "kinds": [
         "negative"
@@ -1899,7 +1899,7 @@
       "type": "REQ",
       "name": "Readiness-Query transparent",
       "description": "Jedes Phase- und Impl-Gate exponiert seine Blocking-Elemente (welche CRs, Tests, UCs, Violations den Score druecken), sodass der Score auditierbar ist und keine Black-Box. In aimprove waren die Impl-Gates nie verdrahtet (0/9, 0/20, 0/4); graphcode macht die Herleitung transparent.",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
       "kinds": [
         "functional"
@@ -2268,9 +2268,14 @@
       "type": "TEST",
       "name": "Artifact-Freshness-Test",
       "description": "Ein Artifact ist gruen bei Graph-Ableitung, gelb bei materialisiertem aber veraltetem Doc (Graph neuer als Doc), rot wenn fehlend. (REQ-artifact-freshness)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
-      "method": "test"
+      "method": "test",
+      "testRef": {
+        "file": "tests/panels.test.ts",
+        "tool": "vitest",
+        "level": "integration"
+      }
     },
     {
       "id": "TEST-batch-seed",
@@ -2366,13 +2371,18 @@
       "type": "TEST",
       "name": "Dashboard-Readonly-Test",
       "description": "Der Viewer exponiert keinen Write- oder Trigger-Pfad und oeffnet kein zweites DB-Handle: nur Reads ueber die Host-Bridge, alle Writes gehen durch MCP mutate(). (REQ-dashboard-readonly)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
       "method": "test",
       "attributes": {
         "level": "integration",
         "tool": "vitest",
         "constraint": "viewer exposes no write path"
+      },
+      "testRef": {
+        "file": "tests/panels.test.ts",
+        "tool": "vitest",
+        "level": "integration"
       }
     },
     {
@@ -2686,9 +2696,14 @@
       "type": "TEST",
       "name": "Readiness-Transparenz-Test",
       "description": "graph_readiness liefert pro Gate die Blocking-Liste (CRs/Tests/UCs/Violations); die Summe der Blocker erklaert den Score deterministisch. (REQ-readiness-transparent)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
-      "method": "test"
+      "method": "test",
+      "testRef": {
+        "file": "tests/panels.test.ts",
+        "tool": "vitest",
+        "level": "integration"
+      }
     },
     {
       "id": "TEST-readonly-bridge",
@@ -2864,7 +2879,7 @@
       "type": "UC",
       "name": "Live-Graph-View (Ziel b)",
       "description": "Read-only Live-Dashboard: jede Mutation aktualisiert die Ansicht ohne Reload (SSE invalidate), Readiness/INCOSE-Gates gegen contracts V3_RULES (nicht BQ-2.0.0). Über den Host (Single-Kuzu-Owner), kein 2. DB-Handle.",
-      "status": "draft",
+      "status": "done",
       "created_at": "2026-06-17T00:00:00.000Z"
     },
     {

@@ -23,7 +23,7 @@
 | `CR-GC-112` | CLI graphcode init/update/remove | done | Neues Projekt scaffolden (.graphcode/, Seed-Import). (docs/cr/open/CR-GC-112) MVP: init eines NEUEN Mitglieds = leerer/Template-Graph + .mcp.json (graphcode mcp) + Guardrails + Deps. |
 | `CR-GC-113` | Graph→Markdown Re-Exporter | done | Kuzu/Graph → commit-fähige docs (SSOT-Round-Trip); ersetzt Hand-Edits. (docs/cr/open/CR-GC-113) |
 | `CR-GC-114` | Host + SSE/WS-Bridge | done | Single-Kuzu-Owner-Host + SSE-Route an onUpdateEvent (Live-Viewer-Feed). (docs/cr/open/CR-GC-114) |
-| `CR-GC-115` | Dashboard-Viewer-App (Hybrid) | open | graph-renderer + shell, V3_RULES-gescort; aimprove-Komponenten repointen. (docs/cr/open/CR-GC-115) |
+| `CR-GC-115` | Dashboard-Viewer-App (Hybrid) | done | graph-renderer + shell, V3_RULES-gescort; aimprove-Komponenten repointen. (docs/cr/open/CR-GC-115) |
 | `CR-GC-116` | Views/Skills an Live-Graph verdrahten | done | 7 tote localhost:3001-Views auf MCP/Bridge umstellen + IRR-View ergänzen. (docs/cr/open/CR-GC-116) |
 | `CR-GC-117` | Modell-Hygiene: V3_RULES-Violations schließen | done | 61 R-01 (verify-Traces) + 14 RD-01 auflösen → Readiness ~0. (docs/cr/open/CR-GC-117) |
 | `CR-GC-118` | Cleanup stale-at-all Knoten | done | Dual-Status-Bug (5 CRs), TEST-harness-install, REQ-dashboard-ontology-sync-Status. (docs/cr/open/CR-GC-118) |

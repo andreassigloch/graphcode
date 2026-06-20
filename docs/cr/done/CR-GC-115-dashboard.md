@@ -1,6 +1,8 @@
 # CR-GC-115: Dashboard-Viewer-App (Hybrid)
 
-**Status:** Open · **Milestone:** `MS-4-mvp2` (Phase 2) · **Datum:** 2026-06-17 · **Max Files:** 5
+**Status:** Done (2026-06-20) · **Milestone:** `MS-4-mvp2` (Phase 2) · **Datum:** 2026-06-17 · **Max Files:** 5
+
+> **Close-Befund (2026-06-20):** Scope = **headless Daten-Schicht** (Andreas bestätigt 2026-06-20): der Cytoscape-Renderer bleibt extern (graph-view-edit, Family-Carve-Out „graphcode ist NICHT Viewer"). graphcode liefert `src/panels.ts` — reine, read-only Shaper über die MCP-Tools: `readinessPanel`/`implGates` mit Blocking-Drilldown (`REQ-readiness-transparent`), `recommendationsPanel` severity-sortiert mit `fixHint` + Top-Kandidat (nutzt CR-GC-203 item 1+3), `artifactsPanel`/`artifactFreshness` Ampel grün=live/gelb=stale/rot=absent (`REQ-artifact-freshness`), `impactPanel`/`healthPanel`, und `panelsForEvent` (`FUNC-subscribe-updates` → CR-GC-114 SSE). `REQ-dashboard-readonly` strukturell (pure functions). Die 8 `FUNC-render-*` = headless Shaper + Mount-Slot (`FUNC-render-graph`), Pixel-Rendering extern. Neuer `tests/panels.test.ts` (5 Cases). 16 Knoten → done (8 FUNC, MOD-dashboard, UC-live-graph-view, 3 REQ, 3 TEST mit testRef). **FRR = 1.0 (passed) — alle 12 MS-4-CRs done.** (R-04-Warnung MOD-dashboard 13 FUNC = Renderer-Slot/Panels-Split, bewusst auf graph-view-edit vertagt; Warnung, kein Blocker.) 142/142 Tests grün.
 **Graph (SSOT):** Spec lebt im Graphen — dieser CR realisiert: `MS-4-mvp2`, `MOD-dashboard`, `UC-live-graph-view`, `REQ-dashboard-ontology-sync`.
 Siehe `docs/graph/graphcode.graph.json`. Diese Datei ist nur Pointer, nicht autoritativ.
 
