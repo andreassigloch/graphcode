@@ -75,7 +75,7 @@ describe('TEST-skills-mcp: every SE skill is MCP-driven, off the retired localho
   });
 
   it('every skill references at least one tool from the live MCP registry', () => {
-    expect(toolNames.length).toBe(12);
+    expect(toolNames.length).toBe(13);
     const missing: string[] = [];
     for (const f of skillFiles()) {
       const text = readFileSync(join(SKILLS_DIR, f), 'utf8');

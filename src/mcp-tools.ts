@@ -24,6 +24,7 @@ import type { GraphCodeHarness } from './harness.js';
 import type { Graph, GraphNode, GraphEdge, AuditLog, AuditEntry } from '@sigloch/graph-api-core';
 import { FormatECodec, SE_DESCRIPTOR, InMemoryAuditLog } from '@sigloch/graph-api-core';
 import { type MutateCommand, type MutateResult, type RuleViolation } from '@sigloch/contracts/harness';
+import { TestRefSchema, type TestRef } from '@sigloch/contracts/se';
 import { exportGraphJson, exportMarkdown, MarkdownViewSchema, MARKDOWN_VIEWS, VIEW_FILENAMES } from './exporter.js';
 import { scoreReadiness, type ReadinessReport } from './readiness.js';
 
@@ -107,6 +108,19 @@ const GraphExportInputSchema = z.object({
 });
 
 const GraphReadinessInputSchema = z.looseObject({});
+
+const GraphTestsInputSchema = z.object({
+  changeSet: z
+    .array(z.string())
+    .min(1)
+    .describe('Changed node uids (e.g. git-diff → graph). The roots of the blast-radius.'),
+  depth: z
+    .number()
+    .int()
+    .nonnegative()
+    .default(1)
+    .describe('Impact traversal depth per changed node (same semantics as graph_impact).'),
+});
 
 // ---------------------------------------------------------------------------
 // Branch → edge-type filter for graph_expand. trace/test branches keep the full
@@ -459,6 +473,81 @@ export function bindToolsToHarness(
   };
 
   // ---------------------------------------------------------------------------
+  // TEST-DEDUCTION tool — bottom-up selective test set (CR-GC-134 / FUNC-deduce-tests).
+  // WRAPS graph_impact's harness.impact() (NO second blast-radius traversal): for each
+  // changed node, the impacted TEST nodes are the verify-dependents already returned by
+  // impact(). Each TEST is resolved via its `testRef` runnable binding to a concrete file;
+  // the emitted command runs ONLY those affected test files — never the full suite.
+  // ---------------------------------------------------------------------------
+
+  const graph_tests: MCPTool<
+    z.infer<typeof GraphTestsInputSchema>,
+    {
+      command: string;
+      tests: Array<{ id: string; name: string; testRef: TestRef }>;
+      coverage: { changeSet: string[]; impactedNodes: number; impactedTests: number; resolved: number; files: string[] };
+      unresolved: Array<{ id: string; name: string; reason: string }>;
+    }
+  > = {
+    name: 'graph_tests',
+    description:
+      'Deduce the minimal selective test set for a change (FUNC-deduce-tests / CR-GC-134). ' +
+      'Maps a changeSet (changed node uids) → impacted TEST nodes by WRAPPING graph_impact ' +
+      '(harness.impact() — the identical blast-radius path, no parallel traversal), resolves each ' +
+      'impacted TEST via its `testRef` runnable binding {file, case?, tool, level?}, and emits the ' +
+      'minimal selective `vitest run <only-affected-files>` command + coverage. Tests without a ' +
+      'resolvable testRef are reported under `unresolved` (never silently dropped).',
+    inputSchema: GraphTestsInputSchema,
+    async handler(input) {
+      // Union the blast-radius across every changed node, computed via the SAME
+      // harness.impact() that graph_impact calls — one impact path, no fork.
+      const impacted = new Map<string, GraphNode>();
+      for (const rootId of input.changeSet) {
+        const subgraph = await harness.impact(rootId, input.depth);
+        for (const node of subgraph.nodes) impacted.set(node.uid, node);
+      }
+
+      const impactedTests = [...impacted.values()].filter((n) => n.type === 'TEST');
+
+      const tests: Array<{ id: string; name: string; testRef: TestRef }> = [];
+      const unresolved: Array<{ id: string; name: string; reason: string }> = [];
+      const files = new Set<string>();
+
+      for (const node of impactedTests) {
+        const raw = node.attributes?.testRef;
+        if (raw === undefined || raw === null) {
+          unresolved.push({ id: node.uid, name: node.name, reason: 'no testRef attribute' });
+          continue;
+        }
+        const parsed = TestRefSchema.safeParse(raw);
+        if (!parsed.success) {
+          unresolved.push({ id: node.uid, name: node.name, reason: `invalid testRef: ${parsed.error.message}` });
+          continue;
+        }
+        tests.push({ id: node.uid, name: node.name, testRef: parsed.data });
+        files.add(parsed.data.file);
+      }
+
+      // Minimal selective run: ONLY the affected test files, sorted+deduped.
+      const fileList = [...files].sort();
+      const command = fileList.length > 0 ? `vitest run ${fileList.join(' ')}` : 'vitest run --passWithNoTests';
+
+      return {
+        command,
+        tests,
+        coverage: {
+          changeSet: input.changeSet,
+          impactedNodes: impacted.size,
+          impactedTests: impactedTests.length,
+          resolved: tests.length,
+          files: fileList,
+        },
+        unresolved,
+      };
+    },
+  };
+
+  // ---------------------------------------------------------------------------
   // Registry
   // ---------------------------------------------------------------------------
 
@@ -475,5 +564,6 @@ export function bindToolsToHarness(
     graph_expand,
     graph_export,
     graph_readiness,
+    graph_tests,
   };
 }

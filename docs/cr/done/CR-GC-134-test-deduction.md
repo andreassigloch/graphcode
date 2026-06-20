@@ -1,6 +1,8 @@
 # CR-GC-134: Bottom-up Test-Deduktion (graph_tests)
 
-**Status:** Open · **Milestone:** `MS-4-mvp2` · **Datum:** 2026-06-19 · **Max Files:** 5
+**Status:** Done (2026-06-20) · **Milestone:** `MS-4-mvp2` · **Datum:** 2026-06-19 · **Max Files:** 5
+
+> **Close-Befund (2026-06-20):** `testRef` als optionales TEST-Attribut + `TestRefSchema {file, case?, tool, level?}` in `@sigloch/contracts/se/ontology.ts`; `ONTOLOGY_VERSION` 3.3.0→3.4.0 (additiv, Familie-Review pre-decided Andreas 2026-06-19). Konsumenten verifiziert: graph-api-core (tsc + 23 Tests grün), claude-plugin-Template auf v3.4.0. graphcode `graph_tests` MCP-Tool (`mcp-tools.ts`) **wrappt `harness.impact()`** (kein zweiter Blast-Radius-Pfad) → impacted TESTs → `testRef`-Resolver → minimales `vitest run <nur-betroffene-Files>` + Coverage; unresolvable TESTs unter `unresolved` (nie still verworfen). Neuer `tests/mcp.tests-deduction.test.ts` (`TEST-test-runnable-binding`, 4 Cases: testRef-Auflösung, nur-betroffene-Files, **Wrap-Proof = gleicher impacted-Set wie graph_impact**, unresolved-Reporting). 13. Tool → Tool-Count-Assertions (agent-agnostic, stdio-server, conformance 12→13) aktualisiert. `testRef` an TEST-test-runnable-binding + TEST-efficient-testing gedogfood. `FUNC-deduce-tests`/`REQ-test-runnable-binding`/`TEST-test-runnable-binding`/`TEST-efficient-testing` → done. 129/129 grün. **Hinweis:** Subagent fiel bei 529-Overload vor Test+Verifikation aus; Test, Tool-Count-Fixes + Familie-Verifikation manuell vervollständigt.
 **Graph (SSOT):** Spec lebt im Graphen — dieser CR realisiert: `UC-efficient-testing`, `FUNC-deduce-tests`, `REQ-test-runnable-binding`, `TEST-test-runnable-binding`. Siehe `docs/graph/graphcode.graph.json`. Diese Datei ist nur Pointer, nicht autoritativ.
 
 ## Problem / Scope
