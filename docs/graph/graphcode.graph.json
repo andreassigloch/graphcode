@@ -341,8 +341,8 @@
       "id": "CR-GC-201",
       "type": "CR",
       "name": "Enforce gate-only graph writes",
-      "description": "Deny direkte SSOT-Edits (Deny-Rule + PreToolUse-Hook); landet MIT CR-111/CR-113, sonst alle Graph-Edits blockiert. (docs/cr/open/CR-GC-201)",
-      "status": "open",
+      "description": "Agent kann den SSOT nicht hand-editieren; jeder Write durch graph_mutate (mutate-Gate, L1). DONE 2026-06-20: PreToolUse deny-hook (.claude/hooks/deny-graph-write.sh) blockt Edit/Write auf docs/graph/*.graph.json + .graphcode/kuzu*; JSON = generierter Export (graph_export, lossless via attrs_json v0.2.0 + deterministische Sortierung, byte-identische Provenance). Follow-ups offen: Scaffolding in Ziel-Repos (FUNC-harness-cli), literaler CI-Provenance-Job. (CR-GC-201)",
+      "status": "done",
       "created_at": "2026-06-18T00:00:00.000Z"
     },
     {

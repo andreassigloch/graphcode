@@ -1,6 +1,6 @@
 # CR-GC-201: Enforce gate-only graph writes (agent cannot hand-edit the SSOT)
 
-**Status:** Open · **Milestone:** `MS-3-mvp-readiness` · **Datum:** 2026-06-18 · **Max Files:** 5
+**Status:** Done (2026-06-20) · **Milestone:** `MS-3-mvp-readiness` · **Datum:** 2026-06-18 · **Max Files:** 5
 **Graph (SSOT):** realizes `+REQ-gate-only-writes` (constraint, refines `REQ-one-gate-per-repo`) + `+TEST-no-direct-graph-write`; touches `.claude/` config + `MOD-docs`. *(graph nodes queued for the graph-owner chat.)*
 
 ## Problem (Why)
