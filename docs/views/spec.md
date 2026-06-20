@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Alle Elemente nach Typ, sortiert nach uid. Deterministisch generiert.
 
-Elemente: 284 · Traces: 664
+Elemente: 286 · Traces: 667
 
 
 ## ACTOR
@@ -47,7 +47,7 @@ Elemente: 284 · Traces: 664
 | `CR-GC-117` | Modell-Hygiene: V3_RULES-Violations schließen | done | 61 R-01 (verify-Traces) + 14 RD-01 auflösen → Readiness ~0. (docs/cr/open/CR-GC-117) |
 | `CR-GC-118` | Cleanup stale-at-all Knoten | done | Dual-Status-Bug (5 CRs), TEST-harness-install, REQ-dashboard-ontology-sync-Status. (docs/cr/open/CR-GC-118) |
 | `CR-GC-119` | Docs-Taxonomie — Views vs Records | done | +REQ-docs-taxonomy (Litmus-Test) + mechanischer Rename-Sweep docs/project → docs/{views,records}. Why: graph-is-ssot interessiert nur „aus dem Graphen reproduzierbar?". (docs/cr/open/CR-GC-119-docs-views-vs-records) |
-| `CR-GC-120` | Batch-Seed/Import (UNWIND) — Scale | open | Per-Node/Edge-MERGE ist O(langsam): 10k Edges = 51s gemessen (SP-2). UNWIND-Batch-Insert → Seed/Import sub-Sekunde, damit 10k-Knoten real wird. |
+| `CR-GC-120` | Batch-Seed/Import (UNWIND) — Scale | done | Per-Node/Edge-MERGE ist O(langsam): 10k Edges = 51s gemessen (SP-2). UNWIND-Batch-Insert → Seed/Import sub-Sekunde, damit 10k-Knoten real wird. |
 | `CR-GC-121` | Distribution: npx-Paket, self-contained, agent-agnostic | done | graphcode als npm-Paket mit bin `npx @sigloch/graphcode init/update/remove`; versionierte (nicht file:) Deps fürs Publish; in beliebigem Fremd-Repo lauffähig. Voraussetzung fürs „neues Repo anlegen". |
 | `CR-GC-122` | New-Member Bootstrap durchs Gate (Format-E Cold-Start) | done | Leeren Graphen eines NEUEN Familie-Mitglieds ausschließlich durchs mutate()-Gate befüllen (Quelle Format-E, kein Direct-Write); Cold-Start mit Template-SYS. Realisiert TEST-bootstrap. |
 | `CR-GC-123` | MVP E2E-Acceptance: bootstrap → spec → KNOW-query → implement → re-export | done | End-to-End-Validierung der MVP-Definition: in einem Wegwerf-Repo ein neues Mitglied bootstrappen, ein paar Knoten durchs Gate spec’en, beweisen dass graph_impact die RICHTIGEN Elemente liefert (nicht grep), einen Knoten implementieren, re-exportieren. Realisiert die UC-Tests. |
@@ -176,6 +176,7 @@ Elemente: 284 · Traces: 664
 | `REQ-artifact-freshness` | Artifact-Ampel-Semantik gruen gelb rot | open | Dokumente und Prozessschritte sind gruen wenn live aus dem aktuellen Graph abgeleitet, gelb wenn ein materialisiertes Doc existiert aber der Graph sich seither geaendert hat (stale), rot wenn noch nicht existent. |
 | `REQ-audit-trail` | Audit-Trail / History | open | CR-GC-101: audit_trail/audit_stats liefern Mutations-History/Statistik. |
 | `REQ-auto-persist-merge` | Auto-Persist + conflict-free Merge | open | Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Artefakt. (R2) |
+| `REQ-batch-seed-performance` | Batch-Seed/Import Performance (UNWIND) | done | Seed/Import muss batch-skalieren: per-Row-MERGE ist O(langsam) (10k Edges ~51s, SP-2). UNWIND-Batch-Insert (gruppiert je Label/Edge-Table, Werte inline via escapeString) liefert 5k Nodes + 5k Edges < 15s (gemessen 5.3s, 5.6x schneller; Edges 9.6x). Interface unverändert (StorageAdapter.saveNodes/saveEdges), kein Parallelpfad. (CR-GC-120) |
 | `REQ-benchmark-harness` | Benchmark-Harness (graphcode vs classic) | open | Setting zum Vergleich graphcode-Modus vs. Claude-Code-classic über eine fixe Task-Suite, 2 LLMs (groß + klein/lokal), mit Token-Counter + Quality-Scorer. Liefert task×mode×LLM → {tokens, success, quality} und belegt token-efficiency + reduced-llm + code-quality. NUR Requirement — Harness-Bau ist Realisierung (eigene CR). |
 | `REQ-bootstrap-through-gate` | Erstbefüllung nur durchs Gate | done | FUNC-import: Erstbefüllung ausschließlich über das mutate()-Gate; Quelle = Format-E; kein Direct-Write. |
 | `REQ-buildable-standalone` | Standalone baufähig (D5) | done | CR-GC-100 Task 0 / SPEC §8 D5 (Blocker): workspace:*-Deps auflösen (versionierte/file-Deps), npm install + tsc --noEmit grün — vor jedem Code. |
@@ -298,6 +299,7 @@ Elemente: 284 · Traces: 664
 |---|---|---|---|
 | `TEST-agent-agnostic` | Agent-Agnostic-Test | done | Dieselbe MCP-Registry wird von zwei Clients (Claude Code und OpenCode headless BYOK) ueber stdio identisch bedient; gleiche Tools, gleiche Gate-Semantik. (REQ-agent-agnostic) |
 | `TEST-artifact-freshness` | Artifact-Freshness-Test | open | Ein Artifact ist gruen bei Graph-Ableitung, gelb bei materialisiertem aber veraltetem Doc (Graph neuer als Doc), rot wenn fehlend. (REQ-artifact-freshness) |
+| `TEST-batch-seed` | Batch-Seed UNWIND performance (automated) | done | tests/perf.batch-seed.test.ts: 5000 Nodes + 5000 compose-Edges via harness.importGraph → saveNodes/saveEdges auf real-disk Kuzu (temp dir); asserts UNWIND-Batch-Insert < 15s (per-Row-Floor ~30s) + Counts + verlustfreies attrs_json-Round-Trip nach Reload. Validiert vom graph-cypher-wasm-Paket-Suite (kuzu-adapter round-trip, rasentraktor L3). (CR-GC-120) |
 | `TEST-bootstrap` | Cold-Start-Import-Test | done | Format-E-Import befüllt leeren Graphen ausschließlich durchs Gate; Direct-Write schlägt fehl. (FUNC-import) |
 | `TEST-cache` | Cache-Layering-Test | open | Version-keyed Response-Cache + Dirty-Flag mappt auf Kuzu-Version; nur Onto+Rules stabil gecached, nie mit Live-Graph gemischt (Prefix-Hygiene). (CR-GC-102 R8/R11) |
 | `TEST-capture` | Interaktive-Erfassung-Test | open | Agent-Kandidaten laufen im suggest-Tier durchs Gate (kein auto-apply). (FCHAIN-capture) |

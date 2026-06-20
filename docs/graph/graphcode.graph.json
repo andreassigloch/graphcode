@@ -252,7 +252,7 @@
       "type": "CR",
       "name": "Batch-Seed/Import (UNWIND) — Scale",
       "description": "Per-Node/Edge-MERGE ist O(langsam): 10k Edges = 51s gemessen (SP-2). UNWIND-Batch-Insert → Seed/Import sub-Sekunde, damit 10k-Knoten real wird.",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-17T00:00:00.000Z"
     },
     {
@@ -1083,6 +1083,13 @@
       "kinds": [
         "functional"
       ]
+    },
+    {
+      "id": "REQ-batch-seed-performance",
+      "type": "REQ",
+      "name": "Batch-Seed/Import Performance (UNWIND)",
+      "description": "Seed/Import muss batch-skalieren: per-Row-MERGE ist O(langsam) (10k Edges ~51s, SP-2). UNWIND-Batch-Insert (gruppiert je Label/Edge-Table, Werte inline via escapeString) liefert 5k Nodes + 5k Edges < 15s (gemessen 5.3s, 5.6x schneller; Edges 9.6x). Interface unverändert (StorageAdapter.saveNodes/saveEdges), kein Parallelpfad. (CR-GC-120)",
+      "status": "done"
     },
     {
       "id": "REQ-benchmark-harness",
@@ -2264,6 +2271,13 @@
       "status": "open",
       "created_at": "2026-06-19T00:00:00.000Z",
       "method": "test"
+    },
+    {
+      "id": "TEST-batch-seed",
+      "type": "TEST",
+      "name": "Batch-Seed UNWIND performance (automated)",
+      "description": "tests/perf.batch-seed.test.ts: 5000 Nodes + 5000 compose-Edges via harness.importGraph → saveNodes/saveEdges auf real-disk Kuzu (temp dir); asserts UNWIND-Batch-Insert < 15s (per-Row-Floor ~30s) + Counts + verlustfreies attrs_json-Round-Trip nach Reload. Validiert vom graph-cypher-wasm-Paket-Suite (kuzu-adapter round-trip, rasentraktor L3). (CR-GC-120)",
+      "status": "done"
     },
     {
       "id": "TEST-bootstrap",
@@ -4019,6 +4033,11 @@
     },
     {
       "source": "CR-GC-120",
+      "target": "REQ-batch-seed-performance",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-120",
       "target": "REQ-bootstrap-through-gate",
       "type": "relation",
       "weight": 1,
@@ -5511,6 +5530,11 @@
     },
     {
       "source": "FUNC-import",
+      "target": "REQ-batch-seed-performance",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-import",
       "target": "REQ-bootstrap-through-gate",
       "type": "satisfy",
       "weight": 1,
@@ -6533,6 +6557,11 @@
       "type": "verify",
       "weight": 1,
       "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-batch-seed",
+      "target": "REQ-batch-seed-performance",
+      "type": "verify"
     },
     {
       "source": "TEST-bootstrap",

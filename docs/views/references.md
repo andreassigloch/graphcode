@@ -173,6 +173,7 @@
 | `CR-GC-120` | relation | `FUNC-import` |
 | `CR-GC-120` | relation | `MOD-harness` |
 | `CR-GC-120` | relation | `MS-4-mvp2` |
+| `CR-GC-120` | relation | `REQ-batch-seed-performance` |
 | `CR-GC-120` | relation | `REQ-bootstrap-through-gate` |
 | `CR-GC-121` | relation | `MOD-cli` |
 | `CR-GC-121` | relation | `MS-3-mvp-readiness` |
@@ -387,6 +388,7 @@
 | `FUNC-health-endpoint` | satisfy | `REQ-real-health-check` |
 | `FUNC-import` | allocate | `MOD-harness` |
 | `FUNC-import` | io | `FLOW-bootstrap-result` |
+| `FUNC-import` | satisfy | `REQ-batch-seed-performance` |
 | `FUNC-import` | satisfy | `REQ-bootstrap-through-gate` |
 | `FUNC-import` | satisfy | `REQ-post-import` |
 | `FUNC-import` | satisfy | `REQ-pre-import` |
@@ -538,6 +540,7 @@
 | `SYS-graphcode` | satisfy | `REQ-structure-driven` |
 | `TEST-agent-agnostic` | verify | `REQ-agent-agnostic` |
 | `TEST-artifact-freshness` | verify | `REQ-artifact-freshness` |
+| `TEST-batch-seed` | verify | `REQ-batch-seed-performance` |
 | `TEST-bootstrap` | verify | `REQ-bootstrap-through-gate` |
 | `TEST-bootstrap` | verify | `REQ-post-import` |
 | `TEST-bootstrap` | verify | `REQ-pre-import` |
