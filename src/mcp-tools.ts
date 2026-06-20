@@ -559,6 +559,34 @@ export function bindToolsToHarness(
   };
 
   // ---------------------------------------------------------------------------
+  // RESEED tool — re-sync the live store to the committed SSOT (CR-GC-203 item 4).
+  // In-process clear+reimport behind the single writer; replaces the corrupting
+  // stop-server → rm .graphcode/kuzu → restart dance.
+  // ---------------------------------------------------------------------------
+
+  const GraphReseedInputSchema = z.object({
+    path: z
+      .string()
+      .optional()
+      .describe('Committed graph JSON path relative to repoRoot (default docs/graph/graphcode.graph.json).'),
+  });
+
+  const graph_reseed: MCPTool<z.infer<typeof GraphReseedInputSchema>, { reseeded: true; nodes: number; edges: number }> = {
+    name: 'graph_reseed',
+    description:
+      'Re-sync the live store to the committed SSOT JSON (CR-GC-203 item 4). The single-writer owner ' +
+      'clears the store IN-PROCESS (DETACH DELETE through the open handle) then re-imports the committed ' +
+      'graph — replacing the stop-server → rm .graphcode/kuzu → restart dance, which corrupts the store ' +
+      'when the file is removed under a live handle. DISCARDS un-exported gate mutations; pairs with the ' +
+      'export drift guard. Single-writer; no direct Kuzu access.',
+    inputSchema: GraphReseedInputSchema,
+    async handler(input) {
+      const { nodes, edges } = await harness.reseed(input.path);
+      return { reseeded: true as const, nodes, edges };
+    },
+  };
+
+  // ---------------------------------------------------------------------------
   // Registry
   // ---------------------------------------------------------------------------
 
@@ -575,6 +603,7 @@ export function bindToolsToHarness(
     graph_expand,
     graph_export,
     graph_readiness,
+    graph_reseed,
     graph_tests,
   };
 }

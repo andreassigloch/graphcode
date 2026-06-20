@@ -259,6 +259,22 @@ export class GraphCodeHarness {
     return this.importGraph(JSON.parse(raw) as OntologyJson);
   }
 
+  /**
+   * Re-sync the live store to the committed SSOT JSON (CR-GC-203 item 4).
+   * The single-writer owner clears the store IN-PROCESS through the open handle
+   * (`deleteNodes` issues `DETACH DELETE`, dropping incident edges with each
+   * node — no separate edge wipe), then re-imports the committed graph. This
+   * replaces the stop-server → `rm .graphcode/kuzu*` → restart dance, which
+   * corrupts the store when the file is removed under a live handle. Discards
+   * any un-exported gate mutations; pairs with the CR-GC-201 drift warning.
+   */
+  async reseed(relPath = 'docs/graph/graphcode.graph.json'): Promise<{ nodes: number; edges: number }> {
+    const uids = this.graph.nodes.map((n) => n.uid);
+    if (uids.length) await this.storage.deleteNodes(uids);
+    this.graph = { nodes: [], edges: [] };
+    return this.seedFromJson(relPath);
+  }
+
   /** Release the store handle (single-writer cleanup). */
   async close(): Promise<void> {
     await this.storage.shutdown();
