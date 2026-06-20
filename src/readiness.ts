@@ -174,6 +174,24 @@ export interface ReadinessReport {
   computedAt: string;
 }
 
+/**
+ * Summary projection of a ReadinessReport (CR-GC-203 item 2): drops the heavy
+ * per-element lists — `violations` and every gate's `blocking`/`open` — while
+ * keeping scores, counts and `violationsByRule`. `graph_readiness` returns this
+ * by default; `detail:true` returns the full lists. On a fully-red graph the
+ * full report inlined every blocking element (86k+ chars, past the MCP tool
+ * result limit) forcing a file-spill; the summary stays small.
+ */
+export function summarizeReadiness(report: ReadinessReport): ReadinessReport {
+  const stripGate = (g: ReadinessGate): ReadinessGate => ({ ...g, blocking: [], open: [] });
+  return {
+    ...report,
+    phaseGates: report.phaseGates.map(stripGate),
+    implGates: report.implGates.map(stripGate),
+    violations: [],
+  };
+}
+
 // ---------------------------------------------------------------------------
 // Scorer
 // ---------------------------------------------------------------------------

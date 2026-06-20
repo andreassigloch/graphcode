@@ -26,7 +26,7 @@ import { FormatECodec, SE_DESCRIPTOR, InMemoryAuditLog } from '@sigloch/graph-ap
 import { type MutateCommand, type MutateResult, type RuleViolation } from '@sigloch/contracts/harness';
 import { TestRefSchema, type TestRef } from '@sigloch/contracts/se';
 import { exportGraphJson, exportMarkdown, MarkdownViewSchema, MARKDOWN_VIEWS, VIEW_FILENAMES } from './exporter.js';
-import { scoreReadiness, type ReadinessReport } from './readiness.js';
+import { scoreReadiness, summarizeReadiness, type ReadinessReport } from './readiness.js';
 
 // ---------------------------------------------------------------------------
 // Public types
@@ -107,7 +107,15 @@ const GraphExportInputSchema = z.object({
     ),
 });
 
-const GraphReadinessInputSchema = z.looseObject({});
+const GraphReadinessInputSchema = z.object({
+  detail: z
+    .boolean()
+    .default(false)
+    .describe(
+      'false (default) = summary: scores + counts + violationsByRule only (stays within the MCP ' +
+        'result limit on a fully-red graph). true = full raw violations + each gate’s blocking/open lists.',
+    ),
+});
 
 const GraphTestsInputSchema = z.object({
   changeSet: z
@@ -464,11 +472,14 @@ export function bindToolsToHarness(
       'violation); incoseScope (graphcode = lean); phaseGates SRR/PDR/CDR/TRR (INCOSE technical reviews, ' +
       'a disjoint partition of the element-level V3_RULES); implGates SAR/FCA/SVR/FRR (milestone tiers ' +
       'MS-1..4, ready iff assigned CRs are done + scope error-clean); violationsByRule (keyed by contracts ' +
-      'rule-ID — R-/RD-/MS-, never BQ-*); the sorted raw violations; and computedAt. Read-only; derived ' +
+      'rule-ID — R-/RD-/MS-, never BQ-*); and computedAt. By DEFAULT returns a summary (no raw ' +
+      'violations, no per-gate blocking/open lists) so it stays within the MCP result limit even on a ' +
+      'fully-red graph; pass detail:true for the full lists. Read-only; derived ' +
       'from harness.evaluateRules() (L2 gate) + the MS nodes + element status.',
     inputSchema: GraphReadinessInputSchema,
-    async handler(_input) {
-      return scoreReadiness(harness);
+    async handler(input) {
+      const report = scoreReadiness(harness);
+      return input.detail ? report : summarizeReadiness(report);
     },
   };
 

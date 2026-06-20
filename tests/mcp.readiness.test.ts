@@ -93,7 +93,7 @@ describe('TEST-mcp-readiness: graph_readiness scores family readiness over the b
     // The orphan FUNC is a WARNING (R-02), so the gate accepts it (no NEW error-violation).
     expect((await harness.mutate(ORPHAN_FUNC)).success).toBe(true);
 
-    const report = await tools.graph_readiness.handler({});
+    const report = await tools.graph_readiness.handler({ detail: true });
     const familyIds = getFamilyRuleIds();
 
     // The warning surfaced and is keyed by a family contracts rule-ID.
@@ -108,5 +108,33 @@ describe('TEST-mcp-readiness: graph_readiness scores family readiness over the b
     }
     // A warning is not an error → compliance (error-severity) stays 1.0.
     expect(report.compliance.score).toBe(1);
+  });
+
+  // CR-GC-203 item 2 — graph_readiness summary mode keeps the result within the MCP limit.
+  it('summary is the default (drops raw violations + gate lists, keeps scores + counts); detail:true restores them', async () => {
+    const tools = bindToolsToHarness(harness);
+    expect((await harness.mutate(CLEAN_MEMBER)).success).toBe(true);
+    expect((await harness.mutate(ORPHAN_FUNC)).success).toBe(true);
+
+    const summary = await tools.graph_readiness.handler({});
+    const detail = await tools.graph_readiness.handler({ detail: true });
+
+    // Summary drops the heavy per-element lists…
+    expect(summary.violations).toEqual([]);
+    for (const gate of [...summary.phaseGates, ...summary.implGates]) {
+      expect(gate.blocking).toEqual([]);
+      expect(gate.open).toEqual([]);
+    }
+    // …but keeps scores + counts (the R-02 warning is still counted, scores match detail).
+    expect(summary.violationsByRule['R-02']).toBeGreaterThanOrEqual(1);
+    expect(summary.violationsByRule).toEqual(detail.violationsByRule);
+    expect(summary.compliance.score).toBe(detail.compliance.score);
+    expect(JSON.stringify(summary).length).toBeLessThan(JSON.stringify(detail).length);
+
+    // detail:true restores the full lists.
+    expect(detail.violations.length).toBeGreaterThanOrEqual(1);
+    expect(
+      [...detail.phaseGates, ...detail.implGates].some((g) => g.blocking.length > 0 || g.open.length > 0),
+    ).toBe(true);
   });
 });
