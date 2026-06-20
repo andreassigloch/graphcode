@@ -277,7 +277,11 @@ export function bindToolsToHarness(
     { violations: RuleViolation[]; total: number }
   > = {
     name: 'rules_get_violations',
-    description: 'Return current rule violations, optionally filtered by severity.',
+    description:
+      'Return current rule violations, optionally filtered by severity. Each violation carries ' +
+      'fixHint + context (candidate_targets, existing_traces) from the contracts rule (CR-GC-203 ' +
+      'item 1), so an agent can resolve R-01/RD-01 from the payload — no extra queries to find ' +
+      'a TEST/FUNC to link.',
     inputSchema: RulesGetViolationsInputSchema,
     async handler(input) {
       let violations = harness.evaluateRules();

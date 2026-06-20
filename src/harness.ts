@@ -312,6 +312,10 @@ export class GraphCodeHarness {
       severity: v.severity,
       message: v.message,
       elementId: v.elementId,
+      // CR-GC-203 item 1: stop flattening — surface fix_hint + candidate_targets so
+      // rules_get_violations / rules_evaluate hand the agent an actionable violation.
+      fixHint: v.fixHint,
+      context: v.context,
     }));
   }
 
