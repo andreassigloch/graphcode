@@ -61,8 +61,8 @@ describe('TEST-skills-mcp: every SE skill is MCP-driven, off the retired localho
     rmSync(repoRoot, { recursive: true, force: true });
   });
 
-  it('finds all 15 SE skills on disk', () => {
-    expect(skillFiles().length).toBe(15);
+  it('finds all 17 SE skills on disk', () => {
+    expect(skillFiles().length).toBe(17);
   });
 
   it('no skill references the retired HTTP API (localhost:3001 / GRAPH_API / /api/graph / /api/dashboard)', () => {

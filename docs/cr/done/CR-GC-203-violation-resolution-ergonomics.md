@@ -1,6 +1,16 @@
 # CR-GC-203: Violation-resolution ergonomics & SSOT tooling
 
-**Status:** Open · **Milestone:** `MS-4-mvp2` · **Datum:** 2026-06-20 · **Max Files:** 5 (split per item)
+**Status:** Done (2026-06-20) · **Milestone:** `MS-4-mvp2` · **Datum:** 2026-06-20 · **Max Files:** 5 (split per item)
+
+> **Close-Befund (2026-06-20):** Alle 6 Items implementiert + getestet, je als eigener Commit:
+> - **Item 1 (fix-context):** `fixHint` + `context` (candidate_targets/existing_traces) durch graph-api-core `RuleViolation` (0.3.0) + contracts harness `RuleViolationSchema` (0.4.0) + harness.runRules → `rules_get_violations`/`rules_evaluate`. `tests/mcp.violation-context.test.ts`.
+> - **Item 2 (summary mode):** `graph_readiness` `detail?:boolean` (default summary) via `summarizeReadiness()` — bleibt unter MCP-Limit auf rotem Graph.
+> - **Item 3 (ranked):** `toCandidates(elements, ref)` rankt nach Token-Overlap (R-01/R-02/RD-01; RD-01 emittiert jetzt Kandidaten). RULES 2.0.0→2.1.0.
+> - **Item 4 (graph_reseed):** `harness.reseed()` clear+reimport in-process (DETACH DELETE durchs offene Handle) → ersetzt den korruptions-anfälligen `rm .graphcode/kuzu`-Tanz. `tests/mcp.reseed.test.ts` (Store-Level no-corruption proof). 14. Tool.
+> - **Item 5:** `.claude/skills/se-close-violations.md` (Resolutions-Loop über die gerankten Kandidaten).
+> - **Item 6:** (a) `.claude/skills/se-author-req.md` (REQ+TEST+verify in einem Gate-Batch); (b) `importGraph` surfaced unverifizierte REQs (`unverifiedReqs`) + opt-in `rejectUnverifiedReqs` — Bypass nie mehr still; Self-Seed flaggt statt zu refusen (kein Bootstrap-Deadlock). `tests/harness.import-invariant.test.ts`.
+>
+> Skill-Count 15→17, Tool-Count 12→14 (graph_tests+graph_reseed). 137/137 Tests grün. **FRR 0.833→0.917** (nur noch CR-GC-115 offen).
 **Graph (SSOT):** new `CR-GC-203` node, `relation`→`MS-4-mvp2`. Touches `MOD-harness` (runRules mapping), `MOD-mcp-tools` (tool surface), `MOD-skills`.
 
 ## Problem (Why)
