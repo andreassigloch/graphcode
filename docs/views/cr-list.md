@@ -25,8 +25,8 @@
 | `CR-GC-114` | Host + SSE/WS-Bridge | open | Single-Kuzu-Owner-Host + SSE-Route an onUpdateEvent (Live-Viewer-Feed). (docs/cr/open/CR-GC-114) |
 | `CR-GC-115` | Dashboard-Viewer-App (Hybrid) | open | graph-renderer + shell, V3_RULES-gescort; aimprove-Komponenten repointen. (docs/cr/open/CR-GC-115) |
 | `CR-GC-116` | Views/Skills an Live-Graph verdrahten | open | 7 tote localhost:3001-Views auf MCP/Bridge umstellen + IRR-View ergänzen. (docs/cr/open/CR-GC-116) |
-| `CR-GC-117` | Modell-Hygiene: V3_RULES-Violations schließen | open | 61 R-01 (verify-Traces) + 14 RD-01 auflösen → Readiness ~0. (docs/cr/open/CR-GC-117) |
-| `CR-GC-118` | Cleanup stale-at-all Knoten | open | Dual-Status-Bug (5 CRs), TEST-harness-install, REQ-dashboard-ontology-sync-Status. (docs/cr/open/CR-GC-118) |
+| `CR-GC-117` | Modell-Hygiene: V3_RULES-Violations schließen | done | 61 R-01 (verify-Traces) + 14 RD-01 auflösen → Readiness ~0. (docs/cr/open/CR-GC-117) |
+| `CR-GC-118` | Cleanup stale-at-all Knoten | done | Dual-Status-Bug (5 CRs), TEST-harness-install, REQ-dashboard-ontology-sync-Status. (docs/cr/open/CR-GC-118) |
 | `CR-GC-119` | Docs-Taxonomie — Views vs Records | done | +REQ-docs-taxonomy (Litmus-Test) + mechanischer Rename-Sweep docs/project → docs/{views,records}. Why: graph-is-ssot interessiert nur „aus dem Graphen reproduzierbar?". (docs/cr/open/CR-GC-119-docs-views-vs-records) |
 | `CR-GC-120` | Batch-Seed/Import (UNWIND) — Scale | open | Per-Node/Edge-MERGE ist O(langsam): 10k Edges = 51s gemessen (SP-2). UNWIND-Batch-Insert → Seed/Import sub-Sekunde, damit 10k-Knoten real wird. |
 | `CR-GC-121` | Distribution: npx-Paket, self-contained, agent-agnostic | done | graphcode als npm-Paket mit bin `npx @sigloch/graphcode init/update/remove`; versionierte (nicht file:) Deps fürs Publish; in beliebigem Fremd-Repo lauffähig. Voraussetzung fürs „neues Repo anlegen". |

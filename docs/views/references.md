@@ -573,7 +573,6 @@
 | `TEST-efficient-testing` | verify | `REQ-pre-impact-testing` |
 | `TEST-graph-integrity` | verify | `REQ-graph-integrity` |
 | `TEST-graph-is-ssot` | verify | `REQ-graph-is-ssot` |
-| `TEST-harness-install` | verify | `REQ-repo-install` |
 | `TEST-hooks` | verify | `REQ-hook-extension-points` |
 | `TEST-hooks` | verify | `REQ-hook-order-deterministic` |
 | `TEST-hooks` | verify | `REQ-precommit-timeout` |

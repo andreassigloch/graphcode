@@ -4,7 +4,7 @@
  * Proves `@sigloch/graphcode` publishes as a SELF-CONTAINED npm package that runs
  * via `npx @sigloch/graphcode <verb>` in ANY foreign repo, WITHOUT a copy of the
  * sigloch/aimprove source tree (REQ-self-contained-dist, REQ-npx-distribution,
- * REQ-repo-install, REQ-buildable-standalone, MOD-cli; verifies TEST-harness-install).
+ * REQ-repo-install, REQ-buildable-standalone, MOD-cli — the real install verifier).
  *
  * No mocks. Real esbuild bundle, real `npm pack`, real foreign `npm install` of the
  * resulting tarball (fetching kuzu-wasm / sdk / zod from the registry), real bin run.

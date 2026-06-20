@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Alle Elemente nach Typ, sortiert nach uid. Deterministisch generiert.
 
-Elemente: 285 · Traces: 665
+Elemente: 284 · Traces: 664
 
 
 ## ACTOR
@@ -44,8 +44,8 @@ Elemente: 285 · Traces: 665
 | `CR-GC-114` | Host + SSE/WS-Bridge | open | Single-Kuzu-Owner-Host + SSE-Route an onUpdateEvent (Live-Viewer-Feed). (docs/cr/open/CR-GC-114) |
 | `CR-GC-115` | Dashboard-Viewer-App (Hybrid) | open | graph-renderer + shell, V3_RULES-gescort; aimprove-Komponenten repointen. (docs/cr/open/CR-GC-115) |
 | `CR-GC-116` | Views/Skills an Live-Graph verdrahten | open | 7 tote localhost:3001-Views auf MCP/Bridge umstellen + IRR-View ergänzen. (docs/cr/open/CR-GC-116) |
-| `CR-GC-117` | Modell-Hygiene: V3_RULES-Violations schließen | open | 61 R-01 (verify-Traces) + 14 RD-01 auflösen → Readiness ~0. (docs/cr/open/CR-GC-117) |
-| `CR-GC-118` | Cleanup stale-at-all Knoten | open | Dual-Status-Bug (5 CRs), TEST-harness-install, REQ-dashboard-ontology-sync-Status. (docs/cr/open/CR-GC-118) |
+| `CR-GC-117` | Modell-Hygiene: V3_RULES-Violations schließen | done | 61 R-01 (verify-Traces) + 14 RD-01 auflösen → Readiness ~0. (docs/cr/open/CR-GC-117) |
+| `CR-GC-118` | Cleanup stale-at-all Knoten | done | Dual-Status-Bug (5 CRs), TEST-harness-install, REQ-dashboard-ontology-sync-Status. (docs/cr/open/CR-GC-118) |
 | `CR-GC-119` | Docs-Taxonomie — Views vs Records | done | +REQ-docs-taxonomy (Litmus-Test) + mechanischer Rename-Sweep docs/project → docs/{views,records}. Why: graph-is-ssot interessiert nur „aus dem Graphen reproduzierbar?". (docs/cr/open/CR-GC-119-docs-views-vs-records) |
 | `CR-GC-120` | Batch-Seed/Import (UNWIND) — Scale | open | Per-Node/Edge-MERGE ist O(langsam): 10k Edges = 51s gemessen (SP-2). UNWIND-Batch-Insert → Seed/Import sub-Sekunde, damit 10k-Knoten real wird. |
 | `CR-GC-121` | Distribution: npx-Paket, self-contained, agent-agnostic | done | graphcode als npm-Paket mit bin `npx @sigloch/graphcode init/update/remove`; versionierte (nicht file:) Deps fürs Publish; in beliebigem Fremd-Repo lauffähig. Voraussetzung fürs „neues Repo anlegen". |
@@ -197,7 +197,7 @@ Elemente: 285 · Traces: 665
 | `REQ-gate-only-writes` | Gate-only Graph-Writes | open | Agent kann den SSOT nicht hand-editieren; jeder Write durch graph_mutate (mutate-Gate, L1). Deny-Rule + PreToolUse-Hook auf Edit/Write von docs/graph/*.graph.json + .graphcode/kuzu; JSON ist generierter Export, Live-Truth ist Kuzu. (CR-GC-201) |
 | `REQ-graceful-degradation` | Betrieb ohne LLM (Degraded-Modus) | open | CONSTRAINT (ConOps): Harness voll funktionsfähig bei nicht erreichbarem LLM-Sidecar — Gate/Regeln deterministisch, kein Modell-Call. |
 | `REQ-graph-integrity` | Graph-Integritaet: ein Validator | open | Ein Validierungs-Pfad an EINEM Punkt (Gate): GraphCodeCodec.validate() erkennt zusaetzlich doppelte UIDs (nodeTypeMap dedupt heute still) + referenzielle Integritaet + valide Edge-Paare; kein inline validPairs-Klon ausserhalb des Codecs (keine parallelen Pfade). Das Apply-Gate ruft validate() VOR persist() auf (gleicher contracts-SSOT, Delta-Semantik), sodass kein strukturell-ungueltiges Edge den Store erreicht und Kuzu-DDL + Export-Check zu Backstops werden. (CR-GC-200) |
-| `REQ-graph-is-ssot` | Graph ist Single Point of Truth | open | Der materialisierte Graph + die Live-Harness sind SSOT. docs/*.md sind historischer Input (Bootstrap). Modelländerungen am Graph (mutate/import), dann Re-Export. (2026-06-14) |
+| `REQ-graph-is-ssot` | Graph ist Single Point of Truth | done | Der materialisierte Graph + die Live-Harness sind SSOT. docs/*.md sind historischer Input (Bootstrap). Modelländerungen am Graph (mutate/import), dann Re-Export. (2026-06-14) |
 | `REQ-harness-schema-in-contracts` | Harness-Schemas in contracts (D1) | open | CR-GC-100 Task 1 / D1: HarnessConfig/MutateCommand/MutateResult nach @sigloch/contracts (eigener harness-Export, NICHT /se), importieren, lokale Defs löschen. |
 | `REQ-hook-extension-points` | Drei Hook-Extension-Points | open | CR-GC-102: registerHook(type, handler) + runPreCommitHooks/runPostApplyHooks/scheduleNightlyBatch; Storage .graphcode/hooks/. |
 | `REQ-hook-order-deterministic` | Deterministische Hook-Reihenfolge (L3) | open | CR-GC-102 L3: Hook-Execution-Order stabil/deterministisch. |
@@ -256,7 +256,7 @@ Elemente: 285 · Traces: 665
 | `REQ-repo-update` | Update ohne Datenverlust | open | Update aktualisiert installierte Artefakte/Pfade, ohne den lokalen Graph-Store (.graphcode/) zu verlieren. |
 | `REQ-responsiveness` | Erste Reaktion < 0,2 s | open | Bindende NFR (Familie §6b): erste Reaktion < 0,2s (UI+Transport+Store-Query+Onto-/Rule-Check, ohne LLM). Draft-Apply sofort + nur betroffener Subgraph geprüft; volle Konsistenz am Commit. End-to-end über FCHAIN-apply-gate. |
 | `REQ-roundtrip-conformance` | Round-Trip-Conformance | open | decode(encode(g)) == g modulo Whitespace (rasentraktor-Fixture). (L3) |
-| `REQ-rule-enforcement` | Regel-Enforcement (V3_RULES) | open | evaluateRules() gegen V3_RULES; error-Severity blockt den Apply. (L2) |
+| `REQ-rule-enforcement` | Regel-Enforcement (V3_RULES) | done | evaluateRules() gegen V3_RULES; error-Severity blockt den Apply. (L2) |
 | `REQ-schema-version-migration` | Schema-Versions-Migration | open | FUNC-migrate-schema: bei Version-Bump re-validieren/migrieren, Violations berichten, Version mitführen. |
 | `REQ-self-contained-dist` | Self-contained Distribution | done | Zielprojekt darf NICHT von einer Kopie des aimprove-Quellbaums abhängen; Distribution self-contained (versionierte Deps). Blockiert auf D5 + CR-GC-100..103. |
 | `REQ-shared-views-no-fork` | Geteilte View-Berechnung, kein Regel-Fork | open | views.ts (testmatrix/FMEA/RTM/IRR/NFR/arch…) aus aimprove → @sigloch/graph-api-core; lokalen BQ-Regel-Fork (aimpro/src/contracts/se) retiren oder via Familie-Review nach contracts migrieren (Drift-Lock L1/L2). |
@@ -310,8 +310,7 @@ Elemente: 285 · Traces: 665
 | `TEST-docs-taxonomy` | Docs-Taxonomie-Inspektion | open | Views reproduzierbar & GENERATED-headered; records durable; kein docs/project mehr. (verify REQ-docs-taxonomy) |
 | `TEST-efficient-testing` | Impact-Testset-Test | open | graph_impact(geänderter Knoten) liefert genau die betroffenen TEST-Knoten; nicht betroffene sind nicht im Set. |
 | `TEST-graph-integrity` | Graph-Integritaets-Test | open | validate() flaggt doppelte UIDs + alles bisher Abgedeckte (Typen, Edge-Pairs, referenzielle Integritaet); Integritaets-Test delegiert an validate(). (CR-GC-200) |
-| `TEST-graph-is-ssot` | Graph-is-SSOT-Test | open | Der committete graphcode.graph.json ist deterministischer Export des Kuzu-Stores; Hand-Edit wird erkannt und verworfen, Views tragen GENERATED-Header. (REQ-graph-is-ssot) |
-| `TEST-harness-install` | Harness-Install Smoke (durchgeführt) | open | Install → Controller → /api/health 200 + Dashboard 200. 2026-06-13 (aimprove-init.sh). NICHT self-contained (AIMPRO_ROOT). |
+| `TEST-graph-is-ssot` | Graph-is-SSOT-Test | done | Der committete graphcode.graph.json ist deterministischer Export des Kuzu-Stores; Hand-Edit wird erkannt und verworfen, Views tragen GENERATED-Header. (REQ-graph-is-ssot) |
 | `TEST-hooks` | Hook-Extension-Points-Test | open | registerHook + runPreCommitHooks/runPostApplyHooks/scheduleNightlyBatch; pre-commit-Hook blockt eine Mutation; preCommitTimeout (default 5000ms) greift; Execution-Order deterministisch. (CR-GC-102) |
 | `TEST-impact-subgraph` | graph_impact Subgraph-Test | done | graph_impact liefert nur den betroffenen Subgraphen (kein Full-Dump). (FCHAIN-agent-query) |
 | `TEST-interface-escalation` | Interface-Eskalations-Test | open | Direkter FLOW-Mutationsversuch eines Realisierungs-Agenten wird abgelehnt; nur der Eskalationspfad (CR an Facilitating-Agent → graph_impact → Gate) ändert ein Interface. (FCHAIN-interface-escalation) |

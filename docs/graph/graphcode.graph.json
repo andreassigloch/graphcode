@@ -79,9 +79,7 @@
       "description": "Apply-Gate (mutate → V3_RULES → Disk-Kuzu) lauffähig statt Stub; löst D5/D1. Why: jede Edit durch EIN Gate (L1); der Vorgänger (Express+JSON) verletzt Kuzu/Disk/Rules-Constraints. (docs/cr/open/CR-GC-100)",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "attributes": {
-        "status": "open"
-      },
+      "attributes": {},
       "updated_at": "2026-06-17T00:00:00.000Z"
     },
     {
@@ -91,9 +89,7 @@
       "description": "MCP-stdio-Surface: Agent nutzt Graph statt grep (Ziel a), graph_impact/expand, Gate-Symmetrie (L2). Why: präziser Blast-Radius = Token-/LLM-Effizienz; ohne MCP kein Agent-Zugriff. (docs/cr/open/CR-GC-101)",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "attributes": {
-        "status": "open"
-      },
+      "attributes": {},
       "updated_at": "2026-06-17T00:00:00.000Z"
     },
     {
@@ -103,9 +99,7 @@
       "description": "pre-commit/post-apply/nightly Extension-Points; Live-Event + Trajectory-Emission. Why: Kopplung an Dashboard (Ziel b) + Learning-Engine; deterministisch + blockierbar. (docs/cr/open/CR-GC-102)",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "attributes": {
-        "status": "open"
-      },
+      "attributes": {},
       "updated_at": "2026-06-17T00:00:00.000Z"
     },
     {
@@ -115,9 +109,7 @@
       "description": "Deterministischer Format-E-Codec (encode/decode), commit-/merge-arm, Validierung gegen SE_DESCRIPTOR. Why: conflict-free git-Merge + Ontologie-Konformität; genau EIN Codec (L1). (docs/cr/open/CR-GC-103)",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "attributes": {
-        "status": "open"
-      },
+      "attributes": {},
       "updated_at": "2026-06-17T00:00:00.000Z"
     },
     {
@@ -127,9 +119,7 @@
       "description": "MOD-skills (.claude/skills/) + prompt-realisierte FUNC-render-views. Why: Skills/Prompts sind reale, zu managende Dateien = Modul; Allokation dorthin = prompt-realisiert (Skills = Funktionen). (docs/cr/open/CR-GC-104)",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "attributes": {
-        "status": "open"
-      }
+      "attributes": {}
     },
     {
       "id": "CR-GC-105",
@@ -138,9 +128,7 @@
       "description": "Kunden-Aktoren (Systems Engineer, Vibe Coder) + Realisierungs-Agent-Reframing; Interface-Eskalations-Prozess (FCHAIN + REQ + Facilitating-Agent); fehlende FCHAINs für efficient-testing + reduced-llm. Why: Mensch=Architektur/Nutzen, Agent=Realisierung; Interface-Drift kontrolliert; jeder UC ein Szenario. (docs/cr/open/CR-GC-105)",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "attributes": {
-        "status": "open"
-      }
+      "attributes": {}
     },
     {
       "id": "CR-GC-106",
@@ -149,9 +137,7 @@
       "description": "9 SCHEMA-Knoten (→ @sigloch/contracts Zod) + FLOW→SCHEMA für alle 28 Interfaces; REQ-interface-schema. Why: Datenvertrag = Code-Precondition (schema-before-code), schließt Readiness-Dimension schema=0. (docs/cr/open/CR-GC-106)",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "attributes": {
-        "status": "open"
-      }
+      "attributes": {}
     },
     {
       "id": "CR-GC-107",
@@ -160,9 +146,7 @@
       "description": "Readiness/Scorer nutzt @sigloch/contracts V3_RULES (via harness.evaluateRules) statt Vorgänger-BQ-Regeln (2.0.0). Why: heutige Readiness teils fremd-gemessen (155 BQ-Warnungen); nach Adoption echte Familie-Compliance. NEXT. (docs/cr/open/CR-GC-107)",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "attributes": {
-        "status": "open"
-      },
+      "attributes": {},
       "updated_at": "2026-06-17T00:00:00.000Z"
     },
     {
@@ -172,9 +156,7 @@
       "description": "TEST-Metadaten (level/tool/constraint) am Graph → test-concept.md als View rekonstruierbar (se-view-testconcept); REQ-benchmark-harness + REQ-quality-metric (nur definiert, nicht gebaut). Why: Test-Konzept ist eine View, kein Hand-Doc; Benchmark-Bau ist Realisierung. (docs/cr/open/CR-GC-108)",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "attributes": {
-        "status": "open"
-      }
+      "attributes": {}
     },
     {
       "id": "CR-GC-109",
@@ -245,7 +227,7 @@
       "type": "CR",
       "name": "Modell-Hygiene: V3_RULES-Violations schließen",
       "description": "61 R-01 (verify-Traces) + 14 RD-01 auflösen → Readiness ~0. (docs/cr/open/CR-GC-117)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-17T00:00:00.000Z"
     },
     {
@@ -253,7 +235,7 @@
       "type": "CR",
       "name": "Cleanup stale-at-all Knoten",
       "description": "Dual-Status-Bug (5 CRs), TEST-harness-install, REQ-dashboard-ontology-sync-Status. (docs/cr/open/CR-GC-118)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-17T00:00:00.000Z"
     },
     {
@@ -1341,7 +1323,7 @@
       "type": "REQ",
       "name": "Graph ist Single Point of Truth",
       "description": "Der materialisierte Graph + die Live-Harness sind SSOT. docs/*.md sind historischer Input (Bootstrap). Modelländerungen am Graph (mutate/import), dann Re-Export. (2026-06-14)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
         "non-functional"
@@ -1999,7 +1981,7 @@
       "type": "REQ",
       "name": "Regel-Enforcement (V3_RULES)",
       "description": "evaluateRules() gegen V3_RULES; error-Severity blockt den Apply. (L2)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
         "functional"
@@ -2442,23 +2424,9 @@
       "type": "TEST",
       "name": "Graph-is-SSOT-Test",
       "description": "Der committete graphcode.graph.json ist deterministischer Export des Kuzu-Stores; Hand-Edit wird erkannt und verworfen, Views tragen GENERATED-Header. (REQ-graph-is-ssot)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
       "method": "test"
-    },
-    {
-      "id": "TEST-harness-install",
-      "type": "TEST",
-      "name": "Harness-Install Smoke (durchgeführt)",
-      "description": "Install → Controller → /api/health 200 + Dashboard 200. 2026-06-13 (aimprove-init.sh). NICHT self-contained (AIMPRO_ROOT).",
-      "status": "open",
-      "created_at": "2026-06-16T00:00:00.000Z",
-      "method": "demonstration",
-      "attributes": {
-        "level": "smoke",
-        "tool": "bash",
-        "constraint": "health 200"
-      }
     },
     {
       "id": "TEST-hooks",
@@ -6782,13 +6750,6 @@
       "type": "verify",
       "weight": 1,
       "created_at": "2026-06-19T00:00:00.000Z"
-    },
-    {
-      "source": "TEST-harness-install",
-      "target": "REQ-repo-install",
-      "type": "verify",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
       "source": "TEST-hooks",
