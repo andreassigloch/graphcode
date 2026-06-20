@@ -5,6 +5,10 @@
  * Verbs:
  *   - `graphcode mcp`               boots the MCP-stdio server so an agent host
  *                                   (Claude Code, OpenCode, …) launches it from `.mcp.json`.
+ *   - `graphcode host`             boots the read-only HOST + SSE bridge (CR-GC-114,
+ *                                   MOD-host-bridge) — owns the single Kuzu store and
+ *                                   serves /health + /events (SSE) to a live viewer.
+ *                                   NO write route (the write path is MCP-stdio).
  *   - `graphcode init|update|remove` self-contained scaffold lifecycle (CR-GC-112,
  *                                   MOD-cli) — installs/refreshes/removes the harness
  *                                   artifacts in the target repo.
@@ -15,12 +19,14 @@
  * @author andreas@siglochconsulting
  */
 import { serveStdio } from './mcp-server.js';
+import { serveHost } from './host.js';
 import { scaffold, type CliCommand } from './scaffold.js';
 
 const USAGE = `graphcode — governed graph substrate (MCP-stdio)
 
 Usage:
   graphcode mcp     Start the MCP-stdio server (bind from .mcp.json)
+  graphcode host    Start the read-only HOST + SSE bridge (live viewer)
   graphcode init    Scaffold the harness into the current repo
   graphcode update  Refresh installed artifacts (preserves the store)
   graphcode remove  Remove all scaffolded artifacts (restlos)
@@ -32,6 +38,18 @@ async function main(): Promise<void> {
     case 'mcp':
       await serveStdio({ repoRoot: process.cwd() });
       return;
+    case 'host': {
+      // Bind the read-only bridge and keep the process alive; the host owns the
+      // single Kuzu store until the process is signalled to exit (CR-GC-114).
+      const portArg = Number(process.env.GRAPHCODE_HOST_PORT ?? 0);
+      const bridge = await serveHost({ repoRoot: process.cwd(), port: Number.isFinite(portArg) ? portArg : 0 });
+      const shutdown = (): void => {
+        void bridge.stop().finally(() => process.exit(0));
+      };
+      process.on('SIGINT', shutdown);
+      process.on('SIGTERM', shutdown);
+      return; // event loop kept alive by the listening server
+    }
     case 'init':
     case 'update':
     case 'remove': {

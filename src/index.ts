@@ -62,6 +62,12 @@ export type { ReadinessReport, ReadinessDimension } from './readiness.js';
 export { scaffold, CliCommandSchema, InstallResultSchema } from './scaffold.js';
 export type { CliCommand, InstallResult } from './scaffold.js';
 
+// Host + read-only SSE bridge (CR-GC-114, MOD-host-bridge) — owns the single
+// Kuzu store and serves /health + /events (SSE) to a live viewer. Read-only:
+// no mutating HTTP verb is reachable (the write path is MCP-stdio).
+export { HostBridge, serveHost } from './host.js';
+export type { HostBridgeOptions, HealthPayload } from './host.js';
+
 export type {
   HarnessConfig,
   MutateCommand,

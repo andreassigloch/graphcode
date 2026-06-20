@@ -203,7 +203,7 @@
       "type": "CR",
       "name": "Host + SSE/WS-Bridge",
       "description": "Single-Kuzu-Owner-Host + SSE-Route an onUpdateEvent (Live-Viewer-Feed). (docs/cr/open/CR-GC-114)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-17T00:00:00.000Z"
     },
     {
@@ -628,7 +628,7 @@
       "type": "FUNC",
       "name": "broadcastDiff(version)",
       "description": "Versionierter Diff-Broadcast mit Late-Joiner-Cache an die Viewer; jede Mutation erhoeht die Version. (CR-GC-114)",
-      "status": "draft",
+      "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z"
     },
     {
@@ -731,7 +731,7 @@
       "type": "FUNC",
       "name": "healthEndpoint()",
       "description": "Echter Funktions-Health: Store erreichbar, Gate funktional, Ontology/Rules/Contracts-Versionen, LLM/BYOK-Readiness. Quelle des Dashboard-FUNC-render-health. (CR-GC-114)",
-      "status": "draft",
+      "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z"
     },
     {
@@ -782,7 +782,7 @@
       "type": "FUNC",
       "name": "ownKuzu()",
       "description": "Der Host-Prozess ist der einzige Kuzu-Owner pro Repo; die Bridge haelt kein zweites DB-Handle. (CR-GC-114)",
-      "status": "draft",
+      "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z"
     },
     {
@@ -864,7 +864,7 @@
       "type": "FUNC",
       "name": "serveSSE()",
       "description": "Host-Prozess exponiert die SSE/WS-Route und leitet harness.onUpdateEvent read-only an die Live-Viewer weiter. Kein Express-REST im Core. (CR-GC-114)",
-      "status": "draft",
+      "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z"
     },
     {
@@ -989,7 +989,7 @@
       "type": "MOD",
       "name": "host-bridge — SSE/WS Bridge",
       "description": "Host-Prozess (Single Kuzu Owner) exponiert graph-api-express + SSE-Route, verdrahtet an harness.onUpdateEvent. Versioned Diff-Broadcast an den Live-Viewer. Kein Express-REST im Core — die Bridge ist Host-Sache. (SPEC §5)",
-      "status": "draft",
+      "status": "done",
       "created_at": "2026-06-17T00:00:00.000Z"
     },
     {
@@ -1472,7 +1472,7 @@
       "type": "REQ",
       "name": "Mutation emittiert Live-Update-Event",
       "description": "CONSTRAINT: Jede Graph-Mutation MUSS ein Live-Update-Event emittieren (SSE invalidate, domains graph/rules/readiness/suggestions). Beleg: aimprove import emittiert keins → Dashboard-Lag ~90s. Fix: alle Write-Pfade einheitlich.",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
         "non-functional"
@@ -1910,7 +1910,7 @@
       "type": "REQ",
       "name": "Read-only Bridge",
       "description": "Bridge read-only; keine Inbound-Mutations, Writes nur via MCP→mutate(). (RECOMMENDATIONS)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
         "negative"
@@ -1921,7 +1921,7 @@
       "type": "REQ",
       "name": "Health = echter Funktionscheck",
       "description": "Der Health-Endpoint prueft Store-Erreichbarkeit, Gate-Funktion, Ontology/Rules/Contracts-Versionen und LLM/BYOK-Readiness, nicht nur Prozess-Liveness. aimprove-spezifische Felder (Sessions/Patterns) sind kein Health-Signal und werden entfernt.",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
       "kinds": [
         "functional"
@@ -2030,7 +2030,7 @@
       "type": "REQ",
       "name": "Single Kuzu-Owner",
       "description": "Genau ein Host-Prozess besitzt .graphcode/kuzu (single-writer; kein 2. DB-Handle). (SPEC §4, L1)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
         "non-functional"
@@ -2130,7 +2130,7 @@
       "type": "REQ",
       "name": "Versioned Diff-Broadcast",
       "description": "Versioned Diff-Broadcast an Dashboard (read-only, Late-Joiner-Cache). (R9)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
         "functional"
@@ -2689,7 +2689,7 @@
       "type": "TEST",
       "name": "Readonly-Bridge-Test",
       "description": "Die Bridge akzeptiert keine Inbound-Mutation; ein Schreibversuch ueber die Bridge wird abgelehnt, Writes gehen nur durch MCP mutate(). (REQ-readonly-bridge)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
       "method": "test"
     },
@@ -2698,7 +2698,7 @@
       "type": "TEST",
       "name": "Health-Funktionscheck-Test",
       "description": "Der Health-Report enthaelt Store-, Gate-, Versions- und LLM-Readiness-Status und faellt bei Store- oder Gate-Ausfall auf nicht-ok, nicht nur bei Prozess-Stop. (REQ-real-health-check)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
       "method": "test"
     },
