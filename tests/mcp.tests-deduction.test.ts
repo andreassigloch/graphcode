@@ -18,11 +18,12 @@
  * Real disk Kuzu (temp dir, never :memory:). No mocks.
  */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { mkdtempSync, rmSync } from 'node:fs';
+import { mkdtempSync, rmSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from '@sigloch/graph-cypher-wasm';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
+import { TestRefSchema } from '@sigloch/contracts/se';
 import { GraphCodeHarness } from '../src/harness.js';
 import { bindToolsToHarness } from '../src/mcp-tools.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
@@ -105,14 +106,18 @@ describe('TEST-test-runnable-binding: graph_tests deduces a minimal selective te
     expect(res.tests.map((t: { id: string }) => t.id)).not.toContain('TEST-B');
   });
 
-  it('(c) wrap proof: graph_tests sees the SAME impacted set as graph_impact', async () => {
+  it('(c) wrap proof: the directed resolver prunes within graph_impact’s blast radius — no second traversal (CR-GC-204)', async () => {
     const registry = bindToolsToHarness(harness);
     const impact = await registry['graph_impact'].handler({ id: 'REQ-A', depth: 1 });
     const res = await registry['graph_tests'].handler({ changeSet: ['REQ-A'], depth: 1 });
 
-    // Same blast-radius node count → same harness.impact() path, no parallel traversal.
-    expect(res.coverage.impactedNodes).toBe(impact.nodeCount);
-    // Two TESTs depend on REQ-A (TEST-A + TEST-NOREF).
+    // For a REQ changeset the directed walk degenerates to verify-dependents: a
+    // PRECISION subset of graph_impact's incoming blast radius (MOD-A satisfies REQ-A
+    // but carries no test → correctly dropped). Both use the same getSubgraph primitive,
+    // so the directed node set is bounded by — never exceeds — the impact node count.
+    expect(res.coverage.impactedNodes).toBe(3); // REQ-A + its two verify-dependent TESTs
+    expect(res.coverage.impactedNodes).toBeLessThanOrEqual(impact.nodeCount);
+    // Two TESTs verify REQ-A (TEST-A + TEST-NOREF).
     expect(res.coverage.impactedTests).toBe(2);
   });
 
@@ -124,5 +129,94 @@ describe('TEST-test-runnable-binding: graph_tests deduces a minimal selective te
     expect(unresolvedIds).toContain('TEST-NOREF');
     // Resolved + unresolved together account for every impacted TEST.
     expect(res.tests.length + res.unresolved.length).toBe(res.coverage.impactedTests);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// TEST-graph-tests-operational (CR-GC-204) — graph_tests is OPERATIONAL on the
+// real committed SSOT graph: a CODE changeset resolves to the COMPLETE set of
+// affected test files via the directed code→REQ→TEST traversal (no false-green),
+// and every runnable TEST node carries a testRef pointing at a file that exists
+// (concept-only nodes are explicitly flagged + surface under `unresolved`).
+//
+// Seeds the real docs/graph/graphcode.graph.json into a disk Kuzu store through
+// the gate (same path as bootstrap/import), then exercises graph_tests against it.
+// ---------------------------------------------------------------------------
+describe('TEST-graph-tests-operational: graph_tests operational on the committed SSOT (CR-GC-204)', () => {
+  const REPO_ROOT = join(__dirname, '..');
+  let tmp: string;
+  let harness: GraphCodeHarness;
+  let registry: ReturnType<typeof bindToolsToHarness>;
+
+  beforeEach(async () => {
+    tmp = mkdtempSync(join(tmpdir(), 'graphcode-tests-operational-'));
+    const storage = new KuzuAdapter({ ontology: SE_DESCRIPTOR, path: join(tmp, 'kuzu') });
+    harness = new GraphCodeHarness(makeConfig(REPO_ROOT), storage);
+    await harness.initialize();
+    await harness.seedFromJson(); // load the real committed graph through the gate
+    registry = bindToolsToHarness(harness);
+  });
+
+  afterEach(async () => {
+    await harness.close();
+    rmSync(tmp, { recursive: true, force: true });
+  });
+
+  it('(e) a code changeset resolves to the COMPLETE affected test-file set via directed code→REQ→TEST', async () => {
+    // CR-GC-200 changed MOD-codec + MOD-harness; the new tests span THREE files
+    // (graph-integrity, codec.validation, harness.gate). Plain incoming-impact
+    // selected 0 TESTs (wrong direction); the directed resolver must reach all three.
+    const res = await registry['graph_tests'].handler({ changeSet: ['MOD-codec', 'MOD-harness'], depth: 3 });
+
+    expect(res.coverage.impactedTests).toBeGreaterThan(0);
+    expect(res.coverage.files).toContain('tests/graph-integrity.test.ts');
+    expect(res.coverage.files).toContain('tests/codec.validation.test.ts');
+    expect(res.coverage.files).toContain('tests/harness.gate.test.ts');
+    // Selective run command over exactly the affected files.
+    expect(res.command.startsWith('vitest run ')).toBe(true);
+    for (const f of res.coverage.files) expect(res.command).toContain(f);
+    // Unrelated subsystem (dashboard panels) is NOT pulled in.
+    expect(res.coverage.files).not.toContain('tests/panels.test.ts');
+  });
+
+  it('(f) testRef-coverage conformance: every TEST node is runnable-with-existing-file OR explicitly concept-only', async () => {
+    const testNodes = harness.getGraph().nodes.filter((n) => n.type === 'TEST');
+    expect(testNodes.length).toBeGreaterThan(40);
+
+    const offenders: string[] = [];
+    for (const n of testNodes) {
+      const raw = n.attributes?.testRef;
+      const isConcept = n.attributes?.concept === true;
+      if (raw === undefined || raw === null) {
+        // No silent gap: a TEST without a runnable binding MUST be flagged concept-only.
+        if (!isConcept) offenders.push(`${n.uid}: no testRef and not concept-only`);
+        continue;
+      }
+      const parsed = TestRefSchema.safeParse(raw);
+      if (!parsed.success) {
+        offenders.push(`${n.uid}: invalid testRef`);
+        continue;
+      }
+      // A runnable testRef must point at a file that actually exists (no false-green).
+      if (!existsSync(join(REPO_ROOT, parsed.data.file))) {
+        offenders.push(`${n.uid}: testRef.file missing on disk → ${parsed.data.file}`);
+      }
+    }
+    expect(offenders).toEqual([]);
+  });
+
+  it('(g) impacted concept-only TESTs surface under unresolved, never silently dropped', async () => {
+    // MOD-codec satisfies REQ-interface-schema, verified only by the concept-only
+    // TEST-interface-schema → it must appear as unresolved, not vanish.
+    const res = await registry['graph_tests'].handler({ changeSet: ['MOD-codec', 'MOD-harness'], depth: 3 });
+    const unresolvedIds = res.unresolved.map((u: { id: string }) => u.id);
+    expect(unresolvedIds).toContain('TEST-interface-schema');
+    // Every unresolved entry is a genuinely concept-only node in the committed graph.
+    const conceptIds = new Set(
+      harness.getGraph().nodes.filter((n) => n.attributes?.concept === true).map((n) => n.uid),
+    );
+    for (const id of unresolvedIds) expect(conceptIds.has(id)).toBe(true);
+    // Resolved + unresolved account for every impacted TEST.
+    expect(res.coverage.resolved + res.unresolved.length).toBe(res.coverage.impactedTests);
   });
 });

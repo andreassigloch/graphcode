@@ -488,11 +488,20 @@ export function bindToolsToHarness(
   };
 
   // ---------------------------------------------------------------------------
-  // TEST-DEDUCTION tool — bottom-up selective test set (CR-GC-134 / FUNC-deduce-tests).
-  // WRAPS graph_impact's harness.impact() (NO second blast-radius traversal): for each
-  // changed node, the impacted TEST nodes are the verify-dependents already returned by
-  // impact(). Each TEST is resolved via its `testRef` runnable binding to a concrete file;
-  // the emitted command runs ONLY those affected test files — never the full suite.
+  // TEST-DEDUCTION tool — selective test set (CR-GC-134 + CR-GC-204 / FUNC-deduce-tests
+  // + FUNC-resolve-tests-from-code). Resolves the impacted TEST nodes via the SINGLE
+  // harness.testImpact() traversal (one getSubgraph primitive, no parallel blast-radius):
+  // a CODE changeset (MOD/FUNC) is walked DIRECTIONALLY `node →satisfy/allocate→ REQ
+  // →verify→ TEST`, a REQ changeset degenerates to its verify-dependents. Each impacted
+  // TEST is resolved via its `testRef` runnable binding to a concrete file; the emitted
+  // command runs ONLY those affected test files — never the full suite. TESTs without a
+  // testRef (concept-only, marked `testRef:null`) surface under `unresolved`, never lost.
+  //
+  // git-diff → node: the changeSet is graph node uids, not paths. The agent maps a
+  // changed source file to its node by the repo's MOD/FUNC naming convention
+  // (`src/codec.ts` → `MOD-codec`, a function → its `FUNC-*`); `graph_elements({search})`
+  // looks the uid up when the convention is ambiguous. graph_tests stays path-agnostic so
+  // the same deduction works for any consumer regardless of its file layout.
   // ---------------------------------------------------------------------------
 
   const graph_tests: MCPTool<
@@ -506,21 +515,21 @@ export function bindToolsToHarness(
   > = {
     name: 'graph_tests',
     description:
-      'Deduce the minimal selective test set for a change (FUNC-deduce-tests / CR-GC-134). ' +
-      'Maps a changeSet (changed node uids) → impacted TEST nodes by WRAPPING graph_impact ' +
-      '(harness.impact() — the identical blast-radius path, no parallel traversal), resolves each ' +
-      'impacted TEST via its `testRef` runnable binding {file, case?, tool, level?}, and emits the ' +
-      'minimal selective `vitest run <only-affected-files>` command + coverage. Tests without a ' +
-      'resolvable testRef are reported under `unresolved` (never silently dropped).',
+      'Deduce the minimal selective test set for a change (FUNC-deduce-tests / CR-GC-134 + ' +
+      'FUNC-resolve-tests-from-code / CR-GC-204). Maps a changeSet (changed node uids — a CODE ' +
+      'node MOD/FUNC or a REQ) → impacted TEST nodes via the SINGLE harness.testImpact() traversal: ' +
+      'a code node is walked DIRECTIONALLY `node →satisfy/allocate→ REQ →verify→ TEST` (not plain ' +
+      'incoming-impact, which never reaches a code node’s tests), a REQ degenerates to its verify- ' +
+      'dependents. Resolves each impacted TEST via its `testRef` binding {file, case?, tool, level?} ' +
+      'and emits the minimal `vitest run <only-affected-files>` command + coverage. TESTs without a ' +
+      'resolvable testRef (concept-only) are reported under `unresolved` (never silently dropped).',
     inputSchema: GraphTestsInputSchema,
     async handler(input) {
-      // Union the blast-radius across every changed node, computed via the SAME
-      // harness.impact() that graph_impact calls — one impact path, no fork.
+      // Directed code→REQ→TEST resolution via the SINGLE getSubgraph primitive
+      // (harness.testImpact — one traversal path, no second blast-radius).
+      const directed = await harness.testImpact(input.changeSet, input.depth);
       const impacted = new Map<string, GraphNode>();
-      for (const rootId of input.changeSet) {
-        const subgraph = await harness.impact(rootId, input.depth);
-        for (const node of subgraph.nodes) impacted.set(node.uid, node);
-      }
+      for (const node of directed.nodes) impacted.set(node.uid, node);
 
       const impactedTests = [...impacted.values()].filter((n) => n.type === 'TEST');
 
@@ -531,7 +540,8 @@ export function bindToolsToHarness(
       for (const node of impactedTests) {
         const raw = node.attributes?.testRef;
         if (raw === undefined || raw === null) {
-          unresolved.push({ id: node.uid, name: node.name, reason: 'no testRef attribute' });
+          const reason = node.attributes?.concept === true ? 'concept-only (no run artifact yet)' : 'no testRef attribute';
+          unresolved.push({ id: node.uid, name: node.name, reason });
           continue;
         }
         const parsed = TestRefSchema.safeParse(raw);

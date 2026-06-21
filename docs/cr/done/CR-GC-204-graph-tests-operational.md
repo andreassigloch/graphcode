@@ -1,6 +1,11 @@
 # CR-GC-204: graph_tests operational — testRef backfill + code→REQ→TEST traversal
 
-**Status:** Open · **Milestone:** `MS-5-efficiency` · **Datum:** 2026-06-21 · **Max Files:** 5
+**Status:** Done · **Milestone:** `MS-5-efficiency` · **Datum:** 2026-06-21 · **Max Files:** 5
+**Abschluss:** 2026-06-21 — `harness.testImpact()` (gerichteter code→REQ→TEST-BFS über das eine
+`getSubgraph`-Primitiv) + `graph_tests` Code-Changeset-Modus; testRef-Backfill über alle 35 lauffähigen
+TEST-Knoten (14 concept-only explizit `testRef:null`+`concept:true`), neuer `TEST-codec-validation`-Knoten;
+`changeSet=[MOD-codec,MOD-harness]` löst `graph-integrity`+`codec.validation`+`harness.gate` auf (kein
+false-green), `TEST-graph-tests-operational` verriegelt Coverage + Deduktion. **147 Tests grün, Build grün.**
 **Graph (SSOT):** Spec lebt im Graphen — dieser CR realisiert: `MS-5-efficiency`, `REQ-graph-tests-operational`, `FUNC-resolve-tests-from-code`, `TEST-graph-tests-operational`; touches `MOD-mcp-tools`. Siehe `docs/graph/graphcode.graph.json`. Diese Datei ist nur Pointer, nicht autoritativ.
 
 ## Problem (Why)

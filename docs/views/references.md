@@ -565,6 +565,7 @@
 | `TEST-code-quality` | verify | `REQ-frame-binding` |
 | `TEST-code-quality` | verify | `REQ-quality-metric` |
 | `TEST-code-quality` | verify | `REQ-structure-driven` |
+| `TEST-codec-validation` | verify | `REQ-graph-integrity` |
 | `TEST-dashboard-ontology-sync` | verify | `REQ-dashboard-ontology-sync` |
 | `TEST-dashboard-ontology-sync` | verify | `REQ-import-se-ontology` |
 | `TEST-dashboard-readonly` | verify | `REQ-dashboard-readonly` |
