@@ -1,6 +1,8 @@
 # CR-GC-202: graph_export refuse-to-clobber guard
 
-**Status:** Open · **Milestone:** `MS-3-mvp-readiness` (safety net) · **Datum:** 2026-06-18 · **Max Files:** 3
+**Status:** Done (2026-06-21) · **Milestone:** `MS-3-mvp-readiness` (safety net) · **Datum:** 2026-06-18 · **Max Files:** 3
+
+> **Close-Befund (2026-06-21):** Bereits funktional implementiert + getestet — der Empty-Guard + Net-Deletion-Guard in MCP `graph_export` (`src/mcp-tools.ts`) **feuerte mehrfach live in dieser Session** (z.B. „graph_export refused: would delete TEST-harness-install … force:true" bei intentionalen Deletes). `tests/mcp.export-guard.test.ts` (3 Cases: empty→refuse, would-drop→refuse+untouched, force→overwrite) grün; `tests/mcp.export.test.ts` (fresh export) grün. Nur Modell-Status nachgezogen: `REQ-export-no-clobber`/`TEST-mcp-export-guard` → done (+ testRef). Kein Code-Change.
 **Graph (SSOT):** realizes `+REQ-export-no-clobber` (constraint, refines `REQ-graph-is-ssot`) + `+TEST-mcp-export-guard`; touches `MOD-mcp-tools`. *(graph nodes queued for the graph-owner chat — single-writer discipline; do not add from two chats.)*
 
 ## Problem (Why)

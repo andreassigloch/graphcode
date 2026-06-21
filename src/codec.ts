@@ -343,6 +343,16 @@ export class GraphCodeCodec {
     const knownNodeTypes = new Set(Object.keys(this.ontology.nodeTypes));
     const nodeTypeMap = new Map(graph.nodes.map((n) => [n.uid, n.type]));
 
+    // Duplicate-UID detection (CR-GC-200): the nodeTypeMap above silently dedupes,
+    // so two nodes sharing a uid (e.g. two CR-GC-119s from parallel chats) collapse
+    // to one and the collision goes unseen. Flag it — this is the one integrity
+    // invariant the validator missed.
+    const uidCounts = new Map<string, number>();
+    for (const node of graph.nodes) uidCounts.set(node.uid, (uidCounts.get(node.uid) ?? 0) + 1);
+    for (const [uid, count] of uidCounts) {
+      if (count > 1) errors.push(`Duplicate node uid "${uid}" (${count} nodes share it)`);
+    }
+
     for (const node of graph.nodes) {
       if (!knownNodeTypes.has(node.type)) {
         errors.push(`Unknown node type "${node.type}" for node "${node.uid}"`);

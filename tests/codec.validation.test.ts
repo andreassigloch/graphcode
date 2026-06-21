@@ -88,6 +88,16 @@ describe('TEST-codec-validation: validate()', () => {
     expect(result.valid).toBe(true);
     expect(result.errors).toHaveLength(0);
   });
+
+  it('(c2) duplicate node uid → valid:false (CR-GC-200 — the nodeTypeMap silently dedupes)', () => {
+    const g: Graph = {
+      nodes: [validReqNode, { ...validReqNode, name: 'Collision REQ' }], // two nodes share REQ-001
+      edges: [],
+    };
+    const result = codec.validate(g);
+    expect(result.valid).toBe(false);
+    expect(result.errors.some((e) => e.includes('Duplicate node uid') && e.includes('REQ-001'))).toBe(true);
+  });
 });
 
 describe('TEST-codec-validation: encode() rejects invalid graphs', () => {

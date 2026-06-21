@@ -38,6 +38,7 @@ import {
   type RuleViolation,
 } from '@sigloch/contracts/harness';
 import { HookSystem } from './hooks.js';
+import { GraphCodeCodec } from './codec.js';
 
 /** Shape of the materialized OntologyGraph in docs/graph/*.graph.json. */
 interface OntologyJson {
@@ -50,6 +51,8 @@ export class GraphCodeHarness {
   private readonly storage: StorageAdapter;
   private readonly hooks: HookSystem;
   private readonly engine: DefaultRuleEngine;
+  /** The canonical structural validator (CR-GC-200) — one validation path. */
+  private readonly codec: GraphCodeCodec;
   /** In-memory working copy; the disk store is the SSOT it mirrors. */
   private graph: Graph = { nodes: [], edges: [] };
 
@@ -60,6 +63,7 @@ export class GraphCodeHarness {
     // L2: rules come from the contracts-derived SE_DESCRIPTOR — no local parser.
     this.engine = new DefaultRuleEngine(SE_DESCRIPTOR.version);
     this.engine.register(SE_DESCRIPTOR.rules ?? []);
+    this.codec = new GraphCodeCodec();
   }
 
   /** Expose the hook system so consumers (CR-102) can register hooks. */
@@ -182,14 +186,27 @@ export class GraphCodeHarness {
     const newViolations = this.runRules().filter((v) => !baselineKeys.has(violationKey(v)));
     const hasNewError = newViolations.some((v) => v.severity === 'error');
 
-    if (hasNewError) {
+    // Step 3b — structural validity at the gate (CR-GC-200 step 5). The codec is
+    // the ONE validator (node/edge types, TRACE_PATTERNS pairs, referential
+    // integrity, duplicate uids); run it here, delta-semantics, so a structurally
+    // invalid mutation (e.g. an unsupported edge pair) is rejected ATOMICALLY
+    // before persist — instead of slipping past the gate and throwing at Kuzu DDL
+    // mid-transaction (partial persist, in-memory != store).
+    const baselineStructural = new Set(this.codec.validate(snapshot).errors);
+    const newStructural = this.codec.validate(this.graph).errors.filter((e) => !baselineStructural.has(e));
+
+    if (hasNewError || newStructural.length > 0) {
       // Step 4 (BLOCK) — roll back the in-memory graph, persist nothing.
       this.graph = snapshot;
+      const violations: RuleViolation[] = [
+        ...newViolations,
+        ...newStructural.map((message) => ({ ruleId: 'STRUCT', severity: 'error' as const, message })),
+      ];
       const result: MutateResult = {
         success: false,
         appliedCommands: commands.length,
         mutations: 0,
-        violations: newViolations,
+        violations,
         confidence: 0,
         tier: 'block',
       };

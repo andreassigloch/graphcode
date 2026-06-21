@@ -1,6 +1,8 @@
 # CR-GC-200: Single graph-validator — uniqueness + de-dup the validation logic
 
-**Status:** Open · **Milestone:** `MS-3-mvp-readiness` (safety net) · **Datum:** 2026-06-18 · **Max Files:** 5
+**Status:** Done (2026-06-21) · **Milestone:** `MS-3-mvp-readiness` (safety net) · **Datum:** 2026-06-18 · **Max Files:** 5
+
+> **Close-Befund (2026-06-21):** (1) **Duplikat-UID-Erkennung** in `GraphCodeCodec.validate()` — die `nodeTypeMap` dedupte still; jetzt zählt `validate()` UIDs + flaggt Kollisionen (`tests/codec.validation.test.ts` (c2)). (5) **Gate-Enforcement:** `mutate()` ruft jetzt `codec.validate()` vor `persist()` mit Delta-Semantik (Step 3b) — strukturell ungültige Mutationen (TRACE_PATTERNS-Pair, Duplikat-UID) werden **atomar am Gate** abgelehnt (`success:false`, in-memory rolled back, Store unverändert), statt mitten im Kuzu-DDL zu werfen (Partial-Persist). **Genau die Fehlerklasse, die in dieser Session den Drift-Recovery erzwang** (`CR -relation-> TEST` brach mid-persist) — jetzt strukturell unmöglich. `validPairs` nur noch im Codec (kein hand-rolled copy; grep clean). Neue Tests: `harness.gate.test.ts` (d) atomic structural reject. `REQ-graph-integrity`/`TEST-graph-integrity` → done. 144/144 grün; **SVR 0.8→1.0**.
 **Graph (SSOT):** realizes `+REQ-graph-integrity` (constraint, refines `REQ-graph-is-ssot`) + `+TEST-graph-integrity`; touches `MOD-codec`. *(graph nodes queued for the graph-owner chat — single-writer discipline; do not add from two chats.)*
 
 ## Problem (Why)

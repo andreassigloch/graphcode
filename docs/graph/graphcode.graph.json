@@ -316,7 +316,7 @@
       "type": "CR",
       "name": "Single graph-validator - uniqueness + de-dup",
       "description": "Ein Validierungs-Pfad: validate() erkennt doppelte UIDs; kein hand-gerollter validPairs-Klon in src/scripts/tests. (docs/cr/open/CR-GC-200)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-18T00:00:00.000Z"
     },
     {
@@ -332,7 +332,7 @@
       "type": "CR",
       "name": "graph_export refuse-to-clobber guard",
       "description": "Empty- + Net-Deletion-Guard im MCP graph_export, force:true Opt-in; spiegelt die Guards von scripts/export-graph.mjs, macht Drift laut statt still. (docs/cr/open/CR-GC-202)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-18T00:00:00.000Z"
     },
     {
@@ -1253,7 +1253,7 @@
       "type": "REQ",
       "name": "Export refuse-to-clobber",
       "description": "graph_export verweigert, wenn es committete Elemente/Traces droppen wuerde: Empty-Guard (0 Elemente) + Net-Deletion-Guard (Diff gegen committetes JSON); force:true als explizites Opt-in fuer beabsichtigte Loeschungen. Sicherheitsnetz gegen stale/parallel-writer Clobber. (CR-GC-202)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-18T00:00:00.000Z",
       "kinds": [
         "non-functional"
@@ -1319,7 +1319,7 @@
       "type": "REQ",
       "name": "Graph-Integritaet: ein Validator",
       "description": "Ein Validierungs-Pfad an EINEM Punkt (Gate): GraphCodeCodec.validate() erkennt zusaetzlich doppelte UIDs (nodeTypeMap dedupt heute still) + referenzielle Integritaet + valide Edge-Paare; kein inline validPairs-Klon ausserhalb des Codecs (keine parallelen Pfade). Das Apply-Gate ruft validate() VOR persist() auf (gleicher contracts-SSOT, Delta-Semantik), sodass kein strukturell-ungueltiges Edge den Store erreicht und Kuzu-DDL + Export-Check zu Backstops werden. (CR-GC-200)",
-      "status": "open",
+      "status": "done",
       "created_at": "2026-06-18T00:00:00.000Z",
       "kinds": [
         "non-functional"
@@ -2446,8 +2446,13 @@
       "type": "TEST",
       "name": "Graph-Integritaets-Test",
       "description": "validate() flaggt doppelte UIDs + alles bisher Abgedeckte (Typen, Edge-Pairs, referenzielle Integritaet); Integritaets-Test delegiert an validate(). (CR-GC-200)",
-      "status": "open",
-      "created_at": "2026-06-18T00:00:00.000Z"
+      "status": "done",
+      "created_at": "2026-06-18T00:00:00.000Z",
+      "testRef": {
+        "file": "tests/graph-integrity.test.ts",
+        "tool": "vitest",
+        "level": "integration"
+      }
     },
     {
       "id": "TEST-graph-is-ssot",
@@ -2569,8 +2574,13 @@
       "type": "TEST",
       "name": "MCP-Export-Guard-Test",
       "description": "MCP graph_export-Guard, drei Faelle: (a) leerer Graph wird verweigert, (b) Drop eines committeten Elements wird verweigert und die Datei bleibt unangetastet, (c) force:true ueberschreibt; Fresh-File-Export bleibt gruen. (CR-GC-202)",
-      "status": "open",
-      "created_at": "2026-06-18T00:00:00.000Z"
+      "status": "done",
+      "created_at": "2026-06-18T00:00:00.000Z",
+      "testRef": {
+        "file": "tests/mcp.export-guard.test.ts",
+        "tool": "vitest",
+        "level": "integration"
+      }
     },
     {
       "id": "TEST-mcp-readiness",

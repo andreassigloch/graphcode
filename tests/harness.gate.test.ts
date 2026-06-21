@@ -109,4 +109,34 @@ describe('TEST-mutate-gate: FCHAIN-apply-gate', () => {
     expect(violations).toBeInstanceOf(Array);
     expect(harness.getGraph().nodes.length).toBe(before);
   });
+
+  it('(d) BLOCKS a structurally-invalid mutation at the gate, atomically — no partial persist (CR-GC-200)', async () => {
+    // A clean member first (REQ verified by TEST).
+    const ok = await harness.mutate([
+      { op: 'add-node', node: { uid: 'REQ-struct', type: 'REQ', name: 'r', description: '', attributes: {} } },
+      { op: 'add-node', node: { uid: 'TEST-struct', type: 'TEST', name: 't', description: '', attributes: {} } },
+      { op: 'add-edge', edge: { sourceId: 'TEST-struct', targetId: 'REQ-struct', edgeType: 'verify', attributes: {} } },
+    ]);
+    expect(ok.success).toBe(true);
+
+    // verify runs TEST->REQ, so REQ->verify->TEST is an unsupported TRACE_PATTERNS
+    // pair: rejected AT THE GATE (codec.validate), not at Kuzu persist mid-transaction.
+    const bad = await harness.mutate([
+      { op: 'add-edge', edge: { sourceId: 'REQ-struct', targetId: 'TEST-struct', edgeType: 'verify', attributes: {} } },
+    ]);
+    expect(bad.success).toBe(false);
+    expect(bad.tier).toBe('block');
+    expect(bad.mutations).toBe(0);
+    expect(bad.violations.some((v) => v.ruleId === 'STRUCT' && /Invalid edge pair/.test(v.message))).toBe(true);
+
+    // Atomic: a fresh reload from disk has the clean edge only, never the invalid one.
+    await harness.close();
+    const storage2 = new KuzuAdapter({ ontology: SE_DESCRIPTOR, path: kuzuPath });
+    const harness2 = new GraphCodeHarness(makeConfig(tmp), storage2);
+    await harness2.initialize();
+    const edges = harness2.getGraph().edges;
+    expect(edges.some((e) => e.sourceId === 'TEST-struct' && e.targetId === 'REQ-struct' && e.edgeType === 'verify')).toBe(true);
+    expect(edges.some((e) => e.sourceId === 'REQ-struct' && e.targetId === 'TEST-struct')).toBe(false);
+    harness = harness2;
+  });
 });
