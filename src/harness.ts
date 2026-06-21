@@ -38,7 +38,6 @@ import {
   type RuleViolation,
 } from '@sigloch/contracts/harness';
 import { HookSystem } from './hooks.js';
-import { GraphCodeCodec } from './codec.js';
 
 /** Shape of the materialized OntologyGraph in docs/graph/*.graph.json. */
 interface OntologyJson {
@@ -51,8 +50,6 @@ export class GraphCodeHarness {
   private readonly storage: StorageAdapter;
   private readonly hooks: HookSystem;
   private readonly engine: DefaultRuleEngine;
-  /** The canonical structural validator (CR-GC-200) — one validation path. */
-  private readonly codec: GraphCodeCodec;
   /** In-memory working copy; the disk store is the SSOT it mirrors. */
   private graph: Graph = { nodes: [], edges: [] };
 
@@ -63,7 +60,6 @@ export class GraphCodeHarness {
     // L2: rules come from the contracts-derived SE_DESCRIPTOR — no local parser.
     this.engine = new DefaultRuleEngine(SE_DESCRIPTOR.version);
     this.engine.register(SE_DESCRIPTOR.rules ?? []);
-    this.codec = new GraphCodeCodec();
   }
 
   /** Expose the hook system so consumers (CR-102) can register hooks. */
@@ -262,21 +258,24 @@ export class GraphCodeHarness {
     const newViolations = this.runRules().filter((v) => !baselineKeys.has(violationKey(v)));
     const hasNewError = newViolations.some((v) => v.severity === 'error');
 
-    // Step 3b — structural validity at the gate (CR-GC-200 step 5). The codec is
-    // the ONE validator (node/edge types, TRACE_PATTERNS pairs, referential
-    // integrity, duplicate uids); run it here, delta-semantics, so a structurally
-    // invalid mutation (e.g. an unsupported edge pair) is rejected ATOMICALLY
-    // before persist — instead of slipping past the gate and throwing at Kuzu DDL
-    // mid-transaction (partial persist, in-memory != store).
-    const baselineStructural = new Set(this.codec.validate(snapshot).errors);
-    const newStructural = this.codec.validate(this.graph).errors.filter((e) => !baselineStructural.has(e));
+    // Step 3b — pre-persist type guard (CR-GC-205 Item 1). Trace-pair legality is
+    // now R-18 and referential integrity is R-08 — both arrive via runRules() above
+    // (one rule base, one enforcement), so the gate NO LONGER calls codec.validate()
+    // for structural validity (the CR-GC-200 duplication is retired; codec.validate
+    // stays only as the encode/import backstop for duplicate uids, which cannot arise
+    // here since applyCommands upserts by uid). The single structural class no rule
+    // covers is an UNKNOWN node/edge type, which would abort the Kuzu DDL mid-persist
+    // (partial persist, in-memory != store). Guard it here, delta-semantics, so an
+    // unknown type is rejected ATOMICALLY before persist.
+    const baselineTypeErrors = new Set(this.unknownTypeErrors(snapshot));
+    const newTypeErrors = this.unknownTypeErrors(this.graph).filter((e) => !baselineTypeErrors.has(e));
 
-    if (hasNewError || newStructural.length > 0) {
+    if (hasNewError || newTypeErrors.length > 0) {
       // Step 4 (BLOCK) — roll back the in-memory graph, persist nothing.
       this.graph = snapshot;
       const violations: RuleViolation[] = [
         ...newViolations,
-        ...newStructural.map((message) => ({ ruleId: 'STRUCT', severity: 'error' as const, message })),
+        ...newTypeErrors.map((message) => ({ ruleId: 'STRUCT', severity: 'error' as const, message })),
       ];
       const result: MutateResult = {
         success: false,
@@ -398,6 +397,27 @@ export class GraphCodeHarness {
   }
 
   // -- internals ------------------------------------------------------------
+
+  /**
+   * Pre-persist Kuzu-DDL guard (CR-GC-205 Item 1): node/edge types that the SE
+   * ontology does not know would abort the persist transaction mid-DDL. Pair-
+   * legality (R-18) and referential integrity (R-08) are engine rules; this is the
+   * one structural class no rule covers, so the gate checks it before persist.
+   */
+  private unknownTypeErrors(graph: Graph): string[] {
+    const errors: string[] = [];
+    const nodeTypes = new Set(Object.keys(SE_DESCRIPTOR.nodeTypes));
+    const edgeTypes = new Set(Object.keys(SE_DESCRIPTOR.edgeTypes));
+    for (const n of graph.nodes) {
+      if (!nodeTypes.has(n.type)) errors.push(`Unknown node type "${n.type}" for node "${n.uid}"`);
+    }
+    for (const e of graph.edges) {
+      if (!edgeTypes.has(e.edgeType)) {
+        errors.push(`Unknown edge type "${e.edgeType}" for edge "${e.sourceId}" → "${e.targetId}"`);
+      }
+    }
+    return errors;
+  }
 
   private runRules(): RuleViolation[] {
     return this.engine.evaluate(this.graph).map((v: CoreRuleViolation) => ({

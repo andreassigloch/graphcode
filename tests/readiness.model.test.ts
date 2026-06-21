@@ -103,9 +103,9 @@ describe('TEST-readiness-model (C): computeReadiness derives gates from rules + 
     // CDR has no firing rule → clean.
     expect(gate('CDR').passed).toBe(true);
     expect(gate('CDR').blocking).toEqual([]);
-    // TRR owns R-08 (error) → blocked, score 1/2.
+    // TRR owns R-05 + R-08 + R-19 (3 rules); R-08 fires (error) → blocked, score 2/3.
     expect(gate('TRR').passed).toBe(false);
-    expect(gate('TRR').score).toBe(0.5);
+    expect(gate('TRR').score).toBeCloseTo(2 / 3);
   });
 
   it('impl gates reflect milestone CR status (open CR blocks) + missing MS', () => {

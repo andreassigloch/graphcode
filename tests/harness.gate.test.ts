@@ -120,14 +120,16 @@ describe('TEST-mutate-gate: FCHAIN-apply-gate', () => {
     expect(ok.success).toBe(true);
 
     // verify runs TEST->REQ, so REQ->verify->TEST is an unsupported TRACE_PATTERNS
-    // pair: rejected AT THE GATE (codec.validate), not at Kuzu persist mid-transaction.
+    // pair: rejected AT THE GATE via the ENGINE rule R-18 (CR-GC-205 Item 1 — pair
+    // legality is no longer a separate codec.validate() call), not at Kuzu persist
+    // mid-transaction. Atomic delta-block, no partial persist.
     const bad = await harness.mutate([
       { op: 'add-edge', edge: { sourceId: 'REQ-struct', targetId: 'TEST-struct', edgeType: 'verify', attributes: {} } },
     ]);
     expect(bad.success).toBe(false);
     expect(bad.tier).toBe('block');
     expect(bad.mutations).toBe(0);
-    expect(bad.violations.some((v) => v.ruleId === 'STRUCT' && /Invalid edge pair/.test(v.message))).toBe(true);
+    expect(bad.violations.some((v) => v.ruleId === 'R-18' && /not a valid verify pattern/.test(v.message))).toBe(true);
 
     // Atomic: a fresh reload from disk has the clean edge only, never the invalid one.
     await harness.close();

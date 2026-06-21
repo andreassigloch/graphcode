@@ -84,10 +84,12 @@ export const PHASE_GATE_RULES: Record<string, readonly string[]> = {
   SRR: ['R-17', 'R-14', 'R-01'],
   // Functional architecture: chains, actors, flows; functions trace to REQs.
   PDR: ['R-15', 'R-16', 'R-10', 'R-02'],
-  // Detailed design: ASIL isolation, module size, no cycles, sound decomposition.
-  CDR: ['R-03', 'R-04', 'R-12', 'RD-01', 'RD-02', 'RD-03'],
-  // Verification wired (TEST→REQ) + referential trace consistency.
-  TRR: ['R-05', 'R-08'],
+  // Detailed design: ASIL isolation, module size, no cycles, sound decomposition,
+  // valid trace patterns (R-18: every trace's element-type pair is legal).
+  CDR: ['R-03', 'R-04', 'R-12', 'R-18', 'RD-01', 'RD-02', 'RD-03'],
+  // Verification wired (TEST→REQ) + referential trace consistency + runnable test
+  // bindings (R-19: every non-concept TEST carries a testRef).
+  TRR: ['R-05', 'R-08', 'R-19'],
 };
 
 /** Human labels for the phase gates. */

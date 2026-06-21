@@ -1,7 +1,13 @@
 # CR-GC-205: Enforce-don't-document — R-18 structural rule + executable guardrails + CLAUDE.md slim-down
 
-**Status:** Draft · **Milestone:** `MS-5-efficiency` · **Datum:** 2026-06-21 · **Max Files:** 5 (split per item)
-**Graph (SSOT):** **Knoten queued für den graph-owner chat** (single-writer — NICHT aus zwei Chats schreiben). Zu realisieren: `R-18` als V3_RULE-Knoten-Wirkung (kein eigener Graph-Knoten — Regeln leben in `@sigloch/contracts/se`), `REQ-structural-rule-shared`, `FUNC-pre-commit-guards`, `REQ-claude-md-enforced`, je `+TEST`; touches `MOD-harness`, `MOD-codec`, `MOD-mcp-tools`. Diese Datei ist Draft-Pointer.
+**Status:** In Progress — **Items 1 + 4 done** (2026-06-21), Items 2 + 3 open · **Milestone:** `MS-5-efficiency` · **Datum:** 2026-06-21 · **Max Files:** 5 (split per item)
+**Graph (SSOT):** Items 1 + 4 sind im Graphen realisiert (über die Live-Gate, single-writer): `REQ-structural-rule-shared` + `TEST-structural-rule-shared` (→ `tests/harness.gate.test.ts`), `REQ-testref-materialized` + `TEST-testref-materialize` (→ `tests/export.testref-materialize.test.ts`), `CR-GC-205` Knoten, je verify/satisfy/compose-Trace, unter `MS-5-efficiency`. `R-18`/`R-19` sind V3_RULE-Wirkungen (kein eigener Graph-Knoten — Regeln leben in `@sigloch/contracts/se`). Items 2/3 (`FUNC-pre-commit-guards`, `REQ-claude-md-enforced` je +TEST) noch queued.
+
+## Realisiert 2026-06-21 (Items 1 + 4)
+
+- **Item 1 — R-18 `valid-trace-pattern` (error) in `@sigloch/contracts/se`** (`rules.ts` + `RULES_VERSION 2.1.0→2.2.0`): Trace-Pair-Legalität ist jetzt eine Engine-Regel (gegen `TRACE_PATTERNS`/`isValidTrace`). graphcodes Gate (`harness.mutate` Step 3b) **ruft `codec.validate()` nicht mehr** — Pair-Legalität = R-18 (Engine), referenzielle Integrität = R-08; nur ein **slim Unknown-Type-Guard** bleibt am Gate (Kuzu-DDL-Schutz). `codec.validate()`-Feld aus `harness` entfernt (kein Parallelpfad). **R-18 fand reale Drift:** 3 `MS -relation-> MS`-Kanten ohne `depends-on`-Label (auch unsichtbar für MS-02) → gelabelt.
+- **Item 4 — R-19 `runnable TEST binding` (warning) + `concept`-Marker + Export-Materialisierung**: `R-19` (warning, wie R-05) macht einen ungebundenen lauffähigen TEST in `rules_evaluate`/`readiness` sichtbar; `concept:true` (neu in `ELEMENT_ATTRIBUTES.TEST`, `ONTOLOGY_VERSION 3.4.0→3.5.0`) nimmt Concept-only-TESTs aus. **`graph_export` materialisiert** einen `it.todo`-Stub für jede gebundene-aber-fehlende testRef-Datei (`exporter.renderTestStubs`) → graph_tests löst nie auf einen Phantom-Pfad auf (kein false-green), existierende Dateien werden nie überschrieben. Readiness-Partition: R-18→CDR, R-19→TRR.
+- **Tests:** `harness.gate.test.ts` (d) prüft R-18-Gate-Block; `export.testref-materialize.test.ts` (neu, 3 Fälle) prüft Materialisierung; `readiness.model`/`bootstrap`/`readiness.ontology-sync` an die 2 neuen Regeln angepasst. **150 Tests grün, contracts + graphcode `tsc` grün.**
 
 ## Problem (Why) — eine Wurzel, mehrere MS-4-Vorfälle
 
@@ -14,7 +20,7 @@ Mehrere Vorfälle der MS-4-Implementierung gehen auf **dasselbe Muster** zurück
 
 **These:** Die zuverlässigste Regel ist eine erzwungene, keine dokumentierte. Invarianten gehören in die **eine Engine / das Gate / einen Hook** — und die Prosa, die sie beschrieb, wird gelöscht.
 
-## Decision — 3 Sub-Items (je eigener ≤5-Datei-Sub-CR)
+## Decision — 4 Sub-Items (je eigener ≤5-Datei-Sub-CR)
 
 ### Item 1 — `R-18: valid-trace-pattern` als first-class Regel in `@sigloch/contracts/se` (höchste Hebelwirkung; cross-repo, Familie-Review L1/L2)
 Trace-Pair-Validität von graphcodes lokalem `codec.validate()` (+ Kuzu-DDL) in die **V3_RULES** heben: neue Regel `R-18` (error), evaluiert gegen `TRACE_PATTERNS` (genau die `validPairs`, die `SE_DESCRIPTOR.edgeTypes[...].validPairs` schon hält). Dann erzwingt der *eine* `engine.evaluate()`, den das Gate ohnehin läuft, **semantisch UND strukturell** — und **jeder** Konsument, der die Engine läuft (nicht nur graphcodes Gate), bekommt es gratis.
@@ -28,13 +34,20 @@ Trace-Pair-Validität von graphcodes lokalem `codec.validate()` (+ Kuzu-DDL) in 
 - **Shared-Package-Edit:** Hook/CI-Schritt, der bei einer sigloch-modules-Paket-Änderung die **eigene** Test-Suite des Pakets vor Integration läuft.
 - **Count/Version aus der Quelle ableiten:** die hardcodierten `toBe(N)`-Tool-/Skill-Counts (`mcp.agent-agnostic`, `mcp.stdio-server`, `skills.mcp-conformance`, `cli.scaffold`) gegen die **live** `bindToolsToHarness()`-Registry / importierte Konstanten asserten statt Magic-Number. Siehe Memory `graphcode-test-count-coupling`.
 
+### Item 4 — `R-19: runnable-TEST-binding` + `concept`-Marker + Export-Materialisierung (DONE 2026-06-21; testRef-Trust aus CR-204-Folgearbeit)
+Das CR-204-Vertrauensloch („graph_tests kann auf einen Phantom-Pfad auflösen / ein lauffähiger TEST ohne Bindung") aus der einmaligen Konformanz-Test-Prüfung in **Engine + Export** heben:
+- `contracts/src/se`: `R-19` (**warning**, wie R-05 — Vollständigkeits-Signal, kein Hard-Gate; ein frisch-spezifizierter TEST ist legitim concept-level bis implementiert) — non-concept TEST ohne valide `testRef` → sichtbar in `rules_evaluate`/`readiness`. `concept`-Marker (boolean) neu in `ELEMENT_ATTRIBUTES.TEST`. `RULES_VERSION 2.2.0`, `ONTOLOGY_VERSION 3.5.0`.
+- graphcode `graph_export` (`exporter.renderTestStubs`): materialisiert einen `it.todo`-Stub für jede gebundene-aber-fehlende `testRef`-Datei — **die** harte Garantie gegen Phantom-Pfade (kein false-green), existierende Dateien nie überschrieben, concept-only übersprungen. Dateiexistenz ist Filesystem-I/O → gehört in den Export, **nicht** in die (pure) Engine-Regel.
+- **Akzeptanz:** ungebundener lauffähiger TEST = R-19-Warning sichtbar; `graph_export` scaffoldt fehlende Stubs; graph_tests löst danach auf reale Dateien auf. Readiness-Partition: R-19→TRR.
+
 ### Item 3 — CLAUDE.md slim-down — pro Regel fragen „erzwingbar?"; wenn ja → Hook/Test/Gate, Prosa **löschen**
 Aus CLAUDE.md (global + projekt) die jetzt erzwungenen Regeln retiren: strukturelle Validität (Gate/R-18), gate-only-writes (deny-hook, done), Read-vor-Edit + Test-after-Edit (→ Hooks aus Item 2). Behalten nur das **nicht-Erzwingbare** (Kommunikationsstil, strategische Prioritäten, „bei Unklarheit fragen"). Ziel: CLAUDE.md schrumpft; was bleibt, ist genau das, was kein Check sein kann. **Mess-Heuristik:** eine Regel, die trotz Niederschrift verletzt wurde (z.B. der Partial-Persist trotz „keine parallelen Pfade"), ist Top-Kandidat fürs Erzwingen.
 
 ## Akzeptanz (gesamt)
-- Item 1: `R-18` gemerged + RULES-bump + Consumer grün; Gate lehnt strukturell-invalide Mutation via Engine ab (ohne separaten codec-Aufruf); CR-200-Doppelung aufgelöst.
+- **Item 1 (DONE):** `R-18` gemerged + RULES-bump + Consumer grün; Gate lehnt strukturell-invalide Mutation via Engine ab (ohne separaten codec-Aufruf); CR-200-Doppelung aufgelöst.
 - Item 2: Hooks aktiv + ein NUL-Byte-/Edit-without-Read-Fall wird real geblockt; Count-Assertions abgeleitet (kein `toBe(N)` mehr).
 - Item 3: CLAUDE.md(s) kürzer; jede gelöschte Regel hat einen erzwingenden Gegenpart (Gate/Hook/Test) verlinkt.
+- **Item 4 (DONE):** `R-19` (warning) + `concept`-Marker gemerged (ONTOLOGY+RULES-bump); `graph_export` materialisiert fehlende testRef-Stubs (`it.todo`), graph_tests phantomfrei; Readiness-Partition R-18→CDR / R-19→TRR.
 
 ## Drive-by (nicht Kern, optional in Item-2-Geist)
 `moneyflow/package.json`: `@sigloch/contracts: file:../../sigloch-modules/...` → `file:../sigloch-modules/...` (eine Ebene zu tief → broken symlink, kein dist, `/finance` unauflösbar). **Pre-existing**, beim MS-4-Rollout-Verify aufgetaucht — nicht von MS-4 verursacht. Evidenz fürs Item-2-Thema: auch file:-Dep-Pfade gehören gelintet, nicht angenommen.

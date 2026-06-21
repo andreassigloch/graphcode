@@ -351,6 +351,13 @@
       "status": "open"
     },
     {
+      "id": "CR-GC-205",
+      "type": "CR",
+      "name": "Enforce-don't-document — R-18/R-19 rules + export materialization",
+      "description": "Lift invariants from prose/one-shot-tests into the one engine/gate/export. Item 1: R-18 valid-trace-pattern (engine) + gate de-dup (no codec.validate call). Item 4: R-19 runnable-TEST-binding (warning) + concept marker + graph_export it.todo materialization. Items 2/3 (executable guardrails, CLAUDE.md slim-down) still open.",
+      "status": "open"
+    },
+    {
       "id": "FCHAIN-agent-query",
       "type": "FCHAIN",
       "name": "Agent-Graph-Query (Impact + progressive Expansion)",
@@ -2110,6 +2117,13 @@
       ]
     },
     {
+      "id": "REQ-structural-rule-shared",
+      "type": "REQ",
+      "name": "Trace-pair legality is one shared engine rule",
+      "description": "Trace-pair legality is enforced by the one shared engine rule R-18 (@sigloch/contracts/se), not a consumer-local validator. graphcodes Gate lehnt strukturell-invalide Mutationen via Engine ab (kein separater codec.validate-Aufruf); jeder Konsument der die Engine laeuft erbt die Pruefung. (CR-GC-205 Item 1)",
+      "status": "done"
+    },
+    {
       "id": "REQ-structure-driven",
       "type": "REQ",
       "name": "Struktur-getrieben (Schema-first)",
@@ -2141,6 +2155,13 @@
       "kinds": [
         "functional"
       ]
+    },
+    {
+      "id": "REQ-testref-materialized",
+      "type": "REQ",
+      "name": "A bound testRef always resolves to a real file",
+      "description": "Ein gebundener TEST-testRef loest immer auf eine reale Datei auf: graph_export materialisiert einen it.todo-Stub fuer jede fehlende testRef-Datei (kein Phantom-Pfad, kein false-green); R-19 macht einen ungebundenen lauffaehigen TEST als Warning sichtbar; concept-only TESTs (concept:true) sind ausgenommen. (CR-GC-205 Item 4)",
+      "status": "done"
     },
     {
       "id": "REQ-trajectory-emit",
@@ -3049,6 +3070,19 @@
       "concept": true
     },
     {
+      "id": "TEST-structural-rule-shared",
+      "type": "TEST",
+      "name": "R-18 gate-block test",
+      "description": "Eine ungueltige Trace-Pair-Mutation in falscher Richtung (Quelle REQ statt TEST bei einer verify-Kante) wird vom Delta-Gate atomar als R-18-Engine-Violation abgelehnt (kein codec.validate-Aufruf, kein Partial-Persist). (CR-GC-205 Item 1)",
+      "status": "done",
+      "method": "test",
+      "testRef": {
+        "file": "tests/harness.gate.test.ts",
+        "tool": "vitest",
+        "level": "integration"
+      }
+    },
+    {
       "id": "TEST-test-runnable-binding",
       "type": "TEST",
       "name": "TestRef-Aufloesungs-Test",
@@ -3060,6 +3094,19 @@
         "file": "tests/mcp.tests-deduction.test.ts",
         "tool": "vitest",
         "level": "unit"
+      }
+    },
+    {
+      "id": "TEST-testref-materialize",
+      "type": "TEST",
+      "name": "Export stub-materialization test",
+      "description": "graph_export scaffoldt einen lauffaehigen it.todo-Stub fuer eine fehlende testRef-Datei, ueberschreibt nie eine existierende, ueberspringt concept-only; danach loest graph_tests auf die materialisierte Datei auf. (CR-GC-205 Item 4)",
+      "status": "done",
+      "method": "test",
+      "testRef": {
+        "file": "tests/export.testref-materialize.test.ts",
+        "tool": "vitest",
+        "level": "integration"
       }
     },
     {
@@ -4614,6 +4661,21 @@
     {
       "source": "CR-GC-204",
       "target": "REQ-graph-tests-operational",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-205",
+      "target": "MS-5-efficiency",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-205",
+      "target": "REQ-structural-rule-shared",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-205",
+      "target": "REQ-testref-materialized",
       "type": "relation"
     },
     {
@@ -6328,6 +6390,11 @@
       "type": "satisfy"
     },
     {
+      "source": "MOD-docs",
+      "target": "REQ-testref-materialized",
+      "type": "satisfy"
+    },
+    {
       "source": "MOD-harness",
       "target": "REQ-harness-schema-in-contracts",
       "type": "satisfy"
@@ -6359,6 +6426,11 @@
     {
       "source": "MOD-harness",
       "target": "REQ-store-recovery",
+      "type": "satisfy"
+    },
+    {
+      "source": "MOD-harness",
+      "target": "REQ-structural-rule-shared",
       "type": "satisfy"
     },
     {
@@ -6425,6 +6497,11 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "MOD-mcp-tools",
+      "target": "REQ-testref-materialized",
+      "type": "satisfy"
+    },
+    {
       "source": "MS-1-specification",
       "target": "UC-code-quality",
       "type": "compose",
@@ -6456,6 +6533,7 @@
       "source": "MS-2-coding-vv",
       "target": "MS-1-specification",
       "type": "relation",
+      "label": "depends-on",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
     },
@@ -6463,6 +6541,7 @@
       "source": "MS-3-mvp-readiness",
       "target": "MS-2-coding-vv",
       "type": "relation",
+      "label": "depends-on",
       "weight": 1,
       "created_at": "2026-06-17T00:00:00.000Z"
     },
@@ -6498,8 +6577,19 @@
       "source": "MS-4-mvp2",
       "target": "MS-3-mvp-readiness",
       "type": "relation",
+      "label": "depends-on",
       "weight": 1,
       "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "MS-5-efficiency",
+      "target": "REQ-structural-rule-shared",
+      "type": "compose"
+    },
+    {
+      "source": "MS-5-efficiency",
+      "target": "REQ-testref-materialized",
+      "type": "compose"
     },
     {
       "source": "REQ-artifact-freshness",
@@ -7483,11 +7573,21 @@
       "type": "verify"
     },
     {
+      "source": "TEST-structural-rule-shared",
+      "target": "REQ-structural-rule-shared",
+      "type": "verify"
+    },
+    {
       "source": "TEST-test-runnable-binding",
       "target": "REQ-test-runnable-binding",
       "type": "verify",
       "weight": 1,
       "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-testref-materialize",
+      "target": "REQ-testref-materialized",
+      "type": "verify"
     },
     {
       "source": "TEST-token-efficiency",

@@ -25,7 +25,7 @@ import type { Graph, GraphNode, GraphEdge, AuditLog, AuditEntry } from '@sigloch
 import { FormatECodec, SE_DESCRIPTOR, InMemoryAuditLog } from '@sigloch/graph-api-core';
 import { type MutateCommand, type MutateResult, type RuleViolation } from '@sigloch/contracts/harness';
 import { TestRefSchema, type TestRef } from '@sigloch/contracts/se';
-import { exportGraphJson, exportMarkdown, MarkdownViewSchema, MARKDOWN_VIEWS, VIEW_FILENAMES } from './exporter.js';
+import { exportGraphJson, exportMarkdown, renderTestStubs, MarkdownViewSchema, MARKDOWN_VIEWS, VIEW_FILENAMES } from './exporter.js';
 import { scoreReadiness, summarizeReadiness, type ReadinessReport } from './readiness.js';
 
 // ---------------------------------------------------------------------------
@@ -388,6 +388,7 @@ export function bindToolsToHarness(
     {
       graphJson: { path: string; bytes: number; nodes: number; edges: number };
       views: Array<{ view: string; path: string; bytes: number }>;
+      stubs: string[];
     }
   > = {
     name: 'graph_export',
@@ -397,7 +398,9 @@ export function bindToolsToHarness(
       'under the repo root, from the live in-memory graph (full fidelity). Closes the agent loop: ' +
       'spec → impact → implement → export. REFUSES to clobber: aborts if the live graph is empty, or if ' +
       'the write would drop elements/traces present in the committed SSOT (stale process / parallel ' +
-      'writer) unless force:true. Returns the written paths and byte sizes.',
+      'writer) unless force:true. Also MATERIALIZES a runnable `it.todo` stub for any bound TEST whose ' +
+      'testRef file is absent (CR-GC-205 Item 4) — so graph_tests never resolves a phantom path; existing ' +
+      'files are never overwritten. Returns the written paths, byte sizes, and the scaffolded stub files.',
     inputSchema: GraphExportInputSchema,
     async handler(input) {
       const graph = harness.getGraph();
@@ -454,9 +457,22 @@ export function bindToolsToHarness(
         return { view: v, path: rel, bytes: Buffer.byteLength(md) };
       });
 
+      // Test-stub materialization (CR-GC-205 Item 4): scaffold an `it.todo` for any
+      // bound TEST whose testRef file is ABSENT, so graph_tests never resolves a
+      // phantom path. Existence-checked — NEVER overwrites a real test file.
+      const stubs: string[] = [];
+      for (const stub of renderTestStubs(graph)) {
+        const abs = join(repoRoot, stub.file);
+        if (existsSync(abs)) continue;
+        mkdirSync(dirname(abs), { recursive: true });
+        writeFileSync(abs, stub.content);
+        stubs.push(stub.file);
+      }
+
       return {
         graphJson: { path: jsonRel, bytes: Buffer.byteLength(json), nodes: graph.nodes.length, edges: graph.edges.length },
         views: written,
+        stubs,
       };
     },
   };

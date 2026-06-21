@@ -222,6 +222,9 @@
 | `CR-GC-204` | relation | `MOD-mcp-tools` |
 | `CR-GC-204` | relation | `MS-5-efficiency` |
 | `CR-GC-204` | relation | `REQ-graph-tests-operational` |
+| `CR-GC-205` | relation | `MS-5-efficiency` |
+| `CR-GC-205` | relation | `REQ-structural-rule-shared` |
+| `CR-GC-205` | relation | `REQ-testref-materialized` |
 | `FCHAIN-agent-query` | compose | `FUNC-graph-expand` |
 | `FCHAIN-agent-query` | compose | `FUNC-graph-impact` |
 | `FCHAIN-agent-query` | satisfy | `REQ-post-agent-query` |
@@ -471,12 +474,14 @@
 | `MOD-dashboard` | satisfy | `REQ-dashboard-readonly` |
 | `MOD-dashboard` | satisfy | `REQ-shared-views-no-fork` |
 | `MOD-docs` | satisfy | `REQ-docs-taxonomy` |
+| `MOD-docs` | satisfy | `REQ-testref-materialized` |
 | `MOD-harness` | satisfy | `REQ-harness-schema-in-contracts` |
 | `MOD-harness` | satisfy | `REQ-import-se-ontology` |
 | `MOD-harness` | satisfy | `REQ-quality-metric` |
 | `MOD-harness` | satisfy | `REQ-single-kuzu-owner` |
 | `MOD-harness` | satisfy | `REQ-single-store` |
 | `MOD-harness` | satisfy | `REQ-store-recovery` |
+| `MOD-harness` | satisfy | `REQ-structural-rule-shared` |
 | `MOD-hooks` | satisfy | `REQ-hook-extension-points` |
 | `MOD-hooks` | satisfy | `REQ-hook-order-deterministic` |
 | `MOD-hooks` | satisfy | `REQ-precommit-timeout` |
@@ -486,6 +491,7 @@
 | `MOD-mcp-tools` | satisfy | `REQ-mcp-tool-registry` |
 | `MOD-mcp-tools` | satisfy | `REQ-readiness-model` |
 | `MOD-mcp-tools` | satisfy | `REQ-single-transport` |
+| `MOD-mcp-tools` | satisfy | `REQ-testref-materialized` |
 | `MS-1-specification` | compose | `UC-code-quality` |
 | `MS-1-specification` | compose | `UC-efficient-testing` |
 | `MS-1-specification` | compose | `UC-reduced-llm` |
@@ -497,6 +503,8 @@
 | `MS-4-mvp2` | compose | `REQ-shared-views-no-fork` |
 | `MS-4-mvp2` | compose | `UC-live-graph-view` |
 | `MS-4-mvp2` | relation | `MS-3-mvp-readiness` |
+| `MS-5-efficiency` | compose | `REQ-structural-rule-shared` |
+| `MS-5-efficiency` | compose | `REQ-testref-materialized` |
 | `REQ-artifact-freshness` | allocate | `MOD-dashboard` |
 | `REQ-dashboard-ontology-sync` | allocate | `MOD-dashboard` |
 | `REQ-dashboard-readonly` | allocate | `MOD-dashboard` |
@@ -654,7 +662,9 @@
 | `TEST-shared-views-no-fork` | verify | `REQ-shared-views-no-fork` |
 | `TEST-skills-mcp` | verify | `REQ-doc-export` |
 | `TEST-store-recovery` | verify | `REQ-store-recovery` |
+| `TEST-structural-rule-shared` | verify | `REQ-structural-rule-shared` |
 | `TEST-test-runnable-binding` | verify | `REQ-test-runnable-binding` |
+| `TEST-testref-materialize` | verify | `REQ-testref-materialized` |
 | `TEST-token-efficiency` | verify | `REQ-benchmark-harness` |
 | `TEST-token-efficiency` | verify | `REQ-precise-context` |
 | `UC-code-quality` | compose | `FCHAIN-apply-gate` |

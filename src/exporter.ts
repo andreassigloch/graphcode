@@ -25,6 +25,7 @@
  */
 import { z } from 'zod/v4';
 import type { Graph, GraphNode, GraphEdge } from '@sigloch/graph-api-core';
+import { TestRefSchema, type TestRef } from '@sigloch/contracts/se';
 
 // ---------------------------------------------------------------------------
 // SCHEMA-markdown-view — app-specific, NOT in @sigloch/contracts.
@@ -246,3 +247,57 @@ export const VIEW_FILENAMES: Record<MarkdownView, string> = {
   'cr-list': 'cr-list.md',
   references: 'references.md',
 };
+
+// ---------------------------------------------------------------------------
+// Test-stub materialization (CR-GC-205 Item 4) — spec-time scaffolding so a TEST
+// testRef NEVER resolves to a phantom file. A TEST can be bound to a file before
+// it is implemented; rendering a minimal `it.todo` stub guarantees the file
+// exists (graph_tests → real selective run, no false-green) while vitest reports
+// the stub pending (suite stays green). Concept-only TESTs (no run artifact yet)
+// are skipped. PURE — returns {file, content} for every bound TEST; the caller
+// (graph_export) writes only files that don't already exist and NEVER overwrites.
+// ---------------------------------------------------------------------------
+
+/** A runnable stub the export would scaffold for one graph TEST binding. */
+export interface TestStub {
+  file: string;
+  content: string;
+}
+
+export function renderTestStubs(graph: Graph): TestStub[] {
+  const verifiesByTest = new Map<string, string[]>();
+  for (const e of graph.edges) {
+    if (e.edgeType !== 'verify') continue;
+    const arr = verifiesByTest.get(e.sourceId) ?? [];
+    arr.push(e.targetId);
+    verifiesByTest.set(e.sourceId, arr);
+  }
+  const stubs: TestStub[] = [];
+  for (const node of graph.nodes) {
+    if (node.type !== 'TEST') continue;
+    if (node.attributes?.concept === true) continue; // concept-only: no run artifact
+    const parsed = TestRefSchema.safeParse(node.attributes?.testRef);
+    if (!parsed.success) continue; // unbound TEST → R-19 surfaces it, nothing to scaffold
+    stubs.push({ file: parsed.data.file, content: renderStub(node, parsed.data, verifiesByTest.get(node.uid) ?? []) });
+  }
+  return stubs;
+}
+
+function renderStub(node: GraphNode, ref: TestRef, verifies: string[]): string {
+  const label = ref.case ?? `implement ${node.uid}`;
+  const verifyNote = verifies.length > 0 ? ` — verifies ${verifies.join(', ')}` : '';
+  return [
+    '/**',
+    ` * GENERATED STUB (CR-GC-205) — materialized from the graph binding ${node.uid}.`,
+    ` * ${node.name}${verifyNote}.`,
+    ' * Replace it.todo with the real test. Until then graph_tests resolves a real',
+    ' * file (no phantom path) and vitest reports it pending, so the suite stays green.',
+    ' */',
+    "import { describe, it } from 'vitest';",
+    '',
+    `describe(${JSON.stringify(`${node.uid}: ${node.name}`)}, () => {`,
+    `  it.todo(${JSON.stringify(label)});`,
+    '});',
+    '',
+  ].join('\n');
+}

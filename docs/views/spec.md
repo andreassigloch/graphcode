@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Alle Elemente nach Typ, sortiert nach uid. Deterministisch generiert.
 
-Elemente: 292 · Traces: 674
+Elemente: 297 · Traces: 684
 
 
 ## ACTOR
@@ -60,6 +60,7 @@ Elemente: 292 · Traces: 674
 | `CR-GC-202` | graph_export refuse-to-clobber guard | done | Empty- + Net-Deletion-Guard im MCP graph_export, force:true Opt-in; spiegelt die Guards von scripts/export-graph.mjs, macht Drift laut statt still. (docs/cr/open/CR-GC-202) |
 | `CR-GC-203` | Violation-resolution ergonomics & SSOT tooling | done | DX/tooling: surface fix_hint+candidate_targets through rules_get_violations (harness.runRules drops them today); graph_readiness summary mode (86k-char overflow); ranked R-01 candidates; in-process graph_reseed tool; se-close-violations skill; REQ-with-test authoring invariant (intrinsic proof) + close the seedFromJson/importGraph gate-bypass so no REQ enters without a verify-traced TEST. Remedial items 1-5 clear accrued unverified REQs; item 6 prevents accrual. Tooling/DX, not a code-quality claim. (CR-GC-203) |
 | `CR-GC-204` | graph_tests operational | open | testRef-Backfill (7/47→alle lauffähigen TESTs) + gerichtete code→satisfy/allocate→REQ→verify→TEST-Auflösung in graph_tests; Code-Changeset selektiert die richtigen Testdateien (heute 0). (docs/cr/open/CR-GC-204) |
+| `CR-GC-205` | Enforce-don't-document — R-18/R-19 rules + export materialization | open | Lift invariants from prose/one-shot-tests into the one engine/gate/export. Item 1: R-18 valid-trace-pattern (engine) + gate de-dup (no codec.validate call). Item 4: R-19 runnable-TEST-binding (warning) + concept marker + graph_export it.todo materialization. Items 2/3 (executable guardrails, CLAUDE.md slim-down) still open. |
 
 ## FCHAIN
 
@@ -270,9 +271,11 @@ Elemente: 292 · Traces: 674
 | `REQ-single-transport` | Ein Transport: MCP-stdio | done | Genau ein Transport = MCP-stdio; kein Express-REST/HTTP im Harness-Core. (SPEC §0, §5) |
 | `REQ-small-model-viable` | Kleine/lokale LLMs tragfähig | open | Deterministische, modellfreie Gates/Regeln + Query-Precision halten kleine/lokale LLMs tragfähig; Kern läuft ohne LLM (degraded). |
 | `REQ-store-recovery` | Store-Recovery (Recovery-Modus) | open | CONSTRAINT (ConOps): Recovery bei Kuzu Lock-Konflikt / abgestürztem Owner / korruptem Store — Lock-Erkennung + sicherer Re-Open. |
+| `REQ-structural-rule-shared` | Trace-pair legality is one shared engine rule | done | Trace-pair legality is enforced by the one shared engine rule R-18 (@sigloch/contracts/se), not a consumer-local validator. graphcodes Gate lehnt strukturell-invalide Mutationen via Engine ab (kein separater codec.validate-Aufruf); jeder Konsument der die Engine laeuft erbt die Pruefung. (CR-GC-205 Item 1) |
 | `REQ-structure-driven` | Struktur-getrieben (Schema-first) | open | Architektur/Interfaces/Integration/Tests werden strikt aus dem governten Graph abgeleitet (Schema-first), nicht ad-hoc. |
 | `REQ-subgraph-slicing` | Sub-Graph-Slicing | open | Sub-Graph-Slicing + pruneToFit(maxTokens) als Context-Primitive. (R7) |
 | `REQ-test-runnable-binding` | TEST hat lauffaehige Bindung (testRef) | done | Jeder TEST-Knoten traegt einen testRef (Datei plus Case, tool, level), sodass ein impacted TEST-Knoten deterministisch zu einem lauffaehigen Artefakt aufgeloest werden kann. Familie-weit: testRef wird Teil des TEST-Element-Schemas in @sigloch/contracts/se (Minor-Version-Bump). |
+| `REQ-testref-materialized` | A bound testRef always resolves to a real file | done | Ein gebundener TEST-testRef loest immer auf eine reale Datei auf: graph_export materialisiert einen it.todo-Stub fuer jede fehlende testRef-Datei (kein Phantom-Pfad, kein false-green); R-19 macht einen ungebundenen lauffaehigen TEST als Warning sichtbar; concept-only TESTs (concept:true) sind ausgenommen. (CR-GC-205 Item 4) |
 | `REQ-trajectory-emit` | Trajectory/Outcome-Emission | open | post-apply/nightly: Trajectory/Outcome append-only nach .aimprove/*.jsonl, Format stabil. (CR-GC-102, L1) |
 | `REQ-versioned-broadcast` | Versioned Diff-Broadcast | done | Versioned Diff-Broadcast an Dashboard (read-only, Late-Joiner-Cache). (R9) |
 | `REQ-versioned-cache` | Version-keyed Cache + Dirty-Flag (R11) | open | CR-GC-102 R11: version-keyed Response-Cache + Dirty-Flag → auf Kuzu-Version mappen. |
@@ -348,7 +351,9 @@ Elemente: 292 · Traces: 674
 | `TEST-shared-views-no-fork` | Shared-Views-No-Fork-Test | done | Die View-Berechnung liegt in @sigloch/graph-api-core; kein lokaler BQ-Regel-Fork (aimpro/src/contracts/se) mehr referenziert. (REQ-shared-views-no-fork) |
 | `TEST-skills-mcp` | Skills-MCP-Conformance-Test | done | Alle 9 .claude/skills/se-*.md sind MCP-getrieben: 0 Treffer fuer die abgeschaltete localhost:3001-API (/api/graph, /api/dashboard, GRAPH_API) und jedes Skill referenziert >=1 Tool aus der Live-Registry. "done = verifiziert" fuer die prompt-realisierten FUNCs von MOD-skills (se-view-* → REQ-doc-export). (CR-GC-132) |
 | `TEST-store-recovery` | Store-Recovery-Test | open | Kuzu Lock-Konflikt / abgestuerzter Owner / korrupter Store: Lock-Erkennung + sicherer Re-Open; kein zweites DB-Handle. (ConOps Recovery) |
+| `TEST-structural-rule-shared` | R-18 gate-block test | done | Eine ungueltige Trace-Pair-Mutation in falscher Richtung (Quelle REQ statt TEST bei einer verify-Kante) wird vom Delta-Gate atomar als R-18-Engine-Violation abgelehnt (kein codec.validate-Aufruf, kein Partial-Persist). (CR-GC-205 Item 1) |
 | `TEST-test-runnable-binding` | TestRef-Aufloesungs-Test | done | Ein impacted TEST-Knoten wird ueber testRef eindeutig zu einer lauffaehigen Datei plus Case aufgeloest; graph_tests erzeugt daraus ein selektives Run-Kommando, das nur die betroffenen Tests enthaelt. (REQ-test-runnable-binding) |
+| `TEST-testref-materialize` | Export stub-materialization test | done | graph_export scaffoldt einen lauffaehigen it.todo-Stub fuer eine fehlende testRef-Datei, ueberschreibt nie eine existierende, ueberspringt concept-only; danach loest graph_tests auf die materialisierte Datei auf. (CR-GC-205 Item 4) |
 | `TEST-token-efficiency` | Token-Budget-Test | open | graph_impact-Kontext ist messbar kleiner als ein Volltext-/grep-Dump desselben Scopes (Token-Count-Assertion). |
 
 ## UC
