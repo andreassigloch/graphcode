@@ -35,6 +35,7 @@
 | `FUNC-render-readiness` | FUNC | renderReadinessPanel(report) |
 | `FUNC-render-recommendations` | FUNC | renderImprovementMeasures() |
 | `FUNC-render-views` | FUNC | render graph→markdown views |
+| `FUNC-resolve-tests-from-code` | FUNC | Gerichtete code→REQ→TEST-Auflösung |
 | `FUNC-save-graph` | FUNC | saveGraph(graph) |
 | `FUNC-serve-sse` | FUNC | serveSSE() |
 | `FUNC-serve-stdio` | FUNC | serveStdio() |
@@ -86,6 +87,7 @@
 | `FUNC-render-recommendations` | `MOD-dashboard` |
 | `FUNC-render-views` | `MOD-dashboard` |
 | `FUNC-render-views` | `MOD-skills` |
+| `FUNC-resolve-tests-from-code` | `MOD-mcp-tools` |
 | `FUNC-save-graph` | `MOD-harness` |
 | `FUNC-serve-sse` | `MOD-host-bridge` |
 | `FUNC-serve-stdio` | `MOD-mcp-tools` |

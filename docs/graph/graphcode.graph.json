@@ -344,6 +344,13 @@
       "created_at": "2026-06-20T00:00:00.000Z"
     },
     {
+      "id": "CR-GC-204",
+      "type": "CR",
+      "name": "graph_tests operational",
+      "description": "testRef-Backfill (7/47→alle lauffähigen TESTs) + gerichtete code→satisfy/allocate→REQ→verify→TEST-Auflösung in graph_tests; Code-Changeset selektiert die richtigen Testdateien (heute 0). (docs/cr/open/CR-GC-204)",
+      "status": "open"
+    },
+    {
       "id": "FCHAIN-agent-query",
       "type": "FCHAIN",
       "name": "Agent-Graph-Query (Impact + progressive Expansion)",
@@ -851,6 +858,13 @@
       "updated_at": "2026-06-18T00:00:00.000Z"
     },
     {
+      "id": "FUNC-resolve-tests-from-code",
+      "type": "FUNC",
+      "name": "Gerichtete code→REQ→TEST-Auflösung",
+      "description": "graph_tests akzeptiert ein Code-Changeset und traversiert gerichtet (geaenderter Knoten →satisfy/allocate→ REQ →verify→ TEST), nicht nur reines incoming-graph_impact. Wrappt EINEN Impact-/Traversal-Pfad, kein zweiter Blast-Radius.",
+      "status": "draft"
+    },
+    {
       "id": "FUNC-save-graph",
       "type": "FUNC",
       "name": "saveGraph(graph)",
@@ -1042,6 +1056,13 @@
       "description": "Fast-follow nach MVP-1: Live-Dashboard (host-bridge + viewer + views→core), OpenCode-Execution (agent-agnostic 2nd client), Batch-Seed (Scale), Readiness-Modell-Definition, Housekeeping. Hängt von MS-3.",
       "status": "draft",
       "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "id": "MS-5-efficiency",
+      "type": "MS",
+      "name": "M5: Efficiency-Hardening",
+      "description": "Post-MVP2: Effizienz-/Tooling-Hardening. Erste Arbeit: graph_tests operativ machen (testRef-Backfill + code→REQ→TEST-Traversal), damit selektives statt vollem Testlauf real wird (R12/R13).",
+      "status": "draft"
     },
     {
       "id": "REQ-agent-agnostic",
@@ -1335,6 +1356,13 @@
       "kinds": [
         "non-functional"
       ]
+    },
+    {
+      "id": "REQ-graph-tests-operational",
+      "type": "REQ",
+      "name": "graph_tests liefert den korrekten selektiven Testset für einen Code-Change",
+      "description": "Ein Code-Changeset (MOD/FUNC/git-diff→Knoten) → graph_tests → vitest run nur-betroffene-Dateien, das JEDE vom Change berührte Testdatei enthält (kein false-green) und unbeteiligte ausschliesst. Erfordert testRef auf allen lauffähigen TESTs + gerichtete Auflösung statt reinem incoming-impact.",
+      "status": "open"
     },
     {
       "id": "REQ-harness-schema-in-contracts",
@@ -2462,6 +2490,13 @@
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
       "method": "test"
+    },
+    {
+      "id": "TEST-graph-tests-operational",
+      "type": "TEST",
+      "name": "Code-Changeset → vollständiger selektiver Testset",
+      "description": "Konzept-Test: changeSet=[MOD-x] → graph_tests resolved alle TESTs, die MOD-x verifizieren, auf die korrekten Dateien (inkl. mehrerer Dateien je REQ); + testRef-Coverage-Konformanz (alle lauffähigen TESTs tragen testRef, concept-only explizit unresolved). Tool: vitest. Constraint: kein false-green, keine übersehene berührte Datei.",
+      "status": "open"
     },
     {
       "id": "TEST-hooks",
@@ -4390,6 +4425,21 @@
       "label": "assigned-to"
     },
     {
+      "source": "CR-GC-204",
+      "target": "MOD-mcp-tools",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-204",
+      "target": "MS-5-efficiency",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-204",
+      "target": "REQ-graph-tests-operational",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-agent-query",
       "target": "FUNC-graph-expand",
       "type": "compose",
@@ -5893,6 +5943,16 @@
       "created_at": "2026-06-17T00:00:00.000Z"
     },
     {
+      "source": "FUNC-resolve-tests-from-code",
+      "target": "MOD-mcp-tools",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-resolve-tests-from-code",
+      "target": "REQ-graph-tests-operational",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-save-graph",
       "target": "MOD-harness",
       "type": "allocate",
@@ -6815,6 +6875,11 @@
       "type": "verify",
       "weight": 1,
       "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-graph-tests-operational",
+      "target": "REQ-graph-tests-operational",
+      "type": "verify"
     },
     {
       "source": "TEST-hooks",

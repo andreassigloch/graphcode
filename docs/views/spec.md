@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Alle Elemente nach Typ, sortiert nach uid. Deterministisch generiert.
 
-Elemente: 286 · Traces: 667
+Elemente: 291 · Traces: 673
 
 
 ## ACTOR
@@ -59,6 +59,7 @@ Elemente: 286 · Traces: 667
 | `CR-GC-201` | Enforce gate-only graph writes | done | Agent kann den SSOT nicht hand-editieren; jeder Write durch graph_mutate (mutate-Gate, L1). DONE 2026-06-20: PreToolUse deny-hook (.claude/hooks/deny-graph-write.sh) blockt Edit/Write auf docs/graph/*.graph.json + .graphcode/kuzu*; JSON = generierter Export (graph_export, lossless via attrs_json v0.2.0 + deterministische Sortierung, byte-identische Provenance). Follow-ups offen: Scaffolding in Ziel-Repos (FUNC-harness-cli), literaler CI-Provenance-Job. (CR-GC-201) |
 | `CR-GC-202` | graph_export refuse-to-clobber guard | done | Empty- + Net-Deletion-Guard im MCP graph_export, force:true Opt-in; spiegelt die Guards von scripts/export-graph.mjs, macht Drift laut statt still. (docs/cr/open/CR-GC-202) |
 | `CR-GC-203` | Violation-resolution ergonomics & SSOT tooling | done | DX/tooling: surface fix_hint+candidate_targets through rules_get_violations (harness.runRules drops them today); graph_readiness summary mode (86k-char overflow); ranked R-01 candidates; in-process graph_reseed tool; se-close-violations skill; REQ-with-test authoring invariant (intrinsic proof) + close the seedFromJson/importGraph gate-bypass so no REQ enters without a verify-traced TEST. Remedial items 1-5 clear accrued unverified REQs; item 6 prevents accrual. Tooling/DX, not a code-quality claim. (CR-GC-203) |
+| `CR-GC-204` | graph_tests operational | open | testRef-Backfill (7/47→alle lauffähigen TESTs) + gerichtete code→satisfy/allocate→REQ→verify→TEST-Auflösung in graph_tests; Code-Changeset selektiert die richtigen Testdateien (heute 0). (docs/cr/open/CR-GC-204) |
 
 ## FCHAIN
 
@@ -134,6 +135,7 @@ Elemente: 286 · Traces: 667
 | `FUNC-render-readiness` | renderReadinessPanel(report) | done | Readiness-Panel: Compliance + Phase-Gates SRR/PDR/CDR/TRR aus graph_readiness (V3_RULES, lean INCOSE). Repoint der aimprove StatusSection-Readiness-Bars + GateView. (CR-GC-115) |
 | `FUNC-render-recommendations` | renderImprovementMeasures() | done | Top-N hoechstbewertete Verbesserungsmassnahmen, deterministisch aus Graph-Defiziten abgeleitet (fehlende verify-Traces R-01, Orphans RD-01, Blast-Radius via graph_impact), nach Severity/Impact sortiert. Behalten aus aimprove TOP-Empfehlungen, aber graph-deduziert statt Learning-Vorschlag (kein Generator). (CR-GC-115) |
 | `FUNC-render-views` | render graph→markdown views | done | PROMPT-realisierter Graph→Markdown-Renderer via se-view-Skills (.claude/skills/se-view-*); erzeugt z.B. architecture-graph.md. Interim-Realisierung von REQ-doc-export, bis FUNC-export-markdown (code, MOD-docs) gebaut ist. Beweis: Skills = Funktionen (Allokation an MOD-skills = prompt-realisiert). |
+| `FUNC-resolve-tests-from-code` | Gerichtete code→REQ→TEST-Auflösung | draft | graph_tests akzeptiert ein Code-Changeset und traversiert gerichtet (geaenderter Knoten →satisfy/allocate→ REQ →verify→ TEST), nicht nur reines incoming-graph_impact. Wrappt EINEN Impact-/Traversal-Pfad, kein zweiter Blast-Radius. |
 | `FUNC-save-graph` | saveGraph(graph) | done | Persistiert in-memory Graph nach Disk-Kuzu, falls keine error-Violations. (SPEC §3.4, §4) |
 | `FUNC-serve-sse` | serveSSE() | done | Host-Prozess exponiert die SSE/WS-Route und leitet harness.onUpdateEvent read-only an die Live-Viewer weiter. Kein Express-REST im Core. (CR-GC-114) |
 | `FUNC-serve-stdio` | serveStdio() | done | Bindet die MCP-Tool-Registry headless an einen stdio-Transport; jeder Agent (Claude Code oder OpenCode, BYOK) ist ein gleichwertiger Client. Beweist agent-agnostisch + headless. (CR-GC-124) |
@@ -167,6 +169,7 @@ Elemente: 286 · Traces: 667
 | `MS-2-coding-vv` | M2: Coding & V&V | done | Realisierung der Module (CR-GC-100..103, 107) + Verifikation/Validierung (Tests, Benchmark). Start nach IRR-Freigabe. |
 | `MS-3-mvp-readiness` | M3: MVP Readiness | done | Realisiert die spezifizierten-aber-unrealisierten Knoten (CLI, MCP-Server, Re-Exporter, Views) + das Live-Dashboard (Hybrid: graphcode-owned, komponiert aus @sigloch/graph-renderer + dashboard-shell + graph-api-express+SSE, V3_RULES-gescort). Schließt F4/F5/F6. (Diskussion 2026-06-17) |
 | `MS-4-mvp2` | M4: MVP-2 (Dashboard, OpenCode, Scale) | draft | Fast-follow nach MVP-1: Live-Dashboard (host-bridge + viewer + views→core), OpenCode-Execution (agent-agnostic 2nd client), Batch-Seed (Scale), Readiness-Modell-Definition, Housekeeping. Hängt von MS-3. |
+| `MS-5-efficiency` | M5: Efficiency-Hardening | draft | Post-MVP2: Effizienz-/Tooling-Hardening. Erste Arbeit: graph_tests operativ machen (testRef-Backfill + code→REQ→TEST-Traversal), damit selektives statt vollem Testlauf real wird (R12/R13). |
 
 ## REQ
 
@@ -199,6 +202,7 @@ Elemente: 286 · Traces: 667
 | `REQ-graceful-degradation` | Betrieb ohne LLM (Degraded-Modus) | open | CONSTRAINT (ConOps): Harness voll funktionsfähig bei nicht erreichbarem LLM-Sidecar — Gate/Regeln deterministisch, kein Modell-Call. |
 | `REQ-graph-integrity` | Graph-Integritaet: ein Validator | done | Ein Validierungs-Pfad an EINEM Punkt (Gate): GraphCodeCodec.validate() erkennt zusaetzlich doppelte UIDs (nodeTypeMap dedupt heute still) + referenzielle Integritaet + valide Edge-Paare; kein inline validPairs-Klon ausserhalb des Codecs (keine parallelen Pfade). Das Apply-Gate ruft validate() VOR persist() auf (gleicher contracts-SSOT, Delta-Semantik), sodass kein strukturell-ungueltiges Edge den Store erreicht und Kuzu-DDL + Export-Check zu Backstops werden. (CR-GC-200) |
 | `REQ-graph-is-ssot` | Graph ist Single Point of Truth | done | Der materialisierte Graph + die Live-Harness sind SSOT. docs/*.md sind historischer Input (Bootstrap). Modelländerungen am Graph (mutate/import), dann Re-Export. (2026-06-14) |
+| `REQ-graph-tests-operational` | graph_tests liefert den korrekten selektiven Testset für einen Code-Change | open | Ein Code-Changeset (MOD/FUNC/git-diff→Knoten) → graph_tests → vitest run nur-betroffene-Dateien, das JEDE vom Change berührte Testdatei enthält (kein false-green) und unbeteiligte ausschliesst. Erfordert testRef auf allen lauffähigen TESTs + gerichtete Auflösung statt reinem incoming-impact. |
 | `REQ-harness-schema-in-contracts` | Harness-Schemas in contracts (D1) | open | CR-GC-100 Task 1 / D1: HarnessConfig/MutateCommand/MutateResult nach @sigloch/contracts (eigener harness-Export, NICHT /se), importieren, lokale Defs löschen. |
 | `REQ-hook-extension-points` | Drei Hook-Extension-Points | open | CR-GC-102: registerHook(type, handler) + runPreCommitHooks/runPostApplyHooks/scheduleNightlyBatch; Storage .graphcode/hooks/. |
 | `REQ-hook-order-deterministic` | Deterministische Hook-Reihenfolge (L3) | open | CR-GC-102 L3: Hook-Execution-Order stabil/deterministisch. |
@@ -313,6 +317,7 @@ Elemente: 286 · Traces: 667
 | `TEST-efficient-testing` | Impact-Testset-Test | done | graph_impact(geänderter Knoten) liefert genau die betroffenen TEST-Knoten; nicht betroffene sind nicht im Set. |
 | `TEST-graph-integrity` | Graph-Integritaets-Test | done | validate() flaggt doppelte UIDs + alles bisher Abgedeckte (Typen, Edge-Pairs, referenzielle Integritaet); Integritaets-Test delegiert an validate(). (CR-GC-200) |
 | `TEST-graph-is-ssot` | Graph-is-SSOT-Test | done | Der committete graphcode.graph.json ist deterministischer Export des Kuzu-Stores; Hand-Edit wird erkannt und verworfen, Views tragen GENERATED-Header. (REQ-graph-is-ssot) |
+| `TEST-graph-tests-operational` | Code-Changeset → vollständiger selektiver Testset | open | Konzept-Test: changeSet=[MOD-x] → graph_tests resolved alle TESTs, die MOD-x verifizieren, auf die korrekten Dateien (inkl. mehrerer Dateien je REQ); + testRef-Coverage-Konformanz (alle lauffähigen TESTs tragen testRef, concept-only explizit unresolved). Tool: vitest. Constraint: kein false-green, keine übersehene berührte Datei. |
 | `TEST-hooks` | Hook-Extension-Points-Test | open | registerHook + runPreCommitHooks/runPostApplyHooks/scheduleNightlyBatch; pre-commit-Hook blockt eine Mutation; preCommitTimeout (default 5000ms) greift; Execution-Order deterministisch. (CR-GC-102) |
 | `TEST-impact-subgraph` | graph_impact Subgraph-Test | done | graph_impact liefert nur den betroffenen Subgraphen (kein Full-Dump). (FCHAIN-agent-query) |
 | `TEST-interface-escalation` | Interface-Eskalations-Test | open | Direkter FLOW-Mutationsversuch eines Realisierungs-Agenten wird abgelehnt; nur der Eskalationspfad (CR an Facilitating-Agent → graph_impact → Gate) ändert ein Interface. (FCHAIN-interface-escalation) |

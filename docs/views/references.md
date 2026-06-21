@@ -219,6 +219,9 @@
 | `CR-GC-203` | relation | `MOD-mcp-tools` |
 | `CR-GC-203` | relation | `MOD-skills` |
 | `CR-GC-203` | relation | `MS-4-mvp2` |
+| `CR-GC-204` | relation | `MOD-mcp-tools` |
+| `CR-GC-204` | relation | `MS-5-efficiency` |
+| `CR-GC-204` | relation | `REQ-graph-tests-operational` |
 | `FCHAIN-agent-query` | compose | `FUNC-graph-expand` |
 | `FCHAIN-agent-query` | compose | `FUNC-graph-impact` |
 | `FCHAIN-agent-query` | satisfy | `REQ-post-agent-query` |
@@ -436,6 +439,8 @@
 | `FUNC-render-views` | satisfy | `REQ-doc-export` |
 | `FUNC-render-views` | satisfy | `UC-code-quality` |
 | `FUNC-render-views` | satisfy | `UC-live-graph-view` |
+| `FUNC-resolve-tests-from-code` | allocate | `MOD-mcp-tools` |
+| `FUNC-resolve-tests-from-code` | satisfy | `REQ-graph-tests-operational` |
 | `FUNC-save-graph` | allocate | `MOD-harness` |
 | `FUNC-save-graph` | io | `FLOW-committed-graph` |
 | `FUNC-save-graph` | satisfy | `REQ-disk-persistence` |
@@ -576,6 +581,7 @@
 | `TEST-efficient-testing` | verify | `REQ-pre-impact-testing` |
 | `TEST-graph-integrity` | verify | `REQ-graph-integrity` |
 | `TEST-graph-is-ssot` | verify | `REQ-graph-is-ssot` |
+| `TEST-graph-tests-operational` | verify | `REQ-graph-tests-operational` |
 | `TEST-hooks` | verify | `REQ-hook-extension-points` |
 | `TEST-hooks` | verify | `REQ-hook-order-deterministic` |
 | `TEST-hooks` | verify | `REQ-precommit-timeout` |
