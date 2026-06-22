@@ -1,0 +1,77 @@
+name: Publish @sigloch/graphcode
+
+# Automated release via npm Trusted Publishing (OIDC) — NO npm token, NO OTP.
+#
+# Trigger: push a version tag (`git tag v0.1.1 && git push origin v0.1.1`)
+#          or run manually from the Actions tab (workflow_dispatch).
+#
+# PREREQUISITES (one-time):
+#   1. @sigloch/graphcode must already exist on npm (the FIRST publish is manual —
+#      Trusted Publishing is configured per-package and the package must exist first).
+#   2. npmjs.com → package @sigloch/graphcode → Settings → Trusted publishing →
+#      GitHub Actions: owner `andreassigloch`, repo `graphcode`, workflow `publish.yml`.
+#   3. A repo secret `SIBLINGS_REPO_TOKEN` — a fine-grained PAT with **read** access to
+#      the private `andreassigloch/sigloch-modules` repo (needed to build the file:-linked
+#      @sigloch/* build deps in CI). This secret authorizes SOURCE checkout only; the npm
+#      publish itself stays tokenless via OIDC.
+#
+# Keep package.json `version` in sync with the tag before pushing it.
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write   # OIDC — required for Trusted Publishing + provenance attestation
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      # graphcode (this repo) → ./graphcode
+      - name: Checkout graphcode
+        uses: actions/checkout@v4
+        with:
+          path: graphcode
+
+      # private sibling monorepo carrying the file: build deps → ./sigloch-modules,
+      # so `file:../sigloch-modules/packages/*` from ./graphcode resolves as a sibling.
+      - name: Checkout sigloch-modules (private)
+        uses: actions/checkout@v4
+        with:
+          repository: andreassigloch/sigloch-modules
+          token: ${{ secrets.SIBLINGS_REPO_TOKEN }}
+          path: sigloch-modules
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: 'https://registry.npmjs.org'
+
+      # OIDC Trusted Publishing needs npm >= 11.5.1; Node 22 ships an older npm.
+      - name: Upgrade npm to OIDC-capable version
+        run: npm install -g npm@latest
+
+      # Build the file:-linked siblings first — esbuild inlines their dist into the bundle.
+      - name: Build sibling packages
+        working-directory: sigloch-modules
+        run: |
+          npm install
+          npm run build --workspaces --if-present
+
+      # `npm install` (not `npm ci`): resolves the file:../sigloch-modules/* links.
+      - name: Install graphcode deps
+        working-directory: graphcode
+        run: npm install
+
+      - name: Build + bundle (self-contained dist)
+        working-directory: graphcode
+        run: npm run build && npm run bundle
+
+      - name: Publish (OIDC Trusted Publishing + provenance)
+        working-directory: graphcode
+        run: npm publish --access public --provenance
