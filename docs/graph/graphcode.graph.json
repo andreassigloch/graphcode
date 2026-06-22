@@ -643,7 +643,12 @@
       "name": "broadcastDiff(version)",
       "description": "Versionierter Diff-Broadcast mit Late-Joiner-Cache an die Viewer; jede Mutation erhoeht die Version. (CR-GC-114)",
       "status": "done",
-      "created_at": "2026-06-19T00:00:00.000Z"
+      "created_at": "2026-06-19T00:00:00.000Z",
+      "codeRef": {
+        "file": "src/host.ts",
+        "symbol": "HostBridge",
+        "lang": "ts"
+      }
     },
     {
       "id": "FUNC-decode",
@@ -652,7 +657,12 @@
       "description": "Format-E → OntologyGraph, Validierung gegen SE_DESCRIPTOR. (CR-GC-103)",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "updated_at": "2026-06-17T00:00:00.000Z"
+      "updated_at": "2026-06-17T00:00:00.000Z",
+      "codeRef": {
+        "file": "src/codec.ts",
+        "symbol": "decode",
+        "lang": "ts"
+      }
     },
     {
       "id": "FUNC-deduce-tests",
@@ -660,7 +670,12 @@
       "name": "graph_tests(changeSet)",
       "description": "Bottom-up Test-Deduktion: mappt eine Aenderung (geaenderte Knoten-IDs oder git-diff zu Knoten) via graph_impact auf die betroffenen TEST-Knoten, loest jeden ueber testRef zu seinem lauffaehigen Artefakt auf und emittiert das minimale selektive Run-Kommando + Coverage. Kapselt graph_impact, kein Parallelpfad. (CR-GC-134)",
       "status": "done",
-      "created_at": "2026-06-19T00:00:00.000Z"
+      "created_at": "2026-06-19T00:00:00.000Z",
+      "codeRef": {
+        "file": "src/mcp-tools.ts",
+        "symbol": "bindToolsToHarness",
+        "lang": "ts"
+      }
     },
     {
       "id": "FUNC-emit-trajectory",
@@ -669,7 +684,12 @@
       "description": "post-apply append-only Trajectory/Outcome nach .aimprove/*.jsonl. (CR-GC-102)",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "updated_at": "2026-06-17T00:00:00.000Z"
+      "updated_at": "2026-06-17T00:00:00.000Z",
+      "codeRef": {
+        "file": "src/emit.ts",
+        "symbol": "makeTrajectoryHook",
+        "lang": "ts"
+      }
     },
     {
       "id": "FUNC-emit-update-event",
@@ -678,7 +698,12 @@
       "description": "Live-Update-Event (SSE invalidate) bei jeder Mutation; Basis des read-only Dashboards. (R9)",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "updated_at": "2026-06-17T00:00:00.000Z"
+      "updated_at": "2026-06-17T00:00:00.000Z",
+      "codeRef": {
+        "file": "src/emit.ts",
+        "symbol": "makeUpdateEventHook",
+        "lang": "ts"
+      }
     },
     {
       "id": "FUNC-encode",
@@ -687,7 +712,12 @@
       "description": "Deterministische Format-E-Serialisierung (stabile Sortierung), Diff-Dialekt. (CR-GC-103, R3/R5)",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "updated_at": "2026-06-17T00:00:00.000Z"
+      "updated_at": "2026-06-17T00:00:00.000Z",
+      "codeRef": {
+        "file": "src/codec.ts",
+        "symbol": "encode",
+        "lang": "ts"
+      }
     },
     {
       "id": "FUNC-evaluate-rules",
@@ -696,7 +726,12 @@
       "description": "Regel-Engine gegen V3_RULES; Violations {ruleId,severity,elementId}; kein lokaler Parser (L2).",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "updated_at": "2026-06-17T00:00:00.000Z"
+      "updated_at": "2026-06-17T00:00:00.000Z",
+      "codeRef": {
+        "file": "src/harness.ts",
+        "symbol": "runRules",
+        "lang": "ts"
+      }
     },
     {
       "id": "FUNC-export-markdown",
@@ -708,7 +743,12 @@
       "attributes": {
         "operatingMode": "export"
       },
-      "updated_at": "2026-06-18T00:00:00.000Z"
+      "updated_at": "2026-06-18T00:00:00.000Z",
+      "codeRef": {
+        "file": "src/exporter.ts",
+        "symbol": "exportMarkdown",
+        "lang": "ts"
+      }
     },
     {
       "id": "FUNC-graph-expand",
@@ -717,7 +757,12 @@
       "description": "Progressive On-Demand-Kuzu-Re-Traversierung; kein Originals-Store. (CR-GC-101, R13)",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "updated_at": "2026-06-17T00:00:00.000Z"
+      "updated_at": "2026-06-17T00:00:00.000Z",
+      "codeRef": {
+        "file": "src/harness.ts",
+        "symbol": "subgraph",
+        "lang": "ts"
+      }
     },
     {
       "id": "FUNC-graph-impact",
@@ -726,7 +771,12 @@
       "description": "Exakter Blast-Radius (Caller/Traces/Tests) als Format-E. (CR-GC-101, R6/R12)",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "updated_at": "2026-06-17T00:00:00.000Z"
+      "updated_at": "2026-06-17T00:00:00.000Z",
+      "codeRef": {
+        "file": "src/harness.ts",
+        "symbol": "impact",
+        "lang": "ts"
+      }
     },
     {
       "id": "FUNC-harness-cli",
@@ -738,7 +788,12 @@
       "attributes": {
         "operatingMode": "lifecycle"
       },
-      "updated_at": "2026-06-18T00:00:00.000Z"
+      "updated_at": "2026-06-18T00:00:00.000Z",
+      "codeRef": {
+        "file": "src/scaffold.ts",
+        "symbol": "scaffold",
+        "lang": "ts"
+      }
     },
     {
       "id": "FUNC-health-endpoint",
@@ -746,7 +801,12 @@
       "name": "healthEndpoint()",
       "description": "Echter Funktions-Health: Store erreichbar, Gate funktional, Ontology/Rules/Contracts-Versionen, LLM/BYOK-Readiness. Quelle des Dashboard-FUNC-render-health. (CR-GC-114)",
       "status": "done",
-      "created_at": "2026-06-19T00:00:00.000Z"
+      "created_at": "2026-06-19T00:00:00.000Z",
+      "codeRef": {
+        "file": "src/host.ts",
+        "symbol": "HostBridge",
+        "lang": "ts"
+      }
     },
     {
       "id": "FUNC-import",
@@ -758,7 +818,12 @@
       "attributes": {
         "operatingMode": "bootstrap"
       },
-      "updated_at": "2026-06-17T00:00:00.000Z"
+      "updated_at": "2026-06-17T00:00:00.000Z",
+      "codeRef": {
+        "file": "src/harness.ts",
+        "symbol": "importGraph",
+        "lang": "ts"
+      }
     },
     {
       "id": "FUNC-merge-nodes",
@@ -769,7 +834,8 @@
       "created_at": "2026-06-16T00:00:00.000Z",
       "attributes": {
         "operatingMode": "merge"
-      }
+      },
+      "concept": true
     },
     {
       "id": "FUNC-migrate-schema",
@@ -780,7 +846,8 @@
       "created_at": "2026-06-16T00:00:00.000Z",
       "attributes": {
         "operatingMode": "migration"
-      }
+      },
+      "concept": true
     },
     {
       "id": "FUNC-mutate",
@@ -789,7 +856,12 @@
       "description": "Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "updated_at": "2026-06-17T00:00:00.000Z"
+      "updated_at": "2026-06-17T00:00:00.000Z",
+      "codeRef": {
+        "file": "src/harness.ts",
+        "symbol": "mutate",
+        "lang": "ts"
+      }
     },
     {
       "id": "FUNC-own-kuzu-host",
@@ -797,7 +869,12 @@
       "name": "ownKuzu()",
       "description": "Der Host-Prozess ist der einzige Kuzu-Owner pro Repo; die Bridge haelt kein zweites DB-Handle. (CR-GC-114)",
       "status": "done",
-      "created_at": "2026-06-19T00:00:00.000Z"
+      "created_at": "2026-06-19T00:00:00.000Z",
+      "codeRef": {
+        "file": "src/host.ts",
+        "symbol": "serveHost",
+        "lang": "ts"
+      }
     },
     {
       "id": "FUNC-render-artifacts",
@@ -805,7 +882,12 @@
       "name": "renderArtifactReadiness(views)",
       "description": "INCOSE-Artifact-Panel: Readiness je Dokument/View (Testmatrix, FMEA, RTM, ImplPlan, IntPlan, ChangeLog, ConOps, IRR, NFR, ICD) aus dem Query-Layer (graph_query views) + graph_readiness. Repoint der aimprove ArtifactReadiness. Die offene View-Liste (RTM, IntPlan, ChangeLog, ConOps, IRR, ICD ohne se-view-Skill) ist genau der Rest-Scope von CR-GC-116. (CR-GC-115)",
       "status": "done",
-      "created_at": "2026-06-19T00:00:00.000Z"
+      "created_at": "2026-06-19T00:00:00.000Z",
+      "codeRef": {
+        "file": "src/panels.ts",
+        "symbol": "artifactsPanel",
+        "lang": "ts"
+      }
     },
     {
       "id": "FUNC-render-graph",
@@ -813,7 +895,8 @@
       "name": "renderGraph(elements, traces)",
       "description": "Pluggbarer Live-Graph-Mount-Slot im Dashboard. Datenquelle: graph_elements + graph_get_edges + rules_get_violations (nur V3_RULES, kein BQ). Der konkrete Cytoscape-Renderer (@sigloch/graph-renderer) wird hier eingehaengt und ist das naechste aise-family-Projekt (graph-view-edit), nicht in graphcode gebaut. aimproves OntologyView rendert keinen Node-Link-Graph (nur Histogramme). (CR-GC-115)",
       "status": "done",
-      "created_at": "2026-06-19T00:00:00.000Z"
+      "created_at": "2026-06-19T00:00:00.000Z",
+      "external": true
     },
     {
       "id": "FUNC-render-health",
@@ -821,7 +904,12 @@
       "name": "renderHealth()",
       "description": "Echter Funktions-Health-Check, kein Prozess-Liveness-Licht: Kuzu-Store erreichbar, Apply-Gate funktional, Ontology/Rules/Contracts-Versionen, LLM/BYOK-Readiness (OpenCode, fuer spaeter). aimprove-spezifische Felder (Sessions/Patterns) entfernt. Quelle: Host-Bridge Health-Endpoint. (CR-GC-115)",
       "status": "done",
-      "created_at": "2026-06-19T00:00:00.000Z"
+      "created_at": "2026-06-19T00:00:00.000Z",
+      "codeRef": {
+        "file": "src/panels.ts",
+        "symbol": "healthPanel",
+        "lang": "ts"
+      }
     },
     {
       "id": "FUNC-render-impact",
@@ -829,7 +917,12 @@
       "name": "renderImpactPanel(id)",
       "description": "Impact-Panel on-demand: exakter Blast-Radius via graph_impact statt gespeicherter aimprove-Impact-Assessments (Learning). Repoint der aimprove ImpactView auf die Live-Quelle. (CR-GC-115)",
       "status": "done",
-      "created_at": "2026-06-19T00:00:00.000Z"
+      "created_at": "2026-06-19T00:00:00.000Z",
+      "codeRef": {
+        "file": "src/panels.ts",
+        "symbol": "impactPanel",
+        "lang": "ts"
+      }
     },
     {
       "id": "FUNC-render-impl-gates",
@@ -837,7 +930,8 @@
       "name": "renderImplGates(report)",
       "description": "Impl-Gates-Panel: SAR/FCA/SVR/FRR + CR/MS-Burndown aus graph_readiness.implGates und den MS/CR-Knoten. In aimprove nie verdrahtet (0/9, 0/20, 0/4); graphcode macht die Query transparent: jedes Gate zeigt seine Blocking-Elemente als Drill-down. Repoint der aimprove ImplGates + CrBurndown. (CR-GC-115)",
       "status": "done",
-      "created_at": "2026-06-19T00:00:00.000Z"
+      "created_at": "2026-06-19T00:00:00.000Z",
+      "external": true
     },
     {
       "id": "FUNC-render-readiness",
@@ -845,7 +939,12 @@
       "name": "renderReadinessPanel(report)",
       "description": "Readiness-Panel: Compliance + Phase-Gates SRR/PDR/CDR/TRR aus graph_readiness (V3_RULES, lean INCOSE). Repoint der aimprove StatusSection-Readiness-Bars + GateView. (CR-GC-115)",
       "status": "done",
-      "created_at": "2026-06-19T00:00:00.000Z"
+      "created_at": "2026-06-19T00:00:00.000Z",
+      "codeRef": {
+        "file": "src/panels.ts",
+        "symbol": "readinessPanel",
+        "lang": "ts"
+      }
     },
     {
       "id": "FUNC-render-recommendations",
@@ -853,7 +952,12 @@
       "name": "renderImprovementMeasures()",
       "description": "Top-N hoechstbewertete Verbesserungsmassnahmen, deterministisch aus Graph-Defiziten abgeleitet (fehlende verify-Traces R-01, Orphans RD-01, Blast-Radius via graph_impact), nach Severity/Impact sortiert. Behalten aus aimprove TOP-Empfehlungen, aber graph-deduziert statt Learning-Vorschlag (kein Generator). (CR-GC-115)",
       "status": "done",
-      "created_at": "2026-06-19T00:00:00.000Z"
+      "created_at": "2026-06-19T00:00:00.000Z",
+      "codeRef": {
+        "file": "src/panels.ts",
+        "symbol": "recommendationsPanel",
+        "lang": "ts"
+      }
     },
     {
       "id": "FUNC-render-views",
@@ -862,14 +966,20 @@
       "description": "PROMPT-realisierter Graph→Markdown-Renderer via se-view-Skills (.claude/skills/se-view-*); erzeugt z.B. architecture-graph.md. Interim-Realisierung von REQ-doc-export, bis FUNC-export-markdown (code, MOD-docs) gebaut ist. Beweis: Skills = Funktionen (Allokation an MOD-skills = prompt-realisiert).",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "updated_at": "2026-06-18T00:00:00.000Z"
+      "updated_at": "2026-06-18T00:00:00.000Z",
+      "external": true
     },
     {
       "id": "FUNC-resolve-tests-from-code",
       "type": "FUNC",
       "name": "Gerichtete code→REQ→TEST-Auflösung",
       "description": "graph_tests akzeptiert ein Code-Changeset und traversiert gerichtet (geaenderter Knoten →satisfy/allocate→ REQ →verify→ TEST), nicht nur reines incoming-graph_impact. Wrappt EINEN Impact-/Traversal-Pfad, kein zweiter Blast-Radius.",
-      "status": "done"
+      "status": "done",
+      "codeRef": {
+        "file": "src/harness.ts",
+        "symbol": "testImpact",
+        "lang": "ts"
+      }
     },
     {
       "id": "FUNC-save-graph",
@@ -878,7 +988,12 @@
       "description": "Persistiert in-memory Graph nach Disk-Kuzu, falls keine error-Violations. (SPEC §3.4, §4)",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "updated_at": "2026-06-17T00:00:00.000Z"
+      "updated_at": "2026-06-17T00:00:00.000Z",
+      "codeRef": {
+        "file": "src/harness.ts",
+        "symbol": "persist",
+        "lang": "ts"
+      }
     },
     {
       "id": "FUNC-serve-sse",
@@ -886,7 +1001,12 @@
       "name": "serveSSE()",
       "description": "Host-Prozess exponiert die SSE/WS-Route und leitet harness.onUpdateEvent read-only an die Live-Viewer weiter. Kein Express-REST im Core. (CR-GC-114)",
       "status": "done",
-      "created_at": "2026-06-19T00:00:00.000Z"
+      "created_at": "2026-06-19T00:00:00.000Z",
+      "codeRef": {
+        "file": "src/host.ts",
+        "symbol": "serveHost",
+        "lang": "ts"
+      }
     },
     {
       "id": "FUNC-serve-stdio",
@@ -894,7 +1014,12 @@
       "name": "serveStdio()",
       "description": "Bindet die MCP-Tool-Registry headless an einen stdio-Transport; jeder Agent (Claude Code oder OpenCode, BYOK) ist ein gleichwertiger Client. Beweist agent-agnostisch + headless. (CR-GC-124)",
       "status": "done",
-      "created_at": "2026-06-19T00:00:00.000Z"
+      "created_at": "2026-06-19T00:00:00.000Z",
+      "codeRef": {
+        "file": "src/mcp-server.ts",
+        "symbol": "serveStdio",
+        "lang": "ts"
+      }
     },
     {
       "id": "FUNC-subscribe-updates",
@@ -902,7 +1027,12 @@
       "name": "subscribeUpdates()",
       "description": "SSE-Client: bei jedem Live-Update-Event (invalidate) werden die betroffenen Domains nachgeladen, ohne Reload. Gegenstueck zu emitUpdateEvent, konsumiert FLOW-live-event ueber die Host-Bridge. (CR-GC-115)",
       "status": "done",
-      "created_at": "2026-06-19T00:00:00.000Z"
+      "created_at": "2026-06-19T00:00:00.000Z",
+      "codeRef": {
+        "file": "src/panels.ts",
+        "symbol": "panelsForEvent",
+        "lang": "ts"
+      }
     },
     {
       "id": "FUNC-view-changelog",
@@ -910,7 +1040,8 @@
       "name": "se-view-changelog (Change Log)",
       "description": "Prompt-realisierte View: Change Log aus CR-Knoten mit Rationale und Status. (CR-GC-116)",
       "status": "done",
-      "created_at": "2026-06-19T00:00:00.000Z"
+      "created_at": "2026-06-19T00:00:00.000Z",
+      "external": true
     },
     {
       "id": "FUNC-view-conops",
@@ -918,7 +1049,8 @@
       "name": "se-view-conops (ConOps)",
       "description": "Prompt-realisierte View: Concept of Operations aus UC plus ACTOR (operatingMode). (CR-GC-116)",
       "status": "done",
-      "created_at": "2026-06-19T00:00:00.000Z"
+      "created_at": "2026-06-19T00:00:00.000Z",
+      "external": true
     },
     {
       "id": "FUNC-view-icd",
@@ -926,7 +1058,8 @@
       "name": "se-view-icd (ICD)",
       "description": "Prompt-realisierte View: Interface Control Document aus FLOW zu SCHEMA. (CR-GC-116)",
       "status": "done",
-      "created_at": "2026-06-19T00:00:00.000Z"
+      "created_at": "2026-06-19T00:00:00.000Z",
+      "external": true
     },
     {
       "id": "FUNC-view-intplan",
@@ -934,7 +1067,8 @@
       "name": "se-view-intplan (Integrations-/Testplan)",
       "description": "Prompt-realisierte View: Integrations-/Testplan aus MS plus verify-Status. (CR-GC-116)",
       "status": "done",
-      "created_at": "2026-06-19T00:00:00.000Z"
+      "created_at": "2026-06-19T00:00:00.000Z",
+      "external": true
     },
     {
       "id": "FUNC-view-irr",
@@ -942,7 +1076,8 @@
       "name": "se-view-irr (Initial Risk Review)",
       "description": "Prompt-realisierte View: Initial Risk Review aus risk-getaggten REQs (mitigated/spiked). Schliesst die fehlende IRR-Artifact-View des Dashboards. (CR-GC-116)",
       "status": "done",
-      "created_at": "2026-06-19T00:00:00.000Z"
+      "created_at": "2026-06-19T00:00:00.000Z",
+      "external": true
     },
     {
       "id": "FUNC-view-rtm",
@@ -950,7 +1085,8 @@
       "name": "se-view-rtm (RTM)",
       "description": "Prompt-realisierte View: Requirements Traceability Matrix aus satisfy/verify-Traces je REQ. (CR-GC-116)",
       "status": "done",
-      "created_at": "2026-06-19T00:00:00.000Z"
+      "created_at": "2026-06-19T00:00:00.000Z",
+      "external": true
     },
     {
       "id": "MOD-cli",
