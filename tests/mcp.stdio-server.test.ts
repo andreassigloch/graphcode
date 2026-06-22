@@ -23,6 +23,7 @@ import { KuzuAdapter } from '@sigloch/graph-cypher-wasm';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/harness.js';
 import { buildMcpServer } from '../src/mcp-server.js';
+import { bindToolsToHarness } from '../src/mcp-tools.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
 
 function makeConfig(repoRoot: string): HarnessConfig {
@@ -79,22 +80,12 @@ describe('TEST-mcp-stdio-server: registry served over the MCP protocol', () => {
   it('enumerates the full bound registry over listTools (REQ-mcp-tool-registry)', async () => {
     const { tools } = await client.listTools();
     const names = tools.map((t) => t.name).sort();
-    expect(names).toEqual([
-      'audit_stats',
-      'audit_trail',
-      'graph_elements',
-      'graph_expand',
-      'graph_export',
-      'graph_get_edges',
-      'graph_get_node',
-      'graph_impact',
-      'graph_mutate',
-      'graph_readiness',
-      'graph_reseed',
-      'graph_tests',
-      'rules_evaluate',
-      'rules_get_violations',
-    ]);
+    // Derived from the live in-process registry, NOT a hardcoded list — the MCP
+    // surface must equal bindToolsToHarness() exactly (REQ-mcp-tool-registry). A new
+    // tool extends both sides; no magic count to bump (CR-GC-205 Item 2).
+    const registryNames = Object.keys(bindToolsToHarness(twinHarness)).sort();
+    expect(names).toEqual(registryNames);
+    expect(names.length).toBeGreaterThan(0);
     // Schemas are advertised, not empty — the agent KNOWS the inputs.
     const mutate = tools.find((t) => t.name === 'graph_mutate');
     expect(mutate?.inputSchema?.properties).toHaveProperty('commands');

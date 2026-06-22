@@ -33,6 +33,7 @@
     "build": "tsc",
     "bundle": "node esbuild.config.mjs",
     "watch": "tsc --watch",
+    "pretest": "bash scripts/ensure-siblings-built.sh",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",

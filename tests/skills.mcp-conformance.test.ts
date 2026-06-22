@@ -61,8 +61,10 @@ describe('TEST-skills-mcp: every SE skill is MCP-driven, off the retired localho
     rmSync(repoRoot, { recursive: true, force: true });
   });
 
-  it('finds all 17 SE skills on disk', () => {
-    expect(skillFiles().length).toBe(17);
+  it('ships the se-*.md skills on disk (count derived from the dir, not hardcoded)', () => {
+    // Source of truth = the shipped .claude/skills/ dir (cli.scaffold asserts the
+    // scaffold copies exactly this set). No magic count to bump (CR-GC-205 Item 2).
+    expect(skillFiles().length).toBeGreaterThan(0);
   });
 
   it('no skill references the retired HTTP API (localhost:3001 / GRAPH_API / /api/graph / /api/dashboard)', () => {
@@ -75,7 +77,7 @@ describe('TEST-skills-mcp: every SE skill is MCP-driven, off the retired localho
   });
 
   it('every skill references at least one tool from the live MCP registry', () => {
-    expect(toolNames.length).toBe(14);
+    expect(toolNames.length).toBeGreaterThan(0); // toolNames IS the live registry (no magic count)
     const missing: string[] = [];
     for (const f of skillFiles()) {
       const text = readFileSync(join(SKILLS_DIR, f), 'utf8');

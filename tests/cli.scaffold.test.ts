@@ -71,7 +71,10 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
   });
 
   it('init installs the MCP-driven SE skills (CR-GC-133)', async () => {
-    expect(SHIPPED_SKILLS.length).toBe(17); // +6 artifact views (CR-116) +2 violation/author skills (CR-203).
+    // SHIPPED_SKILLS is read from the shipped .claude/skills/ dir (the source of
+    // truth); the toEqual(SHIPPED_SKILLS) round-trip below proves init copies exactly
+    // that set. No hardcoded count to bump when a skill is added (CR-GC-205 Item 2).
+    expect(SHIPPED_SKILLS.length).toBeGreaterThan(0);
     const res = await scaffold('init', { repoRoot: repo });
 
     // Every shipped skill lands in the target repo, byte-identical to the source.

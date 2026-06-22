@@ -52,3 +52,20 @@ nach `@sigloch/contracts` (D1) — **nicht lokal neu definieren** (keine paralle
 **Präzise Query statt Result-Kompression** (R12): `graph_impact()` liefert exakt den Blast-Radius;
 `graph_expand()` vertieft on-demand (R13). Details: `docs/RECOMMENDATIONS.md` R5–R14 +
 `bok/docs/research/graphengine-efficiency.md` / `headroom-ai-evaluation.md`.
+
+## Erzwungen, nicht dokumentiert (CR-GC-205 — „enforce, don't document")
+
+Diese Invarianten sind **erzwungen** — kein Prosa-Vertrauen, kein Re-Dokumentieren als Regel:
+
+- **Gate-only-writes** (jede Modell-Edit durch `mutate()`, kein Hand-Edit des SSOT) → PreToolUse-Hook
+  `.claude/hooks/deny-graph-write.sh` + Apply-Gate.
+- **Strukturelle Validität** (Trace-Pair-Legalität gegen `TRACE_PATTERNS`) → Engine-Regel **R-18**
+  (`@sigloch/contracts/se`); das Gate ruft **kein** separates `codec.validate()` mehr (R-08 = referenz.
+  Integrität, slim Unknown-Type-Guard nur fürs Kuzu-DDL).
+- **Bindungs-Vollständigkeit**: lauffähiger TEST trägt `testRef` (**R-19**), realisierte FUNC trägt
+  `codeRef` (**R-20**) — warning, sichtbar in `rules_evaluate`/`readiness`; Export materialisiert fehlende
+  testRef-Stubs (`it.todo`, kein Phantom-Pfad).
+- **Keine Binär-/NUL-Korruption in Source** → PreToolUse-Hook `.claude/hooks/deny-binary-source.sh`.
+- **Shared-Package vor Integration gebaut** (kein Stale-Dist-False-Green) → `scripts/ensure-siblings-built.sh`
+  als `pretest`.
+- **Read-vor-Edit** → Harness-Built-in (Edit verlangt vorheriges Read; kein Zusatz-Hook = kein Parallelpfad).
