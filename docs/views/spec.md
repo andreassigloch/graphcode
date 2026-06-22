@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Alle Elemente nach Typ, sortiert nach uid. Deterministisch generiert.
 
-Elemente: 297 · Traces: 684
+Elemente: 301 · Traces: 689
 
 
 ## ACTOR
@@ -61,6 +61,7 @@ Elemente: 297 · Traces: 684
 | `CR-GC-203` | Violation-resolution ergonomics & SSOT tooling | done | DX/tooling: surface fix_hint+candidate_targets through rules_get_violations (harness.runRules drops them today); graph_readiness summary mode (86k-char overflow); ranked R-01 candidates; in-process graph_reseed tool; se-close-violations skill; REQ-with-test authoring invariant (intrinsic proof) + close the seedFromJson/importGraph gate-bypass so no REQ enters without a verify-traced TEST. Remedial items 1-5 clear accrued unverified REQs; item 6 prevents accrual. Tooling/DX, not a code-quality claim. (CR-GC-203) |
 | `CR-GC-204` | graph_tests operational | open | testRef-Backfill (7/47→alle lauffähigen TESTs) + gerichtete code→satisfy/allocate→REQ→verify→TEST-Auflösung in graph_tests; Code-Changeset selektiert die richtigen Testdateien (heute 0). (docs/cr/open/CR-GC-204) |
 | `CR-GC-205` | Enforce-don't-document — R-18/R-19 rules + export materialization | open | Lift invariants from prose/one-shot-tests into the one engine/gate/export. Item 1: R-18 valid-trace-pattern (engine) + gate de-dup (no codec.validate call). Item 4: R-19 runnable-TEST-binding (warning) + concept marker + graph_export it.todo materialization. Items 2/3 (executable guardrails, CLAUDE.md slim-down) still open. |
+| `CR-GC-206` | Graph-code LSP conformance — resolve FUNC codeRef symbols | done | Follow-up aus CR-205 Item 5: FUNC.codeRef-Symbole real aufloesen (TypeScript-Parser), nicht nur Praesenz pruefen. Cross-Module-Call-Coverage bleibt Follow-up. |
 
 ## FCHAIN
 
@@ -112,6 +113,7 @@ Elemente: 297 · Traces: 684
 | uid | name | status | description |
 |---|---|---|---|
 | `FUNC-broadcast-diff` | broadcastDiff(version) | done | Versionierter Diff-Broadcast mit Late-Joiner-Cache an die Viewer; jede Mutation erhoeht die Version. (CR-GC-114) |
+| `FUNC-check-code-conformance` | checkCodeConformance(graph, repoRoot) | done | Resolved jeden FUNC.codeRef ueber ts.createSourceFile gegen den realen src-Baum und meldet ungeloeste Bindungen. Cross-Module-Call-Coverage bewusst Follow-up. (CR-GC-206) |
 | `FUNC-decode` | decode(json) | done | Format-E → OntologyGraph, Validierung gegen SE_DESCRIPTOR. (CR-GC-103) |
 | `FUNC-deduce-tests` | graph_tests(changeSet) | done | Bottom-up Test-Deduktion: mappt eine Aenderung (geaenderte Knoten-IDs oder git-diff zu Knoten) via graph_impact auf die betroffenen TEST-Knoten, loest jeden ueber testRef zu seinem lauffaehigen Artefakt auf und emittiert das minimale selektive Run-Kommando + Coverage. Kapselt graph_impact, kein Parallelpfad. (CR-GC-134) |
 | `FUNC-emit-trajectory` | emitTrajectory() | done | post-apply append-only Trajectory/Outcome nach .aimprove/*.jsonl. (CR-GC-102) |
@@ -201,6 +203,7 @@ Elemente: 297 · Traces: 684
 | `REQ-frame-binding` | Frame ist bindend für Realisierung | open | Beschluss 2026-06-16: Die in diesem Graph definierte Struktur + Interfaces (6 MOD, 4 Customer-UC, FUNC/FCHAIN/FLOW/REQ + SE-Ontologie/TRACE_PATTERNS) sind BINDEND für die Realisierung. Ergänzungen NUR, wenn sie in die vordefinierten Boxen passen (neue FUNC/FLOW/REQ/TEST an bestehendem MOD/UC durchs Gate). Strukturelle Änderungen — neues sigloch-modules-Shared, neuer ElementType/TraceType, neue Customer-UC/MOD — brauchen Familie-Review. |
 | `REQ-gate-only-writes` | Gate-only Graph-Writes | open | Agent kann den SSOT nicht hand-editieren; jeder Write durch graph_mutate (mutate-Gate, L1). Deny-Rule + PreToolUse-Hook auf Edit/Write von docs/graph/*.graph.json + .graphcode/kuzu; JSON ist generierter Export, Live-Truth ist Kuzu. (CR-GC-201) |
 | `REQ-graceful-degradation` | Betrieb ohne LLM (Degraded-Modus) | open | CONSTRAINT (ConOps): Harness voll funktionsfähig bei nicht erreichbarem LLM-Sidecar — Gate/Regeln deterministisch, kein Modell-Call. |
+| `REQ-graph-code-conformance` | FUNC codeRef resolves to a real declared symbol | done | Jeder FUNC.codeRef loest auf ein real deklariertes Symbol in seiner Datei auf (TypeScript-Parser, kein Substring-Match); prompt-realisierte FUNCs (lang prompt): die Skill-Datei existiert. Macht das R-20-Backfill verifizierbar statt nur vorhanden. (CR-GC-206) |
 | `REQ-graph-integrity` | Graph-Integritaet: ein Validator | done | Ein Validierungs-Pfad an EINEM Punkt (Gate): GraphCodeCodec.validate() erkennt zusaetzlich doppelte UIDs (nodeTypeMap dedupt heute still) + referenzielle Integritaet + valide Edge-Paare; kein inline validPairs-Klon ausserhalb des Codecs (keine parallelen Pfade). Das Apply-Gate ruft validate() VOR persist() auf (gleicher contracts-SSOT, Delta-Semantik), sodass kein strukturell-ungueltiges Edge den Store erreicht und Kuzu-DDL + Export-Check zu Backstops werden. (CR-GC-200) |
 | `REQ-graph-is-ssot` | Graph ist Single Point of Truth | done | Der materialisierte Graph + die Live-Harness sind SSOT. docs/*.md sind historischer Input (Bootstrap). Modelländerungen am Graph (mutate/import), dann Re-Export. (2026-06-14) |
 | `REQ-graph-tests-operational` | graph_tests liefert den korrekten selektiven Testset für einen Code-Change | done | Ein Code-Changeset (MOD/FUNC/git-diff→Knoten) → graph_tests → vitest run nur-betroffene-Dateien, das JEDE vom Change berührte Testdatei enthält (kein false-green) und unbeteiligte ausschliesst. Erfordert testRef auf allen lauffähigen TESTs + gerichtete Auflösung statt reinem incoming-impact. |
@@ -311,6 +314,7 @@ Elemente: 297 · Traces: 684
 | `TEST-cache` | Cache-Layering-Test | open | Version-keyed Response-Cache + Dirty-Flag mappt auf Kuzu-Version; nur Onto+Rules stabil gecached, nie mit Live-Graph gemischt (Prefix-Hygiene). (CR-GC-102 R8/R11) |
 | `TEST-capture` | Interaktive-Erfassung-Test | open | Agent-Kandidaten laufen im suggest-Tier durchs Gate (kein auto-apply). (FCHAIN-capture) |
 | `TEST-cli-scaffold` | CLI-Scaffold-Test | done | graphcode init/update/remove against a mkdtemp temp repo (real node:fs): init scaffolds .graphcode/ + .mcp.json (npx form) + GRAPHCODE.md + package.json dep, idempotent re-run is byte-stable, update preserves the .graphcode/kuzu store, remove deletes all artifacts restlos. No localhost/Controller path. (CR-GC-112) |
+| `TEST-code-conformance` | Graph-code conformance test | done | Seedet den committeten SSOT-Graphen, laeuft checkCodeConformance gegen den realen src-Baum: 0 Violations (jeder Code-codeRef deklariert, jeder Prompt-codeRef existiert); ein falsches Symbol wird gefangen, also nicht vacuous. (CR-GC-206) |
 | `TEST-code-quality` | Code-Quality-Gate-Test | open | Regelverletzende Änderung wird vom Gate geblockt; konformer Graph bleibt driftfrei. |
 | `TEST-codec-validation` | Codec-Validation-Test | done | validate() flaggt strukturelle Defekte (Node/Edge-Typen, TRACE_PATTERNS-Paare, referenzielle Integritaet, doppelte UIDs) auf der Gate-Pruefung; ein zweiter Run-Artefakt fuer REQ-graph-integrity neben dem Integritaets-Test. (CR-GC-200/204) |
 | `TEST-dashboard-ontology-sync` | Dashboard-Ontologie-Test | done | Readiness/Violations stammen aus @sigloch/contracts V3_RULES (Rule-IDs == contracts), keine Vorgänger-BQ-Regeln; valide Familie-REQs werfen keine BQ-Warnungen. (REQ-dashboard-ontology-sync) |

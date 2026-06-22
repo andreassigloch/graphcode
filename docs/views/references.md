@@ -225,6 +225,8 @@
 | `CR-GC-205` | relation | `MS-5-efficiency` |
 | `CR-GC-205` | relation | `REQ-structural-rule-shared` |
 | `CR-GC-205` | relation | `REQ-testref-materialized` |
+| `CR-GC-206` | relation | `MS-5-efficiency` |
+| `CR-GC-206` | relation | `REQ-graph-code-conformance` |
 | `FCHAIN-agent-query` | compose | `FUNC-graph-expand` |
 | `FCHAIN-agent-query` | compose | `FUNC-graph-impact` |
 | `FCHAIN-agent-query` | satisfy | `REQ-post-agent-query` |
@@ -325,6 +327,7 @@
 | `FLOW-violations` | relation | `SCHEMA-mutate-result` |
 | `FUNC-broadcast-diff` | allocate | `MOD-host-bridge` |
 | `FUNC-broadcast-diff` | satisfy | `REQ-versioned-broadcast` |
+| `FUNC-check-code-conformance` | satisfy | `REQ-graph-code-conformance` |
 | `FUNC-decode` | allocate | `MOD-codec` |
 | `FUNC-decode` | io | `FLOW-capture-draft` |
 | `FUNC-decode` | io | `FLOW-parsed-graph` |
@@ -503,6 +506,7 @@
 | `MS-4-mvp2` | compose | `REQ-shared-views-no-fork` |
 | `MS-4-mvp2` | compose | `UC-live-graph-view` |
 | `MS-4-mvp2` | relation | `MS-3-mvp-readiness` |
+| `MS-5-efficiency` | compose | `REQ-graph-code-conformance` |
 | `MS-5-efficiency` | compose | `REQ-structural-rule-shared` |
 | `MS-5-efficiency` | compose | `REQ-testref-materialized` |
 | `REQ-artifact-freshness` | allocate | `MOD-dashboard` |
@@ -569,6 +573,7 @@
 | `TEST-cli-scaffold` | verify | `REQ-repo-install` |
 | `TEST-cli-scaffold` | verify | `REQ-repo-uninstall` |
 | `TEST-cli-scaffold` | verify | `REQ-repo-update` |
+| `TEST-code-conformance` | verify | `REQ-graph-code-conformance` |
 | `TEST-code-quality` | verify | `REQ-code-governed-quality` |
 | `TEST-code-quality` | verify | `REQ-frame-binding` |
 | `TEST-code-quality` | verify | `REQ-quality-metric` |

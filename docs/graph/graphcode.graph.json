@@ -358,6 +358,13 @@
       "status": "open"
     },
     {
+      "id": "CR-GC-206",
+      "type": "CR",
+      "name": "Graph-code LSP conformance — resolve FUNC codeRef symbols",
+      "description": "Follow-up aus CR-205 Item 5: FUNC.codeRef-Symbole real aufloesen (TypeScript-Parser), nicht nur Praesenz pruefen. Cross-Module-Call-Coverage bleibt Follow-up.",
+      "status": "done"
+    },
+    {
       "id": "FCHAIN-agent-query",
       "type": "FCHAIN",
       "name": "Agent-Graph-Query (Impact + progressive Expansion)",
@@ -647,6 +654,18 @@
       "codeRef": {
         "file": "src/host.ts",
         "symbol": "HostBridge",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-check-code-conformance",
+      "type": "FUNC",
+      "name": "checkCodeConformance(graph, repoRoot)",
+      "description": "Resolved jeden FUNC.codeRef ueber ts.createSourceFile gegen den realen src-Baum und meldet ungeloeste Bindungen. Cross-Module-Call-Coverage bewusst Follow-up. (CR-GC-206)",
+      "status": "done",
+      "codeRef": {
+        "file": "src/conformance.ts",
+        "symbol": "checkCodeConformance",
         "lang": "ts"
       }
     },
@@ -1512,6 +1531,13 @@
       "kinds": [
         "non-functional"
       ]
+    },
+    {
+      "id": "REQ-graph-code-conformance",
+      "type": "REQ",
+      "name": "FUNC codeRef resolves to a real declared symbol",
+      "description": "Jeder FUNC.codeRef loest auf ein real deklariertes Symbol in seiner Datei auf (TypeScript-Parser, kein Substring-Match); prompt-realisierte FUNCs (lang prompt): die Skill-Datei existiert. Macht das R-20-Backfill verifizierbar statt nur vorhanden. (CR-GC-206)",
+      "status": "done"
     },
     {
       "id": "REQ-graph-integrity",
@@ -2577,6 +2603,19 @@
       "updated_at": "2026-06-18T00:00:00.000Z",
       "testRef": {
         "file": "tests/cli.scaffold.test.ts",
+        "tool": "vitest",
+        "level": "integration"
+      }
+    },
+    {
+      "id": "TEST-code-conformance",
+      "type": "TEST",
+      "name": "Graph-code conformance test",
+      "description": "Seedet den committeten SSOT-Graphen, laeuft checkCodeConformance gegen den realen src-Baum: 0 Violations (jeder Code-codeRef deklariert, jeder Prompt-codeRef existiert); ein falsches Symbol wird gefangen, also nicht vacuous. (CR-GC-206)",
+      "status": "done",
+      "method": "test",
+      "testRef": {
+        "file": "tests/conformance.test.ts",
         "tool": "vitest",
         "level": "integration"
       }
@@ -4850,6 +4889,16 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-206",
+      "target": "MS-5-efficiency",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-206",
+      "target": "REQ-graph-code-conformance",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-agent-query",
       "target": "FUNC-graph-expand",
       "type": "compose",
@@ -5544,6 +5593,11 @@
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-check-code-conformance",
+      "target": "REQ-graph-code-conformance",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-decode",
@@ -6754,6 +6808,11 @@
     },
     {
       "source": "MS-5-efficiency",
+      "target": "REQ-graph-code-conformance",
+      "type": "compose"
+    },
+    {
+      "source": "MS-5-efficiency",
       "target": "REQ-structural-rule-shared",
       "type": "compose"
     },
@@ -7187,6 +7246,11 @@
       "type": "verify",
       "weight": 1,
       "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-code-conformance",
+      "target": "REQ-graph-code-conformance",
+      "type": "verify"
     },
     {
       "source": "TEST-code-quality",

@@ -11,6 +11,7 @@
 | uid | type | name |
 |---|---|---|
 | `FUNC-broadcast-diff` | FUNC | broadcastDiff(version) |
+| `FUNC-check-code-conformance` | FUNC | checkCodeConformance(graph, repoRoot) |
 | `FUNC-decode` | FUNC | decode(json) |
 | `FUNC-deduce-tests` | FUNC | graph_tests(changeSet) |
 | `FUNC-emit-trajectory` | FUNC | emitTrajectory() |
