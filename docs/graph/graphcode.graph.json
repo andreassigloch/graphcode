@@ -967,7 +967,12 @@
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z",
-      "external": true
+      "external": false,
+      "codeRef": {
+        "file": ".claude/skills/se-view-arch.md",
+        "symbol": "se-view-arch",
+        "lang": "prompt"
+      }
     },
     {
       "id": "FUNC-resolve-tests-from-code",
@@ -1041,7 +1046,12 @@
       "description": "Prompt-realisierte View: Change Log aus CR-Knoten mit Rationale und Status. (CR-GC-116)",
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
-      "external": true
+      "external": false,
+      "codeRef": {
+        "file": ".claude/skills/se-view-changelog.md",
+        "symbol": "se-view-changelog",
+        "lang": "prompt"
+      }
     },
     {
       "id": "FUNC-view-conops",
@@ -1050,7 +1060,12 @@
       "description": "Prompt-realisierte View: Concept of Operations aus UC plus ACTOR (operatingMode). (CR-GC-116)",
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
-      "external": true
+      "external": false,
+      "codeRef": {
+        "file": ".claude/skills/se-view-conops.md",
+        "symbol": "se-view-conops",
+        "lang": "prompt"
+      }
     },
     {
       "id": "FUNC-view-icd",
@@ -1059,7 +1074,12 @@
       "description": "Prompt-realisierte View: Interface Control Document aus FLOW zu SCHEMA. (CR-GC-116)",
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
-      "external": true
+      "external": false,
+      "codeRef": {
+        "file": ".claude/skills/se-view-icd.md",
+        "symbol": "se-view-icd",
+        "lang": "prompt"
+      }
     },
     {
       "id": "FUNC-view-intplan",
@@ -1068,7 +1088,12 @@
       "description": "Prompt-realisierte View: Integrations-/Testplan aus MS plus verify-Status. (CR-GC-116)",
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
-      "external": true
+      "external": false,
+      "codeRef": {
+        "file": ".claude/skills/se-view-intplan.md",
+        "symbol": "se-view-intplan",
+        "lang": "prompt"
+      }
     },
     {
       "id": "FUNC-view-irr",
@@ -1077,7 +1102,12 @@
       "description": "Prompt-realisierte View: Initial Risk Review aus risk-getaggten REQs (mitigated/spiked). Schliesst die fehlende IRR-Artifact-View des Dashboards. (CR-GC-116)",
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
-      "external": true
+      "external": false,
+      "codeRef": {
+        "file": ".claude/skills/se-view-irr.md",
+        "symbol": "se-view-irr",
+        "lang": "prompt"
+      }
     },
     {
       "id": "FUNC-view-rtm",
@@ -1086,7 +1116,12 @@
       "description": "Prompt-realisierte View: Requirements Traceability Matrix aus satisfy/verify-Traces je REQ. (CR-GC-116)",
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
-      "external": true
+      "external": false,
+      "codeRef": {
+        "file": ".claude/skills/se-view-rtm.md",
+        "symbol": "se-view-rtm",
+        "lang": "prompt"
+      }
     },
     {
       "id": "MOD-cli",
