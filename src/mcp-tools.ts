@@ -94,6 +94,16 @@ const GraphExpandInputSchema = z.object({
   depth: z.number().int().positive().default(2).describe('Depth for this expansion (usually prior_depth + 1)'),
 });
 
+const GraphContextInputSchema = z.object({
+  id: z.string().describe('Realization node uid (e.g. a FUNC) to build the definition-of-done context-pack for'),
+  depth: z
+    .number()
+    .int()
+    .positive()
+    .default(1)
+    .describe('Spec-closure ring radius; 1 = direct satisfy/io/allocate neighbours + verify back-edge'),
+});
+
 const GraphExportInputSchema = z.object({
   name: z.string().optional().describe('Base filename for the graph JSON (default: scope.systemId)'),
   views: z.array(MarkdownViewSchema).optional().describe('Markdown views to render (default: all)'),
@@ -149,6 +159,77 @@ function filterByEdgeTypes(graph: Graph, rootId: string, types: Set<string>): Gr
   }
   const nodes: GraphNode[] = graph.nodes.filter((n) => keep.has(n.uid));
   return { nodes, edges };
+}
+
+// ---------------------------------------------------------------------------
+// graph_context — UPSTREAM spec-closure ("definition of done") for one node.
+// Pure composition over the in-memory graph (no Kuzu traversal): self + the
+// REQ/UC it satisfies + the TEST that verify those REQ + the FLOW it exchanges
+// (io) + the MOD it is allocated to + the SCHEMA of those FLOW (relation).
+// Complements graph_impact (DOWNSTREAM blast-radius) — opposite direction.
+// ---------------------------------------------------------------------------
+
+const SATISFY_EDGE = 'satisfy';
+const VERIFY_EDGE = 'verify';
+const IO_EDGE = 'io';
+const ALLOCATE_EDGE = 'allocate';
+const DATA_RELATION_EDGE = 'relation';
+
+function buildContextSlice(
+  graph: Graph,
+  rootId: string,
+  depth: number,
+): { slice: Graph; missingRefs: string[] } {
+  const root = graph.nodes.find((n) => n.uid === rootId);
+  if (!root) throw new Error(`graph_context: node '${rootId}' not found`);
+
+  const keepNodes = new Set<string>([rootId]);
+  const seenEdges = new Set<string>();
+  const keepEdges: GraphEdge[] = [];
+  const ekey = (e: GraphEdge) => `${e.sourceId}>${e.edgeType}>${e.targetId}`;
+  const addEdge = (e: GraphEdge) => {
+    if (seenEdges.has(ekey(e))) return;
+    seenEdges.add(ekey(e));
+    keepEdges.push(e);
+    keepNodes.add(e.sourceId);
+    keepNodes.add(e.targetId);
+  };
+
+  // `depth` outgoing rings of satisfy/io/allocate (io may also feed INTO the node).
+  let frontier = new Set<string>([rootId]);
+  for (let d = 0; d < depth; d++) {
+    const next = new Set<string>();
+    for (const e of graph.edges) {
+      const out = e.edgeType === SATISFY_EDGE || e.edgeType === IO_EDGE || e.edgeType === ALLOCATE_EDGE;
+      if (frontier.has(e.sourceId) && out) {
+        addEdge(e);
+        next.add(e.targetId);
+      }
+      if (frontier.has(e.targetId) && e.edgeType === IO_EDGE) {
+        addEdge(e);
+        next.add(e.sourceId);
+      }
+    }
+    frontier = next;
+  }
+  // verify back-edges: every TEST that verifies a REQ already in the slice.
+  for (const e of graph.edges) {
+    if (e.edgeType === VERIFY_EDGE && keepNodes.has(e.targetId)) addEdge(e);
+  }
+  // data contract: relation edges from a kept FLOW to its SCHEMA.
+  for (const e of graph.edges) {
+    if (e.edgeType === DATA_RELATION_EDGE && keepNodes.has(e.sourceId)) addEdge(e);
+  }
+
+  const nodes = graph.nodes.filter((n) => keepNodes.has(n.uid));
+  // codeRef gap signal — a FUNC in the slice with no pointer to implement from (CR-GC-213).
+  // A "reference implementation" is NOT a separate concept: it is just a codeRef (pointing at a
+  // stub/spike). If that impl is only functionally-close, the agent reads it and fixes it.
+  const missingRefs = nodes
+    .filter((n) => n.type === 'FUNC' && !n.attributes.codeRef)
+    .map((n) => n.uid);
+
+  return { slice: { nodes, edges: keepEdges }, missingRefs };
 }
 
 // ---------------------------------------------------------------------------
@@ -372,6 +453,33 @@ export function bindToolsToHarness(
         handle: input.handle,
         nodeCount: subgraph.nodes.length,
         edgeCount: subgraph.edges.length,
+        formatE,
+      };
+    },
+  };
+
+  const graph_context: MCPTool<
+    z.infer<typeof GraphContextInputSchema>,
+    { formatE: string; nodeCount: number; edgeCount: number; rootId: string; missingRefs: string[] }
+  > = {
+    name: 'graph_context',
+    description:
+      'Definition-of-Done context-pack for ONE realization node (CR-GC-213). Returns the node + its ' +
+      'UPSTREAM spec-closure — the REQ/UC it `satisfy`s, the TEST that `verify` those REQ, the FLOW it ' +
+      'exchanges via `io`, the MOD it is `allocate`d to, and the SCHEMA of those FLOW — plus the node’s ' +
+      'description prose and codeRef/testRef attributes, as one Format-E slice. ' +
+      'Use this to IMPLEMENT a node (one call instead of get_node+impact+expand+get_edges). ' +
+      'Contrast: graph_impact = DOWNSTREAM blast-radius (who breaks if I change this); graph_expand = ' +
+      'manual branch deepening. Never a full dump. `missingRefs` flags FUNCs lacking a codeRef.',
+    inputSchema: GraphContextInputSchema,
+    async handler(input) {
+      const { slice, missingRefs } = buildContextSlice(harness.getGraph(), input.id, input.depth);
+      const formatE = codec.serialize(slice);
+      return {
+        rootId: input.id,
+        nodeCount: slice.nodes.length,
+        edgeCount: slice.edges.length,
+        missingRefs,
         formatE,
       };
     },
@@ -631,6 +739,7 @@ export function bindToolsToHarness(
     audit_stats,
     graph_impact,
     graph_expand,
+    graph_context,
     graph_export,
     graph_readiness,
     graph_reseed,

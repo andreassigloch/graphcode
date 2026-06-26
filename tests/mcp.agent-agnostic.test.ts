@@ -116,6 +116,7 @@ describe('TEST-agent-agnostic: identical surface + gate for any MCP client (CR-G
     expect(claudeTools).toEqual([
       'audit_stats',
       'audit_trail',
+      'graph_context',
       'graph_elements',
       'graph_expand',
       'graph_export',
