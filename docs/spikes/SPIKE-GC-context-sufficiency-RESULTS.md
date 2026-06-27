@@ -28,10 +28,29 @@ Rig: [`rig/dummy-slicer/`](../../rig/dummy-slicer/) — fiktiver Consumer, **gra
 
 Erreicht: **ein kleineres lokales Modell erledigt den Job, weil das Framework präzisen Kontext liefert.** Das ist der positive Ausgang, den der Auftrag definiert hat — nicht „Opus spart Tokens", sondern „ein 27B-Modell implementiert korrekt aus ~667 tok statt an 600k Prosa zu scheitern".
 
+## Agentischer Voll-Loop (claude -p + opencode, 2026-06-27)
+
+Echte headless Agenten-Loops gegen den Rig (scoped `--allowed-tools`, kein Permission-Bypass; MCP `graphcode` aktiv; CR-214-Hook aktiv). Akzeptanz = `scripts/verify.ts` (recall ≥0.85 + Determinismus + sourceRef).
+
+| Arm | Executor | Modell | Ergebnis | Zeit | Turns | `graph_context` | SPEC.md-Reads | out tok |
+|---|---|---|---|---|---|---|---|---|
+| Cloud-Control | `claude -p` | Cloud | **ALL PASS** | 157 s | 21 | 1 | **0** | 36,6k |
+| Local | **opencode** | qwen3.6-27b | **ALL PASS** | 201 s | 7 | 3 hits (+ `graph_mutate` write-back) | **0** | — |
+| Local | `claude -p` | qwen3.6-27b @40k | **ALL PASS** | 556 s | 29 | 1 (+ 2 `graph_mutate`) | **0** | 7,8k |
+| Local | `claude -p` | qwen3.6-27b @22k | **FAIL** (ctx-overflow) | — | — | — | — | — |
+
+**Befunde:**
+
+1. **Alle drei lauffähigen Executors** implementieren den Milestone **korrekt** (verify ALL PASS), **graph-first** (`graph_context` als DoD-Quelle), **0 SPEC.md-Reads** — die absichtlich falschen SPEC-Werte (recall 0.70 / optional / random) tauchten in keiner Implementierung auf. Zwei schrieben via `graph_mutate` ins Modell zurück (graph-native über das bloße Lesen hinaus).
+2. **LM Studio hat ein Anthropic-`/v1/messages`-Interface MIT `tool_use`** → `claude -p` kann das lokale Modell voll-agentisch treiben (nicht nur OpenAI-kompatibel).
+3. **`claude -p` braucht ≥ ~40k Kontext:** beim User-Default 22601 → Overflow (Claude-Code-Harness-Prompt > Fenster); **opencodes schlankerer Harness läuft auch im kleinen Fenster — und in 7 statt 29 Turns** (weniger agentische Round-Trips, ~3,5× schneller). Konkrete Stütze für „OpenCode-executed" als BYOK/Local-Pfad.
+4. **Der CR-214-Hook feuerte in keinem Loop** — die Agenten gingen freiwillig graph-first (Prompt + `graph_context`-Ergonomie). Der Hook ist der **Backstop**; Arm B beweist die Sperre deterministisch.
+
 ## Grenzen (ehrlich)
 
-- **Kein voller agentischer `/loop`** mit Claude Code, das das lokale Modell treibt: Claude Code spricht das Anthropic-API-Format, LM Studio ist OpenAI-kompatibel; `opencode` (der vorgesehene BYOK-Executor) ist nicht installiert. Arm C testete die **entscheidende** Hypothese (Modell implementiert aus dem Bundle) direkt über die LM-Studio-API. Der end-to-end-Loop bleibt ein opencode-Setup (Folge-Schritt).
-- **Arm B** validierte den Enforcement-**Mechanismus** deterministisch (Hook + Bundle), nicht das emergente Agentenverhalten unter Vollloop. Ein headless `claude -p`-Lauf gegen den Rig (Anthropic-Modell) ist als Zusatz-Arm möglich.
+- **Hook-Firing im Loop nicht beobachtet** — die Agenten lasen `SPEC.md` gar nicht erst (graph-first). Ein Arm ohne „lies SPEC nicht"-Instruktion würde das Firing provozieren; Arm B deckt die Sperre bereits deterministisch ab.
+- **Timings = Wall-Clock** auf 48 GB M4 / qwen3.6-27b; nicht modell-/hardware-normiert. Lokaler `claude -p` ist ~3,5× langsamer als opencode (schwererer Per-Turn-Prompt).
+- **Single-Milestone** (`FN-slice`), kein Multi-Milestone-`/loop` bis E2E.
 
 ## Graph-Lücken
 

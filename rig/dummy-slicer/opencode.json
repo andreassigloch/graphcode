@@ -1,0 +1,22 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "lmstudio": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "LM Studio (local)",
+      "options": { "baseURL": "http://localhost:1234/v1" },
+      "models": {
+        "qwen/qwen3.6-27b": { "name": "Qwen3.6 27B (local)" }
+      }
+    }
+  },
+  "mcp": {
+    "graphcode": {
+      "type": "local",
+      "command": ["node", "../../dist/cli.js", "mcp"],
+      "enabled": true
+    }
+  },
+  "permission": { "edit": "allow", "bash": "allow", "webfetch": "deny" },
+  "model": "lmstudio/qwen/qwen3.6-27b"
+}
