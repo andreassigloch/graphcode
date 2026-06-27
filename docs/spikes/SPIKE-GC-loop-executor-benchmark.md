@@ -48,21 +48,18 @@ Erreicht: **ein 27B-Modell lokal (opencode) implementiert den Milestone korrekt,
 
 ## Offene Frage: kann opencode@local auch den **Spec-Prozess**?
 
-Inspektion des realen Spec-Laufs (Session `2d86fe2b`, **vor** der Implementierung):
+**Korrektur (User-Einwand + empirischer Test).** Der Spec-Peak von **504k tok** (Session `2d86fe2b`) war ein **Non-graph-first-Artefakt** — die Session hielt `SPEC.md` + Dossiers + das ganze wachsende Modell im Kontext. **Kein** inhärenter Spec-Bedarf. Spec wird normal **inkrementell + lokal** autoriert: „eine UC + 2 REQs" oder „ein TEST + verify-Link" — jede Einheit braucht nur die **lokale Nachbarschaft**, nicht das ganze Modell. Auch die 14× `graph_mutate` à 4144 chars waren **gebatcht** (viele Elemente pro Call), nicht die atomare Einheit.
 
-| Spec-Demand | Messung (2d86fe2b) | Lokal-Limit (qwen3.6-27b @40k via opencode) |
-|---|---|---|
-| Kontext-Breite | **Peak 504k tok** | 40k-Fenster = **~12× zu klein**; Spec referenziert das ganze wachsende Modell + Research |
-| Authoring-Last | 14× `graph_mutate`, **Ø 4144 chars/Kommando** | das lokale Modell verhaute schon einen **trivialen** `codeRef`-Mutate; 4k-MutateCommands sind unerreichbar |
-| Urteil/Generativität | 1,02M Output-Tok, IRR, FMEA, „welche UCs fehlen?" | **kein objektives Orakel** (Impl hatte `verify.ts`); 27B schwächer bei offenem Urteil |
-| Mensch-im-Loop | **~29 Steuer-Nachrichten** (IRR, fehlende UCs, Constraints) | Spec ist Ko-Autorschaft, kein autonomer Loop |
+**Empirisch** (opencode + qwen3.6-27b, frischer Rig-Store, 127 s): Auftrag „autoriere `UC-export` + 2 REQs + `TEST-export-format` + die compose/verify-Kanten über `graph_mutate`". Ergebnis: **alle 4 Knoten + 4 Kanten korrekt über das Gate** — richtige Typen **und** Richtungen (SYS→UC `compose`, UC→REQ `compose` ×2, TEST→REQ `verify`), **0 Gate-Rejections**, 4 Mutate-Calls. → **Das kleine Modell autoriert die inkrementelle Spec-Einheit graph-nativ; Kontext-Breite ist NICHT das Limit.**
 
-**Befund:** Implementierung ist ein **guter** lokaler Fit (bounded, präzise DoD aus `graph_context`, ~10 Tool-Calls, 40k reicht). **Spezifikation ist es heute nicht** — vier Limits, nach Schärfe geordnet:
+| Aspekt | Lokaler Stand |
+|---|---|
+| Inkrementelles Autoren (UC/REQ/TEST + Links) | **lokal lösbar — empirisch bestätigt**, nur lokale Nachbarschaft nötig |
+| Authoring-Ergonomie **at scale** | mutate klappt, aber Feld-Shape + Kanten-Typen mussten **vorgegeben** werden; eine Affordance (`graph_context`-für-Authoring zeigt die **legalen Meta-Modell-Kanten** eines UC, **oder** flache `add-uc`/`add-req`/`link-verify`-Helfer, CR-216-Familie) macht es **selbständig** (kein Ausbuchstabieren pro Increment) |
+| Offenes Urteil (IRR, FMEA, „welche UCs fehlen?") | **die wenigen Fälle** mit Breiten-/Urteilsbedarf → Mensch/Cloud (vom User akzeptiert) |
+| Mensch-im-Loop | Mensch entscheidet **was** (UC/REQs); der lokale Agent **autoriert** es in den Graphen |
 
-1. **Authoring-Ergonomie (härtester, aber fixbar):** Spec = hunderte add-node/add-edge-Mutationen mit Prosa; das kleine Modell scheitert schon am rohen `graph_mutate`-Schema (Benchmark-Befund 3). → ein **Authoring-Affordance-Layer** — CR-GC-216 (`graph_realize`) verallgemeinert auf flache `add-uc` / `add-req` / `add-trace`-Helfer — ist die **Vorbedingung**.
-2. **Kontext-Breite:** 504k vs 40k. Graph-first senkt das, aber Spec-Reasoning ist inhärent breiter als ein Einzel-FUNC; das Limit bleibt, solange das lokale Fenster klein ist.
-3. **Offenes Urteil:** kein PASS/FAIL-Orakel für „ist diese REQ-Menge vollständig/richtig?"; 27B ist hier schwächer als bei mechanischer Realisierung.
-4. **Mensch-im-Loop:** Spec ist Kollaboration (29 Steuer-Nachrichten). „Local macht Spec" heißt **assistieren** (Knoten autoren, die der Mensch entscheidet, + Readiness/Rules-Feedback fahren), nicht autonom spezifizieren.
+**Fazit (korrigiert):** opencode@local leistet die **Mechanik der Spec** — graph-natives Autoren der vom Menschen entschiedenen Inkremente — schon **heute** (lokal, kleiner Kontext, über das Gate). Es braucht **nicht** das ganze Modell. Nicht-autonom bleiben nur die **wenigen** breiten Urteils-Schritte (Vollständigkeit, FMEA/IRR). Einziger echter Hebel für Skalierung: **Authoring-Affordances (CR-216-Familie)**, damit Kanten-Typen nicht pro Increment vorgegeben werden müssen.
 
 **Fazit:** opencode@local kann den Spec-Prozess **assistieren** (graph-natives Autoren einzelner, vom Menschen entschiedener Knoten), aber **nicht autonom durchziehen** wie die Implementierung. Reihenfolge: erst Authoring-Affordances (CR-216-Familie), dann gegen Kontext-Breite + offenes Urteil testen — ein eigener Spec-Benchmark-Spike.
 
