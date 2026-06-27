@@ -652,7 +652,7 @@
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
       "codeRef": {
-        "file": "src/host.ts",
+        "file": "src/viewer/host.ts",
         "symbol": "HostBridge",
         "lang": "ts"
       }
@@ -822,7 +822,7 @@
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
       "codeRef": {
-        "file": "src/host.ts",
+        "file": "src/viewer/host.ts",
         "symbol": "HostBridge",
         "lang": "ts"
       }
@@ -890,7 +890,7 @@
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
       "codeRef": {
-        "file": "src/host.ts",
+        "file": "src/viewer/host.ts",
         "symbol": "serveHost",
         "lang": "ts"
       }
@@ -903,7 +903,7 @@
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
       "codeRef": {
-        "file": "src/panels.ts",
+        "file": "src/viewer/panels.ts",
         "symbol": "artifactsPanel",
         "lang": "ts"
       }
@@ -925,7 +925,7 @@
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
       "codeRef": {
-        "file": "src/panels.ts",
+        "file": "src/viewer/panels.ts",
         "symbol": "healthPanel",
         "lang": "ts"
       }
@@ -938,7 +938,7 @@
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
       "codeRef": {
-        "file": "src/panels.ts",
+        "file": "src/viewer/panels.ts",
         "symbol": "impactPanel",
         "lang": "ts"
       }
@@ -960,7 +960,7 @@
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
       "codeRef": {
-        "file": "src/panels.ts",
+        "file": "src/viewer/panels.ts",
         "symbol": "readinessPanel",
         "lang": "ts"
       }
@@ -973,7 +973,7 @@
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
       "codeRef": {
-        "file": "src/panels.ts",
+        "file": "src/viewer/panels.ts",
         "symbol": "recommendationsPanel",
         "lang": "ts"
       }
@@ -1027,7 +1027,7 @@
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
       "codeRef": {
-        "file": "src/host.ts",
+        "file": "src/viewer/host.ts",
         "symbol": "serveHost",
         "lang": "ts"
       }
@@ -1053,7 +1053,7 @@
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
       "codeRef": {
-        "file": "src/panels.ts",
+        "file": "src/viewer/panels.ts",
         "symbol": "panelsForEvent",
         "lang": "ts"
       }

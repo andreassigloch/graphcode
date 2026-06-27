@@ -1,25 +1,25 @@
 /**
- * New-Member Bootstrap durchs Gate (CR-GC-122, FUNC-import / REQ-bootstrap-through-gate).
+ * New-member bootstrap through the gate (CR-GC-122, FUNC-import / REQ-bootstrap-through-gate).
  *
- * Befüllt den LEEREN Graphen eines NEUEN Familie-Mitglieds ausschließlich über
- * das `mutate()`-Apply-Gate (L1) — Quelle ist UNGOVERNTER Format-E-Text
- * (z.B. graphify/Slicer-Output, FLOW-bulk-formatE), KEIN Direct-Write.
+ * Fills the EMPTY graph of a NEW family member exclusively through the
+ * `mutate()` Apply-Gate (L1) — the source is UNGOVERNED Format-E text
+ * (e.g. graphify/slicer output, FLOW-bulk-formatE), NOT a direct write.
  *
  *   Format-E text → GraphCodeCodec.decode() → Graph
- *                 → MutateCommand[] (alle add-node ZUERST, dann add-edge)
- *                 → harness.mutate()  ← das EINE Gate (REQ-one-gate-per-repo, L1)
- *                 → BootstrapResult (befüllter Graph + Violations-Report)
+ *                 → MutateCommand[] (all add-node FIRST, then add-edge)
+ *                 → harness.mutate()  ← the ONE gate (REQ-one-gate-per-repo, L1)
+ *                 → BootstrapResult (filled graph + violations report)
  *
- * ── Abgrenzung zu seedFromJson()/importGraph() (KEIN paralleler Pfad) ──────────
- *   harness.seedFromJson()/importGraph() sind ein DIRECT-LOAD des BEREITS
- *   GOVERNTEN, committeten SSOT (graphcodes eigener 226-Element-Graph, der ~63
- *   Alt-R-01-Schulden trägt). Dieser Load MUSS direkt bleiben: durchs Gate
- *   geroutet würde er BLOCKEN, weil gegen einen leeren Baseline-Graphen alle 63
- *   Alt-Violations „neu eingeführt" wären (siehe Delta-Semantik in harness.mutate).
+ * ── Distinction from seedFromJson()/importGraph() (NOT a parallel path) ─────────
+ *   harness.seedFromJson()/importGraph() are a DIRECT LOAD of the ALREADY
+ *   GOVERNED, committed SSOT (graphcode's own graph, which carries legacy
+ *   R-01 debt). That load MUST stay direct: routed through the gate it would
+ *   BLOCK, because against an empty baseline graph every legacy violation would
+ *   count as "newly introduced" (see the delta semantics in harness.mutate).
  *
- *   bootstrap() ist der ZWEITE, separate Pfad: UNGOVERNTER Fremd-Input MUSS durchs
- *   Gate, damit Cold-Start-Daten governt landen oder berichtet/geblockt werden.
- *   Beide Operationen sind nötig und semantisch verschieden — nicht zusammenführen.
+ *   bootstrap() is the SECOND, separate path: UNGOVERNED foreign input MUST pass
+ *   through the gate, so cold-start data lands governed or is reported/blocked.
+ *   Both operations are needed and semantically different — do not merge them.
  *
  * @author andreas@siglochconsulting
  */
@@ -31,36 +31,36 @@ import { GraphCodeHarness } from './harness.js';
 import { GraphCodeCodec } from './codec.js';
 
 /**
- * BootstrapResult (FLOW-bootstrap-result → SCHEMA-mutate-result): das
- * Gate-Ergebnis (MutateResult) plus die Zahl der eingespeisten Knoten/Kanten.
- * MutateResult wird aus @sigloch/contracts/harness importiert — NICHT neu
- * definiert; nur die app-spezifische Hülle ist lokal (Schema-First).
+ * BootstrapResult (FLOW-bootstrap-result → SCHEMA-mutate-result): the gate
+ * result (MutateResult) plus the count of nodes/edges fed in. MutateResult is
+ * imported from @sigloch/contracts/harness — NOT redefined; only the
+ * app-specific wrapper is local (schema-first).
  */
 export const BootstrapResultSchema = z.object({
-  /** Apply-Gate-Ergebnis (success/tier/violations/…) — das eine Gate (L1). */
+  /** Apply-Gate result (success/tier/violations/…) — the one gate (L1). */
   result: MutateResultSchema,
-  /** Aus dem Format-E geparste Knoten (Eingabe-Volumen, vor Gate-Verdikt). */
+  /** Nodes parsed from the Format-E input (volume in, before the gate verdict). */
   nodes: z.number().int().nonnegative(),
-  /** Aus dem Format-E geparste Kanten (Eingabe-Volumen, vor Gate-Verdikt). */
+  /** Edges parsed from the Format-E input (volume in, before the gate verdict). */
   edges: z.number().int().nonnegative(),
 });
 export type BootstrapResult = z.infer<typeof BootstrapResultSchema>;
 
-/** Cold-Start-Modus für einen neuen Member-Graphen. */
+/** Cold-start mode for a new member graph. */
 export type BootstrapMode = 'replace' | 'merge';
 
 /**
- * Minimal-Template eines GATE-VALIDEN Cold-Start-Graphen für ein neues Mitglied.
+ * Minimal template of a GATE-VALID cold-start graph for a new member.
  *
- * Struktur (alle Knoten + Kanten landen in EINEM Gate-Batch):
- *   SYS  -compose-> REQ     (R-17: SYS ist nicht leer)
- *   REQ  <-verify-  TEST     (R-01: REQ ist verifiziert — error sonst)
- *   REQ  <-satisfy- MOD      (RD-01: REQ ist aufgelöst, kein Leaf)
+ * Structure (all nodes + edges land in ONE gate batch):
+ *   SYS  -compose-> REQ     (R-17: SYS is not empty)
+ *   REQ  <-verify-  TEST     (R-01: REQ is verified — error otherwise)
+ *   REQ  <-satisfy- MOD      (RD-01: REQ is resolved, not a leaf)
  *
- * Damit feuert weder eine error- noch eine warning-Regel: `harness.mutate()`
- * gibt auf einem leeren Disk-Kuzu-Graphen success=true mit tier='auto-apply'.
+ * With this, neither an error- nor a warning-rule fires: `harness.mutate()`
+ * returns success=true with tier='auto-apply' on an empty disk Kuzu graph.
  *
- * Format-E entspricht der GraphCodeCodec-Kodierung (uid.TYPE-Suffix, __name-Attr).
+ * Format-E matches the GraphCodeCodec encoding (uid.TYPE suffix, __name attr).
  */
 export const TEMPLATE_FORMAT_E = [
   '## Nodes',
@@ -76,32 +76,32 @@ export const TEMPLATE_FORMAT_E = [
 ].join('\n');
 
 /**
- * Befülle einen (typ. leeren) Member-Graphen durchs Apply-Gate aus Format-E-Text.
+ * Fill a (typically empty) member graph through the Apply-Gate from Format-E text.
  *
- * @param harness  Disk-Kuzu-Harness des neuen Mitglieds (NIE :memory:).
- * @param formatE  UNGOVERNTER Format-E-Text (graphify/Slicer-Output o. Template).
- * @param mode     Cold-Start: 'replace'|'merge' reduzieren auf reine Adds (der
- *                 Graph ist leer). Replace-on-nonempty (delete-then-add) ist für
- *                 MVP-1 OUT OF SCOPE — Cold-Start ist der einzige Pfad hier.
+ * @param harness  Disk Kuzu harness of the new member (NEVER :memory:).
+ * @param formatE  UNGOVERNED Format-E text (graphify/slicer output or template).
+ * @param mode     Cold-start: 'replace'|'merge' both reduce to pure adds (the
+ *                 graph is empty). Replace-on-nonempty (delete-then-add) is OUT
+ *                 OF SCOPE for MVP-1 — cold-start is the only path here.
  *
- * Wirft bei Format-E-Parsefehlern (Codec.decode surfaced sie). Rule-Violations
- * dagegen werden NICHT geworfen: sie sind das governte Gate-Verdikt im Result
- * (success=false, tier='block', z.B. R-01) — der Graph bleibt dann unverändert.
+ * Throws on Format-E parse errors (Codec.decode surfaces them). Rule violations
+ * are NOT thrown: they are the governed gate verdict in the result
+ * (success=false, tier='block', e.g. R-01) — the graph then stays unchanged.
  */
 export async function bootstrap(
   harness: GraphCodeHarness,
   formatE: string,
   mode: BootstrapMode = 'replace',
 ): Promise<BootstrapResult> {
-  void mode; // Cold-Start: beide Modi = reine Adds (siehe @param).
+  void mode; // Cold-start: both modes = pure adds (see @param).
 
-  // 1. Parse: Format-E → Graph (autoritativer Parser; throws bei Parsefehlern).
+  // 1. Parse: Format-E → Graph (authoritative parser; throws on parse errors).
   const codec = new GraphCodeCodec();
   const graph: Graph = codec.decode(formatE);
 
-  // 2. Konvertiere zu MutateCommand[]: ERST alle Knoten, DANN alle Kanten.
-  //    Endpunkte, die im selben Batch angelegt werden, sind ok — das Gate wendet
-  //    die Commands in Reihenfolge an, bevor es die Regeln auswertet.
+  // 2. Convert to MutateCommand[]: FIRST all nodes, THEN all edges. Endpoints
+  //    created in the same batch are fine — the gate applies the commands in
+  //    order before it evaluates the rules.
   const commands: MutateCommand[] = [
     ...graph.nodes.map(
       (n): MutateCommand => ({
@@ -128,8 +128,8 @@ export async function bootstrap(
     ),
   ];
 
-  // 3. Durchs EINE Gate (L1) — kein Direct-Write. Bei neu eingeführten
-  //    error-Violations blockt das Gate und persistiert nichts.
+  // 3. Through the ONE gate (L1) — no direct write. On newly introduced
+  //    error-violations the gate blocks and persists nothing.
   const result: MutateResult = await harness.mutate(commands);
 
   return {

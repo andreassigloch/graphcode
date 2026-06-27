@@ -62,11 +62,18 @@ export type { ReadinessReport, ReadinessDimension } from './readiness.js';
 export { scaffold, CliCommandSchema, InstallResultSchema } from './scaffold.js';
 export type { CliCommand, InstallResult } from './scaffold.js';
 
+// ===========================================================================
+// Viewer surface (`src/viewer/`) — PROVISIONAL. The read-only data layer an
+// external live viewer/renderer (`graph-view-edit`) plugs into. graphcode itself
+// stays headless; these exports stabilize when that renderer lands. See README
+// "Viewer integration — coming soon". Live-update events come from `./emit.js`.
+// ===========================================================================
+
 // Host + read-only SSE bridge (CR-GC-114, MOD-host-bridge) — owns the single
 // Kuzu store and serves /health + /events (SSE) to a live viewer. Read-only:
 // no mutating HTTP verb is reachable (the write path is MCP-stdio).
-export { HostBridge, serveHost } from './host.js';
-export type { HostBridgeOptions, HealthPayload } from './host.js';
+export { HostBridge, serveHost } from './viewer/host.js';
+export type { HostBridgeOptions, HealthPayload } from './viewer/host.js';
 
 // Headless dashboard data-layer (CR-GC-115, MOD-dashboard) — pure read-only
 // shapers over the MCP tools; the external graph-view-edit renderer consumes
@@ -79,7 +86,7 @@ export {
   impactPanel,
   healthPanel,
   panelsForEvent,
-} from './panels.js';
+} from './viewer/panels.js';
 export type {
   ReadinessPanel,
   GatePanel,
@@ -90,7 +97,7 @@ export type {
   Freshness,
   ImpactPanel,
   HealthPanel,
-} from './panels.js';
+} from './viewer/panels.js';
 
 export type {
   HarnessConfig,

@@ -43,9 +43,9 @@ import {
   V3_RULES,
 } from '@sigloch/contracts/se';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
-import { createHarness, type GraphCodeHarness } from './index.js';
-import { deriveMemberName } from './mcp-server.js';
-import type { LiveUpdateEvent } from './emit.js';
+import { createHarness, type GraphCodeHarness } from '../index.js';
+import { deriveMemberName } from '../mcp-server.js';
+import type { LiveUpdateEvent } from '../emit.js';
 
 /** A connected SSE client: its raw response stream. */
 type SseClient = ServerResponse;

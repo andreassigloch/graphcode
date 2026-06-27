@@ -19,7 +19,7 @@
  * @author andreas@siglochconsulting
  */
 import { serveStdio } from './mcp-server.js';
-import { serveHost } from './host.js';
+import { serveHost } from './viewer/host.js';
 import { scaffold, type CliCommand } from './scaffold.js';
 
 const USAGE = `graphcode — governed graph substrate (MCP-stdio)

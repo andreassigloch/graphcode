@@ -64,6 +64,20 @@ falling back to the repo directory name.
 | `rules_evaluate`, `rules_get_violations` | run the SE rules (`V3_RULES`) read-only |
 | `audit_trail`, `audit_stats` | mutation history (every gate write logged) |
 
+## Viewer integration — coming soon
+
+GraphCode is headless and is **not** itself a viewer. It does, however, ship the read-only
+**data layer** an external live viewer/renderer (`graph-view-edit`) plugs into — this surface is
+**provisional** and stabilizes when that renderer lands:
+
+- `host` (`graphcode host`) — owns the single Kuzu store and serves `/health` + `/events` (SSE).
+  Read-only: no mutating HTTP verb is reachable; the write path stays MCP-stdio.
+- panel shapers (`readinessPanel`, `impactPanel`, `artifactsPanel`, …) — pure read-only
+  view-models over the MCP tools; the renderer consumes these and fills the render mount-slot.
+- live-update events — every gate mutation emits one update event the host broadcasts over SSE.
+
+Until the renderer ships, treat these exports as experimental.
+
 ## Local development (this repo)
 
 ```bash
@@ -73,7 +87,11 @@ npm test           # vitest — real disk Kuzu, no mocks
 npm run bundle     # esbuild → self-contained dist (for publish; runs on prepack)
 ```
 
-## Constraints (locked — see `bok/docs/research/2-Year-Review/2yR-SSOT-stand-und-ziel.md`)
+> Note: building/testing **from source** requires the `@sigloch/*` sibling packages (linked as
+> `file:` devDependencies). The **published** npm package is self-contained — esbuild inlines those
+> siblings into `dist/`, so consumers of `@sigloch/graphcode` never need them.
+
+## Constraints (locked)
 
 - **One store = Kuzu**, embedded, single-writer, on disk (`.graphcode/kuzu`) — never `:memory:`.
 - **One transport = MCP-stdio** — no Express/REST in the core.
@@ -81,19 +99,14 @@ npm run bundle     # esbuild → self-contained dist (for publish; runs on prepa
 - **SE ontology + `V3_RULES` from `@sigloch/contracts/se`** — imported, never forked. A new
   ElementType/TraceType/rule requires a family review + version bump.
 
-## Governance SSOT (canonical — in bok, do not copy here)
+## Model & docs
 
-GraphCode follows the No-Duplication model (`bok/docs/governance/REPO-BOUNDARY.md`):
-the spec lives in **bok**; this repo links to it and owns the **implementation + its CRs** (`docs/cr/`).
-The graph SSOT for graphcode's own model is `docs/graph/graphcode.graph.json`.
+GraphCode owns the **implementation** plus its own graph model. The graph SSOT for graphcode's
+own model is [`docs/graph/graphcode.graph.json`](docs/graph/graphcode.graph.json); the founding
+charter and constraints are in [`docs/adr/ADR-001`](docs/adr/ADR-001-graphcode-goal-and-constraints.md).
+GraphCode is part of a larger internal toolchain; some design-history documents reference private
+governance docs that are not part of this repository.
 
-| Topic | Canonical source |
-|---|---|
-| Full spec (modules, Zod interfaces, Drift-Locks, design decisions) | `bok/docs/governance/graphcode-governance.md` |
-| Drift-Locks L1–L4 | `bok/docs/governance/graphcode-governance.md` §3 |
-| Interface matrix (consumers) | `bok/docs/governance/USAGE-MATRIX.md` |
-| Family architecture | `bok/docs/konzept/aise-family-architecture.md` |
+## License
 
----
-
-**Repository:** /Users/andreas/Developer/dev/graphcode/
+MIT — see [LICENSE](LICENSE).

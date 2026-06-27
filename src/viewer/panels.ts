@@ -12,9 +12,9 @@
  *
  * @author andreas@siglochconsulting
  */
-import type { ReadinessReport, ReadinessGate } from './readiness.js';
+import type { ReadinessReport, ReadinessGate } from '../readiness.js';
 import type { RuleViolation } from '@sigloch/contracts/harness';
-import type { LiveUpdateEvent, UpdateDomain } from './emit.js';
+import type { LiveUpdateEvent, UpdateDomain } from '../emit.js';
 
 // ---------------------------------------------------------------------------
 // FUNC-render-readiness + FUNC-render-impl-gates — readiness panel.

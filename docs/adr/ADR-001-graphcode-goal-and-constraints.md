@@ -84,7 +84,6 @@ Diese werden **nicht** hier entschieden; Rationale + Detail liegen in bok:
 
 ## 8. Referenzen
 
-- **bok:** `2yR-SSOT-stand-und-ziel.md`, `2yR-35-store-spec.md`, `2yR-36-codec-spec.md`,
-  `governance/graphcode-governance.md`, `konzept/aise-family-architecture.md`, `governance/REPO-BOUNDARY.md`
-- **CLAUDE.md:** `~/.claude/CLAUDE.md` (CR-Konzept, Test-Disziplin) · `graphcode/CLAUDE.md` (Carve-Out, CR-GC-Sequenz)
-- **Graph:** `docs/graph/graphcode.graph.json` · Re-Exporter: `scripts/export-graph.mjs` (CR-GC-113) · Historischer Input (Bootstrap, retired): `docs/SPEC.md`, `docs/RECOMMENDATIONS.md`
+- **Graph (SSOT):** `docs/graph/graphcode.graph.json` · Re-Exporter: `scripts/export-graph.mjs` (CR-GC-113)
+- **Öffentliche Einführung:** `README.md` · `docs/articles/`
+- _Hinweis:_ Teile der Entwurfshistorie verweisen auf interne Governance-Dokumente, die nicht Teil dieses Repositorys sind.

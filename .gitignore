@@ -8,3 +8,16 @@ dist/
 .aimprove/
 data/
 *.db
+
+# internal process docs — change-requests, gate-review records, and spikes are
+# kept locally but are not part of the public repo (the design narrative for
+# outsiders lives in README.md + docs/articles/ + docs/adr/).
+docs/cr/
+docs/records/
+docs/spikes/
+docs/SPEC.md
+docs/RECOMMENDATIONS.md
+
+# maintainer's full internal guardrails (family governance, bok refs); the public
+# CLAUDE.md ships the app-relevant subset. Claude Code auto-loads both locally.
+CLAUDE.local.md

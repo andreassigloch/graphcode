@@ -27,7 +27,7 @@ import {
   impactPanel,
   healthPanel,
   panelsForEvent,
-} from '../src/panels.js';
+} from '../src/viewer/panels.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 import type { LiveUpdateEvent } from '../src/emit.js';
 

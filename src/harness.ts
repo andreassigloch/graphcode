@@ -125,7 +125,7 @@ export class GraphCodeHarness {
   }
 
   /**
-   * FUNC-resolve-tests-from-code — gerichtete code→REQ→TEST-Auflösung (CR-GC-204).
+   * FUNC-resolve-tests-from-code — directed code→REQ→TEST resolution (CR-GC-204).
    *
    * A code changeset (MOD/FUNC) cannot reach its TESTs through plain incoming
    * `impact()`: the chain is `TEST -verify-> REQ <-satisfy- FUNC -allocate-> MOD`,
