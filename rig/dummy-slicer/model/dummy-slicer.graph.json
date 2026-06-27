@@ -1,0 +1,125 @@
+{
+  "elements": [
+    {
+      "id": "SYS-dummy-slicer",
+      "type": "SYS",
+      "name": "DummySlicer",
+      "description": "Fictional doc-slicer used only as a graphcode test rig — NOT graphify. Turns an unstructured document set into a recall-first candidate graph with provenance.",
+      "status": "reviewed",
+      "created_at": "2026-06-26T00:00:00.000Z"
+    },
+    {
+      "id": "UC-structure-doc",
+      "type": "UC",
+      "name": "Structure an unstructured document set",
+      "description": "Actor feeds a document set; the system returns a candidate graph from which a typed model can be built. Realizes the slicing goal.",
+      "status": "reviewed",
+      "created_at": "2026-06-26T00:00:00.000Z"
+    },
+    {
+      "id": "FN-slice",
+      "type": "FUNC",
+      "name": "Slice into untyped candidate graph",
+      "description": "Recall-first slicer: given a DocSet, surface the superset of plausible candidate nodes (untyped) with a sourceRef on each. Deterministic. NOT yet realized (no codeRef) — this is the milestone to implement.",
+      "status": "specified",
+      "created_at": "2026-06-26T00:00:00.000Z"
+    },
+    {
+      "id": "REQ-recall-first",
+      "type": "REQ",
+      "name": "Recall-first surfacing",
+      "description": "Surface the superset of plausible candidates; core recall >= 0.85 on a real document; never silently drop a candidate. Precision is a later concern.",
+      "status": "reviewed",
+      "created_at": "2026-06-26T00:00:00.000Z"
+    },
+    {
+      "id": "REQ-determinism",
+      "type": "REQ",
+      "name": "Deterministic extraction",
+      "description": "Same input yields the same candidate set with stable, deterministic IDs (re-run Jaccard = 1.0). No randomness, no wall-clock in IDs.",
+      "status": "reviewed",
+      "created_at": "2026-06-26T00:00:00.000Z"
+    },
+    {
+      "id": "REQ-provenance",
+      "type": "REQ",
+      "name": "Provenance via sourceRef",
+      "description": "Every emitted candidate carries a non-empty sourceRef { doc, page, region } so provenance survives the hand-off to the typer.",
+      "status": "reviewed",
+      "created_at": "2026-06-26T00:00:00.000Z"
+    },
+    {
+      "id": "TEST-recall",
+      "type": "TEST",
+      "name": "Recall benchmark",
+      "description": "Target: slice() over a ground-truth document. Tool: vitest + scoreRecall (see spikes/score.ts). PASS iff core recall >= 0.85.",
+      "status": "specified",
+      "method": "test",
+      "created_at": "2026-06-26T00:00:00.000Z"
+    },
+    {
+      "id": "TEST-determinism",
+      "type": "TEST",
+      "name": "Re-run determinism check",
+      "description": "Target: slice() run twice on the same input. Tool: vitest. PASS iff the candidate sets are identical and IDs stable (Jaccard = 1.0).",
+      "status": "specified",
+      "method": "test",
+      "created_at": "2026-06-26T00:00:00.000Z"
+    },
+    {
+      "id": "TEST-provenance",
+      "type": "TEST",
+      "name": "sourceRef presence assertion",
+      "description": "Target: every candidate in the SlicerOutput. Tool: vitest. PASS iff each carries a non-empty sourceRef { doc, page, region }.",
+      "status": "specified",
+      "method": "test",
+      "created_at": "2026-06-26T00:00:00.000Z"
+    },
+    {
+      "id": "FLOW-docset",
+      "type": "FLOW",
+      "name": "DocSet",
+      "description": "Input flow: a primary document plus attachments, as { id, text, page } records.",
+      "status": "reviewed",
+      "created_at": "2026-06-26T00:00:00.000Z"
+    },
+    {
+      "id": "SCHEMA-slicer-output",
+      "type": "SCHEMA",
+      "name": "SlicerOutput",
+      "description": "Output shape: { candidates: Array<{ id: string; text: string; sourceRef: { doc: string; page: number; region: string } }> }. id is a deterministic hash of (doc,page,region,text).",
+      "status": "reviewed",
+      "created_at": "2026-06-26T00:00:00.000Z"
+    },
+    {
+      "id": "MOD-slicer",
+      "type": "MOD",
+      "name": "slicer",
+      "description": "Host module for the slice function (src/slice.ts).",
+      "status": "reviewed",
+      "created_at": "2026-06-26T00:00:00.000Z"
+    },
+    {
+      "id": "MS-slicer-core",
+      "type": "MS",
+      "name": "Milestone: Slicer core",
+      "description": "First milestone — implement FN-slice so the recall/determinism/provenance tests pass.",
+      "status": "open",
+      "created_at": "2026-06-26T00:00:00.000Z"
+    }
+  ],
+  "traces": [
+    { "source": "SYS-dummy-slicer", "target": "UC-structure-doc", "type": "compose" },
+    { "source": "FN-slice", "target": "REQ-recall-first", "type": "satisfy" },
+    { "source": "FN-slice", "target": "REQ-determinism", "type": "satisfy" },
+    { "source": "FN-slice", "target": "REQ-provenance", "type": "satisfy" },
+    { "source": "FN-slice", "target": "UC-structure-doc", "type": "satisfy" },
+    { "source": "TEST-recall", "target": "REQ-recall-first", "type": "verify" },
+    { "source": "TEST-determinism", "target": "REQ-determinism", "type": "verify" },
+    { "source": "TEST-provenance", "target": "REQ-provenance", "type": "verify" },
+    { "source": "FLOW-docset", "target": "FN-slice", "type": "io" },
+    { "source": "FLOW-docset", "target": "SCHEMA-slicer-output", "type": "relation" },
+    { "source": "FN-slice", "target": "MOD-slicer", "type": "allocate" },
+    { "source": "MS-slicer-core", "target": "FN-slice", "type": "compose" }
+  ]
+}

@@ -1,0 +1,3 @@
+# run artifacts (regenerable via scripts/armB.mjs / armC.mjs)
+.armB-bundle.txt
+.armC-output.ts

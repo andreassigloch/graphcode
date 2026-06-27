@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "graphcode": {
+      "command": "node",
+      "args": ["../../dist/cli.js", "mcp"],
+      "env": { "GRAPHCODE_SEED_JSON": "model/dummy-slicer.graph.json" }
+    }
+  }
+}
