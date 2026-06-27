@@ -1565,14 +1565,14 @@
       "id": "REQ-graph-snapshot-per-commit",
       "type": "REQ",
       "name": "Kanonischer Graph-Snapshot pro Commit",
-      "description": "Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/graph/*.graph.json), der zum Code dieses Commits passt. Un-exportierte Modell-Mutationen blockieren den Commit ueber den single-writer-sicheren Drift-Marker .graphcode/EXPORT_PENDING (vom Gate auf mutate gesetzt, von graph_export/graph_reseed geloescht); der pre-commit-Hook staged die generierten Artefakte automatisch. (CR-GC-216)",
+      "description": "Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/graph/*.graph.json), der zum Code dieses Commits passt. Un-exportierte Modell-Mutationen blockieren den Commit ueber den single-writer-sicheren Drift-Marker .graphcode/EXPORT_PENDING (vom Gate auf mutate gesetzt, von graph_export/graph_reseed geloescht); der pre-commit-Hook staged die generierten Artefakte automatisch. (CR-GC-217)",
       "status": "in-progress"
     },
     {
       "id": "REQ-graph-state-recall",
       "type": "REQ",
       "name": "Frueheren Graph-Stand reproduzieren",
-      "description": "Ein frueherer Graph-Stand ist reproduzierbar via 'git checkout <sha>' + graph_reseed: der committete Snapshot ist SSOT-at-rest / history-of-record, der Kuzu-Store eine abgeleitete Working-Copy. reseed loescht+reimportiert den Store in-process hinter dem Single-Writer (kein zweites Handle). (CR-GC-216)",
+      "description": "Ein frueherer Graph-Stand ist reproduzierbar via 'git checkout <sha>' + graph_reseed: der committete Snapshot ist SSOT-at-rest / history-of-record, der Kuzu-Store eine abgeleitete Working-Copy. reseed loescht+reimportiert den Store in-process hinter dem Single-Writer (kein zweites Handle). (CR-GC-217)",
       "status": "in-progress"
     },
     {
@@ -3384,7 +3384,7 @@
       "id": "UC-graph-time-travel",
       "type": "UC",
       "name": "Graph-Stand pro Commit wiederherstellbar",
-      "description": "Als Entwickler will ich den governten Graph-Stand jedes Commits wiederherstellen koennen, sodass Modell und Code zu jedem Commit zusammenpassen — fruehere Modell-Staende sind reproduzierbar, ohne ein zweites Store-Handle. (CR-GC-216, Approach A)",
+      "description": "Als Entwickler will ich den governten Graph-Stand jedes Commits wiederherstellen koennen, sodass Modell und Code zu jedem Commit zusammenpassen — fruehere Modell-Staende sind reproduzierbar, ohne ein zweites Store-Handle. (CR-GC-217, Approach A)",
       "status": "in-progress"
     },
     {

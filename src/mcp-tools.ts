@@ -26,6 +26,7 @@ import { FormatECodec, SE_DESCRIPTOR, InMemoryAuditLog } from '@sigloch/graph-ap
 import { type MutateCommand, type MutateResult, type RuleViolation } from '@sigloch/contracts/harness';
 import { TestRefSchema, type TestRef } from '@sigloch/contracts/se';
 import { exportGraphJson, exportMarkdown, renderTestStubs, MarkdownViewSchema, MARKDOWN_VIEWS, VIEW_FILENAMES } from './exporter.js';
+import { clearExportPending } from './export-marker.js';
 import { scoreReadiness, summarizeReadiness, type ReadinessReport } from './readiness.js';
 
 // ---------------------------------------------------------------------------
@@ -576,6 +577,12 @@ export function bindToolsToHarness(
         writeFileSync(abs, stub.content);
         stubs.push(stub.file);
       }
+
+      // CR-GC-217: the committed snapshot now equals the live model — clear the
+      // drift marker the gate left on the last mutate() so the pre-commit freshness
+      // guard lets the commit through. Only reached after the writes above succeed
+      // (a refused export throws before here, leaving the marker set, by design).
+      clearExportPending(repoRoot);
 
       return {
         graphJson: { path: jsonRel, bytes: Buffer.byteLength(json), nodes: graph.nodes.length, edges: graph.edges.length },

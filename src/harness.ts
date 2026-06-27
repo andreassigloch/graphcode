@@ -38,6 +38,7 @@ import {
   type RuleViolation,
 } from '@sigloch/contracts/harness';
 import { HookSystem } from './hooks.js';
+import { setExportPending, clearExportPending } from './export-marker.js';
 
 /** Shape of the materialized OntologyGraph in docs/graph/*.graph.json. */
 interface OntologyJson {
@@ -292,6 +293,12 @@ export class GraphCodeHarness {
     // Step 4 (APPLY) — persist the delta to disk Kuzu.
     await this.persist(delta);
 
+    // CR-GC-217: the live model now leads the committed snapshot. Leave the
+    // single-writer-safe drift marker so the pre-commit hook blocks a commit until
+    // graph_export re-materializes docs/graph/*.graph.json (each commit a graph
+    // state that fits the code — REQ-graph-snapshot-per-commit).
+    setExportPending(this.config.repoRoot);
+
     const tier = newViolations.some((v) => v.severity === 'warning') ? 'suggest' : 'auto-apply';
     const result: MutateResult = {
       success: true,
@@ -388,7 +395,12 @@ export class GraphCodeHarness {
     const uids = this.graph.nodes.map((n) => n.uid);
     if (uids.length) await this.storage.deleteNodes(uids);
     this.graph = { nodes: [], edges: [] };
-    return this.seedFromJson(relPath);
+    const result = await this.seedFromJson(relPath);
+    // CR-GC-217: the store now equals the committed snapshot again — clear the
+    // drift marker so a post-checkout recall (`git checkout <sha>` + reseed) leaves
+    // a clean working state, not a phantom "export pending".
+    clearExportPending(this.config.repoRoot);
+    return result;
   }
 
   /** Release the store handle (single-writer cleanup). */
