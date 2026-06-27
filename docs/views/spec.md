@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Alle Elemente nach Typ, sortiert nach uid. Deterministisch generiert.
 
-Elemente: 301 · Traces: 689
+Elemente: 305 · Traces: 695
 
 
 ## ACTOR
@@ -206,6 +206,8 @@ Elemente: 301 · Traces: 689
 | `REQ-graph-code-conformance` | FUNC codeRef resolves to a real declared symbol | done | Jeder FUNC.codeRef loest auf ein real deklariertes Symbol in seiner Datei auf (TypeScript-Parser, kein Substring-Match); prompt-realisierte FUNCs (lang prompt): die Skill-Datei existiert. Macht das R-20-Backfill verifizierbar statt nur vorhanden. (CR-GC-206) |
 | `REQ-graph-integrity` | Graph-Integritaet: ein Validator | done | Ein Validierungs-Pfad an EINEM Punkt (Gate): GraphCodeCodec.validate() erkennt zusaetzlich doppelte UIDs (nodeTypeMap dedupt heute still) + referenzielle Integritaet + valide Edge-Paare; kein inline validPairs-Klon ausserhalb des Codecs (keine parallelen Pfade). Das Apply-Gate ruft validate() VOR persist() auf (gleicher contracts-SSOT, Delta-Semantik), sodass kein strukturell-ungueltiges Edge den Store erreicht und Kuzu-DDL + Export-Check zu Backstops werden. (CR-GC-200) |
 | `REQ-graph-is-ssot` | Graph ist Single Point of Truth | done | Der materialisierte Graph + die Live-Harness sind SSOT. docs/*.md sind historischer Input (Bootstrap). Modelländerungen am Graph (mutate/import), dann Re-Export. (2026-06-14) |
+| `REQ-graph-snapshot-per-commit` | Kanonischer Graph-Snapshot pro Commit | in-progress | Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/graph/*.graph.json), der zum Code dieses Commits passt. Un-exportierte Modell-Mutationen blockieren den Commit ueber den single-writer-sicheren Drift-Marker .graphcode/EXPORT_PENDING (vom Gate auf mutate gesetzt, von graph_export/graph_reseed geloescht); der pre-commit-Hook staged die generierten Artefakte automatisch. (CR-GC-216) |
+| `REQ-graph-state-recall` | Frueheren Graph-Stand reproduzieren | in-progress | Ein frueherer Graph-Stand ist reproduzierbar via 'git checkout <sha>' + graph_reseed: der committete Snapshot ist SSOT-at-rest / history-of-record, der Kuzu-Store eine abgeleitete Working-Copy. reseed loescht+reimportiert den Store in-process hinter dem Single-Writer (kein zweites Handle). (CR-GC-216) |
 | `REQ-graph-tests-operational` | graph_tests liefert den korrekten selektiven Testset für einen Code-Change | done | Ein Code-Changeset (MOD/FUNC/git-diff→Knoten) → graph_tests → vitest run nur-betroffene-Dateien, das JEDE vom Change berührte Testdatei enthält (kein false-green) und unbeteiligte ausschliesst. Erfordert testRef auf allen lauffähigen TESTs + gerichtete Auflösung statt reinem incoming-impact. |
 | `REQ-harness-schema-in-contracts` | Harness-Schemas in contracts (D1) | open | CR-GC-100 Task 1 / D1: HarnessConfig/MutateCommand/MutateResult nach @sigloch/contracts (eigener harness-Export, NICHT /se), importieren, lokale Defs löschen. |
 | `REQ-hook-extension-points` | Drei Hook-Extension-Points | open | CR-GC-102: registerHook(type, handler) + runPreCommitHooks/runPostApplyHooks/scheduleNightlyBatch; Storage .graphcode/hooks/. |
@@ -326,6 +328,7 @@ Elemente: 301 · Traces: 689
 | `TEST-graph-integrity` | Graph-Integritaets-Test | done | validate() flaggt doppelte UIDs + alles bisher Abgedeckte (Typen, Edge-Pairs, referenzielle Integritaet); Integritaets-Test delegiert an validate(). (CR-GC-200) |
 | `TEST-graph-is-ssot` | Graph-is-SSOT-Test | done | Der committete graphcode.graph.json ist deterministischer Export des Kuzu-Stores; Hand-Edit wird erkannt und verworfen, Views tragen GENERATED-Header. (REQ-graph-is-ssot) |
 | `TEST-graph-tests-operational` | Code-Changeset → vollständiger selektiver Testset | done | Konzept-Test: changeSet=[MOD-x] → graph_tests resolved alle TESTs, die MOD-x verifizieren, auf die korrekten Dateien (inkl. mehrerer Dateien je REQ); + testRef-Coverage-Konformanz (alle lauffähigen TESTs tragen testRef, concept-only explizit unresolved). Tool: vitest. Constraint: kein false-green, keine übersehene berührte Datei. |
+| `TEST-graph-time-travel` | Time-Travel-Test: Snapshot-Freshness + Recall | done | Realer Disk-Kuzu: mutate setzt den Drift-Marker, graph_export loescht ihn und materialisiert den Snapshot; Reseed eines aelteren Snapshots stellt exakt jenen Stand wieder her (git checkout + reseed = Recall) und hinterlaesst einen sauberen Working-State. (verifiziert REQ-graph-snapshot-per-commit, REQ-graph-state-recall) |
 | `TEST-hooks` | Hook-Extension-Points-Test | open | registerHook + runPreCommitHooks/runPostApplyHooks/scheduleNightlyBatch; pre-commit-Hook blockt eine Mutation; preCommitTimeout (default 5000ms) greift; Execution-Order deterministisch. (CR-GC-102) |
 | `TEST-impact-subgraph` | graph_impact Subgraph-Test | done | graph_impact liefert nur den betroffenen Subgraphen (kein Full-Dump). (FCHAIN-agent-query) |
 | `TEST-interface-escalation` | Interface-Eskalations-Test | open | Direkter FLOW-Mutationsversuch eines Realisierungs-Agenten wird abgelehnt; nur der Eskalationspfad (CR an Facilitating-Agent → graph_impact → Gate) ändert ein Interface. (FCHAIN-interface-escalation) |
@@ -366,6 +369,7 @@ Elemente: 301 · Traces: 689
 |---|---|---|---|
 | `UC-code-quality` | Exzellente, governte Code-Qualität | done | Als Entwickler will ich exzellente, konsistente Code-Qualität: jede Änderung (Mensch/KI) ist ontologie-/regel-konform und driftet nicht — Architektur/Interfaces/Integration/Tests strikt aus dem governten Graph getrieben. |
 | `UC-efficient-testing` | Effizientes, impact-basiertes Testen | done | Als Entwickler will ich nur die richtigen Tests laufen lassen: der Impact-/Abhängigkeitsgraph bestimmt das selektive Testset; „erledigt" = „nachgewiesen". |
+| `UC-graph-time-travel` | Graph-Stand pro Commit wiederherstellbar | in-progress | Als Entwickler will ich den governten Graph-Stand jedes Commits wiederherstellen koennen, sodass Modell und Code zu jedem Commit zusammenpassen — fruehere Modell-Staende sind reproduzierbar, ohne ein zweites Store-Handle. (CR-GC-216, Approach A) |
 | `UC-live-graph-view` | Live-Graph-View (Ziel b) | done | Read-only Live-Dashboard: jede Mutation aktualisiert die Ansicht ohne Reload (SSE invalidate), Readiness/INCOSE-Gates gegen contracts V3_RULES (nicht BQ-2.0.0). Über den Host (Single-Kuzu-Owner), kein 2. DB-Handle. |
 | `UC-reduced-llm` | Reduzierte LLM-Anforderungen | done | Als Nutzer will ich mit kleinen/lokalen LLMs auskommen: deterministische, modellfreie Gates/Regeln + Query-Precision senken den Modell-Bedarf. |
 | `UC-token-efficiency` | Minimaler Token-Verbrauch | done | Als Nutzer/Agent will ich minimalen Token-Verbrauch: präziser Query-Kontext (exakter Blast-Radius/Slice) statt grep-Dump oder Result-Kompression. |

@@ -420,6 +420,7 @@
 | `FUNC-mutate` | io | `FLOW-suggest-result` |
 | `FUNC-mutate` | satisfy | `REQ-confidence-tier` |
 | `FUNC-mutate` | satisfy | `REQ-gate-only-writes` |
+| `FUNC-mutate` | satisfy | `REQ-graph-snapshot-per-commit` |
 | `FUNC-mutate` | satisfy | `UC-code-quality` |
 | `FUNC-own-kuzu-host` | allocate | `MOD-host-bridge` |
 | `FUNC-own-kuzu-host` | satisfy | `REQ-single-kuzu-owner` |
@@ -478,6 +479,7 @@
 | `MOD-dashboard` | satisfy | `REQ-shared-views-no-fork` |
 | `MOD-docs` | satisfy | `REQ-docs-taxonomy` |
 | `MOD-docs` | satisfy | `REQ-testref-materialized` |
+| `MOD-harness` | satisfy | `REQ-graph-state-recall` |
 | `MOD-harness` | satisfy | `REQ-harness-schema-in-contracts` |
 | `MOD-harness` | satisfy | `REQ-import-se-ontology` |
 | `MOD-harness` | satisfy | `REQ-quality-metric` |
@@ -596,6 +598,8 @@
 | `TEST-graph-integrity` | verify | `REQ-graph-integrity` |
 | `TEST-graph-is-ssot` | verify | `REQ-graph-is-ssot` |
 | `TEST-graph-tests-operational` | verify | `REQ-graph-tests-operational` |
+| `TEST-graph-time-travel` | verify | `REQ-graph-snapshot-per-commit` |
+| `TEST-graph-time-travel` | verify | `REQ-graph-state-recall` |
 | `TEST-hooks` | verify | `REQ-hook-extension-points` |
 | `TEST-hooks` | verify | `REQ-hook-order-deterministic` |
 | `TEST-hooks` | verify | `REQ-precommit-timeout` |
@@ -684,6 +688,8 @@
 | `UC-efficient-testing` | compose | `FCHAIN-impact-testing` |
 | `UC-efficient-testing` | compose | `REQ-impact-based-testing` |
 | `UC-efficient-testing` | compose | `REQ-test-runnable-binding` |
+| `UC-graph-time-travel` | compose | `REQ-graph-snapshot-per-commit` |
+| `UC-graph-time-travel` | compose | `REQ-graph-state-recall` |
 | `UC-live-graph-view` | compose | `REQ-artifact-freshness` |
 | `UC-live-graph-view` | compose | `REQ-dashboard-ontology-sync` |
 | `UC-live-graph-view` | compose | `REQ-dashboard-readonly` |

@@ -1562,6 +1562,20 @@
       ]
     },
     {
+      "id": "REQ-graph-snapshot-per-commit",
+      "type": "REQ",
+      "name": "Kanonischer Graph-Snapshot pro Commit",
+      "description": "Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/graph/*.graph.json), der zum Code dieses Commits passt. Un-exportierte Modell-Mutationen blockieren den Commit ueber den single-writer-sicheren Drift-Marker .graphcode/EXPORT_PENDING (vom Gate auf mutate gesetzt, von graph_export/graph_reseed geloescht); der pre-commit-Hook staged die generierten Artefakte automatisch. (CR-GC-216)",
+      "status": "in-progress"
+    },
+    {
+      "id": "REQ-graph-state-recall",
+      "type": "REQ",
+      "name": "Frueheren Graph-Stand reproduzieren",
+      "description": "Ein frueherer Graph-Stand ist reproduzierbar via 'git checkout <sha>' + graph_reseed: der committete Snapshot ist SSOT-at-rest / history-of-record, der Kuzu-Store eine abgeleitete Working-Copy. reseed loescht+reimportiert den Store in-process hinter dem Single-Writer (kein zweites Handle). (CR-GC-216)",
+      "status": "in-progress"
+    },
+    {
       "id": "REQ-graph-tests-operational",
       "type": "REQ",
       "name": "graph_tests liefert den korrekten selektiven Testset für einen Code-Change",
@@ -2797,6 +2811,19 @@
       }
     },
     {
+      "id": "TEST-graph-time-travel",
+      "type": "TEST",
+      "name": "Time-Travel-Test: Snapshot-Freshness + Recall",
+      "description": "Realer Disk-Kuzu: mutate setzt den Drift-Marker, graph_export loescht ihn und materialisiert den Snapshot; Reseed eines aelteren Snapshots stellt exakt jenen Stand wieder her (git checkout + reseed = Recall) und hinterlaesst einen sauberen Working-State. (verifiziert REQ-graph-snapshot-per-commit, REQ-graph-state-recall)",
+      "status": "done",
+      "method": "test",
+      "testRef": {
+        "file": "tests/graph-timetravel.test.ts",
+        "tool": "vitest",
+        "level": "integration"
+      }
+    },
+    {
       "id": "TEST-hooks",
       "type": "TEST",
       "name": "Hook-Extension-Points-Test",
@@ -3352,6 +3379,13 @@
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "id": "UC-graph-time-travel",
+      "type": "UC",
+      "name": "Graph-Stand pro Commit wiederherstellbar",
+      "description": "Als Entwickler will ich den governten Graph-Stand jedes Commits wiederherstellen koennen, sodass Modell und Code zu jedem Commit zusammenpassen — fruehere Modell-Staende sind reproduzierbar, ohne ein zweites Store-Handle. (CR-GC-216, Approach A)",
+      "status": "in-progress"
     },
     {
       "id": "UC-live-graph-view",
@@ -6237,6 +6271,11 @@
     },
     {
       "source": "FUNC-mutate",
+      "target": "REQ-graph-snapshot-per-commit",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-mutate",
       "target": "UC-code-quality",
       "type": "satisfy",
       "weight": 1,
@@ -6617,6 +6656,11 @@
     {
       "source": "MOD-docs",
       "target": "REQ-testref-materialized",
+      "type": "satisfy"
+    },
+    {
+      "source": "MOD-harness",
+      "target": "REQ-graph-state-recall",
       "type": "satisfy"
     },
     {
@@ -7389,6 +7433,16 @@
       "type": "verify"
     },
     {
+      "source": "TEST-graph-time-travel",
+      "target": "REQ-graph-snapshot-per-commit",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-graph-time-travel",
+      "target": "REQ-graph-state-recall",
+      "type": "verify"
+    },
+    {
       "source": "TEST-hooks",
       "target": "REQ-hook-extension-points",
       "type": "verify"
@@ -7921,6 +7975,16 @@
       "type": "compose",
       "weight": 1,
       "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "UC-graph-time-travel",
+      "target": "REQ-graph-snapshot-per-commit",
+      "type": "compose"
+    },
+    {
+      "source": "UC-graph-time-travel",
+      "target": "REQ-graph-state-recall",
+      "type": "compose"
     },
     {
       "source": "UC-live-graph-view",
