@@ -28,34 +28,14 @@ Rig: [`rig/dummy-slicer/`](../../rig/dummy-slicer/) — fiktiver Consumer, **gra
 
 Erreicht: **ein kleineres lokales Modell erledigt den Job, weil das Framework präzisen Kontext liefert.** Das ist der positive Ausgang, den der Auftrag definiert hat — nicht „Opus spart Tokens", sondern „ein 27B-Modell implementiert korrekt aus ~667 tok statt an 600k Prosa zu scheitern".
 
-## Agentischer Voll-Loop (claude -p + opencode, 2026-06-27)
+## Agentischer Voll-Loop
 
-Echte headless Agenten-Loops gegen den Rig (scoped `--allowed-tools`, kein Permission-Bypass; MCP `graphcode` aktiv; CR-214-Hook aktiv). Akzeptanz = `scripts/verify.ts` (recall ≥0.85 + Determinismus + sourceRef).
-
-| Arm | Executor | Modell | Code (verify) | Graph aktualisiert | Zeit | Turns | `graph_context` | SPEC.md |
-|---|---|---|---|---|---|---|---|---|
-| Cloud-Control | `claude -p` | Cloud | **ALL PASS** | n/a (nicht beauftragt) | 157 s | 21 | 1 | **0** |
-| Local | opencode | qwen3.6-27b | **ALL PASS** | Versuch — **abgelehnt** (Format) | 201 s | 7 | 3 | **0** |
-| Local | `claude -p` | qwen @40k | **ALL PASS** | Versuch — **denied** (Allowlist) | 556 s | 29 | 1 | **0** |
-| Local | `claude -p` | qwen @22k | **FAIL** (ctx-overflow) | — | — | — | — | — |
-| **Local — Voll** | **opencode** | qwen3.6-27b | **ALL PASS** | **JA — `codeRef` gesetzt, `missingRefs=[]`** | 293 s | — | ✓ | **0** |
-
-**Code getestet+lauffähig:** alle Läufe `scripts/verify.ts` = ALL PASS (recall 1.0, Determinismus Jaccard=1.0, sourceRef) — zur Laufzeit ausgeführt, nicht behauptet. Die opencode-Routine nutzt `crypto.createHash` (deterministische IDs), Satz-Splitting, `sourceRef {doc,page,region}`.
-
-**Befunde:**
-
-1. **Alle lauffähigen Executors** implementieren den Milestone **korrekt**, **graph-first** (`graph_context` als DoD-Quelle), **0 SPEC.md-Reads** — die absichtlich falschen SPEC-Werte (recall 0.70 / optional / random) tauchten in **keiner** Implementierung auf.
-2. **Graph-Update — Korrektur:** die einfachen Arme **versuchten** `graph_mutate` aus eigenem Antrieb, aber **keiner schrieb erfolgreich** — `claude -p` hatte `graph_mutate` nicht in der Allowlist (denied), und das lokale Modell riet das Kommando-Format falsch (`op:update` + `codeRef:"string"` statt `op:update-node` + `codeRef:{file,symbol}`). **Erst der Voll-Lauf** mit ausbuchstabiertem Format schrieb über das Gate korrekt zurück: `FN-slice.codeRef={file,symbol}`, `missingRefs=[]`, readiness-compliance=1. → **Rohe `graph_mutate` ist ein scharfes Werkzeug für kleine Modelle; ein `graph_realize(funcUid,file,symbol)`-Affordance (analog zur `graph_context`-Ergonomie) ist der nächste Schritt.**
-3. **LM Studio hat ein Anthropic-`/v1/messages`-Interface MIT `tool_use`** → `claude -p` kann das lokale Modell voll-agentisch treiben.
-4. **`claude -p` lokal = no-go:** beim User-Default 22601 ctx → Overflow (Claude-Code-Harness > Fenster); selbst @40k ist es 29 Turns / 556 s. **opencodes schlanker Harness** läuft im kleinen Fenster, in **7 Turns / 201 s** (~3,5× schneller). → opencode ist der lokale Executor; großes Kontextfenster killt lokale Performance.
-5. **Der CR-214-Hook feuerte in keinem Loop** — die Agenten gingen freiwillig graph-first. Der Hook ist der **Backstop**; Arm B beweist die Sperre deterministisch.
+Der Executor-/Modell-Benchmark (claude -p vs opencode, Cloud vs lokal, inkl. Graph-Write-back und dem realen graphify-Original-Lauf) ist eigenständig dokumentiert: **[`SPIKE-GC-loop-executor-benchmark`](SPIKE-GC-loop-executor-benchmark.md)**. Kurz: alle lauffähigen Executors implementieren `FN-slice` graph-first (0 SPEC-Reads); **opencode+qwen3.6-27b** ist der lokale Pfad (7 Turns/201 s; voller Lauf schreibt `codeRef` korrekt über das Gate zurück); `claude -p` lokal braucht ≥40k ctx und ist ~3,5× langsamer.
 
 ## Grenzen (ehrlich)
 
-- **Hook-Firing im Loop nicht beobachtet** — die Agenten lasen `SPEC.md` gar nicht erst (graph-first). Arm B deckt die Sperre deterministisch ab.
-- **`status` blieb `specified`** — der Voll-Lauf setzte nur `codeRef` (so beauftragt); ein voll-realisierter Knoten würde zusätzlich `status` + die TEST-`testRef` setzen.
-- **Timings = Wall-Clock** auf 48 GB M4 / qwen3.6-27b; nicht normiert.
-- **Single-Milestone** (`FN-slice`), kein Multi-Milestone-`/loop` bis E2E.
+- **Arm B** validierte den CR-214-Enforcement-**Mechanismus** deterministisch (Hook + Bundle). In den echten Loops feuerte der Hook nicht — die Agenten gingen freiwillig graph-first; er ist der **Backstop**.
+- **Single-Milestone** (`FN-slice`); kein Multi-Milestone-`/loop` bis E2E.
 
 ## Graph-Lücken
 
