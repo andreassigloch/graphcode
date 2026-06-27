@@ -1,7 +1,9 @@
 # CR-GC-213: `graph_context` — Node-scoped Definition-of-Done-Context-Pack (MCP)
 
-**Status:** Open (2026-06-26) · **Milestone:** `MS-5-efficiency` · **Max Files:** 3
-**Graph (SSOT):** zu seeden (gate-only, bei Pick-up via `graph_mutate`) `REQ-context-pack`, `FUNC-graph-context` (→ `src/mcp-tools.ts`), `TEST-graph-context` (→ `tests/mcp-tools.test.ts`), `CR-GC-213`; unter `MS-5-efficiency`. Pointer, nicht autoritativ.
+**Status:** Done (2026-06-26) · **Milestone:** `MS-5-efficiency` · **Max Files:** 3
+**Graph (SSOT):** zu seeden (gate-only) `REQ-context-pack`, `FUNC-graph-context` (→ `src/mcp-tools.ts`), `TEST-graph-context` (→ `tests/mcp.context.test.ts`), `CR-GC-213`; unter `MS-5-efficiency`. Pointer, nicht autoritativ.
+
+> **Closed 2026-06-26:** `graph_context` live in `src/mcp-tools.ts`; 7 Tests `tests/mcp.context.test.ts` grün, Gesamt-Suite 159 grün. `referenceImpl` verworfen (= `codeRef`, keine Parallelpfade). Live-Smoke gegen das graphcode-Selbstmodell: 3-Node-Bundle ~250 tok, 111× kleiner als der `graph_elements{300}`-Dump. Selbstmodell-Seed (`FUNC-graph-context` etc.) = Follow-up beim nächsten `seed-graph`-Lauf.
 
 ## Problem (Why)
 
