@@ -410,8 +410,8 @@
       "id": "CR-GC-222",
       "type": "CR",
       "name": "Artefakt-Tab: render/analysis Kind-Split",
-      "description": "ArtifactStatus.kind render|analysis + zwei Stale-Mechanismen (mtime vs Scope/Commit); INCOSE vs graphcode-spezifisch getrennt; IRR-Label → Assumption Review. (docs/cr/open/CR-GC-222)",
-      "status": "open"
+      "description": "DONE 2026-06-28: ArtifactStatus gains kind (render|analysis) + group (incose|graphcode) in src/viewer/panels.ts. Render rows keep the mtime classifier (artifactFreshness); analysis/creation rows use a scope-currency classifier (analysisFreshness) and are NEVER mtime-classified (staleVsGraph ignored for them). ARTIFACT_CATALOG is the SSOT for kind/group/label; IRR renamed to 'Assumption Review' (graphcode-specific group); labels are names not ids. creationCurrencyProvider() builds the CR-221 CreationCurrencyProvider from analysis currency. Test: tests/panels.test.ts. (CR-GC-222)",
+      "status": "done"
     },
     {
       "id": "CR-GC-223",

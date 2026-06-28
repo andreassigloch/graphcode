@@ -12,7 +12,7 @@
  *
  * @author andreas@siglochconsulting
  */
-import type { ReadinessReport, ReadinessGate } from '../readiness.js';
+import type { ReadinessReport, ReadinessGate, CreationCurrency, CreationCurrencyProvider } from '../readiness.js';
 import type { RuleViolation } from '@sigloch/contracts/harness';
 import type { LiveUpdateEvent, UpdateDomain } from '../emit.js';
 
@@ -101,17 +101,80 @@ export function recommendationsPanel(violations: RuleViolation[], limit = 5): Re
 
 export type Freshness = 'live' | 'stale' | 'absent';
 
-/** Classify one artifact. `exists` = a materialized doc is present;
- *  `staleVsGraph` = the graph changed since that doc was generated. */
+/**
+ * Two artifact kinds with TWO distinct staleness mechanisms (CR-GC-222):
+ * - `render`   — a deterministic `docs/views/*.md` projection; stale via file mtime vs graph.
+ * - `analysis` — judgment work (FMEA/ConOps/Trade/…); stale when the analyzed SCOPE moved,
+ *                NEVER via mtime. The single `staleVsGraph` boolean was the defect (it applied
+ *                an mtime check to analyses that don't refresh on mtime).
+ */
+export type ArtifactKind = 'render' | 'analysis';
+
+/** INCOSE/SE-standard vs graphcode-specific — so non-INCOSE rows are not mislabeled as INCOSE. */
+export type ArtifactGroup = 'incose' | 'graphcode';
+
+/** Catalog entry: the SSOT for an artifact's kind/group/label (labels are NAMES, never `id==label`). */
+export interface ArtifactCatalogEntry {
+  id: string;
+  label: string;
+  kind: ArtifactKind;
+  group: ArtifactGroup;
+}
+
+/**
+ * The canonical INCOSE-tab artifact catalog (readiness-artifact-model.md §6). Renders are the
+ * deterministic CR-GC-220 views; the 5 analysis ids are exactly CR-GC-221's creation keys
+ * (`conops`/`assumption-review`/`fmea`/`trade`/`implplan`). `irr` is renamed to "Assumption
+ * Review" and grouped graphcode-specific (it is not a standard INCOSE artifact).
+ */
+export const ARTIFACT_CATALOG: readonly ArtifactCatalogEntry[] = [
+  // Renders — INCOSE/SE-standard deterministic views (mtime-classified).
+  { id: 'srs', label: 'Requirements Spec (SRS)', kind: 'render', group: 'incose' },
+  { id: 'architecture', label: 'Architecture (SDD)', kind: 'render', group: 'incose' },
+  { id: 'rtm', label: 'Req-Test Traceability Matrix', kind: 'render', group: 'incose' },
+  { id: 'nfr', label: 'NFR Register', kind: 'render', group: 'incose' },
+  { id: 'icd', label: 'Interface Control Document', kind: 'render', group: 'incose' },
+  { id: 'testconcept', label: 'Test Concept', kind: 'render', group: 'incose' },
+  { id: 'testmatrix', label: 'Test Matrix (VCRM)', kind: 'render', group: 'incose' },
+  { id: 'intplan', label: 'Integration & Test Plan', kind: 'render', group: 'incose' },
+  { id: 'changelog', label: 'Change Log', kind: 'render', group: 'incose' },
+  { id: 'references', label: 'Requirements Traceability', kind: 'render', group: 'incose' },
+  // Creations — judgment work (scope-classified, NEVER mtime).
+  { id: 'conops', label: 'Concept of Operations', kind: 'analysis', group: 'incose' },
+  { id: 'fmea', label: 'FMEA', kind: 'analysis', group: 'incose' },
+  { id: 'trade', label: 'Trade Study', kind: 'analysis', group: 'incose' },
+  { id: 'implplan', label: 'Implementation Plan', kind: 'analysis', group: 'incose' },
+  { id: 'assumption-review', label: 'Assumption Review', kind: 'analysis', group: 'graphcode' },
+];
+
+/** Classify a RENDER artifact. `exists` = doc present; `staleVsGraph` = graph changed since render. */
 export function artifactFreshness(exists: boolean, staleVsGraph: boolean): Freshness {
   if (!exists) return 'absent';
   return staleVsGraph ? 'stale' : 'live';
 }
 
+/** Classify an ANALYSIS artifact from its scope-currency — 🟢 current / 🟡 stale / 🔴 absent. */
+export function analysisFreshness(currency: CreationCurrency): Freshness {
+  return currency === 'current' ? 'live' : currency === 'stale' ? 'stale' : 'absent';
+}
+
 export interface ArtifactStatus {
   id: string;
   label: string;
+  kind: ArtifactKind;
+  group: ArtifactGroup;
   freshness: Freshness;
+}
+
+/** One artifact's freshness signal: render rows carry exists/staleVsGraph, analysis rows carry currency. */
+export interface ArtifactSignal {
+  id: string;
+  /** RENDER: a materialized doc is present. */
+  exists?: boolean;
+  /** RENDER: the graph changed since the doc was generated (mtime). */
+  staleVsGraph?: boolean;
+  /** ANALYSIS: scope-currency of the judgment work (the ONLY signal read for analysis rows). */
+  currency?: CreationCurrency;
 }
 
 export interface ArtifactsPanel {
@@ -121,20 +184,42 @@ export interface ArtifactsPanel {
   absentCount: number;
 }
 
-export function artifactsPanel(
-  artifacts: Array<{ id: string; label: string; exists: boolean; staleVsGraph: boolean }>,
-): ArtifactsPanel {
-  const statuses = artifacts.map((a) => ({
-    id: a.id,
-    label: a.label,
-    freshness: artifactFreshness(a.exists, a.staleVsGraph),
-  }));
+/**
+ * Shape artifact freshness signals into the tab view-model. The catalog decides each row's
+ * kind/group/label; the kind decides WHICH mechanism classifies it — render rows go through
+ * the mtime path, analysis rows through the scope-currency path (so a creation is NEVER
+ * classified by mtime, even if a caller passes `staleVsGraph` — it is ignored). Renderer groups
+ * by `group` to show "INCOSE / SE-standard" and "graphcode-specific" separately.
+ */
+export function artifactsPanel(signals: ArtifactSignal[]): ArtifactsPanel {
+  const byId = new Map(ARTIFACT_CATALOG.map((e) => [e.id, e]));
+  const statuses: ArtifactStatus[] = signals.map((s) => {
+    const entry = byId.get(s.id);
+    const kind: ArtifactKind = entry?.kind ?? 'render';
+    const freshness =
+      kind === 'analysis'
+        ? analysisFreshness(s.currency ?? 'absent')
+        : artifactFreshness(s.exists ?? false, s.staleVsGraph ?? false);
+    return { id: s.id, label: entry?.label ?? s.id, kind, group: entry?.group ?? 'graphcode', freshness };
+  });
   return {
     artifacts: statuses,
     liveCount: statuses.filter((s) => s.freshness === 'live').length,
     staleCount: statuses.filter((s) => s.freshness === 'stale').length,
     absentCount: statuses.filter((s) => s.freshness === 'absent').length,
   };
+}
+
+/**
+ * Build the CreationCurrencyProvider that CR-GC-221's readiness scorer consumes (CR-GC-222
+ * delivers the `analysis`-currency to 221). Maps each creation id → its scope-currency; an
+ * unknown/never-analyzed creation reads as 🔴 absent.
+ */
+export function creationCurrencyProvider(
+  analysis: Array<{ id: string; currency: CreationCurrency }>,
+): CreationCurrencyProvider {
+  const m = new Map(analysis.map((a) => [a.id, a.currency]));
+  return (creation: string) => m.get(creation) ?? 'absent';
 }
 
 // ---------------------------------------------------------------------------
