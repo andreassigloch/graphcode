@@ -365,6 +365,20 @@
       "status": "done"
     },
     {
+      "id": "CR-GC-214",
+      "type": "CR",
+      "name": "Read-side graph-first enforcement (deny-stale-prose-read hook)",
+      "description": "DONE 2026-06-28: PreToolUse deny-hook (.claude/hooks/deny-stale-prose-read.sh) blocks Read of docs self-declaring status: INPUT-ONLY / SUPERSEDED-BY-GRAPH, redirects to graph_context/graph_elements/graph_readiness; GRAPHCODE_ALLOW_STALE_READ=1 escape-hatch. Scaffold ships+registers it (CR-GC-215). Test: tests/hooks.deny-stale-read.test.ts. (CR-GC-214)",
+      "status": "done"
+    },
+    {
+      "id": "CR-GC-215",
+      "type": "CR",
+      "name": "Ship enforcement-hooks to consumer repos",
+      "description": "DONE 2026-06-28 (deferral lifted): graphcode init/update copy .claude/hooks/deny-*.sh (write/binary/stale-read) into the target repo + register them in .claude/settings.json (idempotent merge, member hooks/keys preserved); remove strips only ours; package.json files[] ships hooks+settings. Realizes via src/scaffold.ts installHooks/removeHooks. Test: tests/cli.scaffold.test.ts. (CR-GC-215)",
+      "status": "done"
+    },
+    {
       "id": "CR-GC-220",
       "type": "CR",
       "name": "Renderer: deterministic MarkdownView for every render-able artifact",
