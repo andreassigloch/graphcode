@@ -1,18 +1,10 @@
 ---
 name: se-view:nfr
-version: 1
-description: Show NFR timing budget status
+version: 2
+description: NFR Register — deterministic render, thin trigger of the CR-GC-220 exporter
 ---
 
-Render the NFR status view from a graph slice — graphcode has no view endpoint, the agent renders it. Fetch over MCP:
+Thin trigger for the **deterministic NFR Register** view. Do NOT re-render by hand — agent formatting is a non-deterministic parallel path to the CR-GC-220 exporter, which renders this view as a pure function of the graph.
 
-1. `graph_elements` `{ "type": "REQ" }` — all requirements.
-2. Keep the non-functional ones: those whose `attributes.kinds` contains `"non-functional"` (the live REQ-kind for NFRs).
-
-Format as a readable summary:
-
-- Each NFR REQ with its budget and current measurement, read from the node `attributes` (e.g. `attributes.budget` / `attributes.measured` — members store the timing/limit there).
-- Flag any timing overrun or budget violation (measurement worse than budget).
-- Overall NFR compliance status: how many NFRs are within budget vs over.
-
-If a node carries no budget/measurement attribute yet, list it as **unquantified** — do not invent numbers.
+1. Call `graph_export` `{ "views": ["nfr"] }` — materializes the deterministic NFR Register view to `docs/views/nfr.md` and returns its path.
+2. Output that file verbatim. Do not reformat, summarize, or re-query the graph — the export **is** the view (byte-identical on every re-run).

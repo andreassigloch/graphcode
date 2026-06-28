@@ -423,9 +423,9 @@
     {
       "id": "CR-GC-224",
       "type": "CR",
-      "name": "Skills: View-Skills → Thin-Trigger (Gruppe A)",
-      "description": "se-view arch/icd/rtm/nfr/testconcept/testmatrix rufen nur die deterministische View (CR-220), kein Agent-Formatieren. (docs/cr/open/CR-GC-224)",
-      "status": "open"
+      "name": "Skills: View-Skills Thin-Trigger (Gruppe A)",
+      "description": "DONE 2026-06-28: group-A se-view skills (arch/icd/rtm/nfr/testconcept/testmatrix) rewritten as thin triggers (version bumped to 2) that call graph_export with the single matching view id and output the deterministic docs/views/<view>.md verbatim, no agent formatting. Eliminates the non-deterministic parallel render path against the CR-GC-220 exporter. Conformance green (each names the live graph_export tool, no dead path). Test: tests/skills.mcp-conformance.test.ts. (CR-GC-224)",
+      "status": "done"
     },
     {
       "id": "CR-GC-225",

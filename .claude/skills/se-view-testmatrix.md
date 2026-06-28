@@ -1,20 +1,10 @@
 ---
 name: se-view:testmatrix
-version: 1
-description: Show test coverage status from graph
+version: 2
+description: Test Matrix / VCRM — deterministic render, thin trigger of the CR-GC-220 exporter
 ---
 
-Render the test-coverage matrix from a graph slice — graphcode has no view endpoint, the agent renders it (KNOW-via-query). In the live ontology `verify` runs **TEST → REQ** only; UC / FUNC / FCHAIN are covered indirectly through the REQs they `compose` / `satisfy`. Fetch over MCP:
+Thin trigger for the **deterministic Test Matrix (VCRM)** view. Do NOT re-render by hand — agent formatting is a non-deterministic parallel path to the CR-GC-220 exporter, which renders this view as a pure function of the graph.
 
-1. `graph_elements` `{ "type": "REQ" }` — every requirement (the directly-verifiable unit).
-2. `graph_get_edges` `{ "edgeType": "verify" }` — TEST→REQ coverage links.
-3. `graph_elements` `{ "type": "UC" }` (and `"FUNC"` / `"FCHAIN"`) plus `graph_get_edges` `{ "edgeType": "satisfy" }` / `{ "edgeType": "compose" }` to roll coverage up to the behavioural elements.
-4. `rules_get_violations` `{ "severity": "error" }` — R-01 (REQ without verify) is the canonical coverage-gap signal.
-
-Format as a readable summary:
-
-- Each REQ with its verification status — verified (has a `verify` edge) or unverified (R-01 gap).
-- Each testable element (UC / FUNC / FCHAIN) marked covered when every REQ it leads to is verified.
-- Highlight elements without coverage as gaps.
-- Overall coverage percentage: verified REQ / total REQ.
-- Recommend which elements to test next — start with the R-01 violations.
+1. Call `graph_export` `{ "views": ["testmatrix"] }` — materializes the deterministic Test Matrix view to `docs/views/testmatrix.md` and returns its path.
+2. Output that file verbatim. Do not reformat, summarize, or re-query the graph — the export **is** the view (byte-identical on every re-run).

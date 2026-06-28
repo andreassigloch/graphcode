@@ -1,19 +1,10 @@
 ---
 name: se-view:arch
-version: 1
-description: Show architecture allocation status
+version: 2
+description: Architecture allocation view (SDD) — deterministic render, thin trigger of the CR-GC-220 exporter
 ---
 
-Render the architecture allocation view from a graph slice — graphcode has no server-side view endpoint (KNOW-via-query: the agent is the renderer). Fetch over MCP:
+Thin trigger for the **deterministic Architecture (SDD) view**. Do NOT re-render by hand — agent formatting is a non-deterministic parallel path to the CR-GC-220 exporter, which renders this view as a pure function of the graph.
 
-1. `graph_elements` `{ "type": "FUNC" }` — every function.
-2. `graph_get_edges` `{ "edgeType": "allocate" }` — FUNC→MOD allocations (`allocate` = function-to-module).
-
-Compute and format as a readable summary:
-
-- For each FUNC: its allocation status — **allocated** (has an outgoing `allocate` edge to a MOD; name the MOD) or **unallocated**.
-- Highlight unallocated functions as **gaps**.
-- Overall allocation coverage: `allocated / total FUNC` as a percentage.
-- Recommend which functions to allocate next (start with safety- or REQ-bearing functions).
-
-Optionally draw the allocation as a Mermaid `graph LR` (`FUNC --> MOD`). Keep node labels free of `(`, `)`, and `|` — those blank the whole diagram; use the uid or a plain-text name.
+1. Call `graph_export` `{ "views": ["architecture"] }` — materializes the deterministic Architecture view to `docs/views/architecture.md` and returns its path.
+2. Output that file verbatim. Do not reformat, summarize, or re-query the graph — the export **is** the view (byte-identical on every re-run).
