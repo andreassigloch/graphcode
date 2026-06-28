@@ -400,6 +400,13 @@
       "status": "done"
     },
     {
+      "id": "CR-GC-212",
+      "type": "CR",
+      "name": "Post-project KPI retro (se-retro + KPI standard)",
+      "description": "DONE 2026-06-28: docs/KPI.md defines the 6 KPIs (graph-vs-grep ratio target >1, tool usage, tokens per net-LOC, plan conformance target 0, gate health applied/rejected + readiness delta, binding coverage R-19/R-20 target 100%) with definition+source+target. scripts/retro-kpi.mjs exports computeKpis + renderKpiTable (pure) and a main that reads a session JSON + auto-fills git net-LOC; reads audit+readiness over MCP, no 2nd DB handle. se-retro skill gathers the session data and interprets. Test: tests/retro-kpi.test.ts asserts deterministic values + a graph-less session yields ratio < 1. (CR-GC-212)",
+      "status": "done"
+    },
+    {
       "id": "CR-GC-214",
       "type": "CR",
       "name": "Read-side graph-first enforcement (deny-stale-prose-read hook)",
