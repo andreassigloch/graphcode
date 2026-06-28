@@ -152,8 +152,10 @@ export type CreationCurrencyProvider = (creation: string) => CreationCurrency;
 /** Default stub provider (CR-GC-221, "Default 🔴"): everything absent until CR-GC-222 lands. */
 export const ABSENT_CREATION_PROVIDER: CreationCurrencyProvider = () => 'absent';
 
-/** Format a "<Creation> not performed (<gate> creation)" blocking message. */
-function creationBlockingMsg(creation: string, gateId: string): string {
+/** Format a "<Creation> not performed (<gate> creation)" blocking message.
+ *  Exported so the help layer (CR-GC-228) can identify creation blockers in
+ *  `ReadinessGate.blocking[]` without re-deriving the format (single source). */
+export function creationBlockingMsg(creation: string, gateId: string): string {
   return `${CREATION_LABELS[creation] ?? creation} not performed (${gateId} creation)`;
 }
 

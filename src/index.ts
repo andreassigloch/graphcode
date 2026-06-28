@@ -118,6 +118,13 @@ export type {
 export { deriveImplPlan } from './se-plan.js';
 export type { ImplPlanResult } from './se-plan.js';
 
+// In-context help (CR-GC-227 content + CR-GC-228 data layer) — the read-only layer
+// every help surface (graph_help tool, se:help skill, renderer) projects from.
+export { helpEntry, helpForRules, contextualHelp } from './viewer/help.js';
+export type { HelpEntry, ContextualMeasure } from './viewer/help.js';
+export { HELP_CONTENT, HELP_VOCAB, HELP_PANEL_IDS, HELP_ELEMENT_STATES } from './viewer/help-content.js';
+export type { HelpContentEntry, HelpVocabEntry } from './viewer/help-content.js';
+
 /** Default Kuzu store location relative to the repo root. */
 export const KUZU_DIR = '.graphcode/kuzu';
 

@@ -456,6 +456,13 @@
       "status": "done"
     },
     {
+      "id": "CR-GC-228",
+      "type": "CR",
+      "name": "Help data layer (pure projection to HelpEntry, help.ts)",
+      "description": "DONE 2026-06-28: src/viewer/help.ts is a pure projection (no DOM/HTTP/mutation, sibling of panels.ts): helpEntry(id) assembles a HelpEntry with all three layers (plain/se/exact-prompt) for any rule/gate/panel/artifact/token, merging authored HELP_CONTENT with derived V3_RULES/readiness/catalog fields; helpForRules() groups the full live rule set by owning gate; contextualHelp(readiness, violations) ranks BOTH rule violations (keyed ruleId) and CR-221 creation-not-done blockers (keyed artifact id from ReadinessGate.blocking[]), errors first. Roll-up not detection (always all 3 layers). readiness.ts exports creationBlockingMsg (single source, no parallel format). Test: tests/help.test.ts. (CR-GC-228)",
+      "status": "done"
+    },
+    {
       "id": "FCHAIN-agent-query",
       "type": "FCHAIN",
       "name": "Agent-Graph-Query (Impact + progressive Expansion)",

@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Alle Elemente nach Typ, sortiert nach uid. Deterministisch generiert.
 
-Elemente: 319 · Traces: 702
+Elemente: 320 · Traces: 702
 
 
 ## ACTOR
@@ -75,6 +75,7 @@ Elemente: 319 · Traces: 702
 | `CR-GC-225` | Skills: View-Skills Thin-Trigger (Gruppe B) | done | DONE 2026-06-28: group-B se-view skills (implplan/intplan/changelog/conops/trade) rewritten as thin triggers (version 2) calling graph_export with the single matching view id and emitting the deterministic docs/views/<view>.md verbatim, no agent formatting. implplan renders the se-plan (CR-209) MS/CR; conops/trade render the se-conops/se-trade (CR-223) created structure; intplan is pure render. Eliminates the non-deterministic parallel render path. Conformance green. Test: tests/skills.mcp-conformance.test.ts. (CR-GC-225) |
 | `CR-GC-226` | Doku/Graph: lean=no-artifacts abloesen + Artefakt-Modell seeden | done | DONE 2026-06-28: redefined lean in src/readiness.ts header + IncoseScope comment (supersedes CR-125 no-artifacts stance): graph = SSOT, renders = deterministic projections, creations (ConOps/FMEA/Assumption/Trade/Impl-Plan) = lightweight judgment inputs + gate preconditions; only ASIL-D evidence stays full/non-graphcode. ADR-001 AD-8 updated to a pointer at readiness-artifact-model.md §3 (no new ADR). MS-6-adoption milestone + CR-GC-220..226 relation assignments already present in the graph. Views re-rendered. Closes the CR-220..226 substrate chain. (CR-GC-226) |
 | `CR-GC-227` | Help content layer (authored Plain/SE annotation, HELP_CONTENT) | done | DONE 2026-06-28: src/viewer/help-content.ts holds the authored two-layer help (plain + se) keyed on ruleId/gateId/panelId/artifactId, plus HELP_VOCAB (every ElementType + TraceType + depends-on) and the element-states note. Pure annotation over existing keys, no Rule/ElementType/TraceType/Pattern, no @sigloch/contracts bump (drift-lock not triggered). Derived fields (title/severity/owned-rules/tool-purpose) stay in V3_RULES/readiness/registry and are merged by the data layer (CR-228). Coverage pinned against the live registries (no hand-count): tests/help-content.test.ts. (CR-GC-227) |
+| `CR-GC-228` | Help data layer (pure projection to HelpEntry, help.ts) | done | DONE 2026-06-28: src/viewer/help.ts is a pure projection (no DOM/HTTP/mutation, sibling of panels.ts): helpEntry(id) assembles a HelpEntry with all three layers (plain/se/exact-prompt) for any rule/gate/panel/artifact/token, merging authored HELP_CONTENT with derived V3_RULES/readiness/catalog fields; helpForRules() groups the full live rule set by owning gate; contextualHelp(readiness, violations) ranks BOTH rule violations (keyed ruleId) and CR-221 creation-not-done blockers (keyed artifact id from ReadinessGate.blocking[]), errors first. Roll-up not detection (always all 3 layers). readiness.ts exports creationBlockingMsg (single source, no parallel format). Test: tests/help.test.ts. (CR-GC-228) |
 
 ## FCHAIN
 
