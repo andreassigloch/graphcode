@@ -382,27 +382,27 @@
       "id": "CR-GC-222",
       "type": "CR",
       "name": "Artefakt-Tab: render/analysis Kind-Split",
-      "description": "ArtifactStatus.kind render|analysis + zwei Stale-Mechanismen (mtime vs Scope/Commit); INCOSE vs graphcode-spezifisch getrennt; IRR-Label -> Assumption Review. (docs/cr/open/CR-GC-222)",
+      "description": "ArtifactStatus.kind render|analysis + zwei Stale-Mechanismen (mtime vs Scope/Commit); INCOSE vs graphcode-spezifisch getrennt; IRR-Label → Assumption Review. (docs/cr/open/CR-GC-222)",
       "status": "open"
     },
     {
       "id": "CR-GC-223",
       "type": "CR",
       "name": "Skills: Creation-Skills (FMEA-Rename + se-irr/se-conops/se-trade)",
-      "description": "se-view-irr -> se-view-fmea Rename (FMEA-Render); neu se-irr (Assumption Review), se-conops (operational, vor UC), se-trade (Spike->CR); se-fmea Output-Pfad real. (docs/cr/open/CR-GC-223)",
+      "description": "se-view-irr → se-view-fmea Rename (FMEA-Render); neu se-irr (Assumption Review), se-conops (operational, vor UC), se-trade (Spike→CR); se-fmea Output-Pfad real. (docs/cr/open/CR-GC-223)",
       "status": "open"
     },
     {
       "id": "CR-GC-224",
       "type": "CR",
-      "name": "Skills: View-Skills -> Thin-Trigger (Gruppe A)",
+      "name": "Skills: View-Skills → Thin-Trigger (Gruppe A)",
       "description": "se-view arch/icd/rtm/nfr/testconcept/testmatrix rufen nur die deterministische View (CR-220), kein Agent-Formatieren. (docs/cr/open/CR-GC-224)",
       "status": "open"
     },
     {
       "id": "CR-GC-225",
       "type": "CR",
-      "name": "Skills: View-Skills -> Thin-Trigger (Gruppe B)",
+      "name": "Skills: View-Skills → Thin-Trigger (Gruppe B)",
       "description": "se-view implplan/intplan/changelog/conops/trade als Thin-Trigger der deterministischen Views. (docs/cr/open/CR-GC-225)",
       "status": "open"
     },
