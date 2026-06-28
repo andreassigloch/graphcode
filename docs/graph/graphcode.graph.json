@@ -503,6 +503,13 @@
       "status": "done"
     },
     {
+      "id": "CR-GC-231",
+      "type": "CR",
+      "name": "graph_authoring_guide meta-model edge guidance for graph-native authoring",
+      "description": "DONE 2026-06-28: read-only graph_authoring_guide({type}) MCP tool surfaces the legal incident edges for an ElementType from the imported @sigloch/contracts/se TRACE_PATTERNS (never forked): outgoing [{edgeType,targetType,cardinality,description}], incoming [{edgeType,sourceType,...}], requiredAttrs from the node descriptor. Unknown type gives a clear error listing valid types. The write-side read-twin of graph_context (graph_context = definition-of-done to implement; graph_authoring_guide = legal structure to author). An agent queries it before emitting add-node/add-edge via graph_mutate (write stays gate-only). Renumbered from CR-GC-217 (collision with shipped time-travel). Test: tests/mcp.authoring-guide.test.ts; added to the agent-agnostic surface contract. (CR-GC-231)",
+      "status": "done"
+    },
+    {
       "id": "FCHAIN-agent-query",
       "type": "FCHAIN",
       "name": "Agent-Graph-Query (Impact + progressive Expansion)",

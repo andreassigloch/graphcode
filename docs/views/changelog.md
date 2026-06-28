@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 56 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 57 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 56 CR · 54 done · 2 open.
+Total: 57 CR · 55 done · 2 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -98,3 +98,4 @@ Total: 56 CR · 54 done · 2 open.
 | `CR-GC-228` | done | Help data layer (pure projection to HelpEntry, help.ts) |
 | `CR-GC-229` | done | Help surfaces (graph_help MCP tool + se:help skill) |
 | `CR-GC-230` | done | Help docs (README + GRAPHCODE.md pointer to se:help) |
+| `CR-GC-231` | done | graph_authoring_guide meta-model edge guidance for graph-native authoring |

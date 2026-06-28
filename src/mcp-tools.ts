@@ -24,7 +24,7 @@ import type { GraphCodeHarness } from './harness.js';
 import type { Graph, GraphNode, GraphEdge, AuditLog, AuditEntry } from '@sigloch/graph-api-core';
 import { FormatECodec, SE_DESCRIPTOR, InMemoryAuditLog } from '@sigloch/graph-api-core';
 import { type MutateCommand, type MutateResult, type RuleViolation } from '@sigloch/contracts/harness';
-import { TestRefSchema, type TestRef } from '@sigloch/contracts/se';
+import { TestRefSchema, type TestRef, TRACE_PATTERNS } from '@sigloch/contracts/se';
 import { exportGraphJson, exportMarkdown, renderTestStubs, MarkdownViewSchema, MARKDOWN_VIEWS, VIEW_FILENAMES } from './exporter.js';
 import { clearExportPending } from './export-marker.js';
 import { scoreReadiness, summarizeReadiness, type ReadinessReport } from './readiness.js';
@@ -162,6 +162,11 @@ const GraphRealizeInputSchema = z.object({
   testFile: z.string().optional().describe('Test file path (required when testUid is given).'),
   testCase: z.string().optional().describe('Optional test case name.'),
   tool: z.string().optional().describe('Test tool for the testRef (default vitest).'),
+});
+
+/** Authoring-guide input (CR-GC-231) — which ElementType to surface legal edges for. */
+const GraphAuthoringGuideInputSchema = z.object({
+  type: z.string().describe('The ElementType to author (e.g. UC, REQ, FUNC, TEST, MOD, ACTOR).'),
 });
 
 const GraphTestsInputSchema = z.object({
@@ -905,6 +910,50 @@ export function bindToolsToHarness(
     },
   };
 
+  const graph_authoring_guide: MCPTool<
+    z.infer<typeof GraphAuthoringGuideInputSchema>,
+    {
+      type: string;
+      outgoing: Array<{ edgeType: string; targetType: string; cardinality?: string; description?: string }>;
+      incoming: Array<{ edgeType: string; sourceType: string; cardinality?: string; description?: string }>;
+      requiredAttrs: string[];
+    }
+  > = {
+    name: 'graph_authoring_guide',
+    description:
+      'Surface the LEGAL incident edges for an ElementType (CR-GC-231) — the read-twin of graph_context for ' +
+      'the WRITE side of the spec. graph_context answers "what is a node\'s definition-of-done" (implement); ' +
+      'graph_authoring_guide answers "what structure is legal for this type" (author). Call it BEFORE writing ' +
+      'a node so you emit a correct add-node/add-edge via graph_mutate instead of guessing the ontology. ' +
+      'Returns outgoing [{edgeType,targetType,cardinality,description}], incoming [{edgeType,sourceType,…}], ' +
+      'and requiredAttrs — derived live from the imported @sigloch/contracts/se META_MODEL (TRACE_PATTERNS), ' +
+      'never a local fork. Read-only. Unknown type → a clear error.',
+    inputSchema: GraphAuthoringGuideInputSchema,
+    async handler(input) {
+      const descriptor = SE_DESCRIPTOR.nodeTypes[input.type as keyof typeof SE_DESCRIPTOR.nodeTypes];
+      if (!descriptor) {
+        throw new Error(
+          `graph_authoring_guide: unknown element type '${input.type}'. Valid types: ` +
+            `${Object.keys(SE_DESCRIPTOR.nodeTypes).join(', ')}.`,
+        );
+      }
+      const patterns = TRACE_PATTERNS as ReadonlyArray<{
+        source: string;
+        target: string;
+        type: string;
+        cardinality?: string;
+        description?: string;
+      }>;
+      const outgoing = patterns
+        .filter((p) => p.source === input.type)
+        .map((p) => ({ edgeType: p.type, targetType: p.target, cardinality: p.cardinality, description: p.description }));
+      const incoming = patterns
+        .filter((p) => p.target === input.type)
+        .map((p) => ({ edgeType: p.type, sourceType: p.source, cardinality: p.cardinality, description: p.description }));
+      return { type: input.type, outgoing, incoming, requiredAttrs: [...(descriptor.requiredAttrs ?? [])] };
+    },
+  };
+
   // ---------------------------------------------------------------------------
   // Registry
   // ---------------------------------------------------------------------------
@@ -927,5 +976,6 @@ export function bindToolsToHarness(
     graph_tests,
     graph_help,
     graph_realize,
+    graph_authoring_guide,
   };
 }

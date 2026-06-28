@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Alle Elemente nach Typ, sortiert nach uid. Deterministisch generiert.
 
-Elemente: 327 · Traces: 702
+Elemente: 328 · Traces: 702
 
 
 ## ACTOR
@@ -83,6 +83,7 @@ Elemente: 327 · Traces: 702
 | `CR-GC-228` | Help data layer (pure projection to HelpEntry, help.ts) | done | DONE 2026-06-28: src/viewer/help.ts is a pure projection (no DOM/HTTP/mutation, sibling of panels.ts): helpEntry(id) assembles a HelpEntry with all three layers (plain/se/exact-prompt) for any rule/gate/panel/artifact/token, merging authored HELP_CONTENT with derived V3_RULES/readiness/catalog fields; helpForRules() groups the full live rule set by owning gate; contextualHelp(readiness, violations) ranks BOTH rule violations (keyed ruleId) and CR-221 creation-not-done blockers (keyed artifact id from ReadinessGate.blocking[]), errors first. Roll-up not detection (always all 3 layers). readiness.ts exports creationBlockingMsg (single source, no parallel format). Test: tests/help.test.ts. (CR-GC-228) |
 | `CR-GC-229` | Help surfaces (graph_help MCP tool + se:help skill) | done | DONE 2026-06-28: graph_help read-only MCP tool in src/mcp-tools.ts: no arg returns contextualHelp(readiness, violations) (ranked rule + creation blockers); { token } returns helpEntry(token) for any rule/gate/panel/artifact/vocab token (all 3 layers); unknown token throws a clean error listing valid kinds. se:help skill (.claude/skills/se-help.md, version 1) is the thin surface, auto-registered in the conformance/scaffold lists (registry-derived). Agent-agnostic surface contract (CR-124) updated to include graph_help. Test: tests/mcp.help.test.ts (disk Kuzu). (CR-GC-229) |
 | `CR-GC-230` | Help docs (README + GRAPHCODE.md pointer to se:help) | done | DONE 2026-06-28: README.md gains a Help section (se:help <token> lookup, se:help contextual, graph_help tool) + graph_help in the MCP-tools table. GRAPHCODE.md scaffold (guardrailsContent) graph-first section now points at se:help as the live help entry (static contract advertises the dynamic one); written on both init and update. Test: tests/cli.scaffold.test.ts asserts GRAPHCODE.md names se:help/graph_help. Closes the help system (CR-227..230). (CR-GC-230) |
+| `CR-GC-231` | graph_authoring_guide meta-model edge guidance for graph-native authoring | done | DONE 2026-06-28: read-only graph_authoring_guide({type}) MCP tool surfaces the legal incident edges for an ElementType from the imported @sigloch/contracts/se TRACE_PATTERNS (never forked): outgoing [{edgeType,targetType,cardinality,description}], incoming [{edgeType,sourceType,...}], requiredAttrs from the node descriptor. Unknown type gives a clear error listing valid types. The write-side read-twin of graph_context (graph_context = definition-of-done to implement; graph_authoring_guide = legal structure to author). An agent queries it before emitting add-node/add-edge via graph_mutate (write stays gate-only). Renumbered from CR-GC-217 (collision with shipped time-travel). Test: tests/mcp.authoring-guide.test.ts; added to the agent-agnostic surface contract. (CR-GC-231) |
 
 ## FCHAIN
 

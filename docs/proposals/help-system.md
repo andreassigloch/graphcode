@@ -104,7 +104,7 @@ requirements, functions, tests, modules, and how they connect — kept in the gr
 | `depends-on` | "must come after" (milestone → milestone) | dependency |
 
 *Which element types each trace may legally connect is not restated here — that's the metamodel
-(`TRACE_PATTERNS`), surfaced live by `graph_authoring_guide` (CR-GC-217). Help links to it rather than
+(`TRACE_PATTERNS`), surfaced live by `graph_authoring_guide` (CR-GC-231). Help links to it rather than
 hand-listing legal pairs, so the two can't drift.*
 
 **Element states (attributes).** A `FUNC` or `TEST` carries a state that decides whether the binding rules
@@ -344,7 +344,7 @@ statement here (fix before the chain) · **OVERLAP** = does similar derivation (
 | **222** artifact-tab kind-split | `ArtifactStatus.kind` (`render`/`analysis`); INCOSE vs graphcode grouping; IRR rename | CONFLICT→fixed | §6e `kind` is **read** from CR-222; *IRR → "Assumption Review"* applied. |
 | **223** creation skills | renames `se-view:irr → se-view:fmea`; adds `se-irr`/`se-conops`/`se-trade` | CONFLICT→fixed | §6e prompts updated to post-223 names; `implplan` split create (`se-plan`) vs render. |
 | **226** supersede `lean = no artifacts` | finalizes the create/render split in `readiness.ts` | DEP | The whole §6c–e split only exists once 226 lands → §10 sequenced after it. |
-| **217** `graph_authoring_guide` | read-only tool projecting legal edges from META_MODEL | OVERLAP | §3 trace-legality now **links to** CR-217, not a second hand-kept legal-pair list. |
+| **231** `graph_authoring_guide` | read-only tool projecting legal edges from META_MODEL | OVERLAP | §3 trace-legality now **links to** CR-231 (was CR-217, renumbered), not a second hand-kept legal-pair list. |
 | **208** skill sync + surfacing | `skills sync` + `version:` frontmatter + conformance list | DEP | §9/§10-C: `se:help` carries `version:` + is in the conformance list. |
 | **207** onboarding contract | static `GRAPHCODE.md` "graph-first" one-screen | ADJ | §9: `GRAPHCODE.md` points at `se:help` (the live counterpart). |
 | **216** `graph_realize` | flat write for codeRef/testRef (R-19/R-20) | ADJ | R-19/R-20 Exact prompts can cite `graph_realize` as the one-call fix. |
