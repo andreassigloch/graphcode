@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Alle Elemente nach Typ, sortiert nach uid. Deterministisch generiert.
 
-Elemente: 321 · Traces: 702
+Elemente: 322 · Traces: 702
 
 
 ## ACTOR
@@ -77,6 +77,7 @@ Elemente: 321 · Traces: 702
 | `CR-GC-227` | Help content layer (authored Plain/SE annotation, HELP_CONTENT) | done | DONE 2026-06-28: src/viewer/help-content.ts holds the authored two-layer help (plain + se) keyed on ruleId/gateId/panelId/artifactId, plus HELP_VOCAB (every ElementType + TraceType + depends-on) and the element-states note. Pure annotation over existing keys, no Rule/ElementType/TraceType/Pattern, no @sigloch/contracts bump (drift-lock not triggered). Derived fields (title/severity/owned-rules/tool-purpose) stay in V3_RULES/readiness/registry and are merged by the data layer (CR-228). Coverage pinned against the live registries (no hand-count): tests/help-content.test.ts. (CR-GC-227) |
 | `CR-GC-228` | Help data layer (pure projection to HelpEntry, help.ts) | done | DONE 2026-06-28: src/viewer/help.ts is a pure projection (no DOM/HTTP/mutation, sibling of panels.ts): helpEntry(id) assembles a HelpEntry with all three layers (plain/se/exact-prompt) for any rule/gate/panel/artifact/token, merging authored HELP_CONTENT with derived V3_RULES/readiness/catalog fields; helpForRules() groups the full live rule set by owning gate; contextualHelp(readiness, violations) ranks BOTH rule violations (keyed ruleId) and CR-221 creation-not-done blockers (keyed artifact id from ReadinessGate.blocking[]), errors first. Roll-up not detection (always all 3 layers). readiness.ts exports creationBlockingMsg (single source, no parallel format). Test: tests/help.test.ts. (CR-GC-228) |
 | `CR-GC-229` | Help surfaces (graph_help MCP tool + se:help skill) | done | DONE 2026-06-28: graph_help read-only MCP tool in src/mcp-tools.ts: no arg returns contextualHelp(readiness, violations) (ranked rule + creation blockers); { token } returns helpEntry(token) for any rule/gate/panel/artifact/vocab token (all 3 layers); unknown token throws a clean error listing valid kinds. se:help skill (.claude/skills/se-help.md, version 1) is the thin surface, auto-registered in the conformance/scaffold lists (registry-derived). Agent-agnostic surface contract (CR-124) updated to include graph_help. Test: tests/mcp.help.test.ts (disk Kuzu). (CR-GC-229) |
+| `CR-GC-230` | Help docs (README + GRAPHCODE.md pointer to se:help) | done | DONE 2026-06-28: README.md gains a Help section (se:help <token> lookup, se:help contextual, graph_help tool) + graph_help in the MCP-tools table. GRAPHCODE.md scaffold (guardrailsContent) graph-first section now points at se:help as the live help entry (static contract advertises the dynamic one); written on both init and update. Test: tests/cli.scaffold.test.ts asserts GRAPHCODE.md names se:help/graph_help. Closes the help system (CR-227..230). (CR-GC-230) |
 
 ## FCHAIN
 

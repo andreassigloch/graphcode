@@ -122,6 +122,13 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
     expect(md).toMatch(/SPEC\.md.*do not read it/i);
   });
 
+  it('GRAPHCODE.md points at se:help / graph_help as the live help entry (CR-GC-230)', async () => {
+    await scaffold('init', { repoRoot: repo });
+    const md = readFileSync(join(repo, GUARDRAILS), 'utf8');
+    expect(md).toContain('se:help');
+    expect(md).toContain('graph_help');
+  });
+
   it('GRAPHCODE.md lists the available se-* skills (CR-GC-208)', async () => {
     await scaffold('init', { repoRoot: repo });
     const md = readFileSync(join(repo, GUARDRAILS), 'utf8');

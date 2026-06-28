@@ -63,6 +63,19 @@ falling back to the repo directory name.
 | `graph_export` | re-export the live graph to `docs/graph` + `docs/views` |
 | `rules_evaluate`, `rules_get_violations` | run the SE rules (`V3_RULES`) read-only |
 | `audit_trail`, `audit_stats` | mutation history (every gate write logged) |
+| `graph_help` | explain any dashboard token / give ranked, explained next steps (read-only) |
+
+## Help — explain any item, for both audiences
+
+Every on-screen token is explained in three layers (plain · in SE terms · the exact fix),
+for a systems engineer who doesn't know this encoding **and** a user with no SE background:
+
+- **`se:help <token>`** — explain a rule (`R-04`), gate (`CDR`), panel, or artifact (`fmea`).
+- **`se:help`** (no argument) — ranked, explained next steps from the live readiness + violations.
+- **`graph_help`** — the read-only MCP tool the skill is a thin surface over.
+
+The plain/SE wording is authored once (`src/viewer/help-content.ts`); titles, severity, and the
+owning gate are derived from `V3_RULES` + readiness, so help never drifts from the live model.
 
 ## Viewer integration — coming soon
 

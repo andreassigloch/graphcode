@@ -470,6 +470,13 @@
       "status": "done"
     },
     {
+      "id": "CR-GC-230",
+      "type": "CR",
+      "name": "Help docs (README + GRAPHCODE.md pointer to se:help)",
+      "description": "DONE 2026-06-28: README.md gains a Help section (se:help <token> lookup, se:help contextual, graph_help tool) + graph_help in the MCP-tools table. GRAPHCODE.md scaffold (guardrailsContent) graph-first section now points at se:help as the live help entry (static contract advertises the dynamic one); written on both init and update. Test: tests/cli.scaffold.test.ts asserts GRAPHCODE.md names se:help/graph_help. Closes the help system (CR-227..230). (CR-GC-230)",
+      "status": "done"
+    },
+    {
       "id": "FCHAIN-agent-query",
       "type": "FCHAIN",
       "name": "Agent-Graph-Query (Impact + progressive Expansion)",
