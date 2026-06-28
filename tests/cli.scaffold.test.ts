@@ -2,8 +2,8 @@
  * TEST-cli-scaffold (CR-GC-112) — `graphcode init | update | remove` lifecycle.
  *
  * Runs the real `scaffold()` against a `mkdtempSync` temp repo (no mocks, real
- * `node:fs`). Proves the current MCP-stdio architecture is scaffolded — the
- * retired localhost Controller / `.claude/hooks` path is NOT.
+ * `node:fs`). Proves the current MCP-stdio architecture is scaffolded, including the
+ * PreToolUse deny-hooks + their settings registration (CR-GC-214).
  *
  * Verifies:
  *   - REQ-repo-install      : init creates `.graphcode/`, `.mcp.json` (npx form),
@@ -11,6 +11,9 @@
  *   - REQ-install-idempotent: re-running init is stable (no dup/corruption).
  *   - REQ-repo-update       : update refreshes artifacts but preserves the store.
  *   - REQ-repo-uninstall    : remove deletes every installed artifact, restlos.
+ *   - CR-GC-214             : init ships `.claude/hooks/deny-*.sh` + registers them in
+ *                             `.claude/settings.json` (merge-preserving the member's own
+ *                             hooks/keys); remove strips only ours.
  *   - REQ-pre/post-harness-cli via the InstallResult contract.
  */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
@@ -25,9 +28,15 @@ const MCP = '.mcp.json';
 const GUARDRAILS = 'GRAPHCODE.md';
 const PKG = '@sigloch/graphcode';
 const SKILLS_DIR = join('.claude', 'skills');
+const HOOKS_DIR = join('.claude', 'hooks');
+const SETTINGS = join('.claude', 'settings.json');
 /** The se-*.md skills this package ships — the source of truth the scaffold copies from. */
 const SHIPPED_SKILLS = readdirSync(join(__dirname, '..', '.claude', 'skills'))
   .filter((f) => f.startsWith('se-') && f.endsWith('.md'))
+  .sort();
+/** The deny-*.sh hooks this package ships (CR-GC-214) — same no-hardcoded-count principle. */
+const SHIPPED_HOOKS = readdirSync(join(__dirname, '..', '.claude', 'hooks'))
+  .filter((f) => f.startsWith('deny-') && f.endsWith('.sh'))
   .sort();
 
 describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
@@ -61,8 +70,9 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
     const pkg = JSON.parse(readFileSync(join(repo, 'package.json'), 'utf8'));
     expect(pkg.dependencies[PKG]).toBe('^0.1.0');
 
-    // The retired localhost Controller / hooks path is NOT scaffolded.
-    expect(existsSync(join(repo, '.claude', 'hooks'))).toBe(false);
+    // CR-GC-214: the PreToolUse deny-hooks ARE scaffolded into the consumer repo.
+    expect(existsSync(join(repo, '.claude', 'hooks'))).toBe(true);
+    expect(existsSync(join(repo, SETTINGS))).toBe(true);
 
     // InstallResult records what was created.
     expect(res.action).toBe('init');
@@ -88,6 +98,50 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
     }
     // No stray files in the scaffolded skills dir.
     expect(readdirSync(join(repo, SKILLS_DIR)).sort()).toEqual(SHIPPED_SKILLS);
+  });
+
+  it('init ships the PreToolUse deny-hooks + registers them in settings.json (CR-GC-214)', async () => {
+    expect(SHIPPED_HOOKS.length).toBeGreaterThan(0);
+    const res = await scaffold('init', { repoRoot: repo });
+
+    // Every shipped hook lands byte-identical in the target repo.
+    for (const f of SHIPPED_HOOKS) {
+      const dest = join(repo, HOOKS_DIR, f);
+      expect(existsSync(dest)).toBe(true);
+      expect(readFileSync(dest, 'utf8')).toBe(
+        readFileSync(join(__dirname, '..', '.claude', 'hooks', f), 'utf8'),
+      );
+      expect(res.created).toContain(join(HOOKS_DIR, f));
+    }
+
+    // settings.json registers exactly THIS package's own PreToolUse hooks (no parallel list).
+    const settings = JSON.parse(readFileSync(join(repo, SETTINGS), 'utf8'));
+    const pkgSettings = JSON.parse(
+      readFileSync(join(__dirname, '..', '.claude', 'settings.json'), 'utf8'),
+    );
+    expect(settings.hooks.PreToolUse).toEqual(pkgSettings.hooks.PreToolUse);
+    expect(res.created).toContain(SETTINGS);
+  });
+
+  it("init merges hooks into a member's existing settings.json, preserving their keys (CR-GC-214)", async () => {
+    // A member who already has their own settings key + their own PreToolUse hook.
+    const ownHook = { matcher: 'Bash', hooks: [{ type: 'command', command: 'echo mine' }] };
+    mkdirSync(join(repo, '.claude'), { recursive: true });
+    writeFileSync(
+      join(repo, SETTINGS),
+      JSON.stringify({ env: { FOO: '1' }, hooks: { PreToolUse: [ownHook] } }, null, 2) + '\n',
+      'utf8',
+    );
+
+    await scaffold('init', { repoRoot: repo });
+
+    const settings = JSON.parse(readFileSync(join(repo, SETTINGS), 'utf8'));
+    // Member's non-hook key survives untouched.
+    expect(settings.env).toEqual({ FOO: '1' });
+    // Member's own hook is kept first; graphcode's deny-hooks are appended after it.
+    expect(settings.hooks.PreToolUse[0]).toEqual(ownHook);
+    expect(settings.hooks.PreToolUse.length).toBeGreaterThan(1);
+    expect(JSON.stringify(settings.hooks.PreToolUse)).toContain('.claude/hooks/deny-');
   });
 
   it('init is idempotent — second run is stable, nothing duplicated/corrupted (REQ-install-idempotent)', async () => {
@@ -116,6 +170,8 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
         GUARDRAILS,
         'package.json',
         ...SHIPPED_SKILLS.map((f) => join(SKILLS_DIR, f)),
+        ...SHIPPED_HOOKS.map((f) => join(HOOKS_DIR, f)),
+        SETTINGS,
       ]),
     );
   });
@@ -159,11 +215,18 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
     expect(existsSync(join(repo, MCP))).toBe(false);
     expect(existsSync(join(repo, GUARDRAILS))).toBe(false);
 
-    // Skills removed restlos; the emptied `.claude/skills` + `.claude` are pruned too.
+    // Skills + hooks removed restlos; the graphcode-only settings.json is removed too;
+    // the emptied `.claude/skills`, `.claude/hooks` and `.claude` are pruned.
     for (const f of SHIPPED_SKILLS) {
       expect(existsSync(join(repo, SKILLS_DIR, f))).toBe(false);
       expect(res.removed).toContain(join(SKILLS_DIR, f));
     }
+    for (const f of SHIPPED_HOOKS) {
+      expect(existsSync(join(repo, HOOKS_DIR, f))).toBe(false);
+      expect(res.removed).toContain(join(HOOKS_DIR, f));
+    }
+    expect(existsSync(join(repo, SETTINGS))).toBe(false);
+    expect(res.removed).toContain(SETTINGS);
     expect(existsSync(join(repo, '.claude'))).toBe(false);
 
     // Dependency stripped from package.json (the file itself stays).
@@ -186,6 +249,28 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
     expect(existsSync(join(repo, SKILLS_DIR, SHIPPED_SKILLS[0]))).toBe(false);
     expect(existsSync(own)).toBe(true);
     expect(existsSync(join(repo, SKILLS_DIR))).toBe(true);
+  });
+
+  it("remove preserves a member's own settings keys + their own hooks (only ours are stripped)", async () => {
+    const ownHook = { matcher: 'Bash', hooks: [{ type: 'command', command: 'echo mine' }] };
+    mkdirSync(join(repo, '.claude'), { recursive: true });
+    writeFileSync(
+      join(repo, SETTINGS),
+      JSON.stringify({ env: { FOO: '1' }, hooks: { PreToolUse: [ownHook] } }, null, 2) + '\n',
+      'utf8',
+    );
+    await scaffold('init', { repoRoot: repo });
+    await scaffold('remove', { repoRoot: repo });
+
+    // settings.json survives with the member's key + their hook; only graphcode's are stripped.
+    const settings = JSON.parse(readFileSync(join(repo, SETTINGS), 'utf8'));
+    expect(settings.env).toEqual({ FOO: '1' });
+    expect(settings.hooks.PreToolUse).toEqual([ownHook]);
+    expect(JSON.stringify(settings)).not.toContain('.claude/hooks/deny-');
+    // Our hook files are gone.
+    for (const f of SHIPPED_HOOKS) {
+      expect(existsSync(join(repo, HOOKS_DIR, f))).toBe(false);
+    }
   });
 
   it('remove is idempotent — a clean repo removes nothing without erroring', async () => {

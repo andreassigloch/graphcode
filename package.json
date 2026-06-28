@@ -24,7 +24,9 @@
   },
   "files": [
     "dist",
-    ".claude/skills"
+    ".claude/skills",
+    ".claude/hooks",
+    ".claude/settings.json"
   ],
   "engines": {
     "node": ">=22"

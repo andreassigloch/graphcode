@@ -4,8 +4,9 @@
  * Self-contained installer that scaffolds the governed graph harness into ANY
  * repo. A member repo consumes `@sigloch/graphcode` as a dependency (CR-121) and
  * launches the MCP-stdio server via the scaffolded `.mcp.json`. The CURRENT
- * architecture is MCP-stdio only — the retired localhost Controller / `.claude/hooks`
- * path (CR-111 deletion) is NOT scaffolded.
+ * architecture is MCP-stdio only (the retired localhost Controller is gone, CR-111).
+ * The PreToolUse deny-hooks ARE scaffolded (CR-GC-214): read-side/write-side
+ * enforcement must protect agents working in CONSUMER repos, not only this dev repo.
  *
  * Artifacts this CLI owns, per target repo:
  *   - `.graphcode/`            the per-repo Kuzu store dir (`.graphcode/kuzu`, KUZU_DIR).
@@ -13,6 +14,11 @@
  *                              `graphcode mcp`. NEVER `:memory:` (REQ-disk-persistence).
  *   - `.mcp.json`             so an agent host launches the server via npx.
  *   - `GRAPHCODE.md`          the guardrails doc.
+ *   - `.claude/skills/se-*.md` the MCP-driven SE skills (CR-GC-133).
+ *   - `.claude/hooks/deny-*.sh` the PreToolUse enforcement hooks (gate-only writes,
+ *                              no binary source, no stale-prose reads) — CR-GC-214.
+ *   - `.claude/settings.json`  registers those hooks (merged: a member's own hooks +
+ *                              other settings keys are preserved).
  *   - `package.json`          gains the `@sigloch/graphcode` dependency.
  *
  * Realizes: REQ-pre-harness-cli (repo + node/npx present), REQ-post-harness-cli
@@ -46,6 +52,10 @@ const MCP_CONFIG = '.mcp.json';
 const GUARDRAILS_FILE = 'GRAPHCODE.md';
 /** Where the SE skills land in the target repo (and ship from in this package). */
 const SKILLS_DIR = join('.claude', 'skills');
+/** Where the PreToolUse deny-hooks land (and ship from in this package) — CR-GC-214. */
+const HOOKS_DIR = join('.claude', 'hooks');
+/** The settings file that registers the shipped hooks in the target repo. */
+const SETTINGS_FILE = join('.claude', 'settings.json');
 
 /**
  * The `.claude/skills/` directory shipped INSIDE this package, resolved relative to
@@ -64,6 +74,67 @@ function shippedSkillFiles(): string[] {
   return readdirSync(dir)
     .filter((f) => f.startsWith('se-') && f.endsWith('.md'))
     .sort();
+}
+
+/** Minimal shape of Claude Code's `settings.json` PreToolUse hook config (CR-GC-214). */
+type HookCommand = { type: string; command: string };
+type HookEntry = { matcher?: string; hooks?: HookCommand[] };
+type SettingsShape = {
+  hooks?: { PreToolUse?: HookEntry[]; [k: string]: unknown };
+  [k: string]: unknown;
+};
+
+/** The `.claude/hooks/` dir shipped INSIDE this package (dev: repo root; bundled: package root). */
+function packagedHooksDir(): string {
+  return join(dirname(fileURLToPath(import.meta.url)), '..', HOOKS_DIR);
+}
+
+/** This package's own `settings.json` — the single source for WHICH hooks get registered. */
+function packagedSettingsPath(): string {
+  return join(dirname(fileURLToPath(import.meta.url)), '..', SETTINGS_FILE);
+}
+
+/** The `deny-*.sh` hook files this package ships (empty if the dir is absent). */
+function shippedHookFiles(): string[] {
+  const dir = packagedHooksDir();
+  if (!existsSync(dir)) return [];
+  return readdirSync(dir)
+    .filter((f) => f.startsWith('deny-') && f.endsWith('.sh'))
+    .sort();
+}
+
+/** The PreToolUse entries to inject — read LIVE from this package's settings (no parallel list). */
+function shippedPreToolUseEntries(): HookEntry[] {
+  const p = packagedSettingsPath();
+  if (!existsSync(p)) return [];
+  const s = JSON.parse(readFileSync(p, 'utf8')) as SettingsShape;
+  const pre = s.hooks?.PreToolUse;
+  return Array.isArray(pre) ? pre : [];
+}
+
+/** A PreToolUse entry is graphcode-owned iff any of its commands points into `.claude/hooks/`. */
+function isGraphcodeHookEntry(entry: HookEntry): boolean {
+  return (
+    Array.isArray(entry.hooks) &&
+    entry.hooks.some((h) => typeof h.command === 'string' && h.command.includes('.claude/hooks/'))
+  );
+}
+
+/**
+ * Merge the shipped PreToolUse hooks into `existingRaw` (or {} if absent). A member's own
+ * hooks — and every other settings key — are preserved; graphcode's entries are stripped then
+ * re-appended at the end, so the result is deterministic and a re-run is byte-identical (idempotent).
+ */
+function mergedSettingsContent(existingRaw: string | null): string {
+  const existing: SettingsShape = existingRaw ? (JSON.parse(existingRaw) as SettingsShape) : {};
+  const hooks = existing.hooks && typeof existing.hooks === 'object' ? existing.hooks : {};
+  const pre = Array.isArray(hooks.PreToolUse) ? hooks.PreToolUse : [];
+  const userPre = pre.filter((e) => !isGraphcodeHookEntry(e));
+  const merged: SettingsShape = {
+    ...existing,
+    hooks: { ...hooks, PreToolUse: [...userPre, ...shippedPreToolUseEntries()] },
+  };
+  return JSON.stringify(merged, null, 2) + '\n';
 }
 
 /** `CliCommand` (SCHEMA-cli-command) — the npx-CLI verbs this installer dispatches. */
@@ -110,12 +181,16 @@ function guardrailsContent(): string {
     '- `.mcp.json` — tells the agent host (Claude Code, OpenCode, …) to launch the',
     `  server via \`npx -y ${PACKAGE_NAME} mcp\`.`,
     '- `.claude/skills/se-*.md` — the SE skills (fmea/review/status + the views), MCP-driven.',
+    '- `.claude/hooks/deny-*.sh` + `.claude/settings.json` — PreToolUse enforcement:',
+    '  gate-only writes, no binary source, no stale-prose reads (CR-GC-214). Your own',
+    '  hooks/settings keys are preserved on `update` and restored on `remove`.',
     '',
     '## Rules',
     '',
     '- One store = Kuzu, single-writer, exactly one owner process per repo.',
     '- One transport = MCP-stdio. No Express/REST in the core.',
-    '- One apply-gate = `mutate()` — every edit (human or AI) goes through it.',
+    '- One apply-gate = `mutate()` — every edit (human or AI) goes through it; the',
+    '  `deny-graph-write` hook blocks hand-edits of the graph SSOT.',
     '- SE ontology + rules come from `@sigloch/contracts/se` — import, never fork.',
     '',
     '## Lifecycle',
@@ -218,12 +293,81 @@ function removeSkills(repoRoot: string, res: InstallResult): void {
   for (const f of shippedSkillFiles()) {
     removeArtifact(join(destDir, f), join(SKILLS_DIR, f), res);
   }
+  // Prune `.claude/skills` if WE emptied it; the shared `.claude/` prune runs once after
+  // both skills + hooks are removed (pruneClaudeIfEmpty).
   if (readdirSync(destDir).length === 0) {
     rmSync(destDir, { recursive: true, force: true });
-    const claudeDir = join(repoRoot, '.claude');
-    if (existsSync(claudeDir) && readdirSync(claudeDir).length === 0) {
-      rmSync(claudeDir, { recursive: true, force: true });
+  }
+}
+
+/**
+ * Copy the package's `deny-*.sh` PreToolUse hooks into the target repo's `.claude/hooks/`
+ * and register them in `.claude/settings.json` (CR-GC-214). Idempotent (byte-identical
+ * re-write = `preserved`). Without this, consumer-repo agents have no read/write enforcement.
+ */
+function installHooks(repoRoot: string, res: InstallResult): void {
+  const srcDir = packagedHooksDir();
+  const files = shippedHookFiles();
+  if (files.length === 0) return; // hooks not packaged — substrate still installs.
+  const destDir = join(repoRoot, HOOKS_DIR);
+  mkdirSync(destDir, { recursive: true });
+  for (const f of files) {
+    const content = readFileSync(join(srcDir, f), 'utf8');
+    writeArtifact(join(destDir, f), join(HOOKS_DIR, f), content, res);
+  }
+  // Register, merging so a member's own hooks + other settings keys survive.
+  const abs = join(repoRoot, SETTINGS_FILE);
+  const existingRaw = existsSync(abs) ? readFileSync(abs, 'utf8') : null;
+  writeArtifact(abs, SETTINGS_FILE, mergedSettingsContent(existingRaw), res);
+}
+
+/**
+ * Remove the graphcode-shipped hooks restlos — the `deny-*.sh` files this package owns and
+ * its PreToolUse registrations in `.claude/settings.json`. A member's own hooks / other
+ * settings keys survive; an emptied settings file or `.claude/hooks` dir is pruned.
+ */
+function removeHooks(repoRoot: string, res: InstallResult): void {
+  // Strip our registrations from settings.json first.
+  const abs = join(repoRoot, SETTINGS_FILE);
+  if (existsSync(abs)) {
+    const existingRaw = readFileSync(abs, 'utf8');
+    const existing = JSON.parse(existingRaw) as SettingsShape;
+    const hooks = existing.hooks && typeof existing.hooks === 'object' ? existing.hooks : {};
+    const pre = Array.isArray(hooks.PreToolUse) ? hooks.PreToolUse : [];
+    const userPre = pre.filter((e) => !isGraphcodeHookEntry(e));
+    const nextHooks: Record<string, unknown> = { ...hooks };
+    if (userPre.length > 0) nextHooks.PreToolUse = userPre;
+    else delete nextHooks.PreToolUse;
+    const next: SettingsShape = { ...existing };
+    if (Object.keys(nextHooks).length === 0) delete next.hooks;
+    else next.hooks = nextHooks as SettingsShape['hooks'];
+    if (Object.keys(next).length === 0) {
+      removeArtifact(abs, SETTINGS_FILE, res); // settings was graphcode-only.
+    } else {
+      const nextRaw = JSON.stringify(next, null, 2) + '\n';
+      if (nextRaw !== existingRaw) {
+        writeFileSync(abs, nextRaw, 'utf8');
+        res.updated.push(SETTINGS_FILE);
+      }
     }
+  }
+  // Then the hook files.
+  const destDir = join(repoRoot, HOOKS_DIR);
+  if (existsSync(destDir)) {
+    for (const f of shippedHookFiles()) {
+      removeArtifact(join(destDir, f), join(HOOKS_DIR, f), res);
+    }
+    if (readdirSync(destDir).length === 0) {
+      rmSync(destDir, { recursive: true, force: true });
+    }
+  }
+}
+
+/** Prune the target's `.claude/` dir iff WE emptied it (skills + hooks both removed). */
+function pruneClaudeIfEmpty(repoRoot: string): void {
+  const claudeDir = join(repoRoot, '.claude');
+  if (existsSync(claudeDir) && readdirSync(claudeDir).length === 0) {
+    rmSync(claudeDir, { recursive: true, force: true });
   }
 }
 
@@ -267,6 +411,7 @@ export async function scaffold(
       writeArtifact(mcpAbs, MCP_CONFIG, mcpConfigContent(), res);
       writeArtifact(guardrailsAbs, GUARDRAILS_FILE, guardrailsContent(), res);
       installSkills(repoRoot, res);
+      installHooks(repoRoot, res);
       registerDependency(repoRoot, res);
       return res;
     }
@@ -284,6 +429,7 @@ export async function scaffold(
       writeArtifact(mcpAbs, MCP_CONFIG, mcpConfigContent(), res);
       writeArtifact(guardrailsAbs, GUARDRAILS_FILE, guardrailsContent(), res);
       installSkills(repoRoot, res);
+      installHooks(repoRoot, res);
       registerDependency(repoRoot, res);
       return res;
     }
@@ -294,6 +440,8 @@ export async function scaffold(
       removeArtifact(mcpAbs, MCP_CONFIG, res);
       removeArtifact(guardrailsAbs, GUARDRAILS_FILE, res);
       removeSkills(repoRoot, res);
+      removeHooks(repoRoot, res);
+      pruneClaudeIfEmpty(repoRoot);
       unregisterDependency(repoRoot, res);
       return res;
     }
