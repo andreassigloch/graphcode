@@ -449,6 +449,13 @@
       "status": "done"
     },
     {
+      "id": "CR-GC-227",
+      "type": "CR",
+      "name": "Help content layer (authored Plain/SE annotation, HELP_CONTENT)",
+      "description": "DONE 2026-06-28: src/viewer/help-content.ts holds the authored two-layer help (plain + se) keyed on ruleId/gateId/panelId/artifactId, plus HELP_VOCAB (every ElementType + TraceType + depends-on) and the element-states note. Pure annotation over existing keys, no Rule/ElementType/TraceType/Pattern, no @sigloch/contracts bump (drift-lock not triggered). Derived fields (title/severity/owned-rules/tool-purpose) stay in V3_RULES/readiness/registry and are merged by the data layer (CR-228). Coverage pinned against the live registries (no hand-count): tests/help-content.test.ts. (CR-GC-227)",
+      "status": "done"
+    },
+    {
       "id": "FCHAIN-agent-query",
       "type": "FCHAIN",
       "name": "Agent-Graph-Query (Impact + progressive Expansion)",
