@@ -49,7 +49,7 @@ Diese werden **nicht** hier entschieden; Rationale + Detail liegen in bok:
 | **AD-5** | **Ingestion nach Größe:** chat-taugliche Inputs → graphcode direkt durchs Gate; **große Docs → graphify** sliced zuerst. | Grenze = „passt in einen Chat"; keine Eigen-Extraktion (`REQ-no-extraction`). |
 | **AD-6** | **App-spezifische Module** über die 4 Runtime-Module hinaus: `MOD-cli` (npx-Distribution), `MOD-docs` (Markdown-Re-Export). Nur **sigloch-modules-Shared** braucht Familie-Review. | App-lokale Module sind frei; geteilte Module sind die Governance-Grenze. |
 | **AD-7** | **npx-Distribution** `npx @sigloch/graphcode init\|update\|remove` (ruflo/claude-flow-Muster). | Self-contained statt AIMPRO_ROOT-Kopplung. GATED auf D5 + CR-GC-100..103. |
-| **AD-8** | **Graph→Markdown Re-Export** verpflichtend (`UC-doc-export`/`FUNC-export-markdown`): human-readable Views deterministisch generiert, GENERATED-Header, nie hand-editiert. **Specced, nicht gebaut.** | Schließt die graph-is-ssot-Drift-Lücke; bis dahin sind Docs frozen-by-discipline. |
+| **AD-8** | **Graph→Markdown Re-Export** verpflichtend (`UC-doc-export`/`FUNC-export-markdown`): human-readable Views deterministisch generiert, GENERATED-Header, nie hand-editiert. **Gebaut (CR-GC-113/220):** 16 deterministische Views. `lean`-Scope **verfeinert** (CR-GC-226): Renders = Projektionen (keine separaten Deliverables), Creations (ConOps/FMEA/Assumption/Trade/Impl-Plan) = leichtgewichtige Urteils-Inputs + Gate-Vorbedingung. Pointer: `docs/proposals/readiness-artifact-model.md` §3. | Schließt die graph-is-ssot-Drift-Lücke; Renders nie hand-editiert, Creations leichtgewichtig in-scope (kein ASIL-D). |
 
 ## 5. Guidelines (app-spezifisch)
 

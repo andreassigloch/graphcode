@@ -11,12 +11,16 @@
  *
  * REQ-readiness-model (CR-GC-125) — the model, defined here AND in the graph:
  *
- *   INCOSE-Artifact-Scope = LEAN. graphcode is a headless QM-level governance
- *   harness, not an ASIL-rated system. The governed graph IS the single SE
- *   artifact (REQ = requirements baseline, MOD/FUNC/allocate = design,
- *   TEST/verify = verification); there are no separate document deliverables
- *   (SRS/SDD/STP), and full-scope artifacts (FMEA S/O/D, ASIL-D isolation
- *   evidence) are out of scope — graphcode carries no `asil`-rated elements.
+ *   INCOSE-Artifact-Scope = LEAN, refined (CR-GC-226, supersedes the CR-GC-125
+ *   `lean = no artifacts` stance). graphcode is a headless QM-level governance
+ *   harness, not an ASIL-rated system. The graph is the SSOT and every RENDER
+ *   (SRS/SDD/RTM/ICD/…) is a DETERMINISTIC PROJECTION of it (CR-GC-220) — not a
+ *   separate hand-authored deliverable. CREATION artifacts (ConOps, FMEA,
+ *   Assumption Review, Trade, Impl Plan) ARE in scope as lightweight judgment
+ *   inputs and gate preconditions — tracked in the artifact tab (CR-GC-222) and
+ *   required by the gates (CR-GC-221). Only ASIL-D-grade evidence (full FMEA
+ *   S/O/D rigor, ASIL isolation proof) stays out of scope — graphcode carries no
+ *   `asil`-rated elements. Refined model: docs/proposals/readiness-artifact-model.md §3.
  *
  *   Phase-Readiness — 4 INCOSE technical-review gates (SRR/PDR/CDR/TRR), each a
  *   DISJOINT + EXHAUSTIVE partition of the 15 element-level V3_RULES. A gate is
@@ -66,8 +70,10 @@ export interface ReadinessDimension {
 
 /**
  * INCOSE artifact scope for the system under governance.
- * `lean`  — the graph is the single SE artifact (graphcode's stance).
- * `full`  — separate document deliverables + ASIL/FMEA evidence (not graphcode).
+ * `lean`  — graph = SSOT; renders are deterministic projections, creations are
+ *           lightweight judgment inputs + gate preconditions (graphcode's stance,
+ *           refined CR-GC-226). NOT "no artifacts".
+ * `full`  — ASIL-D-grade evidence (full FMEA S/O/D rigor, ASIL isolation) (not graphcode).
  */
 export type IncoseScope = 'lean' | 'full';
 

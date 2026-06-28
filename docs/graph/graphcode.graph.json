@@ -445,8 +445,8 @@
       "id": "CR-GC-226",
       "type": "CR",
       "name": "Doku/Graph: lean=no-artifacts abloesen + Artefakt-Modell seeden",
-      "description": "lean neu definieren (Renders=Projektion, Creations=Gate-Vorbedingung, FMEA/Assumption lightweight in-scope); MS-6-adoption + CR-220..226 zuordnen; ADR-001 Pointer; Views re-render. (docs/cr/open/CR-GC-226)",
-      "status": "open"
+      "description": "DONE 2026-06-28: redefined lean in src/readiness.ts header + IncoseScope comment (supersedes CR-125 no-artifacts stance): graph = SSOT, renders = deterministic projections, creations (ConOps/FMEA/Assumption/Trade/Impl-Plan) = lightweight judgment inputs + gate preconditions; only ASIL-D evidence stays full/non-graphcode. ADR-001 AD-8 updated to a pointer at readiness-artifact-model.md §3 (no new ADR). MS-6-adoption milestone + CR-GC-220..226 relation assignments already present in the graph. Views re-rendered. Closes the CR-220..226 substrate chain. (CR-GC-226)",
+      "status": "done"
     },
     {
       "id": "FCHAIN-agent-query",
