@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 46 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 46 CR · 37 done · 9 open.
+Total: 46 CR · 38 done · 8 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -72,7 +72,7 @@ Total: 46 CR · 37 done · 9 open.
 
 | CR | status | name |
 |---|---|---|
-| `CR-GC-220` | open | Renderer: deterministic MarkdownView for every render-able artifact |
+| `CR-GC-220` | done | Renderer: deterministic MarkdownView for every render-able artifact |
 | `CR-GC-221` | open | Readiness: Creations als Gate-Vorbedingung |
 | `CR-GC-222` | open | Artefakt-Tab: render/analysis Kind-Split |
 | `CR-GC-223` | open | Skills: Creation-Skills (FMEA-Rename + se-irr/se-conops/se-trade) |

@@ -72,7 +72,7 @@ depends-on:  MS-1-specification  ◀  MS-2-coding-vv  ◀  MS-3-mvp-readiness  �
 
 | CR | status | name |
 |---|---|---|
-| `CR-GC-220` | open | Renderer: deterministic MarkdownView for every render-able artifact |
+| `CR-GC-220` | done | Renderer: deterministic MarkdownView for every render-able artifact |
 | `CR-GC-221` | open | Readiness: Creations als Gate-Vorbedingung |
 | `CR-GC-222` | open | Artefakt-Tab: render/analysis Kind-Split |
 | `CR-GC-223` | open | Skills: Creation-Skills (FMEA-Rename + se-irr/se-conops/se-trade) |

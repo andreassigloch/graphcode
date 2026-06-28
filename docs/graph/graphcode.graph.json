@@ -396,8 +396,8 @@
       "id": "CR-GC-220",
       "type": "CR",
       "name": "Renderer: deterministic MarkdownView for every render-able artifact",
-      "description": "SRS/NFR/RTM/ICD/TestConcept/VCRM/IntPlan/ChangeLog/FMEA/ConOps/Trade/ImplPlan als deterministische Views (exporter-views.ts); nicht-deterministisches Agent-Rendern eliminiert. (docs/cr/open/CR-GC-220)",
-      "status": "open"
+      "description": "DONE 2026-06-28: MarkdownViewSchema extended with 12 deterministic SE-artifact views (srs, nfr, rtm, icd, testconcept, testmatrix, intplan, changelog, fmea, conops, trade, implplan) in src/exporter-views.ts; exporter.ts stays under 500 lines. Each view is a pure stable-sorted projection of the graph (SRS in 29148 structure as a REQ-slice distinct from the full spec dump; TestConcept pyramid with a computed E2E gap marked when 0 system tests; RTM/VCRM matrices). scripts/export-graph.mjs renders all 16 views; two runs are byte-identical. Test: tests/exporter.test.ts. (CR-GC-220)",
+      "status": "done"
     },
     {
       "id": "CR-GC-221",

@@ -81,8 +81,12 @@ describe('TEST-mcp-export: graph_export writes commit-able docs from the live gr
     expect(parsed.elements.map((e) => e.id).sort()).toEqual(['MOD-reset', 'REQ-reset', 'SYS-auth', 'TEST-reset']);
     expect(parsed.traces.some((t) => t.source === 'TEST-reset' && t.target === 'REQ-reset' && t.type === 'verify')).toBe(true);
 
-    // All four Markdown views written with a GENERATED header.
-    expect(res.views.map((v) => v.view).sort()).toEqual(['architecture', 'cr-list', 'references', 'spec']);
+    // Default = ALL views (CR-GC-220: 16), each written with a GENERATED header.
+    // The four foundation views are still present (no parallel path — they were extended).
+    const written = res.views.map((v) => v.view);
+    for (const v of ['architecture', 'cr-list', 'references', 'spec']) expect(written).toContain(v);
+    expect(written).toContain('srs'); // a new deterministic SE-artifact view
+    expect(written.length).toBe(16);
     for (const v of res.views) {
       const md = readFileSync(join(repoRoot, v.path), 'utf8');
       expect(md).toContain('GENERATED');
