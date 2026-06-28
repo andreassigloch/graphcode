@@ -4,7 +4,7 @@ version: 1
 description: Perform a state-of-the-art FMEA (AIAG-VDA 7-step) on a system, subsystem, or component and integrate findings into the SE-graph + spec
 ---
 
-Conduct a Failure Mode and Effects Analysis following the **AIAG-VDA FMEA Handbook (2019)** 7-step method, mapped onto this project's SE-ontology graph. Output is `docs/records/failure-mode-analysis.md` plus a CR that integrates derived requirements into the graph.
+Conduct a Failure Mode and Effects Analysis following the **AIAG-VDA FMEA Handbook (2019)** 7-step method, mapped onto this project's SE-ontology graph. Output is `docs/records/failure-mode-analysis.md` plus a CR that integrates derived requirements into the graph. This is the FMEA **create** skill; once findings are in the graph, render them with `se-view:fmea` (the read-only FMEA view) — do not re-author the analysis at render time.
 
 **Scope argument:** the user names the analysis target (whole system, a module e.g. a `MOD` node, or a component e.g. `ACS712`). If unscoped, ask for it — do not guess.
 

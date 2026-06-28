@@ -417,8 +417,8 @@
       "id": "CR-GC-223",
       "type": "CR",
       "name": "Skills: Creation-Skills (FMEA-Rename + se-irr/se-conops/se-trade)",
-      "description": "se-view-irr → se-view-fmea Rename (FMEA-Render); neu se-irr (Assumption Review), se-conops (operational, vor UC), se-trade (Spike→CR); se-fmea Output-Pfad real. (docs/cr/open/CR-GC-223)",
-      "status": "open"
+      "description": "DONE 2026-06-28: renamed skill se-view-irr to se-view-fmea (FMEA render; rebound FUNC-view-irr codeRef in place, edges preserved) so no skill labels FMEA as IRR. New gate-only create skills: se-irr (Assumption Review, non-INCOSE, commit-pinned record then promote to CRs), se-conops (operational concerns before UC, writes operational REQ via gate), se-trade (Spike to CR, decision recorded as relation decides/superseded-by, no new element type). se-fmea points at se-view:fmea as its render. Conformance green (registry-derived counts). Test: tests/skills.mcp-conformance.test.ts. (CR-GC-223)",
+      "status": "done"
     },
     {
       "id": "CR-GC-224",
@@ -1194,14 +1194,14 @@
     {
       "id": "FUNC-view-irr",
       "type": "FUNC",
-      "name": "se-view-irr (Initial Risk Review)",
-      "description": "Prompt-realisierte View: Initial Risk Review aus risk-getaggten REQs (mitigated/spiked). Schliesst die fehlende IRR-Artifact-View des Dashboards. (CR-GC-116)",
+      "name": "se-view-fmea (FMEA view)",
+      "description": "Prompt-realisierte View: FMEA-Render aus risk-getaggten REQs (S/O/D, Action Priority, Mitigation-Coverage, Verify-Luecken). Skill von se-view-irr zu se-view-fmea umbenannt; das Label IRR ist jetzt die separate Assumption-Review (se-irr). (CR-GC-223)",
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
       "external": false,
       "codeRef": {
-        "file": ".claude/skills/se-view-irr.md",
-        "symbol": "se-view-irr",
+        "file": ".claude/skills/se-view-fmea.md",
+        "symbol": "se-view-fmea",
         "lang": "prompt"
       }
     },

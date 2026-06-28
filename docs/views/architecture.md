@@ -45,7 +45,7 @@
 | `FUNC-view-conops` | FUNC | se-view-conops (ConOps) |
 | `FUNC-view-icd` | FUNC | se-view-icd (ICD) |
 | `FUNC-view-intplan` | FUNC | se-view-intplan (Integrations-/Testplan) |
-| `FUNC-view-irr` | FUNC | se-view-irr (Initial Risk Review) |
+| `FUNC-view-irr` | FUNC | se-view-fmea (FMEA view) |
 | `FUNC-view-rtm` | FUNC | se-view-rtm (RTM) |
 | `MOD-cli` | MOD | cli — npx-Distribution & Lifecycle |
 | `MOD-codec` | MOD | codec.ts — GraphCodeCodec |

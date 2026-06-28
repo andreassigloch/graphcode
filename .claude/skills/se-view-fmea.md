@@ -1,10 +1,10 @@
 ---
-name: se-view:irr
+name: se-view:fmea
 version: 1
-description: Initial Risk Review — risk elements, FMEA linkage, mitigation coverage, readiness
+description: FMEA view — failure-mode risk elements (S/O/D, Action Priority), mitigation coverage, verification gaps
 ---
 
-Render the Initial Risk Review (IRR) from the live governed graph — graphcode has no view endpoint, the agent is the renderer (KNOW-via-query). The graph has **no dedicated risk element type**: risk lives as `REQ` nodes whose `kinds` include `"risk"` (the hazard) or `"mitigation"` (the countermeasure), carrying the FMEA scores in `attributes` (`severity` / `occurrence` / `detection`, each 1–10). Fetch over MCP:
+Render the **FMEA** from the live governed graph — graphcode has no view endpoint, the agent is the renderer (KNOW-via-query). This is the FMEA **render** (the create counterpart is the `se-fmea` skill). The graph has **no dedicated risk element type**: risk lives as `REQ` nodes whose `kinds` include `"risk"` (the hazard) or `"mitigation"` (the countermeasure), carrying the FMEA scores in `attributes` (`severity` / `occurrence` / `detection`, each 1–10). Fetch over MCP:
 
 1. `graph_elements` `{ "type": "REQ" }` — every requirement. Keep the risk-bearing ones: `kinds` contains `"risk"`, `"mitigation"`, or `"negative"`, OR `attributes.severity`/`occurrence`/`detection` is set.
 2. `graph_get_edges` `{ "edgeType": "satisfy" }` — the responsible FUNC for each risk/mitigation REQ (FUNC→REQ): which function owns the hazard.
@@ -27,4 +27,4 @@ For each `risk` REQ, name its mitigating `mitigation` REQ(s) (linked via the sam
 ## 4. Risikomatrix
 A Mermaid `graph LR` linking each High/Medium-AP risk REQ to its responsible FUNC and its mitigation REQ. Keep node labels free of `(`, `)`, and `|` — those blank the whole diagram; use the uid or a plain-text name.
 
-Recommend the top action: start with the highest-AP risk REQ that is unverified or unmitigated. Derive everything from the queries above — do not read a hand-maintained FMEA doc.
+Recommend the top action: start with the highest-AP risk REQ that is unverified or unmitigated. Derive everything from the queries above — do not read a hand-maintained FMEA doc. This view does **not** label its output "IRR" (the Assumption Review is the separate `se-irr` skill).
