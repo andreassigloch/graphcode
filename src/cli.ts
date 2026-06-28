@@ -20,16 +20,17 @@
  */
 import { serveStdio } from './mcp-server.js';
 import { serveHost } from './viewer/host.js';
-import { scaffold, type CliCommand } from './scaffold.js';
+import { scaffold, syncSkills, type CliCommand } from './scaffold.js';
 
 const USAGE = `graphcode — governed graph substrate (MCP-stdio)
 
 Usage:
   graphcode mcp     Start the MCP-stdio server (bind from .mcp.json)
   graphcode host    Start the read-only HOST + SSE bridge (live viewer)
-  graphcode init    Scaffold the harness into the current repo
-  graphcode update  Refresh installed artifacts (preserves the store)
-  graphcode remove  Remove all scaffolded artifacts (restlos)
+  graphcode init        Scaffold the harness into the current repo
+  graphcode update      Refresh installed artifacts (preserves the store)
+  graphcode remove      Remove all scaffolded artifacts (restlos)
+  graphcode skills sync Re-copy shipped se-* skills, overwrite on version mismatch
 `;
 
 async function main(): Promise<void> {
@@ -56,6 +57,19 @@ async function main(): Promise<void> {
       const result = await scaffold(command as CliCommand, { repoRoot: process.cwd() });
       // stdout stays reserved for the MCP transport — report on stderr.
       process.stderr.write(`graphcode ${command}: ${JSON.stringify(result, null, 2)}\n`);
+      process.exit(0);
+    }
+    case 'skills': {
+      // `graphcode skills sync` — re-copy the shipped se-* skills, overwriting only on a
+      // version mismatch (CR-GC-208 anti-drift). The only sub-verb today is `sync`.
+      const sub = process.argv[3];
+      if (sub !== 'sync') {
+        process.stderr.write(`graphcode skills: unknown subcommand "${sub ?? ''}"\n\n${USAGE}`);
+        process.exit(1);
+      }
+      const result = syncSkills(process.cwd());
+      // stdout stays reserved for the MCP transport — report on stderr.
+      process.stderr.write(`graphcode skills sync: ${JSON.stringify(result, null, 2)}\n`);
       process.exit(0);
     }
     case undefined:

@@ -1,5 +1,6 @@
 ---
 name: se-view:trade
+version: 1
 description: Show architecture optimization candidates
 ---
 

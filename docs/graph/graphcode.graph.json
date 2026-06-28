@@ -372,6 +372,13 @@
       "status": "done"
     },
     {
+      "id": "CR-GC-208",
+      "type": "CR",
+      "name": "Skill sync + surfacing (anti-drift for scaffolded se-* skills)",
+      "description": "DONE 2026-06-28: `graphcode skills sync` CLI subcommand (src/cli.ts dispatch arm + syncSkills() in scaffold.ts) re-copies shipped se-*.md into target .claude/skills/, reports added|updated|unchanged per file, overwrites only on version: mismatch (missing=0); all 17 se-*.md carry version:1 frontmatter. GRAPHCODE.md gains a derived '## Available se-* skills' table (name->purpose) so agents call skills via the Skill tool, not ad-hoc. Conformance stays green. Test: tests/cli.scaffold.test.ts. (CR-GC-208)",
+      "status": "done"
+    },
+    {
       "id": "CR-GC-214",
       "type": "CR",
       "name": "Read-side graph-first enforcement (deny-stale-prose-read hook)",

@@ -76,6 +76,35 @@ function shippedSkillFiles(): string[] {
     .sort();
 }
 
+/** The frontmatter fields a skill carries (CR-GC-208): identity, purpose, sync-version. */
+type SkillMeta = { name: string; description: string; version: number };
+
+/**
+ * Parse the `---`-fenced YAML-ish frontmatter of a skill file for `name`, `description`,
+ * and `version`. Only the flat `key: value` pairs in the first fence are read (the skills'
+ * frontmatter is intentionally trivial — no nested YAML). A missing `version:` reads as 0,
+ * so an un-stamped target copy always loses to a shipped `version: 1` and gets refreshed.
+ */
+function parseSkillFrontmatter(content: string): SkillMeta {
+  const meta: SkillMeta = { name: '', description: '', version: 0 };
+  const lines = content.split('\n');
+  if (lines[0]?.trim() !== '---') return meta;
+  for (let i = 1; i < lines.length; i++) {
+    if (lines[i].trim() === '---') break;
+    const m = /^([A-Za-z][\w-]*):\s*(.*)$/.exec(lines[i]);
+    if (!m) continue;
+    const [, key, raw] = m;
+    const value = raw.trim();
+    if (key === 'name') meta.name = value;
+    else if (key === 'description') meta.description = value;
+    else if (key === 'version') {
+      const n = Number.parseInt(value, 10);
+      if (Number.isFinite(n)) meta.version = n;
+    }
+  }
+  return meta;
+}
+
 /** Minimal shape of Claude Code's `settings.json` PreToolUse hook config (CR-GC-214). */
 type HookCommand = { type: string; command: string };
 type HookEntry = { matcher?: string; hooks?: HookCommand[] };
@@ -156,6 +185,21 @@ export const InstallResultSchema = z.object({
 });
 export type InstallResult = z.infer<typeof InstallResultSchema>;
 
+/**
+ * `SkillSyncResult` (CR-GC-208) — per-skill diff-report from `graphcode skills sync`.
+ * `added`   : the target had no copy → the shipped skill was written.
+ * `updated` : the target copy's `version:` was lower/absent → it was overwritten.
+ * `unchanged`: the target copy was already at the shipped `version:` → left untouched.
+ * Repo-relative paths so the report is stable/loggable across machines.
+ */
+export const SkillSyncResultSchema = z.object({
+  repoRoot: z.string(),
+  added: z.array(z.string()),
+  updated: z.array(z.string()),
+  unchanged: z.array(z.string()),
+});
+export type SkillSyncResult = z.infer<typeof SkillSyncResultSchema>;
+
 /** The `.mcp.json` a foreign repo needs: launch the server via npx (CR-121). */
 function mcpConfigContent(): string {
   const cfg = {
@@ -164,6 +208,22 @@ function mcpConfigContent(): string {
     },
   };
   return JSON.stringify(cfg, null, 2) + '\n';
+}
+
+/**
+ * The "## Available se-* skills" rows — derived LIVE from the shipped skills' frontmatter
+ * (CR-GC-208), so the table can never drift from what `init`/`sync` actually copy. Each row
+ * maps a skill `name:` → its `description:`; pipes in a description are escaped so the
+ * Markdown table stays well-formed.
+ */
+function skillTableRows(): string[] {
+  const srcDir = packagedSkillsDir();
+  return shippedSkillFiles().map((f) => {
+    const meta = parseSkillFrontmatter(readFileSync(join(srcDir, f), 'utf8'));
+    const name = meta.name || f.replace(/\.md$/, '');
+    const desc = (meta.description || '').replace(/\|/g, '\\|');
+    return `| \`${name}\` | ${desc} |`;
+  });
 }
 
 /** The guardrails doc scaffolded into the target repo. */
@@ -188,6 +248,16 @@ function guardrailsContent(): string {
     '- **`docs/SPEC.md` is bootstrap input, not authoritative — do not read it** to plan.',
     '- **After seeding the graph, run `graph_export`** so `docs/graph/*.graph.json`',
     '  exists as a readable SSOT for the next session (a single-writer Kuzu store is not).',
+    '',
+    '## Available se-* skills (CR-GC-208)',
+    '',
+    'These ship in `.claude/skills/`. Invoke them via the **Skill tool** instead of',
+    'planning the same work ad-hoc — each is MCP-driven against the live graph. Run',
+    '`npx @sigloch/graphcode skills sync` to refresh them when this package updates.',
+    '',
+    '| skill | purpose |',
+    '| --- | --- |',
+    ...skillTableRows(),
     '',
     '## What is here',
     '',
@@ -295,6 +365,45 @@ function installSkills(repoRoot: string, res: InstallResult): void {
     const content = readFileSync(join(srcDir, f), 'utf8');
     writeArtifact(join(destDir, f), join(SKILLS_DIR, f), content, res);
   }
+}
+
+/**
+ * Re-copy the shipped `se-*.md` skills into the target repo's `.claude/skills/`, overwriting
+ * ONLY on a `version:` mismatch (CR-GC-208 — anti-drift). Compares the shipped skill's
+ * frontmatter `version:` against the target copy's:
+ *   - no target copy            → write it, report `added`.
+ *   - shipped version > target  → overwrite, report `updated` (a stale/older/un-stamped copy).
+ *   - shipped version == target → leave untouched, report `unchanged`.
+ * Reuses `shippedSkillFiles()` + `parseSkillFrontmatter()` — no parallel copy path. A shipped
+ * version LOWER than the target is never written back (the package is the source of truth, but
+ * we don't downgrade a member who is somehow ahead — report `unchanged`).
+ */
+export function syncSkills(repoRoot: string): SkillSyncResult {
+  const res: SkillSyncResult = { repoRoot, added: [], updated: [], unchanged: [] };
+  const srcDir = packagedSkillsDir();
+  const files = shippedSkillFiles();
+  if (files.length === 0) return res; // skills not packaged — nothing to sync.
+  const destDir = join(repoRoot, SKILLS_DIR);
+  mkdirSync(destDir, { recursive: true });
+  for (const f of files) {
+    const rel = join(SKILLS_DIR, f);
+    const content = readFileSync(join(srcDir, f), 'utf8');
+    const destAbs = join(destDir, f);
+    if (!existsSync(destAbs)) {
+      writeFileSync(destAbs, content, 'utf8');
+      res.added.push(rel);
+      continue;
+    }
+    const shippedVersion = parseSkillFrontmatter(content).version;
+    const targetVersion = parseSkillFrontmatter(readFileSync(destAbs, 'utf8')).version;
+    if (shippedVersion > targetVersion) {
+      writeFileSync(destAbs, content, 'utf8');
+      res.updated.push(rel);
+    } else {
+      res.unchanged.push(rel);
+    }
+  }
+  return res;
 }
 
 /**

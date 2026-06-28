@@ -1,5 +1,6 @@
 ---
 name: se-view:irr
+version: 1
 description: Initial Risk Review — risk elements, FMEA linkage, mitigation coverage, readiness
 ---
 

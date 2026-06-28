@@ -1,5 +1,6 @@
 ---
 name: se-view:implplan
+version: 1
 description: Show implementation plan structure and milestone status
 ---
 

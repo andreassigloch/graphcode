@@ -1,5 +1,6 @@
 ---
 name: se:close-violations
+version: 1
 description: Drive the governed graph to zero error-violations — propose ranked verify/satisfy edges, confirm fit, gate-mutate, repeat
 ---
 

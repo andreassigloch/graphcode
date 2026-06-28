@@ -1,5 +1,6 @@
 ---
 name: se-view:conops
+version: 1
 description: Concept of Operations — actors, system context, use-case scenarios and their flows
 ---
 

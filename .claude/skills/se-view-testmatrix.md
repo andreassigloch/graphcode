@@ -1,5 +1,6 @@
 ---
 name: se-view:testmatrix
+version: 1
 description: Show test coverage status from graph
 ---
 

@@ -1,5 +1,6 @@
 ---
 name: se-view:changelog
+version: 1
 description: Change log — applied mutations from the audit trail plus CR status rollup
 ---
 

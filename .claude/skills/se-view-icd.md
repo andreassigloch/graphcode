@@ -1,5 +1,6 @@
 ---
 name: se-view:icd
+version: 1
 description: Interface Control Document — schema contracts, module boundaries and flow completeness
 ---
 

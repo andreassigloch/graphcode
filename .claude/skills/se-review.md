@@ -1,5 +1,6 @@
 ---
 name: se-review
+version: 1
 description: Readiness gate check — blockers and next steps
 ---
 

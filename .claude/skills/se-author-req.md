@@ -1,5 +1,6 @@
 ---
 name: se:author-req
+version: 1
 description: Author a REQ together with its verifying TEST concept in one gated batch — the REQ-with-test invariant
 ---
 

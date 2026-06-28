@@ -21,7 +21,13 @@ import { mkdtempSync, rmSync, existsSync, readFileSync, writeFileSync, mkdirSync
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { readdirSync } from 'node:fs';
-import { scaffold, InstallResultSchema, CliCommandSchema } from '../src/scaffold.js';
+import {
+  scaffold,
+  syncSkills,
+  InstallResultSchema,
+  CliCommandSchema,
+  SkillSyncResultSchema,
+} from '../src/scaffold.js';
 import { KUZU_DIR } from '../src/index.js';
 
 const MCP = '.mcp.json';
@@ -114,6 +120,23 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
     expect(md).toMatch(/`Name\.SY\.001`[^\n]*dead/i);
     // (4) SPEC.md is bootstrap input, do not read it to plan.
     expect(md).toMatch(/SPEC\.md.*do not read it/i);
+  });
+
+  it('GRAPHCODE.md lists the available se-* skills (CR-GC-208)', async () => {
+    await scaffold('init', { repoRoot: repo });
+    const md = readFileSync(join(repo, GUARDRAILS), 'utf8');
+    // The section exists and points at the Skill tool + `skills sync`.
+    expect(md).toMatch(/## Available se-\* skills/);
+    expect(md).toMatch(/Skill tool/);
+    expect(md).toContain('skills sync');
+    // Every shipped skill's `name:` appears in the table — derived, cannot drift.
+    const skillsDir = join(__dirname, '..', '.claude', 'skills');
+    for (const f of SHIPPED_SKILLS) {
+      const fm = readFileSync(join(skillsDir, f), 'utf8');
+      const name = /^name:\s*(.+)$/m.exec(fm)?.[1].trim();
+      expect(name, `${f} has a name:`).toBeTruthy();
+      expect(md).toContain(name as string);
+    }
   });
 
   it('init ships the PreToolUse deny-hooks + registers them in settings.json (CR-GC-214)', async () => {
@@ -297,5 +320,81 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
   it('CliCommandSchema accepts only the three lifecycle verbs', () => {
     expect(CliCommandSchema.options).toEqual(['init', 'update', 'remove']);
     expect(() => CliCommandSchema.parse('mcp')).toThrow();
+  });
+});
+
+describe('TEST-skills-sync: graphcode skills sync (CR-GC-208 anti-drift)', () => {
+  let repo: string;
+
+  beforeEach(() => {
+    repo = mkdtempSync(join(tmpdir(), 'graphcode-skills-sync-'));
+  });
+
+  afterEach(() => {
+    rmSync(repo, { recursive: true, force: true });
+  });
+
+  it('every shipped se-* skill carries a version: in its frontmatter', () => {
+    const skillsDir = join(__dirname, '..', '.claude', 'skills');
+    for (const f of SHIPPED_SKILLS) {
+      const fm = readFileSync(join(skillsDir, f), 'utf8');
+      // version: sits in the first --- fence; assert it parses to a finite integer.
+      const m = /^version:\s*(\d+)\s*$/m.exec(fm);
+      expect(m, `${f} carries version:`).toBeTruthy();
+      expect(Number.isFinite(Number((m as RegExpExecArray)[1]))).toBe(true);
+    }
+  });
+
+  it('an up-to-date repo yields all unchanged (REQ no-drift no-op)', async () => {
+    await scaffold('init', { repoRoot: repo });
+    const res = syncSkills(repo);
+    expect(() => SkillSyncResultSchema.parse(res)).not.toThrow();
+    expect(res.added).toEqual([]);
+    expect(res.updated).toEqual([]);
+    // Every shipped skill reports unchanged (init wrote the current version).
+    expect(res.unchanged.sort()).toEqual(SHIPPED_SKILLS.map((f) => join(SKILLS_DIR, f)).sort());
+  });
+
+  it('a stale/older copy is restored — reports updated and rewrites the shipped version', async () => {
+    await scaffold('init', { repoRoot: repo });
+    const victim = SHIPPED_SKILLS[0];
+    const victimAbs = join(repo, SKILLS_DIR, victim);
+    const shipped = readFileSync(join(__dirname, '..', '.claude', 'skills', victim), 'utf8');
+
+    // Simulate a stale copy: truncate to a frontmatter with a LOWER version: 0.
+    writeFileSync(victimAbs, '---\nname: stale\nversion: 0\ndescription: stale\n---\nold body\n', 'utf8');
+
+    const res = syncSkills(repo);
+    // The stale skill is reported updated; the rest are unchanged.
+    expect(res.updated).toEqual([join(SKILLS_DIR, victim)]);
+    expect(res.added).toEqual([]);
+    expect(res.unchanged).not.toContain(join(SKILLS_DIR, victim));
+    // The file is byte-identical to the shipped source again.
+    expect(readFileSync(victimAbs, 'utf8')).toBe(shipped);
+  });
+
+  it('a missing copy is added (sync also bootstraps a fresh .claude/skills)', () => {
+    // No init: the target has no .claude/skills at all.
+    const res = syncSkills(repo);
+    expect(res.added.sort()).toEqual(SHIPPED_SKILLS.map((f) => join(SKILLS_DIR, f)).sort());
+    expect(res.updated).toEqual([]);
+    expect(res.unchanged).toEqual([]);
+    // Every shipped skill now exists on disk, byte-identical to the source.
+    for (const f of SHIPPED_SKILLS) {
+      const dest = join(repo, SKILLS_DIR, f);
+      expect(existsSync(dest)).toBe(true);
+      expect(readFileSync(dest, 'utf8')).toBe(
+        readFileSync(join(__dirname, '..', '.claude', 'skills', f), 'utf8'),
+      );
+    }
+  });
+
+  it('sync is idempotent — a second run after the first is all unchanged', () => {
+    const first = syncSkills(repo); // bootstraps (all added)
+    expect(first.added.length).toBe(SHIPPED_SKILLS.length);
+    const second = syncSkills(repo);
+    expect(second.added).toEqual([]);
+    expect(second.updated).toEqual([]);
+    expect(second.unchanged.length).toBe(SHIPPED_SKILLS.length);
   });
 });

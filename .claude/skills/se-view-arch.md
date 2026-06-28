@@ -1,5 +1,6 @@
 ---
 name: se-view:arch
+version: 1
 description: Show architecture allocation status
 ---
 

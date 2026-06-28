@@ -1,5 +1,6 @@
 ---
 name: se-view:intplan
+version: 1
 description: Integration & Test Plan — milestones, CRs, impl-gates SAR/FCA/SVR/FRR, ordering
 ---
 

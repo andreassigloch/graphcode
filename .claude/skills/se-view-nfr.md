@@ -1,5 +1,6 @@
 ---
 name: se-view:nfr
+version: 1
 description: Show NFR timing budget status
 ---
 

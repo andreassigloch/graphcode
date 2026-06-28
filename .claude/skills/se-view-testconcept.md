@@ -1,5 +1,6 @@
 ---
 name: se-view:testconcept
+version: 1
 description: Show test concept structure and coverage status
 ---
 

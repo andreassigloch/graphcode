@@ -1,5 +1,6 @@
 ---
 name: se-status
+version: 1
 description: Show SE project status — readiness, violations, top fixes
 ---
 

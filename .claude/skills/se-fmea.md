@@ -1,5 +1,6 @@
 ---
 name: se-fmea
+version: 1
 description: Perform a state-of-the-art FMEA (AIAG-VDA 7-step) on a system, subsystem, or component and integrate findings into the SE-graph + spec
 ---
 
