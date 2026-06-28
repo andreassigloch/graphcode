@@ -379,6 +379,13 @@
       "status": "done"
     },
     {
+      "id": "CR-GC-209",
+      "type": "CR",
+      "name": "se-plan generative impl/integration plan skill",
+      "description": "DONE 2026-06-28: new generative skill .claude/skills/se-plan.md derives the build order from the graph depends-on DAG (relation edge with label depends-on), topo-sorts milestones, proposes CR cuts (max 5 files each), and writes MS/CR/relation through the gate. Forward dependency (lower id depends on higher id) and cycles are reported, never silently ordered. Testable core src/se-plan.ts (deriveImplPlan), distinct from the se-view:implplan render (no parallel path: view renders, plan creates). Test: tests/se-plan.ordering.test.ts. (CR-GC-209)",
+      "status": "done"
+    },
+    {
       "id": "CR-GC-214",
       "type": "CR",
       "name": "Read-side graph-first enforcement (deny-stale-prose-read hook)",

@@ -114,6 +114,10 @@ export type {
   MutateTier,
 } from '@sigloch/contracts/harness';
 
+// Implementation-plan ordering (CR-GC-209) — the testable core behind the `se-plan` skill.
+export { deriveImplPlan } from './se-plan.js';
+export type { ImplPlanResult } from './se-plan.js';
+
 /** Default Kuzu store location relative to the repo root. */
 export const KUZU_DIR = '.graphcode/kuzu';
 
