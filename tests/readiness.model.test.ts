@@ -32,6 +32,8 @@ import {
   PHASE_GATE_RULES,
   IMPL_GATE_MILESTONES,
   IMPL_GATE_RULES,
+  ABSENT_CREATION_PROVIDER,
+  type CreationCurrencyProvider,
 } from '../src/readiness.js';
 
 const REPO_ROOT = join(__dirname, '..');
@@ -146,6 +148,60 @@ describe('TEST-readiness-model (C): computeReadiness derives gates from rules + 
     expect(sar.passed).toBe(true);
     expect(sar.score).toBe(1);
     expect(sar.blocking).toEqual([]);
+  });
+});
+
+// --- (C-221): creations as a gate precondition (rule-green ≠ analysis-done) ---
+describe('TEST-readiness-creations (CR-GC-221): creations gate phase + impl readiness', () => {
+  const reviewedMs = (status = 'reviewed') => ({
+    uid: 'MS-1-specification',
+    type: 'MS',
+    name: 'M1',
+    description: '',
+    attributes: { status },
+  });
+  const doneCr = { uid: 'CR-a', type: 'CR', name: 'a', description: '', attributes: { status: 'done' } };
+  const sarGraph: Pick<Graph, 'nodes' | 'edges'> = {
+    nodes: [reviewedMs(), doneCr],
+    edges: [{ sourceId: 'CR-a', targetId: 'MS-1-specification', edgeType: 'relation', attributes: {} }],
+  };
+
+  it('a rule-clean PDR without FMEA is BLOCKED (rule-green ≠ analysis-done)', () => {
+    // No violations → PDR is rule-clean; provider reports every creation absent (🔴).
+    const r = computeReadiness([], { nodes: [], edges: [] }, ABSENT_CREATION_PROVIDER);
+    const pdr = r.phaseGates.find((g) => g.id === 'PDR')!;
+    expect(pdr.passed).toBe(false);
+    expect(pdr.blocking).toContain('FMEA not performed (PDR creation)');
+    expect(pdr.creationArtifacts).toEqual(['fmea', 'trade']);
+  });
+
+  it('PDR passes when its creations are 🟢 current AND rules are clean (the AND, both ways)', () => {
+    const allCurrent: CreationCurrencyProvider = () => 'current';
+    const pdr = computeReadiness([], { nodes: [], edges: [] }, allCurrent).phaseGates.find((g) => g.id === 'PDR')!;
+    expect(pdr.passed).toBe(true);
+    expect(pdr.blocking).toEqual([]);
+  });
+
+  it('impl gate blocks on a 🔴-absent required creation even when every CR is done (anti-vacuous-green)', () => {
+    const sar = computeReadiness([], sarGraph, ABSENT_CREATION_PROVIDER).implGates.find((g) => g.id === 'SAR')!;
+    expect(sar.passed).toBe(false);
+    expect(sar.blocking.some((b) => b.includes('not performed'))).toBe(true);
+    // The SAME graph is ready without enforcement → proves it's the creation, not the CRs.
+    expect(computeReadiness([], sarGraph).implGates.find((g) => g.id === 'SAR')!.passed).toBe(true);
+  });
+
+  it('impl gate ignores 🟡 stale creations — only 🔴 absent is anti-vacuous-green', () => {
+    const allStale: CreationCurrencyProvider = () => 'stale';
+    const sar = computeReadiness([], sarGraph, allStale).implGates.find((g) => g.id === 'SAR')!;
+    expect(sar.passed).toBe(true);
+  });
+
+  it('gates always report creationArtifacts (metadata); enforcement only with a provider', () => {
+    const r = computeReadiness([], { nodes: [], edges: [] });
+    expect(r.phaseGates.find((g) => g.id === 'SRR')!.creationArtifacts).toEqual(['conops', 'assumption-review']);
+    expect(r.phaseGates.find((g) => g.id === 'TRR')!.creationArtifacts).toEqual([]);
+    // No provider → no creation blocking, despite the absent-by-default reality (back-compat).
+    expect(r.phaseGates.find((g) => g.id === 'PDR')!.passed).toBe(true);
   });
 });
 

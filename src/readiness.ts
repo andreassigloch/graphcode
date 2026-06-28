@@ -102,6 +102,56 @@ export const PHASE_GATE_LABELS: Record<string, string> = {
 };
 
 /**
+ * Creation artifacts each phase gate requires (CR-GC-221): the judgment work
+ * ("rule-green ≠ analysis-done") a rule-clean structure cannot prove was ever
+ * done. A gate is only `passed` if its required creations are 🟢-current.
+ * TRR carries none (tests are inline in the graph, not a separate creation).
+ */
+export const PHASE_GATE_CREATIONS: Record<string, readonly string[]> = {
+  SRR: ['conops', 'assumption-review'],
+  PDR: ['fmea', 'trade'],
+  CDR: ['implplan'],
+  TRR: [],
+};
+
+/** Human labels for creation artifacts (used in blocking messages). */
+const CREATION_LABELS: Record<string, string> = {
+  conops: 'ConOps',
+  'assumption-review': 'Assumption Review',
+  fmea: 'FMEA',
+  trade: 'Trade study',
+  implplan: 'Impl plan',
+};
+
+/** Impl gate → the phase whose creations it inherits as an anti-vacuous-green precondition. */
+export const IMPL_GATE_PHASE: Record<string, string> = {
+  SAR: 'SRR',
+  FCA: 'PDR',
+  SVR: 'CDR',
+  FRR: 'TRR',
+};
+
+/** Currency of a creation artifact: 🟢 current / 🟡 stale / 🔴 absent. */
+export type CreationCurrency = 'current' | 'stale' | 'absent';
+
+/**
+ * Resolves whether a creation artifact is current/stale/absent (CR-GC-221 = the
+ * INTERFACE; CR-GC-222's classifier supplies the real implementation). When no
+ * provider is passed to `computeReadiness`, creation enforcement is OFF
+ * (back-compat) — the gates still report their `creationArtifacts`, but currency
+ * is not checked until 222 wires a provider in.
+ */
+export type CreationCurrencyProvider = (creation: string) => CreationCurrency;
+
+/** Default stub provider (CR-GC-221, "Default 🔴"): everything absent until CR-GC-222 lands. */
+export const ABSENT_CREATION_PROVIDER: CreationCurrencyProvider = () => 'absent';
+
+/** Format a "<Creation> not performed (<gate> creation)" blocking message. */
+function creationBlockingMsg(creation: string, gateId: string): string {
+  return `${CREATION_LABELS[creation] ?? creation} not performed (${gateId} creation)`;
+}
+
+/**
  * Implementation-Readiness gates (program/build acceptance) → milestone tier.
  * Ready iff every CR assigned to the MS is done + the MS scope is error-clean.
  */
@@ -137,6 +187,8 @@ export interface ReadinessGate {
   blocking: string[];
   /** Advisory items surfaced but not blocking (warnings, info, scope notes). */
   open: string[];
+  /** Creation artifacts this gate requires (CR-GC-221) — judgment work, not rules. */
+  creationArtifacts: string[];
 }
 
 // ---------------------------------------------------------------------------
@@ -208,29 +260,70 @@ function elementsWithErrorSet(violations: RuleViolation[]): Set<string> {
   );
 }
 
-/** Score one phase gate from the violations whose ruleId it owns. */
-function scorePhaseGate(id: string, ruleIds: readonly string[], violations: RuleViolation[]): ReadinessGate {
+/**
+ * Score one phase gate from the violations whose ruleId it owns, plus its
+ * required creation artifacts (CR-GC-221): a gate is only `passed` if it is
+ * rule-clean AND every required creation is 🟢-current. When `currency` is
+ * undefined, creation enforcement is OFF (back-compat) — `creationArtifacts`
+ * is still reported. Creations affect `passed`/`blocking`, not the rule `score`.
+ */
+function scorePhaseGate(
+  id: string,
+  ruleIds: readonly string[],
+  violations: RuleViolation[],
+  creations: readonly string[],
+  currency?: CreationCurrencyProvider,
+): ReadinessGate {
   const owned = violations.filter((v) => ruleIds.includes(v.ruleId));
   const errors = owned.filter((v) => v.severity === 'error');
   const rulesWithError = new Set(errors.map((v) => v.ruleId));
-  const blocking = errors.map((v) => `${v.ruleId}: ${v.message}`);
+  const ruleBlocking = errors.map((v) => `${v.ruleId}: ${v.message}`);
   const open = owned.filter((v) => v.severity !== 'error').map((v) => `${v.ruleId}: ${v.message}`);
+  // Phase gate requires every creation 🟢-current — stale OR absent blocks.
+  const creationBlocking = currency
+    ? creations.filter((c) => currency(c) !== 'current').map((c) => creationBlockingMsg(c, id))
+    : [];
+  const blocking = [...ruleBlocking, ...creationBlocking];
   // Maturity = share of the gate's hard checks (its rules) with no error.
   const score = ruleIds.length > 0 ? (ruleIds.length - rulesWithError.size) / ruleIds.length : 1;
-  return { id, label: PHASE_GATE_LABELS[id] ?? id, passed: rulesWithError.size === 0, score, blocking, open };
+  return {
+    id,
+    label: PHASE_GATE_LABELS[id] ?? id,
+    passed: rulesWithError.size === 0 && creationBlocking.length === 0,
+    score,
+    blocking,
+    open,
+    creationArtifacts: [...creations],
+  };
 }
 
-/** Score one implementation gate from its milestone's CRs + scope (MS + status). */
+/**
+ * Score one implementation gate from its milestone's CRs + scope (MS + status),
+ * plus an anti-vacuous-green creation check (CR-GC-221): the gate additionally
+ * blocks when a creation required by its phase is 🔴 **absent** — even with no
+ * representing CR (a never-done FMEA must not pass silently). Only `absent`
+ * blocks here (not `stale`); enforcement is off when `currency` is undefined.
+ */
 function scoreImplGate(
   id: string,
   ms: string,
   label: string,
   graph: Pick<Graph, 'nodes' | 'edges'>,
   elementsWithError: Set<string>,
+  creations: readonly string[],
+  currency?: CreationCurrencyProvider,
 ): ReadinessGate {
   const msNode = graph.nodes.find((n) => n.uid === ms);
   if (!msNode) {
-    return { id, label, passed: false, score: 0, blocking: [`milestone ${ms} missing`], open: [] };
+    return {
+      id,
+      label,
+      passed: false,
+      score: 0,
+      blocking: [`milestone ${ms} missing`],
+      open: [],
+      creationArtifacts: [...creations],
+    };
   }
   const nodeById = new Map(graph.nodes.map((n) => [n.uid, n]));
   // CRs assigned to this milestone: CR -relation-> MS (the MS-01 scope semantics).
@@ -245,15 +338,21 @@ function scoreImplGate(
     .map((e) => e.targetId)
     .filter((id2) => elementsWithError.has(id2));
 
+  // Anti-vacuous-green: a phase creation that is 🔴 absent blocks the impl gate
+  // even when every CR is done and the scope is clean (the analysis was never done).
+  const creationBlocking = currency
+    ? creations.filter((c) => currency(c) === 'absent').map((c) => creationBlockingMsg(c, id))
+    : [];
   const blocking = [
     ...openCrs.map((c) => `${c.uid} not done`),
     ...scopeErrors.map((id2) => `${id2} has an error-severity violation`),
+    ...creationBlocking,
   ];
   const msStatus = msNode.attributes?.status;
   const score = crs.length > 0
     ? (crs.length - openCrs.length) / crs.length
     : msStatus === 'done' || msStatus === 'reviewed' ? 1 : 0;
-  return { id, label, passed: blocking.length === 0, score, blocking, open: [] };
+  return { id, label, passed: blocking.length === 0, score, blocking, open: [], creationArtifacts: [...creations] };
 }
 
 /**
@@ -265,6 +364,7 @@ function scoreImplGate(
 export function computeReadiness(
   violations: RuleViolation[],
   graph: Pick<Graph, 'nodes' | 'edges'>,
+  creationCurrency?: CreationCurrencyProvider,
 ): ReadinessReport {
   const totalElements = graph.nodes.length;
   const elementsWithError = elementsWithErrorSet(violations);
@@ -284,10 +384,18 @@ export function computeReadiness(
   );
 
   const phaseGates = Object.entries(PHASE_GATE_RULES).map(([id, ruleIds]) =>
-    scorePhaseGate(id, ruleIds, violations),
+    scorePhaseGate(id, ruleIds, violations, PHASE_GATE_CREATIONS[id] ?? [], creationCurrency),
   );
   const implGates = Object.entries(IMPL_GATE_MILESTONES).map(([id, { ms, label }]) =>
-    scoreImplGate(id, ms, label, graph, elementsWithError),
+    scoreImplGate(
+      id,
+      ms,
+      label,
+      graph,
+      elementsWithError,
+      PHASE_GATE_CREATIONS[IMPL_GATE_PHASE[id]] ?? [],
+      creationCurrency,
+    ),
   );
 
   return {

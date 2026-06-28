@@ -402,9 +402,9 @@
     {
       "id": "CR-GC-221",
       "type": "CR",
-      "name": "Readiness: Creations als Gate-Vorbedingung",
-      "description": "ReadinessGate.creationArtifacts; PhaseGate passed = rule-clean AND creations-current; ImplGate Anti-vacuous-green (fehlende Pflicht-Creation blockt). (docs/cr/open/CR-GC-221)",
-      "status": "open"
+      "name": "Readiness: creations as gate precondition (phase + impl)",
+      "description": "DONE 2026-06-28: ReadinessGate gains creationArtifacts[]; PHASE_GATE_CREATIONS map (SRR conops+assumption-review, PDR fmea+trade, CDR implplan, TRR none). A phase gate passes only if rule-clean AND every required creation is current (stale or absent blocks). scoreImplGate adds anti-vacuous-green: blocks when a phase creation is absent even with all CRs done. Creation currency comes from a CreationCurrencyProvider interface (CR-GC-221 defines the signature; default ABSENT_CREATION_PROVIDER, real classifier is CR-GC-222) threaded into computeReadiness as an optional arg, so 2-arg callers keep back-compat. Realizes via src/readiness.ts. Test: tests/readiness.model.test.ts. (CR-GC-221)",
+      "status": "done"
     },
     {
       "id": "CR-GC-222",
