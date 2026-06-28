@@ -393,6 +393,13 @@
       "status": "done"
     },
     {
+      "id": "CR-GC-211",
+      "type": "CR",
+      "name": "UC-authoring guardrail (terseness + jargon budget)",
+      "description": "DONE 2026-06-28: se:author-uc skill (.claude/skills/se-author-uc.md) authors UC nodes terse (max 25 words, active, Actor/Verb/Object/Outcome, no impl detail) with a jargon budget (max 2 technical terms, each grounded in a SCHEMA/REQ node) and gate-mutates the UC + compose trace. Executable linter src/se-author-uc.ts (lintUc + groundedTermsFrom); style is a WARNING not a gate error (no engine-rule fork into contracts). Distinct from se-view:conops (renders) vs author (creates). Test: tests/se-author-uc.test.ts catches a too-long jargon-dense UC and runs over the committed graph. (CR-GC-211)",
+      "status": "done"
+    },
+    {
       "id": "CR-GC-214",
       "type": "CR",
       "name": "Read-side graph-first enforcement (deny-stale-prose-read hook)",
