@@ -437,9 +437,9 @@
     {
       "id": "CR-GC-225",
       "type": "CR",
-      "name": "Skills: View-Skills → Thin-Trigger (Gruppe B)",
-      "description": "se-view implplan/intplan/changelog/conops/trade als Thin-Trigger der deterministischen Views. (docs/cr/open/CR-GC-225)",
-      "status": "open"
+      "name": "Skills: View-Skills Thin-Trigger (Gruppe B)",
+      "description": "DONE 2026-06-28: group-B se-view skills (implplan/intplan/changelog/conops/trade) rewritten as thin triggers (version 2) calling graph_export with the single matching view id and emitting the deterministic docs/views/<view>.md verbatim, no agent formatting. implplan renders the se-plan (CR-209) MS/CR; conops/trade render the se-conops/se-trade (CR-223) created structure; intplan is pure render. Eliminates the non-deterministic parallel render path. Conformance green. Test: tests/skills.mcp-conformance.test.ts. (CR-GC-225)",
+      "status": "done"
     },
     {
       "id": "CR-GC-226",

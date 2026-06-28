@@ -1,17 +1,10 @@
 ---
 name: se-view:trade
-version: 1
-description: Show architecture optimization candidates
+version: 2
+description: Trade Study view (decisions + superseded options) — deterministic render, thin trigger of the CR-GC-220 exporter
 ---
 
-Render the trade / decision view from a graph slice — graphcode has no view endpoint, the agent renders it. graphcode has **no dedicated trade-study element type**; trade decisions live as `relation` edges (the generic semantic link, with a `label` such as `alternative` / `supersedes` / `depends-on`) and as `CR` nodes (decision/change records carrying a `status`). Fetch over MCP:
+Thin trigger for the **deterministic Trade Study** view — it renders the decisions/`relation` structure that `se-trade` (CR-GC-223) *recorded* in the graph; it does not make decisions. Do NOT re-render by hand — agent formatting is a non-deterministic parallel path to the CR-GC-220 exporter.
 
-1. `graph_get_edges` `{ "edgeType": "relation" }` — candidate alternative/decision links; read each edge `label`.
-2. `graph_elements` `{ "type": "CR" }` — change/decision records and their `status` (open vs done).
-3. `graph_get_node` `{ "uid": "<id>" }` to resolve the endpoints of an interesting `relation` edge.
-
-Format as a readable summary:
-
-- Each open trade/decision (CR `status: open`, or a `relation` link whose alternatives are not yet resolved) with its alternatives and current selection status.
-- Flag unresolved trades that block architecture completion.
-- Show decided trades (CR `status: done`) with their rationale (`attributes.rationale` / description).
+1. Call `graph_export` `{ "views": ["trade"] }` — materializes the deterministic Trade Study view to `docs/views/trade.md` and returns its path.
+2. Output that file verbatim. Do not reformat, summarize, or re-query the graph — the export **is** the view (byte-identical on every re-run). To *make* a trade decision, use `se-trade`, not this view.
