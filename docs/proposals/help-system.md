@@ -3,7 +3,8 @@
 **Status:** Draft (2026-06-28) · **Branch:** `help` · **Author:** andreas@siglochconsulting + Claude
 **Realizes as:** a CR chain (see §10) — this proposal is the design note, not yet the change.
 **Relates:** [readiness-artifact-model.md](readiness-artifact-model.md) (the panels this explains),
-[help-rules-content.md](help-rules-content.md) (the 20-rule content), CR-GC-207 (onboarding), CR-GC-217 (authoring guide).
+[help-rules-content.md](help-rules-content.md) (the 20-rule content). **Open-CR dependencies & conflicts: §12** —
+this concept *renders over* the artifact/gate model that CR-GC-220→226 define and must be sequenced after it.
 
 > Scope: define **what help graphcode surfaces** behind every dashboard item, the `/help` command, and a
 > rules reference — so a user can self-serve the *what / why / how* (best case: a prompt to copy) **without
@@ -90,6 +91,10 @@ requirements, functions, tests, modules, and how they connect — kept in the gr
 | `relation` | a general link (e.g. a work item → a milestone) | generic association |
 | `depends-on` | "must come after" (milestone → milestone) | dependency |
 
+*Which element types each trace may legally connect is not restated here — that's the metamodel
+(`TRACE_PATTERNS`), surfaced live by `graph_authoring_guide` (CR-GC-217). Help links to it rather than
+hand-listing legal pairs, so the two can't drift.*
+
 **Element states (attributes).** A `FUNC` or `TEST` carries a state that decides whether the binding rules
 (R-19/R-20) apply: **realized** (the default — meant to be built/written now) · `concept:true` (planned, not
 built/written yet — a stub) · `external:true` (provided by an outside library, not built here).
@@ -153,8 +158,11 @@ local rule parser, no forked catalog — respects the locked "`V3_RULES` importe
 
 ### 6c. Phase gates — the four INCOSE design reviews
 
-Each gate passes when its owned rules are error-free (and, per the readiness-artifact proposal, its required
-*creations* are current). Red = that review hasn't been met; the listed prompt shows what's blocking it.
+Each gate passes when its owned rules are error-free **and** its required *creations* are current
+(CR-GC-221 adds `creationArtifacts` to the gate). A gate can therefore be rule-clean yet **red because a
+required analysis was never performed** (e.g. no FMEA) — the Plain "Red:" branch below names that case. These
+creation-not-done blockers are **not** rule violations: they come from `ReadinessGate.blocking[]` (CR-GC-221),
+so help keys them on the artifact id, not a `ruleId` (see §7).
 
 | Gate (token) | Plain — what passing/red means + action | SE concept (INCOSE) | Owned rules | Copy-prompt |
 |---|---|---|---|---|
@@ -184,9 +192,15 @@ error-clean. Red = the milestone isn't finished — open it to see the change-re
 The info box states purpose, whether it's a *render* (current source = the model; fix staleness by
 re-export) or a *creation* (needs fresh human/agent analysis; fix by re-analysis), and the skill.
 
+> **Source of rows, `kind`, and names (do not re-derive):** the artifact set and the view enum come from
+> CR-GC-220, the render/creation `kind` from `ArtifactStatus.kind` (CR-GC-222), and the canonical names from
+> CR-GC-223 — e.g. *IRR → "Assumption Review"*, render skill `se-view:irr → se-view:fmea`, and `spec` (full
+> dump) is split from `srs` (REQ-slice). This table only adds the Plain/SE/prompt layers over those. The rows
+> below are illustrative until that chain lands.
+
 | Artifact | Plain | Kind | Copy-prompt |
 |---|---|---|---|
-| spec | The requirements document — the features you've promised. | render | `se-view:rtm` |
+| srs / spec | The requirements document — the features you've promised (`srs` = the slice, `spec` = the full dump, CR-GC-220). | render | `se-view:rtm` for coverage |
 | architecture | The map of modules and how functions sit in them. | render | `se-view:arch` |
 | rtm | Which test covers which feature, and the gaps. | render | `se-view:rtm` |
 | nfr | How the project is doing against its speed/quality targets. | render | `se-view:nfr` |
@@ -195,10 +209,10 @@ re-export) or a *creation* (needs fresh human/agent analysis; fix by re-analysis
 | changelog | What changed (from the audit trail). | render | `se-view:changelog` |
 | intplan | The milestones, work items, and their order. | render | `se-view:intplan` |
 | conops | How the system is operated and who uses it. | creation | `se-view:conops` |
-| irr | The unproven assumptions and how risky they are. | creation | `se-view:irr` |
+| assumption-review *(was IRR)* | The unproven assumptions and how risky they are. | creation | `se-irr` (CR-GC-223) |
 | trade | The design options weighed and the choice made. | creation | `se-view:trade` |
 | fmea | The "what can break and how it's handled" analysis. | creation | `se-fmea` |
-| implplan | The work slices and milestones (a judgment, not auto-derived). | creation | `se-view:implplan` |
+| implplan | The work slices and milestones (a judgment, not auto-derived). | creation | `se-plan` (create) / `se-view:implplan` (render) |
 
 ## 7. Context-sensitive `/help` — the explained Recommendations
 
@@ -229,6 +243,11 @@ someone who already knows the system; `/help` is the **explained** view of the s
 item lookups. They share the readiness/violations source; `/help` adds the two authored layers and the rule
 explanations. Recommendations stays as-is.
 
+**Two blocker kinds (CR-GC-221).** A gate can be red for a rule violation *or* for an un-performed creation
+(e.g. "FMEA not performed"). The first resolves via the `V3_RULES`-derived path; the second is a string in
+`ReadinessGate.blocking[]` with no `ruleId`. `contextualHelp` must explain both — keying rule blockers on
+`ruleId` and creation blockers on the artifact id (→ the relevant `se-*` create skill from §6e).
+
 ## 8. The `R-04` rollup + Rules tab (the user's explicit ask)
 
 Two presentations of one generated catalog:
@@ -251,6 +270,9 @@ graphcode **is not a viewer**, so the split mirrors `panels.ts`:
   `contextualHelp(readiness, violations)` — projecting `V3_RULES` + `readiness.ts` + the panel view-models
   into `HelpEntry[]`. No DOM, no HTTP beyond the existing read-only bridge. Plus a thin `graph_help` MCP
   tool and a `se:help` skill so help is reachable **today** in Claude Code (a client), before any GUI.
+  (`se:help` ships with `version:` frontmatter and is registered in the skills-conformance list, or
+  `graphcode skills sync` + the skill-count tests break — CR-GC-208. `GRAPHCODE.md` (CR-GC-207) points its
+  static onboarding line at `se:help` as the live entry.)
 - **The renderer owns** the info-box `(i)` affordance, the tooltip, and the Rules tab — graph-view-edit's
   job, the same way it owns the Cytoscape mount-slot.
 
@@ -267,6 +289,11 @@ the eventual GUI — no second source, no viewer in the core.
 3. **CR-C — surfaces:** `graph_help` MCP tool + `se:help` skill (no-arg = contextual, `<token>` = lookup).
 4. **CR-D — docs:** README "help" line; GRAPHCODE.md pointer; supersede scattered explanations.
 5. **(renderer)** info box + Rules tab — tracked in graph-view-edit, out of graphcode scope.
+
+**Sequencing (hard dependency).** This chain runs **after** CR-GC-220→226 close. `help.ts` projects three
+fields that don't exist yet: `ArtifactStatus.kind` (CR-GC-222), `ReadinessGate.creationArtifacts` /
+`blocking[]` creation entries (CR-GC-221), and the view enum + `srs`/`spec` split (CR-GC-220). Building help
+first would force a parallel artifact/gate model — the exact drift this concept forbids.
 
 ## 11. Acceptance — the fairness test (how we know we're done)
 
@@ -290,3 +317,30 @@ full pass surfaces zero blocking tokens for either persona.
 | 3 | **PASS — 0** | **PASS — 0** | — |
 
 Both groups can now self-serve every dashboard item from the layer addressed to them. Loop closed.
+
+## 12. Open-CR integration & sequencing
+
+Cross-check of the open CRs that touch the dashboard / viewer / skills / rules surface. Relationship to this
+concept: **DEP** = help consumes its output (defer, don't redefine) · **CONFLICT** = contradicts a current
+statement here (fix before the chain) · **OVERLAP** = does similar derivation (parallel-path risk) ·
+**ADJ** = related, no shared surface.
+
+| CR | What it changes | Rel | Contact point + action |
+|---|---|---|---|
+| **220** deterministic render views | 12 artifacts → deterministic MD views + view enum; `srs` (slice) ≠ `spec` (dump) | DEP | §6e rows + enum come from CR-220, not a hand-list; added the `srs`/`spec` split. |
+| **221** creations as gate precondition | gate `creationArtifacts`; gate red if a required creation is 🔴, with non-rule `blocking[]` strings | CONFLICT→fixed | §6c "Red:" now names the creation case; §7 now handles non-rule blockers keyed on artifact id. |
+| **222** artifact-tab kind-split | `ArtifactStatus.kind` (`render`/`analysis`); INCOSE vs graphcode grouping; IRR rename | CONFLICT→fixed | §6e `kind` is **read** from CR-222; *IRR → "Assumption Review"* applied. |
+| **223** creation skills | renames `se-view:irr → se-view:fmea`; adds `se-irr`/`se-conops`/`se-trade` | CONFLICT→fixed | §6e prompts updated to post-223 names; `implplan` split create (`se-plan`) vs render. |
+| **226** supersede `lean = no artifacts` | finalizes the create/render split in `readiness.ts` | DEP | The whole §6c–e split only exists once 226 lands → §10 sequenced after it. |
+| **217** `graph_authoring_guide` | read-only tool projecting legal edges from META_MODEL | OVERLAP | §3 trace-legality now **links to** CR-217, not a second hand-kept legal-pair list. |
+| **208** skill sync + surfacing | `skills sync` + `version:` frontmatter + conformance list | DEP | §9/§10-C: `se:help` carries `version:` + is in the conformance list. |
+| **207** onboarding contract | static `GRAPHCODE.md` "graph-first" one-screen | ADJ | §9: `GRAPHCODE.md` points at `se:help` (the live counterpart). |
+| **216** `graph_realize` | flat write for codeRef/testRef (R-19/R-20) | ADJ | R-19/R-20 Exact prompts can cite `graph_realize` as the one-call fix. |
+| **224/225** view-skills → thin-trigger | `se-view:*` become deterministic thin triggers | ADJ | §6e copy-prompts unchanged (names survive); output becomes byte-stable — a bonus. |
+| **211** UC authoring guardrail | jargon-budget linter for UC content | ADJ | Same Cold-Reader discipline as §2; the §3 Vocabulary is the term-lookup it points to. |
+| **209** `se-plan` impl-plan generator | generates MS/CR ordering (create side of `implplan`) | ADJ | §6e `implplan` create-prompt is `se-plan`. |
+| 210, 212, 214, 215, 218, 219 | tool-format, KPI-retro, hooks, isolation, attr-flatten | — | Not relevant to the help surface. |
+
+**Bottom line:** two true conflicts (IRR naming, gate creation-precondition) are now fixed in-text; the
+artifact rows / `kind` / view enum / gate `blocking[]` are **owned by CRs 220–226** and this concept defers to
+them; the help CR-chain (§10) is sequenced **after** that chain so no parallel model is built.
