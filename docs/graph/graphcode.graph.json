@@ -386,6 +386,13 @@
       "status": "done"
     },
     {
+      "id": "CR-GC-210",
+      "type": "CR",
+      "name": "Read-tool output-format contract (JSON vs Format-E)",
+      "description": "DONE 2026-06-28: graph_elements and graph_get_edges gain an opt-in format input (json default, formatE). json stays the default (no breaking change for existing skills); formatE returns a round-trip-stable slice in the canonical uid.TYPE dialect via GraphCodeCodec.encode (re-importable by the same codec), not the non-round-trip raw FormatECodec form. graph_elements ships the selected nodes + induced edges; graph_get_edges ships the filtered edges + their endpoint nodes (no dangling). Tool descriptions document the contract (slice-tools impact/expand are always Format-E). Test: tests/mcp.read-format.test.ts (disk Kuzu, codec round-trip). (CR-GC-210)",
+      "status": "done"
+    },
+    {
       "id": "CR-GC-214",
       "type": "CR",
       "name": "Read-side graph-first enforcement (deny-stale-prose-read hook)",

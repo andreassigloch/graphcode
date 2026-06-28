@@ -29,6 +29,7 @@ import { exportGraphJson, exportMarkdown, renderTestStubs, MarkdownViewSchema, M
 import { clearExportPending } from './export-marker.js';
 import { scoreReadiness, summarizeReadiness, type ReadinessReport } from './readiness.js';
 import { helpEntry, contextualHelp, type HelpEntry, type ContextualMeasure } from './viewer/help.js';
+import { GraphCodeCodec } from './codec.js';
 
 // ---------------------------------------------------------------------------
 // Public types
@@ -48,10 +49,20 @@ export type MCPToolRegistry = Record<string, MCPTool<any, any>>;
 // Input schemas
 // ---------------------------------------------------------------------------
 
+/** Read-tool output format (CR-GC-210): JSON for agent logic, Format-E for a human/round-trip slice. */
+const ReadFormatSchema = z
+  .enum(['json', 'formatE'])
+  .default('json')
+  .describe(
+    "Output format. 'json' (default) for programmatic agent logic; 'formatE' for a human-readable, " +
+      'round-trip-stable slice in the canonical uid.TYPE Format-E dialect (re-importable via the codec).',
+  );
+
 const GraphElementsInputSchema = z.object({
   type: z.string().optional().describe('Filter by node type (e.g. REQ, TEST, MOD)'),
   search: z.string().optional().describe('Substring search against uid, name, description'),
   limit: z.number().int().positive().default(100),
+  format: ReadFormatSchema,
 });
 
 const GraphGetNodeInputSchema = z.object({
@@ -62,6 +73,7 @@ const GraphGetEdgesInputSchema = z.object({
   uid: z.string().optional().describe('Filter edges incident to this node'),
   edgeType: z.string().optional().describe('Filter by edge type'),
   direction: z.enum(['in', 'out', 'both']).default('both'),
+  format: ReadFormatSchema,
 });
 
 const GraphMutateInputSchema = z.object({
@@ -262,6 +274,9 @@ export function bindToolsToHarness(
   auditLog: AuditLog = new InMemoryAuditLog(),
 ): MCPToolRegistry {
   const codec = new FormatECodec(SE_DESCRIPTOR);
+  // Round-trip-stable Format-E for the opt-in read-tool slices (CR-GC-210): the wrapper
+  // adds/strips the .TYPE uid suffix so the slice re-imports via the same codec.
+  const gcCodec = new GraphCodeCodec();
   let _graphVersion = 0;
 
   // Helper to record an audit entry after a mutation
@@ -287,15 +302,29 @@ export function bindToolsToHarness(
   // READ tools
   // ---------------------------------------------------------------------------
 
-  const graph_elements: MCPTool<z.infer<typeof GraphElementsInputSchema>, { nodes: GraphNode[]; total: number }> = {
+  const graph_elements: MCPTool<
+    z.infer<typeof GraphElementsInputSchema>,
+    { nodes: GraphNode[]; total: number } | { formatE: string; total: number }
+  > = {
     name: 'graph_elements',
-    description: 'List graph elements (nodes) with optional type/search filter. Returns a slice, not a full dump.',
+    description:
+      'List graph elements (nodes) with optional type/search filter. Returns a slice, not a full dump. ' +
+      "Output is JSON by default (agent logic); pass format:'formatE' for a human-readable, round-trip-stable " +
+      'slice (the selected nodes + the edges induced between them) in the canonical uid.TYPE Format-E dialect ' +
+      '(re-importable via the codec, like the committed graph.json). The slice-tools (graph_impact / ' +
+      'graph_expand) are ALWAYS Format-E (CR-GC-210).',
     inputSchema: GraphElementsInputSchema,
     async handler(input) {
       // Cypher-backed listing via the Kuzu store (KNOW, not grep over the mirror).
       const nodes = await harness.listElements({ type: input.type, search: input.search });
       const total = nodes.length;
-      return { nodes: nodes.slice(0, input.limit), total };
+      const sliced = nodes.slice(0, input.limit);
+      if (input.format === 'formatE') {
+        const ids = new Set(sliced.map((n) => n.uid));
+        const edges = harness.getGraph().edges.filter((e) => ids.has(e.sourceId) && ids.has(e.targetId));
+        return { formatE: gcCodec.encode({ nodes: sliced, edges }), total };
+      }
+      return { nodes: sliced, total };
     },
   };
 
@@ -309,9 +338,16 @@ export function bindToolsToHarness(
     },
   };
 
-  const graph_get_edges: MCPTool<z.infer<typeof GraphGetEdgesInputSchema>, { edges: GraphEdge[]; total: number }> = {
+  const graph_get_edges: MCPTool<
+    z.infer<typeof GraphGetEdgesInputSchema>,
+    { edges: GraphEdge[]; total: number } | { formatE: string; total: number }
+  > = {
     name: 'graph_get_edges',
-    description: 'Get edges, optionally filtered by incident node uid, edge type, or direction.',
+    description:
+      'Get edges, optionally filtered by incident node uid, edge type, or direction. ' +
+      "Output is JSON by default (agent logic); pass format:'formatE' for a human-readable, round-trip-stable " +
+      'slice (the filtered edges + their endpoint nodes) in the canonical uid.TYPE Format-E dialect ' +
+      '(re-importable via the codec). The slice-tools (graph_impact / graph_expand) are ALWAYS Format-E (CR-GC-210).',
     inputSchema: GraphGetEdgesInputSchema,
     async handler(input) {
       let edges = harness.getGraph().edges;
@@ -327,6 +363,15 @@ export function bindToolsToHarness(
       if (input.edgeType) {
         const et = input.edgeType;
         edges = edges.filter((e) => e.edgeType === et);
+      }
+      if (input.format === 'formatE') {
+        const ids = new Set<string>();
+        for (const e of edges) {
+          ids.add(e.sourceId);
+          ids.add(e.targetId);
+        }
+        const nodes = harness.getGraph().nodes.filter((n) => ids.has(n.uid));
+        return { formatE: gcCodec.encode({ nodes, edges }), total: edges.length };
       }
       return { edges, total: edges.length };
     },
