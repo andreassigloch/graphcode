@@ -55,6 +55,18 @@ is the one place this is not optional — a help text that needs prior context t
 **Action rule:** the Plain cell must end in a plain-English action. The tool/prompt (jargon allowed) lives
 in the Exact layer; a Plain reader is never sent to a jargon-only column for the *do-this*.
 
+**Roll-up, not detection (the design decision behind "both audiences").** graphcode never guesses who the
+reader is — it has no user identity (headless, one store per repo, no session; profiling would be state *and*
+a parallel path, both locked-out). Every `HelpEntry` **always carries all three layers**; the *surface*
+chooses depth, exactly like a readiness gate rolling up to its `blocking[]` elements:
+
+- **GUI** — Plain shown; *In SE terms* and *Exact* behind an expand (progressive disclosure).
+- **Text / `/help`** — all three stacked (Plain → SE → Do this); the reader scans to their level (as in §7).
+
+So "fair for both groups" is not achieved by routing each user to a different text — it's the *same* full
+entry, drilled to the depth the reader wants. An optional single `audience: plain|se|all` default may live in
+`HarnessConfig` later (default `all`) — a preference, never a classifier. No profiling, no per-user state.
+
 ## 3. Vocabulary — the one legend both layers point to
 
 Every element and trace token, mapped once. Cells below use the token; the reader resolves it here. This is
