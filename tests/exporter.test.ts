@@ -85,9 +85,11 @@ describe('exportGraphJson / exportMarkdown (TEST-doc-export)', () => {
     expect(byId.get('REQ-doc-export')?.kinds).toBeDefined();
     // method — TEST-only top-level attr.
     expect(byId.get('TEST-doc-export')?.method).toBeDefined();
-    // nested `attributes` object (SCHEMA zodDefinition).
-    const schema = byId.get('SCHEMA-mutate-command') as { attributes?: { zodDefinition?: string } };
-    expect(schema?.attributes?.zodDefinition).toBeTypeOf('string');
+    // zodDefinition — FLATTENED to a top-level attribute (CR-GC-219): the old nested
+    // `attributes.zodDefinition` artifact is gone; the value is preserved one level up.
+    const schema = byId.get('SCHEMA-mutate-command') as { attributes?: unknown; zodDefinition?: unknown };
+    expect(schema?.zodDefinition).toBeTypeOf('string');
+    expect(schema?.attributes).toBeUndefined();
   });
 
   it('DETERMINISM: exportGraphJson is byte-identical across two calls', () => {

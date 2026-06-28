@@ -101,6 +101,52 @@ function nodeToElement(node: GraphNode): Record<string, unknown> {
   };
 }
 
+/**
+ * Flatten the redundant double-nested `attributes` artifact (CR-GC-219). A committed
+ * element that carries a literal `attributes` object lands it as `node.attributes.attributes`
+ * (the `...rest` spread nests it). This merges that object UP one level — preserving real
+ * metadata (operatingMode / zodDefinition / constraint) as top-level attributes — while
+ * DROPPING `level`/`tool` that merely restate the element's `testRef` (redundant), an empty
+ * `{}`, and the nesting key itself. Idempotent: an element with no nested `attributes` is
+ * returned unchanged, so re-import/export never reintroduces the nesting.
+ */
+function flattenNestedAttributes(rest: Record<string, unknown>): Record<string, unknown> {
+  const nested = rest.attributes;
+  if (nested === null || typeof nested !== 'object' || Array.isArray(nested)) return rest;
+  const { attributes: _drop, ...top } = rest;
+  const testRef = top.testRef as Record<string, unknown> | undefined;
+  const out: Record<string, unknown> = { ...top };
+  for (const [k, v] of Object.entries(nested as Record<string, unknown>)) {
+    // Drop level/tool that merely restate the runnable binding (testRef) — redundant.
+    if ((k === 'level' || k === 'tool') && testRef && testRef[k] === v) continue;
+    // Flatten up one level; never clobber an existing top-level attribute.
+    if (!(k in out)) out[k] = v;
+  }
+  return out;
+}
+
+/**
+ * Map a committed OntologyGraph JSON element to a `GraphNode` (the inverse of `nodeToElement`),
+ * flattening the nested `attributes` artifact (CR-GC-219). The single import mapping — shared by
+ * `harness.importGraph` and `scripts/export-graph.mjs` (no parallel path).
+ */
+export function elementToNode(e: Record<string, unknown>): GraphNode {
+  const { id, type, name, description, ...rest } = e as {
+    id: string;
+    type: string;
+    name?: string;
+    description?: string;
+    [k: string]: unknown;
+  };
+  return {
+    uid: id,
+    type,
+    name: name ?? id,
+    description: description ?? '',
+    attributes: flattenNestedAttributes(rest),
+  };
+}
+
 /** Trace shape in the materialized OntologyGraph JSON. */
 function edgeToTrace(edge: GraphEdge): Record<string, unknown> {
   return {

@@ -79,7 +79,6 @@
       "description": "Apply-Gate (mutate → V3_RULES → Disk-Kuzu) lauffähig statt Stub; löst D5/D1. Why: jede Edit durch EIN Gate (L1); der Vorgänger (Express+JSON) verletzt Kuzu/Disk/Rules-Constraints. (docs/cr/open/CR-GC-100)",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "attributes": {},
       "updated_at": "2026-06-17T00:00:00.000Z"
     },
     {
@@ -89,7 +88,6 @@
       "description": "MCP-stdio-Surface: Agent nutzt Graph statt grep (Ziel a), graph_impact/expand, Gate-Symmetrie (L2). Why: präziser Blast-Radius = Token-/LLM-Effizienz; ohne MCP kein Agent-Zugriff. (docs/cr/open/CR-GC-101)",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "attributes": {},
       "updated_at": "2026-06-17T00:00:00.000Z"
     },
     {
@@ -99,7 +97,6 @@
       "description": "pre-commit/post-apply/nightly Extension-Points; Live-Event + Trajectory-Emission. Why: Kopplung an Dashboard (Ziel b) + Learning-Engine; deterministisch + blockierbar. (docs/cr/open/CR-GC-102)",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "attributes": {},
       "updated_at": "2026-06-17T00:00:00.000Z"
     },
     {
@@ -109,7 +106,6 @@
       "description": "Deterministischer Format-E-Codec (encode/decode), commit-/merge-arm, Validierung gegen SE_DESCRIPTOR. Why: conflict-free git-Merge + Ontologie-Konformität; genau EIN Codec (L1). (docs/cr/open/CR-GC-103)",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "attributes": {},
       "updated_at": "2026-06-17T00:00:00.000Z"
     },
     {
@@ -118,8 +114,7 @@
       "name": "Skills/Prompts-Modul",
       "description": "MOD-skills (.claude/skills/) + prompt-realisierte FUNC-render-views. Why: Skills/Prompts sind reale, zu managende Dateien = Modul; Allokation dorthin = prompt-realisiert (Skills = Funktionen). (docs/cr/open/CR-GC-104)",
       "status": "done",
-      "created_at": "2026-06-16T00:00:00.000Z",
-      "attributes": {}
+      "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
       "id": "CR-GC-105",
@@ -127,8 +122,7 @@
       "name": "Architektur-Verfeinerung",
       "description": "Kunden-Aktoren (Systems Engineer, Vibe Coder) + Realisierungs-Agent-Reframing; Interface-Eskalations-Prozess (FCHAIN + REQ + Facilitating-Agent); fehlende FCHAINs für efficient-testing + reduced-llm. Why: Mensch=Architektur/Nutzen, Agent=Realisierung; Interface-Drift kontrolliert; jeder UC ein Szenario. (docs/cr/open/CR-GC-105)",
       "status": "done",
-      "created_at": "2026-06-16T00:00:00.000Z",
-      "attributes": {}
+      "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
       "id": "CR-GC-106",
@@ -136,8 +130,7 @@
       "name": "Interface-Schemas",
       "description": "9 SCHEMA-Knoten (→ @sigloch/contracts Zod) + FLOW→SCHEMA für alle 28 Interfaces; REQ-interface-schema. Why: Datenvertrag = Code-Precondition (schema-before-code), schließt Readiness-Dimension schema=0. (docs/cr/open/CR-GC-106)",
       "status": "done",
-      "created_at": "2026-06-16T00:00:00.000Z",
-      "attributes": {}
+      "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
       "id": "CR-GC-107",
@@ -146,7 +139,6 @@
       "description": "Readiness/Scorer nutzt @sigloch/contracts V3_RULES (via harness.evaluateRules) statt Vorgänger-BQ-Regeln (2.0.0). Why: heutige Readiness teils fremd-gemessen (155 BQ-Warnungen); nach Adoption echte Familie-Compliance. NEXT. (docs/cr/open/CR-GC-107)",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "attributes": {},
       "updated_at": "2026-06-17T00:00:00.000Z"
     },
     {
@@ -155,8 +147,7 @@
       "name": "Test-Konzept im Graph + Benchmark-REQ",
       "description": "TEST-Metadaten (level/tool/constraint) am Graph → test-concept.md als View rekonstruierbar (se-view-testconcept); REQ-benchmark-harness + REQ-quality-metric (nur definiert, nicht gebaut). Why: Test-Konzept ist eine View, kein Hand-Doc; Benchmark-Bau ist Realisierung. (docs/cr/open/CR-GC-108)",
       "status": "done",
-      "created_at": "2026-06-16T00:00:00.000Z",
-      "attributes": {}
+      "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
       "id": "CR-GC-109",
@@ -425,6 +416,13 @@
       "type": "CR",
       "name": "graph_realize ergonomic write-back affordance (write-twin of graph_context)",
       "description": "DONE 2026-06-28: flat graph_realize MCP tool in src/mcp-tools.ts wraps the 90% realize-mutation behind a flat schema (funcUid/file/symbol/lang?, testUid?/testFile?/testCase?/tool?) and runs through the same Apply-Gate via harness.mutate() (update-node, no parallel write path). Sets FUNC codeRef (R-20) + optional TEST testRef (R-19); returns the missingRefs delta (before/after/resolved) so the agent sees the realization confirmed. Unknown funcUid/testUid gives a clear error. Built for small local models that mis-guessed graph_mutate's nested union (SPIKE-GC-loop-executor-benchmark). Added to the agent-agnostic surface contract. Test: tests/mcp.realize.test.ts. (CR-GC-216)",
+      "status": "done"
+    },
+    {
+      "id": "CR-GC-219",
+      "type": "CR",
+      "name": "Flatten redundant nested attributes field",
+      "description": "DONE 2026-06-28: harness.importGraph spread `...rest` nested a literal `attributes` key as node.attributes.attributes (52 of 305 elements). Root-cause fix: shared elementToNode() in src/exporter.ts (used by harness.importGraph + scripts/export-graph.mjs, killing the duplicated inline mapping) flattens the nested object up one level, drops level/tool that merely restate testRef (18 redundant), drops empty {} (9), preserves operatingMode/zodDefinition/constraint as top-level attributes. Idempotent. Committed SSOT migrated + round-trip guard in tests/graph-integrity.test.ts. (CR-GC-219)",
       "status": "done"
     },
     {
@@ -899,15 +897,13 @@
       "description": "Rendert Graph (View: spec/architecture/cr-list/references) deterministisch nach Markdown mit GENERATED-Header.",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "attributes": {
-        "operatingMode": "export"
-      },
       "updated_at": "2026-06-18T00:00:00.000Z",
       "codeRef": {
         "file": "src/exporter.ts",
         "symbol": "exportMarkdown",
         "lang": "ts"
-      }
+      },
+      "operatingMode": "export"
     },
     {
       "id": "FUNC-graph-expand",
@@ -944,15 +940,13 @@
       "description": "npx-CLI Lifecycle: scaffolds/aktualisiert/entfernt .graphcode/, .claude/hooks, .mcp.json, Controller — idempotent, self-contained.",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "attributes": {
-        "operatingMode": "lifecycle"
-      },
       "updated_at": "2026-06-18T00:00:00.000Z",
       "codeRef": {
         "file": "src/scaffold.ts",
         "symbol": "scaffold",
         "lang": "ts"
-      }
+      },
+      "operatingMode": "lifecycle"
     },
     {
       "id": "FUNC-health-endpoint",
@@ -974,15 +968,13 @@
       "description": "Format-E-Bulk-Import (replace/merge) ausschließlich durchs Gate; Cold-Start aus graphify/Slicer-Output.",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "attributes": {
-        "operatingMode": "bootstrap"
-      },
       "updated_at": "2026-06-17T00:00:00.000Z",
       "codeRef": {
         "file": "src/harness.ts",
         "symbol": "importGraph",
         "lang": "ts"
-      }
+      },
+      "operatingMode": "bootstrap"
     },
     {
       "id": "FUNC-merge-nodes",
@@ -991,10 +983,8 @@
       "description": "Conflict-free Merge via merge_nodes + deterministischer Serialisierung; keine verlorenen Knoten/Traces.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "attributes": {
-        "operatingMode": "merge"
-      },
-      "concept": true
+      "concept": true,
+      "operatingMode": "merge"
     },
     {
       "id": "FUNC-migrate-schema",
@@ -1003,10 +993,8 @@
       "description": "Re-Validierung + Migration des Graphen bei ONTOLOGY/RULES_VERSION-Bump; Version am Artefakt mitgeführt.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "attributes": {
-        "operatingMode": "migration"
-      },
-      "concept": true
+      "concept": true,
+      "operatingMode": "migration"
     },
     {
       "id": "FUNC-mutate",
@@ -2561,9 +2549,7 @@
       "description": "npx-CLI Kommando + Ergebnis.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "attributes": {
-        "zodDefinition": "z.object({ command: z.enum(['init','update','remove']), repoPath: z.string(), result: z.string().optional() })"
-      }
+      "zodDefinition": "z.object({ command: z.enum(['init','update','remove']), repoPath: z.string(), result: z.string().optional() })"
     },
     {
       "id": "SCHEMA-format-e",
@@ -2572,9 +2558,7 @@
       "description": "Kompaktes Snapshot-/Diff-Format. @sigloch/contracts/se.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "attributes": {
-        "zodDefinition": "z.object({ nodes: z.array(z.string()), edges: z.array(z.string()), operations: z.array(z.enum(['+','-','~','M'])).optional(), baseSnapshot: z.string().optional() })"
-      }
+      "zodDefinition": "z.object({ nodes: z.array(z.string()), edges: z.array(z.string()), operations: z.array(z.enum(['+','-','~','M'])).optional(), baseSnapshot: z.string().optional() })"
     },
     {
       "id": "SCHEMA-markdown-view",
@@ -2583,9 +2567,7 @@
       "description": "Generierte human-readable View mit GENERATED-Header.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "attributes": {
-        "zodDefinition": "z.object({ view: z.string(), markdown: z.string(), generated: z.literal(true) })"
-      }
+      "zodDefinition": "z.object({ view: z.string(), markdown: z.string(), generated: z.literal(true) })"
     },
     {
       "id": "SCHEMA-mutate-command",
@@ -2594,9 +2576,7 @@
       "description": "Edit-Operation durch das Gate. @sigloch/contracts harness (D1).",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "attributes": {
-        "zodDefinition": "z.object({ op: z.enum(['add','update','delete']), target: z.enum(['node','edge']), element: z.unknown(), consumerType: z.string() })"
-      }
+      "zodDefinition": "z.object({ op: z.enum(['add','update','delete']), target: z.enum(['node','edge']), element: z.unknown(), consumerType: z.string() })"
     },
     {
       "id": "SCHEMA-mutate-result",
@@ -2605,9 +2585,7 @@
       "description": "Apply-Ergebnis + Violations + Confidence/Tier. @sigloch/contracts harness (D1).",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "attributes": {
-        "zodDefinition": "z.object({ success: z.boolean(), applied: z.number(), violations: z.array(z.object({ ruleId: z.string(), severity: z.enum(['error','warning','info']), elementId: z.string(), msg: z.string() })), confidence: z.number().optional(), tier: z.enum(['auto','suggest','block']).optional() })"
-      }
+      "zodDefinition": "z.object({ success: z.boolean(), applied: z.number(), violations: z.array(z.object({ ruleId: z.string(), severity: z.enum(['error','warning','info']), elementId: z.string(), msg: z.string() })), confidence: z.number().optional(), tier: z.enum(['auto','suggest','block']).optional() })"
     },
     {
       "id": "SCHEMA-ontology-graph",
@@ -2616,9 +2594,7 @@
       "description": "Elements (13 ElementTypes) + Traces (7 TraceTypes). @sigloch/contracts/se.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "attributes": {
-        "zodDefinition": "z.object({ elements: z.array(z.object({ id: z.string(), type: ElementType, name: z.string(), description: z.string() })), traces: z.array(z.object({ source: z.string(), target: z.string(), type: TraceType })) })"
-      }
+      "zodDefinition": "z.object({ elements: z.array(z.object({ id: z.string(), type: ElementType, name: z.string(), description: z.string() })), traces: z.array(z.object({ source: z.string(), target: z.string(), type: TraceType })) })"
     },
     {
       "id": "SCHEMA-query-params",
@@ -2627,9 +2603,7 @@
       "description": "Query-/Request-Parameter.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "attributes": {
-        "zodDefinition": "z.object({ elementId: z.string().optional(), depth: z.number().optional(), branch: z.string().optional(), cursor: z.string().optional(), view: z.string().optional() })"
-      }
+      "zodDefinition": "z.object({ elementId: z.string().optional(), depth: z.number().optional(), branch: z.string().optional(), cursor: z.string().optional(), view: z.string().optional() })"
     },
     {
       "id": "SCHEMA-trajectory",
@@ -2638,9 +2612,7 @@
       "description": "append-only Lern-Emission. @sigloch/learning-core.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "attributes": {
-        "zodDefinition": "z.object({ step: z.string(), action: z.string(), outcome: z.string(), ts: z.string() })"
-      }
+      "zodDefinition": "z.object({ step: z.string(), action: z.string(), outcome: z.string(), ts: z.string() })"
     },
     {
       "id": "SCHEMA-update-event",
@@ -2649,9 +2621,7 @@
       "description": "SSE invalidate Event.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "attributes": {
-        "zodDefinition": "z.object({ type: z.literal('invalidate'), domains: z.array(z.enum(['graph','rules','readiness','suggestions'])), version: z.number() })"
-      }
+      "zodDefinition": "z.object({ type: z.literal('invalidate'), domains: z.array(z.enum(['graph','rules','readiness','suggestions'])), version: z.number() })"
     },
     {
       "id": "SYS-graphcode",
@@ -2709,17 +2679,13 @@
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "method": "test",
-      "attributes": {
-        "level": "integration",
-        "tool": "vitest",
-        "constraint": "gate-only import"
-      },
       "updated_at": "2026-06-18T00:00:00.000Z",
       "testRef": {
         "file": "tests/bootstrap.test.ts",
         "tool": "vitest",
         "level": "integration"
-      }
+      },
+      "constraint": "gate-only import"
     },
     {
       "id": "TEST-cache",
@@ -2740,13 +2706,11 @@
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "method": "test",
-      "attributes": {
-        "level": "integration",
-        "tool": "vitest",
-        "constraint": "suggest-tier"
-      },
       "testRef": null,
-      "concept": true
+      "concept": true,
+      "level": "integration",
+      "tool": "vitest",
+      "constraint": "suggest-tier"
     },
     {
       "id": "TEST-cli-scaffold",
@@ -2756,17 +2720,13 @@
       "status": "done",
       "created_at": "2026-06-18T00:00:00.000Z",
       "method": "test",
-      "attributes": {
-        "level": "integration",
-        "tool": "vitest",
-        "constraint": "self-contained-idempotent"
-      },
       "updated_at": "2026-06-18T00:00:00.000Z",
       "testRef": {
         "file": "tests/cli.scaffold.test.ts",
         "tool": "vitest",
         "level": "integration"
-      }
+      },
+      "constraint": "self-contained-idempotent"
     },
     {
       "id": "TEST-code-conformance",
@@ -2789,13 +2749,11 @@
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "method": "test",
-      "attributes": {
-        "level": "acceptance",
-        "tool": "harness + benchmark",
-        "constraint": "Disk-Kuzu, V3_RULES; vs classic"
-      },
       "testRef": null,
-      "concept": true
+      "concept": true,
+      "level": "acceptance",
+      "tool": "harness + benchmark",
+      "constraint": "Disk-Kuzu, V3_RULES; vs classic"
     },
     {
       "id": "TEST-codec-validation",
@@ -2818,17 +2776,15 @@
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "method": "analysis",
-      "attributes": {
-        "level": "analysis",
-        "tool": "rule-id compare",
-        "constraint": "rule-ids == contracts"
-      },
       "updated_at": "2026-06-17T00:00:00.000Z",
       "testRef": {
         "file": "tests/readiness.ontology-sync.test.ts",
         "tool": "vitest",
         "level": "integration"
-      }
+      },
+      "level": "analysis",
+      "tool": "rule-id compare",
+      "constraint": "rule-ids == contracts"
     },
     {
       "id": "TEST-dashboard-readonly",
@@ -2838,16 +2794,12 @@
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
       "method": "test",
-      "attributes": {
-        "level": "integration",
-        "tool": "vitest",
-        "constraint": "viewer exposes no write path"
-      },
       "testRef": {
         "file": "tests/panels.test.ts",
         "tool": "vitest",
         "level": "integration"
-      }
+      },
+      "constraint": "viewer exposes no write path"
     },
     {
       "id": "TEST-distribution",
@@ -2871,17 +2823,13 @@
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "method": "test",
-      "attributes": {
-        "level": "conformance",
-        "tool": "vitest",
-        "constraint": "deterministic + GENERATED header"
-      },
       "updated_at": "2026-06-18T00:00:00.000Z",
       "testRef": {
         "file": "tests/exporter.test.ts",
         "tool": "vitest",
         "level": "conformance"
-      }
+      },
+      "constraint": "deterministic + GENERATED header"
     },
     {
       "id": "TEST-docs-taxonomy",
@@ -2890,12 +2838,10 @@
       "description": "Views reproduzierbar & GENERATED-headered; records durable; kein docs/project mehr. (verify REQ-docs-taxonomy)",
       "status": "open",
       "created_at": "2026-06-17T00:00:00.000Z",
-      "attributes": {
-        "level": "inspection",
-        "tool": "grep/structure-check"
-      },
       "testRef": null,
-      "concept": true
+      "concept": true,
+      "level": "inspection",
+      "tool": "grep/structure-check"
     },
     {
       "id": "TEST-efficient-testing",
@@ -2905,17 +2851,14 @@
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "method": "test",
-      "attributes": {
-        "level": "acceptance",
-        "tool": "graph_impact assertion",
-        "constraint": "precision/recall vs full run"
-      },
       "testRef": {
         "file": "tests/mvp-e2e.test.ts",
         "case": "UC-efficient-testing",
         "tool": "vitest",
         "level": "acceptance"
-      }
+      },
+      "tool": "graph_impact assertion",
+      "constraint": "precision/recall vs full run"
     },
     {
       "id": "TEST-graph-integrity",
@@ -2989,17 +2932,13 @@
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "method": "test",
-      "attributes": {
-        "level": "integration",
-        "tool": "vitest",
-        "constraint": "no full-dump"
-      },
       "updated_at": "2026-06-17T00:00:00.000Z",
       "testRef": {
         "file": "tests/mcp.impact.test.ts",
         "tool": "vitest",
         "level": "integration"
-      }
+      },
+      "constraint": "no full-dump"
     },
     {
       "id": "TEST-interface-escalation",
@@ -3009,13 +2948,11 @@
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "method": "test",
-      "attributes": {
-        "level": "integration",
-        "tool": "vitest",
-        "constraint": "direct FLOW mutation rejected"
-      },
       "testRef": null,
-      "concept": true
+      "concept": true,
+      "level": "integration",
+      "tool": "vitest",
+      "constraint": "direct FLOW mutation rejected"
     },
     {
       "id": "TEST-interface-schema",
@@ -3025,13 +2962,11 @@
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "method": "inspection",
-      "attributes": {
-        "level": "inspection",
-        "tool": "jq/grep",
-        "constraint": "every FLOW relation SCHEMA"
-      },
       "testRef": null,
-      "concept": true
+      "concept": true,
+      "level": "inspection",
+      "tool": "jq/grep",
+      "constraint": "every FLOW relation SCHEMA"
     },
     {
       "id": "TEST-learning-emit",
@@ -3041,17 +2976,13 @@
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "method": "test",
-      "attributes": {
-        "level": "integration",
-        "tool": "vitest",
-        "constraint": "append-only jsonl"
-      },
       "updated_at": "2026-06-17T00:00:00.000Z",
       "testRef": {
         "file": "tests/hooks.learning-emit.test.ts",
         "tool": "vitest",
         "level": "integration"
-      }
+      },
+      "constraint": "append-only jsonl"
     },
     {
       "id": "TEST-live-event-contract",
@@ -3075,17 +3006,13 @@
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "method": "test",
-      "attributes": {
-        "level": "integration",
-        "tool": "vitest",
-        "constraint": "one event per mutation"
-      },
       "updated_at": "2026-06-17T00:00:00.000Z",
       "testRef": {
         "file": "tests/hooks.live-view.test.ts",
         "tool": "vitest",
         "level": "integration"
-      }
+      },
+      "constraint": "one event per mutation"
     },
     {
       "id": "TEST-mcp-export",
@@ -3095,17 +3022,13 @@
       "status": "done",
       "created_at": "2026-06-18T00:00:00.000Z",
       "method": "test",
-      "attributes": {
-        "level": "integration",
-        "tool": "vitest",
-        "constraint": "agent-loop-closed-over-mcp"
-      },
       "updated_at": "2026-06-18T00:00:00.000Z",
       "testRef": {
         "file": "tests/mcp.export.test.ts",
         "tool": "vitest",
         "level": "integration"
-      }
+      },
+      "constraint": "agent-loop-closed-over-mcp"
     },
     {
       "id": "TEST-mcp-export-guard",
@@ -3128,17 +3051,13 @@
       "status": "done",
       "created_at": "2026-06-18T00:00:00.000Z",
       "method": "test",
-      "attributes": {
-        "level": "integration",
-        "tool": "vitest",
-        "constraint": "readiness-reachable-over-mcp"
-      },
       "updated_at": "2026-06-18T00:00:00.000Z",
       "testRef": {
         "file": "tests/mcp.readiness.test.ts",
         "tool": "vitest",
         "level": "integration"
-      }
+      },
+      "constraint": "readiness-reachable-over-mcp"
     },
     {
       "id": "TEST-mcp-stdio-server",
@@ -3148,17 +3067,13 @@
       "status": "done",
       "created_at": "2026-06-18T00:00:00.000Z",
       "method": "test",
-      "attributes": {
-        "level": "integration",
-        "tool": "vitest",
-        "constraint": "single-transport-mcp-stdio"
-      },
       "updated_at": "2026-06-18T00:00:00.000Z",
       "testRef": {
         "file": "tests/mcp.stdio-server.test.ts",
         "tool": "vitest",
         "level": "integration"
-      }
+      },
+      "constraint": "single-transport-mcp-stdio"
     },
     {
       "id": "TEST-mcp-symmetry",
@@ -3168,17 +3083,13 @@
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "method": "test",
-      "attributes": {
-        "level": "integration",
-        "tool": "vitest",
-        "constraint": "MCP==in-process"
-      },
       "updated_at": "2026-06-17T00:00:00.000Z",
       "testRef": {
         "file": "tests/mcp.symmetry.test.ts",
         "tool": "vitest",
         "level": "integration"
-      }
+      },
+      "constraint": "MCP==in-process"
     },
     {
       "id": "TEST-member-name",
@@ -3188,10 +3099,6 @@
       "status": "done",
       "created_at": "2026-06-18T00:00:00.000Z",
       "method": "test",
-      "attributes": {
-        "level": "unit",
-        "tool": "vitest"
-      },
       "updated_at": "2026-06-18T00:00:00.000Z",
       "testRef": {
         "file": "tests/mcp.member-name.test.ts",
@@ -3207,13 +3114,11 @@
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "method": "test",
-      "attributes": {
-        "level": "integration",
-        "tool": "vitest",
-        "constraint": "conflict-free"
-      },
       "testRef": null,
-      "concept": true
+      "concept": true,
+      "level": "integration",
+      "tool": "vitest",
+      "constraint": "conflict-free"
     },
     {
       "id": "TEST-mutate-gate",
@@ -3223,17 +3128,13 @@
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "method": "test",
-      "attributes": {
-        "level": "integration",
-        "tool": "vitest",
-        "constraint": "Disk-Kuzu"
-      },
       "updated_at": "2026-06-17T00:00:00.000Z",
       "testRef": {
         "file": "tests/harness.gate.test.ts",
         "tool": "vitest",
         "level": "integration"
-      }
+      },
+      "constraint": "Disk-Kuzu"
     },
     {
       "id": "TEST-mvp-e2e",
@@ -3244,16 +3145,12 @@
       "method": "test",
       "created_at": "2026-06-18T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z",
-      "attributes": {
-        "level": "e2e",
-        "tool": "vitest",
-        "constraint": "Disk-Kuzu, no mocks, end-to-end"
-      },
       "testRef": {
         "file": "tests/mvp-e2e.test.ts",
         "tool": "vitest",
         "level": "e2e"
-      }
+      },
+      "constraint": "Disk-Kuzu, no mocks, end-to-end"
     },
     {
       "id": "TEST-no-direct-graph-write",
@@ -3328,13 +3225,11 @@
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "method": "test",
-      "attributes": {
-        "level": "acceptance",
-        "tool": "benchmark, 2 LLMs",
-        "constraint": "small/local LLM succeeds"
-      },
       "testRef": null,
-      "concept": true
+      "concept": true,
+      "level": "acceptance",
+      "tool": "benchmark, 2 LLMs",
+      "constraint": "small/local LLM succeeds"
     },
     {
       "id": "TEST-responsiveness",
@@ -3344,13 +3239,11 @@
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "method": "test",
-      "attributes": {
-        "level": "performance",
-        "tool": "benchmark",
-        "constraint": "<0,2s, no LLM"
-      },
       "testRef": null,
-      "concept": true
+      "concept": true,
+      "level": "performance",
+      "tool": "benchmark",
+      "constraint": "<0,2s, no LLM"
     },
     {
       "id": "TEST-roundtrip",
@@ -3360,17 +3253,13 @@
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "method": "test",
-      "attributes": {
-        "level": "conformance",
-        "tool": "vitest",
-        "constraint": "rasentraktor fixture (L3)"
-      },
       "updated_at": "2026-06-17T00:00:00.000Z",
       "testRef": {
         "file": "tests/codec.roundtrip.test.ts",
         "tool": "vitest",
         "level": "conformance"
-      }
+      },
+      "constraint": "rasentraktor fixture (L3)"
     },
     {
       "id": "TEST-scaffold-skills",
@@ -3380,17 +3269,13 @@
       "status": "done",
       "created_at": "2026-06-18T00:00:00.000Z",
       "method": "test",
-      "attributes": {
-        "level": "integration",
-        "tool": "vitest",
-        "constraint": "skills-shipped-and-scaffolded"
-      },
       "updated_at": "2026-06-18T00:00:00.000Z",
       "testRef": {
         "file": "tests/cli.scaffold.test.ts",
         "tool": "vitest",
         "level": "integration"
-      }
+      },
+      "constraint": "skills-shipped-and-scaffolded"
     },
     {
       "id": "TEST-schema-migration",
@@ -3400,13 +3285,11 @@
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "method": "test",
-      "attributes": {
-        "level": "integration",
-        "tool": "vitest",
-        "constraint": "version bump"
-      },
       "testRef": null,
-      "concept": true
+      "concept": true,
+      "level": "integration",
+      "tool": "vitest",
+      "constraint": "version bump"
     },
     {
       "id": "TEST-shared-views-no-fork",
@@ -3430,17 +3313,13 @@
       "status": "done",
       "created_at": "2026-06-18T00:00:00.000Z",
       "method": "test",
-      "attributes": {
-        "level": "integration",
-        "tool": "vitest",
-        "constraint": "skills-off-dead-api-on-mcp"
-      },
       "updated_at": "2026-06-18T00:00:00.000Z",
       "testRef": {
         "file": "tests/skills.mcp-conformance.test.ts",
         "tool": "vitest",
         "level": "integration"
-      }
+      },
+      "constraint": "skills-off-dead-api-on-mcp"
     },
     {
       "id": "TEST-store-recovery",
@@ -3501,13 +3380,11 @@
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "method": "test",
-      "attributes": {
-        "level": "acceptance",
-        "tool": "benchmark + token counter",
-        "constraint": "graphcode vs classic; <50% tokens"
-      },
       "testRef": null,
-      "concept": true
+      "concept": true,
+      "level": "acceptance",
+      "tool": "benchmark + token counter",
+      "constraint": "graphcode vs classic; <50% tokens"
     },
     {
       "id": "UC-code-quality",

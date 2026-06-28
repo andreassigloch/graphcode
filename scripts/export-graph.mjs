@@ -23,6 +23,7 @@ import { dirname, join } from 'node:path';
 import {
   exportGraphJson,
   exportMarkdown,
+  elementToNode,
   MARKDOWN_VIEWS,
   VIEW_FILENAMES,
 } from '../dist/index.js';
@@ -31,12 +32,9 @@ const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const GRAPH_JSON = join(REPO_ROOT, 'docs/graph/graphcode.graph.json');
 const VIEWS_DIR = join(REPO_ROOT, 'docs/views');
 
-/** importGraph mapping (harness.ts): elements/traces → nodes/edges, full fidelity. */
+/** elements/traces → nodes/edges via the SHARED import mapping (CR-GC-219, no parallel path). */
 function toGraph(ontology) {
-  const nodes = (ontology.elements ?? []).map((e) => {
-    const { id, type, name, description, ...rest } = e;
-    return { uid: id, type, name, description: description ?? '', attributes: rest };
-  });
+  const nodes = (ontology.elements ?? []).map((e) => elementToNode(e));
   const edges = (ontology.traces ?? []).map((t) => {
     const { source, target, type, ...rest } = t;
     return { sourceId: source, targetId: target, edgeType: type, attributes: rest };

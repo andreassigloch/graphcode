@@ -42,6 +42,7 @@ export { GraphCodeCodec } from './codec.js';
 export {
   exportGraphJson,
   exportMarkdown,
+  elementToNode,
   MarkdownViewSchema,
   MARKDOWN_VIEWS,
   VIEW_FILENAMES,

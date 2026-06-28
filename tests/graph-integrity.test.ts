@@ -42,4 +42,11 @@ describe('graph integrity (SSOT safety net)', () => {
   it('is canonically serialized (deterministic writer, not a raw hand-edit)', () => {
     expect(JSON.stringify(json, null, 2) + '\n').toBe(raw);
   });
+
+  it('no element carries a nested `attributes` key (CR-GC-219 flatten, no re-nesting)', () => {
+    const nested = json.elements.filter(
+      (e) => typeof (e as Record<string, unknown>).attributes === 'object' && (e as Record<string, unknown>).attributes !== null,
+    );
+    expect(nested.map((e) => e.id)).toEqual([]);
+  });
 });

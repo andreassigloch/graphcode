@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 46 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 56 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 46 CR · 38 done · 8 open.
+Total: 56 CR · 54 done · 2 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -73,12 +73,12 @@ Total: 46 CR · 38 done · 8 open.
 | CR | status | name |
 |---|---|---|
 | `CR-GC-220` | done | Renderer: deterministic MarkdownView for every render-able artifact |
-| `CR-GC-221` | open | Readiness: Creations als Gate-Vorbedingung |
-| `CR-GC-222` | open | Artefakt-Tab: render/analysis Kind-Split |
-| `CR-GC-223` | open | Skills: Creation-Skills (FMEA-Rename + se-irr/se-conops/se-trade) |
-| `CR-GC-224` | open | Skills: View-Skills → Thin-Trigger (Gruppe A) |
-| `CR-GC-225` | open | Skills: View-Skills → Thin-Trigger (Gruppe B) |
-| `CR-GC-226` | open | Doku/Graph: lean=no-artifacts abloesen + Artefakt-Modell seeden |
+| `CR-GC-221` | done | Readiness: creations as gate precondition (phase + impl) |
+| `CR-GC-222` | done | Artefakt-Tab: render/analysis Kind-Split |
+| `CR-GC-223` | done | Skills: Creation-Skills (FMEA-Rename + se-irr/se-conops/se-trade) |
+| `CR-GC-224` | done | Skills: View-Skills Thin-Trigger (Gruppe A) |
+| `CR-GC-225` | done | Skills: View-Skills Thin-Trigger (Gruppe B) |
+| `CR-GC-226` | done | Doku/Graph: lean=no-artifacts abloesen + Artefakt-Modell seeden |
 
 ## (unassigned)
 
@@ -86,5 +86,15 @@ Total: 46 CR · 38 done · 8 open.
 |---|---|---|
 | `CR-GC-207` | done | Graph-first onboarding contract (GRAPHCODE.md + dialect marker) |
 | `CR-GC-208` | done | Skill sync + surfacing (anti-drift for scaffolded se-* skills) |
+| `CR-GC-209` | done | se-plan generative impl/integration plan skill |
+| `CR-GC-210` | done | Read-tool output-format contract (JSON vs Format-E) |
+| `CR-GC-211` | done | UC-authoring guardrail (terseness + jargon budget) |
+| `CR-GC-212` | done | Post-project KPI retro (se-retro + KPI standard) |
 | `CR-GC-214` | done | Read-side graph-first enforcement (deny-stale-prose-read hook) |
 | `CR-GC-215` | done | Ship enforcement-hooks to consumer repos |
+| `CR-GC-216` | done | graph_realize ergonomic write-back affordance (write-twin of graph_context) |
+| `CR-GC-219` | done | Flatten redundant nested attributes field |
+| `CR-GC-227` | done | Help content layer (authored Plain/SE annotation, HELP_CONTENT) |
+| `CR-GC-228` | done | Help data layer (pure projection to HelpEntry, help.ts) |
+| `CR-GC-229` | done | Help surfaces (graph_help MCP tool + se:help skill) |
+| `CR-GC-230` | done | Help docs (README + GRAPHCODE.md pointer to se:help) |

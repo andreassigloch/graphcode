@@ -38,6 +38,7 @@ import {
   type RuleViolation,
 } from '@sigloch/contracts/harness';
 import { HookSystem } from './hooks.js';
+import { elementToNode } from './exporter.js';
 import { setExportPending, clearExportPending } from './export-marker.js';
 
 /** Shape of the materialized OntologyGraph in docs/graph/*.graph.json. */
@@ -334,16 +335,9 @@ export class GraphCodeHarness {
     ontology: OntologyJson,
     opts?: { rejectUnverifiedReqs?: boolean },
   ): Promise<{ nodes: number; edges: number; unverifiedReqs: string[] }> {
-    const nodes: GraphNode[] = ontology.elements.map((e) => {
-      const { id, type, name, description, ...rest } = e;
-      return {
-        uid: id,
-        type,
-        name,
-        description: description ?? '',
-        attributes: rest,
-      };
-    });
+    // Single import mapping, shared with scripts/export-graph.mjs (CR-GC-219): flattens the
+    // redundant nested `attributes` artifact so the SSOT never carries it.
+    const nodes: GraphNode[] = ontology.elements.map((e) => elementToNode(e as Record<string, unknown>));
     const edges: GraphEdge[] = ontology.traces.map((t) => {
       const { source, target, type, ...rest } = t;
       return { sourceId: source, targetId: target, edgeType: type, attributes: rest };

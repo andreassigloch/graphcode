@@ -22,7 +22,7 @@
 | Level | Element | Test kind | Tests | Coverage | Verdict |
 |---|---|---|---|---|---|
 | System | SYS (1) | E2E | 2 | 2 / 1 | ✓ |
-| Use-case | UC (6) | integration / acceptance | 35 | 6 / 6 scenario | ✓ |
+| Use-case | UC (6) | integration / acceptance | 42 | 6 / 6 scenario | ✓ |
 | Function | FUNC (37) | unit | 2 | 37 / 37 | ✓ |
 | (support) | — | conformance | 2 | codec round-trip | ✓ |
 

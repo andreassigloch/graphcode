@@ -26,7 +26,7 @@ Apply-Gate · mutate() · Trace pattern (TRACE_PATTERNS) · Readiness gate (SRR/
 
 `REQ-code-governed-quality`  priority: must · status: open · kinds: functional
   Statement      Jede Code-/Modell-Änderung ist gate-validiert (SE-Ontologie + V3_RULES), konsistent und driftfrei — kein ungeprüfter Schreibpfad.
-  Verification   TEST-code-quality (), TEST-mvp-e2e (e2e)
+  Verification   TEST-code-quality (acceptance), TEST-mvp-e2e (e2e)
   Trace          satisfy ◀ `FCHAIN-apply-gate` · allocate ▶ — · verify ◀ `TEST-code-quality` · `TEST-mvp-e2e`
 
 `REQ-dashboard-ontology-sync`  priority: must · status: done · kinds: functional
@@ -36,17 +36,17 @@ Apply-Gate · mutate() · Trace pattern (TRACE_PATTERNS) · Readiness gate (SRR/
 
 `REQ-interface-change-escalation`  priority: must · status: open · kinds: functional
   Statement      Ein Realisierungs-Agent darf ein Interface (FLOW/SCHEMA) NICHT direkt mutieren. Bei Bedarf: (a) Notwendigkeit prüfen (sonst im Vertrag bleiben, Tech-Debt vermeiden); (b) CR an Facilitating-Agent + Boundary pausieren; (c) graph_impact(FLOW) Impact-Analyse; (d) Gate-Entscheidung (versionierte FLOW-Mutation / reject); (e) Dependents re-scopen/sequenzieren. Erhält conflict-free Parallelität; Interface-Drift zentral + gegatet.
-  Verification   TEST-interface-escalation ()
+  Verification   TEST-interface-escalation (integration)
   Trace          satisfy ◀ `FCHAIN-interface-escalation` · allocate ▶ — · verify ◀ `TEST-interface-escalation`
 
 `REQ-quality-metric`  priority: should · status: open · kinds: non-functional
   Statement      Qualität = graph-eigene Metriken: (1) 0 error-Violations am Commit, (2) REQ→TEST-Traceability-Coverage, (3) keine Drift bei Re-Eval; gegen classic messbar. Definiert, was „exzellente Code-Qualität" (UC-code-quality) bedeutet — kein Vibe.
-  Verification   TEST-code-quality ()
+  Verification   TEST-code-quality (acceptance)
   Trace          satisfy ◀ `MOD-harness` · allocate ▶ — · verify ◀ `TEST-code-quality`
 
 `REQ-structure-driven`  priority: should · status: open · kinds: non-functional
   Statement      Architektur/Interfaces/Integration/Tests werden strikt aus dem governten Graph abgeleitet (Schema-first), nicht ad-hoc.
-  Verification   TEST-code-quality ()
+  Verification   TEST-code-quality (acceptance)
   Trace          satisfy ◀ `SYS-graphcode` · allocate ▶ — · verify ◀ `TEST-code-quality`
 
 ### 4.2  `UC-efficient-testing` — Effizientes, impact-basiertes Testen
@@ -114,19 +114,19 @@ Apply-Gate · mutate() · Trace pattern (TRACE_PATTERNS) · Readiness gate (SRR/
 
 `REQ-small-model-viable`  priority: should · status: open · kinds: non-functional
   Statement      Deterministische, modellfreie Gates/Regeln + Query-Precision halten kleine/lokale LLMs tragfähig; Kern läuft ohne LLM (degraded).
-  Verification   TEST-mvp-e2e (e2e), TEST-reduced-llm ()
+  Verification   TEST-mvp-e2e (e2e), TEST-reduced-llm (acceptance)
   Trace          satisfy ◀ `FCHAIN-modelfree-gate` · allocate ▶ — · verify ◀ `TEST-mvp-e2e` · `TEST-reduced-llm`
 
 ### 4.6  `UC-token-efficiency` — Minimaler Token-Verbrauch
 
 `REQ-benchmark-harness`  priority: must · status: open · kinds: functional
   Statement      Setting zum Vergleich graphcode-Modus vs. Claude-Code-classic über eine fixe Task-Suite, 2 LLMs (groß + klein/lokal), mit Token-Counter + Quality-Scorer. Liefert task×mode×LLM → {tokens, success, quality} und belegt token-efficiency + reduced-llm + code-quality. NUR Requirement — Harness-Bau ist Realisierung (eigene CR).
-  Verification   TEST-token-efficiency ()
+  Verification   TEST-token-efficiency (acceptance)
   Trace          satisfy ◀ `SYS-graphcode` · allocate ▶ — · verify ◀ `TEST-token-efficiency`
 
 `REQ-precise-context`  priority: should · status: open · kinds: non-functional
   Statement      Kontext = exakter Blast-Radius/Sub-Graph-Slice (Format-E) statt grep-Dump/Result-Kompression.
-  Verification   TEST-mvp-e2e (e2e), TEST-token-efficiency ()
+  Verification   TEST-mvp-e2e (e2e), TEST-token-efficiency (acceptance)
   Trace          satisfy ◀ `FCHAIN-agent-query` · allocate ▶ — · verify ◀ `TEST-mvp-e2e` · `TEST-token-efficiency`
 
 ### 4.7  Cross-cutting / operational (no single UC)
@@ -143,7 +143,7 @@ Apply-Gate · mutate() · Trace pattern (TRACE_PATTERNS) · Readiness gate (SRR/
 
 `REQ-auto-persist-merge`  priority: must · status: open · kinds: functional
   Statement      Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Artefakt. (R2)
-  Verification   TEST-merge ()
+  Verification   TEST-merge (integration)
   Trace          satisfy ◀ `FUNC-merge-nodes` · allocate ▶ `MOD-codec` · verify ◀ `TEST-merge`
 
 `REQ-batch-seed-performance`  priority: must · status: done
@@ -178,7 +178,7 @@ Apply-Gate · mutate() · Trace pattern (TRACE_PATTERNS) · Readiness gate (SRR/
 
 `REQ-conflict-free-merge`  priority: must · status: open · kinds: functional
   Statement      FUNC-merge-nodes: Branch-/Multi-Dev-Merge conflict-free (deterministische Serialisierung + merge_nodes).
-  Verification   TEST-merge ()
+  Verification   TEST-merge (integration)
   Trace          satisfy ◀ `FUNC-merge-nodes` · allocate ▶ `MOD-codec` · verify ◀ `TEST-merge`
 
 `REQ-deterministic-serialization`  priority: should · status: open · kinds: non-functional
@@ -198,7 +198,7 @@ Apply-Gate · mutate() · Trace pattern (TRACE_PATTERNS) · Readiness gate (SRR/
 
 `REQ-docs-taxonomy`  priority: should · status: reviewed · kinds: non-functional
   Statement      CONSTRAINT (non-functional): Aus dem Graphen reproduzierbar → VIEW (generiert, disposable, byte-deterministisch); friert datiertes Urteil/externen Input ein → RECORD (immutable Nachweis). Verfeinert REQ-graph-is-ssot. Ziel-Layout docs/{graph,views,records,adr,cr}. (CR-GC-119)
-  Verification   TEST-docs-taxonomy ()
+  Verification   TEST-docs-taxonomy (inspection)
   Trace          satisfy ◀ `MOD-docs` · allocate ▶ — · verify ◀ `TEST-docs-taxonomy`
 
 `REQ-export-no-clobber`  priority: should · status: done · kinds: non-functional
@@ -218,7 +218,7 @@ Apply-Gate · mutate() · Trace pattern (TRACE_PATTERNS) · Readiness gate (SRR/
 
 `REQ-frame-binding`  priority: should · status: open · kinds: non-functional
   Statement      Beschluss 2026-06-16: Die in diesem Graph definierte Struktur + Interfaces (6 MOD, 4 Customer-UC, FUNC/FCHAIN/FLOW/REQ + SE-Ontologie/TRACE_PATTERNS) sind BINDEND für die Realisierung. Ergänzungen NUR, wenn sie in die vordefinierten Boxen passen (neue FUNC/FLOW/REQ/TEST an bestehendem MOD/UC durchs Gate). Strukturelle Änderungen — neues sigloch-modules-Shared, neuer ElementType/TraceType, neue Customer-UC/MOD — brauchen Familie-Review.
-  Verification   TEST-code-quality ()
+  Verification   TEST-code-quality (acceptance)
   Trace          satisfy ◀ `SYS-graphcode` · allocate ▶ — · verify ◀ `TEST-code-quality`
 
 `REQ-gate-only-writes`  priority: should · status: open · kinds: non-functional
@@ -228,7 +228,7 @@ Apply-Gate · mutate() · Trace pattern (TRACE_PATTERNS) · Readiness gate (SRR/
 
 `REQ-graceful-degradation`  priority: should · status: open · kinds: non-functional
   Statement      CONSTRAINT (ConOps): Harness voll funktionsfähig bei nicht erreichbarem LLM-Sidecar — Gate/Regeln deterministisch, kein Modell-Call.
-  Verification   TEST-reduced-llm ()
+  Verification   TEST-reduced-llm (acceptance)
   Trace          satisfy ◀ `FCHAIN-modelfree-gate` · `SYS-graphcode` · allocate ▶ — · verify ◀ `TEST-reduced-llm`
 
 `REQ-graph-code-conformance`  priority: must · status: done
@@ -278,12 +278,12 @@ Apply-Gate · mutate() · Trace pattern (TRACE_PATTERNS) · Readiness gate (SRR/
 
 `REQ-interactive-capture-suggest`  priority: must · status: open · kinds: functional
   Statement      FCHAIN-capture: NL→Format-E agent-seitig (REQ-no-extraction); Resultat im suggest-Tier durchs Gate, Review vor Persist.
-  Verification   TEST-capture ()
+  Verification   TEST-capture (integration)
   Trace          satisfy ◀ `FCHAIN-capture` · allocate ▶ — · verify ◀ `TEST-capture`
 
 `REQ-interface-schema`  priority: should · status: open · kinds: non-functional
   Statement      Jeder FLOW (Interface) hat ein SCHEMA (Layer 2, Datenformat) — referenziert @sigloch/contracts Zod. Code-Precondition: ohne Datenvertrag rät der Agent das Format. (3-Schichten-Interface-Modell)
-  Verification   TEST-interface-schema ()
+  Verification   TEST-interface-schema (inspection)
   Trace          satisfy ◀ `MOD-codec` · allocate ▶ — · verify ◀ `TEST-interface-schema`
 
 `REQ-live-event-in-contracts`  priority: must · status: done
@@ -303,7 +303,7 @@ Apply-Gate · mutate() · Trace pattern (TRACE_PATTERNS) · Readiness gate (SRR/
 
 `REQ-no-extraction`  priority: must · status: open · kinds: negative
   Statement      Keine tree-sitter/AST/LLM-Extraktion; Extraktion ist Slicer-/graphify-Aufgabe. (RECOMMENDATIONS)
-  Verification   TEST-capture ()
+  Verification   TEST-capture (integration)
   Trace          satisfy ◀ `FCHAIN-capture` · allocate ▶ — · verify ◀ `TEST-capture`
 
 `REQ-npx-distribution`  priority: must · status: done · kinds: functional
@@ -328,7 +328,7 @@ Apply-Gate · mutate() · Trace pattern (TRACE_PATTERNS) · Readiness gate (SRR/
 
 `REQ-post-capture`  priority: must · status: open · kinds: postcondition
   Statement      Format-E-Kandidaten im suggest-Tier durchs Gate; kein auto-apply; Review vor Persist.
-  Verification   TEST-capture ()
+  Verification   TEST-capture (integration)
   Trace          satisfy ◀ `FCHAIN-capture` · allocate ▶ — · verify ◀ `TEST-capture`
 
 `REQ-post-codec-roundtrip`  priority: must · status: open · kinds: postcondition
@@ -368,22 +368,22 @@ Apply-Gate · mutate() · Trace pattern (TRACE_PATTERNS) · Readiness gate (SRR/
 
 `REQ-post-interface-escalation`  priority: must · status: open · kinds: postcondition
   Statement      Interface NICHT direkt mutiert; eskaliert, impact-analysiert, gegatet, Dependents sequenziert — oder verworfen (im Vertrag bleiben).
-  Verification   TEST-interface-escalation ()
+  Verification   TEST-interface-escalation (integration)
   Trace          satisfy ◀ `FCHAIN-interface-escalation` · allocate ▶ — · verify ◀ `TEST-interface-escalation`
 
 `REQ-post-merge-nodes`  priority: must · status: open · kinds: postcondition
   Statement      Conflict-free gemerged; keine verlorenen Knoten/Traces; deterministisch sortiert.
-  Verification   TEST-merge ()
+  Verification   TEST-merge (integration)
   Trace          satisfy ◀ `FUNC-merge-nodes` · allocate ▶ `MOD-codec` · verify ◀ `TEST-merge`
 
 `REQ-post-migrate-schema`  priority: must · status: open · kinds: postcondition
   Statement      Graph re-validiert/migriert; Violations berichtet; Artefakt-Version aktualisiert.
-  Verification   TEST-schema-migration ()
+  Verification   TEST-schema-migration (integration)
   Trace          satisfy ◀ `FUNC-migrate-schema` · allocate ▶ `MOD-harness` · verify ◀ `TEST-schema-migration`
 
 `REQ-post-modelfree-gate`  priority: must · status: open · kinds: postcondition
   Statement      Apply + Regelprüfung deterministisch, kein Modell-Call; nur LLM-Zusatzfeatures degradieren.
-  Verification   TEST-reduced-llm ()
+  Verification   TEST-reduced-llm (acceptance)
   Trace          satisfy ◀ `FCHAIN-modelfree-gate` · allocate ▶ — · verify ◀ `TEST-reduced-llm`
 
 `REQ-pre-agent-query`  priority: must · status: open · kinds: precondition
@@ -398,7 +398,7 @@ Apply-Gate · mutate() · Trace pattern (TRACE_PATTERNS) · Readiness gate (SRR/
 
 `REQ-pre-capture`  priority: must · status: open · kinds: precondition
   Statement      NL/Text-Eingang (chat-tauglich) + Agent verfügbar.
-  Verification   TEST-capture ()
+  Verification   TEST-capture (integration)
   Trace          satisfy ◀ `FCHAIN-capture` · allocate ▶ — · verify ◀ `TEST-capture`
 
 `REQ-pre-codec-roundtrip`  priority: must · status: open · kinds: precondition
@@ -438,22 +438,22 @@ Apply-Gate · mutate() · Trace pattern (TRACE_PATTERNS) · Readiness gate (SRR/
 
 `REQ-pre-interface-escalation`  priority: must · status: open · kinds: precondition
   Statement      Realisierungs-Agent stellt fest: bestehender FLOW-Vertrag reicht nicht.
-  Verification   TEST-interface-escalation ()
+  Verification   TEST-interface-escalation (integration)
   Trace          satisfy ◀ `FCHAIN-interface-escalation` · allocate ▶ — · verify ◀ `TEST-interface-escalation`
 
 `REQ-pre-merge-nodes`  priority: must · status: open · kinds: precondition
   Statement      Zwei (oder mehr) Branch-Versionen des committed Graph-Artefakts.
-  Verification   TEST-merge ()
+  Verification   TEST-merge (integration)
   Trace          satisfy ◀ `FUNC-merge-nodes` · allocate ▶ `MOD-codec` · verify ◀ `TEST-merge`
 
 `REQ-pre-migrate-schema`  priority: must · status: open · kinds: precondition
   Statement      Version-Bump in contracts/se; bestehender Graph auf alter Version.
-  Verification   TEST-schema-migration ()
+  Verification   TEST-schema-migration (integration)
   Trace          satisfy ◀ `FUNC-migrate-schema` · allocate ▶ `MOD-harness` · verify ◀ `TEST-schema-migration`
 
 `REQ-pre-modelfree-gate`  priority: must · status: open · kinds: precondition
   Statement      MutateCommands liegen vor; LLM-Sidecar evtl. nicht erreichbar.
-  Verification   TEST-reduced-llm ()
+  Verification   TEST-reduced-llm (acceptance)
   Trace          satisfy ◀ `FCHAIN-modelfree-gate` · allocate ▶ — · verify ◀ `TEST-reduced-llm`
 
 `REQ-precommit-timeout`  priority: should · status: open · kinds: non-functional
@@ -493,7 +493,7 @@ Apply-Gate · mutate() · Trace pattern (TRACE_PATTERNS) · Readiness gate (SRR/
 
 `REQ-responsiveness`  priority: should · status: open · kinds: non-functional
   Statement      Bindende NFR (Familie §6b): erste Reaktion < 0,2s (UI+Transport+Store-Query+Onto-/Rule-Check, ohne LLM). Draft-Apply sofort + nur betroffener Subgraph geprüft; volle Konsistenz am Commit. End-to-end über FCHAIN-apply-gate.
-  Verification   TEST-responsiveness ()
+  Verification   TEST-responsiveness (performance)
   Trace          satisfy ◀ `FCHAIN-apply-gate` · allocate ▶ — · verify ◀ `TEST-responsiveness`
 
 `REQ-roundtrip-conformance`  priority: should · status: open · kinds: non-functional
@@ -508,7 +508,7 @@ Apply-Gate · mutate() · Trace pattern (TRACE_PATTERNS) · Readiness gate (SRR/
 
 `REQ-schema-version-migration`  priority: must · status: open · kinds: functional
   Statement      FUNC-migrate-schema: bei Version-Bump re-validieren/migrieren, Violations berichten, Version mitführen.
-  Verification   TEST-schema-migration ()
+  Verification   TEST-schema-migration (integration)
   Trace          satisfy ◀ `FUNC-migrate-schema` · allocate ▶ `MOD-harness` · verify ◀ `TEST-schema-migration`
 
 `REQ-self-contained-dist`  priority: should · status: done · kinds: non-functional

@@ -10,15 +10,15 @@
 
 | Interface (SCHEMA) | Contract (Zod) | status |
 |---|---|---|
-| `SCHEMA-cli-command` | z.object({ command: z.enum(['init','update','remove']), repoPath: z.string(), result: z.string().optional() }) | reviewed |
-| `SCHEMA-format-e` | z.object({ nodes: z.array(z.string()), edges: z.array(z.string()), operations: z.array(z.enum(['+','-','~','M'])).optional(), baseSnapshot: z.string().optional() }) | reviewed |
-| `SCHEMA-markdown-view` | z.object({ view: z.string(), markdown: z.string(), generated: z.literal(true) }) | reviewed |
-| `SCHEMA-mutate-command` | z.object({ op: z.enum(['add','update','delete']), target: z.enum(['node','edge']), element: z.unknown(), consumerType: z.string() }) | reviewed |
-| `SCHEMA-mutate-result` | z.object({ success: z.boolean(), applied: z.number(), violations: z.array(z.object({ ruleId: z.string(), severity: z.enum(['error','warning','info']), elementId: z.string(), msg: z.string() })), confidence: z.number().optional(), tier: z.enum(['auto','suggest','block']).optional() }) | reviewed |
-| `SCHEMA-ontology-graph` | z.object({ elements: z.array(z.object({ id: z.string(), type: ElementType, name: z.string(), description: z.string() })), traces: z.array(z.object({ source: z.string(), target: z.string(), type: TraceType })) }) | reviewed |
-| `SCHEMA-query-params` | z.object({ elementId: z.string().optional(), depth: z.number().optional(), branch: z.string().optional(), cursor: z.string().optional(), view: z.string().optional() }) | reviewed |
-| `SCHEMA-trajectory` | z.object({ step: z.string(), action: z.string(), outcome: z.string(), ts: z.string() }) | reviewed |
-| `SCHEMA-update-event` | z.object({ type: z.literal('invalidate'), domains: z.array(z.enum(['graph','rules','readiness','suggestions'])), version: z.number() }) | reviewed |
+| `SCHEMA-cli-command` | npx-CLI Kommando + Ergebnis. | reviewed |
+| `SCHEMA-format-e` | Kompaktes Snapshot-/Diff-Format. @sigloch/contracts/se. | reviewed |
+| `SCHEMA-markdown-view` | Generierte human-readable View mit GENERATED-Header. | reviewed |
+| `SCHEMA-mutate-command` | Edit-Operation durch das Gate. @sigloch/contracts harness (D1). | reviewed |
+| `SCHEMA-mutate-result` | Apply-Ergebnis + Violations + Confidence/Tier. @sigloch/contracts harness (D1). | reviewed |
+| `SCHEMA-ontology-graph` | Elements (13 ElementTypes) + Traces (7 TraceTypes). @sigloch/contracts/se. | reviewed |
+| `SCHEMA-query-params` | Query-/Request-Parameter. | reviewed |
+| `SCHEMA-trajectory` | append-only Lern-Emission. @sigloch/learning-core. | reviewed |
+| `SCHEMA-update-event` | SSE invalidate Event. | reviewed |
 
 ## Flows (producer → consumer)
 
