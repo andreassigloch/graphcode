@@ -421,6 +421,13 @@
       "status": "done"
     },
     {
+      "id": "CR-GC-216",
+      "type": "CR",
+      "name": "graph_realize ergonomic write-back affordance (write-twin of graph_context)",
+      "description": "DONE 2026-06-28: flat graph_realize MCP tool in src/mcp-tools.ts wraps the 90% realize-mutation behind a flat schema (funcUid/file/symbol/lang?, testUid?/testFile?/testCase?/tool?) and runs through the same Apply-Gate via harness.mutate() (update-node, no parallel write path). Sets FUNC codeRef (R-20) + optional TEST testRef (R-19); returns the missingRefs delta (before/after/resolved) so the agent sees the realization confirmed. Unknown funcUid/testUid gives a clear error. Built for small local models that mis-guessed graph_mutate's nested union (SPIKE-GC-loop-executor-benchmark). Added to the agent-agnostic surface contract. Test: tests/mcp.realize.test.ts. (CR-GC-216)",
+      "status": "done"
+    },
+    {
       "id": "CR-GC-220",
       "type": "CR",
       "name": "Renderer: deterministic MarkdownView for every render-able artifact",

@@ -152,6 +152,18 @@ const GraphHelpInputSchema = z.object({
     ),
 });
 
+/** Flat realize affordance (CR-GC-216) — the write-twin of graph_context, no nested union. */
+const GraphRealizeInputSchema = z.object({
+  funcUid: z.string().describe('The FUNC node to realize — sets its codeRef (R-20).'),
+  file: z.string().describe('Implementation file path, e.g. src/x.ts.'),
+  symbol: z.string().describe('The exported symbol (function/class) that realizes the FUNC.'),
+  lang: z.string().optional().describe('Language id (default ts).'),
+  testUid: z.string().optional().describe('Optional TEST node to bind — sets its testRef (R-19).'),
+  testFile: z.string().optional().describe('Test file path (required when testUid is given).'),
+  testCase: z.string().optional().describe('Optional test case name.'),
+  tool: z.string().optional().describe('Test tool for the testRef (default vitest).'),
+});
+
 const GraphTestsInputSchema = z.object({
   changeSet: z
     .array(z.string())
@@ -818,6 +830,81 @@ export function bindToolsToHarness(
     },
   };
 
+  const missingRefIds = (): Set<string> =>
+    new Set(
+      harness
+        .evaluateRules()
+        .filter((v) => v.ruleId === 'R-19' || v.ruleId === 'R-20')
+        .map((v) => v.elementId)
+        .filter((id): id is string => !!id),
+    );
+
+  const graph_realize: MCPTool<
+    z.infer<typeof GraphRealizeInputSchema>,
+    {
+      success: boolean;
+      tier: MutateResult['tier'];
+      violations: RuleViolation[];
+      missingRefsBefore: string[];
+      missingRefsAfter: string[];
+      resolved: string[];
+    }
+  > = {
+    name: 'graph_realize',
+    description:
+      'Flat realize affordance (CR-GC-216) — the write-twin of graph_context. Binds a FUNC to its code ' +
+      '(codeRef, R-20) and optionally a TEST to its test file (testRef, R-19) in ONE call, through the same ' +
+      'Apply-Gate as graph_mutate (no parallel write path — it composes harness.mutate). Use this instead of ' +
+      "hand-building graph_mutate's nested update-node/CodeRef union for the 90% case 'I just realized FUNC X'. " +
+      'Returns the missingRefs delta (before/after + resolved) so the realization is confirmed, not blind. ' +
+      'Unknown funcUid/testUid → a clear error.',
+    inputSchema: GraphRealizeInputSchema,
+    async handler(input) {
+      const nodes = harness.getGraph().nodes;
+      const fn = nodes.find((n) => n.uid === input.funcUid);
+      if (!fn) throw new Error(`graph_realize: unknown funcUid '${input.funcUid}'.`);
+
+      const commands: MutateCommand[] = [
+        {
+          op: 'update-node',
+          node: {
+            uid: input.funcUid,
+            type: fn.type,
+            attributes: { codeRef: { file: input.file, symbol: input.symbol, ...(input.lang ? { lang: input.lang } : {}) } },
+          },
+        },
+      ];
+
+      if (input.testUid) {
+        if (!input.testFile) throw new Error('graph_realize: testFile is required when testUid is given.');
+        const test = nodes.find((n) => n.uid === input.testUid);
+        if (!test) throw new Error(`graph_realize: unknown testUid '${input.testUid}'.`);
+        commands.push({
+          op: 'update-node',
+          node: {
+            uid: input.testUid,
+            type: test.type,
+            attributes: {
+              testRef: { file: input.testFile, tool: input.tool ?? 'vitest', ...(input.testCase ? { case: input.testCase } : {}) },
+            },
+          },
+        });
+      }
+
+      const before = missingRefIds();
+      const result = await harness.mutate(commands);
+      const after = missingRefIds();
+      return {
+        success: result.success,
+        tier: result.tier,
+        violations: result.violations,
+        missingRefsBefore: [...before],
+        missingRefsAfter: [...after],
+        resolved: [...before].filter((id) => !after.has(id)),
+      };
+    },
+  };
+
   // ---------------------------------------------------------------------------
   // Registry
   // ---------------------------------------------------------------------------
@@ -839,5 +926,6 @@ export function bindToolsToHarness(
     graph_reseed,
     graph_tests,
     graph_help,
+    graph_realize,
   };
 }
