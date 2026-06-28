@@ -28,6 +28,7 @@ import { TestRefSchema, type TestRef } from '@sigloch/contracts/se';
 import { exportGraphJson, exportMarkdown, renderTestStubs, MarkdownViewSchema, MARKDOWN_VIEWS, VIEW_FILENAMES } from './exporter.js';
 import { clearExportPending } from './export-marker.js';
 import { scoreReadiness, summarizeReadiness, type ReadinessReport } from './readiness.js';
+import { helpEntry, contextualHelp, type HelpEntry, type ContextualMeasure } from './viewer/help.js';
 
 // ---------------------------------------------------------------------------
 // Public types
@@ -125,6 +126,17 @@ const GraphReadinessInputSchema = z.object({
     .describe(
       'false (default) = summary: scores + counts + violationsByRule only (stays within the MCP ' +
         'result limit on a fully-red graph). true = full raw violations + each gate’s blocking/open lists.',
+    ),
+});
+
+const GraphHelpInputSchema = z.object({
+  token: z
+    .string()
+    .optional()
+    .describe(
+      'Optional dashboard token to explain: a ruleId (R-04), gate (CDR), panel id (recommendations), ' +
+        'artifact id (fmea), or vocabulary token (REQ). Omit for the contextual, ranked, explained ' +
+        'measures derived from the live readiness + violations (the explained Recommendations).',
     ),
 });
 
@@ -731,6 +743,36 @@ export function bindToolsToHarness(
     },
   };
 
+  const graph_help: MCPTool<
+    z.infer<typeof GraphHelpInputSchema>,
+    HelpEntry | { measures: ContextualMeasure[] }
+  > = {
+    name: 'graph_help',
+    description:
+      'Explain any dashboard item for both audiences (CR-GC-229): a systems engineer who does not know ' +
+      'this encoding, and a user with no SE background. Read-only. With `token` → the HelpEntry for that ' +
+      'ruleId / gate / panel / artifact / vocabulary token, carrying all three layers (plain, SE-terms, ' +
+      'and the exact copy-prompt). Without an argument → the contextual, ranked, explained measures from ' +
+      'the live readiness + violations (the explained sibling of Recommendations), covering BOTH rule ' +
+      'violations and not-done-creation gate blockers (CR-GC-221). Authored Plain/SE layers come from ' +
+      'help-content.ts; titles/severity/owning-gate are derived from V3_RULES + readiness.',
+    inputSchema: GraphHelpInputSchema,
+    async handler(input) {
+      if (input.token !== undefined) {
+        const entry = helpEntry(input.token);
+        if (!entry) {
+          throw new Error(
+            `graph_help: unknown token '${input.token}'. Try a ruleId (e.g. R-04), a gate (SRR/PDR/CDR/TRR, ` +
+              `SAR/FCA/SVR/FRR), a panel (readiness/recommendations/artifacts/impact/health), an artifact ` +
+              `(e.g. fmea), or a vocabulary token (e.g. REQ). Omit the token for contextual help.`,
+          );
+        }
+        return entry;
+      }
+      return { measures: contextualHelp(scoreReadiness(harness), harness.evaluateRules()) };
+    },
+  };
+
   // ---------------------------------------------------------------------------
   // Registry
   // ---------------------------------------------------------------------------
@@ -751,5 +793,6 @@ export function bindToolsToHarness(
     graph_readiness,
     graph_reseed,
     graph_tests,
+    graph_help,
   };
 }

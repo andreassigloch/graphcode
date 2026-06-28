@@ -463,6 +463,13 @@
       "status": "done"
     },
     {
+      "id": "CR-GC-229",
+      "type": "CR",
+      "name": "Help surfaces (graph_help MCP tool + se:help skill)",
+      "description": "DONE 2026-06-28: graph_help read-only MCP tool in src/mcp-tools.ts: no arg returns contextualHelp(readiness, violations) (ranked rule + creation blockers); { token } returns helpEntry(token) for any rule/gate/panel/artifact/vocab token (all 3 layers); unknown token throws a clean error listing valid kinds. se:help skill (.claude/skills/se-help.md, version 1) is the thin surface, auto-registered in the conformance/scaffold lists (registry-derived). Agent-agnostic surface contract (CR-124) updated to include graph_help. Test: tests/mcp.help.test.ts (disk Kuzu). (CR-GC-229)",
+      "status": "done"
+    },
+    {
       "id": "FCHAIN-agent-query",
       "type": "FCHAIN",
       "name": "Agent-Graph-Query (Impact + progressive Expansion)",
