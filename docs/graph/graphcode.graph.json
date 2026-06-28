@@ -365,6 +365,55 @@
       "status": "done"
     },
     {
+      "id": "CR-GC-220",
+      "type": "CR",
+      "name": "Renderer: deterministic MarkdownView for every render-able artifact",
+      "description": "SRS/NFR/RTM/ICD/TestConcept/VCRM/IntPlan/ChangeLog/FMEA/ConOps/Trade/ImplPlan als deterministische Views (exporter-views.ts); nicht-deterministisches Agent-Rendern eliminiert. (docs/cr/open/CR-GC-220)",
+      "status": "open"
+    },
+    {
+      "id": "CR-GC-221",
+      "type": "CR",
+      "name": "Readiness: Creations als Gate-Vorbedingung",
+      "description": "ReadinessGate.creationArtifacts; PhaseGate passed = rule-clean AND creations-current; ImplGate Anti-vacuous-green (fehlende Pflicht-Creation blockt). (docs/cr/open/CR-GC-221)",
+      "status": "open"
+    },
+    {
+      "id": "CR-GC-222",
+      "type": "CR",
+      "name": "Artefakt-Tab: render/analysis Kind-Split",
+      "description": "ArtifactStatus.kind render|analysis + zwei Stale-Mechanismen (mtime vs Scope/Commit); INCOSE vs graphcode-spezifisch getrennt; IRR-Label -> Assumption Review. (docs/cr/open/CR-GC-222)",
+      "status": "open"
+    },
+    {
+      "id": "CR-GC-223",
+      "type": "CR",
+      "name": "Skills: Creation-Skills (FMEA-Rename + se-irr/se-conops/se-trade)",
+      "description": "se-view-irr -> se-view-fmea Rename (FMEA-Render); neu se-irr (Assumption Review), se-conops (operational, vor UC), se-trade (Spike->CR); se-fmea Output-Pfad real. (docs/cr/open/CR-GC-223)",
+      "status": "open"
+    },
+    {
+      "id": "CR-GC-224",
+      "type": "CR",
+      "name": "Skills: View-Skills -> Thin-Trigger (Gruppe A)",
+      "description": "se-view arch/icd/rtm/nfr/testconcept/testmatrix rufen nur die deterministische View (CR-220), kein Agent-Formatieren. (docs/cr/open/CR-GC-224)",
+      "status": "open"
+    },
+    {
+      "id": "CR-GC-225",
+      "type": "CR",
+      "name": "Skills: View-Skills -> Thin-Trigger (Gruppe B)",
+      "description": "se-view implplan/intplan/changelog/conops/trade als Thin-Trigger der deterministischen Views. (docs/cr/open/CR-GC-225)",
+      "status": "open"
+    },
+    {
+      "id": "CR-GC-226",
+      "type": "CR",
+      "name": "Doku/Graph: lean=no-artifacts abloesen + Artefakt-Modell seeden",
+      "description": "lean neu definieren (Renders=Projektion, Creations=Gate-Vorbedingung, FMEA/Assumption lightweight in-scope); MS-6-adoption + CR-220..226 zuordnen; ADR-001 Pointer; Views re-render. (docs/cr/open/CR-GC-226)",
+      "status": "open"
+    },
+    {
       "id": "FCHAIN-agent-query",
       "type": "FCHAIN",
       "name": "Agent-Graph-Query (Impact + progressive Expansion)",
@@ -1259,6 +1308,13 @@
       "type": "MS",
       "name": "M5: Efficiency-Hardening",
       "description": "Post-MVP2: Effizienz-/Tooling-Hardening. Erste Arbeit: graph_tests operativ machen (testRef-Backfill + code→REQ→TEST-Traversal), damit selektives statt vollem Testlauf real wird (R12/R13).",
+      "status": "draft"
+    },
+    {
+      "id": "MS-6-adoption",
+      "type": "MS",
+      "name": "M6: Adoption & Artifact-Model",
+      "description": "Adoption-/Tooling-Milestone: erste Realanwendungen (graphify) + Create/Render-Artefaktmodell (deterministisches Rendern, Creations als Gate-Vorbedingung, INCOSE vs graphcode-spezifisch). Heimat von CR-GC-207..226.",
       "status": "draft"
     },
     {
@@ -4930,6 +4986,41 @@
     {
       "source": "CR-GC-206",
       "target": "REQ-graph-code-conformance",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-220",
+      "target": "MS-6-adoption",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-221",
+      "target": "MS-6-adoption",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-222",
+      "target": "MS-6-adoption",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-223",
+      "target": "MS-6-adoption",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-224",
+      "target": "MS-6-adoption",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-225",
+      "target": "MS-6-adoption",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-226",
+      "target": "MS-6-adoption",
       "type": "relation"
     },
     {

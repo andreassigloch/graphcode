@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Alle Elemente nach Typ, sortiert nach uid. Deterministisch generiert.
 
-Elemente: 305 · Traces: 695
+Elemente: 313 · Traces: 702
 
 
 ## ACTOR
@@ -62,6 +62,13 @@ Elemente: 305 · Traces: 695
 | `CR-GC-204` | graph_tests operational | open | testRef-Backfill (7/47→alle lauffähigen TESTs) + gerichtete code→satisfy/allocate→REQ→verify→TEST-Auflösung in graph_tests; Code-Changeset selektiert die richtigen Testdateien (heute 0). (docs/cr/open/CR-GC-204) |
 | `CR-GC-205` | Enforce-don't-document — R-18/R-19 rules + export materialization | open | Lift invariants from prose/one-shot-tests into the one engine/gate/export. Item 1: R-18 valid-trace-pattern (engine) + gate de-dup (no codec.validate call). Item 4: R-19 runnable-TEST-binding (warning) + concept marker + graph_export it.todo materialization. Items 2/3 (executable guardrails, CLAUDE.md slim-down) still open. |
 | `CR-GC-206` | Graph-code LSP conformance — resolve FUNC codeRef symbols | done | Follow-up aus CR-205 Item 5: FUNC.codeRef-Symbole real aufloesen (TypeScript-Parser), nicht nur Praesenz pruefen. Cross-Module-Call-Coverage bleibt Follow-up. |
+| `CR-GC-220` | Renderer: deterministic MarkdownView for every render-able artifact | open | SRS/NFR/RTM/ICD/TestConcept/VCRM/IntPlan/ChangeLog/FMEA/ConOps/Trade/ImplPlan als deterministische Views (exporter-views.ts); nicht-deterministisches Agent-Rendern eliminiert. (docs/cr/open/CR-GC-220) |
+| `CR-GC-221` | Readiness: Creations als Gate-Vorbedingung | open | ReadinessGate.creationArtifacts; PhaseGate passed = rule-clean AND creations-current; ImplGate Anti-vacuous-green (fehlende Pflicht-Creation blockt). (docs/cr/open/CR-GC-221) |
+| `CR-GC-222` | Artefakt-Tab: render/analysis Kind-Split | open | ArtifactStatus.kind render/analysis + zwei Stale-Mechanismen (mtime vs Scope/Commit); INCOSE vs graphcode-spezifisch getrennt; IRR-Label -> Assumption Review. (docs/cr/open/CR-GC-222) |
+| `CR-GC-223` | Skills: Creation-Skills (FMEA-Rename + se-irr/se-conops/se-trade) | open | se-view-irr -> se-view-fmea Rename (FMEA-Render); neu se-irr (Assumption Review), se-conops (operational, vor UC), se-trade (Spike->CR); se-fmea Output-Pfad real. (docs/cr/open/CR-GC-223) |
+| `CR-GC-224` | Skills: View-Skills -> Thin-Trigger (Gruppe A) | open | se-view arch/icd/rtm/nfr/testconcept/testmatrix rufen nur die deterministische View (CR-220), kein Agent-Formatieren. (docs/cr/open/CR-GC-224) |
+| `CR-GC-225` | Skills: View-Skills -> Thin-Trigger (Gruppe B) | open | se-view implplan/intplan/changelog/conops/trade als Thin-Trigger der deterministischen Views. (docs/cr/open/CR-GC-225) |
+| `CR-GC-226` | Doku/Graph: lean=no-artifacts abloesen + Artefakt-Modell seeden | open | lean neu definieren (Renders=Projektion, Creations=Gate-Vorbedingung, FMEA/Assumption lightweight in-scope); MS-6-adoption + CR-220..226 zuordnen; ADR-001 Pointer; Views re-render. (docs/cr/open/CR-GC-226) |
 
 ## FCHAIN
 
@@ -173,6 +180,7 @@ Elemente: 305 · Traces: 695
 | `MS-3-mvp-readiness` | M3: MVP Readiness | done | Realisiert die spezifizierten-aber-unrealisierten Knoten (CLI, MCP-Server, Re-Exporter, Views) + das Live-Dashboard (Hybrid: graphcode-owned, komponiert aus @sigloch/graph-renderer + dashboard-shell + graph-api-express+SSE, V3_RULES-gescort). Schließt F4/F5/F6. (Diskussion 2026-06-17) |
 | `MS-4-mvp2` | M4: MVP-2 (Dashboard, OpenCode, Scale) | draft | Fast-follow nach MVP-1: Live-Dashboard (host-bridge + viewer + views→core), OpenCode-Execution (agent-agnostic 2nd client), Batch-Seed (Scale), Readiness-Modell-Definition, Housekeeping. Hängt von MS-3. |
 | `MS-5-efficiency` | M5: Efficiency-Hardening | draft | Post-MVP2: Effizienz-/Tooling-Hardening. Erste Arbeit: graph_tests operativ machen (testRef-Backfill + code→REQ→TEST-Traversal), damit selektives statt vollem Testlauf real wird (R12/R13). |
+| `MS-6-adoption` | M6: Adoption & Artifact-Model | draft | Adoption-/Tooling-Milestone: erste Realanwendungen (graphify) + Create/Render-Artefaktmodell (deterministisches Rendern, Creations als Gate-Vorbedingung, INCOSE vs graphcode-spezifisch). Heimat von CR-GC-207..226. |
 
 ## REQ
 

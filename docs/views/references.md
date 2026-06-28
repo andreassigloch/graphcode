@@ -227,6 +227,13 @@
 | `CR-GC-205` | relation | `REQ-testref-materialized` |
 | `CR-GC-206` | relation | `MS-5-efficiency` |
 | `CR-GC-206` | relation | `REQ-graph-code-conformance` |
+| `CR-GC-220` | relation | `MS-6-adoption` |
+| `CR-GC-221` | relation | `MS-6-adoption` |
+| `CR-GC-222` | relation | `MS-6-adoption` |
+| `CR-GC-223` | relation | `MS-6-adoption` |
+| `CR-GC-224` | relation | `MS-6-adoption` |
+| `CR-GC-225` | relation | `MS-6-adoption` |
+| `CR-GC-226` | relation | `MS-6-adoption` |
 | `FCHAIN-agent-query` | compose | `FUNC-graph-expand` |
 | `FCHAIN-agent-query` | compose | `FUNC-graph-impact` |
 | `FCHAIN-agent-query` | satisfy | `REQ-post-agent-query` |
