@@ -365,6 +365,13 @@
       "status": "done"
     },
     {
+      "id": "CR-GC-207",
+      "type": "CR",
+      "name": "Graph-first onboarding contract (GRAPHCODE.md + dialect marker)",
+      "description": "DONE 2026-06-28: scaffolded GRAPHCODE.md carries the graph-first contract — graph is SSOT not docs; entry = MCP query (graph_readiness/graph_elements/graph_impact/graph_expand), never doc-ingest; Format-E dialect uid.TYPE (Name.SY.001 dead); SPEC.md = bootstrap input, do not read; run graph_export after seeding so JSON SSOT exists. docs/SPEC.md head now self-declares status: INPUT-ONLY (couples deny-stale-prose-read hook CR-214) + dialect-obsolete note. Realizes via src/scaffold.ts guardrailsContent(). Test: tests/cli.scaffold.test.ts. (CR-GC-207)",
+      "status": "done"
+    },
+    {
       "id": "CR-GC-214",
       "type": "CR",
       "name": "Read-side graph-first enforcement (deny-stale-prose-read hook)",

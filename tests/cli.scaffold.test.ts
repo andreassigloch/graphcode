@@ -100,6 +100,22 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
     expect(readdirSync(join(repo, SKILLS_DIR)).sort()).toEqual(SHIPPED_SKILLS);
   });
 
+  it('GRAPHCODE.md carries the graph-first onboarding contract (CR-GC-207)', async () => {
+    await scaffold('init', { repoRoot: repo });
+    const md = readFileSync(join(repo, GUARDRAILS), 'utf8');
+    // (1) graph is SSOT, not the docs; query-first, not doc-ingest.
+    expect(md).toMatch(/graph is the SSOT, not the docs/i);
+    // (2) names the entry query path — all four precision tools.
+    for (const tool of ['graph_readiness', 'graph_elements', 'graph_impact', 'graph_expand']) {
+      expect(md).toContain(tool);
+    }
+    // (3) canonical Format-E dialect is uid.TYPE; the SPEC.md Name.SY.001 spelling is dead.
+    expect(md).toContain('uid.TYPE');
+    expect(md).toMatch(/`Name\.SY\.001`[^\n]*dead/i);
+    // (4) SPEC.md is bootstrap input, do not read it to plan.
+    expect(md).toMatch(/SPEC\.md.*do not read it/i);
+  });
+
   it('init ships the PreToolUse deny-hooks + registers them in settings.json (CR-GC-214)', async () => {
     expect(SHIPPED_HOOKS.length).toBeGreaterThan(0);
     const res = await scaffold('init', { repoRoot: repo });
