@@ -419,6 +419,13 @@
       "status": "done"
     },
     {
+      "id": "CR-GC-218",
+      "type": "CR",
+      "name": "Concurrent-agent isolation and safe graph recall",
+      "description": "DONE 2026-07-02 (was deferred draft): implemented O1+O2+O3, NOT O4 (O4 changes the locked one-owner-per-repo constraint, family-review-gated). O1 = scripts/gcw.mjs git-worktree wrapper; .graphcode is gitignored + repo-root-relative so each worktree gets its own Kuzu store automatically (per-worktree isolation without touching the constraint); retries .git/config.lock contention (claude-code#34645). O2 = src/store-lock.ts store-ownership lock (atomic O_EXCL lockfile + pid/host, reclaim only on positive-dead or old-corrupt); harness acquires on initialize, releases on close, so a 2nd writer on one store is refused loudly (StoreOwnershipError), enforcing REQ-single-kuzu-owner. O3 = in-process FIFO write-mutex so reseed never interleaves with mutate. Research: codegraph read-only (N/A); claude-flow/ruflo has the same bug, patches with SQLite WAL+retry which single-writer Kuzu rejects. docs/CONCURRENCY.md. Test: tests/store-lock.test.ts. (CR-GC-218)",
+      "status": "done"
+    },
+    {
       "id": "CR-GC-219",
       "type": "CR",
       "name": "Flatten redundant nested attributes field",

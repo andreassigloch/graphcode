@@ -39,6 +39,7 @@ import {
 } from '@sigloch/contracts/harness';
 import { HookSystem } from './hooks.js';
 import { elementToNode } from './exporter.js';
+import { StoreLock } from './store-lock.js';
 import { setExportPending, clearExportPending } from './export-marker.js';
 
 /** Shape of the materialized OntologyGraph in docs/graph/*.graph.json. */
@@ -54,6 +55,10 @@ export class GraphCodeHarness {
   private readonly engine: DefaultRuleEngine;
   /** In-memory working copy; the disk store is the SSOT it mirrors. */
   private graph: Graph = { nodes: [], edges: [] };
+  /** Store-ownership lock (CR-GC-218 O2): one writer per `.graphcode` store. */
+  private readonly storeLock: StoreLock;
+  /** Serializes writes so a reseed never interleaves with a mutate (CR-GC-218 O3). */
+  private writeChain: Promise<unknown> = Promise.resolve();
 
   constructor(config: HarnessConfig, storage: StorageAdapter, hooks?: HookSystem) {
     this.config = HarnessConfigSchema.parse(config);
@@ -62,6 +67,18 @@ export class GraphCodeHarness {
     // L2: rules come from the contracts-derived SE_DESCRIPTOR — no local parser.
     this.engine = new DefaultRuleEngine(SE_DESCRIPTOR.version);
     this.engine.register(SE_DESCRIPTOR.rules ?? []);
+    this.storeLock = new StoreLock(join(this.config.repoRoot, '.graphcode', 'owner.lock'));
+  }
+
+  /** Run a write body with exclusive access — mutate/reseed never interleave (O3). */
+  private serializeWrite<T>(body: () => Promise<T>): Promise<T> {
+    const result = this.writeChain.then(body, body);
+    // Keep the chain alive across failures so one error can't wedge the queue.
+    this.writeChain = result.then(
+      () => undefined,
+      () => undefined,
+    );
+    return result;
   }
 
   /** Expose the hook system so consumers (CR-102) can register hooks. */
@@ -71,8 +88,17 @@ export class GraphCodeHarness {
 
   /** Initialize the store, then load the persisted graph into memory. */
   async initialize(): Promise<void> {
-    await this.storage.initialize();
-    await this.loadGraph();
+    // O2: claim single ownership of this store BEFORE opening it — a second writer
+    // on the same `.graphcode` is refused loudly (StoreOwnershipError), not silently
+    // clobbered. Run a second agent in its own git worktree for its own store.
+    this.storeLock.acquire();
+    try {
+      await this.storage.initialize();
+      await this.loadGraph();
+    } catch (err) {
+      this.storeLock.release();
+      throw err;
+    }
   }
 
   /** Load the persisted graph (disk Kuzu) into the in-memory working copy. */
@@ -226,8 +252,14 @@ export class GraphCodeHarness {
    *   4. persist iff no error-severity violation; otherwise BLOCK (L2).
    *   5. post-apply hooks.
    *   6. return MutateResult (success, mutations, violations, confidence, tier).
+   *
+   * Serialized (O3): a mutate never interleaves with a reseed or another mutate.
    */
   async mutate(commands: MutateCommand[]): Promise<MutateResult> {
+    return this.serializeWrite(() => this.applyMutation(commands));
+  }
+
+  private async applyMutation(commands: MutateCommand[]): Promise<MutateResult> {
     // Step 1 — pre-commit.
     const preResults = await this.hooks.runPreCommitHooks(commands);
     const blockedBy = preResults.find((r) => r.block);
@@ -386,6 +418,12 @@ export class GraphCodeHarness {
    * any un-exported gate mutations; pairs with the CR-GC-201 drift warning.
    */
   async reseed(relPath = 'docs/graph/graphcode.graph.json'): Promise<{ nodes: number; edges: number }> {
+    // Serialized (O3): a reseed never runs while a mutate is mid-flight (or vice versa),
+    // so no writer ever sees the half-cleared store during the DETACH-DELETE + re-import.
+    return this.serializeWrite(() => this.applyReseed(relPath));
+  }
+
+  private async applyReseed(relPath: string): Promise<{ nodes: number; edges: number }> {
     const uids = this.graph.nodes.map((n) => n.uid);
     if (uids.length) await this.storage.deleteNodes(uids);
     this.graph = { nodes: [], edges: [] };
@@ -397,9 +435,13 @@ export class GraphCodeHarness {
     return result;
   }
 
-  /** Release the store handle (single-writer cleanup). */
+  /** Release the store handle + the ownership lock (single-writer cleanup). */
   async close(): Promise<void> {
-    await this.storage.shutdown();
+    try {
+      await this.storage.shutdown();
+    } finally {
+      this.storeLock.release();
+    }
   }
 
   // -- internals ------------------------------------------------------------

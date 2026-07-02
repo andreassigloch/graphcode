@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 57 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 58 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 57 CR · 55 done · 2 open.
+Total: 58 CR · 56 done · 2 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -93,6 +93,7 @@ Total: 57 CR · 55 done · 2 open.
 | `CR-GC-214` | done | Read-side graph-first enforcement (deny-stale-prose-read hook) |
 | `CR-GC-215` | done | Ship enforcement-hooks to consumer repos |
 | `CR-GC-216` | done | graph_realize ergonomic write-back affordance (write-twin of graph_context) |
+| `CR-GC-218` | done | Concurrent-agent isolation and safe graph recall |
 | `CR-GC-219` | done | Flatten redundant nested attributes field |
 | `CR-GC-227` | done | Help content layer (authored Plain/SE annotation, HELP_CONTENT) |
 | `CR-GC-228` | done | Help data layer (pure projection to HelpEntry, help.ts) |
