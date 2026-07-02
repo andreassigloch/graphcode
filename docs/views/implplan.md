@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). MS/CR-Slices + depends-on, leaf ▲ root. Deterministisch generiert.
 
-depends-on:  MS-1-specification  ◀  MS-2-coding-vv  ◀  MS-3-mvp-readiness  ◀  MS-4-mvp2  ◀  MS-5-efficiency  ◀  MS-6-adoption
+depends-on:  MS-1-specification  ◀  MS-2-coding-vv  ◀  MS-3-mvp-readiness  ◀  MS-4-mvp2  ◀  MS-5-efficiency  ◀  MS-6-adoption  ◀  MS-7-concurrency
 
 ## `MS-1-specification` — M1: Spezifikation · status: reviewed
 
@@ -79,5 +79,14 @@ depends-on:  MS-1-specification  ◀  MS-2-coding-vv  ◀  MS-3-mvp-readiness  �
 | `CR-GC-224` | done | Skills: View-Skills Thin-Trigger (Gruppe A) |
 | `CR-GC-225` | done | Skills: View-Skills Thin-Trigger (Gruppe B) |
 | `CR-GC-226` | done | Doku/Graph: lean=no-artifacts abloesen + Artefakt-Modell seeden |
+
+## `MS-7-concurrency` — Enterprise concurrency & merge (one write channel) · status: draft
+
+| CR | status | name |
+|---|---|---|
+| `CR-GC-232` | open | Durables Command-Log (append-only Audit-Persistenz) |
+| `CR-GC-233` | open | OCC: graphVersion + baseVersion-Check am Gate |
+| `CR-GC-234` | open | graph_merge: Replay-basierte Branch-Reintegration (semantischer Rebase) |
+| `CR-GC-235` | open | Ein Write-Channel: Host-owned Store, Sessions als Clients |
 
 > RENDER — the leaf→root MS/CR cut se-plan CREATEd; the test-level mapping mirrors the pyramid (#7).

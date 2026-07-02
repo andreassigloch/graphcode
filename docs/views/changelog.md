@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 58 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 62 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 58 CR · 56 done · 2 open.
+Total: 62 CR · 56 done · 6 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -79,6 +79,15 @@ Total: 58 CR · 56 done · 2 open.
 | `CR-GC-224` | done | Skills: View-Skills Thin-Trigger (Gruppe A) |
 | `CR-GC-225` | done | Skills: View-Skills Thin-Trigger (Gruppe B) |
 | `CR-GC-226` | done | Doku/Graph: lean=no-artifacts abloesen + Artefakt-Modell seeden |
+
+## `MS-7-concurrency` — Enterprise concurrency & merge (one write channel)
+
+| CR | status | name |
+|---|---|---|
+| `CR-GC-232` | open | Durables Command-Log (append-only Audit-Persistenz) |
+| `CR-GC-233` | open | OCC: graphVersion + baseVersion-Check am Gate |
+| `CR-GC-234` | open | graph_merge: Replay-basierte Branch-Reintegration (semantischer Rebase) |
+| `CR-GC-235` | open | Ein Write-Channel: Host-owned Store, Sessions als Clients |
 
 ## (unassigned)
 

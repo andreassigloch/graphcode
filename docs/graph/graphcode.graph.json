@@ -517,6 +517,34 @@
       "status": "done"
     },
     {
+      "id": "CR-GC-232",
+      "type": "CR",
+      "name": "Durables Command-Log (append-only Audit-Persistenz)",
+      "description": "FileAuditLog (append-only JSONL, .graphcode/audit.jsonl) ersetzt den InMemory-Default im Server; audit_trail sessionuebergreifend; crash-tolerant. Fundament fuer OCC-Delta (233) + Replay-Merge (234): das durable Operations-Log ist die Konvergenz-Grundlage, State wird abgeleitet. (docs/cr/open/CR-GC-232)",
+      "status": "open"
+    },
+    {
+      "id": "CR-GC-233",
+      "type": "CR",
+      "name": "OCC: graphVersion + baseVersion-Check am Gate",
+      "description": "Monotone graphVersion pro Store (aus dem Log rekonstruiert); Read-Tools liefern sie mit; graph_mutate/graph_realize akzeptieren baseVersion — veraltet → Reject mit Delta-Report (Eintraege seit dem Read), Agent re-read + retry. Realisiert R5 base_snapshot@version; Tool-Schema-lokal, kein Contracts-Bump. (docs/cr/open/CR-GC-233)",
+      "status": "open"
+    },
+    {
+      "id": "CR-GC-234",
+      "type": "CR",
+      "name": "graph_merge: Replay-basierte Branch-Reintegration (semantischer Rebase)",
+      "description": "Beendet den manuellen Merge: Branch-Command-Log (232) wird ab dem Fork-Punkt (233) durchs bestehende Gate auf der neuen Base re-applied; Konflikte = Gate-Violations mit fixHint (applied/conflicted/skipped-Report, dryRun), keine Text-Konflikte. CRDT verworfen (Ops kommutieren nicht, V3_RULES sind globale Invarianten). (docs/cr/open/CR-GC-234)",
+      "status": "open"
+    },
+    {
+      "id": "CR-GC-235",
+      "type": "CR",
+      "name": "Ein Write-Channel: Host-owned Store, Sessions als Clients",
+      "description": "Singleton-Election via O2-Lock: erster graphcode-mcp-Prozess wird Host (Store+Gate, Unix-Socket .graphcode/host.sock), spaetere degradieren zum stdio→Socket-Proxy — alle Writes durchs eine Gate, Reads aus dem Host-Snapshot. MCP-stdio nach aussen unveraendert (Transport-Lock gewahrt); ein Host pro Store/Worktree. Frontrunner-Entscheid verifiziert: graphcode ist alleiniger Nutzer von Store+MCP-Surface. Phase B (streamable HTTP) = spaeterer Familie-Entscheid. (docs/cr/open/CR-GC-235)",
+      "status": "open"
+    },
+    {
       "id": "FCHAIN-agent-query",
       "type": "FCHAIN",
       "name": "Agent-Graph-Query (Impact + progressive Expansion)",
@@ -1408,6 +1436,13 @@
       "type": "MS",
       "name": "M6: Adoption & Artifact-Model",
       "description": "Adoption-/Tooling-Milestone: erste Realanwendungen (graphify) + Create/Render-Artefaktmodell (deterministisches Rendern, Creations als Gate-Vorbedingung, INCOSE vs graphcode-spezifisch). Heimat von CR-GC-207..226.",
+      "status": "draft"
+    },
+    {
+      "id": "MS-7-concurrency",
+      "type": "MS",
+      "name": "Enterprise concurrency & merge (one write channel)",
+      "description": "Enterprise-Merge-Ladder: durables Command-Log → OCC → Replay-Merge → Host-Topologie (ONE database, one write channel, multiple read). Beendet den manuellen Graph-Merge; Architektur-Vorlage für den aise-Nachfolger. (docs/CONCURRENCY.md)",
       "status": "draft"
     },
     {
@@ -5003,6 +5038,26 @@
     {
       "source": "CR-GC-226",
       "target": "MS-6-adoption",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-232",
+      "target": "MS-7-concurrency",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-233",
+      "target": "MS-7-concurrency",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-234",
+      "target": "MS-7-concurrency",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-235",
+      "target": "MS-7-concurrency",
       "type": "relation"
     },
     {

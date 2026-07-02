@@ -234,6 +234,10 @@
 | `CR-GC-224` | relation | `MS-6-adoption` |
 | `CR-GC-225` | relation | `MS-6-adoption` |
 | `CR-GC-226` | relation | `MS-6-adoption` |
+| `CR-GC-232` | relation | `MS-7-concurrency` |
+| `CR-GC-233` | relation | `MS-7-concurrency` |
+| `CR-GC-234` | relation | `MS-7-concurrency` |
+| `CR-GC-235` | relation | `MS-7-concurrency` |
 | `FCHAIN-agent-query` | compose | `FUNC-graph-expand` |
 | `FCHAIN-agent-query` | compose | `FUNC-graph-impact` |
 | `FCHAIN-agent-query` | satisfy | `REQ-post-agent-query` |

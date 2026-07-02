@@ -4,9 +4,9 @@
 
 # graphcode — Integration & Test Plan
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 6 MS · Impl-Gates, depends-on Tier-Order. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 7 MS · Impl-Gates, depends-on Tier-Order. Deterministisch generiert.
 
-Tier order:  MS-1-specification  ──▶  MS-2-coding-vv  ──▶  MS-3-mvp-readiness  ──▶  MS-4-mvp2  ──▶  MS-5-efficiency  ──▶  MS-6-adoption
+Tier order:  MS-1-specification  ──▶  MS-2-coding-vv  ──▶  MS-3-mvp-readiness  ──▶  MS-4-mvp2  ──▶  MS-5-efficiency  ──▶  MS-6-adoption  ──▶  MS-7-concurrency
 
 | Milestone | status | CRs (open) | blocking |
 |---|---|---|---|
@@ -16,5 +16,6 @@ Tier order:  MS-1-specification  ──▶  MS-2-coding-vv  ──▶  MS-3-mvp-
 | `MS-4-mvp2` | draft | 0 / 12 | — |
 | `MS-5-efficiency` | draft | 2 / 3 | `CR-GC-204` · `CR-GC-205` |
 | `MS-6-adoption` | draft | 0 / 7 | — |
+| `MS-7-concurrency` | draft | 4 / 4 | `CR-GC-232` · `CR-GC-233` · `CR-GC-234` · `CR-GC-235` |
 
 > GENERATED — renders the milestones/CRs the Impl Plan created. Originates nothing.
