@@ -1,4 +1,4 @@
-# Concurrency & recall — safe, simple operation (CR-GC-218)
+# Concurrency & recall — safe, simple operation (CR-GC-218 · MS-7 ladder CR-GC-232..235)
 
 **The model, in one line:** the store is to `docs/graph/*.graph.json` what the working tree
 is to a commit — a **derived, per-worktree cache**, never shared mutable state. Concurrency is
@@ -18,13 +18,36 @@ Both had one root cause: **one shared mutable live store + one shared working tr
    from that worktree's committed graph on first `graphcode mcp`. `gcw <branch>` creates the worktree
    (retrying `.git/config.lock` contention — [claude-code#34645](https://github.com/anthropics/claude-code/issues/34645))
    and prints how to launch an agent there. For Claude Code subagents, pass `isolation: "worktree"`.
-2. **O2 — store-ownership lock (`src/store-lock.ts`).** For the case where two agents DO share one
-   working directory, a second writer on the same store is **refused loudly** (`StoreOwnershipError`)
-   instead of silently clobbering it — enforcing the locked `REQ-single-kuzu-owner` at runtime. The
-   lock is an atomic `O_EXCL` lockfile with the owner's pid/host; it is reclaimed only on positive
-   evidence the owner is gone (same host + dead PID, or an old corrupt file), never while it might be live.
+2. **O2 — store-ownership lock (`src/store-lock.ts`), now an ELECTION (CR-GC-235).** The lock still
+   enforces the locked `REQ-single-kuzu-owner` at runtime — an atomic `O_EXCL` lockfile with the
+   owner's pid/host, reclaimed only on positive evidence the owner is gone (same host + dead PID, or
+   an old corrupt file), never while it might be live. What changed with CR-GC-235: for `graphcode mcp`
+   the loser of the lock race no longer **dies** (`StoreOwnershipError`) — it **degrades to a client**:
+   - **Winner = host**: owns store + gate, serves its own session via MCP-stdio AND a local Unix
+     socket (`.graphcode/host.sock`) for later sessions (`src/host-shim.ts`).
+   - **Loser = client**: a thin stdio→socket proxy — the same tool surface, every call forwarded to
+     the host, every write through the ONE gate (O3-serialized + OCC, CR-GC-233). Two Claude
+     sessions (or parallel subagents) on the same directory now work on **one** model — divergence
+     inside a model cannot arise; merging stays reserved for **intentional** branches (CR-GC-234).
+   - **Host death**: the proxy reconnects once, then attempts ONE re-election (the stale-lock
+     reclaim makes the dead host's lock winnable) and continues as host; otherwise a clear
+     `HostGoneError`. A fresh `graphcode mcp` start after a host kill wins the election — no dead state.
+   - Agents keep speaking **MCP-stdio** either way; the socket is an internal shim hop, not a second
+     API surface (no HTTP — Phase B, streamable HTTP, is a separate future family decision).
+   A DIRECT second `GraphCodeHarness` on an owned store (library use, not `graphcode mcp`) is still
+   refused loudly — the election lives above the harness, the invariant below it is untouched.
 3. **O3 — write serialization (harness).** A `reseed` never interleaves with a `mutate` (nor two
    mutates): both run through one in-process FIFO write-mutex, so no writer sees a half-cleared store.
+
+## The MS-7 ladder on top (CR-GC-232..235)
+- **CR-GC-232 — durable command log**: every gated batch lands in `.graphcode/audit.jsonl`
+  (beside the store, like the lock) with its `MutateCommand[]` — the replay + delta source.
+- **CR-GC-233 — OCC**: reads return `graphVersion`; writes carry `baseVersion`; a stale write is
+  rejected with the delta of applied batches since — re-read, reconcile, retry. Never a silent lost update.
+- **CR-GC-234 — `graph_merge`**: intentional branch reintegration = replaying the branch's command
+  log after the fork point through the existing gate; conflicts are gate violations (report:
+  applied/conflicted/skipped, `dryRun` preview) — never a `graph.json` text merge.
+- **CR-GC-235 — one write channel**: the host election above; one host per store (= per worktree).
 
 ## Why NOT O4 (per-worktree-derived store path sharing one repo dir)
 O4 would key the store to a worktree id while sharing one working directory — that **changes the
@@ -46,5 +69,7 @@ gives per-worktree isolation *because the store lives in the working dir*, witho
 gcw <branch>                       # new isolated worktree + its own store; prints launch steps
 git worktree remove <dir>          # when the agent is done
 ```
-A second `graphcode mcp` on a store another process owns fails fast with a message naming the owner
-and pointing you to `gcw`. If you are certain no other graphcode is running, delete `.graphcode/owner.lock`.
+A second `graphcode mcp` on a store another process owns becomes a **client** of that host (stderr
+names the owning pid + socket) — both sessions work on the one model. A direct second harness
+instance (library use) still fails fast naming the owner. If you are certain no other graphcode is
+running, delete `.graphcode/owner.lock`.

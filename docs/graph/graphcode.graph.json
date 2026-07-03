@@ -541,8 +541,8 @@
       "id": "CR-GC-235",
       "type": "CR",
       "name": "Ein Write-Channel: Host-owned Store, Sessions als Clients",
-      "description": "Singleton-Election via O2-Lock: erster graphcode-mcp-Prozess wird Host (Store+Gate, Unix-Socket .graphcode/host.sock), spaetere degradieren zum stdio→Socket-Proxy — alle Writes durchs eine Gate, Reads aus dem Host-Snapshot. MCP-stdio nach aussen unveraendert (Transport-Lock gewahrt); ein Host pro Store/Worktree. Frontrunner-Entscheid verifiziert: graphcode ist alleiniger Nutzer von Store+MCP-Surface. Phase B (streamable HTTP) = spaeterer Familie-Entscheid. (docs/cr/open/CR-GC-235)",
-      "status": "open"
+      "description": "DONE 2026-07-03 (Phase A, Socket-Shim): src/host-shim.ts + Election in serveStdio (src/mcp-server.ts). Der O2-Lock IST die Election: harness.initialize() gewinnt → Host (Store+Gate, bedient stdio UND Unix-Socket .graphcode/host.sock via startHostSocket); StoreOwnershipError → Verlierer degradiert zum duennen stdio→Socket-Proxy (buildProxyRegistry: identische Tool-Surface aus demselben bindToolsToHarness-Template, jeder Call via callHost geforwardet, Host re-parsed gegen dieselben Zod-Schemas — Gate-Symmetrie CR-124-analog, OCC wirkt ueber den Shim). Nach aussen bleibt MCP-stdio (Transport-Lock in Letter+Spirit; Socket = interner Shim-Hop, newline-JSON, kein HTTP). Host-Tod: ein Reconnect (Connect-Retry), dann EINE Re-Election (promote via Stale-Lock-Reclaim CR-218) und Weiterbetrieb als Host, sonst klarer HostGoneError; naechster mcp-Start gewinnt die Election — kein toter Zustand. Direkte zweite Harness-Instanz wird weiter refused (Election lebt OBERHALB der Harness; store-lock.test unveraendert). Ein Host pro Store/Worktree; docs/CONCURRENCY.md + GRAPHCODE.md-Scaffold aktualisiert. Phase B (streamable HTTP) bleibt eigener Familie-Entscheid. Test: tests/host-shim.test.ts. (CR-GC-235)",
+      "status": "done"
     },
     {
       "id": "FCHAIN-agent-query",

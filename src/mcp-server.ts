@@ -24,6 +24,8 @@ import type { HarnessConfig } from '@sigloch/contracts/harness';
 import { createHarness, type GraphCodeHarness } from './index.js';
 import { exportGraphJson } from './exporter.js';
 import { bindToolsToHarness, type MCPTool, type MCPToolRegistry } from './mcp-tools.js';
+import { StoreOwnershipError } from './store-lock.js';
+import { startHostSocket, buildProxyRegistry, HOST_SOCK_BASENAME } from './host-shim.js';
 
 // Identity advertised to MCP clients during the initialize handshake. Kept in
 // sync with package.json by CR-121 (distribution); hardcoded here so the core
@@ -59,27 +61,15 @@ export function buildMcpServer(harness: GraphCodeHarness, auditLog?: AuditLog): 
 }
 
 /**
- * Boot the harness over disk Kuzu and serve its tools on MCP-stdio until the
- * transport closes. This is the `graphcode mcp` entrypoint.
- *
- * stdout is owned by the JSON-RPC transport — callers must keep it clean
- * (diagnostics go to stderr). On a fresh repo whose store has not been seeded
- * yet, the committed `docs/graph/*.graph.json` (if present) is loaded so the
- * agent immediately sees the model; cold-start through the gate is CR-122.
+ * Boot a HOST over the store this process just won the election for: harness on
+ * disk Kuzu (seed-on-empty / drift warning), the bound tool registry, and the
+ * local Unix socket (`.graphcode/host.sock`) that serves later sessions'
+ * proxies (CR-GC-235). Returns the registry to bind to this session's stdio.
  */
-export async function serveStdio(opts?: {
-  repoRoot?: string;
-  scope?: HarnessConfig['scope'];
-}): Promise<void> {
-  const repoRoot = opts?.repoRoot ?? process.cwd();
-  // Derive the member identity from the repo so graph_export et al. default to a
-  // repo-specific name (e.g. auth-service.graph.json), not the generic 'graphcode'.
-  const member = deriveMemberName(repoRoot);
-  const harness = await createHarness({
-    repoRoot,
-    scope: opts?.scope ?? { workspaceId: member, systemId: member },
-  });
-  await harness.initialize();
+async function bootHost(
+  repoRoot: string,
+  harness: GraphCodeHarness,
+): Promise<MCPToolRegistry> {
   if (harness.getGraph().nodes.length === 0) {
     try {
       const seeded = await harness.seedFromJson();
@@ -118,7 +108,58 @@ export async function serveStdio(opts?: {
       // No committed JSON to compare against — nothing to warn about.
     }
   }
-  const server = buildMcpServer(harness);
+  const registry = bindToolsToHarness(harness);
+  // ONE write channel (CR-GC-235): the elected host also serves later sessions
+  // over the local socket shim — an internal hop, not a second API surface.
+  await startHostSocket(registry, join(harness.getStoreDir(), HOST_SOCK_BASENAME));
+  return registry;
+}
+
+/**
+ * Boot the MCP-stdio server for this repo — with the singleton ELECTION
+ * (CR-GC-235): the O2 store lock decides. The winner becomes the HOST (owns
+ * store + gate, serves stdio + the local socket); a loser no longer dies with
+ * StoreOwnershipError but degrades to a thin stdio→socket PROXY over the same
+ * tool surface — every write still through the ONE gate. Agents keep speaking
+ * MCP-stdio either way (transport lock in letter + spirit).
+ *
+ * stdout is owned by the JSON-RPC transport — callers must keep it clean
+ * (diagnostics go to stderr). On a fresh repo whose store has not been seeded
+ * yet, the committed `docs/graph/*.graph.json` (if present) is loaded so the
+ * agent immediately sees the model; cold-start through the gate is CR-122.
+ */
+export async function serveStdio(opts?: {
+  repoRoot?: string;
+  scope?: HarnessConfig['scope'];
+}): Promise<void> {
+  const repoRoot = opts?.repoRoot ?? process.cwd();
+  // Derive the member identity from the repo so graph_export et al. default to a
+  // repo-specific name (e.g. auth-service.graph.json), not the generic 'graphcode'.
+  const member = deriveMemberName(repoRoot);
+  const scope = opts?.scope ?? { workspaceId: member, systemId: member };
+
+  /** One election attempt: win the lock and come up as a full host. */
+  async function electAndBoot(): Promise<MCPToolRegistry> {
+    const harness = await createHarness({ repoRoot, scope });
+    await harness.initialize(); // the O2 lock IS the election (CR-GC-218)
+    return bootHost(repoRoot, harness);
+  }
+
+  let registry: MCPToolRegistry;
+  try {
+    registry = await electAndBoot();
+    process.stderr.write('[graphcode] host: won the store election — serving stdio + host.sock\n');
+  } catch (err) {
+    if (!(err instanceof StoreOwnershipError)) throw err;
+    // Election lost → thin proxy to the live host. `promote` is the single
+    // re-election attempt when the host dies mid-session (stale-lock reclaim).
+    const socketPath = join(repoRoot, '.graphcode', HOST_SOCK_BASENAME);
+    registry = buildProxyRegistry({ socketPath, promote: electAndBoot });
+    process.stderr.write(
+      `[graphcode] client: store owned by pid ${err.owner.pid} — proxying stdio to ${socketPath}\n`,
+    );
+  }
+  const server = bindRegistryToMcpServer(registry);
   await server.connect(new StdioServerTransport());
 }
 
