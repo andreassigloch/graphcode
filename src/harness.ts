@@ -280,12 +280,19 @@ export class GraphCodeHarness {
    *   6. return MutateResult (success, mutations, violations, confidence, tier).
    *
    * Serialized (O3): a mutate never interleaves with a reseed or another mutate.
+   *
+   * `dryRun` (CR-GC-234): the FULL gate verdict (hooks, rules, delta semantics)
+   * with NOTHING persisted — the in-memory working copy keeps the applied state so
+   * a sequential replay previews CUMULATIVELY (batch N+1 is judged on top of batch
+   * N), which per-batch rollback could not. The caller MUST restore the working
+   * copy afterwards via `loadGraph()` (graph_merge does). Post-apply hooks are
+   * skipped on a dry run (no phantom live-update/learning events).
    */
-  async mutate(commands: MutateCommand[]): Promise<MutateResult> {
-    return this.serializeWrite(() => this.applyMutation(commands));
+  async mutate(commands: MutateCommand[], opts?: { dryRun?: boolean }): Promise<MutateResult> {
+    return this.serializeWrite(() => this.applyMutation(commands, opts?.dryRun ?? false));
   }
 
-  private async applyMutation(commands: MutateCommand[]): Promise<MutateResult> {
+  private async applyMutation(commands: MutateCommand[], dryRun = false): Promise<MutateResult> {
     // Step 1 — pre-commit.
     const preResults = await this.hooks.runPreCommitHooks(commands);
     const blockedBy = preResults.find((r) => r.block);
@@ -300,7 +307,7 @@ export class GraphCodeHarness {
         confidence: 0,
         tier: 'block',
       };
-      await this.hooks.runPostApplyHooks(result);
+      if (!dryRun) await this.hooks.runPostApplyHooks(result);
       return result;
     }
 
@@ -345,18 +352,23 @@ export class GraphCodeHarness {
         confidence: 0,
         tier: 'block',
       };
-      await this.hooks.runPostApplyHooks(result);
+      if (!dryRun) await this.hooks.runPostApplyHooks(result);
       return result;
     }
 
-    // Step 4 (APPLY) — persist the delta to disk Kuzu.
-    await this.persist(delta);
+    // Step 4 (APPLY) — persist the delta to disk Kuzu. A dry run (CR-GC-234)
+    // stops at the verdict: no persist, no drift marker — but the in-memory
+    // working copy KEEPS the applied state for cumulative replay preview
+    // (the caller restores it via loadGraph()).
+    if (!dryRun) {
+      await this.persist(delta);
 
-    // CR-GC-217: the live model now leads the committed snapshot. Leave the
-    // single-writer-safe drift marker so the pre-commit hook blocks a commit until
-    // graph_export re-materializes docs/graph/*.graph.json (each commit a graph
-    // state that fits the code — REQ-graph-snapshot-per-commit).
-    setExportPending(this.config.repoRoot);
+      // CR-GC-217: the live model now leads the committed snapshot. Leave the
+      // single-writer-safe drift marker so the pre-commit hook blocks a commit until
+      // graph_export re-materializes docs/graph/*.graph.json (each commit a graph
+      // state that fits the code — REQ-graph-snapshot-per-commit).
+      setExportPending(this.config.repoRoot);
+    }
 
     const tier = newViolations.some((v) => v.severity === 'warning') ? 'suggest' : 'auto-apply';
     const result: MutateResult = {
@@ -368,8 +380,8 @@ export class GraphCodeHarness {
       tier,
     };
 
-    // Step 5 — post-apply hooks.
-    await this.hooks.runPostApplyHooks(result);
+    // Step 5 — post-apply hooks (skipped on a dry run: no phantom events).
+    if (!dryRun) await this.hooks.runPostApplyHooks(result);
 
     // Step 6 — return.
     return result;

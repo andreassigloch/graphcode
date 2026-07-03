@@ -86,7 +86,7 @@ depends-on:  MS-1-specification  ◀  MS-2-coding-vv  ◀  MS-3-mvp-readiness  �
 |---|---|---|
 | `CR-GC-232` | done | Durables Command-Log (append-only Audit-Persistenz) |
 | `CR-GC-233` | done | OCC: graphVersion + baseVersion-Check am Gate |
-| `CR-GC-234` | open | graph_merge: Replay-basierte Branch-Reintegration (semantischer Rebase) |
+| `CR-GC-234` | done | graph_merge: Replay-basierte Branch-Reintegration (semantischer Rebase) |
 | `CR-GC-235` | open | Ein Write-Channel: Host-owned Store, Sessions als Clients |
 
 > RENDER — the leaf→root MS/CR cut se-plan CREATEd; the test-level mapping mirrors the pyramid (#7).

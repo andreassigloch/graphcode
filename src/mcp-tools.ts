@@ -16,7 +16,7 @@
  * @author andreas@siglochconsulting
  */
 
-import { join, dirname } from 'node:path';
+import { join, dirname, isAbsolute } from 'node:path';
 import { mkdirSync, writeFileSync, existsSync, readFileSync } from 'node:fs';
 import { z } from 'zod/v4';
 import type { ZodType } from 'zod/v4';
@@ -31,6 +31,7 @@ import { clearExportPending } from './export-marker.js';
 import { scoreReadiness, summarizeReadiness, type ReadinessReport } from './readiness.js';
 import { helpEntry, contextualHelp, type HelpEntry, type ContextualMeasure } from './viewer/help.js';
 import { GraphCodeCodec } from './codec.js';
+import { readBranchLog, replayBranchLog, type MergeReport } from './merge.js';
 
 // ---------------------------------------------------------------------------
 // Public types
@@ -188,6 +189,29 @@ const GraphRealizeInputSchema = z.object({
 /** Authoring-guide input (CR-GC-231) — which ElementType to surface legal edges for. */
 const GraphAuthoringGuideInputSchema = z.object({
   type: z.string().describe('The ElementType to author (e.g. UC, REQ, FUNC, TEST, MOD, ACTOR).'),
+});
+
+/** Replay-based branch reintegration (CR-GC-234) — the semantic rebase. */
+const GraphMergeInputSchema = z.object({
+  log: z
+    .string()
+    .describe(
+      "Path to the BRANCH's durable command log (the worktree's .graphcode/audit.jsonl, CR-GC-232) — " +
+        'absolute, or relative to this repoRoot.',
+    ),
+  sinceVersion: z
+    .number()
+    .int()
+    .nonnegative()
+    .describe(
+      'The fork point: the shared base graphVersion (CR-GC-233). Branch entries with graphVersion > ' +
+        'sinceVersion are replayed; everything at or before it is shared history.',
+    ),
+  dryRun: z
+    .boolean()
+    .default(false)
+    .describe('true = merge preview: full report, but graph + log stay byte-identical.'),
+  consumerId: z.string().default('graph-merge'),
 });
 
 const GraphTestsInputSchema = z.object({
@@ -1042,6 +1066,45 @@ export function bindToolsToHarness(
     },
   };
 
+  const graph_merge: MCPTool<
+    z.infer<typeof GraphMergeInputSchema>,
+    MergeReport & { graphVersion: number }
+  > = {
+    name: 'graph_merge',
+    description:
+      'Replay-based branch reintegration (CR-GC-234) — the semantic rebase that ends the manual ' +
+      "graph.json text-merge. Reads the BRANCH's durable command log (its worktree's " +
+      '.graphcode/audit.jsonl), takes the applied batches AFTER the fork point (sinceVersion, the ' +
+      'shared base graphVersion) and re-applies them in log order through the EXISTING Apply-Gate ' +
+      'onto the current base — every batch rule-validated, O3-serialized, no parallel write path. ' +
+      'Conflicts are GATE violations, not text conflicts: a batch that is illegal on the new base ' +
+      '(R-08 dangling after a foreign delete, R-18 illegal pair, delta errors) or would resurrect a ' +
+      'deleted node (update-node on a missing uid) is skipped + reported under conflicted[] with ' +
+      'violations + fixHint — machine-resolvable. Batches already contained in the base are skipped ' +
+      "as idempotent. dryRun:true = merge preview (full report, graph + log byte-identical). " +
+      'Workflow: gcw <branch> → work → graph_export + commit → on the target base: ' +
+      'graph_merge {log, sinceVersion} → graph_export.',
+    inputSchema: GraphMergeInputSchema,
+    async handler(input) {
+      const logPath = isAbsolute(input.log) ? input.log : join(harness.getRepoRoot(), input.log);
+      const entries = readBranchLog(logPath, input.sinceVersion);
+      return serializeToolWrite(async () => {
+        const report = await replayBranchLog(harness, entries, {
+          dryRun: input.dryRun,
+          // Real merge: every replayed batch lands in the TARGET's durable log like
+          // any gated write (applied → version++, conflicted → logged rejected).
+          // A dry run records NOTHING (byte-identical log guarantee).
+          onBatchResult: input.dryRun ? undefined : (result, commands) => recordAudit(input.consumerId, result, commands),
+        });
+        report.sinceVersion = input.sinceVersion;
+        // Dry run: the gate's dryRun mode accumulated the preview in the in-memory
+        // working copy — restore it from the (untouched) disk store.
+        if (input.dryRun) await harness.loadGraph();
+        return { ...report, graphVersion: _graphVersion };
+      });
+    },
+  };
+
   const graph_authoring_guide: MCPTool<
     z.infer<typeof GraphAuthoringGuideInputSchema>,
     {
@@ -1108,6 +1171,7 @@ export function bindToolsToHarness(
     graph_tests,
     graph_help,
     graph_realize,
+    graph_merge,
     graph_authoring_guide,
   };
 }

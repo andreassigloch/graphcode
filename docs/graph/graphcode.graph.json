@@ -534,8 +534,8 @@
       "id": "CR-GC-234",
       "type": "CR",
       "name": "graph_merge: Replay-basierte Branch-Reintegration (semantischer Rebase)",
-      "description": "Beendet den manuellen Merge: Branch-Command-Log (232) wird ab dem Fork-Punkt (233) durchs bestehende Gate auf der neuen Base re-applied; Konflikte = Gate-Violations mit fixHint (applied/conflicted/skipped-Report, dryRun), keine Text-Konflikte. CRDT verworfen (Ops kommutieren nicht, V3_RULES sind globale Invarianten). (docs/cr/open/CR-GC-234)",
-      "status": "open"
+      "description": "DONE 2026-07-03: src/merge.ts (readBranchLog + replayBranchLog) + MCP-Tool graph_merge. Branch-Command-Log (audit.jsonl des Worktrees, CR-232) wird ab dem Fork-Punkt (sinceVersion, CR-233) in Log-Reihenfolge durchs BESTEHENDE Gate re-applied (harness.mutate, O3-serialisiert — kein Parallelpfad); rejected Log-Eintraege und Checkpoints werden uebersprungen. Konflikte = Gate-Sprache: error-Violations auf der neuen Base (R-08/R-18/Delta) → conflicted[] mit Violations + fixHint; update-node auf geloeschtem Knoten → MERGE-Konflikt (Replay-Precondition gegen die Resurrection-Anomalie des Update-as-Upsert); bereits enthaltene Batches → skipped (idempotent, Re-Merge safe). dryRun = Merge-Preview ueber den neuen Gate-dryRun-Modus (kumulative In-Memory-Anwendung ohne Persist/Hooks/Marker, Restore via loadGraph) — Graph + Log byte-identisch. Applied/conflicted Batches landen im Ziel-Log (Version zaehlt weiter, OCC-konsistent). Kein Text-Merge, kein CRDT. Test: tests/mcp.merge.test.ts. (CR-GC-234)",
+      "status": "done"
     },
     {
       "id": "CR-GC-235",
