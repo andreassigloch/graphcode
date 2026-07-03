@@ -32,7 +32,8 @@ describe('TEST-code-conformance: every FUNC codeRef resolves to a real symbol (C
   beforeAll(async () => {
     tmp = mkdtempSync(join(tmpdir(), 'graphcode-conformance-'));
     const storage = new KuzuAdapter({ ontology: SE_DESCRIPTOR, path: join(tmp, 'kuzu') });
-    harness = new GraphCodeHarness(makeConfig(REPO_ROOT), storage);
+    // lockDir = temp store dir, not repoRoot/.graphcode (a live dev server owns that, CR-GC-218).
+    harness = new GraphCodeHarness(makeConfig(REPO_ROOT), storage, undefined, { lockDir: tmp });
     await harness.initialize();
     await harness.seedFromJson();
   });

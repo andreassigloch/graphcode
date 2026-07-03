@@ -52,7 +52,8 @@ describe('exportGraphJson / exportMarkdown (TEST-doc-export)', () => {
     committedRaw = readFileSync(GRAPH_JSON, 'utf8');
     tmp = mkdtempSync(join(tmpdir(), 'graphcode-export-'));
     const storage = new KuzuAdapter({ ontology: SE_DESCRIPTOR, path: join(tmp, 'kuzu') });
-    harness = new GraphCodeHarness(makeConfig(REPO_ROOT), storage);
+    // lockDir = temp store dir, not repoRoot/.graphcode (a live dev server owns that, CR-GC-218).
+    harness = new GraphCodeHarness(makeConfig(REPO_ROOT), storage, undefined, { lockDir: tmp });
     await harness.initialize();
     // seedFromJson() loads the committed SSOT via importGraph and sets the
     // in-memory authoritative graph (full attribute fidelity). getGraph() returns

@@ -151,7 +151,8 @@ describe('TEST-graph-tests-operational: graph_tests operational on the committed
   beforeEach(async () => {
     tmp = mkdtempSync(join(tmpdir(), 'graphcode-tests-operational-'));
     const storage = new KuzuAdapter({ ontology: SE_DESCRIPTOR, path: join(tmp, 'kuzu') });
-    harness = new GraphCodeHarness(makeConfig(REPO_ROOT), storage);
+    // lockDir = temp store dir, not repoRoot/.graphcode (a live dev server owns that, CR-GC-218).
+    harness = new GraphCodeHarness(makeConfig(REPO_ROOT), storage, undefined, { lockDir: tmp });
     await harness.initialize();
     await harness.seedFromJson(); // load the real committed graph through the gate
     registry = bindToolsToHarness(harness);

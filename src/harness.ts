@@ -57,17 +57,43 @@ export class GraphCodeHarness {
   private graph: Graph = { nodes: [], edges: [] };
   /** Store-ownership lock (CR-GC-218 O2): one writer per `.graphcode` store. */
   private readonly storeLock: StoreLock;
+  /** Directory of the store this harness owns (lock + audit log live here). */
+  private readonly storeDir: string;
   /** Serializes writes so a reseed never interleaves with a mutate (CR-GC-218 O3). */
   private writeChain: Promise<unknown> = Promise.resolve();
 
-  constructor(config: HarnessConfig, storage: StorageAdapter, hooks?: HookSystem) {
+  constructor(
+    config: HarnessConfig,
+    storage: StorageAdapter,
+    hooks?: HookSystem,
+    opts?: {
+      /**
+       * Directory of the Kuzu store THIS harness's adapter opens — the O2 lock
+       * (CR-GC-218) guards the store, not the repo. Defaults to the standard
+       * layout `<repoRoot>/.graphcode`; a harness wired to a NON-default store
+       * (tests: temp Kuzu + real repoRoot for the committed docs) MUST pass its
+       * real store dir, or it false-positives against the repo's live owner.
+       */
+      lockDir?: string;
+    },
+  ) {
     this.config = HarnessConfigSchema.parse(config);
     this.storage = storage;
     this.hooks = hooks ?? new HookSystem({ preCommitTimeout: this.config.preCommitTimeout });
     // L2: rules come from the contracts-derived SE_DESCRIPTOR — no local parser.
     this.engine = new DefaultRuleEngine(SE_DESCRIPTOR.version);
     this.engine.register(SE_DESCRIPTOR.rules ?? []);
-    this.storeLock = new StoreLock(join(this.config.repoRoot, '.graphcode', 'owner.lock'));
+    this.storeDir = opts?.lockDir ?? join(this.config.repoRoot, '.graphcode');
+    this.storeLock = new StoreLock(join(this.storeDir, 'owner.lock'));
+  }
+
+  /**
+   * The directory of the store this harness owns — the anchoring point for every
+   * per-store artifact (O2 `owner.lock`, the durable audit log). Per store, never
+   * per repo: a temp-store harness must not touch the repo's live `.graphcode`.
+   */
+  getStoreDir(): string {
+    return this.storeDir;
   }
 
   /** Run a write body with exclusive access — mutate/reseed never interleave (O3). */

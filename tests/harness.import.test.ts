@@ -35,8 +35,9 @@ describe('bootstrap import of the materialized graph', () => {
     tmp = mkdtempSync(join(tmpdir(), 'graphcode-import-'));
     kuzuPath = join(tmp, 'kuzu');
     const storage = new KuzuAdapter({ ontology: SE_DESCRIPTOR, path: kuzuPath });
-    // repoRoot points at the real repo so seedFromJson finds docs/graph/*.
-    harness = new GraphCodeHarness(makeConfig(REPO_ROOT), storage);
+    // repoRoot points at the real repo so seedFromJson finds docs/graph/*;
+    // lockDir = temp store dir, not repoRoot/.graphcode (a live dev server owns that, CR-GC-218).
+    harness = new GraphCodeHarness(makeConfig(REPO_ROOT), storage, undefined, { lockDir: tmp });
     await harness.initialize();
   });
 
@@ -59,7 +60,7 @@ describe('bootstrap import of the materialized graph', () => {
     // Round-trip: reload from a fresh handle on the same disk store.
     await harness.close();
     const storage2 = new KuzuAdapter({ ontology: SE_DESCRIPTOR, path: kuzuPath });
-    const harness2 = new GraphCodeHarness(makeConfig(REPO_ROOT), storage2);
+    const harness2 = new GraphCodeHarness(makeConfig(REPO_ROOT), storage2, undefined, { lockDir: tmp });
     await harness2.initialize();
     const g = harness2.getGraph();
     expect(g.nodes.length).toBe(expectedNodes);

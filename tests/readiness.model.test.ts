@@ -220,7 +220,8 @@ describe('TEST-readiness-model (C-int): scores the live SSOT, never BQ', () => {
       consumerType: 'system',
       preCommitTimeout: 5000,
     };
-    harness = new GraphCodeHarness(config, storage);
+    // lockDir = the temp store's dir — NOT repoRoot/.graphcode, which a live dev server owns (CR-GC-218).
+    harness = new GraphCodeHarness(config, storage, undefined, { lockDir: tmp });
     await harness.initialize();
     await harness.seedFromJson();
   });

@@ -46,8 +46,9 @@ describe('TEST-dashboard-ontology-sync: readiness is family-measured, not BQ-mea
       ontology: SE_DESCRIPTOR,
       path: join(tmp, 'kuzu'),
     });
-    // repoRoot = real repo so seedFromJson finds docs/graph/graphcode.graph.json
-    harness = new GraphCodeHarness(makeConfig(REPO_ROOT), storage);
+    // repoRoot = real repo so seedFromJson finds docs/graph/graphcode.graph.json;
+    // lockDir = temp store dir, not repoRoot/.graphcode (a live dev server owns that, CR-GC-218).
+    harness = new GraphCodeHarness(makeConfig(REPO_ROOT), storage, undefined, { lockDir: tmp });
     await harness.initialize();
     // Seed the full SSOT graph.
     await harness.seedFromJson();

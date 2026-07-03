@@ -38,8 +38,9 @@ describe('TEST-impact-subgraph: graph_impact precision (R6/R12)', () => {
     tmp = mkdtempSync(join(tmpdir(), 'graphcode-impact-'));
     const kuzuPath = join(tmp, 'kuzu');
     const storage = new KuzuAdapter({ ontology: SE_DESCRIPTOR, path: kuzuPath });
-    // Use real repo root so seedFromJson() finds docs/graph/graphcode.graph.json
-    harness = new GraphCodeHarness(makeConfig(REPO_ROOT), storage);
+    // Real repo root so seedFromJson() finds docs/graph/graphcode.graph.json;
+    // lockDir = the temp store's dir, not repoRoot/.graphcode (a live dev server owns that, CR-GC-218).
+    harness = new GraphCodeHarness(makeConfig(REPO_ROOT), storage, undefined, { lockDir: tmp });
     await harness.initialize();
     await harness.seedFromJson();
   });
