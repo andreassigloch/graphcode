@@ -119,6 +119,10 @@ export type {
 export { deriveImplPlan } from './se-plan.js';
 export type { ImplPlanResult } from './se-plan.js';
 
+// Durable command log (CR-GC-232) — event-sourcing foundation for OCC (233) + replay-merge (234).
+export { FileAuditLog, AUDIT_FILE, AUDIT_BASENAME, DEFAULT_COMPACT_BYTES } from './audit-file.js';
+export type { GraphcodeAuditEntry } from './audit-file.js';
+
 // In-context help (CR-GC-227 content + CR-GC-228 data layer) — the read-only layer
 // every help surface (graph_help tool, se:help skill, renderer) projects from.
 export { helpEntry, helpForRules, contextualHelp } from './viewer/help.js';
@@ -157,5 +161,6 @@ export async function createHarness(
     outDir: join(cfg.repoRoot, '.aimprove'),
     onEvent: opts?.onUpdateEvent,
   });
-  return new GraphCodeHarness(cfg, storage, hooks);
+  // O2 lock guards the store this factory just wired: <repoRoot>/.graphcode (CR-GC-218).
+  return new GraphCodeHarness(cfg, storage, hooks, { lockDir: dirname(kuzuPath) });
 }

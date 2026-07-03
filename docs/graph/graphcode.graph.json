@@ -520,8 +520,8 @@
       "id": "CR-GC-232",
       "type": "CR",
       "name": "Durables Command-Log (append-only Audit-Persistenz)",
-      "description": "FileAuditLog (append-only JSONL, .graphcode/audit.jsonl) ersetzt den InMemory-Default im Server; audit_trail sessionuebergreifend; crash-tolerant. Fundament fuer OCC-Delta (233) + Replay-Merge (234): das durable Operations-Log ist die Konvergenz-Grundlage, State wird abgeleitet. (docs/cr/open/CR-GC-232)",
-      "status": "open"
+      "description": "DONE 2026-07-03 (Scope-Amendment per User: Log-Handling gleich mit, sonst Technical Debt): src/audit-file.ts FileAuditLog (append-only JSONL neben dem Store — gleiche Verankerung wie der O2-Lock: pro Store, nie pro Repo). Eintraege tragen den MutateCommand-Batch (GraphcodeAuditEntry, Replay-Quelle fuer 234). Checkpoint-Record als Versions-Anker: latestVersion() ueberlebt jede Compaction; compact() archiviert + Checkpoint, Auto-Compaction ab Size-Threshold beim Bind; torn-tail-tolerant. Version-Kontinuitaet: Tool-Layer-Counter startet bei latestVersion() statt 0 (Monotonie fuer 233). graph_realize-Audit-Bypass geschlossen. Default in bindToolsToHarness; Tests injizieren InMemory. Nebenbefund gefixt: O2-Lock ankerte am repoRoot statt am Store (harness opts.lockDir + getStoreDir, 8 Live-SSOT-Tests). Test: tests/audit-file.test.ts. (CR-GC-232)",
+      "status": "done"
     },
     {
       "id": "CR-GC-233",

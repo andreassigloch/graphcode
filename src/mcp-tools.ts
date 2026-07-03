@@ -22,7 +22,8 @@ import { z } from 'zod/v4';
 import type { ZodType } from 'zod/v4';
 import type { GraphCodeHarness } from './harness.js';
 import type { Graph, GraphNode, GraphEdge, AuditLog, AuditEntry } from '@sigloch/graph-api-core';
-import { FormatECodec, SE_DESCRIPTOR, InMemoryAuditLog } from '@sigloch/graph-api-core';
+import { FormatECodec, SE_DESCRIPTOR } from '@sigloch/graph-api-core';
+import { FileAuditLog, type GraphcodeAuditEntry } from './audit-file.js';
 import { type MutateCommand, type MutateResult, type RuleViolation } from '@sigloch/contracts/harness';
 import { TestRefSchema, type TestRef, TRACE_PATTERNS } from '@sigloch/contracts/se';
 import { exportGraphJson, exportMarkdown, renderTestStubs, MarkdownViewSchema, MARKDOWN_VIEWS, VIEW_FILENAMES } from './exporter.js';
@@ -162,6 +163,7 @@ const GraphRealizeInputSchema = z.object({
   testFile: z.string().optional().describe('Test file path (required when testUid is given).'),
   testCase: z.string().optional().describe('Optional test case name.'),
   tool: z.string().optional().describe('Test tool for the testRef (default vitest).'),
+  consumerId: z.string().default('mcp-client'),
 });
 
 /** Authoring-guide input (CR-GC-231) — which ElementType to surface legal edges for. */
@@ -288,21 +290,29 @@ function buildContextSlice(
  */
 export function bindToolsToHarness(
   harness: GraphCodeHarness,
-  auditLog: AuditLog = new InMemoryAuditLog(),
+  // Durable by default (CR-GC-232): the command log survives the process, anchored
+  // BESIDE the store it describes (per store, never per repo — same rule as the O2
+  // lock). Tests may inject an InMemoryAuditLog (dependency injection, no parallel path).
+  auditLog: AuditLog = new FileAuditLog(harness.getStoreDir()),
 ): MCPToolRegistry {
   const codec = new FormatECodec(SE_DESCRIPTOR);
   // Round-trip-stable Format-E for the opt-in read-tool slices (CR-GC-210): the wrapper
   // adds/strips the .TYPE uid suffix so the slice re-imports via the same codec.
   const gcCodec = new GraphCodeCodec();
-  let _graphVersion = 0;
+  // Version continuity (CR-GC-232): resume from the durable log's highest version —
+  // never reset to 0 per session (CR-233 builds its OCC on this monotonicity).
+  const versioned = auditLog as Partial<Pick<FileAuditLog, 'latestVersion'>>;
+  let _graphVersion = versioned.latestVersion?.() ?? 0;
 
-  // Helper to record an audit entry after a mutation
+  // Record a gated write in the audit log — WITH its command batch, so the log is
+  // replayable (CR-GC-234). Every write tool must call this (no audit bypass).
   async function recordAudit(
     consumerId: string,
     result: MutateResult,
+    commands?: MutateCommand[],
   ): Promise<void> {
     _graphVersion += 1;
-    const entry: AuditEntry = {
+    const entry: GraphcodeAuditEntry = {
       id: `audit-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       timestamp: new Date().toISOString(),
       consumerId,
@@ -311,6 +321,7 @@ export function bindToolsToHarness(
       result: result.success ? 'applied' : 'rejected',
       violations: result.violations as import('@sigloch/graph-api-core').RuleViolation[],
       graphVersion: _graphVersion,
+      commands,
     };
     await auditLog.record(entry);
   }
@@ -410,7 +421,7 @@ export function bindToolsToHarness(
       // Cast: MCP transports deserialize commands as plain objects; harness.mutate()
       // validates internally via MutateCommandSchema.
       const result = await harness.mutate(input.commands as MutateCommand[]);
-      await recordAudit(input.consumerId, result);
+      await recordAudit(input.consumerId, result, input.commands as MutateCommand[]);
       return result;
     },
   };
@@ -898,6 +909,8 @@ export function bindToolsToHarness(
 
       const before = missingRefIds();
       const result = await harness.mutate(commands);
+      // No audit bypass (CR-GC-232): realize writes are logged like any gated write.
+      await recordAudit(input.consumerId, result, commands);
       const after = missingRefIds();
       return {
         success: result.success,

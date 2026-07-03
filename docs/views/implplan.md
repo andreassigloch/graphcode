@@ -84,7 +84,7 @@ depends-on:  MS-1-specification  ◀  MS-2-coding-vv  ◀  MS-3-mvp-readiness  �
 
 | CR | status | name |
 |---|---|---|
-| `CR-GC-232` | open | Durables Command-Log (append-only Audit-Persistenz) |
+| `CR-GC-232` | done | Durables Command-Log (append-only Audit-Persistenz) |
 | `CR-GC-233` | open | OCC: graphVersion + baseVersion-Check am Gate |
 | `CR-GC-234` | open | graph_merge: Replay-basierte Branch-Reintegration (semantischer Rebase) |
 | `CR-GC-235` | open | Ein Write-Channel: Host-owned Store, Sessions als Clients |
