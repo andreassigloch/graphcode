@@ -527,8 +527,8 @@
       "id": "CR-GC-233",
       "type": "CR",
       "name": "OCC: graphVersion + baseVersion-Check am Gate",
-      "description": "Monotone graphVersion pro Store (aus dem Log rekonstruiert); Read-Tools liefern sie mit; graph_mutate/graph_realize akzeptieren baseVersion — veraltet → Reject mit Delta-Report (Eintraege seit dem Read), Agent re-read + retry. Realisiert R5 base_snapshot@version; Tool-Schema-lokal, kein Contracts-Bump. (docs/cr/open/CR-GC-233)",
-      "status": "open"
+      "description": "DONE 2026-07-03: OCC am Tool-Layer (src/mcp-tools.ts). graphVersion zaehlt nur applied Batches (ein Reject bewegt die Version nicht) und wird aus dem durablen Log rekonstruiert (latestVersion — ueberlebt Restart + Compaction). Read-Tools (elements/get_node/get_edges/impact/context/readiness) liefern graphVersion additiv mit; graph_mutate + graph_realize akzeptieren optionales baseVersion — veraltet → Reject (tier block, ruleId OCC) mit Delta-Report (applied Audit-Eintraege seit baseVersion inkl. Commands: der Agent sieht WAS sich aenderte, re-read, retry). Ohne baseVersion nur occWarning (sanfte Migration; Pflicht wird mit CR-235 evaluiert). Check+Gate+Record atomar ueber die Tool-Layer-Write-Chain (O3-Muster). Tool-Schema-lokal, kein Contracts-Bump. GRAPHCODE.md-Scaffold dokumentiert den Read→Mutate-Retry-Loop. Test: tests/mcp.occ.test.ts. (CR-GC-233)",
+      "status": "done"
     },
     {
       "id": "CR-GC-234",

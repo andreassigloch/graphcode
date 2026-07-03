@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 62 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 62 CR · 57 done · 5 open.
+Total: 62 CR · 58 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -85,7 +85,7 @@ Total: 62 CR · 57 done · 5 open.
 | CR | status | name |
 |---|---|---|
 | `CR-GC-232` | done | Durables Command-Log (append-only Audit-Persistenz) |
-| `CR-GC-233` | open | OCC: graphVersion + baseVersion-Check am Gate |
+| `CR-GC-233` | done | OCC: graphVersion + baseVersion-Check am Gate |
 | `CR-GC-234` | open | graph_merge: Replay-basierte Branch-Reintegration (semantischer Rebase) |
 | `CR-GC-235` | open | Ein Write-Channel: Host-owned Store, Sessions als Clients |
 

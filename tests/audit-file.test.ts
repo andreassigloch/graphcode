@@ -149,15 +149,29 @@ describe('TEST-audit-file (CR-GC-232): registry uses the durable log by default'
     const s2 = (await t2.audit_stats.handler({})) as { totalEntries: number; graphVersion: number };
     expect(s2.totalEntries).toBe(3); // audit_trail reads across sessions
     expect(s2.graphVersion).toBe(3); // version resumed, not 0
+    // A REQ is only valid with its verify-traced TEST (R-01) — an APPLIED batch,
+    // because graphVersion counts applied batches only (CR-GC-233 OCC semantics).
     await t2.graph_mutate.handler({
-      commands: [{ op: 'add-node', node: { uid: 'REQ-b', type: 'REQ', name: 'b', description: '', attributes: {} } }],
+      commands: [
+        { op: 'add-node', node: { uid: 'REQ-b', type: 'REQ', name: 'b', description: '', attributes: {} } },
+        { op: 'add-node', node: { uid: 'TEST-b', type: 'TEST', name: 'tb', description: '', attributes: {} } },
+        { op: 'add-edge', edge: { sourceId: 'TEST-b', targetId: 'REQ-b', edgeType: 'verify', attributes: {} } },
+      ],
       consumerId: 'session-2',
     });
     const s3 = (await t2.audit_stats.handler({})) as { graphVersion: number };
     expect(s3.graphVersion).toBe(4); // monotonic across the restart
+    // A REJECTED write is logged but does NOT move the version (state unchanged).
+    await t2.graph_mutate.handler({
+      commands: [{ op: 'add-node', node: { uid: 'REQ-orphan', type: 'REQ', name: 'o', description: '', attributes: {} } }],
+      consumerId: 'session-2',
+    });
+    const s4 = (await t2.audit_stats.handler({})) as { totalEntries: number; rejected: number; graphVersion: number };
+    expect(s4.rejected).toBe(1);
+    expect(s4.graphVersion).toBe(4); // applied-only counter (CR-GC-233)
     // The durable file carries the command batches (replay source for CR-234).
     const raw = readFileSync(join(repoRoot, AUDIT_FILE), 'utf8').trim().split('\n');
-    expect(raw).toHaveLength(4);
+    expect(raw).toHaveLength(5);
     expect(raw.every((l) => JSON.parse(l).commands?.length >= 1)).toBe(true);
     await h2.close();
   });

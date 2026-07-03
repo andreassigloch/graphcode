@@ -77,11 +77,29 @@ const GraphGetEdgesInputSchema = z.object({
   format: ReadFormatSchema,
 });
 
+/**
+ * OCC base version (CR-GC-233): the graphVersion the writer READ before composing
+ * this write. Tool-schema-local by design — NOT a MutateCommand/MutateResult
+ * contracts field (promotion to @sigloch/contracts is a later family review).
+ */
+const BaseVersionSchema = z
+  .number()
+  .int()
+  .nonnegative()
+  .optional()
+  .describe(
+    'Optimistic concurrency (CR-GC-233): the graphVersion your last read returned. ' +
+      'If the graph moved since (baseVersion < current graphVersion) the write is REJECTED ' +
+      'with the delta (audit entries since baseVersion) — re-read, adapt, retry. ' +
+      'Omitting it skips the check (warning only; lost-update window).',
+  );
+
 const GraphMutateInputSchema = z.object({
   // commands is validated by harness.mutate() via MutateCommandSchema internally.
   // We accept any array here to avoid cross-Zod-version schema composition issues (D1).
   commands: z.array(z.unknown()).min(1),
   consumerId: z.string().default('mcp-client'),
+  baseVersion: BaseVersionSchema,
 });
 
 const RulesEvaluateInputSchema = z.looseObject({});
@@ -164,6 +182,7 @@ const GraphRealizeInputSchema = z.object({
   testCase: z.string().optional().describe('Optional test case name.'),
   tool: z.string().optional().describe('Test tool for the testRef (default vitest).'),
   consumerId: z.string().default('mcp-client'),
+  baseVersion: BaseVersionSchema,
 });
 
 /** Authoring-guide input (CR-GC-231) — which ElementType to surface legal edges for. */
@@ -306,12 +325,15 @@ export function bindToolsToHarness(
 
   // Record a gated write in the audit log — WITH its command batch, so the log is
   // replayable (CR-GC-234). Every write tool must call this (no audit bypass).
+  // OCC invariant (CR-GC-233): graphVersion counts APPLIED batches only — a rejected
+  // write changes no state, so it must not move the version (or a bystander's
+  // rejected attempt would spuriously stale every other writer's baseVersion).
   async function recordAudit(
     consumerId: string,
     result: MutateResult,
     commands?: MutateCommand[],
   ): Promise<void> {
-    _graphVersion += 1;
+    if (result.success) _graphVersion += 1;
     const entry: GraphcodeAuditEntry = {
       id: `audit-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       timestamp: new Date().toISOString(),
@@ -327,12 +349,67 @@ export function bindToolsToHarness(
   }
 
   // ---------------------------------------------------------------------------
+  // OCC (CR-GC-233): stale-write rejection at the tool layer. The check and the
+  // gate apply must be ATOMIC relative to other tool-layer writes, so write tools
+  // run on one promise chain (same pattern as the harness O3 mutex — the harness
+  // serializes gate bodies; this serializes check+gate+record as one unit).
+  // ---------------------------------------------------------------------------
+
+  let toolWriteChain: Promise<unknown> = Promise.resolve();
+  function serializeToolWrite<T>(body: () => Promise<T>): Promise<T> {
+    const result = toolWriteChain.then(body, body);
+    toolWriteChain = result.then(
+      () => undefined,
+      () => undefined,
+    );
+    return result;
+  }
+
+  const OCC_WARNING =
+    'no baseVersion supplied — OCC check skipped (lost-update window). Pass the graphVersion ' +
+    'your last read returned as baseVersion (CR-GC-233).';
+
+  /**
+   * Reject a write whose base is older than the current graph — with the DELTA:
+   * the applied audit entries (incl. their command batches) since baseVersion,
+   * so the writer sees WHAT changed, re-reads, retries. Returns null when fresh.
+   */
+  async function occReject(
+    consumerId: string,
+    baseVersion: number | undefined,
+    commands: MutateCommand[] | undefined,
+  ): Promise<(MutateResult & { graphVersion: number; occ: { staleBaseVersion: number; delta: GraphcodeAuditEntry[] } }) | null> {
+    if (baseVersion === undefined || baseVersion >= _graphVersion) return null;
+    const all = (await auditLog.query({})) as GraphcodeAuditEntry[];
+    const delta = all.filter((e) => e.result === 'applied' && (e.graphVersion ?? 0) > baseVersion);
+    const result: MutateResult = {
+      success: false,
+      appliedCommands: 0,
+      mutations: 0,
+      violations: [
+        {
+          ruleId: 'OCC',
+          severity: 'error',
+          message:
+            `stale baseVersion ${baseVersion}: the graph is at version ${_graphVersion} — ` +
+            `${delta.length} applied batch(es) landed since your read. Re-read (any read tool ` +
+            `returns the current graphVersion), reconcile with the delta, retry.`,
+        },
+      ],
+      confidence: 0,
+      tier: 'block',
+    };
+    await recordAudit(consumerId, result, commands);
+    return { ...result, graphVersion: _graphVersion, occ: { staleBaseVersion: baseVersion, delta } };
+  }
+
+  // ---------------------------------------------------------------------------
   // READ tools
   // ---------------------------------------------------------------------------
 
   const graph_elements: MCPTool<
     z.infer<typeof GraphElementsInputSchema>,
-    { nodes: GraphNode[]; total: number } | { formatE: string; total: number }
+    { nodes: GraphNode[]; total: number; graphVersion: number } | { formatE: string; total: number; graphVersion: number }
   > = {
     name: 'graph_elements',
     description:
@@ -350,25 +427,28 @@ export function bindToolsToHarness(
       if (input.format === 'formatE') {
         const ids = new Set(sliced.map((n) => n.uid));
         const edges = harness.getGraph().edges.filter((e) => ids.has(e.sourceId) && ids.has(e.targetId));
-        return { formatE: gcCodec.encode({ nodes: sliced, edges }), total };
+        return { formatE: gcCodec.encode({ nodes: sliced, edges }), total, graphVersion: _graphVersion };
       }
-      return { nodes: sliced, total };
+      return { nodes: sliced, total, graphVersion: _graphVersion };
     },
   };
 
-  const graph_get_node: MCPTool<z.infer<typeof GraphGetNodeInputSchema>, { node: GraphNode | null }> = {
+  const graph_get_node: MCPTool<
+    z.infer<typeof GraphGetNodeInputSchema>,
+    { node: GraphNode | null; graphVersion: number }
+  > = {
     name: 'graph_get_node',
     description: 'Get a single graph node by uid.',
     inputSchema: GraphGetNodeInputSchema,
     async handler(input) {
       const node = harness.getGraph().nodes.find((n) => n.uid === input.uid) ?? null;
-      return { node };
+      return { node, graphVersion: _graphVersion };
     },
   };
 
   const graph_get_edges: MCPTool<
     z.infer<typeof GraphGetEdgesInputSchema>,
-    { edges: GraphEdge[]; total: number } | { formatE: string; total: number }
+    { edges: GraphEdge[]; total: number; graphVersion: number } | { formatE: string; total: number; graphVersion: number }
   > = {
     name: 'graph_get_edges',
     description:
@@ -399,9 +479,9 @@ export function bindToolsToHarness(
           ids.add(e.targetId);
         }
         const nodes = harness.getGraph().nodes.filter((n) => ids.has(n.uid));
-        return { formatE: gcCodec.encode({ nodes, edges }), total: edges.length };
+        return { formatE: gcCodec.encode({ nodes, edges }), total: edges.length, graphVersion: _graphVersion };
       }
-      return { edges, total: edges.length };
+      return { edges, total: edges.length, graphVersion: _graphVersion };
     },
   };
 
@@ -409,20 +489,34 @@ export function bindToolsToHarness(
   // WRITE tool — gate symmetry (L2): delegates to harness.mutate(), no bypass
   // ---------------------------------------------------------------------------
 
-  const graph_mutate: MCPTool<z.infer<typeof GraphMutateInputSchema>, MutateResult> = {
+  const graph_mutate: MCPTool<
+    z.infer<typeof GraphMutateInputSchema>,
+    MutateResult & { graphVersion: number; occWarning?: string; occ?: { staleBaseVersion: number; delta: GraphcodeAuditEntry[] } }
+  > = {
     name: 'graph_mutate',
     description:
       'Apply a batch of graph mutations through the Apply-Gate (L2). ' +
       'Every write goes through harness.mutate() — identical semantics to in-process calls. ' +
-      'No direct Kuzu access; blocked by rules identical to any in-process mutation.',
+      'No direct Kuzu access; blocked by rules identical to any in-process mutation. ' +
+      'OCC (CR-GC-233): pass the graphVersion your last read returned as baseVersion — a stale ' +
+      'base is rejected (tier block) with the delta of applied batches since; re-read + retry.',
     inputSchema: GraphMutateInputSchema,
     async handler(input) {
-      // L2: identical semantics — delegate straight to the gate, no bypass.
-      // Cast: MCP transports deserialize commands as plain objects; harness.mutate()
-      // validates internally via MutateCommandSchema.
-      const result = await harness.mutate(input.commands as MutateCommand[]);
-      await recordAudit(input.consumerId, result, input.commands as MutateCommand[]);
-      return result;
+      return serializeToolWrite(async () => {
+        const commands = input.commands as MutateCommand[];
+        const stale = await occReject(input.consumerId, input.baseVersion, commands);
+        if (stale) return stale;
+        // L2: identical semantics — delegate straight to the gate, no bypass.
+        // Cast: MCP transports deserialize commands as plain objects; harness.mutate()
+        // validates internally via MutateCommandSchema.
+        const result = await harness.mutate(commands);
+        await recordAudit(input.consumerId, result, commands);
+        return {
+          ...result,
+          graphVersion: _graphVersion,
+          ...(input.baseVersion === undefined ? { occWarning: OCC_WARNING } : {}),
+        };
+      });
     },
   };
 
@@ -496,7 +590,7 @@ export function bindToolsToHarness(
 
   const graph_impact: MCPTool<
     z.infer<typeof GraphImpactInputSchema>,
-    { formatE: string; nodeCount: number; edgeCount: number; rootId: string }
+    { formatE: string; nodeCount: number; edgeCount: number; rootId: string; graphVersion: number }
   > = {
     name: 'graph_impact',
     description:
@@ -513,6 +607,7 @@ export function bindToolsToHarness(
         nodeCount: subgraph.nodes.length,
         edgeCount: subgraph.edges.length,
         formatE,
+        graphVersion: _graphVersion,
       };
     },
   };
@@ -546,7 +641,7 @@ export function bindToolsToHarness(
 
   const graph_context: MCPTool<
     z.infer<typeof GraphContextInputSchema>,
-    { formatE: string; nodeCount: number; edgeCount: number; rootId: string; missingRefs: string[] }
+    { formatE: string; nodeCount: number; edgeCount: number; rootId: string; missingRefs: string[]; graphVersion: number }
   > = {
     name: 'graph_context',
     description:
@@ -567,6 +662,7 @@ export function bindToolsToHarness(
         edgeCount: slice.edges.length,
         missingRefs,
         formatE,
+        graphVersion: _graphVersion,
       };
     },
   };
@@ -684,7 +780,10 @@ export function bindToolsToHarness(
   // (L2 gate) so the score is driven by contracts V3_RULES (R-/RD-), never foreign BQ-*.
   // ---------------------------------------------------------------------------
 
-  const graph_readiness: MCPTool<z.infer<typeof GraphReadinessInputSchema>, ReadinessReport> = {
+  const graph_readiness: MCPTool<
+    z.infer<typeof GraphReadinessInputSchema>,
+    ReadinessReport & { graphVersion: number }
+  > = {
     name: 'graph_readiness',
     description:
       'Score family readiness of the live governed graph (FUNC-score-readiness / CR-GC-107 + CR-GC-125). ' +
@@ -699,7 +798,7 @@ export function bindToolsToHarness(
     inputSchema: GraphReadinessInputSchema,
     async handler(input) {
       const report = scoreReadiness(harness);
-      return input.detail ? report : summarizeReadiness(report);
+      return { ...(input.detail ? report : summarizeReadiness(report)), graphVersion: _graphVersion };
     },
   };
 
@@ -864,6 +963,9 @@ export function bindToolsToHarness(
       missingRefsBefore: string[];
       missingRefsAfter: string[];
       resolved: string[];
+      graphVersion: number;
+      occWarning?: string;
+      occ?: { staleBaseVersion: number; delta: GraphcodeAuditEntry[] };
     }
   > = {
     name: 'graph_realize',
@@ -873,7 +975,7 @@ export function bindToolsToHarness(
       'Apply-Gate as graph_mutate (no parallel write path — it composes harness.mutate). Use this instead of ' +
       "hand-building graph_mutate's nested update-node/CodeRef union for the 90% case 'I just realized FUNC X'. " +
       'Returns the missingRefs delta (before/after + resolved) so the realization is confirmed, not blind. ' +
-      'Unknown funcUid/testUid → a clear error.',
+      'Unknown funcUid/testUid → a clear error. OCC (CR-GC-233): optional baseVersion as in graph_mutate.',
     inputSchema: GraphRealizeInputSchema,
     async handler(input) {
       const nodes = harness.getGraph().nodes;
@@ -907,19 +1009,36 @@ export function bindToolsToHarness(
         });
       }
 
-      const before = missingRefIds();
-      const result = await harness.mutate(commands);
-      // No audit bypass (CR-GC-232): realize writes are logged like any gated write.
-      await recordAudit(input.consumerId, result, commands);
-      const after = missingRefIds();
-      return {
-        success: result.success,
-        tier: result.tier,
-        violations: result.violations,
-        missingRefsBefore: [...before],
-        missingRefsAfter: [...after],
-        resolved: [...before].filter((id) => !after.has(id)),
-      };
+      return serializeToolWrite(async () => {
+        const before = missingRefIds();
+        const stale = await occReject(input.consumerId, input.baseVersion, commands);
+        if (stale) {
+          return {
+            success: false,
+            tier: stale.tier,
+            violations: stale.violations,
+            missingRefsBefore: [...before],
+            missingRefsAfter: [...before],
+            resolved: [],
+            graphVersion: stale.graphVersion,
+            occ: stale.occ,
+          };
+        }
+        const result = await harness.mutate(commands);
+        // No audit bypass (CR-GC-232): realize writes are logged like any gated write.
+        await recordAudit(input.consumerId, result, commands);
+        const after = missingRefIds();
+        return {
+          success: result.success,
+          tier: result.tier,
+          violations: result.violations,
+          missingRefsBefore: [...before],
+          missingRefsAfter: [...after],
+          resolved: [...before].filter((id) => !after.has(id)),
+          graphVersion: _graphVersion,
+          ...(input.baseVersion === undefined ? { occWarning: OCC_WARNING } : {}),
+        };
+      });
     },
   };
 
