@@ -31,7 +31,7 @@ import { startHostSocket, buildProxyRegistry, HOST_SOCK_BASENAME } from './host-
 // sync with package.json by CR-121 (distribution); hardcoded here so the core
 // has no JSON-import-outside-rootDir dependency.
 const SERVER_NAME = 'graphcode';
-const SERVER_VERSION = '0.1.0-carve-out';
+const SERVER_VERSION = '0.3.0';
 
 /**
  * Turn a bound `MCPToolRegistry` into a live `McpServer`. Each registry tool's
