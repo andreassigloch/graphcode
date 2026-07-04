@@ -1,6 +1,6 @@
 {
   "name": "@sigloch/graphcode",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Claude Code Sidecar Harness — Graph Operations + MCP Tools + Hook System",
   "type": "module",
   "main": "dist/index.js",
