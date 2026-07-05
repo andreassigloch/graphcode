@@ -1,22 +1,30 @@
 # GraphCode — governed graph substrate for coding agents
 
-**GraphCode** is a headless harness that gives a coding agent (Claude Code, OpenCode, …) a
-**governed graph** of a project's model — requirements, tests, modules, traces — behind an
-**MCP-stdio** surface. The agent **KNOWS** the elements to touch from a precise graph query
-instead of guessing them with grep. Code stays as text in the repo; the **model lives in the graph**.
+**GraphCode** gives a coding agent (Claude Code, OpenCode, …) a **governed graph** of a project's
+model — requirements, tests, modules, traces — behind an **MCP-stdio** surface. The agent **KNOWS**
+the elements to touch from a precise graph query instead of guessing them with grep. Code stays as
+text in the repo; the **model lives in the graph**.
 
-- **IS:** Bridge + Store + MCP tools + Apply-Gate. Agent-agnostic, OpenCode-executed, one Kuzu store per repo.
-- **IS NOT:** a generator (→ aimprove), a learning engine (→ learning-core), a viewer/dashboard, or an extractor (→ graphify).
+## Commands
 
-## Quick start — set up GraphCode in a new repo
+All commands run **inside the target repository**:
 
-Run this **inside the target repository** (the new family member you're building):
+```bash
+npx @sigloch/graphcode init          # one-time setup: scaffold .mcp.json, GRAPHCODE.md, store dir
+npx @sigloch/graphcode mcp           # start the MCP-stdio server (your agent host runs this via .mcp.json)
+npx @sigloch/graphcode host          # start the read-only HTTP/SSE bridge (live dashboard/viewer)
+npx @sigloch/graphcode update        # refresh scaffolded artifacts after a version bump — PRESERVES the store
+npx @sigloch/graphcode skills sync   # re-copy the shipped se-* skills (overwrites on version mismatch)
+npx @sigloch/graphcode remove        # remove all scaffolded artifacts (restlos)
+```
+
+## Get started
+
+**1. Scaffold** (idempotent, self-contained):
 
 ```bash
 npx @sigloch/graphcode init
 ```
-
-`init` is self-contained and idempotent. It scaffolds:
 
 | Artifact | Purpose | Commit? |
 |---|---|---|
@@ -25,20 +33,21 @@ npx @sigloch/graphcode init
 | `GRAPHCODE.md` | guardrails for agents working in the repo | ✅ commit |
 | `package.json` | gains the `@sigloch/graphcode` dependency | ✅ commit |
 
-Then add `.graphcode/` to `.gitignore` and **reload your agent host** (Claude Code / OpenCode) so it
-picks up `.mcp.json`. The agent will see a `graphcode` MCP server exposing the tools below.
+**2. Add `.graphcode/` to `.gitignore` and reload your agent host** (Claude Code / OpenCode) so it
+picks up `.mcp.json`. The agent now sees a `graphcode` MCP server exposing the tools below.
 
-**Lifecycle:**
+**3. Dashboard (optional):** `npx @sigloch/graphcode host` serves `/health` + `/events` (SSE) for a
+live viewer. When an MCP server is already running it owns the single store — then the *elected
+host* serves the bridge itself: set `GRAPHCODE_HOST_PORT` in `.mcp.json` `env`
+(`npx @sigloch/graphcode update` scaffolds a deterministic per-repo port).
 
-```bash
-npx @sigloch/graphcode update   # refresh .mcp.json + GRAPHCODE.md, PRESERVE the store
-npx @sigloch/graphcode remove   # remove all scaffolded artifacts (restlos)
-```
+**4. After upgrading the package:** run `npx @sigloch/graphcode update` — refreshes `.mcp.json`,
+`GRAPHCODE.md` and skills, never touches the store.
 
-## The agent loop (over MCP)
+## Using it — the agent loop (over MCP)
 
-Once the server is running, the agent drives the whole loop through MCP tools — every write goes
-through the **one Apply-Gate** (`mutate()`): rule-checked, author-logged, blocked on new violations.
+The agent drives the whole loop through MCP tools — every write goes through the **one Apply-Gate**
+(`mutate()`): rule-checked, author-logged, blocked on new violations.
 
 1. **Spec** — `graph_mutate` adds requirements/tests/modules + traces through the gate. A REQ with no
    verifying TEST (or unresolved by a MOD) is **rejected** — drift can't land.
@@ -65,7 +74,7 @@ falling back to the repo directory name.
 | `audit_trail`, `audit_stats` | mutation history (every gate write logged) |
 | `graph_help` | explain any dashboard token / give ranked, explained next steps (read-only) |
 
-## Help — explain any item, for both audiences
+### Help — explain any item, for both audiences
 
 Every on-screen token is explained in three layers (plain · in SE terms · the exact fix),
 for a systems engineer who doesn't know this encoding **and** a user with no SE background:
@@ -77,13 +86,18 @@ for a systems engineer who doesn't know this encoding **and** a user with no SE 
 The plain/SE wording is authored once (`src/viewer/help-content.ts`); titles, severity, and the
 owning gate are derived from `V3_RULES` + readiness, so help never drifts from the live model.
 
-## Viewer integration — coming soon
+## What it is / is not
 
-GraphCode is headless and is **not** itself a viewer. It does, however, ship the read-only
-**data layer** an external live viewer/renderer (`graph-view-edit`) plugs into — this surface is
-**provisional** and stabilizes when that renderer lands:
+- **IS:** Bridge + Store + MCP tools + Apply-Gate. Agent-agnostic, headless, one Kuzu store per repo.
+- **IS NOT:** a generator (→ aimprove), a learning engine (→ learning-core), a viewer/dashboard, or an extractor (→ graphify).
 
-- `host` (`graphcode host`) — owns the single Kuzu store and serves `/health` + `/events` (SSE).
+## Viewer integration
+
+GraphCode is headless and is **not** itself a viewer. It ships the read-only **data layer** an
+external live viewer/renderer (`graph-view-edit`) plugs into — this surface is **provisional** and
+stabilizes when that renderer lands:
+
+- `host` — owns the single Kuzu store and serves `/health` + `/events` (SSE).
   Read-only: no mutating HTTP verb is reachable; the write path stays MCP-stdio.
 - panel shapers (`readinessPanel`, `impactPanel`, `artifactsPanel`, …) — pure read-only
   view-models over the MCP tools; the renderer consumes these and fills the render mount-slot.
