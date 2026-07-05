@@ -32,7 +32,7 @@
     "node": ">=22"
   },
   "scripts": {
-    "build": "rm -rf dist && tsc",
+    "build": "rm -rf dist && tsc && chmod +x dist/cli.js",
     "bundle": "node esbuild.config.mjs",
     "watch": "tsc --watch",
     "pretest": "bash scripts/ensure-siblings-built.sh",
