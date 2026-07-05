@@ -125,6 +125,22 @@ function commandIsNoOp(graph: Graph, cmd: MutateCommand): boolean {
       return !graph.edges.some(
         (e) => e.sourceId === cmd.edge.sourceId && e.targetId === cmd.edge.targetId && e.edgeType === cmd.edge.edgeType,
       );
+    // CR-GC-238: mirrors applyCommands — a missing edge/source is a no-op there.
+    case 'update-edge': {
+      const prev = graph.edges.find(
+        (e) => e.sourceId === cmd.edge.sourceId && e.targetId === cmd.edge.targetId && e.edgeType === cmd.edge.edgeType,
+      );
+      if (!prev) return true;
+      const flip = cmd.set.flip === true;
+      const mergedAttrs = { ...prev.attributes, ...(cmd.set.attributes ?? {}) };
+      return (
+        !flip &&
+        (cmd.set.edgeType ?? prev.edgeType) === prev.edgeType &&
+        stableStringify(prev.attributes) === stableStringify(mergedAttrs)
+      );
+    }
+    case 'merge-nodes':
+      return cmd.sourceUid === cmd.targetUid || !graph.nodes.some((n) => n.uid === cmd.sourceUid);
   }
 }
 

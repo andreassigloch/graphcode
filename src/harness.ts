@@ -32,6 +32,7 @@ import type {
 import { DefaultRuleEngine, SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import {
   HarnessConfigSchema,
+  MutateCommandSchema,
   type HarnessConfig,
   type MutateCommand,
   type MutateResult,
@@ -293,6 +294,46 @@ export class GraphCodeHarness {
   }
 
   private async applyMutation(commands: MutateCommand[], dryRun = false): Promise<MutateResult> {
+    // Step 0 — shape validation (CR-GC-239). MCP transports hand commands over as
+    // plain JSON; a shape typo (`op:"add_node"`, flat fields) must never pass the
+    // gate as a silent no-op with success:true. Parse EVERY command against the
+    // contracts schema; any failure blocks the whole batch (no graphVersion bump,
+    // audit records result:"rejected" — both derive from success:false).
+    const schemaViolations: RuleViolation[] = [];
+    const parsedCommands: MutateCommand[] = [];
+    commands.forEach((cmd, i) => {
+      const parsed = MutateCommandSchema.safeParse(cmd);
+      if (parsed.success) {
+        parsedCommands.push(parsed.data);
+        return;
+      }
+      const detail = parsed.error.issues.map((iss) => `${iss.path.join('.') || '(root)'}: ${iss.message}`).join('; ');
+      schemaViolations.push({
+        ruleId: 'SCHEMA-01',
+        severity: 'error',
+        message: `command[${i}] does not match MutateCommandSchema — ${detail}`,
+        fixHint:
+          "Canonical shapes: {op:'add-node'|'update-node', node:{uid,type,name,description?,attributes?}} · " +
+          "{op:'delete-node', uid} · {op:'add-edge', edge:{sourceId,targetId,edgeType,attributes?}} · " +
+          "{op:'delete-edge', edge:{sourceId,targetId,edgeType}} · " +
+          "{op:'update-edge', edge:{sourceId,targetId,edgeType}, set:{edgeType?|flip?|attributes?}} · " +
+          "{op:'merge-nodes', sourceUid, targetUid}",
+      });
+    });
+    if (schemaViolations.length > 0) {
+      const result: MutateResult = {
+        success: false,
+        appliedCommands: 0,
+        mutations: 0,
+        violations: schemaViolations,
+        confidence: 0,
+        tier: 'block',
+      };
+      if (!dryRun) await this.hooks.runPostApplyHooks(result);
+      return result;
+    }
+    commands = parsedCommands; // normalized: schema defaults (attributes: {}) applied
+
     // Step 1 — pre-commit.
     const preResults = await this.hooks.runPreCommitHooks(commands);
     const blockedBy = preResults.find((r) => r.block);
@@ -379,6 +420,14 @@ export class GraphCodeHarness {
       confidence: 1,
       tier,
     };
+
+    // CR-GC-239 invariant: an applied batch that changed NOTHING is suspicious.
+    // Shape errors block above, so the remaining causes are legitimate no-ops
+    // (idempotent delete-edge, update-edge/merge-nodes on a vanished element) —
+    // surface them on stderr (stdout is the MCP transport), don't fail.
+    if (commands.length > 0 && result.mutations === 0) {
+      console.error(`[graphcode] mutate: ${commands.length} command(s) applied with 0 mutations — all no-ops.`);
+    }
 
     // Step 5 — post-apply hooks (skipped on a dry run: no phantom events).
     if (!dryRun) await this.hooks.runPostApplyHooks(result);
@@ -570,6 +619,63 @@ export class GraphCodeHarness {
             (e) => !(e.sourceId === key.sourceId && e.targetId === key.targetId && e.edgeType === key.edgeType),
           );
           delta.deleteEdges.push(key);
+          break;
+        }
+        // CR-GC-238: type-change / flip / attribute-patch as ONE semantic op —
+        // the audit entry stays `update-edge`, distinguishable from delete+add.
+        case 'update-edge': {
+          const key = cmd.edge;
+          const idx = this.graph.edges.findIndex(
+            (e) => e.sourceId === key.sourceId && e.targetId === key.targetId && e.edgeType === key.edgeType,
+          );
+          if (idx < 0) break; // unknown edge → no-op (mutations: 0), same as delete-edge
+          const prev = this.graph.edges[idx];
+          const flip = cmd.set.flip === true;
+          const next: GraphEdge = {
+            sourceId: flip ? prev.targetId : prev.sourceId,
+            targetId: flip ? prev.sourceId : prev.targetId,
+            edgeType: cmd.set.edgeType ?? prev.edgeType,
+            attributes: { ...prev.attributes, ...(cmd.set.attributes ?? {}) },
+          };
+          this.graph.edges.splice(idx, 1);
+          const dup = this.graph.edges.some(
+            (e) => e.sourceId === next.sourceId && e.targetId === next.targetId && e.edgeType === next.edgeType,
+          );
+          if (!dup) this.graph.edges.push(next);
+          // Attribute-only patch keeps the edge identity — a delete of the old key
+          // would remove the just-upserted edge from the store (persist runs upserts
+          // before deletes), so only push the delete when the identity changed.
+          const identityChanged =
+            next.sourceId !== key.sourceId || next.targetId !== key.targetId || next.edgeType !== key.edgeType;
+          if (identityChanged) delta.deleteEdges.push(key);
+          delta.upsertEdges.push(next);
+          break;
+        }
+        // CR-GC-238: target absorbs source — incident edges rewired, source deleted.
+        // An illegal result (R-18 pair, R-08 missing target) blocks via delta rules.
+        case 'merge-nodes': {
+          const { sourceUid, targetUid } = cmd;
+          if (sourceUid === targetUid) break;
+          if (!this.graph.nodes.some((n) => n.uid === sourceUid)) break; // unknown source → no-op
+          const incident = this.graph.edges.filter((e) => e.sourceId === sourceUid || e.targetId === sourceUid);
+          this.graph.edges = this.graph.edges.filter((e) => e.sourceId !== sourceUid && e.targetId !== sourceUid);
+          for (const e of incident) {
+            delta.deleteEdges.push({ sourceId: e.sourceId, targetId: e.targetId, edgeType: e.edgeType });
+            const rewired: GraphEdge = {
+              sourceId: e.sourceId === sourceUid ? targetUid : e.sourceId,
+              targetId: e.targetId === sourceUid ? targetUid : e.targetId,
+              edgeType: e.edgeType,
+              attributes: { ...e.attributes },
+            };
+            if (rewired.sourceId === rewired.targetId) continue; // source↔target edge collapses, no self-loop
+            const dup = this.graph.edges.some(
+              (x) => x.sourceId === rewired.sourceId && x.targetId === rewired.targetId && x.edgeType === rewired.edgeType,
+            );
+            if (!dup) this.graph.edges.push(rewired);
+            delta.upsertEdges.push(rewired);
+          }
+          this.graph.nodes = this.graph.nodes.filter((n) => n.uid !== sourceUid);
+          delta.deleteNodes.push(sourceUid);
           break;
         }
       }
