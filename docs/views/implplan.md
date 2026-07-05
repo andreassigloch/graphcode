@@ -79,6 +79,9 @@ depends-on:  MS-1-specification  ◀  MS-2-coding-vv  ◀  MS-3-mvp-readiness  �
 | `CR-GC-224` | done | Skills: View-Skills Thin-Trigger (Gruppe A) |
 | `CR-GC-225` | done | Skills: View-Skills Thin-Trigger (Gruppe B) |
 | `CR-GC-226` | done | Doku/Graph: lean=no-artifacts abloesen + Artefakt-Modell seeden |
+| `CR-GC-236` | done | Export-Header: Member-Name statt hartkodiertem graphcode |
+| `CR-GC-238` | done | applyCommands: update-edge + merge-nodes ausführen |
+| `CR-GC-239` | done | Gate lehnt malformed Commands hart ab |
 
 ## `MS-7-concurrency` — Enterprise concurrency & merge (one write channel) · status: draft
 
@@ -88,5 +91,6 @@ depends-on:  MS-1-specification  ◀  MS-2-coding-vv  ◀  MS-3-mvp-readiness  �
 | `CR-GC-233` | done | OCC: graphVersion + baseVersion-Check am Gate |
 | `CR-GC-234` | done | graph_merge: Replay-basierte Branch-Reintegration (semantischer Rebase) |
 | `CR-GC-235` | done | Ein Write-Channel: Host-owned Store, Sessions als Clients |
+| `CR-GC-237` | done | HTTP-Bridge folgt dem Store-Lock |
 
 > RENDER — the leaf→root MS/CR cut se-plan CREATEd; the test-level mapping mirrors the pyramid (#7).

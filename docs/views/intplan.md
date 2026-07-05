@@ -15,7 +15,7 @@ Tier order:  MS-1-specification  ──▶  MS-2-coding-vv  ──▶  MS-3-mvp-
 | `MS-3-mvp-readiness` | done | 0 / 10 | — |
 | `MS-4-mvp2` | draft | 0 / 12 | — |
 | `MS-5-efficiency` | draft | 2 / 3 | `CR-GC-204` · `CR-GC-205` |
-| `MS-6-adoption` | draft | 0 / 7 | — |
-| `MS-7-concurrency` | draft | 0 / 4 | — |
+| `MS-6-adoption` | draft | 0 / 10 | — |
+| `MS-7-concurrency` | draft | 0 / 5 | — |
 
 > GENERATED — renders the milestones/CRs the Impl Plan created. Originates nothing.

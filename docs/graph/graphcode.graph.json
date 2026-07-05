@@ -545,6 +545,42 @@
       "status": "done"
     },
     {
+      "id": "CR-GC-236",
+      "type": "CR",
+      "name": "Export-Header: Member-Name statt hartkodiertem graphcode",
+      "description": "DONE 2026-07-05: generatedHeader(name, title, subtitle) — Titel-Präfix und SSOT-Pfad (docs/graph/<name>.graph.json) folgen dem Export-Namen (graph_export {name} bzw. scope.systemId) statt hartkodiert 'graphcode'. Consumer-Repo-Views behaupten nicht mehr graphcode.graph.json als Source of truth. Eigener Export: die 12 SE-Views byte-identisch, die 4 Foundation-Views verlieren nur das alte GraphCode-Präfix. Byte-Determinismus unverändert (Name ist Export-Input). Dateien: src/exporter.ts, src/exporter-views.ts, src/mcp-tools.ts. Test: tests/exporter.test.ts (CR-GC-236-Block). Quelle: graph-view-edit Konzept-Review. (CR-GC-236)",
+      "status": "done",
+      "created_at": "2026-07-05T00:00:00.000Z",
+      "updated_at": "2026-07-05T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-237",
+      "type": "CR",
+      "name": "HTTP-Bridge folgt dem Store-Lock",
+      "description": "DONE 2026-07-05: Der gewählte Host (mcp- oder host-Kommando) serviert die read-only HTTP/SSE-Bridge, wenn GRAPHCODE_HOST_PORT gesetzt ist; init/update scaffolden einen deterministischen Per-Repo-Port in .mcp.json env. graphcode host crasht nicht mehr auf einem lebenden Owner. Fixt zusätzlich ein floating mkdir-Promise im Trajectory-Hook (unhandled rejection wenn eine Harness die Election verliert und nie mutiert). Folge-CR zu CR-GC-235 (Host-Election). (CR-GC-237)",
+      "status": "done",
+      "created_at": "2026-07-05T00:00:00.000Z",
+      "updated_at": "2026-07-05T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-238",
+      "type": "CR",
+      "name": "applyCommands: update-edge + merge-nodes ausführen",
+      "description": "DONE 2026-07-05: applyCommands (harness.ts) führt die zwei CR-196-Ops aus contracts ≥0.5.0 aus. update-edge: Typwechsel/Flip/Attribut-Patch als EIN semantischer Op (Kante per sourceId, targetId, edgeType identifiziert; Attribut-only-Patch behält die Edge-Identität — kein delete des frisch upserteten Keys). merge-nodes: target absorbiert source, alle inzidenten Kanten umgehängt, source→target-Kanten kollabieren (kein Self-Loop), source gelöscht. Illegales Ergebnis blockt via Delta-Regeln R-18/R-08. Audit trägt den semantischen Command verbatim — ein Eintrag pro Op, Flip unterscheidbar von Delete+Add. merge.ts commandIsNoOp deckt beide Ops. Test: tests/harness.gate.test.ts. Quelle: graph-view-edit CR-GVE-D02; dort danach den delete+add-Interim-Pfad löschen. (CR-GC-238)",
+      "status": "done",
+      "created_at": "2026-07-05T00:00:00.000Z",
+      "updated_at": "2026-07-05T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-239",
+      "type": "CR",
+      "name": "Gate lehnt malformed Commands hart ab",
+      "description": "DONE 2026-07-05: harness.applyMutation Step 0 parsed jeden eingehenden Command gegen MutateCommandSchema (contracts) — EIN Enforcement-Punkt für MCP- und in-process-Aufrufer. Shape-Fehler (z.B. op add_node mit flachen Feldern) blockt den GANZEN Batch: tier block, success false, Violation SCHEMA-01 mit Zod-Pfad + fixHint auf die kanonischen Shapes. Kein graphVersion-Bump, Audit schreibt result rejected (beides hängt bereits an success, CR-233). Vorher: stiller No-op mit success true, appliedCommands>0, mutations 0 — sechs Batches einer graph-view-edit-Session verloren. Applied-Batches mit 0 Mutationen warnen auf stderr (legitime No-ops: idempotentes delete-edge, update-edge auf verschwundene Kante). Test: tests/mutate.schema-guard.test.ts. (CR-GC-239)",
+      "status": "done",
+      "created_at": "2026-07-05T00:00:00.000Z",
+      "updated_at": "2026-07-05T00:00:00.000Z"
+    },
+    {
       "id": "FCHAIN-agent-query",
       "type": "FCHAIN",
       "name": "Agent-Graph-Query (Impact + progressive Expansion)",
@@ -5058,6 +5094,26 @@
     {
       "source": "CR-GC-235",
       "target": "MS-7-concurrency",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-236",
+      "target": "MS-6-adoption",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-237",
+      "target": "MS-7-concurrency",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-238",
+      "target": "MS-6-adoption",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-239",
+      "target": "MS-6-adoption",
       "type": "relation"
     },
     {

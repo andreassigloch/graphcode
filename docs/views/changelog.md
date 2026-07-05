@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 62 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 66 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 62 CR · 60 done · 2 open.
+Total: 66 CR · 64 done · 2 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -79,6 +79,9 @@ Total: 62 CR · 60 done · 2 open.
 | `CR-GC-224` | done | Skills: View-Skills Thin-Trigger (Gruppe A) |
 | `CR-GC-225` | done | Skills: View-Skills Thin-Trigger (Gruppe B) |
 | `CR-GC-226` | done | Doku/Graph: lean=no-artifacts abloesen + Artefakt-Modell seeden |
+| `CR-GC-236` | done | Export-Header: Member-Name statt hartkodiertem graphcode |
+| `CR-GC-238` | done | applyCommands: update-edge + merge-nodes ausführen |
+| `CR-GC-239` | done | Gate lehnt malformed Commands hart ab |
 
 ## `MS-7-concurrency` — Enterprise concurrency & merge (one write channel)
 
@@ -88,6 +91,7 @@ Total: 62 CR · 60 done · 2 open.
 | `CR-GC-233` | done | OCC: graphVersion + baseVersion-Check am Gate |
 | `CR-GC-234` | done | graph_merge: Replay-basierte Branch-Reintegration (semantischer Rebase) |
 | `CR-GC-235` | done | Ein Write-Channel: Host-owned Store, Sessions als Clients |
+| `CR-GC-237` | done | HTTP-Bridge folgt dem Store-Lock |
 
 ## (unassigned)
 
