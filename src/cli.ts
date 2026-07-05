@@ -20,6 +20,7 @@
  */
 import { serveStdio } from './mcp-server.js';
 import { serveHost } from './viewer/host.js';
+import { StoreOwnershipError } from './store-lock.js';
 import { scaffold, syncSkills, type CliCommand } from './scaffold.js';
 
 const USAGE = `graphcode — governed graph substrate (MCP-stdio)
@@ -43,13 +44,26 @@ async function main(): Promise<void> {
       // Bind the read-only bridge and keep the process alive; the host owns the
       // single Kuzu store until the process is signalled to exit (CR-GC-114).
       const portArg = Number(process.env.GRAPHCODE_HOST_PORT ?? 0);
-      const bridge = await serveHost({ repoRoot: process.cwd(), port: Number.isFinite(portArg) ? portArg : 0 });
-      const shutdown = (): void => {
-        void bridge.stop().finally(() => process.exit(0));
-      };
-      process.on('SIGINT', shutdown);
-      process.on('SIGTERM', shutdown);
-      return; // event loop kept alive by the listening server
+      try {
+        const bridge = await serveHost({ repoRoot: process.cwd(), port: Number.isFinite(portArg) ? portArg : 0 });
+        const shutdown = (): void => {
+          void bridge.stop().finally(() => process.exit(0));
+        };
+        process.on('SIGINT', shutdown);
+        process.on('SIGTERM', shutdown);
+        return; // event loop kept alive by the listening server
+      } catch (err) {
+        if (!(err instanceof StoreOwnershipError)) throw err;
+        // Not an error state (CR-GC-237): the elected host serves the bridge
+        // itself when GRAPHCODE_HOST_PORT is set (scaffolded into .mcp.json).
+        const hint = Number.isFinite(portArg) && portArg > 0
+          ? `check http://127.0.0.1:${portArg}/health`
+          : 'set GRAPHCODE_HOST_PORT in .mcp.json env (npx @sigloch/graphcode update scaffolds it)';
+        process.stderr.write(
+          `graphcode host: store already owned by pid ${err.owner.pid} — the elected host serves the read-only bridge itself; ${hint}\n`,
+        );
+        process.exit(0);
+      }
     }
     case 'init':
     case 'update':

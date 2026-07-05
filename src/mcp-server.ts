@@ -26,6 +26,8 @@ import { exportGraphJson } from './exporter.js';
 import { bindToolsToHarness, type MCPTool, type MCPToolRegistry } from './mcp-tools.js';
 import { StoreOwnershipError } from './store-lock.js';
 import { startHostSocket, buildProxyRegistry, HOST_SOCK_BASENAME } from './host-shim.js';
+import { HostBridge } from './viewer/host.js';
+import type { LiveUpdateEvent } from './emit.js';
 
 // Identity advertised to MCP clients during the initialize handshake. Kept in
 // sync with package.json by CR-121 (distribution); hardcoded here so the core
@@ -138,11 +140,24 @@ export async function serveStdio(opts?: {
   const member = deriveMemberName(repoRoot);
   const scope = opts?.scope ?? { workspaceId: member, systemId: member };
 
-  /** One election attempt: win the lock and come up as a full host. */
+  /**
+   * One election attempt: win the lock and come up as a full host — incl. the
+   * read-only HTTP bridge when GRAPHCODE_HOST_PORT is set (CR-GC-237: the
+   * bridge follows the lock). Passed as `promote` too, so a client promoted
+   * after a host death rebinds the same port (the dead owner freed it).
+   */
   async function electAndBoot(): Promise<MCPToolRegistry> {
-    const harness = await createHarness({ repoRoot, scope });
+    // The sink is wired BEFORE the bridge exists — a mutable indirection lets
+    // the bridge attach to this harness after the election is won.
+    let bridge: HostBridge | null = null;
+    const harness = await createHarness(
+      { repoRoot, scope },
+      { onUpdateEvent: (event: LiveUpdateEvent) => bridge?.broadcast(event) },
+    );
     await harness.initialize(); // the O2 lock IS the election (CR-GC-218)
-    return bootHost(repoRoot, harness);
+    const registry = await bootHost(repoRoot, harness);
+    bridge = await maybeStartBridge(repoRoot, harness);
+    return registry;
   }
 
   let registry: MCPToolRegistry;
@@ -161,6 +176,37 @@ export async function serveStdio(opts?: {
   }
   const server = bindRegistryToMcpServer(registry);
   await server.connect(new StdioServerTransport());
+}
+
+/**
+ * Start the read-only HTTP bridge over the elected host's harness — ATTACH mode
+ * (CR-GC-237). Opt-in via GRAPHCODE_HOST_PORT (scaffolded into `.mcp.json` env
+ * by `graphcode init`); unset → no bridge, behavior as before. A bind failure
+ * (port taken) must NEVER kill the gate: warn on stderr and serve stdio only.
+ * Exported for TEST-bridge-follows-lock; production callers: electAndBoot only.
+ */
+export async function maybeStartBridge(
+  repoRoot: string,
+  harness: GraphCodeHarness,
+): Promise<HostBridge | null> {
+  const raw = process.env.GRAPHCODE_HOST_PORT;
+  if (!raw) return null;
+  const port = Number(raw);
+  if (!Number.isInteger(port) || port <= 0 || port > 65535) {
+    process.stderr.write(`[graphcode] WARN: GRAPHCODE_HOST_PORT="${raw}" is not a valid port — no bridge started\n`);
+    return null;
+  }
+  const bridge = new HostBridge({ repoRoot, harness, port });
+  try {
+    await bridge.start();
+    process.stderr.write(`[graphcode] host: read-only bridge on http://127.0.0.1:${port} (/health /events /elements /subgraph)\n`);
+    return bridge;
+  } catch (err) {
+    process.stderr.write(
+      `[graphcode] WARN: bridge failed to bind port ${port} (${err instanceof Error ? err.message : String(err)}) — serving stdio only\n`,
+    );
+    return null;
+  }
 }
 
 /** Extract the raw Zod shape a `z.object`/`z.looseObject` was built from. */

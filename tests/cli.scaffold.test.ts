@@ -24,6 +24,7 @@ import { readdirSync } from 'node:fs';
 import {
   scaffold,
   syncSkills,
+  deriveHostPort,
   InstallResultSchema,
   CliCommandSchema,
   SkillSyncResultSchema,
@@ -64,9 +65,16 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
     expect(existsSync(join(repo, '.graphcode'))).toBe(true);
 
     // .mcp.json launches the server via npx — the exact form a foreign repo needs.
+    // env.GRAPHCODE_HOST_PORT opts the elected host into the live-view bridge (CR-GC-237).
     const mcp = JSON.parse(readFileSync(join(repo, MCP), 'utf8'));
     expect(mcp).toEqual({
-      mcpServers: { graphcode: { command: 'npx', args: ['-y', PKG, 'mcp'] } },
+      mcpServers: {
+        graphcode: {
+          command: 'npx',
+          args: ['-y', PKG, 'mcp'],
+          env: { GRAPHCODE_HOST_PORT: String(deriveHostPort(repo)) },
+        },
+      },
     });
 
     // Guardrails doc present.
@@ -241,12 +249,32 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
     expect(readFileSync(marker, 'utf8')).toBe('LIVE-STORE-DATA');
     expect(res.preserved).toEqual(expect.arrayContaining([KUZU_DIR + '/']));
 
-    // .mcp.json refreshed to the canonical form.
+    // .mcp.json refreshed to the canonical form (stale file → derived port).
     const mcp = JSON.parse(readFileSync(join(repo, MCP), 'utf8'));
     expect(mcp).toEqual({
-      mcpServers: { graphcode: { command: 'npx', args: ['-y', PKG, 'mcp'] } },
+      mcpServers: {
+        graphcode: {
+          command: 'npx',
+          args: ['-y', PKG, 'mcp'],
+          env: { GRAPHCODE_HOST_PORT: String(deriveHostPort(repo)) },
+        },
+      },
     });
     expect(res.updated).toEqual(expect.arrayContaining([MCP]));
+  });
+
+  it('update preserves a user-edited GRAPHCODE_HOST_PORT (CR-GC-237)', async () => {
+    await scaffold('init', { repoRoot: repo });
+
+    // The user resolved a port conflict by editing .mcp.json.
+    const edited = JSON.parse(readFileSync(join(repo, MCP), 'utf8'));
+    edited.mcpServers.graphcode.env.GRAPHCODE_HOST_PORT = '4999';
+    writeFileSync(join(repo, MCP), JSON.stringify(edited, null, 2) + '\n', 'utf8');
+
+    await scaffold('update', { repoRoot: repo });
+
+    const mcp = JSON.parse(readFileSync(join(repo, MCP), 'utf8'));
+    expect(mcp.mcpServers.graphcode.env.GRAPHCODE_HOST_PORT).toBe('4999');
   });
 
   it('remove deletes every installed artifact, restlos (REQ-repo-uninstall)', async () => {

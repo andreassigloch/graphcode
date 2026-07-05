@@ -45,6 +45,7 @@ import {
   GraphCodeHarness,
 } from '../src/index.js';
 import type { MutateCommand } from '@sigloch/contracts/harness';
+import { deriveHostPort } from '../src/scaffold.js';
 
 const PKG = '@sigloch/graphcode';
 
@@ -91,7 +92,13 @@ describe('TEST-mvp-e2e: MVP-1 loop (bootstrap → spec → impact → implement 
     // .mcp.json launches the stdio server via npx — the exact form a foreign repo needs.
     const mcp = JSON.parse(readFileSync(join(tmp, '.mcp.json'), 'utf8'));
     expect(mcp).toEqual({
-      mcpServers: { graphcode: { command: 'npx', args: ['-y', PKG, 'mcp'] } },
+      mcpServers: {
+        graphcode: {
+          command: 'npx',
+          args: ['-y', PKG, 'mcp'],
+          env: { GRAPHCODE_HOST_PORT: String(deriveHostPort(tmp)) },
+        },
+      },
     });
     expect(existsSync(join(tmp, '.graphcode'))).toBe(true);
     expect(existsSync(join(tmp, 'GRAPHCODE.md'))).toBe(true);

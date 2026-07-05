@@ -115,11 +115,15 @@ export function makeTrajectoryHook(
   outDir: string,
 ): (data: HookData) => Promise<HookResult | void> {
   const filePath = join(outDir, 'trajectory.jsonl');
-  // Ensure the dir exists once per hook lifetime (lazy, idempotent).
-  const ensureDir = mkdir(outDir, { recursive: true });
+  // Ensure the dir exists once per hook lifetime — created LAZILY on the first
+  // post-apply call. An eager mkdir here is a floating promise: a harness that
+  // never mutates (e.g. one whose initialize() loses the store election) leaks
+  // an unhandled rejection when the promise settles after cleanup (CR-GC-237).
+  let ensureDir: Promise<string | undefined> | null = null;
 
   return async (data: HookData): Promise<HookResult | void> => {
     if (data.phase !== 'post-apply') return;
+    ensureDir ??= mkdir(outDir, { recursive: true });
     await ensureDir; // resolves immediately after first call
     const result = data.result;
     const entry: TrajectoryEntry = {

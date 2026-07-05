@@ -1,8 +1,11 @@
 /**
  * host.ts — graphcode HOST process + READ-ONLY SSE bridge (MOD-host-bridge).
  *
- * The host owns the single disk Kuzu store for a repo (REQ-single-kuzu-owner /
- * FUNC-own-kuzu-host) and exposes a strictly READ/live-view HTTP surface:
+ * The bridge exposes a strictly READ/live-view HTTP surface over the single
+ * disk Kuzu store of a repo (REQ-single-kuzu-owner / FUNC-own-kuzu-host). Two
+ * modes (CR-GC-237): OWN — `graphcode host` wins the election and owns the
+ * harness itself; ATTACH — the elected MCP host injects ITS harness, so live
+ * viewer and agent sessions coexist (the bridge follows the lock):
  *
  *   GET /health   real readiness probe — store reachable + gate functional +
  *                 ontology/rules/meta-model versions (FUNC-health-endpoint /
@@ -57,6 +60,13 @@ export interface HostBridgeOptions {
   port?: number;
   /** Host scope; defaults to the repo-derived member identity if omitted. */
   scope?: HarnessConfig['scope'];
+  /**
+   * ATTACH mode (CR-GC-237): serve the HTTP surface over an already-elected
+   * harness instead of owning a new one. The caller keeps the harness lifecycle
+   * (`stop()` never closes it) and must feed mutations to `broadcast()` — the
+   * injected harness's event sink was fixed at its own `createHarness` time.
+   */
+  harness?: GraphCodeHarness;
 }
 
 /** Live health payload for `GET /health` (REQ-real-health-check). */
@@ -87,6 +97,8 @@ export interface HealthPayload {
 export class HostBridge {
   private readonly opts: HostBridgeOptions;
   private harness: GraphCodeHarness | null = null;
+  /** True when start() created the harness — only then does stop() close it. */
+  private ownsHarness = false;
   private server: Server | null = null;
   private readonly clients = new Set<SseClient>();
   /** Monotonic broadcast version (REQ-versioned-broadcast). Never resets. */
@@ -104,18 +116,27 @@ export class HostBridge {
   async start(): Promise<number> {
     if (this.server) throw new Error('[HostBridge] already started');
 
-    // Single Kuzu owner: createHarness opens exactly one store at
-    // <repoRoot>/.graphcode/kuzu and threads the SSE broadcast as onUpdateEvent.
-    // Default the scope to the repo-derived member identity (mirrors serveStdio).
-    const member = deriveMemberName(this.opts.repoRoot);
-    this.harness = await createHarness(
-      {
-        repoRoot: this.opts.repoRoot,
-        scope: this.opts.scope ?? { workspaceId: member, systemId: member },
-      },
-      { onUpdateEvent: (event) => this.broadcast(event) },
-    );
-    await this.harness.initialize();
+    if (this.opts.harness) {
+      // ATTACH mode (CR-GC-237): the elected host (e.g. the MCP-stdio winner)
+      // already owns the store — serve HTTP over ITS harness. The caller wires
+      // its onUpdateEvent sink to `broadcast()`; we never touch the lock.
+      this.harness = this.opts.harness;
+      this.ownsHarness = false;
+    } else {
+      // OWN mode: single Kuzu owner — createHarness opens exactly one store at
+      // <repoRoot>/.graphcode/kuzu and threads the SSE broadcast as onUpdateEvent.
+      // Default the scope to the repo-derived member identity (mirrors serveStdio).
+      const member = deriveMemberName(this.opts.repoRoot);
+      this.harness = await createHarness(
+        {
+          repoRoot: this.opts.repoRoot,
+          scope: this.opts.scope ?? { workspaceId: member, systemId: member },
+        },
+        { onUpdateEvent: (event) => this.broadcast(event) },
+      );
+      await this.harness.initialize();
+      this.ownsHarness = true;
+    }
 
     const harness = this.harness;
     this.server = createServer((req, res) => {
@@ -134,7 +155,10 @@ export class HostBridge {
     return (this.server!.address() as AddressInfo).port;
   }
 
-  /** Close the HTTP server, end all SSE streams, and release the store handle. */
+  /**
+   * Close the HTTP server and end all SSE streams. Releases the store handle
+   * ONLY in own mode — an attached harness belongs to the elected host.
+   */
   async stop(): Promise<void> {
     for (const client of this.clients) client.end();
     this.clients.clear();
@@ -146,7 +170,7 @@ export class HostBridge {
       this.server = null;
     }
     if (this.harness) {
-      await this.harness.close();
+      if (this.ownsHarness) await this.harness.close();
       this.harness = null;
     }
   }
@@ -245,8 +269,12 @@ export class HostBridge {
    * Broadcast one LiveUpdateEvent to every connected SSE client with a fresh
    * monotonic id (FUNC-broadcast-diff). The id makes the stream VERSIONED:
    * clients track the last id and resume via Last-Event-ID (REQ-versioned-broadcast).
+   *
+   * Public because in ATTACH mode (CR-GC-237) the elected host owns the harness
+   * and wires its own onUpdateEvent sink to this method; in own mode start()
+   * wires it internally.
    */
-  private broadcast(event: LiveUpdateEvent): void {
+  broadcast(event: LiveUpdateEvent): void {
     const id = ++this.seq;
     const frame = `id: ${id}\nevent: invalidate\ndata: ${JSON.stringify(event)}\n\n`;
     for (const client of this.clients) client.write(frame);

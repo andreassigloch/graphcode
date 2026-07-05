@@ -200,11 +200,52 @@ export const SkillSyncResultSchema = z.object({
 });
 export type SkillSyncResult = z.infer<typeof SkillSyncResultSchema>;
 
-/** The `.mcp.json` a foreign repo needs: launch the server via npx (CR-121). */
-function mcpConfigContent(): string {
+/** Read a scaffolded file if present — used to carry user edits across update. */
+function readIfExists(abs: string): string | null {
+  return existsSync(abs) ? readFileSync(abs, 'utf8') : null;
+}
+
+/**
+ * Deterministic live-viewer port for a repo (CR-GC-237): FNV-1a over the repo
+ * path, folded into 4600–4899. Stable across init/update for the same path;
+ * distinct worktrees (own stores) land on distinct ports with high probability.
+ * A collision is harmless — the elected host warns and serves stdio only; the
+ * port lives in `.mcp.json` and is user-editable.
+ */
+export function deriveHostPort(repoRoot: string): number {
+  let hash = 0x811c9dc5;
+  for (let i = 0; i < repoRoot.length; i++) {
+    hash ^= repoRoot.charCodeAt(i);
+    hash = Math.imul(hash, 0x01000193) >>> 0;
+  }
+  return 4600 + (hash % 300);
+}
+
+/**
+ * The `.mcp.json` a foreign repo needs: launch the server via npx (CR-121).
+ * `env.GRAPHCODE_HOST_PORT` opts the elected host into the read-only live-view
+ * bridge (CR-GC-237). A port the user already set survives `update`.
+ */
+function mcpConfigContent(repoRoot: string, existingRaw: string | null): string {
+  let port = deriveHostPort(repoRoot);
+  if (existingRaw) {
+    try {
+      const existing = JSON.parse(existingRaw) as {
+        mcpServers?: { graphcode?: { env?: { GRAPHCODE_HOST_PORT?: unknown } } };
+      };
+      const kept = Number(existing.mcpServers?.graphcode?.env?.GRAPHCODE_HOST_PORT);
+      if (Number.isInteger(kept) && kept > 0 && kept <= 65535) port = kept;
+    } catch {
+      // Stale/unparseable file — refresh to the canonical form.
+    }
+  }
   const cfg = {
     mcpServers: {
-      graphcode: { command: 'npx', args: ['-y', PACKAGE_NAME, 'mcp'] },
+      graphcode: {
+        command: 'npx',
+        args: ['-y', PACKAGE_NAME, 'mcp'],
+        env: { GRAPHCODE_HOST_PORT: String(port) },
+      },
     },
   };
   return JSON.stringify(cfg, null, 2) + '\n';
@@ -542,7 +583,7 @@ export async function scaffold(
         mkdirSync(graphcodeAbs, { recursive: true });
         res.created.push(GRAPHCODE_DIR + '/');
       }
-      writeArtifact(mcpAbs, MCP_CONFIG, mcpConfigContent(), res);
+      writeArtifact(mcpAbs, MCP_CONFIG, mcpConfigContent(repoRoot, readIfExists(mcpAbs)), res);
       writeArtifact(guardrailsAbs, GUARDRAILS_FILE, guardrailsContent(), res);
       installSkills(repoRoot, res);
       installHooks(repoRoot, res);
@@ -560,7 +601,7 @@ export async function scaffold(
         mkdirSync(graphcodeAbs, { recursive: true });
         res.created.push(GRAPHCODE_DIR + '/');
       }
-      writeArtifact(mcpAbs, MCP_CONFIG, mcpConfigContent(), res);
+      writeArtifact(mcpAbs, MCP_CONFIG, mcpConfigContent(repoRoot, readIfExists(mcpAbs)), res);
       writeArtifact(guardrailsAbs, GUARDRAILS_FILE, guardrailsContent(), res);
       installSkills(repoRoot, res);
       installHooks(repoRoot, res);
