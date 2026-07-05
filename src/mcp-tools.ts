@@ -763,7 +763,7 @@ export function bindToolsToHarness(
 
       const views = input.views ?? MARKDOWN_VIEWS;
       const written = views.map((v) => {
-        const md = exportMarkdown(graph, v);
+        const md = exportMarkdown(graph, v, name);
         const rel = join('docs', 'views', VIEW_FILENAMES[v]);
         const abs = join(repoRoot, rel);
         mkdirSync(dirname(abs), { recursive: true });

@@ -2,7 +2,7 @@
      Source of truth: docs/graph/graphcode.graph.json (the live graph).
      Re-render on model change: node scripts/export-graph.mjs -->
 
-# GraphCode — Modell-Spezifikation
+# graphcode — Modell-Spezifikation
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Alle Elemente nach Typ, sortiert nach uid. Deterministisch generiert.
 

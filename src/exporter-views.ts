@@ -96,7 +96,7 @@ function refList(uids: string[] | undefined): string {
 //    full trace. Orphan REQs (no UC, no FUNC) are flagged in their own section.
 // ---------------------------------------------------------------------------
 
-export function renderSrs(graph: Graph): string {
+export function renderSrs(graph: Graph, name: string): string {
   const idx = nodeIndex(graph);
   const reqs = nodesOfType(graph, 'REQ');
   const verify = adjacency(graph, 'verify'); // TEST → REQ : rev[req] = tests
@@ -113,7 +113,8 @@ export function renderSrs(graph: Graph): string {
 
   const lines: string[] = [
     generatedHeader(
-      'graphcode — System Requirements Specification · SRS-graphcode',
+      name,
+      `System Requirements Specification · SRS-${name}`,
       `REQ-Slice nach ISO/IEC/IEEE 29148, gruppiert nach UC. ${reqs.length} REQ. Deterministisch generiert.`,
     ),
   ];
@@ -214,12 +215,13 @@ function renderReqEntry(
 // 3. NFR Register (RENDER · REQ kind=non-functional). Specimen #3.
 // ---------------------------------------------------------------------------
 
-export function renderNfr(graph: Graph): string {
+export function renderNfr(graph: Graph, name: string): string {
   const verify = adjacency(graph, 'verify');
   const nfrs = nodesOfType(graph, 'REQ').filter((r) => reqKinds(r).includes('non-functional'));
   const lines: string[] = [
     generatedHeader(
-      'graphcode — Non-Functional Requirements',
+      name,
+      'Non-Functional Requirements',
       `REQ mit kinds ∋ "non-functional". ${nfrs.length} NFR. Deterministisch generiert.`,
     ),
   ];
@@ -237,14 +239,15 @@ export function renderNfr(graph: Graph): string {
 // 5. ICD — Interface Control Document (RENDER · SCHEMA/FLOW + io). Specimen #5.
 // ---------------------------------------------------------------------------
 
-export function renderIcd(graph: Graph): string {
+export function renderIcd(graph: Graph, name: string): string {
   const schemas = nodesOfType(graph, 'SCHEMA');
   const flows = nodesOfType(graph, 'FLOW');
   const ioFwd = adjacency(graph, 'io'); // producer → FLOW
   const ioRev = adjacency(graph, 'io'); // FLOW → consumer (rev)
   const lines: string[] = [
     generatedHeader(
-      'graphcode — Interface Control Document',
+      name,
+      'Interface Control Document',
       `${schemas.length} SCHEMA · ${flows.length} FLOW. Deterministisch generiert.`,
     ),
   ];
@@ -273,14 +276,15 @@ export function renderIcd(graph: Graph): string {
 //    Specimen #6. Rows sorted by uid; a coverage gap (REQ without verify) is ⚠.
 // ---------------------------------------------------------------------------
 
-export function renderRtm(graph: Graph): string {
+export function renderRtm(graph: Graph, name: string): string {
   const reqs = nodesOfType(graph, 'REQ');
   const verify = adjacency(graph, 'verify');
   const satisfy = adjacency(graph, 'satisfy');
   const allocate = adjacency(graph, 'allocate');
   const lines: string[] = [
     generatedHeader(
-      'graphcode — Requirements Traceability Matrix (RTM)',
+      name,
+      'Requirements Traceability Matrix (RTM)',
       `${reqs.length} REQ rows, sortiert nach uid. Deterministisch generiert.`,
     ),
   ];
@@ -306,7 +310,7 @@ export function renderRtm(graph: Graph): string {
 //    instead of being silently absent. "Make the gap loud."
 // ---------------------------------------------------------------------------
 
-export function renderTestConcept(graph: Graph): string {
+export function renderTestConcept(graph: Graph, name: string): string {
   const tests = nodesOfType(graph, 'TEST');
   const sysCount = nodesOfType(graph, 'SYS').length;
   const ucCount = nodesOfType(graph, 'UC').length;
@@ -354,7 +358,8 @@ export function renderTestConcept(graph: Graph): string {
 
   const lines: string[] = [
     generatedHeader(
-      'graphcode — Test Concept',
+      name,
+      'Test Concept',
       `${tests.length} TEST — Pyramide nach Modell-Level (System/UC/Function). Deterministisch generiert.`,
     ),
   ];
@@ -390,12 +395,13 @@ export function renderTestConcept(graph: Graph): string {
 //    the matrix semantics are preserved as the verifying-TEST set per REQ).
 // ---------------------------------------------------------------------------
 
-export function renderTestMatrix(graph: Graph): string {
+export function renderTestMatrix(graph: Graph, name: string): string {
   const reqs = nodesOfType(graph, 'REQ');
   const verify = adjacency(graph, 'verify');
   const lines: string[] = [
     generatedHeader(
-      'graphcode — Verification Cross-Reference Matrix (VCRM)',
+      name,
+      'Verification Cross-Reference Matrix (VCRM)',
       `REQ × TEST Coverage, ${reqs.length} REQ rows. Deterministisch generiert.`,
     ),
   ];
@@ -417,12 +423,13 @@ export function renderTestMatrix(graph: Graph): string {
 //    Topological MS order via the depends-on relation.
 // ---------------------------------------------------------------------------
 
-export function renderIntPlan(graph: Graph): string {
+export function renderIntPlan(graph: Graph, name: string): string {
   const milestones = nodesOfType(graph, 'MS');
   const ordered = topoOrderMilestones(graph, milestones);
   const lines: string[] = [
     generatedHeader(
-      'graphcode — Integration & Test Plan',
+      name,
+      'Integration & Test Plan',
       `${milestones.length} MS · Impl-Gates, depends-on Tier-Order. Deterministisch generiert.`,
     ),
   ];
@@ -483,13 +490,14 @@ function topoOrderMilestones(graph: Graph, milestones: GraphNode[]): GraphNode[]
 // 13. Change Log (RENDER · CR rollup by milestone + status). Specimen #13.
 // ---------------------------------------------------------------------------
 
-export function renderChangelog(graph: Graph): string {
+export function renderChangelog(graph: Graph, name: string): string {
   const crs = nodesOfType(graph, 'CR');
   const relation = adjacency(graph, 'relation'); // CR → MS : fwd[cr] = MSs
   const compose = adjacency(graph, 'compose'); // MS → CR
   const lines: string[] = [
     generatedHeader(
-      'graphcode — Change Log',
+      name,
+      'Change Log',
       `${crs.length} CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.`,
     ),
   ];
@@ -541,13 +549,14 @@ export function renderChangelog(graph: Graph): string {
 //    risk set renders an explicit empty-state, never a silently blank file.
 // ---------------------------------------------------------------------------
 
-export function renderFmea(graph: Graph): string {
+export function renderFmea(graph: Graph, name: string): string {
   const risks = nodesOfType(graph, 'REQ').filter((r) => reqKinds(r).includes('risk'));
   const verify = adjacency(graph, 'verify');
   const relation = adjacency(graph, 'relation'); // risk REQ → mitigation REQ (label may vary)
   const lines: string[] = [
     generatedHeader(
-      'graphcode — FMEA (functional risk)',
+      name,
+      'FMEA (functional risk)',
       `Render-Form von REQ kind=risk + S/O/D. ${risks.length} Risiken. Deterministisch generiert.`,
     ),
   ];
@@ -587,14 +596,15 @@ export function renderFmea(graph: Graph): string {
 //    CREATE authors the operational REQ before the UCs; this RENDER projects them.
 // ---------------------------------------------------------------------------
 
-export function renderConOps(graph: Graph): string {
+export function renderConOps(graph: Graph, name: string): string {
   const actors = nodesOfType(graph, 'ACTOR');
   const sys = nodesOfType(graph, 'SYS')[0];
   // Operational REQ: kinds ∋ "operational"; fall back to none → empty-state.
   const opReqs = nodesOfType(graph, 'REQ').filter((r) => reqKinds(r).includes('operational'));
   const lines: string[] = [
     generatedHeader(
-      'graphcode — Concept of Operations',
+      name,
+      'Concept of Operations',
       `Operationaler Rahmen: ACTOR + operationale REQ. ${actors.length} ACTOR. Deterministisch generiert.`,
     ),
   ];
@@ -621,7 +631,7 @@ export function renderConOps(graph: Graph): string {
 //    Walks relation(label ∈ {alternative, superseded-by, decides}); empty → note.
 // ---------------------------------------------------------------------------
 
-export function renderTrade(graph: Graph): string {
+export function renderTrade(graph: Graph, name: string): string {
   const idx = nodeIndex(graph);
   const tradeLabels = new Set(['alternative', 'superseded-by', 'decides']);
   const edges = graph.edges
@@ -634,7 +644,8 @@ export function renderTrade(graph: Graph): string {
     );
   const lines: string[] = [
     generatedHeader(
-      'graphcode — Trade Studies',
+      name,
+      'Trade Studies',
       `Render der decision-CRs + relation(decides/alternative/superseded-by). Deterministisch generiert.`,
     ),
   ];
@@ -662,14 +673,15 @@ export function renderTrade(graph: Graph): string {
 //     leaf→root by milestone with the test-level mapping mirroring the pyramid.
 // ---------------------------------------------------------------------------
 
-export function renderImplPlan(graph: Graph): string {
+export function renderImplPlan(graph: Graph, name: string): string {
   const milestones = topoOrderMilestones(graph, nodesOfType(graph, 'MS'));
   const relation = adjacency(graph, 'relation'); // CR → MS : rev[ms] = CRs
   const compose = adjacency(graph, 'compose'); // MS → CR
   const idx = nodeIndex(graph);
   const lines: string[] = [
     generatedHeader(
-      'graphcode — Implementation Plan',
+      name,
+      'Implementation Plan',
       `MS/CR-Slices + depends-on, leaf ▲ root. Deterministisch generiert.`,
     ),
   ];

@@ -116,6 +116,35 @@ describe('exportGraphJson / exportMarkdown (TEST-doc-export)', () => {
     }
   });
 
+  // -------------------------------------------------------------------------
+  // CR-GC-236 — header follows the export/member name, no hardcoded 'graphcode'.
+  // -------------------------------------------------------------------------
+
+  it('CR-GC-236: exportMarkdown(name) puts the member name in title + SSOT path (every view)', () => {
+    for (const view of MARKDOWN_VIEWS) {
+      const md = exportMarkdown(graph, view, 'graph-view-edit');
+      expect(md).toContain('# graph-view-edit — ');
+      expect(md).toContain('Source of truth: docs/graph/graph-view-edit.graph.json');
+      expect(md).toContain('GENERATED from `docs/graph/graph-view-edit.graph.json`');
+      // The GENERATED header must not claim graphcode's SSOT (node descriptions
+      // in the body may legitimately mention the file name).
+      const header = md.split('\n').slice(0, 8).join('\n');
+      expect(header).not.toContain('graphcode.graph.json');
+    }
+  });
+
+  it('CR-GC-236: default name is graphcode (own export keeps its SSOT path)', () => {
+    const md = exportMarkdown(graph, 'spec');
+    expect(md).toContain('# graphcode — ');
+    expect(md).toContain('docs/graph/graphcode.graph.json');
+  });
+
+  it('CR-GC-236: DETERMINISM — same graph + same name → identical bytes', () => {
+    for (const view of MARKDOWN_VIEWS) {
+      expect(exportMarkdown(graph, view, 'member-x')).toBe(exportMarkdown(graph, view, 'member-x'));
+    }
+  });
+
   it('the foundation views mirror FLOW-export-request (spec/architecture/cr-list/references)', () => {
     // The four foundation views are still present (CR-GC-220 ADDS to them, no parallel path).
     for (const v of ['architecture', 'cr-list', 'references', 'spec']) {

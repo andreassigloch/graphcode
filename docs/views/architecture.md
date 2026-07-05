@@ -2,7 +2,7 @@
      Source of truth: docs/graph/graphcode.graph.json (the live graph).
      Re-render on model change: node scripts/export-graph.mjs -->
 
-# GraphCode — Architektur
+# graphcode — Architektur
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). SYS / MOD / FUNC mit allocate-Zuordnung. Deterministisch generiert.
 

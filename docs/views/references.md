@@ -2,7 +2,7 @@
      Source of truth: docs/graph/graphcode.graph.json (the live graph).
      Re-render on model change: node scripts/export-graph.mjs -->
 
-# GraphCode — Traceability-References
+# graphcode — Traceability-References
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Alle Traces (source -type-> target), deterministisch sortiert.
 

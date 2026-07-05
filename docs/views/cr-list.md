@@ -2,7 +2,7 @@
      Source of truth: docs/graph/graphcode.graph.json (the live graph).
      Re-render on model change: node scripts/export-graph.mjs -->
 
-# GraphCode — Change-Requests
+# graphcode — Change-Requests
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Alle CR-Knoten, sortiert nach uid. Deterministisch generiert.
 
