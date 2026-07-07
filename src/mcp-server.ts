@@ -33,7 +33,7 @@ import type { LiveUpdateEvent } from './emit.js';
 // sync with package.json by CR-121 (distribution); hardcoded here so the core
 // has no JSON-import-outside-rootDir dependency.
 const SERVER_NAME = 'graphcode';
-const SERVER_VERSION = '0.4.0';
+const SERVER_VERSION = '0.4.1';
 
 /**
  * Turn a bound `MCPToolRegistry` into a live `McpServer`. Each registry tool's
