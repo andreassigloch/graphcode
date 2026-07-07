@@ -76,6 +76,21 @@ export type { CliCommand, InstallResult } from './scaffold.js';
 export { HostBridge, serveHost } from './viewer/host.js';
 export type { HostBridgeOptions, HealthPayload } from './viewer/host.js';
 
+// Write-path shim client (CR-GC-241, formalizing CR-GC-235's Phase A internal
+// mechanism as a public export): forwards ONE MCP tool call — including
+// graph_mutate — over the elected host's local Unix socket
+// (`<repoRoot>/.graphcode/host.sock`) to the SAME Apply-Gate every MCP-stdio
+// session uses. No second Kuzu owner, no new outward protocol (still local,
+// still no AuthN — same trust boundary as repo access, CR-GC-235's own
+// scoping). This is graph-view-edit's write transport: its own
+// /api/mutate calls callHost(..., 'graph_mutate', {commands, baseVersion,
+// consumerId}) instead of opening a competing harness. `startHostSocket` is
+// exported alongside it purely for consumer-side integration TESTS — spin up
+// a real temp-disk harness + its own throwaway socket to test callHost
+// end-to-end, instead of pointing at (and risking mutating) a live repo.
+export { callHost, HOST_SOCK_BASENAME, startHostSocket } from './host-shim.js';
+export type { HostSocket } from './host-shim.js';
+
 // Headless dashboard data-layer (CR-GC-115, MOD-dashboard) — pure read-only
 // shapers over the MCP tools; the external graph-view-edit renderer consumes
 // these view-models and fills the FUNC-render-graph mount-slot.
