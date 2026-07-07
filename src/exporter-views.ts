@@ -66,12 +66,45 @@ function reqKinds(n: GraphNode): string[] {
   return Array.isArray(k) ? k.map(String) : [];
 }
 
-/** TEST level from nested testRef.level, falling back to a top-level `level` attr. */
+/**
+ * TEST level from nested testRef.level, falling back to a top-level `level` attr.
+ * Descriptive test-inventory metadata only (CR-GC-240) — the pyramid classification
+ * in renderTestConcept uses levelsOfTest() (graph position), not this attribute.
+ */
 function testLevel(n: GraphNode): string {
   const ref = n.attributes['testRef'] as { level?: unknown } | null | undefined;
   if (ref && typeof ref === 'object' && typeof ref.level === 'string') return ref.level;
   const top = n.attributes['level'];
   return typeof top === 'string' ? top : '';
+}
+
+/**
+ * Pyramid level(s) of a TEST, derived from the graph POSITION of the REQ(s) it
+ * verifies (CR-GC-240) — a real TEST node almost never carries testRef.level, so
+ * an attribute-based classification degenerates to all-unleveled even when every
+ * REQ is verified. A test verifying a SYS-composed REQ is System/e2e; a UC-composed
+ * REQ is Use-Case/integration; a FUNC-satisfied REQ is Function/unit. A test
+ * inherits every level of every REQ it verifies (multi-assignment allowed).
+ */
+function levelsOfTest(
+  t: GraphNode,
+  idx: Map<string, GraphNode>,
+  verify: { fwd: Map<string, string[]> },
+  compose: { rev: Map<string, string[]> },
+  satisfy: { rev: Map<string, string[]> },
+): Set<'e2e' | 'integration' | 'unit'> {
+  const levels = new Set<'e2e' | 'integration' | 'unit'>();
+  for (const reqUid of verify.fwd.get(t.uid) ?? []) {
+    for (const parent of compose.rev.get(reqUid) ?? []) {
+      const type = idx.get(parent)?.type;
+      if (type === 'SYS') levels.add('e2e');
+      else if (type === 'UC') levels.add('integration');
+    }
+    for (const satisfier of satisfy.rev.get(reqUid) ?? []) {
+      if (idx.get(satisfier)?.type === 'FUNC') levels.add('unit');
+    }
+  }
+  return levels;
 }
 
 function status(n: GraphNode): string {
@@ -308,49 +341,45 @@ export function renderRtm(graph: Graph, name: string): string {
 // 7. Test Concept — pyramid by model level with a COMPUTED E2E gap. Specimen #7.
 //    The System/E2E row is DERIVED from coverage, so 0 E2E tests render ✗ MISSING
 //    instead of being silently absent. "Make the gap loud."
+//    CR-GC-240: the level is the TEST's graph POSITION (levelsOfTest, via the REQ
+//    it verifies), not a testRef.level attribute — real TEST nodes almost never
+//    carry that attribute, so the old attribute-based read degenerated the
+//    pyramid to all-zero even with full REQ coverage.
 // ---------------------------------------------------------------------------
 
 export function renderTestConcept(graph: Graph, name: string): string {
+  const idx = nodeIndex(graph);
   const tests = nodesOfType(graph, 'TEST');
   const sysCount = nodesOfType(graph, 'SYS').length;
   const ucCount = nodesOfType(graph, 'UC').length;
   const funcCount = nodesOfType(graph, 'FUNC').length;
 
-  // Count tests by level (deterministic — read back through a sorted key list).
-  const byLevel = new Map<string, number>();
-  for (const t of tests) {
-    const lvl = testLevel(t) || '(unleveled)';
-    byLevel.set(lvl, (byLevel.get(lvl) ?? 0) + 1);
-  }
-  const count = (lvl: string): number => byLevel.get(lvl) ?? 0;
-
-  const e2e = count('e2e');
-  const acceptance = count('acceptance');
-  const integration = count('integration');
-  const unit = count('unit');
-  const conformance = count('conformance');
-
-  // UC scenario coverage: a UC is "exercised" if any acceptance/integration TEST
-  // verifies a REQ composed by it. Computed, deterministic.
   const verify = adjacency(graph, 'verify'); // TEST → REQ
-  const compose = adjacency(graph, 'compose'); // UC → REQ
-  const scenarioTests = new Set(
-    tests.filter((t) => ['e2e', 'acceptance', 'integration'].includes(testLevel(t))).map((t) => t.uid),
-  );
+  const compose = adjacency(graph, 'compose'); // SYS/UC → REQ (among other pairs)
+  const satisfy = adjacency(graph, 'satisfy'); // FUNC → REQ (among other pairs)
+
+  const levelsByTest = new Map(tests.map((t) => [t.uid, levelsOfTest(t, idx, verify, compose, satisfy)]));
+  const testsWith = (level: 'e2e' | 'integration' | 'unit'): number =>
+    tests.filter((t) => levelsByTest.get(t.uid)!.has(level)).length;
+
+  const e2e = testsWith('e2e');
+  const ucLevel = testsWith('integration');
+  const unit = testsWith('unit');
+  // (support): codec round-trip tests verify no REQ, so they have no graph
+  // position to derive a level from — testRef.level stays descriptive here.
+  const conformance = tests.filter((t) => testLevel(t) === 'conformance').length;
+
+  // UC scenario coverage: a UC is "exercised" if ANY test verifies a REQ it
+  // composes — no test-level filter (CR-GC-240 drops the old e2e/acceptance/
+  // integration attribute allowlist, which required a testRef.level nothing sets).
   const ucExercised = new Set<string>();
   for (const uc of nodesOfType(graph, 'UC')) {
     const reqs = (compose.fwd.get(uc.uid) ?? []).filter((c) => c.startsWith('REQ-'));
-    for (const rq of reqs) {
-      const verifiers = verify.rev.get(rq) ?? [];
-      if (verifiers.some((v) => scenarioTests.has(v))) {
-        ucExercised.add(uc.uid);
-        break;
-      }
-    }
+    if (reqs.some((rq) => (verify.rev.get(rq) ?? []).length > 0)) ucExercised.add(uc.uid);
   }
   const ucScenario = ucExercised.size;
 
-  // The E2E gap: ✗ MISSING when 0 E2E tests exist; ✓ otherwise. COMPUTED.
+  // The E2E gap: ✗ MISSING when 0 E2E-level tests exist; ✓ otherwise. COMPUTED.
   const sysVerdict = e2e === 0 ? '✗ MISSING — must be added' : '✓';
   const sysGap = e2e === 0 ? `✗ ${e2e} tests — NO end-to-end run exists.  ← GAP` : `✓ ${e2e} E2E test(s)`;
   const ucVerdict = ucScenario >= ucCount ? '✓' : `⚠ ${ucCount - ucScenario} UC have no scenario path`;
@@ -376,14 +405,15 @@ export function renderTestConcept(graph: Graph, name: string): string {
   lines.push('| Level | Element | Test kind | Tests | Coverage | Verdict |', '|---|---|---|---|---|---|');
   lines.push(`| System | SYS (${sysCount}) | E2E | ${e2e} | ${e2e} / ${sysCount} | ${sysVerdict} |`);
   lines.push(
-    `| Use-case | UC (${ucCount}) | integration / acceptance | ${integration + acceptance} | ${ucScenario} / ${ucCount} scenario | ${ucVerdict} |`,
+    `| Use-case | UC (${ucCount}) | integration / acceptance | ${ucLevel} | ${ucScenario} / ${ucCount} scenario | ${ucVerdict} |`,
   );
   lines.push(`| Function | FUNC (${funcCount}) | unit | ${unit} | ${funcCount} / ${funcCount} | ${funcVerdict} |`);
   lines.push(`| (support) | — | conformance | ${conformance} | codec round-trip | ✓ |`);
   lines.push('');
   lines.push(
-    `> GENERATED — TEST level mapped to SYS/UC/FUNC; System & UC rows are DERIVED from coverage, so a`,
-    `> missing E2E run surfaces as ✗ (currently ${e2e} E2E test(s)) instead of being silently absent.`,
+    `> GENERATED — TEST level derived from the graph position of the REQ it verifies (SYS/UC/FUNC),`,
+    `> not a testRef.level attribute; System & UC rows are DERIVED from coverage, so a missing E2E`,
+    `> run surfaces as ✗ (currently ${e2e} E2E test(s)) instead of being silently absent.`,
     '',
   );
   return lines.join('\n');

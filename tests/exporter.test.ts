@@ -242,21 +242,21 @@ describe('exportGraphJson / exportMarkdown (TEST-doc-export)', () => {
     if (func) expect(nfr).not.toContain(func.uid);
   });
 
-  it('CR-GC-220: TestConcept shows System E2E as ✗ MISSING when 0 E2E tests (computed)', () => {
-    // Synthetic graph with NO e2e-level test → the System row must be ✗, not blank.
+  it('CR-GC-220/240: TestConcept shows System E2E as ✗ MISSING when 0 E2E-level tests exist (level from graph position)', () => {
+    // A FUNC-satisfied REQ verified by a test, but no REQ composed by SYS at
+    // all → the System row must be ✗, not blank. No testRef.level anywhere.
     const zeroE2e: Graph = {
       nodes: [
         { uid: 'SYS-x', type: 'SYS', name: 'X', attributes: {} },
         { uid: 'UC-x', type: 'UC', name: 'UC', attributes: {} },
         { uid: 'FUNC-x', type: 'FUNC', name: 'F', attributes: {} },
-        {
-          uid: 'TEST-x',
-          type: 'TEST',
-          name: 'unit',
-          attributes: { testRef: { file: 'a.test.ts', tool: 'vitest', level: 'unit' } },
-        },
+        { uid: 'REQ-func', type: 'REQ', name: 'r', attributes: {} },
+        { uid: 'TEST-unit', type: 'TEST', name: 'unit', attributes: {} },
       ],
-      edges: [],
+      edges: [
+        { sourceId: 'FUNC-x', targetId: 'REQ-func', edgeType: 'satisfy', attributes: {} },
+        { sourceId: 'TEST-unit', targetId: 'REQ-func', edgeType: 'verify', attributes: {} },
+      ],
     };
     const md = exportMarkdown(zeroE2e, 'testconcept');
     expect(md).toContain('✗ MISSING');
@@ -264,22 +264,61 @@ describe('exportGraphJson / exportMarkdown (TEST-doc-export)', () => {
     // The System row reports 0 E2E tests, loudly.
     expect(md).toMatch(/System \| SYS \(1\) \| E2E \| 0/);
 
-    // And with an e2e test present, the same render flips to ✓ (computed both ways).
+    // Adding a SYS-composed REQ verified by a test flips the row to ✓ — purely
+    // via graph position (CR-GC-240), still no testRef.level anywhere.
     const withE2e: Graph = {
-      ...zeroE2e,
       nodes: [
         ...zeroE2e.nodes,
-        {
-          uid: 'TEST-e2e',
-          type: 'TEST',
-          name: 'e2e',
-          attributes: { testRef: { file: 'e.test.ts', tool: 'vitest', level: 'e2e' } },
-        },
+        { uid: 'REQ-sys', type: 'REQ', name: 'r2', attributes: {} },
+        { uid: 'TEST-e2e', type: 'TEST', name: 'e2e', attributes: {} },
+      ],
+      edges: [
+        ...zeroE2e.edges,
+        { sourceId: 'SYS-x', targetId: 'REQ-sys', edgeType: 'compose', attributes: {} },
+        { sourceId: 'TEST-e2e', targetId: 'REQ-sys', edgeType: 'verify', attributes: {} },
       ],
     };
     const md2 = exportMarkdown(withE2e, 'testconcept');
     expect(md2).not.toContain('✗ MISSING');
     expect(md2).toMatch(/System \| SYS \(1\) \| E2E \| 1/);
+  });
+
+  it('CR-GC-240: full REQ coverage renders a clean pyramid with ZERO testRef.level attributes anywhere', () => {
+    // 1 SYS, 2 UC, 1 FUNC — every REQ verified, no TEST carries testRef/level.
+    // Before CR-GC-240 this degenerated to e2e=integration=unit=0 (attribute-based).
+    const graph: Graph = {
+      nodes: [
+        { uid: 'SYS-p', type: 'SYS', name: 'sys', attributes: {} },
+        { uid: 'UC-1', type: 'UC', name: 'uc1', attributes: {} },
+        { uid: 'UC-2', type: 'UC', name: 'uc2', attributes: {} },
+        { uid: 'FUNC-p', type: 'FUNC', name: 'func', attributes: {} },
+        { uid: 'REQ-sys', type: 'REQ', name: 'sys req', attributes: {} },
+        { uid: 'REQ-uc1', type: 'REQ', name: 'uc1 req', attributes: {} },
+        { uid: 'REQ-uc2', type: 'REQ', name: 'uc2 req', attributes: {} },
+        { uid: 'REQ-func', type: 'REQ', name: 'func req', attributes: {} },
+        { uid: 'TEST-sys', type: 'TEST', name: 't-sys', attributes: {} },
+        { uid: 'TEST-uc1', type: 'TEST', name: 't-uc1', attributes: {} },
+        { uid: 'TEST-uc2', type: 'TEST', name: 't-uc2', attributes: {} },
+        { uid: 'TEST-func', type: 'TEST', name: 't-func', attributes: {} },
+      ],
+      edges: [
+        { sourceId: 'SYS-p', targetId: 'REQ-sys', edgeType: 'compose', attributes: {} },
+        { sourceId: 'UC-1', targetId: 'REQ-uc1', edgeType: 'compose', attributes: {} },
+        { sourceId: 'UC-2', targetId: 'REQ-uc2', edgeType: 'compose', attributes: {} },
+        { sourceId: 'FUNC-p', targetId: 'REQ-func', edgeType: 'satisfy', attributes: {} },
+        { sourceId: 'TEST-sys', targetId: 'REQ-sys', edgeType: 'verify', attributes: {} },
+        { sourceId: 'TEST-uc1', targetId: 'REQ-uc1', edgeType: 'verify', attributes: {} },
+        { sourceId: 'TEST-uc2', targetId: 'REQ-uc2', edgeType: 'verify', attributes: {} },
+        { sourceId: 'TEST-func', targetId: 'REQ-func', edgeType: 'verify', attributes: {} },
+      ],
+    };
+    const md = exportMarkdown(graph, 'testconcept');
+    expect(md).not.toContain('✗ MISSING');
+    expect(md).not.toContain('GAP');
+    expect(md).not.toContain('UC have no scenario path');
+    expect(md).toMatch(/System \| SYS \(1\) \| E2E \| 1 \| 1 \/ 1 \| ✓/);
+    expect(md).toMatch(/Use-case \| UC \(2\) \| integration \/ acceptance \| 2 \| 2 \/ 2 scenario \| ✓/);
+    expect(md).toMatch(/Function \| FUNC \(1\) \| unit \| 1 \| 1 \/ 1 \| ✓/);
   });
 
   it('CR-GC-220: FMEA/Trade render an explicit empty-state (never silently blank)', () => {
