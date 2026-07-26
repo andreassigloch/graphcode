@@ -1,0 +1,10 @@
+{
+  "name": "dummy-slicer",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "graphcode test rig — NOT graphify. Spec-era graph; FN-slice to be implemented from graph_context.",
+  "scripts": {
+    "verify": "node --experimental-strip-types scripts/verify.ts"
+  }
+}

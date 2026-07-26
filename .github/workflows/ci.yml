@@ -1,0 +1,36 @@
+name: CI
+
+# Build + test on every push and pull request. Possible since CR-GC-262: the five
+# @sigloch/* dependencies come from the npm registry (CR-214), so a checkout of the
+# private sigloch-modules repo is no longer needed to build this repo.
+#
+# The suite runs a real on-disk Kuzu store and a real `npm pack` + foreign install —
+# no mocks — so it needs a few minutes, not seconds.
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Type-check
+        run: npm run type-check
+
+      - name: Build
+        run: npm run build
+
+      - name: Test
+        run: npm test

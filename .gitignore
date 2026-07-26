@@ -1,0 +1,29 @@
+node_modules/
+dist/
+*.tsbuildinfo
+.graphcode/
+.DS_Store
+
+# local artifacts (predecessor data dir, vector db, scratch data)
+.aimprove/
+data/
+*.db
+
+# internal process docs — change-requests and gate-review records are kept locally
+# but are not part of the public repo (the design narrative for outsiders lives in
+# README.md + docs/articles/ + docs/adr/, the measurements in docs/spikes/).
+docs/cr/
+docs/records/
+docs/SPEC.md
+docs/RECOMMENDATIONS.md
+
+# generated views that are working state, not repo content (CR-GC-264): both dump the
+# full internal CR prose. `graph_export` still writes all 16 views locally — someone
+# using graphcode never sees them (the npm tarball carries no docs), someone
+# contributing wants the architecture views, not the change history.
+docs/views/spec.md
+docs/views/cr-list.md
+
+# maintainer's full internal guardrails (family governance, bok refs); the public
+# CLAUDE.md ships the app-relevant subset. Claude Code auto-loads both locally.
+CLAUDE.local.md

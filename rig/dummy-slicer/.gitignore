@@ -1,0 +1,7 @@
+# run artifacts (regenerable via scripts/armB.mjs / armC.mjs)
+.armB-bundle.txt
+.armC-output.ts
+
+# runtime: MCP store + materialized seed (regenerable)
+.graphcode/
+docs/graph/

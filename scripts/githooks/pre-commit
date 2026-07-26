@@ -1,0 +1,45 @@
+#!/bin/bash
+# CR-GC-217 — pre-commit graph-snapshot freshness guard.
+#
+# Every commit must carry a graph snapshot (docs/graph/*.graph.json) that FITS the
+# code (REQ-graph-snapshot-per-commit). The committed snapshot is the SSOT at rest /
+# history of record; `git checkout <sha>` + graph_reseed is recall. Two ways a commit
+# could otherwise carry a stale snapshot:
+#
+#  1. Un-exported model mutations — the live Kuzu store was changed via graph_mutate
+#     but graph_export never ran. The gate leaves .graphcode/EXPORT_PENDING. We
+#     CANNOT auto-export here: the MCP server owns the single Kuzu writer handle
+#     (REQ-single-kuzu-owner), so a second process can't open the store. → BLOCK and
+#     tell the author to run graph_export (via MCP, in the owner process).
+#
+#  2. Exported but unstaged — graph_export wrote the snapshot/views but they weren't
+#     `git add`ed. → auto-stage them so the commit is self-consistent.
+#
+# Install once per clone:  git config core.hooksPath scripts/githooks
+
+set -eu
+repo_root=$(git rev-parse --show-toplevel)
+cd "$repo_root"
+
+# (1) un-exported live mutations → block.
+if [ -f ".graphcode/EXPORT_PENDING" ]; then
+  echo "BLOCKED (CR-GC-217): the live graph has un-exported mutations." >&2
+  echo "Run the graph_export MCP tool so the committed snapshot fits this commit," >&2
+  echo "then stage docs/graph + docs/views and commit again." >&2
+  echo "(Single-writer: the hook can't export while the MCP server owns the Kuzu store.)" >&2
+  exit 1
+fi
+
+# (2) refuse an empty snapshot; auto-stage generated artifacts when they changed.
+shopt -s nullglob
+for snap in docs/graph/*.graph.json; do
+  if ! grep -q '"elements"' "$snap"; then
+    echo "BLOCKED (CR-GC-217): $snap has no elements — refusing to commit an empty snapshot." >&2
+    exit 1
+  fi
+done
+
+# Generated dirs only — both are graph_export output (decision #2a: auto-stage).
+[ -d docs/graph ] && git add docs/graph
+[ -d docs/views ] && git add docs/views
+exit 0

@@ -1,0 +1,235 @@
+/**
+ * mcp-server.ts — bind the MCP tool registry to an `@modelcontextprotocol/sdk`
+ * server over **stdio** (CR-GC-111 / MOD-cli).
+ *
+ * Realizes:
+ *   - REQ-mcp-tool-registry : every tool from `bindToolsToHarness` is exposed.
+ *   - REQ-mcp-gate-symmetry : `graph_mutate` still delegates to harness.mutate()
+ *     — the protocol layer adds NO logic, so MCP writes == in-process writes (L2).
+ *   - REQ-single-transport  : exactly one transport = MCP-stdio. No HTTP/Express
+ *     in the core; the live-viewer SSE/WS bridge is a separate host concern.
+ *
+ * Agent-agnostic: the same stdio server is what Claude Code, OpenCode, or any
+ * MCP host launches via `graphcode mcp` (see src/cli.ts).
+ *
+ * @author andreas@siglochconsulting
+ */
+import { readFileSync } from 'node:fs';
+import { basename, join } from 'node:path';
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import type { ZodObject, ZodRawShape } from 'zod/v4';
+import type { AuditLog } from '@sigloch/graph-api-core';
+import type { HarnessConfig } from '@sigloch/contracts/harness';
+import { createHarness, type GraphCodeHarness } from './index.js';
+import { exportGraphJson } from './exporter.js';
+import { bindToolsToHarness, type MCPTool, type MCPToolRegistry } from './mcp-tools.js';
+import { StoreOwnershipError } from './store-lock.js';
+import { startHostSocket, buildProxyRegistry, HOST_SOCK_BASENAME } from './host-shim.js';
+import { HostBridge } from './viewer/host.js';
+import type { LiveUpdateEvent } from './emit.js';
+
+// Identity advertised to MCP clients during the initialize handshake. Kept in
+// sync with package.json by CR-121 (distribution); hardcoded here so the core
+// has no JSON-import-outside-rootDir dependency.
+const SERVER_NAME = 'graphcode';
+const SERVER_VERSION = '0.4.1';
+
+/**
+ * Turn a bound `MCPToolRegistry` into a live `McpServer`. Each registry tool's
+ * Zod `inputSchema` (a `z.object`) contributes its raw shape so clients see a
+ * proper JSON-schema; the handler output is wrapped as MCP text content.
+ */
+export function bindRegistryToMcpServer(registry: MCPToolRegistry): McpServer {
+  const server = new McpServer({ name: SERVER_NAME, version: SERVER_VERSION });
+  for (const tool of Object.values(registry)) {
+    server.registerTool(
+      tool.name,
+      { description: tool.description, inputSchema: rawShapeOf(tool) },
+      async (args: unknown) => {
+        // Re-validate against the tool's own schema (idempotent over the SDK's
+        // raw-shape parse) so the handler always receives canonical, defaulted input.
+        const result = await tool.handler(tool.inputSchema.parse(args));
+        return { content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }] };
+      },
+    );
+  }
+  return server;
+}
+
+/** Bind a harness's tools to a fresh `McpServer`. */
+export function buildMcpServer(harness: GraphCodeHarness, auditLog?: AuditLog): McpServer {
+  return bindRegistryToMcpServer(bindToolsToHarness(harness, auditLog));
+}
+
+/**
+ * Boot a HOST over the store this process just won the election for: harness on
+ * disk Kuzu (seed-on-empty / drift warning), the bound tool registry, and the
+ * local Unix socket (`.graphcode/host.sock`) that serves later sessions'
+ * proxies (CR-GC-235). Returns the registry to bind to this session's stdio.
+ */
+async function bootHost(
+  repoRoot: string,
+  harness: GraphCodeHarness,
+): Promise<MCPToolRegistry> {
+  if (harness.getGraph().nodes.length === 0) {
+    try {
+      const seeded = await harness.seedFromJson();
+      // REQ-with-test invariant (CR-GC-203 item 6): the seed bypasses the gate,
+      // so surface — never silently swallow — any REQ that entered without a
+      // verify-traced TEST. (We flag rather than reject so bootstrap can't
+      // deadlock on accrued debt.)
+      if (seeded.unverifiedReqs.length > 0) {
+        process.stderr.write(
+          `[graphcode] WARNING: ${seeded.unverifiedReqs.length} imported REQ(s) lack a verify-traced ` +
+            `TEST (R-01): ${seeded.unverifiedReqs.join(', ')}. Author a concept-level TEST + verify trace.\n`,
+        );
+      }
+    } catch {
+      // No committed graph in this repo yet — serve the empty store.
+    }
+  } else {
+    // Store already seeded → it is the runtime SSOT (REQ-graph-is-ssot). The
+    // committed JSON is its generated export; under CR-GC-201 (gate-only writes)
+    // the JSON can change ONLY via graph_export, so it must never drift ahead of
+    // the store. We do NOT auto-reseed here (that would clobber un-exported gate
+    // mutations) — we WARN, so a stale store or a pending export is visible
+    // instead of silently served (the failure mode that froze the store at an
+    // old snapshot). To adopt a newer committed JSON: stop the server, remove
+    // .graphcode/kuzu*, restart (seed-on-empty re-imports it).
+    try {
+      const committed = readFileSync(join(repoRoot, 'docs/graph/graphcode.graph.json'), 'utf8');
+      if (exportGraphJson(harness.getGraph()) !== committed) {
+        process.stderr.write(
+          '[graphcode] WARN: Kuzu store differs from docs/graph/graphcode.graph.json — ' +
+          'either run graph_export (store has un-exported mutations) or re-seed ' +
+          '(committed JSON is newer: stop, rm .graphcode/kuzu*, restart).\n',
+        );
+      }
+    } catch {
+      // No committed JSON to compare against — nothing to warn about.
+    }
+  }
+  const registry = bindToolsToHarness(harness);
+  // ONE write channel (CR-GC-235): the elected host also serves later sessions
+  // over the local socket shim — an internal hop, not a second API surface.
+  await startHostSocket(registry, join(harness.getStoreDir(), HOST_SOCK_BASENAME));
+  return registry;
+}
+
+/**
+ * Boot the MCP-stdio server for this repo — with the singleton ELECTION
+ * (CR-GC-235): the O2 store lock decides. The winner becomes the HOST (owns
+ * store + gate, serves stdio + the local socket); a loser no longer dies with
+ * StoreOwnershipError but degrades to a thin stdio→socket PROXY over the same
+ * tool surface — every write still through the ONE gate. Agents keep speaking
+ * MCP-stdio either way (transport lock in letter + spirit).
+ *
+ * stdout is owned by the JSON-RPC transport — callers must keep it clean
+ * (diagnostics go to stderr). On a fresh repo whose store has not been seeded
+ * yet, the committed `docs/graph/*.graph.json` (if present) is loaded so the
+ * agent immediately sees the model; cold-start through the gate is CR-122.
+ */
+export async function serveStdio(opts?: {
+  repoRoot?: string;
+  scope?: HarnessConfig['scope'];
+}): Promise<void> {
+  const repoRoot = opts?.repoRoot ?? process.cwd();
+  // Derive the member identity from the repo so graph_export et al. default to a
+  // repo-specific name (e.g. auth-service.graph.json), not the generic 'graphcode'.
+  const member = deriveMemberName(repoRoot);
+  const scope = opts?.scope ?? { workspaceId: member, systemId: member };
+
+  /**
+   * One election attempt: win the lock and come up as a full host — incl. the
+   * read-only HTTP bridge when GRAPHCODE_HOST_PORT is set (CR-GC-237: the
+   * bridge follows the lock). Passed as `promote` too, so a client promoted
+   * after a host death rebinds the same port (the dead owner freed it).
+   */
+  async function electAndBoot(): Promise<MCPToolRegistry> {
+    // The sink is wired BEFORE the bridge exists — a mutable indirection lets
+    // the bridge attach to this harness after the election is won.
+    let bridge: HostBridge | null = null;
+    const harness = await createHarness(
+      { repoRoot, scope },
+      { onUpdateEvent: (event: LiveUpdateEvent) => bridge?.broadcast(event) },
+    );
+    await harness.initialize(); // the O2 lock IS the election (CR-GC-218)
+    const registry = await bootHost(repoRoot, harness);
+    bridge = await maybeStartBridge(repoRoot, harness);
+    return registry;
+  }
+
+  let registry: MCPToolRegistry;
+  try {
+    registry = await electAndBoot();
+    process.stderr.write('[graphcode] host: won the store election — serving stdio + host.sock\n');
+  } catch (err) {
+    if (!(err instanceof StoreOwnershipError)) throw err;
+    // Election lost → thin proxy to the live host. `promote` is the single
+    // re-election attempt when the host dies mid-session (stale-lock reclaim).
+    const socketPath = join(repoRoot, '.graphcode', HOST_SOCK_BASENAME);
+    registry = buildProxyRegistry({ socketPath, promote: electAndBoot });
+    process.stderr.write(
+      `[graphcode] client: store owned by pid ${err.owner.pid} — proxying stdio to ${socketPath}\n`,
+    );
+  }
+  const server = bindRegistryToMcpServer(registry);
+  await server.connect(new StdioServerTransport());
+}
+
+/**
+ * Start the read-only HTTP bridge over the elected host's harness — ATTACH mode
+ * (CR-GC-237). Opt-in via GRAPHCODE_HOST_PORT (scaffolded into `.mcp.json` env
+ * by `graphcode init`); unset → no bridge, behavior as before. A bind failure
+ * (port taken) must NEVER kill the gate: warn on stderr and serve stdio only.
+ * Exported for TEST-bridge-follows-lock; production callers: electAndBoot only.
+ */
+export async function maybeStartBridge(
+  repoRoot: string,
+  harness: GraphCodeHarness,
+): Promise<HostBridge | null> {
+  const raw = process.env.GRAPHCODE_HOST_PORT;
+  if (!raw) return null;
+  const port = Number(raw);
+  if (!Number.isInteger(port) || port <= 0 || port > 65535) {
+    process.stderr.write(`[graphcode] WARN: GRAPHCODE_HOST_PORT="${raw}" is not a valid port — no bridge started\n`);
+    return null;
+  }
+  const bridge = new HostBridge({ repoRoot, harness, port });
+  try {
+    await bridge.start();
+    process.stderr.write(`[graphcode] host: read-only bridge on http://127.0.0.1:${port} (/health /events /elements /subgraph)\n`);
+    return bridge;
+  } catch (err) {
+    process.stderr.write(
+      `[graphcode] WARN: bridge failed to bind port ${port} (${err instanceof Error ? err.message : String(err)}) — serving stdio only\n`,
+    );
+    return null;
+  }
+}
+
+/** Extract the raw Zod shape a `z.object`/`z.looseObject` was built from. */
+function rawShapeOf(tool: MCPTool): ZodRawShape {
+  return (tool.inputSchema as unknown as ZodObject<ZodRawShape>).shape ?? {};
+}
+
+/**
+ * Derive the family-member identity for the repo being served: the unscoped
+ * `package.json` name (e.g. `@acme/auth-service` → `auth-service`), else the repo
+ * directory name, else `graphcode`. Used as the harness scope so re-export and
+ * other tools default to a repo-specific name instead of the generic fallback.
+ */
+export function deriveMemberName(repoRoot: string): string {
+  try {
+    const pkg = JSON.parse(readFileSync(join(repoRoot, 'package.json'), 'utf8')) as { name?: unknown };
+    if (typeof pkg.name === 'string' && pkg.name.trim()) {
+      const unscoped = pkg.name.includes('/') ? pkg.name.slice(pkg.name.lastIndexOf('/') + 1) : pkg.name;
+      const clean = unscoped.trim().replace(/[^a-zA-Z0-9._-]/g, '-').replace(/^-+|-+$/g, '');
+      if (clean) return clean;
+    }
+  } catch {
+    // No/invalid package.json — fall through to the directory name.
+  }
+  return basename(repoRoot) || SERVER_NAME;
+}

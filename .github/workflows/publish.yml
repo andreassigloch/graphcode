@@ -1,0 +1,59 @@
+name: Publish @sigloch/graphcode
+
+# Automated release via npm Trusted Publishing (OIDC) — NO npm token, NO OTP.
+#
+# Trigger: push a version tag (`git tag v0.5.0 && git push origin v0.5.0`)
+#          or run manually from the Actions tab (workflow_dispatch).
+#
+# PREREQUISITES (one-time):
+#   1. @sigloch/graphcode must already exist on npm (the FIRST publish is manual —
+#      Trusted Publishing is configured per-package and the package must exist first).
+#   2. npmjs.com → package @sigloch/graphcode → Settings → Trusted publishing →
+#      GitHub Actions: owner `andreassigloch`, repo `graphcode`, workflow `publish.yml`.
+#
+# Since CR-GC-262 the five @sigloch/* substrate packages are published in their own
+# right (CR-214), so this workflow no longer checks out the private sigloch-modules
+# repo: no SIBLINGS_REPO_TOKEN, no sibling build, no esbuild bundle. `npm ci` resolves
+# everything from the registry. `access: public` lives in package.json publishConfig.
+#
+# Keep package.json `version` in sync with the tag before pushing it.
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write   # OIDC — required for Trusted Publishing + provenance attestation
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'npm'
+
+      # OIDC Trusted Publishing needs npm >= 11.5.1; Node 22 ships an older npm.
+      - name: Upgrade npm to OIDC-capable version
+        run: npm install -g npm@latest
+
+      - name: Install
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Test
+        run: npm test
+
+      - name: Publish (OIDC Trusted Publishing + provenance)
+        run: npm publish --provenance

@@ -1,0 +1,85 @@
+{
+  "name": "@sigloch/graphcode",
+  "version": "0.5.0",
+  "description": "Governed graph substrate for coding agents (Claude Code, OpenCode, any MCP-stdio host) — Apply-Gate + on-disk Kuzu store + MCP tools",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "graphcode": "dist/cli.js"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./harness": {
+      "import": "./dist/harness.js",
+      "types": "./dist/harness.d.ts"
+    },
+    "./mcp": {
+      "import": "./dist/mcp-tools.js",
+      "types": "./dist/mcp-tools.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    ".claude/skills",
+    ".claude/hooks",
+    ".claude/settings.json"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "rm -rf dist && tsc && chmod +x dist/cli.js",
+    "watch": "tsc --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint src --ext .ts,.tsx",
+    "type-check": "tsc --noEmit",
+    "prepack": "npm run build",
+    "link:siblings": "npm link @sigloch/contracts @sigloch/graph-api-core @sigloch/graph-cypher-wasm @sigloch/graphcode-client @sigloch/learning-core @sigloch/se-steering"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "@sigloch/contracts": "^0.8.0",
+    "@sigloch/graph-api-core": "^0.4.1",
+    "@sigloch/graph-cypher-wasm": "^0.2.1",
+    "@sigloch/graphcode-client": "^0.1.0",
+    "@sigloch/learning-core": "^0.1.0",
+    "@sigloch/se-steering": "^0.1.1",
+    "kuzu-wasm": "^0.11.3",
+    "typescript": "^5.5.0",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "eslint": "^9.0.0",
+    "vitest": "^2.0.0"
+  },
+  "keywords": [
+    "graphcode",
+    "mcp",
+    "mcp-server",
+    "claude-code",
+    "opencode",
+    "kuzu",
+    "graph",
+    "systems-engineering",
+    "graph-operations"
+  ],
+  "author": "sigloch-consulting",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andreassigloch/graphcode.git"
+  },
+  "homepage": "https://github.com/andreassigloch/graphcode#readme",
+  "bugs": {
+    "url": "https://github.com/andreassigloch/graphcode/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
