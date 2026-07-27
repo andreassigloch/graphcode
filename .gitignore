@@ -9,10 +9,10 @@ dist/
 data/
 *.db
 
-# internal process docs — change-requests and gate-review records are kept locally
-# but are not part of the public repo (the design narrative for outsiders lives in
-# README.md + docs/articles/ + docs/adr/, the measurements in docs/spikes/).
-docs/cr/
+# internal process docs — gate-review records stay local. Change-requests (docs/cr/) are
+# tracked as of BOK-CR-027: they need a history, and `files:` in package.json never shipped
+# docs/ to npm anyway. The design narrative for outsiders lives in README.md +
+# docs/articles/ + docs/adr/, the measurements in docs/spikes/.
 docs/records/
 docs/SPEC.md
 docs/RECOMMENDATIONS.md
