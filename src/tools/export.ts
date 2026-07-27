@@ -13,7 +13,7 @@
 import { join, dirname, resolve, relative, isAbsolute } from 'node:path';
 import { mkdirSync, writeFileSync, existsSync, readFileSync } from 'node:fs';
 import { z } from 'zod/v4';
-import { exportGraphJson, exportMarkdown, renderTestStubs, MarkdownViewSchema, MARKDOWN_VIEWS, VIEW_FILENAMES } from '../exporter.js';
+import { exportGraphJson, exportMarkdown, renderTestStubs, renderSchemaStubs, MarkdownViewSchema, MARKDOWN_VIEWS, VIEW_FILENAMES } from '../exporter.js';
 import { clearExportPending } from '../export-marker.js';
 import type { MCPTool, MCPToolRegistry } from '../mcp-tools.js';
 import type { ToolContext } from '../tool-context.js';
@@ -83,9 +83,10 @@ export function bindExportTools(ctx: ToolContext): MCPToolRegistry {
       'under the repo root, from the live in-memory graph (full fidelity). Closes the agent loop: ' +
       'spec → impact → implement → export. REFUSES to clobber: aborts if the live graph is empty, or if ' +
       'the write would drop elements/traces present in the committed SSOT (stale process / parallel ' +
-      'writer) unless force:true. Also MATERIALIZES a runnable `it.todo` stub for any bound TEST whose ' +
-      'testRef file is absent (CR-GC-205 Item 4) — so graph_tests never resolves a phantom path; existing ' +
-      'files are never overwritten. Returns the written paths, byte sizes, and the scaffolded stub files.',
+      'writer) unless force:true. Also MATERIALIZES the artifact behind an absent binding — a runnable ' +
+      '`it.todo` stub for a bound TEST testRef (CR-GC-205 Item 4) and a `z.unknown()` Zod stub for a bound ' +
+      'SCHEMA realRef (BOK-CR-026) — so no binding resolves to a phantom path; existing files are never ' +
+      'overwritten. Returns the written paths, byte sizes, and the scaffolded stub files.',
     inputSchema: GraphExportInputSchema,
     async handler(input) {
       const graph = harness.getGraph();
@@ -144,12 +145,14 @@ export function bindExportTools(ctx: ToolContext): MCPToolRegistry {
         return { view: v, path: rel, bytes: Buffer.byteLength(md) };
       });
 
-      // Test-stub materialization (CR-GC-205 Item 4): scaffold an `it.todo` for any
-      // bound TEST whose testRef file is ABSENT, so graph_tests never resolves a
-      // phantom path. Existence-checked — NEVER overwrites a real test file.
+      // Stub materialization: scaffold the artifact behind a binding whose file is
+      // ABSENT, so a binding never resolves to a phantom path. Both arms are
+      // existence-checked and NEVER overwrite a real file.
+      //   TEST   → `it.todo` for a bound testRef (CR-GC-205 Item 4)
+      //   SCHEMA → `z.unknown()` export for a bound realRef (BOK-CR-026 §6b)
       const stubs: string[] = [];
-      for (const stub of renderTestStubs(graph)) {
-        // renderTestStubs already drops a stub whose testRef fails TestRefSchema
+      for (const stub of [...renderTestStubs(graph), ...renderSchemaStubs(graph)]) {
+        // The renderers already drop a stub whose ref fails TestRefSchema/RealRefSchema
         // (CR-GC-255: `..`/absolute no longer parse) — this is the backstop, not the check.
         const abs = assertInRepo(repoRoot, stub.file);
         if (existsSync(abs)) continue;

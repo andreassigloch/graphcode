@@ -46,6 +46,17 @@ export function renderNfr(graph: Graph, name: string): string {
 // 5. ICD — Interface Control Document (RENDER · SCHEMA/FLOW + io). Specimen #5.
 // ---------------------------------------------------------------------------
 
+/** The SCHEMA's binding as one cell: `file#symbol`, the exemption, or an R-26 warning. */
+function schemaBinding(s: GraphNode): string {
+  const ref = s.attributes['realRef'] as { file?: unknown; symbol?: unknown } | null | undefined;
+  if (ref && typeof ref.file === 'string') {
+    return typeof ref.symbol === 'string' ? `${ref.file}#${ref.symbol}` : ref.file;
+  }
+  if (s.attributes['external'] === true) return 'extern definiert (kein realRef)';
+  if (s.attributes['concept'] === true) return 'Konzept (noch kein Zod-Export)';
+  return '⚠ kein realRef (R-26)';
+}
+
 export function renderIcd(graph: Graph, name: string): string {
   const schemas = nodesOfType(graph, 'SCHEMA');
   const flows = nodesOfType(graph, 'FLOW');
@@ -59,11 +70,12 @@ export function renderIcd(graph: Graph, name: string): string {
     ),
   ];
 
-  lines.push('## Schemas (Zod contracts)', '', '| Interface (SCHEMA) | Contract (Zod) | status |', '|---|---|---|');
+  // BOK-CR-026: the contract column shows the BINDING (realRef file#symbol), not a copy
+  // of the Zod body — `zodDefinition` is gone. concept/external SCHEMAs are legitimately
+  // unbound and say so; anything else without a realRef is an R-26 finding, marked ⚠.
+  lines.push('## Schemas (Zod contracts)', '', '| Interface (SCHEMA) | Contract (realRef) | status |', '|---|---|---|');
   for (const s of schemas) {
-    const attrs = (s.attributes['attributes'] as { zodDefinition?: unknown } | undefined) ?? undefined;
-    const zod = attrs && typeof attrs.zodDefinition === 'string' ? attrs.zodDefinition : (s.description ?? s.name);
-    lines.push(`| ${ref(s.uid)} | ${cell(String(zod))} | ${status(s) || 'n/a'} |`);
+    lines.push(`| ${ref(s.uid)} | ${cell(schemaBinding(s))} | ${status(s) || 'n/a'} |`);
   }
   lines.push('');
 

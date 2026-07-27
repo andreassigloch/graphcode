@@ -25,7 +25,7 @@
  */
 import { z } from 'zod/v4';
 import type { Graph, GraphNode, GraphEdge } from '@sigloch/graph-api-core';
-import { TestRefSchema, type TestRef } from '@sigloch/contracts/se';
+import { TestRefSchema, RealRefSchema, type TestRef, type RealRef } from '@sigloch/contracts/se';
 import { renderSrs } from './views/srs.js';
 import { renderNfr, renderRtm, renderIcd, renderTestConcept, renderTestMatrix, renderIntPlan } from './views/incose.js';
 import { renderChangelog, renderFmea, renderConOps, renderTrade, renderImplPlan } from './views/graphcode.js';
@@ -85,7 +85,7 @@ function nodeToElement(node: GraphNode): Record<string, unknown> {
  * Flatten the redundant double-nested `attributes` artifact (CR-GC-219). A committed
  * element that carries a literal `attributes` object lands it as `node.attributes.attributes`
  * (the `...rest` spread nests it). This merges that object UP one level — preserving real
- * metadata (operatingMode / zodDefinition / constraint) as top-level attributes — while
+ * metadata (operatingMode / constraint / …) as top-level attributes — while
  * DROPPING `level`/`tool` that merely restate the element's `testRef` (redundant), an empty
  * `{}`, and the nesting key itself. Idempotent: an element with no nested `attributes` is
  * returned unchanged, so re-import/export never reintroduces the nesting.
@@ -375,6 +375,68 @@ export function renderTestStubs(graph: Graph): TestStub[] {
     stubs.push({ file: parsed.data.file, content: renderStub(node, parsed.data, verifiesByTest.get(node.uid) ?? []) });
   }
   return stubs;
+}
+
+// ---------------------------------------------------------------------------
+// Schema-stub materialization (BOK-CR-026 §6b) — the SCHEMA arm of the same
+// no-phantom-file guarantee the TEST stubs give. R-26 makes `realRef` the single
+// SCHEMA binding, but a binding alone still allowed "bound in the graph, nothing
+// in the code": nothing ever created the Zod file. Rendering a minimal
+// `z.unknown()` export makes the binding resolvable (RC-03/RC-04 see a real
+// export instead of a missing file) and leaves an explicit TODO where the real
+// contract goes. concept-only / external SCHEMAs are skipped — they are exempt
+// from the binding requirement and have no artifact to scaffold. Non-TS
+// realizations (`lang` other than ts/tsx/js) are skipped too: a Zod stub would be
+// the wrong artifact. PURE — the caller (graph_export) writes only files that do
+// not already exist and NEVER overwrites.
+// ---------------------------------------------------------------------------
+
+/** A Zod stub the export would scaffold for one graph SCHEMA binding. */
+export interface SchemaStub {
+  file: string;
+  content: string;
+}
+
+const TS_LANGS = new Set(['ts', 'tsx', 'js', 'jsx', 'typescript', 'javascript']);
+
+/** Turn a node name/uid into a usable TS identifier for a stub export. */
+function stubSymbol(node: GraphNode): string {
+  const cleaned = (node.name || node.uid).replace(/[^A-Za-z0-9_$]/g, '');
+  const identifier = /^[A-Za-z_$]/.test(cleaned) ? cleaned : `Schema${cleaned}`;
+  return identifier.length > 0 ? identifier : 'Schema';
+}
+
+export function renderSchemaStubs(graph: Graph): SchemaStub[] {
+  const stubs: SchemaStub[] = [];
+  for (const node of graph.nodes) {
+    if (node.type !== 'SCHEMA') continue;
+    if (node.attributes?.concept === true || node.attributes?.external === true) continue;
+    const parsed = RealRefSchema.safeParse(node.attributes?.realRef);
+    if (!parsed.success) continue; // unbound SCHEMA → R-26 surfaces it, nothing to scaffold
+    const ref = parsed.data;
+    if (ref.lang !== undefined && !TS_LANGS.has(ref.lang)) continue;
+    stubs.push({ file: ref.file, content: renderSchemaStub(node, ref) });
+  }
+  return stubs;
+}
+
+function renderSchemaStub(node: GraphNode, ref: RealRef): string {
+  const symbol = ref.symbol ?? stubSymbol(node);
+  const desc = node.description ? ` ${node.description}` : '';
+  return [
+    '/**',
+    ` * GENERATED STUB (BOK-CR-026) — materialized from the graph binding ${node.uid}.`,
+    ` * ${node.name}.${desc}`,
+    ' * Replace z.unknown() with the real contract. Until then the SCHEMA realRef',
+    ' * resolves to a real export (no phantom path) instead of a missing file.',
+    ' */',
+    "import { z } from 'zod/v4';",
+    '',
+    `// TODO(${node.uid}): define the actual shape.`,
+    `export const ${symbol} = z.unknown();`,
+    `export type ${symbol}Type = z.infer<typeof ${symbol}>;`,
+    '',
+  ].join('\n');
 }
 
 function renderStub(node: GraphNode, ref: TestRef, verifies: string[]): string {
