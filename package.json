@@ -46,7 +46,7 @@
     "@sigloch/contracts": "^0.8.0",
     "@sigloch/graph-api-core": "^0.4.1",
     "@sigloch/graph-cypher-wasm": "^0.2.1",
-    "@sigloch/graphcode-client": "^0.1.0",
+    "@sigloch/graphcode-client": "^0.2.0",
     "@sigloch/learning-core": "^0.1.0",
     "@sigloch/se-steering": "^0.1.1",
     "kuzu-wasm": "^0.11.3",
