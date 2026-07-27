@@ -4,14 +4,14 @@
 **Typ:** Fix (Token-Effizienz)
 **Erstellt:** 2026-07-27
 **Repo:** graphcode (`src/codec.ts`)
-**Dependency:** sigloch-modules `CR-215` (Parser-Seite) — **muss vorher done sein**
+**Dependency:** sigloch-modules `CR-SM-215` (Parser-Seite) — **muss vorher done sein**
 **Graph:** betrifft `REQ-deterministic-serialization`, `REQ-roundtrip-conformance`, `MOD-codec`
 
 ## Problem
 
 `GraphCodeCodec.encode` erzeugt Format-E-Text **direkt** (nicht über `FormatECodec.serialize`), weil
 es die `@attr-line`-Form für komma-/klammerhaltige Attributwerte braucht. Damit erbt es die
-Fan-out-Reparatur aus `CR-215` **nicht** — es schreibt weiter eine Zeile pro Kante:
+Fan-out-Reparatur aus `CR-SM-215` **nicht** — es schreibt weiter eine Zeile pro Kante:
 
 ```ts
 lines.push(`+ ${fmtSource} -${arrow}-> ${fmtTarget}${inlinePart}`);
@@ -40,13 +40,13 @@ damit Gruppen zusammenhängend liegen.
 **Kanten mit Attributen bleiben einzeilig** — `inlinePart` hängt an der einzelnen Kante.
 
 Decode braucht keine Änderung: `this.inner.parse()` (= `FormatECodec.parse`) beherrscht 1:n bereits
-(`format-e-codec.ts:231`), nach `CR-215` auch der `contracts`-Parser.
+(`format-e-codec.ts:231`), nach `CR-SM-215` auch der `contracts`-Parser.
 
 ## File List (3)
 
 - `src/codec.ts` — `encode()` gruppiert Kanten; Sortier-Schlüssel `[sourceId, edgeType, targetId]`
 - `tests/codec.roundtrip.test.ts` — Assertions erweitern: Fan-out-Zeilen-Count + Round-Trip
-- `package.json` — `@sigloch/graph-api-core` + `@sigloch/contracts` auf die CR-215-Minors heben
+- `package.json` — `@sigloch/graph-api-core` + `@sigloch/contracts` auf die CR-SM-215-Minors heben
 
 ## Akzeptanzkriterien
 
@@ -63,5 +63,5 @@ Decode braucht keine Änderung: `this.inner.parse()` (= `FormatECodec.parse`) be
 
 - Nur der Edges-Block. Knoten-Zeilen, `@attr`-Form und UID-Kodierung unverändert.
 - Der `.TYPE`-Suffix auf jeder UID bleibt hier — das ist `CR-GC-269` (nach sigloch-modules
-  `CR-216`), zusätzliche **−5,1 %**.
+  `CR-SM-216`), zusätzliche **−5,1 %**.
 - Kein npm-Publish in diesem CR; Version zieht der nächste Release-CR.

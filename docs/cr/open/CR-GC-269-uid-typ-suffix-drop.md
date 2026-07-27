@@ -1,10 +1,10 @@
 # CR-GC-269 — `encodeUid`/`decodeUid` entfernen (Format-E v2)
 
-**Status:** 🟠 Open — gated auf sigloch-modules `CR-216`
+**Status:** 🟠 Open — gated auf sigloch-modules `CR-SM-216`
 **Typ:** Refactoring (Format-Bump-Nachzug)
 **Erstellt:** 2026-07-27
 **Repo:** graphcode (`src/codec.ts`)
-**Dependencies:** `CR-GC-268` (Fan-out) **und** sigloch-modules `CR-216` (Typ aus dem Feld) — beide done
+**Dependencies:** `CR-GC-268` (Fan-out) **und** sigloch-modules `CR-SM-216` (Typ aus dem Feld) — beide done
 **Graph:** betrifft `MOD-codec`, `REQ-roundtrip-conformance`, `REQ-deterministic-serialization`
 
 ## Problem
@@ -18,7 +18,7 @@ Legacy/plain uid :  <slug>                    → encode hängt .<TYPE> an, deco
 Decode           :  Dot-Segmente von hinten nach einem bekannten SE-Typ scannen
 ```
 
-Nach `CR-216` liest der Parser den Typ aus der Knoten-Sektion bzw. über den Resolver. Damit ist
+Nach `CR-SM-216` liest der Parser den Typ aus der Knoten-Sektion bzw. über den Resolver. Damit ist
 `encodeUid`/`decodeUid` **toter Ballast** — und ein paralleler Pfad zur Modul-Logik, also genau das,
 was nicht stehenbleiben darf.
 
@@ -29,7 +29,7 @@ UID-Token** oben auf den `CR-GC-268`-Stand — **−5,1 % jedes Graph-Prompts**,
 ## Änderung
 
 1. `encodeUid` / `decodeUid` **löschen**. `encode()` schreibt die UID roh; `decode()` nimmt sie roh.
-2. `encode()` gruppiert die Knoten nach `type` und schreibt Typ-Sektionen (`CR-216`-Form).
+2. `encode()` gruppiert die Knoten nach `type` und schreibt Typ-Sektionen (`CR-SM-216`-Form).
    Determinismus: Sektionen nach Typ-Name sortiert, Knoten je Sektion nach `uid`.
 3. `decode()` bezieht den Typ aus dem Parse-Ergebnis statt aus dem UID-Scan.
 4. `_nodeTypeFor(graph, uid)` wird nur noch für die Sektionierung gebraucht — Aufrufe im Edges-Block
@@ -38,14 +38,14 @@ UID-Token** oben auf den `CR-GC-268`-Stand — **−5,1 % jedes Graph-Prompts**,
    — sonst löschen.
 6. Strict-Cross-Check aktivieren: graphcodes UIDs sind `TYPE-slug`, das Präfix muss zur Sektion
    passen. Widerspruch → `decode()` wirft (die Redundanz kostet bei `TYPE-slug` keine Token, siehe
-   `CR-216` §Risiko).
+   `CR-SM-216` §Risiko).
 
 ## File List (4)
 
 - `src/codec.ts` — `encodeUid`/`decodeUid` raus, Typ-Sektionen rein, Header-Kontrakt neu geschrieben
 - `tests/codec.roundtrip.test.ts` — Round-Trip + Determinismus gegen v2
 - `tests/codec.validation.test.ts` — Strict-Cross-Check Präfix vs. Sektion
-- `package.json` — `@sigloch/contracts` + `graph-api-core` auf die CR-216-Majors
+- `package.json` — `@sigloch/contracts` + `graph-api-core` auf die CR-SM-216-Majors
 
 ## Akzeptanzkriterien
 
