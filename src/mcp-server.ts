@@ -15,7 +15,8 @@
  * @author andreas@siglochconsulting
  */
 import { readFileSync } from 'node:fs';
-import { basename, join } from 'node:path';
+import { basename, dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import type { ZodObject, ZodRawShape } from 'zod/v4';
@@ -29,11 +30,37 @@ import { startHostSocket, buildProxyRegistry, HOST_SOCK_BASENAME } from './host-
 import { HostBridge } from './viewer/host.js';
 import type { LiveUpdateEvent } from './emit.js';
 
-// Identity advertised to MCP clients during the initialize handshake. Kept in
-// sync with package.json by CR-121 (distribution); hardcoded here so the core
-// has no JSON-import-outside-rootDir dependency.
+// Identity advertised to MCP clients during the initialize handshake.
 const SERVER_NAME = 'graphcode';
-const SERVER_VERSION = '0.4.1';
+
+/**
+ * The version, READ from package.json at startup — never a literal (CR-GC-270).
+ *
+ * A hardcoded constant has to be hand-carried on every release, and on 0.5.0 it
+ * was not: the published package announced 0.4.1 in its handshake. Since `npx -y`
+ * consumers always pull `latest`, the one place a user can read the running
+ * version was the one place that lied.
+ *
+ * `readFileSync` rather than `import pkg from '../package.json'` on purpose: the
+ * JSON import sits outside `rootDir` and breaks `tsc`, which is why the literal
+ * existed in the first place. Reading at runtime sidesteps that without adding a
+ * codegen step that could drift in its own right. `dist/mcp-server.js` and
+ * `src/mcp-server.ts` both sit ONE level below the package root, so the relative
+ * path holds in the published package and in the dev tree alike.
+ *
+ * Deliberately NO fallback: if package.json is unreadable, fail loudly instead of
+ * announcing a guessed version — a version you cannot trust is the defect this
+ * change removes.
+ */
+export function readPackageVersion(): string {
+  const pkgPath = join(dirname(fileURLToPath(import.meta.url)), '..', 'package.json');
+  const raw = readFileSync(pkgPath, 'utf8');
+  const version = (JSON.parse(raw) as { version?: string }).version;
+  if (!version) throw new Error(`graphcode: no "version" field in ${pkgPath}`);
+  return version;
+}
+
+const SERVER_VERSION = readPackageVersion();
 
 /**
  * Turn a bound `MCPToolRegistry` into a live `McpServer`. Each registry tool's

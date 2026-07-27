@@ -29,6 +29,7 @@ import { execFileSync } from 'node:child_process';
 import { mkdtempSync, rmSync, readFileSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { pathToFileURL } from 'node:url';
 
 const REPO_ROOT = join(__dirname, '..');
 const CLI_JS = join(REPO_ROOT, 'dist', 'cli.js');
@@ -91,6 +92,31 @@ describe('TEST-distribution: npx distribution', () => {
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
+  });
+
+  // CR-GC-270: the handshake version must come FROM package.json, never from a
+  // literal. 0.5.0 shipped announcing "0.4.1" because the constant was not
+  // hand-carried on release — and `npx -y` consumers always pull latest, so the
+  // one place a user reads the running version was the one place that lied.
+  // Asserted against the BUILT artifact, since that is what a consumer executes.
+  it('announces the package.json version in the MCP handshake, not a literal', async () => {
+    const pkgVersion = (
+      JSON.parse(readFileSync(join(REPO_ROOT, 'package.json'), 'utf8')) as { version: string }
+    ).version;
+
+    const built = join(REPO_ROOT, 'dist', 'mcp-server.js');
+    expect(existsSync(built)).toBe(true);
+
+    // No hardcoded semver may remain in the compiled module.
+    const src = readFileSync(built, 'utf8');
+    const literalVersion = /SERVER_VERSION\s*=\s*['"]\d+\.\d+\.\d+['"]/.test(src);
+    expect(literalVersion).toBe(false);
+
+    // And the value the server advertises must equal the manifest.
+    const { readPackageVersion } = (await import(pathToFileURL(built).href)) as {
+      readPackageVersion: () => string;
+    };
+    expect(readPackageVersion()).toBe(pkgVersion);
   });
 
   it(
