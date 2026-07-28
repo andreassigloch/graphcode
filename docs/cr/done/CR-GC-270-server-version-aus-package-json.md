@@ -1,6 +1,6 @@
 # CR-GC-270: `SERVER_VERSION` aus `package.json` lesen statt hartkodieren
 
-**Status:** Open (2026-07-27) · **Max Files:** 4
+**Status:** Done (2026-07-28) · **Max Files:** 4 · Commit `bdfb6ab` · publiziert als `0.5.1`
 **Herkunft:** Frisch-Repo-Test gegen den publizierten Stand 2026-07-26/27.
 
 ## Problem (Why)
@@ -46,7 +46,10 @@ Versionsangabe, der man nicht trauen kann. `package.json` ist in jedem npm-Insta
 
 ## Akzeptanzkriterien
 
-- [ ] `npm run type-check` grün
-- [ ] Volle Suite grün (Basis: 314/314)
-- [ ] Neuer Test schlägt fehl, wenn man die Version wieder hartkodiert
-- [ ] Nach dem Publish meldet der Handshake im frischen Repo 0.5.1
+- [x] `npm run type-check` grün
+- [x] Volle Suite grün — 315/315 (ein Test mehr als die Basis 314)
+- [x] Neuer Test schlägt fehl, wenn man die Version wieder hartkodiert — **verifiziert durch
+      Mutation:** altes Literal `SERVER_VERSION = '0.4.1'` eingesetzt, neu gebaut, Test rot;
+      danach zurückgenommen. Ein nie rot gesehener Test ist keine Absicherung.
+- [x] Nach dem Publish meldet der Handshake im frischen Repo `0.5.1` — geprüft in einem leeren
+      Verzeichnis ausschließlich über `npx -y @sigloch/graphcode@0.5.1`

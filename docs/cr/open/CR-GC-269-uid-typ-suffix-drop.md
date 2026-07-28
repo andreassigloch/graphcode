@@ -4,7 +4,18 @@
 **Typ:** Refactoring (Format-Bump-Nachzug)
 **Erstellt:** 2026-07-27
 **Repo:** graphcode (`src/codec.ts`)
-**Dependencies:** `CR-GC-268` (Fan-out) **und** sigloch-modules `CR-SM-216` (Typ aus dem Feld) — beide done
+**Dependencies:** `CR-GC-268` (Fan-out) **und** sigloch-modules `CR-SM-216` (Typ aus dem Feld) —
+**beide OFFEN, nicht startbar** (korrigiert 2026-07-28; die Zeile behauptete vorher „beide done"):
+
+| Blocker | Ort | Stand |
+|---|---|---|
+| `CR-GC-268` | `docs/cr/open/` | offen — `src/codec.ts:217` schreibt weiter eine Zeile pro Kante |
+| `CR-SM-215` | sigloch-modules `docs/cr/open/` | offen |
+| `CR-SM-216` | sigloch-modules `docs/cr/open/` | offen, **Entscheidung ausstehend** (Formatbruch) |
+
+`encodeUid`/`decodeUid` stehen unverändert in `src/codec.ts:64` bzw. `:78`. Solange die
+Formatentscheidung in `CR-SM-216` nicht gefallen ist, ist dieser CR nicht anfassbar — er würde die
+Kodierung entfernen, deren Ersatz noch nicht beschlossen ist.
 **Graph:** betrifft `MOD-codec`, `REQ-roundtrip-conformance`, `REQ-deterministic-serialization`
 
 ## Problem

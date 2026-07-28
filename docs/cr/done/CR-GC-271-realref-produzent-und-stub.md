@@ -1,6 +1,6 @@
 # CR-GC-271 — SCHEMA-Bindung: `zodDefinition` raus, `realRef`-Stub materialisieren
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-07-28) — Commit `dd24c32`
 **Typ:** Refactoring (Produzenten-Migration) + Feature (Stub)
 **Erstellt:** 2026-07-27
 **Repo:** graphcode (`src/exporter.ts`, `src/views/incose.ts`, `src/tools/export.ts`)
@@ -51,12 +51,16 @@ sein, während die Datei fehlt. Genau der Zwischenstand, den [[BOK-CR-026]] §6 
 
 ## Akzeptanzkriterien
 
-- [ ] `grep -rn "zodDefinition" src/` leer
-- [ ] `graph_export` legt für eine gebundene SCHEMA mit fehlender `realRef.file` einen Zod-Stub an
-- [ ] Vorhandene Datei wird **nicht** überschrieben (Test beweist es)
-- [ ] `realRef` ohne `symbol` erzeugt keinen Stub
-- [ ] SRS-/INCOSE-Views rendern die Bindung als Zeiger, nicht als Inline-Text
-- [ ] Alle **291** Tests grün, `npm run build` grün
+- [x] `grep -rn "zodDefinition" src/` — **kein Lesepfad mehr.** Ein einziger Treffer bleibt:
+      [`src/views/incose.ts:74`](../../src/views/incose.ts#L74), ein Kommentar, der festhält, dass
+      das Attribut weg ist. Bewusst so notiert statt „grep leer" zu behaupten.
+- [x] `graph_export` legt für eine gebundene SCHEMA mit fehlender `realRef.file` einen Zod-Stub an
+      — `tests/export.realref-materialize.test.ts` Fall (a)
+- [x] Vorhandene Datei wird **nicht** überschrieben — Fall (b)
+- [x] `realRef` ohne `symbol` erzeugt keinen Stub — Fälle (c)/(d) (concept/external, unbound)
+- [x] SRS-/INCOSE-Views rendern die Bindung als Zeiger, nicht als Inline-Text
+- [x] Suite grün + `npm run build` grün — **317/317** (die im CR genannten 291 waren der Stand bei
+      Erstellung; seither sind Tests dazugekommen)
 
 ## Abgrenzung
 
