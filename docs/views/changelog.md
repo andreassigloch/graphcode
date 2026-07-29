@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 88 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 94 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 88 CR · 82 done · 5 open.
+Total: 94 CR · 88 done · 5 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -135,3 +135,9 @@ Total: 88 CR · 82 done · 5 open.
 | `CR-GC-265` | done | npm-Metadaten + Dependency-Range-Drift |
 | `CR-GC-266` | done | REQ-MOD allocate migrieren (CR-228 Teil A, graphcode-Seite) |
 | `CR-GC-267` | done | graphcode-client extrahieren: Host-Socket + View-Katalog |
+| `CR-GC-268` | done | Format-E-Codec: Fan-out erzeugen |
+| `CR-GC-269` | done | encodeUid/decodeUid entfernen (Format-E v2) |
+| `CR-GC-270` | done | SERVER_VERSION aus package.json lesen |
+| `CR-GC-271` | done | SCHEMA-Bindung: zodDefinition raus, realRef-Stub materialisieren |
+| `CR-GC-272` | done | readiness + panels nach graphcode-client |
+| `CR-GC-273` | done | graph_suggest: se-optimizer-Binding mit dryRun-Verdict |

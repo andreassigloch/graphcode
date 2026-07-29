@@ -49,6 +49,7 @@ import {
 } from './harness-import.js';
 import { StoreLock } from './store-lock.js';
 import { setExportPending } from './export-marker.js';
+import { computeFitAdvisory, type FitAdvisory } from './fit-advisory.js';
 import {
   schemaFingerprint,
   readStoredFingerprint,
@@ -336,11 +337,17 @@ export class GraphCodeHarness {
    * copy afterwards via `loadGraph()` (graph_merge does). Post-apply hooks are
    * skipped on a dry run (no phantom live-update/learning events).
    */
-  async mutate(commands: MutateCommand[], opts?: { dryRun?: boolean }): Promise<MutateResult> {
+  async mutate(
+    commands: MutateCommand[],
+    opts?: { dryRun?: boolean },
+  ): Promise<MutateResult & { fitAdvisory?: FitAdvisory }> {
     return this.serializeWrite(() => this.applyMutation(commands, opts?.dryRun ?? false));
   }
 
-  private async applyMutation(commands: MutateCommand[], dryRun = false): Promise<MutateResult> {
+  private async applyMutation(
+    commands: MutateCommand[],
+    dryRun = false,
+  ): Promise<MutateResult & { fitAdvisory?: FitAdvisory }> {
     // Step 0 — shape validation (CR-GC-239). MCP transports hand commands over as
     // plain JSON; a shape typo (`op:"add_node"`, flat fields) must never pass the
     // gate as a silent no-op with success:true. Parse EVERY command against the
@@ -459,13 +466,17 @@ export class GraphCodeHarness {
     }
 
     const tier = newViolations.some((v) => v.severity === 'warning') ? 'suggest' : 'auto-apply';
-    const result: MutateResult = {
+    // Fit-Gate Härtegrad 1 (CR-GC-274): Δm-Advisory auf layer:'arch' pro
+    // erfolgreicher Mutation — eine MESSUNG, kein Gate: tier/success bleiben
+    // allein regelbestimmt ("Metrik rankt, Gate urteilt").
+    const result: MutateResult & { fitAdvisory: FitAdvisory } = {
       success: true,
       appliedCommands: commands.length,
       mutations: delta.upsertNodes.length + delta.deleteNodes.length + delta.upsertEdges.length + delta.deleteEdges.length,
       violations: newViolations,
       confidence: 1,
       tier,
+      fitAdvisory: computeFitAdvisory(snapshot, this.graph),
     };
 
     // CR-GC-239 invariant: an applied batch that changed NOTHING is suspicious.

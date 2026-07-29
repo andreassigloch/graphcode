@@ -8,17 +8,17 @@
 
 ## Schemas (Zod contracts)
 
-| Interface (SCHEMA) | Contract (Zod) | status |
+| Interface (SCHEMA) | Contract (realRef) | status |
 |---|---|---|
-| `SCHEMA-cli-command` | npx-CLI Kommando + Ergebnis. | reviewed |
-| `SCHEMA-format-e` | Kompaktes Snapshot-/Diff-Format. @sigloch/contracts/se. | reviewed |
-| `SCHEMA-markdown-view` | Generierte human-readable View mit GENERATED-Header. | reviewed |
-| `SCHEMA-mutate-command` | Edit-Operation durch das Gate. @sigloch/contracts harness (D1). | reviewed |
-| `SCHEMA-mutate-result` | Apply-Ergebnis + Violations + Confidence/Tier. @sigloch/contracts harness (D1). | reviewed |
-| `SCHEMA-ontology-graph` | Elements (13 ElementTypes) + Traces (7 TraceTypes). @sigloch/contracts/se. | reviewed |
-| `SCHEMA-query-params` | Query-/Request-Parameter. | reviewed |
-| `SCHEMA-trajectory` | append-only Lern-Emission. @sigloch/learning-core. | reviewed |
-| `SCHEMA-update-event` | SSE invalidate Event. | reviewed |
+| `SCHEMA-cli-command` | ⚠ kein realRef (R-26) | reviewed |
+| `SCHEMA-format-e` | ⚠ kein realRef (R-26) | reviewed |
+| `SCHEMA-markdown-view` | ⚠ kein realRef (R-26) | reviewed |
+| `SCHEMA-mutate-command` | ⚠ kein realRef (R-26) | reviewed |
+| `SCHEMA-mutate-result` | ⚠ kein realRef (R-26) | reviewed |
+| `SCHEMA-ontology-graph` | ⚠ kein realRef (R-26) | reviewed |
+| `SCHEMA-query-params` | ⚠ kein realRef (R-26) | reviewed |
+| `SCHEMA-trajectory` | ⚠ kein realRef (R-26) | reviewed |
+| `SCHEMA-update-event` | ⚠ kein realRef (R-26) | reviewed |
 
 ## Flows (producer → consumer)
 

@@ -790,6 +790,57 @@
       "status": "done"
     },
     {
+      "id": "CR-GC-268",
+      "type": "CR",
+      "name": "Format-E-Codec: Fan-out erzeugen",
+      "description": "DONE 2026-07-29, zusammen mit CR-GC-269 umgesetzt (beide fassen encode/decode an, getrennt haette der zweite den ersten sofort ueberschrieben). GraphCodeCodec.encode schrieb eine Zeile pro Kante und erbte die Fan-out-Reparatur aus sigloch-modules CR-SM-215 nicht, weil es Format-E direkt erzeugt statt ueber FormatECodec.serialize (es braucht die at-attr-Form fuer komma- und klammerhaltige Attributwerte). Auf dem eigenen SSOT-Graphen mit 369 Knoten und 751 Kanten waren das 751 Quell-UID-Vorkommen; gemessen mit cl100k_base 2101 UID-Token oder 4,3 Prozent des Gesamtprompts, und zwar auf dem Hot-Path graph_impact, graph_context, graph_expand. Fix: encode gruppiert den Edges-Block nach sourceId und edgeType, der Sortierschluessel wechselt von sourceId-targetId-edgeType auf sourceId-edgeType-targetId, damit Gruppen zusammenhaengend liegen; Kanten mit Attributen bleiben einzeilig. decode blieb unveraendert, der Parser beherrscht 1:n bereits. Ergebnis: 318 Kanten-Zeilen statt 751, Determinismus (REQ-deterministic-serialization) und Round-Trip (L3) unverletzt. Detail: docs/cr/done/CR-GC-268-codec-fanout-emit.md",
+      "status": "done",
+      "created_at": "2026-07-27T00:00:00.000Z",
+      "closed_at": "2026-07-29T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-269",
+      "type": "CR",
+      "name": "encodeUid/decodeUid entfernen (Format-E v2)",
+      "description": "DONE 2026-07-29. src/codec.ts trug eine eigene UID-Kodierung, deren einziger Zweck war, dem Parser den Typ ueber einen Punkt-TYPE-Suffix unterzuschieben. Nach sigloch-modules CR-SM-216 liest der Parser den Typ aus der Knoten-Sektion, damit war die Kodierung toter Ballast und ein Parallelpfad zur Modul-Logik. Token-seitig kostete der Suffix 2510 UID-Token, also 5,1 Prozent jedes Graph-Prompts, kumuliert mit CR-GC-268 9,4 Prozent (49066 auf 44455). Fix: encodeUid und decodeUid geloescht, encode schreibt UIDs roh und gruppiert die Knoten in Typ-Sektionen, decode bezieht den Typ aus dem Parse-Ergebnis statt aus dem UID-Scan; Strict-Cross-Check aktiviert, ein Knoten unter falscher Typ-Sektion laesst decode werfen. Keine ID-Migration, der Kuzu-Store ist nicht betroffen (dort stand der Typ immer im Feld). Blocker CR-SM-215, CR-SM-216 und CR-GC-268 waren zum Abschluss gefallen. Detail: docs/cr/done/CR-GC-269-uid-typ-suffix-drop.md",
+      "status": "done",
+      "created_at": "2026-07-27T00:00:00.000Z",
+      "closed_at": "2026-07-29T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-270",
+      "type": "CR",
+      "name": "SERVER_VERSION aus package.json lesen",
+      "description": "DONE 2026-07-28, Commit bdfb6ab, publiziert als 0.5.1. Der MCP-Handshake des publizierten Pakets meldete serverInfo.version 0.4.1 bei package.json 0.5.0, verifiziert am Artefakt im npx-Cache statt an der Quelle. Ursache war ein Literal SERVER_VERSION in src/mcp-server.ts, das jedes Release von Hand nachgezogen werden musste, und beim 0.5.0-Release unterblieb. Bricht nichts, macht aber jede Support-Frage irrefuehrend, weil die einzige Stelle, an der ein Nutzer die laufende Version sieht, die falsche nennt. Fix: readFileSync auf den relativ zu import.meta.url aufgeloesten Pfad zur package.json, kein JSON-Import (also kein rootDir-Problem) und keine generierte Datei, die wieder driften koennte; dist/mcp-server.js und src/mcp-server.ts liegen beide eine Ebene unter der Paketwurzel. Kein Fallback: fehlt die package.json, wirft der Server beim Start mit klarer Meldung statt eine geratene Version zu melden. Erzwungen statt dokumentiert: tests/distribution.test.ts vergleicht die gemeldete Version mit der aus package.json, durch Mutation einmal rot gesehen. 4 Dateien, Suite 315/315. Detail: docs/cr/done/CR-GC-270-server-version-aus-package-json.md",
+      "status": "done",
+      "closed_at": "2026-07-28T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-271",
+      "type": "CR",
+      "name": "SCHEMA-Bindung: zodDefinition raus, realRef-Stub materialisieren",
+      "description": "DONE 2026-07-28, Commit dd24c32. Zwei Haelften aus BOK-CR-026 Schritt 1 und 1b. Problem A: src/exporter.ts und src/views/incose.ts lasen die SCHEMA-Bindung noch aus dem Legacy-Attribut zodDefinition, also Zod-Quelltext als String im Graphen, eine Kopie die niemand nachzieht; die aktuelle Bindung ist realRef mit file und optionalem symbol (R-26). Solange die Produzentenseite zodDefinition bediente, konnte sigloch-modules CR-SM-220 die Regeln SC-01 und SC-03 nicht entfernen, ohne die Views zu desynchronisieren. Jetzt wird realRef gelesen und der Zeiger gerendert, zodDefinition wird nicht als Fallback gelesen (kein Parallelpfad). Problem B: die Stub-Materialisierung war einseitig, fuer TEST legt der Export seit CR-GC-205 einen it.todo-Stub an, fuer SCHEMA nichts, eine SCHEMA konnte laut Graph gebunden sein waehrend die Datei fehlt. src/tools/export.ts legt jetzt analog eine Datei mit benanntem Export an (z.unknown mit TODO), ueberschreibt bestehende Dateien nie und erzeugt fuer realRef ohne symbol keinen Stub. 5 Dateien, Test tests/export.realref-materialize.test.ts. Detail: docs/cr/done/CR-GC-271-realref-produzent-und-stub.md",
+      "status": "done",
+      "created_at": "2026-07-27T00:00:00.000Z",
+      "closed_at": "2026-07-28T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-272",
+      "type": "CR",
+      "name": "readiness + panels nach graphcode-client",
+      "description": "DONE 2026-07-27, Commits 84ecc39 (client), 7cb159e (graphcode), 2185930 (GVE); nachtraeglich dokumentiert am 2026-07-28. Die Umsetzung lief direkt nach der Freigabe ohne vorheriges CR-Dokument, die Commits tragen deshalb die damals schon vergebene Nummer 265 (bei der Nummernvergabe wurde nur docs/cr/open geprueft, nicht done); die Commit-Referenzen bleiben bewusst falsch, ein History-Rewrite auf publizierten Commits waere die teurere Korrektur. Problem: nach CR-GC-267 hing graph-view-edit weiter an graphcode, weil Dashboard-Panels und Readiness-Projektion dort lagen. Gemessen im Clean-Room-Install 157 MB fuer einen Viewer, davon 70 MB kuzu-wasm, 23 MB typescript und 5,8 MB MCP-SDK, die er per Governance nie anfasst. Verschoben nach graphcode-client 0.2.0: readiness.ts, readiness-completeness.ts, viewer/panels.ts. Schnittkriterium: rein Daten rein, Daten raus; alles was Store, Gate oder Prozess braucht, bleibt im Substrat. Ein verdeckter Strang aufgeloest: panels.ts bezog LiveUpdateEvent und UpdateDomain scheinbar aus emit.ts, sie stammen aus contracts/harness und emit.ts reichte sie nur durch. Keine parallelen Pfade: graphcode behaelt an den drei Stellen Re-Export-Shims, eine Implementierung, alle 11 Importer unangetastet. Ergebnis: 157 MB auf 43 MB, 166 auf 63 Pakete, GVE-Suite 510/510, Schreibweg unveraendert ueber host.sock ins EINE Gate. 10 Dateien, bewusst ueber dem 6-Datei-Limit, weil ein kleinerer Schnitt einen Zwischenstand mit zwei Implementierungen hinterlassen haette. Detail: docs/cr/done/CR-GC-272-readiness-panels-nach-client.md",
+      "status": "done",
+      "closed_at": "2026-07-27T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-273",
+      "type": "CR",
+      "name": "graph_suggest: se-optimizer-Binding mit dryRun-Verdict",
+      "description": "DONE 2026-07-29. Neues read-only MCP-Tool graph_suggest in eigener Tool-Gruppe src/tools/suggest.ts (report.ts-Size-Guard): duennes Binding auf se-optimizer 0.3.0 mit targetFor und suggestEdits. Gegeben eine Zielrichtung im sechsdimensionalen Metrikraum als Gewichte je Dimension, rankt es die feuernden Operator-Regeln nach dem Skalarprodukt aus Metrik-Delta und Zielrichtung. Spike-2-Design: ausgeliefert wird die Fund-Ebene (Violation, Richtung, Delta, Default-Messebene arch), ein konkreter Edit nur dann, wenn ein rule-spezifisches Fix-Template ihn deterministisch herleitet. Jeder Template-Edit laeuft als dryRun (CR-GC-234) durchs volle Gate und kommt mit 3-Tier-Verdict zurueck, nach jedem Preview restauriert loadGraph die In-Memory-Kopie. Nie auto-apply: anwenden geht nur ueber graph_mutate, Previews laufen auf der Tool-Schreibkette serializeToolWrite, kein Interleaving mit echten Writes. graphcode-Haelfte des aimpro-Fahrplans Schritt 3, Paket-Haelfte ist sigloch-modules CR-SM-225. Blocker bis zum Publish von se-optimizer 0.3.0 war distribution.test.ts (E404 beim Tarball-Install im Fremd-Repo), danach gruen ohne Code-Aenderung. 6 Dateien, Suite 321/321. Detail: docs/cr/done/CR-GC-273-graph-suggest.md",
+      "status": "done",
+      "closed_at": "2026-07-29T00:00:00.000Z"
+    },
+    {
       "id": "FCHAIN-agent-query",
       "type": "FCHAIN",
       "name": "Agent-Graph-Query (Impact + progressive Expansion)",
@@ -5590,6 +5641,86 @@
     {
       "source": "CR-GC-261",
       "target": "FUNC-score-completeness",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-268",
+      "target": "FUNC-encode",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-268",
+      "target": "MOD-codec",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-268",
+      "target": "REQ-deterministic-serialization",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-269",
+      "target": "FUNC-decode",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-269",
+      "target": "FUNC-encode",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-269",
+      "target": "MOD-codec",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-269",
+      "target": "REQ-roundtrip-conformance",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-270",
+      "target": "FUNC-serve-stdio",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-270",
+      "target": "REQ-npx-distribution",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-271",
+      "target": "FUNC-export-markdown",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-271",
+      "target": "MOD-docs",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-272",
+      "target": "FUNC-render-readiness",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-272",
+      "target": "FUNC-score-completeness",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-272",
+      "target": "REQ-self-contained-dist",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-273",
+      "target": "FUNC-serve-stdio",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-273",
+      "target": "REQ-mcp-tool-registry",
       "type": "relation"
     },
     {
