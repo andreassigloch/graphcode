@@ -1,7 +1,7 @@
 {
   "name": "@sigloch/graphcode",
-  "version": "0.7.0",
-  "description": "Governed graph substrate for coding agents (Claude Code, OpenCode, any MCP-stdio host) \u2014 Apply-Gate + on-disk Kuzu store + MCP tools",
+  "version": "0.8.0",
+  "description": "Governed graph substrate for coding agents (Claude Code, OpenCode, any MCP-stdio host) — Apply-Gate + on-disk Kuzu store + MCP tools",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
