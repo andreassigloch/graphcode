@@ -35,6 +35,12 @@ export interface ToolContext {
   graphVersion(): number;
   /** The ONLY writer of the version + the audit log (no audit bypass, CR-GC-232). */
   recordAudit(consumerId: string, result: MutateResult, commands?: MutateCommand[]): Promise<void>;
+  /**
+   * Audit a dryRun preview as `operation:'validate'` (CR-GC-276, F2-Evidenz):
+   * Vorschlag + Verdict landen im Log, die Version bewegt sich NICHT (nichts
+   * wurde angewendet) und der Merge-Replay überspringt validate-Einträge.
+   */
+  recordPreview(consumerId: string, result: MutateResult, commands: MutateCommand[]): Promise<void>;
   /** Run a write body on the single tool-write chain (check+gate+record atomic). */
   serializeToolWrite<T>(body: () => Promise<T>): Promise<T>;
   /** Stale-base rejection with staleDelta, or null when the base is fresh (CR-GC-233). */
@@ -92,6 +98,31 @@ export function createToolContext(
     // above is the one truth; the feed is derived, so this can never diverge. The
     // repoRoot is read HERE (on a real write), never at bind time — the tool
     // template must stay unbound (host-shim proxy invariant, CR-GC-235).
+    await materializeTrajectory(auditLog, join(harness.getRepoRoot(), '.aimprove'));
+  }
+
+  // Preview-Audit (CR-GC-276): dryRun-Verdicts sind die halbe F2-Evidenz — auch
+  // VERWORFENE Kandidaten (Vorschlag → Ablehnung) müssen im Log stehen. Als
+  // `operation:'validate'` von echten Writes unterscheidbar; die Version bewegt
+  // sich nicht (nichts angewendet ⇒ kein OCC-Stale für andere Writer), der
+  // Merge-Replay filtert auf operation:'mutate'.
+  async function recordPreview(
+    consumerId: string,
+    result: MutateResult,
+    commands: MutateCommand[],
+  ): Promise<void> {
+    const entry: AuditEntry = {
+      id: `audit-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      timestamp: new Date().toISOString(),
+      consumerId,
+      consumerType: 'agent',
+      operation: 'validate',
+      result: result.success ? 'applied' : 'rejected',
+      violations: result.violations as import('@sigloch/graph-api-core').RuleViolation[],
+      graphVersion: _graphVersion,
+      commands,
+    };
+    await auditLog.record(entry);
     await materializeTrajectory(auditLog, join(harness.getRepoRoot(), '.aimprove'));
   }
 
@@ -195,6 +226,7 @@ export function createToolContext(
     gcCodec,
     graphVersion: () => _graphVersion,
     recordAudit,
+    recordPreview,
     serializeToolWrite,
     occReject,
   };

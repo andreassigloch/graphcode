@@ -74,6 +74,7 @@ export function readBranchLog(logPath: string, sinceVersion: number): AuditEntry
       continue; // torn tail — tolerated, never fatal
     }
     if (parsed.checkpoint === true) continue;
+    if (parsed.operation !== 'mutate') continue; // validate = dryRun-Preview (CR-GC-276), nie replayen
     if (parsed.result !== 'applied') continue; // rejected batches never happened
     if (!parsed.commands || parsed.commands.length === 0) continue;
     if ((parsed.graphVersion ?? 0) <= sinceVersion) continue; // pre-fork = shared history

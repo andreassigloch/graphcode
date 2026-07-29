@@ -1,0 +1,142 @@
+/**
+ * CR-GC-276 — graph_mutate: Format-E-Input, dryRun, Preview-Audit.
+ *
+ * (a) formatE-Block → dieselben Gate-Semantiken wie commands (ein Input-Codec,
+ *     kein zweiter Schreibweg); Parse-Fehler = Block-Verdict, kein Crash.
+ * (b) dryRun:true = volles Verdict inkl. fitAdvisory, NICHTS persistiert,
+ *     graphVersion unbewegt, Working Copy restauriert.
+ * (c) F2-Evidenz: jeder Preview landet als operation:'validate' im Audit-Log
+ *     (auch abgelehnte Kandidaten); der Merge-Replay überspringt validate.
+ * Real disk Kuzu (temp dir), no mocks.
+ */
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { mkdtempSync, rmSync, readFileSync, existsSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { KuzuAdapter } from '@sigloch/graph-cypher-wasm';
+import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
+import { GraphCodeHarness } from '../src/harness.js';
+import { bindToolsToHarness, type MCPToolRegistry } from '../src/mcp-tools.js';
+import { readBranchLog } from '../src/merge.js';
+import type { HarnessConfig } from '@sigloch/contracts/harness';
+
+function makeConfig(repoRoot: string): HarnessConfig {
+  return {
+    repoRoot,
+    scope: { workspaceId: 'test-ws', systemId: 'graphcode' },
+    consumerType: 'system',
+    preCommitTimeout: 5000,
+  };
+}
+
+const FE_BATCH = [
+  '## Nodes',
+  '### REQ',
+  '+ REQ-fe-input|Format-E input reaches the gate. [__name:FE input]',
+  '### TEST',
+  '+ TEST-fe-input|Verifies the Format-E input path. [__name:FE input test]',
+  '',
+  '## Edges',
+  '+ TEST-fe-input -verify-> REQ-fe-input',
+].join('\n');
+
+describe('graph_mutate: formatE + dryRun + Preview-Audit (CR-GC-276)', () => {
+  let tmp: string;
+  let harness: GraphCodeHarness;
+  let tools: MCPToolRegistry;
+
+  beforeEach(async () => {
+    tmp = mkdtempSync(join(tmpdir(), 'graphcode-mutate-input-'));
+    const storage = new KuzuAdapter({ ontology: SE_DESCRIPTOR, path: join(tmp, 'kuzu') });
+    harness = new GraphCodeHarness(makeConfig(tmp), storage);
+    await harness.initialize();
+    tools = bindToolsToHarness(harness);
+  });
+
+  afterEach(async () => {
+    await harness.close();
+    rmSync(tmp, { recursive: true, force: true });
+  });
+
+  it('formatE-Block läuft durchs Gate und mutiert wie commands', async () => {
+    const res = (await tools.graph_mutate.handler({ formatE: FE_BATCH, consumerId: 'fe-test' })) as {
+      success: boolean;
+      mutations: number;
+      graphVersion: number;
+    };
+    expect(res.success).toBe(true);
+    expect(res.mutations).toBe(3); // 2 nodes + 1 edge
+    expect(res.graphVersion).toBe(1);
+    const g = harness.getGraph();
+    expect(g.nodes.map((n) => n.uid).sort()).toEqual(['REQ-fe-input', 'TEST-fe-input']);
+    expect(g.edges.length).toBe(1);
+  });
+
+  it('ungültiger Format-E-Block (illegales Kantenpaar) → Block-Verdict mit Codec-Meldung, kein Crash', async () => {
+    const bad = [
+      '## Nodes',
+      '### REQ',
+      '+ REQ-a|a. [__name:a]',
+      '### TEST',
+      '+ TEST-b|b. [__name:b]',
+      '',
+      '## Edges',
+      '+ REQ-a -compose-> TEST-b',
+    ].join('\n');
+    const res = (await tools.graph_mutate.handler({ formatE: bad })) as {
+      success: boolean;
+      tier: string;
+      violations: { ruleId: string; message: string }[];
+    };
+    expect(res.success).toBe(false);
+    expect(res.tier).toBe('block');
+    expect(res.violations[0].ruleId).toBe('STRUCT');
+    expect(res.violations[0].message).toContain('REQ');
+  });
+
+  it('dryRun: volles Verdict + fitAdvisory, nichts persistiert, Version unbewegt', async () => {
+    const res = (await tools.graph_mutate.handler({ formatE: FE_BATCH, dryRun: true, consumerId: 'fe-preview' })) as {
+      success: boolean;
+      fitAdvisory?: unknown;
+      graphVersion: number;
+    };
+    expect(res.success).toBe(true);
+    expect(res.fitAdvisory).toBeDefined();
+    expect(res.graphVersion).toBe(0); // nichts angewendet
+    expect(harness.getGraph().nodes.length).toBe(0); // Working Copy restauriert
+  });
+
+  it('Preview-Audit: Vorschlag→Verdict im Log (validate), Merge-Replay überspringt ihn', async () => {
+    await tools.graph_mutate.handler({ formatE: FE_BATCH, dryRun: true, consumerId: 'fe-preview' });
+    // Abgelehnter Kandidat (illegales Paar) — auch der ist Evidenz.
+    await tools.graph_mutate.handler({
+      commands: [
+        { op: 'add-node', node: { uid: 'REQ-solo', type: 'REQ', name: 'solo', description: '', attributes: {} } },
+      ],
+      dryRun: true,
+      consumerId: 'fe-preview',
+    });
+
+    const logPath = join(tmp, '.graphcode', 'audit.jsonl');
+    expect(existsSync(logPath)).toBe(true);
+    const entries = readFileSync(logPath, 'utf8')
+      .split('\n')
+      .filter(Boolean)
+      .map((l) => JSON.parse(l) as { operation: string; result: string; commands?: unknown[] });
+    const previews = entries.filter((e) => e.operation === 'validate');
+    expect(previews.length).toBe(2);
+    expect(previews.map((p) => p.result).sort()).toEqual(['applied', 'rejected']); // REQ-solo: neuer R-01-Error
+    expect(previews.every((p) => (p.commands?.length ?? 0) > 0)).toBe(true); // der Vorschlag selbst ist im Log
+
+    // Replay-Sicherheit: validate-Einträge werden nie mitgereplayt.
+    expect(readBranchLog(logPath, 0).length).toBe(0);
+  });
+
+  it('commands und formatE gleichzeitig (oder keins) → Schema-Fehler am Transport', () => {
+    const schema = tools.graph_mutate.inputSchema;
+    expect(schema.safeParse({ formatE: FE_BATCH, commands: [{ op: 'noop' }] }).success).toBe(false);
+    expect(schema.safeParse({ consumerId: 'x' }).success).toBe(false);
+    expect(schema.safeParse({ formatE: FE_BATCH }).success).toBe(true);
+    expect(schema.safeParse({ commands: [{ op: 'noop' }] }).success).toBe(true);
+  });
+});

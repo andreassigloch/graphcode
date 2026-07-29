@@ -34,13 +34,35 @@ const baseVersionField = GraphVersionSchema.optional().describe(
     'Omitting it skips the check (warning only; lost-update window).',
 );
 
-const GraphMutateInputSchema = z.object({
-  // commands is validated by harness.mutate() via MutateCommandSchema internally.
-  // We accept any array here to avoid cross-Zod-version schema composition issues (D1).
-  commands: z.array(z.unknown()).min(1),
-  consumerId: z.string().default('mcp-client'),
-  baseVersion: baseVersionField,
-});
+const GraphMutateInputSchema = z
+  .object({
+    // commands is validated by harness.mutate() via MutateCommandSchema internally.
+    // We accept any array here to avoid cross-Zod-version schema composition issues (D1).
+    commands: z.array(z.unknown()).min(1).optional(),
+    formatE: z
+      .string()
+      .min(1)
+      .optional()
+      .describe(
+        'Token-leane Alternative zu commands (CR-GC-276): ein Format-E-v2-Block (dasselbe Dialekt wie ' +
+          'die Read-Slices) wird zu add-node/add-edge-Kommandos decodiert und läuft durch DASSELBE Gate. ' +
+          'Bevorzugt für LLM-Autoring (~2–3× weniger Tokens); upsert-Semantik. Deletes/updates/merges ' +
+          'brauchen weiterhin commands.',
+      ),
+    dryRun: z
+      .boolean()
+      .default(false)
+      .describe(
+        'true = volles Gate-Verdict (tier/violations/fitAdvisory), NICHTS persistiert (CR-GC-234); ' +
+          'der Preview wird als validate-Eintrag auditiert (Vorschlag→Verdict, F2-Evidenz), die ' +
+          'graphVersion bewegt sich nicht.',
+      ),
+    consumerId: z.string().default('mcp-client'),
+    baseVersion: baseVersionField,
+  })
+  .refine((i) => (i.commands === undefined) !== (i.formatE === undefined), {
+    message: 'graph_mutate: supply exactly one of commands or formatE.',
+  });
 
 /** Flat realize affordance (CR-GC-216) — the write-twin of graph_context, no nested union. */
 const GraphRealizeInputSchema = z
@@ -105,7 +127,20 @@ const GraphReseedInputSchema = z.object({
 // -------------------------------------------------------------------------
 
 export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
-  const { harness, graphVersion, recordAudit, serializeToolWrite, occReject } = ctx;
+  const { harness, graphVersion, recordAudit, recordPreview, serializeToolWrite, occReject } = ctx;
+
+  /** Format-E-Block → additive MutateCommands (CR-GC-276). Ein Input-Codec, KEIN zweiter Schreibweg. */
+  const formatEToCommands = (text: string): MutateCommand[] => {
+    const graph = ctx.gcCodec.decode(text);
+    return [
+      ...graph.nodes.map(
+        (n) => ({ op: 'add-node', node: { uid: n.uid, type: n.type, name: n.name, description: n.description ?? '', attributes: n.attributes ?? {} } }) as MutateCommand,
+      ),
+      ...graph.edges.map(
+        (e) => ({ op: 'add-edge', edge: { sourceId: e.sourceId, targetId: e.targetId, edgeType: e.edgeType, attributes: e.attributes ?? {} } }) as MutateCommand,
+      ),
+    ];
+  };
 
   const OCC_WARNING =
     'no baseVersion supplied — OCC check skipped (lost-update window). Pass the graphVersion ' +
@@ -136,22 +171,48 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
       'Every write goes through harness.mutate() — identical semantics to in-process calls. ' +
       'No direct Kuzu access; blocked by rules identical to any in-process mutation. ' +
       'OCC (CR-GC-233): pass the graphVersion your last read returned as baseVersion — a stale ' +
-      'base is rejected (tier block) with the delta of applied batches since; re-read + retry.',
+      'base is rejected (tier block) with the delta of applied batches since; re-read + retry. ' +
+      'Additive Batches bevorzugt als formatE-Block statt commands (~2–3× weniger Tokens); ' +
+      'dryRun:true liefert das volle Verdict inkl. fitAdvisory ohne anzuwenden (auditiert als Preview).',
     inputSchema: GraphMutateInputSchema,
     async handler(input) {
       return serializeToolWrite(async () => {
-        const commands = input.commands as MutateCommand[];
+        // Format-E-Decode VOR dem Gate: ein Parse-Fehler ist ein Block-Verdict,
+        // kein Transport-Crash — der Autor bekommt die Codec-Meldung als Violation.
+        let commands: MutateCommand[];
+        try {
+          commands = input.formatE !== undefined ? formatEToCommands(input.formatE) : (input.commands as MutateCommand[]);
+        } catch (err) {
+          return {
+            success: false,
+            appliedCommands: 0,
+            mutations: 0,
+            violations: [
+              { ruleId: 'STRUCT', severity: 'error' as const, message: err instanceof Error ? err.message : String(err) },
+            ],
+            confidence: 0,
+            tier: 'block' as const,
+            graphVersion: graphVersion(),
+          };
+        }
         const stale = await occReject(input.consumerId, input.baseVersion, commands);
         if (stale) return stale;
         // L2: identical semantics — delegate straight to the gate, no bypass.
         // Cast: MCP transports deserialize commands as plain objects; harness.mutate()
         // validates internally via MutateCommandSchema.
-        const result = await harness.mutate(commands);
-        await recordAudit(input.consumerId, result, commands);
+        const result = await harness.mutate(commands, { dryRun: input.dryRun });
+        if (input.dryRun) {
+          // Working copy restaurieren (der Gate-dryRun lässt den Applied-Zustand
+          // in-memory, CR-GC-234) und den Vorschlag→Verdict auditieren (F2).
+          await harness.loadGraph();
+          await recordPreview(input.consumerId, result, commands);
+        } else {
+          await recordAudit(input.consumerId, result, commands);
+        }
         return {
           ...result,
           graphVersion: graphVersion(),
-          ...(input.baseVersion === undefined ? { occWarning: OCC_WARNING } : {}),
+          ...(input.baseVersion === undefined && !input.dryRun ? { occWarning: OCC_WARNING } : {}),
         };
       });
     },

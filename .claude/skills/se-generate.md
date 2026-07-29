@@ -12,7 +12,8 @@ Der generative Treiber für Regime 1: **du schlägst vor, das Gate scort und wä
 2. `graph_generate {intent}` aufrufen → liefert `phase`, `prompt`, `readiness`, `blockingErrors`.
 3. **Der `prompt` ist deine Arbeitsanweisung.** Führe genau sie aus:
    - Elementtypen VOR dem Schreiben mit `graph_authoring_guide` prüfen (legale Kanten, Pflichtattribute).
-   - Alternativen als `graph_mutate {dryRun:true}`-Batches einreichen; Verdicts vergleichen — `tier` (auto-apply > suggest > block) und `fitAdvisory` (Δm auf layer:arch, `regressions`).
+   - **Batches als `formatE`-Block schreiben, nicht als `commands`-JSON** — gleicher Gate-Durchlauf, ~2–3× weniger Tokens. JSON nur für deletes/updates/merges.
+   - Alternativen als `graph_mutate {formatE, dryRun:true}` einreichen; Verdicts vergleichen — `tier` (auto-apply > suggest > block) und `fitAdvisory` (Δm auf layer:arch, `regressions`). Jeder Preview wird auditiert (Vorschlag→Verdict) — auch verworfene Kandidaten sind Evidenz.
    - Nur den besten Batch ohne dryRun anwenden. `block` heißt verwerfen oder revidieren — nie erzwingen, nie am Gate vorbei.
 4. Zurück zu 2 (ab jetzt ohne `intent` — steckt in der SYS-description), bis `done:true`.
 5. **Handoff:** bei `phase:'handoff'` Zielprofil mit dem Nutzer wählen (Gewichte je Metrik-Dimension) und auf `graph_suggest {target}` wechseln — ab hier wird optimiert, nicht mehr generiert.
