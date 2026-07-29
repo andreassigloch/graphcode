@@ -28,11 +28,22 @@ import { GraphCodeHarness } from '../src/harness.js';
 import { bindToolsToHarness } from '../src/mcp-tools.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 
-const SKILLS_DIR = join(__dirname, '..', '.claude', 'skills');
+const COMMANDS_DIR = join(__dirname, '..', '.claude', 'commands');
 const DEAD_API = /localhost:3001|GRAPH_API|\/api\/graph|\/api\/dashboard/;
 
+// CR-GC-277: die Skills liegen als Commands-Baum (se/…, se-view/…, se-*.md).
 function skillFiles(): string[] {
-  return readdirSync(SKILLS_DIR).filter((f) => f.startsWith('se-') && f.endsWith('.md'));
+  const out: string[] = [];
+  for (const entry of readdirSync(COMMANDS_DIR, { withFileTypes: true })) {
+    if (!entry.name.startsWith('se')) continue;
+    if (entry.isFile() && entry.name.endsWith('.md')) out.push(entry.name);
+    if (entry.isDirectory()) {
+      for (const f of readdirSync(join(COMMANDS_DIR, entry.name))) {
+        if (f.endsWith('.md')) out.push(join(entry.name, f));
+      }
+    }
+  }
+  return out;
 }
 
 describe('TEST-skills-mcp: every SE skill is MCP-driven, off the retired localhost:3001 API', () => {
@@ -61,8 +72,8 @@ describe('TEST-skills-mcp: every SE skill is MCP-driven, off the retired localho
     rmSync(repoRoot, { recursive: true, force: true });
   });
 
-  it('ships the se-*.md skills on disk (count derived from the dir, not hardcoded)', () => {
-    // Source of truth = the shipped .claude/skills/ dir (cli.scaffold asserts the
+  it('ships the SE skills on disk (count derived from the dir, not hardcoded)', () => {
+    // Source of truth = the shipped .claude/commands/ tree (cli.scaffold asserts the
     // scaffold copies exactly this set). No magic count to bump (CR-GC-205 Item 2).
     expect(skillFiles().length).toBeGreaterThan(0);
   });
@@ -70,7 +81,7 @@ describe('TEST-skills-mcp: every SE skill is MCP-driven, off the retired localho
   it('no skill references the retired HTTP API (localhost:3001 / GRAPH_API / /api/graph / /api/dashboard)', () => {
     const offenders: string[] = [];
     for (const f of skillFiles()) {
-      const text = readFileSync(join(SKILLS_DIR, f), 'utf8');
+      const text = readFileSync(join(COMMANDS_DIR, f), 'utf8');
       if (DEAD_API.test(text)) offenders.push(f);
     }
     expect(offenders).toEqual([]);
@@ -80,7 +91,7 @@ describe('TEST-skills-mcp: every SE skill is MCP-driven, off the retired localho
     expect(toolNames.length).toBeGreaterThan(0); // toolNames IS the live registry (no magic count)
     const missing: string[] = [];
     for (const f of skillFiles()) {
-      const text = readFileSync(join(SKILLS_DIR, f), 'utf8');
+      const text = readFileSync(join(COMMANDS_DIR, f), 'utf8');
       if (!toolNames.some((name) => text.includes(name))) missing.push(f);
     }
     expect(missing).toEqual([]);

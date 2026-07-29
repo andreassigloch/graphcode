@@ -18,7 +18,7 @@
  *                              which host opens the repo is unknowable at init time. Both
  *                              are MERGED — foreign servers / provider blocks survive.
  *   - `GRAPHCODE.md`          the guardrails doc.
- *   - `.claude/skills/se-*.md` the MCP-driven SE skills (CR-GC-133).
+ *   - `.claude/commands/se…`  the MCP-driven SE skills as commands (CR-GC-133/277).
  *   - `.claude/hooks/deny-*.sh` the PreToolUse enforcement hooks (gate-only writes,
  *                              no binary source, no stale-prose reads) — CR-GC-214.
  *   - `.claude/settings.json`  registers those hooks (merged: a member's own hooks +
@@ -32,7 +32,7 @@
  *
  * @author andreas@siglochconsulting
  */
-import { join } from 'node:path';
+import { join, dirname } from 'node:path';
 import {
   existsSync,
   mkdirSync,
@@ -50,7 +50,8 @@ import {
   MCP_CONFIG,
   OPENCODE_CONFIG,
   GUARDRAILS_FILE,
-  SKILLS_DIR,
+  COMMANDS_DIR,
+  LEGACY_SKILLS_DIR,
   HOOKS_DIR,
   SETTINGS_FILE,
   packagedSkillsDir,
@@ -197,19 +198,40 @@ function removeArtifact(abs: string, rel: string, res: InstallResult): void {
 }
 
 /**
- * Copy the package's shipped `se-*.md` skills into the target repo's `.claude/skills/`.
- * Idempotent (byte-identical re-write = `preserved`). The se-* skills are now MCP-driven
+ * Copy the package's shipped SE skills into the target repo's `.claude/commands/`
+ * (CR-GC-277 — als registrierbare Commands: `/se:generate`, `/se-view:arch`, …).
+ * Idempotent (byte-identical re-write = `preserved`). The se-* skills are MCP-driven
  * (CR-GC-130/131/132); without this a freshly-init'd member repo has none of them.
  */
 function installSkills(repoRoot: string, res: InstallResult): void {
   const srcDir = packagedSkillsDir();
   const files = shippedSkillFiles();
   if (files.length === 0) return; // skills not packaged — substrate still installs.
-  const destDir = join(repoRoot, SKILLS_DIR);
-  mkdirSync(destDir, { recursive: true });
   for (const f of files) {
     const content = readFileSync(join(srcDir, f), 'utf8');
-    writeArtifact(join(destDir, f), join(SKILLS_DIR, f), content, res);
+    const destAbs = join(repoRoot, COMMANDS_DIR, f);
+    mkdirSync(dirname(destAbs), { recursive: true });
+    writeArtifact(destAbs, join(COMMANDS_DIR, f), content, res);
+  }
+  removeLegacySkills(repoRoot, res);
+}
+
+/**
+ * Bis 0.9.0 landeten die Skills flach unter `.claude/skills/se-*.md` — dort
+ * registrierte sie nichts. install/update/remove räumen diese verwaisten Kopien
+ * ab (nur das paketeigene `se-*.md`-Muster, nie Member-Skills); keine parallelen
+ * Pfade zwischen Alt- und Neu-Layout.
+ */
+function removeLegacySkills(repoRoot: string, res: InstallResult): void {
+  const legacyDir = join(repoRoot, LEGACY_SKILLS_DIR);
+  if (!existsSync(legacyDir)) return;
+  for (const f of readdirSync(legacyDir)) {
+    if (f.startsWith('se-') && f.endsWith('.md')) {
+      removeArtifact(join(legacyDir, f), join(LEGACY_SKILLS_DIR, f), res);
+    }
+  }
+  if (readdirSync(legacyDir).length === 0) {
+    rmSync(legacyDir, { recursive: true, force: true });
   }
 }
 
@@ -229,12 +251,14 @@ export function syncSkills(repoRoot: string): SkillSyncResult {
   const srcDir = packagedSkillsDir();
   const files = shippedSkillFiles();
   if (files.length === 0) return res; // skills not packaged — nothing to sync.
-  const destDir = join(repoRoot, SKILLS_DIR);
-  mkdirSync(destDir, { recursive: true });
+  // Alt-Layout-Migration läuft auch über sync (nicht nur init/update) — sonst
+  // koexistieren Command- und Legacy-Kopie bis zum nächsten `graphcode update`.
+  removeLegacySkills(repoRoot, { action: 'update', repoRoot, created: [], updated: [], removed: [], preserved: [] });
   for (const f of files) {
-    const rel = join(SKILLS_DIR, f);
+    const rel = join(COMMANDS_DIR, f);
     const content = readFileSync(join(srcDir, f), 'utf8');
-    const destAbs = join(destDir, f);
+    const destAbs = join(repoRoot, COMMANDS_DIR, f);
+    mkdirSync(dirname(destAbs), { recursive: true });
     if (!existsSync(destAbs)) {
       writeFileSync(destAbs, content, 'utf8');
       res.added.push(rel);
@@ -258,12 +282,18 @@ export function syncSkills(repoRoot: string): SkillSyncResult {
  * emptied them.
  */
 function removeSkills(repoRoot: string, res: InstallResult): void {
-  const destDir = join(repoRoot, SKILLS_DIR);
+  removeLegacySkills(repoRoot, res);
+  const destDir = join(repoRoot, COMMANDS_DIR);
   if (!existsSync(destDir)) return;
   for (const f of shippedSkillFiles()) {
-    removeArtifact(join(destDir, f), join(SKILLS_DIR, f), res);
+    removeArtifact(join(destDir, f), join(COMMANDS_DIR, f), res);
+    // Namespace-Unterordner (se/, se-view/) mit entfernen, wenn WIR sie geleert haben.
+    const sub = dirname(join(destDir, f));
+    if (sub !== destDir && existsSync(sub) && readdirSync(sub).length === 0) {
+      rmSync(sub, { recursive: true, force: true });
+    }
   }
-  // Prune `.claude/skills` if WE emptied it; the shared `.claude/` prune runs once after
+  // Prune `.claude/commands` if WE emptied it; the shared `.claude/` prune runs once after
   // both skills + hooks are removed (pruneClaudeIfEmpty).
   if (readdirSync(destDir).length === 0) {
     rmSync(destDir, { recursive: true, force: true });

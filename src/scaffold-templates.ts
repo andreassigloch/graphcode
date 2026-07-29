@@ -53,7 +53,17 @@ export const MCP_CONFIG = '.mcp.json';
 export const OPENCODE_CONFIG = 'opencode.json';
 export const GUARDRAILS_FILE = 'GRAPHCODE.md';
 /** Where the SE skills land in the target repo (and ship from in this package). */
-export const SKILLS_DIR = join('.claude', 'skills');
+/**
+ * Where the shipped SE skills land in a member repo — als Claude-Code-COMMANDS
+ * (CR-GC-277): `.claude/commands/<ns>/<rest>.md` ⇒ invocable als `/se:generate`,
+ * `/se-view:arch` etc. Das flache `.claude/skills/se-*.md`-Layout registrierte
+ * NICHTS (Skills brauchen `<name>/SKILL.md`-Verzeichnisse, Commands den Pfad
+ * als Namen) — die Doppelpunkt-Namen der Frontmatter waren immer schon das
+ * Commands-Schema. Pfad im Paket = Pfad im Ziel, kein Mapping zur Laufzeit.
+ */
+export const COMMANDS_DIR = join('.claude', 'commands');
+/** Das Alt-Ziel bis 0.9.0 — install/sync/remove räumen dort verwaiste se-*.md ab. */
+export const LEGACY_SKILLS_DIR = join('.claude', 'skills');
 /** Where the PreToolUse deny-hooks land (and ship from in this package) — CR-GC-214. */
 export const HOOKS_DIR = join('.claude', 'hooks');
 /** The settings file that registers the shipped hooks in the target repo. */
@@ -66,16 +76,28 @@ export const SETTINGS_FILE = join('.claude', 'settings.json');
  * package.json `files`, so the npm tarball carries them (REQ-self-contained-dist).
  */
 export function packagedSkillsDir(): string {
-  return join(dirname(fileURLToPath(import.meta.url)), '..', SKILLS_DIR);
+  return join(dirname(fileURLToPath(import.meta.url)), '..', COMMANDS_DIR);
 }
 
-/** The `se-*.md` skill files this package ships (empty if the dir is absent). */
+/**
+ * The skill files this package ships, as paths RELATIVE to the commands dir
+ * (`se/generate.md`, `se-view/arch.md`, `se-conops.md`). Only `se*`-owned
+ * entries — a member's own commands are never ours to touch.
+ */
 export function shippedSkillFiles(): string[] {
   const dir = packagedSkillsDir();
   if (!existsSync(dir)) return [];
-  return readdirSync(dir)
-    .filter((f) => f.startsWith('se-') && f.endsWith('.md'))
-    .sort();
+  const out: string[] = [];
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    if (!entry.name.startsWith('se')) continue;
+    if (entry.isFile() && entry.name.endsWith('.md')) out.push(entry.name);
+    if (entry.isDirectory()) {
+      for (const f of readdirSync(join(dir, entry.name))) {
+        if (f.endsWith('.md')) out.push(join(entry.name, f));
+      }
+    }
+  }
+  return out.sort();
 }
 
 /** The frontmatter fields a skill carries (CR-GC-208): identity, purpose, sync-version. */

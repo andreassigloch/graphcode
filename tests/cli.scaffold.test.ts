@@ -43,13 +43,29 @@ const PKG = '@sigloch/graphcode';
 const OWN_VERSION = JSON.parse(
   readFileSync(join(__dirname, '..', 'package.json'), 'utf8'),
 ).version as string;
-const SKILLS_DIR = join('.claude', 'skills');
+const COMMANDS_DIR = join('.claude', 'commands');
+const LEGACY_SKILLS_DIR = join('.claude', 'skills');
 const HOOKS_DIR = join('.claude', 'hooks');
 const SETTINGS = join('.claude', 'settings.json');
-/** The se-*.md skills this package ships — the source of truth the scaffold copies from. */
-const SHIPPED_SKILLS = readdirSync(join(__dirname, '..', '.claude', 'skills'))
-  .filter((f) => f.startsWith('se-') && f.endsWith('.md'))
-  .sort();
+/**
+ * The SE skills this package ships (CR-GC-277: als Commands-Baum, Pfade relativ
+ * zu .claude/commands — se/…, se-view/…, se-*.md) — the source of truth the
+ * scaffold copies from.
+ */
+function listSkillTree(dir: string): string[] {
+  const out: string[] = [];
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    if (!entry.name.startsWith('se')) continue;
+    if (entry.isFile() && entry.name.endsWith('.md')) out.push(entry.name);
+    if (entry.isDirectory()) {
+      for (const f of readdirSync(join(dir, entry.name))) {
+        if (f.endsWith('.md')) out.push(join(entry.name, f));
+      }
+    }
+  }
+  return out.sort();
+}
+const SHIPPED_SKILLS = listSkillTree(join(__dirname, '..', '.claude', 'commands'));
 /** The deny-*.sh hooks this package ships (CR-GC-214) — same no-hardcoded-count principle. */
 const SHIPPED_HOOKS = readdirSync(join(__dirname, '..', '.claude', 'hooks'))
   .filter((f) => f.startsWith('deny-') && f.endsWith('.sh'))
@@ -104,8 +120,8 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
     expect(res.removed).toEqual([]);
   });
 
-  it('init installs the MCP-driven SE skills (CR-GC-133)', async () => {
-    // SHIPPED_SKILLS is read from the shipped .claude/skills/ dir (the source of
+  it('init installs the MCP-driven SE skills as commands (CR-GC-133/277)', async () => {
+    // SHIPPED_SKILLS is read from the shipped .claude/commands/ tree (the source of
     // truth); the toEqual(SHIPPED_SKILLS) round-trip below proves init copies exactly
     // that set. No hardcoded count to bump when a skill is added (CR-GC-205 Item 2).
     expect(SHIPPED_SKILLS.length).toBeGreaterThan(0);
@@ -113,15 +129,31 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
 
     // Every shipped skill lands in the target repo, byte-identical to the source.
     for (const f of SHIPPED_SKILLS) {
-      const dest = join(repo, SKILLS_DIR, f);
+      const dest = join(repo, COMMANDS_DIR, f);
       expect(existsSync(dest)).toBe(true);
       expect(readFileSync(dest, 'utf8')).toBe(
-        readFileSync(join(__dirname, '..', '.claude', 'skills', f), 'utf8'),
+        readFileSync(join(__dirname, '..', '.claude', 'commands', f), 'utf8'),
       );
-      expect(res.created).toContain(join(SKILLS_DIR, f));
+      expect(res.created).toContain(join(COMMANDS_DIR, f));
     }
-    // No stray files in the scaffolded skills dir.
-    expect(readdirSync(join(repo, SKILLS_DIR)).sort()).toEqual(SHIPPED_SKILLS);
+    // No stray files in the scaffolded commands tree — and NOTHING in the legacy dir.
+    expect(listSkillTree(join(repo, COMMANDS_DIR))).toEqual(SHIPPED_SKILLS);
+    expect(existsSync(join(repo, LEGACY_SKILLS_DIR))).toBe(false);
+  });
+
+  it('update migrates legacy flat .claude/skills/se-*.md copies away (CR-GC-277)', async () => {
+    // Ein Repo mit Alt-Stand: flache Skills aus ≤0.9.0.
+    mkdirSync(join(repo, LEGACY_SKILLS_DIR), { recursive: true });
+    writeFileSync(join(repo, LEGACY_SKILLS_DIR, 'se-fmea.md'), '---\nname: se-fmea\nversion: 1\n---\nalt\n', 'utf8');
+    writeFileSync(join(repo, LEGACY_SKILLS_DIR, 'my-own-skill.md'), '# mine\n', 'utf8');
+
+    const res = await scaffold('update', { repoRoot: repo });
+
+    // Legacy-Kopie weg (nur unsere), Member-Skill bleibt, Commands-Baum steht.
+    expect(existsSync(join(repo, LEGACY_SKILLS_DIR, 'se-fmea.md'))).toBe(false);
+    expect(res.removed).toContain(join(LEGACY_SKILLS_DIR, 'se-fmea.md'));
+    expect(existsSync(join(repo, LEGACY_SKILLS_DIR, 'my-own-skill.md'))).toBe(true);
+    expect(existsSync(join(repo, COMMANDS_DIR, 'se-fmea.md'))).toBe(true);
   });
 
   it('GRAPHCODE.md carries the graph-first onboarding contract (CR-GC-207)', async () => {
@@ -155,7 +187,7 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
     expect(md).toMatch(/Skill tool/);
     expect(md).toContain('skills sync');
     // Every shipped skill's `name:` appears in the table — derived, cannot drift.
-    const skillsDir = join(__dirname, '..', '.claude', 'skills');
+    const skillsDir = join(__dirname, '..', '.claude', 'commands');
     for (const f of SHIPPED_SKILLS) {
       const fm = readFileSync(join(skillsDir, f), 'utf8');
       const name = /^name:\s*(.+)$/m.exec(fm)?.[1].trim();
@@ -233,7 +265,7 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
         MCP,
         GUARDRAILS,
         'package.json',
-        ...SHIPPED_SKILLS.map((f) => join(SKILLS_DIR, f)),
+        ...SHIPPED_SKILLS.map((f) => join(COMMANDS_DIR, f)),
         ...SHIPPED_HOOKS.map((f) => join(HOOKS_DIR, f)),
         SETTINGS,
       ]),
@@ -309,8 +341,8 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
     // Skills + hooks removed restlos; the graphcode-only settings.json is removed too;
     // the emptied `.claude/skills`, `.claude/hooks` and `.claude` are pruned.
     for (const f of SHIPPED_SKILLS) {
-      expect(existsSync(join(repo, SKILLS_DIR, f))).toBe(false);
-      expect(res.removed).toContain(join(SKILLS_DIR, f));
+      expect(existsSync(join(repo, COMMANDS_DIR, f))).toBe(false);
+      expect(res.removed).toContain(join(COMMANDS_DIR, f));
     }
     for (const f of SHIPPED_HOOKS) {
       expect(existsSync(join(repo, HOOKS_DIR, f))).toBe(false);
@@ -331,15 +363,15 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
   it('remove preserves a member\'s own non-graphcode skills (only se-* are ours)', async () => {
     await scaffold('init', { repoRoot: repo });
     // A skill the member authored — graphcode must NOT delete it.
-    const own = join(repo, SKILLS_DIR, 'my-own-skill.md');
+    const own = join(repo, COMMANDS_DIR, 'my-own-skill.md');
     writeFileSync(own, '# mine\n', 'utf8');
 
     await scaffold('remove', { repoRoot: repo });
 
     // Our se-* skills are gone; the member's skill (and the dir) survive.
-    expect(existsSync(join(repo, SKILLS_DIR, SHIPPED_SKILLS[0]))).toBe(false);
+    expect(existsSync(join(repo, COMMANDS_DIR, SHIPPED_SKILLS[0]))).toBe(false);
     expect(existsSync(own)).toBe(true);
-    expect(existsSync(join(repo, SKILLS_DIR))).toBe(true);
+    expect(existsSync(join(repo, COMMANDS_DIR))).toBe(true);
   });
 
   it("remove preserves a member's own settings keys + their own hooks (only ours are stripped)", async () => {
@@ -492,7 +524,7 @@ describe('TEST-skills-sync: graphcode skills sync (CR-GC-208 anti-drift)', () =>
   });
 
   it('every shipped se-* skill carries a version: in its frontmatter', () => {
-    const skillsDir = join(__dirname, '..', '.claude', 'skills');
+    const skillsDir = join(__dirname, '..', '.claude', 'commands');
     for (const f of SHIPPED_SKILLS) {
       const fm = readFileSync(join(skillsDir, f), 'utf8');
       // version: sits in the first --- fence; assert it parses to a finite integer.
@@ -509,23 +541,23 @@ describe('TEST-skills-sync: graphcode skills sync (CR-GC-208 anti-drift)', () =>
     expect(res.added).toEqual([]);
     expect(res.updated).toEqual([]);
     // Every shipped skill reports unchanged (init wrote the current version).
-    expect(res.unchanged.sort()).toEqual(SHIPPED_SKILLS.map((f) => join(SKILLS_DIR, f)).sort());
+    expect(res.unchanged.sort()).toEqual(SHIPPED_SKILLS.map((f) => join(COMMANDS_DIR, f)).sort());
   });
 
   it('a stale/older copy is restored — reports updated and rewrites the shipped version', async () => {
     await scaffold('init', { repoRoot: repo });
     const victim = SHIPPED_SKILLS[0];
-    const victimAbs = join(repo, SKILLS_DIR, victim);
-    const shipped = readFileSync(join(__dirname, '..', '.claude', 'skills', victim), 'utf8');
+    const victimAbs = join(repo, COMMANDS_DIR, victim);
+    const shipped = readFileSync(join(__dirname, '..', '.claude', 'commands', victim), 'utf8');
 
     // Simulate a stale copy: truncate to a frontmatter with a LOWER version: 0.
     writeFileSync(victimAbs, '---\nname: stale\nversion: 0\ndescription: stale\n---\nold body\n', 'utf8');
 
     const res = syncSkills(repo);
     // The stale skill is reported updated; the rest are unchanged.
-    expect(res.updated).toEqual([join(SKILLS_DIR, victim)]);
+    expect(res.updated).toEqual([join(COMMANDS_DIR, victim)]);
     expect(res.added).toEqual([]);
-    expect(res.unchanged).not.toContain(join(SKILLS_DIR, victim));
+    expect(res.unchanged).not.toContain(join(COMMANDS_DIR, victim));
     // The file is byte-identical to the shipped source again.
     expect(readFileSync(victimAbs, 'utf8')).toBe(shipped);
   });
@@ -533,15 +565,15 @@ describe('TEST-skills-sync: graphcode skills sync (CR-GC-208 anti-drift)', () =>
   it('a missing copy is added (sync also bootstraps a fresh .claude/skills)', () => {
     // No init: the target has no .claude/skills at all.
     const res = syncSkills(repo);
-    expect(res.added.sort()).toEqual(SHIPPED_SKILLS.map((f) => join(SKILLS_DIR, f)).sort());
+    expect(res.added.sort()).toEqual(SHIPPED_SKILLS.map((f) => join(COMMANDS_DIR, f)).sort());
     expect(res.updated).toEqual([]);
     expect(res.unchanged).toEqual([]);
     // Every shipped skill now exists on disk, byte-identical to the source.
     for (const f of SHIPPED_SKILLS) {
-      const dest = join(repo, SKILLS_DIR, f);
+      const dest = join(repo, COMMANDS_DIR, f);
       expect(existsSync(dest)).toBe(true);
       expect(readFileSync(dest, 'utf8')).toBe(
-        readFileSync(join(__dirname, '..', '.claude', 'skills', f), 'utf8'),
+        readFileSync(join(__dirname, '..', '.claude', 'commands', f), 'utf8'),
       );
     }
   });

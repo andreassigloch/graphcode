@@ -88,7 +88,7 @@ describe('TEST-distribution: npx distribution', () => {
       expect(files).toContain('dist/cli.js');
       expect(files).toContain('dist/index.js');
       expect(files).toContain('dist/harness.js');
-      expect(files.some((f) => f.startsWith('.claude/skills/se-'))).toBe(true);
+      expect(files.some((f) => f.startsWith('.claude/commands/se'))).toBe(true);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
@@ -151,8 +151,10 @@ describe('TEST-distribution: npx distribution', () => {
         expect(existsSync(join(foreign, 'opencode.json'))).toBe(true); // CR-GC-263
         expect(existsSync(join(foreign, '.graphcode'))).toBe(true);
         expect(existsSync(join(foreign, 'GRAPHCODE.md'))).toBe(true);
-        // CR-GC-133: the SE skills ship in the tarball and init copies them in.
-        expect(existsSync(join(foreign, '.claude', 'skills', 'se-fmea.md'))).toBe(true);
+        // CR-GC-133/277: the SE skills ship in the tarball and init copies them in
+        // as commands — the legacy flat skills dir must NOT reappear.
+        expect(existsSync(join(foreign, '.claude', 'commands', 'se-fmea.md'))).toBe(true);
+        expect(existsSync(join(foreign, '.claude', 'skills'))).toBe(false);
 
         const mcp = JSON.parse(readFileSync(join(foreign, '.mcp.json'), 'utf8')) as {
           mcpServers: { graphcode: { command: string; args: string[] } };
