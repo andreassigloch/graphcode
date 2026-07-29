@@ -1,6 +1,6 @@
 ---
 name: se:generate
-version: 1
+version: 2
 description: Kaltstart-Generierung eines Systemmodells aus Prosa-Intention — readiness-getriebener Loop über graph_generate, Kandidaten durchs Gate (dryRun-Verdict + fitAdvisory), Handoff auf graph_suggest
 ---
 
