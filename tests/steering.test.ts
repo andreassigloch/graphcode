@@ -57,20 +57,27 @@ describe('TEST-steering: graph_next_step', () => {
     expect(sum).toBeCloseTo(1, 2);
   });
 
-  it('condenses to the highest-deficit actionable dimension (unverified REQs → ver)', () => {
+  it('condenses to the highest-deficit actionable dimension (unallocated FUNCs → alloc)', () => {
+    // This graph has two unallocated FUNCs and two empty MODs: alloc scores 4/6 = 0.333,
+    // below ver's 3/8 = 0.625, so alloc is the step. The blocking count is unaffected —
+    // R-01 x2 (the unverified precond/postcond REQs) are errors either way.
     const r = nextStep(allocDeficientGraph());
     expect(r.blocking.errors).toBe(2); // R-01 x2 (precond/postcond REQs unverified)
     expect(r.nextStep).not.toBeNull();
-    expect(r.nextStep!.dimension).toBe('ver');
-    expect(r.nextStep!.clears).toContain('R-01 x2');
-    expect(r.nextStep!.action).toMatch(/verif/i);
+    expect(r.nextStep!.dimension).toBe('alloc');
+    expect(r.nextStep!.clears).toEqual(expect.arrayContaining(['R-22 x2', 'R-23 x2']));
+    expect(r.nextStep!.action).toMatch(/alloc|modul/i);
   });
 
-  it('lists unallocated FUNC / empty MOD findings (R-22/R-23) as advisories', () => {
-    // NOTE: R-22/R-23 are unmapped in RULE_TO_DIMENSION (stale readiness mapping,
-    // pre-existing), so they surface as advisories rather than in a dimension.
-    const advisoryIds = nextStep(allocDeficientGraph()).advisory.map((a) => a.rule_id);
-    expect(advisoryIds).toContain('R-22');
-    expect(advisoryIds).toContain('R-23');
+  it('keeps the unverified REQs (R-01) as blocking errors outside the chosen dimension', () => {
+    // Until contracts CR-228 D, R-22/R-23 were unmapped in RULE_TO_DIMENSION and fell
+    // through to `advisory`. They are mapped to `alloc` now, so the advisory list holds
+    // what is left over — the non-error findings of the other dimensions.
+    const r = nextStep(allocDeficientGraph());
+    expect(r.blocking.ruleIds).toContain('R-01');
+    const advisoryIds = r.advisory.map((a) => a.rule_id);
+    expect(advisoryIds).not.toContain('R-22');
+    expect(advisoryIds).not.toContain('R-23');
+    expect(advisoryIds.length).toBeGreaterThan(0);
   });
 });
