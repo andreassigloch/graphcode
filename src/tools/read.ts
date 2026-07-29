@@ -24,7 +24,7 @@ const ReadFormatSchema = z
   .default('json')
   .describe(
     "Output format. 'json' (default) for programmatic agent logic; 'formatE' for a human-readable, " +
-      'round-trip-stable slice in the canonical uid.TYPE Format-E dialect (re-importable via the codec).',
+      'round-trip-stable Format-E v2 slice — type per `### <TYPE>` section, uids verbatim (re-importable via the codec).',
   );
 
 const GraphElementsInputSchema = z.object({
@@ -169,7 +169,7 @@ export function bindReadTools(ctx: ToolContext): MCPToolRegistry {
     description:
       'List graph elements (nodes) with optional type/search filter. Returns a slice, not a full dump. ' +
       "Output is JSON by default (agent logic); pass format:'formatE' for a human-readable, round-trip-stable " +
-      'slice (the selected nodes + the edges induced between them) in the canonical uid.TYPE Format-E dialect ' +
+      'slice (the selected nodes + the edges induced between them) as Format-E v2 — type per `### <TYPE>` section, uids verbatim ' +
       '(re-importable via the codec, like the committed graph.json). The slice-tools (graph_impact / ' +
       'graph_expand) are ALWAYS Format-E (CR-GC-210).',
     inputSchema: GraphElementsInputSchema,
@@ -208,7 +208,7 @@ export function bindReadTools(ctx: ToolContext): MCPToolRegistry {
     description:
       'Get edges, optionally filtered by incident node uid, edge type, or direction. ' +
       "Output is JSON by default (agent logic); pass format:'formatE' for a human-readable, round-trip-stable " +
-      'slice (the filtered edges + their endpoint nodes) in the canonical uid.TYPE Format-E dialect ' +
+      'slice (the filtered edges + their endpoint nodes) as Format-E v2 — type per `### <TYPE>` section, uids verbatim ' +
       '(re-importable via the codec). The slice-tools (graph_impact / graph_expand) are ALWAYS Format-E (CR-GC-210).',
     inputSchema: GraphGetEdgesInputSchema,
     async handler(input) {

@@ -29,7 +29,7 @@ export interface ToolContext {
   readonly auditLog: AuditLog;
   /** Format-E serializer for the slice tools. */
   readonly codec: FormatECodec;
-  /** uid.TYPE Format-E dialect wrapper for the opt-in read-tool slices (CR-GC-210). */
+  /** Format-E v2 wrapper for the opt-in read-tool slices (CR-GC-210, CR-GC-269). */
   readonly gcCodec: GraphCodeCodec;
   /** Read accessor for the applied-batch counter (never a settable field). */
   graphVersion(): number;
