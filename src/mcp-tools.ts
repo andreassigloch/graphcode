@@ -15,6 +15,7 @@
  *   - `tools/write.ts`  — graph_mutate / realize / merge / reseed (all gated)
  *   - `tools/report.ts` — rules / audit / readiness / tests / help / authoring / next_step
  *   - `tools/export.ts` — graph_export (+ the assertInRepo containment guard, CR-GC-255)
+ *   - `tools/suggest.ts`— graph_suggest (se-optimizer binding, dryRun-Verdict, CR-GC-273)
  * Each is bound against ONE `ToolContext` (`tool-context.ts`), which owns the shared state
  * whose invariants require a single instance: the monotone `graphVersion` and the write
  * chain that keeps OCC-check + gate + audit-record atomic. This file adds no behaviour —
@@ -34,6 +35,7 @@ import { bindReadTools } from './tools/read.js';
 import { bindWriteTools } from './tools/write.js';
 import { bindReportTools } from './tools/report.js';
 import { bindExportTools } from './tools/export.js';
+import { bindSuggestTools } from './tools/suggest.js';
 
 // ---------------------------------------------------------------------------
 // Public types
@@ -72,5 +74,6 @@ export function bindToolsToHarness(harness: GraphCodeHarness, auditLog?: AuditLo
     ...bindWriteTools(ctx),
     ...bindReportTools(ctx),
     ...bindExportTools(ctx),
+    ...bindSuggestTools(ctx),
   };
 }

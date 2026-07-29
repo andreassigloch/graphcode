@@ -131,6 +131,7 @@ describe('TEST-agent-agnostic: identical surface + gate for any MCP client (CR-G
       'graph_readiness',
       'graph_realize',
       'graph_reseed',
+      'graph_suggest',
       'graph_tests',
       'rules_evaluate',
       'rules_get_violations',
