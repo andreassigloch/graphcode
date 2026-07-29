@@ -1,5 +1,6 @@
 /**
- * tools/suggest.ts — graph_suggest (MOD-mcp-tools, CR-GC-273).
+ * tools/suggest.ts — die GENERIERUNGS-/OPTIMIERUNGS-Tools (MOD-mcp-tools):
+ * graph_suggest (CR-GC-273) + graph_generate (CR-GC-275).
  *
  * Dünnes MCP-Binding auf @sigloch/se-optimizer (aimpro-Fahrplan-Schritt 3):
  * gegeben eine Zielrichtung im ℝ⁶-Metrikraum, ranke die feuernden
@@ -18,6 +19,7 @@ import type { OntologyGraph } from '@sigloch/contracts/se';
 import type { MutateResult } from '@sigloch/contracts/harness';
 import { targetFor, suggestEdits, type Suggestion } from '@sigloch/se-optimizer';
 import { exportGraphJson } from '../exporter.js';
+import { generationStep, type GenerationStep } from '../generate.js';
 import type { MCPTool, MCPToolRegistry } from '../mcp-tools.js';
 import type { ToolContext } from '../tool-context.js';
 
@@ -119,5 +121,35 @@ export function bindSuggestTools(ctx: ToolContext): MCPToolRegistry {
     },
   };
 
-  return { graph_suggest };
+  const GraphGenerateInputSchema = z.object({
+    intent: z
+      .string()
+      .optional()
+      .describe(
+        'Die Systemintention als Prosa (1 Absatz). Nur beim Kaltstart nötig — sobald ein SYS existiert, ' +
+          'wird sie aus dessen description gelesen.',
+      ),
+    threshold: z
+      .number()
+      .min(0)
+      .max(1)
+      .default(0.8)
+      .describe('Readiness-Schwelle je Dimension für den Handoff auf graph_suggest (Default 0.8).'),
+  });
+
+  const graph_generate: MCPTool<z.infer<typeof GraphGenerateInputSchema>, GenerationStep> = {
+    name: 'graph_generate',
+    description:
+      'Der Kaltstart-Generierungstreiber (Regime 1: LLM schlägt vor, Gate scort/wählt). Liefert aus ' +
+      'Prosa-Intention + Graph-Zustand die KONKRETE nächste Generierungs-Instruktion: seed (SYS/ACTOR/UC ' +
+      'aus der Intention) → expand (Deficit-Dimension, konkrete Funde, Kandidaten-Protokoll: dryRun-' +
+      'Vergleich per Verdict + fitAdvisory, bester Batch echt) → handoff (Schwelle erreicht → graph_suggest). ' +
+      'Read-only und deterministisch; das Vorschlagen bleibt beim Host, das Urteil beim Gate.',
+    inputSchema: GraphGenerateInputSchema,
+    async handler(input) {
+      return generationStep(harness.getGraph(), input.intent, input.threshold);
+    },
+  };
+
+  return { graph_suggest, graph_generate };
 }
