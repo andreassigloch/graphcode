@@ -27,12 +27,12 @@ der Tool-Schreibkette (`serializeToolWrite`), kein Interleaving mit echten Write
 - [x] Read-only: Graph nach Aufruf byte-identisch (Kanten-/Knotenzahl unverändert)
 - [x] `npm run build` grün; Suite 321/321 bis auf `distribution.test.ts`
 
-## Offener Blocker
+## Blocker (aufgelöst 2026-07-29)
 
-`distribution.test.ts` rot, solange `@sigloch/se-optimizer@0.3.0` nicht auf npm
-publiziert ist (E404 beim Tarball-Install in Fremd-Repo). Lokal via `npm link`
-(in `link:siblings` aufgenommen). **Nächste Aktion:** `npm publish` in
-sigloch-modules/packages/se-optimizer, dann Test grün ohne Code-Änderung.
+`distribution.test.ts` war rot, bis `@sigloch/se-optimizer@0.3.0` auf npm
+publiziert war (E404 beim Tarball-Install in Fremd-Repo). Nach Publish:
+package-lock synchronisiert, Test grün ohne Code-Änderung (5/5).
+Für Sibling-Entwicklung bleibt der Link-Weg in `link:siblings`.
 
 **Dateien:** `src/tools/suggest.ts`, `src/mcp-tools.ts` (Registry + Header),
 `package.json` (dep + link:siblings), `tests/mcp.suggest.test.ts`,
