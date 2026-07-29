@@ -60,19 +60,24 @@ export type BootstrapMode = 'replace' | 'merge';
  * With this, neither an error- nor a warning-rule fires: `harness.mutate()`
  * returns success=true with tier='auto-apply' on an empty disk Kuzu graph.
  *
- * Format-E matches the GraphCodeCodec encoding (uid.TYPE suffix, __name attr).
+ * Format-E matches the GraphCodeCodec encoding: v2 `### <TYPE>` sections, uids
+ * verbatim (CR-GC-269), `__name` attr.
  */
 export const TEMPLATE_FORMAT_E = [
   '## Nodes',
-  '+ MOD-template.MOD|Module that satisfies the template requirement [__name:Template module]',
-  '+ REQ-template-root.REQ|First requirement of the new member graph [__name:Template root requirement]',
-  '+ SYS-template.SYS|Cold-start system of a new family member [__name:Template system]',
-  '+ TEST-template-root.TEST|Verifies the template root requirement [__name:Template root test]',
+  '### MOD',
+  '+ MOD-template|Module that satisfies the template requirement [__name:Template module]',
+  '### REQ',
+  '+ REQ-template-root|First requirement of the new member graph [__name:Template root requirement]',
+  '### SYS',
+  '+ SYS-template|Cold-start system of a new family member [__name:Template system]',
+  '### TEST',
+  '+ TEST-template-root|Verifies the template root requirement [__name:Template root test]',
   '',
   '## Edges',
-  '+ MOD-template.MOD -satisfy-> REQ-template-root.REQ',
-  '+ SYS-template.SYS -compose-> REQ-template-root.REQ',
-  '+ TEST-template-root.TEST -verify-> REQ-template-root.REQ',
+  '+ MOD-template -satisfy-> REQ-template-root',
+  '+ SYS-template -compose-> REQ-template-root',
+  '+ TEST-template-root -verify-> REQ-template-root',
 ].join('\n');
 
 /**

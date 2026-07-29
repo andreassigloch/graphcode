@@ -135,7 +135,8 @@ describe('TEST-bootstrap: new-member fill THROUGH the gate', () => {
     // against the empty baseline, so the gate must block and persist nothing.
     const orphanFormatE = [
       '## Nodes',
-      '+ REQ-orphan.REQ|A requirement with no verifying test [__name:Orphan requirement]',
+      '### REQ',
+      '+ REQ-orphan|A requirement with no verifying test [__name:Orphan requirement]',
     ].join('\n');
 
     const { result, nodes } = await bootstrap(harness, orphanFormatE);

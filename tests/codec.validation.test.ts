@@ -114,16 +114,19 @@ describe('TEST-codec-validation: encode() rejects invalid graphs', () => {
 describe('TEST-codec-validation: decode() rejects implicit-add', () => {
   it('(e) decode() throws when edge references undeclared node (implicit-add)', () => {
     // Format-E text with an edge referencing a target node NOT listed in ## Nodes.
-    // CR -relation-> MOD is a valid SE pair so FormatECodec.parse() accepts the
-    // edge line — the implicit-add guard is then hit inside our decode().
+    // Since Format-E v2 (CR-GC-269) the guard fires one layer earlier: an
+    // undeclared node has no `### <TYPE>` section, so the parser cannot type the
+    // endpoint and rejects the edge. Same guarantee — an implicit add never
+    // silently becomes a node — the message just names the cause more precisely.
     const text = `## Nodes
-+ CR-GC-103.CR|Codec CR [__name:Codec CR]
+### CR
++ CR-GC-103|Codec CR [__name:Codec CR]
 
 ## Edges
-+ CR-GC-103.CR -relation-> MOD-missing.MOD`;
++ CR-GC-103 -relation-> MOD-missing`;
 
-    expect(() => codec.decode(text)).toThrow(/implicit-add rejected/);
-    expect(() => codec.decode(text)).toThrow(/MOD-missing\.MOD/);
+    expect(() => codec.decode(text)).toThrow(/Cannot resolve type of target "MOD-missing"/);
+    expect(() => codec.decode(text)).toThrow(/MOD-missing/);
   });
 
   it('(f) decode() throws when FormatECodec.parse() returns errors', () => {

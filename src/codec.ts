@@ -6,7 +6,7 @@
  *
  *   1. DETERMINISTIC ENCODE (REQ-deterministic-serialization R3):
  *      - Nodes sorted by uid (lexicographic).
- *      - Edges sorted by [sourceId, targetId, edgeType].
+ *      - Edges sorted by [sourceId, edgeType, targetId].
  *      - Attribute keys sorted (lexicographic).
  *      Two calls to encode() on the same Graph produce byte-identical output.
  *
@@ -17,25 +17,19 @@
  *      or brackets would break round-trip.  GraphCodeCodec therefore produces
  *      Format-E text directly (using @attr-line form for complex values) and
  *      delegates parsing to FormatECodec.parse() — the authoritative parser.
- *      The UID encoding scheme appends a .TYPE suffix so FormatECodec.parse
- *      can extract the node type (its extractNodeType() scans dot-separated
- *      segments) — unless the uid already carries its type as a dot-segment
- *      (canonical <slug>.<TYPE>.<counter> form), in which case no suffix is
- *      added and none is stripped on decode.
  *
  *   3. STRICT VALIDATION (REQ-codec-validation):
  *      validate() checks every node.type against SE_DESCRIPTOR.nodeTypes and
  *      every edge against SE_DESCRIPTOR.edgeTypes[...].validPairs.
  *      Invalid types → error entries, never a silent pass.
  *
- * UID encoding contract:
- *   Canonical uid    :  <slug>.<TYPE>.<counter>  (e.g. graphcode.SYS.001) —
- *                       type already embedded, encode leaves it untouched.
- *   Legacy/plain uid :  <slug>  (e.g. SYS-graphcode) — encode appends
- *                       .<TYPE> for the wire form; decode strips it back off.
- *   Decode           :  scan dot-segments from the end for a known SE type;
- *                       if it's the last segment, strip it (legacy form);
- *                       otherwise leave the uid unchanged (canonical form).
+ * UID contract (Format-E v2, CR-GC-269):
+ *   Uids travel verbatim in both directions. The type is declared once per
+ *   `### <TYPE>` section, so nothing is appended on encode and nothing stripped
+ *   on decode — the uid the graph holds is the uid on the wire.
+ *
+ * Fan-out (CR-GC-268): edges sharing (source, edgeType) share a line,
+ *   `A -x-> B, C, D`. Attributed edges stay single-line.
  *
  * @author andreas@siglochconsulting
  */
@@ -56,36 +50,11 @@ import type {
 const UNSAFE_ATTR_RE = /[,\[\]{}]/;
 
 /**
- * Encode a UID for Format-E text by appending .<TYPE> — unless the uid
- * already carries its type as a dot-segment (canonical slug.TYPE.counter form).
- * e.g. "SYS-graphcode" + "SYS" → "SYS-graphcode.SYS" (legacy, appended)
- *      "graphcode.SYS.001" + "SYS" → "graphcode.SYS.001" (canonical, unchanged)
+ * CR-GC-269: `encodeUid`/`decodeUid` are gone. Their only job was to smuggle the type
+ * into the uid so the parser could scan it back out. Format-E v2 (sigloch-modules
+ * CR-SM-216) declares the type in the `### <TYPE>` section, so the uid travels
+ * unchanged in both directions — and the parallel encoding path with it.
  */
-function encodeUid(uid: string, type: string): string {
-  if (uid.split('.').includes(type)) return uid;
-  return `${uid}.${type}`;
-}
-
-/**
- * Decode a Format-E uid back to the original uid + type.
- * Scans dot-segments from the end for a known SE type (mirrors
- * FormatECodec.extractNodeType()). A trailing type segment is an appended
- * suffix and gets stripped; a type embedded mid-uid (canonical
- * slug.TYPE.counter form) is left in place.
- * e.g. "SYS-graphcode.SYS" → { uid: "SYS-graphcode", type: "SYS" }
- *      "graphcode.SYS.001" → { uid: "graphcode.SYS.001", type: "SYS" }
- */
-function decodeUid(fmtUid: string, knownTypes: ReadonlySet<string>): { uid: string; type: string } {
-  const parts = fmtUid.split('.');
-  for (let i = parts.length - 1; i >= 1; i--) {
-    if (knownTypes.has(parts[i])) {
-      return i === parts.length - 1
-        ? { uid: parts.slice(0, i).join('.'), type: parts[i] }
-        : { uid: fmtUid, type: parts[i] };
-    }
-  }
-  throw new Error(`Format-E uid "${fmtUid}" has no recognizable type segment`);
-}
 
 /**
  * Sort attribute keys deterministically and convert values to string.
@@ -124,12 +93,10 @@ export class GraphCodeCodec {
    */
   readonly inner: FormatECodec;
   private readonly ontology: OntologyDescriptor;
-  private readonly knownNodeTypes: Set<string>;
 
   constructor() {
     this.ontology = SE_DESCRIPTOR;
     this.inner = new FormatECodec(SE_DESCRIPTOR);
-    this.knownNodeTypes = new Set(Object.keys(SE_DESCRIPTOR.nodeTypes));
   }
 
   // -------------------------------------------------------------------------
@@ -140,13 +107,9 @@ export class GraphCodeCodec {
    * Deterministically serialize a Graph to Format-E text.
    *
    * Sort order (stable, deterministic):
-   *   Nodes  : ascending by uid (String.localeCompare)
-   *   Edges  : ascending by [sourceId, targetId, edgeType]
+   *   Nodes  : grouped by type (`### <TYPE>`), ascending by uid within a section
+   *   Edges  : ascending by [sourceId, edgeType, targetId], fanned out per group
    *   Attrs  : ascending by key (String.localeCompare)
-   *
-   * UID encoding: each node uid is suffixed with .<TYPE> so FormatECodec.parse
-   * can extract the node type from the uid (its extractNodeType scans for a
-   * known-type segment in dot-separated parts).
    *
    * Attribute encoding:
    *   Safe values (no commas, brackets) → inline [k:v,...] on the node/edge line.
@@ -161,19 +124,29 @@ export class GraphCodeCodec {
     }
 
     const sortedNodes = [...graph.nodes].sort((a, b) => a.uid.localeCompare(b.uid));
+    // CR-GC-268: [sourceId, edgeType, targetId] — groups lie contiguously so the
+    // fan-out emitter below stays a single pass and keeps determinism.
     const sortedEdges = [...graph.edges].sort(
       (a, b) =>
         a.sourceId.localeCompare(b.sourceId) ||
-        a.targetId.localeCompare(b.targetId) ||
-        a.edgeType.localeCompare(b.edgeType),
+        a.edgeType.localeCompare(b.edgeType) ||
+        a.targetId.localeCompare(b.targetId),
     );
 
     const lines: string[] = [];
 
     if (sortedNodes.length > 0) {
       lines.push('## Nodes');
-      for (const node of sortedNodes) {
-        const fmtUid = encodeUid(node.uid, node.type);
+      // CR-GC-269 / Format-E v2: one `### <TYPE>` header per type, uids untouched.
+      let currentType: string | null = null;
+      for (const node of [...sortedNodes].sort(
+        (a, b) => a.type.localeCompare(b.type) || a.uid.localeCompare(b.uid),
+      )) {
+        if (node.type !== currentType) {
+          currentType = node.type;
+          lines.push(`### ${node.type}`);
+        }
+        const fmtUid = node.uid;
         const desc = node.description ?? '';
         const attrEntries = sortedAttrEntries({
           ...node.attributes,
@@ -203,9 +176,18 @@ export class GraphCodeCodec {
     if (sortedEdges.length > 0) {
       lines.push('');
       lines.push('## Edges');
+      // CR-GC-268: fan-out — edges sharing (source, edgeType) collapse onto one line
+      // `A -x-> B, C, D`. On the SSOT graph that is 318 source-uid occurrences instead
+      // of 751 (−2101 uid tokens, −4.3 % of every graph prompt). Edges carrying
+      // attributes stay single-line: `inlinePart` belongs to the one edge.
+      let group: { sourceId: string; edgeType: string; targets: string[] } | null = null;
+      const flushGroup = (): void => {
+        if (!group) return;
+        lines.push(`+ ${group.sourceId} -${this._edgeArrow(group.edgeType)}-> ${group.targets.join(', ')}`);
+        group = null;
+      };
+
       for (const edge of sortedEdges) {
-        const fmtSource = encodeUid(edge.sourceId, this._nodeTypeFor(graph, edge.sourceId));
-        const fmtTarget = encodeUid(edge.targetId, this._nodeTypeFor(graph, edge.targetId));
         const arrow = this._edgeArrow(edge.edgeType);
         const attrEntries = sortedAttrEntries(edge.attributes);
         const safeEntries = attrEntries.filter(([, v]) => isAttrSafe(v));
@@ -213,9 +195,21 @@ export class GraphCodeCodec {
           safeEntries.length > 0
             ? ` [${safeEntries.map(([k, v]) => `${k}:${v}`).join(',')}]`
             : '';
-        // Edge attr lines — only safe values for now (complex edge attrs rare in SE)
-        lines.push(`+ ${fmtSource} -${arrow}-> ${fmtTarget}${inlinePart}`);
+
+        if (inlinePart) {
+          flushGroup();
+          lines.push(`+ ${edge.sourceId} -${arrow}-> ${edge.targetId}${inlinePart}`);
+          continue;
+        }
+
+        if (group && group.sourceId === edge.sourceId && group.edgeType === edge.edgeType) {
+          group.targets.push(edge.targetId);
+        } else {
+          flushGroup();
+          group = { sourceId: edge.sourceId, edgeType: edge.edgeType, targets: [edge.targetId] };
+        }
       }
+      flushGroup();
     }
 
     return lines.join('\n');
@@ -252,7 +246,14 @@ export class GraphCodeCodec {
       switch (op.type) {
         case 'add_node':
         case 'strict_add_node': {
-          const { uid, type } = decodeUid(op.semanticId, this.knownNodeTypes);
+          // CR-GC-269: uid verbatim, type from the parser's `### <TYPE>` section.
+          const uid = op.semanticId;
+          const type = op.elementType;
+          if (!type) {
+            throw new Error(
+              `GraphCodeCodec.decode: node "${uid}" carries no type — Format-E v2 declares it in a "### <TYPE>" section`,
+            );
+          }
           const rawAttrs = op.attributes ?? {};
 
           // Extract round-trip metadata fields from attributes
@@ -323,11 +324,9 @@ export class GraphCodeCodec {
     const edges: GraphEdge[] = [];
     for (const op of diff.operations) {
       if (op.type === 'add_edge' || op.type === 'strict_add_edge') {
-        const { uid: sourceId } = decodeUid(op.sourceId!, this.knownNodeTypes);
-        const { uid: targetId } = decodeUid(op.targetId!, this.knownNodeTypes);
         edges.push({
-          sourceId,
-          targetId,
+          sourceId: op.sourceId!,
+          targetId: op.targetId!,
           edgeType: op.edgeType!,
           attributes: op.attributes ? { ...op.attributes } : {},
         });
@@ -424,17 +423,6 @@ export class GraphCodeCodec {
   // -------------------------------------------------------------------------
   // Private helpers
   // -------------------------------------------------------------------------
-
-  /** Look up a node's type from the graph; throws if not found. */
-  private _nodeTypeFor(graph: Graph, uid: string): string {
-    const node = graph.nodes.find((n) => n.uid === uid);
-    if (!node) {
-      throw new Error(
-        `GraphCodeCodec.encode: edge references node "${uid}" not present in graph.nodes`,
-      );
-    }
-    return node.type;
-  }
 
   /** Resolve an edgeType to its first arrow alias (for Format-E text). */
   private _edgeArrow(edgeType: string): string {

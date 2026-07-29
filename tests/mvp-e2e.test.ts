@@ -52,19 +52,24 @@ const PKG = '@sigloch/graphcode';
 /**
  * Cold-start member graph for the new repo — the small valid pattern the gate
  * accepts on an empty graph (SYS compose REQ; TEST verify REQ → R-01 satisfied;
- * MOD satisfy REQ → REQ is resolved). Encoded as Format-E (uid.TYPE + __name).
+ * MOD satisfy REQ → REQ is resolved). Format-E v2: type from the `### <TYPE>`
+ * section, uid verbatim (CR-GC-269), display name as the `__name` attr.
  */
 const MEMBER_FORMAT_E = [
   '## Nodes',
-  '+ MOD-acme.MOD|Module satisfying the cold-start requirement [__name:ACME module]',
-  '+ REQ-acme-root.REQ|First requirement of the new ACME member graph [__name:ACME root requirement]',
-  '+ SYS-acme.SYS|Cold-start system of the new ACME family member [__name:ACME system]',
-  '+ TEST-acme-root.TEST|Verifies the ACME root requirement [__name:ACME root test]',
+  '### MOD',
+  '+ MOD-acme|Module satisfying the cold-start requirement [__name:ACME module]',
+  '### REQ',
+  '+ REQ-acme-root|First requirement of the new ACME member graph [__name:ACME root requirement]',
+  '### SYS',
+  '+ SYS-acme|Cold-start system of the new ACME family member [__name:ACME system]',
+  '### TEST',
+  '+ TEST-acme-root|Verifies the ACME root requirement [__name:ACME root test]',
   '',
   '## Edges',
-  '+ MOD-acme.MOD -satisfy-> REQ-acme-root.REQ',
-  '+ SYS-acme.SYS -compose-> REQ-acme-root.REQ',
-  '+ TEST-acme-root.TEST -verify-> REQ-acme-root.REQ',
+  '+ MOD-acme -satisfy-> REQ-acme-root',
+  '+ SYS-acme -compose-> REQ-acme-root',
+  '+ TEST-acme-root -verify-> REQ-acme-root',
 ].join('\n');
 
 const BOOTSTRAP_UIDS = ['MOD-acme', 'REQ-acme-root', 'SYS-acme', 'TEST-acme-root'];

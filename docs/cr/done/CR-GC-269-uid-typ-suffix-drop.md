@@ -1,6 +1,6 @@
 # CR-GC-269 — `encodeUid`/`decodeUid` entfernen (Format-E v2)
 
-**Status:** 🟠 Open — gated auf sigloch-modules `CR-SM-216`
+**Status:** ✅ Done — 2026-07-29
 **Typ:** Refactoring (Format-Bump-Nachzug)
 **Erstellt:** 2026-07-27
 **Repo:** graphcode (`src/codec.ts`)
@@ -74,3 +74,23 @@ UID-Token** oben auf den `CR-GC-268`-Stand — **−5,1 % jedes Graph-Prompts**,
 - Keine ID-Migration. `ACTOR-claude-code` bleibt `ACTOR-claude-code`.
 - Kein npm-Publish hier; der Major-Bump von `@sigloch/graphcode` zieht der Release-CR.
 - Der Kuzu-Store ist nicht betroffen — dort stand der Typ immer im Feld.
+
+## Abschluss 2026-07-29
+
+Blocker sind gefallen: `CR-SM-215`, `CR-SM-216` und `CR-GC-268` sind done.
+
+- `encodeUid`/`decodeUid` **gelöscht**; UIDs reisen unverändert in beide Richtungen.
+- `encode()` schreibt `### <TYPE>`-Sektionen; `decode()` nimmt den Typ aus
+  `op.elementType` und wirft, wenn er fehlt — kein Raten aus der UID.
+- Mitgefallen als toter Code: `_nodeTypeFor` und das Feld `knownNodeTypes`. Die
+  Prüfung „Kante referenziert unbekannten Knoten" lag ohnehin schon in `validate()`.
+- **Verhaltensänderung bei Implicit-Add:** Der Guard feuert jetzt eine Ebene früher —
+  ein nicht deklarierter Knoten hat keine Typ-Sektion, also lehnt schon der Parser die
+  Kante ab (`Cannot resolve type of target "..."`). Gleiche Garantie, präzisere
+  Meldung; `codec.validation.test.ts` entsprechend nachgezogen.
+- Nachgezogen, weil sie v1-Format-E enthielten: `TEMPLATE_FORMAT_E` (bootstrap.ts),
+  die Orphan-Fixture in `bootstrap.test.ts`, `MEMBER_FORMAT_E` in `mvp-e2e.test.ts`.
+- Zusätzlich aus dem Familien-Release: RD-04 (CR-SM-221) und MT-01..03 (CR-SM-222)
+  brauchten Help-Texte (`viewer/help-content.ts`) und ein Gate — beide sitzen im CDR,
+  Severity warning/info, also nie blockend.
+- Volle Suite: **317/317**.

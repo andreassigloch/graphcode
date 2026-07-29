@@ -1,6 +1,6 @@
 # CR-GC-268 — GraphCodeCodec: Fan-out erzeugen
 
-**Status:** 🟠 Open
+**Status:** ✅ Done — 2026-07-29
 **Typ:** Fix (Token-Effizienz)
 **Erstellt:** 2026-07-27
 **Repo:** graphcode (`src/codec.ts`)
@@ -65,3 +65,14 @@ Decode braucht keine Änderung: `this.inner.parse()` (= `FormatECodec.parse`) be
 - Der `.TYPE`-Suffix auf jeder UID bleibt hier — das ist `CR-GC-269` (nach sigloch-modules
   `CR-SM-216`), zusätzliche **−5,1 %**.
 - Kein npm-Publish in diesem CR; Version zieht der nächste Release-CR.
+
+## Abschluss 2026-07-29
+
+Umgesetzt zusammen mit `CR-GC-269` — beide fassen `encode()`/`decode()` an, getrennt
+hätte der zweite den ersten sofort überschrieben.
+
+- `encode()` gruppiert nach `(sourceId, edgeType)`, Sortierung auf
+  `[sourceId, edgeType, targetId]` umgestellt, damit Gruppen zusammenhängend liegen.
+- Attributierte Kanten bleiben einzeilig (`inlinePart` hängt an der einzelnen Kante).
+- Determinismus- und Round-Trip-Tests (`codec.roundtrip.test.ts`) unverändert grün.
+- Volle Suite: **317/317**.

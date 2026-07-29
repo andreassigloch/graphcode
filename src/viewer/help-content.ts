@@ -186,6 +186,26 @@ export const HELP_CONTENT: Record<string, HelpContentEntry> = {
       'You split a feature into pieces, but all the pieces are handled by the same one thing — the split may be pointless → consider merging them.',
     se: 'Parent `REQ` whose children all share one satisfier.',
   },
+  'RD-04': {
+    plain:
+      'One thing has more than 11 parts directly under it → group them, so each level stays readable.',
+    se: 'Decomposition breadth > 11 children on one level (`FUNC` `compose` `FUNC`, `FUNC` `allocate` `MOD`, `SYS`/`MOD` `compose` `MOD`) — introduce an intermediate level.',
+  },
+  'MT-01': {
+    plain:
+      'This module depends on many others but few depend on it → it will keep changing whenever they do.',
+    se: 'Instability I = fan_out / (fan_in + fan_out) > 0.7 over the module\'s traces (direct MOD↔MOD plus the traces of its allocated `FUNC`s).',
+  },
+  'MT-02': {
+    plain:
+      'The parts inside this module never talk to each other → it is really several modules in one.',
+    se: 'LCOM4 ≥ 4: the allocated `FUNC`s fall into that many disconnected groups (shared `io`/`satisfy` targets and shared `FLOW`s count as connected).',
+  },
+  'MT-03': {
+    plain:
+      'Most of this module\'s communication crosses its own boundary → check whether the split is in the right place.',
+    se: 'Allocation cohesion < 80 %: internal / (internal + external) over FLOW-transitive connection pairs of the allocated `FUNC`s (`a` —`io`→ `FLOW` —`io`→ `b`).',
+  },
   'MS-01': {
     plain: 'A milestone has no work assigned to it → assign the work items that belong to it.',
     se: '`MS` with no `CR` `relation`.',
