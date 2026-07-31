@@ -41,6 +41,9 @@ export const ExecutorConfigSchema = z.object({
   maxStepTurns: z.number().int().positive().default(6),
   /** HTTP-Timeout pro Modell-Call (ms). */
   callTimeoutMs: z.number().int().positive().default(180_000),
+  /** Antwort-Budget pro Call. Ein Batch braucht selten >2k Token; bei ~16 tok/s
+   * lokaler Decode-Rate kostet jedes erlaubte Token Wall-Zeit (8000 ≈ 500s). */
+  maxTokens: z.number().int().positive().default(2048),
   /** Tool-Angebot ans Modell: 'authoring' = kuratiertes Minimal-Set für den
    * generativen Loop (Grundlast-These: jede Schema-Zeile kostet Prompt-Eval bei
    * JEDEM Call — v5-Befund: 20 Schemas trieben die lokale Box über 300s TTFB);
@@ -290,7 +293,7 @@ export function buildCallModel(config: ExecutorConfig): CallModel {
           'anthropic-version': '2023-06-01',
           ...(config.apiKey ? { 'x-api-key': config.apiKey } : {}),
         },
-        body: JSON.stringify({ model: config.model, max_tokens: 8000, system, tools, messages }),
+        body: JSON.stringify({ model: config.model, max_tokens: config.maxTokens, system, tools, messages }),
         signal: AbortSignal.timeout(config.callTimeoutMs),
       });
       const j = (await r.json()) as {
@@ -322,7 +325,7 @@ export function buildCallModel(config: ExecutorConfig): CallModel {
       },
       body: JSON.stringify({
         model: config.model,
-        max_tokens: 8000,
+        max_tokens: config.maxTokens,
         messages: [{ role: 'system', content: system }, ...messages],
         tools,
       }),

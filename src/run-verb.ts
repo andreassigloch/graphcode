@@ -42,6 +42,7 @@ export function parseExecutorEnv(env: NodeJS.ProcessEnv): ExecutorConfig {
     ...(env.GRAPHCODE_LLM_MAX_ROUNDS ? { maxRounds: Number(env.GRAPHCODE_LLM_MAX_ROUNDS) } : {}),
     ...(env.GRAPHCODE_LLM_TIMEOUT_MS ? { callTimeoutMs: Number(env.GRAPHCODE_LLM_TIMEOUT_MS) } : {}),
     ...(env.GRAPHCODE_LLM_TOOLSET ? { toolset: env.GRAPHCODE_LLM_TOOLSET } : {}),
+    ...(env.GRAPHCODE_LLM_MAX_TOKENS ? { maxTokens: Number(env.GRAPHCODE_LLM_MAX_TOKENS) } : {}),
   });
 }
 
