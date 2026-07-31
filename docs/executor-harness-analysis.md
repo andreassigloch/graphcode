@@ -304,6 +304,30 @@ zwischen Läufen ist hoch. Der limitierende Faktor ist inzwischen klar die
   bzw. nur EIN geladenes Modell, Runden 48+, und der saubere Frontier-Vergleich
   über DENSELBEN Executor (`GRAPHCODE_LLM_BACKEND=anthropic`, gebaut, ungetestet).
 
+## Auflösung (v9): das Kontextfenster war der Haupttäter
+
+Messung nach v7b/v8: LM Studio hatte devstral mit **4755 Token Kontext** geladen
+(api-Feld `loaded_context_length`; empirisch via Codewort-Test verifiziert).
+Jeder Expand-Turn lief über — LM Studio truncated **still**, das Modell verlor
+die Emissions-Instruktion mitten im Step. Der „Dither" war nie Modell-Unvermögen,
+sondern Instruktionsverlust. Dazu zwei Interface-Fixes: `maxTokens` 8000→2048
+(Box dekodiert ~16 tok/s; 8k erlaubte Token ≈ 500s = Timeout) und ein
+**Salvage-Parser** (vollständige Commands aus budget-gekappten `[ARGS]`-Batches
+bergen; dabei Endlosschleifen-Guard im Text-Scan gefunden/gefixt).
+
+**v9 (16k Kontext, 24 Runden): 38 Elemente / 58 Traces** — 1 SYS, 2 ACTOR,
+12 UC, 10 FCHAIN, **12 FUNC, 1 MOD**, mit satisfy/allocate-Traces. Batches bis
+41 Mutationen, 8 Applies / 33 Rejections (das Gate arbeitet), erste In-Step-
+Reparatur (`repairedAfterRejection: 1`). 437k in / 70k out Token, $0, headless.
+Gegenüber v6 (14/18) ist das ×2,7 — das CR-GC-280-Kriterium (>14 Elemente,
+≥1 MOD/REQ/TEST) ist mit dem Kontext-Fix nachträglich erfüllt.
+
+**Stand der These:** Kein REQ/TEST nach 24 Runden (`done: false`) — Opus bleibt
+bei 117–143 inkl. REQ/TEST vorn. Aber der Abstand ist jetzt messbar **Grad
+(Runden, Decode-Speed), nicht Art**. Das Nachtrag-1-Fazit ist damit endgültig
+revidiert. Nächster Schritt: 48-Runden-Lauf (REQ/TEST-Dimension erreichen),
+danach der Frontier-Vergleich über denselben Executor.
+
 ---
 
 *Quelle: Greenfield-System-Test, `rig/greenfield-systemtest/` (`driver.mjs`,
