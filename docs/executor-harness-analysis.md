@@ -214,6 +214,77 @@ braucht nur `ANTHROPIC_API_KEY`). Offen.
 
 ---
 
+# Nachtrag 2: Weg C gebaut — `graphcode run` + Repair-Loop (2026-07-31, Branch feat/embedded-executor)
+
+## Korrektur des Nachtrag-1-Fazits
+
+Nachtrag 1 schloss: „Expand-Wand — für offene Zerlegung ist der Abstand nicht Grad,
+sondern Art." Diese Messung war **verfälscht**: der Rig-Treiber brach jeden Step nach
+dem ersten `graph_mutate` ab — auch bei Gate-Rejection — und gab dem Modell die
+violations **nie** zu sehen. Gemessen wurde Near-Miss × atomares Gate ohne
+Repair-Loop, nicht Modell-Fähigkeit.
+
+## Was gebaut wurde (CR-GC-278/279)
+
+`src/executor.ts` + `graphcode run "<intent>"` — der Executor als Produkt-Verb,
+kein opencode/Claude Code im Pfad. Auf dem Weg dahin deckten die devstral-Läufe
+**sechs** reale Fallen auf, jede als Unit-Test fixiert:
+
+1. **Repair-Loop** — Rejection beendet den Step nicht mehr; violations + fixHint
+   gehen als Feedback zurück (der Rig-Denkfehler).
+2. **dryRun-Falle** — das Gate-Protokoll instruiert dryRun-Proben; der Treiber
+   wertete das Verdict als „applied" und beendete den Step ohne Persistenz
+   (Baseline v1: **0 Elemente, exit=1**).
+3. **Idle-Nudge** — devstral dithert in Prosa/Text-Tool-Calls
+   (`tool[ARGS]{…}`); EIN Nachfassen pro Step statt stillem Aufgeben.
+4. **Intent bei jedem generate-Call** — sonst läuft nach einem gescheiterten
+   Seed-Step jede Folgerunde in die „Erfrage die Intention"-Sackgasse (headless
+   unbeantwortbar) bzw. seedet off-intent.
+5. **Rollen-Alternierung** — Mistrals Jinja-Template bricht bei User-Message
+   nach Tool-Results; Gate-Feedback wandert in den Tool-Result-Content.
+6. **Tool-Diät** (`toolset: 'authoring'`, default) — 20 Schemas pro Call trieben
+   die LM-Studio-Box über 300s Time-to-first-byte (undici headersTimeout);
+   der generative Loop braucht 5 graph-Tools + 3 Read-Tools.
+
+## Messung v6 (devstral-small-2-2512, 12 Runden, authoring-Toolset) — exit 0
+
+| Metrik | Wert |
+|---|---|
+| Ergebnis-Graph | **14 Elemente / 18 Traces** (1 SYS, 2 ACTOR, 6 UC, 4 FCHAIN, 1 FUNC) |
+| Mutates | **5 applied / 3 rejected**, 0 dryRun-Proben |
+| Große Batches | Seed R1: 16 Mutationen · **Expand R9: 30 Mutationen** · Expand R12: 6 |
+| Aufwand | 12 generate-Runden, 48 Modell-Turns, 112k Token in / 7k out, $0 |
+| repairedAfterRejection | **0** — Rejections konvertierten nie im selben Step |
+
+- **Seed: bestätigt und stärker als im Rig** — 16 Mutationen in EINEM Batch,
+  Runde 1. Die Tool-Diät löste zugleich die Latenz (Seed in Minuten statt Timeout).
+- **Die Expand-Wand ist gebrochen, aber anders als designed:** devstral landete
+  durable FCHAIN/FUNC-Zerlegung ÜBER Seed-Größe (R9: 30 Mutationen). Der Weg
+  dahin war aber nicht die In-Step-Reparatur (repairedAfterRejection = 0),
+  sondern die **frische Runde**: `graph_generate` re-fokussiert nach jedem
+  gescheiterten Step deterministisch, und irgendwann sitzt der Batch. Der
+  Repair-Loop stellte das Feedback mechanisch korrekt zu; devstral konnte es im
+  Step-Budget (6 Turns) nur nicht verwerten.
+- Verbleibende Reibung: Text-Tool-Calls (`tool[ARGS]{…}`, von der Nudge
+  abgefangen) und Box-Timeouts bei wachsendem Step-Kontext ab ~Runde 4.
+
+## Ehrliche Einordnung
+
+- **„Lokal kann keine offene Zerlegung" ist widerlegt** — mit dem gebauten
+  Executor liefert devstral eine verbundene, on-domain Zerlegung bis auf
+  FCHAIN/FUNC-Ebene, $0, headless, kein Fremd-Harness. Aber langsam (Faktor
+  ~5–6 Wall-Zeit vs. Opus) und flach (14 Elemente vs. 117–143; MOD/REQ/TEST
+  fehlen noch — mehr Runden nötig, n=1).
+- Der wirksame Mechanismus ist **Re-Fokus durch frische Runden**, nicht
+  In-Step-Repair. Konsequenz für den Executor: Step-Budget klein halten,
+  Runden-Budget groß — Runden sind der Konvergenz-Motor.
+- Nächste sinnvolle Hebel (offen): `[ARGS]`-Text-Recovery, kleinere
+  Expand-Batches (1 Fund pro Step erzwingen), mehr Runden (24+), schnellere
+  lokale Inferenz-Box, und der saubere Frontier-Vergleich über DENSELBEN
+  Executor (`GRAPHCODE_LLM_BACKEND=anthropic`, gebaut, ungetestet).
+
+---
+
 *Quelle: Greenfield-System-Test, `rig/greenfield-systemtest/` (`driver.mjs`,
 `run.mjs`, `metrics.mjs`, `report.mjs`). Verwandt:
 [`SPIKE-GC-loop-executor-benchmark`](spikes/SPIKE-GC-loop-executor-benchmark.md)

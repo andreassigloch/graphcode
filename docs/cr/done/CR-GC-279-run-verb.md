@@ -1,7 +1,14 @@
 # CR-GC-279 — `graphcode run "<intent>"` + lokale Validierung (Weg C, Teil 2)
 
-**Status:** open
+**Status:** done (2026-07-31)
 **Datum:** 2026-07-31
+
+**Validierungs-Ergebnis (v6, devstral-small-2-2512):** durable Expand ÜBER
+Seed-Größe erreicht — 14 Elemente / 18 Traces (1 SYS, 2 ACTOR, 6 UC, 4 FCHAIN,
+1 FUNC), 5 applied / 3 rejected, exit 0, Export + Lock-Freigabe sauber.
+`repairedAfterRejection = 0`: Konvergenz kam aus frischen generate-Runden
+(deterministischer Re-Fokus), nicht aus In-Step-Repair — Details + offene Hebel
+in `docs/executor-harness-analysis.md`, Nachtrag 2.
 **Branch:** feat/embedded-executor
 **Abhängigkeit:** CR-GC-278 (Executor-Kern)
 

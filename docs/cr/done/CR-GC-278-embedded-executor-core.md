@@ -1,6 +1,6 @@
 # CR-GC-278 — Embedded Executor Core (Weg C, Teil 1)
 
-**Status:** open
+**Status:** done (2026-07-31)
 **Datum:** 2026-07-31
 **Branch:** feat/embedded-executor
 
