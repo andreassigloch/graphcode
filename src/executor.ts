@@ -565,6 +565,7 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
     const messages: unknown[] = [{ role: 'user', content: gen.prompt + EMIT_SUFFIX + focus }];
     let rejectedInStep = false;
     let nudgedInStep = false;
+    let readTurns = 0; // Lese-Turns ohne Mutate-Versuch in diesem Step (CR-GC-280)
 
     for (let turn = 0; turn < config.maxStepTurns; turn++) {
       stats.modelTurns += 1;
@@ -668,10 +669,17 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
           results.push(await execReadOrGraphTool(call.name, call.input));
         }
       }
+      const attemptedMutate = appliedThisTurn || rejectedThisTurn;
+      if (!attemptedMutate) readTurns += 1;
+      // Lese-Budget (CR-GC-280): devstral exploriert sonst alle 6 Turns (guide/
+      // elements) und emittiert nie — ab dem 2. Lese-Turn wandert der Handlungs-
+      // Zwang in den Tool-Result-Content (Jinja-sicher, s. Rollen-Alternierung).
       const feedback =
         rejectedThisTurn && !appliedThisTurn && lastRejection
           ? formatGateFeedback(lastRejection)
-          : undefined;
+          : !attemptedMutate && readTurns >= 2
+            ? IDLE_NUDGE
+            : undefined;
       pushToolResults(messages, resp.toolCalls, results, feedback);
       if (appliedThisTurn) {
         if (rejectedInStep || rejectedThisTurn) stats.repairedAfterRejection += 1;

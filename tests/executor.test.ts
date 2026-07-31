@@ -333,6 +333,31 @@ describe('executor (CR-GC-278)', () => {
     expect(instruction).toContain('NUR den ERSTEN Fund');
   });
 
+  it('read budget: from the 2nd read-only turn the action nudge rides in the tool result', async () => {
+    const readTurn = (id: string): ModelResponse => ({
+      text: '',
+      toolCalls: [{ id, name: 'graphcode_graph_readiness', input: {} }],
+      assistantMsg: { role: 'assistant', content: null },
+      usage,
+    });
+    const { callModel, calls } = scriptedModel([
+      readTurn('r1'),
+      readTurn('r2'),
+      toolCallResponse('c3', VALID_SEED_BATCH),
+    ]);
+    const stats = await runExecutor({
+      registry,
+      workspaceDir: repoRoot,
+      intent: 'Eine Test-App gegen Explorations-Dither.',
+      config: CONFIG,
+      callModel,
+    });
+    // Nach Turn 1 (1. Lese-Turn): noch keine Nudge. Nach Turn 2: Nudge im Tool-Result.
+    expect(JSON.stringify(calls[1].messages)).not.toContain('KEINEN graph_mutate-Call');
+    expect(JSON.stringify(calls[2].messages)).toContain('KEINEN graph_mutate-Call');
+    expect(stats.mutatesApplied).toBe(1);
+  });
+
   it('extractToolCallFromText parses name[ARGS]{json} and rejects garbage', () => {
     expect(extractToolCallFromText('graphcode_graph_elements[ARGS]{"type": "UC", "search": "login"}')).toEqual({
       name: 'graphcode_graph_elements',
