@@ -489,12 +489,14 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
     if (feedback) messages.push({ role: 'user', content: feedback });
   };
 
-  let intentArg: string | undefined = opts.intent;
+  // Intent bei JEDEM generate-Call mitgeben (nicht nur beim ersten, wie im Rig):
+  // scheitert der Seed-Step (Timeout, Idle), liefe die Folgerunde sonst ohne
+  // Intent UND ohne SYS in die "Erfrage die Systemintention"-Sackgasse — und
+  // headless kann niemand antworten. Nach dem Seed ist er redundant, nie falsch.
   for (let round = 0; round < config.maxRounds; round++) {
     const gen = (await registry['graph_generate'].handler(
-      intentArg ? { intent: intentArg } : {},
+      opts.intent ? { intent: opts.intent } : {},
     )) as GenerationStep;
-    intentArg = undefined;
     stats.genRounds = round + 1;
     trace(`[generate ${round + 1}] phase=${gen.phase} done=${gen.done}`);
     if (gen.done) {
