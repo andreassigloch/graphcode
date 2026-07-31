@@ -22,12 +22,17 @@ import { serveStdio } from './mcp-server.js';
 import { serveHost } from './viewer/host.js';
 import { StoreOwnershipError } from './store-lock.js';
 import { scaffold, syncSkills, type CliCommand } from './scaffold.js';
+import { executeRun, parseExecutorEnv } from './run-verb.js';
 
 const USAGE = `graphcode — governed graph substrate (MCP-stdio)
 
 Usage:
   graphcode mcp     Start the MCP-stdio server (bind from .mcp.json)
   graphcode host    Start the read-only HOST + SSE bridge (live viewer)
+  graphcode run "<intent>"  Author the graph via the embedded executor (no
+                    foreign harness). Env: GRAPHCODE_LLM_BASE_URL +
+                    GRAPHCODE_LLM_MODEL (required), GRAPHCODE_LLM_BACKEND=
+                    openai|anthropic, GRAPHCODE_LLM_API_KEY
   graphcode init        Scaffold the harness into the current repo
   graphcode update      Refresh installed artifacts (preserves the store)
   graphcode remove      Remove all scaffolded artifacts (restlos)
@@ -63,6 +68,36 @@ async function main(): Promise<void> {
           `graphcode host: store already owned by pid ${err.owner.pid} — the elected host serves the read-only bridge itself; ${hint}\n`,
         );
         process.exit(0);
+      }
+    }
+    case 'run': {
+      // Embedded executor (CR-GC-279): same store election as `graphcode mcp`;
+      // stdout stays reserved for MCP transports — every report goes to stderr.
+      const intent = process.argv[3];
+      try {
+        const summary = await executeRun({
+          repoRoot: process.cwd(),
+          intent,
+          config: parseExecutorEnv(process.env),
+          trace: (line) => process.stderr.write(line + '\n'),
+        });
+        process.stderr.write(
+          `graphcode run: ${JSON.stringify(
+            { ...summary.stats, export: summary.exportPath ?? null, exportError: summary.exportError ?? null },
+            null,
+            2,
+          )}\n`,
+        );
+        process.exit(0);
+      } catch (err) {
+        if (err instanceof StoreOwnershipError) {
+          process.stderr.write(
+            `graphcode run: store already owned by pid ${err.owner.pid} — ` +
+              'stop the running MCP host (or the other run) first.\n',
+          );
+          process.exit(1);
+        }
+        throw err;
       }
     }
     case 'init':

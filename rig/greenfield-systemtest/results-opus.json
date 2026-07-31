@@ -1,0 +1,82 @@
+[
+  {
+    "arm": "opus5",
+    "model": "claude-opus-5",
+    "executor": "claude",
+    "run": 0,
+    "elements": 117,
+    "traces": 226,
+    "structure": {
+      "UC": 8,
+      "FUNC": 24,
+      "MOD": 16,
+      "REQ": 17,
+      "TEST": 17
+    },
+    "readiness": {
+      "compliance": 1,
+      "elementsWithErrors": 0,
+      "gatesPassed": "2/8"
+    },
+    "gate_rejections": 0,
+    "tokens": {
+      "wall_s": 873.1,
+      "cost_usd": 4.3060567500000015,
+      "tokens_in": 8041,
+      "tokens_out": 71873,
+      "tokens_reasoning": null
+    },
+    "moduleAudit": {
+      "MOD": {
+        "authored": [
+          "Operations log",
+          "Backend for frontend",
+          "Shared contracts",
+          "Graph engine",
+          "Graph owner process",
+          "Graph view and edit block",
+          "Identity and access",
+          "Learning feed",
+          "Live event bus",
+          "MCP bridge",
+          "Quality gate",
+          "Read client",
+          "Steering and optimization",
+          "Graph store",
+          "Web client",
+          "Workspace registry"
+        ],
+        "golden": [
+          "contracts",
+          "graph-api-core",
+          "learning-core",
+          "learning-engine",
+          "se-optimizer",
+          "se-steering"
+        ]
+      },
+      "FUNC": {
+        "authored": 24,
+        "golden": 11
+      },
+      "UC": {
+        "authored": [
+          "Administer a workspace",
+          "Author the model",
+          "Browse the model",
+          "Collaborate concurrently",
+          "Reintegrate a branch",
+          "Run an agent session",
+          "Sign in to a workspace",
+          "Steer by readiness"
+        ],
+        "golden": [
+          "Fit-Advisory am Gate",
+          "Aus Trajektorien lernen (F2)",
+          "Verbesserungen vorschlagen",
+          "Topologie-Scores anzeigen"
+        ]
+      }
+    }
+  }
+]

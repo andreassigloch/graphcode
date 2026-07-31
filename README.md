@@ -13,6 +13,11 @@ All commands run **inside the target repository**:
 npx @sigloch/graphcode init          # one-time setup: scaffold .mcp.json, GRAPHCODE.md, store dir
 npx @sigloch/graphcode mcp           # start the MCP-stdio server (your agent host runs this via .mcp.json)
 npx @sigloch/graphcode host          # start the read-only HTTP/SSE bridge (live dashboard/viewer)
+npx @sigloch/graphcode run "<intent>" # author the graph via the embedded executor — a local LLM
+                                     # (LM Studio) or Anthropic BYOK drives graph_generate/mutate
+                                     # directly, no coding-agent harness. Env: GRAPHCODE_LLM_BASE_URL
+                                     # + GRAPHCODE_LLM_MODEL (required), GRAPHCODE_LLM_BACKEND=
+                                     # openai|anthropic (default openai), GRAPHCODE_LLM_API_KEY
 npx @sigloch/graphcode update        # refresh scaffolded artifacts after a version bump — PRESERVES the store
 npx @sigloch/graphcode skills sync   # re-copy the shipped se-* skills (overwrites on version mismatch)
 npx @sigloch/graphcode remove        # remove all scaffolded artifacts (restlos)
