@@ -390,9 +390,54 @@ export function extractMutateFromText(text: string): { commands: unknown[] } | n
         // kein valides JSON an dieser Klammer — weiter außen suchen
       }
     }
-    start = text.lastIndexOf('{', start - 1);
+    // lastIndexOf clampt fromIndex<0 auf 0 — bei start=0 liefe die Suche endlos.
+    start = start > 0 ? text.lastIndexOf('{', start - 1) : -1;
   }
-  return null;
+  // Kein balanciertes Objekt — SALVAGE (v8-Befund): devstrals [ARGS]-Mega-Batches
+  // werden vom maxTokens-Budget mitten im JSON abgeschnitten. Alle VOLLSTÄNDIGEN
+  // Command-Objekte aus dem Array bergen; das Gate urteilt über den Teil-Batch.
+  const salvaged = salvageCommands(text);
+  return salvaged.length > 0 ? { commands: salvaged } : null;
+}
+
+/** String-bewusster Brace-Scan: birgt vollständige {…}-Objekte aus einem
+ * (potenziell abgeschnittenen) `"commands": [ … `-Array. */
+function salvageCommands(text: string): unknown[] {
+  const at = text.indexOf('"commands"');
+  if (at < 0) return [];
+  const arr = text.indexOf('[', at);
+  if (arr < 0) return [];
+  const out: unknown[] = [];
+  let i = arr + 1;
+  while (i < text.length) {
+    while (i < text.length && text[i] !== '{' && text[i] !== ']') i++;
+    if (i >= text.length || text[i] === ']') break;
+    const start = i;
+    let depth = 0;
+    let inString = false;
+    let end = -1;
+    for (; i < text.length; i++) {
+      const c = text[i];
+      if (inString) {
+        if (c === '\\') i++; // Escape überspringen
+        else if (c === '"') inString = false;
+      } else if (c === '"') inString = true;
+      else if (c === '{') depth++;
+      else if (c === '}' && --depth === 0) {
+        end = i;
+        break;
+      }
+    }
+    if (end < 0) break; // abgeschnittenes letztes Objekt — verwerfen
+    try {
+      const o = JSON.parse(text.slice(start, end + 1)) as { op?: unknown };
+      if (typeof o.op === 'string') out.push(o);
+    } catch {
+      break; // ab hier ist der Stream nicht mehr vertrauenswürdig
+    }
+    i = end + 1;
+  }
+  return out;
 }
 
 /**

@@ -367,6 +367,21 @@ describe('executor (CR-GC-278)', () => {
     expect(extractToolCallFromText('kaputt[ARGS]{"unclosed": ')).toBeNull();
   });
 
+  it('salvages complete commands from a truncated [ARGS] mega-batch (v8 finding)', () => {
+    const cmd1 = { op: 'add-node', node: { uid: 'SYS-x', type: 'SYS', name: 'X', description: 'ok', attributes: {} } };
+    const cmd2 = {
+      op: 'add-node',
+      node: { uid: 'UC-y', type: 'UC', name: 'Y', description: 'hat {geschweifte} Klammern', attributes: {} },
+    };
+    const truncated =
+      'graphcode_graph_mutate[ARGS]{"commands": [' +
+      JSON.stringify(cmd1) + ', ' + JSON.stringify(cmd2) +
+      ', {"op":"add-node","node":{"uid":"UC-cut","descr'; // Budget-Schnitt mitten im 3. Command
+    expect(extractMutateFromText(truncated)).toEqual({ commands: [cmd1, cmd2] });
+    // Ohne ein einziges vollständiges Command bleibt es null (kein Phantom-Batch).
+    expect(extractMutateFromText('{"commands": [{"op":"add-no')).toBeNull();
+  });
+
   it('extractMutateFromText finds the commands object among surrounding prose/braces', () => {
     const batch = { commands: [{ op: 'add-node', node: { uid: 'SYS-x' } }] };
     const text = `Vorwort {nicht das} — hier: ${JSON.stringify(batch)} Nachwort.`;
