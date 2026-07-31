@@ -47,6 +47,10 @@ export interface RunSummary {
   stats: ExecutorStats;
   /** Workspace-relativer Pfad des committeten Graph-Exports. */
   exportPath?: string;
+  /** Export verweigert/fehlgeschlagen (z.B. leerer Graph) — die Stats des Laufs
+   * gehen deshalb NICHT verloren; ein Lauf ohne durable Elemente ist ein
+   * legitimes (negatives) Ergebnis, kein Crash. */
+  exportError?: string;
   readiness: Record<string, unknown>;
 }
 
@@ -92,11 +96,18 @@ export async function executeRun(opts: {
       callModel: opts.callModel,
       trace: opts.trace,
     });
-    const exported = (await registry['graph_export'].handler({})) as {
-      graphJson?: { path?: string };
-    };
+    let exportPath: string | undefined;
+    let exportError: string | undefined;
+    try {
+      const exported = (await registry['graph_export'].handler({})) as {
+        graphJson?: { path?: string };
+      };
+      exportPath = exported.graphJson?.path;
+    } catch (err) {
+      exportError = err instanceof Error ? err.message : String(err);
+    }
     const readiness = (await registry['graph_readiness'].handler({})) as Record<string, unknown>;
-    return { stats, exportPath: exported.graphJson?.path, readiness };
+    return { stats, exportPath, exportError, readiness };
   } finally {
     await harness.close();
   }

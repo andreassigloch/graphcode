@@ -114,6 +114,31 @@ describe('executeRun (CR-GC-279)', () => {
     }
   });
 
+  it('a run with zero durable elements reports exportError instead of crashing', async () => {
+    const repoRoot = mkdtempSync(join(tmpdir(), 'graphcode-run-idle-'));
+    const idle: ModelResponse = {
+      text: 'nur Prosa, kein Batch',
+      toolCalls: [],
+      assistantMsg: { role: 'assistant', content: 'unused' },
+      usage: { in: 1, out: 1, reasoning: 0 },
+    };
+    try {
+      const summary = await executeRun({
+        repoRoot,
+        intent: 'Eine App, die nie autoriert wird.',
+        config,
+        callModel: () => Promise.resolve(idle),
+      });
+      // Der leere Lauf ist ein legitimes negatives Ergebnis: Stats bleiben erhalten,
+      // der verweigerte Export wird berichtet statt geworfen.
+      expect(summary.stats.mutatesApplied).toBe(0);
+      expect(summary.exportPath).toBeUndefined();
+      expect(summary.exportError).toMatch(/0 elements|empty/i);
+    } finally {
+      rmSync(repoRoot, { recursive: true, force: true });
+    }
+  });
+
   it('rejects an empty graph without intent (headless — nobody can ask back)', async () => {
     const repoRoot = mkdtempSync(join(tmpdir(), 'graphcode-run-empty-'));
     try {

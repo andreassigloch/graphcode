@@ -72,6 +72,8 @@ export interface ExecutorStats {
   modelTurns: number;
   mutatesApplied: number;
   mutatesRejected: number;
+  /** dryRun-Mutates (Gate-Protokoll-Proben) — nie ein Step-Abschluss. */
+  dryRunProbes: number;
   /** Applies, denen im selben Step ≥1 Rejection vorausging — die Repair-Loop-Metrik. */
   repairedAfterRejection: number;
   tokensIn: number;
@@ -103,6 +105,12 @@ const EMIT_SUFFIX =
   '\n\nEmittiere GENAU diesen Schritt als EINEN graph_mutate-Aufruf im commands-Format ' +
   '({"commands":[{"op":"add-node","node":{"uid","type","name","description","attributes":{}}},' +
   '{"op":"add-edge","edge":{"sourceId","targetId","edgeType","attributes":{}}}]}).';
+
+/** Handlungs-Zwang bei Idle-Turns: Coder-Modelle dithern gern in Prosa (Rig-Befund
+ * "6× guide/Runde") — EIN Nachfassen pro Step statt den Schritt still aufzugeben. */
+const IDLE_NUDGE =
+  'Du hast KEINEN graph_mutate-Call emittiert. Emittiere JETZT den geforderten Batch als EINEN ' +
+  'graphcode_graph_mutate-Tool-Call im commands-Format — keine Prosa, keine weitere Analyse.';
 
 /** Diese Tools ruft der EXECUTOR deterministisch — dem Modell werden sie vorenthalten. */
 const WITHHELD_TOOLS = new Set(['graph_generate', 'graph_next_step']);
@@ -412,6 +420,7 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
     modelTurns: 0,
     mutatesApplied: 0,
     mutatesRejected: 0,
+    dryRunProbes: 0,
     repairedAfterRejection: 0,
     tokensIn: 0,
     tokensOut: 0,
@@ -495,6 +504,7 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
 
     const messages: unknown[] = [{ role: 'user', content: gen.prompt + EMIT_SUFFIX }];
     let rejectedInStep = false;
+    let nudgedInStep = false;
 
     for (let turn = 0; turn < config.maxStepTurns; turn++) {
       stats.modelTurns += 1;
@@ -517,7 +527,14 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
       if (resp.toolCalls.length === 0) {
         // Kein Tool-Call: entweder Prosa-Mutate (recovern) oder wirklich idle.
         const recovered = extractMutateFromText(resp.text);
-        if (!recovered) break;
+        if (!recovered) {
+          trace(`    idle: ${resp.text.slice(0, 160).replace(/\n/g, ' ')}`);
+          if (nudgedInStep) break; // schon nachgefasst — Step aufgeben
+          nudgedInStep = true;
+          messages.push({ role: 'assistant', content: resp.text || '(leer)' });
+          messages.push({ role: 'user', content: IDLE_NUDGE });
+          continue;
+        }
         const outcome = await runMutate(recovered);
         if (outcome.success) {
           stats.mutatesApplied += 1;
@@ -542,6 +559,19 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
       let lastRejection: MutateOutcome | null = null;
       for (const call of resp.toolCalls) {
         if (call.name === 'graphcode_graph_mutate') {
+          // dryRun = Gate-Protokoll-Probe (graph_generate instruiert Verdict-Vergleich):
+          // Verdict zurückgeben, aber NIE als Step-Abschluss werten — der echte
+          // Apply folgt im selben Step (die Baseline-Falle: dryRun als applied
+          // gezählt → Step beendet, nichts persistiert).
+          const isDryRun =
+            typeof call.input === 'object' &&
+            call.input !== null &&
+            (call.input as Record<string, unknown>).dryRun === true;
+          if (isDryRun) {
+            stats.dryRunProbes += 1;
+            results.push(await execReadOrGraphTool(call.name, call.input));
+            continue;
+          }
           const outcome = await runMutate(call.input);
           results.push(JSON.stringify(outcome).slice(0, 6000));
           if (outcome.success) {

@@ -82,7 +82,11 @@ async function main(): Promise<void> {
           trace: (line) => process.stderr.write(line + '\n'),
         });
         process.stderr.write(
-          `graphcode run: ${JSON.stringify({ ...summary.stats, export: summary.exportPath }, null, 2)}\n`,
+          `graphcode run: ${JSON.stringify(
+            { ...summary.stats, export: summary.exportPath ?? null, exportError: summary.exportError ?? null },
+            null,
+            2,
+          )}\n`,
         );
         process.exit(0);
       } catch (err) {

@@ -202,6 +202,46 @@ describe('executor (CR-GC-278)', () => {
     expect(stats.repairedAfterRejection).toBe(0);
   });
 
+  it('a dryRun mutate is a probe, never a step terminator — the real apply follows', async () => {
+    const { callModel, calls } = scriptedModel([
+      toolCallResponse('c1', { ...VALID_SEED_BATCH, dryRun: true }),
+      toolCallResponse('c2', VALID_SEED_BATCH),
+    ]);
+    const stats = await runExecutor({
+      registry,
+      workspaceDir: repoRoot,
+      intent: 'Eine Test-App fürs Gate-Protokoll.',
+      config: CONFIG,
+      callModel,
+    });
+    // Die dryRun-Probe hat den Step NICHT beendet — das Modell durfte den echten Apply nachreichen.
+    expect(calls.length).toBe(2);
+    expect(stats.dryRunProbes).toBe(1);
+    expect(stats.mutatesApplied).toBe(1);
+    expect(harness.getGraph().nodes.map((n) => n.uid)).toContain('SYS-app');
+  });
+
+  it('idle turn (no tool call, no recoverable batch) gets ONE nudge before giving up', async () => {
+    const idle: ModelResponse = {
+      text: 'Ich analysiere zunächst die Anforderungen in Prosa …',
+      toolCalls: [],
+      assistantMsg: { role: 'assistant', content: 'unused' },
+      usage,
+    };
+    const { callModel, calls } = scriptedModel([idle, toolCallResponse('c2', VALID_SEED_BATCH)]);
+    const stats = await runExecutor({
+      registry,
+      workspaceDir: repoRoot,
+      intent: 'Eine Test-App gegen das Dithern.',
+      config: CONFIG,
+      callModel,
+    });
+    expect(calls.length).toBe(2);
+    expect(JSON.stringify(calls[1].messages)).toContain('KEINEN graph_mutate-Call');
+    expect(stats.mutatesApplied).toBe(1);
+    expect(harness.getGraph().nodes.map((n) => n.uid)).toContain('SYS-app');
+  });
+
   it('buildToolSpecs: valid object schemas for every tool, generate/next_step withheld', () => {
     const specs = buildToolSpecs(registry);
     const names = specs.map((s) => s.name);
