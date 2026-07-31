@@ -1,0 +1,85 @@
+[
+  {
+    "arm": "opus5",
+    "model": "claude-opus-5",
+    "executor": "claude",
+    "run": 1,
+    "elements": 143,
+    "traces": 318,
+    "structure": {
+      "UC": 10,
+      "FUNC": 34,
+      "MOD": 17,
+      "REQ": 30,
+      "TEST": 16
+    },
+    "readiness": {
+      "compliance": 1,
+      "elementsWithErrors": 0,
+      "gatesPassed": "2/8"
+    },
+    "gate_rejections": 0,
+    "tokens": {
+      "wall_s": 957.7,
+      "cost_usd": 6.2528079499999984,
+      "tokens_in": 13320,
+      "tokens_out": 73974,
+      "tokens_reasoning": null
+    },
+    "moduleAudit": {
+      "MOD": {
+        "authored": [
+          "Advisory Engine",
+          "Read-Only Client",
+          "Compliance Checkers",
+          "HTTP Gateway",
+          "Graph View and Edit Block",
+          "Apply-Gate",
+          "Identity and Access",
+          "Live Update Hub",
+          "MCP Transport",
+          "Graph Store",
+          "Telemetry Projection",
+          "Tenancy and Routing",
+          "Client Tier",
+          "Core Tier",
+          "Edge Tier",
+          "View Renderer",
+          "Web App Shell"
+        ],
+        "golden": [
+          "contracts",
+          "graph-api-core",
+          "learning-core",
+          "learning-engine",
+          "se-optimizer",
+          "se-steering"
+        ]
+      },
+      "FUNC": {
+        "authored": 34,
+        "golden": 11
+      },
+      "UC": {
+        "authored": [
+          "Administer Workspace",
+          "Run Agent Session",
+          "Inspect Audit Trail",
+          "Author Model Concurrently",
+          "Branch and Reintegrate by Replay",
+          "Browse Generated Views",
+          "Open Workspace",
+          "Resolve Concurrent Edit Conflict",
+          "Review Readiness and Next Step",
+          "Sign In and Resolve Membership"
+        ],
+        "golden": [
+          "Fit-Advisory am Gate",
+          "Aus Trajektorien lernen (F2)",
+          "Verbesserungen vorschlagen",
+          "Topologie-Scores anzeigen"
+        ]
+      }
+    }
+  }
+]

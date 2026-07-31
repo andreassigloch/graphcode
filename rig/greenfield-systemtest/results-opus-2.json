@@ -1,0 +1,82 @@
+[
+  {
+    "arm": "opus5",
+    "model": "claude-opus-5",
+    "executor": "claude",
+    "run": 2,
+    "elements": 130,
+    "traces": 305,
+    "structure": {
+      "UC": 8,
+      "FUNC": 35,
+      "MOD": 16,
+      "REQ": 23,
+      "TEST": 8
+    },
+    "readiness": {
+      "compliance": 1,
+      "elementsWithErrors": 0,
+      "gatesPassed": "0/8"
+    },
+    "gate_rejections": 0,
+    "tokens": {
+      "wall_s": 969.3,
+      "cost_usd": 6.6360493,
+      "tokens_in": 8086,
+      "tokens_out": 72339,
+      "tokens_reasoning": null
+    },
+    "moduleAudit": {
+      "MOD": {
+        "authored": [
+          "Agenten-Sidecar",
+          "Apply-Gate",
+          "Audit und Trajektorie",
+          "Autorisierung",
+          "Compliance-Pruefung",
+          "API-Gateway",
+          "Graph-Store",
+          "Host und Owner",
+          "Identitaet",
+          "Einsicht-Panels",
+          "Live-Bruecke",
+          "Modell-Ansicht und Editor",
+          "Reintegration",
+          "Regelwerk",
+          "Steuerung",
+          "Web-Shell"
+        ],
+        "golden": [
+          "contracts",
+          "graph-api-core",
+          "learning-core",
+          "learning-engine",
+          "se-optimizer",
+          "se-steering"
+        ]
+      },
+      "FUNC": {
+        "authored": 35,
+        "golden": 11
+      },
+      "UC": {
+        "authored": [
+          "Zugang und Identitaet",
+          "Agenten-Session",
+          "Modell autorisieren",
+          "Nebenlaeufig zusammenarbeiten",
+          "Modell erkunden",
+          "Governance und Nachweis",
+          "Reifegrad und Steuerung",
+          "Workspace-Lebenszyklus"
+        ],
+        "golden": [
+          "Fit-Advisory am Gate",
+          "Aus Trajektorien lernen (F2)",
+          "Verbesserungen vorschlagen",
+          "Topologie-Scores anzeigen"
+        ]
+      }
+    }
+  }
+]

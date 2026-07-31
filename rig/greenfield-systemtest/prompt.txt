@@ -1,0 +1,1 @@
+Ich möchte aus meinem graph code harness eine web app mit multiuser-fähigkeit bauen. Skizziere die logische architektur, nutze die sigloch-module fähigkeiten maximal.
