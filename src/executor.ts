@@ -111,6 +111,12 @@ const EMIT_SUFFIX =
   '({"commands":[{"op":"add-node","node":{"uid","type","name","description","attributes":{}}},' +
   '{"op":"add-edge","edge":{"sourceId","targetId","edgeType","attributes":{}}}]}).';
 
+/** Expand-Fokus (CR-GC-280): große Batches scheiterten an der Grammatik (v6);
+ * pro Step nur der erste Fund — die frische Runde holt den Rest deterministisch. */
+const EXPAND_FOCUS =
+  '\nBearbeite in diesem Schritt NUR den ERSTEN Fund aus der Instruktion — ' +
+  'ein kleiner Batch (höchstens ~6 Commands). Die weiteren Funde kommen in den nächsten Schritten.';
+
 /** Handlungs-Zwang bei Idle-Turns: Coder-Modelle dithern gern in Prosa (Rig-Befund
  * "6× guide/Runde") — EIN Nachfassen pro Step statt den Schritt still aufzugeben. */
 const IDLE_NUDGE =
@@ -386,6 +392,33 @@ export function extractMutateFromText(text: string): { commands: unknown[] } | n
   return null;
 }
 
+/**
+ * `[ARGS]`-Text-Recovery (CR-GC-280): devstral schreibt Tool-Calls wiederholt
+ * als Text — `graphcode_graph_elements[ARGS]{"type":"UC"}`. Den Call parsen
+ * statt den Turn an die Nudge zu verlieren.
+ */
+export function extractToolCallFromText(text: string): { name: string; input: unknown } | null {
+  if (!text) return null;
+  const m = /([A-Za-z0-9_]+)\s*\[ARGS\]\s*(\{[\s\S]*)/.exec(text);
+  if (!m) return null;
+  const s = m[2];
+  let depth = 0;
+  let end = -1;
+  for (let i = 0; i < s.length; i++) {
+    if (s[i] === '{') depth++;
+    else if (s[i] === '}' && --depth === 0) {
+      end = i;
+      break;
+    }
+  }
+  if (end < 0) return null;
+  try {
+    return { name: m[1], input: JSON.parse(s.slice(0, end + 1)) };
+  } catch {
+    return null;
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Gate-Feedback — der Kern des Repair-Loops.
 // ---------------------------------------------------------------------------
@@ -528,7 +561,8 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
       break;
     }
 
-    const messages: unknown[] = [{ role: 'user', content: gen.prompt + EMIT_SUFFIX }];
+    const focus = gen.phase === 'expand' ? EXPAND_FOCUS : '';
+    const messages: unknown[] = [{ role: 'user', content: gen.prompt + EMIT_SUFFIX + focus }];
     let rejectedInStep = false;
     let nudgedInStep = false;
 
@@ -551,8 +585,30 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
       );
 
       if (resp.toolCalls.length === 0) {
-        // Kein Tool-Call: entweder Prosa-Mutate (recovern) oder wirklich idle.
-        const recovered = extractMutateFromText(resp.text);
+        // Kein Tool-Call: Prosa-Mutate recovern, [ARGS]-Text-Call recovern, sonst idle.
+        let recovered = extractMutateFromText(resp.text);
+        if (!recovered) {
+          const textCall = extractToolCallFromText(resp.text);
+          const canonical = textCall?.name.replace(/^graphcode_/, '');
+          if (textCall && canonical === 'graph_mutate') {
+            // Mutate als [ARGS]-Text → dieselbe Applied/Rejected-Logik wie unten.
+            recovered = (textCall.input ?? {}) as { commands: unknown[] };
+          } else if (textCall && canonical && (READ_TOOLS[textCall.name] || registry[canonical])) {
+            // Sonstiger Tool-Call als Text: ausführen, Ergebnis in die History —
+            // der Turn trägt, statt an die Nudge zu fallen (CR-GC-280).
+            const toolName = READ_TOOLS[textCall.name] ? textCall.name : 'graphcode_' + canonical;
+            const result = await execReadOrGraphTool(toolName, textCall.input);
+            trace(`    recovered text tool-call ${canonical}`);
+            messages.push({ role: 'assistant', content: resp.text });
+            messages.push({
+              role: 'user',
+              content:
+                `Ergebnis von ${canonical}:\n${result.slice(0, 4000)}\n` +
+                'Fahre fort: emittiere jetzt den geforderten graph_mutate-Batch.',
+            });
+            continue;
+          }
+        }
         if (!recovered) {
           trace(`    idle: ${resp.text.slice(0, 160).replace(/\n/g, ' ')}`);
           if (nudgedInStep) break; // schon nachgefasst — Step aufgeben

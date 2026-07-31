@@ -18,6 +18,7 @@ import {
   runExecutor,
   buildToolSpecs,
   extractMutateFromText,
+  extractToolCallFromText,
   ExecutorConfigSchema,
   type ModelResponse,
   type CallModel,
@@ -262,6 +263,83 @@ describe('executor (CR-GC-278)', () => {
     expect(names).toContain('read_file');
     expect(names).not.toContain('graphcode_graph_export');
     expect(names.length).toBeLessThanOrEqual(8);
+  });
+
+  it('[ARGS] text tool-call is executed and its result carries the turn (CR-GC-280)', async () => {
+    const textCall: ModelResponse = {
+      text: 'Ich prüfe zunächst: graphcode_graph_readiness[ARGS]{}',
+      toolCalls: [],
+      assistantMsg: { role: 'assistant', content: 'unused' },
+      usage,
+    };
+    const { callModel, calls } = scriptedModel([textCall, toolCallResponse('c2', VALID_SEED_BATCH)]);
+    const stats = await runExecutor({
+      registry,
+      workspaceDir: repoRoot,
+      intent: 'Eine Test-App für die ARGS-Recovery.',
+      config: CONFIG,
+      callModel,
+    });
+    expect(calls.length).toBe(2);
+    // Der Text-Call wurde ausgeführt — sein Ergebnis steht in der History, keine Nudge nötig.
+    const secondCallText = JSON.stringify(calls[1].messages);
+    expect(secondCallText).toContain('Ergebnis von graph_readiness');
+    expect(secondCallText).not.toContain('KEINEN graph_mutate-Call');
+    expect(stats.mutatesApplied).toBe(1);
+  });
+
+  it('a mutate written as [ARGS] text goes through the applied/rejected gate logic', async () => {
+    const textMutate: ModelResponse = {
+      text: 'graphcode_graph_mutate[ARGS]' + JSON.stringify(VALID_SEED_BATCH),
+      toolCalls: [],
+      assistantMsg: { role: 'assistant', content: 'unused' },
+      usage,
+    };
+    const { callModel, calls } = scriptedModel([textMutate]);
+    const stats = await runExecutor({
+      registry,
+      workspaceDir: repoRoot,
+      intent: 'Eine Test-App für die ARGS-Mutate-Recovery.',
+      config: CONFIG,
+      callModel,
+    });
+    expect(calls.length).toBe(1);
+    expect(stats.mutatesApplied).toBe(1);
+    expect(harness.getGraph().nodes.map((n) => n.uid)).toContain('SYS-app');
+  });
+
+  it('expand steps get the single-finding focus suffix (CR-GC-280)', async () => {
+    // Seed direkt durchs Gate, damit graph_generate in der Expand-Phase startet.
+    await registry['graph_mutate'].handler(VALID_SEED_BATCH);
+    const followUp = {
+      commands: [
+        {
+          op: 'add-node',
+          node: {
+            uid: 'UC-export',
+            type: 'UC',
+            name: 'Export',
+            description: 'User exportiert den Stand und erhält die Datei.',
+            attributes: {},
+          },
+        },
+        { op: 'add-edge', edge: { sourceId: 'SYS-app', targetId: 'UC-export', edgeType: 'compose', attributes: {} } },
+        { op: 'add-edge', edge: { sourceId: 'ACTOR-user', targetId: 'UC-export', edgeType: 'io', attributes: {} } },
+      ],
+    };
+    const { callModel, calls } = scriptedModel([toolCallResponse('c1', followUp)]);
+    await runExecutor({ registry, workspaceDir: repoRoot, config: CONFIG, callModel });
+    const instruction = JSON.stringify(calls[0].messages[0]);
+    expect(instruction).toContain('NUR den ERSTEN Fund');
+  });
+
+  it('extractToolCallFromText parses name[ARGS]{json} and rejects garbage', () => {
+    expect(extractToolCallFromText('graphcode_graph_elements[ARGS]{"type": "UC", "search": "login"}')).toEqual({
+      name: 'graphcode_graph_elements',
+      input: { type: 'UC', search: 'login' },
+    });
+    expect(extractToolCallFromText('nur Prosa ohne Call')).toBeNull();
+    expect(extractToolCallFromText('kaputt[ARGS]{"unclosed": ')).toBeNull();
   });
 
   it('extractMutateFromText finds the commands object among surrounding prose/braces', () => {
