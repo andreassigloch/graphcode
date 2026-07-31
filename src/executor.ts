@@ -485,8 +485,15 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
       messages.push({ role: 'user', content });
       return;
     }
-    calls.forEach((c, i) => messages.push({ role: 'tool', tool_call_id: c.id, content: results[i] }));
-    if (feedback) messages.push({ role: 'user', content: feedback });
+    // openai/LM Studio: KEINE separate User-Message nach Tool-Results — Mistrals
+    // Jinja-Template verlangt strikte Rollen-Alternierung und bricht sonst das
+    // Rendering ("conversation roles must alternate", v3-Lauf-Befund). Das
+    // Feedback wandert in den Content des letzten Tool-Results.
+    calls.forEach((c, i) => {
+      const content =
+        feedback && i === calls.length - 1 ? results[i] + '\n\n' + feedback : results[i];
+      messages.push({ role: 'tool', tool_call_id: c.id, content });
+    });
   };
 
   // Intent bei JEDEM generate-Call mitgeben (nicht nur beim ersten, wie im Rig):
