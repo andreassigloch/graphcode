@@ -278,10 +278,31 @@ kein opencode/Claude Code im Pfad. Auf dem Weg dahin deckten die devstral-Läufe
 - Der wirksame Mechanismus ist **Re-Fokus durch frische Runden**, nicht
   In-Step-Repair. Konsequenz für den Executor: Step-Budget klein halten,
   Runden-Budget groß — Runden sind der Konvergenz-Motor.
-- Nächste sinnvolle Hebel (offen): `[ARGS]`-Text-Recovery, kleinere
-  Expand-Batches (1 Fund pro Step erzwingen), mehr Runden (24+), schnellere
-  lokale Inferenz-Box, und der saubere Frontier-Vergleich über DENSELBEN
-  Executor (`GRAPHCODE_LLM_BACKEND=anthropic`, gebaut, ungetestet).
+
+## Nachtest CR-GC-280 (v7b): die Hebel wirken mechanisch, nicht inhaltlich
+
+Drei Hebel gebaut (`[ARGS]`-Text-Recovery, 1-Fund-Fokus im Expand, Lese-Budget-
+Nudge ab dem 2. Read-Turn) und mit 24 Runden gefahren:
+
+| | v6 (12 Runden) | v7b (24 Runden, alle Hebel) |
+|---|---|---|
+| Elemente / Traces | **14 / 18** | 10 / 11 |
+| Applies / Rejections | 5 / 3 | **9 / 2** |
+| Tiefste Ebene | FCHAIN + 1 FUNC | FCHAIN (kein FUNC/MOD/REQ) |
+| Modell-Turns / Token in | 48 / 112k | 75 / 152k |
+
+**Kriterium verfehlt** (Ziel: >14 Elemente + min. 1 MOD/REQ/TEST). Lesart: die
+Hebel erhöhen die Apply-*Frequenz* (9 vs 5, weniger Rejections), aber der
+1-Fund-Fokus verkleinert die Batches — v6s Tiefe kam aus EINEM 30-Mutationen-
+Glückstreffer, den der Fokus konstruktiv verhindert. Beides ist n=1; die Varianz
+zwischen Läufen ist hoch. Der limitierende Faktor ist inzwischen klar die
+**Decode-Geschwindigkeit der lokalen Box** (Guides/Prompts sind gemessen klein,
+0,8–1,3k Zeichen; Turn-Timeouts entstehen beim Schreiben langer Antworten).
+
+- Nächste sinnvolle Hebel (offen): Fokus adaptiv (kleine Batches nur nach
+  Rejection, sonst volle Zerlegung zulassen), schnellere lokale Inferenz-Box
+  bzw. nur EIN geladenes Modell, Runden 48+, und der saubere Frontier-Vergleich
+  über DENSELBEN Executor (`GRAPHCODE_LLM_BACKEND=anthropic`, gebaut, ungetestet).
 
 ---
 

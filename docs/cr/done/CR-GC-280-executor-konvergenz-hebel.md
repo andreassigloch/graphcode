@@ -1,7 +1,16 @@
 # CR-GC-280 — Executor-Konvergenz-Hebel (Folge zu CR-GC-278/279)
 
-**Status:** open
+**Status:** done (2026-07-31)
 **Datum:** 2026-07-31
+
+**Validierungs-Ergebnis (v7b, 24 Runden): Erfolgskriterium VERFEHLT** — 10
+Elemente / 11 Traces (v6: 14/18), kein MOD/REQ/TEST. Die Hebel wirken
+mechanisch (9 Applies vs. 5, Rejections 2 vs. 3, ARGS-Recovery + Lese-Budget
+greifen nachweislich), aber der 1-Fund-Fokus verkleinert die Batches und
+verhindert konstruktiv die großen Zerlegungs-Treffer, aus denen v6s Tiefe kam
+(n=1, hohe Lauf-Varianz). Limitierender Faktor jetzt: Decode-Geschwindigkeit
+der lokalen Box (Kontexte gemessen klein). Details + Folge-Hebel in
+`docs/executor-harness-analysis.md`, Abschnitt „Nachtest CR-GC-280".
 **Branch:** feat/embedded-executor
 
 ## Ziel
