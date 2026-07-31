@@ -40,6 +40,7 @@ export function parseExecutorEnv(env: NodeJS.ProcessEnv): ExecutorConfig {
     model: env.GRAPHCODE_LLM_MODEL,
     apiKey: env.GRAPHCODE_LLM_API_KEY || undefined,
     ...(env.GRAPHCODE_LLM_MAX_ROUNDS ? { maxRounds: Number(env.GRAPHCODE_LLM_MAX_ROUNDS) } : {}),
+    ...(env.GRAPHCODE_LLM_TIMEOUT_MS ? { callTimeoutMs: Number(env.GRAPHCODE_LLM_TIMEOUT_MS) } : {}),
   });
 }
 
