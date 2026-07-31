@@ -41,6 +41,11 @@ export const ExecutorConfigSchema = z.object({
   maxStepTurns: z.number().int().positive().default(6),
   /** HTTP-Timeout pro Modell-Call (ms). */
   callTimeoutMs: z.number().int().positive().default(180_000),
+  /** Tool-Angebot ans Modell: 'authoring' = kuratiertes Minimal-Set für den
+   * generativen Loop (Grundlast-These: jede Schema-Zeile kostet Prompt-Eval bei
+   * JEDEM Call — v5-Befund: 20 Schemas trieben die lokale Box über 300s TTFB);
+   * 'full' = alle Registry-Tools außer den withheld. */
+  toolset: z.enum(['authoring', 'full']).default('authoring'),
 });
 export type ExecutorConfig = z.infer<typeof ExecutorConfigSchema>;
 
@@ -114,6 +119,15 @@ const IDLE_NUDGE =
 
 /** Diese Tools ruft der EXECUTOR deterministisch — dem Modell werden sie vorenthalten. */
 const WITHHELD_TOOLS = new Set(['graph_generate', 'graph_next_step']);
+
+/** Das kuratierte Minimal-Set für den generativen Loop (toolset 'authoring'). */
+const AUTHORING_TOOLS = new Set([
+  'graph_mutate',
+  'graph_authoring_guide',
+  'graph_get_node',
+  'graph_elements',
+  'graph_readiness',
+]);
 
 // ---------------------------------------------------------------------------
 // Read-Tools — auf den Workspace gescoped (Containment-Guard, kein ..-Ausbruch).
@@ -220,9 +234,12 @@ function toJsonSchema(schema: z.ZodType): Record<string, unknown> {
 }
 
 /** Alle Modell-Tools (graphcode_* + Read-Tools) als backend-neutrale Specs. */
-export function buildToolSpecs(registry: MCPToolRegistry): ToolSpec[] {
+export function buildToolSpecs(
+  registry: MCPToolRegistry,
+  toolset: ExecutorConfig['toolset'] = 'full',
+): ToolSpec[] {
   const gc = Object.keys(registry)
-    .filter((n) => !WITHHELD_TOOLS.has(n))
+    .filter((n) => !WITHHELD_TOOLS.has(n) && (toolset === 'full' || AUTHORING_TOOLS.has(n)))
     .map((n) => ({
       name: 'graphcode_' + n,
       description: (registry[n].description || '').slice(0, 400),
@@ -412,7 +429,7 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
   const { registry, workspaceDir, config } = opts;
   const trace = opts.trace ?? ((): void => undefined);
   const callModel = opts.callModel ?? buildCallModel(config);
-  const tools = toBackendTools(buildToolSpecs(registry), config.backend);
+  const tools = toBackendTools(buildToolSpecs(registry, config.toolset), config.backend);
 
   const stats: ExecutorStats = {
     done: false,

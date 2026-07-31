@@ -255,6 +255,15 @@ describe('executor (CR-GC-278)', () => {
     }
   });
 
+  it("toolset 'authoring' curates the minimal generative set (base-load lever)", () => {
+    const names = buildToolSpecs(registry, 'authoring').map((s) => s.name);
+    expect(names).toContain('graphcode_graph_mutate');
+    expect(names).toContain('graphcode_graph_authoring_guide');
+    expect(names).toContain('read_file');
+    expect(names).not.toContain('graphcode_graph_export');
+    expect(names.length).toBeLessThanOrEqual(8);
+  });
+
   it('extractMutateFromText finds the commands object among surrounding prose/braces', () => {
     const batch = { commands: [{ op: 'add-node', node: { uid: 'SYS-x' } }] };
     const text = `Vorwort {nicht das} — hier: ${JSON.stringify(batch)} Nachwort.`;
