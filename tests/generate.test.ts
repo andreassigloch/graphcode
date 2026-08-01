@@ -14,7 +14,7 @@ import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import type { Graph } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/harness.js';
 import { bindToolsToHarness, type MCPToolRegistry } from '../src/mcp-tools.js';
-import { generationStep } from '../src/generate.js';
+import { generationStep, DIMENSION_FOCUS_TYPES } from '../src/generate.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 
 const node = (uid: string, type: string, name: string, description = '') => ({
@@ -175,6 +175,58 @@ describe('generationStep — Fund-Rotation/defer (CR-GC-281)', () => {
     expect(step.focusKey).toBe(keys[0]);
     // … und der Prompt macht die aufgehobene Zurückstellung kenntlich.
     expect(step.prompt).toContain('Zurückstellung wird ignoriert');
+  });
+});
+
+describe('DIMENSION_FOCUS_TYPES / GenerationStep.focusTypes (CR-GC-285)', () => {
+  it('das Mapping deckt seed + alle 8 Readiness-Dimensionen mit nichtleeren Typlisten ab', () => {
+    expect(Object.keys(DIMENSION_FOCUS_TYPES).sort()).toEqual(
+      ['alloc', 'arch', 'cr', 'ms', 'req', 'schema', 'seed', 'uc', 'ver'],
+    );
+    for (const types of Object.values(DIMENSION_FOCUS_TYPES)) {
+      expect(types.length).toBeGreaterThan(0);
+    }
+    expect(DIMENSION_FOCUS_TYPES.seed).toEqual(['SYS', 'ACTOR', 'UC']);
+    expect(DIMENSION_FOCUS_TYPES.ver).toEqual(['TEST', 'REQ']);
+  });
+
+  it('seed trägt die Seed-Typen; seed ohne Intention trägt keine', () => {
+    expect(generationStep(EMPTY, INTENT).focusTypes).toEqual(DIMENSION_FOCUS_TYPES.seed);
+    expect(generationStep(EMPTY).focusTypes).toEqual([]);
+  });
+
+  it('expand trägt die Typen der Fokus-Dimension (konsistent zum focusKey)', () => {
+    const graph = g(
+      [node('SYS-shop', 'SYS', 'shop', INTENT), node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt Teil.')],
+      [edge('SYS-shop', 'UC-bestellen', 'compose')],
+    );
+    const step = generationStep(graph, undefined, 0.8);
+    expect(step.phase).toBe('expand');
+    const dim = (step.focusKey as string).split(':')[0];
+    expect(step.focusTypes).toEqual(DIMENSION_FOCUS_TYPES[dim]);
+  });
+
+  it('handoff trägt keine Fokus-Typen', () => {
+    const graph = g(
+      [
+        node('SYS-shop', 'SYS', 'shop', INTENT),
+        node('ACTOR-kunde', 'ACTOR', 'Kunde'),
+        node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt Ersatzteil und erhält Bestätigung.'),
+        node('REQ-bestellung', 'REQ', 'Bestellung wird bestätigt'),
+        node('TEST-bestellung', 'TEST', 'Bestellbestätigung prüfen'),
+        node('FCHAIN-bestellung', 'FCHAIN', 'Bestellablauf'),
+      ],
+      [
+        edge('SYS-shop', 'UC-bestellen', 'compose'),
+        edge('ACTOR-kunde', 'UC-bestellen', 'io'),
+        edge('UC-bestellen', 'REQ-bestellung', 'compose'),
+        edge('UC-bestellen', 'FCHAIN-bestellung', 'compose'),
+        edge('TEST-bestellung', 'REQ-bestellung', 'verify'),
+      ],
+    );
+    const step = generationStep(graph, undefined, 0);
+    expect(step.phase).toBe('handoff');
+    expect(step.focusTypes).toEqual([]);
   });
 });
 

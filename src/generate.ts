@@ -38,6 +38,11 @@ export interface GenerationStep {
    * `${dimension}:${element_ids sortiert, komma-getrennt}`. null wenn kein
    * Fokus (seed/handoff/keine regelbaren Funde). */
   focusKey: string | null;
+  /** Fokus-Elementtypen des Schritts (CR-GC-285): `DIMENSION_FOCUS_TYPES` der
+   * Fokus-Dimension bzw. der seed-Phase; leer bei handoff/keinem Fokus. Der
+   * Executor injiziert dafür Guide-Slice + Element-Index in den Runden-Prompt,
+   * ohne den Prompt-String parsen zu müssen. */
+  focusTypes: string[];
 }
 
 /** Gate-Protokoll — identisch in jeder Phase; Kandidatenwahl ist Gate-Sache, nie LLM-Bauchgefühl. */
@@ -59,6 +64,26 @@ const GENERATION_TEMPLATE: Record<string, string> = {
   schema: 'Schlage SCHEMA-Definitionen für die FLOWs ohne Schema vor (FLOW relation SCHEMA bzw. produces), eine pro Datenform, wiederverwendet statt dupliziert.',
   cr: 'Lege CR-Knoten für die anstehenden Umbauten an (CR relation FUNC/MOD, status/commitRef nach Abschluss).',
   ms: 'Schlage 2–4 Milestones mit depends-on-Reihenfolge vor (MS relation MS) und ordne CRs zu (CR relation MS).',
+};
+
+/**
+ * Fokus-Elementtypen je Readiness-Dimension (CR-GC-285) — plus `seed` für die
+ * Kaltstart-Phase. Grundlage der Runden-Prompt-Injektion: der Executor holt
+ * die `graph_authoring_guide`-Slices dieser Typen und filtert den
+ * Element-Index darauf, statt das Modell sie pro Runde erfragen zu lassen
+ * (Turn-Analyse: 41–59 % reine Lese-Turns, guide 72–107× pro Lauf).
+ * Keys = seed + die Dimensionen von GENERATION_TEMPLATE.
+ */
+export const DIMENSION_FOCUS_TYPES: Record<string, string[]> = {
+  seed: ['SYS', 'ACTOR', 'UC'],
+  uc: ['ACTOR', 'UC', 'FCHAIN'],
+  req: ['UC', 'REQ'],
+  arch: ['FCHAIN', 'FUNC', 'FLOW', 'REQ'],
+  alloc: ['FUNC', 'MOD'],
+  ver: ['TEST', 'REQ'],
+  schema: ['FLOW', 'SCHEMA'],
+  cr: ['CR', 'FUNC', 'MOD'],
+  ms: ['MS', 'CR'],
 };
 
 function toOntology(graph: Graph): OntologyGraph {
@@ -111,6 +136,7 @@ export function generationStep(
         threshold,
         blockingErrors,
         focusKey: null,
+        focusTypes: [],
       };
     }
     const seedBase =
@@ -126,6 +152,7 @@ export function generationStep(
       threshold,
       blockingErrors,
       focusKey: null,
+      focusTypes: [...DIMENSION_FOCUS_TYPES.seed],
     };
   }
 
@@ -145,6 +172,7 @@ export function generationStep(
       threshold,
       blockingErrors,
       focusKey: null,
+      focusTypes: [],
     };
   }
 
@@ -207,5 +235,6 @@ export function generationStep(
     threshold,
     blockingErrors,
     focusKey,
+    focusTypes: focus ? [...(DIMENSION_FOCUS_TYPES[focus.dimension] ?? [])] : [],
   };
 }
