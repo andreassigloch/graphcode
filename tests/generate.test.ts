@@ -12,8 +12,10 @@ import { join } from 'node:path';
 import { KuzuAdapter } from '@sigloch/graph-cypher-wasm';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import type { Graph } from '@sigloch/graph-api-core';
+import { evaluateAllRules, type OntologyGraph } from '@sigloch/contracts/se';
 import { GraphCodeHarness } from '../src/harness.js';
 import { bindToolsToHarness, type MCPToolRegistry } from '../src/mcp-tools.js';
+import { exportGraphJson } from '../src/exporter.js';
 import { generationStep } from '../src/generate.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 
@@ -145,6 +147,57 @@ describe('generationStep — Fund-Rotation/defer (CR-GC-281)', () => {
     expect(step.focusKey).toBe(keys[0]);
     // … und der Prompt macht die aufgehobene Zurückstellung kenntlich.
     expect(step.prompt).toContain('Zurückstellung wird ignoriert');
+  });
+});
+
+describe('generationStep — profile-Rendering (CR-GC-282)', () => {
+  const graph = g(
+    [node('SYS-shop', 'SYS', 'shop', INTENT), node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt Teil.')],
+    [edge('SYS-shop', 'UC-bestellen', 'compose')],
+  );
+
+  it("profile 'local' expand: EIN Fund mit fixHint aus der Regel + REGELN, kein Gate-Protokoll", () => {
+    const step = generationStep(graph, undefined, 0.8, [], 'local');
+    expect(step.phase).toBe('expand');
+    expect(step.prompt).not.toContain('Gate-Protokoll');
+    expect(step.prompt).not.toContain('2–3 Kandidaten');
+    expect(step.prompt).toContain('Aufgabe: EIN Batch, der GENAU diesen Fund behebt.');
+    expect(step.prompt).toContain('REGELN:');
+    expect(step.prompt).toContain('im SELBEN Batch');
+
+    // Der gerenderte Fund ist der ERSTE Fokus-Fund — element_id/rule_id/message/
+    // fixHint kommen aus der Regel (evaluateAllRules), nichts ist hart kodiert.
+    const m = /Fund: (\S+) \((\S+): /.exec(step.prompt);
+    expect(m).not.toBeNull();
+    const [, elementId, ruleId] = m as RegExpExecArray;
+    expect(step.focusKey).toContain(elementId);
+    const og = JSON.parse(exportGraphJson(graph)) as OntologyGraph;
+    const violation = evaluateAllRules(og).find(
+      (v) => v.element_id === elementId && v.rule_id === ruleId,
+    );
+    expect(violation).toBeDefined();
+    expect(step.prompt).toContain(violation!.message);
+    if (violation!.fix_hint) expect(step.prompt).toContain(`— Fix: ${violation!.fix_hint}`);
+  });
+
+  it("profile default/'frontier': Prompt identisch zum bisherigen Verhalten (Gate-Protokoll)", () => {
+    const byDefault = generationStep(graph, undefined, 0.8);
+    const explicit = generationStep(graph, undefined, 0.8, [], 'frontier');
+    expect(explicit).toEqual(byDefault);
+    expect(byDefault.prompt).toContain('Gate-Protokoll');
+    expect(byDefault.prompt).toContain('dryRun');
+    // Seed default ebenso unverändert.
+    expect(generationStep(EMPTY, INTENT).prompt).toContain('Gate-Protokoll');
+  });
+
+  it("profile 'local' seed: Struktur-Anforderung ohne Gate-Protokoll-Absatz", () => {
+    const step = generationStep(EMPTY, INTENT, 0.8, [], 'local');
+    expect(step.phase).toBe('seed');
+    for (const part of ['SYS', 'ACTOR', 'UC', 'ACTOR io→UC', 'Keine FUNC/MOD-Ebene im Seed']) {
+      expect(step.prompt).toContain(part);
+    }
+    expect(step.prompt).not.toContain('Gate-Protokoll');
+    expect(step.prompt).not.toContain('dryRun');
   });
 });
 

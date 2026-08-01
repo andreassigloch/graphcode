@@ -118,12 +118,6 @@ const EMIT_SUFFIX =
   '({"commands":[{"op":"add-node","node":{"uid","type","name","description","attributes":{}}},' +
   '{"op":"add-edge","edge":{"sourceId","targetId","edgeType","attributes":{}}}]}).';
 
-/** Expand-Fokus (CR-GC-280): große Batches scheiterten an der Grammatik (v6);
- * pro Step nur der erste Fund — die frische Runde holt den Rest deterministisch. */
-const EXPAND_FOCUS =
-  '\nBearbeite in diesem Schritt NUR den ERSTEN Fund aus der Instruktion — ' +
-  'ein kleiner Batch (höchstens ~6 Commands). Die weiteren Funde kommen in den nächsten Schritten.';
-
 /** Handlungs-Zwang bei Idle-Turns: Coder-Modelle dithern gern in Prosa (Rig-Befund
  * "6× guide/Runde") — EIN Nachfassen pro Step statt den Schritt still aufzugeben. */
 const IDLE_NUDGE =
@@ -618,7 +612,10 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
   const deferred = new Set<string>();
   const STAGNATION_DEFER_THRESHOLD = 3;
   for (let round = 0; round < config.maxRounds; round++) {
-    const genInput: Record<string, unknown> = {};
+    // profile 'local' (CR-GC-282): minimale Ein-Fund-Instruktion mit REGELN-
+    // Zeilen statt Gate-Protokoll — der Fund-Fokus steckt im Rendering, das
+    // frühere EXPAND_FOCUS-Overlay entfällt (keine zweite Stimme).
+    const genInput: Record<string, unknown> = { profile: 'local' };
     if (opts.intent) genInput.intent = opts.intent;
     if (deferred.size > 0) genInput.defer = [...deferred];
     const gen = (await registry['graph_generate'].handler(genInput)) as GenerationStep;
@@ -654,8 +651,7 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
           `Fund NICHT aufgelöst. Häufigste Ursache: die geforderte KANTE fehlt (z.B. TEST verify→REQ). ` +
           `Emittiere Knoten UND Kante zusammen in EINEM Batch; existierende Knoten nicht erneut anlegen.`
         : '';
-    const focus = gen.phase === 'expand' ? EXPAND_FOCUS : '';
-    const messages: unknown[] = [{ role: 'user', content: gen.prompt + EMIT_SUFFIX + focus + stagnationHint }];
+    const messages: unknown[] = [{ role: 'user', content: gen.prompt + EMIT_SUFFIX + stagnationHint }];
     let rejectedInStep = false;
     let nudgedInStep = false;
     let readTurns = 0; // Lese-Turns ohne Mutate-Versuch in diesem Step (CR-GC-280)

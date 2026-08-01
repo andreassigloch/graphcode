@@ -142,6 +142,14 @@ export function bindSuggestTools(ctx: ToolContext): MCPToolRegistry {
         'Zurückgestellte focusKeys (aus GenerationStep.focusKey): diese Fund-Sets werden bei der ' +
           'Fokus-Wahl deterministisch übersprungen; sind alle Kandidaten zurückgestellt, wird defer ignoriert.',
       ),
+    profile: z
+      .enum(['frontier', 'local'])
+      .default('frontier')
+      .describe(
+        "Empfänger-Profil fürs Instruktions-Rendering (CR-GC-282): 'frontier' = voller Text inkl. " +
+          "Gate-Protokoll (MCP-Clients, Default); 'local' = minimale Ein-Fund-Instruktion für den " +
+          'embedded Executor.',
+      ),
   });
 
   const graph_generate: MCPTool<z.infer<typeof GraphGenerateInputSchema>, GenerationStep> = {
@@ -155,7 +163,7 @@ export function bindSuggestTools(ctx: ToolContext): MCPToolRegistry {
       'Festgefahrene Fund-Sets lassen sich per {defer:[focusKey,…]} zurückstellen (Fund-Rotation).',
     inputSchema: GraphGenerateInputSchema,
     async handler(input) {
-      return generationStep(harness.getGraph(), input.intent, input.threshold, input.defer);
+      return generationStep(harness.getGraph(), input.intent, input.threshold, input.defer, input.profile);
     },
   };
 

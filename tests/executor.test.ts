@@ -308,7 +308,7 @@ describe('executor (CR-GC-278)', () => {
     expect(harness.getGraph().nodes.map((n) => n.uid)).toContain('SYS-app');
   });
 
-  it('expand steps get the single-finding focus suffix (CR-GC-280)', async () => {
+  it('expand steps get the minimal local-profile rendering — one finding, no gate protocol (CR-GC-282)', async () => {
     // Seed direkt durchs Gate, damit graph_generate in der Expand-Phase startet.
     await registry['graph_mutate'].handler(VALID_SEED_BATCH);
     const followUp = {
@@ -330,7 +330,12 @@ describe('executor (CR-GC-278)', () => {
     const { callModel, calls } = scriptedModel([toolCallResponse('c1', followUp)]);
     await runExecutor({ registry, workspaceDir: repoRoot, config: CONFIG, callModel });
     const instruction = JSON.stringify(calls[0].messages[0]);
-    expect(instruction).toContain('NUR den ERSTEN Fund');
+    // profile 'local': der Fund-Fokus steckt im Rendering selbst (kein
+    // EXPAND_FOCUS-Overlay mehr — keine zweite Stimme zur Batch-Größe).
+    expect(instruction).toContain('GENAU diesen Fund');
+    expect(instruction).toContain('REGELN:');
+    expect(instruction).not.toContain('Gate-Protokoll');
+    expect(instruction).not.toContain('NUR den ERSTEN Fund');
   });
 
   it('read budget: from the 2nd read-only turn the action nudge rides in the tool result', async () => {
