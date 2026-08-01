@@ -328,6 +328,29 @@ bei 117–143 inkl. REQ/TEST vorn. Aber der Abstand ist jetzt messbar **Grad
 revidiert. Nächster Schritt: 48-Runden-Lauf (REQ/TEST-Dimension erreichen),
 danach der Frontier-Vergleich über denselben Executor.
 
+## 48-Runden-Läufe (v10/v11): die letzte Wand ist Fund-Rotation, nicht das Modell
+
+- **v10** deckte die Lücke „applied ≠ Fortschritt" auf: devstral addierte
+  rundenlang denselben TEST-Knoten OHNE verify-Kante — die Violation blieb,
+  `graph_generate` refokussierte denselben Fund endlos. → Executor bekam einen
+  **Stagnations-Detektor** (identischer generate-Prompt ⇒ Eskalations-Hinweis).
+- **v11 (48 Runden, mit Detektor): 38 Elemente / 48 Traces, davon 9 REQ,
+  10 TEST, 10 verify** — die Verifikations-Dimension, die v9 fehlte, trägt
+  lokal. 46 Applies / 5 Rejections. ABER: **43 von 48 Runden stagnierten**; ein
+  einziger Fund (UID-Verwechslung `TEST-export-audit-verify` vs.
+  `TEST-verify-export-audit`) fraß ~31 Runden trotz Eskalation; nur 2 FUNC,
+  kein MOD, 1 Duplikat-SYS passierte das Gate.
+- Quer über die Läufe: **jede Dimension ist lokal erreichbar** (v9: 12 FUNC +
+  1 MOD + allocate; v11: REQ/TEST/verify) — aber noch nicht in EINEM Lauf.
+
+**Die verbleibende strukturelle Lücke ist deterministisch, nicht modellisch:**
+`graph_generate` kennt kein Defer — ein Fund, den das Modell N-mal nicht löst,
+wird trotzdem endlos refokussiert. Prompt-Druck (Eskalation) durchbricht das
+nur stochastisch. Folge-Hebel: **Fund-Rotation/Defer in `graph_generate`**
+(nach N erfolglosen Runden den Fund zurückstellen, nächsten fokussieren) —
+ein graphcode-CR (generate.ts), kein Executor-Thema. Danach ist der lokale
+Pfad rund; dann Frontier-Vergleich über denselben Executor.
+
 ---
 
 *Quelle: Greenfield-System-Test, `rig/greenfield-systemtest/` (`driver.mjs`,
