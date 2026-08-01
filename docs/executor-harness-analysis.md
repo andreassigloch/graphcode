@@ -351,6 +351,24 @@ nur stochastisch. Folge-Hebel: **Fund-Rotation/Defer in `graph_generate`**
 ein graphcode-CR (generate.ts), kein Executor-Thema. Danach ist der lokale
 Pfad rund; dann Frontier-Vergleich über denselben Executor.
 
+## v12 (CR-GC-281: Defer + temperature 0.2): der Durchbruchslauf
+
+| | v9 | v11 | **v12 (48 Runden)** |
+|---|---|---|---|
+| Elemente / Traces | 38 / 58 | 38 / 48 | **82 / 104** |
+| Dimensionen | FUNC+MOD, kein REQ/TEST | REQ/TEST, kaum FUNC | **ALLE: 42 FUNC, 3 MOD, 2 REQ, 3 TEST** |
+| Max-Stagnation | — | **x31** | **x3** (Defer kappt deterministisch) |
+| repairedAfterRejection | 1 | 1 | **5** |
+| Applies / Rejections | 8 / 33 | 46 / 5 | 37 / 25 |
+| Token in/out | 437k / 70k | 416k / 16k | 555k / 51k · $0 |
+
+Der Defer wirkt exakt wie designed: 3 Stagnations-Schleifen, jede nach 3 Runden
+gekappt statt 31. `done: false` — das Wachstum war bei Rundenende nicht
+ausgeschöpft. Abstand zu Opus (117–143, compliance 1.0) ist damit rein
+**quantitativ** (Runden × Decode-Speed) — auf derselben Methode, $0, headless.
+Offene Hebel jetzt in `docs/executor-bigpicture.md` §5–6 (CR-GC-282:
+Rendering-Profile, Best-of-N mit Gate-Judge, Zielprofil als Initial-Schritt).
+
 ---
 
 *Quelle: Greenfield-System-Test, `rig/greenfield-systemtest/` (`driver.mjs`,

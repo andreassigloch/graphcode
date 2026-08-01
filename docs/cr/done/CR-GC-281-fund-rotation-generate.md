@@ -1,7 +1,16 @@
 # CR-GC-281 — Fund-Rotation/Defer in graph_generate (Folge zu CR-GC-278/280)
 
-**Status:** open
+**Status:** done (2026-08-01)
 **Datum:** 2026-08-01
+
+**Validierungs-Ergebnis (v12, 48 Runden, defer + temperature 0.2):** **82
+Elemente / 104 Traces** — mehr als 2× v9/v11 (je 38), erstmals ALLE Dimensionen
+in EINEM Lauf (42 FUNC, 3 MOD, 2 REQ, 3 TEST, 17 UC, 11 FCHAIN;
+io/compose/satisfy/allocate/verify). Max-Stagnation **x3 statt x31** (v11) —
+der Defer kappte jede Schleife deterministisch (3 Defers im Lauf);
+repairedAfterRejection 5. 37 applied / 25 rejected, 555k in / 51k out Token,
+$0, done:false (Wachstum nicht ausgeschöpft). Details:
+`docs/executor-harness-analysis.md`.
 
 ## Ziel
 
