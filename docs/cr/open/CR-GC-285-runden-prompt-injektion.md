@@ -1,6 +1,9 @@
 # CR-GC-285 — Runden-Prompt-Injektion: Guide-Slice + Element-Index
 
-**Status:** open
+**Status:** open — Implementierung fertig (2026-08-01, gemerged: `DIMENSION_FOCUS_TYPES`
++ `focusTypes` in generate.ts, `buildRoundInjection` im Executor, 8k-Zeichen-Budget,
+Unit-Tests grün). OFFEN ist nur noch der Live-Vergleichslauf (Turns/Runde,
+Elemente, Wall-Zeit — braucht LM Studio oder Anthropic-Key).
 **Datum:** 2026-08-01
 **Kontext:** Turn-Analyse der Testläufe: 41–59 % aller Modell-Turns waren reine
 Lese-Turns; `graph_authoring_guide` wurde 72–107× pro Lauf für dieselben paar

@@ -1,6 +1,9 @@
 # CR-GC-286 — Audit-Vollständigkeit + Rejection-Beobachtbarkeit
 
-**Status:** open
+**Status:** open — Implementierung fertig (2026-08-01, gemerged: formatE-STRUCT
+auditiert, INPUT-SCHEMA-Verdict am Handler statt unauditiertem Throw, ruleIds
+in run.log-Rejections, Unit-Tests grün). OFFEN ist nur noch der Opus-Nachtest
+(12–24 Runden, braucht Anthropic-Key) + Nachtrag im Abschlussbericht.
 **Datum:** 2026-08-01
 **Kontext:** Die Opus-Fehldiagnose des Abschlussberichts („81 Rejections =
 Emissions-Regime beschneidet Frontier") war nur durch Audit-Nachanalyse

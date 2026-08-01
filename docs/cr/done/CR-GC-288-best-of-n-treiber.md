@@ -1,6 +1,9 @@
 # CR-GC-288 — Best-of-N-Auswahl im Treiber (deterministisch)
 
-**Status:** open
+**Status:** done (2026-08-01, alle Akzeptanzkriterien erfüllt; zusätzlich
+Env-Wiring `GRAPHCODE_LLM_CANDIDATES`/`GRAPHCODE_LLM_JUDGE` in run-verb.ts,
+damit N>1 ohne Folge-CR nutzbar ist; `selection: 'host'|'driver'` am
+graph_generate-Input hält die Protokoll-Prosa für MCP-Clients ohne Treiber)
 **Datum:** 2026-08-01
 **Kontext:** Das Gate-Protokoll („Alternativen per dryRun einreichen, Verdicts
 vergleichen, besten anwenden") ist Prosa im generate-Prompt — befolgt hat es im

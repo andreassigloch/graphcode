@@ -1,6 +1,7 @@
 # CR-GC-284 — Batch-Preflight + Autovervollständigung im Executor
 
-**Status:** open
+**Status:** done (2026-08-01, alle Akzeptanzkriterien erfüllt; Preflight in
+eigenem `src/preflight.ts` wegen 500-Zeilen-Regel)
 **Datum:** 2026-08-01
 **Kontext:** Audit-Analyse der Testläufe (`rig/greenfield-systemtest/results/audit/`):
 R-01 (REQ ohne verify-TEST) dominiert die Gate-Rejections aller Modelle —

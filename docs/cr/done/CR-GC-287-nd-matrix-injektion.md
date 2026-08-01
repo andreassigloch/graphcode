@@ -1,6 +1,11 @@
 # CR-GC-287 — Near-Duplicate-Erkennung scharf schalten (ND-Matrix-Injektion)
 
-**Status:** open
+**Status:** done (2026-08-01). Teilabweichung: ND erscheint auf den
+Steering-Flächen (`graph_generate`/`graph_next_step` via `injectNDMatrices`
+vor `evaluateAllRules`), NICHT in `rules_evaluate`/`graph_readiness` — die
+laufen über die Gate-Engine (V3+MT), und ND dort einzuhängen hätte ND zum
+Gate-Blocker gemacht (vom CR verboten). Advisory-Schiene für die beiden
+Harness-Tools = möglicher Folge-CR. Duplikat-Hinweis-Schwelle 0.55 lokal.
 **Datum:** 2026-08-01
 **Kontext:** Alle drei Endgraphen des Greenfield-Vergleichs enthalten sichtbare
 Duplikate (Haiku: Duplikat-REQs; devstral: EN-Paare wie zweimal „User generates
