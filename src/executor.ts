@@ -23,6 +23,7 @@ import { z } from 'zod/v4';
 import type { MutateResult } from '@sigloch/contracts/harness';
 import type { MCPToolRegistry } from './mcp-tools.js';
 import type { GenerationStep } from './generate.js';
+import { preflightBatch, type PreflightKnown } from './preflight.js';
 
 // ---------------------------------------------------------------------------
 // Config (lokal per CR-GC-278 — Promotion nach @sigloch/contracts erst mit der
@@ -88,6 +89,10 @@ export interface ExecutorStats {
   dryRunProbes: number;
   /** Applies, denen im selben Step ≥1 Rejection vorausging — die Repair-Loop-Metrik. */
   repairedAfterRejection: number;
+  /** Preflight-Eingriffe (CR-GC-284): deterministisch reparierte Commands (Auto-Flip, R-01-Stub). */
+  preflightFixed: number;
+  /** Preflight-Blocks (CR-GC-284): Batches, die mit lokalem Feedback NICHT ans Gate gingen. */
+  preflightBlocked: number;
   tokensIn: number;
   tokensOut: number;
   tokensReasoning: number;
@@ -479,7 +484,11 @@ export function extractToolCallFromText(text: string): { name: string; input: un
 // Gate-Feedback — der Kern des Repair-Loops.
 // ---------------------------------------------------------------------------
 
-type MutateOutcome = Partial<MutateResult> & { success: boolean };
+type MutateOutcome = Partial<MutateResult> & {
+  success: boolean;
+  /** true = der Preflight hat den Batch lokal geblockt — es gab KEINEN Gate-Call (CR-GC-284). */
+  preflightBlocked?: boolean;
+};
 
 /** Kompakte Regel-ID-Liste einer Rejection für die run.log-Trace (CR-GC-286). */
 function ruleIdsOf(result: MutateOutcome | null): string {
@@ -494,9 +503,13 @@ function formatGateFeedback(result: MutateOutcome): string {
         `- ${v.ruleId} [${v.severity}] ${v.message}${v.fixHint ? ' — Fix: ' + v.fixHint : ''}`,
     )
     .join('\n');
+  const head = result.preflightBlocked
+    ? `Der Batch wurde VOR dem Gate lokal geprüft und NICHT eingereicht (Preflight)` +
+      ` — NICHTS wurde persistiert.\n`
+    : `Das Gate hat den Batch NICHT übernommen (success:false` +
+      `${result.tier ? ', tier=' + result.tier : ''}) — NICHTS wurde persistiert.\n`;
   return (
-    `Das Gate hat den Batch NICHT übernommen (success:false` +
-    `${result.tier ? ', tier=' + result.tier : ''}) — NICHTS wurde persistiert.\n` +
+    head +
     (violations || '- (keine Einzel-Violations — prüfe die Command-Form)') +
     `\nKorrigiere die beanstandeten Commands und reiche den VOLLSTÄNDIGEN korrigierten Batch ` +
     `erneut als graph_mutate ein.`
@@ -533,9 +546,26 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
     mutatesRejected: 0,
     dryRunProbes: 0,
     repairedAfterRejection: 0,
+    preflightFixed: 0,
+    preflightBlocked: 0,
     tokensIn: 0,
     tokensOut: 0,
     tokensReasoning: 0,
+  };
+
+  // Graph-Zustand für den Preflight — in-process über die Registry-Tools,
+  // deterministisch, pro Mutate frisch (der Graph ändert sich zwischen Runden).
+  const loadPreflightKnown = async (): Promise<PreflightKnown> => {
+    const els = (await registry['graph_elements'].handler({ limit: 100_000 })) as {
+      nodes?: { uid: string; type: string }[];
+    };
+    const ver = (await registry['graph_get_edges'].handler({ edgeType: 'verify' })) as {
+      edges?: { targetId: string }[];
+    };
+    return {
+      types: new Map((els.nodes ?? []).map((n) => [n.uid, n.type])),
+      verifiedReqs: new Set((ver.edges ?? []).map((e) => e.targetId)),
+    };
   };
 
   const runMutate = async (input: unknown): Promise<MutateOutcome> => {
@@ -543,12 +573,30 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
     // Handler-Call. Bei Parse-Fehler geht der Roh-Input an den Handler, dessen
     // identischer Schema-Check das AUDITIERTE INPUT-SCHEMA-Block-Verdict liefert
     // (Zod-Meldung als Violation → formatGateFeedback) — statt eines unauditierten
-    // Handler-Throws als generisches 'executor-call'.
+    // Handler-Throws als generisches 'executor-call'. Der Preflight (CR-GC-284)
+    // läuft nur auf schema-validem Input — Batch-Hygiene VOR dem Gate, kein
+    // zweites Gate-Urteil; bei jedem Preflight-Fehler geht der Batch unverändert durch.
     const parsed = registry['graph_mutate'].inputSchema.safeParse(input);
+    let effective: unknown = parsed.success ? parsed.data : input;
+    if (parsed.success) {
+      try {
+        const pf = preflightBatch(parsed.data, await loadPreflightKnown());
+        if (pf.action === 'blocked') {
+          stats.preflightBlocked += 1;
+          for (const v of pf.violations) trace(`    preflight blocked: ${v.ruleId} ${v.message}`);
+          return { success: false, preflightBlocked: true, violations: pf.violations };
+        }
+        if (pf.action === 'fixed') {
+          stats.preflightFixed += pf.fixes.length;
+          for (const line of pf.fixes) trace(`    preflight: ${line}`);
+          effective = pf.input;
+        }
+      } catch (err) {
+        trace(`    preflight error (pass-through): ${err instanceof Error ? err.message : String(err)}`);
+      }
+    }
     try {
-      const result = (await registry['graph_mutate'].handler(
-        parsed.success ? parsed.data : input,
-      )) as MutateOutcome;
+      const result = (await registry['graph_mutate'].handler(effective)) as MutateOutcome;
       return { ...result, success: result.success === true };
     } catch (err) {
       return {
@@ -731,7 +779,8 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
         }
         // Rejected recovery: Feedback in die History — NICHT stiller Drop (der
         // Rig-Fehler). Assistant-Text zuerst, damit die Konversation konsistent bleibt.
-        stats.mutatesRejected += 1;
+        // Preflight-Blocks zählen NICHT als Gate-Rejection (es gab keinen Gate-Call).
+        if (!outcome.preflightBlocked) stats.mutatesRejected += 1;
         rejectedInStep = true;
         messages.push({ role: 'assistant', content: resp.text });
         messages.push({ role: 'user', content: formatGateFeedback(outcome) });
@@ -765,7 +814,8 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
             stats.mutatesApplied += 1;
             appliedThisTurn = true;
           } else {
-            stats.mutatesRejected += 1;
+            // Preflight-Blocks zählen NICHT als Gate-Rejection (es gab keinen Gate-Call).
+            if (!outcome.preflightBlocked) stats.mutatesRejected += 1;
             rejectedThisTurn = true;
             lastRejection = outcome;
           }
