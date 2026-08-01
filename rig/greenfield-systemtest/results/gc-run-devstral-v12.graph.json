@@ -1,0 +1,1026 @@
+{
+  "elements": [
+    {
+      "id": "ACTOR-admin",
+      "type": "ACTOR",
+      "name": "Admin",
+      "description": "System administrator with export privileges."
+    },
+    {
+      "id": "ACTOR-authenticator",
+      "type": "ACTOR",
+      "name": "Authenticator",
+      "description": "Represents the system's authentication mechanism handling user login and session management."
+    },
+    {
+      "id": "ACTOR-user",
+      "type": "ACTOR",
+      "name": "User",
+      "description": "End user interacting with the web application."
+    },
+    {
+      "id": "FCHAIN-audit-log-export",
+      "type": "FCHAIN",
+      "name": "Audit log export chain",
+      "description": "End-to-end flow for generating and delivering the audit log."
+    },
+    {
+      "id": "FCHAIN-audit-log-scenario",
+      "type": "FCHAIN",
+      "name": "Audit log export scenario",
+      "description": "Admin requests audit log → system compiles events → exports JSON."
+    },
+    {
+      "id": "FCHAIN-edit-scenario",
+      "type": "FCHAIN",
+      "name": "Edit Scenario Chain",
+      "description": "Function chain for editing scenarios."
+    },
+    {
+      "id": "FCHAIN-export-scenario",
+      "type": "FCHAIN",
+      "name": "Export scenario chain",
+      "description": "Function chain for exporting the system graph state."
+    },
+    {
+      "id": "FCHAIN-live-updates-scenario",
+      "type": "FCHAIN",
+      "name": "Live Updates Scenario",
+      "description": "Scenario for live updates after login."
+    },
+    {
+      "id": "FCHAIN-login-scenario",
+      "type": "FCHAIN",
+      "name": "Login flow chain",
+      "description": "Authenticate user, fetch live graph state, return session token."
+    },
+    {
+      "id": "FCHAIN-notifications-scenario",
+      "type": "FCHAIN",
+      "name": "Notifications Scenario",
+      "description": "User receives and views notifications about graph changes."
+    },
+    {
+      "id": "FCHAIN-register-scenario",
+      "type": "FCHAIN",
+      "name": "Register Scenario",
+      "description": "User registers successfully and can log in."
+    },
+    {
+      "id": "FCHAIN-role-management-scenario",
+      "type": "FCHAIN",
+      "name": "Role management scenario",
+      "description": "Scenario covering role assignment and permission management."
+    },
+    {
+      "id": "FCHAIN-share-scenario",
+      "type": "FCHAIN",
+      "name": "Share Scenario",
+      "description": "User shares the graph state via a link or file."
+    },
+    {
+      "id": "FCHAIN-view-graph-scenario",
+      "type": "FCHAIN",
+      "name": "View Graph Scenario",
+      "description": "User navigates to the graph view and sees all elements."
+    },
+    {
+      "id": "FUNC-apply-change",
+      "type": "FUNC",
+      "name": "Apply Change",
+      "description": "Function to apply a change to the governed graph."
+    },
+    {
+      "id": "FUNC-assign-multiple-roles",
+      "type": "FUNC",
+      "name": "Assign multiple roles to user",
+      "description": "Function to assign multiple roles to a user at once."
+    },
+    {
+      "id": "FUNC-assign-role",
+      "type": "FUNC",
+      "name": "Assign role to user",
+      "description": "Function to assign a specific role to a user."
+    },
+    {
+      "id": "FUNC-assign-temporary-role",
+      "type": "FUNC",
+      "name": "Assign temporary role to user",
+      "description": "Function to assign a temporary role to a user for a limited time."
+    },
+    {
+      "id": "FUNC-audit-log",
+      "type": "FUNC",
+      "name": "Audit Log",
+      "description": "Log all user actions and graph mutations for traceability."
+    },
+    {
+      "id": "FUNC-audit-log-export",
+      "type": "FUNC",
+      "name": "Export audit log function",
+      "description": "Compiles all Apply-Gate events into a timestamped JSON export.",
+      "realRef": {
+        "file": "audit_log.py",
+        "symbol": "export_audit_log",
+        "lang": "python"
+      },
+      "concept": false,
+      "external": false
+    },
+    {
+      "id": "FUNC-audit-log-scenario",
+      "type": "FUNC",
+      "name": "Audit Log Scenario",
+      "description": "Function to handle audit log scenarios."
+    },
+    {
+      "id": "FUNC-authenticate-user",
+      "type": "FUNC",
+      "name": "Authenticate user credentials",
+      "description": "Validate username/password against backend store."
+    },
+    {
+      "id": "FUNC-change-email",
+      "type": "FUNC",
+      "name": "Change Email",
+      "description": "Function to change a user's email."
+    },
+    {
+      "id": "FUNC-change-phone",
+      "type": "FUNC",
+      "name": "Change Phone",
+      "description": "Function to change a user's phone number."
+    },
+    {
+      "id": "FUNC-check-permission",
+      "type": "FUNC",
+      "name": "Check user permission",
+      "description": "Function to verify if a user has the required permission."
+    },
+    {
+      "id": "FUNC-check-temporary-role-expiry",
+      "type": "FUNC",
+      "name": "Check temporary role expiry",
+      "description": "Function to check if a temporary role has expired."
+    },
+    {
+      "id": "FUNC-create-role",
+      "type": "FUNC",
+      "name": "Create new role",
+      "description": "Function to create a new role with specified permissions."
+    },
+    {
+      "id": "FUNC-delete-role",
+      "type": "FUNC",
+      "name": "Delete role",
+      "description": "Function to delete an existing role."
+    },
+    {
+      "id": "FUNC-deliver-audit-log",
+      "type": "FUNC",
+      "name": "Deliver audit log",
+      "description": "Sends the generated audit log to the admin."
+    },
+    {
+      "id": "FUNC-export-graph",
+      "type": "FUNC",
+      "name": "Export graph function",
+      "description": "Function to export the current system graph state.",
+      "concept": true
+    },
+    {
+      "id": "FUNC-export-graph-state",
+      "type": "FUNC",
+      "name": "Export Graph State",
+      "description": "Function to export the graph state."
+    },
+    {
+      "id": "FUNC-extend-temporary-role",
+      "type": "FUNC",
+      "name": "Extend temporary role duration",
+      "description": "Function to extend the duration of a temporary role."
+    },
+    {
+      "id": "FUNC-fetch-live-graph-state",
+      "type": "FUNC",
+      "name": "Fetch live graph state",
+      "description": "Query current governed graph state via harness."
+    },
+    {
+      "id": "FUNC-generate-audit-log",
+      "type": "FUNC",
+      "name": "Generate audit log",
+      "description": "Collects and formats all user actions into the audit log."
+    },
+    {
+      "id": "FUNC-get-user-roles",
+      "type": "FUNC",
+      "name": "Get user roles",
+      "description": "Function to retrieve the roles assigned to a user."
+    },
+    {
+      "id": "FUNC-list-roles",
+      "type": "FUNC",
+      "name": "List available roles",
+      "description": "Function to retrieve the list of available roles."
+    },
+    {
+      "id": "FUNC-list-user-roles-with-permissions",
+      "type": "FUNC",
+      "name": "List user roles with permissions",
+      "description": "Function to retrieve the roles and their associated permissions for a user."
+    },
+    {
+      "id": "FUNC-live-updates",
+      "type": "FUNC",
+      "name": "Live Updates",
+      "description": "Function to provide live updates."
+    },
+    {
+      "id": "FUNC-login",
+      "type": "FUNC",
+      "name": "Login",
+      "description": "Function to authenticate a user."
+    },
+    {
+      "id": "FUNC-logout",
+      "type": "FUNC",
+      "name": "Logout",
+      "description": "Function to log out a user."
+    },
+    {
+      "id": "FUNC-notifications",
+      "type": "FUNC",
+      "name": "Notifications",
+      "description": "Function to send notifications."
+    },
+    {
+      "id": "FUNC-notify-users",
+      "type": "FUNC",
+      "name": "Notify Users",
+      "description": "Function to notify users about changes."
+    },
+    {
+      "id": "FUNC-propose-change",
+      "type": "FUNC",
+      "name": "Propose Change",
+      "description": "Function to propose a change to the governed graph."
+    },
+    {
+      "id": "FUNC-register-user",
+      "type": "FUNC",
+      "name": "Register User",
+      "description": "Function to register a new user."
+    },
+    {
+      "id": "FUNC-remove-role",
+      "type": "FUNC",
+      "name": "Remove role from user",
+      "description": "Function to remove a role from a user."
+    },
+    {
+      "id": "FUNC-remove-specific-role-permission",
+      "type": "FUNC",
+      "name": "Remove specific role permission",
+      "description": "Function to remove a specific permission from a role."
+    },
+    {
+      "id": "FUNC-reset-password",
+      "type": "FUNC",
+      "name": "Reset Password",
+      "description": "Function to reset a user's password."
+    },
+    {
+      "id": "FUNC-retrieve-audit-log",
+      "type": "FUNC",
+      "name": "Retrieve audit log entries",
+      "description": "Fetch all audit log entries from the database, ordered by timestamp."
+    },
+    {
+      "id": "FUNC-return-session-token",
+      "type": "FUNC",
+      "name": "Return session token and graph state",
+      "description": "Emit session token and live graph state to client."
+    },
+    {
+      "id": "FUNC-revoke-temporary-role",
+      "type": "FUNC",
+      "name": "Revoke temporary role",
+      "description": "Function to revoke a temporary role from a user."
+    },
+    {
+      "id": "FUNC-role-management",
+      "type": "FUNC",
+      "name": "Role Management",
+      "description": "Function to manage user roles."
+    },
+    {
+      "id": "FUNC-share-graph",
+      "type": "FUNC",
+      "name": "Share Graph",
+      "description": "Function to share the graph state."
+    },
+    {
+      "id": "FUNC-update-role-permissions",
+      "type": "FUNC",
+      "name": "Update role permissions",
+      "description": "Function to update the permissions associated with a role."
+    },
+    {
+      "id": "FUNC-update-user-role-permissions",
+      "type": "FUNC",
+      "name": "Update user role permissions",
+      "description": "Function to update the permissions of a specific role assigned to a user."
+    },
+    {
+      "id": "FUNC-verify-role-assignment",
+      "type": "FUNC",
+      "name": "Verify role assignment",
+      "description": "Function to verify if a role has been successfully assigned to a user."
+    },
+    {
+      "id": "FUNC-view-graph",
+      "type": "FUNC",
+      "name": "View Graph",
+      "description": "Function to view the governed graph."
+    },
+    {
+      "id": "MOD-audit-log",
+      "type": "MOD",
+      "name": "Audit log module",
+      "description": "Module responsible for audit log functionality."
+    },
+    {
+      "id": "MOD-auth-service",
+      "type": "MOD",
+      "name": "Auth Service",
+      "description": "Handles authentication, role assignment and temporary roles. Internally strong (covers auth logic), externally weakly coupled (only via API)."
+    },
+    {
+      "id": "MOD-authz",
+      "type": "MOD",
+      "name": "Authorization Module",
+      "description": "Handles user authentication, authorization, and role management."
+    },
+    {
+      "id": "REQ-audit-log-export",
+      "type": "REQ",
+      "name": "Audit log export requirement",
+      "description": "The system shall generate a timestamped JSON export of all Apply-Gate events for compliance review."
+    },
+    {
+      "id": "REQ-export-format",
+      "type": "REQ",
+      "name": "Export format requirement",
+      "description": "The exported graph must be in a standardized format."
+    },
+    {
+      "id": "SYS-web-app",
+      "type": "SYS",
+      "name": "Multiuser Web-App",
+      "description": "Multiuser-fähige Web-App aus dem graphcode harness: Nutzer melden sich an, autorieren gemeinsam einen governten Systemgraphen über das Apply-Gate, sehen Live-Updates und exportieren den Stand."
+    },
+    {
+      "id": "TEST-audit-log-export",
+      "type": "TEST",
+      "name": "Test audit log export",
+      "description": "Verifies that the audit log export contains all Apply-Gate events."
+    },
+    {
+      "id": "TEST-export-format",
+      "type": "TEST",
+      "name": "Export format test",
+      "description": "Test to verify the exported graph format."
+    },
+    {
+      "id": "TEST-verify-export-format",
+      "type": "TEST",
+      "name": "Verify Export Format",
+      "description": "Check that the exported graph is in the standardized format by running the export command and validating the output against the expected schema."
+    },
+    {
+      "id": "UC-assign-role",
+      "type": "UC",
+      "name": "Assign role to user",
+      "description": "System assigns a role to an authenticated user based on their credentials."
+    },
+    {
+      "id": "UC-audit-log",
+      "type": "UC",
+      "name": "Admin exports audit log",
+      "description": "System generates a timestamped JSON export of all Apply-Gate events for compliance review."
+    },
+    {
+      "id": "UC-audit-log-scenario",
+      "type": "UC",
+      "name": "Admin views audit log",
+      "description": "System admin retrieves and filters the audit log for all user actions, sorted by timestamp descending."
+    },
+    {
+      "id": "UC-edit-scenario",
+      "type": "UC",
+      "name": "Edit Scenario",
+      "description": "User proposes changes to the governed graph via the Apply-Gate."
+    },
+    {
+      "id": "UC-export",
+      "type": "UC",
+      "name": "Exportieren",
+      "description": "Admin exportiert den aktuellen Graphenstand als JSON/Format-E."
+    },
+    {
+      "id": "UC-export-graph",
+      "type": "UC",
+      "name": "Export Graph State",
+      "description": "User exports the current graph state as a file."
+    },
+    {
+      "id": "UC-export-graph-state",
+      "type": "UC",
+      "name": "Admin exports governed graph state",
+      "description": "System administrator requests a complete snapshot of the current governed graph and downloads it as a JSON file."
+    },
+    {
+      "id": "UC-export-scenario",
+      "type": "UC",
+      "name": "Export scenario",
+      "description": "User exports the current governed system graph state as a snapshot."
+    },
+    {
+      "id": "UC-graph-edit",
+      "type": "UC",
+      "name": "Edit Governed Graph",
+      "description": "User proposes changes to the governed graph via the Apply-Gate."
+    },
+    {
+      "id": "UC-live-updates",
+      "type": "UC",
+      "name": "View Live Updates",
+      "description": "User views live updates of the governed system graph."
+    },
+    {
+      "id": "UC-login",
+      "type": "UC",
+      "name": "User logs in to start session",
+      "description": "User provides credentials and gains access to the governed graph."
+    },
+    {
+      "id": "UC-login-scenario",
+      "type": "UC",
+      "name": "User logs in and sees live graph updates",
+      "description": "Actor initiates login, system authenticates, returns session token and live graph state."
+    },
+    {
+      "id": "UC-notifications",
+      "type": "UC",
+      "name": "Receive Notifications",
+      "description": "User receives notifications about changes to the graph."
+    },
+    {
+      "id": "UC-register",
+      "type": "UC",
+      "name": "Register New User",
+      "description": "User registers a new account to access the system."
+    },
+    {
+      "id": "UC-role-management",
+      "type": "UC",
+      "name": "Manage User Roles",
+      "description": "Admin manages user roles and permissions."
+    },
+    {
+      "id": "UC-share-graph",
+      "type": "UC",
+      "name": "Share Graph State",
+      "description": "User shares the current graph state with other users."
+    },
+    {
+      "id": "UC-view-graph",
+      "type": "UC",
+      "name": "View Governed Graph",
+      "description": "User views the current state of the governed graph."
+    }
+  ],
+  "traces": [
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-assign-role",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-audit-log",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-audit-log-scenario",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-export",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-export-graph-state",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-authenticator",
+      "target": "UC-assign-role",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-authenticator",
+      "target": "UC-login",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-assign-role",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-audit-log",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-edit-scenario",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-export-graph",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-export-scenario",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-graph-edit",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-live-updates",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-login",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-login-scenario",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-notifications",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-register",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-role-management",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-share-graph",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-view-graph",
+      "type": "io"
+    },
+    {
+      "source": "FCHAIN-audit-log-export",
+      "target": "FUNC-deliver-audit-log",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-audit-log-export",
+      "target": "FUNC-generate-audit-log",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-audit-log-scenario",
+      "target": "FUNC-audit-log-export",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-audit-log-scenario",
+      "target": "FUNC-retrieve-audit-log",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-audit-log-scenario",
+      "target": "REQ-audit-log-export",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-edit-scenario",
+      "target": "FUNC-apply-change",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-edit-scenario",
+      "target": "FUNC-audit-log",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-edit-scenario",
+      "target": "FUNC-audit-log-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-edit-scenario",
+      "target": "FUNC-change-email",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-edit-scenario",
+      "target": "FUNC-export-graph",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-edit-scenario",
+      "target": "FUNC-export-graph-state",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-edit-scenario",
+      "target": "FUNC-live-updates",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-edit-scenario",
+      "target": "FUNC-login",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-edit-scenario",
+      "target": "FUNC-logout",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-edit-scenario",
+      "target": "FUNC-notifications",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-edit-scenario",
+      "target": "FUNC-notify-users",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-edit-scenario",
+      "target": "FUNC-propose-change",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-edit-scenario",
+      "target": "FUNC-register-user",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-edit-scenario",
+      "target": "FUNC-reset-password",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-edit-scenario",
+      "target": "FUNC-role-management",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-edit-scenario",
+      "target": "FUNC-share-graph",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-edit-scenario",
+      "target": "FUNC-view-graph",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-export-scenario",
+      "target": "FUNC-export-graph",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-login-scenario",
+      "target": "FUNC-authenticate-user",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-login-scenario",
+      "target": "FUNC-fetch-live-graph-state",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-login-scenario",
+      "target": "FUNC-return-session-token",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-role-management-scenario",
+      "target": "FUNC-assign-multiple-roles",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-role-management-scenario",
+      "target": "FUNC-assign-role",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-role-management-scenario",
+      "target": "FUNC-assign-temporary-role",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-role-management-scenario",
+      "target": "FUNC-check-permission",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-role-management-scenario",
+      "target": "FUNC-check-temporary-role-expiry",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-role-management-scenario",
+      "target": "FUNC-create-role",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-role-management-scenario",
+      "target": "FUNC-delete-role",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-role-management-scenario",
+      "target": "FUNC-extend-temporary-role",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-role-management-scenario",
+      "target": "FUNC-get-user-roles",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-role-management-scenario",
+      "target": "FUNC-list-roles",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-role-management-scenario",
+      "target": "FUNC-list-user-roles-with-permissions",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-role-management-scenario",
+      "target": "FUNC-remove-role",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-role-management-scenario",
+      "target": "FUNC-remove-specific-role-permission",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-role-management-scenario",
+      "target": "FUNC-revoke-temporary-role",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-role-management-scenario",
+      "target": "FUNC-update-role-permissions",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-role-management-scenario",
+      "target": "FUNC-update-user-role-permissions",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-role-management-scenario",
+      "target": "FUNC-verify-role-assignment",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-apply-change",
+      "target": "MOD-auth-service",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-assign-multiple-roles",
+      "target": "MOD-auth-service",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-assign-role",
+      "target": "MOD-auth-service",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-assign-temporary-role",
+      "target": "MOD-authz",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-audit-log",
+      "target": "MOD-auth-service",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-audit-log-export",
+      "target": "MOD-audit-log",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-audit-log-export",
+      "target": "REQ-audit-log-export",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-audit-log-scenario",
+      "target": "MOD-auth-service",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-authenticate-user",
+      "target": "MOD-auth-service",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-export-graph",
+      "target": "REQ-export-format",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-export-graph",
+      "target": "UC-export-scenario",
+      "type": "satisfy"
+    },
+    {
+      "source": "SYS-web-app",
+      "target": "UC-export",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-web-app",
+      "target": "UC-graph-edit",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-web-app",
+      "target": "UC-login",
+      "type": "compose"
+    },
+    {
+      "source": "TEST-audit-log-export",
+      "target": "REQ-audit-log-export",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-export-format",
+      "target": "REQ-export-format",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-export-format",
+      "target": "REQ-export-format",
+      "type": "verify"
+    },
+    {
+      "source": "UC-assign-role",
+      "target": "FCHAIN-role-management-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-assign-role",
+      "target": "REQ-export-format",
+      "type": "compose"
+    },
+    {
+      "source": "UC-audit-log",
+      "target": "FCHAIN-audit-log-export",
+      "type": "compose"
+    },
+    {
+      "source": "UC-audit-log",
+      "target": "FCHAIN-audit-log-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-audit-log",
+      "target": "REQ-audit-log-export",
+      "type": "compose"
+    },
+    {
+      "source": "UC-audit-log-scenario",
+      "target": "FCHAIN-audit-log-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-edit-scenario",
+      "target": "FCHAIN-edit-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export",
+      "target": "FCHAIN-export-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export-graph",
+      "target": "FCHAIN-export-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export-graph-state",
+      "target": "FCHAIN-export-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export-scenario",
+      "target": "FCHAIN-export-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export-scenario",
+      "target": "REQ-export-format",
+      "type": "compose"
+    },
+    {
+      "source": "UC-graph-edit",
+      "target": "FCHAIN-edit-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-live-updates",
+      "target": "FCHAIN-live-updates-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login",
+      "target": "FCHAIN-login-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login",
+      "target": "FCHAIN-role-management-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login-scenario",
+      "target": "FCHAIN-live-updates-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login-scenario",
+      "target": "FCHAIN-login-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-notifications",
+      "target": "FCHAIN-notifications-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-register",
+      "target": "FCHAIN-register-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-role-management",
+      "target": "FCHAIN-role-management-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-share-graph",
+      "target": "FCHAIN-share-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-view-graph",
+      "target": "FCHAIN-view-graph-scenario",
+      "type": "compose"
+    }
+  ]
+}

@@ -1,0 +1,795 @@
+{
+  "elements": [
+    {
+      "id": "ACTOR-author",
+      "type": "ACTOR",
+      "name": "Graph-Autor",
+      "description": "Angemeldeter Nutzer, der Elemente und Kanten des governten Systemgraphen über die Web-App vorschlägt und anwendet."
+    },
+    {
+      "id": "ACTOR-integration-client",
+      "type": "ACTOR",
+      "name": "Integrationsclient",
+      "description": "Externes System, das den exportierten Graphstand über die Web-App abruft und in nachgelagerte Werkzeuge übernimmt."
+    },
+    {
+      "id": "ACTOR-operator",
+      "type": "ACTOR",
+      "name": "Betreiber",
+      "description": "Betreiber der Web-App, der Konten, Rollen und Zugriff auf den governten Graphen verwaltet."
+    },
+    {
+      "id": "ACTOR-reviewer",
+      "type": "ACTOR",
+      "name": "Graph-Reviewer",
+      "description": "Nutzer, der parallele Änderungen anderer Autoren live mitliest, bewertet und den Stand exportiert."
+    },
+    {
+      "id": "FCHAIN-apply-gate-validation-verdict",
+      "type": "FCHAIN",
+      "name": "Batch am Apply-Gate bewerten",
+      "description": "Autor reicht Batch ein, Gate wertet Regeln aus und liefert Tier, Violations und Fix-Hinweise vor jeder Persistenz zurück."
+    },
+    {
+      "id": "FCHAIN-authenticate-user-login",
+      "type": "FCHAIN",
+      "name": "Anmeldung mit gültigen Zugangsdaten",
+      "description": "Nutzer sendet Zugangsdaten, System prüft sie, erzeugt Sitzung mit Rolle und liefert authentifizierten Zustand an die Web-App zurück."
+    },
+    {
+      "id": "FCHAIN-author-graph-elements-edit",
+      "type": "FCHAIN",
+      "name": "Knoten und Kanten autorieren",
+      "description": "Autor bearbeitet Graphelemente, System validiert Ontologie, persistiert den Batch und liefert den neuen versionierten Graphstand zurück."
+    },
+    {
+      "id": "FCHAIN-export-graph-state-download",
+      "type": "FCHAIN",
+      "name": "Exportdatei an Client ausliefern",
+      "description": "Integrationsclient ruft den Export ab, System erzeugt die Datei zur angeforderten Version und liefert sie mit Prüfsumme aus."
+    },
+    {
+      "id": "FCHAIN-export-graph-state-filtered",
+      "type": "FCHAIN",
+      "name": "Gefilterten Teilgraphen exportieren",
+      "description": "Nutzer wählt Filter, System serialisiert nur den passenden Teilgraphen und liefert eine konsistente, wieder importierbare Slice-Datei zurück."
+    },
+    {
+      "id": "FCHAIN-export-graph-state-snapshot",
+      "type": "FCHAIN",
+      "name": "Graphstand als Snapshot exportieren",
+      "description": "Nutzer fordert Export an, System serialisiert den aktuellen versionierten Graphen und liefert eine vollständige, wieder importierbare Datei zurück."
+    },
+    {
+      "id": "FCHAIN-import-graph-slice-merge",
+      "type": "FCHAIN",
+      "name": "Exportierte Slice zurückspielen",
+      "description": "Autor lädt eine Slice hoch, System dekodiert sie, prüft am Apply-Gate und liefert den zusammengeführten versionierten Graphstand zurück."
+    },
+    {
+      "id": "FCHAIN-manage-user-access-invite",
+      "type": "FCHAIN",
+      "name": "Konto einladen und freischalten",
+      "description": "Betreiber lädt ein Konto ein, System erzeugt Zugang mit Rolle und liefert den aktualisierten Zugriffsstand für die gemeinsame Autorierung zurück."
+    },
+    {
+      "id": "FCHAIN-manage-user-access-revoke",
+      "type": "FCHAIN",
+      "name": "Zugriff eines Kontos entziehen",
+      "description": "Betreiber entzieht ein Konto, System beendet dessen Sitzungen, sperrt weitere Autorierung und liefert den aktualisierten Zugriffsstand zurück."
+    },
+    {
+      "id": "FCHAIN-manage-user-access-role-change",
+      "type": "FCHAIN",
+      "name": "Rolle eines Kontos ändern",
+      "description": "Betreiber ändert die Rolle eines Kontos, System prüft Berechtigung, persistiert den Zugriffsstand und aktivierte Rechte gelten für die nächste Autorierung."
+    },
+    {
+      "id": "FCHAIN-observe-live-updates-push",
+      "type": "FCHAIN",
+      "name": "Live-Update an Reviewer ausliefern",
+      "description": "System erkennt einen persistierten Graph-Batch, verteilt das Änderungsereignis über den Live-Kanal und Reviewer sieht den aktuellen Stand ohne Neuladen."
+    },
+    {
+      "id": "FCHAIN-observe-live-updates-reconnect",
+      "type": "FCHAIN",
+      "name": "Live-Kanal nach Verbindungsabbruch nachführen",
+      "description": "Reviewer verbindet sich neu, System sendet verpasste Änderungsereignisse seit der letzten Version und stellt den aktuellen Graphstand wieder her."
+    },
+    {
+      "id": "FUNC-assign-account-role",
+      "type": "FUNC",
+      "name": "Kontorolle zuweisen",
+      "description": "Setzt die neue Rolle eines Kontos und bestimmt die daraus abgeleiteten Autorierungsrechte am Apply-Gate."
+    },
+    {
+      "id": "FUNC-authorize-role-assignment",
+      "type": "FUNC",
+      "name": "Rollenänderung berechtigen",
+      "description": "Prüft, ob das anfragende Konto die Berechtigung zur Rollenänderung besitzt, und gibt die Zuweisung frei oder lehnt sie ab."
+    },
+    {
+      "id": "FUNC-build-export-file",
+      "type": "FUNC",
+      "name": "Exportdatei erzeugen",
+      "description": "Verpackt die serialisierte Repräsentation mit Version und Prüfsumme in eine auslieferbare Exportdatei."
+    },
+    {
+      "id": "FUNC-deliver-live-update",
+      "type": "FUNC",
+      "name": "Live-Update zustellen",
+      "description": "Stellt das Änderungsereignis der verbundenen Sitzung zu, sodass die Ansicht ohne Neuladen aktuell bleibt."
+    },
+    {
+      "id": "FUNC-detect-graph-change",
+      "type": "FUNC",
+      "name": "Graphänderung erkennen",
+      "description": "Erkennt persistierte Mutationsbatches und leitet daraus ein versioniertes Änderungsereignis ab."
+    },
+    {
+      "id": "FUNC-edit-graph-element",
+      "type": "FUNC",
+      "name": "Graphelement bearbeiten",
+      "description": "Nimmt Erstellung und Änderung von Knoten und Kanten entgegen und bildet sie auf Mutationskommandos ab."
+    },
+    {
+      "id": "FUNC-evaluate-gate-rules",
+      "type": "FUNC",
+      "name": "Gate-Regeln auswerten",
+      "description": "Wertet die Governance-Regeln gegen den eingereichten Batch aus und sammelt Violations mit Schweregrad."
+    },
+    {
+      "id": "FUNC-filter-subgraph",
+      "type": "FUNC",
+      "name": "Teilgraph filtern",
+      "description": "Wählt anhand von Typ- und Suchfiltern die passenden Knoten samt induzierter Kanten als konsistente Slice aus."
+    },
+    {
+      "id": "FUNC-issue-session",
+      "type": "FUNC",
+      "name": "Sitzung ausstellen",
+      "description": "Erzeugt eine signierte, zeitlich begrenzte Sitzung mit Rollenanspruch für den authentifizierten Nutzer."
+    },
+    {
+      "id": "FUNC-persist-access-state",
+      "type": "FUNC",
+      "name": "Zugriffsstand persistieren",
+      "description": "Schreibt den geänderten Zugriffs- und Rollenstand transaktional fest, sodass er für die nächste Autorierung gilt."
+    },
+    {
+      "id": "FUNC-persist-graph-version",
+      "type": "FUNC",
+      "name": "Graphversion persistieren",
+      "description": "Schreibt den akzeptierten Mutationsbatch transaktional und erhöht die Graphversion für optimistische Nebenläufigkeit."
+    },
+    {
+      "id": "FUNC-publish-change-event",
+      "type": "FUNC",
+      "name": "Änderungsereignis veröffentlichen",
+      "description": "Veröffentlicht das versionierte Änderungsereignis an alle für den Graphen registrierten Live-Kanäle."
+    },
+    {
+      "id": "FUNC-replay-missed-events",
+      "type": "FUNC",
+      "name": "Verpasste Ereignisse nachliefern",
+      "description": "Liefert alle Änderungsereignisse seit der zuletzt bestätigten Version nach und stellt den aktuellen Graphstand wieder her."
+    },
+    {
+      "id": "FUNC-report-gate-verdict",
+      "type": "FUNC",
+      "name": "Gate-Verdikt melden",
+      "description": "Bildet Violations auf ein Tier ab und liefert Verdikt samt Fix-Hinweisen an den einreichenden Autor."
+    },
+    {
+      "id": "FUNC-resume-live-channel",
+      "type": "FUNC",
+      "name": "Live-Kanal wiederaufnehmen",
+      "description": "Nimmt eine abgebrochene Live-Verbindung wieder auf und ermittelt die zuletzt beim Client bestätigte Graphversion."
+    },
+    {
+      "id": "FUNC-revoke-account-access",
+      "type": "FUNC",
+      "name": "Kontozugriff entziehen",
+      "description": "Sperrt Rolle und Autorierungsrechte eines Kontos und schreibt den aktualisierten Zugriffsstand fest."
+    },
+    {
+      "id": "FUNC-serialize-graph-snapshot",
+      "type": "FUNC",
+      "name": "Graphstand serialisieren",
+      "description": "Serialisiert den versionierten Graphen in die kanonische, wieder importierbare Austauschrepräsentation."
+    },
+    {
+      "id": "FUNC-terminate-sessions",
+      "type": "FUNC",
+      "name": "Sitzungen beenden",
+      "description": "Invalidiert alle offenen Sitzungen eines Kontos und trennt dessen Live-Kanäle."
+    },
+    {
+      "id": "FUNC-verify-credentials",
+      "type": "FUNC",
+      "name": "Zugangsdaten prüfen",
+      "description": "Prüft übermittelte Zugangsdaten gegen den Nutzerspeicher und liefert Identität und Rolle oder eine Ablehnung."
+    },
+    {
+      "id": "REQ-access-state-consistent",
+      "type": "REQ",
+      "name": "Zugriffsstand konsistent",
+      "description": "Nachbedingung: Nach einer Zugriffsänderung gelten Rollen und Rechte für alle offenen Sitzungen konsistent und sind auditiert.",
+      "kind": "postcondition"
+    },
+    {
+      "id": "REQ-account-lifecycle-management",
+      "type": "REQ",
+      "name": "Kontolebenszyklus verwalten",
+      "description": "Das System MUSS dem Betreiber erlauben, Konten anzulegen, Rollen zu ändern und Konten zu deaktivieren.",
+      "kind": "functional"
+    },
+    {
+      "id": "REQ-authenticated-session-established",
+      "type": "REQ",
+      "name": "Authentifizierte Sitzung etabliert",
+      "description": "Nachbedingung: Nach erfolgreicher Anmeldung besitzt der Nutzer eine gültige Sitzung mit Rolle und Autorenrechten am Systemgraphen.",
+      "kind": "postcondition"
+    },
+    {
+      "id": "REQ-gate-verdict-persisted",
+      "type": "REQ",
+      "name": "Gate-Verdikt persistiert",
+      "description": "Nachbedingung: Nach der Apply-Gate-Validierung ist das Verdikt (tier, violations) auditiert und der Graph nur bei auto-apply verändert.",
+      "kind": "postcondition"
+    },
+    {
+      "id": "REQ-live-update-push",
+      "type": "REQ",
+      "name": "Live-Update-Push",
+      "description": "Das System MUSS angemeldeten Nutzern Graph-Änderungen innerhalb von 2 Sekunden nach Apply als Live-Update im Browser anzeigen.",
+      "kind": "functional"
+    },
+    {
+      "id": "REQ-live-update-session-consistency",
+      "type": "REQ",
+      "name": "Live-Update-Sitzungskonsistenz",
+      "description": "Nachbedingung: Nach einem Live-Update zeigt jede offene Sitzung dieselbe graphVersion und denselben Elementstand wie der Server.",
+      "kind": "postcondition"
+    },
+    {
+      "id": "REQ-role-based-authoring-permission",
+      "type": "REQ",
+      "name": "Rollenbasierte Autorierrechte",
+      "description": "Das System MUSS Schreibzugriff auf den Systemgraphen nur Nutzern mit der Rolle Autor oder Betreiber gewähren.",
+      "kind": "functional"
+    },
+    {
+      "id": "SYS-collab-graph-authoring",
+      "type": "SYS",
+      "name": "Collaborative Governed Graph Authoring",
+      "description": "Multiuser-fähige Web-App aus dem graphcode harness: Nutzer melden sich an, autorieren gemeinsam einen governten Systemgraphen über das Apply-Gate, sehen Live-Updates und exportieren den Stand."
+    },
+    {
+      "id": "TEST-access-state-consistent",
+      "type": "TEST",
+      "name": "Zugriffsstand konsistent",
+      "description": "Prüfschritt: Zwei Sitzungen (Nutzer A als Autor, Betreiber B) öffnen. B ändert die Rolle von A auf 'reader' und deaktiviert danach ein zweites Konto C. Danach in Sitzung A einen Autorier-Request (graph_mutate) senden: wird mit 403 abgewiesen und die graphVersion bleibt unverändert; Sitzung C wird beim nächsten Request mit 401 beendet. Audit-Log lesen: für jede Zugriffsänderung existiert ein Eintrag mit Akteur, Zielkonto, alter/neuer Rolle und Zeitstempel. PASS wenn alle offenen Sitzungen binnen 2s denselben Rechtestand zeigen; FAIL bei stale Rechten in einer Sitzung oder fehlendem Audit-Eintrag.",
+      "kind": "integration",
+      "level": "integration",
+      "runnable": true,
+      "testRef": "tests/access-state-consistent.spec.ts",
+      "testResult": "pending"
+    },
+    {
+      "id": "TEST-account-lifecycle-management",
+      "type": "TEST",
+      "name": "Kontolebenszyklus verwalten",
+      "description": "Prüfschritt: Als Betreiber über die Web-App (a) ein Konto anlegen — Konto erscheint in der Nutzerliste mit Status active und Rolle reader; (b) die Rolle auf author ändern — das Konto kann danach einen Batch über das Apply-Gate anwenden (tier=auto-apply, graphVersion +1); (c) das Konto deaktivieren — Login schlägt mit 401 fehl und ein bestehender Autorier-Request wird abgewiesen (graphVersion unverändert). PASS wenn alle drei Übergänge wirksam und im Audit-Log protokolliert sind; FAIL wenn ein Nicht-Betreiber einen der Schritte ausführen kann.",
+      "kind": "integration",
+      "level": "integration",
+      "runnable": true,
+      "testRef": "tests/account-lifecycle-management.spec.ts",
+      "testResult": "pending"
+    },
+    {
+      "id": "TEST-authenticated-session-established",
+      "type": "TEST",
+      "name": "Authentifizierte Sitzung etabliert",
+      "description": "Prüfschritt: Mit gültigen Zugangsdaten anmelden — Response liefert Session-Token, Rolle (z.B. author) und Ablaufzeit. Mit dem Token einen Autorier-Request (graph_mutate) senden: wird akzeptiert. Danach ohne bzw. mit ungültigem/abgelaufenem Token denselben Request senden: wird mit 401 abgewiesen und der Graph bleibt unverändert (graphVersion konstant).",
+      "kind": "integration",
+      "testRef": "tests/authenticated-session-established.spec.ts",
+      "runnable": true,
+      "testResult": "pending",
+      "level": "integration"
+    },
+    {
+      "id": "TEST-gate-verdict-persisted",
+      "type": "TEST",
+      "name": "Gate-Verdikt persistiert",
+      "description": "Prüfschritt: Zwei Batches über das Apply-Gate einreichen — (a) einen regelkonformen (erwartet tier=auto-apply), (b) einen regelverletzenden (erwartet tier=block). Danach das Audit-Log lesen: für BEIDE Batches existiert ein Eintrag mit tier und violations; die graphVersion ist nur nach (a) um 1 erhöht und nach (b) unverändert. Zusätzlich einen dryRun:true-Preview einreichen: Verdikt auditiert, graphVersion unverändert. PASS wenn alle drei Verdikte auditiert sind und der Graph nur bei auto-apply mutiert.",
+      "kind": "integration",
+      "testRef": "tests/gate-verdict-persisted.spec.ts",
+      "runnable": true,
+      "testResult": "pending",
+      "level": "integration"
+    },
+    {
+      "id": "TEST-live-update-push",
+      "type": "TEST",
+      "name": "Live-Update-Zustellung",
+      "description": "Prüfschritt: Zwei Sitzungen verbinden, in Sitzung A einen Batch mit tier=auto-apply anwenden und in Sitzung B den Live-Kanal beobachten. PASS wenn Sitzung B ohne Neuladen innerhalb von 2 Sekunden genau ein Änderungsereignis mit der neuen graphVersion empfängt; FAIL bei ausbleibendem, doppeltem oder veraltetem Ereignis.",
+      "kind": "integration",
+      "testRef": "tests/live-update-push.spec.ts",
+      "runnable": true,
+      "testResult": "pending",
+      "level": "integration"
+    },
+    {
+      "id": "TEST-live-update-session-consistency",
+      "type": "TEST",
+      "name": "Live-Update-Sitzungskonsistenz",
+      "description": "Prüfschritt: Zwei Browser-Sitzungen (Nutzer A und B) am selben governten Systemgraphen öffnen; als A eine Node-Änderung über das Apply-Gate mit tier=auto-apply anwenden. Danach in beiden Sitzungen die angezeigte graphVersion und die Elementliste abfragen und gegen den Server-Stand (graph_elements) vergleichen. PASS wenn beide Sitzungen binnen 2s dieselbe graphVersion und denselben Elementstand wie der Server zeigen; FAIL bei Divergenz oder stale graphVersion.",
+      "testRef": "tests/live-update-session-consistency.spec.ts",
+      "kind": "integration",
+      "runnable": true,
+      "testResult": "pending",
+      "level": "integration"
+    },
+    {
+      "id": "TEST-role-based-authoring-permission",
+      "type": "TEST",
+      "name": "Rollenbasierte Autorierrechte",
+      "description": "Prüfschritt: Denselben regelkonformen Batch nacheinander mit drei Sitzungen einreichen — Rolle reader: HTTP 403, graphVersion unverändert, kein Gate-Lauf; Rolle author: akzeptiert, Gate-Verdikt tier=auto-apply, graphVersion +1; Rolle operator: akzeptiert, graphVersion +1. PASS wenn genau Autor und Betreiber schreiben dürfen und jede Abweisung mit Akteur und Grund auditiert ist; FAIL bei Schreibzugriff ohne Autorenrolle oder fehlendem Audit-Eintrag.",
+      "kind": "integration",
+      "level": "integration",
+      "runnable": true,
+      "testRef": "tests/role-based-authoring-permission.spec.ts",
+      "testResult": "pending"
+    },
+    {
+      "id": "UC-apply-gate-validation",
+      "type": "UC",
+      "name": "Änderung über Apply-Gate prüfen",
+      "description": "Autor reicht einen Änderungsbatch ein und erhält das Gate-Verdikt mit Tier, Violations und Fix-Hinweisen vor der Persistenz."
+    },
+    {
+      "id": "UC-authenticate-user",
+      "type": "UC",
+      "name": "Nutzer anmelden",
+      "description": "Nutzer meldet sich an der Web-App an und erhält eine authentifizierte Sitzung mit seiner Rolle am Systemgraphen."
+    },
+    {
+      "id": "UC-author-graph-elements",
+      "type": "UC",
+      "name": "Graphelemente autorieren",
+      "description": "Autor erstellt und ändert Knoten und Kanten des Systemgraphen und erhält einen persistierten, versionierten Graphstand."
+    },
+    {
+      "id": "UC-export-graph-state",
+      "type": "UC",
+      "name": "Graphstand exportieren",
+      "description": "Nutzer exportiert den aktuellen Graphstand und erhält eine vollständige, wieder importierbare Repräsentation des Graphen."
+    },
+    {
+      "id": "UC-import-graph-slice",
+      "type": "UC",
+      "name": "Graph-Slice importieren",
+      "description": "Autor importiert eine exportierte Graph-Slice und erhält den zusammengeführten, versionierten Systemgraphen nach Gate-Prüfung."
+    },
+    {
+      "id": "UC-manage-user-access",
+      "type": "UC",
+      "name": "Nutzerzugriff verwalten",
+      "description": "Betreiber verwaltet Konten und Rollen und erhält einen konsistenten Zugriffsstand für die gemeinsame Autorierung."
+    },
+    {
+      "id": "UC-observe-live-updates",
+      "type": "UC",
+      "name": "Live-Updates verfolgen",
+      "description": "Reviewer verfolgt Änderungen anderer Nutzer in Echtzeit und sieht den aktuellen Graphstand ohne manuelles Neuladen."
+    }
+  ],
+  "traces": [
+    {
+      "source": "ACTOR-author",
+      "target": "UC-apply-gate-validation",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-author",
+      "target": "UC-authenticate-user",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-author",
+      "target": "UC-author-graph-elements",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-author",
+      "target": "UC-import-graph-slice",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-integration-client",
+      "target": "UC-export-graph-state",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-operator",
+      "target": "UC-manage-user-access",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-reviewer",
+      "target": "UC-export-graph-state",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-reviewer",
+      "target": "UC-observe-live-updates",
+      "type": "io"
+    },
+    {
+      "source": "FCHAIN-apply-gate-validation-verdict",
+      "target": "FUNC-evaluate-gate-rules",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-apply-gate-validation-verdict",
+      "target": "FUNC-report-gate-verdict",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-apply-gate-validation-verdict",
+      "target": "REQ-gate-verdict-persisted",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-authenticate-user-login",
+      "target": "FUNC-issue-session",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-authenticate-user-login",
+      "target": "FUNC-verify-credentials",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-authenticate-user-login",
+      "target": "REQ-authenticated-session-established",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-author-graph-elements-edit",
+      "target": "FUNC-edit-graph-element",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-author-graph-elements-edit",
+      "target": "FUNC-persist-graph-version",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-export-graph-state-download",
+      "target": "FUNC-persist-graph-version",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-export-graph-state-download",
+      "target": "FUNC-verify-credentials",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-export-graph-state-filtered",
+      "target": "FUNC-build-export-file",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-export-graph-state-filtered",
+      "target": "FUNC-filter-subgraph",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-export-graph-state-filtered",
+      "target": "FUNC-serialize-graph-snapshot",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-export-graph-state-snapshot",
+      "target": "FUNC-build-export-file",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-export-graph-state-snapshot",
+      "target": "FUNC-serialize-graph-snapshot",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-import-graph-slice-merge",
+      "target": "FUNC-evaluate-gate-rules",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-import-graph-slice-merge",
+      "target": "FUNC-persist-graph-version",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-import-graph-slice-merge",
+      "target": "FUNC-report-gate-verdict",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-manage-user-access-invite",
+      "target": "FUNC-issue-session",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-manage-user-access-invite",
+      "target": "FUNC-verify-credentials",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-manage-user-access-revoke",
+      "target": "FUNC-revoke-account-access",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-manage-user-access-revoke",
+      "target": "FUNC-terminate-sessions",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-manage-user-access-role-change",
+      "target": "FUNC-assign-account-role",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-manage-user-access-role-change",
+      "target": "FUNC-authorize-role-assignment",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-manage-user-access-role-change",
+      "target": "FUNC-persist-access-state",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-observe-live-updates-push",
+      "target": "FUNC-deliver-live-update",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-observe-live-updates-push",
+      "target": "FUNC-detect-graph-change",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-observe-live-updates-push",
+      "target": "FUNC-publish-change-event",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-observe-live-updates-push",
+      "target": "REQ-live-update-push",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-observe-live-updates-reconnect",
+      "target": "FUNC-deliver-live-update",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-observe-live-updates-reconnect",
+      "target": "FUNC-replay-missed-events",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-observe-live-updates-reconnect",
+      "target": "FUNC-resume-live-channel",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-observe-live-updates-reconnect",
+      "target": "REQ-live-update-session-consistency",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-assign-account-role",
+      "target": "REQ-account-lifecycle-management",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-assign-account-role",
+      "target": "REQ-authenticated-session-established",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-authorize-role-assignment",
+      "target": "REQ-authenticated-session-established",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-authorize-role-assignment",
+      "target": "REQ-role-based-authoring-permission",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-build-export-file",
+      "target": "REQ-gate-verdict-persisted",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-persist-access-state",
+      "target": "REQ-access-state-consistent",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-revoke-account-access",
+      "target": "REQ-account-lifecycle-management",
+      "type": "satisfy"
+    },
+    {
+      "source": "SYS-collab-graph-authoring",
+      "target": "UC-apply-gate-validation",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-collab-graph-authoring",
+      "target": "UC-authenticate-user",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-collab-graph-authoring",
+      "target": "UC-author-graph-elements",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-collab-graph-authoring",
+      "target": "UC-export-graph-state",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-collab-graph-authoring",
+      "target": "UC-import-graph-slice",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-collab-graph-authoring",
+      "target": "UC-manage-user-access",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-collab-graph-authoring",
+      "target": "UC-observe-live-updates",
+      "type": "compose"
+    },
+    {
+      "source": "TEST-access-state-consistent",
+      "target": "REQ-access-state-consistent",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-account-lifecycle-management",
+      "target": "REQ-account-lifecycle-management",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-authenticated-session-established",
+      "target": "REQ-authenticated-session-established",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-gate-verdict-persisted",
+      "target": "REQ-gate-verdict-persisted",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-live-update-push",
+      "target": "REQ-live-update-push",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-live-update-session-consistency",
+      "target": "REQ-live-update-session-consistency",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-role-based-authoring-permission",
+      "target": "REQ-role-based-authoring-permission",
+      "type": "verify"
+    },
+    {
+      "source": "UC-apply-gate-validation",
+      "target": "FCHAIN-apply-gate-validation-verdict",
+      "type": "compose"
+    },
+    {
+      "source": "UC-apply-gate-validation",
+      "target": "REQ-gate-verdict-persisted",
+      "type": "compose"
+    },
+    {
+      "source": "UC-authenticate-user",
+      "target": "FCHAIN-authenticate-user-login",
+      "type": "compose"
+    },
+    {
+      "source": "UC-authenticate-user",
+      "target": "REQ-authenticated-session-established",
+      "type": "compose"
+    },
+    {
+      "source": "UC-author-graph-elements",
+      "target": "FCHAIN-author-graph-elements-edit",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export-graph-state",
+      "target": "FCHAIN-export-graph-state-download",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export-graph-state",
+      "target": "FCHAIN-export-graph-state-filtered",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export-graph-state",
+      "target": "FCHAIN-export-graph-state-snapshot",
+      "type": "compose"
+    },
+    {
+      "source": "UC-import-graph-slice",
+      "target": "FCHAIN-import-graph-slice-merge",
+      "type": "compose"
+    },
+    {
+      "source": "UC-manage-user-access",
+      "target": "FCHAIN-manage-user-access-invite",
+      "type": "compose"
+    },
+    {
+      "source": "UC-manage-user-access",
+      "target": "FCHAIN-manage-user-access-revoke",
+      "type": "compose"
+    },
+    {
+      "source": "UC-manage-user-access",
+      "target": "FCHAIN-manage-user-access-role-change",
+      "type": "compose"
+    },
+    {
+      "source": "UC-manage-user-access",
+      "target": "REQ-access-state-consistent",
+      "type": "compose"
+    },
+    {
+      "source": "UC-manage-user-access",
+      "target": "REQ-account-lifecycle-management",
+      "type": "compose"
+    },
+    {
+      "source": "UC-manage-user-access",
+      "target": "REQ-role-based-authoring-permission",
+      "type": "compose"
+    },
+    {
+      "source": "UC-observe-live-updates",
+      "target": "FCHAIN-observe-live-updates-push",
+      "type": "compose"
+    },
+    {
+      "source": "UC-observe-live-updates",
+      "target": "FCHAIN-observe-live-updates-reconnect",
+      "type": "compose"
+    },
+    {
+      "source": "UC-observe-live-updates",
+      "target": "REQ-live-update-push",
+      "type": "compose"
+    },
+    {
+      "source": "UC-observe-live-updates",
+      "target": "REQ-live-update-session-consistency",
+      "type": "compose"
+    }
+  ]
+}

@@ -1,0 +1,1256 @@
+{
+  "elements": [
+    {
+      "id": "ACTOR-admin",
+      "type": "ACTOR",
+      "name": "Admin",
+      "description": "Administrator managing the governed graph."
+    },
+    {
+      "id": "ACTOR-audit-log-viewer",
+      "type": "ACTOR",
+      "name": "Audit Log Viewer",
+      "description": "User who views the audit log of changes."
+    },
+    {
+      "id": "ACTOR-collaborative-editor",
+      "type": "ACTOR",
+      "name": "Collaborative Editor",
+      "description": "Team member co-editing the governed system graph."
+    },
+    {
+      "id": "ACTOR-edit-scenario-user",
+      "type": "ACTOR",
+      "name": "Edit Scenario User",
+      "description": "User who edits scenarios in the governed system graph."
+    },
+    {
+      "id": "ACTOR-editor",
+      "type": "ACTOR",
+      "name": "Editor",
+      "description": "User role editing the governed graph."
+    },
+    {
+      "id": "ACTOR-export-user",
+      "type": "ACTOR",
+      "name": "Export User",
+      "description": "User who exports the current state of the governed system graph."
+    },
+    {
+      "id": "ACTOR-login-user",
+      "type": "ACTOR",
+      "name": "Login User",
+      "description": "User who logs into the system."
+    },
+    {
+      "id": "ACTOR-system",
+      "type": "ACTOR",
+      "name": "System",
+      "description": "The governed system managing the graph."
+    },
+    {
+      "id": "ACTOR-user",
+      "type": "ACTOR",
+      "name": "User",
+      "description": "End user interacting with the web application."
+    },
+    {
+      "id": "CR-1",
+      "type": "CR",
+      "name": "Change Request 1",
+      "description": "Initial change request for the system."
+    },
+    {
+      "id": "FCHAIN-audit-log",
+      "type": "FCHAIN",
+      "name": "Audit log chain",
+      "description": "Sequence of functions for fetching and displaying the audit history."
+    },
+    {
+      "id": "FCHAIN-authorize-graph-flow",
+      "type": "FCHAIN",
+      "name": "Co-authoring flow",
+      "description": "Propose → validate → apply mutation."
+    },
+    {
+      "id": "FCHAIN-collaborative-authoring",
+      "type": "FCHAIN",
+      "name": "Collaborative authoring chain",
+      "description": "Sequence of functions for managing collaborative edits to the governed graph."
+    },
+    {
+      "id": "FCHAIN-custom-reports-flow",
+      "type": "FCHAIN",
+      "name": "Custom reports flow",
+      "description": "Query → render PDF → deliver report."
+    },
+    {
+      "id": "FCHAIN-edit-scenario",
+      "type": "FCHAIN",
+      "name": "Edit Scenario Chain",
+      "description": "User edits scenarios in the governed system graph."
+    },
+    {
+      "id": "FCHAIN-export-flow",
+      "type": "FCHAIN",
+      "name": "Export flow",
+      "description": "Request → serialize → deliver governed graph."
+    },
+    {
+      "id": "FCHAIN-export-scenario",
+      "type": "FCHAIN",
+      "name": "Export scenario chain",
+      "description": "Chain of functions involved in exporting the governed graph snapshot."
+    },
+    {
+      "id": "FCHAIN-export-state",
+      "type": "FCHAIN",
+      "name": "Export State Scenario",
+      "description": "User exports the current state of the governed system graph."
+    },
+    {
+      "id": "FCHAIN-live-updates",
+      "type": "FCHAIN",
+      "name": "Live updates flow",
+      "description": "WebSocket push → UI refresh after any mutation."
+    },
+    {
+      "id": "FCHAIN-live-updates-flow",
+      "type": "FCHAIN",
+      "name": "Live updates flow scenario",
+      "description": "Scenario covering the live update process from mutation to UI reflection."
+    },
+    {
+      "id": "FCHAIN-login",
+      "type": "FCHAIN",
+      "name": "Login Scenario",
+      "description": "User logs into the system to access the governed graph."
+    },
+    {
+      "id": "FCHAIN-login-flow",
+      "type": "FCHAIN",
+      "name": "Login flow",
+      "description": "Authenticate → authorize → open session."
+    },
+    {
+      "id": "FCHAIN-login-scenario",
+      "type": "FCHAIN",
+      "name": "Login scenario chain",
+      "description": "Sequence of functions for user authentication and starting authoring."
+    },
+    {
+      "id": "FCHAIN-manage-permissions",
+      "type": "FCHAIN",
+      "name": "Manage permissions chain",
+      "description": "Sequence of functions for updating user roles and access levels."
+    },
+    {
+      "id": "FCHAIN-manage-session",
+      "type": "FCHAIN",
+      "name": "Session management chain",
+      "description": "Sequence of functions for creating, validating, and terminating user sessions."
+    },
+    {
+      "id": "FCHAIN-notifications",
+      "type": "FCHAIN",
+      "name": "Notifications chain",
+      "description": "Sequence of functions for generating and sending user notifications."
+    },
+    {
+      "id": "FCHAIN-notify-changes",
+      "type": "FCHAIN",
+      "name": "Notification chain",
+      "description": "Sequence of functions for sending notifications to users."
+    },
+    {
+      "id": "FCHAIN-system-health",
+      "type": "FCHAIN",
+      "name": "System health chain",
+      "description": "Sequence of functions for monitoring and reporting system status."
+    },
+    {
+      "id": "FUNC-authenticate",
+      "type": "FUNC",
+      "name": "Authenticate user",
+      "description": "Validate credentials against identity provider."
+    },
+    {
+      "id": "FUNC-authenticate-user",
+      "type": "FUNC",
+      "name": "Authenticate User",
+      "description": "Authenticate the user for accessing the governed graph."
+    },
+    {
+      "id": "FUNC-authorize",
+      "type": "FUNC",
+      "name": "Authorize user",
+      "description": "Grant permissions based on role."
+    },
+    {
+      "id": "FUNC-coedit-graph",
+      "type": "FUNC",
+      "name": "Co-Edit Governed Graph",
+      "description": "Apply changes to the governed system graph via the Apply-Gate."
+    },
+    {
+      "id": "FUNC-deliver-artifact",
+      "type": "FUNC",
+      "name": "Deliver artifact to user",
+      "description": "Web server streams the export file to the client."
+    },
+    {
+      "id": "FUNC-deliver-report",
+      "type": "FUNC",
+      "name": "Deliver report to user",
+      "description": "Web server streams the PDF file to the client."
+    },
+    {
+      "id": "FUNC-edit-scenario",
+      "type": "FUNC",
+      "name": "Edit Scenario",
+      "description": "Edit scenarios in the governed system graph."
+    },
+    {
+      "id": "FUNC-export-handler",
+      "type": "FUNC",
+      "name": "Export handler function",
+      "description": "Handles graph export logic."
+    },
+    {
+      "id": "FUNC-export-snapshot",
+      "type": "FUNC",
+      "name": "Export governed graph snapshot",
+      "description": "Exports the current governed graph as a Format-E v2 snapshot, including all elements and edges."
+    },
+    {
+      "id": "FUNC-export-state",
+      "type": "FUNC",
+      "name": "Export State",
+      "description": "Export the current state of the governed system graph."
+    },
+    {
+      "id": "FUNC-login-handler",
+      "type": "FUNC",
+      "name": "Login handler function",
+      "description": "Handles user authentication logic."
+    },
+    {
+      "id": "FUNC-open-session",
+      "type": "FUNC",
+      "name": "Open user session",
+      "description": "Create and store session token."
+    },
+    {
+      "id": "FUNC-query-metrics",
+      "type": "FUNC",
+      "name": "Query metrics from graph",
+      "description": "Harness computes readiness scores and other metrics."
+    },
+    {
+      "id": "FUNC-render-pdf",
+      "type": "FUNC",
+      "name": "Render PDF report",
+      "description": "Server-side PDF generation with metrics."
+    },
+    {
+      "id": "FUNC-serialize-graph",
+      "type": "FUNC",
+      "name": "Serialize governed graph",
+      "description": "Harness exports the live graph as Format-E v2."
+    },
+    {
+      "id": "FUNC-ui-refresh",
+      "type": "FUNC",
+      "name": "Refresh UI on update",
+      "description": "Client-side handler redraws the governed graph."
+    },
+    {
+      "id": "FUNC-view-audit-log",
+      "type": "FUNC",
+      "name": "View Audit Log",
+      "description": "Retrieve and display the audit log of changes."
+    },
+    {
+      "id": "FUNC-websocket-push",
+      "type": "FUNC",
+      "name": "Push updates via WebSocket",
+      "description": "Harness broadcasts mutations to all connected clients."
+    },
+    {
+      "id": "MOD-auth-module",
+      "type": "MOD",
+      "name": "Authentication module",
+      "description": "Module responsible for user authentication and session management."
+    },
+    {
+      "id": "MOD-auth-service",
+      "type": "MOD",
+      "name": "Auth Service",
+      "description": "Handles user authentication and authorization."
+    },
+    {
+      "id": "MOD-export-module",
+      "type": "MOD",
+      "name": "Export module",
+      "description": "Module responsible for graph export functionality."
+    },
+    {
+      "id": "MOD-export-service",
+      "type": "MOD",
+      "name": "Export Service Module",
+      "description": "Handles graph export and snapshot generation."
+    },
+    {
+      "id": "MOD-graph-editor",
+      "type": "MOD",
+      "name": "Graph Editor",
+      "description": "Provides co-editing capabilities for the governed system graph."
+    },
+    {
+      "id": "MOD-scenario-manager",
+      "type": "MOD",
+      "name": "Scenario Manager",
+      "description": "Manages and edits test scenarios."
+    },
+    {
+      "id": "MS-1",
+      "type": "MS",
+      "name": "Milestone 1",
+      "description": "Initial development phase."
+    },
+    {
+      "id": "MS-2",
+      "type": "MS",
+      "name": "Multiuser Collaboration",
+      "description": "Enable multiuser collaboration on the governed system graph."
+    },
+    {
+      "id": "MS-3",
+      "type": "MS",
+      "name": "Live Updates & Export",
+      "description": "Implement live updates and export functionality."
+    },
+    {
+      "id": "MS-4",
+      "type": "MS",
+      "name": "Final Review & Deployment",
+      "description": "Conduct final review and deploy the system."
+    },
+    {
+      "id": "REQ-export-format",
+      "type": "REQ",
+      "name": "Export format",
+      "description": "Exported graphs must be in a standardized format."
+    },
+    {
+      "id": "REQ-login-authentication",
+      "type": "REQ",
+      "name": "Authentication required",
+      "description": "Users must authenticate to access the system."
+    },
+    {
+      "id": "SYS-governed-graph-system",
+      "type": "SYS",
+      "name": "Governed graph system",
+      "description": "The overall system governing the collaborative graph editing environment."
+    },
+    {
+      "id": "SYS-web-app",
+      "type": "SYS",
+      "name": "Multiuser Web App",
+      "description": "Governed system graph for collaborative authoring."
+    },
+    {
+      "id": "TEST-export-format",
+      "type": "TEST",
+      "name": "Test export format",
+      "description": "Verify that the exported graph is in the correct format."
+    },
+    {
+      "id": "TEST-login-authentication",
+      "type": "TEST",
+      "name": "Test login authentication",
+      "description": "Verify that users can authenticate successfully."
+    },
+    {
+      "id": "TEST-verify-login-authentication",
+      "type": "TEST",
+      "name": "Verify Login Authentication",
+      "description": "Test verifies that users can authenticate successfully by checking the presence of a session token after login."
+    },
+    {
+      "id": "UC-audit-log",
+      "type": "UC",
+      "name": "Admin views audit log",
+      "description": "An admin reviews the history of changes made to the governed graph."
+    },
+    {
+      "id": "UC-authorize-graph",
+      "type": "UC",
+      "name": "Users co-author governed graph",
+      "description": "Logged-in users propose and apply mutations through the Apply-Gate."
+    },
+    {
+      "id": "UC-collaborative-authoring",
+      "type": "UC",
+      "name": "Users collaboratively author the governed graph",
+      "description": "Multiple users jointly edit and govern the system graph through the Apply-Gate."
+    },
+    {
+      "id": "UC-custom-reports",
+      "type": "UC",
+      "name": "User generates custom reports",
+      "description": "A user defines and exports tailored reports based on the governed graph."
+    },
+    {
+      "id": "UC-custom-reports-flow",
+      "type": "UC",
+      "name": "User generates custom reports",
+      "description": "Logged-in user selects metrics and downloads a PDF report."
+    },
+    {
+      "id": "UC-edit-graph",
+      "type": "UC",
+      "name": "Editor edits governed graph",
+      "description": "Editor edits governed graph via Apply-Gate, sees live updates and exports state."
+    },
+    {
+      "id": "UC-edit-scenario",
+      "type": "UC",
+      "name": "Edit Scenario",
+      "description": "User edits scenarios in the governed system graph."
+    },
+    {
+      "id": "UC-export-flow",
+      "type": "UC",
+      "name": "User exports current graph state",
+      "description": "Logged-in user requests and downloads the governed graph in Format-E v2."
+    },
+    {
+      "id": "UC-export-graph",
+      "type": "UC",
+      "name": "User exports the current graph state",
+      "description": "A user requests and downloads the governed graph in a specified format."
+    },
+    {
+      "id": "UC-export-scenario",
+      "type": "UC",
+      "name": "Export scenario",
+      "description": "User exports a specific scenario or part of the graph."
+    },
+    {
+      "id": "UC-export-state",
+      "type": "UC",
+      "name": "Export Current State",
+      "description": "User exports the current state of the governed system graph."
+    },
+    {
+      "id": "UC-live-updates",
+      "type": "UC",
+      "name": "User sees live updates",
+      "description": "After any mutation, all logged-in users see the updated governed graph via WebSocket push."
+    },
+    {
+      "id": "UC-login",
+      "type": "UC",
+      "name": "User logs in",
+      "description": "User authenticates to access the governed graph."
+    },
+    {
+      "id": "UC-login-flow",
+      "type": "UC",
+      "name": "User logs in to the system",
+      "description": "A user provides credentials and gains access to the governed graph."
+    },
+    {
+      "id": "UC-login-scenario",
+      "type": "UC",
+      "name": "User logs in and starts authoring",
+      "description": "User authenticates, gains access to the governed graph, and begins collaborative authoring."
+    },
+    {
+      "id": "UC-manage-permissions",
+      "type": "UC",
+      "name": "Admin manages user permissions",
+      "description": "An admin assigns roles and permissions to users for governing the graph."
+    },
+    {
+      "id": "UC-manage-session",
+      "type": "UC",
+      "name": "System manages user session",
+      "description": "The system tracks and maintains the state of a user's session."
+    },
+    {
+      "id": "UC-notifications",
+      "type": "UC",
+      "name": "User receives notifications",
+      "description": "A user gets alerts about changes or events in the governed graph."
+    },
+    {
+      "id": "UC-notify-changes",
+      "type": "UC",
+      "name": "System notifies users of changes",
+      "description": "The system alerts users about relevant changes in the graph."
+    },
+    {
+      "id": "UC-system-health",
+      "type": "UC",
+      "name": "Admin monitors system health",
+      "description": "An admin checks the status and performance of the governed graph."
+    },
+    {
+      "id": "UC-view-audit-log",
+      "type": "UC",
+      "name": "View Audit Log",
+      "description": "User views the audit log of changes made to the governed system graph."
+    },
+    {
+      "id": "UC-view-live-updates",
+      "type": "UC",
+      "name": "User views live updates",
+      "description": "User views live updates of the governed system graph."
+    }
+  ],
+  "traces": [
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-audit-log",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-collaborative-authoring",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-custom-reports",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-edit-graph",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-export-flow",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-export-graph",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-export-scenario",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-live-updates",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-login",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-login-flow",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-manage-permissions",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-system-health",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-audit-log-viewer",
+      "target": "UC-view-audit-log",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-collaborative-editor",
+      "target": "UC-collaborative-authoring",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-edit-scenario-user",
+      "target": "UC-edit-scenario",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-editor",
+      "target": "UC-edit-graph",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-editor",
+      "target": "UC-edit-scenario",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-export-user",
+      "target": "UC-export-state",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-login-user",
+      "target": "UC-login",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-system",
+      "target": "UC-audit-log",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-system",
+      "target": "UC-edit-graph",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-system",
+      "target": "UC-edit-scenario",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-system",
+      "target": "UC-export-flow",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-system",
+      "target": "UC-export-graph",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-system",
+      "target": "UC-live-updates",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-system",
+      "target": "UC-login",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-system",
+      "target": "UC-login-flow",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-system",
+      "target": "UC-manage-permissions",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-system",
+      "target": "UC-manage-session",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-system",
+      "target": "UC-notify-changes",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-authorize-graph",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-collaborative-authoring",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-custom-reports",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-custom-reports-flow",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-edit-graph",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-edit-scenario",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-export-flow",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-export-graph",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-export-scenario",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-export-state",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-live-updates",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-login",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-login-flow",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-login-scenario",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-notifications",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-view-live-updates",
+      "type": "io"
+    },
+    {
+      "source": "CR-1",
+      "target": "MS-2",
+      "type": "relation"
+    },
+    {
+      "source": "CR-1",
+      "target": "MS-3",
+      "type": "relation"
+    },
+    {
+      "source": "CR-1",
+      "target": "MS-4",
+      "type": "relation"
+    },
+    {
+      "source": "CR-1",
+      "target": "REQ-export-format",
+      "type": "relation"
+    },
+    {
+      "source": "CR-1",
+      "target": "REQ-login-authentication",
+      "type": "relation"
+    },
+    {
+      "source": "FCHAIN-audit-log",
+      "target": "FUNC-view-audit-log",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-collaborative-authoring",
+      "target": "FUNC-coedit-graph",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-custom-reports-flow",
+      "target": "FUNC-deliver-report",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-custom-reports-flow",
+      "target": "FUNC-query-metrics",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-custom-reports-flow",
+      "target": "FUNC-render-pdf",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-edit-scenario",
+      "target": "FUNC-edit-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-export-flow",
+      "target": "FUNC-deliver-artifact",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-export-flow",
+      "target": "FUNC-serialize-graph",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-export-flow",
+      "target": "REQ-export-format",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-export-scenario",
+      "target": "FUNC-export-snapshot",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-export-state",
+      "target": "FUNC-export-state",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-live-updates",
+      "target": "FUNC-ui-refresh",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-live-updates",
+      "target": "FUNC-websocket-push",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-login",
+      "target": "FUNC-authenticate-user",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-login-flow",
+      "target": "FUNC-authenticate",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-login-flow",
+      "target": "FUNC-authorize",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-login-flow",
+      "target": "FUNC-open-session",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-login-flow",
+      "target": "REQ-login-authentication",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-authenticate",
+      "target": "MOD-auth-service",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-authenticate-user",
+      "target": "MOD-auth-service",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-authorize",
+      "target": "MOD-auth-service",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-coedit-graph",
+      "target": "MOD-graph-editor",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-coedit-graph",
+      "target": "UC-collaborative-authoring",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-deliver-artifact",
+      "target": "MOD-auth-service",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-deliver-report",
+      "target": "MOD-auth-service",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-edit-scenario",
+      "target": "MOD-scenario-manager",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-edit-scenario",
+      "target": "UC-edit-scenario",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-export-handler",
+      "target": "MOD-export-service",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-export-handler",
+      "target": "REQ-export-format",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-export-snapshot",
+      "target": "MOD-export-service",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-export-snapshot",
+      "target": "UC-export-scenario",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-export-state",
+      "target": "UC-export-state",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-login-handler",
+      "target": "MOD-auth-service",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-login-handler",
+      "target": "REQ-login-authentication",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-view-audit-log",
+      "target": "UC-view-audit-log",
+      "type": "satisfy"
+    },
+    {
+      "source": "MOD-auth-module",
+      "target": "REQ-login-authentication",
+      "type": "satisfy"
+    },
+    {
+      "source": "MOD-auth-service",
+      "target": "MOD-export-service",
+      "type": "io"
+    },
+    {
+      "source": "MOD-export-module",
+      "target": "REQ-export-format",
+      "type": "satisfy"
+    },
+    {
+      "source": "MS-1",
+      "target": "MS-2",
+      "type": "compose"
+    },
+    {
+      "source": "MS-1",
+      "target": "REQ-export-format",
+      "type": "compose"
+    },
+    {
+      "source": "MS-1",
+      "target": "REQ-login-authentication",
+      "type": "compose"
+    },
+    {
+      "source": "MS-2",
+      "target": "MS-3",
+      "type": "compose"
+    },
+    {
+      "source": "MS-3",
+      "target": "MS-4",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-governed-graph-system",
+      "target": "REQ-export-format",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-governed-graph-system",
+      "target": "REQ-login-authentication",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-governed-graph-system",
+      "target": "UC-export-graph",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-governed-graph-system",
+      "target": "UC-export-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-governed-graph-system",
+      "target": "UC-login",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-governed-graph-system",
+      "target": "REQ-export-format",
+      "type": "satisfy"
+    },
+    {
+      "source": "SYS-governed-graph-system",
+      "target": "REQ-login-authentication",
+      "type": "satisfy"
+    },
+    {
+      "source": "SYS-web-app",
+      "target": "UC-collaborative-authoring",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-web-app",
+      "target": "UC-edit-graph",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-web-app",
+      "target": "UC-export-graph",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-web-app",
+      "target": "UC-export-state",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-web-app",
+      "target": "UC-live-updates",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-web-app",
+      "target": "UC-login",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-web-app",
+      "target": "UC-login-flow",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-web-app",
+      "target": "UC-login-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "TEST-export-format",
+      "target": "REQ-export-format",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-login-authentication",
+      "target": "REQ-login-authentication",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-login-authentication",
+      "target": "REQ-login-authentication",
+      "type": "verify"
+    },
+    {
+      "source": "UC-audit-log",
+      "target": "FCHAIN-audit-log",
+      "type": "compose"
+    },
+    {
+      "source": "UC-authorize-graph",
+      "target": "FCHAIN-authorize-graph-flow",
+      "type": "compose"
+    },
+    {
+      "source": "UC-collaborative-authoring",
+      "target": "FCHAIN-collaborative-authoring",
+      "type": "compose"
+    },
+    {
+      "source": "UC-custom-reports",
+      "target": "FCHAIN-custom-reports-flow",
+      "type": "compose"
+    },
+    {
+      "source": "UC-custom-reports-flow",
+      "target": "FCHAIN-custom-reports-flow",
+      "type": "compose"
+    },
+    {
+      "source": "UC-edit-graph",
+      "target": "FCHAIN-edit-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-edit-scenario",
+      "target": "FCHAIN-edit-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export-flow",
+      "target": "FCHAIN-export-flow",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export-graph",
+      "target": "FCHAIN-export-flow",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export-graph",
+      "target": "FCHAIN-export-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export-graph",
+      "target": "REQ-export-format",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export-scenario",
+      "target": "FCHAIN-export-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export-scenario",
+      "target": "REQ-export-format",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export-state",
+      "target": "FCHAIN-export-state",
+      "type": "compose"
+    },
+    {
+      "source": "UC-live-updates",
+      "target": "FCHAIN-live-updates",
+      "type": "compose"
+    },
+    {
+      "source": "UC-live-updates",
+      "target": "FCHAIN-live-updates-flow",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login",
+      "target": "FCHAIN-audit-log",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login",
+      "target": "FCHAIN-collaborative-authoring",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login",
+      "target": "FCHAIN-custom-reports-flow",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login",
+      "target": "FCHAIN-edit-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login",
+      "target": "FCHAIN-export-flow",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login",
+      "target": "FCHAIN-live-updates",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login",
+      "target": "FCHAIN-login",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login",
+      "target": "FCHAIN-login-flow",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login",
+      "target": "FCHAIN-login-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login",
+      "target": "REQ-login-authentication",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login-flow",
+      "target": "FCHAIN-login-flow",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login-scenario",
+      "target": "FCHAIN-edit-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login-scenario",
+      "target": "FCHAIN-login-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-manage-permissions",
+      "target": "FCHAIN-manage-permissions",
+      "type": "compose"
+    },
+    {
+      "source": "UC-manage-session",
+      "target": "FCHAIN-manage-session",
+      "type": "compose"
+    },
+    {
+      "source": "UC-notifications",
+      "target": "FCHAIN-notifications",
+      "type": "compose"
+    },
+    {
+      "source": "UC-notify-changes",
+      "target": "FCHAIN-notify-changes",
+      "type": "compose"
+    },
+    {
+      "source": "UC-system-health",
+      "target": "FCHAIN-system-health",
+      "type": "compose"
+    },
+    {
+      "source": "UC-view-audit-log",
+      "target": "FCHAIN-audit-log",
+      "type": "compose"
+    },
+    {
+      "source": "UC-view-live-updates",
+      "target": "FCHAIN-live-updates",
+      "type": "compose"
+    }
+  ]
+}
