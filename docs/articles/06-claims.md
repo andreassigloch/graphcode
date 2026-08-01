@@ -26,9 +26,31 @@ Packaged as an add-on to Claude Code or OpenCode.
 ## What are the benefits?
 
 A clear, always-current overview of your codebase, checkable visually and by algorithm — structure and
-architecture quality alike. That overview enables automatic optimization. A local, weaker LLM benefits
+architecture quality alike. That overview enables automatic optimization. A smaller model benefits
 most: small prompts plus traceable, structural checks on its output let it act as well as — or better
-than — a much larger model.
+than — a much larger one, local or hosted (measured at project scale, not just per function — see
+below).
+
+## Does the local/small-model claim hold up under load?
+
+Yes, with a nuance worth stating precisely. A 48-round trial ran the identical driver — same gate, same
+readiness-driven loop, zero code branching between models — against a local 24B open model (devstral)
+and two frontier models (Claude Opus 5, Claude Haiku 4.5), each authoring a full system graph from one
+prompt.
+
+- **Local matched frontier scope.** devstral reached 85 elements / 148 traces across every dimension,
+  including the process layer (milestones, change requests) — for $0.
+- **The smallest model won outright.** Haiku 4.5 produced the largest, cleanest graph (86/154, 5
+  residual violations) for $1.58 in 15 minutes — beating Opus 5, which under the same driver produced
+  the *smallest* graph of the three (57/81, 81 rejected batches) for $11.85.
+- **Why Opus lost.** Its usual edge comes from working its own way — explore, then build, its own
+  judgment on order. A tight, structured loop takes exactly that away. The same regime that scaffolds a
+  small model constrains a large one used to deciding for itself.
+
+The takeaway isn't "small beats big" as a rule — it's that **the fit between the loop and the model
+decides**, and a deterministic gate plus a readiness-driven loop is what lets a model be judged on
+following the method, not on raw scale. Full data:
+[`docs/executor-abschlussbericht.md`](../executor-abschlussbericht.md).
 
 ## What are the downsides?
 

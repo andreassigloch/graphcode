@@ -1,0 +1,24 @@
+[generate 1] phase=seed done=false
+  1.1: graph_mutate
+[generate 2] phase=expand done=false
+  2.1: graph_mutate
+graphcode run: {
+  "done": false,
+  "genRounds": 2,
+  "modelTurns": 2,
+  "mutatesApplied": 2,
+  "mutatesRejected": 0,
+  "dryRunProbes": 0,
+  "repairedAfterRejection": 0,
+  "preflightFixed": 0,
+  "preflightBlocked": 0,
+  "candidatesSampled": 0,
+  "algoPicks": 0,
+  "modelPicks": 0,
+  "judgeDisagreements": 0,
+  "tokensIn": 8144,
+  "tokensOut": 6240,
+  "tokensReasoning": 0,
+  "export": "docs/graph/gc-run-opus5-probe2.graph.json",
+  "exportError": null
+}

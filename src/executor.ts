@@ -846,7 +846,17 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
   const runMutate = async (input: unknown): Promise<MutateOutcome> => {
     const pre = await runPreflight(input);
     if (pre.blocked) return pre.blocked;
-    return callGate(pre.effective, pre.hints);
+    const outcome = await callGate(pre.effective, pre.hints);
+    // CR-GC-286-Beobachtbarkeit: bei INPUT-SCHEMA die Top-Level-Form loggen —
+    // das Audit speichert bei Schema-Fehlern den Roh-Input nicht (commands:[]),
+    // ohne diese Zeile ist "supply exactly one of commands or formatE" nicht
+    // diagnostizierbar (beide gesetzt? keins?).
+    if (!outcome.success && (outcome.violations ?? []).some((v) => v.ruleId === 'INPUT-SCHEMA')) {
+      const keys =
+        typeof input === 'object' && input !== null ? Object.keys(input).join(',') : typeof input;
+      trace(`    input-schema keys: [${keys}]`);
+    }
+    return outcome;
   };
 
   const execReadOrGraphTool = async (name: string, input: unknown): Promise<string> => {

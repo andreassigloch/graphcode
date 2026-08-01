@@ -1,0 +1,30 @@
+[generate 1] phase=seed done=false
+  1.1: graph_mutate
+    input-schema keys: []
+    gate rejected [INPUT-SCHEMA] — feeding violations back (turn 1/6)
+  1.2: graph_mutate
+    input-schema keys: []
+    gate rejected [INPUT-SCHEMA] — feeding violations back (turn 2/6)
+  1.3: graph_mutate
+[generate 2] phase=expand done=false
+  2.1: graph_mutate
+graphcode run: {
+  "done": false,
+  "genRounds": 2,
+  "modelTurns": 4,
+  "mutatesApplied": 2,
+  "mutatesRejected": 2,
+  "dryRunProbes": 0,
+  "repairedAfterRejection": 1,
+  "preflightFixed": 0,
+  "preflightBlocked": 0,
+  "candidatesSampled": 0,
+  "algoPicks": 0,
+  "modelPicks": 0,
+  "judgeDisagreements": 0,
+  "tokensIn": 16747,
+  "tokensOut": 7955,
+  "tokensReasoning": 0,
+  "export": "docs/graph/gc-run-opus5-probe.graph.json",
+  "exportError": null
+}

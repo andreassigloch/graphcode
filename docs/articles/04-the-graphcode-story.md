@@ -77,6 +77,11 @@ talk to the graph. It is not tied to one vendor's assistant.
   laptop implemented a function correctly — all five acceptance criteria, actually executed — from a
   precise 700-word briefing pulled out of the graph. The original session had read the equivalent of
   roughly seventy pages of prose for the same job. Precise context beat the bigger model.
+- **Confirmed at project scale, not just per function.** A 48-round trial ran the same driver,
+  unchanged, against a local 24B model and two frontier models authoring a full system graph from one
+  prompt. The local model matched frontier scope for $0; the *smallest* frontier model produced the
+  best result of the three — cheaper, faster, and more complete than the largest. The deciding factor
+  was following the method, not model size.
 - **Correctness of the structure is checkable without AI.** The result is verified against rules, not
   against a second model's opinion.
 

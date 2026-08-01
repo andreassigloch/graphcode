@@ -1,9 +1,12 @@
 # CR-GC-285 — Runden-Prompt-Injektion: Guide-Slice + Element-Index
 
-**Status:** open — Implementierung fertig (2026-08-01, gemerged: `DIMENSION_FOCUS_TYPES`
-+ `focusTypes` in generate.ts, `buildRoundInjection` im Executor, 8k-Zeichen-Budget,
-Unit-Tests grün). OFFEN ist nur noch der Live-Vergleichslauf (Turns/Runde,
-Elemente, Wall-Zeit — braucht LM Studio oder Anthropic-Key).
+**Status:** done (2026-08-01, Vergleichslauf gemessen — GEMISCHTES Ergebnis,
+dokumentiert im Nachtrag `docs/executor-abschlussbericht.md`): Turn-Ziel klar
+erreicht (devstral 24 Rd.: 40 statt 121 Turns, Lese-Quote 7,5 % statt 62 %,
+Wall 51,7 statt 77,4 min; Opus 12 Rd.: 60 El in 6,5 min). ABER lokale
+Element-Ausbeute 22 vs. 38 (v9) — ohne Explorations-Turns verfallen devstrals
+Batches auf Minimalcompliance. Kriterium „mindestens gleiche Ausbeute": Frontier
+✅, Local ❌. Folge-Entscheidung offen: Injektion als Backend-Config.
 **Datum:** 2026-08-01
 **Kontext:** Turn-Analyse der Testläufe: 41–59 % aller Modell-Turns waren reine
 Lese-Turns; `graph_authoring_guide` wurde 72–107× pro Lauf für dieselben paar

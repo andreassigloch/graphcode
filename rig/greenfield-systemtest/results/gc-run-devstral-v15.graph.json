@@ -1,0 +1,353 @@
+{
+  "elements": [
+    {
+      "id": "ACTOR-admin",
+      "type": "ACTOR",
+      "name": "Admin",
+      "description": "Systemadministrator, der Nutzer verwaltet und Systemeinstellungen konfiguriert."
+    },
+    {
+      "id": "ACTOR-auditor",
+      "type": "ACTOR",
+      "name": "Auditor",
+      "description": "Externe Prüfer, der den Systemgraphen exportiert und auf Compliance überprüft."
+    },
+    {
+      "id": "ACTOR-user",
+      "type": "ACTOR",
+      "name": "Endnutzer",
+      "description": "Anmeldender Nutzer, der den Systemgraphen bearbeitet und Live-Updates sieht."
+    },
+    {
+      "id": "FCHAIN-edit",
+      "type": "FCHAIN",
+      "name": "Edit-Flow",
+      "description": "Szenario für das Bearbeiten des Graphen."
+    },
+    {
+      "id": "FCHAIN-export",
+      "type": "FCHAIN",
+      "name": "Export-Flow",
+      "description": "Szenario für den Export des Graphen."
+    },
+    {
+      "id": "FCHAIN-live-update",
+      "type": "FCHAIN",
+      "name": "Live-Update-Flow",
+      "description": "Szenario für das Anzeigen von Live-Updates."
+    },
+    {
+      "id": "REQ-auth-export",
+      "type": "REQ",
+      "name": "Authentifizierung für Export",
+      "description": "Nutzer muss angemeldet sein, um den Graphen zu exportieren."
+    },
+    {
+      "id": "REQ-broadcast-updates",
+      "type": "REQ",
+      "name": "Broadcast von Live-Updates",
+      "description": "Alle angemeldeten Nutzer erhalten Echtzeit-Benachrichtigungen über Graph-Änderungen."
+    },
+    {
+      "id": "REQ-live-validation",
+      "type": "REQ",
+      "name": "Live-Validierung bei Änderungen",
+      "description": "Jede Graph-Änderung wird sofort auf Validierungsfehler überprüft."
+    },
+    {
+      "id": "SYS-webapp",
+      "type": "SYS",
+      "name": "Multiuser Web-App",
+      "description": "Multiuser-fähige Web-App aus dem graphcode harness: Nutzer melden sich an, autorieren gemeinsam einen governten Systemgraphen über das Apply-Gate, sehen Live-Updates und exportieren den Stand."
+    },
+    {
+      "id": "TEST-verify-auth-export",
+      "type": "TEST",
+      "name": "Verify: Authentifizierung für Export",
+      "description": "Prüfe, ob der Export nur nach erfolgreicher Authentifizierung möglich ist."
+    },
+    {
+      "id": "TEST-verify-broadcast-updates",
+      "type": "TEST",
+      "name": "Verify: Broadcast von Live-Updates",
+      "description": "Prüft, ob Live-Updates an alle angemeldeten Nutzer gesendet werden. Schritt: Nutzer A ändert Graph; Nutzer B sieht die Änderungen sofort im UI."
+    },
+    {
+      "id": "TEST-verify-live-validation",
+      "type": "TEST",
+      "name": "Verify: Live-Validierung bei Änderungen",
+      "description": "Prüft, ob Änderungen sofort validiert werden und Fehlermeldungen angezeigt werden. Schritt: Nutzer fügt ungültigen Knoten hinzu → sofortige Fehlermeldung."
+    },
+    {
+      "id": "UC-edit-scenario",
+      "type": "UC",
+      "name": "Graph bearbeiten mit Live-Validierung",
+      "description": "Admin bearbeitet den Graphen und sieht sofortige Validierungsfeedback."
+    },
+    {
+      "id": "UC-export",
+      "type": "UC",
+      "name": "Graph exportieren",
+      "description": "Nutzer exportiert den aktuellen Stand des Graphen als JSON oder Format-E."
+    },
+    {
+      "id": "UC-export-scenario",
+      "type": "UC",
+      "name": "Graph exportieren mit Authentifizierung",
+      "description": "Admin exportiert den Graphen nach erfolgreicher Authentifizierung."
+    },
+    {
+      "id": "UC-graph-edit",
+      "type": "UC",
+      "name": "Graph bearbeiten",
+      "description": "Nutzer fügt Knoten und Kanten hinzu, löscht Elemente oder aktualisiert Attribute über das Apply-Gate."
+    },
+    {
+      "id": "UC-graph-edit-scenario",
+      "type": "UC",
+      "name": "Graph bearbeiten mit Live-Validierung",
+      "description": "Nutzer bearbeitet den Graphen und sieht Live-Updates."
+    },
+    {
+      "id": "UC-live-update",
+      "type": "UC",
+      "name": "Live-Updates anzeigen",
+      "description": "Nutzer sieht Änderungen anderer Nutzer in Echtzeit im Graphen."
+    },
+    {
+      "id": "UC-live-update-scenario",
+      "type": "UC",
+      "name": "Live-Updates für alle Nutzer anzeigen",
+      "description": "Nutzer sehen Live-Updates des Graphen nach Änderungen."
+    },
+    {
+      "id": "UC-login",
+      "type": "UC",
+      "name": "Anmeldung",
+      "description": "Nutzer gibt Benutzername und Passwort ein, authentifiziert sich und erhält eine Session-ID."
+    },
+    {
+      "id": "UC-login-scenario",
+      "type": "UC",
+      "name": "Anmeldung mit Live-Validierung",
+      "description": "Nutzer meldet sich an und sieht Live-Updates."
+    }
+  ],
+  "traces": [
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-edit-scenario",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-export",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-export-scenario",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-graph-edit",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-live-update",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-login",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-auditor",
+      "target": "UC-export",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-auditor",
+      "target": "UC-graph-edit",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-auditor",
+      "target": "UC-live-update",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-auditor",
+      "target": "UC-login",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-export",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-export-scenario",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-graph-edit",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-graph-edit-scenario",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-live-update",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-live-update-scenario",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-login",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-login-scenario",
+      "type": "io"
+    },
+    {
+      "source": "FCHAIN-edit",
+      "target": "REQ-live-validation",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-export",
+      "target": "REQ-auth-export",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-live-update",
+      "target": "REQ-broadcast-updates",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-live-update",
+      "target": "REQ-live-validation",
+      "type": "satisfy"
+    },
+    {
+      "source": "SYS-webapp",
+      "target": "UC-export",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-webapp",
+      "target": "UC-export-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-webapp",
+      "target": "UC-graph-edit",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-webapp",
+      "target": "UC-graph-edit-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-webapp",
+      "target": "UC-live-update",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-webapp",
+      "target": "UC-live-update-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-webapp",
+      "target": "UC-login",
+      "type": "compose"
+    },
+    {
+      "source": "TEST-verify-auth-export",
+      "target": "REQ-auth-export",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-broadcast-updates",
+      "target": "REQ-broadcast-updates",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-live-validation",
+      "target": "REQ-live-validation",
+      "type": "verify"
+    },
+    {
+      "source": "UC-edit-scenario",
+      "target": "FCHAIN-edit",
+      "type": "compose"
+    },
+    {
+      "source": "UC-edit-scenario",
+      "target": "REQ-live-validation",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export-scenario",
+      "target": "FCHAIN-export",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export-scenario",
+      "target": "REQ-auth-export",
+      "type": "compose"
+    },
+    {
+      "source": "UC-graph-edit-scenario",
+      "target": "FCHAIN-edit",
+      "type": "compose"
+    },
+    {
+      "source": "UC-graph-edit-scenario",
+      "target": "REQ-live-validation",
+      "type": "compose"
+    },
+    {
+      "source": "UC-live-update-scenario",
+      "target": "FCHAIN-live-update",
+      "type": "compose"
+    },
+    {
+      "source": "UC-live-update-scenario",
+      "target": "REQ-broadcast-updates",
+      "type": "compose"
+    },
+    {
+      "source": "UC-live-update-scenario",
+      "target": "REQ-live-validation",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login-scenario",
+      "target": "FCHAIN-live-update",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login-scenario",
+      "target": "REQ-live-validation",
+      "type": "compose"
+    }
+  ]
+}

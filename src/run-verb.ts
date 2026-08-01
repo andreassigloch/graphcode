@@ -42,7 +42,15 @@ export function parseExecutorEnv(env: NodeJS.ProcessEnv): ExecutorConfig {
     ...(env.GRAPHCODE_LLM_MAX_ROUNDS ? { maxRounds: Number(env.GRAPHCODE_LLM_MAX_ROUNDS) } : {}),
     ...(env.GRAPHCODE_LLM_TIMEOUT_MS ? { callTimeoutMs: Number(env.GRAPHCODE_LLM_TIMEOUT_MS) } : {}),
     ...(env.GRAPHCODE_LLM_TOOLSET ? { toolset: env.GRAPHCODE_LLM_TOOLSET } : {}),
-    ...(env.GRAPHCODE_LLM_MAX_TOKENS ? { maxTokens: Number(env.GRAPHCODE_LLM_MAX_TOKENS) } : {}),
+    // Der 2048-Default ist für die lokale Decode-Rate dimensioniert (16 tok/s).
+    // Frontier-Modelle schreiben große Batches: 2048 kappt das Tool-Call-JSON,
+    // die API liefert input {} → INPUT-SCHEMA-Dead-End (Opus-Nachtest CR-GC-286:
+    // 2048 → 10/10 Rejections, 8192 → 0). Anthropic decoded schnell — 8192.
+    ...(env.GRAPHCODE_LLM_MAX_TOKENS
+      ? { maxTokens: Number(env.GRAPHCODE_LLM_MAX_TOKENS) }
+      : env.GRAPHCODE_LLM_BACKEND === 'anthropic'
+        ? { maxTokens: 8192 }
+        : {}),
     ...(env.GRAPHCODE_LLM_TEMPERATURE ? { temperature: Number(env.GRAPHCODE_LLM_TEMPERATURE) } : {}),
     // Best-of-N (CR-GC-288): N Kandidaten pro Runde + Judge ('gate' | 'model').
     ...(env.GRAPHCODE_LLM_CANDIDATES ? { candidates: Number(env.GRAPHCODE_LLM_CANDIDATES) } : {}),

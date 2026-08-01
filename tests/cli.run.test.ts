@@ -77,6 +77,19 @@ describe('parseExecutorEnv (CR-GC-279)', () => {
     expect(config.maxRounds).toBe(5);
     expect(config.maxStepTurns).toBe(6);
     expect(config.apiKey).toBeUndefined();
+    // openai/local: 2048 (Decode-Rate-Budget) bleibt der Schema-Default.
+    expect(config.maxTokens).toBe(2048);
+  });
+
+  it('anthropic backend defaults maxTokens to 8192 (Frontier-Batches: 2048 kappt das Tool-Call-JSON → input {})', () => {
+    const base = {
+      GRAPHCODE_LLM_BASE_URL: 'https://api.anthropic.com',
+      GRAPHCODE_LLM_MODEL: 'claude-opus-5',
+      GRAPHCODE_LLM_BACKEND: 'anthropic',
+    };
+    expect(parseExecutorEnv(base).maxTokens).toBe(8192);
+    // explizite Env gewinnt weiterhin
+    expect(parseExecutorEnv({ ...base, GRAPHCODE_LLM_MAX_TOKENS: '4096' }).maxTokens).toBe(4096);
   });
 });
 

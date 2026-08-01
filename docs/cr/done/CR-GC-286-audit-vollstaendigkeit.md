@@ -1,9 +1,12 @@
 # CR-GC-286 — Audit-Vollständigkeit + Rejection-Beobachtbarkeit
 
-**Status:** open — Implementierung fertig (2026-08-01, gemerged: formatE-STRUCT
-auditiert, INPUT-SCHEMA-Verdict am Handler statt unauditiertem Throw, ruleIds
-in run.log-Rejections, Unit-Tests grün). OFFEN ist nur noch der Opus-Nachtest
-(12–24 Runden, braucht Anthropic-Key) + Nachtrag im Abschlussbericht.
+**Status:** done (2026-08-01, Opus-Nachtest gefahren und Rätsel gelöst): alle
+10 Rejections des 12-Runden-Laufs = INPUT-SCHEMA, auditiert; Key-Logging zeigte
+`keys: []` — **maxTokens 2048 kappte Opus' Tool-Call-JSON** (leeres Input-Objekt
+= die 63 unauditierten Rejections des Originallaufs). Gegenprobe 8192 → 0
+Rejections. Root-Cause-Fix: anthropic-Default maxTokens 8192 in run-verb.ts.
+Nachtrag im Abschlussbericht geschrieben. Der Original-Opus-Befund
+(„Emissions-Regime beschneidet Frontier") ist damit widerlegt.
 **Datum:** 2026-08-01
 **Kontext:** Die Opus-Fehldiagnose des Abschlussberichts („81 Rejections =
 Emissions-Regime beschneidet Frontier") war nur durch Audit-Nachanalyse

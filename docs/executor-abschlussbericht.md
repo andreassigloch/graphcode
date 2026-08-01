@@ -90,6 +90,43 @@ Gate-Judge + Judge-Vergleichs-Logging (Design fixiert in
 Runde-1-Input (Billion-User vs. Banking — heute erst im Handoff); Fund-Familien-
 Defer (v13b: Nachbar-Funde derselben Familie stagnieren nacheinander).
 
+## Nachtrag 2026-08-01: Audit-Nachanalyse + Validierungsläufe CR-284/285/286
+
+Die Audit-Nachanalyse und zwei Messläufe mit den umgesetzten CR-284 (Batch-
+Preflight), CR-285 (Guide/Index-Injektion) und CR-286 (Audit-Vollständigkeit)
+**korrigieren den zentralen Opus-Befund dieses Berichts**:
+
+1. **„81 Rejections = Emissions-Regime beschneidet Frontier" ist widerlegt.**
+   Nur 18 der 81 erreichten das Gate (fast alle R-01); 63 waren unauditierte
+   Client-Fehler. Der Opus-Nachtest mit ruleId-Logging zeigt die Ursache:
+   `input-schema keys: []` — **maxTokens 2048** (für die lokale 16-tok/s-Box
+   dimensioniert) kappte Opus' große Tool-Call-JSONs, die API lieferte ein
+   leeres Input-Objekt, der Handler warf unauditiert. Gegenprobe mit
+   maxTokens 8192: **0 Rejections**. Fix: anthropic-Backend default jetzt 8192
+   (`run-verb.ts`), explizite Env gewinnt.
+2. **Opus 5 mit den drei Fixes (12 Runden): 60 Elemente / 93 Traces, 5 Errors,
+   6,5 min, ~$1,60** — mehr Ausbeute als der ursprüngliche 48-Runden-Lauf
+   (57/81, 36 min, $11,85) in einem Viertel der Runden. Die 10 verbliebenen
+   INPUT-SCHEMA-Rejections (noch mit 2048) reparierte Opus nach Feedback in
+   6 von 10 Fällen selbst.
+3. **Injektion (CR-285) nützt Frontier, hungert Local aus.** devstral v15
+   (24 Rd., mit Injektion) vs. v9 (24 Rd., ohne): Modell-Turns 40 vs. 121,
+   reine Lese-Turns 7,5 % vs. 62 %, Wall 51,7 vs. 77,4 min — aber
+   **22 vs. 38 Elemente**: ohne Explorations-Turns verfallen devstrals Batches
+   ab Runde 5 auf 2-Command-Minimalcompliance (Spiegelbild des CR-282-Befunds:
+   die Lese-Phase war devstrals Elaboration). Messung konfundiert 284+285
+   (Template-Änderung + Injektion) — der Turn-Effekt ist eindeutig 285, der
+   Ausbeute-Einbruch mutmaßlich beides. **Empfehlung: Injektion als Config
+   (an für anthropic, aus für openai/local) — Folge-CR, User-Entscheidung.**
+4. **R-01-Kette bestätigt**: Gate-Rejections der Nachtests sind praktisch
+   verschwunden (v15: 1, opus-v2: 0 jenseits INPUT-SCHEMA); Preflight fixte
+   je 3 Commands (TEST-Stubs/Flips), 0 Blocks.
+
+Die Regime-These bleibt nur in abgeschwächter Form: Haiku folgt dem
+dryRun-Protokoll freiwillig, Opus/devstral nie — die Auswahl gehört in den
+Code (CR-288, umgesetzt, Best-of-N noch ohne Messlauf). Artefakte:
+`rig/greenfield-systemtest/results/` (v15, opus5-v2, Proben-Logs, Audits).
+
 ## Was ursprünglich noch fehlt → Folgechat (CR-GC-283)
 
 Der Ursprungsplan endet nicht beim Graphen: **(1) Planungs-Step** auf dem

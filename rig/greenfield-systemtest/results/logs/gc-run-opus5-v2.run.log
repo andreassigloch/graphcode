@@ -1,0 +1,68 @@
+[generate 1] phase=seed done=false
+  1.1: graph_mutate
+    gate rejected [INPUT-SCHEMA] — feeding violations back (turn 1/6)
+  1.2: graph_mutate
+    gate rejected [INPUT-SCHEMA] — feeding violations back (turn 2/6)
+  1.3: graph_mutate
+    gate rejected [INPUT-SCHEMA] — feeding violations back (turn 3/6)
+  1.4: graph_mutate
+    gate rejected [INPUT-SCHEMA] — feeding violations back (turn 4/6)
+  1.5: graph_mutate
+[generate 2] phase=expand done=false
+  2.1: graph_mutate
+[generate 3] phase=expand done=false
+  3.1: graph_mutate
+[generate 4] phase=expand done=false
+  4.1: graph_mutate
+    gate rejected [INPUT-SCHEMA] — feeding violations back (turn 1/6)
+  4.2: graph_mutate
+[generate 5] phase=expand done=false
+  5.1: graph_mutate
+[generate 6] phase=expand done=false
+  stagnation x1: same generate prompt as last round
+  6.1: graph_mutate
+    gate rejected [INPUT-SCHEMA] — feeding violations back (turn 1/6)
+  6.2: graph_mutate
+[generate 7] phase=expand done=false
+  7.1: graph_mutate
+    gate rejected [INPUT-SCHEMA] — feeding violations back (turn 1/6)
+  7.2: graph_mutate
+[generate 8] phase=expand done=false
+  8.1: graph_mutate
+[generate 9] phase=expand done=false
+  9.1: graph_mutate
+    gate rejected [INPUT-SCHEMA] — feeding violations back (turn 1/6)
+  9.2: graph_mutate
+    gate rejected [INPUT-SCHEMA] — feeding violations back (turn 2/6)
+  9.3: graph_mutate
+[generate 10] phase=expand done=false
+  10.1: graph_mutate
+[generate 11] phase=expand done=false
+  11.1: graph_mutate
+    gate rejected [INPUT-SCHEMA] — feeding violations back (turn 1/6)
+  11.2: graph_mutate
+    preflight: R-01 autocomplete: TEST-Stub TEST-verify-abmeldeereignis-protokollieren + verify-Kante für REQ-abmeldeereignis-protokollieren angehängt
+    preflight: R-01 autocomplete: TEST-Stub TEST-verify-aenderung-dauerhaft-persistieren + verify-Kante für REQ-aenderung-dauerhaft-persistieren angehängt
+    preflight: R-01 autocomplete: TEST-Stub TEST-verify-regelwidrige-aenderung-verwerfen + verify-Kante für REQ-regelwidrige-aenderung-verwerfen angehängt
+[generate 12] phase=expand done=false
+  12.1: graph_mutate
+graphcode run: {
+  "done": false,
+  "genRounds": 12,
+  "modelTurns": 22,
+  "mutatesApplied": 12,
+  "mutatesRejected": 10,
+  "dryRunProbes": 0,
+  "repairedAfterRejection": 6,
+  "preflightFixed": 3,
+  "preflightBlocked": 0,
+  "candidatesSampled": 0,
+  "algoPicks": 0,
+  "modelPicks": 0,
+  "judgeDisagreements": 0,
+  "tokensIn": 120325,
+  "tokensOut": 39402,
+  "tokensReasoning": 0,
+  "export": "docs/graph/gc-run-opus5-v2.graph.json",
+  "exportError": null
+}

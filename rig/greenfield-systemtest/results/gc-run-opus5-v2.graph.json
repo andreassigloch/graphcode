@@ -1,0 +1,840 @@
+{
+  "elements": [
+    {
+      "id": "ACTOR-auditor",
+      "type": "ACTOR",
+      "name": "Auditor",
+      "description": "Prüfende Rolle, die exportierte Graphstände zur Nachvollziehbarkeit von Änderungen abruft und bewertet."
+    },
+    {
+      "id": "ACTOR-graph-author",
+      "type": "ACTOR",
+      "name": "Graph-Autor",
+      "description": "Angemeldeter Nutzer, der gemeinsam mit anderen Elemente und Kanten des governten Systemgraphen autoriert."
+    },
+    {
+      "id": "ACTOR-identitaetsanbieter",
+      "type": "ACTOR",
+      "name": "Identitätsanbieter",
+      "description": "Externer Identitätsdienst, der Zugangsdaten der Nutzer prüft und Anmeldeergebnisse an die Plattform zurückmeldet."
+    },
+    {
+      "id": "ACTOR-platform-operator",
+      "type": "ACTOR",
+      "name": "Plattform-Betreiber",
+      "description": "Betreibt die Web-App, verwaltet Nutzerkonten und Zugriffsrechte und überwacht den Zustand des Systems."
+    },
+    {
+      "id": "FCHAIN-abmeldung-erfolgreich",
+      "type": "FCHAIN",
+      "name": "Abmeldung erfolgreich",
+      "description": "Nutzer löst Abmeldung aus, Sitzung wird invalidiert, Live-Verbindung getrennt, Anmeldemaske erscheint."
+    },
+    {
+      "id": "FCHAIN-anmeldung-abgelehnt",
+      "type": "FCHAIN",
+      "name": "Anmeldung mit ungültigen Zugangsdaten",
+      "description": "Nutzer gibt falsche Zugangsdaten ein, System weist die Anmeldung ab, protokolliert den Versuch und fordert erneute Eingabe ohne Sitzung anzulegen."
+    },
+    {
+      "id": "FCHAIN-anmeldung-erfolgreich",
+      "type": "FCHAIN",
+      "name": "Anmeldung mit gültigen Zugangsdaten",
+      "description": "Nutzer öffnet die Web-App, gibt Zugangsdaten ein, System prüft sie, erstellt eine Sitzung und zeigt den Arbeitsbereich mit dem governten Graphen."
+    },
+    {
+      "id": "FCHAIN-export-erfolgreich",
+      "type": "FCHAIN",
+      "name": "Graphstand vollständig exportiert",
+      "description": "Graph-Autor löst Export aus; System serialisiert den freigegebenen Graphstand und liefert die Exportdatei zum Download aus."
+    },
+    {
+      "id": "FCHAIN-export-waehrend-laufender-aenderung",
+      "type": "FCHAIN",
+      "name": "Export während laufender Änderung",
+      "description": "Export startet, während eine Gate-Prüfung läuft; System exportiert den letzten konsistenten Stand und weist auf ausstehende Änderungen hin."
+    },
+    {
+      "id": "FCHAIN-gate-akzeptiert-aenderung",
+      "type": "FCHAIN",
+      "name": "Gate akzeptiert Änderung",
+      "description": "Autor reicht eine Änderung ein, Apply-Gate prüft Regeln, vergibt Auto-Apply-Verdict, persistiert den Batch und schreibt den Audit-Eintrag."
+    },
+    {
+      "id": "FCHAIN-gate-blockiert-aenderung",
+      "type": "FCHAIN",
+      "name": "Gate blockiert regelwidrige Änderung",
+      "description": "Autor reicht eine regelwidrige Änderung ein, Apply-Gate liefert Block-Verdict mit Violations und Fix-Hints, nichts wird persistiert."
+    },
+    {
+      "id": "FCHAIN-gleichzeitige-autorierung",
+      "type": "FCHAIN",
+      "name": "Gleichzeitige Autorierung zweier Nutzer",
+      "description": "Zwei Autoren ändern denselben Graphstand; System erkennt die veraltete Basisversion, lehnt den zweiten Batch ab und liefert die Änderungsdelta zur Wiederholung."
+    },
+    {
+      "id": "FCHAIN-graph-element-autorieren",
+      "type": "FCHAIN",
+      "name": "Element gemeinsam autorieren",
+      "description": "Autor wählt einen Elementtyp, füllt Attribute und Kanten, reicht den Batch ein; System übernimmt ihn und verteilt das Ergebnis an alle Mitautoren."
+    },
+    {
+      "id": "FCHAIN-live-update-empfangen",
+      "type": "FCHAIN",
+      "name": "Live-Update nach Fremdänderung empfangen",
+      "description": "Ein anderer Nutzer wendet eine Änderung an; System sendet das Update und aktualisiert die Ansicht des Beobachters ohne Neuladen."
+    },
+    {
+      "id": "FCHAIN-live-verbindung-unterbrochen",
+      "type": "FCHAIN",
+      "name": "Live-Verbindung unterbrochen und wiederhergestellt",
+      "description": "Die Update-Verbindung bricht ab; System meldet den Verlust, verbindet neu und liefert die verpassten Änderungen nach."
+    },
+    {
+      "id": "FCHAIN-rolle-zuweisen",
+      "type": "FCHAIN",
+      "name": "Autorierungsrolle zuweisen",
+      "description": "Plattform-Betreiber weist einem Nutzer eine Autorierungsrolle zu; System speichert die Rolle und schaltet die zugehörigen Rechte frei."
+    },
+    {
+      "id": "FCHAIN-sitzung-abgelaufen",
+      "type": "FCHAIN",
+      "name": "Sitzung abgelaufen",
+      "description": "Sitzungszeit läuft ab, System beendet die Sitzung automatisch und fordert erneute Anmeldung an."
+    },
+    {
+      "id": "FCHAIN-zugriff-entzogen",
+      "type": "FCHAIN",
+      "name": "Zugriff entzogen",
+      "description": "Plattform-Betreiber entzieht einem Nutzer den Zugriff; System beendet dessen Sitzung und verweigert weitere Autorierungen."
+    },
+    {
+      "id": "FUNC-abmeldeereignis-protokollieren",
+      "type": "FUNC",
+      "name": "Abmeldeereignis protokollieren",
+      "description": "Schreibt das Abmeldeereignis mit Zeitstempel und Nutzerkennung in das Audit-Protokoll."
+    },
+    {
+      "id": "FUNC-aenderung-persistieren",
+      "type": "FUNC",
+      "name": "Änderung persistieren",
+      "description": "Schreibt den akzeptierten Änderungsbatch transaktional in den governten Graphen und erhöht die Graphversion."
+    },
+    {
+      "id": "FUNC-aenderung-verwerfen",
+      "type": "FUNC",
+      "name": "Änderung verwerfen",
+      "description": "Verwirft den abgelehnten Änderungsbatch transaktional, sodass der Graphstand unverändert bleibt."
+    },
+    {
+      "id": "FUNC-aenderungsbatch-validieren",
+      "type": "FUNC",
+      "name": "Änderungsbatch validieren",
+      "description": "Prüft den eingereichten Änderungsbatch im Apply-Gate gegen die Governance-Regeln und ermittelt das Verdict."
+    },
+    {
+      "id": "FUNC-aenderungsereignis-veroeffentlichen",
+      "type": "FUNC",
+      "name": "Änderungsereignis veröffentlichen",
+      "description": "Veröffentlicht das Änderungsereignis mit neuer Graphversion an alle verbundenen Live-Kanäle."
+    },
+    {
+      "id": "FUNC-anmeldefehler-melden",
+      "type": "FUNC",
+      "name": "Anmeldefehler melden",
+      "description": "Meldet dem Nutzer eine abgelehnte Anmeldung ohne Preisgabe sicherheitsrelevanter Details."
+    },
+    {
+      "id": "FUNC-ansicht-aktualisieren",
+      "type": "FUNC",
+      "name": "Ansicht aktualisieren",
+      "description": "Aktualisiert die Graphansicht des Nutzers mit dem empfangenen Änderungsereignis."
+    },
+    {
+      "id": "FUNC-berechtigung-aktualisieren",
+      "type": "FUNC",
+      "name": "Berechtigung aktualisieren",
+      "description": "Schreibt die geänderten Schreib- und Leserechte in das Berechtigungsmodell."
+    },
+    {
+      "id": "FUNC-elemententwurf-erfassen",
+      "type": "FUNC",
+      "name": "Elemententwurf erfassen",
+      "description": "Nimmt Typ, Name, Beschreibung und Kanten des zu autorierenden Elements vom Nutzer entgegen."
+    },
+    {
+      "id": "FUNC-exportdatei-bereitstellen",
+      "type": "FUNC",
+      "name": "Exportdatei bereitstellen",
+      "description": "Stellt die serialisierte Exportdatei mit Versionsstempel zum Download für den anfordernden Nutzer bereit."
+    },
+    {
+      "id": "FUNC-fehlversuch-protokollieren",
+      "type": "FUNC",
+      "name": "Fehlversuch protokollieren",
+      "description": "Protokolliert abgelehnte Anmeldeversuche revisionssicher für Auditor und Betreiber."
+    },
+    {
+      "id": "FUNC-graphstand-serialisieren",
+      "type": "FUNC",
+      "name": "Graphstand serialisieren",
+      "description": "Serialisiert alle Knoten und Kanten des fixierten Lesestands in das gewählte Exportformat."
+    },
+    {
+      "id": "FUNC-konflikt-aufloesen",
+      "type": "FUNC",
+      "name": "Konflikt auflösen",
+      "description": "Bietet dem Autor den Konfliktstand zum erneuten Anwenden an und übernimmt die aufgelöste Änderung."
+    },
+    {
+      "id": "FUNC-lesestand-fixieren",
+      "type": "FUNC",
+      "name": "Konsistenten Lesestand fixieren",
+      "description": "Fixiert eine konsistente Graphversion als Lesestand, sodass der Export unabhängig von parallel laufenden Änderungen bleibt."
+    },
+    {
+      "id": "FUNC-livekanal-abonnieren",
+      "type": "FUNC",
+      "name": "Live-Kanal abonnieren",
+      "description": "Abonniert den Änderungskanal des Graphen für die aktive Sitzung."
+    },
+    {
+      "id": "FUNC-livekanal-schliessen",
+      "type": "FUNC",
+      "name": "Live-Kanal schließen",
+      "description": "Schließt den Live-Update-Kanal der beendeten Sitzung und meldet den Nutzer von der Autorierungssicht ab."
+    },
+    {
+      "id": "FUNC-livekanal-wiederherstellen",
+      "type": "FUNC",
+      "name": "Live-Kanal wiederherstellen",
+      "description": "Baut den Live-Kanal nach einem Abbruch erneut auf und authentisiert die Sitzung."
+    },
+    {
+      "id": "FUNC-regelverstoss-melden",
+      "type": "FUNC",
+      "name": "Regelverstoß melden",
+      "description": "Meldet dem Autor die verletzten Gate-Regeln mit Fundstelle, Schweregrad und Korrekturhinweis."
+    },
+    {
+      "id": "FUNC-rollenaenderung-protokollieren",
+      "type": "FUNC",
+      "name": "Rollenänderung protokollieren",
+      "description": "Protokolliert Rollenänderungen revisionssicher für den Auditor."
+    },
+    {
+      "id": "FUNC-rollenzuweisung-erfassen",
+      "type": "FUNC",
+      "name": "Rollenzuweisung erfassen",
+      "description": "Erfasst die vom Betreiber gewählte Autorierungsrolle für einen Nutzer."
+    },
+    {
+      "id": "FUNC-schreibkonflikt-erkennen",
+      "type": "FUNC",
+      "name": "Schreibkonflikt erkennen",
+      "description": "Erkennt konkurrierende Änderungen am selben Element durch Vergleich der Basisversion mit dem aktuellen Graphstand."
+    },
+    {
+      "id": "FUNC-sitzung-erstellen",
+      "type": "FUNC",
+      "name": "Sitzung erstellen",
+      "description": "Erzeugt nach erfolgreicher Prüfung eine authentifizierte Nutzersitzung mit Rollen und Gültigkeitsdauer."
+    },
+    {
+      "id": "FUNC-sitzung-invalidieren",
+      "type": "FUNC",
+      "name": "Sitzung invalidieren",
+      "description": "Beendet die aktive Nutzersitzung serverseitig und verwirft ausgestellte Sitzungstoken."
+    },
+    {
+      "id": "FUNC-sitzungskontext-bereitstellen",
+      "type": "FUNC",
+      "name": "Sitzungskontext bereitstellen",
+      "description": "Stellt der Web-App den Sitzungskontext (Nutzer, Rollen, Token) für nachfolgende Autorierungsaktionen bereit."
+    },
+    {
+      "id": "FUNC-update-zustellen",
+      "type": "FUNC",
+      "name": "Update an Client zustellen",
+      "description": "Stellt veröffentlichte Änderungsereignisse an alle abonnierten Clients zu."
+    },
+    {
+      "id": "FUNC-verbindungsabbruch-erkennen",
+      "type": "FUNC",
+      "name": "Verbindungsabbruch erkennen",
+      "description": "Erkennt den Abbruch der Live-Verbindung über ausbleibende Heartbeats."
+    },
+    {
+      "id": "FUNC-versaeumte-aenderungen-nachliefern",
+      "type": "FUNC",
+      "name": "Versäumte Änderungen nachliefern",
+      "description": "Liefert alle seit der letzten bestätigten Version aufgelaufenen Änderungsereignisse nach."
+    },
+    {
+      "id": "FUNC-zugangsdaten-pruefen",
+      "type": "FUNC",
+      "name": "Zugangsdaten prüfen",
+      "description": "Prüft die vom Nutzer übermittelten Zugangsdaten gegen den Identitätsanbieter und liefert ein eindeutiges Prüfergebnis."
+    },
+    {
+      "id": "REQ-abmeldeereignis-protokollieren",
+      "type": "REQ",
+      "name": "Abmeldeereignisse revisionssicher protokollieren",
+      "description": "Das System MUSS jede Beendigung einer Sitzung (aktive Abmeldung, Ablauf, Zugriffsentzug) mit Nutzerkennung, Zeitstempel und Beendigungsgrund in einem unveraenderlichen Protokoll erfassen, sodass ein Auditor den Sitzungsverlauf lueckenlos nachvollziehen kann."
+    },
+    {
+      "id": "REQ-aenderung-dauerhaft-persistieren",
+      "type": "REQ",
+      "name": "Akzeptierte Aenderung dauerhaft persistieren",
+      "description": "Das System MUSS einen vom Apply-Gate akzeptierten Aenderungsbatch atomar und dauerhaft in den governten Systemgraphen uebernehmen, die Graphversion monoton erhoehen und die uebernommene Version dem aufrufenden Nutzer bestaetigen."
+    },
+    {
+      "id": "REQ-regelwidrige-aenderung-verwerfen",
+      "type": "REQ",
+      "name": "Regelwidrige Aenderung vollstaendig verwerfen",
+      "description": "Das System MUSS einen Aenderungsbatch, der gegen die Regeln des Apply-Gates verstoesst oder einen Schreibkonflikt ausloest, vollstaendig verwerfen (kein Teilzustand), den Graphen unveraendert lassen und dem Nutzer die verletzten Regeln benennen."
+    },
+    {
+      "id": "SYS-collab-graph-platform",
+      "type": "SYS",
+      "name": "Collaborative Graph Platform",
+      "description": "Multiuser-fähige Web-App aus dem graphcode harness: Nutzer melden sich an, autorieren gemeinsam einen governten Systemgraphen über das Apply-Gate, sehen Live-Updates und exportieren den Stand."
+    },
+    {
+      "id": "TEST-verify-abmeldeereignis-protokollieren",
+      "type": "TEST",
+      "name": "Verify: Abmeldeereignisse revisionssicher protokollieren",
+      "description": "Prüfschritt: Angemeldete Sitzung aufbauen, Abmeldung auslösen, danach das Audit-Log lesen. Erwartet: genau ein unveränderlicher Eintrag mit Nutzer-ID, Sitzungs-ID, Zeitstempel und Ereignistyp 'logout'; ein Änderungsversuch am Eintrag wird abgewiesen (append-only).",
+      "testRef": "tests/verify-abmeldeereignis-protokollieren.spec.ts::logs an immutable logout audit entry",
+      "runnable": true,
+      "kind": "integration"
+    },
+    {
+      "id": "TEST-verify-aenderung-dauerhaft-persistieren",
+      "type": "TEST",
+      "name": "Verify: Akzeptierte Aenderung dauerhaft persistieren",
+      "description": "Prüfschritt: Regelkonformen Änderungsbatch über das Apply-Gate einreichen (tier auto-apply), Antwort-graphVersion merken, Prozess/Verbindung neu starten und den Graphen erneut lesen. Erwartet: alle Knoten/Kanten des Batches sind unverändert vorhanden und die graphVersion ist um genau 1 erhöht.",
+      "testRef": "tests/verify-aenderung-dauerhaft-persistieren.spec.ts::persists an accepted batch across restart",
+      "runnable": true,
+      "kind": "integration"
+    },
+    {
+      "id": "TEST-verify-regelwidrige-aenderung-verwerfen",
+      "type": "TEST",
+      "name": "Verify: Regelwidrige Aenderung vollstaendig verwerfen",
+      "description": "Prüfschritt: Batch mit einer gültigen und einer regelwidrigen Mutation (z.B. Kante mit unbekanntem Ziel) einreichen. Erwartet: Gate-Verdict tier=block mit Violation, success:false; anschließender Graph-Read zeigt weder die gültige noch die ungültige Mutation, graphVersion unverändert (Alles-oder-nichts).",
+      "testRef": "tests/verify-regelwidrige-aenderung-verwerfen.spec.ts::rejects illegal batch atomically",
+      "runnable": true,
+      "kind": "integration"
+    },
+    {
+      "id": "UC-aenderung-durch-gate-pruefen",
+      "type": "UC",
+      "name": "Änderung über Apply-Gate prüfen",
+      "description": "Graph-Autor reicht eine Änderung über das Apply-Gate ein und erhält ein Verdict, das die Änderung übernimmt oder begründet ablehnt."
+    },
+    {
+      "id": "UC-anmelden",
+      "type": "UC",
+      "name": "Am System anmelden",
+      "description": "Graph-Autor meldet sich mit seinen Zugangsdaten an und erhält eine authentifizierte Sitzung mit seinen Bearbeitungsrechten."
+    },
+    {
+      "id": "UC-graph-autorieren",
+      "type": "UC",
+      "name": "Systemgraph autorieren",
+      "description": "Graph-Autor legt Elemente und Kanten des Systemgraphen an und ändert sie, sodass der Graph den aktuellen Systemstand abbildet."
+    },
+    {
+      "id": "UC-graphstand-exportieren",
+      "type": "UC",
+      "name": "Graphstand exportieren",
+      "description": "Graph-Autor exportiert den aktuellen Graphstand und erhält eine wiederverwendbare Datei des governten Systemgraphen."
+    },
+    {
+      "id": "UC-live-updates-verfolgen",
+      "type": "UC",
+      "name": "Live-Updates verfolgen",
+      "description": "Graph-Autor verfolgt Änderungen anderer Nutzer live, sodass alle Beteiligten denselben aktuellen Graphstand sehen."
+    },
+    {
+      "id": "UC-nutzerzugriff-verwalten",
+      "type": "UC",
+      "name": "Nutzerzugriff verwalten",
+      "description": "Plattform-Betreiber legt Konten und Rollen an und entzieht sie, sodass nur berechtigte Nutzer den Graphen autorieren können."
+    },
+    {
+      "id": "UC-sitzung-beenden",
+      "type": "UC",
+      "name": "Sitzung beenden",
+      "description": "Graph-Autor beendet seine Sitzung und wird abgemeldet, offene Live-Verbindungen werden geschlossen."
+    }
+  ],
+  "traces": [
+    {
+      "source": "ACTOR-auditor",
+      "target": "UC-graphstand-exportieren",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-graph-author",
+      "target": "UC-aenderung-durch-gate-pruefen",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-graph-author",
+      "target": "UC-anmelden",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-graph-author",
+      "target": "UC-graph-autorieren",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-graph-author",
+      "target": "UC-graphstand-exportieren",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-graph-author",
+      "target": "UC-live-updates-verfolgen",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-graph-author",
+      "target": "UC-sitzung-beenden",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-identitaetsanbieter",
+      "target": "UC-anmelden",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-identitaetsanbieter",
+      "target": "UC-sitzung-beenden",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-platform-operator",
+      "target": "UC-nutzerzugriff-verwalten",
+      "type": "io"
+    },
+    {
+      "source": "FCHAIN-abmeldung-erfolgreich",
+      "target": "FUNC-abmeldeereignis-protokollieren",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-abmeldung-erfolgreich",
+      "target": "FUNC-livekanal-schliessen",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-abmeldung-erfolgreich",
+      "target": "FUNC-sitzung-invalidieren",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-anmeldung-abgelehnt",
+      "target": "FUNC-anmeldefehler-melden",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-anmeldung-abgelehnt",
+      "target": "FUNC-fehlversuch-protokollieren",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-anmeldung-abgelehnt",
+      "target": "FUNC-zugangsdaten-pruefen",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-anmeldung-erfolgreich",
+      "target": "FUNC-sitzung-erstellen",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-anmeldung-erfolgreich",
+      "target": "FUNC-sitzungskontext-bereitstellen",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-anmeldung-erfolgreich",
+      "target": "FUNC-zugangsdaten-pruefen",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-export-erfolgreich",
+      "target": "FUNC-exportdatei-bereitstellen",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-export-erfolgreich",
+      "target": "FUNC-graphstand-serialisieren",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-export-erfolgreich",
+      "target": "FUNC-lesestand-fixieren",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-export-waehrend-laufender-aenderung",
+      "target": "FUNC-exportdatei-bereitstellen",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-export-waehrend-laufender-aenderung",
+      "target": "FUNC-graphstand-serialisieren",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-export-waehrend-laufender-aenderung",
+      "target": "FUNC-lesestand-fixieren",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-gate-akzeptiert-aenderung",
+      "target": "FUNC-aenderung-persistieren",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-gate-akzeptiert-aenderung",
+      "target": "FUNC-aenderungsbatch-validieren",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-gate-akzeptiert-aenderung",
+      "target": "FUNC-aenderungsereignis-veroeffentlichen",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-gate-blockiert-aenderung",
+      "target": "FUNC-aenderung-verwerfen",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-gate-blockiert-aenderung",
+      "target": "FUNC-aenderungsbatch-validieren",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-gate-blockiert-aenderung",
+      "target": "FUNC-regelverstoss-melden",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-gleichzeitige-autorierung",
+      "target": "FUNC-aenderung-persistieren",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-gleichzeitige-autorierung",
+      "target": "FUNC-aenderungsereignis-veroeffentlichen",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-gleichzeitige-autorierung",
+      "target": "FUNC-konflikt-aufloesen",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-gleichzeitige-autorierung",
+      "target": "FUNC-schreibkonflikt-erkennen",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-graph-element-autorieren",
+      "target": "FUNC-aenderung-persistieren",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-graph-element-autorieren",
+      "target": "FUNC-aenderungsbatch-validieren",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-graph-element-autorieren",
+      "target": "FUNC-aenderungsereignis-veroeffentlichen",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-graph-element-autorieren",
+      "target": "FUNC-elemententwurf-erfassen",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-live-update-empfangen",
+      "target": "FUNC-aenderungsereignis-veroeffentlichen",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-live-update-empfangen",
+      "target": "FUNC-ansicht-aktualisieren",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-live-update-empfangen",
+      "target": "FUNC-livekanal-abonnieren",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-live-update-empfangen",
+      "target": "FUNC-update-zustellen",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-live-verbindung-unterbrochen",
+      "target": "FUNC-livekanal-schliessen",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-live-verbindung-unterbrochen",
+      "target": "FUNC-livekanal-wiederherstellen",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-live-verbindung-unterbrochen",
+      "target": "FUNC-verbindungsabbruch-erkennen",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-live-verbindung-unterbrochen",
+      "target": "FUNC-versaeumte-aenderungen-nachliefern",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-rolle-zuweisen",
+      "target": "FUNC-berechtigung-aktualisieren",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-rolle-zuweisen",
+      "target": "FUNC-rollenaenderung-protokollieren",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-rolle-zuweisen",
+      "target": "FUNC-rollenzuweisung-erfassen",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-rolle-zuweisen",
+      "target": "FUNC-sitzungskontext-bereitstellen",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-sitzung-abgelaufen",
+      "target": "FUNC-abmeldeereignis-protokollieren",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-sitzung-abgelaufen",
+      "target": "FUNC-livekanal-schliessen",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-sitzung-abgelaufen",
+      "target": "FUNC-sitzung-invalidieren",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-sitzung-abgelaufen",
+      "target": "FUNC-sitzungskontext-bereitstellen",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-zugriff-entzogen",
+      "target": "FUNC-berechtigung-aktualisieren",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-zugriff-entzogen",
+      "target": "FUNC-livekanal-schliessen",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-zugriff-entzogen",
+      "target": "FUNC-rollenaenderung-protokollieren",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-zugriff-entzogen",
+      "target": "FUNC-sitzung-invalidieren",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-abmeldeereignis-protokollieren",
+      "target": "REQ-abmeldeereignis-protokollieren",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-aenderung-persistieren",
+      "target": "REQ-aenderung-dauerhaft-persistieren",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-aenderung-verwerfen",
+      "target": "REQ-regelwidrige-aenderung-verwerfen",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-aenderungsbatch-validieren",
+      "target": "REQ-aenderung-dauerhaft-persistieren",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-regelverstoss-melden",
+      "target": "REQ-regelwidrige-aenderung-verwerfen",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-schreibkonflikt-erkennen",
+      "target": "REQ-regelwidrige-aenderung-verwerfen",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-sitzung-invalidieren",
+      "target": "REQ-abmeldeereignis-protokollieren",
+      "type": "satisfy"
+    },
+    {
+      "source": "SYS-collab-graph-platform",
+      "target": "UC-aenderung-durch-gate-pruefen",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-collab-graph-platform",
+      "target": "UC-anmelden",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-collab-graph-platform",
+      "target": "UC-graph-autorieren",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-collab-graph-platform",
+      "target": "UC-graphstand-exportieren",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-collab-graph-platform",
+      "target": "UC-live-updates-verfolgen",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-collab-graph-platform",
+      "target": "UC-nutzerzugriff-verwalten",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-collab-graph-platform",
+      "target": "UC-sitzung-beenden",
+      "type": "compose"
+    },
+    {
+      "source": "TEST-verify-abmeldeereignis-protokollieren",
+      "target": "REQ-abmeldeereignis-protokollieren",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-aenderung-dauerhaft-persistieren",
+      "target": "REQ-aenderung-dauerhaft-persistieren",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-regelwidrige-aenderung-verwerfen",
+      "target": "REQ-regelwidrige-aenderung-verwerfen",
+      "type": "verify"
+    },
+    {
+      "source": "UC-aenderung-durch-gate-pruefen",
+      "target": "FCHAIN-gate-akzeptiert-aenderung",
+      "type": "compose"
+    },
+    {
+      "source": "UC-aenderung-durch-gate-pruefen",
+      "target": "FCHAIN-gate-blockiert-aenderung",
+      "type": "compose"
+    },
+    {
+      "source": "UC-aenderung-durch-gate-pruefen",
+      "target": "REQ-aenderung-dauerhaft-persistieren",
+      "type": "compose"
+    },
+    {
+      "source": "UC-aenderung-durch-gate-pruefen",
+      "target": "REQ-regelwidrige-aenderung-verwerfen",
+      "type": "compose"
+    },
+    {
+      "source": "UC-anmelden",
+      "target": "FCHAIN-anmeldung-abgelehnt",
+      "type": "compose"
+    },
+    {
+      "source": "UC-anmelden",
+      "target": "FCHAIN-anmeldung-erfolgreich",
+      "type": "compose"
+    },
+    {
+      "source": "UC-graph-autorieren",
+      "target": "FCHAIN-gleichzeitige-autorierung",
+      "type": "compose"
+    },
+    {
+      "source": "UC-graph-autorieren",
+      "target": "FCHAIN-graph-element-autorieren",
+      "type": "compose"
+    },
+    {
+      "source": "UC-graphstand-exportieren",
+      "target": "FCHAIN-export-erfolgreich",
+      "type": "compose"
+    },
+    {
+      "source": "UC-graphstand-exportieren",
+      "target": "FCHAIN-export-waehrend-laufender-aenderung",
+      "type": "compose"
+    },
+    {
+      "source": "UC-live-updates-verfolgen",
+      "target": "FCHAIN-live-update-empfangen",
+      "type": "compose"
+    },
+    {
+      "source": "UC-live-updates-verfolgen",
+      "target": "FCHAIN-live-verbindung-unterbrochen",
+      "type": "compose"
+    },
+    {
+      "source": "UC-nutzerzugriff-verwalten",
+      "target": "FCHAIN-rolle-zuweisen",
+      "type": "compose"
+    },
+    {
+      "source": "UC-nutzerzugriff-verwalten",
+      "target": "FCHAIN-zugriff-entzogen",
+      "type": "compose"
+    },
+    {
+      "source": "UC-sitzung-beenden",
+      "target": "FCHAIN-abmeldung-erfolgreich",
+      "type": "compose"
+    },
+    {
+      "source": "UC-sitzung-beenden",
+      "target": "FCHAIN-sitzung-abgelaufen",
+      "type": "compose"
+    },
+    {
+      "source": "UC-sitzung-beenden",
+      "target": "REQ-abmeldeereignis-protokollieren",
+      "type": "compose"
+    }
+  ]
+}

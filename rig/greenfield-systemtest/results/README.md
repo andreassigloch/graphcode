@@ -16,4 +16,10 @@ ohne Export (v1–v5, v7, v8, v10, v13).
 | v13b | devstral | 48 Rd., Minimal-Rendering (CR-282) | 22 El — **Negativ-Beleg** Minimal-Prompt |
 | v14 | devstral | 48 Rd., volles Rendering, temp 0.15 | 85 El — inkl. 6 MOD, 4 MS, 1 CR |
 | haiku45 | Haiku 4.5 | 48 Rd., anthropic-Backend | **86 El — Top-Graph** (5 Errors, protokolltreu) |
-| opus5 | Opus 5 | 48 Rd., anthropic-Backend | 57 El, 81 Rejections — Emissions-Regime beschneidet Frontier |
+| opus5 | Opus 5 | 48 Rd., anthropic-Backend | 57 El, 81 Rejections — s. Korrektur: maxTokens-Truncation, nicht Regime |
+| devstral-v15 | devstral | 24 Rd., + CR-284/285/286 | 22 El, 40 Turns (7,5 % Reads) — Injektion spart Turns, kostet lokal Ausbeute |
+| opus5-v2 | Opus 5 | 12 Rd., + CR-284/285/286 | **60 El / 6,5 min / ~$1,60** — alle 10 Rejections INPUT-SCHEMA (Truncation) |
+
+Nachtest-Proben (CR-286): `logs/gc-run-opus5-probe-2048.run.log` (maxTokens 2048
+→ `input-schema keys: []`, Tool-Call-JSON gekappt) vs. `…-probe-8192.run.log`
+(8192 → 0 Rejections). `audit/` enthält die Gate-Audit-Trails aller Läufe.

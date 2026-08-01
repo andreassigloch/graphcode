@@ -1,0 +1,132 @@
+[generate 1] phase=seed done=false
+  1.1: graph_authoring_guide,graph_authoring_guide,graph_authoring_guide
+  1.2: (no calls)
+    recovered mutate applied (56 mutations)
+[generate 2] phase=expand done=false
+  2.1: graph_authoring_guide
+  2.2: graph_authoring_guide
+  2.3: (no calls)
+    recovered mutate applied (12 mutations)
+[generate 3] phase=expand done=false
+  3.1: (no calls)
+    idle: 
+  3.2: graph_mutate
+    preflight: R-01 autocomplete: TEST-Stub TEST-verify-auth-export + verify-Kante für REQ-auth-export angehängt
+    preflight: R-01 autocomplete: TEST-Stub TEST-verify-live-validation + verify-Kante für REQ-live-validation angehängt
+    preflight: R-01 autocomplete: TEST-Stub TEST-verify-broadcast-updates + verify-Kante für REQ-broadcast-updates angehängt
+    preflight hint: Hinweis (kein Blocker): UC-graph-edit-scenario ähnlich vorhanden: UC-edit-scenario „Graph bearbeiten mit Live-Validierung" (Ähnlichkeit 62%) — mergen oder differenzieren.
+[generate 4] phase=expand done=false
+  4.1: graph_mutate
+[generate 5] phase=expand done=false
+  stagnation x1: same generate prompt as last round
+  5.1: graph_mutate
+[generate 6] phase=expand done=false
+  stagnation x2: same generate prompt as last round
+  6.1: graph_mutate
+[generate 7] phase=expand done=false
+  stagnation x3: same generate prompt as last round
+  defer: ver:TEST-verify-auth-export,TEST-verify-broadcast-updates,TEST-verify-live-validation
+  7.1: graph_mutate
+[generate 8] phase=expand done=false
+  8.1: (no calls)
+    idle: 
+  8.2: graph_mutate
+    preflight hint: Hinweis (kein Blocker): UC-graph-edit-scenario ähnlich vorhanden: UC-edit-scenario „Graph bearbeiten mit Live-Validierung" (Ähnlichkeit 73%) — mergen oder differenzieren.
+[generate 9] phase=expand done=false
+  stagnation x1: same generate prompt as last round
+  9.1: graph_mutate
+[generate 10] phase=expand done=false
+  stagnation x2: same generate prompt as last round
+  10.1: graph_mutate
+[generate 11] phase=expand done=false
+  stagnation x3: same generate prompt as last round
+  defer: uc:UC-export,UC-graph-edit,UC-live-update
+  11.1: (no calls)
+    idle: 
+  11.2: graph_mutate
+[generate 12] phase=expand done=false
+  12.1: (no calls)
+    idle: 
+  12.2: (no calls)
+    idle: 
+[generate 13] phase=expand done=false
+  stagnation x1: same generate prompt as last round
+  13.1: (no calls)
+    idle: 
+  13.2: graph_mutate
+[generate 14] phase=expand done=false
+  14.1: (no calls)
+    idle: 
+  14.2: graph_mutate
+    gate rejected [INPUT-SCHEMA] — feeding violations back (turn 2/6)
+  14.3: (no calls)
+    idle: 
+[generate 15] phase=expand done=false
+  stagnation x1: same generate prompt as last round
+  15.1: graph_mutate
+[generate 16] phase=expand done=false
+  stagnation x2: same generate prompt as last round
+  16.1: (no calls)
+    idle: 
+  16.2: (no calls)
+    idle: 
+[generate 17] phase=expand done=false
+  stagnation x3: same generate prompt as last round
+  defer: uc:UC-export,UC-graph-edit,UC-login
+  17.1: graph_mutate
+    preflight hint: Hinweis (kein Blocker): UC-graph-edit-scenario ähnlich vorhanden: UC-edit-scenario „Graph bearbeiten mit Live-Validierung" (Ähnlichkeit 73%) — mergen oder differenzieren.
+[generate 18] phase=expand done=false
+  18.1: (no calls)
+    idle: 
+  18.2: (no calls)
+    idle: 
+[generate 19] phase=expand done=false
+  stagnation x1: same generate prompt as last round
+  19.1: (no calls)
+    idle: 
+  19.2: (no calls)
+    idle: 
+[generate 20] phase=expand done=false
+  stagnation x2: same generate prompt as last round
+  20.1: (no calls)
+    idle: 
+  20.2: (no calls)
+    idle: 
+[generate 21] phase=expand done=false
+  stagnation x3: same generate prompt as last round
+  defer: uc:FCHAIN-edit,UC-live-update,UC-login
+  21.1: graph_mutate
+[generate 22] phase=expand done=false
+  22.1: (no calls)
+    idle: 
+  22.2: (no calls)
+    idle: 
+[generate 23] phase=expand done=false
+  stagnation x1: same generate prompt as last round
+  23.1: (no calls)
+    idle: 
+  23.2: (no calls)
+    idle: 
+[generate 24] phase=expand done=false
+  stagnation x2: same generate prompt as last round
+  24.1: graph_mutate
+graphcode run: {
+  "done": false,
+  "genRounds": 24,
+  "modelTurns": 40,
+  "mutatesApplied": 16,
+  "mutatesRejected": 1,
+  "dryRunProbes": 0,
+  "repairedAfterRejection": 0,
+  "preflightFixed": 3,
+  "preflightBlocked": 0,
+  "candidatesSampled": 0,
+  "algoPicks": 0,
+  "modelPicks": 0,
+  "judgeDisagreements": 0,
+  "tokensIn": 113371,
+  "tokensOut": 50640,
+  "tokensReasoning": 0,
+  "export": "docs/graph/gc-run-devstral-v15.graph.json",
+  "exportError": null
+}

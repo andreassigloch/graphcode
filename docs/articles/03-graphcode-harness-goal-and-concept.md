@@ -29,6 +29,7 @@ that, every project grows its own dialect and nothing stays comparable.
 | Schemas | Zod at every boundary | Schema-first; no hand-rolled validation |
 | Ontology + rules | shared contracts package — imported, never forked | New type/rule = family decision + version bump; no local dialect |
 | Local execution | OpenCode + bring-your-own-key | The lean local path; matched the cloud agent on tool count with a smaller context window |
+| Executor | embedded (`graphcode run`), or a host you already use (Claude Code, OpenCode) | Same gate, same readiness-driven loop, no code branch between a local and a frontier model |
 
 The current vocabulary: 13 element types, 7 connection types, 37 legal connection patterns, 66 rules
 across 8 readiness dimensions, exposed as 20 tools over MCP.
@@ -74,4 +75,5 @@ hand-edited.
 ---
 
 *Repo: <https://github.com/andreassigloch/graphcode>. Constraints:
-[`README.md`](../../README.md). Benchmark detail: [`docs/spikes/`](../spikes/).*
+[`README.md`](../../README.md). Benchmark detail: [`docs/spikes/`](../spikes/). Cross-model comparison
+(local vs. frontier, same driver): [`docs/executor-abschlussbericht.md`](../executor-abschlussbericht.md).*
