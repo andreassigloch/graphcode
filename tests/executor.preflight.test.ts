@@ -314,4 +314,97 @@ describe('executor preflight (CR-GC-284, real harness)', () => {
     expect(g.nodes.map((n) => n.uid)).toContain('UC-export');
     expect(g.edges.length).toBe(before + 2);
   });
+
+  // -------------------------------------------------------------------------
+  // CR-GC-287: REQ/UC-Duplikat-HINWEIS — kein Block, das Gate entscheidet.
+  // Fixture-Texte = die REALEN Duplikate aus den Greenfield-Läufen
+  // (haiku45: REQ mit/ohne messbarem Kriterium; v14: UC-export-Paar).
+  // -------------------------------------------------------------------------
+
+  it('ähnlicher REQ/UC-add-node → Hinweis-Trace, Batch geht TROTZDEM ans Gate und wird applied (CR-GC-287)', async () => {
+    // Bestand: Duplikat-Vorlagen in den Graphen legen (direkter Gate-Call, kein Preflight).
+    const seeded = (await registry['graph_mutate'].handler({
+      commands: [
+        addNode(
+          'REQ-batch-atomicity-all-or-nothing',
+          'REQ',
+          'Batch-Mutation ist atomar (All-or-Nothing)',
+          'Wenn ein Kommando im Batch gegen V3_RULES verstößt, wird der gesamte Batch abgelehnt (keine Partial Applies). Messkriterium: Graph-Version ändert sich nur bei tier=auto-apply.',
+        ),
+        addNode('TEST-batch-atomicity', 'TEST', 'Batch-Atomicity-Test', 'Prüft die All-or-Nothing-Ablehnung messbar.'),
+        addEdge('UC-login', 'REQ-batch-atomicity-all-or-nothing', 'compose'),
+        addEdge('TEST-batch-atomicity', 'REQ-batch-atomicity-all-or-nothing', 'verify'),
+        addNode('UC-export-graph', 'UC', 'User exports the current graph state', 'A user requests and downloads the governed graph in a specified format.'),
+        addEdge('SYS-app', 'UC-export-graph', 'compose'),
+        addEdge('ACTOR-user', 'UC-export-graph', 'io'),
+      ],
+    })) as { success: boolean };
+    expect(seeded.success).toBe(true);
+
+    // Modell reicht die Near-Duplikate ein: REQ-Variante „mit messbarem Kriterium"
+    // + die UC-Flow-Variante des Export-Falls (reale v14-/haiku45-Duplikat-Muster).
+    const dupBatch = {
+      commands: [
+        addNode(
+          'REQ-batch-atomicity-measurable',
+          'REQ',
+          'Batch-Mutation ist atomar (All-or-Nothing) mit messbarem Kriterium',
+          'Wenn ein Kommando im Batch gegen V3_RULES verstößt, wird der gesamte Batch abgelehnt (keine Partial Applies). Messkriterium: Graph-Version ändert sich nur bei tier=auto-apply; für jeden fehlgeschlagenen Batch liefert das Gate Violations mit Regel-ID.',
+        ),
+        addNode('TEST-batch-atomicity-2', 'TEST', 'Batch-Atomicity-Messtest', 'Prüft das messbare Kriterium der Atomarität.'),
+        addEdge('UC-login', 'REQ-batch-atomicity-measurable', 'compose'),
+        addEdge('TEST-batch-atomicity-2', 'REQ-batch-atomicity-measurable', 'verify'),
+        addNode('UC-export-flow', 'UC', 'User exports current graph state', 'Logged-in user requests and downloads the governed graph in Format-E v2.'),
+        addEdge('SYS-app', 'UC-export-flow', 'compose'),
+        addEdge('ACTOR-user', 'UC-export-flow', 'io'),
+      ],
+    };
+    const { callModel, calls } = scriptedModel([toolCallResponse('c1', dupBatch)]);
+    const traces: string[] = [];
+    const stats = await runExecutor({
+      registry,
+      workspaceDir: repoRoot,
+      config: CONFIG,
+      callModel,
+      trace: (l) => traces.push(l),
+    });
+
+    // KEIN Block, KEINE Rejection: der Hinweis ist reines Feedback, das Gate entscheidet (AK 2).
+    expect(calls.length).toBe(1);
+    expect(stats.mutatesApplied).toBe(1);
+    expect(stats.mutatesRejected).toBe(0);
+    expect(stats.preflightBlocked).toBe(0);
+
+    // Beide Duplikate wurden gemeldet — je eine Hinweis-Zeile pro Typ.
+    const hintLines = traces.filter((l) => l.includes('preflight hint:'));
+    expect(hintLines.some((l) => l.includes('REQ-batch-atomicity-measurable ähnlich vorhanden') && l.includes('REQ-batch-atomicity-all-or-nothing'))).toBe(true);
+    expect(hintLines.some((l) => l.includes('UC-export-flow ähnlich vorhanden') && l.includes('UC-export-graph'))).toBe(true);
+    expect(hintLines.every((l) => l.includes('mergen oder differenzieren'))).toBe(true);
+
+    // Durable: das Gate hat den Batch übernommen — der Hinweis hat nichts verhindert.
+    const uids = harness.getGraph().nodes.map((n) => n.uid);
+    expect(uids).toContain('REQ-batch-atomicity-measurable');
+    expect(uids).toContain('UC-export-flow');
+  });
+
+  it('unähnliche neue REQ/UC erzeugen KEINEN Hinweis (kein Rausch-Feedback)', async () => {
+    const distinct = {
+      commands: [
+        addNode('UC-audit-review', 'UC', 'Admin reviews audit trail', 'Admin filters mutation history entries by consumer and time range.'),
+        addEdge('SYS-app', 'UC-audit-review', 'compose'),
+        addEdge('ACTOR-user', 'UC-audit-review', 'io'),
+      ],
+    };
+    const { callModel } = scriptedModel([toolCallResponse('c1', distinct)]);
+    const traces: string[] = [];
+    const stats = await runExecutor({
+      registry,
+      workspaceDir: repoRoot,
+      config: CONFIG,
+      callModel,
+      trace: (l) => traces.push(l),
+    });
+    expect(stats.mutatesApplied).toBe(1);
+    expect(traces.some((l) => l.includes('preflight hint:'))).toBe(false);
+  });
 });

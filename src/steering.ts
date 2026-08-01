@@ -14,6 +14,7 @@ import type { OntologyGraph, RuleViolation } from '@sigloch/contracts/se';
 import { evaluateAllRules, RULE_TO_DIMENSION } from '@sigloch/contracts/se';
 import { computeReadiness, computeWeightVector, type WeightVectorType } from '@sigloch/se-steering';
 import { exportGraphJson } from './exporter.js';
+import { injectNDMatrices } from './nd-similarity.js';
 
 /** Generic next action per readiness dimension. */
 const DIMENSION_ACTION: Record<string, string> = {
@@ -64,6 +65,9 @@ function countByRule(violations: RuleViolation[]): { rule_id: string; count: num
  */
 export function nextStep(graph: Graph): NextStepResult {
   const og = toOntologyGraph(graph);
+  // CR-GC-287: ND-Matrizen für DIESEN og injizieren — erst damit liefern die
+  // contracts-ND-Regeln Funde (Full-Katalog-Eval; das Gate evaluiert ND nie).
+  injectNDMatrices(og);
   const violations = evaluateAllRules(og);
   const report = computeReadiness(og);
   const weights = computeWeightVector(report);

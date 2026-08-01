@@ -24,6 +24,7 @@ import type { MutateResult } from '@sigloch/contracts/harness';
 import type { MCPToolRegistry } from './mcp-tools.js';
 import type { GenerationStep } from './generate.js';
 import { preflightBatch, type PreflightKnown } from './preflight.js';
+import { duplicateHints, type IndexedElement } from './nd-similarity.js';
 
 // ---------------------------------------------------------------------------
 // Config (lokal per CR-GC-278 — Promotion nach @sigloch/contracts erst mit der
@@ -596,6 +597,8 @@ type MutateOutcome = Partial<MutateResult> & {
   success: boolean;
   /** true = der Preflight hat den Batch lokal geblockt — es gab KEINEN Gate-Call (CR-GC-284). */
   preflightBlocked?: boolean;
+  /** REQ/UC-Duplikat-Hinweise (CR-GC-287) — reines Feedback, NIE ein Blocker. */
+  hints?: string[];
 };
 
 /** Kompakte Regel-ID-Liste einer Rejection für die run.log-Trace (CR-GC-286). */
@@ -616,9 +619,12 @@ function formatGateFeedback(result: MutateOutcome): string {
       ` — NICHTS wurde persistiert.\n`
     : `Das Gate hat den Batch NICHT übernommen (success:false` +
       `${result.tier ? ', tier=' + result.tier : ''}) — NICHTS wurde persistiert.\n`;
+  // CR-GC-287: Duplikat-Hinweise (kein Blocker) fahren im Feedback mit.
+  const hints = (result.hints ?? []).map((h) => `- ${h}`).join('\n');
   return (
     head +
     (violations || '- (keine Einzel-Violations — prüfe die Command-Form)') +
+    (hints ? '\n' + hints : '') +
     `\nKorrigiere die beanstandeten Commands und reiche den VOLLSTÄNDIGEN korrigierten Batch ` +
     `erneut als graph_mutate ein.`
   ).slice(0, 2500);
@@ -663,16 +669,22 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
 
   // Graph-Zustand für den Preflight — in-process über die Registry-Tools,
   // deterministisch, pro Mutate frisch (der Graph ändert sich zwischen Runden).
-  const loadPreflightKnown = async (): Promise<PreflightKnown> => {
+  // CR-GC-287: derselbe Snapshot trägt den Element-Index (uid/type/name/descr)
+  // für den REQ/UC-Duplikat-Hinweis — kein zweiter Tool-Call.
+  const loadGraphSnapshot = async (): Promise<{ known: PreflightKnown; index: IndexedElement[] }> => {
     const els = (await registry['graph_elements'].handler({ limit: 100_000 })) as {
-      nodes?: { uid: string; type: string }[];
+      nodes?: { uid: string; type: string; name: string; description?: string }[];
     };
     const ver = (await registry['graph_get_edges'].handler({ edgeType: 'verify' })) as {
       edges?: { targetId: string }[];
     };
+    const nodes = els.nodes ?? [];
     return {
-      types: new Map((els.nodes ?? []).map((n) => [n.uid, n.type])),
-      verifiedReqs: new Set((ver.edges ?? []).map((e) => e.targetId)),
+      known: {
+        types: new Map(nodes.map((n) => [n.uid, n.type])),
+        verifiedReqs: new Set((ver.edges ?? []).map((e) => e.targetId)),
+      },
+      index: nodes.map((n) => ({ uid: n.uid, type: n.type, name: n.name, description: n.description })),
     };
   };
 
@@ -686,9 +698,11 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
     // zweites Gate-Urteil; bei jedem Preflight-Fehler geht der Batch unverändert durch.
     const parsed = registry['graph_mutate'].inputSchema.safeParse(input);
     let effective: unknown = parsed.success ? parsed.data : input;
+    let hints: string[] = [];
     if (parsed.success) {
       try {
-        const pf = preflightBatch(parsed.data, await loadPreflightKnown());
+        const snap = await loadGraphSnapshot();
+        const pf = preflightBatch(parsed.data, snap.known);
         if (pf.action === 'blocked') {
           stats.preflightBlocked += 1;
           for (const v of pf.violations) trace(`    preflight blocked: ${v.ruleId} ${v.message}`);
@@ -699,13 +713,18 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
           for (const line of pf.fixes) trace(`    preflight: ${line}`);
           effective = pf.input;
         }
+        // CR-GC-287: REQ/UC-Duplikat-HINWEIS (kein Block!) — neue add-nodes gegen
+        // den Element-Index; der Batch geht trotzdem ans Gate, das Gate entscheidet.
+        hints = duplicateHints(effective, snap.index);
+        for (const h of hints) trace(`    preflight hint: ${h}`);
       } catch (err) {
         trace(`    preflight error (pass-through): ${err instanceof Error ? err.message : String(err)}`);
       }
     }
     try {
       const result = (await registry['graph_mutate'].handler(effective)) as MutateOutcome;
-      return { ...result, success: result.success === true };
+      const out: MutateOutcome = { ...result, success: result.success === true };
+      return hints.length > 0 ? { ...out, hints } : out;
     } catch (err) {
       return {
         success: false,

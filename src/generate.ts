@@ -21,6 +21,7 @@ import type { OntologyGraph } from '@sigloch/contracts/se';
 import { evaluateAllRules, RULE_TO_DIMENSION } from '@sigloch/contracts/se';
 import { computeReadiness } from '@sigloch/se-steering';
 import { exportGraphJson } from './exporter.js';
+import { injectNDMatrices } from './nd-similarity.js';
 
 export interface GenerationStep {
   /** seed = leerer Graph; expand = Deficit-getriebene Verdichtung; handoff = Schwelle erreicht. */
@@ -116,6 +117,9 @@ export function generationStep(
   const sys = og.elements.find((e) => e.type === 'SYS');
   const effectiveIntent = intent?.trim() || sys?.description?.trim() || '';
 
+  // CR-GC-287: ND-Matrizen für DIESEN og injizieren — erst damit liefern die
+  // contracts-ND-Regeln Funde (Full-Katalog-Eval; das Gate evaluiert ND nie).
+  injectNDMatrices(og);
   const violations = evaluateAllRules(og);
   const blockingErrors = violations.filter((v) => v.severity === 'error').length;
   const report = computeReadiness(og);
