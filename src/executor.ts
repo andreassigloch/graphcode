@@ -291,10 +291,12 @@ export function buildCallModel(config: ExecutorConfig): CallModel {
           'anthropic-version': '2023-06-01',
           ...(config.apiKey ? { 'x-api-key': config.apiKey } : {}),
         },
+        // KEINE temperature: die Claude-5-API lehnt den Parameter ab
+        // ("deprecated", invalid_request_error) — die Temperatur-Disziplin ist
+        // ein Lokal-Hebel (devstral), Frontier braucht sie nicht.
         body: JSON.stringify({
           model: config.model,
           max_tokens: config.maxTokens,
-          temperature: config.temperature,
           system,
           tools,
           messages,
