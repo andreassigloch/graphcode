@@ -3,7 +3,12 @@
 **Status:** done (2026-08-01, alle Akzeptanzkriterien erfüllt; zusätzlich
 Env-Wiring `GRAPHCODE_LLM_CANDIDATES`/`GRAPHCODE_LLM_JUDGE` in run-verb.ts,
 damit N>1 ohne Folge-CR nutzbar ist; `selection: 'host'|'driver'` am
-graph_generate-Input hält die Protokoll-Prosa für MCP-Clients ohne Treiber)
+graph_generate-Input hält die Protokoll-Prosa für MCP-Clients ohne Treiber).
+Messlauf v16-bo3 (24 Rd. devstral, N=3, judge=gate): 33 El/76 Tr, 0 Gate-
+Rejections (Filterung wirkt), ABER UC-Monokultur (26/33) — der Mutations-
+Tiebreaker belohnt Volumen statt Defizit-Reparatur. Erkenntnis → Folge-CR:
+Ranking auf Readiness-/Error-Delta aus dem dryRun-Verdict umstellen.
+Details: Nachtrag Punkt 5 in `docs/executor-abschlussbericht.md`.
 **Datum:** 2026-08-01
 **Kontext:** Das Gate-Protokoll („Alternativen per dryRun einreichen, Verdicts
 vergleichen, besten anwenden") ist Prosa im generate-Prompt — befolgt hat es im

@@ -19,6 +19,7 @@ ohne Export (v1–v5, v7, v8, v10, v13).
 | opus5 | Opus 5 | 48 Rd., anthropic-Backend | 57 El, 81 Rejections — s. Korrektur: maxTokens-Truncation, nicht Regime |
 | devstral-v15 | devstral | 24 Rd., + CR-284/285/286 | 22 El, 40 Turns (7,5 % Reads) — Injektion spart Turns, kostet lokal Ausbeute |
 | opus5-v2 | Opus 5 | 12 Rd., + CR-284/285/286 | **60 El / 6,5 min / ~$1,60** — alle 10 Rejections INPUT-SCHEMA (Truncation) |
+| devstral-v16-bo3 | devstral | 24 Rd., Best-of-3 (CR-288, judge=gate) | 33 El / 0 Gate-Rejections, aber UC-Monokultur (26 UC) — Ranking belohnt Volumen, nicht Defizit-Reparatur |
 
 Nachtest-Proben (CR-286): `logs/gc-run-opus5-probe-2048.run.log` (maxTokens 2048
 → `input-schema keys: []`, Tool-Call-JSON gekappt) vs. `…-probe-8192.run.log`

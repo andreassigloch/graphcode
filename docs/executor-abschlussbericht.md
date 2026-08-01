@@ -124,8 +124,21 @@ Preflight), CR-285 (Guide/Index-Injektion) und CR-286 (Audit-Vollständigkeit)
 
 Die Regime-These bleibt nur in abgeschwächter Form: Haiku folgt dem
 dryRun-Protokoll freiwillig, Opus/devstral nie — die Auswahl gehört in den
-Code (CR-288, umgesetzt, Best-of-N noch ohne Messlauf). Artefakte:
-`rig/greenfield-systemtest/results/` (v15, opus5-v2, Proben-Logs, Audits).
+Code (CR-288, umgesetzt).
+
+5. **Best-of-3 lokal (v16, 24 Rd., judge=gate): Menge zurück, Balance verloren.**
+   33 Elemente / 76 Traces (v15 N=1: 22/43; v9-Baseline: 38/58), **0 Gate-
+   Rejections** — die Kandidaten-Filterung wirkt (9 Preflight-Blocks, 7
+   dryRun-Blocks, 56 Kandidaten gesammelt, 22 Algo-Picks). ABER der Endgraph
+   ist eine **UC-Monokultur (26 von 33 Elementen UC, kein REQ/TEST/FUNC)**:
+   das Ranking tier → Δm → Mutations-Anzahl ist typ-blind — es belohnt
+   legalitäts-saubere Volumen-Batches, nicht die Reparatur der schwächsten
+   Dimension. Wall 121 min (unökonomischste El/min aller Arme). **Algo-
+   Nachschärfung nötig (Folge-CR): Ranking-Kriterium = Readiness-/Blocking-
+   Error-Delta aus dem dryRun-Verdict statt roher Mutations-Zahl.**
+
+Artefakte: `rig/greenfield-systemtest/results/` (v15, v16-bo3, opus5-v2,
+Proben-Logs, Audits).
 
 ## Was ursprünglich noch fehlt → Folgechat (CR-GC-283)
 

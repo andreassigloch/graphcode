@@ -1,0 +1,584 @@
+{
+  "elements": [
+    {
+      "id": "ACTOR-admin",
+      "type": "ACTOR",
+      "name": "Admin",
+      "description": "Administrator"
+    },
+    {
+      "id": "ACTOR-user",
+      "type": "ACTOR",
+      "name": "User",
+      "description": "Endnutzer, der sich anmeldet, Use-Cases ausführt und Live-Updates sieht."
+    },
+    {
+      "id": "FCHAIN-collab-edit-scenario",
+      "type": "FCHAIN",
+      "name": "Collaborative Edit Scenario",
+      "description": "Multiple users collaboratively edit the governed system graph."
+    },
+    {
+      "id": "FCHAIN-export-scenario",
+      "type": "FCHAIN",
+      "name": "Export Scenario",
+      "description": "User exports the current state of the governed system graph."
+    },
+    {
+      "id": "FCHAIN-live-updates-scenario",
+      "type": "FCHAIN",
+      "name": "Live Updates Scenario",
+      "description": "Scenario for viewing live updates of the governed graph."
+    },
+    {
+      "id": "FCHAIN-login-scenario",
+      "type": "FCHAIN",
+      "name": "Login Scenario",
+      "description": "User logs in to access the system."
+    },
+    {
+      "id": "SYS-web-app",
+      "type": "SYS",
+      "name": "Multiuser Web App",
+      "description": "Multiuser-fähige Web-App aus dem graphcode harness: Nutzer melden sich an, autorieren gemeinsam einen governten Systemgraphen über das Apply-Gate, sehen Live-Updates und exportieren den Stand."
+    },
+    {
+      "id": "UC-admin-monitors-activity",
+      "type": "UC",
+      "name": "Admin monitors user activity and changes",
+      "description": "Admin tracks user activities and changes in the system."
+    },
+    {
+      "id": "UC-collab-edit",
+      "type": "UC",
+      "name": "Collaborative Edit",
+      "description": "Mehrere Nutzer bearbeiten gemeinsam den Systemgraphen über das Apply-Gate und sehen Live-Updates."
+    },
+    {
+      "id": "UC-collab-edit-scenario-missing-actors",
+      "type": "UC",
+      "name": "User initiates collaborative editing session with admin oversight",
+      "description": "User starts a collaborative editing session and admin monitors the activity in real-time."
+    },
+    {
+      "id": "UC-collaborative-edit-scenario",
+      "type": "UC",
+      "name": "User initiates collaborative editing session",
+      "description": "User starts a collaborative editing session."
+    },
+    {
+      "id": "UC-export",
+      "type": "UC",
+      "name": "Export",
+      "description": "Nutzer exportiert den aktuellen Graphenstand in gewünschtem Format (JSON/Format-E)."
+    },
+    {
+      "id": "UC-export-current-state",
+      "type": "UC",
+      "name": "User exports current governed graph state",
+      "description": "User exports the current state of the governed graph."
+    },
+    {
+      "id": "UC-export-current-state-scenario",
+      "type": "UC",
+      "name": "User exports current graph state with admin approval",
+      "description": "User exports the current governed graph state after obtaining admin approval."
+    },
+    {
+      "id": "UC-export-missing-scenario",
+      "type": "UC",
+      "name": "User exports current graph state with admin approval",
+      "description": "User exports the governed graph state after obtaining admin approval."
+    },
+    {
+      "id": "UC-export-scenario-missing-actors",
+      "type": "UC",
+      "name": "User exports current graph state with admin approval",
+      "description": "User initiates export of the governed graph state after admin approval."
+    },
+    {
+      "id": "UC-live-updates-view",
+      "type": "UC",
+      "name": "User views live updates of the governed graph",
+      "description": "User sees real-time changes in the governed graph interface."
+    },
+    {
+      "id": "UC-live-updates-view-scenario",
+      "type": "UC",
+      "name": "User views live updates of the governed graph",
+      "description": "User views real-time updates in the interface."
+    },
+    {
+      "id": "UC-login",
+      "type": "UC",
+      "name": "Login",
+      "description": "User logs in to access the governed system graph"
+    },
+    {
+      "id": "UC-login-user",
+      "type": "UC",
+      "name": "Login User",
+      "description": "User logs in to access the system."
+    },
+    {
+      "id": "UC-login-user-auth",
+      "type": "UC",
+      "name": "User authenticates via login",
+      "description": "User logs in to the system using credentials."
+    },
+    {
+      "id": "UC-login-user-auth-scenario",
+      "type": "UC",
+      "name": "User authenticates via login to start collaboration",
+      "description": "User authenticates via login to initiate collaborative editing sessions."
+    },
+    {
+      "id": "UC-login-user-scenario",
+      "type": "UC",
+      "name": "User logs in to start collaboration",
+      "description": "User authenticates via login to initiate collaborative editing session."
+    },
+    {
+      "id": "UC-user-authenticates-via-login",
+      "type": "UC",
+      "name": "User authenticates via login",
+      "description": "The user provides credentials to authenticate and gain access to the system."
+    },
+    {
+      "id": "UC-user-exports-graph-state-with-admin-approval",
+      "type": "UC",
+      "name": "User exports current graph state with admin approval",
+      "description": "User exports current graph state with admin approval"
+    },
+    {
+      "id": "UC-user-initiates-collaborative-edit-with-admin",
+      "type": "UC",
+      "name": "User initiates collaborative editing session with admin oversight",
+      "description": "User starts a collaborative editing session under admin supervision."
+    },
+    {
+      "id": "UC-user-manages-authentication",
+      "type": "UC",
+      "name": "User manages authentication settings",
+      "description": "User configures and manages their authentication preferences."
+    },
+    {
+      "id": "UC-user-manages-authentication-scenario",
+      "type": "UC",
+      "name": "User manages authentication settings for collaboration",
+      "description": "User manages authentication settings to enable secure collaborative editing."
+    },
+    {
+      "id": "UC-user-sees-real-time-updates",
+      "type": "UC",
+      "name": "User sees real-time updates in the interface",
+      "description": "A user sees real-time updates to the governed system graph reflected in the user interface."
+    },
+    {
+      "id": "UC-user-sees-real-time-updates-in-interface",
+      "type": "UC",
+      "name": "User sees real-time updates in the interface",
+      "description": "User views live updates of the governed graph in the UI."
+    },
+    {
+      "id": "UC-user-shares-graph-state",
+      "type": "UC",
+      "name": "User shares current graph state with others",
+      "description": "User shares the current governed graph state with other users."
+    },
+    {
+      "id": "UC-user-views-live-updates",
+      "type": "UC",
+      "name": "User views live updates of the governed graph",
+      "description": "User sees real-time updates in the interface"
+    },
+    {
+      "id": "UC-user-views-live-updates-scenario",
+      "type": "UC",
+      "name": "User views live updates scenario",
+      "description": "User sees real-time updates of the governed graph in the interface."
+    }
+  ],
+  "traces": [
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-admin-monitors-activity",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-collab-edit",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-collab-edit-scenario-missing-actors",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-export",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-export-missing-scenario",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-login",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-user-exports-graph-state-with-admin-approval",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-user-initiates-collaborative-edit-with-admin",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-collab-edit",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-collab-edit-scenario-missing-actors",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-collaborative-edit-scenario",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-export",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-export-current-state",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-export-current-state-scenario",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-export-missing-scenario",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-live-updates-view",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-live-updates-view-scenario",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-login",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-login-user",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-login-user-auth",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-login-user-auth-scenario",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-login-user-scenario",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-user-authenticates-via-login",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-user-exports-graph-state-with-admin-approval",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-user-initiates-collaborative-edit-with-admin",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-user-manages-authentication",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-user-manages-authentication-scenario",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-user-sees-real-time-updates",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-user-sees-real-time-updates-in-interface",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-user-shares-graph-state",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-user-views-live-updates",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-user-views-live-updates-scenario",
+      "type": "io"
+    },
+    {
+      "source": "SYS-web-app",
+      "target": "SYS-web-app",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-web-app",
+      "target": "UC-collab-edit",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-web-app",
+      "target": "UC-export",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-web-app",
+      "target": "UC-login",
+      "type": "compose"
+    },
+    {
+      "source": "UC-admin-monitors-activity",
+      "target": "FCHAIN-collab-edit-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-admin-monitors-activity",
+      "target": "FCHAIN-export-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-admin-monitors-activity",
+      "target": "FCHAIN-live-updates-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-admin-monitors-activity",
+      "target": "FCHAIN-login-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-collab-edit",
+      "target": "FCHAIN-collab-edit-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-collab-edit-scenario-missing-actors",
+      "target": "FCHAIN-collab-edit-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-collaborative-edit-scenario",
+      "target": "FCHAIN-collab-edit-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export",
+      "target": "FCHAIN-export-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export-current-state",
+      "target": "FCHAIN-export-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export-current-state-scenario",
+      "target": "FCHAIN-export-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export-missing-scenario",
+      "target": "FCHAIN-export-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export-scenario-missing-actors",
+      "target": "FCHAIN-export-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-live-updates-view",
+      "target": "FCHAIN-collab-edit-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-live-updates-view",
+      "target": "FCHAIN-export-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-live-updates-view",
+      "target": "FCHAIN-live-updates-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-live-updates-view",
+      "target": "FCHAIN-login-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-live-updates-view-scenario",
+      "target": "FCHAIN-live-updates-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login",
+      "target": "FCHAIN-login-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login-user-auth",
+      "target": "FCHAIN-collab-edit-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login-user-auth",
+      "target": "FCHAIN-login-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login-user-auth-scenario",
+      "target": "FCHAIN-login-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login-user-scenario",
+      "target": "FCHAIN-collab-edit-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login-user-scenario",
+      "target": "FCHAIN-export-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login-user-scenario",
+      "target": "FCHAIN-live-updates-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login-user-scenario",
+      "target": "FCHAIN-login-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-authenticates-via-login",
+      "target": "FCHAIN-collab-edit-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-authenticates-via-login",
+      "target": "FCHAIN-login-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-exports-graph-state-with-admin-approval",
+      "target": "FCHAIN-export-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-initiates-collaborative-edit-with-admin",
+      "target": "FCHAIN-collab-edit-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-manages-authentication",
+      "target": "FCHAIN-login-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-manages-authentication-scenario",
+      "target": "FCHAIN-login-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-sees-real-time-updates",
+      "target": "FCHAIN-collab-edit-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-sees-real-time-updates",
+      "target": "FCHAIN-export-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-sees-real-time-updates",
+      "target": "FCHAIN-login-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-sees-real-time-updates-in-interface",
+      "target": "FCHAIN-collab-edit-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-sees-real-time-updates-in-interface",
+      "target": "FCHAIN-live-updates-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-shares-graph-state",
+      "target": "FCHAIN-collab-edit-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-shares-graph-state",
+      "target": "FCHAIN-export-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-views-live-updates",
+      "target": "FCHAIN-live-updates-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-views-live-updates-scenario",
+      "target": "FCHAIN-live-updates-scenario",
+      "type": "compose"
+    }
+  ]
+}
