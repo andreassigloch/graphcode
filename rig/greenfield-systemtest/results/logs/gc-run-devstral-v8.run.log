@@ -1,0 +1,124 @@
+[generate 1] phase=seed done=false
+  1.1: graph_authoring_guide,graph_authoring_guide,graph_authoring_guide
+  1.2: (no calls)
+    recovered mutate applied (15 mutations)
+[generate 2] phase=expand done=false
+  2.1: graph_authoring_guide
+  2.2: graph_authoring_guide
+  2.3: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  2.4: graph_authoring_guide,{"type":"TEST","outgoing":[{"edgeType":"verify","targetType":"REQ","description":"Test verifies requirement"},{"edgeType":"cover","targetType":"FUNC","description":"Test covers function"}],"incoming":[{"edgeType":"verify","sourceType":"REQ","description":"Requirement verified by test"},{"edgeType":"cover","sourceType":"FUNC","description":"Function covered by test"}],"requiredAttrs":[]}[TOOL_CALLS]graph_authoring_guide
+  2.5: (no calls)
+    idle: graphcode_graph_mutate[ARGS]{"commands": [{"op": "add-node", "node": {"uid": "UC-export", "type": "UC", "name": "Export governed system graph", "description": "
+  2.6: graph_authoring_guide
+[generate 3] phase=expand done=false
+  3.1: graph_authoring_guide
+  3.2: graph_authoring_guide
+  3.3: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  3.4: graph_authoring_guide,graph_authoring_guide,graph_authoring_guide
+  3.5: (no calls)
+    idle: graphcode_graph_mutate[ARGS]{"commands": [{"op": "add-node", "node": {"uid": "UC-export", "type": "UC", "name": "User exports governed graph state", "descriptio
+  3.6: (no calls)
+    idle: 
+[generate 4] phase=expand done=false
+  4.1: graph_authoring_guide
+  4.2: graph_authoring_guide
+  4.3: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  4.4: graph_authoring_guide,graph_authoring_guide
+  4.5: (no calls)
+    idle: graphcode_graph_mutate[ARGS]{"commands": [{"op": "add-node", "node": {"uid": "UC-export", "type": "UC", "name": "User exports governed graph state", "descriptio
+  4.6: (no calls)
+    idle: graphcode_graph_mutate[ARGS]{"commands": [{"op": "add-node", "node": {"uid": "UC-export", "type": "UC", "name": "User exports governed graph state", "descriptio
+[generate 5] phase=expand done=false
+  5.1: graph_authoring_guide
+  5.2: graph_authoring_guide
+  5.3: (no calls)
+    idle: graphcode_graph_mutate[ARGS]{"commands": [{"op": "add-node", "node": {"uid": "UC-export", "type": "UC", "name": "Export governed system graph", "description": "
+  5.4: (no calls)
+    idle: 
+[generate 6] phase=expand done=false
+  6.1: graph_authoring_guide
+  6.2: graph_authoring_guide
+  6.3: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  6.4: graph_authoring_guide,graph_authoring_guide
+  6.5: (no calls)
+    idle: graphcode_graph_mutate[ARGS]{"commands": [{"op": "add-node", "node": {"uid": "UC-export", "type": "UC", "name": "Export governed system graph", "description": "
+  6.6: (no calls)
+    idle: graphcode_graph_mutate[ARGS]{"commands": [{"op": "add-node", "node": {"uid": "UC-export", "type": "UC", "name": "Export governed system graph", "description": "
+[generate 7] phase=expand done=false
+  7.1: graph_authoring_guide
+  7.2: graph_authoring_guide
+  7.3: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  7.4: graph_authoring_guide,graph_authoring_guide
+  7.5: (no calls)
+    idle: graphcode_graph_mutate[ARGS]{"commands": [{"op": "add-node", "node": {"uid": "UC-export", "type": "UC", "name": "Export governed system graph", "description": "
+  7.6: (no calls)
+    idle: 
+[generate 8] phase=expand done=false
+  8.1: graph_authoring_guide
+  8.2: graph_authoring_guide
+  8.3: (no calls)
+    idle: graphcode_graph_mutate[ARGS]{"commands": [{"op": "add-node", "node": {"uid": "UC-export", "type": "UC", "name": "User exports governed graph state", "descriptio
+  8.4: (no calls)
+    idle: 
+[generate 9] phase=expand done=false
+  9.1: graph_authoring_guide
+  9.2: graph_authoring_guide
+  9.3: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  9.4: graph_authoring_guide,graph_authoring_guide
+  9.5: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  9.6: graph_authoring_guide
+[generate 10] phase=expand done=false
+  10.1: graph_authoring_guide
+  10.2: graph_authoring_guide
+  10.3: (no calls)
+    idle: graphcode_graph_mutate[ARGS]{"commands": [{"op": "add-node", "node": {"uid": "UC-export", "type": "UC", "name": "User exports governed graph state", "descriptio
+  10.4: (no calls)
+    idle: 
+[generate 11] phase=expand done=false
+  11.1: graph_authoring_guide
+  11.2: graph_authoring_guide
+  11.3: (no calls)
+    idle: graphcode_graph_mutate[ARGS]{"commands": [{"op": "add-node", "node": {"uid": "UC-export", "type": "UC", "name": "User exports governed graph state", "descriptio
+  11.4: (no calls)
+    idle: 
+[generate 12] phase=expand done=false
+  12.1: graph_authoring_guide
+  12.2: graph_authoring_guide
+  12.3: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  12.4: graph_authoring_guide,graph_authoring_guide
+  12.5: (no calls)
+    recovered mutate applied (14 mutations)
+[generate 13] phase=expand done=false
+  13.1: graph_authoring_guide
+  13.2: graph_authoring_guide
+  13.3: (no calls)
+    idle: graphcode_graph_mutate[ARGS]{"commands": [{"op": "add-node", "node": {"uid": "ACTOR-user", "type": "ACTOR", "name": "User", "description": "Multiuser-fähiger Nu
+  13.4: (no calls)
+    idle: 
+[generate 14] phase=expand done=false
+  14.1: graph_authoring_guide
+  14.2: graph_authoring_guide
+  14.3: (no calls)
+    idle: graphcode_graph_mutate[ARGS]{"commands": [{"op": "add-node", "node": {"uid": "ACTOR-user", "type": "ACTOR", "name": "User", "description": "Multiuser-fähige Web
+  14.4: (no calls)
+    idle: 
+[generate 15] phase=expand done=false
+  15.1: graph_authoring_guide
+  15.2: graph_authoring_guide
+  15.3: (no calls)
+    idle: graphcode_graph_mutate[ARGS]{"commands": [{"op": "add-node", "node": {"uid": "ACTOR-user", "type": "ACTOR", "name": "User", "description": "Multiuser-fähige Web
+  15.4: (no calls)
+    idle: 
+[generate 16] phase=expand done=false
+  16.1: graph_authoring_guide
+  16.2: graph_authoring_guide
+  16.3: (no calls)
+    idle: graphcode_graph_mutate[ARGS]{"commands": [{"op": "add-node", "node": {"uid": "ACTOR-user", "type": "ACTOR", "name": "User", "description": "Multiuser-fähiger Nu

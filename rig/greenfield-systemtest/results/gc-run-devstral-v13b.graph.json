@@ -1,0 +1,303 @@
+{
+  "elements": [
+    {
+      "id": "ACTOR-admin",
+      "type": "ACTOR",
+      "name": "Admin",
+      "description": "Verwaltung der Nutzer und Systemeinstellungen."
+    },
+    {
+      "id": "ACTOR-user",
+      "type": "ACTOR",
+      "name": "User",
+      "description": "Endnutzer, der sich anmeldet und den Graphen bearbeitet."
+    },
+    {
+      "id": "FCHAIN-edit-graph",
+      "type": "FCHAIN",
+      "name": "Edit Graph Scenario",
+      "description": "Nutzer fügt Knoten und Kanten zum Systemgraphen hinzu."
+    },
+    {
+      "id": "FCHAIN-export-state-scenario",
+      "type": "FCHAIN",
+      "name": "Export State Scenario",
+      "description": "Nutzer exportiert den aktuellen Stand des Graphen."
+    },
+    {
+      "id": "FCHAIN-login-scenario",
+      "type": "FCHAIN",
+      "name": "Login Scenario",
+      "description": "Nutzer gibt Benutzername und Passwort ein, System validiert Anmeldung und gewährt Zugriff."
+    },
+    {
+      "id": "FCHAIN-view-updates",
+      "type": "FCHAIN",
+      "name": "View Updates Scenario",
+      "description": "Nutzer sieht Live-Updates anderer Nutzer im Graphen."
+    },
+    {
+      "id": "FUNC-edit-graph",
+      "type": "FUNC",
+      "name": "Edit Graph Function",
+      "description": "Funktion zur Bearbeitung des Systemgraphen durch Nutzer."
+    },
+    {
+      "id": "FUNC-export-state-scenario",
+      "type": "FUNC",
+      "name": "Export State Scenario Function",
+      "description": "Funktion zum Exportieren des aktuellen Graphenstandes."
+    },
+    {
+      "id": "FUNC-login-validation",
+      "type": "FUNC",
+      "name": "Login Validation",
+      "description": "Validates user credentials and grants access."
+    },
+    {
+      "id": "FUNC-view-updates",
+      "type": "FUNC",
+      "name": "View Updates Function",
+      "description": "Live-Updates für den Nutzer im Graphen anzeigen."
+    },
+    {
+      "id": "REQ-05",
+      "type": "REQ",
+      "name": "Export State Verification",
+      "description": "The exported graph state must contain all nodes and edges without corruption."
+    },
+    {
+      "id": "REQ-live-updates",
+      "type": "REQ",
+      "name": "Live-Updates anzeigen",
+      "description": "Das System zeigt Live-Updates anderer Nutzer im Graphen an, indem es innerhalb von 500 ms nach einer Mutation alle betroffenen Knoten und Kanten im UI aktualisiert."
+    },
+    {
+      "id": "REQ-postcondition-edit-graph",
+      "type": "REQ",
+      "name": "Postcondition for Edit Graph",
+      "description": "After editing the graph, all changes are persisted and visible to all users in real-time.",
+      "kinds": [
+        "postcondition"
+      ]
+    },
+    {
+      "id": "SYS-web-app",
+      "type": "SYS",
+      "name": "Multiuser Web-App",
+      "description": "Multiuser-fähige Web-App aus dem graphcode harness: Nutzer melden sich an, autorieren gemeinsam einen governten Systemgraphen über das Apply-Gate, sehen Live-Updates und exportieren den Stand."
+    },
+    {
+      "id": "TEST-export-state-verification",
+      "type": "TEST",
+      "name": "Verify Export State",
+      "description": "Testet, ob der Export des Graphen korrekt funktioniert. Schritt: Nutzer exportiert den Graphen als JSON und überprüft, ob alle Knoten und Kanten enthalten sind.",
+      "testRef": {
+        "file": "export-state-test.md",
+        "case": 1,
+        "tool": "graphcode_harness",
+        "level": "integration"
+      }
+    },
+    {
+      "id": "TEST-live-updates-verification",
+      "type": "TEST",
+      "name": "Verify Live Updates",
+      "description": "Testet, ob Live-Updates korrekt angezeigt werden. Schritt: Nutzer A fügt einen Knoten hinzu, Nutzer B sieht die Änderung sofort im Graphen.",
+      "testRef": {
+        "file": "live-updates-test.md",
+        "case": 1,
+        "tool": "graphcode_harness",
+        "level": "integration"
+      }
+    },
+    {
+      "id": "UC-edit-graph",
+      "type": "UC",
+      "name": "Edit Graph",
+      "description": "Nutzer fügt Knoten und Kanten zum Systemgraphen hinzu."
+    },
+    {
+      "id": "UC-export-state",
+      "type": "UC",
+      "name": "Export State",
+      "description": "Nutzer exportiert den aktuellen Stand des Graphen."
+    },
+    {
+      "id": "UC-export-state-scenario",
+      "type": "UC",
+      "name": "Export State Scenario",
+      "description": "Nutzer exportiert den aktuellen Stand des Graphen."
+    },
+    {
+      "id": "UC-login",
+      "type": "UC",
+      "name": "Login",
+      "description": "Nutzer meldet sich mit Benutzername und Passwort an."
+    },
+    {
+      "id": "UC-view-updates",
+      "type": "UC",
+      "name": "View Updates",
+      "description": "Nutzer sieht Live-Updates anderer Nutzer im Graphen."
+    },
+    {
+      "id": "UC-view-updates-scenario",
+      "type": "UC",
+      "name": "View Updates Scenario",
+      "description": "Nutzer sieht Live-Updates anderer Nutzer im Graphen."
+    }
+  ],
+  "traces": [
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-edit-graph",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-edit-graph",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-export-state",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-export-state-scenario",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-login",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-view-updates",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-view-updates-scenario",
+      "type": "io"
+    },
+    {
+      "source": "FCHAIN-edit-graph",
+      "target": "FUNC-edit-graph",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-export-state-scenario",
+      "target": "FUNC-export-state-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-login-scenario",
+      "target": "FUNC-login-validation",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-view-updates",
+      "target": "FUNC-view-updates",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-edit-graph",
+      "target": "UC-edit-graph",
+      "type": "satisfy"
+    },
+    {
+      "source": "SYS-web-app",
+      "target": "UC-edit-graph",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-web-app",
+      "target": "UC-export-state",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-web-app",
+      "target": "UC-login",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-web-app",
+      "target": "UC-view-updates",
+      "type": "compose"
+    },
+    {
+      "source": "TEST-export-state-verification",
+      "target": "REQ-05",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-live-updates-verification",
+      "target": "REQ-live-updates",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-live-updates-verification",
+      "target": "REQ-postcondition-edit-graph",
+      "type": "verify"
+    },
+    {
+      "source": "UC-edit-graph",
+      "target": "FCHAIN-edit-graph",
+      "type": "compose"
+    },
+    {
+      "source": "UC-edit-graph",
+      "target": "REQ-postcondition-edit-graph",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export-state",
+      "target": "FCHAIN-export-state-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export-state-scenario",
+      "target": "FCHAIN-export-state-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export-state-scenario",
+      "target": "REQ-live-updates",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login",
+      "target": "FCHAIN-login-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login",
+      "target": "REQ-live-updates",
+      "type": "compose"
+    },
+    {
+      "source": "UC-view-updates",
+      "target": "FCHAIN-view-updates",
+      "type": "compose"
+    },
+    {
+      "source": "UC-view-updates",
+      "target": "REQ-live-updates",
+      "type": "compose"
+    },
+    {
+      "source": "UC-view-updates-scenario",
+      "target": "FCHAIN-view-updates",
+      "type": "compose"
+    },
+    {
+      "source": "UC-view-updates-scenario",
+      "target": "REQ-live-updates",
+      "type": "compose"
+    }
+  ]
+}

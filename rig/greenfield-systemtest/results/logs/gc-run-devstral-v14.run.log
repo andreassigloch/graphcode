@@ -1,0 +1,340 @@
+[generate 1] phase=seed done=false
+  1.1: graph_authoring_guide,graph_authoring_guide,graph_authoring_guide
+  1.2: (no calls)
+    recovered mutate applied (13 mutations)
+[generate 2] phase=expand done=false
+  2.1: graph_authoring_guide
+  2.2: graph_authoring_guide
+  2.3: (no calls)
+    recovered mutate applied (45 mutations)
+[generate 3] phase=expand done=false
+  3.1: graph_authoring_guide
+  3.2: graph_authoring_guide
+  3.3: (no calls)
+    recovered mutate applied (2 mutations)
+[generate 4] phase=expand done=false
+  4.1: graph_authoring_guide
+  4.2: graph_authoring_guide
+  4.3: (no calls)
+    recovered mutate applied (6 mutations)
+[generate 5] phase=expand done=false
+  5.1: graph_authoring_guide
+  5.2: graph_authoring_guide
+  5.3: (no calls)
+    recovered mutate applied (2 mutations)
+[generate 6] phase=expand done=false
+  stagnation x1: same generate prompt as last round
+  6.1: graph_authoring_guide
+  6.2: graph_authoring_guide
+  6.3: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  6.4: graph_authoring_guide
+  6.5: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  6.6: graph_elements,graph_elements,graph_elements
+[generate 7] phase=expand done=false
+  stagnation x2: same generate prompt as last round
+  7.1: graph_authoring_guide
+  7.2: graph_authoring_guide
+  7.3: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  7.4: graph_authoring_guide
+  7.5: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  7.6: graph_authoring_guide
+[generate 8] phase=expand done=false
+  stagnation x3: same generate prompt as last round
+  defer: uc:FCHAIN-edit-scenario,UC-export-scenario,UC-export-scenario
+  8.1: graph_authoring_guide
+  8.2: graph_authoring_guide
+  8.3: (no calls)
+    recovered mutate applied (7 mutations)
+[generate 9] phase=expand done=false
+  9.1: graph_authoring_guide
+  9.2: graph_authoring_guide
+  9.3: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  9.4: graph_authoring_guide
+  9.5: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  9.6: graph_elements,graph_elements,graph_elements,graph_elements
+[generate 10] phase=expand done=false
+  stagnation x1: same generate prompt as last round
+  10.1: graph_authoring_guide
+  10.2: graph_authoring_guide
+  10.3: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  10.4: graph_elements
+  10.5: (no calls)
+    recovered mutate applied (3 mutations)
+[generate 11] phase=expand done=false
+  11.1: graph_authoring_guide
+  11.2: graph_authoring_guide
+  11.3: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 12] phase=expand done=false
+  stagnation x1: same generate prompt as last round
+  12.1: graph_authoring_guide
+  12.2: graph_authoring_guide
+  12.3: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  12.4: graph_authoring_guide
+  12.5: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  12.6: graph_authoring_guide
+[generate 13] phase=expand done=false
+  stagnation x2: same generate prompt as last round
+  13.1: graph_authoring_guide
+  13.2: graph_authoring_guide
+  13.3: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  13.4: graph_authoring_guide
+  13.5: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  13.6: graph_authoring_guide
+[generate 14] phase=expand done=false
+  stagnation x3: same generate prompt as last round
+  defer: uc:FCHAIN-edit-scenario,FCHAIN-login-scenario,UC-edit-graph
+  14.1: graph_authoring_guide
+  14.2: graph_authoring_guide
+  14.3: (no calls)
+    recovered mutate applied (8 mutations)
+[generate 15] phase=expand done=false
+  15.1: graph_authoring_guide
+  15.2: graph_authoring_guide
+  15.3: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  15.4: graph_authoring_guide
+  15.5: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  15.6: graph_elements,graph_elements,graph_elements,graph_elements,graph_elements,graph_elements,graph_elements,graph_elements
+[generate 16] phase=expand done=false
+  stagnation x1: same generate prompt as last round
+  16.1: graph_authoring_guide
+  16.2: graph_authoring_guide
+  16.3: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  16.4: graph_authoring_guide
+  16.5: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  16.6: graph_authoring_guide,graph_authoring_guide
+[generate 17] phase=expand done=false
+  stagnation x2: same generate prompt as last round
+  17.1: graph_authoring_guide
+  17.2: graph_authoring_guide
+  17.3: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  17.4: graph_authoring_guide
+  17.5: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  17.6: graph_elements
+[generate 18] phase=expand done=false
+  stagnation x3: same generate prompt as last round
+  defer: uc:UC-export-graph,UC-export-scenario,UC-login
+  18.1: graph_authoring_guide
+  18.2: graph_get_node
+  18.3: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  18.4: graph_authoring_guide
+  18.5: (no calls)
+    recovered mutate applied (41 mutations)
+[generate 19] phase=expand done=false
+  19.1: graph_authoring_guide,graph_authoring_guide
+  19.2: graph_mutate
+  19.3: graph_mutate
+  19.4: graph_mutate
+  19.5: graph_mutate
+  19.6: graph_mutate
+[generate 20] phase=expand done=false
+  stagnation x1: same generate prompt as last round
+  20.1: graph_authoring_guide,graph_authoring_guide
+  20.2: graph_elements,graph_elements,graph_elements
+  20.3: (no calls)
+    recovered mutate applied (6 mutations)
+[generate 21] phase=expand done=false
+  21.1: graph_authoring_guide
+  21.2: (no calls)
+    recovered text tool-call graph_authoring_guide
+  21.3: (no calls)
+    recovered mutate applied (2 mutations)
+[generate 22] phase=expand done=false
+  22.1: graph_authoring_guide
+  22.2: (no calls)
+    recovered text tool-call graph_authoring_guide
+  22.3: graph_elements
+  22.4: (no calls)
+    recovered mutate applied (2 mutations)
+[generate 23] phase=expand done=false
+  stagnation x1: same generate prompt as last round
+  23.1: graph_authoring_guide
+  23.2: (no calls)
+    recovered text tool-call graph_elements
+  23.3: graph_elements,graph_elements
+  23.4: (no calls)
+    recovered mutate applied (2 mutations)
+[generate 24] phase=expand done=false
+  stagnation x2: same generate prompt as last round
+  24.1: graph_authoring_guide
+  24.2: (no calls)
+    recovered text tool-call graph_elements
+  24.3: graph_mutate
+[generate 25] phase=expand done=false
+  stagnation x3: same generate prompt as last round
+  defer: ver:TEST-export-format,TEST-login-authentication,TEST-verify-login-authentication
+  25.1: graph_authoring_guide
+  25.2: (no calls)
+    recovered text tool-call graph_elements
+  25.3: graph_mutate
+[generate 26] phase=expand done=false
+  26.1: graph_authoring_guide
+  26.2: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 27] phase=expand done=false
+  stagnation x1: same generate prompt as last round
+  27.1: graph_authoring_guide
+  27.2: (no calls)
+    recovered text tool-call graph_elements
+  27.3: graph_elements
+  27.4: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  27.5: graph_authoring_guide
+  27.6: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+[generate 28] phase=expand done=false
+  stagnation x2: same generate prompt as last round
+  28.1: graph_authoring_guide
+  28.2: (no calls)
+    recovered text tool-call graph_authoring_guide
+  28.3: graph_elements
+  28.4: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  28.5: graph_authoring_guide
+  28.6: (no calls)
+    recovered mutate applied (9 mutations)
+[generate 29] phase=expand done=false
+  29.1: graph_authoring_guide
+  29.2: graph_authoring_guide
+  29.3: (no calls)
+    recovered mutate applied (16 mutations)
+[generate 30] phase=expand done=false
+  30.1: graph_authoring_guide
+  30.2: graph_authoring_guide
+  30.3: (no calls)
+    recovered mutate applied (40 mutations)
+[generate 31] phase=expand done=false
+  31.1: graph_authoring_guide
+  31.2: graph_authoring_guide
+  31.3: (no calls)
+    recovered mutate applied (5 mutations)
+[generate 32] phase=expand done=false
+  32.1: graph_authoring_guide
+  32.2: graph_authoring_guide
+  32.3: (no calls)
+    recovered mutate applied (8 mutations)
+[generate 33] phase=expand done=false
+  stagnation x1: same generate prompt as last round
+  33.1: graph_authoring_guide
+  33.2: graph_authoring_guide
+  33.3: (no calls)
+    recovered mutate applied (3 mutations)
+[generate 34] phase=expand done=false
+  stagnation x2: same generate prompt as last round
+  34.1: graph_authoring_guide
+  34.2: graph_authoring_guide
+  34.3: (no calls)
+    recovered mutate applied (3 mutations)
+[generate 35] phase=expand done=false
+  stagnation x3: same generate prompt as last round
+  defer: uc:FCHAIN-audit-log,FCHAIN-edit-scenario,FCHAIN-export-flow
+  35.1: graph_authoring_guide
+  35.2: graph_authoring_guide
+  35.3: (no calls)
+    recovered mutate applied (24 mutations)
+[generate 36] phase=expand done=false
+  36.1: graph_authoring_guide
+  36.2: graph_authoring_guide
+  36.3: (no calls)
+    recovered mutate applied (3 mutations)
+[generate 37] phase=expand done=false
+  37.1: graph_authoring_guide
+  37.2: graph_authoring_guide
+  37.3: (no calls)
+    recovered mutate applied (41 mutations)
+[generate 38] phase=expand done=false
+  38.1: graph_authoring_guide
+  38.2: graph_authoring_guide
+  38.3: (no calls)
+    recovered mutate applied (8 mutations)
+[generate 39] phase=expand done=false
+  stagnation x1: same generate prompt as last round
+  39.1: graph_authoring_guide
+  39.2: graph_authoring_guide
+  39.3: (no calls)
+    recovered mutate applied (39 mutations)
+[generate 40] phase=expand done=false
+  40.1: graph_authoring_guide
+  40.2: graph_authoring_guide
+  40.3: (no calls)
+    recovered mutate applied (6 mutations)
+[generate 41] phase=expand done=false
+  41.1: graph_authoring_guide
+  41.2: graph_authoring_guide
+  41.3: (no calls)
+    recovered mutate applied (40 mutations)
+[generate 42] phase=expand done=false
+  42.1: graph_authoring_guide
+  42.2: graph_authoring_guide
+  42.3: (no calls)
+    recovered mutate applied (44 mutations)
+[generate 43] phase=expand done=false
+  43.1: graph_authoring_guide
+  43.2: graph_authoring_guide
+  43.3: (no calls)
+    recovered mutate applied (10 mutations)
+[generate 44] phase=expand done=false
+  stagnation x1: same generate prompt as last round
+  44.1: graph_authoring_guide
+  44.2: graph_authoring_guide
+  44.3: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  44.4: graph_elements
+  44.5: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  44.6: graph_elements,graph_elements
+[generate 45] phase=expand done=false
+  stagnation x2: same generate prompt as last round
+  45.1: graph_authoring_guide
+  45.2: graph_authoring_guide
+  45.3: (no calls)
+    recovered mutate applied (40 mutations)
+[generate 46] phase=expand done=false
+  46.1: graph_authoring_guide,graph_authoring_guide
+  46.2: graph_elements
+  46.3: graph_mutate
+[generate 47] phase=expand done=false
+  47.1: graph_authoring_guide,graph_authoring_guide
+  47.2: (no calls)
+    idle: Erstelle zwei Alternativen für MOD-Schnitte und allocate-Kanten FUNC→MOD, um die alloc-Dimension zu verbessern. Ich werde sie als dryRun einreichen, um die Verd
+  47.3: graph_mutate
+[generate 48] phase=expand done=false
+  48.1: graph_authoring_guide,graph_authoring_guide
+  48.2: graph_elements
+  48.3: (no calls)
+    idle: 
+  48.4: graph_mutate
+  48.5: graph_mutate
+  48.6: graph_mutate
+graphcode run: {
+  "done": false,
+  "genRounds": 48,
+  "modelTurns": 187,
+  "mutatesApplied": 36,
+  "mutatesRejected": 23,
+  "dryRunProbes": 8,
+  "repairedAfterRejection": 3,
+  "tokensIn": 553091,
+  "tokensOut": 62779,
+  "tokensReasoning": 0,
+  "export": "docs/graph/gc-run-devstral-v14.graph.json",
+  "exportError": null
+}

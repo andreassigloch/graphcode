@@ -1,0 +1,180 @@
+{
+  "elements": [
+    {
+      "id": "ACTOR-admin",
+      "type": "ACTOR",
+      "name": "Admin",
+      "description": "Betreiber, der Nutzer verwaltet und Systemeinstellungen vornimmt."
+    },
+    {
+      "id": "ACTOR-user",
+      "type": "ACTOR",
+      "name": "User",
+      "description": "Multiuser der Web-App."
+    },
+    {
+      "id": "FCHAIN-export",
+      "type": "FCHAIN",
+      "name": "Export",
+      "description": "User exports the current governed graph state as a snapshot."
+    },
+    {
+      "id": "FCHAIN-export-graph",
+      "type": "FCHAIN",
+      "name": "Export graph chain",
+      "description": "Function chain that exports the governed graph as a Format-E v2 slice."
+    },
+    {
+      "id": "FCHAIN-graph-edit",
+      "type": "FCHAIN",
+      "name": "Graph-Edit-Szenario",
+      "description": "Nutzer bearbeitet den Graphen."
+    },
+    {
+      "id": "FCHAIN-live-update",
+      "type": "FCHAIN",
+      "name": "Live-Update-Szenario",
+      "description": "Nutzer sieht Echtzeit-Updates."
+    },
+    {
+      "id": "FUNC-export-graph",
+      "type": "FUNC",
+      "name": "Export graph function",
+      "description": "Function that serializes the governed graph into a Format-E v2 slice."
+    },
+    {
+      "id": "SYS-web-app",
+      "type": "SYS",
+      "name": "Web-App",
+      "description": "Multiuser-fähige Web-App aus dem graphcode harness: Nutzer melden sich an, autorieren gemeinsam einen governten Systemgraphen über das Apply-Gate, sehen Live-Updates und exportieren den Stand."
+    },
+    {
+      "id": "UC-export",
+      "type": "UC",
+      "name": "Export",
+      "description": "Nutzer exportiert den aktuellen Graphen als JSON."
+    },
+    {
+      "id": "UC-export-graph",
+      "type": "UC",
+      "name": "Export governed graph",
+      "description": "User requests a snapshot of the live governed graph and downloads it as a Format-E v2 slice."
+    },
+    {
+      "id": "UC-graph-edit",
+      "type": "UC",
+      "name": "Graph-Edit",
+      "description": "Nutzer fügt Knoten und Kanten zum Systemgraphen hinzu."
+    },
+    {
+      "id": "UC-live-update",
+      "type": "UC",
+      "name": "Live-Update",
+      "description": "Nutzer sieht Echtzeit-Updates des Graphen nach Änderungen anderer."
+    },
+    {
+      "id": "UC-login",
+      "type": "UC",
+      "name": "Login",
+      "description": "User enters credentials and gains access to the governed system graph."
+    },
+    {
+      "id": "UC-register",
+      "type": "UC",
+      "name": "Register",
+      "description": "New user registers an account to access the system."
+    }
+  ],
+  "traces": [
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-graph-edit",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-export",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-export-graph",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-graph-edit",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-live-update",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-login",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-register",
+      "type": "io"
+    },
+    {
+      "source": "FCHAIN-export-graph",
+      "target": "FUNC-export-graph",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-web-app",
+      "target": "UC-export",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-web-app",
+      "target": "UC-graph-edit",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-web-app",
+      "target": "UC-live-update",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-web-app",
+      "target": "UC-login",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export",
+      "target": "FCHAIN-export",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export-graph",
+      "target": "FCHAIN-export-graph",
+      "type": "compose"
+    },
+    {
+      "source": "UC-graph-edit",
+      "target": "FCHAIN-graph-edit",
+      "type": "compose"
+    },
+    {
+      "source": "UC-live-update",
+      "target": "FCHAIN-live-update",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login",
+      "target": "FCHAIN-export",
+      "type": "compose"
+    },
+    {
+      "source": "UC-register",
+      "target": "FCHAIN-export",
+      "type": "compose"
+    }
+  ]
+}

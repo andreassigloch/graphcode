@@ -1,0 +1,358 @@
+[generate 1] phase=seed done=false
+  1.1: graph_authoring_guide,graph_authoring_guide,graph_authoring_guide
+  1.2: (no calls)
+    recovered mutate applied (16 mutations)
+[generate 2] phase=expand done=false
+  2.1: graph_authoring_guide
+  2.2: graph_authoring_guide
+  2.3: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  2.4: graph_authoring_guide,graph_authoring_guide,graph_authoring_guide
+  2.5: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  2.6: graph_authoring_guide
+[generate 3] phase=expand done=false
+  stagnation x1: same generate prompt as last round
+  3.1: graph_authoring_guide
+  3.2: graph_authoring_guide
+  3.3: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  3.4: graph_authoring_guide
+  3.5: (no calls)
+    recovered mutate applied (40 mutations)
+[generate 4] phase=expand done=false
+  4.1: graph_authoring_guide
+  4.2: graph_authoring_guide
+  4.3: (no calls)
+    recovered mutate applied (39 mutations)
+[generate 5] phase=expand done=false
+  5.1: graph_authoring_guide
+  5.2: (no calls)
+    recovered text tool-call graph_authoring_guide
+  5.3: graph_get_node
+  5.4: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  5.5: graph_get_node
+  5.6: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+[generate 6] phase=expand done=false
+  stagnation x1: same generate prompt as last round
+  6.1: graph_authoring_guide
+  6.2: (no calls)
+    recovered text tool-call graph_get_node
+  6.3: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 7] phase=expand done=false
+  stagnation x2: same generate prompt as last round
+  7.1: graph_authoring_guide
+  7.2: (no calls)
+    recovered text tool-call graph_get_node
+  7.3: graph_get_node
+  7.4: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 8] phase=expand done=false
+  stagnation x3: same generate prompt as last round
+  8.1: graph_authoring_guide
+  8.2: (no calls)
+    recovered text tool-call graph_get_node
+  8.3: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 9] phase=expand done=false
+  stagnation x4: same generate prompt as last round
+  9.1: graph_authoring_guide
+  9.2: (no calls)
+    recovered text tool-call graph_get_node
+  9.3: graph_get_node
+  9.4: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 10] phase=expand done=false
+  stagnation x5: same generate prompt as last round
+  10.1: graph_authoring_guide
+  10.2: (no calls)
+    recovered text tool-call graph_get_node
+  10.3: graph_get_node
+  10.4: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 11] phase=expand done=false
+  stagnation x6: same generate prompt as last round
+  11.1: graph_authoring_guide
+  11.2: (no calls)
+    recovered text tool-call graph_get_node
+  11.3: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 12] phase=expand done=false
+  stagnation x7: same generate prompt as last round
+  12.1: graph_authoring_guide
+  12.2: (no calls)
+    recovered text tool-call graph_get_node
+  12.3: graph_get_node
+  12.4: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 13] phase=expand done=false
+  stagnation x8: same generate prompt as last round
+  13.1: graph_authoring_guide
+  13.2: (no calls)
+    recovered text tool-call graph_get_node
+  13.3: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 14] phase=expand done=false
+  stagnation x9: same generate prompt as last round
+  14.1: graph_authoring_guide
+  14.2: (no calls)
+    recovered text tool-call graph_get_node
+  14.3: graph_get_node
+  14.4: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 15] phase=expand done=false
+  stagnation x10: same generate prompt as last round
+  15.1: graph_authoring_guide
+  15.2: (no calls)
+    recovered text tool-call graph_get_node
+  15.3: graph_get_node
+  15.4: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 16] phase=expand done=false
+  stagnation x11: same generate prompt as last round
+  16.1: graph_authoring_guide
+  16.2: (no calls)
+    recovered text tool-call graph_elements
+  16.3: graph_mutate
+[generate 17] phase=expand done=false
+  17.1: graph_authoring_guide
+  17.2: (no calls)
+    recovered text tool-call graph_authoring_guide
+  17.3: graph_get_node
+  17.4: (no calls)
+    recovered mutate applied (2 mutations)
+[generate 18] phase=expand done=false
+  stagnation x1: same generate prompt as last round
+  18.1: graph_authoring_guide
+  18.2: (no calls)
+    recovered text tool-call graph_get_node
+  18.3: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 19] phase=expand done=false
+  stagnation x2: same generate prompt as last round
+  19.1: graph_authoring_guide
+  19.2: (no calls)
+    recovered text tool-call graph_get_node
+  19.3: graph_get_node
+  19.4: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 20] phase=expand done=false
+  stagnation x3: same generate prompt as last round
+  20.1: graph_authoring_guide
+  20.2: (no calls)
+    recovered text tool-call graph_get_node
+  20.3: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 21] phase=expand done=false
+  stagnation x4: same generate prompt as last round
+  21.1: graph_authoring_guide
+  21.2: (no calls)
+    recovered text tool-call graph_get_node
+  21.3: graph_get_node
+  21.4: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 22] phase=expand done=false
+  stagnation x5: same generate prompt as last round
+  22.1: graph_authoring_guide
+  22.2: (no calls)
+    recovered text tool-call graph_get_node
+  22.3: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 23] phase=expand done=false
+  stagnation x6: same generate prompt as last round
+  23.1: graph_authoring_guide
+  23.2: (no calls)
+    recovered text tool-call graph_get_node
+  23.3: graph_get_node
+  23.4: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 24] phase=expand done=false
+  stagnation x7: same generate prompt as last round
+  24.1: graph_authoring_guide
+  24.2: (no calls)
+    recovered text tool-call graph_get_node
+  24.3: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 25] phase=expand done=false
+  stagnation x8: same generate prompt as last round
+  25.1: graph_authoring_guide
+  25.2: (no calls)
+    recovered text tool-call graph_get_node
+  25.3: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 26] phase=expand done=false
+  stagnation x9: same generate prompt as last round
+  26.1: graph_authoring_guide
+  26.2: (no calls)
+    recovered text tool-call graph_get_node
+  26.3: graph_get_node
+  26.4: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 27] phase=expand done=false
+  stagnation x10: same generate prompt as last round
+  27.1: graph_authoring_guide
+  27.2: (no calls)
+    recovered text tool-call graph_elements
+  27.3: graph_mutate
+[generate 28] phase=expand done=false
+  stagnation x11: same generate prompt as last round
+  28.1: graph_authoring_guide
+  28.2: (no calls)
+    recovered text tool-call graph_get_node
+  28.3: graph_get_node
+  28.4: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 29] phase=expand done=false
+  stagnation x12: same generate prompt as last round
+  29.1: graph_authoring_guide
+  29.2: (no calls)
+    recovered text tool-call graph_elements
+  29.3: graph_mutate
+[generate 30] phase=expand done=false
+  stagnation x13: same generate prompt as last round
+  30.1: graph_authoring_guide
+  30.2: (no calls)
+    recovered text tool-call graph_elements
+  30.3: graph_mutate
+[generate 31] phase=expand done=false
+  stagnation x14: same generate prompt as last round
+  31.1: graph_authoring_guide
+  31.2: (no calls)
+    recovered text tool-call graph_get_node
+  31.3: graph_get_node
+  31.4: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 32] phase=expand done=false
+  stagnation x15: same generate prompt as last round
+  32.1: graph_authoring_guide
+  32.2: (no calls)
+    recovered text tool-call graph_get_node
+  32.3: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 33] phase=expand done=false
+  stagnation x16: same generate prompt as last round
+  33.1: graph_authoring_guide
+  33.2: (no calls)
+    recovered text tool-call graph_get_node
+  33.3: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 34] phase=expand done=false
+  stagnation x17: same generate prompt as last round
+  34.1: graph_authoring_guide
+  34.2: (no calls)
+    recovered text tool-call graph_get_node
+  34.3: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 35] phase=expand done=false
+  stagnation x18: same generate prompt as last round
+  35.1: graph_authoring_guide
+  35.2: (no calls)
+    recovered text tool-call graph_get_node
+  35.3: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 36] phase=expand done=false
+  stagnation x19: same generate prompt as last round
+  36.1: graph_authoring_guide
+  36.2: (no calls)
+    recovered text tool-call graph_get_node
+  36.3: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 37] phase=expand done=false
+  stagnation x20: same generate prompt as last round
+  37.1: graph_authoring_guide
+  37.2: (no calls)
+    recovered text tool-call graph_get_node
+  37.3: graph_get_node
+  37.4: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 38] phase=expand done=false
+  stagnation x21: same generate prompt as last round
+  38.1: graph_authoring_guide
+  38.2: (no calls)
+    recovered text tool-call graph_elements
+  38.3: graph_mutate
+[generate 39] phase=expand done=false
+  stagnation x22: same generate prompt as last round
+  39.1: graph_authoring_guide
+  39.2: (no calls)
+    recovered text tool-call graph_get_node
+  39.3: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 40] phase=expand done=false
+  stagnation x23: same generate prompt as last round
+  40.1: graph_authoring_guide
+  40.2: (no calls)
+    recovered text tool-call graph_get_node
+  40.3: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 41] phase=expand done=false
+  stagnation x24: same generate prompt as last round
+  41.1: graph_authoring_guide
+  41.2: (no calls)
+    recovered text tool-call graph_get_node
+  41.3: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 42] phase=expand done=false
+  stagnation x25: same generate prompt as last round
+  42.1: graph_authoring_guide
+  42.2: (no calls)
+    recovered text tool-call graph_elements
+  42.3: graph_mutate
+[generate 43] phase=expand done=false
+  stagnation x26: same generate prompt as last round
+  43.1: graph_authoring_guide
+  43.2: (no calls)
+    recovered text tool-call graph_get_node
+  43.3: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 44] phase=expand done=false
+  stagnation x27: same generate prompt as last round
+  44.1: graph_authoring_guide
+  44.2: (no calls)
+    recovered text tool-call graph_get_node
+  44.3: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 45] phase=expand done=false
+  stagnation x28: same generate prompt as last round
+  45.1: graph_authoring_guide
+  45.2: (no calls)
+    recovered text tool-call graph_get_node
+  45.3: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 46] phase=expand done=false
+  stagnation x29: same generate prompt as last round
+  46.1: graph_authoring_guide
+  46.2: (no calls)
+    recovered text tool-call graph_elements
+  46.3: graph_mutate
+[generate 47] phase=expand done=false
+  stagnation x30: same generate prompt as last round
+  47.1: graph_authoring_guide
+  47.2: (no calls)
+    recovered text tool-call graph_get_node
+  47.3: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 48] phase=expand done=false
+  stagnation x31: same generate prompt as last round
+  48.1: graph_authoring_guide
+  48.2: (no calls)
+    recovered text tool-call graph_get_node
+  48.3: (no calls)
+    recovered mutate applied (1 mutations)
+graphcode run: {
+  "done": false,
+  "genRounds": 48,
+  "modelTurns": 165,
+  "mutatesApplied": 46,
+  "mutatesRejected": 5,
+  "dryRunProbes": 0,
+  "repairedAfterRejection": 1,
+  "tokensIn": 415964,
+  "tokensOut": 15965,
+  "tokensReasoning": 0,
+  "export": "docs/graph/gc-run-devstral-v11.graph.json",
+  "exportError": null
+}

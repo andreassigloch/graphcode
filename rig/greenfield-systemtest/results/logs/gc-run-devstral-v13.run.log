@@ -1,0 +1,203 @@
+[generate 1] phase=seed done=false
+  1.1: graph_authoring_guide,graph_authoring_guide,graph_authoring_guide
+  1.2: (no calls)
+    recovered mutate applied (14 mutations)
+[generate 2] phase=expand done=false
+  2.1: graph_get_node
+  2.2: (no calls)
+    recovered text tool-call graph_authoring_guide
+  2.3: (no calls)
+    recovered mutate applied (2 mutations)
+[generate 3] phase=expand done=false
+  3.1: graph_get_node
+  3.2: (no calls)
+    recovered text tool-call graph_authoring_guide
+  3.3: (no calls)
+    recovered mutate applied (2 mutations)
+[generate 4] phase=expand done=false
+  4.1: graph_get_node
+  4.2: (no calls)
+    recovered text tool-call graph_authoring_guide
+  4.3: (no calls)
+    recovered mutate applied (2 mutations)
+[generate 5] phase=expand done=false
+  5.1: graph_authoring_guide
+  5.2: (no calls)
+    recovered text tool-call graph_get_node
+  5.3: graph_elements
+  5.4: (no calls)
+    recovered mutate applied (2 mutations)
+[generate 6] phase=expand done=false
+  6.1: graph_get_node
+  6.2: (no calls)
+    recovered text tool-call graph_authoring_guide
+  6.3: graph_elements
+  6.4: (no calls)
+    recovered mutate applied (2 mutations)
+[generate 7] phase=expand done=false
+  7.1: graph_elements
+  7.2: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  7.3: graph_elements
+  7.4: graph_elements
+  7.5: graph_elements
+  7.6: graph_elements
+[generate 8] phase=expand done=false
+  stagnation x1: same generate prompt as last round
+  8.1: graph_elements
+  8.2: graph_authoring_guide
+  8.3: graph_mutate
+[generate 9] phase=expand done=false
+  9.1: graph_elements
+  9.2: graph_authoring_guide
+  9.3: graph_mutate
+[generate 10] phase=expand done=false
+  10.1: graph_elements
+  10.2: graph_authoring_guide
+  10.3: graph_mutate
+[generate 11] phase=expand done=false
+  11.1: graph_get_node
+  11.2: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  11.3: graph_get_node
+  11.4: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  11.5: graph_elements
+  11.6: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+[generate 12] phase=expand done=false
+  stagnation x1: same generate prompt as last round
+  12.1: graph_get_node
+  12.2: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  12.3: graph_get_node
+  12.4: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  12.5: graph_elements
+  12.6: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+[generate 13] phase=expand done=false
+  stagnation x2: same generate prompt as last round
+  13.1: graph_get_node
+  13.2: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  13.3: graph_get_node
+  13.4: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  13.5: graph_authoring_guide
+  13.6: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+[generate 14] phase=expand done=false
+  stagnation x3: same generate prompt as last round
+  defer: uc:UC-edit-graph,UC-export,UC-live-updates
+  14.1: graph_elements
+  14.2: graph_get_node
+  14.3: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  14.4: graph_elements
+  14.5: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  14.6: graph_authoring_guide
+[generate 15] phase=expand done=false
+  15.1: graph_get_node
+  15.2: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  15.3: graph_elements
+  15.4: graph_mutate
+    gate rejected — feeding violations back (turn 4/6)
+  15.5: graph_elements
+  15.6: graph_mutate
+[generate 16] phase=expand done=false
+  stagnation x1: same generate prompt as last round
+  16.1: graph_get_node
+  16.2: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  16.3: graph_get_node
+  16.4: graph_mutate
+    gate rejected — feeding violations back (turn 4/6)
+  16.5: graph_authoring_guide
+  16.6: graph_mutate
+[generate 17] phase=expand done=false
+  17.1: graph_get_node
+  17.2: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  17.3: graph_authoring_guide
+  17.4: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  17.5: graph_authoring_guide
+  17.6: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+[generate 18] phase=expand done=false
+  stagnation x1: same generate prompt as last round
+  18.1: graph_get_node
+  18.2: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  18.3: graph_elements
+  18.4: (no calls)
+    recovered text tool-call graph_elements
+  18.5: graph_mutate
+[generate 19] phase=expand done=false
+  stagnation x2: same generate prompt as last round
+  19.1: graph_get_node
+  19.2: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  19.3: graph_elements
+  19.4: graph_elements
+  19.5: graph_mutate
+[generate 20] phase=expand done=false
+  stagnation x3: same generate prompt as last round
+  defer: ver:TEST-authenticate,TEST-authenticate
+  20.1: graph_get_node
+  20.2: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  20.3: graph_elements
+  20.4: (no calls)
+    recovered text tool-call graph_elements
+  20.5: graph_mutate
+[generate 21] phase=expand done=false
+  21.1: graph_get_node
+  21.2: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  21.3: graph_elements
+  21.4: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  21.5: graph_authoring_guide
+  21.6: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+[generate 22] phase=expand done=false
+  stagnation x1: same generate prompt as last round
+  22.1: graph_get_node
+  22.2: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  22.3: graph_elements
+  22.4: graph_mutate
+    gate rejected — feeding violations back (turn 4/6)
+  22.5: graph_authoring_guide
+  22.6: graph_mutate
+    gate rejected — feeding violations back (turn 6/6)
+[generate 23] phase=expand done=false
+  stagnation x2: same generate prompt as last round
+  23.1: graph_get_node
+  23.2: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  23.3: graph_elements
+  23.4: graph_mutate
+    gate rejected — feeding violations back (turn 4/6)
+  23.5: graph_authoring_guide
+  23.6: (no calls)
+    idle: 
+[generate 24] phase=expand done=false
+  stagnation x3: same generate prompt as last round
+  defer: uc:UC-edit-graph,UC-export,UC-login
+  24.1: graph_get_node
+  24.2: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  24.3: graph_elements
+  24.4: graph_mutate
+    gate rejected — feeding violations back (turn 4/6)
+  24.5: graph_authoring_guide
+  24.6: graph_mutate
+[generate 25] phase=expand done=false
+  25.1: graph_get_node
+  25.2: (no calls)
+    recovered text tool-call graph_authoring_guide

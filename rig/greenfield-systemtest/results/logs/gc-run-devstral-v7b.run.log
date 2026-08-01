@@ -1,0 +1,126 @@
+[generate 1] phase=seed done=false
+  1.1: graph_authoring_guide,graph_authoring_guide,graph_authoring_guide
+  1.2: (no calls)
+    recovered mutate applied (12 mutations)
+[generate 2] phase=expand done=false
+  2.1: graph_authoring_guide
+  2.2: graph_authoring_guide
+  2.3: call failed (The operation was aborted due to timeout) — skip
+[generate 3] phase=expand done=false
+  3.1: graph_authoring_guide
+  3.2: graph_authoring_guide
+  3.3: call failed (The operation was aborted due to timeout) — skip
+[generate 4] phase=expand done=false
+  4.1: graph_authoring_guide
+  4.2: graph_authoring_guide
+  4.3: call failed (The operation was aborted due to timeout) — skip
+[generate 5] phase=expand done=false
+  5.1: graph_authoring_guide
+  5.2: graph_authoring_guide
+  5.3: call failed (The operation was aborted due to timeout) — skip
+[generate 6] phase=expand done=false
+  6.1: graph_authoring_guide
+  6.2: graph_authoring_guide
+  6.3: call failed (The operation was aborted due to timeout) — skip
+[generate 7] phase=expand done=false
+  7.1: graph_authoring_guide
+  7.2: graph_authoring_guide
+  7.3: call failed (The operation was aborted due to timeout) — skip
+[generate 8] phase=expand done=false
+  8.1: graph_authoring_guide
+  8.2: graph_authoring_guide
+  8.3: call failed (The operation was aborted due to timeout) — skip
+[generate 9] phase=expand done=false
+  9.1: graph_authoring_guide
+  9.2: graph_authoring_guide
+  9.3: (no calls)
+    recovered mutate applied (16 mutations)
+[generate 10] phase=expand done=false
+  10.1: graph_authoring_guide
+  10.2: graph_authoring_guide
+  10.3: (no calls)
+    idle: graphcode_graph_mutate[ARGS]{"commands": [{"op": "add-node", "node": {"uid": "ACTOR-user", "type": "ACTOR", "name": "User", "description": "End user of the web 
+  10.4: graph_mutate
+    gate rejected — feeding violations back (turn 4/6)
+  10.5: graph_authoring_guide
+  10.6: (no calls)
+    idle: graphcode_graph_mutate[ARGS]{"commands": [{"op": "add-node", "node": {"uid": "ACTOR-user", "type": "ACTOR", "name": "User", "description": "End user of the web 
+[generate 11] phase=expand done=false
+  11.1: graph_authoring_guide
+  11.2: graph_authoring_guide
+  11.3: call failed (The operation was aborted due to timeout) — skip
+[generate 12] phase=expand done=false
+  12.1: graph_authoring_guide
+  12.2: graph_authoring_guide
+  12.3: call failed (The operation was aborted due to timeout) — skip
+[generate 13] phase=expand done=false
+  13.1: graph_authoring_guide
+  13.2: graph_authoring_guide
+  13.3: call failed (The operation was aborted due to timeout) — skip
+[generate 14] phase=expand done=false
+  14.1: graph_authoring_guide
+  14.2: graph_authoring_guide
+  14.3: call failed (The operation was aborted due to timeout) — skip
+[generate 15] phase=expand done=false
+  15.1: graph_authoring_guide
+  15.2: graph_authoring_guide
+  15.3: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  15.4: call failed (The operation was aborted due to timeout) — skip
+[generate 16] phase=expand done=false
+  16.1: graph_authoring_guide
+  16.2: graph_authoring_guide
+  16.3: (no calls)
+    recovered mutate applied (12 mutations)
+[generate 17] phase=expand done=false
+  17.1: graph_authoring_guide
+  17.2: graph_authoring_guide
+  17.3: (no calls)
+    recovered mutate applied (3 mutations)
+[generate 18] phase=expand done=false
+  18.1: graph_authoring_guide
+  18.2: graph_authoring_guide
+  18.3: call failed (The operation was aborted due to timeout) — skip
+[generate 19] phase=expand done=false
+  19.1: graph_authoring_guide
+  19.2: graph_authoring_guide
+  19.3: call failed (The operation was aborted due to timeout) — skip
+[generate 20] phase=expand done=false
+  20.1: graph_authoring_guide
+  20.2: graph_authoring_guide
+  20.3: (no calls)
+    recovered mutate applied (2 mutations)
+[generate 21] phase=expand done=false
+  21.1: graph_authoring_guide
+  21.2: graph_authoring_guide,graph_elements
+  21.3: (no calls)
+    recovered mutate applied (2 mutations)
+[generate 22] phase=expand done=false
+  22.1: graph_authoring_guide
+  22.2: graph_authoring_guide
+  22.3: (no calls)
+    recovered mutate applied (2 mutations)
+[generate 23] phase=expand done=false
+  23.1: graph_authoring_guide
+  23.2: graph_authoring_guide
+  23.3: (no calls)
+    recovered mutate applied (2 mutations)
+[generate 24] phase=expand done=false
+  24.1: graph_authoring_guide
+  24.2: graph_authoring_guide
+  24.3: (no calls)
+    recovered mutate applied (2 mutations)
+graphcode run: {
+  "done": false,
+  "genRounds": 24,
+  "modelTurns": 75,
+  "mutatesApplied": 9,
+  "mutatesRejected": 2,
+  "dryRunProbes": 0,
+  "repairedAfterRejection": 0,
+  "tokensIn": 152468,
+  "tokensOut": 8200,
+  "tokensReasoning": 0,
+  "export": "docs/graph/gc-run-devstral-v7b.graph.json",
+  "exportError": null
+}

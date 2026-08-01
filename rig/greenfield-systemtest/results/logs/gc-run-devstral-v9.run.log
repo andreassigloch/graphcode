@@ -1,0 +1,203 @@
+[generate 1] phase=seed done=false
+  1.1: graph_authoring_guide,graph_authoring_guide,graph_authoring_guide
+  1.2: (no calls)
+    recovered mutate applied (13 mutations)
+[generate 2] phase=expand done=false
+  2.1: graph_authoring_guide
+  2.2: graph_authoring_guide,{"type":"ACTOR","outgoing":[{"edgeType":"io","targetType":"UC","description":"Actor interacts with use case"},{"edgeType":"io","targetType":"FLOW","description":"Actor interacts with flow"}],"incoming":[{"edgeType":"compose","sourceType":"SYS","description":"System includes actors"},{"edgeType":"relation","sourceType":"CR","description":"CR affects actor"}],"requiredAttrs":[]}[TOOL_CALLS][TOOL_CALLS]graph_authoring_guide
+  2.3: (no calls)
+    idle: 
+  2.4: graph_mutate
+    gate rejected — feeding violations back (turn 4/6)
+  2.5: graph_authoring_guide
+  2.6: (no calls)
+    idle: 
+[generate 3] phase=expand done=false
+  3.1: graph_authoring_guide
+  3.2: graph_authoring_guide,graph_get_node
+  3.3: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  3.4: graph_authoring_guide,graph_authoring_guide
+  3.5: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  3.6: graph_authoring_guide,graph_authoring_guide
+[generate 4] phase=expand done=false
+  4.1: graph_authoring_guide
+  4.2: graph_authoring_guide,graph_elements
+  4.3: (no calls)
+    idle: 
+  4.4: graph_mutate
+    gate rejected — feeding violations back (turn 4/6)
+  4.5: graph_mutate
+    gate rejected — feeding violations back (turn 5/6)
+  4.6: graph_authoring_guide
+[generate 5] phase=expand done=false
+  5.1: graph_authoring_guide
+  5.2: graph_authoring_guide,graph_elements
+  5.3: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  5.4: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  5.5: graph_authoring_guide
+  5.6: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+[generate 6] phase=expand done=false
+  6.1: graph_authoring_guide
+  6.2: graph_authoring_guide
+  6.3: (no calls)
+    recovered mutate applied (38 mutations)
+[generate 7] phase=expand done=false
+  7.1: graph_authoring_guide
+  7.2: graph_authoring_guide
+  7.3: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  7.4: graph_authoring_guide,{"type":"TEST","outgoing":[{"edgeType":"verify","targetType":"REQ","description":"Test verifies requirement"}],"incoming":[{"edgeType":"verify","sourceType":"REQ","description":"Requirement verified by test"}],"requiredAttrs":[]}[TOOL_CALLS]graph_authoring_guide
+  7.5: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  7.6: graph_authoring_guide
+[generate 8] phase=expand done=false
+  8.1: graph_authoring_guide
+  8.2: graph_authoring_guide
+  8.3: (no calls)
+    recovered mutate applied (41 mutations)
+[generate 9] phase=expand done=false
+  9.1: graph_authoring_guide
+  9.2: graph_authoring_guide
+  9.3: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  9.4: graph_authoring_guide
+  9.5: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  9.6: graph_authoring_guide
+[generate 10] phase=expand done=false
+  10.1: graph_authoring_guide
+  10.2: graph_authoring_guide
+  10.3: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  10.4: graph_authoring_guide
+  10.5: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  10.6: graph_authoring_guide
+[generate 11] phase=expand done=false
+  11.1: graph_authoring_guide
+  11.2: graph_authoring_guide
+  11.3: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  11.4: graph_authoring_guide
+  11.5: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  11.6: graph_authoring_guide
+[generate 12] phase=expand done=false
+  12.1: graph_authoring_guide
+  12.2: graph_authoring_guide
+  12.3: (no calls)
+    recovered mutate applied (3 mutations)
+[generate 13] phase=expand done=false
+  13.1: graph_authoring_guide
+  13.2: graph_authoring_guide
+  13.3: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  13.4: graph_authoring_guide
+  13.5: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  13.6: graph_authoring_guide
+[generate 14] phase=expand done=false
+  14.1: graph_authoring_guide
+  14.2: graph_authoring_guide
+  14.3: (no calls)
+    recovered mutate applied (39 mutations)
+[generate 15] phase=expand done=false
+  15.1: graph_authoring_guide
+  15.2: graph_authoring_guide
+  15.3: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  15.4: graph_authoring_guide
+  15.5: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  15.6: graph_authoring_guide
+[generate 16] phase=expand done=false
+  16.1: graph_authoring_guide
+  16.2: graph_authoring_guide
+  16.3: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  16.4: graph_authoring_guide
+  16.5: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  16.6: graph_authoring_guide,graph_authoring_guide
+[generate 17] phase=expand done=false
+  17.1: graph_authoring_guide
+  17.2: graph_authoring_guide
+  17.3: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  17.4: graph_authoring_guide,graph_authoring_guide
+  17.5: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  17.6: graph_authoring_guide,graph_authoring_guide,graph_authoring_guide,graph_authoring_guide,graph_authoring_guide
+[generate 18] phase=expand done=false
+  18.1: graph_authoring_guide
+  18.2: graph_authoring_guide
+  18.3: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  18.4: graph_authoring_guide
+  18.5: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  18.6: graph_authoring_guide
+[generate 19] phase=expand done=false
+  19.1: graph_authoring_guide
+  19.2: graph_authoring_guide
+  19.3: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  19.4: graph_authoring_guide
+  19.5: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  19.6: graph_authoring_guide
+[generate 20] phase=expand done=false
+  20.1: graph_authoring_guide
+  20.2: graph_authoring_guide
+  20.3: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  20.4: graph_authoring_guide
+  20.5: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  20.6: graph_authoring_guide
+[generate 21] phase=expand done=false
+  21.1: graph_authoring_guide
+  21.2: graph_authoring_guide
+  21.3: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  21.4: graph_authoring_guide
+  21.5: (no calls)
+    recovered mutate applied (9 mutations)
+[generate 22] phase=expand done=false
+  22.1: graph_authoring_guide
+  22.2: graph_authoring_guide
+  22.3: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  22.4: graph_authoring_guide
+  22.5: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  22.6: graph_elements
+[generate 23] phase=expand done=false
+  23.1: graph_authoring_guide
+  23.2: graph_authoring_guide
+  23.3: (no calls)
+    recovered mutate applied (37 mutations)
+[generate 24] phase=expand done=false
+  24.1: graph_authoring_guide
+  24.2: graph_authoring_guide
+  24.3: (no calls)
+    recovered mutate applied (16 mutations)
+graphcode run: {
+  "done": false,
+  "genRounds": 24,
+  "modelTurns": 121,
+  "mutatesApplied": 8,
+  "mutatesRejected": 33,
+  "dryRunProbes": 0,
+  "repairedAfterRejection": 1,
+  "tokensIn": 437383,
+  "tokensOut": 70568,
+  "tokensReasoning": 0,
+  "export": "docs/graph/gc-run-devstral-v9.graph.json",
+  "exportError": null
+}

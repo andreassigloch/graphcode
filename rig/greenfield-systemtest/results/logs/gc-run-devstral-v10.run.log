@@ -1,0 +1,180 @@
+[generate 1] phase=seed done=false
+  1.1: graph_authoring_guide,graph_authoring_guide,graph_authoring_guide
+  1.2: (no calls)
+    recovered mutate applied (13 mutations)
+[generate 2] phase=expand done=false
+  2.1: graph_authoring_guide
+  2.2: graph_authoring_guide
+  2.3: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  2.4: graph_authoring_guide
+  2.5: (no calls)
+    recovered mutate applied (39 mutations)
+[generate 3] phase=expand done=false
+  3.1: graph_authoring_guide
+  3.2: graph_authoring_guide
+  3.3: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  3.4: graph_elements
+  3.5: (no calls)
+    recovered mutate applied (6 mutations)
+[generate 4] phase=expand done=false
+  4.1: graph_authoring_guide
+  4.2: graph_authoring_guide
+  4.3: (no calls)
+    recovered mutate applied (7 mutations)
+[generate 5] phase=expand done=false
+  5.1: graph_authoring_guide
+  5.2: graph_authoring_guide
+  5.3: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  5.4: graph_authoring_guide,graph_authoring_guide,graph_authoring_guide
+  5.5: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  5.6: graph_authoring_guide
+[generate 6] phase=expand done=false
+  6.1: graph_authoring_guide
+  6.2: graph_authoring_guide
+  6.3: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  6.4: graph_authoring_guide,graph_authoring_guide,graph_authoring_guide
+  6.5: (no calls)
+    recovered mutate applied (10 mutations)
+[generate 7] phase=expand done=false
+  7.1: graph_authoring_guide
+  7.2: (no calls)
+    recovered text tool-call graph_elements
+  7.3: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 8] phase=expand done=false
+  8.1: graph_authoring_guide
+  8.2: (no calls)
+    recovered text tool-call graph_authoring_guide
+  8.3: graph_get_node
+  8.4: (no calls)
+    recovered mutate applied (2 mutations)
+[generate 9] phase=expand done=false
+  9.1: graph_authoring_guide
+  9.2: (no calls)
+    recovered text tool-call graph_elements
+  9.3: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 10] phase=expand done=false
+  10.1: graph_authoring_guide
+  10.2: (no calls)
+    recovered text tool-call graph_elements
+  10.3: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 11] phase=expand done=false
+  11.1: graph_authoring_guide
+  11.2: (no calls)
+    recovered text tool-call graph_elements
+  11.3: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 12] phase=expand done=false
+  12.1: graph_authoring_guide
+  12.2: (no calls)
+    recovered text tool-call graph_elements
+  12.3: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 13] phase=expand done=false
+  13.1: graph_authoring_guide
+  13.2: (no calls)
+    recovered text tool-call graph_elements
+  13.3: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 14] phase=expand done=false
+  14.1: graph_authoring_guide
+  14.2: (no calls)
+    recovered text tool-call graph_elements
+  14.3: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 15] phase=expand done=false
+  15.1: graph_authoring_guide
+  15.2: (no calls)
+    recovered text tool-call graph_elements
+  15.3: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 16] phase=expand done=false
+  16.1: graph_authoring_guide
+  16.2: (no calls)
+    recovered text tool-call graph_elements
+  16.3: graph_mutate
+[generate 17] phase=expand done=false
+  17.1: graph_authoring_guide
+  17.2: (no calls)
+    recovered text tool-call graph_elements
+  17.3: graph_mutate
+[generate 18] phase=expand done=false
+  18.1: graph_authoring_guide
+  18.2: (no calls)
+    recovered text tool-call graph_elements
+  18.3: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 19] phase=expand done=false
+  19.1: graph_authoring_guide
+  19.2: (no calls)
+    recovered text tool-call graph_elements
+  19.3: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 20] phase=expand done=false
+  20.1: graph_authoring_guide
+  20.2: (no calls)
+    recovered text tool-call graph_elements
+  20.3: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 21] phase=expand done=false
+  21.1: graph_authoring_guide
+  21.2: (no calls)
+    recovered text tool-call graph_authoring_guide
+  21.3: graph_elements
+  21.4: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 22] phase=expand done=false
+  22.1: graph_authoring_guide
+  22.2: (no calls)
+    recovered text tool-call graph_elements
+  22.3: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 23] phase=expand done=false
+  23.1: graph_authoring_guide
+  23.2: (no calls)
+    recovered text tool-call graph_elements
+  23.3: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 24] phase=expand done=false
+  24.1: graph_authoring_guide
+  24.2: (no calls)
+    recovered text tool-call graph_elements
+  24.3: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 25] phase=expand done=false
+  25.1: graph_authoring_guide
+  25.2: (no calls)
+    recovered text tool-call graph_elements
+  25.3: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 26] phase=expand done=false
+  26.1: graph_authoring_guide
+  26.2: (no calls)
+    recovered text tool-call graph_elements
+  26.3: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 27] phase=expand done=false
+  27.1: graph_authoring_guide
+  27.2: (no calls)
+    recovered text tool-call graph_elements
+  27.3: (no calls)
+    recovered mutate applied (1 mutations)
+[generate 28] phase=expand done=false
+  28.1: graph_authoring_guide
+  28.2: (no calls)
+    recovered text tool-call graph_elements
+  28.3: graph_mutate
+[generate 29] phase=expand done=false
+  29.1: graph_authoring_guide
+  29.2: (no calls)
+    recovered text tool-call graph_elements
+  29.3: graph_mutate
+[generate 30] phase=expand done=false
+  30.1: graph_authoring_guide

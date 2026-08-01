@@ -1,0 +1,121 @@
+{
+  "elements": [
+    {
+      "id": "ACTOR-admin",
+      "type": "ACTOR",
+      "name": "Admin",
+      "description": "Betreibt das System, verwaltet Nutzer und exportiert Graph-Stände."
+    },
+    {
+      "id": "ACTOR-user",
+      "type": "ACTOR",
+      "name": "User",
+      "description": "Multiuser-fähige Web-App-Nutzer, die sich anmelden und gemeinsam den Systemgraphen autorisieren."
+    },
+    {
+      "id": "FCHAIN-export-scenario",
+      "type": "FCHAIN",
+      "name": "Export-Szenario",
+      "description": "Nutzer wählt Export-Format, System generiert und liefert Datei."
+    },
+    {
+      "id": "FCHAIN-graph-edit-scenario",
+      "type": "FCHAIN",
+      "name": "Graph-Edit-Szenario",
+      "description": "Nutzer fügt Knoten/Kanten hinzu, System validiert und persistiert."
+    },
+    {
+      "id": "FCHAIN-login-scenario",
+      "type": "FCHAIN",
+      "name": "Login scenario chain",
+      "description": "Functional chain for the login scenario."
+    },
+    {
+      "id": "SYS-web-app",
+      "type": "SYS",
+      "name": "Multiuser Web-App",
+      "description": "Multiuser-fähige Web-App aus dem graphcode harness: Nutzer melden sich an, autorieren gemeinsam einen governten Systemgraphen über das Apply-Gate, sehen Live-Updates und exportieren den Stand."
+    },
+    {
+      "id": "UC-export",
+      "type": "UC",
+      "name": "Export-Stand",
+      "description": "Nutzer exportiert den aktuellen Systemgraphen als Datei."
+    },
+    {
+      "id": "UC-graph-edit",
+      "type": "UC",
+      "name": "Graph-Editieren",
+      "description": "Nutzer bearbeitet den Systemgraphen über das Apply-Gate."
+    },
+    {
+      "id": "UC-login",
+      "type": "UC",
+      "name": "Login",
+      "description": "Nutzer meldet sich an und erhält eine Session-ID für weitere Interaktionen."
+    },
+    {
+      "id": "UC-login-scenario",
+      "type": "UC",
+      "name": "User logs in and sees live graph updates",
+      "description": "A user logs into the system, authenticates successfully, and sees live updates of the governed graph."
+    }
+  ],
+  "traces": [
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-export",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-export",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-graph-edit",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-login",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-login-scenario",
+      "type": "io"
+    },
+    {
+      "source": "SYS-web-app",
+      "target": "UC-export",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-web-app",
+      "target": "UC-graph-edit",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-web-app",
+      "target": "UC-login",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export",
+      "target": "FCHAIN-export-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-graph-edit",
+      "target": "FCHAIN-graph-edit-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login",
+      "target": "FCHAIN-login-scenario",
+      "type": "compose"
+    }
+  ]
+}

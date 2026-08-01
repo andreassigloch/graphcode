@@ -1,0 +1,86 @@
+[generate 1] phase=seed done=false
+  1.1: graph_authoring_guide,graph_authoring_guide,graph_authoring_guide
+  1.2: (no calls)
+    recovered mutate applied (16 mutations)
+[generate 2] phase=expand done=false
+  2.1: graph_authoring_guide
+  2.2: graph_authoring_guide
+  2.3: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  2.4: graph_authoring_guide
+  2.5: (no calls)
+    recovered mutate REJECTED — feeding gate violations back
+  2.6: graph_authoring_guide
+[generate 3] phase=expand done=false
+  3.1: graph_authoring_guide
+  3.2: graph_authoring_guide
+  3.3: graph_elements,graph_elements
+  3.4: (no calls)
+    idle: 
+  3.5: graph_mutate
+[generate 4] phase=expand done=false
+  4.1: graph_authoring_guide
+  4.2: graph_authoring_guide
+  4.3: (no calls)
+    idle: graphcode_graph_elements[ARGS]{"type": "UC", "search": "login"}
+  4.4: graph_elements
+  4.5: call failed (The operation was aborted due to timeout) — skip
+[generate 5] phase=expand done=false
+  5.1: graph_authoring_guide
+  5.2: graph_authoring_guide
+  5.3: (no calls)
+    idle: graphcode_graph_elements[ARGS]{"type": "UC", "search": "login"}
+  5.4: call failed (The operation was aborted due to timeout) — skip
+[generate 6] phase=expand done=false
+  6.1: graph_authoring_guide
+  6.2: graph_authoring_guide
+  6.3: call failed (The operation was aborted due to timeout) — skip
+[generate 7] phase=expand done=false
+  7.1: graph_authoring_guide
+  7.2: graph_authoring_guide
+  7.3: call failed (The operation was aborted due to timeout) — skip
+[generate 8] phase=expand done=false
+  8.1: graph_authoring_guide
+  8.2: graph_authoring_guide
+  8.3: (no calls)
+    idle: graphcode_graph_elements[ARGS]{"type": "UC", "search": "login"}
+  8.4: call failed (The operation was aborted due to timeout) — skip
+[generate 9] phase=expand done=false
+  9.1: graph_authoring_guide
+  9.2: graph_authoring_guide
+  9.3: (no calls)
+    recovered mutate applied (30 mutations)
+[generate 10] phase=expand done=false
+  10.1: graph_authoring_guide
+  10.2: graph_authoring_guide
+  10.3: (no calls)
+    idle: graphcode_graph_elements[ARGS]{"type": "UC", "search": "login"}
+  10.4: graph_mutate
+[generate 11] phase=expand done=false
+  11.1: graph_authoring_guide
+  11.2: graph_authoring_guide
+  11.3: (no calls)
+    idle: graphcode_graph_elements[ARGS]{"type": "UC", "search": "FCHAIN"}
+  11.4: graph_mutate
+    gate rejected — feeding violations back (turn 4/6)
+  11.5: graph_elements
+  11.6: graph_elements
+[generate 12] phase=expand done=false
+  12.1: graph_authoring_guide
+  12.2: graph_authoring_guide
+  12.3: (no calls)
+    recovered mutate applied (6 mutations)
+graphcode run: {
+  "done": false,
+  "genRounds": 12,
+  "modelTurns": 48,
+  "mutatesApplied": 5,
+  "mutatesRejected": 3,
+  "dryRunProbes": 0,
+  "repairedAfterRejection": 0,
+  "tokensIn": 111693,
+  "tokensOut": 6957,
+  "tokensReasoning": 0,
+  "export": "docs/graph/gc-run-devstral-v6.graph.json",
+  "exportError": null
+}

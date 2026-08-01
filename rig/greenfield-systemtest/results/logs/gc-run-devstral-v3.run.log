@@ -1,0 +1,15 @@
+[generate 1] phase=seed done=false
+  1.1: graph_authoring_guide,graph_authoring_guide,graph_authoring_guide
+  1.2: graph_mutate
+  1.3: graph_mutate
+[generate 2] phase=expand done=false
+  2.1: graph_authoring_guide
+  2.2: graph_authoring_guide
+  2.3: (no calls)
+    idle: graphcode_graph_authoring_guide[ARGS]{"type": "REQ"}
+  2.4: graph_mutate
+    gate rejected — feeding violations back (turn 4/6)
+  2.5: call failed (backend: "Error rendering prompt with jinja template: \"After the optional syste) — skip
+[generate 3] phase=expand done=false
+  3.1: graph_authoring_guide
+  3.2: graph_authoring_guide

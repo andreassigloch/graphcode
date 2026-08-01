@@ -1,0 +1,5 @@
+[generate 1] phase=seed done=false
+  1.1: graph_authoring_guide,graph_authoring_guide,graph_authoring_guide
+  1.2: call failed (fetch failed) — skip
+[generate 2] phase=seed done=false
+  2.1: graph_authoring_guide,graph_authoring_guide,graph_authoring_guide

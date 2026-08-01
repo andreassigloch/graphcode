@@ -1,0 +1,31 @@
+[generate 1] phase=seed done=false
+  1.1: graph_authoring_guide,graph_authoring_guide,graph_authoring_guide
+  1.2: graph_mutate
+[generate 2] phase=seed done=false
+  2.1: graph_authoring_guide
+  2.2: (no calls)
+[generate 3] phase=seed done=false
+  3.1: graph_authoring_guide
+  3.2: (no calls)
+[generate 4] phase=seed done=false
+  4.1: graph_authoring_guide
+  4.2: (no calls)
+[generate 5] phase=seed done=false
+  5.1: graph_authoring_guide
+  5.2: (no calls)
+[generate 6] phase=seed done=false
+  6.1: graph_authoring_guide
+  6.2: (no calls)
+[generate 7] phase=seed done=false
+  7.1: graph_authoring_guide
+  7.2: (no calls)
+[generate 8] phase=seed done=false
+  8.1: graph_authoring_guide
+  8.2: (no calls)
+[generate 9] phase=seed done=false
+  9.1: graph_authoring_guide
+  9.2: (no calls)
+[generate 10] phase=seed done=false
+  10.1: graph_authoring_guide
+  10.2: (no calls)
+graphcode: graph_export refused: live graph has 0 elements — refusing to overwrite docs/graph/gc-run-devstral.graph.json with an empty graph.

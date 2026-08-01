@@ -1,0 +1,474 @@
+{
+  "elements": [
+    {
+      "id": "ACTOR-admin",
+      "type": "ACTOR",
+      "name": "Admin",
+      "description": "An administrative user with elevated privileges for managing the system."
+    },
+    {
+      "id": "ACTOR-user",
+      "type": "ACTOR",
+      "name": "User",
+      "description": "A human user interacting with the multiuser web application."
+    },
+    {
+      "id": "FCHAIN-export-scenario",
+      "type": "FCHAIN",
+      "name": "Export scenario",
+      "description": "User selects export format, system serializes the current graph state, and delivers it for download."
+    },
+    {
+      "id": "FCHAIN-graph-edit-scenario",
+      "type": "FCHAIN",
+      "name": "Graph edit scenario",
+      "description": "User proposes a change, the system validates it through the Apply-Gate, and applies the change if valid."
+    },
+    {
+      "id": "FCHAIN-live-update-scenario",
+      "type": "FCHAIN",
+      "name": "Live update scenario",
+      "description": "System detects a change, validates it, and pushes the update to all connected clients in real-time."
+    },
+    {
+      "id": "FCHAIN-login-scenario",
+      "type": "FCHAIN",
+      "name": "Login scenario",
+      "description": "User enters credentials, system validates, grants access, and redirects to the graph editor."
+    },
+    {
+      "id": "FLOW-authentication-flow",
+      "type": "FLOW",
+      "name": "Authentication Flow",
+      "description": "Handles user login, session management, and access control."
+    },
+    {
+      "id": "FLOW-export-flow",
+      "type": "FLOW",
+      "name": "Export Flow",
+      "description": "Handles graph state serialization and delivery for export."
+    },
+    {
+      "id": "FLOW-graph-editing-flow",
+      "type": "FLOW",
+      "name": "Graph Editing Flow",
+      "description": "Manages collaborative graph editing and validation through the Apply-Gate."
+    },
+    {
+      "id": "FLOW-live-update-flow",
+      "type": "FLOW",
+      "name": "Live Update Flow",
+      "description": "Pushes real-time updates to all connected clients."
+    },
+    {
+      "id": "FUNC-apply-graph-change",
+      "type": "FUNC",
+      "name": "Apply Graph Change",
+      "description": "Validates and applies changes to the governed graph through the Apply-Gate."
+    },
+    {
+      "id": "FUNC-authenticate-user",
+      "type": "FUNC",
+      "name": "Authenticate User",
+      "description": "Validates user credentials and establishes a secure session."
+    },
+    {
+      "id": "REQ-export-audit",
+      "type": "REQ",
+      "name": "Export audit requirement",
+      "description": "Each export must be logged with user ID, timestamp, and graph version."
+    },
+    {
+      "id": "REQ-export-authz",
+      "type": "REQ",
+      "name": "Export authorization requirement",
+      "description": "Only authenticated users may trigger export."
+    },
+    {
+      "id": "REQ-export-format",
+      "type": "REQ",
+      "name": "Export format requirement",
+      "description": "Exported graph must be a valid Format-E v2 slice."
+    },
+    {
+      "id": "REQ-export-live",
+      "type": "REQ",
+      "name": "Live export requirement",
+      "description": "Export must reflect the latest graph state at time of request."
+    },
+    {
+      "id": "REQ-export-notification",
+      "type": "REQ",
+      "name": "Export notification requirement",
+      "description": "User must receive a confirmation email with download link."
+    },
+    {
+      "id": "REQ-export-performance",
+      "type": "REQ",
+      "name": "Export performance requirement",
+      "description": "Export must complete within 2 seconds for graphs up to 10k nodes."
+    },
+    {
+      "id": "REQ-export-security",
+      "type": "REQ",
+      "name": "Export security requirement",
+      "description": "Exported artifacts must be encrypted at rest."
+    },
+    {
+      "id": "REQ-export-storage",
+      "type": "REQ",
+      "name": "Export storage requirement",
+      "description": "Exported artifacts must be retained for 30 days."
+    },
+    {
+      "id": "REQ-export-validation",
+      "type": "REQ",
+      "name": "Export validation requirement",
+      "description": "Exported graph must pass basic structural validation."
+    },
+    {
+      "id": "SYS-multiuser-web-app",
+      "type": "SYS",
+      "name": "Multiuser Web Application",
+      "description": "A governed system enabling collaborative graph editing with real-time updates and export capabilities."
+    },
+    {
+      "id": "SYS-web-app",
+      "type": "SYS",
+      "name": "Web-App",
+      "description": "Multiuser-fähige Web-App aus dem graphcode harness: Nutzer melden sich an, autorieren gemeinsam einen governten Systemgraphen über das Apply-Gate, sehen Live-Updates und exportieren den Stand."
+    },
+    {
+      "id": "TEST-export-audit",
+      "type": "TEST",
+      "name": "Test export audit",
+      "description": "Verify that exports are logged with required metadata."
+    },
+    {
+      "id": "TEST-export-authz",
+      "type": "TEST",
+      "name": "Test export authorization",
+      "description": "Verify that only authenticated users can trigger export."
+    },
+    {
+      "id": "TEST-export-format",
+      "type": "TEST",
+      "name": "Test export format",
+      "description": "Verify that exported graph is a valid Format-E v2 slice."
+    },
+    {
+      "id": "TEST-export-live",
+      "type": "TEST",
+      "name": "Test live export",
+      "description": "Verify that exported graph reflects the latest state."
+    },
+    {
+      "id": "TEST-export-notification",
+      "type": "TEST",
+      "name": "Test export notification",
+      "description": "Verify that users receive confirmation emails with download links."
+    },
+    {
+      "id": "TEST-export-performance",
+      "type": "TEST",
+      "name": "Test export performance",
+      "description": "Verify that export completes within 2 seconds."
+    },
+    {
+      "id": "TEST-export-security",
+      "type": "TEST",
+      "name": "Test export security",
+      "description": "Verify that exported artifacts are encrypted at rest."
+    },
+    {
+      "id": "TEST-export-storage",
+      "type": "TEST",
+      "name": "Test export storage",
+      "description": "Verify that exported artifacts are retained for 30 days."
+    },
+    {
+      "id": "TEST-export-validation",
+      "type": "TEST",
+      "name": "Test export validation",
+      "description": "Verify that exported graphs pass structural validation."
+    },
+    {
+      "id": "TEST-verify-export-audit",
+      "type": "TEST",
+      "name": "Verify export audit requirement",
+      "description": "Check that each export is logged with user ID, timestamp, and graph version."
+    },
+    {
+      "id": "UC-export",
+      "type": "UC",
+      "name": "Export governed system graph",
+      "description": "User requests a snapshot of the live governed graph and receives it as a downloadable artifact."
+    },
+    {
+      "id": "UC-export-state",
+      "type": "UC",
+      "name": "User exports the current graph state",
+      "description": "Users can export the governed graph in a specified format for offline analysis or documentation."
+    },
+    {
+      "id": "UC-graph-edit",
+      "type": "UC",
+      "name": "User edits the governed graph collaboratively",
+      "description": "Authenticated users propose changes to the graph, which are validated and applied through the Apply-Gate."
+    },
+    {
+      "id": "UC-live-update",
+      "type": "UC",
+      "name": "User sees live updates to the graph",
+      "description": "Users receive real-time notifications and visual updates when changes are applied to the graph."
+    },
+    {
+      "id": "UC-login",
+      "type": "UC",
+      "name": "User logs in to access the governed graph",
+      "description": "A user provides credentials to authenticate and gain access to the collaborative graph editing environment."
+    }
+  ],
+  "traces": [
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-export",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-export-state",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-graph-edit",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-live-update",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-login",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-export",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-export-state",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-graph-edit",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-live-update",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-login",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-authentication-flow",
+      "target": "UC-login",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-export-flow",
+      "target": "UC-export-state",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-graph-editing-flow",
+      "target": "UC-graph-edit",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-live-update-flow",
+      "target": "UC-live-update",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-apply-graph-change",
+      "target": "UC-graph-edit",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-authenticate-user",
+      "target": "UC-login",
+      "type": "satisfy"
+    },
+    {
+      "source": "SYS-multiuser-web-app",
+      "target": "UC-export-state",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-multiuser-web-app",
+      "target": "UC-graph-edit",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-multiuser-web-app",
+      "target": "UC-live-update",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-multiuser-web-app",
+      "target": "UC-login",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-web-app",
+      "target": "UC-export",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-web-app",
+      "target": "UC-graph-edit",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-web-app",
+      "target": "UC-live-update",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-web-app",
+      "target": "UC-login",
+      "type": "compose"
+    },
+    {
+      "source": "TEST-export-audit",
+      "target": "REQ-export-audit",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-export-authz",
+      "target": "REQ-export-authz",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-export-format",
+      "target": "REQ-export-format",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-export-live",
+      "target": "REQ-export-live",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-export-notification",
+      "target": "REQ-export-notification",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-export-performance",
+      "target": "REQ-export-performance",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-export-security",
+      "target": "REQ-export-security",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-export-storage",
+      "target": "REQ-export-storage",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-export-validation",
+      "target": "REQ-export-validation",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-export-audit",
+      "target": "REQ-export-audit",
+      "type": "verify"
+    },
+    {
+      "source": "UC-export",
+      "target": "FCHAIN-export-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export",
+      "target": "REQ-export-audit",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export",
+      "target": "REQ-export-authz",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export",
+      "target": "REQ-export-format",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export",
+      "target": "REQ-export-live",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export",
+      "target": "REQ-export-notification",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export",
+      "target": "REQ-export-performance",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export",
+      "target": "REQ-export-security",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export",
+      "target": "REQ-export-storage",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export",
+      "target": "REQ-export-validation",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export-state",
+      "target": "FCHAIN-export-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-graph-edit",
+      "target": "FCHAIN-graph-edit-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-live-update",
+      "target": "FCHAIN-live-update-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login",
+      "target": "FCHAIN-login-scenario",
+      "type": "compose"
+    }
+  ]
+}

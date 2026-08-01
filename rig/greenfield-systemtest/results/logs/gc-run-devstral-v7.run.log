@@ -1,0 +1,67 @@
+[generate 1] phase=seed done=false
+  1.1: graph_authoring_guide,graph_authoring_guide,graph_authoring_guide
+  1.2: (no calls)
+    recovered mutate applied (13 mutations)
+[generate 2] phase=expand done=false
+  2.1: graph_authoring_guide
+  2.2: graph_authoring_guide
+  2.3: graph_authoring_guide
+  2.4: graph_get_node
+  2.5: call failed (The operation was aborted due to timeout) — skip
+[generate 3] phase=expand done=false
+  3.1: graph_authoring_guide
+  3.2: graph_authoring_guide
+  3.3: graph_authoring_guide
+  3.4: graph_elements
+  3.5: graph_elements
+  3.6: graph_elements
+[generate 4] phase=expand done=false
+  4.1: graph_authoring_guide
+  4.2: (no calls)
+    recovered text tool-call graph_get_node
+  4.3: graph_authoring_guide
+  4.4: graph_authoring_guide
+  4.5: call failed (The operation was aborted due to timeout) — skip
+[generate 5] phase=expand done=false
+  5.1: graph_authoring_guide
+  5.2: (no calls)
+    recovered text tool-call graph_elements
+  5.3: graph_authoring_guide
+  5.4: graph_authoring_guide
+  5.5: (no calls)
+    recovered mutate applied (7 mutations)
+[generate 6] phase=expand done=false
+  6.1: graph_authoring_guide
+  6.2: graph_authoring_guide
+  6.3: graph_authoring_guide
+  6.4: graph_elements
+  6.5: graph_elements
+  6.6: call failed (The operation was aborted due to timeout) — skip
+[generate 7] phase=expand done=false
+  7.1: graph_authoring_guide
+  7.2: graph_authoring_guide
+  7.3: graph_authoring_guide
+  7.4: graph_elements
+  7.5: graph_elements
+  7.6: call failed (The operation was aborted due to timeout) — skip
+[generate 8] phase=expand done=false
+  8.1: graph_authoring_guide
+  8.2: graph_authoring_guide
+  8.3: graph_authoring_guide
+  8.4: graph_elements
+  8.5: graph_elements
+  8.6: call failed (The operation was aborted due to timeout) — skip
+[generate 9] phase=expand done=false
+  9.1: graph_authoring_guide
+  9.2: graph_authoring_guide
+  9.3: graph_authoring_guide
+  9.4: graph_elements
+  9.5: graph_elements
+  9.6: graph_mutate
+[generate 10] phase=expand done=false
+  10.1: graph_authoring_guide
+  10.2: (no calls)
+    recovered text tool-call graph_elements
+  10.3: graph_authoring_guide
+  10.4: graph_authoring_guide
+  10.5: graph_authoring_guide

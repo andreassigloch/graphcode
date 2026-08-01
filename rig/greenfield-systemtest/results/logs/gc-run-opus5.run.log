@@ -1,0 +1,374 @@
+[generate 1] phase=seed done=false
+  1.1: graph_authoring_guide,graph_authoring_guide,graph_authoring_guide
+  1.2: graph_mutate
+    gate rejected — feeding violations back (turn 2/6)
+  1.3: graph_mutate
+    gate rejected — feeding violations back (turn 3/6)
+  1.4: graph_mutate
+    gate rejected — feeding violations back (turn 4/6)
+  1.5: graph_mutate
+[generate 2] phase=expand done=false
+  2.1: graph_authoring_guide,graph_authoring_guide,graph_elements
+  2.2: graph_elements
+  2.3: graph_mutate
+    gate rejected — feeding violations back (turn 3/6)
+  2.4: graph_mutate
+[generate 3] phase=expand done=false
+  3.1: graph_authoring_guide,graph_authoring_guide,graph_elements,graph_elements
+  3.2: graph_mutate
+[generate 4] phase=expand done=false
+  4.1: graph_authoring_guide,graph_authoring_guide,graph_authoring_guide,graph_elements
+  4.2: graph_elements,graph_elements
+  4.3: graph_mutate
+[generate 5] phase=expand done=false
+  5.1: graph_authoring_guide,graph_authoring_guide,graph_elements,graph_elements
+  5.2: graph_elements,graph_authoring_guide
+  5.3: graph_mutate
+    gate rejected — feeding violations back (turn 3/6)
+  5.4: graph_elements
+  5.5: graph_mutate
+[generate 6] phase=expand done=false
+  6.1: graph_authoring_guide,graph_authoring_guide,graph_authoring_guide,graph_elements
+  6.2: graph_elements,graph_elements
+  6.3: graph_mutate
+[generate 7] phase=expand done=false
+  7.1: graph_authoring_guide,graph_authoring_guide,graph_elements,graph_elements
+  7.2: graph_mutate
+    gate rejected — feeding violations back (turn 2/6)
+  7.3: graph_mutate
+[generate 8] phase=expand done=false
+  8.1: graph_authoring_guide,graph_authoring_guide,graph_elements
+  8.2: graph_mutate
+    gate rejected — feeding violations back (turn 2/6)
+  8.3: graph_mutate
+    gate rejected — feeding violations back (turn 3/6)
+  8.4: graph_mutate
+    gate rejected — feeding violations back (turn 4/6)
+  8.5: graph_mutate
+    gate rejected — feeding violations back (turn 5/6)
+  8.6: graph_mutate
+    gate rejected — feeding violations back (turn 6/6)
+[generate 9] phase=expand done=false
+  stagnation x1: same generate prompt as last round
+  9.1: graph_authoring_guide,graph_authoring_guide,graph_elements
+  9.2: graph_mutate
+    gate rejected — feeding violations back (turn 2/6)
+  9.3: graph_mutate
+    gate rejected — feeding violations back (turn 3/6)
+  9.4: graph_mutate
+    gate rejected — feeding violations back (turn 4/6)
+  9.5: graph_mutate
+    gate rejected — feeding violations back (turn 5/6)
+  9.6: graph_mutate
+    gate rejected — feeding violations back (turn 6/6)
+[generate 10] phase=expand done=false
+  stagnation x2: same generate prompt as last round
+  10.1: graph_authoring_guide,graph_elements
+  10.2: graph_mutate
+    gate rejected — feeding violations back (turn 2/6)
+  10.3: graph_mutate
+    gate rejected — feeding violations back (turn 3/6)
+  10.4: graph_mutate
+    gate rejected — feeding violations back (turn 4/6)
+  10.5: graph_mutate
+    gate rejected — feeding violations back (turn 5/6)
+  10.6: graph_mutate
+    gate rejected — feeding violations back (turn 6/6)
+[generate 11] phase=expand done=false
+  stagnation x3: same generate prompt as last round
+  defer: uc:UC-apply-gate-validation,UC-authenticate-user,UC-author-graph-elements
+  11.1: graph_authoring_guide,graph_elements
+  11.2: graph_mutate
+    gate rejected — feeding violations back (turn 2/6)
+  11.3: graph_mutate
+    gate rejected — feeding violations back (turn 3/6)
+  11.4: graph_mutate
+    gate rejected — feeding violations back (turn 4/6)
+  11.5: graph_mutate
+    gate rejected — feeding violations back (turn 5/6)
+  11.6: graph_mutate
+    gate rejected — feeding violations back (turn 6/6)
+[generate 12] phase=expand done=false
+  12.1: graph_authoring_guide,graph_authoring_guide,graph_elements
+  12.2: graph_mutate
+    gate rejected — feeding violations back (turn 2/6)
+  12.3: graph_mutate
+    gate rejected — feeding violations back (turn 3/6)
+  12.4: graph_mutate
+    gate rejected — feeding violations back (turn 4/6)
+  12.5: graph_mutate
+    gate rejected — feeding violations back (turn 5/6)
+  12.6: graph_mutate
+    gate rejected — feeding violations back (turn 6/6)
+[generate 13] phase=expand done=false
+  stagnation x1: same generate prompt as last round
+  13.1: graph_authoring_guide,graph_elements
+  13.2: graph_mutate
+    gate rejected — feeding violations back (turn 2/6)
+  13.3: graph_mutate
+    gate rejected — feeding violations back (turn 3/6)
+  13.4: graph_mutate
+    gate rejected — feeding violations back (turn 4/6)
+  13.5: graph_mutate
+    gate rejected — feeding violations back (turn 5/6)
+  13.6: graph_mutate
+    gate rejected — feeding violations back (turn 6/6)
+[generate 14] phase=expand done=false
+  stagnation x2: same generate prompt as last round
+  14.1: graph_authoring_guide,graph_elements
+  14.2: graph_mutate
+    gate rejected — feeding violations back (turn 2/6)
+  14.3: graph_mutate
+    gate rejected — feeding violations back (turn 3/6)
+  14.4: graph_mutate
+    gate rejected — feeding violations back (turn 4/6)
+  14.5: graph_mutate
+    gate rejected — feeding violations back (turn 5/6)
+  14.6: graph_mutate
+    gate rejected — feeding violations back (turn 6/6)
+[generate 15] phase=expand done=false
+  stagnation x3: same generate prompt as last round
+  defer: uc:UC-export-graph-state,UC-import-graph-slice,UC-manage-user-access
+  15.1: graph_authoring_guide,graph_elements
+  15.2: graph_mutate
+    gate rejected — feeding violations back (turn 2/6)
+  15.3: graph_mutate
+    gate rejected — feeding violations back (turn 3/6)
+  15.4: graph_mutate
+    gate rejected — feeding violations back (turn 4/6)
+  15.5: graph_mutate
+    gate rejected — feeding violations back (turn 5/6)
+  15.6: graph_mutate
+    gate rejected — feeding violations back (turn 6/6)
+[generate 16] phase=expand done=false
+  16.1: graph_authoring_guide,graph_authoring_guide,graph_authoring_guide,graph_elements
+  16.2: graph_elements
+  16.3: graph_mutate
+    gate rejected — feeding violations back (turn 3/6)
+  16.4: graph_mutate
+    gate rejected — feeding violations back (turn 4/6)
+  16.5: graph_mutate
+    gate rejected — feeding violations back (turn 5/6)
+  16.6: graph_mutate
+    gate rejected — feeding violations back (turn 6/6)
+[generate 17] phase=expand done=false
+  stagnation x1: same generate prompt as last round
+  17.1: graph_authoring_guide,graph_authoring_guide,graph_get_node,graph_get_node,graph_get_node
+  17.2: graph_elements
+  17.3: graph_mutate
+    gate rejected — feeding violations back (turn 3/6)
+  17.4: graph_mutate
+    gate rejected — feeding violations back (turn 4/6)
+  17.5: graph_mutate
+    gate rejected — feeding violations back (turn 5/6)
+  17.6: graph_mutate
+    gate rejected — feeding violations back (turn 6/6)
+[generate 18] phase=expand done=false
+  stagnation x2: same generate prompt as last round
+  18.1: graph_authoring_guide,graph_authoring_guide,graph_elements
+  18.2: graph_elements
+  18.3: graph_mutate
+    gate rejected — feeding violations back (turn 3/6)
+  18.4: graph_mutate
+    gate rejected — feeding violations back (turn 4/6)
+  18.5: graph_mutate
+    gate rejected — feeding violations back (turn 5/6)
+  18.6: graph_mutate
+[generate 19] phase=expand done=false
+  19.1: graph_authoring_guide,graph_elements
+  19.2: graph_mutate
+[generate 20] phase=expand done=false
+  stagnation x1: same generate prompt as last round
+  20.1: graph_elements,graph_authoring_guide
+  20.2: graph_elements
+  20.3: graph_mutate
+[generate 21] phase=expand done=false
+  stagnation x2: same generate prompt as last round
+  21.1: graph_authoring_guide,graph_elements
+  21.2: graph_elements,list_dir
+  21.3: graph_mutate
+[generate 22] phase=expand done=false
+  stagnation x3: same generate prompt as last round
+  defer: ver:TEST-authenticated-session-established,TEST-gate-verdict-persisted,TEST-live-update-push
+  22.1: graph_authoring_guide,graph_get_node
+  22.2: graph_elements,list_dir
+  22.3: graph_mutate
+[generate 23] phase=expand done=false
+  23.1: graph_authoring_guide,graph_elements
+  23.2: graph_elements
+  23.3: graph_mutate
+[generate 24] phase=expand done=false
+  stagnation x1: same generate prompt as last round
+  24.1: graph_authoring_guide,graph_elements
+  24.2: graph_elements
+  24.3: graph_mutate
+[generate 25] phase=expand done=false
+  stagnation x2: same generate prompt as last round
+  25.1: graph_authoring_guide,graph_elements
+  25.2: graph_elements
+  25.3: graph_mutate
+[generate 26] phase=expand done=false
+  stagnation x3: same generate prompt as last round
+  defer: ver:TEST-authenticated-session-established,TEST-gate-verdict-persisted,TEST-live-update-session-consistency
+  26.1: graph_authoring_guide,graph_elements
+  26.2: graph_elements
+  26.3: graph_mutate
+[generate 27] phase=expand done=false
+  27.1: graph_authoring_guide,graph_elements
+  27.2: graph_mutate
+[generate 28] phase=expand done=false
+  stagnation x1: same generate prompt as last round
+  28.1: graph_elements,graph_elements
+  28.2: graph_get_node,graph_authoring_guide
+  28.3: graph_mutate
+[generate 29] phase=expand done=false
+  stagnation x2: same generate prompt as last round
+  29.1: graph_elements,graph_authoring_guide
+  29.2: graph_elements
+  29.3: graph_mutate
+[generate 30] phase=expand done=false
+  stagnation x3: same generate prompt as last round
+  defer: ver:TEST-live-update-push,TEST-live-update-session-consistency
+  30.1: graph_authoring_guide,graph_elements
+  30.2: graph_elements
+  30.3: graph_mutate
+[generate 31] phase=expand done=false
+  31.1: graph_authoring_guide,graph_elements,graph_elements
+  31.2: graph_authoring_guide,graph_authoring_guide,graph_authoring_guide
+  31.3: graph_mutate
+    gate rejected — feeding violations back (turn 3/6)
+  31.4: graph_mutate
+    gate rejected — feeding violations back (turn 4/6)
+  31.5: graph_mutate
+    gate rejected — feeding violations back (turn 5/6)
+  31.6: graph_mutate
+    gate rejected — feeding violations back (turn 6/6)
+[generate 32] phase=expand done=false
+  stagnation x1: same generate prompt as last round
+  32.1: graph_authoring_guide,graph_get_node,graph_get_node,graph_get_node
+  32.2: graph_elements
+  32.3: graph_mutate
+[generate 33] phase=expand done=false
+  33.1: graph_authoring_guide,graph_authoring_guide,graph_elements
+  33.2: graph_mutate
+    gate rejected — feeding violations back (turn 2/6)
+  33.3: graph_mutate
+    gate rejected — feeding violations back (turn 3/6)
+  33.4: graph_mutate
+    gate rejected — feeding violations back (turn 4/6)
+  33.5: graph_mutate
+    gate rejected — feeding violations back (turn 5/6)
+  33.6: graph_mutate
+    gate rejected — feeding violations back (turn 6/6)
+[generate 34] phase=expand done=false
+  stagnation x1: same generate prompt as last round
+  34.1: graph_authoring_guide,graph_elements
+  34.2: graph_mutate
+    gate rejected — feeding violations back (turn 2/6)
+  34.3: graph_mutate
+    gate rejected — feeding violations back (turn 3/6)
+  34.4: graph_mutate
+    gate rejected — feeding violations back (turn 4/6)
+  34.5: graph_mutate
+    gate rejected — feeding violations back (turn 5/6)
+  34.6: graph_mutate
+    gate rejected — feeding violations back (turn 6/6)
+[generate 35] phase=expand done=false
+  stagnation x2: same generate prompt as last round
+  35.1: graph_authoring_guide,graph_elements
+  35.2: graph_mutate
+    gate rejected — feeding violations back (turn 2/6)
+  35.3: graph_elements,graph_authoring_guide
+  35.4: graph_mutate
+    gate rejected — feeding violations back (turn 4/6)
+  35.5: graph_mutate
+    gate rejected — feeding violations back (turn 5/6)
+  35.6: graph_mutate
+    gate rejected — feeding violations back (turn 6/6)
+[generate 36] phase=expand done=false
+  stagnation x3: same generate prompt as last round
+  defer: uc:UC-author-graph-elements,UC-export-graph-state,UC-import-graph-slice
+  36.1: graph_authoring_guide,graph_elements
+  36.2: graph_mutate
+    gate rejected — feeding violations back (turn 2/6)
+  36.3: graph_mutate
+    gate rejected — feeding violations back (turn 3/6)
+  36.4: graph_mutate
+    gate rejected — feeding violations back (turn 4/6)
+  36.5: graph_mutate
+    gate rejected — feeding violations back (turn 5/6)
+  36.6: graph_mutate
+    gate rejected — feeding violations back (turn 6/6)
+[generate 37] phase=expand done=false
+  37.1: graph_authoring_guide,graph_authoring_guide,graph_elements
+  37.2: graph_elements
+  37.3: graph_mutate
+    gate rejected — feeding violations back (turn 3/6)
+  37.4: graph_mutate
+[generate 38] phase=expand done=false
+  38.1: graph_authoring_guide,graph_elements
+  38.2: graph_elements
+  38.3: graph_mutate
+[generate 39] phase=expand done=false
+  stagnation x1: same generate prompt as last round
+  39.1: graph_authoring_guide,graph_elements
+  39.2: graph_elements
+  39.3: graph_mutate
+[generate 40] phase=expand done=false
+  stagnation x2: same generate prompt as last round
+  40.1: graph_authoring_guide,graph_get_node
+  40.2: graph_elements,graph_elements
+  40.3: graph_mutate
+[generate 41] phase=expand done=false
+  stagnation x3: same generate prompt as last round
+  defer: ver:TEST-access-state-consistent,TEST-account-lifecycle-management,TEST-authenticated-session-established
+  41.1: graph_authoring_guide,graph_elements
+  41.2: graph_elements,list_dir
+  41.3: graph_mutate
+[generate 42] phase=expand done=false
+  42.1: graph_authoring_guide,graph_elements,graph_elements
+  42.2: graph_mutate
+[generate 43] phase=expand done=false
+  stagnation x1: same generate prompt as last round
+  43.1: graph_authoring_guide,graph_elements
+  43.2: graph_elements
+  43.3: graph_mutate
+[generate 44] phase=expand done=false
+  stagnation x2: same generate prompt as last round
+  44.1: graph_elements,graph_elements
+  44.2: graph_authoring_guide,graph_get_node
+  44.3: graph_mutate
+[generate 45] phase=expand done=false
+  stagnation x3: same generate prompt as last round
+  defer: ver:TEST-gate-verdict-persisted,TEST-live-update-push,TEST-live-update-session-consistency
+  45.1: graph_authoring_guide,graph_elements
+  45.2: graph_elements,list_dir
+  45.3: graph_mutate
+[generate 46] phase=expand done=false
+  46.1: graph_authoring_guide,graph_elements
+  46.2: graph_elements
+  46.3: graph_mutate
+[generate 47] phase=expand done=false
+  stagnation x1: same generate prompt as last round
+  47.1: graph_authoring_guide,graph_elements
+  47.2: graph_elements
+  47.3: graph_mutate
+[generate 48] phase=expand done=false
+  stagnation x2: same generate prompt as last round
+  48.1: graph_authoring_guide,graph_elements
+  48.2: graph_elements
+  48.3: graph_mutate
+graphcode run: {
+  "done": false,
+  "genRounds": 48,
+  "modelTurns": 194,
+  "mutatesApplied": 33,
+  "mutatesRejected": 81,
+  "dryRunProbes": 0,
+  "repairedAfterRejection": 6,
+  "tokensIn": 1326951,
+  "tokensOut": 208741,
+  "tokensReasoning": 0,
+  "export": "docs/graph/gc-run-opus5.graph.json",
+  "exportError": null
+}
