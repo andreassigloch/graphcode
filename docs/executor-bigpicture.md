@@ -154,9 +154,10 @@ noch das Modell.
    ohne Menschen ist der Extremtest des Substrats; der eigentliche Betrieb ist
    **interaktiv** (Mensch im Loop). Konsequenz für die Hebel: Defer, Nudges,
    Recovery nützen beiden Modi; die Best-of-N-Orchestrierung ist primär ein
-   Autonomie-Feature — im interaktiven Modus ist der Mensch der Judge, dem der
-   Treiber die dryRun-Verdicts nur VORLEGEN muss (gleiche Mechanik, anderer
-   Entscheider).
+   Autonomie-Feature — im interaktiven Modus kann der Mensch als Judge die
+   dryRun-Verdicts vorgelegt bekommen. **Entschieden (2026-08-01): Judge ist
+   Config (`judge: 'gate' | 'human'`), Default `gate`** — der Auswahl-Algo
+   zieht; der Mensch ist Opt-in, sonst bräuchte es den Algo nicht.
 2. **„Frontier nutzt das dryRun-Protokoll" war Design-Behauptung, nicht
    Empirie — und sie ist falsch für die gemessenen Läufe.** Audit-Check aller
    drei Opus-Greenfield-Läufe: **0× dryRun**, 6–10 direkte Batches, trotzdem
