@@ -170,6 +170,25 @@ noch das Modell.
    Vergleich „Gate-Verdict-Wahl vs. Frontier-First-Shot" ist selbst eine
    offene, interessante Messung (Mangel im Auswahl-Algo oder echter
    Frontier-Vorteil?).
+2b. **Judge-Vergleich ist gratis messbar** (Entscheidung 2026-08-01): Best-of-N
+   rechnet Verdicts für alle Kandidaten ohnehin — pro Auswahl werden drei Picks
+   geloggt: Algo (tier > Δm > Violations, ENTSCHEIDET per Default `gate`), LLM
+   blind (nur Kandidaten), LLM informiert (Kandidaten + Verdicts). Agreement-
+   Rate + Divergenz-Audit beantwortet „Mangel im Auswahl-Algo oder echter
+   Frontier-Vorteil" empirisch. Nur Logs — kein zweiter Auswahl-Pfad.
+
+2c. **Zielprofil fehlt als Initial-Schritt** (Befund 2026-08-01): Gewichte je
+   Dimension (`{"scalability":1}` vs. `{"coherence":1,…}`) existieren heute nur
+   im Handoff (`graph_suggest {target}`) — Zerlegung und Δm-Ranking davor
+   laufen gegen ein implizites Default-Gewicht. Billion-User-App und Banking
+   bräuchten aber unterschiedliche Rankings desselben Kandidatensatzes; auch
+   der Judge-Vergleich (2b) ist ohne definiertes Ziel Äpfel-gegen-Birnen.
+   → `graphcode run` bekommt `target` als Initial-Input (interaktiv: erste
+   Frage an den Menschen; headless: Pflicht oder dokumentierter Default),
+   Ablage versioniert im Graphen, fitAdvisory/Judge nutzen es ab Runde 1.
+   Flagge: fitAdvisory kommt aus `@sigloch/se-optimizer` — Target-Durchreichung
+   dort prüfen (ggf. Familie-Berührung).
+
 3. **Temperatur: 0.15 statt 0.2** (Mistrals offizielle Devstral-Empfehlung).
    Die Behauptung „bei 0.2 variieren drei Samples kaum" ist **ungemessen** —
    vor einem Best-of-N-Bau gehört die Sample-Varianz bei 0.15 / 0.4 / 0.7
