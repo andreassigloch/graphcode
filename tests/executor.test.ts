@@ -17,9 +17,11 @@ import { createHarness, bindToolsToHarness } from '../src/index.js';
 import {
   runExecutor,
   buildToolSpecs,
+  buildRoundInjection,
   extractMutateFromText,
   extractToolCallFromText,
   ExecutorConfigSchema,
+  INDEX_CHAR_BUDGET,
   type ModelResponse,
   type CallModel,
 } from '../src/executor.js';
@@ -449,6 +451,102 @@ describe('executor (CR-GC-278)', () => {
 
     registry['graph_generate'] = origGenerate;
   });
+
+  it('round prompt injection (seed): guide slice of the seed focus types, no index on an empty graph (CR-GC-285)', async () => {
+    const { callModel, calls } = scriptedModel([toolCallResponse('c1', VALID_SEED_BATCH)]);
+    await runExecutor({
+      registry,
+      workspaceDir: repoRoot,
+      intent: 'Eine Test-App für die Runden-Prompt-Injektion.',
+      config: CONFIG,
+      callModel,
+    });
+    const instruction = JSON.stringify(calls[0].messages[0]);
+    // Guide-Slice der Seed-Typen steht IM Prompt — inkl. der legalen Kanten.
+    expect(instruction).toContain('Kanten-Grammatik');
+    for (const t of ['- SYS:', '- ACTOR:', '- UC:']) expect(instruction).toContain(t);
+    expect(instruction).toContain('io→UC');
+    // Leerer Graph ⇒ kein Element-Index-Block.
+    expect(instruction).not.toContain('Element-Index');
+    // Die generate-Instruktion selbst bleibt ungekürzt (CR-282-Lektion).
+    expect(instruction).toContain('Gate-Protokoll');
+    // Der System-Prompt sagt dem Modell, dass Guide + Index bereits vorliegen.
+    expect(calls[0].system).toContain('BEREITS in der Instruktion');
+  });
+
+  it('round prompt injection (expand): element index with uid · type · name rides in the prompt (CR-GC-285)', async () => {
+    await registry['graph_mutate'].handler(VALID_SEED_BATCH);
+    const { callModel, calls } = scriptedModel([
+      toolCallResponse('c1', {
+        commands: [
+          {
+            op: 'add-node',
+            node: {
+              uid: 'FCHAIN-login',
+              type: 'FCHAIN',
+              name: 'Login-Ablauf',
+              description: 'Ablauf des Logins.',
+              attributes: {},
+            },
+          },
+          { op: 'add-edge', edge: { sourceId: 'UC-login', targetId: 'FCHAIN-login', edgeType: 'compose', attributes: {} } },
+        ],
+      }),
+    ]);
+    await runExecutor({ registry, workspaceDir: repoRoot, config: CONFIG, callModel });
+    const instruction = JSON.stringify(calls[0].messages[0]);
+    expect(instruction).toContain('Kanten-Grammatik');
+    expect(instruction).toContain('Element-Index');
+    // Der aktuelle Graph-Zustand steht Zeile für Zeile im Prompt.
+    for (const line of ['SYS-app · SYS · Test App', 'ACTOR-user · ACTOR · User', 'UC-login · UC · Login']) {
+      expect(instruction).toContain(line);
+    }
+  });
+
+  it('index budget: an oversized index is deterministically filtered to the focus types (CR-GC-285)', async () => {
+    await registry['graph_mutate'].handler(VALID_SEED_BATCH);
+    // Bulk-UCs, bis der ungefilterte Index das Budget sicher reißt …
+    const bulk: unknown[] = [];
+    for (let i = 0; i < 300; i++) {
+      const uid = `UC-bulk-${String(i).padStart(3, '0')}`;
+      bulk.push({
+        op: 'add-node',
+        node: {
+          uid,
+          type: 'UC',
+          name: `Bulk Use Case Nummer ${i}`,
+          description: 'User erledigt die Massenaufgabe und erhält das Ergebnis.',
+          attributes: {},
+        },
+      });
+      bulk.push({ op: 'add-edge', edge: { sourceId: 'SYS-app', targetId: uid, edgeType: 'compose', attributes: {} } });
+      bulk.push({ op: 'add-edge', edge: { sourceId: 'ACTOR-user', targetId: uid, edgeType: 'io', attributes: {} } });
+    }
+    // … plus wenige Fokus-relevante Elemente (REQ mit TEST im selben Batch).
+    bulk.push({
+      op: 'add-node',
+      node: { uid: 'REQ-kern', type: 'REQ', name: 'Kernanforderung', description: 'Login wird bestätigt.', attributes: {} },
+    });
+    bulk.push({
+      op: 'add-node',
+      node: { uid: 'TEST-kern', type: 'TEST', name: 'Kerntest', description: 'Prüft die Login-Bestätigung.', attributes: {} },
+    });
+    bulk.push({ op: 'add-edge', edge: { sourceId: 'UC-login', targetId: 'REQ-kern', edgeType: 'compose', attributes: {} } });
+    bulk.push({ op: 'add-edge', edge: { sourceId: 'TEST-kern', targetId: 'REQ-kern', edgeType: 'verify', attributes: {} } });
+    const res = (await registry['graph_mutate'].handler({ commands: bulk })) as { success: boolean };
+    expect(res.success).toBe(true);
+
+    const injection = await buildRoundInjection(registry, { focusTypes: ['TEST', 'REQ'] });
+    // Gefiltert auf die Fokus-Typen, mit Hinweis auf den Rest …
+    expect(injection).toContain('gefiltert');
+    expect(injection).toContain('REQ-kern · REQ · Kernanforderung');
+    expect(injection).toContain('TEST-kern · TEST · Kerntest');
+    expect(injection).not.toContain('UC-bulk-007');
+    // … und der Index-Block bleibt unter dem Budget (+ Header/Guide-Overhead).
+    expect(injection.length).toBeLessThan(INDEX_CHAR_BUDGET + 2000);
+    // Deterministisch: gleicher Graph + gleiche Fokus-Typen ⇒ gleiche Injektion.
+    expect(await buildRoundInjection(registry, { focusTypes: ['TEST', 'REQ'] })).toBe(injection);
+  }, 60_000);
 
   it('extractToolCallFromText parses name[ARGS]{json} and rejects garbage', () => {
     expect(extractToolCallFromText('graphcode_graph_elements[ARGS]{"type": "UC", "search": "login"}')).toEqual({
