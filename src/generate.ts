@@ -62,6 +62,21 @@ const LOCAL_RULES =
   'add-node und add-edge desselben Elements im SELBEN Batch. ' +
   'Existierende Knoten nie erneut anlegen. Danach STOPP.';
 
+/** Kanten-Grammatik je Dimension fürs local-Profil (v13-Befund: ohne sie rät
+ * das lokale Modell illegale Kanten — 30 Rejections in 24 Runden). Reines
+ * Grammatik-Destillat der GENERATION_TEMPLATEs, OHNE deren Strategie-Anteile
+ * (Kandidaten/Alternativen/Gate-Wahl); Legalität erzwingt weiterhin R-18. */
+const LOCAL_GRAMMAR: Record<string, string> = {
+  uc: 'Baue: ACTOR io→UC, FCHAIN-Szenario (UC compose FCHAIN) oder fehlenden UC (Actor–Verb–Objekt–Ergebnis, ≤25 Wörter).',
+  req: 'Baue: REQ mit Kante UC compose REQ, präzise und prüfbar formuliert.',
+  arch: 'Baue: FUNCs (7±2 je Zerlegungsebene), FLOWs zwischen FUNCs (io), satisfy FUNC→REQ.',
+  alloc: 'Baue: MOD-Knoten und allocate-Kante FUNC→MOD.',
+  ver: 'Baue: TEST mit Kante TEST verify→REQ und konkretem Prüfschritt in der description.',
+  schema: 'Baue: SCHEMA mit Kante FLOW relation SCHEMA (bzw. produces), eine pro Datenform.',
+  cr: 'Baue: CR-Knoten mit Kante CR relation FUNC/MOD.',
+  ms: 'Baue: MS mit depends-on (MS relation MS) und Kante CR relation MS.',
+};
+
 /** Generative Instruktion je Readiness-Dimension (die Schreib-Zwillinge der graph_next_step-Aktionen). */
 const GENERATION_TEMPLATE: Record<string, string> = {
   uc: 'Schlage je Fund 2–3 Kandidaten vor: fehlende ACTORs (io→UC), FCHAIN-Szenarien (UC compose FCHAIN) oder fehlende UCs aus der Intention. UC-Stil: Actor–Verb–Objekt–Ergebnis, ≤25 Wörter (Skill se:author-uc).',
@@ -219,7 +234,8 @@ export function generationStep(
       ? `Intention: "${effectiveIntent}". ${deferNote}Fund: ${first.element_id} ` +
         `(${first.rule_id}: ${first.message})` +
         (first.fix_hint ? ` — Fix: ${first.fix_hint}` : '') +
-        `. Aufgabe: EIN Batch, der GENAU diesen Fund behebt. ${LOCAL_RULES}`
+        `. Aufgabe: EIN Batch, der GENAU diesen Fund behebt. ` +
+        `${focus ? (LOCAL_GRAMMAR[focus.dimension] ?? '') + ' ' : ''}${LOCAL_RULES}`
       : `Intention: "${effectiveIntent}". Unter Schwelle: ${belowThreshold.map((r) => r.dimension).join(', ')} — ` +
         `aber keine regelbaren Funde; prüfe fehlende Elemente der Dimensionen manuell. ${LOCAL_RULES}`;
 

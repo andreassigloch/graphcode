@@ -164,6 +164,9 @@ describe('generationStep — profile-Rendering (CR-GC-282)', () => {
     expect(step.prompt).toContain('Aufgabe: EIN Batch, der GENAU diesen Fund behebt.');
     expect(step.prompt).toContain('REGELN:');
     expect(step.prompt).toContain('im SELBEN Batch');
+    // v13-Befund: die Kanten-Grammatik der Fokus-Dimension muss im local-Prompt
+    // stehen — ohne sie rät das Modell illegale Kanten (30 Rejections/24 Runden).
+    expect(step.prompt).toContain('Baue: ');
 
     // Der gerenderte Fund ist der ERSTE Fokus-Fund — element_id/rule_id/message/
     // fixHint kommen aus der Regel (evaluateAllRules), nichts ist hart kodiert.
