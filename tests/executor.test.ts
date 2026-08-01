@@ -358,6 +358,33 @@ describe('executor (CR-GC-278)', () => {
     expect(stats.mutatesApplied).toBe(1);
   });
 
+  it('stagnation: an unchanged generate prompt escalates the instruction (v10 finding)', async () => {
+    // Runde 1 applied einen Batch OHNE SYS → der Seed-Prompt wiederholt sich in
+    // Runde 2 wortgleich → Eskalations-Hinweis muss in der Instruktion stehen.
+    const actorOnly = {
+      commands: [
+        {
+          op: 'add-node',
+          node: { uid: 'ACTOR-solo', type: 'ACTOR', name: 'Solo', description: 'Nur ein Actor.', attributes: {} },
+        },
+      ],
+    };
+    const { callModel, calls } = scriptedModel([
+      toolCallResponse('c1', actorOnly),
+      toolCallResponse('c2', VALID_SEED_BATCH),
+    ]);
+    await runExecutor({
+      registry,
+      workspaceDir: repoRoot,
+      intent: 'Eine Test-App gegen Stagnation.',
+      config: ExecutorConfigSchema.parse({ baseUrl: 'http://scripted.invalid', model: 'scripted', maxRounds: 2, maxStepTurns: 4 }),
+      callModel,
+    });
+    expect(calls.length).toBe(2);
+    expect(JSON.stringify(calls[0].messages)).not.toContain('ACHTUNG: Diese Instruktion');
+    expect(JSON.stringify(calls[1].messages)).toContain('hat den Fund NICHT aufgelöst');
+  });
+
   it('extractToolCallFromText parses name[ARGS]{json} and rejects garbage', () => {
     expect(extractToolCallFromText('graphcode_graph_elements[ARGS]{"type": "UC", "search": "login"}')).toEqual({
       name: 'graphcode_graph_elements',

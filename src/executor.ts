@@ -598,6 +598,8 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
   // scheitert der Seed-Step (Timeout, Idle), liefe die Folgerunde sonst ohne
   // Intent UND ohne SYS in die "Erfrage die Systemintention"-Sackgasse — und
   // headless kann niemand antworten. Nach dem Seed ist er redundant, nie falsch.
+  let lastGenPrompt = '';
+  let stagnation = 0;
   for (let round = 0; round < config.maxRounds; round++) {
     const gen = (await registry['graph_generate'].handler(
       opts.intent ? { intent: opts.intent } : {},
@@ -609,8 +611,25 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
       break;
     }
 
+    // Stagnations-Detektor (v10-Befund: "applied ≠ Fortschritt" — devstral fügte
+    // rundenlang denselben TEST-Knoten OHNE die verify-Kante hinzu; die Violation
+    // blieb, graph_generate fokussierte denselben Fund endlos). Identische
+    // Instruktion wie letzte Runde ⇒ der letzte Batch hat den Fund nicht gelöst.
+    if (gen.prompt === lastGenPrompt) {
+      stagnation += 1;
+      trace(`  stagnation x${stagnation}: same generate prompt as last round`);
+    } else {
+      stagnation = 0;
+      lastGenPrompt = gen.prompt;
+    }
+    const stagnationHint =
+      stagnation > 0
+        ? `\nACHTUNG: Diese Instruktion kommt zum ${stagnation + 1}. Mal — dein letzter Batch hat den ` +
+          `Fund NICHT aufgelöst. Häufigste Ursache: die geforderte KANTE fehlt (z.B. TEST verify→REQ). ` +
+          `Emittiere Knoten UND Kante zusammen in EINEM Batch; existierende Knoten nicht erneut anlegen.`
+        : '';
     const focus = gen.phase === 'expand' ? EXPAND_FOCUS : '';
-    const messages: unknown[] = [{ role: 'user', content: gen.prompt + EMIT_SUFFIX + focus }];
+    const messages: unknown[] = [{ role: 'user', content: gen.prompt + EMIT_SUFFIX + focus + stagnationHint }];
     let rejectedInStep = false;
     let nudgedInStep = false;
     let readTurns = 0; // Lese-Turns ohne Mutate-Versuch in diesem Step (CR-GC-280)
