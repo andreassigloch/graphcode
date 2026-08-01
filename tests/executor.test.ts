@@ -10,7 +10,7 @@
  * danach korrigierter Batch landet durable im Store.
  */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { mkdtempSync, rmSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createHarness, bindToolsToHarness } from '../src/index.js';
@@ -137,6 +137,7 @@ describe('executor (CR-GC-278)', () => {
       toolCallResponse('c1', INVALID_BATCH),
       toolCallResponse('c2', VALID_SEED_BATCH),
     ]);
+    const traces: string[] = [];
 
     const stats = await runExecutor({
       registry,
@@ -144,6 +145,7 @@ describe('executor (CR-GC-278)', () => {
       intent: 'Eine Test-App für den Repair-Loop.',
       config: CONFIG,
       callModel,
+      trace: (l) => traces.push(l),
     });
 
     // Die Rejection hat den Step NICHT beendet — das Modell wurde erneut gerufen …
@@ -157,10 +159,55 @@ describe('executor (CR-GC-278)', () => {
     expect(stats.mutatesApplied).toBe(1);
     expect(stats.repairedAfterRejection).toBe(1);
 
+    // CR-GC-286: die Rejection-Trace-Zeile trägt die Regel-IDs — post-hoc-Analyse
+    // braucht das run.log allein, nicht erst audit.jsonl.
+    expect(traces.some((l) => /gate rejected \[[A-Z][^\]]*\] — feeding violations back \(turn \d+\/\d+\)/.test(l))).toBe(true);
+
     // Durable: der korrigierte Seed steht im Store.
     const uids = harness.getGraph().nodes.map((n) => n.uid);
     expect(uids).toContain('SYS-app');
     expect(uids).toContain('UC-login');
+  });
+
+  it('input-schema rejection: missing commands/formatE is fed back with the Zod message and audited (CR-GC-286)', async () => {
+    const { callModel, calls } = scriptedModel([
+      toolCallResponse('c1', { note: 'kein Batch — weder commands noch formatE' }),
+      toolCallResponse('c2', VALID_SEED_BATCH),
+    ]);
+    const traces: string[] = [];
+
+    const stats = await runExecutor({
+      registry,
+      workspaceDir: repoRoot,
+      intent: 'Eine Test-App für die Input-Schema-Parität.',
+      config: CONFIG,
+      callModel,
+      trace: (l) => traces.push(l),
+    });
+
+    // Kein unauditiertes executor-call-Throw: die Zod-Meldung ging als Gate-Feedback zurück …
+    expect(calls.length).toBe(2);
+    const secondCallText = JSON.stringify(calls[1].messages);
+    expect(secondCallText).toContain('NICHT übernommen');
+    expect(secondCallText).toContain('INPUT-SCHEMA');
+    expect(secondCallText).toContain('commands or formatE');
+    // … der Step lief weiter und der korrigierte Batch landete durable.
+    expect(stats.mutatesRejected).toBe(1);
+    expect(stats.mutatesApplied).toBe(1);
+    expect(harness.getGraph().nodes.map((n) => n.uid)).toContain('SYS-app');
+
+    // run.log-Zeile trägt die Regel-ID.
+    expect(traces.some((l) => l.includes('gate rejected [INPUT-SCHEMA]'))).toBe(true);
+
+    // Audit-Eintrag vorhanden (F2-Kette lückenlos) — durable neben dem Store.
+    const auditPath = join(repoRoot, '.graphcode', 'audit.jsonl');
+    const entries = readFileSync(auditPath, 'utf8')
+      .split('\n')
+      .filter(Boolean)
+      .map((l) => JSON.parse(l) as { result: string; violations?: { ruleId: string }[] });
+    const rejected = entries.filter((e) => e.result === 'rejected');
+    expect(rejected.length).toBe(1);
+    expect(rejected[0].violations?.[0]?.ruleId).toBe('INPUT-SCHEMA');
   });
 
   it('prose recovery: a rejected text-mutate is repaired, not silently dropped', async () => {

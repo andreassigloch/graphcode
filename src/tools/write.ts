@@ -175,25 +175,58 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
       'Additive Batches bevorzugt als formatE-Block statt commands (~2–3× weniger Tokens); ' +
       'dryRun:true liefert das volle Verdict inkl. fitAdvisory ohne anzuwenden (auditiert als Preview).',
     inputSchema: GraphMutateInputSchema,
-    async handler(input) {
+    async handler(raw) {
       return serializeToolWrite(async () => {
+        // Input-Parität (CR-GC-286): derselbe Zod-Parse wie am MCP-Transport, auch
+        // für In-Process-Caller (Executor, Tests). Ein Schema-Fehler ist ein
+        // AUDITIERTES Block-Verdict mit der Zod-Meldung — kein unauditierter
+        // Handler-Throw (die 63/81-Lücke der Opus-Nachanalyse).
+        const parsedInput = GraphMutateInputSchema.safeParse(raw);
+        if (!parsedInput.success) {
+          const consumerId =
+            typeof raw === 'object' && raw !== null && typeof (raw as { consumerId?: unknown }).consumerId === 'string'
+              ? (raw as { consumerId: string }).consumerId
+              : 'mcp-client';
+          const result: MutateResult = {
+            success: false,
+            appliedCommands: 0,
+            mutations: 0,
+            violations: [
+              {
+                ruleId: 'INPUT-SCHEMA',
+                severity: 'error',
+                message: parsedInput.error.issues
+                  .map((i) => (i.path.length > 0 ? i.path.join('.') + ': ' : '') + i.message)
+                  .join('; '),
+              },
+            ],
+            confidence: 0,
+            tier: 'block',
+          };
+          await recordAudit(consumerId, result, []);
+          return { ...result, graphVersion: graphVersion() };
+        }
+        const input = parsedInput.data;
         // Format-E-Decode VOR dem Gate: ein Parse-Fehler ist ein Block-Verdict,
         // kein Transport-Crash — der Autor bekommt die Codec-Meldung als Violation.
         let commands: MutateCommand[];
         try {
           commands = input.formatE !== undefined ? formatEToCommands(input.formatE) : (input.commands as MutateCommand[]);
         } catch (err) {
-          return {
+          const result: MutateResult = {
             success: false,
             appliedCommands: 0,
             mutations: 0,
             violations: [
-              { ruleId: 'STRUCT', severity: 'error' as const, message: err instanceof Error ? err.message : String(err) },
+              { ruleId: 'STRUCT', severity: 'error', message: err instanceof Error ? err.message : String(err) },
             ],
             confidence: 0,
-            tier: 'block' as const,
-            graphVersion: graphVersion(),
+            tier: 'block',
           };
+          // CR-GC-286: der Decode-Fehler ist eine Rejection wie jede andere —
+          // ohne Audit reißt die F2-Kette (early return war der unauditierte Pfad).
+          await recordAudit(input.consumerId, result, []);
+          return { ...result, graphVersion: graphVersion() };
         }
         const stale = await occReject(input.consumerId, input.baseVersion, commands);
         if (stale) return stale;

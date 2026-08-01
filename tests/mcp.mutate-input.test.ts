@@ -29,6 +29,22 @@ function makeConfig(repoRoot: string): HarnessConfig {
   };
 }
 
+/** audit.jsonl neben dem Store lesen — die durable Evidenz jeder Gate-Entscheidung. */
+function readAudit(repoRoot: string): {
+  operation: string;
+  result: string;
+  consumerId?: string;
+  violations?: { ruleId: string }[];
+  commands?: unknown[];
+}[] {
+  const logPath = join(repoRoot, '.graphcode', 'audit.jsonl');
+  if (!existsSync(logPath)) return [];
+  return readFileSync(logPath, 'utf8')
+    .split('\n')
+    .filter(Boolean)
+    .map((l) => JSON.parse(l) as ReturnType<typeof readAudit>[number]);
+}
+
 const FE_BATCH = [
   '## Nodes',
   '### REQ',
@@ -92,6 +108,31 @@ describe('graph_mutate: formatE + dryRun + Preview-Audit (CR-GC-276)', () => {
     expect(res.tier).toBe('block');
     expect(res.violations[0].ruleId).toBe('STRUCT');
     expect(res.violations[0].message).toContain('REQ');
+
+    // CR-GC-286: der Decode-Fehler ist KEIN unauditierter early return mehr —
+    // audit.jsonl trägt den rejected-Eintrag mit STRUCT (F2-Kette lückenlos).
+    const entries = readAudit(tmp);
+    const rejected = entries.filter((e) => e.result === 'rejected');
+    expect(rejected.length).toBe(1);
+    expect(rejected[0].operation).toBe('mutate');
+    expect(rejected[0].violations?.[0]?.ruleId).toBe('STRUCT');
+  });
+
+  it('Schema-Fehler am Handler (In-Process-Caller ohne commands/formatE) → auditiertes INPUT-SCHEMA-Verdict (CR-GC-286)', async () => {
+    const res = (await tools.graph_mutate.handler({ consumerId: 'exec-test' })) as {
+      success: boolean;
+      tier: string;
+      violations: { ruleId: string; message: string }[];
+    };
+    expect(res.success).toBe(false);
+    expect(res.tier).toBe('block');
+    expect(res.violations[0].ruleId).toBe('INPUT-SCHEMA');
+    expect(res.violations[0].message).toContain('commands or formatE');
+
+    const rejected = readAudit(tmp).filter((e) => e.result === 'rejected');
+    expect(rejected.length).toBe(1);
+    expect(rejected[0].consumerId).toBe('exec-test');
+    expect(rejected[0].violations?.[0]?.ruleId).toBe('INPUT-SCHEMA');
   });
 
   it('dryRun: volles Verdict + fitAdvisory, nichts persistiert, Version unbewegt', async () => {

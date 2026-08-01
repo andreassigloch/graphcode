@@ -481,6 +481,11 @@ export function extractToolCallFromText(text: string): { name: string; input: un
 
 type MutateOutcome = Partial<MutateResult> & { success: boolean };
 
+/** Kompakte Regel-ID-Liste einer Rejection für die run.log-Trace (CR-GC-286). */
+function ruleIdsOf(result: MutateOutcome | null): string {
+  return [...new Set((result?.violations ?? []).map((v) => v.ruleId))].join(',');
+}
+
 function formatGateFeedback(result: MutateOutcome): string {
   const violations = (result.violations ?? [])
     .slice(0, 8)
@@ -534,8 +539,16 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
   };
 
   const runMutate = async (input: unknown): Promise<MutateOutcome> => {
+    // Input-Parität (CR-GC-286): denselben Zod-Parse wie der MCP-Layer VOR dem
+    // Handler-Call. Bei Parse-Fehler geht der Roh-Input an den Handler, dessen
+    // identischer Schema-Check das AUDITIERTE INPUT-SCHEMA-Block-Verdict liefert
+    // (Zod-Meldung als Violation → formatGateFeedback) — statt eines unauditierten
+    // Handler-Throws als generisches 'executor-call'.
+    const parsed = registry['graph_mutate'].inputSchema.safeParse(input);
     try {
-      const result = (await registry['graph_mutate'].handler(input)) as MutateOutcome;
+      const result = (await registry['graph_mutate'].handler(
+        parsed.success ? parsed.data : input,
+      )) as MutateOutcome;
       return { ...result, success: result.success === true };
     } catch (err) {
       return {
@@ -722,7 +735,7 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
         rejectedInStep = true;
         messages.push({ role: 'assistant', content: resp.text });
         messages.push({ role: 'user', content: formatGateFeedback(outcome) });
-        trace(`    recovered mutate REJECTED — feeding gate violations back`);
+        trace(`    recovered mutate REJECTED [${ruleIdsOf(outcome)}] — feeding gate violations back`);
         continue;
       }
 
@@ -778,7 +791,7 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
       }
       if (rejectedThisTurn) {
         rejectedInStep = true;
-        trace(`    gate rejected — feeding violations back (turn ${turn + 1}/${config.maxStepTurns})`);
+        trace(`    gate rejected [${ruleIdsOf(lastRejection)}] — feeding violations back (turn ${turn + 1}/${config.maxStepTurns})`);
       }
       // reine Read-/Explorations-Turns laufen einfach weiter
     }
