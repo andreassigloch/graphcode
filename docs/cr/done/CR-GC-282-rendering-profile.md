@@ -1,7 +1,22 @@
 # CR-GC-282 — Empfänger-abhängiges Instruktions-Rendering (profile)
 
-**Status:** open
+**Status:** done — **NEGATIV validiert, Ansatz verworfen und zurückgebaut** (2026-08-01)
 **Datum:** 2026-08-01
+
+**Ergebnis:** v13 (Minimal-Rendering ohne Grammatik): 6 Applies / 30 Rejections
+in 24 Runden — abgebrochen. v13b (+ Kanten-Grammatik je Dimension): 22 Elemente /
+30 Traces, 47 Rejections — gegen **82/104 der v12-Baseline** mit vollem
+Rendering. Zwei Ursachen: (1) die Multi-Kandidaten-Instruktion des vollen
+Templates erzeugt die großen verbundenen Batches (38–43 Mutationen), die den
+v12-Durchsatz trugen — das Ein-Fund-Rendering verbietet sie konstruktiv;
+(2) Ein-Fund-Batches kollidieren mit Batch-Invarianten (REQ-braucht-TEST im
+selben Batch → einzeln nachgereichte REQs werden geblockt). Das
+„Frontier-Gepäck" im Instruktions-Text ist tragendes Gerüst, kein Ballast;
+die realen Minimalitäts-Gewinne lagen bei Toolset/History/Temperatur.
+**Konsequenz:** profile-Parameter, LOCAL_RULES/LOCAL_GRAMMAR und
+Executor-Profile-Wiring vollständig entfernt (keine parallelen Pfade für einen
+verworfenen Ansatz); der Executor fährt das volle Rendering — ohne das alte
+EXPAND_FOCUS-Overlay (dessen Ignorieren v12s große Batches erst zuließ).
 **Kontext:** `docs/executor-bigpicture.md` §3/§5-Hebel-2, §6; Folge zu CR-GC-281.
 
 ## Ziel

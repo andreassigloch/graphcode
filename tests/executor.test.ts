@@ -330,11 +330,10 @@ describe('executor (CR-GC-278)', () => {
     const { callModel, calls } = scriptedModel([toolCallResponse('c1', followUp)]);
     await runExecutor({ registry, workspaceDir: repoRoot, config: CONFIG, callModel });
     const instruction = JSON.stringify(calls[0].messages[0]);
-    // profile 'local': der Fund-Fokus steckt im Rendering selbst (kein
-    // EXPAND_FOCUS-Overlay mehr — keine zweite Stimme zur Batch-Größe).
-    expect(instruction).toContain('GENAU diesen Fund');
-    expect(instruction).toContain('REGELN:');
-    expect(instruction).not.toContain('Gate-Protokoll');
+    // CR-GC-282 negativ validiert: der Executor fährt das volle Frontier-
+    // Rendering (Multi-Kandidaten + Gate-Protokoll erzeugen die großen
+    // Batches) — und KEIN widersprüchliches Batch-Größen-Overlay obendrauf.
+    expect(instruction).toContain('Gate-Protokoll');
     expect(instruction).not.toContain('NUR den ERSTEN Fund');
   });
 

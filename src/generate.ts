@@ -40,11 +40,6 @@ export interface GenerationStep {
   focusKey: string | null;
 }
 
-/** Empfänger-Profil fürs Instruktions-Rendering (CR-GC-282): 'frontier' =
- * voller Text inkl. Gate-Protokoll (MCP-Clients); 'local' = minimale
- * Ein-Fund-Instruktion für den embedded Executor. */
-export type GenerationProfile = 'frontier' | 'local';
-
 /** Gate-Protokoll — identisch in jeder Phase; Kandidatenwahl ist Gate-Sache, nie LLM-Bauchgefühl. */
 const GATE_PROTOCOL = [
   'Gate-Protokoll: (1) vor dem Schreiben graph_authoring_guide für jeden Elementtyp aufrufen (legale Kanten). ',
@@ -53,29 +48,6 @@ const GATE_PROTOCOL = [
   '(3) Nur den besten Batch OHNE dryRun anwenden; block-Verdicts verwerfen oder revidieren, nie erzwingen. ',
   '(4) Danach graph_generate erneut aufrufen für den nächsten Schritt.',
 ].join('');
-
-/** Fehlervermeidungs-Zeilen fürs local-Profil (CR-GC-282) — kurz und statisch;
- * die inhaltliche Fehlervermeidung (fixHint/message) ist generiert aus den
- * fokussierten Violations der `@sigloch/contracts`-Regeln, kein Regel-Fork. */
-const LOCAL_RULES =
-  'REGELN: uid aus dem Fund EXAKT kopieren, nie umbenennen oder neu erfinden. ' +
-  'add-node und add-edge desselben Elements im SELBEN Batch. ' +
-  'Existierende Knoten nie erneut anlegen. Danach STOPP.';
-
-/** Kanten-Grammatik je Dimension fürs local-Profil (v13-Befund: ohne sie rät
- * das lokale Modell illegale Kanten — 30 Rejections in 24 Runden). Reines
- * Grammatik-Destillat der GENERATION_TEMPLATEs, OHNE deren Strategie-Anteile
- * (Kandidaten/Alternativen/Gate-Wahl); Legalität erzwingt weiterhin R-18. */
-const LOCAL_GRAMMAR: Record<string, string> = {
-  uc: 'Baue: ACTOR io→UC, FCHAIN-Szenario (UC compose FCHAIN) oder fehlenden UC (Actor–Verb–Objekt–Ergebnis, ≤25 Wörter).',
-  req: 'Baue: REQ mit Kante UC compose REQ, präzise und prüfbar formuliert.',
-  arch: 'Baue: FUNCs (7±2 je Zerlegungsebene), FLOWs zwischen FUNCs (io), satisfy FUNC→REQ.',
-  alloc: 'Baue: MOD-Knoten und allocate-Kante FUNC→MOD.',
-  ver: 'Baue: TEST mit Kante TEST verify→REQ und konkretem Prüfschritt in der description.',
-  schema: 'Baue: SCHEMA mit Kante FLOW relation SCHEMA (bzw. produces), eine pro Datenform.',
-  cr: 'Baue: CR-Knoten mit Kante CR relation FUNC/MOD.',
-  ms: 'Baue: MS mit depends-on (MS relation MS) und Kante CR relation MS.',
-};
 
 /** Generative Instruktion je Readiness-Dimension (die Schreib-Zwillinge der graph_next_step-Aktionen). */
 const GENERATION_TEMPLATE: Record<string, string> = {
@@ -103,18 +75,17 @@ function toOntology(graph: Graph): OntologyGraph {
  * Dimension); sind ALLE Kandidaten zurückgestellt, wird defer ignoriert
  * (kein Dead-End) und das im Prompt kenntlich gemacht.
  *
- * `profile` (CR-GC-282): Empfänger-abhängiges Rendering derselben Methode.
- * 'frontier' (Default) bleibt byte-identisch zum bisherigen Verhalten;
- * 'local' rendert seed/expand minimal (EIN Fund, EIN Batch, REGELN-Zeilen,
- * kein Gate-Protokoll) — gemessen: lokale Modelle befolgen das Protokoll nie,
- * es ist dort totes Gewicht mit Ablenkungsrisiko.
+ * Ein 'local'-Minimal-Rendering (CR-GC-282) wurde gemessen und VERWORFEN:
+ * v13b lieferte 22 Elemente vs. 82 mit diesem vollen Rendering — die
+ * Multi-Kandidaten-Instruktion erzeugt die großen verbundenen Batches, und
+ * Ein-Fund-Batches kollidieren mit Batch-Invarianten (REQ braucht TEST im
+ * selben Batch). Ein Profil-Parameter existiert deshalb bewusst NICHT.
  */
 export function generationStep(
   graph: Graph,
   intent?: string,
   threshold = 0.8,
   defer: string[] = [],
-  profile: GenerationProfile = 'frontier',
 ): GenerationStep {
   const og = toOntology(graph);
   const sys = og.elements.find((e) => e.type === 'SYS');
@@ -150,8 +121,7 @@ export function generationStep(
     return {
       phase: 'seed',
       done: false,
-      // local: gleiche Struktur-Anforderung, OHNE Gate-Protokoll-Absatz.
-      prompt: profile === 'local' ? seedBase.trimEnd() : seedBase + GATE_PROTOCOL,
+      prompt: seedBase + GATE_PROTOCOL,
       readiness,
       threshold,
       blockingErrors,
@@ -225,31 +195,14 @@ export function generationStep(
     ? 'Hinweis: ALLE Fund-Sets waren zurückgestellt (defer) — Zurückstellung wird ignoriert. '
     : '';
 
-  // local (CR-GC-282): EIN Fund, EIN Batch — nur der ERSTE Fokus-Fund (die
-  // Fund-Rotation holt die weiteren deterministisch); fixHint generiert aus
-  // der Regel statt Kandidaten-/Gate-Protokoll.
-  const first = focusViolations[0];
-  const localPrompt =
-    focus && first
-      ? `Intention: "${effectiveIntent}". ${deferNote}Fund: ${first.element_id} ` +
-        `(${first.rule_id}: ${first.message})` +
-        (first.fix_hint ? ` — Fix: ${first.fix_hint}` : '') +
-        `. Aufgabe: EIN Batch, der GENAU diesen Fund behebt. ` +
-        `${focus ? (LOCAL_GRAMMAR[focus.dimension] ?? '') + ' ' : ''}${LOCAL_RULES}`
-      : `Intention: "${effectiveIntent}". Unter Schwelle: ${belowThreshold.map((r) => r.dimension).join(', ')} — ` +
-        `aber keine regelbaren Funde; prüfe fehlende Elemente der Dimensionen manuell. ${LOCAL_RULES}`;
-
   return {
     phase: 'expand',
     done: false,
-    prompt:
-      profile === 'local'
-        ? localPrompt
-        : focus
-          ? `Intention: "${effectiveIntent}". ${deferNote}Schwächste Dimension: ${focus.dimension} ` +
-            `(Score ${focus.score}, ${focus.violations} Funde). Funde: ${funde}. ${template} ${GATE_PROTOCOL}`
-          : `Intention: "${effectiveIntent}". Unter Schwelle: ${belowThreshold.map((r) => r.dimension).join(', ')} — ` +
-            `aber keine regelbaren Funde; prüfe fehlende Elemente der Dimensionen manuell. ${GATE_PROTOCOL}`,
+    prompt: focus
+      ? `Intention: "${effectiveIntent}". ${deferNote}Schwächste Dimension: ${focus.dimension} ` +
+        `(Score ${focus.score}, ${focus.violations} Funde). Funde: ${funde}. ${template} ${GATE_PROTOCOL}`
+      : `Intention: "${effectiveIntent}". Unter Schwelle: ${belowThreshold.map((r) => r.dimension).join(', ')} — ` +
+        `aber keine regelbaren Funde; prüfe fehlende Elemente der Dimensionen manuell. ${GATE_PROTOCOL}`,
     readiness,
     threshold,
     blockingErrors,

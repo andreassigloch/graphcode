@@ -612,10 +612,10 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
   const deferred = new Set<string>();
   const STAGNATION_DEFER_THRESHOLD = 3;
   for (let round = 0; round < config.maxRounds; round++) {
-    // profile 'local' (CR-GC-282): minimale Ein-Fund-Instruktion mit REGELN-
-    // Zeilen statt Gate-Protokoll — der Fund-Fokus steckt im Rendering, das
-    // frühere EXPAND_FOCUS-Overlay entfällt (keine zweite Stimme).
-    const genInput: Record<string, unknown> = { profile: 'local' };
+    // Volles Frontier-Rendering auch lokal (CR-GC-282 negativ validiert: das
+    // Minimal-Rendering halbierte den Durchsatz — v13b 22 vs. v12 82 Elemente;
+    // die Multi-Kandidaten-Instruktion erzeugt die großen verbundenen Batches).
+    const genInput: Record<string, unknown> = {};
     if (opts.intent) genInput.intent = opts.intent;
     if (deferred.size > 0) genInput.defer = [...deferred];
     const gen = (await registry['graph_generate'].handler(genInput)) as GenerationStep;
