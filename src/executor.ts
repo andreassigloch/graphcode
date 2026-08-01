@@ -600,10 +600,16 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
   // headless kann niemand antworten. Nach dem Seed ist er redundant, nie falsch.
   let lastGenPrompt = '';
   let stagnation = 0;
+  // Fund-Rotation (CR-GC-281): focusKeys, an denen sich das Modell festgefahren
+  // hat — ab Stagnations-Schwelle 3 deterministisch zurückgestellt; jeder
+  // weitere generate-Call trägt sie als defer, graph_generate rotiert weiter.
+  const deferred = new Set<string>();
+  const STAGNATION_DEFER_THRESHOLD = 3;
   for (let round = 0; round < config.maxRounds; round++) {
-    const gen = (await registry['graph_generate'].handler(
-      opts.intent ? { intent: opts.intent } : {},
-    )) as GenerationStep;
+    const genInput: Record<string, unknown> = {};
+    if (opts.intent) genInput.intent = opts.intent;
+    if (deferred.size > 0) genInput.defer = [...deferred];
+    const gen = (await registry['graph_generate'].handler(genInput)) as GenerationStep;
     stats.genRounds = round + 1;
     trace(`[generate ${round + 1}] phase=${gen.phase} done=${gen.done}`);
     if (gen.done) {
@@ -618,6 +624,14 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
     if (gen.prompt === lastGenPrompt) {
       stagnation += 1;
       trace(`  stagnation x${stagnation}: same generate prompt as last round`);
+      // Deterministisches Defer statt Prompt-Druck (v11-Befund: ein Fund fraß
+      // 31 Runden): das festgefahrene Fund-Set zurückstellen — die nächste
+      // Runde fokussiert einen anderen Fund, der Prompt-Wechsel resettet
+      // stagnation/lastGenPrompt über den bestehenden Vergleich.
+      if (stagnation >= STAGNATION_DEFER_THRESHOLD && gen.focusKey && !deferred.has(gen.focusKey)) {
+        deferred.add(gen.focusKey);
+        trace(`  defer: ${gen.focusKey}`);
+      }
     } else {
       stagnation = 0;
       lastGenPrompt = gen.prompt;

@@ -100,6 +100,54 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
   });
 });
 
+describe('generationStep — Fund-Rotation/defer (CR-GC-281)', () => {
+  // SYS + 2 UCs ohne Actor/REQ/FCHAIN → mehrere Dimensionen mit Funden,
+  // also garantiert mehr als ein Fokus-Kandidat.
+  const graph = g(
+    [
+      node('SYS-shop', 'SYS', 'shop', INTENT),
+      node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt Teil.'),
+      node('UC-suchen', 'UC', 'suchen', 'Kunde sucht Teil.'),
+    ],
+    [edge('SYS-shop', 'UC-bestellen', 'compose'), edge('SYS-shop', 'UC-suchen', 'compose')],
+  );
+
+  it('focusKey ist stabil und deterministisch (dimension:element_ids sortiert)', () => {
+    const step = generationStep(graph, undefined, 0.8);
+    expect(step.phase).toBe('expand');
+    expect(step.focusKey).toMatch(/^[a-z]+:.+/);
+    // Gleicher Graph + gleiches defer ⇒ identischer Schritt inkl. focusKey.
+    expect(generationStep(graph, undefined, 0.8)).toEqual(step);
+    // Kein Fokus ⇒ kein focusKey (seed).
+    expect(generationStep(EMPTY, INTENT).focusKey).toBeNull();
+  });
+
+  it('defer überspringt das Fund-Set — anderer focusKey, anderer Prompt', () => {
+    const first = generationStep(graph, undefined, 0.8);
+    const second = generationStep(graph, undefined, 0.8, [first.focusKey as string]);
+    expect(second.phase).toBe('expand');
+    expect(second.focusKey).not.toBe(first.focusKey);
+    expect(second.prompt).not.toBe(first.prompt);
+    // Deterministisch auch mit defer.
+    expect(generationStep(graph, undefined, 0.8, [first.focusKey as string])).toEqual(second);
+  });
+
+  it('alles deferred → Fallback ohne Dead-End, Hinweis im Prompt', () => {
+    // Alle Kandidaten einsammeln, bis sich ein focusKey wiederholt.
+    const keys: string[] = [];
+    let step = generationStep(graph, undefined, 0.8, keys);
+    while (step.focusKey && !keys.includes(step.focusKey) && keys.length < 30) {
+      keys.push(step.focusKey);
+      step = generationStep(graph, undefined, 0.8, keys);
+    }
+    // Kein Dead-End: defer wird ignoriert, der erste Kandidat kommt zurück …
+    expect(step.phase).toBe('expand');
+    expect(step.focusKey).toBe(keys[0]);
+    // … und der Prompt macht die aufgehobene Zurückstellung kenntlich.
+    expect(step.prompt).toContain('Zurückstellung wird ignoriert');
+  });
+});
+
 describe('graph_generate — MCP-Binding (echter Harness)', () => {
   let tmp: string;
   let harness: GraphCodeHarness;

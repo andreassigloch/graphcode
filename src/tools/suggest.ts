@@ -135,6 +135,13 @@ export function bindSuggestTools(ctx: ToolContext): MCPToolRegistry {
       .max(1)
       .default(0.8)
       .describe('Readiness-Schwelle je Dimension für den Handoff auf graph_suggest (Default 0.8).'),
+    defer: z
+      .array(z.string())
+      .optional()
+      .describe(
+        'Zurückgestellte focusKeys (aus GenerationStep.focusKey): diese Fund-Sets werden bei der ' +
+          'Fokus-Wahl deterministisch übersprungen; sind alle Kandidaten zurückgestellt, wird defer ignoriert.',
+      ),
   });
 
   const graph_generate: MCPTool<z.infer<typeof GraphGenerateInputSchema>, GenerationStep> = {
@@ -144,10 +151,11 @@ export function bindSuggestTools(ctx: ToolContext): MCPToolRegistry {
       'Prosa-Intention + Graph-Zustand die KONKRETE nächste Generierungs-Instruktion: seed (SYS/ACTOR/UC ' +
       'aus der Intention) → expand (Deficit-Dimension, konkrete Funde, Kandidaten-Protokoll: dryRun-' +
       'Vergleich per Verdict + fitAdvisory, bester Batch echt) → handoff (Schwelle erreicht → graph_suggest). ' +
-      'Read-only und deterministisch; das Vorschlagen bleibt beim Host, das Urteil beim Gate.',
+      'Read-only und deterministisch; das Vorschlagen bleibt beim Host, das Urteil beim Gate. ' +
+      'Festgefahrene Fund-Sets lassen sich per {defer:[focusKey,…]} zurückstellen (Fund-Rotation).',
     inputSchema: GraphGenerateInputSchema,
     async handler(input) {
-      return generationStep(harness.getGraph(), input.intent, input.threshold);
+      return generationStep(harness.getGraph(), input.intent, input.threshold, input.defer);
     },
   };
 

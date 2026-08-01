@@ -385,6 +385,67 @@ describe('executor (CR-GC-278)', () => {
     expect(JSON.stringify(calls[1].messages)).toContain('hat den Fund NICHT aufgelöst');
   });
 
+  it('deterministic defer: after 3 stagnant rounds the next generate call defers the focusKey and the prompt switches (CR-GC-281)', async () => {
+    // Seed direkt durchs Gate → graph_generate startet in der Expand-Phase mit
+    // einem konkreten Fund-Fokus (focusKey).
+    await registry['graph_mutate'].handler(VALID_SEED_BATCH);
+
+    // generate-Inputs mitschneiden (der Executor ruft das Tool intern).
+    const genInputs: Record<string, unknown>[] = [];
+    const origGenerate = registry['graph_generate'];
+    registry['graph_generate'] = {
+      ...origGenerate,
+      handler: (input: unknown) => {
+        genInputs.push((input ?? {}) as Record<string, unknown>);
+        return origGenerate.handler(input);
+      },
+    };
+
+    // Modell, das den Fund NIE löst: nur Idle-Prosa — jede Runde konsumiert
+    // 2 Antworten (Idle → Nudge → Idle → Step-Abbruch), der Graph bleibt
+    // unverändert, der generate-Prompt wiederholt sich wortgleich.
+    const idle: ModelResponse = {
+      text: 'Ich denke weiter nach …',
+      toolCalls: [],
+      assistantMsg: { role: 'assistant', content: 'unused' },
+      usage,
+    };
+    const { callModel, calls } = scriptedModel(Array.from({ length: 12 }, () => idle));
+    const traces: string[] = [];
+
+    await runExecutor({
+      registry,
+      workspaceDir: repoRoot,
+      config: ExecutorConfigSchema.parse({
+        baseUrl: 'http://scripted.invalid',
+        model: 'scripted',
+        maxRounds: 6,
+        maxStepTurns: 4,
+      }),
+      callModel,
+      trace: (l) => traces.push(l),
+    });
+
+    // Runden 1–4: identischer Prompt, noch kein defer im generate-Input.
+    expect(genInputs.length).toBe(6);
+    for (const input of genInputs.slice(0, 4)) expect(input.defer).toBeUndefined();
+    // Nach Stagnation x3 (Runde 4) ist das Fund-Set zurückgestellt …
+    expect(traces.some((l) => l.startsWith('  defer: '))).toBe(true);
+    // … und ab Runde 5 trägt jeder generate-Call das defer.
+    expect(Array.isArray(genInputs[4].defer)).toBe(true);
+    expect((genInputs[4].defer as string[]).length).toBe(1);
+    expect(genInputs[5].defer).toEqual(genInputs[4].defer);
+    // Der Prompt WECHSELT deterministisch (2 Modell-Calls pro Runde → Runde 5
+    // beginnt bei calls[8]): neue Instruktion, Stagnations-Eskalation weg.
+    const instructionOf = (i: number): string => JSON.stringify(calls[i].messages[0]);
+    expect(calls.length).toBe(12);
+    expect(instructionOf(6)).toContain('ACHTUNG'); // Runde 4: noch stagnant
+    expect(instructionOf(8)).not.toBe(instructionOf(0));
+    expect(instructionOf(8)).not.toContain('ACHTUNG'); // Runde 5: Fokus gewechselt
+
+    registry['graph_generate'] = origGenerate;
+  });
+
   it('extractToolCallFromText parses name[ARGS]{json} and rejects garbage', () => {
     expect(extractToolCallFromText('graphcode_graph_elements[ARGS]{"type": "UC", "search": "login"}')).toEqual({
       name: 'graphcode_graph_elements',

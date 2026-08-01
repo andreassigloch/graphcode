@@ -34,6 +34,10 @@ export interface GenerationStep {
   threshold: number;
   /** Error-Violations (Gate-Blocker) — müssen vor dem Handoff auf 0. */
   blockingErrors: number;
+  /** Stabiler Identifikator des fokussierten Fund-Sets (CR-GC-281):
+   * `${dimension}:${element_ids sortiert, komma-getrennt}`. null wenn kein
+   * Fokus (seed/handoff/keine regelbaren Funde). */
+  focusKey: string | null;
 }
 
 /** Gate-Protokoll — identisch in jeder Phase; Kandidatenwahl ist Gate-Sache, nie LLM-Bauchgefühl. */
@@ -63,9 +67,20 @@ function toOntology(graph: Graph): OntologyGraph {
 
 /**
  * Der nächste Generierungsschritt für (Graph, Intention). Deterministisch —
- * gleicher Graph + gleiche Intention ⇒ gleicher Schritt.
+ * gleicher Graph + gleiche Intention + gleiches defer ⇒ gleicher Schritt.
+ *
+ * `defer` (CR-GC-281): zurückgestellte focusKeys — Fund-Sets, an denen sich
+ * der Host festgefahren hat. Die Fokus-Wahl überspringt sie deterministisch
+ * (erst nächstes Fund-Fenster derselben Dimension, dann nächstschwächere
+ * Dimension); sind ALLE Kandidaten zurückgestellt, wird defer ignoriert
+ * (kein Dead-End) und das im Prompt kenntlich gemacht.
  */
-export function generationStep(graph: Graph, intent?: string, threshold = 0.8): GenerationStep {
+export function generationStep(
+  graph: Graph,
+  intent?: string,
+  threshold = 0.8,
+  defer: string[] = [],
+): GenerationStep {
   const og = toOntology(graph);
   const sys = og.elements.find((e) => e.type === 'SYS');
   const effectiveIntent = intent?.trim() || sys?.description?.trim() || '';
@@ -89,6 +104,7 @@ export function generationStep(graph: Graph, intent?: string, threshold = 0.8): 
         readiness,
         threshold,
         blockingErrors,
+        focusKey: null,
       };
     }
     return {
@@ -103,6 +119,7 @@ export function generationStep(graph: Graph, intent?: string, threshold = 0.8): 
       readiness,
       threshold,
       blockingErrors,
+      focusKey: null,
     };
   }
 
@@ -121,34 +138,68 @@ export function generationStep(graph: Graph, intent?: string, threshold = 0.8): 
       readiness,
       threshold,
       blockingErrors,
+      focusKey: null,
     };
   }
 
   // --- Phase expand: niedrigste Dimension mit handlungsfähigen Funden ------
-  const focus = [...report.scores]
+  // Fund-Rotation (CR-GC-281): Kandidaten = 3er-Fenster der deterministisch
+  // sortierten Violations je Dimension (schwächste zuerst). Fenster, deren
+  // focusKey in `defer` liegt, werden übersprungen — erst innerhalb der
+  // Dimension, dann die nächstschwächere. Alles deferred ⇒ defer ignorieren.
+  const dims = [...report.scores]
     .filter((s) => s.applicable > 0 && s.violations > 0)
-    .sort((a, b) => a.score - b.score || b.violations - a.violations)[0];
+    .sort((a, b) => a.score - b.score || b.violations - a.violations);
+  const violationsOf = (dimension: string): typeof violations =>
+    violations
+      .filter((v) => RULE_TO_DIMENSION[v.rule_id] === dimension)
+      .sort((a, b) => a.rule_id.localeCompare(b.rule_id) || a.element_id.localeCompare(b.element_id));
+  const keyOf = (dimension: string, vs: typeof violations): string =>
+    `${dimension}:${vs.map((v) => v.element_id).sort().join(',')}`;
 
-  // Konkrete Funde der Fokus-Dimension (bis zu 3, deterministisch geordnet).
-  const focusViolations = focus
-    ? violations
-        .filter((v) => RULE_TO_DIMENSION[v.rule_id] === focus.dimension)
-        .sort((a, b) => a.rule_id.localeCompare(b.rule_id) || a.element_id.localeCompare(b.element_id))
-        .slice(0, 3)
-    : [];
+  const deferSet = new Set(defer);
+  let focus: (typeof dims)[number] | undefined;
+  let focusViolations: typeof violations = [];
+  let focusKey: string | null = null;
+  let deferExhausted = false;
+  outer: for (const s of dims) {
+    const vs = violationsOf(s.dimension as string);
+    for (let i = 0; i < vs.length; i += 3) {
+      const window = vs.slice(i, i + 3);
+      const key = keyOf(s.dimension as string, window);
+      if (!deferSet.has(key)) {
+        focus = s;
+        focusViolations = window;
+        focusKey = key;
+        break outer;
+      }
+    }
+  }
+  if (!focus && dims.length > 0) {
+    // Alle Kandidaten zurückgestellt — lieber wiederholen als stillstehen.
+    deferExhausted = true;
+    focus = dims[0];
+    focusViolations = violationsOf(focus.dimension as string).slice(0, 3);
+    focusKey = keyOf(focus.dimension as string, focusViolations);
+  }
+
   const funde = focusViolations.map((v) => `${v.element_id} (${v.rule_id}: ${v.message})`).join('; ');
   const template = focus ? (GENERATION_TEMPLATE[focus.dimension] ?? 'Behebe die Funde der Dimension.') : '';
+  const deferNote = deferExhausted
+    ? 'Hinweis: ALLE Fund-Sets waren zurückgestellt (defer) — Zurückstellung wird ignoriert. '
+    : '';
 
   return {
     phase: 'expand',
     done: false,
     prompt: focus
-      ? `Intention: "${effectiveIntent}". Schwächste Dimension: ${focus.dimension} ` +
+      ? `Intention: "${effectiveIntent}". ${deferNote}Schwächste Dimension: ${focus.dimension} ` +
         `(Score ${focus.score}, ${focus.violations} Funde). Funde: ${funde}. ${template} ${GATE_PROTOCOL}`
       : `Intention: "${effectiveIntent}". Unter Schwelle: ${belowThreshold.map((r) => r.dimension).join(', ')} — ` +
         `aber keine regelbaren Funde; prüfe fehlende Elemente der Dimensionen manuell. ${GATE_PROTOCOL}`,
     readiness,
     threshold,
     blockingErrors,
+    focusKey,
   };
 }
