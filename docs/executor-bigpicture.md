@@ -147,3 +147,30 @@ Research), `dev/aise/grphzr-pdf` (2-Pass, LocalProvider), `dev/aimpro`
 Danach ist der lokale Pfad methodisch komplett — und der Frontier-Vergleich
 über denselben Treiber (`GRAPHCODE_LLM_BACKEND=anthropic`) misst erstmals nur
 noch das Modell.
+
+## 6. Korrekturen & Einordnung (2026-08-01, nach Review)
+
+1. **Vollautomatik ist die Königsklasse, nicht der Use Case.** `graphcode run`
+   ohne Menschen ist der Extremtest des Substrats; der eigentliche Betrieb ist
+   **interaktiv** (Mensch im Loop). Konsequenz für die Hebel: Defer, Nudges,
+   Recovery nützen beiden Modi; die Best-of-N-Orchestrierung ist primär ein
+   Autonomie-Feature — im interaktiven Modus ist der Mensch der Judge, dem der
+   Treiber die dryRun-Verdicts nur VORLEGEN muss (gleiche Mechanik, anderer
+   Entscheider).
+2. **„Frontier nutzt das dryRun-Protokoll" war Design-Behauptung, nicht
+   Empirie — und sie ist falsch für die gemessenen Läufe.** Audit-Check aller
+   drei Opus-Greenfield-Läufe: **0× dryRun**, 6–10 direkte Batches, trotzdem
+   compliance 1.0. (Caveat: die Läufe waren `graph_next_step`-getrieben; das
+   Gate-Protokoll steht im `graph_generate`-Prompt, den Opus so evtl. nie
+   sah.) Stand damit: das Verdict-Auswahlverfahren hat bislang NIEMAND real
+   ausgeführt — weder lokal (kann nicht) noch Frontier (tat es nicht). Die
+   Frontier-Qualität kam aus First-Shot-Urteil. Treiberseitige Best-of-N mit
+   Gate-Judge wäre der ERSTE echte Test des Auswahl-Algorithmus — und der
+   Vergleich „Gate-Verdict-Wahl vs. Frontier-First-Shot" ist selbst eine
+   offene, interessante Messung (Mangel im Auswahl-Algo oder echter
+   Frontier-Vorteil?).
+3. **Temperatur: 0.15 statt 0.2** (Mistrals offizielle Devstral-Empfehlung).
+   Die Behauptung „bei 0.2 variieren drei Samples kaum" ist **ungemessen** —
+   vor einem Best-of-N-Bau gehört die Sample-Varianz bei 0.15 / 0.4 / 0.7
+   gemessen (3 identische Calls, Struktur-Diff), sonst ist die
+   Kandidaten-Spreizung Spekulation.

@@ -49,10 +49,10 @@ export const ExecutorConfigSchema = z.object({
    * JEDEM Call — v5-Befund: 20 Schemas trieben die lokale Box über 300s TTFB);
    * 'full' = alle Registry-Tools außer den withheld. */
   toolset: z.enum(['authoring', 'full']).default('authoring'),
-  /** Sampling-Temperatur. aise-Praxis für Graph-/Strukturarbeit lokal: 0.1–0.3
-   * — dämpft die UID-Halluzinations-Klasse (v11: 31 Runden an einem
-   * verwechselten uid). Default 0.2 statt Modell-Default. */
-  temperature: z.number().min(0).max(2).default(0.2),
+  /** Sampling-Temperatur. Mistrals Empfehlung für Devstral: 0.15; aise-Praxis
+   * für Graph-/Strukturarbeit lokal: 0.1–0.3 — dämpft die UID-Halluzinations-
+   * Klasse (v11: 31 Runden an einem verwechselten uid). */
+  temperature: z.number().min(0).max(2).default(0.15),
 });
 export type ExecutorConfig = z.infer<typeof ExecutorConfigSchema>;
 
