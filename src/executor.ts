@@ -49,6 +49,10 @@ export const ExecutorConfigSchema = z.object({
    * JEDEM Call — v5-Befund: 20 Schemas trieben die lokale Box über 300s TTFB);
    * 'full' = alle Registry-Tools außer den withheld. */
   toolset: z.enum(['authoring', 'full']).default('authoring'),
+  /** Sampling-Temperatur. aise-Praxis für Graph-/Strukturarbeit lokal: 0.1–0.3
+   * — dämpft die UID-Halluzinations-Klasse (v11: 31 Runden an einem
+   * verwechselten uid). Default 0.2 statt Modell-Default. */
+  temperature: z.number().min(0).max(2).default(0.2),
 });
 export type ExecutorConfig = z.infer<typeof ExecutorConfigSchema>;
 
@@ -293,7 +297,14 @@ export function buildCallModel(config: ExecutorConfig): CallModel {
           'anthropic-version': '2023-06-01',
           ...(config.apiKey ? { 'x-api-key': config.apiKey } : {}),
         },
-        body: JSON.stringify({ model: config.model, max_tokens: config.maxTokens, system, tools, messages }),
+        body: JSON.stringify({
+          model: config.model,
+          max_tokens: config.maxTokens,
+          temperature: config.temperature,
+          system,
+          tools,
+          messages,
+        }),
         signal: AbortSignal.timeout(config.callTimeoutMs),
       });
       const j = (await r.json()) as {
@@ -326,6 +337,7 @@ export function buildCallModel(config: ExecutorConfig): CallModel {
       body: JSON.stringify({
         model: config.model,
         max_tokens: config.maxTokens,
+        temperature: config.temperature,
         messages: [{ role: 'system', content: system }, ...messages],
         tools,
       }),
