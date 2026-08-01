@@ -142,6 +142,14 @@ export function bindSuggestTools(ctx: ToolContext): MCPToolRegistry {
         'Zurückgestellte focusKeys (aus GenerationStep.focusKey): diese Fund-Sets werden bei der ' +
           'Fokus-Wahl deterministisch übersprungen; sind alle Kandidaten zurückgestellt, wird defer ignoriert.',
       ),
+    selection: z
+      .enum(['host', 'driver'])
+      .default('host')
+      .describe(
+        "Wer die Kandidaten-Auswahl macht (CR-GC-288): 'host' = der MCP-Client vergleicht selbst per " +
+          "dryRun (Protokoll-Prosa im Prompt, Default für alle MCP-Clients); 'driver' = ein " +
+          'Best-of-N-Treiber probt und wählt im Code — der dryRun-Auftrag verschwindet aus dem Prompt.',
+      ),
   });
 
   const graph_generate: MCPTool<z.infer<typeof GraphGenerateInputSchema>, GenerationStep> = {
@@ -155,7 +163,7 @@ export function bindSuggestTools(ctx: ToolContext): MCPToolRegistry {
       'Festgefahrene Fund-Sets lassen sich per {defer:[focusKey,…]} zurückstellen (Fund-Rotation).',
     inputSchema: GraphGenerateInputSchema,
     async handler(input) {
-      return generationStep(harness.getGraph(), input.intent, input.threshold, input.defer);
+      return generationStep(harness.getGraph(), input.intent, input.threshold, input.defer, input.selection);
     },
   };
 

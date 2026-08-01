@@ -234,6 +234,45 @@ describe('DIMENSION_FOCUS_TYPES / GenerationStep.focusTypes (CR-GC-285)', () => 
 // nach negativer Validierung (v13b: 22 vs. 82 Elemente) wieder ENTFERNT —
 // der Executor fährt das volle Rendering; siehe docs/cr/done/CR-GC-282.
 
+describe('GATE_PROTOCOL-Selektion (CR-GC-288)', () => {
+  const expandGraph = g(
+    [node('SYS-shop', 'SYS', 'shop', INTENT), node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt Teil.')],
+    [edge('SYS-shop', 'UC-bestellen', 'compose')],
+  );
+
+  it("Default 'host': der dryRun-Vergleichs-Auftrag bleibt im Prompt (MCP-Clients ohne Treiber)", () => {
+    const step = generationStep(EMPTY, INTENT);
+    expect(step.prompt).toContain('dryRun:true');
+    expect(step.prompt).toContain('fitAdvisory');
+    // Explizites 'host' ist identisch zum Default — kein zweiter Pfad.
+    expect(generationStep(EMPTY, INTENT, 0.8, [], 'host')).toEqual(step);
+  });
+
+  it("'driver' (seed): dryRun-Auftrag raus, Guide-Schritt und Folgeschritt bleiben", () => {
+    const step = generationStep(EMPTY, INTENT, 0.8, [], 'driver');
+    expect(step.phase).toBe('seed');
+    expect(step.prompt).not.toContain('dryRun');
+    expect(step.prompt).toContain('Treiber');
+    expect(step.prompt).toContain('graph_authoring_guide'); // Schritt 1 geteilt
+    expect(step.prompt).toContain('graph_generate erneut aufrufen'); // Folgeschritt geteilt
+    // Nur das Protokoll wechselt — die generative Instruktion selbst ist identisch.
+    const host = generationStep(EMPTY, INTENT);
+    expect(step.prompt.split('Gate-Protokoll')[0]).toBe(host.prompt.split('Gate-Protokoll')[0]);
+  });
+
+  it("'driver' (expand): gleiche Funde/Fokus, nur das Protokoll wechselt", () => {
+    const host = generationStep(expandGraph, undefined, 0.8);
+    const driver = generationStep(expandGraph, undefined, 0.8, [], 'driver');
+    expect(driver.phase).toBe('expand');
+    expect(driver.focusKey).toBe(host.focusKey);
+    expect(driver.focusTypes).toEqual(host.focusTypes);
+    expect(driver.prompt).not.toContain('dryRun');
+    expect(host.prompt).toContain('dryRun:true');
+    // Deterministisch auch mit selection.
+    expect(generationStep(expandGraph, undefined, 0.8, [], 'driver')).toEqual(driver);
+  });
+});
+
 describe('graph_generate — MCP-Binding (echter Harness)', () => {
   let tmp: string;
   let harness: GraphCodeHarness;
@@ -281,5 +320,15 @@ describe('graph_generate — MCP-Binding (echter Harness)', () => {
     const second = (await tools.graph_generate.handler({ threshold: 0.8 })) as { phase: string; prompt: string };
     expect(second.phase).toBe('expand');
     expect(second.prompt).toContain(INTENT); // aus SYS-description, ohne intent-Parameter
+  });
+
+  it("selection:'driver' schaltet die dryRun-Passage im Tool-Prompt ab; Default bleibt 'host' (CR-GC-288)", async () => {
+    const host = (await tools.graph_generate.handler({ intent: INTENT })) as { prompt: string };
+    expect(host.prompt).toContain('dryRun:true'); // MCP-Clients ohne Treiber: Protokoll bleibt
+
+    const parsed = tools.graph_generate.inputSchema.parse({ intent: INTENT, selection: 'driver' });
+    const driver = (await tools.graph_generate.handler(parsed)) as { prompt: string };
+    expect(driver.prompt).not.toContain('dryRun');
+    expect(driver.prompt).toContain('Treiber');
   });
 });

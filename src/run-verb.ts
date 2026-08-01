@@ -44,6 +44,9 @@ export function parseExecutorEnv(env: NodeJS.ProcessEnv): ExecutorConfig {
     ...(env.GRAPHCODE_LLM_TOOLSET ? { toolset: env.GRAPHCODE_LLM_TOOLSET } : {}),
     ...(env.GRAPHCODE_LLM_MAX_TOKENS ? { maxTokens: Number(env.GRAPHCODE_LLM_MAX_TOKENS) } : {}),
     ...(env.GRAPHCODE_LLM_TEMPERATURE ? { temperature: Number(env.GRAPHCODE_LLM_TEMPERATURE) } : {}),
+    // Best-of-N (CR-GC-288): N Kandidaten pro Runde + Judge ('gate' | 'model').
+    ...(env.GRAPHCODE_LLM_CANDIDATES ? { candidates: Number(env.GRAPHCODE_LLM_CANDIDATES) } : {}),
+    ...(env.GRAPHCODE_LLM_JUDGE ? { judge: env.GRAPHCODE_LLM_JUDGE } : {}),
   });
 }
 
