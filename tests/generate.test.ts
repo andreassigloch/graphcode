@@ -72,6 +72,36 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
     expect(generationStep(graph, undefined, 0.8)).toEqual(step);
   });
 
+  it('req-Template fordert den TEST (TEST verify REQ) im selben Batch (CR-GC-284)', () => {
+    // R-01 ist error-severity: eine REQ ohne verify-TEST im selben Batch blockt
+    // das Gate — das Template darf REQ-Kandidaten nicht mehr ohne TEST fordern.
+    const graph = g(
+      [
+        node('SYS-shop', 'SYS', 'shop', INTENT),
+        node('ACTOR-kunde', 'ACTOR', 'Kunde'),
+        node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt Ersatzteil und erhält Bestätigung.'),
+        node('REQ-tbd', 'REQ', 'Bestellung', 'TBD: wird noch definiert.'),
+        node('TEST-req', 'TEST', 'Test', 'Prüft die Bestellung messbar.'),
+      ],
+      [
+        edge('SYS-shop', 'UC-bestellen', 'compose'),
+        edge('ACTOR-kunde', 'UC-bestellen', 'io'),
+        edge('UC-bestellen', 'REQ-tbd', 'compose'),
+        edge('TEST-req', 'REQ-tbd', 'verify'),
+      ],
+    );
+    // Die req-Dimension ist nicht zwingend der erste Fokus — per defer dorthin rotieren.
+    let step = generationStep(graph, undefined, 0.8);
+    const keys: string[] = [];
+    while (step.focusKey && !step.prompt.includes('REQ-Kandidaten') && keys.length < 10) {
+      keys.push(step.focusKey);
+      step = generationStep(graph, undefined, 0.8, keys);
+    }
+    expect(step.prompt).toContain('REQ-Kandidaten');
+    expect(step.prompt).toContain('TEST verify REQ');
+    expect(step.prompt).toContain('im selben Batch');
+  });
+
   it('threshold 0 + keine Blocker → handoff auf graph_suggest', () => {
     // Minimal blockerfrei: SYS + verifiziertes REQ-UC-Paar mit Actor/FCHAIN-Kette.
     const graph = g(

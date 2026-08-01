@@ -52,7 +52,7 @@ const GATE_PROTOCOL = [
 /** Generative Instruktion je Readiness-Dimension (die Schreib-Zwillinge der graph_next_step-Aktionen). */
 const GENERATION_TEMPLATE: Record<string, string> = {
   uc: 'Schlage je Fund 2–3 Kandidaten vor: fehlende ACTORs (io→UC), FCHAIN-Szenarien (UC compose FCHAIN) oder fehlende UCs aus der Intention. UC-Stil: Actor–Verb–Objekt–Ergebnis, ≤25 Wörter (Skill se:author-uc).',
-  req: 'Schlage je UC ohne Requirements 3–5 REQ-Kandidaten vor (UC compose REQ), präzise und prüfbar formuliert; löse Platzhalter/Ambiguität in bestehenden REQs auf.',
+  req: 'Schlage je UC ohne Requirements 3–5 REQ-Kandidaten vor (UC compose REQ), präzise und prüfbar formuliert; emittiere jede neue REQ zusammen mit einem TEST (TEST verify REQ) im selben Batch — eine REQ ohne verify-TEST blockt das Gate (R-01). Löse Platzhalter/Ambiguität in bestehenden REQs auf.',
   arch: 'Zerlege je Fund die FCHAIN/FUNC-Ebene: 7±2 FUNCs pro Zerlegungsebene (RD-04), FLOWs zwischen FUNCs (io), satisfy FUNC→REQ. Schlage 2 alternative Zerlegungen vor und lass das Gate wählen.',
   alloc: 'Schlage MOD-Schnitte vor (intern stark, extern schwach gekoppelt) und allocate-Kanten FUNC→MOD; 2 Alternativen, Δm-Vergleich entscheidet.',
   ver: 'Schlage je unverifiziertem REQ einen TEST-Kandidaten vor (TEST verify REQ), mit konkretem Prüfschritt in der description.',

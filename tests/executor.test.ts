@@ -64,11 +64,15 @@ function toolCallResponse(id: string, input: unknown): ModelResponse {
   };
 }
 
+// Passiert den Batch-Preflight (CR-GC-284: keine Kanten, kein REQ), wird aber vom
+// Gate abgelehnt (unknown-type STRUCT-Guard) — der ECHTE Gate-Rejection-Pfad bleibt
+// getestet. (Der frühere Ghost-Kanten-Batch wird seit CR-GC-284 schon lokal geblockt;
+// dieser Pfad ist in tests/executor.preflight.test.ts abgedeckt.)
 const INVALID_BATCH = {
   commands: [
     {
-      op: 'add-edge',
-      edge: { sourceId: 'ACTOR-ghost', targetId: 'UC-ghost', edgeType: 'io', attributes: {} },
+      op: 'add-node',
+      node: { uid: 'GHOST-x', type: 'GHOST', name: 'Ghost', description: 'Unbekannter Typ.', attributes: {} },
     },
   ],
 };
