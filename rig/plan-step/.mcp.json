@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "graphcode": {
+      "command": "node",
+      "args": [
+        "/Users/andreas/Developer/dev/graphcode/dist/cli.js",
+        "mcp"
+      ],
+      "env": {
+        "GRAPHCODE_HOST_PORT": "4757"
+      }
+    }
+  }
+}

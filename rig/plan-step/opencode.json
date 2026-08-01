@@ -1,0 +1,18 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "graphcode": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@sigloch/graphcode",
+        "mcp"
+      ],
+      "enabled": true,
+      "environment": {
+        "GRAPHCODE_HOST_PORT": "4756"
+      }
+    }
+  }
+}

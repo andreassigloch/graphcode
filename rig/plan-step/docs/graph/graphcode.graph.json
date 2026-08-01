@@ -1,0 +1,1616 @@
+{
+  "elements": [
+    {
+      "id": "ACTOR-admin",
+      "type": "ACTOR",
+      "name": "Administrator",
+      "description": "Nutzer mit Governance-Rechten zur Batch-Genehmigung und Regelabsetzung"
+    },
+    {
+      "id": "ACTOR-governance-reviewer",
+      "type": "ACTOR",
+      "name": "Governance Reviewer",
+      "description": "System architect reviewing authored graph changes for compliance"
+    },
+    {
+      "id": "ACTOR-graph-user",
+      "type": "ACTOR",
+      "name": "Graph User",
+      "description": "End-user discovering and filtering graph elements"
+    },
+    {
+      "id": "ACTOR-system",
+      "type": "ACTOR",
+      "name": "Harness-System",
+      "description": "Automatisiertes System, verwaltet Apply-Gate und Exporte"
+    },
+    {
+      "id": "ACTOR-user",
+      "type": "ACTOR",
+      "name": "Nutzer",
+      "description": "Dateneigner, meldet sich an und erstellt Graphelemente"
+    },
+    {
+      "id": "CR-PS-001",
+      "type": "CR",
+      "name": "Login & Session",
+      "description": "Realisiert FUNC-authenticate-user, FUNC-create-session → REQ-user-auth-email, REQ-session-token-created. Context = graph_context-Slice dieser Knoten (se-plan, CR-GC-283).",
+      "status": "open",
+      "created_at": "2026-08-01T13:31:15.898Z"
+    },
+    {
+      "id": "CR-PS-002",
+      "type": "CR",
+      "name": "Validate Mutation (unit)",
+      "description": "Realisiert FUNC-validate-mutation → REQ-author-gate-validation, REQ-author-input-validation. Context = graph_context-Slice dieser Knoten (se-plan, CR-GC-283).",
+      "status": "open",
+      "created_at": "2026-08-01T13:31:15.898Z"
+    },
+    {
+      "id": "CR-PS-003",
+      "type": "CR",
+      "name": "Validate Mutations (batch)",
+      "description": "Realisiert FUNC-validate-mutations → REQ-apply-gate-verdict-deterministic, REQ-batch-atomicity-measurable. Context = graph_context-Slice dieser Knoten (se-plan, CR-GC-283).",
+      "status": "open",
+      "created_at": "2026-08-01T13:31:15.898Z"
+    },
+    {
+      "id": "CR-PS-004",
+      "type": "CR",
+      "name": "Approve Batch",
+      "description": "Realisiert FUNC-approve-batch → REQ-batch-atomicity-measurable. Context = graph_context-Slice dieser Knoten (se-plan, CR-GC-283).",
+      "status": "open",
+      "created_at": "2026-08-01T13:31:15.898Z"
+    },
+    {
+      "id": "CR-PS-005",
+      "type": "CR",
+      "name": "Persist Batch",
+      "description": "Realisiert FUNC-persist-batch → REQ-governance-enforcement. Context = graph_context-Slice dieser Knoten (se-plan, CR-GC-283).",
+      "status": "open",
+      "created_at": "2026-08-01T13:31:15.898Z"
+    },
+    {
+      "id": "CR-PS-006",
+      "type": "CR",
+      "name": "Edit Element",
+      "description": "Realisiert FUNC-edit-element → REQ-author-integrity. Context = graph_context-Slice dieser Knoten (se-plan, CR-GC-283).",
+      "status": "open",
+      "created_at": "2026-08-01T13:31:15.898Z"
+    },
+    {
+      "id": "CR-PS-007",
+      "type": "CR",
+      "name": "Serialize Graph",
+      "description": "Realisiert FUNC-serialize-graph → REQ-export-snapshot-bitwise-identical, REQ-export-versioning. Context = graph_context-Slice dieser Knoten (se-plan, CR-GC-283).",
+      "status": "open",
+      "created_at": "2026-08-01T13:31:15.898Z"
+    },
+    {
+      "id": "CR-PS-008",
+      "type": "CR",
+      "name": "Search Index",
+      "description": "Realisiert FUNC-search-index → REQ-search-indexing, REQ-search-result-precision-recall. Context = graph_context-Slice dieser Knoten (se-plan, CR-GC-283).",
+      "status": "open",
+      "created_at": "2026-08-01T13:31:15.898Z"
+    },
+    {
+      "id": "CR-PS-009",
+      "type": "CR",
+      "name": "Search Filter",
+      "description": "Realisiert FUNC-search-filter → REQ-search-filtering, REQ-user-discover-search-interface. Context = graph_context-Slice dieser Knoten (se-plan, CR-GC-283).",
+      "status": "open",
+      "created_at": "2026-08-01T13:31:15.898Z"
+    },
+    {
+      "id": "CR-PS-010",
+      "type": "CR",
+      "name": "Broadcast WebSocket",
+      "description": "Realisiert FUNC-broadcast-websocket → REQ-websocket-live. Context = graph_context-Slice dieser Knoten (se-plan, CR-GC-283).",
+      "status": "open",
+      "created_at": "2026-08-01T13:31:15.898Z"
+    },
+    {
+      "id": "CR-PS-011",
+      "type": "CR",
+      "name": "Subscribe Updates",
+      "description": "Realisiert FUNC-subscribe-updates → REQ-updates-visible-ui. Context = graph_context-Slice dieser Knoten (se-plan, CR-GC-283).",
+      "status": "open",
+      "created_at": "2026-08-01T13:31:15.898Z"
+    },
+    {
+      "id": "FCHAIN-apply-gate-validation",
+      "type": "FCHAIN",
+      "name": "Apply-Gate Validation Chain",
+      "description": "Validation flow: OCC check → tier verdict → mutations → graph update"
+    },
+    {
+      "id": "FCHAIN-authoring-scenario",
+      "type": "FCHAIN",
+      "name": "Authoring-Szenario",
+      "description": "Benutzer erstellt/editiert Graphelemente mit Governance-Validierung"
+    },
+    {
+      "id": "FCHAIN-batch-approval-flow",
+      "type": "FCHAIN",
+      "name": "Batch-Genehmigungsablauf",
+      "description": "Szenario: Admin prüft Violations, genehmigt oder lehnt ab"
+    },
+    {
+      "id": "FCHAIN-concurrent-authoring",
+      "type": "FCHAIN",
+      "name": "Concurrent Authoring Flow",
+      "description": "Node creation → OCC validation → gate verdict → mutation apply"
+    },
+    {
+      "id": "FCHAIN-export-lifecycle",
+      "type": "FCHAIN",
+      "name": "Export Lifecycle",
+      "description": "Graph serialization → persistence → client delivery"
+    },
+    {
+      "id": "FCHAIN-export-scenario",
+      "type": "FCHAIN",
+      "name": "Export-Szenario",
+      "description": "Szenario: Nutzer triggert Export, System serialisiert Graphen"
+    },
+    {
+      "id": "FCHAIN-export-standard-format",
+      "type": "FCHAIN",
+      "name": "Export Standard Format Chain",
+      "description": "Export flow: select elements → serialize version → write file"
+    },
+    {
+      "id": "FCHAIN-filter-by-type-and-search",
+      "type": "FCHAIN",
+      "name": "Filter By Type And Search Chain",
+      "description": "Discovery flow: apply type filter → apply search query → return results"
+    },
+    {
+      "id": "FCHAIN-governance-enforcement-flow",
+      "type": "FCHAIN",
+      "name": "Governance-Durchsetzungsablauf",
+      "description": "Szenario: System wendet Regeln auf Batch an, persistiert"
+    },
+    {
+      "id": "FCHAIN-live-update-scenario",
+      "type": "FCHAIN",
+      "name": "Live-Update-Szenario",
+      "description": "Benutzer empfängt WebSocket-Updates bei Änderungen anderer Nutzer"
+    },
+    {
+      "id": "FCHAIN-live-update-stream",
+      "type": "FCHAIN",
+      "name": "Live Update Stream",
+      "description": "Streaming functions for real-time graph updates across sessions"
+    },
+    {
+      "id": "FCHAIN-login-auth-session",
+      "type": "FCHAIN",
+      "name": "Login–Authentifizierung–Session",
+      "description": "Szenario: Nutzer loggt sich ein, wird authentifiziert, erhält Session-Token zur Graphbearbeitung"
+    },
+    {
+      "id": "FCHAIN-login-scenario",
+      "type": "FCHAIN",
+      "name": "Login-Szenario",
+      "description": "Benutzer authentifiziert sich in der Web-App"
+    },
+    {
+      "id": "FCHAIN-monitor-ws-broadcast",
+      "type": "FCHAIN",
+      "name": "Monitor–WebSocket–Broadcast",
+      "description": "Szenario: Nutzer verbindet WebSocket, erhält Live-Updates von Mutations-Events anderer Aktoren"
+    },
+    {
+      "id": "FCHAIN-multiuser-auth-flow",
+      "type": "FCHAIN",
+      "name": "Multiuser Authentication Flow",
+      "description": "Sequential functions for user authentication in multiuser context"
+    },
+    {
+      "id": "FCHAIN-search-scenario",
+      "type": "FCHAIN",
+      "name": "Suchszenario",
+      "description": "Benutzer findet und filtert Elemente im Live-Graphen"
+    },
+    {
+      "id": "FCHAIN-update-propagation",
+      "type": "FCHAIN",
+      "name": "Update Propagation",
+      "description": "Mutation event → broadcast → client render"
+    },
+    {
+      "id": "FCHAIN-view-apply-gate-result",
+      "type": "FCHAIN",
+      "name": "View–Apply-Gate–Result",
+      "description": "Szenario: Nutzer sieht UI-Update mit erfolgreicher oder blockierter Mutation durchs Apply-Gate"
+    },
+    {
+      "id": "FUNC-approve-batch",
+      "type": "FUNC",
+      "name": "Approve Batch",
+      "description": "Approves or rejects mutation batch through Apply-Gate"
+    },
+    {
+      "id": "FUNC-authenticate-user",
+      "type": "FUNC",
+      "name": "Authenticate User",
+      "description": "Validates user credentials against identity provider"
+    },
+    {
+      "id": "FUNC-broadcast-websocket",
+      "type": "FUNC",
+      "name": "Broadcast WebSocket",
+      "description": "Sends real-time updates to connected clients"
+    },
+    {
+      "id": "FUNC-create-session",
+      "type": "FUNC",
+      "name": "Create Session",
+      "description": "Establishes authenticated session for graph operations"
+    },
+    {
+      "id": "FUNC-edit-element",
+      "type": "FUNC",
+      "name": "Edit Element",
+      "description": "Creates or updates graph element with validation"
+    },
+    {
+      "id": "FUNC-persist-batch",
+      "type": "FUNC",
+      "name": "Persist Batch",
+      "description": "Commits validated mutations to graph store"
+    },
+    {
+      "id": "FUNC-search-filter",
+      "type": "FUNC",
+      "name": "Elemente nach Typ filtern",
+      "description": "Filtert Graphelemente nach Typ, UID, Name",
+      "concept": true
+    },
+    {
+      "id": "FUNC-search-index",
+      "type": "FUNC",
+      "name": "Suchindex abfragen",
+      "description": "Indexiert und durchsucht Live-Graph nach Substring",
+      "concept": true
+    },
+    {
+      "id": "FUNC-serialize-graph",
+      "type": "FUNC",
+      "name": "Serialize Graph",
+      "description": "Serializes graph state to export format"
+    },
+    {
+      "id": "FUNC-subscribe-updates",
+      "type": "FUNC",
+      "name": "Subscribe Updates",
+      "description": "Establishes WebSocket subscription for user"
+    },
+    {
+      "id": "FUNC-validate-mutation",
+      "type": "FUNC",
+      "name": "Validate Mutation",
+      "description": "Validates incoming mutation against governance rules"
+    },
+    {
+      "id": "FUNC-validate-mutations",
+      "type": "FUNC",
+      "name": "Validate Mutations",
+      "description": "Applies V3_RULES governance checks to batch"
+    },
+    {
+      "id": "MS-1-auth-session",
+      "type": "MS",
+      "name": "M1: Auth & Session",
+      "description": "Nutzer-Authentifizierung + Session-Erzeugung — Fundament für alle gated Operationen.",
+      "status": "open",
+      "created_at": "2026-08-01T13:31:15.898Z"
+    },
+    {
+      "id": "MS-2-apply-gate-core",
+      "type": "MS",
+      "name": "M2: Apply-Gate Core",
+      "description": "Validierung, Approval, Persistenz der Batch-Mutations — der Kern des Apply-Gate.",
+      "status": "open",
+      "created_at": "2026-08-01T13:31:15.898Z"
+    },
+    {
+      "id": "MS-3-export-search",
+      "type": "MS",
+      "name": "M3: Export & Search",
+      "description": "Graph-Serialisierung + Suchindex/-filter über den persistierten Graphen.",
+      "status": "open",
+      "created_at": "2026-08-01T13:31:15.898Z"
+    },
+    {
+      "id": "MS-4-live-updates",
+      "type": "MS",
+      "name": "M4: Live Updates",
+      "description": "WebSocket-Broadcast + Client-Subscription für Echtzeit-UI-Updates.",
+      "status": "open",
+      "created_at": "2026-08-01T13:31:15.898Z"
+    },
+    {
+      "id": "REQ-apply-gate-verdict-deterministic",
+      "type": "REQ",
+      "name": "Apply-Gate Verdicts sind deterministisch und reproduzierbar",
+      "description": "Für identische Eingabe-Batches muss Apply-Gate identisches Verdict generieren. Messkriterium: 100% Verdict-Reproduzierbarkeit über 1000 Test-Runs; keine Nondeterminismus."
+    },
+    {
+      "id": "REQ-author-gate-validation",
+      "type": "REQ",
+      "name": "Pre-Gate Governance-Validierung",
+      "description": "System muss Element-Validierung gegen Regeln vor Apply-Gate durchführen"
+    },
+    {
+      "id": "REQ-author-input-validation",
+      "type": "REQ",
+      "name": "Elementeingabe validiert gegen Ontologie vor Submit",
+      "description": "System muss Nutzer-Input (uid, type, name, description, attributes) gegen das Ontologie-Schema validieren BEVOR Batch ins Apply-Gate geht. Messkriterium: Alle ungültigen Inputs werden mit >95% Precision erkannt und UI zeigt Fehler <200ms nach keyup."
+    },
+    {
+      "id": "REQ-author-integrity",
+      "type": "REQ",
+      "name": "Node authored by collaborators passes apply-gate",
+      "description": "Batch mutations from multiple users atomically applied"
+    },
+    {
+      "id": "REQ-batch-atomicity-measurable",
+      "type": "REQ",
+      "name": "Batch-Mutation ist atomar (All-or-Nothing) mit messbarem Kriterium",
+      "description": "Wenn ein Kommando im Batch gegen V3_RULES verstößt, wird der gesamte Batch abgelehnt (keine Partial Applies). Messkriterium: (1) graphVersion ändert sich nur bei tier=auto-apply oder tier=suggest mit Approval; bei tier=block bleibt graphVersion unverändert. (2) Für jeden fehlgeschlagenen Batch muss Apply-Gate Violations mit Regel-ID und fixHints zurückgeben. (3) Konsistenz-Test: 100 zufällige Batches mit 1 intentionalen Violation → 100% werden komplett abgelehnt."
+    },
+    {
+      "id": "REQ-batch-validation-measurable",
+      "type": "REQ",
+      "name": "Batch-Validierung gegen V3_RULES mit messbarem Kriterium",
+      "description": "System muss Mutations-Batches gegen V3_RULES validieren und bei Violations korrekt blocken mit violations Array und fixHints. Messkriterium: (1) Für jeden Violation wird ein Eintrag mit ruleId, severity, message und fixHint generiert. (2) False-Negative-Rate <1% (maximal 1 unerkannte Violation pro 100 Test-Batches). (3) False-Positive-Rate <0.5% (maximal 0.5 fehlerhafte Ablehnungen pro 1000 gültigen Batches)."
+    },
+    {
+      "id": "REQ-concurrent-batch-isolation",
+      "type": "REQ",
+      "name": "Concurrent Batches sind isoliert und deterministisch",
+      "description": "Wenn mehrere Nutzer gleichzeitig Batches einreichen, muss das Apply-Gate diese sequenziell oder mit Optimistic Concurrency Control (OCC) verarbeiten. Messkriterium: (1) Final Graph-State ist deterministisch unabhängig von Submission-Reihenfolge (idempotent). (2) baseVersion-Check lehnt stale Batches (baseVersion < currentGraphVersion) ab. (3) Für 1000 concurrent-Batch-Szenarien: Keine Race Conditions, keine Inkonsistenzen."
+    },
+    {
+      "id": "REQ-discover-latency-measurable",
+      "type": "REQ",
+      "name": "Element-Discovery mit messbarem Latenz-Kriterium",
+      "description": "Graph-Suchindex muss Element-Queries innerhalb von 200ms beantworten, ohne Mutations zu blockieren. Messkriterium: (1) P99-Latenz für Suche nach UID/Name <200ms bei bis zu 10.000 Elementen im Graph. (2) Während aktiver Mutations (Apply-Gate laufen) darf Search-Latenz nicht um mehr als 50% ansteigen. (3) Index wird innerhalb von 100ms nach erfolgreicher Mutation aktualisiert."
+    },
+    {
+      "id": "REQ-export-snapshot-bitwise-identical",
+      "type": "REQ",
+      "name": "Export-Snapshot ist bitwise-identisch mit in-memory Graph",
+      "description": "Exportierter Graph ist bitwise-identisch mit dem in-memory Systemgraph. Messkriterium: Round-trip liefert identische Element-UIDs, Kanten und Attribute; SHA256-Hash ist deterministisch."
+    },
+    {
+      "id": "REQ-export-versioning",
+      "type": "REQ",
+      "name": "Versionierte Exporte mit Audit-Trail",
+      "description": "Export muss Graphversion, Timestamp und Nutzer-Aktion enthalten"
+    },
+    {
+      "id": "REQ-governance-enforcement",
+      "type": "REQ",
+      "name": "Governance-Enforcement im Apply-Gate",
+      "description": "Requirement: Apply-Gate muss V3_RULES durchsetzen, ungültige Batches blocken (tier=block), Verdicts mit Regel-IDs und fixHints generieren, erfolgreiche Batches persistent machen."
+    },
+    {
+      "id": "REQ-no-stale-data",
+      "type": "REQ",
+      "name": "Keine veralteten Graph-Daten anzeigen",
+      "description": "View enthält nur Daten, die nicht älter als die letzte Apply-Gate-Mutation sind"
+    },
+    {
+      "id": "REQ-search-filtering",
+      "type": "REQ",
+      "name": "Suchfilterung nach Elementtyp",
+      "description": "Requirement: System muss Elemente nach Typ (UC/REQ/TEST/etc) und Name filtern, Suchquery mit <100ms Latenz beantworten, keine False Positives."
+    },
+    {
+      "id": "REQ-search-indexing",
+      "type": "REQ",
+      "name": "Graphindex für Suche",
+      "description": "Suchindex ermöglicht schnelle Abfragen über Live-Graph"
+    },
+    {
+      "id": "REQ-search-result-precision-recall",
+      "type": "REQ",
+      "name": "Suchindex liefert vollständige und korrekte Treffer",
+      "description": "System muss zu Query alle passenden Knoten zurückliefern (Recall 100%) und keine nicht-passenden (Precision 100%). Messkriterium: <200ms Latenz, exakte Substring-Matching (case-insensitive), Typ-Filter als logisches AND."
+    },
+    {
+      "id": "REQ-session-token-created",
+      "type": "REQ",
+      "name": "Session-Token wird erzeugt und zurückgegeben",
+      "description": "Nach erfolgreicher Authentifizierung erhält Nutzer ein Session-Token zur Identifikation"
+    },
+    {
+      "id": "REQ-updates-visible-ui",
+      "type": "REQ",
+      "name": "UI zeigt Graph-Änderungen Echtzeit",
+      "description": "Mutations werden im UI-Baum sichtbar reflektiert, kein Manuell-Refresh nötig"
+    },
+    {
+      "id": "REQ-user-auth-email",
+      "type": "REQ",
+      "name": "Nutzer authentifiziert mit Email und Passwort",
+      "description": "Gültige Credentials authentifizieren den Nutzer gegenüber dem System"
+    },
+    {
+      "id": "REQ-user-discover-search-interface",
+      "type": "REQ",
+      "name": "Suchoberfläche mit Filterung",
+      "description": "System muss Nutzer-Suche über UID/Name mit Real-time-Filterung unterstützen"
+    },
+    {
+      "id": "REQ-view-current-state",
+      "type": "REQ",
+      "name": "Nutzer sieht aktuellen Systemgraph-Zustand",
+      "description": "Graph-View zeigt Live-Stand mit Knotendaten, Kanten und letztem Mutations-Timestamp"
+    },
+    {
+      "id": "REQ-websocket-live",
+      "type": "REQ",
+      "name": "WebSocket-Verbindung überträgt Graph-Mutations live",
+      "description": "Client empfängt Apply-Gate-Outputs als Events via WebSocket in <500ms"
+    },
+    {
+      "id": "SYS-multiuser-web-app",
+      "type": "SYS",
+      "name": "Multiuser Web App",
+      "description": "Multiuser-fähige Web-App aus dem graphcode harness: Nutzer melden sich an, autorieren gemeinsam einen governten Systemgraphen über das Apply-Gate, sehen Live-Updates und exportieren den Stand."
+    },
+    {
+      "id": "TEST-batch-validation",
+      "type": "TEST",
+      "name": "Batch-Validierung verifizieren",
+      "description": "Prüfschritt: Admin reicht Mutations-Batch ein, System validiert gegen V3_RULES, Violations werden korrekt identifiziert und geblockt",
+      "concept": true
+    },
+    {
+      "id": "TEST-governance-enforcement",
+      "type": "TEST",
+      "name": "Governance-Enforcement verifizieren",
+      "description": "Prüfschritt: System enforced V3_RULES bei Apply-Gate, blockiert ungültige Mutations-Batches mit Verdicts, erlaubt nur compliant gates",
+      "concept": true
+    },
+    {
+      "id": "TEST-search-filtering",
+      "type": "TEST",
+      "name": "Suchfilterung verifizieren",
+      "description": "Prüfschritt: Nutzer filterst Elemente nach Typ (UC/REQ/TEST), Ergebnisse werden korrekt gefiltert und angezeigt, Performance unter 100ms",
+      "concept": true
+    },
+    {
+      "id": "TEST-search-indexing",
+      "type": "TEST",
+      "name": "Suchindex-Indexierung prüfen",
+      "description": "Prüfschritt: (1) Systemstart triggert Index-Build über alle Graph-Elemente; (2) Live-Updates durch Apply-Gate sind sofort im Index sichtbar; (3) Suchquery über name/uid/description liefert <10ms auf 1000+ Knoten; (4) Filter-Kombinationen (type=REQ AND layer=arch) arbeiten korrekt",
+      "concept": true
+    },
+    {
+      "id": "TEST-verify-batch-validation",
+      "type": "TEST",
+      "name": "Batch-Validierung vor Apply-Gate",
+      "description": "Prüfschritt: (1) Admin submittet Batch mit absichtlichen Violations (z.B. orphaned TEST ohne testRef); (2) graph_mutate mit dryRun:true lehnt ab (success:false) mit violations und fixHints; (3) Admin korrigiert Batch; (4) Mit korrigiertem Batch dryRun:true geht durch (success:true); (5) nur der erfolgreiche Batch wird ohne dryRun persistent"
+    },
+    {
+      "id": "TEST-verify-governance-enforcement",
+      "type": "TEST",
+      "name": "Governance-Regeln durchsetzen",
+      "description": "Prüfschritt: (1) User2 submittet Batch mit UC ohne actor-Bindung (V3_RULES-Violation); (2) Gate-Verdict blockiert (tier=block) mit Regel-ID (z.B. R-5); (3) User2 sieht fixHints und fügt ACTOR io→UC ein; (4) Corrected Batch passiert Gate und wird applied; (5) Live-Graph zeigt neue UC+ACTOR sofort; (6) Report verzeichnet Regel und User+Timestamp"
+    },
+    {
+      "id": "TEST-verify-search-filtering",
+      "type": "TEST",
+      "name": "Verify Suchfilterung",
+      "description": "Prüfschritt: Nutzer gibt Filterkriterien ein (z.B. type:REQ, name:*batch*); System returned gefilterte Knotenliste; Verification: Alle Treffer entsprechen Filterkriterien, keine False Positives."
+    },
+    {
+      "id": "TEST-verify-search-indexing",
+      "type": "TEST",
+      "name": "Verify Graphindex",
+      "description": "Prüfschritt: Index wird nach Batch-Mutation aktualisiert; Suche über Live-Graph liefert neue Elemente sofort; Verification: Indexierung synkt mit Graph-State, Query-Latenz <100ms."
+    },
+    {
+      "id": "UC-admin-approve-batch",
+      "type": "UC",
+      "name": "Admin autorisiert Batch",
+      "description": "Admin reviewed und approveert Mutationsbatch durchs Apply-Gate"
+    },
+    {
+      "id": "UC-admin-approve-batch-postcond",
+      "type": "UC",
+      "name": "Admin bestätigt Batch-Gültigkeitscheck",
+      "description": "Admin prüft Gate-Verdict und approveert rechtskonformen Batch zur Persistierung"
+    },
+    {
+      "id": "UC-admin-enforce-governance",
+      "type": "UC",
+      "name": "Admin enforced Governance-Regeln",
+      "description": "Admin durchsetzt V3_RULES und blockiert Violations"
+    },
+    {
+      "id": "UC-admin-enforce-governance-postcond",
+      "type": "UC",
+      "name": "Admin blockiert Verletzungen und dokumentiert",
+      "description": "Admin enforcement-Akt erzwingt V3_RULES-Compliance und dokumentiert Blockade-Gründe"
+    },
+    {
+      "id": "UC-system-export-graph",
+      "type": "UC",
+      "name": "System exportiert Graphstand",
+      "description": "Harness exportiert aktuellen Graphstand als Datei oder API"
+    },
+    {
+      "id": "UC-system-export-graph-postcond",
+      "type": "UC",
+      "name": "System exportiert governten Graphstand",
+      "description": "Harness exportiert aktuellen, gate-geprüften Graphstand als Format-E oder JSON"
+    },
+    {
+      "id": "UC-system-export-graph-versioned",
+      "type": "UC",
+      "name": "System exportiert versionierten Graphstand",
+      "description": "Harness exportiert aktuellen Graph mit Versionsnummer und Audit-Log"
+    },
+    {
+      "id": "UC-user-author-node",
+      "type": "UC",
+      "name": "Nutzer erstellt Graphelement",
+      "description": "Nutzer autorisiert neuen Knoten oder Kante im Systemgraph"
+    },
+    {
+      "id": "UC-user-author-node-with-validation",
+      "type": "UC",
+      "name": "Nutzer erstellt Element mit Governance-Validierung",
+      "description": "Nutzer autorisiert Element; Harness validiert gegen V3_RULES vor Apply-Gate-Submission"
+    },
+    {
+      "id": "UC-user-discover-elements",
+      "type": "UC",
+      "name": "Nutzer sucht Elemente",
+      "description": "Nutzer recherchiert Knoten nach UID oder Name im Graph"
+    },
+    {
+      "id": "UC-user-discover-elements-with-filter",
+      "type": "UC",
+      "name": "Nutzer sucht Elemente mit Filter",
+      "description": "Nutzer recherchiert Knoten nach UID, Name oder Typ und filtert Live-Ergebnisse"
+    },
+    {
+      "id": "UC-user-login",
+      "type": "UC",
+      "name": "Nutzer meldet sich an",
+      "description": "Nutzer authentifiziert und erhält Session zur Graphbearbeitung"
+    },
+    {
+      "id": "UC-user-login-multiuser",
+      "type": "UC",
+      "name": "User meldet sich an",
+      "description": "Nutzer authentifiziert sich und erhält Zugriff auf Web-App"
+    },
+    {
+      "id": "UC-user-monitor-graph-updates",
+      "type": "UC",
+      "name": "Monitor graph updates in real-time",
+      "description": "User observes mutations from collaborators live via websocket"
+    },
+    {
+      "id": "UC-user-view-live-updates",
+      "type": "UC",
+      "name": "User empfängt Live-Updates",
+      "description": "Nutzer sieht Echtzeit-Änderungen am Graphen nach Batch-Anwendung"
+    },
+    {
+      "id": "UC-user-view-updates",
+      "type": "UC",
+      "name": "Nutzer beobachtet Live-Updates",
+      "description": "Nutzer sieht Echtzeit-Änderungen anderer Aktoren im Graph"
+    }
+  ],
+  "traces": [
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-admin-approve-batch",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-admin-approve-batch-postcond",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-admin-enforce-governance",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-admin-enforce-governance-postcond",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-governance-reviewer",
+      "target": "UC-user-author-node-with-validation",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-graph-user",
+      "target": "UC-user-discover-elements-with-filter",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-system",
+      "target": "UC-system-export-graph",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-system",
+      "target": "UC-system-export-graph-postcond",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-system",
+      "target": "UC-system-export-graph-versioned",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-user-author-node",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-user-author-node-with-validation",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-user-discover-elements",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-user-discover-elements-with-filter",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-user-login",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-user-login-multiuser",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-user-monitor-graph-updates",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-user-view-live-updates",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-user-view-updates",
+      "type": "io"
+    },
+    {
+      "source": "CR-PS-001",
+      "target": "FUNC-authenticate-user",
+      "type": "relation"
+    },
+    {
+      "source": "CR-PS-001",
+      "target": "FUNC-create-session",
+      "type": "relation"
+    },
+    {
+      "source": "CR-PS-001",
+      "target": "MS-1-auth-session",
+      "type": "relation"
+    },
+    {
+      "source": "CR-PS-001",
+      "target": "REQ-session-token-created",
+      "type": "relation"
+    },
+    {
+      "source": "CR-PS-001",
+      "target": "REQ-user-auth-email",
+      "type": "relation"
+    },
+    {
+      "source": "CR-PS-002",
+      "target": "FUNC-validate-mutation",
+      "type": "relation"
+    },
+    {
+      "source": "CR-PS-002",
+      "target": "MS-2-apply-gate-core",
+      "type": "relation"
+    },
+    {
+      "source": "CR-PS-002",
+      "target": "REQ-author-gate-validation",
+      "type": "relation"
+    },
+    {
+      "source": "CR-PS-002",
+      "target": "REQ-author-input-validation",
+      "type": "relation"
+    },
+    {
+      "source": "CR-PS-003",
+      "target": "FUNC-validate-mutations",
+      "type": "relation"
+    },
+    {
+      "source": "CR-PS-003",
+      "target": "MS-2-apply-gate-core",
+      "type": "relation"
+    },
+    {
+      "source": "CR-PS-003",
+      "target": "REQ-apply-gate-verdict-deterministic",
+      "type": "relation"
+    },
+    {
+      "source": "CR-PS-003",
+      "target": "REQ-batch-atomicity-measurable",
+      "type": "relation"
+    },
+    {
+      "source": "CR-PS-004",
+      "target": "FUNC-approve-batch",
+      "type": "relation"
+    },
+    {
+      "source": "CR-PS-004",
+      "target": "MS-2-apply-gate-core",
+      "type": "relation"
+    },
+    {
+      "source": "CR-PS-004",
+      "target": "REQ-batch-atomicity-measurable",
+      "type": "relation"
+    },
+    {
+      "source": "CR-PS-005",
+      "target": "FUNC-persist-batch",
+      "type": "relation"
+    },
+    {
+      "source": "CR-PS-005",
+      "target": "MS-2-apply-gate-core",
+      "type": "relation"
+    },
+    {
+      "source": "CR-PS-005",
+      "target": "REQ-governance-enforcement",
+      "type": "relation"
+    },
+    {
+      "source": "CR-PS-006",
+      "target": "FUNC-edit-element",
+      "type": "relation"
+    },
+    {
+      "source": "CR-PS-006",
+      "target": "MS-2-apply-gate-core",
+      "type": "relation"
+    },
+    {
+      "source": "CR-PS-006",
+      "target": "REQ-author-integrity",
+      "type": "relation"
+    },
+    {
+      "source": "CR-PS-007",
+      "target": "FUNC-serialize-graph",
+      "type": "relation"
+    },
+    {
+      "source": "CR-PS-007",
+      "target": "MS-3-export-search",
+      "type": "relation"
+    },
+    {
+      "source": "CR-PS-007",
+      "target": "REQ-export-snapshot-bitwise-identical",
+      "type": "relation"
+    },
+    {
+      "source": "CR-PS-007",
+      "target": "REQ-export-versioning",
+      "type": "relation"
+    },
+    {
+      "source": "CR-PS-008",
+      "target": "FUNC-search-index",
+      "type": "relation"
+    },
+    {
+      "source": "CR-PS-008",
+      "target": "MS-3-export-search",
+      "type": "relation"
+    },
+    {
+      "source": "CR-PS-008",
+      "target": "REQ-search-indexing",
+      "type": "relation"
+    },
+    {
+      "source": "CR-PS-008",
+      "target": "REQ-search-result-precision-recall",
+      "type": "relation"
+    },
+    {
+      "source": "CR-PS-009",
+      "target": "FUNC-search-filter",
+      "type": "relation"
+    },
+    {
+      "source": "CR-PS-009",
+      "target": "MS-3-export-search",
+      "type": "relation"
+    },
+    {
+      "source": "CR-PS-009",
+      "target": "REQ-search-filtering",
+      "type": "relation"
+    },
+    {
+      "source": "CR-PS-009",
+      "target": "REQ-user-discover-search-interface",
+      "type": "relation"
+    },
+    {
+      "source": "CR-PS-010",
+      "target": "FUNC-broadcast-websocket",
+      "type": "relation"
+    },
+    {
+      "source": "CR-PS-010",
+      "target": "MS-4-live-updates",
+      "type": "relation"
+    },
+    {
+      "source": "CR-PS-010",
+      "target": "REQ-websocket-live",
+      "type": "relation"
+    },
+    {
+      "source": "CR-PS-011",
+      "target": "FUNC-subscribe-updates",
+      "type": "relation"
+    },
+    {
+      "source": "CR-PS-011",
+      "target": "MS-4-live-updates",
+      "type": "relation"
+    },
+    {
+      "source": "CR-PS-011",
+      "target": "REQ-updates-visible-ui",
+      "type": "relation"
+    },
+    {
+      "source": "FCHAIN-apply-gate-validation",
+      "target": "FUNC-approve-batch",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-apply-gate-validation",
+      "target": "FUNC-persist-batch",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-apply-gate-validation",
+      "target": "FUNC-validate-mutations",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-apply-gate-validation",
+      "target": "REQ-batch-validation-measurable",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-authoring-scenario",
+      "target": "FUNC-edit-element",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-authoring-scenario",
+      "target": "FUNC-validate-mutation",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-batch-approval-flow",
+      "target": "FUNC-approve-batch",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-batch-approval-flow",
+      "target": "FUNC-validate-mutation",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-batch-approval-flow",
+      "target": "REQ-batch-atomicity-measurable",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-batch-approval-flow",
+      "target": "REQ-batch-validation-measurable",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-concurrent-authoring",
+      "target": "FUNC-approve-batch",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-concurrent-authoring",
+      "target": "FUNC-persist-batch",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-concurrent-authoring",
+      "target": "FUNC-validate-mutations",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-concurrent-authoring",
+      "target": "REQ-author-integrity",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-concurrent-authoring",
+      "target": "REQ-concurrent-batch-isolation",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-export-lifecycle",
+      "target": "FUNC-persist-batch",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-export-lifecycle",
+      "target": "FUNC-serialize-graph",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-export-lifecycle",
+      "target": "REQ-export-snapshot-bitwise-identical",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-export-scenario",
+      "target": "FUNC-serialize-graph",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-export-standard-format",
+      "target": "FUNC-serialize-graph",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-filter-by-type-and-search",
+      "target": "FUNC-search-filter",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-filter-by-type-and-search",
+      "target": "FUNC-search-index",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-filter-by-type-and-search",
+      "target": "REQ-discover-latency-measurable",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-governance-enforcement-flow",
+      "target": "FUNC-persist-batch",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-governance-enforcement-flow",
+      "target": "FUNC-validate-mutations",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-governance-enforcement-flow",
+      "target": "REQ-governance-enforcement",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-live-update-scenario",
+      "target": "FUNC-broadcast-websocket",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-live-update-scenario",
+      "target": "FUNC-subscribe-updates",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-login-auth-session",
+      "target": "FUNC-authenticate-user",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-login-auth-session",
+      "target": "FUNC-create-session",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-login-scenario",
+      "target": "FUNC-authenticate-user",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-login-scenario",
+      "target": "FUNC-create-session",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-monitor-ws-broadcast",
+      "target": "FUNC-broadcast-websocket",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-monitor-ws-broadcast",
+      "target": "FUNC-subscribe-updates",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-search-scenario",
+      "target": "FUNC-search-filter",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-search-scenario",
+      "target": "FUNC-search-index",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-update-propagation",
+      "target": "FUNC-broadcast-websocket",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-update-propagation",
+      "target": "FUNC-subscribe-updates",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-update-propagation",
+      "target": "REQ-discover-latency-measurable",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-view-apply-gate-result",
+      "target": "FUNC-persist-batch",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-view-apply-gate-result",
+      "target": "FUNC-validate-mutations",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-approve-batch",
+      "target": "REQ-batch-atomicity-measurable",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-authenticate-user",
+      "target": "REQ-user-auth-email",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-broadcast-websocket",
+      "target": "REQ-websocket-live",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-create-session",
+      "target": "REQ-session-token-created",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-edit-element",
+      "target": "REQ-author-integrity",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-persist-batch",
+      "target": "REQ-governance-enforcement",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-search-filter",
+      "target": "REQ-search-filtering",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-search-filter",
+      "target": "REQ-user-discover-search-interface",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-search-index",
+      "target": "REQ-search-indexing",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-search-index",
+      "target": "REQ-search-result-precision-recall",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-serialize-graph",
+      "target": "REQ-export-snapshot-bitwise-identical",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-serialize-graph",
+      "target": "REQ-export-versioning",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-subscribe-updates",
+      "target": "REQ-updates-visible-ui",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-validate-mutation",
+      "target": "REQ-author-gate-validation",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-validate-mutation",
+      "target": "REQ-author-input-validation",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-validate-mutations",
+      "target": "REQ-apply-gate-verdict-deterministic",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-validate-mutations",
+      "target": "REQ-batch-atomicity-measurable",
+      "type": "satisfy"
+    },
+    {
+      "source": "MS-2-apply-gate-core",
+      "target": "MS-1-auth-session",
+      "type": "relation",
+      "label": "depends-on"
+    },
+    {
+      "source": "MS-3-export-search",
+      "target": "MS-2-apply-gate-core",
+      "type": "relation",
+      "label": "depends-on"
+    },
+    {
+      "source": "MS-4-live-updates",
+      "target": "MS-2-apply-gate-core",
+      "type": "relation",
+      "label": "depends-on"
+    },
+    {
+      "source": "SYS-multiuser-web-app",
+      "target": "UC-admin-approve-batch",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-multiuser-web-app",
+      "target": "UC-admin-enforce-governance",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-multiuser-web-app",
+      "target": "UC-system-export-graph",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-multiuser-web-app",
+      "target": "UC-user-author-node",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-multiuser-web-app",
+      "target": "UC-user-discover-elements",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-multiuser-web-app",
+      "target": "UC-user-login",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-multiuser-web-app",
+      "target": "UC-user-view-updates",
+      "type": "compose"
+    },
+    {
+      "source": "TEST-batch-validation",
+      "target": "REQ-author-input-validation",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-batch-validation",
+      "target": "REQ-batch-validation-measurable",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-governance-enforcement",
+      "target": "REQ-governance-enforcement",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-governance-enforcement",
+      "target": "REQ-no-stale-data",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-governance-enforcement",
+      "target": "REQ-updates-visible-ui",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-governance-enforcement",
+      "target": "REQ-view-current-state",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-governance-enforcement",
+      "target": "REQ-websocket-live",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-search-filtering",
+      "target": "REQ-search-filtering",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-search-indexing",
+      "target": "REQ-search-indexing",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-batch-validation",
+      "target": "REQ-apply-gate-verdict-deterministic",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-batch-validation",
+      "target": "REQ-author-gate-validation",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-batch-validation",
+      "target": "REQ-author-integrity",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-batch-validation",
+      "target": "REQ-batch-atomicity-measurable",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-batch-validation",
+      "target": "REQ-batch-validation-measurable",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-batch-validation",
+      "target": "REQ-export-snapshot-bitwise-identical",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-batch-validation",
+      "target": "REQ-session-token-created",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-batch-validation",
+      "target": "REQ-user-auth-email",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-governance-enforcement",
+      "target": "REQ-batch-atomicity-measurable",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-governance-enforcement",
+      "target": "REQ-concurrent-batch-isolation",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-governance-enforcement",
+      "target": "REQ-export-snapshot-bitwise-identical",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-governance-enforcement",
+      "target": "REQ-export-versioning",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-governance-enforcement",
+      "target": "REQ-governance-enforcement",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-search-filtering",
+      "target": "REQ-search-filtering",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-search-filtering",
+      "target": "REQ-search-result-precision-recall",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-search-filtering",
+      "target": "REQ-user-discover-search-interface",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-search-indexing",
+      "target": "REQ-discover-latency-measurable",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-search-indexing",
+      "target": "REQ-search-indexing",
+      "type": "verify"
+    },
+    {
+      "source": "UC-admin-approve-batch",
+      "target": "FCHAIN-apply-gate-validation",
+      "type": "compose"
+    },
+    {
+      "source": "UC-admin-approve-batch",
+      "target": "FCHAIN-batch-approval-flow",
+      "type": "compose"
+    },
+    {
+      "source": "UC-admin-approve-batch",
+      "target": "REQ-apply-gate-verdict-deterministic",
+      "type": "compose"
+    },
+    {
+      "source": "UC-admin-approve-batch",
+      "target": "REQ-batch-atomicity-measurable",
+      "type": "compose"
+    },
+    {
+      "source": "UC-admin-approve-batch",
+      "target": "REQ-batch-validation-measurable",
+      "type": "compose"
+    },
+    {
+      "source": "UC-admin-approve-batch-postcond",
+      "target": "FCHAIN-batch-approval-flow",
+      "type": "compose"
+    },
+    {
+      "source": "UC-admin-enforce-governance",
+      "target": "FCHAIN-governance-enforcement-flow",
+      "type": "compose"
+    },
+    {
+      "source": "UC-admin-enforce-governance",
+      "target": "REQ-batch-atomicity-measurable",
+      "type": "compose"
+    },
+    {
+      "source": "UC-admin-enforce-governance",
+      "target": "REQ-governance-enforcement",
+      "type": "compose"
+    },
+    {
+      "source": "UC-admin-enforce-governance-postcond",
+      "target": "FCHAIN-governance-enforcement-flow",
+      "type": "compose"
+    },
+    {
+      "source": "UC-system-export-graph",
+      "target": "FCHAIN-export-lifecycle",
+      "type": "compose"
+    },
+    {
+      "source": "UC-system-export-graph",
+      "target": "FCHAIN-export-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-system-export-graph",
+      "target": "REQ-export-snapshot-bitwise-identical",
+      "type": "compose"
+    },
+    {
+      "source": "UC-system-export-graph-postcond",
+      "target": "FCHAIN-export-standard-format",
+      "type": "compose"
+    },
+    {
+      "source": "UC-system-export-graph-versioned",
+      "target": "FCHAIN-export-standard-format",
+      "type": "compose"
+    },
+    {
+      "source": "UC-system-export-graph-versioned",
+      "target": "REQ-export-snapshot-bitwise-identical",
+      "type": "compose"
+    },
+    {
+      "source": "UC-system-export-graph-versioned",
+      "target": "REQ-export-versioning",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-author-node",
+      "target": "FCHAIN-authoring-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-author-node",
+      "target": "FCHAIN-concurrent-authoring",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-author-node",
+      "target": "REQ-author-input-validation",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-author-node",
+      "target": "REQ-author-integrity",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-author-node",
+      "target": "REQ-concurrent-batch-isolation",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-author-node-with-validation",
+      "target": "FCHAIN-apply-gate-validation",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-author-node-with-validation",
+      "target": "REQ-author-gate-validation",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-author-node-with-validation",
+      "target": "REQ-batch-validation-measurable",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-discover-elements",
+      "target": "FCHAIN-search-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-discover-elements",
+      "target": "FCHAIN-update-propagation",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-discover-elements",
+      "target": "REQ-discover-latency-measurable",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-discover-elements",
+      "target": "REQ-search-result-precision-recall",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-discover-elements-with-filter",
+      "target": "FCHAIN-filter-by-type-and-search",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-discover-elements-with-filter",
+      "target": "REQ-discover-latency-measurable",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-discover-elements-with-filter",
+      "target": "REQ-user-discover-search-interface",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-login",
+      "target": "FCHAIN-login-auth-session",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-login",
+      "target": "FCHAIN-login-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-login",
+      "target": "REQ-session-token-created",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-login",
+      "target": "REQ-user-auth-email",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-login-multiuser",
+      "target": "FCHAIN-multiuser-auth-flow",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-monitor-graph-updates",
+      "target": "FCHAIN-monitor-ws-broadcast",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-monitor-graph-updates",
+      "target": "FCHAIN-update-propagation",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-monitor-graph-updates",
+      "target": "REQ-updates-visible-ui",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-monitor-graph-updates",
+      "target": "REQ-websocket-live",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-view-live-updates",
+      "target": "FCHAIN-live-update-stream",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-view-updates",
+      "target": "FCHAIN-live-update-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-view-updates",
+      "target": "FCHAIN-view-apply-gate-result",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-view-updates",
+      "target": "REQ-no-stale-data",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-view-updates",
+      "target": "REQ-view-current-state",
+      "type": "compose"
+    }
+  ]
+}
