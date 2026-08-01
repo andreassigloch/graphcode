@@ -46,14 +46,35 @@ export interface GenerationStep {
   focusTypes: string[];
 }
 
-/** Gate-Protokoll — identisch in jeder Phase; Kandidatenwahl ist Gate-Sache, nie LLM-Bauchgefühl. */
-const GATE_PROTOCOL = [
-  'Gate-Protokoll: (1) vor dem Schreiben graph_authoring_guide für jeden Elementtyp aufrufen (legale Kanten). ',
-  '(2) Alternativen zuerst als graph_mutate mit dryRun:true einreichen und die Verdicts vergleichen — ',
-  'tier (auto-apply > suggest > block) und fitAdvisory (Δm auf layer:arch, regressions). ',
-  '(3) Nur den besten Batch OHNE dryRun anwenden; block-Verdicts verwerfen oder revidieren, nie erzwingen. ',
-  '(4) Danach graph_generate erneut aufrufen für den nächsten Schritt.',
-].join('');
+/** Wer die Kandidaten-Auswahl macht (CR-GC-288): 'host' = der MCP-Client vergleicht
+ * selbst per dryRun (Protokoll-Prosa im Prompt); 'driver' = der Best-of-N-Treiber
+ * probt und wählt deterministisch im Code — der dryRun-Vergleichs-Auftrag
+ * verschwindet aus dem Prompt (keine parallelen Pfade: der Prompt verlangt nicht,
+ * was der Code schon tut). */
+export type GenerationSelection = 'host' | 'driver';
+
+/** Gate-Protokoll — identisch in jeder Phase; Kandidatenwahl ist Gate-Sache, nie
+ * LLM-Bauchgefühl. EIN Template, zwei Selektions-Varianten (CR-GC-288) — Schritt 1
+ * (Guide) und der Folgeschritt (graph_generate) sind geteilt, nur der mittlere
+ * Auswahl-Auftrag wechselt. */
+const PROTOCOL_GUIDE =
+  'Gate-Protokoll: (1) vor dem Schreiben graph_authoring_guide für jeden Elementtyp aufrufen (legale Kanten). ';
+const PROTOCOL_NEXT = 'Danach graph_generate erneut aufrufen für den nächsten Schritt.';
+const GATE_PROTOCOL: Record<GenerationSelection, string> = {
+  host:
+    PROTOCOL_GUIDE +
+    '(2) Alternativen zuerst als graph_mutate mit dryRun:true einreichen und die Verdicts vergleichen — ' +
+    'tier (auto-apply > suggest > block) und fitAdvisory (Δm auf layer:arch, regressions). ' +
+    '(3) Nur den besten Batch OHNE dryRun anwenden; block-Verdicts verwerfen oder revidieren, nie erzwingen. ' +
+    '(4) ' +
+    PROTOCOL_NEXT,
+  driver:
+    PROTOCOL_GUIDE +
+    '(2) Emittiere EINEN vollständigen Batch — keine eigenen Gate-Proben: der Treiber probt jeden ' +
+    'Kandidaten selbst am Gate (tier, Δm-fitAdvisory, Element-Ausbeute) und wendet nur den Gewinner an. ' +
+    '(3) ' +
+    PROTOCOL_NEXT,
+};
 
 /** Generative Instruktion je Readiness-Dimension (die Schreib-Zwillinge der graph_next_step-Aktionen). */
 const GENERATION_TEMPLATE: Record<string, string> = {
@@ -112,7 +133,9 @@ export function generationStep(
   intent?: string,
   threshold = 0.8,
   defer: string[] = [],
+  selection: GenerationSelection = 'host',
 ): GenerationStep {
+  const gateProtocol = GATE_PROTOCOL[selection];
   const og = toOntology(graph);
   const sys = og.elements.find((e) => e.type === 'SYS');
   const effectiveIntent = intent?.trim() || sys?.description?.trim() || '';
@@ -151,7 +174,7 @@ export function generationStep(
     return {
       phase: 'seed',
       done: false,
-      prompt: seedBase + GATE_PROTOCOL,
+      prompt: seedBase + gateProtocol,
       readiness,
       threshold,
       blockingErrors,
@@ -232,9 +255,9 @@ export function generationStep(
     done: false,
     prompt: focus
       ? `Intention: "${effectiveIntent}". ${deferNote}Schwächste Dimension: ${focus.dimension} ` +
-        `(Score ${focus.score}, ${focus.violations} Funde). Funde: ${funde}. ${template} ${GATE_PROTOCOL}`
+        `(Score ${focus.score}, ${focus.violations} Funde). Funde: ${funde}. ${template} ${gateProtocol}`
       : `Intention: "${effectiveIntent}". Unter Schwelle: ${belowThreshold.map((r) => r.dimension).join(', ')} — ` +
-        `aber keine regelbaren Funde; prüfe fehlende Elemente der Dimensionen manuell. ${GATE_PROTOCOL}`,
+        `aber keine regelbaren Funde; prüfe fehlende Elemente der Dimensionen manuell. ${gateProtocol}`,
     readiness,
     threshold,
     blockingErrors,

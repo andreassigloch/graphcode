@@ -21,6 +21,7 @@ import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 import { z } from 'zod/v4';
 import type { MutateResult } from '@sigloch/contracts/harness';
+import type { FitAdvisory } from './fit-advisory.js';
 import type { MCPToolRegistry } from './mcp-tools.js';
 import type { GenerationStep } from './generate.js';
 import { preflightBatch, type PreflightKnown } from './preflight.js';
@@ -55,6 +56,17 @@ export const ExecutorConfigSchema = z.object({
    * für Graph-/Strukturarbeit lokal: 0.1–0.3 — dämpft die UID-Halluzinations-
    * Klasse (v11: 31 Runden an einem verwechselten uid). */
   temperature: z.number().min(0).max(2).default(0.15),
+  /** Best-of-N (CR-GC-288): Kandidaten-Batches pro generate-Runde. 1 = heutiges
+   * Verhalten (keine Auswahl im Code, Regression-Kriterium). >1 sammelt N
+   * unabhängige Kandidaten (openai via Temperatur-Spread, anthropic via N Calls
+   * ohne temperature), probt jeden als Gate-dryRun und wendet nur den Gewinner an.
+   * Kosten-Realität: lokal nur Wall-Zeit, bei Frontier ≈ N× Tokens. */
+  candidates: z.number().int().min(1).max(8).default(1),
+  /** Kandidaten-Richter (CR-GC-288): 'gate' = deterministisches Ranking im Code
+   * (tier → Δm auf layer:arch → Element-Ausbeute) — Default, unser Algo zieht.
+   * 'model' = die LLM wählt aus den gerenderten Verdicts; BEIDE Picks werden
+   * geloggt (algoPicks/modelPicks/judgeDisagreements), angewandt wird der Modell-Pick. */
+  judge: z.enum(['gate', 'model']).default('gate'),
 });
 export type ExecutorConfig = z.infer<typeof ExecutorConfigSchema>;
 
@@ -77,6 +89,10 @@ export type CallModel = (
   system: string,
   messages: unknown[],
   tools: unknown[],
+  /** Per-Call-Overrides (CR-GC-288): der Temperatur-Spread des Best-of-N-Samplings.
+   * Nur das openai-Backend wertet temperature aus — anthropic ignoriert sie
+   * (die Claude-5-API lehnt den Parameter ab, s. buildCallModel). */
+  opts?: { temperature?: number },
 ) => Promise<ModelResponse>;
 
 export interface ExecutorStats {
@@ -94,6 +110,16 @@ export interface ExecutorStats {
   preflightFixed: number;
   /** Preflight-Blocks (CR-GC-284): Batches, die mit lokalem Feedback NICHT ans Gate gingen. */
   preflightBlocked: number;
+  /** Best-of-N (CR-GC-288): eingesammelte Kandidaten-Batches (inkl. Repair-Nachlieferungen). */
+  candidatesSampled: number;
+  /** Runden, in denen der ANGEWANDTE Pick dem deterministischen Algo-Ranking entspricht
+   * (judge 'gate' immer; judge 'model' nur bei Einigkeit) — der Vergleichszähler zu modelPicks. */
+  algoPicks: number;
+  /** judge:'model'-Runden mit Modell-Pick (angewandt wird der Modell-Pick). */
+  modelPicks: number;
+  /** judge:'model'-Runden, in denen Modell-Pick ≠ Algo-Pick — die Messgröße
+   * "Algo- vs. LLM-Judgement" (Disagreement-Rate = judgeDisagreements/modelPicks). */
+  judgeDisagreements: number;
   tokensIn: number;
   tokensOut: number;
   tokensReasoning: number;
@@ -437,7 +463,7 @@ export function buildCallModel(config: ExecutorConfig): CallModel {
       };
     };
   }
-  return async (system, messages, tools) => {
+  return async (system, messages, tools, opts) => {
     const r = await fetch(`${config.baseUrl}/v1/chat/completions`, {
       method: 'POST',
       headers: {
@@ -447,7 +473,8 @@ export function buildCallModel(config: ExecutorConfig): CallModel {
       body: JSON.stringify({
         model: config.model,
         max_tokens: config.maxTokens,
-        temperature: config.temperature,
+        // Best-of-N (CR-GC-288): der Kandidaten-Spread überschreibt die Basis-Temperatur.
+        temperature: opts?.temperature ?? config.temperature,
         messages: [{ role: 'system', content: system }, ...messages],
         tools,
       }),
@@ -484,6 +511,68 @@ export function buildCallModel(config: ExecutorConfig): CallModel {
       },
     };
   };
+}
+
+// ---------------------------------------------------------------------------
+// Best-of-N (CR-GC-288): Temperatur-Spread + deterministisches Kandidaten-Ranking.
+// ---------------------------------------------------------------------------
+
+/** Anker des Kandidaten-Samplings — gemessene Jaccard-Spreizung 0.45/0.18/0.14
+ * bei temp 0.15/0.4/0.7 (Design-Runde CR-GC-288). */
+export const TEMPERATURE_ANCHORS = [0.15, 0.4, 0.7] as const;
+
+/**
+ * Temperatur-Spread für N Kandidaten (openai-Backend). N=3 trifft die Anker
+ * exakt; N≠3 wird deterministisch stückweise-linear über die Anker interpoliert
+ * (N=2 → [0.15, 0.7]). anthropic nutzt KEINEN Spread — N Calls ohne temperature
+ * (die Claude-5-API lehnt den Parameter ab, s. buildCallModel).
+ */
+export function temperatureSpread(n: number): number[] {
+  const a = TEMPERATURE_ANCHORS;
+  if (n <= 1) return [a[0]];
+  const out: number[] = [];
+  for (let i = 0; i < n; i++) {
+    const p = (i * (a.length - 1)) / (n - 1); // Position im Anker-Raum [0, a.length-1]
+    const lo = Math.min(Math.floor(p), a.length - 2);
+    out.push(a[lo] + (p - lo) * (a[lo + 1] - a[lo]));
+  }
+  return out;
+}
+
+/** Kandidat fürs Ranking: Index (letzter, deterministischer Tiebreaker) + dryRun-Verdict. */
+export interface CandidateProbe {
+  index: number;
+  verdict:
+    | (Partial<MutateResult> & { success: boolean; fitAdvisory?: { delta?: number[] } })
+    | null;
+}
+
+const TIER_RANK: Record<string, number> = { 'auto-apply': 2, suggest: 1, block: 0 };
+
+/** Σ der fitAdvisory-Deltas (layer:arch) — das Δm-Kriterium des Rankings. */
+export function deltaSum(verdict: CandidateProbe['verdict']): number {
+  return (verdict?.fitAdvisory?.delta ?? []).reduce((s, x) => s + x, 0);
+}
+
+/**
+ * Deterministisches Kandidaten-Ranking (der Judge 'gate'):
+ * tier (auto-apply > suggest > block) → Δm-fitAdvisory auf layer:arch →
+ * Element-Ausbeute (mutations) → Kandidaten-Index. block/Preflight-Block/
+ * fehlendes Verdict ranken als tier 0.
+ */
+export function rankCandidates<T extends CandidateProbe>(candidates: T[]): T[] {
+  const tierOf = (c: CandidateProbe): number => {
+    const v = c.verdict;
+    if (!v || v.success !== true) return 0;
+    return TIER_RANK[v.tier ?? 'suggest'] ?? 1;
+  };
+  return [...candidates].sort(
+    (a, b) =>
+      tierOf(b) - tierOf(a) ||
+      deltaSum(b.verdict) - deltaSum(a.verdict) ||
+      (b.verdict?.mutations ?? 0) - (a.verdict?.mutations ?? 0) ||
+      a.index - b.index,
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -599,6 +688,8 @@ type MutateOutcome = Partial<MutateResult> & {
   preflightBlocked?: boolean;
   /** REQ/UC-Duplikat-Hinweise (CR-GC-287) — reines Feedback, NIE ein Blocker. */
   hints?: string[];
+  /** Δm-Messung des Gates (CR-GC-274) — bei dryRun das Ranking-Kriterium des Best-of-N (CR-GC-288). */
+  fitAdvisory?: FitAdvisory;
 };
 
 /** Kompakte Regel-ID-Liste einer Rejection für die run.log-Trace (CR-GC-286). */
@@ -662,6 +753,10 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
     repairedAfterRejection: 0,
     preflightFixed: 0,
     preflightBlocked: 0,
+    candidatesSampled: 0,
+    algoPicks: 0,
+    modelPicks: 0,
+    judgeDisagreements: 0,
     tokensIn: 0,
     tokensOut: 0,
     tokensReasoning: 0,
@@ -688,41 +783,50 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
     };
   };
 
-  const runMutate = async (input: unknown): Promise<MutateOutcome> => {
-    // Input-Parität (CR-GC-286): denselben Zod-Parse wie der MCP-Layer VOR dem
-    // Handler-Call. Bei Parse-Fehler geht der Roh-Input an den Handler, dessen
-    // identischer Schema-Check das AUDITIERTE INPUT-SCHEMA-Block-Verdict liefert
-    // (Zod-Meldung als Violation → formatGateFeedback) — statt eines unauditierten
-    // Handler-Throws als generisches 'executor-call'. Der Preflight (CR-GC-284)
-    // läuft nur auf schema-validem Input — Batch-Hygiene VOR dem Gate, kein
-    // zweites Gate-Urteil; bei jedem Preflight-Fehler geht der Batch unverändert durch.
+  // Input-Parität (CR-GC-286): denselben Zod-Parse wie der MCP-Layer VOR dem
+  // Handler-Call. Bei Parse-Fehler geht der Roh-Input an den Handler, dessen
+  // identischer Schema-Check das AUDITIERTE INPUT-SCHEMA-Block-Verdict liefert
+  // (Zod-Meldung als Violation → formatGateFeedback) — statt eines unauditierten
+  // Handler-Throws als generisches 'executor-call'. Der Preflight (CR-GC-284)
+  // läuft nur auf schema-validem Input — Batch-Hygiene VOR dem Gate, kein
+  // zweites Gate-Urteil; bei jedem Preflight-Fehler geht der Batch unverändert durch.
+  const runPreflight = async (
+    input: unknown,
+  ): Promise<{ effective: unknown; blocked: MutateOutcome | null; hints: string[] }> => {
     const parsed = registry['graph_mutate'].inputSchema.safeParse(input);
-    let effective: unknown = parsed.success ? parsed.data : input;
+    if (!parsed.success) return { effective: input, blocked: null, hints: [] };
+    let effective: unknown = parsed.data;
     let hints: string[] = [];
-    if (parsed.success) {
-      try {
-        const snap = await loadGraphSnapshot();
-        const pf = preflightBatch(parsed.data, snap.known);
-        if (pf.action === 'blocked') {
-          stats.preflightBlocked += 1;
-          for (const v of pf.violations) trace(`    preflight blocked: ${v.ruleId} ${v.message}`);
-          return { success: false, preflightBlocked: true, violations: pf.violations };
-        }
-        if (pf.action === 'fixed') {
-          stats.preflightFixed += pf.fixes.length;
-          for (const line of pf.fixes) trace(`    preflight: ${line}`);
-          effective = pf.input;
-        }
-        // CR-GC-287: REQ/UC-Duplikat-HINWEIS (kein Block!) — neue add-nodes gegen
-        // den Element-Index; der Batch geht trotzdem ans Gate, das Gate entscheidet.
-        hints = duplicateHints(effective, snap.index);
-        for (const h of hints) trace(`    preflight hint: ${h}`);
-      } catch (err) {
-        trace(`    preflight error (pass-through): ${err instanceof Error ? err.message : String(err)}`);
-      }
-    }
     try {
-      const result = (await registry['graph_mutate'].handler(effective)) as MutateOutcome;
+      const snap = await loadGraphSnapshot();
+      const pf = preflightBatch(parsed.data, snap.known);
+      if (pf.action === 'blocked') {
+        stats.preflightBlocked += 1;
+        for (const v of pf.violations) trace(`    preflight blocked: ${v.ruleId} ${v.message}`);
+        return {
+          effective: parsed.data,
+          blocked: { success: false, preflightBlocked: true, violations: pf.violations },
+          hints: [],
+        };
+      }
+      if (pf.action === 'fixed') {
+        stats.preflightFixed += pf.fixes.length;
+        for (const line of pf.fixes) trace(`    preflight: ${line}`);
+        effective = pf.input;
+      }
+      // CR-GC-287: REQ/UC-Duplikat-HINWEIS (kein Block!) — neue add-nodes gegen
+      // den Element-Index; der Batch geht trotzdem ans Gate, das Gate entscheidet.
+      hints = duplicateHints(effective, snap.index);
+      for (const h of hints) trace(`    preflight hint: ${h}`);
+    } catch (err) {
+      trace(`    preflight error (pass-through): ${err instanceof Error ? err.message : String(err)}`);
+    }
+    return { effective, blocked: null, hints };
+  };
+
+  const callGate = async (input: unknown, hints: string[] = []): Promise<MutateOutcome> => {
+    try {
+      const result = (await registry['graph_mutate'].handler(input)) as MutateOutcome;
       const out: MutateOutcome = { ...result, success: result.success === true };
       return hints.length > 0 ? { ...out, hints } : out;
     } catch (err) {
@@ -737,6 +841,12 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
         ],
       };
     }
+  };
+
+  const runMutate = async (input: unknown): Promise<MutateOutcome> => {
+    const pre = await runPreflight(input);
+    if (pre.blocked) return pre.blocked;
+    return callGate(pre.effective, pre.hints);
   };
 
   const execReadOrGraphTool = async (name: string, input: unknown): Promise<string> => {
@@ -790,6 +900,298 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
     });
   };
 
+  // -------------------------------------------------------------------------
+  // Best-of-N (CR-GC-288): N unabhängige Kandidaten sammeln, jeden als Gate-
+  // dryRun proben, deterministisch (oder per Modell-Judge) wählen, NUR den
+  // Gewinner anwenden. Aktiv ab candidates>1 — N=1 fährt den unveränderten
+  // Ein-Kandidaten-Pfad (Regression-Kriterium: byte-identisches Verhalten).
+  // -------------------------------------------------------------------------
+
+  const fmtDelta = (d: number): string => `${d >= 0 ? '+' : ''}${d.toFixed(2)}`;
+
+  /** dryRun-Flag defensiv entfernen — im driver-Modus probt der TREIBER, nicht das Modell. */
+  const stripDryRun = (input: unknown): unknown => {
+    if (typeof input === 'object' && input !== null && 'dryRun' in (input as Record<string, unknown>)) {
+      const { dryRun: _drop, ...rest } = input as Record<string, unknown>;
+      return rest;
+    }
+    return input;
+  };
+
+  interface RoundCandidate extends CandidateProbe {
+    temperature?: number;
+    /** Getrennte Message-History — die Kandidaten sind unabhängig (gleiche Runden-Prompt-Basis). */
+    messages: unknown[];
+    /** Der eingesammelte Batch (dryRun gestrippt); null = kein Batch geliefert. */
+    batch: unknown;
+    /** Preflight-Effektiv-Input (Auto-Fixes angewandt) — das, was Probe UND Apply nutzen. */
+    effective: unknown;
+    verdict: MutateOutcome | null;
+  }
+
+  /**
+   * Turn-Loop eines Kandidaten bis zum ERSTEN Mutate-Batch — Read-Tools,
+   * Idle-Nudge und Prosa-/[ARGS]-Recovery wie im Ein-Kandidaten-Pfad, aber der
+   * Batch geht NICHT ans Gate: einsammeln, der Treiber probt und wählt.
+   */
+  const collectCandidateBatch = async (
+    messages: unknown[],
+    label: string,
+    temperature?: number,
+  ): Promise<unknown> => {
+    let nudged = false;
+    let readTurns = 0;
+    for (let turn = 0; turn < config.maxStepTurns; turn++) {
+      stats.modelTurns += 1;
+      let resp: ModelResponse;
+      try {
+        resp = await callModel(
+          SYSTEM,
+          messages,
+          tools,
+          temperature !== undefined ? { temperature } : undefined,
+        );
+      } catch (err) {
+        trace(`  ${label}: call failed (${(err as Error).message.slice(0, 80)}) — skip`);
+        return null;
+      }
+      stats.tokensIn += resp.usage.in;
+      stats.tokensOut += resp.usage.out;
+      stats.tokensReasoning += resp.usage.reasoning;
+      trace(
+        `  ${label}.${turn + 1}: ` +
+          (resp.toolCalls.map((c) => c.name.replace('graphcode_', '')).join(',') || '(no calls)'),
+      );
+
+      if (resp.toolCalls.length === 0) {
+        let recovered: unknown = extractMutateFromText(resp.text);
+        if (!recovered) {
+          const textCall = extractToolCallFromText(resp.text);
+          const canonical = textCall?.name.replace(/^graphcode_/, '');
+          if (textCall && canonical === 'graph_mutate') {
+            recovered = textCall.input ?? {};
+          } else if (textCall && canonical && (READ_TOOLS[textCall.name] || registry[canonical])) {
+            const toolName = READ_TOOLS[textCall.name] ? textCall.name : 'graphcode_' + canonical;
+            const result = await execReadOrGraphTool(toolName, textCall.input);
+            trace(`    recovered text tool-call ${canonical}`);
+            messages.push({ role: 'assistant', content: resp.text });
+            messages.push({
+              role: 'user',
+              content:
+                `Ergebnis von ${canonical}:\n${result.slice(0, 4000)}\n` +
+                'Fahre fort: emittiere jetzt den geforderten graph_mutate-Batch.',
+            });
+            continue;
+          }
+        }
+        if (recovered) {
+          // Assistant-Text in die History — ein späteres Repair-Feedback (User-
+          // Message) braucht die Rollen-Alternierung (Mistral-Jinja, s. pushToolResults).
+          messages.push({ role: 'assistant', content: resp.text });
+          return stripDryRun(recovered);
+        }
+        trace(`    idle: ${resp.text.slice(0, 160).replace(/\n/g, ' ')}`);
+        if (nudged) return null;
+        nudged = true;
+        messages.push({ role: 'assistant', content: resp.text || '(leer)' });
+        messages.push({ role: 'user', content: IDLE_NUDGE });
+        continue;
+      }
+
+      messages.push(resp.assistantMsg);
+      const results: string[] = [];
+      let captured: unknown = null;
+      for (const call of resp.toolCalls) {
+        if (call.name === 'graphcode_graph_mutate' && captured === null) {
+          captured = stripDryRun(call.input);
+          results.push(
+            JSON.stringify({
+              collected: true,
+              note: 'Kandidat eingesammelt — der Treiber probt am Gate und wählt (CR-GC-288).',
+            }),
+          );
+        } else {
+          results.push(await execReadOrGraphTool(call.name, call.input));
+        }
+      }
+      if (captured === null) readTurns += 1;
+      const feedback = captured === null && readTurns >= 2 ? IDLE_NUDGE : undefined;
+      pushToolResults(messages, resp.toolCalls, results, feedback);
+      if (captured !== null) return captured;
+    }
+    return null;
+  };
+
+  /**
+   * Gate-dryRun-Probe eines Kandidaten: Preflight pro Kandidat VOR der Probe
+   * (CR-GC-284), dann das volle Verdict (tier/violations/fitAdvisory) ohne
+   * Persistenz. dryRun-Proben zählen in stats.dryRunProbes und werden als
+   * validate auditiert — NIE als Step-Abschluss gewertet: nur der Gewinner
+   * wird danach OHNE dryRun angewandt.
+   */
+  const probeCandidate = async (c: RoundCandidate): Promise<void> => {
+    if (c.batch === null) return;
+    const pre = await runPreflight(c.batch);
+    if (pre.blocked) {
+      c.effective = null;
+      c.verdict = pre.blocked;
+      return;
+    }
+    c.effective = pre.effective;
+    stats.dryRunProbes += 1;
+    const probeInput =
+      typeof pre.effective === 'object' && pre.effective !== null
+        ? { ...(pre.effective as Record<string, unknown>), dryRun: true }
+        : pre.effective;
+    c.verdict = await callGate(probeInput);
+  };
+
+  const traceCandidate = (c: RoundCandidate, n: number): void => {
+    if (!c.verdict) {
+      trace(`  candidate ${c.index + 1}/${n}: no batch`);
+      return;
+    }
+    const v = c.verdict;
+    const tier = v.preflightBlocked ? 'preflight-block' : (v.tier ?? (v.success ? 'suggest' : 'block'));
+    trace(
+      `  candidate ${c.index + 1}/${n}: tier=${tier} Δm=${fmtDelta(deltaSum(v))} mutations=${v.mutations ?? 0}`,
+    );
+  };
+
+  /** judge:'model' — die LLM wählt aus den gerenderten Verdicts; unparsebare Antwort ⇒ null (Algo-Pick). */
+  const modelJudgePick = async (viable: RoundCandidate[]): Promise<RoundCandidate | null> => {
+    const lines = viable.map((c, i) => {
+      const v = c.verdict!;
+      const viols =
+        (v.violations ?? [])
+          .slice(0, 3)
+          .map((x) => `${x.ruleId}[${x.severity}]`)
+          .join(',') || '-';
+      return `${i + 1}. tier=${v.tier ?? '?'} Δm=${fmtDelta(deltaSum(v))} mutations=${v.mutations ?? 0} violations=${viols}`;
+    });
+    const prompt =
+      'Wähle den besten Kandidaten-Batch anhand der Gate-Verdicts (dryRun-Proben):\n' +
+      lines.join('\n') +
+      `\nAntworte NUR mit der Nummer (1-${viable.length}).`;
+    try {
+      const resp = await callModel(SYSTEM, [{ role: 'user', content: prompt }], tools);
+      stats.modelTurns += 1;
+      stats.tokensIn += resp.usage.in;
+      stats.tokensOut += resp.usage.out;
+      stats.tokensReasoning += resp.usage.reasoning;
+      const m = /\d+/.exec(resp.text);
+      if (!m) return null;
+      const idx = Number(m[0]) - 1;
+      return idx >= 0 && idx < viable.length ? viable[idx] : null;
+    } catch {
+      return null;
+    }
+  };
+
+  /**
+   * Eine Best-of-N-Runde: N Kandidaten sammeln + proben, wählen, Gewinner
+   * anwenden. Sind ALLE Kandidaten block, geht das beste Feedback zurück ans
+   * Modell (Repair-Loop wie im Ein-Kandidaten-Pfad) — der reparierte Kandidat
+   * wird erneut geprobt und neu gerankt.
+   */
+  const runBestOfNStep = async (baseContent: string): Promise<void> => {
+    const n = config.candidates;
+    const temps: (number | undefined)[] =
+      config.backend === 'openai' ? temperatureSpread(n) : new Array<undefined>(n).fill(undefined);
+    const candidates: RoundCandidate[] = [];
+    for (let k = 0; k < n; k++) {
+      const c: RoundCandidate = {
+        index: k,
+        temperature: temps[k],
+        messages: [{ role: 'user', content: baseContent }],
+        batch: null,
+        effective: null,
+        verdict: null,
+      };
+      c.batch = await collectCandidateBatch(c.messages, `cand ${k + 1}/${n}`, c.temperature);
+      if (c.batch !== null) stats.candidatesSampled += 1;
+      await probeCandidate(c);
+      traceCandidate(c, n);
+      candidates.push(c);
+    }
+
+    let repairs = 0;
+    let repairedInStep = false;
+    for (;;) {
+      const withVerdict = candidates.filter((c) => c.verdict !== null);
+      if (withVerdict.length === 0) return; // kein Kandidat lieferte einen Batch — nächste Runde
+      const ranked = rankCandidates(withVerdict);
+      const viable = ranked.filter((c) => c.verdict!.success === true);
+
+      if (viable.length === 0) {
+        // ALLE block (Gate-dryRun oder Preflight): bestes Feedback zurück ans
+        // Modell — Repair im Rahmen des Step-Budgets, sonst nächste generate-Runde.
+        if (repairs >= config.maxStepTurns) return;
+        repairs += 1;
+        repairedInStep = true;
+        const best = ranked[0];
+        trace(
+          `    all candidates block [${ruleIdsOf(best.verdict)}] — feeding best feedback back (repair ${repairs}/${config.maxStepTurns})`,
+        );
+        best.messages.push({ role: 'user', content: formatGateFeedback(best.verdict!) });
+        best.batch = await collectCandidateBatch(best.messages, `repair cand ${best.index + 1}`, best.temperature);
+        best.effective = null;
+        best.verdict = null;
+        if (best.batch === null) return;
+        stats.candidatesSampled += 1;
+        await probeCandidate(best);
+        traceCandidate(best, n);
+        continue;
+      }
+
+      // Auswahl: Algo-Pick = deterministisches Ranking; judge:'model' lässt die
+      // LLM wählen, aber BEIDE Picks werden geloggt (messbarer Vergleich).
+      const algoPick = viable[0];
+      let winner = algoPick;
+      if (config.judge === 'model' && viable.length > 1) {
+        const modelPick = await modelJudgePick(viable);
+        stats.modelPicks += 1;
+        if (modelPick !== null && modelPick.index !== algoPick.index) {
+          stats.judgeDisagreements += 1;
+          winner = modelPick;
+        } else {
+          stats.algoPicks += 1;
+        }
+        trace(
+          `    pick: algo=${algoPick.index + 1} model=${(modelPick ?? algoPick).index + 1} applied=${winner.index + 1} (judge=model)`,
+        );
+      } else {
+        stats.algoPicks += 1;
+        trace(`    pick: candidate ${winner.index + 1} (judge=gate)`);
+      }
+
+      // Nur der Gewinner OHNE dryRun — auf dem Preflight-Effektiv-Input, der
+      // Preflight lief bereits pro Kandidat (kein Doppel-Zählen der Fixes).
+      const outcome = await callGate(winner.effective);
+      if (outcome.success) {
+        stats.mutatesApplied += 1;
+        if (repairedInStep) stats.repairedAfterRejection += 1;
+        trace(`    winner applied (${outcome.mutations ?? '?'} mutations)`);
+        return;
+      }
+      // Realer Apply abgelehnt (Verdict-Drift zwischen Probe und Apply — selten):
+      // wie eine Gate-Rejection behandeln, Feedback an den Gewinner, Repair.
+      stats.mutatesRejected += 1;
+      trace(`    winner apply REJECTED [${ruleIdsOf(outcome)}] — feeding violations back`);
+      if (repairs >= config.maxStepTurns) return;
+      repairs += 1;
+      repairedInStep = true;
+      winner.messages.push({ role: 'user', content: formatGateFeedback(outcome) });
+      winner.batch = await collectCandidateBatch(winner.messages, `repair cand ${winner.index + 1}`, winner.temperature);
+      winner.effective = null;
+      winner.verdict = null;
+      if (winner.batch === null) return;
+      stats.candidatesSampled += 1;
+      await probeCandidate(winner);
+      traceCandidate(winner, n);
+    }
+  };
+
   // Intent bei JEDEM generate-Call mitgeben (nicht nur beim ersten, wie im Rig):
   // scheitert der Seed-Step (Timeout, Idle), liefe die Folgerunde sonst ohne
   // Intent UND ohne SYS in die "Erfrage die Systemintention"-Sackgasse — und
@@ -801,6 +1203,9 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
   // weitere generate-Call trägt sie als defer, graph_generate rotiert weiter.
   const deferred = new Set<string>();
   const STAGNATION_DEFER_THRESHOLD = 3;
+  // Best-of-N aktiv ⇒ der Treiber macht die Auswahl: graph_generate rendert das
+  // driver-Protokoll (kein dryRun-Vergleichs-Auftrag im Prompt, CR-GC-288).
+  const bestOfN = config.candidates > 1;
   for (let round = 0; round < config.maxRounds; round++) {
     // Volles Frontier-Rendering auch lokal (CR-GC-282 negativ validiert: das
     // Minimal-Rendering halbierte den Durchsatz — v13b 22 vs. v12 82 Elemente;
@@ -808,6 +1213,7 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
     const genInput: Record<string, unknown> = {};
     if (opts.intent) genInput.intent = opts.intent;
     if (deferred.size > 0) genInput.defer = [...deferred];
+    if (bestOfN) genInput.selection = 'driver';
     const gen = (await registry['graph_generate'].handler(genInput)) as GenerationStep;
     stats.genRounds = round + 1;
     trace(`[generate ${round + 1}] phase=${gen.phase} done=${gen.done}`);
@@ -844,12 +1250,14 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
     // CR-GC-285: Guide-Slice + Element-Index deterministisch vorab injizieren —
     // ersetzt die redundanten Lese-Turns am Rundenstart, nicht die Lese-Tools.
     const injection = await buildRoundInjection(registry, gen);
-    const messages: unknown[] = [
-      {
-        role: 'user',
-        content: gen.prompt + (injection ? '\n\n' + injection : '') + EMIT_SUFFIX + stagnationHint,
-      },
-    ];
+    const baseContent = gen.prompt + (injection ? '\n\n' + injection : '') + EMIT_SUFFIX + stagnationHint;
+    if (bestOfN) {
+      // Best-of-N (CR-GC-288): Sammeln → Proben → Wählen → Gewinner anwenden.
+      // Der Turn-Loop darunter bleibt der unveränderte N=1-Pfad.
+      await runBestOfNStep(baseContent);
+      continue;
+    }
+    const messages: unknown[] = [{ role: 'user', content: baseContent }];
     let rejectedInStep = false;
     let nudgedInStep = false;
     let readTurns = 0; // Lese-Turns ohne Mutate-Versuch in diesem Step (CR-GC-280)
