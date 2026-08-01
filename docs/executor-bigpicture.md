@@ -190,7 +190,9 @@ noch das Modell.
    dort prüfen (ggf. Familie-Berührung).
 
 3. **Temperatur: 0.15 statt 0.2** (Mistrals offizielle Devstral-Empfehlung).
-   Die Behauptung „bei 0.2 variieren drei Samples kaum" ist **ungemessen** —
-   vor einem Best-of-N-Bau gehört die Sample-Varianz bei 0.15 / 0.4 / 0.7
-   gemessen (3 identische Calls, Struktur-Diff), sonst ist die
-   Kandidaten-Spreizung Spekulation.
+   **Sample-Varianz gemessen** (2026-08-01, je 3 Seed-Samples, Jaccard über
+   uid-Mengen): 0.15 → 0.45 (gleiche Struktur, Varianz = Namens-Jitter);
+   0.4 → 0.18 (**echte Struktur-Alternativen**, andere Actor-Schnitte);
+   0.7 → 0.14 (max. Diversität, 1 von 3 Samples degeneriert). Die frühere
+   „kaum Varianz bei niedriger Temp"-Behauptung war falsch. Best-of-N-Spreizung
+   daher: **0.15 / 0.4 / 0.7** — das Gate sortiert Degenerate aus.
