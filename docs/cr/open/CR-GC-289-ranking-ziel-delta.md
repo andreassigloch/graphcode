@@ -31,6 +31,25 @@ Readiness-Raum — dem Raum, in dem `graph_generate` den Fokus wählt:
 3. **Trace** je Kandidat: `candidate 2/3: tier=… focus(uc)=+0.04 total=+0.02
    Δm=+0.0 mutations=26` — der Pick wird nachvollziehbar.
 
+## Warum Readiness-Delta primär und nicht ℝ⁶ (Design-Entscheid 2026-08-02)
+
+Ziel ist nicht der große, sondern der GUTE und VOLLSTÄNDIGE Graph. Die beiden
+Räume teilen sich das so auf:
+
+- **Vollständig + regelbasiert gut = Readiness-Raum.** Der Steering-Katalog
+  enthält neben Abdeckung auch die Qualitätsregeln (UC-01..06, BQ, ND) — ein
+  Volumen-Batch (v16: 26 UCs) hat hier ein NEGATIVES Delta und verliert, weil
+  er den Graphen messbar schlechter macht, nicht weil er groß ist.
+- **Topologisch gut = ℝ⁶.** Als Primärkriterium in der Expand-Phase ungeeignet:
+  (a) die arch-Ebene ist früh leer — UC/REQ/TEST-Batches bewegen ℝ⁶ nicht
+  (exakt der v16-Bug: Δm ≈ 0 → Durchfall auf den Volumen-Tiebreaker);
+  (b) ℝ⁶ ist ohne Zielprofil richtungslos (6er-Vektor, Gewichte fehlen).
+  Deshalb Rang 2 direkt hinter dem Readiness-Delta: sobald Kandidaten die
+  arch-Ebene berühren, entscheidet ℝ⁶ mit. Die reine ℝ⁶-Steuerung ist die
+  Handoff-Phase (graph_suggest + Zielprofil) — bisher von keinem Lauf erreicht.
+- Mutations-Zahl bleibt NUR Determinismus-Anker bei komplettem Gleichstand;
+  Graphgröße wird vom Stop-Kriterium (Schwelle→Handoff) begrenzt, nicht belohnt.
+
 ## Abgrenzung
 
 - **Kein Zielprofil in diesem CR** (Gewichte je Dimension, Billion-User vs.
