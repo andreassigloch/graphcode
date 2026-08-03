@@ -593,17 +593,20 @@ export function rankCandidates<T extends CandidateProbe>(
   candidates: T[],
   focusDimension?: string | null,
 ): T[] {
-  const tierOf = (c: CandidateProbe): number => {
-    const v = c.verdict;
-    if (!v || v.success !== true) return 0;
-    return TIER_RANK[v.tier ?? 'suggest'] ?? 1;
-  };
+  const viable = (c: CandidateProbe): number => (c.verdict?.success === true ? 1 : 0);
+  const tierOf = (c: CandidateProbe): number => TIER_RANK[c.verdict?.tier ?? 'suggest'] ?? 1;
+  // v17-Befund (Runde 3): tier VOR focus ließ einen Null-Fortschritt-auto-apply
+  // (20 Upsert-Mutationen, total=0.00) einen Reparatur-suggest (+0.04) schlagen —
+  // Reparatur-Batches tragen oft frische Warnings (R-19 der neuen TESTs) und
+  // landen als suggest. tier ist deshalb nur noch (1) Block-Filter und (2)
+  // SPÄTE Präferenz bei gleichem Ziel-Delta; das Ziel-Delta führt.
   return [...candidates].sort(
     (a, b) =>
-      tierOf(b) - tierOf(a) ||
+      viable(b) - viable(a) ||
       focusDelta(b.verdict, focusDimension) - focusDelta(a.verdict, focusDimension) ||
       blockingRise(a.verdict) - blockingRise(b.verdict) ||
       totalDelta(b.verdict) - totalDelta(a.verdict) ||
+      tierOf(b) - tierOf(a) ||
       deltaSum(b.verdict) - deltaSum(a.verdict) ||
       (b.verdict?.mutations ?? 0) - (a.verdict?.mutations ?? 0) ||
       a.index - b.index,

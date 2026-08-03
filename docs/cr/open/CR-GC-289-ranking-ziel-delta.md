@@ -73,6 +73,18 @@ Räume teilen sich das so auf:
   (extrahiert aus generate.ts, EIN Messpfad für Fokus-Wahl und Delta).
 - Messlauf v17 (24 Rd. devstral, N=3, sonst v16-Konfiguration): Erwartung
   Typ-Mix statt Monokultur; auch ein Negativ-Ergebnis wird dokumentiert.
+  **v17 gefahren (2026-08-03) — KONFUNDIERT, kein valider Ranking-Beleg:**
+  auf der neuen LM-Studio-Box (10.1.3.76) blieben 55/72 Kandidaten-Slots leer;
+  temp 0.15 lieferte nur 3/24 Batches (8 Leerantworten) — invertiert zur alten
+  Box, Sampler-/Box-Thema, mit der danach nicht mehr erreichbaren Box nicht
+  weiter verifizierbar. Nur 6 Applies → 16 Elemente. ZWEI verwertbare Befunde:
+  (a) die Pick-Traces zeigen das Ziel-Delta aktiv (R1: 13-Mutationen-Kandidat
+  schlägt 2× 18er über total-Delta); (b) Runde 3 belegte einen RANKING-FEHLER —
+  tier VOR focus ließ einen Null-Fortschritt-auto-apply (20 Upserts, total 0.00)
+  eine Reparatur (+0.04, suggest) schlagen, weil frische TESTs R-19-Warnings
+  tragen → Reparatur landet als suggest. **Gefixt:** tier ist jetzt nur noch
+  Block-Filter + späte Präferenz bei gleichem Ziel-Delta (Test „v17-Fix" in
+  executor.bestofn.test.ts). Validierungslauf v18 bei stabiler Box nachholen.
 
 ## Dateien (≤6)
 

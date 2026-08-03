@@ -147,10 +147,30 @@ describe('Best-of-N ranking (pur, deterministisch)', () => {
   const cand = (index: number, verdict: Record<string, unknown> | null) =>
     ({ index, verdict }) as Parameters<typeof rankCandidates>[0][number];
 
-  it('tier dominiert: auto-apply schlägt suggest trotz schlechterem Δm', () => {
+  it('ohne Ziel-Delta bleibt tier die Präferenz: auto-apply schlägt suggest trotz schlechterem Δm', () => {
     const a = cand(0, { success: true, tier: 'suggest', fitAdvisory: { delta: [0.9] }, mutations: 99 });
     const b = cand(1, { success: true, tier: 'auto-apply', fitAdvisory: { delta: [-0.5] }, mutations: 1 });
     expect(rankCandidates([a, b])[0]).toBe(b);
+  });
+
+  it('v17-Fix: Fortschritts-suggest schlägt Null-Fortschritt-auto-apply (tier ist keine Vorstufe mehr)', () => {
+    // Der Runde-3-Fall aus v17: 20 Upsert-Mutationen als auto-apply mit total=0.00
+    // gegen eine kleine Reparatur (+0.04 auf der Fokus-Dimension) als suggest.
+    const noop = cand(0, {
+      success: true, tier: 'auto-apply', mutations: 20,
+      steeringDelta: steering(0, 0, {}),
+    });
+    const repair = cand(1, {
+      success: true, tier: 'suggest', mutations: 2,
+      steeringDelta: steering(0, 0, { uc: 0.04 }),
+    });
+    expect(rankCandidates([noop, repair], 'uc')[0]).toBe(repair);
+    // Bei ECHTEM Gleichstand im Ziel-Delta bleibt auto-apply die Präferenz.
+    const cleanEqual = cand(2, {
+      success: true, tier: 'auto-apply', mutations: 2,
+      steeringDelta: steering(0, 0, { uc: 0.04 }),
+    });
+    expect(rankCandidates([repair, cleanEqual], 'uc')[0]).toBe(cleanEqual);
   });
 
   it('Gleichstand im tier, kein steeringDelta → Δm (layer:arch) entscheidet — der Tiebreaker', () => {

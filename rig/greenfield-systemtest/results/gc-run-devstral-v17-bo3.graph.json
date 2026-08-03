@@ -1,0 +1,227 @@
+{
+  "elements": [
+    {
+      "id": "ACTOR-admin",
+      "type": "ACTOR",
+      "name": "Admin",
+      "description": "Systemadministrator, der Nutzer verwaltet und Systemeinstellungen konfiguriert."
+    },
+    {
+      "id": "ACTOR-editor",
+      "type": "ACTOR",
+      "name": "Editor",
+      "description": "Nutzer, der den Systemgraphen autorisiert und Use Cases definiert."
+    },
+    {
+      "id": "ACTOR-export-user",
+      "type": "ACTOR",
+      "name": "Export User",
+      "description": "User who exports the graph state."
+    },
+    {
+      "id": "ACTOR-guest",
+      "type": "ACTOR",
+      "name": "Guest",
+      "description": "Unauthenticated user browsing the system."
+    },
+    {
+      "id": "ACTOR-viewer",
+      "type": "ACTOR",
+      "name": "Viewer",
+      "description": "Gastnutzer, der Live-Updates des Systemgraphen einsehen kann."
+    },
+    {
+      "id": "FCHAIN-authorize-scenario",
+      "type": "FCHAIN",
+      "name": "Authorize Graph Scenario",
+      "description": "Admin authorizes changes to the governed graph."
+    },
+    {
+      "id": "FCHAIN-login-scenario",
+      "type": "FCHAIN",
+      "name": "Login Scenario",
+      "description": "User authenticates and gains access to the system."
+    },
+    {
+      "id": "FCHAIN-view-updates-scenario",
+      "type": "FCHAIN",
+      "name": "View Updates Scenario",
+      "description": "Viewer sees live updates in the governed graph."
+    },
+    {
+      "id": "SYS-web-app",
+      "type": "SYS",
+      "name": "Multiuser Web-App",
+      "description": "Multiuser-fähige Web-App aus dem graphcode harness: Nutzer melden sich an, autorieren gemeinsam einen governten Systemgraphen über das Apply-Gate, sehen Live-Updates und exportieren den Stand."
+    },
+    {
+      "id": "UC-authorize-graph",
+      "type": "UC",
+      "name": "Graph autorisieren",
+      "description": "Editor erstellt oder bearbeitet Use Cases und exportiert den Graphen."
+    },
+    {
+      "id": "UC-collaborate-graph",
+      "type": "UC",
+      "name": "Collaborate Graph",
+      "description": "Users collaborate to authorize the governed system graph."
+    },
+    {
+      "id": "UC-export-graph",
+      "type": "UC",
+      "name": "Export Graph",
+      "description": "User exports the current governed graph state."
+    },
+    {
+      "id": "UC-export-graph-scenario",
+      "type": "UC",
+      "name": "Export Graph Scenario",
+      "description": "User exports the current graph state as a file."
+    },
+    {
+      "id": "UC-live-updates-scenario",
+      "type": "UC",
+      "name": "Live Updates Scenario",
+      "description": "User sees live updates of the graph."
+    },
+    {
+      "id": "UC-login",
+      "type": "UC",
+      "name": "Login",
+      "description": "Nutzer authentifiziert sich mit Benutzername und Passwort."
+    },
+    {
+      "id": "UC-view-updates",
+      "type": "UC",
+      "name": "Live-Updates einsehen",
+      "description": "Viewer sieht die aktuellen Änderungen am Systemgraphen."
+    }
+  ],
+  "traces": [
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-collaborate-graph",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-login",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-editor",
+      "target": "UC-authorize-graph",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-editor",
+      "target": "UC-export-graph-scenario",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-export-user",
+      "target": "UC-export-graph-scenario",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-guest",
+      "target": "UC-login",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-viewer",
+      "target": "UC-live-updates-scenario",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-viewer",
+      "target": "UC-view-updates",
+      "type": "io"
+    },
+    {
+      "source": "SYS-web-app",
+      "target": "UC-authorize-graph",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-web-app",
+      "target": "UC-collaborate-graph",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-web-app",
+      "target": "UC-export-graph",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-web-app",
+      "target": "UC-export-graph-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-web-app",
+      "target": "UC-live-updates-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-web-app",
+      "target": "UC-login",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-web-app",
+      "target": "UC-view-updates",
+      "type": "compose"
+    },
+    {
+      "source": "UC-authorize-graph",
+      "target": "FCHAIN-authorize-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-collaborate-graph",
+      "target": "FCHAIN-authorize-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-collaborate-graph",
+      "target": "FCHAIN-login-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-collaborate-graph",
+      "target": "FCHAIN-view-updates-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export-graph-scenario",
+      "target": "FCHAIN-authorize-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export-graph-scenario",
+      "target": "FCHAIN-login-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export-graph-scenario",
+      "target": "FCHAIN-view-updates-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-live-updates-scenario",
+      "target": "FCHAIN-view-updates-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login",
+      "target": "FCHAIN-login-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-view-updates",
+      "target": "FCHAIN-view-updates-scenario",
+      "type": "compose"
+    }
+  ]
+}
