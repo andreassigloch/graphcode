@@ -1,6 +1,10 @@
 # CR-GC-289 — Best-of-N-Ranking: Ziel-Delta statt Volumen
 
-**Status:** open
+**Status:** done (2026-08-03, v18 validiert: 24 Rd. devstral N=3 → 40 El/78 Tr,
+voller Typ-Mix statt UC-Monokultur [8 UC/12 FCHAIN/6 FUNC/5 REQ/5 TEST],
+NUR 2 Steering-Errors — bester lokaler Endgraph der Messreihe [v14: 19, v12: 14],
+0 Gate-Rejections, 115 min. Inklusive tier-Fix nach v17-Befund: tier nur noch
+Block-Filter + späte Präferenz.)
 **Datum:** 2026-08-02
 **Kontext:** Messlauf v16-bo3 (CR-288, 24 Rd. devstral, N=3): 0 Gate-Rejections,
 aber UC-Monokultur (26/33 Elemente, kein REQ/TEST/FUNC). Root Cause im Ranking
@@ -104,5 +108,6 @@ Räume teilen sich das so auf:
       Erweiterung wäre ein Contracts-Bump)
 - [x] Trace macht den Pick nachvollziehbar (alle Ranking-Stufen sichtbar)
 - [x] N=1-Regression: Verhalten unverändert
-- [ ] Messlauf v17 dokumentiert (Typ-Mix-Vergleich zu v16)
+- [x] Messlauf dokumentiert (v17 konfundiert; v18 = valider Beleg:
+      Typ-Mix statt Monokultur, 40 El, 2 Steering-Errors, 0 Rejections)
 - [x] `npm run build` + Tests grün (68 Dateien / 417 Tests)

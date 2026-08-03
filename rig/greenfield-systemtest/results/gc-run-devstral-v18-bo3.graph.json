@@ -1,0 +1,636 @@
+{
+  "elements": [
+    {
+      "id": "ACTOR-admin",
+      "type": "ACTOR",
+      "name": "Admin",
+      "description": "Systemadministrator, der Nutzer verwaltet und Systemeinstellungen konfiguriert."
+    },
+    {
+      "id": "ACTOR-guest",
+      "type": "ACTOR",
+      "name": "Guest",
+      "description": "Unangemeldeter Gast, der eingeschränkten Zugriff auf den Systemgraphen hat."
+    },
+    {
+      "id": "ACTOR-user",
+      "type": "ACTOR",
+      "name": "User",
+      "description": "Endnutzer, der sich anmeldet und den Systemgraphen autorisiert."
+    },
+    {
+      "id": "FUNC-data-collect",
+      "type": "FUNC",
+      "name": "Collect export data",
+      "description": "Gather system state and user-specific data for export."
+    },
+    {
+      "id": "FUNC-file-generate",
+      "type": "FUNC",
+      "name": "Generate export file",
+      "description": "Create a downloadable file in the requested format."
+    },
+    {
+      "id": "FUNC-login-authenticate",
+      "type": "FUNC",
+      "name": "Authenticate credentials",
+      "description": "Validate user credentials against the identity provider."
+    },
+    {
+      "id": "FUNC-permission-grant",
+      "type": "FUNC",
+      "name": "Grant permissions",
+      "description": "Apply the authorized permissions to the user session."
+    },
+    {
+      "id": "FUNC-role-check",
+      "type": "FUNC",
+      "name": "Check user role",
+      "description": "Verify the user's role against required permissions."
+    },
+    {
+      "id": "FUNC-session-create",
+      "type": "FUNC",
+      "name": "Create session token",
+      "description": "Issue a JWT session token for authenticated user."
+    },
+    {
+      "id": "REQ-audit-log",
+      "type": "REQ",
+      "name": "Audit logging",
+      "description": "Log all authorization actions for compliance."
+    },
+    {
+      "id": "REQ-auth-timeout",
+      "type": "REQ",
+      "name": "Authentication timeout",
+      "description": "Session must expire after 30 minutes of inactivity."
+    },
+    {
+      "id": "REQ-export-format",
+      "type": "REQ",
+      "name": "Export format support",
+      "description": "Support JSON and CSV export formats."
+    },
+    {
+      "id": "REQ-guest-login",
+      "type": "REQ",
+      "name": "Guest Login Requirement",
+      "description": "Requirement for guest login functionality"
+    },
+    {
+      "id": "REQ-login-requirements",
+      "type": "REQ",
+      "name": "Login Requirements Requirement",
+      "description": "Requirement for login requirements functionality"
+    },
+    {
+      "id": "SYS-webapp",
+      "type": "SYS",
+      "name": "Multiuser Web-App",
+      "description": "Multiuser-fähige Web-App aus dem graphcode harness: Nutzer melden sich an, autorieren gemeinsam einen governten Systemgraphen über das Apply-Gate, sehen Live-Updates und exportieren den Stand."
+    },
+    {
+      "id": "TEST-verify-audit-log",
+      "type": "TEST",
+      "name": "Verify: Audit logging",
+      "description": "Prüfe, ob alle Aktionen im Audit-Log protokolliert werden."
+    },
+    {
+      "id": "TEST-verify-auth-timeout",
+      "type": "TEST",
+      "name": "Verify: Authentication timeout",
+      "description": "Prüfe, ob der Benutzer nach Ablauf der Authentifizierungszeit (z.B. 30 Minuten Inaktivität) automatisch abgemeldet wird und keine weiteren Aktionen mehr durchführen kann."
+    },
+    {
+      "id": "TEST-verify-export-format",
+      "type": "TEST",
+      "name": "Verify: Export format support",
+      "description": "Prüfe, ob der Export in den unterstützten Formaten (z.B. JSON, CSV) korrekt erfolgt und die Datenstruktur den Anforderungen entspricht."
+    },
+    {
+      "id": "TEST-verify-guest-login",
+      "type": "TEST",
+      "name": "Verify: Guest Login Requirement",
+      "description": "Prüfe, ob ein Gastbenutzer ohne Anmeldung auf die öffentlichen Bereiche der Web-App zugreifen kann und keine sensiblen Daten einsehen oder bearbeiten kann."
+    },
+    {
+      "id": "TEST-verify-login-requirements",
+      "type": "TEST",
+      "name": "Verify: Login Requirements Requirement",
+      "description": "Prüfe, ob die Anmeldung mit Benutzername und Passwort erfolgreich ist."
+    },
+    {
+      "id": "UC-authorize",
+      "type": "UC",
+      "name": "Authorize",
+      "description": "Nutzer autorisiert Änderungen am Systemgraphen über das Apply-Gate."
+    },
+    {
+      "id": "UC-authorize-scenario-1",
+      "type": "FCHAIN",
+      "name": "Authorize Scenario 1",
+      "description": "Admin grants guest user limited access to the system."
+    },
+    {
+      "id": "UC-authorize-scenario-2",
+      "type": "FCHAIN",
+      "name": "Authorize Scenario 2",
+      "description": "Grant permissions to user"
+    },
+    {
+      "id": "UC-export",
+      "type": "UC",
+      "name": "Export",
+      "description": "Nutzer exportiert den aktuellen Stand des Systemgraphen."
+    },
+    {
+      "id": "UC-export-scenario-1",
+      "type": "FCHAIN",
+      "name": "Export Scenario 1",
+      "description": "User exports the current graph state as a file."
+    },
+    {
+      "id": "UC-export-scenario-2",
+      "type": "FCHAIN",
+      "name": "Export Scenario 2",
+      "description": "Multiuser export with admin privileges"
+    },
+    {
+      "id": "UC-guest-login",
+      "type": "UC",
+      "name": "Guest logs in without credentials",
+      "description": "A guest user accesses the system anonymously and gains limited permissions."
+    },
+    {
+      "id": "UC-guest-login-missing-req",
+      "type": "UC",
+      "name": "Guest Login Missing Requirement",
+      "description": "Guest logs in without meeting authentication requirements."
+    },
+    {
+      "id": "UC-guest-login-missing-req-scenario-1",
+      "type": "FCHAIN",
+      "name": "Guest Login Missing Req Scenario 1",
+      "description": "Scenario for Guest Login Missing Requirement"
+    },
+    {
+      "id": "UC-guest-login-scenario-1",
+      "type": "FCHAIN",
+      "name": "Guest Login Scenario 1",
+      "description": "Guest logs in without credentials and gains limited access."
+    },
+    {
+      "id": "UC-login",
+      "type": "UC",
+      "name": "Login",
+      "description": "Nutzer meldet sich mit Benutzername und Passwort an."
+    },
+    {
+      "id": "UC-login-guest",
+      "type": "UC",
+      "name": "Login as Guest",
+      "description": "Guest user logs in without credentials and gains limited access."
+    },
+    {
+      "id": "UC-login-guest-scenario-1",
+      "type": "FCHAIN",
+      "name": "Login as Guest Scenario 1",
+      "description": "Guest logs in without credentials and gains limited access."
+    },
+    {
+      "id": "UC-login-requirements",
+      "type": "UC",
+      "name": "Login Requirements",
+      "description": "User provides credentials to authenticate and gain access."
+    },
+    {
+      "id": "UC-login-requirements-missing-req",
+      "type": "UC",
+      "name": "Login Requirements Missing Requirement",
+      "description": "User logs in without meeting authentication requirements."
+    },
+    {
+      "id": "UC-login-requirements-missing-req-scenario-1",
+      "type": "FCHAIN",
+      "name": "Login Requirements Missing Req Scenario 1",
+      "description": "Scenario for Login Requirements Missing Requirement"
+    },
+    {
+      "id": "UC-login-requirements-scenario-1",
+      "type": "FCHAIN",
+      "name": "Login Requirements Scenario 1",
+      "description": "System enforces authentication and authorization requirements."
+    },
+    {
+      "id": "UC-login-scenario-1",
+      "type": "FCHAIN",
+      "name": "Login Scenario 1",
+      "description": "User logs in to access the system."
+    },
+    {
+      "id": "UC-login-scenario-2",
+      "type": "FCHAIN",
+      "name": "Login Scenario 2",
+      "description": "Admin login with role check"
+    },
+    {
+      "id": "UC-login-scenario-3",
+      "type": "FCHAIN",
+      "name": "Login Scenario 3",
+      "description": "User logs in with credentials and gains access to the system."
+    }
+  ],
+  "traces": [
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-authorize",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-export",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-login",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-guest",
+      "target": "UC-export",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-guest",
+      "target": "UC-guest-login",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-guest",
+      "target": "UC-guest-login-missing-req",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-guest",
+      "target": "UC-login",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-guest",
+      "target": "UC-login-guest",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-authorize",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-export",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-login",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-login-requirements",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-login-requirements-missing-req",
+      "type": "io"
+    },
+    {
+      "source": "SYS-webapp",
+      "target": "UC-authorize",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-webapp",
+      "target": "UC-export",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-webapp",
+      "target": "UC-login",
+      "type": "compose"
+    },
+    {
+      "source": "TEST-verify-audit-log",
+      "target": "REQ-audit-log",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-auth-timeout",
+      "target": "REQ-auth-timeout",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-export-format",
+      "target": "REQ-export-format",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-guest-login",
+      "target": "REQ-guest-login",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-login-requirements",
+      "target": "REQ-login-requirements",
+      "type": "verify"
+    },
+    {
+      "source": "UC-authorize",
+      "target": "REQ-audit-log",
+      "type": "compose"
+    },
+    {
+      "source": "UC-authorize",
+      "target": "UC-authorize-scenario-1",
+      "type": "compose"
+    },
+    {
+      "source": "UC-authorize",
+      "target": "UC-authorize-scenario-2",
+      "type": "compose"
+    },
+    {
+      "source": "UC-authorize-scenario-1",
+      "target": "FUNC-permission-grant",
+      "type": "compose"
+    },
+    {
+      "source": "UC-authorize-scenario-1",
+      "target": "FUNC-role-check",
+      "type": "compose"
+    },
+    {
+      "source": "UC-authorize-scenario-1",
+      "target": "REQ-audit-log",
+      "type": "satisfy"
+    },
+    {
+      "source": "UC-authorize-scenario-2",
+      "target": "FUNC-permission-grant",
+      "type": "compose"
+    },
+    {
+      "source": "UC-authorize-scenario-2",
+      "target": "REQ-audit-log",
+      "type": "satisfy"
+    },
+    {
+      "source": "UC-export",
+      "target": "REQ-audit-log",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export",
+      "target": "REQ-export-format",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export",
+      "target": "UC-export-scenario-1",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export",
+      "target": "UC-export-scenario-2",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export-scenario-1",
+      "target": "FUNC-data-collect",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export-scenario-1",
+      "target": "FUNC-file-generate",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export-scenario-1",
+      "target": "REQ-export-format",
+      "type": "satisfy"
+    },
+    {
+      "source": "UC-export-scenario-2",
+      "target": "FUNC-data-collect",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export-scenario-2",
+      "target": "FUNC-file-generate",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export-scenario-2",
+      "target": "REQ-export-format",
+      "type": "satisfy"
+    },
+    {
+      "source": "UC-guest-login",
+      "target": "REQ-audit-log",
+      "type": "compose"
+    },
+    {
+      "source": "UC-guest-login",
+      "target": "UC-login-scenario-1",
+      "type": "compose"
+    },
+    {
+      "source": "UC-guest-login-missing-req",
+      "target": "REQ-audit-log",
+      "type": "compose"
+    },
+    {
+      "source": "UC-guest-login-missing-req",
+      "target": "REQ-auth-timeout",
+      "type": "compose"
+    },
+    {
+      "source": "UC-guest-login-missing-req",
+      "target": "REQ-guest-login",
+      "type": "compose"
+    },
+    {
+      "source": "UC-guest-login-missing-req",
+      "target": "UC-guest-login-missing-req-scenario-1",
+      "type": "compose"
+    },
+    {
+      "source": "UC-guest-login-scenario-1",
+      "target": "FUNC-permission-grant",
+      "type": "compose"
+    },
+    {
+      "source": "UC-guest-login-scenario-1",
+      "target": "FUNC-session-create",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login",
+      "target": "UC-login-scenario-1",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login",
+      "target": "UC-login-scenario-2",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login",
+      "target": "UC-login-scenario-3",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login-guest",
+      "target": "UC-guest-login-scenario-1",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login-guest",
+      "target": "UC-login-guest-scenario-1",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login-guest-scenario-1",
+      "target": "FUNC-permission-grant",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login-guest-scenario-1",
+      "target": "FUNC-session-create",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login-guest-scenario-1",
+      "target": "REQ-audit-log",
+      "type": "satisfy"
+    },
+    {
+      "source": "UC-login-requirements",
+      "target": "REQ-audit-log",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login-requirements",
+      "target": "REQ-auth-timeout",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login-requirements",
+      "target": "UC-login-requirements-scenario-1",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login-requirements-missing-req",
+      "target": "REQ-audit-log",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login-requirements-missing-req",
+      "target": "REQ-auth-timeout",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login-requirements-missing-req",
+      "target": "REQ-login-requirements",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login-requirements-missing-req",
+      "target": "UC-login-requirements-missing-req-scenario-1",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login-requirements-scenario-1",
+      "target": "FUNC-login-authenticate",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login-requirements-scenario-1",
+      "target": "FUNC-role-check",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login-requirements-scenario-1",
+      "target": "REQ-audit-log",
+      "type": "satisfy"
+    },
+    {
+      "source": "UC-login-requirements-scenario-1",
+      "target": "REQ-auth-timeout",
+      "type": "satisfy"
+    },
+    {
+      "source": "UC-login-scenario-1",
+      "target": "FUNC-login-authenticate",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login-scenario-1",
+      "target": "FUNC-session-create",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login-scenario-1",
+      "target": "REQ-auth-timeout",
+      "type": "satisfy"
+    },
+    {
+      "source": "UC-login-scenario-2",
+      "target": "FUNC-login-authenticate",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login-scenario-2",
+      "target": "FUNC-role-check",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login-scenario-2",
+      "target": "FUNC-session-create",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login-scenario-2",
+      "target": "REQ-auth-timeout",
+      "type": "satisfy"
+    },
+    {
+      "source": "UC-login-scenario-3",
+      "target": "FUNC-login-authenticate",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login-scenario-3",
+      "target": "FUNC-permission-grant",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login-scenario-3",
+      "target": "FUNC-session-create",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login-scenario-3",
+      "target": "REQ-audit-log",
+      "type": "satisfy"
+    },
+    {
+      "source": "UC-login-scenario-3",
+      "target": "REQ-auth-timeout",
+      "type": "satisfy"
+    }
+  ]
+}

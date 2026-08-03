@@ -137,8 +137,16 @@ Code (CR-288, umgesetzt).
    Nachschärfung nötig (Folge-CR): Ranking-Kriterium = Readiness-/Blocking-
    Error-Delta aus dem dryRun-Verdict statt roher Mutations-Zahl.**
 
-Artefakte: `rig/greenfield-systemtest/results/` (v15, v16-bo3, opus5-v2,
-Proben-Logs, Audits).
+6. **Ziel-Delta-Ranking validiert (CR-289, v18):** Best-of-3 mit steeringDelta-
+   Ranking (Fokus-Delta primär, tier nur noch Block-Filter — der tier-vor-focus-
+   Fehler stammte aus dem konfundierten v17) liefert in 24 Runden **40 Elemente /
+   78 Traces mit vollem Typ-Mix** (8 UC/12 FCHAIN/6 FUNC/5 REQ/5 TEST) statt der
+   v16-UC-Monokultur, **nur 2 Steering-Error-Violations** (bester lokaler
+   Endgraph der Messreihe) und 0 Gate-Rejections. Damit ist die Kette komplett:
+   Preflight verhindert, Ziel-Delta wählt, das Gate bestätigt nur noch.
+
+Artefakte: `rig/greenfield-systemtest/results/` (v15, v16-bo3, v17-bo3,
+v18-bo3, opus5-v2, Proben-Logs, Audits).
 
 ## Was ursprünglich noch fehlt → Folgechat (CR-GC-283)
 

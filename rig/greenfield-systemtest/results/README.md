@@ -21,6 +21,7 @@ ohne Export (v1–v5, v7, v8, v10, v13).
 | opus5-v2 | Opus 5 | 12 Rd., + CR-284/285/286 | **60 El / 6,5 min / ~$1,60** — alle 10 Rejections INPUT-SCHEMA (Truncation) |
 | devstral-v16-bo3 | devstral | 24 Rd., Best-of-3 (CR-288, judge=gate) | 33 El / 0 Gate-Rejections, aber UC-Monokultur (26 UC) — Ranking belohnt Volumen, nicht Defizit-Reparatur |
 | devstral-v17-bo3 | devstral | 24 Rd., Best-of-3 + Ziel-Delta (CR-289), NEUE Box | **konfundiert, kein valider Ranking-Beleg**: 55/72 Kandidaten-Slots leer (temp 0.15: 3/24 Batches, 8 Leerantworten — Box-/Sampler-Thema), 16 El; lieferte aber den Runde-3-Beleg für den tier-vor-focus-Fehler (gefixt) |
+| devstral-v18-bo3 | devstral | 24 Rd., Best-of-3 + Ziel-Delta + tier-Fix (CR-289) | **Validierung: 40 El / 78 Tr, voller Typ-Mix (8 UC/12 FCHAIN/6 FUNC/5 REQ/5 TEST), 2 Steering-Errors (bester lokaler Endgraph), 0 Gate-Rejections, 115 min** |
 
 Nachtest-Proben (CR-286): `logs/gc-run-opus5-probe-2048.run.log` (maxTokens 2048
 → `input-schema keys: []`, Tool-Call-JSON gekappt) vs. `…-probe-8192.run.log`
