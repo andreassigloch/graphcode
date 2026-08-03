@@ -15,6 +15,7 @@ import type { MutateCommand, MutateResult, RuleViolation, StaleDelta } from '@si
 import { GraphVersionSchema } from '@sigloch/contracts/harness';
 import { readBranchLog, replayBranchLog, type MergeReport } from '../merge.js';
 import type { MCPTool, MCPToolRegistry } from '../mcp-tools.js';
+import { computeSteeringDelta, takeSteeringSnapshot, type SteeringDelta } from '../steering-snapshot.js';
 import type { ToolContext } from '../tool-context.js';
 
 // -------------------------------------------------------------------------
@@ -163,7 +164,7 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
 
   const graph_mutate: MCPTool<
     z.infer<typeof GraphMutateInputSchema>,
-    MutateResult & { graphVersion: number; occWarning?: string }
+    MutateResult & { graphVersion: number; occWarning?: string; steeringDelta?: SteeringDelta }
   > = {
     name: 'graph_mutate',
     description:
@@ -230,22 +231,34 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
         }
         const stale = await occReject(input.consumerId, input.baseVersion, commands);
         if (stale) return stale;
+        // steeringDelta (CR-GC-289): Vorher-Snapshot des STEERING-Katalogs
+        // (evaluateAllRules inkl. ND + computeReadiness — der Raum, in dem
+        // graph_generate den Fokus wählt) — NUR im dryRun-Zweig: der Apply-Pfad
+        // bewegt die graphVersion, der Nachher-Zustand ist dort per
+        // graph_readiness lesbar; die Doppel-Evaluierung pro echtem Write wäre
+        // reine Kostenstelle ohne Konsument (Entscheidung dokumentiert im CR).
+        const steeringBefore = input.dryRun ? takeSteeringSnapshot(harness.getGraph()) : null;
         // L2: identical semantics — delegate straight to the gate, no bypass.
         // Cast: MCP transports deserialize commands as plain objects; harness.mutate()
         // validates internally via MutateCommandSchema.
         const result = await harness.mutate(commands, { dryRun: input.dryRun });
         if (input.dryRun) {
-          // Working copy restaurieren (der Gate-dryRun lässt den Applied-Zustand
-          // in-memory, CR-GC-234) und den Vorschlag→Verdict auditieren (F2).
+          // Der Gate-dryRun lässt den Applied-Zustand in-memory (CR-GC-234) —
+          // GENAU JETZT messen (bei block hat das Gate schon zurückgerollt ⇒
+          // Delta 0), dann die Working Copy restaurieren. Pure Messung, kein
+          // Einfluss auf tier/success (Muster fitAdvisory/CR-274).
+          const steeringDelta = computeSteeringDelta(steeringBefore!, takeSteeringSnapshot(harness.getGraph()));
           await harness.loadGraph();
-          await recordPreview(input.consumerId, result, commands);
-        } else {
-          await recordAudit(input.consumerId, result, commands);
+          const preview = { ...result, steeringDelta };
+          // Vorschlag→Verdict auditieren (F2) — der Preview trägt das steeringDelta.
+          await recordPreview(input.consumerId, preview, commands);
+          return { ...preview, graphVersion: graphVersion() };
         }
+        await recordAudit(input.consumerId, result, commands);
         return {
           ...result,
           graphVersion: graphVersion(),
-          ...(input.baseVersion === undefined && !input.dryRun ? { occWarning: OCC_WARNING } : {}),
+          ...(input.baseVersion === undefined ? { occWarning: OCC_WARNING } : {}),
         };
       });
     },

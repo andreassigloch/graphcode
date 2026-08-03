@@ -1,14 +1,17 @@
 /**
- * CR-GC-288 — Best-of-N-Auswahl im Treiber (deterministisch).
+ * CR-GC-288 — Best-of-N-Auswahl im Treiber (deterministisch) +
+ * CR-GC-289 — Ranking auf Ziel-Delta statt Volumen.
  *
  * Reale Persistenz (Disk-Kuzu in temp repoRoot), gescriptetes Modell-Backend —
  * der Modell-Endpoint ist die einzige simulierte Grenze; Gate, dryRun-Proben,
- * fitAdvisory und Audit sind der echte Pfad.
+ * fitAdvisory, steeringDelta und Audit sind der echte Pfad.
  *
  * Kern-Invarianten: N Kandidaten werden als Gate-dryRun geprobt (auditiert als
  * validate, nie ein Step-Abschluss), NUR der Gewinner wird ohne dryRun
- * angewandt; die Auswahl ist deterministisch (tier → Δm arch → Ausbeute);
- * judge:'model' loggt BEIDE Picks; N=1 bleibt der unveränderte heutige Pfad.
+ * angewandt; die Auswahl ist deterministisch (tier → Fokus-Score-Delta →
+ * Gesamt-Readiness-Delta mit blockingErrors-Anstieg strikt schlechter →
+ * Δm arch → Ausbeute); judge:'model' loggt BEIDE Picks; N=1 bleibt der
+ * unveränderte heutige Pfad.
  */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
@@ -19,6 +22,8 @@ import {
   runExecutor,
   rankCandidates,
   deltaSum,
+  focusDelta,
+  totalDelta,
   temperatureSpread,
   TEMPERATURE_ANCHORS,
   ExecutorConfigSchema,
@@ -74,8 +79,7 @@ function textResponse(text: string): ModelResponse {
 
 // --- Kandidaten-Batches mit empirisch verifizierten Gate-Verdicts (dryRun) ----
 // GHOST → tier block (STRUCT) · UC_EXPORT → suggest, Δm=0, mutations=3 ·
-// UPDATE_SYS → auto-apply, mutations=1 · FUNC_PAIR → suggest, Δm≈+4.58, mutations=5 ·
-// UC_PLUS_REQ → suggest, Δm=0, mutations=7 (höhere Ausbeute als FUNC_PAIR).
+// UPDATE_SYS → auto-apply, mutations=1 · FUNC_PAIR → suggest, Δm≈+4.58, mutations=5.
 
 const BLOCK_BATCH = {
   commands: [
@@ -107,14 +111,25 @@ const FUNC_PAIR_BATCH = {
   ],
 };
 
-/** suggest, Δm=0, aber 7 Mutationen — mehr Ausbeute als FUNC_PAIR (5). */
-const UC_PLUS_REQ_BATCH = {
+// --- CR-GC-289: A-vs-B — Volumen gegen Fokus-Reparatur (Fokus nach Seed = 'uc') ---
+// A: 6 neue UCs ohne REQ (18 Mutationen) — Steering: uc-Score SINKT (-0.17),
+//    blockingErrors steigen 1→7. B: REQ+TEST auf UC-login (4 Mutationen) —
+//    uc +0.18, req/ver werden anwendbar, blockingErrors 1→0. Beide tier=suggest.
+
+const VOLUME_UC_BATCH = {
+  commands: Array.from({ length: 6 }, (_, i) => i + 1).flatMap((i) => [
+    { op: 'add-node', node: { uid: `UC-vol-${i}`, type: 'UC', name: `Volumen ${i}`, description: `User erledigt Aufgabe ${i} und erhält das Ergebnis ${i}.`, attributes: {} } },
+    { op: 'add-edge', edge: { sourceId: 'SYS-app', targetId: `UC-vol-${i}`, edgeType: 'compose', attributes: {} } },
+    { op: 'add-edge', edge: { sourceId: 'ACTOR-user', targetId: `UC-vol-${i}`, edgeType: 'io', attributes: {} } },
+  ]),
+};
+
+const FOCUS_REPAIR_BATCH = {
   commands: [
-    ...UC_EXPORT_BATCH.commands,
-    { op: 'add-node', node: { uid: 'REQ-export', type: 'REQ', name: 'Export bestätigt', description: 'Der Export wird bestätigt.', attributes: {} } },
-    { op: 'add-node', node: { uid: 'TEST-export', type: 'TEST', name: 'Export-Test', description: 'Prüft die Export-Bestätigung.', attributes: {} } },
-    { op: 'add-edge', edge: { sourceId: 'UC-export', targetId: 'REQ-export', edgeType: 'compose', attributes: {} } },
-    { op: 'add-edge', edge: { sourceId: 'TEST-export', targetId: 'REQ-export', edgeType: 'verify', attributes: {} } },
+    { op: 'add-node', node: { uid: 'REQ-login', type: 'REQ', name: 'Login bestätigt', description: 'Der Login wird innerhalb von 2s bestätigt.', attributes: {} } },
+    { op: 'add-node', node: { uid: 'TEST-login', type: 'TEST', name: 'Login-Test', description: 'Prüft die Login-Bestätigung.', attributes: {} } },
+    { op: 'add-edge', edge: { sourceId: 'UC-login', targetId: 'REQ-login', edgeType: 'compose', attributes: {} } },
+    { op: 'add-edge', edge: { sourceId: 'TEST-login', targetId: 'REQ-login', edgeType: 'verify', attributes: {} } },
   ],
 };
 
@@ -138,12 +153,53 @@ describe('Best-of-N ranking (pur, deterministisch)', () => {
     expect(rankCandidates([a, b])[0]).toBe(b);
   });
 
-  it('Gleichstand im tier → Δm (layer:arch) entscheidet — der dokumentierte Tiebreaker', () => {
+  it('Gleichstand im tier, kein steeringDelta → Δm (layer:arch) entscheidet — der Tiebreaker', () => {
     const a = cand(0, { success: true, tier: 'suggest', fitAdvisory: { delta: [-0.2, 0.1] }, mutations: 99 });
     const b = cand(1, { success: true, tier: 'suggest', fitAdvisory: { delta: [0.1, 0.05] }, mutations: 1 });
     expect(deltaSum(a.verdict)).toBeCloseTo(-0.1);
     expect(deltaSum(b.verdict)).toBeCloseTo(0.15);
     expect(rankCandidates([a, b])[0]).toBe(b);
+  });
+
+  const steering = (blockBefore: number, blockAfter: number, dims: Record<string, number>) => ({
+    blockingErrors: { before: blockBefore, after: blockAfter },
+    dimensions: Object.fromEntries(
+      Object.entries(dims).map(([d, delta]) => [d, { before: 0.5, after: 0.5 + delta, delta }]),
+    ),
+  });
+
+  it('CR-GC-289: Fokus-Score-Delta schlägt Gesamt-Delta, Δm UND Ausbeute', () => {
+    // a: besserer Gesamt-Fortschritt + Δm + Volumen, aber NICHT auf der Fokus-Dimension.
+    const a = cand(0, {
+      success: true, tier: 'suggest', mutations: 40,
+      fitAdvisory: { delta: [2.0] },
+      steeringDelta: steering(0, 0, { arch: 0.3, alloc: 0.2 }),
+    });
+    const b = cand(1, {
+      success: true, tier: 'suggest', mutations: 12,
+      fitAdvisory: { delta: [0] },
+      steeringDelta: steering(0, 0, { req: 0.04 }),
+    });
+    expect(focusDelta(b.verdict, 'req')).toBeCloseTo(0.04);
+    expect(totalDelta(a.verdict)).toBeCloseTo(0.5);
+    expect(rankCandidates([a, b], 'req')[0]).toBe(b);
+    // Ohne Fokus-Dimension fällt die Stufe weg — dann gewinnt a über das Gesamt-Delta.
+    expect(rankCandidates([a, b], null)[0]).toBe(a);
+  });
+
+  it('CR-GC-289: blockingErrors-Anstieg ist strikt schlechter als jedes Score-Plus', () => {
+    // a: großes Gesamt-Delta, aber neue Steering-Blocker; b: kleines Plus, keine neuen Blocker.
+    const a = cand(0, {
+      success: true, tier: 'suggest', mutations: 26,
+      steeringDelta: steering(1, 7, { uc: 0.5 }),
+    });
+    const b = cand(1, {
+      success: true, tier: 'suggest', mutations: 3,
+      steeringDelta: steering(1, 1, { uc: 0.01 }),
+    });
+    expect(rankCandidates([a, b], null)[0]).toBe(b);
+    // Auf der Fokus-Stufe zählt weiterhin das reine Score-Delta (Reihenfolge lt. CR).
+    expect(rankCandidates([a, b], 'uc')[0]).toBe(a);
   });
 
   it('Gleichstand in tier UND Δm → Element-Ausbeute (mutations), dann Index', () => {
@@ -241,9 +297,11 @@ describe('Best-of-N executor (CR-GC-288, echter Gate-/Store-Pfad)', () => {
     expect(uids()).not.toContain('UC-export'); // der Verlierer-Kandidat ist NICHT im Store
     expect(uids()).not.toContain('GHOST-x');
 
-    // Trace-Zeilen: candidate k/N mit tier/Δm/mutations + der Pick.
-    expect(traces.some((l) => /candidate 1\/3: tier=block Δm=[+-]\d+\.\d{2} mutations=0/.test(l))).toBe(true);
-    expect(traces.some((l) => /candidate 2\/3: tier=suggest Δm=\+0\.00 mutations=3/.test(l))).toBe(true);
+    // Trace-Zeilen (CR-GC-289): ALLE Ranking-Stufen sichtbar — tier, Fokus-Delta,
+    // Gesamt-Delta, Δm, mutations — plus der Pick.
+    const CAND = String.raw`tier=(\S+) focus\(uc\)=([+-]\d+\.\d{2}) total=([+-]\d+\.\d{2}) Δm=([+-]\d+\.\d{2}) mutations=(\d+)`;
+    expect(traces.some((l) => new RegExp(String.raw`candidate 1/3: tier=block .*mutations=0`).test(l))).toBe(true);
+    expect(traces.some((l) => new RegExp(String.raw`candidate 2/3: ${CAND}`).test(l))).toBe(true);
     expect(traces.some((l) => /candidate 3\/3: tier=auto-apply/.test(l))).toBe(true);
     expect(traces.some((l) => l.includes('pick: candidate 3 (judge=gate)'))).toBe(true);
 
@@ -253,10 +311,14 @@ describe('Best-of-N executor (CR-GC-288, echter Gate-/Store-Pfad)', () => {
     expect(entries.filter((e) => e.operation !== 'validate' && e.result === 'applied').length).toBe(1);
   });
 
-  it('Gleichstand im tier → Δm entscheidet vor der Element-Ausbeute (FUNC_PAIR Δm>0 schlägt 7 Mutationen)', async () => {
+  it('CR-GC-289 Kern: Fokus-Reparatur (REQ+TEST, 4 Mutationen) schlägt UC-Volumen (18 Mutationen) — echte Verdicts', async () => {
+    // Fokus der Runde nach dem Seed = 'uc' (UC-login ohne REQ/FCHAIN). A (Volumen):
+    // 6 UCs ohne REQ — uc-Score SINKT, blockingErrors 1→7. B (Fokus-Reparatur):
+    // REQ+TEST auf UC-login — uc +0.18. Beide tier=suggest; unter CR-288-Ranking
+    // (Δm=0 beidseitig → mutations) hätte A gewonnen — Volumen-Bias der v16-Monokultur.
     const { callModel } = scriptedModel([
-      toolCallResponse('c1', UC_PLUS_REQ_BATCH), // suggest, Δm=0, mutations=7
-      toolCallResponse('c2', FUNC_PAIR_BATCH), // suggest, Δm≈+4.58, mutations=5
+      toolCallResponse('c1', VOLUME_UC_BATCH), // suggest, Δm=0, mutations=18
+      toolCallResponse('c2', FOCUS_REPAIR_BATCH), // suggest, Δm=0, mutations=4
     ]);
     const traces: string[] = [];
 
@@ -269,9 +331,13 @@ describe('Best-of-N executor (CR-GC-288, echter Gate-/Store-Pfad)', () => {
     });
 
     expect(stats.mutatesApplied).toBe(1);
+    // Der Trace macht den Pick nachvollziehbar: A mit negativem, B mit positivem Fokus-Delta.
+    expect(traces.some((l) => /candidate 1\/2: tier=suggest focus\(uc\)=-0\.17 total=-0\.17 Δm=\+0\.00 mutations=18/.test(l))).toBe(true);
+    expect(traces.some((l) => /candidate 2\/2: tier=suggest focus\(uc\)=\+0\.18 total=\+1\.48 Δm=\+0\.00 mutations=4/.test(l))).toBe(true);
     expect(traces.some((l) => l.includes('pick: candidate 2 (judge=gate)'))).toBe(true);
-    expect(uids()).toContain('FUNC-auth'); // Δm-Gewinner persistiert …
-    expect(uids()).not.toContain('UC-export'); // … die höhere Ausbeute nicht
+    expect(uids()).toContain('REQ-login'); // der Ziel-Delta-Gewinner ist persistiert …
+    expect(uids()).toContain('TEST-login');
+    expect(uids()).not.toContain('UC-vol-1'); // … das Volumen nicht
   });
 
   it("judge:'model': beide Picks werden geloggt, angewandt wird der Modell-Pick (Disagreement messbar)", async () => {

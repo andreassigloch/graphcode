@@ -47,6 +47,11 @@ Readiness-Raum — dem Raum, in dem `graph_generate` den Fokus wählt:
   **B gewinnt** (Fokus-Delta), mit echten Verdicts auf Disk-Kuzu.
 - Unit: steeringDelta erscheint im dryRun-Verdict, nicht im Apply-Verdict
   (oder in beiden — Entscheidung dokumentieren), graphVersion bewegt sich nicht.
+  **Entscheidung (2026-08-03): nur dryRun.** Der einzige Konsument ist das
+  Best-of-N-Ranking (dryRun-Proben); nach echtem Apply ist der Nachher-Zustand
+  per `graph_readiness` lesbar — die doppelte Katalog-Evaluierung pro Write
+  wäre Kostenstelle ohne Nutzer. Messhelfer: `src/steering-snapshot.ts`
+  (extrahiert aus generate.ts, EIN Messpfad für Fokus-Wahl und Delta).
 - Messlauf v17 (24 Rd. devstral, N=3, sonst v16-Konfiguration): Erwartung
   Typ-Mix statt Monokultur; auch ein Negativ-Ergebnis wird dokumentiert.
 
@@ -60,9 +65,13 @@ Readiness-Raum — dem Raum, in dem `graph_generate` den Fokus wählt:
 
 ## Akzeptanzkriterien
 
-- [ ] Unit-Test: Fokus-Reparatur-Kandidat schlägt Volumen-Kandidaten
-- [ ] steeringDelta deterministisch, auditiert als Teil des Preview-Verdicts
-- [ ] Trace macht den Pick nachvollziehbar (alle Ranking-Stufen sichtbar)
-- [ ] N=1-Regression: Verhalten unverändert
+- [x] Unit-Test: Fokus-Reparatur-Kandidat schlägt Volumen-Kandidaten
+      (echte Verdicts auf Disk-Kuzu: REQ+TEST/4 Mut. schlägt 6 UCs/18 Mut.)
+- [x] steeringDelta deterministisch, auditiert als Teil des Preview-Verdicts
+      (Verdict-Payload wie fitAdvisory; der Preview selbst = validate-Eintrag —
+      das AuditEntry-Schema aus graph-api-core trägt keine Zusatzfelder,
+      Erweiterung wäre ein Contracts-Bump)
+- [x] Trace macht den Pick nachvollziehbar (alle Ranking-Stufen sichtbar)
+- [x] N=1-Regression: Verhalten unverändert
 - [ ] Messlauf v17 dokumentiert (Typ-Mix-Vergleich zu v16)
-- [ ] `npm run build` + Tests grün
+- [x] `npm run build` + Tests grün (68 Dateien / 417 Tests)
