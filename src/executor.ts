@@ -26,6 +26,7 @@ import type { MCPToolRegistry } from './mcp-tools.js';
 import type { GenerationStep } from './generate.js';
 import { preflightBatch, type PreflightKnown } from './preflight.js';
 import { duplicateHints, type IndexedElement } from './nd-similarity.js';
+import type { SteeringDelta } from './steering-snapshot.js';
 
 // ---------------------------------------------------------------------------
 // Config (lokal per CR-GC-278 — Promotion nach @sigloch/contracts erst mit der
@@ -543,7 +544,11 @@ export function temperatureSpread(n: number): number[] {
 export interface CandidateProbe {
   index: number;
   verdict:
-    | (Partial<MutateResult> & { success: boolean; fitAdvisory?: { delta?: number[] } })
+    | (Partial<MutateResult> & {
+        success: boolean;
+        fitAdvisory?: { delta?: number[] };
+        steeringDelta?: SteeringDelta;
+      })
     | null;
 }
 
@@ -554,13 +559,40 @@ export function deltaSum(verdict: CandidateProbe['verdict']): number {
   return (verdict?.fitAdvisory?.delta ?? []).reduce((s, x) => s + x, 0);
 }
 
+/** Score-Delta der Fokus-Dimension aus dem steeringDelta des dryRun-Verdicts (CR-GC-289). */
+export function focusDelta(verdict: CandidateProbe['verdict'], focusDimension?: string | null): number {
+  if (!focusDimension) return 0;
+  return verdict?.steeringDelta?.dimensions[focusDimension]?.delta ?? 0;
+}
+
+/** Gesamt-Readiness-Delta: ungewichtete Summe der Score-Deltas aller Dimensionen. */
+export function totalDelta(verdict: CandidateProbe['verdict']): number {
+  const sd = verdict?.steeringDelta;
+  if (!sd) return 0;
+  return Object.values(sd.dimensions).reduce((s, d) => s + d.delta, 0);
+}
+
+/** blockingErrors-ANSTIEG (Steering-Katalog) — strikt schlechter, nie belohnt. */
+function blockingRise(verdict: CandidateProbe['verdict']): number {
+  const b = verdict?.steeringDelta?.blockingErrors;
+  return b ? Math.max(0, b.after - b.before) : 0;
+}
+
 /**
- * Deterministisches Kandidaten-Ranking (der Judge 'gate'):
- * tier (auto-apply > suggest > block) → Δm-fitAdvisory auf layer:arch →
- * Element-Ausbeute (mutations) → Kandidaten-Index. block/Preflight-Block/
- * fehlendes Verdict ranken als tier 0.
+ * Deterministisches Kandidaten-Ranking (der Judge 'gate'), CR-GC-289: Ziel-Delta
+ * statt Volumen — das Kriterium ist der messbare Steuerungs-Fortschritt im
+ * Readiness-Raum, dem Raum, in dem graph_generate den Fokus wählt:
+ * tier (auto-apply > suggest > block) →
+ * Score-Delta der FOKUS-Dimension (GenerationStep.focusKey) →
+ * Gesamt-Readiness-Delta (blockingErrors-Anstieg strikt schlechter, davor) →
+ * Δm-fitAdvisory auf layer:arch →
+ * Element-Ausbeute (mutations) → Kandidaten-Index (Determinismus-Anker).
+ * block/Preflight-Block/fehlendes Verdict ranken als tier 0.
  */
-export function rankCandidates<T extends CandidateProbe>(candidates: T[]): T[] {
+export function rankCandidates<T extends CandidateProbe>(
+  candidates: T[],
+  focusDimension?: string | null,
+): T[] {
   const tierOf = (c: CandidateProbe): number => {
     const v = c.verdict;
     if (!v || v.success !== true) return 0;
@@ -569,6 +601,9 @@ export function rankCandidates<T extends CandidateProbe>(candidates: T[]): T[] {
   return [...candidates].sort(
     (a, b) =>
       tierOf(b) - tierOf(a) ||
+      focusDelta(b.verdict, focusDimension) - focusDelta(a.verdict, focusDimension) ||
+      blockingRise(a.verdict) - blockingRise(b.verdict) ||
+      totalDelta(b.verdict) - totalDelta(a.verdict) ||
       deltaSum(b.verdict) - deltaSum(a.verdict) ||
       (b.verdict?.mutations ?? 0) - (a.verdict?.mutations ?? 0) ||
       a.index - b.index,
@@ -688,8 +723,10 @@ type MutateOutcome = Partial<MutateResult> & {
   preflightBlocked?: boolean;
   /** REQ/UC-Duplikat-Hinweise (CR-GC-287) — reines Feedback, NIE ein Blocker. */
   hints?: string[];
-  /** Δm-Messung des Gates (CR-GC-274) — bei dryRun das Ranking-Kriterium des Best-of-N (CR-GC-288). */
+  /** Δm-Messung des Gates (CR-GC-274) — Tiebreaker im Best-of-N-Ranking (CR-GC-288). */
   fitAdvisory?: FitAdvisory;
+  /** Readiness-Delta des dryRun-Verdicts (CR-GC-289) — das primäre Ranking-Kriterium nach tier. */
+  steeringDelta?: SteeringDelta;
 };
 
 /** Kompakte Regel-ID-Liste einer Rejection für die run.log-Trace (CR-GC-286). */
@@ -1056,7 +1093,8 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
     c.verdict = await callGate(probeInput);
   };
 
-  const traceCandidate = (c: RoundCandidate, n: number): void => {
+  /** Ranking-Stufen als Trace (CR-GC-289) — der Pick wird nachvollziehbar. */
+  const traceCandidate = (c: RoundCandidate, n: number, focusDimension: string | null): void => {
     if (!c.verdict) {
       trace(`  candidate ${c.index + 1}/${n}: no batch`);
       return;
@@ -1064,12 +1102,17 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
     const v = c.verdict;
     const tier = v.preflightBlocked ? 'preflight-block' : (v.tier ?? (v.success ? 'suggest' : 'block'));
     trace(
-      `  candidate ${c.index + 1}/${n}: tier=${tier} Δm=${fmtDelta(deltaSum(v))} mutations=${v.mutations ?? 0}`,
+      `  candidate ${c.index + 1}/${n}: tier=${tier} focus(${focusDimension ?? '-'})=${fmtDelta(
+        focusDelta(v, focusDimension),
+      )} total=${fmtDelta(totalDelta(v))} Δm=${fmtDelta(deltaSum(v))} mutations=${v.mutations ?? 0}`,
     );
   };
 
   /** judge:'model' — die LLM wählt aus den gerenderten Verdicts; unparsebare Antwort ⇒ null (Algo-Pick). */
-  const modelJudgePick = async (viable: RoundCandidate[]): Promise<RoundCandidate | null> => {
+  const modelJudgePick = async (
+    viable: RoundCandidate[],
+    focusDimension: string | null,
+  ): Promise<RoundCandidate | null> => {
     const lines = viable.map((c, i) => {
       const v = c.verdict!;
       const viols =
@@ -1077,7 +1120,10 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
           .slice(0, 3)
           .map((x) => `${x.ruleId}[${x.severity}]`)
           .join(',') || '-';
-      return `${i + 1}. tier=${v.tier ?? '?'} Δm=${fmtDelta(deltaSum(v))} mutations=${v.mutations ?? 0} violations=${viols}`;
+      return (
+        `${i + 1}. tier=${v.tier ?? '?'} focus(${focusDimension ?? '-'})=${fmtDelta(focusDelta(v, focusDimension))} ` +
+        `total=${fmtDelta(totalDelta(v))} Δm=${fmtDelta(deltaSum(v))} mutations=${v.mutations ?? 0} violations=${viols}`
+      );
     });
     const prompt =
       'Wähle den besten Kandidaten-Batch anhand der Gate-Verdicts (dryRun-Proben):\n' +
@@ -1104,7 +1150,7 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
    * Modell (Repair-Loop wie im Ein-Kandidaten-Pfad) — der reparierte Kandidat
    * wird erneut geprobt und neu gerankt.
    */
-  const runBestOfNStep = async (baseContent: string): Promise<void> => {
+  const runBestOfNStep = async (baseContent: string, focusDimension: string | null): Promise<void> => {
     const n = config.candidates;
     const temps: (number | undefined)[] =
       config.backend === 'openai' ? temperatureSpread(n) : new Array<undefined>(n).fill(undefined);
@@ -1121,7 +1167,7 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
       c.batch = await collectCandidateBatch(c.messages, `cand ${k + 1}/${n}`, c.temperature);
       if (c.batch !== null) stats.candidatesSampled += 1;
       await probeCandidate(c);
-      traceCandidate(c, n);
+      traceCandidate(c, n, focusDimension);
       candidates.push(c);
     }
 
@@ -1130,7 +1176,7 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
     for (;;) {
       const withVerdict = candidates.filter((c) => c.verdict !== null);
       if (withVerdict.length === 0) return; // kein Kandidat lieferte einen Batch — nächste Runde
-      const ranked = rankCandidates(withVerdict);
+      const ranked = rankCandidates(withVerdict, focusDimension);
       const viable = ranked.filter((c) => c.verdict!.success === true);
 
       if (viable.length === 0) {
@@ -1150,7 +1196,7 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
         if (best.batch === null) return;
         stats.candidatesSampled += 1;
         await probeCandidate(best);
-        traceCandidate(best, n);
+        traceCandidate(best, n, focusDimension);
         continue;
       }
 
@@ -1159,7 +1205,7 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
       const algoPick = viable[0];
       let winner = algoPick;
       if (config.judge === 'model' && viable.length > 1) {
-        const modelPick = await modelJudgePick(viable);
+        const modelPick = await modelJudgePick(viable, focusDimension);
         stats.modelPicks += 1;
         if (modelPick !== null && modelPick.index !== algoPick.index) {
           stats.judgeDisagreements += 1;
@@ -1198,7 +1244,7 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
       if (winner.batch === null) return;
       stats.candidatesSampled += 1;
       await probeCandidate(winner);
-      traceCandidate(winner, n);
+      traceCandidate(winner, n, focusDimension);
     }
   };
 
@@ -1263,8 +1309,10 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
     const baseContent = gen.prompt + (injection ? '\n\n' + injection : '') + EMIT_SUFFIX + stagnationHint;
     if (bestOfN) {
       // Best-of-N (CR-GC-288): Sammeln → Proben → Wählen → Gewinner anwenden.
+      // Fokus-Dimension aus dem GenerationStep (CR-GC-289): focusKey hat die
+      // Form `dimension:ids` — das Ranking bevorzugt Reparatur GENAU dort.
       // Der Turn-Loop darunter bleibt der unveränderte N=1-Pfad.
-      await runBestOfNStep(baseContent);
+      await runBestOfNStep(baseContent, gen.focusKey ? gen.focusKey.split(':')[0] : null);
       continue;
     }
     const messages: unknown[] = [{ role: 'user', content: baseContent }];

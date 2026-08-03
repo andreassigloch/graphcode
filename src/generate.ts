@@ -17,11 +17,8 @@
  * Wahl bleibt deterministisch).
  */
 import type { Graph } from '@sigloch/graph-api-core';
-import type { OntologyGraph } from '@sigloch/contracts/se';
-import { evaluateAllRules, RULE_TO_DIMENSION } from '@sigloch/contracts/se';
-import { computeReadiness } from '@sigloch/se-steering';
-import { exportGraphJson } from './exporter.js';
-import { injectNDMatrices } from './nd-similarity.js';
+import { RULE_TO_DIMENSION } from '@sigloch/contracts/se';
+import { takeSteeringSnapshot } from './steering-snapshot.js';
 
 export interface GenerationStep {
   /** seed = leerer Graph; expand = Deficit-getriebene Verdichtung; handoff = Schwelle erreicht. */
@@ -108,10 +105,6 @@ export const DIMENSION_FOCUS_TYPES: Record<string, string[]> = {
   ms: ['MS', 'CR'],
 };
 
-function toOntology(graph: Graph): OntologyGraph {
-  return JSON.parse(exportGraphJson(graph)) as OntologyGraph;
-}
-
 /**
  * Der nächste Generierungsschritt für (Graph, Intention). Deterministisch —
  * gleicher Graph + gleiche Intention + gleiches defer ⇒ gleicher Schritt.
@@ -136,16 +129,11 @@ export function generationStep(
   selection: GenerationSelection = 'host',
 ): GenerationStep {
   const gateProtocol = GATE_PROTOCOL[selection];
-  const og = toOntology(graph);
+  // Steering-Snapshot (CR-GC-289): og + ND-Injektion + Full-Katalog-Eval +
+  // computeReadiness — geteilt mit dem steeringDelta des dryRun-Verdicts.
+  const { og, violations, blockingErrors, report } = takeSteeringSnapshot(graph);
   const sys = og.elements.find((e) => e.type === 'SYS');
   const effectiveIntent = intent?.trim() || sys?.description?.trim() || '';
-
-  // CR-GC-287: ND-Matrizen für DIESEN og injizieren — erst damit liefern die
-  // contracts-ND-Regeln Funde (Full-Katalog-Eval; das Gate evaluiert ND nie).
-  injectNDMatrices(og);
-  const violations = evaluateAllRules(og);
-  const blockingErrors = violations.filter((v) => v.severity === 'error').length;
-  const report = computeReadiness(og);
   const readiness = report.scores
     .filter((s) => s.applicable > 0)
     .map((s) => ({ dimension: s.dimension as string, score: s.score, violations: s.violations }));

@@ -147,6 +147,57 @@ describe('graph_mutate: formatE + dryRun + Preview-Audit (CR-GC-276)', () => {
     expect(harness.getGraph().nodes.length).toBe(0); // Working Copy restauriert
   });
 
+  it('steeringDelta (CR-GC-289): im dryRun-Verdict, deterministisch, NICHT im Apply-Verdict', async () => {
+    type SteeringDelta = {
+      blockingErrors: { before: number; after: number };
+      dimensions: Record<string, { before: number; after: number; delta: number }>;
+    };
+    const dryRun = async (): Promise<{ success: boolean; steeringDelta?: SteeringDelta; graphVersion: number }> =>
+      (await tools.graph_mutate.handler({ formatE: FE_BATCH, dryRun: true, consumerId: 'sd-test' })) as never;
+
+    const first = await dryRun();
+    expect(first.success).toBe(true);
+    expect(first.graphVersion).toBe(0); // Messung, keine Bewegung
+    const sd = first.steeringDelta!;
+    expect(sd.blockingErrors.before).toBe(0); // leerer Graph: keine Steering-Blocker
+    // REQ+TEST+verify machen req/ver anwendbar — der Fortschritt ist messbar positiv.
+    expect(sd.dimensions.req.after).toBeGreaterThan(sd.dimensions.req.before);
+    for (const d of Object.values(sd.dimensions)) {
+      expect(d.delta).toBeCloseTo(d.after - d.before, 10);
+    }
+
+    // Deterministisch: identischer Vorschlag auf identischem Zustand ⇒ identisches Delta.
+    const second = await dryRun();
+    expect(second.steeringDelta).toEqual(sd);
+
+    // Apply-Pfad: KEIN steeringDelta (Entscheidung dryRun-only — der Nachher-
+    // Zustand ist nach echtem Apply per graph_readiness lesbar; die doppelte
+    // Katalog-Evaluierung pro Write hätte keinen Konsumenten).
+    const applied = (await tools.graph_mutate.handler({ formatE: FE_BATCH, consumerId: 'sd-test' })) as {
+      success: boolean;
+      steeringDelta?: SteeringDelta;
+    };
+    expect(applied.success).toBe(true);
+    expect(applied.steeringDelta).toBeUndefined();
+  });
+
+  it('steeringDelta bei Block-Verdict: Gate hat zurückgerollt ⇒ Delta 0, Blocker-Zählung unverändert', async () => {
+    const res = (await tools.graph_mutate.handler({
+      commands: [
+        { op: 'add-node', node: { uid: 'REQ-solo', type: 'REQ', name: 'solo', description: 'Ohne TEST.', attributes: {} } },
+      ],
+      dryRun: true,
+    })) as {
+      success: boolean;
+      tier: string;
+      steeringDelta?: { blockingErrors: { before: number; after: number }; dimensions: Record<string, { delta: number }> };
+    };
+    expect(res.success).toBe(false); // R-01: REQ ohne verify-TEST
+    const sd = res.steeringDelta!;
+    expect(sd.blockingErrors.after).toBe(sd.blockingErrors.before);
+    for (const d of Object.values(sd.dimensions)) expect(d.delta).toBe(0);
+  });
+
   it('Preview-Audit: Vorschlag→Verdict im Log (validate), Merge-Replay überspringt ihn', async () => {
     await tools.graph_mutate.handler({ formatE: FE_BATCH, dryRun: true, consumerId: 'fe-preview' });
     // Abgelehnter Kandidat (illegales Paar) — auch der ist Evidenz.
