@@ -48,14 +48,14 @@ instead of a fixed trigger.)
 
 The two blue boxes in the diagram are computed completely separately and read differently:
 
-- **Readiness Delta** — would this candidate move one of the 8 project-area scores (see below)
+- **`dimension_readiness` Δ** — would this candidate move one of the 8 project-area scores (see below)
   closer to done? Computed from the same rule violations as everything else, just projected onto a
   "how much better" number instead of a yes/no.
 - **Architecture Fitness Delta** — would this candidate move the six whole-graph structure numbers
   (see further below) in a useful direction?
 
 "Weighed against each other" means: among the candidates that passed the rule preview, prefer the one
-with the better Readiness Delta first, and use Architecture Fitness Delta only to break a tie. They
+with the better `dimension_readiness` Δ first, and use Architecture Fitness Delta only to break a tie. They
 are not added into one number — one is the primary ranking, the other a tiebreaker.
 
 **The tiebreaker is a sum, not a veto.** Architecture Fitness has six numbers, and a candidate can
@@ -72,9 +72,47 @@ ways, for three different questions — none of these blocks anything either, th
 
 | View | Groups rules by | Answers |
 |---|---|---|
-| **8 readiness scores** | SE topic (requirements, use cases, functional architecture, module allocation, verification, interfaces, change requests, milestones) | "Which *area* of the project needs work next?" |
-| **Project-review gates** (System Requirements Review, Preliminary Design Review, Critical Design Review, Test Readiness Review) | project stage | "Are we ready to move from requirements-review to design-review to verification?" |
+| **`dimension_readiness`** (8 scores) | SE topic (requirements, use cases, functional architecture, module allocation, verification, interfaces, change requests, milestones) | "Which *area* of the project needs work next?" |
+| **`phase_readiness`** (System Requirements Review, Preliminary Design Review, Critical Design Review, Test Readiness Review) | project stage | "Are we ready to move from requirements-review to design-review to verification?" |
 | **Milestone gates** | which milestone (1st, 2nd, 3rd, 4th slice of the plan) | "Is milestone N actually done?" |
+
+## What a review gate will check — three kinds of leg
+
+*(Design in progress — the review-gate mechanics are being moved from the viewer into the shared
+rule set; this section describes where that lands, not what ships today.)*
+
+A review gate (SRR, PDR, CDR, TRR) answers "may we move to the next stage?" — and it turns out that
+question needs three different kinds of check, because each catches a failure the others are blind to:
+
+1. **Rule legs** — the same yes/no rules as everywhere else, grouped by stage instead of by topic:
+   "every use case has requirements" belongs to the requirements review, "every test is bound to a
+   real test file" belongs to test readiness. Nothing new is computed — it's the third grouping of
+   the one violation stream.
+2. **Layer-presence legs** — a per-element rule cannot fire on an element that doesn't exist. A graph
+   with *zero* data flows passes every flow rule vacuously, and on a real project that exact hole let
+   a graph score 0.86 on functional architecture while its entire flow layer was missing. So a gate
+   also asks the one question no per-element rule can: *is the layer there at all* — once functions
+   exist, the design review demands at least one flow; once flows exist, it demands their data
+   contracts.
+3. **Analysis-freshness legs** — the newest kind, and the reason this section exists. A semantic
+   review of four technically-clean generated graphs found content errors no rule can see: an export
+   requirement inventing formats its own use case contradicts, an error message modeled as a use
+   case, a "collaborative editing" system with no concurrency handling anywhere. Catching those is
+   *judgment work*, and graphcode deliberately does not automate judgment — it has five named
+   judgment artifacts instead (Concept of Operations, Assumption Review, FMEA, Trade Study,
+   Implementation Plan), each produced by a human-guided analysis session and each already tracked
+   with a freshness state: an analysis goes **stale when the scope it analyzed has moved on**. The
+   gate leg checks exactly two things — the artifact exists, and it's fresh — and never looks inside.
+   The judgment stays human; the gate just refuses to let a stage close on judgment work that was
+   never done, or that predates the model it supposedly judged.
+
+![Review gates: rule legs, layer presence, and analysis freshness per stage](img/phase-gates.svg)
+
+The division of labor matters more than the mechanics: rules catch *illegal*, layer checks catch
+*absent*, freshness checks catch *unexamined*. The three failure classes from that semantic review
+map onto the third row — invented facts are what the Assumption Review exists to pin down, the
+missing-concurrency hole is a textbook FMEA finding, and both would have been caught before the
+design review closed, by a gate that itself understands nothing about either.
 
 ## Module diagnostics — a few of those rules, singled out
 
@@ -117,18 +155,18 @@ fixed*, separate from whether the graph got better overall. Worth its own view l
 
 **Progress — rank 3 against rank 4, one point per round actually applied.** Every point is a real
 accepted edit from one real run (devstral, best-of-N driver, 22 rounds); round 1 (the cold start —
-first SYS/ACTORs/UCs from nothing) is left off the plot, off-scale at readiness +1.42 / fitness
-+6.67, and stated here instead of squashing the other 21 points into a corner.
+first SYS/ACTORs/UCs from nothing) is left off the plot, off-scale at `dimension_readiness` +1.42 /
+fitness +6.67, and stated here instead of squashing the other 21 points into a corner.
 
-![Progress scatter: readiness delta vs. architecture fitness delta per applied round](img/progress-scatter.svg)
+![Progress scatter: dimension_readiness delta vs. architecture fitness delta per applied round](img/progress-scatter.svg)
 
 The shape confirms the caveat from earlier, not a diagonal trend: almost every point sits on the
 fitness-delta = 0 line — the architecture layer simply isn't touched most rounds. Round 2 is the
 first to move fitness at all; round 4 moves it *backward* (−1.11) while still winning its round on
-readiness — a real example of the tiebreaker's own rule: one number down is allowed, if the total
-that matters more says yes. A few readiness values dip below zero too (rounds 9, 14, 16, 17) — the
-best of that round's candidates was still a net negative; the driver picked the least-bad option, not
-a guaranteed-good one.
+`dimension_readiness` — a real example of the tiebreaker's own rule: one number down is allowed, if
+the total that matters more says yes. A few `dimension_readiness` values dip below zero too (rounds
+9, 14, 16, 17) — the best of that round's candidates was still a net negative; the driver picked the
+least-bad option, not a guaranteed-good one.
 
 **Efficiency — cumulative applied vs. rejected, rank 1 only.** A second real run (Haiku 4.5, 56 real
 gate calls in sequence) — mutations-count dropped from this view entirely, for the reason above: it's

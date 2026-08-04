@@ -49,10 +49,36 @@ Design-Punkt ("Zielprofil als Runde-1-Input — beeinflusst den Plan"). Dieser C
    führt den Menschen durch die 6 Dimensionen, schreibt die Config über denselben validierten Loader,
    macht eine Konflikt-Warnung sichtbar statt sie stillschweigend zu schlucken.
 
+## Nachtrag 2026-08-04: Intent-Coverage als vierter Baustein
+
+Motivation aus dem semantischen Review der Top-Graphen (Haiku/devstral/qwen, s.
+Chat-Befund): technisch fehlerfreie Graphen tragen Inhaltsfehler (devstral v20
+erfindet XML/CSV-Export, v18 modelliert Fehlermeldungen als UCs, qwen lässt die
+Gate-Governance requirements-los) — **keine Metrik im System misst
+Intentionstreue**. Regeln/Readiness/Ziel-Delta messen Struktur; ein Graph aus
+wohlgeformtem Unsinn passiert alle Gates.
+
+Die Runde-1-Frage wird deshalb ZWEITEILIG: (a) das ℝ⁶-Zielprofil (Qualitäts-
+Richtung, wie oben), (b) die **Intentions-Anker** — die 3–7 inhaltlichen
+Kernthemen der Prosa-Intention, vom Menschen bestätigt (Default: deterministisch
+aus der Intention extrahierte Nomen-/Verbphrasen). Persistiert in derselben
+Config (`.graphcode/target-profile.json`, Feld `intentAnchors`).
+
+Daraus ein **Intent-Coverage-Read-out** (KPI, nie ein Veto): je Anker, ob und
+wo er im Graphen adressiert ist (Namens-/Beschreibungs-Match über UC/REQ/FUNC —
+deterministisch, dieselbe Normalisierung wie der ND-Preflight-Hint aus
+CR-GC-287). Sichtbar in `graph_readiness` und als Zeile im generate-Prompt
+(„unadressierte Anker: …") — damit steuert die Intention jede Runde, nicht nur
+Runde 1. Optional (Folgearbeit, nicht hier): Anker-Abdeckung als Judge-Stufe im
+Best-of-N. Erfundene Inhalte (XML/CSV-Klasse) fängt der Read-out nur indirekt —
+das bleibt Sache der Analyse-Ebene (se-irr, s. CR-GC-294-Spike).
+
 ## Abgrenzung
 
 - Kein neuer ElementType/Gate-Objekt — das Profil ist Config, nicht Graph-SSOT; „kein Hand-Edit des
   SSOT" gilt hier nicht, weil es nicht das SSOT ist.
+- Intent-Coverage ist ein Read-out/KPI, NIE ein Gate-Blocker — Abdeckung sagt „adressiert",
+  nicht „gut gelöst"; das Urteil bleibt bei Mensch/Analyse-Skills.
 - Konflikt-Check bleibt Warnung, kein Block — ein Zielkonflikt kann eine bewusste Operator-Entscheidung
   sein (z.B. beide Seiten leicht anheben); nur unsichtbar darf er nicht bleiben.
 - Kein Auto-`graph_suggest`-Aufruf bei fehlendem Profil — ohne Profil bleibt das Verhalten wie heute

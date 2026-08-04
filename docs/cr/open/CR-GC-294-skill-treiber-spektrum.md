@@ -43,6 +43,25 @@ Nur die Bucket-Einteilung festhalten, priorisiert für einen möglichen Folge-CR
 **Kein Code in diesem CR.** Umsetzung jedes Buckets wäre ein eigener, kleiner CR (≤5 Dateien je
 Skill/Bucket), nicht hier gebündelt.
 
+## Nachtrag 2026-08-04: Bucket-4-Spike konkretisiert (Testfälle aus dem Semantik-Review)
+
+Das semantische Review der Top-Graphen liefert vier REALE Defekte als messbare
+Spike-Testfälle — der Bucket-4-Spike ist damit ein Experiment statt einer vagen
+Frage. Setup: bestes Local-Modell (qwen3.6-35b-a3b, s. results-README), je
+Skill EINE Runden-Instruktion im Treiber-Stil, Erfolg = Defekt wird ohne
+Vorsage gefunden:
+
+| # | Testfall (real, aus results/) | Skill | Erfolgskriterium |
+|---|---|---|---|
+| 1 | devstral-v20: REQ verlangt „JSON, XML, CSV", UC sagt JSON/Format-E | se-irr | Modell benennt die XML/CSV-Behauptung als unbelegte Annahme + den UC↔REQ-Widerspruch |
+| 2 | devstral-v18: „Login Requirements Missing Requirement" als UC | se-irr (oder author-uc-Nachprüfung) | Modell erkennt Meta-Artefakt (kein Actor/Verb/Ergebnis) |
+| 3 | qwen35a3b: „gemeinsam autorieren" ohne Concurrency/OCC-REQ | se-fmea | Failure Mode „konkurrierende Writes" wird gefunden + Mitigations-REQ vorgeschlagen |
+| 4 | qwen35a3b: Apply-Gate nur als FUNC, keine Governance-REQs | se-fmea | Failure „ungültiger Batch persistiert" → abgeleitete REQ |
+
+Auch ein Teilergebnis ist ein Ergebnis (z.B. „irr findet 1+2, fmea braucht
+Frontier") — es entscheidet, welcher Teil von Bucket 4 treiber-fähig wird und
+welcher Host-only bleibt.
+
 ## Abgrenzung
 
 - Keine Änderung an Rules/Preflight/ΔM/ℝ⁶ — reine Scope-/Priorisierungs-Entscheidung.
