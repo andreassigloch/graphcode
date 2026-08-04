@@ -1,6 +1,17 @@
 # CR-GC-283 — Planungs-Step auf dem Top-Graphen (Folgechat-Input)
 
-**Status:** open
+**Status:** open — Schritte 1+2 weitgehend erledigt, Rest offen (Prüf-Nachtrag
+2026-08-04, verifiziert gegen `rig/plan-step/`):
+- ✅ Arbeits-Repo `rig/plan-step/` steht (graphcode init komplett: Hooks,
+  Commands, Kuzu-Store, Graph committed) — der Scratchpad-Hinweis unten ist
+  damit obsolet
+- ✅ Duplikat-REQs gemerged (26→21 REQ, 0 Namens-Duplikate)
+- ✅ se-plan gelaufen: 4 MS + 11 CR im Graphen (11× CR→MS, 3× MS→MS relation)
+- ❌ die 5 UC-01-Errors sind NICHT aufgelöst (die `*-postcond`-UCs ohne REQ)
+- ❌ kein CR→CR-depends-DAG (0 Kanten — Build-Reihenfolge hängt nur an der
+  MS-Kette)
+- ❌ kein `se-view:implplan`-Export (docs/views fehlt im Arbeits-Repo)
+- ❌ Vergleichsmessung Opus-Plan vs. devstral-Plan: nicht gefunden
 **Datum:** 2026-08-01
 **Kontext:** `docs/executor-abschlussbericht.md` — Abschluss des Executor-
 Programms (CR-GC-278…282). Dieser CR ist der erste Schritt des dort benannten
