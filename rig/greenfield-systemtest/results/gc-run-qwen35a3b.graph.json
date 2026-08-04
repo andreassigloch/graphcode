@@ -1,0 +1,694 @@
+{
+  "elements": [
+    {
+      "id": "ACTOR-admin",
+      "type": "ACTOR",
+      "name": "Admin",
+      "description": "Systemadministrator mit Berechtigungen zur Systemverwaltung und Nutzersteuerung"
+    },
+    {
+      "id": "ACTOR-nutzer",
+      "type": "ACTOR",
+      "name": "Nutzer",
+      "description": "Registrierter Benutzer, der sich anmeldet und gemeinsam am Graphen autoriert"
+    },
+    {
+      "id": "ACTOR-user",
+      "type": "ACTOR",
+      "name": "Nutzer der Web-App",
+      "description": "Interne oder externe Benutzer, die sich anmelden und den Graphen nutzen."
+    },
+    {
+      "id": "ACTOR-web-client",
+      "type": "ACTOR",
+      "name": "Web-Client",
+      "description": "Browser-Anwendung des Nutzers, die Live-Updates empfängt und Graphänderungen visualisiert"
+    },
+    {
+      "id": "FCHAIN-anmelden",
+      "type": "FCHAIN",
+      "name": "Anmeldeprozess",
+      "description": "Szenario zur Authentifizierung und Session-Eröffnung."
+    },
+    {
+      "id": "FCHAIN-exportieren",
+      "type": "FCHAIN",
+      "name": "Datenexport",
+      "description": "Szenario zur Erstellung und Ausgabe von Graph-Daten."
+    },
+    {
+      "id": "FCHAIN-graph-autorieren",
+      "type": "FCHAIN",
+      "name": "Graph-Autorisierung",
+      "description": "Szenario zur gemeinsamen Bearbeitung und Validierung von Änderungen."
+    },
+    {
+      "id": "FCHAIN-live-updates",
+      "type": "FCHAIN",
+      "name": "Live-Updates empfangen",
+      "description": "Szenario zur Echtzeit-Bereitstellung von Graph-Änderungen an alle verbundenen Clients."
+    },
+    {
+      "id": "FLOW-auth-request",
+      "type": "FLOW",
+      "name": "Auth-Anfrage",
+      "description": "Schreibberechtigungsanfrage für Graph-Elemente"
+    },
+    {
+      "id": "FLOW-auth-response",
+      "type": "FLOW",
+      "name": "Auth-Antwort",
+      "description": "Apply-Gate-Validierungsergebnis"
+    },
+    {
+      "id": "FLOW-export-file",
+      "type": "FLOW",
+      "name": "Export-Datei",
+      "description": "Geschriebene Exportdatei im Zielformat"
+    },
+    {
+      "id": "FLOW-export-request",
+      "type": "FLOW",
+      "name": "Export-Anfrage",
+      "description": "Anfrage zur Graph-Filterung und Datenauswahl"
+    },
+    {
+      "id": "FLOW-export-response",
+      "type": "FLOW",
+      "name": "Export-Antwort",
+      "description": "Konvertierte und bereitgestellte Exportdatei"
+    },
+    {
+      "id": "FLOW-graph-delta",
+      "type": "FLOW",
+      "name": "Graph-Datenstrom",
+      "description": "Datenstrom der berechneten Graph-Änderungen an Clients"
+    },
+    {
+      "id": "FLOW-live-push",
+      "type": "FLOW",
+      "name": "Live-Push-Verbindung",
+      "description": "Websocket-Verbindung für Echtzeit-Benachrichtigungen über Graphänderungen"
+    },
+    {
+      "id": "FLOW-login-request",
+      "type": "FLOW",
+      "name": "Login-Anfrage",
+      "description": "Websocket-Verbindungsaufbau für Authentifizierungsanfrage"
+    },
+    {
+      "id": "FLOW-login-response",
+      "type": "FLOW",
+      "name": "Login-Antwort",
+      "description": "Session-Token und Dashboard-Zugriff für Nutzer"
+    },
+    {
+      "id": "FUNC-apply-gate-ausfuehren",
+      "type": "FUNC",
+      "name": "Apply-Gate ausführen",
+      "description": "Führt die Validierungslogik des Apply-Gates durch."
+    },
+    {
+      "id": "FUNC-benutzer-pruefen",
+      "type": "FUNC",
+      "name": "Benutzer prüfen",
+      "description": "Überprüft Schreibrechte des aktuellen Nutzers für das Ziel-Element."
+    },
+    {
+      "id": "FUNC-client-broadcast",
+      "type": "FUNC",
+      "name": "Client-Broadcasting",
+      "description": "Broadcastet Graph-Änderungen an alle verbundenen Clients"
+    },
+    {
+      "id": "FUNC-connect-stream",
+      "type": "FUNC",
+      "name": "Stream verbinden",
+      "description": "Websocket-Verbindung zum Server aufbauen und Status prüfen."
+    },
+    {
+      "id": "FUNC-credentials-pruefen",
+      "type": "FUNC",
+      "name": "Credentials prüfen",
+      "description": "Validiert Benutzername und Passwort gegen die Datenbank."
+    },
+    {
+      "id": "FUNC-datei-erstellen",
+      "type": "FUNC",
+      "name": "Datei erstellen",
+      "description": "Schreibt das konvertierte Ergebnis in eine Datei."
+    },
+    {
+      "id": "FUNC-daten-auswaehlen",
+      "type": "FUNC",
+      "name": "Daten auswählen",
+      "description": "Filtert den Graphen nach exportierten Subgraphen."
+    },
+    {
+      "id": "FUNC-delta-compute",
+      "type": "FUNC",
+      "name": "Delta-Berechnung",
+      "description": "Berechnet Inkremente von Graph-Änderungen für effiziente Übertragung"
+    },
+    {
+      "id": "FUNC-export-data",
+      "type": "FUNC",
+      "name": "Daten exportieren",
+      "description": "Serialisiert Graphknoten und Kanten in gewünschtes Format."
+    },
+    {
+      "id": "FUNC-format-konvertieren",
+      "type": "FUNC",
+      "name": "Format konvertieren",
+      "description": "Transformiert interne Graph-Repräsentation in JSON oder Format-E."
+    },
+    {
+      "id": "FUNC-live-update-empfangen",
+      "type": "FUNC",
+      "name": "Live-Update empfangen",
+      "description": "Empfängt und rendert die Bestätigung der Änderung im Client."
+    },
+    {
+      "id": "FUNC-login",
+      "type": "FUNC",
+      "name": "Login durchführen",
+      "description": "Prüft Credentials, validiert Session und gewährt Zugriff."
+    },
+    {
+      "id": "FUNC-process-events",
+      "type": "FUNC",
+      "name": "Events verarbeiten",
+      "description": "Eingehende JSON-Payloads parsen und auf Integrität prüfen."
+    },
+    {
+      "id": "FUNC-realtime-sync",
+      "type": "FUNC",
+      "name": "Echtzeit-Synchronisierung",
+      "description": "Synchronisiert Änderungen des Systemgraphen in Echtzeit über Websocket-Verbindung"
+    },
+    {
+      "id": "FUNC-render-view",
+      "type": "FUNC",
+      "name": "Ansicht aktualisieren",
+      "description": "Benutzeroberfläche mit den neuen Knoten und Kanten rendern."
+    },
+    {
+      "id": "FUNC-session-starten",
+      "type": "FUNC",
+      "name": "Session starten",
+      "description": "Erzeugt ein gültiges Session-Token nach erfolgreicher Prüfung."
+    },
+    {
+      "id": "FUNC-ui-wechseln",
+      "type": "FUNC",
+      "name": "UI wechseln",
+      "description": "Wechselt die Ansicht vom Login-Screen zum Dashboard."
+    },
+    {
+      "id": "FUNC-validate-graph",
+      "type": "FUNC",
+      "name": "Graph validieren",
+      "description": "Prüft Integrität und Konsistenz des Graphen vor Änderungen."
+    },
+    {
+      "id": "REQ-auth-user",
+      "type": "REQ",
+      "name": "Authentifizierung",
+      "description": "Nutzer muss gültige Credentials eingeben und prüfen lassen."
+    },
+    {
+      "id": "REQ-authentication",
+      "type": "REQ",
+      "name": "Authentifizierung",
+      "description": "System muss Nutzer authentifizieren (Login) bevor Zugriff auf Graphen erlaubt ist."
+    },
+    {
+      "id": "REQ-export-valid",
+      "type": "REQ",
+      "name": "Exportvalidierung",
+      "description": "Graph muss konsistent und validiert sein vor Export."
+    },
+    {
+      "id": "REQ-system-export",
+      "type": "REQ",
+      "name": "System-Export",
+      "description": "System muss den aktuellen Graphen als JSON-Datei exportieren können."
+    },
+    {
+      "id": "REQ-write-permission",
+      "type": "REQ",
+      "name": "Schreibberechtigung",
+      "description": "Nutzer muss explizite Schreibrechte für Zielknoten haben."
+    },
+    {
+      "id": "SYS-graphcode-harness",
+      "type": "SYS",
+      "name": "graphcode harness",
+      "description": "Multiuser-fähige Web-App aus dem graphcode harness: Nutzer melden sich an, autorieren gemeinsam einen governten Systemgraphen über das Apply-Gate, sehen Live-Updates und exportieren den Stand."
+    },
+    {
+      "id": "TEST-verify-auth-user",
+      "type": "TEST",
+      "name": "Authentication Check",
+      "description": "Verifiziert, dass Nutzer sich erfolgreich anmelden können. Prüfschritte: 1. Benutzername und Passwort eingeben. 2. Login-Button betätigen. 3. Bestätigung (Session-Token) prüfen.",
+      "concept": true
+    },
+    {
+      "id": "TEST-verify-consistency",
+      "type": "TEST",
+      "name": "Validierung Export-Konsistenz",
+      "description": "Stellt sicher, dass der exportierte Graph konsistent und validiert ist gemäß Schema.",
+      "testRef": {
+        "file": "test_export.py",
+        "tool": "pytest"
+      }
+    },
+    {
+      "id": "TEST-verify-credentials",
+      "type": "TEST",
+      "name": "Verifikation Login-Credentials",
+      "description": "Prüft, dass das System Login mit gültigen und ungültigen Credentials korrekt annimmt oder verweigert.",
+      "testRef": {
+        "file": "test_credentials.py",
+        "tool": "pytest"
+      }
+    },
+    {
+      "id": "TEST-verify-export-valid",
+      "type": "TEST",
+      "name": "Export Validation Check",
+      "description": "Stellt sicher, dass vor dem Export keine Inkonsistenzen im Graphen existieren. Prüfschritte: 1. Integritätsprüfung des Graphen. 2. Konvertierung in JSON/Format-E anstoßen. 3. Ausgabe auf Vollständigkeit prüfen.",
+      "concept": true
+    },
+    {
+      "id": "TEST-verify-json-export",
+      "type": "TEST",
+      "name": "JSON Export Verifikation",
+      "description": "Stellt sicher, dass der Graph nach Export validierbarer JSON-Code ist und alle Knoten repliziert wurden.",
+      "testRef": {
+        "file": "test_export_json.py",
+        "tool": "jest"
+      },
+      "case": "export_integrity"
+    },
+    {
+      "id": "TEST-verify-login",
+      "type": "TEST",
+      "name": "Login-Flow Verifikation",
+      "description": "Überprüft den vollständigen Login-Prozess: Credentials prüfen, Session-Token generieren, Graph-Initiale laden.",
+      "testRef": {
+        "file": "test_login.py",
+        "tool": "jest"
+      },
+      "case": "login_flow"
+    },
+    {
+      "id": "TEST-verify-write-access",
+      "type": "TEST",
+      "name": "Prüfung Schreibrechte",
+      "description": "Stellt sicher, dass ein Nutzer nur Knoten schreiben kann, für die er explizite Berechtigung hat.",
+      "testRef": {
+        "file": "test_perms.py",
+        "tool": "pytest"
+      }
+    },
+    {
+      "id": "TEST-verify-write-permission",
+      "type": "TEST",
+      "name": "Write Permission Check",
+      "description": "Stellt sicher, dass nur autorisierte Nutzer Änderungen vornehmen. Prüfschritte: 1. Rolle des Nutzers prüfen (Admin/User). 2. Schreibversuch auf fremden Knoten. 3. Ergebnis 'Access Denied' oder 'Success' validieren.",
+      "concept": true
+    },
+    {
+      "id": "UC-anmelden",
+      "type": "UC",
+      "name": "Anmelden",
+      "description": "Nutzer melden sich mit Credentials an und erhalten Zugriff auf den Graphen"
+    },
+    {
+      "id": "UC-exportieren",
+      "type": "UC",
+      "name": "Exportieren",
+      "description": "Den aktuellen Graphenstand als JSON oder Format-E exportieren"
+    },
+    {
+      "id": "UC-graph-autorieren",
+      "type": "UC",
+      "name": "Graph autorieren",
+      "description": "Gemeinsam Elemente und Kanten über das Apply-Gate autorieren und verwalten"
+    },
+    {
+      "id": "UC-live-updates-sehen",
+      "type": "UC",
+      "name": "Live-Updates sehen",
+      "description": "Echtzeit-Benachrichtigungen über Graphänderungen aller Nutzer erhalten"
+    }
+  ],
+  "traces": [
+    {
+      "source": "ACTOR-admin",
+      "target": "FLOW-auth-request",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-anmelden",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-exportieren",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-graph-autorieren",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-live-updates-sehen",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-nutzer",
+      "target": "FLOW-login-request",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-nutzer",
+      "target": "UC-anmelden",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-nutzer",
+      "target": "UC-exportieren",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-nutzer",
+      "target": "UC-graph-autorieren",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-nutzer",
+      "target": "UC-live-updates-sehen",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "FLOW-export-request",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-anmelden",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-exportieren",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-graph-autorieren",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-web-client",
+      "target": "FLOW-live-push",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-web-client",
+      "target": "UC-live-updates-sehen",
+      "type": "io"
+    },
+    {
+      "source": "FCHAIN-anmelden",
+      "target": "FUNC-credentials-pruefen",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-anmelden",
+      "target": "FUNC-login",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-anmelden",
+      "target": "FUNC-session-starten",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-anmelden",
+      "target": "FUNC-ui-wechseln",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-exportieren",
+      "target": "FUNC-datei-erstellen",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-exportieren",
+      "target": "FUNC-daten-auswaehlen",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-exportieren",
+      "target": "FUNC-export-data",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-exportieren",
+      "target": "FUNC-format-konvertieren",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-graph-autorieren",
+      "target": "FUNC-apply-gate-ausfuehren",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-graph-autorieren",
+      "target": "FUNC-benutzer-pruefen",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-graph-autorieren",
+      "target": "FUNC-live-update-empfangen",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-graph-autorieren",
+      "target": "FUNC-validate-graph",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-live-updates",
+      "target": "FUNC-client-broadcast",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-live-updates",
+      "target": "FUNC-connect-stream",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-live-updates",
+      "target": "FUNC-delta-compute",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-live-updates",
+      "target": "FUNC-process-events",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-live-updates",
+      "target": "FUNC-realtime-sync",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-live-updates",
+      "target": "FUNC-render-view",
+      "type": "compose"
+    },
+    {
+      "source": "FLOW-auth-request",
+      "target": "FUNC-benutzer-pruefen",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-auth-response",
+      "target": "ACTOR-admin",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-export-file",
+      "target": "ACTOR-user",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-export-request",
+      "target": "FUNC-daten-auswaehlen",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-export-response",
+      "target": "ACTOR-user",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-graph-delta",
+      "target": "ACTOR-web-client",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-live-push",
+      "target": "FUNC-realtime-sync",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-login-request",
+      "target": "FUNC-credentials-pruefen",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-login-response",
+      "target": "ACTOR-nutzer",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-apply-gate-ausfuehren",
+      "target": "FLOW-auth-response",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-datei-erstellen",
+      "target": "FLOW-export-file",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-delta-compute",
+      "target": "FLOW-graph-delta",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-format-konvertieren",
+      "target": "FLOW-export-response",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-session-starten",
+      "target": "FLOW-login-response",
+      "type": "io"
+    },
+    {
+      "source": "SYS-graphcode-harness",
+      "target": "UC-anmelden",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphcode-harness",
+      "target": "UC-exportieren",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphcode-harness",
+      "target": "UC-graph-autorieren",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphcode-harness",
+      "target": "UC-live-updates-sehen",
+      "type": "compose"
+    },
+    {
+      "source": "TEST-verify-auth-user",
+      "target": "REQ-auth-user",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-auth-user",
+      "target": "REQ-authentication",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-consistency",
+      "target": "REQ-export-valid",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-credentials",
+      "target": "REQ-auth-user",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-export-valid",
+      "target": "REQ-export-valid",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-export-valid",
+      "target": "REQ-system-export",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-json-export",
+      "target": "REQ-system-export",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-login",
+      "target": "REQ-authentication",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-write-access",
+      "target": "REQ-write-permission",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-write-permission",
+      "target": "REQ-write-permission",
+      "type": "verify"
+    },
+    {
+      "source": "UC-anmelden",
+      "target": "FCHAIN-anmelden",
+      "type": "compose"
+    },
+    {
+      "source": "UC-anmelden",
+      "target": "REQ-auth-user",
+      "type": "compose"
+    },
+    {
+      "source": "UC-exportieren",
+      "target": "FCHAIN-exportieren",
+      "type": "compose"
+    },
+    {
+      "source": "UC-exportieren",
+      "target": "REQ-export-valid",
+      "type": "compose"
+    },
+    {
+      "source": "UC-graph-autorieren",
+      "target": "FCHAIN-graph-autorieren",
+      "type": "compose"
+    },
+    {
+      "source": "UC-graph-autorieren",
+      "target": "REQ-write-permission",
+      "type": "compose"
+    },
+    {
+      "source": "UC-live-updates-sehen",
+      "target": "FCHAIN-live-updates",
+      "type": "compose"
+    }
+  ]
+}

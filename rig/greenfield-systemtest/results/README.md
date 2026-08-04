@@ -25,6 +25,7 @@ ohne Export (v1–v5, v7, v8, v10, v13).
 | devstral-v19-recount | devstral | 16+7 Rd. (Sleep-Kill-Unterbrechung), N=3, mit Injektion | R-12-Recount für CR-292: **0 Treffer** bei erreichter arch-Ebene (8 FUNC) → CR-292 ohne Bau geschlossen; 31 El |
 | devstral-v20-noinject | devstral | 24 Rd., N=3, `injection=false` (CR-293) | **40 El / 51 Tr inkl. 3 MOD + 1 FLOW** (breitester Local-Mix), 24/24 Applies — Injektion kostet lokal Breite → CR-297 Backend-Default |
 | qwen05b | qwen2.5-0.5b | 8 Rd., N=3, ohne Injektion | **Untergrenzen-Test: 3 El** — 41 Kandidaten preflight-geblockt, 0 Gate-Rejections; einziger korrekter Baustein kam vom CR-284-Autocomplete. Gerüst hält, Kohärenz fehlt |
+| qwen35a3b | qwen3.6-35b-a3b (MoE) | 12 Rd., N=3, ohne Injektion, maxTokens 8192 | **Neues Local-Optimum: 53 El / 69 Tr, 1 Error, 0 Rejections, 9 FLOWs freiwillig, 28 min/$0** — 88 % der Opus-Ausbeute bei gleicher Rundenzahl; Schwäche: req/uc dünn (5 REQ, 1 Duplikat) |
 
 Nachtest-Proben (CR-286): `logs/gc-run-opus5-probe-2048.run.log` (maxTokens 2048
 → `input-schema keys: []`, Tool-Call-JSON gekappt) vs. `…-probe-8192.run.log`
