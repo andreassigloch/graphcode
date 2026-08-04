@@ -227,6 +227,60 @@
       "description": "Szenario: Nutzer sieht UI-Update mit erfolgreicher oder blockierter Mutation durchs Apply-Gate"
     },
     {
+      "id": "FLOW-approved-batch",
+      "type": "FLOW",
+      "name": "Approveter Batch",
+      "description": "Freigegebener Batch → atomare Persistierung (All-or-Nothing)."
+    },
+    {
+      "id": "FLOW-auth-result",
+      "type": "FLOW",
+      "name": "Auth-Ergebnis",
+      "description": "Geprüfte Credentials → Session-Erzeugung (Erfolg/Fehlschlag + User-Identität)."
+    },
+    {
+      "id": "FLOW-edit-commands",
+      "type": "FLOW",
+      "name": "Edit-Kommandos",
+      "description": "Vom Editor erzeugte Mutations-Kommandos (add/update/delete) zur Einzelvalidierung."
+    },
+    {
+      "id": "FLOW-gate-verdict",
+      "type": "FLOW",
+      "name": "Gate-Verdict",
+      "description": "Batch-Verdict (tier/violations) → Approval-Entscheidung."
+    },
+    {
+      "id": "FLOW-graph-delta",
+      "type": "FLOW",
+      "name": "Graph-Delta",
+      "description": "Persistierte Änderungsmenge — Quelle für Export, Suchindex und Live-Broadcast."
+    },
+    {
+      "id": "FLOW-index-entries",
+      "type": "FLOW",
+      "name": "Index-Einträge",
+      "description": "Aktualisierte Suchindex-Einträge → Filter/Query."
+    },
+    {
+      "id": "FLOW-session-token",
+      "type": "FLOW",
+      "name": "Session-Token",
+      "description": "Gültiges Session-Token — Voraussetzung für jede Authoring-Aktion."
+    },
+    {
+      "id": "FLOW-update-event",
+      "type": "FLOW",
+      "name": "Update-Event",
+      "description": "Versioniertes Broadcast-Event → Subscriber-UI."
+    },
+    {
+      "id": "FLOW-validated-commands",
+      "type": "FLOW",
+      "name": "Validierte Kommandos",
+      "description": "Einzeln geprüfte Kommandos → Batch-Validierung gegen V3_RULES."
+    },
+    {
       "id": "FUNC-approve-batch",
       "type": "FUNC",
       "name": "Approve Batch",
@@ -381,6 +435,12 @@
       "description": "Graph-Suchindex muss Element-Queries innerhalb von 200ms beantworten, ohne Mutations zu blockieren. Messkriterium: (1) P99-Latenz für Suche nach UID/Name <200ms bei bis zu 10.000 Elementen im Graph. (2) Während aktiver Mutations (Apply-Gate laufen) darf Search-Latenz nicht um mehr als 50% ansteigen. (3) Index wird innerhalb von 100ms nach erfolgreicher Mutation aktualisiert."
     },
     {
+      "id": "REQ-e2e-collaboration-journey",
+      "type": "REQ",
+      "name": "Kompletter Multiuser-Durchstich",
+      "description": "Zwei Nutzer: Login → gemeinsames Autorieren durchs Apply-Gate → Live-Update beim jeweils anderen sichtbar → Export enthält beide Beiträge. Messbar: Durchstich < 60 s, Export bitweise reproduzierbar."
+    },
+    {
       "id": "REQ-export-snapshot-bitwise-identical",
       "type": "REQ",
       "name": "Export-Snapshot ist bitwise-identisch mit in-memory Graph",
@@ -465,6 +525,12 @@
       "description": "Multiuser-fähige Web-App aus dem graphcode harness: Nutzer melden sich an, autorieren gemeinsam einen governten Systemgraphen über das Apply-Gate, sehen Live-Updates und exportieren den Stand."
     },
     {
+      "id": "TEST-auth-session",
+      "type": "TEST",
+      "name": "Auth & Session-Lebenszyklus",
+      "description": "Login mit Email/Passwort → Session-Token erzeugt und zurückgegeben; falsches Passwort → kein Token; Token-Ablauf erzwingt Re-Login."
+    },
+    {
       "id": "TEST-batch-validation",
       "type": "TEST",
       "name": "Batch-Validierung verifizieren",
@@ -472,11 +538,29 @@
       "concept": true
     },
     {
+      "id": "TEST-e2e-multiuser-journey",
+      "type": "TEST",
+      "name": "E2E Multiuser-Durchstich",
+      "description": "Playwright, 2 Browser-Contexts: beide Nutzer anmelden, User A autoriert Element (Gate-applied), User B sieht Live-Update ohne Reload, Export-Download enthält As Element. Ein Lauf = ganze Pyramide-Spitze."
+    },
+    {
+      "id": "TEST-export-roundtrip",
+      "type": "TEST",
+      "name": "Export-Determinismus",
+      "description": "Zweimal exportieren ohne Mutation → bitweise identisch; Export nach Mutation trägt neue Version; Re-Import (seed) reproduziert den Graphen verlustfrei."
+    },
+    {
       "id": "TEST-governance-enforcement",
       "type": "TEST",
       "name": "Governance-Enforcement verifizieren",
       "description": "Prüfschritt: System enforced V3_RULES bei Apply-Gate, blockiert ungültige Mutations-Batches mit Verdicts, erlaubt nur compliant gates",
       "concept": true
+    },
+    {
+      "id": "TEST-live-updates",
+      "type": "TEST",
+      "name": "Live-Update-Strom",
+      "description": "WebSocket-Subscription: persistierte Mutation erzeugt versioniertes Event; UI zeigt Änderung ohne Reload; Reconnect via Last-Event-ID liefert keinen veralteten Stand."
     },
     {
       "id": "TEST-search-filtering",
@@ -523,34 +607,16 @@
       "description": "Admin reviewed und approveert Mutationsbatch durchs Apply-Gate"
     },
     {
-      "id": "UC-admin-approve-batch-postcond",
-      "type": "UC",
-      "name": "Admin bestätigt Batch-Gültigkeitscheck",
-      "description": "Admin prüft Gate-Verdict und approveert rechtskonformen Batch zur Persistierung"
-    },
-    {
       "id": "UC-admin-enforce-governance",
       "type": "UC",
       "name": "Admin enforced Governance-Regeln",
       "description": "Admin durchsetzt V3_RULES und blockiert Violations"
     },
     {
-      "id": "UC-admin-enforce-governance-postcond",
-      "type": "UC",
-      "name": "Admin blockiert Verletzungen und dokumentiert",
-      "description": "Admin enforcement-Akt erzwingt V3_RULES-Compliance und dokumentiert Blockade-Gründe"
-    },
-    {
       "id": "UC-system-export-graph",
       "type": "UC",
       "name": "System exportiert Graphstand",
       "description": "Harness exportiert aktuellen Graphstand als Datei oder API"
-    },
-    {
-      "id": "UC-system-export-graph-postcond",
-      "type": "UC",
-      "name": "System exportiert governten Graphstand",
-      "description": "Harness exportiert aktuellen, gate-geprüften Graphstand als Format-E oder JSON"
     },
     {
       "id": "UC-system-export-graph-versioned",
@@ -589,22 +655,10 @@
       "description": "Nutzer authentifiziert und erhält Session zur Graphbearbeitung"
     },
     {
-      "id": "UC-user-login-multiuser",
-      "type": "UC",
-      "name": "User meldet sich an",
-      "description": "Nutzer authentifiziert sich und erhält Zugriff auf Web-App"
-    },
-    {
       "id": "UC-user-monitor-graph-updates",
       "type": "UC",
       "name": "Monitor graph updates in real-time",
       "description": "User observes mutations from collaborators live via websocket"
-    },
-    {
-      "id": "UC-user-view-live-updates",
-      "type": "UC",
-      "name": "User empfängt Live-Updates",
-      "description": "Nutzer sieht Echtzeit-Änderungen am Graphen nach Batch-Anwendung"
     },
     {
       "id": "UC-user-view-updates",
@@ -621,17 +675,7 @@
     },
     {
       "source": "ACTOR-admin",
-      "target": "UC-admin-approve-batch-postcond",
-      "type": "io"
-    },
-    {
-      "source": "ACTOR-admin",
       "target": "UC-admin-enforce-governance",
-      "type": "io"
-    },
-    {
-      "source": "ACTOR-admin",
-      "target": "UC-admin-enforce-governance-postcond",
       "type": "io"
     },
     {
@@ -647,11 +691,6 @@
     {
       "source": "ACTOR-system",
       "target": "UC-system-export-graph",
-      "type": "io"
-    },
-    {
-      "source": "ACTOR-system",
-      "target": "UC-system-export-graph-postcond",
       "type": "io"
     },
     {
@@ -686,17 +725,7 @@
     },
     {
       "source": "ACTOR-user",
-      "target": "UC-user-login-multiuser",
-      "type": "io"
-    },
-    {
-      "source": "ACTOR-user",
       "target": "UC-user-monitor-graph-updates",
-      "type": "io"
-    },
-    {
-      "source": "ACTOR-user",
-      "target": "UC-user-view-live-updates",
       "type": "io"
     },
     {
@@ -1110,9 +1139,74 @@
       "type": "compose"
     },
     {
+      "source": "FLOW-approved-batch",
+      "target": "FUNC-persist-batch",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-auth-result",
+      "target": "FUNC-create-session",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-edit-commands",
+      "target": "FUNC-validate-mutation",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-gate-verdict",
+      "target": "FUNC-approve-batch",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-graph-delta",
+      "target": "FUNC-broadcast-websocket",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-graph-delta",
+      "target": "FUNC-search-index",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-graph-delta",
+      "target": "FUNC-serialize-graph",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-index-entries",
+      "target": "FUNC-search-filter",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-session-token",
+      "target": "FUNC-edit-element",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-update-event",
+      "target": "FUNC-subscribe-updates",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-validated-commands",
+      "target": "FUNC-validate-mutations",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-approve-batch",
+      "target": "FLOW-approved-batch",
+      "type": "io"
+    },
+    {
       "source": "FUNC-approve-batch",
       "target": "REQ-batch-atomicity-measurable",
       "type": "satisfy"
+    },
+    {
+      "source": "FUNC-authenticate-user",
+      "target": "FLOW-auth-result",
+      "type": "io"
     },
     {
       "source": "FUNC-authenticate-user",
@@ -1121,8 +1215,18 @@
     },
     {
       "source": "FUNC-broadcast-websocket",
+      "target": "FLOW-update-event",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-broadcast-websocket",
       "target": "REQ-websocket-live",
       "type": "satisfy"
+    },
+    {
+      "source": "FUNC-create-session",
+      "target": "FLOW-session-token",
+      "type": "io"
     },
     {
       "source": "FUNC-create-session",
@@ -1131,8 +1235,18 @@
     },
     {
       "source": "FUNC-edit-element",
+      "target": "FLOW-edit-commands",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-edit-element",
       "target": "REQ-author-integrity",
       "type": "satisfy"
+    },
+    {
+      "source": "FUNC-persist-batch",
+      "target": "FLOW-graph-delta",
+      "type": "io"
     },
     {
       "source": "FUNC-persist-batch",
@@ -1148,6 +1262,11 @@
       "source": "FUNC-search-filter",
       "target": "REQ-user-discover-search-interface",
       "type": "satisfy"
+    },
+    {
+      "source": "FUNC-search-index",
+      "target": "FLOW-index-entries",
+      "type": "io"
     },
     {
       "source": "FUNC-search-index",
@@ -1176,6 +1295,11 @@
     },
     {
       "source": "FUNC-validate-mutation",
+      "target": "FLOW-validated-commands",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-validate-mutation",
       "target": "REQ-author-gate-validation",
       "type": "satisfy"
     },
@@ -1183,6 +1307,11 @@
       "source": "FUNC-validate-mutation",
       "target": "REQ-author-input-validation",
       "type": "satisfy"
+    },
+    {
+      "source": "FUNC-validate-mutations",
+      "target": "FLOW-gate-verdict",
+      "type": "io"
     },
     {
       "source": "FUNC-validate-mutations",
@@ -1211,6 +1340,11 @@
       "target": "MS-2-apply-gate-core",
       "type": "relation",
       "label": "depends-on"
+    },
+    {
+      "source": "SYS-multiuser-web-app",
+      "target": "REQ-e2e-collaboration-journey",
+      "type": "compose"
     },
     {
       "source": "SYS-multiuser-web-app",
@@ -1248,6 +1382,16 @@
       "type": "compose"
     },
     {
+      "source": "TEST-auth-session",
+      "target": "REQ-session-token-created",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-auth-session",
+      "target": "REQ-user-auth-email",
+      "type": "verify"
+    },
+    {
       "source": "TEST-batch-validation",
       "target": "REQ-author-input-validation",
       "type": "verify"
@@ -1258,27 +1402,42 @@
       "type": "verify"
     },
     {
+      "source": "TEST-e2e-multiuser-journey",
+      "target": "REQ-e2e-collaboration-journey",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-export-roundtrip",
+      "target": "REQ-export-snapshot-bitwise-identical",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-export-roundtrip",
+      "target": "REQ-export-versioning",
+      "type": "verify"
+    },
+    {
       "source": "TEST-governance-enforcement",
       "target": "REQ-governance-enforcement",
       "type": "verify"
     },
     {
-      "source": "TEST-governance-enforcement",
+      "source": "TEST-live-updates",
       "target": "REQ-no-stale-data",
       "type": "verify"
     },
     {
-      "source": "TEST-governance-enforcement",
+      "source": "TEST-live-updates",
       "target": "REQ-updates-visible-ui",
       "type": "verify"
     },
     {
-      "source": "TEST-governance-enforcement",
+      "source": "TEST-live-updates",
       "target": "REQ-view-current-state",
       "type": "verify"
     },
     {
-      "source": "TEST-governance-enforcement",
+      "source": "TEST-live-updates",
       "target": "REQ-websocket-live",
       "type": "verify"
     },
@@ -1318,21 +1477,6 @@
       "type": "verify"
     },
     {
-      "source": "TEST-verify-batch-validation",
-      "target": "REQ-export-snapshot-bitwise-identical",
-      "type": "verify"
-    },
-    {
-      "source": "TEST-verify-batch-validation",
-      "target": "REQ-session-token-created",
-      "type": "verify"
-    },
-    {
-      "source": "TEST-verify-batch-validation",
-      "target": "REQ-user-auth-email",
-      "type": "verify"
-    },
-    {
       "source": "TEST-verify-governance-enforcement",
       "target": "REQ-batch-atomicity-measurable",
       "type": "verify"
@@ -1340,16 +1484,6 @@
     {
       "source": "TEST-verify-governance-enforcement",
       "target": "REQ-concurrent-batch-isolation",
-      "type": "verify"
-    },
-    {
-      "source": "TEST-verify-governance-enforcement",
-      "target": "REQ-export-snapshot-bitwise-identical",
-      "type": "verify"
-    },
-    {
-      "source": "TEST-verify-governance-enforcement",
-      "target": "REQ-export-versioning",
       "type": "verify"
     },
     {
@@ -1408,11 +1542,6 @@
       "type": "compose"
     },
     {
-      "source": "UC-admin-approve-batch-postcond",
-      "target": "FCHAIN-batch-approval-flow",
-      "type": "compose"
-    },
-    {
       "source": "UC-admin-enforce-governance",
       "target": "FCHAIN-governance-enforcement-flow",
       "type": "compose"
@@ -1428,11 +1557,6 @@
       "type": "compose"
     },
     {
-      "source": "UC-admin-enforce-governance-postcond",
-      "target": "FCHAIN-governance-enforcement-flow",
-      "type": "compose"
-    },
-    {
       "source": "UC-system-export-graph",
       "target": "FCHAIN-export-lifecycle",
       "type": "compose"
@@ -1444,12 +1568,12 @@
     },
     {
       "source": "UC-system-export-graph",
-      "target": "REQ-export-snapshot-bitwise-identical",
+      "target": "FCHAIN-export-standard-format",
       "type": "compose"
     },
     {
-      "source": "UC-system-export-graph-postcond",
-      "target": "FCHAIN-export-standard-format",
+      "source": "UC-system-export-graph",
+      "target": "REQ-export-snapshot-bitwise-identical",
       "type": "compose"
     },
     {
@@ -1554,17 +1678,17 @@
     },
     {
       "source": "UC-user-login",
+      "target": "FCHAIN-multiuser-auth-flow",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-login",
       "target": "REQ-session-token-created",
       "type": "compose"
     },
     {
       "source": "UC-user-login",
       "target": "REQ-user-auth-email",
-      "type": "compose"
-    },
-    {
-      "source": "UC-user-login-multiuser",
-      "target": "FCHAIN-multiuser-auth-flow",
       "type": "compose"
     },
     {
@@ -1588,13 +1712,13 @@
       "type": "compose"
     },
     {
-      "source": "UC-user-view-live-updates",
-      "target": "FCHAIN-live-update-stream",
+      "source": "UC-user-view-updates",
+      "target": "FCHAIN-live-update-scenario",
       "type": "compose"
     },
     {
       "source": "UC-user-view-updates",
-      "target": "FCHAIN-live-update-scenario",
+      "target": "FCHAIN-live-update-stream",
       "type": "compose"
     },
     {

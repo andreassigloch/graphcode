@@ -7,11 +7,21 @@
   damit obsolet
 - ✅ Duplikat-REQs gemerged (26→21 REQ, 0 Namens-Duplikate)
 - ✅ se-plan gelaufen: 4 MS + 11 CR im Graphen (11× CR→MS, 3× MS→MS relation)
-- ❌ die 5 UC-01-Errors sind NICHT aufgelöst (die `*-postcond`-UCs ohne REQ)
-- ❌ kein CR→CR-depends-DAG (0 Kanten — Build-Reihenfolge hängt nur an der
-  MS-Kette)
-- ❌ kein `se-view:implplan`-Export (docs/views fehlt im Arbeits-Repo)
-- ❌ Vergleichsmessung Opus-Plan vs. devstral-Plan: nicht gefunden
+- ✅ (2026-08-04) 5 UC-01-Errors durchs Gate aufgelöst — alle 5 waren
+  Beinahe-Duplikate REQ-verbundener Basis-UCs → 5× merge-nodes, 0 Errors
+- ✅ (2026-08-04) Build-Reihenfolge ableitbar gemacht: CR→CR ist im Meta-Modell
+  NICHT legal — stattdessen FLOW-Ebene ergänzt (9 FLOWs, 21 io-Kanten); der
+  DAG folgt jetzt aus den FLOWs: 001→006→002→003→004→005→{007 | 008→009 |
+  010→011}
+- ✅ (2026-08-04) alle 16 Views exportiert (implplan, testconcept, testmatrix …)
+- ✅ (2026-08-04) Testpyramide substanziell: E2E-Durchstich ergänzt
+  (REQ-e2e-collaboration-journey + TEST-e2e-multiuser-journey), 6 semantisch
+  falsch gepaarte verify-Kanten auf 3 neue fachliche TESTs umverdrahtet
+  (auth-session, live-updates, export-roundtrip); Restlücke = 6/11
+  FUNC↔FUNC-Integrationsverbindungen (R-21, sichtbar in testconcept) — per
+  se-plan-Disziplin DoD der jeweiligen CRs, kein Graph-Defekt
+- ❌ Vergleichsmessung Opus-Plan vs. devstral-Plan: weiterhin offen (einziger
+  Restpunkt dieses CRs)
 **Datum:** 2026-08-01
 **Kontext:** `docs/executor-abschlussbericht.md` — Abschluss des Executor-
 Programms (CR-GC-278…282). Dieser CR ist der erste Schritt des dort benannten
