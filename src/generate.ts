@@ -75,9 +75,10 @@ const GATE_PROTOCOL: Record<GenerationSelection, string> = {
 
 /** Generative Instruktion je Readiness-Dimension (die Schreib-Zwillinge der graph_next_step-Aktionen). */
 const GENERATION_TEMPLATE: Record<string, string> = {
-  uc: 'Schlage je Fund 2–3 Kandidaten vor: fehlende ACTORs (io→UC), FCHAIN-Szenarien (UC compose FCHAIN) oder fehlende UCs aus der Intention. UC-Stil: Actor–Verb–Objekt–Ergebnis, ≤25 Wörter (Skill se:author-uc).',
+  uc: 'Schlage je Fund 2–3 Kandidaten vor: fehlende ACTORs (io→UC), FCHAIN-Szenarien (UC compose FCHAIN) oder fehlende UCs aus der Intention. UC-Stil: Actor–Verb–Objekt–Ergebnis, ≤25 Wörter (Skill se:author-uc). ' +
+    'FCHAIN OHNE Compose-Kante (R-15): KEINE neue FCHAIN/UC anlegen — stattdessen 3±2 FUNC-Elemente an die BESTEHENDE FCHAIN hängen (FCHAIN compose→FUNC), die den Ablauf in Schritte zerlegen.',
   req: 'Schlage je UC ohne Requirements 3–5 REQ-Kandidaten vor (UC compose REQ), präzise und prüfbar formuliert; emittiere jede neue REQ zusammen mit einem TEST (TEST verify REQ) im selben Batch — eine REQ ohne verify-TEST blockt das Gate (R-01). Löse Platzhalter/Ambiguität in bestehenden REQs auf.',
-  arch: 'Zerlege je Fund die FCHAIN/FUNC-Ebene: 7±2 FUNCs pro Zerlegungsebene (RD-04), FLOWs zwischen FUNCs (io), satisfy FUNC→REQ. Schlage 2 alternative Zerlegungen vor und lass das Gate wählen.',
+  arch: 'Zerlege je Fund die FCHAIN/FUNC-Ebene: 7±2 FUNCs pro Zerlegungsebene (RD-04), FLOWs zwischen FUNCs (io). Schlage je Fund 2 alternative FUNC/FCHAIN-Zerlegungen vor — jede neue FUNC zusammen mit satisfy→REQ und allocate→MOD im selben Batch (fehlt die REQ oder das MOD im Graphen, zuerst anlegen). Lass das Gate wählen.',
   alloc: 'Schlage MOD-Schnitte vor (intern stark, extern schwach gekoppelt) und allocate-Kanten FUNC→MOD; 2 Alternativen, Δm-Vergleich entscheidet.',
   ver: 'Schlage je unverifiziertem REQ einen TEST-Kandidaten vor (TEST verify REQ), mit konkretem Prüfschritt in der description.',
   schema: 'Schlage SCHEMA-Definitionen für die FLOWs ohne Schema vor (FLOW relation SCHEMA bzw. produces), eine pro Datenform, wiederverwendet statt dupliziert.',
@@ -95,7 +96,7 @@ const GENERATION_TEMPLATE: Record<string, string> = {
  */
 export const DIMENSION_FOCUS_TYPES: Record<string, string[]> = {
   seed: ['SYS', 'ACTOR', 'UC'],
-  uc: ['ACTOR', 'UC', 'FCHAIN'],
+  uc: ['ACTOR', 'UC', 'FCHAIN', 'FUNC'],
   req: ['UC', 'REQ'],
   arch: ['FCHAIN', 'FUNC', 'FLOW', 'REQ'],
   alloc: ['FUNC', 'MOD'],
@@ -203,8 +204,28 @@ export function generationStep(
     violations
       .filter((v) => RULE_TO_DIMENSION[v.rule_id] === dimension)
       .sort((a, b) => a.rule_id.localeCompare(b.rule_id) || a.element_id.localeCompare(b.element_id));
+  // Fund-Fenster (CR-GC-290): 3er-Fenster je rule_id-Gruppe, nie regelübergreifend
+  // gemischt — sonst verschränken sich z.B. FCHAIN-Erzeugung (R-15) und
+  // UC-Population (UC-01) über Runden hinweg statt sich sauber abzuschließen.
+  const windowsOf = (vs: typeof violations): (typeof violations)[] => {
+    const byRule = new Map<string, typeof violations>();
+    for (const v of vs) {
+      const list = byRule.get(v.rule_id);
+      if (list) list.push(v);
+      else byRule.set(v.rule_id, [v]);
+    }
+    const windows: (typeof violations)[] = [];
+    for (const list of byRule.values()) {
+      for (let i = 0; i < list.length; i += 3) windows.push(list.slice(i, i + 3));
+    }
+    return windows;
+  };
+  // rule_id im Key (CR-GC-290): windowsOf liefert nie regelgemischte Fenster mehr,
+  // also identifiziert (dimension, rule_id, element_ids) das Fund-Set eindeutig —
+  // ohne rule_id würden zwei Fenster über dieselben Elemente, aber verschiedene
+  // Regeln, auf denselben Key kollabieren.
   const keyOf = (dimension: string, vs: typeof violations): string =>
-    `${dimension}:${vs.map((v) => v.element_id).sort().join(',')}`;
+    `${dimension}:${vs[0]?.rule_id ?? ''}:${vs.map((v) => v.element_id).sort().join(',')}`;
 
   const deferSet = new Set(defer);
   let focus: (typeof dims)[number] | undefined;
@@ -212,9 +233,7 @@ export function generationStep(
   let focusKey: string | null = null;
   let deferExhausted = false;
   outer: for (const s of dims) {
-    const vs = violationsOf(s.dimension as string);
-    for (let i = 0; i < vs.length; i += 3) {
-      const window = vs.slice(i, i + 3);
+    for (const window of windowsOf(violationsOf(s.dimension as string))) {
       const key = keyOf(s.dimension as string, window);
       if (!deferSet.has(key)) {
         focus = s;
@@ -228,11 +247,15 @@ export function generationStep(
     // Alle Kandidaten zurückgestellt — lieber wiederholen als stillstehen.
     deferExhausted = true;
     focus = dims[0];
-    focusViolations = violationsOf(focus.dimension as string).slice(0, 3);
+    focusViolations = windowsOf(violationsOf(focus.dimension as string))[0] ?? [];
     focusKey = keyOf(focus.dimension as string, focusViolations);
   }
 
-  const funde = focusViolations.map((v) => `${v.element_id} (${v.rule_id}: ${v.message})`).join('; ');
+  // fix_hint mitrendern (sonst bleibt z.B. R-15s "Add FUNC elements via compose
+  // trace" für das Modell unsichtbar — es sieht nur die Symptom-Message).
+  const funde = focusViolations
+    .map((v) => `${v.element_id} (${v.rule_id}: ${v.message}${v.fix_hint ? ` — Fix: ${v.fix_hint}` : ''})`)
+    .join('; ');
   const template = focus ? (GENERATION_TEMPLATE[focus.dimension] ?? 'Behebe die Funde der Dimension.') : '';
   const deferNote = deferExhausted
     ? 'Hinweis: ALLE Fund-Sets waren zurückgestellt (defer) — Zurückstellung wird ignoriert. '
@@ -242,8 +265,8 @@ export function generationStep(
     phase: 'expand',
     done: false,
     prompt: focus
-      ? `Intention: "${effectiveIntent}". ${deferNote}Schwächste Dimension: ${focus.dimension} ` +
-        `(Score ${focus.score}, ${focus.violations} Funde). Funde: ${funde}. ${template} ${gateProtocol}`
+      ? `Intention: "${effectiveIntent}". ${deferNote}Schwächste Dimension: ${focus.dimension}. ` +
+        `Funde: ${funde}. ${template} ${gateProtocol}`
       : `Intention: "${effectiveIntent}". Unter Schwelle: ${belowThreshold.map((r) => r.dimension).join(', ')} — ` +
         `aber keine regelbaren Funde; prüfe fehlende Elemente der Dimensionen manuell. ${gateProtocol}`,
     readiness,

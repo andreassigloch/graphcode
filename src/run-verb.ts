@@ -55,6 +55,8 @@ export function parseExecutorEnv(env: NodeJS.ProcessEnv): ExecutorConfig {
     // Best-of-N (CR-GC-288): N Kandidaten pro Runde + Judge ('gate' | 'model').
     ...(env.GRAPHCODE_LLM_CANDIDATES ? { candidates: Number(env.GRAPHCODE_LLM_CANDIDATES) } : {}),
     ...(env.GRAPHCODE_LLM_JUDGE ? { judge: env.GRAPHCODE_LLM_JUDGE } : {}),
+    // Mess-Schalter (CR-GC-293): buildRoundInjection für einen einzelnen Lauf abschalten.
+    ...(env.GRAPHCODE_LLM_INJECTION ? { injection: env.GRAPHCODE_LLM_INJECTION !== 'false' } : {}),
   });
 }
 

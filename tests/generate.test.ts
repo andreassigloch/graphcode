@@ -102,6 +102,39 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
     expect(step.prompt).toContain('im selben Batch');
   });
 
+  it('arch-Template fordert satisfy→REQ und allocate→MOD im selben Batch (CR-GC-290)', () => {
+    // R-02/R-20/R-22: FUNC ohne satisfy-REQ/allocate-MOD entsteht heute unbemerkt,
+    // weil das arch-Template (anders als req) die Bindung nicht im selben Atemzug verlangt.
+    const graph = g(
+      [
+        node('SYS-shop', 'SYS', 'shop', INTENT),
+        node('ACTOR-kunde', 'ACTOR', 'Kunde'),
+        node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt Ersatzteil und erhält Bestätigung.'),
+        node('REQ-bestellung', 'REQ', 'Bestellung wird bestätigt'),
+        node('TEST-bestellung', 'TEST', 'Bestellbestätigung prüfen'),
+        node('FCHAIN-bestellung', 'FCHAIN', 'Bestellablauf'),
+        node('FUNC-pruefen', 'FUNC', 'Bestellung prüfen', 'Prüft die Bestellung.'),
+      ],
+      [
+        edge('SYS-shop', 'UC-bestellen', 'compose'),
+        edge('ACTOR-kunde', 'UC-bestellen', 'io'),
+        edge('UC-bestellen', 'REQ-bestellung', 'compose'),
+        edge('UC-bestellen', 'FCHAIN-bestellung', 'compose'),
+        edge('TEST-bestellung', 'REQ-bestellung', 'verify'),
+        edge('FCHAIN-bestellung', 'FUNC-pruefen', 'compose'),
+      ],
+    );
+    let step = generationStep(graph, undefined, 0.8);
+    const keys: string[] = [];
+    while (step.focusKey && !step.prompt.includes('FUNC/FCHAIN-Zerlegungen') && keys.length < 15) {
+      keys.push(step.focusKey);
+      step = generationStep(graph, undefined, 0.8, keys);
+    }
+    expect(step.prompt).toContain('satisfy→REQ');
+    expect(step.prompt).toContain('allocate→MOD');
+    expect(step.prompt).toContain('im selben Batch');
+  });
+
   it('threshold 0 + keine Blocker → handoff auf graph_suggest', () => {
     // Minimal blockerfrei: SYS + verifiziertes REQ-UC-Paar mit Actor/FCHAIN-Kette.
     const graph = g(
@@ -175,6 +208,97 @@ describe('generationStep — Fund-Rotation/defer (CR-GC-281)', () => {
     expect(step.focusKey).toBe(keys[0]);
     // … und der Prompt macht die aufgehobene Zurückstellung kenntlich.
     expect(step.prompt).toContain('Zurückstellung wird ignoriert');
+  });
+});
+
+describe('generationStep — Fund-Fenster/Prompt-Vollständigkeit (CR-GC-290)', () => {
+  it('Fund-Fenster mischt nie zwei rule_id in derselben Dimension (uc: R-15 FCHAIN-leer + UC-01 UC-ohne-REQ)', () => {
+    // Realer Fall aus dem Audit (gc-run-haiku45, Batch audit-1785579447396-8092tv):
+    // eine leere FCHAIN (R-15) und eine REQ-lose UC (UC-01) landeten im selben Fenster.
+    const graph = g(
+      [
+        node('SYS-shop', 'SYS', 'shop', INTENT),
+        node('ACTOR-kunde', 'ACTOR', 'Kunde'),
+        node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt Ersatzteil und erhält Bestätigung.'),
+        node('FCHAIN-leer', 'FCHAIN', 'Leerer Ablauf'),
+      ],
+      [
+        edge('SYS-shop', 'UC-bestellen', 'compose'),
+        edge('ACTOR-kunde', 'UC-bestellen', 'io'),
+        edge('UC-bestellen', 'FCHAIN-leer', 'compose'),
+      ],
+    );
+    let step = generationStep(graph, undefined, 0.8);
+    const keys: string[] = [];
+    const seenUcWindows: string[] = [];
+    while (step.focusKey && !keys.includes(step.focusKey) && keys.length < 20) {
+      if (step.focusKey.startsWith('uc:')) seenUcWindows.push(step.focusKey);
+      keys.push(step.focusKey);
+      step = generationStep(graph, undefined, 0.8, keys);
+    }
+    // Jedes uc-Fenster trägt genau eine rule_id im Key (dimension:rule_id:elemente) —
+    // R-15 (FCHAIN-leer) und UC-Funde (UC-bestellen) tauchen nie im selben Fenster auf.
+    expect(seenUcWindows.length).toBeGreaterThan(0);
+    for (const key of seenUcWindows) {
+      const [, ruleId] = key.split(':');
+      expect(ruleId).toMatch(/^[A-Z]+-\d+$/);
+    }
+    expect(new Set(seenUcWindows).size).toBe(seenUcWindows.length);
+  });
+
+  it('Prompt trägt kein "(Score X, N Funde)" mehr — die "Funde: ..."-Liste bleibt', () => {
+    const graph = g(
+      [node('SYS-shop', 'SYS', 'shop', INTENT), node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt Teil.')],
+      [edge('SYS-shop', 'UC-bestellen', 'compose')],
+    );
+    const step = generationStep(graph, undefined, 0.8);
+    expect(step.phase).toBe('expand');
+    expect(step.prompt).not.toMatch(/\(Score [\d.]+,\s*\d+ Funde\)/);
+    expect(step.prompt).toContain('Funde: ');
+  });
+});
+
+describe('generationStep — R-15 Stagnations-Fix (CR-GC-290-Nachtrag, Messlauf-Befund)', () => {
+  // Messlauf-Befund (devstral, v18-bo3-Config + CR-290/291): 24 Runden lang im
+  // uc-Fokus festgefahren — R-15 (FCHAIN ohne compose→FUNC) sitzt in der 'uc'-
+  // Dimension, aber weder das uc-Template noch DIMENSION_FOCUS_TYPES.uc noch die
+  // Funde-Zeile erwähnten FUNC/fix_hint. Das Modell befolgte das Template
+  // wörtlich (mehr ACTOR/FCHAIN/UC) und erzeugte dadurch IMMER MEHR R-15-Funde,
+  // statt die leere FCHAIN mit FUNC zu befüllen — ein sich selbst verstärkender
+  // Loop, den CR-290s reine Rule-ID-Fenster (viele Runden am Stück nur R-15)
+  // sichtbar machten.
+  const graph = g(
+    [
+      node('SYS-shop', 'SYS', 'shop', INTENT),
+      node('ACTOR-kunde', 'ACTOR', 'Kunde'),
+      node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt Ersatzteil und erhält Bestätigung.'),
+      node('FCHAIN-leer', 'FCHAIN', 'Leerer Ablauf'),
+    ],
+    [
+      edge('SYS-shop', 'UC-bestellen', 'compose'),
+      edge('ACTOR-kunde', 'UC-bestellen', 'io'),
+      edge('UC-bestellen', 'FCHAIN-leer', 'compose'),
+    ],
+  );
+
+  it('uc-Template weist bei R-15 explizit auf FUNC compose→FCHAIN hin statt auf neue ACTOR/FCHAIN/UC', () => {
+    const step = generationStep(graph, undefined, 0.8);
+    expect(step.phase).toBe('expand');
+    expect(step.focusKey).toMatch(/^uc:R-15:/);
+    expect(step.prompt).toContain('FUNC');
+    expect(step.prompt).toContain('compose→FUNC');
+    expect(step.prompt).toContain('KEINE neue FCHAIN/UC anlegen');
+  });
+
+  it('Funde-Zeile trägt den fix_hint der Violation (R-15: "Add FUNC elements via compose trace")', () => {
+    const step = generationStep(graph, undefined, 0.8);
+    expect(step.prompt).toContain('Fix: Add FUNC elements via compose trace');
+  });
+
+  it('DIMENSION_FOCUS_TYPES.uc trägt FUNC — Runden-Injektion liefert die FUNC-Kantengrammatik im uc-Fokus mit', () => {
+    expect(DIMENSION_FOCUS_TYPES.uc).toContain('FUNC');
+    const step = generationStep(graph, undefined, 0.8);
+    expect(step.focusTypes).toContain('FUNC');
   });
 });
 

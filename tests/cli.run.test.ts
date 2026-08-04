@@ -91,6 +91,13 @@ describe('parseExecutorEnv (CR-GC-279)', () => {
     // explizite Env gewinnt weiterhin
     expect(parseExecutorEnv({ ...base, GRAPHCODE_LLM_MAX_TOKENS: '4096' }).maxTokens).toBe(4096);
   });
+
+  it('GRAPHCODE_LLM_INJECTION toggles the Mess-Schalter (CR-GC-293) — default stays on', () => {
+    const base = { GRAPHCODE_LLM_BASE_URL: 'http://localhost:1234', GRAPHCODE_LLM_MODEL: 'devstral' };
+    expect(parseExecutorEnv(base).injection).toBe(true);
+    expect(parseExecutorEnv({ ...base, GRAPHCODE_LLM_INJECTION: 'false' }).injection).toBe(false);
+    expect(parseExecutorEnv({ ...base, GRAPHCODE_LLM_INJECTION: 'true' }).injection).toBe(true);
+  });
 });
 
 describe('executeRun (CR-GC-279)', () => {

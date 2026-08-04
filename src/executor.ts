@@ -21,6 +21,7 @@ import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 import { z } from 'zod/v4';
 import type { MutateResult } from '@sigloch/contracts/harness';
+import { ElementType } from '@sigloch/contracts/se';
 import type { FitAdvisory } from './fit-advisory.js';
 import type { MCPToolRegistry } from './mcp-tools.js';
 import type { GenerationStep } from './generate.js';
@@ -68,6 +69,11 @@ export const ExecutorConfigSchema = z.object({
    * 'model' = die LLM wählt aus den gerenderten Verdicts; BEIDE Picks werden
    * geloggt (algoPicks/modelPicks/judgeDisagreements), angewandt wird der Modell-Pick. */
   judge: z.enum(['gate', 'model']).default('gate'),
+  /** Mess-Schalter (CR-GC-293): buildRoundInjection (Guide-Slice + Element-Index,
+   * CR-GC-285) für einen einzelnen Lauf abschalten, um ihren isolierten Effekt auf
+   * Elementzahl/Turn-Profil zu messen (Nachtrag executor-abschlussbericht.md Punkt 3:
+   * "Injektion nützt Frontier, hungert Local aus" war mit CR-284 konfundiert). */
+  injection: z.boolean().default(true),
 });
 export type ExecutorConfig = z.infer<typeof ExecutorConfigSchema>;
 
@@ -130,7 +136,12 @@ export interface ExecutorStats {
 // System-Prompt — bewusst ~1 Seite; die Methode kommt aus graph_generate.
 // ---------------------------------------------------------------------------
 
-const SYSTEM = `Du autorierst Elemente in einen graphcode-Graphen. Der Graph ist die einzige Wahrheit — kein Code, keine Prosa.
+/** Exportiert für den Contracts-Drift-Test (CR-GC-291): jeder ElementType.options-Wert
+ * muss in diesem Prompt auftauchen, sonst halluziniert das Modell einen unbekannten Typ. */
+export const SYSTEM = `Du autorierst Elemente in einen graphcode-Graphen. Der Graph ist die einzige Wahrheit — kein Code, keine Prosa.
+
+Legale Elementtypen (NUR diese ${ElementType.options.length}): ${ElementType.options.join(', ')}. Kein anderer Typ
+existiert — auch nicht für Dokumente/Specs (die bleiben Prosa, kein Graph-Knoten).
 
 Jede Nachricht gibt dir EINE präzise Generierungs-Instruktion (inkl. der legalen Kanten). Führe genau sie aus:
 emittiere den geforderten Batch als EINEN graphcode_graph_mutate-Aufruf im commands-Format, dann STOPP.
@@ -1308,7 +1319,7 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
         : '';
     // CR-GC-285: Guide-Slice + Element-Index deterministisch vorab injizieren —
     // ersetzt die redundanten Lese-Turns am Rundenstart, nicht die Lese-Tools.
-    const injection = await buildRoundInjection(registry, gen);
+    const injection = config.injection ? await buildRoundInjection(registry, gen) : '';
     const baseContent = gen.prompt + (injection ? '\n\n' + injection : '') + EMIT_SUFFIX + stagnationHint;
     if (bestOfN) {
       // Best-of-N (CR-GC-288): Sammeln → Proben → Wählen → Gewinner anwenden.

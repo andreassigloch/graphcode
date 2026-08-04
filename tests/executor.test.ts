@@ -22,9 +22,11 @@ import {
   extractToolCallFromText,
   ExecutorConfigSchema,
   INDEX_CHAR_BUDGET,
+  SYSTEM,
   type ModelResponse,
   type CallModel,
 } from '../src/executor.js';
+import { ElementType } from '@sigloch/contracts/se';
 
 const CONFIG = ExecutorConfigSchema.parse({
   baseUrl: 'http://scripted.invalid',
@@ -309,6 +311,13 @@ describe('executor (CR-GC-278)', () => {
     }
   });
 
+  it('SYSTEM prompt names every ElementType.options value — Contracts-Drift-Schutz gegen STRUCT-Halluzination (CR-GC-291)', () => {
+    for (const type of ElementType.options) {
+      expect(SYSTEM).toContain(type);
+    }
+    expect(SYSTEM).toContain(`NUR diese ${ElementType.options.length}`);
+  });
+
   it("toolset 'authoring' curates the minimal generative set (base-load lever)", () => {
     const names = buildToolSpecs(registry, 'authoring').map((s) => s.name);
     expect(names).toContain('graphcode_graph_mutate');
@@ -552,6 +561,34 @@ describe('executor (CR-GC-278)', () => {
     for (const line of ['SYS-app · SYS · Test App', 'ACTOR-user · ACTOR · User', 'UC-login · UC · Login']) {
       expect(instruction).toContain(line);
     }
+  });
+
+  it('injection:false (CR-GC-293 Mess-Schalter) suppresses the guide/index injection block entirely', async () => {
+    await registry['graph_mutate'].handler(VALID_SEED_BATCH);
+    const { callModel, calls } = scriptedModel([
+      toolCallResponse('c1', {
+        commands: [
+          {
+            op: 'add-node',
+            node: {
+              uid: 'FCHAIN-login',
+              type: 'FCHAIN',
+              name: 'Login-Ablauf',
+              description: 'Ablauf des Logins.',
+              attributes: {},
+            },
+          },
+          { op: 'add-edge', edge: { sourceId: 'UC-login', targetId: 'FCHAIN-login', edgeType: 'compose', attributes: {} } },
+        ],
+      }),
+    ]);
+    const config = ExecutorConfigSchema.parse({ ...CONFIG, injection: false });
+    await runExecutor({ registry, workspaceDir: repoRoot, config, callModel });
+    const instruction = JSON.stringify(calls[0].messages[0]);
+    expect(instruction).not.toContain('Kanten-Grammatik');
+    expect(instruction).not.toContain('Element-Index');
+    // Die generate-Instruktion selbst bleibt unverändert (nur die Injektion entfällt).
+    expect(instruction).toContain('Gate-Protokoll');
   });
 
   it('index budget: an oversized index is deterministically filtered to the focus types (CR-GC-285)', async () => {
