@@ -75,6 +75,66 @@ Intent: *"make the auth module more resistant to change."*
 
 You (or the agent) see the *tradeoff* in ⑤ — without the advisor ever having blocked the edit.
 
+## Prompt anatomy, per turn
+
+What actually goes into a turn's context breaks into six pieces — and the two ways of running the
+loop from [Under the Hood](03-graphcode-harness-goal-and-concept.md) ("Two ways to run the loop")
+fill them very differently.
+
+| Piece | Driver (built-in executor) | Host (Claude Code / OpenCode) |
+|---|---|---|
+| System prompt | graphcode's own, fixed, ~320 tokens, identical every round | the assistant's own system prompt — a different artifact, not graphcode's, not measurable from here |
+| Tool definitions | not applicable — the driver calls the gate directly | graphcode's 22 tool descriptions, ~2,600 tokens, loaded once per session |
+| Graph context + open rules | pre-merged into one block by the driver, ~530–1,580 tokens, growing with graph size | fetched by the assistant itself, as separate tool calls — size depends what it asks for (a comparable bundle measured elsewhere: ~670 tokens) |
+| Target/KPI feedback | not shown to the model at all — used internally for ranking only | shown, if the assistant calls the optimizer itself |
+| Turn instruction | project intent (re-read from the graph, quoted fresh) plus the one concrete ask for this round, always both together, ~370 tokens typical | the user's chat message, free length |
+| History | resets every round — only which finds got stuck survives, not context | the whole conversation so far, unbounded |
+
+**One driver round, typical case:** ~320 (system) + ~370 (instruction) + ~530–1,580 (graph context,
+growing as the graph does) + ~65 (format reminder) ≈ **1,300–2,300 tokens**, no history carried
+forward. A rejected batch adds the gate's feedback (capped at ~625 tokens) on top, for that one
+repair attempt only — never accumulating across rounds.
+
+Two things in that table are easy to get wrong:
+
+- **The system prompt is constant *within* each mode, not *across* them.** The driver's is
+  graphcode's own fixed string. An interactive assistant's system prompt is a wholly different
+  artifact — its own, unrelated to graphcode — plus graphcode's tool descriptions, and, only if a
+  skill is explicitly invoked, that skill's full text. The driver never loads a skill's text: a
+  skill's *name* (e.g. "Skill se:author-uc") appears as a three-word pointer inside the round
+  instruction, never its content.
+- **Chat intent and the round's instruction are never either/or.** The project's original intent is
+  written into the graph exactly once, in the very first round — then re-read from there and quoted
+  at the start of *every* round's instruction after that, driver mode or not. It's not a separate
+  turn competing for space; it's the first sentence of each one.
+
+## The outer loop this all sits inside
+
+Everything above — the six-step chain, the prompt anatomy, the many rounds — is an *inner* loop.
+It always sits inside the same outer boundary: one real request in, one real result out.
+
+```
+customer input (a chat message, or the one CLI intent string)
+        │
+        ▼
+   ┌───────────────────────────────────────────────┐
+   │  inner loop — driver or host, many small       │
+   │  rounds or fewer large ones, everything above  │
+   └───────────────────────────────────────────────┘
+        │
+        ▼
+result reported back (a chat reply, or the CLI exiting with a report)
+        │
+        ▼
+   ... waits for the next customer input ...
+```
+
+Driver and host don't differ in *whether* they loop inside that boundary — both do, every time.
+They differ in *who paces the inner loop*: an interactive assistant paces itself, deciding step size
+and order as it goes; the driver's inner loop is an external, fixed, deterministic state machine
+imposing small steps on a model that can't reliably choose its own. Same outer shape, two different
+drivers for the same inner wheel.
+
 ## Self-correction: what blocks, what is carried as debt
 
 The gate is a **judge, not a repairer**, and it only rules on what changes with *this* edit. Two
