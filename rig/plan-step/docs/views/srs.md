@@ -4,7 +4,7 @@
 
 # graphcode — System Requirements Specification · SRS-graphcode
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 22 REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 26 REQ. Deterministisch generiert.
 
 ## 1  Scope
 
@@ -16,13 +16,13 @@
 
 Nutzer mit Governance-Rechten zur Batch-Genehmigung und Regelabsetzung
 
-io ▶ `UC-admin-approve-batch` · `UC-admin-enforce-governance` · io ◀ —
+io ▶ `FLOW-approval-decision` · `UC-admin-approve-batch` · `UC-admin-enforce-governance` · io ◀ `FLOW-gate-verdict`
 
 ### 2.2  `ACTOR-governance-reviewer` — Governance Reviewer
 
 System architect reviewing authored graph changes for compliance
 
-io ▶ `UC-user-author-node-with-validation` · io ◀ —
+io ▶ `FLOW-governance-policy` · `UC-user-author-node-with-validation` · io ◀ —
 
 ### 2.3  `ACTOR-graph-user` — Graph User
 
@@ -34,13 +34,13 @@ io ▶ `UC-user-discover-elements-with-filter` · io ◀ —
 
 Automatisiertes System, verwaltet Apply-Gate und Exporte
 
-io ▶ `UC-system-export-graph` · `UC-system-export-graph-versioned` · io ◀ —
+io ▶ `FLOW-export-request` · `UC-system-export-graph` · `UC-system-export-graph-versioned` · io ◀ —
 
 ### 2.5  `ACTOR-user` — Nutzer
 
 Dateneigner, meldet sich an und erstellt Graphelemente
 
-io ▶ `UC-user-author-node` · `UC-user-author-node-with-validation` · `UC-user-discover-elements` · `UC-user-discover-elements-with-filter` · `UC-user-login` · `UC-user-monitor-graph-updates` · `UC-user-view-updates` · io ◀ —
+io ▶ `FLOW-edit-intent` · `FLOW-login-credentials` · `FLOW-search-query` · `FLOW-subscribe-request` · `UC-user-author-node` · `UC-user-author-node-with-validation` · `UC-user-discover-elements` · `UC-user-discover-elements-with-filter` · `UC-user-login` · `UC-user-monitor-graph-updates` · `UC-user-view-updates` · io ◀ `FLOW-export-artifact` · `FLOW-search-results` · `FLOW-session-token` · `FLOW-update-event` · `FLOW-validation-feedback`
 
 ## 3  Use Cases & Verhalten
 
@@ -68,11 +68,11 @@ Verification ◀ `TEST-batch-validation` · `TEST-verify-batch-validation` · sa
 
 ##### 3.1.1.1  `FUNC-validate-mutations` — Validate Mutations
 
-> auch in: `FCHAIN-concurrent-authoring` · `FCHAIN-governance-enforcement-flow` · `FCHAIN-view-apply-gate-result`
+> auch in: `FCHAIN-authoring-scenario` · `FCHAIN-concurrent-authoring` · `FCHAIN-governance-enforcement-flow` · `FCHAIN-view-apply-gate-result`
 
 Applies V3_RULES governance checks to batch
 
-io ◀ `FLOW-validated-commands` · io ▶ `FLOW-gate-verdict` · allocate ▶ —
+io ◀ `FLOW-governance-policy` · `FLOW-validated-commands` · io ▶ `FLOW-gate-verdict` · allocate ▶ —
 
 ###### `REQ-apply-gate-verdict-deterministic` — Apply-Gate Verdicts sind deterministisch und reproduzierbar
 
@@ -98,7 +98,7 @@ Verification ◀ `TEST-verify-batch-validation` · `TEST-verify-governance-enfor
 
 Approves or rejects mutation batch through Apply-Gate
 
-io ◀ `FLOW-gate-verdict` · io ▶ `FLOW-approved-batch` · allocate ▶ —
+io ◀ `FLOW-approval-decision` · `FLOW-gate-verdict` · io ▶ `FLOW-approved-batch` · allocate ▶ —
 
 ###### `REQ-batch-atomicity-measurable` — Batch-Mutation ist atomar (All-or-Nothing) mit messbarem Kriterium
 
@@ -112,7 +112,7 @@ Verification ◀ `TEST-verify-batch-validation` · `TEST-verify-governance-enfor
 
 ##### 3.1.1.3  `FUNC-persist-batch` — Persist Batch
 
-> auch in: `FCHAIN-concurrent-authoring` · `FCHAIN-export-lifecycle` · `FCHAIN-governance-enforcement-flow` · `FCHAIN-view-apply-gate-result`
+> auch in: `FCHAIN-concurrent-authoring` · `FCHAIN-export-lifecycle` · `FCHAIN-governance-enforcement-flow` · `FCHAIN-search-scenario` · `FCHAIN-update-propagation` · `FCHAIN-view-apply-gate-result`
 
 Commits validated mutations to graph store
 
@@ -158,7 +158,7 @@ Verification ◀ `TEST-batch-validation` · `TEST-verify-batch-validation` · sa
 
 Approves or rejects mutation batch through Apply-Gate
 
-io ◀ `FLOW-gate-verdict` · io ▶ `FLOW-approved-batch` · allocate ▶ —
+io ◀ `FLOW-approval-decision` · `FLOW-gate-verdict` · io ▶ `FLOW-approved-batch` · allocate ▶ —
 
 ###### `REQ-batch-atomicity-measurable` — Batch-Mutation ist atomar (All-or-Nothing) mit messbarem Kriterium
 
@@ -176,7 +176,7 @@ Verification ◀ `TEST-verify-batch-validation` · `TEST-verify-governance-enfor
 
 Validates incoming mutation against governance rules
 
-io ◀ `FLOW-edit-commands` · io ▶ `FLOW-validated-commands` · allocate ▶ —
+io ◀ `FLOW-edit-commands` · io ▶ `FLOW-validated-commands` · `FLOW-validation-feedback` · allocate ▶ —
 
 ###### `REQ-author-gate-validation` — Pre-Gate Governance-Validierung
 
@@ -216,7 +216,7 @@ Verification ◀ `TEST-governance-enforcement` · `TEST-verify-governance-enforc
 
 ##### 3.2.1.1  `FUNC-persist-batch` — Persist Batch
 
-> auch in: `FCHAIN-apply-gate-validation` · `FCHAIN-concurrent-authoring` · `FCHAIN-export-lifecycle` · `FCHAIN-view-apply-gate-result`
+> auch in: `FCHAIN-apply-gate-validation` · `FCHAIN-concurrent-authoring` · `FCHAIN-export-lifecycle` · `FCHAIN-search-scenario` · `FCHAIN-update-propagation` · `FCHAIN-view-apply-gate-result`
 
 Commits validated mutations to graph store
 
@@ -234,11 +234,11 @@ Verification ◀ `TEST-governance-enforcement` · `TEST-verify-governance-enforc
 
 ##### 3.2.1.2  `FUNC-validate-mutations` — Validate Mutations
 
-> auch in: `FCHAIN-apply-gate-validation` · `FCHAIN-concurrent-authoring` · `FCHAIN-view-apply-gate-result`
+> auch in: `FCHAIN-apply-gate-validation` · `FCHAIN-authoring-scenario` · `FCHAIN-concurrent-authoring` · `FCHAIN-view-apply-gate-result`
 
 Applies V3_RULES governance checks to batch
 
-io ◀ `FLOW-validated-commands` · io ▶ `FLOW-gate-verdict` · allocate ▶ —
+io ◀ `FLOW-governance-policy` · `FLOW-validated-commands` · io ▶ `FLOW-gate-verdict` · allocate ▶ —
 
 ###### `REQ-apply-gate-verdict-deterministic` — Apply-Gate Verdicts sind deterministisch und reproduzierbar
 
@@ -280,7 +280,7 @@ Verification ◀ `TEST-export-roundtrip` · satisfy ◀ `FCHAIN-export-lifecycle
 
 ##### 3.3.1.1  `FUNC-persist-batch` — Persist Batch
 
-> auch in: `FCHAIN-apply-gate-validation` · `FCHAIN-concurrent-authoring` · `FCHAIN-governance-enforcement-flow` · `FCHAIN-view-apply-gate-result`
+> auch in: `FCHAIN-apply-gate-validation` · `FCHAIN-concurrent-authoring` · `FCHAIN-governance-enforcement-flow` · `FCHAIN-search-scenario` · `FCHAIN-update-propagation` · `FCHAIN-view-apply-gate-result`
 
 Commits validated mutations to graph store
 
@@ -298,11 +298,11 @@ Verification ◀ `TEST-governance-enforcement` · `TEST-verify-governance-enforc
 
 ##### 3.3.1.2  `FUNC-serialize-graph` — Serialize Graph
 
-> auch in: `FCHAIN-export-scenario` · `FCHAIN-export-standard-format`
+> auch in: `FCHAIN-export-standard-format`
 
 Serializes graph state to export format
 
-io ◀ `FLOW-graph-delta` · io ▶ — · allocate ▶ —
+io ◀ `FLOW-export-request` · `FLOW-graph-delta` · io ▶ `FLOW-export-artifact` · allocate ▶ —
 
 ###### `REQ-export-snapshot-bitwise-identical` — Export-Snapshot ist bitwise-identisch mit in-memory Graph
 
@@ -322,49 +322,19 @@ priority: must · status: n/a
 
 Verification ◀ `TEST-export-roundtrip` · satisfy ◀ `FUNC-serialize-graph` · allocate ▶ —
 
-#### 3.3.2  `FCHAIN-export-scenario` — Export-Szenario
-
-Szenario: Nutzer triggert Export, System serialisiert Graphen
-
-##### 3.3.2.1  `FUNC-serialize-graph` — Serialize Graph
-
-> auch in: `FCHAIN-export-lifecycle` · `FCHAIN-export-standard-format`
-
-Serializes graph state to export format
-
-io ◀ `FLOW-graph-delta` · io ▶ — · allocate ▶ —
-
-###### `REQ-export-snapshot-bitwise-identical` — Export-Snapshot ist bitwise-identisch mit in-memory Graph
-
-> auch unter: `FCHAIN-export-lifecycle`
-
-Exportierter Graph ist bitwise-identisch mit dem in-memory Systemgraph. Messkriterium: Round-trip liefert identische Element-UIDs, Kanten und Attribute; SHA256-Hash ist deterministisch.
-
-priority: must · status: n/a
-
-Verification ◀ `TEST-export-roundtrip` · satisfy ◀ `FCHAIN-export-lifecycle` · `FUNC-serialize-graph` · allocate ▶ —
-
-###### `REQ-export-versioning` — Versionierte Exporte mit Audit-Trail
-
-Export muss Graphversion, Timestamp und Nutzer-Aktion enthalten
-
-priority: must · status: n/a
-
-Verification ◀ `TEST-export-roundtrip` · satisfy ◀ `FUNC-serialize-graph` · allocate ▶ —
-
-#### 3.3.3  `FCHAIN-export-standard-format` — Export Standard Format Chain
+#### 3.3.2  `FCHAIN-export-standard-format` — Export Standard Format Chain
 
 > auch in: `UC-system-export-graph-versioned`
 
 Export flow: select elements → serialize version → write file
 
-##### 3.3.3.1  `FUNC-serialize-graph` — Serialize Graph
+##### 3.3.2.1  `FUNC-serialize-graph` — Serialize Graph
 
-> auch in: `FCHAIN-export-lifecycle` · `FCHAIN-export-scenario`
+> auch in: `FCHAIN-export-lifecycle`
 
 Serializes graph state to export format
 
-io ◀ `FLOW-graph-delta` · io ▶ — · allocate ▶ —
+io ◀ `FLOW-export-request` · `FLOW-graph-delta` · io ▶ `FLOW-export-artifact` · allocate ▶ —
 
 ###### `REQ-export-snapshot-bitwise-identical` — Export-Snapshot ist bitwise-identisch mit in-memory Graph
 
@@ -398,11 +368,11 @@ Export flow: select elements → serialize version → write file
 
 ##### 3.4.1.1  `FUNC-serialize-graph` — Serialize Graph
 
-> auch in: `FCHAIN-export-lifecycle` · `FCHAIN-export-scenario`
+> auch in: `FCHAIN-export-lifecycle`
 
 Serializes graph state to export format
 
-io ◀ `FLOW-graph-delta` · io ▶ — · allocate ▶ —
+io ◀ `FLOW-export-request` · `FLOW-graph-delta` · io ▶ `FLOW-export-artifact` · allocate ▶ —
 
 ###### `REQ-export-snapshot-bitwise-identical` — Export-Snapshot ist bitwise-identisch mit in-memory Graph
 
@@ -432,11 +402,35 @@ io ◀ `ACTOR-user`
 
 Benutzer erstellt/editiert Graphelemente mit Governance-Validierung
 
-##### 3.5.1.1  `FUNC-edit-element` — Edit Element
+##### `REQ-int-authoring-pipeline` — Integration Authoring-Pipeline
+
+Kommandos eines eingeloggten Autors durchlaufen Session-Kontext → Editor → Einzelvalidierung → Batch-Validierung ohne Kontextverlust; ungültige Session bricht vor dem Editor ab.
+
+priority: must · status: n/a
+
+Verification ◀ `TEST-int-authoring-pipeline` · satisfy ◀ `FCHAIN-authoring-scenario` · allocate ▶ —
+
+##### 3.5.1.1  `FUNC-create-session` — Create Session
+
+> auch in: `FCHAIN-login-auth-session`
+
+Establishes authenticated session for graph operations
+
+io ◀ `FLOW-auth-result` · io ▶ `FLOW-session-token` · allocate ▶ —
+
+###### `REQ-session-token-created` — Session-Token wird erzeugt und zurückgegeben
+
+Nach erfolgreicher Authentifizierung erhält Nutzer ein Session-Token zur Identifikation
+
+priority: must · status: n/a
+
+Verification ◀ `TEST-auth-session` · satisfy ◀ `FUNC-create-session` · allocate ▶ —
+
+##### 3.5.1.2  `FUNC-edit-element` — Edit Element
 
 Creates or updates graph element with validation
 
-io ◀ `FLOW-session-token` · io ▶ `FLOW-edit-commands` · allocate ▶ —
+io ◀ `FLOW-edit-intent` · `FLOW-session-token` · io ▶ `FLOW-edit-commands` · allocate ▶ —
 
 ###### `REQ-author-integrity` — Node authored by collaborators passes apply-gate
 
@@ -448,13 +442,13 @@ priority: must · status: n/a
 
 Verification ◀ `TEST-verify-batch-validation` · satisfy ◀ `FCHAIN-concurrent-authoring` · `FUNC-edit-element` · allocate ▶ —
 
-##### 3.5.1.2  `FUNC-validate-mutation` — Validate Mutation
+##### 3.5.1.3  `FUNC-validate-mutation` — Validate Mutation
 
 > auch in: `FCHAIN-batch-approval-flow`
 
 Validates incoming mutation against governance rules
 
-io ◀ `FLOW-edit-commands` · io ▶ `FLOW-validated-commands` · allocate ▶ —
+io ◀ `FLOW-edit-commands` · io ▶ `FLOW-validated-commands` · `FLOW-validation-feedback` · allocate ▶ —
 
 ###### `REQ-author-gate-validation` — Pre-Gate Governance-Validierung
 
@@ -471,6 +465,32 @@ System muss Nutzer-Input (uid, type, name, description, attributes) gegen das On
 priority: must · status: n/a
 
 Verification ◀ `TEST-batch-validation` · satisfy ◀ `FUNC-validate-mutation` · allocate ▶ —
+
+##### 3.5.1.4  `FUNC-validate-mutations` — Validate Mutations
+
+> auch in: `FCHAIN-apply-gate-validation` · `FCHAIN-concurrent-authoring` · `FCHAIN-governance-enforcement-flow` · `FCHAIN-view-apply-gate-result`
+
+Applies V3_RULES governance checks to batch
+
+io ◀ `FLOW-governance-policy` · `FLOW-validated-commands` · io ▶ `FLOW-gate-verdict` · allocate ▶ —
+
+###### `REQ-apply-gate-verdict-deterministic` — Apply-Gate Verdicts sind deterministisch und reproduzierbar
+
+Für identische Eingabe-Batches muss Apply-Gate identisches Verdict generieren. Messkriterium: 100% Verdict-Reproduzierbarkeit über 1000 Test-Runs; keine Nondeterminismus.
+
+priority: must · status: n/a
+
+Verification ◀ `TEST-verify-batch-validation` · satisfy ◀ `FUNC-validate-mutations` · allocate ▶ —
+
+###### `REQ-batch-atomicity-measurable` — Batch-Mutation ist atomar (All-or-Nothing) mit messbarem Kriterium
+
+> auch unter: `FCHAIN-batch-approval-flow` · `FUNC-approve-batch`
+
+Wenn ein Kommando im Batch gegen V3_RULES verstößt, wird der gesamte Batch abgelehnt (keine Partial Applies). Messkriterium: (1) graphVersion ändert sich nur bei tier=auto-apply oder tier=suggest mit Approval; bei tier=block bleibt graphVersion unverändert. (2) Für jeden fehlgeschlagenen Batch muss Apply-Gate Violations mit Regel-ID und fixHints zurückgeben. (3) Konsistenz-Test: 100 zufällige Batches mit 1 intentionalen Violation → 100% werden komplett abgelehnt.
+
+priority: must · status: n/a
+
+Verification ◀ `TEST-verify-batch-validation` · `TEST-verify-governance-enforcement` · satisfy ◀ `FCHAIN-batch-approval-flow` · `FUNC-approve-batch` · `FUNC-validate-mutations` · allocate ▶ —
 
 #### 3.5.2  `FCHAIN-concurrent-authoring` — Concurrent Authoring Flow
 
@@ -496,11 +516,11 @@ Verification ◀ `TEST-verify-governance-enforcement` · satisfy ◀ `FCHAIN-con
 
 ##### 3.5.2.1  `FUNC-validate-mutations` — Validate Mutations
 
-> auch in: `FCHAIN-apply-gate-validation` · `FCHAIN-governance-enforcement-flow` · `FCHAIN-view-apply-gate-result`
+> auch in: `FCHAIN-apply-gate-validation` · `FCHAIN-authoring-scenario` · `FCHAIN-governance-enforcement-flow` · `FCHAIN-view-apply-gate-result`
 
 Applies V3_RULES governance checks to batch
 
-io ◀ `FLOW-validated-commands` · io ▶ `FLOW-gate-verdict` · allocate ▶ —
+io ◀ `FLOW-governance-policy` · `FLOW-validated-commands` · io ▶ `FLOW-gate-verdict` · allocate ▶ —
 
 ###### `REQ-apply-gate-verdict-deterministic` — Apply-Gate Verdicts sind deterministisch und reproduzierbar
 
@@ -526,7 +546,7 @@ Verification ◀ `TEST-verify-batch-validation` · `TEST-verify-governance-enfor
 
 Approves or rejects mutation batch through Apply-Gate
 
-io ◀ `FLOW-gate-verdict` · io ▶ `FLOW-approved-batch` · allocate ▶ —
+io ◀ `FLOW-approval-decision` · `FLOW-gate-verdict` · io ▶ `FLOW-approved-batch` · allocate ▶ —
 
 ###### `REQ-batch-atomicity-measurable` — Batch-Mutation ist atomar (All-or-Nothing) mit messbarem Kriterium
 
@@ -540,7 +560,7 @@ Verification ◀ `TEST-verify-batch-validation` · `TEST-verify-governance-enfor
 
 ##### 3.5.2.3  `FUNC-persist-batch` — Persist Batch
 
-> auch in: `FCHAIN-apply-gate-validation` · `FCHAIN-export-lifecycle` · `FCHAIN-governance-enforcement-flow` · `FCHAIN-view-apply-gate-result`
+> auch in: `FCHAIN-apply-gate-validation` · `FCHAIN-export-lifecycle` · `FCHAIN-governance-enforcement-flow` · `FCHAIN-search-scenario` · `FCHAIN-update-propagation` · `FCHAIN-view-apply-gate-result`
 
 Commits validated mutations to graph store
 
@@ -580,11 +600,11 @@ Verification ◀ `TEST-batch-validation` · `TEST-verify-batch-validation` · sa
 
 ##### 3.6.1.1  `FUNC-validate-mutations` — Validate Mutations
 
-> auch in: `FCHAIN-concurrent-authoring` · `FCHAIN-governance-enforcement-flow` · `FCHAIN-view-apply-gate-result`
+> auch in: `FCHAIN-authoring-scenario` · `FCHAIN-concurrent-authoring` · `FCHAIN-governance-enforcement-flow` · `FCHAIN-view-apply-gate-result`
 
 Applies V3_RULES governance checks to batch
 
-io ◀ `FLOW-validated-commands` · io ▶ `FLOW-gate-verdict` · allocate ▶ —
+io ◀ `FLOW-governance-policy` · `FLOW-validated-commands` · io ▶ `FLOW-gate-verdict` · allocate ▶ —
 
 ###### `REQ-apply-gate-verdict-deterministic` — Apply-Gate Verdicts sind deterministisch und reproduzierbar
 
@@ -610,7 +630,7 @@ Verification ◀ `TEST-verify-batch-validation` · `TEST-verify-governance-enfor
 
 Approves or rejects mutation batch through Apply-Gate
 
-io ◀ `FLOW-gate-verdict` · io ▶ `FLOW-approved-batch` · allocate ▶ —
+io ◀ `FLOW-approval-decision` · `FLOW-gate-verdict` · io ▶ `FLOW-approved-batch` · allocate ▶ —
 
 ###### `REQ-batch-atomicity-measurable` — Batch-Mutation ist atomar (All-or-Nothing) mit messbarem Kriterium
 
@@ -624,7 +644,7 @@ Verification ◀ `TEST-verify-batch-validation` · `TEST-verify-governance-enfor
 
 ##### 3.6.1.3  `FUNC-persist-batch` — Persist Batch
 
-> auch in: `FCHAIN-concurrent-authoring` · `FCHAIN-export-lifecycle` · `FCHAIN-governance-enforcement-flow` · `FCHAIN-view-apply-gate-result`
+> auch in: `FCHAIN-concurrent-authoring` · `FCHAIN-export-lifecycle` · `FCHAIN-governance-enforcement-flow` · `FCHAIN-search-scenario` · `FCHAIN-update-propagation` · `FCHAIN-view-apply-gate-result`
 
 Commits validated mutations to graph store
 
@@ -650,7 +670,33 @@ io ◀ `ACTOR-user`
 
 Benutzer findet und filtert Elemente im Live-Graphen
 
-##### 3.7.1.1  `FUNC-search-index` — Suchindex abfragen
+##### `REQ-int-search-freshness` — Integration Persist→Suchindex
+
+Persistierte Änderungen sind nach Index-Aktualisierung ohne Neustart such- und filterbar; gelöschte Elemente verschwinden aus den Treffern.
+
+priority: must · status: n/a
+
+Verification ◀ `TEST-int-search-freshness` · satisfy ◀ `FCHAIN-search-scenario` · allocate ▶ —
+
+##### 3.7.1.1  `FUNC-persist-batch` — Persist Batch
+
+> auch in: `FCHAIN-apply-gate-validation` · `FCHAIN-concurrent-authoring` · `FCHAIN-export-lifecycle` · `FCHAIN-governance-enforcement-flow` · `FCHAIN-update-propagation` · `FCHAIN-view-apply-gate-result`
+
+Commits validated mutations to graph store
+
+io ◀ `FLOW-approved-batch` · io ▶ `FLOW-graph-delta` · allocate ▶ —
+
+###### `REQ-governance-enforcement` — Governance-Enforcement im Apply-Gate
+
+> auch unter: `FCHAIN-governance-enforcement-flow`
+
+Requirement: Apply-Gate muss V3_RULES durchsetzen, ungültige Batches blocken (tier=block), Verdicts mit Regel-IDs und fixHints generieren, erfolgreiche Batches persistent machen.
+
+priority: must · status: n/a
+
+Verification ◀ `TEST-governance-enforcement` · `TEST-verify-governance-enforcement` · satisfy ◀ `FCHAIN-governance-enforcement-flow` · `FUNC-persist-batch` · allocate ▶ —
+
+##### 3.7.1.2  `FUNC-search-index` — Suchindex abfragen
 
 > auch in: `FCHAIN-filter-by-type-and-search`
 
@@ -674,13 +720,13 @@ priority: must · status: n/a
 
 Verification ◀ `TEST-verify-search-filtering` · satisfy ◀ `FUNC-search-index` · allocate ▶ —
 
-##### 3.7.1.2  `FUNC-search-filter` — Elemente nach Typ filtern
+##### 3.7.1.3  `FUNC-search-filter` — Elemente nach Typ filtern
 
 > auch in: `FCHAIN-filter-by-type-and-search`
 
 Filtert Graphelemente nach Typ, UID, Name
 
-io ◀ `FLOW-index-entries` · io ▶ — · allocate ▶ —
+io ◀ `FLOW-index-entries` · `FLOW-search-query` · io ▶ `FLOW-search-results` · allocate ▶ —
 
 ###### `REQ-search-filtering` — Suchfilterung nach Elementtyp
 
@@ -714,9 +760,35 @@ priority: must · status: n/a
 
 Verification ◀ `TEST-verify-search-indexing` · satisfy ◀ `FCHAIN-filter-by-type-and-search` · `FCHAIN-update-propagation` · allocate ▶ —
 
-##### 3.7.2.1  `FUNC-broadcast-websocket` — Broadcast WebSocket
+##### `REQ-int-update-propagation` — Integration Persist→Broadcast
 
-> auch in: `FCHAIN-live-update-scenario` · `FCHAIN-monitor-ws-broadcast`
+Jede persistierte Mutation erzeugt genau ein versioniertes Broadcast-Event; Subscriber erhalten es in Persist-Reihenfolge.
+
+priority: must · status: n/a
+
+Verification ◀ `TEST-int-update-propagation` · satisfy ◀ `FCHAIN-update-propagation` · allocate ▶ —
+
+##### 3.7.2.1  `FUNC-persist-batch` — Persist Batch
+
+> auch in: `FCHAIN-apply-gate-validation` · `FCHAIN-concurrent-authoring` · `FCHAIN-export-lifecycle` · `FCHAIN-governance-enforcement-flow` · `FCHAIN-search-scenario` · `FCHAIN-view-apply-gate-result`
+
+Commits validated mutations to graph store
+
+io ◀ `FLOW-approved-batch` · io ▶ `FLOW-graph-delta` · allocate ▶ —
+
+###### `REQ-governance-enforcement` — Governance-Enforcement im Apply-Gate
+
+> auch unter: `FCHAIN-governance-enforcement-flow`
+
+Requirement: Apply-Gate muss V3_RULES durchsetzen, ungültige Batches blocken (tier=block), Verdicts mit Regel-IDs und fixHints generieren, erfolgreiche Batches persistent machen.
+
+priority: must · status: n/a
+
+Verification ◀ `TEST-governance-enforcement` · `TEST-verify-governance-enforcement` · satisfy ◀ `FCHAIN-governance-enforcement-flow` · `FUNC-persist-batch` · allocate ▶ —
+
+##### 3.7.2.2  `FUNC-broadcast-websocket` — Broadcast WebSocket
+
+> auch in: `FCHAIN-live-update-scenario`
 
 Sends real-time updates to connected clients
 
@@ -730,13 +802,13 @@ priority: must · status: n/a
 
 Verification ◀ `TEST-live-updates` · satisfy ◀ `FUNC-broadcast-websocket` · allocate ▶ —
 
-##### 3.7.2.2  `FUNC-subscribe-updates` — Subscribe Updates
+##### 3.7.2.3  `FUNC-subscribe-updates` — Subscribe Updates
 
-> auch in: `FCHAIN-live-update-scenario` · `FCHAIN-monitor-ws-broadcast`
+> auch in: `FCHAIN-live-update-scenario`
 
 Establishes WebSocket subscription for user
 
-io ◀ `FLOW-update-event` · io ▶ — · allocate ▶ —
+io ◀ `FLOW-subscribe-request` · `FLOW-update-event` · io ▶ — · allocate ▶ —
 
 ###### `REQ-updates-visible-ui` — UI zeigt Graph-Änderungen Echtzeit
 
@@ -796,7 +868,7 @@ Verification ◀ `TEST-verify-search-filtering` · satisfy ◀ `FUNC-search-inde
 
 Filtert Graphelemente nach Typ, UID, Name
 
-io ◀ `FLOW-index-entries` · io ▶ — · allocate ▶ —
+io ◀ `FLOW-index-entries` · `FLOW-search-query` · io ▶ `FLOW-search-results` · allocate ▶ —
 
 ###### `REQ-search-filtering` — Suchfilterung nach Elementtyp
 
@@ -824,13 +896,19 @@ io ◀ `ACTOR-user`
 
 Szenario: Nutzer loggt sich ein, wird authentifiziert, erhält Session-Token zur Graphbearbeitung
 
-##### 3.9.1.1  `FUNC-authenticate-user` — Authenticate User
+##### `REQ-int-auth-session` — Integration Auth→Session
 
-> auch in: `FCHAIN-login-scenario`
+Erfolgreiche Authentifizierung übergibt die Nutzeridentität verlustfrei an die Session-Erzeugung; Fehlschlag erzeugt keine Session.
+
+priority: must · status: n/a
+
+Verification ◀ `TEST-int-auth-session` · satisfy ◀ `FCHAIN-login-auth-session` · allocate ▶ —
+
+##### 3.9.1.1  `FUNC-authenticate-user` — Authenticate User
 
 Validates user credentials against identity provider
 
-io ◀ — · io ▶ `FLOW-auth-result` · allocate ▶ —
+io ◀ `FLOW-login-credentials` · io ▶ `FLOW-auth-result` · allocate ▶ —
 
 ###### `REQ-user-auth-email` — Nutzer authentifiziert mit Email und Passwort
 
@@ -842,7 +920,7 @@ Verification ◀ `TEST-auth-session` · satisfy ◀ `FUNC-authenticate-user` · 
 
 ##### 3.9.1.2  `FUNC-create-session` — Create Session
 
-> auch in: `FCHAIN-login-scenario`
+> auch in: `FCHAIN-authoring-scenario`
 
 Establishes authenticated session for graph operations
 
@@ -855,46 +933,6 @@ Nach erfolgreicher Authentifizierung erhält Nutzer ein Session-Token zur Identi
 priority: must · status: n/a
 
 Verification ◀ `TEST-auth-session` · satisfy ◀ `FUNC-create-session` · allocate ▶ —
-
-#### 3.9.2  `FCHAIN-login-scenario` — Login-Szenario
-
-Benutzer authentifiziert sich in der Web-App
-
-##### 3.9.2.1  `FUNC-authenticate-user` — Authenticate User
-
-> auch in: `FCHAIN-login-auth-session`
-
-Validates user credentials against identity provider
-
-io ◀ — · io ▶ `FLOW-auth-result` · allocate ▶ —
-
-###### `REQ-user-auth-email` — Nutzer authentifiziert mit Email und Passwort
-
-Gültige Credentials authentifizieren den Nutzer gegenüber dem System
-
-priority: must · status: n/a
-
-Verification ◀ `TEST-auth-session` · satisfy ◀ `FUNC-authenticate-user` · allocate ▶ —
-
-##### 3.9.2.2  `FUNC-create-session` — Create Session
-
-> auch in: `FCHAIN-login-auth-session`
-
-Establishes authenticated session for graph operations
-
-io ◀ `FLOW-auth-result` · io ▶ `FLOW-session-token` · allocate ▶ —
-
-###### `REQ-session-token-created` — Session-Token wird erzeugt und zurückgegeben
-
-Nach erfolgreicher Authentifizierung erhält Nutzer ein Session-Token zur Identifikation
-
-priority: must · status: n/a
-
-Verification ◀ `TEST-auth-session` · satisfy ◀ `FUNC-create-session` · allocate ▶ —
-
-#### 3.9.3  `FCHAIN-multiuser-auth-flow` — Multiuser Authentication Flow
-
-Sequential functions for user authentication in multiuser context
 
 ### 3.10  `UC-user-monitor-graph-updates` — Monitor graph updates in real-time
 
@@ -902,43 +940,7 @@ User observes mutations from collaborators live via websocket
 
 io ◀ `ACTOR-user`
 
-#### 3.10.1  `FCHAIN-monitor-ws-broadcast` — Monitor–WebSocket–Broadcast
-
-Szenario: Nutzer verbindet WebSocket, erhält Live-Updates von Mutations-Events anderer Aktoren
-
-##### 3.10.1.1  `FUNC-broadcast-websocket` — Broadcast WebSocket
-
-> auch in: `FCHAIN-live-update-scenario` · `FCHAIN-update-propagation`
-
-Sends real-time updates to connected clients
-
-io ◀ `FLOW-graph-delta` · io ▶ `FLOW-update-event` · allocate ▶ —
-
-###### `REQ-websocket-live` — WebSocket-Verbindung überträgt Graph-Mutations live
-
-Client empfängt Apply-Gate-Outputs als Events via WebSocket in <500ms
-
-priority: must · status: n/a
-
-Verification ◀ `TEST-live-updates` · satisfy ◀ `FUNC-broadcast-websocket` · allocate ▶ —
-
-##### 3.10.1.2  `FUNC-subscribe-updates` — Subscribe Updates
-
-> auch in: `FCHAIN-live-update-scenario` · `FCHAIN-update-propagation`
-
-Establishes WebSocket subscription for user
-
-io ◀ `FLOW-update-event` · io ▶ — · allocate ▶ —
-
-###### `REQ-updates-visible-ui` — UI zeigt Graph-Änderungen Echtzeit
-
-Mutations werden im UI-Baum sichtbar reflektiert, kein Manuell-Refresh nötig
-
-priority: must · status: n/a
-
-Verification ◀ `TEST-live-updates` · satisfy ◀ `FUNC-subscribe-updates` · allocate ▶ —
-
-#### 3.10.2  `FCHAIN-update-propagation` — Update Propagation
+#### 3.10.1  `FCHAIN-update-propagation` — Update Propagation
 
 > auch in: `UC-user-discover-elements`
 
@@ -954,9 +956,35 @@ priority: must · status: n/a
 
 Verification ◀ `TEST-verify-search-indexing` · satisfy ◀ `FCHAIN-filter-by-type-and-search` · `FCHAIN-update-propagation` · allocate ▶ —
 
-##### 3.10.2.1  `FUNC-broadcast-websocket` — Broadcast WebSocket
+##### `REQ-int-update-propagation` — Integration Persist→Broadcast
 
-> auch in: `FCHAIN-live-update-scenario` · `FCHAIN-monitor-ws-broadcast`
+Jede persistierte Mutation erzeugt genau ein versioniertes Broadcast-Event; Subscriber erhalten es in Persist-Reihenfolge.
+
+priority: must · status: n/a
+
+Verification ◀ `TEST-int-update-propagation` · satisfy ◀ `FCHAIN-update-propagation` · allocate ▶ —
+
+##### 3.10.1.1  `FUNC-persist-batch` — Persist Batch
+
+> auch in: `FCHAIN-apply-gate-validation` · `FCHAIN-concurrent-authoring` · `FCHAIN-export-lifecycle` · `FCHAIN-governance-enforcement-flow` · `FCHAIN-search-scenario` · `FCHAIN-view-apply-gate-result`
+
+Commits validated mutations to graph store
+
+io ◀ `FLOW-approved-batch` · io ▶ `FLOW-graph-delta` · allocate ▶ —
+
+###### `REQ-governance-enforcement` — Governance-Enforcement im Apply-Gate
+
+> auch unter: `FCHAIN-governance-enforcement-flow`
+
+Requirement: Apply-Gate muss V3_RULES durchsetzen, ungültige Batches blocken (tier=block), Verdicts mit Regel-IDs und fixHints generieren, erfolgreiche Batches persistent machen.
+
+priority: must · status: n/a
+
+Verification ◀ `TEST-governance-enforcement` · `TEST-verify-governance-enforcement` · satisfy ◀ `FCHAIN-governance-enforcement-flow` · `FUNC-persist-batch` · allocate ▶ —
+
+##### 3.10.1.2  `FUNC-broadcast-websocket` — Broadcast WebSocket
+
+> auch in: `FCHAIN-live-update-scenario`
 
 Sends real-time updates to connected clients
 
@@ -970,13 +998,13 @@ priority: must · status: n/a
 
 Verification ◀ `TEST-live-updates` · satisfy ◀ `FUNC-broadcast-websocket` · allocate ▶ —
 
-##### 3.10.2.2  `FUNC-subscribe-updates` — Subscribe Updates
+##### 3.10.1.3  `FUNC-subscribe-updates` — Subscribe Updates
 
-> auch in: `FCHAIN-live-update-scenario` · `FCHAIN-monitor-ws-broadcast`
+> auch in: `FCHAIN-live-update-scenario`
 
 Establishes WebSocket subscription for user
 
-io ◀ `FLOW-update-event` · io ▶ — · allocate ▶ —
+io ◀ `FLOW-subscribe-request` · `FLOW-update-event` · io ▶ — · allocate ▶ —
 
 ###### `REQ-updates-visible-ui` — UI zeigt Graph-Änderungen Echtzeit
 
@@ -998,7 +1026,7 @@ Benutzer empfängt WebSocket-Updates bei Änderungen anderer Nutzer
 
 ##### 3.11.1.1  `FUNC-broadcast-websocket` — Broadcast WebSocket
 
-> auch in: `FCHAIN-monitor-ws-broadcast` · `FCHAIN-update-propagation`
+> auch in: `FCHAIN-update-propagation`
 
 Sends real-time updates to connected clients
 
@@ -1014,11 +1042,11 @@ Verification ◀ `TEST-live-updates` · satisfy ◀ `FUNC-broadcast-websocket` �
 
 ##### 3.11.1.2  `FUNC-subscribe-updates` — Subscribe Updates
 
-> auch in: `FCHAIN-monitor-ws-broadcast` · `FCHAIN-update-propagation`
+> auch in: `FCHAIN-update-propagation`
 
 Establishes WebSocket subscription for user
 
-io ◀ `FLOW-update-event` · io ▶ — · allocate ▶ —
+io ◀ `FLOW-subscribe-request` · `FLOW-update-event` · io ▶ — · allocate ▶ —
 
 ###### `REQ-updates-visible-ui` — UI zeigt Graph-Änderungen Echtzeit
 
@@ -1028,17 +1056,13 @@ priority: must · status: n/a
 
 Verification ◀ `TEST-live-updates` · satisfy ◀ `FUNC-subscribe-updates` · allocate ▶ —
 
-#### 3.11.2  `FCHAIN-live-update-stream` — Live Update Stream
-
-Streaming functions for real-time graph updates across sessions
-
-#### 3.11.3  `FCHAIN-view-apply-gate-result` — View–Apply-Gate–Result
+#### 3.11.2  `FCHAIN-view-apply-gate-result` — View–Apply-Gate–Result
 
 Szenario: Nutzer sieht UI-Update mit erfolgreicher oder blockierter Mutation durchs Apply-Gate
 
-##### 3.11.3.1  `FUNC-persist-batch` — Persist Batch
+##### 3.11.2.1  `FUNC-persist-batch` — Persist Batch
 
-> auch in: `FCHAIN-apply-gate-validation` · `FCHAIN-concurrent-authoring` · `FCHAIN-export-lifecycle` · `FCHAIN-governance-enforcement-flow`
+> auch in: `FCHAIN-apply-gate-validation` · `FCHAIN-concurrent-authoring` · `FCHAIN-export-lifecycle` · `FCHAIN-governance-enforcement-flow` · `FCHAIN-search-scenario` · `FCHAIN-update-propagation`
 
 Commits validated mutations to graph store
 
@@ -1054,13 +1078,13 @@ priority: must · status: n/a
 
 Verification ◀ `TEST-governance-enforcement` · `TEST-verify-governance-enforcement` · satisfy ◀ `FCHAIN-governance-enforcement-flow` · `FUNC-persist-batch` · allocate ▶ —
 
-##### 3.11.3.2  `FUNC-validate-mutations` — Validate Mutations
+##### 3.11.2.2  `FUNC-validate-mutations` — Validate Mutations
 
-> auch in: `FCHAIN-apply-gate-validation` · `FCHAIN-concurrent-authoring` · `FCHAIN-governance-enforcement-flow`
+> auch in: `FCHAIN-apply-gate-validation` · `FCHAIN-authoring-scenario` · `FCHAIN-concurrent-authoring` · `FCHAIN-governance-enforcement-flow`
 
 Applies V3_RULES governance checks to batch
 
-io ◀ `FLOW-validated-commands` · io ▶ `FLOW-gate-verdict` · allocate ▶ —
+io ◀ `FLOW-governance-policy` · `FLOW-validated-commands` · io ▶ `FLOW-gate-verdict` · allocate ▶ —
 
 ###### `REQ-apply-gate-verdict-deterministic` — Apply-Gate Verdicts sind deterministisch und reproduzierbar
 
@@ -1082,63 +1106,211 @@ Verification ◀ `TEST-verify-batch-validation` · `TEST-verify-governance-enfor
 
 ## 4  Schnittstellen
 
-### 4.1  `FLOW-approved-batch` — Approveter Batch
+### 4.1  `FLOW-approval-decision` — Approval-Entscheidung
+
+Admin-Entscheidung (approve/reject + Batch-Referenz).
+
+io ◀ `ACTOR-admin` · io ▶ `FUNC-approve-batch` · schema ▶ `SCHEMA-approval-decision`
+
+### 4.2  `FLOW-approved-batch` — Approveter Batch
 
 Freigegebener Batch → atomare Persistierung (All-or-Nothing).
 
-io ◀ `FUNC-approve-batch` · io ▶ `FUNC-persist-batch` · schema ▶ —
+io ◀ `FUNC-approve-batch` · io ▶ `FUNC-persist-batch` · schema ▶ `SCHEMA-mutate-command-batch`
 
-### 4.2  `FLOW-auth-result` — Auth-Ergebnis
+### 4.3  `FLOW-auth-result` — Auth-Ergebnis
 
 Geprüfte Credentials → Session-Erzeugung (Erfolg/Fehlschlag + User-Identität).
 
-io ◀ `FUNC-authenticate-user` · io ▶ `FUNC-create-session` · schema ▶ —
+io ◀ `FUNC-authenticate-user` · io ▶ `FUNC-create-session` · schema ▶ `SCHEMA-auth-result`
 
-### 4.3  `FLOW-edit-commands` — Edit-Kommandos
+### 4.4  `FLOW-edit-commands` — Edit-Kommandos
 
 Vom Editor erzeugte Mutations-Kommandos (add/update/delete) zur Einzelvalidierung.
 
-io ◀ `FUNC-edit-element` · io ▶ `FUNC-validate-mutation` · schema ▶ —
+io ◀ `FUNC-edit-element` · io ▶ `FUNC-validate-mutation` · schema ▶ `SCHEMA-mutate-command-batch`
 
-### 4.4  `FLOW-gate-verdict` — Gate-Verdict
+### 4.5  `FLOW-edit-intent` — Edit-Intention
+
+Vom Nutzer im Editor formulierte Änderungsabsicht (Roh-Kommandos).
+
+io ◀ `ACTOR-user` · io ▶ `FUNC-edit-element` · schema ▶ `SCHEMA-mutate-command-batch`
+
+### 4.6  `FLOW-export-artifact` — Export-Artefakt
+
+Serialisierter Graphstand (Format-E/JSON) zum Download.
+
+io ◀ `FUNC-serialize-graph` · io ▶ `ACTOR-user` · schema ▶ `SCHEMA-export-artifact`
+
+### 4.7  `FLOW-export-request` — Export-Anforderung
+
+Export-Trigger mit Format/Version (System oder Nutzer).
+
+io ◀ `ACTOR-system` · io ▶ `FUNC-serialize-graph` · schema ▶ `SCHEMA-export-request`
+
+### 4.8  `FLOW-gate-verdict` — Gate-Verdict
 
 Batch-Verdict (tier/violations) → Approval-Entscheidung.
 
-io ◀ `FUNC-validate-mutations` · io ▶ `FUNC-approve-batch` · schema ▶ —
+io ◀ `FUNC-validate-mutations` · io ▶ `ACTOR-admin` · `FUNC-approve-batch` · schema ▶ `SCHEMA-gate-verdict`
 
-### 4.5  `FLOW-graph-delta` — Graph-Delta
+### 4.9  `FLOW-governance-policy` — Governance-Policy
+
+Aktive Regel-/Enforcement-Konfiguration des Reviewers für die Batch-Validierung.
+
+io ◀ `ACTOR-governance-reviewer` · io ▶ `FUNC-validate-mutations` · schema ▶ `SCHEMA-governance-policy`
+
+### 4.10  `FLOW-graph-delta` — Graph-Delta
 
 Persistierte Änderungsmenge — Quelle für Export, Suchindex und Live-Broadcast.
 
-io ◀ `FUNC-persist-batch` · io ▶ `FUNC-broadcast-websocket` · `FUNC-search-index` · `FUNC-serialize-graph` · schema ▶ —
+io ◀ `FUNC-persist-batch` · io ▶ `FUNC-broadcast-websocket` · `FUNC-search-index` · `FUNC-serialize-graph` · schema ▶ `SCHEMA-graph-delta`
 
-### 4.6  `FLOW-index-entries` — Index-Einträge
+### 4.11  `FLOW-index-entries` — Index-Einträge
 
 Aktualisierte Suchindex-Einträge → Filter/Query.
 
-io ◀ `FUNC-search-index` · io ▶ `FUNC-search-filter` · schema ▶ —
+io ◀ `FUNC-search-index` · io ▶ `FUNC-search-filter` · schema ▶ `SCHEMA-index-entry`
 
-### 4.7  `FLOW-session-token` — Session-Token
+### 4.12  `FLOW-login-credentials` — Login-Credentials
+
+Email + Passwort vom Nutzer an die Authentifizierung.
+
+io ◀ `ACTOR-user` · io ▶ `FUNC-authenticate-user` · schema ▶ `SCHEMA-credentials`
+
+### 4.13  `FLOW-search-query` — Such-Query
+
+Nutzer-Suchanfrage (Text + Typ-Filter).
+
+io ◀ `ACTOR-user` · io ▶ `FUNC-search-filter` · schema ▶ `SCHEMA-search-query`
+
+### 4.14  `FLOW-search-results` — Such-Ergebnisse
+
+Gefilterte, gerankte Trefferliste an den Nutzer.
+
+io ◀ `FUNC-search-filter` · io ▶ `ACTOR-user` · schema ▶ `SCHEMA-search-result`
+
+### 4.15  `FLOW-session-token` — Session-Token
 
 Gültiges Session-Token — Voraussetzung für jede Authoring-Aktion.
 
-io ◀ `FUNC-create-session` · io ▶ `FUNC-edit-element` · schema ▶ —
+io ◀ `FUNC-create-session` · io ▶ `ACTOR-user` · `FUNC-edit-element` · schema ▶ `SCHEMA-session-token`
 
-### 4.8  `FLOW-update-event` — Update-Event
+### 4.16  `FLOW-subscribe-request` — Subscription-Anfrage
+
+Nutzer abonniert den Live-Update-Strom (ab Version X).
+
+io ◀ `ACTOR-user` · io ▶ `FUNC-subscribe-updates` · schema ▶ `SCHEMA-subscribe-request`
+
+### 4.17  `FLOW-update-event` — Update-Event
 
 Versioniertes Broadcast-Event → Subscriber-UI.
 
-io ◀ `FUNC-broadcast-websocket` · io ▶ `FUNC-subscribe-updates` · schema ▶ —
+io ◀ `FUNC-broadcast-websocket` · io ▶ `ACTOR-user` · `FUNC-subscribe-updates` · schema ▶ `SCHEMA-update-event`
 
-### 4.9  `FLOW-validated-commands` — Validierte Kommandos
+### 4.18  `FLOW-validated-commands` — Validierte Kommandos
 
 Einzeln geprüfte Kommandos → Batch-Validierung gegen V3_RULES.
 
-io ◀ `FUNC-validate-mutation` · io ▶ `FUNC-validate-mutations` · schema ▶ —
+io ◀ `FUNC-validate-mutation` · io ▶ `FUNC-validate-mutations` · schema ▶ `SCHEMA-mutate-command-batch`
+
+### 4.19  `FLOW-validation-feedback` — Validierungs-Feedback
+
+Einzelprüfungs-Ergebnis (Verdict je Kommando) zurück an den Autor.
+
+io ◀ `FUNC-validate-mutation` · io ▶ `ACTOR-user` · schema ▶ `SCHEMA-gate-verdict`
 
 ## 5  Schemata
 
-— none —
+### 5.1  `SCHEMA-approval-decision` — ApprovalDecision
+
+Zod: {batchId, decision: approve/reject, reason?}.
+
+schema ◀ `FLOW-approval-decision`
+
+### 5.2  `SCHEMA-auth-result` — AuthResult
+
+Zod: {ok, userId?, reason?}.
+
+schema ◀ `FLOW-auth-result`
+
+### 5.3  `SCHEMA-credentials` — Credentials
+
+Zod: {email, password}.
+
+schema ◀ `FLOW-login-credentials`
+
+### 5.4  `SCHEMA-export-artifact` — ExportArtifact
+
+Zod: {format, bytes, checksum, version}.
+
+schema ◀ `FLOW-export-artifact`
+
+### 5.5  `SCHEMA-export-request` — ExportRequest
+
+Zod: {format: formatE/json, version?}.
+
+schema ◀ `FLOW-export-request`
+
+### 5.6  `SCHEMA-gate-verdict` — GateVerdict
+
+Zod: {success, tier, violations[], confidence}.
+
+schema ◀ `FLOW-gate-verdict` · `FLOW-validation-feedback`
+
+### 5.7  `SCHEMA-governance-policy` — GovernancePolicy
+
+Zod: {ruleSetVersion, enforcementLevel}.
+
+schema ◀ `FLOW-governance-policy`
+
+### 5.8  `SCHEMA-graph-delta` — GraphDelta
+
+Zod: {upsertNodes[], upsertEdges[], deleteNodes[], deleteEdges[], version}.
+
+schema ◀ `FLOW-graph-delta`
+
+### 5.9  `SCHEMA-index-entry` — IndexEntry
+
+Zod: {uid, type, name, tokens[]}.
+
+schema ◀ `FLOW-index-entries`
+
+### 5.10  `SCHEMA-mutate-command-batch` — MutateCommandBatch
+
+Zod: MutateCommand[] (add/update/delete) + Autor + baseVersion.
+
+schema ◀ `FLOW-approved-batch` · `FLOW-edit-commands` · `FLOW-edit-intent` · `FLOW-validated-commands`
+
+### 5.11  `SCHEMA-search-query` — SearchQuery
+
+Zod: {text, types[]?, limit?}.
+
+schema ◀ `FLOW-search-query`
+
+### 5.12  `SCHEMA-search-result` — SearchResult
+
+Zod: {hits: {uid, score, snippet}[], total}.
+
+schema ◀ `FLOW-search-results`
+
+### 5.13  `SCHEMA-session-token` — SessionToken
+
+Zod: {token, userId, expiresAt}.
+
+schema ◀ `FLOW-session-token`
+
+### 5.14  `SCHEMA-subscribe-request` — SubscribeRequest
+
+Zod: {sinceVersion?, filter?}.
+
+schema ◀ `FLOW-subscribe-request`
+
+### 5.15  `SCHEMA-update-event` — UpdateEvent
+
+Zod: {eventId, version, domains[], ts}.
+
+schema ◀ `FLOW-update-event`
 
 ## 6  Architektur
 
@@ -1202,43 +1374,67 @@ Prüfschritt: System enforced V3_RULES bei Apply-Gate, blockiert ungültige Muta
 
 verify ▶ `REQ-governance-enforcement`
 
-### 8.6  `TEST-live-updates` — Live-Update-Strom
+### 8.6  `TEST-int-auth-session` — Integration Auth→Session
+
+Integrationstest über die echte Kette authenticate-user → create-session (kein Mock): korrektes Passwort → Token mit richtiger userId; falsches → keine Session.
+
+verify ▶ `REQ-int-auth-session`
+
+### 8.7  `TEST-int-authoring-pipeline` — Integration Authoring-Pipeline
+
+Integrationstest über create-session → edit-element → validate-mutation → validate-mutations: Batch eines authentifizierten Autors erreicht das Batch-Verdict; ohne Session: Abbruch vor Edit.
+
+verify ▶ `REQ-int-authoring-pipeline`
+
+### 8.8  `TEST-int-search-freshness` — Integration Persist→Suchindex
+
+Integrationstest persist-batch → search-index → search-filter: neues Element nach Persist auffindbar, gelöschtes nicht mehr.
+
+verify ▶ `REQ-int-search-freshness`
+
+### 8.9  `TEST-int-update-propagation` — Integration Persist→Broadcast
+
+Integrationstest persist-batch → broadcast-websocket → subscribe-updates: N persistierte Batches → N Events in Reihenfolge, Versionen lückenlos.
+
+verify ▶ `REQ-int-update-propagation`
+
+### 8.10  `TEST-live-updates` — Live-Update-Strom
 
 WebSocket-Subscription: persistierte Mutation erzeugt versioniertes Event; UI zeigt Änderung ohne Reload; Reconnect via Last-Event-ID liefert keinen veralteten Stand.
 
 verify ▶ `REQ-no-stale-data` · `REQ-updates-visible-ui` · `REQ-view-current-state` · `REQ-websocket-live`
 
-### 8.7  `TEST-search-filtering` — Suchfilterung verifizieren
+### 8.11  `TEST-search-filtering` — Suchfilterung verifizieren
 
 Prüfschritt: Nutzer filterst Elemente nach Typ (UC/REQ/TEST), Ergebnisse werden korrekt gefiltert und angezeigt, Performance unter 100ms
 
 verify ▶ `REQ-search-filtering`
 
-### 8.8  `TEST-search-indexing` — Suchindex-Indexierung prüfen
+### 8.12  `TEST-search-indexing` — Suchindex-Indexierung prüfen
 
 Prüfschritt: (1) Systemstart triggert Index-Build über alle Graph-Elemente; (2) Live-Updates durch Apply-Gate sind sofort im Index sichtbar; (3) Suchquery über name/uid/description liefert <10ms auf 1000+ Knoten; (4) Filter-Kombinationen (type=REQ AND layer=arch) arbeiten korrekt
 
 verify ▶ `REQ-search-indexing`
 
-### 8.9  `TEST-verify-batch-validation` — Batch-Validierung vor Apply-Gate
+### 8.13  `TEST-verify-batch-validation` — Batch-Validierung vor Apply-Gate
 
 Prüfschritt: (1) Admin submittet Batch mit absichtlichen Violations (z.B. orphaned TEST ohne testRef); (2) graph_mutate mit dryRun:true lehnt ab (success:false) mit violations und fixHints; (3) Admin korrigiert Batch; (4) Mit korrigiertem Batch dryRun:true geht durch (success:true); (5) nur der erfolgreiche Batch wird ohne dryRun persistent
 
 verify ▶ `REQ-apply-gate-verdict-deterministic` · `REQ-author-gate-validation` · `REQ-author-integrity` · `REQ-batch-atomicity-measurable` · `REQ-batch-validation-measurable`
 
-### 8.10  `TEST-verify-governance-enforcement` — Governance-Regeln durchsetzen
+### 8.14  `TEST-verify-governance-enforcement` — Governance-Regeln durchsetzen
 
 Prüfschritt: (1) User2 submittet Batch mit UC ohne actor-Bindung (V3_RULES-Violation); (2) Gate-Verdict blockiert (tier=block) mit Regel-ID (z.B. R-5); (3) User2 sieht fixHints und fügt ACTOR io→UC ein; (4) Corrected Batch passiert Gate und wird applied; (5) Live-Graph zeigt neue UC+ACTOR sofort; (6) Report verzeichnet Regel und User+Timestamp
 
 verify ▶ `REQ-batch-atomicity-measurable` · `REQ-concurrent-batch-isolation` · `REQ-governance-enforcement`
 
-### 8.11  `TEST-verify-search-filtering` — Verify Suchfilterung
+### 8.15  `TEST-verify-search-filtering` — Verify Suchfilterung
 
 Prüfschritt: Nutzer gibt Filterkriterien ein (z.B. type:REQ, name:*batch*); System returned gefilterte Knotenliste; Verification: Alle Treffer entsprechen Filterkriterien, keine False Positives.
 
 verify ▶ `REQ-search-filtering` · `REQ-search-result-precision-recall` · `REQ-user-discover-search-interface`
 
-### 8.12  `TEST-verify-search-indexing` — Verify Graphindex
+### 8.16  `TEST-verify-search-indexing` — Verify Graphindex
 
 Prüfschritt: Index wird nach Batch-Mutation aktualisiert; Suche über Live-Graph liefert neue Elemente sofort; Verification: Indexierung synkt mit Graph-State, Query-Latenz <100ms.
 
@@ -1246,4 +1442,4 @@ verify ▶ `REQ-discover-latency-measurable` · `REQ-search-indexing`
 
 ## 9  Traceability summary
 
-22 REQ · 22 verified · 0 without a verifying TEST (R-01).
+26 REQ · 26 verified · 0 without a verifying TEST (R-01).

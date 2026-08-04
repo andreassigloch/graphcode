@@ -4,23 +4,48 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 0 SCHEMA · 9 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 15 SCHEMA · 19 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
 | Interface (SCHEMA) | Contract (realRef) | status |
 |---|---|---|
+| `SCHEMA-approval-decision` | ⚠ kein realRef (R-26) | n/a |
+| `SCHEMA-auth-result` | ⚠ kein realRef (R-26) | n/a |
+| `SCHEMA-credentials` | ⚠ kein realRef (R-26) | n/a |
+| `SCHEMA-export-artifact` | ⚠ kein realRef (R-26) | n/a |
+| `SCHEMA-export-request` | ⚠ kein realRef (R-26) | n/a |
+| `SCHEMA-gate-verdict` | ⚠ kein realRef (R-26) | n/a |
+| `SCHEMA-governance-policy` | ⚠ kein realRef (R-26) | n/a |
+| `SCHEMA-graph-delta` | ⚠ kein realRef (R-26) | n/a |
+| `SCHEMA-index-entry` | ⚠ kein realRef (R-26) | n/a |
+| `SCHEMA-mutate-command-batch` | ⚠ kein realRef (R-26) | n/a |
+| `SCHEMA-search-query` | ⚠ kein realRef (R-26) | n/a |
+| `SCHEMA-search-result` | ⚠ kein realRef (R-26) | n/a |
+| `SCHEMA-session-token` | ⚠ kein realRef (R-26) | n/a |
+| `SCHEMA-subscribe-request` | ⚠ kein realRef (R-26) | n/a |
+| `SCHEMA-update-event` | ⚠ kein realRef (R-26) | n/a |
 
 ## Flows (producer → consumer)
 
 | Interface (FLOW) | Producer | Consumer |
 |---|---|---|
+| `FLOW-approval-decision` | `ACTOR-admin` | `FUNC-approve-batch` |
 | `FLOW-approved-batch` | `FUNC-approve-batch` | `FUNC-persist-batch` |
 | `FLOW-auth-result` | `FUNC-authenticate-user` | `FUNC-create-session` |
 | `FLOW-edit-commands` | `FUNC-edit-element` | `FUNC-validate-mutation` |
-| `FLOW-gate-verdict` | `FUNC-validate-mutations` | `FUNC-approve-batch` |
+| `FLOW-edit-intent` | `ACTOR-user` | `FUNC-edit-element` |
+| `FLOW-export-artifact` | `FUNC-serialize-graph` | `ACTOR-user` |
+| `FLOW-export-request` | `ACTOR-system` | `FUNC-serialize-graph` |
+| `FLOW-gate-verdict` | `FUNC-validate-mutations` | `ACTOR-admin` · `FUNC-approve-batch` |
+| `FLOW-governance-policy` | `ACTOR-governance-reviewer` | `FUNC-validate-mutations` |
 | `FLOW-graph-delta` | `FUNC-persist-batch` | `FUNC-broadcast-websocket` · `FUNC-search-index` · `FUNC-serialize-graph` |
 | `FLOW-index-entries` | `FUNC-search-index` | `FUNC-search-filter` |
-| `FLOW-session-token` | `FUNC-create-session` | `FUNC-edit-element` |
-| `FLOW-update-event` | `FUNC-broadcast-websocket` | `FUNC-subscribe-updates` |
+| `FLOW-login-credentials` | `ACTOR-user` | `FUNC-authenticate-user` |
+| `FLOW-search-query` | `ACTOR-user` | `FUNC-search-filter` |
+| `FLOW-search-results` | `FUNC-search-filter` | `ACTOR-user` |
+| `FLOW-session-token` | `FUNC-create-session` | `ACTOR-user` · `FUNC-edit-element` |
+| `FLOW-subscribe-request` | `ACTOR-user` | `FUNC-subscribe-updates` |
+| `FLOW-update-event` | `FUNC-broadcast-websocket` | `ACTOR-user` · `FUNC-subscribe-updates` |
 | `FLOW-validated-commands` | `FUNC-validate-mutation` | `FUNC-validate-mutations` |
+| `FLOW-validation-feedback` | `FUNC-validate-mutation` | `ACTOR-user` |

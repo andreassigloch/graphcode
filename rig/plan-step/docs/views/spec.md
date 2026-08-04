@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Alle Elemente nach Typ, sortiert nach uid. Deterministisch generiert.
 
-Elemente: 105 · Traces: 213
+Elemente: 133 · Traces: 261
 
 
 ## ACTOR
@@ -44,16 +44,11 @@ Elemente: 105 · Traces: 213
 | `FCHAIN-batch-approval-flow` | Batch-Genehmigungsablauf |  | Szenario: Admin prüft Violations, genehmigt oder lehnt ab |
 | `FCHAIN-concurrent-authoring` | Concurrent Authoring Flow |  | Node creation → OCC validation → gate verdict → mutation apply |
 | `FCHAIN-export-lifecycle` | Export Lifecycle |  | Graph serialization → persistence → client delivery |
-| `FCHAIN-export-scenario` | Export-Szenario |  | Szenario: Nutzer triggert Export, System serialisiert Graphen |
 | `FCHAIN-export-standard-format` | Export Standard Format Chain |  | Export flow: select elements → serialize version → write file |
 | `FCHAIN-filter-by-type-and-search` | Filter By Type And Search Chain |  | Discovery flow: apply type filter → apply search query → return results |
 | `FCHAIN-governance-enforcement-flow` | Governance-Durchsetzungsablauf |  | Szenario: System wendet Regeln auf Batch an, persistiert |
 | `FCHAIN-live-update-scenario` | Live-Update-Szenario |  | Benutzer empfängt WebSocket-Updates bei Änderungen anderer Nutzer |
-| `FCHAIN-live-update-stream` | Live Update Stream |  | Streaming functions for real-time graph updates across sessions |
 | `FCHAIN-login-auth-session` | Login–Authentifizierung–Session |  | Szenario: Nutzer loggt sich ein, wird authentifiziert, erhält Session-Token zur Graphbearbeitung |
-| `FCHAIN-login-scenario` | Login-Szenario |  | Benutzer authentifiziert sich in der Web-App |
-| `FCHAIN-monitor-ws-broadcast` | Monitor–WebSocket–Broadcast |  | Szenario: Nutzer verbindet WebSocket, erhält Live-Updates von Mutations-Events anderer Aktoren |
-| `FCHAIN-multiuser-auth-flow` | Multiuser Authentication Flow |  | Sequential functions for user authentication in multiuser context |
 | `FCHAIN-search-scenario` | Suchszenario |  | Benutzer findet und filtert Elemente im Live-Graphen |
 | `FCHAIN-update-propagation` | Update Propagation |  | Mutation event → broadcast → client render |
 | `FCHAIN-view-apply-gate-result` | View–Apply-Gate–Result |  | Szenario: Nutzer sieht UI-Update mit erfolgreicher oder blockierter Mutation durchs Apply-Gate |
@@ -62,15 +57,25 @@ Elemente: 105 · Traces: 213
 
 | uid | name | status | description |
 |---|---|---|---|
+| `FLOW-approval-decision` | Approval-Entscheidung |  | Admin-Entscheidung (approve/reject + Batch-Referenz). |
 | `FLOW-approved-batch` | Approveter Batch |  | Freigegebener Batch → atomare Persistierung (All-or-Nothing). |
 | `FLOW-auth-result` | Auth-Ergebnis |  | Geprüfte Credentials → Session-Erzeugung (Erfolg/Fehlschlag + User-Identität). |
 | `FLOW-edit-commands` | Edit-Kommandos |  | Vom Editor erzeugte Mutations-Kommandos (add/update/delete) zur Einzelvalidierung. |
+| `FLOW-edit-intent` | Edit-Intention |  | Vom Nutzer im Editor formulierte Änderungsabsicht (Roh-Kommandos). |
+| `FLOW-export-artifact` | Export-Artefakt |  | Serialisierter Graphstand (Format-E/JSON) zum Download. |
+| `FLOW-export-request` | Export-Anforderung |  | Export-Trigger mit Format/Version (System oder Nutzer). |
 | `FLOW-gate-verdict` | Gate-Verdict |  | Batch-Verdict (tier/violations) → Approval-Entscheidung. |
+| `FLOW-governance-policy` | Governance-Policy |  | Aktive Regel-/Enforcement-Konfiguration des Reviewers für die Batch-Validierung. |
 | `FLOW-graph-delta` | Graph-Delta |  | Persistierte Änderungsmenge — Quelle für Export, Suchindex und Live-Broadcast. |
 | `FLOW-index-entries` | Index-Einträge |  | Aktualisierte Suchindex-Einträge → Filter/Query. |
+| `FLOW-login-credentials` | Login-Credentials |  | Email + Passwort vom Nutzer an die Authentifizierung. |
+| `FLOW-search-query` | Such-Query |  | Nutzer-Suchanfrage (Text + Typ-Filter). |
+| `FLOW-search-results` | Such-Ergebnisse |  | Gefilterte, gerankte Trefferliste an den Nutzer. |
 | `FLOW-session-token` | Session-Token |  | Gültiges Session-Token — Voraussetzung für jede Authoring-Aktion. |
+| `FLOW-subscribe-request` | Subscription-Anfrage |  | Nutzer abonniert den Live-Update-Strom (ab Version X). |
 | `FLOW-update-event` | Update-Event |  | Versioniertes Broadcast-Event → Subscriber-UI. |
 | `FLOW-validated-commands` | Validierte Kommandos |  | Einzeln geprüfte Kommandos → Batch-Validierung gegen V3_RULES. |
+| `FLOW-validation-feedback` | Validierungs-Feedback |  | Einzelprüfungs-Ergebnis (Verdict je Kommando) zurück an den Autor. |
 
 ## FUNC
 
@@ -114,6 +119,10 @@ Elemente: 105 · Traces: 213
 | `REQ-export-snapshot-bitwise-identical` | Export-Snapshot ist bitwise-identisch mit in-memory Graph |  | Exportierter Graph ist bitwise-identisch mit dem in-memory Systemgraph. Messkriterium: Round-trip liefert identische Element-UIDs, Kanten und Attribute; SHA256-Hash ist deterministisch. |
 | `REQ-export-versioning` | Versionierte Exporte mit Audit-Trail |  | Export muss Graphversion, Timestamp und Nutzer-Aktion enthalten |
 | `REQ-governance-enforcement` | Governance-Enforcement im Apply-Gate |  | Requirement: Apply-Gate muss V3_RULES durchsetzen, ungültige Batches blocken (tier=block), Verdicts mit Regel-IDs und fixHints generieren, erfolgreiche Batches persistent machen. |
+| `REQ-int-auth-session` | Integration Auth→Session |  | Erfolgreiche Authentifizierung übergibt die Nutzeridentität verlustfrei an die Session-Erzeugung; Fehlschlag erzeugt keine Session. |
+| `REQ-int-authoring-pipeline` | Integration Authoring-Pipeline |  | Kommandos eines eingeloggten Autors durchlaufen Session-Kontext → Editor → Einzelvalidierung → Batch-Validierung ohne Kontextverlust; ungültige Session bricht vor dem Editor ab. |
+| `REQ-int-search-freshness` | Integration Persist→Suchindex |  | Persistierte Änderungen sind nach Index-Aktualisierung ohne Neustart such- und filterbar; gelöschte Elemente verschwinden aus den Treffern. |
+| `REQ-int-update-propagation` | Integration Persist→Broadcast |  | Jede persistierte Mutation erzeugt genau ein versioniertes Broadcast-Event; Subscriber erhalten es in Persist-Reihenfolge. |
 | `REQ-no-stale-data` | Keine veralteten Graph-Daten anzeigen |  | View enthält nur Daten, die nicht älter als die letzte Apply-Gate-Mutation sind |
 | `REQ-search-filtering` | Suchfilterung nach Elementtyp |  | Requirement: System muss Elemente nach Typ (UC/REQ/TEST/etc) und Name filtern, Suchquery mit <100ms Latenz beantworten, keine False Positives. |
 | `REQ-search-indexing` | Graphindex für Suche |  | Suchindex ermöglicht schnelle Abfragen über Live-Graph |
@@ -124,6 +133,26 @@ Elemente: 105 · Traces: 213
 | `REQ-user-discover-search-interface` | Suchoberfläche mit Filterung |  | System muss Nutzer-Suche über UID/Name mit Real-time-Filterung unterstützen |
 | `REQ-view-current-state` | Nutzer sieht aktuellen Systemgraph-Zustand |  | Graph-View zeigt Live-Stand mit Knotendaten, Kanten und letztem Mutations-Timestamp |
 | `REQ-websocket-live` | WebSocket-Verbindung überträgt Graph-Mutations live |  | Client empfängt Apply-Gate-Outputs als Events via WebSocket in <500ms |
+
+## SCHEMA
+
+| uid | name | status | description |
+|---|---|---|---|
+| `SCHEMA-approval-decision` | ApprovalDecision |  | Zod: {batchId, decision: approve/reject, reason?}. |
+| `SCHEMA-auth-result` | AuthResult |  | Zod: {ok, userId?, reason?}. |
+| `SCHEMA-credentials` | Credentials |  | Zod: {email, password}. |
+| `SCHEMA-export-artifact` | ExportArtifact |  | Zod: {format, bytes, checksum, version}. |
+| `SCHEMA-export-request` | ExportRequest |  | Zod: {format: formatE/json, version?}. |
+| `SCHEMA-gate-verdict` | GateVerdict |  | Zod: {success, tier, violations[], confidence}. |
+| `SCHEMA-governance-policy` | GovernancePolicy |  | Zod: {ruleSetVersion, enforcementLevel}. |
+| `SCHEMA-graph-delta` | GraphDelta |  | Zod: {upsertNodes[], upsertEdges[], deleteNodes[], deleteEdges[], version}. |
+| `SCHEMA-index-entry` | IndexEntry |  | Zod: {uid, type, name, tokens[]}. |
+| `SCHEMA-mutate-command-batch` | MutateCommandBatch |  | Zod: MutateCommand[] (add/update/delete) + Autor + baseVersion. |
+| `SCHEMA-search-query` | SearchQuery |  | Zod: {text, types[]?, limit?}. |
+| `SCHEMA-search-result` | SearchResult |  | Zod: {hits: {uid, score, snippet}[], total}. |
+| `SCHEMA-session-token` | SessionToken |  | Zod: {token, userId, expiresAt}. |
+| `SCHEMA-subscribe-request` | SubscribeRequest |  | Zod: {sinceVersion?, filter?}. |
+| `SCHEMA-update-event` | UpdateEvent |  | Zod: {eventId, version, domains[], ts}. |
 
 ## SYS
 
@@ -140,6 +169,10 @@ Elemente: 105 · Traces: 213
 | `TEST-e2e-multiuser-journey` | E2E Multiuser-Durchstich |  | Playwright, 2 Browser-Contexts: beide Nutzer anmelden, User A autoriert Element (Gate-applied), User B sieht Live-Update ohne Reload, Export-Download enthält As Element. Ein Lauf = ganze Pyramide-Spitze. |
 | `TEST-export-roundtrip` | Export-Determinismus |  | Zweimal exportieren ohne Mutation → bitweise identisch; Export nach Mutation trägt neue Version; Re-Import (seed) reproduziert den Graphen verlustfrei. |
 | `TEST-governance-enforcement` | Governance-Enforcement verifizieren |  | Prüfschritt: System enforced V3_RULES bei Apply-Gate, blockiert ungültige Mutations-Batches mit Verdicts, erlaubt nur compliant gates |
+| `TEST-int-auth-session` | Integration Auth→Session |  | Integrationstest über die echte Kette authenticate-user → create-session (kein Mock): korrektes Passwort → Token mit richtiger userId; falsches → keine Session. |
+| `TEST-int-authoring-pipeline` | Integration Authoring-Pipeline |  | Integrationstest über create-session → edit-element → validate-mutation → validate-mutations: Batch eines authentifizierten Autors erreicht das Batch-Verdict; ohne Session: Abbruch vor Edit. |
+| `TEST-int-search-freshness` | Integration Persist→Suchindex |  | Integrationstest persist-batch → search-index → search-filter: neues Element nach Persist auffindbar, gelöschtes nicht mehr. |
+| `TEST-int-update-propagation` | Integration Persist→Broadcast |  | Integrationstest persist-batch → broadcast-websocket → subscribe-updates: N persistierte Batches → N Events in Reihenfolge, Versionen lückenlos. |
 | `TEST-live-updates` | Live-Update-Strom |  | WebSocket-Subscription: persistierte Mutation erzeugt versioniertes Event; UI zeigt Änderung ohne Reload; Reconnect via Last-Event-ID liefert keinen veralteten Stand. |
 | `TEST-search-filtering` | Suchfilterung verifizieren |  | Prüfschritt: Nutzer filterst Elemente nach Typ (UC/REQ/TEST), Ergebnisse werden korrekt gefiltert und angezeigt, Performance unter 100ms |
 | `TEST-search-indexing` | Suchindex-Indexierung prüfen |  | Prüfschritt: (1) Systemstart triggert Index-Build über alle Graph-Elemente; (2) Live-Updates durch Apply-Gate sind sofort im Index sichtbar; (3) Suchquery über name/uid/description liefert <10ms auf 1000+ Knoten; (4) Filter-Kombinationen (type=REQ AND layer=arch) arbeiten korrekt |

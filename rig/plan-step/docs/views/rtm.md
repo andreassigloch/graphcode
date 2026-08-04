@@ -4,7 +4,7 @@
 
 # graphcode — Requirements Traceability Matrix (RTM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 22 REQ rows, sortiert nach uid. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 26 REQ rows, sortiert nach uid. Deterministisch generiert.
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -20,6 +20,10 @@
 | `REQ-export-snapshot-bitwise-identical` | `TEST-export-roundtrip` | `FCHAIN-export-lifecycle` · `FUNC-serialize-graph` | — |
 | `REQ-export-versioning` | `TEST-export-roundtrip` | `FUNC-serialize-graph` | — |
 | `REQ-governance-enforcement` | `TEST-governance-enforcement` · `TEST-verify-governance-enforcement` | `FCHAIN-governance-enforcement-flow` · `FUNC-persist-batch` | — |
+| `REQ-int-auth-session` | `TEST-int-auth-session` | `FCHAIN-login-auth-session` | — |
+| `REQ-int-authoring-pipeline` | `TEST-int-authoring-pipeline` | `FCHAIN-authoring-scenario` | — |
+| `REQ-int-search-freshness` | `TEST-int-search-freshness` | `FCHAIN-search-scenario` | — |
+| `REQ-int-update-propagation` | `TEST-int-update-propagation` | `FCHAIN-update-propagation` | — |
 | `REQ-no-stale-data` | `TEST-live-updates` | — | — |
 | `REQ-search-filtering` | `TEST-search-filtering` · `TEST-verify-search-filtering` | `FUNC-search-filter` | — |
 | `REQ-search-indexing` | `TEST-search-indexing` · `TEST-verify-search-indexing` | `FUNC-search-index` | — |

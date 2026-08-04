@@ -149,12 +149,6 @@
       "description": "Graph serialization → persistence → client delivery"
     },
     {
-      "id": "FCHAIN-export-scenario",
-      "type": "FCHAIN",
-      "name": "Export-Szenario",
-      "description": "Szenario: Nutzer triggert Export, System serialisiert Graphen"
-    },
-    {
       "id": "FCHAIN-export-standard-format",
       "type": "FCHAIN",
       "name": "Export Standard Format Chain",
@@ -179,34 +173,10 @@
       "description": "Benutzer empfängt WebSocket-Updates bei Änderungen anderer Nutzer"
     },
     {
-      "id": "FCHAIN-live-update-stream",
-      "type": "FCHAIN",
-      "name": "Live Update Stream",
-      "description": "Streaming functions for real-time graph updates across sessions"
-    },
-    {
       "id": "FCHAIN-login-auth-session",
       "type": "FCHAIN",
       "name": "Login–Authentifizierung–Session",
       "description": "Szenario: Nutzer loggt sich ein, wird authentifiziert, erhält Session-Token zur Graphbearbeitung"
-    },
-    {
-      "id": "FCHAIN-login-scenario",
-      "type": "FCHAIN",
-      "name": "Login-Szenario",
-      "description": "Benutzer authentifiziert sich in der Web-App"
-    },
-    {
-      "id": "FCHAIN-monitor-ws-broadcast",
-      "type": "FCHAIN",
-      "name": "Monitor–WebSocket–Broadcast",
-      "description": "Szenario: Nutzer verbindet WebSocket, erhält Live-Updates von Mutations-Events anderer Aktoren"
-    },
-    {
-      "id": "FCHAIN-multiuser-auth-flow",
-      "type": "FCHAIN",
-      "name": "Multiuser Authentication Flow",
-      "description": "Sequential functions for user authentication in multiuser context"
     },
     {
       "id": "FCHAIN-search-scenario",
@@ -227,6 +197,12 @@
       "description": "Szenario: Nutzer sieht UI-Update mit erfolgreicher oder blockierter Mutation durchs Apply-Gate"
     },
     {
+      "id": "FLOW-approval-decision",
+      "type": "FLOW",
+      "name": "Approval-Entscheidung",
+      "description": "Admin-Entscheidung (approve/reject + Batch-Referenz)."
+    },
+    {
       "id": "FLOW-approved-batch",
       "type": "FLOW",
       "name": "Approveter Batch",
@@ -245,10 +221,34 @@
       "description": "Vom Editor erzeugte Mutations-Kommandos (add/update/delete) zur Einzelvalidierung."
     },
     {
+      "id": "FLOW-edit-intent",
+      "type": "FLOW",
+      "name": "Edit-Intention",
+      "description": "Vom Nutzer im Editor formulierte Änderungsabsicht (Roh-Kommandos)."
+    },
+    {
+      "id": "FLOW-export-artifact",
+      "type": "FLOW",
+      "name": "Export-Artefakt",
+      "description": "Serialisierter Graphstand (Format-E/JSON) zum Download."
+    },
+    {
+      "id": "FLOW-export-request",
+      "type": "FLOW",
+      "name": "Export-Anforderung",
+      "description": "Export-Trigger mit Format/Version (System oder Nutzer)."
+    },
+    {
       "id": "FLOW-gate-verdict",
       "type": "FLOW",
       "name": "Gate-Verdict",
       "description": "Batch-Verdict (tier/violations) → Approval-Entscheidung."
+    },
+    {
+      "id": "FLOW-governance-policy",
+      "type": "FLOW",
+      "name": "Governance-Policy",
+      "description": "Aktive Regel-/Enforcement-Konfiguration des Reviewers für die Batch-Validierung."
     },
     {
       "id": "FLOW-graph-delta",
@@ -263,10 +263,34 @@
       "description": "Aktualisierte Suchindex-Einträge → Filter/Query."
     },
     {
+      "id": "FLOW-login-credentials",
+      "type": "FLOW",
+      "name": "Login-Credentials",
+      "description": "Email + Passwort vom Nutzer an die Authentifizierung."
+    },
+    {
+      "id": "FLOW-search-query",
+      "type": "FLOW",
+      "name": "Such-Query",
+      "description": "Nutzer-Suchanfrage (Text + Typ-Filter)."
+    },
+    {
+      "id": "FLOW-search-results",
+      "type": "FLOW",
+      "name": "Such-Ergebnisse",
+      "description": "Gefilterte, gerankte Trefferliste an den Nutzer."
+    },
+    {
       "id": "FLOW-session-token",
       "type": "FLOW",
       "name": "Session-Token",
       "description": "Gültiges Session-Token — Voraussetzung für jede Authoring-Aktion."
+    },
+    {
+      "id": "FLOW-subscribe-request",
+      "type": "FLOW",
+      "name": "Subscription-Anfrage",
+      "description": "Nutzer abonniert den Live-Update-Strom (ab Version X)."
     },
     {
       "id": "FLOW-update-event",
@@ -279,6 +303,12 @@
       "type": "FLOW",
       "name": "Validierte Kommandos",
       "description": "Einzeln geprüfte Kommandos → Batch-Validierung gegen V3_RULES."
+    },
+    {
+      "id": "FLOW-validation-feedback",
+      "type": "FLOW",
+      "name": "Validierungs-Feedback",
+      "description": "Einzelprüfungs-Ergebnis (Verdict je Kommando) zurück an den Autor."
     },
     {
       "id": "FUNC-approve-batch",
@@ -459,6 +489,30 @@
       "description": "Requirement: Apply-Gate muss V3_RULES durchsetzen, ungültige Batches blocken (tier=block), Verdicts mit Regel-IDs und fixHints generieren, erfolgreiche Batches persistent machen."
     },
     {
+      "id": "REQ-int-auth-session",
+      "type": "REQ",
+      "name": "Integration Auth→Session",
+      "description": "Erfolgreiche Authentifizierung übergibt die Nutzeridentität verlustfrei an die Session-Erzeugung; Fehlschlag erzeugt keine Session."
+    },
+    {
+      "id": "REQ-int-authoring-pipeline",
+      "type": "REQ",
+      "name": "Integration Authoring-Pipeline",
+      "description": "Kommandos eines eingeloggten Autors durchlaufen Session-Kontext → Editor → Einzelvalidierung → Batch-Validierung ohne Kontextverlust; ungültige Session bricht vor dem Editor ab."
+    },
+    {
+      "id": "REQ-int-search-freshness",
+      "type": "REQ",
+      "name": "Integration Persist→Suchindex",
+      "description": "Persistierte Änderungen sind nach Index-Aktualisierung ohne Neustart such- und filterbar; gelöschte Elemente verschwinden aus den Treffern."
+    },
+    {
+      "id": "REQ-int-update-propagation",
+      "type": "REQ",
+      "name": "Integration Persist→Broadcast",
+      "description": "Jede persistierte Mutation erzeugt genau ein versioniertes Broadcast-Event; Subscriber erhalten es in Persist-Reihenfolge."
+    },
+    {
       "id": "REQ-no-stale-data",
       "type": "REQ",
       "name": "Keine veralteten Graph-Daten anzeigen",
@@ -519,6 +573,96 @@
       "description": "Client empfängt Apply-Gate-Outputs als Events via WebSocket in <500ms"
     },
     {
+      "id": "SCHEMA-approval-decision",
+      "type": "SCHEMA",
+      "name": "ApprovalDecision",
+      "description": "Zod: {batchId, decision: approve|reject, reason?}."
+    },
+    {
+      "id": "SCHEMA-auth-result",
+      "type": "SCHEMA",
+      "name": "AuthResult",
+      "description": "Zod: {ok, userId?, reason?}."
+    },
+    {
+      "id": "SCHEMA-credentials",
+      "type": "SCHEMA",
+      "name": "Credentials",
+      "description": "Zod: {email, password}."
+    },
+    {
+      "id": "SCHEMA-export-artifact",
+      "type": "SCHEMA",
+      "name": "ExportArtifact",
+      "description": "Zod: {format, bytes, checksum, version}."
+    },
+    {
+      "id": "SCHEMA-export-request",
+      "type": "SCHEMA",
+      "name": "ExportRequest",
+      "description": "Zod: {format: formatE|json, version?}."
+    },
+    {
+      "id": "SCHEMA-gate-verdict",
+      "type": "SCHEMA",
+      "name": "GateVerdict",
+      "description": "Zod: {success, tier, violations[], confidence}."
+    },
+    {
+      "id": "SCHEMA-governance-policy",
+      "type": "SCHEMA",
+      "name": "GovernancePolicy",
+      "description": "Zod: {ruleSetVersion, enforcementLevel}."
+    },
+    {
+      "id": "SCHEMA-graph-delta",
+      "type": "SCHEMA",
+      "name": "GraphDelta",
+      "description": "Zod: {upsertNodes[], upsertEdges[], deleteNodes[], deleteEdges[], version}."
+    },
+    {
+      "id": "SCHEMA-index-entry",
+      "type": "SCHEMA",
+      "name": "IndexEntry",
+      "description": "Zod: {uid, type, name, tokens[]}."
+    },
+    {
+      "id": "SCHEMA-mutate-command-batch",
+      "type": "SCHEMA",
+      "name": "MutateCommandBatch",
+      "description": "Zod: MutateCommand[] (add/update/delete) + Autor + baseVersion."
+    },
+    {
+      "id": "SCHEMA-search-query",
+      "type": "SCHEMA",
+      "name": "SearchQuery",
+      "description": "Zod: {text, types[]?, limit?}."
+    },
+    {
+      "id": "SCHEMA-search-result",
+      "type": "SCHEMA",
+      "name": "SearchResult",
+      "description": "Zod: {hits: {uid, score, snippet}[], total}."
+    },
+    {
+      "id": "SCHEMA-session-token",
+      "type": "SCHEMA",
+      "name": "SessionToken",
+      "description": "Zod: {token, userId, expiresAt}."
+    },
+    {
+      "id": "SCHEMA-subscribe-request",
+      "type": "SCHEMA",
+      "name": "SubscribeRequest",
+      "description": "Zod: {sinceVersion?, filter?}."
+    },
+    {
+      "id": "SCHEMA-update-event",
+      "type": "SCHEMA",
+      "name": "UpdateEvent",
+      "description": "Zod: {eventId, version, domains[], ts}."
+    },
+    {
       "id": "SYS-multiuser-web-app",
       "type": "SYS",
       "name": "Multiuser Web App",
@@ -555,6 +699,30 @@
       "name": "Governance-Enforcement verifizieren",
       "description": "Prüfschritt: System enforced V3_RULES bei Apply-Gate, blockiert ungültige Mutations-Batches mit Verdicts, erlaubt nur compliant gates",
       "concept": true
+    },
+    {
+      "id": "TEST-int-auth-session",
+      "type": "TEST",
+      "name": "Integration Auth→Session",
+      "description": "Integrationstest über die echte Kette authenticate-user → create-session (kein Mock): korrektes Passwort → Token mit richtiger userId; falsches → keine Session."
+    },
+    {
+      "id": "TEST-int-authoring-pipeline",
+      "type": "TEST",
+      "name": "Integration Authoring-Pipeline",
+      "description": "Integrationstest über create-session → edit-element → validate-mutation → validate-mutations: Batch eines authentifizierten Autors erreicht das Batch-Verdict; ohne Session: Abbruch vor Edit."
+    },
+    {
+      "id": "TEST-int-search-freshness",
+      "type": "TEST",
+      "name": "Integration Persist→Suchindex",
+      "description": "Integrationstest persist-batch → search-index → search-filter: neues Element nach Persist auffindbar, gelöschtes nicht mehr."
+    },
+    {
+      "id": "TEST-int-update-propagation",
+      "type": "TEST",
+      "name": "Integration Persist→Broadcast",
+      "description": "Integrationstest persist-batch → broadcast-websocket → subscribe-updates: N persistierte Batches → N Events in Reihenfolge, Versionen lückenlos."
     },
     {
       "id": "TEST-live-updates",
@@ -670,12 +838,22 @@
   "traces": [
     {
       "source": "ACTOR-admin",
+      "target": "FLOW-approval-decision",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-admin",
       "target": "UC-admin-approve-batch",
       "type": "io"
     },
     {
       "source": "ACTOR-admin",
       "target": "UC-admin-enforce-governance",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-governance-reviewer",
+      "target": "FLOW-governance-policy",
       "type": "io"
     },
     {
@@ -690,12 +868,37 @@
     },
     {
       "source": "ACTOR-system",
+      "target": "FLOW-export-request",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-system",
       "target": "UC-system-export-graph",
       "type": "io"
     },
     {
       "source": "ACTOR-system",
       "target": "UC-system-export-graph-versioned",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "FLOW-edit-intent",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "FLOW-login-credentials",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "FLOW-search-query",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "FLOW-subscribe-request",
       "type": "io"
     },
     {
@@ -955,6 +1158,11 @@
     },
     {
       "source": "FCHAIN-authoring-scenario",
+      "target": "FUNC-create-session",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-authoring-scenario",
       "target": "FUNC-edit-element",
       "type": "compose"
     },
@@ -962,6 +1170,16 @@
       "source": "FCHAIN-authoring-scenario",
       "target": "FUNC-validate-mutation",
       "type": "compose"
+    },
+    {
+      "source": "FCHAIN-authoring-scenario",
+      "target": "FUNC-validate-mutations",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-authoring-scenario",
+      "target": "REQ-int-authoring-pipeline",
+      "type": "satisfy"
     },
     {
       "source": "FCHAIN-batch-approval-flow",
@@ -1024,11 +1242,6 @@
       "type": "satisfy"
     },
     {
-      "source": "FCHAIN-export-scenario",
-      "target": "FUNC-serialize-graph",
-      "type": "compose"
-    },
-    {
       "source": "FCHAIN-export-standard-format",
       "target": "FUNC-serialize-graph",
       "type": "compose"
@@ -1084,23 +1297,13 @@
       "type": "compose"
     },
     {
-      "source": "FCHAIN-login-scenario",
-      "target": "FUNC-authenticate-user",
-      "type": "compose"
+      "source": "FCHAIN-login-auth-session",
+      "target": "REQ-int-auth-session",
+      "type": "satisfy"
     },
     {
-      "source": "FCHAIN-login-scenario",
-      "target": "FUNC-create-session",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-monitor-ws-broadcast",
-      "target": "FUNC-broadcast-websocket",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-monitor-ws-broadcast",
-      "target": "FUNC-subscribe-updates",
+      "source": "FCHAIN-search-scenario",
+      "target": "FUNC-persist-batch",
       "type": "compose"
     },
     {
@@ -1114,8 +1317,18 @@
       "type": "compose"
     },
     {
+      "source": "FCHAIN-search-scenario",
+      "target": "REQ-int-search-freshness",
+      "type": "satisfy"
+    },
+    {
       "source": "FCHAIN-update-propagation",
       "target": "FUNC-broadcast-websocket",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-update-propagation",
+      "target": "FUNC-persist-batch",
       "type": "compose"
     },
     {
@@ -1129,6 +1342,11 @@
       "type": "satisfy"
     },
     {
+      "source": "FCHAIN-update-propagation",
+      "target": "REQ-int-update-propagation",
+      "type": "satisfy"
+    },
+    {
       "source": "FCHAIN-view-apply-gate-result",
       "target": "FUNC-persist-batch",
       "type": "compose"
@@ -1139,9 +1357,24 @@
       "type": "compose"
     },
     {
+      "source": "FLOW-approval-decision",
+      "target": "FUNC-approve-batch",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-approval-decision",
+      "target": "SCHEMA-approval-decision",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-approved-batch",
       "target": "FUNC-persist-batch",
       "type": "io"
+    },
+    {
+      "source": "FLOW-approved-batch",
+      "target": "SCHEMA-mutate-command-batch",
+      "type": "relation"
     },
     {
       "source": "FLOW-auth-result",
@@ -1149,14 +1382,74 @@
       "type": "io"
     },
     {
+      "source": "FLOW-auth-result",
+      "target": "SCHEMA-auth-result",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-edit-commands",
       "target": "FUNC-validate-mutation",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-edit-commands",
+      "target": "SCHEMA-mutate-command-batch",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-edit-intent",
+      "target": "FUNC-edit-element",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-edit-intent",
+      "target": "SCHEMA-mutate-command-batch",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-export-artifact",
+      "target": "ACTOR-user",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-export-artifact",
+      "target": "SCHEMA-export-artifact",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-export-request",
+      "target": "FUNC-serialize-graph",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-export-request",
+      "target": "SCHEMA-export-request",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-gate-verdict",
+      "target": "ACTOR-admin",
       "type": "io"
     },
     {
       "source": "FLOW-gate-verdict",
       "target": "FUNC-approve-batch",
       "type": "io"
+    },
+    {
+      "source": "FLOW-gate-verdict",
+      "target": "SCHEMA-gate-verdict",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-governance-policy",
+      "target": "FUNC-validate-mutations",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-governance-policy",
+      "target": "SCHEMA-governance-policy",
+      "type": "relation"
     },
     {
       "source": "FLOW-graph-delta",
@@ -1174,8 +1467,53 @@
       "type": "io"
     },
     {
+      "source": "FLOW-graph-delta",
+      "target": "SCHEMA-graph-delta",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-index-entries",
       "target": "FUNC-search-filter",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-index-entries",
+      "target": "SCHEMA-index-entry",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-login-credentials",
+      "target": "FUNC-authenticate-user",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-login-credentials",
+      "target": "SCHEMA-credentials",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-search-query",
+      "target": "FUNC-search-filter",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-search-query",
+      "target": "SCHEMA-search-query",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-search-results",
+      "target": "ACTOR-user",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-search-results",
+      "target": "SCHEMA-search-result",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-session-token",
+      "target": "ACTOR-user",
       "type": "io"
     },
     {
@@ -1184,14 +1522,54 @@
       "type": "io"
     },
     {
+      "source": "FLOW-session-token",
+      "target": "SCHEMA-session-token",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-subscribe-request",
+      "target": "FUNC-subscribe-updates",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-subscribe-request",
+      "target": "SCHEMA-subscribe-request",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-update-event",
+      "target": "ACTOR-user",
+      "type": "io"
+    },
+    {
       "source": "FLOW-update-event",
       "target": "FUNC-subscribe-updates",
       "type": "io"
     },
     {
+      "source": "FLOW-update-event",
+      "target": "SCHEMA-update-event",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-validated-commands",
       "target": "FUNC-validate-mutations",
       "type": "io"
+    },
+    {
+      "source": "FLOW-validated-commands",
+      "target": "SCHEMA-mutate-command-batch",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-validation-feedback",
+      "target": "ACTOR-user",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-validation-feedback",
+      "target": "SCHEMA-gate-verdict",
+      "type": "relation"
     },
     {
       "source": "FUNC-approve-batch",
@@ -1255,6 +1633,11 @@
     },
     {
       "source": "FUNC-search-filter",
+      "target": "FLOW-search-results",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-search-filter",
       "target": "REQ-search-filtering",
       "type": "satisfy"
     },
@@ -1280,6 +1663,11 @@
     },
     {
       "source": "FUNC-serialize-graph",
+      "target": "FLOW-export-artifact",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-serialize-graph",
       "target": "REQ-export-snapshot-bitwise-identical",
       "type": "satisfy"
     },
@@ -1296,6 +1684,11 @@
     {
       "source": "FUNC-validate-mutation",
       "target": "FLOW-validated-commands",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-validate-mutation",
+      "target": "FLOW-validation-feedback",
       "type": "io"
     },
     {
@@ -1419,6 +1812,26 @@
     {
       "source": "TEST-governance-enforcement",
       "target": "REQ-governance-enforcement",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-int-auth-session",
+      "target": "REQ-int-auth-session",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-int-authoring-pipeline",
+      "target": "REQ-int-authoring-pipeline",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-int-search-freshness",
+      "target": "REQ-int-search-freshness",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-int-update-propagation",
+      "target": "REQ-int-update-propagation",
       "type": "verify"
     },
     {
@@ -1563,11 +1976,6 @@
     },
     {
       "source": "UC-system-export-graph",
-      "target": "FCHAIN-export-scenario",
-      "type": "compose"
-    },
-    {
-      "source": "UC-system-export-graph",
       "target": "FCHAIN-export-standard-format",
       "type": "compose"
     },
@@ -1617,6 +2025,11 @@
       "type": "compose"
     },
     {
+      "source": "UC-user-author-node",
+      "target": "REQ-int-authoring-pipeline",
+      "type": "compose"
+    },
+    {
       "source": "UC-user-author-node-with-validation",
       "target": "FCHAIN-apply-gate-validation",
       "type": "compose"
@@ -1648,6 +2061,11 @@
     },
     {
       "source": "UC-user-discover-elements",
+      "target": "REQ-int-search-freshness",
+      "type": "compose"
+    },
+    {
+      "source": "UC-user-discover-elements",
       "target": "REQ-search-result-precision-recall",
       "type": "compose"
     },
@@ -1673,12 +2091,7 @@
     },
     {
       "source": "UC-user-login",
-      "target": "FCHAIN-login-scenario",
-      "type": "compose"
-    },
-    {
-      "source": "UC-user-login",
-      "target": "FCHAIN-multiuser-auth-flow",
+      "target": "REQ-int-auth-session",
       "type": "compose"
     },
     {
@@ -1693,12 +2106,12 @@
     },
     {
       "source": "UC-user-monitor-graph-updates",
-      "target": "FCHAIN-monitor-ws-broadcast",
+      "target": "FCHAIN-update-propagation",
       "type": "compose"
     },
     {
       "source": "UC-user-monitor-graph-updates",
-      "target": "FCHAIN-update-propagation",
+      "target": "REQ-int-update-propagation",
       "type": "compose"
     },
     {
@@ -1714,11 +2127,6 @@
     {
       "source": "UC-user-view-updates",
       "target": "FCHAIN-live-update-scenario",
-      "type": "compose"
-    },
-    {
-      "source": "UC-user-view-updates",
-      "target": "FCHAIN-live-update-stream",
       "type": "compose"
     },
     {

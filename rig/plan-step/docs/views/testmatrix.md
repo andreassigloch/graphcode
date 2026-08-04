@@ -4,7 +4,7 @@
 
 # graphcode — Verification Cross-Reference Matrix (VCRM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 22 REQ rows. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 26 REQ rows. Deterministisch generiert.
 
 | REQ | verified | verifying TEST(s) |
 |---|---|---|
@@ -20,6 +20,10 @@
 | `REQ-export-snapshot-bitwise-identical` | ✓ | `TEST-export-roundtrip` |
 | `REQ-export-versioning` | ✓ | `TEST-export-roundtrip` |
 | `REQ-governance-enforcement` | ✓ | `TEST-governance-enforcement` · `TEST-verify-governance-enforcement` |
+| `REQ-int-auth-session` | ✓ | `TEST-int-auth-session` |
+| `REQ-int-authoring-pipeline` | ✓ | `TEST-int-authoring-pipeline` |
+| `REQ-int-search-freshness` | ✓ | `TEST-int-search-freshness` |
+| `REQ-int-update-propagation` | ✓ | `TEST-int-update-propagation` |
 | `REQ-no-stale-data` | ✓ | `TEST-live-updates` |
 | `REQ-search-filtering` | ✓ | `TEST-search-filtering` · `TEST-verify-search-filtering` |
 | `REQ-search-indexing` | ✓ | `TEST-search-indexing` · `TEST-verify-search-indexing` |
@@ -31,4 +35,4 @@
 | `REQ-view-current-state` | ✓ | `TEST-live-updates` |
 | `REQ-websocket-live` | ✓ | `TEST-live-updates` |
 
-Coverage: 22/22 REQ verified (100%) · 0 open (R-01).
+Coverage: 26/26 REQ verified (100%) · 0 open (R-01).
