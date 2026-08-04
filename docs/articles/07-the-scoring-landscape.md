@@ -20,41 +20,7 @@ still being weighed) or **after** it (once it's real). This is the same shape wh
 is graphcode's own built-in executor for a small model, or a frontier model reasoning about its own
 draft edits inside a chat — the loop underneath is identical either way.
 
-```mermaid
-flowchart TD
-    classDef rule fill:#f8d7da,stroke:#c0392b,color:#000
-    classDef kpi fill:#d6eaf8,stroke:#2874a6,color:#000
-    classDef driver fill:#fdebd0,stroke:#b9770e,color:#000
-
-    C["Candidate edits drafted"]
-    R1["RULE preview: legal or not"]:::rule
-    K1["KPI: Readiness Delta per candidate"]:::kpi
-    K2["KPI: Architecture Fitness Delta per candidate"]:::kpi
-    D1["DRIVER weighs the KPIs against each other"]:::driver
-    WIN["Winning candidate"]
-    GATE["RULE, for real: error found or not"]:::rule
-    BLOCKED["Blocked, nothing persists"]
-    PERSIST["Persisted"]
-    A1["KPI: Readiness recomputed"]:::kpi
-    A2["KPI: Architecture Fitness recomputed, before vs after"]:::kpi
-    NEXT["DRIVER picks the next focus, triggers the next chat turn"]:::driver
-
-    C --> R1
-    C --> K1
-    C --> K2
-    R1 --> D1
-    K1 --> D1
-    K2 --> D1
-    D1 --> WIN
-    WIN --> GATE
-    GATE --> BLOCKED
-    GATE --> PERSIST
-    PERSIST --> A1
-    PERSIST --> A2
-    A1 --> NEXT
-    A2 --> NEXT
-    NEXT --> C
-```
+![Candidate flow: rules preview and block, KPIs rank, the driver picks and triggers the next round](img/candidate-flow.svg)
 
 Red = rule, blue = KPI, orange = the driver doing the weighing. Notice the rule box appears *twice*
 — once as a non-binding preview (before, just to drop illegal candidates) and once for real (the
