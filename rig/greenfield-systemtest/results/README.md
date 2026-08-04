@@ -26,3 +26,4 @@ ohne Export (v1–v5, v7, v8, v10, v13).
 Nachtest-Proben (CR-286): `logs/gc-run-opus5-probe-2048.run.log` (maxTokens 2048
 → `input-schema keys: []`, Tool-Call-JSON gekappt) vs. `…-probe-8192.run.log`
 (8192 → 0 Rejections). `audit/` enthält die Gate-Audit-Trails aller Läufe.
+| qwen05b | qwen2.5-0.5b | 8 Rd., N=3, ohne Injektion | **Untergrenzen-Test: 3 El** — 41 Kandidaten preflight-geblockt, 0 Gate-Rejections; einziger korrekter Baustein kam vom CR-284-Autocomplete. Gerüst hält, Kohärenz fehlt |

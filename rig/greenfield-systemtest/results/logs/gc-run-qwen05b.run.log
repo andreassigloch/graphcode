@@ -1,0 +1,1179 @@
+[generate 1] phase=seed done=false
+  cand 1/3.1: (no calls)
+    idle: 
+  cand 1/3.2: (no calls)
+    preflight blocked: R-08 add-edge sourceId: uid "ACTOR-user" existiert weder im Graph noch im Batch.
+  candidate 1/3: tier=preflight-block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+  cand 2/3.1: (no calls)
+    idle:  {"commands":[{"op":"add-node","node":{"uid":"USER-login","type":"REQ","name":"Login","description":"...","attributes":{}}],"op":"add-edge","edge":{"sourceId":"
+  cand 2/3.2: (no calls)
+    idle: {"commands":[{"op":"add-node","node":{"uid":"USER-login","type":"REQ","name":"Login","description":"...","attributes":{}}],"op":"add-edge","edge":{"sourceId":"A
+  candidate 2/3: no batch
+  cand 3/3.1: graph_mutate
+  cand 3/3.2: (no calls)
+    idle: Richtig. Du musst eine gültige Funktionname und die passende Kanten aus den Tool-XML tags erweitern, um den angegebenen Schritt zu verwenden.
+  cand 3/3.3: graph_mutate
+  cand 3/3.4: (no calls)
+    idle: Richtig. Du musst eine gültige Funktionname und die passende Kanten aus den Tool-XML tags erweitern, um den angegebenen Schritt zu verwenden.
+  candidate 3/3: no batch
+    all candidates block [R-08] — feeding best feedback back (repair 1/6)
+  repair cand 1.1: (no calls)
+    preflight blocked: R-08 add-edge sourceId: uid "ACTOR-user" existiert weder im Graph noch im Batch.
+  candidate 1/3: tier=preflight-block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+    all candidates block [R-08] — feeding best feedback back (repair 2/6)
+  repair cand 1.1: (no calls)
+    preflight blocked: R-08 add-edge sourceId: uid "ACTOR-user" existiert weder im Graph noch im Batch.
+  candidate 1/3: tier=preflight-block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+    all candidates block [R-08] — feeding best feedback back (repair 3/6)
+  repair cand 1.1: (no calls)
+    preflight blocked: R-08 add-edge sourceId: uid "ACTOR-user" existiert weder im Graph noch im Batch.
+  candidate 1/3: tier=preflight-block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+    all candidates block [R-08] — feeding best feedback back (repair 4/6)
+  repair cand 1.1: (no calls)
+    preflight blocked: R-08 add-edge sourceId: uid "ACTOR-user" existiert weder im Graph noch im Batch.
+  candidate 1/3: tier=preflight-block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+    all candidates block [R-08] — feeding best feedback back (repair 5/6)
+  repair cand 1.1: (no calls)
+    preflight blocked: R-08 add-edge sourceId: uid "ACTOR-user" existiert weder im Graph noch im Batch.
+  candidate 1/3: tier=preflight-block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+    all candidates block [R-08] — feeding best feedback back (repair 6/6)
+  repair cand 1.1: (no calls)
+    preflight blocked: R-08 add-edge sourceId: uid "ACTOR-user" existiert weder im Graph noch im Batch.
+  candidate 1/3: tier=preflight-block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+[generate 2] phase=seed done=false
+  stagnation x1: same generate prompt as last round
+  cand 1/3.1: (no calls)
+    preflight: R-01 autocomplete: TEST-Stub TEST-verify-USER-login + verify-Kante für USER-login angehängt
+  candidate 1/3: tier=suggest focus(-)=+0.00 total=+2.10 Δm=+0.00 mutations=41
+  cand 2/3.1: (no calls)
+    idle: ```json {"commands":[],"op":"add-node","node":{"uid":"sys-login","type":"SYS","name":"login","description":"...","attributes":{}}] ```
+  cand 2/3.2: (no calls)
+    idle: ```json {"commands":[],"op":"add-node","node":{"uid":"sys-login","type":"SYS","name":"login","description":"...","attributes":{}}] ```
+  candidate 2/3: no batch
+  cand 3/3.1: (no calls)
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-1>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<ACTOR-2>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-2>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<ACTORY-3>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTORY-3>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-system>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<UC-system>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<ACTORY-1>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTORY-1>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-system>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTORY-1>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<ACTOR-2>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-2>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-system>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTORY-3>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-system>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<UC-system>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<ACTORY-1>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTORY-1>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-system>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTORY-1>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<ACTOR-2>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-2>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-system>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTORY-3>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-system>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<UC-system>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<ACTORY-1>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTORY-1>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-system>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTORY-1>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<ACTOR-2>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-2>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-system>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTORY-3>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-system>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<UC-system>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<ACTORY-1>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTORY-1>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-system>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTORY-1>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<ACTOR-2>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-2>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-system>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTORY-3>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-system>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<UC-system>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<ACTORY-1>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTORY-1>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-system>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTORY-1>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<ACTOR-2>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-2>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-system>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTORY-3>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-system>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<UC-system>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<ACTORY-1>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTORY-1>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-system>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTORY-1>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<ACTOR-2>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-2>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-system>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTORY-3>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-system>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<UC-system>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<ACTORY-1>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTORY-1>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-system>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTORY-1>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<ACTOR-2>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-2>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-system>" existiert weder im Graph noch im Batch.
+  candidate 3/3: tier=preflight-block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+    pick: candidate 1 (judge=gate)
+    winner applied (41 mutations)
+[generate 3] phase=seed done=false
+  stagnation x2: same generate prompt as last round
+  cand 1/3.1: (no calls)
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+  candidate 1/3: tier=preflight-block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+  cand 2/3.1: (no calls)
+    preflight blocked: R-08 add-edge sourceId: uid "ACTOR-USER" existiert weder im Graph noch im Batch.
+  candidate 2/3: tier=preflight-block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+  cand 3/3.1: (no calls)
+  candidate 3/3: tier=suggest focus(-)=+0.00 total=+0.50 Δm=+10.00 mutations=1
+    pick: candidate 3 (judge=gate)
+    winner applied (1 mutations)
+[generate 4] phase=seed done=false
+  stagnation x3: same generate prompt as last round
+  cand 1/3.1: (no calls)
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+  candidate 1/3: tier=preflight-block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+  cand 2/3.1: (no calls)
+    preflight blocked: R-08 add-edge sourceId: uid "ACTOR-user" existiert weder im Graph noch im Batch.
+  candidate 2/3: tier=preflight-block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+  cand 3/3.1: (no calls)
+    idle: ```json {"commands":[],"op":"add-node","node":{"uid":"USER-login","type":"REQ","name":"login","description":"...","attributes":{}}] ```
+  cand 3/3.2: (no calls)
+    idle: ```json {"commands":[],"op":"add-node","node":{"uid":"USER-login","type":"REQ","name":"login","description":"...","attributes":{}}] ```
+  candidate 3/3: no batch
+    all candidates block [R-08] — feeding best feedback back (repair 1/6)
+  repair cand 1.1: (no calls)
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+  candidate 1/3: tier=preflight-block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+    all candidates block [R-08] — feeding best feedback back (repair 2/6)
+  repair cand 1.1: (no calls)
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+  candidate 1/3: tier=preflight-block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+    all candidates block [R-08] — feeding best feedback back (repair 3/6)
+  repair cand 1.1: (no calls)
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+  candidate 1/3: tier=preflight-block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+    all candidates block [R-08] — feeding best feedback back (repair 4/6)
+  repair cand 1.1: (no calls)
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+  candidate 1/3: tier=preflight-block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+    all candidates block [R-08] — feeding best feedback back (repair 5/6)
+  repair cand 1.1: (no calls)
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+  candidate 1/3: tier=preflight-block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+    all candidates block [R-08] — feeding best feedback back (repair 6/6)
+  repair cand 1.1: (no calls)
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+  candidate 1/3: tier=preflight-block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+[generate 5] phase=seed done=false
+  stagnation x4: same generate prompt as last round
+  cand 1/3.1: (no calls)
+  candidate 1/3: tier=block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+  cand 2/3.1: (no calls)
+    preflight blocked: R-18 Illegales Trace-Paar: UC io UC (<ACTOR> → <UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: UC io UC (<ACTOR> → <UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: UC io UC (<ACTOR> → <UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: UC io UC (<ACTOR> → <UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: UC io UC (<ACTOR> → <UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: UC io UC (<ACTOR> → <UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: UC io UC (<ACTOR> → <UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: UC io UC (<ACTOR> → <UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: UC io UC (<ACTOR> → <UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: UC io UC (<ACTOR> → <UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: UC io UC (<ACTOR> → <UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: UC io UC (<ACTOR> → <UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: UC io UC (<ACTOR> → <UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: UC io UC (<ACTOR> → <UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: UC io UC (<ACTOR> → <UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: UC io UC (<ACTOR> → <UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: UC io UC (<ACTOR> → <UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: UC io UC (<ACTOR> → <UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: UC io UC (<ACTOR> → <UC>) — auch die Gegenrichtung ist nicht legal.
+  candidate 2/3: tier=preflight-block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+  cand 3/3.1: (no calls)
+    preflight blocked: R-08 add-edge sourceId: uid "ACTOR-login" existiert weder im Graph noch im Batch.
+  candidate 3/3: tier=preflight-block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+    all candidates block [R-18] — feeding best feedback back (repair 1/6)
+  repair cand 2.1: (no calls)
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+  candidate 2/3: tier=preflight-block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+    all candidates block [R-08] — feeding best feedback back (repair 2/6)
+  repair cand 2.1: (no calls)
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+  candidate 2/3: tier=preflight-block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+    all candidates block [R-08] — feeding best feedback back (repair 3/6)
+  repair cand 2.1: (no calls)
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+  candidate 2/3: tier=preflight-block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+    all candidates block [R-08] — feeding best feedback back (repair 4/6)
+  repair cand 2.1: (no calls)
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+  candidate 2/3: tier=preflight-block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+    all candidates block [R-08] — feeding best feedback back (repair 5/6)
+  repair cand 2.1: (no calls)
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+  candidate 2/3: tier=preflight-block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+    all candidates block [R-08] — feeding best feedback back (repair 6/6)
+  repair cand 2.1: (no calls)
+  candidate 2/3: tier=block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+[generate 6] phase=seed done=false
+  stagnation x5: same generate prompt as last round
+  cand 1/3.1: (no calls)
+    preflight blocked: R-18 Illegales Trace-Paar: <kebab-name> <io> <kebab-name> (<ACTOR> → <UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: <kebab-name> <io> <kebab-name> (<ACTOR> → <UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: <kebab-name> <io> <kebab-name> (<ACTOR> → <UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: <kebab-name> <io> <kebab-name> (<ACTOR> → <UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: <kebab-name> <io> <kebab-name> (<ACTOR> → <UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: <kebab-name> <io> <kebab-name> (<ACTOR> → <UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: <kebab-name> <io> <kebab-name> (<ACTOR> → <UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: <kebab-name> <io> <kebab-name> (<ACTOR> → <UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: <kebab-name> <io> <kebab-name> (<ACTOR> → <UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: <kebab-name> <io> <kebab-name> (<ACTOR> → <UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: <kebab-name> <io> <kebab-name> (<ACTOR> → <UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: <kebab-name> <io> <kebab-name> (<ACTOR> → <UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: <kebab-name> <io> <kebab-name> (<ACTOR> → <UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: <kebab-name> <io> <kebab-name> (<ACTOR> → <UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: <kebab-name> <io> <kebab-name> (<ACTOR> → <UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: <kebab-name> <io> <kebab-name> (<ACTOR> → <UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: <kebab-name> <io> <kebab-name> (<ACTOR> → <UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: <kebab-name> <io> <kebab-name> (<ACTOR> → <UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: <kebab-name> <io> <kebab-name> (<ACTOR> → <UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: <kebab-name> <io> <kebab-name> (<ACTOR> → <UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: <kebab-name> <io> <kebab-name> (<ACTOR> → <UC>) — auch die Gegenrichtung ist nicht legal.
+  candidate 1/3: tier=preflight-block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+  cand 2/3.1: (no calls)
+  candidate 2/3: tier=block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+  cand 3/3.1: (no calls)
+    preflight blocked: R-18 Illegales Trace-Paar: ACTOR io ACTOR (<ACTOR io→UC> → <SYS>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: ACTOR io ACTOR (<SYS → <ACTOR io→UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: ACTOR io ACTOR (<ACTOR io→UC> → <SYS) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: ACTOR io ACTOR (<SYS → <ACTOR io→UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: ACTOR io ACTOR (<ACTOR io→UC> → <SYS) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: ACTOR io ACTOR (<SYS → <ACTOR io→UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: ACTOR io ACTOR (<ACTOR io→UC> → <SYS) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: ACTOR io ACTOR (<SYS → <ACTOR io→UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: ACTOR io ACTOR (<ACTOR io→UC> → <SYS) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: ACTOR io ACTOR (<SYS → <ACTOR io→UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: ACTOR io ACTOR (<ACTOR io→UC> → <SYS) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: ACTOR io ACTOR (<ACTOR io→UC> → <SYS) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: ACTOR io ACTOR (<SYS → <ACTOR io→UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: ACTOR io ACTOR (<ACTOR io→UC> → <SYS) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: ACTOR io ACTOR (<SYS → <ACTOR io→UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: ACTOR io ACTOR (<ACTOR io→UC> → <SYS) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: ACTOR io ACTOR (<SYS → <ACTOR io→UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: ACTOR io ACTOR (<SYS → <ACTOR io→UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: ACTOR io ACTOR (<ACTOR io→UC> → <SYS) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: ACTOR io ACTOR (<SYS → <ACTOR io→UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: ACTOR io ACTOR (<ACTOR io→UC> → <SYS) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: ACTOR io ACTOR (<SYS → <ACTOR io→UC>) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: ACTOR io ACTOR (<SYS → <ACTOR io→UC>) — auch die Gegenrichtung ist nicht legal.
+  candidate 3/3: tier=preflight-block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+    all candidates block [R-18] — feeding best feedback back (repair 1/6)
+  repair cand 1.1: (no calls)
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+  candidate 1/3: tier=preflight-block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+    all candidates block [R-08] — feeding best feedback back (repair 2/6)
+  repair cand 1.1: (no calls)
+    idle: ```json {   "commands": [     {       "op": "add-edge",       "edge": {         "sourceId": "<kebab-name>",       }     },     {       "op": "add-edge",       "
+  repair cand 1.2: (no calls)
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+  candidate 1/3: tier=preflight-block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+    all candidates block [R-08] — feeding best feedback back (repair 3/6)
+  repair cand 1.1: (no calls)
+    idle: ```json {   "commands": [     {       "op": "add-edge",       "edge": {         "sourceId": "<kebab-name>",       }     },     {       "op": "add-edge",       "
+  repair cand 1.2: (no calls)
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+  candidate 1/3: tier=preflight-block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+    all candidates block [R-08] — feeding best feedback back (repair 4/6)
+  repair cand 1.1: (no calls)
+    idle: ```json {   "commands": [     {       "op": "add-edge",       "edge": {         "sourceId": "<kebab-name>",       }     },     {       "op": "add-edge",       "
+  repair cand 1.2: (no calls)
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+  candidate 1/3: tier=preflight-block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+    all candidates block [R-08] — feeding best feedback back (repair 5/6)
+  repair cand 1.1: (no calls)
+    idle: ```json {   "commands": [     {       "op": "add-edge",       "edge": {         "sourceId": "<kebab-name>",       }     },     {       "op": "add-edge",       "
+  repair cand 1.2: (no calls)
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+  candidate 1/3: tier=preflight-block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+    all candidates block [R-08] — feeding best feedback back (repair 6/6)
+  repair cand 1.1: (no calls)
+    idle: ```json {   "commands": [     {       "op": "add-edge",       "edge": {         "sourceId": "<kebab-name>",       }     },     {       "op": "add-edge",       "
+  repair cand 1.2: (no calls)
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<uc>" existiert weder im Graph noch im Batch.
+  candidate 1/3: tier=preflight-block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+[generate 7] phase=seed done=false
+  stagnation x6: same generate prompt as last round
+  cand 1/3.1: (no calls)
+  candidate 1/3: tier=auto-apply focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=39
+  cand 2/3.1: (no calls)
+    idle: ```json {"commands":[],"op":"add-node","node":{"uid":"UC-login","type":"UC","name":"Login","description":"...","attributes":{}}] ```
+  cand 2/3.2: (no calls)
+    idle: ```json {"commands":[],"op":"add-node","node":{"uid":"UC-login","type":"UC","name":"Login","description":"...","attributes":{}}] ```
+  candidate 2/3: no batch
+  cand 3/3.1: (no calls)
+  candidate 3/3: tier=block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+    pick: candidate 1 (judge=gate)
+    winner applied (39 mutations)
+[generate 8] phase=seed done=false
+  stagnation x7: same generate prompt as last round
+  cand 1/3.1: (no calls)
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+  candidate 1/3: tier=preflight-block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+  cand 2/3.1: (no calls)
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC>" existiert weder im Graph noch im Batch.
+  candidate 2/3: tier=preflight-block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+  cand 3/3.1: (no calls)
+  candidate 3/3: tier=block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+    all candidates block [R-08] — feeding best feedback back (repair 1/6)
+  repair cand 1.1: (no calls)
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+  candidate 1/3: tier=preflight-block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+    all candidates block [R-08] — feeding best feedback back (repair 2/6)
+  repair cand 1.1: (no calls)
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+  candidate 1/3: tier=preflight-block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+    all candidates block [R-08] — feeding best feedback back (repair 3/6)
+  repair cand 1.1: (no calls)
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+  candidate 1/3: tier=preflight-block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+    all candidates block [R-08] — feeding best feedback back (repair 4/6)
+  repair cand 1.1: (no calls)
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+  candidate 1/3: tier=preflight-block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+    all candidates block [R-08] — feeding best feedback back (repair 5/6)
+  repair cand 1.1: (no calls)
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+  candidate 1/3: tier=preflight-block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+    all candidates block [R-08] — feeding best feedback back (repair 6/6)
+  repair cand 1.1: (no calls)
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "<ACTOR-user>" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "<UC-login>" existiert weder im Graph noch im Batch.
+  candidate 1/3: tier=preflight-block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+graphcode run: {
+  "done": false,
+  "genRounds": 8,
+  "modelTurns": 67,
+  "mutatesApplied": 3,
+  "mutatesRejected": 0,
+  "dryRunProbes": 8,
+  "repairedAfterRejection": 0,
+  "preflightFixed": 1,
+  "preflightBlocked": 41,
+  "candidatesSampled": 49,
+  "algoPicks": 3,
+  "modelPicks": 0,
+  "judgeDisagreements": 0,
+  "tokensIn": 482573,
+  "tokensOut": 85993,
+  "tokensReasoning": 0,
+  "export": "docs/graph/gc-run-qwen05b.graph.json",
+  "exportError": null
+}

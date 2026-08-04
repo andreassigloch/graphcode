@@ -1,0 +1,29 @@
+{
+  "elements": [
+    {
+      "id": "TEST-verify-USER-login",
+      "type": "TEST",
+      "name": "Verify: Login",
+      "description": "it.todo: Prüfe \"Login\" — Vorbedingung herstellen, Aktion ausführen, Ergebnis messbar gegen die REQ-Aussage prüfen."
+    },
+    {
+      "id": "UC-login",
+      "type": "ACTOR",
+      "name": "Login",
+      "description": "Connect to the login system."
+    },
+    {
+      "id": "USER-login",
+      "type": "REQ",
+      "name": "Login",
+      "description": ""
+    }
+  ],
+  "traces": [
+    {
+      "source": "TEST-verify-USER-login",
+      "target": "USER-login",
+      "type": "verify"
+    }
+  ]
+}
