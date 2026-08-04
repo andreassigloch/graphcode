@@ -1,0 +1,432 @@
+{
+  "elements": [
+    {
+      "id": "ACTOR-admin",
+      "type": "ACTOR",
+      "name": "Admin",
+      "description": "Systemadministrator, der Nutzer verwaltet und Systemeinstellungen konfiguriert."
+    },
+    {
+      "id": "ACTOR-editor",
+      "type": "ACTOR",
+      "name": "Editor",
+      "description": "Nutzer, der Inhalte erstellt und bearbeitet."
+    },
+    {
+      "id": "ACTOR-viewer",
+      "type": "ACTOR",
+      "name": "Viewer",
+      "description": "Gastnutzer, der Inhalte nur ansehen kann."
+    },
+    {
+      "id": "FCHAIN-content-edit-flow",
+      "type": "FCHAIN",
+      "name": "Content Edit Flow",
+      "description": "User opens document → edits content → saves changes."
+    },
+    {
+      "id": "FCHAIN-export-flow",
+      "type": "FCHAIN",
+      "name": "Export Flow",
+      "description": "User exports system state as JSON."
+    },
+    {
+      "id": "FCHAIN-login-flow",
+      "type": "FCHAIN",
+      "name": "Login Flow",
+      "description": "User enters credentials → system validates session → redirect to dashboard."
+    },
+    {
+      "id": "FUNC-content-apply-changes",
+      "type": "FUNC",
+      "name": "Apply Changes to Backend",
+      "description": "Persist edited content."
+    },
+    {
+      "id": "FUNC-content-load-document",
+      "type": "FUNC",
+      "name": "Load Document into Editor",
+      "description": "Fetch and render document for editing."
+    },
+    {
+      "id": "FUNC-export-download-file",
+      "type": "FUNC",
+      "name": "Download File",
+      "description": "Trigger browser download."
+    },
+    {
+      "id": "FUNC-export-gather-data",
+      "type": "FUNC",
+      "name": "Gather Export Data",
+      "description": "Collect current graph data."
+    },
+    {
+      "id": "FUNC-export-serialize-json",
+      "type": "FUNC",
+      "name": "Serialize to JSON",
+      "description": "Convert data into JSON format."
+    },
+    {
+      "id": "FUNC-login-authenticate",
+      "type": "FUNC",
+      "name": "Authenticate Credentials",
+      "description": "Validate username/password against backend store."
+    },
+    {
+      "id": "FUNC-login-create-session",
+      "type": "FUNC",
+      "name": "Create Session Token",
+      "description": "Issue JWT for authenticated user."
+    },
+    {
+      "id": "FUNC-login-redirect-home",
+      "type": "FUNC",
+      "name": "Redirect to Home Dashboard",
+      "description": "Navigate user to home page."
+    },
+    {
+      "id": "REQ-content-save-persistence",
+      "type": "REQ",
+      "name": "Content Save Persistence",
+      "description": "System shall persist edited content to backend with conflict resolution."
+    },
+    {
+      "id": "REQ-export-format",
+      "type": "REQ",
+      "name": "Export Format Specification",
+      "description": "System shall export state as JSON with version metadata."
+    },
+    {
+      "id": "REQ-login-auth-required",
+      "type": "REQ",
+      "name": "Login Authentication Required",
+      "description": "System shall require valid credentials for user authentication."
+    },
+    {
+      "id": "SYS-web-platform",
+      "type": "SYS",
+      "name": "Web Platform",
+      "description": "Multiuser-fähige Web-App aus dem graphcode harness: Nutzer melden sich an, autorieren gemeinsam einen governten Systemgraphen über das Apply-Gate, sehen Live-Updates und exportieren den Stand."
+    },
+    {
+      "id": "TEST-verify-content-save-persistence",
+      "type": "TEST",
+      "name": "Verify: Content Save Persistence",
+      "description": "Test the persistence of content saves by verifying the saved data matches the expected state.",
+      "concept": true,
+      "testRef": {
+        "file": "content_save_test.js",
+        "case": "persistence_check",
+        "tool": "jest",
+        "level": "integration"
+      }
+    },
+    {
+      "id": "TEST-verify-content-save-persistence-step",
+      "type": "TEST",
+      "name": "Verify: Content Save Persistence Step",
+      "description": "Test the persistence of content saves by verifying each step in the save process.",
+      "concept": true,
+      "testRef": {
+        "file": "content_tests.py",
+        "case": "test_content_step_consistency",
+        "tool": "pytest",
+        "level": "unit"
+      }
+    },
+    {
+      "id": "TEST-verify-content-save-persistence-step-testRef",
+      "type": "TEST",
+      "name": "Verify: Content Save Persistence Step TestRef",
+      "description": "Test the persistence of content saves by verifying each step in the save process.",
+      "testRef": {
+        "file": "persistence_step_test.js",
+        "case": "save_persistence_step",
+        "tool": "jest",
+        "level": "unit"
+      },
+      "concept": true
+    },
+    {
+      "id": "TEST-verify-content-save-persistence-testRef",
+      "type": "TEST",
+      "name": "Verify: Content Save Persistence TestRef",
+      "description": "Test the persistence of content saves by verifying the saved data matches the expected state.",
+      "testRef": {
+        "file": "persistence_test.js",
+        "case": "save_persistence",
+        "tool": "jest",
+        "level": "integration"
+      },
+      "concept": true
+    },
+    {
+      "id": "TEST-verify-export-format",
+      "type": "TEST",
+      "name": "Verify: Export Format Specification",
+      "description": "Prüfe, ob der Export im korrekten JSON-Format erfolgt. Schritt: Exportiere Daten und validiere Schema.",
+      "concept": true,
+      "testRef": {
+        "file": "export_tests.py",
+        "case": "test_export_format",
+        "tool": "pytest",
+        "level": "integration"
+      }
+    },
+    {
+      "id": "TEST-verify-export-format-step",
+      "type": "TEST",
+      "name": "Verify: Export Format Specification Step",
+      "description": "Prüfe, ob der Export korrekt funktioniert. Schritt: Exportiere Daten und prüfe Rückgabewert.",
+      "concept": true,
+      "testRef": {
+        "file": "export_tests.py",
+        "case": "test_export_step_partial_data",
+        "tool": "pytest",
+        "level": "unit"
+      }
+    },
+    {
+      "id": "TEST-verify-export-format-testRef",
+      "type": "TEST",
+      "name": "Verify: Export Format Specification TestRef",
+      "description": "Prüfe, ob der Export im korrekten JSON-Format erfolgt. Schritt: Exportiere Daten und validiere Schema.",
+      "testRef": {
+        "file": "export_format_test.js",
+        "case": "json_schema_validation",
+        "tool": "jest",
+        "level": "integration"
+      },
+      "concept": true
+    },
+    {
+      "id": "TEST-verify-login-auth-required",
+      "type": "TEST",
+      "name": "Verify: Login Authentication Required",
+      "description": "Prüfe, ob der Zugriff ohne Anmeldung blockiert wird. Schritt: Versuche auf geschützte Ressource zuzugreifen.",
+      "concept": true,
+      "testRef": {
+        "file": "login_auth_test.md",
+        "case": "auth_required",
+        "tool": "cypress",
+        "level": "integration"
+      }
+    },
+    {
+      "id": "TEST-verify-login-auth-required-step",
+      "type": "TEST",
+      "name": "Verify: Login Authentication Required Step",
+      "description": "Prüfe, ob der Zugriff ohne Anmeldung blockiert wird. Schritt: Versuche auf geschützte Ressource zuzugreifen.",
+      "concept": true,
+      "testRef": {
+        "file": "auth_tests.py",
+        "case": "test_login_step_unauthorized",
+        "tool": "pytest",
+        "level": "unit"
+      }
+    },
+    {
+      "id": "TEST-verify-login-auth-required-testRef",
+      "type": "TEST",
+      "name": "Test Login Auth Required",
+      "description": "Prüfe, ob der Zugriff ohne Anmeldung blockiert wird. Schritt: Versuche auf geschützte Ressource zuzugreifen.",
+      "testRef": {
+        "file": "login_auth_tests.py",
+        "case": "test_login_auth_required",
+        "tool": "pytest",
+        "level": "integration"
+      },
+      "concept": true
+    },
+    {
+      "id": "UC-edit-content",
+      "type": "UC",
+      "name": "Edit Content",
+      "description": "Editor erstellt oder bearbeitet Inhalte im System."
+    },
+    {
+      "id": "UC-export-state",
+      "type": "UC",
+      "name": "Export State",
+      "description": "Nutzer exportiert den aktuellen Stand des Systemgraphen als Datei."
+    },
+    {
+      "id": "UC-login",
+      "type": "UC",
+      "name": "Login",
+      "description": "Nutzer meldet sich mit Benutzername und Passwort an."
+    }
+  ],
+  "traces": [
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-edit-content",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-export-state",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-login",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-editor",
+      "target": "UC-edit-content",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-editor",
+      "target": "UC-login",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-viewer",
+      "target": "UC-export-state",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-viewer",
+      "target": "UC-login",
+      "type": "io"
+    },
+    {
+      "source": "FCHAIN-content-edit-flow",
+      "target": "FUNC-content-apply-changes",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-content-edit-flow",
+      "target": "FUNC-content-load-document",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-export-flow",
+      "target": "FUNC-export-download-file",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-export-flow",
+      "target": "FUNC-export-gather-data",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-export-flow",
+      "target": "FUNC-export-serialize-json",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-login-flow",
+      "target": "FUNC-login-authenticate",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-login-flow",
+      "target": "FUNC-login-create-session",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-login-flow",
+      "target": "FUNC-login-redirect-home",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-web-platform",
+      "target": "UC-edit-content",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-web-platform",
+      "target": "UC-export-state",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-web-platform",
+      "target": "UC-login",
+      "type": "compose"
+    },
+    {
+      "source": "TEST-verify-content-save-persistence",
+      "target": "REQ-content-save-persistence",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-content-save-persistence-step",
+      "target": "REQ-content-save-persistence",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-content-save-persistence-step-testRef",
+      "target": "REQ-content-save-persistence",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-content-save-persistence-testRef",
+      "target": "REQ-content-save-persistence",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-export-format",
+      "target": "REQ-export-format",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-export-format-step",
+      "target": "REQ-export-format",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-export-format-testRef",
+      "target": "REQ-export-format",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-login-auth-required",
+      "target": "REQ-login-auth-required",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-login-auth-required-step",
+      "target": "REQ-login-auth-required",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-login-auth-required-testRef",
+      "target": "REQ-login-auth-required",
+      "type": "verify"
+    },
+    {
+      "source": "UC-edit-content",
+      "target": "FCHAIN-content-edit-flow",
+      "type": "compose"
+    },
+    {
+      "source": "UC-edit-content",
+      "target": "REQ-content-save-persistence",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export-state",
+      "target": "FCHAIN-export-flow",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export-state",
+      "target": "REQ-export-format",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login",
+      "target": "FCHAIN-login-flow",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login",
+      "target": "REQ-login-auth-required",
+      "type": "compose"
+    }
+  ]
+}

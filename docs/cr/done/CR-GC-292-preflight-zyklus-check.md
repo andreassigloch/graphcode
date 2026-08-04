@@ -1,7 +1,13 @@
 # CR-GC-292 — Preflight-Erweiterung: Zirkuläre Composition (R-12)
 
-**Status:** open — **weiterhin zurückgestellt** (Nachzählung nach CR-GC-290/291 durch
-einen unabhängigen Befund verhindert, s.u.)
+**Status:** done — GESCHLOSSEN OHNE BAU (2026-08-04): Der saubere Recount
+(v19, 16+7 Runden kumuliert nach Sleep-Kill-Unterbrechung, caffeinate, CR-290/
+291 + R-15/uc-Fix aktiv) erreichte die arch-Ebene (8 FUNC, 3 FCHAIN) und
+lieferte **R-12 = 0 Treffer in 86 Audit-Records**. Die Vorbedingung „weiterhin
+zweistellig" ist klar verneint — der Zyklus-Check wird nicht gebaut.
+Vorbehalt ehrlich benannt: kleiner Endgraph (31 El); sollte R-12 in künftigen
+Läufen wieder zweistellig auftreten, diesen CR als Vorlage reaktivieren.
+Artefakte: rig/greenfield-systemtest/results/ (v19-recount .graph/.log/.audit).
 **Datum:** 2026-08-03 (Nachtrag 2026-08-04)
 **Kontext:** CR-GC-283-Folgechat, Audit-Analyse über alle Greenfield-Systemtest-Läufe.
 
