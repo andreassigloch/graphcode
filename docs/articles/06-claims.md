@@ -98,14 +98,16 @@ pushed back onto the right path: the weakest score names the next sensible step.
 That's also what lets a weaker, locally-run model act as well as — or better than — its larger
 siblings: it's told what to do next, not left to guess.
 
-**Layer 4 — architectural fit**, expressed as KPIs. There's a body of computable theory on what makes
-a good architecture — Robert C. Martin's instability metric (fan-out / (fan-in + fan-out)), LCOM4
-cohesion, relay-node and duplicate-path detection, cross-module interface completeness. In the end it's
-another set of vectors pointing at a predefined target: the sweet spot for a banking app is not the
-sweet spot for a billion-user social app. Still deterministic.
+**Layer 4 — module diagnostics.** A second, per-module set of checks: how exposed to change a module
+is (Robert C. Martin's instability metric), whether it does one thing (LCOM4 cohesion), how often it
+crosses paths with other modules. Warnings, not a single project-wide score.
 
-**Layer 5 — optimization.** Every rule and vector defined so far can drive calculated optimizations of
-the graph toward the target KPI — like a chess engine calculating moves in advance. Still not AI.
+**Layer 5 — a whole-graph fitness score, and optimization on top of it.** Separately, the graph as a
+whole gets scored on structural qualities (modularity, redundancy, how connected it is, and more) —
+and, given a target you choose, the same computation ranks candidate fixes by how far they'd move
+toward it, like a chess engine calculating moves in advance. Still not AI, and still just a ranking:
+a rule is what blocks or allows a change, never this score. Full map of how these layers relate:
+[the scoring landscape](07-the-scoring-landscape.md).
 
 ## How does this work, end to end?
 

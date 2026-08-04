@@ -1,0 +1,188 @@
+# The Scoring Landscape — Every Measurement, and How They Relate
+
+*The nerd companion. [The story](04-the-graphcode-story.md) and [the claims](06-claims.md) compress
+several distinct measurement systems into one simple narrative, on purpose — that's the right level
+for a first read. This article is for when "wait, are these the same number?" comes up. It assumes
+[Under the Hood](03-graphcode-harness-goal-and-concept.md) and
+[the advisory roundtrip](05-the-advisory-roundtrip.md).*
+
+## The shape: rules gate, KPIs steer — before the edit and after it
+
+Two kinds of number appear everywhere in graphcode, and they behave completely differently:
+
+- **Rules are yes/no.** A rule either fires or it doesn't — legal or not, complete or not. Only rules
+  can ever block anything.
+- **KPIs are continuous.** A number that goes up or down — never a veto by itself, always an input to
+  ranking or reporting.
+
+And everything happens on one of two sides of a single edit: **before** it (while candidates are
+still being weighed) or **after** it (once it's real). This is the same shape whether "the driver"
+is graphcode's own built-in executor for a small model, or a frontier model reasoning about its own
+draft edits inside a chat — the loop underneath is identical either way.
+
+```mermaid
+flowchart TD
+    classDef rule fill:#f8d7da,stroke:#c0392b,color:#000
+    classDef kpi fill:#d6eaf8,stroke:#2874a6,color:#000
+    classDef driver fill:#fdebd0,stroke:#b9770e,color:#000
+
+    C["Candidate edits drafted"]
+    R1["RULE preview: legal or not"]:::rule
+    K1["KPI: Readiness Delta per candidate"]:::kpi
+    K2["KPI: Architecture Fitness Delta per candidate"]:::kpi
+    D1["DRIVER weighs the KPIs against each other"]:::driver
+    WIN["Winning candidate"]
+    GATE["RULE, for real: error found or not"]:::rule
+    BLOCKED["Blocked, nothing persists"]
+    PERSIST["Persisted"]
+    A1["KPI: Readiness recomputed"]:::kpi
+    A2["KPI: Architecture Fitness recomputed, before vs after"]:::kpi
+    NEXT["DRIVER picks the next focus, triggers the next chat turn"]:::driver
+
+    C --> R1
+    C --> K1
+    C --> K2
+    R1 --> D1
+    K1 --> D1
+    K2 --> D1
+    D1 --> WIN
+    WIN --> GATE
+    GATE --> BLOCKED
+    GATE --> PERSIST
+    PERSIST --> A1
+    PERSIST --> A2
+    A1 --> NEXT
+    A2 --> NEXT
+    NEXT --> C
+```
+
+Red = rule, blue = KPI, orange = the driver doing the weighing. Notice the rule box appears *twice*
+— once as a non-binding preview (before, just to drop illegal candidates) and once for real (the
+actual gate) — but it's the same yes/no question both times. The KPI boxes never repeat that
+pattern: they're always continuous, always feeding a ranking or a report, never a veto.
+
+**When the real gate blocks the winning candidate**, the rejection doesn't go to some separate
+judge — it goes back into the same conversation, as the next thing the model sees. Running the
+built-in executor, the driver reformats the raw verdict into a compact "here's what's wrong, resubmit
+the full corrected batch" message and appends it to that candidate's own message history. Running
+inside an interactive assistant instead (no separate driver in the loop), the raw verdict comes back
+as an ordinary tool result, and the assistant's own reasoning decides what to do with it — same
+information, no translation step in between.
+
+**The candidate set itself can change mid-round, not just the picture between rounds.** If *every*
+candidate in a batch comes back blocked, one of them — the least-bad — gets sent back to the model
+with that rejection message, revised, and re-probed before ranking happens again. That's a
+demand-triggered repair, not a standing feature: it only fires on total failure, unlike everything
+else in this diagram, which runs the same way every time regardless of how the model is doing. (An
+interactive assistant working on its own, without the driver, can be told to revise *any* rejected
+candidate at its own discretion — a looser version of the same idea, driven by the model's judgment
+instead of a fixed trigger.)
+
+## The two KPIs, and what "weighed against each other" means
+
+The two blue boxes in the diagram are computed completely separately and read differently:
+
+- **Readiness Delta** — would this candidate move one of the 8 project-area scores (see below)
+  closer to done? Computed from the same rule violations as everything else, just projected onto a
+  "how much better" number instead of a yes/no.
+- **Architecture Fitness Delta** — would this candidate move the six whole-graph structure numbers
+  (see further below) in a useful direction?
+
+"Weighed against each other" means: among the candidates that passed the rule preview, prefer the one
+with the better Readiness Delta first, and use Architecture Fitness Delta only to break a tie. They
+are not added into one number — one is the primary ranking, the other a tiebreaker.
+
+**The tiebreaker is a sum, not a veto.** Architecture Fitness has six numbers, and a candidate can
+move some of them up and others down at the same time. Breaking a tie with it means adding all six
+changes together and preferring the higher total — a candidate that makes one number worse can still
+win, if it makes the others enough better. Nothing gets thrown out just for having a downside
+somewhere; a downside only shows up as a smaller (or negative) total. The only stage that actually
+discards a candidate is the rule check, at the very top.
+
+## Three views over the same rule violations
+
+Beyond feeding the KPIs above, the identical set of rule violations also gets grouped three more
+ways, for three different questions — none of these blocks anything either, they're read-outs:
+
+| View | Groups rules by | Answers |
+|---|---|---|
+| **8 readiness scores** | SE topic (requirements, use cases, functional architecture, module allocation, verification, interfaces, change requests, milestones) | "Which *area* of the project needs work next?" |
+| **Project-review gates** (System Requirements Review, Preliminary Design Review, Critical Design Review, Test Readiness Review) | project stage | "Are we ready to move from requirements-review to design-review to verification?" |
+| **Milestone gates** | which milestone (1st, 2nd, 3rd, 4th slice of the plan) | "Is milestone N actually done?" |
+
+## Module diagnostics — a few of those rules, singled out
+
+A handful of rules specifically judge one module at a time against classic software-architecture
+theory: is it too exposed to change (instability), does it do more than one job (LCOM4), does it
+cross paths with other modules too often. These are ordinary rules like any other — they feed the
+"module allocation" readiness score above. [The story](04-the-graphcode-story.md) calls them out
+separately because they're the most recognizable ("Robert C. Martin", "LCOM4") to anyone who already
+knows software-architecture theory. Not a fourth system — the same rule set as everything above.
+
+## Architecture Fitness, in full
+
+The six continuous numbers behind the blue "Architecture Fitness" boxes: roughly, how modular the
+graph is, how much redundancy exists, how short its paths are, how self-contained its natural
+clusters are, how connected it is overall, and how free of bottlenecks it is. Computed for the whole
+architecture subgraph at once, by an entirely different piece of code than the rules — it never
+fires a violation and never feeds the 8 readiness scores.
+
+## Where the same word means two different things
+
+One rule and one Architecture Fitness number both claim to measure "cohesion" — whether a module's
+parts belong together. On two real projects (not a synthetic example), the rule-based check scored
+every module at 0%, while Architecture Fitness's version scored 4.0–4.2 out of 5 on the same graphs —
+about as far apart as two numbers can get.
+
+Not a bug: the rule checks whether a module's parts talk to each other *directly, inside the
+boundary you declared*. Where modules talk through a shared data-flow layer instead (a deliberate
+pattern here), that reads near-zero on every well-built module — a known-unreliable signal for this
+style, already excluded from the readiness score for that reason. Architecture Fitness asks a
+different question: does the dependency graph cluster naturally at all, found algorithmically,
+independent of what you called your modules? That's the number that stayed meaningful. Two real
+questions, sharing one word — remembering which is being asked matters more than picking one.
+
+## Watching it run: two views, real data, no synthetic examples
+
+Rank 2 (the focus-dimension-only delta) doesn't need its own chart here — it's already folded into
+rank 3's total, so anything it would show is a subset of the progress view below. It would matter
+for a narrower question this article doesn't ask: *did the round's chosen focus specifically get
+fixed*, separate from whether the graph got better overall. Worth its own view later, not here.
+
+**Progress — rank 3 against rank 4, one point per round actually applied.** Every point is a real
+accepted edit from one real run (devstral, best-of-N driver, 22 rounds); round 1 (the cold start —
+first SYS/ACTORs/UCs from nothing) is left off the plot, off-scale at readiness +1.42 / fitness
++6.67, and stated here instead of squashing the other 21 points into a corner.
+
+![Progress scatter: readiness delta vs. architecture fitness delta per applied round](img/progress-scatter.svg)
+
+The shape confirms the caveat from earlier, not a diagonal trend: almost every point sits on the
+fitness-delta = 0 line — the architecture layer simply isn't touched most rounds. Round 2 is the
+first to move fitness at all; round 4 moves it *backward* (−1.11) while still winning its round on
+readiness — a real example of the tiebreaker's own rule: one number down is allowed, if the total
+that matters more says yes. A few readiness values dip below zero too (rounds 9, 14, 16, 17) — the
+best of that round's candidates was still a net negative; the driver picked the least-bad option, not
+a guaranteed-good one.
+
+**Efficiency — cumulative applied vs. rejected, rank 1 only.** A second real run (Haiku 4.5, 56 real
+gate calls in sequence) — mutations-count dropped from this view entirely, for the reason above: it's
+a tiebreaker of last resort, not a measure of anything, so counting it as "efficiency" would credit
+the wrong thing.
+
+![Cumulative applied vs rejected gate outcomes over one run](img/efficiency-cumulative.svg)
+
+42 applied, 14 rejected — the slope of each line, not just the endpoint, is the signal: a flat stretch
+on the rejected line is a clean run of turns; a steep one (visible about two-thirds through) is where
+the model fought the gate for a while before recovering.
+
+**What the mutations-count is actually good for:** not efficiency, but a rough read on capability —
+how large a batch the model completed successfully. Across this same Haiku run, applied batches
+ranged from 3 mutations up to 28, no clear trend up or down over the session — a different question
+("how much can this model reliably hold in one turn") from either chart above, worth its own view if
+it ever matters, not folded into either of these.
+
+---
+
+*Repo: <https://github.com/andreassigloch/graphcode>. Companions: [the story](04-the-graphcode-story.md),
+[the claims](06-claims.md), [the advisory roundtrip](05-the-advisory-roundtrip.md). Ask the running
+system directly: `graph_help` explains any rule ID, gate name, or dashboard token on demand.*

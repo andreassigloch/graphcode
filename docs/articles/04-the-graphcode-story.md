@@ -77,11 +77,6 @@ talk to the graph. It is not tied to one vendor's assistant.
   laptop implemented a function correctly — all five acceptance criteria, actually executed — from a
   precise 700-word briefing pulled out of the graph. The original session had read the equivalent of
   roughly seventy pages of prose for the same job. Precise context beat the bigger model.
-- **Confirmed at project scale, not just per function.** A 48-round trial ran the same driver,
-  unchanged, against a local 24B model and two frontier models authoring a full system graph from one
-  prompt. The local model matched frontier scope for $0; the *smallest* frontier model produced the
-  best result of the three — cheaper, faster, and more complete than the largest. The deciding factor
-  was following the method, not model size.
 - **Correctness of the structure is checkable without AI.** The result is verified against rules, not
   against a second model's opinion.
 
@@ -159,24 +154,20 @@ the weakest area names the next sensible step. No AI in that loop. Which is exac
 smaller, locally running model perform like a bigger one: it is *told* what to do next instead of
 having to infer it.
 
-### 4. Architectural fit — good structure, measured
+### 4. Module diagnostics — is each module healthy on its own?
 
-There is far more computable architecture theory available than most projects use. Four measures are
-built in, in plain terms:
+Beyond "is it complete", a second set of checks looks at each module by itself, in plain terms:
 
 - **How exposed a module is to change.** A module that depends on many others while many others
   depend on it is where every change hurts. *(instability, Robert C. Martin)*
 - **Whether a module does one thing.** If its inner parts have nothing to do with each other, the
   module is really two modules wearing one name. *(LCOM4, Chidamber–Kemerer / Hitz–Montazeri)*
-- **Whether the right things live together.** Do the functions placed in a module actually belong to
-  the same job? *(allocation cohesion)*
-- **How clean the borders are.** Few, well-defined crossings between modules mean a boundary you can
-  reason about; many crossings mean a boundary that exists only on the diagram.
-  *(coupling, Constantine–Yourdon)*
+- **How often it crosses paths with other modules.** Frequent, uncoordinated crossings mean a
+  boundary that exists only on the diagram, not in practice.
 
-These form a second set of scores, pointing at a target *you* choose. The sweet spot for a banking
-application is not the sweet spot for a social network with a billion users. Still computed, not
-opinion.
+These are per-module warnings, not a single project-wide score — a different, complementary thing
+from the whole-graph optimization score covered in [the advisory roundtrip](05-the-advisory-roundtrip.md).
+The full map of every scoring system and how they relate: [the scoring landscape](07-the-scoring-landscape.md).
 
 ### 5. Optimization
 

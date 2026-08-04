@@ -28,11 +28,28 @@ that, every project grows its own dialect and nothing stays comparable.
 | Apply path | one `mutate()` gate | Every edit rule-checked, author-logged, blocked on new violations |
 | Schemas | Zod at every boundary | Schema-first; no hand-rolled validation |
 | Ontology + rules | shared contracts package — imported, never forked | New type/rule = family decision + version bump; no local dialect |
-| Local execution | OpenCode + bring-your-own-key | The lean local path; matched the cloud agent on tool count with a smaller context window |
-| Executor | embedded (`graphcode run`), or a host you already use (Claude Code, OpenCode) | Same gate, same readiness-driven loop, no code branch between a local and a frontier model |
+| Local execution | OpenCode + bring-your-own-key, or the built-in executor below | Two ways to run a local model — see "Two ways to run the loop" |
 
 The current vocabulary: 13 element types, 7 connection types, 37 legal connection patterns, 66 rules
 across 8 readiness dimensions, exposed as 20 tools over MCP.
+
+## Two ways to run the loop
+
+The tools above get called by whatever is driving the conversation — and there are two different
+drivers, for two different situations.
+
+- **An interactive assistant you already use** (Claude Code, OpenCode, or similar): the model paces
+  itself. It decides what to read, in what order, when to write. This suits a model that plans well
+  on its own.
+- **A built-in executor** (`graphcode run` — no separate coding assistant needed): for each step, it
+  hands the model exactly ONE precise instruction — which few elements are missing and what they
+  should connect to, nothing else. The model doesn't plan the work; it's told the work, one
+  bite-sized slice at a time.
+
+Why both exist: a small or locally-run model does better with the second — being told exactly what
+to do next, rather than left to plan a large task itself. A large, capable model often does better
+with the first, left to explore on its own terms. Same store, same gate, same rules underneath
+either way; only how work is handed to the model differs.
 
 ## The bet: a precise query, not a compressed result
 

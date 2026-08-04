@@ -2,88 +2,106 @@
 
 *The companion to [Under the Hood](03-graphcode-harness-goal-and-concept.md). That article explains
 what "one gate" means; this one walks a single chat turn through the gate, end to end, and shows
-where the SE-optimizer advisory attaches — before the edit and after it.*
+where an optional quality advisor attaches — before the edit and after it.*
+
+## Two separate measurements, easy to conflate
+
+graphcode computes an **Architecture Fitness** score for the code's structure — six numbers,
+roughly: how modular the pieces are, how much redundancy exists, how short the paths from input to
+output are, how self-contained each module's connections stay, how connected the whole thing is, and
+how free it is of single-point bottlenecks.
+
+By itself, that score doesn't say whether an edit is good — going up isn't always better (a banking
+app and a billion-user app want different tradeoffs). You give it a **target direction** — e.g. "I
+care about being change-resistant" — and only then does "moved toward the target" become a
+meaningful score.
+
+The **advisor** (an optional module, not part of the gate) does two things with this: **before** an
+edit, it can rank candidate fixes by how far each would move Architecture Fitness toward a given
+target. **After** an edit, it reports how the fitness numbers actually changed — no target needed for
+that part, it's just "what moved, and did anything get worse." The two are easy to mix up because
+they share the same six numbers; only the "before" one needs a target to mean anything.
+
+Neither one ever blocks anything. The advisor measures and ranks; the gate — the rule-checker from
+[Under the Hood](03-graphcode-harness-goal-and-concept.md) — is the only thing that can refuse an
+edit.
 
 ## The chain
 
-One roundtrip, six steps. The two advisory touchpoints are marked; neither is a gate.
+One roundtrip, six steps. The two advisor touchpoints are marked; neither is the gate.
 
 ```
 Chat intent
    │
    ▼
-① read      graph_context · graph_impact · graph_expand   → a bounded subgraph, not a grep
+① read      look up the relevant slice of the graph      → a bounded answer, not a grep
    │
    ▼
-② status    graph_readiness + rules_evaluate              → where it stands, what is open
+② status    check what rules say is open right now        → where it stands, what is open
    │
    ▼
-③ propose   graph_suggest            ◀ advisory BEFORE the edit (se-optimizer)
-   │        given a target direction in ℝ⁶ metric space, rank the firing operator
-   │        rules by Δm·t̂; return finding + Δm + a dry-run verdict. Never auto-applies.
+③ propose   ADVISOR, before the edit
+   │        given a target direction, rank candidate fixes by how far each moves
+   │        Architecture Fitness toward it; return the best one + a preview verdict.
+   │        Never applies anything itself.
    ▼
-④ apply     graph_mutate → mutate()                        → the one Apply-Gate
+④ apply     the one Apply-Gate                             → rule-checks the edit for real
    │
    ▼
-   verdict  R-18 structural · R-19/R-20 binding → tier      → the advisory does NOT vote here
+   verdict  legal? fully wired? → allowed / needs-review / blocked
    │
    ▼
-⑤ measure   fitAdvisory on the result   ◀ advisory AFTER the edit (se-optimizer)
-   │        Δm(before→after) on layer:arch + the named regressions (Δ < 0)
+⑤ measure   ADVISOR, after the edit
+   │        Architecture Fitness, before vs. after — named if any of the six got worse
    ▼
-⑥ report    tier + violations + fitAdvisory
+⑥ report    verdict + any rule violations + the before/after fitness numbers
 ```
 
-The rule that holds over the whole chain: **the metric ranks (③⑤), the gate judges (④).** The
-advisory is a *measurement*, never a veto — the only thing that blocks an edit is a rule.
+The rule that holds over the whole chain: **the advisor ranks (③⑤), the gate judges (④).** The
+advisor is a *measurement*, never a veto — the only thing that blocks an edit is a rule.
 
 ## A worked example
 
-Intent: *"make the auth module more scalable."*
+Intent: *"make the auth module more resistant to change."*
 
 | Step | What happens |
 |------|--------------|
-| ① read   | `graph_impact(MOD-auth)` — one FUNC feeds four FLOWs, one SCHEMA is shared centrally |
-| ② status | `rules_evaluate` — R-16 warns: MOD-auth has too high a fan-in |
-| ③ suggest| `graph_suggest({scalability:1})` — top move: split the FLOW, `score = +0.31`, dry-run tier `suggest` |
-| ④ apply  | `graph_mutate(splitFlow …)` — rules clean → tier `auto-apply`, persisted |
-| ⑤ measure| `fitAdvisory`: `scalability +0.12`, but `regressions: ['coherence']` (−0.04) |
-| ⑥ report | "Applied. Scalability ↑, coherence slightly ↓ — intended?" |
+| ① read   | look up the auth module's neighborhood — one function feeds four data-flows, one shared data shape is used everywhere |
+| ② status | a rule warns: the auth module has too many other things depending on it |
+| ③ propose| target = "resistant to change" → top move: split one data-flow in two, ranked ahead of the alternatives, preview: allowed |
+| ④ apply  | the split is applied — rules stay clean, it's persisted |
+| ⑤ measure| resistance-to-change improved, but self-containment (one of the six fitness numbers) got slightly worse |
+| ⑥ report | "Applied. Change-resistance up, self-containment slightly down — intended?" |
 
-The human (or agent) sees the *price* of the change in ⑤ — without the advisory ever having blocked it.
+You (or the agent) see the *tradeoff* in ⑤ — without the advisor ever having blocked the edit.
 
 ## Self-correction: what blocks, what is carried as debt
 
-The gate is a **judge, not a repairer**, and it works on deltas — it only rules on violations *this*
-mutation introduces. Two behaviors, split by severity:
+The gate is a **judge, not a repairer**, and it only rules on what changes with *this* edit. Two
+behaviors, split by how serious the problem is:
 
-- **Add a REQ, forget the test → blocked.** A new REQ with no `verify` trace fires **R-01 (error)**.
-  A new error → tier `block`, rollback, nothing persisted. The result carries the fix hint ("link a
-  TEST via verify trace") and the candidate TESTs. Nothing is written for you, but nothing lands
-  silently either — the legal move is one *batch* mutate with REQ + TEST + verify, atomic.
+- **Add a requirement, forget the test that proves it → blocked.** That's a hard rule: nothing
+  persists, and the response names exactly what's missing plus candidate tests already in the graph.
+  The fix is one combined edit — requirement + test + the link between them — applied together.
 
-- **Leave a binding open → carried as debt.** A TEST without `testRef` (**R-19**) or a FUNC without
-  `codeRef` (**R-20**) is a *warning*. The edit lands with tier `suggest`; the open binding stays
-  visible in `rules_evaluate` / `graph_readiness` and depresses the readiness score until resolved.
-  The missing test stub itself is materialized at `graph_export` as an `it.todo` — the file appears,
-  the assertion is yours to write.
+- **Leave a link half-finished → carried as debt, not blocked.** A test not yet wired to real code,
+  or a function not yet wired to a real file, is a softer warning: the edit still lands, but the gap
+  stays visible every time you check status, and it keeps the readiness score down until it's
+  resolved. A placeholder for the missing test file is created automatically so nothing points at a
+  file that doesn't exist — the assertion inside it is still yours to write.
 
-Discovery is automatic — `graph_next_step` surfaces the next open item every turn, so nothing has to
-be asked for. Repair is not: the graph tells you what is missing; it does not fill it in.
+Nothing has to be asked for — the system always surfaces the next open item on its own. It does not
+fill gaps in for you; it makes sure they stay visible until you do.
 
-## What is planned
+## What's planned
 
-- **Hardness level 2 (roadmap step 5).** Today ③ ranks a *single* operator edit. The A\*/Beam
-  extension searches an edit *sequence* that reaches the target and compensates the regression from
-  ⑤ — in the example, the split *plus* a coherence bridge, so `coherence` does not fall. The advisory
-  moves from *measuring* to *planning*. It still never blocks and still never auto-applies; it needs
-  the merge fixture first.
+- **Planning a few edits ahead, not just one.** Today the advisor ranks a *single* fix at a time. A
+  planned extension would let it look a few moves ahead — like a chess engine — so it can plan a fix
+  *plus* whatever second edit is needed to avoid the tradeoff it would otherwise create. It still
+  never blocks and never applies on its own.
 
-- **The F2 learning loop (gated, 2026-Q4).** Today the `target` in ③ is set by hand. The
-  learning engine — held behind the F2 go/no-go until there is proof of effect on ≥6 weeks of
-  operating data — mines the accumulated Δm deltas and accept/reject decisions into candidate rules
-  (UC-8 rule discovery). That closes the chain: measured deltas → learned rules and targets → better
-  proposals. Activation stays manual: a mined rule is a versioned decision, not a silent switch.
-
-The live chain today is ①②→③→④→⑤→⑥. Step 5 turns ③ into sequence planning; F2 makes the target
-self-learning — both deliberately locked until measured.
+- **Learning better targets over time.** Today you set the target direction by hand. Eventually the
+  system could learn, from its own accumulated history of edits and outcomes, which targets and rules
+  tend to help — and suggest refinements. This stays switched off until there's real operating data
+  proving it actually helps; a learned suggestion would still be a decision you approve, never a
+  silent change.
