@@ -22,8 +22,10 @@ ohne Export (v1–v5, v7, v8, v10, v13).
 | devstral-v16-bo3 | devstral | 24 Rd., Best-of-3 (CR-288, judge=gate) | 33 El / 0 Gate-Rejections, aber UC-Monokultur (26 UC) — Ranking belohnt Volumen, nicht Defizit-Reparatur |
 | devstral-v17-bo3 | devstral | 24 Rd., Best-of-3 + Ziel-Delta (CR-289), NEUE Box | **konfundiert, kein valider Ranking-Beleg**: 55/72 Kandidaten-Slots leer (temp 0.15: 3/24 Batches, 8 Leerantworten — Box-/Sampler-Thema), 16 El; lieferte aber den Runde-3-Beleg für den tier-vor-focus-Fehler (gefixt) |
 | devstral-v18-bo3 | devstral | 24 Rd., Best-of-3 + Ziel-Delta + tier-Fix (CR-289) | **Validierung: 40 El / 78 Tr, voller Typ-Mix (8 UC/12 FCHAIN/6 FUNC/5 REQ/5 TEST), 2 Steering-Errors (bester lokaler Endgraph), 0 Gate-Rejections, 115 min** |
+| devstral-v19-recount | devstral | 16+7 Rd. (Sleep-Kill-Unterbrechung), N=3, mit Injektion | R-12-Recount für CR-292: **0 Treffer** bei erreichter arch-Ebene (8 FUNC) → CR-292 ohne Bau geschlossen; 31 El |
+| devstral-v20-noinject | devstral | 24 Rd., N=3, `injection=false` (CR-293) | **40 El / 51 Tr inkl. 3 MOD + 1 FLOW** (breitester Local-Mix), 24/24 Applies — Injektion kostet lokal Breite → CR-297 Backend-Default |
+| qwen05b | qwen2.5-0.5b | 8 Rd., N=3, ohne Injektion | **Untergrenzen-Test: 3 El** — 41 Kandidaten preflight-geblockt, 0 Gate-Rejections; einziger korrekter Baustein kam vom CR-284-Autocomplete. Gerüst hält, Kohärenz fehlt |
 
 Nachtest-Proben (CR-286): `logs/gc-run-opus5-probe-2048.run.log` (maxTokens 2048
 → `input-schema keys: []`, Tool-Call-JSON gekappt) vs. `…-probe-8192.run.log`
 (8192 → 0 Rejections). `audit/` enthält die Gate-Audit-Trails aller Läufe.
-| qwen05b | qwen2.5-0.5b | 8 Rd., N=3, ohne Injektion | **Untergrenzen-Test: 3 El** — 41 Kandidaten preflight-geblockt, 0 Gate-Rejections; einziger korrekter Baustein kam vom CR-284-Autocomplete. Gerüst hält, Kohärenz fehlt |
