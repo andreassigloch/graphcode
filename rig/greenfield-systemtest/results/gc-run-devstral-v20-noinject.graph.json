@@ -1,0 +1,560 @@
+{
+  "elements": [
+    {
+      "id": "ACTOR-admin",
+      "type": "ACTOR",
+      "name": "Admin",
+      "description": "Systemadministrator, der Nutzer verwaltet und Systemeinstellungen konfiguriert."
+    },
+    {
+      "id": "ACTOR-user",
+      "type": "ACTOR",
+      "name": "User",
+      "description": "Endnutzer der Web-App."
+    },
+    {
+      "id": "FCHAIN-edit-graph-scenario",
+      "type": "FCHAIN",
+      "name": "Edit Graph Scenario",
+      "description": "Nutzer bearbeitet den Graphen durch Hinzufügen, Löschen oder Aktualisieren von Knoten/Kanten."
+    },
+    {
+      "id": "FCHAIN-export-scenario",
+      "type": "FCHAIN",
+      "name": "Export Scenario",
+      "description": "Nutzer exportiert den aktuellen Graphenstand als JSON/Format-E."
+    },
+    {
+      "id": "FCHAIN-login-scenario",
+      "type": "FCHAIN",
+      "name": "Login-Szenario",
+      "description": "Nutzer gibt Benutzername und Passwort ein, Authentifizierung erfolgt, Session wird erstellt."
+    },
+    {
+      "id": "FLOW-session-data",
+      "type": "FLOW",
+      "name": "Session Data",
+      "description": "Daten der Nutzer-Session."
+    },
+    {
+      "id": "FUNC-edit-graph-step1",
+      "type": "FUNC",
+      "name": "Laden des aktuellen Graphen",
+      "description": "System lädt den aktuellen Graphenstand für den Nutzer."
+    },
+    {
+      "id": "FUNC-edit-graph-step2",
+      "type": "FUNC",
+      "name": "Anwenden von Änderungen",
+      "description": "System wendet die vom Nutzer vorgenommenen Änderungen an."
+    },
+    {
+      "id": "FUNC-edit-graph-step3",
+      "type": "FUNC",
+      "name": "Live-Updates anzeigen",
+      "description": "System zeigt die Live-Updates des Graphen für alle Nutzer an."
+    },
+    {
+      "id": "FUNC-export-step1",
+      "type": "FUNC",
+      "name": "Graphenstand abrufen",
+      "description": "System ruft den aktuellen Graphenstand ab."
+    },
+    {
+      "id": "FUNC-export-step2",
+      "type": "FUNC",
+      "name": "Export-Format wählen",
+      "description": "Nutzer wählt das Export-Format (JSON/Format-E)."
+    },
+    {
+      "id": "FUNC-export-step3",
+      "type": "FUNC",
+      "name": "Export durchführen",
+      "description": "System führt den Export des Graphenstandes durch."
+    },
+    {
+      "id": "FUNC-login-authenticate",
+      "type": "FUNC",
+      "name": "Authentifizieren",
+      "description": "Überprüft Anmeldedaten gegen Datenbank."
+    },
+    {
+      "id": "FUNC-login-input",
+      "type": "FUNC",
+      "name": "Eingabe validieren",
+      "description": "Prüft Benutzername und Passwort auf Gültigkeit."
+    },
+    {
+      "id": "FUNC-login-session-create",
+      "type": "FUNC",
+      "name": "Session erstellen",
+      "description": "Erzeugt eine neue Session für den Nutzer."
+    },
+    {
+      "id": "MOD-authentication",
+      "type": "MOD",
+      "name": "Authentication Module",
+      "description": "Handles user authentication and session management."
+    },
+    {
+      "id": "MOD-backend",
+      "type": "MOD",
+      "name": "Backend Module",
+      "description": "Backend-Modul für die Bearbeitung des Graphen."
+    },
+    {
+      "id": "MOD-frontend",
+      "type": "MOD",
+      "name": "Frontend Module",
+      "description": "Frontend-Modul für die Anzeige und Bearbeitung des Graphen."
+    },
+    {
+      "id": "REQ-authentication",
+      "type": "REQ",
+      "name": "Authentication Requirement",
+      "description": "Nutzer müssen sich authentifizieren, um auf die Web-App zuzugreifen."
+    },
+    {
+      "id": "REQ-authentication-concrete",
+      "type": "REQ",
+      "name": "Authentication Concrete",
+      "description": "The system shall authenticate users within 1 second with a success rate of >= 95% under load."
+    },
+    {
+      "id": "REQ-authentication-measurable",
+      "type": "REQ",
+      "name": "Authentication Measurable",
+      "description": "Authentication must succeed within 1 second for 95% of requests under load."
+    },
+    {
+      "id": "REQ-export-formats",
+      "type": "REQ",
+      "name": "Export Formats Requirement",
+      "description": "Nutzer können den Graphenstand als JSON oder Format-E exportieren."
+    },
+    {
+      "id": "REQ-export-formats-concrete",
+      "type": "REQ",
+      "name": "Export Formats Concrete",
+      "description": "The system shall export the governed graph in JSON, XML, and CSV formats with validation success rate >= 98%."
+    },
+    {
+      "id": "REQ-export-formats-measurable",
+      "type": "REQ",
+      "name": "Export Formats Measurable",
+      "description": "Export formats must support JSON, XML, and CSV with validation success rate >= 98%."
+    },
+    {
+      "id": "REQ-live-updates",
+      "type": "REQ",
+      "name": "Live Updates Requirement",
+      "description": "Nutzer sehen Live-Updates des Graphen."
+    },
+    {
+      "id": "REQ-live-updates-concrete",
+      "type": "REQ",
+      "name": "Live Updates Concrete",
+      "description": "The system shall reflect live updates to all connected clients within 500ms."
+    },
+    {
+      "id": "REQ-live-updates-measurable",
+      "type": "REQ",
+      "name": "Live Updates Measurable",
+      "description": "Live updates must reflect changes within 500ms for all connected clients."
+    },
+    {
+      "id": "SYS-web-app",
+      "type": "SYS",
+      "name": "Web-App",
+      "description": "Multiuser-fähige Web-App für die Bearbeitung des governten Systemgraphen."
+    },
+    {
+      "id": "TEST-verify-authentication",
+      "type": "TEST",
+      "name": "Verify Authentication",
+      "description": "Test verifies that users can authenticate successfully within 1 second under load conditions. Uses a load testing tool to simulate 100 concurrent users and measures authentication success rate >= 95%.",
+      "concept": true,
+      "testRef": {
+        "file": "authentication_load_test.md",
+        "case": "load_auth_100_users",
+        "tool": "JMeter",
+        "level": "system"
+      }
+    },
+    {
+      "id": "TEST-verify-authentication-concrete",
+      "type": "TEST",
+      "name": "Verify Authentication Concrete",
+      "description": "Test verifies that the system authenticates users within 1 second with a success rate of >= 95% under load. Uses a load testing tool to simulate high traffic and measures response times.",
+      "testRef": {
+        "file": "authentication_concrete_test.md",
+        "case": "load_auth_100_users",
+        "tool": "JMeter",
+        "level": "system"
+      }
+    },
+    {
+      "id": "TEST-verify-authentication-measurable",
+      "type": "TEST",
+      "name": "Verify Authentication Measurable",
+      "description": "Test verifies that authentication succeeds within 1 second for 95% of requests under load. Uses a load testing tool to simulate high traffic and measures response times.",
+      "testRef": {
+        "file": "authentication_measurable_test.md",
+        "case": "load_auth_100_users",
+        "tool": "JMeter",
+        "level": "system"
+      }
+    },
+    {
+      "id": "TEST-verify-export-formats",
+      "type": "TEST",
+      "name": "Verify Export Formats",
+      "description": "Test verifies that the system exports the graph in JSON, XML, and CSV formats with a validation success rate >= 98%. Uses schema validation tools to ensure exported data adheres to the expected format.",
+      "concept": true,
+      "testRef": {
+        "file": "export_formats_test.md",
+        "case": "validate_export_formats",
+        "tool": "SchemaValidator",
+        "level": "system"
+      }
+    },
+    {
+      "id": "TEST-verify-export-formats-concrete",
+      "type": "TEST",
+      "name": "Verify Export Formats Concrete",
+      "description": "Test verifies that the system exports the governed graph in JSON, XML, and CSV formats with a validation success rate >= 98%. Uses schema validation tools to ensure exported data adheres to the expected format.",
+      "testRef": {
+        "file": "export_formats_concrete_test.md",
+        "case": "validate_export_formats",
+        "tool": "SchemaValidator",
+        "level": "system"
+      }
+    },
+    {
+      "id": "TEST-verify-export-formats-measurable",
+      "type": "TEST",
+      "name": "Verify Export Formats Measurable",
+      "description": "Test verifies that export formats support JSON, XML, and CSV with a validation success rate >= 98%. Uses schema validation tools to ensure exported data adheres to the expected format.",
+      "testRef": {
+        "file": "export_formats_measurable_test.md",
+        "case": "validate_export_formats",
+        "tool": "SchemaValidator",
+        "level": "system"
+      }
+    },
+    {
+      "id": "TEST-verify-live-updates",
+      "type": "TEST",
+      "name": "Verify Live Updates",
+      "description": "Test that live updates are reflected within 500ms for all connected clients.",
+      "concept": true,
+      "testRef": {
+        "file": "live_updates_test.md",
+        "case": "concurrent_edit_500ms",
+        "tool": "Cypress",
+        "level": "system"
+      }
+    },
+    {
+      "id": "TEST-verify-live-updates-concrete",
+      "type": "TEST",
+      "name": "Verify Live Updates Concrete",
+      "description": "Test that live updates are reflected within 500ms for all connected clients with a success rate of >= 98%.",
+      "testRef": {
+        "file": "live_updates_concrete_test.md",
+        "case": "concurrent_edit_500ms",
+        "tool": "Cypress",
+        "level": "system"
+      },
+      "concept": true
+    },
+    {
+      "id": "TEST-verify-live-updates-measurable",
+      "type": "TEST",
+      "name": "Verify Live Updates Measurable",
+      "description": "Test that live updates are reflected within 500ms for all connected clients with a success rate of >= 98%.",
+      "testRef": {
+        "file": "live_updates_measurable_test.md",
+        "case": "concurrent_edit_500ms",
+        "tool": "Cypress",
+        "level": "system"
+      },
+      "concept": true
+    },
+    {
+      "id": "UC-edit-graph",
+      "type": "UC",
+      "name": "Graph bearbeiten",
+      "description": "Nutzer fügt Knoten/Kanten hinzu, löscht oder aktualisiert Elemente und sieht Live-Updates."
+    },
+    {
+      "id": "UC-export",
+      "type": "UC",
+      "name": "Exportieren",
+      "description": "Nutzer exportiert den aktuellen Graphenstand als JSON/Format-E."
+    },
+    {
+      "id": "UC-login",
+      "type": "UC",
+      "name": "Login",
+      "description": "Nutzer meldet sich mit Benutzername/Passwort an und erhält eine Session."
+    }
+  ],
+  "traces": [
+    {
+      "source": "ACTOR-admin",
+      "target": "UC-edit-graph",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-edit-graph",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-export",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-user",
+      "target": "UC-login",
+      "type": "io"
+    },
+    {
+      "source": "FCHAIN-edit-graph-scenario",
+      "target": "FUNC-edit-graph-step1",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-edit-graph-scenario",
+      "target": "FUNC-edit-graph-step2",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-edit-graph-scenario",
+      "target": "FUNC-edit-graph-step3",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-export-scenario",
+      "target": "FUNC-export-step1",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-export-scenario",
+      "target": "FUNC-export-step2",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-export-scenario",
+      "target": "FUNC-export-step3",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-login-scenario",
+      "target": "FUNC-login-authenticate",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-login-scenario",
+      "target": "FUNC-login-input",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-login-scenario",
+      "target": "FUNC-login-session-create",
+      "type": "compose"
+    },
+    {
+      "source": "FLOW-session-data",
+      "target": "UC-edit-graph",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-session-data",
+      "target": "UC-export",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-session-data",
+      "target": "UC-login",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-edit-graph-step1",
+      "target": "MOD-frontend",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-edit-graph-step2",
+      "target": "MOD-backend",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-edit-graph-step3",
+      "target": "MOD-frontend",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-export-step1",
+      "target": "MOD-backend",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-export-step2",
+      "target": "MOD-frontend",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-export-step3",
+      "target": "MOD-backend",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-login-authenticate",
+      "target": "MOD-authentication",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-login-input",
+      "target": "MOD-authentication",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-login-session-create",
+      "target": "MOD-authentication",
+      "type": "allocate"
+    },
+    {
+      "source": "MOD-authentication",
+      "target": "MOD-backend",
+      "type": "io"
+    },
+    {
+      "source": "MOD-authentication",
+      "target": "MOD-frontend",
+      "type": "io"
+    },
+    {
+      "source": "SYS-web-app",
+      "target": "UC-edit-graph",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-web-app",
+      "target": "UC-export",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-web-app",
+      "target": "UC-login",
+      "type": "compose"
+    },
+    {
+      "source": "TEST-verify-authentication",
+      "target": "REQ-authentication",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-authentication-concrete",
+      "target": "REQ-authentication-concrete",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-authentication-measurable",
+      "target": "REQ-authentication-measurable",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-export-formats",
+      "target": "REQ-export-formats",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-export-formats-concrete",
+      "target": "REQ-export-formats-concrete",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-export-formats-measurable",
+      "target": "REQ-export-formats-measurable",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-live-updates",
+      "target": "REQ-live-updates",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-live-updates-concrete",
+      "target": "REQ-live-updates-concrete",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-verify-live-updates-measurable",
+      "target": "REQ-live-updates-measurable",
+      "type": "verify"
+    },
+    {
+      "source": "UC-edit-graph",
+      "target": "FCHAIN-edit-graph-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-edit-graph",
+      "target": "REQ-live-updates",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export",
+      "target": "FCHAIN-export-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export",
+      "target": "REQ-export-formats",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login",
+      "target": "FCHAIN-login-scenario",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login",
+      "target": "REQ-authentication",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login",
+      "target": "REQ-authentication-concrete",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login",
+      "target": "REQ-authentication-measurable",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login",
+      "target": "REQ-export-formats-concrete",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login",
+      "target": "REQ-export-formats-measurable",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login",
+      "target": "REQ-live-updates-concrete",
+      "type": "compose"
+    },
+    {
+      "source": "UC-login",
+      "target": "REQ-live-updates-measurable",
+      "type": "compose"
+    }
+  ]
+}

@@ -1,7 +1,15 @@
 # CR-GC-293 — Injektion isoliert messen (kein Code, nur ein Lauf)
 
-**Status:** open — Mess-Schalter implementiert + getestet, Vergleichslauf noch
-ausstehend (Nachtrag 2026-08-04)
+**Status:** done (2026-08-04) — Vergleichslauf gefahren, Befund eindeutig:
+v20 (24 Rd., N=3, Ziel-Delta, `injection=false`) liefert **40 El/51 Tr inkl.
+3 MOD + 1 FLOW** (breitester Local-Mix der Serie, 24/24 Applies) gegen v19
+(gleiche Config MIT Injektion, 16+7 Rd. nach Sleep-Kill): 31 El/34 Tr ohne
+MOD/FLOW. Kosten der Injektions-Abschaltung lokal: ~2,4× Tokens/Runde (10k→24k,
+bei $0 irrelevant) und 55 % Lese-Turns. ZWEITER unabhängiger Beleg nach
+v15-vs-v9: die Lese-Phase ist devstrals Elaboration. **Empfehlung bestätigt:
+Injektion als Backend-Default — an für anthropic, aus für openai/local**
+(Folge-CR-GC-297, Muster maxTokens-Backend-Default). Artefakte:
+rig/greenfield-systemtest/results/ (v19-recount, v20-noinject).
 **Datum:** 2026-08-03
 **Kontext:** `docs/executor-abschlussbericht.md`, Nachtrag 2026-08-01, Punkt 3: „Injektion
 (CR-285) nützt Frontier, hungert Local aus" — devstral v15 (mit Injektion) 22 Elemente
