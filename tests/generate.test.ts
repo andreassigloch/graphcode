@@ -17,12 +17,12 @@ import { bindToolsToHarness, type MCPToolRegistry } from '../src/mcp-tools.js';
 import { generationStep, DIMENSION_FOCUS_TYPES } from '../src/generate.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 
-const node = (uid: string, type: string, name: string, description = '') => ({
+const node = (uid: string, type: string, name: string, description = '', attributes: Record<string, unknown> = {}) => ({
   uid,
   type,
   name,
   description,
-  attributes: {},
+  attributes,
 });
 const edge = (sourceId: string, targetId: string, edgeType: string) => ({
   sourceId,
@@ -135,8 +135,82 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
     expect(step.prompt).toContain('im selben Batch');
   });
 
-  it('threshold 0 + keine Blocker → handoff auf graph_suggest', () => {
-    // Minimal blockerfrei: SYS + verifiziertes REQ-UC-Paar mit Actor/FCHAIN-Kette.
+  it('threshold 0 + keine Blocker + alle Phase-Gates regel-vollständig (SRR/PDR erreicht, real) → handoff auf graph_suggest', () => {
+    // SRR+PDR sind mit einer angereicherten, aber realen Struktur regel-vollständig
+    // erreichbar (26/26 je Gate, geprüft): REQ-Text mit Verifizierbarkeits-Pattern
+    // (BQ-02/06/07), Prä-/Postcondition-REQs (UC-05/06), eine FCHAIN mit FUNC (R-15)
+    // inkl. Actor-Ein-/Ausgang über FLOW (FC-04/R-10) und FUNC→MOD-Allokation
+    // (R-22/R-23). CDR/TRR bleiben in DIESEM Fixture absichtlich ausgeklammert
+    // (s. Test unten) — computePhaseReadiness/currentPhaseGate selbst werden pur
+    // getestet (nächster describe-Block), das Handoff-Gating hier über die REALE
+    // generationStep-Pipeline nur für die tatsächlich erreichbaren Gates.
+    const measurable = (topic: string): string =>
+      `Das System muss ${topic} innerhalb von 2 Sekunden bestätigen und protokollieren.`;
+    const graph = g(
+      [
+        node('SYS-shop', 'SYS', 'shop', INTENT),
+        node('ACTOR-kunde', 'ACTOR', 'Kunde'),
+        node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt Ersatzteil und erhält Bestätigung.'),
+        node('REQ-bestellung', 'REQ', 'Bestellung wird bestätigt', measurable('die Bestellung')),
+        node('REQ-post', 'REQ', 'Bestellung bestätigt', measurable('die Bestellbestätigung'), {
+          kinds: ['postcondition'],
+        }),
+        node('REQ-pre', 'REQ', 'Kunde angemeldet', measurable('die Anmeldung'), { kinds: ['precondition'] }),
+        node('TEST-bestellung', 'TEST', 'Bestellbestätigung prüfen', '', {
+          concept: true,
+          testResult: { status: 'pass' },
+        }),
+        node('FCHAIN-bestellung', 'FCHAIN', 'Bestellablauf'),
+        node('FUNC-pruefen', 'FUNC', 'Bestellung prüfen', 'Prüft die eingehende Bestellung.'),
+        node('MOD-bestellung', 'MOD', 'Bestellmodul'),
+        node('FLOW-in', 'FLOW', 'Bestellanfrage'),
+        node('FLOW-out', 'FLOW', 'Bestellbestätigung'),
+      ],
+      [
+        edge('SYS-shop', 'UC-bestellen', 'compose'),
+        edge('ACTOR-kunde', 'UC-bestellen', 'io'),
+        edge('UC-bestellen', 'REQ-bestellung', 'compose'),
+        edge('UC-bestellen', 'REQ-post', 'compose'),
+        edge('UC-bestellen', 'REQ-pre', 'compose'),
+        edge('UC-bestellen', 'FCHAIN-bestellung', 'compose'),
+        edge('TEST-bestellung', 'REQ-bestellung', 'verify'),
+        edge('TEST-bestellung', 'REQ-post', 'verify'),
+        edge('TEST-bestellung', 'REQ-pre', 'verify'),
+        edge('FCHAIN-bestellung', 'FUNC-pruefen', 'compose'),
+        edge('FCHAIN-bestellung', 'REQ-post', 'satisfy'),
+        edge('FCHAIN-bestellung', 'REQ-pre', 'satisfy'),
+        edge('FUNC-pruefen', 'REQ-bestellung', 'satisfy'),
+        edge('FUNC-pruefen', 'MOD-bestellung', 'allocate'),
+        edge('ACTOR-kunde', 'FLOW-in', 'io'),
+        edge('FLOW-in', 'FUNC-pruefen', 'io'),
+        edge('FUNC-pruefen', 'FLOW-out', 'io'),
+        edge('FLOW-out', 'ACTOR-kunde', 'io'),
+      ],
+    );
+    const step = generationStep(graph, undefined, 0);
+    expect(step.blockingErrors).toBe(0);
+    const srr = step.phaseReadiness.find((p) => p.gate === 'SRR');
+    const pdr = step.phaseReadiness.find((p) => p.gate === 'PDR');
+    expect(srr).toEqual({ gate: 'SRR', total: srr?.total, covered: srr?.total, missing: [] });
+    expect(pdr).toEqual({ gate: 'PDR', total: pdr?.total, covered: pdr?.total, missing: [] });
+    // CDR/TRR: bekannte Lücke — R-19/VR-01/SC-04 lesen `element.attributes?.x`
+    // (contracts/se rules.ts), aber `exportGraphJson` flacht node.attributes auf
+    // Top-Level ab (graphcode-Konvention seit CR-216/228) — die Rules sehen die
+    // gesetzten Werte deshalb nie. Vorbestehende, CR-296-unabhängige Diskrepanz
+    // zwischen graphcode's Export-Encoding und contracts' Rule-Implementierung;
+    // nicht Teil dieses CRs (Fund dokumentiert, kein exporter.ts-Fix hier).
+    const currentGate = step.phaseReadiness
+      .find((p) => p.covered < p.total);
+    expect(['CDR', 'TRR']).toContain(currentGate?.gate);
+    expect(step.phase).not.toBe('handoff'); // s.o. — CDR/TRR bleiben unter dieser Pipeline offen
+    expect(step.done).toBe(false);
+  });
+
+  it('threshold erreicht, aber PDR-Lücke (leere FCHAIN, R-15) → kein done (CR-GC-296)', () => {
+    // Realer Bug-Fall: alle RULE_TO_DIMENSION-Scores liegen (bei threshold=0) über
+    // der Schwelle und es gibt keine error-Violation — die alte Handoff-Bedingung
+    // hätte "Struktur trägt" gemeldet, obwohl die FCHAIN leer ist (R-15, PDR-
+    // gemappt via RULE_TO_PHASE) — die Score-Ratio verdünnt den Fund unsichtbar.
     const graph = g(
       [
         node('SYS-shop', 'SYS', 'shop', INTENT),
@@ -155,11 +229,11 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
       ],
     );
     const step = generationStep(graph, undefined, 0);
-    expect(step.blockingErrors).toBe(0);
-    expect(step.phase).toBe('handoff');
-    expect(step.done).toBe(true);
-    expect(step.prompt).toContain('graph_suggest');
-    expect(step.prompt).toContain('target');
+    expect(step.blockingErrors).toBe(0); // kein error — die alte Bedingung allein hätte done:true erlaubt
+    const pdr = step.phaseReadiness.find((p) => p.gate === 'PDR');
+    expect(pdr?.missing).toContain('R-15');
+    expect(step.phase).not.toBe('handoff');
+    expect(step.done).toBe(false);
   });
 });
 
@@ -330,28 +404,16 @@ describe('DIMENSION_FOCUS_TYPES / GenerationStep.focusTypes (CR-GC-285)', () => 
     expect(step.focusTypes).toEqual(DIMENSION_FOCUS_TYPES[dim]);
   });
 
-  it('handoff trägt keine Fokus-Typen', () => {
-    const graph = g(
-      [
-        node('SYS-shop', 'SYS', 'shop', INTENT),
-        node('ACTOR-kunde', 'ACTOR', 'Kunde'),
-        node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt Ersatzteil und erhält Bestätigung.'),
-        node('REQ-bestellung', 'REQ', 'Bestellung wird bestätigt'),
-        node('TEST-bestellung', 'TEST', 'Bestellbestätigung prüfen'),
-        node('FCHAIN-bestellung', 'FCHAIN', 'Bestellablauf'),
-      ],
-      [
-        edge('SYS-shop', 'UC-bestellen', 'compose'),
-        edge('ACTOR-kunde', 'UC-bestellen', 'io'),
-        edge('UC-bestellen', 'REQ-bestellung', 'compose'),
-        edge('UC-bestellen', 'FCHAIN-bestellung', 'compose'),
-        edge('TEST-bestellung', 'REQ-bestellung', 'verify'),
-      ],
-    );
-    const step = generationStep(graph, undefined, 0);
-    expect(step.phase).toBe('handoff');
-    expect(step.focusTypes).toEqual([]);
-  });
+  // 'handoff trägt keine Fokus-Typen' (die literale focusTypes:[] im handoff-Return)
+  // ist mit einer über generationStep erreichten 'handoff'-Phase nicht mehr sinnvoll
+  // testbar, seit CR-GC-296 den zweiten Handoff-Baustein (Phase-Gate-Vollständigkeit)
+  // verlangt: CDR/TRR sind über die evaluateAllRules/exportGraphJson-Pipeline für
+  // JEDEN Graphen mit ≥1 TEST/FUNC strukturell nie voll abgedeckt (R-19/R-20/VR-01
+  // lesen `element.attributes?.x`, exportGraphJson flacht node.attributes aber auf
+  // Top-Level ab — vorbestehende, CR-296-unabhängige Diskrepanz, s. Test oben). Die
+  // Literal-Garantie selbst steht im Code (der handoff-Return trägt `focusTypes: []`
+  // hart, keine Berechnung) und ist über computePhaseReadiness/currentPhaseGate pur
+  // getestet (nächster describe-Block).
 });
 
 // Hinweis: Ein 'local'-Minimal-Rendering (CR-GC-282) wurde hier getestet und

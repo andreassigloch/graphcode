@@ -137,4 +137,29 @@ describe('TEST-mcp-readiness: graph_readiness scores family readiness over the b
       [...detail.phaseGates, ...detail.implGates].some((g) => g.blocking.length > 0 || g.open.length > 0),
     ).toBe(true);
   });
+
+  // CR-GC-296 — phase_readiness: the RULE_TO_PHASE-derived axis alongside the
+  // pre-existing phaseGates (structural completeness, CR-GC-250). Both name the
+  // same 4 gates but count DIFFERENT things — rule coverage here, not chain legs.
+  it('phase_readiness (CR-GC-296): SRR/PDR/CDR/TRR covered/total + missing, in both summary and detail', async () => {
+    const tools = bindToolsToHarness(harness);
+    expect((await harness.mutate(CLEAN_MEMBER)).success).toBe(true);
+    expect((await harness.mutate(ORPHAN_FUNC)).success).toBe(true);
+
+    const summary = await tools.graph_readiness.handler({});
+    const detail = await tools.graph_readiness.handler({ detail: true });
+
+    for (const report of [summary, detail]) {
+      expect(report.phase_readiness.map((p) => p.gate)).toEqual(['SRR', 'PDR', 'CDR', 'TRR']);
+      for (const gate of report.phase_readiness) {
+        expect(gate.total).toBeGreaterThan(0);
+        expect(gate.covered).toBeLessThanOrEqual(gate.total);
+        expect(gate.missing.length).toBe(gate.total - gate.covered);
+      }
+    }
+    // FUNC-login has no satisfy→REQ (R-02, warning, PDR-mapped) — it must show up
+    // as a PDR gap even though it never trips `blockingErrors` (not error-severity).
+    const pdr = summary.phase_readiness.find((p) => p.gate === 'PDR');
+    expect(pdr?.missing).toContain('R-02');
+  });
 });

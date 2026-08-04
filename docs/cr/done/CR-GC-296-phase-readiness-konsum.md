@@ -1,8 +1,9 @@
 # CR-GC-296 — phase_readiness konsumieren + Sprachregelung (Folge von CR-SM-226)
 
-**Status:** open — blockiert durch CR-SM-226 (contracts: RULE_TO_PHASE +
-Sprachregelung, Familie-Review)
-**Datum:** 2026-08-04
+**Status:** done — CR-SM-226 published (@sigloch/contracts@3.0.0,
+@sigloch/graphcode-client@0.5.0), phase_readiness konsumiert, Sprachregelung
+durchgezogen, 437/437 Tests grün.
+**Datum:** 2026-08-04 (closed 2026-08-04)
 **Kontext:** Analyse 2026-08-04: Der Harness kennt die Phase-Gates nicht —
 `graph_generate`/Handoff können „Struktur trägt" melden, während PDR rot ist
 (real passiert: arch-Readiness 0.86 bei null FLOWs). Die Gates werden mit
@@ -42,10 +43,34 @@ und die neue Sprachregelung durchziehen.
 
 ## Akzeptanzkriterien
 
-- [ ] `graph_readiness` zeigt beide Achsen; Handoff blockt bei rotem aktuellem Gate
+- [x] `graph_readiness` zeigt beide Achsen; Handoff blockt bei rotem aktuellem Gate
       (Unit-Test: Graph mit Schwelle erreicht, aber PDR-Lücke ⇒ kein done)
-- [ ] Begriffe konsistent (grep „Readiness Delta" außerhalb done-CRs = 0)
-- [ ] SVG-Labels aktualisiert, Artikel konsistent
-- [ ] export-after-own-mutate: Unit-Test Merge→Export ohne force, Fremd-Löschung
+- [x] Begriffe konsistent (grep „Readiness Delta" außerhalb done-CRs = 0)
+- [x] SVG-Labels aktualisiert, Artikel konsistent
+- [x] export-after-own-mutate: Unit-Test Merge→Export ohne force, Fremd-Löschung
       weiterhin refused
-- [ ] `npm run build` + Tests grün
+- [x] `npm run build` + Tests grün (437/437)
+
+## Nachtrag (Umsetzung 2026-08-04)
+
+- **phase_readiness-Design:** ein RULE_TO_PHASE-Rule zählt als "covered" nur bei
+  NULL offenen Findings (jede Severity) — strenger als `blockingErrors` (nur
+  error). Bewusst: eine leere FCHAIN (R-15, warning) oder fehlende FLOW→SCHEMA
+  (SC-04, warning) muss den Gate blocken, nicht nur error-Funde.
+- **Entdeckt, außerhalb CR-296-Scope:** `exportGraphJson` (src/exporter.ts)
+  flacht `node.attributes` auf Top-Level ab; einige contracts/se-Regeln (R-19,
+  R-20, VR-01, SC-04 u.a.) lesen aber `element.attributes?.x` (genestet). In der
+  `evaluateAllRules(exportGraphJson(graph))`-Pipeline (generate.ts/steering.ts,
+  NICHT der L2-Gate) feuern diese Regeln deshalb für JEDEN Graphen mit ≥1
+  TEST/FUNC IMMER — TRR (und teils CDR) werden über diesen Pfad strukturell nie
+  vollständig `covered`. `graph_readiness` (harness.evaluateRules(), kein
+  Export-Umweg) ist NICHT betroffen. Empfehlung: Follow-up-CR gegen
+  exporter.ts oder eine Re-Nestung-Konvention — nicht in CR-296 gefixt (Datei
+  nicht im Budget, Verhaltensänderung mit Tragweite über diesen CR hinaus).
+- **Nebenbefund (Versions-Bump, nicht CR-296-Scope):** `graphcode-client@0.5.0`
+  entfernte `hasOutTo/refFile/hasTestRef/hasCodeRef/isLeafFunc/fchainActorBounded`
+  aus `readiness-completeness.ts` (CR-SM-226 rebuild) und änderte
+  `scoreCompleteness`'s Signatur (3. Arg `violations` jetzt Pflicht) sowie TRR-
+  Semantik (concept:true exempt jetzt komplett, nicht mehr strenger als R-19).
+  `src/readiness-completeness.ts` (Re-Export-Shim) und
+  `tests/readiness.completeness.test.ts` (8 Tests) entsprechend angepasst.

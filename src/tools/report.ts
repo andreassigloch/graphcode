@@ -17,8 +17,13 @@ import { z } from 'zod/v4';
 import type { GraphNode, AuditEntry } from '@sigloch/graph-api-core';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import type { RuleViolation } from '@sigloch/contracts/harness';
-import { TestRefSchema, type TestRef, TRACE_PATTERNS } from '@sigloch/contracts/se';
-import { summarizeReadiness, type ReadinessReport } from '../readiness.js';
+import { TestRefSchema, type TestRef, TRACE_PATTERNS, PHASE_READINESS_NAME } from '@sigloch/contracts/se';
+import {
+  summarizeReadiness,
+  computePhaseReadiness,
+  type ReadinessReport,
+  type PhaseGateReadiness,
+} from '../readiness.js';
 import { scoreReadinessWithConformance, conformanceViolations } from '../conformance.js';
 import { helpEntry, contextualHelp, type HelpEntry, type ContextualMeasure } from '../viewer/help.js';
 import { nextStep } from '../steering.js';
@@ -168,24 +173,33 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
 
   const graph_readiness: MCPTool<
     z.infer<typeof GraphReadinessInputSchema>,
-    ReadinessReport & { graphVersion: number }
+    ReadinessReport & { [PHASE_READINESS_NAME]: PhaseGateReadiness[]; graphVersion: number }
   > = {
     name: 'graph_readiness',
     description:
       'Score family readiness of the live governed graph (FUNC-score-readiness / CR-GC-107 + CR-GC-125). ' +
       'Returns the ReadinessReport: compliance dimension (fraction of elements with no error-severity ' +
       'violation); incoseScope (graphcode = lean); phaseGates SRR/PDR/CDR/TRR (INCOSE technical reviews, ' +
-      'a disjoint partition of the element-level V3_RULES); implGates SAR/FCA/SVR/FRR (milestone tiers ' +
-      'MS-1..4, ready iff assigned CRs are done + scope error-clean); violationsByRule (keyed by contracts ' +
-      'rule-ID — R-/RD-/MS-, never BQ-*); and computedAt. By DEFAULT returns a summary (no raw ' +
-      'violations, no per-gate blocking/open lists) so it stays within the MCP result limit even on a ' +
-      'fully-red graph; pass detail:true for the full lists. Read-only; derived ' +
-      'from harness.evaluateRules() (L2 gate) + RC code-conformance (CR-GC-253: realRef/testRef ' +
-      'resolved against the real source tree) + the MS nodes + element status.',
+      'a disjoint partition of the element-level V3_RULES, with structural derivation-chain completeness); ' +
+      `implGates SAR/FCA/SVR/FRR (milestone tiers MS-1..4, ready iff assigned CRs are done + scope ` +
+      `error-clean); ${PHASE_READINESS_NAME} (CR-GC-296) — the SAME SRR/PDR/CDR/TRR gates from the OTHER ` +
+      'axis: per-gate rule coverage (covered/total distinct rule IDs from RULE_TO_PHASE with zero open ' +
+      'violations, any severity, + the missing rule IDs) — orthogonal to phaseGates\' element-completeness; ' +
+      'violationsByRule (keyed by contracts rule-ID — R-/RD-/MS-, never BQ-*); and computedAt. By DEFAULT ' +
+      'returns a summary (no raw violations, no per-gate blocking/open lists) so it stays within the MCP ' +
+      `result limit even on a fully-red graph; pass detail:true for the full lists (${PHASE_READINESS_NAME} ` +
+      'stays in both — it is already a small aggregate). Read-only; derived from harness.evaluateRules() ' +
+      '(L2 gate) + RC code-conformance (CR-GC-253: realRef/testRef resolved against the real source tree) ' +
+      '+ the MS nodes + element status.',
     inputSchema: GraphReadinessInputSchema,
     async handler(input) {
       const report = scoreReadinessWithConformance(harness);
-      return { ...(input.detail ? report : summarizeReadiness(report)), graphVersion: graphVersion() };
+      const phaseReadiness = computePhaseReadiness(report.violations);
+      return {
+        ...(input.detail ? report : summarizeReadiness(report)),
+        [PHASE_READINESS_NAME]: phaseReadiness,
+        graphVersion: graphVersion(),
+      };
     },
   };
 

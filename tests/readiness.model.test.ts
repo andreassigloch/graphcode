@@ -34,6 +34,9 @@ import {
   IMPL_GATE_RULES,
   ABSENT_CREATION_PROVIDER,
   summarizeReadiness,
+  computePhaseReadiness,
+  currentPhaseGate,
+  PHASE_GATE_ORDER,
   type CreationCurrencyProvider,
 } from '../src/readiness.js';
 
@@ -76,6 +79,52 @@ describe('TEST-readiness-model (A/B): model is defined over V3_RULES, lean scope
   it('no model rule-ID is a foreign BQ-* rule', () => {
     const modelRuleIds = [...Object.values(PHASE_GATE_RULES).flat(), ...IMPL_GATE_RULES];
     for (const id of modelRuleIds) expect(/^BQ-/i.test(id)).toBe(false);
+  });
+});
+
+// --- phase_readiness (CR-GC-296): RULE_TO_PHASE rule coverage, orthogonal to --
+// --- the PHASE_GATE_RULES/completeness model above (structural chain legs). --
+
+describe('computePhaseReadiness / currentPhaseGate (CR-GC-296)', () => {
+  it('no violations → every gate fully covered, currentPhaseGate is null (Handoff allowed)', () => {
+    const report = computePhaseReadiness([]);
+    expect(report.map((p) => p.gate)).toEqual(['SRR', 'PDR', 'CDR', 'TRR']);
+    for (const gate of report) {
+      expect(gate.total).toBeGreaterThan(0);
+      expect(gate.covered).toBe(gate.total);
+      expect(gate.missing).toEqual([]);
+    }
+    expect(currentPhaseGate(report)).toBeNull();
+  });
+
+  it('a PDR-mapped violation (R-15) opens PDR only — SRR ahead of it in order stays irrelevant', () => {
+    const report = computePhaseReadiness([{ ruleId: 'R-15' }]);
+    const pdr = report.find((p) => p.gate === 'PDR')!;
+    const srr = report.find((p) => p.gate === 'SRR')!;
+    expect(pdr.missing).toEqual(['R-15']);
+    expect(pdr.covered).toBe(pdr.total - 1);
+    expect(srr.covered).toBe(srr.total); // SRR untouched
+    expect(currentPhaseGate(report)).toBe('PDR');
+  });
+
+  it('currentPhaseGate returns the FIRST incomplete gate in SRR→PDR→CDR→TRR order, not the worst', () => {
+    // TRR (R-19) AND SRR (BQ-02) both open — SRR comes first in lifecycle order.
+    const report = computePhaseReadiness([{ ruleId: 'R-19' }, { ruleId: 'BQ-02' }]);
+    expect(currentPhaseGate(report)).toBe('SRR');
+  });
+
+  it('duplicate violations for the same rule collapse to one missing entry (Set semantics)', () => {
+    const report = computePhaseReadiness([
+      { ruleId: 'R-02' },
+      { ruleId: 'R-02' },
+      { ruleId: 'R-02' },
+    ]);
+    const pdr = report.find((p) => p.gate === 'PDR')!;
+    expect(pdr.missing).toEqual(['R-02']);
+  });
+
+  it('PHASE_GATE_ORDER is the INCOSE lifecycle order the Handoff walk relies on', () => {
+    expect(PHASE_GATE_ORDER).toEqual(['SRR', 'PDR', 'CDR', 'TRR']);
   });
 });
 

@@ -116,4 +116,75 @@ describe('TEST-mcp-export-guard: graph_export refuses to clobber the committed S
     const after = JSON.parse(readFileSync(jsonAbs, 'utf8')) as { elements: Array<{ id: string }> };
     expect(after.elements.map((e) => e.id)).not.toContain('TEST-parallel');
   });
+
+  // CR-GC-296 (GVE-Audit F9) — export-after-own-mutate: the tool decides from
+  // provenance instead of the caller passing a blind force:true.
+  describe('export-after-own-mutate (CR-GC-296)', () => {
+    // Provenance is read from the AUDIT LOG (recordAudit), which only the write
+    // TOOLS populate — so this block drives mutations via tools.graph_mutate,
+    // never harness.mutate() directly (that would silently bypass the audit trail).
+    const addMod2 = { op: 'add-node', node: { uid: 'MOD-reset2', type: 'MOD', name: 'Reset handler v2', description: '', attributes: {} } };
+    const mergeMod = { op: 'merge-nodes', sourceUid: 'MOD-reset', targetUid: 'MOD-reset2' };
+
+    it('merge→export without force: the audited merge-nodes deletion is self-accounted, no force needed', async () => {
+      const tools = bindToolsToHarness(harness);
+      expect((await tools.graph_mutate.handler({ commands: SPEC })).success).toBe(true);
+      await tools.graph_export.handler({ force: false }); // baseline commit: MOD-reset present
+
+      // A second MOD absorbs MOD-reset via an audited, applied merge-nodes batch —
+      // MOD-reset (+ its satisfy→REQ-reset edge identity) vanishes from the live graph.
+      expect((await tools.graph_mutate.handler({ commands: [addMod2] })).success).toBe(true);
+      const merged = await tools.graph_mutate.handler({ commands: [mergeMod] });
+      expect(merged.success).toBe(true);
+      expect(harness.getGraph().nodes.some((n) => n.uid === 'MOD-reset')).toBe(false);
+
+      // Same process, no force:true — the guard sees the drop is self-inflicted.
+      const res = await tools.graph_export.handler({});
+      expect(res.graphJson.nodes).toBe(4); // SYS/REQ/TEST/MOD-reset2 (MOD-reset merged away)
+
+      const jsonAbs = join(repoRoot, JSON_REL);
+      const after = JSON.parse(readFileSync(jsonAbs, 'utf8')) as { elements: Array<{ id: string }> };
+      expect(after.elements.map((e) => e.id)).not.toContain('MOD-reset');
+      expect(after.elements.map((e) => e.id)).toContain('MOD-reset2');
+    });
+
+    it('a foreign drop (no audited own-process deletion) is still refused without force', async () => {
+      const tools = bindToolsToHarness(harness);
+      expect((await tools.graph_mutate.handler({ commands: SPEC })).success).toBe(true);
+      await tools.graph_export.handler({ force: false });
+
+      // Same scenario as the "refuses when the write would drop..." test above, but
+      // explicitly named for CR-GC-296: the committed file gained an element the
+      // live graph never held and no audited batch ever touched — export-after-
+      // own-mutate must NOT wave this through.
+      const jsonAbs = join(repoRoot, JSON_REL);
+      const committed = JSON.parse(readFileSync(jsonAbs, 'utf8')) as {
+        elements: Array<Record<string, unknown>>;
+        traces: Array<Record<string, unknown>>;
+      };
+      committed.elements.push({ id: 'TEST-foreign', type: 'TEST', name: 'Foreign', description: '' });
+      writeFileSync(jsonAbs, JSON.stringify(committed, null, 2));
+
+      await expect(tools.graph_export.handler({})).rejects.toThrow(/would delete .*TEST-foreign/s);
+    });
+
+    it('a merge from a PRIOR process (before this registry booted) is not "own" — still refused without force', async () => {
+      // Simulates a stale-but-not-obviously-so case: the deletion WAS a legitimate,
+      // audited merge-nodes at some point, but not by THIS process instance — the
+      // durable audit log survives, but processStartVersion (captured at THIS
+      // bindExportTools call) is now past it, so it must not count as self-provenance.
+      const priorTools = bindToolsToHarness(harness);
+      expect((await priorTools.graph_mutate.handler({ commands: SPEC })).success).toBe(true);
+      await priorTools.graph_export.handler({ force: false }); // baseline commit
+      expect((await priorTools.graph_mutate.handler({ commands: [addMod2] })).success).toBe(true);
+      expect((await priorTools.graph_mutate.handler({ commands: [mergeMod] })).success).toBe(true);
+      // Do NOT re-export here — the committed file still has MOD-reset (stale relative
+      // to the live graph), exactly like a process that merged but crashed before export.
+
+      // A NEW registry (fresh bindExportTools call, fresh processStartVersion) on
+      // the SAME harness/audit log — the prior process's merge is no longer "own".
+      const freshTools = bindToolsToHarness(harness);
+      await expect(freshTools.graph_export.handler({})).rejects.toThrow(/would delete .*MOD-reset\b/s);
+    });
+  });
 });

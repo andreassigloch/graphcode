@@ -8,10 +8,20 @@
  * even though no error-severity rule fires. Deterministic unit cases on the pure
  * computeReadiness (no mocks, no gate needed). Warnings are NOT promoted: the
  * gate verdict gains a completeness invariant, rule severities are untouched.
+ *
+ * CR-SM-226 (graphcode-client 0.5.0) rebuilt `scoreCompleteness` to read each
+ * leg off its named contracts rule's OWN violation in the SUPPLIED `violations`
+ * stream (COMPLETENESS_SLICES: SRR=R-17/UC-03/UC-01, PDR=R-15/FC-04, CDR=SC-04,
+ * TRR=R-19/R-20) instead of re-walking the graph with local hasTestRef/hasCodeRef/
+ * actor-boundary helpers (CR-GC-250's original, now-deleted second implementation
+ * of what those rules already check). `gate()` below hand-crafts the ONE
+ * violation each fixture's rule twin would actually fire — deterministic,
+ * mirrors the rule's own semantics, no full evaluateAllRules() dependency.
  */
 import { describe, it, expect } from 'vitest';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import type { Graph } from '@sigloch/graph-api-core';
+import type { RuleViolation } from '@sigloch/contracts/harness';
 import { computeReadiness, summarizeReadiness } from '../src/readiness.js';
 import { scoreCompleteness, COMPLETENESS_SLICES } from '../src/readiness-completeness.js';
 
@@ -20,21 +30,33 @@ const node = (uid: string, type: string, attributes: Record<string, unknown> = {
   ({ uid, type, name: uid, description: '', attributes }) as Graph['nodes'][number];
 const edge = (sourceId: string, targetId: string, edgeType: string) =>
   ({ sourceId, targetId, edgeType, attributes: {} }) as Graph['edges'][number];
-const gate = (g: G, id: string) => computeReadiness([], g).phaseGates.find((x) => x.id === id)!;
+/** A minimal hand-crafted violation for one of COMPLETENESS_SLICES' rule twins. */
+const violation = (ruleId: string, elementId: string, severity: RuleViolation['severity'] = 'warning'): RuleViolation => ({
+  ruleId,
+  severity,
+  elementId,
+  message: `${elementId}: ${ruleId} fired (test fixture)`,
+});
+const gate = (g: G, id: string, violations: RuleViolation[] = []) =>
+  computeReadiness(violations, g).phaseGates.find((x) => x.id === id)!;
 
 // --- SRR: UC without an FCHAIN is never green (the headline defect) -----------
 
 describe('CR-GC-250 SRR — UC chain completeness', () => {
   it('a UC with 0 FCHAIN drives SRR red though no error-severity rule fires', () => {
     const g: G = { nodes: [node('SYS-x', 'SYS'), node('UC-x', 'UC')], edges: [edge('SYS-x', 'UC-x', 'compose')] };
-    const srr = gate(g, 'SRR');
+    // UC-x has no FCHAIN (UC-03) and no REQ (UC-01) — both fire; R-17 (SYS→UC's
+    // twin) does not, SYS-x already composes UC-x.
+    const violations = [violation('UC-03', 'UC-x'), violation('UC-01', 'UC-x')];
+    const srr = gate(g, 'SRR', violations);
     // SYS→UC covered; UC→FCHAIN + UC→REQ missing → 1/3, gate blocked.
     expect(srr.completeness.covered).toBe(1);
     expect(srr.completeness.total).toBe(3);
     expect(srr.passed).toBe(false);
     expect(srr.blocking.some((b) => b.includes('completeness') && b.includes('UC→FCHAIN'))).toBe(true);
-    // The graph is error-clean — the old score (rules only) would have read 1.0.
-    expect(computeReadiness([], g).violations.every((v) => v.severity !== 'error')).toBe(true);
+    // Both hand-crafted violations are warnings — completeness reads it blocked
+    // even though nothing at error severity fired (the whole point of CR-GC-250).
+    expect(violations.every((v) => v.severity !== 'error')).toBe(true);
   });
 
   it('completing the UC chain (FCHAIN + REQ) turns SRR green', () => {
@@ -58,7 +80,9 @@ describe('CR-GC-250 PDR — FCHAIN actor-bounded', () => {
 
   it('a chain with a function but no actor trigger/consumer holds PDR red', () => {
     const g: G = { nodes: base(), edges: [edge('FCHAIN-c', 'FUNC-a', 'compose')] };
-    const pdr = gate(g, 'PDR');
+    // R-15 (FCHAIN→FUNC) satisfied — FCHAIN-c does compose a FUNC. FC-04
+    // (actor-bounded) fires — no entry/exit wiring.
+    const pdr = gate(g, 'PDR', [violation('FC-04', 'FCHAIN-c')]);
     // FCHAIN→FUNC covered, actor-bounded missing → not complete.
     expect(pdr.completeness.missing.some((m) => m.startsWith('FCHAIN-actor-bounded'))).toBe(true);
     expect(pdr.passed).toBe(false);
@@ -86,7 +110,8 @@ describe('CR-GC-250 PDR — FCHAIN actor-bounded', () => {
         edge('ACTOR-in', 'FLOW-in', 'io'), edge('FLOW-in', 'FUNC-a', 'io'), // only entry
       ],
     };
-    expect(gate(g, 'PDR').passed).toBe(false);
+    // FC-04 still fires — entry alone doesn't bound the chain (needs entry AND exit).
+    expect(gate(g, 'PDR', [violation('FC-04', 'FCHAIN-c')]).passed).toBe(false);
   });
 });
 
@@ -95,7 +120,8 @@ describe('CR-GC-250 PDR — FCHAIN actor-bounded', () => {
 describe('CR-GC-250 CDR — FLOW→SCHEMA', () => {
   it('a FLOW without a SCHEMA holds CDR red; adding the SCHEMA relation clears it', () => {
     const noSchema: G = { nodes: [node('FLOW-f', 'FLOW')], edges: [] };
-    expect(gate(noSchema, 'CDR').passed).toBe(false);
+    // SC-04 (FLOW→SCHEMA) fires — FLOW-f has no SCHEMA relation.
+    expect(gate(noSchema, 'CDR', [violation('SC-04', 'FLOW-f')]).passed).toBe(false);
     const withSchema: G = {
       nodes: [node('FLOW-f', 'FLOW'), node('SCHEMA-s', 'SCHEMA')],
       edges: [edge('FLOW-f', 'SCHEMA-s', 'relation')],
@@ -104,29 +130,40 @@ describe('CR-GC-250 CDR — FLOW→SCHEMA', () => {
   });
 });
 
-// --- TRR: concept stops counting as complete; binding required ---------------
+// --- TRR: binding required; concept exemption is R-19/R-20's OWN call --------
 
 describe('CR-GC-250 TRR — binding (testRef / realRef)', () => {
-  it('a concept TEST (no testRef) is complete at CDR but incomplete at TRR', () => {
-    const g: G = { nodes: [node('TEST-t', 'TEST', { concept: true, testRef: null })], edges: [] };
+  it('a TEST with no testRef and no concept exemption is incomplete at TRR (complete at CDR)', () => {
+    const g: G = { nodes: [node('TEST-t', 'TEST', { testRef: null })], edges: [] };
     expect(gate(g, 'CDR').passed).toBe(true); // TEST is not a CDR-slice source
-    expect(gate(g, 'TRR').passed).toBe(false);
+    expect(gate(g, 'TRR', [violation('R-19', 'TEST-t')]).passed).toBe(false);
+  });
+
+  it('a concept:true TEST reads complete at TRR too (CR-SM-226: exemption is R-19\'s own call, not re-decided here)', () => {
+    // R-19 itself exempts attributes.concept===true from ever firing — completeness
+    // now reads straight off R-19's violation stream (COMPLETENESS_SLICES doc), so
+    // it no longer re-imposes a stricter local rule on top.
+    const g: G = { nodes: [node('TEST-t', 'TEST', { concept: true, testRef: null })], edges: [] };
+    expect(gate(g, 'TRR', []).passed).toBe(true);
   });
 
   it('a bound TEST (real testRef) turns TRR green', () => {
     const g: G = { nodes: [node('TEST-t', 'TEST', { testRef: { file: 'tests/x.test.ts' } })], edges: [] };
-    expect(gate(g, 'TRR').completeness.covered).toBe(gate(g, 'TRR').completeness.total);
-    expect(gate(g, 'TRR').passed).toBe(true);
+    const trr = gate(g, 'TRR');
+    expect(trr.completeness.covered).toBe(trr.completeness.total);
+    expect(trr.passed).toBe(true);
   });
 
   it('a leaf FUNC needs realRef; a decomposed parent FUNC is realized by its children', () => {
+    // R-20 (FUNC realRef binding) fires — the leaf carries neither realRef nor children.
     const leafNoCode: G = { nodes: [node('FUNC-leaf', 'FUNC')], edges: [] };
-    expect(gate(leafNoCode, 'TRR').passed).toBe(false);
+    expect(gate(leafNoCode, 'TRR', [violation('R-20', 'FUNC-leaf')]).passed).toBe(false);
     const parent: G = {
       nodes: [node('FUNC-p', 'FUNC'), node('FUNC-c', 'FUNC', { realRef: { file: 'src/x.ts' } })],
       edges: [edge('FUNC-p', 'FUNC-c', 'compose')],
     };
-    // parent is non-leaf (holds), child is a leaf with realRef (holds) → complete.
+    // parent is non-leaf (holds — R-20 exempts non-leaf parents realized by their
+    // children), child is a leaf with realRef (holds) → no R-20 violations → complete.
     expect(gate(parent, 'TRR').passed).toBe(true);
   });
 });
@@ -159,7 +196,10 @@ describe('CR-GC-250 single value — one number per gate, detail on demand', () 
   });
 
   it('summary keeps the covered/total value but drops the per-leg missing detail', () => {
-    const full = computeReadiness([], g);
+    // SYS-x has no compose at all (R-17), UC-x has no FCHAIN (UC-03) / REQ (UC-01) —
+    // all three SRR legs fire.
+    const violations = [violation('R-17', 'SYS-x'), violation('UC-03', 'UC-x'), violation('UC-01', 'UC-x')];
+    const full = computeReadiness(violations, g);
     const summary = summarizeReadiness(full);
     const srrFull = full.phaseGates.find((x) => x.id === 'SRR')!;
     const srrSum = summary.phaseGates.find((x) => x.id === 'SRR')!;
@@ -170,7 +210,7 @@ describe('CR-GC-250 single value — one number per gate, detail on demand', () 
   });
 
   it('scoreCompleteness is vacuously complete (1) when no source elements exist', () => {
-    const empty = scoreCompleteness('SRR', { nodes: [], edges: [] });
+    const empty = scoreCompleteness('SRR', { nodes: [], edges: [] }, []);
     expect(empty).toEqual({ covered: 0, total: 0, missing: [] });
   });
 });

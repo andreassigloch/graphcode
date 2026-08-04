@@ -19,6 +19,7 @@
 import type { Graph } from '@sigloch/graph-api-core';
 import { RULE_TO_DIMENSION } from '@sigloch/contracts/se';
 import { takeSteeringSnapshot } from './steering-snapshot.js';
+import { computePhaseReadiness, currentPhaseGate, type PhaseGateReadiness } from './readiness.js';
 
 export interface GenerationStep {
   /** seed = leerer Graph; expand = Deficit-getriebene Verdichtung; handoff = Schwelle erreicht. */
@@ -32,6 +33,10 @@ export interface GenerationStep {
   threshold: number;
   /** Error-Violations (Gate-Blocker) — müssen vor dem Handoff auf 0. */
   blockingErrors: number;
+  /** SRR/PDR/CDR/TRR Regelabdeckung (CR-GC-296, RULE_TO_PHASE) — die zweite
+   * Handoff-Bedingung neben Schwelle + blockingErrors: das AKTUELLE Gate
+   * (erstes unvollständiges in SRR→PDR→CDR→TRR) muss covered===total sein. */
+  phaseReadiness: PhaseGateReadiness[];
   /** Stabiler Identifikator des fokussierten Fund-Sets (CR-GC-281):
    * `${dimension}:${element_ids sortiert, komma-getrennt}`. null wenn kein
    * Fokus (seed/handoff/keine regelbaren Funde). */
@@ -138,6 +143,10 @@ export function generationStep(
   const readiness = report.scores
     .filter((s) => s.applicable > 0)
     .map((s) => ({ dimension: s.dimension as string, score: s.score, violations: s.violations }));
+  // CR-GC-296: RULE_TO_PHASE-Achse aus demselben Regelstrom — die zweite,
+  // strengere Handoff-Bedingung neben Schwelle + blockingErrors (s.u.).
+  const phaseReadiness = computePhaseReadiness(violations.map((v) => ({ ruleId: v.rule_id })));
+  const openGate = currentPhaseGate(phaseReadiness);
 
   // --- Phase seed: noch kein System im Graphen -----------------------------
   if (!sys) {
@@ -151,6 +160,7 @@ export function generationStep(
         readiness,
         threshold,
         blockingErrors,
+        phaseReadiness,
         focusKey: null,
         focusTypes: [],
       };
@@ -167,19 +177,25 @@ export function generationStep(
       readiness,
       threshold,
       blockingErrors,
+      phaseReadiness,
       focusKey: null,
       focusTypes: [...DIMENSION_FOCUS_TYPES.seed],
     };
   }
 
-  // --- Phase handoff: Schwelle erreicht, keine Gate-Blocker ----------------
+  // --- Phase handoff: Schwelle erreicht, keine Gate-Blocker, aktuelles ------
+  // Phase-Gate vollständig (CR-GC-296) — sonst kann "Struktur trägt" melden,
+  // während PDR/SRR/... noch Regel-Funde offen hat, die die Dimension-Score-
+  // Ratio über viele Elemente verdünnt (real passiert: arch-Readiness 0.86 bei
+  // null FLOWs — R-10 blieb unter der Schwelle unsichtbar).
   const belowThreshold = readiness.filter((r) => r.score < threshold);
-  if (belowThreshold.length === 0 && blockingErrors === 0) {
+  if (belowThreshold.length === 0 && blockingErrors === 0 && openGate === null) {
     return {
       phase: 'handoff',
       done: true,
       prompt:
-        `Die Struktur trägt (alle Readiness-Dimensionen ≥ ${threshold}, keine error-Violations). ` +
+        `Die Struktur trägt (alle Readiness-Dimensionen ≥ ${threshold}, keine error-Violations, ` +
+        'alle Phase-Gates SRR/PDR/CDR/TRR regel-vollständig). ' +
         'Handoff auf die ℝ⁶-Optimierung: wähle ein Zielprofil (Gewichte je Dimension, z.B. ' +
         '{"scalability":1} oder {"coherence":1,"modifiability":0.5}) und rufe graph_suggest {target} auf. ' +
         'Arbeite die Funde ab (Fix-Template-Edits über graph_mutate, Fund-only-Suggestions manuell); ' +
@@ -187,6 +203,7 @@ export function generationStep(
       readiness,
       threshold,
       blockingErrors,
+      phaseReadiness,
       focusKey: null,
       focusTypes: [],
     };
@@ -267,11 +284,16 @@ export function generationStep(
     prompt: focus
       ? `Intention: "${effectiveIntent}". ${deferNote}Schwächste Dimension: ${focus.dimension}. ` +
         `Funde: ${funde}. ${template} ${gateProtocol}`
-      : `Intention: "${effectiveIntent}". Unter Schwelle: ${belowThreshold.map((r) => r.dimension).join(', ')} — ` +
-        `aber keine regelbaren Funde; prüfe fehlende Elemente der Dimensionen manuell. ${gateProtocol}`,
+      : belowThreshold.length > 0
+        ? `Intention: "${effectiveIntent}". Unter Schwelle: ${belowThreshold.map((r) => r.dimension).join(', ')} — ` +
+          `aber keine regelbaren Funde; prüfe fehlende Elemente der Dimensionen manuell. ${gateProtocol}`
+        : `Intention: "${effectiveIntent}". Alle Dimensionen ≥ Schwelle, aber Phase-Gate ${openGate} ist noch ` +
+          'nicht regel-vollständig (RULE_TO_PHASE) — aber keine regelbaren Funde; prüfe fehlende Elemente ' +
+          `manuell. ${gateProtocol}`,
     readiness,
     threshold,
     blockingErrors,
+    phaseReadiness,
     focusKey,
     focusTypes: focus ? [...(DIMENSION_FOCUS_TYPES[focus.dimension] ?? [])] : [],
   };
