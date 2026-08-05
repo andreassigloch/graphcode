@@ -4,7 +4,7 @@
 
 # graphcode — Requirements Traceability Matrix (RTM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 109 REQ rows, sortiert nach uid. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 110 REQ rows, sortiert nach uid. Deterministisch generiert.
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -41,6 +41,7 @@
 | `REQ-graph-snapshot-per-commit` | `TEST-graph-time-travel` | `FUNC-mutate` | `MOD-harness` |
 | `REQ-graph-state-recall` | `TEST-graph-time-travel` | `MOD-harness` | — |
 | `REQ-graph-tests-operational` | `TEST-graph-tests-operational` | `FUNC-resolve-tests-from-code` | `MOD-mcp-tools` |
+| `REQ-greenfield-systemtest-dod` | `TEST-greenfield-systemtest` | `SYS-graphcode` | — |
 | `REQ-harness-schema-in-contracts` | `TEST-mcp-symmetry` | `MOD-harness` | — |
 | `REQ-hook-extension-points` | `TEST-hooks` | `MOD-hooks` | — |
 | `REQ-hook-order-deterministic` | `TEST-hooks` | `MOD-hooks` | — |
@@ -107,7 +108,7 @@
 | `REQ-single-kuzu-owner` | `TEST-mvp-e2e` | `FUNC-own-kuzu-host` · `MOD-harness` | `MOD-host-bridge` |
 | `REQ-single-store` | `TEST-mvp-e2e` | `MOD-harness` | — |
 | `REQ-single-transport` | `TEST-mcp-stdio-server` | `FUNC-serve-stdio` · `MOD-mcp-tools` | `MOD-mcp-tools` |
-| `REQ-small-model-viable` | `TEST-mvp-e2e` · `TEST-reduced-llm` | `FCHAIN-modelfree-gate` | — |
+| `REQ-small-model-viable` | `TEST-mvp-e2e` · `TEST-reduced-llm` | `FCHAIN-modelfree-gate` · `FUNC-graph-suggest` | `MOD-mcp-tools` |
 | `REQ-store-recovery` | `TEST-store-recovery` | `MOD-harness` | — |
 | `REQ-structural-rule-shared` | `TEST-structural-rule-shared` | `MOD-harness` | — |
 | `REQ-structure-driven` | `TEST-code-quality` | `SYS-graphcode` | — |

@@ -4,7 +4,7 @@
 
 # graphcode — Verification Cross-Reference Matrix (VCRM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 109 REQ rows. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 110 REQ rows. Deterministisch generiert.
 
 | REQ | verified | verifying TEST(s) |
 |---|---|---|
@@ -41,6 +41,7 @@
 | `REQ-graph-snapshot-per-commit` | ✓ | `TEST-graph-time-travel` |
 | `REQ-graph-state-recall` | ✓ | `TEST-graph-time-travel` |
 | `REQ-graph-tests-operational` | ✓ | `TEST-graph-tests-operational` |
+| `REQ-greenfield-systemtest-dod` | ✓ | `TEST-greenfield-systemtest` |
 | `REQ-harness-schema-in-contracts` | ✓ | `TEST-mcp-symmetry` |
 | `REQ-hook-extension-points` | ✓ | `TEST-hooks` |
 | `REQ-hook-order-deterministic` | ✓ | `TEST-hooks` |
@@ -118,4 +119,4 @@
 | `REQ-versioned-broadcast` | ✓ | `TEST-live-view` |
 | `REQ-versioned-cache` | ✓ | `TEST-cache` |
 
-Coverage: 109/109 REQ verified (100%) · 0 open (R-01).
+Coverage: 110/110 REQ verified (100%) · 0 open (R-01).

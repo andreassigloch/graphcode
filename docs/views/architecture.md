@@ -21,6 +21,7 @@
 | `FUNC-export-markdown` | FUNC | exportMarkdown(graph, view) |
 | `FUNC-graph-expand` | FUNC | graph_expand(handle, branch, depth+1) |
 | `FUNC-graph-impact` | FUNC | graph_impact(id, depth?) |
+| `FUNC-graph-suggest` | FUNC | graph_suggest(weights) |
 | `FUNC-harness-cli` | FUNC | graphcode init/update/remove |
 | `FUNC-health-endpoint` | FUNC | healthEndpoint() |
 | `FUNC-import` | FUNC | importGraph(formatE, mode) |
@@ -75,6 +76,7 @@
 | `FUNC-export-markdown` | `MOD-docs` |
 | `FUNC-graph-expand` | `MOD-mcp-tools` |
 | `FUNC-graph-impact` | `MOD-mcp-tools` |
+| `FUNC-graph-suggest` | `MOD-mcp-tools` |
 | `FUNC-harness-cli` | `MOD-cli` |
 | `FUNC-health-endpoint` | `MOD-host-bridge` |
 | `FUNC-import` | `MOD-harness` |

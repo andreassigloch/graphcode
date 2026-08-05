@@ -841,6 +841,14 @@
       "closed_at": "2026-07-29T00:00:00.000Z"
     },
     {
+      "id": "FCHAIN-advisory-roundtrip",
+      "type": "FCHAIN",
+      "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
+      "description": "Ein Runden-Durchlauf eines Chat-Turns: (1) read (graph_impact/graph_expand) liest den gebundenen Blast-Radius; (2) status (evaluateRules) prueft offene Regelverletzungen; (3) propose (graph_suggest) rankt Kandidaten-Fixes im R^6-Metrikraum, nie auto-apply; (4) apply (mutate) ist das eine Apply-Gate. Treiber (built-in executor) und Host (Claude Code/OpenCode) durchlaufen dieselbe Kette, nur die Taktung unterscheidet sich. (Articles 05/07 - Design in progress: measure/Architecture-Fitness-Delta ist noch nicht gebaut, deshalb hier nicht Teil der Kette.)",
+      "status": "reviewed",
+      "created_at": "2026-08-05T00:00:00.000Z"
+    },
+    {
       "id": "FCHAIN-agent-query",
       "type": "FCHAIN",
       "name": "Agent-Graph-Query (Impact + progressive Expansion)",
@@ -1081,12 +1089,36 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "id": "FLOW-round-findings",
+      "type": "FLOW",
+      "name": "Round Findings (open violations)",
+      "description": "Die von status offen gemeldeten Regelverletzungen, die propose als Rang-Eingabe nimmt (graph_suggest rankt genau die feuernden Operator-Regeln).",
+      "status": "reviewed",
+      "concept": true
+    },
+    {
+      "id": "FLOW-round-scope",
+      "type": "FLOW",
+      "name": "Round Scope (bounded slice)",
+      "description": "Der durch read gebundene Blast-Radius/Kontext, der informiert, was status als offen prueft. Kein festes Wire-Format - informationeller Rundenkontext, kein Code-Datenvertrag.",
+      "status": "reviewed",
+      "concept": true
+    },
+    {
       "id": "FLOW-suggest-result",
       "type": "FLOW",
       "name": "Suggest-Result",
       "description": "Confidence-getaggte Vorschläge (suggest-Tier).",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "id": "FLOW-suggested-edit",
+      "type": "FLOW",
+      "name": "Suggested Edit (ranked candidate)",
+      "description": "Der von propose bestbewertete Kandidaten-Fix (Template-Edit, dryRun-verifiziert), der apply als MutateCommand-Eingabe erreicht - nur wenn der Konsument ihn uebernimmt, nie automatisch.",
+      "status": "reviewed",
+      "concept": true
     },
     {
       "id": "FLOW-trajectory",
@@ -1268,6 +1300,18 @@
       "codeRef": {
         "file": "src/harness.ts",
         "symbol": "impact",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-graph-suggest",
+      "type": "FUNC",
+      "name": "graph_suggest(weights)",
+      "description": "Duennes Binding auf @sigloch/se-optimizer (targetFor/suggestEdits): rankt die feuernden Operator-Regeln nach dem Skalarprodukt aus Metrik-Delta und Zielrichtung im R^6-Metrikraum; liefert die Fund-Ebene, Template-Edits laufen als dryRun durchs Gate. Nie auto-apply. (CR-GC-273)",
+      "status": "done",
+      "realRef": {
+        "file": "src/tools/suggest.ts",
+        "symbol": "bindSuggestTools",
         "lang": "ts"
       }
     },
@@ -2123,6 +2167,14 @@
       "name": "graph_tests liefert den korrekten selektiven Testset für einen Code-Change",
       "description": "Ein Code-Changeset (MOD/FUNC/git-diff→Knoten) → graph_tests → vitest run nur-betroffene-Dateien, das JEDE vom Change berührte Testdatei enthält (kein false-green) und unbeteiligte ausschliesst. Erfordert testRef auf allen lauffähigen TESTs + gerichtete Auflösung statt reinem incoming-impact.",
       "status": "done"
+    },
+    {
+      "id": "REQ-greenfield-systemtest-dod",
+      "type": "REQ",
+      "name": "Definition-of-Done: Greenfield-Systemtest",
+      "description": "Der End-to-End-Nachweis für reduced-llm + token-efficiency + code-quality: leeres Repo, ein Prompt (Web-App aus graphcode, Multiuser, Module maximal genutzt). Authoring qwen3.6-35b-a3b (local) vs. Opus 5 (frontier), je 3×, ein Host (Claude Code). Scoring regelbasiert: readiness, reuse-coverage vs. Modul-Graph-Golden, illegal/blocked, redundanz, tokens_in/out/reasoning, cost, wall_s. Best-fit → Impl-Plan durchs Gate → Coding (qwen-35b · devstral).",
+      "status": "open",
+      "kinds": "[\"functional\"]"
     },
     {
       "id": "REQ-harness-schema-in-contracts",
@@ -3361,6 +3413,16 @@
       }
     },
     {
+      "id": "TEST-greenfield-systemtest",
+      "type": "TEST",
+      "name": "Top-Level Greenfield System-Test",
+      "description": "Leeres Repo, ein Prompt (Web-App aus graphcode, Multiuser, Module maximal nutzen). Authoring: qwen3.6-35b-a3b (local) vs Opus 5 (frontier), je 3×, ein Host (Claude Code). Metriken/Run: readiness, reuse-coverage vs Modul-Graph-Golden, illegal/blocked, redundanz, tokens_in/out/reasoning, cost, wall_s. Best-fit → Impl-Plan durchs Gate → Coding (qwen-35b · devstral). Scorer regelbasiert, keine KI-Bewertung.",
+      "status": "open",
+      "method": "test",
+      "level": "acceptance",
+      "concept": "true"
+    },
+    {
       "id": "TEST-hooks",
       "type": "TEST",
       "name": "Hook-Extension-Points-Test",
@@ -3851,8 +3913,8 @@
     {
       "id": "UC-code-quality",
       "type": "UC",
-      "name": "Exzellente, governte Code-Qualität",
-      "description": "Als Entwickler will ich exzellente, konsistente Code-Qualität: jede Änderung (Mensch/KI) ist ontologie-/regel-konform und driftet nicht — Architektur/Interfaces/Integration/Tests strikt aus dem governten Graph getrieben.",
+      "name": "UC-code-quality",
+      "description": "",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z"
@@ -3884,8 +3946,8 @@
     {
       "id": "UC-reduced-llm",
       "type": "UC",
-      "name": "Reduzierte LLM-Anforderungen",
-      "description": "Als Nutzer will ich mit kleinen/lokalen LLMs auskommen: deterministische, modellfreie Gates/Regeln + Query-Precision senken den Modell-Bedarf.",
+      "name": "UC-reduced-llm",
+      "description": "",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z"
@@ -3893,8 +3955,8 @@
     {
       "id": "UC-token-efficiency",
       "type": "UC",
-      "name": "Minimaler Token-Verbrauch",
-      "description": "Als Nutzer/Agent will ich minimalen Token-Verbrauch: präziser Query-Kontext (exakter Blast-Radius/Slice) statt grep-Dump oder Result-Kompression.",
+      "name": "UC-token-efficiency",
+      "description": "",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z"
@@ -5724,6 +5786,26 @@
       "type": "relation"
     },
     {
+      "source": "FCHAIN-advisory-roundtrip",
+      "target": "FUNC-evaluate-rules",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-advisory-roundtrip",
+      "target": "FUNC-graph-impact",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-advisory-roundtrip",
+      "target": "FUNC-graph-suggest",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-advisory-roundtrip",
+      "target": "FUNC-mutate",
+      "type": "compose"
+    },
+    {
       "source": "FCHAIN-agent-query",
       "target": "FUNC-graph-expand",
       "type": "compose",
@@ -6336,6 +6418,16 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "FLOW-round-findings",
+      "target": "FUNC-graph-suggest",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-round-scope",
+      "target": "FUNC-evaluate-rules",
+      "type": "io"
+    },
+    {
       "source": "FLOW-suggest-result",
       "target": "ACTOR-developer",
       "type": "io",
@@ -6348,6 +6440,11 @@
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-suggested-edit",
+      "target": "FUNC-mutate",
+      "type": "io"
     },
     {
       "source": "FLOW-trajectory",
@@ -6646,6 +6743,11 @@
     },
     {
       "source": "FUNC-evaluate-rules",
+      "target": "FLOW-round-findings",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-evaluate-rules",
       "target": "FLOW-violations",
       "type": "io",
       "weight": 1,
@@ -6758,6 +6860,11 @@
     },
     {
       "source": "FUNC-graph-impact",
+      "target": "FLOW-round-scope",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-graph-impact",
       "target": "REQ-audit-trail",
       "type": "satisfy",
       "weight": 1,
@@ -6797,6 +6904,21 @@
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-graph-suggest",
+      "target": "MOD-mcp-tools",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-graph-suggest",
+      "target": "FLOW-suggested-edit",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-graph-suggest",
+      "target": "REQ-small-model-viable",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-harness-cli",
@@ -7978,6 +8100,11 @@
     },
     {
       "source": "SYS-graphcode",
+      "target": "REQ-greenfield-systemtest-dod",
+      "type": "satisfy"
+    },
+    {
+      "source": "SYS-graphcode",
       "target": "REQ-structure-driven",
       "type": "satisfy"
     },
@@ -8251,6 +8378,12 @@
       "source": "TEST-graph-time-travel",
       "target": "REQ-graph-state-recall",
       "type": "verify"
+    },
+    {
+      "source": "TEST-greenfield-systemtest",
+      "target": "REQ-greenfield-systemtest-dod",
+      "type": "verify",
+      "weight": "1"
     },
     {
       "source": "TEST-hooks",
@@ -8751,6 +8884,12 @@
     },
     {
       "source": "UC-code-quality",
+      "target": "REQ-greenfield-systemtest-dod",
+      "type": "compose",
+      "weight": "1"
+    },
+    {
+      "source": "UC-code-quality",
       "target": "REQ-interface-change-escalation",
       "type": "compose",
       "weight": 1,
@@ -8874,10 +9013,21 @@
     },
     {
       "source": "UC-reduced-llm",
+      "target": "FCHAIN-advisory-roundtrip",
+      "type": "compose"
+    },
+    {
+      "source": "UC-reduced-llm",
       "target": "FCHAIN-modelfree-gate",
       "type": "compose",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "UC-reduced-llm",
+      "target": "REQ-greenfield-systemtest-dod",
+      "type": "compose",
+      "weight": "1"
     },
     {
       "source": "UC-reduced-llm",
@@ -8899,6 +9049,12 @@
       "type": "compose",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "UC-token-efficiency",
+      "target": "REQ-greenfield-systemtest-dod",
+      "type": "compose",
+      "weight": "1"
     },
     {
       "source": "UC-token-efficiency",

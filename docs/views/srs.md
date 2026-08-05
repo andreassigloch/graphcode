@@ -4,7 +4,7 @@
 
 # graphcode — System Requirements Specification · SRS-graphcode
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 109 REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 110 REQ. Deterministisch generiert.
 
 ## 1  Scope
 
@@ -35,6 +35,14 @@ CONSTRAINT (ConOps): Harness voll funktionsfähig bei nicht erreichbarem LLM-Sid
 priority: should · status: open · kinds: non-functional
 
 Verification ◀ `TEST-reduced-llm` (acceptance) · satisfy ◀ `FCHAIN-modelfree-gate` · `SYS-graphcode` · allocate ▶ —
+
+### `REQ-greenfield-systemtest-dod` — Definition-of-Done: Greenfield-Systemtest
+
+Der End-to-End-Nachweis für reduced-llm + token-efficiency + code-quality: leeres Repo, ein Prompt (Web-App aus graphcode, Multiuser, Module maximal genutzt). Authoring qwen3.6-35b-a3b (local) vs. Opus 5 (frontier), je 3×, ein Host (Claude Code). Scoring regelbasiert: readiness, reuse-coverage vs. Modul-Graph-Golden, illegal/blocked, redundanz, tokens_in/out/reasoning, cost, wall_s. Best-fit → Impl-Plan durchs Gate → Coding (qwen-35b · devstral).
+
+priority: must · status: open
+
+Verification ◀ `TEST-greenfield-systemtest` (acceptance) · satisfy ◀ `SYS-graphcode` · allocate ▶ —
 
 ### `REQ-structure-driven` — Struktur-getrieben (Schema-first)
 
@@ -102,9 +110,7 @@ io ▶ `UC-code-quality` · `UC-efficient-testing` · `UC-reduced-llm` · `UC-to
 
 ## 3  Use Cases & Verhalten
 
-### 3.1  `UC-code-quality` — Exzellente, governte Code-Qualität
-
-Als Entwickler will ich exzellente, konsistente Code-Qualität: jede Änderung (Mensch/KI) ist ontologie-/regel-konform und driftet nicht — Architektur/Interfaces/Integration/Tests strikt aus dem governten Graph getrieben.
+### 3.1  `UC-code-quality` — UC-code-quality
 
 io ◀ `ACTOR-claude-code` · `ACTOR-dashboard` · `ACTOR-developer` · `ACTOR-facilitating-agent` · `ACTOR-graphify` · `ACTOR-opencode` · `ACTOR-systems-engineer` · `ACTOR-vibe-coder`
 
@@ -156,11 +162,11 @@ Verification ◀ `TEST-responsiveness` (performance) · satisfy ◀ `FCHAIN-appl
 
 ##### 3.1.1.1  `FUNC-mutate` — mutate(commands)
 
-> auch in: `FCHAIN-capture` · `FCHAIN-interface-escalation` · `FCHAIN-modelfree-gate`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-capture` · `FCHAIN-interface-escalation` · `FCHAIN-modelfree-gate`
 
 Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)
 
-io ◀ `FLOW-capture-draft` · `FLOW-mutate-cmd` · io ▶ `FLOW-draft-graph` · `FLOW-suggest-result` · allocate ▶ `MOD-harness`
+io ◀ `FLOW-capture-draft` · `FLOW-mutate-cmd` · `FLOW-suggested-edit` · io ▶ `FLOW-draft-graph` · `FLOW-suggest-result` · allocate ▶ `MOD-harness`
 
 ###### `REQ-confidence-tier` — Confidence/Tier am MutateResult
 
@@ -188,11 +194,11 @@ Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FUNC-mut
 
 ##### 3.1.1.2  `FUNC-evaluate-rules` — evaluateRules()
 
-> auch in: `FCHAIN-modelfree-gate`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-modelfree-gate`
 
 Regel-Engine gegen V3_RULES; Violations {ruleId,severity,elementId}; kein lokaler Parser (L2).
 
-io ◀ `FLOW-draft-graph` · io ▶ `FLOW-violations` · allocate ▶ `MOD-harness`
+io ◀ `FLOW-draft-graph` · `FLOW-round-scope` · io ▶ `FLOW-round-findings` · `FLOW-violations` · allocate ▶ `MOD-harness`
 
 ###### `REQ-rule-enforcement` — Regel-Enforcement (V3_RULES)
 
@@ -310,11 +316,11 @@ Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FCHAIN-codec-rou
 
 ##### 3.1.2.2  `FUNC-mutate` — mutate(commands)
 
-> auch in: `FCHAIN-apply-gate` · `FCHAIN-interface-escalation` · `FCHAIN-modelfree-gate`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-interface-escalation` · `FCHAIN-modelfree-gate`
 
 Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)
 
-io ◀ `FLOW-capture-draft` · `FLOW-mutate-cmd` · io ▶ `FLOW-draft-graph` · `FLOW-suggest-result` · allocate ▶ `MOD-harness`
+io ◀ `FLOW-capture-draft` · `FLOW-mutate-cmd` · `FLOW-suggested-edit` · io ▶ `FLOW-draft-graph` · `FLOW-suggest-result` · allocate ▶ `MOD-harness`
 
 ###### `REQ-confidence-tier` — Confidence/Tier am MutateResult
 
@@ -456,11 +462,11 @@ Verification ◀ `TEST-interface-escalation` (integration) · satisfy ◀ `FCHAI
 
 ##### 3.1.4.1  `FUNC-graph-impact` — graph_impact(id, depth?)
 
-> auch in: `FCHAIN-agent-query` · `FCHAIN-impact-testing`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-impact-testing`
 
 Exakter Blast-Radius (Caller/Traces/Tests) als Format-E. (CR-GC-101, R6/R12)
 
-io ◀ `FLOW-query-request` · io ▶ `FLOW-impact-subgraph` · allocate ▶ `MOD-mcp-tools`
+io ◀ `FLOW-query-request` · io ▶ `FLOW-impact-subgraph` · `FLOW-round-scope` · allocate ▶ `MOD-mcp-tools`
 
 ###### `REQ-audit-trail` — Audit-Trail / History
 
@@ -488,11 +494,11 @@ Verification ◀ `TEST-impact-subgraph` (integration) · satisfy ◀ `FUNC-graph
 
 ##### 3.1.4.2  `FUNC-mutate` — mutate(commands)
 
-> auch in: `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-modelfree-gate`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-modelfree-gate`
 
 Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)
 
-io ◀ `FLOW-capture-draft` · `FLOW-mutate-cmd` · io ▶ `FLOW-draft-graph` · `FLOW-suggest-result` · allocate ▶ `MOD-harness`
+io ◀ `FLOW-capture-draft` · `FLOW-mutate-cmd` · `FLOW-suggested-edit` · io ▶ `FLOW-draft-graph` · `FLOW-suggest-result` · allocate ▶ `MOD-harness`
 
 ###### `REQ-confidence-tier` — Confidence/Tier am MutateResult
 
@@ -554,11 +560,11 @@ Verification ◀ `TEST-efficient-testing` (acceptance) · satisfy ◀ `FCHAIN-im
 
 ##### 3.2.1.1  `FUNC-graph-impact` — graph_impact(id, depth?)
 
-> auch in: `FCHAIN-agent-query` · `FCHAIN-interface-escalation`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-interface-escalation`
 
 Exakter Blast-Radius (Caller/Traces/Tests) als Format-E. (CR-GC-101, R6/R12)
 
-io ◀ `FLOW-query-request` · io ▶ `FLOW-impact-subgraph` · allocate ▶ `MOD-mcp-tools`
+io ◀ `FLOW-query-request` · io ▶ `FLOW-impact-subgraph` · `FLOW-round-scope` · allocate ▶ `MOD-mcp-tools`
 
 ###### `REQ-audit-trail` — Audit-Trail / History
 
@@ -594,13 +600,111 @@ Read-only Live-Dashboard: jede Mutation aktualisiert die Ansicht ohne Reload (SS
 
 io ◀ `ACTOR-dashboard` · `ACTOR-developer`
 
-### 3.5  `UC-reduced-llm` — Reduzierte LLM-Anforderungen
-
-Als Nutzer will ich mit kleinen/lokalen LLMs auskommen: deterministische, modellfreie Gates/Regeln + Query-Precision senken den Modell-Bedarf.
+### 3.5  `UC-reduced-llm` — UC-reduced-llm
 
 io ◀ `ACTOR-claude-code` · `ACTOR-developer` · `ACTOR-learning-engine` · `ACTOR-systems-engineer` · `ACTOR-vibe-coder`
 
-#### 3.5.1  `FCHAIN-modelfree-gate` — Modellfreier Gate-Betrieb
+#### 3.5.1  `FCHAIN-advisory-roundtrip` — Advisory Roundtrip (Read -> Status -> Propose -> Apply)
+
+Ein Runden-Durchlauf eines Chat-Turns: (1) read (graph_impact/graph_expand) liest den gebundenen Blast-Radius; (2) status (evaluateRules) prueft offene Regelverletzungen; (3) propose (graph_suggest) rankt Kandidaten-Fixes im R^6-Metrikraum, nie auto-apply; (4) apply (mutate) ist das eine Apply-Gate. Treiber (built-in executor) und Host (Claude Code/OpenCode) durchlaufen dieselbe Kette, nur die Taktung unterscheidet sich. (Articles 05/07 - Design in progress: measure/Architecture-Fitness-Delta ist noch nicht gebaut, deshalb hier nicht Teil der Kette.)
+
+##### 3.5.1.1  `FUNC-graph-impact` — graph_impact(id, depth?)
+
+> auch in: `FCHAIN-agent-query` · `FCHAIN-impact-testing` · `FCHAIN-interface-escalation`
+
+Exakter Blast-Radius (Caller/Traces/Tests) als Format-E. (CR-GC-101, R6/R12)
+
+io ◀ `FLOW-query-request` · io ▶ `FLOW-impact-subgraph` · `FLOW-round-scope` · allocate ▶ `MOD-mcp-tools`
+
+###### `REQ-audit-trail` — Audit-Trail / History
+
+CR-GC-101: audit_trail/audit_stats liefern Mutations-History/Statistik.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
+
+###### `REQ-query-precision` — Query-Precision statt Kompression
+
+graph_impact liefert exakten Blast-Radius als Format-E (Anti-grep, Ziel a). (R6/R12)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-impact-subgraph` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
+
+###### `REQ-subgraph-slicing` — Sub-Graph-Slicing
+
+Sub-Graph-Slicing + pruneToFit(maxTokens) als Context-Primitive. (R7)
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-impact-subgraph` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
+
+##### 3.5.1.2  `FUNC-evaluate-rules` — evaluateRules()
+
+> auch in: `FCHAIN-apply-gate` · `FCHAIN-modelfree-gate`
+
+Regel-Engine gegen V3_RULES; Violations {ruleId,severity,elementId}; kein lokaler Parser (L2).
+
+io ◀ `FLOW-draft-graph` · `FLOW-round-scope` · io ▶ `FLOW-round-findings` · `FLOW-violations` · allocate ▶ `MOD-harness`
+
+###### `REQ-rule-enforcement` — Regel-Enforcement (V3_RULES)
+
+evaluateRules() gegen V3_RULES; error-Severity blockt den Apply. (L2)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-evaluate-rules` · allocate ▶ `MOD-harness`
+
+##### 3.5.1.3  `FUNC-graph-suggest` — graph_suggest(weights)
+
+Duennes Binding auf @sigloch/se-optimizer (targetFor/suggestEdits): rankt die feuernden Operator-Regeln nach dem Skalarprodukt aus Metrik-Delta und Zielrichtung im R^6-Metrikraum; liefert die Fund-Ebene, Template-Edits laufen als dryRun durchs Gate. Nie auto-apply. (CR-GC-273)
+
+io ◀ `FLOW-round-findings` · io ▶ `FLOW-suggested-edit` · allocate ▶ `MOD-mcp-tools`
+
+###### `REQ-small-model-viable` — Kleine/lokale LLMs tragfähig
+
+> auch unter: `FCHAIN-modelfree-gate`
+
+Deterministische, modellfreie Gates/Regeln + Query-Precision halten kleine/lokale LLMs tragfähig; Kern läuft ohne LLM (degraded).
+
+priority: should · status: open · kinds: non-functional
+
+Verification ◀ `TEST-mvp-e2e` (e2e) · `TEST-reduced-llm` (acceptance) · satisfy ◀ `FCHAIN-modelfree-gate` · `FUNC-graph-suggest` · allocate ▶ `MOD-mcp-tools`
+
+##### 3.5.1.4  `FUNC-mutate` — mutate(commands)
+
+> auch in: `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-interface-escalation` · `FCHAIN-modelfree-gate`
+
+Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)
+
+io ◀ `FLOW-capture-draft` · `FLOW-mutate-cmd` · `FLOW-suggested-edit` · io ▶ `FLOW-draft-graph` · `FLOW-suggest-result` · allocate ▶ `MOD-harness`
+
+###### `REQ-confidence-tier` — Confidence/Tier am MutateResult
+
+MutateResult trägt Confidence/Tier (auto-apply/suggest/block); speist 3-Tier-Gate. (R1)
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
+
+###### `REQ-gate-only-writes` — Gate-only Graph-Writes
+
+Agent kann den SSOT nicht hand-editieren; jeder Write durch graph_mutate (mutate-Gate, L1). Deny-Rule + PreToolUse-Hook auf Edit/Write von docs/graph/*.graph.json + .graphcode/kuzu; JSON ist generierter Export, Live-Truth ist Kuzu. (CR-GC-201)
+
+priority: should · status: open · kinds: non-functional
+
+Verification ◀ `TEST-no-direct-graph-write` · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
+
+###### `REQ-graph-snapshot-per-commit` — Kanonischer Graph-Snapshot pro Commit
+
+Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/graph/*.graph.json), der zum Code dieses Commits passt. Un-exportierte Modell-Mutationen blockieren den Commit ueber den single-writer-sicheren Drift-Marker .graphcode/EXPORT_PENDING (vom Gate auf mutate gesetzt, von graph_export/graph_reseed geloescht); der pre-commit-Hook staged die generierten Artefakte automatisch. (CR-GC-217)
+
+priority: must · status: in-progress
+
+Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
+
+#### 3.5.2  `FCHAIN-modelfree-gate` — Modellfreier Gate-Betrieb
 
 Gate + Regeln laufen deterministisch ohne Modell-Call (mutate + evaluateRules); kleine/lokale LLMs tragfähig.
 
@@ -632,19 +736,21 @@ Verification ◀ `TEST-reduced-llm` (acceptance) · satisfy ◀ `FCHAIN-modelfre
 
 ##### `REQ-small-model-viable` — Kleine/lokale LLMs tragfähig
 
+> auch unter: `FUNC-graph-suggest`
+
 Deterministische, modellfreie Gates/Regeln + Query-Precision halten kleine/lokale LLMs tragfähig; Kern läuft ohne LLM (degraded).
 
 priority: should · status: open · kinds: non-functional
 
-Verification ◀ `TEST-mvp-e2e` (e2e) · `TEST-reduced-llm` (acceptance) · satisfy ◀ `FCHAIN-modelfree-gate` · allocate ▶ —
+Verification ◀ `TEST-mvp-e2e` (e2e) · `TEST-reduced-llm` (acceptance) · satisfy ◀ `FCHAIN-modelfree-gate` · `FUNC-graph-suggest` · allocate ▶ `MOD-mcp-tools`
 
-##### 3.5.1.1  `FUNC-mutate` — mutate(commands)
+##### 3.5.2.1  `FUNC-mutate` — mutate(commands)
 
-> auch in: `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-interface-escalation`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-interface-escalation`
 
 Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)
 
-io ◀ `FLOW-capture-draft` · `FLOW-mutate-cmd` · io ▶ `FLOW-draft-graph` · `FLOW-suggest-result` · allocate ▶ `MOD-harness`
+io ◀ `FLOW-capture-draft` · `FLOW-mutate-cmd` · `FLOW-suggested-edit` · io ▶ `FLOW-draft-graph` · `FLOW-suggest-result` · allocate ▶ `MOD-harness`
 
 ###### `REQ-confidence-tier` — Confidence/Tier am MutateResult
 
@@ -670,13 +776,13 @@ priority: must · status: in-progress
 
 Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
 
-##### 3.5.1.2  `FUNC-evaluate-rules` — evaluateRules()
+##### 3.5.2.2  `FUNC-evaluate-rules` — evaluateRules()
 
-> auch in: `FCHAIN-apply-gate`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate`
 
 Regel-Engine gegen V3_RULES; Violations {ruleId,severity,elementId}; kein lokaler Parser (L2).
 
-io ◀ `FLOW-draft-graph` · io ▶ `FLOW-violations` · allocate ▶ `MOD-harness`
+io ◀ `FLOW-draft-graph` · `FLOW-round-scope` · io ▶ `FLOW-round-findings` · `FLOW-violations` · allocate ▶ `MOD-harness`
 
 ###### `REQ-rule-enforcement` — Regel-Enforcement (V3_RULES)
 
@@ -686,9 +792,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-evaluate-rules` · allocate ▶ `MOD-harness`
 
-### 3.6  `UC-token-efficiency` — Minimaler Token-Verbrauch
-
-Als Nutzer/Agent will ich minimalen Token-Verbrauch: präziser Query-Kontext (exakter Blast-Radius/Slice) statt grep-Dump oder Result-Kompression.
+### 3.6  `UC-token-efficiency` — UC-token-efficiency
 
 io ◀ `ACTOR-claude-code` · `ACTOR-developer` · `ACTOR-opencode` · `ACTOR-systems-engineer` · `ACTOR-vibe-coder`
 
@@ -744,11 +848,11 @@ Verification ◀ `TEST-impact-subgraph` (integration) · satisfy ◀ `FUNC-graph
 
 ##### 3.6.1.2  `FUNC-graph-impact` — graph_impact(id, depth?)
 
-> auch in: `FCHAIN-impact-testing` · `FCHAIN-interface-escalation`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-impact-testing` · `FCHAIN-interface-escalation`
 
 Exakter Blast-Radius (Caller/Traces/Tests) als Format-E. (CR-GC-101, R6/R12)
 
-io ◀ `FLOW-query-request` · io ▶ `FLOW-impact-subgraph` · allocate ▶ `MOD-mcp-tools`
+io ◀ `FLOW-query-request` · io ▶ `FLOW-impact-subgraph` · `FLOW-round-scope` · allocate ▶ `MOD-mcp-tools`
 
 ###### `REQ-audit-trail` — Audit-Trail / History
 
@@ -1532,31 +1636,49 @@ Generierte Markdown-View, z.B. architecture-graph.md.
 
 io ◀ `FUNC-render-views` · io ▶ `ACTOR-developer` · schema ▶ `SCHEMA-markdown-view`
 
-### 4.24  `FLOW-suggest-result` — Suggest-Result
+### 4.24  `FLOW-round-findings` — Round Findings (open violations)
+
+Die von status offen gemeldeten Regelverletzungen, die propose als Rang-Eingabe nimmt (graph_suggest rankt genau die feuernden Operator-Regeln).
+
+io ◀ `FUNC-evaluate-rules` · io ▶ `FUNC-graph-suggest` · schema ▶ —
+
+### 4.25  `FLOW-round-scope` — Round Scope (bounded slice)
+
+Der durch read gebundene Blast-Radius/Kontext, der informiert, was status als offen prueft. Kein festes Wire-Format - informationeller Rundenkontext, kein Code-Datenvertrag.
+
+io ◀ `FUNC-graph-impact` · io ▶ `FUNC-evaluate-rules` · schema ▶ —
+
+### 4.26  `FLOW-suggest-result` — Suggest-Result
 
 Confidence-getaggte Vorschläge (suggest-Tier).
 
 io ◀ `FUNC-mutate` · io ▶ `ACTOR-developer` · schema ▶ `SCHEMA-mutate-result`
 
-### 4.25  `FLOW-trajectory` — Trajectory/Outcome
+### 4.27  `FLOW-suggested-edit` — Suggested Edit (ranked candidate)
+
+Der von propose bestbewertete Kandidaten-Fix (Template-Edit, dryRun-verifiziert), der apply als MutateCommand-Eingabe erreicht - nur wenn der Konsument ihn uebernimmt, nie automatisch.
+
+io ◀ `FUNC-graph-suggest` · io ▶ `FUNC-mutate` · schema ▶ —
+
+### 4.28  `FLOW-trajectory` — Trajectory/Outcome
 
 append-only Lern-Emission.
 
 io ◀ `FUNC-emit-trajectory` · io ▶ `ACTOR-learning-engine` · schema ▶ `SCHEMA-trajectory`
 
-### 4.26  `FLOW-version-bump` — Version-Bump
+### 4.29  `FLOW-version-bump` — Version-Bump
 
 Neue ONTOLOGY/RULES_VERSION aus contracts/se.
 
 io ◀ `ACTOR-developer` · io ▶ `FUNC-migrate-schema` · schema ▶ `SCHEMA-query-params`
 
-### 4.27  `FLOW-view-request` — View-Request
+### 4.30  `FLOW-view-request` — View-Request
 
 Welche View gerendert werden soll (arch/status/...).
 
 io ◀ `ACTOR-developer` · io ▶ `FUNC-render-views` · schema ▶ `SCHEMA-query-params`
 
-### 4.28  `FLOW-violations` — Violations
+### 4.31  `FLOW-violations` — Violations
 
 Regel-Violations {ruleId,severity,elementId}.
 
@@ -1666,7 +1788,7 @@ allocate ◀ `FUNC-broadcast-diff` · `FUNC-health-endpoint` · `FUNC-own-kuzu-h
 
 MCP-stdio Tool-Registry, an die Harness gebunden; read/write/query Tools. (SPEC §2.2)
 
-allocate ◀ `FUNC-deduce-tests` · `FUNC-graph-expand` · `FUNC-graph-impact` · `FUNC-resolve-tests-from-code` · `FUNC-serve-stdio` · satisfy ▶ `REQ-agent-agnostic` · `REQ-export-no-clobber` · `REQ-mcp-tool-registry` · `REQ-readiness-model` · `REQ-single-transport` · `REQ-test-runnable-binding` · `REQ-testref-materialized`
+allocate ◀ `FUNC-deduce-tests` · `FUNC-graph-expand` · `FUNC-graph-impact` · `FUNC-graph-suggest` · `FUNC-resolve-tests-from-code` · `FUNC-serve-stdio` · satisfy ▶ `REQ-agent-agnostic` · `REQ-export-no-clobber` · `REQ-mcp-tool-registry` · `REQ-readiness-model` · `REQ-single-transport` · `REQ-test-runnable-binding` · `REQ-testref-materialized`
 
 ### 6.9  `MOD-skills` — skills/prompts — agent-realisierte Funktionen
 
@@ -2002,205 +2124,211 @@ Realer Disk-Kuzu: mutate setzt den Drift-Marker, graph_export loescht ihn und ma
 
 verify ▶ `REQ-graph-snapshot-per-commit` · `REQ-graph-state-recall` · testRef: `tests/graph-timetravel.test.ts`
 
-### 8.23  `TEST-hooks` — Hook-Extension-Points-Test
+### 8.23  `TEST-greenfield-systemtest` — Top-Level Greenfield System-Test
+
+Leeres Repo, ein Prompt (Web-App aus graphcode, Multiuser, Module maximal nutzen). Authoring: qwen3.6-35b-a3b (local) vs Opus 5 (frontier), je 3×, ein Host (Claude Code). Metriken/Run: readiness, reuse-coverage vs Modul-Graph-Golden, illegal/blocked, redundanz, tokens_in/out/reasoning, cost, wall_s. Best-fit → Impl-Plan durchs Gate → Coding (qwen-35b · devstral). Scorer regelbasiert, keine KI-Bewertung.
+
+verify ▶ `REQ-greenfield-systemtest-dod`
+
+### 8.24  `TEST-hooks` — Hook-Extension-Points-Test
 
 registerHook + runPreCommitHooks/runPostApplyHooks/scheduleNightlyBatch; pre-commit-Hook blockt eine Mutation; preCommitTimeout (default 5000ms) greift; Execution-Order deterministisch. (CR-GC-102)
 
 verify ▶ `REQ-hook-extension-points` · `REQ-hook-order-deterministic` · `REQ-precommit-timeout`
 
-### 8.24  `TEST-impact-subgraph` — graph_impact Subgraph-Test
+### 8.25  `TEST-impact-subgraph` — graph_impact Subgraph-Test
 
 graph_impact liefert nur den betroffenen Subgraphen (kein Full-Dump). (FCHAIN-agent-query)
 
 verify ▶ `REQ-post-agent-query` · `REQ-pre-agent-query` · `REQ-progressive-expansion` · `REQ-query-precision` · `REQ-subgraph-slicing` · testRef: `tests/mcp.impact.test.ts`
 
-### 8.25  `TEST-interface-escalation` — Interface-Eskalations-Test
+### 8.26  `TEST-interface-escalation` — Interface-Eskalations-Test
 
 Direkter FLOW-Mutationsversuch eines Realisierungs-Agenten wird abgelehnt; nur der Eskalationspfad (CR an Facilitating-Agent → graph_impact → Gate) ändert ein Interface. (FCHAIN-interface-escalation)
 
 verify ▶ `REQ-interface-change-escalation` · `REQ-post-interface-escalation` · `REQ-pre-interface-escalation`
 
-### 8.26  `TEST-interface-schema` — Interface-Schema-Test
+### 8.27  `TEST-interface-schema` — Interface-Schema-Test
 
 Jeder FLOW hat ein SCHEMA (relation); ein FLOW ohne Datenformat ist ein Readiness-Blocker. (REQ-interface-schema)
 
 verify ▶ `REQ-interface-schema`
 
-### 8.27  `TEST-learning-emit` — Learning-Emission-Test
+### 8.28  `TEST-learning-emit` — Learning-Emission-Test
 
 post-apply schreibt Trajectory/Outcome append-only, Format stabil. (FUNC-emit-trajectory)
 
 verify ▶ `REQ-post-emit-trajectory` · `REQ-pre-emit-trajectory` · `REQ-trajectory-emit` · testRef: `tests/hooks.learning-emit.test.ts`
 
-### 8.28  `TEST-live-event-contract` — Live-Event-Contract-Test
+### 8.29  `TEST-live-event-contract` — Live-Event-Contract-Test
 
 LiveUpdateEvent/UpdateDomain sind als Zod-Schema in @sigloch/contracts publiziert und werden von Dashboard und Bridge importiert (kein Fork). (REQ-live-event-in-contracts)
 
 verify ▶ `REQ-live-event-in-contracts` · testRef: `tests/contract.live-event.test.ts`
 
-### 8.29  `TEST-live-view` — Live-Update-Event-Test
+### 8.30  `TEST-live-view` — Live-Update-Event-Test
 
 Jede Mutation emittiert genau ein Live-Update-Event (korrekte domains); Dashboard ohne Reload. (FUNC-emit-update-event)
 
 verify ▶ `REQ-mutation-emits-event` · `REQ-post-emit-update-event` · `REQ-pre-emit-update-event` · `REQ-versioned-broadcast` · testRef: `tests/hooks.live-view.test.ts`
 
-### 8.30  `TEST-mcp-export` — MCP-Export-Test
+### 8.31  `TEST-mcp-export` — MCP-Export-Test
 
 graph_export serialisiert den live In-Memory-Graphen via exportGraphJson/exportMarkdown und schreibt docs/graph + docs/views unter den Repo-Root — schließt die Agent-Loop ueber MCP. (CR-GC-127)
 
 verify ▶ `REQ-doc-export` · testRef: `tests/mcp.export.test.ts`
 
-### 8.31  `TEST-mcp-export-guard` — MCP-Export-Guard-Test
+### 8.32  `TEST-mcp-export-guard` — MCP-Export-Guard-Test
 
 MCP graph_export-Guard, drei Faelle: (a) leerer Graph wird verweigert, (b) Drop eines committeten Elements wird verweigert und die Datei bleibt unangetastet, (c) force:true ueberschreibt; Fresh-File-Export bleibt gruen. (CR-GC-202)
 
 verify ▶ `REQ-export-no-clobber` · testRef: `tests/mcp.export-guard.test.ts`
 
-### 8.32  `TEST-mcp-readiness` — MCP-Readiness-Test
+### 8.33  `TEST-mcp-readiness` — MCP-Readiness-Test
 
 graph_readiness bindet scoreReadiness(harness) an die Registry und liefert den ReadinessReport ueber die MCP-Surface — Familie-Compliance (R-/RD-, nie BQ-) ist fuer einen Agenten erreichbar. (CR-GC-129)
 
 verify ▶ `REQ-mcp-tool-registry` · testRef: `tests/mcp.readiness.test.ts`
 
-### 8.33  `TEST-mcp-stdio-server` — MCP-stdio-Server-Test
+### 8.34  `TEST-mcp-stdio-server` — MCP-stdio-Server-Test
 
 Registry served over the real MCP protocol (linked transport + disk Kuzu): listTools enumerates all tools, graph_mutate==mutate() incl. R-01 BLOCK, graph_impact bounded slice. (CR-GC-111)
 
 verify ▶ `REQ-audit-trail` · `REQ-mcp-gate-symmetry` · `REQ-mcp-tool-registry` · `REQ-single-transport` · testRef: `tests/mcp.stdio-server.test.ts`
 
-### 8.34  `TEST-mcp-symmetry` — MCP-Symmetrie-Test
+### 8.35  `TEST-mcp-symmetry` — MCP-Symmetrie-Test
 
 MCP graph_mutate == in-process mutate(): identische Semantik/Violations. (FCHAIN-apply-gate, L2)
 
 verify ▶ `REQ-harness-schema-in-contracts` · `REQ-mcp-gate-symmetry` · `REQ-one-gate-per-repo` · testRef: `tests/mcp.symmetry.test.ts`
 
-### 8.35  `TEST-member-name` — Member-Name-Derivation-Test
+### 8.36  `TEST-member-name` — Member-Name-Derivation-Test
 
 serveStdio leitet die Member-Identitaet aus dem Repo ab (package.json name unscoped, sonst Verzeichnisname) → graph_export schreibt docs/graph/<member>.graph.json. (CR-GC-128)
 
 verify ▶ `REQ-doc-export` · testRef: `tests/mcp.member-name.test.ts`
 
-### 8.36  `TEST-merge` — Conflict-free-Merge-Test
+### 8.37  `TEST-merge` — Conflict-free-Merge-Test
 
 Zwei Branch-Änderungen mergen conflict-free; keine verlorenen Knoten/Traces. (FUNC-merge-nodes)
 
 verify ▶ `REQ-auto-persist-merge` · `REQ-conflict-free-merge` · `REQ-post-merge-nodes` · `REQ-pre-merge-nodes`
 
-### 8.37  `TEST-mutate-gate` — mutate()-Gate Unit-Test
+### 8.38  `TEST-mutate-gate` — mutate()-Gate Unit-Test
 
 mutate() wendet an, gibt Violations zurück, blockt bei error-Severity. (FCHAIN-apply-gate)
 
 verify ▶ `REQ-confidence-tier` · `REQ-one-gate-per-repo` · `REQ-post-apply-gate` · `REQ-pre-apply-gate` · `REQ-rule-enforcement` · testRef: `tests/harness.gate.test.ts`
 
-### 8.38  `TEST-mvp-e2e` — MVP-1 E2E Acceptance
+### 8.39  `TEST-mvp-e2e` — MVP-1 E2E Acceptance
 
 End-to-End-Akzeptanz des MVP-1-Loops: neues Mitglied bootstrappen, Knoten durchs Gate spec’en, graph_impact liefert exakt den Blast-Radius (KNOW statt grep), Knoten implementieren, re-exportieren. Disk-Kuzu, keine Mocks. (CR-GC-123)
 
 verify ▶ `REQ-code-governed-quality` · `REQ-disk-persistence` · `REQ-impact-based-testing` · `REQ-precise-context` · `REQ-single-kuzu-owner` · `REQ-single-store` · `REQ-small-model-viable` · testRef: `tests/mvp-e2e.test.ts`
 
-### 8.39  `TEST-no-direct-graph-write` — No-Direct-Graph-Write-Test
+### 8.40  `TEST-no-direct-graph-write` — No-Direct-Graph-Write-Test
 
 Direkter Edit/Write auf den committeten SSOT wird von der Harness verweigert; graph_mutate (MCP) gelingt + ist gate-validiert; CI verwirft hand-editiertes (Nicht-Export) JSON. (CR-GC-201)
 
 verify ▶ `REQ-gate-only-writes`
 
-### 8.40  `TEST-readiness-completeness` — Completeness-Dimension-Test
+### 8.41  `TEST-readiness-completeness` — Completeness-Dimension-Test
 
 0-FCHAIN UC -> SRR completeness rot; vollstaendige Kette -> gruen; concept-TEST zaehlt bei CDR als complete, bei TRR nicht; Coverage ueber Source-Population (Abwesenheit zaehlt). Drift-Test: jedes 1..*-Bein des Meta-Modells ist genau einer Phase zugeordnet. (REQ-readiness-completeness)
 
 verify ▶ `REQ-readiness-completeness` · testRef: `tests/readiness.completeness.test.ts`
 
-### 8.41  `TEST-readiness-model` — Readiness-Modell-Test
+### 8.42  `TEST-readiness-model` — Readiness-Modell-Test
 
 Acceptance-Test fuer das Readiness-Modell: INCOSE-Scope lean, Phase-Gates SRR/PDR/CDR/TRR als disjunkte und vollstaendige Partition der V3_RULES, Impl-Gates SAR/FCA/SVR/FRR aus MS + CR-Status; deterministische Unit-Faelle + SSOT-Integration, niemals BQ. (CR-GC-125)
 
 verify ▶ `REQ-readiness-model` · testRef: `tests/readiness.model.test.ts`
 
-### 8.42  `TEST-readiness-transparent` — Readiness-Transparenz-Test
+### 8.43  `TEST-readiness-transparent` — Readiness-Transparenz-Test
 
 graph_readiness liefert pro Gate die Blocking-Liste (CRs/Tests/UCs/Violations); die Summe der Blocker erklaert den Score deterministisch. (REQ-readiness-transparent)
 
 verify ▶ `REQ-readiness-transparent` · testRef: `tests/panels.test.ts`
 
-### 8.43  `TEST-readonly-bridge` — Readonly-Bridge-Test
+### 8.44  `TEST-readonly-bridge` — Readonly-Bridge-Test
 
 Die Bridge akzeptiert keine Inbound-Mutation; ein Schreibversuch ueber die Bridge wird abgelehnt, Writes gehen nur durch MCP mutate(). (REQ-readonly-bridge)
 
 verify ▶ `REQ-readonly-bridge` · testRef: `tests/host.bridge.test.ts`
 
-### 8.44  `TEST-real-health-check` — Health-Funktionscheck-Test
+### 8.45  `TEST-real-health-check` — Health-Funktionscheck-Test
 
 Der Health-Report enthaelt Store-, Gate-, Versions- und LLM-Readiness-Status und faellt bei Store- oder Gate-Ausfall auf nicht-ok, nicht nur bei Prozess-Stop. (REQ-real-health-check)
 
 verify ▶ `REQ-real-health-check` · testRef: `tests/host.bridge.test.ts`
 
-### 8.45  `TEST-reduced-llm` — Modellfrei-Gate-Test
+### 8.46  `TEST-reduced-llm` — Modellfrei-Gate-Test
 
 Gate/Regel-Evaluation läuft ohne Modell-Call (localReachable=false) deterministisch; nur LLM-Zusatzfeatures degradieren.
 
 verify ▶ `REQ-graceful-degradation` · `REQ-post-modelfree-gate` · `REQ-pre-modelfree-gate` · `REQ-small-model-viable`
 
-### 8.46  `TEST-responsiveness` — Responsiveness-Test (<0,2s)
+### 8.47  `TEST-responsiveness` — Responsiveness-Test (<0,2s)
 
 Draft-Apply + betroffener-Subgraph-Check antwortet < 0,2s (ohne LLM). (FCHAIN-apply-gate NFR)
 
 verify ▶ `REQ-responsiveness`
 
-### 8.47  `TEST-roundtrip` — Format-E Round-Trip Conformance
+### 8.48  `TEST-roundtrip` — Format-E Round-Trip Conformance
 
 decode(encode(g))==g; zwei Encodes byte-identisch. (FCHAIN-codec-roundtrip)
 
 verify ▶ `REQ-codec-validation` · `REQ-deterministic-serialization` · `REQ-formatE-diff-dialect` · `REQ-formatE-parity` · `REQ-post-codec-roundtrip` · `REQ-pre-codec-roundtrip` · `REQ-roundtrip-conformance` · testRef: `tests/codec.roundtrip.test.ts`
 
-### 8.48  `TEST-scaffold-skills` — Scaffold-Installs-Skills-Test
+### 8.49  `TEST-scaffold-skills` — Scaffold-Installs-Skills-Test
 
 graphcode init/update kopiert die 9 mitgelieferten .claude/skills/se-*.md in das Ziel-Repo, remove entfernt sie restlos (nur die graphcode-eigenen); end-to-end ueber den gepackten Tarball in einem Fremd-Repo verifiziert. Schliesst die MOD-skills/CR-GC-104-Drift: FUNC-harness-cli managt .claude/skills/. (CR-GC-133)
 
 verify ▶ `REQ-repo-install` · testRef: `tests/cli.scaffold.test.ts`
 
-### 8.49  `TEST-schema-migration` — Schema-Migrations-Test
+### 8.50  `TEST-schema-migration` — Schema-Migrations-Test
 
 Version-Bump → Graph re-validiert/migriert, Violations berichtet, Version aktualisiert. (FUNC-migrate-schema)
 
 verify ▶ `REQ-post-migrate-schema` · `REQ-pre-migrate-schema` · `REQ-schema-version-migration`
 
-### 8.50  `TEST-shared-views-no-fork` — Shared-Views-No-Fork-Test
+### 8.51  `TEST-shared-views-no-fork` — Shared-Views-No-Fork-Test
 
 Die View-Berechnung liegt in @sigloch/graph-api-core; kein lokaler BQ-Regel-Fork (aimpro/src/contracts/se) mehr referenziert. (REQ-shared-views-no-fork)
 
 verify ▶ `REQ-shared-views-no-fork` · testRef: `tests/views.no-fork.test.ts`
 
-### 8.51  `TEST-skills-mcp` — Skills-MCP-Conformance-Test
+### 8.52  `TEST-skills-mcp` — Skills-MCP-Conformance-Test
 
 Alle 9 .claude/skills/se-*.md sind MCP-getrieben: 0 Treffer fuer die abgeschaltete localhost:3001-API (/api/graph, /api/dashboard, GRAPH_API) und jedes Skill referenziert >=1 Tool aus der Live-Registry. "done = verifiziert" fuer die prompt-realisierten FUNCs von MOD-skills (se-view-* → REQ-doc-export). (CR-GC-132)
 
 verify ▶ `REQ-doc-export` · testRef: `tests/skills.mcp-conformance.test.ts`
 
-### 8.52  `TEST-store-recovery` — Store-Recovery-Test
+### 8.53  `TEST-store-recovery` — Store-Recovery-Test
 
 Kuzu Lock-Konflikt / abgestuerzter Owner / korrupter Store: Lock-Erkennung + sicherer Re-Open; kein zweites DB-Handle. (ConOps Recovery)
 
 verify ▶ `REQ-store-recovery`
 
-### 8.53  `TEST-structural-rule-shared` — R-18 gate-block test
+### 8.54  `TEST-structural-rule-shared` — R-18 gate-block test
 
 Eine ungueltige Trace-Pair-Mutation in falscher Richtung (Quelle REQ statt TEST bei einer verify-Kante) wird vom Delta-Gate atomar als R-18-Engine-Violation abgelehnt (kein codec.validate-Aufruf, kein Partial-Persist). (CR-GC-205 Item 1)
 
 verify ▶ `REQ-structural-rule-shared` · testRef: `tests/harness.gate.test.ts`
 
-### 8.54  `TEST-test-runnable-binding` — TestRef-Aufloesungs-Test
+### 8.55  `TEST-test-runnable-binding` — TestRef-Aufloesungs-Test
 
 Ein impacted TEST-Knoten wird ueber testRef eindeutig zu einer lauffaehigen Datei plus Case aufgeloest; graph_tests erzeugt daraus ein selektives Run-Kommando, das nur die betroffenen Tests enthaelt. (REQ-test-runnable-binding)
 
 verify ▶ `REQ-test-runnable-binding` · testRef: `tests/mcp.tests-deduction.test.ts`
 
-### 8.55  `TEST-testref-materialize` — Export stub-materialization test
+### 8.56  `TEST-testref-materialize` — Export stub-materialization test
 
 graph_export scaffoldt einen lauffaehigen it.todo-Stub fuer eine fehlende testRef-Datei, ueberschreibt nie eine existierende, ueberspringt concept-only; danach loest graph_tests auf die materialisierte Datei auf. (CR-GC-205 Item 4)
 
 verify ▶ `REQ-testref-materialized` · testRef: `tests/export.testref-materialize.test.ts`
 
-### 8.56  `TEST-token-efficiency` — Token-Budget-Test
+### 8.57  `TEST-token-efficiency` — Token-Budget-Test
 
 graph_impact-Kontext ist messbar kleiner als ein Volltext-/grep-Dump desselben Scopes (Token-Count-Assertion).
 
@@ -2208,4 +2336,4 @@ verify ▶ `REQ-benchmark-harness` · `REQ-precise-context`
 
 ## 9  Traceability summary
 
-109 REQ · 109 verified · 0 without a verifying TEST (R-01).
+110 REQ · 110 verified · 0 without a verifying TEST (R-01).

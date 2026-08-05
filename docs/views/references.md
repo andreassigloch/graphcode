@@ -288,6 +288,10 @@
 | `CR-GC-272` | relation | `REQ-self-contained-dist` |
 | `CR-GC-273` | relation | `FUNC-serve-stdio` |
 | `CR-GC-273` | relation | `REQ-mcp-tool-registry` |
+| `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
+| `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
+| `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-suggest` |
+| `FCHAIN-advisory-roundtrip` | compose | `FUNC-mutate` |
 | `FCHAIN-agent-query` | compose | `FUNC-graph-expand` |
 | `FCHAIN-agent-query` | compose | `FUNC-graph-impact` |
 | `FCHAIN-agent-query` | satisfy | `REQ-post-agent-query` |
@@ -376,8 +380,11 @@
 | `FLOW-query-request` | relation | `SCHEMA-query-params` |
 | `FLOW-rendered-view` | io | `ACTOR-developer` |
 | `FLOW-rendered-view` | relation | `SCHEMA-markdown-view` |
+| `FLOW-round-findings` | io | `FUNC-graph-suggest` |
+| `FLOW-round-scope` | io | `FUNC-evaluate-rules` |
 | `FLOW-suggest-result` | io | `ACTOR-developer` |
 | `FLOW-suggest-result` | relation | `SCHEMA-mutate-result` |
+| `FLOW-suggested-edit` | io | `FUNC-mutate` |
 | `FLOW-trajectory` | io | `ACTOR-learning-engine` |
 | `FLOW-trajectory` | relation | `SCHEMA-trajectory` |
 | `FLOW-version-bump` | io | `FUNC-migrate-schema` |
@@ -421,6 +428,7 @@
 | `FUNC-encode` | satisfy | `UC-code-quality` |
 | `FUNC-encode` | satisfy | `UC-token-efficiency` |
 | `FUNC-evaluate-rules` | allocate | `MOD-harness` |
+| `FUNC-evaluate-rules` | io | `FLOW-round-findings` |
 | `FUNC-evaluate-rules` | io | `FLOW-violations` |
 | `FUNC-evaluate-rules` | satisfy | `REQ-rule-enforcement` |
 | `FUNC-evaluate-rules` | satisfy | `UC-code-quality` |
@@ -437,12 +445,16 @@
 | `FUNC-graph-expand` | satisfy | `UC-token-efficiency` |
 | `FUNC-graph-impact` | allocate | `MOD-mcp-tools` |
 | `FUNC-graph-impact` | io | `FLOW-impact-subgraph` |
+| `FUNC-graph-impact` | io | `FLOW-round-scope` |
 | `FUNC-graph-impact` | satisfy | `REQ-audit-trail` |
 | `FUNC-graph-impact` | satisfy | `REQ-query-precision` |
 | `FUNC-graph-impact` | satisfy | `REQ-subgraph-slicing` |
 | `FUNC-graph-impact` | satisfy | `UC-efficient-testing` |
 | `FUNC-graph-impact` | satisfy | `UC-reduced-llm` |
 | `FUNC-graph-impact` | satisfy | `UC-token-efficiency` |
+| `FUNC-graph-suggest` | allocate | `MOD-mcp-tools` |
+| `FUNC-graph-suggest` | io | `FLOW-suggested-edit` |
+| `FUNC-graph-suggest` | satisfy | `REQ-small-model-viable` |
 | `FUNC-harness-cli` | allocate | `MOD-cli` |
 | `FUNC-harness-cli` | io | `FLOW-install-result` |
 | `FUNC-harness-cli` | satisfy | `REQ-install-idempotent` |
@@ -622,6 +634,7 @@
 | `SYS-graphcode` | satisfy | `REQ-benchmark-harness` |
 | `SYS-graphcode` | satisfy | `REQ-frame-binding` |
 | `SYS-graphcode` | satisfy | `REQ-graceful-degradation` |
+| `SYS-graphcode` | satisfy | `REQ-greenfield-systemtest-dod` |
 | `SYS-graphcode` | satisfy | `REQ-structure-driven` |
 | `TEST-agent-agnostic` | verify | `REQ-agent-agnostic` |
 | `TEST-artifact-freshness` | verify | `REQ-artifact-freshness` |
@@ -668,6 +681,7 @@
 | `TEST-graph-tests-operational` | verify | `REQ-graph-tests-operational` |
 | `TEST-graph-time-travel` | verify | `REQ-graph-snapshot-per-commit` |
 | `TEST-graph-time-travel` | verify | `REQ-graph-state-recall` |
+| `TEST-greenfield-systemtest` | verify | `REQ-greenfield-systemtest-dod` |
 | `TEST-hooks` | verify | `REQ-hook-extension-points` |
 | `TEST-hooks` | verify | `REQ-hook-order-deterministic` |
 | `TEST-hooks` | verify | `REQ-precommit-timeout` |
@@ -751,6 +765,7 @@
 | `UC-code-quality` | compose | `FCHAIN-interface-escalation` |
 | `UC-code-quality` | compose | `REQ-code-governed-quality` |
 | `UC-code-quality` | compose | `REQ-dashboard-ontology-sync` |
+| `UC-code-quality` | compose | `REQ-greenfield-systemtest-dod` |
 | `UC-code-quality` | compose | `REQ-interface-change-escalation` |
 | `UC-code-quality` | compose | `REQ-quality-metric` |
 | `UC-code-quality` | compose | `REQ-structure-driven` |
@@ -770,8 +785,11 @@
 | `UC-live-graph-view` | compose | `REQ-readonly-bridge` |
 | `UC-live-graph-view` | compose | `REQ-real-health-check` |
 | `UC-live-graph-view` | compose | `REQ-versioned-broadcast` |
+| `UC-reduced-llm` | compose | `FCHAIN-advisory-roundtrip` |
 | `UC-reduced-llm` | compose | `FCHAIN-modelfree-gate` |
+| `UC-reduced-llm` | compose | `REQ-greenfield-systemtest-dod` |
 | `UC-reduced-llm` | compose | `REQ-small-model-viable` |
 | `UC-token-efficiency` | compose | `FCHAIN-agent-query` |
 | `UC-token-efficiency` | compose | `REQ-benchmark-harness` |
+| `UC-token-efficiency` | compose | `REQ-greenfield-systemtest-dod` |
 | `UC-token-efficiency` | compose | `REQ-precise-context` |

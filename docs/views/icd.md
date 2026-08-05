@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 9 SCHEMA · 28 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 9 SCHEMA · 31 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -47,7 +47,10 @@
 | `FLOW-parsed-graph` | `FUNC-decode` | `ACTOR-developer` |
 | `FLOW-query-request` | `ACTOR-claude-code` | `FUNC-graph-impact` |
 | `FLOW-rendered-view` | `FUNC-render-views` | `ACTOR-developer` |
+| `FLOW-round-findings` | `FUNC-evaluate-rules` | `FUNC-graph-suggest` |
+| `FLOW-round-scope` | `FUNC-graph-impact` | `FUNC-evaluate-rules` |
 | `FLOW-suggest-result` | `FUNC-mutate` | `ACTOR-developer` |
+| `FLOW-suggested-edit` | `FUNC-graph-suggest` | `FUNC-mutate` |
 | `FLOW-trajectory` | `FUNC-emit-trajectory` | `ACTOR-learning-engine` |
 | `FLOW-version-bump` | `ACTOR-developer` | `FUNC-migrate-schema` |
 | `FLOW-view-request` | `ACTOR-developer` | `FUNC-render-views` |
