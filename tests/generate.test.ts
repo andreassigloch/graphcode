@@ -192,17 +192,24 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
     const srr = step.phaseReadiness.find((p) => p.gate === 'SRR');
     const pdr = step.phaseReadiness.find((p) => p.gate === 'PDR');
     expect(srr).toEqual({ gate: 'SRR', total: srr?.total, covered: srr?.total, missing: [] });
-    expect(pdr).toEqual({ gate: 'PDR', total: pdr?.total, covered: pdr?.total, missing: [] });
-    // CDR/TRR: bekannte Lücke — R-19/VR-01/SC-04 lesen `element.attributes?.x`
-    // (contracts/se rules.ts), aber `exportGraphJson` flacht node.attributes auf
-    // Top-Level ab (graphcode-Konvention seit CR-216/228) — die Rules sehen die
-    // gesetzten Werte deshalb nie. Vorbestehende, CR-296-unabhängige Diskrepanz
-    // zwischen graphcode's Export-Encoding und contracts' Rule-Implementierung;
-    // nicht Teil dieses CRs (Fund dokumentiert, kein exporter.ts-Fix hier).
+    // PDR/CDR/TRR: bekannte Lücke — R-19/VR-01/SC-04 und seit contracts 3.1.0 auch
+    // AF-01..03 (PDR) lesen `element.attributes?.x` (contracts/se rules.ts), aber
+    // `exportGraphJson` flacht node.attributes auf Top-Level ab (graphcode-Konvention
+    // seit CR-216/228) — die Rules sehen die gesetzten Werte deshalb nie (ein
+    // analysisFreshness-Stamp am Fixture-SYS ändert nichts). Vorbestehende,
+    // CR-296-unabhängige Diskrepanz zwischen graphcode's Export-Encoding und
+    // contracts' Rule-Implementierung; Fund dokumentiert (s. CR-GC-302 Folge-Punkt),
+    // kein exporter.ts-Fix hier.
+    expect(pdr).toEqual({
+      gate: 'PDR',
+      total: pdr?.total,
+      covered: (pdr?.total ?? 0) - 3,
+      missing: ['AF-01', 'AF-02', 'AF-03'],
+    });
     const currentGate = step.phaseReadiness
       .find((p) => p.covered < p.total);
-    expect(['CDR', 'TRR']).toContain(currentGate?.gate);
-    expect(step.phase).not.toBe('handoff'); // s.o. — CDR/TRR bleiben unter dieser Pipeline offen
+    expect(currentGate?.gate).toBe('PDR');
+    expect(step.phase).not.toBe('handoff'); // s.o. — PDR/CDR/TRR bleiben unter dieser Pipeline offen
     expect(step.done).toBe(false);
   });
 
