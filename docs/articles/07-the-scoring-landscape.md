@@ -79,7 +79,10 @@ ways, for three different questions — none of these blocks anything either, th
 ## What a review gate will check — three kinds of leg
 
 *(Design in progress — the review-gate mechanics are being moved from the viewer into the shared
-rule set; this section describes where that lands, not what ships today.)*
+rule set; this section describes where that lands, not what ships today. The rule legs and
+layer-presence legs below are live (CR-SM-226). The analysis-freshness legs' gate assignment was
+decided in CR-SM-227's Familie-Review (2026-08-05) but not yet implemented — the diagram below
+reflects that decision, not a running check.)*
 
 A review gate (SRR, PDR, CDR, TRR) answers "may we move to the next stage?" — and it turns out that
 question needs three different kinds of check, because each catches a failure the others are blind to:
@@ -91,9 +94,9 @@ question needs three different kinds of check, because each catches a failure th
 2. **Layer-presence legs** — a per-element rule cannot fire on an element that doesn't exist. A graph
    with *zero* data flows passes every flow rule vacuously, and on a real project that exact hole let
    a graph score 0.86 on functional architecture while its entire flow layer was missing. So a gate
-   also asks the one question no per-element rule can: *is the layer there at all* — once functions
-   exist, the design review demands at least one flow; once flows exist, it demands their data
-   contracts.
+   also asks the one question no per-element rule can: *is the layer there at all* — once more than
+   one function exists, the design review demands both a flow between them and its data contract in
+   the same check (R-28), not two staged questions across two reviews.
 3. **Analysis-freshness legs** — the newest kind, and the reason this section exists. A semantic
    review of four technically-clean generated graphs found content errors no rule can see: an export
    requirement inventing formats its own use case contradicts, an error message modeled as a use
