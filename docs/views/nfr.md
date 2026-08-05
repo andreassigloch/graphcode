@@ -4,10 +4,11 @@
 
 # graphcode — Non-Functional Requirements
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ mit kinds ∋ "non-functional". 33 NFR. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ mit kinds ∋ "non-functional". 34 NFR. Deterministisch generiert.
 
 | NFR | Budget / constraint | Verified |
 |---|---|---|
+| `REQ-advisory-roundtrip-latency` | Bindende NFR: die volle Runde read->status->propose->apply (FCHAIN-advisory-roundtrip) antwortet < 0,2s bei aktueller Graphgroesse, ohne LLM-Anteil -- deterministische Rechenkosten getrennt von Modell-Inferenzzeit. Ergaenzt REQ-responsiveness (die nur Draft-Apply + betroffenen Subgraph deckt): hier zaehlt die GANZE Runde inkl. status (evaluateRules, ganzer Graph) und propose (graph_suggest Best-of-N-Ranking), beides nicht subgraph-beschraenkt. SPIKE-GC-advisory-roundtrip-latency.md mass 363ms (Ziel verfehlt); CR-SM-228 (se-optimizer) behebt zwei redundante Vollgraph-Operationen im Probe-Loop, verifiziert 123ms -- unter dem Ziel, aber noch nicht in diesem Repo live (Publish von se-optimizer 0.3.2 blockiert durch einen unabhaengigen CR-SM-227-Gap). Skaliert nicht linear (5x Graph -> noch ueber dem Ziel trotz Fix) -- bewusste Grenze, kein Vorwand. | ✓ |
 | `REQ-buildable-standalone` | CR-GC-100 Task 0 / SPEC §8 D5 (Blocker): workspace:*-Deps auflösen (versionierte/file-Deps), npm install + tsc --noEmit grün — vor jedem Code. | ✓ |
 | `REQ-cache-layering` | Nur Onto+Rules stabil cachen, nie mit Live-Graph; Prefix-Hygiene. (R8/R14) | ✓ |
 | `REQ-completeness-single-value` | Das Readiness-Dashboard zeigt EINEN aggregierten Completeness-Wert pro Gate; die Per-Leg-Aufschluesselung (welches Bein, welche Source-Elemente unvollstaendig) erscheint on-click als Drill-down. Ruhiger Wert im Panel, Details on-demand. (CR-GC-250) | ✓ |

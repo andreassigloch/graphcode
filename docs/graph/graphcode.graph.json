@@ -1828,6 +1828,17 @@
       "status": "draft"
     },
     {
+      "id": "REQ-advisory-roundtrip-latency",
+      "type": "REQ",
+      "name": "Advisory-Roundtrip < 200ms (ohne LLM)",
+      "description": "Bindende NFR: die volle Runde read->status->propose->apply (FCHAIN-advisory-roundtrip) antwortet < 0,2s bei aktueller Graphgroesse, ohne LLM-Anteil -- deterministische Rechenkosten getrennt von Modell-Inferenzzeit. Ergaenzt REQ-responsiveness (die nur Draft-Apply + betroffenen Subgraph deckt): hier zaehlt die GANZE Runde inkl. status (evaluateRules, ganzer Graph) und propose (graph_suggest Best-of-N-Ranking), beides nicht subgraph-beschraenkt. SPIKE-GC-advisory-roundtrip-latency.md mass 363ms (Ziel verfehlt); CR-SM-228 (se-optimizer) behebt zwei redundante Vollgraph-Operationen im Probe-Loop, verifiziert 123ms -- unter dem Ziel, aber noch nicht in diesem Repo live (Publish von se-optimizer 0.3.2 blockiert durch einen unabhaengigen CR-SM-227-Gap). Skaliert nicht linear (5x Graph -> noch ueber dem Ziel trotz Fix) -- bewusste Grenze, kein Vorwand.",
+      "status": "open",
+      "created_at": "2026-08-05T00:00:00.000Z",
+      "kinds": [
+        "non-functional"
+      ]
+    },
+    {
       "id": "REQ-agent-agnostic",
       "type": "REQ",
       "name": "Agent-agnostische MCP-Surface",
@@ -3099,6 +3110,24 @@
       "description": "Headless Claude-Code-Sidecar-Governance-Harness: Store + Apply-Gate + Hooks + Learning-Emission, eine Instanz pro Repo. Carve-Out aus aimprove. (README, SPEC §0)",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "id": "TEST-advisory-roundtrip-latency",
+      "type": "TEST",
+      "name": "Advisory-Roundtrip-Latency-Test",
+      "description": "read+status+propose+apply Median < 200ms bei aktueller Graphgroesse (382 Knoten), gemessen in-process gegen echten Disk-Kuzu, kein Mock. Aktuell (2026-08-05) noch generous Sanity-Decken statt harter 200ms-Assertion -- verschaerfen, sobald se-optimizer 0.3.2 publiziert und hier gebumpt ist (CR-SM-228 macht den Fix real, aber dieses Repo zieht ihn noch nicht). (REQ-advisory-roundtrip-latency)",
+      "status": "open",
+      "created_at": "2026-08-05T00:00:00.000Z",
+      "method": "test",
+      "concept": true,
+      "level": "performance",
+      "tool": "benchmark",
+      "constraint": "<200ms full round at current graph size, no LLM -- pending se-optimizer publish (CR-SM-228)",
+      "testRef": {
+        "file": "tests/perf.advisory-roundtrip.spike.test.ts",
+        "tool": "vitest",
+        "level": "performance"
+      }
     },
     {
       "id": "TEST-agent-agnostic",
@@ -5806,6 +5835,11 @@
       "type": "compose"
     },
     {
+      "source": "FCHAIN-advisory-roundtrip",
+      "target": "REQ-advisory-roundtrip-latency",
+      "type": "satisfy"
+    },
+    {
       "source": "FCHAIN-agent-query",
       "target": "FUNC-graph-expand",
       "type": "compose",
@@ -8107,6 +8141,11 @@
       "source": "SYS-graphcode",
       "target": "REQ-structure-driven",
       "type": "satisfy"
+    },
+    {
+      "source": "TEST-advisory-roundtrip-latency",
+      "target": "REQ-advisory-roundtrip-latency",
+      "type": "verify"
     },
     {
       "source": "TEST-agent-agnostic",

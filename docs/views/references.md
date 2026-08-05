@@ -292,6 +292,7 @@
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-suggest` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-mutate` |
+| `FCHAIN-advisory-roundtrip` | satisfy | `REQ-advisory-roundtrip-latency` |
 | `FCHAIN-agent-query` | compose | `FUNC-graph-expand` |
 | `FCHAIN-agent-query` | compose | `FUNC-graph-impact` |
 | `FCHAIN-agent-query` | satisfy | `REQ-post-agent-query` |
@@ -636,6 +637,7 @@
 | `SYS-graphcode` | satisfy | `REQ-graceful-degradation` |
 | `SYS-graphcode` | satisfy | `REQ-greenfield-systemtest-dod` |
 | `SYS-graphcode` | satisfy | `REQ-structure-driven` |
+| `TEST-advisory-roundtrip-latency` | verify | `REQ-advisory-roundtrip-latency` |
 | `TEST-agent-agnostic` | verify | `REQ-agent-agnostic` |
 | `TEST-artifact-freshness` | verify | `REQ-artifact-freshness` |
 | `TEST-batch-seed` | verify | `REQ-batch-seed-performance` |
