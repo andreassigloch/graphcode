@@ -289,6 +289,8 @@
 | `CR-GC-273` | relation | `FUNC-serve-stdio` |
 | `CR-GC-273` | relation | `REQ-mcp-tool-registry` |
 | `CR-GC-302` | relation | `FUNC-import` |
+| `CR-GC-303` | relation | `FUNC-evaluate-rules` |
+| `CR-GC-303` | relation | `FUNC-graph-suggest` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-suggest` |

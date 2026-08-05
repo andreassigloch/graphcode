@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 95 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 96 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 95 CR · 88 done · 6 open.
+Total: 96 CR · 88 done · 7 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -142,3 +142,4 @@ Total: 95 CR · 88 done · 6 open.
 | `CR-GC-272` | done | readiness + panels nach graphcode-client |
 | `CR-GC-273` | done | graph_suggest: se-optimizer-Binding mit dryRun-Verdict |
 | `CR-GC-302` | open | Auto-SYS-Node bei jedem Import |
+| `CR-GC-303` | open | Attribut-Abflachung macht Steering-Pfad regelblind |
