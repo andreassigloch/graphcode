@@ -37,7 +37,9 @@ Design-Punkt ("Zielprofil als Runde-1-Input — beeinflusst den Plan"). Dieser C
    Nicht blockierend — ein leeres Profil ist weiterhin gültig (Gleichgewichtung, CR-289-Verhalten).
 2. **Config-Datei:** `.graphcode/target-profile.json`, Zod-validiert (`weight = z.number().min(-1).max(1)`,
    identisch zu `suggest.ts:30`) — außerhalb des Graph-SSOT (kein `mutate()`-Zwang; das Profil ist
-   Steuer-Config wie `ExecutorConfig`/`.mcp.json`, kein Graph-Content). `graph_suggest` liest sie als
+   Steuer-Config wie `ExecutorConfig`/`.mcp.json`, kein Graph-Content). **Committet** — `.graphcode/`
+   ist gitignored, deshalb `!.graphcode/target-profile.json`-Ausnahme in `.gitignore` (Entscheidung
+   2026-08-05: Projekt-Config, nicht Maschinen-Config; überlebt Clone, team-geteilt). `graph_suggest` liest sie als
    Default, wenn `target` im Input fehlt; der handoff-Prompt in `generate.ts` verweist auf die Config
    statt das Modell ein Profil frei erfinden zu lassen.
 3. **Konflikt-Check, EIN Pfad:** der Loader selbst prüft bei **jedem Read** (nicht nur beim Schreiben)
@@ -45,7 +47,8 @@ Design-Punkt ("Zielprofil als Runde-1-Input — beeinflusst den Plan"). Dieser C
    `conflicts`-Warnung zurück — **Warning, kein Block** (Analogie R-19/R-20: Bindungs-Vollständigkeit
    ist auch Warning, kein Gate-Error). Dadurch läuft ein manueller Datei-Edit durch denselben Check
    wie ein Skill-Schreibzugriff — kein zweiter, separat gepflegter Validierungspfad.
-4. **Skill `se:target-profile`** (`.claude/commands/se-target-profile.md`, Pendant zu `se-trade`):
+4. **Skill `se:target-profile`** (`.claude/commands/se/target-profile.md` — der `se:`-Namespace
+   liegt im `se/`-Unterverzeichnis, wie `se:author-uc`; inhaltlich Pendant zu `se-trade`):
    führt den Menschen durch die 6 Dimensionen, schreibt die Config über denselben validierten Loader,
    macht eine Konflikt-Warnung sichtbar statt sie stillschweigend zu schlucken.
 
@@ -69,7 +72,13 @@ wo er im Graphen adressiert ist (Namens-/Beschreibungs-Match über UC/REQ/FUNC �
 deterministisch, dieselbe Normalisierung wie der ND-Preflight-Hint aus
 CR-GC-287). Sichtbar in `graph_readiness` und als Zeile im generate-Prompt
 („unadressierte Anker: …") — damit steuert die Intention jede Runde, nicht nur
-Runde 1. Optional (Folgearbeit, nicht hier): Anker-Abdeckung als Judge-Stufe im
+Runde 1.
+
+**Anker-Timing (Entscheidung 2026-08-05):** Der Runde-1-Zweig ohne SYS/Intention
+kennt noch keine Intention — der Anker-Default entsteht deshalb beim
+**Seed-Call mit Intention** (`generate.ts`, Zweig mit `effectiveIntent`): Anker
+deterministisch extrahieren, im Prompt zur Bestätigung anbieten, dann in die
+Config schreiben. Optional (Folgearbeit, nicht hier): Anker-Abdeckung als Judge-Stufe im
 Best-of-N. Erfundene Inhalte (XML/CSV-Klasse) fängt der Read-out nur indirekt —
 das bleibt Sache der Analyse-Ebene (se-irr, s. CR-GC-294-Spike).
 
@@ -103,23 +112,37 @@ das bleibt Sache der Analyse-Ebene (se-irr, s. CR-GC-294-Spike).
   (leeres target), wenn die Datei fehlt — Regression-AC gegen bestehende Aufrufer.
 - `npm run build` + Tests grün.
 
-## Dateien (≤6)
+## Dateien (7 — bewusste Ausnahme vom 6er-Limit, Entscheidung 2026-08-05)
 
 1. `docs/cr/open/CR-GC-295-zielprofil-runde1-config.md` (dieses Dokument)
-2. `src/target-profile.ts` (Schema, Loader, Konflikt-Check)
-3. `src/generate.ts` (Runde-1-Frage; handoff liest Config statt Modell-Erfindung)
+2. `src/target-profile.ts` (Schema inkl. `intentAnchors`, Loader, Konflikt-Check, Anker-Extraktion)
+3. `src/generate.ts` (Runde-1-Frage; Anker-Bestätigung im Seed-Call mit Intention;
+   handoff liest Config statt Modell-Erfindung; Coverage-Zeile im Prompt)
 4. `src/tools/suggest.ts` (`graph_suggest`: Default aus Config, wenn `target` fehlt)
-5. `.claude/commands/se-target-profile.md` (Skill)
-6. `tests/target-profile.test.ts`
+5. `src/tools/report.ts` (`graph_readiness`: Intent-Coverage-Read-out)
+6. `.claude/commands/se/target-profile.md` (Skill — `se:`-Namespace-Verzeichnis, s. Ziel 4)
+7. `tests/target-profile.test.ts`
+
+Dazu 1 Zeile `.gitignore` (`!.graphcode/target-profile.json`), nicht als Datei gezählt.
 
 ## Akzeptanzkriterien
 
-- [ ] Runde-1-Prompt fragt optional nach dem Zielprofil, bleibt ohne Antwort gültig (Gleichgewichtung)
-- [ ] `.graphcode/target-profile.json` Zod-validiert, Gewichte `[-1,1]` je der 6 `MetricVector`-Dimensionen
-- [ ] `graph_suggest` nutzt die Config als Default, wenn `target` im Input fehlt; unverändert ohne Config
-- [ ] Konflikt-Check läuft bei jedem Load (Skill-Schreibzugriff UND manueller Datei-Edit identisch),
+- [x] Runde-1-Prompt fragt optional nach dem Zielprofil, bleibt ohne Antwort gültig (Gleichgewichtung)
+- [x] `.graphcode/target-profile.json` Zod-validiert, Gewichte `[-1,1]` je der 6 `MetricVector`-Dimensionen
+- [x] `graph_suggest` nutzt die Config als Default, wenn `target` im Input fehlt; unverändert ohne Config
+- [x] Konflikt-Check läuft bei jedem Load (Skill-Schreibzugriff UND manueller Datei-Edit identisch),
       liefert Warnung, blockiert nicht
-- [ ] Mindestens die zwei formelmäßig hergeleiteten Konfliktpaare erkannt (modifiability/coherence ↔
+- [x] Mindestens die zwei formelmäßig hergeleiteten Konfliktpaare erkannt (modifiability/coherence ↔
       flowEfficiency; coherence/modifiability ↔ scalability)
-- [ ] Skill `se:target-profile` angelegt, führt durch die 6 Dimensionen, macht Konflikte sichtbar
-- [ ] `npm run build` + Tests grün, N=1/`generationStep`-Determinismus für Graphen ohne Profil unverändert
+- [x] Skill `se:target-profile` angelegt, führt durch die 6 Dimensionen, macht Konflikte sichtbar
+- [x] `intentAnchors` in der Config Zod-validiert (3–7 Strings); Default deterministisch aus der
+      Intention extrahiert (Normalisierung wie CR-GC-287: `tokens()` aus nd-similarity), Bestätigung
+      im Seed-Call mit Intention
+- [x] Intent-Coverage-Read-out je Anker in `graph_readiness` (`intentCoverage`, null ohne Config) +
+      „Unadressierte Intentions-Anker"-Zeile im generate-Prompt (expand + handoff) — KPI, nie ein
+      Gate-Blocker
+- [x] `.graphcode/target-profile.json` via `.gitignore`-Ausnahme committbar (Muster `.graphcode/*`
+      plus Negation — mit dem alten `.graphcode/`-Verzeichnismuster wäre kein Re-Include möglich;
+      `git check-ignore` verifiziert)
+- [x] `npm run build` + Tests grün (71 Dateien / 467 Tests, volle Suite), N=1/`generationStep`-
+      Determinismus für Graphen ohne Profil unverändert (Regression-Test in generate.test.ts)

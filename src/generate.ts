@@ -20,6 +20,7 @@ import type { Graph } from '@sigloch/graph-api-core';
 import { RULE_TO_DIMENSION } from '@sigloch/contracts/se';
 import { takeSteeringSnapshot } from './steering-snapshot.js';
 import { computePhaseReadiness, currentPhaseGate, type PhaseGateReadiness } from './readiness.js';
+import { extractIntentAnchors, intentCoverage, type LoadedTargetProfile } from './target-profile.js';
 
 export interface GenerationStep {
   /** seed = leerer Graph; expand = Deficit-getriebene Verdichtung; handoff = Schwelle erreicht. */
@@ -133,6 +134,7 @@ export function generationStep(
   threshold = 0.8,
   defer: string[] = [],
   selection: GenerationSelection = 'host',
+  profile: LoadedTargetProfile | null = null,
 ): GenerationStep {
   const gateProtocol = GATE_PROTOCOL[selection];
   // Steering-Snapshot (CR-GC-289): og + ND-Injektion + Full-Katalog-Eval +
@@ -151,12 +153,21 @@ export function generationStep(
   // --- Phase seed: noch kein System im Graphen -----------------------------
   if (!sys) {
     if (!effectiveIntent) {
+      // Runde-1-Frage (CR-GC-295): das Zielprofil beim Menschen erfragen, nicht
+      // das Modell beim Handoff raten lassen. Optional, nie blockierend — ein
+      // fehlendes Profil ist gültig (Gleichgewichtung, CR-289-Verhalten).
+      const profileAsk = profile
+        ? ''
+        : ' Frage optional auch das ℝ⁶-Zielprofil ab (Gewicht je Metrik-Dimension in [-1,1], Default ' +
+          'unentschieden = alle 0) und persistiere es über den Skill se:target-profile nach ' +
+          '.graphcode/target-profile.json — ohne Profil bleibt die spätere Optimierung ungerichtet (gültig).';
       return {
         phase: 'seed',
         done: false,
         prompt:
           'Es gibt noch kein SYS-Element und keine Intention. Erfrage die Systemintention als 1 Absatz ' +
-          'Prosa (was soll das System für wen leisten?) und rufe graph_generate erneut mit {intent} auf.',
+          'Prosa (was soll das System für wen leisten?) und rufe graph_generate erneut mit {intent} auf.' +
+          profileAsk,
         readiness,
         threshold,
         blockingErrors,
@@ -165,11 +176,23 @@ export function generationStep(
         focusTypes: [],
       };
     }
+    // Anker-Default (CR-GC-295): erst HIER existiert eine Intention — die
+    // Runde-1-Frage ohne Intention kann noch nichts extrahieren.
+    const anchorNote = (() => {
+      if (profile?.profile.intentAnchors?.length) return '';
+      const defaults = extractIntentAnchors(effectiveIntent);
+      return defaults.length > 0
+        ? `Intentions-Anker (Default, aus der Intention extrahiert): ${defaults.join(', ')} — vom Menschen ` +
+            'bestätigen/korrigieren lassen und über den Skill se:target-profile in .graphcode/target-profile.json ' +
+            'persistieren (Feld intentAnchors). '
+        : '';
+    })();
     const seedBase =
       `Kaltstart aus der Intention: "${effectiveIntent}" — ` +
       'Schlage EINEN Seed-Batch vor: 1 SYS-Wurzel (description = die Intention wörtlich), ' +
       '1–3 ACTORs (wer nutzt/betreibt das System) und 3–7 UCs (je Actor–Verb–Objekt–Ergebnis, ≤25 Wörter, ' +
-      'ACTOR io→UC, SYS compose UC). Keine FUNC/MOD-Ebene im Seed — Struktur folgt readiness-getrieben. ';
+      'ACTOR io→UC, SYS compose UC). Keine FUNC/MOD-Ebene im Seed — Struktur folgt readiness-getrieben. ' +
+      anchorNote;
     return {
       phase: 'seed',
       done: false,
@@ -183,6 +206,20 @@ export function generationStep(
     };
   }
 
+  // Intent-Coverage-Zeile (CR-GC-295): unadressierte Anker steuern JEDE Runde,
+  // nicht nur Runde 1 — KPI/Read-out, nie ein Gate-Blocker oder Handoff-Veto.
+  const anchors = profile?.profile.intentAnchors ?? [];
+  const unaddressed =
+    anchors.length > 0
+      ? intentCoverage(anchors, og.elements)
+          .filter((c) => !c.addressed)
+          .map((c) => c.anchor)
+      : [];
+  const coverageLine =
+    unaddressed.length > 0
+      ? `Unadressierte Intentions-Anker: ${unaddressed.join(', ')} — in passenden UC/REQ/FUNC adressieren. `
+      : '';
+
   // --- Phase handoff: Schwelle erreicht, keine Gate-Blocker, aktuelles ------
   // Phase-Gate vollständig (CR-GC-296) — sonst kann "Struktur trägt" melden,
   // während PDR/SRR/... noch Regel-Funde offen hat, die die Dimension-Score-
@@ -190,14 +227,24 @@ export function generationStep(
   // null FLOWs — R-10 blieb unter der Schwelle unsichtbar).
   const belowThreshold = readiness.filter((r) => r.score < threshold);
   if (belowThreshold.length === 0 && blockingErrors === 0 && openGate === null) {
+    // CR-GC-295: das Zielprofil kommt aus der Config (Mensch entscheidet in
+    // Runde 1), nicht mehr als Erfindungs-Auftrag ans Modell.
+    const weights = profile?.profile.weights ?? {};
+    const hasWeights = Object.values(weights).some((w) => typeof w === 'number' && w !== 0);
+    const targetInstruction = hasWeights
+      ? `Zielprofil aus .graphcode/target-profile.json: rufe graph_suggest {target: ${JSON.stringify(weights)}} auf. ` +
+        (profile && profile.conflicts.length > 0 ? profile.conflicts.join(' ') + ' ' : '')
+      : 'Kein Zielprofil konfiguriert — erhebe es beim Menschen über den Skill se:target-profile ' +
+        '(.graphcode/target-profile.json) und rufe dann graph_suggest {target} auf. ';
     return {
       phase: 'handoff',
       done: true,
       prompt:
         `Die Struktur trägt (alle Readiness-Dimensionen ≥ ${threshold}, keine error-Violations, ` +
         'alle Phase-Gates SRR/PDR/CDR/TRR regel-vollständig). ' +
-        'Handoff auf die ℝ⁶-Optimierung: wähle ein Zielprofil (Gewichte je Dimension, z.B. ' +
-        '{"scalability":1} oder {"coherence":1,"modifiability":0.5}) und rufe graph_suggest {target} auf. ' +
+        'Handoff auf die ℝ⁶-Optimierung: ' +
+        targetInstruction +
+        coverageLine +
         'Arbeite die Funde ab (Fix-Template-Edits über graph_mutate, Fund-only-Suggestions manuell); ' +
         'das fitAdvisory jeder Mutation zeigt, ob Δm in Zielrichtung läuft. Die Metrik rankt, das Gate urteilt.',
       readiness,
@@ -282,12 +329,12 @@ export function generationStep(
     phase: 'expand',
     done: false,
     prompt: focus
-      ? `Intention: "${effectiveIntent}". ${deferNote}Schwächste Dimension: ${focus.dimension}. ` +
+      ? `Intention: "${effectiveIntent}". ${coverageLine}${deferNote}Schwächste Dimension: ${focus.dimension}. ` +
         `Funde: ${funde}. ${template} ${gateProtocol}`
       : belowThreshold.length > 0
-        ? `Intention: "${effectiveIntent}". Unter Schwelle: ${belowThreshold.map((r) => r.dimension).join(', ')} — ` +
+        ? `Intention: "${effectiveIntent}". ${coverageLine}Unter Schwelle: ${belowThreshold.map((r) => r.dimension).join(', ')} — ` +
           `aber keine regelbaren Funde; prüfe fehlende Elemente der Dimensionen manuell. ${gateProtocol}`
-        : `Intention: "${effectiveIntent}". Alle Dimensionen ≥ Schwelle, aber Phase-Gate ${openGate} ist noch ` +
+        : `Intention: "${effectiveIntent}". ${coverageLine}Alle Dimensionen ≥ Schwelle, aber Phase-Gate ${openGate} ist noch ` +
           'nicht regel-vollständig (RULE_TO_PHASE) — aber keine regelbaren Funde; prüfe fehlende Elemente ' +
           `manuell. ${gateProtocol}`,
     readiness,

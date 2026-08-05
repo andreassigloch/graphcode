@@ -25,6 +25,7 @@ import {
   type PhaseGateReadiness,
 } from '../readiness.js';
 import { scoreReadinessWithConformance, conformanceViolations } from '../conformance.js';
+import { loadTargetProfile, intentCoverage, type AnchorCoverage } from '../target-profile.js';
 import { helpEntry, contextualHelp, type HelpEntry, type ContextualMeasure } from '../viewer/help.js';
 import { nextStep } from '../steering.js';
 import type { NextStepResult } from '../steering.js';
@@ -173,7 +174,14 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
 
   const graph_readiness: MCPTool<
     z.infer<typeof GraphReadinessInputSchema>,
-    ReadinessReport & { [PHASE_READINESS_NAME]: PhaseGateReadiness[]; graphVersion: number }
+    ReadinessReport & {
+      [PHASE_READINESS_NAME]: PhaseGateReadiness[];
+      graphVersion: number;
+      /** Intent-Coverage-Read-out (CR-GC-295): je bestätigtem Anker, ob/wo er in
+       * UC/REQ/FUNC adressiert ist. KPI, NIE ein Gate-Blocker — Abdeckung sagt
+       * "adressiert", nicht "gut gelöst". null ohne Config/intentAnchors. */
+      intentCoverage: AnchorCoverage[] | null;
+    }
   > = {
     name: 'graph_readiness',
     description:
@@ -185,7 +193,9 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
       `error-clean); ${PHASE_READINESS_NAME} (CR-GC-296) — the SAME SRR/PDR/CDR/TRR gates from the OTHER ` +
       'axis: per-gate rule coverage (covered/total distinct rule IDs from RULE_TO_PHASE with zero open ' +
       'violations, any severity, + the missing rule IDs) — orthogonal to phaseGates\' element-completeness; ' +
-      'violationsByRule (keyed by contracts rule-ID — R-/RD-/MS-, never BQ-*); and computedAt. By DEFAULT ' +
+      'violationsByRule (keyed by contracts rule-ID — R-/RD-/MS-, never BQ-*); intentCoverage ' +
+      '(CR-GC-295: per confirmed intent anchor from .graphcode/target-profile.json, whether/where it is ' +
+      'addressed in UC/REQ/FUNC — a KPI, never a gate blocker; null without config); and computedAt. By DEFAULT ' +
       'returns a summary (no raw violations, no per-gate blocking/open lists) so it stays within the MCP ' +
       `result limit even on a fully-red graph; pass detail:true for the full lists (${PHASE_READINESS_NAME} ` +
       'stays in both — it is already a small aggregate). Read-only; derived from harness.evaluateRules() ' +
@@ -195,10 +205,21 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
     async handler(input) {
       const report = scoreReadinessWithConformance(harness);
       const phaseReadiness = computePhaseReadiness(report.violations);
+      // Intent-Coverage (CR-GC-295): nur wenn die Config bestätigte Anker trägt;
+      // der Loader prüft dabei auch die Zielkonflikt-Paare (Warning, kein Block).
+      const anchors = loadTargetProfile(harness.getRepoRoot())?.profile.intentAnchors ?? [];
+      const coverage =
+        anchors.length > 0
+          ? intentCoverage(
+              anchors,
+              harness.getGraph().nodes.map((n) => ({ id: n.uid, type: n.type, name: n.name, description: n.description })),
+            )
+          : null;
       return {
         ...(input.detail ? report : summarizeReadiness(report)),
         [PHASE_READINESS_NAME]: phaseReadiness,
         graphVersion: graphVersion(),
+        intentCoverage: coverage,
       };
     },
   };

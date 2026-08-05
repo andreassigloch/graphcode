@@ -420,6 +420,62 @@ describe('DIMENSION_FOCUS_TYPES / GenerationStep.focusTypes (CR-GC-285)', () => 
 // nach negativer Validierung (v13b: 22 vs. 82 Elemente) wieder ENTFERNT —
 // der Executor fährt das volle Rendering; siehe docs/cr/done/CR-GC-282.
 
+describe('Zielprofil + Intentions-Anker im Prompt (CR-GC-295)', () => {
+  const withProfile = (weights = {}, intentAnchors?: string[]) => ({
+    profile: { weights, ...(intentAnchors ? { intentAnchors } : {}) },
+    conflicts: [],
+  });
+
+  it('Runde-1-Prompt (kein SYS, keine Intention) fragt optional nach dem Zielprofil', () => {
+    const step = generationStep(EMPTY);
+    expect(step.prompt).toContain('Zielprofil');
+    expect(step.prompt).toContain('se:target-profile');
+    expect(step.prompt).toContain('[-1,1]');
+    // Nicht blockierend: die Intentions-Frage bleibt der Hauptauftrag.
+    expect(step.prompt).toContain('Systemintention');
+  });
+
+  it('mit vorhandenem Profil entfällt die Runde-1-Zielprofil-Frage', () => {
+    const step = generationStep(EMPTY, undefined, 0.8, [], 'host', withProfile({ coherence: 1 }));
+    expect(step.prompt).not.toContain('Zielprofil');
+  });
+
+  it('Seed MIT Intention: Default-Anker aus der Intention, zur Bestätigung (Anker-Timing-Entscheidung)', () => {
+    const step = generationStep(EMPTY, INTENT);
+    expect(step.prompt).toContain('Intentions-Anker');
+    expect(step.prompt).toContain('bestellsystem'); // deterministisch extrahiert
+    expect(step.prompt).toContain('se:target-profile');
+    // Bestätigte Anker in der Config → kein Default-Vorschlag mehr.
+    const confirmed = generationStep(EMPTY, INTENT, 0.8, [], 'host', withProfile({}, ['a', 'b', 'c']));
+    expect(confirmed.prompt).not.toContain('Intentions-Anker (Default');
+  });
+
+  it('expand trägt die Unadressierte-Anker-Zeile — nur für Anker ohne UC/REQ/FUNC-Match', () => {
+    const graph = g(
+      [node('SYS-shop', 'SYS', 'shop', INTENT), node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt Teil.')],
+      [edge('SYS-shop', 'UC-bestellen', 'compose')],
+    );
+    const profile = withProfile({}, ['bestellen', 'zauberdrache', 'teil']);
+    const step = generationStep(graph, undefined, 0.8, [], 'host', profile);
+    expect(step.phase).toBe('expand');
+    expect(step.prompt).toContain('Unadressierte Intentions-Anker: zauberdrache');
+    // 'bestellen'/'teil' sind über UC-Name/Beschreibung adressiert — nicht gelistet.
+    expect(step.prompt).not.toMatch(/Unadressierte Intentions-Anker:[^.]*bestellen/);
+    // Deterministisch auch mit Profil.
+    expect(generationStep(graph, undefined, 0.8, [], 'host', profile)).toEqual(step);
+  });
+
+  it('ohne Profil: expand-Prompt unverändert ohne Anker-Zeile (N=1-Determinismus, Regression)', () => {
+    const graph = g(
+      [node('SYS-shop', 'SYS', 'shop', INTENT), node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt Teil.')],
+      [edge('SYS-shop', 'UC-bestellen', 'compose')],
+    );
+    const step = generationStep(graph, undefined, 0.8);
+    expect(step.prompt).not.toContain('Intentions-Anker');
+    expect(generationStep(graph, undefined, 0.8)).toEqual(step);
+  });
+});
+
 describe('GATE_PROTOCOL-Selektion (CR-GC-288)', () => {
   const expandGraph = g(
     [node('SYS-shop', 'SYS', 'shop', INTENT), node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt Teil.')],

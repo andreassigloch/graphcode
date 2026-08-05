@@ -20,6 +20,7 @@ import type { MutateResult } from '@sigloch/contracts/harness';
 import { targetFor, suggestEdits, type Suggestion } from '@sigloch/se-optimizer';
 import { exportGraphJson } from '../exporter.js';
 import { generationStep, type GenerationStep } from '../generate.js';
+import { TargetWeightsSchema, loadTargetProfile } from '../target-profile.js';
 import type { MCPTool, MCPToolRegistry } from '../mcp-tools.js';
 import type { ToolContext } from '../tool-context.js';
 
@@ -27,22 +28,14 @@ import type { ToolContext } from '../tool-context.js';
 // Input schema
 // -------------------------------------------------------------------------
 
-const weight = z.number().min(-1).max(1);
-
 const GraphSuggestInputSchema = z.object({
-  target: z
-    .object({
-      modifiability: weight.optional(),
-      faultTolerance: weight.optional(),
-      flowEfficiency: weight.optional(),
-      coherence: weight.optional(),
-      viability: weight.optional(),
-      scalability: weight.optional(),
-    })
-    .describe(
-      'Zielrichtung im Metrikraum: Gewicht je Dimension in [-1,1] (>0 heben, <0 senken; ' +
-        'fehlend = 0). Beispiel {"scalability": 1} = "raise scalability".',
-    ),
+  // Gewichts-Form = target-profile.ts (CR-GC-295) — EIN Schema für Input und Config.
+  target: TargetWeightsSchema.optional().describe(
+    'Zielrichtung im Metrikraum: Gewicht je Dimension in [-1,1] (>0 heben, <0 senken; ' +
+      'fehlend = 0). Beispiel {"scalability": 1} = "raise scalability". Ohne Angabe wird ' +
+      '.graphcode/target-profile.json als Default gelesen (CR-GC-295); fehlt auch die, ' +
+      'bleibt das Ziel leer (richtungslos).',
+  ),
   k: z.number().int().positive().max(20).default(5).describe('Top-k Suggestions (Default 5).'),
   layer: z
     .enum(['all', 'arch'])
@@ -86,7 +79,10 @@ export function bindSuggestTools(ctx: ToolContext): MCPToolRegistry {
     inputSchema: GraphSuggestInputSchema,
     async handler(input) {
       const og = JSON.parse(exportGraphJson(harness.getGraph())) as OntologyGraph;
-      const target = targetFor(input.target);
+      // Default aus der Config NUR wenn target im Input fehlt (CR-GC-295);
+      // fehlt auch die Datei, bleibt das Ziel leer — Verhalten wie vor dem CR.
+      const weights = input.target ?? loadTargetProfile(harness.getRepoRoot())?.profile.weights ?? {};
+      const target = targetFor(weights);
       const suggestions = suggestEdits(og, target, { k: input.k, layer: input.layer });
 
       // dryRun-Preview der Template-Edits auf der Schreibkette (kein Interleaving
@@ -163,7 +159,10 @@ export function bindSuggestTools(ctx: ToolContext): MCPToolRegistry {
       'Festgefahrene Fund-Sets lassen sich per {defer:[focusKey,…]} zurückstellen (Fund-Rotation).',
     inputSchema: GraphGenerateInputSchema,
     async handler(input) {
-      return generationStep(harness.getGraph(), input.intent, input.threshold, input.defer, input.selection);
+      // Profil bei jedem Schritt frisch laden (CR-GC-295) — der Loader ist der
+      // EINE Check-Pfad, ein Hand-Edit der Config wirkt ab der nächsten Runde.
+      const profile = loadTargetProfile(harness.getRepoRoot());
+      return generationStep(harness.getGraph(), input.intent, input.threshold, input.defer, input.selection, profile);
     },
   };
 

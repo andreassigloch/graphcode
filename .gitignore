@@ -1,7 +1,13 @@
 node_modules/
 dist/
 *.tsbuildinfo
-.graphcode/
+# .graphcode/ is the local workspace (kuzu store, lock, host.sock, EXPORT_PENDING) —
+# except target-profile.json (CR-GC-295): project config like .mcp.json, committed.
+# `/*` instead of a bare trailing `/` because git cannot re-include below an excluded
+# directory; `**/` because a pattern with an inner slash would anchor to the repo root
+# and un-ignore nested .graphcode dirs (e.g. rig/*/.graphcode).
+**/.graphcode/*
+!**/.graphcode/target-profile.json
 .DS_Store
 
 # local artifacts (predecessor data dir, vector db, scratch data)
