@@ -288,6 +288,7 @@
 | `CR-GC-272` | relation | `REQ-self-contained-dist` |
 | `CR-GC-273` | relation | `FUNC-serve-stdio` |
 | `CR-GC-273` | relation | `REQ-mcp-tool-registry` |
+| `CR-GC-302` | relation | `FUNC-import` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-suggest` |

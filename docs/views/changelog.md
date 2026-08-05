@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 94 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 95 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 94 CR · 88 done · 5 open.
+Total: 95 CR · 88 done · 6 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -141,3 +141,4 @@ Total: 94 CR · 88 done · 5 open.
 | `CR-GC-271` | done | SCHEMA-Bindung: zodDefinition raus, realRef-Stub materialisieren |
 | `CR-GC-272` | done | readiness + panels nach graphcode-client |
 | `CR-GC-273` | done | graph_suggest: se-optimizer-Binding mit dryRun-Verdict |
+| `CR-GC-302` | open | Auto-SYS-Node bei jedem Import |
