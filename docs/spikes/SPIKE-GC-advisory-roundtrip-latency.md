@@ -89,3 +89,29 @@ Optionen, keine hier vorentschieden:
 
 `npx vitest run tests/perf.advisory-roundtrip.spike.test.ts` — zwei Tests, Konsole loggt Median +
 Teilzeiten je Schritt. Kein externer Zustand nötig (frischer Temp-Kuzu-Store pro Testlauf).
+
+## Resolution (2026-08-05, sigloch-modules CR-SM-228)
+
+Root-Cause-Analyse in `se-optimizer` fand den echten Engpass — nicht `betweenness()`, wie eine
+erste (irreführende) Einzelmessung nahelegte, sondern zwei redundante Vollgraph-Operationen pro
+Kandidat in `suggestEdits`s Probe-Loop: ein `structuredClone()` des gesamten Graphen für einen
+Ein-Kanten-Edit, und eine erneute `evaluateAllRules(graph)`-Auswertung pro Probe, obwohl der
+Aufrufer sie bereits einmal berechnet hatte. Details, Messungen, Fix: `sigloch-modules/docs/cr/open/
+CR-SM-228-betweenness-array-indexed.md`.
+
+**Verifiziert per `npm link`** (lokale Arbeitskopie, vor Publish) gegen genau dieses Spike-Skript:
+
+| Größe | vorher | nachher | Faktor |
+|---|---|---|---|
+| aktuell (382/785) | 363,1 ms | **123,1 ms** | 2,9x — **unter dem 200ms-Ziel** |
+| 5x (1910/3925) | 5.612,9 ms | 1.120,1 ms | 5,0x — noch über dem Ziel, aber deutlich näher |
+
+**Noch nicht live in diesem Repo:** `@sigloch/se-optimizer` ist auf 0.3.2 gepatcht und committed,
+aber **nicht publiziert** — `npm publish` ist durch einen unabhängigen, zeitgleich bearbeiteten
+Gap aus CR-SM-227 blockiert (fehlende Regel-Klassifikation, nicht dieser CR). Dieses Repos
+`tests/perf.advisory-roundtrip.spike.test.ts` läuft deshalb weiterhin gegen die alte,
+langsamere `@sigloch/se-optimizer@0.3.1` aus der Registry — die hier dokumentierten
+Nachher-Zahlen sind real gemessen, aber noch nicht das, was `npm test` in diesem Repo aktuell
+zeigt. Sobald `se-optimizer` publiziert und hier gebumpt ist, sollten die Spike-Testschwellen
+entsprechend verschärft werden (aktuelle Größe: harte <200ms-Assertion statt der heutigen
+10s-Sanity-Decke).
