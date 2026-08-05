@@ -11,6 +11,23 @@ gehört in den Harness, nicht in Claude Code selbst: der Harness besitzt den Sto
 Skill soll ein Agent im graphcode-Kontext genauso selbstverständlich aufrufen können wie `se:generate`
 oder `se:author-req`.
 
+## Import-Semantik: Reseed, nie Merge (Entscheidung 2026-08-05)
+
+`import-code` **ersetzt** den Graph-Inhalt vollständig — kein Upsert-Merge in einen bestehenden
+Graph (Gate-`add-node` ist Upsert per uid; ein Merge würde bei Re-Import stille Überschreibungen
+und Leichen erzeugen). Ablauf:
+
+1. **Automatisches Backup:** vor jeder Änderung wird der aktuelle Graph als
+   `.graphcode/backup/graph-v<graphVersion>-<timestamp>.json` gesichert (gleiche Serialisierung
+   wie das committete SSOT-JSON). Das ist der Recovery-Pfad — der Wipe trifft **auch
+   hand-autorisierte UC/REQ/ACTOR**, bewusst akzeptiert.
+2. **Wipe + Fill durchs Gate:** ein `mutate()`-Batch — `delete-node` für alle bestehenden Knoten,
+   dann die `add-node`/`add-edge`-Kommandos des `McpConsumerGate`. **Nicht** `harness.reseed()`
+   (dessen Kontrakt ist „Store ← committetes SSOT", am Gate vorbei); die verriegelte
+   Gate-only-writes-Constraint gilt auch hier.
+3. Ergebnis: Import ist deterministisch und idempotent — gleicher Repo-Stand → gleicher Graph,
+   Re-Import räumt gelöschte/umbenannte Funktionen automatisch mit ab.
+
 ## Ziel
 
 Ein neuer CLI-Verb `graphcode import-code [dir]` (Default `dir` = `process.cwd()`), der:
@@ -30,7 +47,9 @@ Ein neuer CLI-Verb `graphcode import-code [dir]` (Default `dir` = `process.cwd()
 Dazu die Skill `se:import-code` (`.claude/commands/se/`), die einem Agenten sagt, **wann** das der
 richtige Zug ist (bestehende Codebasis reverse-engineeren statt UC/REQ von Hand zu erfinden) und was
 das Ergebnis bedeutet (deterministisch, nur FUNC/MOD/FLOW+SCHEMA aus TS, TEST-Knoten isoliert ohne
-Kante, keine UC/REQ/ACTOR/SYS — das bleibt der generative Pfad `se:generate`).
+Kante, keine UC/REQ/ACTOR/SYS — das bleibt der generative Pfad `se:generate`). Die Skill muss den
+Reseed-Charakter explizit machen: der Import **ersetzt** den bestehenden Graph (Backup automatisch)
+— bei einem hand-gepflegten Graph ist das der falsche Zug, außer der Nutzer will genau das.
 
 **Neue Abhängigkeit:** `@sigloch/graphify` als `dependency` (nicht `devDependency`) in graphcode —
 bewusst, `McpConsumerGate` wurde genau für diesen Zweck exportiert (siehe graphify README
@@ -52,6 +71,11 @@ bewusst, `McpConsumerGate` wurde genau für diesen Zweck exportiert (siehe graph
 ## Akzeptanzkriterien
 - [ ] `graphcode import-code <dir>` auf einer echten kleinen TS-Fixture: FUNC/MOD/FLOW/SCHEMA landen im
       Store (Kuzu, nicht `:memory:`), Report auf stderr.
+- [ ] Reseed-Semantik: Import über einen bereits gefüllten Store ersetzt den Inhalt vollständig —
+      keine Duplikate, keine Stale-Knoten (Test: 2. Import nach Löschen einer Fixture-Funktion →
+      deren FUNC/FLOW-Knoten sind weg).
+- [ ] Backup: vor dem Wipe liegt `.graphcode/backup/graph-v<n>-<ts>.json` mit dem vorherigen
+      Graph-Stand; bei leerem Graph (Erstlauf) wird kein Backup geschrieben.
 - [ ] `StoreOwnershipError` verhält sich identisch zu `run`/`host` (gleiche Meldung, Exit-Code).
 - [ ] `harness.close()` läuft auch im Fehlerfall (kein hängender Lock — Regressionstest: Lock nach
       Verb-Ende frei).
@@ -63,4 +87,11 @@ bewusst, `McpConsumerGate` wurde genau für diesen Zweck exportiert (siehe graph
   deterministisch (graphify-Scope-Grenze aus CR-GF-133).
 - Andere Sprachen als TypeScript — folgt graphifys eigener Sprach-Roadmap (neue Tree-sitter-Grammatik
   dort, keine Änderung an diesem Verb nötig, wenn graphify die Sprache liefert).
-- Watch-Mode / inkrementeller Re-Import bei Datei-Änderungen — eigener CR, falls gebraucht.
+- Watch-Mode / inkrementeller Re-Import bei Datei-Änderungen — eigener CR, falls gebraucht
+  (Re-Import heute = voller Reseed, siehe Import-Semantik).
+- **Graph-Union zweier bestehender Graphen** (z.B. Monorepo-Konsolidierung mehrerer Komponenten-
+  Repos) — eigener CR mit Review-Schritt, wenn die Migration konkret ansteht. `graph_merge` ist
+  das NICHT (Replay-Reintegration eines Branch-Stores desselben Repos, CR-GC-234).
+- **Cross-Repo-Verknüpfung** (z.B. graphcode ↔ sigloch-modules) — läuft über die beiden
+  MCP-Server (eine Session mountet beide Stores); persistente Verweise ggf. als Attribut-Referenz
+  (analog `codeRef`), nie als Kante zwischen Stores („ein Store pro Repo" ist verriegelt).
