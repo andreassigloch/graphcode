@@ -3449,7 +3449,7 @@
       "status": "open",
       "method": "test",
       "level": "acceptance",
-      "concept": "true"
+      "concept": true
     },
     {
       "id": "TEST-hooks",
