@@ -1,6 +1,6 @@
 # CR-GC-298 — `se:import-code`-Skill + `graphcode import-code`-CLI-Verb (graphify Code-Repo-Extraktor anschließen)
 
-**Status:** open
+**Status:** done (2026-08-05)
 **Datum:** 2026-08-04
 **Kontext:** `@sigloch/graphify` hat mit CR-GF-133/134/135 einen deterministischen Code-Repo-Extraktor
 (Tree-sitter, kein LLM): TS-Repo → FUNC/MOD/FLOW+SCHEMA/TEST, über `extractCodeRepoPipeline()` bis zu
@@ -69,18 +69,30 @@ bewusst, `McpConsumerGate` wurde genau für diesen Zweck exportiert (siehe graph
   SCHEMA-Knoten in `harness.getGraph()`, 0 Violations.
 
 ## Akzeptanzkriterien
-- [ ] `graphcode import-code <dir>` auf einer echten kleinen TS-Fixture: FUNC/MOD/FLOW/SCHEMA landen im
+- [x] `graphcode import-code <dir>` auf einer echten kleinen TS-Fixture: FUNC/MOD/FLOW/SCHEMA landen im
       Store (Kuzu, nicht `:memory:`), Report auf stderr.
-- [ ] Reseed-Semantik: Import über einen bereits gefüllten Store ersetzt den Inhalt vollständig —
+- [x] Reseed-Semantik: Import über einen bereits gefüllten Store ersetzt den Inhalt vollständig —
       keine Duplikate, keine Stale-Knoten (Test: 2. Import nach Löschen einer Fixture-Funktion →
       deren FUNC/FLOW-Knoten sind weg).
-- [ ] Backup: vor dem Wipe liegt `.graphcode/backup/graph-v<n>-<ts>.json` mit dem vorherigen
+- [x] Backup: vor dem Wipe liegt `.graphcode/backup/graph-<ts>.json` mit dem vorherigen
       Graph-Stand; bei leerem Graph (Erstlauf) wird kein Backup geschrieben.
-- [ ] `StoreOwnershipError` verhält sich identisch zu `run`/`host` (gleiche Meldung, Exit-Code).
-- [ ] `harness.close()` läuft auch im Fehlerfall (kein hängender Lock — Regressionstest: Lock nach
+- [x] `StoreOwnershipError` verhält sich identisch zu `run`/`host` (gleiche Meldung, Exit-Code).
+- [x] `harness.close()` läuft auch im Fehlerfall (kein hängender Lock — Regressionstest: Lock nach
       Verb-Ende frei).
-- [ ] `se:import-code`-Skill vorhanden, wird von `npx @sigloch/graphcode skills sync` mit ausgeliefert.
-- [ ] `npm run build` + Tests grün.
+- [x] `se:import-code`-Skill vorhanden, wird von `npx @sigloch/graphcode skills sync` mit ausgeliefert.
+- [x] `npm run build` + Tests grün (72 Files / 472 Tests).
+
+## Umsetzungsnotizen (2026-08-05)
+- Reseed als EIN Gate-Batch, aber nur echte Stale-Knoten/-Kanten als delete: `persist()` schreibt
+  deletes LAST — delete+add derselben uid in einem Batch würde den Store-Knoten nach dem Upsert
+  wieder entfernen. Wiederkehrende uids werden upsertet (Topologie == Extraktion; codeRef-Bindings
+  auf unveränderten FUNCs überleben den Re-Import).
+- Gate-Warnings (R-20/R-21/R-26) nach Import sind der erwartete Arbeitsvorrat der Absichtsebene,
+  kein Fehler.
+- `@sigloch/graphify` wurde dafür erstmals publiziert (v0.1.0, npm) — Registry-Range `^0.1.0`,
+  keine file:-Dep (Distribution-Guard CR-GC-262).
+- Beifang: CR-GC-300-Regression gefixt — der graphVersion-Stamp schrieb die committete SSOT
+  einzeilig um (kanonische Form + Stamp-Strip in Round-Trip-Test und Startup-Drift-Vergleich).
 
 ## Out of scope
 - UC/REQ/ACTOR/SYS-Inferenz aus Code — bleibt `se:generate` (generativer Pfad); `import-code` ist rein
