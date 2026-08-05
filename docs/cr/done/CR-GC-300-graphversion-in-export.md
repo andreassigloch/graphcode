@@ -1,6 +1,6 @@
 # CR-GC-300 — graphVersion-Stempel im `graph_export`-Output (CR-SM-227-Voraussetzung)
 
-**Status:** open
+**Status:** done
 **Datum:** 2026-08-05
 **Kontext:** Folge-CR von CR-SM-227 (`sigloch-modules`) — AF-01..05 (Analysis-
 Freshness-Legs, contracts) + `computeAnalysisCurrency()` (graphcode-client)
@@ -52,11 +52,13 @@ schreib-lokaler Wrapper), nicht durch Änderung von `exportGraphJson()` selbst.
 
 ## Akzeptanzkriterien
 
-- [ ] `docs/graph/<name>.graph.json` trägt nach `graph_export` ein
+- [x] `docs/graph/<name>.graph.json` trägt nach `graph_export` ein
       `graphVersion`-Feld == `ctx.graphVersion()` zum Schreibzeitpunkt
-- [ ] `exportGraphJson()` selbst unverändert — alle 9 bestehenden Call-Sites +
+- [x] `exportGraphJson()` selbst unverändert — alle 9 bestehenden Call-Sites +
       Byte-Identität-/Determinismus-Tests (`tests/exporter.test.ts`) bleiben
       grün, ohne Anpassung
-- [ ] Reseed (`seedFromJsonFile`/`importOntologyGraph`) importiert eine Datei
+- [x] Reseed (`seedFromJsonFile`/`importOntologyGraph`) importiert eine Datei
       mit `graphVersion`-Feld unverändert korrekt (Regressionstest)
-- [ ] `npm run build` + Tests grün
+- [x] `npm run build` + Tests grün (1 vorbestehender, unabhängiger Fail:
+      `mcp.tests-deduction.test.ts` testRef-coverage — reproduziert identisch
+      auf `master` vor diesem CR, siehe Verifikation unten)

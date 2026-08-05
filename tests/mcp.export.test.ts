@@ -94,6 +94,30 @@ describe('TEST-mcp-export: graph_export writes commit-able docs from the live gr
     }
   });
 
+  it('stamps graphVersion == ctx.graphVersion() at write time (CR-GC-300)', async () => {
+    const tools = bindToolsToHarness(harness);
+    // Through the tool layer (not harness.mutate() directly) so ctx's audit-log-backed
+    // counter actually advances — graph_export must read the SAME live counter.
+    const mutateRes = await tools.graph_mutate.handler({ commands: SPEC });
+    expect(mutateRes.success).toBe(true);
+    expect(mutateRes.graphVersion).toBeGreaterThan(0);
+
+    const res = await tools.graph_export.handler({});
+    const jsonAbs = join(repoRoot, res.graphJson.path);
+    const parsed = JSON.parse(readFileSync(jsonAbs, 'utf8')) as { graphVersion?: number };
+    expect(parsed.graphVersion).toBe(mutateRes.graphVersion);
+
+    // A second export after a further mutate carries the ADVANCED version — proves
+    // it's stamped at write time, not a stale value captured at bind time.
+    const mutate2 = await tools.graph_mutate.handler({
+      commands: [{ op: 'update-node', node: { uid: 'SYS-auth', type: 'SYS', name: 'Auth service v2', description: 'demo member', attributes: {} } }],
+    });
+    expect(mutate2.graphVersion).toBeGreaterThan(mutateRes.graphVersion);
+    const res2 = await tools.graph_export.handler({});
+    const parsed2 = JSON.parse(readFileSync(join(repoRoot, res2.graphJson.path), 'utf8')) as { graphVersion?: number };
+    expect(parsed2.graphVersion).toBe(mutate2.graphVersion);
+  });
+
   it('respects a custom name + view subset', async () => {
     const tools = bindToolsToHarness(harness);
     await harness.mutate(SPEC);

@@ -200,7 +200,14 @@ export function bindExportTools(ctx: ToolContext): MCPToolRegistry {
       }
 
       mkdirSync(dirname(jsonAbs), { recursive: true });
-      writeFileSync(jsonAbs, json);
+      // CR-GC-300: stamp graphVersion at WRITE time (not processStartVersion, which
+      // is the boundary this registry booted at) — the live comparison value GVE's
+      // computeAnalysisCurrency() needs against SYS.attributes.analysisFreshness.*
+      // .graphVersion. Postprocessing of the unchanged exportGraphJson() output —
+      // exportGraphJson() itself stays the byte-identical inverse of importGraph
+      // (9 call-sites, exporter.test.ts).
+      const jsonWithVersion = JSON.stringify({ ...JSON.parse(json), graphVersion: ctx.graphVersion() });
+      writeFileSync(jsonAbs, jsonWithVersion);
 
       const views = input.views ?? MARKDOWN_VIEWS;
       const written = views.map((v) => {
@@ -235,7 +242,7 @@ export function bindExportTools(ctx: ToolContext): MCPToolRegistry {
       clearExportPending(repoRoot);
 
       return {
-        graphJson: { path: jsonRel, bytes: Buffer.byteLength(json), nodes: graph.nodes.length, edges: graph.edges.length },
+        graphJson: { path: jsonRel, bytes: Buffer.byteLength(jsonWithVersion), nodes: graph.nodes.length, edges: graph.edges.length },
         views: written,
         stubs,
       };
