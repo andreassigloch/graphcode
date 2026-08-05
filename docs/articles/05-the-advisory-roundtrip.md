@@ -30,6 +30,11 @@ edit.
 
 One roundtrip, six steps. The two advisor touchpoints are marked; neither is the gate.
 
+*Of the six, four are built and live: ① read, ② status, ③ propose, ④ apply — modeled in
+graphcode's own graph as `FCHAIN-advisory-roundtrip`, composing the real functions behind each
+step. ⑤ measure (Architecture Fitness before/after) is not built — this section describes the
+intended design, not what ships today. ⑥ report is the tool response, not a separate function.*
+
 ```
 Chat intent
    │
@@ -51,7 +56,7 @@ Chat intent
    verdict  legal? fully wired? → allowed / needs-review / blocked
    │
    ▼
-⑤ measure   ADVISOR, after the edit
+⑤ measure   ADVISOR, after the edit — NOT BUILT YET, see note above
    │        Architecture Fitness, before vs. after — named if any of the six got worse
    ▼
 ⑥ report    verdict + any rule violations + the before/after fitness numbers
@@ -70,10 +75,28 @@ Intent: *"make the auth module more resistant to change."*
 | ② status | a rule warns: the auth module has too many other things depending on it |
 | ③ propose| target = "resistant to change" → top move: split one data-flow in two, ranked ahead of the alternatives, preview: allowed |
 | ④ apply  | the split is applied — rules stay clean, it's persisted |
-| ⑤ measure| resistance-to-change improved, but self-containment (one of the six fitness numbers) got slightly worse |
+| ⑤ measure| *(not built — illustrative only)* resistance-to-change improved, but self-containment (one of the six fitness numbers) got slightly worse |
 | ⑥ report | "Applied. Change-resistance up, self-containment slightly down — intended?" |
 
-You (or the agent) see the *tradeoff* in ⑤ — without the advisor ever having blocked the edit.
+You (or the agent) would see the *tradeoff* in ⑤, once it exists — without the advisor ever having
+blocked the edit.
+
+## How fast is one round, really
+
+①+②+③+④ (the built part of the chain) is deterministic — no LLM, no network — so it has an actual
+wall-clock cost worth measuring, not just describing. `REQ-advisory-roundtrip-latency` binds it to
+under 200ms at graphcode's current graph size (382 elements); `REQ-responsiveness` covers a
+narrower, older case — draft-apply on just the affected subgraph, not the whole round.
+
+Measured (`SPIKE-GC-advisory-roundtrip-latency.md`): the round missed the 200ms budget out of the
+box (363ms) — not from any single slow step, but from `suggestEdits` (③ propose) doing a full
+`structuredClone` of the whole graph and a redundant full rule re-evaluation, once per candidate
+fix it considered. Fixed at the root (`sigloch-modules` CR-SM-228: shallow-copy the additive edit
+instead of deep-cloning the graph, reuse the violations the caller already computed instead of
+re-deriving them) — verified 123ms, under budget. Not yet live in this repo: the fix is committed
+but unpublished, waiting on an unrelated gap in a concurrently-developed sibling CR. The round
+does not scale flat, either — 5x the graph is still over budget (1,120ms) even after the fix; that
+remains open, not hidden.
 
 ## Prompt anatomy, per turn
 
