@@ -2,7 +2,10 @@
   "mcpServers": {
     "graphcode": {
       "command": "node",
-      "args": ["dist/cli.js", "mcp"]
+      "args": ["dist/cli.js", "mcp"],
+      "env": {
+        "GRAPHCODE_GVE_BIN": "node ../graph-view-edit/bin/gve.mjs"
+      }
     }
   }
 }

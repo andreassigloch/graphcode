@@ -27,3 +27,4 @@ docs/views/cr-list.md
 # maintainer's full internal guardrails (family governance, bok refs); the public
 # CLAUDE.md ships the app-relevant subset. Claude Code auto-loads both locally.
 CLAUDE.local.md
+docs/views/dashboard.url

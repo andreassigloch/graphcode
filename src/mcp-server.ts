@@ -14,7 +14,8 @@
  *
  * @author andreas@siglochconsulting
  */
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
+import { spawn, type ChildProcess } from 'node:child_process';
 import { basename, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
@@ -184,6 +185,7 @@ export async function serveStdio(opts?: {
     await harness.initialize(); // the O2 lock IS the election (CR-GC-218)
     const registry = await bootHost(repoRoot, harness);
     bridge = await maybeStartBridge(repoRoot, harness);
+    await maybeStartGve(repoRoot);
     return registry;
   }
 
@@ -234,6 +236,82 @@ export async function maybeStartBridge(
     );
     return null;
   }
+}
+
+/**
+ * Auto-start the GVE live dashboard for the elected host: once the MCP server
+ * owns the store, the viewer is one URL away without a manual launch. GVE is
+ * the DEFAULT for a graphcode session; opt out via GRAPHCODE_NO_GVE=1 (e.g. in
+ * `.mcp.json` env). GRAPHCODE_GVE_BIN overrides the launch command (space-split)
+ * — needed when a local checkout must serve instead of the published package.
+ *
+ * Guards, in order:
+ *   - never under a test/CI runner (VITEST/CI) — suites must not spawn viewers;
+ *   - a REACHABLE docs/views/dashboard.url means some instance (manual or a
+ *     previous session) already serves this repo — never a second spawn; a
+ *     stale file (crashed instance) falls through to a fresh spawn.
+ *
+ * The spawned GVE writes/removes dashboard.url itself with its ACTUAL bound
+ * port (dynamic on conflict) — that file, not this function, is how parallel
+ * sessions discover the URL. Election losers never get here (electAndBoot
+ * only), so N proxy sessions still mean ONE viewer. A spawn failure must never
+ * kill the gate: warn on stderr, serve without a dashboard. The child dies
+ * with this process (detached group, killed on 'exit'); stdout stays off fd 1
+ * — that is the MCP JSON-RPC channel.
+ */
+export async function maybeStartGve(
+  repoRoot: string,
+  deps: {
+    spawnImpl?: typeof spawn;
+    fetchImpl?: typeof fetch;
+    env?: NodeJS.ProcessEnv;
+  } = {},
+): Promise<ChildProcess | null> {
+  const env = deps.env ?? process.env;
+  if (env.GRAPHCODE_NO_GVE || env.VITEST || env.CI) return null;
+  const urlFile = join(repoRoot, 'docs', 'views', 'dashboard.url');
+  if (existsSync(urlFile)) {
+    const url = readFileSync(urlFile, 'utf8').trim();
+    try {
+      const res = await (deps.fetchImpl ?? fetch)(url, { signal: AbortSignal.timeout(750) });
+      if (res.ok) {
+        process.stderr.write(`[graphcode] gve: dashboard already serving this repo at ${url}\n`);
+        return null;
+      }
+    } catch {
+      // Stale file from a crashed instance — fall through and spawn fresh.
+    }
+  }
+  const command = env.GRAPHCODE_GVE_BIN ?? 'npx -y @sigloch/graph-view-edit';
+  const [bin, ...args] = command.split(' ');
+  const child = (deps.spawnImpl ?? spawn)(bin, [...args, '--repo', repoRoot], {
+    stdio: ['ignore', 2, 2],
+    detached: true,
+  });
+  child.on('error', (err: Error) => {
+    process.stderr.write(
+      `[graphcode] WARN: gve failed to start (${err.message}) — install @sigloch/graph-view-edit, set GRAPHCODE_GVE_BIN, or silence with GRAPHCODE_NO_GVE=1\n`,
+    );
+  });
+  const killGroup = (): void => {
+    if (child.pid === undefined) return;
+    try {
+      process.kill(-child.pid, 'SIGTERM'); // whole detached group: npx wrapper + vite
+    } catch {
+      // Already gone.
+    }
+  };
+  process.on('exit', killGroup);
+  // Node runs NO 'exit' listeners on an unhandled signal — without these the
+  // viewer outlives a Ctrl-C/kill of the host and dashboard.url goes stale.
+  for (const sig of ['SIGINT', 'SIGTERM', 'SIGHUP'] as const) {
+    process.once(sig, () => {
+      killGroup();
+      process.exit(0);
+    });
+  }
+  process.stderr.write('[graphcode] gve: dashboard starting — URL lands in docs/views/dashboard.url\n');
+  return child;
 }
 
 /** Extract the raw Zod shape a `z.object`/`z.looseObject` was built from. */
