@@ -52,6 +52,12 @@ decides**, and a deterministic gate plus a readiness-driven loop is what lets a 
 following the method, not on raw scale. Full data:
 [`docs/executor-abschlussbericht.md`](../executor-abschlussbericht.md).
 
+That trial also names a strategy worth its own label: **going local**. The loop exists in two forms —
+*implicit*, when an interactive assistant paces itself through the same tools, and *explicit*, when
+graphcode's built-in driver imposes fixed, small rounds from outside. The explicit form *is* the
+going-local strategy: the driver carries the method, so the model only has to follow it — which is
+exactly what lets a $0 local model stand in for a frontier one.
+
 ## What are the downsides?
 
 If the graph degrades, you have a problem. But because the graph is the reference, degradation is
@@ -135,4 +141,5 @@ tomorrow.
 
 *The layered breakdown here is the short form; for the full narrative see
 [the GraphCode story](04-the-graphcode-story.md). For the gate mechanics behind "every check is a
-query, not a guess": [under the hood](03-graphcode-harness-goal-and-concept.md).*
+query, not a guess": [under the hood](03-graphcode-harness-goal-and-concept.md). Terms pinned down:
+[the glossary](08-glossary.md).*

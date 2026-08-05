@@ -31,7 +31,7 @@ that, every project grows its own dialect and nothing stays comparable.
 | Local execution | OpenCode + bring-your-own-key, or the built-in executor below | Two ways to run a local model — see "Two ways to run the loop" |
 
 The current vocabulary: 13 element types, 7 connection types, 37 legal connection patterns, 66 rules
-across 8 readiness dimensions, exposed as 20 tools over MCP.
+across 8 readiness dimensions, exposed as 22 tools over MCP.
 
 ## Two ways to run the loop
 
@@ -49,7 +49,8 @@ drivers, for two different situations.
 Why both exist: a small or locally-run model does better with the second — being told exactly what
 to do next, rather than left to plan a large task itself. A large, capable model often does better
 with the first, left to explore on its own terms. Same store, same gate, same rules underneath
-either way; only how work is handed to the model differs.
+either way; only how work is handed to the model differs. The second form is the strategy
+[the claims](06-claims.md) call *going local*.
 
 ## The bet: a precise query, not a compressed result
 

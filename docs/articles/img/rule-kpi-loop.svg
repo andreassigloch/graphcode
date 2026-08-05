@@ -1,0 +1,160 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 690" font-family="Helvetica, Arial, sans-serif">
+<rect x="0" y="0" width="960" height="690" fill="#ffffff"/>
+<defs>
+<marker id="ag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#888"/></marker>
+</defs>
+
+<!-- title -->
+<text x="480" y="34" text-anchor="middle" font-size="19" font-weight="bold" fill="#222">Regeln stoppen Fehler. KPIs zeigen den Weg.</text>
+<text x="480" y="54" text-anchor="middle" font-size="12" fill="#555">Regel- und KPI-gesteuertes Modellieren — alle Zahlen live aus dem graphcode-Graphen selbst, Stand 05.08.2026</text>
+
+<!-- ============ left panel: the loop ============ -->
+<text x="300" y="92" text-anchor="middle" font-size="13" font-weight="bold" fill="#222">Jede Änderung: ein Durchlauf</text>
+
+<!-- A: KPI points -->
+<rect x="140" y="106" width="320" height="58" rx="6" fill="#d6eaf8" stroke="#2874a6" stroke-width="1.5"/>
+<text x="300" y="128" text-anchor="middle" font-size="12.5" fill="#222">① Readiness-KPIs zeigen die schwächste Stelle</text>
+<text x="300" y="145" text-anchor="middle" font-size="10.5" fill="#555">heute: 36 Funktionen ohne Code-Bindung (Testreife)</text>
+<line x1="300" y1="164" x2="300" y2="182" stroke="#888" stroke-width="1.5" marker-end="url(#ag)"/>
+
+<!-- B: agent drafts -->
+<rect x="140" y="184" width="320" height="44" rx="6" fill="#f3f3f3" stroke="#888888" stroke-width="1.5"/>
+<text x="300" y="203" text-anchor="middle" font-size="12.5" fill="#222">② Agent entwirft die nächste Änderung</text>
+<text x="300" y="218" text-anchor="middle" font-size="10.5" fill="#555">Mensch oder KI — gleicher Weg für beide</text>
+<line x1="300" y1="228" x2="300" y2="246" stroke="#888" stroke-width="1.5" marker-end="url(#ag)"/>
+
+<!-- C: rule gate -->
+<rect x="140" y="248" width="320" height="58" rx="6" fill="#f8d7da" stroke="#c0392b" stroke-width="1.5"/>
+<text x="300" y="270" text-anchor="middle" font-size="12.5" fill="#222">③ Regel-Gate: legal und vollständig?</text>
+<text x="300" y="287" text-anchor="middle" font-size="10.5" fill="#555">deterministische Prüfung per Datenbank-Query — keine KI</text>
+<line x1="220" y1="306" x2="192" y2="338" stroke="#888" stroke-width="1.5" marker-end="url(#ag)"/>
+<line x1="380" y1="306" x2="408" y2="338" stroke="#888" stroke-width="1.5" marker-end="url(#ag)"/>
+
+<!-- outcomes -->
+<rect x="105" y="340" width="170" height="48" rx="6" fill="#f3f3f3" stroke="#888888" stroke-width="1.5"/>
+<text x="190" y="360" text-anchor="middle" font-size="12.5" fill="#222">blockiert</text>
+<text x="190" y="376" text-anchor="middle" font-size="10.5" fill="#555">nichts wird gespeichert</text>
+<text x="190" y="404" text-anchor="middle" font-size="10" fill="#555">korrigieren, neu einreichen</text>
+
+<rect x="325" y="340" width="170" height="48" rx="6" fill="#f3f3f3" stroke="#888888" stroke-width="1.5"/>
+<text x="410" y="360" text-anchor="middle" font-size="12.5" fill="#222">übernommen</text>
+<text x="410" y="376" text-anchor="middle" font-size="10.5" fill="#555">Autor wird protokolliert</text>
+<line x1="410" y1="388" x2="335" y2="418" stroke="#888" stroke-width="1.5" marker-end="url(#ag)"/>
+
+<!-- D: KPIs recomputed -->
+<rect x="140" y="420" width="320" height="58" rx="6" fill="#d6eaf8" stroke="#2874a6" stroke-width="1.5"/>
+<text x="300" y="442" text-anchor="middle" font-size="12.5" fill="#222">④ Graph gespeichert — alle KPIs neu berechnet</text>
+<text x="300" y="459" text-anchor="middle" font-size="10.5" fill="#555">Readiness, Gates, Architecture Fitness — sofort aktuell</text>
+
+<!-- return loop -->
+<path d="M140,449 L80,449 L80,135 L136,135" fill="none" stroke="#888" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#ag)"/>
+<text x="68" y="292" font-size="10.5" fill="#555" transform="rotate(-90 68 292)" text-anchor="middle">nächste Runde — wieder zur schwächsten Stelle</text>
+
+<!-- bridge to gates panel -->
+<line x1="472" y1="205" x2="548" y2="205" stroke="#888" stroke-width="1.5" marker-end="url(#ag)"/>
+<text x="510" y="185" text-anchor="middle" font-size="10" fill="#555">jede Runde</text>
+<text x="510" y="197" text-anchor="middle" font-size="10" fill="#555">bewegt die Balken</text>
+
+<!-- legend -->
+<rect x="140" y="500" width="14" height="14" rx="3" fill="#f8d7da" stroke="#c0392b" stroke-width="1.2"/>
+<text x="162" y="511" font-size="11" fill="#333">Regel — ja/nein, das einzige Veto</text>
+<rect x="140" y="522" width="14" height="14" rx="3" fill="#d6eaf8" stroke="#2874a6" stroke-width="1.2"/>
+<text x="162" y="533" font-size="11" fill="#333">KPI — kontinuierlich, misst und priorisiert, blockt nie</text>
+
+<!-- ============ right panel: phase gates as KPI thresholds ============ -->
+<text x="750" y="92" text-anchor="middle" font-size="13" font-weight="bold" fill="#222">Projektebene: Phase-Gates = KPI-Schwellen</text>
+<text x="912" y="114" text-anchor="middle" font-size="9.5" fill="#555">Gate öffnet bei 100 %</text>
+<line x1="910" y1="120" x2="910" y2="300" stroke="#aaa" stroke-width="1" stroke-dasharray="3,3"/>
+
+<!-- SRR -->
+<text x="672" y="143" text-anchor="end" font-size="11.5" fill="#222">Anforderungen (SRR)</text>
+<rect x="680" y="130" width="230" height="20" rx="4" fill="#edf1f4"/>
+<rect x="680" y="130" width="230" height="20" rx="4" fill="#2874a6"/>
+<text x="904" y="144" text-anchor="end" font-size="11" fill="#ffffff">100 %</text>
+<!-- PDR -->
+<text x="672" y="191" text-anchor="end" font-size="11.5" fill="#222">Design (PDR)</text>
+<rect x="680" y="178" width="230" height="20" rx="4" fill="#edf1f4"/>
+<rect x="680" y="178" width="230" height="20" rx="4" fill="#2874a6"/>
+<text x="904" y="192" text-anchor="end" font-size="11" fill="#ffffff">100 %</text>
+<!-- CDR -->
+<text x="672" y="239" text-anchor="end" font-size="11.5" fill="#222">Schnittstellen (CDR)</text>
+<rect x="680" y="226" width="230" height="20" rx="4" fill="#edf1f4"/>
+<rect x="680" y="226" width="230" height="20" rx="4" fill="#2874a6"/>
+<text x="904" y="240" text-anchor="end" font-size="11" fill="#ffffff">100 %</text>
+<!-- TRR -->
+<text x="672" y="287" text-anchor="end" font-size="11.5" fill="#222">Testreife (TRR)</text>
+<rect x="680" y="274" width="230" height="20" rx="4" fill="#edf1f4"/>
+<rect x="680" y="274" width="147" height="20" rx="4" fill="#2874a6"/>
+<text x="833" y="288" font-size="11" fill="#222">64 %</text>
+<text x="680" y="312" font-size="10" fill="#555">63 von 99 Regel-Checks erfüllt</text>
+<text x="680" y="326" font-size="10" fill="#555">→ hier arbeitet der Loop gerade</text>
+
+<!-- caption -->
+<text x="750" y="348" text-anchor="middle" font-size="10.5" fill="#333">Gate = Schwelle auf einem live berechneten KPI — kein Review-Meeting mit Folien.</text>
+
+<!-- ============ right panel 2: architecture fitness ============ -->
+<text x="750" y="384" text-anchor="middle" font-size="13" font-weight="bold" fill="#222">Architekturebene: KPI „Architecture Fitness“</text>
+
+<text x="672" y="409" text-anchor="end" font-size="11" fill="#222">Änderbarkeit</text>
+<rect x="680" y="398" width="230" height="14" rx="4" fill="#edf1f4"/>
+<rect x="680" y="398" width="149" height="14" rx="4" fill="#2874a6"/>
+<text x="835" y="409" font-size="10" fill="#222">3,2</text>
+
+<text x="672" y="435" text-anchor="end" font-size="11" fill="#222">Fehlertoleranz</text>
+<rect x="680" y="424" width="230" height="14" rx="4" fill="#edf1f4"/>
+<rect x="680" y="424" width="95" height="14" rx="4" fill="#2874a6"/>
+<text x="781" y="435" font-size="10" fill="#222">2,1</text>
+
+<text x="672" y="461" text-anchor="end" font-size="11" fill="#222">Flusseffizienz</text>
+<rect x="680" y="450" width="230" height="14" rx="4" fill="#edf1f4"/>
+<rect x="680" y="450" width="5" height="14" rx="2" fill="#2874a6"/>
+<text x="691" y="461" font-size="10" fill="#222">0,1</text>
+<text x="780" y="461" font-size="9.5" fill="#555">· größte Lücke zum Ziel</text>
+
+<text x="672" y="487" text-anchor="end" font-size="11" fill="#222">Kohäsion</text>
+<rect x="680" y="476" width="230" height="14" rx="4" fill="#edf1f4"/>
+<rect x="680" y="476" width="186" height="14" rx="4" fill="#2874a6"/>
+<text x="872" y="487" font-size="10" fill="#222">4,1</text>
+
+<text x="672" y="513" text-anchor="end" font-size="11" fill="#222">Verbundenheit</text>
+<rect x="680" y="502" width="230" height="14" rx="4" fill="#edf1f4"/>
+<rect x="680" y="502" width="204" height="14" rx="4" fill="#2874a6"/>
+<text x="890" y="513" font-size="10" fill="#222">4,4</text>
+
+<text x="672" y="539" text-anchor="end" font-size="11" fill="#222">Skalierbarkeit</text>
+<rect x="680" y="528" width="230" height="14" rx="4" fill="#edf1f4"/>
+<rect x="680" y="528" width="155" height="14" rx="4" fill="#2874a6"/>
+<text x="841" y="539" font-size="10" fill="#222">3,4</text>
+
+<!-- target marks: Änderbarkeit 4,0 · Fehlertoleranz 2,0 · Flusseffizienz 2,0 · Kohäsion 4,0 · Verbundenheit 4,5 · Skalierbarkeit 3,0 -->
+<line x1="864" y1="396" x2="864" y2="414" stroke="#c0392b" stroke-width="2"/>
+<line x1="772" y1="422" x2="772" y2="440" stroke="#c0392b" stroke-width="2"/>
+<line x1="772" y1="448" x2="772" y2="466" stroke="#c0392b" stroke-width="2"/>
+<line x1="864" y1="474" x2="864" y2="492" stroke="#c0392b" stroke-width="2"/>
+<line x1="887" y1="500" x2="887" y2="518" stroke="#c0392b" stroke-width="2"/>
+<line x1="818" y1="526" x2="818" y2="544" stroke="#c0392b" stroke-width="2"/>
+<text x="680" y="554" font-size="9" fill="#999">0</text>
+<text x="910" y="554" text-anchor="end" font-size="9" fill="#999">Skala 0–5, Architektur-Teilgraph</text>
+<text x="750" y="570" text-anchor="middle" font-size="10.5" fill="#333">Rote Striche: Zielwerte für die gewählte Architektur — sie geben Richtung, kein Veto.</text>
+
+<!-- bridge: fitness delta feeds candidate ranking -->
+<line x1="555" y1="452" x2="472" y2="452" stroke="#888" stroke-width="1.5" marker-end="url(#ag)"/>
+<text x="513" y="432" text-anchor="middle" font-size="10" fill="#555">bewertet jeden Entwurf aus ②</text>
+<text x="513" y="444" text-anchor="middle" font-size="10" fill="#555">— Zweitkriterium der Auswahl</text>
+
+<!-- ============ stat strip: real numbers ============ -->
+<rect x="20" y="580" width="920" height="94" rx="8" fill="#fafafa" stroke="#dddddd" stroke-width="1"/>
+<text x="40" y="602" font-size="11" font-weight="bold" fill="#222">Live aus dem Graphen — nicht aus einer Folie:</text>
+<text x="140" y="634" text-anchor="middle" font-size="20" font-weight="bold" fill="#222">384</text>
+<text x="140" y="652" text-anchor="middle" font-size="10.5" fill="#555">Elemente</text>
+<text x="140" y="666" text-anchor="middle" font-size="10.5" fill="#555">im Modell</text>
+<text x="380" y="634" text-anchor="middle" font-size="20" font-weight="bold" fill="#222">51</text>
+<text x="380" y="652" text-anchor="middle" font-size="10.5" fill="#555">Edits durchs Gate</text>
+<text x="380" y="666" text-anchor="middle" font-size="10.5" fill="#555">45 übernommen · 6 blockiert</text>
+<text x="620" y="634" text-anchor="middle" font-size="20" font-weight="bold" fill="#222">0</text>
+<text x="620" y="652" text-anchor="middle" font-size="10.5" fill="#555">offene Fehler</text>
+<text x="620" y="666" text-anchor="middle" font-size="10.5" fill="#555">Fehler kommen nie in den Graphen</text>
+<text x="850" y="634" text-anchor="middle" font-size="20" font-weight="bold" fill="#222">53</text>
+<text x="850" y="652" text-anchor="middle" font-size="10.5" fill="#555">Warnungen</text>
+<text x="850" y="666" text-anchor="middle" font-size="10.5" fill="#555">sichtbarer Arbeitsvorrat</text>
+</svg>

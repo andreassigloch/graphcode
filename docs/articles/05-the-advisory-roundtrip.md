@@ -2,7 +2,8 @@
 
 *The companion to [Under the Hood](03-graphcode-harness-goal-and-concept.md). That article explains
 what "one gate" means; this one walks a single chat turn through the gate, end to end, and shows
-where an optional quality advisor attaches — before the edit and after it.*
+where an optional quality advisor attaches — before the edit and after it. Turn, round, candidate,
+batch — used precisely here, pinned down in [the glossary](08-glossary.md).*
 
 ## Two separate measurements, easy to conflate
 

@@ -191,5 +191,6 @@ it ever matters, not folded into either of these.
 ---
 
 *Repo: <https://github.com/andreassigloch/graphcode>. Companions: [the story](04-the-graphcode-story.md),
-[the claims](06-claims.md), [the advisory roundtrip](05-the-advisory-roundtrip.md). Ask the running
+[the claims](06-claims.md), [the advisory roundtrip](05-the-advisory-roundtrip.md),
+[the glossary](08-glossary.md). Ask the running
 system directly: `graph_help` explains any rule ID, gate name, or dashboard token on demand.*
