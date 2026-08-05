@@ -1,0 +1,149 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1350" height="760" viewBox="0 0 1350 760" font-family="Helvetica, Arial, sans-serif">
+  <style>
+    .grp   { fill:#ffffff; stroke:#444; stroke-width:1.3; }
+    .gt    { font-size:13px; font-weight:bold; fill:#222; text-anchor:middle; }
+    rect.b { fill:#ffffff; stroke-width:3; }
+    rect.g { stroke:#2e7d32; }
+    rect.y { stroke:#e0a106; }
+    rect.r { stroke:#c62828; }
+    rect.na{ stroke:#777; stroke-width:2; stroke-dasharray:6 4; }
+    rect.sh{ fill:#ececec; stroke:#b8b8b8; stroke-width:1.2; }
+    .id    { font-size:12px; font-weight:bold; fill:#111; text-anchor:middle; }
+    .nm    { font-size:10px; fill:#111; text-anchor:middle; }
+    g.dim .id, g.dim .nm { fill:#999; }
+    .lg    { font-size:12px; fill:#222; }
+  </style>
+
+  <rect x="0" y="0" width="1350" height="760" fill="#ffffff"/>
+
+  <!-- ================= ACQ (left) ================= -->
+  <rect class="grp" x="15" y="15" width="225" height="413"/>
+  <text class="gt" x="127" y="31">Acquisition Process</text>
+  <text class="gt" x="127" y="45">Group (ACQ)</text>
+  <g class="dim"><rect class="b sh" x="30" y="55" width="195" height="40"/>
+    <text class="id" x="127" y="70">ACQ.2</text><text class="nm" x="127" y="82">Supplier Request and</text><text class="nm" x="127" y="92">Selection</text></g>
+  <g class="dim"><rect class="b sh" x="30" y="101" width="195" height="40"/>
+    <text class="id" x="127" y="118">ACQ.3</text><text class="nm" x="127" y="132">Contract Agreement</text></g>
+  <g><rect class="b na" x="30" y="147" width="195" height="40"><title>VDA scope, but outside graphcode's remit — not evaluated</title></rect>
+    <text class="id" x="127" y="164">ACQ.4</text><text class="nm" x="127" y="178">Supplier Monitoring</text></g>
+  <g class="dim"><rect class="b sh" x="30" y="193" width="195" height="40"/>
+    <text class="id" x="127" y="210">ACQ.11</text><text class="nm" x="127" y="224">Technical Requirements</text></g>
+  <g class="dim"><rect class="b sh" x="30" y="239" width="195" height="40"/>
+    <text class="id" x="127" y="254">ACQ.12</text><text class="nm" x="127" y="266">Legal and Administrative</text><text class="nm" x="127" y="276">Requirements</text></g>
+  <g class="dim"><rect class="b sh" x="30" y="285" width="195" height="40"/>
+    <text class="id" x="127" y="302">ACQ.13</text><text class="nm" x="127" y="316">Project Requirements</text></g>
+  <g class="dim"><rect class="b sh" x="30" y="331" width="195" height="40"/>
+    <text class="id" x="127" y="348">ACQ.14</text><text class="nm" x="127" y="362">Request for Proposals</text></g>
+  <g class="dim"><rect class="b sh" x="30" y="377" width="195" height="40"/>
+    <text class="id" x="127" y="394">ACQ.15</text><text class="nm" x="127" y="408">Supplier Qualification</text></g>
+
+  <!-- ================= SPL (left, below ACQ) ================= -->
+  <rect class="grp" x="15" y="443" width="225" height="135"/>
+  <text class="gt" x="127" y="459">Supply Process Group</text>
+  <text class="gt" x="127" y="473">(SPL)</text>
+  <g class="dim"><rect class="b sh" x="30" y="483" width="195" height="40"/>
+    <text class="id" x="127" y="500">SPL.1</text><text class="nm" x="127" y="514">Supplier Tendering</text></g>
+  <g class="dim"><rect class="b sh" x="30" y="529" width="195" height="40"/>
+    <text class="id" x="127" y="546">SPL.2</text><text class="nm" x="127" y="560">Product Release</text></g>
+
+  <!-- ================= SYS (center top) ================= -->
+  <rect class="grp" x="255" y="15" width="840" height="190"/>
+  <text class="gt" x="675" y="33">System Engineering Process Group (SYS)</text>
+  <g class="dim"><rect class="b sh" x="275" y="45" width="190" height="46"/>
+    <text class="id" x="370" y="63">SYS.1</text><text class="nm" x="370" y="78">Requirements Elicitation</text></g>
+  <g><rect class="b g" x="875" y="45" width="190" height="46"><title>Covered: TEST→verify→REQ (R-01/R-05), VCRM + test-concept views, graph_tests regression selection</title></rect>
+    <text class="id" x="970" y="63">SYS.5</text><text class="nm" x="970" y="78">System Qualification Test</text></g>
+  <g><rect class="b g" x="390" y="95" width="190" height="46"><title>Covered: REQ + BQ-01/02/04/06/07 quality rules, RTM view</title></rect>
+    <text class="id" x="485" y="113">SYS.2</text><text class="nm" x="485" y="128">System Requirements Analysis</text></g>
+  <g><rect class="b g" x="760" y="95" width="190" height="46"><title>Covered: R-21 derives all FUNC↔FUNC interface connections from the architecture and flags uncovered ones; TEST→REQ→FCHAIN→FUNC-pair chain = rolled-up trace</title></rect>
+    <text class="id" x="855" y="111">SYS.4</text><text class="nm" x="855" y="124">System Integration and</text><text class="nm" x="855" y="135">Integration Test</text></g>
+  <g><rect class="b g" x="520" y="140" width="190" height="46"><title>Covered: MOD/allocate, FLOW+SCHEMA interfaces, ICD/SDD views, trade study = evaluate alternatives BP</title></rect>
+    <text class="id" x="615" y="158">SYS.3</text><text class="nm" x="615" y="173">System Architectural Design</text></g>
+
+  <!-- ================= SWE (center) ================= -->
+  <rect class="grp" x="255" y="215" width="840" height="205"/>
+  <text class="gt" x="675" y="233">Software Engineering Process Group (SWE)</text>
+  <g><rect class="b g" x="330" y="245" width="190" height="46"><title>Covered: REQ level = graph position (SYS/UC anchor, REQ→REQ compose), RD-01..04; residue: RTM grouping by level</title></rect>
+    <text class="id" x="425" y="263">SWE.1</text><text class="nm" x="425" y="276">Software Requirements</text><text class="nm" x="425" y="287">Analysis</text></g>
+  <g><rect class="b g" x="830" y="245" width="190" height="46"><title>Covered: TEST→verify→REQ (R-01/R-05), testResult + VR-01, VCRM view</title></rect>
+    <text class="id" x="925" y="263">SWE.6</text><text class="nm" x="925" y="276">Software Qualification</text><text class="nm" x="925" y="287">Test</text></g>
+  <g><rect class="b g" x="430" y="295" width="190" height="46"><title>Covered: MOD/allocate/io, ICD + arch views, MT-01/02 metrics, AO-rules, trade study</title></rect>
+    <text class="id" x="525" y="313">SWE.2</text><text class="nm" x="525" y="326">Software Architectural</text><text class="nm" x="525" y="337">Design</text></g>
+  <g><rect class="b g" x="730" y="295" width="190" height="46"><title>Covered: R-21 computes the interface inventory from FLOW connections, per-connection coverage check; residue: rule doesn't yet require testRef.level=integration</title></rect>
+    <text class="id" x="825" y="313">SWE.5</text><text class="nm" x="825" y="326">Software Integration and</text><text class="nm" x="825" y="337">Integration Test</text></g>
+  <g><rect class="b g" x="470" y="350" width="190" height="46"><title>Covered: FUNC + realRef (R-20, RC-01), FUNC→FUNC compose</title></rect>
+    <text class="id" x="565" y="368">SWE.3</text><text class="nm" x="565" y="381">Software Detailed Design</text><text class="nm" x="565" y="392">and Unit Construction</text></g>
+  <g><rect class="b g" x="675" y="350" width="190" height="46"><title>Covered: testRef unit level (R-19, RC-02), unit derivable via TEST→REQ→FUNC walk</title></rect>
+    <text class="id" x="770" y="368">SWE.4</text><text class="nm" x="770" y="381">Software Unit</text><text class="nm" x="770" y="392">Verification</text></g>
+
+  <!-- ================= SEC (center strip) ================= -->
+  <rect class="grp" x="255" y="430" width="840" height="75"/>
+  <text class="gt" x="675" y="448">Cybersecurity Engineering Process Group (SEC)</text>
+  <g class="dim"><rect class="b sh" x="275" y="456" width="190" height="40"/>
+    <text class="id" x="370" y="471">SEC.1</text><text class="nm" x="370" y="482">Cybersecurity Requirements</text><text class="nm" x="370" y="492">Elicitation</text></g>
+  <g class="dim"><rect class="b sh" x="480" y="456" width="190" height="40"/>
+    <text class="id" x="575" y="473">SEC.2</text><text class="nm" x="575" y="487">Cybersecurity Implementation</text></g>
+  <g class="dim"><rect class="b sh" x="685" y="456" width="190" height="40"/>
+    <text class="id" x="780" y="473">SEC.3</text><text class="nm" x="780" y="487">Risk Treatment Verification</text></g>
+  <g class="dim"><rect class="b sh" x="890" y="456" width="190" height="40"/>
+    <text class="id" x="985" y="473">SEC.4</text><text class="nm" x="985" y="487">Risk Treatment Validation</text></g>
+
+  <!-- ================= SUP (center bottom) ================= -->
+  <rect class="grp" x="255" y="515" width="840" height="150"/>
+  <text class="gt" x="675" y="533">Supporting Process Group (SUP)</text>
+  <g><rect class="b g" x="275" y="545" width="190" height="40"><title>Covered: rules engine + dimension readiness + SRR/PDR/CDR/TRR phase gates = continuous work-product QA</title></rect>
+    <text class="id" x="370" y="562">SUP.1</text><text class="nm" x="370" y="576">Quality Assurance</text></g>
+  <g class="dim"><rect class="b sh" x="480" y="545" width="190" height="40"/>
+    <text class="id" x="575" y="562">SUP.2</text><text class="nm" x="575" y="576">Verification</text></g>
+  <g class="dim"><rect class="b sh" x="685" y="545" width="190" height="40"/>
+    <text class="id" x="780" y="562">SUP.4</text><text class="nm" x="780" y="576">Joint Review</text></g>
+  <g class="dim"><rect class="b sh" x="890" y="545" width="190" height="40"/>
+    <text class="id" x="985" y="562">SUP.7</text><text class="nm" x="985" y="576">Documentation</text></g>
+  <g><rect class="b g" x="275" y="595" width="190" height="40"><title>Covered: single-writer Kuzu, gate-only writes, deterministic export + graphVersion stamp; commits/tags = baselines</title></rect>
+    <text class="id" x="370" y="612">SUP.8</text><text class="nm" x="370" y="626">Configuration Management</text></g>
+  <g><rect class="b r" x="480" y="595" width="190" height="40"><title>Gap: no problem element/lifecycle; testResult:failed triggers no obligation</title></rect>
+    <text class="id" x="575" y="610">SUP.9</text><text class="nm" x="575" y="622">Problem Resolution</text><text class="nm" x="575" y="632">Management</text></g>
+  <g><rect class="b y" x="685" y="595" width="190" height="40"><title>Partial: CR element + CR-R01..04 + graph_impact, but status only open/done — no analyze/approve/confirm evidence</title></rect>
+    <text class="id" x="780" y="610">SUP.10</text><text class="nm" x="780" y="622">Change Request</text><text class="nm" x="780" y="632">Management</text></g>
+
+  <!-- ================= MAN (right) ================= -->
+  <rect class="grp" x="1110" y="15" width="225" height="235"/>
+  <text class="gt" x="1222" y="31">Management Process</text>
+  <text class="gt" x="1222" y="45">Group (MAN)</text>
+  <g><rect class="b g" x="1125" y="55" width="195" height="40"><title>Covered (work-product side): MS + depends-on DAG, se-plan, implplan view, MS-01..03</title></rect>
+    <text class="id" x="1222" y="72">MAN.3</text><text class="nm" x="1222" y="86">Project Management</text></g>
+  <g class="dim"><rect class="b sh" x="1125" y="101" width="195" height="40"/>
+    <text class="id" x="1222" y="118">MAN.5</text><text class="nm" x="1222" y="132">Risk Management</text></g>
+  <g class="dim"><rect class="b sh" x="1125" y="147" width="195" height="40"/>
+    <text class="id" x="1222" y="164">MAN.6</text><text class="nm" x="1222" y="178">Measurement</text></g>
+  <g class="dim"><rect class="b sh" x="1125" y="193" width="195" height="40"/>
+    <text class="id" x="1222" y="208">MAN.7</text><text class="nm" x="1222" y="220">Cybersecurity Risk</text><text class="nm" x="1222" y="230">Management</text></g>
+
+  <!-- ================= REU (right) ================= -->
+  <rect class="grp" x="1110" y="265" width="225" height="100"/>
+  <text class="gt" x="1222" y="281">Reuse Process Group</text>
+  <text class="gt" x="1222" y="295">(REU)</text>
+  <g class="dim"><rect class="b sh" x="1125" y="305" width="195" height="40"/>
+    <text class="id" x="1222" y="320">REU.2</text><text class="nm" x="1222" y="332">Reuse Program</text><text class="nm" x="1222" y="342">Management</text></g>
+
+  <!-- ================= PIM (right) ================= -->
+  <rect class="grp" x="1110" y="380" width="225" height="100"/>
+  <text class="gt" x="1222" y="396">Process Improvement</text>
+  <text class="gt" x="1222" y="410">Process Group (PIM)</text>
+  <g class="dim"><rect class="b sh" x="1125" y="420" width="195" height="40"/>
+    <text class="id" x="1222" y="437">PIM.3</text><text class="nm" x="1222" y="451">Process Improvement</text></g>
+
+  <!-- ================= Legend ================= -->
+  <rect x="15" y="690" width="1320" height="55" fill="#fafafa" stroke="#ccc" stroke-width="1"/>
+  <rect x="35" y="705" width="26" height="16" fill="#fff" stroke="#2e7d32" stroke-width="3"/>
+  <text class="lg" x="70" y="718">covered by graphcode + SE modules</text>
+  <rect x="330" y="705" width="26" height="16" fill="#fff" stroke="#e0a106" stroke-width="3"/>
+  <text class="lg" x="365" y="718">partially covered</text>
+  <rect x="500" y="705" width="26" height="16" fill="#fff" stroke="#c62828" stroke-width="3"/>
+  <text class="lg" x="535" y="718">gap</text>
+  <rect x="590" y="705" width="26" height="16" fill="#fff" stroke="#777" stroke-width="2" stroke-dasharray="6 4"/>
+  <text class="lg" x="625" y="718">VDA scope, outside graphcode remit (not evaluated)</text>
+  <rect x="960" y="705" width="26" height="16" fill="#ececec" stroke="#b8b8b8" stroke-width="1.2"/>
+  <text class="lg" x="995" y="718">not in VDA scope — shaded, not evaluated</text>
+  <text class="lg" x="35" y="740" fill="#666" font-style="italic">Automotive SPICE 3.1 process landscape · graphcode/SE-module coverage evaluation, 2026-08-05</text>
+</svg>
