@@ -881,6 +881,13 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "id": "FCHAIN-doc-export",
+      "type": "FCHAIN",
+      "name": "Doc-Export (stdio → exporter)",
+      "description": "graph_export ueber MCP-stdio: serveStdio nimmt die View-Auswahl (FLOW-export-request) entgegen, exportMarkdown rendert deterministisch docs/views + docs/graph. Integrationstest: TEST-mcp-export via REQ-doc-export.",
+      "status": "reviewed"
+    },
+    {
       "id": "FCHAIN-impact-testing",
       "type": "FCHAIN",
       "name": "Impact-basierte Testauswahl",
@@ -895,6 +902,13 @@
       "description": "Agent erkennt nötige Interface-Änderung → Notwendigkeitsprüfung → CR an Facilitating-Agent → graph_impact(FLOW) → Gate-Entscheidung → Dependents re-scopen. Interface = FLOW ist bindend.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "id": "FCHAIN-live-update",
+      "type": "FCHAIN",
+      "name": "Live-Update-Kette (persist → emit → subscribe)",
+      "description": "Nach jeder Gate-Mutation: persist schreibt den Graphen nach Disk-Kuzu, makeUpdateEventHook emittiert das SSE-invalidate-Event (FLOW-live-event); die Host-Bridge broadcastet den versionierten Diff an die Viewer, die stdio-Tool-Schicht invalidiert ihren Response-Cache, das Dashboard laedt die betroffenen Domains ohne Reload nach. Integrationstest: TEST-live-view via REQ-mutation-emits-event.",
+      "status": "reviewed"
     },
     {
       "id": "FCHAIN-modelfree-gate",
@@ -1163,6 +1177,11 @@
         "file": "src/viewer/host.ts",
         "symbol": "HostBridge",
         "lang": "ts"
+      },
+      "realRef": {
+        "file": "src/viewer/host.ts",
+        "symbol": "broadcast",
+        "lang": "ts"
       }
     },
     {
@@ -1172,6 +1191,11 @@
       "description": "Extrahiert CodeFacts (extractCodeFacts, ts-Parser) und wertet die contracts RC-Regeln (RC-01 codeRef, RC-02 testRef) aus; scoreReadinessWithConformance mischt sie in die Readiness. Cross-Module-Call-Coverage Follow-up CR-GC-256. (CR-GC-206 -> CR-GC-253)",
       "status": "done",
       "codeRef": {
+        "file": "src/conformance.ts",
+        "symbol": "conformanceViolations",
+        "lang": "ts"
+      },
+      "realRef": {
         "file": "src/conformance.ts",
         "symbol": "conformanceViolations",
         "lang": "ts"
@@ -1189,6 +1213,11 @@
         "file": "src/codec.ts",
         "symbol": "decode",
         "lang": "ts"
+      },
+      "realRef": {
+        "file": "src/codec.ts",
+        "symbol": "decode",
+        "lang": "ts"
       }
     },
     {
@@ -1202,6 +1231,11 @@
         "file": "src/mcp-tools.ts",
         "symbol": "bindToolsToHarness",
         "lang": "ts"
+      },
+      "realRef": {
+        "file": "src/tools/report.ts",
+        "symbol": "graph_tests",
+        "lang": "ts"
       }
     },
     {
@@ -1213,6 +1247,11 @@
       "created_at": "2026-06-16T00:00:00.000Z",
       "updated_at": "2026-07-20T00:00:00.000Z",
       "codeRef": {
+        "file": "src/emit.ts",
+        "symbol": "materializeTrajectory",
+        "lang": "ts"
+      },
+      "realRef": {
         "file": "src/emit.ts",
         "symbol": "materializeTrajectory",
         "lang": "ts"
@@ -1230,6 +1269,11 @@
         "file": "src/emit.ts",
         "symbol": "makeUpdateEventHook",
         "lang": "ts"
+      },
+      "realRef": {
+        "file": "src/emit.ts",
+        "symbol": "makeUpdateEventHook",
+        "lang": "ts"
       }
     },
     {
@@ -1241,6 +1285,11 @@
       "created_at": "2026-06-16T00:00:00.000Z",
       "updated_at": "2026-06-17T00:00:00.000Z",
       "codeRef": {
+        "file": "src/codec.ts",
+        "symbol": "encode",
+        "lang": "ts"
+      },
+      "realRef": {
         "file": "src/codec.ts",
         "symbol": "encode",
         "lang": "ts"
@@ -1258,6 +1307,11 @@
         "file": "src/harness.ts",
         "symbol": "runRules",
         "lang": "ts"
+      },
+      "realRef": {
+        "file": "src/harness.ts",
+        "symbol": "evaluateRules",
+        "lang": "ts"
       }
     },
     {
@@ -1273,7 +1327,12 @@
         "symbol": "exportMarkdown",
         "lang": "ts"
       },
-      "operatingMode": "export"
+      "operatingMode": "export",
+      "realRef": {
+        "file": "src/exporter.ts",
+        "symbol": "exportMarkdown",
+        "lang": "ts"
+      }
     },
     {
       "id": "FUNC-graph-expand",
@@ -1284,6 +1343,11 @@
       "created_at": "2026-06-16T00:00:00.000Z",
       "updated_at": "2026-06-17T00:00:00.000Z",
       "codeRef": {
+        "file": "src/harness.ts",
+        "symbol": "subgraph",
+        "lang": "ts"
+      },
+      "realRef": {
         "file": "src/harness.ts",
         "symbol": "subgraph",
         "lang": "ts"
@@ -1298,6 +1362,11 @@
       "created_at": "2026-06-16T00:00:00.000Z",
       "updated_at": "2026-06-17T00:00:00.000Z",
       "codeRef": {
+        "file": "src/harness.ts",
+        "symbol": "impact",
+        "lang": "ts"
+      },
+      "realRef": {
         "file": "src/harness.ts",
         "symbol": "impact",
         "lang": "ts"
@@ -1328,7 +1397,12 @@
         "symbol": "scaffold",
         "lang": "ts"
       },
-      "operatingMode": "lifecycle"
+      "operatingMode": "lifecycle",
+      "realRef": {
+        "file": "src/scaffold.ts",
+        "symbol": "scaffold",
+        "lang": "ts"
+      }
     },
     {
       "id": "FUNC-health-endpoint",
@@ -1340,6 +1414,11 @@
       "codeRef": {
         "file": "src/viewer/host.ts",
         "symbol": "HostBridge",
+        "lang": "ts"
+      },
+      "realRef": {
+        "file": "src/viewer/host.ts",
+        "symbol": "health",
         "lang": "ts"
       }
     },
@@ -1356,7 +1435,12 @@
         "symbol": "importGraph",
         "lang": "ts"
       },
-      "operatingMode": "bootstrap"
+      "operatingMode": "bootstrap",
+      "realRef": {
+        "file": "src/harness.ts",
+        "symbol": "importGraph",
+        "lang": "ts"
+      }
     },
     {
       "id": "FUNC-merge-nodes",
@@ -1390,6 +1474,11 @@
         "file": "src/harness.ts",
         "symbol": "mutate",
         "lang": "ts"
+      },
+      "realRef": {
+        "file": "src/harness.ts",
+        "symbol": "mutate",
+        "lang": "ts"
       }
     },
     {
@@ -1400,6 +1489,11 @@
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
       "codeRef": {
+        "file": "src/viewer/host.ts",
+        "symbol": "serveHost",
+        "lang": "ts"
+      },
+      "realRef": {
         "file": "src/viewer/host.ts",
         "symbol": "serveHost",
         "lang": "ts"
@@ -1416,7 +1510,8 @@
         "file": "src/viewer/panels.ts",
         "symbol": "artifactsPanel",
         "lang": "ts"
-      }
+      },
+      "external": true
     },
     {
       "id": "FUNC-render-graph",
@@ -1438,7 +1533,8 @@
         "file": "src/viewer/panels.ts",
         "symbol": "healthPanel",
         "lang": "ts"
-      }
+      },
+      "external": true
     },
     {
       "id": "FUNC-render-impact",
@@ -1451,7 +1547,8 @@
         "file": "src/viewer/panels.ts",
         "symbol": "impactPanel",
         "lang": "ts"
-      }
+      },
+      "external": true
     },
     {
       "id": "FUNC-render-impl-gates",
@@ -1473,7 +1570,8 @@
         "file": "src/viewer/panels.ts",
         "symbol": "readinessPanel",
         "lang": "ts"
-      }
+      },
+      "external": true
     },
     {
       "id": "FUNC-render-recommendations",
@@ -1486,7 +1584,8 @@
         "file": "src/viewer/panels.ts",
         "symbol": "recommendationsPanel",
         "lang": "ts"
-      }
+      },
+      "external": true
     },
     {
       "id": "FUNC-render-views",
@@ -1501,6 +1600,11 @@
         "file": ".claude/skills/se-view-arch.md",
         "symbol": "se-view-arch",
         "lang": "prompt"
+      },
+      "realRef": {
+        "file": ".claude/commands/se-view/arch.md",
+        "symbol": "se-view:arch",
+        "lang": "prompt"
       }
     },
     {
@@ -1510,6 +1614,11 @@
       "description": "graph_tests akzeptiert ein Code-Changeset und traversiert gerichtet (geaenderter Knoten →satisfy/allocate→ REQ →verify→ TEST), nicht nur reines incoming-graph_impact. Wrappt EINEN Impact-/Traversal-Pfad, kein zweiter Blast-Radius.",
       "status": "done",
       "codeRef": {
+        "file": "src/harness.ts",
+        "symbol": "testImpact",
+        "lang": "ts"
+      },
+      "realRef": {
         "file": "src/harness.ts",
         "symbol": "testImpact",
         "lang": "ts"
@@ -1527,6 +1636,11 @@
         "file": "src/harness.ts",
         "symbol": "persist",
         "lang": "ts"
+      },
+      "realRef": {
+        "file": "src/harness.ts",
+        "symbol": "persist",
+        "lang": "ts"
       }
     },
     {
@@ -1539,7 +1653,8 @@
       "codeRef": {
         "file": "src/readiness-completeness.ts",
         "symbol": "scoreCompleteness"
-      }
+      },
+      "external": true
     },
     {
       "id": "FUNC-serve-sse",
@@ -1549,6 +1664,11 @@
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
       "codeRef": {
+        "file": "src/viewer/host.ts",
+        "symbol": "serveHost",
+        "lang": "ts"
+      },
+      "realRef": {
         "file": "src/viewer/host.ts",
         "symbol": "serveHost",
         "lang": "ts"
@@ -1565,6 +1685,11 @@
         "file": "src/mcp-server.ts",
         "symbol": "serveStdio",
         "lang": "ts"
+      },
+      "realRef": {
+        "file": "src/mcp-server.ts",
+        "symbol": "serveStdio",
+        "lang": "ts"
       }
     },
     {
@@ -1578,7 +1703,8 @@
         "file": "src/viewer/panels.ts",
         "symbol": "panelsForEvent",
         "lang": "ts"
-      }
+      },
+      "external": true
     },
     {
       "id": "FUNC-test",
@@ -1591,6 +1717,11 @@
       "created_at": "2026-07-08T00:00:00.000Z",
       "codeRef": {
         "file": ".claude/skills/se-test.md",
+        "symbol": "se-test",
+        "lang": "prompt"
+      },
+      "realRef": {
+        "file": ".claude/commands/se-test.md",
         "symbol": "se-test",
         "lang": "prompt"
       }
@@ -1608,6 +1739,11 @@
         "file": ".claude/skills/se-test-ui.md",
         "symbol": "se-test-ui",
         "lang": "prompt"
+      },
+      "realRef": {
+        "file": ".claude/commands/se-test-ui.md",
+        "symbol": "se-test-ui",
+        "lang": "prompt"
       }
     },
     {
@@ -1621,6 +1757,11 @@
       "codeRef": {
         "file": ".claude/skills/se-view-changelog.md",
         "symbol": "se-view-changelog",
+        "lang": "prompt"
+      },
+      "realRef": {
+        "file": ".claude/commands/se-view/changelog.md",
+        "symbol": "se-view:changelog",
         "lang": "prompt"
       }
     },
@@ -1636,6 +1777,11 @@
         "file": ".claude/skills/se-view-conops.md",
         "symbol": "se-view-conops",
         "lang": "prompt"
+      },
+      "realRef": {
+        "file": ".claude/commands/se-view/conops.md",
+        "symbol": "se-view:conops",
+        "lang": "prompt"
       }
     },
     {
@@ -1649,6 +1795,11 @@
       "codeRef": {
         "file": ".claude/skills/se-view-icd.md",
         "symbol": "se-view-icd",
+        "lang": "prompt"
+      },
+      "realRef": {
+        "file": ".claude/commands/se-view/icd.md",
+        "symbol": "se-view:icd",
         "lang": "prompt"
       }
     },
@@ -1664,6 +1815,11 @@
         "file": ".claude/skills/se-view-intplan.md",
         "symbol": "se-view-intplan",
         "lang": "prompt"
+      },
+      "realRef": {
+        "file": ".claude/commands/se-view/intplan.md",
+        "symbol": "se-view:intplan",
+        "lang": "prompt"
       }
     },
     {
@@ -1678,6 +1834,11 @@
         "file": ".claude/skills/se-view-fmea.md",
         "symbol": "se-view-fmea",
         "lang": "prompt"
+      },
+      "realRef": {
+        "file": ".claude/commands/se-view/fmea.md",
+        "symbol": "se-view:fmea",
+        "lang": "prompt"
       }
     },
     {
@@ -1691,6 +1852,11 @@
       "codeRef": {
         "file": ".claude/skills/se-view-rtm.md",
         "symbol": "se-view-rtm",
+        "lang": "prompt"
+      },
+      "realRef": {
+        "file": ".claude/commands/se-view/rtm.md",
+        "symbol": "se-view:rtm",
         "lang": "prompt"
       }
     },
@@ -3029,7 +3195,14 @@
       "description": "npx-CLI Kommando + Ergebnis.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "zodDefinition": "z.object({ command: z.enum(['init','update','remove']), repoPath: z.string(), result: z.string().optional() })"
+      "zodDefinition": "z.object({ command: z.enum(['init','update','remove']), repoPath: z.string(), result: z.string().optional() })",
+      "realRef": {
+        "file": "src/scaffold.ts",
+        "symbol": "CliCommandSchema",
+        "lang": "ts"
+      },
+      "external": true,
+      "contract": "Boundary-validiert im CLI-Dispatch (src/cli.ts main, unbekanntes Verb -> Usage); Deklaration src/scaffold.ts CliCommandSchema (realRef)"
     },
     {
       "id": "SCHEMA-format-e",
@@ -3038,7 +3211,8 @@
       "description": "Kompaktes Snapshot-/Diff-Format. @sigloch/contracts/se.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "zodDefinition": "z.object({ nodes: z.array(z.string()), edges: z.array(z.string()), operations: z.array(z.enum(['+','-','~','M'])).optional(), baseSnapshot: z.string().optional() })"
+      "zodDefinition": "z.object({ nodes: z.array(z.string()), edges: z.array(z.string()), operations: z.array(z.enum(['+','-','~','M'])).optional(), baseSnapshot: z.string().optional() })",
+      "external": true
     },
     {
       "id": "SCHEMA-markdown-view",
@@ -3047,7 +3221,14 @@
       "description": "Generierte human-readable View mit GENERATED-Header.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "zodDefinition": "z.object({ view: z.string(), markdown: z.string(), generated: z.literal(true) })"
+      "zodDefinition": "z.object({ view: z.string(), markdown: z.string(), generated: z.literal(true) })",
+      "realRef": {
+        "file": "src/exporter.ts",
+        "symbol": "MarkdownViewSchema",
+        "lang": "ts"
+      },
+      "external": true,
+      "contract": "Framework-validiert: z.array(MarkdownViewSchema) im graph_export-Tool-Input (MCP-Registry parst vor dem Handler); Deklaration src/exporter.ts MarkdownViewSchema (realRef)"
     },
     {
       "id": "SCHEMA-mutate-command",
@@ -3056,7 +3237,8 @@
       "description": "Edit-Operation durch das Gate. @sigloch/contracts harness (D1).",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "zodDefinition": "z.object({ op: z.enum(['add','update','delete']), target: z.enum(['node','edge']), element: z.unknown(), consumerType: z.string() })"
+      "zodDefinition": "z.object({ op: z.enum(['add','update','delete']), target: z.enum(['node','edge']), element: z.unknown(), consumerType: z.string() })",
+      "external": true
     },
     {
       "id": "SCHEMA-mutate-result",
@@ -3065,7 +3247,8 @@
       "description": "Apply-Ergebnis + Violations + Confidence/Tier. @sigloch/contracts harness (D1).",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "zodDefinition": "z.object({ success: z.boolean(), applied: z.number(), violations: z.array(z.object({ ruleId: z.string(), severity: z.enum(['error','warning','info']), elementId: z.string(), msg: z.string() })), confidence: z.number().optional(), tier: z.enum(['auto','suggest','block']).optional() })"
+      "zodDefinition": "z.object({ success: z.boolean(), applied: z.number(), violations: z.array(z.object({ ruleId: z.string(), severity: z.enum(['error','warning','info']), elementId: z.string(), msg: z.string() })), confidence: z.number().optional(), tier: z.enum(['auto','suggest','block']).optional() })",
+      "external": true
     },
     {
       "id": "SCHEMA-ontology-graph",
@@ -3074,7 +3257,8 @@
       "description": "Elements (13 ElementTypes) + Traces (7 TraceTypes). @sigloch/contracts/se.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "zodDefinition": "z.object({ elements: z.array(z.object({ id: z.string(), type: ElementType, name: z.string(), description: z.string() })), traces: z.array(z.object({ source: z.string(), target: z.string(), type: TraceType })) })"
+      "zodDefinition": "z.object({ elements: z.array(z.object({ id: z.string(), type: ElementType, name: z.string(), description: z.string() })), traces: z.array(z.object({ source: z.string(), target: z.string(), type: TraceType })) })",
+      "external": true
     },
     {
       "id": "SCHEMA-query-params",
@@ -3083,7 +3267,8 @@
       "description": "Query-/Request-Parameter.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "zodDefinition": "z.object({ elementId: z.string().optional(), depth: z.number().optional(), branch: z.string().optional(), cursor: z.string().optional(), view: z.string().optional() })"
+      "zodDefinition": "z.object({ elementId: z.string().optional(), depth: z.number().optional(), branch: z.string().optional(), cursor: z.string().optional(), view: z.string().optional() })",
+      "concept": true
     },
     {
       "id": "SCHEMA-trajectory",
@@ -3092,7 +3277,8 @@
       "description": "append-only Lern-Emission. @sigloch/learning-core.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "zodDefinition": "z.object({ step: z.string(), action: z.string(), outcome: z.string(), ts: z.string() })"
+      "zodDefinition": "z.object({ step: z.string(), action: z.string(), outcome: z.string(), ts: z.string() })",
+      "external": true
     },
     {
       "id": "SCHEMA-update-event",
@@ -3101,7 +3287,8 @@
       "description": "SSE invalidate Event.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "zodDefinition": "z.object({ type: z.literal('invalidate'), domains: z.array(z.enum(['graph','rules','readiness','suggestions'])), version: z.number() })"
+      "zodDefinition": "z.object({ type: z.literal('invalidate'), domains: z.array(z.enum(['graph','rules','readiness','suggestions'])), version: z.number() })",
+      "external": true
     },
     {
       "id": "SYS-graphcode",
@@ -6011,6 +6198,21 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "FCHAIN-doc-export",
+      "target": "FUNC-export-markdown",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-doc-export",
+      "target": "FUNC-serve-stdio",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-doc-export",
+      "target": "REQ-doc-export",
+      "type": "satisfy"
+    },
+    {
       "source": "FCHAIN-impact-testing",
       "target": "FUNC-graph-impact",
       "type": "compose",
@@ -6072,6 +6274,36 @@
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FCHAIN-live-update",
+      "target": "FUNC-broadcast-diff",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-live-update",
+      "target": "FUNC-emit-update-event",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-live-update",
+      "target": "FUNC-save-graph",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-live-update",
+      "target": "FUNC-serve-stdio",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-live-update",
+      "target": "FUNC-subscribe-updates",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-live-update",
+      "target": "REQ-mutation-emits-event",
+      "type": "satisfy"
     },
     {
       "source": "FCHAIN-modelfree-gate",
@@ -6341,6 +6573,16 @@
     },
     {
       "source": "FLOW-live-event",
+      "target": "FUNC-broadcast-diff",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-live-event",
+      "target": "FUNC-serve-stdio",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-live-event",
       "target": "FUNC-subscribe-updates",
       "type": "io",
       "weight": 1,
@@ -6549,6 +6791,11 @@
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-check-code-conformance",
+      "target": "MOD-harness",
+      "type": "allocate"
     },
     {
       "source": "FUNC-check-code-conformance",
@@ -7352,13 +7599,6 @@
     },
     {
       "source": "FUNC-render-views",
-      "target": "MOD-dashboard",
-      "type": "allocate",
-      "weight": 1,
-      "created_at": "2026-06-17T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-render-views",
       "target": "MOD-skills",
       "type": "allocate",
       "weight": 1,
@@ -7432,6 +7672,11 @@
     },
     {
       "source": "FUNC-score-completeness",
+      "target": "MOD-harness",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-score-completeness",
       "target": "REQ-completeness-actor-bounded",
       "type": "satisfy"
     },
@@ -7465,6 +7710,11 @@
       "type": "allocate",
       "weight": 1,
       "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-serve-stdio",
+      "target": "FLOW-export-request",
+      "type": "io"
     },
     {
       "source": "FUNC-serve-stdio",
@@ -8981,6 +9231,11 @@
     },
     {
       "source": "UC-live-graph-view",
+      "target": "FCHAIN-live-update",
+      "type": "compose"
+    },
+    {
+      "source": "UC-live-graph-view",
       "target": "REQ-artifact-freshness",
       "type": "compose",
       "weight": 1,
@@ -9102,5 +9357,6 @@
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
     }
-  ]
+  ],
+  "graphVersion": 44
 }

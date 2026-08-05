@@ -71,8 +71,15 @@ describe('exportGraphJson / exportMarkdown (TEST-doc-export)', () => {
     const exported = exportGraphJson(graph);
     // Byte-identical: exporter is the exact inverse of importGraph and the
     // committed file is already in canonical `JSON.stringify(_, null, 2) + "\n"` form.
-    expect(exported).toBe(committedRaw);
-    expect(Buffer.from(exported).equals(Buffer.from(committedRaw))).toBe(true);
+    // Der CR-GC-300 graphVersion-Stamp ist Export-Metadatum, kein Modell-Inhalt —
+    // strippen + kanonisch re-serialisieren, dann muss Byte-Identitaet gelten.
+    const committedCanonical = ((): string => {
+      const parsed = JSON.parse(committedRaw) as Record<string, unknown>;
+      delete parsed.graphVersion;
+      return JSON.stringify(parsed, null, 2) + '\n';
+    })();
+    expect(exported).toBe(committedCanonical);
+    expect(Buffer.from(exported).equals(Buffer.from(committedCanonical))).toBe(true);
   });
 
   it('ROUND-TRIP preserves lossy-in-Kuzu attributes (status/kinds/method/nested attributes)', () => {

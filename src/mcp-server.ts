@@ -127,7 +127,14 @@ async function bootHost(
     // .graphcode/kuzu*, restart (seed-on-empty re-imports it).
     try {
       const committed = readFileSync(join(repoRoot, 'docs/graph/graphcode.graph.json'), 'utf8');
-      if (exportGraphJson(harness.getGraph()) !== committed) {
+      // Der CR-GC-300 graphVersion-Stamp ist Metadatum des Exports, kein Modell-
+      // Inhalt — fuer den Drift-Vergleich strippen und kanonisch re-serialisieren.
+      const committedCanonical = ((): string => {
+        const parsed = JSON.parse(committed) as Record<string, unknown>;
+        delete parsed.graphVersion;
+        return JSON.stringify(parsed, null, 2) + '\n';
+      })();
+      if (exportGraphJson(harness.getGraph()) !== committedCanonical) {
         process.stderr.write(
           '[graphcode] WARN: Kuzu store differs from docs/graph/graphcode.graph.json — ' +
           'either run graph_export (store has un-exported mutations) or re-seed ' +

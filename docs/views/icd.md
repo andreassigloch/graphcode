@@ -10,15 +10,15 @@
 
 | Interface (SCHEMA) | Contract (realRef) | status |
 |---|---|---|
-| `SCHEMA-cli-command` | ⚠ kein realRef (R-26) | reviewed |
-| `SCHEMA-format-e` | ⚠ kein realRef (R-26) | reviewed |
-| `SCHEMA-markdown-view` | ⚠ kein realRef (R-26) | reviewed |
-| `SCHEMA-mutate-command` | ⚠ kein realRef (R-26) | reviewed |
-| `SCHEMA-mutate-result` | ⚠ kein realRef (R-26) | reviewed |
-| `SCHEMA-ontology-graph` | ⚠ kein realRef (R-26) | reviewed |
-| `SCHEMA-query-params` | ⚠ kein realRef (R-26) | reviewed |
-| `SCHEMA-trajectory` | ⚠ kein realRef (R-26) | reviewed |
-| `SCHEMA-update-event` | ⚠ kein realRef (R-26) | reviewed |
+| `SCHEMA-cli-command` | src/scaffold.ts#CliCommandSchema | reviewed |
+| `SCHEMA-format-e` | extern definiert (kein realRef) | reviewed |
+| `SCHEMA-markdown-view` | src/exporter.ts#MarkdownViewSchema | reviewed |
+| `SCHEMA-mutate-command` | extern definiert (kein realRef) | reviewed |
+| `SCHEMA-mutate-result` | extern definiert (kein realRef) | reviewed |
+| `SCHEMA-ontology-graph` | extern definiert (kein realRef) | reviewed |
+| `SCHEMA-query-params` | Konzept (noch kein Zod-Export) | reviewed |
+| `SCHEMA-trajectory` | extern definiert (kein realRef) | reviewed |
+| `SCHEMA-update-event` | extern definiert (kein realRef) | reviewed |
 
 ## Flows (producer → consumer)
 
@@ -33,13 +33,13 @@
 | `FLOW-draft-graph` | `FUNC-mutate` | `FUNC-evaluate-rules` |
 | `FLOW-expand-request` | `ACTOR-claude-code` | `FUNC-graph-expand` |
 | `FLOW-expanded-subgraph` | `FUNC-graph-expand` | `ACTOR-claude-code` |
-| `FLOW-export-request` | `ACTOR-developer` | `FUNC-export-markdown` |
+| `FLOW-export-request` | `ACTOR-developer` · `FUNC-serve-stdio` | `FUNC-export-markdown` |
 | `FLOW-formatE-artifact` | `FUNC-encode` | `FUNC-decode` |
 | `FLOW-formatE-candidates` | `ACTOR-claude-code` | `FUNC-decode` |
 | `FLOW-graph-state` | `ACTOR-developer` | `FUNC-encode` |
 | `FLOW-impact-subgraph` | `FUNC-graph-impact` | `ACTOR-claude-code` |
 | `FLOW-install-result` | `FUNC-harness-cli` | `ACTOR-developer` |
-| `FLOW-live-event` | `FUNC-emit-update-event` | `ACTOR-dashboard` · `FUNC-subscribe-updates` |
+| `FLOW-live-event` | `FUNC-emit-update-event` | `ACTOR-dashboard` · `FUNC-broadcast-diff` · `FUNC-serve-stdio` · `FUNC-subscribe-updates` |
 | `FLOW-markdown-docs` | `FUNC-export-markdown` | `ACTOR-developer` |
 | `FLOW-merged-graph` | `FUNC-merge-nodes` | `ACTOR-developer` |
 | `FLOW-migrated-graph` | `FUNC-migrate-schema` | `ACTOR-developer` |

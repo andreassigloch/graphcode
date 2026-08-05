@@ -318,6 +318,9 @@
 | `FCHAIN-codec-roundtrip` | satisfy | `REQ-post-codec-roundtrip` |
 | `FCHAIN-codec-roundtrip` | satisfy | `REQ-pre-codec-roundtrip` |
 | `FCHAIN-codec-roundtrip` | satisfy | `REQ-roundtrip-conformance` |
+| `FCHAIN-doc-export` | compose | `FUNC-export-markdown` |
+| `FCHAIN-doc-export` | compose | `FUNC-serve-stdio` |
+| `FCHAIN-doc-export` | satisfy | `REQ-doc-export` |
 | `FCHAIN-impact-testing` | compose | `FUNC-graph-impact` |
 | `FCHAIN-impact-testing` | satisfy | `REQ-impact-based-testing` |
 | `FCHAIN-impact-testing` | satisfy | `REQ-post-impact-testing` |
@@ -327,6 +330,12 @@
 | `FCHAIN-interface-escalation` | satisfy | `REQ-interface-change-escalation` |
 | `FCHAIN-interface-escalation` | satisfy | `REQ-post-interface-escalation` |
 | `FCHAIN-interface-escalation` | satisfy | `REQ-pre-interface-escalation` |
+| `FCHAIN-live-update` | compose | `FUNC-broadcast-diff` |
+| `FCHAIN-live-update` | compose | `FUNC-emit-update-event` |
+| `FCHAIN-live-update` | compose | `FUNC-save-graph` |
+| `FCHAIN-live-update` | compose | `FUNC-serve-stdio` |
+| `FCHAIN-live-update` | compose | `FUNC-subscribe-updates` |
+| `FCHAIN-live-update` | satisfy | `REQ-mutation-emits-event` |
 | `FCHAIN-modelfree-gate` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-modelfree-gate` | compose | `FUNC-mutate` |
 | `FCHAIN-modelfree-gate` | satisfy | `REQ-graceful-degradation` |
@@ -365,6 +374,8 @@
 | `FLOW-install-result` | io | `ACTOR-developer` |
 | `FLOW-install-result` | relation | `SCHEMA-cli-command` |
 | `FLOW-live-event` | io | `ACTOR-dashboard` |
+| `FLOW-live-event` | io | `FUNC-broadcast-diff` |
+| `FLOW-live-event` | io | `FUNC-serve-stdio` |
 | `FLOW-live-event` | io | `FUNC-subscribe-updates` |
 | `FLOW-live-event` | relation | `SCHEMA-update-event` |
 | `FLOW-markdown-docs` | io | `ACTOR-developer` |
@@ -396,6 +407,7 @@
 | `FLOW-violations` | relation | `SCHEMA-mutate-result` |
 | `FUNC-broadcast-diff` | allocate | `MOD-host-bridge` |
 | `FUNC-broadcast-diff` | satisfy | `REQ-versioned-broadcast` |
+| `FUNC-check-code-conformance` | allocate | `MOD-harness` |
 | `FUNC-check-code-conformance` | satisfy | `REQ-graph-code-conformance` |
 | `FUNC-decode` | allocate | `MOD-codec` |
 | `FUNC-decode` | io | `FLOW-capture-draft` |
@@ -514,7 +526,6 @@
 | `FUNC-render-readiness` | satisfy | `UC-live-graph-view` |
 | `FUNC-render-recommendations` | allocate | `MOD-dashboard` |
 | `FUNC-render-recommendations` | satisfy | `UC-live-graph-view` |
-| `FUNC-render-views` | allocate | `MOD-dashboard` |
 | `FUNC-render-views` | allocate | `MOD-skills` |
 | `FUNC-render-views` | io | `FLOW-rendered-view` |
 | `FUNC-render-views` | satisfy | `REQ-doc-export` |
@@ -526,12 +537,14 @@
 | `FUNC-save-graph` | io | `FLOW-committed-graph` |
 | `FUNC-save-graph` | satisfy | `REQ-disk-persistence` |
 | `FUNC-save-graph` | satisfy | `UC-code-quality` |
+| `FUNC-score-completeness` | allocate | `MOD-harness` |
 | `FUNC-score-completeness` | satisfy | `REQ-completeness-actor-bounded` |
 | `FUNC-score-completeness` | satisfy | `REQ-completeness-single-value` |
 | `FUNC-score-completeness` | satisfy | `REQ-readiness-completeness` |
 | `FUNC-serve-sse` | allocate | `MOD-host-bridge` |
 | `FUNC-serve-sse` | satisfy | `REQ-readonly-bridge` |
 | `FUNC-serve-stdio` | allocate | `MOD-mcp-tools` |
+| `FUNC-serve-stdio` | io | `FLOW-export-request` |
 | `FUNC-serve-stdio` | satisfy | `REQ-agent-agnostic` |
 | `FUNC-serve-stdio` | satisfy | `REQ-single-transport` |
 | `FUNC-subscribe-updates` | allocate | `MOD-dashboard` |
@@ -776,6 +789,7 @@
 | `UC-efficient-testing` | compose | `REQ-test-runnable-binding` |
 | `UC-graph-time-travel` | compose | `REQ-graph-snapshot-per-commit` |
 | `UC-graph-time-travel` | compose | `REQ-graph-state-recall` |
+| `UC-live-graph-view` | compose | `FCHAIN-live-update` |
 | `UC-live-graph-view` | compose | `REQ-artifact-freshness` |
 | `UC-live-graph-view` | compose | `REQ-completeness-actor-bounded` |
 | `UC-live-graph-view` | compose | `REQ-completeness-single-value` |

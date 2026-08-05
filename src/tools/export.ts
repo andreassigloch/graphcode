@@ -206,7 +206,11 @@ export function bindExportTools(ctx: ToolContext): MCPToolRegistry {
       // .graphVersion. Postprocessing of the unchanged exportGraphJson() output —
       // exportGraphJson() itself stays the byte-identical inverse of importGraph
       // (9 call-sites, exporter.test.ts).
-      const jsonWithVersion = JSON.stringify({ ...JSON.parse(json), graphVersion: ctx.graphVersion() });
+      // Canonical form bleibt erhalten (`null, 2` + trailing newline) — ohne sie
+      // schreibt der Stamp die committete SSOT einzeilig um und bricht den
+      // Round-Trip-Kontrakt (exporter.test.ts) + den Startup-Drift-Vergleich.
+      const jsonWithVersion =
+        JSON.stringify({ ...JSON.parse(json), graphVersion: ctx.graphVersion() }, null, 2) + '\n';
       writeFileSync(jsonAbs, jsonWithVersion);
 
       const views = input.views ?? MARKDOWN_VIEWS;

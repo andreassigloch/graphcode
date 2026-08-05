@@ -67,6 +67,7 @@
 | function | module |
 |---|---|
 | `FUNC-broadcast-diff` | `MOD-host-bridge` |
+| `FUNC-check-code-conformance` | `MOD-harness` |
 | `FUNC-decode` | `MOD-codec` |
 | `FUNC-deduce-tests` | `MOD-mcp-tools` |
 | `FUNC-emit-trajectory` | `MOD-hooks` |
@@ -91,10 +92,10 @@
 | `FUNC-render-impl-gates` | `MOD-dashboard` |
 | `FUNC-render-readiness` | `MOD-dashboard` |
 | `FUNC-render-recommendations` | `MOD-dashboard` |
-| `FUNC-render-views` | `MOD-dashboard` |
 | `FUNC-render-views` | `MOD-skills` |
 | `FUNC-resolve-tests-from-code` | `MOD-mcp-tools` |
 | `FUNC-save-graph` | `MOD-harness` |
+| `FUNC-score-completeness` | `MOD-harness` |
 | `FUNC-serve-sse` | `MOD-host-bridge` |
 | `FUNC-serve-stdio` | `MOD-mcp-tools` |
 | `FUNC-subscribe-updates` | `MOD-dashboard` |
