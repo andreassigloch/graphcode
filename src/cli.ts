@@ -23,6 +23,7 @@ import { serveHost } from './viewer/host.js';
 import { StoreOwnershipError } from './store-lock.js';
 import { scaffold, syncSkills, type CliCommand } from './scaffold.js';
 import { executeRun, parseExecutorEnv } from './run-verb.js';
+import { executeImportCode } from './import-code-verb.js';
 
 const USAGE = `graphcode — governed graph substrate (MCP-stdio)
 
@@ -33,6 +34,10 @@ Usage:
                     foreign harness). Env: GRAPHCODE_LLM_BASE_URL +
                     GRAPHCODE_LLM_MODEL (required), GRAPHCODE_LLM_BACKEND=
                     openai|anthropic, GRAPHCODE_LLM_API_KEY
+  graphcode import-code [dir]  Deterministic TS-repo import (graphify, no LLM):
+                    FUNC/MOD/FLOW+SCHEMA through the gate. RESEED semantics —
+                    replaces the whole graph (automatic backup under
+                    .graphcode/backup/), never merges.
   graphcode init        Scaffold the harness into the current repo
   graphcode update      Refresh installed artifacts (preserves the store)
   graphcode remove      Remove all scaffolded artifacts (restlos)
@@ -93,6 +98,29 @@ async function main(): Promise<void> {
         if (err instanceof StoreOwnershipError) {
           process.stderr.write(
             `graphcode run: store already owned by pid ${err.owner.pid} — ` +
+              'stop the running MCP host (or the other run) first.\n',
+          );
+          process.exit(1);
+        }
+        throw err;
+      }
+    }
+    case 'import-code': {
+      // Deterministischer Code-Repo-Import (CR-GC-298): Reseed-Semantik mit
+      // automatischem Backup; Report auf stderr (stdout bleibt MCP-reserviert).
+      const dir = process.argv[3];
+      try {
+        const summary = await executeImportCode({
+          repoRoot: process.cwd(),
+          dir,
+          trace: (line) => process.stderr.write(line + '\n'),
+        });
+        process.stderr.write(`graphcode import-code: ${JSON.stringify(summary, null, 2)}\n`);
+        process.exit(summary.status === 'failed' ? 1 : 0);
+      } catch (err) {
+        if (err instanceof StoreOwnershipError) {
+          process.stderr.write(
+            `graphcode import-code: store already owned by pid ${err.owner.pid} — ` +
               'stop the running MCP host (or the other run) first.\n',
           );
           process.exit(1);

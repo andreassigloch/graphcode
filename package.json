@@ -47,6 +47,7 @@
     "@sigloch/graph-api-core": "^2.0.0",
     "@sigloch/graph-cypher-wasm": "^0.2.3",
     "@sigloch/graphcode-client": "^0.5.0",
+    "@sigloch/graphify": "file:../graphify",
     "@sigloch/learning-core": "^0.1.0",
     "@sigloch/se-optimizer": "^0.3.0",
     "@sigloch/se-steering": "^0.2.1",
