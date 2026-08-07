@@ -1,0 +1,4168 @@
+{
+  "elements": [
+    {
+      "id": "ACTOR-se-engineer",
+      "type": "ACTOR",
+      "name": "ACTOR-se-engineer",
+      "description": "Systems engineer who authors and reviews sigloch SE graphs and hands approved changes to an apply-gate."
+    },
+    {
+      "id": "ACTOR-ts-developer",
+      "type": "ACTOR",
+      "name": "ACTOR-ts-developer",
+      "description": "TypeScript developer who wants to understand an unfamiliar repo structure without running a backend."
+    },
+    {
+      "id": "CR-FMEA-001",
+      "type": "CR",
+      "name": "Confidentiality and integrity acceptance",
+      "description": "Origin: FMEA 2026-08-06 (AIAG-VDA 7-step, 16 failure modes, 8 AP-High). The twelve mitigation REQs it introduced are NOT implemented here — each is already owned by the CR of its responsible FUNC (cache-allowlist in CR-GVW-029, no-network-bridges in CR-GVW-022, local-graph-only and CSP in CR-GVW-008, error-redaction in CR-GVW-009, export-discloses and handle-binding in CR-GVW-024, input-is-data in CR-GVW-012 and CR-GVW-019, cache-visible in CR-GVW-010, drift-block in CR-GVW-013, concurrent-session in CR-GVW-014). What this CR owns is the system-level acceptance that no single one of them can prove: TEST-sec-acceptance over a full session with a confidential fixture — Cache Storage and the HTTP cache hold no graph or source payload, no outbound request was made, no file other than the chosen target was written. Plus two build-artifact assertions: the CSP demonstrably blocks a foreign origin, verified by an attempted request and not by reading the header; and createCommandBridge is absent from the built bundle. Scheduled last because all three need the shipped bundle and an installed app. Residual risk accepted and not re-litigated here: FM-04, FM-11, FM-15. Budget 4 files.",
+      "status": "open"
+    },
+    {
+      "id": "CR-GVW-001",
+      "type": "CR",
+      "name": "Trade: browser path for graphify TS extraction",
+      "description": "Decision: Graphview consumes an upstream graphify browser subpath with an injectable parser (extractCodeRepo(files,{parse})) rather than vendoring the extraction. Criteria: coherence (weight 1.0), modifiability (0.5), effort, risk, reversibility, self-contained constraint. Winner reuses 4 of 5 extraction files 1:1 and follows the graph-api-core ./browser precedent; only parse-typescript.ts is native. Prebuilt grammars web-tree-sitter@0.26.11 + tree-sitter-wasms@0.1.13 (tree-sitter-typescript.wasm, tree-sitter-tsx.wasm) make the WASM parser low-risk for every option, so the trade turns on code location, not feasibility.",
+      "status": "open",
+      "role": "trade-study"
+    },
+    {
+      "id": "CR-GVW-002",
+      "type": "CR",
+      "name": "Rejected: vendor graphify extraction into Graphview",
+      "description": "Rejected option. Copy graphify's four pure extraction files (resolve-calls, schema-from-signature, detect-tests, extract-code-repo) plus a local WASM parser into Graphview. Cheaper upfront and zero upstream coupling, but duplicates extraction logic across two repos — the parallel path the project rules forbid — and graphify bugfixes stop propagating. Loses on coherence, the highest-weighted dimension. Retained as the fallback if the upstream graphify CR stalls.",
+      "status": "rejected"
+    },
+    {
+      "id": "CR-GVW-003",
+      "type": "CR",
+      "name": "Rejected: TypeScript compiler API instead of tree-sitter",
+      "description": "Rejected option. Produce ParsedFile with the browser-capable typescript package instead of tree-sitter, avoiding WASM assets entirely and gaining real type information. Rejected because it forks extraction semantics away from graphify's deliberate tree-sitter substrate (~25 grammars, a second language is a new parser file), producing two divergent definitions of what a FUNC or SCHEMA is. Worst score on coherence.",
+      "status": "rejected"
+    },
+    {
+      "id": "CR-GVW-004",
+      "type": "CR",
+      "name": "Swap vendored GVE core for @sigloch/graph-view-core",
+      "description": "Graphview vendors graph-view-edit's renderer core rather than depending on GVE, which ships as an app plus CLI and is not embeddable as a library. This CR exists from day one so the vendored copy is a tracked migration, not a fork: when @sigloch/graph-view-core is extracted, replace src/vendor/gve/ with the dependency and delete the vendored tree. SCOPE CORRECTED by CR-GVW-006: the closure is 45 files / 5714 lines, not five modules — 32 files from graph-view-edit/src plus 13 TypeScript files from packages/graph-edit-surface, which is NOT published on npm. Read-only does not separate from editing at import level. Consumers must also alias @sigloch/graphcode-client/view-catalog, which the package does not export. Does not touch the graph-view-edit repo.",
+      "status": "open"
+    },
+    {
+      "id": "CR-GVW-005",
+      "type": "CR",
+      "name": "Supported-browser envelope: fallbacks in parallel",
+      "description": "DECIDED 2026-08-06, Option 2. IRR A-01 falsified the availability of the File System Access API: MDN browser-compat-data shows showOpenFilePicker, showSaveFilePicker and showDirectoryPicker as Chrome 86+ / Chrome Android 132+ only — Firefox no, Safari no. Decision by the requester: develop the fallback path in parallel rather than restrict to Chromium; a reach decision, not a technical one, with the double behaviour knowingly accepted. Affects Safari (WebKit) AND Firefox (Gecko). Load and export fallbacks were already required; the new one is input[webkitdirectory] for repo import. The real cost is the behavioural divergence: no persistent file handles outside Chromium, so re-export downloads again and re-opening requires re-picking.",
+      "status": "open",
+      "role": "decision"
+    },
+    {
+      "id": "CR-GVW-006",
+      "type": "CR",
+      "name": "Spike: is GVE's renderer core vendorable?",
+      "description": "ANSWERED 2026-08-06, not falsified. The closure was vendored unchanged into a bare Vite app, built (218 modules, 559 kB gzip) and rendered 173 shapes / 309 paths / 173 labels against graphview.graph.json — counts matching the graph exactly. No node: imports, no fs/path, no GVE_REPO_ROOT anywhere; the /api/* calls are fetch with injectable url and fetchImpl, and initAppConfig already falls back to schema defaults. Cost is 45 files / 5714 lines across two source trees, one of them unpublished. Also corrected the locked stack: GVE no longer uses Cytoscape.",
+      "status": "done"
+    },
+    {
+      "id": "CR-GVW-007",
+      "type": "CR",
+      "name": "Spike: measure the 200 ms budget and fix the ceilings",
+      "description": "ANSWERED 2026-08-07 over two rounds. IRR A-06, A-07, A-12. Benchmarked view switch, filter, search and selection at 500/2000/5000 nodes against the real vendored GVE renderer — SVG plus elkjs routing, NOT Cytoscape, which CR-GVW-006 established GVE no longer uses. REQ-nfr-responsiveness CONFIRMED: worst first-feedback 103 ms across 96 samples. REQ-nfr-scale-limits ceiling stands at 2000 but its basis changed — interaction latency does not bind (32-39 ms at 5000), label legibility does (resolveBoxOverlaps maxNodes=1500), and the 1000-file figure was never measured. Round 1's 1691 ms search figure is withdrawn as a measurement artifact. Two findings spun out: REQ-view-legible-labels and CR-GVW-016 (runaway ResizeObserver). The harness lands in the repo via CR-GVW-031.",
+      "status": "done",
+      "role": "spike"
+    },
+    {
+      "id": "CR-GVW-008",
+      "type": "CR",
+      "name": "App shell and config load",
+      "description": "Realize FUNC-load-app-config to done. Context IS the graph_context slice of FUNC-load-app-config — do not restate scope here. Also lands the Vite app shell and the CSP that REQ-sec-csp states, which no FUNC realizes because CSP is a build artifact. Make the verify-TESTs green on disk (TEST-op-config, TEST-sec-local-graph-only, TEST-sec-csp), add one io-integration test on the FLOW-app-config boundary, then apply status:done through the gate. Budget 5 files.",
+      "status": "open"
+    },
+    {
+      "id": "CR-GVW-009",
+      "type": "CR",
+      "name": "Error surface",
+      "description": "Realize FUNC-surface-error to done. Context IS the graph_context slice of FUNC-surface-error. This is the sink every FLOW-error-event in the system terminates in, so it must exist before any producer can be verified. Make TEST-op-error-surface and TEST-sec-error-redaction green on disk, add one io-integration test on the FLOW-error-event boundary, then apply status:done through the gate. Budget 4 files.",
+      "status": "open"
+    },
+    {
+      "id": "CR-GVW-010",
+      "type": "CR",
+      "name": "Status surface",
+      "description": "Realize FUNC-report-app-status to done. Context IS the graph_context slice of FUNC-report-app-status. Make TEST-op-status-panel, TEST-op-version-visible, TEST-op-engine-degradation and TEST-sec-cache-visible green on disk, add one io-integration test on the FLOW-app-status boundary, then apply status:done through the gate. Note: TEST-op-engine-degradation asserts both engine behaviours decided by CR-GVW-005, so it needs a non-Chromium run. Budget 5 files.",
+      "status": "open"
+    },
+    {
+      "id": "CR-GVW-011",
+      "type": "CR",
+      "name": "File intake with non-Chromium fallback",
+      "description": "Realize FUNC-open-file-picker to done. Context IS the graph_context slice of FUNC-open-file-picker. CR-GVW-005 decided that showOpenFilePicker is Chromium-only, so the input[type=file] plus drop fallback is in scope here, not a follow-up. Make TEST-load-file-intake green on disk in both engines, add one io-integration test on the FLOW-graph-file boundary, then apply status:done through the gate. Budget 5 files.",
+      "status": "open"
+    },
+    {
+      "id": "CR-GVW-012",
+      "type": "CR",
+      "name": "Decode and validate graph input",
+      "description": "Realize FUNC-decode-and-validate to done. Context IS the graph_context slice of FUNC-decode-and-validate. Reuses FormatECodec from @sigloch/graph-api-core/browser — name the published version as a prerequisite; a npm-linked working copy false-greens this CR. Make TEST-load-decode and TEST-sec-input-is-data green on disk, add one io-integration test on the FLOW-decoded-graph boundary, then apply status:done through the gate. Budget 4 files.",
+      "status": "open"
+    },
+    {
+      "id": "CR-GVW-013",
+      "type": "CR",
+      "name": "Ontology version check",
+      "description": "Realize FUNC-check-ontology-version to done. Context IS the graph_context slice of FUNC-check-ontology-version. It satisfies both REQ-op-ontology-version-check and REQ-data-export-blocked-on-drift, so the drift verdict it produces is what MS-5 later reads. Make TEST-op-ontology-version-check green on disk, add one io-integration test on the FLOW-version-warning boundary, then apply status:done through the gate. Budget 3 files.",
+      "status": "open"
+    },
+    {
+      "id": "CR-GVW-014",
+      "type": "CR",
+      "name": "Session graph init",
+      "description": "Realize FUNC-init-session-graph to done. Context IS the graph_context slice of FUNC-init-session-graph. It satisfies REQ-nfr-scale-limits, whose figures CR-GVW-007 round 2 amended — read the amended numbers, not the provisional ones. Make TEST-data-concurrent-session green on disk, add one io-integration test on the FLOW-session-graph boundary, then apply status:done through the gate. Budget 4 files.",
+      "status": "open"
+    },
+    {
+      "id": "CR-GVW-015",
+      "type": "CR",
+      "name": "Vendor the GVE renderer core",
+      "description": "Mechanical import of the GVE renderer closure into src/vendor/gve/ — 45 files / 5714 lines across graph-view-edit/src and the unpublished packages/graph-edit-surface, exactly as CR-GVW-006 measured and built. FILE-BUDGET EXCEPTION, stated deliberately: the 5-file rule governs authored files; this CR authors none, it copies a closure verified as one atomic unit. Acceptance is the CR-GVW-006 render assertion reproduced in-repo: shape, path and label counts matching the graph exactly. CR-GVW-004 tracks replacing this tree with @sigloch/graph-view-core.",
+      "status": "open"
+    },
+    {
+      "id": "CR-GVW-016",
+      "type": "CR",
+      "name": "Fix runaway ResizeObserver in vendored svg-viewport",
+      "description": "Defect found by CR-GVW-007 round 2. In svg-viewport.mjs, pad is computed as half the canvas client size inside a ResizeObserver on that same canvas and applied as padding on the wrapper div inside it — a self-feeding loop. Vertical padding grew ~3940 px per step and reached 3.82 million px eight seconds after load with no user interaction, rewriting at 30-120 Hz. It does not breach REQ-nfr-responsiveness because the svg subtree stays quiet, but it burns a render loop permanently. Fix in the vendored tree and carry the fix upstream to graph-view-edit. Budget 2 files.",
+      "status": "open"
+    },
+    {
+      "id": "CR-GVW-017",
+      "type": "CR",
+      "name": "View command resolution",
+      "description": "Realize FUNC-resolve-view-command to done. Context IS the graph_context slice of FUNC-resolve-view-command. REQ-view-registry demands a new view need no renderer change, so TEST-view-registry must add a view through the registry only. Make it green on disk, add one io-integration test on the FLOW-view-command boundary, then apply status:done through the gate. Budget 4 files.",
+      "status": "open"
+    },
+    {
+      "id": "CR-GVW-018",
+      "type": "CR",
+      "name": "Filter and search",
+      "description": "Realize FUNC-apply-graph-filter and FUNC-search-elements to done. Context IS their graph_context slices; both satisfy REQ-view-filter-search. CR-GVW-007 round 2 established that filtering dims rather than removes — the shape count does not change, the dim count does. TEST-view-filter-search must assert the dim-count delta, never a shape-count delta, or it will report a working filter as broken. Add one io-integration test each on FLOW-filtered-graph and FLOW-search-hits, then apply status:done through the gate. Budget 5 files.",
+      "status": "open"
+    },
+    {
+      "id": "CR-GVW-019",
+      "type": "CR",
+      "name": "Render binding",
+      "description": "Realize FUNC-render-graph to done against the vendored core. Context IS the graph_context slice of FUNC-render-graph. It consumes four inbound FLOWs from three milestones — FLOW-session-graph (MS-2), FLOW-filtered-graph and FLOW-search-hits (MS-3), FLOW-code-graph (MS-6) — so its io-integration tests are written here for the first three and extended in CR-GVW-027 for the fourth. It satisfies REQ-nfr-scale-limits and REQ-view-legible-labels: CR-GVW-007 round 2 established that interaction latency does not bind the ceiling, label legibility does — resolveBoxOverlaps skips above maxNodes=1500 while the stated ceiling is 2000. Resolve that gap here; the verifying case is TEST-view-legible-labels, written in CR-GVW-031. Follow se-test-ui: assert rendered intent, not DOM presence. Budget 5 files.",
+      "status": "open"
+    },
+    {
+      "id": "CR-GVW-020",
+      "type": "CR",
+      "name": "Legal option derivation",
+      "description": "Realize FUNC-derive-legal-options to done. Context IS the graph_context slice of FUNC-derive-legal-options. The ontology comes from @sigloch/contracts/se and is never forked — name the published version as a prerequisite. TEST-edit-ontology-legal asserts an illegal option is never offered, which is an absence assertion: design it red-first per se-test so you have seen it fail. Add one io-integration test on the FLOW-legal-options boundary, then apply status:done through the gate. Budget 4 files.",
+      "status": "open"
+    },
+    {
+      "id": "CR-GVW-021",
+      "type": "CR",
+      "name": "Trace validation",
+      "description": "Realize FUNC-validate-trace to done. Context IS the graph_context slice of FUNC-validate-trace. Validates every proposed edge with isValidTrace from @sigloch/graph-api-core/browser before it reaches the session graph. Make the verify-TEST green on disk, add one io-integration test on the FLOW-validated-change boundary, then apply status:done through the gate. Budget 3 files.",
+      "status": "open"
+    },
+    {
+      "id": "CR-GVW-022",
+      "type": "CR",
+      "name": "Session mutation and dirty state",
+      "description": "Realize FUNC-apply-session-mutation and FUNC-set-dirty-state to done. Context IS their graph_context slices. FUNC-apply-session-mutation satisfies REQ-sec-no-network-bridges, so TEST-sec-no-network-bridges asserting no POST leaves the app belongs here, not in a security follow-up. FUNC-set-dirty-state has two inbound FLOWs — FLOW-mutation-applied here and FLOW-export-complete from MS-5 — so the second io-integration test is added in CR-GVW-024. Budget 5 files.",
+      "status": "open"
+    },
+    {
+      "id": "CR-GVW-023",
+      "type": "CR",
+      "name": "Format-E serialization",
+      "description": "Realize FUNC-serialize-format-e to done. Context IS the graph_context slice of FUNC-serialize-format-e. REQ-export-roundtrip demands export-then-reimport be identity, so TEST-export-roundtrip is a property test over the real codec, not a fixture comparison. Reuses FormatECodec from @sigloch/graph-api-core/browser — same pinned published version as CR-GVW-012. Add one io-integration test on the FLOW-formate-text boundary, then apply status:done through the gate. Budget 3 files.",
+      "status": "open"
+    },
+    {
+      "id": "CR-GVW-024",
+      "type": "CR",
+      "name": "Write file handle with download fallback",
+      "description": "Realize FUNC-write-file-handle to done. Context IS the graph_context slice of FUNC-write-file-handle — it satisfies four REQ (data-fs-permission, sec-export-discloses, data-handle-binding, fm-05), the densest node in the graph. CR-GVW-005 decided that persistent file handles do not exist outside Chromium, so the download fallback and the re-pick behaviour are in scope here. Also add the second io-integration test on FLOW-export-complete into FUNC-set-dirty-state, which CR-GVW-022 deliberately left open. Budget 5 files.",
+      "status": "open"
+    },
+    {
+      "id": "CR-GVW-025",
+      "type": "CR",
+      "name": "Repo folder pick and progress",
+      "description": "Realize FUNC-pick-repo-folder and FUNC-report-progress to done. Context IS their graph_context slices. CR-GVW-005 decided the input[webkitdirectory] fallback for non-Chromium, in scope here. FUNC-report-progress is allocated to MOD-app-ops but is scheduled in this milestone because its only input FLOW-source-files originates here — a deliberate module/order divergence. It satisfies REQ-nfr-responsiveness, whose 200 ms ceiling CR-GVW-007 round 2 CONFIRMED, so the progress indicator must appear within 200 ms of the folder pick. Budget 5 files.",
+      "status": "open"
+    },
+    {
+      "id": "CR-GVW-026",
+      "type": "CR",
+      "name": "TypeScript parse via WASM",
+      "description": "Realize FUNC-parse-ts-wasm to done. Context IS the graph_context slice of FUNC-parse-ts-wasm. Pinned prerequisites, published versions not linked copies: web-tree-sitter@0.26.11 and tree-sitter-wasms@0.1.13 (tree-sitter-typescript.wasm, tree-sitter-tsx.wasm). REQ-repo-parse-parity demands parity against the native parser, so TEST-repo-parse-parity needs a real graphify-parsed fixture to compare against. Add one io-integration test on the FLOW-parsed-files boundary, then apply status:done through the gate. Budget 4 files.",
+      "status": "open"
+    },
+    {
+      "id": "CR-GVW-027",
+      "type": "CR",
+      "name": "Extract and project code candidates",
+      "description": "Realize FUNC-extract-and-project to done. Context IS the graph_context slice of FUNC-extract-and-project. BLOCKED on the upstream graphify browser subpath that CR-GVW-001 decided: this CR consumes extractCodeRepo(files,{parse}) from a published graphify version and must name it. If that upstream CR stalls, CR-GVW-002 is the recorded fallback and reopening it is a decision, not a workaround. Also add the fourth io-integration test on FLOW-code-graph into FUNC-render-graph, which CR-GVW-019 left open. Budget 4 files.",
+      "status": "open"
+    },
+    {
+      "id": "CR-GVW-028",
+      "type": "CR",
+      "name": "Service worker registration",
+      "description": "Realize FUNC-register-service-worker to done. Context IS the graph_context slice of FUNC-register-service-worker. It satisfies REQ-op-secure-origin, so TEST-op-secure-origin must show an insecure origin failing loudly rather than degrading silently. Add one io-integration test on the FLOW-sw-active boundary, then apply status:done through the gate. Budget 3 files.",
+      "status": "open"
+    },
+    {
+      "id": "CR-GVW-029",
+      "type": "CR",
+      "name": "Precache app shell and grammars",
+      "description": "Realize FUNC-cache-app-shell to done. Context IS the graph_context slice of FUNC-cache-app-shell. The allowlist must cover the tree-sitter WASM grammars introduced by CR-GVW-026 and nothing else — REQ-sec-cache-allowlist. TEST-sec-cache-allowlist is an absence assertion over the cache contents; design it red-first per se-test. TEST-offline-precache must prove repo import works with the network off. Budget 4 files.",
+      "status": "open"
+    },
+    {
+      "id": "CR-GVW-030",
+      "type": "CR",
+      "name": "Update prompt",
+      "description": "Realize FUNC-prompt-update to done. Context IS the graph_context slice of FUNC-prompt-update. Allocated to MOD-app-ops but scheduled here because its only input FLOW-sw-active originates in CR-GVW-028 — the second deliberate module/order divergence. REQ-op-sw-update requires the update be deferred while the session is dirty, so this CR reads the dirty state produced in MS-4. Budget 3 files.",
+      "status": "open"
+    },
+    {
+      "id": "CR-GVW-031",
+      "type": "CR",
+      "name": "NFR test harness and the measurable NFR cases",
+      "description": "Owns the NFR test cases — without this CR the quality attributes are asserted in prose and verified nowhere. Commit the CR-GVW-007 benchmark driver (bench2.mjs plus its second Vite entry) into the repo as a runnable artifact, then write TEST-nfr-responsiveness, TEST-nfr-scale-limits and TEST-view-legible-labels against it. Method is fixed by CR-GVW-007 and is not optional: observe the drawn svg subtree only, assert a quiet baseline before arming, and detect settle by in-page timer ticks rather than CDP polling — polling cannot tell 400 ms idle from 400 ms of blocked main thread and reports a 575 ms view switch as 6 ms. Filter validity is the dim-count delta, never the shape count. Every case red-first per se-test. Bind each TEST's testRef so R-19 clears. Budget 5 files.",
+      "status": "open"
+    },
+    {
+      "id": "CR-GVW-032",
+      "type": "CR",
+      "name": "Privacy and quality acceptance run",
+      "description": "Extends the CR-GVW-031 harness — same files, no second harness — with the two NFR cases that only become measurable once the app installs and runs offline: TEST-nfr-privacy (network blocked, load, import and export all succeed, zero outbound requests across a full session) and TEST-nfr-acceptance (the budget holds across all four interactions, behaviour beyond the ceiling is graceful). Split from CR-GVW-031 deliberately: writing these earlier would mean writing tests that cannot run, which is how a suite goes green without proving anything. Also closes REQ-nfr-privacy and REQ-sec, which today are satisfied by SYS-graphview and owned by no CR. Budget 4 files.",
+      "status": "open"
+    },
+    {
+      "id": "FCHAIN-edit-legal-change",
+      "type": "FCHAIN",
+      "name": "FCHAIN-edit-legal-change",
+      "description": "Select an element, choose from ontology-legal options only, apply the change to the session copy, mark it dirty."
+    },
+    {
+      "id": "FCHAIN-explore-navigate",
+      "type": "FCHAIN",
+      "name": "FCHAIN-explore-navigate",
+      "description": "Select a view, filter by node and edge type, search an element, drill into its neighbourhood."
+    },
+    {
+      "id": "FCHAIN-export-to-disk",
+      "type": "FCHAIN",
+      "name": "FCHAIN-export-to-disk",
+      "description": "Serialize the session graph to Format-E, write it through the File System Access API with download fallback, clear the dirty state."
+    },
+    {
+      "id": "FCHAIN-extract-repo-graph",
+      "type": "FCHAIN",
+      "name": "Extract and render a TypeScript repo",
+      "description": "Pick a folder, parse the TypeScript files with the WASM parser, extract and project graphify's candidates, render them."
+    },
+    {
+      "id": "FCHAIN-install-run-offline",
+      "type": "FCHAIN",
+      "name": "Install and run offline",
+      "description": "Register the service worker and precache the app shell and WASM grammars so later launches need no network."
+    },
+    {
+      "id": "FCHAIN-load-parse-render",
+      "type": "FCHAIN",
+      "name": "Load, parse and render a graph file",
+      "description": "Pick a Format-E or JSON file, decode and validate it, seed the session graph, render it."
+    },
+    {
+      "id": "FCHAIN-operate-monitor",
+      "type": "FCHAIN",
+      "name": "Inspect status and confirm updates",
+      "description": "Load config at launch, report status and version, surface errors, report progress on long operations, and prompt for an update only when no unexported work is at risk."
+    },
+    {
+      "id": "FLOW-app-config",
+      "type": "FLOW",
+      "name": "App config",
+      "description": "Validated configuration values in effect for this session."
+    },
+    {
+      "id": "FLOW-app-launch",
+      "type": "FLOW",
+      "name": "App launch",
+      "description": "The user starts or reloads the app."
+    },
+    {
+      "id": "FLOW-app-status",
+      "type": "FLOW",
+      "name": "App status",
+      "description": "Service-worker state, offline readiness, grammar availability, graph counts, build id and ontology version."
+    },
+    {
+      "id": "FLOW-code-graph",
+      "type": "FLOW",
+      "name": "Code graph",
+      "description": "Typed FUNC, MOD, FLOW, SCHEMA and TEST candidates projected into the session graph."
+    },
+    {
+      "id": "FLOW-decoded-graph",
+      "type": "FLOW",
+      "name": "Decoded graph",
+      "description": "Typed nodes and traces plus any ontology violations found while decoding."
+    },
+    {
+      "id": "FLOW-dirty-badge",
+      "type": "FLOW",
+      "name": "Dirty badge",
+      "description": "Unexported-changes indicator shown to the user."
+    },
+    {
+      "id": "FLOW-edit-selection",
+      "type": "FLOW",
+      "name": "Edit selection",
+      "description": "The element or edge endpoints the user selected for editing."
+    },
+    {
+      "id": "FLOW-error-event",
+      "type": "FLOW",
+      "name": "Error event",
+      "description": "A caught failure from any operation: invalid config, decode failure, denied write permission or a WASM parse error."
+    },
+    {
+      "id": "FLOW-error-report",
+      "type": "FLOW",
+      "name": "Error report",
+      "description": "A visible, copyable error message."
+    },
+    {
+      "id": "FLOW-export-complete",
+      "type": "FLOW",
+      "name": "Export complete",
+      "description": "Signal to clear the unexported-changes flag."
+    },
+    {
+      "id": "FLOW-export-request",
+      "type": "FLOW",
+      "name": "Export request",
+      "description": "User asks to export the session graph."
+    },
+    {
+      "id": "FLOW-filtered-graph",
+      "type": "FLOW",
+      "name": "Filtered graph",
+      "description": "Session graph reduced to the active node and edge type filters."
+    },
+    {
+      "id": "FLOW-formate-text",
+      "type": "FLOW",
+      "name": "Format-E text",
+      "description": "Serialized Format-E v2 representation of the session graph."
+    },
+    {
+      "id": "FLOW-graph-file",
+      "type": "FLOW",
+      "name": "Graph file",
+      "description": "Selected file name and raw text content."
+    },
+    {
+      "id": "FLOW-install-request",
+      "type": "FLOW",
+      "name": "Install request",
+      "description": "User installs Graphview as an app."
+    },
+    {
+      "id": "FLOW-legal-options",
+      "type": "FLOW",
+      "name": "Legal options",
+      "description": "The ontology-legal operations offered for the selection — the menu never offers an illegal one."
+    },
+    {
+      "id": "FLOW-load-request",
+      "type": "FLOW",
+      "name": "Load request",
+      "description": "User asks to open a graph file."
+    },
+    {
+      "id": "FLOW-mutation-applied",
+      "type": "FLOW",
+      "name": "Mutation applied",
+      "description": "Confirmation that the session graph now contains the change."
+    },
+    {
+      "id": "FLOW-offline-status",
+      "type": "FLOW",
+      "name": "Offline status",
+      "description": "Whether the app bundle and WASM grammars are cached for a network-free launch."
+    },
+    {
+      "id": "FLOW-parsed-files",
+      "type": "FLOW",
+      "name": "Parsed files",
+      "description": "graphify ParsedFile symbol tables: functions, imports and calls per file."
+    },
+    {
+      "id": "FLOW-progress",
+      "type": "FLOW",
+      "name": "Progress",
+      "description": "Determinate progress plus a cancel affordance for a long-running operation."
+    },
+    {
+      "id": "FLOW-proposed-change",
+      "type": "FLOW",
+      "name": "Proposed change",
+      "description": "The node or trace change the user picked from the offered options."
+    },
+    {
+      "id": "FLOW-rendered-view",
+      "type": "FLOW",
+      "name": "Rendered view",
+      "description": "The laid-out graph presented on the canvas."
+    },
+    {
+      "id": "FLOW-repo-request",
+      "type": "FLOW",
+      "name": "Repo request",
+      "description": "User asks to view a TypeScript source tree."
+    },
+    {
+      "id": "FLOW-search-hits",
+      "type": "FLOW",
+      "name": "Search hits",
+      "description": "Matching element uids to highlight."
+    },
+    {
+      "id": "FLOW-search-term",
+      "type": "FLOW",
+      "name": "Search term",
+      "description": "Free-text query entered by the user."
+    },
+    {
+      "id": "FLOW-session-graph",
+      "type": "FLOW",
+      "name": "Session graph",
+      "description": "The in-memory working copy with its dirty flag."
+    },
+    {
+      "id": "FLOW-source-files",
+      "type": "FLOW",
+      "name": "Source files",
+      "description": "Collected .ts and .tsx files as path plus content."
+    },
+    {
+      "id": "FLOW-status-request",
+      "type": "FLOW",
+      "name": "Status request",
+      "description": "The user opens the status surface."
+    },
+    {
+      "id": "FLOW-sw-active",
+      "type": "FLOW",
+      "name": "Service worker active",
+      "description": "Registration succeeded and the worker controls the page."
+    },
+    {
+      "id": "FLOW-update-prompt",
+      "type": "FLOW",
+      "name": "Update prompt",
+      "description": "Offer to activate a waiting build, shown only when no unexported work is at risk."
+    },
+    {
+      "id": "FLOW-validated-change",
+      "type": "FLOW",
+      "name": "Validated change",
+      "description": "A change confirmed legal by isValidTrace, ready to apply."
+    },
+    {
+      "id": "FLOW-version-warning",
+      "type": "FLOW",
+      "name": "Version warning",
+      "description": "Ontology-version mismatch between the loaded file and the app, naming both versions."
+    },
+    {
+      "id": "FLOW-view-command",
+      "type": "FLOW",
+      "name": "View command",
+      "description": "Resolved selector, transform and layout for the chosen view."
+    },
+    {
+      "id": "FLOW-view-request",
+      "type": "FLOW",
+      "name": "View request",
+      "description": "Chosen view name, scope and parameters."
+    },
+    {
+      "id": "FLOW-written-file",
+      "type": "FLOW",
+      "name": "Written file",
+      "description": "Confirmation that the Format-E file reached disk."
+    },
+    {
+      "id": "FUNC-apply-graph-filter",
+      "type": "FUNC",
+      "name": "FUNC-apply-graph-filter",
+      "description": "Filter the in-memory graph by node type and edge type for the active view."
+    },
+    {
+      "id": "FUNC-apply-session-mutation",
+      "type": "FUNC",
+      "name": "FUNC-apply-session-mutation",
+      "description": "Apply a validated node or edge change to the in-memory session graph."
+    },
+    {
+      "id": "FUNC-cache-app-shell",
+      "type": "FUNC",
+      "name": "Precache app shell",
+      "description": "Precache the application bundle and the tree-sitter WASM grammar assets so repo import also works offline."
+    },
+    {
+      "id": "FUNC-check-ontology-version",
+      "type": "FUNC",
+      "name": "Check ontology version",
+      "description": "Compare a decoded graph's ontology version against the app's and report a mismatch before anything is rendered."
+    },
+    {
+      "id": "FUNC-decode-and-validate",
+      "type": "FUNC",
+      "name": "Decode and validate graph input",
+      "description": "Detect Format-E versus JSON, decode via FormatECodec and check every node type and trace against SE_DESCRIPTOR, reporting offenders rather than dropping them."
+    },
+    {
+      "id": "FUNC-derive-legal-options",
+      "type": "FUNC",
+      "name": "FUNC-derive-legal-options",
+      "description": "Derive the allowed node and trace operations for a selection from SE_DESCRIPTOR trace patterns."
+    },
+    {
+      "id": "FUNC-extract-and-project",
+      "type": "FUNC",
+      "name": "Extract and project code candidates",
+      "description": "Reuse graphify's deterministic extraction over the parsed files and map the typed candidates onto the session graph. No extraction logic is copied into Graphview."
+    },
+    {
+      "id": "FUNC-init-session-graph",
+      "type": "FUNC",
+      "name": "Initialize session graph",
+      "description": "Seed the in-memory session graph from a validated decode and reset the unexported-changes flag."
+    },
+    {
+      "id": "FUNC-load-app-config",
+      "type": "FUNC",
+      "name": "Load app config",
+      "description": "Read and schema-validate the static config at launch; apply defaults when absent, fail loudly when present but invalid."
+    },
+    {
+      "id": "FUNC-open-file-picker",
+      "type": "FUNC",
+      "name": "Open file picker",
+      "description": "Obtain a Format-E or JSON graph file through showOpenFilePicker, with drag-and-drop as fallback."
+    },
+    {
+      "id": "FUNC-parse-ts-wasm",
+      "type": "FUNC",
+      "name": "Parse TypeScript via WASM",
+      "description": "Produce graphify's ParsedFile symbol table using web-tree-sitter and the prebuilt TypeScript grammar. The injectable parser decided in CR-GVW-001."
+    },
+    {
+      "id": "FUNC-pick-repo-folder",
+      "type": "FUNC",
+      "name": "Pick repo folder",
+      "description": "Obtain a TypeScript source tree through showDirectoryPicker and collect the .ts and .tsx files as path plus content."
+    },
+    {
+      "id": "FUNC-prompt-update",
+      "type": "FUNC",
+      "name": "Prompt for update",
+      "description": "Detect a waiting service worker and ask for confirmation, deferring while the session holds unexported changes."
+    },
+    {
+      "id": "FUNC-register-service-worker",
+      "type": "FUNC",
+      "name": "Register service worker",
+      "description": "Install and update the service worker that makes Graphview launchable without a network, and surface offline readiness."
+    },
+    {
+      "id": "FUNC-render-graph",
+      "type": "FUNC",
+      "name": "Render graph",
+      "description": "Mount the filtered graph into the SVG scene and run the view's elkjs or built-in node-link layout."
+    },
+    {
+      "id": "FUNC-report-app-status",
+      "type": "FUNC",
+      "name": "Report app status",
+      "description": "Report service-worker state, offline readiness, WASM grammar availability, loaded-graph counts, build id and ontology version to the status surface."
+    },
+    {
+      "id": "FUNC-report-progress",
+      "type": "FUNC",
+      "name": "Report progress",
+      "description": "Show determinate progress and accept cancellation for any operation that cannot finish inside the 200 ms feedback budget."
+    },
+    {
+      "id": "FUNC-resolve-view-command",
+      "type": "FUNC",
+      "name": "FUNC-resolve-view-command",
+      "description": "Resolve a view name, scope and params into selector, transform and layout via the GVE view-registry."
+    },
+    {
+      "id": "FUNC-search-elements",
+      "type": "FUNC",
+      "name": "FUNC-search-elements",
+      "description": "Match a search term against node uids and descriptions and return the hits."
+    },
+    {
+      "id": "FUNC-serialize-format-e",
+      "type": "FUNC",
+      "name": "FUNC-serialize-format-e",
+      "description": "Serialize the session graph to Format-E v2 text via FormatECodec."
+    },
+    {
+      "id": "FUNC-set-dirty-state",
+      "type": "FUNC",
+      "name": "FUNC-set-dirty-state",
+      "description": "Set or clear the unexported-changes flag that drives the dirty badge and the close guard."
+    },
+    {
+      "id": "FUNC-surface-error",
+      "type": "FUNC",
+      "name": "Surface error",
+      "description": "Render any caught error as a visible, copyable message. With no server log, an unsurfaced error is unrecoverable."
+    },
+    {
+      "id": "FUNC-validate-trace",
+      "type": "FUNC",
+      "name": "FUNC-validate-trace",
+      "description": "Check a proposed edge against isValidTrace before it enters the session graph."
+    },
+    {
+      "id": "FUNC-write-file-handle",
+      "type": "FUNC",
+      "name": "FUNC-write-file-handle",
+      "description": "Write the Format-E text to disk via showSaveFilePicker, falling back to a download."
+    },
+    {
+      "id": "MOD-app-ops",
+      "type": "MOD",
+      "name": "App Operations",
+      "description": "The operating surface of a backend-free app: config loading, status and version reporting, error surfacing, update prompting and progress reporting. Replaces what a server would expose as a health endpoint and a log."
+    },
+    {
+      "id": "MOD-edit-surface",
+      "type": "MOD",
+      "name": "Edit Surface",
+      "description": "Ontology-legal editing: derives the permitted node and trace operations for a selection from SE_DESCRIPTOR trace patterns and validates every proposed edge with isValidTrace before it reaches the session graph. Pure, ontology-driven, no app state. Reuses @sigloch/graph-api-core/browser; the ontology is imported from @sigloch/contracts/se, never forked."
+    },
+    {
+      "id": "MOD-formate-io",
+      "type": "MOD",
+      "name": "Format-E I/O",
+      "description": "Format-E and JSON load and export: parses incoming graphs and serializes the session graph back to Format-E v2, writing to disk via the File System Access API with a download fallback. Reuses FormatECodec from @sigloch/graph-api-core/browser so round-trip stays identity."
+    },
+    {
+      "id": "MOD-graph-session",
+      "type": "MOD",
+      "name": "Graph Session",
+      "description": "The in-memory session graph and its dirty state: applies validated changes to the working copy and tracks unexported changes for the dirty badge and close guard. No OPFS, no IndexedDB, no write-back to a graphcode host."
+    },
+    {
+      "id": "MOD-pwa-shell",
+      "type": "MOD",
+      "name": "PWA Shell",
+      "description": "Installability and offline operation: service-worker registration, precaching of the app bundle and the tree-sitter WASM grammar assets. Zero backend processes."
+    },
+    {
+      "id": "MOD-repo-import",
+      "type": "MOD",
+      "name": "Repo Import",
+      "description": "Graphview module realizing TypeScript repo viewing: consumes graphify's browser-safe code-extraction subpath and injects a web-tree-sitter (WASM) parser implementing ParsedFile. No native binding, no backend process.",
+      "external": "true"
+    },
+    {
+      "id": "MOD-viewer-core",
+      "type": "MOD",
+      "name": "Viewer Core",
+      "description": "Graph rendering and view selection: the SVG scene and viewport, Chrome (zoom/pan/fit, type and edge filters, search, depth), elkjs routing and the declarative view-registry. Vendored from graph-view-edit into src/vendor/gve/ until @sigloch/graph-view-core is extracted; see CR-GVW-004. CR-GVW-006 measured the real vendoring scope: 45 files / 5714 lines across graph-view-edit/src and the unpublished packages/graph-edit-surface.",
+      "vendored": "true"
+    },
+    {
+      "id": "MS-1",
+      "type": "MS",
+      "name": "Operations spine",
+      "description": "Config, status and error surfacing plus the app shell. Every other FUNC emits FLOW-error-event into FUNC-surface-error, so this milestone has no upstream dependency and must precede all others. Scope: FUNC-load-app-config, FUNC-report-app-status, FUNC-surface-error. Also carries REQ-sec-csp, which no FUNC realizes because CSP is a build artifact (index.html meta plus preview headers), not a function.",
+      "tier": "1",
+      "status": "open"
+    },
+    {
+      "id": "MS-2",
+      "type": "MS",
+      "name": "Load chain",
+      "description": "Getting a graph into the session: file intake, decode and validate, ontology-version check, session-graph init. Topologically the first user-visible chain (FCHAIN-load-parse-render) and the producer of FLOW-session-graph that the renderer consumes. Scope: FUNC-open-file-picker, FUNC-decode-and-validate, FUNC-check-ontology-version, FUNC-init-session-graph.",
+      "tier": "1",
+      "status": "open"
+    },
+    {
+      "id": "MS-3",
+      "type": "MS",
+      "name": "Viewer core",
+      "description": "The vendored GVE renderer plus the view-command, filter, search and render functions. Depends on MS-2 because FUNC-render-graph consumes FLOW-session-graph. The vendoring itself is a 45-file / 5714-line mechanical import measured by CR-GVW-006 and tracked for replacement by CR-GVW-004. Scope: FUNC-resolve-view-command, FUNC-apply-graph-filter, FUNC-search-elements, FUNC-render-graph.",
+      "tier": "2",
+      "status": "open"
+    },
+    {
+      "id": "MS-4",
+      "type": "MS",
+      "name": "Edit surface",
+      "description": "Ontology-legal editing against the session graph: legal-option derivation, trace validation, session mutation and dirty state. Depends on MS-3 because FLOW-edit-selection originates in the rendered view. Scope: FUNC-derive-legal-options, FUNC-validate-trace, FUNC-apply-session-mutation, FUNC-set-dirty-state.",
+      "tier": "2",
+      "status": "open"
+    },
+    {
+      "id": "MS-5",
+      "type": "MS",
+      "name": "Export",
+      "description": "Format-E serialization and write-back to disk with the non-Chromium download fallback. Depends on MS-4 because FUNC-set-dirty-state consumes FLOW-export-complete to clear the badge. Scope: FUNC-serialize-format-e, FUNC-write-file-handle.",
+      "tier": "3",
+      "status": "open"
+    },
+    {
+      "id": "MS-6",
+      "type": "MS",
+      "name": "Repo import",
+      "description": "The second intake path: folder pick, WASM TypeScript parse, extraction and projection into a code graph. Depends on MS-3 because FLOW-code-graph terminates in FUNC-render-graph. Blocked on the upstream graphify browser subpath decided by CR-GVW-001. Scope: FUNC-pick-repo-folder, FUNC-parse-ts-wasm, FUNC-extract-and-project, FUNC-report-progress.",
+      "tier": "3",
+      "status": "open"
+    },
+    {
+      "id": "MS-7",
+      "type": "MS",
+      "name": "PWA shell",
+      "description": "Installability and offline operation: service-worker registration, precache of the app bundle and the tree-sitter grammar assets, update prompting. Depends on MS-6 because the precache allowlist must cover the WASM grammars that MS-6 introduces. Scope: FUNC-register-service-worker, FUNC-cache-app-shell, FUNC-prompt-update.",
+      "tier": "4",
+      "status": "open"
+    },
+    {
+      "id": "REQ-data",
+      "type": "REQ",
+      "name": "Session data integrity",
+      "description": "Protecting an in-memory session: unexported-change protection and file-system permission handling.",
+      "kinds": [
+        "operational"
+      ]
+    },
+    {
+      "id": "REQ-data-concurrent-session",
+      "type": "REQ",
+      "name": "Concurrent sessions on one target are detected",
+      "description": "If another session of the app holds the same export target, the app MUST warn before overwriting rather than silently discarding the other session's work.",
+      "kinds": [
+        "mitigation"
+      ],
+      "rationale": "FM-14 (S7 O4 D7): in-memory sessions know nothing of each other. Two tabs on one graph means the second export silently discards the first. Surfaced by this FMEA; missed by ConOps and the assumption review."
+    },
+    {
+      "id": "REQ-data-dirty-guard",
+      "type": "REQ",
+      "name": "Unexported changes visible and guarded",
+      "description": "Unexported changes MUST be visible at all times and the user MUST be warned before unload. An in-memory session offers no recovery after the tab is gone.",
+      "kinds": [
+        "operational"
+      ]
+    },
+    {
+      "id": "REQ-data-export-blocked-on-drift",
+      "type": "REQ",
+      "name": "Version drift blocks export",
+      "description": "If the loaded graph reported an ontology-version mismatch, export MUST be blocked. It may proceed only after an explicit confirmation that names the risk of overwriting an intact file with a partially misinterpreted graph.",
+      "kinds": [
+        "mitigation"
+      ],
+      "rationale": "FM-13 (S9 O4 D6): REQ-op-ontology-version-check only warns. A warning does not stop an export, and the tool then destroys the artefact it was meant to display."
+    },
+    {
+      "id": "REQ-data-fs-permission",
+      "type": "REQ",
+      "name": "Absent or denied file access degrades explicitly",
+      "description": "Two distinct cases MUST both be handled and MUST NOT be conflated. ABSENT: on an engine without the File System Access API (Firefox, Safari) the fallback path is used from the start. DENIED or REVOKED: on Chromium, a rejected or withdrawn permission MUST degrade to the download path. In both cases the app MUST say which path it took and why; a silent no-op is a defect.",
+      "kinds": [
+        "operational"
+      ]
+    },
+    {
+      "id": "REQ-data-handle-binding",
+      "type": "REQ",
+      "name": "Write handle is bound to the loaded graph",
+      "description": "A retained file handle MUST be bound to the identity of the graph it came from. Loading a different graph MUST invalidate it and force a fresh pick. Export MUST never write to a target the current graph did not come from.",
+      "kinds": [
+        "mitigation"
+      ],
+      "rationale": "FM-12 (S9 O4 D7): a handle from an earlier pick silently overwrites an unrelated file. No recycle bin, no recovery, no symptom."
+    },
+    {
+      "id": "REQ-e2e-edit",
+      "type": "REQ",
+      "name": "Editing works end to end",
+      "description": "A selection MUST yield only legal options, and the chosen change MUST be validated, applied to the session copy and reflected in the dirty state as one sequence.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-e2e-explore",
+      "type": "REQ",
+      "name": "Exploring works end to end",
+      "description": "A chosen view MUST resolve to selector, transform and layout, have the active type filters and search applied, and render as one interaction.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-e2e-export",
+      "type": "REQ",
+      "name": "Exporting works end to end",
+      "description": "The session graph MUST be serialized, written to disk and the dirty state cleared as one sequence; a rejected write MUST surface as a visible error and leave the dirty state untouched.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-e2e-load",
+      "type": "REQ",
+      "name": "Loading works end to end",
+      "description": "A picked file MUST be decoded, checked for ontology-version drift, seeded into the session graph and rendered as one uninterrupted sequence; a failure at any step MUST surface as a visible error instead of a blank canvas.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-e2e-offline",
+      "type": "REQ",
+      "name": "Install and update work end to end",
+      "description": "The service worker MUST register, precache the shell and grammars, and a waiting build MUST be offered for confirmation rather than activated silently.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-e2e-operate",
+      "type": "REQ",
+      "name": "Operating works end to end",
+      "description": "Config MUST load at launch, the status surface MUST report it together with versions and readiness, and a failure in loading config MUST itself surface as a visible error.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-e2e-repo",
+      "type": "REQ",
+      "name": "Repo import works end to end",
+      "description": "A picked folder MUST be parsed, extracted, projected into the session graph and rendered, with determinate progress reported throughout and parse failures surfaced.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-edit-ontology-legal",
+      "type": "REQ",
+      "name": "Ontology-legal editing only",
+      "description": "Ontology-legal editing is mandatory: the edit surface MUST offer only operations legal under SE_DESCRIPTOR trace patterns, and MUST reject an illegal trace before it enters the session graph. The menu never offers an illegal option in the first place.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-edit-session-only",
+      "type": "REQ",
+      "name": "Edits touch only the session copy",
+      "description": "An applied change MUST affect only the in-memory session copy. The app MUST NOT write to a graphcode store and MUST NOT open a second apply-gate.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-export-roundtrip",
+      "type": "REQ",
+      "name": "Export round-trip is identity",
+      "description": "Export MUST produce Format-E v2 whose re-import yields a graph identical to the exported one.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-fm-01",
+      "type": "REQ",
+      "name": "FM-01",
+      "description": "FM-01 Service worker caches graph or source content, persisting confidential data on disk and contradicting the in-memory promise.",
+      "kinds": [
+        "risk"
+      ],
+      "S": 9,
+      "O": 6,
+      "D": 7
+    },
+    {
+      "id": "REQ-fm-02",
+      "type": "REQ",
+      "name": "FM-02",
+      "description": "FM-02 Browser HTTP disk cache stores a graph fetched by URL, outside our control and with no API to clear it.",
+      "kinds": [
+        "risk"
+      ],
+      "S": 8,
+      "O": 7,
+      "D": 8
+    },
+    {
+      "id": "REQ-fm-03",
+      "type": "REQ",
+      "name": "FM-03",
+      "description": "FM-03 Error text carries absolute paths or source excerpts and is copied into bug reports and screenshots.",
+      "kinds": [
+        "risk"
+      ],
+      "S": 7,
+      "O": 7,
+      "D": 6
+    },
+    {
+      "id": "REQ-fm-04",
+      "type": "REQ",
+      "name": "FM-04",
+      "description": "FM-04 The exported artifact discloses architecture, function names and paths far beyond what users expect from a diagram file.",
+      "kinds": [
+        "risk"
+      ],
+      "S": 7,
+      "O": 6,
+      "D": 8
+    },
+    {
+      "id": "REQ-fm-05",
+      "type": "REQ",
+      "name": "FM-05",
+      "description": "FM-05 Download fallback places a confidential graph in the downloads folder, which is frequently cloud-synchronised.",
+      "kinds": [
+        "risk"
+      ],
+      "S": 8,
+      "O": 5,
+      "D": 7
+    },
+    {
+      "id": "REQ-fm-06",
+      "type": "REQ",
+      "name": "FM-06",
+      "description": "FM-06 A hostile input file executes script in our origin, reading the entire session graph and defeating every other control.",
+      "kinds": [
+        "risk"
+      ],
+      "S": 10,
+      "O": 2,
+      "D": 6
+    },
+    {
+      "id": "REQ-fm-07",
+      "type": "REQ",
+      "name": "FM-07",
+      "description": "FM-07 The vendored command-bridge POSTs graph mutation commands to a same-origin endpoint.",
+      "kinds": [
+        "risk"
+      ],
+      "S": 8,
+      "O": 3,
+      "D": 5
+    },
+    {
+      "id": "REQ-fm-08",
+      "type": "REQ",
+      "name": "FM-08",
+      "description": "FM-08 A configured remote graph host redirects the graph fetch to a foreign origin, revealing path, IP and user-agent.",
+      "kinds": [
+        "risk"
+      ],
+      "S": 6,
+      "O": 3,
+      "D": 4
+    },
+    {
+      "id": "REQ-fm-09",
+      "type": "REQ",
+      "name": "FM-09",
+      "description": "FM-09 A precache miss fetches the WASM grammar at use time, breaking the offline promise and revealing that a repo is being parsed.",
+      "kinds": [
+        "risk"
+      ],
+      "S": 5,
+      "O": 5,
+      "D": 6
+    },
+    {
+      "id": "REQ-fm-10",
+      "type": "REQ",
+      "name": "FM-10",
+      "description": "FM-10 A third-party asset in the bundle leaks usage telemetry and possibly the graph path via referrer.",
+      "kinds": [
+        "risk"
+      ],
+      "S": 7,
+      "O": 3,
+      "D": 6
+    },
+    {
+      "id": "REQ-fm-11",
+      "type": "REQ",
+      "name": "FM-11",
+      "description": "FM-11 Expressive function and path names extracted from proprietary source end up in a shared export.",
+      "kinds": [
+        "risk"
+      ],
+      "S": 8,
+      "O": 2,
+      "D": 8
+    },
+    {
+      "id": "REQ-fm-12",
+      "type": "REQ",
+      "name": "FM-12",
+      "description": "FM-12 A stale write handle from an earlier pick silently overwrites an unrelated file.",
+      "kinds": [
+        "risk"
+      ],
+      "S": 9,
+      "O": 4,
+      "D": 7
+    },
+    {
+      "id": "REQ-fm-13",
+      "type": "REQ",
+      "name": "FM-13",
+      "description": "FM-13 Ontology version drift mis-parses a graph and the export then overwrites the intact original.",
+      "kinds": [
+        "risk"
+      ],
+      "S": 9,
+      "O": 4,
+      "D": 6
+    },
+    {
+      "id": "REQ-fm-14",
+      "type": "REQ",
+      "name": "FM-14",
+      "description": "FM-14 Two tabs hold the same export target and the second export silently discards the first session's work.",
+      "kinds": [
+        "risk"
+      ],
+      "S": 7,
+      "O": 4,
+      "D": 7
+    },
+    {
+      "id": "REQ-fm-15",
+      "type": "REQ",
+      "name": "FM-15",
+      "description": "FM-15 A crash or tab close with unexported changes loses the session outright. Knowingly accepted, IRR A-09.",
+      "kinds": [
+        "risk"
+      ],
+      "S": 7,
+      "O": 6,
+      "D": 2
+    },
+    {
+      "id": "REQ-fm-16",
+      "type": "REQ",
+      "name": "FM-16",
+      "description": "FM-16 A service-worker update activates while changes are unexported and discards them.",
+      "kinds": [
+        "risk"
+      ],
+      "S": 7,
+      "O": 3,
+      "D": 2
+    },
+    {
+      "id": "REQ-load-decode",
+      "type": "REQ",
+      "name": "Format detection and honest decoding",
+      "description": "Format-E v2 and the JSON graph form MUST both be accepted, distinguished by content rather than file extension. Elements that are not ontology-legal MUST be reported, never silently dropped.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-load-file-intake",
+      "type": "REQ",
+      "name": "Graph file intake on every engine",
+      "description": "A graph file MUST be obtainable through showOpenFilePicker on Chromium and through input[type=file] plus drag-and-drop on every engine. Drag-and-drop is not a convenience — on Firefox and Safari it is one of the only two ways in.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-nfr",
+      "type": "REQ",
+      "name": "Quality attributes",
+      "description": "Responsiveness, scale limits and privacy.",
+      "kinds": [
+        "non-functional"
+      ]
+    },
+    {
+      "id": "REQ-nfr-privacy",
+      "type": "REQ",
+      "name": "No accounts, nothing leaves the device",
+      "description": "No user accounts and no authentication. No graph or source content leaves the device, and the app MUST function with the network disabled after install.",
+      "kinds": [
+        "non-functional"
+      ]
+    },
+    {
+      "id": "REQ-nfr-responsiveness",
+      "type": "REQ",
+      "name": "200 ms feedback ceiling",
+      "description": "Every user-initiated action MUST produce visible feedback within 200 ms. An operation that cannot complete within 200 ms MUST show determinate progress and remain cancellable. CONFIRMED by CR-GVW-007 round 2 (2026-08-07), not amended: across 96 samples (4 interactions x 3 sizes x 2 layout families, medians of 5 runs) the worst first-feedback is 103 ms, and the worst at 5000 nodes is 39 ms. Feedback was measured as the first mutation inside the drawn svg against an asserted quiet baseline, so a chip's own highlight cannot be mistaken for graph feedback. The second sentence is the binding one for loading: initial render is 384/908/2846 ms at 500/2000/5000 nodes under ELK layout and can therefore never finish inside the budget, so progress reporting is a requirement, not a precaution.",
+      "kinds": [
+        "non-functional"
+      ]
+    },
+    {
+      "id": "REQ-nfr-scale-limits",
+      "type": "REQ",
+      "name": "Stated scale limits",
+      "description": "The app MUST stay interactive up to 2000 nodes and 6000 edges in a loaded graph, and up to 1000 .ts/.tsx files on repo import. Beyond either ceiling it MUST show a limit message and stay responsive instead of freezing the tab. MEASURED by CR-GVW-007 round 2 (2026-08-07); the ceiling stands but its BASIS changed. Interaction latency does NOT bind: filter, search and selection are 32-39 ms even at 5000 nodes / 8749 edges. Round 1's 1691 ms search figure at 5000 nodes does not reproduce and is withdrawn — it was an artifact of an unscoped MutationObserver. What binds instead is (a) label legibility, which stops at 1500 nodes because resolveBoxOverlaps skips overlap resolution above maxNodes=1500 (node-link-layout.mjs:65), so the stated 2000 ceiling already renders unresolved labels — see REQ-view-legible-labels; and (b) layout time, 908 ms at 2000 and 2846 ms at 5000 under ELK, which is a progress-reporting obligation, not an interaction failure. The 1000-file repo-import figure remains UNMEASURED and unproven.",
+      "kinds": [
+        "non-functional"
+      ]
+    },
+    {
+      "id": "REQ-offline-precache",
+      "type": "REQ",
+      "name": "Precache covers repo import, and nothing else",
+      "description": "The application bundle and the tree-sitter WASM grammars MUST be precached so that a launch without network succeeds, repo import included. The precache is an explicit allowlist: graph and source content MUST NOT be cached (see REQ-sec-cache-allowlist). Measured budget: typescript.wasm 209 KB gzip, tsx.wasm ~215 KB gzip, runtime 79 KB gzip plus 150 KB JS; parser assets MUST stay at or below 500 KB gzip.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-op-config",
+      "type": "REQ",
+      "name": "Schema-validated static config",
+      "description": "The app MUST read a schema-validated static config (default view, ontology descriptor, theme, WASM grammar location). A missing config falls back to schema defaults; a present but invalid config MUST fail loudly, never silently.",
+      "kinds": [
+        "operational"
+      ]
+    },
+    {
+      "id": "REQ-op-engine-degradation",
+      "type": "REQ",
+      "name": "Degraded file handling is stated, not discovered",
+      "description": "On an engine without the File System Access API the app MUST state the consequence in the UI: no persistent file handles, so exporting again downloads a second file rather than overwriting, and re-opening a graph requires picking it again. The two behaviours MUST NOT look identical to the user.",
+      "kinds": [
+        "operational"
+      ]
+    },
+    {
+      "id": "REQ-op-error-surface",
+      "type": "REQ",
+      "name": "Errors surfaced and copyable",
+      "description": "Errors MUST be surfaced in the UI with a copyable message. With no server there is no log to inspect afterwards, so a silently swallowed error is unrecoverable.",
+      "kinds": [
+        "operational"
+      ]
+    },
+    {
+      "id": "REQ-op-ontology-version-check",
+      "type": "REQ",
+      "name": "Ontology version drift reported and export-blocking",
+      "description": "A loaded graph whose ontology version differs from the app's MUST be reported before rendering, never silently mis-parsed, and MUST block export until explicitly confirmed (see REQ-data-export-blocked-on-drift).",
+      "kinds": [
+        "operational"
+      ]
+    },
+    {
+      "id": "REQ-op-secure-origin",
+      "type": "REQ",
+      "name": "Served from a secure origin",
+      "description": "The app MUST be served over HTTPS or from localhost. Service workers and the File System Access API both require a secure context, so file:// is not a supported deployment. Self-contained means no application backend, not no origin.",
+      "kinds": [
+        "operational"
+      ]
+    },
+    {
+      "id": "REQ-op-status-panel",
+      "type": "REQ",
+      "name": "In-app status surface",
+      "description": "The app MUST expose an in-app status surface that replaces a server health endpoint: service-worker state, offline readiness, WASM grammar loaded, and loaded-graph node and edge counts.",
+      "kinds": [
+        "operational"
+      ]
+    },
+    {
+      "id": "REQ-op-sw-update",
+      "type": "REQ",
+      "name": "Confirmed service-worker update",
+      "description": "A new build MUST NOT activate silently. The user is informed and confirms the update, and an update MUST NOT be applied while the session graph holds unexported changes.",
+      "kinds": [
+        "operational"
+      ]
+    },
+    {
+      "id": "REQ-op-version-visible",
+      "type": "REQ",
+      "name": "Visible build and ontology version",
+      "description": "The running build version and the ontology version the app was built against MUST be visible in the UI without opening developer tools.",
+      "kinds": [
+        "operational"
+      ]
+    },
+    {
+      "id": "REQ-ops",
+      "type": "REQ",
+      "name": "Operational readiness",
+      "description": "Operational readiness of a backend-free PWA: configuration, update cycle, visible version and status, surfaced errors and ontology-version drift.",
+      "kinds": [
+        "operational"
+      ]
+    },
+    {
+      "id": "REQ-repo-intake",
+      "type": "REQ",
+      "name": "TypeScript tree intake on every engine",
+      "description": "A TypeScript source tree MUST be selectable as a folder on every supported engine: showDirectoryPicker on Chromium, input[type=file][webkitdirectory] on Firefox and Safari. .ts and .tsx files are collected and everything else is ignored without an error. Both intake paths MUST yield the identical file set for the identical folder.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-repo-parse-parity",
+      "type": "REQ",
+      "name": "Browser parser matches graphify",
+      "description": "The browser WASM parser MUST produce the same ParsedFile symbol tables as graphify's native parser for the same input.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-sec",
+      "type": "REQ",
+      "name": "Confidentiality and integrity of foreign data",
+      "description": "Graphview ingests potentially confidential data (proprietary source, internal SE graphs) and holds write access to files the user picks. It MUST neither persist nor transmit that data outside the session, and MUST NOT destroy files it did not create.",
+      "kinds": [
+        "risk"
+      ],
+      "rationale": "FMEA 2026-08-06: the only two harms this system can do are leaking foreign data and destroying foreign files."
+    },
+    {
+      "id": "REQ-sec-cache-allowlist",
+      "type": "REQ",
+      "name": "Caching is an allowlist",
+      "description": "Only the application bundle and the WASM grammar assets MAY be cached. Graph and source content MUST NOT enter Cache Storage or the HTTP cache; responses carrying them MUST be served and fetched with no-store. A caching rule MUST be an explicit allowlist, never a same-origin catch-all.",
+      "kinds": [
+        "mitigation"
+      ],
+      "rationale": "FM-01 (S9 O6 D7) and FM-02 (S8 O7 D8): a broad cache-first rule silently persists confidential graphs on disk, contradicting the in-memory promise. Invisible without inspecting Cache Storage."
+    },
+    {
+      "id": "REQ-sec-cache-visible",
+      "type": "REQ",
+      "name": "Cache contents are inspectable in-app",
+      "description": "The status surface MUST list what is actually held in Cache Storage, so that an over-broad caching rule becomes visible without developer tools.",
+      "kinds": [
+        "mitigation"
+      ],
+      "rationale": "FM-01 and FM-02 both have D>=7: they produce no symptom. This is the only measure that raises detection rather than lowering occurrence."
+    },
+    {
+      "id": "REQ-sec-csp",
+      "type": "REQ",
+      "name": "Strict content security policy",
+      "description": "The app MUST be served with default-src 'self' and connect-src 'self'. No external origin may be contacted for any asset or request. This is the enforcement mechanism behind REQ-nfr-privacy, not merely a recommendation.",
+      "kinds": [
+        "mitigation"
+      ],
+      "rationale": "FM-06, FM-07, FM-10: a CSP turns three separate exfiltration paths into browser-enforced impossibilities rather than code review promises."
+    },
+    {
+      "id": "REQ-sec-error-redaction",
+      "type": "REQ",
+      "name": "Error detail is redacted",
+      "description": "Error messages MUST NOT contain absolute file paths, and any quoted source or graph text MUST be bounded to a short span around the offending position. Copyable errors leave the organisation through channels nobody classifies as data export.",
+      "kinds": [
+        "mitigation"
+      ],
+      "rationale": "FM-03 (S7 O7 D6): SCHEMA-error.detail is unbounded and REQ-op-error-surface demands copyable messages. Decoder and parser errors naturally quote the offending text, which lands in bug reports and screenshots."
+    },
+    {
+      "id": "REQ-sec-export-discloses",
+      "type": "REQ",
+      "name": "Export states what it discloses",
+      "description": "Before writing, the app MUST state what the artifact reveals: file paths, function names, signatures and module structure. On the download path it MUST additionally warn that the file lands in the downloads folder, which is frequently cloud-synchronised.",
+      "kinds": [
+        "mitigation"
+      ],
+      "rationale": "FM-04 (S7 O6 D8) and FM-05 (S8 O5 D7): an export looks like a diagram file and carries the architecture of proprietary code. Nothing about it signals sensitivity, and sharing exports is the intended workflow."
+    },
+    {
+      "id": "REQ-sec-input-is-data",
+      "type": "REQ",
+      "name": "Decoded input is data, never markup",
+      "description": "Content decoded from a file MUST be treated as text throughout rendering. No path may interpolate it as HTML or evaluate it. This holds for graph views and document views alike.",
+      "kinds": [
+        "mitigation"
+      ],
+      "rationale": "FM-06 (S10 O2 D6): script execution in our origin reads the whole session graph and defeats every other confidentiality control. Verified the vendored renderer closure contains no innerHTML or dangerouslySetInnerHTML, hence O=2 — but markdown.mjs was outside the audited closure and could reintroduce the sink."
+    },
+    {
+      "id": "REQ-sec-local-graph-only",
+      "type": "REQ",
+      "name": "Graphs come from local files only",
+      "description": "The app MUST NOT support fetching a graph from a configured remote host. Graph input comes from user-picked files and drag-and-drop only.",
+      "kinds": [
+        "mitigation"
+      ],
+      "rationale": "FM-08 (S6 O3 D4): GVE's graphUrl() builds ${host}/${path} when config.graph.host is set (app-config.mjs:49-52). A misconfigured or tampered config would load an untrusted graph and reveal path, IP and user-agent to a foreign host."
+    },
+    {
+      "id": "REQ-sec-no-network-bridges",
+      "type": "REQ",
+      "name": "No network write bridges in the build",
+      "description": "The vendored command-bridge and realize-bridge MUST be removed from the Graphview build, not merely left unreached. Neither ?edit=1 nor any config flag may construct a component that POSTs graph content anywhere.",
+      "kinds": [
+        "mitigation"
+      ],
+      "rationale": "FM-07 (S8 O3 D5): the vendored edit path POSTs {commands, baseVersion, consumerId}. Verified the URL is hardcoded to /api/mutate at edit-mode.mjs:60 and is not config- or query-driven, so no live exfiltration path exists today. The parameter remains, and on a shared origin with an /api/mutate the content would be transmitted. Deleting beats disabling."
+    },
+    {
+      "id": "REQ-view-filter-search",
+      "type": "REQ",
+      "name": "Filter and search the active view",
+      "description": "The active view MUST be filterable by node type and edge type and searchable by free text, with matches highlighted in place.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-view-legible-labels",
+      "type": "REQ",
+      "name": "Labels stay legible at the stated ceiling",
+      "description": "Node labels MUST NOT overlap in a rendered view at or below the stated node ceiling of REQ-nfr-scale-limits. Discovered by CR-GVW-007 round 2: the vendored renderer's resolveBoxOverlaps returns early above maxNodes=1500, so between 1500 and the stated 2000-node ceiling overlap resolution is silently off and the view degrades with no message. Either the overlap limit is raised to the stated ceiling, or the ceiling is lowered to 1500, or exceeding 1500 emits the limit message REQ-nfr-scale-limits already demands. Silent degradation is not one of the three.",
+      "kinds": [
+        "non-functional"
+      ]
+    },
+    {
+      "id": "REQ-view-registry",
+      "type": "REQ",
+      "name": "Declarative view registry",
+      "description": "Views MUST be selectable by name, scope and parameters through a declarative registry. Adding a view MUST NOT require changes to the renderer core.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "SCHEMA-app-config",
+      "type": "SCHEMA",
+      "name": "App config",
+      "description": "{ defaultView: string, ontologyDescriptor: string, theme: string, grammarUrl: string }. Schema defaults apply when the file is absent; an invalid field fails startup."
+    },
+    {
+      "id": "SCHEMA-app-status",
+      "type": "SCHEMA",
+      "name": "App status",
+      "description": "{ serviceWorker: 'none'|'installing'|'active'|'waiting', offlineReady: boolean, grammarLoaded: boolean, nodeCount: number, edgeCount: number, buildId: string, ontologyVersion: string }. The health endpoint a backend-free app does not have."
+    },
+    {
+      "id": "SCHEMA-dirty-state",
+      "type": "SCHEMA",
+      "name": "Dirty state",
+      "description": "{ dirty: boolean, changedSince?: string }. Drives the badge and the unload guard."
+    },
+    {
+      "id": "SCHEMA-edit-operation",
+      "type": "SCHEMA",
+      "name": "Edit operation",
+      "description": "{ op: 'add-node'|'update-node'|'delete-node'|'add-edge'|'delete-edge', target: string, edgeType?: string, attributes?: Record<string, unknown> }. Every instance is ontology-legal by construction."
+    },
+    {
+      "id": "SCHEMA-element-selection",
+      "type": "SCHEMA",
+      "name": "Element selection",
+      "description": "{ uids: string[] }. Used both for search hits and for the current edit selection."
+    },
+    {
+      "id": "SCHEMA-error",
+      "type": "SCHEMA",
+      "name": "Error",
+      "description": "{ message: string, source: 'config'|'decode'|'write'|'parse', detail?: string }. Must be renderable and copyable; there is no log to fall back to."
+    },
+    {
+      "id": "SCHEMA-graph-file",
+      "type": "SCHEMA",
+      "name": "Graph text",
+      "description": "{ name: string, text: string, format: 'format-e' | 'json' }. Serialized graph in either direction — the text read from a picked file and the text written on export are the same contract. REQ-export-roundtrip is therefore a statement about one schema, not about two that happen to agree. Format is decided from the text, never from the extension."
+    },
+    {
+      "id": "SCHEMA-launch-context",
+      "type": "SCHEMA",
+      "name": "Launch context",
+      "description": "{ coldStart: boolean, secureContext: boolean, buildId: string }. secureContext carries the REQ-op-secure-origin check: service workers and the File System Access API both need it, so the app must know at launch whether it has one."
+    },
+    {
+      "id": "SCHEMA-parsed-file-set",
+      "type": "SCHEMA",
+      "name": "Parsed file set",
+      "description": "ParsedFile[] as defined by graphify: { path, functions: {name, params, returnType, line, exported}[], imports: {local, imported, fromModule}[], calls: {callerName, calleeName}[] }. The seam the WASM parser must match exactly."
+    },
+    {
+      "id": "SCHEMA-progress",
+      "type": "SCHEMA",
+      "name": "Progress",
+      "description": "{ done: number, total: number, label: string, cancel: () => void }. Determinate by contract — a spinner does not satisfy the 200 ms requirement."
+    },
+    {
+      "id": "SCHEMA-render-result",
+      "type": "SCHEMA",
+      "name": "Render result",
+      "description": "{ viewId: string, nodeCount: number, edgeCount: number, layout: string, elapsedMs: number }. What actually reached the canvas. elapsedMs and the counts are the quantities REQ-nfr-responsiveness and REQ-nfr-scale-limits are measured against — without them the 200 ms budget has nothing to read."
+    },
+    {
+      "id": "SCHEMA-se-graph",
+      "type": "SCHEMA",
+      "name": "SE graph",
+      "description": "{ nodes: {uid, type, name?, description?, attributes?}[], edges: {sourceId, targetId, edgeType, attributes?}[], ontologyVersion: string }. The in-memory shape every view and every mutation operates on."
+    },
+    {
+      "id": "SCHEMA-search-term",
+      "type": "SCHEMA",
+      "name": "Search term",
+      "description": "{ term: string, fields: ('uid'|'name'|'description')[] }."
+    },
+    {
+      "id": "SCHEMA-source-file-set",
+      "type": "SCHEMA",
+      "name": "Source file set",
+      "description": "{ path: string, content: string }[] — only .ts and .tsx; the exact input shape graphify's extractCodeRepo expects."
+    },
+    {
+      "id": "SCHEMA-sw-state",
+      "type": "SCHEMA",
+      "name": "Service worker state",
+      "description": "{ state: 'installing' | 'active' | 'waiting', buildId: string, scope: string }. Internal signal from registration to precaching and to the update prompt; distinct from SCHEMA-app-status, which is the on-demand report to the user."
+    },
+    {
+      "id": "SCHEMA-update-offer",
+      "type": "SCHEMA",
+      "name": "Update offer",
+      "description": "{ waitingBuildId: string, deferredBecauseDirty: boolean }."
+    },
+    {
+      "id": "SCHEMA-user-intent",
+      "type": "SCHEMA",
+      "name": "User intent",
+      "description": "{ intent: 'load' | 'repo' | 'install' | 'status' | 'export', source: 'menu' | 'keyboard' | 'drop', params?: Record<string, unknown> }. One contract for every user-initiated trigger; the export suggestion name travels in params rather than warranting its own schema."
+    },
+    {
+      "id": "SCHEMA-version-mismatch",
+      "type": "SCHEMA",
+      "name": "Version mismatch",
+      "description": "{ fileOntologyVersion: string, appOntologyVersion: string }. Both named, so the user can tell which side is stale."
+    },
+    {
+      "id": "SCHEMA-view-command",
+      "type": "SCHEMA",
+      "name": "View command",
+      "description": "{ selector, transform, layoutName }. What the registry resolved the request into; the renderer consumes only this."
+    },
+    {
+      "id": "SCHEMA-view-request",
+      "type": "SCHEMA",
+      "name": "View request",
+      "description": "{ name: string, scope?: string, params?: Record<string, unknown> }. What the user asks for."
+    },
+    {
+      "id": "SCHEMA-write-result",
+      "type": "SCHEMA",
+      "name": "Write result",
+      "description": "{ name: string, bytes: number, viaDownloadFallback: boolean }. The fallback flag makes a denied permission visible rather than silent."
+    },
+    {
+      "id": "SYS-graphview",
+      "type": "SYS",
+      "name": "Graphview",
+      "description": "Graphview — a self-contained PWA (offline-capable, no companion server, no second Kuzu handle) for viewing and lightly editing sigloch SE graphs. (a) Load and view Format-E or JSON graphs in the sigloch SE format — parsing/validation via @sigloch/graph-api-core/browser (FormatECodec, SE_DESCRIPTOR, isValidTrace); rendering via GVE's (graph-view-edit) SVG renderer core and declarative view-registry, vendored into src/vendor/gve/ until a shared @sigloch/graph-view-core package is extracted. (b) View a TypeScript repo by reusing graphify's deterministic code extraction; files enter via the File System Access API; the browser needs a web-tree-sitter (WASM) parser behind graphify's ParsedFile seam (decided in CR-GVW-001). Persistence: the modified graph is held IN MEMORY only during the session and exported as Format-E to disk (File System Access API, download fallback). No OPFS/IndexedDB store, no write-back to a graphcode host, no second apply-gate. Unexported changes must be visible and guarded on close. Locked stack: React + Vite + Zustand + SVG rendering + elkjs. CORRECTED 2026-08-06 by CR-GVW-006: GVE dropped Cytoscape; it renders SVG itself and elkjs is the only layout library left. Ontology imported from @sigloch/contracts/se, never forked; Format-E round-trip is identity; zero backend processes but a secure origin is required; @sigloch/graph-renderer is deprecated and must not be used."
+    },
+    {
+      "id": "TEST-data-acceptance",
+      "type": "TEST",
+      "name": "Session integrity run",
+      "description": "Mutate, see the dirty indicator, hit the unload guard, have the file picker rejected and land on the download fallback, then export successfully and watch both indicators clear."
+    },
+    {
+      "id": "TEST-data-concurrent-session",
+      "type": "TEST",
+      "name": "Second tab warns before overwrite",
+      "description": "Two tabs load the same graph and both edit. The second export warns and names the conflict; confirming or cancelling both behave as stated."
+    },
+    {
+      "id": "TEST-data-dirty-guard",
+      "type": "TEST",
+      "name": "Dirty indicator and unload guard",
+      "description": "After a mutation the dirty indicator appears and a close attempt triggers the guard. After a successful export both clear."
+    },
+    {
+      "id": "TEST-data-export-blocked-on-drift",
+      "type": "TEST",
+      "name": "Drift stops the write",
+      "description": "Load a fixture with a foreign ontology version and attempt an export: it is refused and the target file is unchanged. After explicit confirmation it proceeds, and the confirmation text names the overwrite risk."
+    },
+    {
+      "id": "TEST-data-fs-permission",
+      "type": "TEST",
+      "name": "Rejected picker falls back to download",
+      "description": "With showSaveFilePicker rejected, the export completes through the download path and states why the fallback was used."
+    },
+    {
+      "id": "TEST-data-handle-binding",
+      "type": "TEST",
+      "name": "Switching graphs invalidates the handle",
+      "description": "Export graph A to a handle, load graph B, export again: the app requires a new pick and file A is byte-identical afterwards."
+    },
+    {
+      "id": "TEST-e2e-edit",
+      "type": "TEST",
+      "name": "Edit chain integration",
+      "description": "Integration: select an element, take an offered option, assert validation passed, the session copy changed and the dirty flag flipped."
+    },
+    {
+      "id": "TEST-e2e-explore",
+      "type": "TEST",
+      "name": "Explore chain integration",
+      "description": "Integration: resolve a view command, apply a type filter and a search term, assert the rendered node set equals the expected intersection."
+    },
+    {
+      "id": "TEST-e2e-export",
+      "type": "TEST",
+      "name": "Export chain integration",
+      "description": "Integration: serialize, write, assert the dirty flag cleared. With the write rejected, assert a visible error and an unchanged dirty flag."
+    },
+    {
+      "id": "TEST-e2e-load",
+      "type": "TEST",
+      "name": "Load chain integration",
+      "description": "Integration: drive picker to decode to ontology check to session seed to render on a real fixture, asserting each handoff. A corrupt fixture takes the error branch and renders a visible message."
+    },
+    {
+      "id": "TEST-e2e-offline",
+      "type": "TEST",
+      "name": "Install chain integration",
+      "description": "Integration: register the worker, assert shell and grammar assets are in the cache, then stage a waiting build and assert it is offered rather than activated."
+    },
+    {
+      "id": "TEST-e2e-operate",
+      "type": "TEST",
+      "name": "Operate chain integration",
+      "description": "Integration: launch, assert config reached the status surface with versions and readiness. Then make the config invalid and assert the error branch renders instead."
+    },
+    {
+      "id": "TEST-e2e-repo",
+      "type": "TEST",
+      "name": "Repo chain integration",
+      "description": "Integration: folder to parse to extract to project to render on a small real tree, asserting progress was reported and the projected counts match the extraction output."
+    },
+    {
+      "id": "TEST-edit-ontology-legal",
+      "type": "TEST",
+      "name": "Illegal option never offered",
+      "description": "For a selected FUNC the offered targets contain no ontology-illegal trace. A programmatically forced illegal trace is rejected before reaching the session graph."
+    },
+    {
+      "id": "TEST-edit-session-only",
+      "type": "TEST",
+      "name": "No store write, no second gate",
+      "description": "A full edit session produces no write to .graphcode and opens no second apply-gate; only the in-memory copy differs."
+    },
+    {
+      "id": "TEST-export-roundtrip",
+      "type": "TEST",
+      "name": "Export then re-import is identity",
+      "description": "Export the session graph, re-import the produced file, and compare: nodes, edges and attributes are identical."
+    },
+    {
+      "id": "TEST-load-decode",
+      "type": "TEST",
+      "name": "Both formats, offenders reported",
+      "description": "A Format-E fixture and an equivalent JSON fixture decode to the same graph. A fixture carrying one illegal trace loads with that trace named in a report; the element count confirms nothing was dropped silently."
+    },
+    {
+      "id": "TEST-load-file-intake",
+      "type": "TEST",
+      "name": "Picker and drop both load",
+      "description": "The same fixture loads identically through showOpenFilePicker and through a drop event."
+    },
+    {
+      "id": "TEST-nfr-acceptance",
+      "type": "TEST",
+      "name": "Quality acceptance run",
+      "description": "The 200 ms feedback budget holds across view switch, filter, search and selection; behaviour at and beyond the stated ceiling is graceful; a full session with the network blocked produces no outbound request."
+    },
+    {
+      "id": "TEST-nfr-privacy",
+      "type": "TEST",
+      "name": "No outbound traffic offline",
+      "description": "With the network blocked, load, import and export all succeed. No outbound request is observed across a full session."
+    },
+    {
+      "id": "TEST-nfr-responsiveness",
+      "type": "TEST",
+      "name": "200 ms feedback measured",
+      "description": "View switch, filter change, search and selection each render feedback within 200 ms. Repo import shows a determinate progress indicator within 200 ms of the folder pick and can be cancelled mid-run."
+    },
+    {
+      "id": "TEST-nfr-scale-limits",
+      "type": "TEST",
+      "name": "Behaviour at and beyond the ceiling",
+      "description": "At the stated node and edge ceiling the app stays interactive. Beyond it a limit message appears and the tab does not lock up."
+    },
+    {
+      "id": "TEST-offline-precache",
+      "type": "TEST",
+      "name": "Repo import works offline",
+      "description": "After install, with the network disabled, a repo import completes end to end, proving the WASM grammars were precached and not fetched on demand."
+    },
+    {
+      "id": "TEST-op-config",
+      "type": "TEST",
+      "name": "Config defaults and loud failure",
+      "description": "No config file present: schema defaults apply and the app starts. One field set to an illegal value: startup fails with an error naming that field, and no silent fallback occurs."
+    },
+    {
+      "id": "TEST-op-engine-degradation",
+      "type": "TEST",
+      "name": "Both engines, both behaviours",
+      "description": "With the FSA API present, an export overwrites the picked file and the app reports handle-backed mode. With the API stubbed absent, export downloads, re-export downloads a second file, and the app states the degradation. Run on Chromium and on a Gecko or WebKit engine, not only behind a stub."
+    },
+    {
+      "id": "TEST-op-error-surface",
+      "type": "TEST",
+      "name": "Decode failure is visible and copyable",
+      "description": "A forced decode failure renders a visible error with copyable text. An error only reaching the console fails this test."
+    },
+    {
+      "id": "TEST-op-ontology-version-check",
+      "type": "TEST",
+      "name": "Foreign ontology version warns",
+      "description": "Loading a fixture carrying a foreign ontology version produces a visible mismatch warning naming both versions, before any rendering."
+    },
+    {
+      "id": "TEST-op-secure-origin",
+      "type": "TEST",
+      "name": "Insecure origin fails loudly",
+      "description": "Served from a secure origin, worker registration and the pickers are available. Opened via file://, the app states that a secure origin is required rather than silently losing offline support and file access."
+    },
+    {
+      "id": "TEST-op-status-panel",
+      "type": "TEST",
+      "name": "Status surface reports four items",
+      "description": "Service-worker state, offline readiness, WASM grammar loaded and graph counts are each reported. With the grammar not yet fetched the surface reports not-ready rather than blank."
+    },
+    {
+      "id": "TEST-op-sw-update",
+      "type": "TEST",
+      "name": "Update deferred while dirty",
+      "description": "With a waiting worker and a dirty session, no reload happens and the prompt is deferred. After exporting, confirming the prompt activates the new build."
+    },
+    {
+      "id": "TEST-op-version-visible",
+      "type": "TEST",
+      "name": "Version strings rendered",
+      "description": "The status surface renders a non-empty build identifier and the ontology version string; neither is placeholder text."
+    },
+    {
+      "id": "TEST-ops-acceptance",
+      "type": "TEST",
+      "name": "Operational acceptance walkthrough",
+      "description": "End-to-end on a fresh install: defaults apply without a config, the status surface reports all four items, build and ontology versions render, a forced error is visible and copyable, a foreign ontology version warns before rendering, and a waiting update stays deferred while the session is dirty."
+    },
+    {
+      "id": "TEST-repo-intake",
+      "type": "TEST",
+      "name": "Only TS and TSX collected",
+      "description": "A folder holding .ts, .tsx, .md and .png yields exactly the .ts and .tsx files, with no error raised for the rest."
+    },
+    {
+      "id": "TEST-repo-parse-parity",
+      "type": "TEST",
+      "name": "Parity against the native parser",
+      "description": "Run graphify's self-parse fixture through the browser parser and compare the resulting TypedCandidatesOutput against the native run. Any divergence in node names or counts fails."
+    },
+    {
+      "id": "TEST-sec-acceptance",
+      "type": "TEST",
+      "name": "Confidentiality acceptance run",
+      "description": "Full session with a confidential fixture: load, edit, export. Afterwards Cache Storage and the HTTP cache contain no graph or source payload, no outbound request was made, and no file other than the chosen export target was written."
+    },
+    {
+      "id": "TEST-sec-cache-allowlist",
+      "type": "TEST",
+      "name": "Nothing but shell and grammars is cached",
+      "description": "After loading a graph and importing a repo, enumerate Cache Storage: every entry is the bundle or a grammar asset. Assert no entry body contains a node uid from the fixture. Repeat against the HTTP cache."
+    },
+    {
+      "id": "TEST-sec-cache-visible",
+      "type": "TEST",
+      "name": "Status surface lists cache entries",
+      "description": "The status surface enumerates every Cache Storage entry. Injecting an unexpected entry makes it appear there."
+    },
+    {
+      "id": "TEST-sec-csp",
+      "type": "TEST",
+      "name": "CSP blocks a foreign origin",
+      "description": "Attempt a fetch and an image load against a foreign origin from within the app; both are blocked by the policy, not merely absent. Assert the CSP header is actually present on the served document."
+    },
+    {
+      "id": "TEST-sec-error-redaction",
+      "type": "TEST",
+      "name": "No absolute path, bounded quote",
+      "description": "Force a decode error deep inside a fixture whose path is absolute. The rendered message contains no absolute path and quotes at most the bounded span; the full document does not appear."
+    },
+    {
+      "id": "TEST-sec-export-discloses",
+      "type": "TEST",
+      "name": "Disclosure notice before write",
+      "description": "Export names the disclosed categories before the file is written. On the download path the downloads-folder warning appears; on the handle path it does not."
+    },
+    {
+      "id": "TEST-sec-input-is-data",
+      "type": "TEST",
+      "name": "Markup in a description stays text",
+      "description": "Load a fixture whose node description contains a script tag and an event-handler attribute. Both render as visible text; no script runs and no handler binds. Repeat in a document view."
+    },
+    {
+      "id": "TEST-sec-local-graph-only",
+      "type": "TEST",
+      "name": "Remote host in config is refused",
+      "description": "With a config naming a remote graph host, the app refuses it with a stated reason and loads nothing from that host; no request to it is observed."
+    },
+    {
+      "id": "TEST-sec-no-network-bridges",
+      "type": "TEST",
+      "name": "No POST leaves the app",
+      "description": "Load with ?edit=1 and perform a full edit session with the network instrumented. Assert zero outbound requests of any method. Assert createCommandBridge is absent from the built bundle."
+    },
+    {
+      "id": "TEST-view-filter-search",
+      "type": "TEST",
+      "name": "Filter reduces, search highlights",
+      "description": "Disabling a node type removes exactly those nodes; a search term highlights every match and nothing else."
+    },
+    {
+      "id": "TEST-view-legible-labels",
+      "type": "TEST",
+      "name": "No overlapping labels below the ceiling",
+      "description": "Render at 1400, 1600 and 2000 nodes and assert zero pairwise label-box overlaps at each size. Above the overlap limit, assert the limit message is present rather than accepting the degraded render. Red-first: the test MUST first be seen failing at 1600 nodes against today's maxNodes=1500 behaviour, otherwise it proves nothing."
+    },
+    {
+      "id": "TEST-view-registry",
+      "type": "TEST",
+      "name": "New view needs no renderer change",
+      "description": "Registering an additional view descriptor makes the view selectable, with no diff inside the renderer core."
+    },
+    {
+      "id": "UC-edit-graph",
+      "type": "UC",
+      "name": "UC-edit-graph",
+      "description": "SE-Engineer changes nodes and traces in the session copy and is offered only ontology-legal options."
+    },
+    {
+      "id": "UC-explore-views",
+      "type": "UC",
+      "name": "UC-explore-views",
+      "description": "SE-Engineer switches graph views and filters until the searched element and its neighbourhood are visible."
+    },
+    {
+      "id": "UC-export-formate",
+      "type": "UC",
+      "name": "UC-export-formate",
+      "description": "SE-Engineer exports the modified in-memory graph as Format-E to disk for a later gated apply."
+    },
+    {
+      "id": "UC-import-ts-repo",
+      "type": "UC",
+      "name": "UC-import-ts-repo",
+      "description": "TS-Developer picks a TypeScript folder and sees its functions, modules, calls and tests as a rendered graph."
+    },
+    {
+      "id": "UC-load-graph",
+      "type": "UC",
+      "name": "UC-load-graph",
+      "description": "SE-Engineer opens a Format-E or JSON graph file and sees the typed SE graph rendered in the browser."
+    },
+    {
+      "id": "UC-operate-app",
+      "type": "UC",
+      "name": "Operate the app",
+      "description": "SE-Engineer inspects app status, version and errors and confirms updates, so operating the app never silently loses unexported work."
+    },
+    {
+      "id": "UC-use-offline",
+      "type": "UC",
+      "name": "UC-use-offline",
+      "description": "SE-Engineer installs Graphview and works with graphs offline while no server process runs."
+    }
+  ],
+  "traces": [
+    {
+      "source": "ACTOR-se-engineer",
+      "target": "FLOW-app-launch",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-se-engineer",
+      "target": "FLOW-edit-selection",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-se-engineer",
+      "target": "FLOW-export-request",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-se-engineer",
+      "target": "FLOW-install-request",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-se-engineer",
+      "target": "FLOW-load-request",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-se-engineer",
+      "target": "FLOW-proposed-change",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-se-engineer",
+      "target": "FLOW-search-term",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-se-engineer",
+      "target": "FLOW-status-request",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-se-engineer",
+      "target": "FLOW-view-request",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-se-engineer",
+      "target": "UC-edit-graph",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-se-engineer",
+      "target": "UC-explore-views",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-se-engineer",
+      "target": "UC-export-formate",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-se-engineer",
+      "target": "UC-load-graph",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-se-engineer",
+      "target": "UC-operate-app",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-se-engineer",
+      "target": "UC-use-offline",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-ts-developer",
+      "target": "FLOW-export-request",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-ts-developer",
+      "target": "FLOW-repo-request",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-ts-developer",
+      "target": "FLOW-view-request",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-ts-developer",
+      "target": "UC-explore-views",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-ts-developer",
+      "target": "UC-export-formate",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-ts-developer",
+      "target": "UC-import-ts-repo",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-ts-developer",
+      "target": "UC-operate-app",
+      "type": "io"
+    },
+    {
+      "source": "CR-FMEA-001",
+      "target": "MS-7",
+      "type": "relation",
+      "label": "assigned-to",
+      "role": "assigned-to"
+    },
+    {
+      "source": "CR-FMEA-001",
+      "target": "REQ-sec",
+      "type": "relation",
+      "label": "affects",
+      "role": "affects"
+    },
+    {
+      "source": "CR-FMEA-001",
+      "target": "REQ-sec-csp",
+      "type": "relation",
+      "label": "affects",
+      "role": "affects"
+    },
+    {
+      "source": "CR-GVW-001",
+      "target": "MOD-repo-import",
+      "type": "relation",
+      "role": "decides",
+      "label": "decides"
+    },
+    {
+      "source": "CR-GVW-001",
+      "target": "MS-6",
+      "type": "relation",
+      "label": "assigned-to",
+      "role": "assigned-to"
+    },
+    {
+      "source": "CR-GVW-001",
+      "target": "UC-import-ts-repo",
+      "type": "relation",
+      "role": "affects"
+    },
+    {
+      "source": "CR-GVW-002",
+      "target": "MOD-repo-import",
+      "type": "relation",
+      "role": "superseded-by",
+      "label": "superseded-by"
+    },
+    {
+      "source": "CR-GVW-003",
+      "target": "MOD-repo-import",
+      "type": "relation",
+      "role": "superseded-by",
+      "label": "superseded-by"
+    },
+    {
+      "source": "CR-GVW-004",
+      "target": "MOD-viewer-core",
+      "type": "relation",
+      "role": "affects",
+      "label": "affects"
+    },
+    {
+      "source": "CR-GVW-004",
+      "target": "MS-3",
+      "type": "relation",
+      "label": "assigned-to",
+      "role": "assigned-to"
+    },
+    {
+      "source": "CR-GVW-004",
+      "target": "UC-explore-views",
+      "type": "relation",
+      "role": "affects",
+      "label": "affects"
+    },
+    {
+      "source": "CR-GVW-005",
+      "target": "MS-2",
+      "type": "relation",
+      "label": "assigned-to",
+      "role": "assigned-to"
+    },
+    {
+      "source": "CR-GVW-005",
+      "target": "REQ-data-fs-permission",
+      "type": "relation",
+      "role": "affects",
+      "label": "affects"
+    },
+    {
+      "source": "CR-GVW-005",
+      "target": "REQ-op-engine-degradation",
+      "type": "relation",
+      "role": "decides",
+      "label": "decides"
+    },
+    {
+      "source": "CR-GVW-005",
+      "target": "REQ-repo-intake",
+      "type": "relation",
+      "role": "affects",
+      "label": "affects"
+    },
+    {
+      "source": "CR-GVW-005",
+      "target": "UC-import-ts-repo",
+      "type": "relation",
+      "role": "affects",
+      "label": "affects"
+    },
+    {
+      "source": "CR-GVW-005",
+      "target": "UC-load-graph",
+      "type": "relation",
+      "role": "affects",
+      "label": "affects"
+    },
+    {
+      "source": "CR-GVW-006",
+      "target": "MOD-viewer-core",
+      "type": "relation",
+      "role": "affects",
+      "label": "affects"
+    },
+    {
+      "source": "CR-GVW-007",
+      "target": "MS-3",
+      "type": "relation",
+      "label": "assigned-to",
+      "role": "assigned-to"
+    },
+    {
+      "source": "CR-GVW-007",
+      "target": "REQ-nfr-responsiveness",
+      "type": "relation",
+      "role": "affects",
+      "label": "affects"
+    },
+    {
+      "source": "CR-GVW-007",
+      "target": "REQ-nfr-scale-limits",
+      "type": "relation",
+      "role": "affects",
+      "label": "affects"
+    },
+    {
+      "source": "CR-GVW-007",
+      "target": "REQ-view-legible-labels",
+      "type": "relation",
+      "label": "decides",
+      "role": "decides"
+    },
+    {
+      "source": "CR-GVW-008",
+      "target": "MS-1",
+      "type": "relation",
+      "label": "assigned-to",
+      "role": "assigned-to"
+    },
+    {
+      "source": "CR-GVW-009",
+      "target": "MS-1",
+      "type": "relation",
+      "label": "assigned-to",
+      "role": "assigned-to"
+    },
+    {
+      "source": "CR-GVW-010",
+      "target": "MS-1",
+      "type": "relation",
+      "label": "assigned-to",
+      "role": "assigned-to"
+    },
+    {
+      "source": "CR-GVW-011",
+      "target": "MS-2",
+      "type": "relation",
+      "label": "assigned-to",
+      "role": "assigned-to"
+    },
+    {
+      "source": "CR-GVW-012",
+      "target": "MS-2",
+      "type": "relation",
+      "label": "assigned-to",
+      "role": "assigned-to"
+    },
+    {
+      "source": "CR-GVW-013",
+      "target": "MS-2",
+      "type": "relation",
+      "label": "assigned-to",
+      "role": "assigned-to"
+    },
+    {
+      "source": "CR-GVW-014",
+      "target": "MS-2",
+      "type": "relation",
+      "label": "assigned-to",
+      "role": "assigned-to"
+    },
+    {
+      "source": "CR-GVW-015",
+      "target": "MS-3",
+      "type": "relation",
+      "label": "assigned-to",
+      "role": "assigned-to"
+    },
+    {
+      "source": "CR-GVW-016",
+      "target": "MS-3",
+      "type": "relation",
+      "label": "assigned-to",
+      "role": "assigned-to"
+    },
+    {
+      "source": "CR-GVW-017",
+      "target": "MS-3",
+      "type": "relation",
+      "label": "assigned-to",
+      "role": "assigned-to"
+    },
+    {
+      "source": "CR-GVW-018",
+      "target": "MS-3",
+      "type": "relation",
+      "label": "assigned-to",
+      "role": "assigned-to"
+    },
+    {
+      "source": "CR-GVW-019",
+      "target": "MS-3",
+      "type": "relation",
+      "label": "assigned-to",
+      "role": "assigned-to"
+    },
+    {
+      "source": "CR-GVW-020",
+      "target": "MS-4",
+      "type": "relation",
+      "label": "assigned-to",
+      "role": "assigned-to"
+    },
+    {
+      "source": "CR-GVW-021",
+      "target": "MS-4",
+      "type": "relation",
+      "label": "assigned-to",
+      "role": "assigned-to"
+    },
+    {
+      "source": "CR-GVW-022",
+      "target": "MS-4",
+      "type": "relation",
+      "label": "assigned-to",
+      "role": "assigned-to"
+    },
+    {
+      "source": "CR-GVW-023",
+      "target": "MS-5",
+      "type": "relation",
+      "label": "assigned-to",
+      "role": "assigned-to"
+    },
+    {
+      "source": "CR-GVW-024",
+      "target": "MS-5",
+      "type": "relation",
+      "label": "assigned-to",
+      "role": "assigned-to"
+    },
+    {
+      "source": "CR-GVW-025",
+      "target": "MS-6",
+      "type": "relation",
+      "label": "assigned-to",
+      "role": "assigned-to"
+    },
+    {
+      "source": "CR-GVW-026",
+      "target": "MS-6",
+      "type": "relation",
+      "label": "assigned-to",
+      "role": "assigned-to"
+    },
+    {
+      "source": "CR-GVW-027",
+      "target": "MS-6",
+      "type": "relation",
+      "label": "assigned-to",
+      "role": "assigned-to"
+    },
+    {
+      "source": "CR-GVW-028",
+      "target": "MS-7",
+      "type": "relation",
+      "label": "assigned-to",
+      "role": "assigned-to"
+    },
+    {
+      "source": "CR-GVW-029",
+      "target": "MS-7",
+      "type": "relation",
+      "label": "assigned-to",
+      "role": "assigned-to"
+    },
+    {
+      "source": "CR-GVW-030",
+      "target": "MS-7",
+      "type": "relation",
+      "label": "assigned-to",
+      "role": "assigned-to"
+    },
+    {
+      "source": "CR-GVW-031",
+      "target": "MS-3",
+      "type": "relation",
+      "label": "assigned-to",
+      "role": "assigned-to"
+    },
+    {
+      "source": "CR-GVW-032",
+      "target": "MS-7",
+      "type": "relation",
+      "label": "assigned-to",
+      "role": "assigned-to"
+    },
+    {
+      "source": "FCHAIN-edit-legal-change",
+      "target": "FUNC-apply-session-mutation",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-edit-legal-change",
+      "target": "FUNC-derive-legal-options",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-edit-legal-change",
+      "target": "FUNC-set-dirty-state",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-edit-legal-change",
+      "target": "FUNC-validate-trace",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-edit-legal-change",
+      "target": "REQ-e2e-edit",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-explore-navigate",
+      "target": "FUNC-apply-graph-filter",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-explore-navigate",
+      "target": "FUNC-render-graph",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-explore-navigate",
+      "target": "FUNC-resolve-view-command",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-explore-navigate",
+      "target": "FUNC-search-elements",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-explore-navigate",
+      "target": "REQ-e2e-explore",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-export-to-disk",
+      "target": "FUNC-serialize-format-e",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-export-to-disk",
+      "target": "FUNC-set-dirty-state",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-export-to-disk",
+      "target": "FUNC-surface-error",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-export-to-disk",
+      "target": "FUNC-write-file-handle",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-export-to-disk",
+      "target": "REQ-e2e-export",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-extract-repo-graph",
+      "target": "FUNC-extract-and-project",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-extract-repo-graph",
+      "target": "FUNC-parse-ts-wasm",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-extract-repo-graph",
+      "target": "FUNC-pick-repo-folder",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-extract-repo-graph",
+      "target": "FUNC-render-graph",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-extract-repo-graph",
+      "target": "FUNC-report-progress",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-extract-repo-graph",
+      "target": "FUNC-surface-error",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-extract-repo-graph",
+      "target": "REQ-e2e-repo",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-install-run-offline",
+      "target": "FUNC-cache-app-shell",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-install-run-offline",
+      "target": "FUNC-prompt-update",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-install-run-offline",
+      "target": "FUNC-register-service-worker",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-install-run-offline",
+      "target": "REQ-e2e-offline",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-load-parse-render",
+      "target": "FUNC-check-ontology-version",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-load-parse-render",
+      "target": "FUNC-decode-and-validate",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-load-parse-render",
+      "target": "FUNC-init-session-graph",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-load-parse-render",
+      "target": "FUNC-open-file-picker",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-load-parse-render",
+      "target": "FUNC-render-graph",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-load-parse-render",
+      "target": "FUNC-surface-error",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-load-parse-render",
+      "target": "REQ-e2e-load",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-operate-monitor",
+      "target": "FUNC-load-app-config",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-operate-monitor",
+      "target": "FUNC-prompt-update",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-operate-monitor",
+      "target": "FUNC-report-app-status",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-operate-monitor",
+      "target": "FUNC-report-progress",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-operate-monitor",
+      "target": "FUNC-surface-error",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-operate-monitor",
+      "target": "REQ-e2e-operate",
+      "type": "satisfy"
+    },
+    {
+      "source": "FLOW-app-config",
+      "target": "FUNC-report-app-status",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-app-config",
+      "target": "SCHEMA-app-config",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-app-launch",
+      "target": "FUNC-load-app-config",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-app-launch",
+      "target": "SCHEMA-launch-context",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-app-status",
+      "target": "ACTOR-se-engineer",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-app-status",
+      "target": "ACTOR-ts-developer",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-app-status",
+      "target": "SCHEMA-app-status",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-code-graph",
+      "target": "FUNC-render-graph",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-code-graph",
+      "target": "SCHEMA-se-graph",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-decoded-graph",
+      "target": "FUNC-check-ontology-version",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-decoded-graph",
+      "target": "FUNC-init-session-graph",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-decoded-graph",
+      "target": "SCHEMA-se-graph",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-dirty-badge",
+      "target": "ACTOR-se-engineer",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-dirty-badge",
+      "target": "SCHEMA-dirty-state",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-edit-selection",
+      "target": "FUNC-derive-legal-options",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-edit-selection",
+      "target": "SCHEMA-element-selection",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-error-event",
+      "target": "FUNC-surface-error",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-error-event",
+      "target": "SCHEMA-error",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-error-report",
+      "target": "ACTOR-se-engineer",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-error-report",
+      "target": "SCHEMA-error",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-export-complete",
+      "target": "FUNC-set-dirty-state",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-export-complete",
+      "target": "SCHEMA-write-result",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-export-request",
+      "target": "FUNC-serialize-format-e",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-export-request",
+      "target": "SCHEMA-user-intent",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-filtered-graph",
+      "target": "FUNC-render-graph",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-filtered-graph",
+      "target": "SCHEMA-se-graph",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-formate-text",
+      "target": "FUNC-write-file-handle",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-formate-text",
+      "target": "SCHEMA-graph-file",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-graph-file",
+      "target": "FUNC-decode-and-validate",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-graph-file",
+      "target": "SCHEMA-graph-file",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-install-request",
+      "target": "FUNC-register-service-worker",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-install-request",
+      "target": "SCHEMA-user-intent",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-legal-options",
+      "target": "ACTOR-se-engineer",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-legal-options",
+      "target": "SCHEMA-edit-operation",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-load-request",
+      "target": "FUNC-open-file-picker",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-load-request",
+      "target": "SCHEMA-user-intent",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-mutation-applied",
+      "target": "FUNC-set-dirty-state",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-mutation-applied",
+      "target": "SCHEMA-edit-operation",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-offline-status",
+      "target": "ACTOR-se-engineer",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-offline-status",
+      "target": "SCHEMA-app-status",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-parsed-files",
+      "target": "FUNC-extract-and-project",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-parsed-files",
+      "target": "SCHEMA-parsed-file-set",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-progress",
+      "target": "ACTOR-se-engineer",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-progress",
+      "target": "ACTOR-ts-developer",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-progress",
+      "target": "SCHEMA-progress",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-proposed-change",
+      "target": "FUNC-validate-trace",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-proposed-change",
+      "target": "SCHEMA-edit-operation",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-rendered-view",
+      "target": "ACTOR-se-engineer",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-rendered-view",
+      "target": "ACTOR-ts-developer",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-rendered-view",
+      "target": "SCHEMA-render-result",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-repo-request",
+      "target": "FUNC-pick-repo-folder",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-repo-request",
+      "target": "SCHEMA-user-intent",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-search-hits",
+      "target": "FUNC-render-graph",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-search-hits",
+      "target": "SCHEMA-element-selection",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-search-term",
+      "target": "FUNC-search-elements",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-search-term",
+      "target": "SCHEMA-search-term",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-session-graph",
+      "target": "FUNC-render-graph",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-session-graph",
+      "target": "SCHEMA-se-graph",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-source-files",
+      "target": "FUNC-parse-ts-wasm",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-source-files",
+      "target": "FUNC-report-progress",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-source-files",
+      "target": "SCHEMA-source-file-set",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-status-request",
+      "target": "FUNC-report-app-status",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-status-request",
+      "target": "SCHEMA-user-intent",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-sw-active",
+      "target": "FUNC-cache-app-shell",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-sw-active",
+      "target": "FUNC-prompt-update",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-sw-active",
+      "target": "SCHEMA-sw-state",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-update-prompt",
+      "target": "ACTOR-se-engineer",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-update-prompt",
+      "target": "SCHEMA-update-offer",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-validated-change",
+      "target": "FUNC-apply-session-mutation",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-validated-change",
+      "target": "SCHEMA-edit-operation",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-version-warning",
+      "target": "ACTOR-se-engineer",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-version-warning",
+      "target": "SCHEMA-version-mismatch",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-view-command",
+      "target": "FUNC-apply-graph-filter",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-view-command",
+      "target": "SCHEMA-view-command",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-view-request",
+      "target": "FUNC-resolve-view-command",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-view-request",
+      "target": "SCHEMA-view-request",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-written-file",
+      "target": "ACTOR-se-engineer",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-written-file",
+      "target": "ACTOR-ts-developer",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-written-file",
+      "target": "SCHEMA-write-result",
+      "type": "relation"
+    },
+    {
+      "source": "FUNC-apply-graph-filter",
+      "target": "MOD-viewer-core",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-apply-graph-filter",
+      "target": "FLOW-filtered-graph",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-apply-graph-filter",
+      "target": "REQ-view-filter-search",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-apply-session-mutation",
+      "target": "MOD-graph-session",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-apply-session-mutation",
+      "target": "FLOW-mutation-applied",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-apply-session-mutation",
+      "target": "REQ-edit-session-only",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-apply-session-mutation",
+      "target": "REQ-sec-no-network-bridges",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-cache-app-shell",
+      "target": "MOD-pwa-shell",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-cache-app-shell",
+      "target": "FLOW-offline-status",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-cache-app-shell",
+      "target": "REQ-fm-09",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-cache-app-shell",
+      "target": "REQ-offline-precache",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-cache-app-shell",
+      "target": "REQ-sec-cache-allowlist",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-check-ontology-version",
+      "target": "MOD-formate-io",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-check-ontology-version",
+      "target": "FLOW-version-warning",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-check-ontology-version",
+      "target": "REQ-data-export-blocked-on-drift",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-check-ontology-version",
+      "target": "REQ-op-ontology-version-check",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-decode-and-validate",
+      "target": "MOD-formate-io",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-decode-and-validate",
+      "target": "FLOW-decoded-graph",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-decode-and-validate",
+      "target": "FLOW-error-event",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-decode-and-validate",
+      "target": "REQ-load-decode",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-decode-and-validate",
+      "target": "REQ-sec-input-is-data",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-derive-legal-options",
+      "target": "MOD-edit-surface",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-derive-legal-options",
+      "target": "FLOW-legal-options",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-derive-legal-options",
+      "target": "REQ-edit-ontology-legal",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-extract-and-project",
+      "target": "MOD-repo-import",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-extract-and-project",
+      "target": "FLOW-code-graph",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-extract-and-project",
+      "target": "REQ-fm-11",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-extract-and-project",
+      "target": "REQ-nfr-scale-limits",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-init-session-graph",
+      "target": "MOD-graph-session",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-init-session-graph",
+      "target": "FLOW-session-graph",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-init-session-graph",
+      "target": "REQ-data-concurrent-session",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-init-session-graph",
+      "target": "REQ-nfr-scale-limits",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-load-app-config",
+      "target": "MOD-app-ops",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-load-app-config",
+      "target": "FLOW-app-config",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-load-app-config",
+      "target": "FLOW-error-event",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-load-app-config",
+      "target": "REQ-op-config",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-load-app-config",
+      "target": "REQ-sec-local-graph-only",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-open-file-picker",
+      "target": "MOD-formate-io",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-open-file-picker",
+      "target": "FLOW-graph-file",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-open-file-picker",
+      "target": "REQ-fm-02",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-open-file-picker",
+      "target": "REQ-load-file-intake",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-parse-ts-wasm",
+      "target": "MOD-repo-import",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-parse-ts-wasm",
+      "target": "FLOW-error-event",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-parse-ts-wasm",
+      "target": "FLOW-parsed-files",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-parse-ts-wasm",
+      "target": "REQ-repo-parse-parity",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-pick-repo-folder",
+      "target": "MOD-repo-import",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-pick-repo-folder",
+      "target": "FLOW-source-files",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-pick-repo-folder",
+      "target": "REQ-repo-intake",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-prompt-update",
+      "target": "MOD-app-ops",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-prompt-update",
+      "target": "FLOW-update-prompt",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-prompt-update",
+      "target": "REQ-fm-16",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-prompt-update",
+      "target": "REQ-op-sw-update",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-register-service-worker",
+      "target": "MOD-pwa-shell",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-register-service-worker",
+      "target": "FLOW-sw-active",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-register-service-worker",
+      "target": "REQ-offline-precache",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-register-service-worker",
+      "target": "REQ-op-secure-origin",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-render-graph",
+      "target": "MOD-viewer-core",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-render-graph",
+      "target": "FLOW-rendered-view",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-render-graph",
+      "target": "REQ-nfr-scale-limits",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-render-graph",
+      "target": "REQ-sec-input-is-data",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-render-graph",
+      "target": "REQ-view-legible-labels",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-report-app-status",
+      "target": "MOD-app-ops",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-report-app-status",
+      "target": "FLOW-app-status",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-report-app-status",
+      "target": "REQ-op-engine-degradation",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-report-app-status",
+      "target": "REQ-op-status-panel",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-report-app-status",
+      "target": "REQ-op-version-visible",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-report-app-status",
+      "target": "REQ-sec-cache-visible",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-report-progress",
+      "target": "MOD-app-ops",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-report-progress",
+      "target": "FLOW-progress",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-report-progress",
+      "target": "REQ-nfr-responsiveness",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-resolve-view-command",
+      "target": "MOD-viewer-core",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-resolve-view-command",
+      "target": "FLOW-view-command",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-resolve-view-command",
+      "target": "REQ-view-registry",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-search-elements",
+      "target": "MOD-viewer-core",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-search-elements",
+      "target": "FLOW-search-hits",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-search-elements",
+      "target": "REQ-view-filter-search",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-serialize-format-e",
+      "target": "MOD-formate-io",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-serialize-format-e",
+      "target": "FLOW-formate-text",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-serialize-format-e",
+      "target": "REQ-export-roundtrip",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-set-dirty-state",
+      "target": "MOD-graph-session",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-set-dirty-state",
+      "target": "FLOW-dirty-badge",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-set-dirty-state",
+      "target": "REQ-data-dirty-guard",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-set-dirty-state",
+      "target": "REQ-fm-15",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-surface-error",
+      "target": "MOD-app-ops",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-surface-error",
+      "target": "FLOW-error-report",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-surface-error",
+      "target": "REQ-op-error-surface",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-surface-error",
+      "target": "REQ-sec-error-redaction",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-validate-trace",
+      "target": "MOD-edit-surface",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-validate-trace",
+      "target": "FLOW-validated-change",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-validate-trace",
+      "target": "REQ-edit-ontology-legal",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-write-file-handle",
+      "target": "MOD-formate-io",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-write-file-handle",
+      "target": "FLOW-error-event",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-write-file-handle",
+      "target": "FLOW-export-complete",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-write-file-handle",
+      "target": "FLOW-written-file",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-write-file-handle",
+      "target": "REQ-data-fs-permission",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-write-file-handle",
+      "target": "REQ-data-handle-binding",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-write-file-handle",
+      "target": "REQ-fm-05",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-write-file-handle",
+      "target": "REQ-sec-export-discloses",
+      "type": "satisfy"
+    },
+    {
+      "source": "MS-2",
+      "target": "MS-1",
+      "type": "relation",
+      "label": "depends-on",
+      "role": "depends-on"
+    },
+    {
+      "source": "MS-3",
+      "target": "MS-2",
+      "type": "relation",
+      "label": "depends-on",
+      "role": "depends-on"
+    },
+    {
+      "source": "MS-4",
+      "target": "MS-3",
+      "type": "relation",
+      "label": "depends-on",
+      "role": "depends-on"
+    },
+    {
+      "source": "MS-5",
+      "target": "MS-4",
+      "type": "relation",
+      "label": "depends-on",
+      "role": "depends-on"
+    },
+    {
+      "source": "MS-6",
+      "target": "MS-3",
+      "type": "relation",
+      "label": "depends-on",
+      "role": "depends-on"
+    },
+    {
+      "source": "MS-7",
+      "target": "MS-6",
+      "type": "relation",
+      "label": "depends-on",
+      "role": "depends-on"
+    },
+    {
+      "source": "REQ-data",
+      "target": "REQ-data-concurrent-session",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-data",
+      "target": "REQ-data-dirty-guard",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-data",
+      "target": "REQ-data-export-blocked-on-drift",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-data",
+      "target": "REQ-data-fs-permission",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-data",
+      "target": "REQ-data-handle-binding",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-fm-01",
+      "target": "REQ-sec-cache-allowlist",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-fm-03",
+      "target": "REQ-sec-error-redaction",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-fm-04",
+      "target": "REQ-sec-export-discloses",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-fm-06",
+      "target": "REQ-sec-input-is-data",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-fm-07",
+      "target": "REQ-sec-no-network-bridges",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-fm-08",
+      "target": "REQ-sec-local-graph-only",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-fm-10",
+      "target": "REQ-sec-csp",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-fm-12",
+      "target": "REQ-data-handle-binding",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-fm-13",
+      "target": "REQ-data-export-blocked-on-drift",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-fm-14",
+      "target": "REQ-data-concurrent-session",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-nfr",
+      "target": "REQ-nfr-privacy",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-nfr",
+      "target": "REQ-nfr-responsiveness",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-nfr",
+      "target": "REQ-nfr-scale-limits",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-ops",
+      "target": "REQ-op-config",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-ops",
+      "target": "REQ-op-engine-degradation",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-ops",
+      "target": "REQ-op-error-surface",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-ops",
+      "target": "REQ-op-ontology-version-check",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-ops",
+      "target": "REQ-op-secure-origin",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-ops",
+      "target": "REQ-op-status-panel",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-ops",
+      "target": "REQ-op-sw-update",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-ops",
+      "target": "REQ-op-version-visible",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-sec",
+      "target": "REQ-fm-01",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-sec",
+      "target": "REQ-fm-02",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-sec",
+      "target": "REQ-fm-03",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-sec",
+      "target": "REQ-fm-04",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-sec",
+      "target": "REQ-fm-05",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-sec",
+      "target": "REQ-fm-06",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-sec",
+      "target": "REQ-fm-07",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-sec",
+      "target": "REQ-fm-08",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-sec",
+      "target": "REQ-fm-09",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-sec",
+      "target": "REQ-fm-10",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-sec",
+      "target": "REQ-fm-11",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-sec",
+      "target": "REQ-fm-12",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-sec",
+      "target": "REQ-fm-13",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-sec",
+      "target": "REQ-fm-14",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-sec",
+      "target": "REQ-fm-15",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-sec",
+      "target": "REQ-fm-16",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-sec",
+      "target": "REQ-sec-cache-allowlist",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-sec",
+      "target": "REQ-sec-cache-visible",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-sec",
+      "target": "REQ-sec-csp",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-sec",
+      "target": "REQ-sec-error-redaction",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-sec",
+      "target": "REQ-sec-export-discloses",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-sec",
+      "target": "REQ-sec-input-is-data",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-sec",
+      "target": "REQ-sec-local-graph-only",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-sec",
+      "target": "REQ-sec-no-network-bridges",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphview",
+      "target": "MOD-app-ops",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphview",
+      "target": "MOD-edit-surface",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphview",
+      "target": "MOD-formate-io",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphview",
+      "target": "MOD-graph-session",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphview",
+      "target": "MOD-pwa-shell",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphview",
+      "target": "MOD-repo-import",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphview",
+      "target": "MOD-viewer-core",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphview",
+      "target": "REQ-data",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphview",
+      "target": "REQ-nfr",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphview",
+      "target": "REQ-ops",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphview",
+      "target": "REQ-sec",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphview",
+      "target": "UC-edit-graph",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphview",
+      "target": "UC-explore-views",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphview",
+      "target": "UC-export-formate",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphview",
+      "target": "UC-import-ts-repo",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphview",
+      "target": "UC-load-graph",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphview",
+      "target": "UC-operate-app",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphview",
+      "target": "UC-use-offline",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphview",
+      "target": "REQ-nfr-privacy",
+      "type": "satisfy"
+    },
+    {
+      "source": "SYS-graphview",
+      "target": "REQ-sec",
+      "type": "satisfy"
+    },
+    {
+      "source": "SYS-graphview",
+      "target": "REQ-sec-csp",
+      "type": "satisfy"
+    },
+    {
+      "source": "TEST-data-acceptance",
+      "target": "REQ-data",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-data-concurrent-session",
+      "target": "REQ-data-concurrent-session",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-data-concurrent-session",
+      "target": "REQ-fm-14",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-data-dirty-guard",
+      "target": "REQ-data-dirty-guard",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-data-dirty-guard",
+      "target": "REQ-fm-15",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-data-export-blocked-on-drift",
+      "target": "REQ-data-export-blocked-on-drift",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-data-export-blocked-on-drift",
+      "target": "REQ-fm-13",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-data-fs-permission",
+      "target": "REQ-data-fs-permission",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-data-handle-binding",
+      "target": "REQ-data-handle-binding",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-data-handle-binding",
+      "target": "REQ-fm-12",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-e2e-edit",
+      "target": "REQ-e2e-edit",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-e2e-explore",
+      "target": "REQ-e2e-explore",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-e2e-export",
+      "target": "REQ-e2e-export",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-e2e-load",
+      "target": "REQ-e2e-load",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-e2e-offline",
+      "target": "REQ-e2e-offline",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-e2e-operate",
+      "target": "REQ-e2e-operate",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-e2e-repo",
+      "target": "REQ-e2e-repo",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-edit-ontology-legal",
+      "target": "REQ-edit-ontology-legal",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-edit-session-only",
+      "target": "REQ-edit-session-only",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-export-roundtrip",
+      "target": "REQ-export-roundtrip",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-load-decode",
+      "target": "REQ-load-decode",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-load-file-intake",
+      "target": "REQ-load-file-intake",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-nfr-acceptance",
+      "target": "REQ-nfr",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-nfr-privacy",
+      "target": "REQ-nfr-privacy",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-nfr-responsiveness",
+      "target": "REQ-nfr-responsiveness",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-nfr-scale-limits",
+      "target": "REQ-nfr-scale-limits",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-offline-precache",
+      "target": "REQ-fm-09",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-offline-precache",
+      "target": "REQ-offline-precache",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-op-config",
+      "target": "REQ-op-config",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-op-engine-degradation",
+      "target": "REQ-op-engine-degradation",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-op-error-surface",
+      "target": "REQ-op-error-surface",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-op-ontology-version-check",
+      "target": "REQ-op-ontology-version-check",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-op-secure-origin",
+      "target": "REQ-op-secure-origin",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-op-status-panel",
+      "target": "REQ-op-status-panel",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-op-sw-update",
+      "target": "REQ-fm-16",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-op-sw-update",
+      "target": "REQ-op-sw-update",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-op-version-visible",
+      "target": "REQ-op-version-visible",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-ops-acceptance",
+      "target": "REQ-ops",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-repo-intake",
+      "target": "REQ-repo-intake",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-repo-parse-parity",
+      "target": "REQ-repo-parse-parity",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-sec-acceptance",
+      "target": "REQ-sec",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-sec-cache-allowlist",
+      "target": "REQ-fm-01",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-sec-cache-allowlist",
+      "target": "REQ-fm-02",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-sec-cache-allowlist",
+      "target": "REQ-sec-cache-allowlist",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-sec-cache-visible",
+      "target": "REQ-sec-cache-visible",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-sec-csp",
+      "target": "REQ-fm-10",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-sec-csp",
+      "target": "REQ-sec-csp",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-sec-error-redaction",
+      "target": "REQ-fm-03",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-sec-error-redaction",
+      "target": "REQ-sec-error-redaction",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-sec-export-discloses",
+      "target": "REQ-fm-04",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-sec-export-discloses",
+      "target": "REQ-fm-05",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-sec-export-discloses",
+      "target": "REQ-fm-11",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-sec-export-discloses",
+      "target": "REQ-sec-export-discloses",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-sec-input-is-data",
+      "target": "REQ-fm-06",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-sec-input-is-data",
+      "target": "REQ-sec-input-is-data",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-sec-local-graph-only",
+      "target": "REQ-fm-08",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-sec-local-graph-only",
+      "target": "REQ-sec-local-graph-only",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-sec-no-network-bridges",
+      "target": "REQ-fm-07",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-sec-no-network-bridges",
+      "target": "REQ-sec-no-network-bridges",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-view-filter-search",
+      "target": "REQ-view-filter-search",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-view-legible-labels",
+      "target": "REQ-view-legible-labels",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-view-registry",
+      "target": "REQ-view-registry",
+      "type": "verify"
+    },
+    {
+      "source": "UC-edit-graph",
+      "target": "FCHAIN-edit-legal-change",
+      "type": "compose"
+    },
+    {
+      "source": "UC-edit-graph",
+      "target": "REQ-e2e-edit",
+      "type": "compose"
+    },
+    {
+      "source": "UC-edit-graph",
+      "target": "REQ-edit-ontology-legal",
+      "type": "compose"
+    },
+    {
+      "source": "UC-edit-graph",
+      "target": "REQ-edit-session-only",
+      "type": "compose"
+    },
+    {
+      "source": "UC-explore-views",
+      "target": "FCHAIN-explore-navigate",
+      "type": "compose"
+    },
+    {
+      "source": "UC-explore-views",
+      "target": "REQ-e2e-explore",
+      "type": "compose"
+    },
+    {
+      "source": "UC-explore-views",
+      "target": "REQ-view-filter-search",
+      "type": "compose"
+    },
+    {
+      "source": "UC-explore-views",
+      "target": "REQ-view-registry",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export-formate",
+      "target": "FCHAIN-export-to-disk",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export-formate",
+      "target": "REQ-e2e-export",
+      "type": "compose"
+    },
+    {
+      "source": "UC-export-formate",
+      "target": "REQ-export-roundtrip",
+      "type": "compose"
+    },
+    {
+      "source": "UC-import-ts-repo",
+      "target": "FCHAIN-extract-repo-graph",
+      "type": "compose"
+    },
+    {
+      "source": "UC-import-ts-repo",
+      "target": "REQ-e2e-repo",
+      "type": "compose"
+    },
+    {
+      "source": "UC-import-ts-repo",
+      "target": "REQ-repo-intake",
+      "type": "compose"
+    },
+    {
+      "source": "UC-import-ts-repo",
+      "target": "REQ-repo-parse-parity",
+      "type": "compose"
+    },
+    {
+      "source": "UC-load-graph",
+      "target": "FCHAIN-load-parse-render",
+      "type": "compose"
+    },
+    {
+      "source": "UC-load-graph",
+      "target": "REQ-e2e-load",
+      "type": "compose"
+    },
+    {
+      "source": "UC-load-graph",
+      "target": "REQ-load-decode",
+      "type": "compose"
+    },
+    {
+      "source": "UC-load-graph",
+      "target": "REQ-load-file-intake",
+      "type": "compose"
+    },
+    {
+      "source": "UC-operate-app",
+      "target": "FCHAIN-operate-monitor",
+      "type": "compose"
+    },
+    {
+      "source": "UC-operate-app",
+      "target": "REQ-e2e-operate",
+      "type": "compose"
+    },
+    {
+      "source": "UC-use-offline",
+      "target": "FCHAIN-install-run-offline",
+      "type": "compose"
+    },
+    {
+      "source": "UC-use-offline",
+      "target": "REQ-e2e-offline",
+      "type": "compose"
+    },
+    {
+      "source": "UC-use-offline",
+      "target": "REQ-offline-precache",
+      "type": "compose"
+    }
+  ],
+  "graphVersion": 31
+}
