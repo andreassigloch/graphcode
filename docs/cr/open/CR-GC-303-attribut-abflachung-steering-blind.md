@@ -1,6 +1,18 @@
 # CR-GC-303 — Attribut-Abflachung macht den Steering-Pfad regelblind
 
 **Status:** open · **Angelegt:** 2026-08-05
+**Absorbiert:** [CR-GC-299](../done/CR-GC-299-exporter-attributes-flattening.md)
+(2026-08-07 geschlossen als superseded)
+
+> **Übernommen aus CR-GC-299** — CR-299 beschrieb denselben Defekt einen Tag früher, bot
+> aber als Option 1 an, `exportGraphJson` das Flattening abzugewöhnen. Das ist hier
+> bewusst verworfen (der Export-Encoding ist committete SSOT-/Format-E-Konvention). Zwei
+> Punkte aus CR-299 gelten trotzdem und sind unten in Scope + AC eingearbeitet:
+>
+> 1. **R-20 ist mitbetroffen** (`realRef`/`codeRef`), nicht nur R-19/VR-01/SC-04/AF-01..05.
+> 2. **`graph_readiness` muss unverändert bleiben** — der L2-Pfad
+>    (`harness.evaluateRules()`) liest direkt vom Graph und war nie betroffen. Ein
+>    Ergebnis-Shift dort wäre eine Regression, kein Fortschritt.
 
 ## Problem
 
@@ -52,6 +64,12 @@ aus dem Graph** über dieselbe Abbildung wie der Harness-Pfad —
 - [ ] `takeSteeringSnapshot(graph)`: Regeln sehen `element.attributes.x`
       (Beweis: SYS mit `analysisFreshness`-Stamps → AF-01..05 still; TEST mit
       `testRef` → R-19 still) — Unit-Test, der die Blindheit vorher reproduziert
+- [ ] **R-20 mit im Beweis** (aus CR-GC-299): FUNC mit `realRef`/`codeRef` → R-20
+      still über denselben Pfad. R-19 allein zu prüfen ließe die zweite
+      Bindungsregel ungetestet durchrutschen
+- [ ] **`graph_readiness` unverändert** (aus CR-GC-299): Regressionstest, dass der
+      L2-Pfad (`harness.evaluateRules()`) vor und nach dem Fix dasselbe Ergebnis
+      liefert — er war nie betroffen, ein Shift dort wäre eine Regression
 - [ ] `exportGraphJson`-Output byte-identisch zu vorher (kein Encoding-Change)
 - [ ] Known-Gap-Kommentare in tests/generate.test.ts entfernt, kein
       dauerhaft-offenes Gate mehr durch Encoding statt Modell-Inhalt

@@ -1,9 +1,29 @@
 # CR-GC-261: Restliche 500-Zeilen-Überschreiter — readiness-Config + harness-Query-Pfad
 
-**Status:** postponed (2026-07-26) · **Max Files:** 6
+**Status:** postponed (2026-07-26) · **neu geschnitten 2026-08-07** · **Max Files:** 6
 **Herkunft:** Folge-CR aus CR-GC-260. Zwei der vier dort geschnittenen Module blieben über der
 500-Zeilen-Grenze, weil der jeweils **nächste** Schnitt mehr kostet, als ein Verschiebe-CR tragen
 darf. Nicht offengelassen, sondern hier mit eigenem Budget geführt.
+
+> ## Bestandsaufnahme 2026-08-07 — die Prämisse ist zur Hälfte veraltet
+>
+> Nachgemessen statt fortgeschrieben. Die Zahlen unten (Stand 2026-07-26) stimmen nicht mehr:
+>
+> | Modul | im CR | heute | Befund |
+> |---|---|---|---|
+> | `src/readiness.ts` | 505 | **100** | **erledigt** — CR-GC-265 hat readiness + panels auf `@sigloch/graphcode-client`-Shims umgestellt, CR-GC-296 den Rest. Kein `readiness-gates.ts` nötig, der Schnitt hat sich anders aufgelöst. Punkt 1 der Decision ist gegenstandslos. |
+> | `src/harness.ts` | 712 | **723** | offen, leicht gewachsen. Punkt 2 (`harness-queries.ts`) gilt unverändert. |
+> | `src/executor.ts` | — | **1465** | **neu und der mit Abstand größte Überschreiter** — im CR nie erwähnt, weil er bei CR-GC-260 noch nicht existierte (CR-GC-278/279, eingebetteter Executor). Fast 3× die Grenze. |
+>
+> `src/executor.ts` und `src/harness.ts` sind heute die **einzigen** beiden Dateien über 500
+> Zeilen in `src/` (gemessen, nicht geschätzt).
+>
+> **Konsequenz für dieses CR:** Der Titel („readiness-Config + harness-Query-Pfad") beschreibt
+> nur noch eine halbe Wahrheit. Punkt 1 streichen, `executor.ts` aufnehmen — aber **nicht in
+> denselben CR**: 1465 Zeilen zu schneiden ist keine Verschiebung, sondern ein Umbau mit
+> eigener Risikolage (der Executor trägt den Runden-Loop, die LLM-Backends und den
+> Konvergenz-Abbruch). Der Schnitt braucht einen eigenen CR mit eigener Begründung, welche
+> Achse getrennt wird. **Offene Entscheidung, bewusst nicht selbst getroffen.**
 
 ## Problem (Why)
 

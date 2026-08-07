@@ -1,7 +1,17 @@
 # CR-GC-295 — Zielprofil (ℝ⁶) als Runde-1-Frage + Config + Konflikt-Check
 
-**Status:** open
+**Status:** done · **Geschlossen:** 2026-08-07
 **Datum:** 2026-08-04
+
+> **Schließ-Notiz (2026-08-07):** alle 10 Akzeptanzkriterien waren seit der Umsetzung
+> abgehakt, der Code liegt vor (`src/target-profile.ts`, `tests/target-profile.test.ts`,
+> `intentAnchors` in `generate.ts` + `tools/report.ts`) — das CR lag nur als
+> Lifecycle-Drift in `open/`. Kein Nacharbeit-Rest.
+>
+> **Folge-CR:** [CR-GC-307](../open/CR-GC-307-intent-anchor-nie-beim-kunden.md) nimmt die
+> hier eingeführte **Anker-Bestätigung durch den Menschen** wieder zurück: „Intent-Anker"
+> ist Steuerungsinternes und gehört nicht in den Kundendialog. Die Config, der Loader und
+> der Konflikt-Check aus diesem CR bleiben unverändert bestehen.
 **Kontext:** CR-GC-289 (Ranking Ziel-Delta) hat das Zielprofil bewusst ausgeklammert: *"Kein
 Zielprofil in diesem CR … Zielprofil = eigener CR."* CR-GC-283 listet es unverändert als offenen
 Design-Punkt ("Zielprofil als Runde-1-Input — beeinflusst den Plan"). Dieser CR füllt die Lücke.

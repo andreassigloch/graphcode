@@ -1,7 +1,24 @@
 # CR-GC-299 — exporter.ts flacht attributes ab, TRR/CDR über generate/steering strukturell blockiert
 
-**Status:** open
+**Status:** superseded by [CR-GC-303](../open/CR-GC-303-attribut-abflachung-steering-blind.md) · **Geschlossen:** 2026-08-07
 **Datum:** 2026-08-04
+
+> **Schließ-Notiz (2026-08-07):** derselbe Defekt wie CR-GC-303, aber mit
+> **gegenläufigem** Lösungsvorschlag — dieses CR bot als Option 1 an, `exportGraphJson`
+> nicht mehr abflachen zu lassen; CR-GC-303 verriegelt genau das („Der Export-Encoding
+> bleibt unangetastet", weil er committete SSOT-/Format-E-/Roundtrip-Konvention ist).
+> Zwei offene CRs mit unvereinbarer Richtung auf derselben Datei sind eine Drift-Quelle,
+> kein Optionsraum.
+>
+> CR-GC-303 gewinnt: neuer (05.08. vs. 04.08.), benennt die konkrete Implementierung
+> (`toOntologyGraph` aus `conformance.ts` exportieren und wiederverwenden — ein Mapper,
+> kein Serialisierungs-Umweg) und deckt zusätzlich die AF-01..05-Regeln aus
+> contracts 3.1.0 ab, die dieses CR noch nicht kannte.
+>
+> **Was aus diesem CR nach CR-GC-303 übernommen wurde** (Abschnitt „Übernommen aus
+> CR-GC-299" dort): die R-20-Betroffenheit (`realRef`/`codeRef`) und das
+> Akzeptanzkriterium, dass `graph_readiness` als L2-Pfad **unverändert** bleiben muss.
+> Nichts aus diesem CR geht verloren; Option 1 ist bewusst verworfen.
 **Kontext:** Fund während der Implementierung von CR-GC-296 (phase_readiness-Konsum),
 nicht dort behoben — orthogonal zum eigentlichen CR-296-Scope, aber mit direkter
 Konsequenz für dessen neue Handoff-Bedingung.
