@@ -142,7 +142,12 @@ export async function executeImportCode(opts: {
       >;
       const incomingNodes = new Set(cmds.filter((c) => c.op === 'add-node').map((c) => c.node.uid));
       const incomingEdges = new Set(cmds.filter((c) => c.op === 'add-edge').map((c) => edgeKey(c.edge)));
-      const staleNodes = prev.nodes.filter((n) => !incomingNodes.has(n.uid));
+      // CR-GC-302: der SYS-Anker ueberlebt den Reseed. graphify extrahiert
+      // FUNC/MOD/FLOW/SCHEMA und NIE ein SYS — ohne diese Ausnahme raeumt der
+      // Stale-Filter den vorhandenen SYS-Knoten samt Intention und
+      // analysisFreshness-Stamps weg, und AF-01..05 fallen zurueck in die
+      // Vacuous-Exemption (fehlende Analyse wird unsichtbar statt laut).
+      const staleNodes = prev.nodes.filter((n) => n.type !== 'SYS' && !incomingNodes.has(n.uid));
       const staleNodeUids = new Set(staleNodes.map((n) => n.uid));
       // Kanten an geloeschten Knoten raeumt delete-node selbst ab; nur ueberlebende
       // Endpunkte mit weggefallener Kante brauchen ein explizites delete-edge.
@@ -150,12 +155,35 @@ export async function executeImportCode(opts: {
         (e) =>
           !incomingEdges.has(edgeKey(e)) && !staleNodeUids.has(e.sourceId) && !staleNodeUids.has(e.targetId),
       );
+      // CR-GC-302: fehlt der Anker ganz (frisches Repo, reiner Code-Import), legt ihn
+      // der Batch an — durchs Gate, im selben atomaren Durchlauf, auditiert als
+      // consumerId `import-code`. Nur wenn WEDER der Bestand NOCH die Extraktion ein
+      // SYS traegt: kein Overwrite, und nie delete+add derselben uid in einem Batch
+      // (persist schreibt deletes zuletzt — der Store wuerde vom Speicher abweichen).
+      const hasSys =
+        prev.nodes.some((n) => n.type === 'SYS') ||
+        cmds.some((c) => c.op === 'add-node' && c.node.uid.startsWith('SYS-'));
+      const ensureSys = hasSys
+        ? []
+        : [
+            {
+              op: 'add-node',
+              node: {
+                uid: `SYS-${member}`,
+                type: 'SYS',
+                name: member,
+                description: '',
+                attributes: { status: 'draft' },
+              },
+            },
+          ];
       const batch = [
         ...staleNodes.map((n) => ({ op: 'delete-node', uid: n.uid })),
         ...staleEdges.map((e) => ({
           op: 'delete-edge',
           edge: { sourceId: e.sourceId, targetId: e.targetId, edgeType: e.edgeType },
         })),
+        ...ensureSys,
         ...commands,
       ];
       if (batch.length === 0) return { success: true, violations: [] };

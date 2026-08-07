@@ -844,8 +844,8 @@
       "id": "CR-GC-302",
       "type": "CR",
       "name": "Auto-SYS-Node bei jedem Import",
-      "description": "Import-Pfade (import-code, Format-E-Bulk replace/merge, reseed) stellen den SYS-Knoten selbst sicher (ensure, kein Overwrite, durchs Gate): ohne SYS-Anker laufen AF-01..05 (contracts 3.1.0 Analysis-Freshness) in die Vacuous-Exemption und graph_generate verliert die Intent-Quelle. AC: genau ein SYS nach jedem Import, mitgebrachtes SYS unangetastet, Anlage auditiert, AF feuert nach Import als Warning. (docs/cr/open/CR-GC-302)",
-      "status": "open",
+      "description": "DONE 2026-08-07. ensureSystemNode(nodes, systemId) in harness-import.ts — EINE Entscheidungsstelle am Choke-Point importOntologyGraph, durch den alle Bulk-Pfade laufen (seedFromJsonFile, applyReseed); ImportTarget traegt dafuer neu systemId. Fuer import-code liegt die Anlage als add-node im selben Gate-Batch (auditiert als consumerId import-code). Zusatzfund mitgefixt: der import-code-Reseed haette einen VORHANDENEN SYS geloescht — der Stale-Filter raeumt alles weg, was die Extraktion nicht wieder anlegt, und graphify liefert nie ein SYS; Intention und analysisFreshness-Stamps waeren beim naechsten Code-Import verloren gewesen. SYS ist jetzt vom Stale-Filter ausgenommen. Bewusste AC-Abweichung: der Bulk-Pfad laeuft NICHT durchs Gate — importOntologyGraph ist per Konstruktion gate-frei (ImportTarget schneidet den Gate-Zugriff weg, der Pfad umgeht auch R-01); sein Kontrakt ist Store-aus-SSOT, nicht Mutation. AF-01..05 sind ausserdem gar nicht im Gate-Katalog (SE_DESCRIPTOR = V3_RULES + MT_RULES), nur in evaluateAllRules — der Test misst deshalb ueber takeSteeringSnapshot. Vier fremde Tests angepasst: Fixtures tragen jetzt eigenen SYS statt hochgezaehlter Erwartungen. 74 Testdateien / 489 Tests gruen. (docs/cr/done/CR-GC-302)",
+      "status": "done",
       "created_at": "2026-08-05T00:00:00.000Z"
     },
     {
@@ -9476,5 +9476,5 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     }
   ],
-  "graphVersion": 48
+  "graphVersion": 49
 }

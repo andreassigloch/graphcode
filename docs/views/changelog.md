@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 100 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 100 CR · 89 done · 10 open.
+Total: 100 CR · 90 done · 9 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -141,7 +141,7 @@ Total: 100 CR · 89 done · 10 open.
 | `CR-GC-271` | done | SCHEMA-Bindung: zodDefinition raus, realRef-Stub materialisieren |
 | `CR-GC-272` | done | readiness + panels nach graphcode-client |
 | `CR-GC-273` | done | graph_suggest: se-optimizer-Binding mit dryRun-Verdict |
-| `CR-GC-302` | open | Auto-SYS-Node bei jedem Import |
+| `CR-GC-302` | done | Auto-SYS-Node bei jedem Import |
 | `CR-GC-303` | done | Attribut-Abflachung macht Steering-Pfad regelblind |
 | `CR-GC-304` | open | ConOps-View nach ISO 29148 neu schneiden |
 | `CR-GC-305` | open | spec-View entfernen, srs bleibt |

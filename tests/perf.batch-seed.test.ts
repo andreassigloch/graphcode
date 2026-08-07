@@ -28,7 +28,9 @@ import { GraphCodeHarness } from '../src/harness.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 
 const NODE_COUNT = 5000;
-const EDGE_COUNT = 5000; // chain (NODE_COUNT-1) + 1 wrap-around edge
+/** 1 SYS anchor (CR-GC-302) + the generated MOD chain = NODE_COUNT. */
+const MOD_COUNT = NODE_COUNT - 1;
+const EDGE_COUNT = 5000; // MOD chain (MOD_COUNT-1) + 1 wrap-around + 1 SYS→MOD root
 // Measured A/B (this machine, full SE schema, 5k+5k):
 //   OLD per-row MERGE loop : ~30 s  (edges alone ~26 s)
 //   NEW UNWIND batch       : ~5.3 s (edges ~2.7 s)  → 5.6x faster
@@ -55,21 +57,31 @@ function makeConfig(repoRoot: string): HarnessConfig {
  * valid pair in SE_DESCRIPTOR, so the data is ontology-valid.
  */
 function generateGraph(): { elements: any[]; traces: any[] } {
-  const elements = Array.from({ length: NODE_COUNT }, (_, i) => ({
-    id: `MOD-perf-${i}`,
-    type: 'MOD',
-    name: `Module ${i}`,
-    description: `generated module ${i}`,
-    // a non-declared attribute to exercise the lossless attrs_json path
-    seq: i,
-  }));
+  // CR-GC-302: the fixture carries its own SYS anchor. Without one the importer
+  // supplies it (ensure-semantics) and the count would be NODE_COUNT+1 — measuring
+  // an off-by-one instead of the batch throughput this test is about. A real
+  // governed graph has a SYS, so this is the honest shape, not a workaround.
+  const elements: any[] = [
+    { id: 'SYS-perf', type: 'SYS', name: 'perf', description: 'Perf-Fixture-Wurzel.' },
+  ];
+  for (let i = 0; i < MOD_COUNT; i++) {
+    elements.push({
+      id: `MOD-perf-${i}`,
+      type: 'MOD',
+      name: `Module ${i}`,
+      description: `generated module ${i}`,
+      // a non-declared attribute to exercise the lossless attrs_json path
+      seq: i,
+    });
+  }
 
   const traces: any[] = [];
-  for (let i = 0; i < NODE_COUNT - 1; i++) {
+  for (let i = 0; i < MOD_COUNT - 1; i++) {
     traces.push({ source: `MOD-perf-${i}`, target: `MOD-perf-${i + 1}`, type: 'compose' });
   }
-  // wrap-around to reach exactly EDGE_COUNT (cycle is allowed for MOD→MOD compose)
-  traces.push({ source: `MOD-perf-${NODE_COUNT - 1}`, target: 'MOD-perf-0', type: 'compose' });
+  // wrap-around + the SYS→MOD root edge to reach exactly EDGE_COUNT
+  traces.push({ source: `MOD-perf-${MOD_COUNT - 1}`, target: 'MOD-perf-0', type: 'compose' });
+  traces.push({ source: 'SYS-perf', target: 'MOD-perf-0', type: 'compose' });
 
   return { elements, traces };
 }
@@ -129,10 +141,13 @@ describe('CR-GC-120 batch-seed via UNWIND', () => {
     expect(first!.name).toBe('Module 0');
     expect(Number(first!.attributes?.seq)).toBe(0);
 
-    const last = reloaded.nodes.find((n) => n.uid === `MOD-perf-${NODE_COUNT - 1}`);
+    const last = reloaded.nodes.find((n) => n.uid === `MOD-perf-${MOD_COUNT - 1}`);
     expect(last).toBeDefined();
 
-    // Every edge is a compose edge between two MOD nodes.
+    // The SYS anchor round-trips with the batch, same as every other node.
+    expect(reloaded.nodes.find((n) => n.uid === 'SYS-perf')?.type).toBe('SYS');
+
+    // Every edge is a compose edge (MOD→MOD chain + the SYS→MOD root).
     expect(reloaded.edges.every((e) => e.edgeType === 'compose')).toBe(true);
   }, 60_000);
 });

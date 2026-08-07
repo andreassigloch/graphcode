@@ -27,8 +27,13 @@ function makeConfig(repoRoot: string): HarnessConfig {
 }
 
 // REQ-good is verify-traced by TEST-good; REQ-bad has no verifying TEST.
+// Both fixtures carry their own SYS (CR-GC-302) — the importer would otherwise
+// supply the anchor and the exact node counts below would drift by one, which
+// would be an off-by-one about the anchor rather than about the REQ-with-test
+// invariant these tests exist for.
 const DIRTY = {
   elements: [
+    { id: 'SYS-inv', type: 'SYS', name: 'inv', description: 'Invarianten-Fixture.' },
     { id: 'REQ-good', type: 'REQ', name: 'Good req', description: '' },
     { id: 'TEST-good', type: 'TEST', name: 'Good test', description: '' },
     { id: 'REQ-bad', type: 'REQ', name: 'Bad req', description: 'no verifying TEST' },
@@ -38,6 +43,7 @@ const DIRTY = {
 
 const CLEAN = {
   elements: [
+    { id: 'SYS-inv', type: 'SYS', name: 'inv', description: 'Invarianten-Fixture.' },
     { id: 'REQ-good', type: 'REQ', name: 'Good req', description: '' },
     { id: 'TEST-good', type: 'TEST', name: 'Good test', description: '' },
   ],
@@ -65,7 +71,7 @@ describe('TEST-import-invariant: importGraph enforces REQ-with-test on the bulk-
     expect(res.unverifiedReqs).toContain('REQ-bad');
     expect(res.unverifiedReqs).not.toContain('REQ-good');
     // Default is flag, not refuse — the data still imports so existing flows are unbroken.
-    expect(harness.getGraph().nodes.length).toBe(3);
+    expect(harness.getGraph().nodes.length).toBe(DIRTY.elements.length);
   });
 
   it('refuses the import (throws, store untouched) when rejectUnverifiedReqs is set', async () => {
@@ -79,6 +85,6 @@ describe('TEST-import-invariant: importGraph enforces REQ-with-test on the bulk-
   it('a clean graph (every REQ verify-traced) flags nothing and passes strict mode', async () => {
     const res = await harness.importGraph(CLEAN, { rejectUnverifiedReqs: true });
     expect(res.unverifiedReqs).toEqual([]);
-    expect(harness.getGraph().nodes.length).toBe(2);
+    expect(harness.getGraph().nodes.length).toBe(CLEAN.elements.length);
   });
 });

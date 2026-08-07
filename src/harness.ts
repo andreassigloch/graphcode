@@ -542,6 +542,7 @@ export class GraphCodeHarness {
     return {
       storage: this.storage,
       repoRoot: this.config.repoRoot,
+      systemId: this.config.scope.systemId,
       getGraph: () => this.graph,
       setGraph: (graph: Graph) => {
         this.graph = graph;

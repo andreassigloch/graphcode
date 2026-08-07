@@ -123,6 +123,69 @@ describe('executeImportCode (CR-GC-298)', () => {
     }
   }, 60_000);
 
+  // CR-GC-302 — der SYS-Anker. graphify extrahiert FUNC/MOD/FLOW/SCHEMA und NIE ein
+  // SYS; ohne diese beiden Faelle bleibt ein code-importierter Graph un-ankerbar:
+  // AF-01..05 fallen in die Vacuous-Exemption ("nothing to anchor on yet") und
+  // graph_generate verliert die Intent-Quelle (SYS.description).
+  it('legt beim Code-Import einen SYS-Anker an — durchs Gate, im selben Batch', async () => {
+    const repoRoot = mkdtempSync(join(tmpdir(), 'graphcode-import-sys-'));
+    try {
+      writeFixture(repoRoot);
+      const summary = await executeImportCode({ repoRoot });
+      expect(summary.status).toBe('success');
+
+      const g = await readGraph(repoRoot);
+      expect(g.types.filter((t) => t === 'SYS')).toHaveLength(1);
+      // Der Anker haengt am abgeleiteten Member-Namen, nicht an einem Rateausdruck.
+      expect(g.uids.filter((u) => u.startsWith('SYS-'))).toHaveLength(1);
+    } finally {
+      rmSync(repoRoot, { recursive: true, force: true });
+    }
+  }, 60_000);
+
+  it('der Reseed loescht einen vorhandenen SYS NICHT — Intention und Stamps ueberleben', async () => {
+    const repoRoot = mkdtempSync(join(tmpdir(), 'graphcode-import-sys-keep-'));
+    try {
+      writeFixture(repoRoot);
+      await executeImportCode({ repoRoot });
+
+      // Die Absichtsebene fuellen: Intention + ein Freshness-Stamp am Anker — genau
+      // das, was ein Code-Reseed sonst als "stale" wegraeumen wuerde (die Extraktion
+      // liefert diesen Knoten ja nie mit).
+      const harness = await createHarness({ repoRoot, scope: { workspaceId: 'check', systemId: 'check' } });
+      await harness.initialize();
+      const sysUid = harness.getGraph().nodes.find((n) => n.type === 'SYS')!.uid;
+      await harness.mutate([
+        {
+          op: 'update-node',
+          node: {
+            uid: sysUid,
+            type: 'SYS',
+            name: 'Mein System',
+            description: 'Die Intention, die den Reseed ueberleben muss.',
+            attributes: { status: 'draft', analysisFreshness: { conops: { graphVersion: 3 } } },
+          },
+        },
+      ]);
+      await harness.close();
+
+      await executeImportCode({ repoRoot });
+
+      const after = await createHarness({ repoRoot, scope: { workspaceId: 'check', systemId: 'check' } });
+      await after.initialize();
+      try {
+        const sys = after.getGraph().nodes.filter((n) => n.type === 'SYS');
+        expect(sys).toHaveLength(1);
+        expect(sys[0]?.description).toBe('Die Intention, die den Reseed ueberleben muss.');
+        expect(sys[0]?.attributes?.['analysisFreshness']).toEqual({ conops: { graphVersion: 3 } });
+      } finally {
+        await after.close();
+      }
+    } finally {
+      rmSync(repoRoot, { recursive: true, force: true });
+    }
+  }, 60_000);
+
   it('rejects a directory without TS files before touching the store', async () => {
     const repoRoot = mkdtempSync(join(tmpdir(), 'graphcode-import-empty-'));
     try {

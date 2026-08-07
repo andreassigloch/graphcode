@@ -45,8 +45,39 @@ export interface ImportResult {
 export interface ImportTarget {
   readonly storage: StorageAdapter;
   readonly repoRoot: string;
+  /** The scope's systemId — names the SYS anchor this path ensures (CR-GC-302). */
+  readonly systemId: string;
   getGraph(): Graph;
   setGraph(graph: Graph): void;
+}
+
+/**
+ * Ensure the imported node set carries a SYS anchor (CR-GC-302).
+ *
+ * The SYS node anchors AF-01..05 (the analysis-freshness stamps live under
+ * `SYS.attributes.analysisFreshness.<artifact>.graphVersion`), the R-28 family, and
+ * `graph_generate`'s intent (read from `SYS.description`). Without one, the AF rules
+ * take their vacuous exemption ("nothing to anchor on yet") — a never-performed
+ * analysis then looks exactly like a completed one. Code-shaped imports (graphify:
+ * FUNC/MOD/FLOW/SCHEMA) never bring a SYS, so the substrate supplies it.
+ *
+ * ENSURE, never overwrite: any source-supplied SYS — one or several — is returned
+ * untouched. Two SYS is a modelling problem the rules report; making it three would
+ * not help. The anchor carries no description on purpose: an invented intent would
+ * be worse than an empty one, since `graph_generate` reads it as the human's words.
+ */
+export function ensureSystemNode(nodes: GraphNode[], systemId: string): GraphNode[] {
+  if (nodes.some((n) => n.type === 'SYS')) return nodes;
+  return [
+    ...nodes,
+    {
+      uid: `SYS-${systemId}`,
+      type: 'SYS',
+      name: systemId,
+      description: '',
+      attributes: { status: 'draft' },
+    },
+  ];
 }
 
 /**
@@ -62,7 +93,13 @@ export async function importOntologyGraph(
 ): Promise<ImportResult> {
   // Single import mapping, shared with scripts/export-graph.mjs (CR-GC-219): flattens the
   // redundant nested `attributes` artifact so the SSOT never carries it.
-  const nodes: GraphNode[] = ontology.elements.map((e) => elementToNode(e as Record<string, unknown>));
+  // CR-GC-302: the SYS anchor is ensured HERE, on the one choke point every bulk path
+  // funnels through (seedFromJsonFile → importOntologyGraph, applyReseed →
+  // seedFromJsonFile), so there is no second place to forget it.
+  const nodes: GraphNode[] = ensureSystemNode(
+    ontology.elements.map((e) => elementToNode(e as Record<string, unknown>)),
+    target.systemId,
+  );
   const edges: GraphEdge[] = ontology.traces.map((t) => {
     const { source, target, type, ...rest } = t;
     return { sourceId: source, targetId: target, edgeType: type, attributes: rest };

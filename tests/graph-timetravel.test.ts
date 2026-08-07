@@ -45,13 +45,23 @@ function reqWithTest(suffix: string): MutateCommand[] {
   ];
 }
 
-/** Seed snapshot S0: one already-verified REQ so the import is spec-green. */
+/**
+ * Seed snapshot S0: one already-verified REQ so the import is spec-green, anchored
+ * on its own SYS. The anchor is explicit (CR-GC-302) because the importer would
+ * otherwise supply one — and this test recalls EXACT snapshot states, so a node the
+ * fixture does not name would make the recall assertions measure the importer
+ * instead of the time-travel.
+ */
 const S0 = {
   elements: [
+    { id: 'SYS-tt', type: 'SYS', name: 'tt', description: 'Time-travel-Fixture.' },
     { id: 'REQ-a', type: 'REQ', name: 'Req a', description: '' },
     { id: 'TEST-a', type: 'TEST', name: 'Test a', description: '', concept: true },
   ],
-  traces: [{ source: 'TEST-a', target: 'REQ-a', type: 'verify' }],
+  traces: [
+    { source: 'TEST-a', target: 'REQ-a', type: 'verify' },
+    { source: 'SYS-tt', target: 'REQ-a', type: 'compose' },
+  ],
 };
 
 describe('TEST-graph-time-travel: per-commit snapshot freshness + recall (CR-GC-217)', () => {
