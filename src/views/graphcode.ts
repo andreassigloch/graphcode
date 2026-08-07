@@ -123,37 +123,182 @@ export function renderFmea(graph: Graph, name: string): string {
 }
 
 // ---------------------------------------------------------------------------
-// 1. ConOps — render-form of the operational REQ + ACTOR frame (Specimen #1).
-//    CREATE authors the operational REQ before the UCs; this RENDER projects them.
+// 1. ConOps — the ISO/IEC/IEEE 29148 §5.2.4 OpsCon projection (Specimen #1).
+//
+// CR-GC-304 re-cut this view. Three things were wrong:
+//
+//   1. The operational-REQ filter tested `kinds ∋ "operational"` — UNSATISFIABLE.
+//      `ReqKind` in @sigloch/contracts has exactly 7 values and `operational` is
+//      not one of them, so the gate can never accept such a REQ. The table was
+//      structurally unfillable, no matter how often the create skill ran.
+//   2. The view advertised "actors/system/use-cases" and rendered no UC at all.
+//      Operational scenarios are the CORE of a ConOps and were entirely absent.
+//   3. The change sections had no rendering, although the meta-model has carried
+//      `CR relation → {UC, REQ, FUNC, MOD}` since CR-155 exactly to bundle what a
+//      change produced.
+//
+// Section → graph source (nothing invented, every row walks a real edge):
+//   §1 System overview                  SYS.description
+//   §2 Operational policies/constraints non-functional REQ at SYS/ACTOR scope
+//   §3 User classes                     ACTOR + `ACTOR io UC`
+//   §4 Operational scenarios            `UC compose FCHAIN compose FUNC`
+//   §5 Modes of operation               NAMED GAP — no MODE element type exists
+//   §6 Nature of changes / impacts      CR + `CR relation → {UC,REQ,FUNC,MOD}`
 // ---------------------------------------------------------------------------
 
+/** Element types a `CR relation` edge points at to mean "this change touched it". */
+const CR_IMPACT_TYPES = new Set(['UC', 'REQ', 'FUNC', 'MOD']);
+
+/**
+ * The operational slice of the REQ set (CR-GC-304).
+ *
+ * Operational scope is a GRAPH POSITION, not a `kind`. A non-functional REQ hanging
+ * off the SYS root (`SYS compose|satisfy REQ`) or off an ACTOR constrains the system
+ * as a whole — deployment, persistence, recovery, degraded operation, ownership,
+ * credentials. A REQ allocated only to a single FUNC/MOD is design, not ConOps, and
+ * stays out.
+ */
+export function operationalReqs(graph: Graph): GraphNode[] {
+  const idx = nodeIndex(graph);
+  const systemScoped = new Set<string>();
+  for (const e of graph.edges) {
+    const src = idx.get(e.sourceId);
+    const tgt = idx.get(e.targetId);
+    if (!src || !tgt) continue;
+    if (tgt.type === 'REQ' && src.type === 'SYS' && (e.edgeType === 'compose' || e.edgeType === 'satisfy')) {
+      systemScoped.add(tgt.uid);
+    }
+    // An ACTOR-touching REQ is operational by the same argument (user-mgmt/creds).
+    if (tgt.type === 'REQ' && src.type === 'ACTOR') systemScoped.add(tgt.uid);
+    if (src.type === 'REQ' && tgt.type === 'ACTOR') systemScoped.add(src.uid);
+  }
+  return nodesOfType(graph, 'REQ').filter((r) => reqKinds(r).includes('non-functional') && systemScoped.has(r.uid));
+}
+
 export function renderConOps(graph: Graph, name: string): string {
+  const idx = nodeIndex(graph);
   const actors = nodesOfType(graph, 'ACTOR');
+  const ucs = nodesOfType(graph, 'UC');
   const sys = nodesOfType(graph, 'SYS')[0];
-  // Operational REQ: kinds ∋ "operational"; fall back to none → empty-state.
-  const opReqs = nodesOfType(graph, 'REQ').filter((r) => reqKinds(r).includes('operational'));
+  const opReqs = operationalReqs(graph);
+  const io = adjacency(graph, 'io');
+  const compose = adjacency(graph, 'compose');
+  const relation = adjacency(graph, 'relation');
+
   const lines: string[] = [
     generatedHeader(
       name,
       'Concept of Operations',
-      `Operationaler Rahmen: ACTOR + operationale REQ. ${actors.length} ACTOR. Deterministisch generiert.`,
+      `OpsCon nach ISO/IEC/IEEE 29148 §5.2.4, projiziert aus dem Graphen: ${actors.length} ACTOR, ` +
+        `${ucs.length} UC, ${opReqs.length} operationale REQ. Deterministisch generiert.`,
     ),
   ];
-  lines.push('## System context', '');
-  lines.push(sys ? `${ref(sys.uid)} — ${cell(sys.description ?? sys.name)}` : '— no SYS —', '');
 
-  lines.push('## Operational requirements (authored before the use cases)', '');
-  lines.push('| Operational REQ | Decision | status |', '|---|---|---|');
+  // ── §1 System overview ────────────────────────────────────────────────────
+  lines.push('## 1  System overview', '');
+  lines.push(sys ? `${ref(sys.uid)} — ${cell(sys.description || sys.name)}` : '— kein SYS im Graph —', '');
+
+  // ── §2 Operational policies and constraints ───────────────────────────────
+  lines.push('## 2  Operational policies & constraints', '');
+  lines.push('| Constraint | Aussage | status |', '|---|---|---|');
   if (opReqs.length === 0) {
-    lines.push('| — keine REQ kind=operational im Graph | — | — |');
+    lines.push('| — keine system-/actor-gebundene REQ kind=non-functional im Graph | — | — |');
   } else {
-    for (const r of opReqs) lines.push(`| ${ref(r.uid)} | ${cell(r.description ?? r.name)} | ${status(r) || 'n/a'} |`);
+    for (const r of opReqs) lines.push(`| ${ref(r.uid)} | ${cell(r.description || r.name)} | ${status(r) || 'n/a'} |`);
   }
-  lines.push('');
+  lines.push(
+    '',
+    '> Systemweit bindende non-functional REQ (am SYS-Anker oder an einem ACTOR).',
+    '> Eine REQ, die nur an einem FUNC/MOD haengt, ist Design und steht hier nicht.',
+    '',
+  );
 
-  lines.push(`## Actors (${actors.length}) — who operates / consumes`, '');
-  for (const a of actors) lines.push(`- ${ref(a.uid)} — ${cell(a.name)}`);
-  lines.push('');
+  // ── §3 User classes and involved personnel ────────────────────────────────
+  lines.push(`## 3  User classes & involved personnel (${actors.length})`, '');
+  if (actors.length === 0) {
+    lines.push('— keine ACTOR im Graph —', '');
+  } else {
+    for (const a of actors) {
+      const triggered = (io.fwd.get(a.uid) ?? [])
+        .filter((t) => idx.get(t)?.type === 'UC')
+        .sort((x, y) => x.localeCompare(y));
+      const suffix = triggered.length > 0 ? ` — triggert ${refList(triggered)}` : ' — keine UC-Kopplung im Graph';
+      lines.push(`- ${ref(a.uid)} — ${cell(a.name)}${suffix}`);
+    }
+    lines.push('');
+  }
+
+  // ── §4 Operational scenarios ──────────────────────────────────────────────
+  lines.push(`## 4  Operational scenarios (${ucs.length} UC)`, '');
+  if (ucs.length === 0) {
+    lines.push('— keine UC im Graph —', '');
+  } else {
+    for (const uc of ucs) {
+      const actorsOf = (io.rev.get(uc.uid) ?? [])
+        .filter((s) => idx.get(s)?.type === 'ACTOR')
+        .sort((x, y) => x.localeCompare(y));
+      lines.push(`### ${ref(uc.uid)} — ${cell(uc.name)}`, '');
+      lines.push(cell(uc.description || uc.name), '');
+      if (actorsOf.length > 0) lines.push(`Ausgeloest von: ${refList(actorsOf)}`, '');
+      const chains = (compose.fwd.get(uc.uid) ?? [])
+        .filter((t) => idx.get(t)?.type === 'FCHAIN')
+        .sort((x, y) => x.localeCompare(y));
+      if (chains.length === 0) {
+        // Never silently dropped: "no operational flow described for this use case"
+        // IS the ConOps statement, and the gap is the point of the section.
+        lines.push('— kein Betriebsablauf beschrieben (keine FCHAIN) —', '');
+        continue;
+      }
+      for (const c of chains) {
+        const funcs = (compose.fwd.get(c) ?? [])
+          .filter((t) => idx.get(t)?.type === 'FUNC')
+          .sort((x, y) => x.localeCompare(y));
+        const seq = funcs.length > 0 ? funcs.map((f) => ref(f)).join(' → ') : '— keine FUNC in der Kette —';
+        lines.push(`- ${ref(c)} — ${cell(idx.get(c)?.name ?? c)}: ${seq}`);
+      }
+      lines.push('');
+    }
+  }
+
+  // ── §5 Modes of operation — the named gap ─────────────────────────────────
+  lines.push('## 5  Modes of operation', '');
+  lines.push(
+    '— **Lücke, bewusst offen.** 29148 zählt Betriebsmodi (normal / degraded /',
+    'maintenance / recovery) zum ConOps-Kern. Die SE-Ontologie hat **keinen',
+    'MODE-Elementtyp**; heute reist ein Modus als REQ mit. Ein neuer ElementType ist',
+    'Familie-Review + contracts-Bump (Drift-Lock L1/L2), kein lokaler View-Fix — die',
+    'Lücke steht deshalb hier, statt verschwiegen zu werden. —',
+    '',
+  );
+
+  // ── §6 Nature of changes and summary of impacts ───────────────────────────
+  // `CR relation → MS` is the PLAN axis (rendered by the changelog view), not a
+  // change to the operational concept — only {UC,REQ,FUNC,MOD} targets count.
+  const changes = nodesOfType(graph, 'CR')
+    .map((cr) => ({
+      cr,
+      touched: (relation.fwd.get(cr.uid) ?? [])
+        .filter((t) => CR_IMPACT_TYPES.has(idx.get(t)?.type ?? ''))
+        .sort((x, y) => x.localeCompare(y)),
+    }))
+    .filter((c) => c.touched.length > 0);
+
+  lines.push('## 6  Nature of changes & summary of impacts', '');
+  lines.push('| CR | status | Änderung | Betroffene Elemente |', '|---|---|---|---|');
+  if (changes.length === 0) {
+    lines.push('| — kein CR mit relation auf UC/REQ/FUNC/MOD im Graph | — | — | — |');
+  } else {
+    for (const { cr, touched } of changes) {
+      lines.push(`| ${ref(cr.uid)} | ${status(cr) || 'n/a'} | ${cell(cr.name)} | ${refList(touched)} |`);
+    }
+  }
+  lines.push(
+    '',
+    '> Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,',
+    '> oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen',
+    '> (`CR relation MS`) sind Planung und stehen im Changelog-View, nicht hier.',
+    '',
+  );
   return lines.join('\n');
 }
 

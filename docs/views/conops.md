@@ -4,26 +4,173 @@
 
 # graphcode — Concept of Operations
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Operationaler Rahmen: ACTOR + operationale REQ. 9 ACTOR. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). OpsCon nach ISO/IEC/IEEE 29148 §5.2.4, projiziert aus dem Graphen: 9 ACTOR, 6 UC, 13 operationale REQ. Deterministisch generiert.
 
-## System context
+## 1  System overview
 
 `SYS-graphcode` — Headless Claude-Code-Sidecar-Governance-Harness: Store + Apply-Gate + Hooks + Learning-Emission, eine Instanz pro Repo. Carve-Out aus aimprove. (README, SPEC §0)
 
-## Operational requirements (authored before the use cases)
+## 2  Operational policies & constraints
 
-| Operational REQ | Decision | status |
+| Constraint | Aussage | status |
 |---|---|---|
-| — keine REQ kind=operational im Graph | — | — |
+| `REQ-buildable-standalone` | CR-GC-100 Task 0 / SPEC §8 D5 (Blocker): workspace:*-Deps auflösen (versionierte/file-Deps), npm install + tsc --noEmit grün — vor jedem Code. | done |
+| `REQ-disk-persistence` | Persistenz auf Disk (.graphcode/kuzu/), kein :memory:. (SPEC §4) | open |
+| `REQ-frame-binding` | Beschluss 2026-06-16: Die in diesem Graph definierte Struktur + Interfaces (6 MOD, 4 Customer-UC, FUNC/FCHAIN/FLOW/REQ + SE-Ontologie/TRACE_PATTERNS) sind BINDEND für die Realisierung. Ergänzungen NUR, wenn sie in die vordefinierten Boxen passen (neue FUNC/FLOW/REQ/TEST an bestehendem MOD/UC durchs Gate). Strukturelle Änderungen — neues sigloch-modules-Shared, neuer ElementType/TraceType, neue Customer-UC/MOD — brauchen Familie-Review. | open |
+| `REQ-graceful-degradation` | CONSTRAINT (ConOps): Harness voll funktionsfähig bei nicht erreichbarem LLM-Sidecar — Gate/Regeln deterministisch, kein Modell-Call. | open |
+| `REQ-graph-is-ssot` | Der materialisierte Graph + die Live-Harness sind SSOT. docs/*.md sind historischer Input (Bootstrap). Modelländerungen am Graph (mutate/import), dann Re-Export. (2026-06-14) | done |
+| `REQ-harness-schema-in-contracts` | CR-GC-100 Task 1 / D1: HarnessConfig/MutateCommand/MutateResult nach @sigloch/contracts (eigener harness-Export, NICHT /se), importieren, lokale Defs löschen. | open |
+| `REQ-import-se-ontology` | SE-Ontologie aus @sigloch/contracts/se importieren, nicht lokal neu definieren. (SPEC §1, Drift D1) | open |
+| `REQ-interface-schema` | Jeder FLOW (Interface) hat ein SCHEMA (Layer 2, Datenformat) — referenziert @sigloch/contracts Zod. Code-Precondition: ohne Datenvertrag rät der Agent das Format. (3-Schichten-Interface-Modell) | open |
+| `REQ-single-kuzu-owner` | Genau ein Host-Prozess besitzt .graphcode/kuzu (single-writer; kein 2. DB-Handle). (SPEC §4, L1) | done |
+| `REQ-single-store` | Genau ein Store = Kuzu (embedded native+WASM, Cypher). Kein Neo4j. (SPEC §0) | open |
+| `REQ-single-transport` | Genau ein Transport = MCP-stdio; kein Express-REST/HTTP im Harness-Core. (SPEC §0, §5) | done |
+| `REQ-store-recovery` | CONSTRAINT (ConOps): Recovery bei Kuzu Lock-Konflikt / abgestürztem Owner / korruptem Store — Lock-Erkennung + sicherer Re-Open. | open |
+| `REQ-structure-driven` | Architektur/Interfaces/Integration/Tests werden strikt aus dem governten Graph abgeleitet (Schema-first), nicht ad-hoc. | open |
 
-## Actors (9) — who operates / consumes
+> Systemweit bindende non-functional REQ (am SYS-Anker oder an einem ACTOR).
+> Eine REQ, die nur an einem FUNC/MOD haengt, ist Design und steht hier nicht.
 
-- `ACTOR-claude-code` — Claude Code — Realisierungs-Agent
-- `ACTOR-dashboard` — Browser-Dashboard
-- `ACTOR-developer` — Entwickler / Repo-Owner
-- `ACTOR-facilitating-agent` — Facilitating Agent — Architekt
-- `ACTOR-graphify` — graphify (Slicer)
-- `ACTOR-learning-engine` — Learning-Engine
-- `ACTOR-opencode` — OpenCode — headless Execution-Runtime
-- `ACTOR-systems-engineer` — Systems Engineer
-- `ACTOR-vibe-coder` — Vibe Coder
+## 3  User classes & involved personnel (9)
+
+- `ACTOR-claude-code` — Claude Code — Realisierungs-Agent — triggert `UC-code-quality` · `UC-reduced-llm` · `UC-token-efficiency`
+- `ACTOR-dashboard` — Browser-Dashboard — triggert `UC-code-quality` · `UC-live-graph-view`
+- `ACTOR-developer` — Entwickler / Repo-Owner — triggert `UC-code-quality` · `UC-efficient-testing` · `UC-live-graph-view` · `UC-reduced-llm` · `UC-token-efficiency`
+- `ACTOR-facilitating-agent` — Facilitating Agent — Architekt — triggert `UC-code-quality`
+- `ACTOR-graphify` — graphify (Slicer) — triggert `UC-code-quality`
+- `ACTOR-learning-engine` — Learning-Engine — triggert `UC-reduced-llm`
+- `ACTOR-opencode` — OpenCode — headless Execution-Runtime — triggert `UC-code-quality` · `UC-token-efficiency`
+- `ACTOR-systems-engineer` — Systems Engineer — triggert `UC-code-quality` · `UC-efficient-testing` · `UC-reduced-llm` · `UC-token-efficiency`
+- `ACTOR-vibe-coder` — Vibe Coder — triggert `UC-code-quality` · `UC-efficient-testing` · `UC-reduced-llm` · `UC-token-efficiency`
+
+## 4  Operational scenarios (6 UC)
+
+### `UC-code-quality` — UC-code-quality
+
+UC-code-quality
+
+Ausgeloest von: `ACTOR-claude-code` · `ACTOR-dashboard` · `ACTOR-developer` · `ACTOR-facilitating-agent` · `ACTOR-graphify` · `ACTOR-opencode` · `ACTOR-systems-engineer` · `ACTOR-vibe-coder`
+
+- `FCHAIN-apply-gate` — Apply-Gate-Ablauf (Governed Mutation): `FUNC-emit-trajectory` → `FUNC-evaluate-rules` → `FUNC-mutate` → `FUNC-save-graph`
+- `FCHAIN-capture` — Interaktive Erfassung (Text → suggest-Tier): `FUNC-decode` → `FUNC-mutate`
+- `FCHAIN-codec-roundtrip` — Format-E Round-Trip (encode∘decode): `FUNC-decode` → `FUNC-encode`
+- `FCHAIN-interface-escalation` — Interface-Änderungs-Eskalation: `FUNC-graph-impact` → `FUNC-mutate`
+
+### `UC-efficient-testing` — Effizientes, impact-basiertes Testen
+
+Als Entwickler will ich nur die richtigen Tests laufen lassen: der Impact-/Abhängigkeitsgraph bestimmt das selektive Testset; „erledigt" = „nachgewiesen".
+
+Ausgeloest von: `ACTOR-developer` · `ACTOR-systems-engineer` · `ACTOR-vibe-coder`
+
+- `FCHAIN-impact-testing` — Impact-basierte Testauswahl: `FUNC-graph-impact`
+
+### `UC-graph-time-travel` — Graph-Stand pro Commit wiederherstellbar
+
+Als Entwickler will ich den governten Graph-Stand jedes Commits wiederherstellen koennen, sodass Modell und Code zu jedem Commit zusammenpassen — fruehere Modell-Staende sind reproduzierbar, ohne ein zweites Store-Handle. (CR-GC-217, Approach A)
+
+— kein Betriebsablauf beschrieben (keine FCHAIN) —
+
+### `UC-live-graph-view` — Live-Graph-View (Ziel b)
+
+Read-only Live-Dashboard: jede Mutation aktualisiert die Ansicht ohne Reload (SSE invalidate), Readiness/INCOSE-Gates gegen contracts V3_RULES (nicht BQ-2.0.0). Über den Host (Single-Kuzu-Owner), kein 2. DB-Handle.
+
+Ausgeloest von: `ACTOR-dashboard` · `ACTOR-developer`
+
+- `FCHAIN-live-update` — Live-Update-Kette (persist → emit → subscribe): `FUNC-broadcast-diff` → `FUNC-emit-update-event` → `FUNC-save-graph` → `FUNC-serve-stdio` → `FUNC-subscribe-updates`
+
+### `UC-reduced-llm` — UC-reduced-llm
+
+UC-reduced-llm
+
+Ausgeloest von: `ACTOR-claude-code` · `ACTOR-developer` · `ACTOR-learning-engine` · `ACTOR-systems-engineer` · `ACTOR-vibe-coder`
+
+- `FCHAIN-advisory-roundtrip` — Advisory Roundtrip (Read -> Status -> Propose -> Apply): `FUNC-evaluate-rules` → `FUNC-graph-impact` → `FUNC-graph-suggest` → `FUNC-mutate`
+- `FCHAIN-modelfree-gate` — Modellfreier Gate-Betrieb: `FUNC-evaluate-rules` → `FUNC-mutate`
+
+### `UC-token-efficiency` — UC-token-efficiency
+
+UC-token-efficiency
+
+Ausgeloest von: `ACTOR-claude-code` · `ACTOR-developer` · `ACTOR-opencode` · `ACTOR-systems-engineer` · `ACTOR-vibe-coder`
+
+- `FCHAIN-agent-query` — Agent-Graph-Query (Impact + progressive Expansion): `FUNC-graph-expand` → `FUNC-graph-impact`
+
+## 5  Modes of operation
+
+— **Lücke, bewusst offen.** 29148 zählt Betriebsmodi (normal / degraded /
+maintenance / recovery) zum ConOps-Kern. Die SE-Ontologie hat **keinen
+MODE-Elementtyp**; heute reist ein Modus als REQ mit. Ein neuer ElementType ist
+Familie-Review + contracts-Bump (Drift-Lock L1/L2), kein lokaler View-Fix — die
+Lücke steht deshalb hier, statt verschwiegen zu werden. —
+
+## 6  Nature of changes & summary of impacts
+
+| CR | status | Änderung | Betroffene Elemente |
+|---|---|---|---|
+| `CR-GC-100` | done | Harness Core | `FUNC-evaluate-rules` · `FUNC-import` · `FUNC-mutate` · `FUNC-save-graph` · `MOD-harness` · `REQ-buildable-standalone` · `REQ-confidence-tier` · `REQ-disk-persistence` · `REQ-harness-schema-in-contracts` · `REQ-import-se-ontology` · `REQ-one-gate-per-repo` · `REQ-rule-enforcement` · `REQ-single-kuzu-owner` |
+| `CR-GC-101` | done | MCP-Tools | `FUNC-graph-expand` · `FUNC-graph-impact` · `MOD-mcp-tools` · `REQ-audit-trail` · `REQ-cache-layering` · `REQ-mcp-gate-symmetry` · `REQ-mcp-tool-registry` · `REQ-progressive-expansion` · `REQ-query-precision` · `REQ-single-transport` · `REQ-subgraph-slicing` |
+| `CR-GC-102` | done | Hook-System | `FUNC-emit-trajectory` · `FUNC-emit-update-event` · `MOD-hooks` · `REQ-auto-persist-merge` · `REQ-hook-extension-points` · `REQ-hook-order-deterministic` · `REQ-precommit-timeout` · `REQ-trajectory-emit` · `REQ-versioned-cache` |
+| `CR-GC-103` | done | Format-E Codec | `FUNC-decode` · `FUNC-encode` · `MOD-codec` · `REQ-codec-validation` · `REQ-deterministic-serialization` · `REQ-formatE-diff-dialect` · `REQ-formatE-parity` · `REQ-roundtrip-conformance` |
+| `CR-GC-104` | done | Skills/Prompts-Modul | `MOD-skills` · `REQ-doc-export` |
+| `CR-GC-105` | done | Architektur-Verfeinerung | `MOD-mcp-tools` · `REQ-impact-based-testing` · `REQ-interface-change-escalation` · `REQ-small-model-viable` |
+| `CR-GC-106` | done | Interface-Schemas | `MOD-codec` · `REQ-interface-schema` |
+| `CR-GC-107` | done | Dashboard auf SE-Ontologie | `MOD-harness` · `REQ-dashboard-ontology-sync` |
+| `CR-GC-108` | done | Test-Konzept im Graph + Benchmark-REQ | `MOD-docs` · `REQ-benchmark-harness` · `REQ-quality-metric` |
+| `CR-GC-109` | done | Live-Event + View-Contract → contracts | `REQ-live-event-in-contracts` · `REQ-versioned-broadcast` |
+| `CR-GC-110` | done | views.ts → graph-api-core; BQ-Fork retiren | `FUNC-render-views` · `MOD-docs` · `REQ-shared-views-no-fork` |
+| `CR-GC-111` | done | MCP-stdio-Server + bin (graphcode mcp) | `MOD-cli` · `REQ-mcp-gate-symmetry` · `REQ-mcp-tool-registry` · `REQ-single-transport` |
+| `CR-GC-112` | done | CLI graphcode init/update/remove | `FUNC-harness-cli` · `MOD-cli` · `REQ-post-harness-cli` · `REQ-pre-harness-cli` |
+| `CR-GC-113` | done | Graph→Markdown Re-Exporter | `FUNC-export-markdown` · `MOD-docs` · `REQ-doc-export` · `REQ-post-export-markdown` · `REQ-pre-export-markdown` |
+| `CR-GC-114` | done | Host + SSE/WS-Bridge | `FUNC-broadcast-diff` · `FUNC-health-endpoint` · `FUNC-own-kuzu-host` · `FUNC-serve-sse` · `MOD-host-bridge` · `REQ-mutation-emits-event` · `REQ-readonly-bridge` · `REQ-versioned-broadcast` |
+| `CR-GC-115` | done | Dashboard-Viewer-App (Hybrid) | `FUNC-render-artifacts` · `FUNC-render-graph` · `FUNC-render-health` · `FUNC-render-impact` · `FUNC-render-impl-gates` · `FUNC-render-readiness` · `FUNC-render-recommendations` · `FUNC-subscribe-updates` · `MOD-dashboard` · `REQ-artifact-freshness` · `REQ-dashboard-ontology-sync` · `REQ-dashboard-readonly` · `REQ-readiness-transparent` · `REQ-real-health-check` · `UC-live-graph-view` |
+| `CR-GC-116` | done | Views/Skills an Live-Graph verdrahten | `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` · `MOD-skills` |
+| `CR-GC-117` | done | Modell-Hygiene: V3_RULES-Violations schließen | `REQ-graph-is-ssot` · `REQ-rule-enforcement` |
+| `CR-GC-118` | done | Cleanup stale-at-all Knoten | `REQ-graph-is-ssot` |
+| `CR-GC-119` | done | Docs-Taxonomie — Views vs Records | `MOD-docs` · `REQ-docs-taxonomy` |
+| `CR-GC-120` | done | Batch-Seed/Import (UNWIND) — Scale | `FUNC-import` · `MOD-harness` · `REQ-batch-seed-performance` · `REQ-bootstrap-through-gate` |
+| `CR-GC-121` | done | Distribution: npx-Paket, self-contained, agent-agnostic | `MOD-cli` · `REQ-npx-distribution` · `REQ-repo-install` · `REQ-self-contained-dist` |
+| `CR-GC-122` | done | New-Member Bootstrap durchs Gate (Format-E Cold-Start) | `FUNC-import` · `REQ-bootstrap-through-gate` |
+| `CR-GC-123` | done | MVP E2E-Acceptance: bootstrap → spec → KNOW-query → implement → re-export | `UC-code-quality` · `UC-efficient-testing` · `UC-reduced-llm` · `UC-token-efficiency` |
+| `CR-GC-124` | done | OpenCode-Execution: agent-agnostic 2nd client, headless BYOK | `FUNC-serve-stdio` · `MOD-mcp-tools` · `REQ-agent-agnostic` · `REQ-single-transport` |
+| `CR-GC-125` | done | Readiness-Modell definieren & realisieren (Phase/Impl/INCOSE) | `MOD-dashboard` · `MOD-mcp-tools` · `REQ-readiness-model` |
+| `CR-GC-126` | done | Query-Layer: Cypher, korrekte Impact-Richtung (KNOW statt guess) | `MOD-harness` · `MOD-mcp-tools` · `REQ-progressive-expansion` · `REQ-query-precision` |
+| `CR-GC-134` | done | Bottom-up Test-Deduktion (graph_tests) | `FUNC-deduce-tests` · `REQ-test-runnable-binding` · `UC-efficient-testing` |
+| `CR-GC-200` | done | Single graph-validator - uniqueness + de-dup | `MOD-codec` · `MOD-harness` · `REQ-graph-integrity` |
+| `CR-GC-201` | done | Enforce gate-only graph writes | `REQ-gate-only-writes` |
+| `CR-GC-202` | done | graph_export refuse-to-clobber guard | `MOD-mcp-tools` · `REQ-export-no-clobber` |
+| `CR-GC-203` | done | Violation-resolution ergonomics & SSOT tooling | `MOD-harness` · `MOD-mcp-tools` · `MOD-skills` |
+| `CR-GC-204` | open | graph_tests operational | `MOD-mcp-tools` · `REQ-graph-tests-operational` |
+| `CR-GC-205` | open | Enforce-don't-document — R-18/R-19 rules + export materialization | `REQ-structural-rule-shared` · `REQ-testref-materialized` |
+| `CR-GC-206` | done | Graph-code LSP conformance — resolve FUNC codeRef symbols | `REQ-graph-code-conformance` |
+| `CR-GC-244` | done | Bundle-Staleness fix: rebundle-Disziplin statt Externalisierung | `MOD-cli` · `REQ-self-contained-dist` |
+| `CR-GC-247` | done | Zentralisiere Trace-Legalitaet in einem Checker | `MOD-codec` · `REQ-structural-rule-shared` |
+| `CR-GC-248` | dropped | DROPPED: generisches Kuzu Element/Trace-Schema | `MOD-harness` |
+| `CR-GC-249` | done | Auto-reseed bei Meta-Modell-Schema-Drift | `MOD-harness` |
+| `CR-GC-250` | done | Readiness completeness pointer (cardinality-driven) | `FUNC-score-completeness` · `REQ-completeness-actor-bounded` · `REQ-completeness-single-value` · `REQ-interface-schema` · `REQ-readiness-completeness` |
+| `CR-GC-251` | open | V3-Regel R-21: satisfy-Quelle passt zur REQ-Art | `FUNC-evaluate-rules` · `REQ-rule-enforcement` |
+| `CR-GC-252` | done | Learning-Feed = Projektion aus dem Operations-Log | `FUNC-emit-trajectory` |
+| `CR-GC-253` | done | Graph-Code-Konformanz als Readiness-Regel (RC-01/RC-02) | `FUNC-check-code-conformance` |
+| `CR-GC-254` | open | Konformanz-Parser auf ast-grep umstellen (Multi-Language) — BACKLOG | `FUNC-check-code-conformance` |
+| `CR-GC-255` | done | Path-Containment für graph-getriebene Writes + Bridge-Bind auf Loopback | `FUNC-serve-sse` · `REQ-gate-only-writes` · `REQ-graph-is-ssot` · `REQ-readonly-bridge` |
+| `CR-GC-256` | done | mcp-tools.ts aufteilen (ToolContext + Tool-Gruppen) | `FUNC-serve-stdio` · `REQ-mcp-tool-registry` |
+| `CR-GC-257` | done | R-21: Integrationstest pro FUNC↔FUNC-Verbindung | `FUNC-evaluate-rules` · `FUNC-export-markdown` · `REQ-rule-enforcement` |
+| `CR-GC-258` | done | Audit-Remainder: Dependency-Fixes + Dead-Code | `FUNC-export-markdown` · `REQ-self-contained-dist` |
+| `CR-GC-259` | done | Creation-Enforcement sichtbar machen (kein stilles OFF) | `FUNC-score-completeness` |
+| `CR-GC-260` | done | Uebergrosse Module aufteilen — BACKLOG | `FUNC-export-markdown` |
+| `CR-GC-261` | open | Restliche 500-Zeilen-Ueberschreiter: readiness-Config + harness-Query-Pfad | `FUNC-score-completeness` |
+| `CR-GC-268` | done | Format-E-Codec: Fan-out erzeugen | `FUNC-encode` · `MOD-codec` · `REQ-deterministic-serialization` |
+| `CR-GC-269` | done | encodeUid/decodeUid entfernen (Format-E v2) | `FUNC-decode` · `FUNC-encode` · `MOD-codec` · `REQ-roundtrip-conformance` |
+| `CR-GC-270` | done | SERVER_VERSION aus package.json lesen | `FUNC-serve-stdio` · `REQ-npx-distribution` |
+| `CR-GC-271` | done | SCHEMA-Bindung: zodDefinition raus, realRef-Stub materialisieren | `FUNC-export-markdown` · `MOD-docs` |
+| `CR-GC-272` | done | readiness + panels nach graphcode-client | `FUNC-render-readiness` · `FUNC-score-completeness` · `REQ-self-contained-dist` |
+| `CR-GC-273` | done | graph_suggest: se-optimizer-Binding mit dryRun-Verdict | `FUNC-serve-stdio` · `REQ-mcp-tool-registry` |
+| `CR-GC-302` | done | Auto-SYS-Node bei jedem Import | `FUNC-import` |
+| `CR-GC-303` | done | Attribut-Abflachung macht Steering-Pfad regelblind | `FUNC-evaluate-rules` · `FUNC-graph-suggest` |
+| `CR-GC-304` | done | ConOps-View nach ISO 29148 neu schneiden | `FUNC-render-views` · `MOD-docs` · `MOD-skills` |
+| `CR-GC-305` | open | spec-View entfernen, srs bleibt | `FUNC-export-markdown` · `FUNC-render-views` · `MOD-docs` |
+| `CR-GC-306` | open | Onboarding: ein Start, Beispiel-Prompt, GVE-Adresse | `FUNC-harness-cli` · `MOD-cli` · `MOD-host-bridge` |
+| `CR-GC-307` | open | Intent-Anker sind Steuerungsinternes, nicht Kundendialog | `FUNC-graph-suggest` · `MOD-skills` |
+
+> Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
+> oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen
+> (`CR relation MS`) sind Planung und stehen im Changelog-View, nicht hier.

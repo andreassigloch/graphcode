@@ -1,6 +1,33 @@
 # CR-GC-304 — ConOps-View neu schneiden: 29148-OpsCon aus vorhandenen Knoten + CR-Bündel
 
-**Status:** open · **Angelegt:** 2026-08-07 · **Max Files:** 5
+**Status:** done · **Angelegt:** 2026-08-07 · **Geschlossen:** 2026-08-07 · **Max Files:** 5
+
+> ## Abschluss 2026-08-07
+>
+> Alle sechs Abschnitte tragen gegen den Live-Graphen. `docs/views/conops.md` wächst
+> von **1.266 auf 16.978 Bytes**:
+>
+> | § | Abschnitt | gerendert |
+> |---|---|---|
+> | 1 | System overview | `SYS-graphcode` |
+> | 2 | Operational policies & constraints | **13 REQ** (wie vorhergesagt) |
+> | 3 | User classes | **9 ACTOR**, jeder mit den UC, die er triggert |
+> | 4 | Operational scenarios | **6 UC** mit FCHAIN + Funktionsfolge; **1 UC ohne Ablauf** ausgewiesen |
+> | 5 | Modes of operation | ausgewiesene Lücke |
+> | 6 | Nature of changes & impacts | **63 CR-Bündel** |
+>
+> **Zahlenkorrektur:** der CR nannte oben „74 von 96 CRs". Das war die Zahl der CRs mit
+> *irgendeiner* `relation`-Kante (heute 78 von 100). §6 zählt nur Impact-Kanten auf
+> `{UC, REQ, FUNC, MOD}` — reine `CR relation MS` ist Planung und gehört in den
+> Changelog-View. Die richtige Zahl ist **63**.
+>
+> **Größen-Vorbehalt gehalten:** `src/views/graphcode.ts` liegt bei 383 Zeilen, unter
+> 500 — kein Abspalten von `views/conops.ts` nötig, also keine sechste Datei.
+>
+> **Tests:** 12 neue in `tests/exporter.test.ts`, davon 7 vor dem Fix rot. Sie pinnen
+> auch die Grenzfälle, an denen sich §2 entscheidet: eine `non-functional` REQ an
+> genau einem MOD ist **Design** und bleibt draußen, eine `functional` REQ am SYS
+> ebenso. `npm run build` grün, **74 Testdateien / 501 Tests grün**.
 
 ## Problem — drei Defekte, nicht einer
 

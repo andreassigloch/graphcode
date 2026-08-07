@@ -477,3 +477,161 @@ describe('exportGraphJson / exportMarkdown (TEST-doc-export)', () => {
     expect(new Set(files).size).toBe(files.length); // no filename collision
   });
 });
+
+// ---------------------------------------------------------------------------
+// CR-GC-304 — ConOps as an ISO/IEC/IEEE 29148 §5.2.4 OpsCon projection.
+//
+// Three defects this pins against:
+//   1. The former filter `REQ.kinds ∋ "operational"` was UNSATISFIABLE — ReqKind
+//      in @sigloch/contracts has 7 values and `operational` is not one of them, so
+//      the gate can never accept such a REQ and the table was permanently empty.
+//   2. The view advertised "actors/system/use-cases" and rendered no UC at all —
+//      operational scenarios are the CORE of a ConOps and were entirely absent.
+//   3. The change sections (29148 "nature of changes" / "summary of impacts") had
+//      no rendering, although the meta-model has carried `CR relation → {UC, REQ,
+//      FUNC, MOD}` since CR-155 precisely to bundle what a change produced.
+//
+// Operational scope is a GRAPH POSITION, not a `kind`: a non-functional REQ hanging
+// off the SYS root (or off an ACTOR) constrains the system as a whole; one allocated
+// to a single FUNC/MOD is design and stays out.
+// ---------------------------------------------------------------------------
+
+function cn(uid: string, type: string, name: string, description = '', attributes: Record<string, unknown> = {}): {
+  uid: string;
+  type: string;
+  name: string;
+  description: string;
+  attributes: Record<string, unknown>;
+} {
+  return { uid, type, name, description, attributes };
+}
+function ce(sourceId: string, edgeType: string, targetId: string): {
+  sourceId: string;
+  targetId: string;
+  edgeType: string;
+  attributes: Record<string, unknown>;
+} {
+  return { sourceId, targetId, edgeType, attributes: {} };
+}
+
+/** A graph exercising every one of the six ConOps sections at once. */
+function conOpsGraph(): Graph {
+  return {
+    nodes: [
+      cn('SYS-shop', 'SYS', 'Shop', 'Ein Shop, der Ersatzteile verkauft.'),
+      cn('ACTOR-kunde', 'ACTOR', 'Kunde', 'Bestellt Ersatzteile.'),
+      cn('ACTOR-betreiber', 'ACTOR', 'Betreiber', 'Betreibt den Shop.'),
+      // §2 operational: non-functional AND system-scoped
+      cn('REQ-persistenz', 'REQ', 'Bestellungen ueberleben Neustart', 'Auf Disk, nie im Speicher.', {
+        kinds: ['non-functional'],
+        status: 'done',
+      }),
+      // §2 boundary case: non-functional but allocated to ONE module → design, not ConOps
+      cn('REQ-modul-budget', 'REQ', 'Modul haelt 50MB', 'Speicherbudget des Moduls.', {
+        kinds: ['non-functional'],
+      }),
+      // §2 boundary case: system-scoped but FUNCTIONAL → not an operational constraint
+      cn('REQ-funktional', 'REQ', 'Bestellung anlegen', 'Das System legt eine Bestellung an.', {
+        kinds: ['functional'],
+      }),
+      cn('MOD-core', 'MOD', 'core', 'Kernmodul.'),
+      // §4 operational scenarios
+      cn('UC-bestellen', 'UC', 'Bestellen', 'Kunde bestellt ein Ersatzteil.'),
+      cn('UC-verwalten', 'UC', 'Verwalten', 'Betreiber pflegt den Katalog.'),
+      cn('FCHAIN-bestellablauf', 'FCHAIN', 'Bestellablauf', 'Von Auswahl bis Bestaetigung.'),
+      cn('FUNC-pruefen', 'FUNC', 'pruefen()', 'Prueft die Bestellung.'),
+      cn('FUNC-buchen', 'FUNC', 'buchen()', 'Bucht die Bestellung.'),
+      // §6 change sections
+      cn('CR-1', 'CR', 'Persistenz nachruesten', 'Store auf Disk.', { status: 'done' }),
+      cn('CR-2', 'CR', 'Nur Planung', 'Reine Milestone-Zuordnung.', { status: 'open' }),
+      cn('CR-3', 'CR', 'Ohne Bezug', 'Noch nichts zugeordnet.', { status: 'open' }),
+      cn('MS-1', 'MS', 'Erster Meilenstein', 'MS.'),
+    ],
+    edges: [
+      ce('SYS-shop', 'compose', 'REQ-persistenz'),
+      ce('SYS-shop', 'compose', 'REQ-funktional'),
+      ce('MOD-core', 'satisfy', 'REQ-modul-budget'),
+      ce('SYS-shop', 'compose', 'UC-bestellen'),
+      ce('SYS-shop', 'compose', 'UC-verwalten'),
+      ce('ACTOR-kunde', 'io', 'UC-bestellen'),
+      ce('ACTOR-betreiber', 'io', 'UC-verwalten'),
+      ce('UC-bestellen', 'compose', 'FCHAIN-bestellablauf'),
+      ce('FCHAIN-bestellablauf', 'compose', 'FUNC-pruefen'),
+      ce('FCHAIN-bestellablauf', 'compose', 'FUNC-buchen'),
+      // UC-verwalten has NO FCHAIN on purpose — must be called out, not dropped.
+      ce('CR-1', 'relation', 'REQ-persistenz'),
+      ce('CR-1', 'relation', 'FUNC-pruefen'),
+      ce('CR-2', 'relation', 'MS-1'), // planning only → not an impact
+    ],
+  };
+}
+
+describe('CR-GC-304: ConOps renders the 29148 OpsCon sections from existing nodes', () => {
+  const md = (): string => exportMarkdown(conOpsGraph(), 'conops', 'shop');
+
+  it('§2 lists a system-scoped non-functional REQ as an operational constraint', () => {
+    expect(md()).toContain('REQ-persistenz');
+  });
+
+  it('§2 excludes a REQ allocated to a single MOD — design, not ConOps', () => {
+    expect(md()).not.toContain('REQ-modul-budget');
+  });
+
+  it('§2 excludes a system-scoped FUNCTIONAL REQ', () => {
+    expect(md()).not.toContain('REQ-funktional');
+  });
+
+  it('§3 maps each actor to the use cases it triggers over ACTOR io UC', () => {
+    const out = md();
+    // The former render listed actors flat, with no edge walked at all.
+    expect(out).toMatch(/ACTOR-kunde[\s\S]*?UC-bestellen/);
+    expect(out).toMatch(/ACTOR-betreiber[\s\S]*?UC-verwalten/);
+  });
+
+  it('§4 renders operational scenarios: UC → FCHAIN → its function sequence', () => {
+    const out = md();
+    expect(out).toContain('UC-bestellen');
+    expect(out).toContain('FCHAIN-bestellablauf');
+    expect(out).toContain('FUNC-pruefen');
+    expect(out).toContain('FUNC-buchen');
+  });
+
+  it('§4 calls out a UC without any FCHAIN instead of silently dropping it', () => {
+    const out = md();
+    expect(out).toContain('UC-verwalten');
+    expect(out).toMatch(/UC-verwalten[\s\S]{0,300}?kein Betriebsablauf/);
+  });
+
+  it('§5 states the Modes-of-Operation gap explicitly (no MODE element type)', () => {
+    expect(md()).toMatch(/Modes of Operation|Betriebsmodi/);
+  });
+
+  it('§6 bundles a CR with everything it touched, across element types', () => {
+    const out = md();
+    expect(out).toMatch(/CR-1[\s\S]{0,400}?REQ-persistenz/);
+    expect(out).toMatch(/CR-1[\s\S]{0,400}?FUNC-pruefen/);
+  });
+
+  it('§6 skips a CR that only carries a milestone relation — planning is not impact', () => {
+    // CR relation → MS is the plan axis (rendered by the changelog view), not a
+    // change to the operational concept.
+    expect(md()).not.toContain('CR-2');
+  });
+
+  it('§6 skips a CR with no relation edges at all', () => {
+    expect(md()).not.toContain('CR-3');
+  });
+
+  it('renders an explicit empty-state per section on a bare graph, never a blank table', () => {
+    const bare = exportMarkdown({ nodes: [cn('SYS-x', 'SYS', 'x', 'Nur die Wurzel.')], edges: [] }, 'conops', 'x');
+    // No operational REQ, no actor, no UC, no CR — each must SAY so.
+    expect(bare).toMatch(/—/);
+    expect(bare.length).toBeGreaterThan(200);
+    // And it must not claim the old, unsatisfiable filter any more.
+    expect(bare).not.toContain('kind=operational');
+  });
+
+  it('stays deterministic — two renders are byte-identical', () => {
+    expect(md()).toBe(md());
+  });
+});

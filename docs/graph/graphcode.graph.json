@@ -860,8 +860,8 @@
       "id": "CR-GC-304",
       "type": "CR",
       "name": "ConOps-View nach ISO 29148 neu schneiden",
-      "description": "renderConOps filterte REQ.kinds enthaelt 'operational' — ReqKind in contracts hat 7 Werte, 'operational' ist keiner davon, die Tabelle war strukturell unbefuellbar (0 von 111 REQ). Zweiter Defekt: die View verspricht 'actors/system/use-cases', rendert aber keinen einzigen UC. Neuschnitt gegen ISO 29148 5.2.4 aus Bestandskanten: SYS.description; system-/actor-gebundene non-functional REQ (13); ACTOR io UC (23 Kanten); UC compose FCHAIN compose FUNC als Operational Scenarios; und CR relation auf UC/REQ/FUNC/MOD als 'nature of changes / summary of impacts' (249 Kanten an 74 CRs). Modes of Operation bleiben ausgewiesene Luecke — kein MODE-Elementtyp, Drift-Lock L1/L2. (docs/cr/open/CR-GC-304)",
-      "status": "open",
+      "description": "DONE 2026-08-07. Drei Defekte behoben: (1) renderConOps filterte REQ.kinds enthaelt 'operational' — ReqKind in contracts hat 7 Werte, 'operational' ist keiner davon, die Tabelle war strukturell unbefuellbar; (2) die View versprach 'actors/system/use-cases', rendert aber keinen einzigen UC — Operational Scenarios sind der ConOps-Kern und fehlten ganz; (3) die Aenderungssicht fehlte, obwohl das Meta-Modell seit CR-155 CR-relation auf UC/REQ/FUNC/MOD traegt. Neuschnitt gegen ISO 29148 5.2.4 aus Bestandskanten, sechs Abschnitte: SYS.description; system-/actor-gebundene non-functional REQ (13); ACTOR io UC (9 ACTOR); UC compose FCHAIN compose FUNC (6 UC, 1 ohne Ablauf ausgewiesen); Modes of Operation als benannte Luecke (kein MODE-Elementtyp, Drift-Lock L1/L2); CR-Buendel (63 CRs mit Impact-Kanten — reine CR-relation-MS ist Planung und bleibt im Changelog). docs/views/conops.md waechst von 1266 auf 16978 Bytes. Operationaler Scope ist eine GRAPH-POSITION, keine kind: eine non-functional REQ an genau einem MOD ist Design und bleibt draussen. 12 neue Tests, 7 davon vorher rot; 74 Testdateien / 501 Tests gruen. (docs/cr/done/CR-GC-304)",
+      "status": "done",
       "created_at": "2026-08-07T00:00:00.000Z"
     },
     {
@@ -9476,5 +9476,5 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     }
   ],
-  "graphVersion": 49
+  "graphVersion": 50
 }
