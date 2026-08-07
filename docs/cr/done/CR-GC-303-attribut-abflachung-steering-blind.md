@@ -1,8 +1,49 @@
 # CR-GC-303 — Attribut-Abflachung macht den Steering-Pfad regelblind
 
-**Status:** open · **Angelegt:** 2026-08-05
-**Absorbiert:** [CR-GC-299](../done/CR-GC-299-exporter-attributes-flattening.md)
+**Status:** done · **Angelegt:** 2026-08-05 · **Geschlossen:** 2026-08-07
+**Absorbiert:** [CR-GC-299](CR-GC-299-exporter-attributes-flattening.md)
 (2026-08-07 geschlossen als superseded)
+
+> ## Abschluss 2026-08-07 — die Root Cause lag eine Ebene tiefer
+>
+> Der Fix ist wie geplant umgesetzt (`toOntologyGraph` aus `conformance.ts` exportiert,
+> `takeSteeringSnapshot` mappt direkt statt über `JSON.parse(exportGraphJson(...))`).
+> Beim Grün-Machen der vollen Suite kippte aber **SRR** von 26/26 auf 24/26 mit
+> `missing: [UC-05, UC-06]` — ein Fehlschlag, der den eigentlichen Defekt zeigte:
+>
+> **`OntologyElement` ist weder ein flacher Bag noch ein rein verschachtelter.** Das
+> Schema deklariert **typisierte Top-Level-Felder** — `kinds`, `asil`, `method` —
+> *neben* dem freien `attributes`-Record, und die Regeln lesen jeweils das, was das
+> Schema sagt: UC-05/UC-06 lesen `e.kinds?.includes(…)` **top-level**, R-19/R-20/
+> AF-01..05 lesen aus `attributes`. graphcode legt alles in *einen* `node.attributes`-Bag.
+>
+> Damit war **jeder** der beiden Mapper unvollständig, nicht nur einer:
+>
+> | Pfad | Encoding | funktioniert | blind |
+> |---|---|---|---|
+> | Export-Roundtrip (Steering, vorher) | alles flach | UC-05/06 | R-19/R-20/VR-01/AF-01..05 |
+> | `toOntologyGraph` (Conformance, seit je) | alles verschachtelt | R-19/R-20/AF | **UC-05/UC-06** |
+>
+> Der naive Umbau hätte den Fehler also nur umgedreht. `toOntologyGraph` **hebt** die
+> drei typisierten Felder jetzt aus dem Bag heraus **und behält den Bag** — die einzige
+> Abbildung, die beide Regel-Stile bedient, weil sie genau das ist, was das Schema
+> als OntologyElement definiert.
+>
+> **Nebenbefund, mitgefixt:** UC-05/UC-06 waren dadurch auf dem **Conformance-Pfad**
+> seit jeher still deaktiviert — nie aufgefallen, weil die Generate-Tests den anderen
+> Pfad benutzten. Ein Beispiel für den Grund, zwei Encodings nicht nebeneinander zu
+> führen.
+>
+> **Ergebnis:** PDR ist aus **Modellinhalt** erreichbar statt vom Encoding blockiert
+> (`tests/generate.test.ts`: die Known-Gap-Erwartung `missing: [AF-01, AF-02, AF-03]`
+> ist ersatzlos weg, das Fixture trägt jetzt echte Stamps und deckt PDR voll ab; das
+> aktuelle offene Gate ist CDR — aus fehlendem Inhalt, nicht aus Encoding).
+> `npm run build` grün, **73 Testdateien / 480 Tests grün**.
+>
+> **Neu:** `tests/steering-snapshot.test.ts` (8 Tests) — die Reproduktion war vor dem
+> Fix rot mit exakt den 8 dauerfeuernden Regeln, plus zwei Gegenrichtungs-Tests
+> (eine *fehlende* Bindung muss weiterhin gemeldet werden; `exportGraphJson` bleibt
+> byte-identisch).
 
 > **Übernommen aus CR-GC-299** — CR-299 beschrieb denselben Defekt einen Tag früher, bot
 > aber als Option 1 an, `exportGraphJson` das Flattening abzugewöhnen. Das ist hier

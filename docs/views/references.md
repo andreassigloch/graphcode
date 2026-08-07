@@ -291,6 +291,17 @@
 | `CR-GC-302` | relation | `FUNC-import` |
 | `CR-GC-303` | relation | `FUNC-evaluate-rules` |
 | `CR-GC-303` | relation | `FUNC-graph-suggest` |
+| `CR-GC-304` | relation | `FUNC-render-views` |
+| `CR-GC-304` | relation | `MOD-docs` |
+| `CR-GC-304` | relation | `MOD-skills` |
+| `CR-GC-305` | relation | `FUNC-export-markdown` |
+| `CR-GC-305` | relation | `FUNC-render-views` |
+| `CR-GC-305` | relation | `MOD-docs` |
+| `CR-GC-306` | relation | `FUNC-harness-cli` |
+| `CR-GC-306` | relation | `MOD-cli` |
+| `CR-GC-306` | relation | `MOD-host-bridge` |
+| `CR-GC-307` | relation | `FUNC-graph-suggest` |
+| `CR-GC-307` | relation | `MOD-skills` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-suggest` |

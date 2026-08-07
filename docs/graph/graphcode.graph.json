@@ -852,9 +852,41 @@
       "id": "CR-GC-303",
       "type": "CR",
       "name": "Attribut-Abflachung macht Steering-Pfad regelblind",
-      "description": "takeSteeringSnapshot baut den OntologyGraph via JSON.parse(exportGraphJson(...)) — exportGraphJson flacht node.attributes auf Top-Level ab, contracts-Regeln lesen element.attributes.x: R-19/VR-01/SC-04 und AF-01..05 sind im Steering-/Generate-Pfad blind bzw. dauerfeuernd (graph_generate erreicht PDR/CDR/TRR nie, graph_suggest bewertet gegen verfaelschten Readiness-Raum). Fix: toOntologyGraph aus conformance.ts exportieren und in takeSteeringSnapshot direkt mappen — ein Mapper, Export-Encoding unangetastet. AC: Stamps/testRef im Steering-Pfad sichtbar, exportGraphJson byte-identisch, Known-Gap in tests/generate.test.ts entfernt. (docs/cr/open/CR-GC-303)",
-      "status": "open",
+      "description": "DONE 2026-08-07. takeSteeringSnapshot baute den OntologyGraph via JSON.parse(exportGraphJson(...)); exportGraphJson flacht node.attributes auf Top-Level ab, contracts-Regeln lesen element.attributes.x — R-19/R-20/VR-01/SC-04 und AF-01..05 waren im Steering-/Generate-Pfad blind bzw. dauerfeuernd. Fix: toOntologyGraph aus conformance.ts exportiert und in takeSteeringSnapshot direkt gemappt (ein Mapper, Export-Encoding unangetastet). Tiefere Root Cause als im CR beschrieben: OntologyElement hat TYPISIERTE Top-Level-Felder (kinds, asil, method) NEBEN dem attributes-Bag; der Mapper liess sie fallen, wodurch UC-05/UC-06 auf dem Conformance-Pfad still deaktiviert waren. toOntologyGraph hebt sie jetzt aus dem Bag heraus und behaelt den Bag. Ergebnis: PDR ist aus Modellinhalt erreichbar statt vom Encoding blockiert; 480 Tests gruen. Absorbiert CR-GC-299. (docs/cr/done/CR-GC-303)",
+      "status": "done",
       "created_at": "2026-08-05T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-304",
+      "type": "CR",
+      "name": "ConOps-View nach ISO 29148 neu schneiden",
+      "description": "renderConOps filterte REQ.kinds enthaelt 'operational' — ReqKind in contracts hat 7 Werte, 'operational' ist keiner davon, die Tabelle war strukturell unbefuellbar (0 von 111 REQ). Zweiter Defekt: die View verspricht 'actors/system/use-cases', rendert aber keinen einzigen UC. Neuschnitt gegen ISO 29148 5.2.4 aus Bestandskanten: SYS.description; system-/actor-gebundene non-functional REQ (13); ACTOR io UC (23 Kanten); UC compose FCHAIN compose FUNC als Operational Scenarios; und CR relation auf UC/REQ/FUNC/MOD als 'nature of changes / summary of impacts' (249 Kanten an 74 CRs). Modes of Operation bleiben ausgewiesene Luecke — kein MODE-Elementtyp, Drift-Lock L1/L2. (docs/cr/open/CR-GC-304)",
+      "status": "open",
+      "created_at": "2026-08-07T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-305",
+      "type": "CR",
+      "name": "spec-View entfernen, srs bleibt",
+      "description": "docs/views/ liefert zwei Requirements-Dokumente: spec.md (Rohdump aller Elemente nach Typ) und srs.md (ISO-29148-Narrativ). Doppelte Wahrheit fuer dieselbe Frage. spec faellt weg, srs bleibt. Cross-Package, weil der View-Katalog seit CR-GC-264 in @sigloch/graphcode-client liegt und GVE ihn per Drift-Test exakt gegenprueft: client 0.6.0 auf 0.7.0 bumpen und publishen, dann renderSpec plus case loeschen, Tests auf srs umstellen, docs/views/spec.md entfernen, GVE npm install. Kein halber Pfad. (docs/cr/open/CR-GC-305)",
+      "status": "open",
+      "created_at": "2026-08-07T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-306",
+      "type": "CR",
+      "name": "Onboarding: ein Start, Beispiel-Prompt, GVE-Adresse",
+      "description": "Drei Onboarding-Defekte. 1) README verkauft zwei Server-Starts, wo einer laeuft: init scaffolded GRAPHCODE_HOST_PORT in .mcp.json, damit startet 'graphcode mcp' MCP-stdio UND die SSE-Bridge (CR-GC-237); 'graphcode host' ist der Fallback ohne Agent-Session, wird aber als Normalweg dokumentiert und fuehrt in den StoreOwnershipError. 2) Kein erster Prompt — weder README noch Server-Start nennen einen konkreten Einstiegssatz; das README springt von 'reload your agent host' in die Tool-Referenz. 3) Die GVE-Adresse steht nur in docs/views/README.md, das ein Agent per Graph-first-Regel gerade nicht liest — sie gehoert in GRAPHCODE.md, ohne hartkodierten Port (dashboard.url ist die Quelle). Dazu die Abgrenzung docs/views (Graph-Projektion) gegen docs/records (commit-gestempelte Urteilsdokumente wie irr.md). (docs/cr/open/CR-GC-306)",
+      "status": "open",
+      "created_at": "2026-08-07T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-307",
+      "type": "CR",
+      "name": "Intent-Anker sind Steuerungsinternes, nicht Kundendialog",
+      "description": "generate.ts bittet den Menschen in Runde 1, die aus der Intention extrahierten 'Intentions-Anker' zu bestaetigen, und se:target-profile macht daraus einen eigenen Dialogschritt. Der Kunde kann damit nichts anfangen — der Begriff ist ein internes Hilfskonstrukt zum Einstellen der App-Targets; ein Frontier-LLM hat die Anker spaeter ohnehin still korrigiert. Neu: kein Bestaetigungsschritt, Anker werden still gesetzt und die Config im Hintergrund gemerged (bestehende weights ueberleben). Ist die Intention messbar zu duenn (unter 3 Anker nach Stopword-Filter, oder nur generische Tokens), stellt der Loop stattdessen 2-3 FACHLICHE Rueckfragen in der Sprache des Kunden. Der Begriff erscheint in keiner an den Menschen gerichteten Ausgabe mehr — per grep-Test erzwungen, nicht per Review. intentCoverage in graph_readiness bleibt als Maschinen-Readout unveraendert. Folge-CR zu CR-GC-295. (docs/cr/open/CR-GC-307)",
+      "status": "open",
+      "created_at": "2026-08-07T00:00:00.000Z"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -6033,6 +6065,61 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-304",
+      "target": "FUNC-render-views",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-304",
+      "target": "MOD-docs",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-304",
+      "target": "MOD-skills",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-305",
+      "target": "FUNC-export-markdown",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-305",
+      "target": "FUNC-render-views",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-305",
+      "target": "MOD-docs",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-306",
+      "target": "FUNC-harness-cli",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-306",
+      "target": "MOD-cli",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-306",
+      "target": "MOD-host-bridge",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-307",
+      "target": "FUNC-graph-suggest",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-307",
+      "target": "MOD-skills",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -9389,5 +9476,5 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     }
   ],
-  "graphVersion": 46
+  "graphVersion": 48
 }

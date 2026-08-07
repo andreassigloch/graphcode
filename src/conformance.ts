@@ -229,16 +229,49 @@ export function extractImportEdges(repoRoot: string): ImportEdge[] {
   return edges;
 }
 
-/** Map the core graph onto the contracts OntologyGraph shape the rules expect. */
-function toOntologyGraph(graph: CGraph): OntologyGraph {
+/**
+ * Map the core graph onto the contracts OntologyGraph shape the rules expect.
+ *
+ * Exported since CR-GC-303: this is the ONE mapper for every rule-evaluation input.
+ * The steering/generate path used to build its OntologyGraph via
+ * `JSON.parse(exportGraphJson(graph))` instead — and `exportGraphJson` flattens
+ * `node.attributes` onto the element (the committed SSOT/Format-E convention since
+ * CR-216/228). Contracts rules read `element.attributes?.x`, so every
+ * attribute-reading rule (R-19 testRef, R-20 realRef/codeRef, VR-01 testResult,
+ * SC-04, AF-01..05 analysisFreshness) was permanently blind in that path.
+ *
+ * Fix direction matters: the export encoding stays exactly as it is (it is a
+ * committed on-disk convention with round-trip consumers). What was wrong is using
+ * the *export* encoding as *rule-eval* input. One mapper, no serialization detour.
+ *
+ * BOTH shapes must be served, because `OntologyElement` is not a flat bag NOR a
+ * pure nested one: it declares TYPED TOP-LEVEL fields (`kinds`, `asil`, `method`)
+ * next to the free-form `attributes` record, and the rules read whichever the
+ * schema declares. `kinds` is read top-level (UC-05/UC-06: `e.kinds?.includes(…)`),
+ * `testRef`/`realRef`/`analysisFreshness` are read out of `attributes`. graphcode
+ * stores all of them in one `node.attributes` bag, so the mapper must LIFT the
+ * typed ones out while keeping the bag intact. Mapping only one way blinds the
+ * other half of the catalog — that was the actual defect behind CR-GC-299/303,
+ * and it also silently disabled UC-05/UC-06 on the conformance path.
+ *
+ * NOTE: `attributes` is passed by REFERENCE, not cloned — callers must treat the
+ * result as read-only (both call sites only evaluate rules over it).
+ */
+export function toOntologyGraph(graph: CGraph): OntologyGraph {
+  type OElement = OntologyGraph['elements'][number];
   return {
     elements: graph.nodes.map((n) => ({
       id: n.uid,
-      type: n.type as OntologyGraph['elements'][number]['type'],
+      type: n.type as OElement['type'],
       name: n.name,
       description: n.description ?? '',
-      status: (n.attributes?.status as OntologyGraph['elements'][number]['status']) ?? 'draft',
+      status: (n.attributes?.status as OElement['status']) ?? 'draft',
       created_at: (n.attributes?.created_at as string) ?? '',
+      // Typed OntologyElement columns, lifted out of the bag (see doc comment).
+      // Left `undefined` when absent — the schema marks all three optional.
+      kinds: n.attributes?.kinds as OElement['kinds'],
+      asil: n.attributes?.asil as OElement['asil'],
+      method: n.attributes?.method as OElement['method'],
       attributes: n.attributes,
     })),
     // CR-211: RC-04 walks io + relation traces (FUNC ─io→ FLOW ─relation→ SCHEMA),

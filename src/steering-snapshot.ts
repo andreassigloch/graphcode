@@ -17,11 +17,11 @@ import type { Graph } from '@sigloch/graph-api-core';
 import type { OntologyGraph } from '@sigloch/contracts/se';
 import { evaluateAllRules } from '@sigloch/contracts/se';
 import { computeReadiness } from '@sigloch/se-steering';
-import { exportGraphJson } from './exporter.js';
+import { toOntologyGraph } from './conformance.js';
 import { injectNDMatrices } from './nd-similarity.js';
 
 export interface SteeringSnapshot {
-  /** Der exportierte Ontology-Graph MIT injizierten ND-Matrizen. */
+  /** Der gemappte Ontology-Graph MIT injizierten ND-Matrizen. */
   og: OntologyGraph;
   /** Alle Funde des Steering-Katalogs (Full-Katalog-Eval, nicht der Gate-Delta-Katalog). */
   violations: ReturnType<typeof evaluateAllRules>;
@@ -32,7 +32,13 @@ export interface SteeringSnapshot {
 
 /** Snapshot des Steering-Zustands eines Graphen — der EINE Messpfad (s. Kopf). */
 export function takeSteeringSnapshot(graph: Graph): SteeringSnapshot {
-  const og = JSON.parse(exportGraphJson(graph)) as OntologyGraph;
+  // CR-GC-303: DERSELBE Mapper wie der Harness-/Readiness-Pfad. Vorher lief hier
+  // `JSON.parse(exportGraphJson(graph))` — das Export-Encoding flacht `attributes`
+  // auf Top-Level ab (SSOT-Konvention, CR-216/228), Contracts-Regeln lesen aber
+  // `element.attributes?.x`. Damit waren R-19/R-20/VR-01/SC-04/AF-01..05 in DIESEM
+  // Pfad dauerhaft blind bzw. dauerhaft feuernd. Der Export bleibt unangetastet;
+  // falsch war, das Export-Encoding als Regel-Eval-Input zu benutzen.
+  const og = toOntologyGraph(graph);
   // CR-GC-287: ND-Matrizen für DIESEN og injizieren — erst damit liefern die
   // contracts-ND-Regeln Funde (das Gate evaluiert ND nie).
   injectNDMatrices(og);

@@ -148,7 +148,17 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
       `Das System muss ${topic} innerhalb von 2 Sekunden bestätigen und protokollieren.`;
     const graph = g(
       [
-        node('SYS-shop', 'SYS', 'shop', INTENT),
+        // CR-GC-303: die drei PDR-Freshness-Stamps sind jetzt GESETZT. Vor dem Fix war
+        // das wirkungslos — der Steering-Pfad las den geflachten Export, in dem
+        // `attributes` gar nicht existiert, also feuerten AF-01..03 unabhängig vom
+        // Modellinhalt. Jetzt trägt der Stamp und PDR wird erreichbar.
+        node('SYS-shop', 'SYS', 'shop', INTENT, {
+          analysisFreshness: {
+            conops: { graphVersion: 1 },
+            trade: { graphVersion: 1 },
+            'assumption-review': { graphVersion: 1 },
+          },
+        }),
         node('ACTOR-kunde', 'ACTOR', 'Kunde'),
         node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt Ersatzteil und erhält Bestätigung.'),
         node('REQ-bestellung', 'REQ', 'Bestellung wird bestätigt', measurable('die Bestellung')),
@@ -192,24 +202,18 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
     const srr = step.phaseReadiness.find((p) => p.gate === 'SRR');
     const pdr = step.phaseReadiness.find((p) => p.gate === 'PDR');
     expect(srr).toEqual({ gate: 'SRR', total: srr?.total, covered: srr?.total, missing: [] });
-    // PDR/CDR/TRR: bekannte Lücke — R-19/VR-01/SC-04 und seit contracts 3.1.0 auch
-    // AF-01..03 (PDR) lesen `element.attributes?.x` (contracts/se rules.ts), aber
-    // `exportGraphJson` flacht node.attributes auf Top-Level ab (graphcode-Konvention
-    // seit CR-216/228) — die Rules sehen die gesetzten Werte deshalb nie (ein
-    // analysisFreshness-Stamp am Fixture-SYS ändert nichts). Vorbestehende,
-    // CR-296-unabhängige Diskrepanz zwischen graphcode's Export-Encoding und
-    // contracts' Rule-Implementierung; Fund dokumentiert (s. CR-GC-302 Folge-Punkt),
-    // kein exporter.ts-Fix hier.
-    expect(pdr).toEqual({
-      gate: 'PDR',
-      total: pdr?.total,
-      covered: (pdr?.total ?? 0) - 3,
-      missing: ['AF-01', 'AF-02', 'AF-03'],
-    });
-    const currentGate = step.phaseReadiness
-      .find((p) => p.covered < p.total);
-    expect(currentGate?.gate).toBe('PDR');
-    expect(step.phase).not.toBe('handoff'); // s.o. — PDR/CDR/TRR bleiben unter dieser Pipeline offen
+    // CR-GC-303: die frühere „bekannte Lücke" ist WEG. AF-01..03 galten hier als
+    // dauerhaft offen, weil der Steering-Pfad seinen OntologyGraph aus dem geflachten
+    // Export baute und `element.attributes` dort nicht existiert — kein Stamp konnte
+    // je gesehen werden. Seit `takeSteeringSnapshot` denselben Mapper wie der
+    // Harness-Pfad benutzt, trägt der Stamp am Fixture-SYS und PDR ist voll gedeckt.
+    // Damit ist PDR aus MODELLINHALT erreichbar, nicht mehr durch Encoding blockiert.
+    expect(pdr).toEqual({ gate: 'PDR', total: pdr?.total, covered: pdr?.total, missing: [] });
+    // CDR/TRR bleiben in DIESEM Fixture offen — bewusst, aus fehlendem Modellinhalt
+    // (keine FMEA-/implplan-Stamps, keine Code-/Test-Bindungen), nicht aus Encoding.
+    const currentGate = step.phaseReadiness.find((p) => p.covered < p.total);
+    expect(currentGate?.gate).toBe('CDR');
+    expect(step.phase).not.toBe('handoff');
     expect(step.done).toBe(false);
   });
 
