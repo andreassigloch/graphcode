@@ -52,15 +52,30 @@ export interface HelpEntry {
 /** A ranked, explained measure from `contextualHelp` — the explained Recommendations. */
 export interface ContextualMeasure {
   entry: HelpEntry;
+  /** Highest severity among the grouped violations (CR-GC-316) — order-independent. */
   severity: 'error' | 'warning' | 'info';
   /** A failing rule (keyed `ruleId`) or a not-done creation (keyed artifact id, CR-GC-221). */
   blockerKind: 'rule' | 'creation';
-  /** The offending element (rule blockers). */
-  elementId?: string;
+  /**
+   * How often this rule fires (CR-GC-316). The TRUE count — `elementIds` may be
+   * shorter, so a caller can always tell that the list was cut.
+   */
+  count: number;
+  /** Up to `MAX_EXAMPLE_ELEMENTS` offending uids (rule blockers). Evidence, not the full set. */
+  elementIds: string[];
   /** The gate that surfaced the blocker (creation blockers). */
   gateId?: string;
+  /** The first grouped violation's message, as an example of the shape. */
   message: string;
 }
+
+/**
+ * How many offending uids a measure carries (CR-GC-316). Deliberately small: the
+ * explanation belongs to the RULE, the elements are evidence for it. `count` sits next
+ * to the list, so the cut is visible rather than silent — and whoever needs all of them
+ * asks `rules_get_violations`, the diagnosis tool that stays at full depth.
+ */
+export const MAX_EXAMPLE_ELEMENTS = 5;
 
 const RULE_BY_ID = new Map(
   (SE_DESCRIPTOR.rules as Array<{ id: string; name: string; severity: string }>).map((r) => [r.id, r]),
@@ -160,13 +175,37 @@ const SEVERITY_RANK: Record<string, number> = { error: 0, warning: 1, info: 2 };
 export function contextualHelp(readiness: ReadinessReport, violations: RuleViolation[]): ContextualMeasure[] {
   const measures: ContextualMeasure[] = [];
 
-  // Rule blockers.
+  // Rule blockers — ONE measure per rule, not per violation (CR-GC-316). Each measure
+  // used to carry a full copy of the HelpEntry, so a rule firing 96 times put the same
+  // ~380 bytes of explanation into the answer 96 times. Grouping turns the repetition
+  // into a number and leaves the payload a function of how many DISTINCT rules fire —
+  // bounded by the catalog (66), not by the graph (403 elements and growing).
+  const byRule = new Map<string, ContextualMeasure>();
   for (const v of violations) {
     const entry = helpEntry(v.ruleId);
-    if (entry) {
-      measures.push({ entry, severity: v.severity, blockerKind: 'rule', elementId: v.elementId, message: v.message });
+    if (!entry) continue;
+    const existing = byRule.get(v.ruleId);
+    if (!existing) {
+      byRule.set(v.ruleId, {
+        entry,
+        severity: v.severity,
+        blockerKind: 'rule',
+        count: 1,
+        elementIds: v.elementId ? [v.elementId] : [],
+        message: v.message,
+      });
+      continue;
+    }
+    existing.count += 1;
+    // Highest severity wins, so the ranking below does not depend on input order.
+    if ((SEVERITY_RANK[v.severity] ?? 3) < (SEVERITY_RANK[existing.severity] ?? 3)) {
+      existing.severity = v.severity;
+    }
+    if (v.elementId && existing.elementIds.length < MAX_EXAMPLE_ELEMENTS) {
+      existing.elementIds.push(v.elementId);
     }
   }
+  measures.push(...byRule.values());
 
   // Creation-not-done blockers — a creation in a gate's creationArtifacts whose
   // blocking message is present (CR-GC-221). Deduped across gates.
@@ -178,7 +217,18 @@ export function contextualHelp(readiness: ReadinessReport, violations: RuleViola
       if (g.blocking.includes(msg)) {
         seen.add(c);
         const entry = helpEntry(c);
-        if (entry) measures.push({ entry, severity: 'error', blockerKind: 'creation', gateId: g.id, message: msg });
+        // Already one per artifact (deduped by `seen`), so count is 1 by construction
+        // and there is no offending element — a creation blocker is an ABSENCE.
+        if (entry)
+          measures.push({
+            entry,
+            severity: 'error',
+            blockerKind: 'creation',
+            count: 1,
+            elementIds: [],
+            gateId: g.id,
+            message: msg,
+          });
       }
     }
   }
