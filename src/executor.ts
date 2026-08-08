@@ -195,6 +195,44 @@ const AUTHORING_TOOLS = new Set([
  * deterministisch auf Fokus-Typen filtern, danach harte Kappe von vorn. */
 export const INDEX_CHAR_BUDGET = 8000;
 
+/** Zeichen-Budget eines einzelnen Tool-Ergebnisses im Runden-Prompt. */
+export const TOOL_RESULT_CHAR_BUDGET = 6000;
+
+/**
+ * Ein Tool-Ergebnis als **gültiges JSON** unter dem Budget (CR-GC-309).
+ *
+ * Vorher stand hier zweimal `JSON.stringify(x).slice(0, N)`. Ein Byte-Schnitt
+ * zerlegt das JSON mitten im Objekt: bei einer 70-KB-Antwort bekam das lokale
+ * Modell einen abgehackten Blob — nicht parsebar, also auch keine verwertbare
+ * Violation. Statt zu schneiden geben wir ein KLEINERES, gültiges Objekt zurück,
+ * das sagt, was fehlt.
+ *
+ * Der Summary-Default aus demselben CR macht das für Mutationen zum seltenen Fall;
+ * seltener heißt aber nicht nie — ein großer Graph kann auch eine Leseantwort über
+ * das Budget heben, und dann ist "gültig, aber knapp" das einzig Brauchbare.
+ */
+export function jsonCapped(value: unknown, budget = TOOL_RESULT_CHAR_BUDGET): string {
+  const full = JSON.stringify(value) ?? 'null';
+  if (full.length <= budget) return full;
+  // Skalare Felder der obersten Ebene behalten — dort stehen success/tier/counts,
+  // also genau das, wonach der Treiber verzweigt. Arrays/Objekte fallen weg; ihre
+  // Größe ist der Grund für die Überschreitung.
+  const scalars: Record<string, unknown> = {};
+  if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
+    for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
+      if (v === null || typeof v !== 'object') scalars[k] = v;
+    }
+  }
+  return JSON.stringify({
+    ...scalars,
+    truncated: true,
+    originalChars: full.length,
+    note:
+      `Ergebnis über ${budget} Zeichen und deshalb gekürzt — verschachtelte Felder entfernt. ` +
+      'Gezielt nachfragen (rules_get_violations, graph_impact) statt das volle Ergebnis anzufordern.',
+  });
+}
+
 interface GuideSlice {
   outgoing: { edgeType: string; targetType: string; cardinality?: string }[];
   incoming: { edgeType: string; sourceType: string; cardinality?: string }[];
@@ -923,7 +961,7 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
       const tool = registry[name.slice('graphcode_'.length)];
       if (!tool) return 'ERROR: unknown tool ' + name;
       try {
-        return JSON.stringify(await tool.handler(input ?? {})).slice(0, 6000);
+        return jsonCapped(await tool.handler(input ?? {}));
       } catch (err) {
         return 'ERROR: ' + (err instanceof Error ? err.message : String(err));
       }
@@ -1424,7 +1462,7 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
             continue;
           }
           const outcome = await runMutate(call.input);
-          results.push(JSON.stringify(outcome).slice(0, 6000));
+          results.push(jsonCapped(outcome));
           if (outcome.success) {
             stats.mutatesApplied += 1;
             appliedThisTurn = true;

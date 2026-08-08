@@ -60,10 +60,41 @@ const GraphMutateInputSchema = z
       ),
     consumerId: z.string().default('mcp-client'),
     baseVersion: baseVersionField,
+    violations: z
+      .enum(['summary', 'full'])
+      .default('summary')
+      .describe(
+        'Detailtiefe der zurückgegebenen Violations (CR-GC-309). summary (Default) trägt ruleId, ' +
+          'severity, message, fixHint und elementId — alles, was zum Reparieren des Batches nötig ist; ' +
+          'es entfällt `context` (und damit candidate_targets), das den Löwenanteil der Bytes ausmacht. ' +
+          'full liefert das ungekürzte Ergebnis. Wer candidate_targets braucht, fragt gezielt ' +
+          'rules_get_violations / rules_evaluate — die bleiben auf voller Tiefe.',
+      ),
   })
   .refine((i) => (i.commands === undefined) !== (i.formatE === undefined), {
     message: 'graph_mutate: supply exactly one of commands or formatE.',
   });
+
+/**
+ * Violations ohne `context` (CR-GC-309).
+ *
+ * `context` trägt `candidate_targets`/`existing_traces` — die Fix-Automations-Daten,
+ * die den Löwenanteil der Antwortbytes ausmachen (im Feldtest 39 Kandidaten in EINER
+ * Antwort, zwei Antworten über 60 KB, zusammen 20 % aller Tool-Ergebnisse). Für das
+ * Reparieren eines Batches braucht der Autor sie nicht — `fixHint` sagt, WAS zu tun
+ * ist, `elementId` sagt WO. Wer die Kandidatenliste wirklich braucht, fragt
+ * `rules_get_violations`; das ist Query-Precision, nicht Result-Kompression.
+ *
+ * `fixHint` bleibt zwingend erhalten: der eingebettete Executor rendert ihn in
+ * `formatGateFeedback` — ihn wegzukürzen machte aus einer reparierbaren Violation
+ * eine undurchsichtige.
+ */
+function summarizeViolations<T extends { violations: MutateResult['violations'] }>(result: T): T {
+  return {
+    ...result,
+    violations: result.violations.map(({ context: _context, ...rest }) => rest),
+  };
+}
 
 /** Flat realize affordance (CR-GC-216) — the write-twin of graph_context, no nested union. */
 const GraphRealizeInputSchema = z
@@ -251,12 +282,16 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
           await harness.loadGraph();
           const preview = { ...result, steeringDelta };
           // Vorschlag→Verdict auditieren (F2) — der Preview trägt das steeringDelta.
+          // Auditiert wird die VOLLE Fassung: der Audit-Trail ist Evidenz, nicht
+          // Antwort-Budget. Gekürzt wird erst, was über die Leitung geht.
           await recordPreview(input.consumerId, preview, commands);
-          return { ...preview, graphVersion: graphVersion() };
+          const previewOut = input.violations === 'full' ? preview : summarizeViolations(preview);
+          return { ...previewOut, graphVersion: graphVersion() };
         }
         await recordAudit(input.consumerId, result, commands);
+        const out = input.violations === 'full' ? result : summarizeViolations(result);
         return {
-          ...result,
+          ...out,
           graphVersion: graphVersion(),
           ...(input.baseVersion === undefined ? { occWarning: OCC_WARNING } : {}),
         };

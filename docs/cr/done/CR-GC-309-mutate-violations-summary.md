@@ -1,6 +1,65 @@
 # CR-GC-309 — `graph_mutate` echot Violations in voller Länge; Summary als Default
 
-**Status:** open · **Angelegt:** 2026-08-07 · **Max Files:** 3
+**Status:** done · **Angelegt:** 2026-08-07 · **Geschlossen:** 2026-08-08
+
+> ## Abschluss 2026-08-08
+>
+> **78 Testdateien / 554 Tests grün.**
+>
+> ### Gemessen, nicht geschätzt
+>
+> Fixture in Feldtest-Größe (30 Kommandos gegen 30 TESTs, jede R-01 listet alle
+> Kandidaten):
+>
+> | Batch | full | summary | Faktor |
+> |---|---|---|---|
+> | 30 Kommandos | **60,6 KB** | **10,7 KB** | 5,7× (−82 %) |
+> | 60 Kommandos | **203,8 KB** | **21,0 KB** | 9,7× (−90 %) |
+>
+> Der Effekt wächst überlinear, weil `candidate_targets` mit Batch × Kandidaten
+> skaliert, die verbleibenden `message`+`fixHint` aber nur linear.
+>
+> **AC knapp verfehlt, nicht stillschweigend verschoben:** die AC forderte „>60 KB →
+> unter 10 KB". Erreicht sind 10,7 KB. Die Restmenge ist genau eine Message plus ein
+> fixHint je Fund — und `fixHint` ist laut CR zwingend zu erhalten (der Treiber
+> rendert ihn in `formatGateFeedback`). Weiter zu kürzen hieße, die Reparierbarkeit
+> gegen 700 Bytes zu tauschen. Der Test pinnt deshalb das gemessene Verhältnis
+> (≥5×, <13 KB) statt der runden Zahl.
+>
+> ### `applyIf` NICHT gebaut — der Schalter wäre wirkungslos
+>
+> Beim Testen fiel auf: meine `applyIf`-Tests waren grün, **bevor** irgendetwas
+> implementiert war. Grund, nachgeprüft im Gate: `tier: 'block'` wird ausschließlich
+> auf den Reject-Pfaden gesetzt, die nichts persistieren — der Erfolgspfad
+> (`harness.ts:468`) kann nur `suggest` oder `auto-apply` vergeben. `tier === 'block'`
+> und „nichts geschrieben" sind **dieselbe Bedingung**.
+>
+> `applyIf: 'not-blocked'` hätte also zwei Werte mit identischem Verhalten — ein
+> Parallelpfad ohne semantischen Inhalt, genau was `CLAUDE.md` untersagt. Der CR
+> begründet den Schalter selbst mit „das Gate ist transaktional"; das ist das
+> Argument dafür, dass der zweite Durchlauf entfallen **kann**, nicht dafür, dass es
+> ein Flag braucht.
+>
+> Was der Schalter garantieren sollte, ist trotzdem echt und jetzt **gepinnt**: drei
+> Tests halten fest, dass ein geblockter Batch in einem einzigen Aufruf nichts
+> schreibt, ein sauberer in demselben Aufruf durchgeht, und — als Stolperdraht —
+> dass `tier==='block'` genau dann gilt, wenn nichts persistiert wurde. Kippt das je,
+> bricht das Redundanz-Argument und `applyIf` wird nötig; dann wird es laut.
+>
+> ### Zweiter Defekt: beide Kappungsstellen, nicht eine
+>
+> Der CR nannte `executor.ts:1427`. Es gab **zwei** identische
+> `JSON.stringify(x).slice(0, 6000)` — die zweite in `execReadOrGraphTool` trifft
+> jedes `graphcode_*`-Tool. Beide laufen jetzt über `jsonCapped()`: statt mitten im
+> Objekt zu schneiden, wird ein **kleineres, gültiges** JSON zurückgegeben, das die
+> Skalare der obersten Ebene (`success`, `tier`, Zähler — wonach der Treiber
+> verzweigt) behält und `truncated`/`originalChars` ergänzt.
+>
+> ### Nicht behauptet
+>
+> Die im CR überschlagene Kostenersparnis („$5-8 pro Lauf") ist **nicht** verifiziert
+> — der Kontrafaktik-Lauf existiert weiterhin nicht. Belegt sind ausschließlich die
+> Byte-Zahlen oben.
 **Herkunft:** graphcode-Feldtest Graphview (`docs/GC_test-graphview-results.md` §6.1/§6.6),
 Code-Audit 2026-08-07. Unabhängig von den übrigen offenen CRs.
 

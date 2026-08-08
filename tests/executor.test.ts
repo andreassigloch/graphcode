@@ -22,6 +22,8 @@ import {
   extractToolCallFromText,
   ExecutorConfigSchema,
   INDEX_CHAR_BUDGET,
+  TOOL_RESULT_CHAR_BUDGET,
+  jsonCapped,
   SYSTEM,
   type ModelResponse,
   type CallModel,
@@ -665,5 +667,62 @@ describe('executor (CR-GC-278)', () => {
     const text = `Vorwort {nicht das} — hier: ${JSON.stringify(batch)} Nachwort.`;
     expect(extractMutateFromText(text)).toEqual(batch);
     expect(extractMutateFromText('kein batch hier')).toBeNull();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// CR-GC-309 — a truncated tool result must still be parseable JSON.
+//
+// Both truncation sites were `JSON.stringify(x).slice(0, 6000)`. A byte slice cuts
+// mid-object: on a 70 KB answer the local model received an unparseable blob — so
+// not just a shortened violation, but NO violation it could act on. The summary
+// default makes the overflow rare; rare is not never, and "valid but terse" is the
+// only useful behaviour when it happens.
+// ---------------------------------------------------------------------------
+describe('jsonCapped (CR-GC-309): truncation yields valid JSON, never a cut blob', () => {
+  it('returns the value unchanged when it fits', () => {
+    const small = { success: true, mutations: 3 };
+    expect(jsonCapped(small)).toBe(JSON.stringify(small));
+  });
+
+  it('an oversized result is still parseable', () => {
+    const huge = {
+      success: false,
+      tier: 'block',
+      mutations: 0,
+      violations: Array.from({ length: 400 }, (_, i) => ({
+        ruleId: 'R-01',
+        message: `finding ${i} `.repeat(20),
+        context: { candidate_targets: Array.from({ length: 40 }, (_, j) => ({ id: `TEST-${j}` })) },
+      })),
+    };
+    const out = jsonCapped(huge);
+    expect(JSON.stringify(huge).length).toBeGreaterThan(TOOL_RESULT_CHAR_BUDGET);
+    expect(out.length).toBeLessThanOrEqual(TOOL_RESULT_CHAR_BUDGET);
+    // The whole point: it parses.
+    expect(() => JSON.parse(out)).not.toThrow();
+  });
+
+  it('keeps the scalars the driver branches on, and says it truncated', () => {
+    const huge = {
+      success: false,
+      tier: 'block',
+      mutations: 0,
+      appliedCommands: 0,
+      violations: Array.from({ length: 400 }, () => ({ ruleId: 'R-01', message: 'x'.repeat(60) })),
+    };
+    const parsed = JSON.parse(jsonCapped(huge)) as Record<string, unknown>;
+    // success/tier decide the driver's next move — losing them would make the
+    // truncation worse than the overflow.
+    expect(parsed.success).toBe(false);
+    expect(parsed.tier).toBe('block');
+    expect(parsed.mutations).toBe(0);
+    expect(parsed.truncated).toBe(true);
+    expect(parsed.originalChars).toBeGreaterThan(TOOL_RESULT_CHAR_BUDGET);
+  });
+
+  it('handles a non-object payload without throwing', () => {
+    expect(() => JSON.parse(jsonCapped('x'.repeat(20_000)))).not.toThrow();
+    expect(JSON.parse(jsonCapped(undefined))).toBeNull();
   });
 });

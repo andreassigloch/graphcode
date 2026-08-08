@@ -900,8 +900,8 @@
       "id": "CR-GC-309",
       "type": "CR",
       "name": "graph_mutate echot Violations in voller Laenge",
-      "description": "graph_mutate gibt das MutateResult unveraendert zurueck — jede Antwort listet saemtliche Warnungen mit vollem context inkl. candidate_targets. Im Feldtest: eine Antwort mit 39 Kandidaten, zwei Antworten (70,3 und 64,9 KB) sprengten das Tool-Result-Limit; graph_mutate-Ergebnisse waren 189 KB von 929 KB aller Tool-Ergebnisse (20 Prozent, ca. 47k Token). Im Treiber faellt es nicht auf, weil der Executor selbst kappt — und die zweite Kappung (JSON.stringify(outcome).slice(0,6000)) ist ein eigener Defekt: sie schneidet mitten im JSON, das lokale Modell bekommt einen unparsebaren Blob. Loesung: violations:'summary'|'full' (Default summary, behaelt ruleId/severity/message/fixHint/uids, entfaellt context; fixHint ist zwingend — der Treiber liest ihn) plus applyIf:'always'|'not-blocked' gegen die Doppel-Uebertragung grosser Batches. rules_evaluate/rules_get_violations bleiben auf voller Tiefe — Query-Precision statt Result-Kompression. (docs/cr/open/CR-GC-309)",
-      "status": "open",
+      "description": "DONE 2026-08-08. violations:'summary'|'full' mit Default summary — context (und damit candidate_targets) entfaellt, ruleId/severity/message/fixHint/elementId bleiben. Gemessen an einer Feldtest-grossen Fixture: 30 Kommandos 60,6 KB auf 10,7 KB (5,7x, minus 82 Prozent), 60 Kommandos 203,8 KB auf 21,0 KB (9,7x, minus 90 Prozent) — ueberlinear, weil candidate_targets mit Batch mal Kandidaten skaliert und die verbleibenden message+fixHint nur linear. AC knapp verfehlt und nicht verschoben: gefordert war unter 10 KB, erreicht 10,7 KB; die Restmenge ist genau Message plus fixHint je Fund, und fixHint ist zwingend (der Treiber rendert ihn). applyIf NICHT gebaut: die Tests dafuer waren gruen, BEVOR etwas implementiert war — tier 'block' wird nur auf den Reject-Pfaden gesetzt, die nichts persistieren (der Erfolgspfad kann nur suggest oder auto-apply vergeben), also waeren beide Werte verhaltensgleich, ein Parallelpfad ohne Inhalt. Was der Schalter garantieren sollte, ist stattdessen als Invariante gepinnt, inklusive Stolperdraht: tier==='block' gilt genau dann, wenn nichts persistiert wurde. Zweiter Defekt: es gab ZWEI identische JSON.stringify().slice(0,6000)-Stellen, nicht eine — beide laufen jetzt ueber jsonCapped(), das ein kleineres GUELTIGES JSON mit den Top-Level-Skalaren liefert statt eines mitten im Objekt abgeschnittenen Blobs. Nicht verifiziert: die im CR ueberschlagene Kostenersparnis — der Kontrafaktik-Lauf existiert nicht. 78 Testdateien / 554 Tests gruen. (docs/cr/done/CR-GC-309)",
+      "status": "done",
       "created_at": "2026-08-07T00:00:00.000Z"
     },
     {
@@ -9543,5 +9543,5 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     }
   ],
-  "graphVersion": 55
+  "graphVersion": 56
 }

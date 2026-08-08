@@ -171,7 +171,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-306` | done | Onboarding: ein Start, Beispiel-Prompt, GVE-Adresse | `FUNC-harness-cli` · `MOD-cli` · `MOD-host-bridge` |
 | `CR-GC-307` | done | Intent-Anker sind Steuerungsinternes, nicht Kundendialog | `FUNC-graph-suggest` · `MOD-skills` |
 | `CR-GC-308` | done | View-Exporter lesen nur deklarierte Kanten und Attribute | `FUNC-export-markdown` · `MOD-docs` |
-| `CR-GC-309` | open | graph_mutate echot Violations in voller Laenge | `FUNC-mutate` |
+| `CR-GC-309` | done | graph_mutate echot Violations in voller Laenge | `FUNC-mutate` |
 | `CR-GC-310` | open | Format-E-Kantenbatches verlangen Neu-Deklaration vorhandener Knoten | `FUNC-decode` · `FUNC-mutate` |
 | `CR-GC-313` | open | export-graph.mjs Guard kennt den graphVersion-Stamp nicht | `FUNC-export-markdown` · `MOD-docs` |
 
