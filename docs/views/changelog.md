@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 104 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 113 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 104 CR · 96 done · 7 open.
+Total: 113 CR · 109 done · 3 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -64,8 +64,8 @@ Total: 104 CR · 96 done · 7 open.
 
 | CR | status | name |
 |---|---|---|
-| `CR-GC-204` | open | graph_tests operational |
-| `CR-GC-205` | open | Enforce-don't-document — R-18/R-19 rules + export materialization |
+| `CR-GC-204` | done | graph_tests operational |
+| `CR-GC-205` | done | Enforce-don't-document — R-18 Strukturregel + ausfuehrbare Guardrails |
 | `CR-GC-206` | done | Graph-code LSP conformance — resolve FUNC codeRef symbols |
 
 ## `MS-6-adoption` — M6: Adoption & Artifact-Model
@@ -149,5 +149,14 @@ Total: 104 CR · 96 done · 7 open.
 | `CR-GC-307` | done | Intent-Anker sind Steuerungsinternes, nicht Kundendialog |
 | `CR-GC-308` | done | View-Exporter lesen nur deklarierte Kanten und Attribute |
 | `CR-GC-309` | done | graph_mutate echot Violations in voller Laenge |
-| `CR-GC-310` | open | Format-E-Kantenbatches verlangen Neu-Deklaration vorhandener Knoten |
-| `CR-GC-313` | open | export-graph.mjs Guard kennt den graphVersion-Stamp nicht |
+| `CR-GC-310` | done | Format-E-Kantenbatches verlangen Neu-Deklaration vorhandener Knoten |
+| `CR-GC-311` | done | rewind/restore als CLI-Verb — UC-graph-time-travel realisieren |
+| `CR-GC-312` | done | SE_DESCRIPTOR trug 2 von 12 Regelfamilien — zehn Familien wertete niemand aus |
+| `CR-GC-313` | done | export-graph.mjs Guard kennt den graphVersion-Stamp nicht |
+| `CR-GC-314` | done | Positive Entscheidungen im Audit-Trail (rulesPassed) |
+| `CR-GC-315` | done | R-12 und R-21 feuerten auf Kanten, fuer die sie nie gedacht waren |
+| `CR-GC-316` | done | graph_help buendelt Massnahmen je Regel statt je Element |
+| `CR-GC-317` | done | RTM nach A-SPICE-Ebenen gruppieren + Integrationsabdeckung |
+| `CR-GC-318` | done | reqLevels lief nur ueber compose — satisfy-Bein fehlte |
+| `CR-GC-319` | done | audit_trail lieferte Rohdatensaetze statt einer Projektion |
+| `CR-GC-320` | done | executor.ts schneiden — Schritt 1 (Prompt · Ranking · Prosa-Recovery) |

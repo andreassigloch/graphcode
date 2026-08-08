@@ -142,8 +142,8 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-201` | done | Enforce gate-only graph writes | `REQ-gate-only-writes` |
 | `CR-GC-202` | done | graph_export refuse-to-clobber guard | `MOD-mcp-tools` · `REQ-export-no-clobber` |
 | `CR-GC-203` | done | Violation-resolution ergonomics & SSOT tooling | `MOD-harness` · `MOD-mcp-tools` · `MOD-skills` |
-| `CR-GC-204` | open | graph_tests operational | `MOD-mcp-tools` · `REQ-graph-tests-operational` |
-| `CR-GC-205` | open | Enforce-don't-document — R-18/R-19 rules + export materialization | `REQ-structural-rule-shared` · `REQ-testref-materialized` |
+| `CR-GC-204` | done | graph_tests operational | `MOD-mcp-tools` · `REQ-graph-tests-operational` |
+| `CR-GC-205` | done | Enforce-don't-document — R-18 Strukturregel + ausfuehrbare Guardrails | `REQ-structural-rule-shared` · `REQ-testref-materialized` |
 | `CR-GC-206` | done | Graph-code LSP conformance — resolve FUNC codeRef symbols | `REQ-graph-code-conformance` |
 | `CR-GC-244` | done | Bundle-Staleness fix: rebundle-Disziplin statt Externalisierung | `MOD-cli` · `REQ-self-contained-dist` |
 | `CR-GC-247` | done | Zentralisiere Trace-Legalitaet in einem Checker | `MOD-codec` · `REQ-structural-rule-shared` |
@@ -175,8 +175,16 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-307` | done | Intent-Anker sind Steuerungsinternes, nicht Kundendialog | `FUNC-graph-suggest` · `MOD-skills` |
 | `CR-GC-308` | done | View-Exporter lesen nur deklarierte Kanten und Attribute | `FUNC-export-markdown` · `MOD-docs` |
 | `CR-GC-309` | done | graph_mutate echot Violations in voller Laenge | `FUNC-mutate` |
-| `CR-GC-310` | open | Format-E-Kantenbatches verlangen Neu-Deklaration vorhandener Knoten | `FUNC-decode` · `FUNC-mutate` |
-| `CR-GC-313` | open | export-graph.mjs Guard kennt den graphVersion-Stamp nicht | `FUNC-export-markdown` · `MOD-docs` |
+| `CR-GC-310` | done | Format-E-Kantenbatches verlangen Neu-Deklaration vorhandener Knoten | `FUNC-decode` · `FUNC-mutate` |
+| `CR-GC-311` | done | rewind/restore als CLI-Verb — UC-graph-time-travel realisieren | `FUNC-rewind` · `UC-graph-time-travel` |
+| `CR-GC-312` | done | SE_DESCRIPTOR trug 2 von 12 Regelfamilien — zehn Familien wertete niemand aus | `FUNC-evaluate-rules` · `FUNC-mutate` |
+| `CR-GC-313` | done | export-graph.mjs Guard kennt den graphVersion-Stamp nicht | `FUNC-export-markdown` · `MOD-docs` |
+| `CR-GC-314` | done | Positive Entscheidungen im Audit-Trail (rulesPassed) | `FUNC-mutate` |
+| `CR-GC-315` | done | R-12 und R-21 feuerten auf Kanten, fuer die sie nie gedacht waren | `FUNC-evaluate-rules` |
+| `CR-GC-316` | done | graph_help buendelt Massnahmen je Regel statt je Element | `MOD-mcp-tools` |
+| `CR-GC-317` | done | RTM nach A-SPICE-Ebenen gruppieren + Integrationsabdeckung | `FUNC-view-rtm` |
+| `CR-GC-318` | done | reqLevels lief nur ueber compose — satisfy-Bein fehlte | `FUNC-view-rtm` |
+| `CR-GC-319` | done | audit_trail lieferte Rohdatensaetze statt einer Projektion | `MOD-mcp-tools` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

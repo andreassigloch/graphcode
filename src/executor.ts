@@ -21,13 +21,33 @@ import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 import { z } from 'zod/v4';
 import type { MutateResult } from '@sigloch/contracts/harness';
-import { ElementType } from '@sigloch/contracts/se';
 import type { FitAdvisory } from './fit-advisory.js';
 import type { MCPToolRegistry } from './mcp-tools.js';
 import type { GenerationStep } from './generate.js';
 import { preflightBatch, type PreflightKnown } from './preflight.js';
 import { duplicateHints, type IndexedElement } from './nd-similarity.js';
 import type { SteeringDelta } from './steering-snapshot.js';
+// Die drei zustandsfreien Executor-Achsen (CR-GC-320) — Prompt/Injektion,
+// Best-of-N-Ranking, Prosa-Recovery. Kein Re-Export von hier: wer sie braucht,
+// importiert das jeweilige Modul direkt (keine parallelen Pfade).
+import {
+  AUTHORING_TOOLS,
+  EMIT_SUFFIX,
+  IDLE_NUDGE,
+  SYSTEM,
+  WITHHELD_TOOLS,
+  buildRoundInjection,
+  jsonCapped,
+} from './executor-prompt.js';
+import {
+  deltaSum,
+  focusDelta,
+  rankCandidates,
+  temperatureSpread,
+  totalDelta,
+  type CandidateProbe,
+} from './executor-rank.js';
+import { extractMutateFromText, extractToolCallFromText } from './executor-parse.js';
 
 // ---------------------------------------------------------------------------
 // Config (lokal per CR-GC-278 — Promotion nach @sigloch/contracts erst mit der
@@ -130,200 +150,6 @@ export interface ExecutorStats {
   tokensIn: number;
   tokensOut: number;
   tokensReasoning: number;
-}
-
-// ---------------------------------------------------------------------------
-// System-Prompt — bewusst ~1 Seite; die Methode kommt aus graph_generate.
-// ---------------------------------------------------------------------------
-
-/** Exportiert für den Contracts-Drift-Test (CR-GC-291): jeder ElementType.options-Wert
- * muss in diesem Prompt auftauchen, sonst halluziniert das Modell einen unbekannten Typ. */
-export const SYSTEM = `Du autorierst Elemente in einen graphcode-Graphen. Der Graph ist die einzige Wahrheit — kein Code, keine Prosa.
-
-Legale Elementtypen (NUR diese ${ElementType.options.length}): ${ElementType.options.join(', ')}. Kein anderer Typ
-existiert — auch nicht für Dokumente/Specs (die bleiben Prosa, kein Graph-Knoten).
-
-Jede Nachricht gibt dir EINE präzise Generierungs-Instruktion (inkl. der legalen Kanten). Führe genau sie aus:
-emittiere den geforderten Batch als EINEN graphcode_graph_mutate-Aufruf im commands-Format, dann STOPP.
-
-graph_mutate-Form (exakt):
-{"commands":[
-  {"op":"add-node","node":{"uid":"UC-login","type":"UC","name":"Login","description":"...","attributes":{}}},
-  {"op":"add-edge","edge":{"sourceId":"ACTOR-user","targetId":"UC-login","edgeType":"io","attributes":{}}}
-]}
-uid = "<TYP>-<kebab-name>". Nutze GENAU die Kanten aus der Instruktion (z.B. "ACTOR io→UC, SYS compose→UC").
-Kanten-Grammatik der Fokus-Typen und Element-Index (uid · type · name) stehen BEREITS in der Instruktion —
-rufe graph_authoring_guide/graph_elements NICHT dafür auf, nur für darüber hinausgehende Details (graph_get_node).
-Lehnt das Gate deinen Batch ab (success:false), korrigiere NUR die beanstandeten Commands anhand der
-violations/fixHints und reiche den VOLLSTÄNDIGEN korrigierten Batch erneut ein.
-list_dir/read_file/grep über ./material nur sparsam, um echte Modul-Namen zu finden — nicht statt Bauen.
-Handeln vor Analysieren: rufe graph_mutate, rate die Instruktion nicht tot.`;
-
-const EMIT_SUFFIX =
-  '\n\nEmittiere GENAU diesen Schritt als EINEN graph_mutate-Aufruf im commands-Format ' +
-  '({"commands":[{"op":"add-node","node":{"uid","type","name","description","attributes":{}}},' +
-  '{"op":"add-edge","edge":{"sourceId","targetId","edgeType","attributes":{}}}]}).';
-
-/** Handlungs-Zwang bei Idle-Turns: Coder-Modelle dithern gern in Prosa (Rig-Befund
- * "6× guide/Runde") — EIN Nachfassen pro Step statt den Schritt still aufzugeben. */
-const IDLE_NUDGE =
-  'Du hast KEINEN graph_mutate-Call emittiert. Emittiere JETZT den geforderten Batch als EINEN ' +
-  'graphcode_graph_mutate-Tool-Call im commands-Format — keine Prosa, keine weitere Analyse.';
-
-/** Diese Tools ruft der EXECUTOR deterministisch — dem Modell werden sie vorenthalten. */
-const WITHHELD_TOOLS = new Set(['graph_generate', 'graph_next_step']);
-
-/** Das kuratierte Minimal-Set für den generativen Loop (toolset 'authoring'). */
-const AUTHORING_TOOLS = new Set([
-  'graph_mutate',
-  'graph_authoring_guide',
-  'graph_get_node',
-  'graph_elements',
-  'graph_readiness',
-]);
-
-// ---------------------------------------------------------------------------
-// Runden-Prompt-Injektion (CR-GC-285): deterministisch berechenbare Lese-
-// Inhalte (Guide-Slice der Fokus-Typen + Element-Index) direkt in den Runden-
-// Prompt statt sie das Modell erfragen zu lassen — Turn-Analyse der Testläufe:
-// 41–59 % reine Lese-Turns, graph_authoring_guide 72–107× pro Lauf für
-// dieselben Typen (History resettet pro Runde). Die Lese-Tools bleiben im
-// Toolset (Detail-Nachfragen); nur der Standard-Rundenstart braucht sie nicht.
-// ---------------------------------------------------------------------------
-
-/** Zeichen-Budget des Element-Index (~2k-Token-Äquivalent). Überschreitung ⇒
- * deterministisch auf Fokus-Typen filtern, danach harte Kappe von vorn. */
-export const INDEX_CHAR_BUDGET = 8000;
-
-/** Zeichen-Budget eines einzelnen Tool-Ergebnisses im Runden-Prompt. */
-export const TOOL_RESULT_CHAR_BUDGET = 6000;
-
-/**
- * Ein Tool-Ergebnis als **gültiges JSON** unter dem Budget (CR-GC-309).
- *
- * Vorher stand hier zweimal `JSON.stringify(x).slice(0, N)`. Ein Byte-Schnitt
- * zerlegt das JSON mitten im Objekt: bei einer 70-KB-Antwort bekam das lokale
- * Modell einen abgehackten Blob — nicht parsebar, also auch keine verwertbare
- * Violation. Statt zu schneiden geben wir ein KLEINERES, gültiges Objekt zurück,
- * das sagt, was fehlt.
- *
- * Der Summary-Default aus demselben CR macht das für Mutationen zum seltenen Fall;
- * seltener heißt aber nicht nie — ein großer Graph kann auch eine Leseantwort über
- * das Budget heben, und dann ist "gültig, aber knapp" das einzig Brauchbare.
- */
-export function jsonCapped(value: unknown, budget = TOOL_RESULT_CHAR_BUDGET): string {
-  const full = JSON.stringify(value) ?? 'null';
-  if (full.length <= budget) return full;
-  // Skalare Felder der obersten Ebene behalten — dort stehen success/tier/counts,
-  // also genau das, wonach der Treiber verzweigt. Arrays/Objekte fallen weg; ihre
-  // Größe ist der Grund für die Überschreitung.
-  const scalars: Record<string, unknown> = {};
-  if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
-    for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
-      if (v === null || typeof v !== 'object') scalars[k] = v;
-    }
-  }
-  return JSON.stringify({
-    ...scalars,
-    truncated: true,
-    originalChars: full.length,
-    note:
-      `Ergebnis über ${budget} Zeichen und deshalb gekürzt — verschachtelte Felder entfernt. ` +
-      'Gezielt nachfragen (rules_get_violations, graph_impact) statt das volle Ergebnis anzufordern.',
-  });
-}
-
-interface GuideSlice {
-  outgoing: { edgeType: string; targetType: string; cardinality?: string }[];
-  incoming: { edgeType: string; sourceType: string; cardinality?: string }[];
-  requiredAttrs: string[];
-}
-
-/**
- * Baut die beiden Injektions-Blöcke für den Rundenstart: (a) Kanten-Grammatik
- * der `focusTypes` (in-process `graph_authoring_guide`), (b) Element-Index des
- * Graph-Zustands als `uid · type · name`-Zeilen (in-process `graph_elements`).
- * Fehlertolerant — die Injektion darf den Lauf nie brechen (leerer Block statt
- * Throw); leerer Graph ⇒ kein Index-Block.
- */
-export async function buildRoundInjection(
-  registry: MCPToolRegistry,
-  step: Pick<GenerationStep, 'focusTypes'>,
-): Promise<string> {
-  const blocks: string[] = [];
-  const focusTypes = step.focusTypes ?? [];
-
-  if (focusTypes.length > 0 && registry['graph_authoring_guide']) {
-    const lines: string[] = [];
-    for (const type of focusTypes) {
-      try {
-        const g = (await registry['graph_authoring_guide'].handler({ type })) as GuideSlice;
-        const card = (c?: string): string => (c ? ` (${c})` : '');
-        const out =
-          g.outgoing.map((e) => `${e.edgeType}→${e.targetType}${card(e.cardinality)}`).join(', ') || '-';
-        const inc =
-          g.incoming.map((e) => `${e.sourceType} ${e.edgeType}→${card(e.cardinality)}`).join(', ') || '-';
-        const attrs = g.requiredAttrs.length > 0 ? `; Pflicht-Attrs: ${g.requiredAttrs.join(', ')}` : '';
-        lines.push(`- ${type}: ausgehend: ${out}; eingehend: ${inc}${attrs}`);
-      } catch {
-        // unbekannter Typ / Handler-Fehler: Typ überspringen, Rest injizieren
-      }
-    }
-    if (lines.length > 0) {
-      blocks.push(
-        'Kanten-Grammatik der Fokus-Typen (bereits eingebettet — graph_authoring_guide dafür NICHT ' +
-          'erneut aufrufen; Gate-Protokoll Schritt 1 ist damit erledigt):\n' + lines.join('\n'),
-      );
-    }
-  }
-
-  if (registry['graph_elements']) {
-    try {
-      const res = (await registry['graph_elements'].handler({})) as {
-        nodes?: { uid: string; type: string; name: string }[];
-      };
-      const nodes = [...(res.nodes ?? [])].sort((a, b) => a.uid.localeCompare(b.uid));
-      if (nodes.length > 0) {
-        const toLine = (n: { uid: string; type: string; name: string }): string =>
-          `${n.uid} · ${n.type} · ${n.name}`;
-        let selected = nodes;
-        let note = '';
-        if (nodes.map(toLine).join('\n').length > INDEX_CHAR_BUDGET && focusTypes.length > 0) {
-          const keep = new Set(focusTypes);
-          selected = nodes.filter((n) => keep.has(n.type));
-          note =
-            `(auf die Fokus-Typen ${focusTypes.join('/')} gefiltert — ` +
-            `${nodes.length - selected.length} weitere Elemente via graph_elements)`;
-        }
-        let lines = selected.map(toLine);
-        // Harte Kappe: deterministisch von vorn (uid-sortiert), Rest als Zähler.
-        let total = 0;
-        let cut = lines.length;
-        for (let i = 0; i < lines.length; i++) {
-          total += lines[i].length + 1;
-          if (total > INDEX_CHAR_BUDGET) {
-            cut = i;
-            break;
-          }
-        }
-        if (cut < lines.length) {
-          note = [note, `… (+${lines.length - cut} weitere — via graph_elements)`]
-            .filter(Boolean)
-            .join(' ');
-          lines = lines.slice(0, cut);
-        }
-        blocks.push(
-          'Element-Index des Graphen (uid · type · name; bereits eingebettet — graph_elements NICHT ' +
-            'erneut aufrufen; existierende uids für Kanten referenzieren, keine Duplikate anlegen):\n' +
-            lines.join('\n') +
-            (note ? '\n' + note : ''),
-        );
-      }
-    } catch {
-      // Index optional — Injektion darf den Lauf nie brechen
-    }
-  }
-  return blocks.join('\n\n');
 }
 
 // ---------------------------------------------------------------------------
@@ -561,208 +387,6 @@ export function buildCallModel(config: ExecutorConfig): CallModel {
       },
     };
   };
-}
-
-// ---------------------------------------------------------------------------
-// Best-of-N (CR-GC-288): Temperatur-Spread + deterministisches Kandidaten-Ranking.
-// ---------------------------------------------------------------------------
-
-/** Anker des Kandidaten-Samplings — gemessene Jaccard-Spreizung 0.45/0.18/0.14
- * bei temp 0.15/0.4/0.7 (Design-Runde CR-GC-288). */
-export const TEMPERATURE_ANCHORS = [0.15, 0.4, 0.7] as const;
-
-/**
- * Temperatur-Spread für N Kandidaten (openai-Backend). N=3 trifft die Anker
- * exakt; N≠3 wird deterministisch stückweise-linear über die Anker interpoliert
- * (N=2 → [0.15, 0.7]). anthropic nutzt KEINEN Spread — N Calls ohne temperature
- * (die Claude-5-API lehnt den Parameter ab, s. buildCallModel).
- */
-export function temperatureSpread(n: number): number[] {
-  const a = TEMPERATURE_ANCHORS;
-  if (n <= 1) return [a[0]];
-  const out: number[] = [];
-  for (let i = 0; i < n; i++) {
-    const p = (i * (a.length - 1)) / (n - 1); // Position im Anker-Raum [0, a.length-1]
-    const lo = Math.min(Math.floor(p), a.length - 2);
-    out.push(a[lo] + (p - lo) * (a[lo + 1] - a[lo]));
-  }
-  return out;
-}
-
-/** Kandidat fürs Ranking: Index (letzter, deterministischer Tiebreaker) + dryRun-Verdict. */
-export interface CandidateProbe {
-  index: number;
-  verdict:
-    | (Partial<MutateResult> & {
-        success: boolean;
-        fitAdvisory?: { delta?: number[] };
-        steeringDelta?: SteeringDelta;
-      })
-    | null;
-}
-
-const TIER_RANK: Record<string, number> = { 'auto-apply': 2, suggest: 1, block: 0 };
-
-/** Σ der fitAdvisory-Deltas (layer:arch) — das Δm-Kriterium des Rankings. */
-export function deltaSum(verdict: CandidateProbe['verdict']): number {
-  return (verdict?.fitAdvisory?.delta ?? []).reduce((s, x) => s + x, 0);
-}
-
-/** Score-Delta der Fokus-Dimension aus dem steeringDelta des dryRun-Verdicts (CR-GC-289). */
-export function focusDelta(verdict: CandidateProbe['verdict'], focusDimension?: string | null): number {
-  if (!focusDimension) return 0;
-  return verdict?.steeringDelta?.dimensions[focusDimension]?.delta ?? 0;
-}
-
-/** Gesamt-Readiness-Delta: ungewichtete Summe der Score-Deltas aller Dimensionen. */
-export function totalDelta(verdict: CandidateProbe['verdict']): number {
-  const sd = verdict?.steeringDelta;
-  if (!sd) return 0;
-  return Object.values(sd.dimensions).reduce((s, d) => s + d.delta, 0);
-}
-
-/** blockingErrors-ANSTIEG (Steering-Katalog) — strikt schlechter, nie belohnt. */
-function blockingRise(verdict: CandidateProbe['verdict']): number {
-  const b = verdict?.steeringDelta?.blockingErrors;
-  return b ? Math.max(0, b.after - b.before) : 0;
-}
-
-/**
- * Deterministisches Kandidaten-Ranking (der Judge 'gate'), CR-GC-289: Ziel-Delta
- * statt Volumen — das Kriterium ist der messbare Steuerungs-Fortschritt im
- * Readiness-Raum, dem Raum, in dem graph_generate den Fokus wählt:
- * tier (auto-apply > suggest > block) →
- * Score-Delta der FOKUS-Dimension (GenerationStep.focusKey) →
- * Gesamt-Readiness-Delta (blockingErrors-Anstieg strikt schlechter, davor) →
- * Δm-fitAdvisory auf layer:arch →
- * Element-Ausbeute (mutations) → Kandidaten-Index (Determinismus-Anker).
- * block/Preflight-Block/fehlendes Verdict ranken als tier 0.
- */
-export function rankCandidates<T extends CandidateProbe>(
-  candidates: T[],
-  focusDimension?: string | null,
-): T[] {
-  const viable = (c: CandidateProbe): number => (c.verdict?.success === true ? 1 : 0);
-  const tierOf = (c: CandidateProbe): number => TIER_RANK[c.verdict?.tier ?? 'suggest'] ?? 1;
-  // v17-Befund (Runde 3): tier VOR focus ließ einen Null-Fortschritt-auto-apply
-  // (20 Upsert-Mutationen, total=0.00) einen Reparatur-suggest (+0.04) schlagen —
-  // Reparatur-Batches tragen oft frische Warnings (R-19 der neuen TESTs) und
-  // landen als suggest. tier ist deshalb nur noch (1) Block-Filter und (2)
-  // SPÄTE Präferenz bei gleichem Ziel-Delta; das Ziel-Delta führt.
-  return [...candidates].sort(
-    (a, b) =>
-      viable(b) - viable(a) ||
-      focusDelta(b.verdict, focusDimension) - focusDelta(a.verdict, focusDimension) ||
-      blockingRise(a.verdict) - blockingRise(b.verdict) ||
-      totalDelta(b.verdict) - totalDelta(a.verdict) ||
-      tierOf(b) - tierOf(a) ||
-      deltaSum(b.verdict) - deltaSum(a.verdict) ||
-      (b.verdict?.mutations ?? 0) - (a.verdict?.mutations ?? 0) ||
-      a.index - b.index,
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Prosa-Recovery: Coder-Modelle (devstral) schreiben den Mutate gern als Text.
-// ---------------------------------------------------------------------------
-
-export function extractMutateFromText(text: string): { commands: unknown[] } | null {
-  if (!text || !text.includes('"commands"')) return null;
-  const at = text.indexOf('"commands"');
-  let start = text.lastIndexOf('{', at);
-  while (start >= 0) {
-    let depth = 0;
-    let end = -1;
-    for (let k = start; k < text.length; k++) {
-      if (text[k] === '{') depth++;
-      else if (text[k] === '}' && --depth === 0) {
-        end = k;
-        break;
-      }
-    }
-    if (end > start) {
-      try {
-        const o = JSON.parse(text.slice(start, end + 1)) as { commands?: unknown };
-        if (Array.isArray(o.commands)) return o as { commands: unknown[] };
-      } catch {
-        // kein valides JSON an dieser Klammer — weiter außen suchen
-      }
-    }
-    // lastIndexOf clampt fromIndex<0 auf 0 — bei start=0 liefe die Suche endlos.
-    start = start > 0 ? text.lastIndexOf('{', start - 1) : -1;
-  }
-  // Kein balanciertes Objekt — SALVAGE (v8-Befund): devstrals [ARGS]-Mega-Batches
-  // werden vom maxTokens-Budget mitten im JSON abgeschnitten. Alle VOLLSTÄNDIGEN
-  // Command-Objekte aus dem Array bergen; das Gate urteilt über den Teil-Batch.
-  const salvaged = salvageCommands(text);
-  return salvaged.length > 0 ? { commands: salvaged } : null;
-}
-
-/** String-bewusster Brace-Scan: birgt vollständige {…}-Objekte aus einem
- * (potenziell abgeschnittenen) `"commands": [ … `-Array. */
-function salvageCommands(text: string): unknown[] {
-  const at = text.indexOf('"commands"');
-  if (at < 0) return [];
-  const arr = text.indexOf('[', at);
-  if (arr < 0) return [];
-  const out: unknown[] = [];
-  let i = arr + 1;
-  while (i < text.length) {
-    while (i < text.length && text[i] !== '{' && text[i] !== ']') i++;
-    if (i >= text.length || text[i] === ']') break;
-    const start = i;
-    let depth = 0;
-    let inString = false;
-    let end = -1;
-    for (; i < text.length; i++) {
-      const c = text[i];
-      if (inString) {
-        if (c === '\\') i++; // Escape überspringen
-        else if (c === '"') inString = false;
-      } else if (c === '"') inString = true;
-      else if (c === '{') depth++;
-      else if (c === '}' && --depth === 0) {
-        end = i;
-        break;
-      }
-    }
-    if (end < 0) break; // abgeschnittenes letztes Objekt — verwerfen
-    try {
-      const o = JSON.parse(text.slice(start, end + 1)) as { op?: unknown };
-      if (typeof o.op === 'string') out.push(o);
-    } catch {
-      break; // ab hier ist der Stream nicht mehr vertrauenswürdig
-    }
-    i = end + 1;
-  }
-  return out;
-}
-
-/**
- * `[ARGS]`-Text-Recovery (CR-GC-280): devstral schreibt Tool-Calls wiederholt
- * als Text — `graphcode_graph_elements[ARGS]{"type":"UC"}`. Den Call parsen
- * statt den Turn an die Nudge zu verlieren.
- */
-export function extractToolCallFromText(text: string): { name: string; input: unknown } | null {
-  if (!text) return null;
-  const m = /([A-Za-z0-9_]+)\s*\[ARGS\]\s*(\{[\s\S]*)/.exec(text);
-  if (!m) return null;
-  const s = m[2];
-  let depth = 0;
-  let end = -1;
-  for (let i = 0; i < s.length; i++) {
-    if (s[i] === '{') depth++;
-    else if (s[i] === '}' && --depth === 0) {
-      end = i;
-      break;
-    }
-  }
-  if (end < 0) return null;
-  try {
-    return { name: m[1], input: JSON.parse(s.slice(0, end + 1)) };
-  } catch {
-    return null;
-  }
 }
 
 // ---------------------------------------------------------------------------

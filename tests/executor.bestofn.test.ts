@@ -20,16 +20,18 @@ import { join } from 'node:path';
 import { createHarness, bindToolsToHarness } from '../src/index.js';
 import {
   runExecutor,
+  ExecutorConfigSchema,
+  type ModelResponse,
+  type CallModel,
+} from '../src/executor.js';
+import {
   rankCandidates,
   deltaSum,
   focusDelta,
   totalDelta,
   temperatureSpread,
   TEMPERATURE_ANCHORS,
-  ExecutorConfigSchema,
-  type ModelResponse,
-  type CallModel,
-} from '../src/executor.js';
+} from '../src/executor-rank.js';
 
 const config = (over: Record<string, unknown> = {}) =>
   ExecutorConfigSchema.parse({

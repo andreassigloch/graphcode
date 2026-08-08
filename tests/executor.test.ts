@@ -17,17 +17,18 @@ import { createHarness, bindToolsToHarness } from '../src/index.js';
 import {
   runExecutor,
   buildToolSpecs,
-  buildRoundInjection,
-  extractMutateFromText,
-  extractToolCallFromText,
   ExecutorConfigSchema,
+  type ModelResponse,
+  type CallModel,
+} from '../src/executor.js';
+import {
+  buildRoundInjection,
   INDEX_CHAR_BUDGET,
   TOOL_RESULT_CHAR_BUDGET,
   jsonCapped,
   SYSTEM,
-  type ModelResponse,
-  type CallModel,
-} from '../src/executor.js';
+} from '../src/executor-prompt.js';
+import { extractMutateFromText, extractToolCallFromText } from '../src/executor-parse.js';
 import { ElementType } from '@sigloch/contracts/se';
 
 const CONFIG = ExecutorConfigSchema.parse({

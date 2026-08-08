@@ -64,8 +64,8 @@ depends-on:  MS-1-specification  ◀  MS-2-coding-vv  ◀  MS-3-mvp-readiness  �
 
 | CR | status | name |
 |---|---|---|
-| `CR-GC-204` | open | graph_tests operational |
-| `CR-GC-205` | open | Enforce-don't-document — R-18/R-19 rules + export materialization |
+| `CR-GC-204` | done | graph_tests operational |
+| `CR-GC-205` | done | Enforce-don't-document — R-18 Strukturregel + ausfuehrbare Guardrails |
 | `CR-GC-206` | done | Graph-code LSP conformance — resolve FUNC codeRef symbols |
 
 ## `MS-6-adoption` — M6: Adoption & Artifact-Model · status: draft

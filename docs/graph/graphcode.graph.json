@@ -338,15 +338,15 @@
       "id": "CR-GC-204",
       "type": "CR",
       "name": "graph_tests operational",
-      "description": "testRef-Backfill (7/47→alle lauffähigen TESTs) + gerichtete code→satisfy/allocate→REQ→verify→TEST-Auflösung in graph_tests; Code-Changeset selektiert die richtigen Testdateien (heute 0). (docs/cr/open/CR-GC-204)",
-      "status": "open"
+      "description": "DONE 2026-06-21. harness.testImpact() als gerichteter code→REQ→TEST-BFS ueber das EINE getSubgraph-Primitiv, plus der Code-Changeset-Modus von graph_tests. testRef-Backfill ueber alle 35 lauffaehigen TEST-Knoten; die 14 rein konzeptionellen tragen explizit testRef null und concept true, statt einen Pfad vorzutaeuschen. Neuer Knoten TEST-codec-validation. Nachweis gegen False-Green: changeSet [MOD-codec, MOD-harness] loest graph-integrity + codec.validation + harness.gate auf, TEST-graph-tests-operational verriegelt Coverage und Deduktion. (docs/cr/done/CR-GC-204)",
+      "status": "done"
     },
     {
       "id": "CR-GC-205",
       "type": "CR",
-      "name": "Enforce-don't-document — R-18/R-19 rules + export materialization",
-      "description": "Lift invariants from prose/one-shot-tests into the one engine/gate/export. Item 1: R-18 valid-trace-pattern (engine) + gate de-dup (no codec.validate call). Item 4: R-19 runnable-TEST-binding (warning) + concept marker + graph_export it.todo materialization. Items 2/3 (executable guardrails, CLAUDE.md slim-down) still open.",
-      "status": "open"
+      "name": "Enforce-don't-document — R-18 Strukturregel + ausfuehrbare Guardrails",
+      "description": "DONE 2026-06-21, alle 5 Items. Item 1: R-18 macht die Trace-Paar-Legalitaet gegen TRACE_PATTERNS zur Engine-Regel — das Gate ruft seither KEIN separates codec.validate() mehr. Item 2: ausfuehrbare Guardrails statt Prosa-Vertrauen — NUL-/Binaer-Source-Guard als PreToolUse-Hook, Read-vor-Edit bewusst als Harness-Built-in ohne Zusatz-Hook (kein Parallelpfad), Tool- und Skill-Zaehlungen aus der Live-Registry abgeleitet statt als Magic Number. Item 3: CLAUDE.md auf die Sektion 'Erzwungen, nicht dokumentiert' eingedampft, jede Invariante zeigt auf ihren Enforcer. Item 4: R-19 (lauffaehiger TEST traegt testRef) plus Materialisierung fehlender Stubs als it.todo, kein Phantom-Pfad. Item 5: R-20 (realisierte FUNC traegt codeRef) plus Backfill ueber alle 36 FUNC-Knoten durchs Gate — 25 code-realisiert mit in src/ verifiziertem Symbol, 9 external, 2 concept; R-20 feuert danach 0x. Items 2 und 3 sind Dev-Prozess, nicht Produkt-Requirements, und bekommen deshalb bewusst keine Graph-Knoten. (docs/cr/done/CR-GC-205)",
+      "status": "done"
     },
     {
       "id": "CR-GC-206",
@@ -908,16 +908,88 @@
       "id": "CR-GC-310",
       "type": "CR",
       "name": "Format-E-Kantenbatches verlangen Neu-Deklaration vorhandener Knoten",
-      "description": "Ein formatE-Batch, der nur Kanten zwischen BESTEHENDEN Knoten hinzufuegt, scheitert mit 'Cannot resolve type of source ... no resolveType provided'. Der Codec unterstuetzt options.resolveType, das MCP-Tool reicht es nicht durch (formatEToCommands ruft decode(text) ohne Options). Der Store kennt die Typen — die Pflicht, sie zu wiederholen, ist vermeidbar; kostete im Feldtest einen verlorenen Durchlauf. Betrifft Host und eingebetteten Executor gleichermassen (eine Funktion). Loesung: resolveType aus dem geladenen Graphen bedienen, kein zweiter Index. Grenze: unbekannte uids liefern weiter undefined und damit die bisherige Meldung — ein Tippfehler wird nicht stillschweigend zu einem neuen Knoten. Zweiter Punkt: die kanonischen Kommando-Shapes stehen nur im SCHEMA-01-Fehlertext, der erste commands-Aufruf einer Sitzung kostet einen Probe-Round-Trip — ein Minimalbeispiel je Operationsklasse in die Description. (docs/cr/open/CR-GC-310)",
-      "status": "open",
+      "description": "DONE 2026-08-08. Der Codec nimmt jetzt options.resolveType entgegen und das MCP-Tool reicht es aus dem geladenen Graphen durch (ein Typ-Index, kein zweiter Speicher) — ein formatE-Batch, der nur Kanten zwischen bestehenden Knoten zieht, laeuft ohne Neu-Deklaration. Drei Sperren mussten fallen, nicht eine: die fehlende Durchreichung, der Implicit-Add-Guard und validate(), das seinen Typ ebenfalls nur aus dem Batch kannte. Grenze gehalten: eine unbekannte uid liefert weiter undefined und damit die bisherige Meldung — ein Tippfehler wird nicht stillschweigend zu einem neuen Knoten. Neu und bewusst hart: deklariert ein Batch eine uid mit einem anderen Typ als der Store sie fuehrt, ist das ein Fehler, kein stilles Umtypisieren. 6 Tests. (docs/cr/done/CR-GC-310)",
+      "status": "done",
       "created_at": "2026-08-07T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-311",
+      "type": "CR",
+      "name": "rewind/restore als CLI-Verb — UC-graph-time-travel realisieren",
+      "description": "DONE 2026-08-08. Der ConOps-View fuehrte UC-graph-time-travel, ohne dass es einen Weg gab, einen frueheren Graph-Stand zurueckzuholen — die Rueckwaerts-Haelfte des Use Case war unrealisiert. Neu: src/rewind.ts mit executeRewind + RewindError, CLI-Verb graphcode rewind <ref> [--force]. Kernentscheidung: KEIN git checkout — der Snapshot wird per git show <commit>:<snapshot> direkt aus dem Objektspeicher gelesen, unter .graphcode/rewind-staged.graph.json zwischengelegt und ueber harness.reseed() eingespielt; der Arbeitsbaum wird nie angefasst, die Stage-Datei im finally entfernt. Bricht ab, solange un-exportierte Modell-Aenderungen anstehen (isExportPending) — --force verwirft sie bewusst. Reihenfolge der Pruefungen ist Teil des Vertrags: pending → resolveCommit → readSnapshotAt mit JSON-Validierung → stage → reseed, damit ein kaputter Snapshot den Store nie erreicht. 16 Tests. (docs/cr/done/CR-GC-311)",
+      "status": "done",
+      "created_at": "2026-08-08T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-312",
+      "type": "CR",
+      "name": "SE_DESCRIPTOR trug 2 von 12 Regelfamilien — zehn Familien wertete niemand aus",
+      "description": "DONE 2026-08-08. Befund: SE_DESCRIPTOR.rules enthielt nur V3_RULES und MT_RULES; UC/FC/SC/CR/AO/FM/VIEW/AF wurden zwar in contracts gepflegt, aber von keinem Konsumenten evaluiert — gemeldet wurden 2 Verletzungen, findbar waren 276. Zweiter Befund derselben Klasse: graph-api-core pinnte @sigloch/contracts auf ^2.0.0, waehrend die Familie auf ^3 stand — npm schachtelte eine zweite contracts@2.0.0, sodass das Gate im selben Prozess auf einem aelteren Regelstand lief als der Steering-Pfad. Fix: alle zehn Familien in den Katalog (32 auf 64 Regeln), Dep-Range auf ^3.2.0, eine einzige contracts-Instanz. Damit das Einschalten nicht 114 bestehende Fehler zu Gate-Blockern macht: neues Flag gating auf Rule/RuleViolation — severity sagt wie schlimm, gating sagt ob das Gate handelt; nur R-/RD-/MT- sind gating, der Rest ist sichtbar ohne zu blockieren. Dritter Befund: PHASE_GATE_RULES im graphcode-client war eine handgepflegte Liste, die contracts mit RULE_TO_PHASE bereits ersetzt hatte — sie wichen bei 21 von 33 Regeln voneinander ab. Jetzt abgeleitet statt dupliziert; vier Tests, die die Zuordnung hart verdrahtet hatten (und deshalb die Drift gruen liessen), schlagen sie nun nach. (docs/cr/done/CR-GC-312)",
+      "status": "done",
+      "created_at": "2026-08-08T00:00:00.000Z"
     },
     {
       "id": "CR-GC-313",
       "type": "CR",
       "name": "export-graph.mjs Guard kennt den graphVersion-Stamp nicht",
-      "description": "scripts/export-graph.mjs bricht auf jedem Repo ab, dessen SSOT ueber den MCP-Export entstand: der Canonicity-Guard importiert die committete SSOT, exportiert neu und vergleicht byteweise — die einzige Differenz ist der graphVersion-Trailer, den CR-GC-300 eingefuehrt hat und den das Skript nicht kennt. Impact: das Skript ist unbenutzbar, obwohl der GENERATED-Header JEDER der 15 Views darauf zeigt; wer der Anweisung folgt, bekommt einen Abbruch, der nach korruptem SSOT klingt. Kein Datenverlust — der Guard verweigert, er beschaedigt nichts. Empfehlung: Guard vergleicht stamp-blind (er existiert gegen Hand-Edits, nicht gegen einen Versions-Trailer). Kern-AC: eine SSOT mit echtem Hand-Edit muss WEITER abgelehnt werden — der Guard darf nicht durch Aufweichen repariert werden. Er ist heute ungetestet, was erklaert, warum CR-GC-300 ihn brechen konnte, ohne dass etwas rot wurde. (docs/cr/open/CR-GC-313)",
-      "status": "open",
+      "description": "DONE 2026-08-08. Der Canonicity-Guard verglich die committete SSOT byteweise mit einem Neu-Export; die einzige Differenz war der graphVersion-Trailer aus CR-GC-300, den das Skript nicht kannte — das Skript brach damit auf jedem Repo ab, obwohl der GENERATED-Header jeder der 15 Views darauf zeigt. Neu: isCanonicalSnapshot() in src/exporter.ts vergleicht stamp-blind, indem es den Trailer vor dem Vergleich abtrennt. Der Guard wurde NICHT aufgeweicht — die Kern-Akzeptanz war, dass eine SSOT mit echtem Hand-Edit weiter abgelehnt wird, und genau das ist der Inhalt der negativen Tests. Er war bis dahin ungetestet, was erklaert, warum CR-GC-300 ihn brechen konnte, ohne dass etwas rot wurde; 9 Tests schliessen diese Luecke. (docs/cr/done/CR-GC-313)",
+      "status": "done",
+      "created_at": "2026-08-08T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-314",
+      "type": "CR",
+      "name": "Positive Entscheidungen im Audit-Trail (rulesPassed)",
+      "description": "DONE 2026-08-08. violations hielt immer fest, was schiefging; was eine Mutation BESTAETIGT hat, stand nirgends — eine angenommene Mutation hinterliess ein leeres Feld, und 'R-18 hat diese Kante geprueft und durchgelassen' laesst sich aus 'keine Verletzung' nicht rekonstruieren. Ein Lernmechanismus kann mit der ersten Aussage arbeiten und mit der zweiten gar nicht. Neu auf AuditEntry: rulesPassed (Regel-IDs, nie Regeltext) und rulesetVersion aus dem GELADENEN Paket, nie aus Config. Kein zweiter Regellauf und keine neue Engine-API — reine Mengenarithmetik ueber Katalog und die bereits vorliegenden violations, die beiden Haelften sind damit innerhalb eines Records exakt komplementaer. Auch fuer abgelehnte Mutationen und dryRun-Previews aufgezeichnet. Tragende Entscheidung: audit_trail gibt das Feld per Default NICHT heraus (rund 60 Regel-IDs pro Eintrag bei Limit 50) — und zwar durch ABWESENHEIT, nicht durch ein leeres Array, sonst liest ein Konsument 'nichts bestanden' statt 'nicht aufgezeichnet'. Alte Records werden bewusst nicht nachgetragen: sie gegen einen Regelstand zu rekonstruieren, der zur Mutationszeit nicht galt, waere selbst eine Provenienz-Verletzung. (docs/cr/done/CR-GC-314)",
+      "status": "done",
+      "created_at": "2026-08-08T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-315",
+      "type": "CR",
+      "name": "R-12 und R-21 feuerten auf Kanten, fuer die sie nie gedacht waren",
+      "description": "DONE 2026-08-08 (contracts 3.2.0, RULES_VERSION 2.24.0). R-12 pruefte Redundanz ueber ALLE Kantentypen und zaehlte dabei Richtungspaare doppelt; jetzt auf compose/allocate/relation beschraenkt mit richtungsunabhaengigem Dedup-Schluessel. R-21 verlangte fuer JEDES FUNC-Paar einen gemeinsamen FCHAIN mit Integrationstest — auch fuer Paare, die in keiner gemeinsamen Wirkkette stehen und deshalb gar keinen haben koennen; jetzt schweigt die Regel fuer Paare ohne gemeinsamen FCHAIN. Auf dem committeten SSOT feuern beide Regeln danach 0x, inklusive der Ko-Adjazenz-Warnung FUNC-graph-export-snapshot → FUNC-reseed, die bis dahin bewusst stehen geblieben war. (docs/cr/done/CR-GC-315)",
+      "status": "done",
+      "created_at": "2026-08-08T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-316",
+      "type": "CR",
+      "name": "graph_help buendelt Massnahmen je Regel statt je Element",
+      "description": "DONE 2026-08-08. Die kontextuelle Hilfe listete eine Massnahme pro verletzendem Element — bei einer Regel, die 40x feuert, 40 nahezu identische Bloecke. Jetzt nach ruleId gruppiert: ein Block je Regel mit count, hoechster Severity und bis zu MAX_EXAMPLE_ELEMENTS=5 Beispiel-uids. Reihenfolge war Bedingung, nicht Geschmack: dieser CR musste VOR dem Autorieren der 36 Plain/SE-Textpaare landen, sonst waere der tokenlose graph_help-Modus von 2 KB auf rund 178 KB gewachsen. (docs/cr/done/CR-GC-316)",
+      "status": "done",
+      "created_at": "2026-08-08T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-317",
+      "type": "CR",
+      "name": "RTM nach A-SPICE-Ebenen gruppieren + Integrationsabdeckung",
+      "description": "DONE 2026-08-08. Die Requirements-Traceability-Matrix warf System-, Funktions-, Komponenten- und Integrationsanforderungen in eine Liste. Die Ebene wird NICHT gelabelt, sondern vom Reporter aus der Anbindung erschlossen — SYS compose REQ ergibt system, UC ergibt functional, FUNC/MOD satisfy ergibt component, FCHAIN satisfy ergibt integration; das haelt die Ontologie frei von einem Prozessmodell-Attribut. Zusaetzlich eine Rolled-up-Integrationsabdeckung in der Testmatrix, die nur Paare mit gemeinsamem FCHAIN auswertet. Nachtrag im Abschluss statt still korrigiert: die erste Implementierung las nur compose und nur einen Hop, wodurch 64 von 111 REQs faelschlich als ankerlos erschienen — 63 davon haengen ueber satisfy. Die Zahl '69 ohne Anker' aus dem Zwischenbericht war damit falsch; korrigiert in CR-GC-318. (docs/cr/done/CR-GC-317)",
+      "status": "done",
+      "created_at": "2026-08-08T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-318",
+      "type": "CR",
+      "name": "reqLevels lief nur ueber compose — satisfy-Bein fehlte",
+      "description": "DONE 2026-08-08. Korrektur zu CR-GC-317: die Ebenenherleitung folgte nur der compose-Kante und nur einen Hop, sodass jede REQ, die ueber satisfy an FUNC/MOD/FCHAIN haengt, als 'unassigned' in der RTM landete — 64 von 111. Jetzt laufen beide Beine rekursiv mit Zyklusschutz ueber ein seen-Set. Der Praezedenzfall stand die ganze Zeit daneben: levelsOfTest aus CR-GC-240 lief seit jeher ueber beide Kanten. (docs/cr/done/CR-GC-318)",
+      "status": "done",
+      "created_at": "2026-08-08T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-319",
+      "type": "CR",
+      "name": "audit_trail lieferte Rohdatensaetze statt einer Projektion",
+      "description": "DONE 2026-08-08. Ein Default-Aufruf (limit 50) auf dem Trail dieses Repos war 162,6 KB, davon 79 Prozent die vollstaendigen mutate-Batches. Der Agent fragt den Trail, um zu erfahren WAS PASSIERT IST; der eine Konsument, der die Batches braucht, ist der Replay-Merge, und der liest die JSONL-Datei direkt, nie dieses Tool. Neu: projectAuditEntries als reine, exportierte Funktion — Basisfelder plus commandCount und opSummary (+n ~n -n), Violations auf ruleId/severity/message/elementId geschlankt; includeCommands und includeRulesPassed holen das Volle zurueck. Dieselbe Regel wie CR-GC-314: Schreiben ist nicht Ausliefern — der Record auf Platte bleibt vollstaendig. Gemessen am ECHTEN Trail, wie die Akzeptanz es verlangt: 17,0 KB aus 162,6 KB = 89,3 Prozent, nicht die geschaetzten 90. Die Schwelle steht auf dem gemessenen Wert mit der Begruendung daneben: die von REQ-T01 GEFORDERTEN Basisfelder sind allein rund 10 KB (200 Byte je Record, ueberwiegend JSON-Schluessel), die schlanken Violations weitere 6,3 KB — mehr geht nicht, ohne ein gefordertes Feld zu streichen. rulesetVersion reist seither mit includeRulesPassed statt in der Default-Antwort: beide beschreiben den Regelsatz, nicht das Ereignis. (docs/cr/done/CR-GC-319)",
+      "status": "done",
+      "created_at": "2026-08-08T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-320",
+      "type": "CR",
+      "name": "executor.ts schneiden — Schritt 1 (Prompt · Ranking · Prosa-Recovery)",
+      "description": "DONE 2026-08-08. src/executor.ts war mit 1503 Zeilen der groesste Ueberschreiter in src/ — 3x die 500-Zeilen-Grenze. Drei zustandsfreie Achsen ohne Closure-Bezug zum Runden-Loop herausgeschnitten: src/executor-prompt.ts (207 Zeilen: SYSTEM, EMIT_SUFFIX, IDLE_NUDGE, WITHHELD_TOOLS, AUTHORING_TOOLS, jsonCapped, buildRoundInjection), src/executor-rank.ts (106 Zeilen: TEMPERATURE_ANCHORS, temperatureSpread, deltaSum, focusDelta, totalDelta, rankCandidates, CandidateProbe), src/executor-parse.ts (108 Zeilen: extractMutateFromText, salvageCommands, extractToolCallFromText). Reines Verschieben, per diff gegen HEAD verifiziert: identisch bis auf die export-Praefixe, die der Modulschnitt erzwingt, und die in die Modul-Header gefalteten Abschnitts-Banner. Kein Re-Export-Barrel in executor.ts — die zwei Importeure (tests/executor.test.ts, tests/executor.bestofn.test.ts) ziehen auf die neuen Module um, keine Test-Assertion geaendert. Ergebnis executor.ts 1503 auf 1127 Zeilen. Ehrlicher Rest: 1127 ist weiter ueber 500; der verbleibende Block ist runExecutor mit den Closures loadGraphSnapshot/runPreflight, die stats/registry/trace/config teilen — das verlangt eine Factory und ist Refactoring, kein Verschieben. Entscheidung noch offen: Schritt 2 als Turn-Runner-Extraktion oder begruendete Ausnahme in src/README.md wie bei harness.ts. 85 Testdateien / 622 Tests gruen. (docs/cr/done/CR-GC-320)",
+      "status": "done",
       "created_at": "2026-08-08T00:00:00.000Z"
     },
     {
@@ -6249,6 +6321,26 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-311",
+      "target": "FUNC-rewind",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-311",
+      "target": "UC-graph-time-travel",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-312",
+      "target": "FUNC-evaluate-rules",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-312",
+      "target": "FUNC-mutate",
+      "type": "relation"
+    },
+    {
       "source": "CR-GC-313",
       "target": "FUNC-export-markdown",
       "type": "relation"
@@ -6256,6 +6348,36 @@
     {
       "source": "CR-GC-313",
       "target": "MOD-docs",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-314",
+      "target": "FUNC-mutate",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-315",
+      "target": "FUNC-evaluate-rules",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-316",
+      "target": "MOD-mcp-tools",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-317",
+      "target": "FUNC-view-rtm",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-318",
+      "target": "FUNC-view-rtm",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-319",
+      "target": "MOD-mcp-tools",
       "type": "relation"
     },
     {
@@ -6957,9 +7079,7 @@
     {
       "source": "FLOW-mutate-cmd",
       "target": "FUNC-mutate",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "type": "io"
     },
     {
       "source": "FLOW-mutate-cmd",
@@ -8024,9 +8144,7 @@
     {
       "source": "FUNC-save-graph",
       "target": "FLOW-committed-graph",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "type": "io"
     },
     {
       "source": "FUNC-save-graph",
@@ -9740,5 +9858,5 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     }
   ],
-  "graphVersion": 58
+  "graphVersion": 62
 }

@@ -1,6 +1,6 @@
 # CR-GC-320: executor.ts schneiden — Schritt 1 (Prompt · Ranking · Prosa-Recovery)
 
-**Status:** open · **angelegt 2026-08-08** · **Max Files:** 6
+**Status:** done 2026-08-08 · **angelegt 2026-08-08** · **Max Files:** 6
 **Herkunft:** aus CR-GC-261 ausgegliedert. `src/executor.ts` existierte bei CR-GC-260 noch
 nicht (CR-GC-278/279) und ist heute mit **1503 Zeilen** der größte Überschreiter in `src/` —
 3× die Grenze, also kein Verschiebe-, sondern ein Umbau-Budget.
@@ -61,12 +61,42 @@ begründete Ausnahme in `src/README.md` festgeschrieben.
 
 ## Akzeptanz
 
-- [ ] Reines Verschieben: keine Signatur-, Ausgabe- oder Semantik-Änderung in den drei
-      neuen Modulen.
-- [ ] Keine Test-**Assertion** geändert — nur Import-Zeilen (Präzedenz CR-GC-260).
-- [ ] Kein Re-Export der verschobenen Symbole aus `executor.ts`.
-- [ ] Alle drei neuen Module < 500; `executor.ts` ~1100 (gemessen, im CR-Abschluss notiert).
-- [ ] `npm run build` + `npm test` vollständig grün.
+- [x] Reines Verschieben: keine Signatur-, Ausgabe- oder Semantik-Änderung in den drei
+      neuen Modulen. **Per `diff` gegen `HEAD:src/executor.ts` verifiziert** — identisch bis
+      auf die `export`-Präfixe, die der Modulschnitt erzwingt, und die in die Modul-Header
+      gefalteten Abschnitts-Banner.
+- [x] Keine Test-**Assertion** geändert — nur Import-Zeilen (Präzedenz CR-GC-260).
+      Nachweis: `git diff -U0 tests/` enthält außerhalb der Import-Blöcke keine Zeile.
+- [x] Kein Re-Export der verschobenen Symbole aus `executor.ts`.
+- [x] Alle drei neuen Module < 500; `executor.ts` **1503 → 1127** (gemessen).
+- [x] `npm run build` + `npm test` vollständig grün (85 Dateien / 622 Tests).
+
+## Ergebnis (gemessen)
+
+| Datei | Zeilen |
+|---|---|
+| `src/executor.ts` | 1503 → **1127** |
+| `src/executor-prompt.ts` | 207 |
+| `src/executor-rank.ts` | 106 |
+| `src/executor-parse.ts` | 108 |
+
+Sichtbarkeit ist die einzige Abweichung vom reinen Verschieben: `EMIT_SUFFIX`, `IDLE_NUDGE`,
+`WITHHELD_TOOLS` und `AUTHORING_TOOLS` waren modul-privat und mussten exportiert werden, damit
+`executor.ts` sie importieren kann — beim Modulschnitt unvermeidbar. `salvageCommands`,
+`blockingRise`, `TIER_RANK` und `GuideSlice` bleiben privat: sie werden nur innerhalb ihres
+eigenen neuen Moduls benutzt.
+
+## Nebenbefund (nicht Teil dieses CR)
+
+Der MCP-Server-Prozess dieses Repos (`node dist/cli.js mcp`, gestartet 04:12) war **älter als
+der heutige Publish** von `@sigloch/contracts` 3.2.0 / `graph-api-core` 2.1.0 und hielt den
+alten Regelstand im Speicher — erkennbar daran, dass er R-21 auf
+`FUNC-graph-export-snapshot → FUNC-reseed` meldete, während der frische lokale Code dort 0
+liefert. Sein `graph_export` hat prompt die RTM-Ebenengruppierung (CR-GC-317/318) und die
+Rolled-up-Integrationsabdeckung wieder herausgerendert. Repariert durch `node
+scripts/export-graph.mjs` mit dem frischen lokalen `dist` — derselbe Stale-Prozess-Fehler, der
+in dieser Session schon einmal `docs/views/spec.md` wiederbelebt hatte. **Der Server muss nach
+einem Paket-Update neu gestartet werden**; das ist bisher nirgends erzwungen.
 
 ## Nicht in diesem CR
 
