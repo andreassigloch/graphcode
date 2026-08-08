@@ -295,6 +295,62 @@
       "created_at": "2026-06-17T00:00:00.000Z"
     },
     {
+      "id": "CR-GC-127",
+      "type": "CR",
+      "name": "graph_export als MCP-Tool — Agent-Loop ueber MCP geschlossen",
+      "description": "DONE 2026-06-18. Der Re-Exporter (CR-GC-113) war nur als Library-Funktion und als Skript erreichbar; ueber die Agent-Surface fehlte damit der letzte MVP-1-Schritt. bindToolsToHarness bekam graph_export: serialisiert den LIVE harness.getGraph() via exportGraphJson/exportMarkdown und schreibt docs/graph/<name>.graph.json plus docs/views/*.md unter den Repo-Root. Dafuer neue Getter getRepoRoot() und getScope() in harness.ts. Live-E2E ueber realen CLI und MCP-stdio-Server durchlaufen: init, gate-mutate, graph_impact, implement, graph_export. (docs/cr/done/CR-GC-127)",
+      "status": "done",
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-128",
+      "type": "CR",
+      "name": "Repo-abgeleiteter Member-Name + README-Setup",
+      "description": "DONE 2026-06-18. serveStdio setzte die Harness-Scope hart auf graphcode, weshalb der Re-Export in einem Fremd-Repo als graphcode.graph.json landete. deriveMemberName(repoRoot) leitet den Namen jetzt aus dem unscoped package.json-Namen ab, faellt auf den Repo-Verzeichnisnamen und erst dann auf graphcode zurueck. README neu geschrieben auf den ausgelieferten Stand inklusive Quick-Start fuer ein neues Repo. 6 Testfaelle. (docs/cr/done/CR-GC-128)",
+      "status": "done",
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-129",
+      "type": "CR",
+      "name": "graph_readiness als MCP-Tool",
+      "description": "DONE 2026-06-18. Die Skills se-review und se-status brauchen einen Readiness-Score, den frueher der stillgelegte localhost:3001-Endpunkt lieferte. scoreReadiness(harness) existierte, war aber ueber MCP nicht erreichbar. graph_readiness in bindToolsToHarness ergaenzt (Registry 11 auf 12 Tools), liefert den ReadinessReport mit Compliance-Score, violationsByRule und Dimensionen; Test gegen echtes Disk-Kuzu belegt, dass Familie-Regel-IDs den Score treiben. (docs/cr/done/CR-GC-129)",
+      "status": "done",
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-130",
+      "type": "CR",
+      "name": "Action-Skills (fmea/review/status) auf MCP umgestellt",
+      "description": "DONE 2026-06-18. se-fmea, se-review und se-status riefen weiter curl gegen den mit CR-GC-111 stillgelegten localhost:3001-Endpunkt — ohne Migration liefen die SE-Workflows des MVP nicht. Die drei Skills fahren den Graphen jetzt ausschliesslich ueber MCP-Tools: Query ueber graph_elements/graph_get_node/graph_impact, Schreiben ueber graph_mutate (das Gate blockt neue Error-Violations statt still zu verwerfen), Violations ueber rules_get_violations, Score ueber graph_readiness. Veraltete Ontologie-Kuerzel auf die Live-Ontologie aus @sigloch/contracts/se gezogen. (docs/cr/done/CR-GC-130)",
+      "status": "done",
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-131",
+      "type": "CR",
+      "name": "View-Skills A (arch/nfr/trade) auf MCP umgestellt",
+      "description": "DONE 2026-06-18. se-view-arch, se-view-nfr und se-view-trade lasen ihre Slices per curl vom stillgelegten Endpunkt. Neu holen sie die relevante Slice ueber die MCP-Query-Tools und rendern die View in der Agent-Antwort: Skills sind Prompts, der Agent ist der Renderer — kein server-seitiger View-Endpunkt, das ist der KNOW-via-Query-Entwurf. Konformitaet: 0 Treffer auf localhost:3001, GRAPH_API oder /api/graph. (docs/cr/done/CR-GC-131)",
+      "status": "done",
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-132",
+      "type": "CR",
+      "name": "View-Skills B (testmatrix/testconcept/implplan) + Skill-Konformitaetstest",
+      "description": "DONE 2026-06-18. Die letzten drei Skills auf dem toten Pfad wie in CR-GC-131 umgeschrieben. Wichtiger als die Umstellung ist die Verriegelung: tests/skills.mcp-conformance.test.ts (TEST-skills-mcp) greppt ALLE .claude/skills/*.md auf 0 Treffer fuer localhost:3001, GRAPH_API, /api/graph, /api/dashboard und verlangt je Skill mindestens eine MCP-Tool-Referenz. Damit ist done=verifiziert auch fuer die prompt-realisierten FUNCs, und MOD-skills konnte auf done gehen. (docs/cr/done/CR-GC-132)",
+      "status": "done",
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-133",
+      "type": "CR",
+      "name": "Scaffold installiert die SE-Skills ins Ziel-Repo",
+      "description": "DONE 2026-06-18. graphcode init legte .mcp.json, .graphcode/, GRAPHCODE.md und die Dependency an, aber keine SE-Skills — ein frisch initialisiertes Member-Repo bekam das governte Substrat mit null SE-Workflows. init/update kopieren jetzt die mitgelieferten .claude/skills/se-*.md idempotent ins Ziel (byte-identische Wiederholung = preserved), remove loescht sie restlos und pruned leere Verzeichnisse. .claude/skills in package.json files aufgenommen, damit sie im npm-Tarball ausgeliefert werden; der Distribution-Test installiert aus dem gepackten Tarball in ein Fremd-Repo. (docs/cr/done/CR-GC-133)",
+      "status": "done",
+      "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
       "id": "CR-GC-134",
       "type": "CR",
       "name": "Bottom-up Test-Deduktion (graph_tests)",
@@ -398,6 +454,14 @@
       "status": "done"
     },
     {
+      "id": "CR-GC-213",
+      "type": "CR",
+      "name": "graph_context — knotenbezogenes Definition-of-Done-Kontextpaket",
+      "description": "DONE 2026-06-26. Erste Realanwendung (graphify) zeigte die Ergonomie-Luecke, nicht ein Modellproblem: die Precise-Nav-Tools wurden 0-mal gerufen, stattdessen 31 Reads mit 171k Zeichen — ein Read von docs/SPEC.md liefert scheinbar alles in einem Call. Dazu eine Richtungs-Luecke: graph_impact liefert Downstream, zum Implementieren braucht man das Upstream-Spec-Closure. graph_context(id, depth) assembliert server-seitig ein Format-E-Slice aus Knoten, erfuellten REQ/UC, den verifizierenden TEST, den ausgetauschten FLOW/SCHEMA und dem allozierten MOD. Live-Smoke gegen das Selbstmodell: 3-Knoten-Bundle rund 250 Token. 7 Tests. (docs/cr/done/CR-GC-213)",
+      "status": "done",
+      "created_at": "2026-06-26T00:00:00.000Z"
+    },
+    {
       "id": "CR-GC-214",
       "type": "CR",
       "name": "Read-side graph-first enforcement (deny-stale-prose-read hook)",
@@ -417,6 +481,14 @@
       "name": "graph_realize ergonomic write-back affordance (write-twin of graph_context)",
       "description": "DONE 2026-06-28: flat graph_realize MCP tool in src/mcp-tools.ts wraps the 90% realize-mutation behind a flat schema (funcUid/file/symbol/lang?, testUid?/testFile?/testCase?/tool?) and runs through the same Apply-Gate via harness.mutate() (update-node, no parallel write path). Sets FUNC codeRef (R-20) + optional TEST testRef (R-19); returns the missingRefs delta (before/after/resolved) so the agent sees the realization confirmed. Unknown funcUid/testUid gives a clear error. Built for small local models that mis-guessed graph_mutate's nested union (SPIKE-GC-loop-executor-benchmark). Added to the agent-agnostic surface contract. Test: tests/mcp.realize.test.ts. (CR-GC-216)",
       "status": "done"
+    },
+    {
+      "id": "CR-GC-217",
+      "type": "CR",
+      "name": "Graph-State Time-Travel (commit-gebundener Snapshot)",
+      "description": "DONE 2026-06-27. Ein frueherer Graph-Stand liess sich nicht zu passendem Code zurueckholen: Serialisierung und Restore existierten, die Bindung an die Git-Historie fehlte. Umgesetzt wurde Ansatz A, Scheibe 1 — der deterministische, verlustfreie und git-getrackte Snapshot docs/graph/graphcode.graph.json wird an den Commit gebunden, Restore laeuft ueber graph_reseed (CR-GC-203). Scheibe 2 wurde von CR-GC-218 abgeloest; B/C/D verworfen. Umnummeriert von CR-GC-216, weil eine parallele Session die Nummer belegt hatte. (docs/cr/done/CR-GC-217)",
+      "status": "done",
+      "created_at": "2026-06-27T00:00:00.000Z"
     },
     {
       "id": "CR-GC-218",
@@ -579,6 +651,38 @@
       "status": "done",
       "created_at": "2026-07-05T00:00:00.000Z",
       "updated_at": "2026-07-05T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-240",
+      "type": "CR",
+      "name": "Testkonzept: Pyramiden-Ebene aus der Graph-Position statt aus einem level-Attribut",
+      "description": "DONE 2026-07-07. renderTestConcept klassifizierte die Testpyramide ueber testLevel(n), das ein Attribut am TEST-Knoten las (testRef.level, sonst level). Reale TEST-Knoten tragen das praktisch nie, also fielen e2e, integration und unit auf 0 und alles landete in (unleveled) — die Pyramide degenerierte, obwohl jede REQ verifiziert war. Die Ebene folgt jetzt aus der Graph-Position: worauf der Test ueber REQ zielt, bestimmt unit, integration oder e2e. Vorgabe aus der graph-view-edit-Session: level is defined by graph position, nicht durch ein gepflegtes Attribut. (docs/cr/done/CR-GC-240)",
+      "status": "done",
+      "created_at": "2026-07-07T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-241",
+      "type": "CR",
+      "name": "Host-Shim-Schreibbruecke exportieren (callHost/HOST_SOCK_BASENAME)",
+      "description": "DONE 2026-07-07. CR-GC-235 baute .graphcode/host.sock, damit ein zweiter graphcode-mcp-Prozess Tool-Calls inklusive graph_mutate durch DASSELBE Apply-Gate proxyen kann, ohne ein zweites Kuzu-Handle zu oeffnen. Die Client-Seite callHost/HOST_SOCK_BASENAME in src/host-shim.ts stand aber nie in der Public-Export-Liste von src/index.ts. Ausloeser war der erste externe Konsument: graph-view-edit (CR-GVE-008) braucht genau diesen gegateten Schreibtransport fuer seine Edit-Flaeche. Der Datei-Header trug noch Open (implemented, pending review); die Datei liegt in done/. (docs/cr/done/CR-GC-241)",
+      "status": "done",
+      "created_at": "2026-07-07T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-242",
+      "type": "CR",
+      "name": "se-test-ui-Skill + die Red-First-Regel ausliefern",
+      "description": "DONE 2026-07-08. graphcode liefert rund 24 se-*-Skills aus, aber keinen zum Test-ENTWURF. Die Retrospektive des graph-view-edit-Blind-Render-Vorfalls legte eine ganze Fehlerklasse offen: dutzende unit-getestete Module waren verwaist (von nichts importiert, ueber keine Geste erreichbar) und trotzdem gruen, weil jede Assertion die exportierte Funktion direkt rief; UI-Assertions prueften DOM-Praesenz statt gerenderter Pixel, 12 Views rendersten blind unentdeckt. Die Anleitung musste aus dem Paket kommen, weil graphcode skills sync Konsumenten-Skills ueberschreibt. (docs/cr/done/CR-GC-242)",
+      "status": "done",
+      "created_at": "2026-07-08T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-243",
+      "type": "CR",
+      "name": "Lokale OCC (BaseVersionSchema) auf @sigloch/contracts migriert",
+      "description": "DONE 2026-07-08. CR-GC-233 baute OCC (graphVersion/baseVersion, Stale-Reject plus Delta) bewusst ohne Contracts-Bump, mit lokalem BaseVersionSchema in mcp-tools.ts und der Notiz, die Promotion sei ein spaeterer Familie-Review. Der fand statt: sigloch-modules CR-199 und CR-200 haben graphcodes Form uebernommen, nicht umgekehrt, und sie als GraphVersionSchema, MutateOptionsSchema und MutateResultSchema.stale/staleDelta in contracts gelandet. Ohne diese Migration liefen zwei Formen parallel — genau der Parallelpfad, den CR-GC-205 verbietet. Umnummeriert von CR-GC-241, das doppelt vergeben war. (docs/cr/done/CR-GC-243)",
+      "status": "done",
+      "created_at": "2026-07-08T00:00:00.000Z"
     },
     {
       "id": "CR-GC-244",
@@ -839,6 +943,258 @@
       "description": "DONE 2026-07-29. Neues read-only MCP-Tool graph_suggest in eigener Tool-Gruppe src/tools/suggest.ts (report.ts-Size-Guard): duennes Binding auf se-optimizer 0.3.0 mit targetFor und suggestEdits. Gegeben eine Zielrichtung im sechsdimensionalen Metrikraum als Gewichte je Dimension, rankt es die feuernden Operator-Regeln nach dem Skalarprodukt aus Metrik-Delta und Zielrichtung. Spike-2-Design: ausgeliefert wird die Fund-Ebene (Violation, Richtung, Delta, Default-Messebene arch), ein konkreter Edit nur dann, wenn ein rule-spezifisches Fix-Template ihn deterministisch herleitet. Jeder Template-Edit laeuft als dryRun (CR-GC-234) durchs volle Gate und kommt mit 3-Tier-Verdict zurueck, nach jedem Preview restauriert loadGraph die In-Memory-Kopie. Nie auto-apply: anwenden geht nur ueber graph_mutate, Previews laufen auf der Tool-Schreibkette serializeToolWrite, kein Interleaving mit echten Writes. graphcode-Haelfte des aimpro-Fahrplans Schritt 3, Paket-Haelfte ist sigloch-modules CR-SM-225. Blocker bis zum Publish von se-optimizer 0.3.0 war distribution.test.ts (E404 beim Tarball-Install im Fremd-Repo), danach gruen ohne Code-Aenderung. 6 Dateien, Suite 321/321. Detail: docs/cr/done/CR-GC-273-graph-suggest.md",
       "status": "done",
       "closed_at": "2026-07-29T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-274",
+      "type": "CR",
+      "name": "Fit-Gate Haertegrad 1: Delta-m-Advisory am Apply-Gate",
+      "description": "DONE 2026-07-29. Jede erfolgreiche Mutation, auch dryRun-Verdicts, traegt jetzt ein fitAdvisory am MutateResult: der R6-Topologievektor vor und nach der Mutation auf layer arch (FUNC/FLOW/MOD/SCHEMA/ACTOR, via @sigloch/se-optimizer metrics), das Delta je Dimension und die benannten regressions. Geblockte Mutationen tragen kein Advisory, weil es keinen Nachher-Zustand gibt. Entschiedene Gate-Philosophie: das Advisory ist eine MESSUNG, kein Gate — es beeinflusst weder tier noch success, geblockt wird ausschliesslich ueber Regeln. (docs/cr/done/CR-GC-274)",
+      "status": "done",
+      "created_at": "2026-07-29T00:00:00.000Z",
+      "commitRef": "b37e822"
+    },
+    {
+      "id": "CR-GC-275",
+      "type": "CR",
+      "name": "graph_generate — der Kaltstart-Generierungstreiber",
+      "description": "DONE 2026-07-29. Der bisher fehlende generative Treiber: aus Prosa-Intention plus Graph-Zustand die konkrete naechste Generierungs-Instruktion statt der generischen graph_next_step-Aktion. Deterministische Zustandsmaschine in src/generate.ts mit drei Zustaenden — seed (kein SYS: Seed-Batch aus der Intention, 1 SYS, 1 bis 3 ACTOR, 3 bis 7 UC), expand (schwaechste Readiness-Dimension mit Funden, als Schreib-Instruktion mit Template und bis zu 3 konkreten Funden), handoff (alle Dimensionen ueber Schwelle und 0 Error-Violations: Uebergabe an graph_suggest). Das Gate-Protokoll steckt in jedem Prompt. (docs/cr/done/CR-GC-275)",
+      "status": "done",
+      "created_at": "2026-07-29T00:00:00.000Z",
+      "commitRef": "1cc3ccf"
+    },
+    {
+      "id": "CR-GC-276",
+      "type": "CR",
+      "name": "graph_mutate: Format-E-Input, dryRun, Preview-Audit",
+      "description": "DONE 2026-07-29. Der Greenfield-Trial verbrauchte 133k Output-Token, dominiert von 6 graph_mutate-Batches mit 356 JSON-Kommandos; am Trial-Graphen gemessen ist Format-E Faktor 2,1 bis 2,8 kompakter. Dazu ein echter Bug: der se:generate-Skill verwies auf dryRun, das Tool hatte den Parameter aber nicht — Zod strippte das Feld still, alle Previews wurden real angewendet. Neu: formatE-Input als Alternative zu commands, decodiert ueber den Codec in dieselben Kommandos und durch DASSELBE Gate (Upsert; deletes/updates/merges bleiben commands), plus echter dryRun mit auditiertem Preview-Verdict. (docs/cr/done/CR-GC-276)",
+      "status": "done",
+      "created_at": "2026-07-29T00:00:00.000Z",
+      "commitRef": "a249679"
+    },
+    {
+      "id": "CR-GC-277",
+      "type": "CR",
+      "name": "SE-Skills als registrierbare Commands ausliefern",
+      "description": "DONE 2026-07-30. Die 27 SE-Skills wurden flach nach .claude/skills/se-*.md gescaffoldet — dort registriert Claude Code nichts: Skills brauchen name/SKILL.md-Verzeichnisse, Commands den Pfad als Namen. Die Doppelpunkt-Namen der Frontmatter waren immer schon das Commands-Schema, also existierte /se:generate in keinem Member-Repo. Paket-Quelle per git mv nach .claude/commands/<ns>/<rest>.md verschoben (27 Dateien): Pfad im Paket = Pfad im Ziel, das Scaffold kopiert verbatim, kein Laufzeit-Mapping. Das graphcode-Repo selbst hat seine Skills damit ebenfalls registriert. (docs/cr/done/CR-GC-277)",
+      "status": "done",
+      "created_at": "2026-07-30T00:00:00.000Z",
+      "commitRef": "bac2f3a"
+    },
+    {
+      "id": "CR-GC-278",
+      "type": "CR",
+      "name": "Embedded Executor Core (Weg C, Teil 1)",
+      "description": "DONE 2026-07-31. Der minimale Modell-Treiber aus dem Greenfield-Systemtest wurde Produkt-Code (src/executor.ts): graphcode faehrt damit ein lokales LLM oder Anthropic-BYOK ohne Fremd-Harness — rund 2 bis 3k Token Grundlast statt 16k, Loop in Code statt Prompt, graph_generate entscheidet deterministisch was als naechstes, das Modell emittiert nur. Behobener Denkfehler des Rig-Treibers: er brach den Step-Loop nach dem ERSTEN graph_mutate ab, egal ob appliziert oder abgelehnt — gemessen wurde damit Near-Miss mal atomares Gate ohne Repair-Loop, nicht die Modellfaehigkeit. (docs/cr/done/CR-GC-278)",
+      "status": "done",
+      "created_at": "2026-07-31T00:00:00.000Z",
+      "commitRef": "5acf18e"
+    },
+    {
+      "id": "CR-GC-279",
+      "type": "CR",
+      "name": "graphcode run <intent> + lokale Validierung (Weg C, Teil 2)",
+      "description": "DONE 2026-07-31. Der Executor-Kern wurde als CLI-Verb nutzbar: graphcode run autoriert den Graphen des aktuellen Repos generativ (Seed, Expand, Handoff) gegen ein konfiguriertes Modell, lokal oder Anthropic-BYOK, ohne opencode und ohne Claude Code. Validierung v6 mit devstral-small: durabler Expand ueber Seed-Groesse erreicht — 14 Elemente / 18 Traces, 5 appliziert / 3 abgelehnt, exit 0, Export und Lock-Freigabe sauber. repairedAfterRejection = 0: die Konvergenz kam aus frischen generate-Runden (deterministischer Re-Fokus), nicht aus In-Step-Repair. (docs/cr/done/CR-GC-279)",
+      "status": "done",
+      "created_at": "2026-07-31T00:00:00.000Z",
+      "commitRef": "d24eefa"
+    },
+    {
+      "id": "CR-GC-280",
+      "type": "CR",
+      "name": "Executor-Konvergenz-Hebel (Folge zu CR-GC-278/279)",
+      "description": "DONE 2026-07-31, Erfolgskriterium VERFEHLT und so dokumentiert. Die drei billigen Hebel aus dem v6-Lauf (ARGS-Text-Recovery, Lese-Budget, 1-Fund-Fokus) wirken mechanisch nachweislich (9 Applies statt 5, 2 statt 3 Rejections), aber der Lauf v7b lieferte 10 Elemente / 11 Traces gegen 14/18 in v6 und kein MOD/REQ/TEST: der 1-Fund-Fokus verkleinert die Batches und verhindert konstruktiv die grossen Zerlegungs-Treffer, aus denen v6s Tiefe kam (n=1, hohe Lauf-Varianz). Limitierender Faktor danach: Decode-Geschwindigkeit der lokalen Box. (docs/cr/done/CR-GC-280)",
+      "status": "done",
+      "created_at": "2026-07-31T00:00:00.000Z",
+      "commitRef": "bacc3f2"
+    },
+    {
+      "id": "CR-GC-281",
+      "type": "CR",
+      "name": "Fund-Rotation/Defer in graph_generate",
+      "description": "DONE 2026-08-01. Ein festgefahrener Fund darf einen Executor-Lauf nicht mehr monopolisieren: graph_generate kann Fund-Sets deterministisch zurueckstellen und fokussiert dann den naechstschwaecheren Fund bzw. die naechstschwaechere Dimension; der Executor deferrt nach 3 Stagnations-Runden automatisch. Validierung v12 (48 Runden, defer plus temperature 0.2): 82 Elemente / 104 Traces, mehr als doppelt so viel wie v9 und v11, erstmals ALLE Dimensionen in EINEM Lauf. Max-Stagnation x3 statt x31 — der Defer kappte jede Schleife deterministisch. (docs/cr/done/CR-GC-281)",
+      "status": "done",
+      "created_at": "2026-08-01T00:00:00.000Z",
+      "commitRef": "1114f5e"
+    },
+    {
+      "id": "CR-GC-282",
+      "type": "CR",
+      "name": "Empfaenger-abhaengiges Instruktions-Rendering — negativ validiert und zurueckgebaut",
+      "description": "DONE 2026-08-01, Ansatz VERWORFEN. Minimal-Rendering ohne Grammatik (v13) brachte 6 Applies gegen 30 Rejections in 24 Runden, mit Kanten-Grammatik (v13b) 22 Elemente / 30 Traces und 47 Rejections — gegen 82/104 der v12-Baseline mit vollem Rendering. Zwei Ursachen: die Multi-Kandidaten-Instruktion des vollen Templates erzeugt erst die grossen verbundenen Batches, die den Durchsatz tragen; und Ein-Fund-Batches kollidieren mit Batch-Invarianten wie REQ-braucht-TEST im selben Batch. Das Frontier-Gepaeck im Instruktionstext ist tragendes Geruest, kein Ballast. Konsequenz: profile-Parameter, LOCAL_RULES/LOCAL_GRAMMAR und das Executor-Wiring vollstaendig entfernt — keine parallelen Pfade fuer einen verworfenen Ansatz. (docs/cr/done/CR-GC-282)",
+      "status": "done",
+      "created_at": "2026-08-01T00:00:00.000Z",
+      "commitRef": "903d08d"
+    },
+    {
+      "id": "CR-GC-283",
+      "type": "CR",
+      "name": "Planungs-Step auf dem Top-Graphen",
+      "description": "OPEN (Stand 2026-08-04, verifiziert gegen rig/plan-step/). Erledigt: Arbeits-Repo rig/plan-step/ steht mit vollstaendigem graphcode init; Duplikat-REQs gemerged (26 auf 21, 0 Namens-Duplikate); se-plan gelaufen (4 MS und 11 CR im Graphen); 5 UC-01-Errors durchs Gate aufgeloest (alle Beinahe-Duplikate, 5 merge-nodes, 0 Errors); Build-Reihenfolge ableitbar gemacht — CR nach CR ist im Meta-Modell NICHT legal, stattdessen 9 FLOWs mit 21 io-Kanten, der DAG folgt aus den FLOWs; alle 16 Views exportiert; Testpyramide um einen E2E-Durchstich ergaenzt. Rest offen. (docs/cr/open/CR-GC-283)",
+      "status": "open",
+      "created_at": "2026-08-01T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-284",
+      "type": "CR",
+      "name": "Batch-Preflight + Autovervollstaendigung im Executor",
+      "description": "DONE 2026-08-01. Audit-Analyse der Testlaeufe: R-01 (REQ ohne verify-TEST) dominierte die Gate-Rejections aller Modelle — Haiku 26/29, Opus 17/18, devstral 10/23 — teilweise selbst provoziert, weil das req-Template REQ-Kandidaten ohne TEST-Erwaehnung forderte, waehrend R-01 jede REQ ohne verify im selben Batch blockt. R-18 (illegale Trace-Paare) und R-08 (Referenz existiert nicht) sind rein mechanisch vorab pruefbar. Rejections werden jetzt deterministisch verhindert statt per Feedback-Loop repariert (Repair-Quote war schwach): Preflight in eigenem src/preflight.ts, reine Batch-Hygiene ohne eigenes Regel-Urteil — das Gate bleibt die einzige Wahrheit. (docs/cr/done/CR-GC-284)",
+      "status": "done",
+      "created_at": "2026-08-01T00:00:00.000Z",
+      "commitRef": "c093cb6"
+    },
+    {
+      "id": "CR-GC-285",
+      "type": "CR",
+      "name": "Runden-Prompt-Injektion: Guide-Slice + Element-Index",
+      "description": "DONE 2026-08-01, GEMISCHTES Ergebnis. Turn-Analyse: 41 bis 59 Prozent aller Modell-Turns waren reine Lese-Turns, graph_authoring_guide wurde 72 bis 107 mal pro Lauf fuer dieselben Elementtypen geholt, weil die History pro Runde resettet. Redundante Tool-Roundtrips werden jetzt durch deterministische Vorab-Injektion ersetzt (die Instruktion selbst bleibt lang, Lektion aus CR-GC-282). Turn-Ziel klar erreicht: devstral 40 statt 121 Turns, Lese-Quote 7,5 statt 62 Prozent, Wall 51,7 statt 77,4 min. ABER lokale Element-Ausbeute 22 gegen 38 — ohne Explorations-Turns verfallen devstrals Batches auf Minimalcompliance. Folge-Entscheidung Injektion als Backend-Config. (docs/cr/done/CR-GC-285)",
+      "status": "done",
+      "created_at": "2026-08-01T00:00:00.000Z",
+      "commitRef": "072487c"
+    },
+    {
+      "id": "CR-GC-286",
+      "type": "CR",
+      "name": "Audit-Vollstaendigkeit + Rejection-Beobachtbarkeit",
+      "description": "DONE 2026-08-01, Raetsel geloest und eine Fehldiagnose widerlegt. Von 81 Rejections eines Opus-Laufs erreichten nur 18 das Gate; 63 liefen durch zwei NICHT auditierte Pfade: formatE-Decode-Fehler (write.ts gab das STRUCT-Block-Verdict ohne recordAudit zurueck, early return im catch) und Handler-Exceptions im Executor. Beide Pfade auditieren jetzt. Der Nachtest zeigte per Key-Logging leere Input-Objekte: maxTokens 2048 kappte Opus Tool-Call-JSON. Gegenprobe mit 8192 ergab 0 Rejections; Root-Cause-Fix ist der anthropic-Default maxTokens 8192. Der Originalbefund Emissions-Regime beschneidet Frontier ist damit widerlegt. (docs/cr/done/CR-GC-286)",
+      "status": "done",
+      "created_at": "2026-08-01T00:00:00.000Z",
+      "commitRef": "2a58005"
+    },
+    {
+      "id": "CR-GC-287",
+      "type": "CR",
+      "name": "Near-Duplicate-Erkennung scharf geschaltet (ND-Matrix-Injektion)",
+      "description": "DONE 2026-08-01. Alle drei Endgraphen des Greenfield-Vergleichs enthielten sichtbare Duplikate, aber evaluateAllRules meldete 0 ND-Funde: ND-01/02 aus contracts brauchen eine injizierte Similarity-Matrix, und in graphcode wurde sie nirgends injiziert — die Regeln waren leere Huellen; zudem decken sie nur FUNC und SCHEMA ab, die realen Duplikate waren REQ und UC. Die Matrizen werden jetzt injiziert. Bewusste Teilabweichung: ND erscheint auf den Steering-Flaechen graph_generate und graph_next_step, NICHT in rules_evaluate oder graph_readiness — die laufen ueber die Gate-Engine, und ND dort einzuhaengen haette ND zum Gate-Blocker gemacht. (docs/cr/done/CR-GC-287)",
+      "status": "done",
+      "created_at": "2026-08-01T00:00:00.000Z",
+      "commitRef": "e791192"
+    },
+    {
+      "id": "CR-GC-288",
+      "type": "CR",
+      "name": "Best-of-N-Auswahl im Treiber (deterministisch)",
+      "description": "DONE 2026-08-01. Das Gate-Protokoll (Alternativen per dryRun einreichen, Verdicts vergleichen, besten anwenden) war Prosa im generate-Prompt — befolgt hat es im gesamten Greenfield-Vergleich NUR Haiku (29 dryRun-Proben), devstral und Opus wandten direkt an: die Kandidaten-Auswahl fand de facto nicht statt. Sie liegt jetzt im Treiber, deterministisch. Messlauf v16-bo3 (24 Runden devstral, N=3): 33 Elemente / 76 Traces, 0 Gate-Rejections — die Filterung wirkt — ABER UC-Monokultur (26 von 33), weil der Mutations-Tiebreaker Volumen statt Defizit-Reparatur belohnt. Erkenntnis wurde CR-GC-289. (docs/cr/done/CR-GC-288)",
+      "status": "done",
+      "created_at": "2026-08-01T00:00:00.000Z",
+      "commitRef": "cf53051"
+    },
+    {
+      "id": "CR-GC-289",
+      "type": "CR",
+      "name": "Best-of-N-Ranking: Ziel-Delta statt Volumen",
+      "description": "DONE 2026-08-03. Root Cause der UC-Monokultur aus v16-bo3: das Ranking tier, dann Delta-m, dann mutations — Delta-m (fitAdvisory, CR-GC-274) misst NUR den R6-Vektor auf layer arch, Expand-Batches aus UC/REQ/TEST/FCHAIN bewegen diese Ebene nicht, also war Delta-m fuer alle Kandidaten rund 0 und der Mutations-Tiebreaker entschied. Das Ranking-Kriterium ist jetzt der messbare Steuerungs-Fortschritt (Readiness- und Error-Delta aus dem dryRun-Verdict), tier nur noch Block-Filter und spaete Praeferenz. v18 validiert: 40 Elemente / 78 Traces, voller Typ-Mix statt Monokultur, nur 2 Steering-Errors — bester lokaler Endgraph der Messreihe. (docs/cr/done/CR-GC-289)",
+      "status": "done",
+      "created_at": "2026-08-02T00:00:00.000Z",
+      "commitRef": "e5ee18c"
+    },
+    {
+      "id": "CR-GC-290",
+      "type": "CR",
+      "name": "Runden-Prompt-Vollstaendigkeit (arch-Batches, Fund-Fenster, Score-Ballast)",
+      "description": "DONE 2026-08-04. Audit-Analyse ueber rund 20 Greenfield-Laeufe: die Triade R-02/R-20/R-22 (FUNC erfuellt keine REQ, kein realRef, nicht alloziert) traf aggregiert 170/251/266 mal — auch im saubersten Lauf v18-bo3 noch je 13 mal. Root Cause: das req-Template verlangt REQ zusammen mit einem TEST im selben Batch, das arch-Template verlangt nur die Zerlegung der FCHAIN/FUNC-Ebene, ohne die satisfy- und allocate-Kante im selben Atemzug zu fordern. Nachtrag: der Messlauf deckte einen zweiten, schwereren Befund auf (R-15/uc-Template-Luecke), der mitgefixt und live verifiziert wurde. (docs/cr/done/CR-GC-290)",
+      "status": "done",
+      "created_at": "2026-08-03T00:00:00.000Z",
+      "commitRef": "34a7388"
+    },
+    {
+      "id": "CR-GC-291",
+      "type": "CR",
+      "name": "Elementtyp-Liste im SYSTEM-Prompt (gegen STRUCT-Halluzination)",
+      "description": "DONE 2026-08-04. STRUCT-Fehler (Unknown node type) trafen aggregiert 18 mal mit error-Severity, etwa ein erfundener Typ DOC fuer ein Spec-Artefakt aus dem Material-Verzeichnis. Kein Preflight-Fall: node.type ist im MutateCommandSchema z.string() und nicht der geschlossene ElementType-Enum, der Preflight prueft Kantenlegalitaet statt Typlegalitaet, also geht der Command formal gueltig ans Gate und scheitert erst dort. Der SYSTEM-Prompt nannte bis dahin nur EINEN Beispieltyp; jetzt steht die vollstaendige Liste der 13 legalen Elementtypen drin. (docs/cr/done/CR-GC-291)",
+      "status": "done",
+      "created_at": "2026-08-03T00:00:00.000Z",
+      "commitRef": "34a7388"
+    },
+    {
+      "id": "CR-GC-292",
+      "type": "CR",
+      "name": "Preflight-Erweiterung Zirkulaere Composition — geschlossen ohne Bau",
+      "description": "DONE 2026-08-04, GESCHLOSSEN OHNE BAU. Ausgangslage war R-12 (zirkulaere Composition) mit 65 aggregierten Treffern in warning-Severity; der Preflight prueft heute nur paarweise Kantenlegalitaet (R-18-Auto-Flip) und Referenz-Existenz (R-08), ein Zyklus ueber mehr als eine Kante bleibt ihm verborgen. Die Vorbedingung weiterhin zweistellig wurde vom sauberen Recount v19 klar verneint: der Lauf erreichte die arch-Ebene (8 FUNC, 3 FCHAIN) und lieferte R-12 = 0 Treffer in 86 Audit-Records. Ehrlicher Vorbehalt: kleiner Endgraph mit 31 Elementen — sollte R-12 wieder zweistellig auftreten, ist dieses CR die Vorlage. (docs/cr/done/CR-GC-292)",
+      "status": "done",
+      "created_at": "2026-08-03T00:00:00.000Z",
+      "commitRef": "b74ce9b"
+    },
+    {
+      "id": "CR-GC-293",
+      "type": "CR",
+      "name": "Injektion isoliert messen (kein Code, nur ein Lauf)",
+      "description": "DONE 2026-08-04, Befund eindeutig. Der Abschlussbericht raeumte ein, dass die bisherige Messung CR-GC-284 und CR-GC-285 konfundierte. Der isolierte Vergleichslauf v20 (24 Runden, N=3, Ziel-Delta, injection=false) liefert 40 Elemente / 51 Traces inklusive 3 MOD und 1 FLOW — der breiteste Local-Mix der Serie bei 24 von 24 Applies — gegen v19 mit identischer Config MIT Injektion: 31 Elemente / 34 Traces ohne MOD und FLOW. Kosten der Abschaltung lokal: rund 2,4 mal Tokens pro Runde und 55 Prozent Lese-Turns. Zweiter unabhaengiger Beleg: die Lese-Phase ist devstrals Elaboration. Empfehlung Injektion als Backend-Default, Folge-CR-GC-297. (docs/cr/done/CR-GC-293)",
+      "status": "done",
+      "created_at": "2026-08-03T00:00:00.000Z",
+      "commitRef": "0795e55"
+    },
+    {
+      "id": "CR-GC-294",
+      "type": "CR",
+      "name": "Skill-Spektrum fuer Treiber-Faehigkeit (Bestandsaufnahme, kein Bau)",
+      "description": "OPEN (2026-08-04), bewusst nicht scharf geschaltet. Frage aus dem Folgechat: muss jeder Skill als Local-Breakdown-Variante gebaut werden, oder kann ein lokales Modell gar keine Skills fahren? Antwort ist weder alle noch keine. Der eingebettete Executor deckt heute nur die 8 generativen Readiness-Dimensionen ab (GENERATION_TEMPLATE); der restliche Skill-Katalog laeuft ausschliesslich im Host-Modus. Die Skills liegen auf einem Aufwands- und Unsicherheits-Spektrum, abhaengig davon, ob ein klares Regel-Violation-Signal existiert, das eine Runden-Instruktion tragen kann. Vier Buckets: bereits abgedeckt, praktisch kostenlos, echte Arbeit, nicht lokal fahrbar. (docs/cr/open/CR-GC-294)",
+      "status": "open",
+      "created_at": "2026-08-04T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-295",
+      "type": "CR",
+      "name": "Zielprofil (R6) als Runde-1-Frage, Config und Konflikt-Check",
+      "description": "DONE, geschlossen 2026-08-07. CR-GC-289 hatte das Zielprofil bewusst ausgeklammert und als eigenes CR benannt, CR-GC-283 fuehrte es als offenen Design-Punkt — diese Luecke ist gefuellt: Zielgewichte als Runde-1-Frage, Persistenz in .graphcode/target-profile.json (Config, nicht Graph-SSOT), Konflikt-Check bei widerspruechlichen Zielen, intentAnchors in generate.ts und tools/report.ts. Alle 10 Akzeptanzkriterien waren seit der Umsetzung abgehakt, das CR lag nur als Lifecycle-Drift in open/. Folge-CR-GC-307 nimmt die hier eingefuehrte Anker-Bestaetigung durch den Menschen wieder zurueck; Config, Loader und Konflikt-Check bleiben. (docs/cr/done/CR-GC-295)",
+      "status": "done",
+      "created_at": "2026-08-04T00:00:00.000Z",
+      "closed_at": "2026-08-07T00:00:00.000Z",
+      "commitRef": "0d833cd"
+    },
+    {
+      "id": "CR-GC-296",
+      "type": "CR",
+      "name": "phase_readiness konsumieren + Sprachregelung",
+      "description": "DONE 2026-08-04. Der Harness kannte die Phase-Gates nicht: graph_generate und der Handoff konnten Struktur traegt melden, waehrend PDR rot war — real passiert mit arch-Readiness 0.86 bei null FLOWs. Mit CR-SM-226 wurden die Gates Teil des Regelwerks (RULE_TO_PHASE), graphcode konsumiert sie jetzt: graph_readiness liefert zusaetzlich phase_readiness (SRR/PDR/CDR/TRR covered/total plus fehlende Legs aus dem Regelstrom), und der Handoff verlangt neben Schwelle und 0 blockingErrors auch ein vollstaendiges aktuelles Phase-Gate — aktuell ist das erste unvollstaendige in der Reihenfolge SRR, PDR, CDR, TRR. 437 Tests gruen. (docs/cr/done/CR-GC-296)",
+      "status": "done",
+      "created_at": "2026-08-04T00:00:00.000Z",
+      "closed_at": "2026-08-04T00:00:00.000Z",
+      "commitRef": "18de974"
+    },
+    {
+      "id": "CR-GC-297",
+      "type": "CR",
+      "name": "Injection-Default backend-abhaengig",
+      "description": "OPEN (2026-08-04). Folge aus CR-GC-293: zweifach belegte Messlage — die Guide- und Index-Injektion aus CR-GC-285 nuetzt Frontier (Opus 60 Elemente in 12 Runden) und kostet Local Ausbeute und Breite (v15 22 gegen v9 38; v20 ohne Injektion 40 Elemente inklusive MOD und FLOW gegen v19 31). Der Mess-Schalter injection existiert seit CR-GC-293 mit Default true. Ziel: Default backend-abhaengig nach dem maxTokens-Muster in parseExecutorEnv — explizite Env gewinnt, sonst anthropic true und openai false, mit Messbeleg im Kommentar. (docs/cr/open/CR-GC-297)",
+      "status": "open",
+      "created_at": "2026-08-04T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-298",
+      "type": "CR",
+      "name": "se:import-code-Skill + graphcode-import-code-Verb (graphify-Extraktor angeschlossen)",
+      "description": "DONE 2026-08-05. @sigloch/graphify hatte einen deterministischen Code-Repo-Extraktor (Tree-sitter, kein LLM), der ein TS-Repo bis zu einem ApprovalMatrix.finalGraph durchreicht, und eine injizierbare Konsumentenseite, die bereits das graphcode-Mutate-Format spricht — aber niemand rief das auf, es gab kein CLI- oder Skill-Wiring. Das gehoert in den Harness, der Store und Gate besitzt. Entschiedene Import-Semantik: Reseed, nie Merge — import-code ersetzt den Graph-Inhalt vollstaendig, weil ein Upsert-Merge bei Re-Import stille Ueberschreibungen und Leichen erzeugt; vor jeder Aenderung wird automatisch ein Backup des aktuellen Graphen geschrieben. (docs/cr/done/CR-GC-298)",
+      "status": "done",
+      "created_at": "2026-08-04T00:00:00.000Z",
+      "closed_at": "2026-08-05T00:00:00.000Z",
+      "commitRef": "499161c"
+    },
+    {
+      "id": "CR-GC-299",
+      "type": "CR",
+      "name": "exporter.ts flacht attributes ab — abgeloest von CR-GC-303",
+      "description": "GESCHLOSSEN 2026-08-07 als superseded by CR-GC-303. Derselbe Defekt (exportGraphJson flacht attributes ab, wodurch TRR und CDR ueber generate und steering strukturell blind bleiben), aber mit gegenlaeufigem Loesungsvorschlag: dieses CR bot als Option 1 an, den Export nicht mehr abflachen zu lassen; CR-GC-303 verriegelt genau das, weil das Export-Encoding committete SSOT-, Format-E- und Roundtrip-Konvention ist. Zwei offene CRs mit unvereinbarer Richtung auf derselben Datei sind eine Drift-Quelle, kein Optionsraum. CR-GC-303 gewinnt: neuer, benennt die konkrete Implementierung und deckt zusaetzlich AF-01 bis AF-05 aus contracts 3.1.0 ab. (docs/cr/done/CR-GC-299)",
+      "status": "done",
+      "created_at": "2026-08-04T00:00:00.000Z",
+      "closed_at": "2026-08-07T00:00:00.000Z",
+      "commitRef": "5c54407"
+    },
+    {
+      "id": "CR-GC-300",
+      "type": "CR",
+      "name": "graphVersion-Stempel im graph_export-Output",
+      "description": "DONE 2026-08-05. docs/graph/<name>.graph.json enthielt nur elements und traces, keine graphVersion. Der reale Konsument graph-view-edit liest ausschliesslich diese committete Snapshot-Datei, nie live gegen den Harness — computeAnalysisCurrency (CR-SM-227) braucht aber die LIVE graphVersion als Vergleichswert gegen den Freshness-Stempel in SYS.attributes.analysisFreshness. Ohne echten Wert wuerde jeder gesetzte Stempel faelschlich als current gelesen. graph_export stempelt die graphVersion jetzt in den Snapshot. (docs/cr/done/CR-GC-300)",
+      "status": "done",
+      "created_at": "2026-08-05T00:00:00.000Z",
+      "commitRef": "499161c"
+    },
+    {
+      "id": "CR-GC-301",
+      "type": "CR",
+      "name": "A-SPICE-Nachschaerfungen: R-21-Level-Check, Auditor-Sicht, SUP.9/SUP.10",
+      "description": "DRAFT (2026-08-05, zuletzt 2026-08-08). Aus der A-SPICE-Coverage-Evaluation: die Engineering-Prozesse SYS.2 bis SYS.5 und SWE.1 bis SWE.6 plus SUP.1, SUP.8 und MAN.3 sind durch Ontologie, Regeln und Views abgedeckt, die Evidenz liegt teils transitiv im Graphen. Vier Nachschaerfungen blieben. Paket B ist als CR-GC-317 erledigt (RTM nach compose-Anker gruppiert, VCRM zeigt die rolled-up Integrationsabdeckung je FUNC-Verbindung) — es war das einzige Paket ohne offene Entscheidung, weil es Evidenz rendert, die schon im Graphen lag. Pakete A und C sind weiterhin nicht beauftragt und brauchen einen Familie-Review. (docs/cr/open/CR-GC-301)",
+      "status": "open",
+      "created_at": "2026-08-05T00:00:00.000Z"
     },
     {
       "id": "CR-GC-302",
@@ -5760,6 +6116,111 @@
       "created_at": "2026-06-17T00:00:00.000Z"
     },
     {
+      "source": "CR-GC-127",
+      "target": "FUNC-graph-export-snapshot",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-127",
+      "target": "MOD-mcp-tools",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-127",
+      "target": "MS-3-mvp-readiness",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-128",
+      "target": "FUNC-serve-stdio",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-128",
+      "target": "MOD-docs",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-128",
+      "target": "MS-3-mvp-readiness",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-129",
+      "target": "FUNC-score-completeness",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-129",
+      "target": "MOD-mcp-tools",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-129",
+      "target": "MS-3-mvp-readiness",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-130",
+      "target": "MOD-skills",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-130",
+      "target": "MS-3-mvp-readiness",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-131",
+      "target": "FUNC-render-views",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-131",
+      "target": "MOD-skills",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-131",
+      "target": "MS-3-mvp-readiness",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-132",
+      "target": "FUNC-render-views",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-132",
+      "target": "MOD-skills",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-132",
+      "target": "MS-3-mvp-readiness",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-133",
+      "target": "FUNC-harness-cli",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-133",
+      "target": "MOD-cli",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-133",
+      "target": "MOD-skills",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-133",
+      "target": "MS-3-mvp-readiness",
+      "type": "relation"
+    },
+    {
       "source": "CR-GC-134",
       "target": "FUNC-deduce-tests",
       "type": "relation",
@@ -5921,6 +6382,46 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-213",
+      "target": "MOD-mcp-tools",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-213",
+      "target": "MS-5-efficiency",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-213",
+      "target": "REQ-precise-context",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-217",
+      "target": "FUNC-graph-export-snapshot",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-217",
+      "target": "FUNC-reseed",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-217",
+      "target": "MS-5-efficiency",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-217",
+      "target": "REQ-graph-snapshot-per-commit",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-217",
+      "target": "UC-graph-time-travel",
+      "type": "relation"
+    },
+    {
       "source": "CR-GC-220",
       "target": "MS-6-adoption",
       "type": "relation"
@@ -5993,6 +6494,51 @@
     {
       "source": "CR-GC-239",
       "target": "MS-6-adoption",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-240",
+      "target": "FUNC-render-views",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-240",
+      "target": "MOD-docs",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-241",
+      "target": "FUNC-own-kuzu-host",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-241",
+      "target": "MOD-host-bridge",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-242",
+      "target": "FUNC-test-ui",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-242",
+      "target": "MOD-skills",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-243",
+      "target": "FUNC-mutate",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-243",
+      "target": "MOD-mcp-tools",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-243",
+      "target": "MS-7-concurrency",
       "type": "relation"
     },
     {
@@ -6223,6 +6769,301 @@
     {
       "source": "CR-GC-273",
       "target": "REQ-mcp-tool-registry",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-274",
+      "target": "FUNC-mutate",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-274",
+      "target": "MOD-harness",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-275",
+      "target": "FUNC-graph-suggest",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-275",
+      "target": "MOD-mcp-tools",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-276",
+      "target": "FUNC-decode",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-276",
+      "target": "FUNC-mutate",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-276",
+      "target": "MOD-mcp-tools",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-277",
+      "target": "FUNC-harness-cli",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-277",
+      "target": "MOD-skills",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-278",
+      "target": "FUNC-graph-suggest",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-278",
+      "target": "MOD-cli",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-278",
+      "target": "UC-reduced-llm",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-279",
+      "target": "FUNC-harness-cli",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-279",
+      "target": "MOD-cli",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-279",
+      "target": "UC-reduced-llm",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-280",
+      "target": "FUNC-graph-suggest",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-280",
+      "target": "UC-reduced-llm",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-281",
+      "target": "FUNC-graph-suggest",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-281",
+      "target": "UC-reduced-llm",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-282",
+      "target": "FUNC-graph-suggest",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-282",
+      "target": "UC-reduced-llm",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-283",
+      "target": "FUNC-graph-suggest",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-283",
+      "target": "MOD-cli",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-284",
+      "target": "FUNC-graph-suggest",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-284",
+      "target": "FUNC-mutate",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-285",
+      "target": "FUNC-graph-suggest",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-285",
+      "target": "UC-token-efficiency",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-286",
+      "target": "FUNC-mutate",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-286",
+      "target": "REQ-audit-trail",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-287",
+      "target": "FUNC-graph-suggest",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-287",
+      "target": "FUNC-score-completeness",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-288",
+      "target": "FUNC-graph-suggest",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-288",
+      "target": "FUNC-mutate",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-289",
+      "target": "FUNC-graph-suggest",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-289",
+      "target": "FUNC-score-completeness",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-290",
+      "target": "FUNC-graph-suggest",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-291",
+      "target": "FUNC-graph-suggest",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-291",
+      "target": "UC-reduced-llm",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-292",
+      "target": "FUNC-mutate",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-293",
+      "target": "FUNC-graph-suggest",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-293",
+      "target": "UC-token-efficiency",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-294",
+      "target": "FUNC-graph-suggest",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-294",
+      "target": "MOD-skills",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-295",
+      "target": "FUNC-graph-suggest",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-295",
+      "target": "FUNC-score-completeness",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-296",
+      "target": "FUNC-graph-suggest",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-296",
+      "target": "FUNC-score-completeness",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-296",
+      "target": "REQ-readiness-model",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-297",
+      "target": "FUNC-graph-suggest",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-297",
+      "target": "MOD-cli",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-298",
+      "target": "FUNC-harness-cli",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-298",
+      "target": "FUNC-import",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-298",
+      "target": "MOD-cli",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-299",
+      "target": "FUNC-export-markdown",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-299",
+      "target": "MOD-docs",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-300",
+      "target": "FUNC-export-markdown",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-300",
+      "target": "FUNC-graph-export-snapshot",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-301",
+      "target": "FUNC-view-rtm",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-301",
+      "target": "MOD-docs",
       "type": "relation"
     },
     {
@@ -9858,5 +10699,5 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     }
   ],
-  "graphVersion": 62
+  "graphVersion": 66
 }

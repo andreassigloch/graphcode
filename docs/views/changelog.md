@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 113 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 154 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 113 CR · 109 done · 3 open.
+Total: 154 CR · 146 done · 7 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -39,6 +39,13 @@ Total: 113 CR · 109 done · 3 open.
 | `CR-GC-122` | done | New-Member Bootstrap durchs Gate (Format-E Cold-Start) |
 | `CR-GC-123` | done | MVP E2E-Acceptance: bootstrap → spec → KNOW-query → implement → re-export |
 | `CR-GC-126` | done | Query-Layer: Cypher, korrekte Impact-Richtung (KNOW statt guess) |
+| `CR-GC-127` | done | graph_export als MCP-Tool — Agent-Loop ueber MCP geschlossen |
+| `CR-GC-128` | done | Repo-abgeleiteter Member-Name + README-Setup |
+| `CR-GC-129` | done | graph_readiness als MCP-Tool |
+| `CR-GC-130` | done | Action-Skills (fmea/review/status) auf MCP umgestellt |
+| `CR-GC-131` | done | View-Skills A (arch/nfr/trade) auf MCP umgestellt |
+| `CR-GC-132` | done | View-Skills B (testmatrix/testconcept/implplan) + Skill-Konformitaetstest |
+| `CR-GC-133` | done | Scaffold installiert die SE-Skills ins Ziel-Repo |
 | `CR-GC-200` | done | Single graph-validator - uniqueness + de-dup |
 | `CR-GC-201` | done | Enforce gate-only graph writes |
 | `CR-GC-202` | done | graph_export refuse-to-clobber guard |
@@ -67,6 +74,8 @@ Total: 113 CR · 109 done · 3 open.
 | `CR-GC-204` | done | graph_tests operational |
 | `CR-GC-205` | done | Enforce-don't-document — R-18 Strukturregel + ausfuehrbare Guardrails |
 | `CR-GC-206` | done | Graph-code LSP conformance — resolve FUNC codeRef symbols |
+| `CR-GC-213` | done | graph_context — knotenbezogenes Definition-of-Done-Kontextpaket |
+| `CR-GC-217` | done | Graph-State Time-Travel (commit-gebundener Snapshot) |
 
 ## `MS-6-adoption` — M6: Adoption & Artifact-Model
 
@@ -92,6 +101,7 @@ Total: 113 CR · 109 done · 3 open.
 | `CR-GC-234` | done | graph_merge: Replay-basierte Branch-Reintegration (semantischer Rebase) |
 | `CR-GC-235` | done | Ein Write-Channel: Host-owned Store, Sessions als Clients |
 | `CR-GC-237` | done | HTTP-Bridge folgt dem Store-Lock |
+| `CR-GC-243` | done | Lokale OCC (BaseVersionSchema) auf @sigloch/contracts migriert |
 
 ## (unassigned)
 
@@ -113,6 +123,9 @@ Total: 113 CR · 109 done · 3 open.
 | `CR-GC-229` | done | Help surfaces (graph_help MCP tool + se:help skill) |
 | `CR-GC-230` | done | Help docs (README + GRAPHCODE.md pointer to se:help) |
 | `CR-GC-231` | done | graph_authoring_guide meta-model edge guidance for graph-native authoring |
+| `CR-GC-240` | done | Testkonzept: Pyramiden-Ebene aus der Graph-Position statt aus einem level-Attribut |
+| `CR-GC-241` | done | Host-Shim-Schreibbruecke exportieren (callHost/HOST_SOCK_BASENAME) |
+| `CR-GC-242` | done | se-test-ui-Skill + die Red-First-Regel ausliefern |
 | `CR-GC-244` | done | Bundle-Staleness fix: rebundle-Disziplin statt Externalisierung |
 | `CR-GC-247` | done | Zentralisiere Trace-Legalitaet in einem Checker |
 | `CR-GC-248` | dropped | DROPPED: generisches Kuzu Element/Trace-Schema |
@@ -141,6 +154,34 @@ Total: 113 CR · 109 done · 3 open.
 | `CR-GC-271` | done | SCHEMA-Bindung: zodDefinition raus, realRef-Stub materialisieren |
 | `CR-GC-272` | done | readiness + panels nach graphcode-client |
 | `CR-GC-273` | done | graph_suggest: se-optimizer-Binding mit dryRun-Verdict |
+| `CR-GC-274` | done | Fit-Gate Haertegrad 1: Delta-m-Advisory am Apply-Gate |
+| `CR-GC-275` | done | graph_generate — der Kaltstart-Generierungstreiber |
+| `CR-GC-276` | done | graph_mutate: Format-E-Input, dryRun, Preview-Audit |
+| `CR-GC-277` | done | SE-Skills als registrierbare Commands ausliefern |
+| `CR-GC-278` | done | Embedded Executor Core (Weg C, Teil 1) |
+| `CR-GC-279` | done | graphcode run <intent> + lokale Validierung (Weg C, Teil 2) |
+| `CR-GC-280` | done | Executor-Konvergenz-Hebel (Folge zu CR-GC-278/279) |
+| `CR-GC-281` | done | Fund-Rotation/Defer in graph_generate |
+| `CR-GC-282` | done | Empfaenger-abhaengiges Instruktions-Rendering — negativ validiert und zurueckgebaut |
+| `CR-GC-283` | open | Planungs-Step auf dem Top-Graphen |
+| `CR-GC-284` | done | Batch-Preflight + Autovervollstaendigung im Executor |
+| `CR-GC-285` | done | Runden-Prompt-Injektion: Guide-Slice + Element-Index |
+| `CR-GC-286` | done | Audit-Vollstaendigkeit + Rejection-Beobachtbarkeit |
+| `CR-GC-287` | done | Near-Duplicate-Erkennung scharf geschaltet (ND-Matrix-Injektion) |
+| `CR-GC-288` | done | Best-of-N-Auswahl im Treiber (deterministisch) |
+| `CR-GC-289` | done | Best-of-N-Ranking: Ziel-Delta statt Volumen |
+| `CR-GC-290` | done | Runden-Prompt-Vollstaendigkeit (arch-Batches, Fund-Fenster, Score-Ballast) |
+| `CR-GC-291` | done | Elementtyp-Liste im SYSTEM-Prompt (gegen STRUCT-Halluzination) |
+| `CR-GC-292` | done | Preflight-Erweiterung Zirkulaere Composition — geschlossen ohne Bau |
+| `CR-GC-293` | done | Injektion isoliert messen (kein Code, nur ein Lauf) |
+| `CR-GC-294` | open | Skill-Spektrum fuer Treiber-Faehigkeit (Bestandsaufnahme, kein Bau) |
+| `CR-GC-295` | done | Zielprofil (R6) als Runde-1-Frage, Config und Konflikt-Check |
+| `CR-GC-296` | done | phase_readiness konsumieren + Sprachregelung |
+| `CR-GC-297` | open | Injection-Default backend-abhaengig |
+| `CR-GC-298` | done | se:import-code-Skill + graphcode-import-code-Verb (graphify-Extraktor angeschlossen) |
+| `CR-GC-299` | done | exporter.ts flacht attributes ab — abgeloest von CR-GC-303 |
+| `CR-GC-300` | done | graphVersion-Stempel im graph_export-Output |
+| `CR-GC-301` | open | A-SPICE-Nachschaerfungen: R-21-Level-Check, Auditor-Sicht, SUP.9/SUP.10 |
 | `CR-GC-302` | done | Auto-SYS-Node bei jedem Import |
 | `CR-GC-303` | done | Attribut-Abflachung macht Steering-Pfad regelblind |
 | `CR-GC-304` | done | ConOps-View nach ISO 29148 neu schneiden |

@@ -137,6 +137,13 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-124` | done | OpenCode-Execution: agent-agnostic 2nd client, headless BYOK | `FUNC-serve-stdio` · `MOD-mcp-tools` · `REQ-agent-agnostic` · `REQ-single-transport` |
 | `CR-GC-125` | done | Readiness-Modell definieren & realisieren (Phase/Impl/INCOSE) | `MOD-dashboard` · `MOD-mcp-tools` · `REQ-readiness-model` |
 | `CR-GC-126` | done | Query-Layer: Cypher, korrekte Impact-Richtung (KNOW statt guess) | `MOD-harness` · `MOD-mcp-tools` · `REQ-progressive-expansion` · `REQ-query-precision` |
+| `CR-GC-127` | done | graph_export als MCP-Tool — Agent-Loop ueber MCP geschlossen | `FUNC-graph-export-snapshot` · `MOD-mcp-tools` |
+| `CR-GC-128` | done | Repo-abgeleiteter Member-Name + README-Setup | `FUNC-serve-stdio` · `MOD-docs` |
+| `CR-GC-129` | done | graph_readiness als MCP-Tool | `FUNC-score-completeness` · `MOD-mcp-tools` |
+| `CR-GC-130` | done | Action-Skills (fmea/review/status) auf MCP umgestellt | `MOD-skills` |
+| `CR-GC-131` | done | View-Skills A (arch/nfr/trade) auf MCP umgestellt | `FUNC-render-views` · `MOD-skills` |
+| `CR-GC-132` | done | View-Skills B (testmatrix/testconcept/implplan) + Skill-Konformitaetstest | `FUNC-render-views` · `MOD-skills` |
+| `CR-GC-133` | done | Scaffold installiert die SE-Skills ins Ziel-Repo | `FUNC-harness-cli` · `MOD-cli` · `MOD-skills` |
 | `CR-GC-134` | done | Bottom-up Test-Deduktion (graph_tests) | `FUNC-deduce-tests` · `REQ-test-runnable-binding` · `UC-efficient-testing` |
 | `CR-GC-200` | done | Single graph-validator - uniqueness + de-dup | `MOD-codec` · `MOD-harness` · `REQ-graph-integrity` |
 | `CR-GC-201` | done | Enforce gate-only graph writes | `REQ-gate-only-writes` |
@@ -145,6 +152,12 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-204` | done | graph_tests operational | `MOD-mcp-tools` · `REQ-graph-tests-operational` |
 | `CR-GC-205` | done | Enforce-don't-document — R-18 Strukturregel + ausfuehrbare Guardrails | `REQ-structural-rule-shared` · `REQ-testref-materialized` |
 | `CR-GC-206` | done | Graph-code LSP conformance — resolve FUNC codeRef symbols | `REQ-graph-code-conformance` |
+| `CR-GC-213` | done | graph_context — knotenbezogenes Definition-of-Done-Kontextpaket | `MOD-mcp-tools` · `REQ-precise-context` |
+| `CR-GC-217` | done | Graph-State Time-Travel (commit-gebundener Snapshot) | `FUNC-graph-export-snapshot` · `FUNC-reseed` · `REQ-graph-snapshot-per-commit` · `UC-graph-time-travel` |
+| `CR-GC-240` | done | Testkonzept: Pyramiden-Ebene aus der Graph-Position statt aus einem level-Attribut | `FUNC-render-views` · `MOD-docs` |
+| `CR-GC-241` | done | Host-Shim-Schreibbruecke exportieren (callHost/HOST_SOCK_BASENAME) | `FUNC-own-kuzu-host` · `MOD-host-bridge` |
+| `CR-GC-242` | done | se-test-ui-Skill + die Red-First-Regel ausliefern | `FUNC-test-ui` · `MOD-skills` |
+| `CR-GC-243` | done | Lokale OCC (BaseVersionSchema) auf @sigloch/contracts migriert | `FUNC-mutate` · `MOD-mcp-tools` |
 | `CR-GC-244` | done | Bundle-Staleness fix: rebundle-Disziplin statt Externalisierung | `MOD-cli` · `REQ-self-contained-dist` |
 | `CR-GC-247` | done | Zentralisiere Trace-Legalitaet in einem Checker | `MOD-codec` · `REQ-structural-rule-shared` |
 | `CR-GC-248` | dropped | DROPPED: generisches Kuzu Element/Trace-Schema | `MOD-harness` |
@@ -167,6 +180,34 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-271` | done | SCHEMA-Bindung: zodDefinition raus, realRef-Stub materialisieren | `FUNC-export-markdown` · `MOD-docs` |
 | `CR-GC-272` | done | readiness + panels nach graphcode-client | `FUNC-render-readiness` · `FUNC-score-completeness` · `REQ-self-contained-dist` |
 | `CR-GC-273` | done | graph_suggest: se-optimizer-Binding mit dryRun-Verdict | `FUNC-serve-stdio` · `REQ-mcp-tool-registry` |
+| `CR-GC-274` | done | Fit-Gate Haertegrad 1: Delta-m-Advisory am Apply-Gate | `FUNC-mutate` · `MOD-harness` |
+| `CR-GC-275` | done | graph_generate — der Kaltstart-Generierungstreiber | `FUNC-graph-suggest` · `MOD-mcp-tools` |
+| `CR-GC-276` | done | graph_mutate: Format-E-Input, dryRun, Preview-Audit | `FUNC-decode` · `FUNC-mutate` · `MOD-mcp-tools` |
+| `CR-GC-277` | done | SE-Skills als registrierbare Commands ausliefern | `FUNC-harness-cli` · `MOD-skills` |
+| `CR-GC-278` | done | Embedded Executor Core (Weg C, Teil 1) | `FUNC-graph-suggest` · `MOD-cli` · `UC-reduced-llm` |
+| `CR-GC-279` | done | graphcode run <intent> + lokale Validierung (Weg C, Teil 2) | `FUNC-harness-cli` · `MOD-cli` · `UC-reduced-llm` |
+| `CR-GC-280` | done | Executor-Konvergenz-Hebel (Folge zu CR-GC-278/279) | `FUNC-graph-suggest` · `UC-reduced-llm` |
+| `CR-GC-281` | done | Fund-Rotation/Defer in graph_generate | `FUNC-graph-suggest` · `UC-reduced-llm` |
+| `CR-GC-282` | done | Empfaenger-abhaengiges Instruktions-Rendering — negativ validiert und zurueckgebaut | `FUNC-graph-suggest` · `UC-reduced-llm` |
+| `CR-GC-283` | open | Planungs-Step auf dem Top-Graphen | `FUNC-graph-suggest` · `MOD-cli` |
+| `CR-GC-284` | done | Batch-Preflight + Autovervollstaendigung im Executor | `FUNC-graph-suggest` · `FUNC-mutate` |
+| `CR-GC-285` | done | Runden-Prompt-Injektion: Guide-Slice + Element-Index | `FUNC-graph-suggest` · `UC-token-efficiency` |
+| `CR-GC-286` | done | Audit-Vollstaendigkeit + Rejection-Beobachtbarkeit | `FUNC-mutate` · `REQ-audit-trail` |
+| `CR-GC-287` | done | Near-Duplicate-Erkennung scharf geschaltet (ND-Matrix-Injektion) | `FUNC-graph-suggest` · `FUNC-score-completeness` |
+| `CR-GC-288` | done | Best-of-N-Auswahl im Treiber (deterministisch) | `FUNC-graph-suggest` · `FUNC-mutate` |
+| `CR-GC-289` | done | Best-of-N-Ranking: Ziel-Delta statt Volumen | `FUNC-graph-suggest` · `FUNC-score-completeness` |
+| `CR-GC-290` | done | Runden-Prompt-Vollstaendigkeit (arch-Batches, Fund-Fenster, Score-Ballast) | `FUNC-graph-suggest` |
+| `CR-GC-291` | done | Elementtyp-Liste im SYSTEM-Prompt (gegen STRUCT-Halluzination) | `FUNC-graph-suggest` · `UC-reduced-llm` |
+| `CR-GC-292` | done | Preflight-Erweiterung Zirkulaere Composition — geschlossen ohne Bau | `FUNC-mutate` |
+| `CR-GC-293` | done | Injektion isoliert messen (kein Code, nur ein Lauf) | `FUNC-graph-suggest` · `UC-token-efficiency` |
+| `CR-GC-294` | open | Skill-Spektrum fuer Treiber-Faehigkeit (Bestandsaufnahme, kein Bau) | `FUNC-graph-suggest` · `MOD-skills` |
+| `CR-GC-295` | done | Zielprofil (R6) als Runde-1-Frage, Config und Konflikt-Check | `FUNC-graph-suggest` · `FUNC-score-completeness` |
+| `CR-GC-296` | done | phase_readiness konsumieren + Sprachregelung | `FUNC-graph-suggest` · `FUNC-score-completeness` · `REQ-readiness-model` |
+| `CR-GC-297` | open | Injection-Default backend-abhaengig | `FUNC-graph-suggest` · `MOD-cli` |
+| `CR-GC-298` | done | se:import-code-Skill + graphcode-import-code-Verb (graphify-Extraktor angeschlossen) | `FUNC-harness-cli` · `FUNC-import` · `MOD-cli` |
+| `CR-GC-299` | done | exporter.ts flacht attributes ab — abgeloest von CR-GC-303 | `FUNC-export-markdown` · `MOD-docs` |
+| `CR-GC-300` | done | graphVersion-Stempel im graph_export-Output | `FUNC-export-markdown` · `FUNC-graph-export-snapshot` |
+| `CR-GC-301` | open | A-SPICE-Nachschaerfungen: R-21-Level-Check, Auditor-Sicht, SUP.9/SUP.10 | `FUNC-view-rtm` · `MOD-docs` |
 | `CR-GC-302` | done | Auto-SYS-Node bei jedem Import | `FUNC-import` |
 | `CR-GC-303` | done | Attribut-Abflachung macht Steering-Pfad regelblind | `FUNC-evaluate-rules` · `FUNC-graph-suggest` |
 | `CR-GC-304` | done | ConOps-View nach ISO 29148 neu schneiden | `FUNC-render-views` · `MOD-docs` · `MOD-skills` |

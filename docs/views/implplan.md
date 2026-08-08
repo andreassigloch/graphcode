@@ -39,6 +39,13 @@ depends-on:  MS-1-specification  ◀  MS-2-coding-vv  ◀  MS-3-mvp-readiness  �
 | `CR-GC-122` | done | New-Member Bootstrap durchs Gate (Format-E Cold-Start) |
 | `CR-GC-123` | done | MVP E2E-Acceptance: bootstrap → spec → KNOW-query → implement → re-export |
 | `CR-GC-126` | done | Query-Layer: Cypher, korrekte Impact-Richtung (KNOW statt guess) |
+| `CR-GC-127` | done | graph_export als MCP-Tool — Agent-Loop ueber MCP geschlossen |
+| `CR-GC-128` | done | Repo-abgeleiteter Member-Name + README-Setup |
+| `CR-GC-129` | done | graph_readiness als MCP-Tool |
+| `CR-GC-130` | done | Action-Skills (fmea/review/status) auf MCP umgestellt |
+| `CR-GC-131` | done | View-Skills A (arch/nfr/trade) auf MCP umgestellt |
+| `CR-GC-132` | done | View-Skills B (testmatrix/testconcept/implplan) + Skill-Konformitaetstest |
+| `CR-GC-133` | done | Scaffold installiert die SE-Skills ins Ziel-Repo |
 | `CR-GC-200` | done | Single graph-validator - uniqueness + de-dup |
 | `CR-GC-201` | done | Enforce gate-only graph writes |
 | `CR-GC-202` | done | graph_export refuse-to-clobber guard |
@@ -67,6 +74,8 @@ depends-on:  MS-1-specification  ◀  MS-2-coding-vv  ◀  MS-3-mvp-readiness  �
 | `CR-GC-204` | done | graph_tests operational |
 | `CR-GC-205` | done | Enforce-don't-document — R-18 Strukturregel + ausfuehrbare Guardrails |
 | `CR-GC-206` | done | Graph-code LSP conformance — resolve FUNC codeRef symbols |
+| `CR-GC-213` | done | graph_context — knotenbezogenes Definition-of-Done-Kontextpaket |
+| `CR-GC-217` | done | Graph-State Time-Travel (commit-gebundener Snapshot) |
 
 ## `MS-6-adoption` — M6: Adoption & Artifact-Model · status: draft
 
@@ -92,5 +101,6 @@ depends-on:  MS-1-specification  ◀  MS-2-coding-vv  ◀  MS-3-mvp-readiness  �
 | `CR-GC-234` | done | graph_merge: Replay-basierte Branch-Reintegration (semantischer Rebase) |
 | `CR-GC-235` | done | Ein Write-Channel: Host-owned Store, Sessions als Clients |
 | `CR-GC-237` | done | HTTP-Bridge folgt dem Store-Lock |
+| `CR-GC-243` | done | Lokale OCC (BaseVersionSchema) auf @sigloch/contracts migriert |
 
 > RENDER — the leaf→root MS/CR cut se-plan CREATEd; the test-level mapping mirrors the pyramid (#7).
