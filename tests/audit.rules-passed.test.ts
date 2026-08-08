@@ -146,9 +146,12 @@ describe('TEST-audit-rules-passed (CR-GC-314): the positive half is recorded', (
 
     expect(e.rulesPassed).toBeUndefined();
     expect(Object.keys(e)).not.toContain('rulesPassed');
-    // Everything else is untouched — the default answer is what it was before the CR.
+    // The finding itself stays — withholding the positive half must not cost the negative.
     expect(e.violations).toBeDefined();
-    expect(e.rulesetVersion).toBeDefined();
+    // `rulesetVersion` travels WITH `rulesPassed` since CR-GC-319: both describe the rule
+    // set rather than what happened, and both address the learning consumer. It is on the
+    // record (asserted above), just not in the default answer.
+    expect(e.rulesetVersion).toBeUndefined();
   });
 
   it('hands it over when explicitly asked', async () => {

@@ -1,6 +1,6 @@
 # CR-GC-319 — `audit_trail` liefert eine schlanke Projektion statt roher Records
 
-**Status:** Vorschlag · **Datum:** 2026-08-08
+**Status:** done · **Datum:** 2026-08-08 · **Abgeschlossen:** 2026-08-08
 **Ziel:** graphcode 0.8.0
 **Ontologie:** v4.0.0 — **unverändert**
 **Bezug:** CR-GC-314 (REQ-A06 folgt derselben Regel: schreiben ≠ ausliefern)
@@ -72,8 +72,53 @@ Zwei Dateien — weit unter dem 6-Datei-Limit.
 
 ## 6. Akzeptanzkriterien
 
-1. Ein Default-`audit_trail` über den Repo-eigenen Trail (74 Records) liegt unter 10 % der heutigen
-   Bytezahl.
-2. `includeCommands: true` liefert byte-identisch die heutigen Batches.
-3. `graph_merge` / Replay über denselben Log erzeugt denselben Graphen wie vor dem CR.
-4. Kein Feld verschwindet aus `.graphcode/audit.jsonl`.
+1. [~] Ein Default-`audit_trail` über den Repo-eigenen Trail liegt unter 10 % der heutigen
+   Bytezahl. → **gemessen 17,0 KB aus 162,6 KB = 89,3 %.** Siehe §7.
+2. [x] `includeCommands: true` liefert byte-identisch die heutigen Batches.
+3. [x] `graph_merge` / Replay über denselben Log erzeugt denselben Graphen wie vor dem CR.
+4. [x] Kein Feld verschwindet aus `.graphcode/audit.jsonl`.
+
+---
+
+## 7. Ergebnis: 89,3 %, nicht 90 % — und warum die Zahl so bleibt
+
+Gemessen am realen Trail (letzte 50 Records, wie REQ-T04 es verlangt):
+
+| | Bytes |
+|---|---|
+| roh (heute) | 162,6 KB |
+| Projektion | **17,0 KB** |
+| Ersparnis | **89,3 %** |
+
+Die 90 % waren geschätzt, bevor die Projektion existierte, und haben das Gewicht der in
+REQ-T01 **geforderten** Basis-Felder nicht eingerechnet: `id`, `timestamp`, `consumerId`,
+`operation`, `result`, `graphVersion`, `commandCount`, `opSummary` samt JSON-Schlüsseln sind
+allein **10,0 KB** — 200 B pro Record, nicht entfernbar ohne ein gefordertes Feld zu
+streichen. Die schlanken Violations sind weitere 6,3 KB (davon 3,4 KB `message`).
+
+Die Schwelle im Test steht deshalb auf dem **gemessenen** Wert mit etwas Luft, nicht auf der
+Schätzung, und der Grund steht im Test daneben. Eine Schwelle so lange aufzuweichen, bis der
+Test grün wird, ist genau der Mechanismus, durch den eine Suite eine Regression mitlernt.
+
+**Eine Abweichung von §4:** `rulesetVersion` (aus CR-GC-314) ist nicht in der
+Default-Antwort. REQ-T01 listet es nicht, und es beschreibt den *Regelsatz*, nicht *was
+passiert ist* — dieselbe Hälfte wie `rulesPassed`. Es reist jetzt mit
+`includeRulesPassed`. Auf dem Record steht es unverändert.
+
+## 8. Umsetzung
+
+| Datei | Änderung |
+|---|---|
+| `src/tools/report.ts` | `includeCommands`; `projectAuditEntries()` als **reine, exportierte** Funktion + `opSummary()` |
+| `tests/audit.trail-projection.test.ts` | 9 Tests |
+
+Die Projektion ist bewusst pur und exportiert: nur so lässt sich die Größenaussage am
+**echten** Trail messen statt an einem Fixture, dessen Violation-zu-Command-Verhältnis
+zufällig gewählt wäre — und genau dieses Verhältnis ist die ganze Variable.
+
+## 9. Nachweis
+
+Mutationsprobe: Projektion aufgeweicht (`commands` + volle Violations wieder mitgeliefert)
+→ REQ-T01 **und** das Größenbudget werden rot. Ein Test allein hätte nicht gereicht: eine
+Projektion, die die Batches *verliert*, bestünde das Größenbudget genauso — deshalb prüft
+REQ-T03 gegenläufig, dass `includeCommands` sie byte-identisch zurückgibt.

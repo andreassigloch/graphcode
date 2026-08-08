@@ -14,7 +14,7 @@
  */
 
 import { z } from 'zod/v4';
-import type { GraphNode, AuditEntry } from '@sigloch/graph-api-core';
+import type { GraphNode } from '@sigloch/graph-api-core';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import type { RuleViolation } from '@sigloch/contracts/harness';
 import { TestRefSchema, type TestRef, TRACE_PATTERNS, PHASE_READINESS_NAME } from '@sigloch/contracts/se';
@@ -56,7 +56,97 @@ const AuditTrailInputSchema = z.object({
         'ids PER ENTRY, written for a file-reading learning mechanism, not for an agent ' +
         'that wants to know what went wrong. Turning it on multiplies the payload.',
     ),
+  includeCommands: z
+    .boolean()
+    .default(false)
+    .describe(
+      'CR-GC-319: include the full mutate batch per record. OFF by default — commands are ' +
+        '79 % of this repo\'s trail (129 KB of 163 KB in the last 50 records). The one ' +
+        'consumer that needs them is the replay-merge, and it reads the JSONL file ' +
+        'directly, not this tool. Ask for them when you actually intend to replay.',
+    ),
 });
+
+/** `+n ~n -n` over a mutate batch — the shape of a change without its content (CR-GC-319). */
+function opSummary(commands: readonly unknown[] | undefined): string {
+  let added = 0;
+  let updated = 0;
+  let deleted = 0;
+  for (const c of commands ?? []) {
+    const op = String((c as { op?: unknown }).op ?? '');
+    if (op.startsWith('add-')) added += 1;
+    else if (op.startsWith('delete-')) deleted += 1;
+    else updated += 1; // update-node/update-edge/merge-nodes
+  }
+  return `+${added} ~${updated} -${deleted}`;
+}
+
+/** One audit record as written to disk — only the fields the projection reads. */
+type RawAuditEntry = Record<string, unknown> & {
+  commands?: unknown[];
+  violations?: Array<Record<string, unknown>>;
+  rulesetVersion?: string;
+  rulesPassed?: string[];
+};
+
+/**
+ * The lean `audit_trail` payload (CR-GC-319). Pure, so the size claim can be measured
+ * against this repo's REAL trail instead of a fixture whose violation-to-command ratio
+ * happens to differ from reality.
+ *
+ * CR-GC-319 / CR-GC-314, one rule: WRITING is not DELIVERING. The record on disk stays
+ * complete — it is the replay source and the learning corpus. What an agent gets is a
+ * projection, because it asks the trail to learn WHAT HAPPENED, not to replay batches.
+ * Measured on this repo's own trail, a default call was 163 KB (~40k tokens) of which
+ * 79 % were mutate batches no agent reads.
+ *
+ * Query precision (R12), not result compression: the heavy halves stay available in
+ * full — you ask for them when you intend to use them. The one consumer that truly needs
+ * `commands`, the replay-merge, reads the JSONL file directly (src/merge.ts).
+ */
+export function projectAuditEntries(
+  entries: readonly RawAuditEntry[],
+  opts: { includeCommands?: boolean; includeRulesPassed?: boolean } = {},
+): Array<Record<string, unknown>> {
+  return entries.map((e) => ({
+    id: e.id,
+    timestamp: e.timestamp,
+    consumerId: e.consumerId,
+    operation: e.operation,
+    result: e.result,
+    graphVersion: e.graphVersion,
+    // The SHAPE of the change, not its content. A validate/export record and any pre-CR
+    // entry carry no commands — that is 0, never an error (REQ-T05).
+    commandCount: e.commands?.length ?? 0,
+    opSummary: opSummary(e.commands),
+    // Slim violations: what fired and where. `fixHint`/`context` carry candidate_targets
+    // and are the bulk of the remaining bytes — they live in rules_get_violations, the
+    // tool whose job is repairing (REQ-T02).
+    ...(e.violations !== undefined
+      ? {
+          violations: e.violations.map((v) => ({
+            ruleId: v.ruleId,
+            severity: v.severity,
+            message: v.message,
+            elementId: v.elementId,
+          })),
+        }
+      : {}),
+    // Opt-in halves, added back whole — never a truncated stand-in, which would read as
+    // "this is all there was".
+    ...(opts.includeCommands && e.commands !== undefined ? { commands: e.commands } : {}),
+    // `rulesetVersion` travels with `rulesPassed`: both describe the RULE SET, not what
+    // happened, and both address the learning consumer. REQ-T01 lists neither in the
+    // default field set, and per-record rule-set metadata on an answer nobody reads it
+    // from is just weight.
+    ...(opts.includeRulesPassed
+      ? {
+          ...(e.rulesPassed !== undefined ? { rulesPassed: e.rulesPassed } : {}),
+          ...(e.rulesetVersion !== undefined ? { rulesetVersion: e.rulesetVersion } : {}),
+        }
+      : {}),
+  }));
+}
 
 const AuditStatsInputSchema = z.looseObject({});
 
@@ -147,12 +237,17 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
     },
   };
 
-  const audit_trail: MCPTool<z.infer<typeof AuditTrailInputSchema>, { entries: AuditEntry[] }> = {
+  const audit_trail: MCPTool<
+    z.infer<typeof AuditTrailInputSchema>,
+    { entries: Array<Record<string, unknown>> }
+  > = {
     name: 'audit_trail',
     description:
-      'Return mutation history entries from the audit log. The positive half ' +
-      '(rulesPassed, CR-GC-314) is withheld unless includeRulesPassed is set — it is ' +
-      'learning material on disk, not agent context.',
+      'Return mutation history from the audit log as a LEAN PROJECTION (CR-GC-319): what ' +
+      'happened, when, by whom, with what verdict — plus commandCount + opSummary (+n ~n -n) ' +
+      'as the shape of each change. The full batches (includeCommands) and the positive ' +
+      'half (includeRulesPassed, CR-GC-314) are opt-in. Nothing is dropped from the log on ' +
+      'disk; this is about what an agent is handed.',
     inputSchema: AuditTrailInputSchema,
     async handler(input) {
       const entries = await auditLog.query({
@@ -160,14 +255,11 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
         since: input.since,
         limit: input.limit,
       });
-      // CR-GC-314 REQ-A06: strip on the way OUT rather than never writing it. The trail
-      // on disk is the learning corpus and must be complete; the agent payload is a
-      // different audience with a different cost. Default answer stays byte-identical to
-      // before the CR — the field is absent, not empty, so a reader cannot mistake
-      // "withheld here" for "nothing passed".
-      if (input.includeRulesPassed) return { entries };
       return {
-        entries: entries.map(({ rulesPassed: _withheld, ...rest }) => rest),
+        entries: projectAuditEntries(entries as unknown as RawAuditEntry[], {
+          includeCommands: input.includeCommands,
+          includeRulesPassed: input.includeRulesPassed,
+        }),
       };
     },
   };
