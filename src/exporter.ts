@@ -165,6 +165,35 @@ export function exportGraphJson(graph: Graph): string {
   return JSON.stringify({ elements, traces }, null, 2) + '\n';
 }
 
+/**
+ * Is the committed SSOT still in canonical form? (CR-GC-313)
+ *
+ * The guard behind `scripts/export-graph.mjs`: re-derive the JSON from the graph the
+ * committed file describes and compare bytes. A hand-edit off-canon — a changed
+ * description, a reordered element, a stray field — makes the two differ, and views
+ * must not be rendered from a model the file no longer matches.
+ *
+ * STAMP-BLIND on purpose. CR-GC-300 added a `graphVersion` trailer at WRITE time in
+ * `graph_export`; `exportGraphJson` does not produce it, so a naive byte compare
+ * failed on every snapshot written since — the guard rejected healthy SSOTs and the
+ * script became unusable. The version is a metadatum ABOUT the snapshot, not part of
+ * the model it serializes: it is stripped from both sides before comparing. Making
+ * the script stamp along instead was rejected — it holds no store, so it could only
+ * mirror the committed number back at itself and would fake a check it cannot do.
+ *
+ * Everything else stays byte-exact. This relaxes the guard's INPUT, never its verdict.
+ */
+export function isCanonicalSnapshot(raw: string, graph: Graph): boolean {
+  let parsed: Record<string, unknown>;
+  try {
+    parsed = JSON.parse(raw) as Record<string, unknown>;
+  } catch {
+    return false; // unparseable is never canonical
+  }
+  const { graphVersion: _stamp, ...model } = parsed;
+  return JSON.stringify(model, null, 2) + '\n' === exportGraphJson(graph);
+}
+
 // ---------------------------------------------------------------------------
 // exportMarkdown — deterministic views with a GENERATED header.
 // ---------------------------------------------------------------------------

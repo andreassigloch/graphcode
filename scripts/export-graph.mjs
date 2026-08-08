@@ -21,7 +21,7 @@ import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import {
-  exportGraphJson,
+  isCanonicalSnapshot,
   exportMarkdown,
   elementToNode,
   MARKDOWN_VIEWS,
@@ -56,9 +56,10 @@ if (graph.nodes.length === 0) {
 // REFUSE-TO-CLOBBER guard 2: round-trip integrity. exportGraphJson is the exact
 // inverse of importGraph; if re-serializing the SSOT is not byte-identical to the
 // committed file, the in-memory model and the file disagree — abort rather than
-// emit views built from a mismatched graph.
-const reExport = exportGraphJson(graph);
-if (reExport !== raw) {
+// emit views built from a mismatched graph. Stamp-blind since CR-GC-313: the
+// `graphVersion` trailer graph_export writes is metadata about the snapshot, not
+// part of the model — the comparison itself stays byte-exact (src/exporter.ts).
+if (!isCanonicalSnapshot(raw, graph)) {
   console.error(
     '\n⛔ export-graph: re-export of the SSOT is NOT byte-identical to\n' +
     '   docs/graph/graphcode.graph.json. The graph file is not in canonical\n' +

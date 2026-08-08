@@ -1,6 +1,6 @@
 # CR-GC-311 — Time-Travel: Funktionen modellieren, Wirkkette schließen, `graphcode rewind` bauen
 
-**Status:** open · **Angelegt:** 2026-08-08 · **Max Files:** 4
+**Status:** done · **Angelegt:** 2026-08-08 · **Abgeschlossen:** 2026-08-08 · **Max Files:** 4
 **Herkunft:** ConOps-Review 2026-08-08. `UC-graph-time-travel` rendert in
 `docs/views/conops.md` mit „— kein Betriebsablauf beschrieben (keine FCHAIN) —".
 **Abhängigkeit:** keine. CR-GC-312 (Regelkatalog-Wiring) macht diese Klasse Befund
@@ -96,17 +96,38 @@ Verb-Liste ziehen.
 
 ## Akzeptanzkriterien
 
-- [ ] `graphcode rewind <ref>` stellt den Graph-Stand von `<ref>` her; `rewind HEAD` nach
+- [x] `graphcode rewind <ref>` stellt den Graph-Stand von `<ref>` her; `rewind HEAD` nach
       beliebigen Mutationen ist idempotent
-- [ ] Bei gesetztem `EXPORT_PENDING` bricht `rewind` ab und nennt den Grund; `--force`
+- [x] Bei gesetztem `EXPORT_PENDING` bricht `rewind` ab und nennt den Grund; `--force`
       überschreibt; ohne `--force` ist der Store danach unverändert
-- [ ] Unbekannter Ref / fehlender Snapshot in `<ref>`: Fehlermeldung, Store unverändert
-- [ ] Der Working-Tree wird nicht angefasst (`git status` vor/nach identisch) — Rewind
+- [x] Unbekannter Ref / fehlender Snapshot in `<ref>`: Fehlermeldung, Store unverändert
+- [x] Der Working-Tree wird nicht angefasst (`git status` vor/nach identisch) — Rewind
       betrifft den Store, nicht den Checkout
-- [ ] Test läuft gegen echtes Temp-Git-Repo + Disk-Kuzu, kein Mock, kein `:memory:`
-- [ ] `docs/views/conops.md` zeigt für `UC-graph-time-travel` beide FCHAIN statt
+- [x] Test läuft gegen echtes Temp-Git-Repo + Disk-Kuzu, kein Mock, kein `:memory:`
+- [x] `docs/views/conops.md` zeigt für `UC-graph-time-travel` beide FCHAIN statt
       „kein Betriebsablauf beschrieben"
-- [ ] `evaluateAllRules` meldet für `UC-graph-time-travel` weder UC-02 noch UC-03/FC-02
+- [x] `evaluateAllRules` meldet für `UC-graph-time-travel` weder UC-02 noch UC-03/FC-02
       (Nachweis im Test, nicht per Sichtprüfung)
-- [ ] RC-01 löst für alle drei neuen `realRef` auf
-- [ ] `npm test && npm run build` grün
+- [x] RC-01 löst für alle drei neuen `realRef` auf
+- [x] `npm test && npm run build` grün — 81 Dateien / 582 Tests
+
+## Abweichungen vom Plan
+
+- **`src/viewer/help-content.ts` war der falsche Ort.** Das Modul annotiert Rules/Gates/
+  Panels, keine CLI-Verben. Stattdessen `README.md` (die Verb-Liste, die ein Nutzer liest).
+- **Zwei eigene FLOW statt geteilter.** Der erste Entwurf band die Actor-Grenzen an
+  `FLOW-graph-state` / `FLOW-formatE-artifact` — das erzeugte eine R-12-Zirkularität
+  (`ACTOR-developer ↔ FLOW-graph-state`) und zwei R-21-Treffer, weil geteilte FLOWs die
+  neuen FUNCs an fremde Konsumenten koppeln. `FLOW-graph-snapshot` (SSOT-at-rest) und
+  `FLOW-recalled-state` benennen stattdessen genau die Datenobjekte dieses UC.
+- **`FCHAIN -satisfy-> REQ` ergänzt** (im Plan nicht vorgesehen): deckt die
+  R-21-Verbindungen innerhalb einer Kette über den Integrations-TEST ab.
+- **Ein R-21-Warning bleibt bewusst stehen:** `FUNC-graph-export-snapshot →
+  FUNC-reseed`. Die beiden hängen über `FLOW-graph-snapshot` zusammen, liegen aber in
+  verschiedenen Ketten — der Snapshot IST das Bindeglied zwischen Aufzeichnen und
+  Wiederherstellen. Eine Kette daraus zu machen wäre Modellierung gegen die Regel,
+  nicht für die Sache.
+- **CR-GC-313 musste vorgezogen werden.** Der laufende MCP-Server exportiert aus seinem
+  `dist` vom Startzeitpunkt und hat beim ersten `graph_export` das von CR-GC-305
+  entfernte `docs/views/spec.md` wiederbelebt. Ohne den reparierten
+  `scripts/export-graph.mjs` war dieser CR nicht verifizierbar.

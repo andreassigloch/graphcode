@@ -43,6 +43,7 @@ export { GraphCodeCodec } from './codec.js';
 // path: render the live in-memory graph back into commit-able docs.
 export {
   exportGraphJson,
+  isCanonicalSnapshot,
   exportMarkdown,
   elementToNode,
   MarkdownViewSchema,

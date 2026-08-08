@@ -21,6 +21,9 @@ npx @sigloch/graphcode run "<intent>" # author the graph via the embedded execut
                                      # directly, no coding-agent harness. Env: GRAPHCODE_LLM_BASE_URL
                                      # + GRAPHCODE_LLM_MODEL (required), GRAPHCODE_LLM_BACKEND=
                                      # openai|anthropic (default openai), GRAPHCODE_LLM_API_KEY
+npx @sigloch/graphcode rewind <ref>  # recall the graph state committed at <ref> — reads the snapshot
+                                     # from git object storage, so the working tree is NOT touched.
+                                     # Aborts while un-exported model edits are pending (--force drops them)
 npx @sigloch/graphcode update        # refresh scaffolded artifacts after a version bump — PRESERVES the store
 npx @sigloch/graphcode skills sync   # re-copy the shipped se-* skills (overwrites on version mismatch)
 npx @sigloch/graphcode remove        # remove all scaffolded artifacts (restlos)

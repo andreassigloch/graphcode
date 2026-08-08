@@ -1,6 +1,6 @@
 # CR-GC-313 — `scripts/export-graph.mjs` ist tot: Canonicity-Guard kennt den graphVersion-Stamp nicht
 
-**Status:** open · **Angelegt:** 2026-08-08 · **Max Files:** 3
+**Status:** done · **Angelegt:** 2026-08-08 · **Abgeschlossen:** 2026-08-08 · **Max Files:** 3
 **Gefunden:** 2026-08-07 beim Re-Export im Rahmen von CR-GC-304.
 
 ## Problem
@@ -58,24 +58,38 @@ Fleißarbeit:
 Versions-Trailer. B täuscht eine Prüfung vor, die das Skript ohne Store nicht leisten
 kann.
 
+## Entscheidung: A (stamp-blind), wie empfohlen
+
 ## Akzeptanzkriterien
 
-- [ ] `node scripts/export-graph.mjs` läuft auf diesem Repo durch und schreibt die
+- [x] `node scripts/export-graph.mjs` läuft auf diesem Repo durch und schreibt die
       15 Views
-- [ ] Test: eine SSOT **mit** `graphVersion`-Stamp passiert den Guard
-- [ ] Test: eine SSOT mit einem **echten** Hand-Edit (geänderte Beschreibung,
+- [x] Test: eine SSOT **mit** `graphVersion`-Stamp passiert den Guard
+- [x] Test: eine SSOT mit einem **echten** Hand-Edit (geänderte Beschreibung,
       umsortierte Elemente) wird weiterhin abgelehnt — der Guard darf nicht durch
       Aufweichen „repariert" werden. **Dieser Test ist der eigentliche Punkt des CRs**
-- [ ] `docs/graph/graphcode.graph.json` bleibt unverändert (das Skript rendert Views,
+- [x] `docs/graph/graphcode.graph.json` bleibt unverändert (das Skript rendert Views,
       es schreibt den SSOT nicht um)
-- [ ] `npm run build` + volle Suite grün
+- [x] `npm run build` + volle Suite grün — 81 Dateien / 582 Tests
 
 ## Dateien (3)
 
-1. `docs/cr/open/CR-GC-313-export-graph-guard-vs-graphversion-stamp.md` (dieses Dokument)
-2. `scripts/export-graph.mjs`
-3. eine Testdatei für den Guard (heute gibt es keine — er ist ungetestet, was erklärt,
-   warum CR-GC-300 ihn brechen konnte, ohne dass etwas rot wurde)
+1. `src/exporter.ts` — neu `isCanonicalSnapshot(raw, graph)`. Die Logik gehört nach
+   `src/`, nicht ins Skript: der Header des Runners sagt seit jeher „Logic lives in
+   src/exporter.ts, this runner is thin" — genau daran lag es, dass der Guard
+   ungetestet war. `graphVersion` wird auf der Datei-Seite abgezogen, danach
+   byte-exakter Vergleich wie zuvor.
+2. `scripts/export-graph.mjs` — ruft den Guard statt selbst zu vergleichen
+   (+ `src/index.ts`: ein Zeilen-Re-Export, das Skript lädt aus `dist/index.js`)
+3. `tests/export-graph-guard.test.ts` (neu) — 9 Tests
+
+## Nachweis (Zwei-Wege-Mutationsprobe)
+
+- Guard auf die **Vor-CR-Fassung** zurückgedreht (strikter Byte-Vergleich) → genau die
+  drei Stamp-Tests werden rot, inklusive „passiert auf dem committeten SSOT". Der Bug
+  ist reproduziert, nicht behauptet.
+- Guard **aufgeweicht** (`return true`) → genau die vier REFUSES-Tests werden rot. Der
+  Guard lässt sich nicht durch Nachgeben grün bekommen.
 
 ## Nebenbefund (kein Teil dieses CRs)
 

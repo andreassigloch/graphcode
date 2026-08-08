@@ -9,6 +9,10 @@
  *                                   MOD-host-bridge) — owns the single Kuzu store and
  *                                   serves /health + /events (SSE) to a live viewer.
  *                                   NO write route (the write path is MCP-stdio).
+ *   - `graphcode rewind <ref>`      recall the graph state committed at <ref>
+ *                                   (CR-GC-311, FCHAIN-recall) — reads the snapshot
+ *                                   via `git show`, so the working tree is never
+ *                                   touched and a failure leaves the store untouched.
  *   - `graphcode init|update|remove` self-contained scaffold lifecycle (CR-GC-112,
  *                                   MOD-cli) — installs/refreshes/removes the harness
  *                                   artifacts in the target repo.
@@ -24,6 +28,7 @@ import { StoreOwnershipError } from './store-lock.js';
 import { scaffold, syncSkills, type CliCommand } from './scaffold.js';
 import { executeRun, parseExecutorEnv } from './run-verb.js';
 import { executeImportCode } from './import-code-verb.js';
+import { executeRewind, RewindError } from './rewind.js';
 
 const USAGE = `graphcode — governed graph substrate (MCP-stdio)
 
@@ -38,6 +43,10 @@ Usage:
                     FUNC/MOD/FLOW+SCHEMA through the gate. RESEED semantics —
                     replaces the whole graph (automatic backup under
                     .graphcode/backup/), never merges.
+  graphcode rewind <ref> [--force]  Recall the graph state committed at <ref>
+                    (CR-GC-311). Reads the snapshot from git object storage —
+                    the working tree is NOT touched. Aborts while un-exported
+                    model changes are pending; --force drops them.
   graphcode init        Scaffold the harness into the current repo
   graphcode update      Refresh installed artifacts (preserves the store)
   graphcode remove      Remove all scaffolded artifacts (restlos)
@@ -122,6 +131,39 @@ async function main(): Promise<void> {
           process.stderr.write(
             `graphcode import-code: store already owned by pid ${err.owner.pid} — ` +
               'stop the running MCP host (or the other run) first.\n',
+          );
+          process.exit(1);
+        }
+        throw err;
+      }
+    }
+    case 'rewind': {
+      // Recall (CR-GC-311): Graph-Stand eines Commits herstellen. Der Working-Tree
+      // bleibt unberührt — der Snapshot kommt per `git show` aus dem Objektspeicher,
+      // es gibt also keinen Zwischenzustand, aus dem zurückgekehrt werden müsste.
+      const ref = process.argv[3];
+      if (ref === undefined || ref.startsWith('-')) {
+        process.stderr.write(`graphcode rewind: missing <ref>\n\n${USAGE}`);
+        process.exit(1);
+      }
+      try {
+        const summary = await executeRewind({
+          repoRoot: process.cwd(),
+          ref,
+          force: process.argv.includes('--force'),
+          trace: (line) => process.stderr.write(line + '\n'),
+        });
+        process.stderr.write(`graphcode rewind: ${JSON.stringify(summary, null, 2)}\n`);
+        process.exit(0);
+      } catch (err) {
+        if (err instanceof RewindError) {
+          process.stderr.write(`graphcode rewind: ${err.message}\n`);
+          process.exit(1);
+        }
+        if (err instanceof StoreOwnershipError) {
+          process.stderr.write(
+            `graphcode rewind: store already owned by pid ${err.owner.pid} — ` +
+              'stop the running MCP host first.\n',
           );
           process.exit(1);
         }
