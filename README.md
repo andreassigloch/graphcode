@@ -11,8 +11,11 @@ All commands run **inside the target repository**:
 
 ```bash
 npx @sigloch/graphcode init          # one-time setup: scaffold .mcp.json, GRAPHCODE.md, store dir
-npx @sigloch/graphcode mcp           # start the MCP-stdio server (your agent host runs this via .mcp.json)
-npx @sigloch/graphcode host          # start the read-only HTTP/SSE bridge (live dashboard/viewer)
+npx @sigloch/graphcode mcp           # THE server. Your agent host runs this via .mcp.json and it
+                                     # brings up all three: MCP-stdio, the read-only HTTP/SSE
+                                     # bridge, and the GVE dashboard. Nothing else to start.
+npx @sigloch/graphcode host          # FALLBACK only — the bridge alone, for a repo with no agent
+                                     # session running. Alongside a live `mcp` it hits the store lock.
 npx @sigloch/graphcode run "<intent>" # author the graph via the embedded executor — a local LLM
                                      # (LM Studio) or Anthropic BYOK drives graph_generate/mutate
                                      # directly, no coding-agent harness. Env: GRAPHCODE_LLM_BASE_URL
@@ -50,12 +53,23 @@ exposing the tools below.
 The MCP surface is the agent-agnostic contract — any MCP-stdio host works. The `se-*` **skills**
 are Claude Code surface (`.claude/skills/`); an OpenCode user drives the same tools directly.
 
-**3. Dashboard (optional):** `npx @sigloch/graphcode host` serves `/health` + `/events` (SSE) for a
-live viewer. When an MCP server is already running it owns the single store — then the *elected
-host* serves the bridge itself: set `GRAPHCODE_HOST_PORT` in `.mcp.json` `env`
-(`npx @sigloch/graphcode update` scaffolds a deterministic per-repo port).
+**3. Say this to your agent.** That is the whole first step — the server prints the same line on
+startup:
 
-**4. After upgrading the package:** run `npx @sigloch/graphcode update` — refreshes `.mcp.json`,
+> Lies GRAPHCODE.md, dann: `graph_readiness` — wo steht das Projekt und was ist der nächste Schritt?
+
+On an empty repo (no model yet) start from the intent instead:
+
+> Lies GRAPHCODE.md, dann leg mit `se:generate` los: "&lt;was das System tun soll, in einem Satz&gt;"
+
+**4. Dashboard — already running.** `graphcode mcp` starts the GVE viewer itself, along with the
+read-only `/health` + `/events` (SSE) bridge. Do **not** start a second server: read the URL from
+`docs/views/dashboard.url`, which GVE writes with its actual bound address on startup and removes on
+shutdown (the port is dynamic — Vite bumps on conflict, so never assume one). File absent = not
+running. Opt out with `GRAPHCODE_NO_GVE=1`; the bridge port comes from `GRAPHCODE_HOST_PORT` in
+`.mcp.json` `env`, which `init`/`update` scaffolds per repo.
+
+**5. After upgrading the package:** run `npx @sigloch/graphcode update` — refreshes `.mcp.json`,
 `GRAPHCODE.md` and skills, never touches the store.
 
 ## Using it — the agent loop (over MCP)
@@ -107,17 +121,19 @@ owning gate are derived from `V3_RULES` + readiness, so help never drifts from t
 
 ## Viewer integration
 
-GraphCode is headless and is **not** itself a viewer. It ships the read-only **data layer** an
-external live viewer/renderer (`graph-view-edit`) plugs into — this surface is **provisional** and
-stabilizes when that renderer lands:
+GraphCode is headless and is **not** itself a viewer — it ships the read-only **data layer**, and
+`graph-view-edit` (GVE) is the renderer that consumes it. The elected host **spawns GVE for you**
+(see *Get started* step 4); these are the pieces it wires up:
 
-- `host` — owns the single Kuzu store and serves `/health` + `/events` (SSE).
-  Read-only: no mutating HTTP verb is reachable; the write path stays MCP-stdio.
+- the read-only HTTP/SSE bridge — owns the single Kuzu store and serves `/health` + `/events`.
+  No mutating HTTP verb is reachable; the write path stays MCP-stdio.
 - panel shapers (`readinessPanel`, `impactPanel`, `artifactsPanel`, …) — pure read-only
   view-models over the MCP tools; the renderer consumes these and fills the render mount-slot.
 - live-update events — every gate mutation emits one update event the host broadcasts over SSE.
 
-Until the renderer ships, treat these exports as experimental.
+The bound address is announced in `docs/views/dashboard.url`, never a fixed port. The shared view
+catalog (which documents exist, under which filename) lives in `@sigloch/graphcode-client` so the
+viewer can list them without depending on the exporter.
 
 ## Local development (this repo)
 

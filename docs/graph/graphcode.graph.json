@@ -868,16 +868,16 @@
       "id": "CR-GC-305",
       "type": "CR",
       "name": "spec-View entfernen, srs bleibt",
-      "description": "docs/views/ liefert zwei Requirements-Dokumente: spec.md (Rohdump aller Elemente nach Typ) und srs.md (ISO-29148-Narrativ). Doppelte Wahrheit fuer dieselbe Frage. spec faellt weg, srs bleibt. Cross-Package, weil der View-Katalog seit CR-GC-264 in @sigloch/graphcode-client liegt und GVE ihn per Drift-Test exakt gegenprueft: client 0.6.0 auf 0.7.0 bumpen und publishen, dann renderSpec plus case loeschen, Tests auf srs umstellen, docs/views/spec.md entfernen, GVE npm install. Kein halber Pfad. (docs/cr/open/CR-GC-305)",
-      "status": "open",
+      "description": "DONE 2026-08-08. @sigloch/graphcode-client 0.7.0 publiziert — MARKDOWN_VIEWS und VIEW_FILENAMES fuehren spec nicht mehr (16 auf 15 Views); graphcode und graph-view-edit auf ^0.7.0. Die View war ein Rohdump aller Elemente nach Typ und beantwortete dieselbe Frage wie srs (ISO-29148-Narrativ) mit anderer Vollstaendigkeit. Verifikationsreihenfolge bewusst gedreht: erst npm link in beide Konsumenten und alles gruen fahren, DANN publizieren — eine npm-Version laesst sich nicht zurueckziehen. Drei unabhaengige Signale, dass die View schon totes Gewicht war: GVE fuehrte sie als hidden mit Kommentar 'redundant zur editierbaren SRS', docs/views/spec.md war seit CR-GC-264 gitignored, und der Exporter-Kommentar musste die Abgrenzung eigens erklaeren. Abweichungen: GVE brauchte doch Code (toter DOC_OVERRIDES-Eintrag plus ein 16-Literal im Test), und es waren 6 statt 3 spec-Referenzen in exporter.test.ts — der Test 'SRS ungleich model spec' schrieb die Doppelung positiv fest und ist durch sein Gegenteil ersetzt: keine der 15 Views darf die typgruppierte Form wieder einfuehren. MarkdownViewSchema.parse('spec') wirft jetzt statt still zurueckzufallen. Gruen: client 29, graphcode 501 + Build, GVE 526. (docs/cr/done/CR-GC-305)",
+      "status": "done",
       "created_at": "2026-08-07T00:00:00.000Z"
     },
     {
       "id": "CR-GC-306",
       "type": "CR",
       "name": "Onboarding: ein Start, Beispiel-Prompt, GVE-Adresse",
-      "description": "Drei Onboarding-Defekte. 1) README verkauft zwei Server-Starts, wo einer laeuft: init scaffolded GRAPHCODE_HOST_PORT in .mcp.json, damit startet 'graphcode mcp' MCP-stdio UND die SSE-Bridge (CR-GC-237); 'graphcode host' ist der Fallback ohne Agent-Session, wird aber als Normalweg dokumentiert und fuehrt in den StoreOwnershipError. 2) Kein erster Prompt — weder README noch Server-Start nennen einen konkreten Einstiegssatz; das README springt von 'reload your agent host' in die Tool-Referenz. 3) Die GVE-Adresse steht nur in docs/views/README.md, das ein Agent per Graph-first-Regel gerade nicht liest — sie gehoert in GRAPHCODE.md, ohne hartkodierten Port (dashboard.url ist die Quelle). Dazu die Abgrenzung docs/views (Graph-Projektion) gegen docs/records (commit-gestempelte Urteilsdokumente wie irr.md). (docs/cr/open/CR-GC-306)",
-      "status": "open",
+      "description": "DONE 2026-08-08. Befund staerker als angenommen: `graphcode mcp` startet DREI Dinge, nicht zwei — MCP-stdio, die read-only SSE-Bridge UND den GVE-Viewer selbst (maybeStartGve, abschaltbar per GRAPHCODE_NO_GVE=1). README dokumentierte keins davon richtig und machte `graphcode host` zum Normalweg, was neben einem laufenden Host den Store-Lock trifft. Umgesetzt: README nennt mcp als DEN Server und host als Fallback; Beispiel-Prompt als Schritt 3 im README und auf stderr beim Start (firstStepHint, genau eine Zeile statt Menue); GRAPHCODE.md bekommt einen Live-view-Abschnitt mit docs/views/dashboard.url als Adressquelle und ohne hartkodierten Port; docs/views/README.md grenzt views (deterministische Graph-Projektionen) gegen records (commit-gestempelte Urteilsdokumente wie irr.md) entlang des Ableitbarkeits-Kriteriums ab. Abweichung: das Leer-Kriterium ist die INTENT-EBENE (existiert UC oder REQ?), nicht die Elementzahl — nach CR-GC-302 traegt jeder Store einen SYS-Anker und import-code erzeugt FUNC/MOD ohne UC/REQ, ein count===0 haette beide auf den falschen Zweig geschickt. firstStepHint liegt in mcp-server.ts statt scaffold-templates.ts (kein Scaffold-Artefakt) und feuert nur nach der Erst-Wahl, nicht bei einer Promote-Neuwahl. Mitgefunden: die README-Sektion 'Viewer integration' schloss mit 'Until the renderer ships' — der Renderer wird laengst automatisch gestartet. 10 neue Tests, 8 davon vorher rot; 75 Testdateien / 511 Tests gruen. (docs/cr/done/CR-GC-306)",
+      "status": "done",
       "created_at": "2026-08-07T00:00:00.000Z"
     },
     {
@@ -9476,5 +9476,5 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     }
   ],
-  "graphVersion": 50
+  "graphVersion": 52
 }

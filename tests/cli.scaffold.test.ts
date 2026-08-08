@@ -172,6 +172,30 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
     expect(md).toMatch(/SPEC\.md.*do not read it/i);
   });
 
+  it('GRAPHCODE.md tells the agent where the live view is — and that ONE command starts it (CR-GC-306)', async () => {
+    await scaffold('init', { repoRoot: repo });
+    const md = readFileSync(join(repo, GUARDRAILS), 'utf8');
+    // The address source. An agent follows the graph-first rule and never reads
+    // docs/views/README.md, so the pointer has to be HERE or it is invisible.
+    expect(md).toContain('docs/views/dashboard.url');
+    // One command, not two. `graphcode host` must be marked as the fallback it is —
+    // starting it next to a live host just hits the store lock.
+    expect(md).toMatch(/fallback/i);
+    // No hard-coded port: the bound address is dynamic (Vite bumps on conflict) and
+    // a number in the docs is how people end up inspecting the wrong instance.
+    expect(md).not.toMatch(/\b4317\b/);
+  });
+
+  it('GRAPHCODE.md is refreshed by `update`, not only written by `init` (CR-GC-306)', async () => {
+    await scaffold('init', { repoRoot: repo });
+    // Simulate an older scaffold: the file predates the live-view section.
+    writeFileSync(join(repo, GUARDRAILS), '# stale guardrails from an older version\n');
+    await scaffold('update', { repoRoot: repo });
+    const md = readFileSync(join(repo, GUARDRAILS), 'utf8');
+    expect(md).toContain('docs/views/dashboard.url');
+    expect(md).not.toContain('stale guardrails');
+  });
+
   it('GRAPHCODE.md points at se:help / graph_help as the live help entry (CR-GC-230)', async () => {
     await scaffold('init', { repoRoot: repo });
     const md = readFileSync(join(repo, GUARDRAILS), 'utf8');

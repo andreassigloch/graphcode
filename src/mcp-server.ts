@@ -21,7 +21,7 @@ import { fileURLToPath } from 'node:url';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import type { ZodObject, ZodRawShape } from 'zod/v4';
-import type { AuditLog } from '@sigloch/graph-api-core';
+import type { AuditLog, Graph } from '@sigloch/graph-api-core';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 import { createHarness, type GraphCodeHarness } from './index.js';
 import { exportGraphJson } from './exporter.js';
@@ -181,6 +181,12 @@ export async function serveStdio(opts?: {
    * bridge follows the lock). Passed as `promote` too, so a client promoted
    * after a host death rebinds the same port (the dead owner freed it).
    */
+  // CR-GC-306: the booted graph, stashed so the first-step hint can be printed
+  // ONCE after the initial election. `electAndBoot` keeps its signature because it
+  // doubles as `promote` below — and a mid-session re-election (the host died) must
+  // not re-print "here is your first step" into a session already underway.
+  let bootedGraph: Graph | null = null;
+
   async function electAndBoot(): Promise<MCPToolRegistry> {
     // The sink is wired BEFORE the bridge exists — a mutable indirection lets
     // the bridge attach to this harness after the election is won.
@@ -191,6 +197,7 @@ export async function serveStdio(opts?: {
     );
     await harness.initialize(); // the O2 lock IS the election (CR-GC-218)
     const registry = await bootHost(repoRoot, harness);
+    bootedGraph = harness.getGraph();
     bridge = await maybeStartBridge(repoRoot, harness);
     await maybeStartGve(repoRoot);
     return registry;
@@ -200,6 +207,7 @@ export async function serveStdio(opts?: {
   try {
     registry = await electAndBoot();
     process.stderr.write('[graphcode] host: won the store election — serving stdio + host.sock\n');
+    if (bootedGraph) process.stderr.write(firstStepHint(bootedGraph));
   } catch (err) {
     if (!(err instanceof StoreOwnershipError)) throw err;
     // Election lost → thin proxy to the live host. `promote` is the single
@@ -319,6 +327,31 @@ export async function maybeStartGve(
   }
   process.stderr.write('[graphcode] gve: dashboard starting — URL lands in docs/views/dashboard.url\n');
   return child;
+}
+
+/**
+ * The ONE sentence to say next, printed on boot (CR-GC-306).
+ *
+ * Onboarding failed at the same point every time: the host comes up, prints an
+ * election line, and leaves the reader with a tool reference. A substrate whose
+ * entry point is a tool list gets read and put down. So name a single next action —
+ * never a menu; a wall of options is the failure mode being avoided.
+ *
+ * Which sentence depends on whether an INTENT LAYER exists, not on whether the store
+ * has rows: since CR-GC-302 every imported store carries a SYS anchor, and
+ * `graphcode import-code` produces FUNC/MOD/FLOW with no UC or REQ at all. Telling
+ * that repo to read `graph_readiness` would point it at a status report about
+ * requirements it does not have. UC/REQ is the real test.
+ *
+ * Returns text only — the caller writes it to **stderr**, because stdout is the MCP
+ * JSON-RPC transport and one stray byte on fd 1 corrupts the protocol stream.
+ */
+export function firstStepHint(graph: Graph): string {
+  const hasIntent = graph.nodes.some((n) => n.type === 'UC' || n.type === 'REQ');
+  const step = hasIntent
+    ? 'graph_readiness — wo steht das Projekt und was ist der nächste Schritt?'
+    : 'leg mit se:generate los: "<was das System tun soll, in einem Satz>"';
+  return `[graphcode] Erster Schritt — sag deinem Agenten:\n[graphcode]   Lies GRAPHCODE.md, dann: ${step}\n`;
 }
 
 /** Extract the raw Zod shape a `z.object`/`z.looseObject` was built from. */

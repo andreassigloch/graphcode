@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 100 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 100 CR · 91 done · 8 open.
+Total: 100 CR · 93 done · 6 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -144,6 +144,6 @@ Total: 100 CR · 91 done · 8 open.
 | `CR-GC-302` | done | Auto-SYS-Node bei jedem Import |
 | `CR-GC-303` | done | Attribut-Abflachung macht Steering-Pfad regelblind |
 | `CR-GC-304` | done | ConOps-View nach ISO 29148 neu schneiden |
-| `CR-GC-305` | open | spec-View entfernen, srs bleibt |
-| `CR-GC-306` | open | Onboarding: ein Start, Beispiel-Prompt, GVE-Adresse |
+| `CR-GC-305` | done | spec-View entfernen, srs bleibt |
+| `CR-GC-306` | done | Onboarding: ein Start, Beispiel-Prompt, GVE-Adresse |
 | `CR-GC-307` | open | Intent-Anker sind Steuerungsinternes, nicht Kundendialog |

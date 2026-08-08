@@ -1,6 +1,71 @@
 # CR-GC-306 — Onboarding: ein Start statt zwei, Beispiel-Prompt als 1. Schritt, GVE-Adresse dort wo die LLM sie findet
 
-**Status:** open · **Angelegt:** 2026-08-07 · **Max Files:** 5
+**Status:** done · **Angelegt:** 2026-08-07 · **Geschlossen:** 2026-08-08
+
+> ## Abschluss 2026-08-08
+>
+> ### Der Befund war stärker als der CR annahm: **drei** Server, nicht zwei
+>
+> Der CR beschrieb `graphcode mcp` als MCP-stdio + SSE-Bridge. Tatsächlich startet der
+> gewählte Host auch **GVE selbst** (`maybeStartGve`, `src/mcp-server.ts` — `npx -y
+> @sigloch/graph-view-edit --repo <root>`, abschaltbar per `GRAPHCODE_NO_GVE=1`).
+> Es sind drei Dinge aus einem Kommando, und das README dokumentierte keins davon
+> richtig. Die Aussage „npx host startet schon beide Server" war also noch
+> untertrieben.
+>
+> ### Umgesetzt
+>
+> 1. **`README.md`** — `mcp` ist DER Server (alle drei), `host` ist explizit als
+>    Fallback ohne Agent-Session markiert (daneben gestartet trifft er den Store-Lock).
+>    Der frühere „Dashboard (optional)"-Schritt, der zum Doppelstart einlud, ist weg.
+> 2. **Beispiel-Prompt als Schritt 3** im README **und** auf stderr beim Start
+>    (`firstStepHint`). Genau eine Zeile, kein Menü.
+> 3. **`GRAPHCODE.md`** (via `guardrailsContent()`) hat einen Abschnitt „Live view" —
+>    `docs/views/dashboard.url` als Adressquelle, kein hartkodierter Port.
+> 4. **`docs/views/README.md`** grenzt `views/` gegen `records/` ab — als Tabelle
+>    entlang des *Ableitbarkeits*-Kriteriums, plus der Hinweis auf die
+>    Namensgleichheit `se-conops` (CREATE) vs. `se-view:conops` (RENDER), aus der die
+>    Verwechslung entsteht.
+>
+> ### Abweichung: das Leer-Kriterium ist UC/REQ, nicht die Elementzahl
+>
+> Der CR sagte „Element-Zahl im Store". Nach CR-GC-302 trägt **jeder** importierte
+> Store einen SYS-Anker, und `graphcode import-code` erzeugt FUNC/MOD/FLOW ganz ohne
+> UC/REQ. Ein `count === 0` hätte beide Fälle auf den falschen Zweig geschickt: ein
+> code-importiertes Repo bekäme „lies `graph_readiness`" — einen Statusbericht über
+> Requirements, die es nicht hat. Das Kriterium ist deshalb **die Intent-Ebene**
+> (existiert ein UC oder REQ?), und beide Fälle sind getestet.
+>
+> ### Abweichung: `firstStepHint` liegt in `mcp-server.ts`, nicht in `scaffold-templates.ts`
+>
+> Der CR wollte den Hinweistext zu `guardrailsContent()` legen. Der Start-Hinweis ist
+> aber kein Scaffold-Artefakt — er wird nie in eine Datei geschrieben. Er steht als
+> reine, exportierte Funktion neben `maybeStartGve` und ist ohne Harness testbar.
+> Aufgerufen wird er **nur nach der Erst-Wahl**: `electAndBoot` doubelt als `promote`
+> (Neuwahl nach Host-Tod), und mitten in einer laufenden Session „hier ist dein erster
+> Schritt" nachzudrucken wäre falsch. Dafür der Closure-Umweg über `bootedGraph`
+> statt einer Signaturänderung.
+>
+> ### Mitgefundene Stale-Doku
+>
+> Die README-Sektion „Viewer integration" schloss mit *„Until the renderer ships,
+> treat these exports as experimental."* Der Renderer ist längst da und wird
+> automatisch gestartet — der Satz widersprach dem neuen Schritt 4 direkt. Ersetzt.
+>
+> **Tests:** neu `tests/mcp.first-step.test.ts` (8, alle vorher rot) + 2 in
+> `tests/cli.scaffold.test.ts`. Gepinnt sind u.a.: kein `4317` in `GRAPHCODE.md`, der
+> `update`-Pfad (nicht nur `init`) schreibt den Abschnitt, und der Hinweis bleibt
+> ≤3 Zeilen — gegen das Zurückwachsen zum Menü.
+>
+> `npm run build` grün, **75 Testdateien / 511 Tests grün**.
+>
+> ### Nicht getan
+>
+> Der stderr-Hinweis ist als **Funktion** getestet, nicht über einen echten
+> `serveStdio`-Boot. Ein End-to-End-Test dafür müsste einen MCP-Server hochfahren und
+> fd 1/2 abgreifen; die AC „stdout bleibt byte-genau leer" ist stattdessen durch die
+> Reinheit der Funktion + die bestehende Regel „stdout ist MCP-reserviert" gedeckt.
+> Ehrlicher Rest, kein erledigtes Häkchen.
 
 ## Problem
 

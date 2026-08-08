@@ -167,8 +167,8 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-302` | done | Auto-SYS-Node bei jedem Import | `FUNC-import` |
 | `CR-GC-303` | done | Attribut-Abflachung macht Steering-Pfad regelblind | `FUNC-evaluate-rules` · `FUNC-graph-suggest` |
 | `CR-GC-304` | done | ConOps-View nach ISO 29148 neu schneiden | `FUNC-render-views` · `MOD-docs` · `MOD-skills` |
-| `CR-GC-305` | open | spec-View entfernen, srs bleibt | `FUNC-export-markdown` · `FUNC-render-views` · `MOD-docs` |
-| `CR-GC-306` | open | Onboarding: ein Start, Beispiel-Prompt, GVE-Adresse | `FUNC-harness-cli` · `MOD-cli` · `MOD-host-bridge` |
+| `CR-GC-305` | done | spec-View entfernen, srs bleibt | `FUNC-export-markdown` · `FUNC-render-views` · `MOD-docs` |
+| `CR-GC-306` | done | Onboarding: ein Start, Beispiel-Prompt, GVE-Adresse | `FUNC-harness-cli` · `MOD-cli` · `MOD-host-bridge` |
 | `CR-GC-307` | open | Intent-Anker sind Steuerungsinternes, nicht Kundendialog | `FUNC-graph-suggest` · `MOD-skills` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
