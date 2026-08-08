@@ -1,8 +1,76 @@
 # CR-GC-307 — Intent-Anker sind Steuerungsinternes: raus aus der Kundenfrage, rein in gezielte Fachfragen
 
-**Status:** open · **Angelegt:** 2026-08-07 · **Max Files:** 5
+**Status:** done · **Angelegt:** 2026-08-07 · **Geschlossen:** 2026-08-08
 **Herkunft:** Folge-CR zu CR-GC-295 (Zielprofil), Nutzer-Feedback 2026-08-07 aus einem
 Frontier-LLM-Lauf.
+
+> ## Abschluss 2026-08-08
+>
+> **Der Begriff ist weg aus jedem Text, den ein Mensch liest.** Die Anker selbst
+> bleiben — `graph_readiness.intentCoverage` misst weiter an ihnen. Geändert hat sich
+> nur, **wer** sie sieht: niemand.
+>
+> | Vorher | Nachher |
+> |---|---|
+> | „Intentions-Anker (Default, aus der Intention extrahiert): … — vom Menschen bestätigen/korrigieren lassen" | still gesetzt, keine Rückfrage |
+> | „Unadressierte Intentions-Anker: zauberdrache — in passenden UC/REQ/FUNC adressieren." | „Noch nirgends beschrieben: zauberdrache. Fehlt dazu ein Use Case oder Requirement?" |
+> | zu dünne Intention: Anker-Liste trotzdem vorgelegt | 2–3 **fachliche** Rückfragen, Begriff verboten |
+>
+> ### Der Auslöser ist gemessen, nicht geraten
+>
+> `isIntentTooThin()` hat genau eine Bedingung: weniger als 3 trennscharfe
+> Inhaltswörter nach Stopword- **und** Generika-Filter. Der CR nannte zwei getrennte
+> Auslöser („<3 Anker" und „nur generische Tokens") — das ist derselbe, sobald die
+> Generika im Extraktor gefiltert werden. Eine Bedingung statt zwei, und
+> `extractIntentAnchors` und `isIntentTooThin` können nicht auseinanderdriften
+> (eigener Test dafür). `GENERIC_NOUNS` steht bewusst getrennt von `STOPWORDS`: die
+> Listen existieren aus verschiedenen Gründen (Funktionswörter vs. Substantive, die
+> an Substantivstellen stehen und trotzdem nichts verankern).
+>
+> ### Abweichung: die Persistenz liegt in der Tool-Schicht, nicht in `generate.ts`
+>
+> Der CR wollte den Config-Write in `generate.ts`. Das geht nicht: `generationStep`
+> ist die **reine, deterministische** Zustandsmaschine — der N=1-Determinismus ist
+> eine Akzeptanz-Bedingung aus CR-GC-295, und die Funktion hat nicht einmal einen
+> `repoRoot`. Ein Datei-Write dort wäre ein verstecktes Seiteneffekt-Loch. Der Write
+> sitzt jetzt in `graph_generate` (`src/tools/suggest.ts`), das den Harness und damit
+> den Repo-Root ohnehin hält. `generate.ts` entscheidet nur noch, **was im Prompt
+> steht**.
+>
+> ### `persistIntentAnchors` verweigert in drei Fällen — jeder davon getestet
+>
+> 1. **Bestehende Anker** werden nie überschrieben (ein bestätigter Mensch-Wert
+>    schlägt jede Ableitung).
+> 2. **Anzahl außerhalb 3..7** → kein Write. Sonst würde ein Hintergrund-Schritt eine
+>    schema-ungültige Config schreiben, an der jeder spätere `loadTargetProfile`
+>    wirft — die Automatik darf die Config nicht vergiften können.
+> 3. **Unlesbare/ungültige vorhandene Datei** → kein Write. Die gehört dem Menschen;
+>    das laute Scheitern beim nächsten Read ist die richtige Reaktion.
+>
+> **MERGE, kein Überschreiben:** ein hand-gepflegter `weights`-Block überlebt. Das ist
+> der Regressionstest, der zählt.
+>
+> ### `intentCoverage` bleibt unangetastet
+>
+> Die CR-GC-295-Invariante hält: `graph_readiness.intentCoverage` heißt weiter so und
+> liefert dasselbe. Es ist ein **maschinenlesbares** Read-out, kein Kundentext — es
+> umzubenennen hätte den Vertrag gebrochen, auf dem dieser CR aufsetzt. Ein eigener
+> Test pinnt das als Kontrastfall. Die Tool-Description sagt jetzt allerdings dazu,
+> dass der Inhalt in Klartext weiterzugeben ist (und dass „confirmed" nicht mehr
+> stimmt — es wird nichts mehr bestätigt).
+>
+> ### Erzwungen statt dokumentiert
+>
+> Ein Grep-Test über die **String-Literale** von `generate.ts` lässt den Begriff nicht
+> zurückkriechen. Code-Identifier (`profile.intentAnchors`) bleiben absichtlich
+> unberührt — verboten ist Prosa *über* Anker, die an einen Leser geht.
+>
+> **Tests:** neu `tests/intent-anchors-internal.test.ts` (12, 11 davon vorher rot).
+> Zwei CR-GC-295-Tests in `generate.test.ts` pinnten genau das jetzt zurückgenommene
+> Verhalten und sind umgeschrieben — der eine prüft jetzt die **Abwesenheit** der
+> Rückfrage, der andere den Fachfragen-Pfad.
+>
+> `npm run build` grün, **76 Testdateien / 524 Tests grün**.
 
 ## Problem
 

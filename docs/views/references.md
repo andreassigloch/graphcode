@@ -302,6 +302,8 @@
 | `CR-GC-306` | relation | `MOD-host-bridge` |
 | `CR-GC-307` | relation | `FUNC-graph-suggest` |
 | `CR-GC-307` | relation | `MOD-skills` |
+| `CR-GC-308` | relation | `FUNC-export-markdown` |
+| `CR-GC-308` | relation | `MOD-docs` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-suggest` |

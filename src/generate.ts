@@ -20,7 +20,7 @@ import type { Graph } from '@sigloch/graph-api-core';
 import { RULE_TO_DIMENSION } from '@sigloch/contracts/se';
 import { takeSteeringSnapshot } from './steering-snapshot.js';
 import { computePhaseReadiness, currentPhaseGate, type PhaseGateReadiness } from './readiness.js';
-import { extractIntentAnchors, intentCoverage, type LoadedTargetProfile } from './target-profile.js';
+import { isIntentTooThin, intentCoverage, type LoadedTargetProfile } from './target-profile.js';
 
 export interface GenerationStep {
   /** seed = leerer Graph; expand = Deficit-getriebene Verdichtung; handoff = Schwelle erreicht. */
@@ -176,23 +176,36 @@ export function generationStep(
         focusTypes: [],
       };
     }
-    // Anker-Default (CR-GC-295): erst HIER existiert eine Intention — die
-    // Runde-1-Frage ohne Intention kann noch nichts extrahieren.
-    const anchorNote = (() => {
+    // Steuerung im Hintergrund (CR-GC-307): erst HIER existiert eine Intention.
+    // Die Kernthemen werden STILL abgeleitet und persistiert — der Mensch bekommt
+    // sie nie zu sehen. Das Konzept dahinter ist unser Hilfsmittel, um die
+    // App-Targets einzustellen; für den Kunden ist es kein Begriff, mit dem er etwas
+    // anfangen kann (belegt: ein Frontier-Modell hat die vorgeschlagenen Themen
+    // später ohnehin still korrigiert — die Rückfrage gewann weder Information noch
+    // Kontrolle). Trägt die Intention zu wenig dafür, wird FACHLICH nachgefragt.
+    const steeringNote = (() => {
       if (profile?.profile.intentAnchors?.length) return '';
-      const defaults = extractIntentAnchors(effectiveIntent);
-      return defaults.length > 0
-        ? `Intentions-Anker (Default, aus der Intention extrahiert): ${defaults.join(', ')} — vom Menschen ` +
-            'bestätigen/korrigieren lassen und über den Skill se:target-profile in .graphcode/target-profile.json ' +
-            'persistieren (Feld intentAnchors). '
-        : '';
+      if (isIntentTooThin(effectiveIntent)) {
+        return (
+          'Die Intention ist noch zu unbestimmt, um daraus zu arbeiten. Stelle dem Menschen ' +
+          '2–3 GEZIELTE FACHFRAGEN zum System — in seiner Sprache, über sein Geschäft ' +
+          '(z.B. "Was passiert, wenn ein Kunde eine Bestellung storniert?", "Wer darf Preise ' +
+          'ändern?"). Frage NICHT nach Steuerungs-Einstellungen, Gewichten, Schlagworten oder ' +
+          'internen Begriffen — die Antworten liefern das Nötige von selbst. Baue den Seed-Batch ' +
+          'erst nach den Antworten. '
+        );
+      }
+      // Das Persistieren macht die Tool-Schicht (`graph_generate`), nicht diese
+      // Funktion: `generationStep` ist rein und deterministisch (N=1-AC aus
+      // CR-GC-295) — ein Datei-Write hier wäre ein verstecktes Seiteneffekt-Loch.
+      return '';
     })();
     const seedBase =
       `Kaltstart aus der Intention: "${effectiveIntent}" — ` +
       'Schlage EINEN Seed-Batch vor: 1 SYS-Wurzel (description = die Intention wörtlich), ' +
       '1–3 ACTORs (wer nutzt/betreibt das System) und 3–7 UCs (je Actor–Verb–Objekt–Ergebnis, ≤25 Wörter, ' +
       'ACTOR io→UC, SYS compose UC). Keine FUNC/MOD-Ebene im Seed — Struktur folgt readiness-getrieben. ' +
-      anchorNote;
+      steeringNote;
     return {
       phase: 'seed',
       done: false,
@@ -215,9 +228,11 @@ export function generationStep(
           .filter((c) => !c.addressed)
           .map((c) => c.anchor)
       : [];
+  // CR-GC-307: Klartext statt Steuerungs-Vokabular. Der Mensch sieht die WIRKUNG
+  // (ein Thema kommt nirgends vor), nie den Mechanismus dahinter.
   const coverageLine =
     unaddressed.length > 0
-      ? `Unadressierte Intentions-Anker: ${unaddressed.join(', ')} — in passenden UC/REQ/FUNC adressieren. `
+      ? `Noch nirgends beschrieben: ${unaddressed.join(', ')}. Fehlt dazu ein Use Case oder Requirement? `
       : '';
 
   // --- Phase handoff: Schwelle erreicht, keine Gate-Blocker, aktuelles ------

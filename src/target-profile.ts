@@ -17,8 +17,8 @@
  *
  * @author andreas@siglochconsulting
  */
-import { existsSync, readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 import { z } from 'zod/v4';
 import { tokens } from './nd-similarity.js';
 
@@ -134,19 +134,92 @@ const STOPWORDS = new Set([
 ]);
 
 /**
- * Default-Anker aus der Prosa-Intention: Wort-Token (dieselbe Normalisierung
- * wie der ND-Preflight-Hint, CR-GC-287: `tokens()`) minus Funktionswörter, in
- * Erstauftritts-Reihenfolge, max 7. Reine Näherung — der Mensch bestätigt/
- * korrigiert über den Skill se:target-profile.
+ * Generische Substantive, die grammatisch tragen, fachlich aber nichts verankern
+ * (CR-GC-307). Sie sind KEINE Funktionswörter — sie stehen an Substantivstellen und
+ * überleben den STOPWORDS-Filter. Als Anker sind sie trotzdem wertlos: „System",
+ * „Daten", „App" matchen fast jedes Element, die Coverage meldet dann 100 % und sagt
+ * damit nichts. Getrennt gehalten von STOPWORDS, weil die zwei Listen aus
+ * unterschiedlichen Gründen existieren und nicht gemeinsam gepflegt werden sollten.
+ */
+const GENERIC_NOUNS = new Set([
+  'system', 'systeme', 'app', 'anwendung', 'anwendungen', 'tool', 'tools', 'software',
+  'daten', 'datei', 'dateien', 'verwalten', 'verwaltung', 'management', 'plattform',
+  'loesung', 'lösung', 'programm', 'projekt', 'service', 'dienst',
+  'application', 'applications', 'data', 'manage', 'managing', 'platform', 'solution',
+  'program', 'project', 'thing', 'things', 'stuff',
+]);
+
+/**
+ * Anker aus der Prosa-Intention: Wort-Token (dieselbe Normalisierung wie der
+ * ND-Preflight-Hint, CR-GC-287: `tokens()`) minus Funktionswörter und minus
+ * generischer Substantive, in Erstauftritts-Reihenfolge, max 7.
+ *
+ * CR-GC-307: das Ergebnis wird dem Menschen NICHT mehr zur Bestätigung vorgelegt —
+ * die Anker sind ein internes Steuerungsmittel, kein Kundenbegriff. Sie werden still
+ * gesetzt (`persistIntentAnchors`); reicht die Intention dafür nicht
+ * (`isIntentTooThin`), stellt der Loop stattdessen fachliche Rückfragen.
  */
 export function extractIntentAnchors(intent: string): string[] {
   const out: string[] = [];
   for (const t of tokens(intent)) {
-    if (STOPWORDS.has(t)) continue;
+    if (STOPWORDS.has(t) || GENERIC_NOUNS.has(t)) continue;
     out.push(t);
     if (out.length === 7) break;
   }
   return out;
+}
+
+/** Untergrenze aus dem Schema (`intentAnchors` ist 3..7) — darunter gäbe es keine gültige Config. */
+const MIN_ANCHORS = 3;
+
+/**
+ * Trägt die Intention zu wenig, um die Steuerung daraus abzuleiten? (CR-GC-307)
+ *
+ * Deterministisch, nicht nach Modell-Gefühl: es gibt genau einen Auslöser — weniger
+ * als {@link MIN_ANCHORS} trennscharfe Inhaltswörter nach Stopword- und
+ * Generika-Filter. Beides zusammen deckt die zwei realen Fälle ab: eine zu kurze
+ * Intention („Ein Shop") und eine, die nur aus Floskeln besteht („ein System zum
+ * Verwalten von Daten"). Ist das der Fall, fragt der Loop FACHLICH nach — nie nach
+ * den Ankern selbst.
+ */
+export function isIntentTooThin(intent: string): boolean {
+  return extractIntentAnchors(intent).length < MIN_ANCHORS;
+}
+
+/**
+ * Anker im Hintergrund nach `.graphcode/target-profile.json` schreiben (CR-GC-307).
+ *
+ * Drei Verweigerungsgründe, jeweils `false` und Datei unverändert:
+ *  - die Config trägt schon `intentAnchors` (ein bestätigter Mensch-Wert wird nie
+ *    von einer Ableitung überschrieben),
+ *  - die Anker-Anzahl liegt außerhalb 3..7 (eine schema-ungültige Datei würde jeden
+ *    späteren `loadTargetProfile` werfen lassen — ein Hintergrund-Schritt darf die
+ *    Config nicht vergiften),
+ *  - die vorhandene Datei ist unlesbar/ungültig (dann gehört sie dem Menschen; das
+ *    laute Scheitern beim nächsten Read ist die richtige Reaktion, nicht ein
+ *    stiller Überschreiber).
+ *
+ * MERGE, kein Überschreiben: ein hand-gepflegter `weights`-Block überlebt.
+ */
+export function persistIntentAnchors(repoRoot: string, anchors: string[]): boolean {
+  if (anchors.length < MIN_ANCHORS || anchors.length > 7) return false;
+  const path = join(repoRoot, TARGET_PROFILE_REL);
+  let existing: Record<string, unknown> = {};
+  if (existsSync(path)) {
+    try {
+      const raw: unknown = JSON.parse(readFileSync(path, 'utf8'));
+      if (raw === null || typeof raw !== 'object' || Array.isArray(raw)) return false;
+      existing = raw as Record<string, unknown>;
+    } catch {
+      return false;
+    }
+    if (Array.isArray(existing['intentAnchors']) && existing['intentAnchors'].length > 0) return false;
+  }
+  const merged = { ...existing, intentAnchors: anchors };
+  if (!TargetProfileSchema.safeParse(merged).success) return false;
+  mkdirSync(dirname(path), { recursive: true });
+  writeFileSync(path, JSON.stringify(merged, null, 2) + '\n', 'utf8');
+  return true;
 }
 
 /** Minimaler Element-Blick für die Coverage — og-Elemente (id) und Graph-Nodes (uid→id gemappt). */

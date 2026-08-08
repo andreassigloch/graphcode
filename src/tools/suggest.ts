@@ -20,7 +20,13 @@ import type { MutateResult } from '@sigloch/contracts/harness';
 import { targetFor, suggestEdits, type Suggestion } from '@sigloch/se-optimizer';
 import { exportGraphJson } from '../exporter.js';
 import { generationStep, type GenerationStep } from '../generate.js';
-import { TargetWeightsSchema, loadTargetProfile } from '../target-profile.js';
+import {
+  TargetWeightsSchema,
+  loadTargetProfile,
+  extractIntentAnchors,
+  isIntentTooThin,
+  persistIntentAnchors,
+} from '../target-profile.js';
 import type { MCPTool, MCPToolRegistry } from '../mcp-tools.js';
 import type { ToolContext } from '../tool-context.js';
 
@@ -161,7 +167,17 @@ export function bindSuggestTools(ctx: ToolContext): MCPToolRegistry {
     async handler(input) {
       // Profil bei jedem Schritt frisch laden (CR-GC-295) — der Loader ist der
       // EINE Check-Pfad, ein Hand-Edit der Config wirkt ab der nächsten Runde.
-      const profile = loadTargetProfile(harness.getRepoRoot());
+      const repoRoot = harness.getRepoRoot();
+      const profile = loadTargetProfile(repoRoot);
+      // CR-GC-307: die Kernthemen der Intention werden STILL gesetzt — kein
+      // Bestätigungsschritt beim Menschen, der Begriff dahinter ist Steuerungs-
+      // internes. Bewusst HIER und nicht in generationStep: die Zustandsmaschine
+      // bleibt rein/deterministisch (N=1-AC aus CR-GC-295), der Datei-Write ist ein
+      // Effekt der Tool-Schicht. persistIntentAnchors ist idempotent und verweigert
+      // jedes Überschreiben bestehender Anker.
+      if (input.intent && !profile?.profile.intentAnchors?.length && !isIntentTooThin(input.intent)) {
+        persistIntentAnchors(repoRoot, extractIntentAnchors(input.intent));
+      }
       return generationStep(harness.getGraph(), input.intent, input.threshold, input.defer, input.selection, profile);
     },
   };

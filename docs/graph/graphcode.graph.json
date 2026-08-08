@@ -884,9 +884,17 @@
       "id": "CR-GC-307",
       "type": "CR",
       "name": "Intent-Anker sind Steuerungsinternes, nicht Kundendialog",
-      "description": "generate.ts bittet den Menschen in Runde 1, die aus der Intention extrahierten 'Intentions-Anker' zu bestaetigen, und se:target-profile macht daraus einen eigenen Dialogschritt. Der Kunde kann damit nichts anfangen — der Begriff ist ein internes Hilfskonstrukt zum Einstellen der App-Targets; ein Frontier-LLM hat die Anker spaeter ohnehin still korrigiert. Neu: kein Bestaetigungsschritt, Anker werden still gesetzt und die Config im Hintergrund gemerged (bestehende weights ueberleben). Ist die Intention messbar zu duenn (unter 3 Anker nach Stopword-Filter, oder nur generische Tokens), stellt der Loop stattdessen 2-3 FACHLICHE Rueckfragen in der Sprache des Kunden. Der Begriff erscheint in keiner an den Menschen gerichteten Ausgabe mehr — per grep-Test erzwungen, nicht per Review. intentCoverage in graph_readiness bleibt als Maschinen-Readout unveraendert. Folge-CR zu CR-GC-295. (docs/cr/open/CR-GC-307)",
-      "status": "open",
+      "description": "DONE 2026-08-08. Der Begriff ist weg aus jedem Text, den ein Mensch liest; die Anker selbst bleiben (intentCoverage misst weiter an ihnen), geaendert hat sich nur WER sie sieht: niemand. Statt Bestaetigungsschritt werden sie still abgeleitet und die Config im Hintergrund gemerged; die Coverage-Zeile spricht Klartext ('Noch nirgends beschrieben: X. Fehlt dazu ein Use Case?'). Ist die Intention messbar zu duenn, stellt der Loop 2-3 FACHLICHE Rueckfragen in der Sprache des Kunden und der Prompt verbietet dem Modell ausdruecklich, nach Steuerungs-Einstellungen zu fragen. Der Ausloeser isIntentTooThin hat genau EINE Bedingung (unter 3 trennscharfe Inhaltswoerter nach Stopword- UND Generika-Filter) statt der zwei im CR — dieselbe Sache, sobald Generika im Extraktor gefiltert werden; ein Test pinnt, dass extractIntentAnchors und isIntentTooThin nicht auseinanderdriften. Abweichung: der Config-Write liegt in der Tool-Schicht (graph_generate in tools/suggest.ts), nicht in generate.ts — generationStep ist die reine deterministische Zustandsmaschine (N=1-AC aus CR-GC-295) und hat nicht mal einen repoRoot. persistIntentAnchors verweigert in drei Faellen: bestehende Anker, Anzahl ausserhalb 3..7 (sonst schriebe die Automatik eine schema-ungueltige Config, an der jeder spaetere Load wirft), unlesbare Datei — und merged, ein handgepflegter weights-Block ueberlebt. intentCoverage bleibt als maschinenlesbares Read-out unveraendert (Kontrastfall-Test). Erzwungen statt dokumentiert: ein Grep-Test ueber die String-Literale von generate.ts laesst den Begriff nicht zurueckkriechen. 12 neue Tests (11 vorher rot) plus zwei umgeschriebene CR-295-Tests; 76 Testdateien / 524 Tests gruen. (docs/cr/done/CR-GC-307)",
+      "status": "done",
       "created_at": "2026-08-07T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-308",
+      "type": "CR",
+      "name": "export-graph.mjs Guard kennt den graphVersion-Stamp nicht",
+      "description": "scripts/export-graph.mjs bricht auf jedem Repo ab, dessen SSOT ueber den MCP-Export entstand: der Canonicity-Guard importiert die committete SSOT, exportiert neu und vergleicht byteweise — die einzige Differenz ist der graphVersion-Trailer, den CR-GC-300 eingefuehrt hat und den das Skript nicht kennt. Impact: das Skript ist unbenutzbar, obwohl der GENERATED-Header JEDER der 15 Views darauf zeigt ('Re-render on model change: node scripts/export-graph.mjs'); wer der Anweisung folgt, bekommt einen Abbruch, der nach korruptem SSOT klingt. Kein Datenverlust — der Guard verweigert, er beschaedigt nichts. Zu entscheiden: Guard vergleicht stamp-blind (Empfehlung — er existiert gegen Hand-Edits, nicht gegen einen Versions-Trailer) oder das Skript stampt mit (taeuscht ohne Store eine Pruefung vor, die es nicht leisten kann). Kern-AC: eine SSOT mit echtem Hand-Edit muss WEITER abgelehnt werden — der Guard darf nicht durch Aufweichen repariert werden. Er ist heute ungetestet, was erklaert, warum CR-GC-300 ihn brechen konnte, ohne dass etwas rot wurde. (docs/cr/open/CR-GC-308)",
+      "status": "open",
+      "created_at": "2026-08-08T00:00:00.000Z"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -6120,6 +6128,16 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-308",
+      "target": "FUNC-export-markdown",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-308",
+      "target": "MOD-docs",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -9476,5 +9494,5 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     }
   ],
-  "graphVersion": 52
+  "graphVersion": 53
 }

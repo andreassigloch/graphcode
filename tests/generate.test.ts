@@ -451,14 +451,26 @@ describe('Zielprofil + Intentions-Anker im Prompt (CR-GC-295)', () => {
     expect(step.prompt).not.toContain('Zielprofil');
   });
 
-  it('Seed MIT Intention: Default-Anker aus der Intention, zur Bestätigung (Anker-Timing-Entscheidung)', () => {
+  it('Seed MIT tragfähiger Intention: KEINE Anker-Rückfrage mehr (CR-GC-307)', () => {
+    // CR-GC-295 legte dem Menschen hier die extrahierten Anker zur Bestätigung vor.
+    // Der Begriff ist Steuerungsinternes — der Kunde kann damit nichts anfangen, und
+    // ein Frontier-Modell hat die Vorschläge später ohnehin still korrigiert. Die
+    // Anker werden jetzt im Hintergrund gesetzt (Tool-Schicht), nicht erfragt.
     const step = generationStep(EMPTY, INTENT);
-    expect(step.prompt).toContain('Intentions-Anker');
-    expect(step.prompt).toContain('bestellsystem'); // deterministisch extrahiert
-    expect(step.prompt).toContain('se:target-profile');
-    // Bestätigte Anker in der Config → kein Default-Vorschlag mehr.
-    const confirmed = generationStep(EMPTY, INTENT, 0.8, [], 'host', withProfile({}, ['a', 'b', 'c']));
-    expect(confirmed.prompt).not.toContain('Intentions-Anker (Default');
+    expect(step.prompt).not.toMatch(/Intentions-Anker/i);
+    expect(step.prompt).not.toContain('se:target-profile');
+    // Der eigentliche Seed-Auftrag bleibt unberührt.
+    expect(step.prompt).toContain('Kaltstart aus der Intention');
+  });
+
+  it('Seed MIT zu dünner Intention: fachliche Rückfragen statt Steuerungs-Jargon (CR-GC-307)', () => {
+    // "Ein System zum Verwalten von Daten" parst sauber und verankert nichts — jedes
+    // dieser Wörter matcht fast jedes Element, die Coverage läse 100% und sagte nichts.
+    const step = generationStep(EMPTY, 'Ein System zum Verwalten von Daten');
+    expect(step.prompt).toMatch(/FACHFRAGEN/);
+    expect(step.prompt).not.toMatch(/Intentions-Anker/i);
+    // Der Prompt verbietet dem Modell ausdrücklich, nach der Steuerung zu fragen.
+    expect(step.prompt).toMatch(/Frage NICHT nach Steuerungs-Einstellungen/);
   });
 
   it('expand trägt die Unadressierte-Anker-Zeile — nur für Anker ohne UC/REQ/FUNC-Match', () => {
@@ -469,9 +481,12 @@ describe('Zielprofil + Intentions-Anker im Prompt (CR-GC-295)', () => {
     const profile = withProfile({}, ['bestellen', 'zauberdrache', 'teil']);
     const step = generationStep(graph, undefined, 0.8, [], 'host', profile);
     expect(step.phase).toBe('expand');
-    expect(step.prompt).toContain('Unadressierte Intentions-Anker: zauberdrache');
+    // CR-GC-307: Klartext statt Steuerungs-Vokabular — der Mensch sieht die WIRKUNG
+    // (ein Thema kommt nirgends vor), nie den Mechanismus.
+    expect(step.prompt).toContain('Noch nirgends beschrieben: zauberdrache');
+    expect(step.prompt).not.toMatch(/Intentions-Anker/i);
     // 'bestellen'/'teil' sind über UC-Name/Beschreibung adressiert — nicht gelistet.
-    expect(step.prompt).not.toMatch(/Unadressierte Intentions-Anker:[^.]*bestellen/);
+    expect(step.prompt).not.toMatch(/Noch nirgends beschrieben:[^.]*bestellen/);
     // Deterministisch auch mit Profil.
     expect(generationStep(graph, undefined, 0.8, [], 'host', profile)).toEqual(step);
   });

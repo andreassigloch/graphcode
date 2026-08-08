@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 100 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 101 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 100 CR · 93 done · 6 open.
+Total: 101 CR · 94 done · 6 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -146,4 +146,5 @@ Total: 100 CR · 93 done · 6 open.
 | `CR-GC-304` | done | ConOps-View nach ISO 29148 neu schneiden |
 | `CR-GC-305` | done | spec-View entfernen, srs bleibt |
 | `CR-GC-306` | done | Onboarding: ein Start, Beispiel-Prompt, GVE-Adresse |
-| `CR-GC-307` | open | Intent-Anker sind Steuerungsinternes, nicht Kundendialog |
+| `CR-GC-307` | done | Intent-Anker sind Steuerungsinternes, nicht Kundendialog |
+| `CR-GC-308` | open | export-graph.mjs Guard kennt den graphVersion-Stamp nicht |

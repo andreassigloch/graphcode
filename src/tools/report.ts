@@ -194,8 +194,10 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
       'axis: per-gate rule coverage (covered/total distinct rule IDs from RULE_TO_PHASE with zero open ' +
       'violations, any severity, + the missing rule IDs) — orthogonal to phaseGates\' element-completeness; ' +
       'violationsByRule (keyed by contracts rule-ID — R-/RD-/MS-, never BQ-*); intentCoverage ' +
-      '(CR-GC-295: per confirmed intent anchor from .graphcode/target-profile.json, whether/where it is ' +
-      'addressed in UC/REQ/FUNC — a KPI, never a gate blocker; null without config); and computedAt. By DEFAULT ' +
+      '(CR-GC-295: per content theme from .graphcode/target-profile.json, whether/where it is ' +
+      'addressed in UC/REQ/FUNC — a KPI, never a gate blocker; null without config. CR-GC-307: the themes are ' +
+      'derived and persisted in the BACKGROUND, never confirmed by the human — this read-out is machine-facing, ' +
+      'so relay its content in plain language, never as "intent anchors"); and computedAt. By DEFAULT ' +
       'returns a summary (no raw violations, no per-gate blocking/open lists) so it stays within the MCP ' +
       `result limit even on a fully-red graph; pass detail:true for the full lists (${PHASE_READINESS_NAME} ` +
       'stays in both — it is already a small aggregate). Read-only; derived from harness.evaluateRules() ' +
