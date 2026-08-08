@@ -1,6 +1,6 @@
 ---
 name: se-fmea
-version: 1
+version: 2
 description: Perform a state-of-the-art FMEA (AIAG-VDA 7-step) on a system, subsystem, or component and integrate findings into the SE-graph + spec
 ---
 
@@ -48,6 +48,7 @@ Reference exemplar (existing, RPN-based — upgrade it to AP, do not copy verbat
   - **Low AP** — action MAY be taken.
   - Use the canonical AIAG-VDA AP lookup table for the exact S/O/D → AP mapping; Detection only shifts priority within a fixed S/O band. Safety/regulatory effects (S 9–10) are never demoted below the band their occurrence dictates by a good Detection score alone.
 - Render a **risk matrix** table sorted by AP (High → Low): `# | Fehlermodus | S | O | D | AP | Kategorie`.
+- **AP lives in the document, not (yet) in the graph.** The FMEA view renders `RPN = S×O×D` — the same number `FM-03` thresholds on — because the canonical AP classification belongs in `@sigloch/contracts/se` (`actionPriority()`, CR-SM-229) and is not published yet. Do **not** write an AP field into the graph and do not let a view invent a second classification for a safety-relevant judgement (CR-GC-308).
 - **Legacy compatibility:** the existing doc shows an RPN column. You MAY keep an `RPN = S×O×D` column as a secondary/legacy indicator, but **AP is the primary, governing classification** — never let RPN override AP.
 
 ### Step 6 — Optimization
@@ -74,11 +75,27 @@ Reference exemplar (existing, RPN-based — upgrade it to AP, do not copy verbat
 The FMEA is not done until findings live in the graph, not just the document.
 
 1. **Derive requirements** from AP-High/Medium mitigations. Each becomes a `REQ` node. Check the graph first for ID collisions via `graph_get_node` `{ "uid": "<candidate>" }` (uids are not idempotent — a re-add is a collision). Use the next free `REQ-NNN`.
-2. **Apply to graph** via `graph_mutate` with a single `MutateCommand[]` batch — every write goes through the Apply-Gate (L2). For each new `REQ` add:
-   - an `add-node` for the `REQ`, with the FMEA finding in `attributes.rationale` and the requirement kind in `attributes.kinds` (e.g. `["risk"]` for a hazard, `["mitigation"]` for a countermeasure, or `["functional"]` / `["non-functional"]`),
+2. **Apply to graph** via `graph_mutate` with a single `MutateCommand[]` batch — every write goes through the Apply-Gate (L2).
+
+   **The graph attribute names are fixed by the rules — do not invent your own (CR-GC-308).** `FM-01`/`FM-02`/`FM-03` in `@sigloch/contracts/se` read exactly these keys, and so does the FMEA view. The S/O/D above are the *document's* column headers; in the graph they are spelled out:
+
+   | write | as | read by |
+   |---|---|---|
+   | Severity 1–10 | `attributes.severity` (number) | FM-01, FM-03 (RPN) |
+   | Occurrence 1–10 | `attributes.occurrence` (number) | FM-01, FM-03 |
+   | Detection 1–10 | `attributes.detection` (number) | FM-01, FM-03 |
+   | the hazard | `attributes.kinds: ["risk"]` | FM-01/02/03 select on it |
+   | the countermeasure | `attributes.kinds: ["mitigation"]` | FM-02 |
+
+   Writing `S`/`O`/`D` instead makes `FM-01` fire on every risk REQ **and** leaves the view empty — that is precisely the defect CR-GC-308 fixed.
+
+   For each new `REQ` add:
+   - an `add-node` for the `REQ`, with the FMEA finding in `attributes.rationale`, the S/O/D ratings under the names above, and `attributes.kinds`,
+   - an `add-edge` **`compose`** from the risk `REQ` → the mitigation `REQ` (**FM-02**; `relation` between two REQs is *not* in `TRACE_PATTERNS` and `R-18` rejects it),
    - an `add-edge` `satisfy` from the responsible `FUNC` → the `REQ` (which function is RESPONSIBLE, not merely related),
-   - an `add-edge` `verify` from a `TEST` → the `REQ` (R-01: every REQ must have ≥1 verify).
-   Example: `graph_mutate` `{ "commands": [ { "op": "add-node", "node": { "uid": "REQ-NNN", "type": "REQ", "name": "...", "description": "...", "attributes": { "rationale": "<FMEA finding>", "kinds": ["risk"] } } }, { "op": "add-edge", "edge": { "sourceId": "FUNC-...", "targetId": "REQ-NNN", "edgeType": "satisfy", "attributes": {} } }, { "op": "add-edge", "edge": { "sourceId": "TEST-...", "targetId": "REQ-NNN", "edgeType": "verify", "attributes": {} } } ] }`.
+   - an `add-edge` `verify` from a `TEST` → the `REQ` (R-01: every REQ must have ≥1 verify). For a high-RPN risk, **FM-03** additionally wants that TEST to carry `attributes.testResult: "passed"` — until it does, the view shows the risk as unverified, which is the honest state.
+
+   Example: `graph_mutate` `{ "commands": [ { "op": "add-node", "node": { "uid": "REQ-NNN", "type": "REQ", "name": "...", "description": "...", "attributes": { "rationale": "<FMEA finding>", "kinds": ["risk"], "severity": 9, "occurrence": 3, "detection": 4 } } }, { "op": "add-node", "node": { "uid": "REQ-MMM", "type": "REQ", "name": "<countermeasure>", "description": "...", "attributes": { "kinds": ["mitigation"] } } }, { "op": "add-edge", "edge": { "sourceId": "REQ-NNN", "targetId": "REQ-MMM", "edgeType": "compose", "attributes": {} } }, { "op": "add-edge", "edge": { "sourceId": "FUNC-...", "targetId": "REQ-NNN", "edgeType": "satisfy", "attributes": {} } }, { "op": "add-edge", "edge": { "sourceId": "TEST-...", "targetId": "REQ-NNN", "edgeType": "verify", "attributes": {} } } ] }`.
 3. **Check the result.** `graph_mutate` returns `{ success, tier, appliedCommands, violations }`. The gate **BLOCKS the whole batch** if it would introduce a new **error-severity** violation (`tier: "block"`, `success: false`) — it does NOT silently drop nodes/edges. Read `violations`, fix the batch (e.g. add the missing `verify`), and re-apply.
 4. **Check violations:** `rules_get_violations` — resolve any new R-01/R-02 gaps.
 5. **Open a CR** `docs/cr/open/CR-FMEA-NNN-<desc>.md` listing the new RQs, affected spec sections, and acceptance criteria (mirror `CR-FMEA-001`). Patch `specification.md` sections named in the Step-7 impact table. If the SE-schema (ElementType/TraceType/rules) changed, bump the version in `@sigloch/contracts/se/index.ts`.

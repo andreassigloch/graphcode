@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 101 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 104 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 101 CR · 94 done · 6 open.
+Total: 104 CR · 95 done · 8 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -147,4 +147,7 @@ Total: 101 CR · 94 done · 6 open.
 | `CR-GC-305` | done | spec-View entfernen, srs bleibt |
 | `CR-GC-306` | done | Onboarding: ein Start, Beispiel-Prompt, GVE-Adresse |
 | `CR-GC-307` | done | Intent-Anker sind Steuerungsinternes, nicht Kundendialog |
-| `CR-GC-308` | open | export-graph.mjs Guard kennt den graphVersion-Stamp nicht |
+| `CR-GC-308` | done | View-Exporter lesen nur deklarierte Kanten und Attribute |
+| `CR-GC-309` | open | graph_mutate echot Violations in voller Laenge |
+| `CR-GC-310` | open | Format-E-Kantenbatches verlangen Neu-Deklaration vorhandener Knoten |
+| `CR-GC-313` | open | export-graph.mjs Guard kennt den graphVersion-Stamp nicht |

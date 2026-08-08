@@ -1,6 +1,60 @@
 # CR-GC-308 — View-Exporter lesen nur, was Ontologie und Regeln deklarieren
 
-**Status:** open · **Angelegt:** 2026-08-07 · **Max Files:** 6
+**Status:** done · **Angelegt:** 2026-08-07 · **Geschlossen:** 2026-08-08 · **Max Files:** 6
+
+> ## Abschluss 2026-08-08
+>
+> Alle vier Befunde behoben, **77 Testdateien / 536 Tests grün**.
+>
+> ### AP-Spalte: ersatzlos gestrichen, wie im CR vorgesehen
+>
+> **CR-SM-229 ist nicht publiziert** — `actionPriority()`/`apMethod()` existieren in
+> `@sigloch/contracts/se` nicht (verifiziert, nicht angenommen). Damit greift die
+> Abgrenzung: die erfundene `S >= 8 ? 'High'`-Logik ist weg, eine AP-Spalte kommt
+> nicht. **Stattdessen `RPN = S·O·D`** — nicht als Ersatz-Klassifikation, sondern weil
+> das exakt die Zahl ist, auf die `FM-03` seine >100-Schwelle legt. Sie kommt aus der
+> Regel, nicht aus dieser Datei. Eine zweite hauseigene Klassifikation für einen
+> sicherheitsrelevanten Sachverhalt wäre schlimmer als keine Spalte.
+>
+> ### Beleg, dass Punkt 3 wirklich toter Code war
+>
+> `implplan.md` und `changelog.md` sind nach dem Entfernen des `MS -compose-> CR`-Zweigs
+> **byte-identisch** zu vorher. Der legale `relation`-Zweig trug sie die ganze Zeit —
+> genau die Behauptung des CRs, jetzt gemessen statt vermutet.
+>
+> ### Kern-AC nachgewiesen
+>
+> Der Conformance-Test wurde **rot gesehen**: `renderFmea` testweise auf `relation`
+> zurückgebaut → „fills the mitigation column from the compose edge FM-02 prescribes"
+> schlägt fehl; zurückgerollt → 12/12 grün. Der Wächter greift.
+>
+> ### Zwei Test-Design-Korrekturen unterwegs
+>
+> 1. Die Grep-Tests trafen zunächst **meine eigenen Kommentare**, die die alte, falsche
+>    Schreibweise zitieren, um sie zu erklären. Sie strippen jetzt Kommentare — die
+>    Erklärung zu löschen, nur damit ein Grep durchgeht, wäre der falsche Weg herum.
+> 2. Der MS→CR-Test war erst ein Source-Grep. Der ist brüchig (genau deshalb blieb der
+>    tote Zweig jahrelang unentdeckt) und prüft jetzt **Verhalten**: ein Graph, der nur
+>    illegal verdrahtet ist, darf in keiner View einen CR unter dem Milestone zeigen —
+>    und ein Gegentest belegt, dass die legale Kante ihn weiterhin auflöst. Dabei fiel
+>    auf: im Changelog erscheint so ein CR korrekt unter „(unassigned)". Ihn ganz zu
+>    unterdrücken wäre der Fehler in die Gegenrichtung gewesen.
+>
+> ### Skills auf v2 — dort saß die Wurzel
+>
+> `se-fmea.md` nennt jetzt eine **Attribut-Tabelle** (`severity`/`occurrence`/
+> `detection` → welche Regel sie liest), die Mitigations-Kante ausdrücklich als
+> `compose` (mit dem Hinweis, dass `relation` zwischen zwei REQs von R-18 abgelehnt
+> wird), und `testResult: "passed"` für FM-03. Plus die Ansage, **kein** AP-Feld in den
+> Graphen zu schreiben. `se-trade.md` schreibt `attributes.label` statt `role`.
+>
+> ### Ehrlicher Rest
+>
+> Die AC „Skill-Ausgabe → View, **end-to-end**" ist als zwei gekoppelte Tests
+> umgesetzt: der Skill-Text enthält `attributes.label`, und ein so verdrahteter Graph
+> rendert in `trade.md`. Ein echter End-to-End-Lauf würde bedeuten, den Skill
+> auszuführen — das ist kein Unit-Test-Scope. Die Kopplung ist dadurch abgesichert,
+> dass beide Seiten denselben String prüfen.
 **Herkunft:** graphcode-Feldtest Graphview (`docs/GC_test-graphview-results.md` §6.2/§6.3/§6.7),
 Code-Audit 2026-08-07.
 **Abhängigkeiten:** nach CR-GC-304 (fasst `src/views/graphcode.ts` an, ConOps-Teil) ·

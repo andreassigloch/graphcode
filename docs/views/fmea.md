@@ -4,10 +4,13 @@
 
 # graphcode — FMEA (functional risk)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Render-Form von REQ kind=risk + S/O/D. 0 Risiken. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Render-Form von REQ kind=risk (severity/occurrence/detection nach FM-01). 0 Risiken. Deterministisch generiert.
 
-| Failure mode (REQ kind=risk) | S | O | D | AP | Mitigation | verify |
+| Failure mode (REQ kind=risk) | S | O | D | RPN | Mitigation | verifiziert |
 |---|---|---|---|---|---|---|
 | — keine REQ kind=risk im Graph (FMEA noch nicht durchgeführt) | — | — | — | — | — | — |
 
-> RENDER of the risk/mitigation REQ the se-fmea CREATE mutated into the graph (S/O/D, AP severity-first).
+> RENDER der risk/mitigation-REQ, die `se-fmea` durchs Gate geschrieben hat.
+> Attribute + Kanten exakt wie FM-01/FM-02/FM-03 sie prüfen: `severity`/`occurrence`/
+> `detection`, Mitigation über `compose` → REQ[`kinds` ∋ `mitigation`], „verifiziert" nur
+> bei einem TEST mit `testResult: passed`. RPN = S·O·D (die FM-03-Zahl).

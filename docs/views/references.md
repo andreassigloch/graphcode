@@ -304,6 +304,11 @@
 | `CR-GC-307` | relation | `MOD-skills` |
 | `CR-GC-308` | relation | `FUNC-export-markdown` |
 | `CR-GC-308` | relation | `MOD-docs` |
+| `CR-GC-309` | relation | `FUNC-mutate` |
+| `CR-GC-310` | relation | `FUNC-decode` |
+| `CR-GC-310` | relation | `FUNC-mutate` |
+| `CR-GC-313` | relation | `FUNC-export-markdown` |
+| `CR-GC-313` | relation | `MOD-docs` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-suggest` |

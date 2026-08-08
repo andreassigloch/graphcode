@@ -891,8 +891,32 @@
     {
       "id": "CR-GC-308",
       "type": "CR",
+      "name": "View-Exporter lesen nur deklarierte Kanten und Attribute",
+      "description": "DONE 2026-08-08. Vier Exporter-Stellen lasen Kanten/Attribute, die die Ontologie nicht kennt — 'compliance 1.0 bei leerer View'. renderFmea liest jetzt die FM-01-Schluessel (severity/occurrence/detection statt S/O/D), die Mitigation ueber compose auf REQ[kinds enthaelt mitigation] statt ueber ein von R-18 verbotenes relation, und unterscheidet 'Test vorhanden' von 'Test bestanden' (FM-03, testResult passed). renderTrade und se-trade.md einigen sich auf attributes.label statt role. Der tote MS-compose-CR-Zweig ist an drei Stellen raus — Beleg, dass er wirklich tot war: implplan.md und changelog.md sind danach BYTE-IDENTISCH, der legale relation-Zweig trug sie die ganze Zeit. AP-Spalte ersatzlos gestrichen: CR-SM-229 (actionPriority/apMethod) ist nicht publiziert, die erfundene S>=8-Logik ist weg; stattdessen RPN = S*O*D, weil das exakt die Zahl ist, auf die FM-03 seine 100er-Schwelle legt — aus der Regel, nicht aus dem Exporter. Neu: tests/views.conformance.test.ts (12) als Waechter gegen die fuenfte Instanz; Kern-AC nachgewiesen, indem renderFmea testweise auf relation zurueckgebaut wurde (rot) und zurueckgerollt (gruen). Die Wurzel lag in den Skills: se-fmea.md nannte S/O/D nur als Markdown-Spalten und nie als Graph-Attribute — v2 traegt jetzt eine Attribut-Tabelle mit der jeweils lesenden Regel. 77 Testdateien / 536 Tests gruen. (docs/cr/done/CR-GC-308)",
+      "status": "done",
+      "created_at": "2026-08-07T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-309",
+      "type": "CR",
+      "name": "graph_mutate echot Violations in voller Laenge",
+      "description": "graph_mutate gibt das MutateResult unveraendert zurueck — jede Antwort listet saemtliche Warnungen mit vollem context inkl. candidate_targets. Im Feldtest: eine Antwort mit 39 Kandidaten, zwei Antworten (70,3 und 64,9 KB) sprengten das Tool-Result-Limit; graph_mutate-Ergebnisse waren 189 KB von 929 KB aller Tool-Ergebnisse (20 Prozent, ca. 47k Token). Im Treiber faellt es nicht auf, weil der Executor selbst kappt — und die zweite Kappung (JSON.stringify(outcome).slice(0,6000)) ist ein eigener Defekt: sie schneidet mitten im JSON, das lokale Modell bekommt einen unparsebaren Blob. Loesung: violations:'summary'|'full' (Default summary, behaelt ruleId/severity/message/fixHint/uids, entfaellt context; fixHint ist zwingend — der Treiber liest ihn) plus applyIf:'always'|'not-blocked' gegen die Doppel-Uebertragung grosser Batches. rules_evaluate/rules_get_violations bleiben auf voller Tiefe — Query-Precision statt Result-Kompression. (docs/cr/open/CR-GC-309)",
+      "status": "open",
+      "created_at": "2026-08-07T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-310",
+      "type": "CR",
+      "name": "Format-E-Kantenbatches verlangen Neu-Deklaration vorhandener Knoten",
+      "description": "Ein formatE-Batch, der nur Kanten zwischen BESTEHENDEN Knoten hinzufuegt, scheitert mit 'Cannot resolve type of source ... no resolveType provided'. Der Codec unterstuetzt options.resolveType, das MCP-Tool reicht es nicht durch (formatEToCommands ruft decode(text) ohne Options). Der Store kennt die Typen — die Pflicht, sie zu wiederholen, ist vermeidbar; kostete im Feldtest einen verlorenen Durchlauf. Betrifft Host und eingebetteten Executor gleichermassen (eine Funktion). Loesung: resolveType aus dem geladenen Graphen bedienen, kein zweiter Index. Grenze: unbekannte uids liefern weiter undefined und damit die bisherige Meldung — ein Tippfehler wird nicht stillschweigend zu einem neuen Knoten. Zweiter Punkt: die kanonischen Kommando-Shapes stehen nur im SCHEMA-01-Fehlertext, der erste commands-Aufruf einer Sitzung kostet einen Probe-Round-Trip — ein Minimalbeispiel je Operationsklasse in die Description. (docs/cr/open/CR-GC-310)",
+      "status": "open",
+      "created_at": "2026-08-07T00:00:00.000Z"
+    },
+    {
+      "id": "CR-GC-313",
+      "type": "CR",
       "name": "export-graph.mjs Guard kennt den graphVersion-Stamp nicht",
-      "description": "scripts/export-graph.mjs bricht auf jedem Repo ab, dessen SSOT ueber den MCP-Export entstand: der Canonicity-Guard importiert die committete SSOT, exportiert neu und vergleicht byteweise — die einzige Differenz ist der graphVersion-Trailer, den CR-GC-300 eingefuehrt hat und den das Skript nicht kennt. Impact: das Skript ist unbenutzbar, obwohl der GENERATED-Header JEDER der 15 Views darauf zeigt ('Re-render on model change: node scripts/export-graph.mjs'); wer der Anweisung folgt, bekommt einen Abbruch, der nach korruptem SSOT klingt. Kein Datenverlust — der Guard verweigert, er beschaedigt nichts. Zu entscheiden: Guard vergleicht stamp-blind (Empfehlung — er existiert gegen Hand-Edits, nicht gegen einen Versions-Trailer) oder das Skript stampt mit (taeuscht ohne Store eine Pruefung vor, die es nicht leisten kann). Kern-AC: eine SSOT mit echtem Hand-Edit muss WEITER abgelehnt werden — der Guard darf nicht durch Aufweichen repariert werden. Er ist heute ungetestet, was erklaert, warum CR-GC-300 ihn brechen konnte, ohne dass etwas rot wurde. (docs/cr/open/CR-GC-308)",
+      "description": "scripts/export-graph.mjs bricht auf jedem Repo ab, dessen SSOT ueber den MCP-Export entstand: der Canonicity-Guard importiert die committete SSOT, exportiert neu und vergleicht byteweise — die einzige Differenz ist der graphVersion-Trailer, den CR-GC-300 eingefuehrt hat und den das Skript nicht kennt. Impact: das Skript ist unbenutzbar, obwohl der GENERATED-Header JEDER der 15 Views darauf zeigt; wer der Anweisung folgt, bekommt einen Abbruch, der nach korruptem SSOT klingt. Kein Datenverlust — der Guard verweigert, er beschaedigt nichts. Empfehlung: Guard vergleicht stamp-blind (er existiert gegen Hand-Edits, nicht gegen einen Versions-Trailer). Kern-AC: eine SSOT mit echtem Hand-Edit muss WEITER abgelehnt werden — der Guard darf nicht durch Aufweichen repariert werden. Er ist heute ungetestet, was erklaert, warum CR-GC-300 ihn brechen konnte, ohne dass etwas rot wurde. (docs/cr/open/CR-GC-313)",
       "status": "open",
       "created_at": "2026-08-08T00:00:00.000Z"
     },
@@ -6138,6 +6162,31 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-309",
+      "target": "FUNC-mutate",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-310",
+      "target": "FUNC-decode",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-310",
+      "target": "FUNC-mutate",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-313",
+      "target": "FUNC-export-markdown",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-313",
+      "target": "MOD-docs",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -9494,5 +9543,5 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     }
   ],
-  "graphVersion": 53
+  "graphVersion": 55
 }

@@ -303,13 +303,17 @@ export function renderIntPlan(graph: Graph, name: string): string {
   ];
   lines.push(`Tier order:  ${ordered.map((m) => m.uid).join('  ──▶  ')}`, '');
   lines.push('| Milestone | status | CRs (open) | blocking |', '|---|---|---|---|');
-  // CR → MS via relation; MS compose → CR also exists. Use both, dedup, sort.
+  // CR → MS via `CR -relation-> MS`, die einzige deklarierte Richtung.
+  // CR-GC-308: der Kommentar behauptete hier "MS compose → CR also exists" und ein
+  // zweiter Zweig walkte die Kante. Sie steht nicht in TRACE_PATTERNS (legal ist
+  // MS compose → FUNC/REQ/UC/MS); die Union mit dem legalen Zweig verdeckte, dass
+  // der Code eine falsche Modell-Aussage trug.
   const relation = adjacency(graph, 'relation'); // CR → MS : rev[ms] = CRs
-  const compose = adjacency(graph, 'compose'); // MS → CR : fwd[ms] = CRs
   const idx = nodeIndex(graph);
   for (const ms of ordered) {
-    const crSet = new Set<string>([...(relation.rev.get(ms.uid) ?? []), ...(compose.fwd.get(ms.uid) ?? [])]);
-    const crs = [...crSet].filter((c) => c.startsWith('CR-')).sort((a, b) => a.localeCompare(b));
+    const crs = (relation.rev.get(ms.uid) ?? [])
+      .filter((c) => c.startsWith('CR-'))
+      .sort((a, b) => a.localeCompare(b));
     const open = crs.filter((c) => status(idx.get(c) ?? ({} as GraphNode)) === 'open');
     const blocking = open.length > 0 ? refList(open) : '—';
     lines.push(`| ${ref(ms.uid)} | ${status(ms) || 'n/a'} | ${open.length} / ${crs.length} | ${blocking} |`);

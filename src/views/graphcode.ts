@@ -24,7 +24,6 @@ import { nodesOfType, nodeIndex, adjacency, reqKinds, status, ref, refList, topo
 export function renderChangelog(graph: Graph, name: string): string {
   const crs = nodesOfType(graph, 'CR');
   const relation = adjacency(graph, 'relation'); // CR → MS : fwd[cr] = MSs
-  const compose = adjacency(graph, 'compose'); // MS → CR
   const lines: string[] = [
     generatedHeader(
       name,
@@ -33,16 +32,15 @@ export function renderChangelog(graph: Graph, name: string): string {
     ),
   ];
 
-  // CR → MS: prefer the CR's relation target that is an MS; else the MS that composes it.
+  // CR → MS über `CR -relation-> MS` — die EINZIGE deklarierte Richtung.
+  // CR-GC-308: hier stand zusätzlich ein `MS -compose-> CR`-Zweig. Diese Kante gibt
+  // es im Meta-Modell nicht (legal ist MS compose → FUNC/REQ/UC/MS); sie war
+  // symptomlos, weil der legale relation-Zweig danebenstand und die Union das Loch
+  // füllte. Toter Code, der behauptete, das Modell sähe anders aus, als es aussieht.
   const msOfCr = new Map<string, string>();
   for (const cr of crs) {
     const viaRel = (relation.fwd.get(cr.uid) ?? []).filter((t) => t.startsWith('MS-')).sort((a, b) => a.localeCompare(b))[0];
     msOfCr.set(cr.uid, viaRel ?? '');
-  }
-  for (const ms of nodesOfType(graph, 'MS')) {
-    for (const cr of compose.fwd.get(ms.uid) ?? []) {
-      if (cr.startsWith('CR-') && !msOfCr.get(cr)) msOfCr.set(cr, ms.uid);
-    }
   }
 
   const done = crs.filter((c) => status(c) === 'done').length;
@@ -75,40 +73,83 @@ export function renderChangelog(graph: Graph, name: string): string {
 }
 
 // ---------------------------------------------------------------------------
-// 10. FMEA — render-form of risk/mitigation REQ + S/O/D (Specimen #10).
-//    CREATE populates the graph; this is the deterministic RENDER of it. An empty
-//    risk set renders an explicit empty-state, never a silently blank file.
+// 10. FMEA — render-form of risk/mitigation REQ (Specimen #10).
+//
+// CR-GC-308: this view read a vocabulary nothing produced. `FM-01`/`FM-02`/`FM-03`
+// in @sigloch/contracts/se define the FMEA model completely and run in
+// `evaluateAllRules`; the renderer read something else on every axis:
+//
+//   FM-01 says `severity`/`occurrence`/`detection`   — it read `S`/`O`/`D`
+//   FM-02 says compose → REQ[kinds ∋ mitigation]     — it read `relation` → REQ-*
+//   FM-03 says verify AND testResult === 'passed'    — it read "a verify edge exists"
+//
+// The mitigation column was therefore STRUCTURALLY unfillable: `TRACE_PATTERNS` has
+// no `REQ -relation-> REQ`, so R-18 flags exactly the edge the view was looking for.
+// In the field test it was empty in all 16 rows while the gate reported compliance
+// 1.0 — the "green dashboard, blank document" failure class.
+//
+// Root cause was the skill, not the renderer: `se-fmea.md` named S/O/D only as
+// markdown column headers and never said which graph attributes to write. The model
+// invented `S`/`O`/`D`, the exporter read the same invention — both drifted away
+// from contracts together, which is why nothing ever failed.
+//
+// The rule is now the source; this only renders it.
 // ---------------------------------------------------------------------------
 
 export function renderFmea(graph: Graph, name: string): string {
+  const idx = nodeIndex(graph);
   const risks = nodesOfType(graph, 'REQ').filter((r) => reqKinds(r).includes('risk'));
   const verify = adjacency(graph, 'verify');
-  const relation = adjacency(graph, 'relation'); // risk REQ → mitigation REQ (label may vary)
+  const compose = adjacency(graph, 'compose'); // FM-02: risk REQ ─compose→ mitigation REQ
   const lines: string[] = [
     generatedHeader(
       name,
       'FMEA (functional risk)',
-      `Render-Form von REQ kind=risk + S/O/D. ${risks.length} Risiken. Deterministisch generiert.`,
+      `Render-Form von REQ kind=risk (severity/occurrence/detection nach FM-01). ` +
+        `${risks.length} Risiken. Deterministisch generiert.`,
     ),
   ];
   lines.push(
-    '| Failure mode (REQ kind=risk) | S | O | D | AP | Mitigation | verify |',
+    '| Failure mode (REQ kind=risk) | S | O | D | RPN | Mitigation | verifiziert |',
     '|---|---|---|---|---|---|---|',
   );
   const num = (n: GraphNode, k: string): string => {
-    const v = n.attributes[k];
-    return typeof v === 'number' ? String(v) : '—';
+    const v = Number(n.attributes[k]);
+    return Number.isFinite(v) ? String(v) : '—';
   };
-  const ap = (n: GraphNode): string => {
-    const s = Number(n.attributes['S']);
-    if (!Number.isFinite(s)) return '—';
-    return s >= 8 ? 'High' : s >= 4 ? 'Med' : 'Low';
+  /**
+   * RPN = S·O·D, exakt die Zahl, die FM-03 für seine >100-Schwelle bildet — keine
+   * eigene Formel. Die frühere AP-Spalte (`S >= 8 ? 'High' : …`) war hier erfunden
+   * und entsprach keinem Standard; die echte AIAG-VDA-Action-Priority kommt aus
+   * `actionPriority()`/`apMethod()` in contracts (CR-SM-229) und ist noch nicht
+   * publiziert. Bis dahin lieber die nachvollziehbare Regel-Zahl als eine zweite,
+   * hauseigene Klassifikation für einen sicherheitsrelevanten Sachverhalt.
+   */
+  const rpn = (n: GraphNode): string => {
+    const s = Number(n.attributes['severity']);
+    const o = Number(n.attributes['occurrence']);
+    const d = Number(n.attributes['detection']);
+    if (!Number.isFinite(s) || !Number.isFinite(o) || !Number.isFinite(d)) return '—';
+    return String(s * o * d);
   };
   for (const r of risks) {
-    const mitig = (relation.fwd.get(r.uid) ?? []).filter((t) => t.startsWith('REQ-')).sort((a, b) => a.localeCompare(b));
-    const verified = (verify.rev.get(r.uid) ?? []).length > 0 ? '✓' : '✗';
+    const mitig = (compose.fwd.get(r.uid) ?? [])
+      .filter((t) => {
+        const n = idx.get(t);
+        return n?.type === 'REQ' && reqKinds(n).includes('mitigation');
+      })
+      .sort((a, b) => a.localeCompare(b));
+    // FM-03: nur ein BESTANDENER Test zählt. "Test vorhanden" und "Test bestanden"
+    // auseinanderzuhalten ist der ganze Punkt — die alte Version zeigte ✓, sobald
+    // irgendeine verify-Kante existierte, was die gefährlichere Lesart ist.
+    const verified = (verify.rev.get(r.uid) ?? []).some(
+      (t) => idx.get(t)?.attributes['testResult'] === 'passed',
+    )
+      ? '✓'
+      : '✗';
     lines.push(
-      `| ${cell(r.description ?? r.name)} | ${num(r, 'S')} | ${num(r, 'O')} | ${num(r, 'D')} | ${ap(r)} | ${refList(mitig)} | ${verified} |`,
+      `| ${cell(r.description ?? r.name)} | ${num(r, 'severity')} | ${num(r, 'occurrence')} | ` +
+        `${num(r, 'detection')} | ${rpn(r)} | ${refList(mitig)} | ${verified} |`,
     );
   }
   if (risks.length === 0) {
@@ -116,7 +157,10 @@ export function renderFmea(graph: Graph, name: string): string {
   }
   lines.push(
     '',
-    '> RENDER of the risk/mitigation REQ the se-fmea CREATE mutated into the graph (S/O/D, AP severity-first).',
+    '> RENDER der risk/mitigation-REQ, die `se-fmea` durchs Gate geschrieben hat.',
+    '> Attribute + Kanten exakt wie FM-01/FM-02/FM-03 sie prüfen: `severity`/`occurrence`/',
+    '> `detection`, Mitigation über `compose` → REQ[`kinds` ∋ `mitigation`], „verifiziert" nur',
+    '> bei einem TEST mit `testResult: passed`. RPN = S·O·D (die FM-03-Zahl).',
     '',
   );
   return lines.join('\n');
@@ -351,8 +395,8 @@ export function renderTrade(graph: Graph, name: string): string {
 
 export function renderImplPlan(graph: Graph, name: string): string {
   const milestones = topoOrderMilestones(graph, nodesOfType(graph, 'MS'));
+  // CR-GC-308: `MS -compose-> CR` gibt es im Meta-Modell nicht — der Zweig ist raus.
   const relation = adjacency(graph, 'relation'); // CR → MS : rev[ms] = CRs
-  const compose = adjacency(graph, 'compose'); // MS → CR
   const idx = nodeIndex(graph);
   const lines: string[] = [
     generatedHeader(
@@ -363,8 +407,9 @@ export function renderImplPlan(graph: Graph, name: string): string {
   ];
   lines.push(`depends-on:  ${milestones.map((m) => m.uid).join('  ◀  ')}`, '');
   for (const ms of milestones) {
-    const crSet = new Set<string>([...(relation.rev.get(ms.uid) ?? []), ...(compose.fwd.get(ms.uid) ?? [])]);
-    const crs = [...crSet].filter((c) => c.startsWith('CR-')).sort((a, b) => a.localeCompare(b));
+    const crs = (relation.rev.get(ms.uid) ?? [])
+      .filter((c) => c.startsWith('CR-'))
+      .sort((a, b) => a.localeCompare(b));
     lines.push(`## ${ref(ms.uid)} — ${cell(ms.name)} · status: ${status(ms) || 'n/a'}`, '');
     if (crs.length === 0) {
       lines.push('— no CR —', '');

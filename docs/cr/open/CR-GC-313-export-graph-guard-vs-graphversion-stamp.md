@@ -1,4 +1,4 @@
-# CR-GC-308 — `scripts/export-graph.mjs` ist tot: Canonicity-Guard kennt den graphVersion-Stamp nicht
+# CR-GC-313 — `scripts/export-graph.mjs` ist tot: Canonicity-Guard kennt den graphVersion-Stamp nicht
 
 **Status:** open · **Angelegt:** 2026-08-08 · **Max Files:** 3
 **Gefunden:** 2026-08-07 beim Re-Export im Rahmen von CR-GC-304.
@@ -72,7 +72,7 @@ kann.
 
 ## Dateien (3)
 
-1. `docs/cr/open/CR-GC-308-export-graph-guard-vs-graphversion-stamp.md` (dieses Dokument)
+1. `docs/cr/open/CR-GC-313-export-graph-guard-vs-graphversion-stamp.md` (dieses Dokument)
 2. `scripts/export-graph.mjs`
 3. eine Testdatei für den Guard (heute gibt es keine — er ist ungetestet, was erklärt,
    warum CR-GC-300 ihn brechen konnte, ohne dass etwas rot wurde)
