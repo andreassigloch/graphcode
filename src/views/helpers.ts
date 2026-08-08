@@ -102,6 +102,121 @@ export function levelsOfTest(
   return levels;
 }
 
+/** A-SPICE requirement layer, read off the compose anchor (CR-GC-317). */
+export type ReqLevel = 'system' | 'functional' | 'derived';
+
+/**
+ * Which layer(s) a REQ sits on, derived from its compose ANCHOR (CR-GC-317):
+ * `SYS -compose-> REQ` is a system requirement (A-SPICE SYS.2), `UC -compose-> REQ` a
+ * functional one (SWE.1), `REQ -compose-> REQ` a derived one. The separation an assessor
+ * looks for is already in the graph — it was just never rendered.
+ *
+ * Position, not attribute — same call as `levelsOfTest` (CR-GC-240) and for the same
+ * reason: real nodes almost never carry a level attribute, so an attribute-based read
+ * degenerates to "everything unassigned" on a fully modelled graph. The anchor is always
+ * there.
+ *
+ * A REQ anchored under both a SYS and a UC carries BOTH levels. Collapsing that to one
+ * winner would invent a precision the model does not have.
+ */
+export function reqLevels(
+  reqUid: string,
+  idx: Map<string, GraphNode>,
+  compose: { rev: Map<string, string[]> },
+): Set<ReqLevel> {
+  const levels = new Set<ReqLevel>();
+  for (const parent of compose.rev.get(reqUid) ?? []) {
+    const type = idx.get(parent)?.type;
+    if (type === 'SYS') levels.add('system');
+    else if (type === 'UC') levels.add('functional');
+    else if (type === 'REQ') levels.add('derived');
+  }
+  return levels;
+}
+
+/** One FUNC↔FUNC interface and the tests that actually cover it (CR-GC-317). */
+export interface RolledUpConnection {
+  /** Producer FUNC uid. */
+  from: string;
+  /** Consumer FUNC uid. */
+  to: string;
+  /** The FLOW they exchange. */
+  via: string;
+  /** FCHAINs declaring this pair as one integration scope. */
+  chains: string[];
+  /** TEST uids covering the connection through the full chain. */
+  tests: string[];
+}
+
+/**
+ * Every FUNC→FLOW→FUNC connection with the TESTs that cover it, rolled up over the
+ * four-hop chain `TEST -verify-> REQ <-satisfy- FCHAIN -compose-> FUNC` (CR-GC-317).
+ *
+ * That walk is what an assessor otherwise does by hand to answer "which test covers this
+ * interface?". GVE already renders such hidden links rolled up; the deterministic views
+ * did not.
+ *
+ * Only pairs sharing an FCHAIN are reported. Co-adjacency at a shared FLOW is not a
+ * declared interface — deriving connections from it manufactures P·C pairs per hub FLOW
+ * and taxes reuse (the R-21 defect, CR-GC-315). The FCHAIN is the declared scope.
+ *
+ * Deterministic: results sorted by (from, to, via), uid lists sorted within.
+ */
+export function rolledUpCoverage(
+  graph: Graph,
+  idx: Map<string, GraphNode>,
+  io: { fwd: Map<string, string[]>; rev: Map<string, string[]> },
+  compose: { fwd: Map<string, string[]>; rev: Map<string, string[]> },
+  satisfy: { fwd: Map<string, string[]>; rev: Map<string, string[]> },
+  verify: { rev: Map<string, string[]> },
+): RolledUpConnection[] {
+  const isFunc = (uid: string): boolean => idx.get(uid)?.type === 'FUNC';
+  // FCHAIN → its FUNCs, and the reverse lookup a pair needs.
+  const chainFuncs = new Map<string, Set<string>>();
+  for (const n of graph.nodes) {
+    if (n.type !== 'FCHAIN') continue;
+    chainFuncs.set(n.uid, new Set((compose.fwd.get(n.uid) ?? []).filter(isFunc)));
+  }
+
+  const out: RolledUpConnection[] = [];
+  for (const n of graph.nodes) {
+    if (n.type !== 'FLOW') continue;
+    const producers = (io.rev.get(n.uid) ?? []).filter(isFunc);
+    const consumers = (io.fwd.get(n.uid) ?? []).filter(isFunc);
+    for (const from of producers) {
+      for (const to of consumers) {
+        if (from === to) continue;
+        const chains = [...chainFuncs.entries()]
+          .filter(([, funcs]) => funcs.has(from) && funcs.has(to))
+          .map(([uid]) => uid)
+          .sort((a, b) => a.localeCompare(b));
+        if (chains.length === 0) continue;
+        const tests = new Set<string>();
+        for (const chain of chains) {
+          for (const reqUid of satisfy.fwd.get(chain) ?? []) {
+            for (const t of verify.rev.get(reqUid) ?? []) tests.add(t);
+          }
+        }
+        out.push({
+          from,
+          to,
+          via: n.uid,
+          chains,
+          tests: [...tests].sort((a, b) => a.localeCompare(b)),
+        });
+      }
+    }
+  }
+  return out.sort(
+    (a, b) => a.from.localeCompare(b.from) || a.to.localeCompare(b.to) || a.via.localeCompare(b.via),
+  );
+}
+
+/** Recorded outcome of a TEST run, or '' when none was recorded (VR-01). */
+export function testResult(n: GraphNode): string {
+  return String(n.attributes['testResult'] ?? '');
+}
+
 export function status(n: GraphNode): string {
   return String(n.attributes['status'] ?? '');
 }

@@ -1,7 +1,14 @@
 # CR-GC-301 — A-SPICE-Nachschärfungen: R-21-Level-Check, Auditor-Sicht, SUP.9/SUP.10
 
-**Status:** draft — nicht beauftragt (Familie-Review ausstehend)
-**Datum:** 2026-08-05
+**Status:** draft — Paket B abgespalten und erledigt, **A und C weiterhin nicht beauftragt**
+(Familie-Review ausstehend)
+**Datum:** 2026-08-05 · **Zuletzt:** 2026-08-08
+
+> **Paket B → `CR-GC-317` (done, 2026-08-08).** RTM gruppiert nach compose-Anker
+> (System/funktional/abgeleitet/unassigned), VCRM zeigt die Integrationsabdeckung je
+> FUNC↔FUNC-Verbindung rolled-up über `TEST -verify-> REQ <-satisfy- FCHAIN -compose-> FUNC`.
+> B war das einzige Paket ohne offene Entscheidung — es rendert Evidenz, die schon im Graphen
+> lag. **A und C bleiben hier offen** und brauchen Entscheidungen, siehe unten.
 **Kontext:** A-SPICE-Coverage-Evaluation vom 2026-08-05
 (`docs/articles/img/aspice-coverage.svg`). Ergebnis: Engineering-Prozesse
 (SYS.2–SYS.5, SWE.1–SWE.6) + SUP.1/SUP.8 + MAN.3 sind durch Ontologie, Regeln
@@ -39,7 +46,11 @@ TEST→REQ→FCHAIN→FUNC-Paar). Vier Nachschärfungen bleiben.
   genügt evtl. ohne Pattern-Bump). Severity warning, Dimension `cr`, Phase TRR.
 - Kein neuer ElementType, kein Problem-Lifecycle — bewusst minimal.
 
-### Paket B — graphcode: Auditor-Sicht (`se-view:aspice` oder RTM/VCRM-Ausbau)
+### Paket B — ERLEDIGT als `CR-GC-317` (2026-08-08)
+
+Umgesetzt als RTM/VCRM-Ausbau, **nicht** als `se-view:aspice`: eine dritte Sicht auf
+dieselben Kanten wäre ein Parallelpfad, der bei jedem Ontologie-Bump dreifach
+nachzuziehen wäre. Ursprünglicher Wortlaut zur Nachvollziehbarkeit:
 
 - **RTM-Gruppierung nach Level:** System-REQs (SYS-compose), funktionale REQs
   (UC-compose), abgeleitete REQs (REQ→REQ-compose) als Ebenen ausweisen —

@@ -87,7 +87,7 @@ export const HELP_CONTENT: Record<string, HelpContentEntry> = {
   'R-12': {
     plain:
       'Two items depend on each other in a loop, so neither can stand alone → remove or redirect one of the two links.',
-    se: 'Direct cycle: A→B and B→A via the same trace type.',
+    se: 'Direct cycle: A→B and B→A via the same trace type, checked on `compose` / `allocate` / `relation` only. Data (`io`) is exempt — a function that reads and writes the same `FLOW` is normal reuse, not a dependency cycle.',
   },
   'R-14': {
     plain:
@@ -123,8 +123,8 @@ export const HELP_CONTENT: Record<string, HelpContentEntry> = {
   },
   'R-21': {
     plain:
-      "Two functions pass data to each other but nothing tests that hand-off → add an integration test that checks the connection works.",
-    se: 'FUNC↔FUNC connection (`FUNC` ─io→ `FLOW` ─io→ `FUNC`) whose endpoints share no `FCHAIN` with a verified integration test (`TEST` ─verify→ `REQ` ←satisfy─ `FCHAIN`).',
+      "You grouped functions into a chain that passes data along, but nothing tests that hand-off → add an integration test that checks the chain works.",
+    se: 'FUNC↔FUNC connection (`FUNC` ─io→ `FLOW` ─io→ `FUNC`) whose endpoints DO share an `FCHAIN`, but no shared chain carries a verified integration test (`TEST` ─verify→ `REQ` ←satisfy─ `FCHAIN`). Pairs sharing no `FCHAIN` are silent: co-adjacency at a reused `FLOW` is not an asserted interface.',
   },
   'R-22': {
     plain:

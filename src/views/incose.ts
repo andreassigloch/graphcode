@@ -16,7 +16,7 @@
  */
 import type { Graph, GraphNode } from '@sigloch/graph-api-core';
 import { generatedHeader, cell } from '../exporter.js';
-import { nodesOfType, nodeIndex, adjacency, reqKinds, testLevel, levelsOfTest, status, ref, refList, topoOrderMilestones } from './helpers.js';
+import { nodesOfType, nodeIndex, adjacency, reqKinds, testLevel, testResult, levelsOfTest, reqLevels, rolledUpCoverage, status, ref, refList, topoOrderMilestones, type ReqLevel } from './helpers.js';
 
 // ---------------------------------------------------------------------------
 // 3. NFR Register (RENDER · REQ kind=non-functional). Specimen #3.
@@ -95,31 +95,79 @@ export function renderIcd(graph: Graph, name: string): string {
 //    Specimen #6. Rows sorted by uid; a coverage gap (REQ without verify) is ⚠.
 // ---------------------------------------------------------------------------
 
+/**
+ * CR-GC-317: the layer label an assessor is looking for. A-SPICE separates system
+ * requirements (SYS.2) from software ones (SWE.1); in this ontology that distinction IS
+ * the compose anchor, so it needs deriving, not authoring.
+ */
+const REQ_LEVEL_LABEL: Record<ReqLevel, string> = {
+  system: 'System (SYS.2)',
+  functional: 'funktional (SWE.1)',
+  derived: 'abgeleitet',
+};
+const REQ_LEVEL_ORDER: ReqLevel[] = ['system', 'functional', 'derived'];
+
 export function renderRtm(graph: Graph, name: string): string {
   const reqs = nodesOfType(graph, 'REQ');
+  const idx = nodeIndex(graph);
   const verify = adjacency(graph, 'verify');
   const satisfy = adjacency(graph, 'satisfy');
   const allocate = adjacency(graph, 'allocate');
+  const compose = adjacency(graph, 'compose');
   const lines: string[] = [
     generatedHeader(
       name,
       'Requirements Traceability Matrix (RTM)',
-      `${reqs.length} REQ rows, sortiert nach uid. Deterministisch generiert.`,
+      `${reqs.length} REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.`,
     ),
   ];
-  lines.push('| REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |', '|---|---|---|---|');
-  let gaps = 0;
+
+  // CR-GC-317: group by layer instead of one flat uid-sorted list. A REQ anchored under
+  // both a SYS and a UC appears in BOTH groups — the model says both, and picking a
+  // winner here would invent precision. `unassigned` is its own group rather than a
+  // silent omission: a requirement hanging off nothing is exactly what an assessor wants
+  // to see.
+  const groups = new Map<string, typeof reqs>();
+  for (const level of REQ_LEVEL_ORDER) groups.set(level, []);
+  groups.set('unassigned', []);
   for (const r of reqs) {
-    const tests = verify.rev.get(r.uid) ?? [];
-    const satisfiers = satisfy.rev.get(r.uid) ?? [];
-    const mods = new Set<string>();
-    for (const s of satisfiers) for (const m of allocate.fwd.get(s) ?? []) mods.add(m);
-    const modList = [...mods].sort((a, b) => a.localeCompare(b));
-    const verifyCell = tests.length ? refList(tests) : '⚠ R-01 no verify';
-    if (tests.length === 0) gaps += 1;
-    lines.push(`| ${ref(r.uid)} | ${verifyCell} | ${refList(satisfiers)} | ${refList(modList)} |`);
+    const levels = reqLevels(r.uid, idx, compose);
+    if (levels.size === 0) groups.get('unassigned')!.push(r);
+    else for (const l of levels) groups.get(l)!.push(r);
   }
-  lines.push('', `> Coverage gap = ${gaps} REQ without verify (R-01). Rows sorted by uid.`, '');
+
+  let gaps = 0;
+  const seenForGaps = new Set<string>();
+  const renderGroup = (heading: string, rows: typeof reqs): void => {
+    if (rows.length === 0) return;
+    lines.push('', `### ${heading} — ${rows.length} REQ`, '');
+    lines.push('| REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |', '|---|---|---|---|');
+    for (const r of rows) {
+      const tests = verify.rev.get(r.uid) ?? [];
+      const satisfiers = satisfy.rev.get(r.uid) ?? [];
+      const mods = new Set<string>();
+      for (const s of satisfiers) for (const m of allocate.fwd.get(s) ?? []) mods.add(m);
+      const modList = [...mods].sort((a, b) => a.localeCompare(b));
+      const verifyCell = tests.length ? refList(tests) : '⚠ R-01 no verify';
+      // Count each REQ once even when it appears under two layers, so the gap number
+      // stays comparable with the pre-CR figure.
+      if (tests.length === 0 && !seenForGaps.has(r.uid)) {
+        gaps += 1;
+        seenForGaps.add(r.uid);
+      }
+      lines.push(`| ${ref(r.uid)} | ${verifyCell} | ${refList(satisfiers)} | ${refList(modList)} |`);
+    }
+  };
+
+  for (const level of REQ_LEVEL_ORDER) renderGroup(REQ_LEVEL_LABEL[level], groups.get(level)!);
+  renderGroup('ohne Anker (unassigned)', groups.get('unassigned')!);
+
+  lines.push(
+    '',
+    `> Coverage gap = ${gaps} REQ without verify (R-01). Ebene = compose-Anker ` +
+      `(SYS → System, UC → funktional, REQ → abgeleitet); ein REQ mit zwei Ankern steht in beiden Gruppen.`,
+    '',
+  );
   return lines.join('\n');
 }
 
@@ -282,6 +330,51 @@ export function renderTestMatrix(graph: Graph, name: string): string {
   }
   const pct = reqs.length ? Math.round((verified / reqs.length) * 100) : 0;
   lines.push('', `Coverage: ${verified}/${reqs.length} REQ verified (${pct}%) · ${reqs.length - verified} open (R-01).`, '');
+
+  // CR-GC-317: the rolled-up half. Above answers "is this requirement verified?"; an
+  // assessor also asks "is this INTERFACE verified?" — and that answer sits four hops
+  // away (TEST -verify-> REQ <-satisfy- FCHAIN -compose-> FUNC). GVE renders such hidden
+  // chains as one link; the deterministic views did not, so the evidence existed and was
+  // unreadable.
+  const idx = nodeIndex(graph);
+  const connections = rolledUpCoverage(
+    graph,
+    idx,
+    adjacency(graph, 'io'),
+    adjacency(graph, 'compose'),
+    adjacency(graph, 'satisfy'),
+    verify,
+  );
+  lines.push('## Integrationsabdeckung (rolled-up)', '');
+  if (connections.length === 0) {
+    lines.push('_Keine FUNC↔FUNC-Verbindung in einer FCHAIN deklariert._', '');
+    return lines.join('\n');
+  }
+  lines.push(
+    '| Verbindung | via FLOW | FCHAIN | deckende TEST(s) | level | Ergebnis |',
+    '|---|---|---|---|---|---|',
+  );
+  let uncovered = 0;
+  for (const c of connections) {
+    const nodes = c.tests.map((t) => idx.get(t)).filter((n): n is GraphNode => !!n);
+    // An empty cell reads as "nothing to say". A gap must read as a gap.
+    const testCell = c.tests.length ? refList(c.tests) : '⚠ keine Abdeckung';
+    if (c.tests.length === 0) uncovered += 1;
+    const levels = [...new Set(nodes.map((n) => testLevel(n)).filter(Boolean))].sort();
+    const results = [...new Set(nodes.map((n) => testResult(n)).filter(Boolean))].sort();
+    lines.push(
+      `| ${ref(c.from)} → ${ref(c.to)} | ${ref(c.via)} | ${refList(c.chains)} | ${testCell} ` +
+        `| ${cell(levels.join(', '))} | ${cell(results.join(', '))} |`,
+    );
+  }
+  lines.push(
+    '',
+    `> ${connections.length - uncovered}/${connections.length} deklarierte FUNC↔FUNC-Verbindungen ` +
+      `sind über die Kette TEST→REQ←FCHAIN→FUNC abgedeckt · ${uncovered} offen. ` +
+      'Nur Paare mit gemeinsamer FCHAIN — Ko-Adjazenz an einer geteilten FLOW ist keine ' +
+      'deklarierte Schnittstelle (CR-GC-315). Leeres level/Ergebnis = am TEST nicht gepflegt.',
+    '',
+  );
   return lines.join('\n');
 }
 
