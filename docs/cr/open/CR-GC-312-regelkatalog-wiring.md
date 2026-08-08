@@ -1,6 +1,7 @@
 # CR-GC-312 — Der Regelkatalog feuert nur zu einem Sechstel: 10 von 12 Regel-Familien sind nicht verdrahtet
 
-**Status:** open · **Angelegt:** 2026-08-08 · **Max Files:** 5
+**Status:** open — **implementiert und lokal verifiziert, blockiert auf zwei Entscheidungen**
+(siehe §„Stand 2026-08-08") · **Angelegt:** 2026-08-08 · **Max Files:** 5 (→ real größer)
 **Herkunft:** ConOps-Review 2026-08-08. Gesucht war „warum flaggt uns keiner einen UC ohne
 FCHAIN?" — die Regel dafür existiert seit Langem und lief nie.
 **Repo-Grenze:** Der Fix liegt in **`@sigloch/graph-api-core`** (sigloch-modules), nicht in
@@ -116,6 +117,76 @@ Warnung nicht zu Lärm wird.
    UC/FC/CR/AF; ein Gate-Batch auf einem Graphen mit bestehenden CR-R01/R02 wird **nicht**
    geblockt
 5. `package.json` — Range-Bump auf die neue `@sigloch/graph-api-core`-Version
+
+## Stand 2026-08-08 — was gebaut ist, und der tiefere Befund
+
+**In `graph-api-core` fertig, Suite grün (9 Dateien / 91 Tests), NICHT publiziert:**
+
+- `src/rule-engine.ts` — `Rule.gating?: boolean` (Default `true`), `RuleViolation.gating`;
+  `DefaultRuleEngine.evaluate` stempelt es aus der Regel. Nur wenn eine Regel *abwählt* —
+  ein fehlendes Feld heißt gating, also unverändertes Verhalten für jeden Bestandskonsumenten.
+- `src/se-descriptor.ts` — `SE_RULES` aus **allen zehn SE-Familien** (V3, MT, UC, FC, SC, CR,
+  AO, FM, VIEW, AF). Draußen bleiben BQ/ND (Coding-Profil) und RC (braucht `CodeFacts` aus
+  einem Checkout, den dieses Paket nicht hat). Katalog: **32 → 66 Regeln.**
+- `tests/se-descriptor.test.ts` — Erwartung aus `ALL_RULE_DEFS` **abgeleitet** statt
+  hartkodiert: eine neue contracts-Familie ohne Descriptor-Eintrag wird rot.
+
+**In graphcode fertig gewesen, wieder zurückgenommen** (der Baum darf nicht rot bleiben):
+`src/harness.ts` filtert `v.gating !== false` im Block-Zweig; `tests/rules.catalog.test.ts`
+(4 Tests) beweist Sichtbarkeit **und** dass die neuen Fehler nicht blocken, mit V3-Kontrolle
+gegen zu breites `gating`. Beides lief lokal grün gegen die gebaute graph-api-core.
+
+### Der eigentliche Root Cause liegt tiefer als beschrieben
+
+`graph-api-core@2.0.0` pinnt `@sigloch/contracts: ^2.0.0`. npm installiert deshalb in
+graphcode eine **zweite, geschachtelte** `contracts@2.0.0` neben der Top-Level-`3.1.0`:
+
+```
+node_modules/@sigloch/contracts                          → 3.1.0
+node_modules/@sigloch/graph-api-core/node_modules/…/contracts → 2.0.0
+```
+
+Damit laufen im selben Prozess **zwei Regelstände**: das **Gate** (über `SE_DESCRIPTOR`) auf
+contracts 2.0.0, `steering.ts`/`steering-snapshot.ts` (`evaluateAllRules`) auf 3.1.0. Das ist
+der Grund, warum AF-01..05 nie im Gate auftauchten — sie existieren in 2.0.0 gar nicht. Ohne
+den Range-Bump hätte das Katalog-Wiring die Familien aus dem *veralteten* Stand gezogen.
+
+`^2.0.0` → `^3.1.0` gebaut und getestet. Es ist kein Alleingang: `graphcode-client`,
+`se-optimizer` und `se-steering` stehen längst auf `^3.0.0` — `graph-api-core` war das
+letzte Paket auf `^2`.
+
+### Preis: 3 rote Tests in graphcode — und sie kommen NICHT vom Katalog
+
+Gemessen, nicht geschätzt. Mit contracts 3.1.0 **und dem alten V3+MT-Katalog** fallen bereits:
+
+| Test | Grund |
+|---|---|
+| `help.test.ts` · `help-content.test.ts` | `R-28` hat keinen authored Plain/SE-Eintrag — die Regel existiert erst ab contracts 3.x, `HELP_CONTENT` ist gegen 2.0.0 geschrieben |
+| `readiness.model.test.ts` | Readiness-Modell deckt 31 Regeln ab, der Descriptor liefert 32 |
+
+Das Katalog-Wiring fügt **keinen vierten** Fehlschlag hinzu — es verbreitert dieselben drei:
+Readiness-Modell auf 66 Regeln, und `HELP_CONTENT` bräuchte ~34 weitere authored
+Plain/SE-Paare (UC-*, FC-*, CR-R*, AF-*, AO-*, FM-*, VIEW-*, SC-*).
+
+Genau daran endet dieser CR: das ist Schreibarbeit für zwei Zielgruppen (CR-GC-227), kein
+Wiring — und sie sprengt 6 Dateien deutlich.
+
+### Zweiter, unabhängiger Befund (eigener CR nötig)
+
+`getRuleDefsForProfile('se')` in contracts kennt kein `'MS-'`. `MS-01`/`MS-02` (V3_RULES) und
+`MS-03` (CR_RULES) fallen für **jeden** Konsumenten aus dem `se`-Profil — dieselbe Klasse wie
+die `RD-`-Lücke, die der Funktionskommentar selbst dokumentiert (CR-SM-221). Ein
+Ein-Zeilen-Fix in contracts, hier bewusst nicht mitgemacht (drittes Repo, eigener Bump). In
+`tests/se-descriptor.test.ts` ist die Lücke als Test **festgenagelt**, nicht kommentiert —
+wer sie in contracts schließt, macht diesen Test rot und weiß, dass er ihn löschen darf.
+
+### Offene Entscheidungen
+
+1. **`@sigloch/graph-api-core@2.1.0` publizieren?** Ohne Publish kommt der Katalog in
+   graphcode nicht an (Registry-Dep). Das ist ein Publish nach außen — deine Freigabe.
+2. **Wie wird der Help/Readiness-Rest geschnitten?** ~34 authored Help-Paare + das
+   Readiness-Modell sind ein eigener CR; solange er offen ist, bleibt der graphcode-Teil
+   dieses CRs zurückgenommen.
 
 ## Akzeptanzkriterien
 
