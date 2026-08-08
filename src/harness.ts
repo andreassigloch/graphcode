@@ -418,7 +418,14 @@ export class GraphCodeHarness {
 
     // Step 3 — evaluate, then keep only the violations this mutation introduced.
     const newViolations = this.runRules().filter((v) => !baselineKeys.has(violationKey(v)));
-    const hasNewError = newViolations.some((v) => v.severity === 'error');
+    // CR-GC-312: `gating: false` marks a rule as visible-but-not-gate-relevant. The
+    // descriptor now carries all twelve contracts rule families instead of two; ten of
+    // them were shipped and evaluated by nobody. Switching them on with gate power in
+    // one step would block every write on pre-existing debt (114 errors in this repo's
+    // own graph the day it landed) — debt the writer did not create, which is the same
+    // reason the delta baseline above exists. The violations stay in the result and in
+    // readiness at full severity; they just do not block until a family is promoted.
+    const hasNewError = newViolations.some((v) => v.severity === 'error' && v.gating !== false);
 
     // Step 3b — pre-persist type guard (CR-GC-205 Item 1). Trace-pair legality is
     // now R-18 and referential integrity is R-08 — both arrive via runRules() above
@@ -582,7 +589,7 @@ export class GraphCodeHarness {
     return errors;
   }
 
-  private runRules(): RuleViolation[] {
+  private runRules(): GatedViolation[] {
     return this.engine.evaluate(this.graph).map((v: CoreRuleViolation) => ({
       ruleId: v.ruleId,
       severity: v.severity,
@@ -592,6 +599,9 @@ export class GraphCodeHarness {
       // rules_get_violations / rules_evaluate hand the agent an actionable violation.
       fixHint: v.fixHint,
       context: v.context,
+      // CR-GC-312: stamped by the engine from the rule. Only the GATE reads it; the
+      // field stays out of the contracts harness type so no consumer has to care.
+      gating: v.gating,
     }));
   }
 
@@ -703,6 +713,16 @@ export class GraphCodeHarness {
     if (delta.deleteNodes.length) await this.storage.deleteNodes(delta.deleteNodes);
   }
 }
+
+/**
+ * A violation plus the gate-relevance flag the engine stamps (CR-GC-312).
+ *
+ * Deliberately NOT in the contracts harness `RuleViolation`: only the gate reads it,
+ * and widening a shared schema for one consumer's internal branch is how parallel
+ * shapes start. Structurally assignable to `RuleViolation`, so everything downstream
+ * is untouched.
+ */
+type GatedViolation = RuleViolation & { gating?: boolean };
 
 interface GraphDelta {
   upsertNodes: GraphNode[];

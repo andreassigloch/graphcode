@@ -156,6 +156,212 @@ export const HELP_CONTENT: Record<string, HelpContentEntry> = {
       "A physical part isn't linked to the CAD/geometry that realizes it → link it to the CAD file (or mark it concept/outside).",
     se: "Physical `MOD` (`kind:'physical'`) with no valid `realRef` (CAD/geometry artefact; `symbol` optional); else `concept:true` / `external:true` (CR-228). Logical MODs are realized via their FUNCs' code (R-20), not here.",
   },
+  'R-28': {
+    plain:
+      'Your system has several functions but no described data passing between them, so the parts look unconnected → add the data each function hands to the next.',
+    se: 'Layer presence: with more than one `FUNC` the model must carry `FLOW` and `SCHEMA` elements. A function layer with no data layer is an incomplete decomposition, not a small model.',
+  },
+
+  // ---------------------------------------------------------------------------
+  // Use-case quality (UC-*) — CR-GC-312 wired these into the descriptor; they had
+  // been shipped in contracts and evaluated by nobody.
+  // ---------------------------------------------------------------------------
+  'UC-01': {
+    plain:
+      'A scenario says what someone wants to do but never says what the system must provide → write down the requirements it needs.',
+    se: '`UC` with no `compose` trace to any `REQ`. The use case carries no requirement content.',
+    prompt: 'se:author-req',
+  },
+  'UC-02': {
+    plain: 'A scenario has nobody who triggers it → name who or what starts it.',
+    se: '`UC` with no `ACTOR` connected by an `io` trace (directly or via a `FLOW` of its chain).',
+    prompt: 'se:author-uc',
+  },
+  'UC-03': {
+    plain:
+      'A scenario says what should be possible but not how it runs → describe the steps as a chain of functions.',
+    se: '`UC` with no `compose` trace to an `FCHAIN`. No behavioural scenario is declared.',
+    prompt: 'se:author-uc',
+  },
+  'UC-04': {
+    plain:
+      'A scenario has no real description, or still carries a placeholder like TBD → write what the user actually wants to achieve.',
+    se: '`UC` description shorter than 10 characters or containing TBD/TODO/FIXME/placeholder/XXX. Description IS the goal (CR-150).',
+    prompt: 'se:author-uc',
+  },
+  'UC-05': {
+    plain: 'A scenario does not say what must be true once it has finished → add that as a requirement.',
+    se: '`UC` with no `compose`d `REQ` carrying `kinds:["postcondition"]`.',
+  },
+  'UC-06': {
+    plain: 'A scenario does not say what must be true before it can start → add that as a requirement.',
+    se: '`UC` with no `compose`d `REQ` carrying `kinds:["precondition"]`.',
+  },
+
+  // ---------------------------------------------------------------------------
+  // Function-chain quality (FC-*)
+  // ---------------------------------------------------------------------------
+  'FC-01': {
+    plain:
+      'A sequence of steps has no connection to anyone outside the system → say who triggers it or who receives its result.',
+    se: '`FCHAIN` with no `ACTOR` connection at all — neither via its own FUNC/FLOW nor via its parent `UC`.',
+  },
+  'FC-02': {
+    plain:
+      'A scenario that is not broken into sub-scenarios has no described sequence of steps → add one, even if the steps are done by hand.',
+    se: 'Leaf `UC` (no `UC -compose-> UC`) with no `FCHAIN`. A chain may consist of EXISTING FUNCs an actor strings together — it costs a node plus compose edges, not code.',
+    prompt: 'se:author-uc',
+  },
+  'FC-03': {
+    plain: 'A step inside a sequence contains further steps, so the sequence has hidden depth → lift them to the same level.',
+    se: '`FUNC` inside an `FCHAIN` that itself `compose`s other `FUNC`s. Chains are flat by construction.',
+  },
+  'FC-04': {
+    plain:
+      'A sequence either has nobody starting it or nothing coming back out → wire both ends to whoever uses it.',
+    se: '`FCHAIN` lacking an entry (`ACTOR -io-> FLOW -io-> FUNC∈chain`) or an exit (`FUNC∈chain -io-> FLOW -io-> ACTOR`). Stricter than FC-01: both directions, at FUNC/FLOW level, no UC-level bypass.',
+  },
+
+  // ---------------------------------------------------------------------------
+  // Schema quality (SC-*)
+  // ---------------------------------------------------------------------------
+  'SC-02': {
+    plain: 'A data format is defined but nothing uses it → connect it to the data it describes, or drop it.',
+    se: '`SCHEMA` not referenced by any `FLOW` via a `relation` trace.',
+  },
+  'SC-04': {
+    plain: "A piece of data travels between parts but its shape isn't defined → say what it contains.",
+    se: '`FLOW` with no `SCHEMA` bound via a `relation` trace. The interface is named but not specified.',
+  },
+
+  // ---------------------------------------------------------------------------
+  // Change-request quality (CR-R*, MS-*)
+  // ---------------------------------------------------------------------------
+  'CR-R01': {
+    plain: 'A change is recorded but says nothing about what it changes → link it to what it touches.',
+    se: '`CR` with no `relation` traces. It tracks nothing, so it is not traceable evidence.',
+  },
+  'CR-R02': {
+    plain:
+      'A change is marked finished but there is no commit proving it → record the commit, or set it back to open.',
+    se: '`CR` with `status:done` and no `commitRef` attribute. This is the graph-vs-reality check for change history: "done" without evidence.',
+  },
+  'CR-R03': {
+    plain: 'Several open changes touch the same thing, so they will collide → sequence them or merge them.',
+    se: 'One element tracked by more than one `CR` with `status` open/in-progress.',
+  },
+  'CR-R04': {
+    plain: 'A change has no implementation scope — nothing says which functions it affects → link the functions it changes.',
+    se: '`CR` with no `relation` trace to a `FUNC`.',
+  },
+  'MS-03': {
+    plain: 'A change is not assigned to any milestone, so it has no place in the plan → assign it.',
+    se: '`CR` with no `relation` trace to an `MS`.',
+    prompt: 'se-plan',
+  },
+
+  // ---------------------------------------------------------------------------
+  // Architecture / allocation (AO-*, CR-01, RT-01, PH-01, CA-01, IO-01)
+  // ---------------------------------------------------------------------------
+  'AO-D01': {
+    plain:
+      'A function only passes data through without doing anything with it → connect the consumers straight to the producer and drop the middleman.',
+    se: 'Relay `FUNC`: satisfies no `REQ` and only forwards `io`. A pass-through carries no requirement content.',
+  },
+  'AO-D03': {
+    plain:
+      'The same data reaches a part over two different routes, so it is unclear which one counts → unify the paths or put one mediator in front.',
+    se: 'One `FUNC` with `io` to two targets sharing `SCHEMA` targets — duplicate data paths to the same shape.',
+  },
+  'CR-01': {
+    plain:
+      'Two parts exchange an unusually large amount of data, which usually means the boundary is in the wrong place → reconsider the cut.',
+    se: 'High crossing `io` FLOW count between two `MOD`s — a coupling metric, advisory.',
+  },
+  'RT-01': {
+    plain:
+      'A function is attached straight to a piece of hardware instead of to software inside it → put it in a logical module within that hardware.',
+    se: '`FUNC -allocate-> MOD` where the target is `kind:"physical"`. Allocation must target a logical sub-module.',
+  },
+  'PH-01': {
+    plain: 'A piece of hardware contains no described software parts → add the logical modules inside it.',
+    se: 'Physical `MOD` with no `compose`d logical sub-`MOD`.',
+  },
+  'CA-01': {
+    plain:
+      'A function needs abilities the hardware it sits on does not have → move it, or record the missing ability.',
+    se: '`FUNC` whose required capabilities are not a subset of its physical `MOD`\'s provided capabilities.',
+  },
+  'IO-01': {
+    plain:
+      'Two steps in the same sequence have no described data passing between them → add the data one hands to the other.',
+    se: 'A `FUNC` pair inside one `FCHAIN` with no `io` path (`FUNC -io-> FLOW -io-> FUNC`) connecting them.',
+  },
+
+  // ---------------------------------------------------------------------------
+  // FMEA / budgets (FM-*, NFR-01)
+  // ---------------------------------------------------------------------------
+  'FM-01': {
+    plain:
+      'A requirement is marked as a risk but carries no risk ratings → rate how bad, how likely and how detectable it is (1-10 each).',
+    se: 'Risk `REQ` missing `severity` / `occurrence` / `detection` attributes (AIAG-VDA).',
+    prompt: 'se-fmea',
+  },
+  'FM-02': {
+    plain: 'A known risk has nothing planned against it → write the countermeasure as its own requirement.',
+    se: 'Risk `REQ` with no `compose`d mitigation `REQ` (`kinds:["mitigation"]`).',
+    prompt: 'se-fmea',
+  },
+  'FM-03': {
+    plain:
+      'A high risk has no test that actually passed → add a test proving the countermeasure works.',
+    se: 'Risk `REQ` with RPN > 100 and no `TEST` carrying `testResult:"passed"` verifying it.',
+    prompt: 'se-fmea',
+  },
+  'NFR-01': {
+    plain: 'Something measured exceeds the limit that was set for it → fix it or change the limit deliberately.',
+    se: 'Measured value above its declared budget on a `MOD` (physical) or `FUNC`/`FCHAIN` (behavioural).',
+  },
+
+  // ---------------------------------------------------------------------------
+  // View / analysis freshness (VR-01, CL-01, AF-*)
+  // ---------------------------------------------------------------------------
+  'VR-01': {
+    plain: 'A test exists but no result was ever recorded, so nobody knows if it passed → record the outcome.',
+    se: '`TEST` with no `testResult` attribute — assumed pending, never assumed green.',
+  },
+  'CL-01': {
+    plain:
+      'Someone only ever uses the system in one way, which usually means their other situations are missing → describe the scenarios you left out.',
+    se: '`ACTOR` whose `UC`s cover fewer than 2 distinct `operatingMode`s — a ConOps completeness signal.',
+    prompt: 'se-conops',
+  },
+  'AF-01': {
+    plain: 'The operations concept was never stamped as written, so nobody can tell if it is current → run the ConOps step.',
+    se: 'No `analysisFreshness.conops` stamp under `SYS.attributes` (CR-SM-227 presence rule; staleness is a consumer concern).',
+    prompt: 'se-conops',
+  },
+  'AF-02': {
+    plain: 'No trade study is on record, so the choices made were never written down → record the decision.',
+    se: 'No `analysisFreshness.trade` stamp under `SYS.attributes`.',
+    prompt: 'se-trade',
+  },
+  'AF-03': {
+    plain: 'The assumptions behind this system were never reviewed → run the assumption review.',
+    se: 'No `analysisFreshness.assumption-review` stamp under `SYS.attributes`.',
+    prompt: 'se-irr',
+  },
+  'AF-04': {
+    plain: 'No failure analysis is on record → run the FMEA.',
+    se: 'No `analysisFreshness.fmea` stamp under `SYS.attributes`.',
+    prompt: 'se-fmea',
+  },
+  'AF-05': {
+    plain: 'No implementation plan is on record → derive the build order.',
+    se: 'No `analysisFreshness.implplan` stamp under `SYS.attributes`.',
+    prompt: 'se-plan',
+  },
+
   'RC-03': {
     plain:
       "A data format points to schema code that isn't there anymore (file moved or export renamed) → repoint it to the current schema.",
