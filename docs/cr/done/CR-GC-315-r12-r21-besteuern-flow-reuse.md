@@ -1,6 +1,6 @@
 # CR-GC-315 — R-12 und R-21 besteuern FLOW-Reuse: die einzige Art, sie stillzukriegen, ist Duplizieren
 
-**Status:** open · **Angelegt:** 2026-08-08 · **Max Files:** 5
+**Status:** done · **Abgeschlossen:** 2026-08-08 · **Angelegt:** 2026-08-08 · **Max Files:** 5
 **Herkunft:** CR-Arbeit 2026-08-08. Ein Agent meldete „dryRun grün, aber zwei vermeidbare
 Warnungen (R-12, R-21) — die entstehen nur, weil ich geteilte FLOWs wiederverwende. Ich
 schneide zwei eigene." Genau der Trade, den das Modell nie erzwingen darf.
@@ -89,9 +89,5 @@ behauptet eine Schnittstelle, die niemand modelliert hat.
 - [x] Deklarierte FCHAIN ohne verifizierte REQ → weiterhin R-21-Violation, verankert auf der FCHAIN
 - [x] Unit-Test auf einer FUNC deckt die Verbindung weiterhin **nicht** ab
 - [x] `npm run build` + volle Suite in contracts grün (193/193)
-- [ ] contracts publiziert; graphcode-Range gezogen, Suite grün, Warnungen am realen Graphen weg
+- [x] contracts 3.2.0 publiziert; graphcode-Range gezogen, 622 Tests grün, R-12 und R-21 am realen Graphen auf 0 (auch die in CR-GC-311 bewusst stehengelassene Ko-Adjazenz-Warnung)
 
-## Offen
-
-Der letzte Punkt braucht einen contracts-Publish (Familie zieht die Version, s.
-`sigloch-family-filedep-rollout`). Bis dahin sieht graphcode die alten Regeln.

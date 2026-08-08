@@ -1,7 +1,7 @@
 # CR-GC-312 — Der Regelkatalog feuert nur zu einem Sechstel: 10 von 12 Regel-Familien sind nicht verdrahtet
 
-**Status:** open — **implementiert und lokal verifiziert, blockiert auf zwei Entscheidungen**
-(siehe §„Stand 2026-08-08") · **Angelegt:** 2026-08-08 · **Max Files:** 5 (→ real größer)
+**Status:** done · **Angelegt:** 2026-08-08 · **Abgeschlossen:** 2026-08-08 · **Max Files:** 5
+(→ real größer, drei Repos)
 **Herkunft:** ConOps-Review 2026-08-08. Gesucht war „warum flaggt uns keiner einen UC ohne
 FCHAIN?" — die Regel dafür existiert seit Langem und lief nie.
 **Repo-Grenze:** Der Fix liegt in **`@sigloch/graph-api-core`** (sigloch-modules), nicht in
@@ -180,13 +180,43 @@ Ein-Zeilen-Fix in contracts, hier bewusst nicht mitgemacht (drittes Repo, eigene
 `tests/se-descriptor.test.ts` ist die Lücke als Test **festgenagelt**, nicht kommentiert —
 wer sie in contracts schließt, macht diesen Test rot und weiß, dass er ihn löschen darf.
 
-### Offene Entscheidungen
+### Beide Entscheidungen getroffen und umgesetzt (2026-08-08)
 
-1. **`@sigloch/graph-api-core@2.1.0` publizieren?** Ohne Publish kommt der Katalog in
-   graphcode nicht an (Registry-Dep). Das ist ein Publish nach außen — deine Freigabe.
-2. **Wie wird der Help/Readiness-Rest geschnitten?** ~34 authored Help-Paare + das
-   Readiness-Modell sind ein eigener CR; solange er offen ist, bleibt der graphcode-Teil
-   dieses CRs zurückgenommen.
+1. **Publiziert** — `contracts 3.2.0` → `graph-api-core 2.1.0` → `graphcode-client 0.8.0`,
+   graphcode-Ranges gezogen. Der Range-Bump war der eigentliche Fix: es gibt jetzt genau
+   **eine** contracts-Instanz statt einer geschachtelten 2.0.0 unter core.
+2. **Help-Rest in diesem CR erledigt**, nicht ausgelagert: 36 authored Plain/SE-Paare
+   geschrieben (`R-28`, UC-*, FC-*, SC-*, CR-R*, MS-03, AO-*, RT/PH/CA/IO, FM-*, NFR-01,
+   VR-01, CL-01, AF-*). Der befürchtete Prompt-Bloat wurde vorher separat abgeräumt —
+   `graph_help` fasst seit **CR-GC-316** pro Regel zusammen statt pro Vorkommen, sonst
+   hätte das Authorn den token-losen Modus von 2 KB auf ~178 KB getrieben.
+
+### Der dritte Parallelpfad, gefunden beim Nachziehen des Readiness-Modells
+
+`PHASE_GATE_RULES` in `graphcode-client` war ein handgepflegtes Literal über 33 Regeln —
+und contracts hatte es längst ersetzt: CR-SM-226 entfernte `emergentPhase`/`phaseScore` als
+„ein drittes, undokumentiertes Phase-Konstrukt neben `RULE_TO_DIMENSION` und der (damals
+noch ad-hoc) Phase-Gate-Gruppierung" und führte `RULE_TO_PHASE` ein, „exportiert, damit kein
+Konsument sie neu erfindet". Diese ad-hoc-Gruppierung **war** dieses Literal; der Umbau kam
+nie an.
+
+Preis des Liegenlassens: die beiden waren bei **21 von 33** geteilten Regeln
+auseinandergelaufen (`R-01` SRR vs. TRR, `R-08` TRR vs. PDR, `RD-01..03` CDR vs. SRR).
+Readiness wurde gegen die eingefrorene Karte gerechnet. Jetzt abgeleitet; `IMPL_GATE_RULES`
+ebenso (per `MS-`/`CR-R`-Präfix statt `['MS-01','MS-02']`). Die 5 `RC-*` sind die einzige
+echte Lokal-Ergänzung — sie liegen bewusst außerhalb `ALL_RULE_DEFS` — und auch die nicht
+handverlesen: jede erbt das Gate ihrer Presence-Regel.
+
+**Vier Tests fielen dabei um, und das ist der eigentliche Befund.** Sie nannten das Gate
+beim Namen (`R-01 → SRR`, `RC-01 → CDR`, `IMPL_GATE_RULES === ['MS-01','MS-02']`,
+Score `2/3`). Genau deshalb konnte die Drift monatelang grün bleiben — die Tests hatten sie
+mitgelernt. Sie fragen jetzt die Zuordnung ab, statt sie zu behaupten.
+
+### Ergebnis
+
+64 Regeln im Descriptor (vorher 32), 69 im Readiness-Modell (disjunkt + vollständig gegen
+`SE_DESCRIPTOR` geprüft), `HELP_CONTENT` deckt den Katalog vollständig ab.
+**85 Dateien / 622 Tests grün** gegen die publizierten Pakete.
 
 ## Akzeptanzkriterien
 
