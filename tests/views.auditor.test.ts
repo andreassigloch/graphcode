@@ -15,6 +15,8 @@
  * @author andreas@siglochconsulting
  */
 import { describe, it, expect } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import type { Graph, GraphNode, GraphEdge } from '@sigloch/graph-api-core';
 import { renderRtm, renderTestMatrix } from '../src/views/incose.js';
 
@@ -44,6 +46,9 @@ function fixture(): Graph {
       node('REQ-both', 'REQ'),
       node('REQ-orphan', 'REQ'),
       node('REQ-chain', 'REQ'),
+      node('REQ-func', 'REQ'),
+      node('REQ-mod', 'REQ'),
+      node('MOD-x', 'MOD'),
       node('FUNC-a', 'FUNC'),
       node('FUNC-b', 'FUNC'),
       node('FUNC-c', 'FUNC'),
@@ -67,6 +72,9 @@ function fixture(): Graph {
       edge('FCHAIN-chain', 'compose', 'FUNC-b'),
       edge('FCHAIN-chain', 'satisfy', 'REQ-chain'),
       edge('TEST-int', 'verify', 'REQ-chain'),
+      // CR-GC-318: the satisfy legs the one-hop version missed entirely.
+      edge('FUNC-a', 'satisfy', 'REQ-func'),
+      edge('MOD-x', 'satisfy', 'REQ-mod'),
     ],
   };
 }
@@ -79,38 +87,86 @@ function shuffled(g: Graph): Graph {
 describe('TEST-views-auditor (CR-GC-317): RTM layers', () => {
   const md = renderRtm(fixture(), 'x');
 
-  it('groups requirements by their compose anchor', () => {
+  const section = (heading: string): string => {
+    const start = md.indexOf(`### ${heading}`);
+    const rest = md.slice(start + 1);
+    const next = rest.indexOf('\n### ');
+    return next === -1 ? rest : rest.slice(0, next);
+  };
+
+  it('groups requirements by the element that carries the assignment', () => {
     expect(md).toContain('### System (SYS.2)');
     expect(md).toContain('### funktional (SWE.1)');
-    expect(md).toContain('### abgeleitet');
+    expect(md).toContain('### Integration (SWE.4)');
+    expect(md).toContain('### Komponente (SWE.2/3)');
     expect(md).toContain('### ohne Anker (unassigned)');
   });
 
-  it('places each requirement under the layer its anchor implies', () => {
-    const section = (heading: string): string => {
-      const start = md.indexOf(`### ${heading}`);
-      const rest = md.slice(start + 1);
-      const next = rest.indexOf('\n### ');
-      return next === -1 ? rest : rest.slice(0, next);
-    };
+  it('finds the compose legs — SYS and UC', () => {
     expect(section('System (SYS.2)')).toContain('REQ-sys');
     expect(section('funktional (SWE.1)')).toContain('REQ-uc');
-    expect(section('abgeleitet')).toContain('REQ-derived');
-    expect(section('ohne Anker (unassigned)')).toContain('REQ-orphan');
   });
 
-  it('lists a double-anchored REQ under BOTH layers — no invented winner', () => {
+  it('finds the SATISFY legs too — this is what CR-GC-317 missed (CR-GC-318)', () => {
+    // 67 of this repo's 111 REQs are assigned ONLY over a satisfy edge. Reading `compose`
+    // alone reported them as unanchored — a reporter gap sold as a model finding.
+    expect(section('Komponente (SWE.2/3)')).toContain('REQ-func'); // FUNC -satisfy->
+    expect(section('Komponente (SWE.2/3)')).toContain('REQ-mod'); // MOD  -satisfy->
+    expect(section('Integration (SWE.4)')).toContain('REQ-chain'); // FCHAIN -satisfy->
+  });
+
+  it('resolves REQ→REQ transitively — "derived" is a provenance, not a layer', () => {
+    // REQ-derived hangs under REQ-sys, which hangs under SYS-x. It IS a system
+    // requirement. A separate "derived" bucket would be exactly the label the reporter
+    // must not introduce.
+    expect(section('System (SYS.2)')).toContain('REQ-derived');
+    expect(md).not.toContain('### abgeleitet');
+  });
+
+  it('leaves only a genuinely unattached REQ unassigned', () => {
+    expect(section('ohne Anker (unassigned)')).toContain('REQ-orphan');
+    expect(section('ohne Anker (unassigned)')).not.toContain('REQ-func');
+  });
+
+  it('terminates on a REQ→REQ cycle instead of hanging', () => {
+    // R-12 rules out 2-cycles on compose; longer ones are not excluded, and a renderer
+    // must not be the thing that discovers that.
+    const g = fixture();
+    g.nodes.push(node('REQ-c1', 'REQ'), node('REQ-c2', 'REQ'));
+    g.edges.push(edge('REQ-c1', 'compose', 'REQ-c2'), edge('REQ-c2', 'compose', 'REQ-c1'));
+    expect(() => renderRtm(g, 'x')).not.toThrow();
+  });
+
+  it('lists a multi-assigned REQ under EVERY layer that reaches it — no invented winner', () => {
     // The load-bearing one. Collapsing to a single layer would be a silent modelling
     // decision made by the renderer.
     const rows = md.split('\n').filter((l) => l.includes('`REQ-both`'));
     expect(rows).toHaveLength(2);
   });
 
-  it('counts a double-anchored REQ once in the coverage gap', () => {
-    // REQ-both has no verify and appears twice — the gap must not double-count it.
-    // Six REQs lack verify here: sys, uc, derived, both, orphan, chain… minus chain,
-    // which TEST-int verifies. So five.
-    expect(md).toMatch(/Coverage gap = 5 REQ without verify/);
+  it('counts a multi-assigned REQ once in the coverage gap', () => {
+    // Seven REQs lack verify: sys, uc, derived, both, orphan, func, mod. REQ-chain is
+    // verified by TEST-int. REQ-both appears twice and must not be double-counted.
+    expect(md).toMatch(/Coverage gap = 7 REQ without verify/);
+  });
+});
+
+describe('TEST-views-auditor (CR-GC-318): the committed SSOT', () => {
+  it('leaves at most one REQ without a layer — asserted, not claimed', () => {
+    // CR-GC-317 reported 68 unanchored REQs on this graph and called it a finding. It was
+    // the one-hop lookup. Pinned against the real SSOT so the claim cannot drift back
+    // into prose.
+    const raw = JSON.parse(
+      readFileSync(join(process.cwd(), 'docs/graph/graphcode.graph.json'), 'utf8'),
+    ) as { elements: Array<Record<string, unknown>>; traces: Array<Record<string, string>> };
+    const graph: Graph = {
+      nodes: raw.elements.map((e) => node(e.id as string, e.type as string)),
+      edges: raw.traces.map((t) => edge(t.source, t.type, t.target)),
+    };
+    const md = renderRtm(graph, 'graphcode');
+    const heading = md.split('\n').find((l) => l.startsWith('### ohne Anker'));
+    const count = heading ? Number(/— (\d+) REQ/.exec(heading)?.[1] ?? 0) : 0;
+    expect(count).toBeLessThanOrEqual(1);
   });
 });
 

@@ -67,10 +67,15 @@ und wird ausgewiesen, nicht zu einer „gewinnenden" Ebene verkürzt.
 
 ## Ergebnis am realen Graphen
 
-RTM, 111 REQ: **16 System · 23 funktional · 4 abgeleitet · 69 ohne Anker.** Die 69 sind ein
-echter Befund, kein Renderfehler — zwei Drittel der Anforderungen hängen an keinem
-compose-Anker und sind damit keiner A-SPICE-Ebene zuzuordnen. Vorher war das in einer
-flachen uid-Liste unsichtbar.
+> **KORRIGIERT durch `CR-GC-318` (2026-08-08).** Die ursprünglich hier stehende Zahl
+> „69 REQ ohne Anker" war **falsch** — und die Behauptung „ein echter Befund, kein
+> Renderfehler" war genau verkehrt herum. `reqLevels` las nur die `compose`-Kante, einen
+> Hop weit; 67 der 68 gemeldeten REQ tragen ihre Zuordnung über `satisfy` von FUNC, MOD
+> oder FCHAIN. Die Lücke lag im Reporter, nicht im Modell.
+>
+> Mit Pfadsuche über alle zuordnungstragenden Beine (CR-GC-318), 111 REQ:
+> **19 System · 23 funktional · 30 Integration · 82 Komponente · 1 ohne Anker.**
+> Mehrfachzuordnung erklärt die Summe > 111.
 
 VCRM: 11 deklarierte FUNC↔FUNC-Verbindungen, alle abgedeckt. `testResult` ist durchgängig
 leer — an keinem TEST-Knoten gepflegt. Genau die Lücke, die Paket A (SUP.9, `PR-01`) adressiert;

@@ -102,34 +102,60 @@ export function levelsOfTest(
   return levels;
 }
 
-/** A-SPICE requirement layer, read off the compose anchor (CR-GC-317). */
-export type ReqLevel = 'system' | 'functional' | 'derived';
+/** A-SPICE requirement layer, found by walking to the element that carries it. */
+export type ReqLevel = 'system' | 'functional' | 'component' | 'integration';
 
 /**
- * Which layer(s) a REQ sits on, derived from its compose ANCHOR (CR-GC-317):
- * `SYS -compose-> REQ` is a system requirement (A-SPICE SYS.2), `UC -compose-> REQ` a
- * functional one (SWE.1), `REQ -compose-> REQ` a derived one. The separation an assessor
- * looks for is already in the graph — it was just never rendered.
+ * Which layer(s) a REQ sits on (CR-GC-318). The assignment lives in the REQ's link to a
+ * SYS / UC / FUNC / MOD / FCHAIN, and FINDING THOSE PATHS IS THE REPORTER'S JOB — there
+ * is no level attribute and there must not be one. The edges are the SSOT.
  *
- * Position, not attribute — same call as `levelsOfTest` (CR-GC-240) and for the same
- * reason: real nodes almost never carry a level attribute, so an attribute-based read
- * degenerates to "everything unassigned" on a fully modelled graph. The anchor is always
- * there.
+ * The assignment reaches a REQ over different legs depending on the layer:
  *
- * A REQ anchored under both a SYS and a UC carries BOTH levels. Collapsing that to one
- * winner would invent a precision the model does not have.
+ *   SYS  -compose-> REQ   system      (A-SPICE SYS.2)
+ *   UC   -compose-> REQ   functional  (SWE.1)
+ *   FUNC -satisfy-> REQ   component   (SWE.2/3)   — also MOD
+ *   FCHAIN -satisfy-> REQ integration (SWE.4/SYS.4)
+ *   REQ  -compose-> REQ   RESOLVED TRANSITIVELY, not a layer of its own
+ *
+ * That last line is the point. A requirement derived from a system requirement is still a
+ * system requirement; bucketing it as "derived" would be the label this function exists to
+ * avoid. Same for the satisfy legs: CR-GC-317 read only `compose`, so 68 of 111 REQs came
+ * out as "unanchored" when 67 of them were plainly assigned via `satisfy`. The gap was in
+ * the reporter, not the model.
+ *
+ * Precedent: `levelsOfTest` (CR-GC-240) already walks compose AND satisfy for exactly this
+ * reason — position over attribute, because real nodes carry no level attribute.
+ *
+ * A REQ reachable from several elements carries ALL their layers. Picking a winner would
+ * invent precision the model does not have.
+ *
+ * `seen` guards the recursion: R-12 rules out 2-cycles on `compose`, longer ones are not
+ * excluded, and a renderer must not hang on a malformed graph.
  */
 export function reqLevels(
   reqUid: string,
   idx: Map<string, GraphNode>,
   compose: { rev: Map<string, string[]> },
+  satisfy: { rev: Map<string, string[]> },
+  seen: Set<string> = new Set(),
 ): Set<ReqLevel> {
   const levels = new Set<ReqLevel>();
+  if (seen.has(reqUid)) return levels;
+  seen.add(reqUid);
+
   for (const parent of compose.rev.get(reqUid) ?? []) {
     const type = idx.get(parent)?.type;
     if (type === 'SYS') levels.add('system');
     else if (type === 'UC') levels.add('functional');
-    else if (type === 'REQ') levels.add('derived');
+    else if (type === 'REQ') {
+      for (const l of reqLevels(parent, idx, compose, satisfy, seen)) levels.add(l);
+    }
+  }
+  for (const source of satisfy.rev.get(reqUid) ?? []) {
+    const type = idx.get(source)?.type;
+    if (type === 'FUNC' || type === 'MOD') levels.add('component');
+    else if (type === 'FCHAIN') levels.add('integration');
   }
   return levels;
 }

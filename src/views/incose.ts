@@ -103,9 +103,11 @@ export function renderIcd(graph: Graph, name: string): string {
 const REQ_LEVEL_LABEL: Record<ReqLevel, string> = {
   system: 'System (SYS.2)',
   functional: 'funktional (SWE.1)',
-  derived: 'abgeleitet',
+  integration: 'Integration (SWE.4)',
+  component: 'Komponente (SWE.2/3)',
 };
-const REQ_LEVEL_ORDER: ReqLevel[] = ['system', 'functional', 'derived'];
+/** Top-down, the order an assessor reads them in. */
+const REQ_LEVEL_ORDER: ReqLevel[] = ['system', 'functional', 'integration', 'component'];
 
 export function renderRtm(graph: Graph, name: string): string {
   const reqs = nodesOfType(graph, 'REQ');
@@ -122,16 +124,17 @@ export function renderRtm(graph: Graph, name: string): string {
     ),
   ];
 
-  // CR-GC-317: group by layer instead of one flat uid-sorted list. A REQ anchored under
-  // both a SYS and a UC appears in BOTH groups — the model says both, and picking a
-  // winner here would invent precision. `unassigned` is its own group rather than a
-  // silent omission: a requirement hanging off nothing is exactly what an assessor wants
-  // to see.
+  // CR-GC-317/318: group by layer instead of one flat uid-sorted list. The layer comes
+  // from WALKING to the SYS/UC/FUNC/MOD/FCHAIN that carries the assignment (reqLevels) —
+  // no attribute, no label. A REQ reachable from several of them appears in BOTH groups;
+  // picking a winner would invent precision. `unassigned` stays its own group rather than
+  // a silent omission: a requirement hanging off nothing is what an assessor wants to see
+  // — and after CR-GC-318 it is one REQ, not the 68 the one-hop version reported.
   const groups = new Map<string, typeof reqs>();
   for (const level of REQ_LEVEL_ORDER) groups.set(level, []);
   groups.set('unassigned', []);
   for (const r of reqs) {
-    const levels = reqLevels(r.uid, idx, compose);
+    const levels = reqLevels(r.uid, idx, compose, satisfy);
     if (levels.size === 0) groups.get('unassigned')!.push(r);
     else for (const l of levels) groups.get(l)!.push(r);
   }
@@ -164,8 +167,11 @@ export function renderRtm(graph: Graph, name: string): string {
 
   lines.push(
     '',
-    `> Coverage gap = ${gaps} REQ without verify (R-01). Ebene = compose-Anker ` +
-      `(SYS → System, UC → funktional, REQ → abgeleitet); ein REQ mit zwei Ankern steht in beiden Gruppen.`,
+    `> Coverage gap = ${gaps} REQ without verify (R-01). Ebene = gefundener Pfad zum ` +
+      `zuordnenden Element: SYS -compose-> System · UC -compose-> funktional · ` +
+      `FCHAIN -satisfy-> Integration · FUNC/MOD -satisfy-> Komponente. REQ -compose-> REQ ` +
+      `erbt die Ebene des Elternteils (keine eigene). Ein REQ, das über mehrere Wege ` +
+      `zugeordnet ist, steht in mehreren Gruppen.`,
     '',
   );
   return lines.join('\n');
