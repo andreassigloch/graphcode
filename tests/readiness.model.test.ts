@@ -20,6 +20,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from '@sigloch/graph-cypher-wasm';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
+import { RULE_TO_PHASE } from '@sigloch/contracts/se';
 import type { Graph } from '@sigloch/graph-api-core';
 import type { RuleViolation } from '@sigloch/contracts/harness';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
@@ -72,8 +73,13 @@ describe('TEST-readiness-model (A/B): model is defined over V3_RULES, lean scope
     expect(new Set(modelRuleIds).size).toBe(modelRuleIds.length);
     // Set-equality with the contracts V3_RULES — the model covers exactly them.
     expect(new Set(modelRuleIds)).toEqual(familyIds);
-    // The impl gates carry exactly the milestone rules (MS-01/MS-02).
-    expect([...IMPL_GATE_RULES].sort()).toEqual(['MS-01', 'MS-02']);
+    // The impl gates carry the milestone- AND change-level rules: the impl gates ARE
+    // the milestone/CR burndown, so a rule about a CR belongs there and not on a design
+    // review (CR-GC-312 widened this from MS-01/MS-02 alone). Derived from the prefix,
+    // not listed — a new MS-/CR-R rule must not need this line edited.
+    expect([...IMPL_GATE_RULES].sort()).toEqual(
+      [...getFamilyRuleIds()].filter((id) => /^(MS-|CR-R)/.test(id)).sort(),
+    );
   });
 
   it('no model rule-ID is a foreign BQ-* rule', () => {
@@ -144,20 +150,40 @@ describe('TEST-readiness-model (C): computeReadiness derives gates from rules + 
     const r = computeReadiness(violations, graph);
     const gate = (id: string) => r.phaseGates.find((g) => g.id === id)!;
 
-    // SRR owns R-01 (error) → blocked, score 2/3.
-    expect(gate('SRR').passed).toBe(false);
-    expect(gate('SRR').blocking.some((b) => b.startsWith('R-01'))).toBe(true);
-    expect(gate('SRR').score).toBeCloseTo(2 / 3);
-    // PDR owns R-02 (warning) → not blocked, surfaced as open, score 1.
-    expect(gate('PDR').passed).toBe(true);
-    expect(gate('PDR').open.some((o) => o.startsWith('R-02'))).toBe(true);
-    expect(gate('PDR').score).toBe(1);
-    // CDR has no firing rule → clean.
-    expect(gate('CDR').passed).toBe(true);
-    expect(gate('CDR').blocking).toEqual([]);
-    // TRR owns R-05 + R-08 + R-19 + R-21 + RC-02 (5 rules); R-08 fires (error) → blocked, score 4/5.
-    expect(gate('TRR').passed).toBe(false);
-    expect(gate('TRR').score).toBeCloseTo(4 / 5);
+    // Scores are (owned rules − firing rules) / owned, so they move whenever a gate's
+    // rule set grows. Derived from PHASE_GATE_RULES rather than written out (CR-GC-312):
+    // a hardcoded 2/3 asserts the catalog SIZE, which is exactly what nobody wants to
+    // re-edit — and what let ten rule families sit unevaluated for months.
+    const owned = (id: string): number => PHASE_GATE_RULES[id]!.length;
+    // WHICH gate owns a rule comes from contracts' RULE_TO_PHASE (CR-GC-312) and is not
+    // this test's business — asserting 'SRR' for R-01 is precisely how the readiness
+    // model drifted away from that map on 21 rules while staying green. What IS this
+    // test's business: an error blocks its owner and costs one rule of its score, a
+    // warning does neither.
+    const ownerOf = (ruleId: string): string => RULE_TO_PHASE[ruleId];
+    const errorGate = ownerOf('R-01');
+    const warnGate = ownerOf('R-02');
+    const cleanGate = ['SRR', 'PDR', 'CDR', 'TRR'].find(
+      (g) => g !== errorGate && g !== warnGate && g !== ownerOf('R-08'),
+    )!;
+
+    // R-01 (error) blocks its owning gate and costs it one rule.
+    expect(gate(errorGate).passed).toBe(false);
+    expect(gate(errorGate).blocking.some((b) => b.startsWith('R-01'))).toBe(true);
+    // R-08 is an error too; if it shares the gate, two rules are down, not one.
+    const downOnErrorGate = ownerOf('R-08') === errorGate ? 2 : 1;
+    expect(gate(errorGate).score).toBeCloseTo(
+      (owned(errorGate) - downOnErrorGate) / owned(errorGate),
+    );
+    // R-02 (warning) surfaces as open, never blocks, never reduces the score.
+    expect(gate(warnGate).open.some((o) => o.startsWith('R-02'))).toBe(true);
+    if (warnGate !== errorGate && warnGate !== ownerOf('R-08')) {
+      expect(gate(warnGate).passed).toBe(true);
+      expect(gate(warnGate).score).toBe(1);
+    }
+    // A gate no violation touches stays clean.
+    expect(gate(cleanGate).passed).toBe(true);
+    expect(gate(cleanGate).blocking).toEqual([]);
   });
 
   it('impl gates reflect milestone CR status (open CR blocks) + missing MS', () => {

@@ -15,6 +15,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from '@sigloch/graph-cypher-wasm';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
+import { PHASE_GATE_RULES } from '../src/readiness.js';
 import { GraphCodeHarness } from '../src/harness.js';
 import { extractCodeFacts, extractImportEdges, conformanceViolations, scoreReadinessWithConformance } from '../src/conformance.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
@@ -89,9 +90,17 @@ describe('TEST-code-conformance: realRef/testRef resolve as RC readiness rules (
       getRepoRoot: () => REPO_ROOT,
     });
     expect(report.violationsByRule['RC-01']).toBe(1);
-    const cdr = report.phaseGates.find((gate) => gate.id === 'CDR');
-    expect(cdr?.passed).toBe(false);
-    expect(cdr?.blocking.some((b) => b.startsWith('RC-01:'))).toBe(true);
+    // WHICH gate owns RC-01 is the readiness model's business, not this test's — since
+    // CR-GC-312 it is derived (RC-01 inherits the gate of R-20, the presence rule it
+    // resolves) instead of being written down. Naming a gate here is how the model
+    // drifted from contracts on 21 rules while every test stayed green. What this test
+    // asserts is the conformance→readiness wiring: a broken binding blocks its owner.
+    const ownerId = Object.keys(PHASE_GATE_RULES).find((id) =>
+      PHASE_GATE_RULES[id]!.includes('RC-01'),
+    )!;
+    const owner = report.phaseGates.find((gate) => gate.id === ownerId);
+    expect(owner?.passed).toBe(false);
+    expect(owner?.blocking.some((b) => b.startsWith('RC-01:'))).toBe(true);
   });
 
   it('resolves .mjs and .jsx realRefs and vitest case names (gve reality)', () => {

@@ -7,6 +7,7 @@ import { describe, it, expect } from 'vitest';
 import type { Graph } from '@sigloch/graph-api-core';
 import type { RuleViolation } from '@sigloch/contracts/harness';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
+import { RULE_TO_PHASE } from '@sigloch/contracts/se';
 import { computeReadiness, ABSENT_CREATION_PROVIDER } from '../src/readiness.js';
 import { helpEntry, helpForRules, contextualHelp } from '../src/viewer/help.js';
 
@@ -23,7 +24,10 @@ describe('TEST-help-projection (CR-GC-228): help.ts projects HELP_CONTENT + the 
     const r01 = helpEntry('R-01')!;
     expect(r01.kind).toBe('rule');
     expect(r01.severity).toBe('error');
-    expect(r01.ownedByGate).toBe('SRR');
+    // The gate comes from the live map, so assert THAT it is derived from it — not a
+    // literal. Pinning 'SRR' here is what let the readiness model drift away from
+    // contracts' RULE_TO_PHASE on 21 rules without a test noticing (CR-GC-312).
+    expect(r01.ownedByGate).toBe(RULE_TO_PHASE['R-01']);
     expect(r01.source).toBe('derived');
     // A gate uses its INCOSE label; an artifact its catalog label; a token has no prompt.
     expect(helpEntry('SRR')!.title).toMatch(/System Requirements Review/);
@@ -41,7 +45,9 @@ describe('TEST-help-projection (CR-GC-228): help.ts projects HELP_CONTENT + the 
     for (const r of SE_DESCRIPTOR.rules as Array<{ id: string }>) {
       expect(covered.has(r.id), `rule ${r.id} not in helpForRules`).toBe(true);
     }
-    expect(groups.SRR.map((e) => e.id)).toContain('R-01');
+    // Grouping follows RULE_TO_PHASE, so check the rule lands in the group that map
+    // names — not in a group this test remembers (CR-GC-312).
+    expect(groups[RULE_TO_PHASE['R-01']].map((e) => e.id)).toContain('R-01');
     expect(groups.impl.map((e) => e.id)).toEqual(expect.arrayContaining(['MS-01', 'MS-02']));
   });
 
