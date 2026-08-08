@@ -47,6 +47,15 @@ const AuditTrailInputSchema = z.object({
   consumerId: z.string().optional(),
   since: z.string().optional().describe('ISO 8601 timestamp lower bound'),
   limit: z.number().int().positive().default(50),
+  includeRulesPassed: z
+    .boolean()
+    .default(false)
+    .describe(
+      'CR-GC-314: include the positive half (rulesPassed — every rule that ran on that ' +
+        'mutation without a finding). OFF by default and deliberately so: it is ~60 rule ' +
+        'ids PER ENTRY, written for a file-reading learning mechanism, not for an agent ' +
+        'that wants to know what went wrong. Turning it on multiplies the payload.',
+    ),
 });
 
 const AuditStatsInputSchema = z.looseObject({});
@@ -140,7 +149,10 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
 
   const audit_trail: MCPTool<z.infer<typeof AuditTrailInputSchema>, { entries: AuditEntry[] }> = {
     name: 'audit_trail',
-    description: 'Return mutation history entries from the audit log.',
+    description:
+      'Return mutation history entries from the audit log. The positive half ' +
+      '(rulesPassed, CR-GC-314) is withheld unless includeRulesPassed is set — it is ' +
+      'learning material on disk, not agent context.',
     inputSchema: AuditTrailInputSchema,
     async handler(input) {
       const entries = await auditLog.query({
@@ -148,7 +160,15 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
         since: input.since,
         limit: input.limit,
       });
-      return { entries };
+      // CR-GC-314 REQ-A06: strip on the way OUT rather than never writing it. The trail
+      // on disk is the learning corpus and must be complete; the agent payload is a
+      // different audience with a different cost. Default answer stays byte-identical to
+      // before the CR — the field is absent, not empty, so a reader cannot mistake
+      // "withheld here" for "nothing passed".
+      if (input.includeRulesPassed) return { entries };
+      return {
+        entries: entries.map(({ rulesPassed: _withheld, ...rest }) => rest),
+      };
     },
   };
 

@@ -19,6 +19,9 @@ import { join } from 'node:path';
 import type { GraphCodeHarness } from './harness.js';
 import type { AuditLog, AuditEntry, OperationsLog } from '@sigloch/graph-api-core';
 import { FormatECodec, SE_DESCRIPTOR, FileOperationsLog } from '@sigloch/graph-api-core';
+// CR-GC-314 REQ-A02: the rule-set version comes from the LOADED package, never from
+// config — otherwise the trail records a claim instead of a fact.
+import { RULES_VERSION } from '@sigloch/contracts/se';
 import type { MutateCommand, MutateResult, StaleDelta, StaleDeltaEntry } from '@sigloch/contracts/harness';
 import { GraphCodeCodec } from './codec.js';
 import { materializeTrajectory } from './emit.js';
@@ -76,6 +79,30 @@ export function createToolContext(
   // OCC invariant (CR-GC-233): graphVersion counts APPLIED batches only — a rejected
   // write changes no state, so it must not move the version (or a bystander's
   // rejected attempt would spuriously stale every other writer's baseVersion).
+  /**
+   * The positive half of the finding (CR-GC-314): which rules ran on this mutation and
+   * returned nothing, plus the rule-set version they came from.
+   *
+   * `violations` is the negative half and has always been recorded. The positive half
+   * was not, so an accepted mutation left an empty field — and "R-18 checked this edit
+   * and passed it" cannot be recovered from "no violation". A later learning mechanism
+   * can use the first statement and nothing at all from the second.
+   *
+   * REQ-A03 — no second rule run and no new engine API: this is set arithmetic over the
+   * registered catalog and the violations the result already carries. The two halves are
+   * therefore exactly complementary WITHIN one record, which is what makes the pair
+   * readable at all.
+   *
+   * Rule IDs only, never rule text (REQ-A04).
+   */
+  function positiveHalf(result: MutateResult): { rulesPassed: string[]; rulesetVersion: string } {
+    const fired = new Set(result.violations.map((v) => v.ruleId));
+    return {
+      rulesPassed: (SE_DESCRIPTOR.rules ?? []).map((r) => r.id).filter((id) => !fired.has(id)),
+      rulesetVersion: RULES_VERSION,
+    };
+  }
+
   async function recordAudit(
     consumerId: string,
     result: MutateResult,
@@ -92,6 +119,7 @@ export function createToolContext(
       violations: result.violations as import('@sigloch/graph-api-core').RuleViolation[],
       graphVersion: _graphVersion,
       commands,
+      ...positiveHalf(result),
     };
     await auditLog.record(entry);
     // Re-project the feed from the log as the single source (CR-252). The write
@@ -121,6 +149,7 @@ export function createToolContext(
       violations: result.violations as import('@sigloch/graph-api-core').RuleViolation[],
       graphVersion: _graphVersion,
       commands,
+      ...positiveHalf(result),
     };
     await auditLog.record(entry);
     await materializeTrajectory(auditLog, join(harness.getRepoRoot(), '.aimprove'));
