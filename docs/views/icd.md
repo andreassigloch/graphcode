@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 9 SCHEMA · 31 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 9 SCHEMA · 33 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -28,14 +28,15 @@
 | `FLOW-branch-graphs` | `ACTOR-developer` | `FUNC-merge-nodes` |
 | `FLOW-bulk-formatE` | `ACTOR-graphify` | `FUNC-import` |
 | `FLOW-capture-draft` | `FUNC-decode` | `FUNC-mutate` |
-| `FLOW-cli-command` | `ACTOR-developer` | `FUNC-harness-cli` |
-| `FLOW-committed-graph` | `FUNC-save-graph` | `FUNC-emit-trajectory` · `FUNC-emit-update-event` |
+| `FLOW-cli-command` | `ACTOR-developer` | `FUNC-harness-cli` · `FUNC-rewind` |
+| `FLOW-committed-graph` | `FUNC-save-graph` | `FUNC-emit-trajectory` · `FUNC-emit-update-event` · `FUNC-graph-export-snapshot` |
 | `FLOW-draft-graph` | `FUNC-mutate` | `FUNC-evaluate-rules` |
 | `FLOW-expand-request` | `ACTOR-claude-code` | `FUNC-graph-expand` |
 | `FLOW-expanded-subgraph` | `FUNC-graph-expand` | `ACTOR-claude-code` |
 | `FLOW-export-request` | `ACTOR-developer` · `FUNC-serve-stdio` | `FUNC-export-markdown` |
 | `FLOW-formatE-artifact` | `FUNC-encode` | `FUNC-decode` |
 | `FLOW-formatE-candidates` | `ACTOR-claude-code` | `FUNC-decode` |
+| `FLOW-graph-snapshot` | `FUNC-graph-export-snapshot` · `FUNC-rewind` | `ACTOR-developer` · `FUNC-reseed` |
 | `FLOW-graph-state` | `ACTOR-developer` | `FUNC-encode` |
 | `FLOW-impact-subgraph` | `FUNC-graph-impact` | `ACTOR-claude-code` |
 | `FLOW-install-result` | `FUNC-harness-cli` | `ACTOR-developer` |
@@ -43,9 +44,10 @@
 | `FLOW-markdown-docs` | `FUNC-export-markdown` | `ACTOR-developer` |
 | `FLOW-merged-graph` | `FUNC-merge-nodes` | `ACTOR-developer` |
 | `FLOW-migrated-graph` | `FUNC-migrate-schema` | `ACTOR-developer` |
-| `FLOW-mutate-cmd` | `ACTOR-claude-code` | `FUNC-mutate` |
+| `FLOW-mutate-cmd` | `ACTOR-claude-code` · `ACTOR-developer` | `FUNC-mutate` |
 | `FLOW-parsed-graph` | `FUNC-decode` | `ACTOR-developer` |
 | `FLOW-query-request` | `ACTOR-claude-code` | `FUNC-graph-impact` |
+| `FLOW-recalled-state` | `FUNC-reseed` | `ACTOR-developer` |
 | `FLOW-rendered-view` | `FUNC-render-views` | `ACTOR-developer` |
 | `FLOW-round-findings` | `FUNC-evaluate-rules` | `FUNC-graph-suggest` |
 | `FLOW-round-scope` | `FUNC-graph-impact` | `FUNC-evaluate-rules` |

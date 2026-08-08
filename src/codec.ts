@@ -227,13 +227,22 @@ export class GraphCodeCodec {
    *   add_node / strict_add_node → add node
    *   add_edge / strict_add_edge → add edge (rejects implicit-add if source/target missing)
    *
+   * CR-GC-310: `options.resolveType` types uids the TEXT does not declare. A batch that
+   * only adds edges between nodes the store already holds carries no `## Nodes` block —
+   * without a resolver that is an error, with one it resolves against the caller's store.
+   * The boundary is deliberate: **resolve what exists, invent nothing.** An unknown uid
+   * still throws (a typo must not become a new node), and a type the text declares that
+   * CONTRADICTS the store is an error too — never a silent retype.
+   *
    * THROWS on:
    *   - any parse errors returned by FormatECodec.parse()
-   *   - add_edge where source or target node has not been seen (implicit-add)
+   *   - add_edge where source or target is neither declared here nor resolvable
+   *   - a declared node type that conflicts with the resolver's type for that uid
    *   - unsupported operation types (remove/update/merge)
    */
-  decode(text: string): Graph {
-    const diff = this.inner.parse(text);
+  decode(text: string, options?: { resolveType?: (uid: string) => string | undefined }): Graph {
+    const resolveType = options?.resolveType;
+    const diff = this.inner.parse(text, resolveType ? { resolveType } : undefined);
     if (diff.errors.length > 0) {
       throw new Error(
         `GraphCodeCodec.decode: parse errors:\n  - ${diff.errors.join('\n  - ')}`,
@@ -252,6 +261,16 @@ export class GraphCodeCodec {
           if (!type) {
             throw new Error(
               `GraphCodeCodec.decode: node "${uid}" carries no type — Format-E v2 declares it in a "### <TYPE>" section`,
+            );
+          }
+          // CR-GC-310: the text declares a type AND the store knows one — if they
+          // disagree, that is an authoring error, not an update. Silently preferring
+          // either side would retype a node through an additive batch.
+          const storeType = resolveType?.(uid);
+          if (storeType !== undefined && storeType !== type) {
+            throw new Error(
+              `GraphCodeCodec.decode: node "${uid}" is declared as "${type}" but exists as ` +
+                `"${storeType}" — a type conflict is an error, not a silent retype.`,
             );
           }
           const rawAttrs = op.attributes ?? {};
@@ -288,13 +307,16 @@ export class GraphCodeCodec {
           const fmtSource = op.sourceId!;
           const fmtTarget = op.targetId!;
 
-          if (!nodeMap.has(fmtSource)) {
+          // CR-GC-310: an endpoint counts as present when this text declares it OR the
+          // caller's store resolves it. Everything else stays the implicit-add rejection.
+          const known = (uid: string): boolean => nodeMap.has(uid) || resolveType?.(uid) !== undefined;
+          if (!known(fmtSource)) {
             throw new Error(
               `GraphCodeCodec.decode: implicit-add rejected — source "${fmtSource}" not present; ` +
                 'all nodes must be declared before referencing them in edges.',
             );
           }
-          if (!nodeMap.has(fmtTarget)) {
+          if (!known(fmtTarget)) {
             throw new Error(
               `GraphCodeCodec.decode: implicit-add rejected — target "${fmtTarget}" not present; ` +
                 'all nodes must be declared before referencing them in edges.',
@@ -336,7 +358,7 @@ export class GraphCodeCodec {
     const nodes = Array.from(nodeMap.values());
     const result: Graph = { nodes, edges };
 
-    const { valid, errors } = this.validate(result);
+    const { valid, errors } = this.validate(result, resolveType);
     if (!valid) {
       throw new Error(
         `GraphCodeCodec.decode: decoded graph failed validation:\n  - ${errors.join('\n  - ')}`,
@@ -354,12 +376,22 @@ export class GraphCodeCodec {
    * Validate every node type against SE_DESCRIPTOR.nodeTypes and every edge
    * against SE_DESCRIPTOR.edgeTypes[...].validPairs.
    *
+   * `resolveType` (CR-GC-310) types edge endpoints this graph does not carry, so an
+   * edge-only batch is still checked for pair-legality against the caller's store —
+   * the check is relaxed in its INPUT, never in its verdict.
+   *
    * Invalid → error entries; never a silent pass.
    */
-  validate(graph: Graph): { valid: boolean; errors: string[] } {
+  validate(
+    graph: Graph,
+    resolveType?: (uid: string) => string | undefined,
+  ): { valid: boolean; errors: string[] } {
     const errors: string[] = [];
     const knownNodeTypes = new Set(Object.keys(this.ontology.nodeTypes));
-    const nodeTypeMap = new Map(graph.nodes.map((n) => [n.uid, n.type]));
+    const declaredTypes = new Map(graph.nodes.map((n) => [n.uid, n.type]));
+    const nodeTypeMap = {
+      get: (uid: string): string | undefined => declaredTypes.get(uid) ?? resolveType?.(uid),
+    };
 
     // Duplicate-UID detection (CR-GC-200): the nodeTypeMap above silently dedupes,
     // so two nodes sharing a uid (e.g. two CR-GC-119s from parallel chats) collapse

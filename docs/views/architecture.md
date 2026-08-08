@@ -20,6 +20,7 @@
 | `FUNC-evaluate-rules` | FUNC | evaluateRules() |
 | `FUNC-export-markdown` | FUNC | exportMarkdown(graph, view) |
 | `FUNC-graph-expand` | FUNC | graph_expand(handle, branch, depth+1) |
+| `FUNC-graph-export-snapshot` | FUNC | graph_export(views?) |
 | `FUNC-graph-impact` | FUNC | graph_impact(id, depth?) |
 | `FUNC-graph-suggest` | FUNC | graph_suggest(weights) |
 | `FUNC-harness-cli` | FUNC | graphcode init/update/remove |
@@ -37,7 +38,9 @@
 | `FUNC-render-readiness` | FUNC | renderReadinessPanel(report) |
 | `FUNC-render-recommendations` | FUNC | renderImprovementMeasures() |
 | `FUNC-render-views` | FUNC | render graph→markdown views |
+| `FUNC-reseed` | FUNC | reseed(relPath) |
 | `FUNC-resolve-tests-from-code` | FUNC | Gerichtete code→REQ→TEST-Auflösung |
+| `FUNC-rewind` | FUNC | graphcode rewind <ref> |
 | `FUNC-save-graph` | FUNC | saveGraph(graph) |
 | `FUNC-score-completeness` | FUNC | scoreCompleteness(gateId, graph) |
 | `FUNC-serve-sse` | FUNC | serveSSE() |
@@ -76,6 +79,7 @@
 | `FUNC-evaluate-rules` | `MOD-harness` |
 | `FUNC-export-markdown` | `MOD-docs` |
 | `FUNC-graph-expand` | `MOD-mcp-tools` |
+| `FUNC-graph-export-snapshot` | `MOD-mcp-tools` |
 | `FUNC-graph-impact` | `MOD-mcp-tools` |
 | `FUNC-graph-suggest` | `MOD-mcp-tools` |
 | `FUNC-harness-cli` | `MOD-cli` |
@@ -93,7 +97,9 @@
 | `FUNC-render-readiness` | `MOD-dashboard` |
 | `FUNC-render-recommendations` | `MOD-dashboard` |
 | `FUNC-render-views` | `MOD-skills` |
+| `FUNC-reseed` | `MOD-harness` |
 | `FUNC-resolve-tests-from-code` | `MOD-mcp-tools` |
+| `FUNC-rewind` | `MOD-cli` |
 | `FUNC-save-graph` | `MOD-harness` |
 | `FUNC-score-completeness` | `MOD-harness` |
 | `FUNC-serve-sse` | `MOD-host-bridge` |

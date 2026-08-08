@@ -35,7 +35,7 @@
 
 - `ACTOR-claude-code` — Claude Code — Realisierungs-Agent — triggert `UC-code-quality` · `UC-reduced-llm` · `UC-token-efficiency`
 - `ACTOR-dashboard` — Browser-Dashboard — triggert `UC-code-quality` · `UC-live-graph-view`
-- `ACTOR-developer` — Entwickler / Repo-Owner — triggert `UC-code-quality` · `UC-efficient-testing` · `UC-live-graph-view` · `UC-reduced-llm` · `UC-token-efficiency`
+- `ACTOR-developer` — Entwickler / Repo-Owner — triggert `UC-code-quality` · `UC-efficient-testing` · `UC-graph-time-travel` · `UC-live-graph-view` · `UC-reduced-llm` · `UC-token-efficiency`
 - `ACTOR-facilitating-agent` — Facilitating Agent — Architekt — triggert `UC-code-quality`
 - `ACTOR-graphify` — graphify (Slicer) — triggert `UC-code-quality`
 - `ACTOR-learning-engine` — Learning-Engine — triggert `UC-reduced-llm`
@@ -66,9 +66,12 @@ Ausgeloest von: `ACTOR-developer` · `ACTOR-systems-engineer` · `ACTOR-vibe-cod
 
 ### `UC-graph-time-travel` — Graph-Stand pro Commit wiederherstellbar
 
-Als Entwickler will ich den governten Graph-Stand jedes Commits wiederherstellen koennen, sodass Modell und Code zu jedem Commit zusammenpassen — fruehere Modell-Staende sind reproduzierbar, ohne ein zweites Store-Handle. (CR-GC-217, Approach A)
+Als Entwickler will ich den governten Graph-Stand jedes Commits wiederherstellen koennen, sodass Modell und Code zu jedem Commit zusammenpassen — fruehere Modell-Staende sind reproduzierbar, ohne ein zweites Store-Handle. (CR-GC-217 Approach A, Operation CR-GC-311)
 
-— kein Betriebsablauf beschrieben (keine FCHAIN) —
+Ausgeloest von: `ACTOR-developer`
+
+- `FCHAIN-recall` — Recall (Wiederherstellen): `FUNC-reseed` → `FUNC-rewind`
+- `FCHAIN-snapshot-freshness` — Snapshot-Freshness (Aufzeichnen): `FUNC-graph-export-snapshot` → `FUNC-mutate` → `FUNC-save-graph`
 
 ### `UC-live-graph-view` — Live-Graph-View (Ziel b)
 

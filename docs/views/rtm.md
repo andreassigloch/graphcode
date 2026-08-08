@@ -39,8 +39,8 @@
 | `REQ-graph-code-conformance` | `TEST-code-conformance` | `FUNC-check-code-conformance` | `MOD-harness` |
 | `REQ-graph-integrity` | `TEST-codec-validation` · `TEST-graph-integrity` | `MOD-codec` | — |
 | `REQ-graph-is-ssot` | `TEST-graph-is-ssot` | — | — |
-| `REQ-graph-snapshot-per-commit` | `TEST-graph-time-travel` | `FUNC-mutate` | `MOD-harness` |
-| `REQ-graph-state-recall` | `TEST-graph-time-travel` | `MOD-harness` | — |
+| `REQ-graph-snapshot-per-commit` | `TEST-graph-time-travel` | `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot` · `FUNC-mutate` | `MOD-harness` · `MOD-mcp-tools` |
+| `REQ-graph-state-recall` | `TEST-graph-time-travel` | `FCHAIN-recall` · `FUNC-reseed` · `FUNC-rewind` · `MOD-harness` | `MOD-cli` · `MOD-harness` |
 | `REQ-graph-tests-operational` | `TEST-graph-tests-operational` | `FUNC-resolve-tests-from-code` | `MOD-mcp-tools` |
 | `REQ-greenfield-systemtest-dod` | `TEST-greenfield-systemtest` | `SYS-graphcode` | — |
 | `REQ-harness-schema-in-contracts` | `TEST-mcp-symmetry` | `MOD-harness` | — |

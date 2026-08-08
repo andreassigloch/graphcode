@@ -999,6 +999,18 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "id": "FCHAIN-recall",
+      "type": "FCHAIN",
+      "name": "Recall (Wiederherstellen)",
+      "description": "Der Entwickler nennt einen Commit; rewind liest dessen Snapshot aus dem Git-Objektspeicher und reseed stellt den Store daraus her. Ergebnis: Modell und Code passen wieder zu demselben Commit."
+    },
+    {
+      "id": "FCHAIN-snapshot-freshness",
+      "type": "FCHAIN",
+      "name": "Snapshot-Freshness (Aufzeichnen)",
+      "description": "Jede Modell-Mutation setzt den Drift-Marker, die Persistenz schreibt den Store, der Export materialisiert den kanonischen Snapshot und loescht den Marker. Ergebnis: kein Commit traegt einen Snapshot, der dem Live-Modell nachlaeuft."
+    },
+    {
       "id": "FLOW-bootstrap-result",
       "type": "FLOW",
       "name": "Bootstrap-Result",
@@ -1034,7 +1046,7 @@
       "id": "FLOW-cli-command",
       "type": "FLOW",
       "name": "CLI-Command",
-      "description": "init | update | remove.",
+      "description": "mcp | host | run | import-code | rewind | init | update | remove | skills sync.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z"
     },
@@ -1093,6 +1105,13 @@
       "description": "Agent-interpretierte NL → Format-E (agent-seitig).",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "id": "FLOW-graph-snapshot",
+      "type": "FLOW",
+      "name": "Graph-Snapshot (SSOT-at-rest)",
+      "description": "Der kanonische, deterministische Snapshot docs/graph/<system>.graph.json — history-of-record. Der Export erzeugt ihn, rewind holt eine aeltere Fassung aus dem Git-Objektspeicher, reseed liest ihn.",
+      "status": "reviewed"
     },
     {
       "id": "FLOW-graph-state",
@@ -1173,6 +1192,13 @@
       "description": "elementId + depth.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "id": "FLOW-recalled-state",
+      "type": "FLOW",
+      "name": "Wiederhergestellter Graph-Stand",
+      "description": "Der Live-Store nach dem Reseed: Modell und Code gehoeren wieder zu demselben Commit, der Drift-Marker ist geloescht.",
+      "status": "reviewed"
     },
     {
       "id": "FLOW-rendered-view",
@@ -1434,6 +1460,18 @@
       }
     },
     {
+      "id": "FUNC-graph-export-snapshot",
+      "type": "FUNC",
+      "name": "graph_export(views?)",
+      "description": "Materialisiert den kanonischen, deterministischen Graph-Snapshot docs/graph/<system>.graph.json plus die Markdown-Views und loescht den Drift-Marker EXPORT_PENDING. Der einzige Sync-Pfad Graph zu committeten Docs; verweigert das Clobbern (leerer Graph, fremder Drop). (CR-GC-113, CR-GC-217)",
+      "status": "done",
+      "realRef": {
+        "file": "src/tools/export.ts",
+        "symbol": "graph_export",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "FUNC-graph-impact",
       "type": "FUNC",
       "name": "graph_impact(id, depth?)",
@@ -1688,6 +1726,18 @@
       }
     },
     {
+      "id": "FUNC-reseed",
+      "type": "FUNC",
+      "name": "reseed(relPath)",
+      "description": "Re-synct den Live-Store aus einem Snapshot: DETACH-DELETE plus Re-Import hinter dem Single-Writer, kein zweites DB-Handle. Serialisiert gegen mutate (O3), loescht danach den Drift-Marker. (CR-GC-203, CR-GC-218)",
+      "status": "done",
+      "realRef": {
+        "file": "src/harness.ts",
+        "symbol": "reseed",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "FUNC-resolve-tests-from-code",
       "type": "FUNC",
       "name": "Gerichtete code→REQ→TEST-Auflösung",
@@ -1701,6 +1751,18 @@
       "realRef": {
         "file": "src/harness.ts",
         "symbol": "testImpact",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-rewind",
+      "type": "FUNC",
+      "name": "graphcode rewind <ref>",
+      "description": "Stellt den Graph-Stand eines Commits her: liest den Snapshot per git show aus dem Objektspeicher und stellt ihn im gitignorierten Workspace bereit. Der Working-Tree bleibt unberuehrt, es gibt also genau eine Zustandsaenderung; un-exportierte Mutationen brechen ab, force verwirft sie. (CR-GC-311)",
+      "status": "done",
+      "realRef": {
+        "file": "src/rewind.ts",
+        "symbol": "executeRewind",
         "lang": "ts"
       }
     },
@@ -2409,14 +2471,14 @@
       "type": "REQ",
       "name": "Kanonischer Graph-Snapshot pro Commit",
       "description": "Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/graph/*.graph.json), der zum Code dieses Commits passt. Un-exportierte Modell-Mutationen blockieren den Commit ueber den single-writer-sicheren Drift-Marker .graphcode/EXPORT_PENDING (vom Gate auf mutate gesetzt, von graph_export/graph_reseed geloescht); der pre-commit-Hook staged die generierten Artefakte automatisch. (CR-GC-217)",
-      "status": "in-progress"
+      "status": "done"
     },
     {
       "id": "REQ-graph-state-recall",
       "type": "REQ",
       "name": "Frueheren Graph-Stand reproduzieren",
-      "description": "Ein frueherer Graph-Stand ist reproduzierbar via 'git checkout <sha>' + graph_reseed: der committete Snapshot ist SSOT-at-rest / history-of-record, der Kuzu-Store eine abgeleitete Working-Copy. reseed loescht+reimportiert den Store in-process hinter dem Single-Writer (kein zweites Handle). (CR-GC-217)",
-      "status": "in-progress"
+      "description": "Ein frueherer Graph-Stand ist mit einem Kommando reproduzierbar: graphcode rewind <ref> liest den committeten Snapshot aus dem Git-Objektspeicher und reseedet den Store daraus. Der committete Snapshot ist SSOT-at-rest / history-of-record, der Kuzu-Store eine abgeleitete Working-Copy; reseed loescht+reimportiert in-process hinter dem Single-Writer (kein zweites Handle). Der Working-Tree wird nicht angefasst. (CR-GC-217, CR-GC-311)",
+      "status": "done"
     },
     {
       "id": "REQ-graph-tests-operational",
@@ -4228,8 +4290,8 @@
       "id": "UC-graph-time-travel",
       "type": "UC",
       "name": "Graph-Stand pro Commit wiederherstellbar",
-      "description": "Als Entwickler will ich den governten Graph-Stand jedes Commits wiederherstellen koennen, sodass Modell und Code zu jedem Commit zusammenpassen — fruehere Modell-Staende sind reproduzierbar, ohne ein zweites Store-Handle. (CR-GC-217, Approach A)",
-      "status": "in-progress"
+      "description": "Als Entwickler will ich den governten Graph-Stand jedes Commits wiederherstellen koennen, sodass Modell und Code zu jedem Commit zusammenpassen — fruehere Modell-Staende sind reproduzierbar, ohne ein zweites Store-Handle. (CR-GC-217 Approach A, Operation CR-GC-311)",
+      "status": "done"
     },
     {
       "id": "UC-live-graph-view",
@@ -4352,6 +4414,11 @@
     },
     {
       "source": "ACTOR-developer",
+      "target": "FLOW-mutate-cmd",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-developer",
       "target": "FLOW-version-bump",
       "type": "io",
       "weight": 1,
@@ -4377,6 +4444,11 @@
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "ACTOR-developer",
+      "target": "UC-graph-time-travel",
+      "type": "io"
     },
     {
       "source": "ACTOR-developer",
@@ -6533,6 +6605,41 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "FCHAIN-recall",
+      "target": "FUNC-reseed",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-recall",
+      "target": "FUNC-rewind",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-recall",
+      "target": "REQ-graph-state-recall",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-snapshot-freshness",
+      "target": "FUNC-graph-export-snapshot",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-snapshot-freshness",
+      "target": "FUNC-mutate",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-snapshot-freshness",
+      "target": "FUNC-save-graph",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-snapshot-freshness",
+      "target": "REQ-graph-snapshot-per-commit",
+      "type": "satisfy"
+    },
+    {
       "source": "FLOW-bootstrap-result",
       "target": "ACTOR-developer",
       "type": "io",
@@ -6597,6 +6704,11 @@
     },
     {
       "source": "FLOW-cli-command",
+      "target": "FUNC-rewind",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-cli-command",
       "target": "SCHEMA-cli-command",
       "type": "relation",
       "weight": 1,
@@ -6615,6 +6727,11 @@
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-committed-graph",
+      "target": "FUNC-graph-export-snapshot",
+      "type": "io"
     },
     {
       "source": "FLOW-committed-graph",
@@ -6706,6 +6823,21 @@
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-graph-snapshot",
+      "target": "ACTOR-developer",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-graph-snapshot",
+      "target": "FUNC-reseed",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-graph-snapshot",
+      "target": "SCHEMA-ontology-graph",
+      "type": "relation"
     },
     {
       "source": "FLOW-graph-state",
@@ -6863,6 +6995,16 @@
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-recalled-state",
+      "target": "ACTOR-developer",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-recalled-state",
+      "target": "SCHEMA-ontology-graph",
+      "type": "relation"
     },
     {
       "source": "FLOW-rendered-view",
@@ -7309,6 +7451,21 @@
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-graph-export-snapshot",
+      "target": "MOD-mcp-tools",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-graph-export-snapshot",
+      "target": "FLOW-graph-snapshot",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-graph-export-snapshot",
+      "target": "REQ-graph-snapshot-per-commit",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-graph-impact",
@@ -7818,6 +7975,21 @@
       "created_at": "2026-06-17T00:00:00.000Z"
     },
     {
+      "source": "FUNC-reseed",
+      "target": "MOD-harness",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-reseed",
+      "target": "FLOW-recalled-state",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-reseed",
+      "target": "REQ-graph-state-recall",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-resolve-tests-from-code",
       "target": "MOD-mcp-tools",
       "type": "allocate"
@@ -7825,6 +7997,21 @@
     {
       "source": "FUNC-resolve-tests-from-code",
       "target": "REQ-graph-tests-operational",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-rewind",
+      "target": "MOD-cli",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-rewind",
+      "target": "FLOW-graph-snapshot",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-rewind",
+      "target": "REQ-graph-state-recall",
       "type": "satisfy"
     },
     {
@@ -9406,6 +9593,16 @@
     },
     {
       "source": "UC-graph-time-travel",
+      "target": "FCHAIN-recall",
+      "type": "compose"
+    },
+    {
+      "source": "UC-graph-time-travel",
+      "target": "FCHAIN-snapshot-freshness",
+      "type": "compose"
+    },
+    {
+      "source": "UC-graph-time-travel",
       "target": "REQ-graph-snapshot-per-commit",
       "type": "compose"
     },
@@ -9543,5 +9740,5 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     }
   ],
-  "graphVersion": 56
+  "graphVersion": 58
 }

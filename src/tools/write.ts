@@ -48,7 +48,9 @@ const GraphMutateInputSchema = z
         'Token-leane Alternative zu commands (CR-GC-276): ein Format-E-v2-Block (dasselbe Dialekt wie ' +
           'die Read-Slices) wird zu add-node/add-edge-Kommandos decodiert und läuft durch DASSELBE Gate. ' +
           'Bevorzugt für LLM-Autoring (~2–3× weniger Tokens); upsert-Semantik. Deletes/updates/merges ' +
-          'brauchen weiterhin commands.',
+          'brauchen weiterhin commands. Kanten zwischen BESTEHENDEN Knoten brauchen keine ' +
+          '`### <TYPE>`-Sektion (CR-GC-310) — der Typ kommt aus dem Store; ein reiner Kanten-Batch ist ' +
+          '"## Edges" + Zeilen der Form "+ A -verify-> B". Eine unbekannte uid bleibt ein Fehler.',
       ),
     dryRun: z
       .boolean()
@@ -163,7 +165,12 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
 
   /** Format-E-Block → additive MutateCommands (CR-GC-276). Ein Input-Codec, KEIN zweiter Schreibweg. */
   const formatEToCommands = (text: string): MutateCommand[] => {
-    const graph = ctx.gcCodec.decode(text);
+    // CR-GC-310: Typen bestehender Knoten kommen aus dem geladenen Graphen — dieselbe
+    // Quelle, aus der das Gate ohnehin liest, kein zweiter Index. Damit braucht ein
+    // reiner Kanten-Batch keine `### <TYPE>`-Sektionen mehr. Unbekannte uids liefern
+    // weiterhin undefined und damit die bisherige Codec-Ablehnung.
+    const typeIndex = new Map(harness.getGraph().nodes.map((n) => [n.uid, n.type]));
+    const graph = ctx.gcCodec.decode(text, { resolveType: (uid) => typeIndex.get(uid) });
     return [
       ...graph.nodes.map(
         (n) => ({ op: 'add-node', node: { uid: n.uid, type: n.type, name: n.name, description: n.description ?? '', attributes: n.attributes ?? {} } }) as MutateCommand,
@@ -205,7 +212,11 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
       'OCC (CR-GC-233): pass the graphVersion your last read returned as baseVersion — a stale ' +
       'base is rejected (tier block) with the delta of applied batches since; re-read + retry. ' +
       'Additive Batches bevorzugt als formatE-Block statt commands (~2–3× weniger Tokens); ' +
-      'dryRun:true liefert das volle Verdict inkl. fitAdvisory ohne anzuwenden (auditiert als Preview).',
+      'dryRun:true liefert das volle Verdict inkl. fitAdvisory ohne anzuwenden (auditiert als Preview). ' +
+      'commands-Minimalform (die vollständige Signaturliste aller sieben Operationen liefert ' +
+      'der SCHEMA-01-Fehlertext): ' +
+      '{"op":"add-node","node":{"uid":"REQ-x","type":"REQ","name":"…","description":"…"}} · ' +
+      '{"op":"add-edge","edge":{"sourceId":"TEST-x","targetId":"REQ-x","edgeType":"verify"}}.',
     inputSchema: GraphMutateInputSchema,
     async handler(raw) {
       return serializeToolWrite(async () => {

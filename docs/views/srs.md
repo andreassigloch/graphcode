@@ -70,7 +70,7 @@ io ▶ `UC-code-quality` · `UC-live-graph-view` · io ◀ `FLOW-live-event`
 
 Kunde/Nutzer: will exzellente Code-Qualität bei effizientem Testen und minimalem Token-/LLM-Aufwand.
 
-io ▶ `FLOW-branch-graphs` · `FLOW-cli-command` · `FLOW-export-request` · `FLOW-graph-state` · `FLOW-version-bump` · `FLOW-view-request` · `UC-code-quality` · `UC-efficient-testing` · `UC-live-graph-view` · `UC-reduced-llm` · `UC-token-efficiency` · io ◀ `FLOW-bootstrap-result` · `FLOW-install-result` · `FLOW-markdown-docs` · `FLOW-merged-graph` · `FLOW-migrated-graph` · `FLOW-parsed-graph` · `FLOW-rendered-view` · `FLOW-suggest-result`
+io ▶ `FLOW-branch-graphs` · `FLOW-cli-command` · `FLOW-export-request` · `FLOW-graph-state` · `FLOW-mutate-cmd` · `FLOW-version-bump` · `FLOW-view-request` · `UC-code-quality` · `UC-efficient-testing` · `UC-graph-time-travel` · `UC-live-graph-view` · `UC-reduced-llm` · `UC-token-efficiency` · io ◀ `FLOW-bootstrap-result` · `FLOW-graph-snapshot` · `FLOW-install-result` · `FLOW-markdown-docs` · `FLOW-merged-graph` · `FLOW-migrated-graph` · `FLOW-parsed-graph` · `FLOW-recalled-state` · `FLOW-rendered-view` · `FLOW-suggest-result`
 
 ### 2.4  `ACTOR-facilitating-agent` — Facilitating Agent — Architekt
 
@@ -162,7 +162,7 @@ Verification ◀ `TEST-responsiveness` (performance) · satisfy ◀ `FCHAIN-appl
 
 ##### 3.1.1.1  `FUNC-mutate` — mutate(commands)
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-capture` · `FCHAIN-interface-escalation` · `FCHAIN-modelfree-gate`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-capture` · `FCHAIN-interface-escalation` · `FCHAIN-modelfree-gate` · `FCHAIN-snapshot-freshness`
 
 Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)
 
@@ -186,11 +186,13 @@ Verification ◀ `TEST-no-direct-graph-write` · satisfy ◀ `FUNC-mutate` · al
 
 ###### `REQ-graph-snapshot-per-commit` — Kanonischer Graph-Snapshot pro Commit
 
+> auch unter: `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot`
+
 Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/graph/*.graph.json), der zum Code dieses Commits passt. Un-exportierte Modell-Mutationen blockieren den Commit ueber den single-writer-sicheren Drift-Marker .graphcode/EXPORT_PENDING (vom Gate auf mutate gesetzt, von graph_export/graph_reseed geloescht); der pre-commit-Hook staged die generierten Artefakte automatisch. (CR-GC-217)
 
-priority: must · status: in-progress
+priority: must · status: done
 
-Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
+Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
 
 ##### 3.1.1.2  `FUNC-evaluate-rules` — evaluateRules()
 
@@ -210,7 +212,7 @@ Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-evaluate-
 
 ##### 3.1.1.3  `FUNC-save-graph` — saveGraph(graph)
 
-> auch in: `FCHAIN-live-update`
+> auch in: `FCHAIN-live-update` · `FCHAIN-snapshot-freshness`
 
 Persistiert in-memory Graph nach Disk-Kuzu, falls keine error-Violations. (SPEC §3.4, §4)
 
@@ -318,7 +320,7 @@ Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FCHAIN-codec-rou
 
 ##### 3.1.2.2  `FUNC-mutate` — mutate(commands)
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-interface-escalation` · `FCHAIN-modelfree-gate`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-interface-escalation` · `FCHAIN-modelfree-gate` · `FCHAIN-snapshot-freshness`
 
 Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)
 
@@ -342,11 +344,13 @@ Verification ◀ `TEST-no-direct-graph-write` · satisfy ◀ `FUNC-mutate` · al
 
 ###### `REQ-graph-snapshot-per-commit` — Kanonischer Graph-Snapshot pro Commit
 
+> auch unter: `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot`
+
 Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/graph/*.graph.json), der zum Code dieses Commits passt. Un-exportierte Modell-Mutationen blockieren den Commit ueber den single-writer-sicheren Drift-Marker .graphcode/EXPORT_PENDING (vom Gate auf mutate gesetzt, von graph_export/graph_reseed geloescht); der pre-commit-Hook staged die generierten Artefakte automatisch. (CR-GC-217)
 
-priority: must · status: in-progress
+priority: must · status: done
 
-Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
+Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
 
 #### 3.1.3  `FCHAIN-codec-roundtrip` — Format-E Round-Trip (encode∘decode)
 
@@ -496,7 +500,7 @@ Verification ◀ `TEST-impact-subgraph` (integration) · satisfy ◀ `FUNC-graph
 
 ##### 3.1.4.2  `FUNC-mutate` — mutate(commands)
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-modelfree-gate`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-modelfree-gate` · `FCHAIN-snapshot-freshness`
 
 Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)
 
@@ -520,11 +524,13 @@ Verification ◀ `TEST-no-direct-graph-write` · satisfy ◀ `FUNC-mutate` · al
 
 ###### `REQ-graph-snapshot-per-commit` — Kanonischer Graph-Snapshot pro Commit
 
+> auch unter: `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot`
+
 Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/graph/*.graph.json), der zum Code dieses Commits passt. Un-exportierte Modell-Mutationen blockieren den Commit ueber den single-writer-sicheren Drift-Marker .graphcode/EXPORT_PENDING (vom Gate auf mutate gesetzt, von graph_export/graph_reseed geloescht); der pre-commit-Hook staged die generierten Artefakte automatisch. (CR-GC-217)
 
-priority: must · status: in-progress
+priority: must · status: done
 
-Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
+Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
 
 ### 3.2  `UC-efficient-testing` — Effizientes, impact-basiertes Testen
 
@@ -594,7 +600,135 @@ Verification ◀ `TEST-impact-subgraph` (integration) · satisfy ◀ `FUNC-graph
 
 ### 3.3  `UC-graph-time-travel` — Graph-Stand pro Commit wiederherstellbar
 
-Als Entwickler will ich den governten Graph-Stand jedes Commits wiederherstellen koennen, sodass Modell und Code zu jedem Commit zusammenpassen — fruehere Modell-Staende sind reproduzierbar, ohne ein zweites Store-Handle. (CR-GC-217, Approach A)
+Als Entwickler will ich den governten Graph-Stand jedes Commits wiederherstellen koennen, sodass Modell und Code zu jedem Commit zusammenpassen — fruehere Modell-Staende sind reproduzierbar, ohne ein zweites Store-Handle. (CR-GC-217 Approach A, Operation CR-GC-311)
+
+io ◀ `ACTOR-developer`
+
+#### 3.3.1  `FCHAIN-recall` — Recall (Wiederherstellen)
+
+Der Entwickler nennt einen Commit; rewind liest dessen Snapshot aus dem Git-Objektspeicher und reseed stellt den Store daraus her. Ergebnis: Modell und Code passen wieder zu demselben Commit.
+
+##### `REQ-graph-state-recall` — Frueheren Graph-Stand reproduzieren
+
+> auch unter: `FUNC-reseed` · `FUNC-rewind`
+
+Ein frueherer Graph-Stand ist mit einem Kommando reproduzierbar: graphcode rewind <ref> liest den committeten Snapshot aus dem Git-Objektspeicher und reseedet den Store daraus. Der committete Snapshot ist SSOT-at-rest / history-of-record, der Kuzu-Store eine abgeleitete Working-Copy; reseed loescht+reimportiert in-process hinter dem Single-Writer (kein zweites Handle). Der Working-Tree wird nicht angefasst. (CR-GC-217, CR-GC-311)
+
+priority: must · status: done
+
+Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-recall` · `FUNC-reseed` · `FUNC-rewind` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness`
+
+##### 3.3.1.1  `FUNC-rewind` — graphcode rewind <ref>
+
+Stellt den Graph-Stand eines Commits her: liest den Snapshot per git show aus dem Objektspeicher und stellt ihn im gitignorierten Workspace bereit. Der Working-Tree bleibt unberuehrt, es gibt also genau eine Zustandsaenderung; un-exportierte Mutationen brechen ab, force verwirft sie. (CR-GC-311)
+
+io ◀ `FLOW-cli-command` · io ▶ `FLOW-graph-snapshot` · allocate ▶ `MOD-cli`
+
+###### `REQ-graph-state-recall` — Frueheren Graph-Stand reproduzieren
+
+> auch unter: `FCHAIN-recall` · `FUNC-reseed`
+
+Ein frueherer Graph-Stand ist mit einem Kommando reproduzierbar: graphcode rewind <ref> liest den committeten Snapshot aus dem Git-Objektspeicher und reseedet den Store daraus. Der committete Snapshot ist SSOT-at-rest / history-of-record, der Kuzu-Store eine abgeleitete Working-Copy; reseed loescht+reimportiert in-process hinter dem Single-Writer (kein zweites Handle). Der Working-Tree wird nicht angefasst. (CR-GC-217, CR-GC-311)
+
+priority: must · status: done
+
+Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-recall` · `FUNC-reseed` · `FUNC-rewind` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness`
+
+##### 3.3.1.2  `FUNC-reseed` — reseed(relPath)
+
+Re-synct den Live-Store aus einem Snapshot: DETACH-DELETE plus Re-Import hinter dem Single-Writer, kein zweites DB-Handle. Serialisiert gegen mutate (O3), loescht danach den Drift-Marker. (CR-GC-203, CR-GC-218)
+
+io ◀ `FLOW-graph-snapshot` · io ▶ `FLOW-recalled-state` · allocate ▶ `MOD-harness`
+
+###### `REQ-graph-state-recall` — Frueheren Graph-Stand reproduzieren
+
+> auch unter: `FCHAIN-recall` · `FUNC-rewind`
+
+Ein frueherer Graph-Stand ist mit einem Kommando reproduzierbar: graphcode rewind <ref> liest den committeten Snapshot aus dem Git-Objektspeicher und reseedet den Store daraus. Der committete Snapshot ist SSOT-at-rest / history-of-record, der Kuzu-Store eine abgeleitete Working-Copy; reseed loescht+reimportiert in-process hinter dem Single-Writer (kein zweites Handle). Der Working-Tree wird nicht angefasst. (CR-GC-217, CR-GC-311)
+
+priority: must · status: done
+
+Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-recall` · `FUNC-reseed` · `FUNC-rewind` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness`
+
+#### 3.3.2  `FCHAIN-snapshot-freshness` — Snapshot-Freshness (Aufzeichnen)
+
+Jede Modell-Mutation setzt den Drift-Marker, die Persistenz schreibt den Store, der Export materialisiert den kanonischen Snapshot und loescht den Marker. Ergebnis: kein Commit traegt einen Snapshot, der dem Live-Modell nachlaeuft.
+
+##### `REQ-graph-snapshot-per-commit` — Kanonischer Graph-Snapshot pro Commit
+
+> auch unter: `FUNC-graph-export-snapshot` · `FUNC-mutate`
+
+Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/graph/*.graph.json), der zum Code dieses Commits passt. Un-exportierte Modell-Mutationen blockieren den Commit ueber den single-writer-sicheren Drift-Marker .graphcode/EXPORT_PENDING (vom Gate auf mutate gesetzt, von graph_export/graph_reseed geloescht); der pre-commit-Hook staged die generierten Artefakte automatisch. (CR-GC-217)
+
+priority: must · status: done
+
+Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
+
+##### 3.3.2.1  `FUNC-mutate` — mutate(commands)
+
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-interface-escalation` · `FCHAIN-modelfree-gate`
+
+Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)
+
+io ◀ `FLOW-capture-draft` · `FLOW-mutate-cmd` · `FLOW-suggested-edit` · io ▶ `FLOW-draft-graph` · `FLOW-suggest-result` · allocate ▶ `MOD-harness`
+
+###### `REQ-confidence-tier` — Confidence/Tier am MutateResult
+
+MutateResult trägt Confidence/Tier (auto-apply/suggest/block); speist 3-Tier-Gate. (R1)
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
+
+###### `REQ-gate-only-writes` — Gate-only Graph-Writes
+
+Agent kann den SSOT nicht hand-editieren; jeder Write durch graph_mutate (mutate-Gate, L1). Deny-Rule + PreToolUse-Hook auf Edit/Write von docs/graph/*.graph.json + .graphcode/kuzu; JSON ist generierter Export, Live-Truth ist Kuzu. (CR-GC-201)
+
+priority: should · status: open · kinds: non-functional
+
+Verification ◀ `TEST-no-direct-graph-write` · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
+
+###### `REQ-graph-snapshot-per-commit` — Kanonischer Graph-Snapshot pro Commit
+
+> auch unter: `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot`
+
+Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/graph/*.graph.json), der zum Code dieses Commits passt. Un-exportierte Modell-Mutationen blockieren den Commit ueber den single-writer-sicheren Drift-Marker .graphcode/EXPORT_PENDING (vom Gate auf mutate gesetzt, von graph_export/graph_reseed geloescht); der pre-commit-Hook staged die generierten Artefakte automatisch. (CR-GC-217)
+
+priority: must · status: done
+
+Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
+
+##### 3.3.2.2  `FUNC-save-graph` — saveGraph(graph)
+
+> auch in: `FCHAIN-apply-gate` · `FCHAIN-live-update`
+
+Persistiert in-memory Graph nach Disk-Kuzu, falls keine error-Violations. (SPEC §3.4, §4)
+
+io ◀ `FLOW-violations` · io ▶ `FLOW-committed-graph` · allocate ▶ `MOD-harness`
+
+###### `REQ-disk-persistence` — Disk-Persistenz
+
+Persistenz auf Disk (.graphcode/kuzu/), kein :memory:. (SPEC §4)
+
+priority: should · status: open · kinds: non-functional
+
+Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `FUNC-save-graph` · allocate ▶ `MOD-harness`
+
+##### 3.3.2.3  `FUNC-graph-export-snapshot` — graph_export(views?)
+
+Materialisiert den kanonischen, deterministischen Graph-Snapshot docs/graph/<system>.graph.json plus die Markdown-Views und loescht den Drift-Marker EXPORT_PENDING. Der einzige Sync-Pfad Graph zu committeten Docs; verweigert das Clobbern (leerer Graph, fremder Drop). (CR-GC-113, CR-GC-217)
+
+io ◀ `FLOW-committed-graph` · io ▶ `FLOW-graph-snapshot` · allocate ▶ `MOD-mcp-tools`
+
+###### `REQ-graph-snapshot-per-commit` — Kanonischer Graph-Snapshot pro Commit
+
+> auch unter: `FCHAIN-snapshot-freshness` · `FUNC-mutate`
+
+Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/graph/*.graph.json), der zum Code dieses Commits passt. Un-exportierte Modell-Mutationen blockieren den Commit ueber den single-writer-sicheren Drift-Marker .graphcode/EXPORT_PENDING (vom Gate auf mutate gesetzt, von graph_export/graph_reseed geloescht); der pre-commit-Hook staged die generierten Artefakte automatisch. (CR-GC-217)
+
+priority: must · status: done
+
+Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
 
 ### 3.4  `UC-live-graph-view` — Live-Graph-View (Ziel b)
 
@@ -618,7 +752,7 @@ Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FCHAIN-live-upda
 
 ##### 3.4.1.1  `FUNC-save-graph` — saveGraph(graph)
 
-> auch in: `FCHAIN-apply-gate`
+> auch in: `FCHAIN-apply-gate` · `FCHAIN-snapshot-freshness`
 
 Persistiert in-memory Graph nach Disk-Kuzu, falls keine error-Violations. (SPEC §3.4, §4)
 
@@ -810,7 +944,7 @@ Verification ◀ `TEST-mvp-e2e` (e2e) · `TEST-reduced-llm` (acceptance) · sati
 
 ##### 3.5.1.4  `FUNC-mutate` — mutate(commands)
 
-> auch in: `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-interface-escalation` · `FCHAIN-modelfree-gate`
+> auch in: `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-interface-escalation` · `FCHAIN-modelfree-gate` · `FCHAIN-snapshot-freshness`
 
 Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)
 
@@ -834,11 +968,13 @@ Verification ◀ `TEST-no-direct-graph-write` · satisfy ◀ `FUNC-mutate` · al
 
 ###### `REQ-graph-snapshot-per-commit` — Kanonischer Graph-Snapshot pro Commit
 
+> auch unter: `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot`
+
 Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/graph/*.graph.json), der zum Code dieses Commits passt. Un-exportierte Modell-Mutationen blockieren den Commit ueber den single-writer-sicheren Drift-Marker .graphcode/EXPORT_PENDING (vom Gate auf mutate gesetzt, von graph_export/graph_reseed geloescht); der pre-commit-Hook staged die generierten Artefakte automatisch. (CR-GC-217)
 
-priority: must · status: in-progress
+priority: must · status: done
 
-Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
+Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
 
 #### 3.5.2  `FCHAIN-modelfree-gate` — Modellfreier Gate-Betrieb
 
@@ -882,7 +1018,7 @@ Verification ◀ `TEST-mvp-e2e` (e2e) · `TEST-reduced-llm` (acceptance) · sati
 
 ##### 3.5.2.1  `FUNC-mutate` — mutate(commands)
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-interface-escalation`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-interface-escalation` · `FCHAIN-snapshot-freshness`
 
 Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)
 
@@ -906,11 +1042,13 @@ Verification ◀ `TEST-no-direct-graph-write` · satisfy ◀ `FUNC-mutate` · al
 
 ###### `REQ-graph-snapshot-per-commit` — Kanonischer Graph-Snapshot pro Commit
 
+> auch unter: `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot`
+
 Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/graph/*.graph.json), der zum Code dieses Commits passt. Un-exportierte Modell-Mutationen blockieren den Commit ueber den single-writer-sicheren Drift-Marker .graphcode/EXPORT_PENDING (vom Gate auf mutate gesetzt, von graph_export/graph_reseed geloescht); der pre-commit-Hook staged die generierten Artefakte automatisch. (CR-GC-217)
 
-priority: must · status: in-progress
+priority: must · status: done
 
-Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
+Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
 
 ##### 3.5.2.2  `FUNC-evaluate-rules` — evaluateRules()
 
@@ -1608,15 +1746,15 @@ io ◀ `FUNC-decode` · io ▶ `FUNC-mutate` · schema ▶ `SCHEMA-ontology-grap
 
 ### 4.5  `FLOW-cli-command` — CLI-Command
 
-init / update / remove.
+mcp / host / run / import-code / rewind / init / update / remove / skills sync.
 
-io ◀ `ACTOR-developer` · io ▶ `FUNC-harness-cli` · schema ▶ `SCHEMA-cli-command`
+io ◀ `ACTOR-developer` · io ▶ `FUNC-harness-cli` · `FUNC-rewind` · schema ▶ `SCHEMA-cli-command`
 
 ### 4.6  `FLOW-committed-graph` — Committed-Graph
 
 Persistierter Graph + Version-Counter.
 
-io ◀ `FUNC-save-graph` · io ▶ `FUNC-emit-trajectory` · `FUNC-emit-update-event` · schema ▶ `SCHEMA-ontology-graph`
+io ◀ `FUNC-save-graph` · io ▶ `FUNC-emit-trajectory` · `FUNC-emit-update-event` · `FUNC-graph-export-snapshot` · schema ▶ `SCHEMA-ontology-graph`
 
 ### 4.7  `FLOW-draft-graph` — Draft-Graph
 
@@ -1654,115 +1792,127 @@ Agent-interpretierte NL → Format-E (agent-seitig).
 
 io ◀ `ACTOR-claude-code` · io ▶ `FUNC-decode` · schema ▶ `SCHEMA-format-e`
 
-### 4.13  `FLOW-graph-state` — Graph-State
+### 4.13  `FLOW-graph-snapshot` — Graph-Snapshot (SSOT-at-rest)
+
+Der kanonische, deterministische Snapshot docs/graph/<system>.graph.json — history-of-record. Der Export erzeugt ihn, rewind holt eine aeltere Fassung aus dem Git-Objektspeicher, reseed liest ihn.
+
+io ◀ `FUNC-graph-export-snapshot` · `FUNC-rewind` · io ▶ `ACTOR-developer` · `FUNC-reseed` · schema ▶ `SCHEMA-ontology-graph`
+
+### 4.14  `FLOW-graph-state` — Graph-State
 
 Aktueller OntologyGraph (in-memory).
 
 io ◀ `ACTOR-developer` · io ▶ `FUNC-encode` · schema ▶ `SCHEMA-ontology-graph`
 
-### 4.14  `FLOW-impact-subgraph` — Impact-Subgraph
+### 4.15  `FLOW-impact-subgraph` — Impact-Subgraph
 
 Exakter Blast-Radius als Format-E + Cursor.
 
 io ◀ `FUNC-graph-impact` · io ▶ `ACTOR-claude-code` · schema ▶ `SCHEMA-format-e`
 
-### 4.15  `FLOW-install-result` — Install-Result
+### 4.16  `FLOW-install-result` — Install-Result
 
 Scaffold-/Update-/Remove-Ergebnis.
 
 io ◀ `FUNC-harness-cli` · io ▶ `ACTOR-developer` · schema ▶ `SCHEMA-cli-command`
 
-### 4.16  `FLOW-live-event` — Live-Update-Event
+### 4.17  `FLOW-live-event` — Live-Update-Event
 
 SSE invalidate (graph/rules/readiness/suggestions).
 
 io ◀ `FUNC-emit-update-event` · io ▶ `ACTOR-dashboard` · `FUNC-broadcast-diff` · `FUNC-serve-stdio` · `FUNC-subscribe-updates` · schema ▶ `SCHEMA-update-event`
 
-### 4.17  `FLOW-markdown-docs` — Markdown-Docs
+### 4.18  `FLOW-markdown-docs` — Markdown-Docs
 
 Generierte Markdown-Views (GENERATED-Header).
 
 io ◀ `FUNC-export-markdown` · io ▶ `ACTOR-developer` · schema ▶ `SCHEMA-markdown-view`
 
-### 4.18  `FLOW-merged-graph` — Merged-Graph
+### 4.19  `FLOW-merged-graph` — Merged-Graph
 
 Conflict-free gemergter Graph.
 
 io ◀ `FUNC-merge-nodes` · io ▶ `ACTOR-developer` · schema ▶ `SCHEMA-ontology-graph`
 
-### 4.19  `FLOW-migrated-graph` — Migrated-Graph
+### 4.20  `FLOW-migrated-graph` — Migrated-Graph
 
 Re-validierter/migrierter Graph + Report.
 
 io ◀ `FUNC-migrate-schema` · io ▶ `ACTOR-developer` · schema ▶ `SCHEMA-ontology-graph`
 
-### 4.20  `FLOW-mutate-cmd` — Mutate-Command
+### 4.21  `FLOW-mutate-cmd` — Mutate-Command
 
 Edit-Op (add/update/delete) vom Agent/Mensch.
 
-io ◀ `ACTOR-claude-code` · io ▶ `FUNC-mutate` · schema ▶ `SCHEMA-mutate-command`
+io ◀ `ACTOR-claude-code` · `ACTOR-developer` · io ▶ `FUNC-mutate` · schema ▶ `SCHEMA-mutate-command`
 
-### 4.21  `FLOW-parsed-graph` — Parsed-Graph
+### 4.22  `FLOW-parsed-graph` — Parsed-Graph
 
 Aus Format-E rekonstruierter Graph (== Original).
 
 io ◀ `FUNC-decode` · io ▶ `ACTOR-developer` · schema ▶ `SCHEMA-ontology-graph`
 
-### 4.22  `FLOW-query-request` — Query-Request
+### 4.23  `FLOW-query-request` — Query-Request
 
 elementId + depth.
 
 io ◀ `ACTOR-claude-code` · io ▶ `FUNC-graph-impact` · schema ▶ `SCHEMA-query-params`
 
-### 4.23  `FLOW-rendered-view` — Rendered-View
+### 4.24  `FLOW-recalled-state` — Wiederhergestellter Graph-Stand
+
+Der Live-Store nach dem Reseed: Modell und Code gehoeren wieder zu demselben Commit, der Drift-Marker ist geloescht.
+
+io ◀ `FUNC-reseed` · io ▶ `ACTOR-developer` · schema ▶ `SCHEMA-ontology-graph`
+
+### 4.25  `FLOW-rendered-view` — Rendered-View
 
 Generierte Markdown-View, z.B. architecture-graph.md.
 
 io ◀ `FUNC-render-views` · io ▶ `ACTOR-developer` · schema ▶ `SCHEMA-markdown-view`
 
-### 4.24  `FLOW-round-findings` — Round Findings (open violations)
+### 4.26  `FLOW-round-findings` — Round Findings (open violations)
 
 Die von status offen gemeldeten Regelverletzungen, die propose als Rang-Eingabe nimmt (graph_suggest rankt genau die feuernden Operator-Regeln).
 
 io ◀ `FUNC-evaluate-rules` · io ▶ `FUNC-graph-suggest` · schema ▶ —
 
-### 4.25  `FLOW-round-scope` — Round Scope (bounded slice)
+### 4.27  `FLOW-round-scope` — Round Scope (bounded slice)
 
 Der durch read gebundene Blast-Radius/Kontext, der informiert, was status als offen prueft. Kein festes Wire-Format - informationeller Rundenkontext, kein Code-Datenvertrag.
 
 io ◀ `FUNC-graph-impact` · io ▶ `FUNC-evaluate-rules` · schema ▶ —
 
-### 4.26  `FLOW-suggest-result` — Suggest-Result
+### 4.28  `FLOW-suggest-result` — Suggest-Result
 
 Confidence-getaggte Vorschläge (suggest-Tier).
 
 io ◀ `FUNC-mutate` · io ▶ `ACTOR-developer` · schema ▶ `SCHEMA-mutate-result`
 
-### 4.27  `FLOW-suggested-edit` — Suggested Edit (ranked candidate)
+### 4.29  `FLOW-suggested-edit` — Suggested Edit (ranked candidate)
 
 Der von propose bestbewertete Kandidaten-Fix (Template-Edit, dryRun-verifiziert), der apply als MutateCommand-Eingabe erreicht - nur wenn der Konsument ihn uebernimmt, nie automatisch.
 
 io ◀ `FUNC-graph-suggest` · io ▶ `FUNC-mutate` · schema ▶ —
 
-### 4.28  `FLOW-trajectory` — Trajectory/Outcome
+### 4.30  `FLOW-trajectory` — Trajectory/Outcome
 
 append-only Lern-Emission.
 
 io ◀ `FUNC-emit-trajectory` · io ▶ `ACTOR-learning-engine` · schema ▶ `SCHEMA-trajectory`
 
-### 4.29  `FLOW-version-bump` — Version-Bump
+### 4.31  `FLOW-version-bump` — Version-Bump
 
 Neue ONTOLOGY/RULES_VERSION aus contracts/se.
 
 io ◀ `ACTOR-developer` · io ▶ `FUNC-migrate-schema` · schema ▶ `SCHEMA-query-params`
 
-### 4.30  `FLOW-view-request` — View-Request
+### 4.32  `FLOW-view-request` — View-Request
 
 Welche View gerendert werden soll (arch/status/...).
 
 io ◀ `ACTOR-developer` · io ▶ `FUNC-render-views` · schema ▶ `SCHEMA-query-params`
 
-### 4.31  `FLOW-violations` — Violations
+### 4.33  `FLOW-violations` — Violations
 
 Regel-Violations {ruleId,severity,elementId}.
 
@@ -1804,7 +1954,7 @@ schema ◀ `FLOW-bootstrap-result` · `FLOW-suggest-result` · `FLOW-violations`
 
 Elements (13 ElementTypes) + Traces (7 TraceTypes). @sigloch/contracts/se.
 
-schema ◀ `FLOW-branch-graphs` · `FLOW-capture-draft` · `FLOW-committed-graph` · `FLOW-draft-graph` · `FLOW-graph-state` · `FLOW-merged-graph` · `FLOW-migrated-graph` · `FLOW-parsed-graph`
+schema ◀ `FLOW-branch-graphs` · `FLOW-capture-draft` · `FLOW-committed-graph` · `FLOW-draft-graph` · `FLOW-graph-snapshot` · `FLOW-graph-state` · `FLOW-merged-graph` · `FLOW-migrated-graph` · `FLOW-parsed-graph` · `FLOW-recalled-state`
 
 ### 5.7  `SCHEMA-query-params` — QueryParams
 
@@ -1830,7 +1980,7 @@ schema ◀ `FLOW-live-event`
 
 bin `npx @sigloch/graphcode init/update/remove`: self-contained Installer. App-spezifisch. (REQ-npx-distribution)
 
-allocate ◀ `FUNC-harness-cli` · satisfy ▶ `REQ-buildable-standalone`
+allocate ◀ `FUNC-harness-cli` · `FUNC-rewind` · satisfy ▶ `REQ-buildable-standalone`
 
 ### 6.2  `MOD-codec` — codec.ts — GraphCodeCodec
 
@@ -1854,7 +2004,7 @@ allocate ◀ `FUNC-export-markdown` · satisfy ▶ `REQ-docs-taxonomy` · `REQ-t
 
 Apply-Gate: loadGraph/saveGraph/mutate/evaluateRules/close gegen lokalen Kuzu. (SPEC §2.1)
 
-allocate ◀ `FUNC-check-code-conformance` · `FUNC-evaluate-rules` · `FUNC-import` · `FUNC-migrate-schema` · `FUNC-mutate` · `FUNC-save-graph` · `FUNC-score-completeness` · satisfy ▶ `REQ-graph-state-recall` · `REQ-harness-schema-in-contracts` · `REQ-import-se-ontology` · `REQ-quality-metric` · `REQ-single-kuzu-owner` · `REQ-single-store` · `REQ-store-recovery` · `REQ-structural-rule-shared`
+allocate ◀ `FUNC-check-code-conformance` · `FUNC-evaluate-rules` · `FUNC-import` · `FUNC-migrate-schema` · `FUNC-mutate` · `FUNC-reseed` · `FUNC-save-graph` · `FUNC-score-completeness` · satisfy ▶ `REQ-graph-state-recall` · `REQ-harness-schema-in-contracts` · `REQ-import-se-ontology` · `REQ-quality-metric` · `REQ-single-kuzu-owner` · `REQ-single-store` · `REQ-store-recovery` · `REQ-structural-rule-shared`
 
 ### 6.6  `MOD-hooks` — hooks.ts — HookSystem
 
@@ -1872,7 +2022,7 @@ allocate ◀ `FUNC-broadcast-diff` · `FUNC-health-endpoint` · `FUNC-own-kuzu-h
 
 MCP-stdio Tool-Registry, an die Harness gebunden; read/write/query Tools. (SPEC §2.2)
 
-allocate ◀ `FUNC-deduce-tests` · `FUNC-graph-expand` · `FUNC-graph-impact` · `FUNC-graph-suggest` · `FUNC-resolve-tests-from-code` · `FUNC-serve-stdio` · satisfy ▶ `REQ-agent-agnostic` · `REQ-export-no-clobber` · `REQ-mcp-tool-registry` · `REQ-readiness-model` · `REQ-single-transport` · `REQ-test-runnable-binding` · `REQ-testref-materialized`
+allocate ◀ `FUNC-deduce-tests` · `FUNC-graph-expand` · `FUNC-graph-export-snapshot` · `FUNC-graph-impact` · `FUNC-graph-suggest` · `FUNC-resolve-tests-from-code` · `FUNC-serve-stdio` · satisfy ▶ `REQ-agent-agnostic` · `REQ-export-no-clobber` · `REQ-mcp-tool-registry` · `REQ-readiness-model` · `REQ-single-transport` · `REQ-test-runnable-binding` · `REQ-testref-materialized`
 
 ### 6.9  `MOD-skills` — skills/prompts — agent-realisierte Funktionen
 
@@ -1937,14 +2087,6 @@ Der materialisierte Graph + die Live-Harness sind SSOT. docs/*.md sind historisc
 priority: should · status: done · kinds: non-functional
 
 Verification ◀ `TEST-graph-is-ssot` (integration) · satisfy ◀ — · allocate ▶ —
-
-### `REQ-graph-state-recall` — Frueheren Graph-Stand reproduzieren
-
-Ein frueherer Graph-Stand ist reproduzierbar via 'git checkout <sha>' + graph_reseed: der committete Snapshot ist SSOT-at-rest / history-of-record, der Kuzu-Store eine abgeleitete Working-Copy. reseed loescht+reimportiert den Store in-process hinter dem Single-Writer (kein zweites Handle). (CR-GC-217)
-
-priority: must · status: in-progress
-
-Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `MOD-harness` · allocate ▶ —
 
 ### `REQ-harness-schema-in-contracts` — Harness-Schemas in contracts (D1)
 
