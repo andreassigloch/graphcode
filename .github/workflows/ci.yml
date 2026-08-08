@@ -1,15 +1,19 @@
 name: CI
 
-# Build + test on every push and pull request. Possible since CR-GC-262: the five
-# @sigloch/* dependencies come from the npm registry (CR-214), so a checkout of the
-# private sigloch-modules repo is no longer needed to build this repo.
+# Build + test on a fresh checkout. Possible since CR-GC-262: the five @sigloch/*
+# dependencies come from the npm registry (CR-214), so a checkout of the private
+# sigloch-modules repo is no longer needed to build this repo.
 #
 # The suite runs a real on-disk Kuzu store and a real `npm pack` + foreign install —
 # no mocks — so it needs a few minutes, not seconds.
+#
+# master + PRs only, not every branch push: with one committer the regression signal is
+# already there locally. What CI adds is the CLEAN MACHINE — no local .graphcode/, no
+# linked siblings, no warm cache — and that only needs to run where work lands.
 
 on:
   push:
-    branches: ['**']
+    branches: [master]
   pull_request:
 
 jobs:

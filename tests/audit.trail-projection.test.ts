@@ -16,7 +16,7 @@
  * @author andreas@siglochconsulting
  */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { mkdtempSync, rmSync, readFileSync } from 'node:fs';
+import { mkdtempSync, rmSync, readFileSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from '@sigloch/graph-cypher-wasm';
@@ -186,10 +186,17 @@ describe('TEST-audit-trail-projection (CR-GC-319)', () => {
  * REQ-T04 measured where the CR says to measure it: on THIS repo's own trail. A fixture
  * cannot stand in — the ratio of commands to violations is the whole variable, and a
  * synthetic batch picks that ratio by accident. The real log is 79 % commands.
+ *
+ * That makes the block workspace-local by construction: `.graphcode/*` is gitignored, so a
+ * fresh checkout (CI, or a clone before the first mutate) has no trail. It skips there
+ * rather than failing — the claim is measured on every dev run, where the data is real.
+ * The alternative, committing a sample, would freeze the very ratio being measured.
  */
-describe('TEST-audit-trail-projection: the size claim on real data (REQ-T04)', () => {
-  const trail = join(process.cwd(), '.graphcode', 'audit.jsonl');
+const trail = join(process.cwd(), '.graphcode', 'audit.jsonl');
 
+const REAL_TRAIL = 'TEST-audit-trail-projection: the size claim on real data (REQ-T04)';
+
+describe.skipIf(!existsSync(trail))(REAL_TRAIL, () => {
   /**
    * MEASURED: 17.0 KB projected from 162.6 KB raw = **89.3 %** smaller.
    *
