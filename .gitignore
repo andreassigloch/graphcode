@@ -23,11 +23,12 @@ docs/records/
 docs/SPEC.md
 docs/RECOMMENDATIONS.md
 
-# generated views that are working state, not repo content (CR-GC-264): both dump the
-# full internal CR prose. `graph_export` still writes all 16 views locally — someone
+# generated view that is working state, not repo content (CR-GC-264): it dumps the
+# full internal CR prose. `graph_export` still writes all 15 views locally — someone
 # using graphcode never sees them (the npm tarball carries no docs), someone
 # contributing wants the architecture views, not the change history.
-docs/views/spec.md
+# CR-GC-305: the `docs/views/spec.md` entry is gone with the view itself — an ignore
+# rule for a file nothing can generate is a dead path.
 docs/views/cr-list.md
 
 # maintainer's full internal guardrails (family governance, bok refs); the public

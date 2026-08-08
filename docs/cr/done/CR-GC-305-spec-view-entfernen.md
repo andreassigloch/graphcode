@@ -1,7 +1,59 @@
 # CR-GC-305 — `spec`-View entfernen, `srs` ist die Requirements-Sicht (Cross-Package)
 
-**Status:** open · **Angelegt:** 2026-08-07 · **Max Files:** 6 in graphcode (+ 1 in
-graphcode-client, + 0 Code in GVE — s. Reihenfolge)
+**Status:** done · **Angelegt:** 2026-08-07 · **Geschlossen:** 2026-08-08
+
+> ## Abschluss 2026-08-08
+>
+> **`@sigloch/graphcode-client@0.7.0` ist publiziert** (`npm view` bestätigt 0.5.0 /
+> 0.6.0 / 0.7.0). Der Katalog trägt 15 Views, `spec` ist weder in `MARKDOWN_VIEWS`
+> noch in `VIEW_FILENAMES`.
+>
+> **Verifikationsreihenfolge geändert — bewusst.** Der CR sah publish → install →
+> verify vor. Stattdessen: `npm link` in beide Konsumenten, **alles** grün fahren,
+> **dann** publizieren, dann auf die Registry-Range umstellen und erneut verifizieren.
+> Eine npm-Version lässt sich nicht zurückziehen und nicht wiederverwenden — erst
+> publizieren und dann feststellen, dass GVE bricht, hätte 0.7.1 gekostet.
+>
+> | Repo | Ergebnis gegen 0.7.0 aus der Registry |
+> |---|---|
+> | graphcode-client | 3 Testdateien / **29 Tests** grün |
+> | graphcode | 74 Testdateien / **501 Tests** grün, Build grün |
+> | graph-view-edit | 65 Dateien / **526 Tests** grün |
+>
+> ### Abweichung: GVE brauchte doch Code
+>
+> Der CR sagte „GVE: 0 Code". Falsch — zwei Stellen:
+>
+> 1. `src/view-descriptors.mjs` trug `spec: { hidden: true }` mit dem Kommentar
+>    „redundant zur editierbaren SRS — menu-hidden, nicht deregistriert". GVE war
+>    also **unabhängig zum selben Schluss gekommen** und hatte die View nur versteckt
+>    statt entfernt. Der Override ist jetzt gelöscht; stehenzulassen wäre ein toter
+>    Pfad (`DOC_OVERRIDES` wird über `Object.keys(VIEW_FILENAMES)` gelesen, ein Key
+>    ohne View greift nie).
+> 2. `tests/views-docview.test.mjs` pinnte die Zahl **16** als Literal. Jetzt gegen
+>    `Object.keys(VIEW_FILENAMES).length` — die nächste Katalogänderung muss nicht
+>    wieder durch fremde Testdateien gejagt werden.
+>
+> Der Drift-Test `tests/view-registry.test.mjs` blieb ohne Anpassung grün, weil er
+> schon immer aus dem Katalog ableitet — er hat genau das getan, wofür er da ist.
+>
+> ### Weitere Abweichung: mehr `spec`-Referenzen als der CR auflistete
+>
+> Der CR nannte 3 Teststellen. Tatsächlich waren es **6** in `tests/exporter.test.ts`
+> (u.a. der Test „SRS ≠ model spec", der die Doppelung positiv festschrieb) plus
+> `mcp.export.test.ts` und `mvp-e2e.test.ts`. Der Test, der die zwei Dokumente
+> gegeneinander prüfte, ist durch einen ersetzt, der das Gegenteil sichert: **keine**
+> verbleibende View darf die typgruppierte Form (`Modell-Spezifikation`, `## FUNC`)
+> wieder einführen — geprüft über alle 15 Views, nicht nur über `srs`.
+>
+> `MarkdownViewSchema.parse('spec')` **wirft** jetzt — harte Ablehnung statt stillem
+> Fallback, damit ein Konsument mit alter ID laut scheitert.
+>
+> ### Nicht getan: npm-Publish von graphcode selbst
+>
+> Der Konsum von 0.7.0 ist in `package.json` + `package-lock.json` festgeschrieben,
+> aber `@sigloch/graphcode` ist **nicht** neu publiziert. Das ist ein eigener
+> Release-Schritt (manueller Prozess, `CLAUDE.local.md`) und war nicht Teil dieses CRs.
 
 ## Problem
 

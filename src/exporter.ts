@@ -38,14 +38,16 @@ import { renderChangelog, renderFmea, renderConOps, renderTrade, renderImplPlan 
  * MarkdownView (SCHEMA-markdown-view): which generated, human-readable view to
  * render. Each renders deterministically with a GENERATED header.
  *
- * Foundation views (spec/architecture/cr-list/references) mirror
- * FLOW-export-request; CR-GC-220 adds the SE-artifact projections
- * (srs/nfr/rtm/icd/testconcept/testmatrix/intplan/changelog + the render-form of
- * fmea/conops/trade/implplan) so EVERY render-able artifact is a deterministic
- * function of the graph, not an agent-rendered `se-view:*` skill.
+ * Foundation views (architecture/cr-list/references) mirror FLOW-export-request;
+ * CR-GC-220 adds the SE-artifact projections (srs/nfr/rtm/icd/testconcept/
+ * testmatrix/intplan/changelog + the render-form of fmea/conops/trade/implplan) so
+ * EVERY render-able artifact is a deterministic function of the graph, not an
+ * agent-rendered `se-view:*` skill.
  *
- * NOTE: `srs` (REQ-slice, 29148 spec shape) is DISTINCT from `spec` (full graph
- * dump) — Specimen #2 vs #12. They must differ.
+ * CR-GC-305 removed the `spec` view (raw dump of every element grouped by type).
+ * It answered the same question as `srs` — the ISO-29148 narrative — with different
+ * completeness, i.e. two requirements documents and one truth. `srs` is the
+ * requirements view; the full element inventory is the graph JSON itself.
  */
 // The view CATALOG (which views exist, their order, their filenames) moved to
 // @sigloch/graphcode-client (CR-GC-264) so a viewer can list and link the views
@@ -192,11 +194,6 @@ export function byUid(a: GraphNode, b: GraphNode): number {
   return a.uid.localeCompare(b.uid);
 }
 
-/** Stable comparator on [type, uid] for grouped listings. */
-function byTypeThenUid(a: GraphNode, b: GraphNode): number {
-  return a.type.localeCompare(b.type) || a.uid.localeCompare(b.uid);
-}
-
 /** A single-line, table-safe rendering of a description (no newlines / pipes). */
 export function cell(text: string): string {
   return (text ?? '').replace(/\s*\n\s*/g, ' ').replace(/\|/g, '/').trim();
@@ -206,30 +203,6 @@ export function cell(text: string): string {
 function nodesOfTypes(graph: Graph, types: string[]): GraphNode[] {
   const set = new Set(types);
   return graph.nodes.filter((n) => set.has(n.type)).sort(byUid);
-}
-
-/** Overview/index of every element grouped by type (the `spec` view). */
-function renderSpec(graph: Graph, name: string): string {
-  const header = generatedHeader(
-    name,
-    'Modell-Spezifikation',
-    'Alle Elemente nach Typ, sortiert nach uid. Deterministisch generiert.',
-  );
-  const sorted = [...graph.nodes].sort(byTypeThenUid);
-  const lines: string[] = [header];
-  lines.push(`Elemente: ${graph.nodes.length} · Traces: ${graph.edges.length}`, '');
-
-  let currentType = '';
-  for (const n of sorted) {
-    if (n.type !== currentType) {
-      currentType = n.type;
-      lines.push('', `## ${currentType}`, '', '| uid | name | status | description |', '|---|---|---|---|');
-    }
-    const status = String(n.attributes['status'] ?? '');
-    lines.push(`| \`${n.uid}\` | ${cell(n.name)} | ${status} | ${cell(n.description ?? '')} |`);
-  }
-  lines.push('');
-  return lines.join('\n');
 }
 
 /** Module / function / system structure with allocate edges (the `architecture` view). */
@@ -307,8 +280,6 @@ function renderReferences(graph: Graph, name: string): string {
 export function exportMarkdown(graph: Graph, view: MarkdownView, name = 'graphcode'): string {
   const v = MarkdownViewSchema.parse(view);
   switch (v) {
-    case 'spec':
-      return renderSpec(graph, name);
     case 'architecture':
       return renderArchitecture(graph, name);
     case 'cr-list':

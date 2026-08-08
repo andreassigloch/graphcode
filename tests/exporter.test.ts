@@ -141,7 +141,7 @@ describe('exportGraphJson / exportMarkdown (TEST-doc-export)', () => {
   });
 
   it('CR-GC-236: default name is graphcode (own export keeps its SSOT path)', () => {
-    const md = exportMarkdown(graph, 'spec');
+    const md = exportMarkdown(graph, 'srs');
     expect(md).toContain('# graphcode — ');
     expect(md).toContain('docs/graph/graphcode.graph.json');
   });
@@ -152,9 +152,10 @@ describe('exportGraphJson / exportMarkdown (TEST-doc-export)', () => {
     }
   });
 
-  it('the foundation views mirror FLOW-export-request (spec/architecture/cr-list/references)', () => {
-    // The four foundation views are still present (CR-GC-220 ADDS to them, no parallel path).
-    for (const v of ['architecture', 'cr-list', 'references', 'spec']) {
+  it('the foundation views mirror FLOW-export-request (architecture/cr-list/references)', () => {
+    // CR-GC-305 dropped the fourth (`spec`); the rest are untouched — CR-GC-220 ADDS
+    // to them, no parallel path.
+    for (const v of ['architecture', 'cr-list', 'references']) {
       expect([...MARKDOWN_VIEWS]).toContain(v);
     }
     // schema rejects unknown views.
@@ -194,10 +195,13 @@ describe('exportGraphJson / exportMarkdown (TEST-doc-export)', () => {
     'implplan',
   ] as const;
 
-  it('CR-GC-220: schema accepts all 12 new views plus spec (16 total)', () => {
+  it('CR-GC-220: schema accepts all 12 new views (15 total after CR-GC-305)', () => {
     for (const v of CR220_VIEWS) expect(() => MarkdownViewSchema.parse(v)).not.toThrow();
-    expect(MARKDOWN_VIEWS.length).toBe(16);
-    expect([...MARKDOWN_VIEWS]).toContain('spec'); // full dump kept
+    expect(MARKDOWN_VIEWS.length).toBe(15);
+    // CR-GC-305: `spec` is gone and must be a HARD reject, not a silent fallback —
+    // a consumer still passing it has to fail loudly, not receive some other view.
+    expect([...MARKDOWN_VIEWS]).not.toContain('spec');
+    expect(() => MarkdownViewSchema.parse('spec')).toThrow();
   });
 
   it('CR-GC-220: every new view renders non-empty with the GENERATED header', () => {
@@ -218,18 +222,17 @@ describe('exportGraphJson / exportMarkdown (TEST-doc-export)', () => {
     }
   });
 
-  it('CR-GC-220: SRS (textual spec) ≠ model spec (full dump)', () => {
+  it('CR-GC-305: SRS is THE requirements view — the type-grouped dump is gone', () => {
     const srs = exportMarkdown(graph, 'srs');
-    const spec = exportMarkdown(graph, 'spec');
-    expect(srs).not.toBe(spec);
-    // SRS carries the specification scaffolding; spec is a type-grouped dump.
     expect(srs).toContain('System Requirements Specification');
     expect(srs).toContain('## 3  Use Cases & Verhalten');
-    expect(spec).toContain('Modell-Spezifikation');
-    expect(spec).not.toContain('System Requirements Specification');
-    // SRS renders elements as per-uid headings, not the dump's type sections.
-    expect(spec).toContain('## FUNC');
+    // The former `spec` view grouped by element type (`## FUNC`, `## MOD`, …) under
+    // the heading "Modell-Spezifikation". No remaining view may reintroduce that
+    // shape — the second requirements document WAS the duplication this CR removed.
     expect(srs).not.toContain('## FUNC');
+    for (const v of MARKDOWN_VIEWS) {
+      expect(exportMarkdown(graph, v)).not.toContain('Modell-Spezifikation');
+    }
   });
 
   // -------------------------------------------------------------------------

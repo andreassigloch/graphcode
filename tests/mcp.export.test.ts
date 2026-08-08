@@ -84,9 +84,10 @@ describe('TEST-mcp-export: graph_export writes commit-able docs from the live gr
     // Default = ALL views (CR-GC-220: 16), each written with a GENERATED header.
     // The four foundation views are still present (no parallel path — they were extended).
     const written = res.views.map((v) => v.view);
-    for (const v of ['architecture', 'cr-list', 'references', 'spec']) expect(written).toContain(v);
-    expect(written).toContain('srs'); // a new deterministic SE-artifact view
-    expect(written.length).toBe(16);
+    for (const v of ['architecture', 'cr-list', 'references']) expect(written).toContain(v);
+    expect(written).toContain('srs'); // the requirements view (CR-GC-305: replaced `spec`)
+    expect(written).not.toContain('spec');
+    expect(written.length).toBe(15);
     for (const v of res.views) {
       const md = readFileSync(join(repoRoot, v.path), 'utf8');
       expect(md).toContain('GENERATED');
@@ -121,10 +122,12 @@ describe('TEST-mcp-export: graph_export writes commit-able docs from the live gr
   it('respects a custom name + view subset', async () => {
     const tools = bindToolsToHarness(harness);
     await harness.mutate(SPEC);
-    const res = await tools.graph_export.handler({ name: 'member', views: ['spec'] });
+    const res = await tools.graph_export.handler({ name: 'member', views: ['srs'] });
     expect(res.graphJson.path).toBe(join('docs', 'graph', 'member.graph.json'));
     expect(res.views).toHaveLength(1);
-    expect(res.views[0].view).toBe('spec');
-    expect(existsSync(join(repoRoot, 'docs', 'views', 'spec.md'))).toBe(true);
+    expect(res.views[0].view).toBe('srs');
+    expect(existsSync(join(repoRoot, 'docs', 'views', 'srs.md'))).toBe(true);
+    // CR-GC-305: the dropped view is not silently re-created alongside.
+    expect(existsSync(join(repoRoot, 'docs', 'views', 'spec.md'))).toBe(false);
   });
 });

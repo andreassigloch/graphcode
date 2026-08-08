@@ -304,8 +304,7 @@ export const HELP_CONTENT: Record<string, HelpContentEntry> = {
 
   // --- Artifacts (keyed on ARTIFACT_CATALOG id; kind/names come from CR-220/222/223) --
   srs: {
-    plain:
-      "The requirements document — the features you've promised (`srs` = the slice, `spec` = the full dump).",
+    plain: "The requirements document — the features you've promised, per use case.",
     se: 'Software Requirements Specification (a render — re-derivable from the model).',
     prompt: 'se-view:rtm',
   },
