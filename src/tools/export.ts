@@ -10,8 +10,8 @@
  * @author andreas@siglochconsulting
  */
 
-import { join, dirname, resolve, relative, isAbsolute } from 'node:path';
-import { mkdirSync, writeFileSync, existsSync, readFileSync } from 'node:fs';
+import { join, dirname, resolve, relative, isAbsolute, basename } from 'node:path';
+import { mkdirSync, writeFileSync, existsSync, readFileSync, renameSync, unlinkSync } from 'node:fs';
 import { z } from 'zod/v4';
 import { exportGraphJson, exportMarkdown, renderTestStubs, renderSchemaStubs, MarkdownViewSchema, MARKDOWN_VIEWS, VIEW_FILENAMES } from '../exporter.js';
 import { clearExportPending } from '../export-marker.js';
@@ -82,6 +82,31 @@ function assertInRepo(repoRoot: string, rel: string): string {
     );
   }
   return abs;
+}
+
+/**
+ * Schreiben, das ein paralleler LESER nie halbfertig sieht (CR-GC-323).
+ *
+ * `writeFileSync` truncated erst und schreibt dann — wer die Datei in diesem Fenster
+ * liest, bekommt eine abgeschnittene JSON (400 KB Graph, ein Leser pro Datei-Watcher).
+ * Bei manuellem Export war das Fenster selten genug, um nie aufzufallen; mit dem
+ * Auto-Export nach jeder Mutation nicht mehr. Temp-Datei im SELBEN Verzeichnis (rename
+ * ist nur innerhalb eines Dateisystems atomar) + `renameSync` — der Leser sieht
+ * entweder den alten oder den neuen Inhalt, nie einen dritten.
+ */
+export function writeFileAtomic(abs: string, content: string): void {
+  const tmp = join(dirname(abs), `.${basename(abs)}.tmp-${process.pid}`);
+  try {
+    writeFileSync(tmp, content);
+    renameSync(tmp, abs);
+  } catch (err) {
+    try {
+      unlinkSync(tmp);
+    } catch {
+      /* schon weg */
+    }
+    throw err;
+  }
 }
 
 const GraphExportInputSchema = z.object({
@@ -211,7 +236,7 @@ export function bindExportTools(ctx: ToolContext): MCPToolRegistry {
       // Round-Trip-Kontrakt (exporter.test.ts) + den Startup-Drift-Vergleich.
       const jsonWithVersion =
         JSON.stringify({ ...JSON.parse(json), graphVersion: ctx.graphVersion() }, null, 2) + '\n';
-      writeFileSync(jsonAbs, jsonWithVersion);
+      writeFileAtomic(jsonAbs, jsonWithVersion);
 
       const views = input.views ?? MARKDOWN_VIEWS;
       const written = views.map((v) => {
@@ -219,7 +244,7 @@ export function bindExportTools(ctx: ToolContext): MCPToolRegistry {
         const rel = join('docs', 'views', VIEW_FILENAMES[v]);
         const abs = assertInRepo(repoRoot, rel);
         mkdirSync(dirname(abs), { recursive: true });
-        writeFileSync(abs, md);
+        writeFileAtomic(abs, md);
         return { view: v, path: rel, bytes: Buffer.byteLength(md) };
       });
 

@@ -26,6 +26,7 @@ import type { HarnessConfig } from '@sigloch/contracts/harness';
 import { createHarness, type GraphCodeHarness } from './index.js';
 import { exportGraphJson } from './exporter.js';
 import { bindToolsToHarness, type MCPTool, type MCPToolRegistry } from './mcp-tools.js';
+import { registerAutoExport } from './auto-export.js';
 import { StoreOwnershipError } from './store-lock.js';
 import { startHostSocket, buildProxyRegistry, HOST_SOCK_BASENAME } from './host-shim.js';
 import { HostBridge } from './viewer/host.js';
@@ -146,6 +147,10 @@ async function bootHost(
     }
   }
   const registry = bindToolsToHarness(harness);
+  // Der Export folgt der Mutation (CR-GC-323) — entprellt + single-flight. NUR hier, im
+  // gewählten Host: er allein besitzt den Store und schreibt. Ein Proxy oder eine
+  // Test-Registry bindet dieselben Tools, darf davon aber nichts ins Repo schreiben.
+  registerAutoExport(harness, registry.graph_export);
   // ONE write channel (CR-GC-235): the elected host also serves later sessions
   // over the local socket shim — an internal hop, not a second API surface.
   await startHostSocket(registry, join(harness.getStoreDir(), HOST_SOCK_BASENAME));
