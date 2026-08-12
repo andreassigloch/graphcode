@@ -71,11 +71,11 @@ function initWorkspace(dir) {
   // (opencode blocks external-dir reads even with --dangerously-skip-permissions).
   // Exclude noise (node_modules/dist/.git) AND the golden graph (docs/graph) — the
   // golden must never be visible to the model, only used for scoring.
-  // Exclude .graphcode/.aimprove too: they hold the LIVE Kuzu store (~100M) which
-  // both drowns the executor's file index AND leaks the golden graph data.
+  // Exclude .graphcode too: it holds the LIVE Kuzu store (~100M) which both drowns
+  // the executor's file index AND leaks the golden graph data.
   execFileSync('rsync', ['-a', '--exclude', 'node_modules', '--exclude', 'dist',
     '--exclude', '.git', '--exclude', 'docs/graph', '--exclude', '.graphcode',
-    '--exclude', '.aimprove', `${CFG.material}/`, join(dir, 'material') + '/'],
+    `${CFG.material}/`, join(dir, 'material') + '/'],
     { stdio: 'pipe' });
 }
 

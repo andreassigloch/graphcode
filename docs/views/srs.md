@@ -228,13 +228,13 @@ Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `FUNC-save-graph` · alloca
 
 ##### 3.1.1.4  `FUNC-emit-trajectory` — materializeTrajectory()
 
-Projiziert .aimprove/trajectory.jsonl als reine Projektion des Operations-Logs (CR-207) — kein Parallel-Write; Schema Trajectory/Outcome aus @sigloch/learning-core. (CR-GC-102, CR-GC-252)
+Projiziert .graphcode/trajectory.jsonl als reine Projektion des Operations-Logs (CR-207) — kein Parallel-Write; Schema Trajectory/Outcome aus @sigloch/learning-core. Zielverzeichnis ist der eigene Workspace GRAPHCODE_DIR, nicht der Vorgaenger-Ordner .aimprove (CR-GC-330). (CR-GC-102, CR-GC-252, CR-GC-330)
 
 io ◀ `FLOW-committed-graph` · io ▶ `FLOW-trajectory` · allocate ▶ `MOD-hooks`
 
 ###### `REQ-post-emit-trajectory` — Postcondition: FUNC-emit-trajectory
 
-Trajectory/Outcome append-only nach .aimprove/*.jsonl, Format stabil.
+Trajectory/Outcome append-only nach .graphcode/*.jsonl, Format stabil. (CR-GC-330)
 
 priority: must · status: open · kinds: postcondition
 
@@ -250,7 +250,7 @@ Verification ◀ `TEST-learning-emit` (integration) · satisfy ◀ `FUNC-emit-tr
 
 ###### `REQ-trajectory-emit` — Trajectory/Outcome-Emission
 
-post-apply/nightly: Trajectory/Outcome append-only nach .aimprove/*.jsonl, Format stabil. (CR-GC-102, L1)
+post-apply/nightly: Trajectory/Outcome append-only nach .graphcode/*.jsonl, Format stabil. Ein Workspace-Verzeichnis pro Repo — der Feed liegt neben Store, Lock und Audit-Log (CR-GC-330). (CR-GC-102, L1)
 
 priority: must · status: open · kinds: functional
 

@@ -25,6 +25,9 @@ import { RULES_VERSION } from '@sigloch/contracts/se';
 import type { MutateCommand, MutateResult, StaleDelta, StaleDeltaEntry } from '@sigloch/contracts/harness';
 import { GraphCodeCodec } from './codec.js';
 import { materializeTrajectory } from './emit.js';
+// The per-repo workspace dir is named ONCE (scaffold-templates); the feed lands in
+// graphcode's own workspace, not the predecessor's `.aimprove/` (CR-GC-330).
+import { GRAPHCODE_DIR } from './scaffold-templates.js';
 
 /** Everything a tool group needs; the state behind it exists once per bound registry. */
 export interface ToolContext {
@@ -126,7 +129,7 @@ export function createToolContext(
     // above is the one truth; the feed is derived, so this can never diverge. The
     // repoRoot is read HERE (on a real write), never at bind time — the tool
     // template must stay unbound (host-shim proxy invariant, CR-GC-235).
-    await materializeTrajectory(auditLog, join(harness.getRepoRoot(), '.aimprove'));
+    await materializeTrajectory(auditLog, join(harness.getRepoRoot(), GRAPHCODE_DIR));
   }
 
   // Preview-Audit (CR-GC-276): dryRun-Verdicts sind die halbe F2-Evidenz — auch
@@ -152,7 +155,7 @@ export function createToolContext(
       ...positiveHalf(result),
     };
     await auditLog.record(entry);
-    await materializeTrajectory(auditLog, join(harness.getRepoRoot(), '.aimprove'));
+    await materializeTrajectory(auditLog, join(harness.getRepoRoot(), GRAPHCODE_DIR));
   }
 
   // OCC (CR-GC-233): stale-write rejection at the tool layer. The check and the

@@ -26,6 +26,9 @@ import { join } from 'node:path';
 import type { MutateResult, UpdateDomain, LiveUpdateEvent } from '@sigloch/contracts/harness';
 import type { AuditLog } from '@sigloch/graph-api-core';
 import { projectTrajectory } from '@sigloch/learning-core';
+// Der Feed-Dateiname steht einmal (scaffold-templates) — dieselbe Konstante, die
+// `graphcode remove` beim Aufräumen der Alt-Kopie liest (CR-GC-331).
+import { TRAJECTORY_FILE } from './scaffold-templates.js';
 import type { HookSystem } from './hooks.js';
 import type { HookData, HookResult } from './hooks.js';
 
@@ -101,7 +104,7 @@ export async function materializeTrajectory(log: AuditLog, outDir: string): Prom
   const entries = await log.query({});
   const body = entries.map((entry) => JSON.stringify(projectTrajectory(entry))).join('\n');
   await mkdir(outDir, { recursive: true });
-  await writeFile(join(outDir, 'trajectory.jsonl'), body ? body + '\n' : '', 'utf8');
+  await writeFile(join(outDir, TRAJECTORY_FILE), body ? body + '\n' : '', 'utf8');
 }
 
 // ---------------------------------------------------------------------------

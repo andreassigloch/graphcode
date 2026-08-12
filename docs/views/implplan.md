@@ -91,6 +91,8 @@ depends-on:  MS-1-specification  ◀  MS-2-coding-vv  ◀  MS-3-mvp-readiness  �
 | `CR-GC-236` | done | Export-Header: Member-Name statt hartkodiertem graphcode |
 | `CR-GC-238` | done | applyCommands: update-edge + merge-nodes ausführen |
 | `CR-GC-239` | done | Gate lehnt malformed Commands hart ab |
+| `CR-GC-330` | done | Der Learning-Feed zieht in den eigenen Workspace |
+| `CR-GC-331` | done | graphcode remove raeumt auch den Vorgaenger-Ordner weg |
 
 ## `MS-7-concurrency` — Enterprise concurrency & merge (one write channel) · status: draft
 

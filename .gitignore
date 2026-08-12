@@ -10,8 +10,8 @@ dist/
 !**/.graphcode/target-profile.json
 .DS_Store
 
-# local artifacts (predecessor data dir, vector db, scratch data)
-.aimprove/
+# local artifacts (vector db, scratch data). The predecessor's `.aimprove/` is gone
+# (CR-GC-330): the learning feed lives in `.graphcode/`, already ignored above.
 data/
 *.db
 

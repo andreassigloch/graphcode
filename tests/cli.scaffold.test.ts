@@ -49,6 +49,9 @@ const OWN_VERSION = JSON.parse(
 const COMMANDS_DIR = join('.claude', 'commands');
 const LEGACY_SKILLS_DIR = join('.claude', 'skills');
 const HOOKS_DIR = join('.claude', 'hooks');
+/** The predecessor product's workspace — graphcode wrote its feed there until CR-GC-330. */
+const LEGACY_WORKSPACE = '.aimprove';
+const TRAJECTORY = 'trajectory.jsonl';
 const SETTINGS = join('.claude', 'settings.json');
 /**
  * The SE skills this package ships (CR-GC-277: als Commands-Baum, Pfade relativ
@@ -385,6 +388,43 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
 
     expect(res.action).toBe('remove');
     expect(res.removed).toEqual(expect.arrayContaining(['.graphcode/', MCP, GUARDRAILS]));
+  });
+
+  // CR-GC-331 — bis CR-GC-330 landete der Learning-Feed in `.aimprove/`, dem Workspace
+  // des Vorgängerprodukts. `remove` verspricht Restlosigkeit und kannte den Ordner nicht.
+  // Geräumt wird genau unsere Datei; ein `.aimprove/` mit Fremdinhalt bleibt stehen.
+  it('remove deletes the predecessor learning feed and its empty dir (CR-GC-331)', async () => {
+    await scaffold('init', { repoRoot: repo });
+    mkdirSync(join(repo, LEGACY_WORKSPACE), { recursive: true });
+    writeFileSync(join(repo, LEGACY_WORKSPACE, TRAJECTORY), '{"a":1}\n', 'utf8');
+
+    const res = await scaffold('remove', { repoRoot: repo });
+
+    expect(res.removed).toContain(join(LEGACY_WORKSPACE, TRAJECTORY));
+    expect(existsSync(join(repo, LEGACY_WORKSPACE))).toBe(false);
+  });
+
+  it('remove leaves a predecessor dir that still holds foreign data (CR-GC-331)', async () => {
+    await scaffold('init', { repoRoot: repo });
+    mkdirSync(join(repo, LEGACY_WORKSPACE), { recursive: true });
+    writeFileSync(join(repo, LEGACY_WORKSPACE, TRAJECTORY), '{"a":1}\n', 'utf8');
+    // aimprove's own state — not ours to delete.
+    writeFileSync(join(repo, LEGACY_WORKSPACE, 'learning.db'), 'sqlite', 'utf8');
+
+    const res = await scaffold('remove', { repoRoot: repo });
+
+    expect(res.removed).toContain(join(LEGACY_WORKSPACE, TRAJECTORY));
+    expect(existsSync(join(repo, LEGACY_WORKSPACE, TRAJECTORY))).toBe(false);
+    expect(existsSync(join(repo, LEGACY_WORKSPACE, 'learning.db'))).toBe(true);
+  });
+
+  it('remove without a predecessor dir reports nothing extra (CR-GC-331)', async () => {
+    await scaffold('init', { repoRoot: repo });
+
+    const res = await scaffold('remove', { repoRoot: repo });
+
+    expect(res.removed.some((p) => p.startsWith(LEGACY_WORKSPACE))).toBe(false);
+    expect(existsSync(join(repo, LEGACY_WORKSPACE))).toBe(false);
   });
 
   it('remove preserves a member\'s own non-graphcode skills (only se-* are ours)', async () => {

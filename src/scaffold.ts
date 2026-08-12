@@ -55,6 +55,8 @@ import {
   STEERING_FILE,
   COMMANDS_DIR,
   LEGACY_SKILLS_DIR,
+  LEGACY_WORKSPACE_DIR,
+  TRAJECTORY_FILE,
   HOOKS_DIR,
   SETTINGS_FILE,
   packagedSkillsDir,
@@ -199,6 +201,28 @@ function removeArtifact(abs: string, rel: string, res: InstallResult): void {
   if (!existsSync(abs)) return;
   rmSync(abs, { recursive: true, force: true });
   res.removed.push(rel);
+}
+
+/**
+ * Bis CR-GC-330 schrieb graphcode seinen Learning-Feed in `.aimprove/`, den Workspace
+ * des Vorgängerprodukts. `remove` versprach restlose Deinstallation, kannte den Ordner
+ * aber nicht — in jedem so initialisierten Repo blieb die Datei liegen (CR-GC-331).
+ *
+ * Entfernt wird ausschließlich unsere `trajectory.jsonl`; der Ordner nur, wenn er danach
+ * leer ist. Ein `.aimprove/` mit `learning.db`/`state.json` gehört aimprove selbst und
+ * bleibt stehen — wir räumen unsere Datei weg, nicht fremde.
+ */
+function removeLegacyTrajectory(repoRoot: string, res: InstallResult): void {
+  const legacyDir = join(repoRoot, LEGACY_WORKSPACE_DIR);
+  if (!existsSync(legacyDir)) return;
+  removeArtifact(
+    join(legacyDir, TRAJECTORY_FILE),
+    join(LEGACY_WORKSPACE_DIR, TRAJECTORY_FILE),
+    res,
+  );
+  if (readdirSync(legacyDir).length === 0) {
+    rmSync(legacyDir, { recursive: true, force: true });
+  }
 }
 
 /**
@@ -469,6 +493,7 @@ export async function scaffold(
       removeArtifact(steeringAbs, STEERING_FILE, res);
       removeSkills(repoRoot, res);
       removeHooks(repoRoot, res);
+      removeLegacyTrajectory(repoRoot, res);
       pruneClaudeIfEmpty(repoRoot);
       unregisterDependency(repoRoot, res);
       return res;

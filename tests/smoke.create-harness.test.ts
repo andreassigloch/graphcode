@@ -61,12 +61,16 @@ describe('smoke: createHarness production path', () => {
     expect(events.length).toBe(1);
     expect(events[0].domains).toContain('graph');
 
-    // Learning feed written under <repoRoot>/.aimprove as a projection of the log.
-    const jsonl = join(repoRoot, '.aimprove/trajectory.jsonl');
+    // Learning feed written under <repoRoot>/.graphcode as a projection of the log.
+    const jsonl = join(repoRoot, '.graphcode/trajectory.jsonl');
     expect(existsSync(jsonl)).toBe(true);
     const lines = readFileSync(jsonl, 'utf8').trim().split('\n').filter(Boolean);
     expect(lines.length).toBe(1);
     expect(() => JSON.parse(lines[0])).not.toThrow();
+
+    // One workspace dir per repo (CR-GC-330): the predecessor's `.aimprove/` is
+    // never created again — a write there would be a second, unowned workspace.
+    expect(existsSync(join(repoRoot, '.aimprove'))).toBe(false);
 
     // Readiness is family-measured (contracts V3_RULES, not foreign BQ rules).
     const r = scoreReadiness(harness);

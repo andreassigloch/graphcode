@@ -44,7 +44,7 @@ function verifiedReq(n: string): MutateCommand[] {
 }
 
 function readTrajectory(repoRoot: string): Trajectory[] {
-  const file = join(repoRoot, '.aimprove', 'trajectory.jsonl');
+  const file = join(repoRoot, '.graphcode', 'trajectory.jsonl');
   if (!existsSync(file)) return [];
   return readFileSync(file, 'utf8')
     .split('\n')

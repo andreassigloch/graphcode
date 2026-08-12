@@ -418,6 +418,13 @@
 | `CR-GC-317` | relation | `FUNC-view-rtm` |
 | `CR-GC-318` | relation | `FUNC-view-rtm` |
 | `CR-GC-319` | relation | `MOD-mcp-tools` |
+| `CR-GC-330` | relation | `FUNC-emit-trajectory` |
+| `CR-GC-330` | relation | `MS-6-adoption` |
+| `CR-GC-330` | relation | `REQ-post-emit-trajectory` |
+| `CR-GC-330` | relation | `REQ-trajectory-emit` |
+| `CR-GC-331` | relation | `FUNC-harness-cli` |
+| `CR-GC-331` | relation | `MS-6-adoption` |
+| `CR-GC-331` | relation | `REQ-repo-uninstall` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-suggest` |

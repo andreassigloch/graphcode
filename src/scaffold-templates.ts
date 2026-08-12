@@ -74,6 +74,14 @@ export const STEERING_FILE = 'GRAPHCODE-STEERING.md';
 export const COMMANDS_DIR = join('.claude', 'commands');
 /** Das Alt-Ziel bis 0.9.0 — install/sync/remove räumen dort verwaiste se-*.md ab. */
 export const LEGACY_SKILLS_DIR = join('.claude', 'skills');
+/**
+ * Der Workspace des Vorgängerprodukts. Bis CR-GC-330 schrieb graphcode seinen
+ * Learning-Feed dorthin statt in den eigenen Ordner; `remove` räumt genau diese eine
+ * Datei ab (CR-GC-331) — der Rest eines `.aimprove/` kann aimprove selbst gehören.
+ */
+export const LEGACY_WORKSPACE_DIR = '.aimprove';
+/** Der Learning-Feed, heute unter GRAPHCODE_DIR (CR-GC-330). */
+export const TRAJECTORY_FILE = 'trajectory.jsonl';
 /** Where the PreToolUse deny-hooks land (and ship from in this package) — CR-GC-214. */
 export const HOOKS_DIR = join('.claude', 'hooks');
 /** The settings file that registers the shipped hooks in the target repo. */

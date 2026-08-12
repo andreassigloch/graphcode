@@ -226,6 +226,8 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-317` | done | RTM nach A-SPICE-Ebenen gruppieren + Integrationsabdeckung | `FUNC-view-rtm` |
 | `CR-GC-318` | done | reqLevels lief nur ueber compose — satisfy-Bein fehlte | `FUNC-view-rtm` |
 | `CR-GC-319` | done | audit_trail lieferte Rohdatensaetze statt einer Projektion | `MOD-mcp-tools` |
+| `CR-GC-330` | done | Der Learning-Feed zieht in den eigenen Workspace | `FUNC-emit-trajectory` · `REQ-post-emit-trajectory` · `REQ-trajectory-emit` |
+| `CR-GC-331` | done | graphcode remove raeumt auch den Vorgaenger-Ordner weg | `FUNC-harness-cli` · `REQ-repo-uninstall` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

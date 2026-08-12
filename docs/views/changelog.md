@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 156 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 158 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 156 CR · 147 done · 8 open.
+Total: 158 CR · 149 done · 8 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -91,6 +91,8 @@ Total: 156 CR · 147 done · 8 open.
 | `CR-GC-236` | done | Export-Header: Member-Name statt hartkodiertem graphcode |
 | `CR-GC-238` | done | applyCommands: update-edge + merge-nodes ausführen |
 | `CR-GC-239` | done | Gate lehnt malformed Commands hart ab |
+| `CR-GC-330` | done | Der Learning-Feed zieht in den eigenen Workspace |
+| `CR-GC-331` | done | graphcode remove raeumt auch den Vorgaenger-Ordner weg |
 
 ## `MS-7-concurrency` — Enterprise concurrency & merge (one write channel)
 

@@ -161,7 +161,7 @@ export const KUZU_DIR = '.graphcode/kuzu';
  * The live-update emitter is registered by default (REQ-mutation-emits-event):
  * every mutation emits exactly one live-update event. A host passes `onUpdateEvent`
  * to wire its SSE broadcast; the harness core stays headless (no HTTP). The learning
- * feed (`<repoRoot>/.aimprove/trajectory.jsonl`) is materialized in the tool layer
+ * feed (`<repoRoot>/.graphcode/trajectory.jsonl`) is materialized in the tool layer
  * as a projection of the operations log (CR-252), not by a harness hook.
  */
 export async function createHarness(
