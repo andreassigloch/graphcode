@@ -17,7 +17,9 @@
  *                              always written: each is invisible to the other host, and
  *                              which host opens the repo is unknowable at init time. Both
  *                              are MERGED — foreign servers / provider blocks survive.
- *   - `GRAPHCODE.md`          the guardrails doc.
+ *   - `GRAPHCODE.md`          the guardrails doc — the AGENT's contract.
+ *   - `GRAPHCODE-STEERING.md` the HUMAN's companion (CR-GC-322): the four decisions
+ *                              only the person can make + what `docs/views/` is.
  *   - `.claude/commands/se…`  the MCP-driven SE skills as commands (CR-GC-133/277).
  *   - `.claude/hooks/deny-*.sh` the PreToolUse enforcement hooks (gate-only writes,
  *                              no binary source, no stale-prose reads) — CR-GC-214.
@@ -50,6 +52,7 @@ import {
   MCP_CONFIG,
   OPENCODE_CONFIG,
   GUARDRAILS_FILE,
+  STEERING_FILE,
   COMMANDS_DIR,
   LEGACY_SKILLS_DIR,
   HOOKS_DIR,
@@ -65,6 +68,7 @@ import {
   opencodeConfigContent,
   hostConfigWithoutGraphcode,
   guardrailsContent,
+  steeringContent,
   type SettingsShape,
 } from './scaffold-templates.js';
 
@@ -398,6 +402,7 @@ export async function scaffold(
   const mcpAbs = join(repoRoot, MCP_CONFIG);
   const opencodeAbs = join(repoRoot, OPENCODE_CONFIG);
   const guardrailsAbs = join(repoRoot, GUARDRAILS_FILE);
+  const steeringAbs = join(repoRoot, STEERING_FILE);
 
   switch (action) {
     case 'init': {
@@ -417,6 +422,9 @@ export async function scaffold(
         res,
       );
       writeArtifact(guardrailsAbs, GUARDRAILS_FILE, guardrailsContent(), res);
+      // CR-GC-322: the human's companion doc. Shipped copy, so `update` REFRESHES it
+      // like the guardrails — it carries no user content to preserve.
+      writeArtifact(steeringAbs, STEERING_FILE, steeringContent(), res);
       installSkills(repoRoot, res);
       installHooks(repoRoot, res);
       registerDependency(repoRoot, res);
@@ -441,6 +449,9 @@ export async function scaffold(
         res,
       );
       writeArtifact(guardrailsAbs, GUARDRAILS_FILE, guardrailsContent(), res);
+      // CR-GC-322: the human's companion doc. Shipped copy, so `update` REFRESHES it
+      // like the guardrails — it carries no user content to preserve.
+      writeArtifact(steeringAbs, STEERING_FILE, steeringContent(), res);
       installSkills(repoRoot, res);
       installHooks(repoRoot, res);
       registerDependency(repoRoot, res);
@@ -455,6 +466,7 @@ export async function scaffold(
       removeHostConfig(mcpAbs, MCP_CONFIG, 'mcpServers', res);
       removeHostConfig(opencodeAbs, OPENCODE_CONFIG, 'mcp', res);
       removeArtifact(guardrailsAbs, GUARDRAILS_FILE, res);
+      removeArtifact(steeringAbs, STEERING_FILE, res);
       removeSkills(repoRoot, res);
       removeHooks(repoRoot, res);
       pruneClaudeIfEmpty(repoRoot);

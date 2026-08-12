@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 154 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 156 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 154 CR · 146 done · 7 open.
+Total: 156 CR · 147 done · 8 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -201,3 +201,5 @@ Total: 154 CR · 146 done · 7 open.
 | `CR-GC-318` | done | reqLevels lief nur ueber compose — satisfy-Bein fehlte |
 | `CR-GC-319` | done | audit_trail lieferte Rohdatensaetze statt einer Projektion |
 | `CR-GC-320` | done | executor.ts schneiden — Schritt 1 (Prompt · Ranking · Prosa-Recovery) |
+| `CR-GC-321` | open | __name in Format-E entdeckbar machen, stillen Namens-Fallback laut machen |
+| `CR-GC-322` | done | GRAPHCODE-STEERING.md — die Anleitung fuer den Menschen (Steuerung und docs/views/) |

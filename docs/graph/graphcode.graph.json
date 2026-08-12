@@ -1349,6 +1349,22 @@
       "created_at": "2026-08-08T00:00:00.000Z"
     },
     {
+      "id": "CR-GC-321",
+      "type": "CR",
+      "name": "__name in Format-E entdeckbar machen, stillen Namens-Fallback laut machen",
+      "description": "OPEN 2026-08-10. Format-E kann Namen setzen, nur nicht positional: der Name reist als Attribut __name, inline oder als @__name-Folgezeile. Nur steht __name in keiner Tool-Beschreibung (weder im formatE-Feld von graph_mutate noch in graph_authoring_guide) — einzige Fundstelle im Repo ist das Cold-Start-Template in src/bootstrap.ts. Und der Fallback schweigt: fehlt __name, setzt der Codec name gleich uid, ohne Violation, tier bleibt pass. Realer Schaden (Session 2026-08-10, Fremdrepo): 87 von 134 Knoten trugen ihren uid als Namen, sichtbar erst in den generierten Sichten (implplan.md zeigte CR-002 statt des Titels); Reparatur in drei Gate-Batches. Geplant: die formatE-Feldbeschreibung nennt beide __name-Formen und den Fallback, graph_authoring_guide liefert je Typ ein decodierbares formatEExample, und ein formatE-Batch ohne __name liefert nameWarning mit den betroffenen uids (Muster occWarning, aendert success, tier und violations nicht, greift auch im dryRun). Nicht-Ziele: kein drittes positionales Feld in Format-E, kein Block, und keine Contracts-Regel name-gleich-uid — die waere die staerkere Variante, kostet aber Familie-Review plus Version-Bump und ist ein eigener CR. (docs/cr/open/CR-GC-321)",
+      "created_at": "2026-08-10T00:00:00.000Z",
+      "status": "open"
+    },
+    {
+      "id": "CR-GC-322",
+      "type": "CR",
+      "name": "GRAPHCODE-STEERING.md — die Anleitung fuer den Menschen (Steuerung und docs/views/)",
+      "description": "DONE 2026-08-11. Nach graphcode init lagen 17 Anleitungen im Repo und keine davon war fuer den Menschen geschrieben — alle .claude/commands/se-Skills sind Arbeitsanweisungen an den Agenten in Ontologie-Sprache, GRAPHCODE.md deklariert sich selbst als Harness-Guardrails. Neu: GRAPHCODE-STEERING.md wird von init und update ins Repo-Root geschrieben (Refresh wie GRAPHCODE.md, kein preserve) und von remove restlos entfernt. Es benennt die vier Steuerhebel des Menschen (Intent-Absatz, Beantworten der Domaenenfragen, Entscheidung zwischen vorgelegten Alternativen, Zielprofil in .graphcode/target-profile.json), liefert die woertlichen Startsaetze fuer beide Faelle (leeres Repo per se:generate, bestehendes Modell per graph_readiness) und erklaert docs/views/ als deterministischen Render, dessen Hand-Edit beim naechsten graph_export verschwindet. Die View-Tabelle ist derived aus MARKDOWN_VIEWS und VIEW_FILENAMES ueber VIEW_BLURBS als Record ueber MarkdownView — ein neuer View bricht die Kompilierung, bis er einen Satz hat; dashboard.url ist ausdruecklich als kein View ausgewiesen. Nebenbefund gefixt: guardrailsContent nannte zweimal .claude/skills/ als Skill-Ort, real schreibt installSkills nach .claude/commands/ und removeLegacySkills entfernt das Legacy-Layout aktiv. 85 Testdateien und 630 Tests gruen; vier Mutationsproben treffen je genau den zugehoerigen Test. (docs/cr/done/CR-GC-322)",
+      "created_at": "2026-08-11T00:00:00.000Z",
+      "status": "done"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -10699,5 +10715,5 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     }
   ],
-  "graphVersion": 66
+  "graphVersion": 67
 }

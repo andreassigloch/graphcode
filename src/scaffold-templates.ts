@@ -17,6 +17,7 @@
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { MARKDOWN_VIEWS, VIEW_FILENAMES, type MarkdownView } from '@sigloch/graphcode-client';
 
 /** The distribution package a member repo depends on. */
 export const PACKAGE_NAME = '@sigloch/graphcode';
@@ -52,6 +53,15 @@ export const MCP_CONFIG = '.mcp.json';
 /** OpenCode's host config in the target repo — same server, OpenCode's schema (CR-GC-263). */
 export const OPENCODE_CONFIG = 'opencode.json';
 export const GUARDRAILS_FILE = 'GRAPHCODE.md';
+/**
+ * The human-facing companion to GUARDRAILS_FILE (CR-GC-322). `GRAPHCODE.md` is the
+ * AGENT contract — query paths, Format-E, prohibitions, read graph-first. This one is
+ * for the PERSON: what runs without them, the four decisions only they can make, and
+ * what the generated `docs/views/` documents are. Two audiences, two files: merged,
+ * the agent reads onboarding prose it does not need and the human hunts for their four
+ * levers between Format-E rules.
+ */
+export const STEERING_FILE = 'GRAPHCODE-STEERING.md';
 /** Where the SE skills land in the target repo (and ship from in this package). */
 /**
  * Where the shipped SE skills land in a member repo — als Claude-Code-COMMANDS
@@ -370,7 +380,7 @@ export function guardrailsContent(): string {
     '',
     '## Available se-* skills (CR-GC-208)',
     '',
-    'These ship in `.claude/skills/`. Invoke them via the **Skill tool** instead of',
+    'These ship in `.claude/commands/`. Invoke them via the **Skill tool** instead of',
     'planning the same work ad-hoc — each is MCP-driven against the live graph. Run',
     '`npx @sigloch/graphcode skills sync` to refresh them when this package updates.',
     '',
@@ -388,8 +398,11 @@ export function guardrailsContent(): string {
     '- `.mcp.json` (Claude schema) + `opencode.json` (OpenCode schema) — both tell the',
     `  agent host to launch the server via \`npx -y ${PACKAGE_NAME} mcp\`. Merged, never`,
     '  overwritten: foreign MCP servers and your `provider`/`model` block survive.',
-    '- `.claude/skills/se-*.md` — the SE skills (fmea/review/status + the views), MCP-driven.',
+    '- `.claude/commands/se*.md` — the SE skills (fmea/review/status + the views), MCP-driven.',
     '  Claude Code surface; on other hosts drive the MCP tools directly.',
+    `- \`${STEERING_FILE}\` — the HUMAN's companion to this file: the four decisions only`,
+    '  the person can make, and what the generated `docs/views/` documents are. Point',
+    '  the user there when they ask how to steer the model — do not paraphrase it.',
     '- `.claude/hooks/deny-*.sh` + `.claude/settings.json` — PreToolUse enforcement:',
     '  gate-only writes, no binary source, no stale-prose reads (CR-GC-214). Your own',
     '  hooks/settings keys are preserved on `update` and restored on `remove`.',
@@ -418,6 +431,154 @@ export function guardrailsContent(): string {
     '',
     '- `npx @sigloch/graphcode update` — refresh both host configs + this file, preserve the store.',
     '- `npx @sigloch/graphcode remove`  — remove all scaffolded artifacts (incl. `.graphcode/`).',
+    '',
+  ].join('\n');
+}
+
+/**
+ * One sentence per generated view — what QUESTION the document answers, in the
+ * language of someone who has never met this ontology (CR-GC-322).
+ *
+ * Typed as a total `Record<MarkdownView, …>` on purpose: a view added to
+ * `MARKDOWN_VIEWS` (@sigloch/graphcode-client) fails the build here until it has a
+ * sentence, so `docs/views/` can never grow an undocumented file. The catalog itself
+ * stays description-free — it is deliberately zero-dependency, plain data (CR-GC-264);
+ * the wording is authored, so it lives with the other authored copy.
+ */
+export const VIEW_BLURBS: Record<MarkdownView, string> = {
+  architecture: 'Which module realizes which function — the allocation, i.e. the design description.',
+  'cr-list': 'Every change request with its status and description.',
+  references: 'Every trace in the model as `source -type-> target` — the raw link inventory.',
+  srs: 'The requirements narrative (ISO 29148): what the system must do, and why.',
+  nfr: 'The non-functional register — the quality requirements and how each is measured.',
+  rtm: 'Traceability: requirement → realizing element → verifying test. The audit view.',
+  icd: 'The interfaces between the modules (Interface Control Document).',
+  testconcept: 'The test pyramid over the model, with the end-to-end gap computed, not claimed.',
+  testmatrix: 'Which test verifies which requirement (VCRM) — and which requirement has none.',
+  intplan: 'Integration and test plan: in which order the parts come together, verified how.',
+  changelog: 'The change history, derived from the CR nodes.',
+  fmea: 'Failure modes with severity/occurrence/detection, action priority, and mitigation coverage.',
+  conops: 'Concept of operations: user classes, scenarios, constraints — the operational picture.',
+  trade: 'The decisions: which options were evaluated, which won, what superseded what.',
+  implplan: 'Milestones and the change requests assigned to them — the build order.',
+};
+
+/**
+ * The `docs/views/` table rows for the steering doc — derived from the shared catalog
+ * (CR-GC-264) so filename and coverage cannot drift from what `graph_export` writes.
+ */
+export function viewTableRows(): string[] {
+  return MARKDOWN_VIEWS.map((v) => `| \`${VIEW_FILENAMES[v]}\` | ${VIEW_BLURBS[v]} |`);
+}
+
+/**
+ * `GRAPHCODE-STEERING.md` — the doc scaffolded FOR THE HUMAN (CR-GC-322).
+ *
+ * The other 17 scaffolded documents are instructions to the agent, written in this
+ * ontology's vocabulary; `se/target-profile.md` even says so out loud (CR-GC-307: the
+ * steering vocabulary is our device, not a customer concept). That left the person who
+ * OWNS the intent with nothing addressed to them. This file is that, and only that:
+ * the four levers they actually hold, plus the generated documents they are expected
+ * to read. No element types, no Format-E, no rule IDs beyond one worked example.
+ */
+export function steeringContent(): string {
+  return [
+    '# graphcode — steering the model (written for you, not for your agent)',
+    '',
+    `\`${GUARDRAILS_FILE}\` is the contract for your **agent**. This file is for **you**: what`,
+    'graphcode decides on its own, the four decisions only you can make, and what the',
+    'generated documents under `docs/views/` are.',
+    '',
+    '## What runs without you',
+    '',
+    'The agent does not invent the order of work. `graph_generate` derives from the live',
+    'model what has to be described next and hands the agent that instruction; every write',
+    'then passes the **apply-gate**, which checks it against the SE rules and rejects what',
+    'would leave the model inconsistent. A requirement with no test that could falsify it,',
+    'for example, is refused at the moment it is written — not flagged in a review later.',
+    '',
+    'So consistency takes care of itself. What no rule can check is whether the model',
+    'describes **the system you wanted**. That is what the four levers below are for.',
+    '',
+    '## Lever 1 — the intent paragraph (this one is not optional)',
+    '',
+    'Everything derives from one paragraph of prose: **what should the system do, and for',
+    'whom?** Write it in your own words — no method vocabulary, no module names, no file',
+    'layout. Three things are worth naming explicitly, because each becomes structure:',
+    '',
+    '- **who uses it, and what they get out of it** — the users and their goals;',
+    '- **what the system must not do, or must never lose** — the hard constraints;',
+    '- **what happens when something goes wrong** — the cases people forget to mention.',
+    '',
+    'Say this to your agent, with your paragraph in the quotes:',
+    '',
+    '> Read GRAPHCODE.md, then `se:generate`: "<what the system should do, for whom>"',
+    '',
+    'On a repo that already has a model, start from where it stands instead:',
+    '',
+    '> Read GRAPHCODE.md, then: `graph_readiness` — where does the project stand, and what',
+    '> is the next step?',
+    '',
+    '## Lever 2 — answering the questions you get asked',
+    '',
+    'If the paragraph is too thin to derive from, you get **questions about your domain, in',
+    'plain language** ("What happens when a customer cancels an order?", "Who is allowed to',
+    'change prices?"). They are not a formality: your answers are the material the model is',
+    'built from. Answer them concretely — a vague answer produces a vague requirement, and',
+    'the gate will happily certify it as consistent.',
+    '',
+    '## Lever 3 — the choices that come back to you',
+    '',
+    'At every design decision the agent is required to put **two** options in front of you,',
+    'each previewed against the real model, and to show what each does to it — never to pick',
+    'silently. Same for trade studies and failure-mode analysis: those produce options and',
+    'evidence, not verdicts. You decide; the decision is recorded, including the option you',
+    'turned down, so a later reader can see what was considered and why it lost.',
+    '',
+    'If your agent presents one option as settled, that is the moment to push back and ask',
+    'for the alternative it did not show you.',
+    '',
+    '## Lever 4 — the target profile (optional, and only when you want to steer)',
+    '',
+    'You can tell the optimizer what "better" means for this project — how strongly to favour',
+    'loosely coupled parts, redundancy, short data paths, cohesive modules, a balanced size,',
+    'or the absence of bottlenecks. It lives in `.graphcode/target-profile.json`; your agent',
+    'sets it up if you ask for it ("I want to steer the optimization").',
+    '',
+    'Leaving it unset is a legitimate choice — everything is then weighted equally. Note that',
+    'some goals genuinely pull against each other (loosely coupled parts vs. short data paths,',
+    'for instance); if you weight both up, you get a warning, not a block. A conscious',
+    'trade-off is fine, an invisible one is not.',
+    '',
+    '## `docs/views/` — the generated documents',
+    '',
+    'Everything in `docs/views/` is a **deterministic render of the model**, written by',
+    '`graph_export`. The same model always produces byte-identical files, and each one carries',
+    'a `GENERATED … DO NOT HAND-EDIT` header.',
+    '',
+    'Take that literally: an edit you make there survives until the next export and is then',
+    'gone without a trace. To change what a document says, change the **model** (your agent',
+    'does that through the gate) and export again. The documents are the readable face of the',
+    'model — for a review, a hand-off, or a diff in a pull request. Your agent does not read',
+    'them to plan its work; it queries the model directly. They are for you.',
+    '',
+    '| file | answers |',
+    '| --- | --- |',
+    ...viewTableRows(),
+    '',
+    'Two generated things you will meet alongside them are **not** views:',
+    '',
+    '- `docs/views/dashboard.url` — the address of the live dashboard, written by the viewer',
+    '  on startup and removed on shutdown. The port is dynamic; read the file, never assume a',
+    '  number. File absent = nothing running.',
+    '- `docs/graph/<name>.graph.json` — the exported model itself, the readable source the',
+    '  documents above are rendered from. Also generated; a hand-edit is actively blocked.',
+    '',
+    '## When a document or a screen says something you do not recognize',
+    '',
+    'Ask for it by name — `se:help <whatever it said>` explains any rule, gate, panel, or term',
+    'twice over: once in plain language, once in systems-engineering terms, plus the exact fix.',
+    '`se:help` with nothing after it gives you the ranked next steps for this project.',
     '',
   ].join('\n');
 }

@@ -32,12 +32,15 @@ import {
   SkillSyncResultSchema,
 } from '../src/scaffold.js';
 import { deriveHostPort } from '../src/scaffold-templates.js';
+import { MARKDOWN_VIEWS, VIEW_FILENAMES } from '@sigloch/graphcode-client';
 import { KUZU_DIR } from '../src/index.js';
 
 const MCP = '.mcp.json';
 /** OpenCode's host config — the second first-class agent host (CR-GC-263). */
 const OPENCODE = 'opencode.json';
 const GUARDRAILS = 'GRAPHCODE.md';
+/** The human-facing companion doc (CR-GC-322). */
+const STEERING = 'GRAPHCODE-STEERING.md';
 const PKG = '@sigloch/graphcode';
 /** This package's published version — the single source both sides of the range read (CR-GC-265). */
 const OWN_VERSION = JSON.parse(
@@ -609,5 +612,123 @@ describe('TEST-skills-sync: graphcode skills sync (CR-GC-208 anti-drift)', () =>
     expect(second.added).toEqual([]);
     expect(second.updated).toEqual([]);
     expect(second.unchanged.length).toBe(SHIPPED_SKILLS.length);
+  });
+});
+
+/**
+ * TEST-steering-doc (CR-GC-322) — `GRAPHCODE-STEERING.md`, the doc scaffolded for the
+ * HUMAN. Every other scaffolded document addresses the agent; this one has to survive
+ * the cold-reader test: someone who has never met this ontology must find their four
+ * decisions and an explanation of `docs/views/` in it.
+ */
+describe('TEST-steering-doc: GRAPHCODE-STEERING.md (CR-GC-322)', () => {
+  let repo: string;
+
+  beforeEach(() => {
+    repo = mkdtempSync(join(tmpdir(), 'graphcode-steering-'));
+    writeFileSync(join(repo, 'package.json'), JSON.stringify({ name: 'member' }, null, 2), 'utf8');
+  });
+
+  afterEach(() => {
+    rmSync(repo, { recursive: true, force: true });
+  });
+
+  const read = () => readFileSync(join(repo, STEERING), 'utf8');
+
+  it('init writes it, update refreshes it, remove deletes it (REQ-S01)', async () => {
+    const init = await scaffold('init', { repoRoot: repo });
+    expect(existsSync(join(repo, STEERING))).toBe(true);
+    expect(init.created).toContain(STEERING);
+
+    // Unchanged content is reported as preserved, not updated (writeArtifact's
+    // idempotence contract — same as GRAPHCODE.md). The refresh path is REQ-S08.
+    const upd = await scaffold('update', { repoRoot: repo });
+    expect(upd.preserved).toContain(STEERING);
+
+    const rm = await scaffold('remove', { repoRoot: repo });
+    expect(existsSync(join(repo, STEERING))).toBe(false);
+    expect(rm.removed).toContain(STEERING);
+  });
+
+  it('names all four levers the human actually holds (REQ-S02)', async () => {
+    await scaffold('init', { repoRoot: repo });
+    const md = read();
+    // 1 intent paragraph, 2 the domain questions, 3 the choices handed back, 4 target profile.
+    expect(md).toMatch(/intent paragraph/i);
+    expect(md).toMatch(/questions about your domain/i);
+    expect(md).toMatch(/\*\*two\*\* options/);
+    expect(md).toContain('.graphcode/target-profile.json');
+    // …and says the two mandatory ones are mandatory.
+    expect(md).toMatch(/not optional/i);
+  });
+
+  it('carries the copy-able opening line for both the empty and the seeded repo (REQ-S03)', async () => {
+    await scaffold('init', { repoRoot: repo });
+    const md = read();
+    expect(md).toContain('se:generate');
+    expect(md).toContain('graph_readiness');
+    // Both are quoted lines the user can copy, not prose describing them.
+    expect(md).toMatch(/^> Read GRAPHCODE\.md, then `se:generate`:/m);
+    expect(md).toMatch(/^> Read GRAPHCODE\.md, then: `graph_readiness`/m);
+  });
+
+  it('explains docs/views as a deterministic render, not a place to edit (REQ-S04)', async () => {
+    await scaffold('init', { repoRoot: repo });
+    const md = read();
+    expect(md).toContain('docs/views/');
+    expect(md).toContain('graph_export');
+    expect(md).toMatch(/byte-identical/i);
+    expect(md).toMatch(/DO NOT HAND-EDIT/);
+    // The consequence, spelled out — the header alone is read only after opening the file.
+    expect(md).toMatch(/survives until the next export and is then/i);
+  });
+
+  it('documents EVERY view in the shared catalog, under its real filename (REQ-S05)', async () => {
+    await scaffold('init', { repoRoot: repo });
+    const md = read();
+    for (const v of MARKDOWN_VIEWS) {
+      const file = VIEW_FILENAMES[v];
+      const row = md.split('\n').find((l) => l.startsWith(`| \`${file}\` |`));
+      expect(row, `${file} has a table row`).toBeTruthy();
+      // The row carries a real sentence, not a placeholder.
+      const blurb = (row as string).split('|')[2].trim();
+      expect(blurb.length, `${file} blurb is a sentence`).toBeGreaterThan(20);
+      expect(blurb).not.toMatch(/TODO|TBD/i);
+    }
+    // Coverage is exactly the catalog — no invented extra rows.
+    const rows = md.split('\n').filter((l) => /^\| `[a-z-]+\.md` \| /.test(l));
+    expect(rows.length).toBe(MARKDOWN_VIEWS.length);
+  });
+
+  it('marks dashboard.url as NOT a view and hard-codes no port (REQ-S06)', async () => {
+    await scaffold('init', { repoRoot: repo });
+    const md = read();
+    expect(md).toContain('docs/views/dashboard.url');
+    expect(md).toMatch(/are \*\*not\*\* views/i);
+    // It must not appear as a catalog row (that is what would send people looking for a render).
+    expect(md).not.toMatch(/^\| `dashboard\.url` \|/m);
+    // The bound port is dynamic; a number here is how people inspect the wrong instance.
+    expect(md).not.toMatch(/\b\d{4}\b/);
+  });
+
+  it('GRAPHCODE.md points at it once and names the REAL skill dir (REQ-S07)', async () => {
+    await scaffold('init', { repoRoot: repo });
+    const md = readFileSync(join(repo, GUARDRAILS), 'utf8');
+    // The pointer exists — and exactly once, so the agent-facing doc stays short.
+    expect(md.match(new RegExp(STEERING, 'g'))?.length).toBe(1);
+    // CR-GC-277 moved the skills to .claude/commands/; the guardrails still claimed
+    // `.claude/skills/` — the very layout removeLegacySkills() deletes.
+    expect(md).toContain('.claude/commands/');
+    expect(md).not.toContain('.claude/skills/');
+  });
+
+  it('update overwrites a stale copy — shipped doc, no user content to preserve (REQ-S08)', async () => {
+    await scaffold('init', { repoRoot: repo });
+    writeFileSync(join(repo, STEERING), '# steering doc from an older version\n', 'utf8');
+    const res = await scaffold('update', { repoRoot: repo });
+    expect(res.updated).toContain(STEERING);
+    const md = read();
+    expect(md).not.toContain('from an older version');
+    expect(md).toContain('docs/views/');
   });
 });

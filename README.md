@@ -43,6 +43,7 @@ npx @sigloch/graphcode init
 | `opencode.json` | the same server in OpenCode's schema (`mcp.graphcode`) | ✅ commit |
 | `.graphcode/` | the per-repo Kuzu store (`.graphcode/kuzu`), created lazily on first run | ❌ gitignore |
 | `GRAPHCODE.md` | guardrails for agents working in the repo | ✅ commit |
+| `GRAPHCODE-STEERING.md` | the human's companion — the four decisions only you can make, and what `docs/views/` is | ✅ commit |
 | `package.json` | gains the `@sigloch/graphcode` dependency | ✅ commit |
 
 Both host configs are written every time and **merged**, never overwritten: a foreign MCP server
