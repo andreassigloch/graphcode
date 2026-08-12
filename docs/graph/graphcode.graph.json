@@ -1370,7 +1370,8 @@
       "name": "Der Learning-Feed zieht in den eigenen Workspace",
       "description": "DONE 2026-08-12. Der Learning-Feed trajectory.jsonl war die letzte Datei, die graphcode in den Workspace des Vorgaengerprodukts .aimprove schrieb (tool-context recordAudit/recordPreview). Zwei Folgen: graphcode remove verspricht restlose Deinstallation, entfernt aber nur .graphcode und liess trajectory.jsonl in jedem Zielrepo verwaist zurueck; und drei Live-Knoten nannten den falschen Pfad als verbindlich, was ueber den Export in srs.md propagierte. Das Ziel kommt jetzt aus dem bestehenden GRAPHCODE_DIR (scaffold-templates), kein zweites String-Literal; materializeTrajectory selbst bleibt unveraendert, es nimmt outDir als Parameter. Der Smoke-Test pinnt zusaetzlich negativ, dass .aimprove nach einer Mutation nicht mehr entsteht. Entfernt wurden 103 MB Vorgaenger-Daten im Root plus je eine verwaiste trajectory.jsonl in rig/dummy-slicer und rig/plan-step, die die geloeschte gitignore-Zeile bisher unsichtbar hielt. Nicht in Scope: aimprove als Produkt (README-Abgrenzung, ADR-001, CR-Historie) bleibt referenziert, nur der Pfad zieht um. 664 Tests gruen. (docs/cr/done/CR-GC-330)",
       "status": "done",
-      "created_at": "2026-08-12T00:00:00.000Z"
+      "created_at": "2026-08-12T00:00:00.000Z",
+      "commitRef": "f988c79"
     },
     {
       "id": "CR-GC-331",
@@ -1378,7 +1379,8 @@
       "name": "graphcode remove raeumt auch den Vorgaenger-Ordner weg",
       "description": "DONE 2026-08-12. Folge-CR zu CR-GC-330: dass graphcode .aimprove nicht mehr anlegt, entfernt die Datei nicht aus Repos, die mit einer aelteren Version initialisiert wurden — und remove kannte den Ordner nicht, obwohl es Restlosigkeit verspricht. Neu: removeLegacyTrajectory analog zum bestehenden removeLegacySkills, aufgerufen nur im remove-Zweig. Geraeumt wird ausschliesslich unsere trajectory.jsonl; der Ordner nur, wenn er danach leer ist — ein .aimprove mit learning.db oder state.json gehoert aimprove selbst und bleibt stehen. Nebenbefund gefixt: der Dateiname stand zweimal da, einmal beim Schreiben in emit.ts und einmal beim Aufraeumen; jetzt einmal als TRAJECTORY_FILE neben LEGACY_WORKSPACE_DIR in scaffold-templates. Drei Testfaelle (raeumt Datei und leeren Ordner, laesst Fremdinhalt stehen, idempotent ohne Ordner), zwei davon vorher rot gesehen. 667 Tests gruen. (docs/cr/done/CR-GC-331)",
       "status": "done",
-      "created_at": "2026-08-12T00:00:00.000Z"
+      "created_at": "2026-08-12T00:00:00.000Z",
+      "commitRef": "f988c79"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -10766,5 +10768,5 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     }
   ],
-  "graphVersion": 71
+  "graphVersion": 73
 }
