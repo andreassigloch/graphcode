@@ -50,7 +50,12 @@ const GraphMutateInputSchema = z
           'Bevorzugt für LLM-Autoring (~2–3× weniger Tokens); upsert-Semantik. Deletes/updates/merges ' +
           'brauchen weiterhin commands. Kanten zwischen BESTEHENDEN Knoten brauchen keine ' +
           '`### <TYPE>`-Sektion (CR-GC-310) — der Typ kommt aus dem Store; ein reiner Kanten-Batch ist ' +
-          '"## Edges" + Zeilen der Form "+ A -verify-> B". Eine unbekannte uid bleibt ein Fehler.',
+          '"## Edges" + Zeilen der Form "+ A -verify-> B". Eine unbekannte uid bleibt ein Fehler. ' +
+          'NAME (CR-GC-321): `+ uid|text` hat nur ZWEI positionale Felder — uid und BESCHREIBUNG. ' +
+          'Der Name reist als Attribut `__name`: inline `+ REQ-x|Beschreibung [__name:Lesbarer Name]`, ' +
+          'oder als Folgezeile `@__name Lesbarer Name` wenn der Name Komma oder eckige Klammer enthält. ' +
+          'OHNE `__name` wird die uid zum Namen (kein Fehler, aber jede Sicht zeigt dann "REQ-x" ' +
+          'statt des Namens) — das Ergebnis meldet die betroffenen uids als `nameWarning`.',
       ),
     dryRun: z
       .boolean()
@@ -163,15 +168,25 @@ const GraphReseedInputSchema = z.object({
 export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
   const { harness, graphVersion, recordAudit, recordPreview, serializeToolWrite, occReject } = ctx;
 
-  /** Format-E-Block → additive MutateCommands (CR-GC-276). Ein Input-Codec, KEIN zweiter Schreibweg. */
-  const formatEToCommands = (text: string): MutateCommand[] => {
+  /**
+   * Format-E-Block → additive MutateCommands (CR-GC-276). Ein Input-Codec, KEIN zweiter Schreibweg.
+   *
+   * CR-GC-321: `unnamed` trägt die uids, deren Zeile kein `__name` hatte — exakt vom
+   * Decoder gemeldet, nicht aus `name === uid` erraten (das träfe auch bewusst
+   * gleichnamige technische Knoten).
+   */
+  const formatEToCommands = (text: string): { commands: MutateCommand[]; unnamed: string[] } => {
     // CR-GC-310: Typen bestehender Knoten kommen aus dem geladenen Graphen — dieselbe
     // Quelle, aus der das Gate ohnehin liest, kein zweiter Index. Damit braucht ein
     // reiner Kanten-Batch keine `### <TYPE>`-Sektionen mehr. Unbekannte uids liefern
     // weiterhin undefined und damit die bisherige Codec-Ablehnung.
     const typeIndex = new Map(harness.getGraph().nodes.map((n) => [n.uid, n.type]));
-    const graph = ctx.gcCodec.decode(text, { resolveType: (uid) => typeIndex.get(uid) });
-    return [
+    const unnamed: string[] = [];
+    const graph = ctx.gcCodec.decode(text, {
+      resolveType: (uid) => typeIndex.get(uid),
+      onUnnamed: (uid) => unnamed.push(uid),
+    });
+    const commands: MutateCommand[] = [
       ...graph.nodes.map(
         (n) => ({ op: 'add-node', node: { uid: n.uid, type: n.type, name: n.name, description: n.description ?? '', attributes: n.attributes ?? {} } }) as MutateCommand,
       ),
@@ -179,7 +194,16 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
         (e) => ({ op: 'add-edge', edge: { sourceId: e.sourceId, targetId: e.targetId, edgeType: e.edgeType, attributes: e.attributes ?? {} } }) as MutateCommand,
       ),
     ];
+    return { commands, unnamed };
   };
+
+  /** CR-GC-321: der Hinweis, der den stillen `name = uid`-Fallback laut macht. */
+  const nameWarningFor = (unnamed: string[]): string | undefined =>
+    unnamed.length === 0
+      ? undefined
+      : `${unnamed.length} node(s) carry no __name — their uid became the name: ${unnamed.join(', ')}. ` +
+        'Format-E has two positional fields (uid|description); the name travels as ' +
+        '[__name:…] inline or as an @__name line. Repair through the gate (update-node).';
 
   const OCC_WARNING =
     'no baseVersion supplied — OCC check skipped (lost-update window). Pass the graphVersion ' +
@@ -202,7 +226,7 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
 
   const graph_mutate: MCPTool<
     z.infer<typeof GraphMutateInputSchema>,
-    MutateResult & { graphVersion: number; occWarning?: string; steeringDelta?: SteeringDelta }
+    MutateResult & { graphVersion: number; occWarning?: string; nameWarning?: string; steeringDelta?: SteeringDelta }
   > = {
     name: 'graph_mutate',
     description:
@@ -253,8 +277,17 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
         // Format-E-Decode VOR dem Gate: ein Parse-Fehler ist ein Block-Verdict,
         // kein Transport-Crash — der Autor bekommt die Codec-Meldung als Violation.
         let commands: MutateCommand[];
+        // CR-GC-321: nur der formatE-Pfad kennt den stillen `name = uid`-Fallback;
+        // auf dem commands-Pfad ist `name` explizite Autorenabsicht.
+        let nameWarning: string | undefined;
         try {
-          commands = input.formatE !== undefined ? formatEToCommands(input.formatE) : (input.commands as MutateCommand[]);
+          if (input.formatE !== undefined) {
+            const decoded = formatEToCommands(input.formatE);
+            commands = decoded.commands;
+            nameWarning = nameWarningFor(decoded.unnamed);
+          } else {
+            commands = input.commands as MutateCommand[];
+          }
         } catch (err) {
           const result: MutateResult = {
             success: false,
@@ -297,7 +330,9 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
           // Antwort-Budget. Gekürzt wird erst, was über die Leitung geht.
           await recordPreview(input.consumerId, preview, commands);
           const previewOut = input.violations === 'full' ? preview : summarizeViolations(preview);
-          return { ...previewOut, graphVersion: graphVersion() };
+          // CR-GC-321/REQ-N07: auch im Preview — sonst meldet der dryRun sauber
+          // und der Apply verliert die Namen.
+          return { ...previewOut, graphVersion: graphVersion(), ...(nameWarning ? { nameWarning } : {}) };
         }
         await recordAudit(input.consumerId, result, commands);
         const out = input.violations === 'full' ? result : summarizeViolations(result);
@@ -305,6 +340,7 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
           ...out,
           graphVersion: graphVersion(),
           ...(input.baseVersion === undefined ? { occWarning: OCC_WARNING } : {}),
+          ...(nameWarning ? { nameWarning } : {}),
         };
       });
     },

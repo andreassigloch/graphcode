@@ -13,9 +13,8 @@
  * Härtegrad 2+ (Kompensations-Operatoren, A-Stern/Beam) ist Fahrplan-Schritt 5.
  */
 import type { Graph } from '@sigloch/graph-api-core';
-import type { OntologyGraph } from '@sigloch/contracts/se';
 import { metrics, toArray, METRIC_DIMENSIONS } from '@sigloch/se-optimizer';
-import { exportGraphJson } from './exporter.js';
+import { toOntologyGraph } from './conformance.js';
 
 export interface FitAdvisory {
   /** Messebene: Architektur-Teilgraph (FUNC/FLOW/MOD/SCHEMA/ACTOR). */
@@ -30,8 +29,9 @@ export interface FitAdvisory {
 }
 
 function measure(graph: Graph): number[] {
-  const og = JSON.parse(exportGraphJson(graph)) as OntologyGraph;
-  return toArray(metrics(og, { layer: 'arch' }));
+  // CR-GC-324: der EINE Mapper (conformance.toOntologyGraph) statt des flachen
+  // Export-Encodings — keine zweite Graph→OntologyGraph-Abbildung in src/.
+  return toArray(metrics(toOntologyGraph(graph), { layer: 'arch' }));
 }
 
 /** Δm(before → after) auf layer:'arch'. Pure Messung, deterministisch. */

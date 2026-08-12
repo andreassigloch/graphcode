@@ -240,7 +240,18 @@ export class GraphCodeCodec {
    *   - a declared node type that conflicts with the resolver's type for that uid
    *   - unsupported operation types (remove/update/merge)
    */
-  decode(text: string, options?: { resolveType?: (uid: string) => string | undefined }): Graph {
+  decode(
+    text: string,
+    options?: {
+      resolveType?: (uid: string) => string | undefined;
+      /**
+       * CR-GC-321: called with every uid whose node line carried NO `__name`.
+       * The decoder is the only place that knows this exactly — after decode the
+       * fallback `name = uid` is indistinguishable from a deliberately equal name.
+       */
+      onUnnamed?: (uid: string) => void;
+    },
+  ): Graph {
     const resolveType = options?.resolveType;
     const diff = this.inner.parse(text, resolveType ? { resolveType } : undefined);
     if (diff.errors.length > 0) {
@@ -276,7 +287,9 @@ export class GraphCodeCodec {
           const rawAttrs = op.attributes ?? {};
 
           // Extract round-trip metadata fields from attributes
-          const name = (rawAttrs['__name'] as string | undefined) ?? uid;
+          const rawName = rawAttrs['__name'] as string | undefined;
+          if (rawName === undefined) options?.onUnnamed?.(uid);
+          const name = rawName ?? uid;
           const createdAt = rawAttrs['__createdAt'] as string | undefined;
           const updatedAt = rawAttrs['__updatedAt'] as string | undefined;
 

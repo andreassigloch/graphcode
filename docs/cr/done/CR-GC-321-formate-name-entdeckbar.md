@@ -1,6 +1,6 @@
 # CR-GC-321 — `__name` in Format-E entdeckbar machen, stillen `name = uid`-Fallback laut machen
 
-**Status:** open · **Datum:** 2026-08-10
+**Status:** done (2026-08-12) · **Datum:** 2026-08-10
 **Ziel:** graphcode 0.12.x
 **Ontologie:** v4.0.0 — **unverändert** (kein Contracts-Bump, siehe §3)
 **Bezug:** CR-GC-276 (formatE als Input-Codec), CR-GC-310 (resolveType), CR-GC-231 (`graph_authoring_guide`)
@@ -76,9 +76,15 @@ Arbeitsschritte später auffällt.
 |---|---|
 | `src/tools/write.ts` | `formatE`-Beschreibung (REQ-N01); `formatEToCommands` gibt zusätzlich die uids ohne `__name` zurück; `nameWarning` im Ergebnis, Apply- **und** dryRun-Zweig |
 | `src/tools/report.ts` | `graph_authoring_guide`: Feld `formatEExample` + Beschreibungssatz |
+| `src/codec.ts` | `decode(text, {onUnnamed})` — der Decoder ist die einzige Stelle, die den Fall EXAKT kennt |
+| `src/authoring-example.ts` | neu — `formatEExampleFor(type)`; nicht in `report.ts`, das steht am 500-Zeilen-Guard (CR-GC-256 §6) |
 | `tests/mutate.formate-name.test.ts` | neu — REQ-N01..N07 |
 
-Drei Dateien, unter dem 6-Datei-Limit.
+Fünf Dateien, unter dem 6-Datei-Limit. (Abweichung von der Planung: `codec.ts` kam dazu, weil
+`formatEToCommands` den fehlenden `__name` nach dem Decode nicht mehr sehen kann — der Decoder
+verwirft `__`-Felder und setzt den Fallback; ein `name === uid`-Vergleich danach wäre die
+unschärfere Variante, die dieser CR ausdrücklich ablehnt. `authoring-example.ts` kam dazu, weil
+`report.ts` laut eigenem Größen-Guard nicht wachsen soll.)
 
 **Umsetzungsnotiz:** `formatEToCommands` erkennt den Fall exakt, weil es den Decode selbst fährt —
 `__name` fehlt genau dann im geparsten Attributsatz, wenn der Autor ihn nicht geschrieben hat. Ein
@@ -89,10 +95,13 @@ gleichnamige Knoten) und gehört in die Contracts-Regel, nicht hierher.
 
 ## 6. Akzeptanzkriterien
 
-1. [ ] Ein formatE-Batch ohne `__name` liefert `nameWarning` mit den uids; `tier` bleibt `pass`.
-2. [ ] `graph_authoring_guide('REQ')` liefert ein `formatEExample`, das der Codec zu einem REQ mit
-   lesbarem Namen decodiert (REQ-N03 — der Beispiel-String ist geprüft, nicht behauptet).
-3. [ ] Reiner Kanten-Batch (CR-GC-310) erzeugt **kein** `nameWarning`.
-4. [ ] `npm run build` + volle Suite grün.
-5. [ ] Mutationsprobe: `__name` aus einem Test-Batch entfernt → REQ-N04 rot; `nameWarning` fest auf
-   `undefined` verdrahtet → REQ-N04 rot, REQ-N05 grün (die beiden Tests laufen gegenläufig).
+1. [x] Ein formatE-Batch ohne `__name` liefert `nameWarning` mit den uids; das Verdict bleibt das
+   Pass-Tier (`auto-apply` — die Formulierung „tier bleibt pass" im Entwurf traf den
+   Tier-Wortschatz nicht).
+2. [x] `graph_authoring_guide('REQ')` liefert ein `formatEExample`, das der Codec zu einem REQ mit
+   lesbarem Namen decodiert (REQ-N03 — der Beispiel-String ist geprüft, nicht behauptet; im Test
+   für REQ, FUNC und TEST).
+3. [x] Reiner Kanten-Batch (CR-GC-310) erzeugt **kein** `nameWarning`.
+4. [x] `npm run build` + volle Suite grün.
+5. [x] Mutationsprobe gefahren: `nameWarning` fest auf `undefined` verdrahtet → REQ-N04 **und**
+   REQ-N07 rot, REQ-N05 grün (die Tests laufen gegenläufig, messen also wirklich etwas).

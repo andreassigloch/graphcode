@@ -16,6 +16,9 @@
  */
 import type { Graph, GraphNode } from '@sigloch/graph-api-core';
 import { generatedHeader, cell } from '../exporter.js';
+// CR-GC-327: DIESELBE Lesart von "was ist das Ergebnis dieses TEST" wie der
+// Prüfreport — inklusive `not-run` statt Leerstring. Kein zweiter Begriff.
+import { resultOf } from '../testreport.js';
 import { nodesOfType, nodeIndex, adjacency, reqKinds, testLevel, testResult, levelsOfTest, reqLevels, rolledUpCoverage, status, ref, refList, topoOrderMilestones, type ReqLevel } from './helpers.js';
 
 // ---------------------------------------------------------------------------
@@ -327,15 +330,44 @@ export function renderTestMatrix(graph: Graph, name: string): string {
       `REQ × TEST Coverage, ${reqs.length} REQ rows. Deterministisch generiert.`,
     ),
   ];
-  lines.push('| REQ | verified | verifying TEST(s) |', '|---|---|---|');
+  // CR-GC-327: „verify-Kante vorhanden" ist NICHT „bestanden". Die alte Matrix zeigte
+  // für beides ein `✓` — auf diesem Repo für 72 von 72 REQ, während kein einziger
+  // TEST-Knoten je ein `testResult` trug. Ein Prüfer, der das Häkchen als
+  // Verifikationsnachweis las, las es falsch, und das Dokument gab ihm keinen
+  // Anhaltspunkt dafür. Zwei Spalten, weil es zwei Aussagen sind.
+  const idxByUid = new Map(graph.nodes.map((n) => [n.uid, n]));
+  const resultCell = (testUids: string[]): string => {
+    if (testUids.length === 0) return '—';
+    const results = testUids.map((uid) => {
+      const node = idxByUid.get(uid);
+      return node ? resultOf(node) : 'not-run';
+    });
+    if (results.some((r) => r === 'failed')) return '✗ failed';
+    if (results.every((r) => r === 'passed')) return '✓ passed';
+    if (results.every((r) => r === 'not-run')) return '⚠ nie gelaufen';
+    return `⚠ ${results.filter((r) => r === 'passed').length}/${results.length} passed`;
+  };
+
+  lines.push('| REQ | verify-Kante | Lauf-Ergebnis | verifying TEST(s) |', '|---|---|---|---|');
   let verified = 0;
+  let passed = 0;
   for (const r of reqs) {
     const tests = verify.rev.get(r.uid) ?? [];
     if (tests.length > 0) verified += 1;
-    lines.push(`| ${ref(r.uid)} | ${tests.length > 0 ? '✓' : '✗'} | ${refList(tests)} |`);
+    const result = resultCell(tests);
+    if (result === '✓ passed') passed += 1;
+    lines.push(`| ${ref(r.uid)} | ${tests.length > 0 ? '✓' : '✗'} | ${result} | ${refList(tests)} |`);
   }
   const pct = reqs.length ? Math.round((verified / reqs.length) * 100) : 0;
-  lines.push('', `Coverage: ${verified}/${reqs.length} REQ verified (${pct}%) · ${reqs.length - verified} open (R-01).`, '');
+  const passedPct = reqs.length ? Math.round((passed / reqs.length) * 100) : 0;
+  lines.push(
+    '',
+    `Coverage: ${verified}/${reqs.length} REQ mit verify-Kante (${pct}%) · ${reqs.length - verified} offen (R-01).`,
+    `Belegt: ${passed}/${reqs.length} REQ bestanden (${passedPct}%) — eine Kante ist kein Nachweis; ` +
+      'ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt ' +
+      '(Rückweg: `graph_test_ingest`, CR-GC-327).',
+    '',
+  );
 
   // CR-GC-317: the rolled-up half. Above answers "is this requirement verified?"; an
   // assessor also asks "is this INTERFACE verified?" — and that answer sits four hops

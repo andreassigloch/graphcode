@@ -6,121 +6,122 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 111 REQ rows. Deterministisch generiert.
 
-| REQ | verified | verifying TEST(s) |
-|---|---|---|
-| `REQ-advisory-roundtrip-latency` | ✓ | `TEST-advisory-roundtrip-latency` |
-| `REQ-agent-agnostic` | ✓ | `TEST-agent-agnostic` |
-| `REQ-artifact-freshness` | ✓ | `TEST-artifact-freshness` |
-| `REQ-audit-trail` | ✓ | `TEST-mcp-stdio-server` |
-| `REQ-auto-persist-merge` | ✓ | `TEST-merge` |
-| `REQ-batch-seed-performance` | ✓ | `TEST-batch-seed` |
-| `REQ-benchmark-harness` | ✓ | `TEST-token-efficiency` |
-| `REQ-bootstrap-through-gate` | ✓ | `TEST-bootstrap` |
-| `REQ-buildable-standalone` | ✓ | `TEST-distribution` |
-| `REQ-cache-layering` | ✓ | `TEST-cache` |
-| `REQ-code-governed-quality` | ✓ | `TEST-code-quality` · `TEST-mvp-e2e` |
-| `REQ-codec-validation` | ✓ | `TEST-roundtrip` |
-| `REQ-completeness-actor-bounded` | ✓ | `TEST-completeness-actor-bounded` |
-| `REQ-completeness-single-value` | ✓ | `TEST-completeness-single-value` |
-| `REQ-confidence-tier` | ✓ | `TEST-mutate-gate` |
-| `REQ-conflict-free-merge` | ✓ | `TEST-merge` |
-| `REQ-dashboard-ontology-sync` | ✓ | `TEST-dashboard-ontology-sync` |
-| `REQ-dashboard-readonly` | ✓ | `TEST-dashboard-readonly` |
-| `REQ-deterministic-serialization` | ✓ | `TEST-roundtrip` |
-| `REQ-disk-persistence` | ✓ | `TEST-mvp-e2e` |
-| `REQ-doc-export` | ✓ | `TEST-doc-export` · `TEST-mcp-export` · `TEST-member-name` · `TEST-skills-mcp` |
-| `REQ-docs-taxonomy` | ✓ | `TEST-docs-taxonomy` |
-| `REQ-export-no-clobber` | ✓ | `TEST-mcp-export-guard` |
-| `REQ-formatE-diff-dialect` | ✓ | `TEST-roundtrip` |
-| `REQ-formatE-parity` | ✓ | `TEST-roundtrip` |
-| `REQ-frame-binding` | ✓ | `TEST-code-quality` |
-| `REQ-gate-only-writes` | ✓ | `TEST-no-direct-graph-write` |
-| `REQ-graceful-degradation` | ✓ | `TEST-reduced-llm` |
-| `REQ-graph-code-conformance` | ✓ | `TEST-code-conformance` |
-| `REQ-graph-integrity` | ✓ | `TEST-codec-validation` · `TEST-graph-integrity` |
-| `REQ-graph-is-ssot` | ✓ | `TEST-graph-is-ssot` |
-| `REQ-graph-snapshot-per-commit` | ✓ | `TEST-graph-time-travel` |
-| `REQ-graph-state-recall` | ✓ | `TEST-graph-time-travel` |
-| `REQ-graph-tests-operational` | ✓ | `TEST-graph-tests-operational` |
-| `REQ-greenfield-systemtest-dod` | ✓ | `TEST-greenfield-systemtest` |
-| `REQ-harness-schema-in-contracts` | ✓ | `TEST-mcp-symmetry` |
-| `REQ-hook-extension-points` | ✓ | `TEST-hooks` |
-| `REQ-hook-order-deterministic` | ✓ | `TEST-hooks` |
-| `REQ-impact-based-testing` | ✓ | `TEST-efficient-testing` · `TEST-mvp-e2e` |
-| `REQ-import-se-ontology` | ✓ | `TEST-dashboard-ontology-sync` |
-| `REQ-install-idempotent` | ✓ | `TEST-cli-scaffold` |
-| `REQ-interactive-capture-suggest` | ✓ | `TEST-capture` |
-| `REQ-interface-change-escalation` | ✓ | `TEST-interface-escalation` |
-| `REQ-interface-schema` | ✓ | `TEST-interface-schema` |
-| `REQ-live-event-in-contracts` | ✓ | `TEST-live-event-contract` |
-| `REQ-mcp-gate-symmetry` | ✓ | `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` |
-| `REQ-mcp-tool-registry` | ✓ | `TEST-mcp-readiness` · `TEST-mcp-stdio-server` |
-| `REQ-mutation-emits-event` | ✓ | `TEST-live-view` |
-| `REQ-no-extraction` | ✓ | `TEST-capture` |
-| `REQ-npx-distribution` | ✓ | `TEST-distribution` |
-| `REQ-one-gate-per-repo` | ✓ | `TEST-mcp-symmetry` · `TEST-mutate-gate` |
-| `REQ-post-agent-query` | ✓ | `TEST-impact-subgraph` |
-| `REQ-post-apply-gate` | ✓ | `TEST-mutate-gate` |
-| `REQ-post-capture` | ✓ | `TEST-capture` |
-| `REQ-post-codec-roundtrip` | ✓ | `TEST-roundtrip` |
-| `REQ-post-emit-trajectory` | ✓ | `TEST-learning-emit` |
-| `REQ-post-emit-update-event` | ✓ | `TEST-live-view` |
-| `REQ-post-export-markdown` | ✓ | `TEST-doc-export` |
-| `REQ-post-harness-cli` | ✓ | `TEST-cli-scaffold` |
-| `REQ-post-impact-testing` | ✓ | `TEST-efficient-testing` |
-| `REQ-post-import` | ✓ | `TEST-bootstrap` |
-| `REQ-post-interface-escalation` | ✓ | `TEST-interface-escalation` |
-| `REQ-post-merge-nodes` | ✓ | `TEST-merge` |
-| `REQ-post-migrate-schema` | ✓ | `TEST-schema-migration` |
-| `REQ-post-modelfree-gate` | ✓ | `TEST-reduced-llm` |
-| `REQ-pre-agent-query` | ✓ | `TEST-impact-subgraph` |
-| `REQ-pre-apply-gate` | ✓ | `TEST-mutate-gate` |
-| `REQ-pre-capture` | ✓ | `TEST-capture` |
-| `REQ-pre-codec-roundtrip` | ✓ | `TEST-roundtrip` |
-| `REQ-pre-emit-trajectory` | ✓ | `TEST-learning-emit` |
-| `REQ-pre-emit-update-event` | ✓ | `TEST-live-view` |
-| `REQ-pre-export-markdown` | ✓ | `TEST-doc-export` |
-| `REQ-pre-harness-cli` | ✓ | `TEST-cli-scaffold` |
-| `REQ-pre-impact-testing` | ✓ | `TEST-efficient-testing` |
-| `REQ-pre-import` | ✓ | `TEST-bootstrap` |
-| `REQ-pre-interface-escalation` | ✓ | `TEST-interface-escalation` |
-| `REQ-pre-merge-nodes` | ✓ | `TEST-merge` |
-| `REQ-pre-migrate-schema` | ✓ | `TEST-schema-migration` |
-| `REQ-pre-modelfree-gate` | ✓ | `TEST-reduced-llm` |
-| `REQ-precise-context` | ✓ | `TEST-mvp-e2e` · `TEST-token-efficiency` |
-| `REQ-precommit-timeout` | ✓ | `TEST-hooks` |
-| `REQ-progressive-expansion` | ✓ | `TEST-impact-subgraph` |
-| `REQ-quality-metric` | ✓ | `TEST-code-quality` |
-| `REQ-query-precision` | ✓ | `TEST-impact-subgraph` |
-| `REQ-readiness-completeness` | ✓ | `TEST-readiness-completeness` |
-| `REQ-readiness-model` | ✓ | `TEST-readiness-model` |
-| `REQ-readiness-transparent` | ✓ | `TEST-readiness-transparent` |
-| `REQ-readonly-bridge` | ✓ | `TEST-readonly-bridge` |
-| `REQ-real-health-check` | ✓ | `TEST-real-health-check` |
-| `REQ-repo-install` | ✓ | `TEST-cli-scaffold` · `TEST-distribution` · `TEST-scaffold-skills` |
-| `REQ-repo-uninstall` | ✓ | `TEST-cli-scaffold` |
-| `REQ-repo-update` | ✓ | `TEST-cli-scaffold` |
-| `REQ-responsiveness` | ✓ | `TEST-responsiveness` |
-| `REQ-roundtrip-conformance` | ✓ | `TEST-roundtrip` |
-| `REQ-rule-enforcement` | ✓ | `TEST-mutate-gate` |
-| `REQ-schema-version-migration` | ✓ | `TEST-schema-migration` |
-| `REQ-self-contained-dist` | ✓ | `TEST-distribution` |
-| `REQ-shared-views-no-fork` | ✓ | `TEST-shared-views-no-fork` |
-| `REQ-single-kuzu-owner` | ✓ | `TEST-mvp-e2e` |
-| `REQ-single-store` | ✓ | `TEST-mvp-e2e` |
-| `REQ-single-transport` | ✓ | `TEST-mcp-stdio-server` |
-| `REQ-small-model-viable` | ✓ | `TEST-mvp-e2e` · `TEST-reduced-llm` |
-| `REQ-store-recovery` | ✓ | `TEST-store-recovery` |
-| `REQ-structural-rule-shared` | ✓ | `TEST-structural-rule-shared` |
-| `REQ-structure-driven` | ✓ | `TEST-code-quality` |
-| `REQ-subgraph-slicing` | ✓ | `TEST-impact-subgraph` |
-| `REQ-test-runnable-binding` | ✓ | `TEST-test-runnable-binding` |
-| `REQ-testref-materialized` | ✓ | `TEST-testref-materialize` |
-| `REQ-trajectory-emit` | ✓ | `TEST-learning-emit` |
-| `REQ-versioned-broadcast` | ✓ | `TEST-live-view` |
-| `REQ-versioned-cache` | ✓ | `TEST-cache` |
+| REQ | verify-Kante | Lauf-Ergebnis | verifying TEST(s) |
+|---|---|---|---|
+| `REQ-advisory-roundtrip-latency` | ✓ | ⚠ nie gelaufen | `TEST-advisory-roundtrip-latency` |
+| `REQ-agent-agnostic` | ✓ | ⚠ nie gelaufen | `TEST-agent-agnostic` |
+| `REQ-artifact-freshness` | ✓ | ⚠ nie gelaufen | `TEST-artifact-freshness` |
+| `REQ-audit-trail` | ✓ | ⚠ nie gelaufen | `TEST-mcp-stdio-server` |
+| `REQ-auto-persist-merge` | ✓ | ⚠ nie gelaufen | `TEST-merge` |
+| `REQ-batch-seed-performance` | ✓ | ⚠ nie gelaufen | `TEST-batch-seed` |
+| `REQ-benchmark-harness` | ✓ | ⚠ nie gelaufen | `TEST-token-efficiency` |
+| `REQ-bootstrap-through-gate` | ✓ | ⚠ nie gelaufen | `TEST-bootstrap` |
+| `REQ-buildable-standalone` | ✓ | ⚠ nie gelaufen | `TEST-distribution` |
+| `REQ-cache-layering` | ✓ | ⚠ nie gelaufen | `TEST-cache` |
+| `REQ-code-governed-quality` | ✓ | ⚠ nie gelaufen | `TEST-code-quality` · `TEST-mvp-e2e` |
+| `REQ-codec-validation` | ✓ | ⚠ nie gelaufen | `TEST-roundtrip` |
+| `REQ-completeness-actor-bounded` | ✓ | ⚠ nie gelaufen | `TEST-completeness-actor-bounded` |
+| `REQ-completeness-single-value` | ✓ | ⚠ nie gelaufen | `TEST-completeness-single-value` |
+| `REQ-confidence-tier` | ✓ | ⚠ nie gelaufen | `TEST-mutate-gate` |
+| `REQ-conflict-free-merge` | ✓ | ⚠ nie gelaufen | `TEST-merge` |
+| `REQ-dashboard-ontology-sync` | ✓ | ⚠ nie gelaufen | `TEST-dashboard-ontology-sync` |
+| `REQ-dashboard-readonly` | ✓ | ⚠ nie gelaufen | `TEST-dashboard-readonly` |
+| `REQ-deterministic-serialization` | ✓ | ⚠ nie gelaufen | `TEST-roundtrip` |
+| `REQ-disk-persistence` | ✓ | ⚠ nie gelaufen | `TEST-mvp-e2e` |
+| `REQ-doc-export` | ✓ | ⚠ nie gelaufen | `TEST-doc-export` · `TEST-mcp-export` · `TEST-member-name` · `TEST-skills-mcp` |
+| `REQ-docs-taxonomy` | ✓ | ⚠ nie gelaufen | `TEST-docs-taxonomy` |
+| `REQ-export-no-clobber` | ✓ | ⚠ nie gelaufen | `TEST-mcp-export-guard` |
+| `REQ-formatE-diff-dialect` | ✓ | ⚠ nie gelaufen | `TEST-roundtrip` |
+| `REQ-formatE-parity` | ✓ | ⚠ nie gelaufen | `TEST-roundtrip` |
+| `REQ-frame-binding` | ✓ | ⚠ nie gelaufen | `TEST-code-quality` |
+| `REQ-gate-only-writes` | ✓ | ⚠ nie gelaufen | `TEST-no-direct-graph-write` |
+| `REQ-graceful-degradation` | ✓ | ⚠ nie gelaufen | `TEST-reduced-llm` |
+| `REQ-graph-code-conformance` | ✓ | ⚠ nie gelaufen | `TEST-code-conformance` |
+| `REQ-graph-integrity` | ✓ | ⚠ nie gelaufen | `TEST-codec-validation` · `TEST-graph-integrity` |
+| `REQ-graph-is-ssot` | ✓ | ⚠ nie gelaufen | `TEST-graph-is-ssot` |
+| `REQ-graph-snapshot-per-commit` | ✓ | ⚠ nie gelaufen | `TEST-graph-time-travel` |
+| `REQ-graph-state-recall` | ✓ | ⚠ nie gelaufen | `TEST-graph-time-travel` |
+| `REQ-graph-tests-operational` | ✓ | ⚠ nie gelaufen | `TEST-graph-tests-operational` |
+| `REQ-greenfield-systemtest-dod` | ✓ | ⚠ nie gelaufen | `TEST-greenfield-systemtest` |
+| `REQ-harness-schema-in-contracts` | ✓ | ⚠ nie gelaufen | `TEST-mcp-symmetry` |
+| `REQ-hook-extension-points` | ✓ | ⚠ nie gelaufen | `TEST-hooks` |
+| `REQ-hook-order-deterministic` | ✓ | ⚠ nie gelaufen | `TEST-hooks` |
+| `REQ-impact-based-testing` | ✓ | ⚠ nie gelaufen | `TEST-efficient-testing` · `TEST-mvp-e2e` |
+| `REQ-import-se-ontology` | ✓ | ⚠ nie gelaufen | `TEST-dashboard-ontology-sync` |
+| `REQ-install-idempotent` | ✓ | ⚠ nie gelaufen | `TEST-cli-scaffold` |
+| `REQ-interactive-capture-suggest` | ✓ | ⚠ nie gelaufen | `TEST-capture` |
+| `REQ-interface-change-escalation` | ✓ | ⚠ nie gelaufen | `TEST-interface-escalation` |
+| `REQ-interface-schema` | ✓ | ⚠ nie gelaufen | `TEST-interface-schema` |
+| `REQ-live-event-in-contracts` | ✓ | ⚠ nie gelaufen | `TEST-live-event-contract` |
+| `REQ-mcp-gate-symmetry` | ✓ | ⚠ nie gelaufen | `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` |
+| `REQ-mcp-tool-registry` | ✓ | ⚠ nie gelaufen | `TEST-mcp-readiness` · `TEST-mcp-stdio-server` |
+| `REQ-mutation-emits-event` | ✓ | ⚠ nie gelaufen | `TEST-live-view` |
+| `REQ-no-extraction` | ✓ | ⚠ nie gelaufen | `TEST-capture` |
+| `REQ-npx-distribution` | ✓ | ⚠ nie gelaufen | `TEST-distribution` |
+| `REQ-one-gate-per-repo` | ✓ | ⚠ nie gelaufen | `TEST-mcp-symmetry` · `TEST-mutate-gate` |
+| `REQ-post-agent-query` | ✓ | ⚠ nie gelaufen | `TEST-impact-subgraph` |
+| `REQ-post-apply-gate` | ✓ | ⚠ nie gelaufen | `TEST-mutate-gate` |
+| `REQ-post-capture` | ✓ | ⚠ nie gelaufen | `TEST-capture` |
+| `REQ-post-codec-roundtrip` | ✓ | ⚠ nie gelaufen | `TEST-roundtrip` |
+| `REQ-post-emit-trajectory` | ✓ | ⚠ nie gelaufen | `TEST-learning-emit` |
+| `REQ-post-emit-update-event` | ✓ | ⚠ nie gelaufen | `TEST-live-view` |
+| `REQ-post-export-markdown` | ✓ | ⚠ nie gelaufen | `TEST-doc-export` |
+| `REQ-post-harness-cli` | ✓ | ⚠ nie gelaufen | `TEST-cli-scaffold` |
+| `REQ-post-impact-testing` | ✓ | ⚠ nie gelaufen | `TEST-efficient-testing` |
+| `REQ-post-import` | ✓ | ⚠ nie gelaufen | `TEST-bootstrap` |
+| `REQ-post-interface-escalation` | ✓ | ⚠ nie gelaufen | `TEST-interface-escalation` |
+| `REQ-post-merge-nodes` | ✓ | ⚠ nie gelaufen | `TEST-merge` |
+| `REQ-post-migrate-schema` | ✓ | ⚠ nie gelaufen | `TEST-schema-migration` |
+| `REQ-post-modelfree-gate` | ✓ | ⚠ nie gelaufen | `TEST-reduced-llm` |
+| `REQ-pre-agent-query` | ✓ | ⚠ nie gelaufen | `TEST-impact-subgraph` |
+| `REQ-pre-apply-gate` | ✓ | ⚠ nie gelaufen | `TEST-mutate-gate` |
+| `REQ-pre-capture` | ✓ | ⚠ nie gelaufen | `TEST-capture` |
+| `REQ-pre-codec-roundtrip` | ✓ | ⚠ nie gelaufen | `TEST-roundtrip` |
+| `REQ-pre-emit-trajectory` | ✓ | ⚠ nie gelaufen | `TEST-learning-emit` |
+| `REQ-pre-emit-update-event` | ✓ | ⚠ nie gelaufen | `TEST-live-view` |
+| `REQ-pre-export-markdown` | ✓ | ⚠ nie gelaufen | `TEST-doc-export` |
+| `REQ-pre-harness-cli` | ✓ | ⚠ nie gelaufen | `TEST-cli-scaffold` |
+| `REQ-pre-impact-testing` | ✓ | ⚠ nie gelaufen | `TEST-efficient-testing` |
+| `REQ-pre-import` | ✓ | ⚠ nie gelaufen | `TEST-bootstrap` |
+| `REQ-pre-interface-escalation` | ✓ | ⚠ nie gelaufen | `TEST-interface-escalation` |
+| `REQ-pre-merge-nodes` | ✓ | ⚠ nie gelaufen | `TEST-merge` |
+| `REQ-pre-migrate-schema` | ✓ | ⚠ nie gelaufen | `TEST-schema-migration` |
+| `REQ-pre-modelfree-gate` | ✓ | ⚠ nie gelaufen | `TEST-reduced-llm` |
+| `REQ-precise-context` | ✓ | ⚠ nie gelaufen | `TEST-mvp-e2e` · `TEST-token-efficiency` |
+| `REQ-precommit-timeout` | ✓ | ⚠ nie gelaufen | `TEST-hooks` |
+| `REQ-progressive-expansion` | ✓ | ⚠ nie gelaufen | `TEST-impact-subgraph` |
+| `REQ-quality-metric` | ✓ | ⚠ nie gelaufen | `TEST-code-quality` |
+| `REQ-query-precision` | ✓ | ⚠ nie gelaufen | `TEST-impact-subgraph` |
+| `REQ-readiness-completeness` | ✓ | ⚠ nie gelaufen | `TEST-readiness-completeness` |
+| `REQ-readiness-model` | ✓ | ⚠ nie gelaufen | `TEST-readiness-model` |
+| `REQ-readiness-transparent` | ✓ | ⚠ nie gelaufen | `TEST-readiness-transparent` |
+| `REQ-readonly-bridge` | ✓ | ⚠ nie gelaufen | `TEST-readonly-bridge` |
+| `REQ-real-health-check` | ✓ | ⚠ nie gelaufen | `TEST-real-health-check` |
+| `REQ-repo-install` | ✓ | ⚠ nie gelaufen | `TEST-cli-scaffold` · `TEST-distribution` · `TEST-scaffold-skills` |
+| `REQ-repo-uninstall` | ✓ | ⚠ nie gelaufen | `TEST-cli-scaffold` |
+| `REQ-repo-update` | ✓ | ⚠ nie gelaufen | `TEST-cli-scaffold` |
+| `REQ-responsiveness` | ✓ | ⚠ nie gelaufen | `TEST-responsiveness` |
+| `REQ-roundtrip-conformance` | ✓ | ⚠ nie gelaufen | `TEST-roundtrip` |
+| `REQ-rule-enforcement` | ✓ | ⚠ nie gelaufen | `TEST-mutate-gate` |
+| `REQ-schema-version-migration` | ✓ | ⚠ nie gelaufen | `TEST-schema-migration` |
+| `REQ-self-contained-dist` | ✓ | ⚠ nie gelaufen | `TEST-distribution` |
+| `REQ-shared-views-no-fork` | ✓ | ⚠ nie gelaufen | `TEST-shared-views-no-fork` |
+| `REQ-single-kuzu-owner` | ✓ | ⚠ nie gelaufen | `TEST-mvp-e2e` |
+| `REQ-single-store` | ✓ | ⚠ nie gelaufen | `TEST-mvp-e2e` |
+| `REQ-single-transport` | ✓ | ⚠ nie gelaufen | `TEST-mcp-stdio-server` |
+| `REQ-small-model-viable` | ✓ | ⚠ nie gelaufen | `TEST-mvp-e2e` · `TEST-reduced-llm` |
+| `REQ-store-recovery` | ✓ | ⚠ nie gelaufen | `TEST-store-recovery` |
+| `REQ-structural-rule-shared` | ✓ | ⚠ nie gelaufen | `TEST-structural-rule-shared` |
+| `REQ-structure-driven` | ✓ | ⚠ nie gelaufen | `TEST-code-quality` |
+| `REQ-subgraph-slicing` | ✓ | ⚠ nie gelaufen | `TEST-impact-subgraph` |
+| `REQ-test-runnable-binding` | ✓ | ⚠ nie gelaufen | `TEST-test-runnable-binding` |
+| `REQ-testref-materialized` | ✓ | ⚠ nie gelaufen | `TEST-testref-materialize` |
+| `REQ-trajectory-emit` | ✓ | ⚠ nie gelaufen | `TEST-learning-emit` |
+| `REQ-versioned-broadcast` | ✓ | ⚠ nie gelaufen | `TEST-live-view` |
+| `REQ-versioned-cache` | ✓ | ⚠ nie gelaufen | `TEST-cache` |
 
-Coverage: 111/111 REQ verified (100%) · 0 open (R-01).
+Coverage: 111/111 REQ mit verify-Kante (100%) · 0 offen (R-01).
+Belegt: 0/111 REQ bestanden (0%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
 
 ## Integrationsabdeckung (rolled-up)
 

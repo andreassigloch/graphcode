@@ -15,10 +15,9 @@
  * die In-Memory-Kopie via loadGraph() restauriert — das Tool ist read-only.
  */
 import { z } from 'zod/v4';
-import type { OntologyGraph } from '@sigloch/contracts/se';
 import type { MutateResult } from '@sigloch/contracts/harness';
 import { targetFor, suggestEdits, type Suggestion } from '@sigloch/se-optimizer';
-import { exportGraphJson } from '../exporter.js';
+import { toOntologyGraph } from '../conformance.js';
 import { generationStep, type GenerationStep } from '../generate.js';
 import {
   TargetWeightsSchema,
@@ -84,7 +83,8 @@ export function bindSuggestTools(ctx: ToolContext): MCPToolRegistry {
       'über graph_mutate. Read-only; die Metrik rankt, das Gate urteilt.',
     inputSchema: GraphSuggestInputSchema,
     async handler(input) {
-      const og = JSON.parse(exportGraphJson(harness.getGraph())) as OntologyGraph;
+      // CR-GC-324: der EINE Mapper statt des flachen Export-Encodings.
+      const og = toOntologyGraph(harness.getGraph());
       // Default aus der Config NUR wenn target im Input fehlt (CR-GC-295);
       // fehlt auch die Datei, bleibt das Ziel leer — Verhalten wie vor dem CR.
       const weights = input.target ?? loadTargetProfile(harness.getRepoRoot())?.profile.weights ?? {};

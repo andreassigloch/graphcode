@@ -69,6 +69,39 @@ describe('TEST-steering: graph_next_step', () => {
     expect(r.nextStep!.action).toMatch(/alloc|modul/i);
   });
 
+  // ---------------------------------------------------------------------
+  // CR-GC-324: nextStep must read the SAME Graph→OntologyGraph mapping as the
+  // snapshot path. While it built its own og via `JSON.parse(exportGraphJson())`,
+  // the flat export encoding hid `attributes.*` and every attribute-reading rule
+  // (R-19 testRef, R-20/R-26 realRef, VR-01 testResult) fired against bound nodes.
+  // ---------------------------------------------------------------------
+  /** Fixture whose TEST/FUNC carry testRef / realRef / testResult in the bag. */
+  function boundBindingsGraph(): Graph {
+    const g = allocDeficientGraph();
+    const test = g.nodes.find((n) => n.uid === 'OrderTest.TS.001')!;
+    test.attributes = { testResult: 'passed', testRef: { file: 'tests/order.test.ts', tool: 'vitest' } };
+    for (const uid of ['Validate.FN.001', 'Persist.FN.002']) {
+      const fn = g.nodes.find((n) => n.uid === uid)!;
+      fn.attributes = { realRef: { file: 'src/order.ts', symbol: uid.split('.')[0] } };
+    }
+    return g;
+  }
+
+  it('sees attribute-carried bindings — no phantom R-19/R-20/R-26/VR-01 findings', () => {
+    const r = nextStep(boundBindingsGraph());
+    const fired = new Set([...r.blocking.ruleIds, ...r.advisory.map((a) => a.rule_id), ...(r.nextStep?.clears ?? []).map((c) => c.split(' ')[0])]);
+    for (const ruleId of ['R-19', 'R-20', 'R-26', 'VR-01']) {
+      expect(fired.has(ruleId), `${ruleId} fired although the binding is present`).toBe(false);
+    }
+  });
+
+  it('still reports a MISSING binding (the fix does not blind the rules)', () => {
+    // Same fixture, bindings stripped again → the very same rules must fire.
+    const r = nextStep(allocDeficientGraph());
+    const fired = new Set([...r.blocking.ruleIds, ...r.advisory.map((a) => a.rule_id), ...(r.nextStep?.clears ?? []).map((c) => c.split(' ')[0])]);
+    expect(fired.has('R-19') || fired.has('R-20')).toBe(true);
+  });
+
   it('keeps the unverified REQs (R-01) as blocking errors outside the chosen dimension', () => {
     // Until contracts CR-228 D, R-22/R-23 were unmapped in RULE_TO_DIMENSION and fell
     // through to `advisory`. They are mapped to `alloc` now, so the advisory list holds

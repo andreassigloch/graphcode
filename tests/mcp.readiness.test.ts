@@ -162,4 +162,59 @@ describe('TEST-mcp-readiness: graph_readiness scores family readiness over the b
     const pdr = summary.phase_readiness.find((p) => p.gate === 'PDR');
     expect(pdr?.missing).toContain('R-02');
   });
+
+  // -------------------------------------------------------------------------
+  // CR-GC-325: the 8 RULE_TO_DIMENSION topic scores — the other projection of
+  // the SAME rule stream. Before this CR `computeReadiness` ran inside nextStep
+  // and seven of its eight results were thrown away; a dashboard that wanted the
+  // architecture axis had to recompute it (which graph-view-edit actually did).
+  // -------------------------------------------------------------------------
+
+  it('dimension_readiness (CR-GC-325): all 8 dimensions, each with its denominator, in summary and detail', async () => {
+    const tools = bindToolsToHarness(harness);
+    expect((await harness.mutate(CLEAN_MEMBER)).success).toBe(true);
+    expect((await harness.mutate(ORPHAN_FUNC)).success).toBe(true);
+
+    const summary = await tools.graph_readiness.handler({});
+    const detail = await tools.graph_readiness.handler({ detail: true });
+
+    for (const report of [summary, detail]) {
+      // Completeness: a MISSING dimension must not read as "all good" (req 5).
+      expect(report.dimension_readiness.map((d) => d.dimension)).toEqual([
+        'req',
+        'uc',
+        'arch',
+        'alloc',
+        'ver',
+        'schema',
+        'cr',
+        'ms',
+      ]);
+      for (const d of report.dimension_readiness) {
+        // The denominator is mandatory — a score without `applicable` is not
+        // interpretable (req 4: ms reads 0 % off 67 findings over 15 elements).
+        expect(typeof d.applicable, `${d.dimension}.applicable`).toBe('number');
+        expect(typeof d.violations, `${d.dimension}.violations`).toBe('number');
+        expect(d.score).toBeGreaterThanOrEqual(0);
+        expect(d.score).toBeLessThanOrEqual(1);
+        expect(typeof d.ready).toBe('boolean');
+      }
+    }
+  });
+
+  it('is ONE computation, not two: next_step\'s deficit is 1 − the score of that dimension', async () => {
+    const tools = bindToolsToHarness(harness);
+    expect((await harness.mutate(CLEAN_MEMBER)).success).toBe(true);
+    expect((await harness.mutate(ORPHAN_FUNC)).success).toBe(true);
+
+    const readiness = await tools.graph_readiness.handler({});
+    const step = await tools.graph_next_step.handler({});
+
+    expect(step.nextStep, 'fixture has findings, so a step is expected').not.toBeNull();
+    const score = readiness.dimension_readiness.find((d) => d.dimension === step.nextStep!.dimension);
+    expect(score, `dimension ${step.nextStep!.dimension} missing from dimension_readiness`).toBeDefined();
+    // nextStep rounds the deficit to 3 decimals — same number, same snapshot.
+    expect(step.nextStep!.deficit).toBeCloseTo(1 - score!.score, 3);
+    expect(score!.violations).toBeGreaterThan(0);
+  });
 });

@@ -36,6 +36,8 @@ import { bindWriteTools } from './tools/write.js';
 import { bindReportTools } from './tools/report.js';
 import { bindExportTools } from './tools/export.js';
 import { bindSuggestTools } from './tools/suggest.js';
+import { bindMetricsTools } from './tools/metrics.js';
+import { bindTestReportTools } from './tools/testreport.js';
 
 // ---------------------------------------------------------------------------
 // Public types
@@ -75,5 +77,7 @@ export function bindToolsToHarness(harness: GraphCodeHarness, auditLog?: AuditLo
     ...bindReportTools(ctx),
     ...bindExportTools(ctx),
     ...bindSuggestTools(ctx),
+    ...bindMetricsTools(ctx),
+    ...bindTestReportTools(ctx),
   };
 }

@@ -17,7 +17,16 @@ import { z } from 'zod/v4';
 import type { GraphNode } from '@sigloch/graph-api-core';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import type { RuleViolation } from '@sigloch/contracts/harness';
-import { TestRefSchema, type TestRef, TRACE_PATTERNS, PHASE_READINESS_NAME } from '@sigloch/contracts/se';
+import {
+  TestRefSchema,
+  type TestRef,
+  TRACE_PATTERNS,
+  PHASE_READINESS_NAME,
+  DIMENSION_READINESS_NAME,
+  ReadinessDimension,
+  type ReadinessScoreType,
+} from '@sigloch/contracts/se';
+import { takeSteeringSnapshot } from '../steering-snapshot.js';
 import {
   summarizeReadiness,
   computePhaseReadiness,
@@ -27,6 +36,7 @@ import {
 import { scoreReadinessWithConformance, conformanceViolations } from '../conformance.js';
 import { loadTargetProfile, intentCoverage, type AnchorCoverage } from '../target-profile.js';
 import { helpEntry, contextualHelp, type HelpEntry, type ContextualMeasure } from '../viewer/help.js';
+import { formatEExampleFor } from '../authoring-example.js';
 import { nextStep } from '../steering.js';
 import type { NextStepResult } from '../steering.js';
 import type { MCPTool, MCPToolRegistry } from '../mcp-tools.js';
@@ -284,10 +294,34 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
   // GET /api/graph/readiness. Delegates to scoreReadiness(harness) → evaluateRules()
   // (L2 gate) so the score is driven by contracts V3_RULES (R-/RD-), never foreign BQ-*.
 
+  /**
+   * CR-GC-325: die 8 RULE_TO_DIMENSION-Themenscores.
+   *
+   * Keine zweite Rechnung: `computeReadiness` aus @sigloch/se-steering bleibt die
+   * einzige Implementierung, hier wird ihr Ergebnis aus DEMSELBEN Snapshot
+   * durchgereicht, den `nextStep` benutzt (CR-GC-324). Deshalb ist der Score, den
+   * ein Dashboard zeigt, exakt der, aus dem die Empfehlung entstand.
+   *
+   * VOLLSTÄNDIG: die Reihenfolge kommt aus `ReadinessDimension.options`, damit eine
+   * fehlende Dimension nicht als "alles gut" durchgeht. Fehlt eine im Report, wird
+   * sie mit `applicable: 0` ausgewiesen — konstruktiv nicht messbar, NICHT perfekt
+   * (Muster computeSteeringDelta).
+   */
+  const dimensionReadiness = (): ReadinessScoreType[] => {
+    const scores = new Map(takeSteeringSnapshot(harness.getGraph()).report.scores.map((s) => [s.dimension as string, s]));
+    return ReadinessDimension.options.map(
+      (dimension) =>
+        scores.get(dimension) ?? { dimension, score: 0, violations: 0, applicable: 0, ready: false },
+    );
+  };
+
   const graph_readiness: MCPTool<
     z.infer<typeof GraphReadinessInputSchema>,
     ReadinessReport & {
       [PHASE_READINESS_NAME]: PhaseGateReadiness[];
+      /** CR-GC-325: die 8 RULE_TO_DIMENSION-Themenscores — die zweite Projektion
+       * DESSELBEN Regelstroms, aus DEMSELBEN Snapshot wie nextStep. */
+      [DIMENSION_READINESS_NAME]: ReadinessScoreType[];
       graphVersion: number;
       /** Intent-Coverage-Read-out (CR-GC-295): je bestätigtem Anker, ob/wo er in
        * UC/REQ/FUNC adressiert ist. KPI, NIE ein Gate-Blocker — Abdeckung sagt
@@ -305,6 +339,12 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
       `error-clean); ${PHASE_READINESS_NAME} (CR-GC-296) — the SAME SRR/PDR/CDR/TRR gates from the OTHER ` +
       'axis: per-gate rule coverage (covered/total distinct rule IDs from RULE_TO_PHASE with zero open ' +
       'violations, any severity, + the missing rule IDs) — orthogonal to phaseGates\' element-completeness; ' +
+      `${DIMENSION_READINESS_NAME} (CR-GC-325) — the 8 RULE_TO_DIMENSION topic scores ` +
+      '(req/uc/arch/alloc/ver/schema/cr/ms), the OTHER projection of the same rule stream: each with ' +
+      'score, violations, applicable (the denominator — a score is not interpretable without it) and ' +
+      'ready (contracts threshold, not a graphcode policy). Steering values, NOT a gate: the gates stay ' +
+      'the pass/fail authority. Computed from the same steering snapshot graph_next_step uses, so the ' +
+      'number a dashboard shows is the one the recommendation came from; ' +
       'violationsByRule (keyed by contracts rule-ID — R-/RD-/MS-, never BQ-*); intentCoverage ' +
       '(CR-GC-295: per content theme from .graphcode/target-profile.json, whether/where it is ' +
       'addressed in UC/REQ/FUNC — a KPI, never a gate blocker; null without config. CR-GC-307: the themes are ' +
@@ -332,6 +372,7 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
       return {
         ...(input.detail ? report : summarizeReadiness(report)),
         [PHASE_READINESS_NAME]: phaseReadiness,
+        [DIMENSION_READINESS_NAME]: dimensionReadiness(),
         graphVersion: graphVersion(),
         intentCoverage: coverage,
       };
@@ -463,6 +504,7 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
       outgoing: Array<{ edgeType: string; targetType: string; cardinality?: string; description?: string }>;
       incoming: Array<{ edgeType: string; sourceType: string; cardinality?: string; description?: string }>;
       requiredAttrs: string[];
+      formatEExample: string;
     }
   > = {
     name: 'graph_authoring_guide',
@@ -473,7 +515,11 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
       'a node so you emit a correct add-node/add-edge via graph_mutate instead of guessing the ontology. ' +
       'Returns outgoing [{edgeType,targetType,cardinality,description}], incoming [{edgeType,sourceType,…}], ' +
       'and requiredAttrs — derived live from the imported @sigloch/contracts/se META_MODEL (TRACE_PATTERNS), ' +
-      'never a local fork. Read-only. Unknown type → a clear error.',
+      'never a local fork. Read-only. Unknown type → a clear error. ' +
+      'formatEExample (CR-GC-321) is a ready-to-paste Format-E block for this type: `+ uid|text` has only ' +
+      'TWO positional fields (uid and DESCRIPTION) — the readable name travels as the `__name` attribute, ' +
+      'inline `[__name:…]` or as an `@__name …` line when it contains a comma or a bracket. Without ' +
+      '`__name` the uid silently becomes the name.',
     inputSchema: GraphAuthoringGuideInputSchema,
     async handler(input) {
       const descriptor = SE_DESCRIPTOR.nodeTypes[input.type as keyof typeof SE_DESCRIPTOR.nodeTypes];
@@ -496,7 +542,13 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
       const incoming = patterns
         .filter((p) => p.target === input.type)
         .map((p) => ({ edgeType: p.type, sourceType: p.source, cardinality: p.cardinality, description: p.description }));
-      return { type: input.type, outgoing, incoming, requiredAttrs: [...(descriptor.requiredAttrs ?? [])] };
+      return {
+        type: input.type,
+        outgoing,
+        incoming,
+        requiredAttrs: [...(descriptor.requiredAttrs ?? [])],
+        formatEExample: formatEExampleFor(input.type),
+      };
     },
   };
 

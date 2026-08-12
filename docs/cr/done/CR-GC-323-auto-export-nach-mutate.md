@@ -1,6 +1,6 @@
 # CR-GC-323 — Der Export folgt der Mutation (entprellt, single-flight, atomar geschrieben)
 
-**Status:** open · **Datum:** 2026-08-12
+**Status:** done (2026-08-12) · **Datum:** 2026-08-12
 **Ziel:** graphcode 0.12.x
 **Ontologie:** v4.0.0 — **unverändert**
 **Bezug:** CR-GC-113 (Export als einziger Sync-Pfad), CR-GC-296 (export-after-own-mutate),
