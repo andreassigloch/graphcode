@@ -19,6 +19,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { Graph, GraphNode, GraphEdge } from '@sigloch/graph-api-core';
 import { GraphCodeCodec } from '../src/codec.js';
+import { elementToNode } from '../src/exporter.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -65,28 +66,15 @@ interface OntologyJson {
  *   edge.edgeType    = trace.type
  *   edge.attributes  = { weight, created_at }
  *
- * Attribute values are stringified so round-trip comparison is String-stable.
+ * CR-GC-334: die Attributwerte werden NICHT mehr vorab stringifiziert. Vorher baute dieser
+ * File seine Erwartung mit `String(v)` bzw. `JSON.stringify(kinds)` — damit war der
+ * Round-Trip **per Konstruktion** string-stabil und konnte den einen Defekt, für den er da
+ * ist, nicht sehen: `realRef` wurde zu `"[object Object]"`, und beide Seiten waren sich
+ * einig. Die Fixture kommt jetzt aus `elementToNode` (src/exporter.ts) — derselben
+ * Abbildung, die `harness.importGraph` benutzt, also kein Test-eigener Parallelpfad.
  */
 function ontologyJsonToGraph(raw: OntologyJson): Graph {
-  const nodes: GraphNode[] = raw.elements.map((el) => {
-    const attributes: Record<string, string> = {};
-    if (el.status !== undefined) attributes['status'] = String(el.status);
-    if (el.kinds !== undefined) attributes['kinds'] = JSON.stringify(el.kinds);
-    if (el.method !== undefined) attributes['method'] = String(el.method);
-    if (el.attributes) {
-      for (const [k, v] of Object.entries(el.attributes)) {
-        attributes[k] = String(v);
-      }
-    }
-    return {
-      uid: el.id,
-      type: el.type,
-      name: el.name,
-      description: el.description,
-      attributes,
-      ...(el.created_at !== undefined ? { createdAt: el.created_at } : {}),
-    };
-  });
+  const nodes: GraphNode[] = raw.elements.map((el) => elementToNode(el as Record<string, unknown>));
 
   const edges: GraphEdge[] = raw.traces.map((tr) => {
     const attributes: Record<string, string> = {};
@@ -113,7 +101,25 @@ function ontologyJsonToGraph(raw: OntologyJson): Graph {
  *   - Sort edges by [sourceId, targetId, edgeType]
  *   - Sort attribute keys within each node/edge
  *   - Collapse undefined/empty description to undefined
+ *   - Scalars as strings (CR-GC-334, s.u.)
  */
+/**
+ * CR-GC-334: der Inline-Block `[k:v]` ist untypisierter Text — `maxFiles:4` und
+ * `concept:true` kommen als `"4"`/`"true"` zurück. Das ist eine bekannte Grenze des
+ * Formats, KEIN Bindungsverlust: Zahlen und Booleans bleiben lesbar und bedeutungsgleich.
+ * Deshalb werden Skalare beidseitig auf String normalisiert — **Objekte und Arrays nicht**,
+ * die müssen exakt gleich zurückkommen (genau das war der Defekt).
+ */
+function scalarsAsStrings(attrs: Record<string, unknown>): Record<string, unknown> {
+  return Object.fromEntries(
+    Object.entries(attrs)
+      // Der Serializer schreibt null/'' nicht (`serializeAttrs`), also darf die Erwartung
+      // sie auch nicht enthalten — sonst prüft der Test eine Zusage, die das Format nie gibt.
+      .filter(([, v]) => v !== null && v !== undefined && v !== '')
+      .map(([k, v]) => [k, typeof v === 'object' ? v : String(v)]),
+  );
+}
+
 function normalize(g: Graph): Graph {
   const nodes = [...g.nodes]
     .sort((a, b) => a.uid.localeCompare(b.uid))
@@ -123,7 +129,7 @@ function normalize(g: Graph): Graph {
       name: n.name,
       ...(n.description !== undefined && n.description !== '' ? { description: n.description } : {}),
       attributes: Object.fromEntries(
-        Object.entries(n.attributes)
+        Object.entries(scalarsAsStrings(n.attributes))
           .sort(([a], [b]) => a.localeCompare(b)),
       ),
       ...(n.createdAt !== undefined ? { createdAt: n.createdAt } : {}),

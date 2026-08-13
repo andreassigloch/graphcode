@@ -40,7 +40,7 @@ Verification ◀ `TEST-reduced-llm` (acceptance) · satisfy ◀ `FCHAIN-modelfre
 
 Der End-to-End-Nachweis für reduced-llm + token-efficiency + code-quality: leeres Repo, ein Prompt (Web-App aus graphcode, Multiuser, Module maximal genutzt). Authoring qwen3.6-35b-a3b (local) vs. Opus 5 (frontier), je 3×, ein Host (Claude Code). Scoring regelbasiert: readiness, reuse-coverage vs. Modul-Graph-Golden, illegal/blocked, redundanz, tokens_in/out/reasoning, cost, wall_s. Best-fit → Impl-Plan durchs Gate → Coding (qwen-35b · devstral).
 
-priority: must · status: open
+priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-greenfield-systemtest` (acceptance) · satisfy ◀ `SYS-graphcode` · allocate ▶ —
 
