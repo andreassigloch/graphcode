@@ -9,10 +9,10 @@
 ```
               ╱╲
              ╱E2╲          System level · SYS-graphcode
-            ╱ E  ╲         ✓ 14 E2E test(s)
+            ╱ E  ╲         ✓ 16 E2E test(s)
            ╱──────╲
-          ╱  UC /   ╲       Use-case level · 7 UC
-         ╱integration╲      ⚠ 7 / 7 UC exercised by a scenario test
+          ╱  UC /   ╲       Use-case level · 6 UC
+         ╱integration╲      ⚠ 6 / 6 UC exercised by a scenario test
         ╱────────────╲      ✗ 23/34 FUNC↔FUNC connections tested  ← GAP
        ╱  Function /   ╲     Function level · 55 FUNC
       ╱      unit       ╲
@@ -21,13 +21,13 @@
 
 | Level | Element | Test kind | Tests | Coverage | Verdict |
 |---|---|---|---|---|---|
-| System | SYS (1) | E2E | 14 | 14 / 1 | ✓ |
-| Use-case | UC (7) | acceptance / integration | 32 | 7 / 7 scenario | ✓ |
-| Integration | FUNC↔FUNC (34 conn) | integration (chain) | 32 | 23 / 34 connections | ✗ 11 uncovered |
-| Function | FUNC (55) | unit | 36 | 55 / 55 | ✓ |
+| System | SYS (1) | E2E | 16 | 16 / 1 | ✓ |
+| Use-case | UC (6) | acceptance / integration | 31 | 6 / 6 scenario | ✓ |
+| Integration | FUNC↔FUNC (34 conn) | integration (chain) | 31 | 23 / 34 connections | ✗ 11 uncovered |
+| Function | FUNC (55) | unit | 37 | 55 / 55 | ✓ |
 | (support) | — | conformance | 2 | codec round-trip | ✓ |
 
 > GENERATED — TEST level derived from the graph position of the REQ it verifies (SYS/UC/FUNC/FCHAIN),
 > not a testRef.level attribute; System, UC & Integration rows are DERIVED from coverage, so a missing
-> E2E run surfaces as ✗ (currently 14 E2E test(s)) and an untested FUNC↔FUNC connection (R-21)
+> E2E run surfaces as ✗ (currently 16 E2E test(s)) and an untested FUNC↔FUNC connection (R-21)
 > surfaces as ✗ (23/34 covered) instead of being silently absent.

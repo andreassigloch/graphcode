@@ -4011,6 +4011,16 @@
       "status": "done"
     },
     {
+      "id": "REQ-token-efficiency",
+      "type": "REQ",
+      "name": "Token-Effizienz gegenueber Datei-Kontext",
+      "description": "Das System soll den Kontext einer Runde aus dem Graphen binden statt aus Datei-Dumps: eine typisierte Abfrage liefert den exakten Blast-Radius, Vertiefung geschieht on demand. Messgroesse ist tokens_in je Aufgabe gegenueber einem grep-basierten Lauf.",
+      "status": "done",
+      "kinds": [
+        "non-functional"
+      ]
+    },
+    {
       "id": "REQ-trajectory-emit",
       "type": "REQ",
       "name": "Trajectory/Outcome-Emission",
@@ -5125,8 +5135,8 @@
     {
       "id": "UC-code-quality",
       "type": "UC",
-      "name": "UC-code-quality",
-      "description": "",
+      "name": "Jede Aenderung geht durchs Gate",
+      "description": "Als Entwickler will ich, dass jede Aenderung, meine wie die eines Agenten, durch dasselbe Apply-Gate laeuft und gegen dieselben Regeln geprueft wird.",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z"
@@ -5165,17 +5175,8 @@
     {
       "id": "UC-reduced-llm",
       "type": "UC",
-      "name": "UC-reduced-llm",
-      "description": "",
-      "status": "done",
-      "created_at": "2026-06-16T00:00:00.000Z",
-      "updated_at": "2026-06-18T00:00:00.000Z"
-    },
-    {
-      "id": "UC-token-efficiency",
-      "type": "UC",
-      "name": "UC-token-efficiency",
-      "description": "",
+      "name": "Mit kleinem oder lokalem Modell arbeiten",
+      "description": "Als Entwickler will ich anspruchsvolle Aenderungen mit einem kleinen oder lokalen Modell fahren, weil Gate und praezise Graph-Abfragen die Arbeit tragen, die sonst das Modell leisten muesste.",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z"
@@ -5220,13 +5221,6 @@
     {
       "source": "ACTOR-claude-code",
       "target": "UC-reduced-llm",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "ACTOR-claude-code",
-      "target": "UC-token-efficiency",
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
@@ -5336,13 +5330,6 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
-      "source": "ACTOR-developer",
-      "target": "UC-token-efficiency",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
       "source": "ACTOR-facilitating-agent",
       "target": "UC-code-quality",
       "type": "io",
@@ -5388,13 +5375,6 @@
       "type": "io"
     },
     {
-      "source": "ACTOR-opencode",
-      "target": "UC-token-efficiency",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-17T00:00:00.000Z"
-    },
-    {
       "source": "ACTOR-systems-engineer",
       "target": "UC-code-quality",
       "type": "io",
@@ -5416,13 +5396,6 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
-      "source": "ACTOR-systems-engineer",
-      "target": "UC-token-efficiency",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
       "source": "ACTOR-vibe-coder",
       "target": "UC-code-quality",
       "type": "io",
@@ -5439,13 +5412,6 @@
     {
       "source": "ACTOR-vibe-coder",
       "target": "UC-reduced-llm",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "ACTOR-vibe-coder",
-      "target": "UC-token-efficiency",
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
@@ -6444,6 +6410,11 @@
     },
     {
       "source": "CR-GC-123",
+      "target": "REQ-token-efficiency",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-123",
       "target": "UC-code-quality",
       "type": "relation",
       "weight": 1,
@@ -6459,13 +6430,6 @@
     {
       "source": "CR-GC-123",
       "target": "UC-reduced-llm",
-      "type": "relation",
-      "weight": 1,
-      "created_at": "2026-06-17T00:00:00.000Z"
-    },
-    {
-      "source": "CR-GC-123",
-      "target": "UC-token-efficiency",
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-17T00:00:00.000Z"
@@ -7356,7 +7320,7 @@
     },
     {
       "source": "CR-GC-285",
-      "target": "UC-token-efficiency",
+      "target": "REQ-token-efficiency",
       "type": "relation"
     },
     {
@@ -7426,7 +7390,7 @@
     },
     {
       "source": "CR-GC-293",
-      "target": "UC-token-efficiency",
+      "target": "REQ-token-efficiency",
       "type": "relation"
     },
     {
@@ -9024,14 +8988,12 @@
     },
     {
       "source": "FUNC-encode",
-      "target": "UC-code-quality",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "target": "REQ-precise-context",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-encode",
-      "target": "UC-token-efficiency",
+      "target": "UC-code-quality",
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
@@ -9199,14 +9161,12 @@
     },
     {
       "source": "FUNC-graph-expand",
-      "target": "REQ-progressive-expansion",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "target": "REQ-precise-context",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-graph-expand",
-      "target": "UC-token-efficiency",
+      "target": "REQ-progressive-expansion",
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
@@ -9254,6 +9214,11 @@
     },
     {
       "source": "FUNC-graph-impact",
+      "target": "REQ-precise-context",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-graph-impact",
       "target": "REQ-query-precision",
       "type": "satisfy",
       "weight": 1,
@@ -9276,13 +9241,6 @@
     {
       "source": "FUNC-graph-impact",
       "target": "UC-reduced-llm",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-graph-impact",
-      "target": "UC-token-efficiency",
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
@@ -10258,13 +10216,6 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
-      "source": "MS-1-specification",
-      "target": "UC-token-efficiency",
-      "type": "compose",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
       "source": "MS-2-coding-vv",
       "target": "MS-1-specification",
       "type": "relation",
@@ -10358,6 +10309,16 @@
       "type": "compose",
       "weight": 1,
       "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "REQ-token-efficiency",
+      "target": "REQ-benchmark-harness",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-token-efficiency",
+      "target": "REQ-precise-context",
+      "type": "compose"
     },
     {
       "source": "SYS-graphcode",
@@ -10466,6 +10427,11 @@
     },
     {
       "source": "SYS-graphcode",
+      "target": "REQ-greenfield-systemtest-dod",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphcode",
       "target": "REQ-harness-schema-in-contracts",
       "type": "compose",
       "weight": 1,
@@ -10536,6 +10502,11 @@
     },
     {
       "source": "SYS-graphcode",
+      "target": "REQ-token-efficiency",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphcode",
       "target": "UC-code-quality",
       "type": "compose",
       "weight": 1,
@@ -10563,13 +10534,6 @@
     {
       "source": "SYS-graphcode",
       "target": "UC-reduced-llm",
-      "type": "compose",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "SYS-graphcode",
-      "target": "UC-token-efficiency",
       "type": "compose",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
@@ -11344,6 +11308,11 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "TEST-token-efficiency",
+      "target": "REQ-token-efficiency",
+      "type": "verify"
+    },
+    {
       "source": "UC-code-quality",
       "target": "FCHAIN-apply-gate",
       "type": "compose",
@@ -11384,12 +11353,6 @@
       "type": "compose",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "UC-code-quality",
-      "target": "REQ-greenfield-systemtest-dod",
-      "type": "compose",
-      "weight": "1"
     },
     {
       "source": "UC-code-quality",
@@ -11546,6 +11509,11 @@
     },
     {
       "source": "UC-reduced-llm",
+      "target": "FCHAIN-agent-query",
+      "type": "compose"
+    },
+    {
+      "source": "UC-reduced-llm",
       "target": "FCHAIN-modelfree-gate",
       "type": "compose",
       "weight": 1,
@@ -11553,44 +11521,11 @@
     },
     {
       "source": "UC-reduced-llm",
-      "target": "REQ-greenfield-systemtest-dod",
-      "type": "compose",
-      "weight": "1"
-    },
-    {
-      "source": "UC-reduced-llm",
       "target": "REQ-small-model-viable",
-      "type": "compose",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "UC-token-efficiency",
-      "target": "FCHAIN-agent-query",
-      "type": "compose",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "UC-token-efficiency",
-      "target": "REQ-benchmark-harness",
-      "type": "compose",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "UC-token-efficiency",
-      "target": "REQ-greenfield-systemtest-dod",
-      "type": "compose",
-      "weight": "1"
-    },
-    {
-      "source": "UC-token-efficiency",
-      "target": "REQ-precise-context",
       "type": "compose",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
     }
   ],
-  "graphVersion": 76
+  "graphVersion": 78
 }

@@ -4,7 +4,7 @@
 
 # graphcode — Concept of Operations
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). OpsCon nach ISO/IEC/IEEE 29148 §5.2.4, projiziert aus dem Graphen: 9 ACTOR, 7 UC, 13 operationale REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). OpsCon nach ISO/IEC/IEEE 29148 §5.2.4, projiziert aus dem Graphen: 9 ACTOR, 6 UC, 14 operationale REQ. Deterministisch generiert.
 
 ## 1  System overview
 
@@ -27,27 +27,28 @@
 | `REQ-single-transport` | Genau ein Transport = MCP-stdio; kein Express-REST/HTTP im Harness-Core. (SPEC §0, §5) | done |
 | `REQ-store-recovery` | CONSTRAINT (ConOps): Recovery bei Kuzu Lock-Konflikt / abgestürztem Owner / korruptem Store — Lock-Erkennung + sicherer Re-Open. | open |
 | `REQ-structure-driven` | Architektur/Interfaces/Integration/Tests werden strikt aus dem governten Graph abgeleitet (Schema-first), nicht ad-hoc. | open |
+| `REQ-token-efficiency` | Das System soll den Kontext einer Runde aus dem Graphen binden statt aus Datei-Dumps: eine typisierte Abfrage liefert den exakten Blast-Radius, Vertiefung geschieht on demand. Messgroesse ist tokens_in je Aufgabe gegenueber einem grep-basierten Lauf. | done |
 
 > Systemweit bindende non-functional REQ (am SYS-Anker oder an einem ACTOR).
 > Eine REQ, die nur an einem FUNC/MOD haengt, ist Design und steht hier nicht.
 
 ## 3  User classes & involved personnel (9)
 
-- `ACTOR-claude-code` — Claude Code — Realisierungs-Agent — triggert `UC-code-quality` · `UC-reduced-llm` · `UC-token-efficiency`
+- `ACTOR-claude-code` — Claude Code — Realisierungs-Agent — triggert `UC-code-quality` · `UC-reduced-llm`
 - `ACTOR-dashboard` — Browser-Dashboard — triggert `UC-code-quality` · `UC-live-graph-view`
-- `ACTOR-developer` — Entwickler / Repo-Owner — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-efficient-testing` · `UC-graph-time-travel` · `UC-live-graph-view` · `UC-reduced-llm` · `UC-token-efficiency`
+- `ACTOR-developer` — Entwickler / Repo-Owner — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-efficient-testing` · `UC-graph-time-travel` · `UC-live-graph-view` · `UC-reduced-llm`
 - `ACTOR-facilitating-agent` — Facilitating Agent — Architekt — triggert `UC-code-quality`
 - `ACTOR-graphify` — graphify (Slicer) — triggert `UC-code-quality`
 - `ACTOR-learning-engine` — Learning-Engine — triggert `UC-reduced-llm`
-- `ACTOR-opencode` — OpenCode — headless Execution-Runtime — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-token-efficiency`
-- `ACTOR-systems-engineer` — Systems Engineer — triggert `UC-code-quality` · `UC-efficient-testing` · `UC-reduced-llm` · `UC-token-efficiency`
-- `ACTOR-vibe-coder` — Vibe Coder — triggert `UC-code-quality` · `UC-efficient-testing` · `UC-reduced-llm` · `UC-token-efficiency`
+- `ACTOR-opencode` — OpenCode — headless Execution-Runtime — triggert `UC-code-quality` · `UC-deterministic-steering`
+- `ACTOR-systems-engineer` — Systems Engineer — triggert `UC-code-quality` · `UC-efficient-testing` · `UC-reduced-llm`
+- `ACTOR-vibe-coder` — Vibe Coder — triggert `UC-code-quality` · `UC-efficient-testing` · `UC-reduced-llm`
 
-## 4  Operational scenarios (7 UC)
+## 4  Operational scenarios (6 UC)
 
-### `UC-code-quality` — UC-code-quality
+### `UC-code-quality` — Jede Aenderung geht durchs Gate
 
-UC-code-quality
+Als Entwickler will ich, dass jede Aenderung, meine wie die eines Agenten, durch dasselbe Apply-Gate laeuft und gegen dieselben Regeln geprueft wird.
 
 Ausgeloest von: `ACTOR-claude-code` · `ACTOR-dashboard` · `ACTOR-developer` · `ACTOR-facilitating-agent` · `ACTOR-graphify` · `ACTOR-opencode` · `ACTOR-systems-engineer` · `ACTOR-vibe-coder`
 
@@ -89,22 +90,15 @@ Ausgeloest von: `ACTOR-dashboard` · `ACTOR-developer`
 
 - `FCHAIN-live-update` — Live-Update-Kette (persist → emit → subscribe): `FUNC-broadcast-diff` → `FUNC-emit-update-event` → `FUNC-save-graph` → `FUNC-serve-stdio` → `FUNC-subscribe-updates`
 
-### `UC-reduced-llm` — UC-reduced-llm
+### `UC-reduced-llm` — Mit kleinem oder lokalem Modell arbeiten
 
-UC-reduced-llm
+Als Entwickler will ich anspruchsvolle Aenderungen mit einem kleinen oder lokalen Modell fahren, weil Gate und praezise Graph-Abfragen die Arbeit tragen, die sonst das Modell leisten muesste.
 
 Ausgeloest von: `ACTOR-claude-code` · `ACTOR-developer` · `ACTOR-learning-engine` · `ACTOR-systems-engineer` · `ACTOR-vibe-coder`
 
 - `FCHAIN-advisory-roundtrip` — Advisory Roundtrip (Read -> Status -> Propose -> Apply): `FUNC-evaluate-rules` → `FUNC-graph-impact` → `FUNC-graph-suggest` → `FUNC-mutate`
-- `FCHAIN-modelfree-gate` — Modellfreier Gate-Betrieb: `FUNC-evaluate-rules` → `FUNC-mutate`
-
-### `UC-token-efficiency` — UC-token-efficiency
-
-UC-token-efficiency
-
-Ausgeloest von: `ACTOR-claude-code` · `ACTOR-developer` · `ACTOR-opencode` · `ACTOR-systems-engineer` · `ACTOR-vibe-coder`
-
 - `FCHAIN-agent-query` — Agent-Graph-Query (Impact + progressive Expansion): `FUNC-graph-expand` → `FUNC-graph-impact`
+- `FCHAIN-modelfree-gate` — Modellfreier Gate-Betrieb: `FUNC-evaluate-rules` → `FUNC-mutate`
 
 ## 5  Modes of operation
 
@@ -141,7 +135,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-120` | done | Batch-Seed/Import (UNWIND) — Scale | `FUNC-import` · `MOD-harness` · `REQ-batch-seed-performance` · `REQ-bootstrap-through-gate` |
 | `CR-GC-121` | done | Distribution: npx-Paket, self-contained, agent-agnostic | `MOD-cli` · `REQ-npx-distribution` · `REQ-repo-install` · `REQ-self-contained-dist` |
 | `CR-GC-122` | done | New-Member Bootstrap durchs Gate (Format-E Cold-Start) | `FUNC-import` · `REQ-bootstrap-through-gate` |
-| `CR-GC-123` | done | MVP E2E-Acceptance: bootstrap → spec → KNOW-query → implement → re-export | `UC-code-quality` · `UC-efficient-testing` · `UC-reduced-llm` · `UC-token-efficiency` |
+| `CR-GC-123` | done | MVP E2E-Acceptance: bootstrap → spec → KNOW-query → implement → re-export | `REQ-token-efficiency` · `UC-code-quality` · `UC-efficient-testing` · `UC-reduced-llm` |
 | `CR-GC-124` | done | OpenCode-Execution: agent-agnostic 2nd client, headless BYOK | `FUNC-serve-stdio` · `MOD-mcp-tools` · `REQ-agent-agnostic` · `REQ-single-transport` |
 | `CR-GC-125` | done | Readiness-Modell definieren & realisieren (Phase/Impl/INCOSE) | `MOD-dashboard` · `MOD-mcp-tools` · `REQ-readiness-model` |
 | `CR-GC-126` | done | Query-Layer: Cypher, korrekte Impact-Richtung (KNOW statt guess) | `MOD-harness` · `MOD-mcp-tools` · `REQ-progressive-expansion` · `REQ-query-precision` |
@@ -199,7 +193,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-282` | done | Empfaenger-abhaengiges Instruktions-Rendering — negativ validiert und zurueckgebaut | `FUNC-graph-suggest` · `UC-reduced-llm` |
 | `CR-GC-283` | open | Planungs-Step auf dem Top-Graphen | `FUNC-graph-suggest` · `MOD-cli` |
 | `CR-GC-284` | done | Batch-Preflight + Autovervollstaendigung im Executor | `FUNC-graph-suggest` · `FUNC-mutate` |
-| `CR-GC-285` | done | Runden-Prompt-Injektion: Guide-Slice + Element-Index | `FUNC-graph-suggest` · `UC-token-efficiency` |
+| `CR-GC-285` | done | Runden-Prompt-Injektion: Guide-Slice + Element-Index | `FUNC-graph-suggest` · `REQ-token-efficiency` |
 | `CR-GC-286` | done | Audit-Vollstaendigkeit + Rejection-Beobachtbarkeit | `FUNC-mutate` · `REQ-audit-trail` |
 | `CR-GC-287` | done | Near-Duplicate-Erkennung scharf geschaltet (ND-Matrix-Injektion) | `FUNC-graph-suggest` · `FUNC-score-completeness` |
 | `CR-GC-288` | done | Best-of-N-Auswahl im Treiber (deterministisch) | `FUNC-graph-suggest` · `FUNC-mutate` |
@@ -207,7 +201,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-290` | done | Runden-Prompt-Vollstaendigkeit (arch-Batches, Fund-Fenster, Score-Ballast) | `FUNC-graph-suggest` |
 | `CR-GC-291` | done | Elementtyp-Liste im SYSTEM-Prompt (gegen STRUCT-Halluzination) | `FUNC-graph-suggest` · `UC-reduced-llm` |
 | `CR-GC-292` | done | Preflight-Erweiterung Zirkulaere Composition — geschlossen ohne Bau | `FUNC-mutate` |
-| `CR-GC-293` | done | Injektion isoliert messen (kein Code, nur ein Lauf) | `FUNC-graph-suggest` · `UC-token-efficiency` |
+| `CR-GC-293` | done | Injektion isoliert messen (kein Code, nur ein Lauf) | `FUNC-graph-suggest` · `REQ-token-efficiency` |
 | `CR-GC-294` | open | Skill-Spektrum fuer Treiber-Faehigkeit (Bestandsaufnahme, kein Bau) | `FUNC-graph-suggest` · `MOD-skills` |
 | `CR-GC-295` | done | Zielprofil (R6) als Runde-1-Frage, Config und Konflikt-Check | `FUNC-graph-suggest` · `FUNC-score-completeness` |
 | `CR-GC-296` | done | phase_readiness konsumieren + Sprachregelung | `FUNC-graph-suggest` · `FUNC-score-completeness` · `REQ-readiness-model` |

@@ -4,7 +4,7 @@
 
 # graphcode — Non-Functional Requirements
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ mit kinds ∋ "non-functional". 34 NFR. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ mit kinds ∋ "non-functional". 35 NFR. Deterministisch generiert.
 
 | NFR | Budget / constraint | Verified |
 |---|---|---|
@@ -41,4 +41,5 @@
 | `REQ-small-model-viable` | Deterministische, modellfreie Gates/Regeln + Query-Precision halten kleine/lokale LLMs tragfähig; Kern läuft ohne LLM (degraded). | ✓ |
 | `REQ-store-recovery` | CONSTRAINT (ConOps): Recovery bei Kuzu Lock-Konflikt / abgestürztem Owner / korruptem Store — Lock-Erkennung + sicherer Re-Open. | ✓ |
 | `REQ-structure-driven` | Architektur/Interfaces/Integration/Tests werden strikt aus dem governten Graph abgeleitet (Schema-first), nicht ad-hoc. | ✓ |
+| `REQ-token-efficiency` | Das System soll den Kontext einer Runde aus dem Graphen binden statt aus Datei-Dumps: eine typisierte Abfrage liefert den exakten Blast-Radius, Vertiefung geschieht on demand. Messgroesse ist tokens_in je Aufgabe gegenueber einem grep-basierten Lauf. | ✓ |
 | `REQ-versioned-cache` | CR-GC-102 R11: version-keyed Response-Cache + Dirty-Flag → auf Kuzu-Version mappen. | ✓ |

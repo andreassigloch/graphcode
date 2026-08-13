@@ -4,14 +4,15 @@
 
 # graphcode — Requirements Traceability Matrix (RTM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 112 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 113 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
 
 
-### System (SYS.2) — 19 REQ
+### System (SYS.2) — 23 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
 | `REQ-agent-agnostic` | `TEST-agent-agnostic` | `FUNC-serve-stdio` · `MOD-mcp-tools` | `MOD-mcp-tools` |
+| `REQ-benchmark-harness` | `TEST-token-efficiency` | `SYS-graphcode` | — |
 | `REQ-buildable-standalone` | `TEST-distribution` | `MOD-cli` | — |
 | `REQ-disk-persistence` | `TEST-mvp-e2e` | `FUNC-save-graph` | `MOD-harness` |
 | `REQ-docs-taxonomy` | `TEST-docs-taxonomy` | `MOD-docs` | — |
@@ -20,23 +21,25 @@
 | `REQ-graceful-degradation` | `TEST-reduced-llm` | `FCHAIN-modelfree-gate` · `SYS-graphcode` | — |
 | `REQ-graph-integrity` | `TEST-codec-validation` · `TEST-graph-integrity` | `MOD-codec` | — |
 | `REQ-graph-is-ssot` | `TEST-graph-is-ssot` | — | — |
+| `REQ-greenfield-systemtest-dod` | `TEST-greenfield-systemtest` | `SYS-graphcode` | — |
 | `REQ-harness-schema-in-contracts` | `TEST-mcp-symmetry` | `MOD-harness` | — |
 | `REQ-import-se-ontology` | `TEST-dashboard-ontology-sync` | `MOD-harness` | — |
 | `REQ-interface-schema` | `TEST-interface-schema` | `MOD-codec` | — |
 | `REQ-no-extraction` | `TEST-capture` | `FCHAIN-capture` | — |
+| `REQ-precise-context` | `TEST-mvp-e2e` · `TEST-token-efficiency` | `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-graph-impact` | `MOD-codec` · `MOD-mcp-tools` |
 | `REQ-readiness-model` | `TEST-readiness-model` | `MOD-mcp-tools` | — |
 | `REQ-readonly-bridge` | `TEST-readonly-bridge` | `FUNC-serve-sse` · `MOD-host-bridge` | `MOD-host-bridge` |
 | `REQ-single-kuzu-owner` | `TEST-mvp-e2e` | `FUNC-own-kuzu-host` · `MOD-harness` | `MOD-host-bridge` |
 | `REQ-single-store` | `TEST-mvp-e2e` | `MOD-harness` | — |
 | `REQ-single-transport` | `TEST-mcp-stdio-server` | `FUNC-serve-stdio` · `MOD-mcp-tools` | `MOD-mcp-tools` |
 | `REQ-store-recovery` | `TEST-store-recovery` | `MOD-harness` | — |
+| `REQ-token-efficiency` | `TEST-token-efficiency` | — | — |
 
-### funktional (SWE.1) — 24 REQ
+### funktional (SWE.1) — 21 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
 | `REQ-artifact-freshness` | `TEST-artifact-freshness` | `FUNC-render-artifacts` · `MOD-dashboard` | `MOD-dashboard` |
-| `REQ-benchmark-harness` | `TEST-token-efficiency` | `SYS-graphcode` | — |
 | `REQ-code-governed-quality` | `TEST-code-quality` · `TEST-mvp-e2e` | `FCHAIN-apply-gate` · `FUNC-test` · `FUNC-test-ui` | `MOD-skills` |
 | `REQ-completeness-actor-bounded` | `TEST-completeness-actor-bounded` | `FUNC-score-completeness` | `MOD-harness` |
 | `REQ-completeness-single-value` | `TEST-completeness-single-value` | `FUNC-score-completeness` | `MOD-harness` |
@@ -44,11 +47,9 @@
 | `REQ-dashboard-readonly` | `TEST-dashboard-readonly` | `MOD-dashboard` | — |
 | `REQ-graph-snapshot-per-commit` | `TEST-graph-time-travel` | `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot` · `FUNC-mutate` | `MOD-harness` · `MOD-mcp-tools` |
 | `REQ-graph-state-recall` | `TEST-graph-time-travel` | `FCHAIN-recall` · `FUNC-reseed` · `FUNC-rewind` · `MOD-harness` | `MOD-cli` · `MOD-harness` |
-| `REQ-greenfield-systemtest-dod` | `TEST-greenfield-systemtest` | `SYS-graphcode` | — |
 | `REQ-impact-based-testing` | `TEST-efficient-testing` · `TEST-mvp-e2e` | `FCHAIN-impact-testing` | — |
 | `REQ-interface-change-escalation` | `TEST-interface-escalation` | `FCHAIN-interface-escalation` | — |
 | `REQ-mutation-emits-event` | `TEST-live-view` | `FCHAIN-live-update` · `FUNC-emit-update-event` | `MOD-hooks` |
-| `REQ-precise-context` | `TEST-mvp-e2e` · `TEST-token-efficiency` | `FCHAIN-agent-query` | — |
 | `REQ-quality-metric` | `TEST-code-quality` | `MOD-harness` | — |
 | `REQ-readiness-completeness` | `TEST-readiness-completeness` | `FUNC-score-completeness` | `MOD-harness` |
 | `REQ-readiness-transparent` | `TEST-readiness-transparent` | `FUNC-render-readiness` · `MOD-dashboard` | `MOD-dashboard` |
@@ -90,13 +91,13 @@
 | `REQ-pre-impact-testing` | `TEST-efficient-testing` | `FCHAIN-impact-testing` | — |
 | `REQ-pre-interface-escalation` | `TEST-interface-escalation` | `FCHAIN-interface-escalation` | — |
 | `REQ-pre-modelfree-gate` | `TEST-reduced-llm` | `FCHAIN-modelfree-gate` | — |
-| `REQ-precise-context` | `TEST-mvp-e2e` · `TEST-token-efficiency` | `FCHAIN-agent-query` | — |
+| `REQ-precise-context` | `TEST-mvp-e2e` · `TEST-token-efficiency` | `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-graph-impact` | `MOD-codec` · `MOD-mcp-tools` |
 | `REQ-responsiveness` | `TEST-responsiveness` | `FCHAIN-apply-gate` | — |
 | `REQ-roundtrip-conformance` | `TEST-roundtrip` | `FCHAIN-codec-roundtrip` · `FUNC-decode` | `MOD-codec` |
 | `REQ-small-model-viable` | `TEST-mvp-e2e` · `TEST-reduced-llm` | `FCHAIN-modelfree-gate` · `FUNC-graph-suggest` | `MOD-mcp-tools` |
 | `REQ-steering-from-metrics` | `TEST-steering-loop` | `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` | `MOD-steering` |
 
-### Komponente (SWE.2/3) — 83 REQ
+### Komponente (SWE.2/3) — 84 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -153,6 +154,7 @@
 | `REQ-pre-import` | `TEST-bootstrap` | `FUNC-import` | `MOD-harness` |
 | `REQ-pre-merge-nodes` | `TEST-merge` | `FUNC-merge-nodes` | `MOD-codec` |
 | `REQ-pre-migrate-schema` | `TEST-schema-migration` | `FUNC-migrate-schema` | `MOD-harness` |
+| `REQ-precise-context` | `TEST-mvp-e2e` · `TEST-token-efficiency` | `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-graph-impact` | `MOD-codec` · `MOD-mcp-tools` |
 | `REQ-precommit-timeout` | `TEST-hooks` | `MOD-hooks` | — |
 | `REQ-progressive-expansion` | `TEST-impact-subgraph` | `FUNC-graph-expand` | `MOD-mcp-tools` |
 | `REQ-quality-metric` | `TEST-code-quality` | `MOD-harness` | — |
