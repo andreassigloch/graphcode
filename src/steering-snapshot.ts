@@ -14,7 +14,7 @@
  * @author andreas@siglochconsulting
  */
 import type { Graph } from '@sigloch/graph-api-core';
-import type { OntologyGraph } from '@sigloch/contracts/se';
+import type { OntologyGraph, MetricPolicy } from '@sigloch/contracts/se';
 import { evaluateAllRules } from '@sigloch/contracts/se';
 import { computeReadiness } from '@sigloch/se-steering';
 import { toOntologyGraph } from './conformance.js';
@@ -30,8 +30,15 @@ export interface SteeringSnapshot {
   report: ReturnType<typeof computeReadiness>;
 }
 
-/** Snapshot des Steering-Zustands eines Graphen — der EINE Messpfad (s. Kopf). */
-export function takeSteeringSnapshot(graph: Graph): SteeringSnapshot {
+/**
+ * Snapshot des Steering-Zustands eines Graphen — der EINE Messpfad (s. Kopf).
+ *
+ * CR-GC-329: `policy` ist die Urteilsschwelle der Architektur-Metriken und kommt aus
+ * `graphcode.config.jsonc` — dieselbe, mit der das Gate urteilt (`harness.getMetricPolicy()`).
+ * Kein Default hier: ein zweiter Wert an dieser Stelle hiesse, dass der Steuerungsraum
+ * gegen eine andere Schwelle misst als die, die der Host anzeigt.
+ */
+export function takeSteeringSnapshot(graph: Graph, policy: MetricPolicy): SteeringSnapshot {
   // CR-GC-303: DERSELBE Mapper wie der Harness-/Readiness-Pfad. Vorher lief hier
   // `JSON.parse(exportGraphJson(graph))` — das Export-Encoding flacht `attributes`
   // auf Top-Level ab (SSOT-Konvention, CR-216/228), Contracts-Regeln lesen aber
@@ -42,12 +49,12 @@ export function takeSteeringSnapshot(graph: Graph): SteeringSnapshot {
   // CR-GC-287: ND-Matrizen für DIESEN og injizieren — erst damit liefern die
   // contracts-ND-Regeln Funde (das Gate evaluiert ND nie).
   injectNDMatrices(og);
-  const violations = evaluateAllRules(og);
+  const violations = evaluateAllRules(og, policy);
   return {
     og,
     violations,
     blockingErrors: violations.filter((v) => v.severity === 'error').length,
-    report: computeReadiness(og),
+    report: computeReadiness(og, policy),
   };
 }
 

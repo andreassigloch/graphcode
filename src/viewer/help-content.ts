@@ -400,12 +400,12 @@ export const HELP_CONTENT: Record<string, HelpContentEntry> = {
   'MT-01': {
     plain:
       'This module depends on many others but few depend on it → it will keep changing whenever they do.',
-    se: 'Instability I = fan_out / (fan_in + fan_out) > 0.7 over the module\'s traces (direct MOD↔MOD plus the traces of its allocated `FUNC`s).',
+    se: 'Instability I = fan_out / (fan_in + fan_out) over the module\'s traces (direct MOD↔MOD plus the traces of its allocated `FUNC`s), judged against `metricPolicy.instability` from `graphcode.config.jsonc` — `graph_metrics` returns the value AND the threshold in force; `null` there means measure, do not judge (CR-GC-329).',
   },
   'MT-02': {
     plain:
       'The parts inside this module never talk to each other → it is really several modules in one.',
-    se: 'LCOM4 ≥ 4: the allocated `FUNC`s fall into that many disconnected groups (shared `io`/`satisfy` targets and shared `FLOW`s count as connected).',
+    se: 'LCOM4: the allocated `FUNC`s fall into that many disconnected groups (shared `io`/`satisfy` targets and shared `FLOW`s count as connected); `info` from `metricPolicy.lcom4.info`, `warning` from `.warning` in `graphcode.config.jsonc` (CR-GC-329).',
   },
   'MS-01': {
     plain: 'A milestone has no work assigned to it → assign the work items that belong to it.',

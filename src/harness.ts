@@ -27,9 +27,11 @@ import type {
   Graph,
   GraphNode,
   GraphEdge,
+  OntologyDescriptor,
   RuleViolation as CoreRuleViolation,
 } from '@sigloch/graph-api-core';
-import { DefaultRuleEngine, SE_DESCRIPTOR, updateEdge, mergeNodes } from '@sigloch/graph-api-core';
+import { DefaultRuleEngine, createSeDescriptor, updateEdge, mergeNodes } from '@sigloch/graph-api-core';
+import { type MetricPolicy } from '@sigloch/contracts/se';
 import {
   HarnessConfigSchema,
   MutateCommandSchema,
@@ -39,6 +41,7 @@ import {
   type RuleViolation,
 } from '@sigloch/contracts/harness';
 import { HookSystem } from './hooks.js';
+import { CONFIG_FILENAME, DEFAULT_CONFIG, type LoadedConfig } from './config.js';
 import {
   DEFAULT_GRAPH_JSON,
   importOntologyGraph,
@@ -63,6 +66,12 @@ export class GraphCodeHarness {
   private readonly storage: StorageAdapter;
   private readonly hooks: HookSystem;
   private readonly engine: DefaultRuleEngine;
+  /** The repo config this harness operates under (CR-GC-329) — thresholds + source. */
+  private readonly graphcodeConfig: LoadedConfig;
+  /** The judging thresholds this harness evaluates MT-01/MT-02 with (CR-GC-329). */
+  private readonly metricPolicy: MetricPolicy;
+  /** The SE descriptor built with `metricPolicy` — the ONE this harness uses. */
+  private readonly descriptor: OntologyDescriptor;
   /** In-memory working copy; the disk store is the SSOT it mirrors. */
   private graph: Graph = { nodes: [], edges: [] };
   /** Store-ownership lock (CR-GC-218 O2): one writer per `.graphcode` store. */
@@ -98,14 +107,29 @@ export class GraphCodeHarness {
        * (createHarness) passes it; leave unset in adapter-injection tests.
        */
       storePath?: string;
+      /**
+       * The repo's loaded `graphcode.config.jsonc` (CR-GC-329) — it carries the judging
+       * thresholds of the architecture metrics, so the gate judges MT-01/MT-02 against
+       * the SAME number `graph_metrics` reports. Production wiring (createHarness) passes
+       * it; adapter-injection tests may omit it and get `DEFAULT_CONFIG`, i.e. contracts'
+       * `DEFAULT_METRIC_POLICY` — the same named constant a repo without a config file
+       * gets, never a second value.
+       */
+      graphcodeConfig?: LoadedConfig;
     },
   ) {
     this.config = HarnessConfigSchema.parse(config);
     this.storage = storage;
     this.hooks = hooks ?? new HookSystem({ preCommitTimeout: this.config.preCommitTimeout });
-    // L2: rules come from the contracts-derived SE_DESCRIPTOR — no local parser.
-    this.engine = new DefaultRuleEngine(SE_DESCRIPTOR.version);
-    this.engine.register(SE_DESCRIPTOR.rules ?? []);
+    // L2: rules come from the contracts-derived SE descriptor — no local parser.
+    // CR-GC-329: the descriptor is BUILT with the policy; a constant with the threshold
+    // baked in would judge next to the configured value instead of with it.
+    this.graphcodeConfig = opts?.graphcodeConfig
+      ?? { config: DEFAULT_CONFIG, source: 'default', path: join(this.config.repoRoot, CONFIG_FILENAME) };
+    this.metricPolicy = this.graphcodeConfig.config.metricPolicy;
+    this.descriptor = createSeDescriptor(this.metricPolicy);
+    this.engine = new DefaultRuleEngine(this.descriptor.version);
+    this.engine.register(this.descriptor.rules ?? []);
     this.storeDir = opts?.lockDir ?? join(this.config.repoRoot, '.graphcode');
     this.storePath = opts?.storePath ?? null;
     this.storeLock = new StoreLock(join(this.storeDir, 'owner.lock'));
@@ -118,6 +142,20 @@ export class GraphCodeHarness {
    */
   getStoreDir(): string {
     return this.storeDir;
+  }
+
+  /**
+   * The repo config in force (CR-GC-329) — the thresholds this harness judges with and
+   * where they came from. Read by `graph_metrics`, so value and threshold leave the host
+   * in ONE answer and a consumer never keeps a target value of its own.
+   */
+  getGraphcodeConfig(): LoadedConfig {
+    return this.graphcodeConfig;
+  }
+
+  /** The judging thresholds of the architecture metrics — same object the gate uses. */
+  getMetricPolicy(): MetricPolicy {
+    return this.metricPolicy;
   }
 
   /** Run a write body with exclusive access — mutate/reseed never interleave (O3). */
@@ -152,7 +190,7 @@ export class GraphCodeHarness {
       // store path); the marker lives beside the store file.
       const markerDir = this.storePath ? dirname(this.storePath) : null;
       const graphJson = join(this.config.repoRoot, DEFAULT_GRAPH_JSON);
-      const current = schemaFingerprint(SE_DESCRIPTOR);
+      const current = schemaFingerprint(this.descriptor);
       const stored = markerDir ? readStoredFingerprint(markerDir) : null;
       // Only reset when we have a stored fingerprint that differs AND a SSOT to reseed
       // from. A store with no marker (pre-249 or fresh) is adopted at the current
@@ -576,8 +614,8 @@ export class GraphCodeHarness {
    */
   private unknownTypeErrors(graph: Graph): string[] {
     const errors: string[] = [];
-    const nodeTypes = new Set(Object.keys(SE_DESCRIPTOR.nodeTypes));
-    const edgeTypes = new Set(Object.keys(SE_DESCRIPTOR.edgeTypes));
+    const nodeTypes = new Set(Object.keys(this.descriptor.nodeTypes));
+    const edgeTypes = new Set(Object.keys(this.descriptor.edgeTypes));
     for (const n of graph.nodes) {
       if (!nodeTypes.has(n.type)) errors.push(`Unknown node type "${n.type}" for node "${n.uid}"`);
     }

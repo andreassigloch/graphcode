@@ -201,6 +201,15 @@ export async function serveStdio(opts?: {
       { onUpdateEvent: (event: LiveUpdateEvent) => bridge?.broadcast(event) },
     );
     await harness.initialize(); // the O2 lock IS the election (CR-GC-218)
+    // CR-GC-329: einmalige Notiz, WELCHE Schwellen gelten. Fehlt die Config, wird das
+    // gesagt statt verschwiegen — ein Konsument, der `policySource: 'default'` sieht,
+    // weiss dann auch im Log, warum.
+    const loaded = harness.getGraphcodeConfig();
+    process.stderr.write(
+      loaded.source === 'config'
+        ? `[graphcode] metric policy: ${loaded.path}\n`
+        : `[graphcode] metric policy: contracts DEFAULT_METRIC_POLICY (no ${loaded.path})\n`,
+    );
     const registry = await bootHost(repoRoot, harness);
     bootedGraph = harness.getGraph();
     bridge = await maybeStartBridge(repoRoot, harness);

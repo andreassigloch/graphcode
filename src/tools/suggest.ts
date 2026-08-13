@@ -178,7 +178,7 @@ export function bindSuggestTools(ctx: ToolContext): MCPToolRegistry {
       if (input.intent && !profile?.profile.intentAnchors?.length && !isIntentTooThin(input.intent)) {
         persistIntentAnchors(repoRoot, extractIntentAnchors(input.intent));
       }
-      return generationStep(harness.getGraph(), input.intent, input.threshold, input.defer, input.selection, profile);
+      return generationStep(harness.getGraph(), harness.getMetricPolicy(), input.intent, input.threshold, input.defer, input.selection, profile);
     },
   };
 

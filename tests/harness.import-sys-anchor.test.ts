@@ -14,6 +14,7 @@
  * Real disk Kuzu (temp dir, never :memory:). No mocks.
  */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { DEFAULT_METRIC_POLICY } from '@sigloch/contracts/se';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -126,7 +127,7 @@ describe('TEST-import-sys-anchor: every import leaves exactly one SYS (CR-GC-302
   // `harness.evaluateRules()` would answer an empty list no matter what the graph says.
   it('AF-01..05 fire as warnings after the anchored import — the gap is loud, not vacuous', async () => {
     await harness.importGraph(WITHOUT_SYS);
-    const af = takeSteeringSnapshot(harness.getGraph()).violations.filter((v) => v.rule_id.startsWith('AF-'));
+    const af = takeSteeringSnapshot(harness.getGraph(), DEFAULT_METRIC_POLICY).violations.filter((v) => v.rule_id.startsWith('AF-'));
     // Before the anchor existed these were silently skipped ("nothing to anchor on
     // yet") — a never-performed analysis looked exactly like a completed one.
     expect(af.map((v) => v.rule_id).sort()).toEqual(['AF-01', 'AF-02', 'AF-03', 'AF-04', 'AF-05']);
@@ -143,7 +144,7 @@ describe('TEST-import-sys-anchor: every import leaves exactly one SYS (CR-GC-302
     const af = takeSteeringSnapshot({
       nodes: [{ uid: 'MOD-core', type: 'MOD', name: 'core', description: '', attributes: {} }],
       edges: [],
-    }).violations.filter((v) => v.rule_id.startsWith('AF-'));
+    }, DEFAULT_METRIC_POLICY).violations.filter((v) => v.rule_id.startsWith('AF-'));
     expect(af).toEqual([]);
   });
 });

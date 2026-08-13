@@ -8,6 +8,7 @@
  * REQ/UC-Hinweis-Pfad (duplicateHints, contracts-frei, keine Regel).
  */
 import { describe, it, expect, afterEach } from 'vitest';
+import { DEFAULT_METRIC_POLICY } from '@sigloch/contracts/se';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import {
@@ -94,7 +95,7 @@ describe('ND-01 — FUNC-Near-Duplicates (konstruierte Duplikate)', () => {
 
   it('injectNDMatrices ⇒ evaluateAllRules meldet ND-01 GENAU für das Duplikat-Paar', () => {
     injectNDMatrices(og);
-    const nd = evaluateAllRules(og).filter((v) => v.rule_id === 'ND-01');
+    const nd = evaluateAllRules(og, DEFAULT_METRIC_POLICY).filter((v) => v.rule_id === 'ND-01');
     expect(nd).toHaveLength(1);
     expect(nd[0].element_id).toBe('FUNC-generate-report-2');
     expect(nd[0].message).toContain('FUNC-generate-report');
@@ -102,7 +103,7 @@ describe('ND-01 — FUNC-Near-Duplicates (konstruierte Duplikate)', () => {
   });
 
   it('ohne Injektion liefert ND-01 nichts (der Alt-Zustand — leere Hülle)', () => {
-    expect(evaluateAllRules(og).filter((v) => v.rule_id === 'ND-01')).toHaveLength(0);
+    expect(evaluateAllRules(og, DEFAULT_METRIC_POLICY).filter((v) => v.rule_id === 'ND-01')).toHaveLength(0);
   });
 });
 
@@ -124,7 +125,7 @@ describe('ND-02 — SCHEMA-Near-Duplicates (konstruierte Duplikate)', () => {
     const { schemaIds, matrix } = computeND02Matrix(og);
     expect(schemaIds[0]).toBe('SCHEMA-audit-entry');
     injectNDMatrices(og);
-    const nd = evaluateAllRules(og).filter((v) => v.rule_id === 'ND-02');
+    const nd = evaluateAllRules(og, DEFAULT_METRIC_POLICY).filter((v) => v.rule_id === 'ND-02');
     expect(nd).toHaveLength(1);
     expect(nd[0].message).toContain('SCHEMA-report-req');
     expect(matrix.every((row) => row.every((v) => v >= 0 && v <= 1))).toBe(true);
@@ -162,8 +163,8 @@ describe('generate-Fokus sieht ND (AK 3)', () => {
     }) as unknown as Graph;
 
   it('identische FUNC-Duplikate erhöhen blockingErrors um genau 1 vs. differenzierte', () => {
-    const dup = generationStep(buildGraph('Assemble the selected metrics into a downloadable report document.'));
-    const distinct = generationStep(buildGraph('Stream raw audit events into the retention archive nightly.'));
+    const dup = generationStep(buildGraph('Assemble the selected metrics into a downloadable report document.'), DEFAULT_METRIC_POLICY);
+    const distinct = generationStep(buildGraph('Stream raw audit events into the retention archive nightly.'), DEFAULT_METRIC_POLICY);
     expect(dup.blockingErrors).toBe(distinct.blockingErrors + 1);
   });
 });

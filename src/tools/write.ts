@@ -312,7 +312,7 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
         // bewegt die graphVersion, der Nachher-Zustand ist dort per
         // graph_readiness lesbar; die Doppel-Evaluierung pro echtem Write wäre
         // reine Kostenstelle ohne Konsument (Entscheidung dokumentiert im CR).
-        const steeringBefore = input.dryRun ? takeSteeringSnapshot(harness.getGraph()) : null;
+        const steeringBefore = input.dryRun ? takeSteeringSnapshot(harness.getGraph(), harness.getMetricPolicy()) : null;
         // L2: identical semantics — delegate straight to the gate, no bypass.
         // Cast: MCP transports deserialize commands as plain objects; harness.mutate()
         // validates internally via MutateCommandSchema.
@@ -322,7 +322,7 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
           // GENAU JETZT messen (bei block hat das Gate schon zurückgerollt ⇒
           // Delta 0), dann die Working Copy restaurieren. Pure Messung, kein
           // Einfluss auf tier/success (Muster fitAdvisory/CR-274).
-          const steeringDelta = computeSteeringDelta(steeringBefore!, takeSteeringSnapshot(harness.getGraph()));
+          const steeringDelta = computeSteeringDelta(steeringBefore!, takeSteeringSnapshot(harness.getGraph(), harness.getMetricPolicy()));
           await harness.loadGraph();
           const preview = { ...result, steeringDelta };
           // Vorschlag→Verdict auditieren (F2) — der Preview trägt das steeringDelta.

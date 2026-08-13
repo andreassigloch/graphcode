@@ -243,7 +243,7 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
       'LLM/learning. Complements rules_get_violations (the flat gate list) by prioritising.',
     inputSchema: GraphNextStepInputSchema,
     async handler(_input) {
-      return nextStep(harness.getGraph());
+      return nextStep(harness.getGraph(), harness.getMetricPolicy());
     },
   };
 
@@ -308,7 +308,7 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
    * (Muster computeSteeringDelta).
    */
   const dimensionReadiness = (): ReadinessScoreType[] => {
-    const scores = new Map(takeSteeringSnapshot(harness.getGraph()).report.scores.map((s) => [s.dimension as string, s]));
+    const scores = new Map(takeSteeringSnapshot(harness.getGraph(), harness.getMetricPolicy()).report.scores.map((s) => [s.dimension as string, s]));
     return ReadinessDimension.options.map(
       (dimension) =>
         scores.get(dimension) ?? { dimension, score: 0, violations: 0, applicable: 0, ready: false },

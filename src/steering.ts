@@ -10,7 +10,7 @@
  * pass/fail. This tool only prioritises what to do next.
  */
 import type { Graph } from '@sigloch/graph-api-core';
-import type { RuleViolation } from '@sigloch/contracts/se';
+import type { RuleViolation, MetricPolicy } from '@sigloch/contracts/se';
 import { RULE_TO_DIMENSION } from '@sigloch/contracts/se';
 import { computeWeightVector, type WeightVectorType } from '@sigloch/se-steering';
 import { takeSteeringSnapshot } from './steering-snapshot.js';
@@ -57,14 +57,14 @@ function countByRule(violations: RuleViolation[]): { rule_id: string; count: num
  * Compute the "next best step" for the current graph.
  * Deterministic: readiness → weight vector → top-deficit dimension → firing rules.
  */
-export function nextStep(graph: Graph): NextStepResult {
+export function nextStep(graph: Graph, policy: MetricPolicy): NextStepResult {
   // CR-GC-324: EINE Graph→OntologyGraph-Abbildung. Vorher stand hier eine lokale
   // Kopie über `JSON.parse(exportGraphJson(graph))` — das flache Export-Encoding
   // (CR-216/219) versteckt `attributes.*`, wodurch R-19/R-20/R-26/VR-01/AF-01..05
   // in DIESEM Pfad scheinfeuerten und damit die Dimensions-Priorisierung
   // verschoben. Der Snapshot (CR-GC-303/289) ist der eine Messpfad; er trägt die
   // ND-Injektion (CR-GC-287) bereits.
-  const { violations, report } = takeSteeringSnapshot(graph);
+  const { violations, report } = takeSteeringSnapshot(graph, policy);
   const weights = computeWeightVector(report);
 
   const errors = violations.filter((v) => v.severity === 'error');

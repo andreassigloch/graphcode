@@ -19,7 +19,8 @@
  */
 
 import { z } from 'zod/v4';
-import { moduleMetrics, type ModuleMetrics } from '@sigloch/contracts/se';
+import { moduleMetrics, type ModuleMetrics, type MetricPolicy } from '@sigloch/contracts/se';
+import type { PolicySource } from '../config.js';
 import { toOntologyGraph } from '../conformance.js';
 import type { MCPTool, MCPToolRegistry } from '../mcp-tools.js';
 import type { ToolContext } from '../tool-context.js';
@@ -31,7 +32,7 @@ export function bindMetricsTools(ctx: ToolContext): MCPToolRegistry {
 
   const graph_metrics: MCPTool<
     z.infer<typeof GraphMetricsInputSchema>,
-    { modules: ModuleMetrics[]; graphVersion: number }
+    { modules: ModuleMetrics[]; policy: MetricPolicy; policySource: PolicySource; graphVersion: number }
   > = {
     name: 'graph_metrics',
     description:
@@ -47,11 +48,24 @@ export function bindMetricsTools(ctx: ToolContext): MCPToolRegistry {
       'allocated FUNCs, cohesion below 2 FUNCs or without an external connection — a value that is ' +
       'not measurable is not zero percent. Cohesion is deliberately THRESHOLD-FREE (CR-SM-223: a ' +
       'measurement must not masquerade as a defect); judge it, do not gate on it. Sorted worst ' +
-      'cohesion first — the ranking IS the signal. Read-only.',
+      'cohesion first — the ranking IS the signal. CR-GC-329: the answer also carries the ' +
+      'JUDGING THRESHOLDS it was measured against — `policy` {instability, lcom4:{info,warning}} ' +
+      'plus `policySource` ("config" = graphcode.config.jsonc, "default" = the named contracts ' +
+      'DEFAULT_METRIC_POLICY). Draw the traffic light from THIS answer; a consumer that keeps a ' +
+      'target value of its own is a second source for the same number. `policy.instability: null` ' +
+      'means measure, do not judge: MT-01 never fires, the instability value is still in every ' +
+      'module row. Read-only.',
     inputSchema: GraphMetricsInputSchema,
     async handler(_input) {
+      // CR-GC-329: Wert UND Schwelle aus EINER Antwort. Ein Konsument, der „71 % /
+      // Ziel <= 70 %" zeichnet, hat beide Zahlen von hier und keinen eigenen Zielwert;
+      // `policySource` sagt, ob sie aus `graphcode.config.jsonc` stammt oder der
+      // benannte contracts-Startwert ist — verschwiegen wird nichts.
+      const { config, source } = harness.getGraphcodeConfig();
       return {
         modules: moduleMetrics(toOntologyGraph(harness.getGraph())),
+        policy: config.metricPolicy,
+        policySource: source,
         graphVersion: graphVersion(),
       };
     },

@@ -18,6 +18,7 @@
  */
 import type { Graph } from '@sigloch/graph-api-core';
 import { RULE_TO_DIMENSION } from '@sigloch/contracts/se';
+import type { MetricPolicy } from '@sigloch/contracts/se';
 import { takeSteeringSnapshot } from './steering-snapshot.js';
 import { computePhaseReadiness, currentPhaseGate, type PhaseGateReadiness } from './readiness.js';
 import { isIntentTooThin, intentCoverage, type LoadedTargetProfile } from './target-profile.js';
@@ -130,6 +131,7 @@ export const DIMENSION_FOCUS_TYPES: Record<string, string[]> = {
  */
 export function generationStep(
   graph: Graph,
+  policy: MetricPolicy,
   intent?: string,
   threshold = 0.8,
   defer: string[] = [],
@@ -139,7 +141,7 @@ export function generationStep(
   const gateProtocol = GATE_PROTOCOL[selection];
   // Steering-Snapshot (CR-GC-289): og + ND-Injektion + Full-Katalog-Eval +
   // computeReadiness — geteilt mit dem steeringDelta des dryRun-Verdicts.
-  const { og, violations, blockingErrors, report } = takeSteeringSnapshot(graph);
+  const { og, violations, blockingErrors, report } = takeSteeringSnapshot(graph, policy);
   const sys = og.elements.find((e) => e.type === 'SYS');
   const effectiveIntent = intent?.trim() || sys?.description?.trim() || '';
   const readiness = report.scores

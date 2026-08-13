@@ -12,9 +12,10 @@ import { join, dirname } from 'node:path';
 import { mkdirSync } from 'node:fs';
 import { z } from 'zod/v4';
 import { KuzuAdapter } from '@sigloch/graph-cypher-wasm';
-import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
+import { createSeDescriptor } from '@sigloch/graph-api-core';
 import { HarnessConfigSchema } from '@sigloch/contracts/harness';
 import { GraphCodeHarness } from './harness.js';
+import { loadGraphcodeConfig } from './config.js';
 import { HookSystem } from './hooks.js';
 import { registerEmitters } from './emit.js';
 
@@ -150,6 +151,19 @@ export type { HelpEntry, ContextualMeasure } from './viewer/help.js';
 export { HELP_CONTENT, HELP_VOCAB, HELP_PANEL_IDS, HELP_ELEMENT_STATES } from './viewer/help-content.js';
 export type { HelpContentEntry, HelpVocabEntry } from './viewer/help-content.js';
 
+// Repo-Betriebs-Config (CR-GC-329) — hält die Urteilsschwellen der Architektur-Metriken
+// an EINER Stelle und gibt sie mit den Kennzahlen heraus (graph_metrics.policy).
+export {
+  loadGraphcodeConfig,
+  stripJsonComments,
+  GraphcodeConfigSchema,
+  ConfigError,
+  CONFIG_FILENAME,
+  DEFAULT_CONFIG,
+  DEFAULT_FOCUS_THRESHOLD,
+} from './config.js';
+export type { GraphcodeConfig, LoadedConfig, PolicySource } from './config.js';
+
 /** Default Kuzu store location relative to the repo root. */
 export const KUZU_DIR = '.graphcode/kuzu';
 
@@ -170,11 +184,18 @@ export async function createHarness(
 ): Promise<GraphCodeHarness> {
   const cfg = HarnessConfigSchema.parse(config);
   const kuzuPath = join(cfg.repoRoot, KUZU_DIR);
+  // CR-GC-329: die Betriebs-Config des Repos — sie hält die Urteilsschwellen der
+  // Architektur-Metriken. Fehlt die Datei, gilt der benannte contracts-Startwert
+  // (`source: 'default'`); ist sie da und schemawidrig, bricht der Start hier ab,
+  // statt still auf Defaults zu fallen.
+  const graphcodeConfig = loadGraphcodeConfig(cfg.repoRoot);
   // graphcode owns the per-repo `.graphcode/` workspace (SPEC §4). Kuzu opens the
   // store at `kuzuPath` but needs its parent to exist — create it on first run.
   mkdirSync(dirname(kuzuPath), { recursive: true });
   const storage = new KuzuAdapter({
-    ontology: SE_DESCRIPTOR,
+    // Dieselbe Descriptor-Herkunft wie im Gate (harness.ts) — die Policy ändert nur
+    // die MT-Urteile, das DDL bleibt davon unberührt.
+    ontology: createSeDescriptor(graphcodeConfig.config.metricPolicy),
     path: kuzuPath,
   });
   const hooks = new HookSystem({ preCommitTimeout: cfg.preCommitTimeout });
@@ -183,5 +204,9 @@ export async function createHarness(
   });
   // O2 lock guards the store this factory just wired: <repoRoot>/.graphcode (CR-GC-218).
   // storePath enables the CR-GC-249 schema-drift guard (auto-reseed on meta-model change).
-  return new GraphCodeHarness(cfg, storage, hooks, { lockDir: dirname(kuzuPath), storePath: kuzuPath });
+  return new GraphCodeHarness(cfg, storage, hooks, {
+    lockDir: dirname(kuzuPath),
+    storePath: kuzuPath,
+    graphcodeConfig,
+  });
 }

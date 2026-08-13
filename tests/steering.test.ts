@@ -2,6 +2,7 @@
  * TEST-steering (CR-223 / ST-5): graph_next_step condenses violations into one action.
  */
 import { describe, it, expect } from 'vitest';
+import { DEFAULT_METRIC_POLICY } from '@sigloch/contracts/se';
 import type { Graph, GraphNode, GraphEdge } from '@sigloch/graph-api-core';
 import { nextStep } from '../src/steering.js';
 
@@ -48,7 +49,7 @@ function allocDeficientGraph(): Graph {
 
 describe('TEST-steering: graph_next_step', () => {
   it('returns a well-formed result with normalized guidance weights', () => {
-    const r = nextStep(allocDeficientGraph());
+    const r = nextStep(allocDeficientGraph(), DEFAULT_METRIC_POLICY);
     expect(r).toHaveProperty('blocking');
     expect(r).toHaveProperty('nextStep');
     expect(Array.isArray(r.advisory)).toBe(true);
@@ -61,7 +62,7 @@ describe('TEST-steering: graph_next_step', () => {
     // This graph has two unallocated FUNCs and two empty MODs: alloc scores 4/6 = 0.333,
     // below ver's 3/8 = 0.625, so alloc is the step. The blocking count is unaffected —
     // R-01 x2 (the unverified precond/postcond REQs) are errors either way.
-    const r = nextStep(allocDeficientGraph());
+    const r = nextStep(allocDeficientGraph(), DEFAULT_METRIC_POLICY);
     expect(r.blocking.errors).toBe(2); // R-01 x2 (precond/postcond REQs unverified)
     expect(r.nextStep).not.toBeNull();
     expect(r.nextStep!.dimension).toBe('alloc');
@@ -88,7 +89,7 @@ describe('TEST-steering: graph_next_step', () => {
   }
 
   it('sees attribute-carried bindings — no phantom R-19/R-20/R-26/VR-01 findings', () => {
-    const r = nextStep(boundBindingsGraph());
+    const r = nextStep(boundBindingsGraph(), DEFAULT_METRIC_POLICY);
     const fired = new Set([...r.blocking.ruleIds, ...r.advisory.map((a) => a.rule_id), ...(r.nextStep?.clears ?? []).map((c) => c.split(' ')[0])]);
     for (const ruleId of ['R-19', 'R-20', 'R-26', 'VR-01']) {
       expect(fired.has(ruleId), `${ruleId} fired although the binding is present`).toBe(false);
@@ -97,7 +98,7 @@ describe('TEST-steering: graph_next_step', () => {
 
   it('still reports a MISSING binding (the fix does not blind the rules)', () => {
     // Same fixture, bindings stripped again → the very same rules must fire.
-    const r = nextStep(allocDeficientGraph());
+    const r = nextStep(allocDeficientGraph(), DEFAULT_METRIC_POLICY);
     const fired = new Set([...r.blocking.ruleIds, ...r.advisory.map((a) => a.rule_id), ...(r.nextStep?.clears ?? []).map((c) => c.split(' ')[0])]);
     expect(fired.has('R-19') || fired.has('R-20')).toBe(true);
   });
@@ -106,7 +107,7 @@ describe('TEST-steering: graph_next_step', () => {
     // Until contracts CR-228 D, R-22/R-23 were unmapped in RULE_TO_DIMENSION and fell
     // through to `advisory`. They are mapped to `alloc` now, so the advisory list holds
     // what is left over — the non-error findings of the other dimensions.
-    const r = nextStep(allocDeficientGraph());
+    const r = nextStep(allocDeficientGraph(), DEFAULT_METRIC_POLICY);
     expect(r.blocking.ruleIds).toContain('R-01');
     const advisoryIds = r.advisory.map((a) => a.rule_id);
     expect(advisoryIds).not.toContain('R-22');

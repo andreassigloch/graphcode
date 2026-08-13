@@ -17,6 +17,7 @@
  * @author andreas@siglochconsulting
  */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { DEFAULT_METRIC_POLICY } from '@sigloch/contracts/se';
 import { execFileSync } from 'node:child_process';
 import { mkdtempSync, mkdirSync, rmSync, writeFileSync, existsSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -248,7 +249,7 @@ describe('UC-graph-time-travel is modelled, not just built (CR-GC-311)', () => {
     // because SE_DESCRIPTOR wires only V3_RULES + MT_RULES (CR-GC-312).
     // Cast: the SSOT is the runtime shape the rules read; the exported TS type demands
     // literal unions the JSON cannot carry.
-    const fired = evaluateAllRules(graph as unknown as Parameters<typeof evaluateAllRules>[0])
+    const fired = evaluateAllRules(graph as unknown as Parameters<typeof evaluateAllRules>[0], DEFAULT_METRIC_POLICY)
       .filter((v) => v.element_id === 'UC-graph-time-travel')
       .map((v) => v.rule_id);
 

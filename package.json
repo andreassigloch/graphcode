@@ -1,7 +1,7 @@
 {
   "name": "@sigloch/graphcode",
   "version": "0.12.0",
-  "description": "Governed graph substrate for coding agents (Claude Code, OpenCode, any MCP-stdio host) — Apply-Gate + on-disk Kuzu store + MCP tools",
+  "description": "Governed graph substrate for coding agents (Claude Code, OpenCode, any MCP-stdio host) \u2014 Apply-Gate + on-disk Kuzu store + MCP tools",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -43,14 +43,14 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
-    "@sigloch/contracts": "^3.3.0",
-    "@sigloch/graph-api-core": "^2.1.0",
+    "@sigloch/contracts": "^4.0.0",
+    "@sigloch/graph-api-core": "^2.2.0",
     "@sigloch/graph-cypher-wasm": "^0.2.3",
     "@sigloch/graphcode-client": "^0.8.0",
     "@sigloch/graphify": "^0.1.0",
     "@sigloch/learning-core": "^0.1.0",
-    "@sigloch/se-optimizer": "^0.3.1",
-    "@sigloch/se-steering": "^0.3.0",
+    "@sigloch/se-optimizer": "^0.3.3",
+    "@sigloch/se-steering": "^0.4.0",
     "kuzu-wasm": "^0.11.3",
     "typescript": "^5.5.0",
     "zod": "^4.0.0"

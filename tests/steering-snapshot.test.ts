@@ -18,6 +18,7 @@
  * @author andreas@siglochconsulting
  */
 import { describe, it, expect } from 'vitest';
+import { DEFAULT_METRIC_POLICY } from '@sigloch/contracts/se';
 import type { Graph, GraphNode, GraphEdge } from '@sigloch/graph-api-core';
 import { takeSteeringSnapshot } from '../src/steering-snapshot.js';
 import { exportGraphJson } from '../src/exporter.js';
@@ -84,7 +85,7 @@ const ATTRIBUTE_READING_RULES = ['R-19', 'R-20', 'VR-01', 'SC-04', 'AF-01', 'AF-
 
 describe('takeSteeringSnapshot — attributes reach the rules (CR-GC-303)', () => {
   it('exposes attributes NESTED, not flattened onto the element', () => {
-    const snap = takeSteeringSnapshot(fullyBoundGraph());
+    const snap = takeSteeringSnapshot(fullyBoundGraph(), DEFAULT_METRIC_POLICY);
     const test = snap.og.elements.find((e) => e.id === 'TEST-bestellung');
     // The exact shape the contracts rules read. Before the fix this was `undefined`
     // and `testRef` sat on the element itself.
@@ -99,23 +100,23 @@ describe('takeSteeringSnapshot — attributes reach the rules (CR-GC-303)', () =
   });
 
   it('R-19 (testRef) stays silent on a bound TEST', () => {
-    const snap = takeSteeringSnapshot(fullyBoundGraph());
+    const snap = takeSteeringSnapshot(fullyBoundGraph(), DEFAULT_METRIC_POLICY);
     expect(snap.violations.filter((v) => v.rule_id === 'R-19')).toEqual([]);
   });
 
   it('R-20 (realRef/codeRef) stays silent on a bound FUNC — the second binding rule, from CR-GC-299', () => {
-    const snap = takeSteeringSnapshot(fullyBoundGraph());
+    const snap = takeSteeringSnapshot(fullyBoundGraph(), DEFAULT_METRIC_POLICY);
     expect(snap.violations.filter((v) => v.rule_id === 'R-20')).toEqual([]);
   });
 
   it('AF-01..05 stay silent when SYS carries all five freshness stamps', () => {
-    const snap = takeSteeringSnapshot(fullyBoundGraph());
+    const snap = takeSteeringSnapshot(fullyBoundGraph(), DEFAULT_METRIC_POLICY);
     const af = snap.violations.filter((v) => v.rule_id.startsWith('AF-')).map((v) => v.rule_id);
     expect(af).toEqual([]);
   });
 
   it('none of the attribute-reading rules fires on a fully bound graph', () => {
-    const snap = takeSteeringSnapshot(fullyBoundGraph());
+    const snap = takeSteeringSnapshot(fullyBoundGraph(), DEFAULT_METRIC_POLICY);
     const fired = [...new Set(snap.violations.map((v) => v.rule_id))]
       .filter((r) => ATTRIBUTE_READING_RULES.includes(r))
       .sort();
@@ -127,14 +128,14 @@ describe('takeSteeringSnapshot — attributes reach the rules (CR-GC-303)', () =
     // Strip the binding: now R-19 SHOULD fire. A snapshot that reports nothing here
     // would be the mirror-image bug (silent instead of screaming).
     graph.nodes.find((n) => n.uid === 'TEST-bestellung')!.attributes = { testResult: 'passed' };
-    const snap = takeSteeringSnapshot(graph);
+    const snap = takeSteeringSnapshot(graph, DEFAULT_METRIC_POLICY);
     expect(snap.violations.filter((v) => v.rule_id === 'R-19').length).toBeGreaterThan(0);
   });
 
   it('leaves the export encoding byte-identical — the SSOT convention is untouched', () => {
     const graph = fullyBoundGraph();
     const before = exportGraphJson(graph);
-    takeSteeringSnapshot(graph);
+    takeSteeringSnapshot(graph, DEFAULT_METRIC_POLICY);
     expect(exportGraphJson(graph)).toBe(before);
     // The flattening itself is still the committed convention, not collateral damage.
     const parsed = JSON.parse(before) as { elements: Record<string, unknown>[] };
@@ -146,7 +147,7 @@ describe('takeSteeringSnapshot — attributes reach the rules (CR-GC-303)', () =
   it('does not mutate the source graph (the mapper shares attribute references)', () => {
     const graph = fullyBoundGraph();
     const snapshotBefore = JSON.stringify(graph);
-    takeSteeringSnapshot(graph);
+    takeSteeringSnapshot(graph, DEFAULT_METRIC_POLICY);
     expect(JSON.stringify(graph)).toBe(snapshotBefore);
   });
 });

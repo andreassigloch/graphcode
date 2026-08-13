@@ -6,6 +6,7 @@
  * Kern pur über Graph-Fixtures; Tool über echten disk-Kuzu-Harness.
  */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { DEFAULT_METRIC_POLICY } from '@sigloch/contracts/se';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -37,7 +38,7 @@ const INTENT = 'Ein Bestellsystem, mit dem Kunden Ersatzteile suchen und bestell
 
 describe('generationStep — Zustandsmaschine (pur)', () => {
   it('leerer Graph ohne Intention → seed-Phase fordert die Intention an', () => {
-    const step = generationStep(EMPTY);
+    const step = generationStep(EMPTY, DEFAULT_METRIC_POLICY);
     expect(step.phase).toBe('seed');
     expect(step.done).toBe(false);
     expect(step.prompt).toContain('Intention');
@@ -45,7 +46,7 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
   });
 
   it('leerer Graph mit Intention → Seed-Batch-Instruktion (SYS/ACTOR/UC, Gate-Protokoll)', () => {
-    const step = generationStep(EMPTY, INTENT);
+    const step = generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT);
     expect(step.phase).toBe('seed');
     expect(step.prompt).toContain(INTENT);
     for (const part of ['SYS', 'ACTOR', 'UC', 'dryRun', 'fitAdvisory', 'graph_authoring_guide']) {
@@ -60,7 +61,7 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
       [node('SYS-shop', 'SYS', 'shop', INTENT), node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt Teil.')],
       [edge('SYS-shop', 'UC-bestellen', 'compose')],
     );
-    const step = generationStep(graph, undefined, 0.8);
+    const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8);
     expect(step.phase).toBe('expand');
     expect(step.done).toBe(false);
     // Intention kommt aus der SYS-description — kein intent-Parameter nötig.
@@ -69,7 +70,7 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
     expect(step.prompt).toMatch(/UC-bestellen \([A-Z]+-?\d*/);
     expect(step.blockingErrors).toBeGreaterThan(0);
     // Deterministisch.
-    expect(generationStep(graph, undefined, 0.8)).toEqual(step);
+    expect(generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8)).toEqual(step);
   });
 
   it('req-Template fordert den TEST (TEST verify REQ) im selben Batch (CR-GC-284)', () => {
@@ -91,11 +92,11 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
       ],
     );
     // Die req-Dimension ist nicht zwingend der erste Fokus — per defer dorthin rotieren.
-    let step = generationStep(graph, undefined, 0.8);
+    let step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8);
     const keys: string[] = [];
     while (step.focusKey && !step.prompt.includes('REQ-Kandidaten') && keys.length < 10) {
       keys.push(step.focusKey);
-      step = generationStep(graph, undefined, 0.8, keys);
+      step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8, keys);
     }
     expect(step.prompt).toContain('REQ-Kandidaten');
     expect(step.prompt).toContain('TEST verify REQ');
@@ -124,11 +125,11 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
         edge('FCHAIN-bestellung', 'FUNC-pruefen', 'compose'),
       ],
     );
-    let step = generationStep(graph, undefined, 0.8);
+    let step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8);
     const keys: string[] = [];
     while (step.focusKey && !step.prompt.includes('FUNC/FCHAIN-Zerlegungen') && keys.length < 15) {
       keys.push(step.focusKey);
-      step = generationStep(graph, undefined, 0.8, keys);
+      step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8, keys);
     }
     expect(step.prompt).toContain('satisfy→REQ');
     expect(step.prompt).toContain('allocate→MOD');
@@ -197,7 +198,7 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
         edge('FLOW-out', 'ACTOR-kunde', 'io'),
       ],
     );
-    const step = generationStep(graph, undefined, 0);
+    const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0);
     expect(step.blockingErrors).toBe(0);
     const srr = step.phaseReadiness.find((p) => p.gate === 'SRR');
     const pdr = step.phaseReadiness.find((p) => p.gate === 'PDR');
@@ -239,7 +240,7 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
         edge('TEST-bestellung', 'REQ-bestellung', 'verify'),
       ],
     );
-    const step = generationStep(graph, undefined, 0);
+    const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0);
     expect(step.blockingErrors).toBe(0); // kein error — die alte Bedingung allein hätte done:true erlaubt
     const pdr = step.phaseReadiness.find((p) => p.gate === 'PDR');
     expect(pdr?.missing).toContain('R-15');
@@ -261,32 +262,32 @@ describe('generationStep — Fund-Rotation/defer (CR-GC-281)', () => {
   );
 
   it('focusKey ist stabil und deterministisch (dimension:element_ids sortiert)', () => {
-    const step = generationStep(graph, undefined, 0.8);
+    const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8);
     expect(step.phase).toBe('expand');
     expect(step.focusKey).toMatch(/^[a-z]+:.+/);
     // Gleicher Graph + gleiches defer ⇒ identischer Schritt inkl. focusKey.
-    expect(generationStep(graph, undefined, 0.8)).toEqual(step);
+    expect(generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8)).toEqual(step);
     // Kein Fokus ⇒ kein focusKey (seed).
-    expect(generationStep(EMPTY, INTENT).focusKey).toBeNull();
+    expect(generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT).focusKey).toBeNull();
   });
 
   it('defer überspringt das Fund-Set — anderer focusKey, anderer Prompt', () => {
-    const first = generationStep(graph, undefined, 0.8);
-    const second = generationStep(graph, undefined, 0.8, [first.focusKey as string]);
+    const first = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8);
+    const second = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8, [first.focusKey as string]);
     expect(second.phase).toBe('expand');
     expect(second.focusKey).not.toBe(first.focusKey);
     expect(second.prompt).not.toBe(first.prompt);
     // Deterministisch auch mit defer.
-    expect(generationStep(graph, undefined, 0.8, [first.focusKey as string])).toEqual(second);
+    expect(generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8, [first.focusKey as string])).toEqual(second);
   });
 
   it('alles deferred → Fallback ohne Dead-End, Hinweis im Prompt', () => {
     // Alle Kandidaten einsammeln, bis sich ein focusKey wiederholt.
     const keys: string[] = [];
-    let step = generationStep(graph, undefined, 0.8, keys);
+    let step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8, keys);
     while (step.focusKey && !keys.includes(step.focusKey) && keys.length < 30) {
       keys.push(step.focusKey);
-      step = generationStep(graph, undefined, 0.8, keys);
+      step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8, keys);
     }
     // Kein Dead-End: defer wird ignoriert, der erste Kandidat kommt zurück …
     expect(step.phase).toBe('expand');
@@ -313,13 +314,13 @@ describe('generationStep — Fund-Fenster/Prompt-Vollständigkeit (CR-GC-290)', 
         edge('UC-bestellen', 'FCHAIN-leer', 'compose'),
       ],
     );
-    let step = generationStep(graph, undefined, 0.8);
+    let step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8);
     const keys: string[] = [];
     const seenUcWindows: string[] = [];
     while (step.focusKey && !keys.includes(step.focusKey) && keys.length < 20) {
       if (step.focusKey.startsWith('uc:')) seenUcWindows.push(step.focusKey);
       keys.push(step.focusKey);
-      step = generationStep(graph, undefined, 0.8, keys);
+      step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8, keys);
     }
     // Jedes uc-Fenster trägt genau eine rule_id im Key (dimension:rule_id:elemente) —
     // R-15 (FCHAIN-leer) und UC-Funde (UC-bestellen) tauchen nie im selben Fenster auf.
@@ -336,7 +337,7 @@ describe('generationStep — Fund-Fenster/Prompt-Vollständigkeit (CR-GC-290)', 
       [node('SYS-shop', 'SYS', 'shop', INTENT), node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt Teil.')],
       [edge('SYS-shop', 'UC-bestellen', 'compose')],
     );
-    const step = generationStep(graph, undefined, 0.8);
+    const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8);
     expect(step.phase).toBe('expand');
     expect(step.prompt).not.toMatch(/\(Score [\d.]+,\s*\d+ Funde\)/);
     expect(step.prompt).toContain('Funde: ');
@@ -367,7 +368,7 @@ describe('generationStep — R-15 Stagnations-Fix (CR-GC-290-Nachtrag, Messlauf-
   );
 
   it('uc-Template weist bei R-15 explizit auf FUNC compose→FCHAIN hin statt auf neue ACTOR/FCHAIN/UC', () => {
-    const step = generationStep(graph, undefined, 0.8);
+    const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8);
     expect(step.phase).toBe('expand');
     expect(step.focusKey).toMatch(/^uc:R-15:/);
     expect(step.prompt).toContain('FUNC');
@@ -376,13 +377,13 @@ describe('generationStep — R-15 Stagnations-Fix (CR-GC-290-Nachtrag, Messlauf-
   });
 
   it('Funde-Zeile trägt den fix_hint der Violation (R-15: "Add FUNC elements via compose trace")', () => {
-    const step = generationStep(graph, undefined, 0.8);
+    const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8);
     expect(step.prompt).toContain('Fix: Add FUNC elements via compose trace');
   });
 
   it('DIMENSION_FOCUS_TYPES.uc trägt FUNC — Runden-Injektion liefert die FUNC-Kantengrammatik im uc-Fokus mit', () => {
     expect(DIMENSION_FOCUS_TYPES.uc).toContain('FUNC');
-    const step = generationStep(graph, undefined, 0.8);
+    const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8);
     expect(step.focusTypes).toContain('FUNC');
   });
 });
@@ -400,8 +401,8 @@ describe('DIMENSION_FOCUS_TYPES / GenerationStep.focusTypes (CR-GC-285)', () => 
   });
 
   it('seed trägt die Seed-Typen; seed ohne Intention trägt keine', () => {
-    expect(generationStep(EMPTY, INTENT).focusTypes).toEqual(DIMENSION_FOCUS_TYPES.seed);
-    expect(generationStep(EMPTY).focusTypes).toEqual([]);
+    expect(generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT).focusTypes).toEqual(DIMENSION_FOCUS_TYPES.seed);
+    expect(generationStep(EMPTY, DEFAULT_METRIC_POLICY).focusTypes).toEqual([]);
   });
 
   it('expand trägt die Typen der Fokus-Dimension (konsistent zum focusKey)', () => {
@@ -409,7 +410,7 @@ describe('DIMENSION_FOCUS_TYPES / GenerationStep.focusTypes (CR-GC-285)', () => 
       [node('SYS-shop', 'SYS', 'shop', INTENT), node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt Teil.')],
       [edge('SYS-shop', 'UC-bestellen', 'compose')],
     );
-    const step = generationStep(graph, undefined, 0.8);
+    const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8);
     expect(step.phase).toBe('expand');
     const dim = (step.focusKey as string).split(':')[0];
     expect(step.focusTypes).toEqual(DIMENSION_FOCUS_TYPES[dim]);
@@ -438,7 +439,7 @@ describe('Zielprofil + Intentions-Anker im Prompt (CR-GC-295)', () => {
   });
 
   it('Runde-1-Prompt (kein SYS, keine Intention) fragt optional nach dem Zielprofil', () => {
-    const step = generationStep(EMPTY);
+    const step = generationStep(EMPTY, DEFAULT_METRIC_POLICY);
     expect(step.prompt).toContain('Zielprofil');
     expect(step.prompt).toContain('se:target-profile');
     expect(step.prompt).toContain('[-1,1]');
@@ -447,7 +448,7 @@ describe('Zielprofil + Intentions-Anker im Prompt (CR-GC-295)', () => {
   });
 
   it('mit vorhandenem Profil entfällt die Runde-1-Zielprofil-Frage', () => {
-    const step = generationStep(EMPTY, undefined, 0.8, [], 'host', withProfile({ coherence: 1 }));
+    const step = generationStep(EMPTY, DEFAULT_METRIC_POLICY, undefined, 0.8, [], 'host', withProfile({ coherence: 1 }));
     expect(step.prompt).not.toContain('Zielprofil');
   });
 
@@ -456,7 +457,7 @@ describe('Zielprofil + Intentions-Anker im Prompt (CR-GC-295)', () => {
     // Der Begriff ist Steuerungsinternes — der Kunde kann damit nichts anfangen, und
     // ein Frontier-Modell hat die Vorschläge später ohnehin still korrigiert. Die
     // Anker werden jetzt im Hintergrund gesetzt (Tool-Schicht), nicht erfragt.
-    const step = generationStep(EMPTY, INTENT);
+    const step = generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT);
     expect(step.prompt).not.toMatch(/Intentions-Anker/i);
     expect(step.prompt).not.toContain('se:target-profile');
     // Der eigentliche Seed-Auftrag bleibt unberührt.
@@ -466,7 +467,7 @@ describe('Zielprofil + Intentions-Anker im Prompt (CR-GC-295)', () => {
   it('Seed MIT zu dünner Intention: fachliche Rückfragen statt Steuerungs-Jargon (CR-GC-307)', () => {
     // "Ein System zum Verwalten von Daten" parst sauber und verankert nichts — jedes
     // dieser Wörter matcht fast jedes Element, die Coverage läse 100% und sagte nichts.
-    const step = generationStep(EMPTY, 'Ein System zum Verwalten von Daten');
+    const step = generationStep(EMPTY, DEFAULT_METRIC_POLICY, 'Ein System zum Verwalten von Daten');
     expect(step.prompt).toMatch(/FACHFRAGEN/);
     expect(step.prompt).not.toMatch(/Intentions-Anker/i);
     // Der Prompt verbietet dem Modell ausdrücklich, nach der Steuerung zu fragen.
@@ -479,7 +480,7 @@ describe('Zielprofil + Intentions-Anker im Prompt (CR-GC-295)', () => {
       [edge('SYS-shop', 'UC-bestellen', 'compose')],
     );
     const profile = withProfile({}, ['bestellen', 'zauberdrache', 'teil']);
-    const step = generationStep(graph, undefined, 0.8, [], 'host', profile);
+    const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8, [], 'host', profile);
     expect(step.phase).toBe('expand');
     // CR-GC-307: Klartext statt Steuerungs-Vokabular — der Mensch sieht die WIRKUNG
     // (ein Thema kommt nirgends vor), nie den Mechanismus.
@@ -488,7 +489,7 @@ describe('Zielprofil + Intentions-Anker im Prompt (CR-GC-295)', () => {
     // 'bestellen'/'teil' sind über UC-Name/Beschreibung adressiert — nicht gelistet.
     expect(step.prompt).not.toMatch(/Noch nirgends beschrieben:[^.]*bestellen/);
     // Deterministisch auch mit Profil.
-    expect(generationStep(graph, undefined, 0.8, [], 'host', profile)).toEqual(step);
+    expect(generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8, [], 'host', profile)).toEqual(step);
   });
 
   it('ohne Profil: expand-Prompt unverändert ohne Anker-Zeile (N=1-Determinismus, Regression)', () => {
@@ -496,9 +497,9 @@ describe('Zielprofil + Intentions-Anker im Prompt (CR-GC-295)', () => {
       [node('SYS-shop', 'SYS', 'shop', INTENT), node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt Teil.')],
       [edge('SYS-shop', 'UC-bestellen', 'compose')],
     );
-    const step = generationStep(graph, undefined, 0.8);
+    const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8);
     expect(step.prompt).not.toContain('Intentions-Anker');
-    expect(generationStep(graph, undefined, 0.8)).toEqual(step);
+    expect(generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8)).toEqual(step);
   });
 });
 
@@ -509,35 +510,35 @@ describe('GATE_PROTOCOL-Selektion (CR-GC-288)', () => {
   );
 
   it("Default 'host': der dryRun-Vergleichs-Auftrag bleibt im Prompt (MCP-Clients ohne Treiber)", () => {
-    const step = generationStep(EMPTY, INTENT);
+    const step = generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT);
     expect(step.prompt).toContain('dryRun:true');
     expect(step.prompt).toContain('fitAdvisory');
     // Explizites 'host' ist identisch zum Default — kein zweiter Pfad.
-    expect(generationStep(EMPTY, INTENT, 0.8, [], 'host')).toEqual(step);
+    expect(generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT, 0.8, [], 'host')).toEqual(step);
   });
 
   it("'driver' (seed): dryRun-Auftrag raus, Guide-Schritt und Folgeschritt bleiben", () => {
-    const step = generationStep(EMPTY, INTENT, 0.8, [], 'driver');
+    const step = generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT, 0.8, [], 'driver');
     expect(step.phase).toBe('seed');
     expect(step.prompt).not.toContain('dryRun');
     expect(step.prompt).toContain('Treiber');
     expect(step.prompt).toContain('graph_authoring_guide'); // Schritt 1 geteilt
     expect(step.prompt).toContain('graph_generate erneut aufrufen'); // Folgeschritt geteilt
     // Nur das Protokoll wechselt — die generative Instruktion selbst ist identisch.
-    const host = generationStep(EMPTY, INTENT);
+    const host = generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT);
     expect(step.prompt.split('Gate-Protokoll')[0]).toBe(host.prompt.split('Gate-Protokoll')[0]);
   });
 
   it("'driver' (expand): gleiche Funde/Fokus, nur das Protokoll wechselt", () => {
-    const host = generationStep(expandGraph, undefined, 0.8);
-    const driver = generationStep(expandGraph, undefined, 0.8, [], 'driver');
+    const host = generationStep(expandGraph, DEFAULT_METRIC_POLICY, undefined, 0.8);
+    const driver = generationStep(expandGraph, DEFAULT_METRIC_POLICY, undefined, 0.8, [], 'driver');
     expect(driver.phase).toBe('expand');
     expect(driver.focusKey).toBe(host.focusKey);
     expect(driver.focusTypes).toEqual(host.focusTypes);
     expect(driver.prompt).not.toContain('dryRun');
     expect(host.prompt).toContain('dryRun:true');
     // Deterministisch auch mit selection.
-    expect(generationStep(expandGraph, undefined, 0.8, [], 'driver')).toEqual(driver);
+    expect(generationStep(expandGraph, DEFAULT_METRIC_POLICY, undefined, 0.8, [], 'driver')).toEqual(driver);
   });
 });
 

@@ -1,0 +1,32 @@
+// graphcode.config.jsonc — die Betriebs-Config dieses Repos (CR-GC-329).
+//
+// Hier steht jede Urteilsschwelle GENAU EINMAL. Dieselben Werte treiben die Regeln
+// (MT-01/MT-02 im Gate und im Steuerungsraum) und verlassen den Host zusammen mit der
+// Kennzahl, ueber die sie urteilen: `graph_metrics` liefert `policy` + `policySource`
+// in derselben Antwort wie `modules`. Ein Dashboard, das "71 % / Ziel <= 70 %" zeigt,
+// liest beide Zahlen von dort und haelt keinen eigenen Zielwert.
+//
+// JSONC, nicht JSON: ein stillgelegter Wert traegt seine Begruendung neben sich.
+// Fehlt diese Datei, gilt DEFAULT_METRIC_POLICY aus @sigloch/contracts und die
+// Antwort sagt das (`policySource: "default"`). Ist sie da und schemawidrig, bricht
+// der Start ab — kein stiller Fallback.
+{
+  "metricPolicy": {
+    // MT-01 (Instabilitaet, fanOut / (fanIn + fanOut)) ist unvalidiert: die 0.7 ist
+    // gesetzt, nicht gemessen (CR-SM-223, "Validation ... is deferred"). null heisst
+    // MESSEN, NICHT URTEILEN — die Zahl steht weiter in jeder Modulzeile von
+    // graph_metrics, es entsteht nur kein Verstoss. Auf 0.7 setzen, sobald die
+    // Schwelle an echten Modulen kalibriert ist.
+    "instability": null,
+
+    // MT-02 (LCOM4 = Zahl unverbundener FUNC-Gruppen je MOD): ab `info` gemeldet,
+    // ab `warning` hochgestuft. 4/6 ist das Verhalten vor CR-SM-233.
+    "lcom4": { "info": 4, "warning": 6 }
+  },
+
+  // "Ist diese Dimension zu schwach?" — EINE Zahl fuer Fokuswahl und ready-Flag.
+  // Bis CR-GC-329 hatte dieselbe Frage zwei Antworten (0.8 in generate.ts, 0.7 in
+  // se-steering). Die Konsumenten ziehen nach, sobald CR-SM-235 die Schwelle in
+  // computeReadiness zum Parameter ohne Default gemacht hat.
+  "focusThreshold": 0.8
+}
