@@ -4,7 +4,7 @@
 
 # graphcode — Verification Cross-Reference Matrix (VCRM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 111 REQ rows. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 112 REQ rows. Deterministisch generiert.
 
 | REQ | verify-Kante | Lauf-Ergebnis | verifying TEST(s) |
 |---|---|---|---|
@@ -110,6 +110,7 @@
 | `REQ-single-store` | ✓ | ⚠ nie gelaufen | `TEST-mvp-e2e` |
 | `REQ-single-transport` | ✓ | ⚠ nie gelaufen | `TEST-mcp-stdio-server` |
 | `REQ-small-model-viable` | ✓ | ⚠ nie gelaufen | `TEST-mvp-e2e` · `TEST-reduced-llm` |
+| `REQ-steering-from-metrics` | ✓ | ⚠ nie gelaufen | `TEST-steering-loop` |
 | `REQ-store-recovery` | ✓ | ⚠ nie gelaufen | `TEST-store-recovery` |
 | `REQ-structural-rule-shared` | ✓ | ⚠ nie gelaufen | `TEST-structural-rule-shared` |
 | `REQ-structure-driven` | ✓ | ⚠ nie gelaufen | `TEST-code-quality` |
@@ -120,13 +121,15 @@
 | `REQ-versioned-broadcast` | ✓ | ⚠ nie gelaufen | `TEST-live-view` |
 | `REQ-versioned-cache` | ✓ | ⚠ nie gelaufen | `TEST-cache` |
 
-Coverage: 111/111 REQ mit verify-Kante (100%) · 0 offen (R-01).
-Belegt: 0/111 REQ bestanden (0%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
+Coverage: 112/112 REQ mit verify-Kante (100%) · 0 offen (R-01).
+Belegt: 0/112 REQ bestanden (0%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
 
 ## Integrationsabdeckung (rolled-up)
 
 | Verbindung | via FLOW | FCHAIN | deckende TEST(s) | level | Ergebnis |
 |---|---|---|---|---|---|
+| `FUNC-compute-readiness` → `FUNC-generation-step` | `FLOW-dimension-readiness` | `FCHAIN-steering-loop` | `TEST-steering-loop` | integration |  |
+| `FUNC-compute-readiness` → `FUNC-next-step` | `FLOW-dimension-readiness` | `FCHAIN-steering-loop` | `TEST-steering-loop` | integration |  |
 | `FUNC-decode` → `FUNC-mutate` | `FLOW-capture-draft` | `FCHAIN-capture` | `TEST-capture` | integration |  |
 | `FUNC-emit-update-event` → `FUNC-broadcast-diff` | `FLOW-live-event` | `FCHAIN-live-update` | `TEST-live-view` | integration |  |
 | `FUNC-emit-update-event` → `FUNC-serve-stdio` | `FLOW-live-event` | `FCHAIN-live-update` | `TEST-live-view` | integration |  |
@@ -134,13 +137,19 @@ Belegt: 0/111 REQ bestanden (0%) — eine Kante ist kein Nachweis; ein REQ zähl
 | `FUNC-encode` → `FUNC-decode` | `FLOW-formatE-artifact` | `FCHAIN-codec-roundtrip` | `TEST-roundtrip` | conformance |  |
 | `FUNC-evaluate-rules` → `FUNC-graph-suggest` | `FLOW-round-findings` | `FCHAIN-advisory-roundtrip` | `TEST-advisory-roundtrip-latency` | performance |  |
 | `FUNC-evaluate-rules` → `FUNC-save-graph` | `FLOW-violations` | `FCHAIN-apply-gate` | `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, e2e, integration, performance |  |
+| `FUNC-generation-step` → `FUNC-rank-candidates` | `FLOW-round-prompt` | `FCHAIN-steering-loop` | `TEST-steering-loop` | integration |  |
 | `FUNC-graph-impact` → `FUNC-evaluate-rules` | `FLOW-round-scope` | `FCHAIN-advisory-roundtrip` | `TEST-advisory-roundtrip-latency` | performance |  |
 | `FUNC-graph-suggest` → `FUNC-mutate` | `FLOW-suggested-edit` | `FCHAIN-advisory-roundtrip` | `TEST-advisory-roundtrip-latency` | performance |  |
 | `FUNC-mutate` → `FUNC-evaluate-rules` | `FLOW-draft-graph` | `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-modelfree-gate` | `TEST-advisory-roundtrip-latency` · `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-reduced-llm` · `TEST-responsiveness` | acceptance, e2e, integration, performance |  |
+| `FUNC-mutate` → `FUNC-take-steering-snapshot` | `FLOW-gate-verdict` | `FCHAIN-steering-loop` | `TEST-steering-loop` | integration |  |
+| `FUNC-next-step` → `FUNC-rank-candidates` | `FLOW-round-prompt` | `FCHAIN-steering-loop` | `TEST-steering-loop` | integration |  |
+| `FUNC-rank-candidates` → `FUNC-mutate` | `FLOW-suggested-edit` | `FCHAIN-steering-loop` | `TEST-steering-loop` | integration |  |
 | `FUNC-rewind` → `FUNC-reseed` | `FLOW-graph-snapshot` | `FCHAIN-recall` | `TEST-graph-time-travel` | integration |  |
 | `FUNC-save-graph` → `FUNC-emit-trajectory` | `FLOW-committed-graph` | `FCHAIN-apply-gate` | `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, e2e, integration, performance |  |
 | `FUNC-save-graph` → `FUNC-emit-update-event` | `FLOW-committed-graph` | `FCHAIN-live-update` | `TEST-live-view` | integration |  |
 | `FUNC-save-graph` → `FUNC-graph-export-snapshot` | `FLOW-committed-graph` | `FCHAIN-snapshot-freshness` | `TEST-graph-time-travel` | integration |  |
 | `FUNC-serve-stdio` → `FUNC-export-markdown` | `FLOW-export-request` | `FCHAIN-doc-export` | `TEST-doc-export` · `TEST-mcp-export` · `TEST-member-name` · `TEST-skills-mcp` | conformance, integration, unit |  |
+| `FUNC-take-steering-snapshot` → `FUNC-compute-readiness` | `FLOW-steering-snapshot` | `FCHAIN-steering-loop` | `TEST-steering-loop` | integration |  |
+| `FUNC-take-steering-snapshot` → `FUNC-next-step` | `FLOW-steering-snapshot` | `FCHAIN-steering-loop` | `TEST-steering-loop` | integration |  |
 
-> 15/15 deklarierte FUNC↔FUNC-Verbindungen sind über die Kette TEST→REQ←FCHAIN→FUNC abgedeckt · 0 offen. Nur Paare mit gemeinsamer FCHAIN — Ko-Adjazenz an einer geteilten FLOW ist keine deklarierte Schnittstelle (CR-GC-315). Leeres level/Ergebnis = am TEST nicht gepflegt.
+> 23/23 deklarierte FUNC↔FUNC-Verbindungen sind über die Kette TEST→REQ←FCHAIN→FUNC abgedeckt · 0 offen. Nur Paare mit gemeinsamer FCHAIN — Ko-Adjazenz an einer geteilten FLOW ist keine deklarierte Schnittstelle (CR-GC-315). Leeres level/Ergebnis = am TEST nicht gepflegt.

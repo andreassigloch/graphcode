@@ -4,7 +4,7 @@
 
 # graphcode — Concept of Operations
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). OpsCon nach ISO/IEC/IEEE 29148 §5.2.4, projiziert aus dem Graphen: 9 ACTOR, 6 UC, 13 operationale REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). OpsCon nach ISO/IEC/IEEE 29148 §5.2.4, projiziert aus dem Graphen: 9 ACTOR, 7 UC, 13 operationale REQ. Deterministisch generiert.
 
 ## 1  System overview
 
@@ -35,15 +35,15 @@
 
 - `ACTOR-claude-code` — Claude Code — Realisierungs-Agent — triggert `UC-code-quality` · `UC-reduced-llm` · `UC-token-efficiency`
 - `ACTOR-dashboard` — Browser-Dashboard — triggert `UC-code-quality` · `UC-live-graph-view`
-- `ACTOR-developer` — Entwickler / Repo-Owner — triggert `UC-code-quality` · `UC-efficient-testing` · `UC-graph-time-travel` · `UC-live-graph-view` · `UC-reduced-llm` · `UC-token-efficiency`
+- `ACTOR-developer` — Entwickler / Repo-Owner — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-efficient-testing` · `UC-graph-time-travel` · `UC-live-graph-view` · `UC-reduced-llm` · `UC-token-efficiency`
 - `ACTOR-facilitating-agent` — Facilitating Agent — Architekt — triggert `UC-code-quality`
 - `ACTOR-graphify` — graphify (Slicer) — triggert `UC-code-quality`
 - `ACTOR-learning-engine` — Learning-Engine — triggert `UC-reduced-llm`
-- `ACTOR-opencode` — OpenCode — headless Execution-Runtime — triggert `UC-code-quality` · `UC-token-efficiency`
+- `ACTOR-opencode` — OpenCode — headless Execution-Runtime — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-token-efficiency`
 - `ACTOR-systems-engineer` — Systems Engineer — triggert `UC-code-quality` · `UC-efficient-testing` · `UC-reduced-llm` · `UC-token-efficiency`
 - `ACTOR-vibe-coder` — Vibe Coder — triggert `UC-code-quality` · `UC-efficient-testing` · `UC-reduced-llm` · `UC-token-efficiency`
 
-## 4  Operational scenarios (6 UC)
+## 4  Operational scenarios (7 UC)
 
 ### `UC-code-quality` — UC-code-quality
 
@@ -55,6 +55,14 @@ Ausgeloest von: `ACTOR-claude-code` · `ACTOR-dashboard` · `ACTOR-developer` ·
 - `FCHAIN-capture` — Interaktive Erfassung (Text → suggest-Tier): `FUNC-decode` → `FUNC-mutate`
 - `FCHAIN-codec-roundtrip` — Format-E Round-Trip (encode∘decode): `FUNC-decode` → `FUNC-encode`
 - `FCHAIN-interface-escalation` — Interface-Änderungs-Eskalation: `FUNC-graph-impact` → `FUNC-mutate`
+
+### `UC-deterministic-steering` — Deterministisch auf ein mehrdimensionales Ziel steuern
+
+Als Entwickler will ich, dass der naechste Schritt aus deterministisch gemessenen Kenngroessen folgt und nicht aus einer Modell-Meinung, sodass jede Runde nachvollziehbar auf ein mehrdimensionales Ziel zulaeuft.
+
+Ausgeloest von: `ACTOR-developer` · `ACTOR-opencode`
+
+- `FCHAIN-steering-loop` — Kenngroessen-Steuerungsschleife: `FUNC-compute-readiness` → `FUNC-generation-step` → `FUNC-mutate` → `FUNC-next-step` → `FUNC-rank-candidates` → `FUNC-take-steering-snapshot`
 
 ### `UC-efficient-testing` — Effizientes, impact-basiertes Testen
 

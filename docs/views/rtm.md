@@ -4,7 +4,7 @@
 
 # graphcode — Requirements Traceability Matrix (RTM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 111 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 112 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
 
 
 ### System (SYS.2) — 19 REQ
@@ -31,7 +31,7 @@
 | `REQ-single-transport` | `TEST-mcp-stdio-server` | `FUNC-serve-stdio` · `MOD-mcp-tools` | `MOD-mcp-tools` |
 | `REQ-store-recovery` | `TEST-store-recovery` | `MOD-harness` | — |
 
-### funktional (SWE.1) — 23 REQ
+### funktional (SWE.1) — 24 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -55,11 +55,12 @@
 | `REQ-readonly-bridge` | `TEST-readonly-bridge` | `FUNC-serve-sse` · `MOD-host-bridge` | `MOD-host-bridge` |
 | `REQ-real-health-check` | `TEST-real-health-check` | `FUNC-health-endpoint` · `MOD-host-bridge` | `MOD-host-bridge` |
 | `REQ-small-model-viable` | `TEST-mvp-e2e` · `TEST-reduced-llm` | `FCHAIN-modelfree-gate` · `FUNC-graph-suggest` | `MOD-mcp-tools` |
+| `REQ-steering-from-metrics` | `TEST-steering-loop` | `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` | `MOD-steering` |
 | `REQ-structure-driven` | `TEST-code-quality` | `SYS-graphcode` | — |
 | `REQ-test-runnable-binding` | `TEST-test-runnable-binding` | `FUNC-deduce-tests` · `MOD-mcp-tools` | `MOD-mcp-tools` |
 | `REQ-versioned-broadcast` | `TEST-live-view` | `FUNC-broadcast-diff` · `FUNC-emit-update-event` · `MOD-host-bridge` | `MOD-hooks` · `MOD-host-bridge` |
 
-### Integration (SWE.4) — 30 REQ
+### Integration (SWE.4) — 31 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -93,8 +94,9 @@
 | `REQ-responsiveness` | `TEST-responsiveness` | `FCHAIN-apply-gate` | — |
 | `REQ-roundtrip-conformance` | `TEST-roundtrip` | `FCHAIN-codec-roundtrip` · `FUNC-decode` | `MOD-codec` |
 | `REQ-small-model-viable` | `TEST-mvp-e2e` · `TEST-reduced-llm` | `FCHAIN-modelfree-gate` · `FUNC-graph-suggest` | `MOD-mcp-tools` |
+| `REQ-steering-from-metrics` | `TEST-steering-loop` | `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` | `MOD-steering` |
 
-### Komponente (SWE.2/3) — 82 REQ
+### Komponente (SWE.2/3) — 83 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -172,6 +174,7 @@
 | `REQ-single-store` | `TEST-mvp-e2e` | `MOD-harness` | — |
 | `REQ-single-transport` | `TEST-mcp-stdio-server` | `FUNC-serve-stdio` · `MOD-mcp-tools` | `MOD-mcp-tools` |
 | `REQ-small-model-viable` | `TEST-mvp-e2e` · `TEST-reduced-llm` | `FCHAIN-modelfree-gate` · `FUNC-graph-suggest` | `MOD-mcp-tools` |
+| `REQ-steering-from-metrics` | `TEST-steering-loop` | `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` | `MOD-steering` |
 | `REQ-store-recovery` | `TEST-store-recovery` | `MOD-harness` | — |
 | `REQ-structural-rule-shared` | `TEST-structural-rule-shared` | `MOD-harness` | — |
 | `REQ-subgraph-slicing` | `TEST-impact-subgraph` | `FUNC-graph-impact` | `MOD-mcp-tools` |

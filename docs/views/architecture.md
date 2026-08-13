@@ -10,8 +10,12 @@
 
 | uid | type | name |
 |---|---|---|
+| `FUNC-arch-fitness` | FUNC | metrics(graph, layer arch) |
 | `FUNC-broadcast-diff` | FUNC | broadcastDiff(version) |
 | `FUNC-check-code-conformance` | FUNC | conformanceViolations(harness) |
+| `FUNC-compute-phase-readiness` | FUNC | computePhaseReadiness(violations) |
+| `FUNC-compute-readiness` | FUNC | computeReadiness(graph, policy) |
+| `FUNC-compute-steering-delta` | FUNC | computeSteeringDelta(before, after) |
 | `FUNC-decode` | FUNC | decode(json) |
 | `FUNC-deduce-tests` | FUNC | graph_tests(changeSet) |
 | `FUNC-emit-trajectory` | FUNC | materializeTrajectory() |
@@ -19,6 +23,9 @@
 | `FUNC-encode` | FUNC | encode(graph) |
 | `FUNC-evaluate-rules` | FUNC | evaluateRules() |
 | `FUNC-export-markdown` | FUNC | exportMarkdown(graph, view) |
+| `FUNC-fit-advisory` | FUNC | computeFitAdvisory(before, after) |
+| `FUNC-generation-step` | FUNC | generationStep(graph, policy, intent) |
+| `FUNC-goal-steerer` | FUNC | Zielsteuerer (Sammler der vier Entscheidungen) |
 | `FUNC-graph-expand` | FUNC | graph_expand(handle, branch, depth+1) |
 | `FUNC-graph-export-snapshot` | FUNC | graph_export(views?) |
 | `FUNC-graph-impact` | FUNC | graph_impact(id, depth?) |
@@ -28,8 +35,11 @@
 | `FUNC-import` | FUNC | importGraph(formatE, mode) |
 | `FUNC-merge-nodes` | FUNC | mergeNodes(graph) |
 | `FUNC-migrate-schema` | FUNC | migrateSchema(from, to) |
+| `FUNC-module-metrics` | FUNC | moduleMetrics(graph) |
 | `FUNC-mutate` | FUNC | mutate(commands) |
+| `FUNC-next-step` | FUNC | nextStep(graph, policy) |
 | `FUNC-own-kuzu-host` | FUNC | ownKuzu() |
+| `FUNC-rank-candidates` | FUNC | rankCandidates(probes, focus) |
 | `FUNC-render-artifacts` | FUNC | renderArtifactReadiness(views) |
 | `FUNC-render-graph` | FUNC | renderGraph(elements, traces) |
 | `FUNC-render-health` | FUNC | renderHealth() |
@@ -46,6 +56,7 @@
 | `FUNC-serve-sse` | FUNC | serveSSE() |
 | `FUNC-serve-stdio` | FUNC | serveStdio() |
 | `FUNC-subscribe-updates` | FUNC | subscribeUpdates() |
+| `FUNC-take-steering-snapshot` | FUNC | takeSteeringSnapshot(graph, policy) |
 | `FUNC-test` | FUNC | se-test (red-first test design) |
 | `FUNC-test-ui` | FUNC | se-test-ui (UI test design) |
 | `FUNC-view-changelog` | FUNC | se-view-changelog (Change Log) |
@@ -63,6 +74,7 @@
 | `MOD-host-bridge` | MOD | host-bridge — SSE/WS Bridge |
 | `MOD-mcp-tools` | MOD | mcp-tools.ts — MCP-Registry |
 | `MOD-skills` | MOD | skills/prompts — agent-realisierte Funktionen |
+| `MOD-steering` | MOD | steering — Kenngroessen-Steuerungskern |
 | `SYS-graphcode` | SYS | GraphCode |
 
 ## Allokation (FUNC -allocate-> MOD)
@@ -71,6 +83,8 @@
 |---|---|
 | `FUNC-broadcast-diff` | `MOD-host-bridge` |
 | `FUNC-check-code-conformance` | `MOD-harness` |
+| `FUNC-compute-phase-readiness` | `MOD-steering` |
+| `FUNC-compute-steering-delta` | `MOD-steering` |
 | `FUNC-decode` | `MOD-codec` |
 | `FUNC-deduce-tests` | `MOD-mcp-tools` |
 | `FUNC-emit-trajectory` | `MOD-hooks` |
@@ -78,6 +92,9 @@
 | `FUNC-encode` | `MOD-codec` |
 | `FUNC-evaluate-rules` | `MOD-harness` |
 | `FUNC-export-markdown` | `MOD-docs` |
+| `FUNC-fit-advisory` | `MOD-steering` |
+| `FUNC-generation-step` | `MOD-steering` |
+| `FUNC-goal-steerer` | `MOD-steering` |
 | `FUNC-graph-expand` | `MOD-mcp-tools` |
 | `FUNC-graph-export-snapshot` | `MOD-mcp-tools` |
 | `FUNC-graph-impact` | `MOD-mcp-tools` |
@@ -88,7 +105,9 @@
 | `FUNC-merge-nodes` | `MOD-codec` |
 | `FUNC-migrate-schema` | `MOD-harness` |
 | `FUNC-mutate` | `MOD-harness` |
+| `FUNC-next-step` | `MOD-steering` |
 | `FUNC-own-kuzu-host` | `MOD-host-bridge` |
+| `FUNC-rank-candidates` | `MOD-steering` |
 | `FUNC-render-artifacts` | `MOD-dashboard` |
 | `FUNC-render-graph` | `MOD-dashboard` |
 | `FUNC-render-health` | `MOD-dashboard` |
@@ -105,6 +124,7 @@
 | `FUNC-serve-sse` | `MOD-host-bridge` |
 | `FUNC-serve-stdio` | `MOD-mcp-tools` |
 | `FUNC-subscribe-updates` | `MOD-dashboard` |
+| `FUNC-take-steering-snapshot` | `MOD-steering` |
 | `FUNC-test` | `MOD-skills` |
 | `FUNC-test-ui` | `MOD-skills` |
 | `FUNC-view-changelog` | `MOD-skills` |

@@ -331,7 +331,9 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
   > = {
     name: 'graph_readiness',
     description:
-      'Score family readiness of the live governed graph (FUNC-score-readiness / CR-GC-107 + CR-GC-125). ' +
+      // CR-GC-332: der frühere Verweis nannte `FUNC-score-readiness` — einen Knoten, den
+      // das Modell nie enthielt. Jetzt steht hier die Stelle, die es wirklich gibt.
+      'Score family readiness of the live governed graph (FUNC-compute-readiness / CR-GC-107 + CR-GC-125). ' +
       'Returns the ReadinessReport: compliance dimension (fraction of elements with no error-severity ' +
       'violation); incoseScope (graphcode = lean); phaseGates SRR/PDR/CDR/TRR (INCOSE technical reviews, ' +
       'a disjoint partition of the element-level V3_RULES, with structural derivation-chain completeness); ' +

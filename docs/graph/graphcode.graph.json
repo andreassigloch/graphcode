@@ -1473,6 +1473,28 @@
       "description": "Jede Modell-Mutation setzt den Drift-Marker, die Persistenz schreibt den Store, der Export materialisiert den kanonischen Snapshot und loescht den Marker. Ergebnis: kein Commit traegt einen Snapshot, der dem Live-Modell nachlaeuft."
     },
     {
+      "id": "FCHAIN-steering-loop",
+      "type": "FCHAIN",
+      "name": "Kenngroessen-Steuerungsschleife",
+      "description": "Die Schleife in der Reihenfolge der Messgroessen-Landschaft: messen, projizieren, Fokus waehlen, Kandidaten bewerten, Prompt stellen, Gate. Nicht zu verwechseln mit FCHAIN-advisory-roundtrip: der antwortet auf eine Frage, diese Kette waehlt selbst den naechsten Schritt.",
+      "status": "reviewed"
+    },
+    {
+      "id": "FLOW-action",
+      "type": "FLOW",
+      "name": "Handlung",
+      "description": "Der gemeinsame Ausgang der vier Entscheidungen: blocken, Fokus setzen, Kandidat waehlen, uebergeben. Vier Auspraegungen einer Form.",
+      "status": "reviewed",
+      "concept": true
+    },
+    {
+      "id": "FLOW-arch-fitness",
+      "type": "FLOW",
+      "name": "Architektur-Fitness (R^6)",
+      "description": "Sechs Topologiewerte ueber den ganzen Teilgraphen. Das einzige Signal der Schleife, das nicht aus dem Regelstrom stammt, und deshalb der Tiebreaker im Ranking.",
+      "status": "reviewed"
+    },
+    {
       "id": "FLOW-bootstrap-result",
       "type": "FLOW",
       "name": "Bootstrap-Result",
@@ -1521,6 +1543,20 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "id": "FLOW-completeness",
+      "type": "FLOW",
+      "name": "Completeness je Gate",
+      "description": "covered gegen total ueber die Element-Population eines Gates plus die fehlenden je Bein. Die einzige Projektion, die Abwesenheit messen kann; Regeln je Element feuern bei null Elementen null mal.",
+      "status": "reviewed"
+    },
+    {
+      "id": "FLOW-dimension-readiness",
+      "type": "FLOW",
+      "name": "Dimensions-Readiness (8 Scores)",
+      "description": "Die thematische Verdichtung des Regelstroms: je Dimension score, violations, applicable. Der Nenner reist mit, weil ein Score ohne ihn nicht lesbar ist.",
+      "status": "reviewed"
+    },
+    {
       "id": "FLOW-draft-graph",
       "type": "FLOW",
       "name": "Draft-Graph",
@@ -1553,6 +1589,13 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "id": "FLOW-fit-advisory",
+      "type": "FLOW",
+      "name": "Fit-Advisory (Richtung im Metrikraum)",
+      "description": "Richtung und Regressionen eines Kandidaten im R^6-Metrikraum. Reine Messung: rankt, urteilt nicht.",
+      "status": "reviewed"
+    },
+    {
       "id": "FLOW-formatE-artifact",
       "type": "FLOW",
       "name": "Format-E-Artefakt",
@@ -1567,6 +1610,13 @@
       "description": "Agent-interpretierte NL → Format-E (agent-seitig).",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "id": "FLOW-gate-verdict",
+      "type": "FLOW",
+      "name": "Gate-Verdikt",
+      "description": "Das Urteil des Apply-Gates ueber die angewendete oder probierte Mutation: success, tier, Violations, Confidence. Es schliesst die Schleife, weil der naechste Snapshot darauf misst.",
+      "status": "reviewed"
     },
     {
       "id": "FLOW-graph-snapshot",
@@ -1616,6 +1666,14 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "id": "FLOW-measurement-vector",
+      "type": "FLOW",
+      "name": "Messvektor",
+      "description": "Der gemeinsame Eingang der vier Entscheidungen: der gemessene Zustand als Vektor, unabhaengig davon, welche Projektion ihn fuellt. Erst mit diesem Vertrag ist die Gleichheit der vier Signaturen geprueft statt behauptet.",
+      "status": "reviewed",
+      "concept": true
+    },
+    {
       "id": "FLOW-merged-graph",
       "type": "FLOW",
       "name": "Merged-Graph",
@@ -1632,6 +1690,13 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "id": "FLOW-module-metrics",
+      "type": "FLOW",
+      "name": "Modulkennzahlen je MOD",
+      "description": "Instabilitaet, LCOM4, Kohaesion je Modul plus die geltende Urteils-Policy und ihre Herkunft. Wert und Schwelle verlassen den Host zusammen, damit die Anzeige keinen eigenen Zielwert braucht (CR-GC-329).",
+      "status": "reviewed"
+    },
+    {
       "id": "FLOW-mutate-cmd",
       "type": "FLOW",
       "name": "Mutate-Command",
@@ -1646,6 +1711,13 @@
       "description": "Aus Format-E rekonstruierter Graph (== Original).",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "id": "FLOW-phase-readiness",
+      "type": "FLOW",
+      "name": "Phasen-Readiness (SRR/PDR/CDR/TRR)",
+      "description": "Dieselbe Regelauswertung auf die Phasen-Gates projiziert: je Gate abgedeckte gegen alle Regel-IDs plus die fehlenden. Die zweite Achse, nicht die zweite Messung.",
+      "status": "reviewed"
     },
     {
       "id": "FLOW-query-request",
@@ -1679,10 +1751,39 @@
       "concept": true
     },
     {
+      "id": "FLOW-round-prompt",
+      "type": "FLOW",
+      "name": "Runden-Prompt (naechster Schritt)",
+      "description": "Der aus dem Messzustand abgeleitete naechste Schritt: Fokus-Dimension, Fokus-Typen, Fund-Fenster, Gate-Protokoll, Handoff-Bedingung.",
+      "status": "reviewed"
+    },
+    {
       "id": "FLOW-round-scope",
       "type": "FLOW",
       "name": "Round Scope (bounded slice)",
       "description": "Der durch read gebundene Blast-Radius/Kontext, der informiert, was status als offen prueft. Kein festes Wire-Format - informationeller Rundenkontext, kein Code-Datenvertrag.",
+      "status": "reviewed",
+      "concept": true
+    },
+    {
+      "id": "FLOW-steering-delta",
+      "type": "FLOW",
+      "name": "Steering-Delta (vor/nach Kandidat)",
+      "description": "Blockierende Fehler vorher und nachher plus Score-Delta je Dimension. Das erste Sachkriterium der Kandidaten-Rangfolge.",
+      "status": "reviewed"
+    },
+    {
+      "id": "FLOW-steering-snapshot",
+      "type": "FLOW",
+      "name": "Steering-Snapshot",
+      "description": "Das Ergebnis der EINEN Messung: gemappter Graph, voller Regelstrom, blockierende Fehler, Readiness-Report. Alles Weitere ist Projektion davon.",
+      "status": "reviewed"
+    },
+    {
+      "id": "FLOW-steering-trigger",
+      "type": "FLOW",
+      "name": "Runden-Ausloeser",
+      "description": "Der Wunsch, eine Steuerungsrunde zu fahren, mit ihren Parametern: Intent, zurueckgestellte Fokus-Schluessel, Auswahlmodus. Mensch und lokaler Executor loesen dieselbe Kette aus, nur die Taktung unterscheidet sich.",
       "status": "reviewed",
       "concept": true
     },
@@ -1735,6 +1836,19 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "id": "FUNC-arch-fitness",
+      "type": "FUNC",
+      "name": "metrics(graph, layer arch)",
+      "description": "Misst die Architektur-Topologie als Vektor in R^6 — das einzige Signal der Schleife, das nicht aus dem Regelstrom stammt, und deshalb im Ranking der Tiebreaker. Fremdpaket @sigloch/se-optimizer, deshalb external.",
+      "status": "done",
+      "external": true,
+      "realRef": {
+        "file": "packages/se-optimizer/src/metrics.ts",
+        "symbol": "metrics",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "FUNC-broadcast-diff",
       "type": "FUNC",
       "name": "broadcastDiff(version)",
@@ -1766,6 +1880,43 @@
       "realRef": {
         "file": "src/conformance.ts",
         "symbol": "conformanceViolations",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-compute-phase-readiness",
+      "type": "FUNC",
+      "name": "computePhaseReadiness(violations)",
+      "description": "Projiziert denselben Regelstrom auf die Phasen-Gates SRR/PDR/CDR/TRR: je Gate abgedeckte gegen alle Regel-IDs plus die fehlenden. Die zweite Achse neben den Dimensionen, aus einer Quelle.",
+      "status": "done",
+      "realRef": {
+        "file": "src/readiness.ts",
+        "symbol": "computePhaseReadiness",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-compute-readiness",
+      "type": "FUNC",
+      "name": "computeReadiness(graph, policy)",
+      "description": "Projiziert den Regelstrom auf die acht Dimensionsscores (score = 1 minus Verstoesse durch applicable). Fremdpaket @sigloch/se-steering, deshalb external.",
+      "status": "done",
+      "external": true,
+      "realRef": {
+        "file": "packages/se-steering/src/readiness-compute.ts",
+        "symbol": "computeReadiness",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-compute-steering-delta",
+      "type": "FUNC",
+      "name": "computeSteeringDelta(before, after)",
+      "description": "Differenz zweier Snapshots: blockierende Fehler vorher und nachher plus Score-Delta je Dimension. Dimensionen ohne Grundgesamtheit auf beiden Seiten entfallen, weil ihr Score dort konstruktiv 0 ist und nicht perfekt.",
+      "status": "done",
+      "realRef": {
+        "file": "src/steering-snapshot.ts",
+        "symbol": "computeSteeringDelta",
         "lang": "ts"
       }
     },
@@ -1901,6 +2052,38 @@
         "symbol": "exportMarkdown",
         "lang": "ts"
       }
+    },
+    {
+      "id": "FUNC-fit-advisory",
+      "type": "FUNC",
+      "name": "computeFitAdvisory(before, after)",
+      "description": "Bewertet einen Kandidaten im R^6-Metrikraum vor und nach der probierten Mutation und liefert die Richtung als Advisory. Die Metrik rankt, das Gate urteilt.",
+      "status": "done",
+      "realRef": {
+        "file": "src/fit-advisory.ts",
+        "symbol": "computeFitAdvisory",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-generation-step",
+      "type": "FUNC",
+      "name": "generationStep(graph, policy, intent)",
+      "description": "Waehlt aus den Dimensionsscores die schwaechste Dimension unter der Fokus-Schwelle und stellt daraus den Runden-Prompt zusammen: Fokus-Typen, Fund-Fenster, Gate-Protokoll, Handoff-Bedingung.",
+      "status": "done",
+      "realRef": {
+        "file": "src/generate.ts",
+        "symbol": "generationStep",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-goal-steerer",
+      "type": "FUNC",
+      "name": "Zielsteuerer (Sammler der vier Entscheidungen)",
+      "description": "Logischer Sammler der vier Entscheidungen der Schleife: Gate-Verdikt, Fokuswahl, Kandidaten-Rangfolge, Handoff. Alle vier teilen eine Signatur: aus einem Messvektor plus optional einem Kandidaten folgt eine Handlung. Sammler, keine Funktion — kein realRef; der Code wird NICHT zusammengezogen, die vier Stellen bleiben wo sie sind. Wer diesem Knoten eine Datei anhaengt, muss concept entfernen, und das faellt auf.",
+      "status": "reviewed",
+      "concept": true
     },
     {
       "id": "FUNC-graph-expand",
@@ -2043,6 +2226,19 @@
       "operatingMode": "migration"
     },
     {
+      "id": "FUNC-module-metrics",
+      "type": "FUNC",
+      "name": "moduleMetrics(graph)",
+      "description": "Projiziert den Graphen auf die Modulkennzahlen je MOD (Instabilitaet, LCOM4, Kohaesion) — dieselbe Rechnung, aus der MT-01/MT-02 ihre Verstoesse ableiten. Fremdpaket @sigloch/contracts, deshalb external.",
+      "status": "done",
+      "external": true,
+      "realRef": {
+        "file": "packages/contracts/src/se/metric-rules.ts",
+        "symbol": "moduleMetrics",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "FUNC-mutate",
       "type": "FUNC",
       "name": "mutate(commands)",
@@ -2062,6 +2258,18 @@
       }
     },
     {
+      "id": "FUNC-next-step",
+      "type": "FUNC",
+      "name": "nextStep(graph, policy)",
+      "description": "Der Advisory-Rueckweg an den fragenden Agenten: aus demselben Snapshot die Fokus-Dimension, die blockierenden Fehler und die feuernden Regeln als naechster Schritt.",
+      "status": "done",
+      "realRef": {
+        "file": "src/steering.ts",
+        "symbol": "nextStep",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "FUNC-own-kuzu-host",
       "type": "FUNC",
       "name": "ownKuzu()",
@@ -2076,6 +2284,18 @@
       "realRef": {
         "file": "src/viewer/host.ts",
         "symbol": "serveHost",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-rank-candidates",
+      "type": "FUNC",
+      "name": "rankCandidates(probes, focus)",
+      "description": "Ordnet die Kandidaten einer Runde deterministisch: tier zuerst, dann das Delta der Fokus-Dimension, dann das Gesamt-Delta, dann die Architektur-Fitness als Tiebreaker. Kein Modell-Urteil, nur gemessene Groessen.",
+      "status": "done",
+      "realRef": {
+        "file": "src/executor-rank.ts",
+        "symbol": "rankCandidates",
         "lang": "ts"
       }
     },
@@ -2311,6 +2531,18 @@
       "external": true
     },
     {
+      "id": "FUNC-take-steering-snapshot",
+      "type": "FUNC",
+      "name": "takeSteeringSnapshot(graph, policy)",
+      "description": "Der EINE Messpfad: mappt den Graphen ueber toOntologyGraph, injiziert die ND-Matrizen und wertet den vollen Regelkatalog aus; liefert Regelstrom, blockierende Fehler und den Readiness-Report in EINEM Objekt. Jede weitere Kenngroesse ist eine Projektion davon, keine zweite Messung.",
+      "status": "done",
+      "realRef": {
+        "file": "src/steering-snapshot.ts",
+        "symbol": "takeSteeringSnapshot",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "FUNC-test",
       "type": "FUNC",
       "name": "se-test (red-first test design)",
@@ -2542,6 +2774,13 @@
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "id": "MOD-steering",
+      "type": "MOD",
+      "name": "steering — Kenngroessen-Steuerungskern",
+      "description": "Der Steuerungskern als Modul: Snapshot und Delta (src/steering-snapshot.ts), Fokuswahl und Runden-Prompt (src/generate.ts), Advisory-Naechster-Schritt (src/steering.ts), Kandidaten-Rangfolge (src/executor-rank.ts). Code-realisiert; dieser CR schreibt keinen Code, die Dateien lagen bisher nur ohne Modellstelle da.",
+      "status": "done"
     },
     {
       "id": "MS-1-specification",
@@ -3702,6 +3941,16 @@
       ]
     },
     {
+      "id": "REQ-steering-from-metrics",
+      "type": "REQ",
+      "name": "Naechster Schritt folgt aus gemessenen Kenngroessen",
+      "description": "Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefert Regelstrom und Projektionen, daraus waehlt die Steuerung die schwaechste Dimension, rankt Kandidaten nach dem Delta derselben Groessen und uebergibt das Ergebnis dem Apply-Gate. Deterministisch: gleicher Graph, gleiche Empfehlung.",
+      "status": "done",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-store-recovery",
       "type": "REQ",
       "name": "Store-Recovery (Recovery-Modus)",
@@ -3793,6 +4042,14 @@
       ]
     },
     {
+      "id": "SCHEMA-action",
+      "type": "SCHEMA",
+      "name": "Handlung (Vertrag der vier Entscheidungen)",
+      "description": "Der gemeinsame Ausgang: blocken, Fokus setzen, Kandidat waehlen, uebergeben. Spec-only aus demselben Grund wie der Messvektor.",
+      "status": "reviewed",
+      "concept": true
+    },
+    {
       "id": "SCHEMA-cli-command",
       "type": "SCHEMA",
       "name": "CliCommand",
@@ -3809,6 +4066,31 @@
       "contract": "Boundary-validiert im CLI-Dispatch (src/cli.ts main, unbekanntes Verb -> Usage); Deklaration src/scaffold.ts CliCommandSchema (realRef)"
     },
     {
+      "id": "SCHEMA-completeness",
+      "type": "SCHEMA",
+      "name": "GateCompleteness",
+      "description": "covered, total und je Bein die fehlenden Elemente eines Gates. Aus @sigloch/graphcode-client, deshalb external.",
+      "status": "reviewed",
+      "external": true,
+      "realRef": {
+        "file": "packages/graphcode-client/src/readiness-completeness.ts",
+        "symbol": "GateCompleteness",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "SCHEMA-fit-advisory",
+      "type": "SCHEMA",
+      "name": "FitAdvisory",
+      "description": "layer, dimensions, before, after, delta, regressions.",
+      "status": "reviewed",
+      "realRef": {
+        "file": "src/fit-advisory.ts",
+        "symbol": "FitAdvisory",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "SCHEMA-format-e",
       "type": "SCHEMA",
       "name": "Format-E",
@@ -3817,6 +4099,18 @@
       "created_at": "2026-06-16T00:00:00.000Z",
       "zodDefinition": "z.object({ nodes: z.array(z.string()), edges: z.array(z.string()), operations: z.array(z.enum(['+','-','~','M'])).optional(), baseSnapshot: z.string().optional() })",
       "external": true
+    },
+    {
+      "id": "SCHEMA-generation-step",
+      "type": "SCHEMA",
+      "name": "GenerationStep",
+      "description": "Fokus-Schluessel und -Typen, Readiness-Auszug, Fund-Fenster, Gate-Protokoll, Handoff-Bedingung.",
+      "status": "reviewed",
+      "realRef": {
+        "file": "src/generate.ts",
+        "symbol": "GenerationStep",
+        "lang": "ts"
+      }
     },
     {
       "id": "SCHEMA-markdown-view",
@@ -3833,6 +4127,40 @@
       },
       "external": true,
       "contract": "Framework-validiert: z.array(MarkdownViewSchema) im graph_export-Tool-Input (MCP-Registry parst vor dem Handler); Deklaration src/exporter.ts MarkdownViewSchema (realRef)"
+    },
+    {
+      "id": "SCHEMA-measurement-vector",
+      "type": "SCHEMA",
+      "name": "Messvektor (Vertrag der vier Entscheidungen)",
+      "description": "Der gemeinsame Eingang: Regelstrom plus Projektionen, so weit die jeweilige Entscheidung sie braucht. Bewusst spec-only, weil er heute in vier Signaturen verstreut ist; sein Zweck ist, diese Verstreuung sichtbar zu halten.",
+      "status": "reviewed",
+      "concept": true
+    },
+    {
+      "id": "SCHEMA-metric-vector",
+      "type": "SCHEMA",
+      "name": "MetricVector",
+      "description": "Sechs Topologiedimensionen: modifiability, faultTolerance, flowEfficiency, coherence, viability, scalability. Aus @sigloch/se-optimizer, deshalb external.",
+      "status": "reviewed",
+      "external": true,
+      "realRef": {
+        "file": "packages/se-optimizer/src/metrics.ts",
+        "symbol": "MetricVector",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "SCHEMA-module-metrics",
+      "type": "SCHEMA",
+      "name": "ModuleMetrics",
+      "description": "Je MOD allocatedFuncs, fanIn, fanOut, instability, lcom4, cohesion; null heisst nicht messbar, nie null Prozent. Aus @sigloch/contracts, deshalb external.",
+      "status": "reviewed",
+      "external": true,
+      "realRef": {
+        "file": "packages/contracts/src/se/metric-rules.ts",
+        "symbol": "ModuleMetrics",
+        "lang": "ts"
+      }
     },
     {
       "id": "SCHEMA-mutate-command",
@@ -3865,6 +4193,18 @@
       "external": true
     },
     {
+      "id": "SCHEMA-phase-readiness",
+      "type": "SCHEMA",
+      "name": "PhaseGateReadiness",
+      "description": "Je Gate: abgedeckte und alle Regel-IDs plus die fehlenden.",
+      "status": "reviewed",
+      "realRef": {
+        "file": "src/readiness.ts",
+        "symbol": "PhaseGateReadiness",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "SCHEMA-query-params",
       "type": "SCHEMA",
       "name": "QueryParams",
@@ -3873,6 +4213,43 @@
       "created_at": "2026-06-16T00:00:00.000Z",
       "zodDefinition": "z.object({ elementId: z.string().optional(), depth: z.number().optional(), branch: z.string().optional(), cursor: z.string().optional(), view: z.string().optional() })",
       "concept": true
+    },
+    {
+      "id": "SCHEMA-readiness-report",
+      "type": "SCHEMA",
+      "name": "ReadinessReportType",
+      "description": "Je Dimension score, violations, applicable, ready. Aus @sigloch/contracts, deshalb external.",
+      "status": "reviewed",
+      "external": true,
+      "realRef": {
+        "file": "packages/contracts/src/se/readiness.ts",
+        "symbol": "ReadinessReport",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "SCHEMA-steering-delta",
+      "type": "SCHEMA",
+      "name": "SteeringDelta",
+      "description": "blockingErrors vorher und nachher plus je Dimension before, after, delta.",
+      "status": "reviewed",
+      "realRef": {
+        "file": "src/steering-snapshot.ts",
+        "symbol": "SteeringDelta",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "SCHEMA-steering-snapshot",
+      "type": "SCHEMA",
+      "name": "SteeringSnapshot",
+      "description": "Gemappter OntologyGraph mit injizierten ND-Matrizen, Violations des vollen Katalogs, Zahl der blockierenden Fehler, Readiness-Report.",
+      "status": "reviewed",
+      "realRef": {
+        "file": "src/steering-snapshot.ts",
+        "symbol": "SteeringSnapshot",
+        "lang": "ts"
+      }
     },
     {
       "id": "SCHEMA-trajectory",
@@ -4666,6 +5043,19 @@
       "constraint": "skills-off-dead-api-on-mcp"
     },
     {
+      "id": "TEST-steering-loop",
+      "type": "TEST",
+      "name": "Steuerungsschleifen-Test",
+      "description": "Die Schleife als Ganzes: nextStep leitet Fokus und Blocker aus demselben Snapshot ab, generationStep waehlt dieselbe Dimension, rankCandidates ordnet nach dem Fokus-Delta; Determinismus gegen wiederholte Laeufe.",
+      "status": "done",
+      "method": "test",
+      "testRef": {
+        "file": "tests/steering.test.ts",
+        "tool": "vitest",
+        "level": "integration"
+      }
+    },
+    {
       "id": "TEST-store-recovery",
       "type": "TEST",
       "name": "Store-Recovery-Test",
@@ -4738,6 +5128,13 @@
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "id": "UC-deterministic-steering",
+      "type": "UC",
+      "name": "Deterministisch auf ein mehrdimensionales Ziel steuern",
+      "description": "Als Entwickler will ich, dass der naechste Schritt aus deterministisch gemessenen Kenngroessen folgt und nicht aus einer Modell-Meinung, sodass jede Runde nachvollziehbar auf ein mehrdimensionales Ziel zulaeuft.",
+      "status": "done"
     },
     {
       "id": "UC-efficient-testing",
@@ -4881,6 +5278,11 @@
     },
     {
       "source": "ACTOR-developer",
+      "target": "FLOW-steering-trigger",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-developer",
       "target": "FLOW-version-bump",
       "type": "io",
       "weight": 1,
@@ -4899,6 +5301,11 @@
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "ACTOR-developer",
+      "target": "UC-deterministic-steering",
+      "type": "io"
     },
     {
       "source": "ACTOR-developer",
@@ -4963,10 +5370,20 @@
     },
     {
       "source": "ACTOR-opencode",
+      "target": "FLOW-steering-trigger",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-opencode",
       "target": "UC-code-quality",
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "ACTOR-opencode",
+      "target": "UC-deterministic-steering",
+      "type": "io"
     },
     {
       "source": "ACTOR-opencode",
@@ -7672,6 +8089,61 @@
       "type": "satisfy"
     },
     {
+      "source": "FCHAIN-steering-loop",
+      "target": "FUNC-compute-readiness",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
+      "target": "FUNC-generation-step",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
+      "target": "FUNC-mutate",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
+      "target": "FUNC-next-step",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
+      "target": "FUNC-rank-candidates",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
+      "target": "FUNC-take-steering-snapshot",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
+      "target": "REQ-steering-from-metrics",
+      "type": "satisfy"
+    },
+    {
+      "source": "FLOW-action",
+      "target": "ACTOR-claude-code",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-action",
+      "target": "SCHEMA-action",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-arch-fitness",
+      "target": "FUNC-rank-candidates",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-arch-fitness",
+      "target": "SCHEMA-metric-vector",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-bootstrap-result",
       "target": "ACTOR-developer",
       "type": "io",
@@ -7773,6 +8245,31 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "FLOW-completeness",
+      "target": "FUNC-compute-phase-readiness",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-completeness",
+      "target": "SCHEMA-completeness",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-dimension-readiness",
+      "target": "FUNC-generation-step",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-dimension-readiness",
+      "target": "FUNC-next-step",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-dimension-readiness",
+      "target": "SCHEMA-readiness-report",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-draft-graph",
       "target": "FUNC-evaluate-rules",
       "type": "io",
@@ -7829,6 +8326,16 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "FLOW-fit-advisory",
+      "target": "FUNC-rank-candidates",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-fit-advisory",
+      "target": "SCHEMA-fit-advisory",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-formatE-artifact",
       "target": "FUNC-decode",
       "type": "io",
@@ -7855,6 +8362,16 @@
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-gate-verdict",
+      "target": "FUNC-take-steering-snapshot",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-gate-verdict",
+      "target": "SCHEMA-mutate-result",
+      "type": "relation"
     },
     {
       "source": "FLOW-graph-snapshot",
@@ -7959,6 +8476,16 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "FLOW-measurement-vector",
+      "target": "FUNC-goal-steerer",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-measurement-vector",
+      "target": "SCHEMA-measurement-vector",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-merged-graph",
       "target": "ACTOR-developer",
       "type": "io",
@@ -7985,6 +8512,16 @@
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-module-metrics",
+      "target": "ACTOR-dashboard",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-module-metrics",
+      "target": "SCHEMA-module-metrics",
+      "type": "relation"
     },
     {
       "source": "FLOW-mutate-cmd",
@@ -8011,6 +8548,16 @@
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-phase-readiness",
+      "target": "FUNC-generation-step",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-phase-readiness",
+      "target": "SCHEMA-phase-readiness",
+      "type": "relation"
     },
     {
       "source": "FLOW-query-request",
@@ -8056,9 +8603,69 @@
       "type": "io"
     },
     {
+      "source": "FLOW-round-prompt",
+      "target": "ACTOR-claude-code",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-round-prompt",
+      "target": "ACTOR-opencode",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-round-prompt",
+      "target": "FUNC-rank-candidates",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-round-prompt",
+      "target": "SCHEMA-generation-step",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-round-scope",
       "target": "FUNC-evaluate-rules",
       "type": "io"
+    },
+    {
+      "source": "FLOW-steering-delta",
+      "target": "FUNC-rank-candidates",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-steering-delta",
+      "target": "SCHEMA-steering-delta",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-steering-snapshot",
+      "target": "FUNC-compute-readiness",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-steering-snapshot",
+      "target": "FUNC-compute-steering-delta",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-steering-snapshot",
+      "target": "FUNC-next-step",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-steering-snapshot",
+      "target": "SCHEMA-steering-snapshot",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-steering-trigger",
+      "target": "FUNC-take-steering-snapshot",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-steering-trigger",
+      "target": "SCHEMA-query-params",
+      "type": "relation"
     },
     {
       "source": "FLOW-suggest-result",
@@ -8123,6 +8730,11 @@
     },
     {
       "source": "FLOW-violations",
+      "target": "FUNC-compute-phase-readiness",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-violations",
       "target": "FUNC-save-graph",
       "type": "io",
       "weight": 1,
@@ -8134,6 +8746,16 @@
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-arch-fitness",
+      "target": "FLOW-arch-fitness",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-arch-fitness",
+      "target": "REQ-steering-from-metrics",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-broadcast-diff",
@@ -8157,6 +8779,46 @@
     {
       "source": "FUNC-check-code-conformance",
       "target": "REQ-graph-code-conformance",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-compute-phase-readiness",
+      "target": "MOD-steering",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-compute-phase-readiness",
+      "target": "FLOW-phase-readiness",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-compute-phase-readiness",
+      "target": "REQ-steering-from-metrics",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-compute-readiness",
+      "target": "FLOW-dimension-readiness",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-compute-readiness",
+      "target": "REQ-steering-from-metrics",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-compute-steering-delta",
+      "target": "MOD-steering",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-compute-steering-delta",
+      "target": "FLOW-steering-delta",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-compute-steering-delta",
+      "target": "REQ-steering-from-metrics",
       "type": "satisfy"
     },
     {
@@ -8446,6 +9108,71 @@
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-fit-advisory",
+      "target": "MOD-steering",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-fit-advisory",
+      "target": "FLOW-fit-advisory",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-fit-advisory",
+      "target": "REQ-steering-from-metrics",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-generation-step",
+      "target": "MOD-steering",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-generation-step",
+      "target": "FLOW-round-prompt",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-generation-step",
+      "target": "REQ-steering-from-metrics",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-goal-steerer",
+      "target": "MOD-steering",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-goal-steerer",
+      "target": "FUNC-generation-step",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-goal-steerer",
+      "target": "FUNC-mutate",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-goal-steerer",
+      "target": "FUNC-next-step",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-goal-steerer",
+      "target": "FUNC-rank-candidates",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-goal-steerer",
+      "target": "FLOW-action",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-goal-steerer",
+      "target": "REQ-steering-from-metrics",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-graph-expand",
@@ -8803,6 +9530,16 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "FUNC-module-metrics",
+      "target": "FLOW-module-metrics",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-module-metrics",
+      "target": "REQ-steering-from-metrics",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-mutate",
       "target": "MOD-harness",
       "type": "allocate",
@@ -8815,6 +9552,11 @@
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-mutate",
+      "target": "FLOW-gate-verdict",
+      "type": "io"
     },
     {
       "source": "FUNC-mutate",
@@ -8848,6 +9590,21 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "FUNC-next-step",
+      "target": "MOD-steering",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-next-step",
+      "target": "FLOW-round-prompt",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-next-step",
+      "target": "REQ-steering-from-metrics",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-own-kuzu-host",
       "target": "MOD-host-bridge",
       "type": "allocate",
@@ -8860,6 +9617,21 @@
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-rank-candidates",
+      "target": "MOD-steering",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-rank-candidates",
+      "target": "FLOW-suggested-edit",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-rank-candidates",
+      "target": "REQ-steering-from-metrics",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-render-artifacts",
@@ -9077,6 +9849,11 @@
     },
     {
       "source": "FUNC-score-completeness",
+      "target": "FLOW-completeness",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-score-completeness",
       "target": "REQ-completeness-actor-bounded",
       "type": "satisfy"
     },
@@ -9143,6 +9920,31 @@
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-take-steering-snapshot",
+      "target": "MOD-steering",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-take-steering-snapshot",
+      "target": "FLOW-measurement-vector",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-take-steering-snapshot",
+      "target": "FLOW-steering-snapshot",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-take-steering-snapshot",
+      "target": "FLOW-violations",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-take-steering-snapshot",
+      "target": "REQ-steering-from-metrics",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-test",
@@ -9736,6 +10538,11 @@
       "type": "compose",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "SYS-graphcode",
+      "target": "UC-deterministic-steering",
+      "type": "compose"
     },
     {
       "source": "SYS-graphcode",
@@ -10494,6 +11301,11 @@
       "created_at": "2026-06-18T00:00:00.000Z"
     },
     {
+      "source": "TEST-steering-loop",
+      "target": "REQ-steering-from-metrics",
+      "type": "verify"
+    },
+    {
       "source": "TEST-store-recovery",
       "target": "REQ-store-recovery",
       "type": "verify"
@@ -10597,6 +11409,16 @@
       "type": "compose",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "UC-deterministic-steering",
+      "target": "FCHAIN-steering-loop",
+      "type": "compose"
+    },
+    {
+      "source": "UC-deterministic-steering",
+      "target": "REQ-steering-from-metrics",
+      "type": "compose"
     },
     {
       "source": "UC-efficient-testing",
@@ -10768,5 +11590,5 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     }
   ],
-  "graphVersion": 73
+  "graphVersion": 75
 }

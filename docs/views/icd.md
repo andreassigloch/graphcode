@@ -4,19 +4,30 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 9 SCHEMA · 33 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 20 SCHEMA · 46 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
 | Interface (SCHEMA) | Contract (realRef) | status |
 |---|---|---|
+| `SCHEMA-action` | Konzept (noch kein Zod-Export) | reviewed |
 | `SCHEMA-cli-command` | src/scaffold.ts#CliCommandSchema | reviewed |
+| `SCHEMA-completeness` | packages/graphcode-client/src/readiness-completeness.ts#GateCompleteness | reviewed |
+| `SCHEMA-fit-advisory` | src/fit-advisory.ts#FitAdvisory | reviewed |
 | `SCHEMA-format-e` | extern definiert (kein realRef) | reviewed |
+| `SCHEMA-generation-step` | src/generate.ts#GenerationStep | reviewed |
 | `SCHEMA-markdown-view` | src/exporter.ts#MarkdownViewSchema | reviewed |
+| `SCHEMA-measurement-vector` | Konzept (noch kein Zod-Export) | reviewed |
+| `SCHEMA-metric-vector` | packages/se-optimizer/src/metrics.ts#MetricVector | reviewed |
+| `SCHEMA-module-metrics` | packages/contracts/src/se/metric-rules.ts#ModuleMetrics | reviewed |
 | `SCHEMA-mutate-command` | extern definiert (kein realRef) | reviewed |
 | `SCHEMA-mutate-result` | extern definiert (kein realRef) | reviewed |
 | `SCHEMA-ontology-graph` | extern definiert (kein realRef) | reviewed |
+| `SCHEMA-phase-readiness` | src/readiness.ts#PhaseGateReadiness | reviewed |
 | `SCHEMA-query-params` | Konzept (noch kein Zod-Export) | reviewed |
+| `SCHEMA-readiness-report` | packages/contracts/src/se/readiness.ts#ReadinessReport | reviewed |
+| `SCHEMA-steering-delta` | src/steering-snapshot.ts#SteeringDelta | reviewed |
+| `SCHEMA-steering-snapshot` | src/steering-snapshot.ts#SteeringSnapshot | reviewed |
 | `SCHEMA-trajectory` | extern definiert (kein realRef) | reviewed |
 | `SCHEMA-update-event` | extern definiert (kein realRef) | reviewed |
 
@@ -24,36 +35,49 @@
 
 | Interface (FLOW) | Producer | Consumer |
 |---|---|---|
+| `FLOW-action` | `FUNC-goal-steerer` | `ACTOR-claude-code` |
+| `FLOW-arch-fitness` | `FUNC-arch-fitness` | `FUNC-rank-candidates` |
 | `FLOW-bootstrap-result` | `FUNC-import` | `ACTOR-developer` |
 | `FLOW-branch-graphs` | `ACTOR-developer` | `FUNC-merge-nodes` |
 | `FLOW-bulk-formatE` | `ACTOR-graphify` | `FUNC-import` |
 | `FLOW-capture-draft` | `FUNC-decode` | `FUNC-mutate` |
 | `FLOW-cli-command` | `ACTOR-developer` | `FUNC-harness-cli` · `FUNC-rewind` |
 | `FLOW-committed-graph` | `FUNC-save-graph` | `FUNC-emit-trajectory` · `FUNC-emit-update-event` · `FUNC-graph-export-snapshot` |
+| `FLOW-completeness` | `FUNC-score-completeness` | `FUNC-compute-phase-readiness` |
+| `FLOW-dimension-readiness` | `FUNC-compute-readiness` | `FUNC-generation-step` · `FUNC-next-step` |
 | `FLOW-draft-graph` | `FUNC-mutate` | `FUNC-evaluate-rules` |
 | `FLOW-expand-request` | `ACTOR-claude-code` | `FUNC-graph-expand` |
 | `FLOW-expanded-subgraph` | `FUNC-graph-expand` | `ACTOR-claude-code` |
 | `FLOW-export-request` | `ACTOR-developer` · `FUNC-serve-stdio` | `FUNC-export-markdown` |
+| `FLOW-fit-advisory` | `FUNC-fit-advisory` | `FUNC-rank-candidates` |
 | `FLOW-formatE-artifact` | `FUNC-encode` | `FUNC-decode` |
 | `FLOW-formatE-candidates` | `ACTOR-claude-code` | `FUNC-decode` |
+| `FLOW-gate-verdict` | `FUNC-mutate` | `FUNC-take-steering-snapshot` |
 | `FLOW-graph-snapshot` | `FUNC-graph-export-snapshot` · `FUNC-rewind` | `ACTOR-developer` · `FUNC-reseed` |
 | `FLOW-graph-state` | `ACTOR-developer` | `FUNC-encode` |
 | `FLOW-impact-subgraph` | `FUNC-graph-impact` | `ACTOR-claude-code` |
 | `FLOW-install-result` | `FUNC-harness-cli` | `ACTOR-developer` |
 | `FLOW-live-event` | `FUNC-emit-update-event` | `ACTOR-dashboard` · `FUNC-broadcast-diff` · `FUNC-serve-stdio` · `FUNC-subscribe-updates` |
 | `FLOW-markdown-docs` | `FUNC-export-markdown` | `ACTOR-developer` |
+| `FLOW-measurement-vector` | `FUNC-take-steering-snapshot` | `FUNC-goal-steerer` |
 | `FLOW-merged-graph` | `FUNC-merge-nodes` | `ACTOR-developer` |
 | `FLOW-migrated-graph` | `FUNC-migrate-schema` | `ACTOR-developer` |
+| `FLOW-module-metrics` | `FUNC-module-metrics` | `ACTOR-dashboard` |
 | `FLOW-mutate-cmd` | `ACTOR-claude-code` · `ACTOR-developer` | `FUNC-mutate` |
 | `FLOW-parsed-graph` | `FUNC-decode` | `ACTOR-developer` |
+| `FLOW-phase-readiness` | `FUNC-compute-phase-readiness` | `FUNC-generation-step` |
 | `FLOW-query-request` | `ACTOR-claude-code` | `FUNC-graph-impact` |
 | `FLOW-recalled-state` | `FUNC-reseed` | `ACTOR-developer` |
 | `FLOW-rendered-view` | `FUNC-render-views` | `ACTOR-developer` |
 | `FLOW-round-findings` | `FUNC-evaluate-rules` | `FUNC-graph-suggest` |
+| `FLOW-round-prompt` | `FUNC-generation-step` · `FUNC-next-step` | `ACTOR-claude-code` · `ACTOR-opencode` · `FUNC-rank-candidates` |
 | `FLOW-round-scope` | `FUNC-graph-impact` | `FUNC-evaluate-rules` |
+| `FLOW-steering-delta` | `FUNC-compute-steering-delta` | `FUNC-rank-candidates` |
+| `FLOW-steering-snapshot` | `FUNC-take-steering-snapshot` | `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-next-step` |
+| `FLOW-steering-trigger` | `ACTOR-developer` · `ACTOR-opencode` | `FUNC-take-steering-snapshot` |
 | `FLOW-suggest-result` | `FUNC-mutate` | `ACTOR-developer` |
-| `FLOW-suggested-edit` | `FUNC-graph-suggest` | `FUNC-mutate` |
+| `FLOW-suggested-edit` | `FUNC-graph-suggest` · `FUNC-rank-candidates` | `FUNC-mutate` |
 | `FLOW-trajectory` | `FUNC-emit-trajectory` | `ACTOR-learning-engine` |
 | `FLOW-version-bump` | `ACTOR-developer` | `FUNC-migrate-schema` |
 | `FLOW-view-request` | `ACTOR-developer` | `FUNC-render-views` |
-| `FLOW-violations` | `FUNC-evaluate-rules` | `FUNC-save-graph` |
+| `FLOW-violations` | `FUNC-evaluate-rules` · `FUNC-take-steering-snapshot` | `FUNC-compute-phase-readiness` · `FUNC-save-graph` |
