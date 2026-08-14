@@ -39,7 +39,7 @@
     "lint": "eslint src --ext .ts,.tsx",
     "type-check": "tsc --noEmit",
     "prepack": "npm run build",
-    "link:siblings": "npm link @sigloch/contracts @sigloch/graph-api-core @sigloch/graph-cypher-wasm @sigloch/graphcode-client @sigloch/learning-core @sigloch/se-optimizer @sigloch/se-steering"
+    "link:siblings": "npm link @sigloch/contracts @sigloch/graphify @sigloch/graph-api-core @sigloch/graph-cypher-wasm @sigloch/graphcode-client @sigloch/learning-core @sigloch/se-optimizer @sigloch/se-steering"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
