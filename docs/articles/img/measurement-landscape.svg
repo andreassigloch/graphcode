@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 580" font-family="Helvetica, Arial, sans-serif">
+<rect x="0" y="0" width="1000" height="580" fill="#ffffff"/>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#888"/></marker>
+<marker id="arrowo" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#b9770e"/></marker></defs>
+
+<!-- Schleife: Gate schreibt den Graphen (oben), Prompt liefert Kandidaten ans Gate (rechts) -->
+<path d="M845,20 V8 H95 V236" fill="none" stroke="#b9770e" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#arrowo)"/>
+<text x="470" y="21" text-anchor="middle" font-size="11" fill="#b9770e">übernommen — Graph neu, alle Kenngrößen neu</text>
+<path d="M930,460 H972 V60 H936" fill="none" stroke="#b9770e" stroke-width="1.5" marker-end="url(#arrowo)"/>
+<text x="972" y="270" text-anchor="middle" font-size="11" fill="#b9770e" transform="rotate(-90 972 270)">Kandidaten</text>
+
+<!-- Graph -> Produzenten -->
+<line x1="170" y1="255" x2="206" y2="56" stroke="#888" stroke-width="1.5" marker-end="url(#arrow)"/>
+<line x1="170" y1="268" x2="206" y2="176" stroke="#888" stroke-width="1.5" marker-end="url(#arrow)"/>
+<line x1="170" y1="282" x2="186" y2="324" stroke="#888" stroke-width="1.5" marker-end="url(#arrow)"/>
+<line x1="170" y1="296" x2="206" y2="454" stroke="#888" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<!-- Messung speist ihre eigenen Schwellenregeln, die in den Regelstrom laufen -->
+<line x1="330" y1="332" x2="342" y2="332" stroke="#888" stroke-width="1.5" marker-end="url(#arrow)"/>
+<line x1="406" y1="306" x2="406" y2="218" stroke="#888" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<!-- Creation-Freshness blockt direkt am Gate -->
+<line x1="450" y1="42" x2="756" y2="46" stroke="#888" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<!-- Regelstrom -> Projektionen (nach Konsument sortiert, daher kreuzungsfrei) -->
+<line x1="450" y1="168" x2="496" y2="122" stroke="#888" stroke-width="1.5" marker-end="url(#arrow)"/>
+<line x1="450" y1="176" x2="496" y2="176" stroke="#888" stroke-width="1.5" marker-end="url(#arrow)"/>
+<line x1="450" y1="184" x2="496" y2="232" stroke="#888" stroke-width="1.5" marker-end="url(#arrow)"/>
+<line x1="450" y1="192" x2="496" y2="348" stroke="#888" stroke-width="1.5" marker-end="url(#arrow)"/>
+<line x1="610" y1="260" x2="610" y2="272" stroke="#888" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<!-- Projektionen -> Akteure -->
+<line x1="720" y1="120" x2="756" y2="86" stroke="#888" stroke-width="1.5" marker-end="url(#arrow)"/>
+<line x1="720" y1="176" x2="756" y2="196" stroke="#888" stroke-width="1.5" marker-end="url(#arrow)"/>
+<line x1="720" y1="236" x2="756" y2="212" stroke="#888" stroke-width="1.5" marker-end="url(#arrow)"/>
+<line x1="720" y1="296" x2="756" y2="242" stroke="#888" stroke-width="1.5" marker-end="url(#arrow)"/>
+<line x1="610" y1="372" x2="610" y2="388" stroke="#888" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M260,354 V412 H496" fill="none" stroke="#888" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M450,462 H736 V254 H756" fill="none" stroke="#888" stroke-width="1.5" marker-end="url(#arrow)"/>
+<line x1="845" y1="266" x2="845" y2="426" stroke="#888" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<!-- Quelle -->
+<rect x="20" y="240" width="150" height="64" rx="6" fill="#f3f3f3" stroke="#888888" stroke-width="1.5"/>
+<text x="95" y="267" text-anchor="middle" font-size="13" fill="#222" font-weight="bold">Graph</text>
+<text x="95" y="285" text-anchor="middle" font-size="12" fill="#333">SSOT</text>
+
+<!-- Produzenten -->
+<rect x="210" y="20" width="240" height="44" rx="6" fill="#f8d7da" stroke="#c0392b" stroke-width="1.5"/>
+<text x="330" y="39" text-anchor="middle" font-size="12.5" fill="#222">Creation-Artefakte — Freshness</text>
+<text x="330" y="55" text-anchor="middle" font-size="11" fill="#333">ConOps · FMEA · Trade · ImplPlan · Assumption</text>
+
+<rect x="210" y="150" width="240" height="64" rx="6" fill="#f8d7da" stroke="#c0392b" stroke-width="1.5"/>
+<text x="330" y="172" text-anchor="middle" font-size="13" fill="#222" font-weight="bold">Regelauswertung</text>
+<text x="330" y="189" text-anchor="middle" font-size="11" fill="#333">contracts/se — eine Implementierung</text>
+<text x="330" y="204" text-anchor="middle" font-size="11" fill="#333">SE_DESCRIPTOR = SE-Profil</text>
+
+<rect x="190" y="310" width="140" height="44" rx="6" fill="#d6eaf8" stroke="#2980b9" stroke-width="1.5"/>
+<text x="260" y="329" text-anchor="middle" font-size="12" fill="#222">moduleMetrics</text>
+<text x="260" y="345" text-anchor="middle" font-size="11" fill="#333">instab · lcom4 · coh</text>
+
+<rect x="342" y="310" width="120" height="44" rx="6" fill="#f8d7da" stroke="#c0392b" stroke-width="1.5"/>
+<text x="402" y="329" text-anchor="middle" font-size="12" fill="#222">MT-01 / MT-02</text>
+<text x="402" y="345" text-anchor="middle" font-size="11" fill="#333">schwellen sie</text>
+
+<rect x="210" y="440" width="240" height="44" rx="6" fill="#d6eaf8" stroke="#2980b9" stroke-width="1.5"/>
+<text x="330" y="459" text-anchor="middle" font-size="12.5" fill="#222">Architecture Fitness ℝ⁶</text>
+<text x="330" y="475" text-anchor="middle" font-size="11" fill="#333">se-optimizer · layer:arch</text>
+
+<!-- Projektionen -->
+<rect x="500" y="100" width="220" height="40" rx="6" fill="#f8d7da" stroke="#c0392b" stroke-width="1.5"/>
+<text x="610" y="117" text-anchor="middle" font-size="12" fill="#222">completeness</text>
+<text x="610" y="132" text-anchor="middle" font-size="11" fill="#333">Elementabdeckung — Abwesenheit</text>
+
+<rect x="500" y="156" width="220" height="40" rx="6" fill="#d6eaf8" stroke="#2980b9" stroke-width="1.5"/>
+<text x="610" y="173" text-anchor="middle" font-size="12" fill="#222">phase_readiness</text>
+<text x="610" y="188" text-anchor="middle" font-size="11" fill="#333">Regelabdeckung je Gate</text>
+
+<rect x="500" y="212" width="220" height="48" rx="6" fill="#d6eaf8" stroke="#2980b9" stroke-width="1.5"/>
+<text x="610" y="231" text-anchor="middle" font-size="12.5" fill="#222" font-weight="bold">dimension_readiness</text>
+<text x="610" y="248" text-anchor="middle" font-size="11" fill="#333">8 Themen · 1 − Verstöße / applicable</text>
+
+<rect x="500" y="276" width="220" height="40" rx="6" fill="#d6eaf8" stroke="#2980b9" stroke-width="1.5"/>
+<text x="610" y="293" text-anchor="middle" font-size="12" fill="#222">steeringDelta Δ</text>
+<text x="610" y="308" text-anchor="middle" font-size="11" fill="#333">je Kandidat, vor/nach</text>
+
+<rect x="500" y="332" width="220" height="40" rx="6" fill="#d6eaf8" stroke="#2980b9" stroke-width="1.5"/>
+<text x="610" y="349" text-anchor="middle" font-size="12" fill="#222">compliance</text>
+<text x="610" y="364" text-anchor="middle" font-size="11" fill="#333">Elemente ohne error</text>
+
+<!-- Akteure -->
+<rect x="760" y="20" width="170" height="80" rx="6" fill="#fdebd0" stroke="#b9770e" stroke-width="1.5"/>
+<text x="845" y="44" text-anchor="middle" font-size="13" fill="#222" font-weight="bold">GATE</text>
+<text x="845" y="62" text-anchor="middle" font-size="11" fill="#333">blockt bei error,</text>
+<text x="845" y="76" text-anchor="middle" font-size="11" fill="#333">fehlender Analyse,</text>
+<text x="845" y="90" text-anchor="middle" font-size="11" fill="#333">unvollständiger Kette</text>
+
+<rect x="760" y="170" width="170" height="96" rx="6" fill="#fdebd0" stroke="#b9770e" stroke-width="1.5"/>
+<text x="845" y="192" text-anchor="middle" font-size="13" fill="#222" font-weight="bold">AUSWAHL</text>
+<text x="845" y="210" text-anchor="middle" font-size="11" fill="#333">Fokus: schwächste Dimension</text>
+<text x="845" y="224" text-anchor="middle" font-size="11" fill="#333">unter der Fokus-Schwelle</text>
+<text x="845" y="242" text-anchor="middle" font-size="11" fill="#333">Rang: tier → Δ Fokus →</text>
+<text x="845" y="256" text-anchor="middle" font-size="11" fill="#333">Δ gesamt → Σ Δm</text>
+
+<rect x="500" y="392" width="220" height="44" rx="6" fill="#f3f3f3" stroke="#888888" stroke-width="1.5"/>
+<text x="610" y="411" text-anchor="middle" font-size="12.5" fill="#222">Anzeige</text>
+<text x="610" y="427" text-anchor="middle" font-size="11" fill="#333">Dashboard · Skill</text>
+
+<rect x="760" y="426" width="170" height="68" rx="6" fill="#fdebd0" stroke="#b9770e" stroke-width="1.5"/>
+<text x="845" y="448" text-anchor="middle" font-size="13" fill="#222" font-weight="bold">NÄCHSTER PROMPT</text>
+<text x="845" y="466" text-anchor="middle" font-size="11" fill="#333">Fundfenster + Template</text>
+<text x="845" y="482" text-anchor="middle" font-size="11" fill="#333">an Mensch oder LLM</text>
+
+<!-- Legende -->
+<rect x="20" y="524" width="14" height="14" rx="3" fill="#f8d7da" stroke="#c0392b" stroke-width="1.5"/>
+<text x="42" y="536" font-size="11.5" fill="#333">kann blocken</text>
+<rect x="150" y="524" width="14" height="14" rx="3" fill="#d6eaf8" stroke="#2980b9" stroke-width="1.5"/>
+<text x="172" y="536" font-size="11.5" fill="#333">Messung — blockt nie</text>
+<rect x="330" y="524" width="14" height="14" rx="3" fill="#fdebd0" stroke="#b9770e" stroke-width="1.5"/>
+<text x="352" y="536" font-size="11.5" fill="#333">handelt darauf</text>
+<text x="470" y="536" font-size="11.5" fill="#666">Der orange Kreis ist die Schleife aus „Regeln stoppen Fehler, KPIs zeigen den Weg" — hier von innen.</text>
+</svg>

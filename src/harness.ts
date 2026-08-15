@@ -158,6 +158,16 @@ export class GraphCodeHarness {
     return this.metricPolicy;
   }
 
+  /**
+   * „Ist diese Dimension zu schwach?" — die EINE Zahl fuer Fokuswahl und `ready`-Flag
+   * (CR-GC-329). Seit contracts 4.0.0 (CR-SM-235) verlangt `computeReadiness` sie als
+   * Parameter ohne Default: se-steering hatte 0.7, `generate.ts` 0.8, und der Konsument
+   * konnte nicht wissen, welche galt. Jetzt gibt es nur diese hier.
+   */
+  getFocusThreshold(): number {
+    return this.graphcodeConfig.config.focusThreshold;
+  }
+
   /** Run a write body with exclusive access — mutate/reseed never interleave (O3). */
   private serializeWrite<T>(body: () => Promise<T>): Promise<T> {
     const result = this.writeChain.then(body, body);

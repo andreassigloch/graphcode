@@ -6,12 +6,26 @@ for a first read. This article is for when "wait, are these the same number?" co
 [Under the Hood](03-graphcode-harness-goal-and-concept.md) and
 [the advisory roundtrip](05-the-advisory-roundtrip.md).*
 
+*Normative one-pager — every measurement, its single computation site, its denominator and where it is
+consumed: [`docs/MESSGROESSEN.md`](../MESSGROESSEN.md). When this article and that page disagree, the
+page wins; this one explains, it does not define.*
+
+## The whole landscape on one picture
+
+Every measurement, what produces it, and which of the three actors acts on it — the gate that blocks,
+the driver that picks the next edit, or the display a human reads. Nothing is measured that nobody
+acts on.
+
+![Measurement landscape: sources, projections, and who acts on each](img/measurement-landscape.svg)
+
 ## The shape: rules gate, KPIs steer — before the edit and after it
 
 Two kinds of number appear everywhere in graphcode, and they behave completely differently:
 
-- **Rules are yes/no.** A rule either fires or it doesn't — legal or not, complete or not. Only rules
-  can ever block anything.
+- **Rules are yes/no.** A rule either fires or it doesn't — legal or not, complete or not. No KPI
+  ever blocks anything; a review gate additionally holds on two non-KPI conditions of the same
+  yes/no kind (a required analysis artifact missing or stale, and an incomplete derivation chain —
+  both in "three kinds of leg" below).
 - **KPIs are continuous.** A number that goes up or down — never a veto by itself, always an input to
   ranking or reporting.
 
@@ -73,8 +87,13 @@ ways, for three different questions — none of these blocks anything either, th
 | View | Groups rules by | Answers |
 |---|---|---|
 | **`dimension_readiness`** (8 scores) | SE topic (requirements, use cases, functional architecture, module allocation, verification, interfaces, change requests, milestones) | "Which *area* of the project needs work next?" |
-| **`phase_readiness`** (System Requirements Review, Preliminary Design Review, Critical Design Review, Test Readiness Review) | project stage | "Are we ready to move from requirements-review to design-review to verification?" |
+| **`phase_readiness`** (System Requirements Review, Preliminary Design Review, Critical Design Review, Test Readiness Review) | project stage — *rule coverage*: which of the stage's rules are clean | "Are we ready to move from requirements-review to design-review to verification?" |
+| **Review-gate completeness** | project stage — *element coverage* over the derivation chain | "Is the chain this stage owns actually there?" (the absence a per-element rule cannot see) |
 | **Milestone gates** | which milestone (1st, 2nd, 3rd, 4th slice of the plan) | "Is milestone N actually done?" |
+
+The middle two both answer per stage and are easy to confuse: one counts *rules*, the other counts
+*elements*. A stage can have every rule clean and still be incomplete, because the elements the rules
+would have judged do not exist yet.
 
 ## What a review gate will check — three kinds of leg
 
@@ -121,10 +140,16 @@ design review closed, by a gate that itself understands nothing about either.
 
 A handful of rules specifically judge one module at a time against classic software-architecture
 theory: is it too exposed to change (instability), does it do more than one job (LCOM4), does it
-cross paths with other modules too often. These are ordinary rules like any other — they feed the
-"module allocation" readiness score above. [The story](04-the-graphcode-story.md) calls them out
-separately because they're the most recognizable ("Robert C. Martin", "LCOM4") to anyone who already
-knows software-architecture theory. Not a fourth system — the same rule set as everything above.
+cross paths with other modules too often. Their violations are ordinary rules like any other — they
+feed the "module allocation" readiness score above. [The story](04-the-graphcode-story.md) calls them
+out separately because they're the most recognizable ("Robert C. Martin", "LCOM4") to anyone who
+already knows software-architecture theory.
+
+**The number underneath is separately readable.** One computation produces the per-module
+measurements — instability with its fan-in/fan-out, LCOM4, allocation cohesion — and the rules only
+threshold it. A module below every threshold still has values, which is what a trend or a target
+needs; a rule alone can only ever say "not yet a problem". The measurements never block anything,
+exactly like Architecture Fitness below.
 
 ## Architecture Fitness, in full
 

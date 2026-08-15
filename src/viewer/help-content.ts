@@ -161,6 +161,11 @@ export const HELP_CONTENT: Record<string, HelpContentEntry> = {
       'Your system has several functions but no described data passing between them, so the parts look unconnected → add the data each function hands to the next.',
     se: 'Layer presence: with more than one `FUNC` the model must carry `FLOW` and `SCHEMA` elements. A function layer with no data layer is an incomplete decomposition, not a small model.',
   },
+  'R-29': {
+    plain:
+      'Two acceptances claim the same test file, so a red run cannot be traced to one of them and the gate counts that evidence twice → give the file to the one acceptance it really proves, or split it.',
+    se: "Test file exclusivity (CR-SM-231): every file in `attributes.testRefs` belongs to at most one `TEST`. An acceptance may name n files (1:n) — a file may not name n acceptances. Severity `error`, deliberately sharper than R-19/R-20: a doubly claimed file makes gate numbers wrong, which is a mis-measurement, not a completeness signal. Purely structural — the file need not exist to be claimed twice.",
+  },
 
   // ---------------------------------------------------------------------------
   // Use-case quality (UC-*) — CR-GC-312 wired these into the descriptor; they had

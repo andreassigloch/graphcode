@@ -12,7 +12,6 @@
 import type { Graph } from '@sigloch/graph-api-core';
 import type { RuleViolation, MetricPolicy } from '@sigloch/contracts/se';
 import { RULE_TO_DIMENSION } from '@sigloch/contracts/se';
-import { computeWeightVector, type WeightVectorType } from '@sigloch/se-steering';
 import { takeSteeringSnapshot } from './steering-snapshot.js';
 
 /** Generic next action per readiness dimension. */
@@ -40,8 +39,9 @@ export interface NextStepResult {
   } | null;
   /** Lower-priority findings to address after the gate. */
   advisory: { rule_id: string; count: number }[];
-  /** Normalized D1–D6 guidance weights (Σ = 1) from the shared steering core. */
-  weights: WeightVectorType;
+  // CR-GC-336: `weights` (D1–D6) ist gestrichen. Der Vektor wurde ausgegeben, aber niemand
+  // handelte auf ihm — er gewichtete keinen Kandidaten und verschob keine Auswahl (CR-SM-237).
+  // Die Fokus-Dimension steht in `nextStep`; der Vektor war nur eine zweite Darstellung davon.
 }
 
 /** Group violations into `"RULE xN"` labels, highest count first. */
@@ -55,17 +55,16 @@ function countByRule(violations: RuleViolation[]): { rule_id: string; count: num
 
 /**
  * Compute the "next best step" for the current graph.
- * Deterministic: readiness → weight vector → top-deficit dimension → firing rules.
+ * Deterministic: readiness → top-deficit dimension → firing rules.
  */
-export function nextStep(graph: Graph, policy: MetricPolicy): NextStepResult {
+export function nextStep(graph: Graph, policy: MetricPolicy, focusThreshold: number): NextStepResult {
   // CR-GC-324: EINE Graph→OntologyGraph-Abbildung. Vorher stand hier eine lokale
   // Kopie über `JSON.parse(exportGraphJson(graph))` — das flache Export-Encoding
   // (CR-216/219) versteckt `attributes.*`, wodurch R-19/R-20/R-26/VR-01/AF-01..05
   // in DIESEM Pfad scheinfeuerten und damit die Dimensions-Priorisierung
   // verschoben. Der Snapshot (CR-GC-303/289) ist der eine Messpfad; er trägt die
   // ND-Injektion (CR-GC-287) bereits.
-  const { violations, report } = takeSteeringSnapshot(graph, policy);
-  const weights = computeWeightVector(report);
+  const { violations, report } = takeSteeringSnapshot(graph, policy, focusThreshold);
 
   const errors = violations.filter((v) => v.severity === 'error');
   const blocking = {
@@ -98,5 +97,5 @@ export function nextStep(graph: Graph, policy: MetricPolicy): NextStepResult {
     violations.filter((v) => v.severity !== 'error' && (!top || RULE_TO_DIMENSION[v.rule_id] !== top.dimension)),
   );
 
-  return { blocking, nextStep: step, advisory, weights };
+  return { blocking, nextStep: step, advisory };
 }

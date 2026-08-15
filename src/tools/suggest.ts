@@ -135,8 +135,12 @@ export function bindSuggestTools(ctx: ToolContext): MCPToolRegistry {
       .number()
       .min(0)
       .max(1)
-      .default(0.8)
-      .describe('Readiness-Schwelle je Dimension für den Handoff auf graph_suggest (Default 0.8).'),
+      .optional()
+      .describe(
+        'Readiness-Schwelle je Dimension für den Handoff auf graph_suggest. Ohne Angabe gilt ' +
+        'die Schwelle des Hosts (graphcode.config.jsonc → focusThreshold) — CR-GC-336: ein ' +
+        'Tool-Default wäre eine zweite Antwort auf dieselbe Frage.',
+      ),
     defer: z
       .array(z.string())
       .optional()
@@ -178,7 +182,7 @@ export function bindSuggestTools(ctx: ToolContext): MCPToolRegistry {
       if (input.intent && !profile?.profile.intentAnchors?.length && !isIntentTooThin(input.intent)) {
         persistIntentAnchors(repoRoot, extractIntentAnchors(input.intent));
       }
-      return generationStep(harness.getGraph(), harness.getMetricPolicy(), input.intent, input.threshold, input.defer, input.selection, profile);
+      return generationStep(harness.getGraph(), harness.getMetricPolicy(), input.intent, input.threshold ?? harness.getFocusThreshold(), input.defer, input.selection, profile);
     },
   };
 

@@ -21,7 +21,32 @@
 
     // MT-02 (LCOM4 = Zahl unverbundener FUNC-Gruppen je MOD): ab `info` gemeldet,
     // ab `warning` hochgestuft. 4/6 ist das Verhalten vor CR-SM-233.
-    "lcom4": { "info": 4, "warning": 6 }
+    "lcom4": { "info": 4, "warning": 6 },
+
+    // CR-01 (kreuzende io-Flows je Modulpaar). Bis CR-SM-236 hatte die Regel keinen
+    // Aus-Zustand: JEDES Paar mit >= 1 Kreuzung erzeugte eine info, und die verduennt
+    // die arch-Dimension. null legt sie still, die Zahl bleibt in graph_metrics.
+    // Die frueher in se-design.md behauptete "<= 8" hatte im Regelcode nie eine
+    // Entsprechung — der Startwert ist 3 (= das alte `count > 2`).
+    "crossingFlows": { "warning": 3 },
+
+    // FM-03: RPN-Grenze des markierten Uebergangs (CR-SM-229). Seit dort urteilt
+    // FM-03 nach Action Priority; diese Zahl greift nur, wo AP keine bestaetigte
+    // Invariante hat (also weder S >= 9 noch S == 1). 100 ist Domaenenstandard,
+    // aber skalenabhaengig.
+    "riskRpn": 100,
+
+    // R-04: Modulgroesse GEGEN Kreuzungen — drei Urteile, drei Werte (CR-SM-236).
+    // large: > 12 FUNCs gilt als gross (mit Kreuzungen warning, ohne info).
+    // coupled: unter 9 FUNCs sieht die Regel gar nicht hin.
+    // crossings: ab 3 Kreuzungen warnt auch ein nur `coupled`-grosses Modul.
+    "moduleSize": { "large": 12, "coupled": 8, "crossings": 2 },
+
+    // CR-SM-229: die lizenzierte AIAG-VDA-Tabelle gehoert NICHT in diese Datei —
+    // sie ist eingecheckt. null heisst hier nicht "aus", sondern "markierter
+    // Uebergang": bestaetigte AP-Invarianten, sonst RPN-Baender. Wer eine Lizenz
+    // hat, legt sie nach .graphcode/ap-table.json (gitignored).
+    "apTable": null
   },
 
   // "Ist diese Dimension zu schwach?" — EINE Zahl fuer Fokuswahl und ready-Flag.

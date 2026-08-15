@@ -18,6 +18,13 @@ import { bindToolsToHarness, type MCPToolRegistry } from '../src/mcp-tools.js';
 import { generationStep, DIMENSION_FOCUS_TYPES } from '../src/generate.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 
+/**
+ * CR-GC-335: die Fokus-Schwelle ist Eingabe, kein Default der Signatur. 0.8 ist der
+ * Config-Startwert (`DEFAULT_FOCUS_THRESHOLD`) und steht hier als Testeingabe —
+ * im Betrieb liefert ihn `harness.getFocusThreshold()`.
+ */
+const FOCUS = 0.8;
+
 const node = (uid: string, type: string, name: string, description = '', attributes: Record<string, unknown> = {}) => ({
   uid,
   type,
@@ -38,7 +45,7 @@ const INTENT = 'Ein Bestellsystem, mit dem Kunden Ersatzteile suchen und bestell
 
 describe('generationStep — Zustandsmaschine (pur)', () => {
   it('leerer Graph ohne Intention → seed-Phase fordert die Intention an', () => {
-    const step = generationStep(EMPTY, DEFAULT_METRIC_POLICY);
+    const step = generationStep(EMPTY, DEFAULT_METRIC_POLICY, undefined, FOCUS);
     expect(step.phase).toBe('seed');
     expect(step.done).toBe(false);
     expect(step.prompt).toContain('Intention');
@@ -46,7 +53,7 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
   });
 
   it('leerer Graph mit Intention → Seed-Batch-Instruktion (SYS/ACTOR/UC, Gate-Protokoll)', () => {
-    const step = generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT);
+    const step = generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT, FOCUS);
     expect(step.phase).toBe('seed');
     expect(step.prompt).toContain(INTENT);
     for (const part of ['SYS', 'ACTOR', 'UC', 'dryRun', 'fitAdvisory', 'graph_authoring_guide']) {
@@ -61,7 +68,7 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
       [node('SYS-shop', 'SYS', 'shop', INTENT), node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt Teil.')],
       [edge('SYS-shop', 'UC-bestellen', 'compose')],
     );
-    const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8);
+    const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
     expect(step.phase).toBe('expand');
     expect(step.done).toBe(false);
     // Intention kommt aus der SYS-description — kein intent-Parameter nötig.
@@ -70,7 +77,7 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
     expect(step.prompt).toMatch(/UC-bestellen \([A-Z]+-?\d*/);
     expect(step.blockingErrors).toBeGreaterThan(0);
     // Deterministisch.
-    expect(generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8)).toEqual(step);
+    expect(generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS)).toEqual(step);
   });
 
   it('req-Template fordert den TEST (TEST verify REQ) im selben Batch (CR-GC-284)', () => {
@@ -92,7 +99,7 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
       ],
     );
     // Die req-Dimension ist nicht zwingend der erste Fokus — per defer dorthin rotieren.
-    let step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8);
+    let step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
     const keys: string[] = [];
     while (step.focusKey && !step.prompt.includes('REQ-Kandidaten') && keys.length < 10) {
       keys.push(step.focusKey);
@@ -125,7 +132,7 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
         edge('FCHAIN-bestellung', 'FUNC-pruefen', 'compose'),
       ],
     );
-    let step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8);
+    let step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
     const keys: string[] = [];
     while (step.focusKey && !step.prompt.includes('FUNC/FCHAIN-Zerlegungen') && keys.length < 15) {
       keys.push(step.focusKey);
@@ -262,17 +269,17 @@ describe('generationStep — Fund-Rotation/defer (CR-GC-281)', () => {
   );
 
   it('focusKey ist stabil und deterministisch (dimension:element_ids sortiert)', () => {
-    const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8);
+    const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
     expect(step.phase).toBe('expand');
     expect(step.focusKey).toMatch(/^[a-z]+:.+/);
     // Gleicher Graph + gleiches defer ⇒ identischer Schritt inkl. focusKey.
-    expect(generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8)).toEqual(step);
+    expect(generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS)).toEqual(step);
     // Kein Fokus ⇒ kein focusKey (seed).
-    expect(generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT).focusKey).toBeNull();
+    expect(generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT, FOCUS).focusKey).toBeNull();
   });
 
   it('defer überspringt das Fund-Set — anderer focusKey, anderer Prompt', () => {
-    const first = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8);
+    const first = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
     const second = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8, [first.focusKey as string]);
     expect(second.phase).toBe('expand');
     expect(second.focusKey).not.toBe(first.focusKey);
@@ -314,7 +321,7 @@ describe('generationStep — Fund-Fenster/Prompt-Vollständigkeit (CR-GC-290)', 
         edge('UC-bestellen', 'FCHAIN-leer', 'compose'),
       ],
     );
-    let step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8);
+    let step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
     const keys: string[] = [];
     const seenUcWindows: string[] = [];
     while (step.focusKey && !keys.includes(step.focusKey) && keys.length < 20) {
@@ -337,7 +344,7 @@ describe('generationStep — Fund-Fenster/Prompt-Vollständigkeit (CR-GC-290)', 
       [node('SYS-shop', 'SYS', 'shop', INTENT), node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt Teil.')],
       [edge('SYS-shop', 'UC-bestellen', 'compose')],
     );
-    const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8);
+    const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
     expect(step.phase).toBe('expand');
     expect(step.prompt).not.toMatch(/\(Score [\d.]+,\s*\d+ Funde\)/);
     expect(step.prompt).toContain('Funde: ');
@@ -368,7 +375,7 @@ describe('generationStep — R-15 Stagnations-Fix (CR-GC-290-Nachtrag, Messlauf-
   );
 
   it('uc-Template weist bei R-15 explizit auf FUNC compose→FCHAIN hin statt auf neue ACTOR/FCHAIN/UC', () => {
-    const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8);
+    const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
     expect(step.phase).toBe('expand');
     expect(step.focusKey).toMatch(/^uc:R-15:/);
     expect(step.prompt).toContain('FUNC');
@@ -377,13 +384,13 @@ describe('generationStep — R-15 Stagnations-Fix (CR-GC-290-Nachtrag, Messlauf-
   });
 
   it('Funde-Zeile trägt den fix_hint der Violation (R-15: "Add FUNC elements via compose trace")', () => {
-    const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8);
+    const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
     expect(step.prompt).toContain('Fix: Add FUNC elements via compose trace');
   });
 
   it('DIMENSION_FOCUS_TYPES.uc trägt FUNC — Runden-Injektion liefert die FUNC-Kantengrammatik im uc-Fokus mit', () => {
     expect(DIMENSION_FOCUS_TYPES.uc).toContain('FUNC');
-    const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8);
+    const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
     expect(step.focusTypes).toContain('FUNC');
   });
 });
@@ -401,8 +408,8 @@ describe('DIMENSION_FOCUS_TYPES / GenerationStep.focusTypes (CR-GC-285)', () => 
   });
 
   it('seed trägt die Seed-Typen; seed ohne Intention trägt keine', () => {
-    expect(generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT).focusTypes).toEqual(DIMENSION_FOCUS_TYPES.seed);
-    expect(generationStep(EMPTY, DEFAULT_METRIC_POLICY).focusTypes).toEqual([]);
+    expect(generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT, FOCUS).focusTypes).toEqual(DIMENSION_FOCUS_TYPES.seed);
+    expect(generationStep(EMPTY, DEFAULT_METRIC_POLICY, undefined, FOCUS).focusTypes).toEqual([]);
   });
 
   it('expand trägt die Typen der Fokus-Dimension (konsistent zum focusKey)', () => {
@@ -410,7 +417,7 @@ describe('DIMENSION_FOCUS_TYPES / GenerationStep.focusTypes (CR-GC-285)', () => 
       [node('SYS-shop', 'SYS', 'shop', INTENT), node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt Teil.')],
       [edge('SYS-shop', 'UC-bestellen', 'compose')],
     );
-    const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8);
+    const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
     expect(step.phase).toBe('expand');
     const dim = (step.focusKey as string).split(':')[0];
     expect(step.focusTypes).toEqual(DIMENSION_FOCUS_TYPES[dim]);
@@ -439,7 +446,7 @@ describe('Zielprofil + Intentions-Anker im Prompt (CR-GC-295)', () => {
   });
 
   it('Runde-1-Prompt (kein SYS, keine Intention) fragt optional nach dem Zielprofil', () => {
-    const step = generationStep(EMPTY, DEFAULT_METRIC_POLICY);
+    const step = generationStep(EMPTY, DEFAULT_METRIC_POLICY, undefined, FOCUS);
     expect(step.prompt).toContain('Zielprofil');
     expect(step.prompt).toContain('se:target-profile');
     expect(step.prompt).toContain('[-1,1]');
@@ -457,7 +464,7 @@ describe('Zielprofil + Intentions-Anker im Prompt (CR-GC-295)', () => {
     // Der Begriff ist Steuerungsinternes — der Kunde kann damit nichts anfangen, und
     // ein Frontier-Modell hat die Vorschläge später ohnehin still korrigiert. Die
     // Anker werden jetzt im Hintergrund gesetzt (Tool-Schicht), nicht erfragt.
-    const step = generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT);
+    const step = generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT, FOCUS);
     expect(step.prompt).not.toMatch(/Intentions-Anker/i);
     expect(step.prompt).not.toContain('se:target-profile');
     // Der eigentliche Seed-Auftrag bleibt unberührt.
@@ -497,9 +504,9 @@ describe('Zielprofil + Intentions-Anker im Prompt (CR-GC-295)', () => {
       [node('SYS-shop', 'SYS', 'shop', INTENT), node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt Teil.')],
       [edge('SYS-shop', 'UC-bestellen', 'compose')],
     );
-    const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8);
+    const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
     expect(step.prompt).not.toContain('Intentions-Anker');
-    expect(generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8)).toEqual(step);
+    expect(generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS)).toEqual(step);
   });
 });
 
@@ -510,7 +517,7 @@ describe('GATE_PROTOCOL-Selektion (CR-GC-288)', () => {
   );
 
   it("Default 'host': der dryRun-Vergleichs-Auftrag bleibt im Prompt (MCP-Clients ohne Treiber)", () => {
-    const step = generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT);
+    const step = generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT, FOCUS);
     expect(step.prompt).toContain('dryRun:true');
     expect(step.prompt).toContain('fitAdvisory');
     // Explizites 'host' ist identisch zum Default — kein zweiter Pfad.
@@ -525,12 +532,12 @@ describe('GATE_PROTOCOL-Selektion (CR-GC-288)', () => {
     expect(step.prompt).toContain('graph_authoring_guide'); // Schritt 1 geteilt
     expect(step.prompt).toContain('graph_generate erneut aufrufen'); // Folgeschritt geteilt
     // Nur das Protokoll wechselt — die generative Instruktion selbst ist identisch.
-    const host = generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT);
+    const host = generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT, FOCUS);
     expect(step.prompt.split('Gate-Protokoll')[0]).toBe(host.prompt.split('Gate-Protokoll')[0]);
   });
 
   it("'driver' (expand): gleiche Funde/Fokus, nur das Protokoll wechselt", () => {
-    const host = generationStep(expandGraph, DEFAULT_METRIC_POLICY, undefined, 0.8);
+    const host = generationStep(expandGraph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
     const driver = generationStep(expandGraph, DEFAULT_METRIC_POLICY, undefined, 0.8, [], 'driver');
     expect(driver.phase).toBe('expand');
     expect(driver.focusKey).toBe(host.focusKey);

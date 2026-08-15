@@ -37,8 +37,15 @@ export interface SteeringSnapshot {
  * `graphcode.config.jsonc` — dieselbe, mit der das Gate urteilt (`harness.getMetricPolicy()`).
  * Kein Default hier: ein zweiter Wert an dieser Stelle hiesse, dass der Steuerungsraum
  * gegen eine andere Schwelle misst als die, die der Host anzeigt.
+ *
+ * CR-GC-336: `focusThreshold` aus demselben Grund und aus derselben Quelle
+ * (`harness.getFocusThreshold()`). contracts 4.0.0 verlangt sie bei `computeReadiness`.
  */
-export function takeSteeringSnapshot(graph: Graph, policy: MetricPolicy): SteeringSnapshot {
+export function takeSteeringSnapshot(
+  graph: Graph,
+  policy: MetricPolicy,
+  focusThreshold: number,
+): SteeringSnapshot {
   // CR-GC-303: DERSELBE Mapper wie der Harness-/Readiness-Pfad. Vorher lief hier
   // `JSON.parse(exportGraphJson(graph))` — das Export-Encoding flacht `attributes`
   // auf Top-Level ab (SSOT-Konvention, CR-216/228), Contracts-Regeln lesen aber
@@ -54,7 +61,7 @@ export function takeSteeringSnapshot(graph: Graph, policy: MetricPolicy): Steeri
     og,
     violations,
     blockingErrors: violations.filter((v) => v.severity === 'error').length,
-    report: computeReadiness(og, policy),
+    report: computeReadiness(og, policy, focusThreshold),
   };
 }
 

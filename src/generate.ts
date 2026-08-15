@@ -132,8 +132,10 @@ export const DIMENSION_FOCUS_TYPES: Record<string, string[]> = {
 export function generationStep(
   graph: Graph,
   policy: MetricPolicy,
-  intent?: string,
-  threshold = 0.8,
+  intent: string | undefined,
+  // CR-GC-336: kein `= 0.8` mehr. Dieselbe Frage („ist diese Dimension zu schwach?")
+  // hatte drei Antworten — hier, im Tool-Schema und in se-steering. Jetzt eine: die Config.
+  threshold: number,
   defer: string[] = [],
   selection: GenerationSelection = 'host',
   profile: LoadedTargetProfile | null = null,
@@ -141,7 +143,7 @@ export function generationStep(
   const gateProtocol = GATE_PROTOCOL[selection];
   // Steering-Snapshot (CR-GC-289): og + ND-Injektion + Full-Katalog-Eval +
   // computeReadiness — geteilt mit dem steeringDelta des dryRun-Verdicts.
-  const { og, violations, blockingErrors, report } = takeSteeringSnapshot(graph, policy);
+  const { og, violations, blockingErrors, report } = takeSteeringSnapshot(graph, policy, threshold);
   const sys = og.elements.find((e) => e.type === 'SYS');
   const effectiveIntent = intent?.trim() || sys?.description?.trim() || '';
   const readiness = report.scores

@@ -1,6 +1,7 @@
 # CR-GC-336 — `weights` fällt aus `NextStepResult` und aus `graph_next_step`
 
-**Status:** open · **Angelegt:** 2026-08-14 · **Max Files:** 6 (dieser CR: 3–4)
+**Status:** done · **Angelegt:** 2026-08-14 · **Abgeschlossen:** 2026-08-15 · **Max Files:** 6
+(dieser CR: 6 — vier mehr als geplant, Begründung unten)
 **Herkunft:** CR-SM-237 (sigloch-modules) §4.5 — dieser CR ist die dort geforderte Folge.
 **Blockiert:** den Umstieg auf die nächste `@sigloch/se-steering`-Version.
 
@@ -43,11 +44,11 @@ unangetastet. Vor dem Streichen prüfen, dass nicht versehentlich beides getroff
 
 ## Akzeptanzkriterien
 
-- [ ] `grep -rn "computeWeightVector\|WeightVectorType\|PromptDimension" src/` ist leer.
-- [ ] Das Zielprofil-`weights` (`target-profile.ts`, `suggest.ts`, `generate.ts`) ist
+- [x] `grep -rn "computeWeightVector\|WeightVectorType\|PromptDimension" src/` ist leer.
+- [x] Das Zielprofil-`weights` (`target-profile.ts`, `suggest.ts`, `generate.ts`) ist
       **unverändert** — eigener Grep als Gegenprobe.
-- [ ] `npx tsc --noEmit` sauber gegen die neue `@sigloch/se-steering`-Version.
-- [ ] `graph_next_step` liefert weiter Blocker, Fokus-Dimension und Advisory; die Suite ist grün.
+- [x] `npx tsc --noEmit` sauber gegen die neue `@sigloch/se-steering`-Version.
+- [x] `graph_next_step` liefert weiter Blocker, Fokus-Dimension und Advisory; die Suite ist grün.
 
 ## Betroffene Dateien
 
@@ -61,3 +62,30 @@ unangetastet. Vor dem Streichen prüfen, dass nicht versehentlich beides getroff
 
 Dieser CR muss **vor** dem Update der `@sigloch/se-steering`-Dependency gemerged sein — sonst
 ist der Build zwischen beiden Schritten rot.
+
+## Zweiter Sachverhalt, der mitmusste: die Ready-Schwelle
+
+Beim Bauen zeigte sich ein zweiter Bruch, den dieser CR nicht kannte: **`computeReadiness`
+verlangt seit contracts 4.0.0 (CR-SM-235) die Schwelle als dritten Parameter** — ohne Default,
+damit es nicht zwei Antworten auf „ist diese Dimension zu schwach?" gibt.
+
+In graphcode gab es davon **drei**:
+
+| Ort | Wert | jetzt |
+|---|---|---|
+| `config.ts` `focusThreshold` | 0.8 (CR-GC-329) | **die eine Quelle** |
+| `generate.ts` `threshold = 0.8` | Default-Parameter | Pflichtparameter, vom Aufrufer |
+| `suggest.ts` Tool-Schema `.default(0.8)` | Zod-Default | `.optional()`, Host füllt |
+
+Neu ist `harness.getFocusThreshold()` — analog zu `getMetricPolicy()`, aus derselben Config.
+`takeSteeringSnapshot` und `nextStep` reichen sie durch. Ein Tool-Default wäre eine zweite
+Antwort gewesen, die der Aufrufer nicht als solche erkennen kann.
+
+## Abweichung: 6 Dateien statt 3–4
+
+`steering.ts`, `report.ts` und die Tests waren geplant. Dazu kamen `harness.ts` (Accessor),
+`steering-snapshot.ts`, `generate.ts`, `suggest.ts` und `write.ts` — alle als Folge **einer**
+Signaturänderung in contracts, nicht als zweiter Sachverhalt.
+
+Die Zielprofil-`weights` (`target-profile.ts`, `suggest.ts`, `generate.ts:249`) sind wie
+angekündigt **unangetastet** — andere Größe, eigener Konsument.
