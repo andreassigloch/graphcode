@@ -4,9 +4,10 @@
  * Realer Disk-Store, gescriptetes Modell-Backend.
  */
 import { describe, it, expect } from 'vitest';
-import { existsSync, mkdtempSync, rmSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { AUDIT_FILE, type AuditEntry } from '@sigloch/graph-api-core';
 import { createHarness } from '../src/index.js';
 import { executeRun, parseExecutorEnv } from '../src/run-verb.js';
 import { ExecutorConfigSchema, type ModelResponse } from '../src/executor.js';
@@ -129,6 +130,45 @@ describe('executeRun (CR-GC-279)', () => {
       await again.initialize();
       expect(again.getGraph().nodes.map((n) => n.uid)).toContain('SYS-app');
       await again.close();
+    } finally {
+      rmSync(repoRoot, { recursive: true, force: true });
+    }
+  });
+
+  it('stamps model and the human prompt onto every record of the run (CR-GC-355)', async () => {
+    // THE path without a client-side transcript: `~/.claude/projects` is a rolling ~30-day
+    // window and exists for Claude Code alone, so for a local or third-party model the
+    // trail is the only place "who, on which prompt" can ever be answered.
+    const repoRoot = mkdtempSync(join(tmpdir(), 'graphcode-run-origin-'));
+    try {
+      await executeRun({
+        repoRoot,
+        intent: 'Eine Test-App für das run-Verb.',
+        config: ExecutorConfigSchema.parse({
+          baseUrl: 'http://scripted.invalid',
+          model: 'devstral-small:24b',
+          maxRounds: 1,
+        }),
+        callModel: () => Promise.resolve(SEED_RESPONSE),
+      });
+
+      const entries = readFileSync(join(repoRoot, AUDIT_FILE), 'utf8')
+        .split('\n')
+        .filter(Boolean)
+        .map((l) => JSON.parse(l) as AuditEntry)
+        .filter((e) => e.operation === 'mutate' || e.operation === 'validate');
+      expect(entries.length).toBeGreaterThan(0);
+
+      for (const entry of entries) {
+        expect(entry.model).toBe('devstral-small:24b');
+        // VERBATIM human prose — not the generated round instruction. The instruction is
+        // derivable from graph state + the templates in this repo; the human sentence is
+        // not recoverable from anything once the process exits.
+        expect(entry.intent).toBe('Eine Test-App für das run-Verb.');
+      }
+      // One run = one session: the id is what re-assembles a flat trail into runs.
+      expect(new Set(entries.map((e) => e.sessionId)).size).toBe(1);
+      expect(entries[0].sessionId).toBeTruthy();
     } finally {
       rmSync(repoRoot, { recursive: true, force: true });
     }

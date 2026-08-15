@@ -10,7 +10,7 @@
  * @author andreas@siglochconsulting
  */
 import { createHarness } from './index.js';
-import { bindToolsToHarness } from './mcp-tools.js';
+import { bindToolsWithContext } from './mcp-tools.js';
 import { deriveMemberName } from './mcp-server.js';
 import {
   ExecutorConfigSchema,
@@ -104,7 +104,18 @@ export async function executeRun(opts: {
           'Usage: graphcode run "<intent>"',
       );
     }
-    const registry = bindToolsToHarness(harness);
+    const { registry, ctx } = bindToolsWithContext(harness);
+    // Provenance for the whole run (CR-GC-355). THIS is the path with no client-side
+    // transcript: `~/.claude/projects` exists for Claude Code and for nothing else, so a
+    // local or third-party model's prompts are recorded here or nowhere.
+    //
+    // `intent` is the HUMAN prose, constant for the run, not the per-round generated
+    // instruction. Two reasons: the round instruction is deterministically derivable from
+    // the graph state plus the templates in this repo, while the human's sentence is not
+    // recoverable from anything once the process exits; and stamping ~4 KB of rendered
+    // template onto every record would cost more than the whole trail (measured: the human
+    // prompts average 288 B capped). `sessionId` is what ties a run's records together.
+    ctx.setOrigin({ model: opts.config.model, intent: opts.intent });
     const stats = await runExecutor({
       registry,
       workspaceDir: opts.repoRoot,
