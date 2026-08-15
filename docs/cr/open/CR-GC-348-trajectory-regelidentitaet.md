@@ -1,6 +1,31 @@
 # CR-GC-348 — Der Learning-Feed trägt die Regelidentität
 
-**Status:** open · **Angelegt:** 2026-08-15 · **Max Files:** 6 (dieser CR: **5**, **zwei Repos**)
+> **PARKED 2026-08-15 — nicht anfangen.** Entscheid des Auftraggebers: Learning ist ein
+> Zukunftsthema, `@sigloch/learning-core` wird bis dahin **nicht angefasst**.
+>
+> Die Nachmessung stützt den Entscheid. graphcode bezieht aus dem Paket **genau eine Funktion**:
+> `projectTrajectory` ([src/emit.ts:28](../../../src/emit.ts)); dazu im Test `TrajectorySchema`
+> und der Paketname in einer Registry-Liste. **Ungenutzt** bleibt alles andere, was learning-core
+> exportiert: `EventBus`, `clamp01`/`mean`/`pseudoEmbedding` und rund zwanzig Interface-Typen
+> (`Observer`, `EpisodeAdapter`, `PatternDetector`, `Scorer`, `RuleDiscoverer`, `CacheResolver`,
+> `EffectivenessTracker`, `NightlyReportBase`, `WorkflowKnowledge`, `LearningConsumer`,
+> `ContextInjection*`, `SuggestNextAction*`, `RecordOutcome*`, `Outcome`, `PublishedModel(s)`).
+>
+> Und: **`trajectory.jsonl` liest niemand.** Sie wird bei jeder Mutation und jedem dryRun-Preview
+> vollständig neu geschrieben ([tool-context.ts:132 und :158](../../../src/tool-context.ts)), aber
+> in der ganzen Familie existiert kein Konsument — die Suche findet nur graphcodes eigenen
+> Schreiber, das Scaffold und learning-cores eigene Vertragsdatei. Die zugehörigen Zeilen der
+> USAGE-MATRIX beschreiben `learning-plugin` und `.aimprove/trajectories.jsonl`, also das
+> Vorgängerprodukt.
+>
+> Ein Format zu bumpen, das ein Write-only-Artefakt für einen Konsumenten beschreibt, den es nicht
+> gibt, ist Arbeit ohne Abnehmer. Der CR bleibt als Analyse stehen — die Befunde sind gemessen und
+> gelten weiter. **Reaktivieren, wenn ein echter Leser existiert**, nicht vorher.
+>
+> Offene Frage, die dieser Entscheid aufwirft und die **nicht** zu diesem CR gehört: ob der Feed
+> heute überhaupt geschrieben werden soll. Nicht angefasst — siehe CR-GC-346 §6.
+
+**Status:** parked · **Angelegt:** 2026-08-15 · **Max Files:** 6 (dieser CR: **5**, **zwei Repos**)
 **Vorbedingung:** CR-GC-346 — dort steht `REQ-prompt-prediction`, das dieser CR erfüllbar macht.
 **Governance:** Drift-Lock **L1** (`Trajectory` = *format stable*, Owner Governance-Guardian) —
 Familie-Review **vor** der Änderung. **Nicht** L2; L2 betrifft `V3_RULES`, die hier unangetastet

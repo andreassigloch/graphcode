@@ -50,27 +50,38 @@ welche Regel wie oft und bei wem blockt, damit ich Schwellen und Prompt-Template
 Messwerten justiere statt an Vermutungen.
 ```
 
-Zwei REQ hängen daran — die zwei Hälften, die der Nutzer benannt hat:
+**Eine** REQ hängt daran:
 
 | uid | Inhalt |
 |---|---|
 | `REQ-rule-calibration` | Die Aufzeichnung erlaubt es, je Regel und je Konsument Blockade­häufigkeit und Ergebnis über die Zeit auszuwerten — die Eingangsgröße jeder Schwellen­entscheidung. |
-| `REQ-prompt-prediction` | Die Aufzeichnung trägt die **Regelidentität** jeder Entscheidung, positiv wie negativ, sodass ein Lernmechanismus vorhersagen kann, welche Regeln ein Kandidat verletzen wird, bevor er ans Gate geht. |
 
-`REQ-prompt-prediction` ist keine Neuerfindung: CR-GC-314 hat `rulesPassed` genau mit dieser
-Begründung eingeführt — *„Ein Lernmechanismus kann mit der ersten Aussage arbeiten und mit der
-zweiten gar nicht."* Das Feld existiert. Der Use Case dazu nicht, und Befund F1 zeigt, was daraus
-folgt.
+### 2.1 Die Vorhersage-Hälfte kommt bewusst **nicht** mit
 
-**Abgrenzung, damit der Umfang nicht zerläuft:** dieser CR modelliert den Zweck und repariert die
-Datenpfade. Er baut **keinen** Lernmechanismus — der ist `@sigloch/learning-core`s Sache. graphcode
-liefert Evidenz, nicht Inferenz.
+Ein zweites `REQ-prompt-prediction` (der Trail trägt die Regelidentität, damit ein Lernmechanismus
+Verstöße vorhersagen kann) stand hier im ersten Entwurf und ist **gestrichen**. Entscheid
+2026-08-15: Learning ist ein Zukunftsthema, `@sigloch/learning-core` wird nicht angefasst.
+
+Die Nachmessung stützt das. graphcode bezieht aus dem Paket **genau eine Funktion**
+(`projectTrajectory`, [src/emit.ts:28](../../../src/emit.ts)); alles andere — `EventBus`,
+`math-utils`, rund zwanzig Interface-Typen von `Observer` bis `PublishedModels` — ist ungenutzt.
+Und `trajectory.jsonl` **liest niemand**: sie wird bei jeder Mutation und jedem Preview vollständig
+neu geschrieben, hat aber familienweit keinen Konsumenten; die zugehörigen USAGE-MATRIX-Zeilen
+beschreiben `learning-plugin` und `.aimprove/trajectories.jsonl`, also das Vorgängerprodukt.
+
+Eine REQ zu modellieren, deren Abnehmer nicht existiert, wäre genau die Sorte Behauptung, gegen die
+CR-GC-339 antritt. Befund F1 unten bleibt trotzdem stehen — er ist gemessen und wird wahr bleiben;
+er treibt hier nur nichts.
+
+**Abgrenzung:** dieser CR modelliert den Zweck und repariert **einen** Datenpfad (F3). Er baut
+keinen Lernmechanismus und fasst learning-core nicht an. graphcode liefert Evidenz, nicht Inferenz —
+und `REQ-rule-calibration` braucht dafür nichts ausser `audit.jsonl`.
 
 ---
 
 ## 3. Befunde — gemessen am echten Trail (2026-08-15, 108 Records seit 2026-07-03)
 
-### F1 · Der Learning-Feed zerstört die Regelidentität — **der schwerste**
+### F1 · Der Learning-Feed zerstört die Regelidentität — **notiert, geparkt** (§2.1)
 
 `trajectory.jsonl` ist das eine Artefakt, das ausdrücklich für einen Lernmechanismus existiert
 (CR-GC-252). `projectTrajectory` in `@sigloch/learning-core` reduziert die Violations auf **drei
@@ -85,8 +96,14 @@ Audit-Record alle vier trägt. Ein Konsument des Feeds kann nicht sagen, **welch
 hat. Keine der vier Analysen aus §1 wäre auf diesem Feed möglich gewesen; alle vier liefen auf
 `audit.jsonl` von Hand.
 
-`TrajectorySchema` liegt in learning-core → Familie-Review + Version-Bump. **Nicht in diesem CR**,
-siehe §6.
+`TrajectorySchema` liegt in learning-core. **Nicht anfassen** (§2.1) — der Befund ist festgehalten,
+damit er beim Reaktivieren nicht neu erhoben werden muss, und treibt hier nichts.
+
+**Zweitbefund aus derselben Messung, ebenfalls nur notiert:** `materializeTrajectory` schreibt den
+Feed bei **jeder** Mutation und **jedem** dryRun-Preview vollständig neu
+([tool-context.ts:132/:158](../../../src/tool-context.ts)) — 108 Zeilen pro Schreibvorgang,
+für null Leser. Ob dieser Schreibpfad heute überhaupt laufen soll, ist eine eigene Entscheidung
+(Kosten gegen Optionswert) und gehört weder in diesen CR noch in den geparkten CR-GC-348.
 
 ### F2 · `audit_stats` liefert vier Zahlen
 
@@ -151,10 +168,10 @@ Aufnehmen, nicht jetzt lösen (§6).
 
 ## 4. Umfang **dieses** CR
 
-1. **Modell:** `UC-loop-closure` + `REQ-rule-calibration` + `REQ-prompt-prediction` durchs Gate
-   anlegen, mit `compose`-Kanten an `SYS-graphcode` und `verify`-Kanten auf ihre TESTs (die
-   REQ-mit-Test-Invariante, `se:author-req`). `REQ-audit-trail` bleibt, wie es ist — es beschreibt
-   die Lesefläche korrekt; die neuen REQ beschreiben den Zweck.
+1. **Modell:** `UC-loop-closure` + `REQ-rule-calibration` durchs Gate anlegen, mit `compose`-Kanten
+   an `SYS-graphcode` und einer `verify`-Kante auf den TEST (die REQ-mit-Test-Invariante,
+   `se:author-req`). `REQ-audit-trail` bleibt, wie es ist — es beschreibt die Lesefläche korrekt;
+   die neue REQ beschreibt den Zweck.
 2. **F3 fixen:** `projectAuditEntries` verdichtet nicht-gatende Violations je `(ruleId, severity)`.
    Die Schwelle im Test bleibt bei 11 %, der gemessene Wert (5,4 %) steht mit Datum daneben — wie
    CR-GC-319 es vorgemacht hat.
@@ -162,16 +179,18 @@ Aufnehmen, nicht jetzt lösen (§6).
    gesehen worden sein, und der bestehende Größen-Fall muss mit dem Fix von rot auf grün kippen —
    das ist der Nachweis, dass er den Pfad wirklich misst.
 
-**Nicht-Ziele:** kein Lernmechanismus, keine Kalibrierung selbst (die braucht eine Messreihe, nicht
-einen CR), keine Änderung an `learning-core` oder `contracts`.
+**Nicht-Ziele:** kein Lernmechanismus und **keine Zeile** in `learning-core` (§2.1), keine
+Kalibrierung selbst (die braucht eine Messreihe, nicht einen CR), keine Änderung an `contracts`.
 
 ---
 
 ## 5. Akzeptanzkriterien
 
-- [ ] `UC-loop-closure`, `REQ-rule-calibration`, `REQ-prompt-prediction` liegen im Graphen, durchs
-      Gate mutiert, jede REQ mit verifizierendem TEST — kein Hand-Edit am SSOT.
-- [ ] `graph_export` läuft ohne `force`; `docs/views/srs.md` führt die drei neuen Knoten.
+- [ ] `UC-loop-closure` und `REQ-rule-calibration` liegen im Graphen, durchs Gate mutiert, die REQ
+      mit verifizierendem TEST — kein Hand-Edit am SSOT.
+- [ ] `graph_export` läuft ohne `force`; `docs/views/srs.md` führt die neuen Knoten.
+- [ ] `@sigloch/learning-core` ist unverändert — `git diff` in `sigloch-modules` ist leer und die
+      Range in `package.json` steht weiter auf `^0.2.0`.
 - [ ] `audit_trail` Default über den **echten** Repo-Trail ≤ 11 % der Rohgröße; der gemessene Wert
       steht mit Datum im Test daneben, nicht als geschätzte Zahl.
 - [ ] Ein Record mit 28 gleichartigen `info`-Violations projiziert auf **einen** Eintrag mit
@@ -187,13 +206,14 @@ einen CR), keine Änderung an `learning-core` oder `contracts`.
 
 ## 6. Folge-CRs — benannt, nicht begonnen
 
-| CR | Inhalt | Warum nicht hier |
+| CR | Inhalt | Status |
 |---|---|---|
-| **CR-GC-347** | `audit_stats` aggregiert je Regel und je Konsument (F2) | eigenes Tool-Schema; erst sinnvoll, wenn der Zweck im Modell steht |
-| **CR-GC-348** | `TrajectorySchema` trägt Regelidentität + `rulesetVersion` (F1) | `@sigloch/learning-core` → Familie-Review + Publish + Range-Anhebung (Drift-Lock **L1**, *format stable*) |
-| **CR-GC-349** | Aufbewahrungsregel für den Trail (F4) | Entscheidung, was Compaction überleben muss — Governance, nicht Code |
+| **CR-GC-347** | `audit_stats` aggregiert je Regel und je Konsument (F2) | **offen** — reines graphcode, keine Fremdpakete; das Werkzeug, das die vier Analysen aus §1 gebraucht hätten |
+| **CR-GC-349** | Aufbewahrungsregel für den Trail (F4) | **offen** — Entscheidung, was Compaction überleben muss; Governance, nicht Code. Noch nicht geschrieben |
+| **CR-GC-348** | `TrajectorySchema` trägt Regelidentität (F1) | **PARKED** (§2.1) — learning-core wird nicht angefasst, solange kein Leser existiert |
 
-Reihenfolge: 346 → 348 (die Regelidentität ist die Voraussetzung für alles Lernen) → 347 → 349.
+Reihenfolge: **346 → 347 → 349**. 348 steht ausserhalb dieser Kette und wartet auf einen echten
+Konsumenten des Feeds.
 
 ---
 
