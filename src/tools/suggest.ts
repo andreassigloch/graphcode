@@ -61,12 +61,36 @@ export interface SuggestVerdict {
   tier: MutateResult['tier'];
   success: boolean;
   violations: { ruleId: string; severity: string; message: string }[];
+  /**
+   * Δm des Gate-Advisorys für genau diesen Edit — gemessen auf `advisoryLayer`
+   * des umgebenden Ergebnisses, NICHT auf der Ranking-Ebene (CR-GC-353/352).
+   * Vorher wurde die Zahl weggeworfen, sodass ein Treiber sie nur über einen
+   * eigenen `graph_mutate`-dryRun bekam — und dann ohne den Hinweis, dass sie
+   * von einer anderen Ebene stammt als sein Ranking.
+   */
+  fitDelta: number[];
 }
+
+/** Messebene, auf der `harness.mutate()` sein `fitAdvisory` bildet (CR-GC-274). */
+const ADVISORY_LAYER = 'arch' as const;
 
 export interface GraphSuggestResult {
   /** Aufgelöster Zielvektor (ℝ⁶, kanonische Dimensionsordnung). */
   target: number[];
+  /** Messebene des RANKINGS (= Eingabe `layer`). */
   layer: 'all' | 'arch';
+  /**
+   * Messebene des GATE-ADVISORYS (`verdict.fitDelta`) — heute fest `'arch'`.
+   * Zwei Zahlen, zwei Ebenen: ohne diese Angabe konnte ein Treiber auf `'all'`
+   * ranken und ein Δ von 0 aus dem Advisory lesen, ohne dass irgendetwas den
+   * Widerspruch benannte.
+   */
+  advisoryLayer: typeof ADVISORY_LAYER;
+  /**
+   * Gesetzt, sobald Ranking- und Advisory-Ebene auseinanderlaufen. Kein Fehler
+   * und keine Warnung im Log — ein Satz IM ERGEBNIS, weil genau dort gelesen wird.
+   */
+  layerMismatch?: string;
   suggestions: (Suggestion & { verdict?: SuggestVerdict })[];
 }
 
@@ -83,8 +107,11 @@ export function bindSuggestTools(ctx: ToolContext): MCPToolRegistry {
       'Greedy-1-Schritt-Optimierungsvorschläge: ranke die feuernden Operator-Regeln danach, wie weit ' +
       'ihr Edit den Graphen entlang der Zielrichtung im 6-Metrik-Raum bewegt (score = Δm·t̂). Liefert ' +
       'die Fund-Ebene (Violation + Richtung + Δm); ein konkreter Edit nur aus rule-spezifischen ' +
-      'Fix-Templates — jeder mit dryRun-Gate-Verdict (3-Tier). Wendet NIE selbst an: Edits gehen ' +
-      'über graph_mutate. Read-only; die Metrik rankt, das Gate urteilt.',
+      'Fix-Templates — jeder mit dryRun-Gate-Verdict (3-Tier) inkl. dessen Δm als verdict.fitDelta. ' +
+      'ZWEI MESSEBENEN: `layer` ist die Ebene des Rankings, `advisoryLayer` die des Gate-Advisorys ' +
+      "(fest 'arch'). Laufen sie auseinander, sagt das Feld `layerMismatch` es im Ergebnis — die " +
+      'Zahlen sind dann nicht vergleichbar. Wendet NIE selbst an: Edits gehen über graph_mutate. ' +
+      'Read-only; die Metrik rankt, das Gate urteilt.',
     inputSchema: GraphSuggestInputSchema,
     async handler(input) {
       // CR-GC-324: der EINE Mapper statt des flachen Export-Encodings.
@@ -114,6 +141,7 @@ export function bindSuggestTools(ctx: ToolContext): MCPToolRegistry {
             tier: res.tier,
             success: res.success,
             violations: res.violations.map((v) => ({ ruleId: v.ruleId, severity: v.severity, message: v.message })),
+            fitDelta: (res as { fitAdvisory?: { delta?: number[] } }).fitAdvisory?.delta ?? [],
           });
         }
         return out;
@@ -122,6 +150,15 @@ export function bindSuggestTools(ctx: ToolContext): MCPToolRegistry {
       return {
         target,
         layer: input.layer,
+        advisoryLayer: ADVISORY_LAYER,
+        ...(input.layer !== ADVISORY_LAYER
+          ? {
+              layerMismatch:
+                `Ranking auf layer:'${input.layer}', Gate-Advisory (verdict.fitDelta) auf ` +
+                `layer:'${ADVISORY_LAYER}' — die beiden Zahlen sind NICHT vergleichbar. ` +
+                `Für eine Kette aus einer Ebene: layer:'${ADVISORY_LAYER}' ranken.`,
+            }
+          : {}),
         suggestions: suggestions.map((s, i) => (verdicts[i] ? { ...s, verdict: verdicts[i] } : s)),
       };
     },

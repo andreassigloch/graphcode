@@ -49,7 +49,7 @@
     "@sigloch/graphcode-client": "^0.9.0",
     "@sigloch/graphify": "^0.2.0",
     "@sigloch/learning-core": "^0.2.0",
-    "@sigloch/se-optimizer": "^0.4.0",
+    "@sigloch/se-optimizer": "^0.5.0",
     "@sigloch/se-steering": "^0.6.0",
     "kuzu-wasm": "^0.11.3",
     "typescript": "^5.5.0",

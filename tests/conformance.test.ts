@@ -10,14 +10,16 @@
  * the gate. Real disk Kuzu (tmp dir, never :memory:). No mocks.
  */
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, writeFileSync, rmSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from '@sigloch/graph-cypher-wasm';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { PHASE_GATE_RULES } from '../src/readiness.js';
 import { GraphCodeHarness } from '../src/harness.js';
-import { extractCodeFacts, extractImportEdges, conformanceViolations, scoreReadinessWithConformance } from '../src/conformance.js';
+import { extractCodeFacts, extractImportEdges, conformanceViolations, scoreReadinessWithConformance, toOntologyGraph } from '../src/conformance.js';
+import { elementToNode } from '../src/exporter.js';
+import { evaluateAllRules, DEFAULT_METRIC_POLICY } from '@sigloch/contracts/se';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 
 const REPO_ROOT = join(__dirname, '..');
@@ -242,5 +244,39 @@ describe('TEST-import-drift: extractImportEdges + RC-05 (CR-212)', () => {
   it('same import once the graph documents the MOD adjacency (io FLOW) → no RC-05', () => {
     const v = conformanceViolations({ getGraph: () => driftGraph(true), getRepoRoot: () => dir });
     expect(v.some((x) => x.ruleId === 'RC-05')).toBe(false);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// CR-SM-240 follow-through — why the canonical sort in `toOntologyGraph` stays.
+// ---------------------------------------------------------------------------
+
+describe('toOntologyGraph: the canonical order pins the VIOLATION SEQUENCE (CR-SM-240)', () => {
+  const raw = JSON.parse(readFileSync(join(REPO_ROOT, 'docs/graph/graphcode.graph.json'), 'utf8')) as {
+    elements: Record<string, unknown>[];
+    traces: { source: string; target: string; type: string }[];
+  };
+
+  const asGraph = (elements: Record<string, unknown>[], traces: typeof raw.traces) =>
+    ({
+      nodes: elements.map(elementToNode),
+      edges: traces.map((t) => ({ sourceId: t.source, targetId: t.target, edgeType: t.type, attributes: {} })),
+    }) as unknown as Parameters<typeof toOntologyGraph>[0];
+
+  it('a permuted input yields the identical violation SEQUENCE, not just the same set', () => {
+    // The sort's original justification — the ℝ⁶ metrics — is gone: that bug was in
+    // @sigloch/se-optimizer and is fixed at the source in 0.5.0. What remains is
+    // this: `rules_evaluate`, the readiness report and the audit record all emit the
+    // stream in order, and the store guarantees no row order. Measured on the repo
+    // graph: WITHOUT the sort the set stays identical and the sequence does not.
+    // If this test ever becomes trivially true, the sort may go.
+    const inOrder = evaluateAllRules(toOntologyGraph(asGraph(raw.elements, raw.traces)), DEFAULT_METRIC_POLICY);
+    const reversed = evaluateAllRules(
+      toOntologyGraph(asGraph([...raw.elements].reverse(), [...raw.traces].reverse())),
+      DEFAULT_METRIC_POLICY,
+    );
+    const key = (v: { rule_id: string; element_id: string }) => `${v.rule_id}|${v.element_id}`;
+    expect(inOrder.length).toBeGreaterThan(0);
+    expect(reversed.map(key)).toEqual(inOrder.map(key));
   });
 });

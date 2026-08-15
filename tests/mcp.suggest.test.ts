@@ -95,6 +95,36 @@ describe('graph_suggest (CR-GC-273): Fund + Richtung + Δm, Template-Edit mit dr
     expect(after.nodes.length).toBe(before.nodes.length);
   });
 
+  // CR-GC-352 §3.2 — die zweite Falle: wer auf 'all' rankt und das Gate-Advisory
+  // liest, vergleicht zwei Ebenen. Bisher sagte das nur ein Kommentar im Test.
+  it('benennt beide Messebenen und meldet den Widerspruch, wenn sie auseinanderlaufen', async () => {
+    const all = (await tools.graph_suggest.handler({ target: { coherence: 1 }, k: 20, layer: 'all' })) as GraphSuggestResult;
+    expect(all.layer).toBe('all');
+    expect(all.advisoryLayer).toBe('arch');
+    expect(all.layerMismatch).toContain("layer:'all'");
+    expect(all.layerMismatch).toContain("layer:'arch'");
+
+    // Gleiche Ebene → nichts zu melden. Ohne diese Hälfte wäre der Hinweis
+    // Dauerrauschen statt eines Signals.
+    const arch = (await tools.graph_suggest.handler({ target: { coherence: 1 }, k: 20, layer: 'arch' })) as GraphSuggestResult;
+    expect(arch.advisoryLayer).toBe('arch');
+    expect(arch.layerMismatch).toBeUndefined();
+  });
+
+  it('das Verdict trägt das Δm des Gate-Advisorys, nicht nur den Tier', async () => {
+    const res = (await tools.graph_suggest.handler({ target: { coherence: 1 }, k: 20, layer: 'all' })) as GraphSuggestResult;
+    const withEdit = res.suggestions.find((s) => s.verdict);
+    expect(withEdit, 'kein Template-Edit in der Fixture — der Test hätte kein Subjekt').toBeDefined();
+    // Sechs Komponenten, dieselbe kanonische Ordnung wie `target` und `delta`.
+    expect(withEdit!.verdict!.fitDelta.length).toBe(6);
+    // Und es ist die ADVISORY-Zahl, nicht die Ranking-Zahl: CR-1 -relation-> FUNC-parse
+    // bewegt den Architektur-Teilgraphen nicht (CR ist kein ARCH_TYPE), während das
+    // Ranking auf 'all' sehr wohl einen Ausschlag sieht. Genau dieser Unterschied ist
+    // der Grund für `layerMismatch`.
+    expect(withEdit!.verdict!.fitDelta.every((d) => d === 0)).toBe(true);
+    expect(withEdit!.delta.some((d) => d !== 0)).toBe(true);
+  });
+
   it('ist deterministisch', async () => {
     const a = await tools.graph_suggest.handler({ target: { viability: 1 } });
     const b = await tools.graph_suggest.handler({ target: { viability: 1 } });

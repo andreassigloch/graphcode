@@ -224,6 +224,71 @@ describe('T-C2 (CR-GC-340): an applied suggestion moves ℝ⁶ in the target dir
   });
 });
 
+describe("T-C2 on the DEFAULT layer (CR-GC-352 / CR-SM-241): 'arch' now carries an applicable edit", () => {
+  // The gap CR-GC-352 measured: `graph_suggest` defaults to `layer: 'arch'`, but
+  // all four fix templates hung on CR/MS/UC — none of which is in the arch
+  // subgraph. Every applicable edit therefore scored exactly 0.000, so a driver
+  // ranking on the default layer picked at random among ties, and the whole
+  // proof above had to be run on `layer: 'all'`.
+  //
+  // se-optimizer 0.5.0 adds the architecture operators (R-22/R-23/SC-02/SC-04).
+  // `faultTolerance` is the steered dimension here — it carries the largest
+  // unambiguous signal for the one applicable edit on this fixture
+  // (SC-04: FLOW-document ─relation→ SCHEMA-result, the graph's only SCHEMA,
+  // hence derivable by uniqueness rather than by guessing).
+  const ARCH_STEERED = 'faultTolerance';
+  const ARCH_INDEX = DIMS.indexOf(ARCH_STEERED);
+
+  it('an applicable suggestion scores NON-zero on arch — the negative this replaces', async () => {
+    const rig = await makeRig();
+    try {
+      const res = (await rig.tools.graph_suggest.handler({ target: { [ARCH_STEERED]: 1 }, k: 20, layer: 'arch' })) as GraphSuggestResult;
+      const appliable = res.suggestions.filter((s) => s.edit);
+      expect(appliable.length, 'no applicable edit at all on the default layer').toBeGreaterThan(0);
+      // The whole point: not every edit is 0 any more.
+      expect(Math.max(...appliable.map((s) => s.score)), 'every applicable edit still scores 0 on arch').toBeGreaterThan(EPS);
+
+      // And it is an ARCHITECTURE rule that carries it — the CR/MS/UC templates
+      // are still flat here, because their nodes are still outside the subgraph.
+      const best = appliable.reduce((a, b) => (b.score > a.score ? b : a));
+      expect(['R-22', 'R-23', 'SC-02', 'SC-04']).toContain(best.ruleId);
+      for (const s of appliable.filter((x) => ['CR-R01', 'CR-R04', 'MS-03', 'UC-02'].includes(x.ruleId))) {
+        expect(Math.abs(s.score), `${s.ruleId} is outside the arch subgraph and must stay flat`).toBeLessThan(EPS);
+      }
+    } finally {
+      await dropRig(rig);
+    }
+  });
+
+  it('ranking and gate advisory now agree, because both measure arch', async () => {
+    const rig = await makeRig();
+    try {
+      const res = (await rig.tools.graph_suggest.handler({ target: { [ARCH_STEERED]: 1 }, k: 20, layer: 'arch' })) as GraphSuggestResult;
+      // Same layer → the tool has nothing to warn about (CR-GC-352 §3.2).
+      expect(res.layerMismatch).toBeUndefined();
+
+      const pick = res.suggestions.filter((s) => s.edit).reduce((a, b) => (b.score > a.score ? b : a));
+      const before = fitOf(rig.harness, 'arch');
+      const applied = await rig.harness.mutate([
+        { op: 'add-edge', edge: { sourceId: pick.edit!.source, targetId: pick.edit!.target, edgeType: pick.edit!.type, attributes: {} } },
+      ]);
+      expect(applied.success).toBe(true);
+      const after = fitOf(rig.harness, 'arch');
+
+      const realised = after[ARCH_INDEX] - before[ARCH_INDEX];
+      expect(realised).toBeGreaterThan(0);
+      // The predicted Δm is the realised one — the same closure T-C2 proves on
+      // 'all', now on the layer the tool actually defaults to.
+      expect(realised).toBeCloseTo(pick.delta[ARCH_INDEX], 6);
+      // And the gate's own advisory (always arch) agrees with the ranker's
+      // prediction. On 'all' these two numbers disagreed by construction.
+      expect(applied.fitAdvisory.delta[ARCH_INDEX]).toBeCloseTo(pick.delta[ARCH_INDEX], 6);
+    } finally {
+      await dropRig(rig);
+    }
+  });
+});
+
 describe('T-C3 (CR-GC-340): the judging threshold is a knob in the config, not a literal in the rule', () => {
   it('the same graph flips a moduleMetrics verdict when MetricPolicy moves', async () => {
     // Same graph, same rules — only the instability threshold differs.
