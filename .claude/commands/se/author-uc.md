@@ -19,3 +19,15 @@ Emit ONE `graph_mutate` batch:
 2. `add-edge` `compose` from the `UC` to the `FCHAIN` or `FUNC`(s) that realize it (`{ "op":"add-edge", "edge":{ "sourceId":"UC-…", "targetId":"FCHAIN-…", "edgeType":"compose" } }`) — a UC with no `compose` raises R-14.
 
 Inspect the returned `violations`; never hand-edit the SSOT. To author the requirements the UC composes, use `se:author-req`.
+
+## Two conventions for a coherent UC set
+Modelling knowledge, not tool operation — both come from the retired `se:requirements` skill (CR-GC-345) and exist nowhere else.
+
+**UC sequencing goes through a shared FUNC + its REQ — no new edge.** "UC.002 needs a finished contact from UC.001" is a *precondition*, and the metamodel already expresses it: put the precondition in a FUNC, let that FUNC satisfy its own REQ, and compose the FUNC into every UC's chain that depends on it.
+```
+CheckContactExists.FN.006 -satisfy-> ContactExists.RQ.010
+CaptureInterestMain.FC.002 -compose-> CheckContactExists.FN.006
+```
+The dependency is then verifiable (the REQ carries a TEST) instead of being an opaque UC→UC arrow. Do not reach for `depends` to order use cases.
+
+**Author in batches of 4–5, cross-cutting elements first.** Cut batches by deployment site × actor × functional coupling, max 4–5 UCs per batch — one chat context, so the whole batch stays reviewable. Per batch: propose → review → mutate → check violations. Settle the shared elements (shared FUNCs, their REQs) in the FIRST batch; discovering them in batch three means rewriting batches one and two.

@@ -186,6 +186,24 @@ describe('CR-GC-308: skills instruct only vocabulary the ontology declares', () 
     }
   });
 
+  /**
+   * CR-GC-345 — the two UC-modelling conventions survived the retirement of the
+   * aimprove-bound `se:requirements` skill. They are the ONLY part of that skill that
+   * had no graphcode counterpart (everything else was covered, dead, or a drifting
+   * hand-copy of RULE_TO_DIMENSION), so the decision "strike both skills" is only
+   * safe as long as this assertion holds. Nothing else points at them.
+   */
+  it('CR-GC-345: se/author-uc carries the two conventions rescued from se:requirements', () => {
+    const text = readFileSync(join(COMMANDS_DIR, 'se', 'author-uc.md'), 'utf8');
+    // 1. UC sequencing via a shared FUNC + its REQ instead of a UC→UC dependency edge.
+    expect(text).toMatch(/-satisfy->/);
+    expect(text).toMatch(/-compose->/);
+    expect(text, 'the "no depends edge for UC order" rule must stay explicit').toMatch(/`depends`/);
+    // 2. Batching: 4–5 UCs per chat context, cross-cutting elements in the first batch.
+    expect(text).toMatch(/4[–-]5/);
+    expect(text).toMatch(/cross-cutting/i);
+  });
+
   it('every edgeType a skill instructs is a declared TraceType', () => {
     const declared = new Set(TraceType.options as readonly string[]);
     const offenders: string[] = [];

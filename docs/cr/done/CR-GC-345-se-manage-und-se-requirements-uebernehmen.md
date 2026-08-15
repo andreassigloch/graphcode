@@ -1,6 +1,6 @@
 # CR-GC-345 — `se-manage` und `se-requirements`: übernehmen oder streichen
 
-**Status:** open · **Angelegt:** 2026-08-15 · **Max Files:** 6 (dieser CR: 0–3, je nach Entscheid)
+**Status:** done (2026-08-15, Entscheid **A/A**) · **Angelegt:** 2026-08-15 · **Files:** 3
 **Herkunft:** Befund beim Abarbeiten von CR-SM-234 — `@sigloch/claude-plugin` pflegt einen
 zweiten, aimprove-gebundenen Skill-Satz neben dem, den graphcode ausliefert.
 **Entscheid vorab (2026-08-15):** *„Alles, was gegen aimprove läuft, ist tot."* Diese beiden
@@ -95,6 +95,34 @@ existierender Regeln — sie gehören in die Regel, nicht in eine Checkliste, so
 **Empfehlung: A für `se-manage`, B für `se-requirements`.** `se-plan` ist deutlich schärfer als
 die Planungs-Checkliste; für REQ/UC gibt es dagegen nur die Autoren-Skills (`author-req`,
 `author-uc`) und kein „zeig mir den Zustand meiner Anforderungen".
+
+### Getroffen: **A für beide** (2026-08-15)
+
+Begründung — gemessen am Inhalt, nicht am Namen: die beiden Skills bestehen aus **13
+Abschnitten, genau einer davon ist einzigartig** (`se-requirements` §5, die zwei
+Konventionen). Der Rest teilt sich in
+
+- **abgedeckt:** State-Holen → `graph_readiness`/`rules_get_violations`; Views → 12
+  `se-view/*`-Skills; „3 nächste Aktionen" → `graph_next_step` + `se-status`;
+- **schlechter als vorhanden:** die Dimensions-Anzeige (`graph_readiness` liefert
+  `dimension_readiness` — alle 8 Scores mit `score/violations/applicable/ready`, der Skill
+  filtert nur) und die Phase (`phase_readiness` aus `RULE_TO_PHASE` **berechnet** SRR/PDR/CDR/TRR,
+  der Skill **behauptet** sie);
+- **aktiv driftend:** die Regel-ID-Listen (Handkopie von `RULE_TO_DIMENSION`, 3 bzw. 6 IDs
+  fehlen bereits) und die vier Checklisten (Prosa-Fassung von BQ-01/02/06/07, RD-01,
+  MS-01/02, IO-01) — Defektklasse CR-SM-235;
+- **tot:** `decisionlog` und `irr` sind keine `MARKDOWN_VIEWS`.
+
+Option B wurde verworfen: ein übernommener `se:requirements` wäre ein **zweiter
+Status-Einstieg** neben `se-status`/`se-review` — paralleler Pfad — für zwei Absätze
+Substanz. Bleibt Bedarf nach einer Anforderungs-Linse, ist der Ort ein Dimensions-Filter
+**in** `se-status`, kein neuer Skill.
+
+**Umgesetzt:** die zwei Konventionen sind in `.claude/commands/se/author-uc.md`
+(§„Two conventions for a coherent UC set"); der Nachweis ist der Test
+`CR-GC-345: se/author-uc carries the two conventions rescued from se:requirements`
+in `tests/skills.mcp-conformance.test.ts` (rot ohne den Abschnitt verifiziert).
+`se-manage` und `se-requirements` werden **nicht** nach graphcode übernommen.
 
 **Nicht Teil dieses CRs:** was mit `@sigloch/claude-plugin` insgesamt passiert. Sein Skill-Satz,
 seine drei Hook-Skripte und `bin/install.sh` hängen alle an `${AIMPROVE_API}` und sind nach dem
