@@ -258,11 +258,31 @@ export function extractImportEdges(repoRoot: string): ImportEdge[] {
  *
  * NOTE: `attributes` is passed by REFERENCE, not cloned — callers must treat the
  * result as read-only (both call sites only evaluate rules over it).
+ *
+ * CANONICAL ORDER (CR-GC-340): elements come out sorted by id, traces by
+ * source/type/target. Row order is not part of a graph, but three consumers read it
+ * as if it were, all measured on the steering fixture:
+ *   - `metrics()`'s community detection returns a different partition for a permuted
+ *     element list, so the ℝ⁶ `modifiability` component moved (2.383 vs 2.461) while
+ *     the graph stood still;
+ *   - `suggestEdits` scored the SAME candidate 0.263 in one order and 0.000 in
+ *     another — two consecutive `graph_suggest` calls disagreed, against that tool's
+ *     own "read-only, deterministisch" contract;
+ *   - equally-scored suggestions came back in a different rank per call.
+ * The store gives no order guarantee (three consecutive `loadGraph()` calls on an
+ * untouched store return three different sequences), so pinning it has to happen on
+ * the consumer side. Here is the only place that reaches every derived number, which
+ * is why it belongs here and not at each call site.
  */
 export function toOntologyGraph(graph: CGraph): OntologyGraph {
   type OElement = OntologyGraph['elements'][number];
+  // Newline separator: it cannot occur in a uid or an edge type, so two distinct
+  // traces can never collapse onto one sort key.
+  const traceKey = (e: CGraph['edges'][number]): string => [e.sourceId, e.edgeType, e.targetId].join('\n');
+  const nodes = [...graph.nodes].sort((a, b) => a.uid.localeCompare(b.uid));
+  const edges = [...graph.edges].sort((a, b) => traceKey(a).localeCompare(traceKey(b)));
   return {
-    elements: graph.nodes.map((n) => ({
+    elements: nodes.map((n) => ({
       id: n.uid,
       type: n.type as OElement['type'],
       name: n.name,
@@ -278,7 +298,7 @@ export function toOntologyGraph(graph: CGraph): OntologyGraph {
     })),
     // CR-211: RC-04 walks io + relation traces (FUNC ─io→ FLOW ─relation→ SCHEMA),
     // so the edges must be mapped, not dropped.
-    traces: graph.edges.map((e) => ({
+    traces: edges.map((e) => ({
       source: e.sourceId,
       target: e.targetId,
       type: e.edgeType as OntologyGraph['traces'][number]['type'],
