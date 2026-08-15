@@ -185,8 +185,8 @@ describe('TEST-mvp-e2e: MVP-1 loop (bootstrap → spec → impact → implement 
     expect(harness.getGraph().nodes.find((n) => n.uid === 'REQ-orphan')).toBeUndefined();
   });
 
-  // ── STEP 4 — KNOW-NOT-GREP via graph_impact (UC-token-efficiency + UC-reduced-llm)
-  it('4. UC-token-efficiency + UC-reduced-llm: graph_impact returns EXACTLY the dependent set (precise slice, not a grep dump)', async () => {
+  // ── STEP 4 — KNOW-NOT-GREP via graph_impact (UC-reduced-llm)
+  it('4. UC-reduced-llm: graph_impact returns EXACTLY the dependent set (precise slice, not a grep dump)', async () => {
     const registry = bindToolsToHarness(harness);
     const fullNodeCount = harness.getGraph().nodes.length; // SYS/REQ/TEST/MOD acme + REQ-login/TEST-login/MOD-auth = 7
 
