@@ -16,6 +16,8 @@
  */
 
 import { join } from 'node:path';
+import { readdirSync, readFileSync } from 'node:fs';
+import { randomUUID } from 'node:crypto';
 import type { GraphCodeHarness } from './harness.js';
 import type { AuditLog, AuditEntry, OperationsLog } from '@sigloch/graph-api-core';
 import { FormatECodec, SE_DESCRIPTOR, FileOperationsLog } from '@sigloch/graph-api-core';
@@ -28,6 +30,74 @@ import { materializeTrajectory } from './emit.js';
 // The per-repo workspace dir is named ONCE (scaffold-templates); the feed lands in
 // graphcode's own workspace, not the predecessor's `.aimprove/` (CR-GC-330).
 import { GRAPHCODE_DIR } from './scaffold-templates.js';
+
+/**
+ * Truncation policy for `AuditEntry.intent` (CR-GC-354). The CONTRACT says the prompt is
+ * truncated; this says where. Measured against 379 real prompts from 51 sessions of this
+ * repo: median 126 chars, 7 of 379 above this bound — the cap costs almost nothing and
+ * bounds the one pathological case (a 616 KB paste) that would otherwise dominate the trail.
+ */
+export const INTENT_MAX_CHARS = 4000;
+
+/**
+ * Provenance the recording host knows about the CURRENT write (CR-GC-354).
+ *
+ * DERIVED, never self-declared: this is deliberately NOT part of any tool input schema.
+ * `consumerId` is the counter-example — it is a caller-supplied field and 40% of the
+ * records carry its anonymous default; and a prompt a model writes about its own prompt
+ * is a paraphrase, which is worthless as provenance precisely because it already contains
+ * the interpretation. So the host sets this out of band and the model cannot reach it.
+ *
+ * SINGLE-SESSION ASSUMPTION: one context serves one writing session. `graphcode run`
+ * (CR-GC-355) satisfies this by construction — it owns its process. The MCP path does
+ * NOT when the host-shim proxies several sessions onto one host (CR-GC-235), so the
+ * hook path (CR-GC-356) must key the prompt by session before it may set `intent` here.
+ * Until then only `model` and `sessionId` are populated, both of which are constant per
+ * process and therefore unaffected.
+ */
+export interface AuditOrigin {
+  /** The LLM that emitted the commands, e.g. the executor's configured model. */
+  model?: string;
+  /** The triggering prompt VERBATIM. Capped here, on the way into the record. */
+  intent?: string;
+}
+
+/** Where `.claude/hooks/record-prompt.sh` relays the verbatim user prompt (CR-GC-356). */
+export const PROMPT_RELAY_DIR = join(GRAPHCODE_DIR, 'prompts');
+
+/**
+ * Read the prompt the client relayed for the CURRENT session (CR-GC-356), or null.
+ *
+ * AMBIGUITY IS RECORDED AS ABSENCE. One host process can serve several proxied sessions
+ * (CR-GC-235) and the relay carries no marker tying a prompt to a specific tool call, so with
+ * two live relays there is no way to tell whose prompt caused this write. Guessing — newest
+ * wins, say — would stamp session B's prompt onto session A's record, and a wrong prompt→result
+ * pairing is worse than a missing one: it poisons exactly the data this is collected for.
+ * So: exactly one relay ⇒ use it, anything else ⇒ nothing. The hook prunes day-old files, which
+ * is what keeps the ordinary one-session-per-repo case unambiguous.
+ */
+function readRelayedPrompt(repoRoot: string): { sessionId: string; prompt: string } | null {
+  const dir = join(repoRoot, PROMPT_RELAY_DIR);
+  let files: string[];
+  try {
+    files = readdirSync(dir).filter((f) => f.endsWith('.json'));
+  } catch {
+    return null; // no relay dir = no hook installed = not recorded
+  }
+  if (files.length !== 1) return null;
+  try {
+    const raw = JSON.parse(readFileSync(join(dir, files[0]), 'utf8')) as {
+      sessionId?: unknown;
+      prompt?: unknown;
+    };
+    if (typeof raw.sessionId !== 'string' || typeof raw.prompt !== 'string' || !raw.prompt) {
+      return null;
+    }
+    return { sessionId: raw.sessionId, prompt: raw.prompt };
+  } catch {
+    return null; // torn or hand-mangled relay: not recorded, never a throw on the write path
+  }
+}
 
 /** Everything a tool group needs; the state behind it exists once per bound registry. */
 export interface ToolContext {
@@ -47,6 +117,14 @@ export interface ToolContext {
    * wurde angewendet) und der Merge-Replay überspringt validate-Einträge.
    */
   recordPreview(consumerId: string, result: MutateResult, commands: MutateCommand[]): Promise<void>;
+  /**
+   * Set the provenance stamped onto every SUBSEQUENT record (CR-GC-354). Out-of-band on
+   * purpose — see `AuditOrigin`. Replaces wholesale, so a caller that stops knowing the
+   * prompt clears it by passing `{}` instead of leaving a stale one behind.
+   */
+  setOrigin(origin: AuditOrigin): void;
+  /** The session id stamped on this context's records — one per host process. */
+  sessionId(): string;
   /** Run a write body on the single tool-write chain (check+gate+record atomic). */
   serializeToolWrite<T>(body: () => Promise<T>): Promise<T>;
   /** Stale-base rejection with staleDelta, or null when the base is fresh (CR-GC-233). */
@@ -76,6 +154,45 @@ export function createToolContext(
   // never reset to 0 per session (CR-233 builds its OCC on this monotonicity).
   const versioned = auditLog as Partial<Pick<OperationsLog, 'latestVersion'>>;
   let _graphVersion = versioned.latestVersion?.() ?? 0;
+
+  // Provenance (CR-GC-354). The session id is minted ONCE per context: it is the join key
+  // that turns a flat record stream back into conversations, so it must be stable across
+  // every record this process writes and distinct across processes.
+  const _sessionId = `sess-${Date.now().toString(36)}-${randomUUID().slice(0, 8)}`;
+  let _origin: AuditOrigin = {};
+  function setOrigin(origin: AuditOrigin): void {
+    _origin = { ...origin };
+  }
+
+  /**
+   * The provenance half of a record (CR-GC-354): who, and on which prompt.
+   *
+   * ABSENCE IS THE STATEMENT — the same asymmetry `rulesPassed` established (CR-GC-314
+   * REQ-A05). A missing `intent` means NOT RECORDED, never "empty prompt", so an unset or
+   * empty origin must leave the field OFF the record rather than write `''`. Likewise
+   * `intentTruncated` appears only when a cut actually happened: emitting `false` on the
+   * 372-of-379 records that fit would be noise claiming to be information.
+   */
+  function provenance(): Pick<AuditEntry, 'sessionId' | 'model' | 'intent' | 'intentTruncated'> {
+    const relayed = _origin.intent ? null : readRelayedPrompt(harness.getRepoRoot());
+    const out: Pick<AuditEntry, 'sessionId' | 'model' | 'intent' | 'intentTruncated'> = {
+      // A relayed prompt brings the CLIENT's session id, which is strictly better provenance
+      // than our minted one: it is the same id that names the transcript in ~/.claude/projects,
+      // so a record stays joinable to its conversation for the ~30 days that one survives.
+      sessionId: relayed?.sessionId ?? _sessionId,
+    };
+    if (_origin.model) out.model = _origin.model;
+    const intent = _origin.intent ?? relayed?.prompt;
+    if (intent) {
+      if (intent.length > INTENT_MAX_CHARS) {
+        out.intent = intent.slice(0, INTENT_MAX_CHARS);
+        out.intentTruncated = true;
+      } else {
+        out.intent = intent;
+      }
+    }
+    return out;
+  }
 
   // Record a gated write in the audit log — WITH its command batch, so the log is
   // replayable (CR-GC-234). Every write tool must call this (no audit bypass).
@@ -123,6 +240,7 @@ export function createToolContext(
       graphVersion: _graphVersion,
       commands,
       ...positiveHalf(result),
+      ...provenance(),
     };
     await auditLog.record(entry);
     // Re-project the feed from the log as the single source (CR-252). The write
@@ -153,6 +271,7 @@ export function createToolContext(
       graphVersion: _graphVersion,
       commands,
       ...positiveHalf(result),
+      ...provenance(),
     };
     await auditLog.record(entry);
     await materializeTrajectory(auditLog, join(harness.getRepoRoot(), GRAPHCODE_DIR));
@@ -259,6 +378,8 @@ export function createToolContext(
     graphVersion: () => _graphVersion,
     recordAudit,
     recordPreview,
+    setOrigin,
+    sessionId: () => _sessionId,
     serializeToolWrite,
     occReject,
   };

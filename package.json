@@ -44,7 +44,7 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
     "@sigloch/contracts": "^4.1.0",
-    "@sigloch/graph-api-core": "^3.0.0",
+    "@sigloch/graph-api-core": "^3.1.0",
     "@sigloch/graph-cypher-wasm": "^0.2.3",
     "@sigloch/graphcode-client": "^0.9.0",
     "@sigloch/graphify": "^0.2.0",

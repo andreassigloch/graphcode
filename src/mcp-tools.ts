@@ -30,7 +30,7 @@
 import type { ZodType } from 'zod/v4';
 import type { AuditLog } from '@sigloch/graph-api-core';
 import type { GraphCodeHarness } from './harness.js';
-import { createToolContext } from './tool-context.js';
+import { createToolContext, type ToolContext } from './tool-context.js';
 import { bindReadTools } from './tools/read.js';
 import { bindWriteTools } from './tools/write.js';
 import { bindReportTools } from './tools/report.js';
@@ -66,18 +66,37 @@ export type MCPToolRegistry = Record<string, MCPTool<any, any>>;
  * enumerate and dispatch. The stdio server itself is the host's concern (single-
  * transport constraint: no HTTP added here).
  */
-export function bindToolsToHarness(harness: GraphCodeHarness, auditLog?: AuditLog): MCPToolRegistry {
+/**
+ * Bind the registry AND hand back the context behind it (CR-GC-354).
+ *
+ * The registry alone cannot carry provenance: `setOrigin` is deliberately out of band, so
+ * a caller that knows the model and the prompt — the embedded executor (CR-GC-355), the
+ * prompt hook (CR-GC-356) — needs the context itself. Exposing it as an extra registry key
+ * would leak a non-tool into every registry enumeration (`tests/mcp.symmetry.test.ts`),
+ * hence a second VIEW on the same single binding, never a second binding.
+ */
+export function bindToolsWithContext(
+  harness: GraphCodeHarness,
+  auditLog?: AuditLog,
+): { registry: MCPToolRegistry; ctx: ToolContext } {
   // Exactly one context per registry — the whole reason the groups take `ctx`
   // instead of `(harness, auditLog)` (CR-GC-256 Decision §1).
   const ctx = createToolContext(harness, auditLog);
 
   return {
-    ...bindReadTools(ctx),
-    ...bindWriteTools(ctx),
-    ...bindReportTools(ctx),
-    ...bindExportTools(ctx),
-    ...bindSuggestTools(ctx),
-    ...bindMetricsTools(ctx),
-    ...bindTestReportTools(ctx),
+    ctx,
+    registry: {
+      ...bindReadTools(ctx),
+      ...bindWriteTools(ctx),
+      ...bindReportTools(ctx),
+      ...bindExportTools(ctx),
+      ...bindSuggestTools(ctx),
+      ...bindMetricsTools(ctx),
+      ...bindTestReportTools(ctx),
+    },
   };
+}
+
+export function bindToolsToHarness(harness: GraphCodeHarness, auditLog?: AuditLog): MCPToolRegistry {
+  return bindToolsWithContext(harness, auditLog).registry;
 }

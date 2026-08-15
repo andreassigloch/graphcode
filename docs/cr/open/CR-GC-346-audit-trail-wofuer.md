@@ -77,6 +77,14 @@ er treibt hier nur nichts.
 keinen Lernmechanismus und fasst learning-core nicht an. graphcode liefert Evidenz, nicht Inferenz —
 und `REQ-rule-calibration` braucht dafür nichts ausser `audit.jsonl`.
 
+**Nachtrag 2026-08-15 — was hier zu weit gestrichen wurde.** Der Entscheid oben trennt zwei Dinge
+nicht, die getrennt gehören: *Auswerten* und *Erfassen*. Für die Vorhersage-Anforderung und für
+CR-DRAFT-GC-348 gilt er unverändert. Für das **Erfassen** des Urhebers und des auslösenden Prompts
+gilt er nicht — eine Aggregation lässt sich jederzeit nachrechnen, ein nicht mitgeschriebener Prompt
+ist unwiederbringlich weg. Die Aufzeichnungs-Hälfte ist deshalb als **[CR-GC-354](CR-GC-354-trail-traegt-urheber-und-prompt.md)**
+wieder aufgemacht (`REQ-prompt-provenance`, dort modelliert in CR-GC-355). learning-core bleibt
+unangetastet — das Akzeptanzkriterium unten gilt für 354 genauso.
+
 ---
 
 ## 3. Befunde — gemessen am echten Trail (2026-08-15, 108 Records seit 2026-07-03)
@@ -244,9 +252,13 @@ Kalibrierung selbst (die braucht eine Messreihe, nicht einen CR), keine Änderun
 | **CR-GC-347** | `audit_stats` aggregiert je Regel und je Konsument (F2) | **offen** — reines graphcode, keine Fremdpakete; das Werkzeug, das die vier Analysen aus §1 gebraucht hätten |
 | **CR-GC-349** | Aufbewahrungsregel für den Trail (F4) | **offen** — Entscheidung, was Compaction überleben muss; Governance, nicht Code. Noch nicht geschrieben |
 | **CR-DRAFT-GC-348** | `TrajectorySchema` trägt Regelidentität (F1) | **PARKED** (§2.1) — learning-core wird nicht angefasst, solange kein Leser existiert; als Draft benannt, damit es kein umsetzbarer CR ist |
+| **CR-GC-354** | `AuditEntry` trägt `sessionId`/`model`/`intent` (§2.1 Nachtrag) | **offen** — der Vertrag, damit der Prompt überhaupt erfassbar ist; graph-api-core 3.1.0, kein Drift-Lock |
+| **CR-GC-355** | Der Executor stempelt Modell + Prompt im Wortlaut | **offen** — der Pfad ohne Fremd-Transkript (lokale/fremde LLMs); modelliert `REQ-prompt-provenance` |
+| **CR-GC-356** | `UserPromptSubmit`-Hook liefert den Prompt im MCP-Pfad | **offen** — Claude Code / OpenCode; Hook-Mechanik statt Selbstdeklaration |
 
-Reihenfolge: **346 → 347 → 349**. 348 steht ausserhalb dieser Kette und wartet auf einen echten
-Konsumenten des Feeds.
+Reihenfolge: **346 → 354 → 355 → 356**, mit **347** und **349** unabhängig davon. 347 nimmt die
+neuen Felder automatisch mit (`byModel` als dritte Gruppierung), sobald sie im Record stehen.
+348 steht ausserhalb dieser Kette und wartet auf einen echten Konsumenten des Feeds.
 
 ---
 
