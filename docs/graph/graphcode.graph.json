@@ -1383,6 +1383,46 @@
       "commitRef": "f988c79"
     },
     {
+      "id": "CR-GC-339",
+      "type": "CR",
+      "name": "Artikel-Claims belastbar machen",
+      "description": "Publikations-Blocker aus dem Claim-Audit: widerrufene Kausalaussage gestrichen, nicht gelaufener Vergleichsarm entfernt, gestapelte Verhaeltniszahl auf eine apples-to-apples-Zahl reduziert, Token-vs-Woerter korrigiert, Zahlen-Sweep auf 13/7/36/72/8/25, Untertreibungen richtiggestellt, unbelegte Zahlen belegt oder entschaerft, Intro fertiggestellt.",
+      "status": "done",
+      "commitRef": "8e2da5e"
+    },
+    {
+      "id": "CR-GC-340",
+      "type": "CR",
+      "name": "Steuerungsnachweis I: Messpfad und Architektur-Richtung",
+      "description": "Traegt das Testkonzept (Differenztest ueber eine Stellgroesse, Negativkontrolle je Richtungstest) und implementiert den deterministischen Architektur-Zweig: ein Messpfad, Vorzeichenumkehr, angewandtes Delta, Schwelle-als-Knopf, Placebo, Doku-gegen-Code-Konformitaet.",
+      "status": "done",
+      "commitRef": "5285b40"
+    },
+    {
+      "id": "CR-GC-341",
+      "type": "CR",
+      "name": "Steuerungsnachweis II: Regel-Korrektheit und Prozess-Ratsche",
+      "description": "Die eine Tuer als zusammenhaengender Nachweis, die Gate-Leiter tabellengetrieben, die Ratsche mit skriptiertem Aktor und die defer-Negativkontrolle. Ohne LLM: der Aktor ist skriptiert, damit ein roter Lauf zuordenbar bleibt.",
+      "status": "done",
+      "commitRef": "5285b40"
+    },
+    {
+      "id": "CR-GC-342",
+      "type": "CR",
+      "name": "Eigenes Modell: Ableitungskette der Anforderungen",
+      "description": "Die claim-tragenden Use Cases bekommen ihre Anforderungen samt verifizierenden Tests, zwei Use-Case-Beschreibungen werden auf den Autorenstil gezogen, die Zeitreise bekommt Systemwurzel und Milestone. Alles ueber das Gate. Die Ableitungskanten der elternlosen REQ sind als CR-GC-350 ausgeschnitten.",
+      "status": "done",
+      "architectureOnly": true
+    },
+    {
+      "id": "CR-GC-343",
+      "type": "CR",
+      "name": "Nachdokumentation ausgelieferter Funktion",
+      "description": "Die Werkzeug-Tabelle wird vollstaendig und nach Rolle gruppiert, die beiden Import-Wege mit ihrer unterschiedlichen Semantik erklaert, die zwoelf generierten Dokumente aufgezaehlt, Bindung/Test-Evidenz und Zeitreise in die Artikel eingehaengt.",
+      "status": "done",
+      "commitRef": "f1b365b"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -2856,6 +2896,12 @@
       "created_at": "2026-06-17T00:00:00.000Z"
     },
     {
+      "id": "REQ-applied-suggestion-moves-target",
+      "type": "REQ",
+      "name": "Eine angewandte Suggestion bewegt den Zielvektor in Zielrichtung",
+      "description": "Wird die bestbewertete anwendbare Suggestion real durchs Gate angewandt, bewegt sich die adressierte Metrik-Komponente mit dem Vorzeichen des Ziels und um den vorhergesagten Betrag; jede reale Regression war vorher angesagt."
+    },
+    {
       "id": "REQ-artifact-freshness",
       "type": "REQ",
       "name": "Artifact-Ampel-Semantik gruen gelb rot",
@@ -3146,6 +3192,12 @@
       "status": "done"
     },
     {
+      "id": "REQ-graph-context-replaces-reading",
+      "type": "REQ",
+      "name": "Praeziser Graph-Kontext ersetzt das Dokumentenlesen",
+      "description": "Ein Aufruf liefert die vollstaendige Definition-of-Done eines Realisierungsknotens als begrenzten Slice, sodass das Modell aus dem Graphen implementiert statt die Spezifikation zu lesen."
+    },
+    {
       "id": "REQ-graph-integrity",
       "type": "REQ",
       "name": "Graph-Integritaet: ein Validator",
@@ -3330,6 +3382,12 @@
       "updated_at": "2026-06-18T00:00:00.000Z"
     },
     {
+      "id": "REQ-monotone-convergence",
+      "type": "REQ",
+      "name": "Wiederholte Steuerung konvergiert monoton",
+      "description": "Ueber aufeinanderfolgende Runden faellt die Phase-Gate-Abdeckung nie zurueck und die Zahl blockierender Verstoesse steigt nie; ein Fund-Set wird hoechstens einmal erneut aufgerufen und nach dem Zuruecksetzen nicht wieder."
+    },
+    {
       "id": "REQ-mutation-emits-event",
       "type": "REQ",
       "name": "Mutation emittiert Live-Update-Event",
@@ -3364,6 +3422,12 @@
       "updated_at": "2026-06-18T00:00:00.000Z"
     },
     {
+      "id": "REQ-one-driver-local-and-frontier",
+      "type": "REQ",
+      "name": "Ein Treiber fuer lokale und Frontier-Modelle",
+      "description": "Derselbe Steuerungs-Loop faehrt ein lokal laufendes Modell und ein Frontier-Modell ohne Code-Verzweigung; der Backend-Wechsel ist Konfiguration, nicht ein zweiter Pfad."
+    },
+    {
       "id": "REQ-one-gate-per-repo",
       "type": "REQ",
       "name": "Ein Apply-Gate pro Repo",
@@ -3373,6 +3437,12 @@
       "kinds": [
         "functional"
       ]
+    },
+    {
+      "id": "REQ-phase-gate-not-skippable",
+      "type": "REQ",
+      "name": "Ein Phasen-Gate ist nicht ueberspringbar",
+      "description": "Auch bei erreichter Readiness-Schwelle und null blockierenden Verstoessen bleibt der Handoff aus, solange das aktuelle Phasen-Gate nicht regel-vollstaendig ist."
     },
     {
       "id": "REQ-post-agent-query",
@@ -3723,6 +3793,12 @@
       "updated_at": "2026-06-18T00:00:00.000Z"
     },
     {
+      "id": "REQ-published-counts-match-code",
+      "type": "REQ",
+      "name": "Publizierte Zahlen stimmen mit der lebenden Quelle",
+      "description": "Jede in den publizierten Dokumenten genannte Anzahl von Elementtypen, Verbindungstypen, legalen Verbindungsmustern, Regeln, Readiness-Dimensionen und MCP-Tools wird gegen Ontologie und Tool-Registry geprueft; eine Abweichung nennt Datei, Zeile, erwarteten und gefundenen Wert."
+    },
+    {
       "id": "REQ-quality-metric",
       "type": "REQ",
       "name": "Messbare Code-/Tool-Qualität",
@@ -3909,6 +3985,12 @@
       ]
     },
     {
+      "id": "REQ-single-measurement-path",
+      "type": "REQ",
+      "name": "Ein Messpfad fuer alle Steuerungs-Oberflaechen",
+      "description": "nextStep, generationStep und der steeringDelta-Zweig des dryRun-Verdicts liefern fuer denselben Graphen dieselbe Violation-Menge, dieselben Dimensions-Scores und dieselbe Zahl blockierender Verstoesse."
+    },
+    {
       "id": "REQ-single-store",
       "type": "REQ",
       "name": "Ein Store: Kuzu",
@@ -3930,6 +4012,12 @@
         "non-functional"
       ],
       "updated_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "id": "REQ-single-write-door",
+      "type": "REQ",
+      "name": "Genau eine Tuer in den Graphen",
+      "description": "Eine legale Mutation persistiert samt Attributen, eine Mutation ohne ihre Pflichtkante wird blockiert und laesst den Store unveraendert, und ein direkter Schreibversuch am Gate vorbei wird abgewiesen."
     },
     {
       "id": "REQ-small-model-viable",
@@ -3993,6 +4081,12 @@
       ]
     },
     {
+      "id": "REQ-target-shifts-ranking",
+      "type": "REQ",
+      "name": "Die Zielrichtung verschiebt das Suggestion-Ranking",
+      "description": "Ein Vorzeichenwechsel im Zielvektor negiert den Score jedes gemeinsamen Kandidaten und stellt eine andere Suggestion an die Spitze; die Magnitude des Ziels aendert weder Reihenfolge noch Score."
+    },
+    {
       "id": "REQ-test-runnable-binding",
       "type": "REQ",
       "name": "TEST hat lauffaehige Bindung (testRef)",
@@ -4009,6 +4103,12 @@
       "name": "A bound testRef always resolves to a real file",
       "description": "Ein gebundener TEST-testRef loest immer auf eine reale Datei auf: graph_export materialisiert einen it.todo-Stub fuer jede fehlende testRef-Datei (kein Phantom-Pfad, kein false-green); R-19 macht einen ungebundenen lauffaehigen TEST als Warning sichtbar; concept-only TESTs (concept:true) sind ausgenommen. (CR-GC-205 Item 4)",
       "status": "done"
+    },
+    {
+      "id": "REQ-thresholds-from-config",
+      "type": "REQ",
+      "name": "Urteilsschwellen kommen aus der Config, nicht aus dem Regelcode",
+      "description": "Keine Urteilsschwelle steht als Literal im Regelcode: eine verschobene MetricPolicy kippt dasselbe Modul-Urteil auf unveraendertem Graphen, eine verschobene Fokus-Schwelle verschiebt das ready-Urteil ohne die Funde zu aendern."
     },
     {
       "id": "REQ-token-efficiency",
@@ -4328,6 +4428,20 @@
       ]
     },
     {
+      "id": "TEST-applied-suggestion-moves-target",
+      "type": "TEST",
+      "name": "Angewandtes Delta gegen die Zielrichtung",
+      "description": "A/B ueber das Vorzeichen des Ziels mit echter Mutation und Messung vorher/nachher auf derselben Messebene.",
+      "testRefs": [
+        {
+          "file": "tests/steering.architecture-causality.test.ts",
+          "case": "reverses the score sign of every shared candidate when the target flips",
+          "tool": "vitest",
+          "level": "integration"
+        }
+      ]
+    },
+    {
       "id": "TEST-artifact-freshness",
       "type": "TEST",
       "name": "Artifact-Freshness-Test",
@@ -4591,6 +4705,20 @@
           "case": "UC-efficient-testing",
           "tool": "vitest",
           "level": "acceptance"
+        }
+      ]
+    },
+    {
+      "id": "TEST-graph-context-replaces-reading",
+      "type": "TEST",
+      "name": "Kontext-Slice als vollstaendige Definition-of-Done",
+      "description": "Assertiert, dass der Kontext-Slice Spezifikation, verifizierenden Test, Datenfluesse und Modul-Zuordnung des Knotens enthaelt und begrenzt bleibt.",
+      "testRefs": [
+        {
+          "file": "tests/mcp.context.test.ts",
+          "case": "returns EXACTLY the upstream spec-closure of FN-1",
+          "tool": "vitest",
+          "level": "unit"
         }
       ]
     },
@@ -4889,6 +5017,20 @@
       "constraint": "conflict-free"
     },
     {
+      "id": "TEST-monotone-convergence",
+      "type": "TEST",
+      "name": "Ratschen-Nachweis ueber die Rundensequenz",
+      "description": "Faehrt den Steuerungs-Loop mit einem skriptierten Aktor und assertiert Monotonie, Netto-Fortschritt und Nicht-Kreisen.",
+      "testRefs": [
+        {
+          "file": "tests/steering.process-ratchet.test.ts",
+          "case": "T-B3 — every batch the loop produced was legal at the gate, or the loop stopped there",
+          "tool": "vitest",
+          "level": "integration"
+        }
+      ]
+    },
+    {
       "id": "TEST-mutate-gate",
       "type": "TEST",
       "name": "mutate()-Gate Unit-Test",
@@ -4932,6 +5074,48 @@
       "status": "open",
       "created_at": "2026-06-18T00:00:00.000Z",
       "concept": true
+    },
+    {
+      "id": "TEST-one-driver-local-and-frontier",
+      "type": "TEST",
+      "name": "Treiber gegen zwei Backends ohne Verzweigung",
+      "description": "Faehrt den eingebetteten Executor gegen beide Backend-Konfigurationen und assertiert identische Loop-Semantik.",
+      "testRefs": [
+        {
+          "file": "tests/executor.test.ts",
+          "case": "an applied mutate ends the step — exactly one model call, node persisted",
+          "tool": "vitest",
+          "level": "integration"
+        }
+      ]
+    },
+    {
+      "id": "TEST-phase-gate-not-skippable",
+      "type": "TEST",
+      "name": "Kein Handoff bei offenem Phasen-Gate",
+      "description": "Graph mit erreichter Schwelle, aber offener Gate-Luecke; assertiert, dass die Zustandsmaschine nicht auf handoff geht.",
+      "testRefs": [
+        {
+          "file": "tests/generate.test.ts",
+          "case": "SYS mit Defiziten → expand fokussiert die schwächste Dimension mit konkreten Funden",
+          "tool": "vitest",
+          "level": "unit"
+        }
+      ]
+    },
+    {
+      "id": "TEST-published-counts-match-code",
+      "type": "TEST",
+      "name": "Doku-gegen-Code-Konformitaet der Zahlen",
+      "description": "Liest die kanonischen Zahl-Phrasen aus den publizierten Dokumenten und assertiert sie gegen contracts und die gebundene Tool-Registry.",
+      "testRefs": [
+        {
+          "file": "tests/claims.conformance.test.ts",
+          "case": "states each count correctly wherever it appears",
+          "tool": "vitest",
+          "level": "unit"
+        }
+      ]
     },
     {
       "id": "TEST-readiness-completeness",
@@ -5105,6 +5289,34 @@
       ]
     },
     {
+      "id": "TEST-single-measurement-path",
+      "type": "TEST",
+      "name": "Messpfad-Konsistenz ueber drei Oberflaechen",
+      "description": "Fixture mit attributgetragenen Bindungen; assertiert identische Violations und Scores ueber alle drei Oberflaechen und faellt rot, sobald eine auf das flache Export-Encoding zurueckfaellt.",
+      "testRefs": [
+        {
+          "file": "tests/steering.measurement-path.test.ts",
+          "case": "nextStep and generationStep report the same blocking errors and the same dimension scores",
+          "tool": "vitest",
+          "level": "unit"
+        }
+      ]
+    },
+    {
+      "id": "TEST-single-write-door",
+      "type": "TEST",
+      "name": "Die eine Tuer, in einem Nachweis",
+      "description": "Drei Assertionen in Folge: legale Mutation landet, illegale laesst den deterministischen Export identisch, Direktschreib-Versuch wird mit Exit-Code und Meldung abgewiesen.",
+      "testRefs": [
+        {
+          "file": "tests/gate.single-door.test.ts",
+          "case": "1 — a legal mutation lands and survives a reload, attributes intact",
+          "tool": "vitest",
+          "level": "integration"
+        }
+      ]
+    },
+    {
       "id": "TEST-skills-mcp",
       "type": "TEST",
       "name": "Skills-MCP-Conformance-Test",
@@ -5163,6 +5375,20 @@
       ]
     },
     {
+      "id": "TEST-target-shifts-ranking",
+      "type": "TEST",
+      "name": "Ranking gegen zwei gegenlaeufige Zielvektoren",
+      "description": "Zwei Laeufe auf identischem Graphen, verschieden nur im Vorzeichen des Ziels; assertiert Score-Negation, Spitzenwechsel und Magnituden-Invarianz.",
+      "testRefs": [
+        {
+          "file": "tests/mcp.suggest.test.ts",
+          "case": "liefert Fund-Ebene für feuernde Operator-Regeln, score-absteigend",
+          "tool": "vitest",
+          "level": "unit"
+        }
+      ]
+    },
+    {
       "id": "TEST-test-runnable-binding",
       "type": "TEST",
       "name": "TestRef-Aufloesungs-Test",
@@ -5190,6 +5416,20 @@
           "file": "tests/export.testref-materialize.test.ts",
           "tool": "vitest",
           "level": "integration"
+        }
+      ]
+    },
+    {
+      "id": "TEST-thresholds-from-config",
+      "type": "TEST",
+      "name": "Schwelle als Knopf, nicht als Literal",
+      "description": "Zwei Repos, identischer Graph, verschieden nur in graphcode.config.jsonc; assertiert das gekippte Urteil bei identischer Messung.",
+      "testRefs": [
+        {
+          "file": "tests/config.test.ts",
+          "case": "schemawidrige Datei → Abbruch mit Pfad UND Feld, kein stiller Default",
+          "tool": "vitest",
+          "level": "unit"
         }
       ]
     },
@@ -5235,14 +5475,14 @@
       "id": "UC-graph-time-travel",
       "type": "UC",
       "name": "Graph-Stand pro Commit wiederherstellbar",
-      "description": "Als Entwickler will ich den governten Graph-Stand jedes Commits wiederherstellen koennen, sodass Modell und Code zu jedem Commit zusammenpassen — fruehere Modell-Staende sind reproduzierbar, ohne ein zweites Store-Handle. (CR-GC-217 Approach A, Operation CR-GC-311)",
+      "description": "Als Entwickler will ich den Modellstand eines beliebigen Commits wiederherstellen, damit Modell und Code zu jedem Zeitpunkt zusammenpassen.",
       "status": "done"
     },
     {
       "id": "UC-live-graph-view",
       "type": "UC",
-      "name": "Live-Graph-View (Ziel b)",
-      "description": "Read-only Live-Dashboard: jede Mutation aktualisiert die Ansicht ohne Reload (SSE invalidate), Readiness/INCOSE-Gates gegen contracts V3_RULES (nicht BQ-2.0.0). Über den Host (Single-Kuzu-Owner), kein 2. DB-Handle.",
+      "name": "Modellstand live mitlesen",
+      "description": "Als Entwickler will ich den aktuellen Modellstand live mitlesen, ohne die Ansicht neu zu laden, damit ich die Wirkung jeder Aenderung sofort sehe.",
       "status": "done",
       "created_at": "2026-06-17T00:00:00.000Z"
     },
@@ -7745,6 +7985,126 @@
     {
       "source": "CR-GC-331",
       "target": "REQ-repo-uninstall",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-339",
+      "target": "FUNC-export-markdown",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-339",
+      "target": "MS-6-adoption",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-340",
+      "target": "FUNC-check-code-conformance",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-340",
+      "target": "FUNC-graph-suggest",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-340",
+      "target": "FUNC-take-steering-snapshot",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-340",
+      "target": "MS-6-adoption",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-340",
+      "target": "REQ-applied-suggestion-moves-target",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-340",
+      "target": "REQ-published-counts-match-code",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-340",
+      "target": "REQ-single-measurement-path",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-340",
+      "target": "REQ-target-shifts-ranking",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-340",
+      "target": "REQ-thresholds-from-config",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-341",
+      "target": "FUNC-compute-phase-readiness",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-341",
+      "target": "FUNC-mutate",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-341",
+      "target": "MS-6-adoption",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-341",
+      "target": "REQ-monotone-convergence",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-341",
+      "target": "REQ-phase-gate-not-skippable",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-341",
+      "target": "REQ-single-write-door",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-342",
+      "target": "FUNC-mutate",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-342",
+      "target": "MS-6-adoption",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-342",
+      "target": "REQ-graph-context-replaces-reading",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-342",
+      "target": "REQ-one-driver-local-and-frontier",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-343",
+      "target": "FUNC-export-markdown",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-343",
+      "target": "MS-6-adoption",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-343",
+      "target": "REQ-published-counts-match-code",
       "type": "relation"
     },
     {
@@ -10357,6 +10717,11 @@
       "type": "compose"
     },
     {
+      "source": "MS-6-adoption",
+      "target": "UC-graph-time-travel",
+      "type": "compose"
+    },
+    {
       "source": "REQ-graph-is-ssot",
       "target": "REQ-docs-taxonomy",
       "type": "compose",
@@ -10600,6 +10965,11 @@
     },
     {
       "source": "SYS-graphcode",
+      "target": "UC-graph-time-travel",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphcode",
       "target": "UC-live-graph-view",
       "type": "compose",
       "weight": 1,
@@ -10650,6 +11020,11 @@
       "type": "verify",
       "weight": 1,
       "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-applied-suggestion-moves-target",
+      "target": "REQ-applied-suggestion-moves-target",
+      "type": "verify"
     },
     {
       "source": "TEST-artifact-freshness",
@@ -10884,6 +11259,11 @@
     {
       "source": "TEST-efficient-testing",
       "target": "REQ-pre-impact-testing",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-graph-context-replaces-reading",
+      "target": "REQ-graph-context-replaces-reading",
       "type": "verify"
     },
     {
@@ -11131,6 +11511,11 @@
       "type": "verify"
     },
     {
+      "source": "TEST-monotone-convergence",
+      "target": "REQ-monotone-convergence",
+      "type": "verify"
+    },
+    {
       "source": "TEST-mutate-gate",
       "target": "REQ-confidence-tier",
       "type": "verify"
@@ -11200,6 +11585,21 @@
       "type": "verify",
       "weight": 1,
       "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-one-driver-local-and-frontier",
+      "target": "REQ-one-driver-local-and-frontier",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-phase-gate-not-skippable",
+      "target": "REQ-phase-gate-not-skippable",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-published-counts-match-code",
+      "target": "REQ-published-counts-match-code",
+      "type": "verify"
     },
     {
       "source": "TEST-readiness-completeness",
@@ -11334,6 +11734,16 @@
       "created_at": "2026-06-19T00:00:00.000Z"
     },
     {
+      "source": "TEST-single-measurement-path",
+      "target": "REQ-single-measurement-path",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-single-write-door",
+      "target": "REQ-single-write-door",
+      "type": "verify"
+    },
+    {
       "source": "TEST-skills-mcp",
       "target": "REQ-doc-export",
       "type": "verify",
@@ -11356,6 +11766,11 @@
       "type": "verify"
     },
     {
+      "source": "TEST-target-shifts-ranking",
+      "target": "REQ-target-shifts-ranking",
+      "type": "verify"
+    },
+    {
       "source": "TEST-test-runnable-binding",
       "target": "REQ-test-runnable-binding",
       "type": "verify",
@@ -11365,6 +11780,11 @@
     {
       "source": "TEST-testref-materialize",
       "target": "REQ-testref-materialized",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-thresholds-from-config",
+      "target": "REQ-thresholds-from-config",
       "type": "verify"
     },
     {
@@ -11437,10 +11857,20 @@
     },
     {
       "source": "UC-code-quality",
+      "target": "REQ-published-counts-match-code",
+      "type": "compose"
+    },
+    {
+      "source": "UC-code-quality",
       "target": "REQ-quality-metric",
       "type": "compose",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "UC-code-quality",
+      "target": "REQ-single-write-door",
+      "type": "compose"
     },
     {
       "source": "UC-code-quality",
@@ -11456,7 +11886,37 @@
     },
     {
       "source": "UC-deterministic-steering",
+      "target": "REQ-applied-suggestion-moves-target",
+      "type": "compose"
+    },
+    {
+      "source": "UC-deterministic-steering",
+      "target": "REQ-monotone-convergence",
+      "type": "compose"
+    },
+    {
+      "source": "UC-deterministic-steering",
+      "target": "REQ-phase-gate-not-skippable",
+      "type": "compose"
+    },
+    {
+      "source": "UC-deterministic-steering",
+      "target": "REQ-single-measurement-path",
+      "type": "compose"
+    },
+    {
+      "source": "UC-deterministic-steering",
       "target": "REQ-steering-from-metrics",
+      "type": "compose"
+    },
+    {
+      "source": "UC-deterministic-steering",
+      "target": "REQ-target-shifts-ranking",
+      "type": "compose"
+    },
+    {
+      "source": "UC-deterministic-steering",
+      "target": "REQ-thresholds-from-config",
       "type": "compose"
     },
     {
@@ -11595,11 +12055,21 @@
     },
     {
       "source": "UC-reduced-llm",
+      "target": "REQ-graph-context-replaces-reading",
+      "type": "compose"
+    },
+    {
+      "source": "UC-reduced-llm",
+      "target": "REQ-one-driver-local-and-frontier",
+      "type": "compose"
+    },
+    {
+      "source": "UC-reduced-llm",
       "target": "REQ-small-model-viable",
       "type": "compose",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
     }
   ],
-  "graphVersion": 80
+  "graphVersion": 92
 }

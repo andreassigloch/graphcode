@@ -8,7 +8,7 @@
  *   1. NEW MEMBER REPO        — scaffold('init')                  (headline: create a repo)
  *   2. BOOTSTRAP THROUGH GATE — bootstrap(harness, Format-E)      (UC-code-quality)
  *   3. SPEC + GOVERNANCE      — mutate(valid) ✓ / mutate(orphan) ✗ (UC-code-quality)
- *   4. KNOW-NOT-GREP          — graph_impact = exact blast-radius  (UC-token-efficiency + UC-reduced-llm)
+ *   4. KNOW-NOT-GREP          — graph_impact = exact blast-radius  (UC-reduced-llm)
  *   5. IMPACT-BASED TESTING   — impact slice selects the test set  (UC-efficient-testing)
  *   6. IMPLEMENT A NODE       — mutate(update) persists to disk     (UC-code-quality)
  *   7. RE-EXPORT              — exportGraphJson/exportMarkdown      (UC-code-quality)
@@ -16,9 +16,12 @@
  * The UC descriptions in docs/graph/graphcode.graph.json ARE the acceptance:
  *   UC-code-quality   : every change ontology-/rule-conform, no drift; docs/interfaces
  *                       strictly derived from the governed graph.
- *   UC-token-efficiency: precise query context (exact blast-radius slice), not a grep dump.
  *   UC-efficient-testing: the impact/dependency graph selects the test set; done = proven.
- *   UC-reduced-llm    : deterministic, model-free gates + query-precision.
+ *   UC-reduced-llm    : deterministic, model-free gates + query-precision — precise query
+ *                       context (the exact blast-radius slice) instead of a grep dump.
+ *
+ * Only use cases that EXIST in the graph may be named here (CR-GC-342): a header
+ * claiming an acceptance nobody modelled is a claim with no owner.
  *
  * Composes ONLY the public surface (createHarness/scaffold/bootstrap/mutate/
  * impact/getGraph/bindToolsToHarness/exportGraphJson/exportMarkdown) — no src

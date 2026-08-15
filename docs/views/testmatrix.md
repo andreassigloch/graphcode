@@ -4,12 +4,13 @@
 
 # graphcode — Verification Cross-Reference Matrix (VCRM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 113 REQ rows. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 123 REQ rows. Deterministisch generiert.
 
 | REQ | verify-Kante | Lauf-Ergebnis | verifying TEST(s) |
 |---|---|---|---|
 | `REQ-advisory-roundtrip-latency` | ✓ | ⚠ nie gelaufen | `TEST-advisory-roundtrip-latency` |
 | `REQ-agent-agnostic` | ✓ | ⚠ nie gelaufen | `TEST-agent-agnostic` |
+| `REQ-applied-suggestion-moves-target` | ✓ | ⚠ nie gelaufen | `TEST-applied-suggestion-moves-target` |
 | `REQ-artifact-freshness` | ✓ | ⚠ nie gelaufen | `TEST-artifact-freshness` |
 | `REQ-audit-trail` | ✓ | ⚠ nie gelaufen | `TEST-mcp-stdio-server` |
 | `REQ-auto-persist-merge` | ✓ | ⚠ nie gelaufen | `TEST-merge` |
@@ -37,6 +38,7 @@
 | `REQ-gate-only-writes` | ✓ | ⚠ nie gelaufen | `TEST-no-direct-graph-write` |
 | `REQ-graceful-degradation` | ✓ | ⚠ nie gelaufen | `TEST-reduced-llm` |
 | `REQ-graph-code-conformance` | ✓ | ⚠ nie gelaufen | `TEST-code-conformance` |
+| `REQ-graph-context-replaces-reading` | ✓ | ⚠ nie gelaufen | `TEST-graph-context-replaces-reading` |
 | `REQ-graph-integrity` | ✓ | ⚠ nie gelaufen | `TEST-codec-validation` · `TEST-graph-integrity` |
 | `REQ-graph-is-ssot` | ✓ | ⚠ nie gelaufen | `TEST-graph-is-ssot` |
 | `REQ-graph-snapshot-per-commit` | ✓ | ⚠ nie gelaufen | `TEST-graph-time-travel` |
@@ -55,10 +57,13 @@
 | `REQ-live-event-in-contracts` | ✓ | ⚠ nie gelaufen | `TEST-live-event-contract` |
 | `REQ-mcp-gate-symmetry` | ✓ | ⚠ nie gelaufen | `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` |
 | `REQ-mcp-tool-registry` | ✓ | ⚠ nie gelaufen | `TEST-mcp-readiness` · `TEST-mcp-stdio-server` |
+| `REQ-monotone-convergence` | ✓ | ⚠ nie gelaufen | `TEST-monotone-convergence` |
 | `REQ-mutation-emits-event` | ✓ | ⚠ nie gelaufen | `TEST-live-view` |
 | `REQ-no-extraction` | ✓ | ⚠ nie gelaufen | `TEST-capture` |
 | `REQ-npx-distribution` | ✓ | ⚠ nie gelaufen | `TEST-distribution` |
+| `REQ-one-driver-local-and-frontier` | ✓ | ⚠ nie gelaufen | `TEST-one-driver-local-and-frontier` |
 | `REQ-one-gate-per-repo` | ✓ | ⚠ nie gelaufen | `TEST-mcp-symmetry` · `TEST-mutate-gate` |
+| `REQ-phase-gate-not-skippable` | ✓ | ⚠ nie gelaufen | `TEST-phase-gate-not-skippable` |
 | `REQ-post-agent-query` | ✓ | ⚠ nie gelaufen | `TEST-impact-subgraph` |
 | `REQ-post-apply-gate` | ✓ | ⚠ nie gelaufen | `TEST-mutate-gate` |
 | `REQ-post-capture` | ✓ | ⚠ nie gelaufen | `TEST-capture` |
@@ -90,6 +95,7 @@
 | `REQ-precise-context` | ✓ | ⚠ nie gelaufen | `TEST-mvp-e2e` · `TEST-token-efficiency` |
 | `REQ-precommit-timeout` | ✓ | ⚠ nie gelaufen | `TEST-hooks` |
 | `REQ-progressive-expansion` | ✓ | ⚠ nie gelaufen | `TEST-impact-subgraph` |
+| `REQ-published-counts-match-code` | ✓ | ⚠ nie gelaufen | `TEST-published-counts-match-code` |
 | `REQ-quality-metric` | ✓ | ⚠ nie gelaufen | `TEST-code-quality` |
 | `REQ-query-precision` | ✓ | ⚠ nie gelaufen | `TEST-impact-subgraph` |
 | `REQ-readiness-completeness` | ✓ | ⚠ nie gelaufen | `TEST-readiness-completeness` |
@@ -107,23 +113,27 @@
 | `REQ-self-contained-dist` | ✓ | ⚠ nie gelaufen | `TEST-distribution` |
 | `REQ-shared-views-no-fork` | ✓ | ⚠ nie gelaufen | `TEST-shared-views-no-fork` |
 | `REQ-single-kuzu-owner` | ✓ | ⚠ nie gelaufen | `TEST-mvp-e2e` |
+| `REQ-single-measurement-path` | ✓ | ⚠ nie gelaufen | `TEST-single-measurement-path` |
 | `REQ-single-store` | ✓ | ⚠ nie gelaufen | `TEST-mvp-e2e` |
 | `REQ-single-transport` | ✓ | ⚠ nie gelaufen | `TEST-mcp-stdio-server` |
+| `REQ-single-write-door` | ✓ | ⚠ nie gelaufen | `TEST-single-write-door` |
 | `REQ-small-model-viable` | ✓ | ⚠ nie gelaufen | `TEST-mvp-e2e` · `TEST-reduced-llm` |
 | `REQ-steering-from-metrics` | ✓ | ⚠ nie gelaufen | `TEST-steering-loop` |
 | `REQ-store-recovery` | ✓ | ⚠ nie gelaufen | `TEST-store-recovery` |
 | `REQ-structural-rule-shared` | ✓ | ⚠ nie gelaufen | `TEST-structural-rule-shared` |
 | `REQ-structure-driven` | ✓ | ⚠ nie gelaufen | `TEST-code-quality` |
 | `REQ-subgraph-slicing` | ✓ | ⚠ nie gelaufen | `TEST-impact-subgraph` |
+| `REQ-target-shifts-ranking` | ✓ | ⚠ nie gelaufen | `TEST-target-shifts-ranking` |
 | `REQ-test-runnable-binding` | ✓ | ⚠ nie gelaufen | `TEST-test-runnable-binding` |
 | `REQ-testref-materialized` | ✓ | ⚠ nie gelaufen | `TEST-testref-materialize` |
+| `REQ-thresholds-from-config` | ✓ | ⚠ nie gelaufen | `TEST-thresholds-from-config` |
 | `REQ-token-efficiency` | ✓ | ⚠ nie gelaufen | `TEST-token-efficiency` |
 | `REQ-trajectory-emit` | ✓ | ⚠ nie gelaufen | `TEST-learning-emit` |
 | `REQ-versioned-broadcast` | ✓ | ⚠ nie gelaufen | `TEST-live-view` |
 | `REQ-versioned-cache` | ✓ | ⚠ nie gelaufen | `TEST-cache` |
 
-Coverage: 113/113 REQ mit verify-Kante (100%) · 0 offen (R-01).
-Belegt: 0/113 REQ bestanden (0%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
+Coverage: 123/123 REQ mit verify-Kante (100%) · 0 offen (R-01).
+Belegt: 0/123 REQ bestanden (0%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
 
 ## Integrationsabdeckung (rolled-up)
 
@@ -137,16 +147,16 @@ Belegt: 0/113 REQ bestanden (0%) — eine Kante ist kein Nachweis; ein REQ zähl
 | `FUNC-emit-update-event` → `FUNC-subscribe-updates` | `FLOW-live-event` | `FCHAIN-live-update` | `TEST-live-view` | integration |  |
 | `FUNC-encode` → `FUNC-decode` | `FLOW-formatE-artifact` | `FCHAIN-codec-roundtrip` | `TEST-roundtrip` | conformance |  |
 | `FUNC-evaluate-rules` → `FUNC-graph-suggest` | `FLOW-round-findings` | `FCHAIN-advisory-roundtrip` | `TEST-advisory-roundtrip-latency` | performance |  |
-| `FUNC-evaluate-rules` → `FUNC-save-graph` | `FLOW-violations` | `FCHAIN-apply-gate` | `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, integration, performance |  |
+| `FUNC-evaluate-rules` → `FUNC-save-graph` | `FLOW-violations` | `FCHAIN-apply-gate` | `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, e2e, integration, performance |  |
 | `FUNC-generation-step` → `FUNC-rank-candidates` | `FLOW-round-prompt` | `FCHAIN-steering-loop` | `TEST-steering-loop` | integration |  |
 | `FUNC-graph-impact` → `FUNC-evaluate-rules` | `FLOW-round-scope` | `FCHAIN-advisory-roundtrip` | `TEST-advisory-roundtrip-latency` | performance |  |
 | `FUNC-graph-suggest` → `FUNC-mutate` | `FLOW-suggested-edit` | `FCHAIN-advisory-roundtrip` | `TEST-advisory-roundtrip-latency` | performance |  |
-| `FUNC-mutate` → `FUNC-evaluate-rules` | `FLOW-draft-graph` | `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-modelfree-gate` | `TEST-advisory-roundtrip-latency` · `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-reduced-llm` · `TEST-responsiveness` | acceptance, integration, performance |  |
+| `FUNC-mutate` → `FUNC-evaluate-rules` | `FLOW-draft-graph` | `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-modelfree-gate` | `TEST-advisory-roundtrip-latency` · `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-reduced-llm` · `TEST-responsiveness` | acceptance, e2e, integration, performance |  |
 | `FUNC-mutate` → `FUNC-take-steering-snapshot` | `FLOW-gate-verdict` | `FCHAIN-steering-loop` | `TEST-steering-loop` | integration |  |
 | `FUNC-next-step` → `FUNC-rank-candidates` | `FLOW-round-prompt` | `FCHAIN-steering-loop` | `TEST-steering-loop` | integration |  |
 | `FUNC-rank-candidates` → `FUNC-mutate` | `FLOW-suggested-edit` | `FCHAIN-steering-loop` | `TEST-steering-loop` | integration |  |
 | `FUNC-rewind` → `FUNC-reseed` | `FLOW-graph-snapshot` | `FCHAIN-recall` | `TEST-graph-time-travel` | integration |  |
-| `FUNC-save-graph` → `FUNC-emit-trajectory` | `FLOW-committed-graph` | `FCHAIN-apply-gate` | `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, integration, performance |  |
+| `FUNC-save-graph` → `FUNC-emit-trajectory` | `FLOW-committed-graph` | `FCHAIN-apply-gate` | `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, e2e, integration, performance |  |
 | `FUNC-save-graph` → `FUNC-emit-update-event` | `FLOW-committed-graph` | `FCHAIN-live-update` | `TEST-live-view` | integration |  |
 | `FUNC-save-graph` → `FUNC-graph-export-snapshot` | `FLOW-committed-graph` | `FCHAIN-snapshot-freshness` | `TEST-graph-time-travel` | integration |  |
 | `FUNC-serve-stdio` → `FUNC-export-markdown` | `FLOW-export-request` | `FCHAIN-doc-export` | `TEST-doc-export` · `TEST-mcp-export` · `TEST-member-name` · `TEST-skills-mcp` | conformance, integration, unit |  |

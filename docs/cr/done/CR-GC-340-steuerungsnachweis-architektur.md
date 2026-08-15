@@ -1,6 +1,6 @@
 # CR-GC-340 — Steuerungsnachweis I: Messpfad, Architektur-Richtung, Claim-Konformität
 
-**Status:** open · **Angelegt:** 2026-08-15 · **Max Files:** 6 (dieser CR: **4**)
+**Status:** done · **Abgeschlossen:** 2026-08-15 · **Angelegt:** 2026-08-15 · **Max Files:** 6 (dieser CR: **4**)
 **Ziel:** die Steuerungswirkung von graphcode wird **bewiesen**, nicht behauptet.
 **Herkunft:** Claim-Audit 2026-08-15 (→ CR-GC-339). Dieser CR trägt das **vollständige
 Testkonzept** (§2, restart-fest) und implementiert davon den deterministischen Architektur-Zweig.

@@ -1,6 +1,6 @@
 # CR-GC-339 — Artikel-Claims belastbar machen (Publikations-Blocker)
 
-**Status:** open · **Angelegt:** 2026-08-15 · **Max Files:** 6 (dieser CR: **6**)
+**Status:** done · **Abgeschlossen:** 2026-08-15 · **Angelegt:** 2026-08-15 · **Max Files:** 6 (dieser CR: **6**)
 **Ziel:** `docs/articles/` publikationsreif — jeder Claim entweder belegt, korrigiert oder gestrichen.
 **Herkunft:** Claim-Audit 2026-08-15 gegen `@sigloch/contracts@4.0.0` (ONTOLOGY 6.0.0,
 RULES 2.26.0), `docs/executor-abschlussbericht.md`, `docs/spikes/` und

@@ -1,6 +1,6 @@
 # CR-GC-343 — Nachdokumentation: was ausgeliefert ist, aber nirgends steht
 
-**Status:** open · **Angelegt:** 2026-08-15 · **Max Files:** 6 (dieser CR: **4**)
+**Status:** done · **Abgeschlossen:** 2026-08-15 · **Angelegt:** 2026-08-15 · **Max Files:** 6 (dieser CR: **4**)
 **Ziel:** README und Artikel bilden den ausgelieferten Funktionsumfang ab.
 **Reihenfolge:** **nach** CR-GC-339 (der korrigiert dieselben Artikel-Dateien; erst korrigieren,
 dann ergänzen — sonst Merge-Konflikte in Prosa).

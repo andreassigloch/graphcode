@@ -1,6 +1,6 @@
 # CR-GC-341 — Steuerungsnachweis II: Regel-Korrektheit und Prozess-Ratsche
 
-**Status:** open · **Angelegt:** 2026-08-15 · **Max Files:** 6 (dieser CR: **3**)
+**Status:** done · **Abgeschlossen:** 2026-08-15 · **Angelegt:** 2026-08-15 · **Max Files:** 6 (dieser CR: **3**)
 **Ziel:** Claim a) („Regeln machen den Graphen korrekt") und Claim b) („wir steuern den Kunden
 durch den SE-Prozess") sind kausal belegt.
 **Vorbedingung:** CR-GC-340 — dort steht das **vollständige Testkonzept** (§2) und dort entsteht

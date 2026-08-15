@@ -1,6 +1,6 @@
 # CR-GC-342 — Das eigene Modell reparieren: die Ableitungskette der Anforderungen
 
-**Status:** open · **Angelegt:** 2026-08-15 · **Max Files:** 6 (dieser CR: **2 Dateien, aber
+**Status:** done (Block 1) · **Abgeschlossen:** 2026-08-15 · **Angelegt:** 2026-08-15 · **Max Files:** 6 (dieser CR: **2 Dateien, aber
 ~70 Gate-Mutationen — s. §6 zur Schnittfrage**)
 **Ziel:** graphcode's eigenes Modell erfüllt die Ableitungs- und Stilregeln, die graphcode
 Kunden auferlegt.
@@ -206,3 +206,28 @@ Abwesenheit sieht. Das ist kein Werkzeugfehler, sondern die Bestätigung des Sat
 MESSGROESSEN — und der Grund, warum §3 (die Regel) wichtiger ist als §2 (die Daten).
 
 @author andreas@siglochconsulting
+
+---
+
+## 8. Abschluss 2026-08-15 — was wirklich drin ist
+
+Geschlossen nach dem Schnitt aus §6: **Block 1 (§2.1) + §2.3 + §2.4**, alles durchs Gate
+(`graph_mutate` → `graph_export`), kein Hand-Edit am SSOT.
+
+| Kriterium | Stand |
+|---|---|
+| `UC-deterministic-steering` ≥ 6 REQ, je mit verify-TEST | **7** ✅ |
+| `UC-reduced-llm` ≥ 2 REQ, je mit verify-TEST | **3** ✅ |
+| Weiterhin 0 REQ ohne verify-TEST | **0 von 123** ✅ |
+| `UC-live-graph-view` / `UC-graph-time-travel` auf `se:author-uc` | ✅ (Actor–Verb–Objekt–Ergebnis, ≤ 25 Wörter, keine CR-IDs, keine internen Kürzel) |
+| `UC-graph-time-travel` mit `SYS compose` + Milestone | ✅ (`SYS-graphcode`, `MS-6-adoption`) |
+| `mvp-e2e.test.ts` nennt nur existierende UCs | ✅ (`UC-token-efficiency` entfernt) |
+
+Zusätzlich, weil der Nutzen fast null kostete: **`UC-code-quality`** hat zwei weitere REQ mit Test
+bekommen (`REQ-published-counts-match-code`, `REQ-single-write-door`) — die beiden Zusagen, die
+CR-GC-339/340/341 neu erzwingen. Und die fünf CRs dieses Satzes stehen als CR-Knoten im Graphen,
+mit `commitRef`, `relation`→REQ, `relation`→FUNC und Milestone-Zuordnung.
+
+**Nicht drin, bewusst:** §2.2 — die Ableitungskanten der elternlosen REQ (Messung nach diesem CR:
+**75 von 123**). Das ist der Block, den §6 ausdrücklich in einen eigenen Lauf schneidet: pro REQ eine
+bewusste Entscheidung UC vs. SYS, keine Heuristik. → **CR-GC-350**.

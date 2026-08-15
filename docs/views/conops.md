@@ -75,16 +75,16 @@ Ausgeloest von: `ACTOR-developer` · `ACTOR-systems-engineer` · `ACTOR-vibe-cod
 
 ### `UC-graph-time-travel` — Graph-Stand pro Commit wiederherstellbar
 
-Als Entwickler will ich den governten Graph-Stand jedes Commits wiederherstellen koennen, sodass Modell und Code zu jedem Commit zusammenpassen — fruehere Modell-Staende sind reproduzierbar, ohne ein zweites Store-Handle. (CR-GC-217 Approach A, Operation CR-GC-311)
+Als Entwickler will ich den Modellstand eines beliebigen Commits wiederherstellen, damit Modell und Code zu jedem Zeitpunkt zusammenpassen.
 
 Ausgeloest von: `ACTOR-developer`
 
 - `FCHAIN-recall` — Recall (Wiederherstellen): `FUNC-reseed` → `FUNC-rewind`
 - `FCHAIN-snapshot-freshness` — Snapshot-Freshness (Aufzeichnen): `FUNC-graph-export-snapshot` → `FUNC-mutate` → `FUNC-save-graph`
 
-### `UC-live-graph-view` — Live-Graph-View (Ziel b)
+### `UC-live-graph-view` — Modellstand live mitlesen
 
-Read-only Live-Dashboard: jede Mutation aktualisiert die Ansicht ohne Reload (SSE invalidate), Readiness/INCOSE-Gates gegen contracts V3_RULES (nicht BQ-2.0.0). Über den Host (Single-Kuzu-Owner), kein 2. DB-Handle.
+Als Entwickler will ich den aktuellen Modellstand live mitlesen, ohne die Ansicht neu zu laden, damit ich die Wirkung jeder Aenderung sofort sehe.
 
 Ausgeloest von: `ACTOR-dashboard` · `ACTOR-developer`
 
@@ -230,6 +230,11 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-319` | done | audit_trail lieferte Rohdatensaetze statt einer Projektion | `MOD-mcp-tools` |
 | `CR-GC-330` | done | Der Learning-Feed zieht in den eigenen Workspace | `FUNC-emit-trajectory` · `REQ-post-emit-trajectory` · `REQ-trajectory-emit` |
 | `CR-GC-331` | done | graphcode remove raeumt auch den Vorgaenger-Ordner weg | `FUNC-harness-cli` · `REQ-repo-uninstall` |
+| `CR-GC-339` | done | Artikel-Claims belastbar machen | `FUNC-export-markdown` |
+| `CR-GC-340` | done | Steuerungsnachweis I: Messpfad und Architektur-Richtung | `FUNC-check-code-conformance` · `FUNC-graph-suggest` · `FUNC-take-steering-snapshot` · `REQ-applied-suggestion-moves-target` · `REQ-published-counts-match-code` · `REQ-single-measurement-path` · `REQ-target-shifts-ranking` · `REQ-thresholds-from-config` |
+| `CR-GC-341` | done | Steuerungsnachweis II: Regel-Korrektheit und Prozess-Ratsche | `FUNC-compute-phase-readiness` · `FUNC-mutate` · `REQ-monotone-convergence` · `REQ-phase-gate-not-skippable` · `REQ-single-write-door` |
+| `CR-GC-342` | done | Eigenes Modell: Ableitungskette der Anforderungen | `FUNC-mutate` · `REQ-graph-context-replaces-reading` · `REQ-one-driver-local-and-frontier` |
+| `CR-GC-343` | done | Nachdokumentation ausgelieferter Funktion | `FUNC-export-markdown` · `REQ-published-counts-match-code` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

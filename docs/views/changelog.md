@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 158 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 163 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 158 CR · 149 done · 8 open.
+Total: 163 CR · 154 done · 8 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -93,6 +93,11 @@ Total: 158 CR · 149 done · 8 open.
 | `CR-GC-239` | done | Gate lehnt malformed Commands hart ab |
 | `CR-GC-330` | done | Der Learning-Feed zieht in den eigenen Workspace |
 | `CR-GC-331` | done | graphcode remove raeumt auch den Vorgaenger-Ordner weg |
+| `CR-GC-339` | done | Artikel-Claims belastbar machen |
+| `CR-GC-340` | done | Steuerungsnachweis I: Messpfad und Architektur-Richtung |
+| `CR-GC-341` | done | Steuerungsnachweis II: Regel-Korrektheit und Prozess-Ratsche |
+| `CR-GC-342` | done | Eigenes Modell: Ableitungskette der Anforderungen |
+| `CR-GC-343` | done | Nachdokumentation ausgelieferter Funktion |
 
 ## `MS-7-concurrency` — Enterprise concurrency & merge (one write channel)
 

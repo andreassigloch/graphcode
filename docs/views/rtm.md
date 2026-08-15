@@ -4,7 +4,7 @@
 
 # graphcode — Requirements Traceability Matrix (RTM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 113 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 123 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
 
 
 ### System (SYS.2) — 23 REQ
@@ -35,30 +35,40 @@
 | `REQ-store-recovery` | `TEST-store-recovery` | `MOD-harness` | — |
 | `REQ-token-efficiency` | `TEST-token-efficiency` | — | — |
 
-### funktional (SWE.1) — 21 REQ
+### funktional (SWE.1) — 31 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
+| `REQ-applied-suggestion-moves-target` | `TEST-applied-suggestion-moves-target` | — | — |
 | `REQ-artifact-freshness` | `TEST-artifact-freshness` | `FUNC-render-artifacts` · `MOD-dashboard` | `MOD-dashboard` |
 | `REQ-code-governed-quality` | `TEST-code-quality` · `TEST-mvp-e2e` | `FCHAIN-apply-gate` · `FUNC-test` · `FUNC-test-ui` | `MOD-skills` |
 | `REQ-completeness-actor-bounded` | `TEST-completeness-actor-bounded` | `FUNC-score-completeness` | `MOD-harness` |
 | `REQ-completeness-single-value` | `TEST-completeness-single-value` | `FUNC-score-completeness` | `MOD-harness` |
 | `REQ-dashboard-ontology-sync` | `TEST-dashboard-ontology-sync` | `MOD-dashboard` | — |
 | `REQ-dashboard-readonly` | `TEST-dashboard-readonly` | `MOD-dashboard` | — |
+| `REQ-graph-context-replaces-reading` | `TEST-graph-context-replaces-reading` | — | — |
 | `REQ-graph-snapshot-per-commit` | `TEST-graph-time-travel` | `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot` · `FUNC-mutate` | `MOD-harness` · `MOD-mcp-tools` |
 | `REQ-graph-state-recall` | `TEST-graph-time-travel` | `FCHAIN-recall` · `FUNC-reseed` · `FUNC-rewind` · `MOD-harness` | `MOD-cli` · `MOD-harness` |
 | `REQ-impact-based-testing` | `TEST-efficient-testing` · `TEST-mvp-e2e` | `FCHAIN-impact-testing` | — |
 | `REQ-interface-change-escalation` | `TEST-interface-escalation` | `FCHAIN-interface-escalation` | — |
+| `REQ-monotone-convergence` | `TEST-monotone-convergence` | — | — |
 | `REQ-mutation-emits-event` | `TEST-live-view` | `FCHAIN-live-update` · `FUNC-emit-update-event` | `MOD-hooks` |
+| `REQ-one-driver-local-and-frontier` | `TEST-one-driver-local-and-frontier` | — | — |
+| `REQ-phase-gate-not-skippable` | `TEST-phase-gate-not-skippable` | — | — |
+| `REQ-published-counts-match-code` | `TEST-published-counts-match-code` | — | — |
 | `REQ-quality-metric` | `TEST-code-quality` | `MOD-harness` | — |
 | `REQ-readiness-completeness` | `TEST-readiness-completeness` | `FUNC-score-completeness` | `MOD-harness` |
 | `REQ-readiness-transparent` | `TEST-readiness-transparent` | `FUNC-render-readiness` · `MOD-dashboard` | `MOD-dashboard` |
 | `REQ-readonly-bridge` | `TEST-readonly-bridge` | `FUNC-serve-sse` · `MOD-host-bridge` | `MOD-host-bridge` |
 | `REQ-real-health-check` | `TEST-real-health-check` | `FUNC-health-endpoint` · `MOD-host-bridge` | `MOD-host-bridge` |
+| `REQ-single-measurement-path` | `TEST-single-measurement-path` | — | — |
+| `REQ-single-write-door` | `TEST-single-write-door` | — | — |
 | `REQ-small-model-viable` | `TEST-mvp-e2e` · `TEST-reduced-llm` | `FCHAIN-modelfree-gate` · `FUNC-graph-suggest` | `MOD-mcp-tools` |
 | `REQ-steering-from-metrics` | `TEST-steering-loop` | `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` | `MOD-steering` |
 | `REQ-structure-driven` | `TEST-code-quality` | `SYS-graphcode` | — |
+| `REQ-target-shifts-ranking` | `TEST-target-shifts-ranking` | — | — |
 | `REQ-test-runnable-binding` | `TEST-test-runnable-binding` | `FUNC-deduce-tests` · `MOD-mcp-tools` | `MOD-mcp-tools` |
+| `REQ-thresholds-from-config` | `TEST-thresholds-from-config` | — | — |
 | `REQ-versioned-broadcast` | `TEST-live-view` | `FUNC-broadcast-diff` · `FUNC-emit-update-event` · `MOD-host-bridge` | `MOD-hooks` · `MOD-host-bridge` |
 
 ### Integration (SWE.4) — 31 REQ
