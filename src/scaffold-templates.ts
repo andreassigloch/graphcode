@@ -165,22 +165,37 @@ export function packagedSettingsPath(): string {
   return join(dirname(fileURLToPath(import.meta.url)), '..', SETTINGS_FILE);
 }
 
-/** The `deny-*.sh` hook files this package ships (empty if the dir is absent). */
+/**
+ * The hook scripts this package ships (empty if the dir is absent).
+ *
+ * Every `.sh` in the packaged hooks dir, not just `deny-*` (CR-GC-356): the dir holds
+ * graphcode's hooks and nothing else, and a name-prefix filter would have silently dropped
+ * `record-prompt.sh` from every scaffolded repo — installed here, absent for consumers.
+ */
 export function shippedHookFiles(): string[] {
   const dir = packagedHooksDir();
   if (!existsSync(dir)) return [];
   return readdirSync(dir)
-    .filter((f) => f.startsWith('deny-') && f.endsWith('.sh'))
+    .filter((f) => f.endsWith('.sh'))
     .sort();
 }
 
-/** The PreToolUse entries to inject — read LIVE from this package's settings (no parallel list). */
-export function shippedPreToolUseEntries(): HookEntry[] {
+/**
+ * The hook entries to inject, PER EVENT — read LIVE from this package's settings, which stays
+ * the single source for WHICH hooks get registered (no parallel list). Generalized from
+ * PreToolUse-only in CR-GC-356: the prompt relay is a `UserPromptSubmit` hook, and hard-coding
+ * event names here is the same drift source as hard-coding the file list.
+ */
+export function shippedHookEvents(): Record<string, HookEntry[]> {
   const p = packagedSettingsPath();
-  if (!existsSync(p)) return [];
+  if (!existsSync(p)) return {};
   const s = JSON.parse(readFileSync(p, 'utf8')) as SettingsShape;
-  const pre = s.hooks?.PreToolUse;
-  return Array.isArray(pre) ? pre : [];
+  const hooks = s.hooks && typeof s.hooks === 'object' ? s.hooks : {};
+  const out: Record<string, HookEntry[]> = {};
+  for (const [event, entries] of Object.entries(hooks)) {
+    if (Array.isArray(entries)) out[event] = entries as HookEntry[];
+  }
+  return out;
 }
 
 /** A PreToolUse entry is graphcode-owned iff any of its commands points into `.claude/hooks/`. */
@@ -199,12 +214,13 @@ export function isGraphcodeHookEntry(entry: HookEntry): boolean {
 export function mergedSettingsContent(existingRaw: string | null): string {
   const existing: SettingsShape = existingRaw ? (JSON.parse(existingRaw) as SettingsShape) : {};
   const hooks = existing.hooks && typeof existing.hooks === 'object' ? existing.hooks : {};
-  const pre = Array.isArray(hooks.PreToolUse) ? hooks.PreToolUse : [];
-  const userPre = pre.filter((e) => !isGraphcodeHookEntry(e));
-  const merged: SettingsShape = {
-    ...existing,
-    hooks: { ...hooks, PreToolUse: [...userPre, ...shippedPreToolUseEntries()] },
-  };
+  const nextHooks: Record<string, unknown> = { ...hooks };
+  for (const [event, shipped] of Object.entries(shippedHookEvents())) {
+    const current = Array.isArray(nextHooks[event]) ? (nextHooks[event] as HookEntry[]) : [];
+    const userOwned = current.filter((e) => !isGraphcodeHookEntry(e));
+    nextHooks[event] = [...userOwned, ...shipped];
+  }
+  const merged: SettingsShape = { ...existing, hooks: nextHooks as SettingsShape['hooks'] };
   return JSON.stringify(merged, null, 2) + '\n';
 }
 

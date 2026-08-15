@@ -72,6 +72,7 @@ import {
   guardrailsContent,
   steeringContent,
   type SettingsShape,
+  type HookEntry,
 } from './scaffold-templates.js';
 
 
@@ -361,11 +362,16 @@ function removeHooks(repoRoot: string, res: InstallResult): void {
     const existingRaw = readFileSync(abs, 'utf8');
     const existing = JSON.parse(existingRaw) as SettingsShape;
     const hooks = existing.hooks && typeof existing.hooks === 'object' ? existing.hooks : {};
-    const pre = Array.isArray(hooks.PreToolUse) ? hooks.PreToolUse : [];
-    const userPre = pre.filter((e) => !isGraphcodeHookEntry(e));
     const nextHooks: Record<string, unknown> = { ...hooks };
-    if (userPre.length > 0) nextHooks.PreToolUse = userPre;
-    else delete nextHooks.PreToolUse;
+    // Every event we register, not just PreToolUse (CR-GC-356) — and driven by what is
+    // ACTUALLY in the file, so removing still works for a repo scaffolded by an older
+    // version that registered events this one no longer ships.
+    for (const [event, entries] of Object.entries(hooks)) {
+      if (!Array.isArray(entries)) continue;
+      const userOwned = (entries as HookEntry[]).filter((e) => !isGraphcodeHookEntry(e));
+      if (userOwned.length > 0) nextHooks[event] = userOwned;
+      else delete nextHooks[event];
+    }
     const next: SettingsShape = { ...existing };
     if (Object.keys(nextHooks).length === 0) delete next.hooks;
     else next.hooks = nextHooks as SettingsShape['hooks'];
