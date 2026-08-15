@@ -1,6 +1,6 @@
 # CR-GC-353 — Steuerungsnachweis III: die Lücken aus CR-GC-340/341 schließen
 
-**Status:** open · **Angelegt:** 2026-08-15 · **Max Files:** 6 (dieser CR: **4**)
+**Status:** done · **Angelegt:** 2026-08-15 · **Abgeschlossen:** 2026-08-15 · **Max Files:** 6 (dieser CR: **5**)
 **Ziel:** die drei Aussagen, die CR-GC-340/341 versprochen und **nicht** belegt haben, sind entweder
 belegt oder ausdrücklich als nicht-belegt dokumentiert — kein stiller Rest.
 **Herkunft:** Abgleich der Akzeptanzkriterien von CR-GC-340/341 gegen den Commit `5285b40`
@@ -47,14 +47,28 @@ ein Consumer-Pflaster; Root Cause = **CR-GC-351**, Anwendbarkeit der Arch-Sugges
 
 Je Phase-Gate die zugehörige View über `exportMarkdown(graph, view, name)`
 ([`src/exporter.ts:312`](../../../src/exporter.ts)) auf demselben Graphen **vor** und **nach**
-Schließen des Gates rendern:
+Schließen des Gates rendern.
 
-| Gate | View |
-|---|---|
-| SRR | `rtm` |
-| PDR | `arch` |
-| CDR | `icd` |
-| TRR | `testmatrix` |
+**Korrigiert beim Bau — die geplante Zuordnung ging nicht auf.** Sie war Gate→View gedacht; eine
+View kann aber nur die Lücke einer **Regel** markieren, die sie überhaupt kennt. Ein Gate bündelt
+26–29 Regeln, von denen keine einzige View mehr als eine oder zwei markiert — die
+Vorher-Assertion („die Lücke ist als Zeile ausgewiesen") wäre entweder falsch oder auf eine
+Teilmenge verwässert worden. Der Nachweis läuft deshalb über vier **Regel→View**-Tripel, je eines
+pro Gate; zusätzlich hiess die geplante View `arch` gar nicht so:
+
+| Gate | Regel | View | Fehlmarkierung im Dokument |
+|---|---|---|---|
+| SRR | R-16 (ACTOR ohne io→UC) | `conops` §3 | `keine UC-Kopplung im Graph` |
+| PDR | R-22 (FUNC ohne allocate) | `architecture` | `⚠ nicht alloziert (R-22)` |
+| CDR | R-26 (SCHEMA ohne realRef) | `icd` | `⚠ kein realRef (R-26)` |
+| TRR | R-01 (REQ ohne verify) | `rtm` + `testmatrix` | `⚠ R-01 no verify` / `✗` |
+
+**Ein Produktions-Fix wurde dabei nötig** (deshalb 5 statt 4 Dateien): `architecture` markierte
+**nichts**. Die Allokationstabelle iterierte über die `allocate`-**Kanten**, also verschwand eine
+nicht allozierte FUNC ersatzlos aus dem Dokument — exakt die stille Klasse aus CR-GC-308. Sie
+iteriert jetzt über die FUNC (R-22s Domäne); `allocate` hat genau ein legales TRACE_PATTERN
+(FUNC→MOD), es geht also keine Kante verloren. Wirkung im echten Graphen: drei bis dahin unsichtbare
+R-22-Funde stehen jetzt in `docs/views/architecture.md`.
 
 Assertions je Paar:
 
@@ -72,6 +86,15 @@ Fixture-Austausch — sonst vergleicht der Test zwei Welten statt eines Fortschr
 
 Auf den beiden Zuständen des T-B4-Graphen zusätzlich `generationStep(...).phase` und `focusTypes`
 prüfen. Damit ist die Leiter einmal auf einem echten Graphen belegt, nicht nur über `RULE_TO_PHASE`.
+
+**Grenze, beim Bau gemessen und im Test benannt:** der Gate-**Zeiger** bewegt sich dabei *nicht* —
+`GATE_FIXTURE` trägt weitere offene SRR-Regeln (UC-03/UC-05/UC-06/FC-02/MS-01/…), also bleibt SRR
+per Definition von `currentPhaseGate` aktuell. Belegt ist die Kopplung eine Ebene tiefer: die
+`missing`-Regelliste jedes Gates verliert genau die reparierte Regel und gewinnt **keine** neue.
+Nicht „genau eine weniger": das Schliessen von R-22 hat gemessen auch **MT-01** geschlossen, weil
+die Instabilität von `MOD-parsing` unter die Urteilsschwelle fiel. Ein zweiter Effekt eines
+strukturellen Edits ist real — „nur die Zielregel bewegt sich" zu behaupten wäre eine falsche
+Aussage über das Modell.
 
 ### T-B3 · Grenze festschreiben statt nachbessern
 
@@ -102,33 +125,48 @@ Nur Text. Kein Verhaltens-Änderung am Echo: `target` bleibt der rohe Input (T-C
 
 ## 4. Akzeptanzkriterien
 
-- [ ] **T-B4**: vier Gate/View-Paare, je vorher/nachher, Zustandswechsel über `mutate()`; das
-      Vorher weist die Lücke als Zeile mit Fehlmarkierung aus.
-- [ ] **T-B4-Kopplung**: die Lücken-Elemente der Vorher-View = die `element_id` der offenen
-      Violations des Gates.
-- [ ] **T-B1-Nachzug**: `generationStep().phase` und `focusTypes` auf beiden Zuständen des echten
-      Graphen geprüft.
-- [ ] **T-B3**: Nachtrags-Zeile in CR-GC-341 §3; das Kriterium ist nicht mehr offen, sondern
-      zurückgezogen-mit-Begründung.
-- [ ] **Doku**: Tool-Beschreibung und Skill sagen „Richtung, nicht Betrag"; die Aussage hängt am
-      bestehenden Test (Verweis auf T-C4), nicht an neuer Prosa.
-- [ ] Alle Tests **red-first** nachgewiesen (`se-test`) — je Assertion einmal aus dem *richtigen*
-      Grund rot gesehen.
-- [ ] Disk-Kuzu, keine Mocks, kein `:memory:`.
-- [ ] `npm run build` + `npm test` grün.
+- [x] **T-B4**: vier Regel/View-Paare (statt Gate/View, §3), je vorher/nachher, Zustandswechsel über
+      `harness.mutate()` mit dem Batch des skriptierten Aktors; das Vorher weist die Lücke als Zeile
+      mit Fehlmarkierung aus — **und** die Zeile existiert nachher noch, nur ohne Markierung.
+- [x] **T-B4-Kopplung**: die Lücken-Elemente der Vorher-View = die `elementId` der offenen
+      Violations der Regel — Gleichheit, keine Teilmenge. Ein eigener Test hält fest, dass jede der
+      vier Regeln in der Fixture **genau einen** Fund hat, sonst wäre die Gleichheit Zufall.
+- [x] **T-B1-Nachzug**: `generationStep().phase`/`focusTypes` und die `missing`-Listen aller vier
+      Gates auf beiden Zuständen des echten Graphen geprüft (Grenze in §3 benannt).
+- [x] **T-B3**: Nachtrags-Zeile in CR-GC-341 §3; das Kriterium ist zurückgezogen-mit-Begründung,
+      die Datei bleibt in `done/`.
+- [x] **Doku**: `src/tools/suggest.ts` und `se:target-profile` §1 sagen „Richtung, nicht Betrag",
+      mit Verweis auf den bestehenden T-C4-Test — kein neuer Test, keine neue Prosa-Behauptung.
+- [x] Alle tragenden Assertions **red-first** nachgewiesen — je einmal aus dem *richtigen* Grund
+      rot gesehen: Markierung entfernt → `does not mark … as a gap`; Reparatur zum No-Op → `openFor`
+      bleibt gefüllt; View markiert zu viel → `marks something the gate does not`; Zeile
+      weggelassen (CR-GC-308-Klasse) → `does not mention … at all`.
+- [x] Disk-Kuzu (temp dir), keine Mocks, kein `:memory:`.
+- [x] `npm run build` grün · `npm test`: **719/720**. Der eine Fehlschlag
+      (`tests/audit.trail-projection.test.ts`, 76,3 KB von 575,8 KB statt ≤ 11 %) ist **vorbestehend
+      und fremd** — er gehört zu CR-GC-346 §3 F3, ist dort als „heute rot" dokumentiert und fällt
+      mit `git stash` auf identische Zahl.
 
 ---
 
-## 5. Betroffene Dateien (4)
+## 5. Betroffene Dateien (5)
 
 | Datei | Inhalt |
 |---|---|
 | `tests/steering.artifact-coupling.test.ts` | **neu** — T-B4 + T-B1-Nachzug |
-| `tests/fixtures/steering-graphs.ts` | erweitern: der Graph, der die vier Gates nacheinander schließt |
+| `tests/fixtures/steering-graphs.ts` | `GATE_FIXTURE`/`GATE_FINDINGS` (ein Fund je Gate) + `testRefFor` |
+| `src/exporter.ts` | `renderArchitecture`: pro FUNC statt pro Kante, mit R-22-Fehlmarkierung (§3) |
 | `src/tools/suggest.ts` | `target`-Feldbeschreibung: Richtung, nicht Betrag |
 | `.claude/commands/se/target-profile.md` | §1: Gewichte wirken relativ zueinander |
 
-Plus die Nachtrags-Zeile in `docs/cr/done/CR-GC-341-…md` (Doku, kein Code).
+Plus die Nachtrags-Zeile in `docs/cr/done/CR-GC-341-…md` und `docs/views/architecture.md`
+(generiert, zieht per `scripts/export-graph.mjs` nach — kein Hand-Edit).
+
+**Zweiter Fund beim Bau, hier mitgefixt:** `scriptedActor` gab **jedem** erzeugten TEST dieselbe
+`testRefs`-Datei. R-29 („eine Testdatei gehört höchstens einem TEST", **error**) liess das Gate den
+R-01-Reparaturbatch deshalb ab — `TEST-parse` beanspruchte `steering-graphs.ts` bereits. Das war
+eine Eigenschaft des Aktors, nicht ein Befund über den Regler: ein dummer Aktor darf langweilige
+Bindungen schreiben, aber keine illegalen. Jeder erzeugte TEST bekommt jetzt eine eigene Datei.
 
 ---
 
