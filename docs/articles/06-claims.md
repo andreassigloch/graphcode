@@ -126,9 +126,21 @@ communicates the result, and writes storage back.
 
 ## And where's the systems engineering in that?
 
-INCOSE guidelines translated into rules, INCOSE processes coded as skills, documents generated from the
-graph. Traceability is guaranteed by the same graph rules. Actual INCOSE documents and methods are
-still designed for humans, not for LLMs or computable KPIs.
+INCOSE guidelines translated into rules, INCOSE processes coded as skills, and — the part usually
+skipped over in one clause — **the document family itself, generated from the graph**: requirements
+traceability matrix, architecture allocation, interface control document, NFR register, test concept
+and verification matrix, integration and implementation plan, concept of operations, FMEA, trade
+studies, change log. Twelve documents, each rendered deterministically: same graph, same bytes, no
+hand-maintained copy drifting behind the model.
+
+That is what "traceability is guaranteed by the same graph rules" actually buys. The matrix is not a
+document somebody keeps up to date; it is a view. A hole in it is a hole in the model, and the same
+rule that put the hole in the document also blocks the gate — one cause, two places you notice it.
+For anyone arriving from the systems-engineering side, this is usually the most immediately legible
+part of the whole thing: the deliverables they already owe an auditor, falling out of the model they
+were building anyway.
+
+Actual INCOSE documents and methods are still designed for humans, not for LLMs or computable KPIs.
 
 ## Does it speak SysML v2?
 

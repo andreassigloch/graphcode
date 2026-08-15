@@ -69,6 +69,30 @@ gate. That matters most for small models, which guess the mutation shape badly.
 And **`graph_next_step()`** condenses the whole advisory rule set into one prioritized action, derived
 from the weakest readiness dimension. Deterministic — no model involved in deciding what to do next.
 
+## Closing the loop back to the code
+
+A model of a system is only worth having if it stays attached to the system. Two tools do that
+attaching, and both are checked by rules rather than by good intentions:
+
+- **`graph_realize(id, ref)`** binds a model element to the artifact that realizes it — the file and
+  symbol behind a function or a data shape, the test file and case behind a test. The binding is an
+  attribute, and its absence is a rule finding (a realized function without a code reference, a
+  runnable test without a test reference), visible in every readiness report.
+- **`graph_test_ingest` / `graph_test_report` / `graph_tests`** feed a real test run's results back
+  into the graph. "Done" then means a result landed against the requirement — not that a status field
+  was set by hand.
+
+That is the honest answer to "your model will drift from your code". It can, and the graph will say
+so by name, which is more than a document does.
+
+## Recalling an earlier state
+
+`graphcode rewind <ref>` reconstructs the graph as it stood at any commit. The snapshot is read out
+of git's own object storage, so the working tree is untouched and nothing is overwritten. Against a
+tool that draws a picture of your current code, this is the structural difference: a picture of the
+past cannot be re-derived once the code has moved on, but a committed model can — every commit
+carries the model that went with it.
+
 ## The loop
 
 Specification through the gate → know the target by query → implement in real files → export back to

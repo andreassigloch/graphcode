@@ -96,15 +96,75 @@ falling back to the repo directory name.
 
 ### MCP tools
 
-| Tool | Role |
+All 25 MCP tools, grouped by role — this table is complete, and a test asserts the count against the
+live registry so it cannot silently fall behind the code.
+
+| Role | Tool | What it does |
+|---|---|---|
+| **read** | `graph_elements` | filtered slice of the graph, never a full dump |
+| | `graph_get_node` | one node with its attributes |
+| | `graph_get_edges` | the traces of one node |
+| | `graph_impact` | the exact blast-radius: who breaks if I change this (KNOW, not grep) |
+| | `graph_expand` | deepen one branch on demand |
+| | `graph_context` | the definition-of-done pack for ONE node — spec closure in one call |
+| **write** | `graph_mutate` | the write path — through the Apply-Gate (human or AI, same gate) |
+| | `graph_realize` | bind model to code: `realRef` on a FUNC/SCHEMA, `testRefs` on a TEST |
+| | `graph_merge` | additive merge (adds only) — the non-destructive import path |
+| | `graph_reseed` | in-process reseed from the committed SSOT, with an automatic backup |
+| **measure** | `rules_evaluate`, `rules_get_violations` | run the SE rules read-only |
+| | `graph_readiness` | the readiness report: dimensions, phase gates, blocking errors |
+| | `graph_metrics` | per-module architecture metrics **plus the thresholds they were judged against** |
+| | `graph_next_step` | the single highest-leverage next action, derived from readiness |
+| **generate** | `graph_generate` | the cold-start driver: seed → expand → handoff, as a state machine |
+| | `graph_suggest` | rank candidate fixes by how far they move the graph toward your target |
+| | `graph_authoring_guide` | the legal edges for a given element type, before you write |
+| **test evidence** | `graph_test_ingest` | feed a test run's results back into the graph |
+| | `graph_test_report` | the report over those results |
+| | `graph_tests` | which tests exist, and what they are bound to |
+| **export** | `graph_export` | re-export the live graph to `docs/graph` + `docs/views` |
+| **audit** | `audit_trail`, `audit_stats` | mutation history — every gate write logged |
+| **help** | `graph_help` | explain any rule ID, gate, or dashboard token (read-only) |
+
+`graph_realize`, `graph_test_ingest`/`graph_test_report`/`graph_tests` are the answer to the obvious
+objection that a model can drift from its code: the binding is an attribute the rules check (R-19,
+R-20), and "done" means a test result landed in the graph, not that someone ticked a box.
+
+### Bringing an existing project in
+
+You do not have to start from an empty graph. Two import paths ship, with **deliberately different
+semantics** — the difference is safety-relevant, not cosmetic:
+
+| Skill | Source | Semantics |
+|---|---|---|
+| `se:import-code` | an existing TypeScript codebase | deterministic extraction via graphify — **no LLM**. Produces FUNC/MOD/FLOW/SCHEMA, never use cases or requirements (nobody can read intent out of code). **RESEED, not merge**: the graph is replaced, and a backup is written automatically first. |
+| `se:import-doc` | a document (PDF / Markdown / text) | two-stage: the skeleton is shown to you, you decide the element types in chat, then an LLM extract goes through the Apply-Gate like any other write. **MERGE (adds only)** — nothing existing is removed. |
+
+Use `import-code` to bootstrap a brownfield repo's architecture layer, then `import-doc` to bring the
+specification in on top of it.
+
+### Generated documents
+
+The SE document family is rendered from the graph, deterministically — same graph, same bytes. Each
+has a skill that renders it into `docs/views/`:
+
+| Skill | Document |
 |---|---|
-| `graph_elements`, `graph_get_node`, `graph_get_edges` | read slices of the graph |
-| `graph_impact`, `graph_expand` | precise blast-radius / progressive deepening (KNOW) |
-| `graph_mutate` | the write path — through the Apply-Gate (human or AI, same gate) |
-| `graph_export` | re-export the live graph to `docs/graph` + `docs/views` |
-| `rules_evaluate`, `rules_get_violations` | run the SE rules (`V3_RULES`) read-only |
-| `audit_trail`, `audit_stats` | mutation history (every gate write logged) |
-| `graph_help` | explain any dashboard token / give ranked, explained next steps (read-only) |
+| `se-view:rtm` | Requirements Traceability Matrix |
+| `se-view:arch` | Architecture allocation (SDD) |
+| `se-view:icd` | Interface Control Document |
+| `se-view:nfr` | NFR register |
+| `se-view:testconcept` · `se-view:testmatrix` | test concept (pyramid + computed E2E gap) · VCRM |
+| `se-view:intplan` · `se-view:implplan` | integration & test plan · implementation plan (MS/CR) |
+| `se-view:conops` | Concept of Operations (ISO 29148 §5.2.4) |
+| `se-view:fmea` | FMEA — failure modes, S/O/D, action priority |
+| `se-view:trade` | trade studies — decisions and superseded options |
+| `se-view:changelog` | change log from the CR history |
+
+Because they are generated, "the document is incomplete" and "the gate is still open" are the same
+fact with the same cause — there is no separate documentation debt to track.
+
+`se-retro` computes the six KPIs over a finished stretch of work (graph-vs-grep, tool usage,
+token/LOC, plan conformance, gate health, binding coverage).
 
 ### Help — explain any item, for both audiences
 

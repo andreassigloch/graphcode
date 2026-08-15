@@ -87,7 +87,11 @@ talk to the graph. It is not tied to one vendor's assistant.
   early, instead of surfacing as a mystery six months later.
 - **Model and code can still drift apart.** The graph knows which code and which test belong to each
   element and complains when the link is missing — but it cannot tell you that the code behind a
-  correct link does the wrong thing.
+  correct link does the wrong thing. Two mechanisms narrow the gap without closing it: binding a
+  model element to its file and symbol is a tool call rather than a convention, and a missing binding
+  is a rule finding; and test results are ingested back into the graph, so "verified" means a run
+  reported it, not that someone set a field. What remains genuinely open is semantic correctness —
+  and no tool decides that.
 - **It requires discipline.** Every change to the model goes through the same checkpoint, including
   yours. There is no quick hand-edit "just this once" — that is the whole point, and some days it
   will annoy you.
