@@ -81,9 +81,11 @@
 
 | function | module |
 |---|---|
+| `FUNC-arch-fitness` | ⚠ nicht alloziert (R-22) |
 | `FUNC-broadcast-diff` | `MOD-host-bridge` |
 | `FUNC-check-code-conformance` | `MOD-harness` |
 | `FUNC-compute-phase-readiness` | `MOD-steering` |
+| `FUNC-compute-readiness` | ⚠ nicht alloziert (R-22) |
 | `FUNC-compute-steering-delta` | `MOD-steering` |
 | `FUNC-decode` | `MOD-codec` |
 | `FUNC-deduce-tests` | `MOD-mcp-tools` |
@@ -104,6 +106,7 @@
 | `FUNC-import` | `MOD-harness` |
 | `FUNC-merge-nodes` | `MOD-codec` |
 | `FUNC-migrate-schema` | `MOD-harness` |
+| `FUNC-module-metrics` | ⚠ nicht alloziert (R-22) |
 | `FUNC-mutate` | `MOD-harness` |
 | `FUNC-next-step` | `MOD-steering` |
 | `FUNC-own-kuzu-host` | `MOD-host-bridge` |

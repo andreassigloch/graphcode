@@ -37,9 +37,13 @@ const GraphSuggestInputSchema = z.object({
   // Gewichts-Form = target-profile.ts (CR-GC-295) — EIN Schema für Input und Config.
   target: TargetWeightsSchema.optional().describe(
     'Zielrichtung im Metrikraum: Gewicht je Dimension in [-1,1] (>0 heben, <0 senken; ' +
-      'fehlend = 0). Beispiel {"scalability": 1} = "raise scalability". Ohne Angabe wird ' +
-      '.graphcode/target-profile.json als Default gelesen (CR-GC-295); fehlt auch die, ' +
-      'bleibt das Ziel leer (richtungslos).',
+      'fehlend = 0). Nur die RICHTUNG wirkt, nicht der Betrag — der Vektor wird vor dem ' +
+      'Ranking L2-normalisiert, also rankt {"scalability": 1} exakt wie ' +
+      '{"scalability": 0.2}; entscheidend ist das VERHÄLTNIS der Dimensionen zueinander ' +
+      '(CR-GC-353, belegt durch T-C4). Das Feld `target` der Antwort echot den ROHEN ' +
+      'Input zurück, nicht den normalisierten Vektor. Beispiel {"scalability": 1} = ' +
+      '"raise scalability". Ohne Angabe wird .graphcode/target-profile.json als Default ' +
+      'gelesen (CR-GC-295); fehlt auch die, bleibt das Ziel leer (richtungslos).',
   ),
   k: z.number().int().positive().max(20).default(5).describe('Top-k Suggestions (Default 5).'),
   layer: z

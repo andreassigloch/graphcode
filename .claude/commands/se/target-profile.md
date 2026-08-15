@@ -20,6 +20,13 @@ description: Zielprofil (CREATE, EXPERT) — elicit the ℝ⁶ target weights fr
 
 Walk the human through each `MetricVector` dimension; weight in `[-1,1]`, `>0` raise, `<0` lower, missing/`0` = undecided. All 0 is valid (equal weighting — the pre-CR-295 behavior):
 
+> **Only the direction steers, not the magnitude (CR-GC-353).** `suggestEdits` L2-normalizes
+> the vector before it ranks, so `{ scalability: 1 }` and `{ scalability: 0.2 }` produce the
+> **identical** ranking. A weight is therefore not an intensity — it only means something in
+> **relation to the other dimensions**: `{ coherence: 1, scalability: 0.5 }` says "coherence
+> counts twice as much as scalability", and scaling both by any factor changes nothing. Do
+> not let the human read `0.2` as "a bit" and `1` as "a lot" of the same wish.
+
 | Dimension | raises when the graph … |
 |---|---|
 | `modifiability` | splits into loosely coupled communities |

@@ -143,6 +143,64 @@ export const ARCH_FIXTURE: FixtureGraph = {
 };
 
 // ---------------------------------------------------------------------------
+// The gate/artifact fixture (CR-GC-353 T-B4)
+// ---------------------------------------------------------------------------
+
+/**
+ * One open finding per phase gate, each of which a RENDERED VIEW marks as a gap —
+ * the subject of T-B4 ("the artifacts are process output, not decoration").
+ *
+ *   SRR · R-16  ACTOR-auditor has no io into a UC      → conops §3
+ *   PDR · R-22  FUNC-audit is allocated to no module   → architecture
+ *   CDR · R-26  SCHEMA-envelope carries no realRef     → icd
+ *   TRR · R-01  REQ-audit-trail is verified by nothing → rtm + testmatrix
+ *
+ * Built ON TOP of `ARCH_FIXTURE` rather than beside it: `scriptedActor` repairs
+ * against fixed anchors (`UC-ingest`, `MOD-parsing`), so the gate fixture must be a
+ * world that actuator already lives in. Extending instead of editing also keeps
+ * T-B3/T-B5 measuring the graph they were calibrated on — a fixture edit there
+ * would silently move the ratchet's baseline.
+ *
+ * Each of the four is the ONLY violation of its rule in this graph, which is what
+ * makes the coupling assertion ("marked in the document" = "open at the gate") an
+ * equality instead of a subset.
+ */
+export const GATE_FIXTURE: FixtureGraph = {
+  elements: [
+    ...ARCH_FIXTURE.elements,
+    {
+      id: 'SCHEMA-envelope',
+      type: 'SCHEMA',
+      name: 'DocumentEnvelope',
+      description: 'Shape of the raw document envelope carried into the parser.',
+      // No realRef, and neither `external` nor `concept` — so the ICD prints the
+      // R-26 warning rather than the legitimate "defined elsewhere" note.
+    },
+    {
+      id: 'REQ-audit-trail',
+      type: 'REQ',
+      name: 'Audit trail completeness',
+      description: 'Every accepted mutation appends exactly one record to the audit trail.',
+    },
+  ],
+  traces: [
+    ...ARCH_FIXTURE.traces,
+    { source: 'FLOW-document', target: 'SCHEMA-envelope', type: 'relation' },
+    { source: 'SYS-steering', target: 'REQ-audit-trail', type: 'compose' },
+    { source: 'FUNC-audit', target: 'REQ-audit-trail', type: 'satisfy' },
+    // Deliberately NO `TEST -verify-> REQ-audit-trail` — that is the R-01 finding.
+  ],
+};
+
+/** The four (gate, rule, element) triples `GATE_FIXTURE` opens, in lifecycle order. */
+export const GATE_FINDINGS = [
+  { gate: 'SRR', ruleId: 'R-16', elementId: 'ACTOR-auditor' },
+  { gate: 'PDR', ruleId: 'R-22', elementId: 'FUNC-audit' },
+  { gate: 'CDR', ruleId: 'R-26', elementId: 'SCHEMA-envelope' },
+  { gate: 'TRR', ruleId: 'R-01', elementId: 'REQ-audit-trail' },
+] as const;
+
+// ---------------------------------------------------------------------------
 // The scripted actuator (CR-GC-341 T-B3)
 // ---------------------------------------------------------------------------
 
@@ -174,6 +232,19 @@ export function parseFocusKey(focusKey: string): ParsedFocus {
  * Returns `null` for a rule it has no canonical batch for — the caller records
  * that as "the actuator could not act", never as progress.
  */
+/**
+ * The run binding for a TEST the actuator creates. ONE FILE PER TEST — R-29 is an
+ * ERROR-level rule ("a test file belongs to at most one TEST"), so handing every
+ * generated TEST the same path made the gate reject the whole batch. Measured in
+ * CR-GC-353: the R-01 repair was refused because `TEST-parse` already claimed
+ * `steering-graphs.ts`. The collision was an artefact of the actuator, not a
+ * finding about the controller — a dumb actuator may write dull bindings, but not
+ * illegal ones.
+ */
+const testRefFor = (uid: string, testCase: string) => [
+  { file: `tests/fixtures/generated/${uid}.test.ts`, case: testCase, tool: 'vitest', level: 'unit' },
+];
+
 export function scriptedActor(focus: ParsedFocus, seq: number): unknown[] | null {
   const { ruleId, elementIds } = focus;
   const cmds: unknown[] = [];
@@ -198,7 +269,7 @@ export function scriptedActor(focus: ParsedFocus, seq: number): unknown[] | null
         cmds.push(node(req, 'REQ', `Requirement for ${uc}`, `The system shall complete ${uc} within the agreed service window.`));
         cmds.push(
           node(test, 'TEST', `Test for ${uc}`, `Exercises ${uc} end to end and asserts the agreed service window.`, {
-            testRefs: [{ file: 'tests/fixtures/steering-graphs.ts', case: uc, tool: 'vitest', level: 'unit' }],
+            testRefs: testRefFor(test, uc),
           }),
         );
         cmds.push(edge(test, 'verify', req));
@@ -213,7 +284,7 @@ export function scriptedActor(focus: ParsedFocus, seq: number): unknown[] | null
         const test = `TEST-${req}-${seq}`;
         cmds.push(
           node(test, 'TEST', `Test for ${req}`, `Asserts the acceptance criterion stated in ${req}.`, {
-            testRefs: [{ file: 'tests/fixtures/steering-graphs.ts', case: req, tool: 'vitest', level: 'unit' }],
+            testRefs: testRefFor(test, req),
           }),
         );
         cmds.push(edge(test, 'verify', req));
@@ -228,7 +299,7 @@ export function scriptedActor(focus: ParsedFocus, seq: number): unknown[] | null
         cmds.push(node(req, 'REQ', `Requirement behind ${fn}`, `${fn} shall produce its documented result for every accepted input.`));
         cmds.push(
           node(test, 'TEST', `Test for ${fn}`, `Drives ${fn} over the accepted input set and asserts the documented result.`, {
-            testRefs: [{ file: 'tests/fixtures/steering-graphs.ts', case: fn, tool: 'vitest', level: 'unit' }],
+            testRefs: testRefFor(test, fn),
           }),
         );
         cmds.push(edge(test, 'verify', req));
@@ -282,7 +353,7 @@ export function scriptedActor(focus: ParsedFocus, seq: number): unknown[] | null
           op: 'update-node',
           node: {
             uid: id,
-            attributes: { testRefs: [{ file: 'tests/fixtures/steering-graphs.ts', case: id, tool: 'vitest', level: 'unit' }] },
+            attributes: { testRefs: testRefFor(id, id) },
           },
         });
       }
@@ -345,7 +416,7 @@ export function scriptedActor(focus: ParsedFocus, seq: number): unknown[] | null
         );
         cmds.push(
           node(test, 'TEST', `Test of the ${kind} of ${uc}`, `Asserts the ${kind} of ${uc} after the scenario runs.`, {
-            testRefs: [{ file: 'tests/fixtures/steering-graphs.ts', case: `${uc}-${kind}`, tool: 'vitest', level: 'unit' }],
+            testRefs: testRefFor(test, `${uc}-${kind}`),
           }),
         );
         cmds.push(edge(test, 'verify', req));

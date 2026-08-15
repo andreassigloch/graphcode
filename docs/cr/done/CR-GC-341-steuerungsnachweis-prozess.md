@@ -99,7 +99,23 @@ Zustand nicht ändern. Ohne diesen Test ist T-B3 nicht interpretierbar.
 - [ ] **T-B1**: vier Reifegrade, je erwartetes Gate + Phase + Fokus-Typen.
 - [ ] **T-B3**: aus leerem Graphen erreicht die Schleife `handoff`; `phaseReadiness` monoton,
       `blockingErrors` monoton fallend, kein `focusKey` doppelt.
+      > **Nachtrag 2026-08-15 (CR-GC-353): die `handoff`-Hälfte ist ZURÜCKGEZOGEN.** Belegt und
+      > gültig bleiben Monotonie und Nicht-Kreisen über einen beschränkten Lauf
+      > ([`tests/steering.process-ratchet.test.ts`](../../../tests/steering.process-ratchet.test.ts)).
+      > `handoff` verlangt zusätzlich, dass **alle vier** Phase-Gates regel-vollständig sind — also
+      > einen Aktor mit kanonischer Reparatur für praktisch jede Katalogregel. Das ist eine
+      > Eigenschaft des **Aktors**, nicht des Reglers unter Test; ein Aktor, der das kann, würde die
+      > eigene Fixture messen. Die ehrliche Aussage ist damit „die Steuerung fällt nicht zurück und
+      > kreist nicht", **nicht** „die Steuerung führt zum Ziel". Der CR bleibt in `done/` — er ist
+      > geliefert, nur nicht im ursprünglich versprochenen Umfang.
 - [ ] **T-B4**: je Gate ein Vorher/Nachher-Paar; das Vorher weist die Lücke aus.
+      > **Nachtrag 2026-08-15: nachgeliefert in CR-GC-353** —
+      > [`tests/steering.artifact-coupling.test.ts`](../../../tests/steering.artifact-coupling.test.ts).
+      > Statt der hier geplanten Gate→View-Zuordnung (`rtm`/`arch`/`icd`/`testmatrix`) trägt der
+      > Nachweis vier **Regel→View**-Tripel: nur eine View, die die Lücke ihrer Regel auch
+      > **markiert**, kann „das Vorher weist die Lücke aus" belegen. `arch` existiert ausserdem
+      > nicht — die View heisst `architecture`, und sie markierte gar nichts, bis CR-GC-353 ihr die
+      > R-22-Fehlmarkierung gab.
 - [ ] **T-B5**: `defer` ändert Fokus, nicht Zustand.
 - [ ] Alle Tests **red-first** nachgewiesen (`se-test`).
 - [ ] Disk-Kuzu, keine Mocks, kein `:memory:`.

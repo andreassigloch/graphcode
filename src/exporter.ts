@@ -253,15 +253,26 @@ function renderArchitecture(graph: Graph, name: string): string {
   }
   lines.push('');
 
-  // FUNC -allocate-> MOD assignment, sorted deterministically.
-  const allocations = graph.edges
-    .filter((e) => e.edgeType === 'allocate')
-    .map((e) => ({ s: e.sourceId, t: e.targetId }))
-    .sort((a, b) => a.s.localeCompare(b.s) || a.t.localeCompare(b.t));
-  lines.push('## Allokation (FUNC -allocate-> MOD)', '', '| function | module |', '|---|---|');
-  for (const a of allocations) {
-    lines.push(`| \`${a.s}\` | \`${a.t}\` |`);
+  // FUNC -allocate-> MOD assignment, one row per FUNC (not per edge). CR-GC-353:
+  // iterating the EDGES made an unallocated function vanish from the table — the
+  // silent-gap class CR-GC-308 already caught once ("compliance 1.0 auf leerer
+  // View"). R-22 is exactly "FUNC must be allocated to MOD", so the row has to
+  // exist and carry the finding, like `⚠ R-01 no verify` does in the RTM.
+  // `allocate` has a single legal pattern (FUNC → MOD), so a per-FUNC table loses
+  // no edge.
+  const byFunc = new Map<string, string[]>();
+  for (const e of graph.edges) {
+    if (e.edgeType !== 'allocate') continue;
+    (byFunc.get(e.sourceId) ?? byFunc.set(e.sourceId, []).get(e.sourceId)!).push(e.targetId);
   }
+  const funcs = nodesOfTypes(graph, ['FUNC']);
+  lines.push('## Allokation (FUNC -allocate-> MOD)', '', '| function | module |', '|---|---|');
+  for (const f of funcs) {
+    const mods = (byFunc.get(f.uid) ?? []).sort((a, b) => a.localeCompare(b));
+    const cellText = mods.length ? mods.map((m) => `\`${m}\``).join(' · ') : '⚠ nicht alloziert (R-22)';
+    lines.push(`| \`${f.uid}\` | ${cellText} |`);
+  }
+  if (funcs.length === 0) lines.push('| — | keine FUNC im Graph |');
   lines.push('');
   return lines.join('\n');
 }
