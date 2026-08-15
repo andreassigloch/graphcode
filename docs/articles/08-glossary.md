@@ -105,9 +105,10 @@ after the fact, from the audit trail. None of them — ever — blocks anything.
 
 ## The graph itself
 
-- **element** — one typed node (13 types: system, actor, use case, requirement, function, flow,
-  schema, module, test, milestone, change request, …).
-- **trace** — one typed edge between elements (7 types); which pairs are legal is itself a rule.
+- **element** — one typed node; 13 element types in all (system, actor, use case, requirement,
+  function, flow, schema, module, test, milestone, change request, …).
+- **trace** — one typed edge between elements; 7 connection types, and which pairs are legal is
+  itself a rule.
 - **ontology** — the fixed vocabulary of those types and legal connections, imported from a shared
   contract package, never forked per project.
 - **graph version** — a counter stamped on every applied batch; what the audit trail and exports

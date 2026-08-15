@@ -40,16 +40,20 @@ prompt.
 
 - **Local matched frontier scope.** devstral reached 85 elements / 148 traces across every dimension,
   including the process layer (milestones, change requests) — for $0.
-- **The smallest model won outright.** Haiku 4.5 produced the largest, cleanest graph (86/154, 5
-  residual violations) for $1.58 in 15 minutes — beating Opus 5, which under the same driver produced
-  the *smallest* graph of the three (57/81, 81 rejected batches) for $11.85.
-- **Why Opus lost.** Its usual edge comes from working its own way — explore, then build, its own
-  judgment on order. A tight, structured loop takes exactly that away. The same regime that scaffolds a
-  small model constrains a large one used to deciding for itself.
+- **Frontier arms are not a clean ranking, and the trial says so itself.** Haiku 4.5 produced the
+  largest graph of the run (86/154, 5 residual violations, ~15 minutes). The Opus 5 arm looked far
+  worse (57/81, 81 rejected batches, ~$11.85) — but a follow-up audit traced that to a client-side
+  bug, not to the model: a `maxTokens` ceiling sized for the local 16-tok/s box truncated Opus'
+  tool-call JSON, so 63 of the 81 "rejections" never reached the gate at all. Re-run with the ceiling
+  raised, Opus reached 60 elements / 93 traces in 12 rounds for ~$1.60 — more output than the original
+  48-round arm, in a quarter of the rounds. Cross-model rankings from that trial are withdrawn.
 
-The takeaway isn't "small beats big" as a rule — it's that **the fit between the loop and the model
-decides**, and a deterministic gate plus a readiness-driven loop is what lets a model be judged on
-following the method, not on raw scale. Full data:
+What survives is the load-bearing part: **one driver, one method, every model.** A $0 local model
+reached full scope through the same loop that carried a frontier model, and a deterministic gate plus
+a readiness-driven loop is what makes output judgeable on *following the method* rather than on raw
+scale. The one model-specific difference that held up is narrow: Haiku followed the dry-run protocol
+voluntarily, Opus and devstral never did — so that selection moved into the code instead of the
+prompt. Full data, including the correction:
 [`docs/executor-abschlussbericht.md`](../executor-abschlussbericht.md).
 
 That trial also names a strategy worth its own label: **going local**. The loop exists in two forms —
@@ -93,10 +97,10 @@ npx @sigloch/graphcode init
 that most code-graph tools skip: milestones (MS), changes (CR), and sessions (SESSION, the audit
 trail).
 
-**Layer 2 — the grammar.** How those elements may legally connect: 37 rules (constraints) define a
-well-formed graph. An illegal connection never enters the graph — it isn't a warning to read later.
+**Layer 2 — the grammar.** How those elements may legally connect: 36 legal connection patterns define
+a well-formed graph. An illegal connection never enters the graph — it isn't a warning to read later.
 
-**Layer 3 — readiness.** 66 rules feed 8 readiness scores, one deliberately *not* asking "is this
+**Layer 3 — readiness.** 72 engine rules feed 8 readiness dimensions, one deliberately *not* asking "is this
 correct?" — no tool can decide that — but "is it complete and well-formed?", which is decidable. I've
 watched hundreds of strict quality gates pass by, and maybe a handful made it through without a
 deviation. Dynamic readiness scores let you move back and forth — call it agile — while still being

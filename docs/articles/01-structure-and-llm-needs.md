@@ -1,7 +1,8 @@
 # The Effect of Structure on What an LLM Needs
 
 **Claim:** Replace document-reading with a precise graph query and the context an agent needs
-for a task drops ~50× — enough that a small model does work a frontier model was doing.
+for a task drops by more than two orders of magnitude — enough that a small model does work a
+frontier model was doing.
 
 ## The comparison
 
@@ -12,23 +13,28 @@ One task, two ways to give an agent what it needs:
 - **Structured:** pull one bundle from the project graph — the function's spec, the requirement
   above it, the test beside it, the data it touches. One call, bounded.
 
+The measured pair — one task, one graph, both numbers from the same spike run:
+
 | | Unstructured | Graph bundle |
 |---|---|---|
-| Context needed | ~34,000 tokens of spec + notes | **~667 tokens** |
+| Context needed | ~34,000 tokens of spec + notes | **~250 tokens** |
 
-Same correct result, **~50× less context.** Not because the spec was bloated — the waste is
-reading all of it to use one slice. The bundle is bounded by construction; a document isn't.
+Same correct result, **~136× less context** — both numbers from the same measurement: what the
+original session actually read out of `SPEC.md` + spikes, against the `graph_context` closure for
+the same node. Not because the spec was bloated — the waste is reading all of it to use one slice.
+The bundle is bounded by construction; a document isn't.
 
 ## Why the ratio matters more than it looks
 
-A small open model running locally implemented the task correctly from the 667-token bundle
-alone. The same model, given the full document instead, ran out of context before finishing.
-Structure is the difference between "the small model nails it" and "the small model can't fit
-the problem."
+A separate arm of the same spike gave a small open model running locally the *full* definition of
+done for one function as a graph bundle — 11 nodes, ~667 tokens — and it implemented the function
+correctly: all five acceptance criteria, statically checked and actually executed. That bundle is
+the *larger*, complete one — a full definition of done still cheaper than reading a single spec
+chapter.
 
-It also carries correctness for free: the model never read the document, so a wrong or sloppy
-document never entered context in the first place. Structure doesn't just compress — it decides
-what the model can even go wrong on.
+The model never read the document at all, and that carries correctness for free: where graph and
+spec disagreed, it followed the graph, because a stale document could not reach it. Structure
+doesn't just compress — it decides what the model can even go wrong on.
 
 ---
 

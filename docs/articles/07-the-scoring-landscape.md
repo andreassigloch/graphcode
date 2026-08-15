@@ -97,11 +97,11 @@ would have judged do not exist yet.
 
 ## What a review gate will check — three kinds of leg
 
-*(Design in progress — the review-gate mechanics are being moved from the viewer into the shared
-rule set; this section describes where that lands, not what ships today. The rule legs and
-layer-presence legs below are live (CR-SM-226). The analysis-freshness legs' gate assignment was
-decided in CR-SM-227's Familie-Review (2026-08-05) but not yet implemented — the diagram below
-reflects that decision, not a running check.)*
+*(All three kinds of leg are live. The rule legs and layer-presence legs shipped with CR-SM-226; the
+analysis-freshness legs shipped after CR-SM-227's family review as rules AF-01…AF-05, mapped to the
+gates shown below — ConOps, trade study and assumption review to PDR, FMEA to CDR, implementation
+plan to TRR. They carry `warning` severity by design: a stale analysis names itself in
+`rules_evaluate` and in the readiness report, it does not block the gate.)*
 
 A review gate (SRR, PDR, CDR, TRR) answers "may we move to the next stage?" — and it turns out that
 question needs three different kinds of check, because each catches a failure the others are blind to:
@@ -125,8 +125,10 @@ question needs three different kinds of check, because each catches a failure th
    Implementation Plan), each produced by a human-guided analysis session and each already tracked
    with a freshness state: an analysis goes **stale when the scope it analyzed has moved on**. The
    gate leg checks exactly two things — the artifact exists, and it's fresh — and never looks inside.
-   The judgment stays human; the gate just refuses to let a stage close on judgment work that was
-   never done, or that predates the model it supposedly judged.
+   The judgment stays human; the leg just makes it visible when a stage is about to close on judgment
+   work that was never done, or that predates the model it supposedly judged. Visible, not blocked:
+   AF-01…AF-05 are warnings, because "you skipped the thinking" is a call the tool should surface and
+   a human should answer.
 
 ![Review gates: rule legs, layer presence, and analysis freshness per stage](img/phase-gates.svg)
 
@@ -162,9 +164,11 @@ fires a violation and never feeds the 8 readiness scores.
 ## Where the same word means two different things
 
 One rule and one Architecture Fitness number both claim to measure "cohesion" — whether a module's
-parts belong together. On two real projects (not a synthetic example), the rule-based check scored
-every module at 0%, while Architecture Fitness's version scored 4.0–4.2 out of 5 on the same graphs —
-about as far apart as two numbers can get.
+parts belong together. Measured on graphcode's own graph (497 elements / 1,041 traces, 2026-08-15):
+the rule-based check reads **0.00 on six of the nine measurable modules** and never rises above 0.36,
+while Architecture Fitness's version reads **4.10 out of 5** on the very same graph — about as far
+apart as two numbers can get. Both are reproducible in one session: `graph_metrics` returns the
+per-module ratio, and the fitness vector's `coherence` component the other.
 
 Not a bug: the rule checks whether a module's parts talk to each other *directly, inside the
 boundary you declared*. Where modules talk through a shared data-flow layer instead (a deliberate
@@ -182,9 +186,11 @@ for a narrower question this article doesn't ask: *did the round's chosen focus 
 fixed*, separate from whether the graph got better overall. Worth its own view later, not here.
 
 **Progress — rank 3 against rank 4, one point per round actually applied.** Every point is a real
-accepted edit from one real run (devstral, best-of-N driver, 22 rounds); round 1 (the cold start —
-first SYS/ACTORs/UCs from nothing) is left off the plot, off-scale at `dimension_readiness` +1.42 /
-fitness +6.67, and stated here instead of squashing the other 21 points into a corner.
+accepted edit from one real run — devstral through the best-of-N driver, 22 applied rounds, raw log
+committed as [`gc-run-devstral-v18-bo3.run.log`](../../rig/greenfield-systemtest/results/logs/gc-run-devstral-v18-bo3.run.log).
+Round 1 (the cold start — first SYS/ACTORs/UCs from nothing) is left off the plot, off-scale at
+`dimension_readiness` +1.42 / fitness +6.67, and stated here instead of squashing the other 21
+points into a corner.
 
 ![Progress scatter: dimension_readiness delta vs. architecture fitness delta per applied round](img/progress-scatter.svg)
 
@@ -197,13 +203,17 @@ the total that matters more says yes. A few `dimension_readiness` values dip bel
 least-bad option, not a guaranteed-good one.
 
 **Efficiency — cumulative applied vs. rejected, rank 1 only.** A second real run (Haiku 4.5, 56 real
-gate calls in sequence) — mutations-count dropped from this view entirely, for the reason above: it's
+`mutate` calls in sequence, raw log committed as
+[`gc-run-haiku45.audit.jsonl`](../../rig/greenfield-systemtest/results/audit/gc-run-haiku45.audit.jsonl))
+— mutations-count dropped from this view entirely, for the reason above: it's
 a tiebreaker of last resort, not a measure of anything, so counting it as "efficiency" would credit
 the wrong thing.
 
 ![Cumulative applied vs rejected gate outcomes over one run](img/efficiency-cumulative.svg)
 
-42 applied, 14 rejected — the slope of each line, not just the endpoint, is the signal: a flat stretch
+42 applied, 14 rejected — these are the `mutate` calls only; the same run also fired 28 `validate`
+dry runs, which is why the summary table in the executor report quotes a higher rejection count for
+the same session. The slope of each line, not just the endpoint, is the signal: a flat stretch
 on the rejected line is a clean run of turns; a steep one (visible about two-thirds through) is where
 the model fought the gate for a while before recovering.
 

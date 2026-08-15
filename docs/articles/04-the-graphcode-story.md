@@ -75,8 +75,8 @@ talk to the graph. It is not tied to one vendor's assistant.
   folklore that lives in someone's head.
 - **Small models become good enough.** In one measured trial, a model small enough to run on a
   laptop implemented a function correctly — all five acceptance criteria, actually executed — from a
-  precise 700-word briefing pulled out of the graph. The original session had read the equivalent of
-  roughly seventy pages of prose for the same job. Precise context beat the bigger model.
+  precise 667-token briefing pulled out of the graph: 11 nodes, the whole definition of done. Precise
+  context beat the bigger model.
 - **Correctness of the structure is checkable without AI.** The result is verified against rules, not
   against a second model's opinion.
 
@@ -124,7 +124,7 @@ Five layers. Each one is computed, not estimated. Each is useful on its own.
 
 ### 1. The vocabulary — what may exist
 
-Thirteen kinds of element and seven kinds of connection. The elements cover the engineering side —
+13 element types and 7 connection types. The elements cover the engineering side —
 system, use case, actor, function, data flow, requirement, test, module, interface — and the process
 side: change requests, milestones, work sessions. Planning lives in the same graph as the design,
 not in a spreadsheet next to it.
@@ -134,12 +134,12 @@ is what makes everything below it comparable.
 
 ### 2. The grammar — how things may connect
 
-Thirty-seven legal combinations. Which kind of element may be connected to which, and in what way.
+36 legal connection patterns. Which kind of element may be connected to which, and in what way.
 An illegal connection is not a warning in a report you might read — it never enters the graph.
 
 ### 3. Readiness — is it complete and well-formed?
 
-Sixty-six rules feed eight readiness scores: requirements, use cases, functional architecture,
+72 engine rules feed 8 readiness dimensions: requirements, use cases, functional architecture,
 module allocation, verification, interfaces, change requests, milestones. Each area gets a percentage
 and a threshold.
 
