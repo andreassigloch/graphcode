@@ -4303,11 +4303,14 @@
       "level": "performance",
       "tool": "benchmark",
       "constraint": "<200ms full round at current graph size, no LLM -- pending se-optimizer publish (CR-SM-228)",
-      "testRef": {
-        "file": "tests/perf.advisory-roundtrip.spike.test.ts",
-        "tool": "vitest",
-        "level": "performance"
-      }
+      "testRef": null,
+      "testRefs": [
+        {
+          "file": "tests/perf.advisory-roundtrip.spike.test.ts",
+          "tool": "vitest",
+          "level": "performance"
+        }
+      ]
     },
     {
       "id": "TEST-agent-agnostic",
@@ -4317,11 +4320,14 @@
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
       "method": "test",
-      "testRef": {
-        "file": "tests/mcp.agent-agnostic.test.ts",
-        "tool": "vitest",
-        "level": "integration"
-      }
+      "testRef": null,
+      "testRefs": [
+        {
+          "file": "tests/mcp.agent-agnostic.test.ts",
+          "tool": "vitest",
+          "level": "integration"
+        }
+      ]
     },
     {
       "id": "TEST-artifact-freshness",
@@ -4343,11 +4349,14 @@
       "name": "Batch-Seed UNWIND performance (automated)",
       "description": "tests/perf.batch-seed.test.ts: 5000 Nodes + 5000 compose-Edges via harness.importGraph → saveNodes/saveEdges auf real-disk Kuzu (temp dir); asserts UNWIND-Batch-Insert < 15s (per-Row-Floor ~30s) + Counts + verlustfreies attrs_json-Round-Trip nach Reload. Validiert vom graph-cypher-wasm-Paket-Suite (kuzu-adapter round-trip, rasentraktor L3). (CR-GC-120)",
       "status": "done",
-      "testRef": {
-        "file": "tests/perf.batch-seed.test.ts",
-        "tool": "vitest",
-        "level": "performance"
-      }
+      "testRef": null,
+      "testRefs": [
+        {
+          "file": "tests/perf.batch-seed.test.ts",
+          "tool": "vitest",
+          "level": "performance"
+        }
+      ]
     },
     {
       "id": "TEST-bootstrap",
@@ -4358,12 +4367,15 @@
       "created_at": "2026-06-16T00:00:00.000Z",
       "method": "test",
       "updated_at": "2026-06-18T00:00:00.000Z",
-      "testRef": {
-        "file": "tests/bootstrap.test.ts",
-        "tool": "vitest",
-        "level": "integration"
-      },
-      "constraint": "gate-only import"
+      "testRef": null,
+      "constraint": "gate-only import",
+      "testRefs": [
+        {
+          "file": "tests/bootstrap.test.ts",
+          "tool": "vitest",
+          "level": "integration"
+        }
+      ]
     },
     {
       "id": "TEST-cache",
@@ -4413,11 +4425,14 @@
       "description": "Seedet den committeten SSOT-Graphen, laeuft checkCodeConformance gegen den realen src-Baum: 0 Violations (jeder Code-codeRef deklariert, jeder Prompt-codeRef existiert); ein falsches Symbol wird gefangen, also nicht vacuous. (CR-GC-206)",
       "status": "done",
       "method": "test",
-      "testRef": {
-        "file": "tests/conformance.test.ts",
-        "tool": "vitest",
-        "level": "integration"
-      }
+      "testRef": null,
+      "testRefs": [
+        {
+          "file": "tests/conformance.test.ts",
+          "tool": "vitest",
+          "level": "integration"
+        }
+      ]
     },
     {
       "id": "TEST-code-quality",
@@ -4440,11 +4455,14 @@
       "description": "validate() flaggt strukturelle Defekte (Node/Edge-Typen, TRACE_PATTERNS-Paare, referenzielle Integritaet, doppelte UIDs) auf der Gate-Pruefung; ein zweiter Run-Artefakt fuer REQ-graph-integrity neben dem Integritaets-Test. (CR-GC-200/204)",
       "status": "done",
       "method": "test",
-      "testRef": {
-        "file": "tests/codec.validation.test.ts",
-        "tool": "vitest",
-        "level": "integration"
-      }
+      "testRef": null,
+      "testRefs": [
+        {
+          "file": "tests/codec.validation.test.ts",
+          "tool": "vitest",
+          "level": "integration"
+        }
+      ]
     },
     {
       "id": "TEST-completeness-actor-bounded",
@@ -4485,14 +4503,17 @@
       "created_at": "2026-06-16T00:00:00.000Z",
       "method": "analysis",
       "updated_at": "2026-06-17T00:00:00.000Z",
-      "testRef": {
-        "file": "tests/readiness.ontology-sync.test.ts",
-        "tool": "vitest",
-        "level": "integration"
-      },
+      "testRef": null,
       "level": "analysis",
       "tool": "rule-id compare",
-      "constraint": "rule-ids == contracts"
+      "constraint": "rule-ids == contracts",
+      "testRefs": [
+        {
+          "file": "tests/readiness.ontology-sync.test.ts",
+          "tool": "vitest",
+          "level": "integration"
+        }
+      ]
     },
     {
       "id": "TEST-dashboard-readonly",
@@ -4517,11 +4538,14 @@
       "status": "done",
       "created_at": "2026-06-18T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z",
-      "testRef": {
-        "file": "tests/distribution.test.ts",
-        "tool": "vitest",
-        "level": "e2e"
-      }
+      "testRef": null,
+      "testRefs": [
+        {
+          "file": "tests/distribution.test.ts",
+          "tool": "vitest",
+          "level": "e2e"
+        }
+      ]
     },
     {
       "id": "TEST-doc-export",
@@ -4532,12 +4556,15 @@
       "created_at": "2026-06-16T00:00:00.000Z",
       "method": "test",
       "updated_at": "2026-06-18T00:00:00.000Z",
-      "testRef": {
-        "file": "tests/exporter.test.ts",
-        "tool": "vitest",
-        "level": "conformance"
-      },
-      "constraint": "deterministic + GENERATED header"
+      "testRef": null,
+      "constraint": "deterministic + GENERATED header",
+      "testRefs": [
+        {
+          "file": "tests/exporter.test.ts",
+          "tool": "vitest",
+          "level": "conformance"
+        }
+      ]
     },
     {
       "id": "TEST-docs-taxonomy",
@@ -4575,11 +4602,14 @@
       "description": "validate() flaggt doppelte UIDs + alles bisher Abgedeckte (Typen, Edge-Pairs, referenzielle Integritaet); Integritaets-Test delegiert an validate(). (CR-GC-200)",
       "status": "done",
       "created_at": "2026-06-18T00:00:00.000Z",
-      "testRef": {
-        "file": "tests/graph-integrity.test.ts",
-        "tool": "vitest",
-        "level": "integration"
-      }
+      "testRef": null,
+      "testRefs": [
+        {
+          "file": "tests/graph-integrity.test.ts",
+          "tool": "vitest",
+          "level": "integration"
+        }
+      ]
     },
     {
       "id": "TEST-graph-is-ssot",
@@ -4589,11 +4619,14 @@
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
       "method": "test",
-      "testRef": {
-        "file": "tests/harness.import.test.ts",
-        "tool": "vitest",
-        "level": "integration"
-      }
+      "testRef": null,
+      "testRefs": [
+        {
+          "file": "tests/harness.import.test.ts",
+          "tool": "vitest",
+          "level": "integration"
+        }
+      ]
     },
     {
       "id": "TEST-graph-tests-operational",
@@ -4615,11 +4648,14 @@
       "description": "Realer Disk-Kuzu: mutate setzt den Drift-Marker, graph_export loescht ihn und materialisiert den Snapshot; Reseed eines aelteren Snapshots stellt exakt jenen Stand wieder her (git checkout + reseed = Recall) und hinterlaesst einen sauberen Working-State. (verifiziert REQ-graph-snapshot-per-commit, REQ-graph-state-recall)",
       "status": "done",
       "method": "test",
-      "testRef": {
-        "file": "tests/graph-timetravel.test.ts",
-        "tool": "vitest",
-        "level": "integration"
-      }
+      "testRef": null,
+      "testRefs": [
+        {
+          "file": "tests/graph-timetravel.test.ts",
+          "tool": "vitest",
+          "level": "integration"
+        }
+      ]
     },
     {
       "id": "TEST-greenfield-systemtest",
@@ -4651,12 +4687,15 @@
       "created_at": "2026-06-16T00:00:00.000Z",
       "method": "test",
       "updated_at": "2026-06-17T00:00:00.000Z",
-      "testRef": {
-        "file": "tests/mcp.impact.test.ts",
-        "tool": "vitest",
-        "level": "integration"
-      },
-      "constraint": "no full-dump"
+      "testRef": null,
+      "constraint": "no full-dump",
+      "testRefs": [
+        {
+          "file": "tests/mcp.impact.test.ts",
+          "tool": "vitest",
+          "level": "integration"
+        }
+      ]
     },
     {
       "id": "TEST-interface-escalation",
@@ -4695,12 +4734,15 @@
       "created_at": "2026-06-16T00:00:00.000Z",
       "method": "test",
       "updated_at": "2026-06-17T00:00:00.000Z",
-      "testRef": {
-        "file": "tests/hooks.learning-emit.test.ts",
-        "tool": "vitest",
-        "level": "integration"
-      },
-      "constraint": "append-only jsonl"
+      "testRef": null,
+      "constraint": "append-only jsonl",
+      "testRefs": [
+        {
+          "file": "tests/hooks.learning-emit.test.ts",
+          "tool": "vitest",
+          "level": "integration"
+        }
+      ]
     },
     {
       "id": "TEST-live-event-contract",
@@ -4710,11 +4752,14 @@
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
       "method": "test",
-      "testRef": {
-        "file": "tests/contract.live-event.test.ts",
-        "tool": "vitest",
-        "level": "integration"
-      }
+      "testRef": null,
+      "testRefs": [
+        {
+          "file": "tests/contract.live-event.test.ts",
+          "tool": "vitest",
+          "level": "integration"
+        }
+      ]
     },
     {
       "id": "TEST-live-view",
@@ -4725,12 +4770,15 @@
       "created_at": "2026-06-16T00:00:00.000Z",
       "method": "test",
       "updated_at": "2026-06-17T00:00:00.000Z",
-      "testRef": {
-        "file": "tests/hooks.live-view.test.ts",
-        "tool": "vitest",
-        "level": "integration"
-      },
-      "constraint": "one event per mutation"
+      "testRef": null,
+      "constraint": "one event per mutation",
+      "testRefs": [
+        {
+          "file": "tests/hooks.live-view.test.ts",
+          "tool": "vitest",
+          "level": "integration"
+        }
+      ]
     },
     {
       "id": "TEST-mcp-export",
@@ -4741,12 +4789,15 @@
       "created_at": "2026-06-18T00:00:00.000Z",
       "method": "test",
       "updated_at": "2026-06-18T00:00:00.000Z",
-      "testRef": {
-        "file": "tests/mcp.export.test.ts",
-        "tool": "vitest",
-        "level": "integration"
-      },
-      "constraint": "agent-loop-closed-over-mcp"
+      "testRef": null,
+      "constraint": "agent-loop-closed-over-mcp",
+      "testRefs": [
+        {
+          "file": "tests/mcp.export.test.ts",
+          "tool": "vitest",
+          "level": "integration"
+        }
+      ]
     },
     {
       "id": "TEST-mcp-export-guard",
@@ -4755,11 +4806,14 @@
       "description": "MCP graph_export-Guard, drei Faelle: (a) leerer Graph wird verweigert, (b) Drop eines committeten Elements wird verweigert und die Datei bleibt unangetastet, (c) force:true ueberschreibt; Fresh-File-Export bleibt gruen. (CR-GC-202)",
       "status": "done",
       "created_at": "2026-06-18T00:00:00.000Z",
-      "testRef": {
-        "file": "tests/mcp.export-guard.test.ts",
-        "tool": "vitest",
-        "level": "integration"
-      }
+      "testRef": null,
+      "testRefs": [
+        {
+          "file": "tests/mcp.export-guard.test.ts",
+          "tool": "vitest",
+          "level": "integration"
+        }
+      ]
     },
     {
       "id": "TEST-mcp-readiness",
@@ -4770,12 +4824,15 @@
       "created_at": "2026-06-18T00:00:00.000Z",
       "method": "test",
       "updated_at": "2026-06-18T00:00:00.000Z",
-      "testRef": {
-        "file": "tests/mcp.readiness.test.ts",
-        "tool": "vitest",
-        "level": "integration"
-      },
-      "constraint": "readiness-reachable-over-mcp"
+      "testRef": null,
+      "constraint": "readiness-reachable-over-mcp",
+      "testRefs": [
+        {
+          "file": "tests/mcp.readiness.test.ts",
+          "tool": "vitest",
+          "level": "integration"
+        }
+      ]
     },
     {
       "id": "TEST-mcp-stdio-server",
@@ -4786,12 +4843,15 @@
       "created_at": "2026-06-18T00:00:00.000Z",
       "method": "test",
       "updated_at": "2026-06-18T00:00:00.000Z",
-      "testRef": {
-        "file": "tests/mcp.stdio-server.test.ts",
-        "tool": "vitest",
-        "level": "integration"
-      },
-      "constraint": "single-transport-mcp-stdio"
+      "testRef": null,
+      "constraint": "single-transport-mcp-stdio",
+      "testRefs": [
+        {
+          "file": "tests/mcp.stdio-server.test.ts",
+          "tool": "vitest",
+          "level": "integration"
+        }
+      ]
     },
     {
       "id": "TEST-mcp-symmetry",
@@ -4802,12 +4862,15 @@
       "created_at": "2026-06-16T00:00:00.000Z",
       "method": "test",
       "updated_at": "2026-06-17T00:00:00.000Z",
-      "testRef": {
-        "file": "tests/mcp.symmetry.test.ts",
-        "tool": "vitest",
-        "level": "integration"
-      },
-      "constraint": "MCP==in-process"
+      "testRef": null,
+      "constraint": "MCP==in-process",
+      "testRefs": [
+        {
+          "file": "tests/mcp.symmetry.test.ts",
+          "tool": "vitest",
+          "level": "integration"
+        }
+      ]
     },
     {
       "id": "TEST-member-name",
@@ -4818,11 +4881,14 @@
       "created_at": "2026-06-18T00:00:00.000Z",
       "method": "test",
       "updated_at": "2026-06-18T00:00:00.000Z",
-      "testRef": {
-        "file": "tests/mcp.member-name.test.ts",
-        "tool": "vitest",
-        "level": "unit"
-      }
+      "testRef": null,
+      "testRefs": [
+        {
+          "file": "tests/mcp.member-name.test.ts",
+          "tool": "vitest",
+          "level": "unit"
+        }
+      ]
     },
     {
       "id": "TEST-merge",
@@ -4902,11 +4968,14 @@
       "description": "Acceptance-Test fuer das Readiness-Modell: INCOSE-Scope lean, Phase-Gates SRR/PDR/CDR/TRR als disjunkte und vollstaendige Partition der V3_RULES, Impl-Gates SAR/FCA/SVR/FRR aus MS + CR-Status; deterministische Unit-Faelle + SSOT-Integration, niemals BQ. (CR-GC-125)",
       "status": "done",
       "created_at": "2026-06-18T00:00:00.000Z",
-      "testRef": {
-        "file": "tests/readiness.model.test.ts",
-        "tool": "vitest",
-        "level": "acceptance"
-      }
+      "testRef": null,
+      "testRefs": [
+        {
+          "file": "tests/readiness.model.test.ts",
+          "tool": "vitest",
+          "level": "acceptance"
+        }
+      ]
     },
     {
       "id": "TEST-readiness-transparent",
@@ -4987,12 +5056,15 @@
       "created_at": "2026-06-16T00:00:00.000Z",
       "method": "test",
       "updated_at": "2026-06-17T00:00:00.000Z",
-      "testRef": {
-        "file": "tests/codec.roundtrip.test.ts",
-        "tool": "vitest",
-        "level": "conformance"
-      },
-      "constraint": "rasentraktor fixture (L3)"
+      "testRef": null,
+      "constraint": "rasentraktor fixture (L3)",
+      "testRefs": [
+        {
+          "file": "tests/codec.roundtrip.test.ts",
+          "tool": "vitest",
+          "level": "conformance"
+        }
+      ]
     },
     {
       "id": "TEST-scaffold-skills",
@@ -5032,11 +5104,14 @@
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
       "method": "test",
-      "testRef": {
-        "file": "tests/views.no-fork.test.ts",
-        "tool": "vitest",
-        "level": "integration"
-      }
+      "testRef": null,
+      "testRefs": [
+        {
+          "file": "tests/views.no-fork.test.ts",
+          "tool": "vitest",
+          "level": "integration"
+        }
+      ]
     },
     {
       "id": "TEST-skills-mcp",
@@ -5047,12 +5122,15 @@
       "created_at": "2026-06-18T00:00:00.000Z",
       "method": "test",
       "updated_at": "2026-06-18T00:00:00.000Z",
-      "testRef": {
-        "file": "tests/skills.mcp-conformance.test.ts",
-        "tool": "vitest",
-        "level": "integration"
-      },
-      "constraint": "skills-off-dead-api-on-mcp"
+      "testRef": null,
+      "constraint": "skills-off-dead-api-on-mcp",
+      "testRefs": [
+        {
+          "file": "tests/skills.mcp-conformance.test.ts",
+          "tool": "vitest",
+          "level": "integration"
+        }
+      ]
     },
     {
       "id": "TEST-steering-loop",
@@ -5061,11 +5139,14 @@
       "description": "Die Schleife als Ganzes: nextStep leitet Fokus und Blocker aus demselben Snapshot ab, generationStep waehlt dieselbe Dimension, rankCandidates ordnet nach dem Fokus-Delta; Determinismus gegen wiederholte Laeufe.",
       "status": "done",
       "method": "test",
-      "testRef": {
-        "file": "tests/steering.test.ts",
-        "tool": "vitest",
-        "level": "integration"
-      }
+      "testRef": null,
+      "testRefs": [
+        {
+          "file": "tests/steering.test.ts",
+          "tool": "vitest",
+          "level": "integration"
+        }
+      ]
     },
     {
       "id": "TEST-store-recovery",
@@ -5112,11 +5193,14 @@
       "description": "graph_export scaffoldt einen lauffaehigen it.todo-Stub fuer eine fehlende testRef-Datei, ueberschreibt nie eine existierende, ueberspringt concept-only; danach loest graph_tests auf die materialisierte Datei auf. (CR-GC-205 Item 4)",
       "status": "done",
       "method": "test",
-      "testRef": {
-        "file": "tests/export.testref-materialize.test.ts",
-        "tool": "vitest",
-        "level": "integration"
-      }
+      "testRef": null,
+      "testRefs": [
+        {
+          "file": "tests/export.testref-materialize.test.ts",
+          "tool": "vitest",
+          "level": "integration"
+        }
+      ]
     },
     {
       "id": "TEST-token-efficiency",
@@ -11527,5 +11611,5 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     }
   ],
-  "graphVersion": 78
+  "graphVersion": 80
 }

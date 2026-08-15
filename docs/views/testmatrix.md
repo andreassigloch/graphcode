@@ -137,16 +137,16 @@ Belegt: 0/113 REQ bestanden (0%) — eine Kante ist kein Nachweis; ein REQ zähl
 | `FUNC-emit-update-event` → `FUNC-subscribe-updates` | `FLOW-live-event` | `FCHAIN-live-update` | `TEST-live-view` | integration |  |
 | `FUNC-encode` → `FUNC-decode` | `FLOW-formatE-artifact` | `FCHAIN-codec-roundtrip` | `TEST-roundtrip` | conformance |  |
 | `FUNC-evaluate-rules` → `FUNC-graph-suggest` | `FLOW-round-findings` | `FCHAIN-advisory-roundtrip` | `TEST-advisory-roundtrip-latency` | performance |  |
-| `FUNC-evaluate-rules` → `FUNC-save-graph` | `FLOW-violations` | `FCHAIN-apply-gate` | `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, e2e, integration, performance |  |
+| `FUNC-evaluate-rules` → `FUNC-save-graph` | `FLOW-violations` | `FCHAIN-apply-gate` | `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, integration, performance |  |
 | `FUNC-generation-step` → `FUNC-rank-candidates` | `FLOW-round-prompt` | `FCHAIN-steering-loop` | `TEST-steering-loop` | integration |  |
 | `FUNC-graph-impact` → `FUNC-evaluate-rules` | `FLOW-round-scope` | `FCHAIN-advisory-roundtrip` | `TEST-advisory-roundtrip-latency` | performance |  |
 | `FUNC-graph-suggest` → `FUNC-mutate` | `FLOW-suggested-edit` | `FCHAIN-advisory-roundtrip` | `TEST-advisory-roundtrip-latency` | performance |  |
-| `FUNC-mutate` → `FUNC-evaluate-rules` | `FLOW-draft-graph` | `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-modelfree-gate` | `TEST-advisory-roundtrip-latency` · `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-reduced-llm` · `TEST-responsiveness` | acceptance, e2e, integration, performance |  |
+| `FUNC-mutate` → `FUNC-evaluate-rules` | `FLOW-draft-graph` | `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-modelfree-gate` | `TEST-advisory-roundtrip-latency` · `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-reduced-llm` · `TEST-responsiveness` | acceptance, integration, performance |  |
 | `FUNC-mutate` → `FUNC-take-steering-snapshot` | `FLOW-gate-verdict` | `FCHAIN-steering-loop` | `TEST-steering-loop` | integration |  |
 | `FUNC-next-step` → `FUNC-rank-candidates` | `FLOW-round-prompt` | `FCHAIN-steering-loop` | `TEST-steering-loop` | integration |  |
 | `FUNC-rank-candidates` → `FUNC-mutate` | `FLOW-suggested-edit` | `FCHAIN-steering-loop` | `TEST-steering-loop` | integration |  |
 | `FUNC-rewind` → `FUNC-reseed` | `FLOW-graph-snapshot` | `FCHAIN-recall` | `TEST-graph-time-travel` | integration |  |
-| `FUNC-save-graph` → `FUNC-emit-trajectory` | `FLOW-committed-graph` | `FCHAIN-apply-gate` | `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, e2e, integration, performance |  |
+| `FUNC-save-graph` → `FUNC-emit-trajectory` | `FLOW-committed-graph` | `FCHAIN-apply-gate` | `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, integration, performance |  |
 | `FUNC-save-graph` → `FUNC-emit-update-event` | `FLOW-committed-graph` | `FCHAIN-live-update` | `TEST-live-view` | integration |  |
 | `FUNC-save-graph` → `FUNC-graph-export-snapshot` | `FLOW-committed-graph` | `FCHAIN-snapshot-freshness` | `TEST-graph-time-travel` | integration |  |
 | `FUNC-serve-stdio` → `FUNC-export-markdown` | `FLOW-export-request` | `FCHAIN-doc-export` | `TEST-doc-export` · `TEST-mcp-export` · `TEST-member-name` · `TEST-skills-mcp` | conformance, integration, unit |  |
