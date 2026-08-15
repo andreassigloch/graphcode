@@ -1,6 +1,6 @@
 # CR-GC-354 — Der Trail trägt Urheber und Prompt
 
-**Status:** open · **Angelegt:** 2026-08-15 · **Max Files:** 6 (dieser CR: **5**, **zwei Repos**)
+**Status:** done 2026-08-15 · **Angelegt:** 2026-08-15 · **Max Files:** 6 (dieser CR: **5**, **zwei Repos**)
 **Vorbedingung:** CR-GC-346 (Use Case + Projektionsfix) — dieser CR erweitert den Record, den 346
 projiziert; andersherum kollidiert die Projektionsänderung mit den neuen Feldern.
 **Governance:** **kein Drift-Lock** auf `AuditEntry` — Prüfung gegen
@@ -164,20 +164,20 @@ CR-GC-355 und 356 füllen sie.
 
 ## 5. Akzeptanzkriterien
 
-- [ ] `@sigloch/graph-api-core` **3.1.0 publiziert**; `npm view @sigloch/graph-api-core versions`
+- [x] `@sigloch/graph-api-core` **3.1.0 publiziert**; `npm view @sigloch/graph-api-core versions`
       zeigt sie, `package-lock.json` in graphcode weist sie aus.
-- [ ] Die vier Felder sind **optional** — jeder der 123 bestehenden Records parst unverändert
+- [x] Die vier Felder sind **optional** — jeder der 123 bestehenden Records parst unverändert
       gegen den neuen Typ, `npm test` ohne Fixture-Änderung grün.
-- [ ] Ein Prompt von 5000 Zeichen wird auf 4000 gekappt **und** trägt `intentTruncated: true`;
+- [x] Ein Prompt von 5000 Zeichen wird auf 4000 gekappt **und** trägt `intentTruncated: true`;
       ein Prompt von 3999 Zeichen trägt das Feld **nicht** (nicht `false` — Abwesenheit ist die Aussage).
-- [ ] Kein `intent` geliefert ⇒ Feld **fehlt** im Record. Nicht `""`, nicht `null` — red-first
+- [x] Kein `intent` geliefert ⇒ Feld **fehlt** im Record. Nicht `""`, nicht `null` — red-first
       nachgewiesen, dieselbe Asymmetrie wie `rulesPassed` (CR-GC-314 REQ-A05).
-- [ ] `sessionId` ist über alle Records eines Harness-Prozesses **identisch** und über zwei
+- [x] `sessionId` ist über alle Records eines Harness-Prozesses **identisch** und über zwei
       Prozesse **verschieden**.
-- [ ] Die alte `recordAudit(consumerId: string, …)`-Signatur existiert nicht mehr — `grep` beweist
+- [x] Die alte `recordAudit(consumerId: string, …)`-Signatur existiert nicht mehr — `grep` beweist
       es, alle sieben Aufrufstellen umgestellt.
-- [ ] `tests/mcp.symmetry.test.ts` unverändert grün — die Werkzeug-Oberfläche hat sich nicht bewegt.
-- [ ] Disk-Kuzu, keine Mocks. `npm run build` + `npm test` grün.
+- [x] `tests/mcp.symmetry.test.ts` unverändert grün — die Werkzeug-Oberfläche hat sich nicht bewegt.
+- [x] Disk-Kuzu, keine Mocks. `npm run build` + `npm test` grün.
 
 ---
 

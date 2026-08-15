@@ -1,6 +1,6 @@
 # CR-GC-356 — Der Prompt-Relay im MCP-Pfad
 
-**Status:** open · **Angelegt:** 2026-08-15 · **Max Files:** 6 (dieser CR: **6**)
+**Status:** done 2026-08-15 · **Angelegt:** 2026-08-15 · **Max Files:** 6 (dieser CR: **6**)
 **Vorbedingung:** CR-GC-354 (Vertrag), CR-GC-355 (der Executor-Pfad, unabhängig lauffähig).
 **Ziel:** auch Claude Code / OpenCode liefern den auslösenden Prompt in den Trail — im Wortlaut,
 ohne dass ein Modell ihn über sich selbst berichtet.

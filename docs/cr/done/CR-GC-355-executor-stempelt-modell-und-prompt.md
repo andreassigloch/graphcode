@@ -1,6 +1,6 @@
 # CR-GC-355 — Der Executor stempelt Modell und Prompt
 
-**Status:** open · **Angelegt:** 2026-08-15 · **Max Files:** 6 (dieser CR: **3**)
+**Status:** done 2026-08-15 · **Angelegt:** 2026-08-15 · **Max Files:** 6 (dieser CR: **3**)
 **Vorbedingung:** CR-GC-354 (`AuditEntry.sessionId/model/intent`, graph-api-core 3.1.0).
 **Ziel:** der Pfad **ohne** Fremd-Transkript beantwortet „wer, mit welchem Prompt" von selbst.
 
