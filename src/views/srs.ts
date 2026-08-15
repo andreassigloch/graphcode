@@ -322,10 +322,12 @@ export function renderSrs(graph: Graph, name: string): string {
   tests.forEach((t, i) => {
     lines.push(heading(3, [8, i + 1], t), '');
     if (t.description) lines.push(cell(t.description), '');
-    const testRef = t.attributes['testRef'] as { file?: unknown } | null | undefined;
+    // CR-GC-338: 1:n — eine Abnahme kann mehrere Laufdateien belegen (CR-SM-231).
+    const refs = Array.isArray(t.attributes['testRefs']) ? (t.attributes['testRefs'] as { file?: unknown }[]) : [];
+    const files = refs.map((r) => r?.file).filter((f): f is string => typeof f === 'string');
     const fileNote =
-      testRef && typeof testRef === 'object' && typeof testRef.file === 'string'
-        ? ` · testRef: \`${testRef.file}\``
+      files.length > 0
+        ? ` · testRefs: ${files.map((f) => `\`${f}\``).join(', ')}`
         : '';
     lines.push(`verify ▶ ${refList(verify.fwd.get(t.uid))}${fileNote}`, '');
   });

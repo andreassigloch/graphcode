@@ -48,21 +48,23 @@ function allocDeficientGraph(): Graph {
 }
 
 describe('TEST-steering: graph_next_step', () => {
-  it('returns a well-formed result with normalized guidance weights', () => {
-    const r = nextStep(allocDeficientGraph(), DEFAULT_METRIC_POLICY);
+  it('returns a well-formed result — Blocker, Fokus, Advisory', () => {
+    // CR-GC-336: `weights` (D1–D6) ist gestrichen. Der Vektor wurde ausgegeben, aber niemand
+    // handelte auf ihm (CR-SM-237) — die Fokus-Dimension steht in `nextStep`, und sie war die
+    // einzige Information, die der Vektor je trug.
+    const r = nextStep(allocDeficientGraph(), DEFAULT_METRIC_POLICY, 0.8);
     expect(r).toHaveProperty('blocking');
     expect(r).toHaveProperty('nextStep');
     expect(Array.isArray(r.advisory)).toBe(true);
     expect(Array.isArray(r.blocking.ruleIds)).toBe(true);
-    const sum = Object.values(r.weights).reduce((a, b) => a + (b as number), 0);
-    expect(sum).toBeCloseTo(1, 2);
+    expect(r).not.toHaveProperty('weights');
   });
 
   it('condenses to the highest-deficit actionable dimension (unallocated FUNCs → alloc)', () => {
     // This graph has two unallocated FUNCs and two empty MODs: alloc scores 4/6 = 0.333,
     // below ver's 3/8 = 0.625, so alloc is the step. The blocking count is unaffected —
     // R-01 x2 (the unverified precond/postcond REQs) are errors either way.
-    const r = nextStep(allocDeficientGraph(), DEFAULT_METRIC_POLICY);
+    const r = nextStep(allocDeficientGraph(), DEFAULT_METRIC_POLICY, 0.8);
     expect(r.blocking.errors).toBe(2); // R-01 x2 (precond/postcond REQs unverified)
     expect(r.nextStep).not.toBeNull();
     expect(r.nextStep!.dimension).toBe('alloc');
@@ -74,13 +76,13 @@ describe('TEST-steering: graph_next_step', () => {
   // CR-GC-324: nextStep must read the SAME Graph→OntologyGraph mapping as the
   // snapshot path. While it built its own og via `JSON.parse(exportGraphJson())`,
   // the flat export encoding hid `attributes.*` and every attribute-reading rule
-  // (R-19 testRef, R-20/R-26 realRef, VR-01 testResult) fired against bound nodes.
+  // (R-19 testRefs, R-20/R-26 realRef, VR-01 result je Eintrag) fired against bound nodes.
   // ---------------------------------------------------------------------
-  /** Fixture whose TEST/FUNC carry testRef / realRef / testResult in the bag. */
+  /** Fixture whose TEST/FUNC carry testRefs (mit result) / realRef in the bag. */
   function boundBindingsGraph(): Graph {
     const g = allocDeficientGraph();
     const test = g.nodes.find((n) => n.uid === 'OrderTest.TS.001')!;
-    test.attributes = { testResult: 'passed', testRef: { file: 'tests/order.test.ts', tool: 'vitest' } };
+    test.attributes = { testRefs: [{ file: 'tests/order.test.ts', tool: 'vitest', result: 'passed' }] };
     for (const uid of ['Validate.FN.001', 'Persist.FN.002']) {
       const fn = g.nodes.find((n) => n.uid === uid)!;
       fn.attributes = { realRef: { file: 'src/order.ts', symbol: uid.split('.')[0] } };
@@ -89,7 +91,7 @@ describe('TEST-steering: graph_next_step', () => {
   }
 
   it('sees attribute-carried bindings — no phantom R-19/R-20/R-26/VR-01 findings', () => {
-    const r = nextStep(boundBindingsGraph(), DEFAULT_METRIC_POLICY);
+    const r = nextStep(boundBindingsGraph(), DEFAULT_METRIC_POLICY, 0.8);
     const fired = new Set([...r.blocking.ruleIds, ...r.advisory.map((a) => a.rule_id), ...(r.nextStep?.clears ?? []).map((c) => c.split(' ')[0])]);
     for (const ruleId of ['R-19', 'R-20', 'R-26', 'VR-01']) {
       expect(fired.has(ruleId), `${ruleId} fired although the binding is present`).toBe(false);
@@ -98,7 +100,7 @@ describe('TEST-steering: graph_next_step', () => {
 
   it('still reports a MISSING binding (the fix does not blind the rules)', () => {
     // Same fixture, bindings stripped again → the very same rules must fire.
-    const r = nextStep(allocDeficientGraph(), DEFAULT_METRIC_POLICY);
+    const r = nextStep(allocDeficientGraph(), DEFAULT_METRIC_POLICY, 0.8);
     const fired = new Set([...r.blocking.ruleIds, ...r.advisory.map((a) => a.rule_id), ...(r.nextStep?.clears ?? []).map((c) => c.split(' ')[0])]);
     expect(fired.has('R-19') || fired.has('R-20')).toBe(true);
   });
@@ -107,7 +109,7 @@ describe('TEST-steering: graph_next_step', () => {
     // Until contracts CR-228 D, R-22/R-23 were unmapped in RULE_TO_DIMENSION and fell
     // through to `advisory`. They are mapped to `alloc` now, so the advisory list holds
     // what is left over — the non-error findings of the other dimensions.
-    const r = nextStep(allocDeficientGraph(), DEFAULT_METRIC_POLICY);
+    const r = nextStep(allocDeficientGraph(), DEFAULT_METRIC_POLICY, 0.8);
     expect(r.blocking.ruleIds).toContain('R-01');
     const advisoryIds = r.advisory.map((a) => a.rule_id);
     expect(advisoryIds).not.toContain('R-22');

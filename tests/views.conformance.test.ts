@@ -144,14 +144,19 @@ describe('CR-GC-308: rendering a rule-clean FMEA graph fills every column', () =
           detection: 4,
         }),
         n('REQ-backup', 'REQ', 'Automatisches Backup', { kinds: ['mitigation'] }),
-        n('TEST-ausfall', 'TEST', 'Ausfalltest', { testResult: 'passed' }),
+        n('TEST-ausfall', 'TEST', 'Ausfalltest', {
+          // CR-SM-231b: das Ergebnis haengt am testRefs-Eintrag, nicht am Knoten.
+          testRefs: [{ file: 'tests/ausfall.test.ts', tool: 'vitest', result: 'passed' }],
+        }),
         n('REQ-langsam', 'REQ', 'Store wird langsam', {
           kinds: ['risk'],
           severity: 3,
           occurrence: 2,
           detection: 2,
         }),
-        n('TEST-langsam', 'TEST', 'Lasttest', { testResult: 'pending' }),
+        n('TEST-langsam', 'TEST', 'Lasttest', {
+          testRefs: [{ file: 'tests/last.test.ts', tool: 'vitest', result: 'pending' }],
+        }),
       ],
       edges: [
         { sourceId: 'REQ-ausfall', targetId: 'REQ-backup', edgeType: 'compose', attributes: {} },

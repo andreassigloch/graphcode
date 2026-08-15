@@ -4,7 +4,7 @@
  * Der Steering-/Generate-Pfad baute seinen OntologyGraph über den Umweg
  * `JSON.parse(exportGraphJson(graph))`. `exportGraphJson` flacht `node.attributes`
  * per SSOT-Konvention (CR-216/228) auf Top-Level ab — Contracts-Regeln lesen aber
- * `element.attributes?.x` (rules.ts). Folge: R-19 (testRef), R-20 (realRef/codeRef),
+ * `element.attributes?.x` (rules.ts). Folge: R-19 (testRefs), R-20 (realRef/codeRef),
  * VR-01 (testResult) und AF-01..05 (SYS.analysisFreshness) feuerten in diesem Pfad
  * UNBEDINGT, egal was im Graphen stand — `graph_generate` konnte PDR/CDR/TRR nie
  * regel-vollständig erreichen.
@@ -58,8 +58,12 @@ function fullyBoundGraph(): Graph {
         kinds: ['functional'],
       }),
       node('TEST-bestellung', 'TEST', 'Bestell-Test', 'Prüft die Persistenz.', {
-        testRef: { file: 'tests/bestellung.test.ts', case: 'persistiert', tool: 'vitest', level: 'unit' },
-        testResult: 'passed',
+        // CR-SM-231b: das Ergebnis haengt PRO EINTRAG, nicht am Knoten — bei n Laeufen
+        // koennte ein Knoten-Attribut nicht sagen, welcher gemeint ist.
+        testRefs: [{
+          file: 'tests/bestellung.test.ts', case: 'persistiert', tool: 'vitest', level: 'unit',
+          result: 'passed', ranAt: '2026-08-15T09:00:00.000Z',
+        }],
       }),
       node('FUNC-persist', 'FUNC', 'persist()', 'Schreibt die Bestellung.', {
         realRef: { file: 'src/bestellung.ts', symbol: 'persist' },
@@ -88,18 +92,20 @@ describe('takeSteeringSnapshot — attributes reach the rules (CR-GC-303)', () =
     const snap = takeSteeringSnapshot(fullyBoundGraph(), DEFAULT_METRIC_POLICY);
     const test = snap.og.elements.find((e) => e.id === 'TEST-bestellung');
     // The exact shape the contracts rules read. Before the fix this was `undefined`
-    // and `testRef` sat on the element itself.
+    // and `testRefs` sat on the element itself.
     expect(test?.attributes).toBeDefined();
-    expect((test?.attributes as Record<string, unknown>)?.['testRef']).toEqual({
+    expect((test?.attributes as Record<string, unknown>)?.['testRefs']).toEqual([{
       file: 'tests/bestellung.test.ts',
       case: 'persistiert',
       tool: 'vitest',
       level: 'unit',
-    });
-    expect((test as unknown as Record<string, unknown>)['testRef']).toBeUndefined();
+      result: 'passed',
+      ranAt: '2026-08-15T09:00:00.000Z',
+    }]);
+    expect((test as unknown as Record<string, unknown>)['testRefs']).toBeUndefined();
   });
 
-  it('R-19 (testRef) stays silent on a bound TEST', () => {
+  it('R-19 (testRefs) stays silent on a bound TEST', () => {
     const snap = takeSteeringSnapshot(fullyBoundGraph(), DEFAULT_METRIC_POLICY);
     expect(snap.violations.filter((v) => v.rule_id === 'R-19')).toEqual([]);
   });
@@ -140,7 +146,7 @@ describe('takeSteeringSnapshot — attributes reach the rules (CR-GC-303)', () =
     // The flattening itself is still the committed convention, not collateral damage.
     const parsed = JSON.parse(before) as { elements: Record<string, unknown>[] };
     const test = parsed.elements.find((e) => e['id'] === 'TEST-bestellung')!;
-    expect(test['testRef']).toBeDefined();
+    expect(test['testRefs']).toBeDefined();
     expect(test['attributes']).toBeUndefined();
   });
 

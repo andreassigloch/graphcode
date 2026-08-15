@@ -1,6 +1,6 @@
 /**
  * TEST-code-conformance (CR-GC-206 → CR-GC-253) — graph↔code conformance as a
- * readiness rule: every realRef/testRef in the committed SSOT resolves against
+ * readiness rule: every realRef/testRefs entry in the committed SSOT resolves against
  * the real src tree (TypeScript compiler parser, not a substring match), and a
  * broken binding surfaces as RC-01/RC-02 in the readiness report (gates/dashboard),
  * not just in a side report. Rules live in @sigloch/contracts; this exercises
@@ -26,7 +26,7 @@ function makeConfig(repoRoot: string): HarnessConfig {
   return { repoRoot, scope: { workspaceId: 'test-ws', systemId: 'graphcode' }, consumerType: 'system', preCommitTimeout: 5000 };
 }
 
-describe('TEST-code-conformance: realRef/testRef resolve as RC readiness rules (CR-GC-253)', () => {
+describe('TEST-code-conformance: realRef/testRefs resolve as RC readiness rules (CR-GC-253)', () => {
   let tmp: string;
   let harness: GraphCodeHarness;
 
@@ -116,7 +116,7 @@ describe('TEST-code-conformance: realRef/testRef resolve as RC readiness rules (
       nodes: [
         { uid: 'FUNC-w', type: 'FUNC', name: 'w', description: '', attributes: { realRef: { file: 'src/widget.jsx', symbol: 'Widget', lang: 'js' } } },
         { uid: 'FUNC-u', type: 'FUNC', name: 'u', description: '', attributes: { realRef: { file: 'src/util.mjs', symbol: 'computeThing', lang: 'js' } } },
-        { uid: 'TEST-u', type: 'TEST', name: 't', description: '', attributes: { testRef: { file: 'src/util.test.mjs', case: 'computes the thing', tool: 'vitest' } } },
+        { uid: 'TEST-u', type: 'TEST', name: 't', description: '', attributes: { testRefs: [{ file: 'src/util.test.mjs', case: 'computes the thing', tool: 'vitest' }] } },
       ],
       edges: [],
     };
@@ -125,7 +125,7 @@ describe('TEST-code-conformance: realRef/testRef resolve as RC readiness rules (
     const renamed = {
       ...graph,
       nodes: graph.nodes.map((n) =>
-        n.uid === 'TEST-u' ? { ...n, attributes: { testRef: { file: 'src/util.test.mjs', case: 'renamed', tool: 'vitest' } } } : n,
+        n.uid === 'TEST-u' ? { ...n, attributes: { testRefs: [{ file: 'src/util.test.mjs', case: 'renamed', tool: 'vitest' }] } } : n,
       ),
     };
     const v = conformanceViolations({ getGraph: () => renamed, getRepoRoot: () => dir });

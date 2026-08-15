@@ -2,9 +2,9 @@
  * TEST-formate-binding (CR-GC-334) — eine über Format-E gesetzte Bindung kommt am Gate an.
  *
  * Der gemessene Schaden (Modellierung CR-GC-332, 2026-08-13): ein Batch mit `@realRef`/
- * `@testRef` je Knoten kam mit R-19/R-20 für JEDEN dieser Knoten zurück — „Bindung fehlt",
+ * `@testRefs` je Knoten kam mit R-19/R-20 für JEDEN dieser Knoten zurück — „Bindung fehlt",
  * obwohl jede Zeile eine trug. Ursache: `FormatECodec.parse` reichte den `@key`-Wert als
- * String durch, und `RealRefSchema`/`TestRefSchema` weisen einen String ab. Damit war der
+ * String durch, und `RealRefSchema`/`TestRefsSchema` weisen einen String ab. Damit war der
  * Format-E-Pfad für gebundene Elemente unbenutzbar — und genau für ihn wirbt die
  * Tool-Beschreibung („~2–3× weniger Tokens").
  *
@@ -55,7 +55,7 @@ const BOUND_BATCH =
   '@realRef {"file":"src/steering.ts","symbol":"nextStep","lang":"ts"}\n' +
   '### TEST\n' +
   '+ TEST-bound|Prueft die bestehende Anforderung. [__name:Bindungs-Test,method:test]\n' +
-  '@testRef {"file":"tests/steering.test.ts","tool":"vitest","level":"integration"}\n' +
+  '@testRefs [{"file":"tests/steering.test.ts","tool":"vitest","level":"integration"}]\n' +
   '\n## Edges\n' +
   '+ FUNC-bound -satisfy-> REQ-seed\n' +
   '+ TEST-bound -verify-> REQ-seed\n';
@@ -70,7 +70,7 @@ const UNBOUND_BATCH =
 
 type MutateOut = { success: boolean; violations: Array<{ ruleId: string; elementId?: string }> };
 
-describe('TEST-formate-binding: @realRef/@testRef ueberleben den Format-E-Schreibpfad (CR-GC-334)', () => {
+describe('TEST-formate-binding: @realRef/@testRefs ueberleben den Format-E-Schreibpfad (CR-GC-334)', () => {
   let tmp: string;
   let harness: GraphCodeHarness;
   let tools: MCPToolRegistry;
@@ -102,7 +102,7 @@ describe('TEST-formate-binding: @realRef/@testRef ueberleben den Format-E-Schrei
     expect(open.filter((v) => v.ruleId === 'R-19' && v.elementId === 'TEST-bound')).toEqual([]);
   });
 
-  it('die Bindung liegt als OBJEKT im Graphen, nicht als String', async () => {
+  it('die Bindung liegt als OBJEKT/LISTE im Graphen, nicht als String', async () => {
     await tools.graph_mutate.handler({ formatE: BOUND_BATCH, consumerId: 'test' });
 
     const func = harness.getGraph().nodes.find((n) => n.uid === 'FUNC-bound')!;
@@ -112,11 +112,12 @@ describe('TEST-formate-binding: @realRef/@testRef ueberleben den Format-E-Schrei
       lang: 'ts',
     });
     const test = harness.getGraph().nodes.find((n) => n.uid === 'TEST-bound')!;
-    expect(test.attributes.testRef).toEqual({
+    // CR-SM-231: 1:n — die Bindung ist eine LISTE von Objekten, kein Objekt.
+    expect(test.attributes.testRefs).toEqual([{
       file: 'tests/steering.test.ts',
       tool: 'vitest',
       level: 'integration',
-    });
+    }]);
   });
 
   /**

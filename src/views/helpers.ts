@@ -58,12 +58,16 @@ export function reqKinds(n: GraphNode): string[] {
 }
 
 /**
- * TEST level from nested testRef.level, falling back to a top-level `level` attr.
+ * TEST level from nested testRefs[].level, falling back to a top-level `level` attr.
  * Descriptive test-inventory metadata only (CR-GC-240) — the pyramid classification
  * in renderTestConcept uses levelsOfTest() (graph position), not this attribute.
  */
 export function testLevel(n: GraphNode): string {
-  const ref = n.attributes['testRef'] as { level?: unknown } | null | undefined;
+  // CR-GC-338: `level` aus dem ERSTEN Eintrag, der eines traegt — die Eintraege einer
+  // Abnahme koennen verschiedene Runner haben, aber die Ebene ist eine Aussage ueber die
+  // Abnahme, nicht ueber die Datei.
+  const refs = Array.isArray(n.attributes['testRefs']) ? (n.attributes['testRefs'] as { level?: unknown }[]) : [];
+  const ref = refs.find((r) => r && typeof r.level === 'string');
   if (ref && typeof ref === 'object' && typeof ref.level === 'string') return ref.level;
   const top = n.attributes['level'];
   return typeof top === 'string' ? top : '';
@@ -71,7 +75,7 @@ export function testLevel(n: GraphNode): string {
 
 /**
  * Pyramid level(s) of a TEST, derived from the graph POSITION of the REQ(s) it
- * verifies (CR-GC-240) — a real TEST node almost never carries testRef.level, so
+ * verifies (CR-GC-240) — a real TEST node almost never carries a testRefs[].level, so
  * an attribute-based classification degenerates to all-unleveled even when every
  * REQ is verified. A test verifying a SYS-composed REQ is System/e2e; a UC-composed
  * REQ is Use-Case/integration; a FUNC-satisfied REQ is Function/unit; an
@@ -240,7 +244,19 @@ export function rolledUpCoverage(
 
 /** Recorded outcome of a TEST run, or '' when none was recorded (VR-01). */
 export function testResult(n: GraphNode): string {
-  return String(n.attributes['testResult'] ?? '');
+  // CR-SM-231b / CR-GC-338: das Ergebnis haengt PRO `testRefs`-Eintrag, nicht am Knoten.
+  // Aggregation streng: **jeder** Eintrag muss `passed` sein. Sonst gilt das schlechteste
+  // vorliegende Ergebnis; fehlt eines, ist die Abnahme leer — nicht gelaufen ist nicht gruen.
+  const refs = Array.isArray(n.attributes['testRefs'])
+    ? (n.attributes['testRefs'] as Array<{ result?: unknown }>)
+    : [];
+  if (refs.length === 0) return '';
+  const results = refs.map((r) => (typeof r?.result === 'string' ? r.result : undefined));
+  if (results.some((r) => r === undefined)) return '';
+  for (const worst of ['failed', 'skipped', 'pending']) {
+    if (results.includes(worst)) return worst;
+  }
+  return 'passed';
 }
 
 export function status(n: GraphNode): string {

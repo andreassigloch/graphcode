@@ -55,8 +55,8 @@ function fixture(): Graph {
       node('FLOW-x', 'FLOW'),
       node('FCHAIN-chain', 'FCHAIN'),
       node('TEST-int', 'TEST', {
-        testRef: { file: 'tests/x.test.ts', level: 'integration' },
-        testResult: 'passed',
+        // CR-SM-231/231b: 1:n, und das Ergebnis haengt am Eintrag.
+        testRefs: [{ file: 'tests/x.test.ts', tool: 'vitest', level: 'integration', result: 'passed' }],
       }),
     ],
     edges: [

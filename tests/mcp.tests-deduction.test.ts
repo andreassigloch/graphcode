@@ -1,19 +1,19 @@
 /**
  * TEST-test-runnable-binding (CR-GC-134) — graph_tests deduces the minimal
  * selective test set for a change. It WRAPS graph_impact's harness.impact()
- * (no parallel blast-radius path), resolves each impacted TEST via its `testRef`
+ * (no parallel blast-radius path), resolves each impacted TEST via its `testRefs`
  * runnable binding, and emits a `vitest run <only-affected-files>` command.
  *
  * Disk-Kuzu fixture (incoming-dependent direction, mirrors mcp.impact.test.ts):
- *   TEST-A      -verify->  REQ-A   (testRef → tests/feature-a.test.ts)   impacted+resolved
- *   TEST-NOREF  -verify->  REQ-A   (no testRef)                           impacted+unresolved
+ *   TEST-A      -verify->  REQ-A   (testRefs → tests/feature-a.test.ts)   impacted+resolved
+ *   TEST-NOREF  -verify->  REQ-A   (no testRefs)                           impacted+unresolved
  *   MOD-A       -satisfy-> REQ-A   (dependent, not a TEST)
- *   TEST-B      -verify->  REQ-B   (testRef → tests/feature-b.test.ts)    UNRELATED
+ *   TEST-B      -verify->  REQ-B   (testRefs → tests/feature-b.test.ts)    UNRELATED
  *
- * Asserts: (a) a changeset resolves to exactly its impacted TESTs via testRef;
+ * Asserts: (a) a changeset resolves to exactly its impacted TESTs via testRefs;
  * (b) the run command lists ONLY affected files and excludes unrelated ones;
  * (c) graph_tests sees the SAME impacted set as graph_impact (wrap proof);
- * (d) a TEST without a testRef is reported under `unresolved`, never dropped.
+ * (d) a TEST without testRefs is reported under `unresolved`, never dropped.
  *
  * Real disk Kuzu (temp dir, never :memory:). No mocks.
  */
@@ -23,7 +23,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from '@sigloch/graph-cypher-wasm';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import { TestRefSchema } from '@sigloch/contracts/se';
+import { TestRefsSchema } from '@sigloch/contracts/se';
 import { GraphCodeHarness } from '../src/harness.js';
 import { bindToolsToHarness } from '../src/mcp-tools.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
@@ -41,7 +41,7 @@ describe('TEST-test-runnable-binding: graph_tests deduces a minimal selective te
   let tmp: string;
   let harness: GraphCodeHarness;
 
-  // testRef rides as an extra element field → importGraph folds it into node.attributes.testRef.
+  // testRef rides as an extra element field → importGraph folds it into node.attributes.testRefs.
   const fixture = {
     elements: [
       { id: 'REQ-A', type: 'REQ', name: 'Req A', description: 'root under change' },
@@ -50,9 +50,9 @@ describe('TEST-test-runnable-binding: graph_tests deduces a minimal selective te
         type: 'TEST',
         name: 'Test A',
         description: 'verifies REQ-A',
-        testRef: { file: 'tests/feature-a.test.ts', case: 'does A', tool: 'vitest', level: 'unit' },
+        testRefs: [{ file: 'tests/feature-a.test.ts', case: 'does A', tool: 'vitest', level: 'unit' }],
       },
-      { id: 'TEST-NOREF', type: 'TEST', name: 'Test NoRef', description: 'verifies REQ-A, no testRef' },
+      { id: 'TEST-NOREF', type: 'TEST', name: 'Test NoRef', description: 'verifies REQ-A, no testRefs' },
       { id: 'MOD-A', type: 'MOD', name: 'Mod A', description: 'satisfies REQ-A (dependent, not a TEST)' },
       { id: 'REQ-B', type: 'REQ', name: 'Req B', description: 'unrelated component' },
       {
@@ -60,7 +60,7 @@ describe('TEST-test-runnable-binding: graph_tests deduces a minimal selective te
         type: 'TEST',
         name: 'Test B',
         description: 'verifies REQ-B',
-        testRef: { file: 'tests/feature-b.test.ts', tool: 'vitest', level: 'unit' },
+        testRefs: [{ file: 'tests/feature-b.test.ts', tool: 'vitest', level: 'unit' }],
       },
     ],
     traces: [
@@ -84,15 +84,15 @@ describe('TEST-test-runnable-binding: graph_tests deduces a minimal selective te
     rmSync(tmp, { recursive: true, force: true });
   });
 
-  it('(a) resolves the impacted TEST uniquely via its testRef', async () => {
+  it('(a) resolves the impacted TEST uniquely via its testRefs', async () => {
     const registry = bindToolsToHarness(harness);
     const res = await registry['graph_tests'].handler({ changeSet: ['REQ-A'], depth: 1 });
 
     const resolvedIds = res.tests.map((t: { id: string }) => t.id);
     expect(resolvedIds).toContain('TEST-A');
     const a = res.tests.find((t: { id: string }) => t.id === 'TEST-A');
-    expect(a?.testRef.file).toBe('tests/feature-a.test.ts');
-    expect(a?.testRef.tool).toBe('vitest');
+    expect(a?.testRefs[0].file).toBe('tests/feature-a.test.ts');
+    expect(a?.testRefs[0].tool).toBe('vitest');
     expect(res.coverage.files).toEqual(['tests/feature-a.test.ts']);
   });
 
@@ -121,7 +121,7 @@ describe('TEST-test-runnable-binding: graph_tests deduces a minimal selective te
     expect(res.coverage.impactedTests).toBe(2);
   });
 
-  it('(d) a TEST without a testRef is reported under unresolved, never silently dropped', async () => {
+  it('(d) a TEST without testRefs is reported under unresolved, never silently dropped', async () => {
     const registry = bindToolsToHarness(harness);
     const res = await registry['graph_tests'].handler({ changeSet: ['REQ-A'], depth: 1 });
 
@@ -136,7 +136,7 @@ describe('TEST-test-runnable-binding: graph_tests deduces a minimal selective te
 // TEST-graph-tests-operational (CR-GC-204) — graph_tests is OPERATIONAL on the
 // real committed SSOT graph: a CODE changeset resolves to the COMPLETE set of
 // affected test files via the directed code→REQ→TEST traversal (no false-green),
-// and every runnable TEST node carries a testRef pointing at a file that exists
+// and every runnable TEST node carries a testRefs entry pointing at a file that exists
 // (concept-only nodes are explicitly flagged + surface under `unresolved`).
 //
 // Seeds the real docs/graph/graphcode.graph.json into a disk Kuzu store through
@@ -180,27 +180,30 @@ describe('TEST-graph-tests-operational: graph_tests operational on the committed
     expect(res.coverage.files).not.toContain('tests/panels.test.ts');
   });
 
-  it('(f) testRef-coverage conformance: every TEST node is runnable-with-existing-file OR explicitly concept-only', async () => {
+  it('(f) testRefs-coverage conformance: every TEST node is runnable-with-existing-file OR explicitly concept-only', async () => {
     const testNodes = harness.getGraph().nodes.filter((n) => n.type === 'TEST');
     expect(testNodes.length).toBeGreaterThan(40);
 
     const offenders: string[] = [];
     for (const n of testNodes) {
-      const raw = n.attributes?.testRef;
+      const raw = n.attributes?.testRefs;
       const isConcept = n.attributes?.concept === true;
       if (raw === undefined || raw === null) {
         // No silent gap: a TEST without a runnable binding MUST be flagged concept-only.
-        if (!isConcept) offenders.push(`${n.uid}: no testRef and not concept-only`);
+        if (!isConcept) offenders.push(`${n.uid}: no testRefs and not concept-only`);
         continue;
       }
-      const parsed = TestRefSchema.safeParse(raw);
+      const parsed = TestRefsSchema.safeParse(raw);
       if (!parsed.success) {
-        offenders.push(`${n.uid}: invalid testRef`);
+        offenders.push(`${n.uid}: invalid testRefs`);
         continue;
       }
-      // A runnable testRef must point at a file that actually exists (no false-green).
-      if (!existsSync(join(REPO_ROOT, parsed.data.file))) {
-        offenders.push(`${n.uid}: testRef.file missing on disk → ${parsed.data.file}`);
+      // CR-GC-338: JEDER Eintrag muss auf eine existierende Datei zeigen — eine Abnahme aus
+      // Unit- und Visual-Lauf ist erst dann wirklich lauffaehig, wenn beide Dateien da sind.
+      for (const ref of parsed.data) {
+        if (!existsSync(join(REPO_ROOT, ref.file))) {
+          offenders.push(`${n.uid}: testRefs entry file missing on disk → ${ref.file}`);
+        }
       }
     }
     expect(offenders).toEqual([]);

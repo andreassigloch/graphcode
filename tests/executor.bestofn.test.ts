@@ -354,9 +354,15 @@ describe('Best-of-N executor (CR-GC-288, echter Gate-/Store-Pfad)', () => {
 
     expect(stats.mutatesApplied).toBe(1);
     // Der Trace macht den Pick nachvollziehbar: A mit negativem, B mit positivem Fokus-Delta.
+    // CR-SM-235/239: die `total`-Werte haben sich mit dem korrigierten Nenner geschaerft.
+    // Vorher las Kandidat 1 (18 UC-Mutationen) `total=+0.05` — leicht POSITIV, obwohl er das
+    // Modell verschlechtert; die Zahl kam aus Dimensionen ohne Inhalt und aus Graph-Checks,
+    // die als Ein-Element-Gruppe mitzaehlten. Jetzt `-0.17`: der Volumen-Kandidat ist als
+    // Netto-Verschlechterung sichtbar. Die FOKUS-Deltas sind unveraendert (-0.17 / +0.18) —
+    // die uc-Dimension der Fixture wurde nicht angefasst.
     // (totals seit contracts 3.1.0 inkl. AF-01..05-Dimension — Fokus-Deltas unverändert)
-    expect(traces.some((l) => /candidate 1\/2: tier=suggest focus\(uc\)=-0\.17 total=\+0\.05 Δm=\+0\.00 mutations=18/.test(l))).toBe(true);
-    expect(traces.some((l) => /candidate 2\/2: tier=suggest focus\(uc\)=\+0\.18 total=\+1\.16 Δm=\+0\.00 mutations=4/.test(l))).toBe(true);
+    expect(traces.some((l) => /candidate 1\/2: tier=suggest focus\(uc\)=-0\.17 total=-0\.17 Δm=\+0\.00 mutations=18/.test(l))).toBe(true);
+    expect(traces.some((l) => /candidate 2\/2: tier=suggest focus\(uc\)=\+0\.18 total=\+1\.81 Δm=\+0\.00 mutations=4/.test(l))).toBe(true);
     expect(traces.some((l) => l.includes('pick: candidate 2 (judge=gate)'))).toBe(true);
     expect(uids()).toContain('REQ-login'); // der Ziel-Delta-Gewinner ist persistiert …
     expect(uids()).toContain('TEST-login');

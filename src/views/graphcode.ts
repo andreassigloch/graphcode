@@ -15,7 +15,7 @@
  */
 import type { Graph, GraphNode } from '@sigloch/graph-api-core';
 import { generatedHeader, cell } from '../exporter.js';
-import { nodesOfType, nodeIndex, adjacency, reqKinds, status, ref, refList, topoOrderMilestones } from './helpers.js';
+import { nodesOfType, nodeIndex, adjacency, reqKinds, status, ref, refList, topoOrderMilestones, testResult } from './helpers.js';
 
 // ---------------------------------------------------------------------------
 // 13. Change Log (RENDER · CR rollup by milestone + status). Specimen #13.
@@ -143,7 +143,9 @@ export function renderFmea(graph: Graph, name: string): string {
     // auseinanderzuhalten ist der ganze Punkt — die alte Version zeigte ✓, sobald
     // irgendeine verify-Kante existierte, was die gefährlichere Lesart ist.
     const verified = (verify.rev.get(r.uid) ?? []).some(
-      (t) => idx.get(t)?.attributes['testResult'] === 'passed',
+      // CR-GC-338: „bestanden" heisst JEDER testRefs-Eintrag ist `passed` — ein gruener
+      // Unit-Lauf darf einen roten Visual-Lauf nicht verdecken (CR-SM-231b).
+      (t) => testResult(idx.get(t)!) === 'passed',
     )
       ? '✓'
       : '✗';

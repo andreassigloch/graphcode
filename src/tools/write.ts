@@ -13,6 +13,7 @@ import { z } from 'zod/v4';
 import { isAbsolute, join } from 'node:path';
 import type { MutateCommand, MutateResult, RuleViolation, StaleDelta } from '@sigloch/contracts/harness';
 import { GraphVersionSchema } from '@sigloch/contracts/harness';
+import { TestRefsSchema } from '@sigloch/contracts/se';
 import { readBranchLog, replayBranchLog, type MergeReport } from '../merge.js';
 import type { MCPTool, MCPToolRegistry } from '../mcp-tools.js';
 import { computeSteeringDelta, takeSteeringSnapshot, type SteeringDelta } from '../steering-snapshot.js';
@@ -114,10 +115,10 @@ const GraphRealizeInputSchema = z
     schemaUid: z.string().optional().describe('Optional SCHEMA node to bind — sets its realRef (R-26/RC-03).'),
     schemaFile: z.string().optional().describe('File declaring the Zod schema (required when schemaUid is given).'),
     schemaSymbol: z.string().optional().describe('The exported Zod schema symbol (required when schemaUid is given).'),
-    testUid: z.string().optional().describe('Optional TEST node to bind — sets its testRef (R-19).'),
+    testUid: z.string().optional().describe('Optional TEST node to bind — adds an entry to its testRefs (R-19, 1:n).'),
     testFile: z.string().optional().describe('Test file path (required when testUid is given).'),
     testCase: z.string().optional().describe('Optional test case name.'),
-    tool: z.string().optional().describe('Test tool for the testRef (default vitest).'),
+    tool: z.string().optional().describe('Test tool for the entry (default vitest).'),
     consumerId: z.string().default('mcp-client'),
     baseVersion: baseVersionField,
   })
@@ -213,7 +214,7 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
     new Set(
       harness
         .evaluateRules()
-        // R-19 testRef, R-20 FUNC realRef, R-26 SCHEMA realRef (CR-211/228) — the presence rules
+        // R-19 testRefs, R-20 FUNC realRef, R-26 SCHEMA realRef (CR-211/228) — the presence rules
         // whose binding graph_realize resolves; the delta confirms the realization.
         .filter((v) => v.ruleId === 'R-19' || v.ruleId === 'R-20' || v.ruleId === 'R-26')
         .map((v) => v.elementId)
@@ -365,7 +366,7 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
     description:
       'Flat realize affordance (CR-GC-216) — the write-twin of graph_context. Binds a FUNC to its code ' +
       '(realRef, R-20), a SCHEMA to its Zod export (realRef, R-26/RC-03 — CR-211/228), and/or a TEST to its ' +
-      'test file (testRef, R-19) in ONE call, through the same Apply-Gate as graph_mutate (no parallel write ' +
+      'test file (testRefs entry, R-19) in ONE call, through the same Apply-Gate as graph_mutate (no parallel write ' +
       "path — it composes harness.mutate). Use instead of hand-building graph_mutate's nested update-node union " +
       "for the 90% case 'I just realized FUNC/SCHEMA X'. Supply at least one of funcUid/schemaUid. " +
       'Returns the missingRefs delta (before/after + resolved) so the realization is confirmed, not blind. ' +
@@ -410,14 +411,22 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
         if (!input.testFile) throw new Error('graph_realize: testFile is required when testUid is given.');
         const test = nodes.find((n) => n.uid === input.testUid);
         if (!test) throw new Error(`graph_realize: unknown testUid '${input.testUid}'.`);
+        // CR-GC-338: ERGAENZEN, nicht ersetzen. Seit CR-SM-231 ist die Bindung 1:n — eine
+        // Abnahme aus Unit- und Visual-Lauf verlaere sonst bei jedem Realize die andere
+        // Haelfte. Dieselbe Datei zweimal zu binden ist Redundanz, kein zweiter Eintrag.
+        const existing = TestRefsSchema.safeParse(test.attributes?.testRefs);
+        const kept = existing.success ? existing.data.filter((r) => r.file !== input.testFile) : [];
+        const added = {
+          file: input.testFile,
+          tool: input.tool ?? 'vitest',
+          ...(input.testCase ? { case: input.testCase } : {}),
+        };
         commands.push({
           op: 'update-node',
           node: {
             uid: input.testUid,
             type: test.type,
-            attributes: {
-              testRef: { file: input.testFile, tool: input.tool ?? 'vitest', ...(input.testCase ? { case: input.testCase } : {}) },
-            },
+            attributes: { testRefs: [...kept, added] },
           },
         });
       }

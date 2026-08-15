@@ -114,7 +114,7 @@ export const HELP_CONTENT: Record<string, HelpContentEntry> = {
   'R-19': {
     plain:
       "A test that's meant to run doesn't point to a test file → add the link to the test file, or, if it isn't written yet, mark it not-yet-written.",
-    se: 'Realized `TEST` with no valid `testRef` `{file, case?, tool}`; else set `concept:true` (a stub).',
+    se: 'Realized `TEST` with no valid `testRefs` `[{file, case?, tool}, …]` (at least one entry); else set `concept:true` (a stub).',
   },
   'R-20': {
     plain:
@@ -144,7 +144,7 @@ export const HELP_CONTENT: Record<string, HelpContentEntry> = {
   'RC-02': {
     plain:
       "A test points to a test file or test name that isn't there anymore → repoint it to the current test.",
-    se: 'TEST `testRef` that does not resolve: file missing or `case` not declared as an it/test/describe (CR-GC-253).',
+    se: 'A `testRefs` entry that does not resolve: file missing or `case` not declared as an it/test/describe (CR-GC-253). The message names the concrete path — with n entries the node id alone is not actionable.',
   },
   'R-26': {
     plain:

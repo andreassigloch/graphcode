@@ -2,12 +2,12 @@
  * CodeFacts extractor + conformance-enriched readiness (CR-GC-253, supersedes
  * the CR-GC-206 rule-carrying shape).
  *
- * The RC resolution rules (RC-01 realRef, RC-02 testRef) live in
+ * The RC resolution rules (RC-01 realRef, RC-02 testRefs) live in
  * `@sigloch/contracts/se` (conformance-rules.ts) — one rule base per onto set,
  * no rule definitions in executor codebases. This module is graphcode's
  * executor side only:
  *
- *   - `extractCodeFacts` : resolve every file referenced by a realRef/testRef
+ *   - `extractCodeFacts` : resolve every file referenced by a realRef/testRefs
  *     against `repoRoot` via the TypeScript compiler's own parser (declared
  *     symbols + it/test/describe case names). Deterministic, filesystem-reads
  *     only. Multi-language swap point for CR-GC-254 (ast-grep).
@@ -31,7 +31,7 @@ import { join, dirname, relative, resolve as resolvePath } from 'node:path';
 import ts from 'typescript';
 import {
   RealRefSchema,
-  TestRefSchema,
+  TestRefsSchema,
   evaluateConformanceRules,
   type CodeFacts,
   type FileFacts,
@@ -121,7 +121,7 @@ function parseFileFacts(source: string, fileName: string): Omit<FileFacts, 'exis
 }
 
 /**
- * Extract CodeFacts for every file referenced by a realRef/testRef in `graph`,
+ * Extract CodeFacts for every file referenced by a realRef/testRefs in `graph`,
  * resolved against `repoRoot`. Guarantees an entry per referenced file — the
  * RC rules treat an absent key as an extractor gap (loud, not silently green).
  */
@@ -133,8 +133,10 @@ export function extractCodeFacts(graph: CGraph, repoRoot: string): CodeFacts {
     // now, so the formerly separate codeRef/schemaRef scans collapse into one.
     const real = RealRefSchema.safeParse(node.attributes?.realRef);
     if (real.success) referenced.add(real.data.file);
-    const test = TestRefSchema.safeParse(node.attributes?.testRef);
-    if (test.success) referenced.add(test.data.file);
+    // CR-GC-338: `testRefs` ist eine Liste (CR-SM-231) — JEDE gebundene Datei zaehlt,
+    // sonst prueft RC-02 nur die erste und der Rest ist stillschweigend unbelegt.
+    const tests = TestRefsSchema.safeParse(node.attributes?.testRefs);
+    if (tests.success) for (const t of tests.data) referenced.add(t.file);
   }
   const files: Record<string, FileFacts> = {};
   for (const rel of referenced) {
@@ -237,7 +239,7 @@ export function extractImportEdges(repoRoot: string): ImportEdge[] {
  * `JSON.parse(exportGraphJson(graph))` instead — and `exportGraphJson` flattens
  * `node.attributes` onto the element (the committed SSOT/Format-E convention since
  * CR-216/228). Contracts rules read `element.attributes?.x`, so every
- * attribute-reading rule (R-19 testRef, R-20 realRef/codeRef, VR-01 testResult,
+ * attribute-reading rule (R-19 testRefs, R-20 realRef/codeRef, VR-01 testResult,
  * SC-04, AF-01..05 analysisFreshness) was permanently blind in that path.
  *
  * Fix direction matters: the export encoding stays exactly as it is (it is a
@@ -248,7 +250,7 @@ export function extractImportEdges(repoRoot: string): ImportEdge[] {
  * pure nested one: it declares TYPED TOP-LEVEL fields (`kinds`, `asil`, `method`)
  * next to the free-form `attributes` record, and the rules read whichever the
  * schema declares. `kinds` is read top-level (UC-05/UC-06: `e.kinds?.includes(…)`),
- * `testRef`/`realRef`/`analysisFreshness` are read out of `attributes`. graphcode
+ * `testRefs`/`realRef`/`analysisFreshness` are read out of `attributes`. graphcode
  * stores all of them in one `node.attributes` bag, so the mapper must LIFT the
  * typed ones out while keeping the bag intact. Mapping only one way blinds the
  * other half of the catalog — that was the actual defect behind CR-GC-299/303,

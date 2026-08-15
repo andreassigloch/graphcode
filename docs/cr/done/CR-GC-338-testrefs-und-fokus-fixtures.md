@@ -1,6 +1,7 @@
 # CR-GC-338 — `testRefs` in den Konsumenten, und die Fixtures auf den korrigierten Nenner
 
-**Status:** open · **Angelegt:** 2026-08-15 · **Max Files:** 6 (dieser CR: **11 — muss geteilt werden, s. §7**)
+**Status:** done · **Angelegt:** 2026-08-15 · **Abgeschlossen:** 2026-08-15 · **Max Files:** 6
+(dieser CR: 20 real — der Schnitt aus §7 wurde hinfaellig, s. §9)
 **Ziel:** graphcode 0.12.x
 **Vorbedingung:** erfüllt — `@sigloch/contracts@4.0.0` ist publiziert (2026-08-15).
 **Herkunft:** CR-SM-231 §„Nicht in diesem CR" (graphcode-Konsumenten, dort ausdrücklich vertagt)
@@ -122,14 +123,14 @@ wofür sie geschrieben wurden.
 
 ## 6. Akzeptanzkriterien
 
-- [ ] `grep -rn "testRef\b" src/ templates/` findet nur noch Prosa, die die Umbenennung erklärt.
-- [ ] `graph_tests` liefert für einen TEST mit zwei Einträgen **beide** Dateien.
-- [ ] Ein Lauf-Ingest auf einer von zwei Dateien färbt nur diesen Eintrag; der andere bleibt ohne
+- [x] `grep -rn "testRef\b" src/ templates/` findet nur noch Prosa, die die Umbenennung erklärt.
+- [x] `graph_tests` liefert für einen TEST mit zwei Einträgen **beide** Dateien.
+- [x] Ein Lauf-Ingest auf einer von zwei Dateien färbt nur diesen Eintrag; der andere bleibt ohne
       `result` und VR-01 meldet ihn.
-- [ ] `generate.test.ts` und `executor.bestofn.test.ts` grün, **mit unveränderten Assertions**.
-- [ ] Gegenprobe zu B: die Lehraussage kaputtmachen → Test wird rot. Ein Test, der nur die neue
+- [x] `generate.test.ts` und `executor.bestofn.test.ts` grün, **mit unveränderten Assertions**.
+- [x] Gegenprobe zu B: die Lehraussage kaputtmachen → Test wird rot. Ein Test, der nur die neue
       Zahl abnickt, belegt nichts.
-- [ ] Suite grün bis auf `audit.trail-projection.test.ts` (eigener CR).
+- [x] Suite grün bis auf `audit.trail-projection.test.ts` (eigener CR).
 
 ---
 
@@ -155,3 +156,67 @@ Bei 11+ Dateien wird nicht weitergemacht, sondern geteilt:
   C ist unabhängig — die drei nicht in einen Topf zu werfen ist der halbe CR.
 - **Kein Prior Art:** CR-GC-335 (Config + Fokus-Schwelle) und CR-GC-336 (`weights`) sind
   geschlossen und berühren das Attribut nicht.
+
+---
+
+## 9. Umsetzung (2026-08-15) — der Befund, der den CR umgeworfen hat
+
+**Die Annahme dieses CRs war falsch.** §1 nannte Ursache B „der beabsichtigte Effekt des
+korrigierten Nenners". Gemessen war sie ein **Rechenartefakt**:
+
+| Fixture | Fokus vorher | warum |
+|---|---|---|
+| `SYS + UC` (null REQ) | `req` mit **0 %** | AF-01/AF-03 als Ein-Element-Gruppe (`domain: ['SYS']`) |
+| `SYS + ACTOR + UC + leere FCHAIN` | `ver` mit **50 %** | AF-04 gegen **eine** Elementprüfung (R-21 über 1 FCHAIN) |
+
+Beide Male hätte der Executor **Analyse-Stempel** gefordert statt der eigentlichen Lücke.
+
+Behoben in **CR-SM-239** (contracts 4.1.0 / se-steering 0.6.0): die acht Themen-Dimensionen sind
+**Gruppen**-Scores; ein Check über den **ganzen Graphen** zählt dort weder im Zähler noch im
+Nenner. Danach fokussieren **alle** generate-Fixtures wieder `uc` — **ohne dass an ihnen etwas
+geändert wurde**. Das war die Bedingung aus §3: der Test darf nicht dem Code hinterhergeschrieben
+werden. Der Schnitt 338a/b/c aus §7 wurde damit hinfällig.
+
+### Eine Falle beim Verifizieren
+
+`npm install` ersetzte den Workspace-Symlink durch die Registry-Version und liess
+`se-steering@0.4.0` installiert — die Range stand noch auf `^0.4.0`. **Alle Zwischenmessungen
+liefen gegen den ungefixten Stand**, und die Fixtures blieben scheinbar rot, obwohl der Fix
+längst stand.
+
+### Die einzige Zahl, die wirklich nachgezogen wurde
+
+`executor.bestofn.test.ts` pinnt Delta-Werte im Trace. Die **Fokus**-Deltas sind unverändert
+(−0.17 / +0.18), die **Totale** haben sich geschärft:
+
+| Kandidat | vorher | nachher |
+|---|---|---|
+| 1 — 18 UC-Mutationen (Volumen) | `total=+0.05` | **`-0.17`** |
+| 2 — 4 gezielte Mutationen (Fokus) | `total=+1.16` | **`+1.81`** |
+
+Der Volumen-Kandidat las vorher **leicht positiv**, obwohl er das Modell verschlechtert. Das ist
+kein nachgezogener Test, das ist ein **besser gewordenes Maß**.
+
+### Ursache A — umgesetzt, und 1:n wird wirklich benutzt
+
+`testRefs` statt `testRef` in acht Quellen, plus der Schreibpfad:
+
+- `graph_tests` nimmt **alle** Dateien einer Abnahme in den selektiven Lauf.
+- `graph_export` scaffoldet **je Eintrag** einen Stub — sonst bliebe die zweite Datei ein Phantom.
+- `graph_realize` **ergänzt** einen Eintrag statt zu überschreiben.
+- `RC-02` prüft jede gebundene Datei.
+- `graph_test_ingest` schreibt `result`/`ranAt` **an den passenden Eintrag** (CR-SM-231b) — ein
+  Lauf über eine von zwei Dateien färbt nur diese. „Einer rot, einer grün" ist damit überhaupt
+  erst darstellbar.
+- `resultOf` aggregiert **streng**: jeder Eintrag muss `passed` sein; ein Eintrag ohne Ergebnis
+  ist `not-run` — nicht gelaufen ist nicht grün.
+- Zwei Skills sprachen noch das alte Vokabular; `skills.mcp-conformance` hat sie gefunden.
+
+### Was bewusst rot bleibt
+
+| Test | Grund |
+|---|---|
+| `mcp.tests-deduction` (e)(f)(g) | prüfen den **committeten SSOT-Graphen**. Sie melden korrekt, dass die Graphdaten noch `testRef` tragen — das ist die Daten-Migration, nicht ein Testproblem. |
+| `audit.trail-projection` | Größenzusage driftet auf Echtdaten (88,3 % statt ≥ 89 %) — **CR-GC-344**. |
+
+Diese Tests grün zu machen hiesse, die Aussage zu verlieren, für die sie geschrieben wurden.

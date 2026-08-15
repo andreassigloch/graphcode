@@ -2,7 +2,7 @@
  * testreport.ts — der RÜCKWEG: Testergebnisse in den Graphen und je REQ heraus (CR-GC-327).
  *
  * Der Hinweg stand seit CR-GC-134/204: `graph_tests` löst einen changeSet über
- * `TEST.attributes.testRef` in einen minimalen `vitest run`-Befehl auf. Der Rückweg
+ * `TEST.attributes.testRefs` in einen minimalen `vitest run`-Befehl auf. Der Rückweg
  * fehlte — kein Pfad brachte das Ergebnis eines Laufs zurück. Das Feld dafür ist seit
  * jeher deklariert (`testResult: passed|failed|skipped|pending`), es schrieb es nur nie
  * jemand: auf graph-view-edit feuerte VR-01 für ALLE 14 TEST-Knoten, während die Suite
@@ -14,7 +14,7 @@
  * Ein Prüfer, der es als Verifikationsnachweis liest, liest es falsch.
  *
  * Zwei Regeln, an denen hier nichts weich wird:
- *   1. **Nie still verwerfen.** Eine Runner-Datei ohne passenden `testRef` erscheint als
+ *   1. **Nie still verwerfen.** Eine Runner-Datei ohne passenden `testRefs`-Eintrag erscheint als
  *      `unresolved` — dieselbe Regel wie bei `graph_tests`.
  *   2. **Kein Default auf grün.** Ein TEST ohne Ergebnis ist `not-run`, weder bestanden
  *      noch weggelassen.
@@ -31,7 +31,7 @@
  */
 
 import type { Graph, GraphNode } from '@sigloch/graph-api-core';
-import { TestResult, TestRefSchema } from '@sigloch/contracts/se';
+import { TestResult, TestRefsSchema } from '@sigloch/contracts/se';
 
 /** Das Ergebnis eines Laufs, wie die Ontologie es kennt. */
 export type TestResultValue = (typeof TestResult.options)[number];
@@ -52,12 +52,12 @@ export interface TestResultAssignment {
 
 export interface IngestPlan {
   assignments: TestResultAssignment[];
-  /** Runner-Dateien ohne passenden `testRef` — gemeldet, nie still verworfen. */
+  /** Runner-Dateien ohne passenden `testRefs`-Eintrag — gemeldet, nie still verworfen. */
   unresolved: Array<{ file: string; reason: string }>;
 }
 
 /**
- * Normalisiert einen Pfad für den Vergleich Runner ↔ `testRef.file`.
+ * Normalisiert einen Pfad für den Vergleich Runner ↔ `testRefs[].file`.
  *
  * Der Runner meldet je nach Aufruf absolut oder mit `./`-Präfix, der Graph hält den
  * repo-relativen Pfad. Verglichen wird deshalb auf dem gemeinsamen Suffix — aber NUR
@@ -68,7 +68,7 @@ function normalizePath(path: string): string {
 }
 
 /** true, wenn beide Pfade auf dieselbe Datei zeigen (Segment-Suffix-Vergleich). */
-function samePath(a: string, b: string): boolean {
+export function samePath(a: string, b: string): boolean {
   const x = normalizePath(a);
   const y = normalizePath(b);
   if (x === y) return true;
@@ -77,16 +77,16 @@ function samePath(a: string, b: string): boolean {
   return longer.endsWith(`/${shorter}`);
 }
 
-/** Die `testRef.file`-Bindung eines Knotens, oder undefined wenn er keine trägt. */
-function testRefFile(node: GraphNode): string | undefined {
-  const parsed = TestRefSchema.safeParse(node.attributes?.testRef);
-  return parsed.success ? parsed.data.file : undefined;
+/** Alle `testRefs`-Dateien eines Knotens — leer, wenn er keine gültige Bindung trägt. */
+function testRefFiles(node: GraphNode): string[] {
+  const parsed = TestRefsSchema.safeParse(node.attributes?.testRefs);
+  return parsed.success ? parsed.data.map((r) => r.file) : [];
 }
 
 /**
  * Runner-Ergebnis → Schreibplan.
  *
- * Zugeordnet wird über `testRef.file`, NICHT über Namensraten: ein TEST-Knoten, der auf
+ * Zugeordnet wird über `testRefs[].file`, NICHT über Namensraten: ein TEST-Knoten, der auf
  * eine Datei zeigt, bekommt deren Ergebnis. Zeigen mehrere Knoten auf dieselbe Datei,
  * bekommen alle dasselbe Ergebnis (1:n ist zulässig — ein File verifiziert mehrere REQ).
  */
@@ -96,14 +96,14 @@ export function planIngest(graph: Graph, files: RunnerFileResult[]): IngestPlan 
   const unresolved: IngestPlan['unresolved'] = [];
 
   for (const entry of files) {
-    const matches = tests.filter((t) => {
-      const bound = testRefFile(t);
-      return bound !== undefined && samePath(bound, entry.file);
-    });
+    // CR-GC-338: ein Knoten kann n Dateien binden — er passt, wenn IRGENDEINE davon
+    // die gelaufene ist. Nur die erste zu pruefen liesse den Visual-Lauf einer Abnahme
+    // als "no TEST node carries a binding" auflaufen, obwohl er gebunden ist.
+    const matches = tests.filter((t) => testRefFiles(t).some((f) => samePath(f, entry.file)));
     if (matches.length === 0) {
       unresolved.push({
         file: entry.file,
-        reason: 'no TEST node carries a testRef pointing at this file',
+        reason: 'no TEST node carries a testRefs entry pointing at this file',
       });
       continue;
     }
@@ -159,9 +159,15 @@ export function parseVitestJson(raw: string): RunnerFileResult[] {
 export interface TestReportRow {
   testUid: string;
   testName: string;
-  /** Die Bindung an die reale Datei, oder null bei konzeptionellem TEST. */
-  testRef: string | null;
-  /** `not-run`, solange kein Lauf ein Ergebnis geschrieben hat — nie ein Default auf grün. */
+  /** Die gebundenen Dateien — leer bei konzeptionellem TEST. */
+  testRefs: string[];
+  /**
+   * `not-run`, solange kein Lauf ein Ergebnis geschrieben hat — nie ein Default auf grün.
+   *
+   * CR-GC-338/CR-SM-231b: das Ergebnis haengt PRO EINTRAG. Die Abnahme gilt als bestanden,
+   * wenn JEDER Eintrag `passed` ist — "irgendeiner gruen" liesse einen gruenen Unit-Lauf
+   * einen roten Visual-Lauf verdecken. Ein Eintrag ohne Ergebnis ist nicht bestanden.
+   */
   result: TestResultValue | 'not-run';
 }
 
@@ -190,8 +196,24 @@ export interface VerificationReport {
   };
 }
 
-/** Das `testResult` eines Knotens, oder `not-run` — kein Default auf grün. */
+/**
+ * Das Ergebnis einer Abnahme ueber ALLE ihre Eintraege — oder `not-run`.
+ *
+ * CR-SM-231b: `testResult` haengt nicht mehr am Knoten, sondern je `testRefs`-Eintrag.
+ * Aggregation hier ist bewusst streng: **jeder** Eintrag muss `passed` sein. Sonst gilt das
+ * schlechteste vorliegende Ergebnis; fehlt eines, ist die Abnahme `not-run` — nicht gelaufen
+ * ist nicht gruen.
+ */
 export function resultOf(node: GraphNode): TestResultValue | 'not-run' {
+  const refs = TestRefsSchema.safeParse(node.attributes?.testRefs);
+  if (refs.success) {
+    const results = refs.data.map((r) => r.result);
+    if (results.some((r) => r === undefined)) return 'not-run';
+    if (results.some((r) => r === 'failed')) return 'failed';
+    if (results.some((r) => r === 'skipped')) return 'skipped';
+    if (results.some((r) => r === 'pending')) return 'pending';
+    return 'passed';
+  }
   const parsed = TestResult.safeParse(node.attributes?.testResult);
   return parsed.success ? parsed.data : 'not-run';
 }
@@ -223,7 +245,7 @@ export function verificationReport(graph: Graph): VerificationReport {
       tests.push({
         testUid: uid,
         testName: node.name,
-        testRef: testRefFile(node) ?? null,
+        testRefs: testRefFiles(node),
         result: resultOf(node),
       });
     }

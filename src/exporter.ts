@@ -25,7 +25,7 @@
  */
 import { z } from 'zod/v4';
 import type { Graph, GraphNode, GraphEdge } from '@sigloch/graph-api-core';
-import { TestRefSchema, RealRefSchema, type TestRef, type RealRef } from '@sigloch/contracts/se';
+import { TestRefsSchema, RealRefSchema, type TestRef, type RealRef } from '@sigloch/contracts/se';
 import { renderSrs } from './views/srs.js';
 import { renderNfr, renderRtm, renderIcd, renderTestConcept, renderTestMatrix, renderIntPlan } from './views/incose.js';
 import { renderChangelog, renderFmea, renderConOps, renderTrade, renderImplPlan } from './views/graphcode.js';
@@ -88,7 +88,7 @@ function nodeToElement(node: GraphNode): Record<string, unknown> {
  * element that carries a literal `attributes` object lands it as `node.attributes.attributes`
  * (the `...rest` spread nests it). This merges that object UP one level — preserving real
  * metadata (operatingMode / constraint / …) as top-level attributes — while
- * DROPPING `level`/`tool` that merely restate the element's `testRef` (redundant), an empty
+ * DROPPING `level`/`tool` that merely restate one of the element's `testRefs` (redundant), an empty
  * `{}`, and the nesting key itself. Idempotent: an element with no nested `attributes` is
  * returned unchanged, so re-import/export never reintroduces the nesting.
  */
@@ -96,11 +96,14 @@ function flattenNestedAttributes(rest: Record<string, unknown>): Record<string, 
   const nested = rest.attributes;
   if (nested === null || typeof nested !== 'object' || Array.isArray(nested)) return rest;
   const { attributes: _drop, ...top } = rest;
-  const testRef = top.testRef as Record<string, unknown> | undefined;
+  // CR-GC-338: `testRefs` ist eine Liste — redundant ist ein Wert nur, wenn IRGENDEIN
+  // Eintrag ihn schon traegt. Gegen den ersten zu pruefen loeschte bei gemischten Runnern
+  // (vitest + playwright) den falschen.
+  const testRefs = Array.isArray(top.testRefs) ? (top.testRefs as Record<string, unknown>[]) : [];
   const out: Record<string, unknown> = { ...top };
   for (const [k, v] of Object.entries(nested as Record<string, unknown>)) {
-    // Drop level/tool that merely restate the runnable binding (testRef) — redundant.
-    if ((k === 'level' || k === 'tool') && testRef && testRef[k] === v) continue;
+    // Drop level/tool that merely restate a runnable binding (testRefs) — redundant.
+    if ((k === 'level' || k === 'tool') && testRefs.some((r) => r && r[k] === v)) continue;
     // Flatten up one level; never clobber an existing top-level attribute.
     if (!(k in out)) out[k] = v;
   }
@@ -344,7 +347,7 @@ export function exportMarkdown(graph: Graph, view: MarkdownView, name = 'graphco
 
 // ---------------------------------------------------------------------------
 // Test-stub materialization (CR-GC-205 Item 4) — spec-time scaffolding so a TEST
-// testRef NEVER resolves to a phantom file. A TEST can be bound to a file before
+// testRefs NEVER resolve to a phantom file. A TEST can be bound to a file before
 // it is implemented; rendering a minimal `it.todo` stub guarantees the file
 // exists (graph_tests → real selective run, no false-green) while vitest reports
 // the stub pending (suite stays green). Concept-only TESTs (no run artifact yet)
@@ -370,9 +373,13 @@ export function renderTestStubs(graph: Graph): TestStub[] {
   for (const node of graph.nodes) {
     if (node.type !== 'TEST') continue;
     if (node.attributes?.concept === true) continue; // concept-only: no run artifact
-    const parsed = TestRefSchema.safeParse(node.attributes?.testRef);
+    const parsed = TestRefsSchema.safeParse(node.attributes?.testRefs);
     if (!parsed.success) continue; // unbound TEST → R-19 surfaces it, nothing to scaffold
-    stubs.push({ file: parsed.data.file, content: renderStub(node, parsed.data, verifiesByTest.get(node.uid) ?? []) });
+    // CR-GC-338: ein Stub JE EINTRAG — sonst bleibt bei einer Abnahme mit Unit- und
+    // Visual-Lauf die zweite Datei ein Phantom, und genau das soll hier nicht passieren.
+    for (const ref of parsed.data) {
+      stubs.push({ file: ref.file, content: renderStub(node, ref, verifiesByTest.get(node.uid) ?? []) });
+    }
   }
   return stubs;
 }

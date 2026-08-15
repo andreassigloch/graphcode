@@ -1,7 +1,7 @@
 /**
  * TEST-graph-realize (CR-GC-216) — the flat realize affordance over the gate.
  *
- * graph_realize binds a FUNC's realRef (and optionally a TEST's testRef) in one
+ * graph_realize binds a FUNC's realRef (and optionally a TEST's testRefs entry) in one
  * flat call, through harness.mutate() (gate-only, no parallel write path), and
  * returns the missingRefs delta so the realization is confirmed. Real disk Kuzu.
  */
@@ -27,7 +27,7 @@ function makeHarness(repoRoot: string): GraphCodeHarness {
   return new GraphCodeHarness(config, storage);
 }
 
-// A realized FUNC with no realRef (R-20) and a realized TEST with no testRef (R-19) — both warnings,
+// A realized FUNC with no realRef (R-20) and a realized TEST with no testRefs (R-19) — both warnings,
 // so the gate accepts the seed; graph_realize then clears them.
 const SPEC: MutateCommand[] = [
   { op: 'add-node', node: { uid: 'FN-x', type: 'FUNC', name: 'Do x', description: '', attributes: {} } },
@@ -64,7 +64,7 @@ describe('TEST-graph-realize (CR-GC-216): flat realize affordance through the ga
     expect(fn.attributes.realRef).toEqual({ file: 'src/x.ts', symbol: 'doX' });
   });
 
-  it('optionally binds a TEST testRef (R-19) in the same call', async () => {
+  it('optionally adds a TEST testRefs entry (R-19) in the same call', async () => {
     const tools = bindToolsToHarness(harness);
     const out = await tools.graph_realize.handler({
       funcUid: 'FN-x',
@@ -76,7 +76,7 @@ describe('TEST-graph-realize (CR-GC-216): flat realize affordance through the ga
 
     expect(out.resolved).toEqual(expect.arrayContaining(['FN-x', 'TEST-x']));
     const test = harness.getGraph().nodes.find((n) => n.uid === 'TEST-x')!;
-    expect(test.attributes.testRef).toEqual({ file: 'tests/x.test.ts', tool: 'vitest' });
+    expect(test.attributes.testRefs).toEqual([{ file: 'tests/x.test.ts', tool: 'vitest' }]);
   });
 
   it('unknown funcUid → a clear error (no silent no-op)', async () => {

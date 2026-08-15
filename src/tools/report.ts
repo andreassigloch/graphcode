@@ -18,7 +18,7 @@ import type { GraphNode } from '@sigloch/graph-api-core';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import type { RuleViolation } from '@sigloch/contracts/harness';
 import {
-  TestRefSchema,
+  TestRefsSchema,
   type TestRef,
   TRACE_PATTERNS,
   PHASE_READINESS_NAME,
@@ -355,7 +355,7 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
       'returns a summary (no raw violations, no per-gate blocking/open lists) so it stays within the MCP ' +
       `result limit even on a fully-red graph; pass detail:true for the full lists (${PHASE_READINESS_NAME} ` +
       'stays in both — it is already a small aggregate). Read-only; derived from harness.evaluateRules() ' +
-      '(L2 gate) + RC code-conformance (CR-GC-253: realRef/testRef resolved against the real source tree) ' +
+      '(L2 gate) + RC code-conformance (CR-GC-253: realRef/testRefs resolved against the real source tree) ' +
       '+ the MS nodes + element status.',
     inputSchema: GraphReadinessInputSchema,
     async handler(input) {
@@ -386,9 +386,9 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
   // harness.testImpact() traversal (one getSubgraph primitive, no parallel blast-radius):
   // a CODE changeset (MOD/FUNC) is walked DIRECTIONALLY `node →satisfy/allocate→ REQ
   // →verify→ TEST`, a REQ changeset degenerates to its verify-dependents. Each impacted
-  // TEST is resolved via its `testRef` runnable binding to a concrete file; the emitted
+  // TEST is resolved via its `testRefs` runnable bindings to concrete files; the emitted
   // command runs ONLY those affected test files — never the full suite. TESTs without a
-  // testRef (concept-only, marked `testRef:null`) surface under `unresolved`, never lost.
+  // testRefs (concept-only) surface under `unresolved`, never lost.
   //
   // git-diff → node: the changeSet is graph node uids, not paths. The agent maps a
   // changed source file to its node by the repo's MOD/FUNC naming convention
@@ -400,7 +400,7 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
     z.infer<typeof GraphTestsInputSchema>,
     {
       command: string;
-      tests: Array<{ id: string; name: string; testRef: TestRef }>;
+      tests: Array<{ id: string; name: string; testRefs: TestRef[] }>;
       coverage: { changeSet: string[]; impactedNodes: number; impactedTests: number; resolved: number; files: string[] };
       unresolved: Array<{ id: string; name: string; reason: string }>;
     }
@@ -412,9 +412,9 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
       'node MOD/FUNC or a REQ) → impacted TEST nodes via the SINGLE harness.testImpact() traversal: ' +
       'a code node is walked DIRECTIONALLY `node →satisfy/allocate→ REQ →verify→ TEST` (not plain ' +
       'incoming-impact, which never reaches a code node’s tests), a REQ degenerates to its verify- ' +
-      'dependents. Resolves each impacted TEST via its `testRef` binding {file, case?, tool, level?} ' +
+      'dependents. Resolves each impacted TEST via its `testRefs` bindings [{file, case?, tool, level?}, …] ' +
       'and emits the minimal `vitest run <only-affected-files>` command + coverage. TESTs without a ' +
-      'resolvable testRef (concept-only) are reported under `unresolved` (never silently dropped).',
+      'resolvable testRefs (concept-only) are reported under `unresolved` (never silently dropped).',
     inputSchema: GraphTestsInputSchema,
     async handler(input) {
       // Directed code→REQ→TEST resolution via the SINGLE getSubgraph primitive
@@ -425,24 +425,26 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
 
       const impactedTests = [...impacted.values()].filter((n) => n.type === 'TEST');
 
-      const tests: Array<{ id: string; name: string; testRef: TestRef }> = [];
+      const tests: Array<{ id: string; name: string; testRefs: TestRef[] }> = [];
       const unresolved: Array<{ id: string; name: string; reason: string }> = [];
       const files = new Set<string>();
 
       for (const node of impactedTests) {
-        const raw = node.attributes?.testRef;
+        const raw = node.attributes?.testRefs;
         if (raw === undefined || raw === null) {
-          const reason = node.attributes?.concept === true ? 'concept-only (no run artifact yet)' : 'no testRef attribute';
+          const reason = node.attributes?.concept === true ? 'concept-only (no run artifact yet)' : 'no testRefs attribute';
           unresolved.push({ id: node.uid, name: node.name, reason });
           continue;
         }
-        const parsed = TestRefSchema.safeParse(raw);
+        const parsed = TestRefsSchema.safeParse(raw);
         if (!parsed.success) {
-          unresolved.push({ id: node.uid, name: node.name, reason: `invalid testRef: ${parsed.error.message}` });
+          unresolved.push({ id: node.uid, name: node.name, reason: `invalid testRefs: ${parsed.error.message}` });
           continue;
         }
-        tests.push({ id: node.uid, name: node.name, testRef: parsed.data });
-        files.add(parsed.data.file);
+        // CR-GC-338: ALLE Dateien der Abnahme in den selektiven Lauf — genau dafuer ist
+        // 1:n da (CR-SM-231). Nur die erste zu nehmen liesse den Visual-Lauf ungelaufen.
+        tests.push({ id: node.uid, name: node.name, testRefs: parsed.data });
+        for (const ref of parsed.data) files.add(ref.file);
       }
 
       // Minimal selective run: ONLY the affected test files, sorted+deduped.

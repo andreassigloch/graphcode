@@ -20,9 +20,11 @@
 import { z } from 'zod/v4';
 import { TestResult } from '@sigloch/contracts/se';
 import type { MutateCommand, MutateResult } from '@sigloch/contracts/harness';
+import { TestRefsSchema } from '@sigloch/contracts/se';
 import {
   planIngest,
   parseVitestJson,
+  samePath,
   verificationReport,
   type RunnerFileResult,
   type VerificationReport,
@@ -79,7 +81,7 @@ export function bindTestReportTools(ctx: ToolContext): MCPToolRegistry {
       'graph_tests. Takes a vitest `--reporter=json` document (`report`) or pre-parsed [{file,result}] ' +
       '(`results`) and maps each file onto the TEST nodes whose `testRef.file` points at it — mapping ' +
       'by binding, never by name guessing. A runner file that matches no testRef comes back as ' +
-      '`unresolved`, never silently dropped (same rule as graph_tests). Writes `attributes.testResult` ' +
+      '`unresolved`, never silently dropped (same rule as graph_tests). Writes `result`/`ranAt` onto the ' +
       '(passed|failed|skipped|pending) through the SAME Apply-Gate as graph_mutate: gated, audited, ' +
       'no side channel. OVERWRITES: a new run replaces the previous result — the earlier one stays ' +
       'readable through the history (audit trail / graph_timetravel), so the node carries no run stamp. ' +
@@ -105,14 +107,27 @@ export function bindTestReportTools(ctx: ToolContext): MCPToolRegistry {
 
       return serializeToolWrite(async () => {
         const nodes = harness.getGraph().nodes;
-        const commands: MutateCommand[] = plan.assignments.map((a) => ({
-          op: 'update-node',
-          node: {
-            uid: a.testUid,
-            type: nodes.find((n) => n.uid === a.testUid)!.type,
-            attributes: { testResult: a.result },
-          },
-        }));
+        // CR-SM-231b / CR-GC-338: das Ergebnis haengt PRO EINTRAG, nicht am Knoten. Ein Lauf,
+        // der EINE von zwei Dateien betrifft, faerbt nur diese — „einer rot, einer gruen" ist
+        // damit ueberhaupt erst darstellbar. Ein Knoten-Attribut konnte das nie.
+        const commands: MutateCommand[] = plan.assignments.map((a) => {
+          const node = nodes.find((n) => n.uid === a.testUid)!;
+          const parsed = TestRefsSchema.safeParse(node.attributes?.testRefs);
+          const refs = parsed.success ? parsed.data : [];
+          const ranAt = new Date().toISOString();
+          return {
+            op: 'update-node' as const,
+            node: {
+              uid: a.testUid,
+              type: node.type,
+              attributes: {
+                testRefs: refs.map((r) =>
+                  samePath(r.file, a.file) ? { ...r, result: a.result, ranAt } : r,
+                ),
+              },
+            },
+          };
+        });
         const result = await harness.mutate(commands);
         // Kein Audit-Bypass (CR-GC-232): der Ingest wird geloggt wie jeder gated Write.
         await recordAudit(input.consumerId, result, commands);

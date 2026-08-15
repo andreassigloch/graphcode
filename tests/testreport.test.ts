@@ -7,7 +7,7 @@
  * Dieses Häkchen bedeutete ausschließlich „es existiert eine verify-Kante".
  *
  * Die drei Stellen, an denen ein Prüfreport lügen kann, und die deshalb hier stehen:
- *   1. eine Runner-Datei ohne passenden `testRef` wird still verworfen → `unresolved`,
+ *   1. eine Runner-Datei ohne passenden `testRefs`-Eintrag wird still verworfen → `unresolved`,
  *   2. ein TEST ohne Lauf wird als grün gelesen → expliziter Zustand `not-run`,
  *   3. die VCRM zeigt Kante und Ergebnis in EINER Spalte → zwei Spalten.
  *
@@ -56,8 +56,8 @@ const SEED: MutateCommand[] = [
   node('SYS-t', 'SYS', 'Test system'),
   node('REQ-ran', 'REQ', 'Requirement with a run'),
   node('REQ-never', 'REQ', 'Requirement never run'),
-  node('TEST-ran', 'TEST', 'Ran test', { testRef: { file: 'tests/ran.test.ts', tool: 'vitest' } }),
-  node('TEST-never', 'TEST', 'Never run test', { testRef: { file: 'tests/never.test.ts', tool: 'vitest' } }),
+  node('TEST-ran', 'TEST', 'Ran test', { testRefs: [{ file: 'tests/ran.test.ts', tool: 'vitest' }] }),
+  node('TEST-never', 'TEST', 'Never run test', { testRefs: [{ file: 'tests/never.test.ts', tool: 'vitest' }] }),
   node('MOD-t', 'MOD', 'Test module'),
   edge('SYS-t', 'compose', 'REQ-ran'),
   edge('SYS-t', 'compose', 'REQ-never'),
@@ -102,22 +102,27 @@ describe('TEST-testreport: Ergebnisse zurueck in den Graphen (CR-GC-327)', () =>
     rmSync(repoRoot, { recursive: true, force: true });
   });
 
-  it('schreibt das Ergebnis ueber testRef.file an den TEST-Knoten — durch das Gate', async () => {
+  it('schreibt das Ergebnis ueber testRefs[].file an den Eintrag — durch das Gate', async () => {
     const res = await tools.graph_test_ingest.handler({ report: VITEST_JSON, consumerId: 'runner' });
 
     expect(res.success, JSON.stringify(res.violations)).toBe(true);
     expect(res.assignments).toContainEqual({ testUid: 'TEST-ran', file: '/abs/repo/tests/ran.test.ts', result: 'passed' });
-    expect(harness.getGraph().nodes.find((n) => n.uid === 'TEST-ran')?.attributes?.testResult).toBe('passed');
+    // CR-SM-231b: das Ergebnis steht am EINTRAG, nicht am Knoten — bei n Laeufen koennte ein
+    // Knoten-Attribut nicht sagen, welcher gemeint ist.
+    const ran = harness.getGraph().nodes.find((n) => n.uid === 'TEST-ran')!;
+    const refs = ran.attributes?.testRefs as Array<{ file: string; result?: string; ranAt?: string }>;
+    expect(refs.find((r) => r.file === 'tests/ran.test.ts')?.result).toBe('passed');
+    expect(refs.find((r) => r.file === 'tests/ran.test.ts')?.ranAt).toBeDefined();
     // Kein Seitenkanal: der Ingest liegt im Audit-Trail wie jeder gated Write.
     const trail = await tools.audit_trail.handler({ limit: 10 });
     expect(trail.entries.some((e) => e.consumerId === 'runner')).toBe(true);
   });
 
-  it('meldet eine Runner-Datei ohne passenden testRef als unresolved statt sie zu verwerfen', async () => {
+  it('meldet eine Runner-Datei ohne passenden testRefs-Eintrag als unresolved statt sie zu verwerfen', async () => {
     const res = await tools.graph_test_ingest.handler({ report: VITEST_JSON, consumerId: 'runner' });
 
     expect(res.unresolved.map((u) => u.file)).toEqual(['tests/orphan.test.ts']);
-    expect(res.unresolved[0].reason).toMatch(/testRef/);
+    expect(res.unresolved[0].reason).toMatch(/testRefs/);
   });
 
   it('laesst einen TEST ohne Lauf als `not-run` stehen — nicht als bestanden, nicht weg', async () => {
@@ -129,7 +134,7 @@ describe('TEST-testreport: Ergebnisse zurueck in den Graphen (CR-GC-327)', () =>
     expect(never.passed, 'ohne Lauf ist nichts belegt').toBe(false);
     expect(never.tests).toHaveLength(1);
     expect(never.tests[0].result).toBe('not-run');
-    expect(never.tests[0].testRef).toBe('tests/never.test.ts');
+    expect(never.tests[0].testRefs).toEqual(['tests/never.test.ts']);
 
     const ran = report.requirements.find((r) => r.reqUid === 'REQ-ran')!;
     expect(ran.passed).toBe(true);
@@ -142,7 +147,12 @@ describe('TEST-testreport: Ergebnisse zurueck in den Graphen (CR-GC-327)', () =>
 
   it('ueberschreibt bei einem zweiten Lauf statt zu stapeln', async () => {
     await tools.graph_test_ingest.handler({ report: VITEST_JSON, consumerId: 'runner' });
-    expect(harness.getGraph().nodes.find((n) => n.uid === 'TEST-ran')?.attributes?.testResult).toBe('passed');
+    // CR-SM-231b: das Ergebnis steht am EINTRAG, nicht am Knoten — bei n Laeufen koennte ein
+    // Knoten-Attribut nicht sagen, welcher gemeint ist.
+    const ran = harness.getGraph().nodes.find((n) => n.uid === 'TEST-ran')!;
+    const refs = ran.attributes?.testRefs as Array<{ file: string; result?: string; ranAt?: string }>;
+    expect(refs.find((r) => r.file === 'tests/ran.test.ts')?.result).toBe('passed');
+    expect(refs.find((r) => r.file === 'tests/ran.test.ts')?.ranAt).toBeDefined();
 
     const res = await tools.graph_test_ingest.handler({
       results: [{ file: 'tests/ran.test.ts', result: 'failed' }],
@@ -150,7 +160,11 @@ describe('TEST-testreport: Ergebnisse zurueck in den Graphen (CR-GC-327)', () =>
     });
 
     expect(res.success, JSON.stringify(res.violations)).toBe(true);
-    expect(harness.getGraph().nodes.find((n) => n.uid === 'TEST-ran')?.attributes?.testResult).toBe('failed');
+    const after = harness.getGraph().nodes.find((n) => n.uid === 'TEST-ran')!;
+    const afterRefs = after.attributes?.testRefs as Array<{ file: string; result?: string }>;
+    // Ueberschreiben, nicht stapeln: derselbe Eintrag traegt jetzt das neue Ergebnis.
+    expect(afterRefs).toHaveLength(1);
+    expect(afterRefs[0].result).toBe('failed');
     const report = await tools.graph_test_report.handler({});
     expect(report.requirements.find((r) => r.reqUid === 'REQ-ran')!.passed).toBe(false);
   });

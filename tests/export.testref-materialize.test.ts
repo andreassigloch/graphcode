@@ -1,10 +1,10 @@
 /**
  * TEST-testref-materialize (CR-GC-205 Item 4) — graph_export scaffolds a runnable
- * `it.todo` stub for every bound TEST whose testRef file is ABSENT, so graph_tests
+ * `it.todo` stub for every bound TEST whose testRefs entry file is ABSENT, so graph_tests
  * never resolves a phantom path (the spec-time materialization that replaces the
- * lenient "non-null testRef ⇒ file may not exist yet" gap with a hard guarantee).
+ * lenient "non-null testRefs ⇒ file may not exist yet" gap with a hard guarantee).
  *
- * Asserts: (a) a missing testRef file is materialized as a valid it.todo stub and
+ * Asserts: (a) a missing testRefs entry file is materialized as a valid it.todo stub and
  * listed under `stubs`; (b) an EXISTING test file is never overwritten; (c) a
  * concept-only TEST (no run artifact) is skipped; (d) after export, graph_tests
  * resolves the materialized file — a real selective run, no false-green.
@@ -26,7 +26,7 @@ function makeConfig(repoRoot: string): HarnessConfig {
   return { repoRoot, scope: { workspaceId: 'test-ws', systemId: 'graphcode' }, consumerType: 'system', preCommitTimeout: 5000 };
 }
 
-describe('TEST-testref-materialize: graph_export scaffolds missing testRef stubs (CR-GC-205 Item 4)', () => {
+describe('TEST-testref-materialize: graph_export scaffolds missing testRefs stubs (CR-GC-205 Item 4)', () => {
   let tmp: string;
   let harness: GraphCodeHarness;
   let registry: ReturnType<typeof bindToolsToHarness>;
@@ -40,12 +40,12 @@ describe('TEST-testref-materialize: graph_export scaffolds missing testRef stubs
       { id: 'REQ-bound', type: 'REQ', name: 'Req bound', description: 'verified by an unimplemented TEST' },
       {
         id: 'TEST-bound', type: 'TEST', name: 'Bound Test', description: 'bound but not yet implemented',
-        testRef: { file: BOUND_MISSING, case: 'does the bound thing', tool: 'vitest', level: 'unit' },
+        testRefs: [{ file: BOUND_MISSING, case: 'does the bound thing', tool: 'vitest', level: 'unit' }],
       },
       { id: 'REQ-existing', type: 'REQ', name: 'Req existing', description: 'verified by a real TEST' },
       {
         id: 'TEST-existing', type: 'TEST', name: 'Existing Test', description: 'already implemented',
-        testRef: { file: BOUND_EXISTING, tool: 'vitest', level: 'unit' },
+        testRefs: [{ file: BOUND_EXISTING, tool: 'vitest', level: 'unit' }],
       },
       { id: 'REQ-concept', type: 'REQ', name: 'Req concept', description: 'verified by a concept-only TEST' },
       { id: 'TEST-concept', type: 'TEST', name: 'Concept Test', description: 'no run artifact yet', concept: true },
