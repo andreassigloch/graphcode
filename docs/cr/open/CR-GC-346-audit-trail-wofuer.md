@@ -190,7 +190,7 @@ einen CR), keine Änderung an `learning-core` oder `contracts`.
 | CR | Inhalt | Warum nicht hier |
 |---|---|---|
 | **CR-GC-347** | `audit_stats` aggregiert je Regel und je Konsument (F2) | eigenes Tool-Schema; erst sinnvoll, wenn der Zweck im Modell steht |
-| **CR-GC-348** | `TrajectorySchema` trägt Regelidentität + `rulesetVersion` (F1) | `@sigloch/learning-core` → Familie-Review + Version-Bump (Drift-Lock L1/L2) |
+| **CR-GC-348** | `TrajectorySchema` trägt Regelidentität + `rulesetVersion` (F1) | `@sigloch/learning-core` → Familie-Review + Publish + Range-Anhebung (Drift-Lock **L1**, *format stable*) |
 | **CR-GC-349** | Aufbewahrungsregel für den Trail (F4) | Entscheidung, was Compaction überleben muss — Governance, nicht Code |
 
 Reihenfolge: 346 → 348 (die Regelidentität ist die Voraussetzung für alles Lernen) → 347 → 349.
