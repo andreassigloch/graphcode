@@ -10939,6 +10939,11 @@
     },
     {
       "source": "SYS-graphcode",
+      "target": "REQ-batch-seed-performance",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphcode",
       "target": "REQ-buildable-standalone",
       "type": "compose",
       "weight": 1,
@@ -10950,6 +10955,11 @@
       "type": "compose",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "SYS-graphcode",
+      "target": "REQ-doc-export",
+      "type": "compose"
     },
     {
       "source": "SYS-graphcode",
@@ -10986,10 +10996,25 @@
     },
     {
       "source": "SYS-graphcode",
+      "target": "REQ-hook-extension-points",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphcode",
+      "target": "REQ-hook-order-deterministic",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphcode",
       "target": "REQ-import-se-ontology",
       "type": "compose",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "SYS-graphcode",
+      "target": "REQ-install-idempotent",
+      "type": "compose"
     },
     {
       "source": "SYS-graphcode",
@@ -11000,10 +11025,55 @@
     },
     {
       "source": "SYS-graphcode",
+      "target": "REQ-mcp-tool-registry",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphcode",
       "target": "REQ-no-extraction",
       "type": "compose",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "SYS-graphcode",
+      "target": "REQ-npx-distribution",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphcode",
+      "target": "REQ-post-export-markdown",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphcode",
+      "target": "REQ-post-harness-cli",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphcode",
+      "target": "REQ-post-migrate-schema",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphcode",
+      "target": "REQ-pre-export-markdown",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphcode",
+      "target": "REQ-pre-harness-cli",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphcode",
+      "target": "REQ-pre-migrate-schema",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphcode",
+      "target": "REQ-precommit-timeout",
+      "type": "compose"
     },
     {
       "source": "SYS-graphcode",
@@ -11018,6 +11088,36 @@
       "type": "compose",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "SYS-graphcode",
+      "target": "REQ-repo-install",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphcode",
+      "target": "REQ-repo-uninstall",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphcode",
+      "target": "REQ-repo-update",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphcode",
+      "target": "REQ-responsiveness",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphcode",
+      "target": "REQ-schema-version-migration",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphcode",
+      "target": "REQ-self-contained-dist",
+      "type": "compose"
     },
     {
       "source": "SYS-graphcode",
@@ -11050,6 +11150,11 @@
     {
       "source": "SYS-graphcode",
       "target": "REQ-token-efficiency",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphcode",
+      "target": "REQ-versioned-cache",
       "type": "compose"
     },
     {
@@ -11944,10 +12049,30 @@
     },
     {
       "source": "UC-code-quality",
+      "target": "REQ-audit-trail",
+      "type": "compose"
+    },
+    {
+      "source": "UC-code-quality",
+      "target": "REQ-bootstrap-through-gate",
+      "type": "compose"
+    },
+    {
+      "source": "UC-code-quality",
       "target": "REQ-code-governed-quality",
       "type": "compose",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "UC-code-quality",
+      "target": "REQ-codec-validation",
+      "type": "compose"
+    },
+    {
+      "source": "UC-code-quality",
+      "target": "REQ-confidence-tier",
+      "type": "compose"
     },
     {
       "source": "UC-code-quality",
@@ -11958,10 +12083,100 @@
     },
     {
       "source": "UC-code-quality",
+      "target": "REQ-deterministic-serialization",
+      "type": "compose"
+    },
+    {
+      "source": "UC-code-quality",
+      "target": "REQ-formatE-diff-dialect",
+      "type": "compose"
+    },
+    {
+      "source": "UC-code-quality",
+      "target": "REQ-formatE-parity",
+      "type": "compose"
+    },
+    {
+      "source": "UC-code-quality",
+      "target": "REQ-interactive-capture-suggest",
+      "type": "compose"
+    },
+    {
+      "source": "UC-code-quality",
       "target": "REQ-interface-change-escalation",
       "type": "compose",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "UC-code-quality",
+      "target": "REQ-mcp-gate-symmetry",
+      "type": "compose"
+    },
+    {
+      "source": "UC-code-quality",
+      "target": "REQ-one-gate-per-repo",
+      "type": "compose"
+    },
+    {
+      "source": "UC-code-quality",
+      "target": "REQ-post-apply-gate",
+      "type": "compose"
+    },
+    {
+      "source": "UC-code-quality",
+      "target": "REQ-post-capture",
+      "type": "compose"
+    },
+    {
+      "source": "UC-code-quality",
+      "target": "REQ-post-codec-roundtrip",
+      "type": "compose"
+    },
+    {
+      "source": "UC-code-quality",
+      "target": "REQ-post-emit-trajectory",
+      "type": "compose"
+    },
+    {
+      "source": "UC-code-quality",
+      "target": "REQ-post-import",
+      "type": "compose"
+    },
+    {
+      "source": "UC-code-quality",
+      "target": "REQ-post-interface-escalation",
+      "type": "compose"
+    },
+    {
+      "source": "UC-code-quality",
+      "target": "REQ-pre-apply-gate",
+      "type": "compose"
+    },
+    {
+      "source": "UC-code-quality",
+      "target": "REQ-pre-capture",
+      "type": "compose"
+    },
+    {
+      "source": "UC-code-quality",
+      "target": "REQ-pre-codec-roundtrip",
+      "type": "compose"
+    },
+    {
+      "source": "UC-code-quality",
+      "target": "REQ-pre-emit-trajectory",
+      "type": "compose"
+    },
+    {
+      "source": "UC-code-quality",
+      "target": "REQ-pre-import",
+      "type": "compose"
+    },
+    {
+      "source": "UC-code-quality",
+      "target": "REQ-pre-interface-escalation",
+      "type": "compose"
     },
     {
       "source": "UC-code-quality",
@@ -11977,6 +12192,16 @@
     },
     {
       "source": "UC-code-quality",
+      "target": "REQ-roundtrip-conformance",
+      "type": "compose"
+    },
+    {
+      "source": "UC-code-quality",
+      "target": "REQ-rule-enforcement",
+      "type": "compose"
+    },
+    {
+      "source": "UC-code-quality",
       "target": "REQ-single-write-door",
       "type": "compose"
     },
@@ -11986,6 +12211,11 @@
       "type": "compose",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "UC-code-quality",
+      "target": "REQ-trajectory-emit",
+      "type": "compose"
     },
     {
       "source": "UC-deterministic-steering",
@@ -12036,10 +12266,25 @@
     },
     {
       "source": "UC-efficient-testing",
+      "target": "REQ-graph-tests-operational",
+      "type": "compose"
+    },
+    {
+      "source": "UC-efficient-testing",
       "target": "REQ-impact-based-testing",
       "type": "compose",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "UC-efficient-testing",
+      "target": "REQ-post-impact-testing",
+      "type": "compose"
+    },
+    {
+      "source": "UC-efficient-testing",
+      "target": "REQ-pre-impact-testing",
+      "type": "compose"
     },
     {
       "source": "UC-efficient-testing",
@@ -12060,12 +12305,32 @@
     },
     {
       "source": "UC-graph-time-travel",
+      "target": "REQ-auto-persist-merge",
+      "type": "compose"
+    },
+    {
+      "source": "UC-graph-time-travel",
+      "target": "REQ-conflict-free-merge",
+      "type": "compose"
+    },
+    {
+      "source": "UC-graph-time-travel",
       "target": "REQ-graph-snapshot-per-commit",
       "type": "compose"
     },
     {
       "source": "UC-graph-time-travel",
       "target": "REQ-graph-state-recall",
+      "type": "compose"
+    },
+    {
+      "source": "UC-graph-time-travel",
+      "target": "REQ-post-merge-nodes",
+      "type": "compose"
+    },
+    {
+      "source": "UC-graph-time-travel",
+      "target": "REQ-pre-merge-nodes",
       "type": "compose"
     },
     {
@@ -12110,6 +12375,16 @@
       "type": "compose",
       "weight": 1,
       "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "UC-live-graph-view",
+      "target": "REQ-post-emit-update-event",
+      "type": "compose"
+    },
+    {
+      "source": "UC-live-graph-view",
+      "target": "REQ-pre-emit-update-event",
+      "type": "compose"
     },
     {
       "source": "UC-live-graph-view",
@@ -12163,6 +12438,16 @@
     },
     {
       "source": "UC-reduced-llm",
+      "target": "REQ-advisory-roundtrip-latency",
+      "type": "compose"
+    },
+    {
+      "source": "UC-reduced-llm",
+      "target": "REQ-cache-layering",
+      "type": "compose"
+    },
+    {
+      "source": "UC-reduced-llm",
       "target": "REQ-graph-context-replaces-reading",
       "type": "compose"
     },
@@ -12173,11 +12458,46 @@
     },
     {
       "source": "UC-reduced-llm",
+      "target": "REQ-post-agent-query",
+      "type": "compose"
+    },
+    {
+      "source": "UC-reduced-llm",
+      "target": "REQ-post-modelfree-gate",
+      "type": "compose"
+    },
+    {
+      "source": "UC-reduced-llm",
+      "target": "REQ-pre-agent-query",
+      "type": "compose"
+    },
+    {
+      "source": "UC-reduced-llm",
+      "target": "REQ-pre-modelfree-gate",
+      "type": "compose"
+    },
+    {
+      "source": "UC-reduced-llm",
+      "target": "REQ-progressive-expansion",
+      "type": "compose"
+    },
+    {
+      "source": "UC-reduced-llm",
+      "target": "REQ-query-precision",
+      "type": "compose"
+    },
+    {
+      "source": "UC-reduced-llm",
       "target": "REQ-small-model-viable",
       "type": "compose",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "UC-reduced-llm",
+      "target": "REQ-subgraph-slicing",
+      "type": "compose"
     }
   ],
-  "graphVersion": 93
+  "graphVersion": 97
 }
