@@ -217,6 +217,6 @@ kein nachgezogener Test, das ist ein **besser gewordenes Maß**.
 | Test | Grund |
 |---|---|
 | `mcp.tests-deduction` (e)(f)(g) | prüfen den **committeten SSOT-Graphen**. Sie melden korrekt, dass die Graphdaten noch `testRef` tragen — das ist die Daten-Migration, nicht ein Testproblem. |
-| `audit.trail-projection` | Größenzusage driftet auf Echtdaten (88,3 % statt ≥ 89 %) — **CR-GC-344**. |
+| `audit.trail-projection` | Größenzusage driftet auf Echtdaten (88,3 % statt ≥ 89 %) — **CR-GC-346** §3 F3/F3b (der ursprünglich dafür angelegte CR-GC-344 ist dort aufgegangen). |
 
 Diese Tests grün zu machen hiesse, die Aussage zu verlieren, für die sie geschrieben wurden.

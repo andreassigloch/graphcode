@@ -147,7 +147,10 @@ Werkzeugzahl aus CR-GC-205 unangetastet bleiben.
 | `docs/cr/open/CR-GC-347-audit-stats-aggregation.md` | dieser CR |
 
 `tests/audit.trail-projection.test.ts` importiert `projectAuditEntries` — der Import-Pfad ändert
-sich, der Testinhalt nicht. Das zählt als Folgeänderung, nicht als fünfte Datei.
+sich, der Testinhalt nicht. Das zählt als Folgeänderung, nicht als fünfte Datei. Insbesondere bleibt
+die Größenzusage samt Messdatum, Fenster-Bandbreite und Gegenprobe (CR-GC-346 §3 F3b) unverändert
+stehen — sie unangetastet grün zu sehen ist Teil des Nachweises, dass der Umzug verhaltensneutral
+war.
 
 ---
 

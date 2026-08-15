@@ -128,6 +128,7 @@ Kleinen, nur eben ohne Werkzeug.
 
 [`tests/audit.trail-projection.test.ts`](../../../tests/audit.trail-projection.test.ts) fällt seit
 heute: die Default-Antwort ist **61,8 KB von 387,7 KB = 15,9 %**, gefordert sind ≤ 11 %.
+Nachmessung am selben Tag, wenige Stunden später: **76,9 KB von 564,7 KB = 13,6 %** — dazu F3b.
 
 Ursache: CR-GC-319 wirft `commands` und `rulesPassed` weg, behält aber **jede** Violation wörtlich —
 auch nicht-gatende `info`. Violations skalieren mit der Batch-Breite **genauso** wie Kommandos: ein
@@ -156,6 +157,32 @@ Kein stiller Cap: die Anzahl bleibt vollständig, nur die Wiederholung der Prosa
 `elementId`s stehen unverkürzt im Record auf Platte, und für den lebenden Graphen liefert sie
 `rules_get_violations`.
 
+### F3b · Die Schwelle misst gegen ein gleitendes Fenster — sekundäre Anforderung
+
+*(übernommen aus CR-GC-344, das dafür ersatzlos gelöscht wurde — die Ursache ist dieselbe Zeile.)*
+
+Der Test slict auf die **letzten 50 Records** ([Zeile 226](../../../tests/audit.trail-projection.test.ts)) und
+vergleicht gegen eine *absolute* Schwelle. Damit hängt das Ergebnis an der Form der letzten 50
+Operationen, nicht am Trail insgesamt. Gemessen über gleitende 50er-Fenster desselben Trails:
+
+| Fenster (letzte 50 …) | roh | projiziert | Reduktion |
+|---|---|---|---|
+| aktuell | 564,7 KB | 76,9 KB | **86,4 %** ❌ |
+| −50 Ops | 160,4 KB | 16,5 KB | 89,7 % ✓ |
+| −150 Ops | 332,5 KB | 36,4 KB | 89,1 % ✓ |
+
+Die Zusage kippt also mit der Session-Aktivität hin und her, Bandbreite ~86–90 %; ein Batch über 28
+Knoten verschiebt sie allein. **Das ist dieselbe Ursache wie F3** — Violations skalieren mit der
+Batch-Breite —, aber der Aggregations-Fix beseitigt sie nicht, er verschafft ihr nur Luft (5,4 %
+statt 13,6 %). Ohne Gegenmaßnahme kalibriert der Test nach jedem Fix erneut gegen eine
+Momentaufnahme und ist irgendwann wieder rot, ohne dass sich an der Projektion etwas geändert hat.
+
+**Sekundäre Anforderung zu §4.2/4.3:** die 11-%-Schwelle bleibt, aber die Kalibrierung wird
+belastbar gemacht — Messwert **mit Datum und Bandbreite über die drei Fenster** im Kommentar, plus
+eine trail-unabhängige Gegenprobe (synthetischer Record mit bekanntem Fett-Anteil, feste
+Größenzusage). Erst die Gegenprobe schlägt zuverlässig fehl, wenn die Projektion *schlechter* wird;
+der Fall am echten Trail allein nickt sonst ab, was gerade herauskommt.
+
 ### F4 · Aufbewahrung ist unentschieden
 
 `FileAuditLog` komprimiert automatisch ab **10 MB** (`DEFAULT_COMPACT_BYTES`) und benennt die alte
@@ -178,6 +205,8 @@ Aufnehmen, nicht jetzt lösen (§6).
 3. **Test rot zuerst** (`se-test`): der Aggregations-Fall muss einmal aus dem richtigen Grund rot
    gesehen worden sein, und der bestehende Größen-Fall muss mit dem Fix von rot auf grün kippen —
    das ist der Nachweis, dass er den Pfad wirklich misst.
+4. **F3b (sekundär):** Messdatum + Fenster-Bandbreite an die Schwelle, und ein trail-unabhängiger
+   Gegenprobe-Fall. Kein Absenken der 11 % — die Schwelle bleibt, nur ihre Herkunft wird prüfbar.
 
 **Nicht-Ziele:** kein Lernmechanismus und **keine Zeile** in `learning-core` (§2.1), keine
 Kalibrierung selbst (die braucht eine Messreihe, nicht einen CR), keine Änderung an `contracts`.
@@ -199,6 +228,10 @@ Kalibrierung selbst (die braucht eine Messreihe, nicht einen CR), keine Änderun
       der Default-Antwort erklärbar bleiben.
 - [ ] `includeCommands` / `includeRulesPassed` liefern unverändert das Volle; der Record auf Platte
       ist unangetastet (*Schreiben ist nicht Ausliefern*, CR-GC-314).
+- [ ] **(F3b)** Die Schwelle trägt Messdatum **und** die Bandbreite über drei gleitende 50er-Fenster —
+      nicht eine einzelne Momentaufnahme.
+- [ ] **(F3b)** Ein trail-unabhängiger Fall auf synthetischem Record sichert die Zusage: er schlägt
+      fehl, wenn die Projektion schlechter wird, egal wie der lokale Trail gerade aussieht.
 - [ ] Red-first für beide neuen Fälle nachgewiesen.
 - [ ] `npm run build` + `npm test` grün.
 
