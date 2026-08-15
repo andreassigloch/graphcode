@@ -103,7 +103,7 @@ damit er beim Reaktivieren nicht neu erhoben werden muss, und treibt hier nichts
 Feed bei **jeder** Mutation und **jedem** dryRun-Preview vollständig neu
 ([tool-context.ts:132/:158](../../../src/tool-context.ts)) — 108 Zeilen pro Schreibvorgang,
 für null Leser. Ob dieser Schreibpfad heute überhaupt laufen soll, ist eine eigene Entscheidung
-(Kosten gegen Optionswert) und gehört weder in diesen CR noch in den geparkten CR-GC-348.
+(Kosten gegen Optionswert) und gehört weder in diesen CR noch in den geparkten CR-DRAFT-GC-348.
 
 ### F2 · `audit_stats` liefert vier Zahlen
 
@@ -243,7 +243,7 @@ Kalibrierung selbst (die braucht eine Messreihe, nicht einen CR), keine Änderun
 |---|---|---|
 | **CR-GC-347** | `audit_stats` aggregiert je Regel und je Konsument (F2) | **offen** — reines graphcode, keine Fremdpakete; das Werkzeug, das die vier Analysen aus §1 gebraucht hätten |
 | **CR-GC-349** | Aufbewahrungsregel für den Trail (F4) | **offen** — Entscheidung, was Compaction überleben muss; Governance, nicht Code. Noch nicht geschrieben |
-| **CR-GC-348** | `TrajectorySchema` trägt Regelidentität (F1) | **PARKED** (§2.1) — learning-core wird nicht angefasst, solange kein Leser existiert |
+| **CR-DRAFT-GC-348** | `TrajectorySchema` trägt Regelidentität (F1) | **PARKED** (§2.1) — learning-core wird nicht angefasst, solange kein Leser existiert; als Draft benannt, damit es kein umsetzbarer CR ist |
 
 Reihenfolge: **346 → 347 → 349**. 348 steht ausserhalb dieser Kette und wartet auf einen echten
 Konsumenten des Feeds.

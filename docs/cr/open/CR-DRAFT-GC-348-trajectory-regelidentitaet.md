@@ -1,6 +1,10 @@
-# CR-GC-348 — Der Learning-Feed trägt die Regelidentität
+# CR-DRAFT-GC-348 — Der Learning-Feed trägt die Regelidentität
 
-> **PARKED 2026-08-15 — nicht anfangen.** Entscheid des Auftraggebers: Learning ist ein
+> **DRAFT / PARKED 2026-08-15 — nicht anfangen.** Der Dateiname trägt `CR-DRAFT-`, damit dieser
+> Text nicht als umsetzbarer offener CR gelesen wird: er ist eine belegte Analyse ohne Auftrag.
+> Beim Reaktivieren zurück auf `CR-GC-348-…` benennen.
+>
+> **Grund:** Entscheid des Auftraggebers: Learning ist ein
 > Zukunftsthema, `@sigloch/learning-core` wird bis dahin **nicht angefasst**.
 >
 > Die Nachmessung stützt den Entscheid. graphcode bezieht aus dem Paket **genau eine Funktion**:
@@ -25,7 +29,7 @@
 > Offene Frage, die dieser Entscheid aufwirft und die **nicht** zu diesem CR gehört: ob der Feed
 > heute überhaupt geschrieben werden soll. Nicht angefasst — siehe CR-GC-346 §6.
 
-**Status:** parked · **Angelegt:** 2026-08-15 · **Max Files:** 6 (dieser CR: **5**, **zwei Repos**)
+**Status:** draft/parked · **Angelegt:** 2026-08-15 · **Max Files:** 6 (dieser CR: **5**, **zwei Repos**)
 **Vorbedingung:** CR-GC-346 — dort steht `REQ-prompt-prediction`, das dieser CR erfüllbar macht.
 **Governance:** Drift-Lock **L1** (`Trajectory` = *format stable*, Owner Governance-Guardian) —
 Familie-Review **vor** der Änderung. **Nicht** L2; L2 betrifft `V3_RULES`, die hier unangetastet
