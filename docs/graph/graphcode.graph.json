@@ -1889,6 +1889,28 @@
       }
     },
     {
+      "id": "FUNC-author-req",
+      "type": "FUNC",
+      "name": "Skill se:author-req",
+      "description": "Prompt-realisierter Skill se:author-req: REQ mit verifizierendem TEST-Konzept in einem Batch — die REQ-with-test-Invariante.",
+      "realRef": {
+        "file": ".claude/skills/se-author-req.md",
+        "symbol": "se-author-req",
+        "lang": "prompt"
+      }
+    },
+    {
+      "id": "FUNC-author-uc",
+      "type": "FUNC",
+      "name": "Skill se:author-uc",
+      "description": "Prompt-realisierter Skill se:author-uc: UC terse und jargonarm autorieren, mit compose-Trace durchs Gate.",
+      "realRef": {
+        "file": ".claude/skills/se-author-uc.md",
+        "symbol": "se-author-uc",
+        "lang": "prompt"
+      }
+    },
+    {
       "id": "FUNC-block-anschluss",
       "type": "FUNC",
       "name": "Agenten-Anschluss",
@@ -1899,6 +1921,12 @@
       "type": "FUNC",
       "name": "Architektur-Optimierung",
       "description": "Ebene-1-Block im Autopilot: Architektur-Optimierung — Operator-Vorschlaege entlang der R6-Fitness."
+    },
+    {
+      "id": "FUNC-block-arch-sicht",
+      "type": "FUNC",
+      "name": "Architektur-Sicht",
+      "description": "Ebene-1-Block im Viewer: die Architektur-Sicht — Live-Graph und exakter Blast-Radius on demand."
     },
     {
       "id": "FUNC-block-dokumentenwerk",
@@ -1921,8 +1949,8 @@
     {
       "id": "FUNC-block-live-dashboard",
       "type": "FUNC",
-      "name": "Live-Dashboard",
-      "description": "Ebene-1-Block im Schaufenster: der Live-Pfad — Update-Events, SSE-Verteilung, Dashboard-Panels."
+      "name": "Live-Kanal",
+      "description": "Ebene-1-Block im Viewer: der Live-Transport — Update-Events, Diff-Broadcast, SSE-Verteilung an die Panels."
     },
     {
       "id": "FUNC-block-messwerk",
@@ -1935,6 +1963,12 @@
       "type": "FUNC",
       "name": "Q-Improvement",
       "description": "Ebene-1-Block im Autopilot: Qualitaets-Verbesserung — Fehler und Warnings abbauen; Fokus-Dimension und Top-Fixes an den Agenten."
+    },
+    {
+      "id": "FUNC-block-reifegrad-sicht",
+      "type": "FUNC",
+      "name": "Reifegrad-Sicht",
+      "description": "Ebene-1-Block im Viewer: die Reifegrad-Sicht — Readiness, Phase-Gates, Artefakt-Panel, Empfehlungen, Funktions-Health."
     },
     {
       "id": "FUNC-block-schaufenster",
@@ -1981,6 +2015,17 @@
         "file": "src/conformance.ts",
         "symbol": "conformanceViolations",
         "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-close-violations",
+      "type": "FUNC",
+      "name": "Skill se:close-violations",
+      "description": "Prompt-realisierter Skill se:close-violations: den Graphen auf null Error-Verstoesse treiben — ranked verify/satisfy-Kanten durchs Gate.",
+      "realRef": {
+        "file": ".claude/skills/se-close-violations.md",
+        "symbol": "se-close-violations",
+        "lang": "prompt"
       }
     },
     {
@@ -2306,6 +2351,17 @@
       }
     },
     {
+      "id": "FUNC-import-doc",
+      "type": "FUNC",
+      "name": "Skill se:import-doc",
+      "description": "Prompt-realisierter Skill se:import-doc: Dokument zweistufig importieren — Struktur vor KI, Merge nie Reseed.",
+      "realRef": {
+        "file": ".claude/skills/se-import-doc.md",
+        "symbol": "se-import-doc",
+        "lang": "prompt"
+      }
+    },
+    {
       "id": "FUNC-merge-nodes",
       "type": "FUNC",
       "name": "mergeNodes(graph)",
@@ -2581,6 +2637,116 @@
       "external": true
     },
     {
+      "id": "FUNC-se-conops",
+      "type": "FUNC",
+      "name": "Skill se-conops",
+      "description": "Prompt-realisierter Skill se-conops: Concept of Operations — Betriebsaspekte vor den Use Cases, als system-scoped REQ durchs Gate.",
+      "realRef": {
+        "file": ".claude/skills/se-conops.md",
+        "symbol": "se-conops",
+        "lang": "prompt"
+      }
+    },
+    {
+      "id": "FUNC-se-fmea",
+      "type": "FUNC",
+      "name": "Skill se-fmea",
+      "description": "Prompt-realisierter Skill se-fmea: AIAG-VDA-FMEA auf System/Subsystem, Befunde in Graph und Spec.",
+      "realRef": {
+        "file": ".claude/skills/se-fmea.md",
+        "symbol": "se-fmea",
+        "lang": "prompt"
+      }
+    },
+    {
+      "id": "FUNC-se-generate",
+      "type": "FUNC",
+      "name": "Skill se:generate",
+      "description": "Prompt-realisierter Skill se:generate: Kaltstart-Generierung aus Prosa-Intention, readiness-getriebener Loop durchs Gate.",
+      "realRef": {
+        "file": ".claude/skills/se-generate.md",
+        "symbol": "se-generate",
+        "lang": "prompt"
+      }
+    },
+    {
+      "id": "FUNC-se-help",
+      "type": "FUNC",
+      "name": "Skill se:help",
+      "description": "Prompt-realisierter Skill se:help: jedes Dashboard-Element fuer beide Publikums-Seiten erklaeren.",
+      "realRef": {
+        "file": ".claude/skills/se-help.md",
+        "symbol": "se-help",
+        "lang": "prompt"
+      }
+    },
+    {
+      "id": "FUNC-se-irr",
+      "type": "FUNC",
+      "name": "Skill se-irr",
+      "description": "Prompt-realisierter Skill se-irr: Assumption Review — unbewiesene Annahmen pinnen, tragende zu CRs promoten.",
+      "realRef": {
+        "file": ".claude/skills/se-irr.md",
+        "symbol": "se-irr",
+        "lang": "prompt"
+      }
+    },
+    {
+      "id": "FUNC-se-plan",
+      "type": "FUNC",
+      "name": "Skill se-plan",
+      "description": "Prompt-realisierter Skill se-plan: Implementierungsplan aus dem depends-on-DAG, CR-Schnitt aus graph_context-Slices.",
+      "realRef": {
+        "file": ".claude/skills/se-plan.md",
+        "symbol": "se-plan",
+        "lang": "prompt"
+      }
+    },
+    {
+      "id": "FUNC-se-retro",
+      "type": "FUNC",
+      "name": "Skill se-retro",
+      "description": "Prompt-realisierter Skill se-retro: Post-Projekt-Retro ueber die sechs graphcode-KPIs.",
+      "realRef": {
+        "file": ".claude/skills/se-retro.md",
+        "symbol": "se-retro",
+        "lang": "prompt"
+      }
+    },
+    {
+      "id": "FUNC-se-review",
+      "type": "FUNC",
+      "name": "Skill se-review",
+      "description": "Prompt-realisierter Skill se-review: Readiness-Gate-Check — Blocker und naechste Schritte.",
+      "realRef": {
+        "file": ".claude/skills/se-review.md",
+        "symbol": "se-review",
+        "lang": "prompt"
+      }
+    },
+    {
+      "id": "FUNC-se-status",
+      "type": "FUNC",
+      "name": "Skill se-status",
+      "description": "Prompt-realisierter Skill se-status: SE-Projektstatus — Readiness, Verstoesse, Top-Fixes.",
+      "realRef": {
+        "file": ".claude/skills/se-status.md",
+        "symbol": "se-status",
+        "lang": "prompt"
+      }
+    },
+    {
+      "id": "FUNC-se-trade",
+      "type": "FUNC",
+      "name": "Skill se-trade",
+      "description": "Prompt-realisierter Skill se-trade: Trade Study — Optionen bewerten, Entscheidung mit decides-Kanten im Graph.",
+      "realRef": {
+        "file": ".claude/skills/se-trade.md",
+        "symbol": "se-trade",
+        "lang": "prompt"
+      }
+    },
+    {
       "id": "FUNC-serve-sse",
       "type": "FUNC",
       "name": "serveSSE()",
@@ -2640,6 +2806,17 @@
         "file": "src/steering-snapshot.ts",
         "symbol": "takeSteeringSnapshot",
         "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-target-profile",
+      "type": "FUNC",
+      "name": "Skill se:target-profile",
+      "description": "Prompt-realisierter Skill se:target-profile: R6-Zielgewichte vom Menschen elizitieren, Zielkonflikte sichtbar machen.",
+      "realRef": {
+        "file": ".claude/skills/se-target-profile.md",
+        "symbol": "se-target-profile",
+        "lang": "prompt"
       }
     },
     {
@@ -9406,9 +9583,29 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-author-req",
+      "target": "MOD-skills",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-author-uc",
+      "target": "MOD-skills",
+      "type": "allocate"
+    },
+    {
       "source": "FUNC-block-anschluss",
       "target": "MOD-repo-root",
       "type": "allocate"
+    },
+    {
+      "source": "FUNC-block-anschluss",
+      "target": "FUNC-author-req",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-anschluss",
+      "target": "FUNC-author-uc",
+      "type": "compose"
     },
     {
       "source": "FUNC-block-anschluss",
@@ -9437,12 +9634,27 @@
     },
     {
       "source": "FUNC-block-anschluss",
+      "target": "FUNC-import-doc",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-anschluss",
       "target": "FUNC-resolve-tests-from-code",
       "type": "compose"
     },
     {
       "source": "FUNC-block-anschluss",
+      "target": "FUNC-se-help",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-anschluss",
       "target": "FUNC-serve-stdio",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-anschluss",
+      "target": "FUNC-target-profile",
       "type": "compose"
     },
     {
@@ -9463,6 +9675,21 @@
     {
       "source": "FUNC-block-arch-optimierung",
       "target": "FUNC-graph-suggest",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-arch-sicht",
+      "target": "MOD-dashboard",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-block-arch-sicht",
+      "target": "FUNC-render-graph",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-arch-sicht",
+      "target": "FUNC-render-impact",
       "type": "compose"
     },
     {
@@ -9607,41 +9834,6 @@
     },
     {
       "source": "FUNC-block-live-dashboard",
-      "target": "FUNC-render-artifacts",
-      "type": "compose"
-    },
-    {
-      "source": "FUNC-block-live-dashboard",
-      "target": "FUNC-render-graph",
-      "type": "compose"
-    },
-    {
-      "source": "FUNC-block-live-dashboard",
-      "target": "FUNC-render-health",
-      "type": "compose"
-    },
-    {
-      "source": "FUNC-block-live-dashboard",
-      "target": "FUNC-render-impact",
-      "type": "compose"
-    },
-    {
-      "source": "FUNC-block-live-dashboard",
-      "target": "FUNC-render-impl-gates",
-      "type": "compose"
-    },
-    {
-      "source": "FUNC-block-live-dashboard",
-      "target": "FUNC-render-readiness",
-      "type": "compose"
-    },
-    {
-      "source": "FUNC-block-live-dashboard",
-      "target": "FUNC-render-recommendations",
-      "type": "compose"
-    },
-    {
-      "source": "FUNC-block-live-dashboard",
       "target": "FUNC-serve-sse",
       "type": "compose"
     },
@@ -9702,7 +9894,42 @@
     },
     {
       "source": "FUNC-block-q-improvement",
+      "target": "FUNC-close-violations",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-q-improvement",
       "target": "FUNC-next-step",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-reifegrad-sicht",
+      "target": "MOD-dashboard",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-block-reifegrad-sicht",
+      "target": "FUNC-render-artifacts",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-reifegrad-sicht",
+      "target": "FUNC-render-health",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-reifegrad-sicht",
+      "target": "FUNC-render-impl-gates",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-reifegrad-sicht",
+      "target": "FUNC-render-readiness",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-reifegrad-sicht",
+      "target": "FUNC-render-recommendations",
       "type": "compose"
     },
     {
@@ -9712,12 +9939,22 @@
     },
     {
       "source": "FUNC-block-schaufenster",
+      "target": "FUNC-block-arch-sicht",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-schaufenster",
       "target": "FUNC-block-dokumentenwerk",
       "type": "compose"
     },
     {
       "source": "FUNC-block-schaufenster",
       "target": "FUNC-block-live-dashboard",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-schaufenster",
+      "target": "FUNC-block-reifegrad-sicht",
       "type": "compose"
     },
     {
@@ -9733,6 +9970,51 @@
     {
       "source": "FUNC-block-se-steuerung",
       "target": "FUNC-rank-candidates",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-se-steuerung",
+      "target": "FUNC-se-conops",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-se-steuerung",
+      "target": "FUNC-se-fmea",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-se-steuerung",
+      "target": "FUNC-se-generate",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-se-steuerung",
+      "target": "FUNC-se-irr",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-se-steuerung",
+      "target": "FUNC-se-plan",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-se-steuerung",
+      "target": "FUNC-se-retro",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-se-steuerung",
+      "target": "FUNC-se-review",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-se-steuerung",
+      "target": "FUNC-se-status",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-se-steuerung",
+      "target": "FUNC-se-trade",
       "type": "compose"
     },
     {
@@ -9758,6 +10040,11 @@
       "source": "FUNC-check-code-conformance",
       "target": "REQ-graph-code-conformance",
       "type": "satisfy"
+    },
+    {
+      "source": "FUNC-close-violations",
+      "target": "MOD-skills",
+      "type": "allocate"
     },
     {
       "source": "FUNC-compute-phase-readiness",
@@ -10406,6 +10693,11 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "FUNC-import-doc",
+      "target": "MOD-skills",
+      "type": "allocate"
+    },
+    {
       "source": "FUNC-merge-nodes",
       "target": "MOD-codec",
       "type": "allocate",
@@ -10835,6 +11127,56 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-se-conops",
+      "target": "MOD-skills",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-se-fmea",
+      "target": "MOD-skills",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-se-generate",
+      "target": "MOD-skills",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-se-help",
+      "target": "MOD-skills",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-se-irr",
+      "target": "MOD-skills",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-se-plan",
+      "target": "MOD-skills",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-se-retro",
+      "target": "MOD-skills",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-se-review",
+      "target": "MOD-skills",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-se-status",
+      "target": "MOD-skills",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-se-trade",
+      "target": "MOD-skills",
+      "type": "allocate"
+    },
+    {
       "source": "FUNC-serve-sse",
       "target": "MOD-host-bridge",
       "type": "allocate",
@@ -10912,6 +11254,11 @@
       "source": "FUNC-take-steering-snapshot",
       "target": "REQ-steering-from-metrics",
       "type": "satisfy"
+    },
+    {
+      "source": "FUNC-target-profile",
+      "target": "MOD-skills",
+      "type": "allocate"
     },
     {
       "source": "FUNC-test",
@@ -12991,5 +13338,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 104
+  "graphVersion": 107
 }

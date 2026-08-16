@@ -252,6 +252,124 @@ FCHAIN-Mitgliedschaften, keine modellierten FLOWs — damit die R⁶-Fitness ein
 bewerten kann, müssen die Flüsse der Schleife erst als FLOW-Knoten ins Modell. Erst
 modellieren, dann messen, dann refactorn.
 
+---
+
+## 7. Testcase 2 — moneyflow per graphify importiert (2026-08-16, Runde 1)
+
+**Repo:** `dev/moneyflow` („Finance Pinball – Geldfluss-Simulation als gerichteter Graph").
+Import über den echten Produktpfad `graphcode import-code` → eigener Store in moneyflow,
+Gate-only, Reseed-Semantik. **1228 Knoten / 966 Kanten:** FUNC 306 · FLOW 220 · SCHEMA 122 ·
+TEST 425 · MOD 155 (eine MOD je Datei).
+
+### 7.0 Beifang: echter graphify-Bug in Minute 2
+
+`extractCodeRepoPipeline` → `parseFile` übergibt Dateiinhalte als plain String an tree-sitter;
+dessen Node-Binding wirft **„Invalid argument" für Strings > 32 KiB** — der ganze Import
+stirbt an einer Datei. moneyflow hat zwei davon (`import/cross-source-linker.ts` 46 KB,
+`frontend/components/PinballCanvas.tsx` 33 KB). **Workaround im Spike:** 155/157 Dateien
+importiert, die zwei ausgeschlossen — kein stiller Cap, hier notiert. **Fix gehört nach
+graphify** (Buffer-/Callback-Parse statt String), eigener CR im graphify-Repo.
+
+### 7.1 Ebene-0-Schnitt (7 Blöcke, Substantiv-Wording, aus den Top-Verzeichnissen)
+
+| Block | Quelle (FUNCs) | Sales-Satz |
+|---|---|---|
+| **Datensammler** | crawlers (18) | Holt öffentliche Finanzdaten: Bundeshaushalt, Bundesbank, Destatis, Eurostat, EDGAR … |
+| **Importwerk** | import, transformers, schemas (59) | Prüft Rohdaten und verknüpft Quellen zu einem Bild |
+| **Geldfluss-Graph** | core (36) | Das Herz: Quellen, Senken, Flüsse — mit Konfidenz je Kante |
+| **Simulation** | simulation (11) | Der „Pinball": Szenarien durchspielen, Wirkungen verfolgen |
+| **Auskunft** | api, mcp, llm (64) | Antworten über REST, MCP und natürliche Sprache |
+| **Schauplatz** | frontend (57) | Die Pinball-Ansicht: Geldflüsse sichtbar in Bewegung |
+| **Betrieb** | auth, billing, ops, cli, content (61) | Zugang, Abrechnung, Betrieb, Kuratierung |
+
+306 FUNCs vollständig zugeordnet. Ebene 1 = die Top-Verzeichnisse selbst (z. B. Auskunft →
+api/mcp/llm) — die Verzeichnisstruktur der App IST bereits eine brauchbare Ebene 1; der
+Schnitt oben ist reines Zusammenfassen, kein Umsortieren.
+
+### 7.2 Kern-Wirkkette Ebene 0
+
+```mermaid
+graph LR
+    DS["Datensammler<br/>11 öffentliche Quellen"] --> IW["Importwerk<br/>prüfen und verknüpfen"]
+    IW --> GG["Geldfluss-Graph<br/>Quellen Senken Flüsse"]
+    GG --> SIM["Simulation<br/>Szenarien durchspielen"]
+    SIM --> AK["Auskunft<br/>REST MCP Sprachfrage"]
+    AK --> SP["Schauplatz<br/>Pinball-Ansicht"]
+    BET["Betrieb<br/>Zugang Abrechnung Kuratierung"] --> AK
+```
+
+Belegt aus den importierten FLOWs (Beispiele): `compare-Route → simulation/snapshot-diff`,
+`admin-Route → auth/revocation`, `extern-Route → user/api-key-scope` — die Kette oben ist
+Rollup echter Kanten, nicht Prosa.
+
+### 7.3 Prinzip-Thema (Kalt-Leser-Test) + Befunde
+
+**These aus der Struktur:** *Öffentliche Geldflüsse als gerichteter Graph — einsammeln,
+verknüpfen, durchspielen, befragen.* Die Struktur trägt die Erklärung ohne Code-Lektüre —
+und die Pointe: das Fremd-Repo ist strukturverwandt mit graphcode selbst (Graph-Kern,
+kuratierter Schreibpfad in `content/cr-lifecycle`, MCP-Auskunft).
+
+**Ehrliche Befunde des Imports:**
+1. **Eine MOD je Datei ist zu fein für Ebene 1** — 155 MODs; die Verzeichnis-Ebene fehlt dem
+   Import. Potential für graphify/import-code: MOD-Nesting aus der Verzeichnishierarchie
+   gleich mitliefern (`mod_api` compose `mod_api_routes_*`), dann wäre Ebene 1 geschenkt.
+2. **Testdateien werden MOD+FUNC** (`mod_api_api_test_ts`, `func_..._makemockgraphservice`)
+   und zugleich existieren 425 TEST-Knoten — die Trennung Test-Artefakt vs. Produktions-MOD
+   ist unscharf; für Übersichtsebenen müssten `*_test_ts`-MODs herausprojiziert werden.
+3. Der Grouping-Gate-Write in moneyflows Store steht aus (gleicher Loop wie Testcase 1:
+   erst Urteil, dann Write).
+
+### 7.4 Stand / offen
+
+- [x] Import durch den Produktpfad, Zahlen oben; moneyflow-Store existiert (`.graphcode/`),
+      Export `docs/graph/moneyflow.graph.json` — dort **uncommitted**
+- [ ] Vergleichsurteil Betreiber: erklärt 7.1/7.2 die App einem Kalt-Leser (besser/
+      vergleichbar/schlechter als README/Artikel)?
+- [ ] Bei Bestätigung: Block-FUNCs + compose durchs Gate in moneyflows Store (eigene Session
+      dort, wie GVE-230-Muster)
+- [x] graphify-CR: 32-KiB-tree-sitter-Limit → **CR-GF-140**
+- [x] graphify-CR: Verzeichnis-Nesting + Testdatei-Policy → **CR-GF-141**
+
+---
+
+## 8. Runde 3 (2026-08-16, v104 → v107) — Viewer-Trias + Skills als FUNC
+
+**Viewer-Ebene-1 entlang der Namens-Trias** (statt nach Mechanik): **Dokumentenwerk** ·
+**Architektur-Sicht** (render-graph, render-impact) · **Reifegrad-Sicht** (render-readiness,
+impl-gates, artifacts, recommendations, health) · **Live-Kanal** (nur Transport: sse,
+subscribe, broadcast, emit — umbenannt aus Live-Dashboard).
+
+**15 Skill-FUNCs modelliert** (die verlorene Diskussion ist jetzt Modellstand), alle mit
+`realRef` auf ihre Skill-Datei (`.claude/skills/<name>.md`, lang `prompt` — Konvention von
+FUNC-view-icd) und `allocate → MOD-skills`:
+
+| Block | Skill-FUNCs |
+|---|---|
+| SE-Prozess-Steuerung | se-status, se-review, se-plan, se-retro, se-conops, se-fmea, se-irr, se-trade, se-generate |
+| Q-Improvement | close-violations |
+| Agenten-Anschluss | author-uc, author-req, import-doc, se-help, target-profile |
+
+**Struktur verifiziert:** 76 FUNC-compose · 0 Doppel-Eltern · 6 Wurzeln (555 Knoten / 1260
+Kanten).
+
+**Ehrliche Warnlage danach:** R-04/MT-02 an MOD-skills (24 FUNCs, LCOM4 17 — der
+Skill-Katalog ist als EIN Modul modelliert, real sind es unabhängige Prompts); RD-04 am
+Agenten-Anschluss (14 Kinder > 11 — Kandidat für eine Ebene „Autorenwerkzeug" in Runde 4);
+15× R-02 (Skills ohne satisfy — die Skill→UC-Zuordnung ist Fachurteil, offen wie die
+Block-satisfies aus §4).
+
+**Welche Tests haben die Skills?** (Frage aus dem Review) — Stand heute:
+1. **Strukturell, kollektiv:** `TEST-skills-mcp` → `tests/skills.mcp-conformance.test.ts` —
+   prüft jedes Skill-Vokabular gegen die live Ontologie + Tool-Registry; hat bei contracts
+   4.0 zwei gedriftete Skills gefunden (CR-GC-338). Plus `TEST-scaffold-skills`
+   (Installation via CLI).
+2. **View-Skills:** de-facto über die Determinismus-Tests des CR-GC-220-Exporters — der
+   Skill ist ein dünner Trigger.
+3. **Verhalten je Skill: nur Rig-Läufe** (`rig/greenfield-systemtest`), nicht CI. Ein
+   Prompt hat kein Red-First-Äquivalent in der Suite — dieselbe Lücke, die se-test-ui für
+   UI schloss, ist für Skills offen. Wenn das mehr sein soll als ein Vermerk: eigener CR
+   (Skill-Verhaltens-Fixtures im Rig, versioniert je Ontologie-Stand).
+
 @author andreas@siglochconsulting
 
 @author andreas@siglochconsulting

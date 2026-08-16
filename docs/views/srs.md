@@ -1466,7 +1466,19 @@ Ebene-0-Block Sales-Sicht: der Arbeitsplatz des Coding-Agenten — praezise Frag
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-repo-root`
 
-##### 3.9.1.1  `FUNC-deduce-tests` — graph_tests(changeSet)
+##### 3.9.1.1  `FUNC-author-req` — Skill se:author-req
+
+Prompt-realisierter Skill se:author-req: REQ mit verifizierendem TEST-Konzept in einem Batch — die REQ-with-test-Invariante.
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-skills`
+
+##### 3.9.1.2  `FUNC-author-uc` — Skill se:author-uc
+
+Prompt-realisierter Skill se:author-uc: UC terse und jargonarm autorieren, mit compose-Trace durchs Gate.
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-skills`
+
+##### 3.9.1.3  `FUNC-deduce-tests` — graph_tests(changeSet)
 
 Bottom-up Test-Deduktion: mappt eine Aenderung (geaenderte Knoten-IDs oder git-diff zu Knoten) via graph_impact auf die betroffenen TEST-Knoten, loest jeden ueber testRef zu seinem lauffaehigen Artefakt auf und emittiert das minimale selektive Run-Kommando + Coverage. Kapselt graph_impact, kein Parallelpfad. (CR-GC-134)
 
@@ -1480,7 +1492,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-test-runnable-binding` (unit) · satisfy ◀ `FUNC-deduce-tests` · `MOD-mcp-tools` · allocate ▶ `MOD-mcp-tools`
 
-##### 3.9.1.2  `FUNC-graph-expand` — graph_expand(handle, branch, depth+1)
+##### 3.9.1.4  `FUNC-graph-expand` — graph_expand(handle, branch, depth+1)
 
 > auch in: `FCHAIN-agent-query`
 
@@ -1514,7 +1526,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-impact-subgraph` (integration) · satisfy ◀ `FUNC-graph-expand` · allocate ▶ `MOD-mcp-tools`
 
-##### 3.9.1.3  `FUNC-graph-impact` — graph_impact(id, depth?)
+##### 3.9.1.5  `FUNC-graph-impact` — graph_impact(id, depth?)
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-impact-testing` · `FCHAIN-interface-escalation`
 
@@ -1556,7 +1568,7 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-impact-subgraph` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
 
-##### 3.9.1.4  `FUNC-harness-cli` — graphcode init/update/remove
+##### 3.9.1.6  `FUNC-harness-cli` — graphcode init/update/remove
 
 npx-CLI Lifecycle: scaffolds/aktualisiert/entfernt .graphcode/, .claude/hooks, .mcp.json, Controller — idempotent, self-contained.
 
@@ -1626,7 +1638,7 @@ priority: should · status: done · kinds: non-functional
 
 Verification ◀ `TEST-distribution` (e2e) · satisfy ◀ `FUNC-harness-cli` · allocate ▶ `MOD-cli`
 
-##### 3.9.1.5  `FUNC-health-endpoint` — healthEndpoint()
+##### 3.9.1.7  `FUNC-health-endpoint` — healthEndpoint()
 
 Echter Funktions-Health: Store erreichbar, Gate funktional, Ontology/Rules/Contracts-Versionen, LLM/BYOK-Readiness. Quelle des Dashboard-FUNC-render-health. (CR-GC-114)
 
@@ -1640,7 +1652,13 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-real-health-check` (integration) · satisfy ◀ `FUNC-health-endpoint` · `MOD-host-bridge` · allocate ▶ `MOD-host-bridge`
 
-##### 3.9.1.6  `FUNC-resolve-tests-from-code` — Gerichtete code→REQ→TEST-Auflösung
+##### 3.9.1.8  `FUNC-import-doc` — Skill se:import-doc
+
+Prompt-realisierter Skill se:import-doc: Dokument zweistufig importieren — Struktur vor KI, Merge nie Reseed.
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-skills`
+
+##### 3.9.1.9  `FUNC-resolve-tests-from-code` — Gerichtete code→REQ→TEST-Auflösung
 
 graph_tests akzeptiert ein Code-Changeset und traversiert gerichtet (geaenderter Knoten →satisfy/allocate→ REQ →verify→ TEST), nicht nur reines incoming-graph_impact. Wrappt EINEN Impact-/Traversal-Pfad, kein zweiter Blast-Radius.
 
@@ -1654,7 +1672,13 @@ priority: must · status: done
 
 Verification ◀ `TEST-graph-tests-operational` (integration) · satisfy ◀ `FUNC-resolve-tests-from-code` · allocate ▶ `MOD-mcp-tools`
 
-##### 3.9.1.7  `FUNC-serve-stdio` — serveStdio()
+##### 3.9.1.10  `FUNC-se-help` — Skill se:help
+
+Prompt-realisierter Skill se:help: jedes Dashboard-Element fuer beide Publikums-Seiten erklaeren.
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-skills`
+
+##### 3.9.1.11  `FUNC-serve-stdio` — serveStdio()
 
 > auch in: `FCHAIN-doc-export` · `FCHAIN-live-update`
 
@@ -1678,7 +1702,13 @@ priority: should · status: done · kinds: non-functional
 
 Verification ◀ `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-serve-stdio` · `MOD-mcp-tools` · allocate ▶ `MOD-mcp-tools`
 
-##### 3.9.1.8  `FUNC-test` — se-test (red-first test design)
+##### 3.9.1.12  `FUNC-target-profile` — Skill se:target-profile
+
+Prompt-realisierter Skill se:target-profile: R6-Zielgewichte vom Menschen elizitieren, Zielkonflikte sichtbar machen.
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-skills`
+
+##### 3.9.1.13  `FUNC-test` — se-test (red-first test design)
 
 Prompt-realisierter Skill: die allgemeine Red-First-Regel — einen Test erst trauen, wenn er aus dem richtigen Grund rot gesehen wurde; höchste beobachtende Assertion-Stufe, Reachability statt Unit-in-Isolation, TEST-Node concept:false mit auflösbarem testRef (R-19). UI-spezifisch: se-test-ui. (CR-GC-242)
 
@@ -1694,7 +1724,7 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-code-quality` (acceptance) · `TEST-mvp-e2e` (e2e) · satisfy ◀ `FCHAIN-apply-gate` · `FUNC-test` · `FUNC-test-ui` · allocate ▶ `MOD-skills`
 
-##### 3.9.1.9  `FUNC-test-ui` — se-test-ui (UI test design)
+##### 3.9.1.14  `FUNC-test-ui` — se-test-ui (UI test design)
 
 Prompt-realisierter Skill: UI-Test-Design gegen gerenderte Intent (Mockup) statt DOM-Presence — Red-First, Assertion-Ladder (Pixel > Computed-Style > Geometrie > Presence), vier stille Styling-Seams, Reachability-Chain, UI-CR-DoD-Gate. Anti-False-Green aus dem Blind-Render-Retro 2026-07-08. (CR-GC-242)
 
@@ -2234,13 +2264,31 @@ Ebene-0-Block Sales-Sicht: der Viewer fuer Dokumente, Architektur und Reifegrad 
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-repo-root`
 
-##### 3.9.5.1  `FUNC-block-dokumentenwerk` — Dokumentenwerk
+##### 3.9.5.1  `FUNC-block-arch-sicht` — Architektur-Sicht
+
+Ebene-1-Block im Viewer: die Architektur-Sicht — Live-Graph und exakter Blast-Radius on demand.
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-dashboard`
+
+###### 3.9.5.1.1  `FUNC-render-graph` — renderGraph(elements, traces)
+
+Pluggbarer Live-Graph-Mount-Slot im Dashboard. Datenquelle: graph_elements + graph_get_edges + rules_get_violations (nur V3_RULES, kein BQ). Der konkrete Cytoscape-Renderer (@sigloch/graph-renderer) wird hier eingehaengt und ist das naechste aise-family-Projekt (graph-view-edit), nicht in graphcode gebaut. aimproves OntologyView rendert keinen Node-Link-Graph (nur Histogramme). (CR-GC-115)
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-dashboard`
+
+###### 3.9.5.1.2  `FUNC-render-impact` — renderImpactPanel(id)
+
+Impact-Panel on-demand: exakter Blast-Radius via graph_impact statt gespeicherter aimprove-Impact-Assessments (Learning). Repoint der aimprove ImpactView auf die Live-Quelle. (CR-GC-115)
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-dashboard`
+
+##### 3.9.5.2  `FUNC-block-dokumentenwerk` — Dokumentenwerk
 
 Ebene-1-Block im Schaufenster: deterministische Dokument-Renders — Markdown-Export und die se-view-Sichten.
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-docs`
 
-###### 3.9.5.1.1  `FUNC-export-markdown` — exportMarkdown(graph, view)
+###### 3.9.5.2.1  `FUNC-export-markdown` — exportMarkdown(graph, view)
 
 > auch in: `FCHAIN-doc-export`
 
@@ -2274,7 +2322,7 @@ priority: must · status: done · kinds: precondition
 
 Verification ◀ `TEST-doc-export` (conformance) · satisfy ◀ `FUNC-export-markdown` · allocate ▶ `MOD-docs`
 
-###### 3.9.5.1.2  `FUNC-render-views` — render graph→markdown views
+###### 3.9.5.2.2  `FUNC-render-views` — render graph→markdown views
 
 PROMPT-realisierter Graph→Markdown-Renderer via se-view-Skills (.claude/skills/se-view-*); erzeugt z.B. architecture-graph.md. Interim-Realisierung von REQ-doc-export, bis FUNC-export-markdown (code, MOD-docs) gebaut ist. Beweis: Skills = Funktionen (Allokation an MOD-skills = prompt-realisiert).
 
@@ -2290,7 +2338,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
 
-###### 3.9.5.1.3  `FUNC-view-changelog` — se-view-changelog (Change Log)
+###### 3.9.5.2.3  `FUNC-view-changelog` — se-view-changelog (Change Log)
 
 Prompt-realisierte View: Change Log aus CR-Knoten mit Rationale und Status. (CR-GC-116)
 
@@ -2306,7 +2354,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
 
-###### 3.9.5.1.4  `FUNC-view-conops` — se-view-conops (ConOps)
+###### 3.9.5.2.4  `FUNC-view-conops` — se-view-conops (ConOps)
 
 Prompt-realisierte View: Concept of Operations aus UC plus ACTOR (operatingMode). (CR-GC-116)
 
@@ -2322,7 +2370,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
 
-###### 3.9.5.1.5  `FUNC-view-icd` — se-view-icd (ICD)
+###### 3.9.5.2.5  `FUNC-view-icd` — se-view-icd (ICD)
 
 Prompt-realisierte View: Interface Control Document aus FLOW zu SCHEMA. (CR-GC-116)
 
@@ -2338,7 +2386,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
 
-###### 3.9.5.1.6  `FUNC-view-intplan` — se-view-intplan (Integrations-/Testplan)
+###### 3.9.5.2.6  `FUNC-view-intplan` — se-view-intplan (Integrations-/Testplan)
 
 Prompt-realisierte View: Integrations-/Testplan aus MS plus verify-Status. (CR-GC-116)
 
@@ -2354,7 +2402,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
 
-###### 3.9.5.1.7  `FUNC-view-irr` — se-view-fmea (FMEA view)
+###### 3.9.5.2.7  `FUNC-view-irr` — se-view-fmea (FMEA view)
 
 Prompt-realisierte View: FMEA-Render aus risk-getaggten REQs (S/O/D, Action Priority, Mitigation-Coverage, Verify-Luecken). Skill von se-view-irr zu se-view-fmea umbenannt; das Label IRR ist jetzt die separate Assumption-Review (se-irr). (CR-GC-223)
 
@@ -2370,7 +2418,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
 
-###### 3.9.5.1.8  `FUNC-view-rtm` — se-view-rtm (RTM)
+###### 3.9.5.2.8  `FUNC-view-rtm` — se-view-rtm (RTM)
 
 Prompt-realisierte View: Requirements Traceability Matrix aus satisfy/verify-Traces je REQ. (CR-GC-116)
 
@@ -2386,13 +2434,13 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
 
-##### 3.9.5.2  `FUNC-block-live-dashboard` — Live-Dashboard
+##### 3.9.5.3  `FUNC-block-live-dashboard` — Live-Kanal
 
-Ebene-1-Block im Schaufenster: der Live-Pfad — Update-Events, SSE-Verteilung, Dashboard-Panels.
+Ebene-1-Block im Viewer: der Live-Transport — Update-Events, Diff-Broadcast, SSE-Verteilung an die Panels.
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-dashboard`
 
-###### 3.9.5.2.1  `FUNC-broadcast-diff` — broadcastDiff(version)
+###### 3.9.5.3.1  `FUNC-broadcast-diff` — broadcastDiff(version)
 
 > auch in: `FCHAIN-live-update`
 
@@ -2410,7 +2458,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FUNC-broadcast-diff` · `FUNC-emit-update-event` · `MOD-host-bridge` · allocate ▶ `MOD-hooks` · `MOD-host-bridge`
 
-###### 3.9.5.2.2  `FUNC-emit-update-event` — emitUpdateEvent(domains)
+###### 3.9.5.3.2  `FUNC-emit-update-event` — emitUpdateEvent(domains)
 
 > auch in: `FCHAIN-live-update`
 
@@ -2462,65 +2510,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FUNC-broadcast-diff` · `FUNC-emit-update-event` · `MOD-host-bridge` · allocate ▶ `MOD-hooks` · `MOD-host-bridge`
 
-###### 3.9.5.2.3  `FUNC-render-artifacts` — renderArtifactReadiness(views)
-
-INCOSE-Artifact-Panel: Readiness je Dokument/View (Testmatrix, FMEA, RTM, ImplPlan, IntPlan, ChangeLog, ConOps, IRR, NFR, ICD) aus dem Query-Layer (graph_query views) + graph_readiness. Repoint der aimprove ArtifactReadiness. Die offene View-Liste (RTM, IntPlan, ChangeLog, ConOps, IRR, ICD ohne se-view-Skill) ist genau der Rest-Scope von CR-GC-116. (CR-GC-115)
-
-io ◀ — · io ▶ — · allocate ▶ `MOD-dashboard`
-
-###### `REQ-artifact-freshness` — Artifact-Ampel-Semantik gruen gelb rot
-
-Dokumente und Prozessschritte sind gruen wenn live aus dem aktuellen Graph abgeleitet, gelb wenn ein materialisiertes Doc existiert aber der Graph sich seither geaendert hat (stale), rot wenn noch nicht existent.
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-artifact-freshness` (integration) · satisfy ◀ `FUNC-render-artifacts` · `MOD-dashboard` · allocate ▶ `MOD-dashboard`
-
-###### 3.9.5.2.4  `FUNC-render-graph` — renderGraph(elements, traces)
-
-Pluggbarer Live-Graph-Mount-Slot im Dashboard. Datenquelle: graph_elements + graph_get_edges + rules_get_violations (nur V3_RULES, kein BQ). Der konkrete Cytoscape-Renderer (@sigloch/graph-renderer) wird hier eingehaengt und ist das naechste aise-family-Projekt (graph-view-edit), nicht in graphcode gebaut. aimproves OntologyView rendert keinen Node-Link-Graph (nur Histogramme). (CR-GC-115)
-
-io ◀ — · io ▶ — · allocate ▶ `MOD-dashboard`
-
-###### 3.9.5.2.5  `FUNC-render-health` — renderHealth()
-
-Echter Funktions-Health-Check, kein Prozess-Liveness-Licht: Kuzu-Store erreichbar, Apply-Gate funktional, Ontology/Rules/Contracts-Versionen, LLM/BYOK-Readiness (OpenCode, fuer spaeter). aimprove-spezifische Felder (Sessions/Patterns) entfernt. Quelle: Host-Bridge Health-Endpoint. (CR-GC-115)
-
-io ◀ — · io ▶ — · allocate ▶ `MOD-dashboard`
-
-###### 3.9.5.2.6  `FUNC-render-impact` — renderImpactPanel(id)
-
-Impact-Panel on-demand: exakter Blast-Radius via graph_impact statt gespeicherter aimprove-Impact-Assessments (Learning). Repoint der aimprove ImpactView auf die Live-Quelle. (CR-GC-115)
-
-io ◀ — · io ▶ — · allocate ▶ `MOD-dashboard`
-
-###### 3.9.5.2.7  `FUNC-render-impl-gates` — renderImplGates(report)
-
-Impl-Gates-Panel: SAR/FCA/SVR/FRR + CR/MS-Burndown aus graph_readiness.implGates und den MS/CR-Knoten. In aimprove nie verdrahtet (0/9, 0/20, 0/4); graphcode macht die Query transparent: jedes Gate zeigt seine Blocking-Elemente als Drill-down. Repoint der aimprove ImplGates + CrBurndown. (CR-GC-115)
-
-io ◀ — · io ▶ — · allocate ▶ `MOD-dashboard`
-
-###### 3.9.5.2.8  `FUNC-render-readiness` — renderReadinessPanel(report)
-
-Readiness-Panel: Compliance + Phase-Gates SRR/PDR/CDR/TRR aus graph_readiness (V3_RULES, lean INCOSE). Repoint der aimprove StatusSection-Readiness-Bars + GateView. (CR-GC-115)
-
-io ◀ — · io ▶ — · allocate ▶ `MOD-dashboard`
-
-###### `REQ-readiness-transparent` — Readiness-Query transparent
-
-Jedes Phase- und Impl-Gate exponiert seine Blocking-Elemente (welche CRs, Tests, UCs, Violations den Score druecken), sodass der Score auditierbar ist und keine Black-Box. In aimprove waren die Impl-Gates nie verdrahtet (0/9, 0/20, 0/4); graphcode macht die Herleitung transparent.
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-readiness-transparent` (integration) · satisfy ◀ `FUNC-render-readiness` · `MOD-dashboard` · allocate ▶ `MOD-dashboard`
-
-###### 3.9.5.2.9  `FUNC-render-recommendations` — renderImprovementMeasures()
-
-Top-N hoechstbewertete Verbesserungsmassnahmen, deterministisch aus Graph-Defiziten abgeleitet (fehlende verify-Traces R-01, Orphans RD-01, Blast-Radius via graph_impact), nach Severity/Impact sortiert. Behalten aus aimprove TOP-Empfehlungen, aber graph-deduziert statt Learning-Vorschlag (kein Generator). (CR-GC-115)
-
-io ◀ — · io ▶ — · allocate ▶ `MOD-dashboard`
-
-###### 3.9.5.2.10  `FUNC-serve-sse` — serveSSE()
+###### 3.9.5.3.3  `FUNC-serve-sse` — serveSSE()
 
 Host-Prozess exponiert die SSE/WS-Route und leitet harness.onUpdateEvent read-only an die Live-Viewer weiter. Kein Express-REST im Core. (CR-GC-114)
 
@@ -2534,13 +2524,65 @@ priority: must · status: done · kinds: negative
 
 Verification ◀ `TEST-readonly-bridge` (integration) · satisfy ◀ `FUNC-serve-sse` · `MOD-host-bridge` · allocate ▶ `MOD-host-bridge`
 
-###### 3.9.5.2.11  `FUNC-subscribe-updates` — subscribeUpdates()
+###### 3.9.5.3.4  `FUNC-subscribe-updates` — subscribeUpdates()
 
 > auch in: `FCHAIN-live-update`
 
 SSE-Client: bei jedem Live-Update-Event (invalidate) werden die betroffenen Domains nachgeladen, ohne Reload. Gegenstueck zu emitUpdateEvent, konsumiert FLOW-live-event ueber die Host-Bridge. (CR-GC-115)
 
 io ◀ `FLOW-live-event` · io ▶ — · allocate ▶ `MOD-dashboard`
+
+##### 3.9.5.4  `FUNC-block-reifegrad-sicht` — Reifegrad-Sicht
+
+Ebene-1-Block im Viewer: die Reifegrad-Sicht — Readiness, Phase-Gates, Artefakt-Panel, Empfehlungen, Funktions-Health.
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-dashboard`
+
+###### 3.9.5.4.1  `FUNC-render-artifacts` — renderArtifactReadiness(views)
+
+INCOSE-Artifact-Panel: Readiness je Dokument/View (Testmatrix, FMEA, RTM, ImplPlan, IntPlan, ChangeLog, ConOps, IRR, NFR, ICD) aus dem Query-Layer (graph_query views) + graph_readiness. Repoint der aimprove ArtifactReadiness. Die offene View-Liste (RTM, IntPlan, ChangeLog, ConOps, IRR, ICD ohne se-view-Skill) ist genau der Rest-Scope von CR-GC-116. (CR-GC-115)
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-dashboard`
+
+###### `REQ-artifact-freshness` — Artifact-Ampel-Semantik gruen gelb rot
+
+Dokumente und Prozessschritte sind gruen wenn live aus dem aktuellen Graph abgeleitet, gelb wenn ein materialisiertes Doc existiert aber der Graph sich seither geaendert hat (stale), rot wenn noch nicht existent.
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-artifact-freshness` (integration) · satisfy ◀ `FUNC-render-artifacts` · `MOD-dashboard` · allocate ▶ `MOD-dashboard`
+
+###### 3.9.5.4.2  `FUNC-render-health` — renderHealth()
+
+Echter Funktions-Health-Check, kein Prozess-Liveness-Licht: Kuzu-Store erreichbar, Apply-Gate funktional, Ontology/Rules/Contracts-Versionen, LLM/BYOK-Readiness (OpenCode, fuer spaeter). aimprove-spezifische Felder (Sessions/Patterns) entfernt. Quelle: Host-Bridge Health-Endpoint. (CR-GC-115)
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-dashboard`
+
+###### 3.9.5.4.3  `FUNC-render-impl-gates` — renderImplGates(report)
+
+Impl-Gates-Panel: SAR/FCA/SVR/FRR + CR/MS-Burndown aus graph_readiness.implGates und den MS/CR-Knoten. In aimprove nie verdrahtet (0/9, 0/20, 0/4); graphcode macht die Query transparent: jedes Gate zeigt seine Blocking-Elemente als Drill-down. Repoint der aimprove ImplGates + CrBurndown. (CR-GC-115)
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-dashboard`
+
+###### 3.9.5.4.4  `FUNC-render-readiness` — renderReadinessPanel(report)
+
+Readiness-Panel: Compliance + Phase-Gates SRR/PDR/CDR/TRR aus graph_readiness (V3_RULES, lean INCOSE). Repoint der aimprove StatusSection-Readiness-Bars + GateView. (CR-GC-115)
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-dashboard`
+
+###### `REQ-readiness-transparent` — Readiness-Query transparent
+
+Jedes Phase- und Impl-Gate exponiert seine Blocking-Elemente (welche CRs, Tests, UCs, Violations den Score druecken), sodass der Score auditierbar ist und keine Black-Box. In aimprove waren die Impl-Gates nie verdrahtet (0/9, 0/20, 0/4); graphcode macht die Herleitung transparent.
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-readiness-transparent` (integration) · satisfy ◀ `FUNC-render-readiness` · `MOD-dashboard` · allocate ▶ `MOD-dashboard`
+
+###### 3.9.5.4.5  `FUNC-render-recommendations` — renderImprovementMeasures()
+
+Top-N hoechstbewertete Verbesserungsmassnahmen, deterministisch aus Graph-Defiziten abgeleitet (fehlende verify-Traces R-01, Orphans RD-01, Blast-Radius via graph_impact), nach Severity/Impact sortiert. Behalten aus aimprove TOP-Empfehlungen, aber graph-deduziert statt Learning-Vorschlag (kein Generator). (CR-GC-115)
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-dashboard`
 
 #### 3.9.6  `FUNC-goal-steerer` — Autopilot
 
@@ -2588,7 +2630,13 @@ Ebene-1-Block im Autopilot: Qualitaets-Verbesserung — Fehler und Warnings abba
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-steering`
 
-###### 3.9.6.2.1  `FUNC-next-step` — nextStep(graph, policy)
+###### 3.9.6.2.1  `FUNC-close-violations` — Skill se:close-violations
+
+Prompt-realisierter Skill se:close-violations: den Graphen auf null Error-Verstoesse treiben — ranked verify/satisfy-Kanten durchs Gate.
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-skills`
+
+###### 3.9.6.2.2  `FUNC-next-step` — nextStep(graph, policy)
 
 > auch in: `FCHAIN-steering-loop`
 
@@ -2647,6 +2695,60 @@ Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefer
 priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
+
+###### 3.9.6.3.3  `FUNC-se-conops` — Skill se-conops
+
+Prompt-realisierter Skill se-conops: Concept of Operations — Betriebsaspekte vor den Use Cases, als system-scoped REQ durchs Gate.
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-skills`
+
+###### 3.9.6.3.4  `FUNC-se-fmea` — Skill se-fmea
+
+Prompt-realisierter Skill se-fmea: AIAG-VDA-FMEA auf System/Subsystem, Befunde in Graph und Spec.
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-skills`
+
+###### 3.9.6.3.5  `FUNC-se-generate` — Skill se:generate
+
+Prompt-realisierter Skill se:generate: Kaltstart-Generierung aus Prosa-Intention, readiness-getriebener Loop durchs Gate.
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-skills`
+
+###### 3.9.6.3.6  `FUNC-se-irr` — Skill se-irr
+
+Prompt-realisierter Skill se-irr: Assumption Review — unbewiesene Annahmen pinnen, tragende zu CRs promoten.
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-skills`
+
+###### 3.9.6.3.7  `FUNC-se-plan` — Skill se-plan
+
+Prompt-realisierter Skill se-plan: Implementierungsplan aus dem depends-on-DAG, CR-Schnitt aus graph_context-Slices.
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-skills`
+
+###### 3.9.6.3.8  `FUNC-se-retro` — Skill se-retro
+
+Prompt-realisierter Skill se-retro: Post-Projekt-Retro ueber die sechs graphcode-KPIs.
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-skills`
+
+###### 3.9.6.3.9  `FUNC-se-review` — Skill se-review
+
+Prompt-realisierter Skill se-review: Readiness-Gate-Check — Blocker und naechste Schritte.
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-skills`
+
+###### 3.9.6.3.10  `FUNC-se-status` — Skill se-status
+
+Prompt-realisierter Skill se-status: SE-Projektstatus — Readiness, Verstoesse, Top-Fixes.
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-skills`
+
+###### 3.9.6.3.11  `FUNC-se-trade` — Skill se-trade
+
+Prompt-realisierter Skill se-trade: Trade Study — Optionen bewerten, Entscheidung mit decides-Kanten im Graph.
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-skills`
 
 ## 4  Schnittstellen
 
@@ -3072,7 +3174,7 @@ allocate ◀ `FUNC-decode` · `FUNC-encode` · `FUNC-merge-nodes` · satisfy ▶
 
 graphcode-owned Dashboard-App, komponiert aus @sigloch/graph-renderer (Cytoscape) + dashboard-shell, konsumiert die Host-Bridge. Readiness/INCOSE-Panels gegen V3_RULES (CR-GC-107-Scorer). Hybrid-Entscheidung 2026-06-17.
 
-allocate ◀ `FUNC-block-live-dashboard` · `FUNC-render-artifacts` · `FUNC-render-graph` · `FUNC-render-health` · `FUNC-render-impact` · `FUNC-render-impl-gates` · `FUNC-render-readiness` · `FUNC-render-recommendations` · `FUNC-subscribe-updates` · satisfy ▶ `REQ-artifact-freshness` · `REQ-dashboard-ontology-sync` · `REQ-dashboard-readonly` · `REQ-readiness-transparent` · `REQ-shared-views-no-fork`
+allocate ◀ `FUNC-block-arch-sicht` · `FUNC-block-live-dashboard` · `FUNC-block-reifegrad-sicht` · `FUNC-render-artifacts` · `FUNC-render-graph` · `FUNC-render-health` · `FUNC-render-impact` · `FUNC-render-impl-gates` · `FUNC-render-readiness` · `FUNC-render-recommendations` · `FUNC-subscribe-updates` · satisfy ▶ `REQ-artifact-freshness` · `REQ-dashboard-ontology-sync` · `REQ-dashboard-readonly` · `REQ-readiness-transparent` · `REQ-shared-views-no-fork`
 
 #### 6.1.4  `MOD-docs` — docs — Markdown-Re-Exporter
 
@@ -3108,7 +3210,7 @@ allocate ◀ `FUNC-deduce-tests` · `FUNC-graph-expand` · `FUNC-graph-export-sn
 
 App-spezifisches Modul: .claude/skills/ (+ Prompts) — Skill-/Prompt-Definitionen als agent-ausgeführte Funktionen (z.B. se-view-* Graph→Markdown-Views). Lifecycle via FUNC-harness-cli. Allokation hierher = prompt-realisiert (vs. code-realisiert in den übrigen MODs). Beweis: Skills = Funktionen.
 
-allocate ◀ `FUNC-render-views` · `FUNC-test` · `FUNC-test-ui` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm`
+allocate ◀ `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-import-doc` · `FUNC-render-views` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-help` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-se-trade` · `FUNC-target-profile` · `FUNC-test` · `FUNC-test-ui` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm`
 
 #### 6.1.10  `MOD-steering` — steering — Kenngroessen-Steuerungskern
 

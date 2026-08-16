@@ -11,18 +11,23 @@
 | uid | type | name |
 |---|---|---|
 | `FUNC-arch-fitness` | FUNC | metrics(graph, layer arch) |
+| `FUNC-author-req` | FUNC | Skill se:author-req |
+| `FUNC-author-uc` | FUNC | Skill se:author-uc |
 | `FUNC-block-anschluss` | FUNC | Agenten-Anschluss |
 | `FUNC-block-arch-optimierung` | FUNC | Architektur-Optimierung |
+| `FUNC-block-arch-sicht` | FUNC | Architektur-Sicht |
 | `FUNC-block-dokumentenwerk` | FUNC | Dokumentenwerk |
 | `FUNC-block-gate` | FUNC | Qualitäts-Gate |
 | `FUNC-block-gedaechtnis` | FUNC | Gedächtnis |
-| `FUNC-block-live-dashboard` | FUNC | Live-Dashboard |
+| `FUNC-block-live-dashboard` | FUNC | Live-Kanal |
 | `FUNC-block-messwerk` | FUNC | Messwerk |
 | `FUNC-block-q-improvement` | FUNC | Q-Improvement |
+| `FUNC-block-reifegrad-sicht` | FUNC | Reifegrad-Sicht |
 | `FUNC-block-schaufenster` | FUNC | Viewer |
 | `FUNC-block-se-steuerung` | FUNC | SE-Prozess-Steuerung |
 | `FUNC-broadcast-diff` | FUNC | broadcastDiff(version) |
 | `FUNC-check-code-conformance` | FUNC | conformanceViolations(harness) |
+| `FUNC-close-violations` | FUNC | Skill se:close-violations |
 | `FUNC-compute-phase-readiness` | FUNC | computePhaseReadiness(violations) |
 | `FUNC-compute-readiness` | FUNC | computeReadiness(graph, policy) |
 | `FUNC-compute-steering-delta` | FUNC | computeSteeringDelta(before, after) |
@@ -43,6 +48,7 @@
 | `FUNC-harness-cli` | FUNC | graphcode init/update/remove |
 | `FUNC-health-endpoint` | FUNC | healthEndpoint() |
 | `FUNC-import` | FUNC | importGraph(formatE, mode) |
+| `FUNC-import-doc` | FUNC | Skill se:import-doc |
 | `FUNC-merge-nodes` | FUNC | mergeNodes(graph) |
 | `FUNC-migrate-schema` | FUNC | migrateSchema(from, to) |
 | `FUNC-module-metrics` | FUNC | moduleMetrics(graph) |
@@ -63,10 +69,21 @@
 | `FUNC-rewind` | FUNC | graphcode rewind <ref> |
 | `FUNC-save-graph` | FUNC | saveGraph(graph) |
 | `FUNC-score-completeness` | FUNC | scoreCompleteness(gateId, graph) |
+| `FUNC-se-conops` | FUNC | Skill se-conops |
+| `FUNC-se-fmea` | FUNC | Skill se-fmea |
+| `FUNC-se-generate` | FUNC | Skill se:generate |
+| `FUNC-se-help` | FUNC | Skill se:help |
+| `FUNC-se-irr` | FUNC | Skill se-irr |
+| `FUNC-se-plan` | FUNC | Skill se-plan |
+| `FUNC-se-retro` | FUNC | Skill se-retro |
+| `FUNC-se-review` | FUNC | Skill se-review |
+| `FUNC-se-status` | FUNC | Skill se-status |
+| `FUNC-se-trade` | FUNC | Skill se-trade |
 | `FUNC-serve-sse` | FUNC | serveSSE() |
 | `FUNC-serve-stdio` | FUNC | serveStdio() |
 | `FUNC-subscribe-updates` | FUNC | subscribeUpdates() |
 | `FUNC-take-steering-snapshot` | FUNC | takeSteeringSnapshot(graph, policy) |
+| `FUNC-target-profile` | FUNC | Skill se:target-profile |
 | `FUNC-test` | FUNC | se-test (red-first test design) |
 | `FUNC-test-ui` | FUNC | se-test-ui (UI test design) |
 | `FUNC-view-changelog` | FUNC | se-view-changelog (Change Log) |
@@ -92,19 +109,26 @@
 
 | function | module |
 |---|---|
+| `FUNC-arch-fitness` | ⚠ nicht alloziert (R-22) |
+| `FUNC-author-req` | `MOD-skills` |
+| `FUNC-author-uc` | `MOD-skills` |
 | `FUNC-block-anschluss` | `MOD-repo-root` |
 | `FUNC-block-arch-optimierung` | `MOD-steering` |
+| `FUNC-block-arch-sicht` | `MOD-dashboard` |
 | `FUNC-block-dokumentenwerk` | `MOD-docs` |
 | `FUNC-block-gate` | `MOD-repo-root` |
 | `FUNC-block-gedaechtnis` | `MOD-repo-root` |
 | `FUNC-block-live-dashboard` | `MOD-dashboard` |
 | `FUNC-block-messwerk` | `MOD-repo-root` |
 | `FUNC-block-q-improvement` | `MOD-steering` |
+| `FUNC-block-reifegrad-sicht` | `MOD-dashboard` |
 | `FUNC-block-schaufenster` | `MOD-repo-root` |
 | `FUNC-block-se-steuerung` | `MOD-steering` |
 | `FUNC-broadcast-diff` | `MOD-host-bridge` |
 | `FUNC-check-code-conformance` | `MOD-harness` |
+| `FUNC-close-violations` | `MOD-skills` |
 | `FUNC-compute-phase-readiness` | `MOD-steering` |
+| `FUNC-compute-readiness` | ⚠ nicht alloziert (R-22) |
 | `FUNC-compute-steering-delta` | `MOD-steering` |
 | `FUNC-decode` | `MOD-codec` |
 | `FUNC-deduce-tests` | `MOD-mcp-tools` |
@@ -123,8 +147,10 @@
 | `FUNC-harness-cli` | `MOD-cli` |
 | `FUNC-health-endpoint` | `MOD-host-bridge` |
 | `FUNC-import` | `MOD-harness` |
+| `FUNC-import-doc` | `MOD-skills` |
 | `FUNC-merge-nodes` | `MOD-codec` |
 | `FUNC-migrate-schema` | `MOD-harness` |
+| `FUNC-module-metrics` | ⚠ nicht alloziert (R-22) |
 | `FUNC-mutate` | `MOD-harness` |
 | `FUNC-next-step` | `MOD-steering` |
 | `FUNC-own-kuzu-host` | `MOD-host-bridge` |
@@ -142,10 +168,21 @@
 | `FUNC-rewind` | `MOD-cli` |
 | `FUNC-save-graph` | `MOD-harness` |
 | `FUNC-score-completeness` | `MOD-harness` |
+| `FUNC-se-conops` | `MOD-skills` |
+| `FUNC-se-fmea` | `MOD-skills` |
+| `FUNC-se-generate` | `MOD-skills` |
+| `FUNC-se-help` | `MOD-skills` |
+| `FUNC-se-irr` | `MOD-skills` |
+| `FUNC-se-plan` | `MOD-skills` |
+| `FUNC-se-retro` | `MOD-skills` |
+| `FUNC-se-review` | `MOD-skills` |
+| `FUNC-se-status` | `MOD-skills` |
+| `FUNC-se-trade` | `MOD-skills` |
 | `FUNC-serve-sse` | `MOD-host-bridge` |
 | `FUNC-serve-stdio` | `MOD-mcp-tools` |
 | `FUNC-subscribe-updates` | `MOD-dashboard` |
 | `FUNC-take-steering-snapshot` | `MOD-steering` |
+| `FUNC-target-profile` | `MOD-skills` |
 | `FUNC-test` | `MOD-skills` |
 | `FUNC-test-ui` | `MOD-skills` |
 | `FUNC-view-changelog` | `MOD-skills` |
