@@ -356,6 +356,41 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
     expect(mcp.mcpServers.graphcode.env.GRAPHCODE_HOST_PORT).toBe('4999');
   });
 
+  it('update preserves the operator own env switches', async () => {
+    await scaffold('init', { repoRoot: repo });
+
+    // The operator opted out of the auto-started viewer and pinned a local GVE build.
+    const edited = JSON.parse(readFileSync(join(repo, MCP), 'utf8'));
+    edited.mcpServers.graphcode.env.GRAPHCODE_NO_GVE = '1';
+    edited.mcpServers.graphcode.env.GRAPHCODE_GVE_BIN = 'node ../graph-view-edit/bin/gve.mjs';
+    writeFileSync(join(repo, MCP), JSON.stringify(edited, null, 2) + '\n', 'utf8');
+
+    await scaffold('update', { repoRoot: repo });
+
+    const mcp = JSON.parse(readFileSync(join(repo, MCP), 'utf8'));
+    expect(mcp.mcpServers.graphcode.env).toEqual({
+      GRAPHCODE_NO_GVE: '1',
+      GRAPHCODE_GVE_BIN: 'node ../graph-view-edit/bin/gve.mjs',
+      GRAPHCODE_HOST_PORT: String(deriveHostPort(repo)),
+    });
+  });
+
+  it('update preserves the operator own environment switches in opencode.json', async () => {
+    await scaffold('init', { repoRoot: repo });
+
+    const edited = JSON.parse(readFileSync(join(repo, OPENCODE), 'utf8'));
+    edited.mcp.graphcode.environment.GRAPHCODE_NO_GVE = '1';
+    writeFileSync(join(repo, OPENCODE), JSON.stringify(edited, null, 2) + '\n', 'utf8');
+
+    await scaffold('update', { repoRoot: repo });
+
+    const cfg = JSON.parse(readFileSync(join(repo, OPENCODE), 'utf8'));
+    expect(cfg.mcp.graphcode.environment).toEqual({
+      GRAPHCODE_NO_GVE: '1',
+      GRAPHCODE_HOST_PORT: String(deriveHostPort(repo)),
+    });
+  });
+
   it('remove deletes every installed artifact, restlos (REQ-repo-uninstall)', async () => {
     await scaffold('init', { repoRoot: repo });
     // Add store data so we prove .graphcode/ is fully removed.
