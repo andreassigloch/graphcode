@@ -15,6 +15,7 @@ import { KuzuAdapter } from '@sigloch/graph-cypher-wasm';
 import { SE_DESCRIPTOR, AUDIT_FILE } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/harness.js';
 import { bindToolsToHarness } from '../src/mcp-tools.js';
+import type { AuditStats } from '../src/tools/audit.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
 
 function makeHarness(repoRoot: string): GraphCodeHarness {
@@ -52,8 +53,10 @@ describe('operations-log integration (CR-207): registry uses the durable store l
       consumerId: 'session-1',
     });
     await t1.graph_realize.handler({ funcUid: 'FN-a', file: 'src/a.ts', symbol: 'a', consumerId: 'session-1' });
-    const s1 = (await t1.audit_stats.handler({})) as { totalEntries: number; graphVersion: number };
-    expect(s1.totalEntries).toBe(3); // realize IS in the log
+    // CR-GC-347 shape: counts moved under `window`/`totals` when audit_stats grew the
+    // per-rule/per-consumer aggregation. The numbers are the same numbers.
+    const s1 = (await t1.audit_stats.handler({})) as AuditStats;
+    expect(s1.window.entries).toBe(3); // realize IS in the log
     expect(s1.graphVersion).toBe(3);
     await h1.close();
 
@@ -61,8 +64,8 @@ describe('operations-log integration (CR-207): registry uses the durable store l
     const h2 = makeHarness(repoRoot);
     await h2.initialize();
     const t2 = bindToolsToHarness(h2);
-    const s2 = (await t2.audit_stats.handler({})) as { totalEntries: number; graphVersion: number };
-    expect(s2.totalEntries).toBe(3); // audit_trail reads across sessions
+    const s2 = (await t2.audit_stats.handler({})) as AuditStats;
+    expect(s2.window.entries).toBe(3); // audit_trail reads across sessions
     expect(s2.graphVersion).toBe(3); // version resumed, not 0
     // A REQ is only valid with its verify-traced TEST (R-01) — an APPLIED batch,
     // because graphVersion counts applied batches only (CR-GC-233 OCC semantics).
@@ -74,15 +77,15 @@ describe('operations-log integration (CR-207): registry uses the durable store l
       ],
       consumerId: 'session-2',
     });
-    const s3 = (await t2.audit_stats.handler({})) as { graphVersion: number };
+    const s3 = (await t2.audit_stats.handler({})) as AuditStats;
     expect(s3.graphVersion).toBe(4); // monotonic across the restart
     // A REJECTED write is logged but does NOT move the version (state unchanged).
     await t2.graph_mutate.handler({
       commands: [{ op: 'add-node', node: { uid: 'REQ-orphan', type: 'REQ', name: 'o', description: '', attributes: {} } }],
       consumerId: 'session-2',
     });
-    const s4 = (await t2.audit_stats.handler({})) as { totalEntries: number; rejected: number; graphVersion: number };
-    expect(s4.rejected).toBe(1);
+    const s4 = (await t2.audit_stats.handler({})) as AuditStats;
+    expect(s4.totals.rejected).toBe(1);
     expect(s4.graphVersion).toBe(4); // applied-only counter (CR-GC-233)
     // The durable file carries the command batches (replay source for CR-234).
     const raw = readFileSync(join(repoRoot, AUDIT_FILE), 'utf8').trim().split('\n');

@@ -23,7 +23,7 @@ import { KuzuAdapter } from '@sigloch/graph-cypher-wasm';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/harness.js';
 import { bindToolsToHarness, type MCPToolRegistry } from '../src/mcp-tools.js';
-import { projectAuditEntries } from '../src/tools/report.js';
+import { projectAuditEntries, type AuditStats } from '../src/tools/audit.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 
 function makeConfig(repoRoot: string): HarnessConfig {
@@ -163,18 +163,15 @@ describe('TEST-audit-trail-projection (CR-GC-319)', () => {
   it('leaves audit_stats untouched (REQ-T06)', async () => {
     // Stats read the log, not the projection — the numbers must not move.
     await tools.graph_mutate.handler({ commands: MIXED, consumerId: 't' });
-    const stats = (await tools.audit_stats.handler({})) as {
-      totalEntries: number;
-      applied: number;
-    };
-    expect(stats.totalEntries).toBeGreaterThan(0);
-    expect(stats.applied).toBeGreaterThan(0);
+    const stats = (await tools.audit_stats.handler({})) as AuditStats;
+    expect(stats.window.entries).toBeGreaterThan(0);
+    expect(stats.totals.applied).toBeGreaterThan(0);
   });
 
   it('drops the projection nowhere else — audit_stats is unaffected twice over', async () => {
     await tools.graph_mutate.handler({ commands: MIXED, consumerId: 't' });
-    const stats = (await tools.audit_stats.handler({})) as { totalEntries: number };
-    expect(stats.totalEntries).toBeGreaterThan(0);
+    const stats = (await tools.audit_stats.handler({})) as AuditStats;
+    expect(stats.window.entries).toBeGreaterThan(0);
   });
 
   it('does not touch what was WRITTEN — the log keeps every field', async () => {

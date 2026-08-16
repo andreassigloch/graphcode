@@ -9,7 +9,7 @@ The standard analysis run after a project: did the agent actually use the govern
 ## 1. Gather the session data (over MCP + git + transcript)
 Assemble a `retro-session.json`:
 - **toolUsage** — from the session transcript: `graphCalls` (every `graph_*` MCP call), `grepGlobDocReads` (Grep + Glob + raw doc reads), and the counts `mutate` / `impact` / `expand` / `rulesEvaluate`.
-- **audit** — call `audit_stats`: `{ applied, rejected }`.
+- **audit** — call `audit_stats` and read `totals`: `{ applied, rejected }` (CR-GC-347 moved the counts under `totals`; `byRule` / `byModel` / `byConsumer` sit beside them and answer which rule blocked whom).
 - **readiness** — `graph_readiness` at session start and end: `{ start, end }` (the `compliance.score`).
 - **git** — `{ netLoc }` (insertions − deletions; the script auto-fills it from `git diff` if omitted) and `{ tokens }` if the transcript gives a token count.
 - **plan** — `{ dependsOnViolations }`: # CRs whose order violates a `depends-on` edge (derive with `se-plan` / `deriveImplPlan`, CR-GC-209).

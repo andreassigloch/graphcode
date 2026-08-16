@@ -34,6 +34,7 @@ import { createToolContext, type ToolContext } from './tool-context.js';
 import { bindReadTools } from './tools/read.js';
 import { bindWriteTools } from './tools/write.js';
 import { bindReportTools } from './tools/report.js';
+import { bindAuditTools } from './tools/audit.js';
 import { bindExportTools } from './tools/export.js';
 import { bindSuggestTools } from './tools/suggest.js';
 import { bindMetricsTools } from './tools/metrics.js';
@@ -89,6 +90,7 @@ export function bindToolsWithContext(
       ...bindReadTools(ctx),
       ...bindWriteTools(ctx),
       ...bindReportTools(ctx),
+      ...bindAuditTools(ctx),
       ...bindExportTools(ctx),
       ...bindSuggestTools(ctx),
       ...bindMetricsTools(ctx),
