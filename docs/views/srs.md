@@ -164,7 +164,7 @@ Verification ◀ `TEST-responsiveness` (performance) · satisfy ◀ `FCHAIN-appl
 
 ##### 3.1.1.1  `FUNC-mutate` — mutate(commands)
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-capture` · `FCHAIN-interface-escalation` · `FCHAIN-modelfree-gate` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FUNC-goal-steerer`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-capture` · `FCHAIN-interface-escalation` · `FCHAIN-modelfree-gate` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FUNC-block-gate`
 
 Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)
 
@@ -198,7 +198,7 @@ Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-s
 
 ##### 3.1.1.2  `FUNC-evaluate-rules` — evaluateRules()
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-modelfree-gate`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-modelfree-gate` · `FUNC-block-gate`
 
 Regel-Engine gegen V3_RULES; Violations {ruleId,severity,elementId}; kein lokaler Parser (L2).
 
@@ -214,7 +214,7 @@ Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-evaluate-
 
 ##### 3.1.1.3  `FUNC-save-graph` — saveGraph(graph)
 
-> auch in: `FCHAIN-live-update` · `FCHAIN-snapshot-freshness`
+> auch in: `FCHAIN-live-update` · `FCHAIN-snapshot-freshness` · `FUNC-block-gate`
 
 Persistiert in-memory Graph nach Disk-Kuzu, falls keine error-Violations. (SPEC §3.4, §4)
 
@@ -229,6 +229,8 @@ priority: should · status: open · kinds: non-functional
 Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `FUNC-save-graph` · allocate ▶ `MOD-harness`
 
 ##### 3.1.1.4  `FUNC-emit-trajectory` — materializeTrajectory()
+
+> auch in: `FUNC-block-gedaechtnis`
 
 Projiziert .graphcode/trajectory.jsonl als reine Projektion des Operations-Logs (CR-207) — kein Parallel-Write; Schema Trajectory/Outcome aus @sigloch/learning-core. Zielverzeichnis ist der eigene Workspace GRAPHCODE_DIR, nicht der Vorgaenger-Ordner .aimprove (CR-GC-330). (CR-GC-102, CR-GC-252, CR-GC-330)
 
@@ -296,7 +298,7 @@ Verification ◀ `TEST-capture` (integration) · satisfy ◀ `FCHAIN-capture` ·
 
 ##### 3.1.2.1  `FUNC-decode` — decode(json)
 
-> auch in: `FCHAIN-codec-roundtrip`
+> auch in: `FCHAIN-codec-roundtrip` · `FUNC-block-gedaechtnis`
 
 Format-E → OntologyGraph, Validierung gegen SE_DESCRIPTOR. (CR-GC-103)
 
@@ -322,7 +324,7 @@ Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FCHAIN-codec-rou
 
 ##### 3.1.2.2  `FUNC-mutate` — mutate(commands)
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-interface-escalation` · `FCHAIN-modelfree-gate` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FUNC-goal-steerer`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-interface-escalation` · `FCHAIN-modelfree-gate` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FUNC-block-gate`
 
 Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)
 
@@ -386,6 +388,8 @@ Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FCHAIN-codec-rou
 
 ##### 3.1.3.1  `FUNC-encode` — encode(graph)
 
+> auch in: `FUNC-block-gedaechtnis`
+
 Deterministische Format-E-Serialisierung (stabile Sortierung), Diff-Dialekt. (CR-GC-103, R3/R5)
 
 io ◀ `FLOW-graph-state` · io ▶ `FLOW-formatE-artifact` · allocate ▶ `MOD-codec`
@@ -426,7 +430,7 @@ Verification ◀ `TEST-mvp-e2e` (e2e) · `TEST-token-efficiency` (acceptance) ·
 
 ##### 3.1.3.2  `FUNC-decode` — decode(json)
 
-> auch in: `FCHAIN-capture`
+> auch in: `FCHAIN-capture` · `FUNC-block-gedaechtnis`
 
 Format-E → OntologyGraph, Validierung gegen SE_DESCRIPTOR. (CR-GC-103)
 
@@ -480,7 +484,7 @@ Verification ◀ `TEST-interface-escalation` (integration) · satisfy ◀ `FCHAI
 
 ##### 3.1.4.1  `FUNC-graph-impact` — graph_impact(id, depth?)
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-impact-testing`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-impact-testing` · `FUNC-block-anschluss`
 
 Exakter Blast-Radius (Caller/Traces/Tests) als Format-E. (CR-GC-101, R6/R12)
 
@@ -522,7 +526,7 @@ Verification ◀ `TEST-impact-subgraph` (integration) · satisfy ◀ `FUNC-graph
 
 ##### 3.1.4.2  `FUNC-mutate` — mutate(commands)
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-modelfree-gate` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FUNC-goal-steerer`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-modelfree-gate` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FUNC-block-gate`
 
 Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)
 
@@ -576,6 +580,8 @@ Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steer
 
 ##### 3.2.1.1  `FUNC-compute-readiness` — computeReadiness(graph, policy)
 
+> auch in: `FUNC-block-messwerk`
+
 Projiziert den Regelstrom auf die acht Dimensionsscores (score = 1 minus Verstoesse durch applicable). Fremdpaket @sigloch/se-steering, deshalb external.
 
 io ◀ `FLOW-steering-snapshot` · io ▶ `FLOW-dimension-readiness` · allocate ▶ —
@@ -628,7 +634,7 @@ Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steer
 
 ##### 3.2.1.4  `FUNC-mutate` — mutate(commands)
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-interface-escalation` · `FCHAIN-modelfree-gate` · `FCHAIN-snapshot-freshness` · `FUNC-goal-steerer`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-interface-escalation` · `FCHAIN-modelfree-gate` · `FCHAIN-snapshot-freshness` · `FUNC-block-gate`
 
 Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)
 
@@ -661,6 +667,8 @@ priority: must · status: done
 Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
 
 ##### 3.2.1.5  `FUNC-take-steering-snapshot` — takeSteeringSnapshot(graph, policy)
+
+> auch in: `FUNC-block-messwerk`
 
 Der EINE Messpfad: mappt den Graphen ueber toOntologyGraph, injiziert die ND-Matrizen und wertet den vollen Regelkatalog aus; liefert Regelstrom, blockierende Fehler und den Readiness-Report in EINEM Objekt. Jede weitere Kenngroesse ist eine Projektion davon, keine zweite Messung.
 
@@ -730,7 +738,7 @@ Verification ◀ `TEST-efficient-testing` (acceptance) · satisfy ◀ `FCHAIN-im
 
 ##### 3.3.1.1  `FUNC-graph-impact` — graph_impact(id, depth?)
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-interface-escalation`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-interface-escalation` · `FUNC-block-anschluss`
 
 Exakter Blast-Radius (Caller/Traces/Tests) als Format-E. (CR-GC-101, R6/R12)
 
@@ -792,6 +800,8 @@ Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-r
 
 ##### 3.4.1.1  `FUNC-rewind` — graphcode rewind <ref>
 
+> auch in: `FUNC-block-gedaechtnis`
+
 Stellt den Graph-Stand eines Commits her: liest den Snapshot per git show aus dem Objektspeicher und stellt ihn im gitignorierten Workspace bereit. Der Working-Tree bleibt unberuehrt, es gibt also genau eine Zustandsaenderung; un-exportierte Mutationen brechen ab, force verwirft sie. (CR-GC-311)
 
 io ◀ `FLOW-cli-command` · io ▶ `FLOW-graph-snapshot` · allocate ▶ `MOD-cli`
@@ -807,6 +817,8 @@ priority: must · status: done
 Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-recall` · `FUNC-reseed` · `FUNC-rewind` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness`
 
 ##### 3.4.1.2  `FUNC-reseed` — reseed(relPath)
+
+> auch in: `FUNC-block-gedaechtnis`
 
 Re-synct den Live-Store aus einem Snapshot: DETACH-DELETE plus Re-Import hinter dem Single-Writer, kein zweites DB-Handle. Serialisiert gegen mutate (O3), loescht danach den Drift-Marker. (CR-GC-203, CR-GC-218)
 
@@ -838,7 +850,7 @@ Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-s
 
 ##### 3.4.2.1  `FUNC-mutate` — mutate(commands)
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-interface-escalation` · `FCHAIN-modelfree-gate` · `FCHAIN-steering-loop` · `FUNC-goal-steerer`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-interface-escalation` · `FCHAIN-modelfree-gate` · `FCHAIN-steering-loop` · `FUNC-block-gate`
 
 Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)
 
@@ -872,7 +884,7 @@ Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-s
 
 ##### 3.4.2.2  `FUNC-save-graph` — saveGraph(graph)
 
-> auch in: `FCHAIN-apply-gate` · `FCHAIN-live-update`
+> auch in: `FCHAIN-apply-gate` · `FCHAIN-live-update` · `FUNC-block-gate`
 
 Persistiert in-memory Graph nach Disk-Kuzu, falls keine error-Violations. (SPEC §3.4, §4)
 
@@ -887,6 +899,8 @@ priority: should · status: open · kinds: non-functional
 Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `FUNC-save-graph` · allocate ▶ `MOD-harness`
 
 ##### 3.4.2.3  `FUNC-graph-export-snapshot` — graph_export(views?)
+
+> auch in: `FUNC-block-gedaechtnis`
 
 Materialisiert den kanonischen, deterministischen Graph-Snapshot docs/graph/<system>.graph.json plus die Markdown-Views und loescht den Drift-Marker EXPORT_PENDING. Der einzige Sync-Pfad Graph zu committeten Docs; verweigert das Clobbern (leerer Graph, fremder Drop). (CR-GC-113, CR-GC-217)
 
@@ -924,7 +938,7 @@ Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FCHAIN-live-upda
 
 ##### 3.5.1.1  `FUNC-save-graph` — saveGraph(graph)
 
-> auch in: `FCHAIN-apply-gate` · `FCHAIN-snapshot-freshness`
+> auch in: `FCHAIN-apply-gate` · `FCHAIN-snapshot-freshness` · `FUNC-block-gate`
 
 Persistiert in-memory Graph nach Disk-Kuzu, falls keine error-Violations. (SPEC §3.4, §4)
 
@@ -939,6 +953,8 @@ priority: should · status: open · kinds: non-functional
 Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `FUNC-save-graph` · allocate ▶ `MOD-harness`
 
 ##### 3.5.1.2  `FUNC-emit-update-event` — emitUpdateEvent(domains)
+
+> auch in: `FUNC-block-live-dashboard`
 
 Live-Update-Event (SSE invalidate) bei jeder Mutation; Basis des read-only Dashboards. (R9)
 
@@ -990,6 +1006,8 @@ Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FUNC-broadcast-d
 
 ##### 3.5.1.3  `FUNC-broadcast-diff` — broadcastDiff(version)
 
+> auch in: `FUNC-block-live-dashboard`
+
 Versionierter Diff-Broadcast mit Late-Joiner-Cache an die Viewer; jede Mutation erhoeht die Version. (CR-GC-114)
 
 io ◀ `FLOW-live-event` · io ▶ — · allocate ▶ `MOD-host-bridge`
@@ -1006,7 +1024,7 @@ Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FUNC-broadcast-d
 
 ##### 3.5.1.4  `FUNC-serve-stdio` — serveStdio()
 
-> auch in: `FCHAIN-doc-export`
+> auch in: `FCHAIN-doc-export` · `FUNC-block-anschluss`
 
 Bindet die MCP-Tool-Registry headless an einen stdio-Transport; jeder Agent (Claude Code oder OpenCode, BYOK) ist ein gleichwertiger Client. Beweist agent-agnostisch + headless. (CR-GC-124)
 
@@ -1029,6 +1047,8 @@ priority: should · status: done · kinds: non-functional
 Verification ◀ `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-serve-stdio` · `MOD-mcp-tools` · allocate ▶ `MOD-mcp-tools`
 
 ##### 3.5.1.5  `FUNC-subscribe-updates` — subscribeUpdates()
+
+> auch in: `FUNC-block-live-dashboard`
 
 SSE-Client: bei jedem Live-Update-Event (invalidate) werden die betroffenen Domains nachgeladen, ohne Reload. Gegenstueck zu emitUpdateEvent, konsumiert FLOW-live-event ueber die Host-Bridge. (CR-GC-115)
 
@@ -1060,7 +1080,7 @@ Verification ◀ `TEST-advisory-roundtrip-latency` (performance) · satisfy ◀ 
 
 ##### 3.7.1.1  `FUNC-graph-impact` — graph_impact(id, depth?)
 
-> auch in: `FCHAIN-agent-query` · `FCHAIN-impact-testing` · `FCHAIN-interface-escalation`
+> auch in: `FCHAIN-agent-query` · `FCHAIN-impact-testing` · `FCHAIN-interface-escalation` · `FUNC-block-anschluss`
 
 Exakter Blast-Radius (Caller/Traces/Tests) als Format-E. (CR-GC-101, R6/R12)
 
@@ -1102,7 +1122,7 @@ Verification ◀ `TEST-impact-subgraph` (integration) · satisfy ◀ `FUNC-graph
 
 ##### 3.7.1.2  `FUNC-evaluate-rules` — evaluateRules()
 
-> auch in: `FCHAIN-apply-gate` · `FCHAIN-modelfree-gate`
+> auch in: `FCHAIN-apply-gate` · `FCHAIN-modelfree-gate` · `FUNC-block-gate`
 
 Regel-Engine gegen V3_RULES; Violations {ruleId,severity,elementId}; kein lokaler Parser (L2).
 
@@ -1117,6 +1137,8 @@ priority: must · status: done · kinds: functional
 Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-evaluate-rules` · allocate ▶ `MOD-harness`
 
 ##### 3.7.1.3  `FUNC-graph-suggest` — graph_suggest(weights)
+
+> auch in: `FUNC-goal-steerer`
 
 Duennes Binding auf @sigloch/se-optimizer (targetFor/suggestEdits): rankt die feuernden Operator-Regeln nach dem Skalarprodukt aus Metrik-Delta und Zielrichtung im R^6-Metrikraum; liefert die Fund-Ebene, Template-Edits laufen als dryRun durchs Gate. Nie auto-apply. (CR-GC-273)
 
@@ -1134,7 +1156,7 @@ Verification ◀ `TEST-mvp-e2e` (e2e) · `TEST-reduced-llm` (acceptance) · sati
 
 ##### 3.7.1.4  `FUNC-mutate` — mutate(commands)
 
-> auch in: `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-interface-escalation` · `FCHAIN-modelfree-gate` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FUNC-goal-steerer`
+> auch in: `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-interface-escalation` · `FCHAIN-modelfree-gate` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FUNC-block-gate`
 
 Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)
 
@@ -1198,6 +1220,8 @@ Verification ◀ `TEST-mvp-e2e` (e2e) · `TEST-token-efficiency` (acceptance) ·
 
 ##### 3.7.2.1  `FUNC-graph-expand` — graph_expand(handle, branch, depth+1)
 
+> auch in: `FUNC-block-anschluss`
+
 Progressive On-Demand-Kuzu-Re-Traversierung; kein Originals-Store. (CR-GC-101, R13)
 
 io ◀ `FLOW-expand-request` · io ▶ `FLOW-expanded-subgraph` · allocate ▶ `MOD-mcp-tools`
@@ -1230,7 +1254,7 @@ Verification ◀ `TEST-impact-subgraph` (integration) · satisfy ◀ `FUNC-graph
 
 ##### 3.7.2.2  `FUNC-graph-impact` — graph_impact(id, depth?)
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-impact-testing` · `FCHAIN-interface-escalation`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-impact-testing` · `FCHAIN-interface-escalation` · `FUNC-block-anschluss`
 
 Exakter Blast-Radius (Caller/Traces/Tests) als Format-E. (CR-GC-101, R6/R12)
 
@@ -1312,7 +1336,7 @@ Verification ◀ `TEST-mvp-e2e` (e2e) · `TEST-reduced-llm` (acceptance) · sati
 
 ##### 3.7.3.1  `FUNC-mutate` — mutate(commands)
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-interface-escalation` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FUNC-goal-steerer`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-interface-escalation` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FUNC-block-gate`
 
 Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)
 
@@ -1346,7 +1370,7 @@ Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-s
 
 ##### 3.7.3.2  `FUNC-evaluate-rules` — evaluateRules()
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FUNC-block-gate`
 
 Regel-Engine gegen V3_RULES; Violations {ruleId,severity,elementId}; kein lokaler Parser (L2).
 
@@ -1378,7 +1402,7 @@ Verification ◀ `TEST-doc-export` (conformance) · `TEST-mcp-export` (integrati
 
 ##### 3.8.1.1  `FUNC-serve-stdio` — serveStdio()
 
-> auch in: `FCHAIN-live-update`
+> auch in: `FCHAIN-live-update` · `FUNC-block-anschluss`
 
 Bindet die MCP-Tool-Registry headless an einen stdio-Transport; jeder Agent (Claude Code oder OpenCode, BYOK) ist ein gleichwertiger Client. Beweist agent-agnostisch + headless. (CR-GC-124)
 
@@ -1401,6 +1425,8 @@ priority: should · status: done · kinds: non-functional
 Verification ◀ `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-serve-stdio` · `MOD-mcp-tools` · allocate ▶ `MOD-mcp-tools`
 
 ##### 3.8.1.2  `FUNC-export-markdown` — exportMarkdown(graph, view)
+
+> auch in: `FUNC-block-dokumentenwerk`
 
 Rendert Graph (View: spec/architecture/cr-list/references) deterministisch nach Markdown mit GENERATED-Header.
 
@@ -1434,75 +1460,19 @@ Verification ◀ `TEST-doc-export` (conformance) · satisfy ◀ `FUNC-export-mar
 
 ### 3.9  Funktionen ohne FCHAIN
 
-#### 3.9.1  `FUNC-arch-fitness` — metrics(graph, layer arch)
+#### 3.9.1  `FUNC-block-anschluss` — Agenten-Anschluss
 
-Misst die Architektur-Topologie als Vektor in R^6 — das einzige Signal der Schleife, das nicht aus dem Regelstrom stammt, und deshalb im Ranking der Tiebreaker. Fremdpaket @sigloch/se-optimizer, deshalb external.
+Ebene-0-Block Sales-Sicht: der Arbeitsplatz des Coding-Agenten — praezise Fragen statt Volltextsuche. Realisiert durch seine Kinder.
 
-io ◀ — · io ▶ `FLOW-arch-fitness` · allocate ▶ —
+io ◀ — · io ▶ — · allocate ▶ —
 
-##### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
-
-> auch unter: `FCHAIN-steering-loop` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot`
-
-Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefert Regelstrom und Projektionen, daraus waehlt die Steuerung die schwaechste Dimension, rankt Kandidaten nach dem Delta derselben Groessen und uebergibt das Ergebnis dem Apply-Gate. Deterministisch: gleicher Graph, gleiche Empfehlung.
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
-
-#### 3.9.2  `FUNC-check-code-conformance` — conformanceViolations(harness)
-
-Extrahiert CodeFacts (extractCodeFacts, ts-Parser) und wertet die contracts RC-Regeln (RC-01 codeRef, RC-02 testRef) aus; scoreReadinessWithConformance mischt sie in die Readiness. Cross-Module-Call-Coverage Follow-up CR-GC-256. (CR-GC-206 -> CR-GC-253)
-
-io ◀ — · io ▶ — · allocate ▶ `MOD-harness`
-
-##### `REQ-graph-code-conformance` — FUNC codeRef resolves to a real declared symbol
-
-Jeder FUNC.codeRef loest auf ein real deklariertes Symbol in seiner Datei auf (TypeScript-Parser, kein Substring-Match); prompt-realisierte FUNCs (lang prompt): die Skill-Datei existiert. Macht das R-20-Backfill verifizierbar statt nur vorhanden. (CR-GC-206)
-
-priority: must · status: done
-
-Verification ◀ `TEST-code-conformance` (integration) · satisfy ◀ `FUNC-check-code-conformance` · allocate ▶ `MOD-harness`
-
-#### 3.9.3  `FUNC-compute-phase-readiness` — computePhaseReadiness(violations)
-
-Projiziert denselben Regelstrom auf die Phasen-Gates SRR/PDR/CDR/TRR: je Gate abgedeckte gegen alle Regel-IDs plus die fehlenden. Die zweite Achse neben den Dimensionen, aus einer Quelle.
-
-io ◀ `FLOW-completeness` · `FLOW-violations` · io ▶ `FLOW-phase-readiness` · allocate ▶ `MOD-steering`
-
-##### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
-
-> auch unter: `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot`
-
-Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefert Regelstrom und Projektionen, daraus waehlt die Steuerung die schwaechste Dimension, rankt Kandidaten nach dem Delta derselben Groessen und uebergibt das Ergebnis dem Apply-Gate. Deterministisch: gleicher Graph, gleiche Empfehlung.
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
-
-#### 3.9.4  `FUNC-compute-steering-delta` — computeSteeringDelta(before, after)
-
-Differenz zweier Snapshots: blockierende Fehler vorher und nachher plus Score-Delta je Dimension. Dimensionen ohne Grundgesamtheit auf beiden Seiten entfallen, weil ihr Score dort konstruktiv 0 ist und nicht perfekt.
-
-io ◀ `FLOW-steering-snapshot` · io ▶ `FLOW-steering-delta` · allocate ▶ `MOD-steering`
-
-##### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
-
-> auch unter: `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot`
-
-Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefert Regelstrom und Projektionen, daraus waehlt die Steuerung die schwaechste Dimension, rankt Kandidaten nach dem Delta derselben Groessen und uebergibt das Ergebnis dem Apply-Gate. Deterministisch: gleicher Graph, gleiche Empfehlung.
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
-
-#### 3.9.5  `FUNC-deduce-tests` — graph_tests(changeSet)
+##### 3.9.1.1  `FUNC-deduce-tests` — graph_tests(changeSet)
 
 Bottom-up Test-Deduktion: mappt eine Aenderung (geaenderte Knoten-IDs oder git-diff zu Knoten) via graph_impact auf die betroffenen TEST-Knoten, loest jeden ueber testRef zu seinem lauffaehigen Artefakt auf und emittiert das minimale selektive Run-Kommando + Coverage. Kapselt graph_impact, kein Parallelpfad. (CR-GC-134)
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-mcp-tools`
 
-##### `REQ-test-runnable-binding` — TEST hat lauffaehige Bindung (testRef)
+###### `REQ-test-runnable-binding` — TEST hat lauffaehige Bindung (testRef)
 
 Jeder TEST-Knoten traegt einen testRef (Datei plus Case, tool, level), sodass ein impacted TEST-Knoten deterministisch zu einem lauffaehigen Artefakt aufgeloest werden kann. Familie-weit: testRef wird Teil des TEST-Element-Schemas in @sigloch/contracts/se (Minor-Version-Bump).
 
@@ -1510,57 +1480,273 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-test-runnable-binding` (unit) · satisfy ◀ `FUNC-deduce-tests` · `MOD-mcp-tools` · allocate ▶ `MOD-mcp-tools`
 
-#### 3.9.6  `FUNC-fit-advisory` — computeFitAdvisory(before, after)
+##### 3.9.1.2  `FUNC-graph-expand` — graph_expand(handle, branch, depth+1)
 
-Bewertet einen Kandidaten im R^6-Metrikraum vor und nach der probierten Mutation und liefert die Richtung als Advisory. Die Metrik rankt, das Gate urteilt.
+> auch in: `FCHAIN-agent-query`
 
-io ◀ — · io ▶ `FLOW-fit-advisory` · allocate ▶ `MOD-steering`
+Progressive On-Demand-Kuzu-Re-Traversierung; kein Originals-Store. (CR-GC-101, R13)
 
-##### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
+io ◀ `FLOW-expand-request` · io ▶ `FLOW-expanded-subgraph` · allocate ▶ `MOD-mcp-tools`
 
-> auch unter: `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot`
+###### `REQ-cache-layering` — Prompt-Cache-Layering
 
-Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefert Regelstrom und Projektionen, daraus waehlt die Steuerung die schwaechste Dimension, rankt Kandidaten nach dem Delta derselben Groessen und uebergibt das Ergebnis dem Apply-Gate. Deterministisch: gleicher Graph, gleiche Empfehlung.
+Nur Onto+Rules stabil cachen, nie mit Live-Graph; Prefix-Hygiene. (R8/R14)
 
-priority: must · status: done · kinds: functional
+priority: should · status: open · kinds: non-functional
 
-Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
+Verification ◀ `TEST-cache` (integration) · satisfy ◀ `FUNC-graph-expand` · allocate ▶ `MOD-mcp-tools`
 
-#### 3.9.7  `FUNC-goal-steerer` — Zielsteuerer (Sammler der vier Entscheidungen)
+###### `REQ-precise-context` — Präziser Kontext statt grep-Dump
 
-Logischer Sammler der vier Entscheidungen der Schleife: Gate-Verdikt, Fokuswahl, Kandidaten-Rangfolge, Handoff. Alle vier teilen eine Signatur: aus einem Messvektor plus optional einem Kandidaten folgt eine Handlung. Sammler, keine Funktion — kein realRef; der Code wird NICHT zusammengezogen, die vier Stellen bleiben wo sie sind. Wer diesem Knoten eine Datei anhaengt, muss concept entfernen, und das faellt auf.
+> auch unter: `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-impact`
 
-io ◀ `FLOW-measurement-vector` · io ▶ `FLOW-action` · allocate ▶ `MOD-steering`
+Kontext = exakter Blast-Radius/Sub-Graph-Slice (Format-E) statt grep-Dump/Result-Kompression.
 
-##### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
+priority: should · status: open · kinds: non-functional
 
-> auch unter: `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot`
+Verification ◀ `TEST-mvp-e2e` (e2e) · `TEST-token-efficiency` (acceptance) · satisfy ◀ `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-graph-impact` · allocate ▶ `MOD-codec` · `MOD-mcp-tools`
 
-Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefert Regelstrom und Projektionen, daraus waehlt die Steuerung die schwaechste Dimension, rankt Kandidaten nach dem Delta derselben Groessen und uebergibt das Ergebnis dem Apply-Gate. Deterministisch: gleicher Graph, gleiche Empfehlung.
+###### `REQ-progressive-expansion` — Progressive Query-Expansion
 
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
-
-##### 3.9.7.1  `FUNC-generation-step` — generationStep(graph, policy, intent)
-
-> auch in: `FCHAIN-steering-loop`
-
-Waehlt aus den Dimensionsscores die schwaechste Dimension unter der Fokus-Schwelle und stellt daraus den Runden-Prompt zusammen: Fokus-Typen, Fund-Fenster, Gate-Protokoll, Handoff-Bedingung.
-
-io ◀ `FLOW-dimension-readiness` · `FLOW-phase-readiness` · io ▶ `FLOW-round-prompt` · allocate ▶ `MOD-steering`
-
-###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
-
-> auch unter: `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot`
-
-Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefert Regelstrom und Projektionen, daraus waehlt die Steuerung die schwaechste Dimension, rankt Kandidaten nach dem Delta derselben Groessen und uebergibt das Ergebnis dem Apply-Gate. Deterministisch: gleicher Graph, gleiche Empfehlung.
+graph_expand vertieft on-demand (Kuzu-Re-Traversierung, kein Originals-Store). (R13)
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
+Verification ◀ `TEST-impact-subgraph` (integration) · satisfy ◀ `FUNC-graph-expand` · allocate ▶ `MOD-mcp-tools`
 
-##### 3.9.7.2  `FUNC-mutate` — mutate(commands)
+##### 3.9.1.3  `FUNC-graph-impact` — graph_impact(id, depth?)
+
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-impact-testing` · `FCHAIN-interface-escalation`
+
+Exakter Blast-Radius (Caller/Traces/Tests) als Format-E. (CR-GC-101, R6/R12)
+
+io ◀ `FLOW-query-request` · io ▶ `FLOW-impact-subgraph` · `FLOW-round-scope` · allocate ▶ `MOD-mcp-tools`
+
+###### `REQ-audit-trail` — Audit-Trail / History
+
+CR-GC-101: audit_trail/audit_stats liefern Mutations-History/Statistik.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
+
+###### `REQ-precise-context` — Präziser Kontext statt grep-Dump
+
+> auch unter: `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand`
+
+Kontext = exakter Blast-Radius/Sub-Graph-Slice (Format-E) statt grep-Dump/Result-Kompression.
+
+priority: should · status: open · kinds: non-functional
+
+Verification ◀ `TEST-mvp-e2e` (e2e) · `TEST-token-efficiency` (acceptance) · satisfy ◀ `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-graph-impact` · allocate ▶ `MOD-codec` · `MOD-mcp-tools`
+
+###### `REQ-query-precision` — Query-Precision statt Kompression
+
+graph_impact liefert exakten Blast-Radius als Format-E (Anti-grep, Ziel a). (R6/R12)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-impact-subgraph` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
+
+###### `REQ-subgraph-slicing` — Sub-Graph-Slicing
+
+Sub-Graph-Slicing + pruneToFit(maxTokens) als Context-Primitive. (R7)
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-impact-subgraph` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
+
+##### 3.9.1.4  `FUNC-harness-cli` — graphcode init/update/remove
+
+npx-CLI Lifecycle: scaffolds/aktualisiert/entfernt .graphcode/, .claude/hooks, .mcp.json, Controller — idempotent, self-contained.
+
+io ◀ `FLOW-cli-command` · io ▶ `FLOW-install-result` · allocate ▶ `MOD-cli`
+
+###### `REQ-install-idempotent` — Idempotent, keine parallelen Pfade
+
+Install/Update idempotent; alte Versionen überschrieben/gelöscht, nicht dupliziert.
+
+priority: should · status: open · kinds: non-functional
+
+Verification ◀ `TEST-cli-scaffold` (integration) · satisfy ◀ `FUNC-harness-cli` · allocate ▶ `MOD-cli`
+
+###### `REQ-npx-distribution` — npx-CLI als Distribution
+
+Distribution als npm-Paket mit bin `npx @sigloch/graphcode init/update/remove`. GATED auf REQ-buildable-standalone + CR-GC-100..103.
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-distribution` (e2e) · satisfy ◀ `FUNC-harness-cli` · allocate ▶ `MOD-cli`
+
+###### `REQ-post-harness-cli` — Postcondition: graphcode init/update/remove
+
+Artefakte installiert/aktualisiert/restlos entfernt; idempotent; Store bei Update erhalten.
+
+priority: must · status: done · kinds: postcondition
+
+Verification ◀ `TEST-cli-scaffold` (integration) · satisfy ◀ `FUNC-harness-cli` · allocate ▶ `MOD-cli`
+
+###### `REQ-pre-harness-cli` — Precondition: graphcode init/update/remove
+
+Repo vorhanden, npx/Node verfügbar.
+
+priority: must · status: done · kinds: precondition
+
+Verification ◀ `TEST-cli-scaffold` (integration) · satisfy ◀ `FUNC-harness-cli` · allocate ▶ `MOD-cli`
+
+###### `REQ-repo-install` — Ein-Kommando-Installation
+
+Installation der Harness in ein beliebiges Repo mit einem Kommando: scaffolds .graphcode/, .claude/hooks, .mcp.json, Controller.
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-cli-scaffold` (integration) · `TEST-distribution` (e2e) · `TEST-scaffold-skills` (integration) · satisfy ◀ `FUNC-harness-cli` · allocate ▶ `MOD-cli`
+
+###### `REQ-repo-uninstall` — Restlose Deinstallation
+
+Deinstallation entfernt alle installierten Artefakte ohne Residuen.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-cli-scaffold` (integration) · satisfy ◀ `FUNC-harness-cli` · allocate ▶ `MOD-cli`
+
+###### `REQ-repo-update` — Update ohne Datenverlust
+
+Update aktualisiert installierte Artefakte/Pfade, ohne den lokalen Graph-Store (.graphcode/) zu verlieren.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-cli-scaffold` (integration) · satisfy ◀ `FUNC-harness-cli` · allocate ▶ `MOD-cli`
+
+###### `REQ-self-contained-dist` — Self-contained Distribution
+
+Zielprojekt darf NICHT von einer Kopie des aimprove-Quellbaums abhängen; Distribution self-contained (versionierte Deps). Blockiert auf D5 + CR-GC-100..103.
+
+priority: should · status: done · kinds: non-functional
+
+Verification ◀ `TEST-distribution` (e2e) · satisfy ◀ `FUNC-harness-cli` · allocate ▶ `MOD-cli`
+
+##### 3.9.1.5  `FUNC-health-endpoint` — healthEndpoint()
+
+Echter Funktions-Health: Store erreichbar, Gate funktional, Ontology/Rules/Contracts-Versionen, LLM/BYOK-Readiness. Quelle des Dashboard-FUNC-render-health. (CR-GC-114)
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-host-bridge`
+
+###### `REQ-real-health-check` — Health = echter Funktionscheck
+
+Der Health-Endpoint prueft Store-Erreichbarkeit, Gate-Funktion, Ontology/Rules/Contracts-Versionen und LLM/BYOK-Readiness, nicht nur Prozess-Liveness. aimprove-spezifische Felder (Sessions/Patterns) sind kein Health-Signal und werden entfernt.
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-real-health-check` (integration) · satisfy ◀ `FUNC-health-endpoint` · `MOD-host-bridge` · allocate ▶ `MOD-host-bridge`
+
+##### 3.9.1.6  `FUNC-resolve-tests-from-code` — Gerichtete code→REQ→TEST-Auflösung
+
+graph_tests akzeptiert ein Code-Changeset und traversiert gerichtet (geaenderter Knoten →satisfy/allocate→ REQ →verify→ TEST), nicht nur reines incoming-graph_impact. Wrappt EINEN Impact-/Traversal-Pfad, kein zweiter Blast-Radius.
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-mcp-tools`
+
+###### `REQ-graph-tests-operational` — graph_tests liefert den korrekten selektiven Testset für einen Code-Change
+
+Ein Code-Changeset (MOD/FUNC/git-diff→Knoten) → graph_tests → vitest run nur-betroffene-Dateien, das JEDE vom Change berührte Testdatei enthält (kein false-green) und unbeteiligte ausschliesst. Erfordert testRef auf allen lauffähigen TESTs + gerichtete Auflösung statt reinem incoming-impact.
+
+priority: must · status: done
+
+Verification ◀ `TEST-graph-tests-operational` (integration) · satisfy ◀ `FUNC-resolve-tests-from-code` · allocate ▶ `MOD-mcp-tools`
+
+##### 3.9.1.7  `FUNC-serve-stdio` — serveStdio()
+
+> auch in: `FCHAIN-doc-export` · `FCHAIN-live-update`
+
+Bindet die MCP-Tool-Registry headless an einen stdio-Transport; jeder Agent (Claude Code oder OpenCode, BYOK) ist ein gleichwertiger Client. Beweist agent-agnostisch + headless. (CR-GC-124)
+
+io ◀ `FLOW-live-event` · io ▶ `FLOW-export-request` · allocate ▶ `MOD-mcp-tools`
+
+###### `REQ-agent-agnostic` — Agent-agnostische MCP-Surface
+
+Die MCP-stdio-Surface ist agent-agnostisch: Claude Code UND OpenCode (und jeder MCP-Client) treiben dieselbe Harness durchs selbe Gate; keine client-spezifischen Annahmen. (CLAUDE.md verriegelt: OpenCode-executed, Claude Code = ein Client)
+
+priority: must · status: done
+
+Verification ◀ `TEST-agent-agnostic` (integration) · satisfy ◀ `FUNC-serve-stdio` · `MOD-mcp-tools` · allocate ▶ `MOD-mcp-tools`
+
+###### `REQ-single-transport` — Ein Transport: MCP-stdio
+
+Genau ein Transport = MCP-stdio; kein Express-REST/HTTP im Harness-Core. (SPEC §0, §5)
+
+priority: should · status: done · kinds: non-functional
+
+Verification ◀ `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-serve-stdio` · `MOD-mcp-tools` · allocate ▶ `MOD-mcp-tools`
+
+##### 3.9.1.8  `FUNC-test` — se-test (red-first test design)
+
+Prompt-realisierter Skill: die allgemeine Red-First-Regel — einen Test erst trauen, wenn er aus dem richtigen Grund rot gesehen wurde; höchste beobachtende Assertion-Stufe, Reachability statt Unit-in-Isolation, TEST-Node concept:false mit auflösbarem testRef (R-19). UI-spezifisch: se-test-ui. (CR-GC-242)
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-skills`
+
+###### `REQ-code-governed-quality` — Gate-validierte, driftfreie Qualität
+
+> auch unter: `FCHAIN-apply-gate` · `FUNC-test-ui`
+
+Jede Code-/Modell-Änderung ist gate-validiert (SE-Ontologie + V3_RULES), konsistent und driftfrei — kein ungeprüfter Schreibpfad.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-code-quality` (acceptance) · `TEST-mvp-e2e` (e2e) · satisfy ◀ `FCHAIN-apply-gate` · `FUNC-test` · `FUNC-test-ui` · allocate ▶ `MOD-skills`
+
+##### 3.9.1.9  `FUNC-test-ui` — se-test-ui (UI test design)
+
+Prompt-realisierter Skill: UI-Test-Design gegen gerenderte Intent (Mockup) statt DOM-Presence — Red-First, Assertion-Ladder (Pixel > Computed-Style > Geometrie > Presence), vier stille Styling-Seams, Reachability-Chain, UI-CR-DoD-Gate. Anti-False-Green aus dem Blind-Render-Retro 2026-07-08. (CR-GC-242)
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-skills`
+
+###### `REQ-code-governed-quality` — Gate-validierte, driftfreie Qualität
+
+> auch unter: `FCHAIN-apply-gate` · `FUNC-test`
+
+Jede Code-/Modell-Änderung ist gate-validiert (SE-Ontologie + V3_RULES), konsistent und driftfrei — kein ungeprüfter Schreibpfad.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-code-quality` (acceptance) · `TEST-mvp-e2e` (e2e) · satisfy ◀ `FCHAIN-apply-gate` · `FUNC-test` · `FUNC-test-ui` · allocate ▶ `MOD-skills`
+
+#### 3.9.2  `FUNC-block-gate` — Qualitäts-Gate
+
+Ebene-0-Block Sales-Sicht: jede Aenderung — von Mensch oder KI — geht durch dieselbe Pruefung; illegal wird nie gespeichert. Realisiert durch seine Kinder.
+
+io ◀ — · io ▶ — · allocate ▶ —
+
+##### 3.9.2.1  `FUNC-check-code-conformance` — conformanceViolations(harness)
+
+Extrahiert CodeFacts (extractCodeFacts, ts-Parser) und wertet die contracts RC-Regeln (RC-01 codeRef, RC-02 testRef) aus; scoreReadinessWithConformance mischt sie in die Readiness. Cross-Module-Call-Coverage Follow-up CR-GC-256. (CR-GC-206 -> CR-GC-253)
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-harness`
+
+###### `REQ-graph-code-conformance` — FUNC codeRef resolves to a real declared symbol
+
+Jeder FUNC.codeRef loest auf ein real deklariertes Symbol in seiner Datei auf (TypeScript-Parser, kein Substring-Match); prompt-realisierte FUNCs (lang prompt): die Skill-Datei existiert. Macht das R-20-Backfill verifizierbar statt nur vorhanden. (CR-GC-206)
+
+priority: must · status: done
+
+Verification ◀ `TEST-code-conformance` (integration) · satisfy ◀ `FUNC-check-code-conformance` · allocate ▶ `MOD-harness`
+
+##### 3.9.2.2  `FUNC-evaluate-rules` — evaluateRules()
+
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-modelfree-gate`
+
+Regel-Engine gegen V3_RULES; Violations {ruleId,severity,elementId}; kein lokaler Parser (L2).
+
+io ◀ `FLOW-draft-graph` · `FLOW-round-scope` · io ▶ `FLOW-round-findings` · `FLOW-violations` · allocate ▶ `MOD-harness`
+
+###### `REQ-rule-enforcement` — Regel-Enforcement (V3_RULES)
+
+evaluateRules() gegen V3_RULES; error-Severity blockt den Apply. (L2)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-evaluate-rules` · allocate ▶ `MOD-harness`
+
+##### 3.9.2.3  `FUNC-mutate` — mutate(commands)
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-interface-escalation` · `FCHAIN-modelfree-gate` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop`
 
@@ -1594,7 +1780,821 @@ priority: must · status: done
 
 Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
 
-##### 3.9.7.3  `FUNC-next-step` — nextStep(graph, policy)
+##### 3.9.2.4  `FUNC-save-graph` — saveGraph(graph)
+
+> auch in: `FCHAIN-apply-gate` · `FCHAIN-live-update` · `FCHAIN-snapshot-freshness`
+
+Persistiert in-memory Graph nach Disk-Kuzu, falls keine error-Violations. (SPEC §3.4, §4)
+
+io ◀ `FLOW-violations` · io ▶ `FLOW-committed-graph` · allocate ▶ `MOD-harness`
+
+###### `REQ-disk-persistence` — Disk-Persistenz
+
+Persistenz auf Disk (.graphcode/kuzu/), kein :memory:. (SPEC §4)
+
+priority: should · status: open · kinds: non-functional
+
+Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `FUNC-save-graph` · allocate ▶ `MOD-harness`
+
+#### 3.9.3  `FUNC-block-gedaechtnis` — Gedächtnis
+
+Ebene-0-Block Sales-Sicht: das Modell als Text-Artefakt — versioniert, wiederherstellbar, zusammenfuehrbar. Realisiert durch seine Kinder.
+
+io ◀ — · io ▶ — · allocate ▶ —
+
+##### 3.9.3.1  `FUNC-decode` — decode(json)
+
+> auch in: `FCHAIN-capture` · `FCHAIN-codec-roundtrip`
+
+Format-E → OntologyGraph, Validierung gegen SE_DESCRIPTOR. (CR-GC-103)
+
+io ◀ `FLOW-formatE-artifact` · `FLOW-formatE-candidates` · io ▶ `FLOW-capture-draft` · `FLOW-parsed-graph` · allocate ▶ `MOD-codec`
+
+###### `REQ-codec-validation` — Codec-Validierung gegen SE_DESCRIPTOR
+
+CR-GC-103: encode/decode validiert gegen SE_DESCRIPTOR; ungültige Typen → Validierungsfehler, kein silent pass.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-codec`
+
+###### `REQ-roundtrip-conformance` — Round-Trip-Conformance
+
+> auch unter: `FCHAIN-codec-roundtrip`
+
+decode(encode(g)) == g modulo Whitespace (rasentraktor-Fixture). (L3)
+
+priority: should · status: open · kinds: non-functional
+
+Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FCHAIN-codec-roundtrip` · `FUNC-decode` · allocate ▶ `MOD-codec`
+
+##### 3.9.3.2  `FUNC-emit-trajectory` — materializeTrajectory()
+
+> auch in: `FCHAIN-apply-gate`
+
+Projiziert .graphcode/trajectory.jsonl als reine Projektion des Operations-Logs (CR-207) — kein Parallel-Write; Schema Trajectory/Outcome aus @sigloch/learning-core. Zielverzeichnis ist der eigene Workspace GRAPHCODE_DIR, nicht der Vorgaenger-Ordner .aimprove (CR-GC-330). (CR-GC-102, CR-GC-252, CR-GC-330)
+
+io ◀ `FLOW-committed-graph` · io ▶ `FLOW-trajectory` · allocate ▶ `MOD-hooks`
+
+###### `REQ-post-emit-trajectory` — Postcondition: FUNC-emit-trajectory
+
+Trajectory/Outcome append-only nach .graphcode/*.jsonl, Format stabil. (CR-GC-330)
+
+priority: must · status: open · kinds: postcondition
+
+Verification ◀ `TEST-learning-emit` (integration) · satisfy ◀ `FUNC-emit-trajectory` · allocate ▶ `MOD-hooks`
+
+###### `REQ-pre-emit-trajectory` — Precondition: FUNC-emit-trajectory
+
+Mutation erfolgreich applied (post-apply-Phase).
+
+priority: must · status: open · kinds: precondition
+
+Verification ◀ `TEST-learning-emit` (integration) · satisfy ◀ `FUNC-emit-trajectory` · allocate ▶ `MOD-hooks`
+
+###### `REQ-trajectory-emit` — Trajectory/Outcome-Emission
+
+post-apply/nightly: Trajectory/Outcome append-only nach .graphcode/*.jsonl, Format stabil. Ein Workspace-Verzeichnis pro Repo — der Feed liegt neben Store, Lock und Audit-Log (CR-GC-330). (CR-GC-102, L1)
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-learning-emit` (integration) · satisfy ◀ `FUNC-emit-trajectory` · allocate ▶ `MOD-hooks`
+
+##### 3.9.3.3  `FUNC-encode` — encode(graph)
+
+> auch in: `FCHAIN-codec-roundtrip`
+
+Deterministische Format-E-Serialisierung (stabile Sortierung), Diff-Dialekt. (CR-GC-103, R3/R5)
+
+io ◀ `FLOW-graph-state` · io ▶ `FLOW-formatE-artifact` · allocate ▶ `MOD-codec`
+
+###### `REQ-deterministic-serialization` — Deterministische Serialisierung
+
+Stabile Sortierung → commit-/merge-arm; zwei Encodes byte-identisch. (R3)
+
+priority: should · status: open · kinds: non-functional
+
+Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-encode` · allocate ▶ `MOD-codec`
+
+###### `REQ-formatE-diff-dialect` — Format-E-Diff-Dialekt (R5)
+
+CR-GC-103 R5: Diff-Dialekt +/-/~/M mit <operations><base_snapshot>ID@version + 1:N-Grouping; implicit-add VERWERFEN.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-encode` · allocate ▶ `MOD-codec`
+
+###### `REQ-formatE-parity` — Format-E-Parity = contracts (L1)
+
+CR-GC-103 L1: Format-E-Parität = contracts-Baseline; genau EIN Codec.
+
+priority: should · status: open · kinds: non-functional
+
+Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-encode` · allocate ▶ `MOD-codec`
+
+###### `REQ-precise-context` — Präziser Kontext statt grep-Dump
+
+> auch unter: `FCHAIN-agent-query` · `FUNC-graph-expand` · `FUNC-graph-impact`
+
+Kontext = exakter Blast-Radius/Sub-Graph-Slice (Format-E) statt grep-Dump/Result-Kompression.
+
+priority: should · status: open · kinds: non-functional
+
+Verification ◀ `TEST-mvp-e2e` (e2e) · `TEST-token-efficiency` (acceptance) · satisfy ◀ `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-graph-impact` · allocate ▶ `MOD-codec` · `MOD-mcp-tools`
+
+##### 3.9.3.4  `FUNC-graph-export-snapshot` — graph_export(views?)
+
+> auch in: `FCHAIN-snapshot-freshness`
+
+Materialisiert den kanonischen, deterministischen Graph-Snapshot docs/graph/<system>.graph.json plus die Markdown-Views und loescht den Drift-Marker EXPORT_PENDING. Der einzige Sync-Pfad Graph zu committeten Docs; verweigert das Clobbern (leerer Graph, fremder Drop). (CR-GC-113, CR-GC-217)
+
+io ◀ `FLOW-committed-graph` · io ▶ `FLOW-graph-snapshot` · allocate ▶ `MOD-mcp-tools`
+
+###### `REQ-graph-snapshot-per-commit` — Kanonischer Graph-Snapshot pro Commit
+
+> auch unter: `FCHAIN-snapshot-freshness` · `FUNC-mutate`
+
+Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/graph/*.graph.json), der zum Code dieses Commits passt. Un-exportierte Modell-Mutationen blockieren den Commit ueber den single-writer-sicheren Drift-Marker .graphcode/EXPORT_PENDING (vom Gate auf mutate gesetzt, von graph_export/graph_reseed geloescht); der pre-commit-Hook staged die generierten Artefakte automatisch. (CR-GC-217)
+
+priority: must · status: done
+
+Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
+
+##### 3.9.3.5  `FUNC-import` — importGraph(formatE, mode)
+
+Format-E-Bulk-Import (replace/merge) ausschließlich durchs Gate; Cold-Start aus graphify/Slicer-Output.
+
+io ◀ `FLOW-bulk-formatE` · io ▶ `FLOW-bootstrap-result` · allocate ▶ `MOD-harness`
+
+###### `REQ-batch-seed-performance` — Batch-Seed/Import Performance (UNWIND)
+
+Seed/Import muss batch-skalieren: per-Row-MERGE ist O(langsam) (10k Edges ~51s, SP-2). UNWIND-Batch-Insert (gruppiert je Label/Edge-Table, Werte inline via escapeString) liefert 5k Nodes + 5k Edges < 15s (gemessen 5.3s, 5.6x schneller; Edges 9.6x). Interface unverändert (StorageAdapter.saveNodes/saveEdges), kein Parallelpfad. (CR-GC-120)
+
+priority: must · status: done
+
+Verification ◀ `TEST-batch-seed` (performance) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-harness`
+
+###### `REQ-bootstrap-through-gate` — Erstbefüllung nur durchs Gate
+
+FUNC-import: Erstbefüllung ausschließlich über das mutate()-Gate; Quelle = Format-E; kein Direct-Write.
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-bootstrap` (integration) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-harness`
+
+###### `REQ-post-import` — Postcondition: importGraph(formatE, mode)
+
+Graph durchs Gate befüllt; kein Direct-Write; Violations berichtet.
+
+priority: must · status: done · kinds: postcondition
+
+Verification ◀ `TEST-bootstrap` (integration) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-harness`
+
+###### `REQ-pre-import` — Precondition: importGraph(formatE, mode)
+
+Leerer/zu befüllender Repo-Graph; Format-E-Quelle (graphify/Import) liegt vor.
+
+priority: must · status: done · kinds: precondition
+
+Verification ◀ `TEST-bootstrap` (integration) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-harness`
+
+##### 3.9.3.6  `FUNC-merge-nodes` — mergeNodes(graph)
+
+Conflict-free Merge via merge_nodes + deterministischer Serialisierung; keine verlorenen Knoten/Traces.
+
+io ◀ `FLOW-branch-graphs` · io ▶ `FLOW-merged-graph` · allocate ▶ `MOD-codec`
+
+###### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
+
+Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Artefakt. (R2)
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-merge` (integration) · satisfy ◀ `FUNC-merge-nodes` · allocate ▶ `MOD-codec`
+
+###### `REQ-conflict-free-merge` — Conflict-free Graph-Merge
+
+FUNC-merge-nodes: Branch-/Multi-Dev-Merge conflict-free (deterministische Serialisierung + merge_nodes).
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-merge` (integration) · satisfy ◀ `FUNC-merge-nodes` · allocate ▶ `MOD-codec`
+
+###### `REQ-post-merge-nodes` — Postcondition: mergeNodes(graph)
+
+Conflict-free gemerged; keine verlorenen Knoten/Traces; deterministisch sortiert.
+
+priority: must · status: open · kinds: postcondition
+
+Verification ◀ `TEST-merge` (integration) · satisfy ◀ `FUNC-merge-nodes` · allocate ▶ `MOD-codec`
+
+###### `REQ-pre-merge-nodes` — Precondition: mergeNodes(graph)
+
+Zwei (oder mehr) Branch-Versionen des committed Graph-Artefakts.
+
+priority: must · status: open · kinds: precondition
+
+Verification ◀ `TEST-merge` (integration) · satisfy ◀ `FUNC-merge-nodes` · allocate ▶ `MOD-codec`
+
+##### 3.9.3.7  `FUNC-migrate-schema` — migrateSchema(from, to)
+
+Re-Validierung + Migration des Graphen bei ONTOLOGY/RULES_VERSION-Bump; Version am Artefakt mitgeführt.
+
+io ◀ `FLOW-version-bump` · io ▶ `FLOW-migrated-graph` · allocate ▶ `MOD-harness`
+
+###### `REQ-post-migrate-schema` — Postcondition: migrateSchema(from, to)
+
+Graph re-validiert/migriert; Violations berichtet; Artefakt-Version aktualisiert.
+
+priority: must · status: open · kinds: postcondition
+
+Verification ◀ `TEST-schema-migration` (integration) · satisfy ◀ `FUNC-migrate-schema` · allocate ▶ `MOD-harness`
+
+###### `REQ-pre-migrate-schema` — Precondition: migrateSchema(from, to)
+
+Version-Bump in contracts/se; bestehender Graph auf alter Version.
+
+priority: must · status: open · kinds: precondition
+
+Verification ◀ `TEST-schema-migration` (integration) · satisfy ◀ `FUNC-migrate-schema` · allocate ▶ `MOD-harness`
+
+###### `REQ-schema-version-migration` — Schema-Versions-Migration
+
+FUNC-migrate-schema: bei Version-Bump re-validieren/migrieren, Violations berichten, Version mitführen.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-schema-migration` (integration) · satisfy ◀ `FUNC-migrate-schema` · allocate ▶ `MOD-harness`
+
+##### 3.9.3.8  `FUNC-own-kuzu-host` — ownKuzu()
+
+Der Host-Prozess ist der einzige Kuzu-Owner pro Repo; die Bridge haelt kein zweites DB-Handle. (CR-GC-114)
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-host-bridge`
+
+###### `REQ-single-kuzu-owner` — Single Kuzu-Owner
+
+Genau ein Host-Prozess besitzt .graphcode/kuzu (single-writer; kein 2. DB-Handle). (SPEC §4, L1)
+
+priority: should · status: done · kinds: non-functional
+
+Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `FUNC-own-kuzu-host` · `MOD-harness` · allocate ▶ `MOD-host-bridge`
+
+##### 3.9.3.9  `FUNC-reseed` — reseed(relPath)
+
+> auch in: `FCHAIN-recall`
+
+Re-synct den Live-Store aus einem Snapshot: DETACH-DELETE plus Re-Import hinter dem Single-Writer, kein zweites DB-Handle. Serialisiert gegen mutate (O3), loescht danach den Drift-Marker. (CR-GC-203, CR-GC-218)
+
+io ◀ `FLOW-graph-snapshot` · io ▶ `FLOW-recalled-state` · allocate ▶ `MOD-harness`
+
+###### `REQ-graph-state-recall` — Frueheren Graph-Stand reproduzieren
+
+> auch unter: `FCHAIN-recall` · `FUNC-rewind`
+
+Ein frueherer Graph-Stand ist mit einem Kommando reproduzierbar: graphcode rewind <ref> liest den committeten Snapshot aus dem Git-Objektspeicher und reseedet den Store daraus. Der committete Snapshot ist SSOT-at-rest / history-of-record, der Kuzu-Store eine abgeleitete Working-Copy; reseed loescht+reimportiert in-process hinter dem Single-Writer (kein zweites Handle). Der Working-Tree wird nicht angefasst. (CR-GC-217, CR-GC-311)
+
+priority: must · status: done
+
+Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-recall` · `FUNC-reseed` · `FUNC-rewind` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness`
+
+##### 3.9.3.10  `FUNC-rewind` — graphcode rewind <ref>
+
+> auch in: `FCHAIN-recall`
+
+Stellt den Graph-Stand eines Commits her: liest den Snapshot per git show aus dem Objektspeicher und stellt ihn im gitignorierten Workspace bereit. Der Working-Tree bleibt unberuehrt, es gibt also genau eine Zustandsaenderung; un-exportierte Mutationen brechen ab, force verwirft sie. (CR-GC-311)
+
+io ◀ `FLOW-cli-command` · io ▶ `FLOW-graph-snapshot` · allocate ▶ `MOD-cli`
+
+###### `REQ-graph-state-recall` — Frueheren Graph-Stand reproduzieren
+
+> auch unter: `FCHAIN-recall` · `FUNC-reseed`
+
+Ein frueherer Graph-Stand ist mit einem Kommando reproduzierbar: graphcode rewind <ref> liest den committeten Snapshot aus dem Git-Objektspeicher und reseedet den Store daraus. Der committete Snapshot ist SSOT-at-rest / history-of-record, der Kuzu-Store eine abgeleitete Working-Copy; reseed loescht+reimportiert in-process hinter dem Single-Writer (kein zweites Handle). Der Working-Tree wird nicht angefasst. (CR-GC-217, CR-GC-311)
+
+priority: must · status: done
+
+Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-recall` · `FUNC-reseed` · `FUNC-rewind` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness`
+
+#### 3.9.4  `FUNC-block-messwerk` — Messwerk
+
+Ebene-0-Block Sales-Sicht: Kennzahlen aus dem Modell selbst — Reifegrad, Phasen-Gates, Architektur-Fitness — live, ohne KI. Realisiert durch seine Kinder.
+
+io ◀ — · io ▶ — · allocate ▶ —
+
+##### 3.9.4.1  `FUNC-arch-fitness` — metrics(graph, layer arch)
+
+Misst die Architektur-Topologie als Vektor in R^6 — das einzige Signal der Schleife, das nicht aus dem Regelstrom stammt, und deshalb im Ranking der Tiebreaker. Fremdpaket @sigloch/se-optimizer, deshalb external.
+
+io ◀ — · io ▶ `FLOW-arch-fitness` · allocate ▶ —
+
+###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
+
+> auch unter: `FCHAIN-steering-loop` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot`
+
+Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefert Regelstrom und Projektionen, daraus waehlt die Steuerung die schwaechste Dimension, rankt Kandidaten nach dem Delta derselben Groessen und uebergibt das Ergebnis dem Apply-Gate. Deterministisch: gleicher Graph, gleiche Empfehlung.
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
+
+##### 3.9.4.2  `FUNC-compute-phase-readiness` — computePhaseReadiness(violations)
+
+Projiziert denselben Regelstrom auf die Phasen-Gates SRR/PDR/CDR/TRR: je Gate abgedeckte gegen alle Regel-IDs plus die fehlenden. Die zweite Achse neben den Dimensionen, aus einer Quelle.
+
+io ◀ `FLOW-completeness` · `FLOW-violations` · io ▶ `FLOW-phase-readiness` · allocate ▶ `MOD-steering`
+
+###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
+
+> auch unter: `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot`
+
+Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefert Regelstrom und Projektionen, daraus waehlt die Steuerung die schwaechste Dimension, rankt Kandidaten nach dem Delta derselben Groessen und uebergibt das Ergebnis dem Apply-Gate. Deterministisch: gleicher Graph, gleiche Empfehlung.
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
+
+##### 3.9.4.3  `FUNC-compute-readiness` — computeReadiness(graph, policy)
+
+> auch in: `FCHAIN-steering-loop`
+
+Projiziert den Regelstrom auf die acht Dimensionsscores (score = 1 minus Verstoesse durch applicable). Fremdpaket @sigloch/se-steering, deshalb external.
+
+io ◀ `FLOW-steering-snapshot` · io ▶ `FLOW-dimension-readiness` · allocate ▶ —
+
+###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
+
+> auch unter: `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot`
+
+Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefert Regelstrom und Projektionen, daraus waehlt die Steuerung die schwaechste Dimension, rankt Kandidaten nach dem Delta derselben Groessen und uebergibt das Ergebnis dem Apply-Gate. Deterministisch: gleicher Graph, gleiche Empfehlung.
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
+
+##### 3.9.4.4  `FUNC-compute-steering-delta` — computeSteeringDelta(before, after)
+
+Differenz zweier Snapshots: blockierende Fehler vorher und nachher plus Score-Delta je Dimension. Dimensionen ohne Grundgesamtheit auf beiden Seiten entfallen, weil ihr Score dort konstruktiv 0 ist und nicht perfekt.
+
+io ◀ `FLOW-steering-snapshot` · io ▶ `FLOW-steering-delta` · allocate ▶ `MOD-steering`
+
+###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
+
+> auch unter: `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot`
+
+Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefert Regelstrom und Projektionen, daraus waehlt die Steuerung die schwaechste Dimension, rankt Kandidaten nach dem Delta derselben Groessen und uebergibt das Ergebnis dem Apply-Gate. Deterministisch: gleicher Graph, gleiche Empfehlung.
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
+
+##### 3.9.4.5  `FUNC-fit-advisory` — computeFitAdvisory(before, after)
+
+Bewertet einen Kandidaten im R^6-Metrikraum vor und nach der probierten Mutation und liefert die Richtung als Advisory. Die Metrik rankt, das Gate urteilt.
+
+io ◀ — · io ▶ `FLOW-fit-advisory` · allocate ▶ `MOD-steering`
+
+###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
+
+> auch unter: `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot`
+
+Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefert Regelstrom und Projektionen, daraus waehlt die Steuerung die schwaechste Dimension, rankt Kandidaten nach dem Delta derselben Groessen und uebergibt das Ergebnis dem Apply-Gate. Deterministisch: gleicher Graph, gleiche Empfehlung.
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
+
+##### 3.9.4.6  `FUNC-module-metrics` — moduleMetrics(graph)
+
+Projiziert den Graphen auf die Modulkennzahlen je MOD (Instabilitaet, LCOM4, Kohaesion) — dieselbe Rechnung, aus der MT-01/MT-02 ihre Verstoesse ableiten. Fremdpaket @sigloch/contracts, deshalb external.
+
+io ◀ — · io ▶ `FLOW-module-metrics` · allocate ▶ —
+
+###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
+
+> auch unter: `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot`
+
+Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefert Regelstrom und Projektionen, daraus waehlt die Steuerung die schwaechste Dimension, rankt Kandidaten nach dem Delta derselben Groessen und uebergibt das Ergebnis dem Apply-Gate. Deterministisch: gleicher Graph, gleiche Empfehlung.
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
+
+##### 3.9.4.7  `FUNC-score-completeness` — scoreCompleteness(gateId, graph)
+
+Berechnet die Completeness-Dimension pro Gate: traversiert die Phase-Slice-Beine (Meta-Modell 1..*) ueber die treibende Source-Population und liefert covered/total + per-leg missing[]. Ergaenzt scorePhaseGate in src/readiness.ts; ein Gate ist passed nur wenn rule-clean UND completeness.covered==total. Config = statische Phase->Beine-Map, im Test gegen die Meta-Modell-Kardinalitaeten asserted (Drift-Lock). (CR-GC-250)
+
+io ◀ — · io ▶ `FLOW-completeness` · allocate ▶ `MOD-harness`
+
+###### `REQ-completeness-actor-bounded` — FCHAIN actor-bounded (Trigger + Consumer)
+
+Jede FCHAIN ist actor-bounded: ein ACTOR->FLOW->FUNC(in chain) am Eintritt UND ein FUNC(in chain)->FLOW->ACTOR am Austritt. Eine FCHAIN ohne Trigger oder ohne Consumer ist eine hohle Kette und darf das PDR-Gate nicht gruen passieren. Teil der PDR-Completeness-Slice. (CR-GC-250)
+
+priority: must · status: reviewed · kinds: functional
+
+Verification ◀ `TEST-completeness-actor-bounded` (acceptance) · satisfy ◀ `FUNC-score-completeness` · allocate ▶ `MOD-harness`
+
+###### `REQ-completeness-single-value` — Completeness: ein Wert pro Gate, Detail on-click
+
+Das Readiness-Dashboard zeigt EINEN aggregierten Completeness-Wert pro Gate; die Per-Leg-Aufschluesselung (welches Bein, welche Source-Elemente unvollstaendig) erscheint on-click als Drill-down. Ruhiger Wert im Panel, Details on-demand. (CR-GC-250)
+
+priority: should · status: reviewed · kinds: non-functional
+
+Verification ◀ `TEST-completeness-single-value` (acceptance) · satisfy ◀ `FUNC-score-completeness` · allocate ▶ `MOD-harness`
+
+###### `REQ-readiness-completeness` — Readiness Completeness-Dimension (cardinality-driven)
+
+Readiness traegt eine strukturelle Completeness-Dimension pro Gate, orthogonal zur Violation-Severity: ein Gate ist NICHT gruen, solange ein vom Meta-Modell als 1..* markiertes Ketten-Bein seiner Phase unvollstaendig ist. Coverage wird ueber die TREIBENDE Source-Population gemessen -> Abwesenheit zaehlt (0 FCHAIN -> alle UC unvollstaendig -> SRR rot). Warnings behalten ihre Severity (keine Inflation); das Gate-Urteil ergaenzt die Completeness-Invariante. Phase-Slices: SRR {UC->FCHAIN, UC->REQ}, PDR {FCHAIN->FUNC, FUNC->satisfy, FUNC->MOD}, CDR {REQ<-verify-TEST, FLOW->SCHEMA}, TRR {testRef/codeRef non-concept}. concept:true gilt bis CDR, zaehlt erst ab TRR nicht als complete. (CR-GC-250)
+
+priority: must · status: reviewed · kinds: functional
+
+Verification ◀ `TEST-readiness-completeness` (acceptance) · satisfy ◀ `FUNC-score-completeness` · allocate ▶ `MOD-harness`
+
+##### 3.9.4.8  `FUNC-take-steering-snapshot` — takeSteeringSnapshot(graph, policy)
+
+> auch in: `FCHAIN-steering-loop`
+
+Der EINE Messpfad: mappt den Graphen ueber toOntologyGraph, injiziert die ND-Matrizen und wertet den vollen Regelkatalog aus; liefert Regelstrom, blockierende Fehler und den Readiness-Report in EINEM Objekt. Jede weitere Kenngroesse ist eine Projektion davon, keine zweite Messung.
+
+io ◀ `FLOW-gate-verdict` · `FLOW-steering-trigger` · io ▶ `FLOW-measurement-vector` · `FLOW-steering-snapshot` · `FLOW-violations` · allocate ▶ `MOD-steering`
+
+###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
+
+> auch unter: `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates`
+
+Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefert Regelstrom und Projektionen, daraus waehlt die Steuerung die schwaechste Dimension, rankt Kandidaten nach dem Delta derselben Groessen und uebergibt das Ergebnis dem Apply-Gate. Deterministisch: gleicher Graph, gleiche Empfehlung.
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
+
+#### 3.9.5  `FUNC-block-schaufenster` — Schaufenster
+
+Ebene-0-Block Sales-Sicht: Live-Dashboard und fertige Ingenieurs-Dokumente — immer aktuell, nie von Hand gepflegt. Realisiert durch seine Kinder.
+
+io ◀ — · io ▶ — · allocate ▶ —
+
+##### 3.9.5.1  `FUNC-block-dokumentenwerk` — Dokumentenwerk
+
+Ebene-1-Block im Schaufenster: deterministische Dokument-Renders — Markdown-Export und die se-view-Sichten.
+
+io ◀ — · io ▶ — · allocate ▶ —
+
+###### 3.9.5.1.1  `FUNC-export-markdown` — exportMarkdown(graph, view)
+
+> auch in: `FCHAIN-doc-export`
+
+Rendert Graph (View: spec/architecture/cr-list/references) deterministisch nach Markdown mit GENERATED-Header.
+
+io ◀ `FLOW-export-request` · io ▶ `FLOW-markdown-docs` · allocate ▶ `MOD-docs`
+
+###### `REQ-doc-export` — Graph → Markdown Re-Export
+
+> auch unter: `FCHAIN-doc-export` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm`
+
+human-readable Docs (SPEC/Architektur/CR-Liste/References) werden DETERMINISTISCH aus dem Graph generiert (GENERATED-Header), nie hand-editiert. Schließt die graph-is-ssot-Drift-Lücke. (REQ-graph-is-ssot)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
+
+###### `REQ-post-export-markdown` — Postcondition: exportMarkdown(graph, view)
+
+Deterministische Markdown-Views mit GENERATED-Header; nie hand-editiert.
+
+priority: must · status: done · kinds: postcondition
+
+Verification ◀ `TEST-doc-export` (conformance) · satisfy ◀ `FUNC-export-markdown` · allocate ▶ `MOD-docs`
+
+###### `REQ-pre-export-markdown` — Precondition: exportMarkdown(graph, view)
+
+Aktueller Graph (SSOT) geladen; View gewählt.
+
+priority: must · status: done · kinds: precondition
+
+Verification ◀ `TEST-doc-export` (conformance) · satisfy ◀ `FUNC-export-markdown` · allocate ▶ `MOD-docs`
+
+###### 3.9.5.1.2  `FUNC-render-views` — render graph→markdown views
+
+PROMPT-realisierter Graph→Markdown-Renderer via se-view-Skills (.claude/skills/se-view-*); erzeugt z.B. architecture-graph.md. Interim-Realisierung von REQ-doc-export, bis FUNC-export-markdown (code, MOD-docs) gebaut ist. Beweis: Skills = Funktionen (Allokation an MOD-skills = prompt-realisiert).
+
+io ◀ `FLOW-view-request` · io ▶ `FLOW-rendered-view` · allocate ▶ `MOD-skills`
+
+###### `REQ-doc-export` — Graph → Markdown Re-Export
+
+> auch unter: `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm`
+
+human-readable Docs (SPEC/Architektur/CR-Liste/References) werden DETERMINISTISCH aus dem Graph generiert (GENERATED-Header), nie hand-editiert. Schließt die graph-is-ssot-Drift-Lücke. (REQ-graph-is-ssot)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
+
+###### 3.9.5.1.3  `FUNC-view-changelog` — se-view-changelog (Change Log)
+
+Prompt-realisierte View: Change Log aus CR-Knoten mit Rationale und Status. (CR-GC-116)
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-skills`
+
+###### `REQ-doc-export` — Graph → Markdown Re-Export
+
+> auch unter: `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm`
+
+human-readable Docs (SPEC/Architektur/CR-Liste/References) werden DETERMINISTISCH aus dem Graph generiert (GENERATED-Header), nie hand-editiert. Schließt die graph-is-ssot-Drift-Lücke. (REQ-graph-is-ssot)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
+
+###### 3.9.5.1.4  `FUNC-view-conops` — se-view-conops (ConOps)
+
+Prompt-realisierte View: Concept of Operations aus UC plus ACTOR (operatingMode). (CR-GC-116)
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-skills`
+
+###### `REQ-doc-export` — Graph → Markdown Re-Export
+
+> auch unter: `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm`
+
+human-readable Docs (SPEC/Architektur/CR-Liste/References) werden DETERMINISTISCH aus dem Graph generiert (GENERATED-Header), nie hand-editiert. Schließt die graph-is-ssot-Drift-Lücke. (REQ-graph-is-ssot)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
+
+###### 3.9.5.1.5  `FUNC-view-icd` — se-view-icd (ICD)
+
+Prompt-realisierte View: Interface Control Document aus FLOW zu SCHEMA. (CR-GC-116)
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-skills`
+
+###### `REQ-doc-export` — Graph → Markdown Re-Export
+
+> auch unter: `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm`
+
+human-readable Docs (SPEC/Architektur/CR-Liste/References) werden DETERMINISTISCH aus dem Graph generiert (GENERATED-Header), nie hand-editiert. Schließt die graph-is-ssot-Drift-Lücke. (REQ-graph-is-ssot)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
+
+###### 3.9.5.1.6  `FUNC-view-intplan` — se-view-intplan (Integrations-/Testplan)
+
+Prompt-realisierte View: Integrations-/Testplan aus MS plus verify-Status. (CR-GC-116)
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-skills`
+
+###### `REQ-doc-export` — Graph → Markdown Re-Export
+
+> auch unter: `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-irr` · `FUNC-view-rtm`
+
+human-readable Docs (SPEC/Architektur/CR-Liste/References) werden DETERMINISTISCH aus dem Graph generiert (GENERATED-Header), nie hand-editiert. Schließt die graph-is-ssot-Drift-Lücke. (REQ-graph-is-ssot)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
+
+###### 3.9.5.1.7  `FUNC-view-irr` — se-view-fmea (FMEA view)
+
+Prompt-realisierte View: FMEA-Render aus risk-getaggten REQs (S/O/D, Action Priority, Mitigation-Coverage, Verify-Luecken). Skill von se-view-irr zu se-view-fmea umbenannt; das Label IRR ist jetzt die separate Assumption-Review (se-irr). (CR-GC-223)
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-skills`
+
+###### `REQ-doc-export` — Graph → Markdown Re-Export
+
+> auch unter: `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm`
+
+human-readable Docs (SPEC/Architektur/CR-Liste/References) werden DETERMINISTISCH aus dem Graph generiert (GENERATED-Header), nie hand-editiert. Schließt die graph-is-ssot-Drift-Lücke. (REQ-graph-is-ssot)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
+
+###### 3.9.5.1.8  `FUNC-view-rtm` — se-view-rtm (RTM)
+
+Prompt-realisierte View: Requirements Traceability Matrix aus satisfy/verify-Traces je REQ. (CR-GC-116)
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-skills`
+
+###### `REQ-doc-export` — Graph → Markdown Re-Export
+
+> auch unter: `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr`
+
+human-readable Docs (SPEC/Architektur/CR-Liste/References) werden DETERMINISTISCH aus dem Graph generiert (GENERATED-Header), nie hand-editiert. Schließt die graph-is-ssot-Drift-Lücke. (REQ-graph-is-ssot)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
+
+##### 3.9.5.2  `FUNC-block-live-dashboard` — Live-Dashboard
+
+Ebene-1-Block im Schaufenster: der Live-Pfad — Update-Events, SSE-Verteilung, Dashboard-Panels.
+
+io ◀ — · io ▶ — · allocate ▶ —
+
+###### 3.9.5.2.1  `FUNC-broadcast-diff` — broadcastDiff(version)
+
+> auch in: `FCHAIN-live-update`
+
+Versionierter Diff-Broadcast mit Late-Joiner-Cache an die Viewer; jede Mutation erhoeht die Version. (CR-GC-114)
+
+io ◀ `FLOW-live-event` · io ▶ — · allocate ▶ `MOD-host-bridge`
+
+###### `REQ-versioned-broadcast` — Versioned Diff-Broadcast
+
+> auch unter: `FUNC-emit-update-event`
+
+Versioned Diff-Broadcast an Dashboard (read-only, Late-Joiner-Cache). (R9)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FUNC-broadcast-diff` · `FUNC-emit-update-event` · `MOD-host-bridge` · allocate ▶ `MOD-hooks` · `MOD-host-bridge`
+
+###### 3.9.5.2.2  `FUNC-emit-update-event` — emitUpdateEvent(domains)
+
+> auch in: `FCHAIN-live-update`
+
+Live-Update-Event (SSE invalidate) bei jeder Mutation; Basis des read-only Dashboards. (R9)
+
+io ◀ `FLOW-committed-graph` · io ▶ `FLOW-live-event` · allocate ▶ `MOD-hooks`
+
+###### `REQ-live-event-in-contracts` — Live-Event-Contract in @sigloch/contracts
+
+LiveUpdateEvent/UpdateDomain (heute nur graphcode src/emit.ts) als Zod-Schema nach @sigloch/contracts publishen, damit Dashboard/Bridge denselben Vertrag importieren (kein Fork). Analog D1.
+
+priority: must · status: done
+
+Verification ◀ `TEST-live-event-contract` (integration) · satisfy ◀ `FUNC-emit-update-event` · allocate ▶ `MOD-hooks`
+
+###### `REQ-mutation-emits-event` — Mutation emittiert Live-Update-Event
+
+> auch unter: `FCHAIN-live-update`
+
+CONSTRAINT: Jede Graph-Mutation MUSS ein Live-Update-Event emittieren (SSE invalidate, domains graph/rules/readiness/suggestions). Beleg: aimprove import emittiert keins → Dashboard-Lag ~90s. Fix: alle Write-Pfade einheitlich.
+
+priority: should · status: done · kinds: non-functional
+
+Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FCHAIN-live-update` · `FUNC-emit-update-event` · allocate ▶ `MOD-hooks`
+
+###### `REQ-post-emit-update-event` — Postcondition: FUNC-emit-update-event
+
+Genau ein Live-Update-Event mit korrekten domains; ausschließlich read-only.
+
+priority: must · status: open · kinds: postcondition
+
+Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FUNC-emit-update-event` · allocate ▶ `MOD-hooks`
+
+###### `REQ-pre-emit-update-event` — Precondition: FUNC-emit-update-event
+
+Mutation committed; SSE/WS-Bridge verbunden.
+
+priority: must · status: open · kinds: precondition
+
+Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FUNC-emit-update-event` · allocate ▶ `MOD-hooks`
+
+###### `REQ-versioned-broadcast` — Versioned Diff-Broadcast
+
+> auch unter: `FUNC-broadcast-diff`
+
+Versioned Diff-Broadcast an Dashboard (read-only, Late-Joiner-Cache). (R9)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FUNC-broadcast-diff` · `FUNC-emit-update-event` · `MOD-host-bridge` · allocate ▶ `MOD-hooks` · `MOD-host-bridge`
+
+###### 3.9.5.2.3  `FUNC-render-artifacts` — renderArtifactReadiness(views)
+
+INCOSE-Artifact-Panel: Readiness je Dokument/View (Testmatrix, FMEA, RTM, ImplPlan, IntPlan, ChangeLog, ConOps, IRR, NFR, ICD) aus dem Query-Layer (graph_query views) + graph_readiness. Repoint der aimprove ArtifactReadiness. Die offene View-Liste (RTM, IntPlan, ChangeLog, ConOps, IRR, ICD ohne se-view-Skill) ist genau der Rest-Scope von CR-GC-116. (CR-GC-115)
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-dashboard`
+
+###### `REQ-artifact-freshness` — Artifact-Ampel-Semantik gruen gelb rot
+
+Dokumente und Prozessschritte sind gruen wenn live aus dem aktuellen Graph abgeleitet, gelb wenn ein materialisiertes Doc existiert aber der Graph sich seither geaendert hat (stale), rot wenn noch nicht existent.
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-artifact-freshness` (integration) · satisfy ◀ `FUNC-render-artifacts` · `MOD-dashboard` · allocate ▶ `MOD-dashboard`
+
+###### 3.9.5.2.4  `FUNC-render-graph` — renderGraph(elements, traces)
+
+Pluggbarer Live-Graph-Mount-Slot im Dashboard. Datenquelle: graph_elements + graph_get_edges + rules_get_violations (nur V3_RULES, kein BQ). Der konkrete Cytoscape-Renderer (@sigloch/graph-renderer) wird hier eingehaengt und ist das naechste aise-family-Projekt (graph-view-edit), nicht in graphcode gebaut. aimproves OntologyView rendert keinen Node-Link-Graph (nur Histogramme). (CR-GC-115)
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-dashboard`
+
+###### 3.9.5.2.5  `FUNC-render-health` — renderHealth()
+
+Echter Funktions-Health-Check, kein Prozess-Liveness-Licht: Kuzu-Store erreichbar, Apply-Gate funktional, Ontology/Rules/Contracts-Versionen, LLM/BYOK-Readiness (OpenCode, fuer spaeter). aimprove-spezifische Felder (Sessions/Patterns) entfernt. Quelle: Host-Bridge Health-Endpoint. (CR-GC-115)
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-dashboard`
+
+###### 3.9.5.2.6  `FUNC-render-impact` — renderImpactPanel(id)
+
+Impact-Panel on-demand: exakter Blast-Radius via graph_impact statt gespeicherter aimprove-Impact-Assessments (Learning). Repoint der aimprove ImpactView auf die Live-Quelle. (CR-GC-115)
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-dashboard`
+
+###### 3.9.5.2.7  `FUNC-render-impl-gates` — renderImplGates(report)
+
+Impl-Gates-Panel: SAR/FCA/SVR/FRR + CR/MS-Burndown aus graph_readiness.implGates und den MS/CR-Knoten. In aimprove nie verdrahtet (0/9, 0/20, 0/4); graphcode macht die Query transparent: jedes Gate zeigt seine Blocking-Elemente als Drill-down. Repoint der aimprove ImplGates + CrBurndown. (CR-GC-115)
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-dashboard`
+
+###### 3.9.5.2.8  `FUNC-render-readiness` — renderReadinessPanel(report)
+
+Readiness-Panel: Compliance + Phase-Gates SRR/PDR/CDR/TRR aus graph_readiness (V3_RULES, lean INCOSE). Repoint der aimprove StatusSection-Readiness-Bars + GateView. (CR-GC-115)
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-dashboard`
+
+###### `REQ-readiness-transparent` — Readiness-Query transparent
+
+Jedes Phase- und Impl-Gate exponiert seine Blocking-Elemente (welche CRs, Tests, UCs, Violations den Score druecken), sodass der Score auditierbar ist und keine Black-Box. In aimprove waren die Impl-Gates nie verdrahtet (0/9, 0/20, 0/4); graphcode macht die Herleitung transparent.
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-readiness-transparent` (integration) · satisfy ◀ `FUNC-render-readiness` · `MOD-dashboard` · allocate ▶ `MOD-dashboard`
+
+###### 3.9.5.2.9  `FUNC-render-recommendations` — renderImprovementMeasures()
+
+Top-N hoechstbewertete Verbesserungsmassnahmen, deterministisch aus Graph-Defiziten abgeleitet (fehlende verify-Traces R-01, Orphans RD-01, Blast-Radius via graph_impact), nach Severity/Impact sortiert. Behalten aus aimprove TOP-Empfehlungen, aber graph-deduziert statt Learning-Vorschlag (kein Generator). (CR-GC-115)
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-dashboard`
+
+###### 3.9.5.2.10  `FUNC-serve-sse` — serveSSE()
+
+Host-Prozess exponiert die SSE/WS-Route und leitet harness.onUpdateEvent read-only an die Live-Viewer weiter. Kein Express-REST im Core. (CR-GC-114)
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-host-bridge`
+
+###### `REQ-readonly-bridge` — Read-only Bridge
+
+Bridge read-only; keine Inbound-Mutations, Writes nur via MCP→mutate(). (RECOMMENDATIONS)
+
+priority: must · status: done · kinds: negative
+
+Verification ◀ `TEST-readonly-bridge` (integration) · satisfy ◀ `FUNC-serve-sse` · `MOD-host-bridge` · allocate ▶ `MOD-host-bridge`
+
+###### 3.9.5.2.11  `FUNC-subscribe-updates` — subscribeUpdates()
+
+> auch in: `FCHAIN-live-update`
+
+SSE-Client: bei jedem Live-Update-Event (invalidate) werden die betroffenen Domains nachgeladen, ohne Reload. Gegenstueck zu emitUpdateEvent, konsumiert FLOW-live-event ueber die Host-Bridge. (CR-GC-115)
+
+io ◀ `FLOW-live-event` · io ▶ — · allocate ▶ `MOD-dashboard`
+
+#### 3.9.6  `FUNC-goal-steerer` — Autopilot
+
+Ebene-0-Block Sales-Sicht: waehlt die schwaechste Stelle, laesst Kandidaten antreten, stoesst die naechste Runde an. Logischer Sammler der Schleifen-Entscheidungen: Fokuswahl, Kandidaten-Ranking, Advisory-Rueckweg, Operator-Vorschlaege. Realisiert durch seine Kinder; das Gate-Verdikt liegt beim Qualitaets-Gate.
+
+io ◀ `FLOW-measurement-vector` · io ▶ `FLOW-action` · allocate ▶ `MOD-steering`
+
+##### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
+
+> auch unter: `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot`
+
+Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefert Regelstrom und Projektionen, daraus waehlt die Steuerung die schwaechste Dimension, rankt Kandidaten nach dem Delta derselben Groessen und uebergibt das Ergebnis dem Apply-Gate. Deterministisch: gleicher Graph, gleiche Empfehlung.
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
+
+##### 3.9.6.1  `FUNC-generation-step` — generationStep(graph, policy, intent)
+
+> auch in: `FCHAIN-steering-loop`
+
+Waehlt aus den Dimensionsscores die schwaechste Dimension unter der Fokus-Schwelle und stellt daraus den Runden-Prompt zusammen: Fokus-Typen, Fund-Fenster, Gate-Protokoll, Handoff-Bedingung.
+
+io ◀ `FLOW-dimension-readiness` · `FLOW-phase-readiness` · io ▶ `FLOW-round-prompt` · allocate ▶ `MOD-steering`
+
+###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
+
+> auch unter: `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot`
+
+Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefert Regelstrom und Projektionen, daraus waehlt die Steuerung die schwaechste Dimension, rankt Kandidaten nach dem Delta derselben Groessen und uebergibt das Ergebnis dem Apply-Gate. Deterministisch: gleicher Graph, gleiche Empfehlung.
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
+
+##### 3.9.6.2  `FUNC-graph-suggest` — graph_suggest(weights)
+
+> auch in: `FCHAIN-advisory-roundtrip`
+
+Duennes Binding auf @sigloch/se-optimizer (targetFor/suggestEdits): rankt die feuernden Operator-Regeln nach dem Skalarprodukt aus Metrik-Delta und Zielrichtung im R^6-Metrikraum; liefert die Fund-Ebene, Template-Edits laufen als dryRun durchs Gate. Nie auto-apply. (CR-GC-273)
+
+io ◀ `FLOW-round-findings` · io ▶ `FLOW-suggested-edit` · allocate ▶ `MOD-mcp-tools`
+
+###### `REQ-small-model-viable` — Kleine/lokale LLMs tragfähig
+
+> auch unter: `FCHAIN-modelfree-gate`
+
+Deterministische, modellfreie Gates/Regeln + Query-Precision halten kleine/lokale LLMs tragfähig; Kern läuft ohne LLM (degraded).
+
+priority: should · status: open · kinds: non-functional
+
+Verification ◀ `TEST-mvp-e2e` (e2e) · `TEST-reduced-llm` (acceptance) · satisfy ◀ `FCHAIN-modelfree-gate` · `FUNC-graph-suggest` · allocate ▶ `MOD-mcp-tools`
+
+##### 3.9.6.3  `FUNC-next-step` — nextStep(graph, policy)
 
 > auch in: `FCHAIN-steering-loop`
 
@@ -1612,7 +2612,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
 
-##### 3.9.7.4  `FUNC-rank-candidates` — rankCandidates(probes, focus)
+##### 3.9.6.4  `FUNC-rank-candidates` — rankCandidates(probes, focus)
 
 > auch in: `FCHAIN-steering-loop`
 
@@ -1629,486 +2629,6 @@ Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefer
 priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
-
-#### 3.9.8  `FUNC-harness-cli` — graphcode init/update/remove
-
-npx-CLI Lifecycle: scaffolds/aktualisiert/entfernt .graphcode/, .claude/hooks, .mcp.json, Controller — idempotent, self-contained.
-
-io ◀ `FLOW-cli-command` · io ▶ `FLOW-install-result` · allocate ▶ `MOD-cli`
-
-##### `REQ-install-idempotent` — Idempotent, keine parallelen Pfade
-
-Install/Update idempotent; alte Versionen überschrieben/gelöscht, nicht dupliziert.
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-cli-scaffold` (integration) · satisfy ◀ `FUNC-harness-cli` · allocate ▶ `MOD-cli`
-
-##### `REQ-npx-distribution` — npx-CLI als Distribution
-
-Distribution als npm-Paket mit bin `npx @sigloch/graphcode init/update/remove`. GATED auf REQ-buildable-standalone + CR-GC-100..103.
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-distribution` (e2e) · satisfy ◀ `FUNC-harness-cli` · allocate ▶ `MOD-cli`
-
-##### `REQ-post-harness-cli` — Postcondition: graphcode init/update/remove
-
-Artefakte installiert/aktualisiert/restlos entfernt; idempotent; Store bei Update erhalten.
-
-priority: must · status: done · kinds: postcondition
-
-Verification ◀ `TEST-cli-scaffold` (integration) · satisfy ◀ `FUNC-harness-cli` · allocate ▶ `MOD-cli`
-
-##### `REQ-pre-harness-cli` — Precondition: graphcode init/update/remove
-
-Repo vorhanden, npx/Node verfügbar.
-
-priority: must · status: done · kinds: precondition
-
-Verification ◀ `TEST-cli-scaffold` (integration) · satisfy ◀ `FUNC-harness-cli` · allocate ▶ `MOD-cli`
-
-##### `REQ-repo-install` — Ein-Kommando-Installation
-
-Installation der Harness in ein beliebiges Repo mit einem Kommando: scaffolds .graphcode/, .claude/hooks, .mcp.json, Controller.
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-cli-scaffold` (integration) · `TEST-distribution` (e2e) · `TEST-scaffold-skills` (integration) · satisfy ◀ `FUNC-harness-cli` · allocate ▶ `MOD-cli`
-
-##### `REQ-repo-uninstall` — Restlose Deinstallation
-
-Deinstallation entfernt alle installierten Artefakte ohne Residuen.
-
-priority: must · status: open · kinds: functional
-
-Verification ◀ `TEST-cli-scaffold` (integration) · satisfy ◀ `FUNC-harness-cli` · allocate ▶ `MOD-cli`
-
-##### `REQ-repo-update` — Update ohne Datenverlust
-
-Update aktualisiert installierte Artefakte/Pfade, ohne den lokalen Graph-Store (.graphcode/) zu verlieren.
-
-priority: must · status: open · kinds: functional
-
-Verification ◀ `TEST-cli-scaffold` (integration) · satisfy ◀ `FUNC-harness-cli` · allocate ▶ `MOD-cli`
-
-##### `REQ-self-contained-dist` — Self-contained Distribution
-
-Zielprojekt darf NICHT von einer Kopie des aimprove-Quellbaums abhängen; Distribution self-contained (versionierte Deps). Blockiert auf D5 + CR-GC-100..103.
-
-priority: should · status: done · kinds: non-functional
-
-Verification ◀ `TEST-distribution` (e2e) · satisfy ◀ `FUNC-harness-cli` · allocate ▶ `MOD-cli`
-
-#### 3.9.9  `FUNC-health-endpoint` — healthEndpoint()
-
-Echter Funktions-Health: Store erreichbar, Gate funktional, Ontology/Rules/Contracts-Versionen, LLM/BYOK-Readiness. Quelle des Dashboard-FUNC-render-health. (CR-GC-114)
-
-io ◀ — · io ▶ — · allocate ▶ `MOD-host-bridge`
-
-##### `REQ-real-health-check` — Health = echter Funktionscheck
-
-Der Health-Endpoint prueft Store-Erreichbarkeit, Gate-Funktion, Ontology/Rules/Contracts-Versionen und LLM/BYOK-Readiness, nicht nur Prozess-Liveness. aimprove-spezifische Felder (Sessions/Patterns) sind kein Health-Signal und werden entfernt.
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-real-health-check` (integration) · satisfy ◀ `FUNC-health-endpoint` · `MOD-host-bridge` · allocate ▶ `MOD-host-bridge`
-
-#### 3.9.10  `FUNC-import` — importGraph(formatE, mode)
-
-Format-E-Bulk-Import (replace/merge) ausschließlich durchs Gate; Cold-Start aus graphify/Slicer-Output.
-
-io ◀ `FLOW-bulk-formatE` · io ▶ `FLOW-bootstrap-result` · allocate ▶ `MOD-harness`
-
-##### `REQ-batch-seed-performance` — Batch-Seed/Import Performance (UNWIND)
-
-Seed/Import muss batch-skalieren: per-Row-MERGE ist O(langsam) (10k Edges ~51s, SP-2). UNWIND-Batch-Insert (gruppiert je Label/Edge-Table, Werte inline via escapeString) liefert 5k Nodes + 5k Edges < 15s (gemessen 5.3s, 5.6x schneller; Edges 9.6x). Interface unverändert (StorageAdapter.saveNodes/saveEdges), kein Parallelpfad. (CR-GC-120)
-
-priority: must · status: done
-
-Verification ◀ `TEST-batch-seed` (performance) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-harness`
-
-##### `REQ-bootstrap-through-gate` — Erstbefüllung nur durchs Gate
-
-FUNC-import: Erstbefüllung ausschließlich über das mutate()-Gate; Quelle = Format-E; kein Direct-Write.
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-bootstrap` (integration) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-harness`
-
-##### `REQ-post-import` — Postcondition: importGraph(formatE, mode)
-
-Graph durchs Gate befüllt; kein Direct-Write; Violations berichtet.
-
-priority: must · status: done · kinds: postcondition
-
-Verification ◀ `TEST-bootstrap` (integration) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-harness`
-
-##### `REQ-pre-import` — Precondition: importGraph(formatE, mode)
-
-Leerer/zu befüllender Repo-Graph; Format-E-Quelle (graphify/Import) liegt vor.
-
-priority: must · status: done · kinds: precondition
-
-Verification ◀ `TEST-bootstrap` (integration) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-harness`
-
-#### 3.9.11  `FUNC-merge-nodes` — mergeNodes(graph)
-
-Conflict-free Merge via merge_nodes + deterministischer Serialisierung; keine verlorenen Knoten/Traces.
-
-io ◀ `FLOW-branch-graphs` · io ▶ `FLOW-merged-graph` · allocate ▶ `MOD-codec`
-
-##### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
-
-Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Artefakt. (R2)
-
-priority: must · status: open · kinds: functional
-
-Verification ◀ `TEST-merge` (integration) · satisfy ◀ `FUNC-merge-nodes` · allocate ▶ `MOD-codec`
-
-##### `REQ-conflict-free-merge` — Conflict-free Graph-Merge
-
-FUNC-merge-nodes: Branch-/Multi-Dev-Merge conflict-free (deterministische Serialisierung + merge_nodes).
-
-priority: must · status: open · kinds: functional
-
-Verification ◀ `TEST-merge` (integration) · satisfy ◀ `FUNC-merge-nodes` · allocate ▶ `MOD-codec`
-
-##### `REQ-post-merge-nodes` — Postcondition: mergeNodes(graph)
-
-Conflict-free gemerged; keine verlorenen Knoten/Traces; deterministisch sortiert.
-
-priority: must · status: open · kinds: postcondition
-
-Verification ◀ `TEST-merge` (integration) · satisfy ◀ `FUNC-merge-nodes` · allocate ▶ `MOD-codec`
-
-##### `REQ-pre-merge-nodes` — Precondition: mergeNodes(graph)
-
-Zwei (oder mehr) Branch-Versionen des committed Graph-Artefakts.
-
-priority: must · status: open · kinds: precondition
-
-Verification ◀ `TEST-merge` (integration) · satisfy ◀ `FUNC-merge-nodes` · allocate ▶ `MOD-codec`
-
-#### 3.9.12  `FUNC-migrate-schema` — migrateSchema(from, to)
-
-Re-Validierung + Migration des Graphen bei ONTOLOGY/RULES_VERSION-Bump; Version am Artefakt mitgeführt.
-
-io ◀ `FLOW-version-bump` · io ▶ `FLOW-migrated-graph` · allocate ▶ `MOD-harness`
-
-##### `REQ-post-migrate-schema` — Postcondition: migrateSchema(from, to)
-
-Graph re-validiert/migriert; Violations berichtet; Artefakt-Version aktualisiert.
-
-priority: must · status: open · kinds: postcondition
-
-Verification ◀ `TEST-schema-migration` (integration) · satisfy ◀ `FUNC-migrate-schema` · allocate ▶ `MOD-harness`
-
-##### `REQ-pre-migrate-schema` — Precondition: migrateSchema(from, to)
-
-Version-Bump in contracts/se; bestehender Graph auf alter Version.
-
-priority: must · status: open · kinds: precondition
-
-Verification ◀ `TEST-schema-migration` (integration) · satisfy ◀ `FUNC-migrate-schema` · allocate ▶ `MOD-harness`
-
-##### `REQ-schema-version-migration` — Schema-Versions-Migration
-
-FUNC-migrate-schema: bei Version-Bump re-validieren/migrieren, Violations berichten, Version mitführen.
-
-priority: must · status: open · kinds: functional
-
-Verification ◀ `TEST-schema-migration` (integration) · satisfy ◀ `FUNC-migrate-schema` · allocate ▶ `MOD-harness`
-
-#### 3.9.13  `FUNC-module-metrics` — moduleMetrics(graph)
-
-Projiziert den Graphen auf die Modulkennzahlen je MOD (Instabilitaet, LCOM4, Kohaesion) — dieselbe Rechnung, aus der MT-01/MT-02 ihre Verstoesse ableiten. Fremdpaket @sigloch/contracts, deshalb external.
-
-io ◀ — · io ▶ `FLOW-module-metrics` · allocate ▶ —
-
-##### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
-
-> auch unter: `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot`
-
-Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefert Regelstrom und Projektionen, daraus waehlt die Steuerung die schwaechste Dimension, rankt Kandidaten nach dem Delta derselben Groessen und uebergibt das Ergebnis dem Apply-Gate. Deterministisch: gleicher Graph, gleiche Empfehlung.
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
-
-#### 3.9.14  `FUNC-own-kuzu-host` — ownKuzu()
-
-Der Host-Prozess ist der einzige Kuzu-Owner pro Repo; die Bridge haelt kein zweites DB-Handle. (CR-GC-114)
-
-io ◀ — · io ▶ — · allocate ▶ `MOD-host-bridge`
-
-##### `REQ-single-kuzu-owner` — Single Kuzu-Owner
-
-Genau ein Host-Prozess besitzt .graphcode/kuzu (single-writer; kein 2. DB-Handle). (SPEC §4, L1)
-
-priority: should · status: done · kinds: non-functional
-
-Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `FUNC-own-kuzu-host` · `MOD-harness` · allocate ▶ `MOD-host-bridge`
-
-#### 3.9.15  `FUNC-render-artifacts` — renderArtifactReadiness(views)
-
-INCOSE-Artifact-Panel: Readiness je Dokument/View (Testmatrix, FMEA, RTM, ImplPlan, IntPlan, ChangeLog, ConOps, IRR, NFR, ICD) aus dem Query-Layer (graph_query views) + graph_readiness. Repoint der aimprove ArtifactReadiness. Die offene View-Liste (RTM, IntPlan, ChangeLog, ConOps, IRR, ICD ohne se-view-Skill) ist genau der Rest-Scope von CR-GC-116. (CR-GC-115)
-
-io ◀ — · io ▶ — · allocate ▶ `MOD-dashboard`
-
-##### `REQ-artifact-freshness` — Artifact-Ampel-Semantik gruen gelb rot
-
-Dokumente und Prozessschritte sind gruen wenn live aus dem aktuellen Graph abgeleitet, gelb wenn ein materialisiertes Doc existiert aber der Graph sich seither geaendert hat (stale), rot wenn noch nicht existent.
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-artifact-freshness` (integration) · satisfy ◀ `FUNC-render-artifacts` · `MOD-dashboard` · allocate ▶ `MOD-dashboard`
-
-#### 3.9.16  `FUNC-render-graph` — renderGraph(elements, traces)
-
-Pluggbarer Live-Graph-Mount-Slot im Dashboard. Datenquelle: graph_elements + graph_get_edges + rules_get_violations (nur V3_RULES, kein BQ). Der konkrete Cytoscape-Renderer (@sigloch/graph-renderer) wird hier eingehaengt und ist das naechste aise-family-Projekt (graph-view-edit), nicht in graphcode gebaut. aimproves OntologyView rendert keinen Node-Link-Graph (nur Histogramme). (CR-GC-115)
-
-io ◀ — · io ▶ — · allocate ▶ `MOD-dashboard`
-
-#### 3.9.17  `FUNC-render-health` — renderHealth()
-
-Echter Funktions-Health-Check, kein Prozess-Liveness-Licht: Kuzu-Store erreichbar, Apply-Gate funktional, Ontology/Rules/Contracts-Versionen, LLM/BYOK-Readiness (OpenCode, fuer spaeter). aimprove-spezifische Felder (Sessions/Patterns) entfernt. Quelle: Host-Bridge Health-Endpoint. (CR-GC-115)
-
-io ◀ — · io ▶ — · allocate ▶ `MOD-dashboard`
-
-#### 3.9.18  `FUNC-render-impact` — renderImpactPanel(id)
-
-Impact-Panel on-demand: exakter Blast-Radius via graph_impact statt gespeicherter aimprove-Impact-Assessments (Learning). Repoint der aimprove ImpactView auf die Live-Quelle. (CR-GC-115)
-
-io ◀ — · io ▶ — · allocate ▶ `MOD-dashboard`
-
-#### 3.9.19  `FUNC-render-impl-gates` — renderImplGates(report)
-
-Impl-Gates-Panel: SAR/FCA/SVR/FRR + CR/MS-Burndown aus graph_readiness.implGates und den MS/CR-Knoten. In aimprove nie verdrahtet (0/9, 0/20, 0/4); graphcode macht die Query transparent: jedes Gate zeigt seine Blocking-Elemente als Drill-down. Repoint der aimprove ImplGates + CrBurndown. (CR-GC-115)
-
-io ◀ — · io ▶ — · allocate ▶ `MOD-dashboard`
-
-#### 3.9.20  `FUNC-render-readiness` — renderReadinessPanel(report)
-
-Readiness-Panel: Compliance + Phase-Gates SRR/PDR/CDR/TRR aus graph_readiness (V3_RULES, lean INCOSE). Repoint der aimprove StatusSection-Readiness-Bars + GateView. (CR-GC-115)
-
-io ◀ — · io ▶ — · allocate ▶ `MOD-dashboard`
-
-##### `REQ-readiness-transparent` — Readiness-Query transparent
-
-Jedes Phase- und Impl-Gate exponiert seine Blocking-Elemente (welche CRs, Tests, UCs, Violations den Score druecken), sodass der Score auditierbar ist und keine Black-Box. In aimprove waren die Impl-Gates nie verdrahtet (0/9, 0/20, 0/4); graphcode macht die Herleitung transparent.
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-readiness-transparent` (integration) · satisfy ◀ `FUNC-render-readiness` · `MOD-dashboard` · allocate ▶ `MOD-dashboard`
-
-#### 3.9.21  `FUNC-render-recommendations` — renderImprovementMeasures()
-
-Top-N hoechstbewertete Verbesserungsmassnahmen, deterministisch aus Graph-Defiziten abgeleitet (fehlende verify-Traces R-01, Orphans RD-01, Blast-Radius via graph_impact), nach Severity/Impact sortiert. Behalten aus aimprove TOP-Empfehlungen, aber graph-deduziert statt Learning-Vorschlag (kein Generator). (CR-GC-115)
-
-io ◀ — · io ▶ — · allocate ▶ `MOD-dashboard`
-
-#### 3.9.22  `FUNC-render-views` — render graph→markdown views
-
-PROMPT-realisierter Graph→Markdown-Renderer via se-view-Skills (.claude/skills/se-view-*); erzeugt z.B. architecture-graph.md. Interim-Realisierung von REQ-doc-export, bis FUNC-export-markdown (code, MOD-docs) gebaut ist. Beweis: Skills = Funktionen (Allokation an MOD-skills = prompt-realisiert).
-
-io ◀ `FLOW-view-request` · io ▶ `FLOW-rendered-view` · allocate ▶ `MOD-skills`
-
-##### `REQ-doc-export` — Graph → Markdown Re-Export
-
-> auch unter: `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm`
-
-human-readable Docs (SPEC/Architektur/CR-Liste/References) werden DETERMINISTISCH aus dem Graph generiert (GENERATED-Header), nie hand-editiert. Schließt die graph-is-ssot-Drift-Lücke. (REQ-graph-is-ssot)
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
-
-#### 3.9.23  `FUNC-resolve-tests-from-code` — Gerichtete code→REQ→TEST-Auflösung
-
-graph_tests akzeptiert ein Code-Changeset und traversiert gerichtet (geaenderter Knoten →satisfy/allocate→ REQ →verify→ TEST), nicht nur reines incoming-graph_impact. Wrappt EINEN Impact-/Traversal-Pfad, kein zweiter Blast-Radius.
-
-io ◀ — · io ▶ — · allocate ▶ `MOD-mcp-tools`
-
-##### `REQ-graph-tests-operational` — graph_tests liefert den korrekten selektiven Testset für einen Code-Change
-
-Ein Code-Changeset (MOD/FUNC/git-diff→Knoten) → graph_tests → vitest run nur-betroffene-Dateien, das JEDE vom Change berührte Testdatei enthält (kein false-green) und unbeteiligte ausschliesst. Erfordert testRef auf allen lauffähigen TESTs + gerichtete Auflösung statt reinem incoming-impact.
-
-priority: must · status: done
-
-Verification ◀ `TEST-graph-tests-operational` (integration) · satisfy ◀ `FUNC-resolve-tests-from-code` · allocate ▶ `MOD-mcp-tools`
-
-#### 3.9.24  `FUNC-score-completeness` — scoreCompleteness(gateId, graph)
-
-Berechnet die Completeness-Dimension pro Gate: traversiert die Phase-Slice-Beine (Meta-Modell 1..*) ueber die treibende Source-Population und liefert covered/total + per-leg missing[]. Ergaenzt scorePhaseGate in src/readiness.ts; ein Gate ist passed nur wenn rule-clean UND completeness.covered==total. Config = statische Phase->Beine-Map, im Test gegen die Meta-Modell-Kardinalitaeten asserted (Drift-Lock). (CR-GC-250)
-
-io ◀ — · io ▶ `FLOW-completeness` · allocate ▶ `MOD-harness`
-
-##### `REQ-completeness-actor-bounded` — FCHAIN actor-bounded (Trigger + Consumer)
-
-Jede FCHAIN ist actor-bounded: ein ACTOR->FLOW->FUNC(in chain) am Eintritt UND ein FUNC(in chain)->FLOW->ACTOR am Austritt. Eine FCHAIN ohne Trigger oder ohne Consumer ist eine hohle Kette und darf das PDR-Gate nicht gruen passieren. Teil der PDR-Completeness-Slice. (CR-GC-250)
-
-priority: must · status: reviewed · kinds: functional
-
-Verification ◀ `TEST-completeness-actor-bounded` (acceptance) · satisfy ◀ `FUNC-score-completeness` · allocate ▶ `MOD-harness`
-
-##### `REQ-completeness-single-value` — Completeness: ein Wert pro Gate, Detail on-click
-
-Das Readiness-Dashboard zeigt EINEN aggregierten Completeness-Wert pro Gate; die Per-Leg-Aufschluesselung (welches Bein, welche Source-Elemente unvollstaendig) erscheint on-click als Drill-down. Ruhiger Wert im Panel, Details on-demand. (CR-GC-250)
-
-priority: should · status: reviewed · kinds: non-functional
-
-Verification ◀ `TEST-completeness-single-value` (acceptance) · satisfy ◀ `FUNC-score-completeness` · allocate ▶ `MOD-harness`
-
-##### `REQ-readiness-completeness` — Readiness Completeness-Dimension (cardinality-driven)
-
-Readiness traegt eine strukturelle Completeness-Dimension pro Gate, orthogonal zur Violation-Severity: ein Gate ist NICHT gruen, solange ein vom Meta-Modell als 1..* markiertes Ketten-Bein seiner Phase unvollstaendig ist. Coverage wird ueber die TREIBENDE Source-Population gemessen -> Abwesenheit zaehlt (0 FCHAIN -> alle UC unvollstaendig -> SRR rot). Warnings behalten ihre Severity (keine Inflation); das Gate-Urteil ergaenzt die Completeness-Invariante. Phase-Slices: SRR {UC->FCHAIN, UC->REQ}, PDR {FCHAIN->FUNC, FUNC->satisfy, FUNC->MOD}, CDR {REQ<-verify-TEST, FLOW->SCHEMA}, TRR {testRef/codeRef non-concept}. concept:true gilt bis CDR, zaehlt erst ab TRR nicht als complete. (CR-GC-250)
-
-priority: must · status: reviewed · kinds: functional
-
-Verification ◀ `TEST-readiness-completeness` (acceptance) · satisfy ◀ `FUNC-score-completeness` · allocate ▶ `MOD-harness`
-
-#### 3.9.25  `FUNC-serve-sse` — serveSSE()
-
-Host-Prozess exponiert die SSE/WS-Route und leitet harness.onUpdateEvent read-only an die Live-Viewer weiter. Kein Express-REST im Core. (CR-GC-114)
-
-io ◀ — · io ▶ — · allocate ▶ `MOD-host-bridge`
-
-##### `REQ-readonly-bridge` — Read-only Bridge
-
-Bridge read-only; keine Inbound-Mutations, Writes nur via MCP→mutate(). (RECOMMENDATIONS)
-
-priority: must · status: done · kinds: negative
-
-Verification ◀ `TEST-readonly-bridge` (integration) · satisfy ◀ `FUNC-serve-sse` · `MOD-host-bridge` · allocate ▶ `MOD-host-bridge`
-
-#### 3.9.26  `FUNC-test` — se-test (red-first test design)
-
-Prompt-realisierter Skill: die allgemeine Red-First-Regel — einen Test erst trauen, wenn er aus dem richtigen Grund rot gesehen wurde; höchste beobachtende Assertion-Stufe, Reachability statt Unit-in-Isolation, TEST-Node concept:false mit auflösbarem testRef (R-19). UI-spezifisch: se-test-ui. (CR-GC-242)
-
-io ◀ — · io ▶ — · allocate ▶ `MOD-skills`
-
-##### `REQ-code-governed-quality` — Gate-validierte, driftfreie Qualität
-
-> auch unter: `FCHAIN-apply-gate` · `FUNC-test-ui`
-
-Jede Code-/Modell-Änderung ist gate-validiert (SE-Ontologie + V3_RULES), konsistent und driftfrei — kein ungeprüfter Schreibpfad.
-
-priority: must · status: open · kinds: functional
-
-Verification ◀ `TEST-code-quality` (acceptance) · `TEST-mvp-e2e` (e2e) · satisfy ◀ `FCHAIN-apply-gate` · `FUNC-test` · `FUNC-test-ui` · allocate ▶ `MOD-skills`
-
-#### 3.9.27  `FUNC-test-ui` — se-test-ui (UI test design)
-
-Prompt-realisierter Skill: UI-Test-Design gegen gerenderte Intent (Mockup) statt DOM-Presence — Red-First, Assertion-Ladder (Pixel > Computed-Style > Geometrie > Presence), vier stille Styling-Seams, Reachability-Chain, UI-CR-DoD-Gate. Anti-False-Green aus dem Blind-Render-Retro 2026-07-08. (CR-GC-242)
-
-io ◀ — · io ▶ — · allocate ▶ `MOD-skills`
-
-##### `REQ-code-governed-quality` — Gate-validierte, driftfreie Qualität
-
-> auch unter: `FCHAIN-apply-gate` · `FUNC-test`
-
-Jede Code-/Modell-Änderung ist gate-validiert (SE-Ontologie + V3_RULES), konsistent und driftfrei — kein ungeprüfter Schreibpfad.
-
-priority: must · status: open · kinds: functional
-
-Verification ◀ `TEST-code-quality` (acceptance) · `TEST-mvp-e2e` (e2e) · satisfy ◀ `FCHAIN-apply-gate` · `FUNC-test` · `FUNC-test-ui` · allocate ▶ `MOD-skills`
-
-#### 3.9.28  `FUNC-view-changelog` — se-view-changelog (Change Log)
-
-Prompt-realisierte View: Change Log aus CR-Knoten mit Rationale und Status. (CR-GC-116)
-
-io ◀ — · io ▶ — · allocate ▶ `MOD-skills`
-
-##### `REQ-doc-export` — Graph → Markdown Re-Export
-
-> auch unter: `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm`
-
-human-readable Docs (SPEC/Architektur/CR-Liste/References) werden DETERMINISTISCH aus dem Graph generiert (GENERATED-Header), nie hand-editiert. Schließt die graph-is-ssot-Drift-Lücke. (REQ-graph-is-ssot)
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
-
-#### 3.9.29  `FUNC-view-conops` — se-view-conops (ConOps)
-
-Prompt-realisierte View: Concept of Operations aus UC plus ACTOR (operatingMode). (CR-GC-116)
-
-io ◀ — · io ▶ — · allocate ▶ `MOD-skills`
-
-##### `REQ-doc-export` — Graph → Markdown Re-Export
-
-> auch unter: `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm`
-
-human-readable Docs (SPEC/Architektur/CR-Liste/References) werden DETERMINISTISCH aus dem Graph generiert (GENERATED-Header), nie hand-editiert. Schließt die graph-is-ssot-Drift-Lücke. (REQ-graph-is-ssot)
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
-
-#### 3.9.30  `FUNC-view-icd` — se-view-icd (ICD)
-
-Prompt-realisierte View: Interface Control Document aus FLOW zu SCHEMA. (CR-GC-116)
-
-io ◀ — · io ▶ — · allocate ▶ `MOD-skills`
-
-##### `REQ-doc-export` — Graph → Markdown Re-Export
-
-> auch unter: `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm`
-
-human-readable Docs (SPEC/Architektur/CR-Liste/References) werden DETERMINISTISCH aus dem Graph generiert (GENERATED-Header), nie hand-editiert. Schließt die graph-is-ssot-Drift-Lücke. (REQ-graph-is-ssot)
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
-
-#### 3.9.31  `FUNC-view-intplan` — se-view-intplan (Integrations-/Testplan)
-
-Prompt-realisierte View: Integrations-/Testplan aus MS plus verify-Status. (CR-GC-116)
-
-io ◀ — · io ▶ — · allocate ▶ `MOD-skills`
-
-##### `REQ-doc-export` — Graph → Markdown Re-Export
-
-> auch unter: `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-irr` · `FUNC-view-rtm`
-
-human-readable Docs (SPEC/Architektur/CR-Liste/References) werden DETERMINISTISCH aus dem Graph generiert (GENERATED-Header), nie hand-editiert. Schließt die graph-is-ssot-Drift-Lücke. (REQ-graph-is-ssot)
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
-
-#### 3.9.32  `FUNC-view-irr` — se-view-fmea (FMEA view)
-
-Prompt-realisierte View: FMEA-Render aus risk-getaggten REQs (S/O/D, Action Priority, Mitigation-Coverage, Verify-Luecken). Skill von se-view-irr zu se-view-fmea umbenannt; das Label IRR ist jetzt die separate Assumption-Review (se-irr). (CR-GC-223)
-
-io ◀ — · io ▶ — · allocate ▶ `MOD-skills`
-
-##### `REQ-doc-export` — Graph → Markdown Re-Export
-
-> auch unter: `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm`
-
-human-readable Docs (SPEC/Architektur/CR-Liste/References) werden DETERMINISTISCH aus dem Graph generiert (GENERATED-Header), nie hand-editiert. Schließt die graph-is-ssot-Drift-Lücke. (REQ-graph-is-ssot)
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
-
-#### 3.9.33  `FUNC-view-rtm` — se-view-rtm (RTM)
-
-Prompt-realisierte View: Requirements Traceability Matrix aus satisfy/verify-Traces je REQ. (CR-GC-116)
-
-io ◀ — · io ▶ — · allocate ▶ `MOD-skills`
-
-##### `REQ-doc-export` — Graph → Markdown Re-Export
-
-> auch unter: `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr`
-
-human-readable Docs (SPEC/Architektur/CR-Liste/References) werden DETERMINISTISCH aus dem Graph generiert (GENERATED-Header), nie hand-editiert. Schließt die graph-is-ssot-Drift-Lücke. (REQ-graph-is-ssot)
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
 
 ## 4  Schnittstellen
 

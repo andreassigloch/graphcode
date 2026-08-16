@@ -1889,6 +1889,48 @@
       }
     },
     {
+      "id": "FUNC-block-anschluss",
+      "type": "FUNC",
+      "name": "Agenten-Anschluss",
+      "description": "Ebene-0-Block Sales-Sicht: der Arbeitsplatz des Coding-Agenten — praezise Fragen statt Volltextsuche. Realisiert durch seine Kinder."
+    },
+    {
+      "id": "FUNC-block-dokumentenwerk",
+      "type": "FUNC",
+      "name": "Dokumentenwerk",
+      "description": "Ebene-1-Block im Schaufenster: deterministische Dokument-Renders — Markdown-Export und die se-view-Sichten."
+    },
+    {
+      "id": "FUNC-block-gate",
+      "type": "FUNC",
+      "name": "Qualitäts-Gate",
+      "description": "Ebene-0-Block Sales-Sicht: jede Aenderung — von Mensch oder KI — geht durch dieselbe Pruefung; illegal wird nie gespeichert. Realisiert durch seine Kinder."
+    },
+    {
+      "id": "FUNC-block-gedaechtnis",
+      "type": "FUNC",
+      "name": "Gedächtnis",
+      "description": "Ebene-0-Block Sales-Sicht: das Modell als Text-Artefakt — versioniert, wiederherstellbar, zusammenfuehrbar. Realisiert durch seine Kinder."
+    },
+    {
+      "id": "FUNC-block-live-dashboard",
+      "type": "FUNC",
+      "name": "Live-Dashboard",
+      "description": "Ebene-1-Block im Schaufenster: der Live-Pfad — Update-Events, SSE-Verteilung, Dashboard-Panels."
+    },
+    {
+      "id": "FUNC-block-messwerk",
+      "type": "FUNC",
+      "name": "Messwerk",
+      "description": "Ebene-0-Block Sales-Sicht: Kennzahlen aus dem Modell selbst — Reifegrad, Phasen-Gates, Architektur-Fitness — live, ohne KI. Realisiert durch seine Kinder."
+    },
+    {
+      "id": "FUNC-block-schaufenster",
+      "type": "FUNC",
+      "name": "Schaufenster",
+      "description": "Ebene-0-Block Sales-Sicht: Live-Dashboard und fertige Ingenieurs-Dokumente — immer aktuell, nie von Hand gepflegt. Realisiert durch seine Kinder."
+    },
+    {
       "id": "FUNC-broadcast-diff",
       "type": "FUNC",
       "name": "broadcastDiff(version)",
@@ -2120,8 +2162,8 @@
     {
       "id": "FUNC-goal-steerer",
       "type": "FUNC",
-      "name": "Zielsteuerer (Sammler der vier Entscheidungen)",
-      "description": "Logischer Sammler der vier Entscheidungen der Schleife: Gate-Verdikt, Fokuswahl, Kandidaten-Rangfolge, Handoff. Alle vier teilen eine Signatur: aus einem Messvektor plus optional einem Kandidaten folgt eine Handlung. Sammler, keine Funktion — kein realRef; der Code wird NICHT zusammengezogen, die vier Stellen bleiben wo sie sind. Wer diesem Knoten eine Datei anhaengt, muss concept entfernen, und das faellt auf.",
+      "name": "Autopilot",
+      "description": "Ebene-0-Block Sales-Sicht: waehlt die schwaechste Stelle, laesst Kandidaten antreten, stoesst die naechste Runde an. Logischer Sammler der Schleifen-Entscheidungen: Fokuswahl, Kandidaten-Ranking, Advisory-Rueckweg, Operator-Vorschlaege. Realisiert durch seine Kinder; das Gate-Verdikt liegt beim Qualitaets-Gate.",
       "status": "reviewed",
       "concept": true
     },
@@ -9340,6 +9382,266 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-block-anschluss",
+      "target": "FUNC-deduce-tests",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-anschluss",
+      "target": "FUNC-graph-expand",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-anschluss",
+      "target": "FUNC-graph-impact",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-anschluss",
+      "target": "FUNC-harness-cli",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-anschluss",
+      "target": "FUNC-health-endpoint",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-anschluss",
+      "target": "FUNC-resolve-tests-from-code",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-anschluss",
+      "target": "FUNC-serve-stdio",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-anschluss",
+      "target": "FUNC-test",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-anschluss",
+      "target": "FUNC-test-ui",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-dokumentenwerk",
+      "target": "FUNC-export-markdown",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-dokumentenwerk",
+      "target": "FUNC-render-views",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-dokumentenwerk",
+      "target": "FUNC-view-changelog",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-dokumentenwerk",
+      "target": "FUNC-view-conops",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-dokumentenwerk",
+      "target": "FUNC-view-icd",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-dokumentenwerk",
+      "target": "FUNC-view-intplan",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-dokumentenwerk",
+      "target": "FUNC-view-irr",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-dokumentenwerk",
+      "target": "FUNC-view-rtm",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-gate",
+      "target": "FUNC-check-code-conformance",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-gate",
+      "target": "FUNC-evaluate-rules",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-gate",
+      "target": "FUNC-mutate",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-gate",
+      "target": "FUNC-save-graph",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-gedaechtnis",
+      "target": "FUNC-decode",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-gedaechtnis",
+      "target": "FUNC-emit-trajectory",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-gedaechtnis",
+      "target": "FUNC-encode",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-gedaechtnis",
+      "target": "FUNC-graph-export-snapshot",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-gedaechtnis",
+      "target": "FUNC-import",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-gedaechtnis",
+      "target": "FUNC-merge-nodes",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-gedaechtnis",
+      "target": "FUNC-migrate-schema",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-gedaechtnis",
+      "target": "FUNC-own-kuzu-host",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-gedaechtnis",
+      "target": "FUNC-reseed",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-gedaechtnis",
+      "target": "FUNC-rewind",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-live-dashboard",
+      "target": "FUNC-broadcast-diff",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-live-dashboard",
+      "target": "FUNC-emit-update-event",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-live-dashboard",
+      "target": "FUNC-render-artifacts",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-live-dashboard",
+      "target": "FUNC-render-graph",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-live-dashboard",
+      "target": "FUNC-render-health",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-live-dashboard",
+      "target": "FUNC-render-impact",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-live-dashboard",
+      "target": "FUNC-render-impl-gates",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-live-dashboard",
+      "target": "FUNC-render-readiness",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-live-dashboard",
+      "target": "FUNC-render-recommendations",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-live-dashboard",
+      "target": "FUNC-serve-sse",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-live-dashboard",
+      "target": "FUNC-subscribe-updates",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-messwerk",
+      "target": "FUNC-arch-fitness",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-messwerk",
+      "target": "FUNC-compute-phase-readiness",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-messwerk",
+      "target": "FUNC-compute-readiness",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-messwerk",
+      "target": "FUNC-compute-steering-delta",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-messwerk",
+      "target": "FUNC-fit-advisory",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-messwerk",
+      "target": "FUNC-module-metrics",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-messwerk",
+      "target": "FUNC-score-completeness",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-messwerk",
+      "target": "FUNC-take-steering-snapshot",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-schaufenster",
+      "target": "FUNC-block-dokumentenwerk",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-schaufenster",
+      "target": "FUNC-block-live-dashboard",
+      "type": "compose"
+    },
+    {
       "source": "FUNC-broadcast-diff",
       "target": "MOD-host-bridge",
       "type": "allocate",
@@ -9731,7 +10033,7 @@
     },
     {
       "source": "FUNC-goal-steerer",
-      "target": "FUNC-mutate",
+      "target": "FUNC-graph-suggest",
       "type": "compose"
     },
     {
@@ -12608,5 +12910,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 98
+  "graphVersion": 101
 }

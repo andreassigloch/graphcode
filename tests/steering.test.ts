@@ -25,6 +25,14 @@ function allocDeficientGraph(): Graph {
     node('Validate.FN.001', 'FUNC', 'Validate Order'),
     node('Persist.FN.002', 'FUNC', 'Persist Order'),
     node('OrderData.FL.001', 'FLOW', 'Order Data'),
+    // Der FLOW traegt einen Datenvertrag, damit dieser Graph WIRKLICH nur bei alloc
+    // defizitaer ist. Vor contracts 4.2.0 war das unsichtbar: SC-04 deklarierte
+    // `domain: ['SCHEMA']`, bei null SCHEMA war der schema-Nenner 0 und die Dimension
+    // fiel aus der Fokuswahl — ihr Verstoss zaehlte, ihre Grundgesamtheit nicht
+    // (CR-SM-242). Mit korrigiertem Nenner (SC-04 zaehlt FLOWs) waere schema hier
+    // 0 von 1 und wuerde alloc als Fokus schlagen — richtig gerechnet, aber nicht
+    // das, was dieser Test misst. `concept: true`: spec-only, kein realRef noetig (R-26).
+    node('OrderSchema.SC.001', 'SCHEMA', 'Order Schema', 'Order payload contract', { concept: true }),
     node('OrderTest.TS.001', 'TEST', 'Order Test', '', { testResult: 'passed' }),
     node('Backend.MD.001', 'MOD', 'Backend'),
     node('Frontend.MD.002', 'MOD', 'Frontend'),
@@ -42,6 +50,7 @@ function allocDeficientGraph(): Graph {
     edge('OrderTest.TS.001', 'verify', 'OrderReq.RQ.001'),
     edge('Validate.FN.001', 'io', 'OrderData.FL.001'),
     edge('OrderData.FL.001', 'io', 'Persist.FN.002'),
+    edge('OrderData.FL.001', 'relation', 'OrderSchema.SC.001'),
     // NO allocate FUNC->MOD  → R-22 x2 (FUNC unallocated), R-23 x2 (MOD empty)
   ];
   return { nodes, edges };

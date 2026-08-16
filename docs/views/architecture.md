@@ -11,6 +11,13 @@
 | uid | type | name |
 |---|---|---|
 | `FUNC-arch-fitness` | FUNC | metrics(graph, layer arch) |
+| `FUNC-block-anschluss` | FUNC | Agenten-Anschluss |
+| `FUNC-block-dokumentenwerk` | FUNC | Dokumentenwerk |
+| `FUNC-block-gate` | FUNC | Qualitäts-Gate |
+| `FUNC-block-gedaechtnis` | FUNC | Gedächtnis |
+| `FUNC-block-live-dashboard` | FUNC | Live-Dashboard |
+| `FUNC-block-messwerk` | FUNC | Messwerk |
+| `FUNC-block-schaufenster` | FUNC | Schaufenster |
 | `FUNC-broadcast-diff` | FUNC | broadcastDiff(version) |
 | `FUNC-check-code-conformance` | FUNC | conformanceViolations(harness) |
 | `FUNC-compute-phase-readiness` | FUNC | computePhaseReadiness(violations) |
@@ -25,7 +32,7 @@
 | `FUNC-export-markdown` | FUNC | exportMarkdown(graph, view) |
 | `FUNC-fit-advisory` | FUNC | computeFitAdvisory(before, after) |
 | `FUNC-generation-step` | FUNC | generationStep(graph, policy, intent) |
-| `FUNC-goal-steerer` | FUNC | Zielsteuerer (Sammler der vier Entscheidungen) |
+| `FUNC-goal-steerer` | FUNC | Autopilot |
 | `FUNC-graph-expand` | FUNC | graph_expand(handle, branch, depth+1) |
 | `FUNC-graph-export-snapshot` | FUNC | graph_export(views?) |
 | `FUNC-graph-impact` | FUNC | graph_impact(id, depth?) |
@@ -81,11 +88,9 @@
 
 | function | module |
 |---|---|
-| `FUNC-arch-fitness` | ⚠ nicht alloziert (R-22) |
 | `FUNC-broadcast-diff` | `MOD-host-bridge` |
 | `FUNC-check-code-conformance` | `MOD-harness` |
 | `FUNC-compute-phase-readiness` | `MOD-steering` |
-| `FUNC-compute-readiness` | ⚠ nicht alloziert (R-22) |
 | `FUNC-compute-steering-delta` | `MOD-steering` |
 | `FUNC-decode` | `MOD-codec` |
 | `FUNC-deduce-tests` | `MOD-mcp-tools` |
@@ -106,7 +111,6 @@
 | `FUNC-import` | `MOD-harness` |
 | `FUNC-merge-nodes` | `MOD-codec` |
 | `FUNC-migrate-schema` | `MOD-harness` |
-| `FUNC-module-metrics` | ⚠ nicht alloziert (R-22) |
 | `FUNC-mutate` | `MOD-harness` |
 | `FUNC-next-step` | `MOD-steering` |
 | `FUNC-own-kuzu-host` | `MOD-host-bridge` |
