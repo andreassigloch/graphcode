@@ -1895,6 +1895,12 @@
       "description": "Ebene-0-Block Sales-Sicht: der Arbeitsplatz des Coding-Agenten — praezise Fragen statt Volltextsuche. Realisiert durch seine Kinder."
     },
     {
+      "id": "FUNC-block-arch-optimierung",
+      "type": "FUNC",
+      "name": "Architektur-Optimierung",
+      "description": "Ebene-1-Block im Autopilot: Architektur-Optimierung — Operator-Vorschlaege entlang der R6-Fitness."
+    },
+    {
       "id": "FUNC-block-dokumentenwerk",
       "type": "FUNC",
       "name": "Dokumentenwerk",
@@ -1925,10 +1931,22 @@
       "description": "Ebene-0-Block Sales-Sicht: Kennzahlen aus dem Modell selbst — Reifegrad, Phasen-Gates, Architektur-Fitness — live, ohne KI. Realisiert durch seine Kinder."
     },
     {
+      "id": "FUNC-block-q-improvement",
+      "type": "FUNC",
+      "name": "Q-Improvement",
+      "description": "Ebene-1-Block im Autopilot: Qualitaets-Verbesserung — Fehler und Warnings abbauen; Fokus-Dimension und Top-Fixes an den Agenten."
+    },
+    {
       "id": "FUNC-block-schaufenster",
       "type": "FUNC",
-      "name": "Schaufenster",
-      "description": "Ebene-0-Block Sales-Sicht: Live-Dashboard und fertige Ingenieurs-Dokumente — immer aktuell, nie von Hand gepflegt. Realisiert durch seine Kinder."
+      "name": "Viewer",
+      "description": "Ebene-0-Block Sales-Sicht: der Viewer fuer Dokumente, Architektur und Reifegrad — Live-Dashboard und fertige Ingenieurs-Dokumente, immer aktuell, nie von Hand gepflegt. Realisiert durch seine Kinder."
+    },
+    {
+      "id": "FUNC-block-se-steuerung",
+      "type": "FUNC",
+      "name": "SE-Prozess-Steuerung",
+      "description": "Ebene-1-Block im Autopilot: SE-Prozess-Steuerung — readiness-getriebener Rundenschritt und Kandidaten-Ranking; treibt den Prozess von der schwaechsten Stelle zur naechsten."
     },
     {
       "id": "FUNC-broadcast-diff",
@@ -2847,6 +2865,12 @@
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "updated_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "id": "MOD-repo-root",
+      "type": "MOD",
+      "name": "graphcode Projektwurzel",
+      "description": "Ebene-0-Modul: das Wurzelverzeichnis des Projekts — ein Repo, ein npm-Paket, ein Kuzu-Store. Enthaelt alle Module; die Ebene-0-Funktionsbloecke sind hierhin allokiert."
     },
     {
       "id": "MOD-skills",
@@ -9383,6 +9407,11 @@
     },
     {
       "source": "FUNC-block-anschluss",
+      "target": "MOD-repo-root",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-block-anschluss",
       "target": "FUNC-deduce-tests",
       "type": "compose"
     },
@@ -9427,6 +9456,21 @@
       "type": "compose"
     },
     {
+      "source": "FUNC-block-arch-optimierung",
+      "target": "MOD-steering",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-block-arch-optimierung",
+      "target": "FUNC-graph-suggest",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-dokumentenwerk",
+      "target": "MOD-docs",
+      "type": "allocate"
+    },
+    {
       "source": "FUNC-block-dokumentenwerk",
       "target": "FUNC-export-markdown",
       "type": "compose"
@@ -9468,6 +9512,11 @@
     },
     {
       "source": "FUNC-block-gate",
+      "target": "MOD-repo-root",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-block-gate",
       "target": "FUNC-check-code-conformance",
       "type": "compose"
     },
@@ -9485,6 +9534,11 @@
       "source": "FUNC-block-gate",
       "target": "FUNC-save-graph",
       "type": "compose"
+    },
+    {
+      "source": "FUNC-block-gedaechtnis",
+      "target": "MOD-repo-root",
+      "type": "allocate"
     },
     {
       "source": "FUNC-block-gedaechtnis",
@@ -9535,6 +9589,11 @@
       "source": "FUNC-block-gedaechtnis",
       "target": "FUNC-rewind",
       "type": "compose"
+    },
+    {
+      "source": "FUNC-block-live-dashboard",
+      "target": "MOD-dashboard",
+      "type": "allocate"
     },
     {
       "source": "FUNC-block-live-dashboard",
@@ -9593,6 +9652,11 @@
     },
     {
       "source": "FUNC-block-messwerk",
+      "target": "MOD-repo-root",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-block-messwerk",
       "target": "FUNC-arch-fitness",
       "type": "compose"
     },
@@ -9632,6 +9696,21 @@
       "type": "compose"
     },
     {
+      "source": "FUNC-block-q-improvement",
+      "target": "MOD-steering",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-block-q-improvement",
+      "target": "FUNC-next-step",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-schaufenster",
+      "target": "MOD-repo-root",
+      "type": "allocate"
+    },
+    {
       "source": "FUNC-block-schaufenster",
       "target": "FUNC-block-dokumentenwerk",
       "type": "compose"
@@ -9639,6 +9718,21 @@
     {
       "source": "FUNC-block-schaufenster",
       "target": "FUNC-block-live-dashboard",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-se-steuerung",
+      "target": "MOD-steering",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-block-se-steuerung",
+      "target": "FUNC-generation-step",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-se-steuerung",
+      "target": "FUNC-rank-candidates",
       "type": "compose"
     },
     {
@@ -10028,22 +10122,17 @@
     },
     {
       "source": "FUNC-goal-steerer",
-      "target": "FUNC-generation-step",
+      "target": "FUNC-block-arch-optimierung",
       "type": "compose"
     },
     {
       "source": "FUNC-goal-steerer",
-      "target": "FUNC-graph-suggest",
+      "target": "FUNC-block-q-improvement",
       "type": "compose"
     },
     {
       "source": "FUNC-goal-steerer",
-      "target": "FUNC-next-step",
-      "type": "compose"
-    },
-    {
-      "source": "FUNC-goal-steerer",
-      "target": "FUNC-rank-candidates",
+      "target": "FUNC-block-se-steuerung",
       "type": "compose"
     },
     {
@@ -11123,6 +11212,56 @@
       "type": "satisfy"
     },
     {
+      "source": "MOD-repo-root",
+      "target": "MOD-cli",
+      "type": "compose"
+    },
+    {
+      "source": "MOD-repo-root",
+      "target": "MOD-codec",
+      "type": "compose"
+    },
+    {
+      "source": "MOD-repo-root",
+      "target": "MOD-dashboard",
+      "type": "compose"
+    },
+    {
+      "source": "MOD-repo-root",
+      "target": "MOD-docs",
+      "type": "compose"
+    },
+    {
+      "source": "MOD-repo-root",
+      "target": "MOD-harness",
+      "type": "compose"
+    },
+    {
+      "source": "MOD-repo-root",
+      "target": "MOD-hooks",
+      "type": "compose"
+    },
+    {
+      "source": "MOD-repo-root",
+      "target": "MOD-host-bridge",
+      "type": "compose"
+    },
+    {
+      "source": "MOD-repo-root",
+      "target": "MOD-mcp-tools",
+      "type": "compose"
+    },
+    {
+      "source": "MOD-repo-root",
+      "target": "MOD-skills",
+      "type": "compose"
+    },
+    {
+      "source": "MOD-repo-root",
+      "target": "MOD-steering",
+      "type": "compose"
+    },
+    {
       "source": "MS-1-specification",
       "target": "UC-code-quality",
       "type": "compose",
@@ -11255,66 +11394,8 @@
     },
     {
       "source": "SYS-graphcode",
-      "target": "MOD-cli",
-      "type": "compose",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "SYS-graphcode",
-      "target": "MOD-codec",
-      "type": "compose",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "SYS-graphcode",
-      "target": "MOD-dashboard",
-      "type": "compose",
-      "weight": 1,
-      "created_at": "2026-06-17T00:00:00.000Z"
-    },
-    {
-      "source": "SYS-graphcode",
-      "target": "MOD-docs",
-      "type": "compose",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "SYS-graphcode",
-      "target": "MOD-harness",
-      "type": "compose",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "SYS-graphcode",
-      "target": "MOD-hooks",
-      "type": "compose",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "SYS-graphcode",
-      "target": "MOD-host-bridge",
-      "type": "compose",
-      "weight": 1,
-      "created_at": "2026-06-17T00:00:00.000Z"
-    },
-    {
-      "source": "SYS-graphcode",
-      "target": "MOD-mcp-tools",
-      "type": "compose",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "SYS-graphcode",
-      "target": "MOD-skills",
-      "type": "compose",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "target": "MOD-repo-root",
+      "type": "compose"
     },
     {
       "source": "SYS-graphcode",
@@ -12910,5 +12991,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 101
+  "graphVersion": 104
 }

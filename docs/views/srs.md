@@ -598,7 +598,7 @@ Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steer
 
 ##### 3.2.1.2  `FUNC-generation-step` — generationStep(graph, policy, intent)
 
-> auch in: `FUNC-goal-steerer`
+> auch in: `FUNC-block-se-steuerung`
 
 Waehlt aus den Dimensionsscores die schwaechste Dimension unter der Fokus-Schwelle und stellt daraus den Runden-Prompt zusammen: Fokus-Typen, Fund-Fenster, Gate-Protokoll, Handoff-Bedingung.
 
@@ -616,7 +616,7 @@ Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steer
 
 ##### 3.2.1.3  `FUNC-rank-candidates` — rankCandidates(probes, focus)
 
-> auch in: `FUNC-goal-steerer`
+> auch in: `FUNC-block-se-steuerung`
 
 Ordnet die Kandidaten einer Runde deterministisch: tier zuerst, dann das Delta der Fokus-Dimension, dann das Gesamt-Delta, dann die Architektur-Fitness als Tiebreaker. Kein Modell-Urteil, nur gemessene Groessen.
 
@@ -686,7 +686,7 @@ Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steer
 
 ##### 3.2.1.6  `FUNC-next-step` — nextStep(graph, policy)
 
-> auch in: `FUNC-goal-steerer`
+> auch in: `FUNC-block-q-improvement`
 
 Der Advisory-Rueckweg an den fragenden Agenten: aus demselben Snapshot die Fokus-Dimension, die blockierenden Fehler und die feuernden Regeln als naechster Schritt.
 
@@ -1138,7 +1138,7 @@ Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-evaluate-
 
 ##### 3.7.1.3  `FUNC-graph-suggest` — graph_suggest(weights)
 
-> auch in: `FUNC-goal-steerer`
+> auch in: `FUNC-block-arch-optimierung`
 
 Duennes Binding auf @sigloch/se-optimizer (targetFor/suggestEdits): rankt die feuernden Operator-Regeln nach dem Skalarprodukt aus Metrik-Delta und Zielrichtung im R^6-Metrikraum; liefert die Fund-Ebene, Template-Edits laufen als dryRun durchs Gate. Nie auto-apply. (CR-GC-273)
 
@@ -1464,7 +1464,7 @@ Verification ◀ `TEST-doc-export` (conformance) · satisfy ◀ `FUNC-export-mar
 
 Ebene-0-Block Sales-Sicht: der Arbeitsplatz des Coding-Agenten — praezise Fragen statt Volltextsuche. Realisiert durch seine Kinder.
 
-io ◀ — · io ▶ — · allocate ▶ —
+io ◀ — · io ▶ — · allocate ▶ `MOD-repo-root`
 
 ##### 3.9.1.1  `FUNC-deduce-tests` — graph_tests(changeSet)
 
@@ -1714,7 +1714,7 @@ Verification ◀ `TEST-code-quality` (acceptance) · `TEST-mvp-e2e` (e2e) · sat
 
 Ebene-0-Block Sales-Sicht: jede Aenderung — von Mensch oder KI — geht durch dieselbe Pruefung; illegal wird nie gespeichert. Realisiert durch seine Kinder.
 
-io ◀ — · io ▶ — · allocate ▶ —
+io ◀ — · io ▶ — · allocate ▶ `MOD-repo-root`
 
 ##### 3.9.2.1  `FUNC-check-code-conformance` — conformanceViolations(harness)
 
@@ -1800,7 +1800,7 @@ Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `FUNC-save-graph` · alloca
 
 Ebene-0-Block Sales-Sicht: das Modell als Text-Artefakt — versioniert, wiederherstellbar, zusammenfuehrbar. Realisiert durch seine Kinder.
 
-io ◀ — · io ▶ — · allocate ▶ —
+io ◀ — · io ▶ — · allocate ▶ `MOD-repo-root`
 
 ##### 3.9.3.1  `FUNC-decode` — decode(json)
 
@@ -2080,7 +2080,7 @@ Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-r
 
 Ebene-0-Block Sales-Sicht: Kennzahlen aus dem Modell selbst — Reifegrad, Phasen-Gates, Architektur-Fitness — live, ohne KI. Realisiert durch seine Kinder.
 
-io ◀ — · io ▶ — · allocate ▶ —
+io ◀ — · io ▶ — · allocate ▶ `MOD-repo-root`
 
 ##### 3.9.4.1  `FUNC-arch-fitness` — metrics(graph, layer arch)
 
@@ -2228,17 +2228,17 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
 
-#### 3.9.5  `FUNC-block-schaufenster` — Schaufenster
+#### 3.9.5  `FUNC-block-schaufenster` — Viewer
 
-Ebene-0-Block Sales-Sicht: Live-Dashboard und fertige Ingenieurs-Dokumente — immer aktuell, nie von Hand gepflegt. Realisiert durch seine Kinder.
+Ebene-0-Block Sales-Sicht: der Viewer fuer Dokumente, Architektur und Reifegrad — Live-Dashboard und fertige Ingenieurs-Dokumente, immer aktuell, nie von Hand gepflegt. Realisiert durch seine Kinder.
 
-io ◀ — · io ▶ — · allocate ▶ —
+io ◀ — · io ▶ — · allocate ▶ `MOD-repo-root`
 
 ##### 3.9.5.1  `FUNC-block-dokumentenwerk` — Dokumentenwerk
 
 Ebene-1-Block im Schaufenster: deterministische Dokument-Renders — Markdown-Export und die se-view-Sichten.
 
-io ◀ — · io ▶ — · allocate ▶ —
+io ◀ — · io ▶ — · allocate ▶ `MOD-docs`
 
 ###### 3.9.5.1.1  `FUNC-export-markdown` — exportMarkdown(graph, view)
 
@@ -2390,7 +2390,7 @@ Verification ◀ `TEST-doc-export` (conformance) · `TEST-mcp-export` (integrati
 
 Ebene-1-Block im Schaufenster: der Live-Pfad — Update-Events, SSE-Verteilung, Dashboard-Panels.
 
-io ◀ — · io ▶ — · allocate ▶ —
+io ◀ — · io ▶ — · allocate ▶ `MOD-dashboard`
 
 ###### 3.9.5.2.1  `FUNC-broadcast-diff` — broadcastDiff(version)
 
@@ -2558,25 +2558,13 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
 
-##### 3.9.6.1  `FUNC-generation-step` — generationStep(graph, policy, intent)
+##### 3.9.6.1  `FUNC-block-arch-optimierung` — Architektur-Optimierung
 
-> auch in: `FCHAIN-steering-loop`
+Ebene-1-Block im Autopilot: Architektur-Optimierung — Operator-Vorschlaege entlang der R6-Fitness.
 
-Waehlt aus den Dimensionsscores die schwaechste Dimension unter der Fokus-Schwelle und stellt daraus den Runden-Prompt zusammen: Fokus-Typen, Fund-Fenster, Gate-Protokoll, Handoff-Bedingung.
+io ◀ — · io ▶ — · allocate ▶ `MOD-steering`
 
-io ◀ `FLOW-dimension-readiness` · `FLOW-phase-readiness` · io ▶ `FLOW-round-prompt` · allocate ▶ `MOD-steering`
-
-###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
-
-> auch unter: `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot`
-
-Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefert Regelstrom und Projektionen, daraus waehlt die Steuerung die schwaechste Dimension, rankt Kandidaten nach dem Delta derselben Groessen und uebergibt das Ergebnis dem Apply-Gate. Deterministisch: gleicher Graph, gleiche Empfehlung.
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
-
-##### 3.9.6.2  `FUNC-graph-suggest` — graph_suggest(weights)
+###### 3.9.6.1.1  `FUNC-graph-suggest` — graph_suggest(weights)
 
 > auch in: `FCHAIN-advisory-roundtrip`
 
@@ -2594,7 +2582,13 @@ priority: should · status: open · kinds: non-functional
 
 Verification ◀ `TEST-mvp-e2e` (e2e) · `TEST-reduced-llm` (acceptance) · satisfy ◀ `FCHAIN-modelfree-gate` · `FUNC-graph-suggest` · allocate ▶ `MOD-mcp-tools`
 
-##### 3.9.6.3  `FUNC-next-step` — nextStep(graph, policy)
+##### 3.9.6.2  `FUNC-block-q-improvement` — Q-Improvement
+
+Ebene-1-Block im Autopilot: Qualitaets-Verbesserung — Fehler und Warnings abbauen; Fokus-Dimension und Top-Fixes an den Agenten.
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-steering`
+
+###### 3.9.6.2.1  `FUNC-next-step` — nextStep(graph, policy)
 
 > auch in: `FCHAIN-steering-loop`
 
@@ -2612,7 +2606,31 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
 
-##### 3.9.6.4  `FUNC-rank-candidates` — rankCandidates(probes, focus)
+##### 3.9.6.3  `FUNC-block-se-steuerung` — SE-Prozess-Steuerung
+
+Ebene-1-Block im Autopilot: SE-Prozess-Steuerung — readiness-getriebener Rundenschritt und Kandidaten-Ranking; treibt den Prozess von der schwaechsten Stelle zur naechsten.
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-steering`
+
+###### 3.9.6.3.1  `FUNC-generation-step` — generationStep(graph, policy, intent)
+
+> auch in: `FCHAIN-steering-loop`
+
+Waehlt aus den Dimensionsscores die schwaechste Dimension unter der Fokus-Schwelle und stellt daraus den Runden-Prompt zusammen: Fokus-Typen, Fund-Fenster, Gate-Protokoll, Handoff-Bedingung.
+
+io ◀ `FLOW-dimension-readiness` · `FLOW-phase-readiness` · io ▶ `FLOW-round-prompt` · allocate ▶ `MOD-steering`
+
+###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
+
+> auch unter: `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot`
+
+Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefert Regelstrom und Projektionen, daraus waehlt die Steuerung die schwaechste Dimension, rankt Kandidaten nach dem Delta derselben Groessen und uebergibt das Ergebnis dem Apply-Gate. Deterministisch: gleicher Graph, gleiche Empfehlung.
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
+
+###### 3.9.6.3.2  `FUNC-rank-candidates` — rankCandidates(probes, focus)
 
 > auch in: `FCHAIN-steering-loop`
 
@@ -3032,65 +3050,71 @@ schema ◀ `FLOW-live-event`
 
 ## 6  Architektur
 
-### 6.1  `MOD-cli` — cli — npx-Distribution & Lifecycle
+### 6.1  `MOD-repo-root` — graphcode Projektwurzel
+
+Ebene-0-Modul: das Wurzelverzeichnis des Projekts — ein Repo, ein npm-Paket, ein Kuzu-Store. Enthaelt alle Module; die Ebene-0-Funktionsbloecke sind hierhin allokiert.
+
+allocate ◀ `FUNC-block-anschluss` · `FUNC-block-gate` · `FUNC-block-gedaechtnis` · `FUNC-block-messwerk` · `FUNC-block-schaufenster`
+
+#### 6.1.1  `MOD-cli` — cli — npx-Distribution & Lifecycle
 
 bin `npx @sigloch/graphcode init/update/remove`: self-contained Installer. App-spezifisch. (REQ-npx-distribution)
 
 allocate ◀ `FUNC-harness-cli` · `FUNC-rewind` · satisfy ▶ `REQ-buildable-standalone`
 
-### 6.2  `MOD-codec` — codec.ts — GraphCodeCodec
+#### 6.1.2  `MOD-codec` — codec.ts — GraphCodeCodec
 
 Format-E ↔ OntologyGraph, deterministische Serialisierung, Validierung gegen SE-Ontologie. (SPEC §2.4)
 
 allocate ◀ `FUNC-decode` · `FUNC-encode` · `FUNC-merge-nodes` · satisfy ▶ `REQ-graph-integrity` · `REQ-interface-schema`
 
-### 6.3  `MOD-dashboard` — dashboard — Live-Viewer-App
+#### 6.1.3  `MOD-dashboard` — dashboard — Live-Viewer-App
 
 graphcode-owned Dashboard-App, komponiert aus @sigloch/graph-renderer (Cytoscape) + dashboard-shell, konsumiert die Host-Bridge. Readiness/INCOSE-Panels gegen V3_RULES (CR-GC-107-Scorer). Hybrid-Entscheidung 2026-06-17.
 
-allocate ◀ `FUNC-render-artifacts` · `FUNC-render-graph` · `FUNC-render-health` · `FUNC-render-impact` · `FUNC-render-impl-gates` · `FUNC-render-readiness` · `FUNC-render-recommendations` · `FUNC-subscribe-updates` · satisfy ▶ `REQ-artifact-freshness` · `REQ-dashboard-ontology-sync` · `REQ-dashboard-readonly` · `REQ-readiness-transparent` · `REQ-shared-views-no-fork`
+allocate ◀ `FUNC-block-live-dashboard` · `FUNC-render-artifacts` · `FUNC-render-graph` · `FUNC-render-health` · `FUNC-render-impact` · `FUNC-render-impl-gates` · `FUNC-render-readiness` · `FUNC-render-recommendations` · `FUNC-subscribe-updates` · satisfy ▶ `REQ-artifact-freshness` · `REQ-dashboard-ontology-sync` · `REQ-dashboard-readonly` · `REQ-readiness-transparent` · `REQ-shared-views-no-fork`
 
-### 6.4  `MOD-docs` — docs — Markdown-Re-Exporter
+#### 6.1.4  `MOD-docs` — docs — Markdown-Re-Exporter
 
 App-spezifisches Rendering: Graph → Markdown-Views (deterministisch, GENERATED-Header). (REQ-doc-export, code-realisiert, target)
 
-allocate ◀ `FUNC-export-markdown` · satisfy ▶ `REQ-docs-taxonomy` · `REQ-testref-materialized`
+allocate ◀ `FUNC-block-dokumentenwerk` · `FUNC-export-markdown` · satisfy ▶ `REQ-docs-taxonomy` · `REQ-testref-materialized`
 
-### 6.5  `MOD-harness` — harness.ts — GraphCodeHarness
+#### 6.1.5  `MOD-harness` — harness.ts — GraphCodeHarness
 
 Apply-Gate: loadGraph/saveGraph/mutate/evaluateRules/close gegen lokalen Kuzu. (SPEC §2.1)
 
 allocate ◀ `FUNC-check-code-conformance` · `FUNC-evaluate-rules` · `FUNC-import` · `FUNC-migrate-schema` · `FUNC-mutate` · `FUNC-reseed` · `FUNC-save-graph` · `FUNC-score-completeness` · satisfy ▶ `REQ-graph-state-recall` · `REQ-harness-schema-in-contracts` · `REQ-import-se-ontology` · `REQ-quality-metric` · `REQ-single-kuzu-owner` · `REQ-single-store` · `REQ-store-recovery` · `REQ-structural-rule-shared`
 
-### 6.6  `MOD-hooks` — hooks.ts — HookSystem
+#### 6.1.6  `MOD-hooks` — hooks.ts — HookSystem
 
 pre-commit / post-apply / nightly-batch Extension-Points. (SPEC §2.3)
 
 allocate ◀ `FUNC-emit-trajectory` · `FUNC-emit-update-event` · satisfy ▶ `REQ-hook-extension-points` · `REQ-hook-order-deterministic` · `REQ-precommit-timeout` · `REQ-versioned-cache`
 
-### 6.7  `MOD-host-bridge` — host-bridge — SSE/WS Bridge
+#### 6.1.7  `MOD-host-bridge` — host-bridge — SSE/WS Bridge
 
 Host-Prozess (Single Kuzu Owner) exponiert graph-api-express + SSE-Route, verdrahtet an harness.onUpdateEvent. Versioned Diff-Broadcast an den Live-Viewer. Kein Express-REST im Core — die Bridge ist Host-Sache. (SPEC §5)
 
 allocate ◀ `FUNC-broadcast-diff` · `FUNC-health-endpoint` · `FUNC-own-kuzu-host` · `FUNC-serve-sse` · satisfy ▶ `REQ-readonly-bridge` · `REQ-real-health-check` · `REQ-versioned-broadcast`
 
-### 6.8  `MOD-mcp-tools` — mcp-tools.ts — MCP-Registry
+#### 6.1.8  `MOD-mcp-tools` — mcp-tools.ts — MCP-Registry
 
 MCP-stdio Tool-Registry, an die Harness gebunden; read/write/query Tools. (SPEC §2.2)
 
 allocate ◀ `FUNC-deduce-tests` · `FUNC-graph-expand` · `FUNC-graph-export-snapshot` · `FUNC-graph-impact` · `FUNC-graph-suggest` · `FUNC-resolve-tests-from-code` · `FUNC-serve-stdio` · satisfy ▶ `REQ-agent-agnostic` · `REQ-export-no-clobber` · `REQ-mcp-tool-registry` · `REQ-prompt-provenance` · `REQ-readiness-model` · `REQ-rule-calibration` · `REQ-single-transport` · `REQ-test-runnable-binding` · `REQ-testref-materialized`
 
-### 6.9  `MOD-skills` — skills/prompts — agent-realisierte Funktionen
+#### 6.1.9  `MOD-skills` — skills/prompts — agent-realisierte Funktionen
 
 App-spezifisches Modul: .claude/skills/ (+ Prompts) — Skill-/Prompt-Definitionen als agent-ausgeführte Funktionen (z.B. se-view-* Graph→Markdown-Views). Lifecycle via FUNC-harness-cli. Allokation hierher = prompt-realisiert (vs. code-realisiert in den übrigen MODs). Beweis: Skills = Funktionen.
 
 allocate ◀ `FUNC-render-views` · `FUNC-test` · `FUNC-test-ui` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm`
 
-### 6.10  `MOD-steering` — steering — Kenngroessen-Steuerungskern
+#### 6.1.10  `MOD-steering` — steering — Kenngroessen-Steuerungskern
 
 Der Steuerungskern als Modul: Snapshot und Delta (src/steering-snapshot.ts), Fokuswahl und Runden-Prompt (src/generate.ts), Advisory-Naechster-Schritt (src/steering.ts), Kandidaten-Rangfolge (src/executor-rank.ts). Code-realisiert; dieser CR schreibt keinen Code, die Dateien lagen bisher nur ohne Modellstelle da.
 
-allocate ◀ `FUNC-compute-phase-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot`
+allocate ◀ `FUNC-block-arch-optimierung` · `FUNC-block-q-improvement` · `FUNC-block-se-steuerung` · `FUNC-compute-phase-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot`
 
 ## 7  Cross-cutting Requirements
 

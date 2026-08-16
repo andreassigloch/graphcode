@@ -12,12 +12,15 @@
 |---|---|---|
 | `FUNC-arch-fitness` | FUNC | metrics(graph, layer arch) |
 | `FUNC-block-anschluss` | FUNC | Agenten-Anschluss |
+| `FUNC-block-arch-optimierung` | FUNC | Architektur-Optimierung |
 | `FUNC-block-dokumentenwerk` | FUNC | Dokumentenwerk |
 | `FUNC-block-gate` | FUNC | Qualitäts-Gate |
 | `FUNC-block-gedaechtnis` | FUNC | Gedächtnis |
 | `FUNC-block-live-dashboard` | FUNC | Live-Dashboard |
 | `FUNC-block-messwerk` | FUNC | Messwerk |
-| `FUNC-block-schaufenster` | FUNC | Schaufenster |
+| `FUNC-block-q-improvement` | FUNC | Q-Improvement |
+| `FUNC-block-schaufenster` | FUNC | Viewer |
+| `FUNC-block-se-steuerung` | FUNC | SE-Prozess-Steuerung |
 | `FUNC-broadcast-diff` | FUNC | broadcastDiff(version) |
 | `FUNC-check-code-conformance` | FUNC | conformanceViolations(harness) |
 | `FUNC-compute-phase-readiness` | FUNC | computePhaseReadiness(violations) |
@@ -80,6 +83,7 @@
 | `MOD-hooks` | MOD | hooks.ts — HookSystem |
 | `MOD-host-bridge` | MOD | host-bridge — SSE/WS Bridge |
 | `MOD-mcp-tools` | MOD | mcp-tools.ts — MCP-Registry |
+| `MOD-repo-root` | MOD | graphcode Projektwurzel |
 | `MOD-skills` | MOD | skills/prompts — agent-realisierte Funktionen |
 | `MOD-steering` | MOD | steering — Kenngroessen-Steuerungskern |
 | `SYS-graphcode` | SYS | GraphCode |
@@ -88,6 +92,16 @@
 
 | function | module |
 |---|---|
+| `FUNC-block-anschluss` | `MOD-repo-root` |
+| `FUNC-block-arch-optimierung` | `MOD-steering` |
+| `FUNC-block-dokumentenwerk` | `MOD-docs` |
+| `FUNC-block-gate` | `MOD-repo-root` |
+| `FUNC-block-gedaechtnis` | `MOD-repo-root` |
+| `FUNC-block-live-dashboard` | `MOD-dashboard` |
+| `FUNC-block-messwerk` | `MOD-repo-root` |
+| `FUNC-block-q-improvement` | `MOD-steering` |
+| `FUNC-block-schaufenster` | `MOD-repo-root` |
+| `FUNC-block-se-steuerung` | `MOD-steering` |
 | `FUNC-broadcast-diff` | `MOD-host-bridge` |
 | `FUNC-check-code-conformance` | `MOD-harness` |
 | `FUNC-compute-phase-readiness` | `MOD-steering` |
