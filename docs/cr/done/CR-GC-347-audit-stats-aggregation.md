@@ -1,6 +1,6 @@
 # CR-GC-347 — `audit_stats` aggregiert je Regel und je Konsument
 
-**Status:** open · **Angelegt:** 2026-08-15 · **Max Files:** 6 (dieser CR: **4**)
+**Status:** done 2026-08-16 · **Angelegt:** 2026-08-15 · **Max Files:** 6 (dieser CR: **4**)
 **Vorbedingung:** CR-GC-346 — dort steht der Use Case (`REQ-rule-calibration`), den dieses Werkzeug
 bedient. Ohne ihn ist das hier ein Feature ohne Auftraggeber.
 **Ziel:** die Tabelle, auf der CR-GC-284 ruht, kommt aus einem Werkzeug statt aus `jq`.
@@ -121,19 +121,19 @@ Werkzeugzahl aus CR-GC-205 unangetastet bleiben.
 
 ## 4. Akzeptanzkriterien
 
-- [ ] `audit_stats` liefert `byRule` und `byConsumer` über den **echten** Repo-Trail, und die Werte
+- [x] `audit_stats` liefert `byRule` und `byConsumer` über den **echten** Repo-Trail, und die Werte
       sind **identisch** zur `jq`-Zeile aus §1 — der Test vergleicht gegen die Zeile, nicht gegen
       abgeschriebene Zahlen (sonst driftet die Erwartung mit den Daten).
-- [ ] Ein Record mit 20 Violations derselben Regel zählt `blocked: 1`, `occurrences: 20`.
-- [ ] Auf einem Trail ohne ein einziges `rulesPassed` ist `passed` und `passRate` **`null`**, nicht
+- [x] Ein Record mit 20 Violations derselben Regel zählt `blocked: 1`, `occurrences: 20`.
+- [x] Auf einem Trail ohne ein einziges `rulesPassed` ist `passed` und `passRate` **`null`**, nicht
       `0` — red-first nachgewiesen.
-- [ ] Gleichstand bei `topBlockingRule` ⇒ `null`.
-- [ ] `since`/`consumerId` filtern nachweislich; ein Filter, der nichts trifft, liefert leere
+- [x] Gleichstand bei `topBlockingRule` ⇒ `null`.
+- [x] `since`/`consumerId` filtern nachweislich; ein Filter, der nichts trifft, liefert leere
       Listen und `entries: 0`, keinen Fehler.
-- [ ] `src/tools/report.ts` ist wieder **unter 500 Zeilen**; `src/tools/audit.ts` ebenfalls.
-- [ ] Keine `tests/mcp.symmetry.test.ts`-Änderung nötig — das ist der Beweis, dass der Umzug
+- [x] `src/tools/report.ts` ist wieder **unter 500 Zeilen**; `src/tools/audit.ts` ebenfalls.
+- [x] Keine `tests/mcp.symmetry.test.ts`-Änderung nötig — das ist der Beweis, dass der Umzug
       verhaltensneutral war.
-- [ ] Disk-Kuzu, keine Mocks. `npm run build` + `npm test` grün.
+- [x] Disk-Kuzu, keine Mocks. `npm run build` + `npm test` grün.
 
 ---
 

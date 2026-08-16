@@ -1,6 +1,6 @@
 # CR-GC-346 — Der Audit-Trail: wofür er da ist
 
-**Status:** open · **Angelegt:** 2026-08-15 · **Max Files:** 6 (dieser CR: **3** + Graph)
+**Status:** done 2026-08-16 · **Angelegt:** 2026-08-15 · **Max Files:** 6 (dieser CR: **3** + Graph)
 **Ziel:** der Audit-Trail bekommt den Verwendungszweck, den er faktisch schon hat — Kalibrierung
 unserer eigenen Schwellen, Regeln und Prompt-Templates — und die Datenpfade tragen ihn.
 **Verwandt:** CR-GC-340/341 beweisen den **inneren** Regelkreis bei festen Stellgrößen. Dieser CR
@@ -223,25 +223,25 @@ Kalibrierung selbst (die braucht eine Messreihe, nicht einen CR), keine Änderun
 
 ## 5. Akzeptanzkriterien
 
-- [ ] `UC-loop-closure` und `REQ-rule-calibration` liegen im Graphen, durchs Gate mutiert, die REQ
+- [x] `UC-loop-closure` und `REQ-rule-calibration` liegen im Graphen, durchs Gate mutiert, die REQ
       mit verifizierendem TEST — kein Hand-Edit am SSOT.
-- [ ] `graph_export` läuft ohne `force`; `docs/views/srs.md` führt die neuen Knoten.
-- [ ] `@sigloch/learning-core` ist unverändert — `git diff` in `sigloch-modules` ist leer und die
+- [x] `graph_export` läuft ohne `force`; `docs/views/srs.md` führt die neuen Knoten.
+- [x] `@sigloch/learning-core` ist unverändert — `git diff` in `sigloch-modules` ist leer und die
       Range in `package.json` steht weiter auf `^0.2.0`.
-- [ ] `audit_trail` Default über den **echten** Repo-Trail ≤ 11 % der Rohgröße; der gemessene Wert
+- [x] `audit_trail` Default über den **echten** Repo-Trail ≤ 11 % der Rohgröße; der gemessene Wert
       steht mit Datum im Test daneben, nicht als geschätzte Zahl.
-- [ ] Ein Record mit 28 gleichartigen `info`-Violations projiziert auf **einen** Eintrag mit
+- [x] Ein Record mit 28 gleichartigen `info`-Violations projiziert auf **einen** Eintrag mit
       `count: 28` — die Summe bleibt, die Wiederholung geht.
-- [ ] `error`-Violations bleiben wörtlich inkl. `elementId` und `message` — eine Ablehnung muss aus
+- [x] `error`-Violations bleiben wörtlich inkl. `elementId` und `message` — eine Ablehnung muss aus
       der Default-Antwort erklärbar bleiben.
-- [ ] `includeCommands` / `includeRulesPassed` liefern unverändert das Volle; der Record auf Platte
+- [x] `includeCommands` / `includeRulesPassed` liefern unverändert das Volle; der Record auf Platte
       ist unangetastet (*Schreiben ist nicht Ausliefern*, CR-GC-314).
-- [ ] **(F3b)** Die Schwelle trägt Messdatum **und** die Bandbreite über drei gleitende 50er-Fenster —
+- [x] **(F3b)** Die Schwelle trägt Messdatum **und** die Bandbreite über drei gleitende 50er-Fenster —
       nicht eine einzelne Momentaufnahme.
-- [ ] **(F3b)** Ein trail-unabhängiger Fall auf synthetischem Record sichert die Zusage: er schlägt
+- [x] **(F3b)** Ein trail-unabhängiger Fall auf synthetischem Record sichert die Zusage: er schlägt
       fehl, wenn die Projektion schlechter wird, egal wie der lokale Trail gerade aussieht.
-- [ ] Red-first für beide neuen Fälle nachgewiesen.
-- [ ] `npm run build` + `npm test` grün.
+- [x] Red-first für beide neuen Fälle nachgewiesen.
+- [x] `npm run build` + `npm test` grün.
 
 ---
 
