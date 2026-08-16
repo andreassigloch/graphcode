@@ -14,7 +14,7 @@
  */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { execFileSync } from 'node:child_process';
-import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from '@sigloch/graph-cypher-wasm';
@@ -22,7 +22,13 @@ import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import type { AuditEntry } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/harness.js';
 import { bindToolsWithContext, type MCPToolRegistry } from '../src/mcp-tools.js';
-import { PROMPT_RELAY_DIR, type ToolContext } from '../src/tool-context.js';
+import {
+  PROMPT_RELAY_DIR,
+  beginProxiedCall,
+  endProxiedCall,
+  resolveOwnerPid,
+  type ToolContext,
+} from '../src/tool-context.js';
 import { mergedSettingsContent, shippedHookFiles } from '../src/scaffold-templates.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
 
@@ -48,11 +54,18 @@ function validSet(suffix: string): MutateCommand[] {
   ];
 }
 
-/** Run the REAL hook exactly as Claude Code would: event JSON on stdin, repo via env. */
-function submitPrompt(repoRoot: string, sessionId: string, prompt: string): void {
+/**
+ * Run the REAL hook exactly as Claude Code would: event JSON on stdin, repo via env.
+ *
+ * `ownerPid` is the client process the relay belongs to (CR-GC-357). The test pins it instead
+ * of letting the hook walk its own ancestry, because a test runner has no `claude` ancestor —
+ * pinning keeps the case identical on this machine and in CI. `process.pid` is used for "mine"
+ * so it is a genuinely LIVE pid: the hook prunes relays whose owner is gone.
+ */
+function submitPrompt(repoRoot: string, sessionId: string, prompt: string, ownerPid = String(process.pid)): void {
   execFileSync('bash', [HOOK], {
     input: JSON.stringify({ session_id: sessionId, prompt, cwd: repoRoot, hook_event_name: 'UserPromptSubmit' }),
-    env: { ...process.env, CLAUDE_PROJECT_DIR: repoRoot },
+    env: { ...process.env, CLAUDE_PROJECT_DIR: repoRoot, GRAPHCODE_OWNER_PID: ownerPid },
   });
 }
 
@@ -75,7 +88,7 @@ describe('TEST-prompt-relay (CR-GC-356): the client relays, the trail records', 
     repoRoot = mkdtempSync(join(tmpdir(), 'graphcode-relay-'));
     harness = makeHarness(repoRoot);
     await harness.initialize();
-    ({ registry: tools, ctx } = bindToolsWithContext(harness));
+    ({ registry: tools, ctx } = bindToolsWithContext(harness, undefined, { ownerPid: String(process.pid) }));
   });
 
   afterEach(async () => {
@@ -105,16 +118,68 @@ describe('TEST-prompt-relay (CR-GC-356): the client relays, the trail records', 
     expect(all.map((e) => e.intent)).toEqual(['erste frage', 'zweite frage']);
   });
 
-  it('records ABSENCE when two sessions are live — never a guessed pairing', async () => {
-    submitPrompt(repoRoot, 'claude-sess-001', 'session A prompt');
-    submitPrompt(repoRoot, 'claude-sess-002', 'session B prompt');
+  it('picks OUR relay out of several live sessions (CR-GC-357)', async () => {
+    // The case that made CR-GC-356 record nothing in practice: measured 2026-08-16, five live
+    // client processes wrote four relays inside 24 minutes. No time window separates those —
+    // the owning process does, and it is an exact key rather than a guess.
+    submitPrompt(repoRoot, 'other-sess-A', 'fremde session A', String(process.ppid));
+    submitPrompt(repoRoot, 'claude-sess-001', 'unser prompt');
+    submitPrompt(repoRoot, 'other-sess-B', 'fremde session B', '999999'); // dead pid
     await mutate('d');
 
     const entry = await lastEntry();
-    // A "newest wins" heuristic would stamp B's prompt here; whether that is right is
+    expect(entry.intent).toBe('unser prompt');
+    expect(entry.sessionId).toBe('claude-sess-001');
+  });
+
+  it('records ABSENCE when no relay belongs to us — never a guessed pairing', async () => {
+    submitPrompt(repoRoot, 'other-sess-A', 'session A prompt', String(process.ppid));
+    await mutate('d2');
+
+    const entry = await lastEntry();
+    // A "newest wins" heuristic would stamp A's prompt here; whether that is right is
     // unknowable, and a wrong prompt→result pair is worse than a missing one.
     expect(Object.prototype.hasOwnProperty.call(entry, 'intent')).toBe(false);
     expect(entry.sessionId).toBe(ctx.sessionId());
+  });
+
+  it('prunes relays whose client process is gone — liveness, not age', async () => {
+    submitPrompt(repoRoot, 'dead-sess', 'prompt einer toten session', '999999');
+    // The next prompt from ANY session sweeps it: a relay whose owner cannot come back can
+    // never be matched again, and leaving it lay is what made the directory look ambiguous.
+    submitPrompt(repoRoot, 'claude-sess-001', 'unser prompt');
+
+    const files = readdirSync(join(repoRoot, PROMPT_RELAY_DIR));
+    expect(files).toEqual(['claude-sess-001.json']);
+  });
+
+  it('records nothing while serving another session over the shim socket', async () => {
+    submitPrompt(repoRoot, 'claude-sess-001', 'unser prompt');
+    // The elected host runs proxied calls for OTHER sessions (CR-GC-235) and cannot tell them
+    // apart at the handler. While one is in flight nobody gets a stamp: a concurrent local call
+    // losing its prompt is a gap, a proxied call gaining ours would be a defect.
+    beginProxiedCall();
+    try {
+      await mutate('p');
+    } finally {
+      endProxiedCall();
+    }
+    const during = await lastEntry();
+    expect(Object.prototype.hasOwnProperty.call(during, 'intent')).toBe(false);
+
+    // …and the stamp comes back once the proxied call is done.
+    await mutate('q');
+    expect((await lastEntry()).intent).toBe('unser prompt');
+  });
+
+  it('records ABSENCE when the ancestry is unknown — no key, no guess', async () => {
+    const { registry, ctx: blind } = bindToolsWithContext(harness, undefined, { ownerPid: null });
+    submitPrompt(repoRoot, 'claude-sess-001', 'unser prompt');
+    await registry['graph_mutate'].handler({ commands: validSet('z'), consumerId: 'relay-test' });
+
+    const all = (await blind.auditLog.query({})) as AuditEntry[];
+    const entry = all[all.length - 1];
+    expect(Object.prototype.hasOwnProperty.call(entry, 'intent')).toBe(false);
   });
 
   it('survives a torn or mangled relay file without failing the write', async () => {
@@ -139,6 +204,15 @@ describe('TEST-prompt-relay (CR-GC-356): the client relays, the trail records', 
     expect(entry.intent).toBe('graphcode run intent');
     expect(entry.model).toBe('devstral-small:24b');
     expect(entry.sessionId).toBe(ctx.sessionId());
+  });
+
+  it('resolves no owner rather than a wrong one when the ancestry breaks', () => {
+    // The walk must fail CLOSED. A dead pid, an unwalkable root, a missing `ps` — each yields
+    // null, which reads downstream as "not recorded". Anything else would be a fabricated key,
+    // and a fabricated key matches a foreign relay.
+    expect(resolveOwnerPid(999999)).toBeNull(); // no such process
+    expect(resolveOwnerPid(1)).toBeNull(); // init: the walk starts above it and stops
+    expect(() => resolveOwnerPid(0)).not.toThrow();
   });
 
   it('ships the hook to consumer repos and registers it under UserPromptSubmit', () => {

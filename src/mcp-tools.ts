@@ -79,10 +79,11 @@ export type MCPToolRegistry = Record<string, MCPTool<any, any>>;
 export function bindToolsWithContext(
   harness: GraphCodeHarness,
   auditLog?: AuditLog,
+  opts?: { ownerPid?: string | null },
 ): { registry: MCPToolRegistry; ctx: ToolContext } {
   // Exactly one context per registry — the whole reason the groups take `ctx`
   // instead of `(harness, auditLog)` (CR-GC-256 Decision §1).
-  const ctx = createToolContext(harness, auditLog);
+  const ctx = createToolContext(harness, auditLog, opts);
 
   return {
     ctx,

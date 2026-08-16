@@ -22,6 +22,7 @@
  * @author andreas@siglochconsulting
  */
 import { createServer, type Server, type Socket } from 'node:net';
+import { beginProxiedCall, endProxiedCall } from './tool-context.js';
 import { rmSync } from 'node:fs';
 import type { AuditLog } from '@sigloch/graph-api-core';
 import {
@@ -80,8 +81,15 @@ export function startHostSocket(registry: MCPToolRegistry, socketPath: string): 
       id = req.id;
       const tool = registry[req.tool];
       if (!tool) throw new Error(`unknown tool '${req.tool}'`);
-      const result = await tool.handler(tool.inputSchema.parse(req.input ?? {}));
-      response = { id, ok: true, result };
+      // Serving another session (CR-GC-357): while this is in flight, no write in this
+      // process may stamp OUR relayed prompt onto it — see beginProxiedCall.
+      beginProxiedCall();
+      try {
+        const result = await tool.handler(tool.inputSchema.parse(req.input ?? {}));
+        response = { id, ok: true, result };
+      } finally {
+        endProxiedCall();
+      }
     } catch (err) {
       response = { id, ok: false, error: err instanceof Error ? err.message : String(err) };
     }

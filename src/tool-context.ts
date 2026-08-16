@@ -17,6 +17,7 @@
 
 import { join } from 'node:path';
 import { readdirSync, readFileSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import type { GraphCodeHarness } from './harness.js';
 import type { AuditLog, AuditEntry, OperationsLog } from '@sigloch/graph-api-core';
@@ -66,6 +67,57 @@ export interface AuditOrigin {
 export const PROMPT_RELAY_DIR = join(GRAPHCODE_DIR, 'prompts');
 
 /**
+ * The client process this graphcode process belongs to (CR-GC-357), or null.
+ *
+ * Walks the parent chain to the first ancestor whose executable is named `claude`. Measured
+ * ancestry of a real server: `node …/graphcode mcp` → `npm exec @sigloch/graphcode` → `claude`.
+ * The match is on the EXECUTABLE basename, not on the command line, because the hook's own
+ * shell carries `.claude/hooks/record-prompt.sh` in its arguments and would otherwise match
+ * itself.
+ *
+ * This is the exact join key the relay needed. Time-based disambiguation cannot work here and
+ * that is measured, not assumed: this machine ran FIVE live client processes with four relay
+ * files written inside 24 minutes — no window separates them, but the ancestry does.
+ */
+export function resolveOwnerPid(startPid: number = process.ppid): string | null {
+  let pid = startPid;
+  for (let hop = 0; hop < 8 && pid > 1; hop++) {
+    let comm: string;
+    let ppid: string;
+    try {
+      comm = execFileSync('ps', ['-o', 'comm=', '-p', String(pid)], { encoding: 'utf8' }).trim();
+      ppid = execFileSync('ps', ['-o', 'ppid=', '-p', String(pid)], { encoding: 'utf8' }).trim();
+    } catch {
+      return null; // process gone mid-walk, or no `ps` — not recorded, never a guess
+    }
+    if (comm.split('/').pop() === 'claude') return String(pid);
+    const next = Number(ppid);
+    if (!Number.isFinite(next) || next === pid) return null;
+    pid = next;
+  }
+  return null;
+}
+
+/**
+ * Proxied-call depth (CR-GC-357). PROCESS-global on purpose, unlike everything else in this
+ * file: it answers "is this process currently executing a call on someone else's behalf",
+ * which is a property of the process, not of a bound registry.
+ *
+ * The elected host serves other sessions over the shim socket (CR-GC-235), and a proxied call
+ * is indistinguishable from a local one at the handler. Its own relay would therefore be
+ * stamped onto a foreign session's write — the exact wrong-pairing CR-GC-356 refuses to make.
+ * While any proxied call is in flight NOBODY gets a prompt stamp: a concurrent local call
+ * loses its stamp (a gap) rather than a proxied one gaining a false one (a defect).
+ */
+let _proxiedDepth = 0;
+export function beginProxiedCall(): void {
+  _proxiedDepth += 1;
+}
+export function endProxiedCall(): void {
+  _proxiedDepth = Math.max(0, _proxiedDepth - 1);
+}
+
+/**
  * Read the prompt the client relayed for the CURRENT session (CR-GC-356), or null.
  *
  * AMBIGUITY IS RECORDED AS ABSENCE. One host process can serve several proxied sessions
@@ -76,7 +128,12 @@ export const PROMPT_RELAY_DIR = join(GRAPHCODE_DIR, 'prompts');
  * So: exactly one relay ⇒ use it, anything else ⇒ nothing. The hook prunes day-old files, which
  * is what keeps the ordinary one-session-per-repo case unambiguous.
  */
-function readRelayedPrompt(repoRoot: string): { sessionId: string; prompt: string } | null {
+function readRelayedPrompt(
+  repoRoot: string,
+  ownerPid: string | null,
+): { sessionId: string; prompt: string } | null {
+  if (_proxiedDepth > 0) return null; // serving someone else — see beginProxiedCall
+  if (!ownerPid) return null; // ancestry unknown ⇒ no exact match is possible ⇒ not recorded
   const dir = join(repoRoot, PROMPT_RELAY_DIR);
   let files: string[];
   try {
@@ -84,19 +141,24 @@ function readRelayedPrompt(repoRoot: string): { sessionId: string; prompt: strin
   } catch {
     return null; // no relay dir = no hook installed = not recorded
   }
-  if (files.length !== 1) return null;
-  try {
-    const raw = JSON.parse(readFileSync(join(dir, files[0]), 'utf8')) as {
-      sessionId?: unknown;
-      prompt?: unknown;
-    };
-    if (typeof raw.sessionId !== 'string' || typeof raw.prompt !== 'string' || !raw.prompt) {
-      return null;
+  const mine: Array<{ sessionId: string; prompt: string }> = [];
+  for (const f of files) {
+    try {
+      const raw = JSON.parse(readFileSync(join(dir, f), 'utf8')) as {
+        sessionId?: unknown;
+        prompt?: unknown;
+        ownerPid?: unknown;
+      };
+      if (String(raw.ownerPid ?? '') !== ownerPid) continue;
+      if (typeof raw.sessionId !== 'string' || typeof raw.prompt !== 'string' || !raw.prompt) continue;
+      mine.push({ sessionId: raw.sessionId, prompt: raw.prompt });
+    } catch {
+      // torn or hand-mangled relay: skip the file, never throw on the write path
     }
-    return { sessionId: raw.sessionId, prompt: raw.prompt };
-  } catch {
-    return null; // torn or hand-mangled relay: not recorded, never a throw on the write path
   }
+  // One client process, one relay. Two would mean the join key is not a key after all, and a
+  // guess between them is exactly what this replaced.
+  return mine.length === 1 ? mine[0] : null;
 }
 
 /** Everything a tool group needs; the state behind it exists once per bound registry. */
@@ -125,6 +187,8 @@ export interface ToolContext {
   setOrigin(origin: AuditOrigin): void;
   /** The session id stamped on this context's records — one per host process. */
   sessionId(): string;
+  /** The client process this one belongs to (CR-GC-357), or null when the ancestry is unknown. */
+  ownerPid(): string | null;
   /** Run a write body on the single tool-write chain (check+gate+record atomic). */
   serializeToolWrite<T>(body: () => Promise<T>): Promise<T>;
   /** Stale-base rejection with staleDelta, or null when the base is fresh (CR-GC-233). */
@@ -145,6 +209,7 @@ export interface ToolContext {
 export function createToolContext(
   harness: GraphCodeHarness,
   auditLog: AuditLog = new FileOperationsLog(harness.getStoreDir()),
+  opts: { ownerPid?: string | null } = {},
 ): ToolContext {
   const codec = new FormatECodec(SE_DESCRIPTOR);
   // Round-trip-stable Format-E for the opt-in read-tool slices (CR-GC-210): the wrapper
@@ -159,6 +224,9 @@ export function createToolContext(
   // that turns a flat record stream back into conversations, so it must be stable across
   // every record this process writes and distinct across processes.
   const _sessionId = `sess-${Date.now().toString(36)}-${randomUUID().slice(0, 8)}`;
+  // The client process that owns this one (CR-GC-357) — resolved ONCE at bind: the ancestry
+  // cannot change for a live process, and re-walking it per write would spawn `ps` per mutation.
+  const _ownerPid = opts.ownerPid !== undefined ? opts.ownerPid : resolveOwnerPid();
   let _origin: AuditOrigin = {};
   function setOrigin(origin: AuditOrigin): void {
     _origin = { ...origin };
@@ -174,7 +242,7 @@ export function createToolContext(
    * 372-of-379 records that fit would be noise claiming to be information.
    */
   function provenance(): Pick<AuditEntry, 'sessionId' | 'model' | 'intent' | 'intentTruncated'> {
-    const relayed = _origin.intent ? null : readRelayedPrompt(harness.getRepoRoot());
+    const relayed = _origin.intent ? null : readRelayedPrompt(harness.getRepoRoot(), _ownerPid);
     const out: Pick<AuditEntry, 'sessionId' | 'model' | 'intent' | 'intentTruncated'> = {
       // A relayed prompt brings the CLIENT's session id, which is strictly better provenance
       // than our minted one: it is the same id that names the transcript in ~/.claude/projects,
@@ -380,6 +448,7 @@ export function createToolContext(
     recordPreview,
     setOrigin,
     sessionId: () => _sessionId,
+    ownerPid: () => _ownerPid,
     serializeToolWrite,
     occReject,
   };
