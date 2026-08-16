@@ -18,6 +18,7 @@
  */
 
 import { z } from 'zod/v4';
+import type { OperationsLog } from '@sigloch/graph-api-core';
 import type { MCPTool, MCPToolRegistry } from '../mcp-tools.js';
 import type { ToolContext } from '../tool-context.js';
 
@@ -226,7 +227,22 @@ export interface ModelStat {
 }
 
 export interface AuditStats {
-  window: { since: string | null; until: string | null; entries: number };
+  /**
+   * What this answer actually covered (CR-GC-349).
+   *
+   * `archives` and `checkpointVersion` are the READ HORIZON: compaction archives by rename and
+   * deletes nothing, so an aggregation that only saw the active log would report a near-empty
+   * trail while the evidence sat untouched beside it — a wrong measurement shaped like a
+   * result. Both are `0` on a never-compacted log; that zero is a measurement, not a gap, which
+   * is why it is not `null` (contrast `passed`/`passRate` below).
+   */
+  window: {
+    since: string | null;
+    until: string | null;
+    entries: number;
+    archives: number;
+    checkpointVersion: number;
+  };
   totals: { applied: number; rejected: number; partial: number };
   byRule: RuleStat[];
   byConsumer: ConsumerStat[];
@@ -281,6 +297,7 @@ function topBlocker(counts: Map<string, number>): string | null {
 export function aggregateAuditEntries(
   entries: readonly RawAuditEntry[],
   graphVersion: number,
+  horizon: { archives?: number; checkpointVersion?: number } = {},
 ): AuditStats {
   const rules = new Map<string, RuleStat & { seenPassRecords: number }>();
   const consumers = new Map<string, { applied: number; rejected: number; blockers: Map<string, number> }>();
@@ -394,7 +411,13 @@ export function aggregateAuditEntries(
     .sort((a, b) => b.rejected - a.rejected || b.applied - a.applied || a.model.localeCompare(b.model));
 
   return {
-    window: { since, until, entries: total },
+    window: {
+      since,
+      until,
+      entries: total,
+      archives: horizon.archives ?? 0,
+      checkpointVersion: horizon.checkpointVersion ?? 0,
+    },
     totals: { applied, rejected, partial },
     byRule,
     byConsumer,
@@ -427,6 +450,9 @@ export function bindAuditTools(ctx: ToolContext): MCPToolRegistry {
         consumerId: input.consumerId,
         since: input.since,
         limit: input.limit,
+        // Read across archived segments (CR-GC-349): compaction rotates the ACTIVE file, so
+        // without this the history silently starts at the last checkpoint.
+        includeArchived: true,
       });
       return {
         entries: projectAuditEntries(entries as unknown as RawAuditEntry[], {
@@ -452,8 +478,18 @@ export function bindAuditTools(ctx: ToolContext): MCPToolRegistry {
       'consumers, not with records; narrow with since/consumerId rather than expecting a cut.',
     inputSchema: AuditStatsInputSchema,
     async handler(input) {
-      const all = await auditLog.query({ since: input.since, consumerId: input.consumerId });
-      return aggregateAuditEntries(all as unknown as RawAuditEntry[], graphVersion());
+      const all = await auditLog.query({
+        since: input.since,
+        consumerId: input.consumerId,
+        includeArchived: true,
+      });
+      // The horizon is reported, not assumed. An InMemoryAuditLog (tests) has neither method;
+      // absent capability reads as "no archives", which is exactly true for it.
+      const durable = auditLog as Partial<Pick<OperationsLog, 'archives' | 'baseVersion'>>;
+      return aggregateAuditEntries(all as unknown as RawAuditEntry[], graphVersion(), {
+        archives: durable.archives?.().length ?? 0,
+        checkpointVersion: durable.baseVersion?.() ?? 0,
+      });
     },
   };
 
