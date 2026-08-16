@@ -14,7 +14,7 @@
  *
  * @author andreas@siglochconsulting
  */
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync, realpathSync } from 'node:fs';
 import { spawn, type ChildProcess } from 'node:child_process';
 import { basename, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -276,9 +276,24 @@ export async function maybeStartBridge(
  *
  * Guards, in order:
  *   - never under a test/CI runner (VITEST/CI) — suites must not spawn viewers;
- *   - a REACHABLE docs/views/dashboard.url means some instance (manual or a
- *     previous session) already serves this repo — never a second spawn; a
- *     stale file (crashed instance) falls through to a fresh spawn.
+ *   - a docs/views/dashboard.url whose instance serves THIS repo means some
+ *     instance (manual or a previous session) already has it — never a second
+ *     spawn; a stale file (crashed instance) OR one now answered by a FOREIGN
+ *     repo's viewer falls through to a fresh spawn.
+ *
+ * Why identity, not reachability: every GVE defaults to the SAME
+ * port (4317 — the viewer's config schema default, per repo overridable only by
+ * its own config.json), and Vite bumps on conflict. So repo A can write
+ * `:4317` into its dashboard.url, die, and repo B's viewer take that port —
+ * after which A's probe was answered by B and A never started its own viewer.
+ * The reported symptom was exactly that: `graphcode mcp` in repo A opened B's
+ * dashboard. `GET <url>api/dashboard` names the REPO it serves,
+ * and only that repo counts as already-serving. The path is compared physical
+ * (realpath both sides): a symlinked launch path — /var vs /private/var on
+ * macOS, a worktree reached through a link — must not read as a foreign repo.
+ * An instance that answers without a `repoRoot` is a viewer older than that
+ * field:
+ * unidentifiable, therefore foreign, so this repo gets its own viewer.
  *
  * The spawned GVE writes/removes dashboard.url itself with its ACTUAL bound
  * port (dynamic on conflict) — that file, not this function, is how parallel
@@ -288,6 +303,19 @@ export async function maybeStartBridge(
  * with this process (detached group, killed on 'exit'); stdout stays off fd 1
  * — that is the MCP JSON-RPC channel.
  */
+/**
+ * A path in its physical form — the only form two processes can compare. A path
+ * that cannot be resolved (a repo the viewer serves but this machine doesn't
+ * have) stays as given: it will simply not match, which is the correct verdict.
+ */
+function physicalPath(p: string): string {
+  try {
+    return realpathSync(p);
+  } catch {
+    return p;
+  }
+}
+
 export async function maybeStartGve(
   repoRoot: string,
   deps: {
@@ -301,12 +329,20 @@ export async function maybeStartGve(
   const urlFile = join(repoRoot, 'docs', 'views', 'dashboard.url');
   if (existsSync(urlFile)) {
     const url = readFileSync(urlFile, 'utf8').trim();
+    const mine = physicalPath(repoRoot);
     try {
-      const res = await (deps.fetchImpl ?? fetch)(url, { signal: AbortSignal.timeout(750) });
-      if (res.ok) {
+      const res = await (deps.fetchImpl ?? fetch)(new URL('api/dashboard', url), {
+        signal: AbortSignal.timeout(750),
+      });
+      const served = res.ok ? ((await res.json()) as { repoRoot?: unknown }).repoRoot : undefined;
+      if (typeof served === 'string' && physicalPath(served) === mine) {
         process.stderr.write(`[graphcode] gve: dashboard already serving this repo at ${url}\n`);
         return null;
       }
+      process.stderr.write(
+        `[graphcode] gve: ${url} serves ${typeof served === 'string' ? served : 'another repo'}, ` +
+          `not ${mine} — starting this repo's own dashboard\n`,
+      );
     } catch {
       // Stale file from a crashed instance — fall through and spawn fresh.
     }
