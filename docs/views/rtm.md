@@ -4,7 +4,7 @@
 
 # graphcode — Requirements Traceability Matrix (RTM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 123 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 125 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
 
 
 ### System (SYS.2) — 44 REQ
@@ -56,7 +56,7 @@
 | `REQ-token-efficiency` | `TEST-token-efficiency` | — | — |
 | `REQ-versioned-cache` | `TEST-cache` | `MOD-hooks` | — |
 
-### funktional (SWE.1) — 75 REQ
+### funktional (SWE.1) — 77 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -115,6 +115,7 @@
 | `REQ-pre-merge-nodes` | `TEST-merge` | `FUNC-merge-nodes` | `MOD-codec` |
 | `REQ-pre-modelfree-gate` | `TEST-reduced-llm` | `FCHAIN-modelfree-gate` | — |
 | `REQ-progressive-expansion` | `TEST-impact-subgraph` | `FUNC-graph-expand` | `MOD-mcp-tools` |
+| `REQ-prompt-provenance` | `TEST-prompt-provenance` | `MOD-mcp-tools` | — |
 | `REQ-published-counts-match-code` | `TEST-published-counts-match-code` | — | — |
 | `REQ-quality-metric` | `TEST-code-quality` | `MOD-harness` | — |
 | `REQ-query-precision` | `TEST-impact-subgraph` | `FUNC-graph-impact` | `MOD-mcp-tools` |
@@ -123,6 +124,7 @@
 | `REQ-readonly-bridge` | `TEST-readonly-bridge` | `FUNC-serve-sse` · `MOD-host-bridge` | `MOD-host-bridge` |
 | `REQ-real-health-check` | `TEST-real-health-check` | `FUNC-health-endpoint` · `MOD-host-bridge` | `MOD-host-bridge` |
 | `REQ-roundtrip-conformance` | `TEST-roundtrip` | `FCHAIN-codec-roundtrip` · `FUNC-decode` | `MOD-codec` |
+| `REQ-rule-calibration` | `TEST-rule-calibration` | `MOD-mcp-tools` | — |
 | `REQ-rule-enforcement` | `TEST-mutate-gate` | `FUNC-evaluate-rules` | `MOD-harness` |
 | `REQ-single-measurement-path` | `TEST-single-measurement-path` | — | — |
 | `REQ-single-write-door` | `TEST-single-write-door` | — | — |
@@ -172,7 +174,7 @@
 | `REQ-small-model-viable` | `TEST-mvp-e2e` · `TEST-reduced-llm` | `FCHAIN-modelfree-gate` · `FUNC-graph-suggest` | `MOD-mcp-tools` |
 | `REQ-steering-from-metrics` | `TEST-steering-loop` | `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` | `MOD-steering` |
 
-### Komponente (SWE.2/3) — 84 REQ
+### Komponente (SWE.2/3) — 86 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -232,6 +234,7 @@
 | `REQ-precise-context` | `TEST-mvp-e2e` · `TEST-token-efficiency` | `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-graph-impact` | `MOD-codec` · `MOD-mcp-tools` |
 | `REQ-precommit-timeout` | `TEST-hooks` | `MOD-hooks` | — |
 | `REQ-progressive-expansion` | `TEST-impact-subgraph` | `FUNC-graph-expand` | `MOD-mcp-tools` |
+| `REQ-prompt-provenance` | `TEST-prompt-provenance` | `MOD-mcp-tools` | — |
 | `REQ-quality-metric` | `TEST-code-quality` | `MOD-harness` | — |
 | `REQ-query-precision` | `TEST-impact-subgraph` | `FUNC-graph-impact` | `MOD-mcp-tools` |
 | `REQ-readiness-completeness` | `TEST-readiness-completeness` | `FUNC-score-completeness` | `MOD-harness` |
@@ -243,6 +246,7 @@
 | `REQ-repo-uninstall` | `TEST-cli-scaffold` | `FUNC-harness-cli` | `MOD-cli` |
 | `REQ-repo-update` | `TEST-cli-scaffold` | `FUNC-harness-cli` | `MOD-cli` |
 | `REQ-roundtrip-conformance` | `TEST-roundtrip` | `FCHAIN-codec-roundtrip` · `FUNC-decode` | `MOD-codec` |
+| `REQ-rule-calibration` | `TEST-rule-calibration` | `MOD-mcp-tools` | — |
 | `REQ-rule-enforcement` | `TEST-mutate-gate` | `FUNC-evaluate-rules` | `MOD-harness` |
 | `REQ-schema-version-migration` | `TEST-schema-migration` | `FUNC-migrate-schema` | `MOD-harness` |
 | `REQ-self-contained-dist` | `TEST-distribution` | `FUNC-harness-cli` | `MOD-cli` |

@@ -4,7 +4,7 @@
 
 # graphcode — Concept of Operations
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). OpsCon nach ISO/IEC/IEEE 29148 §5.2.4, projiziert aus dem Graphen: 9 ACTOR, 6 UC, 20 operationale REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). OpsCon nach ISO/IEC/IEEE 29148 §5.2.4, projiziert aus dem Graphen: 9 ACTOR, 7 UC, 20 operationale REQ. Deterministisch generiert.
 
 ## 1  System overview
 
@@ -42,7 +42,7 @@
 
 - `ACTOR-claude-code` — Claude Code — Realisierungs-Agent — triggert `UC-code-quality` · `UC-reduced-llm`
 - `ACTOR-dashboard` — Browser-Dashboard — triggert `UC-code-quality` · `UC-live-graph-view`
-- `ACTOR-developer` — Entwickler / Repo-Owner — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-efficient-testing` · `UC-graph-time-travel` · `UC-live-graph-view` · `UC-reduced-llm`
+- `ACTOR-developer` — Entwickler / Repo-Owner — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-efficient-testing` · `UC-graph-time-travel` · `UC-live-graph-view` · `UC-loop-closure` · `UC-reduced-llm`
 - `ACTOR-facilitating-agent` — Facilitating Agent — Architekt — triggert `UC-code-quality`
 - `ACTOR-graphify` — graphify (Slicer) — triggert `UC-code-quality`
 - `ACTOR-learning-engine` — Learning-Engine — triggert `UC-reduced-llm`
@@ -50,7 +50,7 @@
 - `ACTOR-systems-engineer` — Systems Engineer — triggert `UC-code-quality` · `UC-efficient-testing` · `UC-reduced-llm`
 - `ACTOR-vibe-coder` — Vibe Coder — triggert `UC-code-quality` · `UC-efficient-testing` · `UC-reduced-llm`
 
-## 4  Operational scenarios (6 UC)
+## 4  Operational scenarios (7 UC)
 
 ### `UC-code-quality` — Jede Aenderung geht durchs Gate
 
@@ -95,6 +95,14 @@ Als Entwickler will ich den aktuellen Modellstand live mitlesen, ohne die Ansich
 Ausgeloest von: `ACTOR-dashboard` · `ACTOR-developer`
 
 - `FCHAIN-live-update` — Live-Update-Kette (persist → emit → subscribe): `FUNC-broadcast-diff` → `FUNC-emit-update-event` → `FUNC-save-graph` → `FUNC-serve-stdio` → `FUNC-subscribe-updates`
+
+### `UC-loop-closure` — Schwellen und Prompts am Trail kalibrieren
+
+Als Betreiber des Regelwerks will ich an den aufgezeichneten Gate-Entscheidungen ablesen, welche Regel bei wem wie oft blockt, damit ich Schwellen und Prompt-Vorlagen an Messwerten justiere statt an Vermutungen.
+
+Ausgeloest von: `ACTOR-developer`
+
+— kein Betriebsablauf beschrieben (keine FCHAIN) —
 
 ### `UC-reduced-llm` — Mit kleinem oder lokalem Modell arbeiten
 

@@ -4,7 +4,7 @@
 
 # graphcode — Verification Cross-Reference Matrix (VCRM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 123 REQ rows. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 125 REQ rows. Deterministisch generiert.
 
 | REQ | verify-Kante | Lauf-Ergebnis | verifying TEST(s) |
 |---|---|---|---|
@@ -95,6 +95,7 @@
 | `REQ-precise-context` | ✓ | ⚠ 1/2 passed | `TEST-mvp-e2e` · `TEST-token-efficiency` |
 | `REQ-precommit-timeout` | ✓ | ⚠ nie gelaufen | `TEST-hooks` |
 | `REQ-progressive-expansion` | ✓ | ✓ passed | `TEST-impact-subgraph` |
+| `REQ-prompt-provenance` | ✓ | ⚠ nie gelaufen | `TEST-prompt-provenance` |
 | `REQ-published-counts-match-code` | ✓ | ✓ passed | `TEST-published-counts-match-code` |
 | `REQ-quality-metric` | ✓ | ⚠ nie gelaufen | `TEST-code-quality` |
 | `REQ-query-precision` | ✓ | ✓ passed | `TEST-impact-subgraph` |
@@ -108,6 +109,7 @@
 | `REQ-repo-update` | ✓ | ✓ passed | `TEST-cli-scaffold` |
 | `REQ-responsiveness` | ✓ | ⚠ nie gelaufen | `TEST-responsiveness` |
 | `REQ-roundtrip-conformance` | ✓ | ✓ passed | `TEST-roundtrip` |
+| `REQ-rule-calibration` | ✓ | ⚠ nie gelaufen | `TEST-rule-calibration` |
 | `REQ-rule-enforcement` | ✓ | ✓ passed | `TEST-mutate-gate` |
 | `REQ-schema-version-migration` | ✓ | ⚠ nie gelaufen | `TEST-schema-migration` |
 | `REQ-self-contained-dist` | ✓ | ✓ passed | `TEST-distribution` |
@@ -132,8 +134,8 @@
 | `REQ-versioned-broadcast` | ✓ | ✓ passed | `TEST-live-view` |
 | `REQ-versioned-cache` | ✓ | ⚠ nie gelaufen | `TEST-cache` |
 
-Coverage: 123/123 REQ mit verify-Kante (100%) · 0 offen (R-01).
-Belegt: 87/123 REQ bestanden (71%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
+Coverage: 125/125 REQ mit verify-Kante (100%) · 0 offen (R-01).
+Belegt: 87/125 REQ bestanden (70%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
 
 ## Integrationsabdeckung (rolled-up)
 

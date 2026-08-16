@@ -29,6 +29,7 @@
 | `ACTOR-developer` | io | `UC-efficient-testing` |
 | `ACTOR-developer` | io | `UC-graph-time-travel` |
 | `ACTOR-developer` | io | `UC-live-graph-view` |
+| `ACTOR-developer` | io | `UC-loop-closure` |
 | `ACTOR-developer` | io | `UC-reduced-llm` |
 | `ACTOR-facilitating-agent` | io | `UC-code-quality` |
 | `ACTOR-graphify` | io | `FLOW-bulk-formatE` |
@@ -853,7 +854,9 @@
 | `MOD-mcp-tools` | satisfy | `REQ-agent-agnostic` |
 | `MOD-mcp-tools` | satisfy | `REQ-export-no-clobber` |
 | `MOD-mcp-tools` | satisfy | `REQ-mcp-tool-registry` |
+| `MOD-mcp-tools` | satisfy | `REQ-prompt-provenance` |
 | `MOD-mcp-tools` | satisfy | `REQ-readiness-model` |
+| `MOD-mcp-tools` | satisfy | `REQ-rule-calibration` |
 | `MOD-mcp-tools` | satisfy | `REQ-single-transport` |
 | `MOD-mcp-tools` | satisfy | `REQ-test-runnable-binding` |
 | `MOD-mcp-tools` | satisfy | `REQ-testref-materialized` |
@@ -930,6 +933,7 @@
 | `SYS-graphcode` | compose | `UC-efficient-testing` |
 | `SYS-graphcode` | compose | `UC-graph-time-travel` |
 | `SYS-graphcode` | compose | `UC-live-graph-view` |
+| `SYS-graphcode` | compose | `UC-loop-closure` |
 | `SYS-graphcode` | compose | `UC-reduced-llm` |
 | `SYS-graphcode` | satisfy | `REQ-benchmark-harness` |
 | `SYS-graphcode` | satisfy | `REQ-frame-binding` |
@@ -1036,6 +1040,7 @@
 | `TEST-no-direct-graph-write` | verify | `REQ-gate-only-writes` |
 | `TEST-one-driver-local-and-frontier` | verify | `REQ-one-driver-local-and-frontier` |
 | `TEST-phase-gate-not-skippable` | verify | `REQ-phase-gate-not-skippable` |
+| `TEST-prompt-provenance` | verify | `REQ-prompt-provenance` |
 | `TEST-published-counts-match-code` | verify | `REQ-published-counts-match-code` |
 | `TEST-readiness-completeness` | verify | `REQ-readiness-completeness` |
 | `TEST-readiness-model` | verify | `REQ-readiness-model` |
@@ -1054,6 +1059,7 @@
 | `TEST-roundtrip` | verify | `REQ-post-codec-roundtrip` |
 | `TEST-roundtrip` | verify | `REQ-pre-codec-roundtrip` |
 | `TEST-roundtrip` | verify | `REQ-roundtrip-conformance` |
+| `TEST-rule-calibration` | verify | `REQ-rule-calibration` |
 | `TEST-scaffold-skills` | verify | `REQ-repo-install` |
 | `TEST-schema-migration` | verify | `REQ-post-migrate-schema` |
 | `TEST-schema-migration` | verify | `REQ-pre-migrate-schema` |
@@ -1144,6 +1150,8 @@
 | `UC-live-graph-view` | compose | `REQ-readonly-bridge` |
 | `UC-live-graph-view` | compose | `REQ-real-health-check` |
 | `UC-live-graph-view` | compose | `REQ-versioned-broadcast` |
+| `UC-loop-closure` | compose | `REQ-prompt-provenance` |
+| `UC-loop-closure` | compose | `REQ-rule-calibration` |
 | `UC-reduced-llm` | compose | `FCHAIN-advisory-roundtrip` |
 | `UC-reduced-llm` | compose | `FCHAIN-agent-query` |
 | `UC-reduced-llm` | compose | `FCHAIN-modelfree-gate` |

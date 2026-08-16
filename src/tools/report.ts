@@ -75,6 +75,15 @@ const AuditTrailInputSchema = z.object({
         'consumer that needs them is the replay-merge, and it reads the JSONL file ' +
         'directly, not this tool. Ask for them when you actually intend to replay.',
     ),
+  includeIntent: z
+    .boolean()
+    .default(false)
+    .describe(
+      'CR-GC-354/346: include the verbatim triggering prompt per record. OFF by default — a ' +
+        'prompt is up to 4000 chars, the same volume-not-event trade commands lost. sessionId ' +
+        'and model are always included; ask for the prompt text when you are calibrating ' +
+        'prompts rather than reading what happened.',
+    ),
 });
 
 /** `+n ~n -n` over a mutate batch — the shape of a change without its content (CR-GC-319). */
@@ -97,7 +106,50 @@ type RawAuditEntry = Record<string, unknown> & {
   violations?: Array<Record<string, unknown>>;
   rulesetVersion?: string;
   rulesPassed?: string[];
+  sessionId?: string;
+  model?: string;
+  intent?: string;
+  intentTruncated?: boolean;
 };
+
+/**
+ * Violations, delivered as the EVENT and not as the VOLUME (CR-GC-346 F3).
+ *
+ * CR-GC-319 dropped `commands` because they scale with batch width. Violations scale the
+ * same way and were kept verbatim: a batch over 28 nodes emits 28 VR-01 infos, and three
+ * such records carried 40.3 KB of a 61.8 KB answer — the size claim went red on that alone.
+ *
+ * `error` stays VERBATIM including `elementId` and `message`: it explains a rejection, and
+ * a rejection that cannot be explained from the default answer defeats the point of the
+ * tool. Non-gating `warning`/`info` collapse per (ruleId, severity) to a count.
+ *
+ * NO SILENT CAP — the count is exact, only the repetition of identical prose is gone. The
+ * elementIds stay in full in the record on disk, and for the LIVING graph they are what
+ * `rules_get_violations` returns. First-encounter order is kept, so the answer reads in the
+ * order the engine produced and stays byte-stable across runs.
+ */
+function projectViolations(
+  violations: ReadonlyArray<Record<string, unknown>>,
+): Array<Record<string, unknown>> {
+  const out: Array<Record<string, unknown>> = [];
+  const grouped = new Map<string, Record<string, unknown>>();
+  for (const v of violations) {
+    if (v.severity === 'error') {
+      out.push({ ruleId: v.ruleId, severity: v.severity, message: v.message, elementId: v.elementId });
+      continue;
+    }
+    const key = String(v.ruleId) + ' ' + String(v.severity);
+    const seen = grouped.get(key);
+    if (seen) {
+      seen.count = (seen.count as number) + 1;
+      continue;
+    }
+    const entry: Record<string, unknown> = { ruleId: v.ruleId, severity: v.severity, count: 1 };
+    grouped.set(key, entry);
+    out.push(entry);
+  }
+  return out;
+}
 
 /**
  * The lean `audit_trail` payload (CR-GC-319). Pure, so the size claim can be measured
@@ -116,7 +168,7 @@ type RawAuditEntry = Record<string, unknown> & {
  */
 export function projectAuditEntries(
   entries: readonly RawAuditEntry[],
-  opts: { includeCommands?: boolean; includeRulesPassed?: boolean } = {},
+  opts: { includeCommands?: boolean; includeRulesPassed?: boolean; includeIntent?: boolean } = {},
 ): Array<Record<string, unknown>> {
   return entries.map((e) => ({
     id: e.id,
@@ -132,14 +184,16 @@ export function projectAuditEntries(
     // Slim violations: what fired and where. `fixHint`/`context` carry candidate_targets
     // and are the bulk of the remaining bytes — they live in rules_get_violations, the
     // tool whose job is repairing (REQ-T02).
-    ...(e.violations !== undefined
+    ...(e.violations !== undefined ? { violations: projectViolations(e.violations) } : {}),
+    // Provenance (CR-GC-354): who, and in which session. Both are ~50 B together and they
+    // answer half of what the trail is FOR, so they are default fields. `intent` is not —
+    // it is a full prompt, i.e. the same "volume, not event" trade `commands` lost.
+    ...(e.sessionId !== undefined ? { sessionId: e.sessionId } : {}),
+    ...(e.model !== undefined ? { model: e.model } : {}),
+    ...(opts.includeIntent && e.intent !== undefined
       ? {
-          violations: e.violations.map((v) => ({
-            ruleId: v.ruleId,
-            severity: v.severity,
-            message: v.message,
-            elementId: v.elementId,
-          })),
+          intent: e.intent,
+          ...(e.intentTruncated !== undefined ? { intentTruncated: e.intentTruncated } : {}),
         }
       : {}),
     // Opt-in halves, added back whole — never a truncated stand-in, which would read as
@@ -269,6 +323,7 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
         entries: projectAuditEntries(entries as unknown as RawAuditEntry[], {
           includeCommands: input.includeCommands,
           includeRulesPassed: input.includeRulesPassed,
+          includeIntent: input.includeIntent,
         }),
       };
     },

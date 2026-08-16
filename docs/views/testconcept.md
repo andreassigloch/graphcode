@@ -4,15 +4,15 @@
 
 # graphcode — Test Concept
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 69 TEST — Pyramide nach Modell-Level (System/UC/Function). Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 71 TEST — Pyramide nach Modell-Level (System/UC/Function). Deterministisch generiert.
 
 ```
               ╱╲
              ╱E2╲          System level · SYS-graphcode
             ╱ E  ╲         ✓ 28 E2E test(s)
            ╱──────╲
-          ╱  UC /   ╲       Use-case level · 6 UC
-         ╱integration╲      ⚠ 6 / 6 UC exercised by a scenario test
+          ╱  UC /   ╲       Use-case level · 7 UC
+         ╱integration╲      ⚠ 7 / 7 UC exercised by a scenario test
         ╱────────────╲      ✗ 23/34 FUNC↔FUNC connections tested  ← GAP
        ╱  Function /   ╲     Function level · 55 FUNC
       ╱      unit       ╲
@@ -22,8 +22,8 @@
 | Level | Element | Test kind | Tests | Coverage | Verdict |
 |---|---|---|---|---|---|
 | System | SYS (1) | E2E | 28 | 28 / 1 | ✓ |
-| Use-case | UC (6) | acceptance / integration | 46 | 6 / 6 scenario | ✓ |
-| Integration | FUNC↔FUNC (34 conn) | integration (chain) | 46 | 23 / 34 connections | ✗ 11 uncovered |
+| Use-case | UC (7) | acceptance / integration | 48 | 7 / 7 scenario | ✓ |
+| Integration | FUNC↔FUNC (34 conn) | integration (chain) | 48 | 23 / 34 connections | ✗ 11 uncovered |
 | Function | FUNC (55) | unit | 37 | 55 / 55 | ✓ |
 | (support) | — | conformance | 2 | codec round-trip | ✓ |
 

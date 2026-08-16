@@ -3793,6 +3793,17 @@
       "updated_at": "2026-06-18T00:00:00.000Z"
     },
     {
+      "id": "REQ-prompt-provenance",
+      "type": "REQ",
+      "name": "Urheber und Prompt je Gate-Entscheidung",
+      "description": "Jede Gate-Entscheidung ist ihrem Urheber, also Session und Modell, und ihrem ausloesenden Prompt im Wortlaut zuordenbar. Die Aufzeichnung ist abgeleitet, nie vom Konsumenten deklariert, und Abwesenheit bedeutet nicht aufgezeichnet, nie leerer Prompt. (CR-GC-354)",
+      "status": "done",
+      "created_at": "2026-08-16T00:00:00.000Z",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-published-counts-match-code",
       "type": "REQ",
       "name": "Publizierte Zahlen stimmen mit der lebenden Quelle",
@@ -3929,6 +3940,17 @@
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
         "non-functional"
+      ]
+    },
+    {
+      "id": "REQ-rule-calibration",
+      "type": "REQ",
+      "name": "Regel-Kalibrierung aus der Aufzeichnung",
+      "description": "Die Aufzeichnung erlaubt es, je Regel, je Modell und je Konsument die Blockadehaeufigkeit und das Ergebnis ueber die Zeit auszuwerten. Das ist die Eingangsgroesse jeder Schwellenentscheidung; ohne sie bleibt jede Schwelle eine Setzung. (CR-GC-346)",
+      "status": "open",
+      "created_at": "2026-08-16T00:00:00.000Z",
+      "kinds": [
+        "functional"
       ]
     },
     {
@@ -5176,6 +5198,28 @@
       ]
     },
     {
+      "id": "TEST-prompt-provenance",
+      "type": "TEST",
+      "name": "Prompt-Provenienz-Test",
+      "description": "Ein Record traegt Session, Modell und den Prompt im Wortlaut; ueber der Kappungsgrenze wird gekuerzt und das gesagt. Abwesenheit bleibt Abwesenheit statt leerem Feld, und bei zwei gleichzeitigen Sessions wird lieber nichts aufgezeichnet als ein geratenes Paar. (REQ-prompt-provenance)",
+      "status": "done",
+      "method": "test",
+      "level": "integration",
+      "tool": "vitest",
+      "testRefs": [
+        {
+          "file": "tests/audit.origin.test.ts",
+          "tool": "vitest",
+          "level": "integration"
+        },
+        {
+          "file": "tests/hooks.prompt-relay.test.ts",
+          "tool": "vitest",
+          "level": "integration"
+        }
+      ]
+    },
+    {
       "id": "TEST-published-counts-match-code",
       "type": "TEST",
       "name": "Doku-gegen-Code-Konformitaet der Zahlen",
@@ -5324,6 +5368,23 @@
           "level": "conformance",
           "result": "passed",
           "ranAt": "2026-08-15T13:34:09.409Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-rule-calibration",
+      "type": "TEST",
+      "name": "Regel-Kalibrierungs-Test",
+      "description": "audit_stats aggregiert je Regel, je Modell und je Konsument; die Werte sind identisch zur jq-Zeile auf demselben Trail. Ein Record mit 20 Violations derselben Regel zaehlt eine Blockade und zwanzig Vorkommen; fehlendes rulesPassed liefert null statt einer Null. (REQ-rule-calibration)",
+      "status": "open",
+      "method": "test",
+      "level": "unit",
+      "tool": "vitest",
+      "testRefs": [
+        {
+          "file": "tests/audit.stats.test.ts",
+          "tool": "vitest",
+          "level": "unit"
         }
       ]
     },
@@ -5595,6 +5656,14 @@
       "created_at": "2026-06-17T00:00:00.000Z"
     },
     {
+      "id": "UC-loop-closure",
+      "type": "UC",
+      "name": "Schwellen und Prompts am Trail kalibrieren",
+      "description": "Als Betreiber des Regelwerks will ich an den aufgezeichneten Gate-Entscheidungen ablesen, welche Regel bei wem wie oft blockt, damit ich Schwellen und Prompt-Vorlagen an Messwerten justiere statt an Vermutungen.",
+      "status": "open",
+      "created_at": "2026-08-16T00:00:00.000Z"
+    },
+    {
       "id": "UC-reduced-llm",
       "type": "UC",
       "name": "Mit kleinem oder lokalem Modell arbeiten",
@@ -5743,6 +5812,11 @@
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "ACTOR-developer",
+      "target": "UC-loop-closure",
+      "type": "io"
     },
     {
       "source": "ACTOR-developer",
@@ -10714,10 +10788,20 @@
     },
     {
       "source": "MOD-mcp-tools",
+      "target": "REQ-prompt-provenance",
+      "type": "satisfy"
+    },
+    {
+      "source": "MOD-mcp-tools",
       "target": "REQ-readiness-model",
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "MOD-mcp-tools",
+      "target": "REQ-rule-calibration",
+      "type": "satisfy"
     },
     {
       "source": "MOD-mcp-tools",
@@ -11187,6 +11271,11 @@
       "type": "compose",
       "weight": 1,
       "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "SYS-graphcode",
+      "target": "UC-loop-closure",
+      "type": "compose"
     },
     {
       "source": "SYS-graphcode",
@@ -11810,6 +11899,11 @@
       "type": "verify"
     },
     {
+      "source": "TEST-prompt-provenance",
+      "target": "REQ-prompt-provenance",
+      "type": "verify"
+    },
+    {
       "source": "TEST-published-counts-match-code",
       "target": "REQ-published-counts-match-code",
       "type": "verify"
@@ -11914,6 +12008,11 @@
       "type": "verify",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-rule-calibration",
+      "target": "REQ-rule-calibration",
+      "type": "verify"
     },
     {
       "source": "TEST-scaffold-skills",
@@ -12420,6 +12519,16 @@
       "created_at": "2026-06-17T00:00:00.000Z"
     },
     {
+      "source": "UC-loop-closure",
+      "target": "REQ-prompt-provenance",
+      "type": "compose"
+    },
+    {
+      "source": "UC-loop-closure",
+      "target": "REQ-rule-calibration",
+      "type": "compose"
+    },
+    {
       "source": "UC-reduced-llm",
       "target": "FCHAIN-advisory-roundtrip",
       "type": "compose"
@@ -12499,5 +12608,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 97
+  "graphVersion": 98
 }

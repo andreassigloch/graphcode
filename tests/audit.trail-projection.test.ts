@@ -121,7 +121,16 @@ describe('TEST-audit-trail-projection (CR-GC-319)', () => {
     for (const v of e.violations!) {
       expect(v).toHaveProperty('ruleId');
       expect(v).toHaveProperty('severity');
-      expect(v).toHaveProperty('message');
+      // `message` only where it EXPLAINS something (CR-GC-346 F3): a gating error carries
+      // its text and its elementId, a non-gating finding carries a count instead. Repeating
+      // identical prose per element is the volume that took the size claim red.
+      if (v.severity === 'error') {
+        expect(v).toHaveProperty('message');
+        expect(v).toHaveProperty('elementId');
+      } else {
+        expect(v).toHaveProperty('count');
+        expect(v).not.toHaveProperty('message');
+      }
       // These are the bulk of the remaining bytes and live in rules_get_violations —
       // the tool whose job is repairing, not recounting.
       expect(v).not.toHaveProperty('fixHint');
@@ -198,18 +207,25 @@ const REAL_TRAIL = 'TEST-audit-trail-projection: the size claim on real data (RE
 
 describe.skipIf(!existsSync(trail))(REAL_TRAIL, () => {
   /**
-   * MEASURED: 17.0 KB projected from 162.6 KB raw = **89.3 %** smaller.
+   * MEASURED 2026-08-16 over THREE sliding 50-record windows of this repo's trail:
    *
-   * The CR asked for ≥ 90 %. That figure was estimated before the projection existed and
-   * did not account for the base fields REQ-T01 mandates: on a 50-record answer,
-   * `id`/`timestamp`/`consumerId`/`operation`/`result`/`graphVersion`/`commandCount`/
-   * `opSummary` plus their JSON keys are ~10 KB on their own — 200 B per record that
-   * cannot be removed without dropping a required field. The slim violations are a
-   * further 6.3 KB.
+   *   last 50            573.2 KB raw → 24.0 KB  =  4.2 %
+   *   last 50 minus 50   158.4 KB raw → 13.0 KB  =  8.2 %
+   *   last 50 minus 150  360.2 KB raw → 19.9 KB  =  5.5 %
    *
-   * The budget below is therefore the measured value with a little headroom, not the
-   * estimate. Loosening a threshold until a test passes is how a suite learns a
-   * regression; naming the number is the alternative.
+   * The bandwidth is the point (CR-GC-346 F3b). This case slices the LAST 50 records and
+   * compares against an ABSOLUTE threshold, so its result depends on the shape of recent
+   * work, not on the trail as a whole — before CR-GC-346 the same threshold read 13.6 %
+   * here and 10.3 % one session earlier, i.e. it went red from batch width alone. Quoting
+   * one snapshot would hide that; quoting the range says how much headroom is real.
+   *
+   * Why 11 % stays: it was the CR-GC-319 budget and nothing about the promise changed. The
+   * measured value moved from 13.6 % to 4.2 % because violations stopped scaling with
+   * batch width, not because the threshold was loosened to fit — loosening a threshold
+   * until a test passes is how a suite learns a regression.
+   *
+   * This case alone cannot fail when the projection gets WORSE on a quiet trail, so the
+   * synthetic counter-check below carries that half of the promise.
    */
   it('a default answer over the repo trail is ~89 % smaller than the raw records', () => {
     const raw = readFileSync(trail, 'utf8')
@@ -234,6 +250,87 @@ describe.skipIf(!existsSync(trail))(REAL_TRAIL, () => {
       after,
       `${(after / 1024).toFixed(1)} KB projected vs ${(before / 1024).toFixed(1)} KB raw`,
     ).toBeLessThan(before * 0.11);
+  });
+
+  /**
+   * The trail-independent half of the size promise (CR-GC-346 F3b).
+   *
+   * The case above measures the real trail, which means it re-calibrates against whatever
+   * the last 50 operations happened to look like — it nods through what comes out. This one
+   * has a KNOWN fat ratio, so it fails whenever the projection gets worse, no matter what
+   * the local trail looks like today.
+   */
+  it('collapses a wide batch on a synthetic record — the claim without the trail', () => {
+    // One record shaped like the three that took the size claim red: a batch over 28 nodes
+    // emitting one non-gating info PER node, all from the same rule.
+    const record = {
+      id: 'audit-synthetic',
+      timestamp: '2026-08-16T00:00:00.000Z',
+      consumerId: 'synthetic',
+      operation: 'mutate',
+      result: 'applied',
+      graphVersion: 1,
+      commands: Array.from({ length: 28 }, (_, i) => ({
+        op: 'add-node',
+        node: { uid: `REQ-syn-${i}`, type: 'REQ', name: `Anforderung ${i}`, description: 'x'.repeat(200) },
+      })),
+      violations: Array.from({ length: 28 }, (_, i) => ({
+        ruleId: 'VR-01',
+        severity: 'info',
+        elementId: `REQ-syn-${i}`,
+        message: 'Dieses Element hat noch keine verifizierende Beziehung und zaehlt daher nicht als abgedeckt.',
+        fixHint: 'Lege einen TEST an und verbinde ihn per verify-Kante mit dieser Anforderung.',
+        context: { candidate_targets: [`TEST-syn-${i}`, `TEST-alt-${i}`] },
+      })),
+    };
+
+    const before = bytes({ entries: [record] });
+    const after = bytes({ entries: projectAuditEntries([record]) });
+    expect(
+      after,
+      `${(after / 1024).toFixed(1)} KB projected vs ${(before / 1024).toFixed(1)} KB raw`,
+    ).toBeLessThan(before * 0.11);
+  });
+
+  it('aggregates non-gating violations per rule — the count survives, the repetition goes', () => {
+    const record = {
+      id: 'audit-agg',
+      timestamp: '2026-08-16T00:00:00.000Z',
+      consumerId: 'agg',
+      operation: 'mutate',
+      result: 'rejected',
+      graphVersion: 1,
+      violations: [
+        // A gating error: stays VERBATIM, because it is what explains the rejection.
+        { ruleId: 'R-01', severity: 'error', elementId: 'REQ-x', message: 'REQ ohne verifizierenden TEST.' },
+        ...Array.from({ length: 28 }, (_, i) => ({
+          ruleId: 'VR-01',
+          severity: 'info',
+          elementId: `REQ-syn-${i}`,
+          message: 'Noch nicht abgedeckt.',
+        })),
+        { ruleId: 'R-20', severity: 'warning', elementId: 'FUNC-a', message: 'Kein codeRef.' },
+        { ruleId: 'R-20', severity: 'warning', elementId: 'FUNC-b', message: 'Kein codeRef.' },
+      ],
+    };
+
+    const [projected] = projectAuditEntries([record]);
+    const violations = projected.violations as Array<Record<string, unknown>>;
+
+    // error first and complete — a rejection must stay explainable from the default answer.
+    expect(violations[0]).toEqual({
+      ruleId: 'R-01',
+      severity: 'error',
+      message: 'REQ ohne verifizierenden TEST.',
+      elementId: 'REQ-x',
+    });
+    // 28 identical infos become ONE entry that still says 28. No silent cap.
+    expect(violations[1]).toEqual({ ruleId: 'VR-01', severity: 'info', count: 28 });
+    expect(violations[2]).toEqual({ ruleId: 'R-20', severity: 'warning', count: 2 });
+    expect(violations).toHaveLength(3);
+    // The total is recoverable: 1 error + 28 + 2 = 31, exactly what went in.
+    const total = violations.reduce((n, v) => n + ((v.count as number) ?? 1), 0);
+    expect(total).toBe(31);
   });
 
   it('keeps every record — smaller must not mean fewer', () => {
