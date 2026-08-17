@@ -533,8 +533,12 @@ describe('executor (CR-GC-278)', () => {
     expect(instruction).not.toContain('Element-Index');
     // Die generate-Instruktion selbst bleibt ungekürzt (CR-282-Lektion).
     expect(instruction).toContain('Gate-Protokoll');
-    // Der System-Prompt sagt dem Modell, dass Guide + Index bereits vorliegen.
-    expect(calls[0].system).toContain('BEREITS in der Instruktion');
+    // GENAU EIN Schreiber pro Tatsache (CR-GC-358): dass der Guide schon vorliegt,
+    // sagt der Injektions-Block — der es als einziger WEISS, weil er ihn erzeugt hat.
+    expect(instruction).toContain('Gate-Protokoll Schritt 1 ist damit erledigt');
+    // Der System-Prompt (Konstante) darf es NICHT behaupten: bei injection=false liefe
+    // die Injektion nicht, die Behauptung wäre falsch und widerspräche dem Protokoll.
+    expect(calls[0].system).not.toContain('BEREITS in der Instruktion');
   });
 
   it('round prompt injection (expand): element index with uid · type · name rides in the prompt (CR-GC-285)', async () => {

@@ -68,10 +68,36 @@ ein Parallelpfad ohne Anforderung.
 
 - [x] `npm run build` grün, `tests/cli.run.test.ts` grün
 - [x] Test verifiziert, dass das Feld unkonfiguriert NICHT gesendet wird
+- [x] Prompt-Widerspruch (a) behoben: R-15-Klausel nur im R-15-Fund-Fenster, mit uids;
+      `SYSTEM` behauptet nichts mehr über den Inhalt der Instruktion. Test erzwingt
+      BEIDE Zweige (Klausel da / Klausel weg), sonst prüft er nichts
 - [ ] Benchmark-Lauf qwen3.8 mit `reasoning_effort=low` liefert einen verwertbaren
       Endgraphen; Zeile in `rig/greenfield-systemtest/results/README.md` ergänzt
+- [ ] undici-`headersTimeout` aus `callTimeoutMs` ableiten (Punkt (b) des Nachtrags)
 - [ ] Timeout-Empfehlung für dense-Modelle dokumentiert (`GRAPHCODE_LLM_TIMEOUT_MS`,
       Faustregel `maxTokens / Decode-Rate` + Prefill-Reserve)
+
+## Warum keine Regeländerung (Entscheidung, 2026-08-17)
+
+`R-15` in `@sigloch/contracts/se` ist `FCHAIN must have compose`, severity `warning`,
+Dimension `uc` — die Regel ist korrekt und eindeutig. Widersprüchlich war allein die
+**Prosa, die aus ihr gemacht wurde**: ein unbedingter Satz im `uc`-Template, der neben
+seinem eigenen Nachbarsatz stand („FCHAIN-Szenarien (UC compose FCHAIN)" = lege eine an
+vs. „KEINE neue FCHAIN/UC anlegen"). Eine Contracts-Änderung hätte einen Version-Bump
+plus Familie-Review gekostet (Drift-Lock L1/L2) und das Problem nicht berührt.
+
+Ebenso verworfen: ein `if` auf die Config im Prompt-Builder. Das lässt zwei Texte
+*bedingt* übereinstimmen — zwei Schreiber derselben Tatsache bleiben zwei Schreiber, und
+der nächste Umbau bricht sie wieder auseinander. Gewählt wurde die dritte Ebene: die
+Aussage aus dem Zustand ABLEITEN, damit der Widerspruch strukturell unmöglich wird.
+Genau EIN Schreiber pro Tatsache — `injection=true` ⇒ der Injektions-Block sagt „Schritt 1
+erledigt"; `injection=false` ⇒ das Gate-Protokoll sagt „Guide aufrufen"; nie beides.
+
+Nebenbefund: der bereits existierende Test „R-15 Stagnations-Fix" (`generate.test.ts`,
+CR-GC-290-Nachtrag) dokumentiert einen Messlauf, in dem das Modell dem Template wörtlich
+folgte, mehr ACTOR/FCHAIN/UC anlegte und dadurch IMMER MEHR R-15-Funde erzeugte. Das
+wurde damals mit Rule-ID-Fenstern auf einer anderen Ebene abgefangen — der Widerspruch
+selbst blieb stehen. Dies hier ist die Ursache zu jenem Workaround.
 
 ## Nachtrag — der Verifikationslauf deckte ZWEI tiefere Ursachen auf
 

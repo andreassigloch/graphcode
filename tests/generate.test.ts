@@ -380,7 +380,36 @@ describe('generationStep — R-15 Stagnations-Fix (CR-GC-290-Nachtrag, Messlauf-
     expect(step.focusKey).toMatch(/^uc:R-15:/);
     expect(step.prompt).toContain('FUNC');
     expect(step.prompt).toContain('compose→FUNC');
-    expect(step.prompt).toContain('KEINE neue FCHAIN/UC anlegen');
+    expect(step.prompt).toContain('KEINE neue FCHAIN');
+    // Die Klausel benennt die konkreten Funde, statt global zu verbieten (CR-GC-358).
+    expect(step.prompt).toContain('FCHAIN-leer');
+  });
+
+  it('die R-15-Klausel erscheint NUR im R-15-Fenster — nie über einem uc-Fenster anderer Regel (CR-GC-358)', () => {
+    // Der Widerspruch, den qwen3.8 auseinandernahm: das uc-Template trug den Satz
+    // "KEINE neue FCHAIN/UC anlegen" unbedingt — also auch neben Funden, deren Fix
+    // GENAU das Anlegen einer FCHAIN ist ("FCHAIN-Szenarien (UC compose FCHAIN)").
+    let step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    const keys: string[] = [];
+    let checkedNonR15 = 0;
+    let checkedR15 = 0;
+    while (step.focusKey && !keys.includes(step.focusKey) && keys.length < 20) {
+      if (step.focusKey.startsWith('uc:')) {
+        const [, ruleId] = step.focusKey.split(':');
+        if (ruleId === 'R-15') {
+          expect(step.prompt).toContain('KEINE neue FCHAIN');
+          checkedR15++;
+        } else {
+          expect(step.prompt).not.toContain('KEINE neue FCHAIN');
+          checkedNonR15++;
+        }
+      }
+      keys.push(step.focusKey);
+      step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8, keys);
+    }
+    // Beide Zweige müssen wirklich durchlaufen worden sein, sonst prüft der Test nichts.
+    expect(checkedR15).toBeGreaterThan(0);
+    expect(checkedNonR15).toBeGreaterThan(0);
   });
 
   it('Funde-Zeile trägt den fix_hint der Violation (R-15: "Add FUNC elements via compose trace")', () => {

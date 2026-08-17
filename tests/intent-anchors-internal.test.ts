@@ -35,9 +35,15 @@ describe('CR-GC-307: the anchor vocabulary never reaches a human-facing string',
     // Source-level grep: a review comment would let the term creep back on the next
     // edit. This is the enforcement.
     const src = readFileSync(new URL('../src/generate.ts', import.meta.url), 'utf8');
+    // Kommentare ZUERST entfernen (CR-GC-358): der Literal-Match unten ist ein naiver
+    // Quote-Scanner, und ein einzelnes Apostroph in deutscher Kommentar-Prosa ("don't",
+    // "das Modell's") verschiebt seine Paarbildung um eins — danach ist jedes gemeldete
+    // "Literal" ein Phantom-Ausschnitt quer über echten Code. Kommentare sind ohnehin
+    // nicht das Schutzziel: geprüft wird, was ein MENSCH aus dem Prompt liest.
+    const code = src.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
     // Only the STRING LITERALS matter — code identifiers (profile.intentAnchors) are
     // internal and must keep their name.
-    const literals = [...src.matchAll(/'((?:[^'\\]|\\.)*)'/g)].map((m) => m[1]);
+    const literals = [...code.matchAll(/'((?:[^'\\]|\\.)*)'/g)].map((m) => m[1]);
     for (const lit of literals) {
       for (const pattern of STEERING_JARGON) {
         // `intentAnchors` as a bare field reference inside a code string is fine;

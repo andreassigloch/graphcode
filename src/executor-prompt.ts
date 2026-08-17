@@ -14,6 +14,17 @@ import type { GenerationStep } from './generate.js';
 
 // ---------------------------------------------------------------------------
 // System-Prompt — bewusst ~1 Seite; die Methode kommt aus graph_generate.
+//
+// Der System-Prompt macht bewusst KEINE Aussage darüber, was die Runden-
+// Instruktion enthält (CR-GC-358). Er ist eine Konstante und kann es nicht
+// wissen: die Kanten-Grammatik landet nur dann in der Instruktion, wenn
+// buildRoundInjection lief (injection=true) — bei injection=false behauptete
+// der frühere Satz „steht BEREITS in der Instruktion, rufe graph_authoring_guide
+// NICHT auf" das Gegenteil dessen, was das Gate-Protokoll („Schritt 1: Guide
+// aufrufen") verlangte, und zwar über einer Instruktion, in der die Grammatik
+// tatsächlich fehlte. Genau EIN Schreiber pro Tatsache: injection=true → der
+// Injektions-Block sagt „bereits eingebettet, Schritt 1 erledigt";
+// injection=false → das Gate-Protokoll sagt „Guide aufrufen". Nie beides.
 // ---------------------------------------------------------------------------
 
 /** Exportiert für den Contracts-Drift-Test (CR-GC-291): jeder ElementType.options-Wert
@@ -32,8 +43,6 @@ graph_mutate-Form (exakt):
   {"op":"add-edge","edge":{"sourceId":"ACTOR-user","targetId":"UC-login","edgeType":"io","attributes":{}}}
 ]}
 uid = "<TYP>-<kebab-name>". Nutze GENAU die Kanten aus der Instruktion (z.B. "ACTOR io→UC, SYS compose→UC").
-Kanten-Grammatik der Fokus-Typen und Element-Index (uid · type · name) stehen BEREITS in der Instruktion —
-rufe graph_authoring_guide/graph_elements NICHT dafür auf, nur für darüber hinausgehende Details (graph_get_node).
 Lehnt das Gate deinen Batch ab (success:false), korrigiere NUR die beanstandeten Commands anhand der
 violations/fixHints und reiche den VOLLSTÄNDIGEN korrigierten Batch erneut ein.
 list_dir/read_file/grep über ./material nur sparsam, um echte Modul-Namen zu finden — nicht statt Bauen.

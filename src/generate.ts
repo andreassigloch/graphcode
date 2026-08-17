@@ -80,10 +80,31 @@ const GATE_PROTOCOL: Record<GenerationSelection, string> = {
     PROTOCOL_NEXT,
 };
 
+/**
+ * Regel-spezifische Zusatzklausel, NUR gerendert wenn genau diese Regel das
+ * Fund-Fenster der Runde stellt (CR-GC-358).
+ *
+ * Warum nicht im Dimensions-Template: dort stand die R-15-Klausel als
+ * unbedingter Satz neben „FCHAIN-Szenarien (UC compose FCHAIN)" — also
+ * „lege eine FCHAIN an" UND „lege KEINE neue FCHAIN an" in EINEM String, in
+ * JEDER uc-Runde, unabhängig davon ob überhaupt eine leere FCHAIN existierte.
+ * qwen3.8 hat den Widerspruch im Reasoning auseinandergenommen („this is a
+ * direct conflict") und dann 4347 Denk-Token ohne Tool-Call verbraucht;
+ * schwächere Modelle haben ihn überlesen. Die Regel R-15 selbst ist korrekt —
+ * falsch war, sie als Prosa zu BEHAUPTEN statt aus dem Zustand abzuleiten
+ * („enforce, don't document"). `windowsOf` gruppiert je rule_id, ein Fenster
+ * trägt also genau eine Regel: die Klausel wird exakt und mit den konkreten
+ * uids gerendert oder gar nicht.
+ */
+const RULE_CLAUSE: Record<string, (uids: string[]) => string> = {
+  'R-15': (uids) =>
+    ` Diese Funde sind BESTEHENDE, leere FCHAINs (${uids.join(', ')}): häng an jede davon 3±2 FUNC-Elemente` +
+    ' (FCHAIN compose→FUNC), die den Ablauf in Schritte zerlegen. Für diese Funde KEINE neue FCHAIN und keinen neuen UC anlegen.',
+};
+
 /** Generative Instruktion je Readiness-Dimension (die Schreib-Zwillinge der graph_next_step-Aktionen). */
 const GENERATION_TEMPLATE: Record<string, string> = {
-  uc: 'Schlage je Fund 2–3 Kandidaten vor: fehlende ACTORs (io→UC), FCHAIN-Szenarien (UC compose FCHAIN) oder fehlende UCs aus der Intention. UC-Stil: Actor–Verb–Objekt–Ergebnis, ≤25 Wörter (Skill se:author-uc). ' +
-    'FCHAIN OHNE Compose-Kante (R-15): KEINE neue FCHAIN/UC anlegen — stattdessen 3±2 FUNC-Elemente an die BESTEHENDE FCHAIN hängen (FCHAIN compose→FUNC), die den Ablauf in Schritte zerlegen.',
+  uc: 'Schlage je Fund 2–3 Kandidaten vor: fehlende ACTORs (io→UC), FCHAIN-Szenarien (UC compose FCHAIN) oder fehlende UCs aus der Intention. UC-Stil: Actor–Verb–Objekt–Ergebnis, ≤25 Wörter (Skill se:author-uc).',
   req: 'Schlage je UC ohne Requirements 3–5 REQ-Kandidaten vor (UC compose REQ), präzise und prüfbar formuliert; emittiere jede neue REQ zusammen mit einem TEST (TEST verify REQ) im selben Batch — eine REQ ohne verify-TEST blockt das Gate (R-01). Löse Platzhalter/Ambiguität in bestehenden REQs auf.',
   arch: 'Zerlege je Fund die FCHAIN/FUNC-Ebene: 7±2 FUNCs pro Zerlegungsebene (RD-04), FLOWs zwischen FUNCs (io). Schlage je Fund 2 alternative FUNC/FCHAIN-Zerlegungen vor — jede neue FUNC zusammen mit satisfy→REQ und allocate→MOD im selben Batch (fehlt die REQ oder das MOD im Graphen, zuerst anlegen). Lass das Gate wählen.',
   alloc: 'Schlage MOD-Schnitte vor (intern stark, extern schwach gekoppelt) und allocate-Kanten FUNC→MOD; 2 Alternativen, Δm-Vergleich entscheidet.',
@@ -339,7 +360,16 @@ export function generationStep(
   const funde = focusViolations
     .map((v) => `${v.element_id} (${v.rule_id}: ${v.message}${v.fix_hint ? ` — Fix: ${v.fix_hint}` : ''})`)
     .join('; ');
-  const template = focus ? (GENERATION_TEMPLATE[focus.dimension] ?? 'Behebe die Funde der Dimension.') : '';
+  // Regel-Klausel nur für die Regel, die dieses Fenster stellt (windowsOf gruppiert
+  // je rule_id) — und mit den konkreten uids, statt als globales Verbot.
+  const windowRule = focusViolations[0]?.rule_id;
+  const ruleClause =
+    windowRule && RULE_CLAUSE[windowRule]
+      ? RULE_CLAUSE[windowRule](focusViolations.map((v) => v.element_id))
+      : '';
+  const template = focus
+    ? (GENERATION_TEMPLATE[focus.dimension] ?? 'Behebe die Funde der Dimension.') + ruleClause
+    : '';
   const deferNote = deferExhausted
     ? 'Hinweis: ALLE Fund-Sets waren zurückgestellt (defer) — Zurückstellung wird ignoriert. '
     : '';
