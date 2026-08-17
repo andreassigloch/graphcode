@@ -1894,7 +1894,7 @@
       "name": "Skill se:author-req",
       "description": "Prompt-realisierter Skill se:author-req: REQ mit verifizierendem TEST-Konzept in einem Batch — die REQ-with-test-Invariante.",
       "realRef": {
-        "file": ".claude/skills/se-author-req.md",
+        "file": ".claude/commands/se/author-req.md",
         "symbol": "se-author-req",
         "lang": "prompt"
       }
@@ -1905,7 +1905,7 @@
       "name": "Skill se:author-uc",
       "description": "Prompt-realisierter Skill se:author-uc: UC terse und jargonarm autorieren, mit compose-Trace durchs Gate.",
       "realRef": {
-        "file": ".claude/skills/se-author-uc.md",
+        "file": ".claude/commands/se/author-uc.md",
         "symbol": "se-author-uc",
         "lang": "prompt"
       }
@@ -2023,7 +2023,7 @@
       "name": "Skill se:close-violations",
       "description": "Prompt-realisierter Skill se:close-violations: den Graphen auf null Error-Verstoesse treiben — ranked verify/satisfy-Kanten durchs Gate.",
       "realRef": {
-        "file": ".claude/skills/se-close-violations.md",
+        "file": ".claude/commands/se/close-violations.md",
         "symbol": "se-close-violations",
         "lang": "prompt"
       }
@@ -2356,7 +2356,7 @@
       "name": "Skill se:import-doc",
       "description": "Prompt-realisierter Skill se:import-doc: Dokument zweistufig importieren — Struktur vor KI, Merge nie Reseed.",
       "realRef": {
-        "file": ".claude/skills/se-import-doc.md",
+        "file": ".claude/commands/se/import-doc.md",
         "symbol": "se-import-doc",
         "lang": "prompt"
       }
@@ -2642,7 +2642,7 @@
       "name": "Skill se-conops",
       "description": "Prompt-realisierter Skill se-conops: Concept of Operations — Betriebsaspekte vor den Use Cases, als system-scoped REQ durchs Gate.",
       "realRef": {
-        "file": ".claude/skills/se-conops.md",
+        "file": ".claude/commands/se-conops.md",
         "symbol": "se-conops",
         "lang": "prompt"
       }
@@ -2653,7 +2653,7 @@
       "name": "Skill se-fmea",
       "description": "Prompt-realisierter Skill se-fmea: AIAG-VDA-FMEA auf System/Subsystem, Befunde in Graph und Spec.",
       "realRef": {
-        "file": ".claude/skills/se-fmea.md",
+        "file": ".claude/commands/se-fmea.md",
         "symbol": "se-fmea",
         "lang": "prompt"
       }
@@ -2664,7 +2664,7 @@
       "name": "Skill se:generate",
       "description": "Prompt-realisierter Skill se:generate: Kaltstart-Generierung aus Prosa-Intention, readiness-getriebener Loop durchs Gate.",
       "realRef": {
-        "file": ".claude/skills/se-generate.md",
+        "file": ".claude/commands/se/generate.md",
         "symbol": "se-generate",
         "lang": "prompt"
       }
@@ -2675,7 +2675,7 @@
       "name": "Skill se:help",
       "description": "Prompt-realisierter Skill se:help: jedes Dashboard-Element fuer beide Publikums-Seiten erklaeren.",
       "realRef": {
-        "file": ".claude/skills/se-help.md",
+        "file": ".claude/commands/se/help.md",
         "symbol": "se-help",
         "lang": "prompt"
       }
@@ -2686,7 +2686,7 @@
       "name": "Skill se-irr",
       "description": "Prompt-realisierter Skill se-irr: Assumption Review — unbewiesene Annahmen pinnen, tragende zu CRs promoten.",
       "realRef": {
-        "file": ".claude/skills/se-irr.md",
+        "file": ".claude/commands/se-irr.md",
         "symbol": "se-irr",
         "lang": "prompt"
       }
@@ -2697,7 +2697,7 @@
       "name": "Skill se-plan",
       "description": "Prompt-realisierter Skill se-plan: Implementierungsplan aus dem depends-on-DAG, CR-Schnitt aus graph_context-Slices.",
       "realRef": {
-        "file": ".claude/skills/se-plan.md",
+        "file": ".claude/commands/se-plan.md",
         "symbol": "se-plan",
         "lang": "prompt"
       }
@@ -2708,7 +2708,7 @@
       "name": "Skill se-retro",
       "description": "Prompt-realisierter Skill se-retro: Post-Projekt-Retro ueber die sechs graphcode-KPIs.",
       "realRef": {
-        "file": ".claude/skills/se-retro.md",
+        "file": ".claude/commands/se-retro.md",
         "symbol": "se-retro",
         "lang": "prompt"
       }
@@ -2719,7 +2719,7 @@
       "name": "Skill se-review",
       "description": "Prompt-realisierter Skill se-review: Readiness-Gate-Check — Blocker und naechste Schritte.",
       "realRef": {
-        "file": ".claude/skills/se-review.md",
+        "file": ".claude/commands/se-review.md",
         "symbol": "se-review",
         "lang": "prompt"
       }
@@ -2730,7 +2730,7 @@
       "name": "Skill se-status",
       "description": "Prompt-realisierter Skill se-status: SE-Projektstatus — Readiness, Verstoesse, Top-Fixes.",
       "realRef": {
-        "file": ".claude/skills/se-status.md",
+        "file": ".claude/commands/se-status.md",
         "symbol": "se-status",
         "lang": "prompt"
       }
@@ -2741,7 +2741,7 @@
       "name": "Skill se-trade",
       "description": "Prompt-realisierter Skill se-trade: Trade Study — Optionen bewerten, Entscheidung mit decides-Kanten im Graph.",
       "realRef": {
-        "file": ".claude/skills/se-trade.md",
+        "file": ".claude/commands/se-trade.md",
         "symbol": "se-trade",
         "lang": "prompt"
       }
@@ -2814,7 +2814,7 @@
       "name": "Skill se:target-profile",
       "description": "Prompt-realisierter Skill se:target-profile: R6-Zielgewichte vom Menschen elizitieren, Zielkonflikte sichtbar machen.",
       "realRef": {
-        "file": ".claude/skills/se-target-profile.md",
+        "file": ".claude/commands/se/target-profile.md",
         "symbol": "se-target-profile",
         "lang": "prompt"
       }
@@ -13338,5 +13338,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 107
+  "graphVersion": 108
 }
