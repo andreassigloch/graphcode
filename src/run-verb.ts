@@ -57,6 +57,10 @@ export function parseExecutorEnv(env: NodeJS.ProcessEnv): ExecutorConfig {
     ...(env.GRAPHCODE_LLM_JUDGE ? { judge: env.GRAPHCODE_LLM_JUDGE } : {}),
     // Mess-Schalter (CR-GC-293): buildRoundInjection für einen einzelnen Lauf abschalten.
     ...(env.GRAPHCODE_LLM_INJECTION ? { injection: env.GRAPHCODE_LLM_INJECTION !== 'false' } : {}),
+    // Denk-Budget für Reasoning-Modelle (qwen3.8-Messung, s. ExecutorConfigSchema).
+    ...(env.GRAPHCODE_LLM_REASONING_EFFORT
+      ? { reasoningEffort: env.GRAPHCODE_LLM_REASONING_EFFORT }
+      : {}),
   });
 }
 

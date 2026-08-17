@@ -10,7 +10,7 @@ import { join } from 'node:path';
 import { AUDIT_FILE, type AuditEntry } from '@sigloch/graph-api-core';
 import { createHarness } from '../src/index.js';
 import { executeRun, parseExecutorEnv } from '../src/run-verb.js';
-import { ExecutorConfigSchema, type ModelResponse } from '../src/executor.js';
+import { ExecutorConfigSchema, buildCallModel, type ModelResponse } from '../src/executor.js';
 
 const SEED_RESPONSE: ModelResponse = {
   text: '',
@@ -98,6 +98,46 @@ describe('parseExecutorEnv (CR-GC-279)', () => {
     expect(parseExecutorEnv(base).injection).toBe(true);
     expect(parseExecutorEnv({ ...base, GRAPHCODE_LLM_INJECTION: 'false' }).injection).toBe(false);
     expect(parseExecutorEnv({ ...base, GRAPHCODE_LLM_INJECTION: 'true' }).injection).toBe(true);
+  });
+
+  it('GRAPHCODE_LLM_REASONING_EFFORT sets the Denk-Budget — unset stays undefined (Feld wird nicht gesendet)', () => {
+    const base = { GRAPHCODE_LLM_BASE_URL: 'http://localhost:1234', GRAPHCODE_LLM_MODEL: 'qwen3.8-27b' };
+    expect(parseExecutorEnv(base).reasoningEffort).toBeUndefined();
+    expect(parseExecutorEnv({ ...base, GRAPHCODE_LLM_REASONING_EFFORT: 'low' }).reasoningEffort).toBe('low');
+    expect(() => parseExecutorEnv({ ...base, GRAPHCODE_LLM_REASONING_EFFORT: 'schnell' })).toThrowError();
+  });
+});
+
+describe('buildCallModel openai body — reasoning_effort (qwen3.8)', () => {
+  /** Fängt genau EINEN Request ab und gibt seinen geparsten Body zurück. */
+  async function captureBody(config: Record<string, unknown>): Promise<Record<string, unknown>> {
+    const original = globalThis.fetch;
+    let body: Record<string, unknown> = {};
+    globalThis.fetch = (async (_url: string, init: { body: string }) => {
+      body = JSON.parse(init.body) as Record<string, unknown>;
+      return {
+        json: async () => ({
+          choices: [{ message: { content: 'ok', tool_calls: [] } }],
+          usage: { prompt_tokens: 1, completion_tokens: 1 },
+        }),
+      };
+    }) as unknown as typeof globalThis.fetch;
+    try {
+      const call = buildCallModel(
+        ExecutorConfigSchema.parse({ baseUrl: 'http://localhost:1234', model: 'qwen3.8-27b', ...config }),
+      );
+      await call('sys', [{ role: 'user', content: 'hi' }], [], undefined);
+    } finally {
+      globalThis.fetch = original;
+    }
+    return body;
+  }
+
+  it('sends reasoning_effort only when configured (Denk-Budget-Schalter erreicht das Backend)', async () => {
+    expect(await captureBody({ reasoningEffort: 'low' })).toMatchObject({ reasoning_effort: 'low' });
+    // Unkonfiguriert darf das Feld NICHT im Body stehen — Backends ohne das Feld
+    // (Anthropic-kompatible Proxies) würden den Request sonst ablehnen.
+    expect(await captureBody({})).not.toHaveProperty('reasoning_effort');
   });
 });
 

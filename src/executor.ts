@@ -94,6 +94,14 @@ export const ExecutorConfigSchema = z.object({
    * Elementzahl/Turn-Profil zu messen (Nachtrag executor-abschlussbericht.md Punkt 3:
    * "Injektion nützt Frontier, hungert Local aus" war mit CR-284 konfundiert). */
   injection: z.boolean().default(true),
+  /** Denk-Budget von Reasoning-Modellen (Qwen3.8: xhigh|medium|low, OpenAI-kompatibel
+   * als `reasoning_effort` im Request). Gemessen an qwen3.8-27b@4bit (M4 Pro, 14,8 tok/s):
+   * ohne den Schalter denkt das Modell 815 Reasoning-Token pro Call (68 s), mit 'low'
+   * noch 175 (25 s) — bei IDENTISCHEM Batch (5/5 Commands). Ohne ihn reißt jeder Call
+   * mit gewachsenem Kontext den callTimeoutMs, weil dense-27B ~4× langsamer decodiert
+   * als das 35B-A3B-MoE, für das die Defaults dimensioniert waren. Nur gesetzt gesendet:
+   * Backends ohne das Feld dürfen den Request nicht mit unbekanntem Feld ablehnen. */
+  reasoningEffort: z.enum(['none', 'minimal', 'low', 'medium', 'high', 'xhigh']).optional(),
 });
 export type ExecutorConfig = z.infer<typeof ExecutorConfigSchema>;
 
@@ -351,6 +359,7 @@ export function buildCallModel(config: ExecutorConfig): CallModel {
         max_tokens: config.maxTokens,
         // Best-of-N (CR-GC-288): der Kandidaten-Spread überschreibt die Basis-Temperatur.
         temperature: opts?.temperature ?? config.temperature,
+        ...(config.reasoningEffort ? { reasoning_effort: config.reasoningEffort } : {}),
         messages: [{ role: 'system', content: system }, ...messages],
         tools,
       }),
