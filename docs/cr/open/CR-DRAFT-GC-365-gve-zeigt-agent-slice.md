@@ -51,3 +51,13 @@ aus dem Slice, nicht aus dem Browser.
 - [ ] UI-Test prüft **gerendertes Ergebnis** gegen die Slice-Knotenmenge (se-test-ui:
       Rendered Intent, nicht DOM-Präsenz)
 - [ ] `npm run build` + Tests in beiden Repos grün
+
+---
+
+## Blockiert (2026-08-18)
+
+**Nicht implementieren, bis `SPIKE-GC-minimal-whitebox` abgeschlossen ist.** Der Spike
+definiert, *was* die Scheibe ist (Rollen `seed | whitebox | blackbox`, §8) und *wie groß*
+sie sein darf (H3). Vorher gebaut, würde dieser CR gegen eine Scheibe implementieren, die
+der Spike gerade widerlegen soll. Auch **keine** weiteren CRs zu diesem Thema anlegen,
+bis das Ergebnis vorliegt.

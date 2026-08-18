@@ -52,3 +52,13 @@ und die Messung; das Einschalten ist ein Folge-CR, kein Teil hiervon.
 - [ ] Schalter `GRAPHCODE_HOOK_INJECT` **default aus**; Test beide Richtungen
 - [ ] Messlauf gegen CR-293-Baseline dokumentiert (Frontier + Local), Zahlen im CR
 - [ ] `npm run build` + Tests grün
+
+---
+
+## Blockiert (2026-08-18)
+
+**Nicht implementieren, bis `SPIKE-GC-minimal-whitebox` abgeschlossen ist.** Der Spike
+definiert, *was* die Scheibe ist (Rollen `seed | whitebox | blackbox`, §8) und *wie groß*
+sie sein darf (H3). Vorher gebaut, würde dieser CR gegen eine Scheibe implementieren, die
+der Spike gerade widerlegen soll. Auch **keine** weiteren CRs zu diesem Thema anlegen,
+bis das Ergebnis vorliegt.

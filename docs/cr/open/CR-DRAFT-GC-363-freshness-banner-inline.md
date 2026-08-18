@@ -33,3 +33,12 @@ Das Banner informiert, es fordert nicht zum Neubau auf.
       keine zweite Quelle)
 - [ ] Gilt für `graph_context` **und** `graph_impact`; Test deckt beide ab
 - [ ] `npm run build` + Tests grün
+
+---
+
+## Blockiert (2026-08-18)
+
+**Nicht implementieren, bis `SPIKE-GC-minimal-whitebox` abgeschlossen ist.** Die Sperre ist
+hier **nicht** inhaltlich — das Freshness-Banner ist unabhängig von der Whitebox-Frage —
+sondern eine Datei-Kollision: der Spike ändert dieselbe Read-Ergebnis-Oberfläche
+(`src/tools/read.ts`, Format-E-Kopf). Zuerst der Slice, dann das Banner darauf.

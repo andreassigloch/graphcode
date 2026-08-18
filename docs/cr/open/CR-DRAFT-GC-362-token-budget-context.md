@@ -35,3 +35,13 @@ steuert die **Traversierung**, nicht eine Nachbearbeitung des Ergebnisses.
 - [ ] Zu kleines Budget (< Wurzelknoten) → klarer Fehler, kein leeres Ergebnis
 - [ ] Ausgabe bleibt Format-E (CR-GC-210), nicht JSON
 - [ ] `npm run build` + Tests grün
+
+---
+
+## Blockiert (2026-08-18)
+
+**Nicht implementieren, bis `SPIKE-GC-minimal-whitebox` abgeschlossen ist.** Der Spike
+definiert, *was* die Scheibe ist (Rollen `seed | whitebox | blackbox`, §8) und *wie groß*
+sie sein darf (H3). Vorher gebaut, würde dieser CR gegen eine Scheibe implementieren, die
+der Spike gerade widerlegen soll. Auch **keine** weiteren CRs zu diesem Thema anlegen,
+bis das Ergebnis vorliegt.

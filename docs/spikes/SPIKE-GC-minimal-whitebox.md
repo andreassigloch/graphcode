@@ -82,6 +82,24 @@ Alle Arme laufen gegen **dasselbe Job-Set** (§6) und liefern denselben Artefakt
   CR-GC-293-Baseline (v9/v15/v19/v20), **gleiches** Modell, **gleicher** Prompt. Beantwortet,
   ob der Local-Nachteil aus der *Menge* kam und nicht aus dem *Prinzip* Injektion.
 
+## 5a. Ausführung in zwei Phasen
+
+**Phase 1 — Frontier-LLM.** Der Whitebox-Schnitt wird zuerst mit einem Frontier-Modell
+bestimmt und geprüft. Grund: die Frage ist „welcher Schnitt trägt", nicht „welches Modell
+schafft es". Ein starkes Modell trennt die beiden Fehlerquellen — scheitert der Job hier,
+liegt es am Schnitt, nicht am Modell.
+
+**Phase 2 — Lokales Modell + Treiber.** Derselbe Schnitt, gefahren mit lokalem Modell im
+Treiber-Loop (`generation-step` / `next-step` / `rank-candidates`). Erst hier zählt Arm C
+gegen die CR-GC-293-Baseline. Phase 2 kann Phase 1 **nicht** ersetzen: ein negatives
+Ergebnis wäre nicht zuzuordnen.
+
+**Mindestlatte für beide Phasen.** Der heutige Zustand ist *ganzer Graph, alphabetisch bei
+8000 Zeichen gekappt*. Jeder Schnitt, der überhaupt einen Seed kennt, muss das schlagen.
+Ein Ergebnis „nicht besser als heute" ist deshalb kein Beleg gegen die Whitebox-These,
+sondern ein Befund über den Harness — und wird als solcher untersucht, nicht als
+Falsifikation verbucht.
+
 ## 6. Job-Set (Fixture)
 
 Reale, abgeschlossene Jobs aus diesem Repo — Ground Truth = die tatsächlich geänderten
@@ -112,12 +130,14 @@ je Knoten: `seed | whitebox | blackbox`. Dieses Objekt ist zugleich das, was GVE
 den, den der Agent bekommen hat. Rechnet GVE weiter selbst, driftet die Anzeige per
 Konstruktion — genau der am 2026-08-18 gefundene Ist-Zustand.
 
-## 9. Abhängigkeit: `CR-DRAFT-GC-297` ist geparkt
+## 9. CR-Sperre für dieses Thema
 
 CR-GC-297 wollte den Injektions-Default backend-abhängig machen, weil Injektion Local
 Ausbeute kostete. Wenn Arm C zeigt, dass die Kosten aus dem alphabetischen Voll-Index
 kamen, ist 297 eine Symptombehandlung an einem Schalter, dessen Ursache verschwindet.
 **297 wird nicht implementiert, bis Arm C gelaufen ist.**
+
+Ebenso blockiert bis zum Spike-Ergebnis: **CR-DRAFT-GC-361** (Hook-Injektion), **362** (Token-Budget-Context), **365** (GVE-Viewer) — sie alle würden gegen eine Scheibe bauen, die dieser Spike erst definiert. **363** (Freshness-Banner) ist nur wegen der Datei-Kollision in `src/tools/read.ts` mitblockiert. **Keine neuen CRs zu diesem Thema**, bis das Ergebnis vorliegt.
 
 ## 10. Nicht-Ziele
 
