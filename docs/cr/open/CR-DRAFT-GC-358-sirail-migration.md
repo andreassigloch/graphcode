@@ -150,11 +150,38 @@ offene Frage**, und sie ist jetzt an zwei echten Beispielen belegt statt an eine
    welche FUNC, welche Datei belegt welche Abnahme) — eigener CR, ~19 FUNC + 43 TEST Urteile.
 5. **Ebene 1** in sirail: die Blätter sind heute Ebene 1. Erst nötig, wenn ein Block über
    ~8 Kinder wächst.
-6. **Alt-Daten**: `.aimprove/` (82 MB Kuzu, learning.db, state.json) bleibt liegen. Die
-   Migration hat aus dem **JSON-Backup vom 11.06.** gelesen, nicht aus dem Alt-Kuzu — falls
-   dort neuere Stände liegen, sind sie nicht mitgekommen. **Vor dem Löschen prüfen.**
+6. ~~**Alt-Daten**~~ — **erledigt, siehe §5.**
 
 ---
+
+## 5. Altdaten-Entsorgung (2026-08-18) — und wie sie geprüft wurde
+
+**Entfernt: 100 MB.** `.aimprove/` (98 MB — Alt-Kuzu, zwei `learning.db`-Sätze, zwei
+`state.json`, ein versehentlich verschachteltes `.aimprove/.aimprove/`), `data/` (380 KB,
+aimprove-Lernstatistik: `sessionsAnalyzed`/`allEpisodes`/`allPatterns`), `ruvector.db` (1,5 MB,
+von keiner Zeile im Repo referenziert).
+
+**Die Prüfung vor dem Löschen war nötig und hätte fast in die Irre geführt.** Der Alt-Kuzu ist
+vom **13.06.**, das migrierte JSON-Backup vom **11.06.** — zwei Tage Delta. Der Store ist ein
+Einzeldatei-Kuzu aus der aimprove-Zeit und lässt sich mit der heutigen Engine nicht öffnen, also
+wurde er per String-Extraktion gegen die migrierten IDs verglichen:
+
+> **Erstbefund: 4 IDs nur im Alt-Kuzu.** Nachgeprüft waren alle vier Artefakte der Extraktion —
+> `TrainSim.AC.005a`/`TrainHw.AC.005b` heißen mit Buchstabensuffix, das der ID-Regex
+> (`[0-9]{3}`) abschnitt; `aTrainHw.AC.005`/`bAdminRole.AC.005` sind Verkettungsrauschen aus dem
+> Binärdump.
+
+**Kein Element war nur im Alt-Store.** Erst danach wurde gelöscht. Die Migrationsquelle liegt als
+Provenance-Beleg in `docs/archive/sirail-aimprove-graph-2026-06-11.json` (88 KB, committet) —
+88 KB aufzuheben ist billiger als die Frage, woher die 190 Elemente kamen.
+
+**Nicht angefasst — das ist kein Datenmüll, sondern eine Entscheidung (F5):**
+`src/graph-server.js` (sirails eigener Express-Graph-Server), sein `graph-server`-Eintrag in
+`.mcp.json` und `tests/e2e/startup.spec.ts`, das ihn startet und *„190 elements loaded"*
+behauptet. **Dieser Pfad war schon vor der Migration tot:** er liest `.aimprove/graph.json` —
+eine Datei, die es seit Juni nicht mehr gibt, es lagen nur noch `.bak`-Stände daneben. Der Test
+prüft also seit Monaten einen Server, der einen leeren Graphen lädt. Rückbau = eigener CR mit
+Testfolge, nicht Beifang eines Aufräumens.
 
 ## 4. Reproduktion
 
