@@ -112,7 +112,7 @@
       "id": "CR-GC-104",
       "type": "CR",
       "name": "Skills/Prompts-Modul",
-      "description": "MOD-skills (.claude/skills/) + prompt-realisierte FUNC-render-views. Why: Skills/Prompts sind reale, zu managende Dateien = Modul; Allokation dorthin = prompt-realisiert (Skills = Funktionen). (docs/cr/open/CR-GC-104)",
+      "description": "MOD-skills (.claude/commands/) + prompt-realisierte FUNC-render-views. Why: Skills/Prompts sind reale, zu managende Dateien = Modul; Allokation dorthin = prompt-realisiert (Skills = Funktionen). (docs/cr/done/CR-GC-104)",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z"
     },
@@ -2547,7 +2547,7 @@
       "id": "FUNC-render-views",
       "type": "FUNC",
       "name": "render graph→markdown views",
-      "description": "PROMPT-realisierter Graph→Markdown-Renderer via se-view-Skills (.claude/skills/se-view-*); erzeugt z.B. architecture-graph.md. Interim-Realisierung von REQ-doc-export, bis FUNC-export-markdown (code, MOD-docs) gebaut ist. Beweis: Skills = Funktionen (Allokation an MOD-skills = prompt-realisiert).",
+      "description": "PROMPT-realisierter Graph→Markdown-Renderer via se-view-Commands (.claude/commands/se-view/*); erzeugt z.B. architecture-graph.md. Interim-Realisierung von REQ-doc-export, bis FUNC-export-markdown (code, MOD-docs) gebaut ist. Beweis: Skills = Funktionen (Allokation an MOD-skills = prompt-realisiert).",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z",
@@ -3053,7 +3053,7 @@
       "id": "MOD-skills",
       "type": "MOD",
       "name": "skills/prompts — agent-realisierte Funktionen",
-      "description": "App-spezifisches Modul: .claude/skills/ (+ Prompts) — Skill-/Prompt-Definitionen als agent-ausgeführte Funktionen (z.B. se-view-* Graph→Markdown-Views). Lifecycle via FUNC-harness-cli. Allokation hierher = prompt-realisiert (vs. code-realisiert in den übrigen MODs). Beweis: Skills = Funktionen.",
+      "description": "App-spezifisches Modul: .claude/commands/ (+ Prompts) — Skill-/Prompt-Definitionen als agent-ausgeführte Funktionen (z.B. se-view/* Graph→Markdown-Views). Lifecycle via FUNC-harness-cli. Allokation hierher = prompt-realisiert (vs. code-realisiert in den übrigen MODs). Beweis: Skills = Funktionen.",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z"
@@ -5635,7 +5635,7 @@
       "id": "TEST-scaffold-skills",
       "type": "TEST",
       "name": "Scaffold-Installs-Skills-Test",
-      "description": "graphcode init/update kopiert die 9 mitgelieferten .claude/skills/se-*.md in das Ziel-Repo, remove entfernt sie restlos (nur die graphcode-eigenen); end-to-end ueber den gepackten Tarball in einem Fremd-Repo verifiziert. Schliesst die MOD-skills/CR-GC-104-Drift: FUNC-harness-cli managt .claude/skills/. (CR-GC-133)",
+      "description": "graphcode init/update kopiert die mitgelieferten .claude/commands/se*-Dateien in das Ziel-Repo, remove entfernt sie restlos (nur die graphcode-eigenen); end-to-end ueber den gepackten Tarball in einem Fremd-Repo verifiziert. Schliesst die MOD-skills/CR-GC-104-Drift: FUNC-harness-cli managt .claude/commands/. (CR-GC-133)",
       "status": "done",
       "created_at": "2026-06-18T00:00:00.000Z",
       "method": "test",
@@ -5718,7 +5718,7 @@
       "id": "TEST-skills-mcp",
       "type": "TEST",
       "name": "Skills-MCP-Conformance-Test",
-      "description": "Alle 9 .claude/skills/se-*.md sind MCP-getrieben: 0 Treffer fuer die abgeschaltete localhost:3001-API (/api/graph, /api/dashboard, GRAPH_API) und jedes Skill referenziert >=1 Tool aus der Live-Registry. \"done = verifiziert\" fuer die prompt-realisierten FUNCs von MOD-skills (se-view-* → REQ-doc-export). (CR-GC-132)",
+      "description": "Alle mitgelieferten .claude/commands/se*-Dateien sind MCP-getrieben: 0 Treffer fuer die abgeschaltete localhost:3001-API (/api/graph, /api/dashboard, GRAPH_API) und jedes Skill referenziert >=1 Tool aus der Live-Registry. \"done = verifiziert\" fuer die prompt-realisierten FUNCs von MOD-skills (se-view/* → REQ-doc-export). (CR-GC-132)",
       "status": "done",
       "created_at": "2026-06-18T00:00:00.000Z",
       "method": "test",
@@ -13338,5 +13338,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 108
+  "graphVersion": 109
 }
