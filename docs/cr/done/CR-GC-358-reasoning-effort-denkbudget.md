@@ -1,6 +1,14 @@
 # CR-GC-358 — Denk-Budget als Config (`reasoning_effort`) für Reasoning-Modelle
 
-**Status:** open
+**Status:** done (2026-08-18) — Code-Arbeit abgeschlossen in `c3ee2a2` (`reasoning_effort`
+als optionales Denk-Budget) und `91d4e1c` (beide Prompt-Widersprüche aus dem Zustand
+abgeleitet statt behauptet). Suite gemessen **765/767**; die 2 Fehlschläge in
+`conformance.test.ts` sind vorbestehend (per Stash-Gegenprobe nachgewiesen: 16× RC-01,
+stale `realRef` auf `.claude/skills/se-*.md` seit dem Skill→Command-Umzug in CR-GC-277)
+und gehören nicht zu diesem CR.
+**Offene Punkte wandern in Folge-CRs, dieser bleibt nicht offen:** der undici-Deckel nach
+**CR-GC-359**, der Verifikationslauf samt Zeile in der Ergebnisreihe nach **CR-GC-360**
+(er ist erst aussagekräftig, wenn 359 den 300-s-Deckel entfernt hat).
 **Datum:** 2026-08-16
 **Kontext:** `rig/greenfield-systemtest/results/README.md` (Ergebnisreihe), Baseline-Arm
 `qwen35a3b` (12 Rd., N=3, ohne Injektion, maxTokens 8192 → 53 El / 69 Tr, 28 min).
