@@ -108,6 +108,17 @@ bei jeder Migration ein Parallelpfad (CLAUDE.md: *keine parallelen Pfade*). Offe
 `graphcode init` bekannte Vorgänger-Einträge erkennen und ihre Entfernung *anbieten*
 (nicht: still tun)?
 
+### F5b · `init` legt keinen `.gitignore`-Eintrag an — der Kuzu-Store wäre committet worden
+
+Nach `graphcode init` stand `.graphcode/` in sirail als **untracked** da, nicht ignoriert. Ein
+arglosen `git add -A` hätte den Kuzu-Store (in sirails Altbestand: 82 MB) ins Repo geschrieben.
+graphcodes eigenes `.gitignore` trägt die Regel seit langem (`**/.graphcode/*` +
+`!**/.graphcode/target-profile.json`) — **`init` verteilt sie aber nicht**, sie ist
+handgepflegte Historie im Ursprungs-Repo.
+
+Hier nachgetragen. **Das gehört in `init`** — es ist die Sorte Ein-Zeilen-Invariante, deren
+Fehlen erst auffällt, wenn jemand 80 MB Binärdaten committet hat.
+
 ### F6 · Testhandling — dritter Beleg, und er widerspricht moneyflow
 
 Für [CR-DRAFT-GC-357](CR-DRAFT-GC-357-testhandling.md): sirails 43 TEST-Knoten sind
@@ -134,6 +145,7 @@ offene Frage**, und sie ist jetzt an zwei echten Beispielen belegt statt an eine
    graphcode und sirail gleichermaßen → gehört in contracts, nicht ins Repo.
 2. **F3 — die 2 Werkzeug-CRs** löschen oder verdrahten.
 3. **F5 — `init` und die Vorgänger-Artefakte**: erkennen und Entfernung anbieten?
+   **F5b — `.gitignore`-Eintrag gehört in `init`** (klarer Fix, kein Diskussionsbedarf).
 4. **Bindungsschicht sirail** (F2): 73 Warnungen sind Modellarbeit (welcher Code realisiert
    welche FUNC, welche Datei belegt welche Abnahme) — eigener CR, ~19 FUNC + 43 TEST Urteile.
 5. **Ebene 1** in sirail: die Blätter sind heute Ebene 1. Erst nötig, wenn ein Block über
