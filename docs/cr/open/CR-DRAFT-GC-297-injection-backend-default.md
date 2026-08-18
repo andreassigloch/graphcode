@@ -25,3 +25,14 @@ Messbeleg (v19/v20, v15/v9, opus-v2).
 - [ ] Unit-Test: openai-Backend ohne Env → injection false; anthropic → true;
       `GRAPHCODE_LLM_INJECTION` überschreibt beide Richtungen
 - [ ] `npm run build` + Tests grün
+
+---
+
+## Geparkt (2026-08-18)
+
+Nicht implementieren, bis `SPIKE-GC-minimal-whitebox` Arm C gelaufen ist. Befund:
+was der Runden-Prompt injiziert, ist `graph_elements({})` — der **ganze** Graph,
+uid-sortiert, bei Überlauf alphabetisch geschnitten (`executor-prompt.ts`,
+`INDEX_CHAR_BUDGET` 8000). Der gemessene Local-Nachteil (v15 22 vs. v9 38) kann
+aus der **Menge** stammen, nicht aus dem **Prinzip** Injektion. Trifft das zu,
+behandelt dieser CR ein Symptom an einem Schalter, dessen Ursache verschwindet.
