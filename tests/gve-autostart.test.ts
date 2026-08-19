@@ -1,5 +1,5 @@
 /**
- * TEST-gve-autostart — maybeStartGve guards (mcp-server.ts).
+ * TEST-gve-autostart — maybeStartGve guards (gve.ts).
  *
  * The elected host auto-starts the GVE dashboard by default; these tests pin
  * the guards that keep that safe: opt-out env, test-runner suppression,
@@ -16,7 +16,7 @@ import { mkdtempSync, mkdirSync, writeFileSync, rmSync, realpathSync } from 'nod
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import type { spawn, ChildProcess } from 'node:child_process';
-import { maybeStartGve } from '../src/mcp-server.js';
+import { maybeStartGve } from '../src/gve.js';
 
 type SpawnCall = { bin: string; args: string[] };
 
