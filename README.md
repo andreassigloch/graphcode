@@ -10,13 +10,16 @@ text in the repo; the **model lives in the graph**.
 All commands run **inside the target repository**:
 
 ```bash
-npx @sigloch/graphcode init          # one-time setup: scaffold .mcp.json, GRAPHCODE.md, store dir
-npx @sigloch/graphcode mcp           # THE server. Your agent host runs this via .mcp.json and it
-                                     # brings up all three: MCP-stdio, the read-only HTTP/SSE
-                                     # bridge, and the GVE dashboard. Nothing else to start.
-npx @sigloch/graphcode status        # läuft mein Host, und wo ist MEIN Dashboard? Read-only:
-                                     # prüft per api/dashboard die REPO-IDENTITÄT des Viewers,
-                                     # statt einen Port zu raten. Exit 1, wenn eines von beiden fehlt.
+npx @sigloch/graphcode init          # THE install. One command, one download: scaffolds .mcp.json,
+                                     # GRAPHCODE.md and the store dir; the GVE viewer comes along as a
+                                     # dependency, so the first start needs no network.
+                                     # ↓ everything below is run FOR you or only when you need it ↓
+npx @sigloch/graphcode mcp           # THE server — your agent host starts this from .mcp.json; you
+                                     # normally never type it. Brings up all three: MCP-stdio, the
+                                     # read-only HTTP/SSE bridge, and the GVE dashboard.
+npx @sigloch/graphcode status        # is my host up, and where is MY dashboard? Read-only: asks the
+                                     # viewer via api/dashboard WHICH REPO it serves instead of
+                                     # guessing a port. Exit 1 if either is missing.
 npx @sigloch/graphcode host          # FALLBACK only — the bridge alone, for a repo with no agent
                                      # session running. Alongside a live `mcp` it hits the store lock.
 npx @sigloch/graphcode run "<intent>" # author the graph via the embedded executor — a local LLM

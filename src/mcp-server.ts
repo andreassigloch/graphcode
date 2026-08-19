@@ -18,6 +18,7 @@ import { readFileSync, existsSync, realpathSync } from 'node:fs';
 import { spawn, type ChildProcess } from 'node:child_process';
 import { basename, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import type { ZodObject, ZodRawShape } from 'zod/v4';
@@ -272,7 +273,12 @@ export async function maybeStartBridge(
  * owns the store, the viewer is one URL away without a manual launch. GVE is
  * the DEFAULT for a graphcode session; opt out via GRAPHCODE_NO_GVE=1 (e.g. in
  * `.mcp.json` env). GRAPHCODE_GVE_BIN overrides the launch command (space-split)
- * — needed when a local checkout must serve instead of the published package.
+ * — needed when a local checkout must serve instead of the installed package.
+ *
+ * The viewer is a DEPENDENCY, started from `node_modules` (CR-GC-369) — not fetched
+ * per session with `npx -y`. That cost the customer a second registry roundtrip on
+ * top of `graphcode init`, failed offline, and pinned the viewer to whatever the
+ * registry called `latest` rather than to a version this package was tested against.
  *
  * Guards, in order:
  *   - never under a test/CI runner (VITEST/CI) — suites must not spawn viewers;
@@ -316,12 +322,18 @@ function physicalPath(p: string): string {
   }
 }
 
+/** The installed viewer's CLI entry — resolved from THIS package's dependency tree. */
+function resolveGveEntry(): string {
+  return createRequire(import.meta.url).resolve('@sigloch/graph-view-edit/bin/gve.mjs');
+}
+
 export async function maybeStartGve(
   repoRoot: string,
   deps: {
     spawnImpl?: typeof spawn;
     fetchImpl?: typeof fetch;
     env?: NodeJS.ProcessEnv;
+    resolveGve?: () => string;
   } = {},
 ): Promise<ChildProcess | null> {
   const env = deps.env ?? process.env;
@@ -347,15 +359,35 @@ export async function maybeStartGve(
       // Stale file from a crashed instance — fall through and spawn fresh.
     }
   }
-  const command = env.GRAPHCODE_GVE_BIN ?? 'npx -y @sigloch/graph-view-edit';
-  const [bin, ...args] = command.split(' ');
+  let bin: string;
+  let args: string[];
+  if (env.GRAPHCODE_GVE_BIN) {
+    [bin, ...args] = env.GRAPHCODE_GVE_BIN.split(' ');
+  } else {
+    let entry: string;
+    try {
+      entry = (deps.resolveGve ?? resolveGveEntry)();
+    } catch (err) {
+      // No viewer installed (a stripped install, a broken hoist): warn and serve
+      // without a dashboard. A missing viewer must never take the gate down.
+      process.stderr.write(
+        `[graphcode] WARN: gve not resolvable (${err instanceof Error ? err.message : String(err)}) — ` +
+          'reinstall @sigloch/graphcode, set GRAPHCODE_GVE_BIN, or silence with GRAPHCODE_NO_GVE=1\n',
+      );
+      return null;
+    }
+    // process.execPath, not the shebang: the entry is run by the SAME node that
+    // runs this host, independent of exec bits and of what `node` means on PATH.
+    bin = process.execPath;
+    args = [entry];
+  }
   const child = (deps.spawnImpl ?? spawn)(bin, [...args, '--repo', repoRoot], {
     stdio: ['ignore', 2, 2],
     detached: true,
   });
   child.on('error', (err: Error) => {
     process.stderr.write(
-      `[graphcode] WARN: gve failed to start (${err.message}) — install @sigloch/graph-view-edit, set GRAPHCODE_GVE_BIN, or silence with GRAPHCODE_NO_GVE=1\n`,
+      `[graphcode] WARN: gve failed to start (${err.message}) — set GRAPHCODE_GVE_BIN or silence with GRAPHCODE_NO_GVE=1\n`,
     );
   });
   const killGroup = (): void => {

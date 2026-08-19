@@ -46,6 +46,7 @@
     "@sigloch/contracts": "^4.2.0",
     "@sigloch/graph-api-core": "^3.2.0",
     "@sigloch/graph-cypher-wasm": "^0.2.3",
+    "@sigloch/graph-view-edit": "^0.2.0",
     "@sigloch/graphcode-client": "^0.9.0",
     "@sigloch/graphify": "^0.2.0",
     "@sigloch/learning-core": "^0.2.0",

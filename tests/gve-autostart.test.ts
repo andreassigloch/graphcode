@@ -4,8 +4,9 @@
  * The elected host auto-starts the GVE dashboard by default; these tests pin
  * the guards that keep that safe: opt-out env, test-runner suppression,
  * already-running detection via a REACHABLE docs/views/dashboard.url, and the
- * spawn command shape (GRAPHCODE_GVE_BIN override, --repo appended). All
- * spawn/fetch effects are injected — no real viewer, no network.
+ * spawn command shape (installed entry vs. GRAPHCODE_GVE_BIN override, --repo
+ * appended). All spawn/fetch/resolve effects are injected — no real viewer, no
+ * network, no dependency on where node_modules happens to sit.
  *
  * @author andreas@siglochconsulting
  */
@@ -29,6 +30,9 @@ describe('TEST-gve-autostart', () => {
   let repo: string;
   let calls: SpawnCall[];
   let probed: string[];
+
+  /** Stand-in for the installed viewer entry — the real path depends on the install layout. */
+  const resolveGve = () => '/opt/node_modules/@sigloch/graph-view-edit/bin/gve.mjs';
 
   /** A dashboard.url probe answering for `repoRoot` — records the URL actually hit. */
   function probe(answer: { ok: boolean; repoRoot: unknown }): typeof fetch {
@@ -93,10 +97,14 @@ describe('TEST-gve-autostart', () => {
     await maybeStartGve(repo, {
       env: {},
       spawnImpl: fakeSpawn(calls),
+      resolveGve,
       fetchImpl: probe({ ok: true, repoRoot: '/somewhere/else' }),
     });
     expect(calls).toEqual([
-      { bin: 'npx', args: ['-y', '@sigloch/graph-view-edit', '--repo', repo] },
+      {
+        bin: process.execPath,
+        args: ['/opt/node_modules/@sigloch/graph-view-edit/bin/gve.mjs', '--repo', repo],
+      },
     ]);
   });
 
@@ -116,6 +124,7 @@ describe('TEST-gve-autostart', () => {
     await maybeStartGve(repo, {
       env: {},
       spawnImpl: fakeSpawn(calls),
+      resolveGve,
       fetchImpl: (async () => {
         throw new Error('ECONNREFUSED');
       }) as unknown as typeof fetch,
@@ -123,11 +132,33 @@ describe('TEST-gve-autostart', () => {
     expect(calls).toHaveLength(1);
   });
 
-  it('default command is npx -y @sigloch/graph-view-edit --repo <root>', async () => {
-    await maybeStartGve(repo, { env: {}, spawnImpl: fakeSpawn(calls) });
+  it('starts the INSTALLED viewer with this node — no npx, no second download (CR-GC-369)', async () => {
+    await maybeStartGve(repo, { env: {}, spawnImpl: fakeSpawn(calls), resolveGve });
     expect(calls).toEqual([
-      { bin: 'npx', args: ['-y', '@sigloch/graph-view-edit', '--repo', repo] },
+      {
+        bin: process.execPath,
+        args: ['/opt/node_modules/@sigloch/graph-view-edit/bin/gve.mjs', '--repo', repo],
+      },
     ]);
+  });
+
+  it('resolves the viewer entry from the real dependency tree', async () => {
+    await maybeStartGve(repo, { env: {}, spawnImpl: fakeSpawn(calls) });
+    expect(calls).toHaveLength(1);
+    expect(calls[0].bin).toBe(process.execPath);
+    expect(calls[0].args[0]).toMatch(/graph-view-edit[/\\]bin[/\\]gve\.mjs$/);
+  });
+
+  it('an unresolvable viewer warns and serves without a dashboard — the gate stays up', async () => {
+    const child = await maybeStartGve(repo, {
+      env: {},
+      spawnImpl: fakeSpawn(calls),
+      resolveGve: () => {
+        throw new Error('MODULE_NOT_FOUND');
+      },
+    });
+    expect(child).toBeNull();
+    expect(calls).toHaveLength(0);
   });
 
   it('GRAPHCODE_GVE_BIN overrides the launch command (space-split)', async () => {
