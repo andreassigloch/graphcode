@@ -29,7 +29,8 @@ import { exportGraphJson } from './exporter.js';
 import { bindToolsToHarness, type MCPTool, type MCPToolRegistry } from './mcp-tools.js';
 import { registerAutoExport } from './auto-export.js';
 import { StoreOwnershipError } from './store-lock.js';
-import { startHostSocket, buildProxyRegistry, HOST_SOCK_BASENAME } from './host-shim.js';
+import { SessionLifecycle } from './session-lifecycle.js';
+import { startHostSocket, buildProxyRegistry, HOST_SOCK_BASENAME, type HostSocket } from './host-shim.js';
 import { HostBridge } from './viewer/host.js';
 import type { LiveUpdateEvent } from './emit.js';
 
@@ -101,7 +102,7 @@ export function buildMcpServer(harness: GraphCodeHarness, auditLog?: AuditLog): 
 async function bootHost(
   repoRoot: string,
   harness: GraphCodeHarness,
-): Promise<MCPToolRegistry> {
+): Promise<{ registry: MCPToolRegistry; socket: HostSocket }> {
   if (harness.getGraph().nodes.length === 0) {
     try {
       const seeded = await harness.seedFromJson();
@@ -154,8 +155,10 @@ async function bootHost(
   registerAutoExport(harness, registry.graph_export);
   // ONE write channel (CR-GC-235): the elected host also serves later sessions
   // over the local socket shim — an internal hop, not a second API surface.
-  await startHostSocket(registry, join(harness.getStoreDir(), HOST_SOCK_BASENAME));
-  return registry;
+  const socket = await startHostSocket(registry, join(harness.getStoreDir(), HOST_SOCK_BASENAME));
+  // Der Handle wird gebraucht, nicht weggeworfen: beim Sessionende muss die Socket-Datei
+  // weg, sonst zeigt sie auf einen toten Host (CR-GC-370).
+  return { registry, socket };
 }
 
 /**
@@ -192,6 +195,11 @@ export async function serveStdio(opts?: {
   // doubles as `promote` below — and a mid-session re-election (the host died) must
   // not re-print "here is your first step" into a session already underway.
   let bootedGraph: Graph | null = null;
+  // Ein Host lebt so lange wie seine Session: EIN Abraeumpfad fuer Signale UND das Ende
+  // des stdio-Clients. Ohne ihn ueberlebt der Host sein Editor-Fenster, behaelt den Lock
+  // und macht jede spaetere Session zum Proxy eines toten Editors (CR-GC-370).
+  const lifecycle = new SessionLifecycle();
+  lifecycle.installTriggers();
 
   async function electAndBoot(): Promise<MCPToolRegistry> {
     // The sink is wired BEFORE the bridge exists — a mutable indirection lets
@@ -211,10 +219,16 @@ export async function serveStdio(opts?: {
         ? `[graphcode] metric policy: ${loaded.path}\n`
         : `[graphcode] metric policy: contracts DEFAULT_METRIC_POLICY (no ${loaded.path})\n`,
     );
-    const registry = await bootHost(repoRoot, harness);
+    // Aufbaureihenfolge = Registrierungsreihenfolge; abgeraeumt wird rueckwaerts,
+    // der Store-Lock also zuletzt (CR-GC-370).
+    lifecycle.add({ name: 'store lock', close: () => harness.close() });
+    const { registry, socket } = await bootHost(repoRoot, harness);
+    lifecycle.add({ name: 'host.sock', close: () => socket.close() });
     bootedGraph = harness.getGraph();
     bridge = await maybeStartBridge(repoRoot, harness);
-    await maybeStartGve(repoRoot);
+    if (bridge) lifecycle.add({ name: 'http bridge', close: () => bridge!.stop() });
+    const gve = await maybeStartGve(repoRoot);
+    if (gve) lifecycle.add({ name: 'gve dashboard', close: () => killProcessGroup(gve) });
     return registry;
   }
 
@@ -322,6 +336,20 @@ function physicalPath(p: string): string {
   }
 }
 
+/**
+ * Beendet den Viewer samt seiner Prozessgruppe (`detached: true` machte ihn zum
+ * Gruppenfuehrer). Der Aufrufer ist der SessionLifecycle — der Host haengt keine
+ * eigenen Signal-Handler mehr an, sonst gaebe es zwei Abraeumpfade nebeneinander.
+ */
+export function killProcessGroup(child: ChildProcess): void {
+  if (child.pid === undefined) return;
+  try {
+    process.kill(-child.pid, 'SIGTERM');
+  } catch {
+    // Schon weg.
+  }
+}
+
 /** The installed viewer's CLI entry — resolved from THIS package's dependency tree. */
 function resolveGveEntry(): string {
   return createRequire(import.meta.url).resolve('@sigloch/graph-view-edit/bin/gve.mjs');
@@ -390,23 +418,6 @@ export async function maybeStartGve(
       `[graphcode] WARN: gve failed to start (${err.message}) — set GRAPHCODE_GVE_BIN or silence with GRAPHCODE_NO_GVE=1\n`,
     );
   });
-  const killGroup = (): void => {
-    if (child.pid === undefined) return;
-    try {
-      process.kill(-child.pid, 'SIGTERM'); // whole detached group: npx wrapper + vite
-    } catch {
-      // Already gone.
-    }
-  };
-  process.on('exit', killGroup);
-  // Node runs NO 'exit' listeners on an unhandled signal — without these the
-  // viewer outlives a Ctrl-C/kill of the host and dashboard.url goes stale.
-  for (const sig of ['SIGINT', 'SIGTERM', 'SIGHUP'] as const) {
-    process.once(sig, () => {
-      killGroup();
-      process.exit(0);
-    });
-  }
   process.stderr.write('[graphcode] gve: dashboard starting — URL lands in docs/views/dashboard.url\n');
   return child;
 }

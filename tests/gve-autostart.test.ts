@@ -5,7 +5,8 @@
  * the guards that keep that safe: opt-out env, test-runner suppression,
  * already-running detection via a REACHABLE docs/views/dashboard.url, and the
  * spawn command shape (installed entry vs. GRAPHCODE_GVE_BIN override, --repo
- * appended). All spawn/fetch/resolve effects are injected — no real viewer, no
+ * appended) and the ABSENCE of own process handlers — the SessionLifecycle owns
+ * teardown (CR-GC-370). All spawn/fetch/resolve effects are injected — no real viewer, no
  * network, no dependency on where node_modules happens to sit.
  *
  * @author andreas@siglochconsulting
@@ -169,5 +170,21 @@ describe('TEST-gve-autostart', () => {
     expect(calls).toEqual([
       { bin: 'node', args: ['/opt/gve/bin/gve.mjs', '--repo', repo] },
     ]);
+  });
+  it('haengt KEINE eigenen Prozess-Handler an — es gibt genau einen Abraeumpfad (CR-GC-370)', async () => {
+    const before = {
+      exit: process.listenerCount('exit'),
+      SIGINT: process.listenerCount('SIGINT'),
+      SIGTERM: process.listenerCount('SIGTERM'),
+      SIGHUP: process.listenerCount('SIGHUP'),
+    };
+    await maybeStartGve(repo, { env: {}, spawnImpl: fakeSpawn(calls), resolveGve });
+    expect(calls).toHaveLength(1);
+    expect({
+      exit: process.listenerCount('exit'),
+      SIGINT: process.listenerCount('SIGINT'),
+      SIGTERM: process.listenerCount('SIGTERM'),
+      SIGHUP: process.listenerCount('SIGHUP'),
+    }).toEqual(before);
   });
 });
