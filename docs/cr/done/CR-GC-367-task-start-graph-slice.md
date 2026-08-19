@@ -1,6 +1,6 @@
 # CR-GC-367 — Graph-Scheibe beim Task-Start injizieren (Push, kein Pull)
 
-**Status:** open (entsperrt)
+**Status:** done (2026-08-19)
 **Datum:** 2026-08-19
 **Ersetzt:** `CR-DRAFT-GC-361-hook-graph-slice-injektion` (PreToolUse auf `Grep|Glob`).
 Umnummeriert wegen Kollision mit `CR-GC-361-ranking-sieht-duplikate`.
@@ -58,6 +58,25 @@ R12 ersetzen soll. Der Job-Knoten macht das Problem gegenstandslos: uids sind ex
 - [ ] Bridge aus → Exit 0, keine Ausgabe; Unit-Test belegt **kein** zweites Kuzu-Handle
 - [ ] Schalter `GRAPHCODE_HOOK_INJECT`, Test beide Richtungen
 - [ ] `npm run build` + Tests grün
+
+## Umsetzung (2026-08-19)
+
+Implementiert wie entworfen; zwei Punkte, die erst beim Bauen sichtbar wurden:
+
+- **Port:** der Draft nannte 4317 — das ist der GVE-Viewer. Die read-only Bridge startet nur,
+  wenn `GRAPHCODE_HOST_PORT` gesetzt ist (`maybeStartBridge`), und genau dort. Der Hook liest
+  dieselbe Variable; kein Port ⇒ keine Bridge ⇒ kein Inject.
+- **Testfalle:** `spawnSync` blockiert die Event-Loop, die Bridge im selben Prozess nimmt die
+  Verbindung nie an, der Hook läuft in sein curl-Timeout und schweigt korrekt. Der Test spawnt
+  deshalb asynchron; der Grund steht als Kommentar im Test.
+
+Regression gegen die Spike-Ground-Truth (echtes Selbstmodell, 555 Knoten): `buildJobSlice`
+liefert für CR-GC-114 **12/12** und für CR-GC-115 **16/16** der real geänderten Knoten,
+0 CR/MS im Slice, 16 bzw. 26 Knoten (< 5 % des Graphen). Live gemessen: 1740 Token für
+CR-GC-114. Volle Suite grün (808 Tests).
+
+Offen geblieben (→ CR-GC-368): 18 % der Scheibe sind Provenienz-Stempel
+(`created_at`/`updated_at`/`ranAt`, `weight:1`), die für „implementiere das" nichts tragen.
 
 ## Was dieser CR NICHT entscheidet
 

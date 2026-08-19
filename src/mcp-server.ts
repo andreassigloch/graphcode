@@ -281,7 +281,7 @@ export async function maybeStartBridge(
   const bridge = new HostBridge({ repoRoot, harness, port });
   try {
     await bridge.start();
-    process.stderr.write(`[graphcode] host: read-only bridge on http://127.0.0.1:${port} (/health /events /elements /subgraph)\n`);
+    process.stderr.write(`[graphcode] host: read-only bridge on http://127.0.0.1:${port} (/health /events /elements /subgraph /context)\n`);
     return bridge;
   } catch (err) {
     process.stderr.write(

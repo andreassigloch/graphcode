@@ -97,6 +97,59 @@ const IO_EDGE = 'io';
 const ALLOCATE_EDGE = 'allocate';
 const DATA_RELATION_EDGE = 'relation';
 
+/**
+ * Job-Scheibe (CR-GC-367) — was ein Agent aufmachen muss, um EINEN Job zu tun.
+ *
+ * Nicht dasselbe wie `buildContextSlice`: der Job-Anker ist oft ein CR, und
+ * `graph_context` folgt keiner `relation`-Kante von einem CR aus (sie ist keine
+ * Spec-Kante). Ein CR-Anker wird deshalb zuerst auf seine `relation`-Ziele
+ * aufgelöst — das sind die Knoten, an denen der Job wirklich arbeitet — und
+ * darüber die Spec-Closure gebildet.
+ *
+ * CR und MS fallen aus dem Ergebnis: gemessen (SPIKE-GC-minimal-whitebox) stellen
+ * CR-Knoten 60 % des Graph-Textes und 0 % der Knoten, die die zugehörigen Commits
+ * real geändert haben. Sie beantworten „wer hat das mal angefasst", nicht „woraus
+ * ist der Job definiert".
+ *
+ * Kein Blackbox-Ring: die Dependents des Blast-Radius sind der Benachrichtigungs-,
+ * nicht der Arbeitsbegriff (Arm B des Spikes deckte 12/12 bzw. 16/16 der real
+ * geänderten Knoten ohne ihn).
+ */
+const JOB_EXCLUDED_TYPES = new Set(['CR', 'MS']);
+
+export function buildJobSlice(
+  graph: Graph,
+  anchorId: string,
+  depth = 1,
+): { slice: Graph; seeds: string[]; missingRefs: string[] } {
+  const anchor = graph.nodes.find((n) => n.uid === anchorId);
+  if (!anchor) throw new Error(`buildJobSlice: node '${anchorId}' not found`);
+
+  // CR-Anker → seine relation-Ziele; alles andere ist sein eigener Seed.
+  const seeds =
+    anchor.type === 'CR'
+      ? graph.edges
+          .filter((e) => e.sourceId === anchorId && e.edgeType === DATA_RELATION_EDGE)
+          .map((e) => e.targetId)
+          .filter((t) => !JOB_EXCLUDED_TYPES.has(graph.nodes.find((n) => n.uid === t)?.type ?? ''))
+      : [anchorId];
+  if (seeds.length === 0) return { slice: { nodes: [], edges: [] }, seeds: [], missingRefs: [] };
+
+  const keep = new Set<string>();
+  const missingRefs = new Set<string>();
+  for (const seed of seeds) {
+    const { slice, missingRefs: missing } = buildContextSlice(graph, seed, depth);
+    for (const n of slice.nodes) keep.add(n.uid);
+    for (const m of missing) missingRefs.add(m);
+  }
+  for (const uid of [...keep]) {
+    if (JOB_EXCLUDED_TYPES.has(graph.nodes.find((n) => n.uid === uid)?.type ?? '')) keep.delete(uid);
+  }
+  const nodes = graph.nodes.filter((n) => keep.has(n.uid));
+  const edges = graph.edges.filter((e) => keep.has(e.sourceId) && keep.has(e.targetId));
+  return { slice: { nodes, edges }, seeds, missingRefs: [...missingRefs] };
+}
+
 function buildContextSlice(
   graph: Graph,
   rootId: string,

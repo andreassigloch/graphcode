@@ -18,6 +18,8 @@
  *                 resume via `Last-Event-ID` (REQ-versioned-broadcast).
  *   GET /elements         read-only node listing (slice, not a full dump).
  *   GET /subgraph/:root   read-only neighbourhood query.
+ *   GET /context/:uid     read-only job slice (CR-GC-367) — the spec-closure an
+ *                         agent must open to do THIS job, CR/MS filtered.
  *
  * READ-ONLY GUARANTEE (REQ-readonly-bridge): the request router dispatches ONLY
  * on `GET` and ONLY to the four read paths above. Any non-GET method (POST/PUT/
@@ -46,6 +48,8 @@ import {
   V3_RULES,
 } from '@sigloch/contracts/se';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
+import { FormatECodec, SE_DESCRIPTOR } from '@sigloch/graph-api-core';
+import { buildJobSlice } from '../tools/read.js';
 import { createHarness, type GraphCodeHarness } from '../index.js';
 import { deriveMemberName } from '../mcp-server.js';
 import type { LiveUpdateEvent } from '../emit.js';
@@ -233,6 +237,34 @@ export class HostBridge {
       if (type) filter.type = type;
       if (search) filter.search = search;
       sendJson(res, 200, await harness.listElements(filter));
+      return;
+    }
+
+    // CR-GC-367: die Job-Scheibe, die der Task-Start-Hook in den Agenten-Kontext
+    // schiebt. Read-only wie alles hier; die Scheibe rechnet `buildJobSlice`
+    // (tools/read.ts) — der Bridge-Endpoint ist reine Zustellung, keine zweite
+    // Definition dessen, was eine Scheibe ist.
+    if (path.startsWith('/context/')) {
+      const anchor = decodeURIComponent(path.slice('/context/'.length));
+      if (!anchor) {
+        sendJson(res, 404, { error: 'not found (read-only bridge)' });
+        return;
+      }
+      try {
+        const { slice, seeds, missingRefs } = buildJobSlice(harness.getGraph(), anchor);
+        sendJson(res, 200, {
+          anchor,
+          seeds,
+          missingRefs,
+          nodeCount: slice.nodes.length,
+          edgeCount: slice.edges.length,
+          formatE: new FormatECodec(SE_DESCRIPTOR).serialize(slice),
+        });
+      } catch {
+        // Unbekannter Anker ist kein Fehler des Aufrufers, sondern ein Nicht-Treffer:
+        // der Hook darf daraufhin still nichts injizieren (nie ein Fuzzy-Fallback).
+        sendJson(res, 404, { error: `unknown anchor '${anchor}'` });
+      }
       return;
     }
 
