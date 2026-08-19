@@ -1,5 +1,48 @@
 # @sigloch/graphcode
 
+## 0.15.0 — 2026-08-19
+
+### Changed! — die vier Pflichten einer FUNC (CR-GC-366)
+
+**Von den vier Pflichten einer FUNC waren nur zwei geprueft.** Zwei neue Regeln schliessen die
+Luecke: **R-30** verlangt, dass eine FUNC in einer Wirkkette liegt (Mitgliedschaft erbt ueber
+`FUNC-compose-FUNC` nach unten) — bisher verlangte R-15 nur die Gegenrichtung, weshalb IO-01 und
+R-21 an Funktionen ausserhalb jeder Kette vorbeiliefen. **R-31** verlangt, dass eine FUNC per `io`
+verdrahtet ist; nur ACTOR terminiert. R-02 prueft jetzt den Zieltyp und schwieg deshalb nicht mehr
+bei `satisfy -> UC` (6 von 33 Befunden waren verdeckt).
+
+**BREAKING:** das Pattern `FUNC -satisfy-> UC` entfaellt — ein zweiter, billigerer Weg zum UC, der
+genau die Ketten-Pruefungen umging. Bestehende Graphen brauchen eine Migration: im Selbstmodell
+wurden 26 solche Kanten durchs Gate geloescht (graphVersion 109 → 110, blockingErrors unveraendert
+164 → 164, R-18 26 → 0). **On-Disk-Kuzu-Stores tragen das DDL der Ontologie, die sie angelegt hat**
+— ein Store aus contracts 4.x meldet nach dem Update `Query node t violates schema`, bis er neu
+angelegt ist.
+
+Ein Regressionsfund aus derselben Aenderung ist mitgefixt: `buildContextSlice` folgte ausgehenden
+`satisfy`-Kanten und haette eine FUNC nach dem Pattern-Wegfall ihren UC nicht mehr finden lassen —
+also genau das gebrochen, was `graph_context` zusagt. Jetzt zwei typgebundene Rueckkanten ueber
+`UC-compose-FCHAIN-compose-FUNC`; `MS-compose-FUNC` bleibt draussen, sonst verschwaende der
+Unterschied zu `graph_impact`.
+
+### Added — Job-Scheibe beim Task-Start (CR-GC-367)
+
+`buildJobSlice()` loest einen CR-Anker auf seine `relation`-Ziele auf und bildet darueber die
+Spec-Closure — ohne Blackbox-Ring, ohne CR/MS. `GET /context/:uid` stellt sie zu, der
+`UserPromptSubmit`-Hook schiebt sie in den Agenten-Kontext. Anker ist ein exaktes uid aus dem
+Prompt, nie ein Pattern: unbekanntes Token = No-op, kein Fuzzy-Match. Gegen die Spike-Ground-Truth
+am echten Modell: 12/12 (CR-114) und 16/16 (CR-115) der real geaenderten Knoten, **1740 Token statt
+~34k Prosa**.
+
+### Fixed — zwei Ontologien in einem Baum
+
+`@sigloch/contracts@5.0.0` deklarierte eine Abhaengigkeit auf sich selbst (`^4.1.0`), womit npm
+eine zweite Ontologie-Instanz unter die erste legte (contracts 5.0.0 + 4.2.0, graph-api-core 3.2.0
++ 2.1.0 in einem Baum). Zur Laufzeit prueft nichts die Identitaet, TypeScript typt strukturell —
+der Fehler war unsichtbar, bis man den Baum zaehlt. Behoben in `contracts@5.0.1`; graphcode zieht
+die gesamte Substrat-Linie nach (contracts ^5, graph-api-core ^4, graph-cypher-wasm ^0.2.4,
+graphcode-client ^0.10, se-optimizer ^0.6, se-steering ^0.7, graph-view-edit ^0.4).
+Der strukturelle Nachlauf ist CR-SM-248.
+
 ## 0.14.0 — 2026-08-19
 
 ### Fixed — ein Host stirbt mit seiner Session (CR-GC-370)
