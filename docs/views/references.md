@@ -469,6 +469,7 @@
 | `FCHAIN-apply-gate` | satisfy | `REQ-pre-apply-gate` |
 | `FCHAIN-apply-gate` | satisfy | `REQ-responsiveness` |
 | `FCHAIN-capture` | compose | `FUNC-decode` |
+| `FCHAIN-capture` | compose | `FUNC-import` |
 | `FCHAIN-capture` | compose | `FUNC-mutate` |
 | `FCHAIN-capture` | satisfy | `REQ-interactive-capture-suggest` |
 | `FCHAIN-capture` | satisfy | `REQ-no-extraction` |
@@ -476,13 +477,16 @@
 | `FCHAIN-capture` | satisfy | `REQ-pre-capture` |
 | `FCHAIN-codec-roundtrip` | compose | `FUNC-decode` |
 | `FCHAIN-codec-roundtrip` | compose | `FUNC-encode` |
+| `FCHAIN-codec-roundtrip` | compose | `FUNC-merge-nodes` |
 | `FCHAIN-codec-roundtrip` | satisfy | `REQ-post-codec-roundtrip` |
 | `FCHAIN-codec-roundtrip` | satisfy | `REQ-pre-codec-roundtrip` |
 | `FCHAIN-codec-roundtrip` | satisfy | `REQ-roundtrip-conformance` |
 | `FCHAIN-doc-export` | compose | `FUNC-export-markdown` |
 | `FCHAIN-doc-export` | compose | `FUNC-serve-stdio` |
 | `FCHAIN-doc-export` | satisfy | `REQ-doc-export` |
+| `FCHAIN-impact-testing` | compose | `FUNC-deduce-tests` |
 | `FCHAIN-impact-testing` | compose | `FUNC-graph-impact` |
+| `FCHAIN-impact-testing` | compose | `FUNC-resolve-tests-from-code` |
 | `FCHAIN-impact-testing` | satisfy | `REQ-impact-based-testing` |
 | `FCHAIN-impact-testing` | satisfy | `REQ-post-impact-testing` |
 | `FCHAIN-impact-testing` | satisfy | `REQ-pre-impact-testing` |

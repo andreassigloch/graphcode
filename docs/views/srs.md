@@ -356,6 +356,46 @@ priority: must · status: done
 
 Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
 
+##### 3.1.2.3  `FUNC-import` — importGraph(formatE, mode)
+
+> auch in: `FUNC-block-gedaechtnis`
+
+Format-E-Bulk-Import (replace/merge) ausschließlich durchs Gate; Cold-Start aus graphify/Slicer-Output.
+
+io ◀ `FLOW-bulk-formatE` · io ▶ `FLOW-bootstrap-result` · allocate ▶ `MOD-harness`
+
+###### `REQ-batch-seed-performance` — Batch-Seed/Import Performance (UNWIND)
+
+Seed/Import muss batch-skalieren: per-Row-MERGE ist O(langsam) (10k Edges ~51s, SP-2). UNWIND-Batch-Insert (gruppiert je Label/Edge-Table, Werte inline via escapeString) liefert 5k Nodes + 5k Edges < 15s (gemessen 5.3s, 5.6x schneller; Edges 9.6x). Interface unverändert (StorageAdapter.saveNodes/saveEdges), kein Parallelpfad. (CR-GC-120)
+
+priority: must · status: done
+
+Verification ◀ `TEST-batch-seed` (performance) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-harness`
+
+###### `REQ-bootstrap-through-gate` — Erstbefüllung nur durchs Gate
+
+FUNC-import: Erstbefüllung ausschließlich über das mutate()-Gate; Quelle = Format-E; kein Direct-Write.
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-bootstrap` (integration) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-harness`
+
+###### `REQ-post-import` — Postcondition: importGraph(formatE, mode)
+
+Graph durchs Gate befüllt; kein Direct-Write; Violations berichtet.
+
+priority: must · status: done · kinds: postcondition
+
+Verification ◀ `TEST-bootstrap` (integration) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-harness`
+
+###### `REQ-pre-import` — Precondition: importGraph(formatE, mode)
+
+Leerer/zu befüllender Repo-Graph; Format-E-Quelle (graphify/Import) liegt vor.
+
+priority: must · status: done · kinds: precondition
+
+Verification ◀ `TEST-bootstrap` (integration) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-harness`
+
 #### 3.1.3  `FCHAIN-codec-roundtrip` — Format-E Round-Trip (encode∘decode)
 
 encode → decode → Vergleich; deterministisch, validiert; commit-/merge-arm. (SPEC §2.4, L3)
@@ -453,6 +493,46 @@ decode(encode(g)) == g modulo Whitespace (rasentraktor-Fixture). (L3)
 priority: should · status: open · kinds: non-functional
 
 Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FCHAIN-codec-roundtrip` · `FUNC-decode` · allocate ▶ `MOD-codec`
+
+##### 3.1.3.3  `FUNC-merge-nodes` — mergeNodes(graph)
+
+> auch in: `FUNC-block-gedaechtnis`
+
+Conflict-free Merge via merge_nodes + deterministischer Serialisierung; keine verlorenen Knoten/Traces.
+
+io ◀ `FLOW-branch-graphs` · io ▶ `FLOW-merged-graph` · allocate ▶ `MOD-codec`
+
+###### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
+
+Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Artefakt. (R2)
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-merge` (integration) · satisfy ◀ `FUNC-merge-nodes` · allocate ▶ `MOD-codec`
+
+###### `REQ-conflict-free-merge` — Conflict-free Graph-Merge
+
+FUNC-merge-nodes: Branch-/Multi-Dev-Merge conflict-free (deterministische Serialisierung + merge_nodes).
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-merge` (integration) · satisfy ◀ `FUNC-merge-nodes` · allocate ▶ `MOD-codec`
+
+###### `REQ-post-merge-nodes` — Postcondition: mergeNodes(graph)
+
+Conflict-free gemerged; keine verlorenen Knoten/Traces; deterministisch sortiert.
+
+priority: must · status: open · kinds: postcondition
+
+Verification ◀ `TEST-merge` (integration) · satisfy ◀ `FUNC-merge-nodes` · allocate ▶ `MOD-codec`
+
+###### `REQ-pre-merge-nodes` — Precondition: mergeNodes(graph)
+
+Zwei (oder mehr) Branch-Versionen des committed Graph-Artefakts.
+
+priority: must · status: open · kinds: precondition
+
+Verification ◀ `TEST-merge` (integration) · satisfy ◀ `FUNC-merge-nodes` · allocate ▶ `MOD-codec`
 
 #### 3.1.4  `FCHAIN-interface-escalation` — Interface-Änderungs-Eskalation
 
@@ -736,7 +816,23 @@ priority: must · status: open · kinds: precondition
 
 Verification ◀ `TEST-efficient-testing` (acceptance) · satisfy ◀ `FCHAIN-impact-testing` · allocate ▶ —
 
-##### 3.3.1.1  `FUNC-graph-impact` — graph_impact(id, depth?)
+##### 3.3.1.1  `FUNC-deduce-tests` — graph_tests(changeSet)
+
+> auch in: `FUNC-block-anschluss`
+
+Bottom-up Test-Deduktion: mappt eine Aenderung (geaenderte Knoten-IDs oder git-diff zu Knoten) via graph_impact auf die betroffenen TEST-Knoten, loest jeden ueber testRef zu seinem lauffaehigen Artefakt auf und emittiert das minimale selektive Run-Kommando + Coverage. Kapselt graph_impact, kein Parallelpfad. (CR-GC-134)
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-mcp-tools`
+
+###### `REQ-test-runnable-binding` — TEST hat lauffaehige Bindung (testRef)
+
+Jeder TEST-Knoten traegt einen testRef (Datei plus Case, tool, level), sodass ein impacted TEST-Knoten deterministisch zu einem lauffaehigen Artefakt aufgeloest werden kann. Familie-weit: testRef wird Teil des TEST-Element-Schemas in @sigloch/contracts/se (Minor-Version-Bump).
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-test-runnable-binding` (unit) · satisfy ◀ `FUNC-deduce-tests` · `MOD-mcp-tools` · allocate ▶ `MOD-mcp-tools`
+
+##### 3.3.1.2  `FUNC-graph-impact` — graph_impact(id, depth?)
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-interface-escalation` · `FUNC-block-anschluss`
 
@@ -777,6 +873,22 @@ Sub-Graph-Slicing + pruneToFit(maxTokens) als Context-Primitive. (R7)
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-impact-subgraph` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
+
+##### 3.3.1.3  `FUNC-resolve-tests-from-code` — Gerichtete code→REQ→TEST-Auflösung
+
+> auch in: `FUNC-block-anschluss`
+
+graph_tests akzeptiert ein Code-Changeset und traversiert gerichtet (geaenderter Knoten →satisfy/allocate→ REQ →verify→ TEST), nicht nur reines incoming-graph_impact. Wrappt EINEN Impact-/Traversal-Pfad, kein zweiter Blast-Radius.
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-mcp-tools`
+
+###### `REQ-graph-tests-operational` — graph_tests liefert den korrekten selektiven Testset für einen Code-Change
+
+Ein Code-Changeset (MOD/FUNC/git-diff→Knoten) → graph_tests → vitest run nur-betroffene-Dateien, das JEDE vom Change berührte Testdatei enthält (kein false-green) und unbeteiligte ausschliesst. Erfordert testRef auf allen lauffähigen TESTs + gerichtete Auflösung statt reinem incoming-impact.
+
+priority: must · status: done
+
+Verification ◀ `TEST-graph-tests-operational` (integration) · satisfy ◀ `FUNC-resolve-tests-from-code` · allocate ▶ `MOD-mcp-tools`
 
 ### 3.4  `UC-graph-time-travel` — Graph-Stand pro Commit wiederherstellbar
 
@@ -1480,6 +1592,8 @@ io ◀ — · io ▶ — · allocate ▶ `MOD-skills`
 
 ##### 3.9.1.3  `FUNC-deduce-tests` — graph_tests(changeSet)
 
+> auch in: `FCHAIN-impact-testing`
+
 Bottom-up Test-Deduktion: mappt eine Aenderung (geaenderte Knoten-IDs oder git-diff zu Knoten) via graph_impact auf die betroffenen TEST-Knoten, loest jeden ueber testRef zu seinem lauffaehigen Artefakt auf und emittiert das minimale selektive Run-Kommando + Coverage. Kapselt graph_impact, kein Parallelpfad. (CR-GC-134)
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-mcp-tools`
@@ -1659,6 +1773,8 @@ Prompt-realisierter Skill se:import-doc: Dokument zweistufig importieren — Str
 io ◀ — · io ▶ — · allocate ▶ `MOD-skills`
 
 ##### 3.9.1.9  `FUNC-resolve-tests-from-code` — Gerichtete code→REQ→TEST-Auflösung
+
+> auch in: `FCHAIN-impact-testing`
 
 graph_tests akzeptiert ein Code-Changeset und traversiert gerichtet (geaenderter Knoten →satisfy/allocate→ REQ →verify→ TEST), nicht nur reines incoming-graph_impact. Wrappt EINEN Impact-/Traversal-Pfad, kein zweiter Blast-Radius.
 
@@ -1952,6 +2068,8 @@ Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-s
 
 ##### 3.9.3.5  `FUNC-import` — importGraph(formatE, mode)
 
+> auch in: `FCHAIN-capture`
+
 Format-E-Bulk-Import (replace/merge) ausschließlich durchs Gate; Cold-Start aus graphify/Slicer-Output.
 
 io ◀ `FLOW-bulk-formatE` · io ▶ `FLOW-bootstrap-result` · allocate ▶ `MOD-harness`
@@ -1989,6 +2107,8 @@ priority: must · status: done · kinds: precondition
 Verification ◀ `TEST-bootstrap` (integration) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-harness`
 
 ##### 3.9.3.6  `FUNC-merge-nodes` — mergeNodes(graph)
+
+> auch in: `FCHAIN-codec-roundtrip`
 
 Conflict-free Merge via merge_nodes + deterministischer Serialisierung; keine verlorenen Knoten/Traces.
 

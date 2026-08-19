@@ -59,8 +59,8 @@ Als Entwickler will ich, dass jede Aenderung, meine wie die eines Agenten, durch
 Ausgeloest von: `ACTOR-claude-code` · `ACTOR-dashboard` · `ACTOR-developer` · `ACTOR-facilitating-agent` · `ACTOR-graphify` · `ACTOR-opencode` · `ACTOR-systems-engineer` · `ACTOR-vibe-coder`
 
 - `FCHAIN-apply-gate` — Apply-Gate-Ablauf (Governed Mutation): `FUNC-emit-trajectory` → `FUNC-evaluate-rules` → `FUNC-mutate` → `FUNC-save-graph`
-- `FCHAIN-capture` — Interaktive Erfassung (Text → suggest-Tier): `FUNC-decode` → `FUNC-mutate`
-- `FCHAIN-codec-roundtrip` — Format-E Round-Trip (encode∘decode): `FUNC-decode` → `FUNC-encode`
+- `FCHAIN-capture` — Interaktive Erfassung (Text → suggest-Tier): `FUNC-decode` → `FUNC-import` → `FUNC-mutate`
+- `FCHAIN-codec-roundtrip` — Format-E Round-Trip (encode∘decode): `FUNC-decode` → `FUNC-encode` → `FUNC-merge-nodes`
 - `FCHAIN-interface-escalation` — Interface-Änderungs-Eskalation: `FUNC-graph-impact` → `FUNC-mutate`
 
 ### `UC-deterministic-steering` — Deterministisch auf ein mehrdimensionales Ziel steuern
@@ -77,7 +77,7 @@ Als Entwickler will ich nur die richtigen Tests laufen lassen: der Impact-/Abhä
 
 Ausgeloest von: `ACTOR-developer` · `ACTOR-systems-engineer` · `ACTOR-vibe-coder`
 
-- `FCHAIN-impact-testing` — Impact-basierte Testauswahl: `FUNC-graph-impact`
+- `FCHAIN-impact-testing` — Impact-basierte Testauswahl: `FUNC-deduce-tests` → `FUNC-graph-impact` → `FUNC-resolve-tests-from-code`
 
 ### `UC-graph-time-travel` — Graph-Stand pro Commit wiederherstellbar
 
