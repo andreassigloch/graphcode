@@ -1,0 +1,496 @@
+{
+  "elements": [
+    {
+      "uid": "SYS-web-app",
+      "type": "SYS",
+      "name": "Multiuser Web-App",
+      "attributes": {},
+      "description": "Multiuser-fähige Web-App aus dem graphcode harness: Nutzer melden sich an, autorieren gemeinsam einen governten Systemgraphen über das Apply-Gate, sehen Live-Updates und exportieren den Stand."
+    },
+    {
+      "uid": "UC-login",
+      "type": "UC",
+      "name": "Login",
+      "attributes": {},
+      "description": "User authenticates and gains access to the system."
+    },
+    {
+      "uid": "UC-collaborate",
+      "type": "UC",
+      "name": "Collaborate",
+      "attributes": {},
+      "description": "Multiple users co-author the governed system graph."
+    },
+    {
+      "uid": "UC-export",
+      "type": "UC",
+      "name": "Export",
+      "attributes": {},
+      "description": "User exports the current graph state as a file."
+    },
+    {
+      "uid": "UC-multiuser-collaboration",
+      "type": "UC",
+      "name": "Multiuser Collaboration",
+      "attributes": {},
+      "description": "Multiple users co-author the governed system graph in real-time."
+    },
+    {
+      "uid": "UC-multiuser-web-app",
+      "type": "UC",
+      "name": "Multiuser Web App Collaboration",
+      "description": "Users authenticate, collaborate on a governed system graph via the Apply-Gate, see live updates, and export the current state.",
+      "attributes": {}
+    },
+    {
+      "uid": "ACTOR-user",
+      "type": "ACTOR",
+      "name": "User",
+      "attributes": {},
+      "description": "Endnutzer der Web-App, der sich anmeldet und den Graphen autorisiert."
+    },
+    {
+      "uid": "ACTOR-admin",
+      "type": "ACTOR",
+      "name": "Admin",
+      "attributes": {},
+      "description": "Administrator, der Nutzer verwaltet und Systemeinstellungen vornimmt."
+    },
+    {
+      "uid": "FCHAIN-login",
+      "type": "FCHAIN",
+      "name": "Login Flow",
+      "attributes": {},
+      "description": "User authenticates and gains access to the system."
+    },
+    {
+      "uid": "FCHAIN-collaborate",
+      "type": "FCHAIN",
+      "name": "Collaboration Flow",
+      "attributes": {},
+      "description": "Users collaborate on the governed system graph."
+    },
+    {
+      "uid": "FCHAIN-export",
+      "type": "FCHAIN",
+      "name": "Export Flow",
+      "attributes": {},
+      "description": "User exports the current state of the governed graph."
+    },
+    {
+      "uid": "FUNC-authenticate-user",
+      "type": "FUNC",
+      "name": "Authenticate User",
+      "attributes": {},
+      "description": "Validate user credentials and issue session token."
+    },
+    {
+      "uid": "FUNC-validate-session",
+      "type": "FUNC",
+      "name": "Validate Session",
+      "attributes": {},
+      "description": "Check session token validity for authenticated access."
+    },
+    {
+      "uid": "FUNC-logout-user",
+      "type": "FUNC",
+      "name": "Logout User",
+      "attributes": {},
+      "description": "Invalidate session token and end user session."
+    },
+    {
+      "uid": "FUNC-merge-changes",
+      "type": "FUNC",
+      "name": "Merge Changes",
+      "attributes": {},
+      "description": "Combine concurrent edits from multiple users into a single graph state."
+    },
+    {
+      "uid": "FUNC-notify-users",
+      "type": "FUNC",
+      "name": "Notify Users",
+      "attributes": {},
+      "description": "Send real-time updates to all users about graph changes."
+    },
+    {
+      "uid": "FUNC-export-graph",
+      "type": "FUNC",
+      "name": "Export Graph",
+      "attributes": {},
+      "description": "Serialize the current graph state into a portable format."
+    },
+    {
+      "uid": "FUNC-validate-export",
+      "type": "FUNC",
+      "name": "Validate Export",
+      "attributes": {},
+      "description": "Ensure the exported graph conforms to schema and business rules."
+    },
+    {
+      "uid": "FLOW-validate-session",
+      "type": "FLOW",
+      "name": "Validate Session",
+      "attributes": {},
+      "description": "Validates the user session after authentication."
+    },
+    {
+      "uid": "FLOW-notify-users",
+      "type": "FLOW",
+      "name": "Notify Users",
+      "attributes": {},
+      "description": "Notifies users about changes or updates."
+    },
+    {
+      "uid": "MOD-auth",
+      "type": "MOD",
+      "name": "Authentication Module",
+      "attributes": {},
+      "description": "Handles user authentication and session management."
+    },
+    {
+      "uid": "MOD-export",
+      "type": "MOD",
+      "name": "Export Module",
+      "attributes": {},
+      "description": "Manages graph exports and validation."
+    },
+    {
+      "uid": "SCHEMA-user-session",
+      "type": "SCHEMA",
+      "name": "User Session Schema",
+      "attributes": {},
+      "description": "Defines the structure of user session data, including authentication tokens and permissions."
+    },
+    {
+      "uid": "SCHEMA-notification-payload",
+      "type": "SCHEMA",
+      "name": "Notification Payload Schema",
+      "attributes": {},
+      "description": "Defines the structure of notification messages sent to users, including metadata and content."
+    },
+    {
+      "uid": "FLOW-session-created",
+      "type": "FLOW",
+      "name": "Session Created Flow",
+      "description": "Flow indicating a user session has been created.",
+      "attributes": {}
+    },
+    {
+      "uid": "FLOW-collaboration-update",
+      "type": "FLOW",
+      "name": "Collaboration Update Flow",
+      "description": "Flow indicating a collaboration update has been applied.",
+      "attributes": {}
+    },
+    {
+      "uid": "FLOW-export-ready",
+      "type": "FLOW",
+      "name": "Export Ready Flow",
+      "description": "Flow indicating an export is ready for the user.",
+      "attributes": {}
+    },
+    {
+      "uid": "FLOW-graph-exported",
+      "type": "FLOW",
+      "name": "Graph Exported Flow",
+      "description": "Flow indicating the graph has been exported.",
+      "attributes": {}
+    }
+  ],
+  "traces": [
+    {
+      "sourceId": "SYS-web-app",
+      "targetId": "UC-login",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "SYS-web-app",
+      "targetId": "UC-collaborate",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "SYS-web-app",
+      "targetId": "UC-export",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-login",
+      "targetId": "FCHAIN-login",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-collaborate",
+      "targetId": "FCHAIN-collaborate",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-export",
+      "targetId": "FCHAIN-export",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-collaboration",
+      "targetId": "FCHAIN-collaborate",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-collaboration",
+      "targetId": "FCHAIN-login",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-collaboration",
+      "targetId": "FCHAIN-export",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-web-app",
+      "targetId": "FCHAIN-login",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-web-app",
+      "targetId": "FCHAIN-collaborate",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-web-app",
+      "targetId": "FCHAIN-export",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-user",
+      "targetId": "UC-login",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-user",
+      "targetId": "UC-collaborate",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-user",
+      "targetId": "UC-export",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-user",
+      "targetId": "UC-multiuser-collaboration",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-user",
+      "targetId": "UC-multiuser-web-app",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-admin",
+      "targetId": "UC-collaborate",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-admin",
+      "targetId": "UC-export",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-login",
+      "targetId": "FUNC-authenticate-user",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-login",
+      "targetId": "FUNC-validate-session",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-login",
+      "targetId": "FUNC-logout-user",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-collaborate",
+      "targetId": "FUNC-merge-changes",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-collaborate",
+      "targetId": "FUNC-notify-users",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-export",
+      "targetId": "FUNC-export-graph",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-export",
+      "targetId": "FUNC-validate-export",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-authenticate-user",
+      "targetId": "FLOW-validate-session",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-merge-changes",
+      "targetId": "FLOW-notify-users",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-validate-export",
+      "targetId": "FLOW-notify-users",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-authenticate-user",
+      "targetId": "UC-login",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-merge-changes",
+      "targetId": "UC-collaborate",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-merge-changes",
+      "targetId": "UC-multiuser-collaboration",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-validate-export",
+      "targetId": "UC-export",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-authenticate-user",
+      "targetId": "MOD-auth",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-logout-user",
+      "targetId": "MOD-auth",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-export-graph",
+      "targetId": "MOD-export",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-validate-export",
+      "targetId": "MOD-export",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FLOW-validate-session",
+      "targetId": "ACTOR-user",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FLOW-notify-users",
+      "targetId": "ACTOR-user",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FLOW-validate-session",
+      "targetId": "SCHEMA-user-session",
+      "edgeType": "relation",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FLOW-notify-users",
+      "targetId": "SCHEMA-notification-payload",
+      "edgeType": "relation",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-authenticate-user",
+      "targetId": "FLOW-session-created",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FLOW-session-created",
+      "targetId": "ACTOR-user",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-merge-changes",
+      "targetId": "FLOW-collaboration-update",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FLOW-collaboration-update",
+      "targetId": "ACTOR-user",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-validate-export",
+      "targetId": "FLOW-export-ready",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FLOW-export-ready",
+      "targetId": "ACTOR-user",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-export-graph",
+      "targetId": "FLOW-graph-exported",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FLOW-graph-exported",
+      "targetId": "ACTOR-user",
+      "edgeType": "io",
+      "attributes": {}
+    }
+  ]
+}

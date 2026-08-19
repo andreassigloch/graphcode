@@ -1,0 +1,96 @@
+[
+  {
+    "fixture": "A3a — greenfield, lokal (devstral v9, bester Baseline-Lauf)",
+    "G": 38,
+    "phase": "expand",
+    "dimension": "alloc:R-22:FUNC-apply-gate,FUNC-authorize,FUNC-export-graph",
+    "focusTypes": [
+      "FUNC",
+      "MOD"
+    ],
+    "seeds": [
+      "FUNC-apply-gate",
+      "FUNC-authorize",
+      "FUNC-export-graph"
+    ],
+    "today_tokens": 635,
+    "armA_tokens": 368,
+    "whitebox": {
+      "nodes": 5,
+      "tokens": 210
+    },
+    "ring_nodes": 10,
+    "focusTypeNodes": 13,
+    "coverage_today": 1,
+    "coverage_armA": 1,
+    "tight": {
+      "nodes": 3,
+      "whitebox_tokens": 58,
+      "armA1_tokens": 215,
+      "coverage": 1
+    },
+    "W_over_G": 0.132
+  },
+  {
+    "fixture": "A3b — greenfield, frontier (opus5)",
+    "G": 57,
+    "phase": "expand",
+    "dimension": "alloc:R-22:FUNC-assign-account-role,FUNC-authorize-role-assignment,FUNC-build-export-file",
+    "focusTypes": [
+      "FUNC",
+      "MOD"
+    ],
+    "seeds": [
+      "FUNC-assign-account-role",
+      "FUNC-authorize-role-assignment",
+      "FUNC-build-export-file"
+    ],
+    "today_tokens": 1068,
+    "armA_tokens": 816,
+    "whitebox": {
+      "nodes": 10,
+      "tokens": 566
+    },
+    "ring_nodes": 16,
+    "focusTypeNodes": 19,
+    "coverage_today": 1,
+    "coverage_armA": 1,
+    "tight": {
+      "nodes": 3,
+      "whitebox_tokens": 108,
+      "armA1_tokens": 358,
+      "coverage": 1
+    },
+    "W_over_G": 0.175
+  },
+  {
+    "fixture": "A3c — reifes Modell (graphcode-Selbstmodell)",
+    "G": 555,
+    "phase": "expand",
+    "dimension": "ms:AF-05:SYS-graphcode",
+    "focusTypes": [
+      "MS",
+      "CR"
+    ],
+    "seeds": [
+      "SYS-graphcode"
+    ],
+    "today_tokens": 2167,
+    "armA_tokens": 6850,
+    "whitebox": {
+      "nodes": 50,
+      "tokens": 3972
+    },
+    "ring_nodes": 170,
+    "focusTypeNodes": 170,
+    "coverage_today": 0.712,
+    "coverage_armA": 1,
+    "tight": {
+      "nodes": 1,
+      "whitebox_tokens": 62,
+      "armA1_tokens": 2940,
+      "coverage": 1
+    },
+    "W_over_G": 0.09
+  }
+]

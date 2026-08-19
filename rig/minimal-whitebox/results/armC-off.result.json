@@ -1,0 +1,344 @@
+{
+  "tag": "armC-off",
+  "model": "mistralai/devstral-small-2-2512",
+  "rounds": 12,
+  "candidates": 3,
+  "injection": "off",
+  "wallSeconds": 10040,
+  "elements": 19,
+  "traces": 30,
+  "byType": {
+    "MOD": 2,
+    "SYS": 1,
+    "UC": 6,
+    "ACTOR": 2,
+    "FCHAIN": 3,
+    "FUNC": 5
+  },
+  "injectionCalls": 0,
+  "modelUnfilteredCalls": 26,
+  "stats": {
+    "done": false,
+    "genRounds": 12,
+    "modelTurns": 107,
+    "mutatesApplied": 12,
+    "mutatesRejected": 0,
+    "dryRunProbes": 23,
+    "repairedAfterRejection": 1,
+    "preflightFixed": 3,
+    "preflightBlocked": 3,
+    "candidatesSampled": 26,
+    "algoPicks": 12,
+    "modelPicks": 0,
+    "judgeDisagreements": 0,
+    "tokensIn": 298004,
+    "tokensOut": 10842,
+    "tokensReasoning": 0
+  },
+  "readiness": {
+    "compliance": {
+      "score": 0.6842105263157895,
+      "label": "Compliance (V3_RULES, error-severity)",
+      "totalElements": 19,
+      "elementsWithErrors": 6
+    },
+    "incoseScope": "lean",
+    "phaseGates": [
+      {
+        "id": "SRR",
+        "label": "System Requirements Review",
+        "passed": false,
+        "score": 0.5384615384615384,
+        "blocking": [],
+        "open": [],
+        "creationArtifacts": [
+          "conops",
+          "assumption-review"
+        ],
+        "completeness": {
+          "covered": 7,
+          "total": 13,
+          "missing": []
+        }
+      },
+      {
+        "id": "PDR",
+        "label": "Preliminary Design Review",
+        "passed": false,
+        "score": 0.5,
+        "blocking": [],
+        "open": [],
+        "creationArtifacts": [
+          "fmea",
+          "trade"
+        ],
+        "completeness": {
+          "covered": 3,
+          "total": 6,
+          "missing": []
+        }
+      },
+      {
+        "id": "CDR",
+        "label": "Critical Design Review",
+        "passed": true,
+        "score": 1,
+        "blocking": [],
+        "open": [],
+        "creationArtifacts": [
+          "implplan"
+        ],
+        "completeness": {
+          "covered": 0,
+          "total": 0,
+          "missing": []
+        }
+      },
+      {
+        "id": "TRR",
+        "label": "Test Readiness Review",
+        "passed": false,
+        "score": 0,
+        "blocking": [],
+        "open": [],
+        "creationArtifacts": [],
+        "completeness": {
+          "covered": 0,
+          "total": 5,
+          "missing": []
+        }
+      }
+    ],
+    "implGates": [
+      {
+        "id": "SAR",
+        "label": "System Acceptance Review",
+        "passed": false,
+        "score": 0,
+        "blocking": [],
+        "open": [],
+        "creationArtifacts": [
+          "conops",
+          "assumption-review"
+        ],
+        "completeness": {
+          "covered": 0,
+          "total": 0,
+          "missing": []
+        }
+      },
+      {
+        "id": "FCA",
+        "label": "Functional Configuration Audit",
+        "passed": false,
+        "score": 0,
+        "blocking": [],
+        "open": [],
+        "creationArtifacts": [
+          "fmea",
+          "trade"
+        ],
+        "completeness": {
+          "covered": 0,
+          "total": 0,
+          "missing": []
+        }
+      },
+      {
+        "id": "SVR",
+        "label": "System Verification Review",
+        "passed": false,
+        "score": 0,
+        "blocking": [],
+        "open": [],
+        "creationArtifacts": [
+          "implplan"
+        ],
+        "completeness": {
+          "covered": 0,
+          "total": 0,
+          "missing": []
+        }
+      },
+      {
+        "id": "FRR",
+        "label": "Functional Readiness Review",
+        "passed": false,
+        "score": 0,
+        "blocking": [],
+        "open": [],
+        "creationArtifacts": [],
+        "completeness": {
+          "covered": 0,
+          "total": 0,
+          "missing": []
+        }
+      }
+    ],
+    "violationsByRule": {
+      "R-02": 4,
+      "R-20": 5,
+      "R-22": 2,
+      "R-28": 1,
+      "UC-01": 6,
+      "UC-05": 6,
+      "UC-06": 6,
+      "FC-03": 1,
+      "FC-04": 3,
+      "AF-01": 1,
+      "AF-02": 1,
+      "AF-03": 1,
+      "AF-04": 1,
+      "AF-05": 1
+    },
+    "violations": [],
+    "creationEnforcement": "off",
+    "computedAt": "2026-08-18T15:52:35.424Z",
+    "phase_readiness": [
+      {
+        "gate": "SRR",
+        "total": 26,
+        "covered": 23,
+        "missing": [
+          "UC-01",
+          "UC-05",
+          "UC-06"
+        ]
+      },
+      {
+        "gate": "PDR",
+        "total": 29,
+        "covered": 21,
+        "missing": [
+          "AF-01",
+          "AF-02",
+          "AF-03",
+          "FC-03",
+          "FC-04",
+          "R-02",
+          "R-22",
+          "R-28"
+        ]
+      },
+      {
+        "gate": "CDR",
+        "total": 7,
+        "covered": 6,
+        "missing": [
+          "AF-04"
+        ]
+      },
+      {
+        "gate": "TRR",
+        "total": 10,
+        "covered": 8,
+        "missing": [
+          "AF-05",
+          "R-20"
+        ]
+      }
+    ],
+    "dimension_readiness": [
+      {
+        "dimension": "req",
+        "score": 0,
+        "violations": 0,
+        "applicable": 0,
+        "ready": false
+      },
+      {
+        "dimension": "uc",
+        "score": 0.672,
+        "violations": 22,
+        "applicable": 67,
+        "ready": false
+      },
+      {
+        "dimension": "arch",
+        "score": 0.917,
+        "violations": 9,
+        "applicable": 109,
+        "ready": true
+      },
+      {
+        "dimension": "alloc",
+        "score": 0.846,
+        "violations": 2,
+        "applicable": 13,
+        "ready": true
+      },
+      {
+        "dimension": "ver",
+        "score": 1,
+        "violations": 0,
+        "applicable": 3,
+        "ready": true
+      },
+      {
+        "dimension": "schema",
+        "score": 0,
+        "violations": 0,
+        "applicable": 0,
+        "ready": false
+      },
+      {
+        "dimension": "cr",
+        "score": 1,
+        "violations": 0,
+        "applicable": 19,
+        "ready": true
+      },
+      {
+        "dimension": "ms",
+        "score": 0,
+        "violations": 0,
+        "applicable": 0,
+        "ready": false
+      }
+    ],
+    "graphVersion": 12,
+    "intentCoverage": [
+      {
+        "anchor": "multiuser",
+        "addressed": true,
+        "elements": [
+          "UC-authenticate-system-graph",
+          "UC-multiuser-collaboration",
+          "UC-multiuser-web-app"
+        ]
+      },
+      {
+        "anchor": "fähige",
+        "addressed": false,
+        "elements": []
+      },
+      {
+        "anchor": "web",
+        "addressed": true,
+        "elements": [
+          "UC-multiuser-web-app"
+        ]
+      },
+      {
+        "anchor": "graphcode",
+        "addressed": false,
+        "elements": []
+      },
+      {
+        "anchor": "harness",
+        "addressed": false,
+        "elements": []
+      },
+      {
+        "anchor": "nutzer",
+        "addressed": false,
+        "elements": []
+      },
+      {
+        "anchor": "melden",
+        "addressed": false,
+        "elements": []
+      }
+    ]
+  }
+}

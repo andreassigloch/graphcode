@@ -1,0 +1,148 @@
+Kanten-Grammatik der Fokus-Typen (bereits eingebettet — graph_authoring_guide dafür NICHT erneut aufrufen; Gate-Protokoll Schritt 1 ist damit erledigt):
+- FUNC: ausgehend: compose→FUNC (0..*), io→FLOW, satisfy→REQ, satisfy→UC, allocate→MOD; eingehend: FCHAIN compose→ (1..*), FUNC compose→ (0..*), FLOW io→, MS compose→, CR relation→
+- MOD: ausgehend: compose→MOD (0..*), io→MOD, satisfy→REQ; eingehend: SYS compose→ (0..*), MOD compose→ (0..*), MOD io→, FUNC allocate→, CR relation→
+- REQ: ausgehend: compose→REQ (0..*); eingehend: SYS compose→ (0..*), UC compose→ (1..*), REQ compose→ (0..*), FUNC satisfy→, FCHAIN satisfy→, MOD satisfy→, SYS satisfy→, TEST verify→, MS compose→, CR relation→
+
+Element-Index des Graphen (uid · type · name; bereits eingebettet — graph_elements NICHT erneut aufrufen; existierende uids für Kanten referenzieren, keine Duplikate anlegen):
+FUNC-arch-fitness · FUNC · metrics(graph, layer arch)
+FUNC-author-req · FUNC · Skill se:author-req
+FUNC-author-uc · FUNC · Skill se:author-uc
+FUNC-block-anschluss · FUNC · Agenten-Anschluss
+FUNC-block-arch-optimierung · FUNC · Architektur-Optimierung
+FUNC-block-arch-sicht · FUNC · Architektur-Sicht
+FUNC-block-dokumentenwerk · FUNC · Dokumentenwerk
+FUNC-block-gate · FUNC · Qualitäts-Gate
+FUNC-block-gedaechtnis · FUNC · Gedächtnis
+FUNC-block-live-dashboard · FUNC · Live-Kanal
+FUNC-block-messwerk · FUNC · Messwerk
+FUNC-block-q-improvement · FUNC · Q-Improvement
+FUNC-block-reifegrad-sicht · FUNC · Reifegrad-Sicht
+FUNC-block-schaufenster · FUNC · Viewer
+FUNC-block-se-steuerung · FUNC · SE-Prozess-Steuerung
+FUNC-broadcast-diff · FUNC · broadcastDiff(version)
+FUNC-check-code-conformance · FUNC · conformanceViolations(harness)
+FUNC-close-violations · FUNC · Skill se:close-violations
+FUNC-compute-phase-readiness · FUNC · computePhaseReadiness(violations)
+FUNC-compute-readiness · FUNC · computeReadiness(graph, policy)
+FUNC-compute-steering-delta · FUNC · computeSteeringDelta(before, after)
+FUNC-decode · FUNC · decode(json)
+FUNC-deduce-tests · FUNC · graph_tests(changeSet)
+FUNC-emit-trajectory · FUNC · materializeTrajectory()
+FUNC-emit-update-event · FUNC · emitUpdateEvent(domains)
+FUNC-encode · FUNC · encode(graph)
+FUNC-evaluate-rules · FUNC · evaluateRules()
+FUNC-export-markdown · FUNC · exportMarkdown(graph, view)
+FUNC-fit-advisory · FUNC · computeFitAdvisory(before, after)
+FUNC-generation-step · FUNC · generationStep(graph, policy, intent)
+FUNC-goal-steerer · FUNC · Autopilot
+FUNC-graph-expand · FUNC · graph_expand(handle, branch, depth+1)
+FUNC-graph-export-snapshot · FUNC · graph_export(views?)
+FUNC-graph-impact · FUNC · graph_impact(id, depth?)
+FUNC-graph-suggest · FUNC · graph_suggest(weights)
+FUNC-harness-cli · FUNC · graphcode init|update|remove
+FUNC-health-endpoint · FUNC · healthEndpoint()
+FUNC-import · FUNC · importGraph(formatE, mode)
+FUNC-import-doc · FUNC · Skill se:import-doc
+FUNC-merge-nodes · FUNC · mergeNodes(graph)
+FUNC-migrate-schema · FUNC · migrateSchema(from, to)
+FUNC-module-metrics · FUNC · moduleMetrics(graph)
+FUNC-mutate · FUNC · mutate(commands)
+FUNC-next-step · FUNC · nextStep(graph, policy)
+FUNC-own-kuzu-host · FUNC · ownKuzu()
+FUNC-rank-candidates · FUNC · rankCandidates(probes, focus)
+FUNC-render-artifacts · FUNC · renderArtifactReadiness(views)
+FUNC-render-graph · FUNC · renderGraph(elements, traces)
+FUNC-render-health · FUNC · renderHealth()
+FUNC-render-impact · FUNC · renderImpactPanel(id)
+FUNC-render-impl-gates · FUNC · renderImplGates(report)
+FUNC-render-readiness · FUNC · renderReadinessPanel(report)
+FUNC-render-recommendations · FUNC · renderImprovementMeasures()
+FUNC-render-views · FUNC · render graph→markdown views
+FUNC-reseed · FUNC · reseed(relPath)
+FUNC-resolve-tests-from-code · FUNC · Gerichtete code→REQ→TEST-Auflösung
+FUNC-rewind · FUNC · graphcode rewind <ref>
+FUNC-save-graph · FUNC · saveGraph(graph)
+FUNC-score-completeness · FUNC · scoreCompleteness(gateId, graph)
+FUNC-se-conops · FUNC · Skill se-conops
+FUNC-se-fmea · FUNC · Skill se-fmea
+FUNC-se-generate · FUNC · Skill se:generate
+FUNC-se-help · FUNC · Skill se:help
+FUNC-se-irr · FUNC · Skill se-irr
+FUNC-se-plan · FUNC · Skill se-plan
+FUNC-se-retro · FUNC · Skill se-retro
+FUNC-se-review · FUNC · Skill se-review
+FUNC-se-status · FUNC · Skill se-status
+FUNC-se-trade · FUNC · Skill se-trade
+FUNC-serve-sse · FUNC · serveSSE()
+FUNC-serve-stdio · FUNC · serveStdio()
+FUNC-subscribe-updates · FUNC · subscribeUpdates()
+FUNC-take-steering-snapshot · FUNC · takeSteeringSnapshot(graph, policy)
+FUNC-target-profile · FUNC · Skill se:target-profile
+FUNC-test · FUNC · se-test (red-first test design)
+FUNC-test-ui · FUNC · se-test-ui (UI test design)
+FUNC-view-changelog · FUNC · se-view-changelog (Change Log)
+FUNC-view-conops · FUNC · se-view-conops (ConOps)
+FUNC-view-icd · FUNC · se-view-icd (ICD)
+FUNC-view-intplan · FUNC · se-view-intplan (Integrations-/Testplan)
+FUNC-view-irr · FUNC · se-view-fmea (FMEA view)
+FUNC-view-rtm · FUNC · se-view-rtm (RTM)
+MOD-cli · MOD · cli — npx-Distribution & Lifecycle
+MOD-codec · MOD · codec.ts — GraphCodeCodec
+MOD-dashboard · MOD · dashboard — Live-Viewer-App
+MOD-docs · MOD · docs — Markdown-Re-Exporter
+MOD-harness · MOD · harness.ts — GraphCodeHarness
+MOD-hooks · MOD · hooks.ts — HookSystem
+MOD-host-bridge · MOD · host-bridge — SSE/WS Bridge
+MOD-mcp-tools · MOD · mcp-tools.ts — MCP-Registry
+MOD-repo-root · MOD · graphcode Projektwurzel
+MOD-skills · MOD · skills/prompts — agent-realisierte Funktionen
+MOD-steering · MOD · steering — Kenngroessen-Steuerungskern
+REQ-advisory-roundtrip-latency · REQ · Advisory-Roundtrip < 200ms (ohne LLM)
+REQ-agent-agnostic · REQ · Agent-agnostische MCP-Surface
+REQ-applied-suggestion-moves-target · REQ · Eine angewandte Suggestion bewegt den Zielvektor in Zielrichtung
+REQ-artifact-freshness · REQ · Artifact-Ampel-Semantik gruen gelb rot
+REQ-audit-trail · REQ · Audit-Trail / History
+REQ-auto-persist-merge · REQ · Auto-Persist + conflict-free Merge
+REQ-batch-seed-performance · REQ · Batch-Seed/Import Performance (UNWIND)
+REQ-benchmark-harness · REQ · Benchmark-Harness (graphcode vs classic)
+REQ-bootstrap-through-gate · REQ · Erstbefüllung nur durchs Gate
+REQ-buildable-standalone · REQ · Standalone baufähig (D5)
+REQ-cache-layering · REQ · Prompt-Cache-Layering
+REQ-code-governed-quality · REQ · Gate-validierte, driftfreie Qualität
+REQ-codec-validation · REQ · Codec-Validierung gegen SE_DESCRIPTOR
+REQ-completeness-actor-bounded · REQ · FCHAIN actor-bounded (Trigger + Consumer)
+REQ-completeness-single-value · REQ · Completeness: ein Wert pro Gate, Detail on-click
+REQ-confidence-tier · REQ · Confidence/Tier am MutateResult
+REQ-conflict-free-merge · REQ · Conflict-free Graph-Merge
+REQ-dashboard-ontology-sync · REQ · Dashboard/Readiness nutzt SE-Ontologie + V3_RULES
+REQ-dashboard-readonly · REQ · Dashboard strikt read-only
+REQ-deterministic-serialization · REQ · Deterministische Serialisierung
+REQ-disk-persistence · REQ · Disk-Persistenz
+REQ-doc-export · REQ · Graph → Markdown Re-Export
+REQ-docs-taxonomy · REQ · Docs-Taxonomie: Views vs Records (Litmus-Test)
+REQ-export-no-clobber · REQ · Export refuse-to-clobber
+REQ-formatE-diff-dialect · REQ · Format-E-Diff-Dialekt (R5)
+REQ-formatE-parity · REQ · Format-E-Parity = contracts (L1)
+REQ-frame-binding · REQ · Frame ist bindend für Realisierung
+REQ-gate-only-writes · REQ · Gate-only Graph-Writes
+REQ-graceful-degradation · REQ · Betrieb ohne LLM (Degraded-Modus)
+REQ-graph-code-conformance · REQ · FUNC codeRef resolves to a real declared symbol
+REQ-graph-context-replaces-reading · REQ · Praeziser Graph-Kontext ersetzt das Dokumentenlesen
+REQ-graph-integrity · REQ · Graph-Integritaet: ein Validator
+REQ-graph-is-ssot · REQ · Graph ist Single Point of Truth
+REQ-graph-snapshot-per-commit · REQ · Kanonischer Graph-Snapshot pro Commit
+REQ-graph-state-recall · REQ · Frueheren Graph-Stand reproduzieren
+REQ-graph-tests-operational · REQ · graph_tests liefert den korrekten selektiven Testset für einen Code-Change
+REQ-greenfield-systemtest-dod · REQ · Definition-of-Done: Greenfield-Systemtest
+REQ-harness-schema-in-contracts · REQ · Harness-Schemas in contracts (D1)
+REQ-hook-extension-points · REQ · Drei Hook-Extension-Points
+REQ-hook-order-deterministic · REQ · Deterministische Hook-Reihenfolge (L3)
+REQ-impact-based-testing · REQ · Selektives Testset via Impact
+REQ-import-se-ontology · REQ · SE-Ontologie importieren
+REQ-install-idempotent · REQ · Idempotent, keine parallelen Pfade
+REQ-interactive-capture-suggest · REQ · Interaktive Erfassung im suggest-Tier
+REQ-interface-change-escalation · REQ · Interface-Änderung nur per Eskalation
+REQ-interface-schema · REQ · Interface trägt ein Datenformat (SCHEMA)
+REQ-live-event-in-contracts · REQ · Live-Event-Contract in @sigloch/contracts
+REQ-mcp-gate-symmetry · REQ · MCP-Gate-Symmetrie (L2)
+(auf die Fokus-Typen FUNC/MOD/REQ gefiltert — 337 weitere Elemente via graph_elements) … (+77 weitere — via graph_elements)

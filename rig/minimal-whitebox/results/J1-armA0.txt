@@ -1,0 +1,11 @@
+## Nodes
+### FLOW
++ FLOW-docset|Input flow: a primary document plus attachments, as { id, text, page } records. [status:reviewed,created_at:2026-06-26T00:00:00.000Z]
+### FUNC
++ FN-slice|Recall-first slicer: given a DocSet, surface the superset of plausible candidate nodes (untyped) with a sourceRef on each. Deterministic. NOT yet realized (no codeRef) — this is the milestone to implement. [status:specified,created_at:2026-06-26T00:00:00.000Z]
+### MS
++ MS-slicer-core|First milestone — implement FN-slice so the recall/determinism/provenance tests pass. [status:open,created_at:2026-06-26T00:00:00.000Z]
+
+## Edges
++ FLOW-docset -io-> FN-slice
++ MS-slicer-core -compose-> FN-slice

@@ -1,0 +1,255 @@
+{
+  "armC-full": {
+    "run": "armC-full",
+    "tracedTurns": 80,
+    "textRecovered": 19,
+    "calls": {
+      "graph_authoring_guide": 71,
+      "graph_mutate": 21,
+      "graph_elements": 2
+    },
+    "callsStructured": {
+      "graph_authoring_guide": 54,
+      "graph_mutate": 21
+    },
+    "callsTextRecovered": {
+      "graph_authoring_guide": 17,
+      "graph_elements": 2
+    },
+    "meta": {
+      "elements": 27,
+      "traces": 78,
+      "REQ": 0,
+      "TEST": 0,
+      "wallMin": 67,
+      "modelTurns": 89,
+      "applied": 12,
+      "rejected": 0
+    }
+  },
+  "armC-off": {
+    "run": "armC-off",
+    "tracedTurns": 96,
+    "textRecovered": 3,
+    "calls": {
+      "graph_authoring_guide": 86,
+      "graph_mutate": 4,
+      "graph_elements": 30
+    },
+    "callsStructured": {
+      "graph_authoring_guide": 83,
+      "graph_mutate": 4,
+      "graph_elements": 30
+    },
+    "callsTextRecovered": {
+      "graph_authoring_guide": 3
+    },
+    "meta": {
+      "elements": 19,
+      "traces": 30,
+      "REQ": 0,
+      "TEST": 0,
+      "wallMin": 167,
+      "modelTurns": 107,
+      "applied": 12,
+      "rejected": 0
+    }
+  },
+  "armC-pull-devstral-low": {
+    "run": "armC-pull-devstral-low",
+    "tracedTurns": 100,
+    "textRecovered": 7,
+    "calls": {
+      "graph_authoring_guide": 92,
+      "graph_mutate": 14,
+      "graph_elements": 23
+    },
+    "callsStructured": {
+      "graph_authoring_guide": 86,
+      "graph_mutate": 14,
+      "graph_elements": 22
+    },
+    "callsTextRecovered": {
+      "graph_authoring_guide": 6,
+      "graph_elements": 1
+    },
+    "meta": {
+      "elements": 35,
+      "traces": 46,
+      "REQ": 3,
+      "TEST": 3,
+      "wallMin": 51,
+      "modelTurns": 105,
+      "applied": 11,
+      "rejected": 0
+    }
+  },
+  "armC-pull-devstral": {
+    "run": "armC-pull-devstral",
+    "tracedTurns": 95,
+    "textRecovered": 5,
+    "calls": {
+      "graph_authoring_guide": 113,
+      "graph_mutate": 17,
+      "graph_elements": 32
+    },
+    "callsStructured": {
+      "graph_authoring_guide": 108,
+      "graph_mutate": 17,
+      "graph_elements": 32
+    },
+    "callsTextRecovered": {
+      "graph_authoring_guide": 5
+    },
+    "meta": {
+      "elements": 101,
+      "traces": 136,
+      "REQ": 9,
+      "TEST": 9,
+      "wallMin": 75,
+      "modelTurns": 101,
+      "applied": 12,
+      "rejected": 0
+    }
+  },
+  "armC-pull-qwen36": {
+    "run": "armC-pull-qwen36",
+    "tracedTurns": 108,
+    "textRecovered": 0,
+    "calls": {
+      "graph_authoring_guide": 73,
+      "graph_mutate": 32,
+      "graph_elements": 58,
+      "graph_get_node": 10,
+      "graph_impact": 4
+    },
+    "callsStructured": {
+      "graph_authoring_guide": 73,
+      "graph_mutate": 32,
+      "graph_elements": 58,
+      "graph_get_node": 10,
+      "graph_impact": 4
+    },
+    "callsTextRecovered": {},
+    "meta": {
+      "elements": 43,
+      "traces": 56,
+      "REQ": 5,
+      "TEST": 5,
+      "wallMin": 36,
+      "modelTurns": 108,
+      "applied": 12,
+      "rejected": 0
+    }
+  },
+  "armC-whitebox": {
+    "run": "armC-whitebox",
+    "tracedTurns": 83,
+    "textRecovered": 14,
+    "calls": {
+      "graph_authoring_guide": 95,
+      "graph_mutate": 32,
+      "graph_elements": 3
+    },
+    "callsStructured": {
+      "graph_authoring_guide": 84,
+      "graph_mutate": 32
+    },
+    "callsTextRecovered": {
+      "graph_authoring_guide": 11,
+      "graph_elements": 3
+    },
+    "meta": {
+      "elements": 28,
+      "traces": 49,
+      "REQ": 0,
+      "TEST": 0,
+      "wallMin": 36,
+      "modelTurns": 88,
+      "applied": 9,
+      "rejected": 0
+    }
+  },
+  "qwen36/armC-full": {
+    "run": "qwen36/armC-full",
+    "tracedTurns": 52,
+    "textRecovered": 0,
+    "calls": {
+      "graph_mutate": 21,
+      "graph_authoring_guide": 3
+    },
+    "callsStructured": {
+      "graph_mutate": 21,
+      "graph_authoring_guide": 3
+    },
+    "callsTextRecovered": {},
+    "meta": {
+      "elements": 46,
+      "traces": 70,
+      "REQ": 3,
+      "TEST": 3,
+      "wallMin": 59,
+      "modelTurns": 51,
+      "applied": 12,
+      "rejected": 0
+    }
+  },
+  "qwen36/armC-off": {
+    "run": "qwen36/armC-off",
+    "tracedTurns": 113,
+    "textRecovered": 0,
+    "calls": {
+      "graph_authoring_guide": 77,
+      "graph_mutate": 32,
+      "graph_elements": 70,
+      "graph_get_node": 7,
+      "graph_readiness": 1
+    },
+    "callsStructured": {
+      "graph_authoring_guide": 77,
+      "graph_mutate": 32,
+      "graph_elements": 70,
+      "graph_get_node": 7,
+      "graph_readiness": 1
+    },
+    "callsTextRecovered": {},
+    "meta": {
+      "elements": 87,
+      "traces": 99,
+      "REQ": 22,
+      "TEST": 22,
+      "wallMin": 30,
+      "modelTurns": 113,
+      "applied": 12,
+      "rejected": 0
+    }
+  },
+  "qwen36/armC-whitebox": {
+    "run": "qwen36/armC-whitebox",
+    "tracedTurns": 50,
+    "textRecovered": 0,
+    "calls": {
+      "graph_authoring_guide": 4,
+      "graph_mutate": 24,
+      "graph_get_node": 1,
+      "graph_elements": 1
+    },
+    "callsStructured": {
+      "graph_authoring_guide": 4,
+      "graph_mutate": 24,
+      "graph_get_node": 1,
+      "graph_elements": 1
+    },
+    "callsTextRecovered": {},
+    "meta": {
+      "elements": 40,
+      "traces": 52,
+      "REQ": 0,
+      "TEST": 0,
+      "wallMin": 45,
+      "modelTurns": 50,
+      "applied": 12,
+      "rejected": 0
+    }
+  }
+}

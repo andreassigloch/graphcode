@@ -1,0 +1,62 @@
+Kanten-Grammatik der Fokus-Typen (bereits eingebettet — graph_authoring_guide dafür NICHT erneut aufrufen; Gate-Protokoll Schritt 1 ist damit erledigt):
+- FUNC: ausgehend: compose→FUNC (0..*), io→FLOW, satisfy→REQ, satisfy→UC, allocate→MOD; eingehend: FCHAIN compose→ (1..*), FUNC compose→ (0..*), FLOW io→, MS compose→, CR relation→
+- MOD: ausgehend: compose→MOD (0..*), io→MOD, satisfy→REQ; eingehend: SYS compose→ (0..*), MOD compose→ (0..*), MOD io→, FUNC allocate→, CR relation→
+
+Element-Index des Graphen (uid · type · name; bereits eingebettet — graph_elements NICHT erneut aufrufen; existierende uids für Kanten referenzieren, keine Duplikate anlegen):
+ACTOR-author · ACTOR · Graph-Autor
+ACTOR-integration-client · ACTOR · Integrationsclient
+ACTOR-operator · ACTOR · Betreiber
+ACTOR-reviewer · ACTOR · Graph-Reviewer
+FCHAIN-apply-gate-validation-verdict · FCHAIN · Batch am Apply-Gate bewerten
+FCHAIN-authenticate-user-login · FCHAIN · Anmeldung mit gültigen Zugangsdaten
+FCHAIN-author-graph-elements-edit · FCHAIN · Knoten und Kanten autorieren
+FCHAIN-export-graph-state-download · FCHAIN · Exportdatei an Client ausliefern
+FCHAIN-export-graph-state-filtered · FCHAIN · Gefilterten Teilgraphen exportieren
+FCHAIN-export-graph-state-snapshot · FCHAIN · Graphstand als Snapshot exportieren
+FCHAIN-import-graph-slice-merge · FCHAIN · Exportierte Slice zurückspielen
+FCHAIN-manage-user-access-invite · FCHAIN · Konto einladen und freischalten
+FCHAIN-manage-user-access-revoke · FCHAIN · Zugriff eines Kontos entziehen
+FCHAIN-manage-user-access-role-change · FCHAIN · Rolle eines Kontos ändern
+FCHAIN-observe-live-updates-push · FCHAIN · Live-Update an Reviewer ausliefern
+FCHAIN-observe-live-updates-reconnect · FCHAIN · Live-Kanal nach Verbindungsabbruch nachführen
+FUNC-assign-account-role · FUNC · Kontorolle zuweisen
+FUNC-authorize-role-assignment · FUNC · Rollenänderung berechtigen
+FUNC-build-export-file · FUNC · Exportdatei erzeugen
+FUNC-deliver-live-update · FUNC · Live-Update zustellen
+FUNC-detect-graph-change · FUNC · Graphänderung erkennen
+FUNC-edit-graph-element · FUNC · Graphelement bearbeiten
+FUNC-evaluate-gate-rules · FUNC · Gate-Regeln auswerten
+FUNC-filter-subgraph · FUNC · Teilgraph filtern
+FUNC-issue-session · FUNC · Sitzung ausstellen
+FUNC-persist-access-state · FUNC · Zugriffsstand persistieren
+FUNC-persist-graph-version · FUNC · Graphversion persistieren
+FUNC-publish-change-event · FUNC · Änderungsereignis veröffentlichen
+FUNC-replay-missed-events · FUNC · Verpasste Ereignisse nachliefern
+FUNC-report-gate-verdict · FUNC · Gate-Verdikt melden
+FUNC-resume-live-channel · FUNC · Live-Kanal wiederaufnehmen
+FUNC-revoke-account-access · FUNC · Kontozugriff entziehen
+FUNC-serialize-graph-snapshot · FUNC · Graphstand serialisieren
+FUNC-terminate-sessions · FUNC · Sitzungen beenden
+FUNC-verify-credentials · FUNC · Zugangsdaten prüfen
+REQ-access-state-consistent · REQ · Zugriffsstand konsistent
+REQ-account-lifecycle-management · REQ · Kontolebenszyklus verwalten
+REQ-authenticated-session-established · REQ · Authentifizierte Sitzung etabliert
+REQ-gate-verdict-persisted · REQ · Gate-Verdikt persistiert
+REQ-live-update-push · REQ · Live-Update-Push
+REQ-live-update-session-consistency · REQ · Live-Update-Sitzungskonsistenz
+REQ-role-based-authoring-permission · REQ · Rollenbasierte Autorierrechte
+SYS-collab-graph-authoring · SYS · Collaborative Governed Graph Authoring
+TEST-access-state-consistent · TEST · Zugriffsstand konsistent
+TEST-account-lifecycle-management · TEST · Kontolebenszyklus verwalten
+TEST-authenticated-session-established · TEST · Authentifizierte Sitzung etabliert
+TEST-gate-verdict-persisted · TEST · Gate-Verdikt persistiert
+TEST-live-update-push · TEST · Live-Update-Zustellung
+TEST-live-update-session-consistency · TEST · Live-Update-Sitzungskonsistenz
+TEST-role-based-authoring-permission · TEST · Rollenbasierte Autorierrechte
+UC-apply-gate-validation · UC · Änderung über Apply-Gate prüfen
+UC-authenticate-user · UC · Nutzer anmelden
+UC-author-graph-elements · UC · Graphelemente autorieren
+UC-export-graph-state · UC · Graphstand exportieren
+UC-import-graph-slice · UC · Graph-Slice importieren
+UC-manage-user-access · UC · Nutzerzugriff verwalten
+UC-observe-live-updates · UC · Live-Updates verfolgen

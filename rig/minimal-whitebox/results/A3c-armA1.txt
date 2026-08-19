@@ -1,0 +1,175 @@
+## Nodes
+### SYS
++ SYS-graphcode|Headless Claude-Code-Sidecar-Governance-Harness: Store + Apply-Gate + Hooks + Learning-Emission, eine Instanz pro Repo. Carve-Out aus aimprove. (README, SPEC §0) [status:reviewed,created_at:2026-06-16T00:00:00.000Z]
+
+## Bereits vorhanden (Identität, nicht öffnen — keine Duplikate anlegen)
+CR-GC-100 · CR · Harness Core
+CR-GC-101 · CR · MCP-Tools
+CR-GC-102 · CR · Hook-System
+CR-GC-103 · CR · Format-E Codec
+CR-GC-104 · CR · Skills/Prompts-Modul
+CR-GC-105 · CR · Architektur-Verfeinerung
+CR-GC-106 · CR · Interface-Schemas
+CR-GC-107 · CR · Dashboard auf SE-Ontologie
+CR-GC-108 · CR · Test-Konzept im Graph + Benchmark-REQ
+CR-GC-109 · CR · Live-Event + View-Contract → contracts
+CR-GC-110 · CR · views.ts → graph-api-core; BQ-Fork retiren
+CR-GC-111 · CR · MCP-stdio-Server + bin (graphcode mcp)
+CR-GC-112 · CR · CLI graphcode init|update|remove
+CR-GC-113 · CR · Graph→Markdown Re-Exporter
+CR-GC-114 · CR · Host + SSE/WS-Bridge
+CR-GC-115 · CR · Dashboard-Viewer-App (Hybrid)
+CR-GC-116 · CR · Views/Skills an Live-Graph verdrahten
+CR-GC-117 · CR · Modell-Hygiene: V3_RULES-Violations schließen
+CR-GC-118 · CR · Cleanup stale-at-all Knoten
+CR-GC-119 · CR · Docs-Taxonomie — Views vs Records
+CR-GC-120 · CR · Batch-Seed/Import (UNWIND) — Scale
+CR-GC-121 · CR · Distribution: npx-Paket, self-contained, agent-agnostic
+CR-GC-122 · CR · New-Member Bootstrap durchs Gate (Format-E Cold-Start)
+CR-GC-123 · CR · MVP E2E-Acceptance: bootstrap → spec → KNOW-query → implement → re-export
+CR-GC-124 · CR · OpenCode-Execution: agent-agnostic 2nd client, headless BYOK
+CR-GC-125 · CR · Readiness-Modell definieren & realisieren (Phase/Impl/INCOSE)
+CR-GC-126 · CR · Query-Layer: Cypher, korrekte Impact-Richtung (KNOW statt guess)
+CR-GC-127 · CR · graph_export als MCP-Tool — Agent-Loop ueber MCP geschlossen
+CR-GC-128 · CR · Repo-abgeleiteter Member-Name + README-Setup
+CR-GC-129 · CR · graph_readiness als MCP-Tool
+CR-GC-130 · CR · Action-Skills (fmea/review/status) auf MCP umgestellt
+CR-GC-131 · CR · View-Skills A (arch/nfr/trade) auf MCP umgestellt
+CR-GC-132 · CR · View-Skills B (testmatrix/testconcept/implplan) + Skill-Konformitaetstest
+CR-GC-133 · CR · Scaffold installiert die SE-Skills ins Ziel-Repo
+CR-GC-134 · CR · Bottom-up Test-Deduktion (graph_tests)
+CR-GC-200 · CR · Single graph-validator - uniqueness + de-dup
+CR-GC-201 · CR · Enforce gate-only graph writes
+CR-GC-202 · CR · graph_export refuse-to-clobber guard
+CR-GC-203 · CR · Violation-resolution ergonomics & SSOT tooling
+CR-GC-204 · CR · graph_tests operational
+CR-GC-205 · CR · Enforce-don't-document — R-18 Strukturregel + ausfuehrbare Guardrails
+CR-GC-206 · CR · Graph-code LSP conformance — resolve FUNC codeRef symbols
+CR-GC-207 · CR · Graph-first onboarding contract (GRAPHCODE.md + dialect marker)
+CR-GC-208 · CR · Skill sync + surfacing (anti-drift for scaffolded se-* skills)
+CR-GC-209 · CR · se-plan generative impl/integration plan skill
+CR-GC-210 · CR · Read-tool output-format contract (JSON vs Format-E)
+CR-GC-211 · CR · UC-authoring guardrail (terseness + jargon budget)
+CR-GC-212 · CR · Post-project KPI retro (se-retro + KPI standard)
+CR-GC-213 · CR · graph_context — knotenbezogenes Definition-of-Done-Kontextpaket
+CR-GC-214 · CR · Read-side graph-first enforcement (deny-stale-prose-read hook)
+CR-GC-215 · CR · Ship enforcement-hooks to consumer repos
+CR-GC-216 · CR · graph_realize ergonomic write-back affordance (write-twin of graph_context)
+CR-GC-217 · CR · Graph-State Time-Travel (commit-gebundener Snapshot)
+CR-GC-218 · CR · Concurrent-agent isolation and safe graph recall
+CR-GC-219 · CR · Flatten redundant nested attributes field
+CR-GC-220 · CR · Renderer: deterministic MarkdownView for every render-able artifact
+CR-GC-221 · CR · Readiness: creations as gate precondition (phase + impl)
+CR-GC-222 · CR · Artefakt-Tab: render/analysis Kind-Split
+CR-GC-223 · CR · Skills: Creation-Skills (FMEA-Rename + se-irr/se-conops/se-trade)
+CR-GC-224 · CR · Skills: View-Skills Thin-Trigger (Gruppe A)
+CR-GC-225 · CR · Skills: View-Skills Thin-Trigger (Gruppe B)
+CR-GC-226 · CR · Doku/Graph: lean=no-artifacts abloesen + Artefakt-Modell seeden
+CR-GC-227 · CR · Help content layer (authored Plain/SE annotation, HELP_CONTENT)
+CR-GC-228 · CR · Help data layer (pure projection to HelpEntry, help.ts)
+CR-GC-229 · CR · Help surfaces (graph_help MCP tool + se:help skill)
+CR-GC-230 · CR · Help docs (README + GRAPHCODE.md pointer to se:help)
+CR-GC-231 · CR · graph_authoring_guide meta-model edge guidance for graph-native authoring
+CR-GC-232 · CR · Durables Command-Log (append-only Audit-Persistenz)
+CR-GC-233 · CR · OCC: graphVersion + baseVersion-Check am Gate
+CR-GC-234 · CR · graph_merge: Replay-basierte Branch-Reintegration (semantischer Rebase)
+CR-GC-235 · CR · Ein Write-Channel: Host-owned Store, Sessions als Clients
+CR-GC-236 · CR · Export-Header: Member-Name statt hartkodiertem graphcode
+CR-GC-237 · CR · HTTP-Bridge folgt dem Store-Lock
+CR-GC-238 · CR · applyCommands: update-edge + merge-nodes ausführen
+CR-GC-239 · CR · Gate lehnt malformed Commands hart ab
+CR-GC-240 · CR · Testkonzept: Pyramiden-Ebene aus der Graph-Position statt aus einem level-Attribut
+CR-GC-241 · CR · Host-Shim-Schreibbruecke exportieren (callHost/HOST_SOCK_BASENAME)
+CR-GC-242 · CR · se-test-ui-Skill + die Red-First-Regel ausliefern
+CR-GC-243 · CR · Lokale OCC (BaseVersionSchema) auf @sigloch/contracts migriert
+CR-GC-244 · CR · Bundle-Staleness fix: rebundle-Disziplin statt Externalisierung
+CR-GC-247 · CR · Zentralisiere Trace-Legalitaet in einem Checker
+CR-GC-248 · CR · DROPPED: generisches Kuzu Element/Trace-Schema
+CR-GC-249 · CR · Auto-reseed bei Meta-Modell-Schema-Drift
+CR-GC-250 · CR · Readiness completeness pointer (cardinality-driven)
+CR-GC-251 · CR · V3-Regel R-21: satisfy-Quelle passt zur REQ-Art
+CR-GC-252 · CR · Learning-Feed = Projektion aus dem Operations-Log
+CR-GC-253 · CR · Graph-Code-Konformanz als Readiness-Regel (RC-01/RC-02)
+CR-GC-254 · CR · Konformanz-Parser auf ast-grep umstellen (Multi-Language) — BACKLOG
+CR-GC-255 · CR · Path-Containment für graph-getriebene Writes + Bridge-Bind auf Loopback
+CR-GC-256 · CR · mcp-tools.ts aufteilen (ToolContext + Tool-Gruppen)
+CR-GC-257 · CR · R-21: Integrationstest pro FUNC↔FUNC-Verbindung
+CR-GC-258 · CR · Audit-Remainder: Dependency-Fixes + Dead-Code
+CR-GC-259 · CR · Creation-Enforcement sichtbar machen (kein stilles OFF)
+CR-GC-260 · CR · Uebergrosse Module aufteilen — BACKLOG
+CR-GC-261 · CR · Restliche 500-Zeilen-Ueberschreiter: readiness-Config + harness-Query-Pfad
+CR-GC-262 · CR · Registry-Deps statt esbuild-Inlining
+CR-GC-263 · CR · OpenCode als First-Class-Client: opencode.json scaffolden
+CR-GC-264 · CR · Public-Repo-Doc-Hygiene: Belege rein, Entstehungsgeschichte raus
+CR-GC-265 · CR · npm-Metadaten + Dependency-Range-Drift
+CR-GC-266 · CR · REQ-MOD allocate migrieren (CR-228 Teil A, graphcode-Seite)
+CR-GC-267 · CR · graphcode-client extrahieren: Host-Socket + View-Katalog
+CR-GC-268 · CR · Format-E-Codec: Fan-out erzeugen
+CR-GC-269 · CR · encodeUid/decodeUid entfernen (Format-E v2)
+CR-GC-270 · CR · SERVER_VERSION aus package.json lesen
+CR-GC-271 · CR · SCHEMA-Bindung: zodDefinition raus, realRef-Stub materialisieren
+CR-GC-272 · CR · readiness + panels nach graphcode-client
+CR-GC-273 · CR · graph_suggest: se-optimizer-Binding mit dryRun-Verdict
+CR-GC-274 · CR · Fit-Gate Haertegrad 1: Delta-m-Advisory am Apply-Gate
+CR-GC-275 · CR · graph_generate — der Kaltstart-Generierungstreiber
+CR-GC-276 · CR · graph_mutate: Format-E-Input, dryRun, Preview-Audit
+CR-GC-277 · CR · SE-Skills als registrierbare Commands ausliefern
+CR-GC-278 · CR · Embedded Executor Core (Weg C, Teil 1)
+CR-GC-279 · CR · graphcode run <intent> + lokale Validierung (Weg C, Teil 2)
+CR-GC-280 · CR · Executor-Konvergenz-Hebel (Folge zu CR-GC-278/279)
+CR-GC-281 · CR · Fund-Rotation/Defer in graph_generate
+CR-GC-282 · CR · Empfaenger-abhaengiges Instruktions-Rendering — negativ validiert und zurueckgebaut
+CR-GC-283 · CR · Planungs-Step auf dem Top-Graphen
+CR-GC-284 · CR · Batch-Preflight + Autovervollstaendigung im Executor
+CR-GC-285 · CR · Runden-Prompt-Injektion: Guide-Slice + Element-Index
+CR-GC-286 · CR · Audit-Vollstaendigkeit + Rejection-Beobachtbarkeit
+CR-GC-287 · CR · Near-Duplicate-Erkennung scharf geschaltet (ND-Matrix-Injektion)
+CR-GC-288 · CR · Best-of-N-Auswahl im Treiber (deterministisch)
+CR-GC-289 · CR · Best-of-N-Ranking: Ziel-Delta statt Volumen
+CR-GC-290 · CR · Runden-Prompt-Vollstaendigkeit (arch-Batches, Fund-Fenster, Score-Ballast)
+CR-GC-291 · CR · Elementtyp-Liste im SYSTEM-Prompt (gegen STRUCT-Halluzination)
+CR-GC-292 · CR · Preflight-Erweiterung Zirkulaere Composition — geschlossen ohne Bau
+CR-GC-293 · CR · Injektion isoliert messen (kein Code, nur ein Lauf)
+CR-GC-294 · CR · Skill-Spektrum fuer Treiber-Faehigkeit (Bestandsaufnahme, kein Bau)
+CR-GC-295 · CR · Zielprofil (R6) als Runde-1-Frage, Config und Konflikt-Check
+CR-GC-296 · CR · phase_readiness konsumieren + Sprachregelung
+CR-GC-297 · CR · Injection-Default backend-abhaengig
+CR-GC-298 · CR · se:import-code-Skill + graphcode-import-code-Verb (graphify-Extraktor angeschlossen)
+CR-GC-299 · CR · exporter.ts flacht attributes ab — abgeloest von CR-GC-303
+CR-GC-300 · CR · graphVersion-Stempel im graph_export-Output
+CR-GC-301 · CR · A-SPICE-Nachschaerfungen: R-21-Level-Check, Auditor-Sicht, SUP.9/SUP.10
+CR-GC-302 · CR · Auto-SYS-Node bei jedem Import
+CR-GC-303 · CR · Attribut-Abflachung macht Steering-Pfad regelblind
+CR-GC-304 · CR · ConOps-View nach ISO 29148 neu schneiden
+CR-GC-305 · CR · spec-View entfernen, srs bleibt
+CR-GC-306 · CR · Onboarding: ein Start, Beispiel-Prompt, GVE-Adresse
+CR-GC-307 · CR · Intent-Anker sind Steuerungsinternes, nicht Kundendialog
+CR-GC-308 · CR · View-Exporter lesen nur deklarierte Kanten und Attribute
+CR-GC-309 · CR · graph_mutate echot Violations in voller Laenge
+CR-GC-310 · CR · Format-E-Kantenbatches verlangen Neu-Deklaration vorhandener Knoten
+CR-GC-311 · CR · rewind/restore als CLI-Verb — UC-graph-time-travel realisieren
+CR-GC-312 · CR · SE_DESCRIPTOR trug 2 von 12 Regelfamilien — zehn Familien wertete niemand aus
+CR-GC-313 · CR · export-graph.mjs Guard kennt den graphVersion-Stamp nicht
+CR-GC-314 · CR · Positive Entscheidungen im Audit-Trail (rulesPassed)
+CR-GC-315 · CR · R-12 und R-21 feuerten auf Kanten, fuer die sie nie gedacht waren
+CR-GC-316 · CR · graph_help buendelt Massnahmen je Regel statt je Element
+CR-GC-317 · CR · RTM nach A-SPICE-Ebenen gruppieren + Integrationsabdeckung
+CR-GC-318 · CR · reqLevels lief nur ueber compose — satisfy-Bein fehlte
+CR-GC-319 · CR · audit_trail lieferte Rohdatensaetze statt einer Projektion
+CR-GC-320 · CR · executor.ts schneiden — Schritt 1 (Prompt · Ranking · Prosa-Recovery)
+CR-GC-321 · CR · __name in Format-E entdeckbar machen, stillen Namens-Fallback laut machen
+CR-GC-322 · CR · GRAPHCODE-STEERING.md — die Anleitung fuer den Menschen (Steuerung und docs/views/)
+CR-GC-330 · CR · Der Learning-Feed zieht in den eigenen Workspace
+CR-GC-331 · CR · graphcode remove raeumt auch den Vorgaenger-Ordner weg
+CR-GC-339 · CR · Artikel-Claims belastbar machen
+CR-GC-340 · CR · Steuerungsnachweis I: Messpfad und Architektur-Richtung
+CR-GC-341 · CR · Steuerungsnachweis II: Regel-Korrektheit und Prozess-Ratsche
+CR-GC-342 · CR · Eigenes Modell: Ableitungskette der Anforderungen
+CR-GC-343 · CR · Nachdokumentation ausgelieferter Funktion
+MS-1-specification · MS · M1: Spezifikation
+MS-2-coding-vv · MS · M2: Coding & V&V
+MS-3-mvp-readiness · MS · M3: MVP Readiness
+MS-4-mvp2 · MS · M4: MVP-2 (Dashboard, OpenCode, Scale)
+MS-5-efficiency · MS · M5: Efficiency-Hardening
+MS-6-adoption · MS · M6: Adoption & Artifact-Model
+MS-7-concurrency · MS · Enterprise concurrency & merge (one write channel)

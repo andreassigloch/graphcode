@@ -1,0 +1,148 @@
+{
+  "job": "J1 — 1 Knoten, Implementieren (FN-slice, Kalibrierung)",
+  "seeds": [
+    "FN-slice"
+  ],
+  "nodes": [
+    {
+      "uid": "UC-structure-doc",
+      "type": "UC",
+      "name": "Structure an unstructured document set",
+      "role": "whitebox",
+      "description": "Actor feeds a document set; the system returns a candidate graph from which a typed model can be built. Realizes the slicing goal."
+    },
+    {
+      "uid": "FN-slice",
+      "type": "FUNC",
+      "name": "Slice into untyped candidate graph",
+      "role": "seed",
+      "description": "Recall-first slicer: given a DocSet, surface the superset of plausible candidate nodes (untyped) with a sourceRef on each. Deterministic. NOT yet realized (no codeRef) — this is the milestone to implement."
+    },
+    {
+      "uid": "REQ-recall-first",
+      "type": "REQ",
+      "name": "Recall-first surfacing",
+      "role": "whitebox",
+      "description": "Surface the superset of plausible candidates; core recall >= 0.85 on a real document; never silently drop a candidate. Precision is a later concern."
+    },
+    {
+      "uid": "REQ-determinism",
+      "type": "REQ",
+      "name": "Deterministic extraction",
+      "role": "whitebox",
+      "description": "Same input yields the same candidate set with stable, deterministic IDs (re-run Jaccard = 1.0). No randomness, no wall-clock in IDs."
+    },
+    {
+      "uid": "REQ-provenance",
+      "type": "REQ",
+      "name": "Provenance via sourceRef",
+      "role": "whitebox",
+      "description": "Every emitted candidate carries a non-empty sourceRef { doc, page, region } so provenance survives the hand-off to the typer."
+    },
+    {
+      "uid": "TEST-recall",
+      "type": "TEST",
+      "name": "Recall benchmark",
+      "role": "whitebox",
+      "description": "Target: slice() over a ground-truth document. Tool: vitest + scoreRecall (see spikes/score.ts). PASS iff core recall >= 0.85."
+    },
+    {
+      "uid": "TEST-determinism",
+      "type": "TEST",
+      "name": "Re-run determinism check",
+      "role": "whitebox",
+      "description": "Target: slice() run twice on the same input. Tool: vitest. PASS iff the candidate sets are identical and IDs stable (Jaccard = 1.0)."
+    },
+    {
+      "uid": "TEST-provenance",
+      "type": "TEST",
+      "name": "sourceRef presence assertion",
+      "role": "whitebox",
+      "description": "Target: every candidate in the SlicerOutput. Tool: vitest. PASS iff each carries a non-empty sourceRef { doc, page, region }."
+    },
+    {
+      "uid": "FLOW-docset",
+      "type": "FLOW",
+      "name": "DocSet",
+      "role": "whitebox",
+      "description": "Input flow: a primary document plus attachments, as { id, text, page } records."
+    },
+    {
+      "uid": "SCHEMA-slicer-output",
+      "type": "SCHEMA",
+      "name": "SlicerOutput",
+      "role": "whitebox",
+      "description": "Output shape: { candidates: Array<{ id: string; text: string; sourceRef: { doc: string; page: number; region: string } }> }. id is a deterministic hash of (doc,page,region,text)."
+    },
+    {
+      "uid": "MOD-slicer",
+      "type": "MOD",
+      "name": "slicer",
+      "role": "whitebox",
+      "description": "Host module for the slice function (src/slice.ts)."
+    },
+    {
+      "uid": "MS-slicer-core",
+      "type": "MS",
+      "name": "Milestone: Slicer core",
+      "role": "blackbox"
+    }
+  ],
+  "edges": [
+    {
+      "source": "FN-slice",
+      "type": "satisfy",
+      "target": "REQ-recall-first"
+    },
+    {
+      "source": "FN-slice",
+      "type": "satisfy",
+      "target": "REQ-determinism"
+    },
+    {
+      "source": "FN-slice",
+      "type": "satisfy",
+      "target": "REQ-provenance"
+    },
+    {
+      "source": "FN-slice",
+      "type": "satisfy",
+      "target": "UC-structure-doc"
+    },
+    {
+      "source": "TEST-recall",
+      "type": "verify",
+      "target": "REQ-recall-first"
+    },
+    {
+      "source": "TEST-determinism",
+      "type": "verify",
+      "target": "REQ-determinism"
+    },
+    {
+      "source": "TEST-provenance",
+      "type": "verify",
+      "target": "REQ-provenance"
+    },
+    {
+      "source": "FLOW-docset",
+      "type": "io",
+      "target": "FN-slice"
+    },
+    {
+      "source": "FLOW-docset",
+      "type": "relation",
+      "target": "SCHEMA-slicer-output"
+    },
+    {
+      "source": "FN-slice",
+      "type": "allocate",
+      "target": "MOD-slicer"
+    },
+    {
+      "source": "MS-slicer-core",
+      "type": "compose",
+      "target": "FN-slice"
+    }
+  ]
+}

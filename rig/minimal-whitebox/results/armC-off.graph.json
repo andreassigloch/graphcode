@@ -1,0 +1,319 @@
+{
+  "elements": [
+    {
+      "uid": "MOD-authentication",
+      "type": "MOD",
+      "name": "Authentication Module",
+      "attributes": {},
+      "description": "Handles user authentication and session management."
+    },
+    {
+      "uid": "MOD-ui",
+      "type": "MOD",
+      "name": "User Interface Module",
+      "attributes": {},
+      "description": "Provides the web-based interface for user interaction."
+    },
+    {
+      "uid": "SYS-web-app",
+      "type": "SYS",
+      "name": "Multiuser Web-App",
+      "attributes": {},
+      "description": "Multiuser-fähige Web-App aus dem graphcode harness: Nutzer melden sich an, autorieren gemeinsam einen governten Systemgraphen über das Apply-Gate, sehen Live-Updates und exportieren den Stand."
+    },
+    {
+      "uid": "UC-login",
+      "type": "UC",
+      "name": "Login",
+      "description": "User initiates login, system validates credentials and grants access.",
+      "attributes": {}
+    },
+    {
+      "uid": "UC-collaborate",
+      "type": "UC",
+      "name": "Collaborate",
+      "attributes": {},
+      "description": "Users propose changes, the Apply-Gate validates and merges them into the governed graph."
+    },
+    {
+      "uid": "UC-export",
+      "type": "UC",
+      "name": "Export",
+      "attributes": {},
+      "description": "User requests export, system generates a snapshot of the governed graph."
+    },
+    {
+      "uid": "UC-multiuser-web-app",
+      "type": "UC",
+      "name": "Multiuser Web App",
+      "attributes": {},
+      "description": "Users authenticate, collaborate on a governed system graph via the Apply-Gate, see live updates, and export the current state."
+    },
+    {
+      "uid": "UC-authenticate-system-graph",
+      "type": "UC",
+      "name": "Authenticate System Graph",
+      "attributes": {},
+      "description": "User authenticates to access the governed system graph and collaborate on multiuser authoring."
+    },
+    {
+      "uid": "UC-multiuser-collaboration",
+      "type": "UC",
+      "name": "Multiuser Collaboration",
+      "attributes": {},
+      "description": "Users authenticate, jointly author a governed system graph via the Apply-Gate, see live updates, and export the state."
+    },
+    {
+      "uid": "ACTOR-user",
+      "type": "ACTOR",
+      "name": "User",
+      "attributes": {},
+      "description": "End user interacting with the web application."
+    },
+    {
+      "uid": "ACTOR-admin",
+      "type": "ACTOR",
+      "name": "Administrator",
+      "attributes": {},
+      "description": "Betreiber der Web-App, verwaltet Nutzer und Systemeinstellungen."
+    },
+    {
+      "uid": "FCHAIN-login-scenario",
+      "type": "FCHAIN",
+      "name": "Login Scenario",
+      "attributes": {},
+      "description": "User initiates login, system validates credentials and grants access."
+    },
+    {
+      "uid": "FCHAIN-collaborate-scenario",
+      "type": "FCHAIN",
+      "name": "Collaboration Scenario",
+      "attributes": {},
+      "description": "Users propose changes, the Apply-Gate validates and merges them into the governed graph."
+    },
+    {
+      "uid": "FCHAIN-export-scenario",
+      "type": "FCHAIN",
+      "name": "Export Scenario",
+      "attributes": {},
+      "description": "User requests export, system generates a snapshot of the governed graph."
+    },
+    {
+      "uid": "FUNC-login-initiate",
+      "type": "FUNC",
+      "name": "Initiate Login",
+      "attributes": {},
+      "description": "User initiates the login process by entering credentials."
+    },
+    {
+      "uid": "FUNC-login-validate",
+      "type": "FUNC",
+      "name": "Validate Credentials",
+      "attributes": {},
+      "description": "System validates the entered credentials against stored data."
+    },
+    {
+      "uid": "FUNC-login-grant-access",
+      "type": "FUNC",
+      "name": "Grant Access",
+      "attributes": {},
+      "description": "System grants access to the user upon successful validation."
+    },
+    {
+      "uid": "FUNC-apply-gate-validate",
+      "type": "FUNC",
+      "name": "Apply Gate Validate",
+      "attributes": {},
+      "description": "Validates and merges changes into the governed graph."
+    },
+    {
+      "uid": "FUNC-graph-export",
+      "type": "FUNC",
+      "name": "Graph Export",
+      "attributes": {},
+      "description": "Generates a snapshot of the governed graph."
+    }
+  ],
+  "traces": [
+    {
+      "sourceId": "SYS-web-app",
+      "targetId": "UC-login",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "SYS-web-app",
+      "targetId": "UC-collaborate",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "SYS-web-app",
+      "targetId": "UC-export",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-login",
+      "targetId": "FCHAIN-login-scenario",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-collaborate",
+      "targetId": "FCHAIN-collaborate-scenario",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-export",
+      "targetId": "FCHAIN-export-scenario",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-web-app",
+      "targetId": "FCHAIN-login-scenario",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-web-app",
+      "targetId": "FCHAIN-collaborate-scenario",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-web-app",
+      "targetId": "FCHAIN-export-scenario",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-authenticate-system-graph",
+      "targetId": "FCHAIN-login-scenario",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-collaboration",
+      "targetId": "FCHAIN-login-scenario",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-user",
+      "targetId": "UC-login",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-user",
+      "targetId": "UC-collaborate",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-user",
+      "targetId": "UC-export",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-user",
+      "targetId": "UC-multiuser-web-app",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-user",
+      "targetId": "UC-authenticate-system-graph",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-user",
+      "targetId": "UC-multiuser-collaboration",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-admin",
+      "targetId": "UC-collaborate",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-admin",
+      "targetId": "UC-multiuser-web-app",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-login-scenario",
+      "targetId": "FUNC-login-initiate",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-collaborate-scenario",
+      "targetId": "FUNC-apply-gate-validate",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-export-scenario",
+      "targetId": "FUNC-graph-export",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-login-initiate",
+      "targetId": "FUNC-login-validate",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-login-validate",
+      "targetId": "FUNC-login-grant-access",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-login-initiate",
+      "targetId": "UC-multiuser-collaboration",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-login-initiate",
+      "targetId": "UC-login",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-login-initiate",
+      "targetId": "MOD-authentication",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-login-validate",
+      "targetId": "MOD-authentication",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-login-grant-access",
+      "targetId": "MOD-ui",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "MOD-ui",
+      "targetId": "MOD-authentication",
+      "edgeType": "io",
+      "attributes": {}
+    }
+  ]
+}

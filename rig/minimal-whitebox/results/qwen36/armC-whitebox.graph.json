@@ -1,0 +1,623 @@
+{
+  "elements": [
+    {
+      "uid": "SYS-graphcode-harness",
+      "type": "SYS",
+      "name": "graphcode harness",
+      "attributes": {},
+      "description": "Graphcode Harness System"
+    },
+    {
+      "uid": "UC-login",
+      "type": "UC",
+      "name": "Login",
+      "attributes": {},
+      "description": "Nutzer meldet sich an und erhält Zugriff auf den Graphen."
+    },
+    {
+      "uid": "UC-author-graph",
+      "type": "UC",
+      "name": "Graph autorieren",
+      "attributes": {},
+      "description": "Nutzer autorieren gemeinsam einen Systemgraphen über das Apply-Gate."
+    },
+    {
+      "uid": "UC-view-updates",
+      "type": "UC",
+      "name": "Live-Updates sehen",
+      "attributes": {},
+      "description": "Nutzer sieht Live-Updates des Graphenstands."
+    },
+    {
+      "uid": "UC-export-graph",
+      "type": "UC",
+      "name": "Graph exportieren",
+      "attributes": {},
+      "description": "Nutzer exportiert den aktuellen Graphenstand als Datei."
+    },
+    {
+      "uid": "UC-collaborative-authoring",
+      "type": "UC",
+      "name": "Collaborative Authoring",
+      "attributes": {},
+      "description": "Nutzer melden sich an und autorieren gemeinsam einen Systemgraphen über das Apply-Gate."
+    },
+    {
+      "uid": "UC-multiuser-webapp",
+      "type": "UC",
+      "name": "Multiuser Web App",
+      "attributes": {},
+      "description": "Multiuser-fähige Web-App aus dem graphcode harness autorieren"
+    },
+    {
+      "uid": "ACTOR-user",
+      "type": "ACTOR",
+      "name": "User",
+      "attributes": {},
+      "description": "Nutzer des Systems, die sich anmelden und den Graphen nutzen."
+    },
+    {
+      "uid": "ACTOR-admin",
+      "type": "ACTOR",
+      "name": "Admin",
+      "attributes": {},
+      "description": "Systembetreiber, der den Graphen verwaltet und exportiert."
+    },
+    {
+      "uid": "ACTOR-guest",
+      "type": "ACTOR",
+      "name": "Guest",
+      "attributes": {},
+      "description": "Nicht-autorisierter Besucher der Web-App, der Live-Updates betrachtet."
+    },
+    {
+      "uid": "FCHAIN-login-flow",
+      "type": "FCHAIN",
+      "name": "Login-Flow",
+      "attributes": {},
+      "description": "Nutzer melden sich an und erhalten Zugriff auf den Graphen."
+    },
+    {
+      "uid": "FCHAIN-author-flow",
+      "type": "FCHAIN",
+      "name": "Author-Flow",
+      "attributes": {},
+      "description": "Nutzer autorieren gemeinsam einen Systemgraphen über das Apply-Gate."
+    },
+    {
+      "uid": "FCHAIN-export-flow",
+      "type": "FCHAIN",
+      "name": "Export-Flow",
+      "attributes": {},
+      "description": "Nutzer exportieren den aktuellen Graphen-Stand."
+    },
+    {
+      "uid": "FCHAIN-live-updates",
+      "type": "FCHAIN",
+      "name": "Live-Updates-Flow",
+      "attributes": {},
+      "description": "Szenario: Nutzer sieht Live-Updates des Graphenstands via WebSocket/Server-Sent-Events."
+    },
+    {
+      "uid": "FCHAIN-multiuser-flow",
+      "type": "FCHAIN",
+      "name": "Multiuser Flow",
+      "attributes": {},
+      "description": "Multiuser-Webapp Szenario"
+    },
+    {
+      "uid": "FCHAIN-collaborative-authoring",
+      "type": "FCHAIN",
+      "name": "Collaborative Authoring",
+      "attributes": {},
+      "description": "Nutzer arbeiten gemeinsam an einem Systemgraphen über das Apply-Gate."
+    },
+    {
+      "uid": "FUNC-live-update",
+      "type": "FUNC",
+      "name": "Live-Update bereitstellen",
+      "attributes": {},
+      "description": "Bereitstellung von Echtzeit-Graphaktualisierungen an Clients."
+    },
+    {
+      "uid": "FUNC-collab-edit",
+      "type": "FUNC",
+      "name": "Collaborative editing synchronisieren",
+      "attributes": {},
+      "description": "Ermöglicht mehreren Nutzern, gleichzeitig am Systemgraphen zu arbeiten und Änderungen in Echtzeit zu synchronisieren."
+    },
+    {
+      "uid": "FUNC-load-graph",
+      "type": "FUNC",
+      "name": "Graphstruktur laden",
+      "attributes": {},
+      "description": "Graphdatenstruktur laden"
+    },
+    {
+      "uid": "FUNC-edit-nodes",
+      "type": "FUNC",
+      "name": "Knoten und Kanten bearbeiten",
+      "attributes": {},
+      "description": "Knoten und Kanten bearbeiten"
+    },
+    {
+      "uid": "FUNC-save-graph",
+      "type": "FUNC",
+      "name": "Graph speichern",
+      "attributes": {},
+      "description": "Graphänderungen speichern"
+    },
+    {
+      "uid": "FUNC-select-format",
+      "type": "FUNC",
+      "name": "Exportformat auswählen",
+      "attributes": {},
+      "description": "Exportformat auswählen"
+    },
+    {
+      "uid": "FUNC-generate-export",
+      "type": "FUNC",
+      "name": "Exportdatei generieren",
+      "attributes": {},
+      "description": "Exportdatei generieren"
+    },
+    {
+      "uid": "FUNC-download-file",
+      "type": "FUNC",
+      "name": "Datei herunterladen",
+      "attributes": {},
+      "description": "Datei herunterladen"
+    },
+    {
+      "uid": "FUNC-input-credentials",
+      "type": "FUNC",
+      "name": "Zugangsdaten eingeben",
+      "attributes": {},
+      "description": "Benutzername und Passwort eingeben"
+    },
+    {
+      "uid": "FUNC-check-authentication",
+      "type": "FUNC",
+      "name": "Benutzer validieren",
+      "attributes": {},
+      "description": "Zugangsdaten prüfen"
+    },
+    {
+      "uid": "FUNC-create-session",
+      "type": "FUNC",
+      "name": "Sitzung erstellen",
+      "attributes": {},
+      "description": "Benutzersitzung erstellen"
+    },
+    {
+      "uid": "FLOW-collab-sync",
+      "type": "FLOW",
+      "name": "Echtzeit-Synchronisation",
+      "attributes": {},
+      "description": "Synchronisiert Graph-Änderungen zwischen allen verbundenen Clients."
+    },
+    {
+      "uid": "FLOW-collab-entry",
+      "type": "FLOW",
+      "name": "Collaborative Entry",
+      "attributes": {},
+      "description": "Entry flow for collaborative authoring chain"
+    },
+    {
+      "uid": "FLOW-collab-exit",
+      "type": "FLOW",
+      "name": "Collaborative Exit",
+      "attributes": {},
+      "description": "Exit flow for collaborative authoring chain"
+    },
+    {
+      "uid": "FLOW-live-entry",
+      "type": "FLOW",
+      "name": "Live Entry",
+      "attributes": {},
+      "description": "Entry flow for live updates chain"
+    },
+    {
+      "uid": "FLOW-live-exit",
+      "type": "FLOW",
+      "name": "Live Exit",
+      "attributes": {},
+      "description": "Exit flow for live updates chain"
+    },
+    {
+      "uid": "MOD-web-platform",
+      "type": "MOD",
+      "name": "Web Platform Module",
+      "attributes": {},
+      "description": "Web-App Modul, das die Live-Update-Funktionalität bereitstellt."
+    },
+    {
+      "uid": "SCHEMA-collab-sync",
+      "type": "SCHEMA",
+      "name": "Collaborative Editing Schema",
+      "attributes": {
+        "realRef": {
+          "file": "schema/collab-sync.json",
+          "symbol": "CollabSyncSchema"
+        }
+      },
+      "description": "Real-time synchronization schema for collaborative editing."
+    },
+    {
+      "uid": "SCHEMA-collab-entry",
+      "type": "SCHEMA",
+      "name": "Collaborative Entry Schema",
+      "attributes": {
+        "realRef": {
+          "file": "schema/collab-entry.json",
+          "symbol": "CollabEntrySchema"
+        }
+      },
+      "description": "Data schema for collaborative entry operations."
+    },
+    {
+      "uid": "SCHEMA-collab-exit",
+      "type": "SCHEMA",
+      "name": "Collaborative Exit Schema",
+      "attributes": {
+        "realRef": {
+          "file": "schema/collab-exit.json",
+          "symbol": "CollabExitSchema"
+        }
+      },
+      "description": "Data schema for collaborative exit operations."
+    },
+    {
+      "uid": "SCHEMA-live-entry",
+      "type": "SCHEMA",
+      "name": "Live Entry Schema",
+      "attributes": {
+        "realRef": {
+          "file": "schema/live-entry.json",
+          "symbol": "LiveEntrySchema"
+        }
+      },
+      "description": "Data schema for live entry streaming."
+    },
+    {
+      "uid": "SCHEMA-live-exit",
+      "type": "SCHEMA",
+      "name": "Live Exit Schema",
+      "attributes": {
+        "realRef": {
+          "file": "schema/live-exit.json",
+          "symbol": "LiveExitSchema"
+        }
+      },
+      "description": "Data schema for live exit streaming."
+    },
+    {
+      "uid": "MOD-auth-module",
+      "type": "MOD",
+      "name": "Auth Module",
+      "description": "Handles authentication and session management for multi-user access. Contains user verification, credential processing, and session lifecycle functions.",
+      "attributes": {}
+    },
+    {
+      "uid": "MOD-collab-platform",
+      "type": "MOD",
+      "name": "Collaboration Platform Module",
+      "description": "Manages real-time collaborative editing, synchronization, and live-update delivery for concurrent multi-user graph authoring.",
+      "attributes": {}
+    }
+  ],
+  "traces": [
+    {
+      "sourceId": "SYS-graphcode-harness",
+      "targetId": "UC-login",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "SYS-graphcode-harness",
+      "targetId": "UC-author-graph",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "SYS-graphcode-harness",
+      "targetId": "UC-view-updates",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "SYS-graphcode-harness",
+      "targetId": "UC-export-graph",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "SYS-graphcode-harness",
+      "targetId": "UC-multiuser-webapp",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-login",
+      "targetId": "FCHAIN-login-flow",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-author-graph",
+      "targetId": "FCHAIN-author-flow",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-author-graph",
+      "targetId": "FCHAIN-collaborative-authoring",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-view-updates",
+      "targetId": "FCHAIN-live-updates",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-export-graph",
+      "targetId": "FCHAIN-export-flow",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-collaborative-authoring",
+      "targetId": "FCHAIN-collaborative-authoring",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-webapp",
+      "targetId": "FCHAIN-multiuser-flow",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-user",
+      "targetId": "FLOW-collab-sync",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-user",
+      "targetId": "FLOW-collab-entry",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-admin",
+      "targetId": "FLOW-live-entry",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-user",
+      "targetId": "UC-login",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-user",
+      "targetId": "UC-author-graph",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-user",
+      "targetId": "UC-view-updates",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-user",
+      "targetId": "UC-export-graph",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-user",
+      "targetId": "UC-multiuser-webapp",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-admin",
+      "targetId": "UC-login",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-admin",
+      "targetId": "UC-author-graph",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-admin",
+      "targetId": "UC-view-updates",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-admin",
+      "targetId": "UC-export-graph",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-guest",
+      "targetId": "UC-view-updates",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-login-flow",
+      "targetId": "FUNC-input-credentials",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-login-flow",
+      "targetId": "FUNC-check-authentication",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-login-flow",
+      "targetId": "FUNC-create-session",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-author-flow",
+      "targetId": "FUNC-load-graph",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-author-flow",
+      "targetId": "FUNC-edit-nodes",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-author-flow",
+      "targetId": "FUNC-save-graph",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-export-flow",
+      "targetId": "FUNC-select-format",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-export-flow",
+      "targetId": "FUNC-generate-export",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-export-flow",
+      "targetId": "FUNC-download-file",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-live-updates",
+      "targetId": "FUNC-live-update",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-collaborative-authoring",
+      "targetId": "FUNC-collab-edit",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-live-update",
+      "targetId": "FLOW-live-exit",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-collab-edit",
+      "targetId": "FLOW-collab-sync",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-collab-edit",
+      "targetId": "FLOW-collab-exit",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-live-update",
+      "targetId": "MOD-web-platform",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FLOW-collab-exit",
+      "targetId": "ACTOR-user",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FLOW-live-exit",
+      "targetId": "ACTOR-admin",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FLOW-collab-entry",
+      "targetId": "FUNC-collab-edit",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FLOW-live-entry",
+      "targetId": "FUNC-live-update",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FLOW-collab-sync",
+      "targetId": "SCHEMA-collab-sync",
+      "edgeType": "relation",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FLOW-collab-entry",
+      "targetId": "SCHEMA-collab-entry",
+      "edgeType": "relation",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FLOW-collab-exit",
+      "targetId": "SCHEMA-collab-exit",
+      "edgeType": "relation",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FLOW-live-entry",
+      "targetId": "SCHEMA-live-entry",
+      "edgeType": "relation",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FLOW-live-exit",
+      "targetId": "SCHEMA-live-exit",
+      "edgeType": "relation",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-check-authentication",
+      "targetId": "MOD-auth-module",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-create-session",
+      "targetId": "MOD-auth-module",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-collab-edit",
+      "targetId": "MOD-collab-platform",
+      "edgeType": "allocate",
+      "attributes": {}
+    }
+  ]
+}

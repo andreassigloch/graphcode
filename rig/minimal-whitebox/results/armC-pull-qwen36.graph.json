@@ -1,0 +1,643 @@
+{
+  "elements": [
+    {
+      "uid": "SYS-graphcode-webapp",
+      "type": "SYS",
+      "name": "Graphcode Web-App",
+      "attributes": {},
+      "description": "Multiuser-fähige Web-App aus dem graphcode harness: Nutzer melden sich an, autorieren gemeinsam einen governten Systemgraphen über das Apply-Gate, sehen Live-Updates und exportieren den Stand."
+    },
+    {
+      "uid": "UC-anmelden",
+      "type": "UC",
+      "name": "Anmelden",
+      "attributes": {},
+      "description": "Nutzer melden sich an, um Zugriff auf die Web-App zu erhalten."
+    },
+    {
+      "uid": "UC-graph-erstellen",
+      "type": "UC",
+      "name": "Graph erstellen",
+      "attributes": {},
+      "description": "Nutzer autorieren gemeinsam einen Systemgraphen über das Apply-Gate."
+    },
+    {
+      "uid": "UC-live-updates",
+      "type": "UC",
+      "name": "Live-Updates sehen",
+      "attributes": {},
+      "description": "Nutzer sehen Live-Updates des gemeinsamen Graphen."
+    },
+    {
+      "uid": "UC-exportieren",
+      "type": "UC",
+      "name": "Exportieren",
+      "attributes": {},
+      "description": "Nutzer exportieren den aktuellen Stand des Graphen."
+    },
+    {
+      "uid": "UC-governen",
+      "type": "UC",
+      "name": "Systemgraphen verwalten",
+      "attributes": {},
+      "description": "Admin betreibt das Apply-Gate und verwaltet den Systemgraphen."
+    },
+    {
+      "uid": "UC-multiuser-webapp",
+      "type": "UC",
+      "name": "Multiuser-Webapp nutzen",
+      "attributes": {},
+      "description": "Nutzer melden sich an, autorieren gemeinsam einen Systemgraphen über das Apply-Gate, sehen Live-Updates und exportieren den Stand."
+    },
+    {
+      "uid": "UC-gemeinsam-harness-nutzen",
+      "type": "UC",
+      "name": "Gemeinsam Harness Nutzen",
+      "attributes": {},
+      "description": "Nutzer melden sich an, autorieren gemeinsam einen Systemgraphen über das Apply-Gate und exportieren den Stand."
+    },
+    {
+      "uid": "UC-multiuser-collab",
+      "type": "UC",
+      "name": "Multi-User Collaboration Session",
+      "attributes": {},
+      "description": "Nutzer melden sich an, autorieren gemeinsam einen governten Systemgraphen über das Apply-Gate, sehen Live-Updates und exportieren den Stand."
+    },
+    {
+      "uid": "ACTOR-nutzer",
+      "type": "ACTOR",
+      "name": "Nutzer",
+      "attributes": {},
+      "description": "Nutzer der Multiuser-Web-App"
+    },
+    {
+      "uid": "ACTOR-admin",
+      "type": "ACTOR",
+      "name": "Administrator",
+      "attributes": {},
+      "description": "Administrator, der das Apply-Gate betreibt und den Graphen verwaltet."
+    },
+    {
+      "uid": "ACTOR-multiuser-user",
+      "type": "ACTOR",
+      "name": "Multiuser-Nutzer",
+      "attributes": {},
+      "description": "Nutzer, der sich am graphcode-Harness anmeldet, gemeinsam Graphen autorisiert und Live-Updates sieht."
+    },
+    {
+      "uid": "ACTOR-user",
+      "type": "ACTOR",
+      "name": "User",
+      "attributes": {},
+      "description": "Nutzer der Web-App"
+    },
+    {
+      "uid": "FC-anmelden",
+      "type": "FCHAIN",
+      "name": "Anmelden",
+      "attributes": {},
+      "description": "Nutzer meldet sich erfolgreich an, um Zugriff auf den Graphen zu erhalten."
+    },
+    {
+      "uid": "FC-exportieren",
+      "type": "FCHAIN",
+      "name": "Exportieren",
+      "attributes": {},
+      "description": "Nutzer exportiert den aktuellen Graphenstand als Datei."
+    },
+    {
+      "uid": "FC-governen",
+      "type": "FCHAIN",
+      "name": "Governen",
+      "attributes": {},
+      "description": "Nutzer autoriert Änderungen gemeinsam über das Apply-Gate."
+    },
+    {
+      "uid": "FCHAIN-graph-erstellen",
+      "type": "FCHAIN",
+      "name": "Graph erstellen",
+      "attributes": {},
+      "description": "Nutzer erstellen und bearbeiten den Systemgraphen gemeinsam über das Apply-Gate."
+    },
+    {
+      "uid": "FCHAIN-live-updates",
+      "type": "FCHAIN",
+      "name": "Live-Updates sehen",
+      "attributes": {},
+      "description": "Nutzer sehen Live-Updates des gemeinsamen Graphen in Echtzeit."
+    },
+    {
+      "uid": "FCHAIN-szenar-web-multiuser",
+      "type": "FCHAIN",
+      "name": "Web-Multiuser-Szenario",
+      "attributes": {},
+      "description": "Szenario: Anmeldung, gemeinsame Autorisierung über Apply-Gate und Live-Export."
+    },
+    {
+      "uid": "FCHAIN-collaboration-session",
+      "type": "FCHAIN",
+      "name": "Collaboration Session",
+      "attributes": {},
+      "description": "Funktionale Kette für gemeinsame Graph-Autorierung über das Apply-Gate mit Live-Updates und Export"
+    },
+    {
+      "uid": "FUNC-login-benutzervalidierung",
+      "type": "FUNC",
+      "name": "Login-Benutzervalidierung",
+      "attributes": {},
+      "description": "Validiert Benutzername und Passwort gegen die Authentifizierungsdatenbank und prüft Account-Status."
+    },
+    {
+      "uid": "FUNC-session-token-erstellung",
+      "type": "FUNC",
+      "name": "Session-Token-Erstellung",
+      "attributes": {},
+      "description": "Generiert ein JWT für die authentifizierte Sitzung mit Ablaufzeit und Berechtigungen."
+    },
+    {
+      "uid": "FUNC-graph-zugriffsberechtigung-pruefen",
+      "type": "FUNC",
+      "name": "Graph-Zugriffsberechtigung prüfen",
+      "attributes": {},
+      "description": "Prüft die Berechtigungen des Benutzers für den Zugriff auf den Systemgraphen."
+    },
+    {
+      "uid": "FUNC-graph-daten-serialisieren",
+      "type": "FUNC",
+      "name": "Graph-Daten serialisieren",
+      "attributes": {},
+      "description": "Konvertiert die aktuelle Graphenstruktur in ein exportierbares Format (JSON/XML)."
+    },
+    {
+      "uid": "FUNC-datei-generierung",
+      "type": "FUNC",
+      "name": "Datei-Generierung",
+      "attributes": {},
+      "description": "Erstellt eine exportierbare Datei mit Grapheninhalt und Metadaten."
+    },
+    {
+      "uid": "FUNC-download-link-bereitstellen",
+      "type": "FUNC",
+      "name": "Download-Link bereitstellen",
+      "attributes": {},
+      "description": "Generiert einen sicheren, zeitlich begrenzten Download-Link für den Export."
+    },
+    {
+      "uid": "FUNC-aenderungsvorschlag-einreichen",
+      "type": "FUNC",
+      "name": "Änderungsvorschlag einreichen",
+      "attributes": {},
+      "description": "Erstellt einen CR/REQ für vorgeschlagene Änderungen am Systemgraphen."
+    },
+    {
+      "uid": "FUNC-apply-gate-validierung",
+      "type": "FUNC",
+      "name": "Apply-Gate Validierung",
+      "attributes": {},
+      "description": "Prüft Änderungen gegen Governance-Regeln und Compliance-Anforderungen."
+    },
+    {
+      "uid": "FUNC-live-update-broadcast",
+      "type": "FUNC",
+      "name": "Live-Update Broadcast",
+      "attributes": {},
+      "description": "Sendet Echtzeit-Updates an alle verbundenen Nutzer über WebSocket."
+    },
+    {
+      "uid": "REQ-multiuser-fähig",
+      "type": "REQ",
+      "name": "Multiuser-Funktionalität",
+      "attributes": {},
+      "description": "System bietet Multiuser-Zugriff mit Echtzeit-Synchronisation und Exportfunktionen."
+    },
+    {
+      "uid": "REQ-auth-login",
+      "type": "REQ",
+      "name": "Authentication Requirement",
+      "attributes": {},
+      "description": "Das System muss Nutzern erlauben, sich mit gültigen Credentials anzumelden."
+    },
+    {
+      "uid": "REQ-collab-write",
+      "type": "REQ",
+      "name": "Concurrent Editing Requirement",
+      "attributes": {},
+      "description": "Das System muss es mehreren Nutzern erlauben, gleichzeitig an einem Graphen zu arbeiten."
+    },
+    {
+      "uid": "REQ-live-update",
+      "type": "REQ",
+      "name": "Real-time Update Requirement",
+      "attributes": {},
+      "description": "Das System muss Änderungen an Graphen in Echtzeit für alle verbundenen Clients pushen."
+    },
+    {
+      "uid": "REQ-export-json",
+      "type": "REQ",
+      "name": "Export Requirement",
+      "attributes": {},
+      "description": "Das System muss den aktuellen Graphenstand als JSON exportieren können."
+    },
+    {
+      "uid": "TEST-verify-multiuser-fähig",
+      "type": "TEST",
+      "name": "Verify: Multiuser-Funktionalität",
+      "attributes": {},
+      "description": "it.todo: Prüfe \"Multiuser-Funktionalität\" — Vorbedingung herstellen, Aktion ausführen, Ergebnis messbar gegen die REQ-Aussage prüfen."
+    },
+    {
+      "uid": "TEST-auth-login",
+      "type": "TEST",
+      "name": "Login Test Case",
+      "attributes": {},
+      "description": "Testet erfolgreichen Login mit gültigen Credentials."
+    },
+    {
+      "uid": "TEST-collab-concurrency",
+      "type": "TEST",
+      "name": "Concurrency Test Case",
+      "attributes": {},
+      "description": "Testet parallele Schreiboperationen auf denselben Knoten."
+    },
+    {
+      "uid": "TEST-live-ws",
+      "type": "TEST",
+      "name": "WebSocket Real-time Test Case",
+      "attributes": {},
+      "description": "Testet WebSocket-Verbindung für Echtzeit-Updates."
+    },
+    {
+      "uid": "TEST-export-json",
+      "type": "TEST",
+      "name": "JSON Export Test Case",
+      "attributes": {},
+      "description": "Testet den JSON-Export des Graphen."
+    },
+    {
+      "uid": "MOD-auth",
+      "type": "MOD",
+      "name": "Auth-Modul",
+      "attributes": {},
+      "description": "Bereitstellung von Benutzeranmeldung, Session-Token-Erstellung und Zugriffskontrolle für den Systemgraphen."
+    },
+    {
+      "uid": "MOD-collab",
+      "type": "MOD",
+      "name": "Kollaborations-Modul",
+      "attributes": {},
+      "description": "Verwaltung von Echtzeit-Kollaboration, Änderungsvorschlägen und Live-Updates für Multiuser-Szenarien."
+    },
+    {
+      "uid": "MOD-export",
+      "type": "MOD",
+      "name": "Export-Modul",
+      "attributes": {},
+      "description": "Serialisierung, Dateigenerierung und Bereitstellung von Export-Funktionalitäten für den Systemgraphen."
+    },
+    {
+      "uid": "MOD-governance",
+      "type": "MOD",
+      "name": "Governance-Modul",
+      "attributes": {},
+      "description": "Durchsetzung von Governance-Regeln, Zugriffsberechtigungen und Apply-Gate-Validierung."
+    }
+  ],
+  "traces": [
+    {
+      "sourceId": "TEST-verify-multiuser-fähig",
+      "targetId": "REQ-multiuser-fähig",
+      "edgeType": "verify",
+      "attributes": {}
+    },
+    {
+      "sourceId": "TEST-auth-login",
+      "targetId": "REQ-auth-login",
+      "edgeType": "verify",
+      "attributes": {}
+    },
+    {
+      "sourceId": "TEST-collab-concurrency",
+      "targetId": "REQ-collab-write",
+      "edgeType": "verify",
+      "attributes": {}
+    },
+    {
+      "sourceId": "TEST-live-ws",
+      "targetId": "REQ-live-update",
+      "edgeType": "verify",
+      "attributes": {}
+    },
+    {
+      "sourceId": "TEST-export-json",
+      "targetId": "REQ-export-json",
+      "edgeType": "verify",
+      "attributes": {}
+    },
+    {
+      "sourceId": "SYS-graphcode-webapp",
+      "targetId": "UC-anmelden",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "SYS-graphcode-webapp",
+      "targetId": "UC-graph-erstellen",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "SYS-graphcode-webapp",
+      "targetId": "UC-live-updates",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "SYS-graphcode-webapp",
+      "targetId": "UC-exportieren",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "SYS-graphcode-webapp",
+      "targetId": "UC-governen",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "SYS-graphcode-webapp",
+      "targetId": "UC-multiuser-collab",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-anmelden",
+      "targetId": "FC-anmelden",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-graph-erstellen",
+      "targetId": "FCHAIN-graph-erstellen",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-live-updates",
+      "targetId": "FCHAIN-live-updates",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-exportieren",
+      "targetId": "FC-exportieren",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-governen",
+      "targetId": "FC-governen",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-webapp",
+      "targetId": "FC-anmelden",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-webapp",
+      "targetId": "FC-exportieren",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-webapp",
+      "targetId": "FC-governen",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-gemeinsam-harness-nutzen",
+      "targetId": "FCHAIN-szenar-web-multiuser",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-collab",
+      "targetId": "FCHAIN-collaboration-session",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-gemeinsam-harness-nutzen",
+      "targetId": "REQ-multiuser-fähig",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-collab",
+      "targetId": "REQ-auth-login",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-collab",
+      "targetId": "REQ-collab-write",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-collab",
+      "targetId": "REQ-live-update",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-collab",
+      "targetId": "REQ-export-json",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-nutzer",
+      "targetId": "UC-anmelden",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-nutzer",
+      "targetId": "UC-graph-erstellen",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-nutzer",
+      "targetId": "UC-live-updates",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-nutzer",
+      "targetId": "UC-exportieren",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-nutzer",
+      "targetId": "UC-governen",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-nutzer",
+      "targetId": "UC-multiuser-webapp",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-nutzer",
+      "targetId": "UC-gemeinsam-harness-nutzen",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-admin",
+      "targetId": "UC-governen",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-admin",
+      "targetId": "UC-graph-erstellen",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-multiuser-user",
+      "targetId": "UC-gemeinsam-harness-nutzen",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-user",
+      "targetId": "UC-multiuser-collab",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-user",
+      "targetId": "UC-multiuser-webapp",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FC-anmelden",
+      "targetId": "FUNC-login-benutzervalidierung",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FC-anmelden",
+      "targetId": "FUNC-session-token-erstellung",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FC-anmelden",
+      "targetId": "FUNC-graph-zugriffsberechtigung-pruefen",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FC-exportieren",
+      "targetId": "FUNC-graph-daten-serialisieren",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FC-exportieren",
+      "targetId": "FUNC-datei-generierung",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FC-exportieren",
+      "targetId": "FUNC-download-link-bereitstellen",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FC-governen",
+      "targetId": "FUNC-aenderungsvorschlag-einreichen",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FC-governen",
+      "targetId": "FUNC-apply-gate-validierung",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FC-governen",
+      "targetId": "FUNC-live-update-broadcast",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-login-benutzervalidierung",
+      "targetId": "MOD-auth",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-session-token-erstellung",
+      "targetId": "MOD-auth",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-graph-zugriffsberechtigung-pruefen",
+      "targetId": "MOD-governance",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-graph-daten-serialisieren",
+      "targetId": "MOD-export",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-datei-generierung",
+      "targetId": "MOD-export",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-download-link-bereitstellen",
+      "targetId": "MOD-export",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-aenderungsvorschlag-einreichen",
+      "targetId": "MOD-collab",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-apply-gate-validierung",
+      "targetId": "MOD-governance",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-live-update-broadcast",
+      "targetId": "MOD-collab",
+      "edgeType": "allocate",
+      "attributes": {}
+    }
+  ]
+}

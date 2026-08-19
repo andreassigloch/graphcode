@@ -1,0 +1,28 @@
+## Nodes
+### FCHAIN
++ FCHAIN-collaborate-scenario|Function chain for collaborating on the governed system graph.
+### FUNC
++ FUNC-apply-gate|Validate and apply graph mutations through the Apply-Gate.
++ FUNC-authorize|Check user permissions for graph operations.
++ FUNC-export-graph|Generate and serve the current graph state as a file.
+### UC
++ UC-collaborate-scenario|Multiuser-fähige Web-App aus dem graphcode harness: Nutzer melden sich an, autorieren gemeinsam einen governten Systemgraphen über das Apply-Gate.
+
+## Edges
++ FCHAIN-collaborate-scenario -compose-> FUNC-apply-gate, FUNC-authorize, FUNC-export-graph
++ FUNC-apply-gate -satisfy-> UC-collaborate-scenario
++ FUNC-authorize -satisfy-> UC-collaborate-scenario
++ FUNC-export-graph -satisfy-> UC-collaborate-scenario
++ UC-collaborate-scenario -compose-> FCHAIN-collaborate-scenario
+
+## Bereits vorhanden (Identität, nicht öffnen — keine Duplikate anlegen)
+FUNC-export-graph-final · FUNC · Export Graph Final Function
+FUNC-export-graph-state · FUNC · Export Graph State Function
+FUNC-export-graph-state-final · FUNC · Export Graph State Final Function
+FUNC-live-updates · FUNC · Live Updates Function
+FUNC-login · FUNC · Login Function
+FUNC-login-audit · FUNC · Log user login action
+FUNC-see-exported-graph · FUNC · See Exported Graph Function
+FUNC-see-exported-graph-final · FUNC · See Exported Graph Final Function
+FUNC-see-live-updates · FUNC · See Live Updates Function
+MOD-auth · MOD · Authentication module

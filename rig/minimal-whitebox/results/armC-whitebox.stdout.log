@@ -1,0 +1,234 @@
+[generate 1] phase=seed done=false
+  cand 1/3.1: graph_authoring_guide,graph_authoring_guide,graph_authoring_guide
+  cand 1/3.2: graph_mutate
+  candidate 1/3: tier=block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+  cand 2/3.1: graph_authoring_guide,graph_authoring_guide,graph_authoring_guide
+  cand 2/3.2: graph_mutate
+  candidate 2/3: tier=block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+  cand 3/3.1: graph_authoring_guide,graph_authoring_guide,graph_authoring_guide
+  cand 3/3.2: graph_mutate
+  candidate 3/3: tier=block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+    all candidates block [INPUT-SCHEMA] — feeding best feedback back (repair 1/6)
+  repair cand 1: call failed (backend: "Error rendering prompt with jinja template: \"After the optional syste) — skip
+[generate 2] phase=seed done=false
+  stagnation x1: same generate prompt as last round
+  cand 1/3.1: graph_authoring_guide,graph_authoring_guide,graph_authoring_guide
+  cand 1/3.2: graph_mutate
+    preflight blocked: R-18 Illegales Trace-Paar: SYS compose ACTOR (SYS-web-app → ACTOR-user) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: SYS compose ACTOR (SYS-web-app → ACTOR-admin) — auch die Gegenrichtung ist nicht legal.
+  candidate 1/3: tier=preflight-block focus(-)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+  cand 2/3.1: graph_authoring_guide,graph_authoring_guide,graph_authoring_guide
+  cand 2/3.2: graph_mutate
+  candidate 2/3: tier=suggest focus(-)=+0.00 total=+2.38 Δm=+7.50 mutations=14
+  cand 3/3.1: graph_authoring_guide,graph_authoring_guide,graph_authoring_guide
+  cand 3/3.2: graph_mutate
+  candidate 3/3: tier=suggest focus(-)=+0.00 total=+2.38 Δm=+7.50 mutations=14
+    pick: candidate 2 (judge=gate)
+    winner applied (14 mutations)
+[generate 3] phase=expand done=false
+  cand 1/3.1: graph_authoring_guide
+  cand 1/3.2: (no calls)
+    recovered text tool-call graph_authoring_guide
+  cand 1/3.3: graph_mutate
+  candidate 1/3: tier=suggest focus(uc)=+0.31 total=+1.31 Δm=+0.00 mutations=6
+  cand 2/3.1: graph_authoring_guide
+  cand 2/3.2: (no calls)
+  candidate 2/3: tier=suggest focus(uc)=+0.31 total=+1.31 Δm=+0.00 mutations=6
+  cand 3/3.1: graph_authoring_guide
+  cand 3/3.2: (no calls)
+    recovered text tool-call graph_elements
+  cand 3/3.3: graph_mutate
+  candidate 3/3: tier=suggest focus(uc)=+0.12 total=+1.12 Δm=+0.00 mutations=2
+    pick: candidate 1 (judge=gate)
+    winner applied (6 mutations)
+[generate 4] phase=expand done=false
+  cand 1/3.1: graph_authoring_guide,graph_authoring_guide,graph_authoring_guide
+  cand 1/3.2: graph_mutate
+  candidate 1/3: tier=suggest focus(uc)=-0.00 total=-0.13 Δm=+7.92 mutations=18
+  cand 2/3.1: graph_authoring_guide
+  cand 2/3.2: (no calls)
+  candidate 2/3: tier=suggest focus(uc)=-0.00 total=-0.13 Δm=+7.95 mutations=17
+  cand 3/3.1: graph_authoring_guide,graph_authoring_guide,graph_authoring_guide,graph_authoring_guide
+  cand 3/3.2: graph_mutate
+  candidate 3/3: tier=suggest focus(uc)=+0.05 total=-0.12 Δm=-1.94 mutations=14
+    pick: candidate 3 (judge=gate)
+    winner applied (14 mutations)
+[generate 5] phase=expand done=false
+  cand 1/3.1: graph_authoring_guide
+  cand 1/3.2: (no calls)
+    recovered text tool-call graph_authoring_guide
+  cand 1/3: call failed (fetch failed) — skip
+  candidate 1/3: no batch
+  cand 2/3.1: graph_authoring_guide
+  cand 2/3.2: (no calls)
+    recovered text tool-call graph_elements
+  cand 2/3.3: graph_mutate
+  candidate 2/3: tier=suggest focus(alloc)=+0.80 total=+0.82 Δm=+10.70 mutations=6
+  cand 3/3.1: graph_authoring_guide
+  cand 3/3.2: (no calls)
+    recovered text tool-call graph_authoring_guide
+  cand 3/3.3: graph_mutate
+  candidate 3/3: tier=suggest focus(alloc)=+0.73 total=+0.71 Δm=+10.42 mutations=10
+    pick: candidate 2 (judge=gate)
+    winner applied (6 mutations)
+[generate 6] phase=expand done=false
+  cand 1/3.1: graph_authoring_guide,graph_authoring_guide,graph_authoring_guide,graph_authoring_guide
+  cand 1/3: call failed (fetch failed) — skip
+  candidate 1/3: no batch
+  cand 2/3.1: graph_authoring_guide
+  cand 2/3.2: (no calls)
+    recovered text tool-call graph_authoring_guide
+  cand 2/3.3: graph_mutate
+  candidate 2/3: tier=auto-apply focus(uc)=-0.02 total=-0.01 Δm=+0.00 mutations=5
+  cand 3/3.1: graph_mutate
+  candidate 3/3: tier=suggest focus(uc)=-0.07 total=-0.07 Δm=+0.00 mutations=2
+    pick: candidate 2 (judge=gate)
+    winner applied (5 mutations)
+[generate 7] phase=expand done=false
+  cand 1/3.1: graph_authoring_guide
+  cand 1/3.2: (no calls)
+    recovered text tool-call graph_authoring_guide
+  cand 1/3.3: graph_mutate
+    preflight blocked: R-18 Illegales Trace-Paar: FUNC io ACTOR (FUNC-authenticate-user → ACTOR-user) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: FUNC io ACTOR (FUNC-merge-changes → ACTOR-user) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: FUNC io ACTOR (FUNC-validate-export → ACTOR-user) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: FUNC io ACTOR (FUNC-export-graph → ACTOR-user) — auch die Gegenrichtung ist nicht legal.
+  candidate 1/3: tier=preflight-block focus(uc)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+  cand 2/3.1: graph_authoring_guide
+  cand 2/3.2: (no calls)
+    recovered text tool-call graph_authoring_guide
+  cand 2/3.3: graph_mutate
+    preflight blocked: R-18 Illegales Trace-Paar: FUNC io ACTOR (FUNC-authenticate-user → ACTOR-user) — auch die Gegenrichtung ist nicht legal.
+  candidate 2/3: tier=preflight-block focus(uc)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+  cand 3/3.1: graph_authoring_guide
+  cand 3/3.2: (no calls)
+    recovered text tool-call graph_authoring_guide
+  cand 3/3.3: graph_mutate
+  candidate 3/3: tier=suggest focus(uc)=+0.00 total=+0.03 Δm=-1.50 mutations=27
+    pick: candidate 3 (judge=gate)
+    winner applied (27 mutations)
+[generate 8] phase=expand done=false
+  cand 1/3.1: graph_authoring_guide
+  cand 1/3.2: (no calls)
+    recovered text tool-call graph_authoring_guide
+  cand 1/3.3: graph_mutate
+  candidate 1/3: tier=suggest focus(schema)=+0.75 total=+0.75 Δm=-0.53 mutations=4
+  cand 2/3.1: graph_authoring_guide
+  cand 2/3.2: (no calls)
+    recovered text tool-call graph_elements
+  cand 2/3.3: graph_mutate
+  candidate 2/3: tier=suggest focus(schema)=+0.75 total=+0.75 Δm=-0.53 mutations=4
+  cand 3/3.1: graph_authoring_guide
+  cand 3/3.2: (no calls)
+    recovered text tool-call graph_authoring_guide
+  cand 3/3.3: graph_mutate
+  candidate 3/3: tier=suggest focus(schema)=+0.75 total=+0.75 Δm=-0.53 mutations=4
+    pick: candidate 1 (judge=gate)
+    winner applied (4 mutations)
+[generate 9] phase=expand done=false
+  cand 1/3.1: graph_authoring_guide
+  cand 1/3.2: (no calls)
+    recovered text tool-call graph_authoring_guide
+  cand 1/3.3: graph_mutate
+    preflight blocked: R-18 Illegales Trace-Paar: FUNC io ACTOR (FUNC-authenticate-user → ACTOR-user) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: FUNC io ACTOR (FUNC-validate-export → ACTOR-user) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: FUNC io ACTOR (FUNC-merge-changes → ACTOR-user) — auch die Gegenrichtung ist nicht legal.
+  candidate 1/3: tier=preflight-block focus(uc)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+  cand 2/3.1: graph_authoring_guide
+  cand 2/3.2: (no calls)
+    recovered text tool-call graph_authoring_guide
+  cand 2/3.3: graph_mutate
+  candidate 2/3: tier=auto-apply focus(uc)=-0.01 total=-0.01 Δm=+0.00 mutations=5
+  cand 3/3.1: graph_authoring_guide,graph_authoring_guide,graph_authoring_guide,graph_authoring_guide
+  cand 3/3.2: graph_mutate
+    preflight blocked: R-18 Illegales Trace-Paar: FUNC io ACTOR (FUNC-export-graph → ACTOR-user) — auch die Gegenrichtung ist nicht legal.
+  candidate 3/3: tier=preflight-block focus(uc)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+    pick: candidate 2 (judge=gate)
+    winner applied (5 mutations)
+[generate 10] phase=expand done=false
+  cand 1/3.1: graph_authoring_guide,graph_authoring_guide,graph_authoring_guide,graph_authoring_guide
+  cand 1/3.2: graph_mutate
+    preflight blocked: R-08 add-edge targetId: uid "FLOW-session-created" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "FLOW-session-created" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "FLOW-collaboration-update" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "FLOW-collaboration-update" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "FLOW-export-ready" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "FLOW-export-ready" existiert weder im Graph noch im Batch.
+  candidate 1/3: tier=preflight-block focus(uc)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+  cand 2/3.1: graph_authoring_guide,graph_authoring_guide,graph_authoring_guide,graph_authoring_guide
+  cand 2/3.2: graph_mutate
+    preflight blocked: R-08 add-edge targetId: uid "FLOW-session-init" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "FLOW-session-init" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "FLOW-export-data" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "FLOW-export-data" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "FLOW-collab-update" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "FLOW-collab-update" existiert weder im Graph noch im Batch.
+  candidate 2/3: tier=preflight-block focus(uc)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+  cand 3/3.1: graph_authoring_guide,graph_authoring_guide,graph_authoring_guide
+  cand 3/3.2: graph_mutate
+    preflight blocked: R-18 Illegales Trace-Paar: FUNC io ACTOR (FUNC-authenticate-user → ACTOR-user) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: FUNC io ACTOR (FUNC-export-graph → ACTOR-user) — auch die Gegenrichtung ist nicht legal.
+  candidate 3/3: tier=preflight-block focus(uc)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+    all candidates block [R-08] — feeding best feedback back (repair 1/6)
+  repair cand 1: call failed (backend: "Error rendering prompt with jinja template: \"After the optional syste) — skip
+[generate 11] phase=expand done=false
+  stagnation x1: same generate prompt as last round
+  cand 1/3.1: graph_authoring_guide,graph_authoring_guide,graph_authoring_guide,graph_authoring_guide
+  cand 1/3.2: graph_mutate
+    preflight blocked: R-18 Illegales Trace-Paar: FUNC io ACTOR (FUNC-authenticate-user → ACTOR-user) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: FUNC io ACTOR (FUNC-merge-changes → ACTOR-user) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: FUNC io ACTOR (FUNC-validate-export → ACTOR-user) — auch die Gegenrichtung ist nicht legal.
+  candidate 1/3: tier=preflight-block focus(uc)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+  cand 2/3.1: graph_authoring_guide,graph_authoring_guide,graph_authoring_guide,graph_authoring_guide
+  cand 2/3.2: graph_mutate
+    preflight blocked: R-18 Illegales Trace-Paar: FUNC io ACTOR (FUNC-authenticate-user → ACTOR-user) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: FUNC io ACTOR (FUNC-merge-changes → ACTOR-user) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: FUNC io ACTOR (FUNC-export-graph → ACTOR-user) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: FUNC io ACTOR (FUNC-validate-export → ACTOR-user) — auch die Gegenrichtung ist nicht legal.
+  candidate 2/3: tier=preflight-block focus(uc)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+  cand 3/3.1: graph_authoring_guide,graph_authoring_guide,graph_authoring_guide,graph_authoring_guide
+  cand 3/3.2: graph_mutate
+    preflight blocked: R-08 add-edge targetId: uid "FLOW-login-success" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "FLOW-login-success" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "FLOW-export-success" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "FLOW-export-success" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "FLOW-logout-success" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "FLOW-logout-success" existiert weder im Graph noch im Batch.
+  candidate 3/3: tier=preflight-block focus(uc)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+    all candidates block [R-18] — feeding best feedback back (repair 1/6)
+  repair cand 1: call failed (backend: "Error rendering prompt with jinja template: \"After the optional syste) — skip
+[generate 12] phase=expand done=false
+  stagnation x2: same generate prompt as last round
+  cand 1/3.1: graph_authoring_guide,graph_authoring_guide,graph_authoring_guide,graph_authoring_guide
+  cand 1/3.2: graph_mutate
+    preflight blocked: R-18 Illegales Trace-Paar: FUNC io ACTOR (FUNC-authenticate-user → ACTOR-user) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: FUNC io ACTOR (FUNC-merge-changes → ACTOR-user) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: FUNC io ACTOR (FUNC-validate-export → ACTOR-user) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: FUNC io ACTOR (FUNC-export-graph → ACTOR-user) — auch die Gegenrichtung ist nicht legal.
+  candidate 1/3: tier=preflight-block focus(uc)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+  cand 2/3.1: graph_authoring_guide,graph_authoring_guide,graph_authoring_guide,graph_authoring_guide
+  cand 2/3.2: graph_mutate
+  candidate 2/3: tier=suggest focus(uc)=+0.00 total=-0.24 Δm=+0.80 mutations=21
+  cand 3/3.1: graph_authoring_guide,graph_authoring_guide,graph_authoring_guide,graph_authoring_guide
+  cand 3/3.2: graph_mutate
+    preflight blocked: R-18 Illegales Trace-Paar: ACTOR io FCHAIN (ACTOR-user → FCHAIN-login) — auch die Gegenrichtung ist nicht legal.
+  candidate 3/3: tier=preflight-block focus(uc)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+    pick: candidate 2 (judge=gate)
+    winner applied (21 mutations)
+{
+  "elements": 28,
+  "traces": 49,
+  "byType": {
+    "SYS": 1,
+    "UC": 5,
+    "ACTOR": 2,
+    "FCHAIN": 3,
+    "FUNC": 7,
+    "FLOW": 6,
+    "MOD": 2,
+    "SCHEMA": 2
+  },
+  "wall": 2185,
+  "injectionCalls": 12,
+  "modelUnfilteredCalls": 31
+}

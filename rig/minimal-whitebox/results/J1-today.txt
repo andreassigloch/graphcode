@@ -1,0 +1,17 @@
+Kanten-Grammatik der Fokus-Typen (bereits eingebettet — graph_authoring_guide dafür NICHT erneut aufrufen; Gate-Protokoll Schritt 1 ist damit erledigt):
+- FUNC: ausgehend: compose→FUNC (0..*), io→FLOW, satisfy→REQ, satisfy→UC, allocate→MOD; eingehend: FCHAIN compose→ (1..*), FUNC compose→ (0..*), FLOW io→, MS compose→, CR relation→
+
+Element-Index des Graphen (uid · type · name; bereits eingebettet — graph_elements NICHT erneut aufrufen; existierende uids für Kanten referenzieren, keine Duplikate anlegen):
+FLOW-docset · FLOW · DocSet
+FN-slice · FUNC · Slice into untyped candidate graph
+MOD-slicer · MOD · slicer
+MS-slicer-core · MS · Milestone: Slicer core
+REQ-determinism · REQ · Deterministic extraction
+REQ-provenance · REQ · Provenance via sourceRef
+REQ-recall-first · REQ · Recall-first surfacing
+SCHEMA-slicer-output · SCHEMA · SlicerOutput
+SYS-dummy-slicer · SYS · DummySlicer
+TEST-determinism · TEST · Re-run determinism check
+TEST-provenance · TEST · sourceRef presence assertion
+TEST-recall · TEST · Recall benchmark
+UC-structure-doc · UC · Structure an unstructured document set

@@ -1,0 +1,1529 @@
+{
+  "elements": [
+    {
+      "uid": "SYS-web-app",
+      "type": "SYS",
+      "name": "Multiuser Web-App",
+      "attributes": {},
+      "description": "Multiuser-fähige Web-App aus dem graphcode harness: Nutzer melden sich an, autorieren gemeinsam einen governten Systemgraphen über das Apply-Gate, sehen Live-Updates und exportieren den Stand."
+    },
+    {
+      "uid": "UC-login",
+      "type": "UC",
+      "name": "Login",
+      "attributes": {},
+      "description": "Nutzer melden sich an."
+    },
+    {
+      "uid": "UC-authorize-graph",
+      "type": "UC",
+      "name": "Authorize Graph",
+      "attributes": {},
+      "description": "Nutzer autorisieren gemeinsam einen governten Systemgraphen über das Apply-Gate."
+    },
+    {
+      "uid": "UC-view-updates",
+      "type": "UC",
+      "name": "View Updates",
+      "attributes": {},
+      "description": "Nutzer sehen Live-Updates des Systemgraphen."
+    },
+    {
+      "uid": "UC-export-state",
+      "type": "UC",
+      "name": "Export State",
+      "attributes": {},
+      "description": "Nutzer exportieren den aktuellen Stand des Systemgraphen."
+    },
+    {
+      "uid": "UC-multiuser-session",
+      "type": "UC",
+      "name": "Multiuser Session Management",
+      "attributes": {},
+      "description": "System manages concurrent multiuser sessions with authentication and authorization."
+    },
+    {
+      "uid": "UC-export-graph-snapshot",
+      "type": "UC",
+      "name": "Export Graph Snapshot",
+      "attributes": {},
+      "description": "User exports the current state of the governed system graph."
+    },
+    {
+      "uid": "UC-view-live-updates",
+      "type": "UC",
+      "name": "View Live Updates",
+      "attributes": {},
+      "description": "User observes real-time changes in the governed system graph."
+    },
+    {
+      "uid": "UC-multiuser-web-app",
+      "type": "UC",
+      "name": "Multiuser Web-App",
+      "attributes": {},
+      "description": "Nutzer melden sich an, autorieren gemeinsam einen governten Systemgraphen über das Apply-Gate, sehen Live-Updates und exportieren den Stand."
+    },
+    {
+      "uid": "ACTOR-user",
+      "type": "ACTOR",
+      "name": "User",
+      "attributes": {},
+      "description": "System user who interacts with the web app."
+    },
+    {
+      "uid": "ACTOR-admin",
+      "type": "ACTOR",
+      "name": "Admin",
+      "attributes": {},
+      "description": "Administrator der Web-App, verwaltet Nutzer und Systemeinstellungen."
+    },
+    {
+      "uid": "FCHAIN-multiuser-session",
+      "type": "FCHAIN",
+      "name": "Multiuser Session Flow",
+      "attributes": {},
+      "description": "Behavioral scenario for managing multiuser sessions."
+    },
+    {
+      "uid": "FCHAIN-login-flow",
+      "type": "FCHAIN",
+      "name": "Login Flow",
+      "attributes": {},
+      "description": "End-to-end flow for user authentication and session establishment."
+    },
+    {
+      "uid": "FCHAIN-export-flow",
+      "type": "FCHAIN",
+      "name": "Export Flow",
+      "attributes": {},
+      "description": "End-to-end flow for exporting the governed system graph."
+    },
+    {
+      "uid": "FCHAIN-authorize-flow",
+      "type": "FCHAIN",
+      "name": "Authorize Flow",
+      "attributes": {},
+      "description": "Behavioral scenario for authorizing graph changes."
+    },
+    {
+      "uid": "FCHAIN-view-updates-flow",
+      "type": "FCHAIN",
+      "name": "View Updates Flow",
+      "attributes": {},
+      "description": "Behavioral scenario for viewing live updates."
+    },
+    {
+      "uid": "FCHAIN-live-update-flow",
+      "type": "FCHAIN",
+      "name": "Live Update Flow",
+      "attributes": {},
+      "description": "End-to-end flow for delivering live graph updates to users."
+    },
+    {
+      "uid": "FCHAIN-auth-collab",
+      "type": "FCHAIN",
+      "name": "Authentication and Collaboration Chain",
+      "attributes": {},
+      "description": "Function chain for authentication and collaboration."
+    },
+    {
+      "uid": "FCHAIN-auth-collab-alt1",
+      "type": "FCHAIN",
+      "name": "Authentication and Collaboration Chain Alternative 1",
+      "attributes": {},
+      "description": "Alternative function chain for authentication and collaboration."
+    },
+    {
+      "uid": "FCHAIN-auth-collab-alt2",
+      "type": "FCHAIN",
+      "name": "Authentication and Collaboration Chain Alternative 2",
+      "attributes": {},
+      "description": "Another alternative function chain for authentication and collaboration."
+    },
+    {
+      "uid": "FUNC-authenticate-credentials",
+      "type": "FUNC",
+      "name": "Authenticate Credentials",
+      "attributes": {},
+      "description": "Validate user credentials against the identity provider."
+    },
+    {
+      "uid": "FUNC-generate-session-token",
+      "type": "FUNC",
+      "name": "Generate Session Token",
+      "attributes": {},
+      "description": "Creates a session token for the authenticated user."
+    },
+    {
+      "uid": "FUNC-update-user-session",
+      "type": "FUNC",
+      "name": "Update User Session",
+      "attributes": {},
+      "description": "Updates the user's session state in the system."
+    },
+    {
+      "uid": "FUNC-establish-session",
+      "type": "FUNC",
+      "name": "Establish Session",
+      "attributes": {},
+      "description": "Create a secure session token and associate it with the authenticated user."
+    },
+    {
+      "uid": "FUNC-synchronize-graph-state",
+      "type": "FUNC",
+      "name": "Synchronize Graph State",
+      "attributes": {},
+      "description": "Broadcast live graph updates to all connected clients."
+    },
+    {
+      "uid": "FUNC-generate-snapshot",
+      "type": "FUNC",
+      "name": "Generate Snapshot",
+      "attributes": {},
+      "description": "Serialize the current graph state into a portable format."
+    },
+    {
+      "uid": "FUNC-deliver-snapshot",
+      "type": "FUNC",
+      "name": "Deliver Snapshot",
+      "attributes": {},
+      "description": "Transmit the snapshot to the requesting user."
+    },
+    {
+      "uid": "FUNC-push-updates",
+      "type": "FUNC",
+      "name": "Push Updates",
+      "attributes": {},
+      "description": "Transmit live graph updates to connected clients."
+    },
+    {
+      "uid": "FUNC-render-updates",
+      "type": "FUNC",
+      "name": "Render Updates",
+      "attributes": {},
+      "description": "Update the user interface to reflect live graph changes."
+    },
+    {
+      "uid": "FUNC-apply-graph-mutations",
+      "type": "FUNC",
+      "name": "Apply Graph Mutations",
+      "attributes": {},
+      "description": "Execute graph mutations through the Apply-Gate and broadcast results."
+    },
+    {
+      "uid": "FUNC-authorize-user",
+      "type": "FUNC",
+      "name": "Authorize User",
+      "attributes": {},
+      "description": "Check user permissions and grant access to graph operations."
+    },
+    {
+      "uid": "FUNC-validate-session",
+      "type": "FUNC",
+      "name": "Validate Session",
+      "attributes": {},
+      "description": "Verify the validity of a session token."
+    },
+    {
+      "uid": "FUNC-invalidate-session",
+      "type": "FUNC",
+      "name": "Invalidate Session",
+      "attributes": {},
+      "description": "Terminate an active session."
+    },
+    {
+      "uid": "FUNC-log-audit-event",
+      "type": "FUNC",
+      "name": "Log Audit Event",
+      "attributes": {},
+      "description": "Record user actions and graph changes for compliance."
+    },
+    {
+      "uid": "FUNC-notify-users",
+      "type": "FUNC",
+      "name": "Notify Users",
+      "attributes": {},
+      "description": "Send notifications to users about graph changes or events."
+    },
+    {
+      "uid": "FUNC-cache-graph-state",
+      "type": "FUNC",
+      "name": "Cache Graph State",
+      "attributes": {},
+      "description": "Store a cached version of the graph state for performance."
+    },
+    {
+      "uid": "FUNC-validate-graph-mutation",
+      "type": "FUNC",
+      "name": "Validate Graph Mutation",
+      "attributes": {},
+      "description": "Check the validity of a graph mutation before applying it."
+    },
+    {
+      "uid": "FUNC-resolve-conflicts",
+      "type": "FUNC",
+      "name": "Resolve Conflicts",
+      "attributes": {},
+      "description": "Handle conflicts in concurrent graph mutations."
+    },
+    {
+      "uid": "FUNC-optimize-graph-query",
+      "type": "FUNC",
+      "name": "Optimize Graph Query",
+      "attributes": {},
+      "description": "Optimize queries for performance."
+    },
+    {
+      "uid": "FUNC-monitor-system-health",
+      "type": "FUNC",
+      "name": "Monitor System Health",
+      "attributes": {},
+      "description": "Check the health of the system and its components."
+    },
+    {
+      "uid": "FUNC-backup-graph-state",
+      "type": "FUNC",
+      "name": "Backup Graph State",
+      "attributes": {},
+      "description": "Create a backup of the current graph state."
+    },
+    {
+      "uid": "FUNC-restore-graph-state",
+      "type": "FUNC",
+      "name": "Restore Graph State",
+      "attributes": {},
+      "description": "Restore the graph state from a backup."
+    },
+    {
+      "uid": "FUNC-analyze-graph-performance",
+      "type": "FUNC",
+      "name": "Analyze Graph Performance",
+      "attributes": {},
+      "description": "Analyze the performance of graph operations."
+    },
+    {
+      "uid": "FUNC-generate-performance-report",
+      "type": "FUNC",
+      "name": "Generate Performance Report",
+      "attributes": {},
+      "description": "Generate a report on graph performance."
+    },
+    {
+      "uid": "FUNC-optimize-graph-storage",
+      "type": "FUNC",
+      "name": "Optimize Graph Storage",
+      "attributes": {},
+      "description": "Optimize the storage of graph data."
+    },
+    {
+      "uid": "FUNC-manage-graph-schema",
+      "type": "FUNC",
+      "name": "Manage Graph Schema",
+      "attributes": {},
+      "description": "Manage the schema of the graph."
+    },
+    {
+      "uid": "FUNC-manage-graph-access-control",
+      "type": "FUNC",
+      "name": "Manage Graph Access Control",
+      "attributes": {},
+      "description": "Manage access control for the graph."
+    },
+    {
+      "uid": "FUNC-manage-graph-backup-strategy",
+      "type": "FUNC",
+      "name": "Manage Graph Backup Strategy",
+      "attributes": {},
+      "description": "Manage the backup strategy for the graph."
+    },
+    {
+      "uid": "FUNC-manage-graph-monitoring-strategy",
+      "type": "FUNC",
+      "name": "Manage Graph Monitoring Strategy",
+      "attributes": {},
+      "description": "Manage the monitoring strategy for the graph."
+    },
+    {
+      "uid": "FUNC-manage-graph-performance-strategy",
+      "type": "FUNC",
+      "name": "Manage Graph Performance Strategy",
+      "attributes": {},
+      "description": "Manage the performance strategy for the graph."
+    },
+    {
+      "uid": "FUNC-login",
+      "type": "FUNC",
+      "name": "Login",
+      "attributes": {},
+      "description": "Nutzer geben Benutzername und Passwort ein, um sich zu authentifizieren."
+    },
+    {
+      "uid": "FUNC-apply-gate",
+      "type": "FUNC",
+      "name": "Apply-Gate",
+      "attributes": {},
+      "description": "Gemeinsame Autorisierung von Änderungen durch das Apply-Gate."
+    },
+    {
+      "uid": "FUNC-live-updates",
+      "type": "FUNC",
+      "name": "Live-Updates",
+      "attributes": {},
+      "description": "Anzeige von Echtzeit-Änderungen des Systemgraphen."
+    },
+    {
+      "uid": "FUNC-export-state",
+      "type": "FUNC",
+      "name": "Export State",
+      "attributes": {},
+      "description": "Exportieren des aktuellen Zustands des Systemgraphen."
+    },
+    {
+      "uid": "FUNC-auth",
+      "type": "FUNC",
+      "name": "Authentication Function",
+      "attributes": {},
+      "description": "Authenticates users and manages sessions."
+    },
+    {
+      "uid": "FUNC-collab",
+      "type": "FUNC",
+      "name": "Collaboration Function",
+      "attributes": {},
+      "description": "Handles collaborative editing and live updates."
+    },
+    {
+      "uid": "FUNC-auth-alt1",
+      "type": "FUNC",
+      "name": "Authentication Function Alternative 1",
+      "attributes": {},
+      "description": "Alternative implementation for user authentication."
+    },
+    {
+      "uid": "FUNC-collab-alt1",
+      "type": "FUNC",
+      "name": "Collaboration Function Alternative 1",
+      "attributes": {},
+      "description": "Alternative implementation for collaborative editing."
+    },
+    {
+      "uid": "FUNC-auth-alt2",
+      "type": "FUNC",
+      "name": "Authentication Function Alternative 2",
+      "attributes": {},
+      "description": "Another alternative implementation for user authentication."
+    },
+    {
+      "uid": "FUNC-collab-alt2",
+      "type": "FUNC",
+      "name": "Collaboration Function Alternative 2",
+      "attributes": {},
+      "description": "Another alternative implementation for collaborative editing."
+    },
+    {
+      "uid": "FUNC-authenticate-user",
+      "type": "FUNC",
+      "name": "Authenticate User",
+      "description": "Authenticates a user based on credentials.",
+      "attributes": {}
+    },
+    {
+      "uid": "FUNC-handle-session",
+      "type": "FUNC",
+      "name": "Handle Session",
+      "attributes": {},
+      "description": "Verwaltet Nutzer-Sessions."
+    },
+    {
+      "uid": "FUNC-manage-session",
+      "type": "FUNC",
+      "name": "Manage Session",
+      "attributes": {},
+      "description": "Nutzersitzung verwalten."
+    },
+    {
+      "uid": "FUNC-sync-graph-updates",
+      "type": "FUNC",
+      "name": "Sync Graph Updates",
+      "attributes": {},
+      "description": "Graph-Updates synchronisieren."
+    },
+    {
+      "uid": "FUNC-export-graph-data",
+      "type": "FUNC",
+      "name": "Export Graph Data",
+      "attributes": {},
+      "description": "Graph-Daten exportieren."
+    },
+    {
+      "uid": "FUNC-alternative-auth",
+      "type": "FUNC",
+      "name": "Alternative Auth",
+      "attributes": {},
+      "description": "Alternative Authentifizierungsmethode."
+    },
+    {
+      "uid": "FUNC-alternative-session",
+      "type": "FUNC",
+      "name": "Alternative Session",
+      "attributes": {},
+      "description": "Alternative Sitzungsverwaltung."
+    },
+    {
+      "uid": "FUNC-alternative-sync",
+      "type": "FUNC",
+      "name": "Alternative Sync",
+      "attributes": {},
+      "description": "Alternative Synchronisation."
+    },
+    {
+      "uid": "FUNC-alternative-export",
+      "type": "FUNC",
+      "name": "Alternative Export",
+      "attributes": {},
+      "description": "Alternative Exportmethode."
+    },
+    {
+      "uid": "REQ-authentication",
+      "type": "REQ",
+      "name": "Authentication Requirement",
+      "description": "System must support secure user authentication.",
+      "attributes": {}
+    },
+    {
+      "uid": "REQ-collaborative-authoring",
+      "type": "REQ",
+      "name": "Collaborative Authoring",
+      "attributes": {},
+      "description": "Mehrere Nutzer arbeiten gleichzeitig an dem Systemgraphen und autorisieren Änderungen über das Apply-Gate."
+    },
+    {
+      "uid": "REQ-live-updates",
+      "type": "REQ",
+      "name": "Live-Updates",
+      "attributes": {},
+      "description": "Nutzer sehen in Echtzeit, wie sich der Systemgraph durch die Änderungen anderer Nutzer verändert."
+    },
+    {
+      "uid": "REQ-export-state",
+      "type": "REQ",
+      "name": "Export State",
+      "attributes": {},
+      "description": "Nutzer können den aktuellen Zustand des Systemgraphen exportieren."
+    },
+    {
+      "uid": "REQ-auth",
+      "type": "REQ",
+      "name": "Authentication",
+      "attributes": {},
+      "description": "Sichere Authentifizierung für Nutzer."
+    },
+    {
+      "uid": "REQ-collab",
+      "type": "REQ",
+      "name": "Collaboration Requirement",
+      "attributes": {},
+      "description": "Users must be able to collaboratively edit the graph."
+    },
+    {
+      "uid": "REQ-multiuser-authentication",
+      "type": "REQ",
+      "name": "Multiuser Authentication",
+      "attributes": {},
+      "description": "Die Web-App muss eine sichere Authentifizierung für mehrere Nutzer unterstützen."
+    },
+    {
+      "uid": "REQ-real-time-updates",
+      "type": "REQ",
+      "name": "Real-Time Updates",
+      "attributes": {},
+      "description": "Die Web-App muss Live-Updates für alle Nutzer anzeigen."
+    },
+    {
+      "uid": "REQ-export-graph-state",
+      "type": "REQ",
+      "name": "Export Graph State",
+      "attributes": {},
+      "description": "Die Web-App muss den aktuellen Stand des Systemgraphen exportieren können."
+    },
+    {
+      "uid": "MOD-auth",
+      "type": "MOD",
+      "name": "Authentication Module",
+      "attributes": {},
+      "description": "Handles user authentication and session management."
+    },
+    {
+      "uid": "MOD-graph-service",
+      "type": "MOD",
+      "name": "Graph Service Module",
+      "attributes": {},
+      "description": "Handles graph operations, performance analysis, and user authorization."
+    },
+    {
+      "uid": "MOD-ui-service",
+      "type": "MOD",
+      "name": "UI Service Module",
+      "attributes": {},
+      "description": "Manages user interface, authentication, and live updates."
+    },
+    {
+      "uid": "MOD-authentication",
+      "type": "MOD",
+      "name": "Authentication Module",
+      "description": "Module responsible for handling user authentication.",
+      "attributes": {}
+    },
+    {
+      "uid": "MOD-apply-gate",
+      "type": "MOD",
+      "name": "Apply-Gate Module",
+      "attributes": {},
+      "description": "Modul für das Apply-Gate, das Änderungen autorisiert."
+    },
+    {
+      "uid": "MOD-live-updates",
+      "type": "MOD",
+      "name": "Live-Updates Module",
+      "attributes": {},
+      "description": "Modul für die Anzeige von Live-Updates."
+    },
+    {
+      "uid": "MOD-export-state",
+      "type": "MOD",
+      "name": "Export State Module",
+      "attributes": {},
+      "description": "Modul für das Exportieren des Systemgraphen."
+    },
+    {
+      "uid": "MOD-collab",
+      "type": "MOD",
+      "name": "Collaboration Module",
+      "attributes": {},
+      "description": "Manages collaborative editing and live updates."
+    },
+    {
+      "uid": "MOD-auth-service",
+      "type": "MOD",
+      "name": "Auth Service",
+      "attributes": {},
+      "description": "Dienst für Authentifizierung."
+    },
+    {
+      "uid": "MOD-auth-module",
+      "type": "MOD",
+      "name": "Auth Module",
+      "attributes": {},
+      "description": "Modul für Authentifizierung."
+    },
+    {
+      "uid": "MOD-session-module",
+      "type": "MOD",
+      "name": "Session Module",
+      "attributes": {},
+      "description": "Modul für Sitzungsverwaltung."
+    },
+    {
+      "uid": "MOD-graph-module",
+      "type": "MOD",
+      "name": "Graph Module",
+      "attributes": {},
+      "description": "Modul für Graph-Verwaltung."
+    },
+    {
+      "uid": "SCHEMA-session-token",
+      "type": "SCHEMA",
+      "name": "Session Token Schema",
+      "attributes": {},
+      "description": "Defines the structure of session tokens exchanged in the system."
+    },
+    {
+      "uid": "FLOW-session-token",
+      "type": "FLOW",
+      "name": "Session Token",
+      "attributes": {},
+      "description": "Token für Nutzer-Session."
+    },
+    {
+      "uid": "TEST-verify-authentication",
+      "type": "TEST",
+      "name": "Verify: Authentication",
+      "attributes": {},
+      "description": "it.todo: Prüfe \"Authentication\" — Vorbedingung herstellen, Aktion ausführen, Ergebnis messbar gegen die REQ-Aussage prüfen."
+    },
+    {
+      "uid": "TEST-verify-collaborative-authoring",
+      "type": "TEST",
+      "name": "Verify: Collaborative Authoring",
+      "attributes": {},
+      "description": "it.todo: Prüfe \"Collaborative Authoring\" — Vorbedingung herstellen, Aktion ausführen, Ergebnis messbar gegen die REQ-Aussage prüfen."
+    },
+    {
+      "uid": "TEST-verify-live-updates",
+      "type": "TEST",
+      "name": "Verify: Live-Updates",
+      "attributes": {},
+      "description": "it.todo: Prüfe \"Live-Updates\" — Vorbedingung herstellen, Aktion ausführen, Ergebnis messbar gegen die REQ-Aussage prüfen."
+    },
+    {
+      "uid": "TEST-verify-export-state",
+      "type": "TEST",
+      "name": "Verify: Export State",
+      "attributes": {},
+      "description": "it.todo: Prüfe \"Export State\" — Vorbedingung herstellen, Aktion ausführen, Ergebnis messbar gegen die REQ-Aussage prüfen."
+    },
+    {
+      "uid": "TEST-verify-auth",
+      "type": "TEST",
+      "name": "Verify: Authentication Requirement",
+      "attributes": {},
+      "description": "it.todo: Prüfe \"Authentication Requirement\" — Vorbedingung herstellen, Aktion ausführen, Ergebnis messbar gegen die REQ-Aussage prüfen."
+    },
+    {
+      "uid": "TEST-verify-collab",
+      "type": "TEST",
+      "name": "Verify: Collaboration Requirement",
+      "attributes": {},
+      "description": "it.todo: Prüfe \"Collaboration Requirement\" — Vorbedingung herstellen, Aktion ausführen, Ergebnis messbar gegen die REQ-Aussage prüfen."
+    },
+    {
+      "uid": "TEST-verify-multiuser-authentication",
+      "type": "TEST",
+      "name": "Verify: Multiuser Authentication",
+      "attributes": {},
+      "description": "it.todo: Prüfe \"Multiuser Authentication\" — Vorbedingung herstellen, Aktion ausführen, Ergebnis messbar gegen die REQ-Aussage prüfen."
+    },
+    {
+      "uid": "TEST-verify-real-time-updates",
+      "type": "TEST",
+      "name": "Verify: Real-Time Updates",
+      "attributes": {},
+      "description": "it.todo: Prüfe \"Real-Time Updates\" — Vorbedingung herstellen, Aktion ausführen, Ergebnis messbar gegen die REQ-Aussage prüfen."
+    },
+    {
+      "uid": "TEST-verify-export-graph-state",
+      "type": "TEST",
+      "name": "Verify: Export Graph State",
+      "attributes": {},
+      "description": "it.todo: Prüfe \"Export Graph State\" — Vorbedingung herstellen, Aktion ausführen, Ergebnis messbar gegen die REQ-Aussage prüfen."
+    }
+  ],
+  "traces": [
+    {
+      "sourceId": "SYS-web-app",
+      "targetId": "UC-login",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "SYS-web-app",
+      "targetId": "UC-authorize-graph",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "SYS-web-app",
+      "targetId": "UC-view-updates",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "SYS-web-app",
+      "targetId": "UC-export-state",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-login",
+      "targetId": "FCHAIN-login-flow",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-authorize-graph",
+      "targetId": "FCHAIN-authorize-flow",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-view-updates",
+      "targetId": "FCHAIN-view-updates-flow",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-export-state",
+      "targetId": "FCHAIN-export-flow",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-session",
+      "targetId": "FCHAIN-multiuser-session",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-export-graph-snapshot",
+      "targetId": "FCHAIN-export-flow",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-view-live-updates",
+      "targetId": "FCHAIN-live-update-flow",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-login",
+      "targetId": "REQ-auth",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-web-app",
+      "targetId": "REQ-authentication",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-web-app",
+      "targetId": "REQ-collaborative-authoring",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-web-app",
+      "targetId": "REQ-live-updates",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-web-app",
+      "targetId": "REQ-export-state",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-web-app",
+      "targetId": "REQ-multiuser-authentication",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-web-app",
+      "targetId": "REQ-real-time-updates",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-web-app",
+      "targetId": "REQ-export-graph-state",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-user",
+      "targetId": "UC-login",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-user",
+      "targetId": "UC-authorize-graph",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-user",
+      "targetId": "UC-view-updates",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-user",
+      "targetId": "UC-export-state",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-user",
+      "targetId": "UC-multiuser-session",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-user",
+      "targetId": "UC-export-graph-snapshot",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-user",
+      "targetId": "UC-view-live-updates",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-user",
+      "targetId": "UC-multiuser-web-app",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-admin",
+      "targetId": "UC-login",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-admin",
+      "targetId": "UC-authorize-graph",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-admin",
+      "targetId": "UC-view-updates",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-admin",
+      "targetId": "UC-export-state",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-login-flow",
+      "targetId": "FUNC-authenticate-credentials",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-login-flow",
+      "targetId": "FUNC-establish-session",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-login-flow",
+      "targetId": "FUNC-synchronize-graph-state",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-login-flow",
+      "targetId": "FUNC-authorize-user",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-login-flow",
+      "targetId": "FUNC-validate-session",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-login-flow",
+      "targetId": "FUNC-invalidate-session",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-login-flow",
+      "targetId": "FUNC-log-audit-event",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-login-flow",
+      "targetId": "FUNC-cache-graph-state",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-export-flow",
+      "targetId": "FUNC-generate-snapshot",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-export-flow",
+      "targetId": "FUNC-deliver-snapshot",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-export-flow",
+      "targetId": "FUNC-log-audit-event",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-export-flow",
+      "targetId": "FUNC-cache-graph-state",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-live-update-flow",
+      "targetId": "FUNC-push-updates",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-live-update-flow",
+      "targetId": "FUNC-render-updates",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-live-update-flow",
+      "targetId": "FUNC-apply-graph-mutations",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-live-update-flow",
+      "targetId": "FUNC-log-audit-event",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-live-update-flow",
+      "targetId": "FUNC-notify-users",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-live-update-flow",
+      "targetId": "FUNC-cache-graph-state",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-live-update-flow",
+      "targetId": "FUNC-validate-graph-mutation",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-live-update-flow",
+      "targetId": "FUNC-resolve-conflicts",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-live-update-flow",
+      "targetId": "FUNC-optimize-graph-query",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-live-update-flow",
+      "targetId": "FUNC-monitor-system-health",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-live-update-flow",
+      "targetId": "FUNC-backup-graph-state",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-live-update-flow",
+      "targetId": "FUNC-restore-graph-state",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-live-update-flow",
+      "targetId": "FUNC-analyze-graph-performance",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-live-update-flow",
+      "targetId": "FUNC-generate-performance-report",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-live-update-flow",
+      "targetId": "FUNC-optimize-graph-storage",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-live-update-flow",
+      "targetId": "FUNC-manage-graph-schema",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-live-update-flow",
+      "targetId": "FUNC-manage-graph-access-control",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-live-update-flow",
+      "targetId": "FUNC-manage-graph-backup-strategy",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-live-update-flow",
+      "targetId": "FUNC-manage-graph-monitoring-strategy",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-live-update-flow",
+      "targetId": "FUNC-manage-graph-performance-strategy",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-auth-collab",
+      "targetId": "FUNC-auth",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-auth-collab",
+      "targetId": "FUNC-collab",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-auth-collab-alt1",
+      "targetId": "FUNC-auth-alt1",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-auth-collab-alt1",
+      "targetId": "FUNC-collab-alt1",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-auth-collab-alt2",
+      "targetId": "FUNC-auth-alt2",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-auth-collab-alt2",
+      "targetId": "FUNC-collab-alt2",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-authenticate-credentials",
+      "targetId": "FUNC-generate-session-token",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-generate-session-token",
+      "targetId": "FUNC-update-user-session",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-authenticate-user",
+      "targetId": "FLOW-session-token",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-login",
+      "targetId": "REQ-authentication",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-apply-gate",
+      "targetId": "REQ-collaborative-authoring",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-live-updates",
+      "targetId": "REQ-live-updates",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-export-state",
+      "targetId": "REQ-export-state",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-auth",
+      "targetId": "REQ-auth",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-collab",
+      "targetId": "REQ-collab",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-auth-alt1",
+      "targetId": "REQ-auth",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-collab-alt1",
+      "targetId": "REQ-collab",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-auth-alt2",
+      "targetId": "REQ-auth",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-collab-alt2",
+      "targetId": "REQ-collab",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-authenticate-user",
+      "targetId": "REQ-auth",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-authenticate-user",
+      "targetId": "REQ-multiuser-authentication",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-handle-session",
+      "targetId": "REQ-auth",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-manage-session",
+      "targetId": "REQ-multiuser-authentication",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-sync-graph-updates",
+      "targetId": "REQ-real-time-updates",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-export-graph-data",
+      "targetId": "REQ-export-graph-state",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-alternative-auth",
+      "targetId": "REQ-multiuser-authentication",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-alternative-session",
+      "targetId": "REQ-multiuser-authentication",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-alternative-sync",
+      "targetId": "REQ-real-time-updates",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-alternative-export",
+      "targetId": "REQ-export-graph-state",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-authenticate-credentials",
+      "targetId": "MOD-auth",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-generate-session-token",
+      "targetId": "MOD-auth",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-update-user-session",
+      "targetId": "MOD-auth",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-apply-graph-mutations",
+      "targetId": "MOD-graph-service",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-authorize-user",
+      "targetId": "MOD-ui-service",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-authorize-user",
+      "targetId": "MOD-graph-service",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-analyze-graph-performance",
+      "targetId": "MOD-graph-service",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-login",
+      "targetId": "MOD-authentication",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-apply-gate",
+      "targetId": "MOD-apply-gate",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-live-updates",
+      "targetId": "MOD-live-updates",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-export-state",
+      "targetId": "MOD-export-state",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-auth",
+      "targetId": "MOD-auth",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-collab",
+      "targetId": "MOD-collab",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-auth-alt1",
+      "targetId": "MOD-auth",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-collab-alt1",
+      "targetId": "MOD-collab",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-auth-alt2",
+      "targetId": "MOD-auth",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-collab-alt2",
+      "targetId": "MOD-collab",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-authenticate-user",
+      "targetId": "MOD-auth-service",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-authenticate-user",
+      "targetId": "MOD-auth-module",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-handle-session",
+      "targetId": "MOD-auth-service",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-manage-session",
+      "targetId": "MOD-session-module",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-sync-graph-updates",
+      "targetId": "MOD-graph-module",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-export-graph-data",
+      "targetId": "MOD-graph-module",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-alternative-auth",
+      "targetId": "MOD-auth-module",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-alternative-session",
+      "targetId": "MOD-session-module",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-alternative-sync",
+      "targetId": "MOD-graph-module",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-alternative-export",
+      "targetId": "MOD-graph-module",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FLOW-session-token",
+      "targetId": "FUNC-handle-session",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FLOW-session-token",
+      "targetId": "SCHEMA-session-token",
+      "edgeType": "relation",
+      "attributes": {}
+    },
+    {
+      "sourceId": "TEST-verify-authentication",
+      "targetId": "REQ-authentication",
+      "edgeType": "verify",
+      "attributes": {}
+    },
+    {
+      "sourceId": "TEST-verify-collaborative-authoring",
+      "targetId": "REQ-collaborative-authoring",
+      "edgeType": "verify",
+      "attributes": {}
+    },
+    {
+      "sourceId": "TEST-verify-live-updates",
+      "targetId": "REQ-live-updates",
+      "edgeType": "verify",
+      "attributes": {}
+    },
+    {
+      "sourceId": "TEST-verify-export-state",
+      "targetId": "REQ-export-state",
+      "edgeType": "verify",
+      "attributes": {}
+    },
+    {
+      "sourceId": "TEST-verify-auth",
+      "targetId": "REQ-auth",
+      "edgeType": "verify",
+      "attributes": {}
+    },
+    {
+      "sourceId": "TEST-verify-collab",
+      "targetId": "REQ-collab",
+      "edgeType": "verify",
+      "attributes": {}
+    },
+    {
+      "sourceId": "TEST-verify-multiuser-authentication",
+      "targetId": "REQ-multiuser-authentication",
+      "edgeType": "verify",
+      "attributes": {}
+    },
+    {
+      "sourceId": "TEST-verify-real-time-updates",
+      "targetId": "REQ-real-time-updates",
+      "edgeType": "verify",
+      "attributes": {}
+    },
+    {
+      "sourceId": "TEST-verify-export-graph-state",
+      "targetId": "REQ-export-graph-state",
+      "edgeType": "verify",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-authenticate-user",
+      "targetId": "REQ-authentication",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-authenticate-user",
+      "targetId": "MOD-authentication",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-authenticate-user",
+      "targetId": "UC-login",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-authenticate-user",
+      "targetId": "UC-authorize-graph",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-authenticate-user",
+      "targetId": "UC-view-updates",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-authenticate-user",
+      "targetId": "UC-export-state",
+      "edgeType": "satisfy",
+      "attributes": {}
+    }
+  ]
+}

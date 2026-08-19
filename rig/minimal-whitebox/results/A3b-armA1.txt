@@ -1,0 +1,23 @@
+## Nodes
+### FUNC
++ FUNC-assign-account-role|Setzt die neue Rolle eines Kontos und bestimmt die daraus abgeleiteten Autorierungsrechte am Apply-Gate.
++ FUNC-authorize-role-assignment|Prüft, ob das anfragende Konto die Berechtigung zur Rollenänderung besitzt, und gibt die Zuweisung frei oder lehnt sie ab.
++ FUNC-build-export-file|Verpackt die serialisierte Repräsentation mit Version und Prüfsumme in eine auslieferbare Exportdatei.
+
+## Bereits vorhanden (Identität, nicht öffnen — keine Duplikate anlegen)
+FUNC-deliver-live-update · FUNC · Live-Update zustellen
+FUNC-detect-graph-change · FUNC · Graphänderung erkennen
+FUNC-edit-graph-element · FUNC · Graphelement bearbeiten
+FUNC-evaluate-gate-rules · FUNC · Gate-Regeln auswerten
+FUNC-filter-subgraph · FUNC · Teilgraph filtern
+FUNC-issue-session · FUNC · Sitzung ausstellen
+FUNC-persist-access-state · FUNC · Zugriffsstand persistieren
+FUNC-persist-graph-version · FUNC · Graphversion persistieren
+FUNC-publish-change-event · FUNC · Änderungsereignis veröffentlichen
+FUNC-replay-missed-events · FUNC · Verpasste Ereignisse nachliefern
+FUNC-report-gate-verdict · FUNC · Gate-Verdikt melden
+FUNC-resume-live-channel · FUNC · Live-Kanal wiederaufnehmen
+FUNC-revoke-account-access · FUNC · Kontozugriff entziehen
+FUNC-serialize-graph-snapshot · FUNC · Graphstand serialisieren
+FUNC-terminate-sessions · FUNC · Sitzungen beenden
+FUNC-verify-credentials · FUNC · Zugangsdaten prüfen

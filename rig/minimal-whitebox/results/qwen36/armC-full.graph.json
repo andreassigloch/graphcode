@@ -1,0 +1,748 @@
+{
+  "elements": [
+    {
+      "uid": "TEST-verify-01",
+      "type": "TEST",
+      "name": "Verify: System muss Nutzer authentifizieren",
+      "attributes": {},
+      "description": "it.todo: Prüfe \"System muss Nutzer authentifizieren\" — Vorbedingung herstellen, Aktion ausführen, Ergebnis messbar gegen die REQ-Aussage prüfen."
+    },
+    {
+      "uid": "TEST-verify-02",
+      "type": "TEST",
+      "name": "Verify: System muss Export ermöglichen",
+      "attributes": {},
+      "description": "it.todo: Prüfe \"System muss Export ermöglichen\" — Vorbedingung herstellen, Aktion ausführen, Ergebnis messbar gegen die REQ-Aussage prüfen."
+    },
+    {
+      "uid": "TEST-verify-03",
+      "type": "TEST",
+      "name": "Verify: System muss Graphenerstellung erlauben",
+      "attributes": {},
+      "description": "it.todo: Prüfe \"System muss Graphenerstellung erlauben\" — Vorbedingung herstellen, Aktion ausführen, Ergebnis messbar gegen die REQ-Aussage prüfen."
+    },
+    {
+      "uid": "SYS-graphcode-harness",
+      "type": "SYS",
+      "name": "Graphcode Harness Web-App",
+      "attributes": {},
+      "description": "Multiuser-fähige Web-App aus dem graphcode harness: Nutzer melden sich an, autorieren gemeinsam einen governten Systemgraphen über das Apply-Gate, sehen Live-Updates und exportieren den Stand."
+    },
+    {
+      "uid": "UC-anmelden",
+      "type": "UC",
+      "name": "Anmelden",
+      "attributes": {},
+      "description": "Nutzer authentifiziert sich am System und erhält Zugriff auf den Graphen"
+    },
+    {
+      "uid": "UC-graphen-autorieren",
+      "type": "UC",
+      "name": "Graphen autorieren",
+      "attributes": {},
+      "description": "Nutzer erstellen und bearbeiten gemeinsam Elemente des Systemgraphen über das Apply-Gate"
+    },
+    {
+      "uid": "UC-live-updates-sehen",
+      "type": "UC",
+      "name": "Live-Updates sehen",
+      "attributes": {},
+      "description": "Nutzer erhalten Echtzeit-Benachrichtigungen über Graphänderungen durch andere Nutzer"
+    },
+    {
+      "uid": "UC-exportieren",
+      "type": "UC",
+      "name": "Exportieren",
+      "attributes": {},
+      "description": "Nutzer exportieren den aktuellen Systemgraphen-Stand als Datei oder API-Antwort"
+    },
+    {
+      "uid": "ACTOR-nutzer",
+      "type": "ACTOR",
+      "name": "Nutzer",
+      "attributes": {},
+      "description": "Registrierter Benutzer, der den Systemgraphen autorieren und verwalten kann"
+    },
+    {
+      "uid": "ACTOR-administrator",
+      "type": "ACTOR",
+      "name": "Administrator",
+      "attributes": {},
+      "description": "Systembetreuer mit erweiterten Berechtigungen für Graph-Management und Export"
+    },
+    {
+      "uid": "FCHAIN-anmelden",
+      "type": "FCHAIN",
+      "name": "Nutzer meldet sich an",
+      "attributes": {},
+      "description": "Szenario: Nutzer gibt gültige Zugangsdaten ein und wird vom System authentifiziert."
+    },
+    {
+      "uid": "FCHAIN-exportieren",
+      "type": "FCHAIN",
+      "name": "Nutzer exportiert den Graphen",
+      "attributes": {},
+      "description": "Szenario: Nutzer wählt Export-Funktion und erhält eine Datei mit dem Grapheninhalt."
+    },
+    {
+      "uid": "FCHAIN-graphen-autorieren",
+      "type": "FCHAIN",
+      "name": "Nutzer erstellt einen Graphen",
+      "attributes": {},
+      "description": "Szenario: Nutzer fügt neue Elemente hinzu und speichert den Graphen."
+    },
+    {
+      "uid": "FCHAIN-live-updates-empfangen",
+      "type": "FCHAIN",
+      "name": "Live-Updates empfangen",
+      "attributes": {},
+      "description": "System sendet Echtzeit-Änderungen an alle verbundenen Clients."
+    },
+    {
+      "uid": "FUNC-auth",
+      "type": "FUNC",
+      "name": "Authentifizierung durchführen",
+      "attributes": {},
+      "description": "Funktionale Einheit: Überprüft Credentials gegen die Datenbank."
+    },
+    {
+      "uid": "FUNC-export",
+      "type": "FUNC",
+      "name": "Daten exportieren",
+      "attributes": {},
+      "description": "Funktionale Einheit: Serialisiert den Graphen in ein Dateiformat."
+    },
+    {
+      "uid": "FUNC-autorieren",
+      "type": "FUNC",
+      "name": "Graph erstellen und speichern",
+      "attributes": {},
+      "description": "Funktionale Einheit: Verarbeitet Änderungen und persistiert den Graphen."
+    },
+    {
+      "uid": "FUNC-check-credentials",
+      "type": "FUNC",
+      "name": "Prüfe Zugangsdaten",
+      "attributes": {},
+      "description": "Validiere Nutzername und Passwort gegen die Benutzertabelle"
+    },
+    {
+      "uid": "FUNC-create-session",
+      "type": "FUNC",
+      "name": "Initialisiere Sitzung",
+      "attributes": {},
+      "description": "Erstelle Session-Token und ordne Nutzer zu"
+    },
+    {
+      "uid": "FUNC-validate-structure",
+      "type": "FUNC",
+      "name": "Validiere Graphstruktur",
+      "attributes": {},
+      "description": "Überprüfe Graphknoten und Kantensemantik auf Konsistenz"
+    },
+    {
+      "uid": "FUNC-store-graph",
+      "type": "FUNC",
+      "name": "Speichere Graphdaten",
+      "attributes": {},
+      "description": "Persistiere aktuelle Graphversion im Datenspeicher"
+    },
+    {
+      "uid": "FUNC-select-format",
+      "type": "FUNC",
+      "name": "Wähle Exportformat",
+      "attributes": {},
+      "description": "Ermittle gewünschtes Zielformat (z.B. JSON, GraphML)"
+    },
+    {
+      "uid": "FUNC-generate-archive",
+      "type": "FUNC",
+      "name": "Generiere Archivdatei",
+      "attributes": {},
+      "description": "Erzeuge komprimierte Exportdatei mit Serialisierung"
+    },
+    {
+      "uid": "FUNC-sync-state",
+      "type": "FUNC",
+      "name": "Synchronisiere Graphzustand",
+      "attributes": {},
+      "description": "Prüfe Server auf neue Graphversionen und Deltas"
+    },
+    {
+      "uid": "FUNC-process-delta",
+      "type": "FUNC",
+      "name": "Verarbeite Deltadaten",
+      "attributes": {},
+      "description": "Integriere empfangene Änderungen in den lokalen Graphen"
+    },
+    {
+      "uid": "FUNC-render-view",
+      "type": "FUNC",
+      "name": "Aktualisiere Graphdarstellung",
+      "attributes": {},
+      "description": "Zeichne DOM/Canvas basierend auf aktueller Graphstruktur neu"
+    },
+    {
+      "uid": "FLOW-anmelden-eintritt",
+      "type": "FLOW",
+      "name": "Anmelden Eintritt",
+      "attributes": {},
+      "description": "Eintritts-Flow für Anmelden-Kette zur Actor-Bindung"
+    },
+    {
+      "uid": "FLOW-anmelden-austritt",
+      "type": "FLOW",
+      "name": "Anmelden Austritt",
+      "attributes": {},
+      "description": "Austritts-Flow für Anmelden-Kette zur Actor-Bindung"
+    },
+    {
+      "uid": "FLOW-export-eintritt",
+      "type": "FLOW",
+      "name": "Export Eintritt",
+      "attributes": {},
+      "description": "Eintritts-Flow für Export-Kette zur Actor-Bindung"
+    },
+    {
+      "uid": "FLOW-export-austritt",
+      "type": "FLOW",
+      "name": "Export Austritt",
+      "attributes": {},
+      "description": "Austritts-Flow für Export-Kette zur Actor-Bindung"
+    },
+    {
+      "uid": "FLOW-graphen-eintritt",
+      "type": "FLOW",
+      "name": "Graphen Eintritt",
+      "attributes": {},
+      "description": "Eintritts-Flow für Graphen-Autorieren-Kette zur Actor-Bindung"
+    },
+    {
+      "uid": "FLOW-graphen-austritt",
+      "type": "FLOW",
+      "name": "Graphen Austritt",
+      "attributes": {},
+      "description": "Austritts-Flow für Graphen-Autorieren-Kette zur Actor-Bindung"
+    },
+    {
+      "uid": "FLOW-live-updates-eintritt",
+      "type": "FLOW",
+      "name": "Live Updates Eintritt",
+      "attributes": {},
+      "description": "Eintrittspunkt für den Live-Update-Prozess des Nutzers"
+    },
+    {
+      "uid": "FLOW-live-updates-austritt",
+      "type": "FLOW",
+      "name": "Live Updates Austritt",
+      "attributes": {},
+      "description": "Austrittspunkt für den Live-Update-Prozess des Nutzers"
+    },
+    {
+      "uid": "REQ-01",
+      "type": "REQ",
+      "name": "System muss Nutzer authentifizieren",
+      "attributes": {},
+      "description": "Anforderung: Das System muss die Identität des Nutzers verifizieren."
+    },
+    {
+      "uid": "REQ-02",
+      "type": "REQ",
+      "name": "System muss Export ermöglichen",
+      "attributes": {},
+      "description": "Anforderung: Das System muss den Graphen exportierbar machen."
+    },
+    {
+      "uid": "REQ-03",
+      "type": "REQ",
+      "name": "System muss Graphenerstellung erlauben",
+      "attributes": {},
+      "description": "Anforderung: Das System muss das Autorisieren von Graphen erlauben."
+    },
+    {
+      "uid": "MOD-auth",
+      "type": "MOD",
+      "name": "Authentifizierungsmodul",
+      "attributes": {},
+      "description": "Modul zur Verwaltung von Benutzeranmeldung und Identitätsprüfung."
+    },
+    {
+      "uid": "MOD-editor",
+      "type": "MOD",
+      "name": "Grapheditormodul",
+      "attributes": {},
+      "description": "Modul zur Verwaltung der Graphenerstellung und -änderung."
+    },
+    {
+      "uid": "MOD-exporter",
+      "type": "MOD",
+      "name": "Exportmodul",
+      "attributes": {},
+      "description": "Modul zur Verwaltung des Datenexports in verschiedene Formate."
+    },
+    {
+      "uid": "MOD-realtime-sync",
+      "type": "MOD",
+      "name": "Echtzeit-Synchronisationsmodul",
+      "attributes": {},
+      "description": "Verwaltet WebSocket-Connections und Deltaverteilung an alle verbundenen Clients"
+    },
+    {
+      "uid": "MOD-graph-editor",
+      "type": "MOD",
+      "name": "Grapheditormodul",
+      "attributes": {},
+      "description": "Bietet UI-Komponenten zum Erstellen, Bearbeiten und Validieren von Systemgraphen"
+    },
+    {
+      "uid": "MOD-export-manager",
+      "type": "MOD",
+      "name": "Exportmanager-Modul",
+      "attributes": {},
+      "description": "Verwaltet Exportformate, Archivierung und Dateigenerierung für Graphexporte"
+    },
+    {
+      "uid": "SCHEMA-user-session",
+      "type": "SCHEMA",
+      "name": "User Session Data",
+      "attributes": {},
+      "description": "Spezifikation für Nutzeranmeldungsdaten, Tokens und Session-Status."
+    },
+    {
+      "uid": "SCHEMA-graph-struct",
+      "type": "SCHEMA",
+      "name": "Graph Structure Data",
+      "attributes": {},
+      "description": "Spezifikation für den Systemgraphen, Knoten und Kanten zur Erstellung (Graphen autorieren)."
+    },
+    {
+      "uid": "SCHEMA-export-archive",
+      "type": "SCHEMA",
+      "name": "Export Archive Data",
+      "attributes": {},
+      "description": "Spezifikation für die exportierbaren Daten des Systemgraphen."
+    }
+  ],
+  "traces": [
+    {
+      "sourceId": "SYS-graphcode-harness",
+      "targetId": "UC-anmelden",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "SYS-graphcode-harness",
+      "targetId": "UC-graphen-autorieren",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "SYS-graphcode-harness",
+      "targetId": "UC-live-updates-sehen",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "SYS-graphcode-harness",
+      "targetId": "UC-exportieren",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "SYS-graphcode-harness",
+      "targetId": "MOD-auth",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "SYS-graphcode-harness",
+      "targetId": "MOD-editor",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "SYS-graphcode-harness",
+      "targetId": "MOD-exporter",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-anmelden",
+      "targetId": "FCHAIN-anmelden",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-graphen-autorieren",
+      "targetId": "FCHAIN-graphen-autorieren",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-live-updates-sehen",
+      "targetId": "FCHAIN-live-updates-empfangen",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-exportieren",
+      "targetId": "FCHAIN-exportieren",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-nutzer",
+      "targetId": "FLOW-anmelden-eintritt",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-nutzer",
+      "targetId": "FLOW-export-eintritt",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-nutzer",
+      "targetId": "FLOW-graphen-eintritt",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-nutzer",
+      "targetId": "FLOW-live-updates-eintritt",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-nutzer",
+      "targetId": "UC-anmelden",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-nutzer",
+      "targetId": "UC-graphen-autorieren",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-nutzer",
+      "targetId": "UC-live-updates-sehen",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-nutzer",
+      "targetId": "UC-exportieren",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-administrator",
+      "targetId": "UC-anmelden",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-administrator",
+      "targetId": "UC-graphen-autorieren",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-administrator",
+      "targetId": "UC-live-updates-sehen",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-administrator",
+      "targetId": "UC-exportieren",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-anmelden",
+      "targetId": "FUNC-auth",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-anmelden",
+      "targetId": "FUNC-check-credentials",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-anmelden",
+      "targetId": "FUNC-create-session",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-exportieren",
+      "targetId": "FUNC-export",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-exportieren",
+      "targetId": "FUNC-select-format",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-exportieren",
+      "targetId": "FUNC-generate-archive",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-graphen-autorieren",
+      "targetId": "FUNC-autorieren",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-graphen-autorieren",
+      "targetId": "FUNC-validate-structure",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-graphen-autorieren",
+      "targetId": "FUNC-store-graph",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-live-updates-empfangen",
+      "targetId": "FUNC-sync-state",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-live-updates-empfangen",
+      "targetId": "FUNC-process-delta",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-live-updates-empfangen",
+      "targetId": "FUNC-render-view",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-anmelden",
+      "targetId": "REQ-01",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-exportieren",
+      "targetId": "REQ-02",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-graphen-autorieren",
+      "targetId": "REQ-03",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-auth",
+      "targetId": "FLOW-anmelden-austritt",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-export",
+      "targetId": "FLOW-export-austritt",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-autorieren",
+      "targetId": "FLOW-graphen-austritt",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-render-view",
+      "targetId": "FLOW-live-updates-austritt",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-auth",
+      "targetId": "MOD-auth",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-export",
+      "targetId": "MOD-exporter",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-autorieren",
+      "targetId": "MOD-editor",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-check-credentials",
+      "targetId": "MOD-auth",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-create-session",
+      "targetId": "MOD-auth",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-select-format",
+      "targetId": "MOD-export-manager",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-generate-archive",
+      "targetId": "MOD-exporter",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-process-delta",
+      "targetId": "MOD-realtime-sync",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-render-view",
+      "targetId": "MOD-graph-editor",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FLOW-anmelden-austritt",
+      "targetId": "ACTOR-nutzer",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FLOW-export-austritt",
+      "targetId": "ACTOR-nutzer",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FLOW-graphen-austritt",
+      "targetId": "ACTOR-nutzer",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FLOW-live-updates-austritt",
+      "targetId": "ACTOR-nutzer",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FLOW-anmelden-eintritt",
+      "targetId": "FUNC-auth",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FLOW-export-eintritt",
+      "targetId": "FUNC-export",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FLOW-graphen-eintritt",
+      "targetId": "FUNC-autorieren",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FLOW-live-updates-eintritt",
+      "targetId": "FUNC-sync-state",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FLOW-anmelden-eintritt",
+      "targetId": "SCHEMA-user-session",
+      "edgeType": "relation",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FLOW-anmelden-austritt",
+      "targetId": "SCHEMA-user-session",
+      "edgeType": "relation",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FLOW-export-eintritt",
+      "targetId": "SCHEMA-export-archive",
+      "edgeType": "relation",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FLOW-export-austritt",
+      "targetId": "SCHEMA-export-archive",
+      "edgeType": "relation",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FLOW-graphen-eintritt",
+      "targetId": "SCHEMA-graph-struct",
+      "edgeType": "relation",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FLOW-graphen-austritt",
+      "targetId": "SCHEMA-graph-struct",
+      "edgeType": "relation",
+      "attributes": {}
+    },
+    {
+      "sourceId": "TEST-verify-01",
+      "targetId": "REQ-01",
+      "edgeType": "verify",
+      "attributes": {}
+    },
+    {
+      "sourceId": "TEST-verify-02",
+      "targetId": "REQ-02",
+      "edgeType": "verify",
+      "attributes": {}
+    },
+    {
+      "sourceId": "TEST-verify-03",
+      "targetId": "REQ-03",
+      "edgeType": "verify",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FLOW-live-updates-eintritt",
+      "targetId": "SCHEMA-graph-struct",
+      "edgeType": "relation",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FLOW-live-updates-austritt",
+      "targetId": "SCHEMA-graph-struct",
+      "edgeType": "relation",
+      "attributes": {}
+    }
+  ]
+}

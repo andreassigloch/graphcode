@@ -1,0 +1,43 @@
+Kanten-Grammatik der Fokus-Typen (bereits eingebettet — graph_authoring_guide dafür NICHT erneut aufrufen; Gate-Protokoll Schritt 1 ist damit erledigt):
+- FUNC: ausgehend: compose→FUNC (0..*), io→FLOW, satisfy→REQ, satisfy→UC, allocate→MOD; eingehend: FCHAIN compose→ (1..*), FUNC compose→ (0..*), FLOW io→, MS compose→, CR relation→
+- MOD: ausgehend: compose→MOD (0..*), io→MOD, satisfy→REQ; eingehend: SYS compose→ (0..*), MOD compose→ (0..*), MOD io→, FUNC allocate→, CR relation→
+
+Element-Index des Graphen (uid · type · name; bereits eingebettet — graph_elements NICHT erneut aufrufen; existierende uids für Kanten referenzieren, keine Duplikate anlegen):
+ACTOR-admin · ACTOR · Admin
+ACTOR-user · ACTOR · User
+FCHAIN-audit-log-scenario · FCHAIN · Audit log scenario
+FCHAIN-collaborate-scenario · FCHAIN · Collaborate Scenario Chain
+FCHAIN-edit-graph-scenario · FCHAIN · Graph editing scenario for login
+FCHAIN-export-graph-scenario · FCHAIN · Export-Graph-Szenario
+FCHAIN-login-scenario · FCHAIN · Login-Szenario
+FCHAIN-manage-permissions-scenario · FCHAIN · Manage Permissions Scenario
+FCHAIN-manage-session-scenario · FCHAIN · Manage-Session-Szenario
+FCHAIN-notify-updates-scenario · FCHAIN · Notify-Updates-Szenario
+FCHAIN-validate-mutation-scenario · FCHAIN · Validate-Mutation-Szenario
+FCHAIN-view-graph-scenario · FCHAIN · View-Graph-Szenario
+FUNC-apply-gate · FUNC · Apply Gate Function
+FUNC-authorize · FUNC · Authorize Function
+FUNC-export-graph · FUNC · Export Graph Function
+FUNC-export-graph-final · FUNC · Export Graph Final Function
+FUNC-export-graph-state · FUNC · Export Graph State Function
+FUNC-export-graph-state-final · FUNC · Export Graph State Final Function
+FUNC-live-updates · FUNC · Live Updates Function
+FUNC-login · FUNC · Login Function
+FUNC-login-audit · FUNC · Log user login action
+FUNC-see-exported-graph · FUNC · See Exported Graph Function
+FUNC-see-exported-graph-final · FUNC · See Exported Graph Final Function
+FUNC-see-live-updates · FUNC · See Live Updates Function
+MOD-auth · MOD · Authentication module
+SYS-web-app · SYS · Web-App
+UC-audit-log · UC · Audit Log Export
+UC-collaborate · UC · Collaborate
+UC-collaborate-scenario · UC · Collaborate Scenario
+UC-edit-graph · UC · Edit-Graph
+UC-export · UC · Export
+UC-export-graph · UC · Export-Graph
+UC-login · UC · User logs in to the system
+UC-manage-permissions · UC · Manage-Permissions
+UC-manage-session · UC · Manage-Session
+UC-notify-updates · UC · Notify-Updates
+UC-validate-mutation · UC · Validate-Mutation
+UC-view-graph · UC · View-Graph

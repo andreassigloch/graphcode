@@ -1,0 +1,663 @@
+{
+  "elements": [
+    {
+      "uid": "SYS-web-app",
+      "type": "SYS",
+      "name": "Multiuser Web App",
+      "attributes": {},
+      "description": "Multiuser-fähige Web-App aus dem graphcode harness: Nutzer melden sich an, autorieren gemeinsam einen governten Systemgraphen über das Apply-Gate, sehen Live-Updates und exportieren den Stand."
+    },
+    {
+      "uid": "UC-login",
+      "type": "UC",
+      "name": "Login",
+      "attributes": {},
+      "description": "Nutzer melden sich an, autorieren gemeinsam einen governten Systemgraphen über das Apply-Gate, sehen Live-Updates und exportieren den Stand."
+    },
+    {
+      "uid": "UC-collab-edit",
+      "type": "UC",
+      "name": "Kollaborative Graphbearbeitung",
+      "attributes": {},
+      "description": "Mehrere Nutzer bearbeiten gleichzeitig den Systemgraphen und sehen Live-Updates."
+    },
+    {
+      "uid": "UC-export",
+      "type": "UC",
+      "name": "Graph Export",
+      "attributes": {},
+      "description": "Nutzer exportiert den aktuellen Stand des Graphen als Datei."
+    },
+    {
+      "uid": "UC-multiuser-web-app",
+      "type": "UC",
+      "name": "Multiuser Web App Usage",
+      "attributes": {},
+      "description": "Endnutzer nutzen die Multiuser-Web-App über Live-Updates und Export-Funktionen."
+    },
+    {
+      "uid": "UC-multiuser-web-app-fähig",
+      "type": "UC",
+      "name": "Multiuser Web App Fähigkeit",
+      "description": "Nutzer melden sich an, autorisieren gemeinsam einen governten Systemgraphen über das Apply-Gate, sehen Live-Updates und exportieren den Stand.",
+      "attributes": {}
+    },
+    {
+      "uid": "ACTOR-admin",
+      "type": "ACTOR",
+      "name": "Admin",
+      "attributes": {},
+      "description": "Administrator, der das System verwaltet und Nutzerrechte verleiht."
+    },
+    {
+      "uid": "ACTOR-user",
+      "type": "ACTOR",
+      "name": "Endnutzer",
+      "attributes": {},
+      "description": "Anwendungsnutzer, der den Graphen autorisiert und Live-Updates sieht."
+    },
+    {
+      "uid": "FCHAIN-login-scenario",
+      "type": "FCHAIN",
+      "name": "Login Scenario",
+      "attributes": {},
+      "description": "User authenticates and gains access to the web app."
+    },
+    {
+      "uid": "FCHAIN-collab-edit-scenario",
+      "type": "FCHAIN",
+      "name": "Collaborative Edit Scenario",
+      "attributes": {},
+      "description": "Multiple users edit the governed graph simultaneously."
+    },
+    {
+      "uid": "FCHAIN-export-scenario",
+      "type": "FCHAIN",
+      "name": "Export Scenario",
+      "attributes": {},
+      "description": "User exports the current state of the governed graph."
+    },
+    {
+      "uid": "FCHAIN-multiuser-scenario",
+      "type": "FCHAIN",
+      "name": "Multiuser Scenario",
+      "attributes": {},
+      "description": "Szenario für die Nutzung der Web-App durch mehrere Nutzer."
+    },
+    {
+      "uid": "FUNC-login-initiate",
+      "type": "FUNC",
+      "name": "Login Initiate",
+      "attributes": {},
+      "description": "Initiate the login process for a user."
+    },
+    {
+      "uid": "FUNC-login-validate",
+      "type": "FUNC",
+      "name": "Login Validate",
+      "attributes": {},
+      "description": "Validate user credentials during login."
+    },
+    {
+      "uid": "FUNC-login-complete",
+      "type": "FUNC",
+      "name": "Login Complete",
+      "attributes": {},
+      "description": "Complete the login process and grant access."
+    },
+    {
+      "uid": "FUNC-collab-edit-initiate",
+      "type": "FUNC",
+      "name": "Collaborative Edit Initiate",
+      "attributes": {},
+      "description": "Initiate a collaborative editing session."
+    },
+    {
+      "uid": "FUNC-collab-edit-sync",
+      "type": "FUNC",
+      "name": "Collaborative Edit Sync",
+      "attributes": {},
+      "description": "Synchronize changes during collaborative editing."
+    },
+    {
+      "uid": "FUNC-collab-edit-apply",
+      "type": "FUNC",
+      "name": "Collaborative Edit Apply",
+      "attributes": {},
+      "description": "Apply changes from collaborative editing."
+    },
+    {
+      "uid": "FUNC-export-initiate",
+      "type": "FUNC",
+      "name": "Export Initiate",
+      "attributes": {},
+      "description": "Initiate the export process."
+    },
+    {
+      "uid": "FUNC-export-generate",
+      "type": "FUNC",
+      "name": "Export Generate",
+      "attributes": {},
+      "description": "Generate the export data."
+    },
+    {
+      "uid": "FUNC-export-deliver",
+      "type": "FUNC",
+      "name": "Export Deliver",
+      "attributes": {},
+      "description": "Deliver the exported data."
+    },
+    {
+      "uid": "FUNC-multiuser-manage",
+      "type": "FUNC",
+      "name": "Multiuser Management",
+      "attributes": {},
+      "description": "Verwaltung der Multiuser-Sitzungen und Berechtigungen."
+    },
+    {
+      "uid": "FUNC-live-update-broadcast",
+      "type": "FUNC",
+      "name": "Live Update Broadcast",
+      "attributes": {},
+      "description": "Broadcast von Live-Updates an alle angemeldeten Nutzer."
+    },
+    {
+      "uid": "FUNC-export-delivery",
+      "type": "FUNC",
+      "name": "Export Delivery",
+      "attributes": {},
+      "description": "Bereitstellung des exportierten Graphen an den Nutzer."
+    },
+    {
+      "uid": "MOD-collab-engine",
+      "type": "MOD",
+      "name": "Collaboration Engine",
+      "attributes": {},
+      "description": "Handles real-time collaborative editing and synchronization of the governed graph."
+    },
+    {
+      "uid": "MOD-export-engine",
+      "type": "MOD",
+      "name": "Export Engine",
+      "attributes": {},
+      "description": "Generates and delivers exports of the governed graph."
+    },
+    {
+      "uid": "MOD-auth-engine",
+      "type": "MOD",
+      "name": "Authentication Engine",
+      "attributes": {},
+      "description": "Manages user authentication and session handling."
+    }
+  ],
+  "traces": [
+    {
+      "sourceId": "MOD-collab-engine",
+      "targetId": "MOD-auth-engine",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "MOD-collab-engine",
+      "targetId": "MOD-export-engine",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "MOD-export-engine",
+      "targetId": "MOD-auth-engine",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "MOD-export-engine",
+      "targetId": "MOD-collab-engine",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "SYS-web-app",
+      "targetId": "UC-login",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "SYS-web-app",
+      "targetId": "UC-collab-edit",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "SYS-web-app",
+      "targetId": "UC-export",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "SYS-web-app",
+      "targetId": "UC-multiuser-web-app",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "SYS-web-app",
+      "targetId": "UC-multiuser-web-app-fähig",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "SYS-web-app",
+      "targetId": "MOD-collab-engine",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "SYS-web-app",
+      "targetId": "MOD-export-engine",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "SYS-web-app",
+      "targetId": "MOD-auth-engine",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-login",
+      "targetId": "FCHAIN-login-scenario",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-collab-edit",
+      "targetId": "FCHAIN-collab-edit-scenario",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-export",
+      "targetId": "FCHAIN-export-scenario",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-web-app",
+      "targetId": "FCHAIN-multiuser-scenario",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-web-app",
+      "targetId": "FCHAIN-login-scenario",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-web-app",
+      "targetId": "FCHAIN-collab-edit-scenario",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-web-app",
+      "targetId": "FCHAIN-export-scenario",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-web-app-fähig",
+      "targetId": "FCHAIN-collab-edit-scenario",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-web-app-fähig",
+      "targetId": "FCHAIN-export-scenario",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-web-app-fähig",
+      "targetId": "FCHAIN-login-scenario",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-web-app-fähig",
+      "targetId": "FCHAIN-multiuser-scenario",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-admin",
+      "targetId": "UC-login",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-admin",
+      "targetId": "UC-multiuser-web-app",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-user",
+      "targetId": "UC-login",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-user",
+      "targetId": "UC-collab-edit",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-user",
+      "targetId": "UC-export",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-user",
+      "targetId": "UC-multiuser-web-app",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-user",
+      "targetId": "UC-multiuser-web-app-fähig",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-login-scenario",
+      "targetId": "FUNC-login-initiate",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-login-scenario",
+      "targetId": "FUNC-login-complete",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-login-scenario",
+      "targetId": "FUNC-login-validate",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-collab-edit-scenario",
+      "targetId": "FUNC-collab-edit-initiate",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-collab-edit-scenario",
+      "targetId": "FUNC-collab-edit-apply",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-collab-edit-scenario",
+      "targetId": "FUNC-collab-edit-sync",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-export-scenario",
+      "targetId": "FUNC-export-initiate",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-export-scenario",
+      "targetId": "FUNC-export-deliver",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-export-scenario",
+      "targetId": "FUNC-export-generate",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-export-scenario",
+      "targetId": "FUNC-export-delivery",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-multiuser-scenario",
+      "targetId": "FUNC-multiuser-manage",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-multiuser-scenario",
+      "targetId": "FUNC-live-update-broadcast",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-login-initiate",
+      "targetId": "FUNC-login-validate",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-login-validate",
+      "targetId": "FUNC-login-complete",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-collab-edit-initiate",
+      "targetId": "FUNC-collab-edit-sync",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-collab-edit-sync",
+      "targetId": "FUNC-collab-edit-apply",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-export-initiate",
+      "targetId": "FUNC-export-generate",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-export-generate",
+      "targetId": "FUNC-export-deliver",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-login-initiate",
+      "targetId": "UC-login",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-login-initiate",
+      "targetId": "UC-multiuser-web-app",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-login-validate",
+      "targetId": "UC-login",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-login-validate",
+      "targetId": "UC-multiuser-web-app",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-login-complete",
+      "targetId": "UC-login",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-login-complete",
+      "targetId": "UC-multiuser-web-app",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-collab-edit-initiate",
+      "targetId": "UC-collab-edit",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-collab-edit-initiate",
+      "targetId": "UC-multiuser-web-app",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-collab-edit-sync",
+      "targetId": "UC-collab-edit",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-collab-edit-sync",
+      "targetId": "UC-multiuser-web-app",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-collab-edit-apply",
+      "targetId": "UC-collab-edit",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-collab-edit-apply",
+      "targetId": "UC-multiuser-web-app",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-export-initiate",
+      "targetId": "UC-export",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-export-initiate",
+      "targetId": "UC-multiuser-web-app",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-export-generate",
+      "targetId": "UC-export",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-export-generate",
+      "targetId": "UC-multiuser-web-app",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-export-deliver",
+      "targetId": "UC-export",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-export-deliver",
+      "targetId": "UC-multiuser-web-app",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-multiuser-manage",
+      "targetId": "UC-multiuser-web-app",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-live-update-broadcast",
+      "targetId": "UC-multiuser-web-app",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-export-delivery",
+      "targetId": "UC-multiuser-web-app",
+      "edgeType": "satisfy",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-login-initiate",
+      "targetId": "MOD-auth-engine",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-login-validate",
+      "targetId": "MOD-auth-engine",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-login-complete",
+      "targetId": "MOD-auth-engine",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-collab-edit-initiate",
+      "targetId": "MOD-collab-engine",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-collab-edit-sync",
+      "targetId": "MOD-collab-engine",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-collab-edit-apply",
+      "targetId": "MOD-collab-engine",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-export-initiate",
+      "targetId": "MOD-export-engine",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-export-generate",
+      "targetId": "MOD-export-engine",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-export-deliver",
+      "targetId": "MOD-export-engine",
+      "edgeType": "allocate",
+      "attributes": {}
+    }
+  ]
+}

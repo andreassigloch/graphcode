@@ -1,0 +1,1217 @@
+{
+  "elements": [
+    {
+      "uid": "SYS-system-core",
+      "type": "SYS",
+      "name": "System Core",
+      "attributes": {},
+      "description": "Multiuser-fähige Web-App aus dem graphcode harness: Nutzer melden sich an, autorieren gemeinsam einen governten Systemgraphen über das Apply-Gate, sehen Live-Updates und exportieren den Stand."
+    },
+    {
+      "uid": "UC-login",
+      "type": "UC",
+      "name": "Login",
+      "attributes": {},
+      "description": "Nutzer meldet sich an und erhält Zugriff auf den Systemgraphen"
+    },
+    {
+      "uid": "UC-author-graph",
+      "type": "UC",
+      "name": "Graph autorieren",
+      "attributes": {},
+      "description": "Nutzer erstellt und autoriert gemeinsam einen governten Systemgraphen über das Apply-Gate"
+    },
+    {
+      "uid": "UC-view-graph",
+      "type": "UC",
+      "name": "Graph anzeigen",
+      "attributes": {},
+      "description": "Nutzer sieht den live aktualisierten Systemgraphen als visuelle Darstellung"
+    },
+    {
+      "uid": "UC-export-graph",
+      "type": "UC",
+      "name": "Graph exportieren",
+      "attributes": {},
+      "description": "Nutzer exportiert den aktuellen Stand des Graphen als Datei oder JSON"
+    },
+    {
+      "uid": "UC-manage-access",
+      "type": "UC",
+      "name": "Zugriff verwalten",
+      "attributes": {},
+      "description": "Admin verwaltet Nutzerberechtigungen und Systemkonfiguration"
+    },
+    {
+      "uid": "UC-multiuser-webapp",
+      "type": "UC",
+      "name": "Multiuser-fähige Web-App aus dem graphcode harness: Nutzer melden sich an, autorieren gemeinsam einen governten Systemgraphen über das Apply-Gate, sehen Live-Updates und exportieren den Stand.",
+      "attributes": {},
+      "description": "Multiuser-fähige Web-App aus dem graphcode harness: Nutzer melden sich an, autorieren gemeinsam einen governten Systemgraphen über das Apply-Gate, sehen Live-Updates und exportieren den Stand."
+    },
+    {
+      "uid": "UC-erstellen-systemgraphen",
+      "type": "UC",
+      "name": "Nutzer erstellt Systemgraphen",
+      "attributes": {},
+      "description": "Nutzer melden sich an, autorieren gemeinsam einen governten Systemgraphen über das Apply-Gate, sehen Live-Updates und exportieren den Stand."
+    },
+    {
+      "uid": "FCHAIN-login",
+      "type": "FCHAIN",
+      "name": "Login Flow",
+      "attributes": {},
+      "description": "Szenario für die Anmeldung des Nutzers."
+    },
+    {
+      "uid": "FCHAIN-author-graph",
+      "type": "FCHAIN",
+      "name": "Author Graph Flow",
+      "attributes": {},
+      "description": "Szenario für das Autorisieren eines Systemgraphen."
+    },
+    {
+      "uid": "FCHAIN-export-graph",
+      "type": "FCHAIN",
+      "name": "Export Graph Flow",
+      "attributes": {},
+      "description": "Szenario für das Exportieren des Systemgraphen."
+    },
+    {
+      "uid": "FCHAIN-view-graph",
+      "type": "FCHAIN",
+      "name": "View Graph Flow",
+      "attributes": {},
+      "description": "Szenario für das Anzeigen des live aktualisierten Systemgraphen als visuelle Darstellung"
+    },
+    {
+      "uid": "FCHAIN-manage-access",
+      "type": "FCHAIN",
+      "name": "Manage Access Flow",
+      "attributes": {},
+      "description": "Szenario für die Verwaltung von Nutzerberechtigungen und Systemkonfiguration"
+    },
+    {
+      "uid": "FCHAIN-login-authoring",
+      "type": "FCHAIN",
+      "name": "Login Authoring",
+      "attributes": {},
+      "description": "Nutzer anmeldet, authentifiziert und gemeinsam Graphen autorisiert."
+    },
+    {
+      "uid": "FLOW-manage-access-entry",
+      "type": "FLOW",
+      "name": "Manage Access Start Flow",
+      "attributes": {},
+      "description": "Start flow for managing access permissions"
+    },
+    {
+      "uid": "FLOW-manage-access-result",
+      "type": "FLOW",
+      "name": "Manage Access Result Flow",
+      "attributes": {},
+      "description": "Result flow for managing access permissions"
+    },
+    {
+      "uid": "FLOW-view-graph-entry",
+      "type": "FLOW",
+      "name": "View Graph Start Flow",
+      "attributes": {},
+      "description": "Start flow for viewing the system graph"
+    },
+    {
+      "uid": "FLOW-view-graph-result",
+      "type": "FLOW",
+      "name": "View Graph Result Flow",
+      "attributes": {},
+      "description": "Result flow for viewing the system graph"
+    },
+    {
+      "uid": "TEST-verify-authentication",
+      "type": "TEST",
+      "name": "Verify: User Authentication",
+      "attributes": {},
+      "description": "it.todo: Prüfe \"User Authentication\" — Vorbedingung herstellen, Aktion ausführen, Ergebnis messbar gegen die REQ-Aussage prüfen."
+    },
+    {
+      "uid": "TEST-verify-realtime-sync",
+      "type": "TEST",
+      "name": "Verify: Real-time Synchronization",
+      "attributes": {},
+      "description": "it.todo: Prüfe \"Real-time Synchronization\" — Vorbedingung herstellen, Aktion ausführen, Ergebnis messbar gegen die REQ-Aussage prüfen."
+    },
+    {
+      "uid": "TEST-verify-export",
+      "type": "TEST",
+      "name": "Verify: Graph Export",
+      "attributes": {},
+      "description": "it.todo: Prüfe \"Graph Export\" — Vorbedingung herstellen, Aktion ausführen, Ergebnis messbar gegen die REQ-Aussage prüfen."
+    },
+    {
+      "uid": "SCHEMA-access-entry",
+      "type": "SCHEMA",
+      "name": "Access Entry Schema",
+      "attributes": {
+        "concept": true
+      },
+      "description": "Schema definition for access entry data form, reused across flows."
+    },
+    {
+      "uid": "SCHEMA-access-result",
+      "type": "SCHEMA",
+      "name": "Access Result Schema",
+      "attributes": {
+        "concept": true
+      },
+      "description": "Schema definition for access result data form, reused across flows."
+    },
+    {
+      "uid": "SCHEMA-graph-view",
+      "type": "SCHEMA",
+      "name": "Graph View Schema",
+      "attributes": {
+        "concept": true
+      },
+      "description": "Schema definition for graph view data form, reused across flows."
+    },
+    {
+      "uid": "SCHEMA-graph-view-result",
+      "type": "SCHEMA",
+      "name": "Graph View Result Schema",
+      "attributes": {
+        "concept": true
+      },
+      "description": "Schema definition for graph view result data form, reused across flows."
+    },
+    {
+      "uid": "ACTOR-nutzer",
+      "type": "ACTOR",
+      "name": "Nutzer",
+      "attributes": {},
+      "description": "Ein Benutzer der Web-App, der Graphen autorieren und verwalten kann."
+    },
+    {
+      "uid": "ACTOR-admin",
+      "type": "ACTOR",
+      "name": "Admin",
+      "attributes": {},
+      "description": "Systembetreiber, der Access-Controls und System-Health überwacht"
+    },
+    {
+      "uid": "ACTOR-user",
+      "type": "ACTOR",
+      "name": "User",
+      "attributes": {},
+      "description": "Nutzer der Web-App, die sich anmelden und Graphen autorieren."
+    },
+    {
+      "uid": "FUNC-render-graph",
+      "type": "FUNC",
+      "name": "Render Graph Function",
+      "attributes": {},
+      "description": "Renders the system graph for display"
+    },
+    {
+      "uid": "FUNC-stream-updates",
+      "type": "FUNC",
+      "name": "Stream Updates",
+      "attributes": {},
+      "description": "Überträgt Live-Updates des Graphen an den Client"
+    },
+    {
+      "uid": "FUNC-validate-permissions",
+      "type": "FUNC",
+      "name": "Validate Permissions",
+      "attributes": {},
+      "description": "Überprüft die Berechtigungen eines Nutzers für bestimmte Operationen"
+    },
+    {
+      "uid": "FUNC-update-acl",
+      "type": "FUNC",
+      "name": "Update ACL",
+      "attributes": {},
+      "description": "Aktualisiert die Access Control List des Systems"
+    },
+    {
+      "uid": "FUNC-update-permissions",
+      "type": "FUNC",
+      "name": "Update Permissions Function",
+      "attributes": {},
+      "description": "Updates user permissions and access controls"
+    },
+    {
+      "uid": "FUNC-login-input",
+      "type": "FUNC",
+      "name": "Login Input",
+      "attributes": {},
+      "description": "Benutzer gibt Anmeldeinformationen (E-Mail/Passwort) in das Login-Formular ein."
+    },
+    {
+      "uid": "FUNC-authenticate",
+      "type": "FUNC",
+      "name": "Authenticate User",
+      "attributes": {},
+      "description": "System validiert Anmeldeinformationen gegen die Benutzerdatenbank und prüft Berechtigungen."
+    },
+    {
+      "uid": "FUNC-login-success",
+      "type": "FUNC",
+      "name": "Login Success",
+      "attributes": {},
+      "description": "System erstellt eine neue Benutzer-Sitzung und leitet zum Dashboard weiter."
+    },
+    {
+      "uid": "FUNC-open-editor",
+      "type": "FUNC",
+      "name": "Open Editor",
+      "attributes": {},
+      "description": "Authentifizierter Benutzer öffnet den Graphen-Editor für die Autorisierung."
+    },
+    {
+      "uid": "FUNC-create-node",
+      "type": "FUNC",
+      "name": "Create Node",
+      "attributes": {},
+      "description": "Benutzer erstellt einen neuen Graphen-Knoten (z.B. REQ, UC, FUNC) mit Beschreibung."
+    },
+    {
+      "uid": "FUNC-save-graph",
+      "type": "FUNC",
+      "name": "Save Graph",
+      "attributes": {},
+      "description": "System speichert den autorisierten Graphen über das Apply-Gate und löst Live-Updates aus."
+    },
+    {
+      "uid": "FUNC-select-format",
+      "type": "FUNC",
+      "name": "Select Format",
+      "attributes": {},
+      "description": "Benutzer wählt das gewünschte Exportformat (JSON, GraphML, PDF) aus."
+    },
+    {
+      "uid": "FUNC-generate-export",
+      "type": "FUNC",
+      "name": "Generate Export",
+      "attributes": {},
+      "description": "System generiert den Graphen im gewählten Format und erstellt die Exportdatei."
+    },
+    {
+      "uid": "FUNC-download-export",
+      "type": "FUNC",
+      "name": "Download Export",
+      "attributes": {},
+      "description": "System stellt die Exportdatei zum Download bereit und bestätigt den Vorgang."
+    },
+    {
+      "uid": "REQ-authentication",
+      "type": "REQ",
+      "name": "User Authentication",
+      "attributes": {},
+      "description": "Nutzer müssen sich anmelden können; das System verwaltet Zugriffsrechte über ACLs."
+    },
+    {
+      "uid": "REQ-realtime-sync",
+      "type": "REQ",
+      "name": "Real-time Synchronization",
+      "attributes": {},
+      "description": "Änderungen am Graphen müssen live an alle verbundenen Nutzer synchronisiert werden."
+    },
+    {
+      "uid": "REQ-export",
+      "type": "REQ",
+      "name": "Graph Export",
+      "attributes": {},
+      "description": "Der aktuelle Graphenstand muss exportiert werden können."
+    },
+    {
+      "uid": "MOD-auth",
+      "type": "MOD",
+      "name": "Authentifizierungsmodul",
+      "attributes": {},
+      "description": "Modul für Benutzeranmeldung, Validierung und Session-Management."
+    },
+    {
+      "uid": "MOD-collab",
+      "type": "MOD",
+      "name": "Collaboration Module",
+      "attributes": {},
+      "description": "Bündelt Rendering, Echtzeit-Updates und Export für gemeinsame Graphenarbeit."
+    },
+    {
+      "uid": "MOD-editor",
+      "type": "MOD",
+      "name": "Editor-Modul",
+      "attributes": {},
+      "description": "Modul für Graphen-Autorisierung, Knotenerstellung und Persistenz."
+    },
+    {
+      "uid": "MOD-export",
+      "type": "MOD",
+      "name": "Export-Modul",
+      "attributes": {},
+      "description": "Modul für Graphen-Export, Formatierung und Download."
+    },
+    {
+      "uid": "REQ-validation",
+      "type": "REQ",
+      "name": "Graph Validierung",
+      "description": "Der Graph muss vor dem Speichern strukturell und semantisch validiert werden.",
+      "attributes": {}
+    },
+    {
+      "uid": "REQ-conflict-resolution",
+      "type": "REQ",
+      "name": "Konfliktlösung",
+      "description": "Kollidierende Änderungen mehrerer Nutzer müssen automatisch oder manuell aufgelöst werden.",
+      "attributes": {}
+    },
+    {
+      "uid": "REQ-versioning",
+      "type": "REQ",
+      "name": "Graph Versionierung",
+      "description": "Jeder Graphenstand muss versioniert gespeichert und abgerufen werden können.",
+      "attributes": {}
+    },
+    {
+      "uid": "REQ-performance",
+      "type": "REQ",
+      "name": "Darstellungsperformance",
+      "description": "Die visuelle Darstellung des Graphen muss auch bei großen Datenmengen performant bleiben.",
+      "attributes": {}
+    },
+    {
+      "uid": "REQ-interactivity",
+      "type": "REQ",
+      "name": "Interaktive Manipulation",
+      "description": "Nutzer müssen Knoten und Kanten im Graphen interaktiv verschieben, erstellen und löschen können.",
+      "attributes": {}
+    },
+    {
+      "uid": "REQ-zoom-pan",
+      "type": "REQ",
+      "name": "Zoom und Pan",
+      "description": "Der Graph muss nahtlos gezoomt und gepanned werden können, ohne Datenverlust.",
+      "attributes": {}
+    },
+    {
+      "uid": "REQ-role-management",
+      "type": "REQ",
+      "name": "Rollenverwaltung",
+      "description": "Administratoren müssen Nutzerrollen und deren Berechtigungen dynamisch verwalten können.",
+      "attributes": {}
+    },
+    {
+      "uid": "REQ-audit-log",
+      "type": "REQ",
+      "name": "Audit-Logging",
+      "description": "Alle Änderungen an Zugriffsrechten und Nutzerkonten müssen lückenlos protokolliert werden.",
+      "attributes": {}
+    },
+    {
+      "uid": "REQ-user-lifecycle",
+      "type": "REQ",
+      "name": "Nutzer-Lebenszyklus",
+      "description": "Das System muss die Erstellung, Deaktivierung und Löschung von Nutzerkonten unterstützen.",
+      "attributes": {}
+    },
+    {
+      "uid": "REQ-concurrency",
+      "type": "REQ",
+      "name": "Nebenläufigkeit",
+      "description": "Das System muss den gleichzeitigen Zugriff und die Bearbeitung durch mehrere Nutzer sicher gewährleisten.",
+      "attributes": {}
+    },
+    {
+      "uid": "REQ-scalability",
+      "type": "REQ",
+      "name": "Skalierbarkeit",
+      "description": "Die Systemarchitektur muss horizontal skalierbar sein, um wachsende Nutzerzahlen zu unterstützen.",
+      "attributes": {}
+    },
+    {
+      "uid": "REQ-reliability",
+      "type": "REQ",
+      "name": "Verfügbarkeit",
+      "description": "Das System muss eine hohe Verfügbarkeit (High Availability) gewährleisten, auch bei Teilausfällen.",
+      "attributes": {}
+    },
+    {
+      "uid": "REQ-persistence",
+      "type": "REQ",
+      "name": "Datenpersistenz",
+      "description": "Der Systemgraph muss dauerhaft und konsistent in einem Speichermedium abgelegt werden.",
+      "attributes": {}
+    },
+    {
+      "uid": "REQ-backup",
+      "type": "REQ",
+      "name": "Sicherungsmanagement",
+      "description": "Regelmäßige und manuelle Backups des Graphen müssen automatisiert oder händisch ausgelöst werden können.",
+      "attributes": {}
+    },
+    {
+      "uid": "REQ-recovery",
+      "type": "REQ",
+      "name": "Wiederherstellung",
+      "description": "Im Fehlerfall muss der Graph aus Backups oder Logs vollständig wiederherstellbar sein.",
+      "attributes": {}
+    },
+    {
+      "uid": "REQ-session-management",
+      "type": "REQ",
+      "name": "Session-Verwaltung",
+      "description": "Nutzer-Sessions müssen sicher erstellt, verwaltet und bei Logout ungültig gemacht werden.",
+      "attributes": {}
+    },
+    {
+      "uid": "REQ-error-handling",
+      "type": "REQ",
+      "name": "Fehlerbehandlung Login",
+      "description": "Fehlerhafte Anmeldeversuche müssen sicher abgefangen und dem Nutzer angemessen kommuniziert werden.",
+      "attributes": {}
+    },
+    {
+      "uid": "REQ-format-support",
+      "type": "REQ",
+      "name": "Exportformate",
+      "description": "Der Graph muss in verschiedenen Standardformaten (z.B. JSON, XML) exportiert werden können.",
+      "attributes": {}
+    },
+    {
+      "uid": "REQ-large-graph-handling",
+      "type": "REQ",
+      "name": "Große Graphen Export",
+      "description": "Auch sehr große Graphen müssen effizient und ohne Zeitüberschreitung exportiert werden können.",
+      "attributes": {}
+    },
+    {
+      "uid": "TEST-verify-validation",
+      "type": "TEST",
+      "name": "Verify: Graph Validierung",
+      "description": "Prüft, ob der Graph vor dem Speichern korrekt validiert wird.",
+      "attributes": {}
+    },
+    {
+      "uid": "TEST-verify-conflict-resolution",
+      "type": "TEST",
+      "name": "Verify: Konfliktlösung",
+      "description": "Prüft, ob kollidierende Änderungen korrekt aufgelöst werden.",
+      "attributes": {}
+    },
+    {
+      "uid": "TEST-verify-versioning",
+      "type": "TEST",
+      "name": "Verify: Graph Versionierung",
+      "description": "Prüft, ob Graphenstände korrekt versioniert gespeichert und abgerufen werden.",
+      "attributes": {}
+    },
+    {
+      "uid": "TEST-verify-performance",
+      "type": "TEST",
+      "name": "Verify: Darstellungsperformance",
+      "description": "Prüft, ob die Darstellung auch bei großen Graphen performant bleibt.",
+      "attributes": {}
+    },
+    {
+      "uid": "TEST-verify-interactivity",
+      "type": "TEST",
+      "name": "Verify: Interaktive Manipulation",
+      "description": "Prüft, ob Knoten und Kanten interaktiv manipuliert werden können.",
+      "attributes": {}
+    },
+    {
+      "uid": "TEST-verify-zoom-pan",
+      "type": "TEST",
+      "name": "Verify: Zoom und Pan",
+      "description": "Prüft, ob der Graph nahtlos gezoomt und gepanned werden kann.",
+      "attributes": {}
+    },
+    {
+      "uid": "TEST-verify-role-management",
+      "type": "TEST",
+      "name": "Verify: Rollenverwaltung",
+      "description": "Prüft, ob Administratoren Nutzerrollen und Berechtigungen verwalten können.",
+      "attributes": {}
+    },
+    {
+      "uid": "TEST-verify-audit-log",
+      "type": "TEST",
+      "name": "Verify: Audit-Logging",
+      "description": "Prüft, ob Zugriffsänderungen lückenlos protokolliert werden.",
+      "attributes": {}
+    },
+    {
+      "uid": "TEST-verify-user-lifecycle",
+      "type": "TEST",
+      "name": "Verify: Nutzer-Lebenszyklus",
+      "description": "Prüft, ob die Erstellung, Deaktivierung und Löschung von Nutzerkonten unterstützt wird.",
+      "attributes": {}
+    },
+    {
+      "uid": "TEST-verify-concurrency",
+      "type": "TEST",
+      "name": "Verify: Nebenläufigkeit",
+      "description": "Prüft, ob der gleichzeitige Zugriff durch mehrere Nutzer sicher gewährleistet ist.",
+      "attributes": {}
+    },
+    {
+      "uid": "TEST-verify-scalability",
+      "type": "TEST",
+      "name": "Verify: Skalierbarkeit",
+      "description": "Prüft, ob die Systemarchitektur horizontal skalierbar ist.",
+      "attributes": {}
+    },
+    {
+      "uid": "TEST-verify-reliability",
+      "type": "TEST",
+      "name": "Verify: Verfügbarkeit",
+      "description": "Prüft, ob das System eine hohe Verfügbarkeit gewährleistet.",
+      "attributes": {}
+    },
+    {
+      "uid": "TEST-verify-persistence",
+      "type": "TEST",
+      "name": "Verify: Datenpersistenz",
+      "description": "Prüft, ob der Systemgraph dauerhaft und konsistent gespeichert wird.",
+      "attributes": {}
+    },
+    {
+      "uid": "TEST-verify-backup",
+      "type": "TEST",
+      "name": "Verify: Sicherungsmanagement",
+      "description": "Prüft, ob Backups des Graphen automatisiert oder händisch ausgelöst werden können.",
+      "attributes": {}
+    },
+    {
+      "uid": "TEST-verify-recovery",
+      "type": "TEST",
+      "name": "Verify: Wiederherstellung",
+      "description": "Prüft, ob der Graph aus Backups oder Logs vollständig wiederherstellbar ist.",
+      "attributes": {}
+    },
+    {
+      "uid": "TEST-verify-session-management",
+      "type": "TEST",
+      "name": "Verify: Session-Verwaltung",
+      "description": "Prüft, ob Nutzer-Sessions sicher erstellt, verwaltet und bei Logout ungültig gemacht werden.",
+      "attributes": {}
+    },
+    {
+      "uid": "TEST-verify-error-handling",
+      "type": "TEST",
+      "name": "Verify: Fehlerbehandlung Login",
+      "description": "Prüft, ob fehlerhafte Anmeldeversuche sicher abgefangen und kommuniziert werden.",
+      "attributes": {}
+    },
+    {
+      "uid": "TEST-verify-format-support",
+      "type": "TEST",
+      "name": "Verify: Exportformate",
+      "description": "Prüft, ob der Graph in verschiedenen Standardformaten exportiert werden kann.",
+      "attributes": {}
+    },
+    {
+      "uid": "TEST-verify-large-graph-handling",
+      "type": "TEST",
+      "name": "Verify: Große Graphen Export",
+      "description": "Prüft, ob auch sehr große Graphen effizient exportiert werden können.",
+      "attributes": {}
+    }
+  ],
+  "traces": [
+    {
+      "sourceId": "FLOW-manage-access-result",
+      "targetId": "ACTOR-user",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FLOW-view-graph-result",
+      "targetId": "ACTOR-user",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FLOW-manage-access-entry",
+      "targetId": "FUNC-update-permissions",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FLOW-view-graph-entry",
+      "targetId": "FUNC-render-graph",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FLOW-manage-access-entry",
+      "targetId": "SCHEMA-access-entry",
+      "edgeType": "relation",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FLOW-manage-access-result",
+      "targetId": "SCHEMA-access-result",
+      "edgeType": "relation",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FLOW-view-graph-entry",
+      "targetId": "SCHEMA-graph-view",
+      "edgeType": "relation",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FLOW-view-graph-result",
+      "targetId": "SCHEMA-graph-view-result",
+      "edgeType": "relation",
+      "attributes": {}
+    },
+    {
+      "sourceId": "SYS-system-core",
+      "targetId": "UC-login",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "SYS-system-core",
+      "targetId": "UC-author-graph",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "SYS-system-core",
+      "targetId": "UC-view-graph",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "SYS-system-core",
+      "targetId": "UC-export-graph",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "SYS-system-core",
+      "targetId": "UC-manage-access",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-login",
+      "targetId": "FCHAIN-login",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-author-graph",
+      "targetId": "FCHAIN-author-graph",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-view-graph",
+      "targetId": "FCHAIN-view-graph",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-export-graph",
+      "targetId": "FCHAIN-export-graph",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-manage-access",
+      "targetId": "FCHAIN-manage-access",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-webapp",
+      "targetId": "FCHAIN-login-authoring",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-erstellen-systemgraphen",
+      "targetId": "FCHAIN-manage-access",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-erstellen-systemgraphen",
+      "targetId": "FCHAIN-view-graph",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-webapp",
+      "targetId": "REQ-authentication",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-webapp",
+      "targetId": "REQ-realtime-sync",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-webapp",
+      "targetId": "REQ-export",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-user",
+      "targetId": "FLOW-manage-access-entry",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-user",
+      "targetId": "FLOW-view-graph-entry",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-nutzer",
+      "targetId": "UC-login",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-nutzer",
+      "targetId": "UC-author-graph",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-nutzer",
+      "targetId": "UC-view-graph",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-nutzer",
+      "targetId": "UC-export-graph",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-nutzer",
+      "targetId": "UC-erstellen-systemgraphen",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-admin",
+      "targetId": "UC-manage-access",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-user",
+      "targetId": "UC-login",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-user",
+      "targetId": "UC-author-graph",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-user",
+      "targetId": "UC-export-graph",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-user",
+      "targetId": "UC-multiuser-webapp",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-login",
+      "targetId": "FUNC-login-input",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-login",
+      "targetId": "FUNC-authenticate",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-login",
+      "targetId": "FUNC-login-success",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-author-graph",
+      "targetId": "FUNC-open-editor",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-author-graph",
+      "targetId": "FUNC-create-node",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-author-graph",
+      "targetId": "FUNC-save-graph",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-export-graph",
+      "targetId": "FUNC-select-format",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-export-graph",
+      "targetId": "FUNC-generate-export",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-export-graph",
+      "targetId": "FUNC-download-export",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-view-graph",
+      "targetId": "FUNC-render-graph",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-view-graph",
+      "targetId": "FUNC-stream-updates",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-manage-access",
+      "targetId": "FUNC-validate-permissions",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-manage-access",
+      "targetId": "FUNC-update-acl",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-manage-access",
+      "targetId": "FUNC-update-permissions",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-render-graph",
+      "targetId": "FLOW-view-graph-result",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-update-permissions",
+      "targetId": "FLOW-manage-access-result",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-render-graph",
+      "targetId": "MOD-collab",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-stream-updates",
+      "targetId": "MOD-collab",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-update-acl",
+      "targetId": "MOD-auth",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-authenticate",
+      "targetId": "MOD-auth",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-create-node",
+      "targetId": "MOD-editor",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-download-export",
+      "targetId": "MOD-export",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "TEST-verify-authentication",
+      "targetId": "REQ-authentication",
+      "edgeType": "verify",
+      "attributes": {}
+    },
+    {
+      "sourceId": "TEST-verify-realtime-sync",
+      "targetId": "REQ-realtime-sync",
+      "edgeType": "verify",
+      "attributes": {}
+    },
+    {
+      "sourceId": "TEST-verify-export",
+      "targetId": "REQ-export",
+      "edgeType": "verify",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-author-graph",
+      "targetId": "REQ-validation",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-author-graph",
+      "targetId": "REQ-conflict-resolution",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-author-graph",
+      "targetId": "REQ-versioning",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-view-graph",
+      "targetId": "REQ-performance",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-view-graph",
+      "targetId": "REQ-interactivity",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-view-graph",
+      "targetId": "REQ-zoom-pan",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-manage-access",
+      "targetId": "REQ-role-management",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-manage-access",
+      "targetId": "REQ-audit-log",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-manage-access",
+      "targetId": "REQ-user-lifecycle",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-webapp",
+      "targetId": "REQ-concurrency",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-webapp",
+      "targetId": "REQ-scalability",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-webapp",
+      "targetId": "REQ-reliability",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-erstellen-systemgraphen",
+      "targetId": "REQ-persistence",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-erstellen-systemgraphen",
+      "targetId": "REQ-backup",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-erstellen-systemgraphen",
+      "targetId": "REQ-recovery",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-login",
+      "targetId": "REQ-session-management",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-login",
+      "targetId": "REQ-error-handling",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-export-graph",
+      "targetId": "REQ-format-support",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-export-graph",
+      "targetId": "REQ-large-graph-handling",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "TEST-verify-validation",
+      "targetId": "REQ-validation",
+      "edgeType": "verify",
+      "attributes": {}
+    },
+    {
+      "sourceId": "TEST-verify-conflict-resolution",
+      "targetId": "REQ-conflict-resolution",
+      "edgeType": "verify",
+      "attributes": {}
+    },
+    {
+      "sourceId": "TEST-verify-versioning",
+      "targetId": "REQ-versioning",
+      "edgeType": "verify",
+      "attributes": {}
+    },
+    {
+      "sourceId": "TEST-verify-performance",
+      "targetId": "REQ-performance",
+      "edgeType": "verify",
+      "attributes": {}
+    },
+    {
+      "sourceId": "TEST-verify-interactivity",
+      "targetId": "REQ-interactivity",
+      "edgeType": "verify",
+      "attributes": {}
+    },
+    {
+      "sourceId": "TEST-verify-zoom-pan",
+      "targetId": "REQ-zoom-pan",
+      "edgeType": "verify",
+      "attributes": {}
+    },
+    {
+      "sourceId": "TEST-verify-role-management",
+      "targetId": "REQ-role-management",
+      "edgeType": "verify",
+      "attributes": {}
+    },
+    {
+      "sourceId": "TEST-verify-audit-log",
+      "targetId": "REQ-audit-log",
+      "edgeType": "verify",
+      "attributes": {}
+    },
+    {
+      "sourceId": "TEST-verify-user-lifecycle",
+      "targetId": "REQ-user-lifecycle",
+      "edgeType": "verify",
+      "attributes": {}
+    },
+    {
+      "sourceId": "TEST-verify-concurrency",
+      "targetId": "REQ-concurrency",
+      "edgeType": "verify",
+      "attributes": {}
+    },
+    {
+      "sourceId": "TEST-verify-scalability",
+      "targetId": "REQ-scalability",
+      "edgeType": "verify",
+      "attributes": {}
+    },
+    {
+      "sourceId": "TEST-verify-reliability",
+      "targetId": "REQ-reliability",
+      "edgeType": "verify",
+      "attributes": {}
+    },
+    {
+      "sourceId": "TEST-verify-persistence",
+      "targetId": "REQ-persistence",
+      "edgeType": "verify",
+      "attributes": {}
+    },
+    {
+      "sourceId": "TEST-verify-backup",
+      "targetId": "REQ-backup",
+      "edgeType": "verify",
+      "attributes": {}
+    },
+    {
+      "sourceId": "TEST-verify-recovery",
+      "targetId": "REQ-recovery",
+      "edgeType": "verify",
+      "attributes": {}
+    },
+    {
+      "sourceId": "TEST-verify-session-management",
+      "targetId": "REQ-session-management",
+      "edgeType": "verify",
+      "attributes": {}
+    },
+    {
+      "sourceId": "TEST-verify-error-handling",
+      "targetId": "REQ-error-handling",
+      "edgeType": "verify",
+      "attributes": {}
+    },
+    {
+      "sourceId": "TEST-verify-format-support",
+      "targetId": "REQ-format-support",
+      "edgeType": "verify",
+      "attributes": {}
+    },
+    {
+      "sourceId": "TEST-verify-large-graph-handling",
+      "targetId": "REQ-large-graph-handling",
+      "edgeType": "verify",
+      "attributes": {}
+    }
+  ]
+}

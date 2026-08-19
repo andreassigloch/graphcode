@@ -1,0 +1,408 @@
+{
+  "tag": "armC-pull-qwen36",
+  "arm": "pull",
+  "model": "qwen3.6-35b-a3b-mlx",
+  "backend": "openai",
+  "rounds": 12,
+  "candidates": 3,
+  "maxTokens": 8192,
+  "reasoningEffort": "low",
+  "injection": "off",
+  "toolset": "authoring",
+  "offeredTools": [
+    "graphcode_graph_elements",
+    "graphcode_graph_get_node",
+    "graphcode_graph_impact",
+    "graphcode_graph_expand",
+    "graphcode_graph_context",
+    "graphcode_graph_mutate",
+    "graphcode_graph_readiness",
+    "graphcode_graph_authoring_guide",
+    "list_dir",
+    "read_file",
+    "grep"
+  ],
+  "precisionTools": [
+    "graph_context",
+    "graph_impact",
+    "graph_expand"
+  ],
+  "stub": false,
+  "wallSeconds": 2181,
+  "elements": 43,
+  "traces": 56,
+  "byType": {
+    "SYS": 1,
+    "UC": 8,
+    "ACTOR": 4,
+    "FCHAIN": 7,
+    "FUNC": 9,
+    "REQ": 5,
+    "TEST": 5,
+    "MOD": 4
+  },
+  "modelToolCalls": {
+    "graph_authoring_guide": 73,
+    "graph_mutate": 31,
+    "graph_elements": 58,
+    "graph_get_node": 10,
+    "graph_impact": 4
+  },
+  "tracedModelTurns": 107,
+  "totalRegistryCalls": {
+    "graph_generate": 12,
+    "graph_authoring_guide": 73,
+    "graph_mutate": 45,
+    "graph_elements": 87,
+    "graph_get_edges": 29,
+    "graph_get_node": 10,
+    "graph_impact": 4,
+    "graph_readiness": 1
+  },
+  "internalRegistryCalls": {
+    "graph_generate": 12,
+    "graph_mutate": 14,
+    "graph_elements": 29,
+    "graph_get_edges": 29,
+    "graph_readiness": 1
+  },
+  "internalCallsNote": "internal = total − model; für graph_mutate bedeutungslos (Gate-Calls vs. Emissionen)",
+  "unfilteredElementsCalls": 29,
+  "stats": {
+    "done": false,
+    "genRounds": 12,
+    "modelTurns": 108,
+    "mutatesApplied": 12,
+    "mutatesRejected": 0,
+    "dryRunProbes": 33,
+    "repairedAfterRejection": 1,
+    "preflightFixed": 2,
+    "preflightBlocked": 1,
+    "candidatesSampled": 34,
+    "algoPicks": 12,
+    "modelPicks": 0,
+    "judgeDisagreements": 0,
+    "tokensIn": 497375,
+    "tokensOut": 98784,
+    "tokensReasoning": 75135
+  },
+  "readiness": {
+    "compliance": {
+      "score": 0.8604651162790697,
+      "label": "Compliance (V3_RULES, error-severity)",
+      "totalElements": 43,
+      "elementsWithErrors": 6
+    },
+    "incoseScope": "lean",
+    "phaseGates": [
+      {
+        "id": "SRR",
+        "label": "System Requirements Review",
+        "passed": false,
+        "score": 0.6470588235294118,
+        "blocking": [],
+        "open": [],
+        "creationArtifacts": [
+          "conops",
+          "assumption-review"
+        ],
+        "completeness": {
+          "covered": 11,
+          "total": 17,
+          "missing": []
+        }
+      },
+      {
+        "id": "PDR",
+        "label": "Preliminary Design Review",
+        "passed": false,
+        "score": 0.5,
+        "blocking": [],
+        "open": [],
+        "creationArtifacts": [
+          "fmea",
+          "trade"
+        ],
+        "completeness": {
+          "covered": 7,
+          "total": 14,
+          "missing": []
+        }
+      },
+      {
+        "id": "CDR",
+        "label": "Critical Design Review",
+        "passed": true,
+        "score": 1,
+        "blocking": [],
+        "open": [],
+        "creationArtifacts": [
+          "implplan"
+        ],
+        "completeness": {
+          "covered": 0,
+          "total": 0,
+          "missing": []
+        }
+      },
+      {
+        "id": "TRR",
+        "label": "Test Readiness Review",
+        "passed": false,
+        "score": 0,
+        "blocking": [],
+        "open": [],
+        "creationArtifacts": [],
+        "completeness": {
+          "covered": 0,
+          "total": 14,
+          "missing": []
+        }
+      }
+    ],
+    "implGates": [
+      {
+        "id": "SAR",
+        "label": "System Acceptance Review",
+        "passed": false,
+        "score": 0,
+        "blocking": [],
+        "open": [],
+        "creationArtifacts": [
+          "conops",
+          "assumption-review"
+        ],
+        "completeness": {
+          "covered": 0,
+          "total": 0,
+          "missing": []
+        }
+      },
+      {
+        "id": "FCA",
+        "label": "Functional Configuration Audit",
+        "passed": false,
+        "score": 0,
+        "blocking": [],
+        "open": [],
+        "creationArtifacts": [
+          "fmea",
+          "trade"
+        ],
+        "completeness": {
+          "covered": 0,
+          "total": 0,
+          "missing": []
+        }
+      },
+      {
+        "id": "SVR",
+        "label": "System Verification Review",
+        "passed": false,
+        "score": 0,
+        "blocking": [],
+        "open": [],
+        "creationArtifacts": [
+          "implplan"
+        ],
+        "completeness": {
+          "covered": 0,
+          "total": 0,
+          "missing": []
+        }
+      },
+      {
+        "id": "FRR",
+        "label": "Functional Readiness Review",
+        "passed": false,
+        "score": 0,
+        "blocking": [],
+        "open": [],
+        "creationArtifacts": [],
+        "completeness": {
+          "covered": 0,
+          "total": 0,
+          "missing": []
+        }
+      }
+    ],
+    "violationsByRule": {
+      "R-02": 9,
+      "R-15": 4,
+      "R-19": 5,
+      "R-20": 9,
+      "RD-01": 5,
+      "R-28": 1,
+      "UC-01": 6,
+      "UC-05": 8,
+      "UC-06": 8,
+      "FC-04": 3,
+      "IO-01": 9,
+      "AF-01": 1,
+      "AF-02": 1,
+      "AF-03": 1,
+      "AF-04": 1,
+      "AF-05": 1
+    },
+    "violations": [],
+    "creationEnforcement": "off",
+    "computedAt": "2026-08-19T04:10:56.777Z",
+    "phase_readiness": [
+      {
+        "gate": "SRR",
+        "total": 26,
+        "covered": 22,
+        "missing": [
+          "RD-01",
+          "UC-01",
+          "UC-05",
+          "UC-06"
+        ]
+      },
+      {
+        "gate": "PDR",
+        "total": 29,
+        "covered": 21,
+        "missing": [
+          "AF-01",
+          "AF-02",
+          "AF-03",
+          "FC-04",
+          "IO-01",
+          "R-02",
+          "R-15",
+          "R-28"
+        ]
+      },
+      {
+        "gate": "CDR",
+        "total": 7,
+        "covered": 6,
+        "missing": [
+          "AF-04"
+        ]
+      },
+      {
+        "gate": "TRR",
+        "total": 10,
+        "covered": 7,
+        "missing": [
+          "AF-05",
+          "R-19",
+          "R-20"
+        ]
+      }
+    ],
+    "dimension_readiness": [
+      {
+        "dimension": "req",
+        "score": 0.76,
+        "violations": 12,
+        "applicable": 50,
+        "ready": false
+      },
+      {
+        "dimension": "uc",
+        "score": 0.718,
+        "violations": 29,
+        "applicable": 103,
+        "ready": false
+      },
+      {
+        "dimension": "arch",
+        "score": 0.876,
+        "violations": 27,
+        "applicable": 217,
+        "ready": true
+      },
+      {
+        "dimension": "alloc",
+        "score": 1,
+        "violations": 0,
+        "applicable": 25,
+        "ready": true
+      },
+      {
+        "dimension": "ver",
+        "score": 0.865,
+        "violations": 5,
+        "applicable": 37,
+        "ready": true
+      },
+      {
+        "dimension": "schema",
+        "score": 0,
+        "violations": 0,
+        "applicable": 0,
+        "ready": false
+      },
+      {
+        "dimension": "cr",
+        "score": 1,
+        "violations": 0,
+        "applicable": 43,
+        "ready": true
+      },
+      {
+        "dimension": "ms",
+        "score": 0,
+        "violations": 0,
+        "applicable": 0,
+        "ready": false
+      }
+    ],
+    "graphVersion": 12,
+    "intentCoverage": [
+      {
+        "anchor": "multiuser",
+        "addressed": true,
+        "elements": [
+          "REQ-multiuser-fähig",
+          "UC-multiuser-webapp"
+        ]
+      },
+      {
+        "anchor": "fähige",
+        "addressed": false,
+        "elements": []
+      },
+      {
+        "anchor": "web",
+        "addressed": true,
+        "elements": [
+          "UC-anmelden"
+        ]
+      },
+      {
+        "anchor": "graphcode",
+        "addressed": false,
+        "elements": []
+      },
+      {
+        "anchor": "harness",
+        "addressed": true,
+        "elements": [
+          "UC-gemeinsam-harness-nutzen"
+        ]
+      },
+      {
+        "anchor": "nutzer",
+        "addressed": true,
+        "elements": [
+          "FUNC-live-update-broadcast",
+          "UC-anmelden",
+          "UC-exportieren"
+        ]
+      },
+      {
+        "anchor": "melden",
+        "addressed": true,
+        "elements": [
+          "UC-anmelden",
+          "UC-gemeinsam-harness-nutzen",
+          "UC-multiuser-collab"
+        ]
+      }
+    ]
+  }
+}

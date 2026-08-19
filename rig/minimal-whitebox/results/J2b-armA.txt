@@ -1,0 +1,122 @@
+## Nodes
+### ACTOR
++ ACTOR-dashboard|SSE/WS read-only Viewer; Live-Q-Status-Visualisierung (Ziel b). (SPEC §5 Kanal 2) [status:reviewed,created_at:2026-06-16T00:00:00.000Z]
++ ACTOR-developer|Kunde/Nutzer: will exzellente Code-Qualität bei effizientem Testen und minimalem Token-/LLM-Aufwand. [status:reviewed,created_at:2026-06-16T00:00:00.000Z]
+### FLOW
++ FLOW-live-event|SSE invalidate (graph/rules/readiness/suggestions). [status:reviewed,created_at:2026-06-16T00:00:00.000Z]
+### FUNC
++ FUNC-render-artifacts|INCOSE-Artifact-Panel: Readiness je Dokument/View (Testmatrix, FMEA, RTM, ImplPlan, IntPlan, ChangeLog, ConOps, IRR, NFR, ICD) aus dem Query-Layer (graph_query views) + graph_readiness. Repoint der aimprove ArtifactReadiness. Die offene View-Liste (RTM, IntPlan, ChangeLog, ConOps, IRR, ICD ohne se-view-Skill) ist genau der Rest-Scope von CR-GC-116. (CR-GC-115) [status:done,created_at:2026-06-19T00:00:00.000Z,external:true]
+@codeRef {"file":"src/viewer/panels.ts","symbol":"artifactsPanel","lang":"ts"}
++ FUNC-render-graph|Pluggbarer Live-Graph-Mount-Slot im Dashboard. Datenquelle: graph_elements + graph_get_edges + rules_get_violations (nur V3_RULES, kein BQ). Der konkrete Cytoscape-Renderer (@sigloch/graph-renderer) wird hier eingehaengt und ist das naechste aise-family-Projekt (graph-view-edit), nicht in graphcode gebaut. aimproves OntologyView rendert keinen Node-Link-Graph (nur Histogramme). (CR-GC-115) [status:done,created_at:2026-06-19T00:00:00.000Z,external:true]
++ FUNC-render-health|Echter Funktions-Health-Check, kein Prozess-Liveness-Licht: Kuzu-Store erreichbar, Apply-Gate funktional, Ontology/Rules/Contracts-Versionen, LLM/BYOK-Readiness (OpenCode, fuer spaeter). aimprove-spezifische Felder (Sessions/Patterns) entfernt. Quelle: Host-Bridge Health-Endpoint. (CR-GC-115) [status:done,created_at:2026-06-19T00:00:00.000Z,external:true]
+@codeRef {"file":"src/viewer/panels.ts","symbol":"healthPanel","lang":"ts"}
++ FUNC-render-impact|Impact-Panel on-demand: exakter Blast-Radius via graph_impact statt gespeicherter aimprove-Impact-Assessments (Learning). Repoint der aimprove ImpactView auf die Live-Quelle. (CR-GC-115) [status:done,created_at:2026-06-19T00:00:00.000Z,external:true]
+@codeRef {"file":"src/viewer/panels.ts","symbol":"impactPanel","lang":"ts"}
++ FUNC-render-impl-gates|Impl-Gates-Panel: SAR/FCA/SVR/FRR + CR/MS-Burndown aus graph_readiness.implGates und den MS/CR-Knoten. In aimprove nie verdrahtet (0/9, 0/20, 0/4); graphcode macht die Query transparent: jedes Gate zeigt seine Blocking-Elemente als Drill-down. Repoint der aimprove ImplGates + CrBurndown. (CR-GC-115) [status:done,created_at:2026-06-19T00:00:00.000Z,external:true]
++ FUNC-render-readiness|Readiness-Panel: Compliance + Phase-Gates SRR/PDR/CDR/TRR aus graph_readiness (V3_RULES, lean INCOSE). Repoint der aimprove StatusSection-Readiness-Bars + GateView. (CR-GC-115) [status:done,created_at:2026-06-19T00:00:00.000Z,external:true]
+@codeRef {"file":"src/viewer/panels.ts","symbol":"readinessPanel","lang":"ts"}
++ FUNC-render-recommendations|Top-N hoechstbewertete Verbesserungsmassnahmen, deterministisch aus Graph-Defiziten abgeleitet (fehlende verify-Traces R-01, Orphans RD-01, Blast-Radius via graph_impact), nach Severity/Impact sortiert. Behalten aus aimprove TOP-Empfehlungen, aber graph-deduziert statt Learning-Vorschlag (kein Generator). (CR-GC-115) [status:done,created_at:2026-06-19T00:00:00.000Z,external:true]
+@codeRef {"file":"src/viewer/panels.ts","symbol":"recommendationsPanel","lang":"ts"}
++ FUNC-subscribe-updates|SSE-Client: bei jedem Live-Update-Event (invalidate) werden die betroffenen Domains nachgeladen, ohne Reload. Gegenstueck zu emitUpdateEvent, konsumiert FLOW-live-event ueber die Host-Bridge. (CR-GC-115) [status:done,created_at:2026-06-19T00:00:00.000Z,external:true]
+@codeRef {"file":"src/viewer/panels.ts","symbol":"panelsForEvent","lang":"ts"}
+### MOD
++ MOD-dashboard|graphcode-owned Dashboard-App, komponiert aus @sigloch/graph-renderer (Cytoscape) + dashboard-shell, konsumiert die Host-Bridge. Readiness/INCOSE-Panels gegen V3_RULES (CR-GC-107-Scorer). Hybrid-Entscheidung 2026-06-17. [status:done,created_at:2026-06-17T00:00:00.000Z]
+### MS
++ MS-3-mvp-readiness|Realisiert die spezifizierten-aber-unrealisierten Knoten (CLI, MCP-Server, Re-Exporter, Views) + das Live-Dashboard (Hybrid: graphcode-owned, komponiert aus @sigloch/graph-renderer + dashboard-shell + graph-api-express+SSE, V3_RULES-gescort). Schließt F4/F5/F6. (Diskussion 2026-06-17) [status:done,created_at:2026-06-17T00:00:00.000Z]
++ MS-4-mvp2|Fast-follow nach MVP-1: Live-Dashboard (host-bridge + viewer + views→core), OpenCode-Execution (agent-agnostic 2nd client), Batch-Seed (Scale), Readiness-Modell-Definition, Housekeeping. Hängt von MS-3. [status:draft,created_at:2026-06-17T00:00:00.000Z]
+### REQ
++ REQ-artifact-freshness|Dokumente und Prozessschritte sind gruen wenn live aus dem aktuellen Graph abgeleitet, gelb wenn ein materialisiertes Doc existiert aber der Graph sich seither geaendert hat (stale), rot wenn noch nicht existent. [status:done,created_at:2026-06-19T00:00:00.000Z]
+@kinds ["functional"]
++ REQ-dashboard-ontology-sync|Das Dashboard/Readiness-Scorer MUSS gegen @sigloch/contracts Ontologie + V3_RULES evaluieren (via harness.evaluateRules, L2) — nicht die aimprove-Vorgänger-Regeln (rules 2.0.0, BQ-06/BQ-02 INCOSE). Heutige 155 BQ-Warnungen messen unsere REQs gegen eine Fremd-Regelbasis; nach Adoption echte Familie-Compliance. (NEXT REQ 2026-06-17) [status:done,created_at:2026-06-16T00:00:00.000Z]
+@kinds ["functional"]
++ REQ-dashboard-readonly|CONSTRAINT: Der Viewer ist strikt read-only. Kein Write-Pfad aus dem Browser (kein mutate/analyze/optimize/nightly-Trigger), kein Projekt-Switching (Single-Repo-Owner, CR-195e), Konsum nur ueber die Host-Bridge. Beleg: aimprove-Dashboard mischte Generator/Optimizer-Trigger ein; graphcode ist Harness-only. [status:done,created_at:2026-06-19T00:00:00.000Z]
+@kinds ["negative"]
++ REQ-readiness-transparent|Jedes Phase- und Impl-Gate exponiert seine Blocking-Elemente (welche CRs, Tests, UCs, Violations den Score druecken), sodass der Score auditierbar ist und keine Black-Box. In aimprove waren die Impl-Gates nie verdrahtet (0/9, 0/20, 0/4); graphcode macht die Herleitung transparent. [status:done,created_at:2026-06-19T00:00:00.000Z]
+@kinds ["functional"]
++ REQ-real-health-check|Der Health-Endpoint prueft Store-Erreichbarkeit, Gate-Funktion, Ontology/Rules/Contracts-Versionen und LLM/BYOK-Readiness, nicht nur Prozess-Liveness. aimprove-spezifische Felder (Sessions/Patterns) sind kein Health-Signal und werden entfernt. [status:done,created_at:2026-06-19T00:00:00.000Z]
+@kinds ["functional"]
++ REQ-shared-views-no-fork|views.ts (testmatrix/FMEA/RTM/IRR/NFR/arch…) aus aimprove → @sigloch/graph-api-core; lokalen BQ-Regel-Fork (aimpro/src/contracts/se) retiren oder via Familie-Review nach contracts migrieren (Drift-Lock L1/L2). [status:done,created_at:2026-06-17T00:00:00.000Z]
+### SCHEMA
++ SCHEMA-update-event|SSE invalidate Event. [status:reviewed,created_at:2026-06-16T00:00:00.000Z,zodDefinition:z.object({ type: z.literal('invalidate'), domains: z.array(z.enum(['graph','rules','readiness','suggestions'])), version: z.number() }),external:true]
+### TEST
++ TEST-artifact-freshness|Ein Artifact ist gruen bei Graph-Ableitung, gelb bei materialisiertem aber veraltetem Doc (Graph neuer als Doc), rot wenn fehlend. (REQ-artifact-freshness) [status:done,created_at:2026-06-19T00:00:00.000Z,method:test]
+@testRefs [{"file":"tests/panels.test.ts","tool":"vitest","level":"integration","result":"passed","ranAt":"2026-08-15T13:34:09.409Z"}]
++ TEST-dashboard-ontology-sync|Readiness/Violations stammen aus @sigloch/contracts V3_RULES (Rule-IDs == contracts), keine Vorgänger-BQ-Regeln; valide Familie-REQs werfen keine BQ-Warnungen. (REQ-dashboard-ontology-sync) [status:done,created_at:2026-06-16T00:00:00.000Z,method:analysis,updated_at:2026-06-17T00:00:00.000Z,level:analysis,tool:rule-id compare,constraint:rule-ids == contracts]
+@testRefs [{"file":"tests/readiness.ontology-sync.test.ts","tool":"vitest","level":"integration","result":"passed","ranAt":"2026-08-15T13:34:09.409Z"}]
++ TEST-dashboard-readonly|Der Viewer exponiert keinen Write- oder Trigger-Pfad und oeffnet kein zweites DB-Handle: nur Reads ueber die Host-Bridge, alle Writes gehen durch MCP mutate(). (REQ-dashboard-readonly) [status:done,created_at:2026-06-19T00:00:00.000Z,method:test,constraint:viewer exposes no write path]
+@testRefs [{"file":"tests/panels.test.ts","tool":"vitest","level":"integration","result":"passed","ranAt":"2026-08-15T13:34:09.409Z"}]
++ TEST-readiness-transparent|graph_readiness liefert pro Gate die Blocking-Liste (CRs/Tests/UCs/Violations); die Summe der Blocker erklaert den Score deterministisch. (REQ-readiness-transparent) [status:done,created_at:2026-06-19T00:00:00.000Z,method:test]
+@testRefs [{"file":"tests/panels.test.ts","tool":"vitest","level":"integration","result":"passed","ranAt":"2026-08-15T13:34:09.409Z"}]
++ TEST-real-health-check|Der Health-Report enthaelt Store-, Gate-, Versions- und LLM-Readiness-Status und faellt bei Store- oder Gate-Ausfall auf nicht-ok, nicht nur bei Prozess-Stop. (REQ-real-health-check) [status:done,created_at:2026-06-19T00:00:00.000Z,method:test]
+@testRefs [{"file":"tests/host.bridge.test.ts","tool":"vitest","level":"integration","result":"passed","ranAt":"2026-08-15T13:34:09.409Z"}]
++ TEST-shared-views-no-fork|Die View-Berechnung liegt in @sigloch/graph-api-core; kein lokaler BQ-Regel-Fork (aimpro/src/contracts/se) mehr referenziert. (REQ-shared-views-no-fork) [status:done,created_at:2026-06-19T00:00:00.000Z,method:test]
+@testRefs [{"file":"tests/views.no-fork.test.ts","tool":"vitest","level":"integration","result":"passed","ranAt":"2026-08-15T13:34:09.409Z"}]
+### UC
++ UC-live-graph-view|Als Entwickler will ich den aktuellen Modellstand live mitlesen, ohne die Ansicht neu zu laden, damit ich die Wirkung jeder Aenderung sofort sehe. [status:done,created_at:2026-06-17T00:00:00.000Z]
+
+## Edges
++ ACTOR-dashboard -io-> UC-live-graph-view [weight:1,created_at:2026-06-17T00:00:00.000Z]
++ ACTOR-developer -io-> UC-live-graph-view [weight:1,created_at:2026-06-17T00:00:00.000Z]
++ FLOW-live-event -io-> ACTOR-dashboard [weight:1,created_at:2026-06-16T00:00:00.000Z]
++ FLOW-live-event -io-> FUNC-subscribe-updates [weight:1,created_at:2026-06-19T00:00:00.000Z]
++ FLOW-live-event -relation-> SCHEMA-update-event [weight:1,created_at:2026-06-16T00:00:00.000Z]
++ FUNC-render-artifacts -allocate-> MOD-dashboard [weight:1,created_at:2026-06-19T00:00:00.000Z]
++ FUNC-render-artifacts -satisfy-> REQ-artifact-freshness
++ FUNC-render-artifacts -satisfy-> UC-live-graph-view [weight:1,created_at:2026-06-19T00:00:00.000Z]
++ FUNC-render-graph -allocate-> MOD-dashboard [weight:1,created_at:2026-06-19T00:00:00.000Z]
++ FUNC-render-graph -satisfy-> UC-live-graph-view [weight:1,created_at:2026-06-19T00:00:00.000Z]
++ FUNC-render-health -allocate-> MOD-dashboard [weight:1,created_at:2026-06-19T00:00:00.000Z]
++ FUNC-render-health -satisfy-> UC-live-graph-view [weight:1,created_at:2026-06-19T00:00:00.000Z]
++ FUNC-render-impact -allocate-> MOD-dashboard [weight:1,created_at:2026-06-19T00:00:00.000Z]
++ FUNC-render-impact -satisfy-> UC-live-graph-view [weight:1,created_at:2026-06-19T00:00:00.000Z]
++ FUNC-render-impl-gates -allocate-> MOD-dashboard [weight:1,created_at:2026-06-19T00:00:00.000Z]
++ FUNC-render-impl-gates -satisfy-> UC-live-graph-view [weight:1,created_at:2026-06-19T00:00:00.000Z]
++ FUNC-render-readiness -allocate-> MOD-dashboard [weight:1,created_at:2026-06-19T00:00:00.000Z]
++ FUNC-render-readiness -satisfy-> REQ-readiness-transparent
++ FUNC-render-readiness -satisfy-> UC-live-graph-view [weight:1,created_at:2026-06-19T00:00:00.000Z]
++ FUNC-render-recommendations -allocate-> MOD-dashboard [weight:1,created_at:2026-06-19T00:00:00.000Z]
++ FUNC-render-recommendations -satisfy-> UC-live-graph-view [weight:1,created_at:2026-06-19T00:00:00.000Z]
++ FUNC-subscribe-updates -allocate-> MOD-dashboard [weight:1,created_at:2026-06-19T00:00:00.000Z]
++ FUNC-subscribe-updates -satisfy-> UC-live-graph-view [weight:1,created_at:2026-06-19T00:00:00.000Z]
++ MOD-dashboard -satisfy-> REQ-artifact-freshness, REQ-dashboard-ontology-sync, REQ-dashboard-readonly, REQ-readiness-transparent, REQ-shared-views-no-fork
++ MS-4-mvp2 -compose-> REQ-shared-views-no-fork [weight:1,created_at:2026-06-18T00:00:00.000Z]
++ MS-4-mvp2 -compose-> UC-live-graph-view [weight:1,created_at:2026-06-18T00:00:00.000Z]
++ MS-4-mvp2 -relation-> MS-3-mvp-readiness [label:depends-on,weight:1,created_at:2026-06-17T00:00:00.000Z]
++ TEST-artifact-freshness -verify-> REQ-artifact-freshness [weight:1,created_at:2026-06-19T00:00:00.000Z]
++ TEST-dashboard-ontology-sync -verify-> REQ-dashboard-ontology-sync [weight:1,created_at:2026-06-16T00:00:00.000Z]
++ TEST-dashboard-readonly -verify-> REQ-dashboard-readonly [weight:1,created_at:2026-06-19T00:00:00.000Z]
++ TEST-readiness-transparent -verify-> REQ-readiness-transparent [weight:1,created_at:2026-06-19T00:00:00.000Z]
++ TEST-real-health-check -verify-> REQ-real-health-check [weight:1,created_at:2026-06-19T00:00:00.000Z]
++ TEST-shared-views-no-fork -verify-> REQ-shared-views-no-fork [weight:1,created_at:2026-06-19T00:00:00.000Z]
++ UC-live-graph-view -compose-> REQ-artifact-freshness [weight:1,created_at:2026-06-19T00:00:00.000Z]
++ UC-live-graph-view -compose-> REQ-dashboard-ontology-sync [weight:1,created_at:2026-06-17T00:00:00.000Z]
++ UC-live-graph-view -compose-> REQ-dashboard-readonly [weight:1,created_at:2026-06-19T00:00:00.000Z]
++ UC-live-graph-view -compose-> REQ-readiness-transparent [weight:1,created_at:2026-06-19T00:00:00.000Z]
++ UC-live-graph-view -compose-> REQ-real-health-check [weight:1,created_at:2026-06-19T00:00:00.000Z]
+
+## Blackbox-Ring (Schnittstelle, nicht öffnen)
+CR-GC-107 · CR · Dashboard auf SE-Ontologie · relation→MOD-harness relation→MS-2-coding-vv relation→REQ-dashboard-ontology-sync
+CR-GC-109 · CR · Live-Event + View-Contract → contracts · relation→MS-4-mvp2 relation→REQ-live-event-in-contracts relation→REQ-versioned-broadcast
+CR-GC-110 · CR · views.ts → graph-api-core; BQ-Fork retiren · relation→FUNC-render-views relation→MOD-docs relation→MS-4-mvp2 relation→REQ-shared-views-no-fork
+CR-GC-114 · CR · Host + SSE/WS-Bridge · relation→FUNC-broadcast-diff relation→FUNC-health-endpoint relation→FUNC-own-kuzu-host relation→FUNC-serve-sse relation→MOD-host-bridge relation→MS-4-mvp2 relation→REQ-mutation-emits-event relation→REQ-readonly-bridge relation→REQ-versioned-broadcast
+CR-GC-115 · CR · Dashboard-Viewer-App (Hybrid) · relation→FUNC-render-artifacts relation→FUNC-render-graph relation→FUNC-render-health relation→FUNC-render-impact relation→FUNC-render-impl-gates relation→FUNC-render-readiness relation→FUNC-render-recommendations relation→FUNC-subscribe-updates relation→MOD-dashboard relation→MS-4-mvp2 relation→REQ-artifact-freshness relation→REQ-dashboard-ontology-sync relation→REQ-dashboard-readonly relation→REQ-readiness-transparent relation→REQ-real-health-check relation→UC-live-graph-view
+CR-GC-116 · CR · Views/Skills an Live-Graph verdrahten · relation→FUNC-render-views relation→FUNC-view-changelog relation→FUNC-view-conops relation→FUNC-view-icd relation→FUNC-view-intplan relation→FUNC-view-irr relation→FUNC-view-rtm relation→MOD-skills relation→MS-4-mvp2
+CR-GC-117 · CR · Modell-Hygiene: V3_RULES-Violations schließen · relation→MS-4-mvp2 relation→REQ-graph-is-ssot relation→REQ-rule-enforcement
+CR-GC-118 · CR · Cleanup stale-at-all Knoten · relation→MS-4-mvp2 relation→REQ-graph-is-ssot
+CR-GC-120 · CR · Batch-Seed/Import (UNWIND) — Scale · relation→FUNC-import relation→MOD-harness relation→MS-4-mvp2 relation→REQ-batch-seed-performance relation→REQ-bootstrap-through-gate
+CR-GC-124 · CR · OpenCode-Execution: agent-agnostic 2nd client, headless BYOK · relation→FUNC-serve-stdio relation→MOD-mcp-tools relation→MS-4-mvp2 relation→REQ-agent-agnostic relation→REQ-single-transport
+CR-GC-125 · CR · Readiness-Modell definieren & realisieren (Phase/Impl/INCOSE) · relation→MOD-dashboard relation→MOD-mcp-tools relation→MS-4-mvp2 relation→REQ-readiness-model
+CR-GC-134 · CR · Bottom-up Test-Deduktion (graph_tests) · relation→FUNC-deduce-tests relation→MS-4-mvp2 relation→REQ-test-runnable-binding relation→UC-efficient-testing
+CR-GC-203 · CR · Violation-resolution ergonomics & SSOT tooling · relation→MOD-harness relation→MOD-mcp-tools relation→MOD-skills relation→MS-4-mvp2
+CR-GC-272 · CR · readiness + panels nach graphcode-client · relation→FUNC-render-readiness relation→FUNC-score-completeness relation→REQ-self-contained-dist
+FCHAIN-live-update · FCHAIN · Live-Update-Kette (persist → emit → subscribe)
+FUNC-block-arch-sicht · FUNC · Architektur-Sicht
+FUNC-block-live-dashboard · FUNC · Live-Kanal
+FUNC-block-reifegrad-sicht · FUNC · Reifegrad-Sicht
+FUNC-emit-update-event · FUNC · emitUpdateEvent(domains) · CR-GC-102 relation→ FLOW-committed-graph io→ io→FLOW-live-event
+FUNC-health-endpoint · FUNC · healthEndpoint() · CR-GC-114 relation→
+FUNC-render-views · FUNC · render graph→markdown views · CR-GC-110 relation→ CR-GC-116 relation→ CR-GC-131 relation→ CR-GC-132 relation→ CR-GC-240 relation→ CR-GC-304 relation→ CR-GC-305 relation→ FLOW-view-request io→ io→FLOW-rendered-view
+MOD-host-bridge · MOD · host-bridge — SSE/WS Bridge · CR-GC-114 relation→ CR-GC-241 relation→ CR-GC-306 relation→
+MOD-repo-root · MOD · graphcode Projektwurzel
+SYS-graphcode · SYS · GraphCode
+UC-code-quality · UC · Jede Aenderung geht durchs Gate · ACTOR-claude-code io→ ACTOR-dashboard io→ ACTOR-developer io→ ACTOR-facilitating-agent io→ ACTOR-graphify io→ ACTOR-opencode io→ ACTOR-systems-engineer io→ ACTOR-vibe-coder io→ CR-GC-123 relation→

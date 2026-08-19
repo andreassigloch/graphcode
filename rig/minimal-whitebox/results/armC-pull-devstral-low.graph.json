@@ -1,0 +1,527 @@
+{
+  "elements": [
+    {
+      "uid": "SYS-web-app",
+      "type": "SYS",
+      "name": "Multiuser Web-App",
+      "attributes": {},
+      "description": "Multiuser-fähige Web-App aus dem graphcode harness: Nutzer melden sich an, autorieren gemeinsam einen governten Systemgraphen über das Apply-Gate, sehen Live-Updates und exportieren den Stand."
+    },
+    {
+      "uid": "UC-login",
+      "type": "UC",
+      "name": "Login",
+      "attributes": {},
+      "description": "User authenticates to start a session and gain access to the governed graph."
+    },
+    {
+      "uid": "UC-collaborate",
+      "type": "UC",
+      "name": "Collaborate",
+      "attributes": {},
+      "description": "Users co-author and govern the system graph via the Apply-Gate."
+    },
+    {
+      "uid": "UC-export",
+      "type": "UC",
+      "name": "Export",
+      "attributes": {},
+      "description": "User exports the current governed graph state."
+    },
+    {
+      "uid": "uc-collaborate",
+      "type": "UC",
+      "name": "Collaborate",
+      "attributes": {},
+      "description": "Multiple users edit and review the governed graph together in real time."
+    },
+    {
+      "uid": "uc-export",
+      "type": "UC",
+      "name": "Export",
+      "attributes": {},
+      "description": "User exports the current state of the governed graph as a snapshot."
+    },
+    {
+      "uid": "UC-multiuser-web-app",
+      "type": "UC",
+      "name": "Multiuser Web App Collaboration",
+      "description": "Users authenticate, collaboratively author a governed system graph via the Apply-Gate, see live updates, and export the current state.",
+      "attributes": {}
+    },
+    {
+      "uid": "UC-multiuser-collaboration",
+      "type": "UC",
+      "name": "Multiuser Collaboration",
+      "attributes": {},
+      "description": "Users authenticate, jointly edit the governed system graph via the Apply-Gate, see live updates, and export the state."
+    },
+    {
+      "uid": "ACTOR-admin",
+      "type": "ACTOR",
+      "name": "Admin",
+      "attributes": {},
+      "description": "Systemadministrator, der Nutzer verwaltet und Systemeinstellungen konfiguriert."
+    },
+    {
+      "uid": "ACTOR-user",
+      "type": "ACTOR",
+      "name": "User",
+      "attributes": {},
+      "description": "End user interacting with the multiuser web app."
+    },
+    {
+      "uid": "actor-user",
+      "type": "ACTOR",
+      "name": "User",
+      "attributes": {},
+      "description": "A system user who authenticates and collaborates on the governed graph."
+    },
+    {
+      "uid": "fchain-login-scenario",
+      "type": "FCHAIN",
+      "name": "Login Scenario",
+      "attributes": {},
+      "description": "User authenticates to access the collaborative environment."
+    },
+    {
+      "uid": "fchain-collaborate-scenario",
+      "type": "FCHAIN",
+      "name": "Collaboration Scenario",
+      "attributes": {},
+      "description": "Users simultaneously edit and see live updates in the shared graph."
+    },
+    {
+      "uid": "fchain-export-scenario",
+      "type": "FCHAIN",
+      "name": "Export Scenario",
+      "attributes": {},
+      "description": "User requests and downloads the latest graph state."
+    },
+    {
+      "uid": "FCHAIN-login-scenario",
+      "type": "FCHAIN",
+      "name": "Login Scenario",
+      "attributes": {},
+      "description": "User logs in and gains access to the collaborative graph editor."
+    },
+    {
+      "uid": "FCHAIN-collaborate-scenario",
+      "type": "FCHAIN",
+      "name": "Collaborate Scenario",
+      "attributes": {},
+      "description": "End-to-end flow for multiple users authoring the graph together."
+    },
+    {
+      "uid": "FCHAIN-export-scenario",
+      "type": "FCHAIN",
+      "name": "Export Scenario",
+      "attributes": {},
+      "description": "End-to-end flow for exporting the current graph state."
+    },
+    {
+      "uid": "FCHAIN-multiuser-collaboration-scenario",
+      "type": "FCHAIN",
+      "name": "Multiuser Collaboration Scenario",
+      "attributes": {},
+      "description": "Users authenticate, jointly edit the governed system graph via the Apply-Gate, see live updates, and export the state."
+    },
+    {
+      "uid": "FUNC-collaborate-authenticate",
+      "type": "FUNC",
+      "name": "Authenticate User",
+      "attributes": {},
+      "description": "Authenticates user credentials during login."
+    },
+    {
+      "uid": "FUNC-collaborate-sync-state",
+      "type": "FUNC",
+      "name": "Synchronize State",
+      "attributes": {},
+      "description": "Synchronizes shared graph state among users."
+    },
+    {
+      "uid": "FUNC-collaborate-apply-change",
+      "type": "FUNC",
+      "name": "Apply Change",
+      "attributes": {},
+      "description": "Applies validated changes to the graph."
+    },
+    {
+      "uid": "FUNC-export-generate-snapshot",
+      "type": "FUNC",
+      "name": "Generate Snapshot",
+      "attributes": {},
+      "description": "Generates a snapshot of the current graph state."
+    },
+    {
+      "uid": "FUNC-export-format-output",
+      "type": "FUNC",
+      "name": "Format Output",
+      "attributes": {},
+      "description": "Formats the snapshot into the desired export format."
+    },
+    {
+      "uid": "FUNC-export-deliver-file",
+      "type": "FUNC",
+      "name": "Deliver File",
+      "attributes": {},
+      "description": "Delivers the formatted export file to the user."
+    },
+    {
+      "uid": "FUNC-collab-validate-change",
+      "type": "FUNC",
+      "name": "Validate Change",
+      "attributes": {},
+      "description": "Validates proposed changes before applying them."
+    },
+    {
+      "uid": "FUNC-export-check-version",
+      "type": "FUNC",
+      "name": "Check Version",
+      "attributes": {},
+      "description": "Checks the current graph version before export."
+    },
+    {
+      "uid": "REQ-multiuser-authentication",
+      "type": "REQ",
+      "name": "Multiuser Authentication",
+      "attributes": {},
+      "description": "System muss sichere Authentifizierung für mehrere Nutzer bereitstellen."
+    },
+    {
+      "uid": "REQ-live-updates",
+      "type": "REQ",
+      "name": "Live Updates",
+      "attributes": {},
+      "description": "Nutzer sehen Live-Updates des Systemgraphen."
+    },
+    {
+      "uid": "REQ-export-graph-state",
+      "type": "REQ",
+      "name": "Export Graph State",
+      "attributes": {},
+      "description": "Nutzer können den aktuellen Stand des Systemgraphen exportieren."
+    },
+    {
+      "uid": "TEST-verify-multiuser-authentication",
+      "type": "TEST",
+      "name": "Verify: Multiuser Authentication",
+      "attributes": {},
+      "description": "it.todo: Prüfe \"Multiuser Authentication\" — Vorbedingung herstellen, Aktion ausführen, Ergebnis messbar gegen die REQ-Aussage prüfen."
+    },
+    {
+      "uid": "TEST-verify-live-updates",
+      "type": "TEST",
+      "name": "Verify: Live Updates",
+      "attributes": {},
+      "description": "it.todo: Prüfe \"Live Updates\" — Vorbedingung herstellen, Aktion ausführen, Ergebnis messbar gegen die REQ-Aussage prüfen."
+    },
+    {
+      "uid": "TEST-verify-export-graph-state",
+      "type": "TEST",
+      "name": "Verify: Export Graph State",
+      "attributes": {},
+      "description": "it.todo: Prüfe \"Export Graph State\" — Vorbedingung herstellen, Aktion ausführen, Ergebnis messbar gegen die REQ-Aussage prüfen."
+    },
+    {
+      "uid": "MOD-authentication",
+      "type": "MOD",
+      "name": "Authentication Module",
+      "attributes": {},
+      "description": "Handles user authentication and session management."
+    },
+    {
+      "uid": "MOD-collaboration",
+      "type": "MOD",
+      "name": "Collaboration Module",
+      "attributes": {},
+      "description": "Manages collaborative editing of the governed system graph."
+    },
+    {
+      "uid": "MOD-ui",
+      "type": "MOD",
+      "name": "UI Module",
+      "attributes": {},
+      "description": "Provides the web-based user interface for interaction."
+    }
+  ],
+  "traces": [
+    {
+      "sourceId": "SYS-web-app",
+      "targetId": "UC-login",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "SYS-web-app",
+      "targetId": "UC-collaborate",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "SYS-web-app",
+      "targetId": "UC-export",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-login",
+      "targetId": "fchain-login-scenario",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-login",
+      "targetId": "FCHAIN-login-scenario",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-login",
+      "targetId": "FCHAIN-collaborate-scenario",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-login",
+      "targetId": "FCHAIN-export-scenario",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-collaborate",
+      "targetId": "FCHAIN-collaborate-scenario",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-export",
+      "targetId": "FCHAIN-export-scenario",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "uc-collaborate",
+      "targetId": "fchain-collaborate-scenario",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "uc-export",
+      "targetId": "fchain-export-scenario",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-web-app",
+      "targetId": "FCHAIN-login-scenario",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-collaboration",
+      "targetId": "FCHAIN-multiuser-collaboration-scenario",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-web-app",
+      "targetId": "REQ-multiuser-authentication",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-web-app",
+      "targetId": "REQ-live-updates",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-web-app",
+      "targetId": "REQ-export-graph-state",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-admin",
+      "targetId": "UC-login",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-user",
+      "targetId": "UC-login",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-user",
+      "targetId": "UC-collaborate",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-user",
+      "targetId": "UC-export",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-user",
+      "targetId": "UC-multiuser-web-app",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "ACTOR-user",
+      "targetId": "UC-multiuser-collaboration",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "actor-user",
+      "targetId": "UC-login",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "actor-user",
+      "targetId": "uc-collaborate",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "actor-user",
+      "targetId": "uc-export",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "fchain-collaborate-scenario",
+      "targetId": "FUNC-collaborate-authenticate",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "fchain-collaborate-scenario",
+      "targetId": "FUNC-collaborate-sync-state",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "fchain-collaborate-scenario",
+      "targetId": "FUNC-collaborate-apply-change",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "fchain-export-scenario",
+      "targetId": "FUNC-export-generate-snapshot",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "fchain-export-scenario",
+      "targetId": "FUNC-export-format-output",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "fchain-export-scenario",
+      "targetId": "FUNC-export-deliver-file",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "fchain-export-scenario",
+      "targetId": "FUNC-export-check-version",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FCHAIN-collaborate-scenario",
+      "targetId": "FUNC-collab-validate-change",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-collaborate-authenticate",
+      "targetId": "MOD-authentication",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-collaborate-sync-state",
+      "targetId": "MOD-collaboration",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-collaborate-apply-change",
+      "targetId": "MOD-collaboration",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-export-deliver-file",
+      "targetId": "MOD-ui",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-collab-validate-change",
+      "targetId": "MOD-collaboration",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "FUNC-export-check-version",
+      "targetId": "MOD-ui",
+      "edgeType": "allocate",
+      "attributes": {}
+    },
+    {
+      "sourceId": "TEST-verify-multiuser-authentication",
+      "targetId": "REQ-multiuser-authentication",
+      "edgeType": "verify",
+      "attributes": {}
+    },
+    {
+      "sourceId": "TEST-verify-live-updates",
+      "targetId": "REQ-live-updates",
+      "edgeType": "verify",
+      "attributes": {}
+    },
+    {
+      "sourceId": "TEST-verify-export-graph-state",
+      "targetId": "REQ-export-graph-state",
+      "edgeType": "verify",
+      "attributes": {}
+    },
+    {
+      "sourceId": "MOD-authentication",
+      "targetId": "MOD-ui",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "MOD-collaboration",
+      "targetId": "MOD-ui",
+      "edgeType": "io",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-web-app",
+      "targetId": "FCHAIN-collaborate-scenario",
+      "edgeType": "compose",
+      "attributes": {}
+    },
+    {
+      "sourceId": "UC-multiuser-web-app",
+      "targetId": "FCHAIN-export-scenario",
+      "edgeType": "compose",
+      "attributes": {}
+    }
+  ]
+}

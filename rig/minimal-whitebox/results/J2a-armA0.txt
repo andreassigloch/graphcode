@@ -1,0 +1,120 @@
+## Nodes
+### CR
++ CR-GC-109|Publish LiveUpdateEvent/View-Vertrag nach @sigloch/contracts (Phase 0). (docs/cr/open/CR-GC-109) [status:done,created_at:2026-06-17T00:00:00.000Z]
++ CR-GC-110|Geteilte View-Berechnung nach core; aimprove-Regel-Fork auflösen (Phase 0). (docs/cr/open/CR-GC-110) [status:done,created_at:2026-06-17T00:00:00.000Z]
++ CR-GC-114|Single-Kuzu-Owner-Host + SSE-Route an onUpdateEvent (Live-Viewer-Feed). (docs/cr/open/CR-GC-114) [status:done,created_at:2026-06-17T00:00:00.000Z]
++ CR-GC-115|graph-renderer + shell, V3_RULES-gescort; aimprove-Komponenten repointen. (docs/cr/open/CR-GC-115) [status:done,created_at:2026-06-17T00:00:00.000Z]
++ CR-GC-116|7 tote localhost:3001-Views auf MCP/Bridge umstellen + IRR-View ergänzen. (docs/cr/open/CR-GC-116) [status:done,created_at:2026-06-17T00:00:00.000Z]
++ CR-GC-117|61 R-01 (verify-Traces) + 14 RD-01 auflösen → Readiness ~0. (docs/cr/open/CR-GC-117) [status:done,created_at:2026-06-17T00:00:00.000Z]
++ CR-GC-118|Dual-Status-Bug (5 CRs), TEST-harness-install, REQ-dashboard-ontology-sync-Status. (docs/cr/open/CR-GC-118) [status:done,created_at:2026-06-17T00:00:00.000Z]
++ CR-GC-120|Per-Node/Edge-MERGE ist O(langsam): 10k Edges = 51s gemessen (SP-2). UNWIND-Batch-Insert → Seed/Import sub-Sekunde, damit 10k-Knoten real wird. [status:done,created_at:2026-06-17T00:00:00.000Z]
++ CR-GC-124|graphcode headless von OpenCode getrieben (BYOK), als zweiter MCP-stdio-Client neben Claude Code — beweist die agent-agnostische + headless Claim (verriegelt: OpenCode-executed). [status:done,created_at:2026-06-17T00:00:00.000Z]
++ CR-GC-125|Definiert was Phase-Readiness/Impl-Readiness-Gates/INCOSE-Artifacts in graphcode-Begriffen bedeuten (V3_RULES + MS + Status), dann als Scorer/View realisieren. Subsumiert die offene INCOSE-Scope-Frage (voll vs. lean). Voraussetzung für CR-110/115/116. (docs/cr/open/CR-GC-125) [status:done,created_at:2026-06-17T00:00:00.000Z]
++ CR-GC-134|graph_tests(changeSet) leitet aus einer Aenderung via graph_impact genau das betroffene TEST-Set ab und emittiert ein selektives Run-Kommando (Zeit/Token-Ersparnis + Qualitaet). Realisiert UC-efficient-testing + REQ-test-runnable-binding; braucht testRef am TEST-Element in @sigloch/contracts (Familie-weit, Minor-Version-Bump, Drift-Lock L1/L2). Kein Parallelpfad: kapselt graph_impact. (docs/cr/open/CR-GC-134) [status:done,created_at:2026-06-19T00:00:00.000Z]
++ CR-GC-203|DX/tooling: surface fix_hint+candidate_targets through rules_get_violations (harness.runRules drops them today); graph_readiness summary mode (86k-char overflow); ranked R-01 candidates; in-process graph_reseed tool; se-close-violations skill; REQ-with-test authoring invariant (intrinsic proof) + close the seedFromJson/importGraph gate-bypass so no REQ enters without a verify-traced TEST. Remedial items 1-5 clear accrued unverified REQs; item 6 prevents accrual. Tooling/DX, not a code-quality claim. (CR-GC-203) [status:done,created_at:2026-06-20T00:00:00.000Z]
++ CR-GC-241|DONE 2026-07-07. CR-GC-235 baute .graphcode/host.sock, damit ein zweiter graphcode-mcp-Prozess Tool-Calls inklusive graph_mutate durch DASSELBE Apply-Gate proxyen kann, ohne ein zweites Kuzu-Handle zu oeffnen. Die Client-Seite callHost/HOST_SOCK_BASENAME in src/host-shim.ts stand aber nie in der Public-Export-Liste von src/index.ts. Ausloeser war der erste externe Konsument: graph-view-edit (CR-GVE-008) braucht genau diesen gegateten Schreibtransport fuer seine Edit-Flaeche. Der Datei-Header trug noch Open (implemented, pending review); die Datei liegt in done/. (docs/cr/done/CR-GC-241) [status:done,created_at:2026-07-07T00:00:00.000Z]
++ CR-GC-255|Audit-Befund 2026-07-26: graph_export schreibt an zwei Sinks ausserhalb repoRoot — testRef.file aus dem Graph (src/mcp-tools.ts, join(repoRoot, stub.file)) und der Tool-Input name (docs/graph/<name>.graph.json); beides mit Disk-Kuzu-Test reproduziert (Datei landete 2 Ebenen ueber repoRoot). Ein Containment-Guard existiert nirgends in src/ (grep nach startsWith(repoRoot / relative(repoRoot: 0 Treffer). Die Governance-Folge ist schaerfer als der Dateisystem-Aspekt: eine JSON ausserhalb docs/graph/ entgeht sowohl dem Glob von deny-graph-write.sh als auch dem Pre-Commit-Freshness-Guard, waehrend clearExportPending trotzdem feuert — Drift-Marker geloescht, echter SSOT still veraltet, REQ-gate-only-writes verletzt. Wurzel-Fix in @sigloch/contracts: neues RepoRelativePathSchema (pure Zod, kein node:path, contracts bleibt I/O-frei und browser-bundlebar, Entscheid CR-GC-253) verwendet in TestRefSchema.file, CodeRefSchema.file, SchemaRefSchema.file; ONTOLOGY_VERSION 3.7.0 auf 3.8.0. Das neutralisiert Sink 1 ohne Zusatzcode: renderTestStubs (src/exporter.ts) und R-19 pruefen beide per TestRefSchema.safeParse, ein ..-Pfad scheitert am Parse, der Stub wird uebersprungen und R-19 meldet das Binding. Lokal nur der Nicht-Ontologie-Sink: GraphExportInputSchema.name auf Basename-Muster einengen plus assertInRepo vor jedem Write des Tools. Zweiter Befund: die SSE-Bridge ruft listen(port) ohne Host-Argument und bindet damit :: (alle Interfaces, verifiziert), waehrend das Log http://127.0.0.1 behauptet — /elements, /subgraph und /health ohne Auth und ohne Origin-Check aus dem LAN lesbar; Fix listen(port, '127.0.0.1'), kein Config-Flag. Migration: keine — alle drei realen Familie-Graph-JSONs geprueft, 0 unsichere Pfade. Detail: docs/cr/open/CR-GC-255-path-containment-und-loopback-bind.md. (CR-GC-255) [status:done,created_at:2026-07-26T00:00:00.000Z,maxFiles:6,closed_at:2026-07-26T00:00:00.000Z]
+@files ["packages/contracts/src/se/ontology.ts","packages/contracts/src/se/index.ts","packages/contracts/tests/unit/se-ref-paths.test.ts","src/mcp-tools.ts","src/viewer/host.ts","tests/security.path-containment.test.ts"]
++ CR-GC-306|DONE 2026-08-08. Befund staerker als angenommen: `graphcode mcp` startet DREI Dinge, nicht zwei — MCP-stdio, die read-only SSE-Bridge UND den GVE-Viewer selbst (maybeStartGve, abschaltbar per GRAPHCODE_NO_GVE=1). README dokumentierte keins davon richtig und machte `graphcode host` zum Normalweg, was neben einem laufenden Host den Store-Lock trifft. Umgesetzt: README nennt mcp als DEN Server und host als Fallback; Beispiel-Prompt als Schritt 3 im README und auf stderr beim Start (firstStepHint, genau eine Zeile statt Menue); GRAPHCODE.md bekommt einen Live-view-Abschnitt mit docs/views/dashboard.url als Adressquelle und ohne hartkodierten Port; docs/views/README.md grenzt views (deterministische Graph-Projektionen) gegen records (commit-gestempelte Urteilsdokumente wie irr.md) entlang des Ableitbarkeits-Kriteriums ab. Abweichung: das Leer-Kriterium ist die INTENT-EBENE (existiert UC oder REQ?), nicht die Elementzahl — nach CR-GC-302 traegt jeder Store einen SYS-Anker und import-code erzeugt FUNC/MOD ohne UC/REQ, ein count===0 haette beide auf den falschen Zweig geschickt. firstStepHint liegt in mcp-server.ts statt scaffold-templates.ts (kein Scaffold-Artefakt) und feuert nur nach der Erst-Wahl, nicht bei einer Promote-Neuwahl. Mitgefunden: die README-Sektion 'Viewer integration' schloss mit 'Until the renderer ships' — der Renderer wird laengst automatisch gestartet. 10 neue Tests, 8 davon vorher rot; 75 Testdateien / 511 Tests gruen. (docs/cr/done/CR-GC-306) [status:done,created_at:2026-08-07T00:00:00.000Z]
+### FCHAIN
++ FCHAIN-live-update|Nach jeder Gate-Mutation: persist schreibt den Graphen nach Disk-Kuzu, makeUpdateEventHook emittiert das SSE-invalidate-Event (FLOW-live-event); die Host-Bridge broadcastet den versionierten Diff an die Viewer, die stdio-Tool-Schicht invalidiert ihren Response-Cache, das Dashboard laedt die betroffenen Domains ohne Reload nach. Integrationstest: TEST-live-view via REQ-mutation-emits-event. [status:reviewed]
+### FLOW
++ FLOW-live-event|SSE invalidate (graph/rules/readiness/suggestions). [status:reviewed,created_at:2026-06-16T00:00:00.000Z]
+### FUNC
++ FUNC-block-anschluss|Ebene-0-Block Sales-Sicht: der Arbeitsplatz des Coding-Agenten — praezise Fragen statt Volltextsuche. Realisiert durch seine Kinder.
++ FUNC-block-gedaechtnis|Ebene-0-Block Sales-Sicht: das Modell als Text-Artefakt — versioniert, wiederherstellbar, zusammenfuehrbar. Realisiert durch seine Kinder.
++ FUNC-block-live-dashboard|Ebene-1-Block im Viewer: der Live-Transport — Update-Events, Diff-Broadcast, SSE-Verteilung an die Panels.
++ FUNC-broadcast-diff|Versionierter Diff-Broadcast mit Late-Joiner-Cache an die Viewer; jede Mutation erhoeht die Version. (CR-GC-114) [status:done,created_at:2026-06-19T00:00:00.000Z]
+@codeRef {"file":"src/viewer/host.ts","symbol":"HostBridge","lang":"ts"}
+@realRef {"file":"src/viewer/host.ts","symbol":"broadcast","lang":"ts"}
++ FUNC-emit-update-event|Live-Update-Event (SSE invalidate) bei jeder Mutation; Basis des read-only Dashboards. (R9) [status:done,created_at:2026-06-16T00:00:00.000Z,updated_at:2026-06-17T00:00:00.000Z]
+@codeRef {"file":"src/emit.ts","symbol":"makeUpdateEventHook","lang":"ts"}
+@realRef {"file":"src/emit.ts","symbol":"makeUpdateEventHook","lang":"ts"}
++ FUNC-health-endpoint|Echter Funktions-Health: Store erreichbar, Gate funktional, Ontology/Rules/Contracts-Versionen, LLM/BYOK-Readiness. Quelle des Dashboard-FUNC-render-health. (CR-GC-114) [status:done,created_at:2026-06-19T00:00:00.000Z]
+@codeRef {"file":"src/viewer/host.ts","symbol":"HostBridge","lang":"ts"}
+@realRef {"file":"src/viewer/host.ts","symbol":"health","lang":"ts"}
++ FUNC-own-kuzu-host|Der Host-Prozess ist der einzige Kuzu-Owner pro Repo; die Bridge haelt kein zweites DB-Handle. (CR-GC-114) [status:done,created_at:2026-06-19T00:00:00.000Z]
+@codeRef {"file":"src/viewer/host.ts","symbol":"serveHost","lang":"ts"}
+@realRef {"file":"src/viewer/host.ts","symbol":"serveHost","lang":"ts"}
++ FUNC-serve-sse|Host-Prozess exponiert die SSE/WS-Route und leitet harness.onUpdateEvent read-only an die Live-Viewer weiter. Kein Express-REST im Core. (CR-GC-114) [status:done,created_at:2026-06-19T00:00:00.000Z]
+@codeRef {"file":"src/viewer/host.ts","symbol":"serveHost","lang":"ts"}
+@realRef {"file":"src/viewer/host.ts","symbol":"serveHost","lang":"ts"}
+### MOD
++ MOD-host-bridge|Host-Prozess (Single Kuzu Owner) exponiert graph-api-express + SSE-Route, verdrahtet an harness.onUpdateEvent. Versioned Diff-Broadcast an den Live-Viewer. Kein Express-REST im Core — die Bridge ist Host-Sache. (SPEC §5) [status:done,created_at:2026-06-17T00:00:00.000Z]
++ MOD-repo-root|Ebene-0-Modul: das Wurzelverzeichnis des Projekts — ein Repo, ein npm-Paket, ein Kuzu-Store. Enthaelt alle Module; die Ebene-0-Funktionsbloecke sind hierhin allokiert.
+### MS
++ MS-4-mvp2|Fast-follow nach MVP-1: Live-Dashboard (host-bridge + viewer + views→core), OpenCode-Execution (agent-agnostic 2nd client), Batch-Seed (Scale), Readiness-Modell-Definition, Housekeeping. Hängt von MS-3. [status:draft,created_at:2026-06-17T00:00:00.000Z]
+### REQ
++ REQ-mutation-emits-event|CONSTRAINT: Jede Graph-Mutation MUSS ein Live-Update-Event emittieren (SSE invalidate, domains graph/rules/readiness/suggestions). Beleg: aimprove import emittiert keins → Dashboard-Lag ~90s. Fix: alle Write-Pfade einheitlich. [status:done,created_at:2026-06-16T00:00:00.000Z]
+@kinds ["non-functional"]
++ REQ-readonly-bridge|Bridge read-only; keine Inbound-Mutations, Writes nur via MCP→mutate(). (RECOMMENDATIONS) [status:done,created_at:2026-06-16T00:00:00.000Z]
+@kinds ["negative"]
++ REQ-versioned-broadcast|Versioned Diff-Broadcast an Dashboard (read-only, Late-Joiner-Cache). (R9) [status:done,created_at:2026-06-16T00:00:00.000Z]
+@kinds ["functional"]
+### SYS
++ SYS-graphcode|Headless Claude-Code-Sidecar-Governance-Harness: Store + Apply-Gate + Hooks + Learning-Emission, eine Instanz pro Repo. Carve-Out aus aimprove. (README, SPEC §0) [status:reviewed,created_at:2026-06-16T00:00:00.000Z]
+### TEST
++ TEST-live-view|Jede Mutation emittiert genau ein Live-Update-Event (korrekte domains); Dashboard ohne Reload. (FUNC-emit-update-event) [status:done,created_at:2026-06-16T00:00:00.000Z,method:test,updated_at:2026-06-17T00:00:00.000Z,constraint:one event per mutation]
+@testRefs [{"file":"tests/hooks.live-view.test.ts","tool":"vitest","level":"integration","result":"passed","ranAt":"2026-08-15T13:34:09.409Z"}]
++ TEST-readonly-bridge|Die Bridge akzeptiert keine Inbound-Mutation; ein Schreibversuch ueber die Bridge wird abgelehnt, Writes gehen nur durch MCP mutate(). (REQ-readonly-bridge) [status:done,created_at:2026-06-19T00:00:00.000Z,method:test]
+@testRefs [{"file":"tests/host.bridge.test.ts","tool":"vitest","level":"integration","result":"passed","ranAt":"2026-08-15T13:34:09.409Z"}]
+### UC
++ UC-live-graph-view|Als Entwickler will ich den aktuellen Modellstand live mitlesen, ohne die Ansicht neu zu laden, damit ich die Wirkung jeder Aenderung sofort sehe. [status:done,created_at:2026-06-17T00:00:00.000Z]
+
+## Edges
++ CR-GC-109 -relation-> MS-4-mvp2 [weight:1,created_at:2026-06-17T00:00:00.000Z]
++ CR-GC-109 -relation-> REQ-versioned-broadcast [weight:1,created_at:2026-06-17T00:00:00.000Z]
++ CR-GC-110 -relation-> MS-4-mvp2 [weight:1,created_at:2026-06-17T00:00:00.000Z]
++ CR-GC-114 -relation-> FUNC-broadcast-diff [weight:1,created_at:2026-06-19T00:00:00.000Z]
++ CR-GC-114 -relation-> FUNC-health-endpoint [weight:1,created_at:2026-06-19T00:00:00.000Z]
++ CR-GC-114 -relation-> FUNC-own-kuzu-host [weight:1,created_at:2026-06-19T00:00:00.000Z]
++ CR-GC-114 -relation-> FUNC-serve-sse [weight:1,created_at:2026-06-19T00:00:00.000Z]
++ CR-GC-114 -relation-> MOD-host-bridge [weight:1,created_at:2026-06-17T00:00:00.000Z]
++ CR-GC-114 -relation-> MS-4-mvp2 [weight:1,created_at:2026-06-17T00:00:00.000Z]
++ CR-GC-114 -relation-> REQ-mutation-emits-event [weight:1,created_at:2026-06-17T00:00:00.000Z]
++ CR-GC-114 -relation-> REQ-readonly-bridge [weight:1,created_at:2026-06-17T00:00:00.000Z]
++ CR-GC-114 -relation-> REQ-versioned-broadcast [weight:1,created_at:2026-06-17T00:00:00.000Z]
++ CR-GC-115 -relation-> MS-4-mvp2 [weight:1,created_at:2026-06-17T00:00:00.000Z]
++ CR-GC-115 -relation-> UC-live-graph-view [weight:1,created_at:2026-06-17T00:00:00.000Z]
++ CR-GC-116 -relation-> MS-4-mvp2 [weight:1,created_at:2026-06-17T00:00:00.000Z]
++ CR-GC-117 -relation-> MS-4-mvp2 [weight:1,created_at:2026-06-17T00:00:00.000Z]
++ CR-GC-118 -relation-> MS-4-mvp2 [weight:1,created_at:2026-06-17T00:00:00.000Z]
++ CR-GC-120 -relation-> MS-4-mvp2 [weight:1,created_at:2026-06-17T00:00:00.000Z]
++ CR-GC-124 -relation-> MS-4-mvp2 [weight:1,created_at:2026-06-17T00:00:00.000Z]
++ CR-GC-125 -relation-> MS-4-mvp2 [weight:1,created_at:2026-06-17T00:00:00.000Z]
++ CR-GC-134 -relation-> MS-4-mvp2 [weight:1,created_at:2026-06-19T00:00:00.000Z]
++ CR-GC-203 -relation-> MS-4-mvp2 [label:assigned-to]
++ CR-GC-241 -relation-> FUNC-own-kuzu-host, MOD-host-bridge
++ CR-GC-255 -relation-> FUNC-serve-sse, REQ-readonly-bridge
++ CR-GC-306 -relation-> MOD-host-bridge
++ FCHAIN-live-update -compose-> FUNC-broadcast-diff, FUNC-emit-update-event
++ FCHAIN-live-update -satisfy-> REQ-mutation-emits-event
++ FLOW-live-event -io-> FUNC-broadcast-diff
++ FUNC-block-anschluss -allocate-> MOD-repo-root
++ FUNC-block-anschluss -compose-> FUNC-health-endpoint
++ FUNC-block-gedaechtnis -allocate-> MOD-repo-root
++ FUNC-block-gedaechtnis -compose-> FUNC-own-kuzu-host
++ FUNC-block-live-dashboard -compose-> FUNC-broadcast-diff, FUNC-emit-update-event, FUNC-serve-sse
++ FUNC-broadcast-diff -allocate-> MOD-host-bridge [weight:1,created_at:2026-06-19T00:00:00.000Z]
++ FUNC-broadcast-diff -satisfy-> REQ-versioned-broadcast [weight:1,created_at:2026-06-19T00:00:00.000Z]
++ FUNC-emit-update-event -io-> FLOW-live-event [weight:1,created_at:2026-06-16T00:00:00.000Z]
++ FUNC-emit-update-event -satisfy-> REQ-mutation-emits-event [weight:1,created_at:2026-06-16T00:00:00.000Z]
++ FUNC-emit-update-event -satisfy-> REQ-versioned-broadcast [weight:1,created_at:2026-06-16T00:00:00.000Z]
++ FUNC-emit-update-event -satisfy-> UC-live-graph-view [weight:1,created_at:2026-06-17T00:00:00.000Z]
++ FUNC-health-endpoint -allocate-> MOD-host-bridge [weight:1,created_at:2026-06-19T00:00:00.000Z]
++ FUNC-own-kuzu-host -allocate-> MOD-host-bridge [weight:1,created_at:2026-06-19T00:00:00.000Z]
++ FUNC-serve-sse -allocate-> MOD-host-bridge [weight:1,created_at:2026-06-19T00:00:00.000Z]
++ FUNC-serve-sse -satisfy-> REQ-readonly-bridge [weight:1,created_at:2026-06-19T00:00:00.000Z]
++ MOD-host-bridge -satisfy-> REQ-readonly-bridge, REQ-versioned-broadcast
++ MOD-repo-root -compose-> MOD-host-bridge
++ MS-4-mvp2 -compose-> UC-live-graph-view [weight:1,created_at:2026-06-18T00:00:00.000Z]
++ SYS-graphcode -compose-> MOD-repo-root
++ SYS-graphcode -compose-> REQ-readonly-bridge [weight:1,created_at:2026-06-16T00:00:00.000Z]
++ SYS-graphcode -compose-> UC-live-graph-view [weight:1,created_at:2026-06-17T00:00:00.000Z]
++ TEST-live-view -verify-> REQ-mutation-emits-event [weight:1,created_at:2026-06-16T00:00:00.000Z]
++ TEST-live-view -verify-> REQ-versioned-broadcast [weight:1,created_at:2026-06-16T00:00:00.000Z]
++ TEST-readonly-bridge -verify-> REQ-readonly-bridge [weight:1,created_at:2026-06-19T00:00:00.000Z]
++ UC-live-graph-view -compose-> FCHAIN-live-update
++ UC-live-graph-view -compose-> REQ-mutation-emits-event [weight:1,created_at:2026-06-17T00:00:00.000Z]
++ UC-live-graph-view -compose-> REQ-readonly-bridge [weight:1,created_at:2026-06-17T00:00:00.000Z]
++ UC-live-graph-view -compose-> REQ-versioned-broadcast [weight:1,created_at:2026-06-17T00:00:00.000Z]

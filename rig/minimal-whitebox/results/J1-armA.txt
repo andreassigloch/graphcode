@@ -1,0 +1,31 @@
+## Nodes
+### FLOW
++ FLOW-docset|Input flow: a primary document plus attachments, as { id, text, page } records. [status:reviewed,created_at:2026-06-26T00:00:00.000Z]
+### FUNC
++ FN-slice|Recall-first slicer: given a DocSet, surface the superset of plausible candidate nodes (untyped) with a sourceRef on each. Deterministic. NOT yet realized (no codeRef) — this is the milestone to implement. [status:specified,created_at:2026-06-26T00:00:00.000Z]
+### MOD
++ MOD-slicer|Host module for the slice function (src/slice.ts). [status:reviewed,created_at:2026-06-26T00:00:00.000Z]
+### REQ
++ REQ-recall-first|Surface the superset of plausible candidates; core recall >= 0.85 on a real document; never silently drop a candidate. Precision is a later concern. [status:reviewed,created_at:2026-06-26T00:00:00.000Z]
++ REQ-determinism|Same input yields the same candidate set with stable, deterministic IDs (re-run Jaccard = 1.0). No randomness, no wall-clock in IDs. [status:reviewed,created_at:2026-06-26T00:00:00.000Z]
++ REQ-provenance|Every emitted candidate carries a non-empty sourceRef { doc, page, region } so provenance survives the hand-off to the typer. [status:reviewed,created_at:2026-06-26T00:00:00.000Z]
+### SCHEMA
++ SCHEMA-slicer-output|Output shape: { candidates: Array<{ id: string; text: string; sourceRef: { doc: string; page: number; region: string } }> }. id is a deterministic hash of (doc,page,region,text). [status:reviewed,created_at:2026-06-26T00:00:00.000Z]
+### TEST
++ TEST-recall|Target: slice() over a ground-truth document. Tool: vitest + scoreRecall (see spikes/score.ts). PASS iff core recall >= 0.85. [status:specified,method:test,created_at:2026-06-26T00:00:00.000Z]
++ TEST-determinism|Target: slice() run twice on the same input. Tool: vitest. PASS iff the candidate sets are identical and IDs stable (Jaccard = 1.0). [status:specified,method:test,created_at:2026-06-26T00:00:00.000Z]
++ TEST-provenance|Target: every candidate in the SlicerOutput. Tool: vitest. PASS iff each carries a non-empty sourceRef { doc, page, region }. [status:specified,method:test,created_at:2026-06-26T00:00:00.000Z]
+### UC
++ UC-structure-doc|Actor feeds a document set; the system returns a candidate graph from which a typed model can be built. Realizes the slicing goal. [status:reviewed,created_at:2026-06-26T00:00:00.000Z]
+
+## Edges
++ FLOW-docset -io-> FN-slice
++ FLOW-docset -relation-> SCHEMA-slicer-output
++ FN-slice -allocate-> MOD-slicer
++ FN-slice -satisfy-> REQ-determinism, REQ-provenance, REQ-recall-first, UC-structure-doc
++ TEST-determinism -verify-> REQ-determinism
++ TEST-provenance -verify-> REQ-provenance
++ TEST-recall -verify-> REQ-recall-first
+
+## Blackbox-Ring (Schnittstelle, nicht öffnen)
+MS-slicer-core · MS · Milestone: Slicer core

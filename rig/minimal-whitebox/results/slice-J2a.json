@@ -1,0 +1,642 @@
+{
+  "job": "J2a — CR-großer Job, Implementieren (CR-GC-114 host-bridge, 4 FUNC)",
+  "seeds": [
+    "FUNC-broadcast-diff",
+    "FUNC-health-endpoint",
+    "FUNC-own-kuzu-host",
+    "FUNC-serve-sse",
+    "MOD-host-bridge",
+    "MS-4-mvp2",
+    "REQ-mutation-emits-event",
+    "REQ-readonly-bridge",
+    "REQ-versioned-broadcast"
+  ],
+  "nodes": [
+    {
+      "uid": "CR-GC-109",
+      "type": "CR",
+      "name": "Live-Event + View-Contract → contracts",
+      "role": "blackbox"
+    },
+    {
+      "uid": "CR-GC-110",
+      "type": "CR",
+      "name": "views.ts → graph-api-core; BQ-Fork retiren",
+      "role": "blackbox"
+    },
+    {
+      "uid": "CR-GC-114",
+      "type": "CR",
+      "name": "Host + SSE/WS-Bridge",
+      "role": "blackbox"
+    },
+    {
+      "uid": "CR-GC-115",
+      "type": "CR",
+      "name": "Dashboard-Viewer-App (Hybrid)",
+      "role": "blackbox"
+    },
+    {
+      "uid": "CR-GC-116",
+      "type": "CR",
+      "name": "Views/Skills an Live-Graph verdrahten",
+      "role": "blackbox"
+    },
+    {
+      "uid": "CR-GC-117",
+      "type": "CR",
+      "name": "Modell-Hygiene: V3_RULES-Violations schließen",
+      "role": "blackbox"
+    },
+    {
+      "uid": "CR-GC-118",
+      "type": "CR",
+      "name": "Cleanup stale-at-all Knoten",
+      "role": "blackbox"
+    },
+    {
+      "uid": "CR-GC-120",
+      "type": "CR",
+      "name": "Batch-Seed/Import (UNWIND) — Scale",
+      "role": "blackbox"
+    },
+    {
+      "uid": "CR-GC-124",
+      "type": "CR",
+      "name": "OpenCode-Execution: agent-agnostic 2nd client, headless BYOK",
+      "role": "blackbox"
+    },
+    {
+      "uid": "CR-GC-125",
+      "type": "CR",
+      "name": "Readiness-Modell definieren & realisieren (Phase/Impl/INCOSE)",
+      "role": "blackbox"
+    },
+    {
+      "uid": "CR-GC-134",
+      "type": "CR",
+      "name": "Bottom-up Test-Deduktion (graph_tests)",
+      "role": "blackbox"
+    },
+    {
+      "uid": "CR-GC-203",
+      "type": "CR",
+      "name": "Violation-resolution ergonomics & SSOT tooling",
+      "role": "blackbox"
+    },
+    {
+      "uid": "CR-GC-241",
+      "type": "CR",
+      "name": "Host-Shim-Schreibbruecke exportieren (callHost/HOST_SOCK_BASENAME)",
+      "role": "blackbox"
+    },
+    {
+      "uid": "CR-GC-255",
+      "type": "CR",
+      "name": "Path-Containment für graph-getriebene Writes + Bridge-Bind auf Loopback",
+      "role": "blackbox"
+    },
+    {
+      "uid": "CR-GC-306",
+      "type": "CR",
+      "name": "Onboarding: ein Start, Beispiel-Prompt, GVE-Adresse",
+      "role": "blackbox"
+    },
+    {
+      "uid": "FCHAIN-live-update",
+      "type": "FCHAIN",
+      "name": "Live-Update-Kette (persist → emit → subscribe)",
+      "role": "blackbox"
+    },
+    {
+      "uid": "FLOW-live-event",
+      "type": "FLOW",
+      "name": "Live-Update-Event",
+      "role": "whitebox",
+      "description": "SSE invalidate (graph/rules/readiness/suggestions)."
+    },
+    {
+      "uid": "FUNC-block-anschluss",
+      "type": "FUNC",
+      "name": "Agenten-Anschluss",
+      "role": "blackbox"
+    },
+    {
+      "uid": "FUNC-block-gedaechtnis",
+      "type": "FUNC",
+      "name": "Gedächtnis",
+      "role": "blackbox"
+    },
+    {
+      "uid": "FUNC-block-live-dashboard",
+      "type": "FUNC",
+      "name": "Live-Kanal",
+      "role": "blackbox"
+    },
+    {
+      "uid": "FUNC-broadcast-diff",
+      "type": "FUNC",
+      "name": "broadcastDiff(version)",
+      "role": "seed",
+      "description": "Versionierter Diff-Broadcast mit Late-Joiner-Cache an die Viewer; jede Mutation erhoeht die Version. (CR-GC-114)"
+    },
+    {
+      "uid": "FUNC-emit-update-event",
+      "type": "FUNC",
+      "name": "emitUpdateEvent(domains)",
+      "role": "blackbox"
+    },
+    {
+      "uid": "FUNC-health-endpoint",
+      "type": "FUNC",
+      "name": "healthEndpoint()",
+      "role": "seed",
+      "description": "Echter Funktions-Health: Store erreichbar, Gate funktional, Ontology/Rules/Contracts-Versionen, LLM/BYOK-Readiness. Quelle des Dashboard-FUNC-render-health. (CR-GC-114)"
+    },
+    {
+      "uid": "FUNC-own-kuzu-host",
+      "type": "FUNC",
+      "name": "ownKuzu()",
+      "role": "seed",
+      "description": "Der Host-Prozess ist der einzige Kuzu-Owner pro Repo; die Bridge haelt kein zweites DB-Handle. (CR-GC-114)"
+    },
+    {
+      "uid": "FUNC-serve-sse",
+      "type": "FUNC",
+      "name": "serveSSE()",
+      "role": "seed",
+      "description": "Host-Prozess exponiert die SSE/WS-Route und leitet harness.onUpdateEvent read-only an die Live-Viewer weiter. Kein Express-REST im Core. (CR-GC-114)"
+    },
+    {
+      "uid": "MOD-host-bridge",
+      "type": "MOD",
+      "name": "host-bridge — SSE/WS Bridge",
+      "role": "seed",
+      "description": "Host-Prozess (Single Kuzu Owner) exponiert graph-api-express + SSE-Route, verdrahtet an harness.onUpdateEvent. Versioned Diff-Broadcast an den Live-Viewer. Kein Express-REST im Core — die Bridge ist Host-Sache. (SPEC §5)"
+    },
+    {
+      "uid": "MOD-repo-root",
+      "type": "MOD",
+      "name": "graphcode Projektwurzel",
+      "role": "blackbox"
+    },
+    {
+      "uid": "MS-3-mvp-readiness",
+      "type": "MS",
+      "name": "M3: MVP Readiness",
+      "role": "whitebox",
+      "description": "Realisiert die spezifizierten-aber-unrealisierten Knoten (CLI, MCP-Server, Re-Exporter, Views) + das Live-Dashboard (Hybrid: graphcode-owned, komponiert aus @sigloch/graph-renderer + dashboard-shell + graph-api-express+SSE, V3_RULES-gescort). Schließt F4/F5/F6. (Diskussion 2026-06-17)"
+    },
+    {
+      "uid": "MS-4-mvp2",
+      "type": "MS",
+      "name": "M4: MVP-2 (Dashboard, OpenCode, Scale)",
+      "role": "seed",
+      "description": "Fast-follow nach MVP-1: Live-Dashboard (host-bridge + viewer + views→core), OpenCode-Execution (agent-agnostic 2nd client), Batch-Seed (Scale), Readiness-Modell-Definition, Housekeeping. Hängt von MS-3."
+    },
+    {
+      "uid": "REQ-mutation-emits-event",
+      "type": "REQ",
+      "name": "Mutation emittiert Live-Update-Event",
+      "role": "seed",
+      "description": "CONSTRAINT: Jede Graph-Mutation MUSS ein Live-Update-Event emittieren (SSE invalidate, domains graph/rules/readiness/suggestions). Beleg: aimprove import emittiert keins → Dashboard-Lag ~90s. Fix: alle Write-Pfade einheitlich."
+    },
+    {
+      "uid": "REQ-readonly-bridge",
+      "type": "REQ",
+      "name": "Read-only Bridge",
+      "role": "seed",
+      "description": "Bridge read-only; keine Inbound-Mutations, Writes nur via MCP→mutate(). (RECOMMENDATIONS)"
+    },
+    {
+      "uid": "REQ-real-health-check",
+      "type": "REQ",
+      "name": "Health = echter Funktionscheck",
+      "role": "whitebox",
+      "description": "Der Health-Endpoint prueft Store-Erreichbarkeit, Gate-Funktion, Ontology/Rules/Contracts-Versionen und LLM/BYOK-Readiness, nicht nur Prozess-Liveness. aimprove-spezifische Felder (Sessions/Patterns) sind kein Health-Signal und werden entfernt."
+    },
+    {
+      "uid": "REQ-single-kuzu-owner",
+      "type": "REQ",
+      "name": "Single Kuzu-Owner",
+      "role": "whitebox",
+      "description": "Genau ein Host-Prozess besitzt .graphcode/kuzu (single-writer; kein 2. DB-Handle). (SPEC §4, L1)"
+    },
+    {
+      "uid": "REQ-versioned-broadcast",
+      "type": "REQ",
+      "name": "Versioned Diff-Broadcast",
+      "role": "seed",
+      "description": "Versioned Diff-Broadcast an Dashboard (read-only, Late-Joiner-Cache). (R9)"
+    },
+    {
+      "uid": "SCHEMA-update-event",
+      "type": "SCHEMA",
+      "name": "UpdateEvent",
+      "role": "whitebox",
+      "description": "SSE invalidate Event."
+    },
+    {
+      "uid": "SYS-graphcode",
+      "type": "SYS",
+      "name": "GraphCode",
+      "role": "blackbox"
+    },
+    {
+      "uid": "TEST-live-view",
+      "type": "TEST",
+      "name": "Live-Update-Event-Test",
+      "role": "whitebox",
+      "description": "Jede Mutation emittiert genau ein Live-Update-Event (korrekte domains); Dashboard ohne Reload. (FUNC-emit-update-event)"
+    },
+    {
+      "uid": "TEST-mvp-e2e",
+      "type": "TEST",
+      "name": "MVP-1 E2E Acceptance",
+      "role": "whitebox",
+      "description": "End-to-End-Akzeptanz des MVP-1-Loops: neues Mitglied bootstrappen, Knoten durchs Gate spec’en, graph_impact liefert exakt den Blast-Radius (KNOW statt grep), Knoten implementieren, re-exportieren. Disk-Kuzu, keine Mocks. (CR-GC-123)"
+    },
+    {
+      "uid": "TEST-readonly-bridge",
+      "type": "TEST",
+      "name": "Readonly-Bridge-Test",
+      "role": "whitebox",
+      "description": "Die Bridge akzeptiert keine Inbound-Mutation; ein Schreibversuch ueber die Bridge wird abgelehnt, Writes gehen nur durch MCP mutate(). (REQ-readonly-bridge)"
+    },
+    {
+      "uid": "TEST-real-health-check",
+      "type": "TEST",
+      "name": "Health-Funktionscheck-Test",
+      "role": "whitebox",
+      "description": "Der Health-Report enthaelt Store-, Gate-, Versions- und LLM-Readiness-Status und faellt bei Store- oder Gate-Ausfall auf nicht-ok, nicht nur bei Prozess-Stop. (REQ-real-health-check)"
+    },
+    {
+      "uid": "UC-live-graph-view",
+      "type": "UC",
+      "name": "Modellstand live mitlesen",
+      "role": "blackbox"
+    }
+  ],
+  "edges": [
+    {
+      "source": "CR-GC-109",
+      "type": "relation",
+      "target": "MS-4-mvp2"
+    },
+    {
+      "source": "CR-GC-109",
+      "type": "relation",
+      "target": "REQ-versioned-broadcast"
+    },
+    {
+      "source": "CR-GC-110",
+      "type": "relation",
+      "target": "MS-4-mvp2"
+    },
+    {
+      "source": "CR-GC-114",
+      "type": "relation",
+      "target": "FUNC-broadcast-diff"
+    },
+    {
+      "source": "CR-GC-114",
+      "type": "relation",
+      "target": "FUNC-health-endpoint"
+    },
+    {
+      "source": "CR-GC-114",
+      "type": "relation",
+      "target": "FUNC-own-kuzu-host"
+    },
+    {
+      "source": "CR-GC-114",
+      "type": "relation",
+      "target": "FUNC-serve-sse"
+    },
+    {
+      "source": "CR-GC-114",
+      "type": "relation",
+      "target": "MOD-host-bridge"
+    },
+    {
+      "source": "CR-GC-114",
+      "type": "relation",
+      "target": "MS-4-mvp2"
+    },
+    {
+      "source": "CR-GC-114",
+      "type": "relation",
+      "target": "REQ-mutation-emits-event"
+    },
+    {
+      "source": "CR-GC-114",
+      "type": "relation",
+      "target": "REQ-readonly-bridge"
+    },
+    {
+      "source": "CR-GC-114",
+      "type": "relation",
+      "target": "REQ-versioned-broadcast"
+    },
+    {
+      "source": "CR-GC-115",
+      "type": "relation",
+      "target": "MS-4-mvp2"
+    },
+    {
+      "source": "CR-GC-115",
+      "type": "relation",
+      "target": "REQ-real-health-check"
+    },
+    {
+      "source": "CR-GC-115",
+      "type": "relation",
+      "target": "UC-live-graph-view"
+    },
+    {
+      "source": "CR-GC-116",
+      "type": "relation",
+      "target": "MS-4-mvp2"
+    },
+    {
+      "source": "CR-GC-117",
+      "type": "relation",
+      "target": "MS-4-mvp2"
+    },
+    {
+      "source": "CR-GC-118",
+      "type": "relation",
+      "target": "MS-4-mvp2"
+    },
+    {
+      "source": "CR-GC-120",
+      "type": "relation",
+      "target": "MS-4-mvp2"
+    },
+    {
+      "source": "CR-GC-124",
+      "type": "relation",
+      "target": "MS-4-mvp2"
+    },
+    {
+      "source": "CR-GC-125",
+      "type": "relation",
+      "target": "MS-4-mvp2"
+    },
+    {
+      "source": "CR-GC-134",
+      "type": "relation",
+      "target": "MS-4-mvp2"
+    },
+    {
+      "source": "CR-GC-203",
+      "type": "relation",
+      "target": "MS-4-mvp2"
+    },
+    {
+      "source": "CR-GC-241",
+      "type": "relation",
+      "target": "FUNC-own-kuzu-host"
+    },
+    {
+      "source": "CR-GC-241",
+      "type": "relation",
+      "target": "MOD-host-bridge"
+    },
+    {
+      "source": "CR-GC-255",
+      "type": "relation",
+      "target": "FUNC-serve-sse"
+    },
+    {
+      "source": "CR-GC-255",
+      "type": "relation",
+      "target": "REQ-readonly-bridge"
+    },
+    {
+      "source": "CR-GC-306",
+      "type": "relation",
+      "target": "MOD-host-bridge"
+    },
+    {
+      "source": "FCHAIN-live-update",
+      "type": "compose",
+      "target": "FUNC-broadcast-diff"
+    },
+    {
+      "source": "FCHAIN-live-update",
+      "type": "compose",
+      "target": "FUNC-emit-update-event"
+    },
+    {
+      "source": "FCHAIN-live-update",
+      "type": "satisfy",
+      "target": "REQ-mutation-emits-event"
+    },
+    {
+      "source": "FLOW-live-event",
+      "type": "io",
+      "target": "FUNC-broadcast-diff"
+    },
+    {
+      "source": "FLOW-live-event",
+      "type": "relation",
+      "target": "SCHEMA-update-event"
+    },
+    {
+      "source": "FUNC-block-anschluss",
+      "type": "allocate",
+      "target": "MOD-repo-root"
+    },
+    {
+      "source": "FUNC-block-anschluss",
+      "type": "compose",
+      "target": "FUNC-health-endpoint"
+    },
+    {
+      "source": "FUNC-block-gedaechtnis",
+      "type": "allocate",
+      "target": "MOD-repo-root"
+    },
+    {
+      "source": "FUNC-block-gedaechtnis",
+      "type": "compose",
+      "target": "FUNC-own-kuzu-host"
+    },
+    {
+      "source": "FUNC-block-live-dashboard",
+      "type": "compose",
+      "target": "FUNC-broadcast-diff"
+    },
+    {
+      "source": "FUNC-block-live-dashboard",
+      "type": "compose",
+      "target": "FUNC-emit-update-event"
+    },
+    {
+      "source": "FUNC-block-live-dashboard",
+      "type": "compose",
+      "target": "FUNC-serve-sse"
+    },
+    {
+      "source": "FUNC-broadcast-diff",
+      "type": "allocate",
+      "target": "MOD-host-bridge"
+    },
+    {
+      "source": "FUNC-broadcast-diff",
+      "type": "satisfy",
+      "target": "REQ-versioned-broadcast"
+    },
+    {
+      "source": "FUNC-emit-update-event",
+      "type": "io",
+      "target": "FLOW-live-event"
+    },
+    {
+      "source": "FUNC-emit-update-event",
+      "type": "satisfy",
+      "target": "REQ-mutation-emits-event"
+    },
+    {
+      "source": "FUNC-emit-update-event",
+      "type": "satisfy",
+      "target": "REQ-versioned-broadcast"
+    },
+    {
+      "source": "FUNC-emit-update-event",
+      "type": "satisfy",
+      "target": "UC-live-graph-view"
+    },
+    {
+      "source": "FUNC-health-endpoint",
+      "type": "allocate",
+      "target": "MOD-host-bridge"
+    },
+    {
+      "source": "FUNC-health-endpoint",
+      "type": "satisfy",
+      "target": "REQ-real-health-check"
+    },
+    {
+      "source": "FUNC-own-kuzu-host",
+      "type": "allocate",
+      "target": "MOD-host-bridge"
+    },
+    {
+      "source": "FUNC-own-kuzu-host",
+      "type": "satisfy",
+      "target": "REQ-single-kuzu-owner"
+    },
+    {
+      "source": "FUNC-serve-sse",
+      "type": "allocate",
+      "target": "MOD-host-bridge"
+    },
+    {
+      "source": "FUNC-serve-sse",
+      "type": "satisfy",
+      "target": "REQ-readonly-bridge"
+    },
+    {
+      "source": "MOD-host-bridge",
+      "type": "satisfy",
+      "target": "REQ-readonly-bridge"
+    },
+    {
+      "source": "MOD-host-bridge",
+      "type": "satisfy",
+      "target": "REQ-real-health-check"
+    },
+    {
+      "source": "MOD-host-bridge",
+      "type": "satisfy",
+      "target": "REQ-versioned-broadcast"
+    },
+    {
+      "source": "MOD-repo-root",
+      "type": "compose",
+      "target": "MOD-host-bridge"
+    },
+    {
+      "source": "MS-4-mvp2",
+      "type": "compose",
+      "target": "UC-live-graph-view"
+    },
+    {
+      "source": "MS-4-mvp2",
+      "type": "relation",
+      "target": "MS-3-mvp-readiness"
+    },
+    {
+      "source": "SYS-graphcode",
+      "type": "compose",
+      "target": "MOD-repo-root"
+    },
+    {
+      "source": "SYS-graphcode",
+      "type": "compose",
+      "target": "REQ-readonly-bridge"
+    },
+    {
+      "source": "SYS-graphcode",
+      "type": "compose",
+      "target": "REQ-single-kuzu-owner"
+    },
+    {
+      "source": "SYS-graphcode",
+      "type": "compose",
+      "target": "UC-live-graph-view"
+    },
+    {
+      "source": "TEST-live-view",
+      "type": "verify",
+      "target": "REQ-mutation-emits-event"
+    },
+    {
+      "source": "TEST-live-view",
+      "type": "verify",
+      "target": "REQ-versioned-broadcast"
+    },
+    {
+      "source": "TEST-mvp-e2e",
+      "type": "verify",
+      "target": "REQ-single-kuzu-owner"
+    },
+    {
+      "source": "TEST-readonly-bridge",
+      "type": "verify",
+      "target": "REQ-readonly-bridge"
+    },
+    {
+      "source": "TEST-real-health-check",
+      "type": "verify",
+      "target": "REQ-real-health-check"
+    },
+    {
+      "source": "UC-live-graph-view",
+      "type": "compose",
+      "target": "FCHAIN-live-update"
+    },
+    {
+      "source": "UC-live-graph-view",
+      "type": "compose",
+      "target": "REQ-mutation-emits-event"
+    },
+    {
+      "source": "UC-live-graph-view",
+      "type": "compose",
+      "target": "REQ-readonly-bridge"
+    },
+    {
+      "source": "UC-live-graph-view",
+      "type": "compose",
+      "target": "REQ-real-health-check"
+    },
+    {
+      "source": "UC-live-graph-view",
+      "type": "compose",
+      "target": "REQ-versioned-broadcast"
+    }
+  ]
+}

@@ -1,0 +1,166 @@
+[generate 1] phase=seed done=false
+[whitebox-index] 0 von 0 Knoten
+  cand 1/3.1: graph_authoring_guide,graph_authoring_guide,graph_authoring_guide
+  cand 1/3.2: graph_mutate
+  candidate 1/3: tier=suggest focus(-)=+0.00 total=+2.35 Δm=+7.50 mutations=19
+  cand 2/3.1: graph_mutate
+  candidate 2/3: tier=suggest focus(-)=+0.00 total=+2.33 Δm=+7.50 mutations=18
+  cand 3/3.1: graph_mutate
+  candidate 3/3: tier=suggest focus(-)=+0.00 total=+2.33 Δm=+7.50 mutations=21
+    pick: candidate 1 (judge=gate)
+    winner applied (19 mutations)
+[generate 2] phase=expand done=false
+[whitebox-index] 7 von 7 Knoten
+  cand 1/3.1: graph_mutate
+  candidate 1/3: tier=block focus(uc)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+  cand 2/3.1: graph_mutate
+  candidate 2/3: tier=suggest focus(uc)=+0.27 total=+1.27 Δm=-0.83 mutations=8
+  cand 3/3.1: graph_authoring_guide
+  cand 3/3.2: graph_mutate
+    preflight blocked: R-18 Illegales Trace-Paar: UC compose FUNC (UC-view-updates → FCHAIN-view-updates-live) — auch die Gegenrichtung ist nicht legal.
+  candidate 3/3: tier=preflight-block focus(uc)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+    pick: candidate 2 (judge=gate)
+    winner applied (8 mutations)
+[generate 3] phase=expand done=false
+[whitebox-index] 11 von 11 Knoten
+  cand 1/3.1: graph_mutate
+    preflight blocked: R-08 add-edge targetId: uid "FUNC-realtime-sync" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "REQ-realtime-updates" existiert weder im Graph noch im Batch.
+  candidate 1/3: tier=preflight-block focus(uc)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+  cand 2/3.1: graph_get_node
+  cand 2/3.2: graph_elements
+  cand 2/3.3: graph_mutate
+  candidate 2/3: tier=suggest focus(uc)=+0.07 total=+0.02 Δm=-0.42 mutations=4
+  cand 3/3.1: graph_mutate
+  candidate 3/3: tier=suggest focus(uc)=+0.06 total=+0.06 Δm=+0.00 mutations=2
+    pick: candidate 2 (judge=gate)
+    winner applied (4 mutations)
+[generate 4] phase=expand done=false
+[whitebox-index] 2 von 13 Knoten
+  cand 1/3.1: (no calls)
+    idle: 
+  cand 1/3.2: (no calls)
+    idle: 
+  candidate 1/3: no batch
+  cand 2/3.1: graph_mutate
+  candidate 2/3: tier=suggest focus(alloc)=+1.00 total=+0.94 Δm=+10.75 mutations=3
+  cand 3/3.1: graph_mutate
+  candidate 3/3: tier=block focus(alloc)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+    pick: candidate 2 (judge=gate)
+    winner applied (3 mutations)
+[generate 5] phase=expand done=false
+[whitebox-index] 13 von 15 Knoten
+  cand 1/3.1: (no calls)
+    idle: 
+  cand 1/3.2: graph_mutate
+  candidate 1/3: tier=suggest focus(uc)=+0.00 total=+0.01 Δm=+0.00 mutations=6
+  cand 2/3.1: graph_mutate
+    preflight blocked: R-18 Illegales Trace-Paar: FCHAIN satisfy UC (FCHAIN-collaborative-authoring → UC-login) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: FCHAIN satisfy UC (FCHAIN-collaborative-authoring → UC-view-updates) — auch die Gegenrichtung ist nicht legal.
+  candidate 2/3: tier=preflight-block focus(uc)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+  cand 3/3.1: graph_mutate
+  candidate 3/3: tier=block focus(uc)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+    pick: candidate 1 (judge=gate)
+    winner applied (6 mutations)
+[generate 6] phase=expand done=false
+[whitebox-index] 15 von 17 Knoten
+  cand 1/3.1: (no calls)
+  candidate 1/3: tier=suggest focus(uc)=+0.03 total=+0.03 Δm=+0.00 mutations=2
+  cand 2/3.1: (no calls)
+    idle: 
+  cand 2/3.2: (no calls)
+    idle: 
+  candidate 2/3: no batch
+  cand 3/3.1: (no calls)
+    idle: 
+  cand 3/3.2: (no calls)
+    idle: 
+  candidate 3/3: no batch
+    pick: candidate 1 (judge=gate)
+    winner applied (2 mutations)
+[generate 7] phase=expand done=false
+[whitebox-index] 16 von 18 Knoten
+  cand 1/3.1: (no calls)
+  candidate 1/3: tier=suggest focus(uc)=+0.02 total=-0.18 Δm=-0.47 mutations=5
+  cand 2/3.1: (no calls)
+    idle: 
+  cand 2/3.2: graph_mutate
+    preflight blocked: R-08 add-edge targetId: uid "FLOW-login" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "FLOW-login" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "FLOW-collab" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "FLOW-collab" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "FLOW-push" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "FLOW-push" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge targetId: uid "FLOW-download" existiert weder im Graph noch im Batch.
+    preflight blocked: R-08 add-edge sourceId: uid "FLOW-download" existiert weder im Graph noch im Batch.
+  candidate 2/3: tier=preflight-block focus(uc)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+  cand 3/3.1: graph_mutate
+  candidate 3/3: tier=block focus(uc)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+    pick: candidate 1 (judge=gate)
+    winner applied (5 mutations)
+[generate 8] phase=expand done=false
+[whitebox-index] 3 von 20 Knoten
+  cand 1/3.1: (no calls)
+    idle: 
+  cand 1/3.2: (no calls)
+  candidate 1/3: tier=suggest focus(schema)=+0.71 total=+0.72 Δm=-1.68 mutations=4
+  cand 2/3.1: graph_mutate
+  candidate 2/3: tier=suggest focus(schema)=+0.75 total=+0.75 Δm=-1.37 mutations=2
+  cand 3/3.1: (no calls)
+  candidate 3/3: tier=suggest focus(schema)=+0.71 total=+0.72 Δm=-1.68 mutations=4
+    pick: candidate 2 (judge=gate)
+    winner applied (2 mutations)
+[generate 9] phase=expand done=false
+[whitebox-index] 17 von 21 Knoten
+  cand 1/3.1: graph_mutate
+    preflight blocked: R-18 Illegales Trace-Paar: FLOW io FCHAIN (FLOW-collab-entry → FCHAIN-collaborative-authoring) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: FLOW io FCHAIN (FLOW-live-entry → FCHAIN-live-updates) — auch die Gegenrichtung ist nicht legal.
+  candidate 1/3: tier=preflight-block focus(uc)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+  cand 2/3.1: graph_mutate
+  candidate 2/3: tier=block focus(uc)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+  cand 3/3.1: (no calls)
+    preflight blocked: R-18 Illegales Trace-Paar: FCHAIN io UC (FCHAIN-collaborative-authoring → UC-view-updates) — auch die Gegenrichtung ist nicht legal.
+    preflight blocked: R-18 Illegales Trace-Paar: FCHAIN io UC (FCHAIN-live-updates → UC-collaborative-authoring) — auch die Gegenrichtung ist nicht legal.
+  candidate 3/3: tier=preflight-block focus(uc)=+0.00 total=+0.00 Δm=+0.00 mutations=0
+    all candidates block [R-18] — feeding best feedback back (repair 1/6)
+  repair cand 1.1: (no calls)
+    idle: 
+  repair cand 1.2: graph_mutate
+  candidate 1/3: tier=suggest focus(uc)=+0.03 total=-0.34 Δm=+0.63 mutations=16
+    pick: candidate 1 (judge=gate)
+    winner applied (16 mutations)
+[generate 10] phase=expand done=false
+[whitebox-index] 6 von 25 Knoten
+  cand 1/3.1: (no calls)
+  candidate 1/3: tier=auto-apply focus(schema)=+0.63 total=+0.63 Δm=-0.22 mutations=9
+  cand 2/3.1: graph_mutate
+  candidate 2/3: tier=auto-apply focus(schema)=+0.57 total=+0.58 Δm=-0.22 mutations=8
+  cand 3/3.1: graph_mutate
+  candidate 3/3: tier=auto-apply focus(schema)=+0.57 total=+0.58 Δm=-0.22 mutations=8
+    pick: candidate 1 (judge=gate)
+    winner applied (9 mutations)
+[generate 11] phase=expand done=false
+[whitebox-index] 17 von 29 Knoten
+  cand 1/3.1: (no calls)
+  candidate 1/3: tier=suggest focus(uc)=+0.03 total=-0.56 Δm=-1.03 mutations=18
+  cand 2/3.1: (no calls)
+  candidate 2/3: tier=suggest focus(uc)=+0.02 total=-0.46 Δm=-0.77 mutations=12
+  cand 3/3.1: (no calls)
+    idle: 
+  cand 3/3.2: (no calls)
+  candidate 3/3: tier=suggest focus(uc)=+0.03 total=-0.56 Δm=-1.03 mutations=18
+    pick: candidate 1 (judge=gate)
+    winner applied (18 mutations)
+[generate 12] phase=expand done=false
+[whitebox-index] 17 von 38 Knoten
+  cand 1/3.1: (no calls)
+    idle: 
+  cand 1/3.2: (no calls)
+    idle: 
+  candidate 1/3: no batch
+  cand 2/3.1: graph_mutate
+  candidate 2/3: tier=suggest focus(alloc)=+0.36 total=+0.37 Δm=+0.99 mutations=5
+  cand 3/3.1: graph_mutate
+  candidate 3/3: tier=suggest focus(alloc)=+0.36 total=+0.37 Δm=+0.99 mutations=5
+    pick: candidate 2 (judge=gate)
+    winner applied (5 mutations)
