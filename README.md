@@ -83,11 +83,21 @@ graphcode status — auth-service  (/Users/you/dev/auth-service)
 ```
 
 `status` reads `docs/views/dashboard.url` (GVE writes its actual bound address there on startup,
-removes it on shutdown) and then asks that instance `api/dashboard` **which repo it serves** —
-because the port is dynamic (Vite bumps on conflict) and a neighbouring repo's viewer can end up
-on the address yours left behind. Only an instance serving THIS repo is reported as yours; anything
-else reads `fremdes Repo` with the repo it actually serves. Opt out with `GRAPHCODE_NO_GVE=1`; the bridge port comes from `GRAPHCODE_HOST_PORT` in
+removes it on shutdown) and then asks that instance `api/dashboard` **which repo it serves**. The
+address itself is stable per repo — GVE derives it from the repo path (43000–43999) — so your
+bookmark keeps working across restarts; the identity check stays as the safety net for the rare
+collision, where Vite bumps and a neighbour's viewer could end up on the address yours left behind.
+Only an instance serving THIS repo is reported as yours. Opt out with `GRAPHCODE_NO_GVE=1`; the bridge port comes from `GRAPHCODE_HOST_PORT` in
 `.mcp.json` `env`, which `init`/`update` scaffolds per repo.
+
+**Lifecycle — the host lives exactly as long as your session (CR-GC-370..372).** Closing the
+editor (or anything that ends the stdio client) shuts the host down in order: viewer → HTTP
+bridge → `host.sock` → store lock. Reopening therefore wins a REAL election instead of proxying a
+host whose editor is gone, and brings its dashboard back at the same address. Three guards behind
+that: a viewer that dies mid-session is restarted (1 s / 3 s / 10 s, then it says so and stops
+trying); the store lock carries a heartbeat, so a lock without a pulse for 90 s is free even if its
+PID is alive (PID reuse after a reboot, a hung host); and a host whose lock was taken over notices
+at its next beat and ends its session rather than becoming a second writer.
 
 **5. After upgrading the package:** run `npx @sigloch/graphcode update` — refreshes `.mcp.json`,
 `GRAPHCODE.md` and skills, never touches the store.
