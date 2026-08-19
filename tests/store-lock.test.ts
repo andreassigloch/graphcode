@@ -132,3 +132,75 @@ describe('TEST-store-lock (CR-GC-218): harness enforces one owner + serializes w
     }
   });
 });
+
+describe('TEST-store-lock (CR-GC-372): Puls statt nur PID', () => {
+  let dir: string;
+  let lockPath: string;
+
+  beforeEach(() => {
+    dir = mkdtempSync(join(tmpdir(), 'graphcode-pulse-'));
+    lockPath = join(dir, '.graphcode', 'owner.lock');
+    mkdirSync(join(dir, '.graphcode'), { recursive: true });
+  });
+  afterEach(() => rmSync(dir, { recursive: true, force: true }));
+
+  /** Altert die Lock-Datei um `ms`, ohne zu warten. */
+  function age(ms: number): void {
+    const t = new Date(Date.now() - ms);
+    utimesSync(lockPath, t, t);
+  }
+
+  it('übernimmt einen pulslosen Lock, obwohl die PID lebt', () => {
+    const owner = new StoreLock(lockPath);
+    owner.acquire(); // PID = dieser Prozess, also nachweislich am Leben
+    age(120_000); // zwei Minuten kein Schlag
+    const other = new StoreLock(lockPath);
+    expect(() => other.acquire()).not.toThrow();
+    other.release();
+  });
+
+  it('übernimmt auch den Lock eines fremden Rechners, wenn er pulslos ist', () => {
+    writeFileSync(
+      lockPath,
+      JSON.stringify({ pid: 1234, hostname: 'ein-anderer-rechner', startedAt: '2020-01-01T00:00:00.000Z' }),
+    );
+    age(120_000);
+    const lock = new StoreLock(lockPath);
+    expect(() => lock.acquire()).not.toThrow();
+    lock.release();
+  });
+
+  it('lässt einen frisch gestempelten Lock IN RUHE — auch cross-host', () => {
+    writeFileSync(
+      lockPath,
+      JSON.stringify({ pid: 1234, hostname: 'ein-anderer-rechner', startedAt: '2020-01-01T00:00:00.000Z' }),
+    );
+    const lock = new StoreLock(lockPath);
+    expect(() => lock.acquire()).toThrow(StoreOwnershipError);
+  });
+
+  it('hält den eigenen Lock mit jedem Schlag jung', () => {
+    const owner = new StoreLock(lockPath);
+    owner.acquire();
+    age(120_000);
+    expect(owner.heartbeat()).toBe(true); // stempelt neu
+    const other = new StoreLock(lockPath);
+    expect(() => other.acquire()).toThrow(StoreOwnershipError);
+    owner.release();
+  });
+
+  it('meldet den Verlust, wenn ein anderer den Lock übernommen hat', () => {
+    const owner = new StoreLock(lockPath);
+    owner.acquire();
+    // Übernahme durch einen anderen Prozess: fremder Inhalt an derselben Stelle.
+    writeFileSync(lockPath, JSON.stringify({ pid: 1234, hostname: 'anderer', startedAt: '2026-01-01T00:00:00.000Z' }));
+    expect(owner.heartbeat()).toBe(false);
+  });
+
+  it('meldet den Verlust auch, wenn die Lock-Datei verschwindet', () => {
+    const owner = new StoreLock(lockPath);
+    owner.acquire();
+    rmSync(lockPath, { force: true });
+    expect(owner.heartbeat()).toBe(false);
+  });
+});

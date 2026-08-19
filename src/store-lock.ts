@@ -18,12 +18,23 @@
  *
  * @author andreas@siglochconsulting
  */
-import { openSync, writeSync, closeSync, readFileSync, rmSync, mkdirSync, statSync, existsSync } from 'node:fs';
+import { openSync, writeSync, closeSync, readFileSync, rmSync, mkdirSync, statSync, existsSync, utimesSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { hostname } from 'node:os';
 
 /** Grace period after which an UNPARSEABLE lockfile is treated as stale (a mid-write window is sub-second). */
 const STALE_CORRUPT_MS = 5000;
+
+/** Wie oft der Eigentümer seinen Lock stempelt (CR-GC-372). */
+const HEARTBEAT_MS = 30_000;
+
+/**
+ * Ohne Puls so lange gilt ein Lock als frei — auch wenn seine PID lebt.
+ *
+ * Drei Schläge Spielraum: ein einzelner verpasster Schlag (Lastspitze, kurzer
+ * Suspend) darf keinen Lock-Diebstahl auslösen.
+ */
+const STALE_HEARTBEAT_MS = 90_000;
 
 /** Identity written into the lockfile so only the true owner releases it. */
 export interface LockOwner {
@@ -53,8 +64,19 @@ export class StoreOwnershipError extends Error {
 export class StoreLock {
   private held = false;
   private readonly me: LockOwner;
+  private pulse: NodeJS.Timeout | null = null;
 
-  constructor(private readonly lockPath: string) {
+  constructor(
+    private readonly lockPath: string,
+    private readonly opts: {
+      /**
+       * Der Lock gehört uns nicht mehr (ein anderer hat ihn übernommen, während wir
+       * pulslos waren). Der Aufrufer MUSS die Session beenden — zwei Schreiber auf
+       * einem Kuzu-Store sind der Fall, den O2 ausschließt.
+       */
+      onLockLost?: () => void;
+    } = {},
+  ) {
     this.me = { pid: process.pid, hostname: hostname(), startedAt: new Date().toISOString() };
   }
 
@@ -69,6 +91,7 @@ export class StoreLock {
         writeSync(fd, JSON.stringify(this.me, null, 2));
         closeSync(fd);
         this.held = true;
+        this.startPulse();
         return;
       } catch (err) {
         if ((err as NodeJS.ErrnoException).code !== 'EEXIST') throw err;
@@ -81,12 +104,54 @@ export class StoreLock {
 
   /** Release the lock — only if THIS process still owns it (never remove a foreign lock). */
   release(): void {
+    this.stopPulse();
     if (!this.held) return;
     const owner = this.readOwner();
     if (owner && owner.pid === this.me.pid && owner.hostname === this.me.hostname) {
       rmSync(this.lockPath, { force: true });
     }
     this.held = false;
+  }
+
+  /**
+   * Ein Schlag: bestätigt, dass die Datei noch uns gehört, und stempelt sie.
+   *
+   * Gestempelt wird per `utimesSync`, nicht durch Neuschreiben des Inhalts — ein
+   * Zeitstempel kann nicht halb geschrieben sein, ein JSON-Dokument schon (und
+   * `reclaimIfStale` liest genau diese Datei aus einem anderen Prozess).
+   *
+   * Rückgabe `false` heißt: der Lock ist weg oder gehört einem anderen. Öffentlich,
+   * weil der Timer nur der übliche Auslöser ist — ein Aufrufer darf jederzeit fragen.
+   */
+  heartbeat(): boolean {
+    const owner = this.readOwner();
+    if (!owner || owner.pid !== this.me.pid || owner.hostname !== this.me.hostname) return false;
+    try {
+      const now = new Date();
+      utimesSync(this.lockPath, now, now);
+      return true;
+    } catch {
+      return false; // Datei verschwunden zwischen Lesen und Stempeln
+    }
+  }
+
+  private startPulse(): void {
+    this.stopPulse();
+    this.pulse = setInterval(() => {
+      if (this.heartbeat()) return;
+      // Verloren: nicht mehr freigeben (das wäre ein fremder Lock) und den Aufrufer
+      // informieren, damit die Session endet statt weiterzuschreiben.
+      this.stopPulse();
+      this.held = false;
+      this.opts.onLockLost?.();
+    }, HEARTBEAT_MS);
+    this.pulse.unref?.(); // ein Lock darf den Prozess nicht am Leben halten
+  }
+
+  private stopPulse(): void {
+    if (!this.pulse) return;
+    clearInterval(this.pulse);
+    this.pulse = null;
   }
 
   private readOwner(): LockOwner | null {
@@ -108,6 +173,15 @@ export class StoreLock {
         return true;
       }
       return false;
+    }
+    // Pulslos = frei, egal was die PID sagt (CR-GC-372): nach einem Reboot kann die
+    // Nummer im Lock einem fremden Prozess gehören, und ein hängender Host lebt für
+    // `kill(pid, 0)`, bedient aber niemanden. Gilt auch cross-host — der Puls ist die
+    // eine Aussage, die über Rechnergrenzen hinweg trägt.
+    const age = this.lockAgeMs();
+    if (age !== null && age > STALE_HEARTBEAT_MS) {
+      rmSync(this.lockPath, { force: true });
+      return true;
     }
     // Cross-host: cannot verify liveness → never reclaim (safest: refuse).
     if (owner.hostname !== this.me.hostname) return false;

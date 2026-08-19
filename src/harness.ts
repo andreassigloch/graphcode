@@ -116,6 +116,12 @@ export class GraphCodeHarness {
        * gets, never a second value.
        */
       graphcodeConfig?: LoadedConfig;
+      /**
+       * Der Store-Lock wurde uns entzogen (CR-GC-372): ein anderer Host hat ihn
+       * übernommen, während dieser hier pulslos war. Der Aufrufer beendet daraufhin
+       * seine Session — weiterschreiben hieße zwei Schreiber auf einem Kuzu-Store.
+       */
+      onLockLost?: () => void;
     },
   ) {
     this.config = HarnessConfigSchema.parse(config);
@@ -132,7 +138,7 @@ export class GraphCodeHarness {
     this.engine.register(this.descriptor.rules ?? []);
     this.storeDir = opts?.lockDir ?? join(this.config.repoRoot, '.graphcode');
     this.storePath = opts?.storePath ?? null;
-    this.storeLock = new StoreLock(join(this.storeDir, 'owner.lock'));
+    this.storeLock = new StoreLock(join(this.storeDir, 'owner.lock'), { onLockLost: opts?.onLockLost });
   }
 
   /**

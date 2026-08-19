@@ -206,7 +206,15 @@ export async function serveStdio(opts?: {
     let bridge: HostBridge | null = null;
     const harness = await createHarness(
       { repoRoot, scope },
-      { onUpdateEvent: (event: LiveUpdateEvent) => bridge?.broadcast(event) },
+      {
+        onUpdateEvent: (event: LiveUpdateEvent) => bridge?.broadcast(event),
+        // Der Store gehoert jetzt einem anderen Host (CR-GC-372). Weiterlaufen hiesse
+        // zweiter Schreiber auf einem Kuzu-Store — also endet diese Session.
+        onLockLost: () => {
+          process.stderr.write('[graphcode] host: store lock taken over by another host — ending this session\n');
+          void lifecycle.shutdown('store lock lost').then(() => process.exit(0));
+        },
+      },
     );
     await harness.initialize(); // the O2 lock IS the election (CR-GC-218)
     // CR-GC-329: einmalige Notiz, WELCHE Schwellen gelten. Fehlt die Config, wird das

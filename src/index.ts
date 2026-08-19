@@ -180,7 +180,11 @@ export const KUZU_DIR = '.graphcode/kuzu';
  */
 export async function createHarness(
   config: z.input<typeof HarnessConfigSchema>,
-  opts?: { onUpdateEvent?: (event: import('./emit.js').LiveUpdateEvent) => void },
+  opts?: {
+    onUpdateEvent?: (event: import('./emit.js').LiveUpdateEvent) => void;
+    /** Store-Lock entzogen (CR-GC-372) — der Aufrufer beendet seine Session. */
+    onLockLost?: () => void;
+  },
 ): Promise<GraphCodeHarness> {
   const cfg = HarnessConfigSchema.parse(config);
   const kuzuPath = join(cfg.repoRoot, KUZU_DIR);
@@ -208,5 +212,6 @@ export async function createHarness(
     lockDir: dirname(kuzuPath),
     storePath: kuzuPath,
     graphcodeConfig,
+    onLockLost: opts?.onLockLost,
   });
 }
