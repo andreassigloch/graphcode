@@ -14,6 +14,9 @@ npx @sigloch/graphcode init          # one-time setup: scaffold .mcp.json, GRAPH
 npx @sigloch/graphcode mcp           # THE server. Your agent host runs this via .mcp.json and it
                                      # brings up all three: MCP-stdio, the read-only HTTP/SSE
                                      # bridge, and the GVE dashboard. Nothing else to start.
+npx @sigloch/graphcode status        # läuft mein Host, und wo ist MEIN Dashboard? Read-only:
+                                     # prüft per api/dashboard die REPO-IDENTITÄT des Viewers,
+                                     # statt einen Port zu raten. Exit 1, wenn eines von beiden fehlt.
 npx @sigloch/graphcode host          # FALLBACK only — the bridge alone, for a repo with no agent
                                      # session running. Alongside a live `mcp` it hits the store lock.
 npx @sigloch/graphcode run "<intent>" # author the graph via the embedded executor — a local LLM
@@ -67,10 +70,20 @@ On an empty repo (no model yet) start from the intent instead:
 > Lies GRAPHCODE.md, dann leg mit `se:generate` los: "&lt;was das System tun soll, in einem Satz&gt;"
 
 **4. Dashboard — already running.** `graphcode mcp` starts the GVE viewer itself, along with the
-read-only `/health` + `/events` (SSE) bridge. Do **not** start a second server: read the URL from
-`docs/views/dashboard.url`, which GVE writes with its actual bound address on startup and removes on
-shutdown (the port is dynamic — Vite bumps on conflict, so never assume one). File absent = not
-running. Opt out with `GRAPHCODE_NO_GVE=1`; the bridge port comes from `GRAPHCODE_HOST_PORT` in
+read-only `/health` + `/events` (SSE) bridge. Do **not** start a second server — ask where yours is:
+
+```bash
+npx @sigloch/graphcode status
+graphcode status — auth-service  (/Users/you/dev/auth-service)
+  MCP-Host    OK             pid 40001, seit 2026-08-19T09:12:03.000Z
+  Dashboard   OK             http://localhost:4318/
+```
+
+`status` reads `docs/views/dashboard.url` (GVE writes its actual bound address there on startup,
+removes it on shutdown) and then asks that instance `api/dashboard` **which repo it serves** —
+because the port is dynamic (Vite bumps on conflict) and a neighbouring repo's viewer can end up
+on the address yours left behind. Only an instance serving THIS repo is reported as yours; anything
+else reads `fremdes Repo` with the repo it actually serves. Opt out with `GRAPHCODE_NO_GVE=1`; the bridge port comes from `GRAPHCODE_HOST_PORT` in
 `.mcp.json` `env`, which `init`/`update` scaffolds per repo.
 
 **5. After upgrading the package:** run `npx @sigloch/graphcode update` — refreshes `.mcp.json`,

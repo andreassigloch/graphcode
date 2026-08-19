@@ -13,6 +13,9 @@
  *                                   (CR-GC-311, FCHAIN-recall) — reads the snapshot
  *                                   via `git show`, so the working tree is never
  *                                   touched and a failure leaves the store untouched.
+ *   - `graphcode status`            read-only report (CR-GC-368): does a live process own
+ *                                   the store, and which viewer serves THIS repo? The only
+ *                                   verb that prints on stdout — see the case below.
  *   - `graphcode init|update|remove` self-contained scaffold lifecycle (CR-GC-112,
  *                                   MOD-cli) — installs/refreshes/removes the harness
  *                                   artifacts in the target repo.
@@ -29,12 +32,16 @@ import { scaffold, syncSkills, type CliCommand } from './scaffold.js';
 import { executeRun, parseExecutorEnv } from './run-verb.js';
 import { executeImportCode } from './import-code-verb.js';
 import { executeRewind, RewindError } from './rewind.js';
+import { collectStatus, formatStatus, statusIsHealthy } from './status.js';
 
 const USAGE = `graphcode — governed graph substrate (MCP-stdio)
 
 Usage:
   graphcode mcp     Start the MCP-stdio server (bind from .mcp.json)
   graphcode host    Start the read-only HOST + SSE bridge (live viewer)
+  graphcode status  Läuft mein Host, und wo ist MEIN Dashboard? Read-only —
+                    prüft die Repo-Identität des Viewers, statt eine Adresse
+                    zu raten. Exit 1, wenn eines von beiden fehlt.
   graphcode run "<intent>"  Author the graph via the embedded executor (no
                     foreign harness). Env: GRAPHCODE_LLM_BASE_URL +
                     GRAPHCODE_LLM_MODEL (required), GRAPHCODE_LLM_BACKEND=
@@ -169,6 +176,13 @@ async function main(): Promise<void> {
         }
         throw err;
       }
+    }
+    case 'status': {
+      const status = await collectStatus(process.cwd());
+      // Einziges Verb, das auf stdout schreibt: hier läuft kein JSON-RPC-Transport,
+      // und die Adresse soll kopier- und pipebar sein (`graphcode status | grep`).
+      process.stdout.write(formatStatus(status));
+      process.exit(statusIsHealthy(status) ? 0 : 1);
     }
     case 'init':
     case 'update':
