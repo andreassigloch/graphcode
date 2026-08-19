@@ -1,6 +1,6 @@
 {
   "name": "@sigloch/graphcode",
-  "version": "0.13.2",
+  "version": "0.14.0",
   "description": "Governed graph substrate for coding agents (Claude Code, OpenCode, any MCP-stdio host) — Apply-Gate + on-disk Kuzu store + MCP tools",
   "type": "module",
   "main": "dist/index.js",
@@ -46,7 +46,7 @@
     "@sigloch/contracts": "^4.2.0",
     "@sigloch/graph-api-core": "^3.2.0",
     "@sigloch/graph-cypher-wasm": "^0.2.3",
-    "@sigloch/graph-view-edit": "^0.2.0",
+    "@sigloch/graph-view-edit": "^0.3.0",
     "@sigloch/graphcode-client": "^0.9.0",
     "@sigloch/graphify": "^0.2.0",
     "@sigloch/learning-core": "^0.2.0",
