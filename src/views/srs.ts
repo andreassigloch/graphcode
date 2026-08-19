@@ -114,7 +114,8 @@ export function renderSrs(graph: Graph, name: string): string {
   const heading = (level: number, path: number[] | null, n: GraphNode): string =>
     `${'#'.repeat(Math.min(level, 6))} ${path ? `${num(path)}  ` : ''}\`${n.uid}\` — ${cell(n.name)}`;
 
-  /** REQ nodes satisfied by uid (satisfy also carries FUNC→UC — REQ only). */
+  /** REQ nodes satisfied by uid. The filter also narrows `GraphNode | undefined`, so it stays
+   *  even though `FUNC -satisfy-> UC` is gone from the meta-model (CR-GC-366). */
   const satisfiedReqs = (uid: string): GraphNode[] =>
     (satisfy.fwd.get(uid) ?? [])
       .map((r) => idx.get(r))

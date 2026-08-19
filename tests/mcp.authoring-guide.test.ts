@@ -50,7 +50,10 @@ describe('TEST-graph-authoring-guide (CR-GC-231): legal edges from the meta-mode
     expect(out).toEqual(expect.arrayContaining(['compose->REQ', 'compose->FCHAIN']));
     // Incoming: SYS compose, FUNC satisfy, ACTOR/FLOW io.
     const inc = guide.incoming.map((e) => `${e.sourceType}-${e.edgeType}`);
-    expect(inc).toEqual(expect.arrayContaining(['SYS-compose', 'FUNC-satisfy', 'ACTOR-io', 'FLOW-io']));
+    // CR-GC-366: 'FUNC-satisfy' ist hier weg — ein UC wird nicht mehr direkt von einer FUNC
+    // erfuellt, sondern ueber `UC -compose-> FCHAIN -compose-> FUNC` erreicht.
+    expect(inc).toEqual(expect.arrayContaining(['SYS-compose', 'ACTOR-io', 'FLOW-io']));
+    expect(inc).not.toContain('FUNC-satisfy');
     // requiredAttrs is present (an array, from the node descriptor).
     expect(Array.isArray(guide.requiredAttrs)).toBe(true);
     // Carries the meta-model descriptions/cardinality (not a bare pair list).

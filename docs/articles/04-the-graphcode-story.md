@@ -138,12 +138,12 @@ is what makes everything below it comparable.
 
 ### 2. The grammar — how things may connect
 
-36 legal connection patterns. Which kind of element may be connected to which, and in what way.
+35 legal connection patterns. Which kind of element may be connected to which, and in what way.
 An illegal connection is not a warning in a report you might read — it never enters the graph.
 
 ### 3. Readiness — is it complete and well-formed?
 
-72 engine rules feed 8 readiness dimensions: requirements, use cases, functional architecture,
+74 engine rules feed 8 readiness dimensions: requirements, use cases, functional architecture,
 module allocation, verification, interfaces, change requests, milestones. Each area gets a percentage
 and a threshold.
 

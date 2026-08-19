@@ -159,8 +159,8 @@ describe('T-D1 (CR-GC-340): every published count matches the living source', ()
     expect(claims().map((c) => `${c.phrase}=${c.actual()}`)).toEqual([
       'element types=13',
       'connection types=7',
-      'legal connection patterns=36',
-      'engine rules=72',
+      'legal connection patterns=35',
+      'engine rules=74',
       'readiness dimensions=8',
       'MCP tools=25',
     ]);

@@ -96,6 +96,7 @@ const VERIFY_EDGE = 'verify';
 const IO_EDGE = 'io';
 const ALLOCATE_EDGE = 'allocate';
 const DATA_RELATION_EDGE = 'relation';
+const COMPOSE_EDGE = 'compose';
 
 /**
  * Job-Scheibe (CR-GC-367) — was ein Agent aufmachen muss, um EINEN Job zu tun.
@@ -187,6 +188,25 @@ function buildContextSlice(
     }
     frontier = next;
   }
+  // Wirkketten-Rueckkanten (CR-GC-366): seit `FUNC -satisfy-> UC` aus dem Meta-Modell
+  // entfaellt, ist `UC -compose-> FCHAIN -compose-> FUNC` der EINZIGE Weg von einer Funktion
+  // zu ihrem Use Case. Ohne diese zwei Hops verloere die Spec-Closure genau das, was die
+  // Tool-Beschreibung zusagt ("die REQ/UC, die sie erfuellt"). Bewusst an den Quelltyp
+  // gebunden statt an `compose` allgemein: ein `MS -compose-> FUNC` ist ein DOWNSTREAM-
+  // Container und bleibt draussen (der Unterschied zu graph_impact), ein
+  // `FUNC -compose-> FUNC` waere Zerlegung, nicht Spezifikation.
+  const typeOf = new Map(graph.nodes.map((n) => [n.uid, n.type]));
+  for (const e of graph.edges) {
+    if (e.edgeType === COMPOSE_EDGE && typeOf.get(e.sourceId) === 'FCHAIN' && keepNodes.has(e.targetId)) {
+      addEdge(e);
+    }
+  }
+  for (const e of graph.edges) {
+    if (e.edgeType === COMPOSE_EDGE && typeOf.get(e.sourceId) === 'UC' && keepNodes.has(e.targetId)) {
+      addEdge(e);
+    }
+  }
+
   // verify back-edges: every TEST that verifies a REQ already in the slice.
   for (const e of graph.edges) {
     if (e.edgeType === VERIFY_EDGE && keepNodes.has(e.targetId)) addEdge(e);

@@ -161,6 +161,18 @@ export const HELP_CONTENT: Record<string, HelpContentEntry> = {
       'Your system has several functions but no described data passing between them, so the parts look unconnected → add the data each function hands to the next.',
     se: 'Layer presence: with more than one `FUNC` the model must carry `FLOW` and `SCHEMA` elements. A function layer with no data layer is an incomplete decomposition, not a small model.',
   },
+  'R-30': {
+    plain:
+      'This function sits in no chain of effects, so nobody can say which use case it serves — and the checks that would prove its wiring never look at it → add it to the chain of the use case it belongs to.',
+    se: "FUNC belongs to a function chain (CR-GC-366): a `FUNC` needs an incoming `FCHAIN -compose-> FUNC`, directly or inherited from a parent `FUNC` it decomposes from. R-15 demanded the opposite direction — that a chain has functions — and nothing demanded that a function has a chain. That gap is load-bearing: IO-01 (FLOW paths between chain members) and R-21 (integration test per chain) both scope themselves to a chain, so a function outside every chain falls through both nets silently. Severity `warning`, not error: on a real model this fires on the majority of functions, and an error would block every further mutation through the delta gate.",
+  },
+
+  'R-31': {
+    plain:
+      'This function has no input or no output, so it is a dead block in the picture — only an actor is allowed to be an end point → connect it to a flow on the missing side.',
+    se: "FUNC is wired (CR-GC-366): a `FUNC` needs at least one incoming `FLOW -io-> FUNC` and one outgoing `FUNC -io-> FLOW`. Only an `ACTOR` may terminate a chain. R-10 asks the same question from the FLOW side ('does this flow have a producer and a consumer?') and therefore never sees a function with no io edge at all — it does not appear in the FLOW loop. IO-01 presupposes chain membership and misses it too. One finding per FUNC naming the missing side(s), not one per side: otherwise the counter exceeds its own denominator contribution, the mis-measurement documented in CR-SM-242.",
+  },
+
   'R-29': {
     plain:
       'Two acceptances claim the same test file, so a red run cannot be traced to one of them and the gate counts that evidence twice → give the file to the one acceptance it really proves, or split it.',

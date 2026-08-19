@@ -30,8 +30,11 @@ describe('TEST-graph-context: upstream spec-closure (CR-GC-213)', () => {
   let tmp: string;
   let harness: GraphCodeHarness;
 
-  // FN-1 satisfies REQ-1 + UC-1; TST-1 verifies REQ-1; FLOW-1 feeds FN-1 (io) and is typed by
-  // SCH-1 (relation); FN-1 is allocated to MOD-1; MS-1 COMPOSES FN-1 (downstream container).
+  // FN-1 satisfies REQ-1 and reaches UC-1 through its chain (CR-GC-366: `FUNC -satisfy-> UC` is
+  // no longer a legal pattern — `UC -compose-> FCHAIN -compose-> FUNC` is the only path from a
+  // function to its use case); TST-1 verifies REQ-1; FLOW-1 feeds FN-1 (io) and is typed by
+  // SCH-1 (relation); FN-1 is allocated to MOD-1; MS-1 COMPOSES FN-1 (downstream container) —
+  // the type-bound back-edge must let the chain in and keep the milestone out.
   // REQ-2 / TST-2 are an unrelated component.
   const fixture = {
     elements: [
@@ -42,13 +45,15 @@ describe('TEST-graph-context: upstream spec-closure (CR-GC-213)', () => {
       { id: 'FLOW-1', type: 'FLOW', name: 'DocSet', description: 'primary doc + attachments' },
       { id: 'SCH-1', type: 'SCHEMA', name: 'SlicerOutput', description: 'candidate graph shape' },
       { id: 'MOD-1', type: 'MOD', name: 'slicer', description: 'host module' },
+      { id: 'FC-1', type: 'FCHAIN', name: 'Slice a doc', description: 'the chain UC-1 decomposes into' },
       { id: 'MS-1', type: 'MS', name: 'Milestone Slicer', description: 'downstream container' },
       { id: 'REQ-2', type: 'REQ', name: 'Unrelated', description: 'other component' },
       { id: 'TST-2', type: 'TEST', name: 'Unrelated test', description: 'verifies REQ-2' },
     ],
     traces: [
       { source: 'FN-1', target: 'REQ-1', type: 'satisfy' },
-      { source: 'FN-1', target: 'UC-1', type: 'satisfy' },
+      { source: 'UC-1', target: 'FC-1', type: 'compose' }, // chain back-edge hop 2 → included
+      { source: 'FC-1', target: 'FN-1', type: 'compose' }, // chain back-edge hop 1 → included
       { source: 'TST-1', target: 'REQ-1', type: 'verify' }, // back-edge → included
       { source: 'FLOW-1', target: 'FN-1', type: 'io' }, // flow feeds FN-1 → included
       { source: 'FLOW-1', target: 'SCH-1', type: 'relation' }, // data contract → included
@@ -82,7 +87,7 @@ describe('TEST-graph-context: upstream spec-closure (CR-GC-213)', () => {
 
     expect(rootId).toBe('FN-1');
     expect(uidsFromFormatE(formatE)).toEqual(
-      new Set(['FN-1', 'REQ-1', 'UC-1', 'TST-1', 'FLOW-1', 'SCH-1', 'MOD-1']),
+      new Set(['FN-1', 'REQ-1', 'UC-1', 'FC-1', 'TST-1', 'FLOW-1', 'SCH-1', 'MOD-1']),
     );
   });
 

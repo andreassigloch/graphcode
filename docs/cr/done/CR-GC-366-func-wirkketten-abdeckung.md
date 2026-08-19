@@ -1,6 +1,6 @@
 # CR-GC-366 — Wirkketten-Abdeckung: jede FUNC gehört in eine Wirkkette
 
-**Status:** open
+**Status:** done (2026-08-19)
 **Datum:** 2026-08-19
 **Herkunft:** `docs/spikes/SPIKE-GC-minimal-whitebox-RESULTS.md` — der Wirkketten-Radius
 („welche UC sind von dieser Funktionsänderung betroffen") ist deterministisch berechenbar und
@@ -76,3 +76,57 @@ wäre ein Parallelpfad.
 `graph_effect_chain(uid)` — der Wirkketten-Radius als read-only Query („welche FCHAIN/UC sind
 betroffen"), Gegenstück zu `graph_impact`. Erst sinnvoll, wenn R-30 die Abdeckung treibt:
 eine Query, die für 57 % der Funktionen leer zurückkommt, erzieht niemanden.
+
+---
+
+## Ergebnis (2026-08-19)
+
+Der Zuschnitt hat sich beim Bauen an drei Stellen geaendert — alle drei auf Entscheidung:
+
+**`FUNC -satisfy-> UC` ist gestrichen**, nicht nur als zweiter Weg geduldet. Es war die billigere
+Abkuerzung: eine FUNC konnte einen UC bedienen, ohne in dessen Kette zu stehen, womit IO-01 und
+R-21 sie nie sahen. ONTOLOGY 6.0.0 → 7.0.0. Damit entfaellt auch der zweite Disjunkt in R-30 —
+die Regel fragt nur noch nach der FCHAIN.
+
+**R-31 kam dazu.** Die Messung fand eine groessere Luecke als die im CR beschriebene: 54 FUNC ohne
+io-Ein- oder -Ausgang gegen 60 ohne Kette. R-10 stellt dieselbe Frage vom FLOW aus und sieht eine
+FUNC ohne jede io-Kante nie.
+
+**R-02 war zieltyp-blind.** Ein `satisfy` auf einen UC schaltete es stumm, obwohl kein Requirement
+erfuellt war — 6 von 33 Faellen verdeckt.
+
+### Zwei Design-Entscheidungen, die nicht im CR standen
+
+- R-30 vererbt Ketten-Mitgliedschaft ueber `FUNC -compose-> FUNC` nach unten. Ohne das waeren 76
+  der 82 FUNC Fehlbefunde, weil sie Kinder sind.
+- R-31 meldet **einen** Befund je FUNC, nicht je fehlender Seite — sonst uebersteigt der Zaehler
+  seinen Nenner-Beitrag (CR-SM-242).
+
+### Gemessen (82 FUNC)
+
+| | vorher | nachher |
+|---|---|---|
+| R-18 (error) | 26 | **0** |
+| R-30 | — | 60 |
+| R-31 | — | 54 |
+| R-02 | 27 | 33 |
+
+**error-Verstoesse im Selbstmodell gesamt: 0.** 808/808 Tests gruen.
+
+### Rollout
+
+contracts 5.0.0 (+5.0.1: Selbst-Dependency entfernt, die eine contracts-4.2.0-Kopie ins
+node_modules nistete) → graph-api-core 4.0.0 → graphcode-client 0.10.0 · se-optimizer 0.6.0 ·
+se-steering 0.7.0 · graph-cypher-wasm 0.2.4 → graph-view-edit 0.4.0 → graphcode.
+
+`se-optimizer` trug echte Arbeit: `CLASS_MAP` deckt R-30/R-31 als **Operator** ab; ohne Eintrag
+waeren sie als `unclassified` durch `applyRule`/`suggestEdits` gefallen, also wirkungslos.
+
+### Nicht Teil dieses CRs
+
+Die 13 Waisen, die ihre satisfy-Kante verloren haben, sind jetzt R-30-Warnungen — sie waren es
+vorher schon (R-30 zaehlt 60 vorher wie nachher), die Kante hat das nur verdeckt. Ihre
+Ketten-Zuordnung ist gate-getriebene Folgearbeit. Analyse liegt vor: 8 → `FCHAIN-live-update`,
+1 → `FCHAIN-impact-testing`, `FUNC-import` → `capture`, `FUNC-merge-nodes` → `codec-roundtrip`.
+`FUNC-harness-cli` (npx-Lifecycle) und `FUNC-migrate-schema` (Re-Validierung bei Version-Bump)
+passen in keine bestehende Kette und brauchen eine eigene.

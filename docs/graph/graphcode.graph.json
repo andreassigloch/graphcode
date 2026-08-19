@@ -10122,13 +10122,6 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
-      "source": "FUNC-decode",
-      "target": "UC-code-quality",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
       "source": "FUNC-deduce-tests",
       "target": "MOD-mcp-tools",
       "type": "allocate",
@@ -10139,13 +10132,6 @@
       "source": "FUNC-deduce-tests",
       "target": "REQ-test-runnable-binding",
       "type": "satisfy"
-    },
-    {
-      "source": "FUNC-deduce-tests",
-      "target": "UC-efficient-testing",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-19T00:00:00.000Z"
     },
     {
       "source": "FUNC-emit-trajectory",
@@ -10178,13 +10164,6 @@
     {
       "source": "FUNC-emit-trajectory",
       "target": "REQ-trajectory-emit",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-emit-trajectory",
-      "target": "UC-reduced-llm",
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
@@ -10237,20 +10216,6 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
-      "source": "FUNC-emit-update-event",
-      "target": "UC-code-quality",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-emit-update-event",
-      "target": "UC-live-graph-view",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-17T00:00:00.000Z"
-    },
-    {
       "source": "FUNC-encode",
       "target": "MOD-codec",
       "type": "allocate",
@@ -10291,13 +10256,6 @@
       "type": "satisfy"
     },
     {
-      "source": "FUNC-encode",
-      "target": "UC-code-quality",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
       "source": "FUNC-evaluate-rules",
       "target": "MOD-harness",
       "type": "allocate",
@@ -10319,13 +10277,6 @@
     {
       "source": "FUNC-evaluate-rules",
       "target": "REQ-rule-enforcement",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-evaluate-rules",
-      "target": "UC-code-quality",
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
@@ -10361,13 +10312,6 @@
     {
       "source": "FUNC-export-markdown",
       "target": "REQ-pre-export-markdown",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-export-markdown",
-      "target": "UC-code-quality",
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
@@ -10526,20 +10470,6 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
-      "source": "FUNC-graph-impact",
-      "target": "UC-efficient-testing",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-graph-impact",
-      "target": "UC-reduced-llm",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
       "source": "FUNC-graph-suggest",
       "target": "MOD-mcp-tools",
       "type": "allocate"
@@ -10625,13 +10555,6 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
-      "source": "FUNC-harness-cli",
-      "target": "UC-code-quality",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
       "source": "FUNC-health-endpoint",
       "target": "MOD-host-bridge",
       "type": "allocate",
@@ -10686,13 +10609,6 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
-      "source": "FUNC-import",
-      "target": "UC-code-quality",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
       "source": "FUNC-import-doc",
       "target": "MOD-skills",
       "type": "allocate"
@@ -10740,13 +10656,6 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
-      "source": "FUNC-merge-nodes",
-      "target": "UC-code-quality",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
       "source": "FUNC-migrate-schema",
       "target": "MOD-harness",
       "type": "allocate",
@@ -10777,13 +10686,6 @@
     {
       "source": "FUNC-migrate-schema",
       "target": "REQ-schema-version-migration",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-migrate-schema",
-      "target": "UC-code-quality",
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
@@ -10842,13 +10744,6 @@
       "type": "satisfy"
     },
     {
-      "source": "FUNC-mutate",
-      "target": "UC-code-quality",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
       "source": "FUNC-next-step",
       "target": "MOD-steering",
       "type": "allocate"
@@ -10905,23 +10800,9 @@
       "type": "satisfy"
     },
     {
-      "source": "FUNC-render-artifacts",
-      "target": "UC-live-graph-view",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-19T00:00:00.000Z"
-    },
-    {
       "source": "FUNC-render-graph",
       "target": "MOD-dashboard",
       "type": "allocate",
-      "weight": 1,
-      "created_at": "2026-06-19T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-render-graph",
-      "target": "UC-live-graph-view",
-      "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-19T00:00:00.000Z"
     },
@@ -10933,13 +10814,6 @@
       "created_at": "2026-06-19T00:00:00.000Z"
     },
     {
-      "source": "FUNC-render-health",
-      "target": "UC-live-graph-view",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-19T00:00:00.000Z"
-    },
-    {
       "source": "FUNC-render-impact",
       "target": "MOD-dashboard",
       "type": "allocate",
@@ -10947,23 +10821,9 @@
       "created_at": "2026-06-19T00:00:00.000Z"
     },
     {
-      "source": "FUNC-render-impact",
-      "target": "UC-live-graph-view",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-19T00:00:00.000Z"
-    },
-    {
       "source": "FUNC-render-impl-gates",
       "target": "MOD-dashboard",
       "type": "allocate",
-      "weight": 1,
-      "created_at": "2026-06-19T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-render-impl-gates",
-      "target": "UC-live-graph-view",
-      "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-19T00:00:00.000Z"
     },
@@ -10980,23 +10840,9 @@
       "type": "satisfy"
     },
     {
-      "source": "FUNC-render-readiness",
-      "target": "UC-live-graph-view",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-19T00:00:00.000Z"
-    },
-    {
       "source": "FUNC-render-recommendations",
       "target": "MOD-dashboard",
       "type": "allocate",
-      "weight": 1,
-      "created_at": "2026-06-19T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-render-recommendations",
-      "target": "UC-live-graph-view",
-      "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-19T00:00:00.000Z"
     },
@@ -11020,20 +10866,6 @@
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-render-views",
-      "target": "UC-code-quality",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-render-views",
-      "target": "UC-live-graph-view",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-17T00:00:00.000Z"
     },
     {
       "source": "FUNC-reseed",
@@ -11090,13 +10922,6 @@
     {
       "source": "FUNC-save-graph",
       "target": "REQ-disk-persistence",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-save-graph",
-      "target": "UC-code-quality",
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
@@ -11220,13 +11045,6 @@
       "source": "FUNC-subscribe-updates",
       "target": "MOD-dashboard",
       "type": "allocate",
-      "weight": 1,
-      "created_at": "2026-06-19T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-subscribe-updates",
-      "target": "UC-live-graph-view",
-      "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-19T00:00:00.000Z"
     },
@@ -13338,5 +13156,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 109
+  "graphVersion": 110
 }
