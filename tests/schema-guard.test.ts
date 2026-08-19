@@ -12,7 +12,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { mkdtempSync, mkdirSync, rmSync, copyFileSync, writeFileSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
-import { KuzuAdapter } from '@sigloch/graph-cypher-wasm';
+import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import type { OntologyDescriptor } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/harness.js';

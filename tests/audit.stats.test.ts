@@ -16,7 +16,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { KuzuAdapter } from '@sigloch/graph-cypher-wasm';
+import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR, AUDIT_FILE } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/harness.js';
 import { bindToolsWithContext, type MCPToolRegistry } from '../src/mcp-tools.js';
