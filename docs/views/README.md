@@ -1,15 +1,17 @@
 # Views
 
-**Live dashboard (GVE):** read [`dashboard.url`](dashboard.url) — GVE writes its actual bound
-address there when it starts against this repo and removes it on shutdown (the port is dynamic:
-Vite bumps on conflict, so never assume the 4317 default). File absent = server not running.
+**Live dashboard (GVE):** ask `npx @sigloch/graphcode status` — it names the host and the URL of
+the viewer serving THIS repo. The machine-readable source is [`dashboard.url`](dashboard.url),
+which GVE writes with its actual bound address on startup and removes on shutdown; file absent =
+nothing running. The address is stable per repo (derived from the repo path, 43000–43999), so a
+bookmark survives restarts.
 
 You normally start nothing: `graphcode mcp` — which your agent host launches from `.mcp.json` —
-spawns GVE itself, along with the read-only SSE bridge. Start it by hand only against a repo with
-no agent session running:
+spawns GVE itself, along with the read-only SSE bridge, and takes it down again when the session
+ends. Start it by hand only against a repo with no agent session running:
 
 ```bash
-npx @sigloch/graph-view-edit --repo /path/to/graphcode   # then: cat docs/views/dashboard.url
+npx @sigloch/graph-view-edit --repo /path/to/graphcode   # then: graphcode status
 ```
 
 The `.md` files in this directory are **GENERATED** by `graph_export` /
