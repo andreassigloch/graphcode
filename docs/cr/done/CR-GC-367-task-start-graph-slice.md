@@ -75,7 +75,7 @@ liefert für CR-GC-114 **12/12** und für CR-GC-115 **16/16** der real geändert
 0 CR/MS im Slice, 16 bzw. 26 Knoten (< 5 % des Graphen). Live gemessen: 1740 Token für
 CR-GC-114. Volle Suite grün (808 Tests).
 
-Offen geblieben (→ CR-GC-368): 18 % der Scheibe sind Provenienz-Stempel
+Offen geblieben (→ CR-GC-373): 18 % der Scheibe sind Provenienz-Stempel
 (`created_at`/`updated_at`/`ranAt`, `weight:1`), die für „implementiere das" nichts tragen.
 
 ## Was dieser CR NICHT entscheidet
