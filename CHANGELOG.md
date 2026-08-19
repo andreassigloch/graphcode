@@ -1,5 +1,44 @@
 # @sigloch/graphcode
 
+## 0.14.0 — 2026-08-19
+
+### Fixed — ein Host stirbt mit seiner Session (CR-GC-370)
+
+**Elf MCP-Hosts liefen verwaist, fuenf davon drei Tage alt, und hielten die Store-Locks ihrer
+Repos.** `serveStdio` hatte keinen Shutdown-Pfad: jede neue Session lief als Proxy eines laengst
+geschlossenen Editors, ohne Dashboard. Jetzt raeumt **ein** `SessionLifecycle` auf Signale *und*
+stdin-EOF rueckwaerts ab — Viewer, Bridge, `host.sock`, Store-Lock zuletzt, mit hartem Deckel,
+damit ein haengender Store den Lock nicht behaelt.
+
+### Added — Herzschlag im Store-Lock (CR-GC-372)
+
+Der Eigentuemer stempelt seinen Lock alle 30 s (`utimes`, kein zerrissener Lesevorgang). Ein Lock
+ohne Puls (> 90 s) gilt als frei — auch bei lebender PID und cross-host. Das entschaerft
+PID-Wiederverwendung nach Reboot und haengende Hosts. Wird der Lock uebernommen, meldet der
+Alteigentuemer `onLockLost` und beendet seine Session, statt als zweiter Schreiber weiterzulaufen.
+
+### Added — das Dashboard wird beaufsichtigt, nicht nur gestartet (CR-GC-371)
+
+Stirbt der Viewer mitten in der Session, startet `superviseGve` ihn neu (1 s / 3 s / 10 s, dann
+Aufgabe mit ehrlicher Meldung; Budget-Reset nach 60 s stabiler Laufzeit). `stop()` beim Sessionende
+unterdrueckt jeden Neustart. Start + Aufsicht liegen jetzt in `src/gve.ts`, `mcp-server.ts` faellt
+von 473 auf 335 Zeilen.
+
+### Added — `graphcode status` zeigt MEIN Dashboard (CR-GC-368)
+
+Read-only-Bericht auf zwei Fragen: besitzt ein lebender Prozess den Store, und welcher Viewer
+bedient *dieses* Repo? Die Adresse aus `docs/views/dashboard.url` wird nicht geglaubt, sondern per
+`api/dashboard` auf Repo-Identitaet geprueft (`realpath` beidseitig) — ein Nachbar-Viewer auf
+demselben Port meldet sich als „fremdes Repo", einer ohne `repoRoot`-Feld als „unbekannt".
+
+### Changed — GVE als Dependency statt `npx -y` (CR-GC-369)
+
+Der Viewer startet aus `node_modules`, mit dem node des Hosts (`process.execPath`): kein zweiter
+Registry-Roundtrip beim Erststart, offline lauffaehig, Version an semver gebunden statt an
+`latest`. Damit steigt `@sigloch/graph-view-edit` auf **^0.3.0** (stabiler Port je Repo).
+`GRAPHCODE_GVE_BIN` / `GRAPHCODE_NO_GVE` unveraendert; eine nicht aufloesbare Dependency warnt und
+laesst den Gate laufen.
+
 ## 0.13.0 — 2026-08-15
 
 ### Changed (BREAKING) — auf die Familie 4.x nachgezogen
