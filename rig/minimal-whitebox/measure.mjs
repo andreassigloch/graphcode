@@ -10,7 +10,7 @@ import { mkdtempSync, rmSync, writeFileSync, mkdirSync, copyFileSync } from 'nod
 import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { KuzuAdapter } from '@sigloch/graph-cypher-wasm';
+import { KuzuAdapter } from '@sigloch/graph-api-core/kuzu';
 import { SE_DESCRIPTOR, FormatECodec } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../../dist/harness.js';
 import { bindToolsToHarness } from '../../dist/mcp-tools.js';

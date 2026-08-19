@@ -49,7 +49,7 @@ export function makeSteeringConfig(repoRoot: string): HarnessConfig {
 /**
  * The architecture fixture: a small but complete arch layer (MOD/FUNC/FLOW/SCHEMA)
  * plus the process elements whose rules carry an executable fix template
- * (`CR-R01`, `UC-02`, `MS-03` in `@sigloch/se-optimizer`'s FIX_TEMPLATES) — without
+ * (`CR-R01`, `UC-02`, `MS-03` in `@sigloch/se-engine`'s FIX_TEMPLATES) — without
  * at least one of those, `graph_suggest` has findings but nothing to apply, and
  * T-C2 (apply the top suggestion for real) has no subject.
  *

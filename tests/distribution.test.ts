@@ -34,13 +34,12 @@ import { pathToFileURL } from 'node:url';
 const REPO_ROOT = join(__dirname, '..');
 const CLI_JS = join(REPO_ROOT, 'dist', 'cli.js');
 
-/** The five substrate packages graphcode consumes from the registry (CR-214). */
+/** The substrate packages graphcode consumes from the registry (CR-214, CR-SM-248). */
 const SUBSTRATE = [
   '@sigloch/contracts',
   '@sigloch/graph-api-core',
-  '@sigloch/graph-cypher-wasm',
   '@sigloch/learning-core',
-  '@sigloch/se-steering',
+  '@sigloch/se-engine',
 ];
 
 function run(cmd: string, args: string[], cwd: string): string {

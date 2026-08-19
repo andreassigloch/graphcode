@@ -23,7 +23,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import { targetFor, suggestEdits } from '@sigloch/se-optimizer';
+import { targetFor, suggestEdits } from '@sigloch/se-engine';
 import { GraphCodeHarness } from '../src/harness.js';
 import { exportGraphJson } from '../src/exporter.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';

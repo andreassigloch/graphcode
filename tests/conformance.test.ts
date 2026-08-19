@@ -265,7 +265,8 @@ describe('toOntologyGraph: the canonical order pins the VIOLATION SEQUENCE (CR-S
 
   it('a permuted input yields the identical violation SEQUENCE, not just the same set', () => {
     // The sort's original justification — the ℝ⁶ metrics — is gone: that bug was in
-    // @sigloch/se-optimizer and is fixed at the source in 0.5.0. What remains is
+    // @sigloch/se-optimizer (today @sigloch/se-engine) and is fixed at the source in
+    // 0.5.0. What remains is
     // this: `rules_evaluate`, the readiness report and the audit record all emit the
     // stream in order, and the store guarantees no row order. Measured on the repo
     // graph: WITHOUT the sort the set stays identical and the sequence does not.

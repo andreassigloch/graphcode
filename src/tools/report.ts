@@ -132,7 +132,7 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
       'Read-only "next best step": condenses the full advisory rule set into ONE ' +
       'causally-grounded action — the highest readiness-deficit dimension, the rules ' +
       'firing in it (clears), a concrete action, plus error blockers and lower-priority ' +
-      'advisories. Deterministic (readiness → weight vector via @sigloch/se-steering), no ' +
+      'advisories. Deterministic (readiness → weight vector via @sigloch/se-engine), no ' +
       'LLM/learning. Complements rules_get_violations (the flat gate list) by prioritising.',
     inputSchema: GraphNextStepInputSchema,
     async handler(_input) {
@@ -148,7 +148,7 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
   /**
    * CR-GC-325: die 8 RULE_TO_DIMENSION-Themenscores.
    *
-   * Keine zweite Rechnung: `computeReadiness` aus @sigloch/se-steering bleibt die
+   * Keine zweite Rechnung: `computeReadiness` aus @sigloch/se-engine bleibt die
    * einzige Implementierung, hier wird ihr Ergebnis aus DEMSELBEN Snapshot
    * durchgereicht, den `nextStep` benutzt (CR-GC-324). Deshalb ist der Score, den
    * ein Dashboard zeigt, exakt der, aus dem die Empfehlung entstand.

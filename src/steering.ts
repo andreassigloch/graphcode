@@ -4,7 +4,7 @@
  * Read-only. Condenses the full advisory rule set into ONE causally-grounded
  * action: highest readiness-deficit dimension → the rules firing in it → a
  * concrete next action. Uses the shared deterministic steering core
- * (@sigloch/se-steering), NOT the aimpro Suggestion/learning layer.
+ * (@sigloch/se-engine), NOT the aimpro Suggestion/learning layer.
  *
  * The GATE (rules_get_violations / graph_readiness) stays authoritative for
  * pass/fail. This tool only prioritises what to do next.

@@ -16,7 +16,7 @@
 import type { Graph } from '@sigloch/graph-api-core';
 import type { OntologyGraph, MetricPolicy } from '@sigloch/contracts/se';
 import { evaluateAllRules } from '@sigloch/contracts/se';
-import { computeReadiness } from '@sigloch/se-steering';
+import { computeReadiness } from '@sigloch/se-engine';
 import { toOntologyGraph } from './conformance.js';
 import { injectNDMatrices } from './nd-similarity.js';
 

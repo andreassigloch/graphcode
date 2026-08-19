@@ -6,4 +6,4 @@
  * rather than a one-line change, which is why the substrate restructure (CR-SM-248) looked
  * more expensive than it is. Tests import the store from here; the package name lives here.
  */
-export { KuzuAdapter } from '@sigloch/graph-cypher-wasm';
+export { KuzuAdapter } from '@sigloch/graph-api-core/kuzu';

@@ -17,7 +17,7 @@
 import { join } from 'node:path';
 import { createHash } from 'node:crypto';
 import { readFileSync, writeFileSync, existsSync, rmSync } from 'node:fs';
-import { generateSchema } from '@sigloch/graph-cypher-wasm';
+import { generateSchema } from '@sigloch/graph-api-core/kuzu';
 import type { OntologyDescriptor } from '@sigloch/graph-api-core';
 
 /** Marker file (next to the Kuzu store) holding the schema fingerprint. */

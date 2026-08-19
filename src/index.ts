@@ -11,7 +11,7 @@
 import { join, dirname } from 'node:path';
 import { mkdirSync } from 'node:fs';
 import { z } from 'zod/v4';
-import { KuzuAdapter } from '@sigloch/graph-cypher-wasm';
+import { KuzuAdapter } from '@sigloch/graph-api-core/kuzu';
 import { createSeDescriptor } from '@sigloch/graph-api-core';
 import { HarnessConfigSchema } from '@sigloch/contracts/harness';
 import { GraphCodeHarness } from './harness.js';

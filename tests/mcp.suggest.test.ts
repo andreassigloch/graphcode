@@ -1,5 +1,5 @@
 /**
- * CR-GC-273 — graph_suggest: dünnes MCP-Binding auf @sigloch/se-optimizer.
+ * CR-GC-273 — graph_suggest: dünnes MCP-Binding auf @sigloch/se-engine.
  *
  * Fund-Ebene (Violation + Richtung + Δm) für jede feuernde Operator-Regel;
  * ein konkreter Edit NUR aus rule-spezifischen Fix-Templates, jeder mit

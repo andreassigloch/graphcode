@@ -6,7 +6,7 @@ import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
-import { KuzuAdapter } from '@sigloch/graph-cypher-wasm';
+import { KuzuAdapter } from '@sigloch/graph-api-core/kuzu';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../../../dist/harness.js';
 import { bindToolsToHarness } from '../../../dist/mcp-tools.js';

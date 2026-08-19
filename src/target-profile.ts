@@ -12,7 +12,7 @@
  * bewusste Operator-Entscheidung sein — nur unsichtbar darf er nicht bleiben.
  *
  * Die Konfliktpaare sind aus den Metrik-Formeln hergeleitet
- * (@sigloch/se-optimizer/metrics), kein Anspruch auf Vollständigkeit —
+ * (@sigloch/se-engine), kein Anspruch auf Vollständigkeit —
  * Erweiterung ist ein kleiner Nachtrag, kein eigener CR.
  *
  * @author andreas@siglochconsulting

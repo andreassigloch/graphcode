@@ -2,7 +2,7 @@
  * tools/suggest.ts — die GENERIERUNGS-/OPTIMIERUNGS-Tools (MOD-mcp-tools):
  * graph_suggest (CR-GC-273) + graph_generate (CR-GC-275).
  *
- * Dünnes MCP-Binding auf @sigloch/se-optimizer (aimpro-Fahrplan-Schritt 3):
+ * Dünnes MCP-Binding auf @sigloch/se-engine (aimpro-Fahrplan-Schritt 3):
  * gegeben eine Zielrichtung im ℝ⁶-Metrikraum, ranke die feuernden
  * Operator-Regeln nach Δm·t̂. Ausgeliefert wird die FUND-EBENE (Violation +
  * Richtung + Δm) — ein konkreter Edit nur, wenn ein rule-spezifisches
@@ -16,7 +16,7 @@
  */
 import { z } from 'zod/v4';
 import type { MutateResult } from '@sigloch/contracts/harness';
-import { targetFor, suggestEdits, type Suggestion } from '@sigloch/se-optimizer';
+import { targetFor, suggestEdits, type Suggestion } from '@sigloch/se-engine';
 import { toOntologyGraph } from '../conformance.js';
 import { generationStep, type GenerationStep } from '../generate.js';
 import {

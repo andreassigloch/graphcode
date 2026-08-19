@@ -3,7 +3,7 @@
  *
  * Δm-Advisory pro Mutation am Apply-Gate: vor/nach jeder ERFOLGREICHEN Mutation
  * wird der ℝ⁶-Topologievektor auf der Architektur-Ebene gemessen
- * (@sigloch/se-optimizer `metrics(G, {layer:'arch'})` — FUNC/FLOW/MOD/SCHEMA/ACTOR)
+ * (@sigloch/se-engine `metrics(G, {layer:'arch'})` — FUNC/FLOW/MOD/SCHEMA/ACTOR)
  * und die Differenz ans MutateResult gehängt.
  *
  * GATE-PHILOSOPHIE (hiermit entschieden, dokumentierte Tendenz): das Advisory
@@ -13,7 +13,7 @@
  * Härtegrad 2+ (Kompensations-Operatoren, A-Stern/Beam) ist Fahrplan-Schritt 5.
  */
 import type { Graph } from '@sigloch/graph-api-core';
-import { metrics, toArray, METRIC_DIMENSIONS } from '@sigloch/se-optimizer';
+import { metrics, toArray, METRIC_DIMENSIONS } from '@sigloch/se-engine';
 import { toOntologyGraph } from './conformance.js';
 
 export interface FitAdvisory {
