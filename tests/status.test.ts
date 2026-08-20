@@ -35,6 +35,13 @@ describe('TEST-status', () => {
     writeFileSync(join(repo, 'docs', 'views', 'dashboard.url'), `${url}\n`);
   }
 
+  /** Der Repo-lokale Install, den `npx` aus `.mcp.json` zuerst nimmt. */
+  function writeRepoInstall(version: string): void {
+    const dir = join(repo, 'node_modules', '@sigloch', 'graphcode');
+    mkdirSync(dir, { recursive: true });
+    writeFileSync(join(dir, 'package.json'), JSON.stringify({ name: '@sigloch/graphcode', version }));
+  }
+
   function writeLock(owner: object): void {
     mkdirSync(join(repo, '.graphcode'), { recursive: true });
     writeFileSync(join(repo, '.graphcode', 'owner.lock'), JSON.stringify(owner));
@@ -50,12 +57,13 @@ describe('TEST-status', () => {
   });
 
   it('meldet Host und Dashboard grün, wenn der Viewer DIESES Repo bedient', async () => {
-    writeLock({ pid: 4242, hostname: 'this-box', startedAt: '2026-08-19T09:12:03.000Z' });
+    writeLock({ pid: 4242, hostname: 'this-box', startedAt: '2026-08-19T09:12:03.000Z', version: '0.16.0' });
     writeUrl('http://localhost:4318/');
     const s = await collectStatus(repo, {
       fetchImpl: probe({ repoRoot: repo }),
       pidAlive: () => true,
       hostnameImpl: () => 'this-box',
+      cliVersion: '0.16.0',
     });
     expect(s.host).toMatchObject({ state: 'running', pid: 4242 });
     expect(s.dashboard).toEqual({ state: 'running', url: 'http://localhost:4318/' });
@@ -148,5 +156,83 @@ describe('TEST-status', () => {
     const s = await collectStatus(repo, { fetchImpl: unreachable });
     expect(s.member).toBe('auth-service');
     expect(formatStatus(s)).toContain('auth-service');
+  });
+
+  it('meldet Versionen grün, wenn CLI, Host und Repo-Install denselben Build nennen', async () => {
+    writeLock({ pid: 4242, hostname: 'this-box', startedAt: '2026-08-20T09:00:00.000Z', version: '0.16.0' });
+    writeRepoInstall('0.16.0');
+    const s = await collectStatus(repo, {
+      fetchImpl: unreachable,
+      pidAlive: () => true,
+      hostnameImpl: () => 'this-box',
+      cliVersion: '0.16.0',
+    });
+    expect(s.version).toEqual({ cli: '0.16.0', host: '0.16.0', repo: '0.16.0', state: 'ok' });
+    expect(formatStatus(s)).toContain('CLI 0.16.0 · Host 0.16.0 · Repo 0.16.0');
+  });
+
+  it('nennt den alten Repo-Install — das ist der Build, den die Agent-Session bootet', async () => {
+    writeRepoInstall('0.13.2');
+    const s = await collectStatus(repo, { fetchImpl: unreachable, cliVersion: '0.16.0' });
+    expect(s.version.state).toBe('drift');
+    expect(s.version.action).toBe('npm i @sigloch/graphcode@0.16.0');
+    expect(formatStatus(s)).toContain('Repo 0.13.2');
+    expect(statusIsHealthy(s)).toBe(false);
+  });
+
+  it('nennt einen Host, der auf altem Code weiterläuft — Neustart statt Installation', async () => {
+    writeLock({ pid: 4242, hostname: 'this-box', startedAt: '2026-08-20T09:00:00.000Z', version: '0.13.2' });
+    writeRepoInstall('0.16.0');
+    const s = await collectStatus(repo, {
+      fetchImpl: unreachable,
+      pidAlive: () => true,
+      hostnameImpl: () => 'this-box',
+      cliVersion: '0.16.0',
+    });
+    expect(s.version.state).toBe('drift');
+    expect(s.version.action).toBe('Host neu starten (graphcode mcp)');
+  });
+
+  it('behandelt einen Lock ohne Versions-Stempel als unbekannt, nicht als gleich', async () => {
+    writeLock({ pid: 4242, hostname: 'this-box', startedAt: '2026-08-20T09:00:00.000Z' });
+    const s = await collectStatus(repo, {
+      fetchImpl: unreachable,
+      pidAlive: () => true,
+      hostnameImpl: () => 'this-box',
+      cliVersion: '0.16.0',
+    });
+    expect(s.version.state).toBe('host-unknown');
+    expect(formatStatus(s)).toContain('Host neu starten');
+  });
+
+  it('zieht die bekannte Drift dem fehlenden Host-Stempel vor — der Repo-Install ist die Ursache', async () => {
+    writeLock({ pid: 4242, hostname: 'this-box', startedAt: '2026-08-20T09:00:00.000Z' });
+    writeRepoInstall('0.13.2');
+    const s = await collectStatus(repo, {
+      fetchImpl: unreachable,
+      pidAlive: () => true,
+      hostnameImpl: () => 'this-box',
+      cliVersion: '0.16.0',
+    });
+    expect(s.version.state).toBe('drift');
+    expect(s.version.action).toBe('npm i @sigloch/graphcode@0.16.0');
+  });
+
+  it('meldet ohne Repo-Install und ohne Host nur die eigene Version', async () => {
+    const s = await collectStatus(repo, { fetchImpl: unreachable, cliVersion: '0.16.0' });
+    expect(s.version).toEqual({ cli: '0.16.0', host: undefined, repo: undefined, state: 'ok' });
+    expect(formatStatus(s)).toContain('Version     OK             CLI 0.16.0');
+  });
+
+  it('vergleicht Versionen numerisch, nicht als Text (0.9.0 < 0.10.0)', async () => {
+    writeRepoInstall('0.9.0');
+    const s = await collectStatus(repo, { fetchImpl: unreachable, cliVersion: '0.10.0' });
+    expect(s.version.action).toBe('npm i @sigloch/graphcode@0.10.0');
+  });
+
+  it('empfiehlt das globale Update, wenn der Repo-Install der neuere Build ist', async () => {
+    writeRepoInstall('0.16.0');
+    const s = await collectStatus(repo, { fetchImpl: unreachable, cliVersion: '0.15.0' });
+    expect(s.version.action).toBe('npm i -g @sigloch/graphcode@0.16.0');
   });
 });

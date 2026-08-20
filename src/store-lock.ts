@@ -21,6 +21,7 @@
 import { openSync, writeSync, closeSync, readFileSync, rmSync, mkdirSync, statSync, existsSync, utimesSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { hostname } from 'node:os';
+import { readPackageVersion } from './package-version.js';
 
 /** Grace period after which an UNPARSEABLE lockfile is treated as stale (a mid-write window is sub-second). */
 const STALE_CORRUPT_MS = 5000;
@@ -41,6 +42,18 @@ export interface LockOwner {
   pid: number;
   hostname: string;
   startedAt: string;
+  /**
+   * Der Build, der den Store gerade besitzt (CR-GC-376).
+   *
+   * Ein Prozess lebt weiter mit dem Code, mit dem er gebootet hat: wer im Terminal
+   * ein neueres `graphcode` tippt, sieht dessen Zahlen — der Host im selben Repo
+   * kann ein älteres Paket fahren und damit eine andere Ontologie. Der Stempel ist
+   * die EINZIGE lokale Quelle für „welcher Build besitzt den Store", ohne den Host
+   * zu befragen (`status` ist read-only und darf nie an einem toten Port hängen).
+   * Fehlt das Feld, stammt der Lock von einem Owner vor diesem CR — unbekannt, nicht
+   * gleich.
+   */
+  version?: string;
 }
 
 /** Thrown when the store is already owned by a live process (a second writer is refused). */
@@ -77,7 +90,12 @@ export class StoreLock {
       onLockLost?: () => void;
     } = {},
   ) {
-    this.me = { pid: process.pid, hostname: hostname(), startedAt: new Date().toISOString() };
+    this.me = {
+      pid: process.pid,
+      hostname: hostname(),
+      startedAt: new Date().toISOString(),
+      version: readPackageVersion(),
+    };
   }
 
   /** Acquire the lock, or throw StoreOwnershipError if a live owner already holds it. */

@@ -13,6 +13,15 @@
  * einen Link) als fremdes Repo. Dieselbe Regel wie in `maybeStartGve` — eine Wahrheit
  * über „gehört dieser Viewer zu mir", zwei Aufrufer.
  *
+ * Warum die Versions-Zeile (CR-GC-376): eine angezeigte Version, die nicht die
+ * laufende ist, ist derselbe Defekt wie ein Dashboard, das ein fremdes Repo zeigt.
+ * Drei Builds können hier auseinanderlaufen — das getippte CLI, der Host, der den
+ * Store besitzt (er lebt mit dem Code, mit dem er gebootet hat), und der Repo-Install
+ * in `node_modules`, den `npx` aus `.mcp.json` ZUERST nimmt. Verglichen wird rein
+ * lokal; „gibt es in der Registry etwas Neueres" ist eine andere Frage mit Netz,
+ * Timeout und Cache (FUNC-search-updates, Entwurf) und gehört nicht in ein Verb,
+ * das immer antworten muss.
+ *
  * Read-only: `status` startet und stoppt nichts. Gestartet wird das Dashboard vom
  * MCP-Host, beendet mit ihm.
  *
@@ -22,6 +31,7 @@ import { existsSync, readFileSync, realpathSync } from 'node:fs';
 import { join } from 'node:path';
 import { hostname } from 'node:os';
 import { deriveMemberName } from './mcp-server.js';
+import { readPackageVersion } from './package-version.js';
 
 /** Wie lange auf die Identitätsantwort eines Viewers gewartet wird. */
 const PROBE_TIMEOUT_MS = 750;
@@ -32,6 +42,8 @@ export interface HostStatus {
   pid?: number;
   hostname?: string;
   startedAt?: string;
+  /** Der Build des Owners (Lock-Stempel, CR-GC-376) — fehlt bei Locks älterer Owner. */
+  version?: string;
 }
 
 export interface DashboardStatus {
@@ -46,11 +58,29 @@ export interface DashboardStatus {
   servedRepo?: string;
 }
 
+export interface VersionStatus {
+  /** Der Build, der DIESEN Bericht schreibt. */
+  cli: string;
+  /** Der Build, der den Store besitzt (Lock-Stempel) — fehlt, wenn kein Host läuft. */
+  host?: string;
+  /** Der Build, den eine Agent-Session in diesem Repo bootet (`node_modules`). */
+  repo?: string;
+  /**
+   * `ok` = alle vorhandenen Zahlen gleich; `drift` = mindestens eine ist älter;
+   * `host-unknown` = ein Host läuft, sein Lock nennt aber keine Version (Build vor
+   * diesem Stempel) — nicht als gleich verwertbar.
+   */
+  state: 'ok' | 'drift' | 'host-unknown';
+  /** Bei `drift`/`host-unknown`: die EINE nächste Aktion. */
+  action?: string;
+}
+
 export interface RepoStatus {
   repoRoot: string;
   member: string;
   host: HostStatus;
   dashboard: DashboardStatus;
+  version: VersionStatus;
 }
 
 interface StatusDeps {
@@ -58,6 +88,8 @@ interface StatusDeps {
   /** Liveness-Probe des Lock-Owners; injizierbar, weil `process.kill` im Test nicht steuerbar ist. */
   pidAlive?: (pid: number) => boolean;
   hostnameImpl?: () => string;
+  /** Die eigene Version; injizierbar, damit ein Test nicht gegen die echte package.json driftet. */
+  cliVersion?: string;
 }
 
 /**
@@ -88,7 +120,7 @@ function defaultPidAlive(pid: number): boolean {
 function readHostStatus(repoRoot: string, deps: StatusDeps): HostStatus {
   const lockPath = join(repoRoot, '.graphcode', 'owner.lock');
   if (!existsSync(lockPath)) return { state: 'none' };
-  let owner: { pid?: unknown; hostname?: unknown; startedAt?: unknown };
+  let owner: { pid?: unknown; hostname?: unknown; startedAt?: unknown; version?: unknown };
   try {
     owner = JSON.parse(readFileSync(lockPath, 'utf8')) as typeof owner;
   } catch {
@@ -99,6 +131,7 @@ function readHostStatus(repoRoot: string, deps: StatusDeps): HostStatus {
     pid: owner.pid,
     hostname: typeof owner.hostname === 'string' ? owner.hostname : undefined,
     startedAt: typeof owner.startedAt === 'string' ? owner.startedAt : undefined,
+    version: typeof owner.version === 'string' ? owner.version : undefined,
   };
   // Fremder Host: Liveness ist von hier aus nicht prüfbar — als laufend melden statt
   // einen fremden Rechner für tot zu erklären (dieselbe Vorsicht wie StoreLock).
@@ -133,13 +166,86 @@ async function readDashboardStatus(repoRoot: string, deps: StatusDeps): Promise<
   }
 }
 
+/**
+ * Die Version, die eine Agent-Session in diesem Repo tatsächlich bootet.
+ *
+ * `.mcp.json` startet `npx -y @sigloch/graphcode mcp`, und npx nimmt den LOKALEN
+ * Bin zuerst — ein Repo mit altem `node_modules` bootet also den alten Build,
+ * während dasselbe Verb im Terminal (globales Paket) den neuen fährt. Genau diese
+ * Zahl fehlt sonst im Bericht.
+ */
+function readRepoInstallVersion(repoRoot: string): string | undefined {
+  const manifest = join(repoRoot, 'node_modules', '@sigloch', 'graphcode', 'package.json');
+  if (!existsSync(manifest)) return undefined;
+  try {
+    const version = (JSON.parse(readFileSync(manifest, 'utf8')) as { version?: unknown }).version;
+    return typeof version === 'string' && version.length > 0 ? version : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+/** Vergleicht `1.10.0` > `1.9.0` numerisch je Stelle; Vorabkennung entscheidet zuletzt. */
+function compareVersions(a: string, b: string): number {
+  const parts = (v: string): number[] => v.split('-')[0].split('.').map((n) => Number.parseInt(n, 10) || 0);
+  const [pa, pb] = [parts(a), parts(b)];
+  for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+    const d = (pa[i] ?? 0) - (pb[i] ?? 0);
+    if (d !== 0) return d;
+  }
+  return a === b ? 0 : a < b ? -1 : 1;
+}
+
+/**
+ * Der Versions-Befund. Rein lokal — KEINE Registry-Abfrage: `status` ist read-only
+ * und darf nicht an einem Proxy hängen, und die Frage „ist woanders etwas Neueres"
+ * ist eine andere als „widersprechen sich die Zahlen HIER" (FUNC-search-updates,
+ * Entwurf).
+ *
+ * Ziel ist die höchste vorhandene Zahl — der neueste Build, der auf dieser Maschine
+ * schon liegt. Die Reihenfolge der Aktion ist nicht kosmetisch: der Repo-Install ist
+ * zuerst dran, weil er das ist, was die nächste Agent-Session bootet.
+ */
+function judgeVersions(repoRoot: string, host: HostStatus, deps: StatusDeps): VersionStatus {
+  const cli = deps.cliVersion ?? readPackageVersion();
+  const repo = readRepoInstallVersion(repoRoot);
+  const hostVersion = host.state === 'running' ? host.version : undefined;
+  const base: VersionStatus = { cli, host: hostVersion, repo, state: 'ok' };
+
+  const known = [cli, hostVersion, repo].filter((v): v is string => typeof v === 'string');
+  const target = known.reduce((max, v) => (compareVersions(v, max) > 0 ? v : max), known[0]);
+  if (repo && compareVersions(repo, target) < 0) {
+    return { ...base, state: 'drift', action: `npm i @sigloch/graphcode@${target}` };
+  }
+  if (hostVersion && compareVersions(hostVersion, target) < 0) {
+    return { ...base, state: 'drift', action: 'Host neu starten (graphcode mcp)' };
+  }
+  if (compareVersions(cli, target) < 0) {
+    return { ...base, state: 'drift', action: `npm i -g @sigloch/graphcode@${target}` };
+  }
+  // Der fehlende Stempel kommt ZULETZT: ein Host ohne Versionsangabe ist ein
+  // Erkenntnis-, kein Handlungsproblem — solange eine BEKANNTE Zahl hinterherhinkt,
+  // ist deren Fix die nützlichere Aktion. Ein Neustart würde im Extremfall sogar den
+  // alten Repo-Install hochfahren (npx nimmt den lokalen Bin zuerst).
+  if (host.state === 'running' && !hostVersion) {
+    return {
+      ...base,
+      state: 'host-unknown',
+      action: 'Host neu starten — sein Build stempelt seine Version nicht in den Lock',
+    };
+  }
+  return base;
+}
+
 /** Erhebt den Zustand des Repos. Read-only, ohne Store-Zugriff (nimmt keinen Lock). */
 export async function collectStatus(repoRoot: string, deps: StatusDeps = {}): Promise<RepoStatus> {
+  const host = readHostStatus(repoRoot, deps);
   return {
     repoRoot,
     member: deriveMemberName(repoRoot),
-    host: readHostStatus(repoRoot, deps),
+    host,
     dashboard: await readDashboardStatus(repoRoot, deps),
+    version: judgeVersions(repoRoot, host, deps),
   };
 }
 
@@ -167,10 +273,21 @@ export function formatStatus(s: RepoStatus): string {
         : s.dashboard.state === 'unidentified'
           ? row('Dashboard', 'unbekannt', `${s.dashboard.url} nennt sein Repo nicht (Viewer veraltet) → Agent-Session neu starten`)
           : row('Dashboard', 'läuft nicht', '→ startet mit dem MCP-Host; GRAPHCODE_NO_GVE gesetzt?');
-  return `graphcode status — ${s.member}  (${s.repoRoot})\n${host}\n${dash}\n`;
+  const parts = [
+    `CLI ${s.version.cli}`,
+    s.version.host ? `Host ${s.version.host}` : null,
+    s.version.repo ? `Repo ${s.version.repo}` : null,
+  ].filter((p): p is string => p !== null);
+  const ver =
+    s.version.state === 'ok'
+      ? row('Version', 'OK', parts.join(' · '))
+      : row('Version', s.version.state === 'drift' ? 'Drift' : 'unbekannt', `${parts.join(' · ')} → ${s.version.action}`);
+  return `graphcode status — ${s.member}  (${s.repoRoot})\n${host}\n${dash}\n${ver}\n`;
 }
 
 /** Beide grün? Bestimmt den Exit-Code, damit ein Skript den Zustand abfragen kann. */
 export function statusIsHealthy(s: RepoStatus): boolean {
-  return s.host.state === 'running' && s.dashboard.state === 'running';
+  // Versions-Drift zählt als ungesund: eine angezeigte Zahl, die nicht die laufende
+  // ist, ist derselbe Defekt wie ein Dashboard, das ein fremdes Repo zeigt.
+  return s.host.state === 'running' && s.dashboard.state === 'running' && s.version.state === 'ok';
 }

@@ -7,12 +7,13 @@
  * interleaves with a mutate. Real disk, no mocks.
  */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { mkdtempSync, mkdirSync, rmSync, writeFileSync, existsSync, utimesSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, rmSync, writeFileSync, readFileSync, existsSync, utimesSync } from 'node:fs';
 import { tmpdir, hostname } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { StoreLock, StoreOwnershipError } from '../src/store-lock.js';
+import { readPackageVersion } from '../src/package-version.js';
 import { GraphCodeHarness } from '../src/harness.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
 
@@ -34,6 +35,16 @@ describe('TEST-store-lock (CR-GC-218 O2): store-ownership lock', () => {
     const b = new StoreLock(lockPath);
     // Owner pid is THIS process → alive → refused.
     expect(() => b.acquire()).toThrow(StoreOwnershipError);
+    a.release();
+  });
+
+  it('stempelt den eigenen Build in den Lock — die Quelle der Host-Version in `status` (CR-GC-376)', () => {
+    const a = new StoreLock(lockPath);
+    a.acquire();
+    const owner = JSON.parse(readFileSync(lockPath, 'utf8')) as { version?: string };
+    // Kein Literal: verglichen wird gegen dieselbe package.json, die der Handshake nennt —
+    // sonst pinnt der Test eine Zahl, die beim naechsten Release luegt.
+    expect(owner.version).toBe(readPackageVersion());
     a.release();
   });
 

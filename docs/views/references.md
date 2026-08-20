@@ -874,6 +874,7 @@
 | `FUNC-se-review` | allocate | `MOD-skills` |
 | `FUNC-se-status` | allocate | `MOD-skills` |
 | `FUNC-se-trade` | allocate | `MOD-skills` |
+| `FUNC-search-updates` | allocate | `MOD-cli` |
 | `FUNC-serve-sse` | allocate | `MOD-host-bridge` |
 | `FUNC-serve-sse` | satisfy | `REQ-readonly-bridge` |
 | `FUNC-serve-stdio` | allocate | `MOD-mcp-tools` |

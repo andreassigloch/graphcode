@@ -2747,6 +2747,13 @@
       }
     },
     {
+      "id": "FUNC-search-updates",
+      "type": "FUNC",
+      "name": "searchForUpdates()",
+      "description": "ENTWURF, nicht realisiert: fragt die npm-Registry, ob eine neuere @sigloch/graphcode-Version existiert als die lokal aufgeloeste, und nennt den Installationsbefehl. Bewusst getrennt von der lokalen Versions-Drift-Anzeige in graphcode status (CR-GC-376): die Drift dreier lokal lesbarer Zahlen (CLI, Host aus owner.lock, Repo-Install) braucht kein Netz und darf nie blockieren; eine Registry-Abfrage braucht Netz, Timeout, Offline-Verhalten und einen Cache, damit kein Statusaufruf an einem toten Proxy haengt. Deshalb ein eigener Aufruf statt einer stillen Erweiterung von status. Offene Entscheidungen vor der Realisierung: eigenes Verb oder Flag, Cache-Dauer, Verhalten ohne Netz, ob auch die Peers (contracts, graph-view-edit) geprueft werden.",
+      "status": "draft"
+    },
+    {
       "id": "FUNC-serve-sse",
       "type": "FUNC",
       "name": "serveSSE()",
@@ -11022,6 +11029,11 @@
       "type": "allocate"
     },
     {
+      "source": "FUNC-search-updates",
+      "target": "MOD-cli",
+      "type": "allocate"
+    },
+    {
       "source": "FUNC-serve-sse",
       "target": "MOD-host-bridge",
       "type": "allocate",
@@ -13176,5 +13188,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 112
+  "graphVersion": 113
 }

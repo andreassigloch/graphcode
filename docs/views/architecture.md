@@ -79,6 +79,7 @@
 | `FUNC-se-review` | FUNC | Skill se-review |
 | `FUNC-se-status` | FUNC | Skill se-status |
 | `FUNC-se-trade` | FUNC | Skill se-trade |
+| `FUNC-search-updates` | FUNC | searchForUpdates() |
 | `FUNC-serve-sse` | FUNC | serveSSE() |
 | `FUNC-serve-stdio` | FUNC | serveStdio() |
 | `FUNC-subscribe-updates` | FUNC | subscribeUpdates() |
@@ -178,6 +179,7 @@
 | `FUNC-se-review` | `MOD-skills` |
 | `FUNC-se-status` | `MOD-skills` |
 | `FUNC-se-trade` | `MOD-skills` |
+| `FUNC-search-updates` | `MOD-cli` |
 | `FUNC-serve-sse` | `MOD-host-bridge` |
 | `FUNC-serve-stdio` | `MOD-mcp-tools` |
 | `FUNC-subscribe-updates` | `MOD-dashboard` |
