@@ -143,7 +143,7 @@ An illegal connection is not a warning in a report you might read — it never e
 
 ### 3. Readiness — is it complete and well-formed?
 
-74 engine rules feed 8 readiness dimensions: requirements, use cases, functional architecture,
+73 engine rules feed 8 readiness dimensions: requirements, use cases, functional architecture,
 module allocation, verification, interfaces, change requests, milestones. Each area gets a percentage
 and a threshold.
 

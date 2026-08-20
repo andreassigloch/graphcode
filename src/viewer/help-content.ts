@@ -156,11 +156,6 @@ export const HELP_CONTENT: Record<string, HelpContentEntry> = {
       "A physical part isn't linked to the CAD/geometry that realizes it → link it to the CAD file (or mark it concept/outside).",
     se: "Physical `MOD` (`kind:'physical'`) with no valid `realRef` (CAD/geometry artefact; `symbol` optional); else `concept:true` / `external:true` (CR-228). Logical MODs are realized via their FUNCs' code (R-20), not here.",
   },
-  'R-28': {
-    plain:
-      'Your system has several functions but no described data passing between them, so the parts look unconnected → add the data each function hands to the next.',
-    se: 'Layer presence: with more than one `FUNC` the model must carry `FLOW` and `SCHEMA` elements. A function layer with no data layer is an incomplete decomposition, not a small model.',
-  },
   'R-30': {
     plain:
       'This function sits in no chain of effects, so nobody can say which use case it serves — and the checks that would prove its wiring never look at it → add it to the chain of the use case it belongs to.',

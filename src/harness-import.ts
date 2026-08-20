@@ -55,7 +55,7 @@ export interface ImportTarget {
  * Ensure the imported node set carries a SYS anchor (CR-GC-302).
  *
  * The SYS node anchors AF-01..05 (the analysis-freshness stamps live under
- * `SYS.attributes.analysisFreshness.<artifact>.graphVersion`), the R-28 family, and
+ * `SYS.attributes.analysisFreshness.<artifact>.graphVersion`) and
  * `graph_generate`'s intent (read from `SYS.description`). Without one, the AF rules
  * take their vacuous exemption ("nothing to anchor on yet") — a never-performed
  * analysis then looks exactly like a completed one. Code-shaped imports (graphify:

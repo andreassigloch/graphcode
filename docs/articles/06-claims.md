@@ -100,7 +100,7 @@ trail).
 **Layer 2 — the grammar.** How those elements may legally connect: 35 legal connection patterns define
 a well-formed graph. An illegal connection never enters the graph — it isn't a warning to read later.
 
-**Layer 3 — readiness.** 74 engine rules feed 8 readiness dimensions, one deliberately *not* asking "is this
+**Layer 3 — readiness.** 73 engine rules feed 8 readiness dimensions, one deliberately *not* asking "is this
 correct?" — no tool can decide that — but "is it complete and well-formed?", which is decidable. I've
 watched hundreds of strict quality gates pass by, and maybe a handful made it through without a
 deviation. Dynamic readiness scores let you move back and forth — call it agile — while still being

@@ -115,7 +115,12 @@ question needs three different kinds of check, because each catches a failure th
    a graph score 0.86 on functional architecture while its entire flow layer was missing. So a gate
    also asks the one question no per-element rule can: *is the layer there at all* — once more than
    one function exists, the design review demands both a flow between them and its data contract in
-   the same check (R-28), not two staged questions across two reviews.
+   the same check, not two staged questions across two reviews. *(Nachtrag 2026-08-20: die Regel,
+   die das tat — R-28 Ebenen-Präsenz — ist mit CR-SM-247 entfallen. Nicht weil die Frage falsch
+   war, sondern weil sie inzwischen **pro Element** beantwortet wird: R-31 verlangt io-Ein- und
+   -Ausgang je FUNC, SC-04 einen Vertrag je FLOW. Die Lehre dieses Absatzes gilt weiter — die
+   vakuum-vollständige Lücke braucht eine Antwort; sie kam nur besser von einer präziseren
+   Regel als von einem Graph-Check.)*
 3. **Analysis-freshness legs** — the newest kind, and the reason this section exists. A semantic
    review of four technically-clean generated graphs found content errors no rule can see: an export
    requirement inventing formats its own use case contradicts, an error message modeled as a use

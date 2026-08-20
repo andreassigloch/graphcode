@@ -160,7 +160,7 @@ describe('T-D1 (CR-GC-340): every published count matches the living source', ()
       'element types=13',
       'connection types=7',
       'legal connection patterns=35',
-      'engine rules=74',
+      'engine rules=73', // CR-SM-247: R-28 (Ebenen-Praesenz) entfaellt — seit CR-GC-366 doppelt
       'readiness dimensions=8',
       'MCP tools=25',
     ]);

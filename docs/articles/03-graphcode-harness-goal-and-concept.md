@@ -31,7 +31,7 @@ that, every project grows its own dialect and nothing stays comparable.
 | Local execution | OpenCode + bring-your-own-key, or the built-in executor below | Two ways to run a local model — see "Two ways to run the loop" |
 
 The current vocabulary: 13 element types, 7 connection types, 35 legal connection patterns,
-74 engine rules across 8 readiness dimensions, exposed as 25 MCP tools.
+73 engine rules across 8 readiness dimensions, exposed as 25 MCP tools.
 
 ## Two ways to run the loop
 

@@ -71,7 +71,8 @@ Alle Schreibzugriffe durchs Gate (`graph_mutate`), Export via `graph_export`. Je
 4. **Nachschärfen:** Umhängen und zurück zu 2. — **bis beide Übersichtsebenen stehen** und jede
    Baseline-Grafik ihr modellabgeleitetes Gegenstück hat.
 
-**Regeln:** die bestehenden Architektur-Regeln (RD-04 Breadth, R-28, `crossingFlows`/`moduleSize`
+**Regeln:** die bestehenden Architektur-Regeln (RD-04 Breadth, R-31 io-Verdrahtung [war R-28 bis
+CR-SM-247], `crossingFlows`/`moduleSize`
 aus der metricPolicy) gelten unverändert und dienen als Leitplanke; das Gate blockt auf neu
 eingeführte Error-Verstöße. **Keine neuen Regeln in diesem Spike** — Ebenen-Konsistenz-Regeln
 erst, wenn die Tiefe real benutzt wird (sonst wieder eine Regel über leerer Grundgesamtheit,
