@@ -124,7 +124,7 @@ describe('TEST-status', () => {
       hostnameImpl: () => 'this-box',
     });
     expect(s.host.state).toBe('stale');
-    expect(formatStatus(s)).toContain('verwaist');
+    expect(formatStatus(s)).toMatch(/verwaist; graphcode mcp/);
   });
 
   it('erklärt einen Lock von einem anderen Rechner nicht für tot', async () => {
@@ -137,10 +137,10 @@ describe('TEST-status', () => {
     expect(s.host.state).toBe('running');
   });
 
-  it('meldet ohne Lock einen nicht laufenden Host mit genau einer nächsten Aktion', async () => {
+  it('nennt ohne Lock den ausführbaren Befehl als einzige nächste Aktion', async () => {
     const s = await collectStatus(repo, { fetchImpl: unreachable });
     expect(s.host).toEqual({ state: 'none' });
-    expect(formatStatus(s)).toContain('.mcp.json');
+    expect(formatStatus(s)).toContain('→ graphcode mcp');
   });
 
   it('nennt den Member-Namen aus der package.json des Repos', async () => {

@@ -157,8 +157,8 @@ export function formatStatus(s: RepoStatus): string {
     s.host.state === 'running'
       ? row('MCP-Host', 'OK', `pid ${s.host.pid}${s.host.startedAt ? `, seit ${s.host.startedAt}` : ''}`)
       : s.host.state === 'stale'
-        ? row('MCP-Host', 'läuft nicht', `→ Lock von pid ${s.host.pid ?? '?'} ist verwaist; Agent-Session neu starten`)
-        : row('MCP-Host', 'läuft nicht', '→ Agent-Session in diesem Repo starten (.mcp.json)');
+        ? row('MCP-Host', 'läuft nicht', `→ Lock von pid ${s.host.pid ?? '?'} ist verwaist; graphcode mcp`)
+        : row('MCP-Host', 'läuft nicht', '→ graphcode mcp');
   const dash =
     s.dashboard.state === 'running'
       ? row('Dashboard', 'OK', s.dashboard.url ?? '')
