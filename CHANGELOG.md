@@ -1,6 +1,6 @@
 # @sigloch/graphcode
 
-## Unreleased — Substrat auf zwei Schichten (CR-SM-248)
+## 0.16.0 — 2026-08-20 · Substrat auf zwei Schichten (CR-SM-248)
 
 ### Changed! — die Abhaengigkeitskette ist flach
 
