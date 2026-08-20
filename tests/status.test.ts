@@ -175,7 +175,7 @@ describe('TEST-status', () => {
     writeRepoInstall('0.13.2');
     const s = await collectStatus(repo, { fetchImpl: unreachable, cliVersion: '0.16.0' });
     expect(s.version.state).toBe('drift');
-    expect(s.version.action).toBe('npm i @sigloch/graphcode@0.16.0');
+    expect(s.version.action).toBe('graphcode upgrade');
     expect(formatStatus(s)).toContain('Repo 0.13.2');
     expect(statusIsHealthy(s)).toBe(false);
   });
@@ -190,7 +190,7 @@ describe('TEST-status', () => {
       cliVersion: '0.16.0',
     });
     expect(s.version.state).toBe('drift');
-    expect(s.version.action).toBe('Host neu starten (graphcode mcp)');
+    expect(s.version.action).toBe('graphcode upgrade');
   });
 
   it('behandelt einen Lock ohne Versions-Stempel als unbekannt, nicht als gleich', async () => {
@@ -202,7 +202,7 @@ describe('TEST-status', () => {
       cliVersion: '0.16.0',
     });
     expect(s.version.state).toBe('host-unknown');
-    expect(formatStatus(s)).toContain('Host neu starten');
+    expect(formatStatus(s)).toContain('graphcode upgrade');
   });
 
   it('zieht die bekannte Drift dem fehlenden Host-Stempel vor — der Repo-Install ist die Ursache', async () => {
@@ -215,7 +215,7 @@ describe('TEST-status', () => {
       cliVersion: '0.16.0',
     });
     expect(s.version.state).toBe('drift');
-    expect(s.version.action).toBe('npm i @sigloch/graphcode@0.16.0');
+    expect(s.version.action).toBe('graphcode upgrade');
   });
 
   it('meldet ohne Repo-Install und ohne Host nur die eigene Version', async () => {
@@ -227,12 +227,13 @@ describe('TEST-status', () => {
   it('vergleicht Versionen numerisch, nicht als Text (0.9.0 < 0.10.0)', async () => {
     writeRepoInstall('0.9.0');
     const s = await collectStatus(repo, { fetchImpl: unreachable, cliVersion: '0.10.0' });
-    expect(s.version.action).toBe('npm i @sigloch/graphcode@0.10.0');
+    expect(s.version.state).toBe('drift');
+    expect(s.version.action).toBe('graphcode upgrade');
   });
 
   it('empfiehlt das globale Update, wenn der Repo-Install der neuere Build ist', async () => {
     writeRepoInstall('0.16.0');
     const s = await collectStatus(repo, { fetchImpl: unreachable, cliVersion: '0.15.0' });
-    expect(s.version.action).toBe('npm i -g @sigloch/graphcode@0.16.0');
+    expect(s.version.action).toBe('graphcode upgrade --global');
   });
 });

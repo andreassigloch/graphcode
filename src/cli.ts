@@ -16,9 +16,14 @@
  *   - `graphcode status`            read-only report (CR-GC-368): does a live process own
  *                                   the store, and which viewer serves THIS repo? The only
  *                                   verb that prints on stdout — see the case below.
- *   - `graphcode init|update|remove` self-contained scaffold lifecycle (CR-GC-112,
- *                                   MOD-cli) — installs/refreshes/removes the harness
- *                                   artifacts in the target repo.
+ *   - `graphcode upgrade`           ONE verb that makes everything current (CR-GC-377):
+ *                                   installs the target version, lets THAT build write
+ *                                   the artifacts, stops the host running old code.
+ *                                   Replaces `update`, which only refreshed artifacts
+ *                                   and therefore lied about its name.
+ *   - `graphcode init|remove`       self-contained scaffold lifecycle (CR-GC-112,
+ *                                   MOD-cli) — installs/removes the harness artifacts
+ *                                   in the target repo.
  *
  * stdout is reserved for the MCP JSON-RPC transport — all human-facing output
  * here goes to stderr so it never corrupts the protocol stream.
@@ -33,6 +38,7 @@ import { executeRun, parseExecutorEnv } from './run-verb.js';
 import { executeImportCode } from './import-code-verb.js';
 import { executeRewind, RewindError } from './rewind.js';
 import { collectStatus, formatStatus, statusIsHealthy } from './status.js';
+import { executeUpgrade, formatUpgrade, UpgradeError } from './upgrade.js';
 
 const USAGE = `graphcode — governed graph substrate (MCP-stdio)
 
@@ -55,7 +61,11 @@ Usage:
                     the working tree is NOT touched. Aborts while un-exported
                     model changes are pending; --force drops them.
   graphcode init        Scaffold the harness into the current repo
-  graphcode update      Refresh installed artifacts (preserves the store)
+  graphcode upgrade     Alles aktuell machen: neueste Version installieren,
+                    Artefakte vom NEUEN Build schreiben lassen, alten Host beenden.
+                    --check  nur berichten · --to <version>  ohne Registry
+                    --keep-host  laufenden Host nicht beenden
+                    --global  auch das global installierte Paket ziehen
   graphcode remove      Remove all scaffolded artifacts (restlos)
   graphcode skills sync Re-copy shipped se-* skills, overwrite on version mismatch
 `;
@@ -84,7 +94,7 @@ async function main(): Promise<void> {
         // itself when GRAPHCODE_HOST_PORT is set (scaffolded into .mcp.json).
         const hint = Number.isFinite(portArg) && portArg > 0
           ? `check http://127.0.0.1:${portArg}/health`
-          : 'set GRAPHCODE_HOST_PORT in .mcp.json env (npx @sigloch/graphcode update scaffolds it)';
+          : 'set GRAPHCODE_HOST_PORT in .mcp.json env (`graphcode upgrade` scaffolds it)';
         process.stderr.write(
           `graphcode host: store already owned by pid ${err.owner.pid} — the elected host serves the read-only bridge itself; ${hint}\n`,
         );
@@ -184,8 +194,35 @@ async function main(): Promise<void> {
       process.stdout.write(formatStatus(status));
       process.exit(statusIsHealthy(status) ? 0 : 1);
     }
+    case 'upgrade': {
+      const flags = process.argv.slice(3);
+      // Interner Einstieg (CR-GC-377 Schritt 3): der frisch installierte Build wird von
+      // `executeUpgrade` re-exec't, damit die Artefakte aus SEINER Version stammen.
+      if (flags.includes('--refresh-only')) {
+        const result = await scaffold('update', { repoRoot: process.cwd() });
+        process.stderr.write(`graphcode upgrade --refresh-only: ${JSON.stringify(result, null, 2)}\n`);
+        process.exit(0);
+      }
+      const check = flags.includes('--check');
+      const toIdx = flags.indexOf('--to');
+      try {
+        const report = await executeUpgrade({
+          repoRoot: process.cwd(),
+          check,
+          keepHost: flags.includes('--keep-host'),
+          global: flags.includes('--global'),
+          to: toIdx >= 0 ? flags[toIdx + 1] : undefined,
+        });
+        // Wie `status`: hier läuft kein JSON-RPC-Transport, der Bericht darf auf stdout.
+        process.stdout.write(formatUpgrade(report, check));
+        process.exit(check && report.drift ? 1 : 0);
+      } catch (err) {
+        if (!(err instanceof UpgradeError)) throw err;
+        process.stderr.write(`${err.message}\n`);
+        process.exit(1);
+      }
+    }
     case 'init':
-    case 'update':
     case 'remove': {
       const result = await scaffold(command as CliCommand, { repoRoot: process.cwd() });
       // stdout stays reserved for the MCP transport — report on stderr.

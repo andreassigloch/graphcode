@@ -88,5 +88,5 @@ planning the same work ad-hoc — each is MCP-driven against the live graph. Run
 
 ## Lifecycle
 
-- `npx @sigloch/graphcode update` — refresh both host configs + this file, preserve the store.
+- `graphcode upgrade` — neueste Version installieren, Artefakte + Host-Configs erneuern, alten Host beenden. Der Store bleibt.
 - `npx @sigloch/graphcode remove`  — remove all scaffolded artifacts (incl. `.graphcode/`).

@@ -117,7 +117,7 @@ function defaultPidAlive(pid: number): boolean {
 }
 
 /** Host-Zustand aus `.graphcode/owner.lock` — derselben Datei, die `StoreLock` schreibt. */
-function readHostStatus(repoRoot: string, deps: StatusDeps): HostStatus {
+export function readHostStatus(repoRoot: string, deps: StatusDeps = {}): HostStatus {
   const lockPath = join(repoRoot, '.graphcode', 'owner.lock');
   if (!existsSync(lockPath)) return { state: 'none' };
   let owner: { pid?: unknown; hostname?: unknown; startedAt?: unknown; version?: unknown };
@@ -174,7 +174,7 @@ async function readDashboardStatus(repoRoot: string, deps: StatusDeps): Promise<
  * während dasselbe Verb im Terminal (globales Paket) den neuen fährt. Genau diese
  * Zahl fehlt sonst im Bericht.
  */
-function readRepoInstallVersion(repoRoot: string): string | undefined {
+export function readRepoInstallVersion(repoRoot: string): string | undefined {
   const manifest = join(repoRoot, 'node_modules', '@sigloch', 'graphcode', 'package.json');
   if (!existsSync(manifest)) return undefined;
   try {
@@ -186,7 +186,7 @@ function readRepoInstallVersion(repoRoot: string): string | undefined {
 }
 
 /** Vergleicht `1.10.0` > `1.9.0` numerisch je Stelle; Vorabkennung entscheidet zuletzt. */
-function compareVersions(a: string, b: string): number {
+export function compareVersions(a: string, b: string): number {
   const parts = (v: string): number[] => v.split('-')[0].split('.').map((n) => Number.parseInt(n, 10) || 0);
   const [pa, pb] = [parts(a), parts(b)];
   for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
@@ -214,24 +214,26 @@ function judgeVersions(repoRoot: string, host: HostStatus, deps: StatusDeps): Ve
 
   const known = [cli, hostVersion, repo].filter((v): v is string => typeof v === 'string');
   const target = known.reduce((max, v) => (compareVersions(v, max) > 0 ? v : max), known[0]);
-  if (repo && compareVersions(repo, target) < 0) {
-    return { ...base, state: 'drift', action: `npm i @sigloch/graphcode@${target}` };
+  const behind = (v: string | undefined): boolean => typeof v === 'string' && compareVersions(v, target) < 0;
+
+  // Eine Aktion für jeden Fall: `graphcode upgrade` zieht den Repo-Install, schreibt die
+  // Artefakte aus dem neuen Build und beendet den alten Host. Der Mensch soll nicht
+  // wissen muessen, WELCHE der drei Zahlen hinterherhinkt — nur, dass sie es tun.
+  if (behind(repo) || behind(hostVersion)) {
+    return { ...base, state: 'drift', action: 'graphcode upgrade' };
   }
-  if (hostVersion && compareVersions(hostVersion, target) < 0) {
-    return { ...base, state: 'drift', action: 'Host neu starten (graphcode mcp)' };
-  }
-  if (compareVersions(cli, target) < 0) {
-    return { ...base, state: 'drift', action: `npm i -g @sigloch/graphcode@${target}` };
+  // Nur das getippte CLI ist alt: das liegt ausserhalb des Repos, deshalb `--global`.
+  if (behind(cli)) {
+    return { ...base, state: 'drift', action: 'graphcode upgrade --global' };
   }
   // Der fehlende Stempel kommt ZULETZT: ein Host ohne Versionsangabe ist ein
   // Erkenntnis-, kein Handlungsproblem — solange eine BEKANNTE Zahl hinterherhinkt,
-  // ist deren Fix die nützlichere Aktion. Ein Neustart würde im Extremfall sogar den
-  // alten Repo-Install hochfahren (npx nimmt den lokalen Bin zuerst).
+  // ist deren Fix die nuetzlichere Aktion.
   if (host.state === 'running' && !hostVersion) {
     return {
       ...base,
       state: 'host-unknown',
-      action: 'Host neu starten — sein Build stempelt seine Version nicht in den Lock',
+      action: 'graphcode upgrade — sein Build stempelt seine Version nicht in den Lock',
     };
   }
   return base;

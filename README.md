@@ -30,7 +30,7 @@ npx @sigloch/graphcode run "<intent>" # author the graph via the embedded execut
 npx @sigloch/graphcode rewind <ref>  # recall the graph state committed at <ref> — reads the snapshot
                                      # from git object storage, so the working tree is NOT touched.
                                      # Aborts while un-exported model edits are pending (--force drops them)
-npx @sigloch/graphcode update        # refresh scaffolded artifacts after a version bump — PRESERVES the store
+npx @sigloch/graphcode upgrade       # install the latest version, refresh artifacts, stop the old host — PRESERVES the store
 npx @sigloch/graphcode skills sync   # re-copy the shipped se-* skills (overwrites on version mismatch)
 npx @sigloch/graphcode remove        # remove all scaffolded artifacts (restlos)
 ```
@@ -99,7 +99,7 @@ trying); the store lock carries a heartbeat, so a lock without a pulse for 90 s 
 PID is alive (PID reuse after a reboot, a hung host); and a host whose lock was taken over notices
 at its next beat and ends its session rather than becoming a second writer.
 
-**5. After upgrading the package:** run `npx @sigloch/graphcode update` — refreshes `.mcp.json`,
+**5. To upgrade:** run `graphcode upgrade` — one command: installs the latest version, lets THAT build refresh `.mcp.json`,
 `GRAPHCODE.md` and skills, never touches the store.
 
 ## Using it — the agent loop (over MCP)
