@@ -1,5 +1,49 @@
 # @sigloch/graphcode
 
+## Unreleased — Substrat auf zwei Schichten (CR-SM-248)
+
+### Changed! — die Abhaengigkeitskette ist flach
+
+Das Substrat war eine Kette der Tiefe 3 (`contracts → graph-api-core → graph-cypher-wasm`), und
+`contracts/src` wird in **37 % aller Commits** angefasst (51 von 136 in 60 Tagen). Die
+meistbewegte Schicht hatte damit den laengsten Nachlauf: ein contracts-Release war ein
+3-Hop-Publish. Von 12 contracts-Releases waren **7 nicht-breaking** — fuer die war die gesamte
+Kaskade ueberfluessig und kam allein aus der Deklarationsform.
+
+Jetzt sitzt jedes Paket direkt auf `contracts`, keines auf einem Geschwister:
+
+- `@sigloch/graph-cypher-wasm` ist **geloescht**, sein Inhalt liegt als Subpath
+  `@sigloch/graph-api-core/kuzu` (**5.0.0**). `kuzu-wasm` ist dort eine *optionale*
+  peerDependency — wer nur die Ontologie-Typen braucht (`/browser`), laedt kein WASM.
+- `@sigloch/se-optimizer` + `@sigloch/se-steering` sind **geloescht**, zusammengefuehrt als
+  `@sigloch/se-engine` (**1.0.0**).
+- `@sigloch/contracts` ist in allen Paketen **peerDependency** statt dependency. Damit kann npm
+  keine zweite Ontologie-Instanz nesten, und ein additives contracts-Release kostet **null**
+  Downstream-Publishes.
+
+Kein deprecated Re-Export, keine parallelen Pfade. Consumer-Umstellung ist ein Specifier je Zeile.
+Der Paketname `graph-api-core` bleibt bewusst: ein Rename kostet gemessen 178 Import-Sites in acht
+Repos und traegt null zur Struktur bei.
+
+### Fixed — das Substrat wird genau einmal installiert
+
+graphcodes Baum trug zwei `graph-api-core` und zwei `graphcode-client`, genestet unter
+`graph-view-edit`, dessen Pins `^4.0.0`/`^0.10.0` die alleinige Ursache waren (behoben in gve
+**0.5.0**). Jetzt liegt jedes Paket genau einmal im Baum.
+
+### Added — der Waechter gegen die Doppelinstanz
+
+`tests/distribution.test.ts` laeuft den installierten `@sigloch`-Baum rekursiv ab und verlangt:
+keine Selbstreferenz, jedes Paket genau einmal. Die Defektklasse ist zweimal aufgetreten
+(`contracts@5.0.0`, `graphify@0.2.0`) und ist unsichtbar fuer TypeScript wie fuer die Laufzeit —
+strukturelle Typisierung bzw. keine Identitaetspruefung. Der Waechter hat den graphify-Fall beim
+ersten Lauf gefunden.
+
+### Intern
+
+`tests/helpers/store.ts` ist die einzige Stelle in `tests/`, die den Store-Paketnamen kennt
+(vorher 66 Testdateien).
+
 ## 0.15.0 — 2026-08-19
 
 ### Changed! — die vier Pflichten einer FUNC (CR-GC-366)
