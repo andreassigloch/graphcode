@@ -26,7 +26,7 @@
  */
 import { describe, it, expect, beforeAll } from 'vitest';
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, rmSync, readFileSync, existsSync } from 'node:fs';
+import { mkdtempSync, rmSync, readFileSync, readdirSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -183,4 +183,65 @@ describe('TEST-distribution: npx distribution', () => {
     },
     180_000,
   );
+
+  /**
+   * CR-SM-248 — the substrate ships exactly once, and no package hangs on itself.
+   *
+   * This is the net for a defect class that has now occurred twice, in two different
+   * repos: `@sigloch/contracts@5.0.0` declared `"@sigloch/contracts": "^4.1.0"` and
+   * `@sigloch/graphify@0.2.0` declared `"@sigloch/graphify": "file:"`. npm honours such
+   * a line by nesting a second copy of the package inside itself — so one tree carried
+   * contracts 5.0.0 *and* 4.2.0. Nothing catches that upstream: TypeScript types
+   * structurally, the runtime checks no identity, and every test stays green while two
+   * ontologies live in one process.
+   *
+   * It is asserted HERE rather than in a single package because graphcode is the only
+   * place all @sigloch packages meet — `contracts/tests/unit/layering.test.ts` guards
+   * the monorepo, and graphify (a separate repo) slipped straight past it.
+   */
+  it('installs each @sigloch package exactly once, and none depends on itself', () => {
+    const root = join(REPO_ROOT, 'node_modules', '@sigloch');
+    const manifests: Array<{ path: string; name: string; version: string; self: string[] }> = [];
+
+    const walk = (dir: string): void => {
+      for (const entry of readdirSync(dir, { withFileTypes: true })) {
+        if (!entry.isDirectory()) continue;
+        const child = join(dir, entry.name);
+        const pkgFile = join(child, 'package.json');
+        if (existsSync(pkgFile)) {
+          const m = JSON.parse(readFileSync(pkgFile, 'utf8')) as {
+            name?: string;
+            version?: string;
+            dependencies?: Record<string, string>;
+            peerDependencies?: Record<string, string>;
+          };
+          if (m.name) {
+            manifests.push({
+              path: child.slice(REPO_ROOT.length + 1),
+              name: m.name,
+              version: m.version ?? '?',
+              self: [...Object.keys(m.dependencies ?? {}), ...Object.keys(m.peerDependencies ?? {})]
+                .filter((d) => d === m.name),
+            });
+          }
+        }
+        const nested = join(child, 'node_modules', '@sigloch');
+        if (existsSync(nested)) walk(nested);
+      }
+    };
+    walk(root);
+
+    // The guard is worthless if it walked an empty tree.
+    expect(manifests.length).toBeGreaterThanOrEqual(5);
+
+    const selfDeps = manifests.filter((m) => m.self.length > 0).map((m) => `${m.name} -> itself`);
+    expect(selfDeps).toEqual([]);
+
+    const byName = new Map<string, string[]>();
+    for (const m of manifests) byName.set(m.name, [...(byName.get(m.name) ?? []), `${m.version} @ ${m.path}`]);
+    const duplicated = [...byName.entries()]
+      .filter(([, copies]) => copies.length > 1)
+      .map(([name, copies]) => `${name}: ${copies.join(' | ')}`);
+    expect(duplicated).toEqual([]);
+  });
 });
