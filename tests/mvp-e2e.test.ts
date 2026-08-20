@@ -48,9 +48,10 @@ import {
   GraphCodeHarness,
 } from '../src/index.js';
 import type { MutateCommand } from '@sigloch/contracts/harness';
-import { deriveHostPort } from '../src/scaffold-templates.js';
+import { deriveHostPort, PACKAGE_SPEC } from '../src/scaffold-templates.js';
 
-const PKG = '@sigloch/graphcode';
+// Startzeile mit fester Version (CR-GC-378) — gegen die Konstante, nicht gegen ein Literal.
+const PKG = PACKAGE_SPEC;
 
 /**
  * Cold-start member graph for the new repo — the small valid pattern the gate
@@ -97,7 +98,7 @@ describe('TEST-mvp-e2e: MVP-1 loop (bootstrap → spec → impact → implement 
     const res = await scaffold('init', { repoRoot: tmp });
     expect(res.action).toBe('init');
 
-    // .mcp.json launches the stdio server via npx — the exact form a foreign repo needs.
+    // .mcp.json launches the stdio server via npx AT A PINNED VERSION — the exact form a foreign repo needs.
     const mcp = JSON.parse(readFileSync(join(tmp, '.mcp.json'), 'utf8'));
     expect(mcp).toEqual({
       mcpServers: {

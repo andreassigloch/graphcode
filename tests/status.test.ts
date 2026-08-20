@@ -42,6 +42,12 @@ describe('TEST-status', () => {
     writeFileSync(join(dir, 'package.json'), JSON.stringify({ name: '@sigloch/graphcode', version }));
   }
 
+  /** Die Startzeile, die `init`/`upgrade` schreiben — optional mit fester Version. */
+  function writeMcpConfig(spec: string | null, command = 'npx'): void {
+    const args = command === 'npx' ? ['-y', spec ?? '@sigloch/graphcode', 'mcp'] : ['dist/cli.js', 'mcp'];
+    writeFileSync(join(repo, '.mcp.json'), JSON.stringify({ mcpServers: { graphcode: { command, args } } }));
+  }
+
   function writeLock(owner: object): void {
     mkdirSync(join(repo, '.graphcode'), { recursive: true });
     writeFileSync(join(repo, '.graphcode', 'owner.lock'), JSON.stringify(owner));
@@ -216,6 +222,38 @@ describe('TEST-status', () => {
     });
     expect(s.version.state).toBe('drift');
     expect(s.version.action).toBe('graphcode upgrade');
+  });
+
+  it('nennt die festgenagelte Version aus .mcp.json (CR-GC-378)', async () => {
+    writeMcpConfig('@sigloch/graphcode@0.17.0');
+    writeRepoInstall('0.17.0');
+    const s = await collectStatus(repo, { fetchImpl: unreachable, cliVersion: '0.17.0' });
+    expect(s.version).toMatchObject({ pin: '0.17.0', state: 'ok' });
+    expect(formatStatus(s)).toContain('Pin 0.17.0');
+  });
+
+  it('behandelt eine npx-Startzeile OHNE Pin als Drift — was sie startet, ist nicht lesbar', async () => {
+    writeMcpConfig(null);
+    writeRepoInstall('0.17.0');
+    const s = await collectStatus(repo, { fetchImpl: unreachable, cliVersion: '0.17.0' });
+    expect(s.version.pin).toBe('—');
+    expect(s.version.state).toBe('drift');
+    expect(s.version.action).toBe('graphcode upgrade');
+  });
+
+  it('meldet einen Pin, der hinter dem Install liegt — die Session bootet den alten Build', async () => {
+    writeMcpConfig('@sigloch/graphcode@0.13.2');
+    writeRepoInstall('0.17.0');
+    const s = await collectStatus(repo, { fetchImpl: unreachable, cliVersion: '0.17.0' });
+    expect(s.version.state).toBe('drift');
+    expect(formatStatus(s)).toContain('Pin 0.13.2');
+  });
+
+  it('fällt über eine fremde Startzeile kein Pin-Urteil (graphcodes eigenes Repo startet node dist/cli.js)', async () => {
+    writeMcpConfig(null, 'node');
+    const s = await collectStatus(repo, { fetchImpl: unreachable, cliVersion: '0.17.0' });
+    expect(s.version.pin).toBeUndefined();
+    expect(s.version.state).toBe('ok');
   });
 
   it('meldet ohne Repo-Install und ohne Host nur die eigene Version', async () => {

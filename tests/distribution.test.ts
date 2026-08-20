@@ -159,7 +159,11 @@ describe('TEST-distribution: npx distribution', () => {
           mcpServers: { graphcode: { command: string; args: string[] } };
         };
         expect(mcp.mcpServers.graphcode.command).toBe('npx');
-        expect(mcp.mcpServers.graphcode.args).toContain('@sigloch/graphcode');
+        // Feste Version in der Startzeile (CR-GC-378): was der Agent-Host bootet, ist
+        // eine Zahl im Repo und kein npx-Auflösungsergebnis.
+        expect(mcp.mcpServers.graphcode.args).toContain(
+          `@sigloch/graphcode@${(JSON.parse(readFileSync(join(REPO_ROOT, 'package.json'), 'utf8')) as { version: string }).version}`,
+        );
 
         // Every export path resolves in the foreign install — the subpaths were broken
         // for as long as only the two entrypoints were bundled (CR-GC-262).

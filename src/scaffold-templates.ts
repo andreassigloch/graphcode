@@ -17,26 +17,33 @@
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { readPackageVersion } from './package-version.js';
 import { MARKDOWN_VIEWS, VIEW_FILENAMES, type MarkdownView } from '@sigloch/graphcode-client';
 
 /** The distribution package a member repo depends on. */
 export const PACKAGE_NAME = '@sigloch/graphcode';
 
 /**
- * This package's own `version`, read from the package.json next to the shipped code
- * (same resolution as `packagedSkillsDir()`: works from `src/` in dev and from the
- * bundled `dist/` in a consumer's node_modules). Falls back to `0` when the manifest
- * is unreadable — a wide range beats an invented version number.
+ * Die Startzeile der Host-Configs — mit **fester Version** (CR-GC-378).
+ *
+ * Ohne Pin stand in `.mcp.json` nur `npx -y @sigloch/graphcode mcp`, und was daraus
+ * wirklich startete, war ein Auflösungsergebnis: npx nimmt den lokalen Bin zuerst, ein
+ * Repo mit altem `node_modules` bootete also den alten Build — während dasselbe Verb im
+ * Terminal den neuen fuhr. Zwei Wahrheiten pro Repo, keine davon lesbar. Mit dem Pin
+ * steht die laufende Version als Zahl in einer eingecheckten Datei; geschrieben wird sie
+ * vom Build, der das Upgrade ausführt (CR-GC-377 lässt genau diesen die Artefakte
+ * schreiben), und `graphcode status` vergleicht sie gegen den Install.
  */
-function packageVersion(): string {
-  const manifest = join(dirname(fileURLToPath(import.meta.url)), '..', 'package.json');
-  try {
-    const version = (JSON.parse(readFileSync(manifest, 'utf8')) as { version?: unknown }).version;
-    return typeof version === 'string' && version.length > 0 ? version : '0';
-  } catch {
-    return '0';
-  }
-}
+export const PACKAGE_SPEC = `${PACKAGE_NAME}@${readPackageVersion()}`;
+
+/**
+ * Die eigene Version — EIN Leser für das ganze Paket (CR-GC-376/378).
+ *
+ * Früher las diese Datei die package.json selbst, mit Fallback `'0'`. Für einen
+ * Dep-Range war das tolerierbar; für den **Pin** in `.mcp.json` (CR-GC-378) ist es
+ * fatal — `@sigloch/graphcode@0` existiert nicht, der Agent-Host startet dann gar
+ * nichts. Der gemeinsame Leser scheitert stattdessen laut.
+ */
 
 /**
  * Dependency range written into the target's package.json (CR-121 distribution),
@@ -45,7 +52,7 @@ function packageVersion(): string {
  * resolves to an old line. A version bump now changes the scaffolded range with no
  * code edit.
  */
-export const PACKAGE_RANGE = `^${packageVersion()}`;
+export const PACKAGE_RANGE = `^${readPackageVersion()}`;
 
 /** Per-repo workspace dir (`.graphcode/`); the Kuzu store lives at `.graphcode/kuzu`. */
 export const GRAPHCODE_DIR = '.graphcode';
@@ -307,7 +314,7 @@ export function mcpConfigContent(repoRoot: string, existingRaw: string | null): 
       ...servers,
       graphcode: {
         command: 'npx',
-        args: ['-y', PACKAGE_NAME, 'mcp'],
+        args: ['-y', PACKAGE_SPEC, 'mcp'],
         env: { ...keptEnv(servers, 'env'), GRAPHCODE_HOST_PORT: String(port) },
       },
     },
@@ -335,7 +342,7 @@ export function opencodeConfigContent(repoRoot: string, existingRaw: string | nu
       ...mcp,
       graphcode: {
         type: 'local',
-        command: ['npx', '-y', PACKAGE_NAME, 'mcp'],
+        command: ['npx', '-y', PACKAGE_SPEC, 'mcp'],
         enabled: true,
         environment: { ...keptEnv(mcp, 'environment'), GRAPHCODE_HOST_PORT: String(port) },
       },
@@ -435,7 +442,7 @@ export function guardrailsContent(): string {
     '  store election and becomes the host (`.graphcode/host.sock`); later sessions proxy to',
     '  it transparently — same tools, one gate, one write channel per store/worktree.',
     '- `.mcp.json` (Claude schema) + `opencode.json` (OpenCode schema) — both tell the',
-    `  agent host to launch the server via \`npx -y ${PACKAGE_NAME} mcp\`. Merged, never`,
+    `  agent host to launch the server via \`npx -y ${PACKAGE_SPEC} mcp\`. Merged, never`,
     '  overwritten: foreign MCP servers and your `provider`/`model` block survive.',
     '- `.claude/commands/se*.md` — the SE skills (fmea/review/status + the views), MCP-driven.',
     '  Claude Code surface; on other hosts drive the MCP tools directly.',

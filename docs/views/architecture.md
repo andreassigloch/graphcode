@@ -79,7 +79,6 @@
 | `FUNC-se-review` | FUNC | Skill se-review |
 | `FUNC-se-status` | FUNC | Skill se-status |
 | `FUNC-se-trade` | FUNC | Skill se-trade |
-| `FUNC-search-updates` | FUNC | searchForUpdates() |
 | `FUNC-serve-sse` | FUNC | serveSSE() |
 | `FUNC-serve-stdio` | FUNC | serveStdio() |
 | `FUNC-subscribe-updates` | FUNC | subscribeUpdates() |
@@ -87,6 +86,7 @@
 | `FUNC-target-profile` | FUNC | Skill se:target-profile |
 | `FUNC-test` | FUNC | se-test (red-first test design) |
 | `FUNC-test-ui` | FUNC | se-test-ui (UI test design) |
+| `FUNC-upgrade` | FUNC | executeUpgrade(opts) |
 | `FUNC-view-changelog` | FUNC | se-view-changelog (Change Log) |
 | `FUNC-view-conops` | FUNC | se-view-conops (ConOps) |
 | `FUNC-view-icd` | FUNC | se-view-icd (ICD) |
@@ -179,7 +179,6 @@
 | `FUNC-se-review` | `MOD-skills` |
 | `FUNC-se-status` | `MOD-skills` |
 | `FUNC-se-trade` | `MOD-skills` |
-| `FUNC-search-updates` | `MOD-cli` |
 | `FUNC-serve-sse` | `MOD-host-bridge` |
 | `FUNC-serve-stdio` | `MOD-mcp-tools` |
 | `FUNC-subscribe-updates` | `MOD-dashboard` |
@@ -187,6 +186,7 @@
 | `FUNC-target-profile` | `MOD-skills` |
 | `FUNC-test` | `MOD-skills` |
 | `FUNC-test-ui` | `MOD-skills` |
+| `FUNC-upgrade` | `MOD-cli` |
 | `FUNC-view-changelog` | `MOD-skills` |
 | `FUNC-view-conops` | `MOD-skills` |
 | `FUNC-view-icd` | `MOD-skills` |

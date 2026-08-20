@@ -2747,13 +2747,6 @@
       }
     },
     {
-      "id": "FUNC-search-updates",
-      "type": "FUNC",
-      "name": "searchForUpdates()",
-      "description": "ENTWURF, nicht realisiert: fragt die npm-Registry, ob eine neuere @sigloch/graphcode-Version existiert als die lokal aufgeloeste, und nennt den Installationsbefehl. Bewusst getrennt von der lokalen Versions-Drift-Anzeige in graphcode status (CR-GC-376): die Drift dreier lokal lesbarer Zahlen (CLI, Host aus owner.lock, Repo-Install) braucht kein Netz und darf nie blockieren; eine Registry-Abfrage braucht Netz, Timeout, Offline-Verhalten und einen Cache, damit kein Statusaufruf an einem toten Proxy haengt. Deshalb ein eigener Aufruf statt einer stillen Erweiterung von status. Offene Entscheidungen vor der Realisierung: eigenes Verb oder Flag, Cache-Dauer, Verhalten ohne Netz, ob auch die Peers (contracts, graph-view-edit) geprueft werden.",
-      "status": "draft"
-    },
-    {
       "id": "FUNC-serve-sse",
       "type": "FUNC",
       "name": "serveSSE()",
@@ -2865,6 +2858,24 @@
         "symbol": "se-test-ui",
         "lang": "prompt"
       }
+    },
+    {
+      "id": "FUNC-upgrade",
+      "type": "FUNC",
+      "name": "executeUpgrade(opts)",
+      "description": "Ein Befehl, der alles aktuell macht (CR-GC-377): Ziel aus der Registry (oder --to), Repo-Install ziehen, den NEU installierten Build seine eigenen Artefakte schreiben lassen (Re-Exec), den Host beenden, der auf altem Code weiterlaeuft. Ersetzt das Verb update ersatzlos, dessen Name log: es refreshte nur Artefakte. --check ist die reine Registry-Abfrage ohne Aenderung und macht eine separate Suchfunktion ueberfluessig. Kein stilles Downgrade: liegt die Registry hinter dem Installierten, bricht der Befehl ab und verlangt --to.",
+      "status": "done",
+      "realRef": {
+        "file": "src/upgrade.ts",
+        "symbol": "executeUpgrade",
+        "lang": "ts"
+      },
+      "testRefs": [
+        {
+          "file": "tests/upgrade.test.ts",
+          "tool": "vitest"
+        }
+      ]
     },
     {
       "id": "FUNC-view-changelog",
@@ -11029,11 +11040,6 @@
       "type": "allocate"
     },
     {
-      "source": "FUNC-search-updates",
-      "target": "MOD-cli",
-      "type": "allocate"
-    },
-    {
       "source": "FUNC-serve-sse",
       "target": "MOD-host-bridge",
       "type": "allocate",
@@ -11129,6 +11135,11 @@
       "source": "FUNC-test-ui",
       "target": "REQ-code-governed-quality",
       "type": "satisfy"
+    },
+    {
+      "source": "FUNC-upgrade",
+      "target": "MOD-cli",
+      "type": "allocate"
     },
     {
       "source": "FUNC-view-changelog",
@@ -13188,5 +13199,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 113
+  "graphVersion": 114
 }

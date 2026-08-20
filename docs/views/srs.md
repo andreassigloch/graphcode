@@ -2870,9 +2870,9 @@ Prompt-realisierter Skill se-trade: Trade Study — Optionen bewerten, Entscheid
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-skills`
 
-#### 3.9.7  `FUNC-search-updates` — searchForUpdates()
+#### 3.9.7  `FUNC-upgrade` — executeUpgrade(opts)
 
-ENTWURF, nicht realisiert: fragt die npm-Registry, ob eine neuere @sigloch/graphcode-Version existiert als die lokal aufgeloeste, und nennt den Installationsbefehl. Bewusst getrennt von der lokalen Versions-Drift-Anzeige in graphcode status (CR-GC-376): die Drift dreier lokal lesbarer Zahlen (CLI, Host aus owner.lock, Repo-Install) braucht kein Netz und darf nie blockieren; eine Registry-Abfrage braucht Netz, Timeout, Offline-Verhalten und einen Cache, damit kein Statusaufruf an einem toten Proxy haengt. Deshalb ein eigener Aufruf statt einer stillen Erweiterung von status. Offene Entscheidungen vor der Realisierung: eigenes Verb oder Flag, Cache-Dauer, Verhalten ohne Netz, ob auch die Peers (contracts, graph-view-edit) geprueft werden.
+Ein Befehl, der alles aktuell macht (CR-GC-377): Ziel aus der Registry (oder --to), Repo-Install ziehen, den NEU installierten Build seine eigenen Artefakte schreiben lassen (Re-Exec), den Host beenden, der auf altem Code weiterlaeuft. Ersetzt das Verb update ersatzlos, dessen Name log: es refreshte nur Artefakte. --check ist die reine Registry-Abfrage ohne Aenderung und macht eine separate Suchfunktion ueberfluessig. Kein stilles Downgrade: liegt die Registry hinter dem Installierten, bricht der Befehl ab und verlangt --to.
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-cli`
 
@@ -3288,7 +3288,7 @@ allocate ◀ `FUNC-block-anschluss` · `FUNC-block-gate` · `FUNC-block-gedaecht
 
 bin `npx @sigloch/graphcode init/update/remove`: self-contained Installer. App-spezifisch. (REQ-npx-distribution)
 
-allocate ◀ `FUNC-harness-cli` · `FUNC-rewind` · `FUNC-search-updates` · satisfy ▶ `REQ-buildable-standalone`
+allocate ◀ `FUNC-harness-cli` · `FUNC-rewind` · `FUNC-upgrade` · satisfy ▶ `REQ-buildable-standalone`
 
 #### 6.1.2  `MOD-codec` — codec.ts — GraphCodeCodec
 

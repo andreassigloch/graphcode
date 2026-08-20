@@ -874,7 +874,6 @@
 | `FUNC-se-review` | allocate | `MOD-skills` |
 | `FUNC-se-status` | allocate | `MOD-skills` |
 | `FUNC-se-trade` | allocate | `MOD-skills` |
-| `FUNC-search-updates` | allocate | `MOD-cli` |
 | `FUNC-serve-sse` | allocate | `MOD-host-bridge` |
 | `FUNC-serve-sse` | satisfy | `REQ-readonly-bridge` |
 | `FUNC-serve-stdio` | allocate | `MOD-mcp-tools` |
@@ -892,6 +891,7 @@
 | `FUNC-test` | satisfy | `REQ-code-governed-quality` |
 | `FUNC-test-ui` | allocate | `MOD-skills` |
 | `FUNC-test-ui` | satisfy | `REQ-code-governed-quality` |
+| `FUNC-upgrade` | allocate | `MOD-cli` |
 | `FUNC-view-changelog` | allocate | `MOD-skills` |
 | `FUNC-view-changelog` | satisfy | `REQ-doc-export` |
 | `FUNC-view-conops` | allocate | `MOD-skills` |
