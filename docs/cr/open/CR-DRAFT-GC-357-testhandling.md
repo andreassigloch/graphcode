@@ -54,6 +54,36 @@ keine Entscheidung** — CR-GF-141 ist auf das Verzeichnis-Nesting reduziert.
 Vorentscheidungs-Notiz: b+d kombinierbar (Datei-Abnahmen + markierte Test-Module); a ist die
 billigste, d die ehrlichste Variante. **Nicht hier entscheiden.**
 
+## 2b. Konsumentenbefund (SPIKE-GC-selective-tests, 2026-08-21)
+
+Schritt 3.2 („was würde ein Konsument mit den importierten TESTs anfangen wollen?") ist für
+`graph_tests` beantwortet — gemessen an acht Familien-Graphen, Details in
+`docs/spikes/SPIKE-GC-selective-tests.md`.
+
+**B1 · Der Leitsatz entscheidet die Optionsfrage.** Betreiberentscheidung 2026-08-21: *der
+TEST-Knoten IST die Repräsentation des Testobjektes; zu grob ⇒ neues Testobjekt, neuer Knoten.*
+Damit ist **Option b** (TEST je Datei) nicht mehr eine von vier Möglichkeiten, sondern die
+Konsequenz der Identität. Option c (Fall-Granularität, R-29 relativieren) fällt weg, Option a/d
+(Testdatei als MOD/FUNC) ebenfalls: eine Testdatei ist ein Testobjekt, kein Architekturbaustein —
+der Dual-Use aus E1 ist damit erledigt.
+
+**B2 · E2 ist bereits ausgebrochen — auf der anderen Seite.** Die Vermutung des Drafts war, der
+Konflikt bräche auf, sobald man die importierten TESTs bindet. Gemessen bricht er in der
+**Handarbeit**: 16 R-29-Verletzungen im handgeschriebenen graphcode-Graphen, **39 in siconizer**,
+**0 in allen importierten**. Ursache ist überall dieselbe: je REQ ein Knoten statt je Testobjekt
+einer. Sieben graphcode-Testdateien tragen 2–3 Knoten.
+
+**B3 · Fall-Granularität kauft dem Konsumenten nichts.** `vitest` selektiert Dateien; `-t` filtert
+Fälle, lädt die Datei aber trotzdem. moneyflows 425 Knoten für 34 Dateien modellieren Testroutinen,
+nicht Testobjekte, und liefern keine feinere Auswahl — nur mehr Knoten. Folgerichtig entfällt auch
+`case` aus `testRefs` (12 Einträge in graphcode, genutzt nur von RC-02, ignoriert von R-29,
+`graph_tests` und dem Ingest) — eigener contracts-CR.
+
+**B4 · E3 bleibt offen.** Dass die importierten TESTs nichts verifizieren (425× kein `verify`),
+bleibt der ungelöste Teil: ein Testobjekt ohne Anforderung ist Evidenz ohne Anspruch. Der Import
+kennt keine REQ; ob er TESTs überhaupt anlegen soll, solange nichts zu verifizieren da ist, ist
+weiterhin Draft-Gebiet.
+
 ## 3. Nächste Schritte
 
 1. **2–3 weitere echte Importe** (Kandidaten: GVE, sirail, immo/lead-capture) — je Repo die
