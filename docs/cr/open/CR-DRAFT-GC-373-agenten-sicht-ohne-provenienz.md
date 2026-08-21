@@ -1,6 +1,6 @@
 # CR-GC-373 — Agenten-Sicht des Codecs: Provenienz raus
 
-**Status:** open
+**Status:** draft — zurückgestuft 2026-08-21: nicht gebaut, `omitProvenance` existiert weder in `@sigloch/graph-api-core` noch hier.
 **Datum:** 2026-08-19
 **Herkunft:** Live-Messung beim Abschluss von `CR-GC-367`.
 

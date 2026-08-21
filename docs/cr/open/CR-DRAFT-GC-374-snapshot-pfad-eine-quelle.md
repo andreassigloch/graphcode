@@ -1,6 +1,6 @@
 # CR-GC-374 — Snapshot-Pfad: eine Quelle statt zwei
 
-**Status:** open
+**Status:** draft — zurückgestuft 2026-08-21: nicht gebaut, das eigene Akzeptanzkriterium `grep -rn "graph/graphcode.graph.json" src/` liefert 6 Treffer (u. a. `src/rewind.ts:107`, `src/harness-import.ts:26`).
 **Datum:** 2026-08-19
 **Herkunft:** Aufbau des Vorführ-Repos `prod/graphcodedemo` gegen die publizierte 0.13.2.
 

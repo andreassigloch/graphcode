@@ -1,6 +1,6 @@
 # CR-GC-359 — `callTimeoutMs` wirklich wirksam machen (undici-Deckel)
 
-**Status:** open
+**Status:** draft — zurückgestuft 2026-08-21: nicht gebaut, im Quelltext ist keine undici-Konfiguration (`dispatcher`/`headersTimeout`/`bodyTimeout`) vorhanden.
 **Datum:** 2026-08-18
 **Vorgänger:** CR-GC-358 (Nachtrag Punkt b) · **Nachfolger:** CR-GC-360 (Probe)
 

@@ -1,6 +1,6 @@
 # CR-GC-328 — Lauf-Stempel und Evidenzpfad am TEST (die geparkte Hälfte von CR-GC-327)
 
-**Status:** open (geparkt — braucht Sorgfalt, Entscheidung 2026-08-12) · **Datum:** 2026-08-12
+**Status:** draft — zurückgestuft 2026-08-21: §2.1 (Stempel am Knoten vs. aus dem Trail) und §2.2 („was ist veraltet") sind unentschieden, ohne sie ist der CR per eigener Ansage nicht implementierbar. §2.3 ist upstream beantwortet: `evidence` ist ein Feld im `TestRefSchema` (contracts), von graphcode noch nicht genutzt.
 **Ziel:** graphcode 0.13.x
 **Ontologie:** v4.0.0 — **Änderung nötig** (siehe §3; contracts-CR ist Vorbedingung)
 **Bezug:** [CR-GC-327](../done/CR-GC-327-pruefreport-testresult-rueckweg.md) (Rückweg, done),

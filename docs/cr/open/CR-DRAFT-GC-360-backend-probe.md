@@ -1,6 +1,6 @@
 # CR-GC-360 — `graphcode probe`: das Backend messen, bevor Stunden verbrannt werden
 
-**Status:** open
+**Status:** draft — zurückgestuft 2026-08-21: nicht gebaut, `graphcode probe` existiert nicht (kein `probe`-Zweig im CLI-Switch). Hängt ohnehin an CR-GC-359.
 **Datum:** 2026-08-18
 **Vorgänger:** CR-GC-359 (der Deckel muss weg, sonst misst die Probe ihn statt des Modells)
 
