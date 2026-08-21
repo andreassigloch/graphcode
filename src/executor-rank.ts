@@ -42,6 +42,12 @@ export interface CandidateProbe {
         steeringDelta?: SteeringDelta;
       })
     | null;
+  /**
+   * REQ/UC-Beinahe-Duplikate im Batch dieses Kandidaten (CR-GC-361), gemessen im
+   * Preflight. Nur der Zähler geht ins Ranking — die Struktur ist absichtlich
+   * minimal, damit `executor-rank` nichts über nd-similarity wissen muss.
+   */
+  duplicates?: { score: number }[];
 }
 
 const TIER_RANK: Record<string, number> = { 'auto-apply': 2, suggest: 1, block: 0 };
@@ -55,6 +61,39 @@ export function deltaSum(verdict: CandidateProbe['verdict']): number {
 export function focusDelta(verdict: CandidateProbe['verdict'], focusDimension?: string | null): number {
   if (!focusDimension) return 0;
   return verdict?.steeringDelta?.dimensions[focusDimension]?.delta ?? 0;
+}
+
+/**
+ * Der um Redundanz BEREINIGTE Fokus-Fortschritt (CR-GC-361) — das primäre
+ * Ranking-Kriterium nach dem Viability-Filter.
+ *
+ * Warum überhaupt: Readiness-Scores entstehen aus Regel-Verletzungen, und die
+ * Regeln sind strukturell pro Element („UC hat REQs", „REQ hat verify-TEST").
+ * Ein Beinahe-Duplikat erfüllt sie exakt so gut wie ein eigenständiges Element —
+ * `focusDelta` allein kann Fortschritt und Scheinfortschritt nicht unterscheiden
+ * und belohnt anschließend über den `mutations`-Tiebreaker die größere Menge.
+ *
+ * Die Bereinigung: der Anteil der Duplikate an der Element-Ausbeute wird vom
+ * GEWINN abgezogen. Ein Batch, dessen Ausbeute vollständig aus Duplikaten
+ * besteht, zählt als Null-Fortschritt; einer mit einem Duplikat unter fünf
+ * Elementen verliert ein Fünftel — echter Fortschritt bleibt Fortschritt
+ * (das ist die Gegenmaßnahme zum v16-Fehler in Gegenrichtung).
+ *
+ * Verluste werden NICHT bereinigt: ein negativer Fokus-Delta bleibt, wie er ist —
+ * Redundanz darf eine Verschlechterung nicht abmildern.
+ */
+export function effectiveFocusDelta(
+  candidate: CandidateProbe,
+  focusDimension?: string | null,
+): number {
+  const raw = focusDelta(candidate.verdict, focusDimension);
+  const dupes = candidate.duplicates?.length ?? 0;
+  if (raw <= 0 || dupes === 0) return raw;
+  // mutations = Element-Ausbeute des Batches. Fehlt sie (oder ist 0), während
+  // Duplikate gemessen wurden, ist der gesamte Gewinn unbelegt ⇒ Anteil 1.
+  const yieldCount = candidate.verdict?.mutations ?? 0;
+  const share = yieldCount > 0 ? Math.min(1, dupes / yieldCount) : 1;
+  return raw * (1 - share);
 }
 
 /** Gesamt-Readiness-Delta: ungewichtete Summe der Score-Deltas aller Dimensionen. */
@@ -75,7 +114,8 @@ function blockingRise(verdict: CandidateProbe['verdict']): number {
  * statt Volumen — das Kriterium ist der messbare Steuerungs-Fortschritt im
  * Readiness-Raum, dem Raum, in dem graph_generate den Fokus wählt:
  * tier (auto-apply > suggest > block) →
- * Score-Delta der FOKUS-Dimension (GenerationStep.focusKey) →
+ * um Redundanz bereinigter Score-Delta der FOKUS-Dimension (GenerationStep.focusKey,
+ * CR-GC-361) →
  * Gesamt-Readiness-Delta (blockingErrors-Anstieg strikt schlechter, davor) →
  * Δm-fitAdvisory auf layer:arch →
  * Element-Ausbeute (mutations) → Kandidaten-Index (Determinismus-Anker).
@@ -95,7 +135,7 @@ export function rankCandidates<T extends CandidateProbe>(
   return [...candidates].sort(
     (a, b) =>
       viable(b) - viable(a) ||
-      focusDelta(b.verdict, focusDimension) - focusDelta(a.verdict, focusDimension) ||
+      effectiveFocusDelta(b, focusDimension) - effectiveFocusDelta(a, focusDimension) ||
       blockingRise(a.verdict) - blockingRise(b.verdict) ||
       totalDelta(b.verdict) - totalDelta(a.verdict) ||
       tierOf(b) - tierOf(a) ||

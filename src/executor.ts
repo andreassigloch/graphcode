@@ -25,7 +25,12 @@ import type { FitAdvisory } from './fit-advisory.js';
 import type { MCPToolRegistry } from './mcp-tools.js';
 import type { GenerationStep } from './generate.js';
 import { preflightBatch, type PreflightKnown } from './preflight.js';
-import { duplicateHints, type IndexedElement } from './nd-similarity.js';
+import {
+  duplicateHits,
+  renderDuplicateHints,
+  type DuplicateHit,
+  type IndexedElement,
+} from './nd-similarity.js';
 import type { SteeringDelta } from './steering-snapshot.js';
 // Die drei zustandsfreien Executor-Achsen (CR-GC-320) — Prompt/Injektion,
 // Best-of-N-Ranking, Prosa-Recovery. Kein Re-Export von hier: wer sie braucht,
@@ -43,6 +48,7 @@ import {
   deltaSum,
   focusDelta,
   rankCandidates,
+  effectiveFocusDelta,
   temperatureSpread,
   totalDelta,
   type CandidateProbe,
@@ -514,11 +520,17 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
   // zweites Gate-Urteil; bei jedem Preflight-Fehler geht der Batch unverändert durch.
   const runPreflight = async (
     input: unknown,
-  ): Promise<{ effective: unknown; blocked: MutateOutcome | null; hints: string[] }> => {
+  ): Promise<{
+    effective: unknown;
+    blocked: MutateOutcome | null;
+    hints: string[];
+    duplicates: DuplicateHit[];
+  }> => {
     const parsed = registry['graph_mutate'].inputSchema.safeParse(input);
-    if (!parsed.success) return { effective: input, blocked: null, hints: [] };
+    if (!parsed.success) return { effective: input, blocked: null, hints: [], duplicates: [] };
     let effective: unknown = parsed.data;
     let hints: string[] = [];
+    let duplicates: DuplicateHit[] = [];
     try {
       const snap = await loadGraphSnapshot();
       const pf = preflightBatch(parsed.data, snap.known);
@@ -529,6 +541,7 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
           effective: parsed.data,
           blocked: { success: false, preflightBlocked: true, violations: pf.violations },
           hints: [],
+          duplicates: [],
         };
       }
       if (pf.action === 'fixed') {
@@ -538,12 +551,15 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
       }
       // CR-GC-287: REQ/UC-Duplikat-HINWEIS (kein Block!) — neue add-nodes gegen
       // den Element-Index; der Batch geht trotzdem ans Gate, das Gate entscheidet.
-      hints = duplicateHints(effective, snap.index);
+      // CR-GC-361: EINE Messung, zwei Konsumenten — die Zeilen gehen als Feedback
+      // ans Modell, die Treffer als bereinigter Fokus-Delta ins Best-of-N-Ranking.
+      duplicates = duplicateHits(effective, snap.index);
+      hints = renderDuplicateHints(duplicates);
       for (const h of hints) trace(`    preflight hint: ${h}`);
     } catch (err) {
       trace(`    preflight error (pass-through): ${err instanceof Error ? err.message : String(err)}`);
     }
-    return { effective, blocked: null, hints };
+    return { effective, blocked: null, hints, duplicates };
   };
 
   const callGate = async (input: unknown, hints: string[] = []): Promise<MutateOutcome> => {
@@ -659,6 +675,8 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
     /** Preflight-Effektiv-Input (Auto-Fixes angewandt) — das, was Probe UND Apply nutzen. */
     effective: unknown;
     verdict: MutateOutcome | null;
+    /** REQ/UC-Beinahe-Duplikate dieses Batches (CR-GC-361) — bereinigt den Fokus-Delta. */
+    duplicates: DuplicateHit[];
   }
 
   /**
@@ -764,6 +782,7 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
   const probeCandidate = async (c: RoundCandidate): Promise<void> => {
     if (c.batch === null) return;
     const pre = await runPreflight(c.batch);
+    c.duplicates = pre.duplicates;
     if (pre.blocked) {
       c.effective = null;
       c.verdict = pre.blocked;
@@ -786,10 +805,16 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
     }
     const v = c.verdict;
     const tier = v.preflightBlocked ? 'preflight-block' : (v.tier ?? (v.success ? 'suggest' : 'block'));
+    // CR-GC-361: bei Duplikaten BEIDE Zahlen — der rohe Fokus-Delta und der
+    // bereinigte, nach dem wirklich gerankt wird. Sonst ist ein Pick, der am
+    // bereinigten Wert kippt, aus der Trace nicht nachvollziehbar.
+    const dupes = c.duplicates.length;
+    const eff = effectiveFocusDelta(c, focusDimension);
     trace(
       `  candidate ${c.index + 1}/${n}: tier=${tier} focus(${focusDimension ?? '-'})=${fmtDelta(
         focusDelta(v, focusDimension),
-      )} total=${fmtDelta(totalDelta(v))} Δm=${fmtDelta(deltaSum(v))} mutations=${v.mutations ?? 0}`,
+      )}${dupes > 0 ? ` dupes=${dupes} eff=${fmtDelta(eff)}` : ''}` +
+        ` total=${fmtDelta(totalDelta(v))} Δm=${fmtDelta(deltaSum(v))} mutations=${v.mutations ?? 0}`,
     );
   };
 
@@ -848,6 +873,7 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
         batch: null,
         effective: null,
         verdict: null,
+        duplicates: [],
       };
       c.batch = await collectCandidateBatch(c.messages, `cand ${k + 1}/${n}`, c.temperature);
       if (c.batch !== null) stats.candidatesSampled += 1;

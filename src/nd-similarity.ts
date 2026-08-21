@@ -17,10 +17,15 @@
  * Modul-State ist für Gate-Läufe wirkungslos; ND bleibt Steering, nie
  * Gate-Blocker (Delta-Semantik unberührt).
  *
- * Zusätzlich der graphcode-LOKALE Executor-HINWEIS (keine Regel, kein Block):
- * `duplicateHints` vergleicht neue REQ/UC-add-nodes per Name/Beschreibung
+ * Zusätzlich die graphcode-LOKALE Executor-MESSUNG (keine Regel, kein Block):
+ * `duplicateHits` vergleicht neue REQ/UC-add-nodes per Name/Beschreibung
  * gegen den Element-Index — echte ND-Regeln für REQ/UC gehören nach contracts
  * (Familie-Review + Version-Bump, siehe CR-Abgrenzung).
+ *
+ * CR-GC-361: die Treffer sind strukturiert. Sie speisen ZWEI Konsumenten aus
+ * EINER Berechnung — `renderDuplicateHints` das Modell-Feedback, das Best-of-N-
+ * Ranking den bereinigten Fokus-Delta (`effectiveFocusDelta`). Vorher endete
+ * die Messung als Textzeile, und das Ranking belohnte Scheinfortschritt.
  *
  * @author andreas@siglochconsulting
  */
@@ -168,17 +173,38 @@ export interface IndexedElement {
 }
 
 /**
- * Hinweis-Zeilen für neue REQ/UC-add-nodes, deren Name/Beschreibung stark einem
- * EXISTIERENDEN Element gleichen Typs ähnelt. Duck-typed und wurffrei — jeder
- * unerwartete Input ⇒ []. Der Batch geht IMMER unverändert ans Gate; die Zeilen
- * sind reines Modell-Feedback („mergen oder differenzieren").
+ * Ein Beinahe-Duplikat: ein neues REQ/UC aus dem Batch (`uid`) gleicht einem
+ * EXISTIERENDEN Element gleichen Typs (`matchedUid`) mit `score` ≥ Threshold.
+ *
+ * CR-GC-361: strukturiert statt nur als Textzeile, damit das Ranking dieselbe
+ * Messung sehen kann, die bisher nur ins Modell-Feedback lief.
  */
-export function duplicateHints(input: unknown, existing: IndexedElement[]): string[] {
+export interface DuplicateHit {
+  /** uid des NEUEN Knotens aus dem Batch. */
+  uid: string;
+  /** uid des vorhandenen Elements, dem er gleicht. */
+  matchedUid: string;
+  /** Name des vorhandenen Elements — für die Hinweis-Zeile, kein zweiter Lookup. */
+  matchedName: string;
+  /** Name/Descr-Ähnlichkeit, ≥ HINT_SIMILARITY_THRESHOLD. */
+  score: number;
+}
+
+/**
+ * Beinahe-Duplikate unter den neuen REQ/UC-add-nodes eines Batches, gemessen
+ * gegen den Element-Index. Duck-typed und wurffrei — jeder unerwartete Input ⇒ [].
+ * Der Batch geht IMMER unverändert ans Gate; das hier ist eine MESSUNG, kein Urteil.
+ *
+ * Absteigend nach Ähnlichkeit, bei Gleichstand nach `uid` — deterministisch.
+ * VOLLSTÄNDIG: nicht auf MAX_HINTS gekürzt, denn das Ranking zählt die Treffer
+ * (die Kürzung ist eine Frage der Lesbarkeit und gehört in `renderDuplicateHints`).
+ */
+export function duplicateHits(input: unknown, existing: IndexedElement[]): DuplicateHit[] {
   if (typeof input !== 'object' || input === null) return [];
   const commands = (input as { commands?: unknown }).commands;
   if (!Array.isArray(commands)) return [];
 
-  const hints: { sim: number; line: string }[] = [];
+  const hits: DuplicateHit[] = [];
   for (const c of commands) {
     const node = (c as { op?: unknown; node?: unknown })?.op === 'add-node' ? (c as { node?: unknown }).node : undefined;
     if (typeof node !== 'object' || node === null) continue;
@@ -194,16 +220,22 @@ export function duplicateHints(input: unknown, existing: IndexedElement[]): stri
       if (sim >= HINT_SIMILARITY_THRESHOLD && (!best || sim > best.sim)) best = { el, sim };
     }
     if (best) {
-      hints.push({
-        sim: best.sim,
-        line:
-          `Hinweis (kein Blocker): ${n.uid} ähnlich vorhanden: ${best.el.uid} „${best.el.name}" ` +
-          `(Ähnlichkeit ${Math.round(best.sim * 100)}%) — mergen oder differenzieren.`,
-      });
+      hits.push({ uid: n.uid, matchedUid: best.el.uid, matchedName: best.el.name, score: best.sim });
     }
   }
-  return hints
-    .sort((a, b) => b.sim - a.sim || a.line.localeCompare(b.line))
+  return hits.sort((a, b) => b.score - a.score || a.uid.localeCompare(b.uid));
+}
+
+/**
+ * Die Hinweis-Zeilen fürs Modell-Feedback — dieselbe Messung, nur gerendert und
+ * auf MAX_HINTS gekürzt. Kein zweiter Berechnungspfad (CR-GC-361).
+ */
+export function renderDuplicateHints(hits: DuplicateHit[]): string[] {
+  return hits
     .slice(0, MAX_HINTS)
-    .map((h) => h.line);
+    .map(
+      (h) =>
+        `Hinweis (kein Blocker): ${h.uid} ähnlich vorhanden: ${h.matchedUid} „${h.matchedName}" ` +
+        `(Ähnlichkeit ${Math.round(h.score * 100)}%) — mergen oder differenzieren.`,
+    );
 }

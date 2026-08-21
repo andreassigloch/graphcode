@@ -1,6 +1,6 @@
 # CR-GC-361 — Das Ranking soll Fortschritt von Scheinfortschritt unterscheiden
 
-**Status:** open
+**Status:** done (Code) · **Umgesetzt:** 2026-08-21 · **Letztes AK offen:** Validierungslauf, blockiert durch CR-DRAFT-GC-359
 **Datum:** 2026-08-18
 **Vorgänger:** CR-GC-289 (Ziel-Delta-Ranking) · **Braucht zur Validierung:** CR-GC-359
 
@@ -69,26 +69,73 @@ Deshalb: der Term ist eine **Ranking-Präferenz, kein Block**. Kein Kandidat wir
 das Gate bleibt unberührt, die Delta-Semantik unberührt. Der Threshold bleibt der bereits
 gemessene ND-Wert (0.85) — dieses CR erfindet keine neue Ähnlichkeits-Formel.
 
-## Dateien (4)
+## Dateien (5)
 
-- `src/nd-similarity.ts` — strukturierte Rückgabe, String-Rendering bleibt
-- `src/executor.ts` — Treffer in die `CandidateProbe`
-- `src/executor-rank.ts` — bereinigter Fokus-Delta
-- `tests/executor.bestofn.test.ts` — s.u.
+- `src/nd-similarity.ts` — `duplicateHits()` liefert `DuplicateHit[]`, `renderDuplicateHints()` die Zeilen
+- `src/executor.ts` — `runPreflight` gibt die Treffer heraus, `RoundCandidate.duplicates` trägt sie
+- `src/executor-rank.ts` — `effectiveFocusDelta()` ersetzt `focusDelta()` in der Sortierung
+- `tests/executor.bestofn.test.ts` — 4 Fälle (s.u.)
+- `tests/nd-similarity.test.ts` — auf die strukturierte API gezogen + ein Fall für Messung vs. Rendering
+
+`duplicateHints()` wurde **gelöscht**, nicht danebengestellt: die Zeilen sind jetzt
+`renderDuplicateHints(duplicateHits(...))`, es gibt genau eine Berechnung und keinen Parallelpfad.
+
+## Die Bereinigungsformel
+
+Der Anteil der Duplikate an der Element-Ausbeute wird vom **Gewinn** abgezogen:
+
+```
+eff = focusDelta > 0 ? focusDelta · (1 − min(1, dupes / mutations)) : focusDelta
+```
+
+Drei Eigenschaften, alle absichtlich:
+
+- **Ausbeute vollständig aus Duplikaten ⇒ Null-Fortschritt.** Genau der gemessene Fall.
+- **Ein Duplikat unter fünf Elementen kostet ein Fünftel**, nicht den ganzen Gewinn — das ist
+  die Gegenmaßnahme zum v16-Fehler in Gegenrichtung.
+- **Verluste werden nicht bereinigt.** Ein negativer Fokus-Delta bleibt, wie er ist; Redundanz
+  darf eine Verschlechterung nicht abmildern.
+
+Fehlt `mutations` (oder ist 0), während Duplikate gemessen wurden, gilt Anteil 1 — ein Gewinn
+ohne belegte Ausbeute ist unbelegt.
+
+## Abweichung vom CR-Text: der Threshold ist 0.55, nicht 0.85
+
+Der CR nennt „den bereits gemessenen ND-Wert (0.85)". Der Hinweis-Pfad läuft seit CR-GC-287
+aber auf `HINT_SIMILARITY_THRESHOLD = 0.55` — 0.85 ist der Threshold der ND-01/ND-02-**Regeln**
+in contracts, nicht der des lokalen Hinweises. Unverändert gelassen: die Absicht des CR ist
+„keine neue Ähnlichkeits-Formel", und ein Anheben auf 0.85 hätte die bestehende Hinweis-Ausgabe
+verändert — eine andere Änderung als die hier beauftragte.
+
+## Rot-zuerst-Nachweis
+
+Beide tragenden Zusicherungen per Mutation als wirksam belegt, nicht nur grün beobachtet:
+
+| Mutation | erwartet rot | beobachtet |
+|---|---|---|
+| Ranking benutzt wieder den rohen `focusDelta` | der Gleichstand-Fall | 1 rot, 18 grün |
+| Überkorrektur: jedes Duplikat löscht den Gewinn ganz (`share = 1`) | Fortschritt-trotz-Duplikat + Determinismus | 2 rot, 17 grün |
 
 ## Akzeptanzkriterien
 
-- [ ] Unit: zwei Kandidaten mit **identischem** `focusDelta`, einer davon aus
+- [x] Unit: zwei Kandidaten mit **identischem** `focusDelta`, einer davon aus
       Beinahe-Duplikaten — der eigenständige gewinnt. Ohne den Fix gewinnt der
-      Duplikat-Kandidat (Test muss zuerst rot gesehen werden, sonst prüft er nichts)
-- [ ] Unit: ein Kandidat mit ECHTEM Fortschritt **und** einem Duplikat schlägt weiterhin
+      Duplikat-Kandidat (rot gesehen, s. Mutation 1)
+- [x] Unit: ein Kandidat mit ECHTEM Fortschritt **und** einem Duplikat schlägt weiterhin
       einen ohne Fortschritt — die Bereinigung darf Fortschritt nicht auslöschen
-- [ ] Determinismus bleibt: gleiche Kandidaten ⇒ gleiche Reihenfolge (Index-Anker zuletzt)
-- [ ] `npm run build` + Suite grün (Baseline 765/767, s. CR-GC-358)
+      (rot gesehen unter der Überkorrektur, s. Mutation 2)
+- [x] Determinismus bleibt: gleiche Kandidaten ⇒ gleiche Reihenfolge (Index-Anker zuletzt)
+- [x] `npm run build` + Suite grün: **856/857**. Der eine rote Fall ist der Vorbestand
+      `tests/distribution.test.ts` — `@sigloch/graph-view-edit@^0.6.0` ist nicht publiziert
+      (npm kennt nur bis 0.5.0); die Anhebung liegt uncommitted im Arbeitsbaum
 - [ ] **Validierung durch Lauf** (nach CR-GC-359): REQ-Anteil und Duplikat-Zahl gegen
       den qwen35a3b-Bestlauf (53 El, 5 REQ, 1 Duplikat). Ohne diesen Lauf bleibt das CR
       offen — ein Ranking-Kriterium ohne Messung ist genau der Fehler, den CR-GC-288/289
       schon einmal gekostet haben (v16 Volumen-Bias, v17 konfundiert, erst v18 valide)
+
+      **Blockiert:** CR-GC-359 ist am 2026-08-21 auf `CR-DRAFT-GC-359` zurückgestuft worden
+      (nicht gebaut). Ohne den undici-Deckel misst ein Lauf den Timeout statt des Modells.
+      Der Code steht und ist unit-belegt; das CR bleibt bis zu diesem Lauf offen.
 
 ## Abgrenzung
 

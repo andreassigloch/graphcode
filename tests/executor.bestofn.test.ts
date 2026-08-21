@@ -26,6 +26,7 @@ import {
 } from '../src/executor.js';
 import {
   rankCandidates,
+  effectiveFocusDelta,
   deltaSum,
   focusDelta,
   totalDelta,
@@ -207,6 +208,89 @@ describe('Best-of-N ranking (pur, deterministisch)', () => {
     expect(rankCandidates([a, b], 'req')[0]).toBe(b);
     // Ohne Fokus-Dimension fällt die Stufe weg — dann gewinnt a über das Gesamt-Delta.
     expect(rankCandidates([a, b], null)[0]).toBe(a);
+  });
+
+  // -------------------------------------------------------------------------
+  // CR-GC-361 — Fortschritt vs. Scheinfortschritt
+  // -------------------------------------------------------------------------
+
+  /** Kandidat MIT gemessenen REQ/UC-Beinahe-Duplikaten (Preflight-Messung). */
+  const candDup = (index: number, verdict: Record<string, unknown>, dupes: number) =>
+    ({
+      index,
+      verdict,
+      duplicates: Array.from({ length: dupes }, () => ({ score: 0.9 })),
+    }) as Parameters<typeof rankCandidates>[0][number];
+
+  it('CR-GC-361: bei identischem Fokus-Delta gewinnt der eigenständige, nicht der volumigere Duplikat-Batch', () => {
+    // Der gemessene Fehler: Readiness-Regeln sind strukturell pro Element, ein
+    // Beinahe-Duplikat erfüllt sie exakt so gut. Beide Kandidaten heben `req`
+    // um dasselbe — der Duplikat-Batch nur deshalb, weil er mehr Knoten mitbringt,
+    // und er gewinnt ohne die Bereinigung den späten `mutations`-Tiebreaker.
+    const dupes = candDup(
+      0,
+      { success: true, tier: 'suggest', mutations: 5, steeringDelta: steering(0, 0, { req: 0.1 }) },
+      5,
+    );
+    const clean = cand(1, {
+      success: true, tier: 'suggest', mutations: 3,
+      steeringDelta: steering(0, 0, { req: 0.1 }),
+    });
+
+    // Der ROHE Fokus-Delta ist identisch — genau deshalb entschied vorher die Menge.
+    expect(focusDelta(dupes.verdict, 'req')).toBeCloseTo(focusDelta(clean.verdict, 'req'));
+    // Bereinigt: der Gewinn des Duplikat-Batches ist vollständig unbelegt.
+    expect(effectiveFocusDelta(dupes, 'req')).toBeCloseTo(0);
+    expect(effectiveFocusDelta(clean, 'req')).toBeCloseTo(0.1);
+    expect(rankCandidates([dupes, clean], 'req')[0]).toBe(clean);
+  });
+
+  it('CR-GC-361: echter Fortschritt MIT einem Duplikat schlägt weiterhin Null-Fortschritt', () => {
+    // Die Gegenmaßnahme zum v16-Fehler in Gegenrichtung: die Bereinigung ist eine
+    // Präferenz, kein Block. Ein Duplikat unter fünf Elementen kostet ein Fünftel
+    // des Gewinns — es löscht ihn nicht aus.
+    const progress = candDup(
+      0,
+      { success: true, tier: 'suggest', mutations: 5, steeringDelta: steering(0, 0, { req: 0.1 }) },
+      1,
+    );
+    const noProgress = cand(1, {
+      success: true, tier: 'auto-apply', mutations: 20,
+      steeringDelta: steering(0, 0, { req: 0 }),
+    });
+    expect(effectiveFocusDelta(progress, 'req')).toBeCloseTo(0.08);
+    expect(rankCandidates([progress, noProgress], 'req')[0]).toBe(progress);
+  });
+
+  it('CR-GC-361: Verluste werden nicht bereinigt, und ohne Duplikate ändert sich nichts', () => {
+    // Ein negativer Fokus-Delta bleibt, wie er ist — Redundanz darf eine
+    // Verschlechterung nicht abmildern.
+    const loss = candDup(
+      0,
+      { success: true, tier: 'suggest', mutations: 4, steeringDelta: steering(0, 0, { req: -0.2 }) },
+      4,
+    );
+    expect(effectiveFocusDelta(loss, 'req')).toBeCloseTo(-0.2);
+    // Ohne Duplikate ist der bereinigte Wert der rohe — der Pfad ist für alle
+    // bisherigen Kandidaten unverändert.
+    const plain = cand(1, { success: true, tier: 'suggest', mutations: 4, steeringDelta: steering(0, 0, { req: 0.3 }) });
+    expect(effectiveFocusDelta(plain, 'req')).toBeCloseTo(focusDelta(plain.verdict, 'req'));
+  });
+
+  it('CR-GC-361: Determinismus — gleiche Kandidaten ⇒ gleiche Reihenfolge, Index bleibt der Anker', () => {
+    const mk = () => [
+      candDup(0, { success: true, tier: 'suggest', mutations: 4, steeringDelta: steering(0, 0, { req: 0.1 }) }, 2),
+      cand(1, { success: true, tier: 'suggest', mutations: 4, steeringDelta: steering(0, 0, { req: 0.05 }) }),
+      candDup(2, { success: true, tier: 'suggest', mutations: 4, steeringDelta: steering(0, 0, { req: 0.1 }) }, 2),
+    ];
+    const once = rankCandidates(mk(), 'req').map((c) => c.index);
+    const twice = rankCandidates(mk(), 'req').map((c) => c.index);
+    expect(once).toEqual(twice);
+    // Alle drei liegen im bereinigten Fokus-Delta gleichauf (0.05): 0 und 2 durch
+    // die Bereinigung (0.1 minus 2 von 4), 1 roh. Die naechste Stufe trennt sie —
+    // Gesamt-Delta 0.1 (0 und 2) vor 0.05 (1); zwischen 0 und 2 entscheidet der
+    // Index-Anker zuletzt.
+    expect(once).toEqual([0, 2, 1]);
   });
 
   it('CR-GC-289: blockingErrors-Anstieg ist strikt schlechter als jedes Score-Plus', () => {

@@ -5,7 +5,7 @@
  * contracts-Kommentaren. Das Gate (V3_RULES+MT via SE_DESCRIPTOR) evaluiert
  * ND NIE — Regression hier mitgeprüft. Reale Duplikate aus den
  * Greenfield-Läufen (haiku45 / devstral-v14) dienen als Fixtures für den
- * REQ/UC-Hinweis-Pfad (duplicateHints, contracts-frei, keine Regel).
+ * REQ/UC-Hinweis-Pfad (duplicateHits + renderDuplicateHints, contracts-frei, keine Regel).
  */
 import { describe, it, expect, afterEach } from 'vitest';
 import { DEFAULT_METRIC_POLICY } from '@sigloch/contracts/se';
@@ -27,7 +27,8 @@ import {
   computeND01Matrix,
   computeND02Matrix,
   injectNDMatrices,
-  duplicateHints,
+  duplicateHits,
+  renderDuplicateHints,
   HINT_SIMILARITY_THRESHOLD,
 } from '../src/nd-similarity.js';
 import { generationStep } from '../src/generate.js';
@@ -169,7 +170,7 @@ describe('generate-Fokus sieht ND (AK 3)', () => {
   });
 });
 
-describe('duplicateHints — reale Duplikate aus den Greenfield-Läufen (AK 1)', () => {
+describe('duplicateHits — reale Duplikate aus den Greenfield-Läufen (AK 1)', () => {
   it('haiku45: REQ-Paar (mit/ohne messbarem Kriterium) liegt über der Hinweis-Schwelle', () => {
     const og = fixture('gc-run-haiku45');
     const a = og.elements.find((e) => e.id === 'REQ-batch-atomicity-all-or-nothing');
@@ -187,7 +188,7 @@ describe('duplicateHints — reale Duplikate aus den Greenfield-Läufen (AK 1)',
         { op: 'add-node', node: { uid: 'REQ-neu', type: 'REQ', name: dup.name, description: dup.description } },
       ],
     };
-    const hints = duplicateHints(batch, index);
+    const hints = renderDuplicateHints(duplicateHits(batch, index));
     expect(hints).toHaveLength(1);
     expect(hints[0]).toContain('REQ-neu ähnlich vorhanden');
     expect(hints[0]).toContain('REQ-batch-atomicity');
@@ -200,29 +201,56 @@ describe('duplicateHints — reale Duplikate aus den Greenfield-Läufen (AK 1)',
       .filter((e) => e.id !== 'UC-export-flow')
       .map((e) => ({ uid: e.id, type: e.type, name: e.name, description: e.description }));
     const flow = og.elements.find((e) => e.id === 'UC-export-flow')!;
-    const hints = duplicateHints(
+    const hints = renderDuplicateHints(duplicateHits(
       { commands: [{ op: 'add-node', node: { uid: 'UC-export-flow', type: 'UC', name: flow.name, description: flow.description } }] },
       index,
-    );
+    ));
     expect(hints).toHaveLength(1);
     expect(hints[0]).toContain('UC-export-graph');
+  });
+
+  it('CR-GC-361: der Treffer ist strukturiert und vollständig — die Kürzung sitzt erst im Rendering', () => {
+    const og = fixture('gc-run-haiku45');
+    const index = og.elements.map((e) => ({ uid: e.id, type: e.type, name: e.name, description: e.description }));
+    const dup = og.elements.find((e) => e.id === 'REQ-batch-atomicity-measurable')!;
+    // Vier Duplikate: das Rendering zeigt MAX_HINTS=3 Zeilen, die Messung liefert alle vier —
+    // sonst könnte das Ranking den Redundanz-Anteil eines großen Batches nicht sehen.
+    const hits = duplicateHits(
+      {
+        commands: [1, 2, 3, 4].map((i) => ({
+          op: 'add-node',
+          node: { uid: `REQ-neu-${i}`, type: 'REQ', name: dup.name, description: dup.description },
+        })),
+      },
+      index,
+    );
+    expect(hits).toHaveLength(4);
+    expect(renderDuplicateHints(hits)).toHaveLength(3);
+    for (const h of hits) {
+      expect(h.uid).toMatch(/^REQ-neu-\d$/);
+      expect(h.matchedUid).toContain('REQ-batch-atomicity');
+      expect(h.matchedName).toBe(dup.name);
+      expect(h.score).toBeGreaterThanOrEqual(HINT_SIMILARITY_THRESHOLD);
+    }
+    // Deterministisch: absteigend nach Ähnlichkeit, bei Gleichstand nach uid.
+    expect(hits.map((h) => h.uid)).toEqual(['REQ-neu-1', 'REQ-neu-2', 'REQ-neu-3', 'REQ-neu-4']);
   });
 
   it('unähnliche neue Elemente, Nicht-REQ/UC-Typen und kaputter Input ⇒ keine Hinweise', () => {
     const index = [{ uid: 'UC-login', type: 'UC', name: 'Login', description: 'User meldet sich an.' }];
     expect(
-      duplicateHints(
+      duplicateHits(
         { commands: [{ op: 'add-node', node: { uid: 'UC-export', type: 'UC', name: 'Export graph', description: 'User downloads the governed graph as Format-E.' } }] },
         index,
       ),
     ).toHaveLength(0);
     expect(
-      duplicateHints(
+      duplicateHits(
         { commands: [{ op: 'add-node', node: { uid: 'FUNC-login', type: 'FUNC', name: 'Login', description: 'User meldet sich an.' } }] },
         index,
       ),
     ).toHaveLength(0);
-    expect(duplicateHints({ formatE: '### UC' }, index)).toHaveLength(0);
-    expect(duplicateHints(null, index)).toHaveLength(0);
+    expect(duplicateHits({ formatE: '### UC' }, index)).toHaveLength(0);
+    expect(duplicateHits(null, index)).toHaveLength(0);
   });
 });
