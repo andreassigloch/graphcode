@@ -1,6 +1,6 @@
 # CR-GC-382 — Modellbereinigung: eine Code-Bindung, keine zweite Adresse
 
-**Status:** open · **Angelegt:** 2026-08-21 · **Basis:** SPIKE-GC-selective-tests, CR-GC-381
+**Status:** done · **Angelegt:** 2026-08-21 · **Geschlossen:** 2026-08-21 · **Basis:** SPIKE-GC-selective-tests, CR-GC-381
 
 ## Problem
 

@@ -1,6 +1,6 @@
 # CR-GC-381 — Messinstrument für die selektive Testauswahl
 
-**Status:** open · **Angelegt:** 2026-08-21 · **Basis:** SPIKE-GC-selective-tests (CR-GC-380)
+**Status:** done · **Angelegt:** 2026-08-21 · **Geschlossen:** 2026-08-21 · **Basis:** SPIKE-GC-selective-tests (CR-GC-380)
 
 ## Problem
 

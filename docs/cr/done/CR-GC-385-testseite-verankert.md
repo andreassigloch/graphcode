@@ -1,6 +1,6 @@
 # CR-GC-385 — Die Testseite steht im Graphen
 
-**Status:** open · **Angelegt:** 2026-08-21 · **Basis:** SPIKE-GC-selective-tests M3, CR-GC-381
+**Status:** done · **Angelegt:** 2026-08-21 · **Geschlossen:** 2026-08-21 · **Basis:** SPIKE-GC-selective-tests M3, CR-GC-381
 
 ## Problem
 

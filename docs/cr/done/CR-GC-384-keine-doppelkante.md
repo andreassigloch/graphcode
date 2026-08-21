@@ -1,6 +1,6 @@
 # CR-GC-384 — Eine Kante existiert einmal: Doppelkante nach `merge-nodes`
 
-**Status:** open · **Angelegt:** 2026-08-21 · **Auslöser:** CR-GC-383
+**Status:** done · **Angelegt:** 2026-08-21 · **Geschlossen:** 2026-08-21 · **Auslöser:** CR-GC-383
 
 ## Root Cause
 

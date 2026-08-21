@@ -1,6 +1,6 @@
 # CR-GC-386 — Evidenz je Eintrag: der Ingest stempelt alle Dateien einer Abnahme
 
-**Status:** open · **Angelegt:** 2026-08-21 · **Gefunden beim Einspielen des eigenen Laufs (CR-GC-385)**
+**Status:** done · **Angelegt:** 2026-08-21 · **Geschlossen:** 2026-08-21 · **Gefunden beim Einspielen des eigenen Laufs (CR-GC-385)**
 
 ## Root Cause
 

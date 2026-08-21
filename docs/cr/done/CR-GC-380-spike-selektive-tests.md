@@ -1,6 +1,6 @@
 # CR-GC-380 — Spike: warum jeder Lauf ein Volllauf ist
 
-**Status:** open · **Angelegt:** 2026-08-21
+**Status:** done · **Angelegt:** 2026-08-21 · **Geschlossen:** 2026-08-21
 
 ## Problem
 
