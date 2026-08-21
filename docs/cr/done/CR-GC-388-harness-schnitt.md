@@ -80,11 +80,19 @@ evaluate-rules, import, load-graph, mutate, open-store, reseed, save-graph, seed
 Der verbliebene R-04-Befund ist die ehrliche Restaussage: der Sammler ist nicht mehr zu groß, aber
 weiterhin stark gekoppelt (27 kreuzende Flüsse, Kohäsion 6 intern gegen 32 extern).
 
-**Code:** nur `listElements` ist gewandert — samt der fünf Aufrufstellen
-(`src/tools/read.ts`, `src/viewer/host.ts` ×2, zwei Tests). Die Methode am Harness ist **gelöscht**,
-keine Delegation, kein Parallelpfad. `src/harness.ts` steht damit bei **759 Zeilen** und bleibt über
-der 500-Zeilen-Grenze: die Kohäsions-Komponenten geben keinen weiteren Schnitt her, den die Messung
-stützt. Wer die Zeilenzahl senken will, braucht ein anderes Argument als LCOM4 — und einen eigenen CR.
+**Code:** nur `listElements` ist gewandert. Die Implementierung wohnt in `element-slice.ts`, am
+Harness bleibt eine **einzeilige Fassade** — Aufrufer und publizierte API sind unverändert.
+
+Zwischenschritt und Korrektur, weil er die Regel zeigt: zuerst war die Methode ersatzlos gelöscht und
+jede der fünf Aufrufstellen rief `listElements(harness.getStore(), harness.getScope(), filter)`. Das
+war „keine parallelen Pfade" überdehnt — die Regel verbietet zwei *Implementierungen*, nicht eine
+Fassade auf die eine. Der Preis wäre zwei Positionsargumente an jeder Aufrufstelle plus ein Bruch der
+publizierten API gewesen, für null Gewinn: LCOM4 rechnet über das Modell (`allocate`/`io`/`satisfy`),
+nicht über den Aufrufcode. Die Kennzahl bleibt bei 1, auch mit Fassade.
+
+`src/harness.ts` steht bei **770 Zeilen** und bleibt über der 500-Zeilen-Grenze: die
+Kohäsions-Komponenten geben keinen weiteren Schnitt her, den die Messung stützt. Wer die Zeilenzahl
+senken will, braucht ein anderes Argument als LCOM4 — und einen eigenen CR.
 
 ## Weitere Dateien über der Grenze
 
@@ -97,7 +105,7 @@ weil an ihm die Messung hängt.
 - [x] Schnitt streng entlang der LCOM4-Komponenten, ≥ 2 MOD, Sammler benannt
 - [x] Jede herausgelöste FUNC trägt `realRef` auf ihr neues Zuhause; R-02/R-22/R-30/R-31 steigen nicht
 - [x] MT-02 und RD-04 an `MOD-harness` sind weg; R-04 nur noch als Kopplungs-, nicht als Größenbefund
-- [x] `harness.listElements` gelöscht, alle fünf Aufrufer auf das neue Modul umgestellt
+- [x] `listElements` implementiert in `element-slice.ts`, am Harness nur noch eine Fassaden-Zeile; Aufrufer und publizierte API unverändert
 - [x] `npm run build` grün, `npm test` grün
 - [x] `scripts/test-selection-audit.mjs` nach dem Schnitt: M1 52 %, M2 36 %, M8 56 %
 

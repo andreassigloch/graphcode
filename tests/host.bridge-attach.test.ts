@@ -28,7 +28,6 @@ import { createHarness, type GraphCodeHarness } from '../src/index.js';
 import { HostBridge } from '../src/viewer/host.js';
 import { maybeStartBridge } from '../src/mcp-server.js';
 import { StoreOwnershipError } from '../src/store-lock.js';
-import { listElements } from '../src/element-slice.js';
 
 describe('TEST-bridge-follows-lock: elected host serves the read-only bridge (CR-GC-237)', () => {
   let tmp: string;
@@ -111,7 +110,7 @@ describe('TEST-bridge-follows-lock: elected host serves the read-only bridge (CR
     // stop() releases ONLY the HTTP surface — the elected host keeps its store.
     await bridge.stop();
     bridge = null;
-    const nodes = await listElements(harness.getStore(), harness.getScope(), {});
+    const nodes = await harness.listElements({});
     expect(nodes.find((n) => n.uid === 'REQ-bfl-01')).toBeDefined();
   });
 

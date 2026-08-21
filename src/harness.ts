@@ -52,6 +52,7 @@ import {
   type OntologyJson,
 } from './harness-import.js';
 import { StoreLock } from './store-lock.js';
+import { listElements, type ElementFilter } from './element-slice.js';
 import { setExportPending } from './export-marker.js';
 import { computeFitAdvisory, type FitAdvisory } from './fit-advisory.js';
 import {
@@ -307,6 +308,16 @@ export class GraphCodeHarness {
    * Returns the directed subgraph: the changed nodes ∪ reached spec anchors ∪ the
    * TESTs verifying them. The TEST nodes are the impacted test set.
    */
+  /**
+   * Fassade auf `element-slice.ts` (CR-GC-388). Die Implementierung wohnt dort —
+   * sie teilt mit dem Gate weder FLOW noch REQ und ist deshalb ein eigenes MOD.
+   * Diese Zeile bleibt, weil der Aufrufer Store und Scope nicht selbst einsammeln
+   * soll: eine Implementierung, ein bequemer Einstieg, kein zweiter Pfad.
+   */
+  async listElements(filter: ElementFilter): Promise<GraphNode[]> {
+    return listElements(this.storage, this.config.scope, filter);
+  }
+
   async testImpact(changeSet: string[], depth: number): Promise<Graph> {
     // The full store read is the same primitive `listElements` (element-slice.ts) uses; a plain
     // `getSubgraph(both)` fetch on the changeset would NOT reach the tests (it is the

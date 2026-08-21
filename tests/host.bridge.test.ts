@@ -26,7 +26,6 @@ import {
 import { LiveUpdateEventSchema } from '@sigloch/contracts/harness';
 import type { MutateCommand } from '@sigloch/contracts/harness';
 import { HostBridge } from '../src/viewer/host.js';
-import { listElements } from '../src/element-slice.js';
 
 /** One parsed SSE frame: id + event name + JSON-decoded data. */
 interface SseFrame {
@@ -172,7 +171,7 @@ describe('TEST-readonly-bridge: host owns Kuzu and serves a read-only SSE surfac
     expect([404, 405]).toContain(deleteElements.status);
 
     // The store is unchanged — no mutation slipped through.
-    const nodes = await listElements(bridge.getHarness().getStore(), bridge.getHarness().getScope(), {});
+    const nodes = await bridge.getHarness().listElements({});
     expect(nodes.find((n) => n.uid === 'REQ-x')).toBeUndefined();
   });
 });
