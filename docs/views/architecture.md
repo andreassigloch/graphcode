@@ -102,13 +102,17 @@
 | `FUNC-view-rtm` | FUNC | se-view-rtm (RTM) |
 | `MOD-cli` | MOD | cli — npx-Distribution & Lifecycle |
 | `MOD-codec` | MOD | codec.ts — GraphCodeCodec |
+| `MOD-completeness` | MOD | readiness-completeness — Gate-Vollstaendigkeit |
+| `MOD-conformance` | MOD | conformance.ts — Code-Konformitaet |
 | `MOD-dashboard` | MOD | dashboard — Live-Viewer-App |
 | `MOD-docs` | MOD | docs — Markdown-Re-Exporter |
+| `MOD-element-slice` | MOD | element-slice.ts — Element-Scheibe |
 | `MOD-harness` | MOD | harness.ts — GraphCodeHarness |
 | `MOD-hooks` | MOD | hooks.ts — HookSystem |
 | `MOD-host-bridge` | MOD | host-bridge — SSE/WS Bridge |
 | `MOD-mcp-tools` | MOD | mcp-tools.ts — MCP-Registry |
 | `MOD-repo-root` | MOD | graphcode Projektwurzel |
+| `MOD-schema-migration` | MOD | Schema-Migration |
 | `MOD-skills` | MOD | skills/prompts — agent-realisierte Funktionen |
 | `MOD-steering` | MOD | steering — Kenngroessen-Steuerungskern |
 | `SYS-graphcode` | SYS | GraphCode |
@@ -133,7 +137,7 @@
 | `FUNC-block-schaufenster` | `MOD-repo-root` |
 | `FUNC-block-se-steuerung` | `MOD-steering` |
 | `FUNC-broadcast-diff` | `MOD-host-bridge` |
-| `FUNC-check-code-conformance` | `MOD-harness` |
+| `FUNC-check-code-conformance` | `MOD-conformance` |
 | `FUNC-claim-store-lock` | `MOD-harness` |
 | `FUNC-close-store` | `MOD-harness` |
 | `FUNC-close-violations` | `MOD-skills` |
@@ -158,10 +162,10 @@
 | `FUNC-health-endpoint` | `MOD-host-bridge` |
 | `FUNC-import` | `MOD-harness` |
 | `FUNC-import-doc` | `MOD-skills` |
-| `FUNC-list-elements` | `MOD-harness` |
+| `FUNC-list-elements` | `MOD-element-slice` |
 | `FUNC-load-graph` | `MOD-harness` |
 | `FUNC-merge-nodes` | `MOD-codec` |
-| `FUNC-migrate-schema` | `MOD-harness` |
+| `FUNC-migrate-schema` | `MOD-schema-migration` |
 | `FUNC-module-metrics` | ⚠ nicht alloziert (R-22) |
 | `FUNC-mutate` | `MOD-harness` |
 | `FUNC-next-step` | `MOD-steering` |
@@ -180,7 +184,7 @@
 | `FUNC-resolve-tests-from-code` | `MOD-mcp-tools` |
 | `FUNC-rewind` | `MOD-cli` |
 | `FUNC-save-graph` | `MOD-harness` |
-| `FUNC-score-completeness` | `MOD-harness` |
+| `FUNC-score-completeness` | `MOD-completeness` |
 | `FUNC-se-conops` | `MOD-skills` |
 | `FUNC-se-fmea` | `MOD-skills` |
 | `FUNC-se-generate` | `MOD-skills` |

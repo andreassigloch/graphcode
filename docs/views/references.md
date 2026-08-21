@@ -733,7 +733,7 @@
 | `FUNC-block-se-steuerung` | compose | `FUNC-se-trade` |
 | `FUNC-broadcast-diff` | allocate | `MOD-host-bridge` |
 | `FUNC-broadcast-diff` | satisfy | `REQ-versioned-broadcast` |
-| `FUNC-check-code-conformance` | allocate | `MOD-harness` |
+| `FUNC-check-code-conformance` | allocate | `MOD-conformance` |
 | `FUNC-check-code-conformance` | satisfy | `REQ-graph-code-conformance` |
 | `FUNC-claim-store-lock` | allocate | `MOD-harness` |
 | `FUNC-claim-store-lock` | io | `FLOW-store-ownership` |
@@ -833,7 +833,7 @@
 | `FUNC-import` | satisfy | `REQ-post-import` |
 | `FUNC-import` | satisfy | `REQ-pre-import` |
 | `FUNC-import-doc` | allocate | `MOD-skills` |
-| `FUNC-list-elements` | allocate | `MOD-harness` |
+| `FUNC-list-elements` | allocate | `MOD-element-slice` |
 | `FUNC-list-elements` | io | `FLOW-element-slice` |
 | `FUNC-list-elements` | satisfy | `REQ-query-precision` |
 | `FUNC-load-graph` | allocate | `MOD-harness` |
@@ -845,7 +845,7 @@
 | `FUNC-merge-nodes` | satisfy | `REQ-conflict-free-merge` |
 | `FUNC-merge-nodes` | satisfy | `REQ-post-merge-nodes` |
 | `FUNC-merge-nodes` | satisfy | `REQ-pre-merge-nodes` |
-| `FUNC-migrate-schema` | allocate | `MOD-harness` |
+| `FUNC-migrate-schema` | allocate | `MOD-schema-migration` |
 | `FUNC-migrate-schema` | io | `FLOW-migrated-graph` |
 | `FUNC-migrate-schema` | satisfy | `REQ-post-migrate-schema` |
 | `FUNC-migrate-schema` | satisfy | `REQ-pre-migrate-schema` |
@@ -893,7 +893,7 @@
 | `FUNC-save-graph` | allocate | `MOD-harness` |
 | `FUNC-save-graph` | io | `FLOW-committed-graph` |
 | `FUNC-save-graph` | satisfy | `REQ-disk-persistence` |
-| `FUNC-score-completeness` | allocate | `MOD-harness` |
+| `FUNC-score-completeness` | allocate | `MOD-completeness` |
 | `FUNC-score-completeness` | io | `FLOW-completeness` |
 | `FUNC-score-completeness` | satisfy | `REQ-completeness-actor-bounded` |
 | `FUNC-score-completeness` | satisfy | `REQ-completeness-single-value` |

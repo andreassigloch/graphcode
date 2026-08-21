@@ -680,7 +680,7 @@ graph_impact liefert exakten Blast-Radius als Format-E (Anti-grep, Ziel a). (R6/
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param` (integration) · satisfy ◀ `FUNC-graph-impact` · `FUNC-list-elements` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
+Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param` (integration) · satisfy ◀ `FUNC-graph-impact` · `FUNC-list-elements` · allocate ▶ `MOD-element-slice` · `MOD-mcp-tools`
 
 ###### `REQ-subgraph-slicing` — Sub-Graph-Slicing
 
@@ -952,7 +952,7 @@ graph_impact liefert exakten Blast-Radius als Format-E (Anti-grep, Ziel a). (R6/
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param` (integration) · satisfy ◀ `FUNC-graph-impact` · `FUNC-list-elements` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
+Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param` (integration) · satisfy ◀ `FUNC-graph-impact` · `FUNC-list-elements` · allocate ▶ `MOD-element-slice` · `MOD-mcp-tools`
 
 ###### `REQ-subgraph-slicing` — Sub-Graph-Slicing
 
@@ -1332,7 +1332,7 @@ graph_impact liefert exakten Blast-Radius als Format-E (Anti-grep, Ziel a). (R6/
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param` (integration) · satisfy ◀ `FUNC-graph-impact` · `FUNC-list-elements` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
+Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param` (integration) · satisfy ◀ `FUNC-graph-impact` · `FUNC-list-elements` · allocate ▶ `MOD-element-slice` · `MOD-mcp-tools`
 
 ###### `REQ-subgraph-slicing` — Sub-Graph-Slicing
 
@@ -1474,7 +1474,7 @@ graph_impact liefert exakten Blast-Radius als Format-E (Anti-grep, Ziel a). (R6/
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param` (integration) · satisfy ◀ `FUNC-graph-impact` · `FUNC-list-elements` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
+Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param` (integration) · satisfy ◀ `FUNC-graph-impact` · `FUNC-list-elements` · allocate ▶ `MOD-element-slice` · `MOD-mcp-tools`
 
 ###### `REQ-subgraph-slicing` — Sub-Graph-Slicing
 
@@ -1522,7 +1522,7 @@ Verification ◀ `TEST-impact-subgraph` (integration) · satisfy ◀ `FUNC-graph
 
 Liefert eine nach Typ und Suchbegriff gefilterte Element-Scheibe aus dem Store.
 
-io ◀ `FLOW-query-request` · io ▶ `FLOW-element-slice` · allocate ▶ `MOD-harness`
+io ◀ `FLOW-query-request` · io ▶ `FLOW-element-slice` · allocate ▶ `MOD-element-slice`
 
 ###### `REQ-query-precision` — Query-Precision statt Kompression
 
@@ -1532,7 +1532,7 @@ graph_impact liefert exakten Blast-Radius als Format-E (Anti-grep, Ziel a). (R6/
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param` (integration) · satisfy ◀ `FUNC-graph-impact` · `FUNC-list-elements` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
+Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param` (integration) · satisfy ◀ `FUNC-graph-impact` · `FUNC-list-elements` · allocate ▶ `MOD-element-slice` · `MOD-mcp-tools`
 
 #### 3.7.3  `FCHAIN-modelfree-gate` — Modellfreier Gate-Betrieb
 
@@ -1802,7 +1802,7 @@ graph_impact liefert exakten Blast-Radius als Format-E (Anti-grep, Ziel a). (R6/
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param` (integration) · satisfy ◀ `FUNC-graph-impact` · `FUNC-list-elements` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
+Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param` (integration) · satisfy ◀ `FUNC-graph-impact` · `FUNC-list-elements` · allocate ▶ `MOD-element-slice` · `MOD-mcp-tools`
 
 ###### `REQ-subgraph-slicing` — Sub-Graph-Slicing
 
@@ -1996,7 +1996,7 @@ io ◀ — · io ▶ — · allocate ▶ `MOD-repo-root`
 
 Extrahiert CodeFacts (extractCodeFacts, ts-Parser) und wertet die contracts RC-Regeln (RC-01 codeRef, RC-02 testRef) aus; scoreReadinessWithConformance mischt sie in die Readiness. Cross-Module-Call-Coverage Follow-up CR-GC-256. (CR-GC-206 -> CR-GC-253)
 
-io ◀ — · io ▶ — · allocate ▶ `MOD-harness`
+io ◀ — · io ▶ — · allocate ▶ `MOD-conformance`
 
 ###### `REQ-graph-code-conformance` — FUNC codeRef resolves to a real declared symbol
 
@@ -2004,7 +2004,7 @@ Jeder FUNC.codeRef loest auf ein real deklariertes Symbol in seiner Datei auf (T
 
 priority: must · status: done
 
-Verification ◀ `TEST-code-conformance` (integration) · satisfy ◀ `FUNC-check-code-conformance` · allocate ▶ `MOD-harness`
+Verification ◀ `TEST-code-conformance` (integration) · satisfy ◀ `FUNC-check-code-conformance` · allocate ▶ `MOD-conformance`
 
 ##### 3.9.2.2  `FUNC-evaluate-rules` — evaluateRules()
 
@@ -2284,7 +2284,7 @@ Verification ◀ `TEST-merge` (integration) · satisfy ◀ `FUNC-merge-nodes` ·
 
 Re-Validierung + Migration des Graphen bei ONTOLOGY/RULES_VERSION-Bump; Version am Artefakt mitgeführt.
 
-io ◀ `FLOW-version-bump` · io ▶ `FLOW-migrated-graph` · allocate ▶ `MOD-harness`
+io ◀ `FLOW-version-bump` · io ▶ `FLOW-migrated-graph` · allocate ▶ `MOD-schema-migration`
 
 ###### `REQ-post-migrate-schema` — Postcondition: migrateSchema(from, to)
 
@@ -2292,7 +2292,7 @@ Graph re-validiert/migriert; Violations berichtet; Artefakt-Version aktualisiert
 
 priority: must · status: open · kinds: postcondition
 
-Verification ◀ `TEST-schema-migration` (integration) · satisfy ◀ `FUNC-migrate-schema` · allocate ▶ `MOD-harness`
+Verification ◀ `TEST-schema-migration` (integration) · satisfy ◀ `FUNC-migrate-schema` · allocate ▶ `MOD-schema-migration`
 
 ###### `REQ-pre-migrate-schema` — Precondition: migrateSchema(from, to)
 
@@ -2300,7 +2300,7 @@ Version-Bump in contracts/se; bestehender Graph auf alter Version.
 
 priority: must · status: open · kinds: precondition
 
-Verification ◀ `TEST-schema-migration` (integration) · satisfy ◀ `FUNC-migrate-schema` · allocate ▶ `MOD-harness`
+Verification ◀ `TEST-schema-migration` (integration) · satisfy ◀ `FUNC-migrate-schema` · allocate ▶ `MOD-schema-migration`
 
 ###### `REQ-schema-version-migration` — Schema-Versions-Migration
 
@@ -2308,7 +2308,7 @@ FUNC-migrate-schema: bei Version-Bump re-validieren/migrieren, Violations berich
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-schema-migration` (integration) · satisfy ◀ `FUNC-migrate-schema` · allocate ▶ `MOD-harness`
+Verification ◀ `TEST-schema-migration` (integration) · satisfy ◀ `FUNC-migrate-schema` · allocate ▶ `MOD-schema-migration`
 
 ##### 3.9.3.8  `FUNC-own-kuzu-host` — ownKuzu()
 
@@ -2470,7 +2470,7 @@ Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (in
 
 Berechnet die Completeness-Dimension pro Gate: traversiert die Phase-Slice-Beine (Meta-Modell 1..*) ueber die treibende Source-Population und liefert covered/total + per-leg missing[]. Ergaenzt scorePhaseGate in src/readiness.ts; ein Gate ist passed nur wenn rule-clean UND completeness.covered==total. Config = statische Phase->Beine-Map, im Test gegen die Meta-Modell-Kardinalitaeten asserted (Drift-Lock). (CR-GC-250)
 
-io ◀ — · io ▶ `FLOW-completeness` · allocate ▶ `MOD-harness`
+io ◀ — · io ▶ `FLOW-completeness` · allocate ▶ `MOD-completeness`
 
 ###### `REQ-completeness-actor-bounded` — FCHAIN actor-bounded (Trigger + Consumer)
 
@@ -2478,7 +2478,7 @@ Jede FCHAIN ist actor-bounded: ein ACTOR->FLOW->FUNC(in chain) am Eintritt UND e
 
 priority: must · status: reviewed · kinds: functional
 
-Verification ◀ `TEST-readiness-completeness` (acceptance) · satisfy ◀ `FUNC-score-completeness` · allocate ▶ `MOD-harness`
+Verification ◀ `TEST-readiness-completeness` (acceptance) · satisfy ◀ `FUNC-score-completeness` · allocate ▶ `MOD-completeness`
 
 ###### `REQ-completeness-single-value` — Completeness: ein Wert pro Gate, Detail on-click
 
@@ -2486,7 +2486,7 @@ Das Readiness-Dashboard zeigt EINEN aggregierten Completeness-Wert pro Gate; die
 
 priority: should · status: reviewed · kinds: non-functional
 
-Verification ◀ `TEST-readiness-completeness` (acceptance) · satisfy ◀ `FUNC-score-completeness` · allocate ▶ `MOD-harness`
+Verification ◀ `TEST-readiness-completeness` (acceptance) · satisfy ◀ `FUNC-score-completeness` · allocate ▶ `MOD-completeness`
 
 ###### `REQ-readiness-completeness` — Readiness Completeness-Dimension (cardinality-driven)
 
@@ -2494,7 +2494,7 @@ Readiness traegt eine strukturelle Completeness-Dimension pro Gate, orthogonal z
 
 priority: must · status: reviewed · kinds: functional
 
-Verification ◀ `TEST-readiness-completeness` (acceptance) · satisfy ◀ `FUNC-score-completeness` · allocate ▶ `MOD-harness`
+Verification ◀ `TEST-readiness-completeness` (acceptance) · satisfy ◀ `FUNC-score-completeness` · allocate ▶ `MOD-completeness`
 
 ##### 3.9.4.8  `FUNC-take-steering-snapshot` — takeSteeringSnapshot(graph, policy)
 
@@ -3432,71 +3432,95 @@ schema ◀ `FLOW-live-event`
 
 ## 6  Architektur
 
-### 6.1  `MOD-repo-root` — graphcode Projektwurzel
+### 6.1  `MOD-completeness` — readiness-completeness — Gate-Vollstaendigkeit
+
+Vollstaendigkeit je Gate, realisiert im Paket @sigloch/graphcode-client statt in diesem Repo.
+
+allocate ◀ `FUNC-score-completeness`
+
+### 6.2  `MOD-conformance` — conformance.ts — Code-Konformitaet
+
+Prueft, ob eine Bindung im Modell auf ein real deklariertes Symbol zeigt.
+
+allocate ◀ `FUNC-check-code-conformance`
+
+### 6.3  `MOD-element-slice` — element-slice.ts — Element-Scheibe
+
+Gefilterte Leseansicht auf den Store: Typ- und Substring-Filter, keine Mutation, kein Hook, kein Persist.
+
+allocate ◀ `FUNC-list-elements`
+
+### 6.4  `MOD-repo-root` — graphcode Projektwurzel
 
 Ebene-0-Modul: das Wurzelverzeichnis des Projekts — ein Repo, ein npm-Paket, ein Kuzu-Store. Enthaelt alle Module; die Ebene-0-Funktionsbloecke sind hierhin allokiert.
 
 allocate ◀ `FUNC-block-anschluss` · `FUNC-block-gate` · `FUNC-block-gedaechtnis` · `FUNC-block-messwerk` · `FUNC-block-schaufenster`
 
-#### 6.1.1  `MOD-cli` — cli — npx-Distribution & Lifecycle
+#### 6.4.1  `MOD-cli` — cli — npx-Distribution & Lifecycle
 
 bin `npx @sigloch/graphcode init/update/remove`: self-contained Installer. App-spezifisch. (REQ-npx-distribution)
 
 allocate ◀ `FUNC-harness-cli` · `FUNC-rewind` · `FUNC-session-shutdown` · `FUNC-upgrade` · satisfy ▶ `REQ-buildable-standalone`
 
-#### 6.1.2  `MOD-codec` — codec.ts — GraphCodeCodec
+#### 6.4.2  `MOD-codec` — codec.ts — GraphCodeCodec
 
 Format-E ↔ OntologyGraph, deterministische Serialisierung, Validierung gegen SE-Ontologie. (SPEC §2.4)
 
 allocate ◀ `FUNC-decode` · `FUNC-encode` · `FUNC-merge-nodes` · satisfy ▶ `REQ-graph-integrity` · `REQ-interface-schema`
 
-#### 6.1.3  `MOD-dashboard` — dashboard — Live-Viewer-App
+#### 6.4.3  `MOD-dashboard` — dashboard — Live-Viewer-App
 
 graphcode-owned Dashboard-App, komponiert aus @sigloch/graph-renderer (Cytoscape) + dashboard-shell, konsumiert die Host-Bridge. Readiness/INCOSE-Panels gegen V3_RULES (CR-GC-107-Scorer). Hybrid-Entscheidung 2026-06-17.
 
 allocate ◀ `FUNC-block-arch-sicht` · `FUNC-block-live-dashboard` · `FUNC-block-reifegrad-sicht` · `FUNC-render-artifacts` · `FUNC-render-graph` · `FUNC-render-health` · `FUNC-render-impact` · `FUNC-render-impl-gates` · `FUNC-render-readiness` · `FUNC-render-recommendations` · `FUNC-subscribe-updates` · satisfy ▶ `REQ-artifact-freshness` · `REQ-dashboard-ontology-sync` · `REQ-dashboard-readonly` · `REQ-readiness-transparent` · `REQ-shared-views-no-fork`
 
-#### 6.1.4  `MOD-docs` — docs — Markdown-Re-Exporter
+#### 6.4.4  `MOD-docs` — docs — Markdown-Re-Exporter
 
 App-spezifisches Rendering: Graph → Markdown-Views (deterministisch, GENERATED-Header). (REQ-doc-export, code-realisiert, target)
 
 allocate ◀ `FUNC-block-dokumentenwerk` · `FUNC-export-markdown` · satisfy ▶ `REQ-docs-taxonomy` · `REQ-testref-materialized`
 
-#### 6.1.5  `MOD-harness` — harness.ts — GraphCodeHarness
+#### 6.4.5  `MOD-harness` — harness.ts — GraphCodeHarness
 
 Apply-Gate: loadGraph/saveGraph/mutate/evaluateRules/close gegen lokalen Kuzu. (SPEC §2.1)
 
-allocate ◀ `FUNC-check-code-conformance` · `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-evaluate-rules` · `FUNC-import` · `FUNC-list-elements` · `FUNC-load-graph` · `FUNC-migrate-schema` · `FUNC-mutate` · `FUNC-open-store` · `FUNC-reseed` · `FUNC-save-graph` · `FUNC-score-completeness` · `FUNC-seed-from-json` · satisfy ▶ `REQ-graph-state-recall` · `REQ-harness-schema-in-contracts` · `REQ-import-se-ontology` · `REQ-quality-metric` · `REQ-single-kuzu-owner` · `REQ-single-store` · `REQ-store-recovery` · `REQ-structural-rule-shared`
+allocate ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-evaluate-rules` · `FUNC-import` · `FUNC-load-graph` · `FUNC-mutate` · `FUNC-open-store` · `FUNC-reseed` · `FUNC-save-graph` · `FUNC-seed-from-json` · satisfy ▶ `REQ-graph-state-recall` · `REQ-harness-schema-in-contracts` · `REQ-import-se-ontology` · `REQ-quality-metric` · `REQ-single-kuzu-owner` · `REQ-single-store` · `REQ-store-recovery` · `REQ-structural-rule-shared`
 
-#### 6.1.6  `MOD-hooks` — hooks.ts — HookSystem
+#### 6.4.6  `MOD-hooks` — hooks.ts — HookSystem
 
 pre-commit / post-apply / nightly-batch Extension-Points. (SPEC §2.3)
 
 allocate ◀ `FUNC-emit-trajectory` · `FUNC-emit-update-event` · satisfy ▶ `REQ-hook-extension-points` · `REQ-hook-order-deterministic` · `REQ-precommit-timeout` · `REQ-versioned-cache`
 
-#### 6.1.7  `MOD-host-bridge` — host-bridge — SSE/WS Bridge
+#### 6.4.7  `MOD-host-bridge` — host-bridge — SSE/WS Bridge
 
 Host-Prozess (Single Kuzu Owner) exponiert graph-api-express + SSE-Route, verdrahtet an harness.onUpdateEvent. Versioned Diff-Broadcast an den Live-Viewer. Kein Express-REST im Core — die Bridge ist Host-Sache. (SPEC §5)
 
 allocate ◀ `FUNC-broadcast-diff` · `FUNC-health-endpoint` · `FUNC-own-kuzu-host` · `FUNC-serve-sse` · satisfy ▶ `REQ-readonly-bridge` · `REQ-real-health-check` · `REQ-versioned-broadcast`
 
-#### 6.1.8  `MOD-mcp-tools` — mcp-tools.ts — MCP-Registry
+#### 6.4.8  `MOD-mcp-tools` — mcp-tools.ts — MCP-Registry
 
 MCP-stdio Tool-Registry, an die Harness gebunden; read/write/query Tools. (SPEC §2.2)
 
 allocate ◀ `FUNC-deduce-tests` · `FUNC-graph-expand` · `FUNC-graph-export-snapshot` · `FUNC-graph-impact` · `FUNC-graph-suggest` · `FUNC-resolve-tests-from-code` · `FUNC-serve-stdio` · satisfy ▶ `REQ-agent-agnostic` · `REQ-export-no-clobber` · `REQ-mcp-tool-registry` · `REQ-prompt-provenance` · `REQ-readiness-model` · `REQ-rule-calibration` · `REQ-single-transport` · `REQ-test-runnable-binding` · `REQ-testref-materialized`
 
-#### 6.1.9  `MOD-skills` — skills/prompts — agent-realisierte Funktionen
+#### 6.4.9  `MOD-skills` — skills/prompts — agent-realisierte Funktionen
 
 App-spezifisches Modul: .claude/commands/ (+ Prompts) — Skill-/Prompt-Definitionen als agent-ausgeführte Funktionen (z.B. se-view/* Graph→Markdown-Views). Lifecycle via FUNC-harness-cli. Allokation hierher = prompt-realisiert (vs. code-realisiert in den übrigen MODs). Beweis: Skills = Funktionen.
 
 allocate ◀ `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-import-doc` · `FUNC-render-views` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-help` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-se-trade` · `FUNC-target-profile` · `FUNC-test` · `FUNC-test-ui` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm`
 
-#### 6.1.10  `MOD-steering` — steering — Kenngroessen-Steuerungskern
+#### 6.4.10  `MOD-steering` — steering — Kenngroessen-Steuerungskern
 
 Der Steuerungskern als Modul: Snapshot und Delta (src/steering-snapshot.ts), Fokuswahl und Runden-Prompt (src/generate.ts), Advisory-Naechster-Schritt (src/steering.ts), Kandidaten-Rangfolge (src/executor-rank.ts). Code-realisiert; dieser CR schreibt keinen Code, die Dateien lagen bisher nur ohne Modellstelle da.
 
 allocate ◀ `FUNC-block-arch-optimierung` · `FUNC-block-q-improvement` · `FUNC-block-se-steuerung` · `FUNC-compute-phase-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot`
+
+### 6.5  `MOD-schema-migration` — Schema-Migration
+
+Versionsmigration des Meta-Modells: modelliert, noch nicht realisiert.
+
+allocate ◀ `FUNC-migrate-schema`
 
 ## 7  Cross-cutting Requirements
 

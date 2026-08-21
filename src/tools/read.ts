@@ -13,6 +13,7 @@ import { z } from 'zod/v4';
 import type { Graph, GraphNode, GraphEdge } from '@sigloch/graph-api-core';
 import type { MCPTool, MCPToolRegistry } from '../mcp-tools.js';
 import type { ToolContext } from '../tool-context.js';
+import { listElements } from '../element-slice.js';
 
 // -------------------------------------------------------------------------
 // Input schemas
@@ -248,7 +249,7 @@ export function bindReadTools(ctx: ToolContext): MCPToolRegistry {
     inputSchema: GraphElementsInputSchema,
     async handler(input) {
       // Cypher-backed listing via the Kuzu store (KNOW, not grep over the mirror).
-      const nodes = await harness.listElements({ type: input.type, search: input.search });
+      const nodes = await listElements(harness.getStore(), harness.getScope(), { type: input.type, search: input.search });
       const total = nodes.length;
       const sliced = nodes.slice(0, input.limit);
       if (input.format === 'formatE') {

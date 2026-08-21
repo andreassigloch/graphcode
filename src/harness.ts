@@ -308,30 +308,13 @@ export class GraphCodeHarness {
    * TESTs verifying them. The TEST nodes are the impacted test set.
    */
   async testImpact(changeSet: string[], depth: number): Promise<Graph> {
-    // The full store read is the same primitive listElements() uses; a plain
+    // The full store read is the same primitive `listElements` (element-slice.ts) uses; a plain
     // `getSubgraph(both)` fetch on the changeset would NOT reach the tests (it is the
     // UNION of pure-in and pure-out reachability, and a code node reaches its TESTs
     // only by turning direction: `MOD →satisfy→ REQ ←verify← TEST`).
     const graph = await this.storage.loadGraph(this.config.scope);
     const { nodes, edges } = impactedTests(graph, changeSet, depth);
     return { nodes, edges };
-  }
-
-  /** List nodes from the Kuzu store (REQ-query-precision: slice, never a full dump). */
-  async listElements(filter: { type?: string; search?: string }): Promise<GraphNode[]> {
-    const { nodes } = await this.storage.loadGraph(this.config.scope);
-    let result = nodes;
-    if (filter.type) result = result.filter((n) => n.type === filter.type);
-    if (filter.search) {
-      const q = filter.search.toLowerCase();
-      result = result.filter(
-        (n) =>
-          n.uid.toLowerCase().includes(q) ||
-          n.name.toLowerCase().includes(q) ||
-          (n.description ?? '').toLowerCase().includes(q),
-      );
-    }
-    return result;
   }
 
   /**

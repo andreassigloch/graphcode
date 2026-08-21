@@ -2345,7 +2345,7 @@
       "name": "listElements(filter)",
       "description": "Liefert eine nach Typ und Suchbegriff gefilterte Element-Scheibe aus dem Store.",
       "realRef": {
-        "file": "src/harness.ts",
+        "file": "src/element-slice.ts",
         "symbol": "listElements",
         "lang": "ts"
       }
@@ -2951,6 +2951,25 @@
       "updated_at": "2026-06-17T00:00:00.000Z"
     },
     {
+      "id": "MOD-completeness",
+      "type": "MOD",
+      "name": "readiness-completeness — Gate-Vollstaendigkeit",
+      "description": "Vollstaendigkeit je Gate, realisiert im Paket @sigloch/graphcode-client statt in diesem Repo.",
+      "external": true,
+      "status": "done"
+    },
+    {
+      "id": "MOD-conformance",
+      "type": "MOD",
+      "name": "conformance.ts — Code-Konformitaet",
+      "description": "Prueft, ob eine Bindung im Modell auf ein real deklariertes Symbol zeigt.",
+      "realRef": {
+        "file": "src/conformance.ts",
+        "lang": "ts"
+      },
+      "status": "done"
+    },
+    {
       "id": "MOD-dashboard",
       "type": "MOD",
       "name": "dashboard — Live-Viewer-App",
@@ -2968,6 +2987,17 @@
       "created_at": "2026-06-16T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z",
       "path": "src/views"
+    },
+    {
+      "id": "MOD-element-slice",
+      "type": "MOD",
+      "name": "element-slice.ts — Element-Scheibe",
+      "description": "Gefilterte Leseansicht auf den Store: Typ- und Substring-Filter, keine Mutation, kein Hook, kein Persist.",
+      "realRef": {
+        "file": "src/element-slice.ts",
+        "lang": "ts"
+      },
+      "status": "done"
     },
     {
       "id": "MOD-harness",
@@ -3010,6 +3040,14 @@
       "type": "MOD",
       "name": "graphcode Projektwurzel",
       "description": "Ebene-0-Modul: das Wurzelverzeichnis des Projekts — ein Repo, ein npm-Paket, ein Kuzu-Store. Enthaelt alle Module; die Ebene-0-Funktionsbloecke sind hierhin allokiert."
+    },
+    {
+      "id": "MOD-schema-migration",
+      "type": "MOD",
+      "name": "Schema-Migration",
+      "description": "Versionsmigration des Meta-Modells: modelliert, noch nicht realisiert.",
+      "concept": true,
+      "status": "draft"
     },
     {
       "id": "MOD-skills",
@@ -10854,7 +10892,7 @@
     },
     {
       "source": "FUNC-check-code-conformance",
-      "target": "MOD-harness",
+      "target": "MOD-conformance",
       "type": "allocate"
     },
     {
@@ -11466,7 +11504,7 @@
     },
     {
       "source": "FUNC-list-elements",
-      "target": "MOD-harness",
+      "target": "MOD-element-slice",
       "type": "allocate"
     },
     {
@@ -11538,10 +11576,8 @@
     },
     {
       "source": "FUNC-migrate-schema",
-      "target": "MOD-harness",
-      "type": "allocate",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "target": "MOD-schema-migration",
+      "type": "allocate"
     },
     {
       "source": "FUNC-migrate-schema",
@@ -11824,7 +11860,7 @@
     },
     {
       "source": "FUNC-score-completeness",
-      "target": "MOD-harness",
+      "target": "MOD-completeness",
       "type": "allocate"
     },
     {
@@ -14521,5 +14557,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 133
+  "graphVersion": 134
 }

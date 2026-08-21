@@ -53,6 +53,7 @@ import { buildJobSlice } from '../tools/read.js';
 import { createHarness, type GraphCodeHarness } from '../index.js';
 import { deriveMemberName } from '../mcp-server.js';
 import type { LiveUpdateEvent } from '../emit.js';
+import { listElements } from '../element-slice.js';
 
 /** A connected SSE client: its raw response stream. */
 type SseClient = ServerResponse;
@@ -236,7 +237,7 @@ export class HostBridge {
       const search = url.searchParams.get('search');
       if (type) filter.type = type;
       if (search) filter.search = search;
-      sendJson(res, 200, await harness.listElements(filter));
+      sendJson(res, 200, await listElements(harness.getStore(), harness.getScope(), filter));
       return;
     }
 
@@ -326,7 +327,7 @@ export class HostBridge {
     let store: HealthPayload['store'] = 'unreachable';
     let nodeCount = 0;
     try {
-      const nodes = await harness.listElements({});
+      const nodes = await listElements(harness.getStore(), harness.getScope(), {});
       nodeCount = nodes.length;
       store = 'reachable';
     } catch {
