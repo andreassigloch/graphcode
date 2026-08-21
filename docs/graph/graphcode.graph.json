@@ -1605,6 +1605,12 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "id": "FLOW-element-slice",
+      "type": "FLOW",
+      "name": "Element-Scheibe",
+      "description": "Gefilterte Knotenmenge aus dem Store (type/search) — eine Scheibe statt eines Volldumps."
+    },
+    {
       "id": "FLOW-expand-request",
       "type": "FLOW",
       "name": "Expand-Request",
@@ -2010,6 +2016,17 @@
       }
     },
     {
+      "id": "FUNC-close-store",
+      "type": "FUNC",
+      "name": "close()",
+      "description": "Faehrt den Store herunter und gibt die Ownership wieder frei.",
+      "realRef": {
+        "file": "src/harness.ts",
+        "symbol": "close",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "FUNC-close-violations",
       "type": "FUNC",
       "name": "Skill se:close-violations",
@@ -2306,6 +2323,28 @@
       }
     },
     {
+      "id": "FUNC-list-elements",
+      "type": "FUNC",
+      "name": "listElements(filter)",
+      "description": "Liefert eine nach Typ und Suchbegriff gefilterte Element-Scheibe aus dem Store.",
+      "realRef": {
+        "file": "src/harness.ts",
+        "symbol": "listElements",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-load-graph",
+      "type": "FUNC",
+      "name": "loadGraph()",
+      "description": "Laedt den persistierten Graphen in die Arbeitskopie des Gates.",
+      "realRef": {
+        "file": "src/harness.ts",
+        "symbol": "loadGraph",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "FUNC-merge-nodes",
       "type": "FUNC",
       "name": "mergeNodes(graph)",
@@ -2362,6 +2401,17 @@
       "realRef": {
         "file": "src/steering.ts",
         "symbol": "nextStep",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-open-store",
+      "type": "FUNC",
+      "name": "initialize()",
+      "description": "Beansprucht die alleinige Store-Ownership, erkennt Meta-Modell-Drift und oeffnet den Kuzu-Store.",
+      "realRef": {
+        "file": "src/harness.ts",
+        "symbol": "initialize",
         "lang": "ts"
       }
     },
@@ -2645,6 +2695,17 @@
         "file": ".claude/commands/se-trade.md",
         "symbol": "se-trade",
         "lang": "prompt"
+      }
+    },
+    {
+      "id": "FUNC-seed-from-json",
+      "type": "FUNC",
+      "name": "seedFromJson(relPath)",
+      "description": "Erstbefuellung des Stores aus dem committeten Snapshot, ueber den Import-Port statt am Gate vorbei.",
+      "realRef": {
+        "file": "src/harness.ts",
+        "symbol": "seedFromJson",
+        "lang": "ts"
       }
     },
     {
@@ -9179,6 +9240,11 @@
     },
     {
       "source": "FCHAIN-agent-query",
+      "target": "FUNC-list-elements",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-agent-query",
       "target": "REQ-post-agent-query",
       "type": "satisfy",
       "weight": 1,
@@ -9200,6 +9266,11 @@
     },
     {
       "source": "FCHAIN-apply-gate",
+      "target": "FUNC-close-store",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-apply-gate",
       "target": "FUNC-emit-trajectory",
       "type": "compose",
       "weight": 1,
@@ -9214,10 +9285,20 @@
     },
     {
       "source": "FCHAIN-apply-gate",
+      "target": "FUNC-load-graph",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-apply-gate",
       "target": "FUNC-mutate",
       "type": "compose",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FCHAIN-apply-gate",
+      "target": "FUNC-open-store",
+      "type": "compose"
     },
     {
       "source": "FCHAIN-apply-gate",
@@ -9516,6 +9597,11 @@
     },
     {
       "source": "FCHAIN-recall",
+      "target": "FUNC-seed-from-json",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-recall",
       "target": "REQ-graph-state-recall",
       "type": "satisfy"
     },
@@ -9690,6 +9776,11 @@
     },
     {
       "source": "FLOW-committed-graph",
+      "target": "FUNC-load-graph",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-committed-graph",
       "target": "SCHEMA-ontology-graph",
       "type": "relation",
       "weight": 1,
@@ -9733,6 +9824,16 @@
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-element-slice",
+      "target": "ACTOR-claude-code",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-element-slice",
+      "target": "SCHEMA-ontology-graph",
+      "type": "relation"
     },
     {
       "source": "FLOW-expand-request",
@@ -9831,13 +9932,28 @@
     },
     {
       "source": "FLOW-graph-snapshot",
+      "target": "FUNC-open-store",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-graph-snapshot",
       "target": "FUNC-reseed",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-graph-snapshot",
+      "target": "FUNC-seed-from-json",
       "type": "io"
     },
     {
       "source": "FLOW-graph-snapshot",
       "target": "SCHEMA-ontology-graph",
       "type": "relation"
+    },
+    {
+      "source": "FLOW-graph-state",
+      "target": "FUNC-close-store",
+      "type": "io"
     },
     {
       "source": "FLOW-graph-state",
@@ -9859,6 +9975,11 @@
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-impact-subgraph",
+      "target": "FUNC-graph-expand",
+      "type": "io"
     },
     {
       "source": "FLOW-impact-subgraph",
@@ -10016,6 +10137,11 @@
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-query-request",
+      "target": "FUNC-list-elements",
+      "type": "io"
     },
     {
       "source": "FLOW-query-request",
@@ -10668,6 +10794,21 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-close-store",
+      "target": "MOD-harness",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-close-store",
+      "target": "FLOW-committed-graph",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-close-store",
+      "target": "REQ-single-kuzu-owner",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-close-violations",
       "target": "MOD-skills",
       "type": "allocate"
@@ -11240,6 +11381,36 @@
       "type": "allocate"
     },
     {
+      "source": "FUNC-list-elements",
+      "target": "MOD-harness",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-list-elements",
+      "target": "FLOW-element-slice",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-list-elements",
+      "target": "REQ-query-precision",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-load-graph",
+      "target": "MOD-harness",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-load-graph",
+      "target": "FLOW-graph-state",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-load-graph",
+      "target": "REQ-disk-persistence",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-merge-nodes",
       "target": "MOD-codec",
       "type": "allocate",
@@ -11382,6 +11553,21 @@
     {
       "source": "FUNC-next-step",
       "target": "REQ-steering-from-metrics",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-open-store",
+      "target": "MOD-harness",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-open-store",
+      "target": "FLOW-graph-state",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-open-store",
+      "target": "REQ-single-kuzu-owner",
       "type": "satisfy"
     },
     {
@@ -11626,6 +11812,21 @@
       "source": "FUNC-se-trade",
       "target": "MOD-skills",
       "type": "allocate"
+    },
+    {
+      "source": "FUNC-seed-from-json",
+      "target": "MOD-harness",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-seed-from-json",
+      "target": "FLOW-recalled-state",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-seed-from-json",
+      "target": "REQ-bootstrap-through-gate",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-serve-sse",
@@ -14221,5 +14422,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 131
+  "graphVersion": 132
 }

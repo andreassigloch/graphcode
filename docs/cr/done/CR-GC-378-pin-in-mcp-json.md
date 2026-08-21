@@ -1,6 +1,6 @@
 # CR-GC-378 — Feste Version in der Startzeile: was läuft, steht im Repo
 
-**Status:** open · **Angelegt:** 2026-08-20 · **Vorgänger:** CR-GC-377
+**Status:** done · **Angelegt:** 2026-08-20 · **Geschlossen:** 2026-08-21 · **Vorgänger:** CR-GC-377
 
 ## Problem
 

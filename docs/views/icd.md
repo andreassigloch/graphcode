@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 20 SCHEMA · 46 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 20 SCHEMA · 47 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -42,10 +42,11 @@
 | `FLOW-bulk-formatE` | `ACTOR-graphify` | `FUNC-import` |
 | `FLOW-capture-draft` | `FUNC-decode` | `FUNC-mutate` |
 | `FLOW-cli-command` | `ACTOR-developer` | `FUNC-harness-cli` · `FUNC-rewind` |
-| `FLOW-committed-graph` | `FUNC-save-graph` | `FUNC-emit-trajectory` · `FUNC-emit-update-event` · `FUNC-graph-export-snapshot` |
+| `FLOW-committed-graph` | `FUNC-close-store` · `FUNC-save-graph` | `FUNC-emit-trajectory` · `FUNC-emit-update-event` · `FUNC-graph-export-snapshot` · `FUNC-load-graph` |
 | `FLOW-completeness` | `FUNC-score-completeness` | `FUNC-compute-phase-readiness` |
 | `FLOW-dimension-readiness` | `FUNC-compute-readiness` | `FUNC-generation-step` · `FUNC-next-step` |
 | `FLOW-draft-graph` | `FUNC-mutate` | `FUNC-evaluate-rules` |
+| `FLOW-element-slice` | `FUNC-list-elements` | `ACTOR-claude-code` |
 | `FLOW-expand-request` | `ACTOR-claude-code` | `FUNC-graph-expand` |
 | `FLOW-expanded-subgraph` | `FUNC-graph-expand` | `ACTOR-claude-code` |
 | `FLOW-export-request` | `ACTOR-developer` · `FUNC-serve-stdio` | `FUNC-export-markdown` |
@@ -53,9 +54,9 @@
 | `FLOW-formatE-artifact` | `FUNC-encode` | `FUNC-decode` |
 | `FLOW-formatE-candidates` | `ACTOR-claude-code` | `FUNC-decode` |
 | `FLOW-gate-verdict` | `FUNC-mutate` | `FUNC-take-steering-snapshot` |
-| `FLOW-graph-snapshot` | `FUNC-graph-export-snapshot` · `FUNC-rewind` | `ACTOR-developer` · `FUNC-reseed` |
-| `FLOW-graph-state` | `ACTOR-developer` | `FUNC-encode` |
-| `FLOW-impact-subgraph` | `FUNC-graph-impact` | `ACTOR-claude-code` |
+| `FLOW-graph-snapshot` | `FUNC-graph-export-snapshot` · `FUNC-rewind` | `ACTOR-developer` · `FUNC-open-store` · `FUNC-reseed` · `FUNC-seed-from-json` |
+| `FLOW-graph-state` | `ACTOR-developer` · `FUNC-load-graph` · `FUNC-open-store` | `FUNC-close-store` · `FUNC-encode` |
+| `FLOW-impact-subgraph` | `FUNC-graph-impact` | `ACTOR-claude-code` · `FUNC-graph-expand` |
 | `FLOW-install-result` | `FUNC-harness-cli` | `ACTOR-developer` |
 | `FLOW-live-event` | `FUNC-emit-update-event` | `ACTOR-dashboard` · `FUNC-broadcast-diff` · `FUNC-serve-stdio` · `FUNC-subscribe-updates` |
 | `FLOW-markdown-docs` | `FUNC-export-markdown` | `ACTOR-developer` |
@@ -66,8 +67,8 @@
 | `FLOW-mutate-cmd` | `ACTOR-claude-code` · `ACTOR-developer` | `FUNC-mutate` |
 | `FLOW-parsed-graph` | `FUNC-decode` | `ACTOR-developer` |
 | `FLOW-phase-readiness` | `FUNC-compute-phase-readiness` | `FUNC-generation-step` |
-| `FLOW-query-request` | `ACTOR-claude-code` | `FUNC-graph-impact` |
-| `FLOW-recalled-state` | `FUNC-reseed` | `ACTOR-developer` |
+| `FLOW-query-request` | `ACTOR-claude-code` | `FUNC-graph-impact` · `FUNC-list-elements` |
+| `FLOW-recalled-state` | `FUNC-reseed` · `FUNC-seed-from-json` | `ACTOR-developer` |
 | `FLOW-rendered-view` | `FUNC-render-views` | `ACTOR-developer` |
 | `FLOW-round-findings` | `FUNC-evaluate-rules` | `FUNC-graph-suggest` |
 | `FLOW-round-prompt` | `FUNC-generation-step` · `FUNC-next-step` | `ACTOR-claude-code` · `ACTOR-opencode` · `FUNC-rank-candidates` |

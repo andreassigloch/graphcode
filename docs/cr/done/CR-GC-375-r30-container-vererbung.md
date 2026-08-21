@@ -1,6 +1,6 @@
 # CR-GC-375 — R-30 bewertet Blätter; ein zerlegter FUNC ist ein Rollup
 
-**Status:** open
+**Status:** done · **Geschlossen:** 2026-08-21 (upstream in @sigloch/contracts 6.0.0, CR-SM-249; nachgezogen mit CR-GC-379)
 **Datum:** 2026-08-19
 **Herkunft:** CR-GC-366 (R-30 eingeführt). Die erste Messung an 82 FUNC zeigt 13 Befunde, die keine
 Modellierungslücke sind, sondern die Regel, die einen Container wie ein Kettenglied behandelt.
@@ -69,3 +69,26 @@ hängen kostet **+79 IO-01-Warnungen**. Wenn eine Kette parallele Zweige haben d
 tauschen per Definition keinen Flow. CR-GC-315 hat exakt diese Korrektur für R-21 schon vollzogen
 („reuse was penalised quadratically"); bei IO-01 steht sie aus. **Diese Frage gehört vor die
 Anbindung der 43**, sonst modellieren wir gegen eine Regel, die sich danach ändert.
+
+---
+
+## Abschluss-Nachtrag (2026-08-21)
+
+Umgesetzt **nicht hier, sondern upstream**: `@sigloch/contracts` CR-SM-249 (RULES_VERSION
+6.0.0) macht Blätter zur alleinigen Grundgesamtheit von R-30 und streicht die
+Aufwärts-Vererbung aus CR-GC-366 ersatzlos. In dieses Repo gezogen mit CR-GC-379.
+
+Nachgemessen am Snapshot `graphVersion` 131 gegen den echten Evaluator:
+
+| AC | Sollwert im CR | gemessen | |
+|---|---|---|---|
+| FUNC mit FUNC-Kindern meldet R-30 nie | 0 | **0 von 13** | ✅ |
+| R-30 gesamt | 43 | 44 | s. u. |
+| R-31 | 54 | 55 | s. u. |
+| R-02 | 33 | 34 | s. u. |
+| R-18 | 0 | 0 | ✅ |
+| FC-03 | 0 | 0 | ✅ |
+
+Die drei Abweichungen sind je genau **+1** und stammen nicht aus der Regeländerung: der
+Graph trägt seit der Messung vom 2026-08-19 eine FUNC mehr (82 → 83). Das tragende
+Kriterium — ein zerlegter FUNC meldet nie — ist exakt erfüllt.

@@ -1,6 +1,6 @@
 # CR-GC-376 — Was angezeigt wird, ist was läuft: Versions-Drift in `graphcode status`
 
-**Status:** open · **Angelegt:** 2026-08-20
+**Status:** done · **Angelegt:** 2026-08-20 · **Geschlossen:** 2026-08-21
 
 ## Problem
 

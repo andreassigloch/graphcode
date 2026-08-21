@@ -58,7 +58,7 @@ Verification ◀ `TEST-code-quality` (acceptance) · `TEST-mutate-schema-guard` 
 
 Realisierungs-Agent unter graphcode-Kontrolle (OpenCode-executed); MCP-stdio-Client; nutzt den Graphen statt grep (Ziel a). Delegierte HOW-Ebene. (SPEC §5 Kanal 1)
 
-io ▶ `FLOW-expand-request` · `FLOW-formatE-candidates` · `FLOW-mutate-cmd` · `FLOW-query-request` · `UC-code-quality` · `UC-reduced-llm` · io ◀ `FLOW-action` · `FLOW-expanded-subgraph` · `FLOW-impact-subgraph` · `FLOW-round-prompt`
+io ▶ `FLOW-expand-request` · `FLOW-formatE-candidates` · `FLOW-mutate-cmd` · `FLOW-query-request` · `UC-code-quality` · `UC-reduced-llm` · io ◀ `FLOW-action` · `FLOW-element-slice` · `FLOW-expanded-subgraph` · `FLOW-impact-subgraph` · `FLOW-round-prompt`
 
 ### 2.2  `ACTOR-dashboard` — Browser-Dashboard
 
@@ -222,11 +222,13 @@ io ◀ `FLOW-violations` · io ▶ `FLOW-committed-graph` · allocate ▶ `MOD-h
 
 ###### `REQ-disk-persistence` — Disk-Persistenz
 
+> auch unter: `FUNC-load-graph`
+
 Persistenz auf Disk (.graphcode/kuzu/), kein :memory:. (SPEC §4)
 
 priority: should · status: open · kinds: non-functional
 
-Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `FUNC-save-graph` · allocate ▶ `MOD-harness`
+Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `FUNC-load-graph` · `FUNC-save-graph` · allocate ▶ `MOD-harness`
 
 ##### 3.1.1.4  `FUNC-emit-trajectory` — materializeTrajectory()
 
@@ -259,6 +261,54 @@ post-apply/nightly: Trajectory/Outcome append-only nach .graphcode/*.jsonl, Form
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-create-harness-smoke` (integration) · `TEST-learning-emit` (integration) · satisfy ◀ `FUNC-emit-trajectory` · allocate ▶ `MOD-hooks`
+
+##### 3.1.1.5  `FUNC-load-graph` — loadGraph()
+
+Laedt den persistierten Graphen in die Arbeitskopie des Gates.
+
+io ◀ `FLOW-committed-graph` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-harness`
+
+###### `REQ-disk-persistence` — Disk-Persistenz
+
+> auch unter: `FUNC-save-graph`
+
+Persistenz auf Disk (.graphcode/kuzu/), kein :memory:. (SPEC §4)
+
+priority: should · status: open · kinds: non-functional
+
+Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `FUNC-load-graph` · `FUNC-save-graph` · allocate ▶ `MOD-harness`
+
+##### 3.1.1.6  `FUNC-close-store` — close()
+
+Faehrt den Store herunter und gibt die Ownership wieder frei.
+
+io ◀ `FLOW-graph-state` · io ▶ `FLOW-committed-graph` · allocate ▶ `MOD-harness`
+
+###### `REQ-single-kuzu-owner` — Single Kuzu-Owner
+
+> auch unter: `FUNC-open-store` · `FUNC-own-kuzu-host`
+
+Genau ein Host-Prozess besitzt .graphcode/kuzu (single-writer; kein 2. DB-Handle). (SPEC §4, L1)
+
+priority: should · status: done · kinds: non-functional
+
+Verification ◀ `TEST-bridge-follows-lock` (integration) · `TEST-gve-autostart` (unit) · `TEST-host-shim` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-session-lifecycle` (integration) · `TEST-status-verb` (unit) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-close-store` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `MOD-harness` · allocate ▶ `MOD-harness` · `MOD-host-bridge`
+
+##### 3.1.1.7  `FUNC-open-store` — initialize()
+
+Beansprucht die alleinige Store-Ownership, erkennt Meta-Modell-Drift und oeffnet den Kuzu-Store.
+
+io ◀ `FLOW-graph-snapshot` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-harness`
+
+###### `REQ-single-kuzu-owner` — Single Kuzu-Owner
+
+> auch unter: `FUNC-close-store` · `FUNC-own-kuzu-host`
+
+Genau ein Host-Prozess besitzt .graphcode/kuzu (single-writer; kein 2. DB-Handle). (SPEC §4, L1)
+
+priority: should · status: done · kinds: non-functional
+
+Verification ◀ `TEST-bridge-follows-lock` (integration) · `TEST-gve-autostart` (unit) · `TEST-host-shim` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-session-lifecycle` (integration) · `TEST-status-verb` (unit) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-close-store` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `MOD-harness` · allocate ▶ `MOD-harness` · `MOD-host-bridge`
 
 #### 3.1.2  `FCHAIN-capture` — Interaktive Erfassung (Text → suggest-Tier)
 
@@ -374,11 +424,13 @@ Verification ◀ `TEST-batch-seed` (performance) · satisfy ◀ `FUNC-import` ·
 
 ###### `REQ-bootstrap-through-gate` — Erstbefüllung nur durchs Gate
 
+> auch unter: `FUNC-seed-from-json`
+
 FUNC-import: Erstbefüllung ausschließlich über das mutate()-Gate; Quelle = Format-E; kein Direct-Write.
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-harness`
+Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-harness`
 
 ###### `REQ-post-import` — Postcondition: importGraph(formatE, mode)
 
@@ -590,11 +642,13 @@ Verification ◀ `TEST-inject-graph-slice` (integration) · `TEST-mvp-e2e` (e2e)
 
 ###### `REQ-query-precision` — Query-Precision statt Kompression
 
+> auch unter: `FUNC-list-elements`
+
 graph_impact liefert exakten Blast-Radius als Format-E (Anti-grep, Ziel a). (R6/R12)
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
+Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param` (integration) · satisfy ◀ `FUNC-graph-impact` · `FUNC-list-elements` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
 
 ###### `REQ-subgraph-slicing` — Sub-Graph-Slicing
 
@@ -860,11 +914,13 @@ Verification ◀ `TEST-inject-graph-slice` (integration) · `TEST-mvp-e2e` (e2e)
 
 ###### `REQ-query-precision` — Query-Precision statt Kompression
 
+> auch unter: `FUNC-list-elements`
+
 graph_impact liefert exakten Blast-Radius als Format-E (Anti-grep, Ziel a). (R6/R12)
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
+Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param` (integration) · satisfy ◀ `FUNC-graph-impact` · `FUNC-list-elements` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
 
 ###### `REQ-subgraph-slicing` — Sub-Graph-Slicing
 
@@ -946,6 +1002,22 @@ priority: must · status: done
 
 Verification ◀ `TEST-graph-time-travel` (integration) · `TEST-reseed` (integration) · `TEST-rewind` (integration) · satisfy ◀ `FCHAIN-recall` · `FUNC-reseed` · `FUNC-rewind` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness`
 
+##### 3.4.1.3  `FUNC-seed-from-json` — seedFromJson(relPath)
+
+Erstbefuellung des Stores aus dem committeten Snapshot, ueber den Import-Port statt am Gate vorbei.
+
+io ◀ `FLOW-graph-snapshot` · io ▶ `FLOW-recalled-state` · allocate ▶ `MOD-harness`
+
+###### `REQ-bootstrap-through-gate` — Erstbefüllung nur durchs Gate
+
+> auch unter: `FUNC-import`
+
+FUNC-import: Erstbefüllung ausschließlich über das mutate()-Gate; Quelle = Format-E; kein Direct-Write.
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-harness`
+
 #### 3.4.2  `FCHAIN-snapshot-freshness` — Snapshot-Freshness (Aufzeichnen)
 
 Jede Modell-Mutation setzt den Drift-Marker, die Persistenz schreibt den Store, der Export materialisiert den kanonischen Snapshot und loescht den Marker. Ergebnis: kein Commit traegt einen Snapshot, der dem Live-Modell nachlaeuft.
@@ -1004,11 +1076,13 @@ io ◀ `FLOW-violations` · io ▶ `FLOW-committed-graph` · allocate ▶ `MOD-h
 
 ###### `REQ-disk-persistence` — Disk-Persistenz
 
+> auch unter: `FUNC-load-graph`
+
 Persistenz auf Disk (.graphcode/kuzu/), kein :memory:. (SPEC §4)
 
 priority: should · status: open · kinds: non-functional
 
-Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `FUNC-save-graph` · allocate ▶ `MOD-harness`
+Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `FUNC-load-graph` · `FUNC-save-graph` · allocate ▶ `MOD-harness`
 
 ##### 3.4.2.3  `FUNC-graph-export-snapshot` — graph_export(views?)
 
@@ -1058,11 +1132,13 @@ io ◀ `FLOW-violations` · io ▶ `FLOW-committed-graph` · allocate ▶ `MOD-h
 
 ###### `REQ-disk-persistence` — Disk-Persistenz
 
+> auch unter: `FUNC-load-graph`
+
 Persistenz auf Disk (.graphcode/kuzu/), kein :memory:. (SPEC §4)
 
 priority: should · status: open · kinds: non-functional
 
-Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `FUNC-save-graph` · allocate ▶ `MOD-harness`
+Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `FUNC-load-graph` · `FUNC-save-graph` · allocate ▶ `MOD-harness`
 
 ##### 3.5.1.2  `FUNC-emit-update-event` — emitUpdateEvent(domains)
 
@@ -1218,11 +1294,13 @@ Verification ◀ `TEST-inject-graph-slice` (integration) · `TEST-mvp-e2e` (e2e)
 
 ###### `REQ-query-precision` — Query-Precision statt Kompression
 
+> auch unter: `FUNC-list-elements`
+
 graph_impact liefert exakten Blast-Radius als Format-E (Anti-grep, Ziel a). (R6/R12)
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
+Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param` (integration) · satisfy ◀ `FUNC-graph-impact` · `FUNC-list-elements` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
 
 ###### `REQ-subgraph-slicing` — Sub-Graph-Slicing
 
@@ -1330,41 +1408,7 @@ priority: should · status: open · kinds: non-functional
 
 Verification ◀ `TEST-inject-graph-slice` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-token-efficiency` (acceptance) · `TEST-violation-context` (integration) · satisfy ◀ `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-graph-impact` · allocate ▶ `MOD-codec` · `MOD-mcp-tools`
 
-##### 3.7.2.1  `FUNC-graph-expand` — graph_expand(handle, branch, depth+1)
-
-> auch in: `FUNC-block-anschluss`
-
-Progressive On-Demand-Kuzu-Re-Traversierung; kein Originals-Store. (CR-GC-101, R13)
-
-io ◀ `FLOW-expand-request` · io ▶ `FLOW-expanded-subgraph` · allocate ▶ `MOD-mcp-tools`
-
-###### `REQ-cache-layering` — Prompt-Cache-Layering
-
-Nur Onto+Rules stabil cachen, nie mit Live-Graph; Prefix-Hygiene. (R8/R14)
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-cache` (integration) · satisfy ◀ `FUNC-graph-expand` · allocate ▶ `MOD-mcp-tools`
-
-###### `REQ-precise-context` — Präziser Kontext statt grep-Dump
-
-> auch unter: `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-impact`
-
-Kontext = exakter Blast-Radius/Sub-Graph-Slice (Format-E) statt grep-Dump/Result-Kompression.
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-inject-graph-slice` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-token-efficiency` (acceptance) · `TEST-violation-context` (integration) · satisfy ◀ `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-graph-impact` · allocate ▶ `MOD-codec` · `MOD-mcp-tools`
-
-###### `REQ-progressive-expansion` — Progressive Query-Expansion
-
-graph_expand vertieft on-demand (Kuzu-Re-Traversierung, kein Originals-Store). (R13)
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-impact-subgraph` (integration) · satisfy ◀ `FUNC-graph-expand` · allocate ▶ `MOD-mcp-tools`
-
-##### 3.7.2.2  `FUNC-graph-impact` — graph_impact(id, depth?)
+##### 3.7.2.1  `FUNC-graph-impact` — graph_impact(id, depth?)
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-impact-testing` · `FCHAIN-interface-escalation` · `FUNC-block-anschluss`
 
@@ -1392,11 +1436,13 @@ Verification ◀ `TEST-inject-graph-slice` (integration) · `TEST-mvp-e2e` (e2e)
 
 ###### `REQ-query-precision` — Query-Precision statt Kompression
 
+> auch unter: `FUNC-list-elements`
+
 graph_impact liefert exakten Blast-Radius als Format-E (Anti-grep, Ziel a). (R6/R12)
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
+Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param` (integration) · satisfy ◀ `FUNC-graph-impact` · `FUNC-list-elements` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
 
 ###### `REQ-subgraph-slicing` — Sub-Graph-Slicing
 
@@ -1405,6 +1451,56 @@ Sub-Graph-Slicing + pruneToFit(maxTokens) als Context-Primitive. (R7)
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-inject-graph-slice` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
+
+##### 3.7.2.2  `FUNC-graph-expand` — graph_expand(handle, branch, depth+1)
+
+> auch in: `FUNC-block-anschluss`
+
+Progressive On-Demand-Kuzu-Re-Traversierung; kein Originals-Store. (CR-GC-101, R13)
+
+io ◀ `FLOW-expand-request` · `FLOW-impact-subgraph` · io ▶ `FLOW-expanded-subgraph` · allocate ▶ `MOD-mcp-tools`
+
+###### `REQ-cache-layering` — Prompt-Cache-Layering
+
+Nur Onto+Rules stabil cachen, nie mit Live-Graph; Prefix-Hygiene. (R8/R14)
+
+priority: should · status: open · kinds: non-functional
+
+Verification ◀ `TEST-cache` (integration) · satisfy ◀ `FUNC-graph-expand` · allocate ▶ `MOD-mcp-tools`
+
+###### `REQ-precise-context` — Präziser Kontext statt grep-Dump
+
+> auch unter: `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-impact`
+
+Kontext = exakter Blast-Radius/Sub-Graph-Slice (Format-E) statt grep-Dump/Result-Kompression.
+
+priority: should · status: open · kinds: non-functional
+
+Verification ◀ `TEST-inject-graph-slice` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-token-efficiency` (acceptance) · `TEST-violation-context` (integration) · satisfy ◀ `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-graph-impact` · allocate ▶ `MOD-codec` · `MOD-mcp-tools`
+
+###### `REQ-progressive-expansion` — Progressive Query-Expansion
+
+graph_expand vertieft on-demand (Kuzu-Re-Traversierung, kein Originals-Store). (R13)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-impact-subgraph` (integration) · satisfy ◀ `FUNC-graph-expand` · allocate ▶ `MOD-mcp-tools`
+
+##### 3.7.2.3  `FUNC-list-elements` — listElements(filter)
+
+Liefert eine nach Typ und Suchbegriff gefilterte Element-Scheibe aus dem Store.
+
+io ◀ `FLOW-query-request` · io ▶ `FLOW-element-slice` · allocate ▶ `MOD-harness`
+
+###### `REQ-query-precision` — Query-Precision statt Kompression
+
+> auch unter: `FUNC-graph-impact`
+
+graph_impact liefert exakten Blast-Radius als Format-E (Anti-grep, Ziel a). (R6/R12)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param` (integration) · satisfy ◀ `FUNC-graph-impact` · `FUNC-list-elements` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
 
 #### 3.7.3  `FCHAIN-modelfree-gate` — Modellfreier Gate-Betrieb
 
@@ -1612,7 +1708,7 @@ Verification ◀ `TEST-formate-binding` (integration) · `TEST-test-runnable-bin
 
 Progressive On-Demand-Kuzu-Re-Traversierung; kein Originals-Store. (CR-GC-101, R13)
 
-io ◀ `FLOW-expand-request` · io ▶ `FLOW-expanded-subgraph` · allocate ▶ `MOD-mcp-tools`
+io ◀ `FLOW-expand-request` · `FLOW-impact-subgraph` · io ▶ `FLOW-expanded-subgraph` · allocate ▶ `MOD-mcp-tools`
 
 ###### `REQ-cache-layering` — Prompt-Cache-Layering
 
@@ -1668,11 +1764,13 @@ Verification ◀ `TEST-inject-graph-slice` (integration) · `TEST-mvp-e2e` (e2e)
 
 ###### `REQ-query-precision` — Query-Precision statt Kompression
 
+> auch unter: `FUNC-list-elements`
+
 graph_impact liefert exakten Blast-Radius als Format-E (Anti-grep, Ziel a). (R6/R12)
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
+Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param` (integration) · satisfy ◀ `FUNC-graph-impact` · `FUNC-list-elements` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
 
 ###### `REQ-subgraph-slicing` — Sub-Graph-Slicing
 
@@ -1936,11 +2034,13 @@ io ◀ `FLOW-violations` · io ▶ `FLOW-committed-graph` · allocate ▶ `MOD-h
 
 ###### `REQ-disk-persistence` — Disk-Persistenz
 
+> auch unter: `FUNC-load-graph`
+
 Persistenz auf Disk (.graphcode/kuzu/), kein :memory:. (SPEC §4)
 
 priority: should · status: open · kinds: non-functional
 
-Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `FUNC-save-graph` · allocate ▶ `MOD-harness`
+Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `FUNC-load-graph` · `FUNC-save-graph` · allocate ▶ `MOD-harness`
 
 #### 3.9.3  `FUNC-block-gedaechtnis` — Gedächtnis
 
@@ -2084,11 +2184,13 @@ Verification ◀ `TEST-batch-seed` (performance) · satisfy ◀ `FUNC-import` ·
 
 ###### `REQ-bootstrap-through-gate` — Erstbefüllung nur durchs Gate
 
+> auch unter: `FUNC-seed-from-json`
+
 FUNC-import: Erstbefüllung ausschließlich über das mutate()-Gate; Quelle = Format-E; kein Direct-Write.
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-harness`
+Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-harness`
 
 ###### `REQ-post-import` — Postcondition: importGraph(formatE, mode)
 
@@ -2184,11 +2286,13 @@ io ◀ — · io ▶ — · allocate ▶ `MOD-host-bridge`
 
 ###### `REQ-single-kuzu-owner` — Single Kuzu-Owner
 
+> auch unter: `FUNC-close-store` · `FUNC-open-store`
+
 Genau ein Host-Prozess besitzt .graphcode/kuzu (single-writer; kein 2. DB-Handle). (SPEC §4, L1)
 
 priority: should · status: done · kinds: non-functional
 
-Verification ◀ `TEST-bridge-follows-lock` (integration) · `TEST-gve-autostart` (unit) · `TEST-host-shim` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-session-lifecycle` (integration) · `TEST-status-verb` (unit) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-own-kuzu-host` · `MOD-harness` · allocate ▶ `MOD-host-bridge`
+Verification ◀ `TEST-bridge-follows-lock` (integration) · `TEST-gve-autostart` (unit) · `TEST-host-shim` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-session-lifecycle` (integration) · `TEST-status-verb` (unit) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-close-store` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `MOD-harness` · allocate ▶ `MOD-harness` · `MOD-host-bridge`
 
 ##### 3.9.3.9  `FUNC-reseed` — reseed(relPath)
 
@@ -2924,7 +3028,7 @@ io ◀ `ACTOR-developer` · io ▶ `FUNC-harness-cli` · `FUNC-rewind` · schema
 
 Persistierter Graph + Version-Counter.
 
-io ◀ `FUNC-save-graph` · io ▶ `FUNC-emit-trajectory` · `FUNC-emit-update-event` · `FUNC-graph-export-snapshot` · schema ▶ `SCHEMA-ontology-graph`
+io ◀ `FUNC-close-store` · `FUNC-save-graph` · io ▶ `FUNC-emit-trajectory` · `FUNC-emit-update-event` · `FUNC-graph-export-snapshot` · `FUNC-load-graph` · schema ▶ `SCHEMA-ontology-graph`
 
 ### 4.9  `FLOW-completeness` — Completeness je Gate
 
@@ -2944,211 +3048,217 @@ In-memory applizierter Graph (draft) vor Regelprüfung.
 
 io ◀ `FUNC-mutate` · io ▶ `FUNC-evaluate-rules` · schema ▶ `SCHEMA-ontology-graph`
 
-### 4.12  `FLOW-expand-request` — Expand-Request
+### 4.12  `FLOW-element-slice` — Element-Scheibe
+
+Gefilterte Knotenmenge aus dem Store (type/search) — eine Scheibe statt eines Volldumps.
+
+io ◀ `FUNC-list-elements` · io ▶ `ACTOR-claude-code` · schema ▶ `SCHEMA-ontology-graph`
+
+### 4.13  `FLOW-expand-request` — Expand-Request
 
 Cursor/handle + branch + depth+1.
 
 io ◀ `ACTOR-claude-code` · io ▶ `FUNC-graph-expand` · schema ▶ `SCHEMA-query-params`
 
-### 4.13  `FLOW-expanded-subgraph` — Expanded-Subgraph
+### 4.14  `FLOW-expanded-subgraph` — Expanded-Subgraph
 
 On-demand vertiefter Subgraph.
 
 io ◀ `FUNC-graph-expand` · io ▶ `ACTOR-claude-code` · schema ▶ `SCHEMA-format-e`
 
-### 4.14  `FLOW-export-request` — Export-Request
+### 4.15  `FLOW-export-request` — Export-Request
 
 View-Auswahl (spec/architecture/cr-list/references).
 
 io ◀ `ACTOR-developer` · `FUNC-serve-stdio` · io ▶ `FUNC-export-markdown` · schema ▶ `SCHEMA-query-params`
 
-### 4.15  `FLOW-fit-advisory` — Fit-Advisory (Richtung im Metrikraum)
+### 4.16  `FLOW-fit-advisory` — Fit-Advisory (Richtung im Metrikraum)
 
 Richtung und Regressionen eines Kandidaten im R^6-Metrikraum. Reine Messung: rankt, urteilt nicht.
 
 io ◀ `FUNC-fit-advisory` · io ▶ `FUNC-rank-candidates` · schema ▶ `SCHEMA-fit-advisory`
 
-### 4.16  `FLOW-formatE-artifact` — Format-E-Artefakt
+### 4.17  `FLOW-formatE-artifact` — Format-E-Artefakt
 
 Deterministisch serialisierter Graph (commit-fähig).
 
 io ◀ `FUNC-encode` · io ▶ `FUNC-decode` · schema ▶ `SCHEMA-format-e`
 
-### 4.17  `FLOW-formatE-candidates` — Format-E-Kandidaten
+### 4.18  `FLOW-formatE-candidates` — Format-E-Kandidaten
 
 Agent-interpretierte NL → Format-E (agent-seitig).
 
 io ◀ `ACTOR-claude-code` · io ▶ `FUNC-decode` · schema ▶ `SCHEMA-format-e`
 
-### 4.18  `FLOW-gate-verdict` — Gate-Verdikt
+### 4.19  `FLOW-gate-verdict` — Gate-Verdikt
 
 Das Urteil des Apply-Gates ueber die angewendete oder probierte Mutation: success, tier, Violations, Confidence. Es schliesst die Schleife, weil der naechste Snapshot darauf misst.
 
 io ◀ `FUNC-mutate` · io ▶ `FUNC-take-steering-snapshot` · schema ▶ `SCHEMA-mutate-result`
 
-### 4.19  `FLOW-graph-snapshot` — Graph-Snapshot (SSOT-at-rest)
+### 4.20  `FLOW-graph-snapshot` — Graph-Snapshot (SSOT-at-rest)
 
 Der kanonische, deterministische Snapshot docs/graph/<system>.graph.json — history-of-record. Der Export erzeugt ihn, rewind holt eine aeltere Fassung aus dem Git-Objektspeicher, reseed liest ihn.
 
-io ◀ `FUNC-graph-export-snapshot` · `FUNC-rewind` · io ▶ `ACTOR-developer` · `FUNC-reseed` · schema ▶ `SCHEMA-ontology-graph`
+io ◀ `FUNC-graph-export-snapshot` · `FUNC-rewind` · io ▶ `ACTOR-developer` · `FUNC-open-store` · `FUNC-reseed` · `FUNC-seed-from-json` · schema ▶ `SCHEMA-ontology-graph`
 
-### 4.20  `FLOW-graph-state` — Graph-State
+### 4.21  `FLOW-graph-state` — Graph-State
 
 Aktueller OntologyGraph (in-memory).
 
-io ◀ `ACTOR-developer` · io ▶ `FUNC-encode` · schema ▶ `SCHEMA-ontology-graph`
+io ◀ `ACTOR-developer` · `FUNC-load-graph` · `FUNC-open-store` · io ▶ `FUNC-close-store` · `FUNC-encode` · schema ▶ `SCHEMA-ontology-graph`
 
-### 4.21  `FLOW-impact-subgraph` — Impact-Subgraph
+### 4.22  `FLOW-impact-subgraph` — Impact-Subgraph
 
 Exakter Blast-Radius als Format-E + Cursor.
 
-io ◀ `FUNC-graph-impact` · io ▶ `ACTOR-claude-code` · schema ▶ `SCHEMA-format-e`
+io ◀ `FUNC-graph-impact` · io ▶ `ACTOR-claude-code` · `FUNC-graph-expand` · schema ▶ `SCHEMA-format-e`
 
-### 4.22  `FLOW-install-result` — Install-Result
+### 4.23  `FLOW-install-result` — Install-Result
 
 Scaffold-/Update-/Remove-Ergebnis.
 
 io ◀ `FUNC-harness-cli` · io ▶ `ACTOR-developer` · schema ▶ `SCHEMA-cli-command`
 
-### 4.23  `FLOW-live-event` — Live-Update-Event
+### 4.24  `FLOW-live-event` — Live-Update-Event
 
 SSE invalidate (graph/rules/readiness/suggestions).
 
 io ◀ `FUNC-emit-update-event` · io ▶ `ACTOR-dashboard` · `FUNC-broadcast-diff` · `FUNC-serve-stdio` · `FUNC-subscribe-updates` · schema ▶ `SCHEMA-update-event`
 
-### 4.24  `FLOW-markdown-docs` — Markdown-Docs
+### 4.25  `FLOW-markdown-docs` — Markdown-Docs
 
 Generierte Markdown-Views (GENERATED-Header).
 
 io ◀ `FUNC-export-markdown` · io ▶ `ACTOR-developer` · schema ▶ `SCHEMA-markdown-view`
 
-### 4.25  `FLOW-measurement-vector` — Messvektor
+### 4.26  `FLOW-measurement-vector` — Messvektor
 
 Der gemeinsame Eingang der vier Entscheidungen: der gemessene Zustand als Vektor, unabhaengig davon, welche Projektion ihn fuellt. Erst mit diesem Vertrag ist die Gleichheit der vier Signaturen geprueft statt behauptet.
 
 io ◀ `FUNC-take-steering-snapshot` · io ▶ `FUNC-goal-steerer` · schema ▶ `SCHEMA-measurement-vector`
 
-### 4.26  `FLOW-merged-graph` — Merged-Graph
+### 4.27  `FLOW-merged-graph` — Merged-Graph
 
 Conflict-free gemergter Graph.
 
 io ◀ `FUNC-merge-nodes` · io ▶ `ACTOR-developer` · schema ▶ `SCHEMA-ontology-graph`
 
-### 4.27  `FLOW-migrated-graph` — Migrated-Graph
+### 4.28  `FLOW-migrated-graph` — Migrated-Graph
 
 Re-validierter/migrierter Graph + Report.
 
 io ◀ `FUNC-migrate-schema` · io ▶ `ACTOR-developer` · schema ▶ `SCHEMA-ontology-graph`
 
-### 4.28  `FLOW-module-metrics` — Modulkennzahlen je MOD
+### 4.29  `FLOW-module-metrics` — Modulkennzahlen je MOD
 
 Instabilitaet, LCOM4, Kohaesion je Modul plus die geltende Urteils-Policy und ihre Herkunft. Wert und Schwelle verlassen den Host zusammen, damit die Anzeige keinen eigenen Zielwert braucht (CR-GC-329).
 
 io ◀ `FUNC-module-metrics` · io ▶ `ACTOR-dashboard` · schema ▶ `SCHEMA-module-metrics`
 
-### 4.29  `FLOW-mutate-cmd` — Mutate-Command
+### 4.30  `FLOW-mutate-cmd` — Mutate-Command
 
 Edit-Op (add/update/delete) vom Agent/Mensch.
 
 io ◀ `ACTOR-claude-code` · `ACTOR-developer` · io ▶ `FUNC-mutate` · schema ▶ `SCHEMA-mutate-command`
 
-### 4.30  `FLOW-parsed-graph` — Parsed-Graph
+### 4.31  `FLOW-parsed-graph` — Parsed-Graph
 
 Aus Format-E rekonstruierter Graph (== Original).
 
 io ◀ `FUNC-decode` · io ▶ `ACTOR-developer` · schema ▶ `SCHEMA-ontology-graph`
 
-### 4.31  `FLOW-phase-readiness` — Phasen-Readiness (SRR/PDR/CDR/TRR)
+### 4.32  `FLOW-phase-readiness` — Phasen-Readiness (SRR/PDR/CDR/TRR)
 
 Dieselbe Regelauswertung auf die Phasen-Gates projiziert: je Gate abgedeckte gegen alle Regel-IDs plus die fehlenden. Die zweite Achse, nicht die zweite Messung.
 
 io ◀ `FUNC-compute-phase-readiness` · io ▶ `FUNC-generation-step` · schema ▶ `SCHEMA-phase-readiness`
 
-### 4.32  `FLOW-query-request` — Query-Request
+### 4.33  `FLOW-query-request` — Query-Request
 
 elementId + depth.
 
-io ◀ `ACTOR-claude-code` · io ▶ `FUNC-graph-impact` · schema ▶ `SCHEMA-query-params`
+io ◀ `ACTOR-claude-code` · io ▶ `FUNC-graph-impact` · `FUNC-list-elements` · schema ▶ `SCHEMA-query-params`
 
-### 4.33  `FLOW-recalled-state` — Wiederhergestellter Graph-Stand
+### 4.34  `FLOW-recalled-state` — Wiederhergestellter Graph-Stand
 
 Der Live-Store nach dem Reseed: Modell und Code gehoeren wieder zu demselben Commit, der Drift-Marker ist geloescht.
 
-io ◀ `FUNC-reseed` · io ▶ `ACTOR-developer` · schema ▶ `SCHEMA-ontology-graph`
+io ◀ `FUNC-reseed` · `FUNC-seed-from-json` · io ▶ `ACTOR-developer` · schema ▶ `SCHEMA-ontology-graph`
 
-### 4.34  `FLOW-rendered-view` — Rendered-View
+### 4.35  `FLOW-rendered-view` — Rendered-View
 
 Generierte Markdown-View, z.B. architecture-graph.md.
 
 io ◀ `FUNC-render-views` · io ▶ `ACTOR-developer` · schema ▶ `SCHEMA-markdown-view`
 
-### 4.35  `FLOW-round-findings` — Round Findings (open violations)
+### 4.36  `FLOW-round-findings` — Round Findings (open violations)
 
 Die von status offen gemeldeten Regelverletzungen, die propose als Rang-Eingabe nimmt (graph_suggest rankt genau die feuernden Operator-Regeln).
 
 io ◀ `FUNC-evaluate-rules` · io ▶ `FUNC-graph-suggest` · schema ▶ —
 
-### 4.36  `FLOW-round-prompt` — Runden-Prompt (naechster Schritt)
+### 4.37  `FLOW-round-prompt` — Runden-Prompt (naechster Schritt)
 
 Der aus dem Messzustand abgeleitete naechste Schritt: Fokus-Dimension, Fokus-Typen, Fund-Fenster, Gate-Protokoll, Handoff-Bedingung.
 
 io ◀ `FUNC-generation-step` · `FUNC-next-step` · io ▶ `ACTOR-claude-code` · `ACTOR-opencode` · `FUNC-rank-candidates` · schema ▶ `SCHEMA-generation-step`
 
-### 4.37  `FLOW-round-scope` — Round Scope (bounded slice)
+### 4.38  `FLOW-round-scope` — Round Scope (bounded slice)
 
 Der durch read gebundene Blast-Radius/Kontext, der informiert, was status als offen prueft. Kein festes Wire-Format - informationeller Rundenkontext, kein Code-Datenvertrag.
 
 io ◀ `FUNC-graph-impact` · io ▶ `FUNC-evaluate-rules` · schema ▶ —
 
-### 4.38  `FLOW-steering-delta` — Steering-Delta (vor/nach Kandidat)
+### 4.39  `FLOW-steering-delta` — Steering-Delta (vor/nach Kandidat)
 
 Blockierende Fehler vorher und nachher plus Score-Delta je Dimension. Das erste Sachkriterium der Kandidaten-Rangfolge.
 
 io ◀ `FUNC-compute-steering-delta` · io ▶ `FUNC-rank-candidates` · schema ▶ `SCHEMA-steering-delta`
 
-### 4.39  `FLOW-steering-snapshot` — Steering-Snapshot
+### 4.40  `FLOW-steering-snapshot` — Steering-Snapshot
 
 Das Ergebnis der EINEN Messung: gemappter Graph, voller Regelstrom, blockierende Fehler, Readiness-Report. Alles Weitere ist Projektion davon.
 
 io ◀ `FUNC-take-steering-snapshot` · io ▶ `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-next-step` · schema ▶ `SCHEMA-steering-snapshot`
 
-### 4.40  `FLOW-steering-trigger` — Runden-Ausloeser
+### 4.41  `FLOW-steering-trigger` — Runden-Ausloeser
 
 Der Wunsch, eine Steuerungsrunde zu fahren, mit ihren Parametern: Intent, zurueckgestellte Fokus-Schluessel, Auswahlmodus. Mensch und lokaler Executor loesen dieselbe Kette aus, nur die Taktung unterscheidet sich.
 
 io ◀ `ACTOR-developer` · `ACTOR-opencode` · io ▶ `FUNC-take-steering-snapshot` · schema ▶ `SCHEMA-query-params`
 
-### 4.41  `FLOW-suggest-result` — Suggest-Result
+### 4.42  `FLOW-suggest-result` — Suggest-Result
 
 Confidence-getaggte Vorschläge (suggest-Tier).
 
 io ◀ `FUNC-mutate` · io ▶ `ACTOR-developer` · schema ▶ `SCHEMA-mutate-result`
 
-### 4.42  `FLOW-suggested-edit` — Suggested Edit (ranked candidate)
+### 4.43  `FLOW-suggested-edit` — Suggested Edit (ranked candidate)
 
 Der von propose bestbewertete Kandidaten-Fix (Template-Edit, dryRun-verifiziert), der apply als MutateCommand-Eingabe erreicht - nur wenn der Konsument ihn uebernimmt, nie automatisch.
 
 io ◀ `FUNC-graph-suggest` · `FUNC-rank-candidates` · io ▶ `FUNC-mutate` · schema ▶ —
 
-### 4.43  `FLOW-trajectory` — Trajectory/Outcome
+### 4.44  `FLOW-trajectory` — Trajectory/Outcome
 
 append-only Lern-Emission.
 
 io ◀ `FUNC-emit-trajectory` · io ▶ `ACTOR-learning-engine` · schema ▶ `SCHEMA-trajectory`
 
-### 4.44  `FLOW-version-bump` — Version-Bump
+### 4.45  `FLOW-version-bump` — Version-Bump
 
 Neue ONTOLOGY/RULES_VERSION aus contracts/se.
 
 io ◀ `ACTOR-developer` · io ▶ `FUNC-migrate-schema` · schema ▶ `SCHEMA-query-params`
 
-### 4.45  `FLOW-view-request` — View-Request
+### 4.46  `FLOW-view-request` — View-Request
 
 Welche View gerendert werden soll (arch/status/...).
 
 io ◀ `ACTOR-developer` · io ▶ `FUNC-render-views` · schema ▶ `SCHEMA-query-params`
 
-### 4.46  `FLOW-violations` — Violations
+### 4.47  `FLOW-violations` — Violations
 
 Regel-Violations {ruleId,severity,elementId}.
 
@@ -3232,7 +3342,7 @@ schema ◀ `FLOW-bootstrap-result` · `FLOW-gate-verdict` · `FLOW-suggest-resul
 
 Elements (13 ElementTypes) + Traces (7 TraceTypes). @sigloch/contracts/se.
 
-schema ◀ `FLOW-branch-graphs` · `FLOW-capture-draft` · `FLOW-committed-graph` · `FLOW-draft-graph` · `FLOW-graph-snapshot` · `FLOW-graph-state` · `FLOW-merged-graph` · `FLOW-migrated-graph` · `FLOW-parsed-graph` · `FLOW-recalled-state`
+schema ◀ `FLOW-branch-graphs` · `FLOW-capture-draft` · `FLOW-committed-graph` · `FLOW-draft-graph` · `FLOW-element-slice` · `FLOW-graph-snapshot` · `FLOW-graph-state` · `FLOW-merged-graph` · `FLOW-migrated-graph` · `FLOW-parsed-graph` · `FLOW-recalled-state`
 
 ### 5.14  `SCHEMA-phase-readiness` — PhaseGateReadiness
 
@@ -3312,7 +3422,7 @@ allocate ◀ `FUNC-block-dokumentenwerk` · `FUNC-export-markdown` · satisfy �
 
 Apply-Gate: loadGraph/saveGraph/mutate/evaluateRules/close gegen lokalen Kuzu. (SPEC §2.1)
 
-allocate ◀ `FUNC-check-code-conformance` · `FUNC-evaluate-rules` · `FUNC-import` · `FUNC-migrate-schema` · `FUNC-mutate` · `FUNC-reseed` · `FUNC-save-graph` · `FUNC-score-completeness` · satisfy ▶ `REQ-graph-state-recall` · `REQ-harness-schema-in-contracts` · `REQ-import-se-ontology` · `REQ-quality-metric` · `REQ-single-kuzu-owner` · `REQ-single-store` · `REQ-store-recovery` · `REQ-structural-rule-shared`
+allocate ◀ `FUNC-check-code-conformance` · `FUNC-close-store` · `FUNC-evaluate-rules` · `FUNC-import` · `FUNC-list-elements` · `FUNC-load-graph` · `FUNC-migrate-schema` · `FUNC-mutate` · `FUNC-open-store` · `FUNC-reseed` · `FUNC-save-graph` · `FUNC-score-completeness` · `FUNC-seed-from-json` · satisfy ▶ `REQ-graph-state-recall` · `REQ-harness-schema-in-contracts` · `REQ-import-se-ontology` · `REQ-quality-metric` · `REQ-single-kuzu-owner` · `REQ-single-store` · `REQ-store-recovery` · `REQ-structural-rule-shared`
 
 #### 6.1.6  `MOD-hooks` — hooks.ts — HookSystem
 

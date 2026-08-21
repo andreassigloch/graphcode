@@ -27,6 +27,7 @@
 | `FUNC-block-se-steuerung` | FUNC | SE-Prozess-Steuerung |
 | `FUNC-broadcast-diff` | FUNC | broadcastDiff(version) |
 | `FUNC-check-code-conformance` | FUNC | conformanceViolations(harness) |
+| `FUNC-close-store` | FUNC | close() |
 | `FUNC-close-violations` | FUNC | Skill se:close-violations |
 | `FUNC-compute-phase-readiness` | FUNC | computePhaseReadiness(violations) |
 | `FUNC-compute-readiness` | FUNC | computeReadiness(graph, policy) |
@@ -49,11 +50,14 @@
 | `FUNC-health-endpoint` | FUNC | healthEndpoint() |
 | `FUNC-import` | FUNC | importGraph(formatE, mode) |
 | `FUNC-import-doc` | FUNC | Skill se:import-doc |
+| `FUNC-list-elements` | FUNC | listElements(filter) |
+| `FUNC-load-graph` | FUNC | loadGraph() |
 | `FUNC-merge-nodes` | FUNC | mergeNodes(graph) |
 | `FUNC-migrate-schema` | FUNC | migrateSchema(from, to) |
 | `FUNC-module-metrics` | FUNC | moduleMetrics(graph) |
 | `FUNC-mutate` | FUNC | mutate(commands) |
 | `FUNC-next-step` | FUNC | nextStep(graph, policy) |
+| `FUNC-open-store` | FUNC | initialize() |
 | `FUNC-own-kuzu-host` | FUNC | ownKuzu() |
 | `FUNC-rank-candidates` | FUNC | rankCandidates(probes, focus) |
 | `FUNC-render-artifacts` | FUNC | renderArtifactReadiness(views) |
@@ -79,6 +83,7 @@
 | `FUNC-se-review` | FUNC | Skill se-review |
 | `FUNC-se-status` | FUNC | Skill se-status |
 | `FUNC-se-trade` | FUNC | Skill se-trade |
+| `FUNC-seed-from-json` | FUNC | seedFromJson(relPath) |
 | `FUNC-serve-sse` | FUNC | serveSSE() |
 | `FUNC-serve-stdio` | FUNC | serveStdio() |
 | `FUNC-subscribe-updates` | FUNC | subscribeUpdates() |
@@ -127,6 +132,7 @@
 | `FUNC-block-se-steuerung` | `MOD-steering` |
 | `FUNC-broadcast-diff` | `MOD-host-bridge` |
 | `FUNC-check-code-conformance` | `MOD-harness` |
+| `FUNC-close-store` | `MOD-harness` |
 | `FUNC-close-violations` | `MOD-skills` |
 | `FUNC-compute-phase-readiness` | `MOD-steering` |
 | `FUNC-compute-readiness` | ⚠ nicht alloziert (R-22) |
@@ -149,11 +155,14 @@
 | `FUNC-health-endpoint` | `MOD-host-bridge` |
 | `FUNC-import` | `MOD-harness` |
 | `FUNC-import-doc` | `MOD-skills` |
+| `FUNC-list-elements` | `MOD-harness` |
+| `FUNC-load-graph` | `MOD-harness` |
 | `FUNC-merge-nodes` | `MOD-codec` |
 | `FUNC-migrate-schema` | `MOD-harness` |
 | `FUNC-module-metrics` | ⚠ nicht alloziert (R-22) |
 | `FUNC-mutate` | `MOD-harness` |
 | `FUNC-next-step` | `MOD-steering` |
+| `FUNC-open-store` | `MOD-harness` |
 | `FUNC-own-kuzu-host` | `MOD-host-bridge` |
 | `FUNC-rank-candidates` | `MOD-steering` |
 | `FUNC-render-artifacts` | `MOD-dashboard` |
@@ -179,6 +188,7 @@
 | `FUNC-se-review` | `MOD-skills` |
 | `FUNC-se-status` | `MOD-skills` |
 | `FUNC-se-trade` | `MOD-skills` |
+| `FUNC-seed-from-json` | `MOD-harness` |
 | `FUNC-serve-sse` | `MOD-host-bridge` |
 | `FUNC-serve-stdio` | `MOD-mcp-tools` |
 | `FUNC-subscribe-updates` | `MOD-dashboard` |

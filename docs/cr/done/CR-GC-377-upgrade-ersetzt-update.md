@@ -1,6 +1,6 @@
 # CR-GC-377 — `graphcode upgrade` ersetzt `update`: ein Befehl, der wirklich alles aktuell macht
 
-**Status:** open · **Angelegt:** 2026-08-20 · **Vorgänger:** CR-GC-376 (Diagnose)
+**Status:** done · **Angelegt:** 2026-08-20 · **Geschlossen:** 2026-08-21 · **Vorgänger:** CR-GC-376 (Diagnose)
 
 ## Problem
 
