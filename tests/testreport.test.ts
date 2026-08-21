@@ -102,6 +102,50 @@ describe('TEST-testreport: Ergebnisse zurueck in den Graphen (CR-GC-327)', () =>
     rmSync(repoRoot, { recursive: true, force: true });
   });
 
+  it('stempelt BEIDE Dateien einer Abnahme, nicht nur die zuletzt zugeordnete', async () => {
+    // CR-GC-386, real gefunden beim Einspielen des eigenen Laufs: die Kommandos werden aus
+    // dem Zustand VOR dem Batch gebaut und `testRefs` als ganzes Array ersetzt. Bei zwei
+    // Dateien an einer Abnahme überschrieb das zweite Kommando den Stempel des ersten —
+    // grüner Lauf, verschwundene Evidenz, VR-01 dauerhaft `pending`.
+    expect(
+      (
+        await harness.mutate([
+          {
+            op: 'update-node',
+            node: {
+              uid: 'TEST-ran',
+              type: 'TEST',
+              attributes: {
+                testRefs: [
+                  { file: 'tests/ran.test.ts', tool: 'vitest' },
+                  { file: 'tests/ran-visual.spec.ts', tool: 'playwright' },
+                ],
+              },
+            },
+          },
+        ])
+      ).success,
+    ).toBe(true);
+
+    const res = await tools.graph_test_ingest.handler({
+      results: [
+        { file: 'tests/ran.test.ts', result: 'passed' },
+        { file: 'tests/ran-visual.spec.ts', result: 'failed' },
+      ],
+      consumerId: 'runner',
+    });
+    expect(res.success, JSON.stringify(res.violations)).toBe(true);
+
+    const refs = harness.getGraph().nodes.find((n) => n.uid === 'TEST-ran')!.attributes!.testRefs as Array<{
+      file: string;
+      result?: string;
+    }>;
+    // Beide Einträge tragen ihr EIGENES Ergebnis — „einer rot, einer grün" ist der Fall,
+    // für den 1:n überhaupt existiert.
+    expect(refs.find((r) => r.file === 'tests/ran.test.ts')?.result).toBe('passed');
+    expect(refs.find((r) => r.file === 'tests/ran-visual.spec.ts')?.result).toBe('failed');
+  });
+
   it('schreibt das Ergebnis ueber testRefs[].file an den Eintrag — durch das Gate', async () => {
     const res = await tools.graph_test_ingest.handler({ report: VITEST_JSON, consumerId: 'runner' });
 

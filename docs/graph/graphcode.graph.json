@@ -2751,12 +2751,7 @@
         "symbol": "executeUpgrade",
         "lang": "ts"
       },
-      "testRefs": [
-        {
-          "file": "tests/upgrade.test.ts",
-          "tool": "vitest"
-        }
-      ]
+      "testRefs": null
     },
     {
       "id": "FUNC-view-changelog",
@@ -4552,7 +4547,7 @@
           "tool": "vitest",
           "level": "performance",
           "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -4570,7 +4565,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -4585,7 +4580,82 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-artifact-coupling",
+      "type": "TEST",
+      "name": "Artefakt-Zweig des Steuerungsbeweises",
+      "description": "Abnahme der Datei tests/steering.artifact-coupling.test.ts: die Steuerung wirkt auch auf die Artefakte, nicht nur auf das Ranking. Der Regler war bereits belegt, dieser Zweig schliesst die Kopplung zwischen gemessener Lage und erzeugtem Artefakt.",
+      "testRefs": [
+        {
+          "file": "tests/steering.artifact-coupling.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-audit-retention",
+      "type": "TEST",
+      "name": "Audit-Aufbewahrungs-Abnahme",
+      "description": "Abnahme der Datei tests/audit.retention.test.ts: compact() archiviert per Umbenennung und loescht nichts, und eine Abfrage sieht danach weiterhin, was archiviert wurde. Trennt Aufbewahrung von Sichtbarkeit, damit aus einer Kompaktierung nie stille Beweisvernichtung wird.",
+      "testRefs": [
+        {
+          "file": "tests/audit.retention.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-audit-rules-passed",
+      "type": "TEST",
+      "name": "Bestandene Regeln im Audit",
+      "description": "Abnahme der Datei tests/audit.rules-passed.test.ts: der Audit-Eintrag einer angenommenen Mutation nennt die Regeln, die geprueft und bestanden wurden. Ohne diese positive Haelfte ist aus einem leeren violations-Feld nicht rekonstruierbar, ob eine Regel geprueft hat oder gar nicht lief.",
+      "testRefs": [
+        {
+          "file": "tests/audit.rules-passed.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-audit-trail-projection",
+      "type": "TEST",
+      "name": "Audit-Trail als schlanke Projektion",
+      "description": "Abnahme der Datei tests/audit.trail-projection.test.ts: audit_trail liefert eine Projektion statt der Rohsaetze, sodass ein Standardaufruf den Agenten nicht mit vollstaendigen Mutations-Batches flutet. Der Ausloeser war messbar: ein Default-Aufruf trug 163 KB, davon 79 Prozent Batch-Inhalt.",
+      "testRefs": [
+        {
+          "file": "tests/audit.trail-projection.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-auto-export",
+      "type": "TEST",
+      "name": "Export folgt der Mutation",
+      "description": "Abnahme der Datei tests/auto-export.test.ts: nach einer angewandten Mutation entsteht der Snapshot-Export, ohne dass jemand graph_export ruft, und er schreibt weder bei blockierten Batches noch doppelt. Geprueft werden die Eigenschaften des Ausloesens, nicht die Dateiinhalte.",
+      "testRefs": [
+        {
+          "file": "tests/auto-export.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -4601,7 +4671,7 @@
           "tool": "vitest",
           "level": "performance",
           "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -4621,7 +4691,22 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.408Z"
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-bridge-follows-lock",
+      "type": "TEST",
+      "name": "Bridge folgt dem Lock",
+      "description": "Abnahme der Datei tests/host.bridge-attach.test.ts: der gewaehlte Host bedient die read-only HTTP-Bridge ueber sein eigenes Harness statt einen zweiten Prozess um den Store-Lock kaempfen zu lassen. Viewer und MCP-Sitzungen leben damit nebeneinander.",
+      "testRefs": [
+        {
+          "file": "tests/host.bridge-attach.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -4649,6 +4734,21 @@
       "constraint": "suggest-tier"
     },
     {
+      "id": "TEST-cli-run",
+      "type": "TEST",
+      "name": "Abnahme des run-Verbs",
+      "description": "Abnahme der Datei tests/cli.run.test.ts: graphcode run laeuft ueber denselben executeRun-Pfad wie die CLI, liest seine Konfiguration aus der Umgebung und arbeitet gegen einen realen Disk-Store mit gescriptetem Modell-Backend. Kein Parallelweg neben dem Produktionspfad.",
+      "testRefs": [
+        {
+          "file": "tests/cli.run.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
       "id": "TEST-cli-scaffold",
       "type": "TEST",
       "name": "CLI-Scaffold-Test",
@@ -4664,7 +4764,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -4681,7 +4781,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -4711,7 +4811,22 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-create-harness-smoke",
+      "type": "TEST",
+      "name": "Produktionsverdrahtung der Fabrik",
+      "description": "Abnahme der Datei tests/smoke.create-harness.test.ts: die ausgelieferte Verdrahtung wird wirklich gefahren, nicht der direkte Konstruktor. Disk-Kuzu am vorgesehenen Ort und die Standard-Emitter fuer Live-Event und Trajektorie haengen dran.",
+      "testRefs": [
+        {
+          "file": "tests/smoke.create-harness.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -4733,7 +4848,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -4752,7 +4867,22 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-deny-stale-read",
+      "type": "TEST",
+      "name": "Lesesperre gegen veraltete Dokumente",
+      "description": "Abnahme der Datei tests/hooks.deny-stale-read.test.ts: der echte PreToolUse-Shell-Hook wird mit dem JSON gefuettert, das der Host uebergibt. Eine Datei, die sich als INPUT-ONLY deklariert, wird blockiert und der Leser auf graph_context umgeleitet.",
+      "testRefs": [
+        {
+          "file": "tests/hooks.deny-stale-read.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -4769,8 +4899,8 @@
           "file": "tests/distribution.test.ts",
           "tool": "vitest",
           "level": "e2e",
-          "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
+          "result": "failed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -4790,7 +4920,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -4806,6 +4936,141 @@
       "tool": "grep/structure-check"
     },
     {
+      "id": "TEST-edge-only-batch",
+      "type": "TEST",
+      "name": "Reiner Kanten-Batch ohne Typ-Sektion",
+      "description": "Abnahme der Datei tests/mutate.edge-only-batch.test.ts: ein Format-E-Batch, der nur Kanten zwischen bereits vorhandenen Knoten zieht, braucht keine Typ-Sektionen. Vorher starb genau dieser Batch im Codec, obwohl der Typ im Store steht.",
+      "testRefs": [
+        {
+          "file": "tests/mutate.edge-only-batch.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-executor-bestofn",
+      "type": "TEST",
+      "name": "Best-of-N-Auswahl im Treiber",
+      "description": "Abnahme der Datei tests/executor.bestofn.test.ts: der Treiber waehlt aus mehreren Kandidaten deterministisch aus, und das Ranking folgt dem Ziel-Delta statt dem Volumen des Vorschlags. Reale Persistenz, gescriptetes Modell-Backend als einzige simulierte Grenze.",
+      "testRefs": [
+        {
+          "file": "tests/executor.bestofn.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-executor-preflight",
+      "type": "TEST",
+      "name": "Batch-Hygiene vor dem Gate",
+      "description": "Abnahme der Datei tests/executor.preflight.test.ts: der Preflight vervollstaendigt einen Batch deterministisch aus den Contracts-Importen, bevor das Gate urteilt, und bleibt bei Unsicherheit passiv. Er ist Hygiene, kein zweites Gate; genau daran haengt, dass kleine Modelle die Tuer treffen.",
+      "testRefs": [
+        {
+          "file": "tests/executor.preflight.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-export-graph-guard",
+      "type": "TEST",
+      "name": "Kanonizitaets-Wache des Exports",
+      "description": "Abnahme der Datei tests/export-graph-guard.test.ts: die Wache hinter scripts/export-graph.mjs erkennt einen Hand-Edit am SSOT und verweigert das Rendern, bleibt aber blind gegen den graphVersion-Stempel. Beide Haelften zaehlen: eine durch Aufweichen reparierte Wache ist schlimmer als eine kaputte.",
+      "testRefs": [
+        {
+          "file": "tests/export-graph-guard.test.ts",
+          "tool": "vitest",
+          "level": "unit",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-first-step",
+      "type": "TEST",
+      "name": "Eine naechste Aktion beim Start",
+      "description": "Abnahme der Datei tests/mcp.first-step.test.ts: der gewaehlte Host nennt beim Hochfahren genau eine naechste Aktion statt einer Werkzeugliste. Das Onboarding scheiterte reproduzierbar an derselben Stelle, weil der Leser nach der Wahl-Zeile allein blieb.",
+      "testRefs": [
+        {
+          "file": "tests/mcp.first-step.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-fit-advisory",
+      "type": "TEST",
+      "name": "Delta-Advisory je Mutation",
+      "description": "Abnahme der Datei tests/harness.fit-advisory.test.ts: jede erfolgreiche Mutation traegt ein fitAdvisory mit Vorher, Nachher und Delta auf der Architektur-Ebene, auch im dryRun. Es ist eine Messung, kein Gate: tier und success bleiben davon unberuehrt.",
+      "testRefs": [
+        {
+          "file": "tests/harness.fit-advisory.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-formate-binding",
+      "type": "TEST",
+      "name": "Bindung ueber Format-E kommt an",
+      "description": "Abnahme der Datei tests/mutate.formate-binding.test.ts: eine per Format-E gesetzte realRef oder testRefs erreicht das Gate wirklich. Der gemessene Schaden war das Gegenteil: der Batch kam mit Bindungs-Verstoessen fuer jeden Knoten zurueck, obwohl die Bindung im Text stand.",
+      "testRefs": [
+        {
+          "file": "tests/mutate.formate-binding.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-formate-name",
+      "type": "TEST",
+      "name": "Name-Attribut ist entdeckbar",
+      "description": "Abnahme der Datei tests/mutate.formate-name.test.ts: der Name reist als eigenes Attribut, und der Rueckfall auf die uid als Namen meldet sich laut. Der gemessene Schaden in einem Fremdrepo waren 87 von 134 Knoten, die ihre uid als Namen trugen.",
+      "testRefs": [
+        {
+          "file": "tests/mutate.formate-name.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-graph-authoring-guide",
+      "type": "TEST",
+      "name": "Legale Kanten aus dem Meta-Modell",
+      "description": "Abnahme der Datei tests/mcp.authoring-guide.test.ts: der Autoren-Leitfaden nennt die legalen anliegenden Kanten aus den importierten TRACE_PATTERNS, nie aus einem lokalen Fork. Er ist der Schreib-Zwilling von graph_context und wird VOR dem Anlegen eines Knotens gefragt.",
+      "testRefs": [
+        {
+          "file": "tests/mcp.authoring-guide.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
       "id": "TEST-graph-context-replaces-reading",
       "type": "TEST",
       "name": "Kontext-Slice als vollstaendige Definition-of-Done",
@@ -4816,7 +5081,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -4833,7 +5098,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -4851,7 +5116,37 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-graph-metrics",
+      "type": "TEST",
+      "name": "Modulkennzahlen je Modul",
+      "description": "Abnahme der Datei tests/metrics.test.ts: die Kennzahlen liegen je MOD vor, unabhaengig davon ob eine Regel feuert. Der Mangel war gemessen: die Regel meldete nur die Module ueber der Schwelle, fuer die uebrigen war ueber MCP gar kein Wert zu bekommen.",
+      "testRefs": [
+        {
+          "file": "tests/metrics.test.ts",
+          "tool": "vitest",
+          "level": "unit",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-graph-realize",
+      "type": "TEST",
+      "name": "Flaches Binden ueber das Gate",
+      "description": "Abnahme der Datei tests/mcp.realize.test.ts: graph_realize setzt die realRef einer FUNC und optional den testRefs-Eintrag einer Abnahme in einem flachen Aufruf, und zwar durch mutate. Kein paralleler Schreibweg neben dem Gate.",
+      "testRefs": [
+        {
+          "file": "tests/mcp.realize.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -4867,7 +5162,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-08-21T04:06:57.000Z"
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -4884,7 +5179,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -4899,6 +5194,96 @@
       "concept": true
     },
     {
+      "id": "TEST-gve-autostart",
+      "type": "TEST",
+      "name": "Autostart-Wachen des Viewers",
+      "description": "Abnahme der Datei tests/gve-autostart.test.ts: der gewaehlte Host startet den Viewer nur, wenn die Wachen es erlauben. Geprueft werden Opt-out per Umgebung, Unterdrueckung im Testlauf und die Erkennung einer bereits laufenden Instanz ueber die erreichbare dashboard.url.",
+      "testRefs": [
+        {
+          "file": "tests/gve-autostart.test.ts",
+          "tool": "vitest",
+          "level": "unit",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-gve-supervision",
+      "type": "TEST",
+      "name": "Viewer wird am Leben gehalten",
+      "description": "Abnahme der Datei tests/gve-supervision.test.ts: stirbt der Viewer nach dem Start, startet der Host ihn neu, aber nur bis zu einer Grenze. Ausloeser war ein gesunder Host ohne Dashboard, den niemand bemerkte.",
+      "testRefs": [
+        {
+          "file": "tests/gve-supervision.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-help-content-coverage",
+      "type": "TEST",
+      "name": "Hilfe deckt jedes lebende Token",
+      "description": "Abnahme der Datei tests/help-content.test.ts: die verfasste Plain- und SE-Ebene deckt jedes im Dashboard lebende Token, geprueft gegen die Registries statt gegen eine Handzaehlung. Eine neue Regel oder ein neues Artefakt faellt nur auf, wenn ihr Hilfe-Eintrag fehlt.",
+      "testRefs": [
+        {
+          "file": "tests/help-content.test.ts",
+          "tool": "vitest",
+          "level": "unit",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-help-contextual-dedup",
+      "type": "TEST",
+      "name": "Eine Massnahme je Regel, nicht je Verstoss",
+      "description": "Abnahme der Datei tests/help.contextual-dedup.test.ts: graph_help ohne Token liefert eine Massnahme je Regel statt je Verstoss. Da jede Massnahme eine vollstaendige Kopie des Hilfe-Eintrags traegt, waere die Verstoss-Variante ein Vielfaches an Text fuer dieselbe Aussage.",
+      "testRefs": [
+        {
+          "file": "tests/help.contextual-dedup.test.ts",
+          "tool": "vitest",
+          "level": "unit",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-help-projection",
+      "type": "TEST",
+      "name": "Hilfe ist reine Projektion",
+      "description": "Abnahme der Datei tests/help.test.ts: die Hilfe rechnet ohne Datenbank. Jeder Eintrag traegt alle drei Ebenen, die Regel-Hilfe deckt die lebenden V3_RULES, und die kontextuelle Hilfe rankt Regel- und Erstellungs-Blocker gemeinsam, Fehler zuerst.",
+      "testRefs": [
+        {
+          "file": "tests/help.test.ts",
+          "tool": "vitest",
+          "level": "unit",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-help-tool",
+      "type": "TEST",
+      "name": "graph_help ueber MCP",
+      "description": "Abnahme der Datei tests/mcp.help.test.ts: graph_help erreicht die Hilfe-Datenschicht ueber MCP. Realer Disk-Kuzu auf einem Temp-Repo, ein Graph der eine Warnung ausloest, und der Nachweis, dass der Aufruf ohne Argument die kontextuellen Massnahmen liefert.",
+      "testRefs": [
+        {
+          "file": "tests/mcp.help.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
       "id": "TEST-hooks",
       "type": "TEST",
       "name": "Hook-Extension-Points-Test",
@@ -4907,6 +5292,21 @@
       "level": "integration",
       "tool": "vitest",
       "concept": true
+    },
+    {
+      "id": "TEST-host-shim",
+      "type": "TEST",
+      "name": "Ein Schreibkanal ueber zwei Prozesse",
+      "description": "Abnahme der Datei tests/host-shim.test.ts: die Zwei-Prozess-Topologie auf Socket-Ebene, ein echter Host mit Store und ein echter Proxy-Registry-Client. Der Verlierer der Wahl bedient dieselbe Oberflaeche ueber stdio, ohne einen zweiten Schreibkanal zu oeffnen.",
+      "testRefs": [
+        {
+          "file": "tests/host-shim.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
     },
     {
       "id": "TEST-impact-subgraph",
@@ -4924,7 +5324,82 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-import-code-verb",
+      "type": "TEST",
+      "name": "Abnahme des import-code-Verbs",
+      "description": "Abnahme der Datei tests/import-code-verb.test.ts: graphcode import-code faehrt den deterministischen Code-Import mit Reseed-Semantik ueber denselben executeImportCode-Pfad wie die CLI. Realer Disk-Store, echte Fixture-Dateien, die Dateisuche laeuft mit.",
+      "testRefs": [
+        {
+          "file": "tests/import-code-verb.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-import-invariant",
+      "type": "TEST",
+      "name": "REQ-mit-Test-Invariante auf dem Import-Pfad",
+      "description": "Abnahme der Datei tests/harness.import-invariant.test.ts: der Massen-Import meldet jede REQ ohne verifizierenden TEST und verweigert bei entsprechender Option den Import ganz. Der Bypass am Gate vorbei ist damit nie stumm, so waren die historischen unverifizierten REQ hereingekommen.",
+      "testRefs": [
+        {
+          "file": "tests/harness.import-invariant.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-import-sys-anchor",
+      "type": "TEST",
+      "name": "Genau ein SYS-Anker nach jedem Import",
+      "description": "Abnahme der Datei tests/harness.import-sys-anchor.test.ts: jeder Import-Pfad hinterlaesst genau einen SYS-Knoten. An ihm haengen die Analyse-Frische-Stempel und die graphweiten Regeln, ein zweiter oder fehlender Anker macht sie unauswertbar.",
+      "testRefs": [
+        {
+          "file": "tests/harness.import-sys-anchor.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-inject-graph-slice",
+      "type": "TEST",
+      "name": "Task-Start-Scheibe im Agentenkontext",
+      "description": "Abnahme der Datei tests/hooks.inject-graph-slice.test.ts: der Bridge-Endpunkt liefert die Kontext-Scheibe zu einer uid, und der UserPromptSubmit-Hook schiebt sie in den Agentenkontext. Realer Disk-Kuzu, realer HTTP-Aufruf, echte Ground truth statt Stichprobe.",
+      "testRefs": [
+        {
+          "file": "tests/hooks.inject-graph-slice.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-intent-anchors-internal",
+      "type": "TEST",
+      "name": "Intentions-Anker bleiben Interna",
+      "description": "Abnahme der Datei tests/intent-anchors-internal.test.ts: die Anker sind ein Steuerungs-Interna und werden dem Menschen nicht zur Bestaetigung vorgelegt. Der Begriff ist unserer, nicht seiner; eine Rueckfrage danach verlangt Vokabular, das der Gegenueber nicht hat.",
+      "testRefs": [
+        {
+          "file": "tests/intent-anchors-internal.test.ts",
+          "tool": "vitest",
+          "level": "unit",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -4970,7 +5445,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -4988,7 +5463,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -5008,7 +5483,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -5028,7 +5503,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -5045,7 +5520,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -5065,7 +5540,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -5085,7 +5560,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -5105,7 +5580,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -5124,22 +5599,46 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
     {
       "id": "TEST-merge",
       "type": "TEST",
-      "name": "Conflict-free-Merge-Test",
-      "description": "Zwei Branch-Änderungen mergen conflict-free; keine verlorenen Knoten/Traces. (FUNC-merge-nodes)",
+      "name": "Wiedereingliederung eines Zweigs",
+      "description": "Abnahme der Datei tests/mcp.merge.test.ts: zwei Zweig-Aenderungen werden ohne Konflikt wieder zusammengefuehrt, ohne Knoten oder Kanten zu verlieren. Die Wiedereingliederung laeuft als Replay durchs Gate, nicht als Datei-Merge; echte Zwei-Store-Integration mit eigenem Disk-Kuzu und eigenem Audit-Log je Seite.",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "method": "test",
-      "concept": true,
+      "concept": false,
       "level": "integration",
       "tool": "vitest",
-      "constraint": "conflict-free"
+      "constraint": "conflict-free",
+      "testRefs": [
+        {
+          "file": "tests/mcp.merge.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-merge-no-duplicate-edge",
+      "type": "TEST",
+      "name": "Keine Doppelkante nach dem Verschmelzen",
+      "description": "Abnahme der Datei tests/mutate.merge-dedupe.test.ts: das Verschmelzen zweier Knoten fuehrt eine identische Kante nur einmal, unabhaengig von der Reihenfolge, und Speicher und Disk zaehlen danach dasselbe. Auch der kanonische Snapshot schreibt ein Tripel nie zweimal.",
+      "testRefs": [
+        {
+          "file": "tests/mutate.merge-dedupe.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
     },
     {
       "id": "TEST-monotone-convergence",
@@ -5152,7 +5651,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -5172,7 +5671,52 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-mutate-input-formate",
+      "type": "TEST",
+      "name": "Format-E als Eingabe am Gate",
+      "description": "Abnahme der Datei tests/mcp.mutate-input.test.ts: ein Format-E-Block laeuft durch dieselbe Gate-Semantik wie Kommandos, ein Parse-Fehler wird zum Block-Verdikt statt zum Absturz, und der dryRun-Preview wird auditiert. Ein Eingabe-Codec, kein zweiter Schreibweg.",
+      "testRefs": [
+        {
+          "file": "tests/mcp.mutate-input.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-mutate-schema-guard",
+      "type": "TEST",
+      "name": "Fehlgeformte Kommandos werden hart abgelehnt",
+      "description": "Abnahme der Datei tests/mutate.schema-guard.test.ts: ein Batch mit falsch geschriebenen Operationen wird abgelehnt statt als Erfolg quittiert. Der Live-Befund war genau das: die Kommandos passierten das Gate mit success, ohne dass irgendetwas geschrieben wurde.",
+      "testRefs": [
+        {
+          "file": "tests/mutate.schema-guard.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-mutate-violations",
+      "type": "TEST",
+      "name": "Verstoesse als Zusammenfassung",
+      "description": "Abnahme der Datei tests/mcp.mutate-violations.test.ts: graph_mutate antwortet standardmaessig mit einer Zusammenfassung statt dem vollstaendigen Ergebnis. Vorher trug jede Warnung ihren gesamten Kontext zurueck, was den Loewenanteil der Bytes ausmachte, ohne beim Reparieren zu helfen.",
+      "testRefs": [
+        {
+          "file": "tests/mcp.mutate-violations.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -5192,7 +5736,22 @@
           "tool": "vitest",
           "level": "e2e",
           "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-nd-similarity",
+      "type": "TEST",
+      "name": "Aehnlichkeits-Matrix fuer die ND-Regeln",
+      "description": "Abnahme der Datei tests/nd-similarity.test.ts: die Nah-Duplikat-Regeln der Contracts liefern erst mit injizierter Aehnlichkeits-Matrix Funde, und graphcode berechnet diese Matrizen deterministisch nach den dort dokumentierten Formeln.",
+      "testRefs": [
+        {
+          "file": "tests/nd-similarity.test.ts",
+          "tool": "vitest",
+          "level": "unit",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -5206,6 +5765,21 @@
       "concept": true
     },
     {
+      "id": "TEST-occ",
+      "type": "TEST",
+      "name": "Optimistische Nebenlaeufigkeit am Werkzeug",
+      "description": "Abnahme der Datei tests/mcp.occ.test.ts: ein Schreibzugriff traegt die graphVersion, die sein Autor gelesen hat; eine veraltete Basis wird abgelehnt und meldet die seither angewandten Batches zurueck. Damit verliert kein nebenlaeufiger Schreiber still seine Aenderung.",
+      "testRefs": [
+        {
+          "file": "tests/mcp.occ.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
       "id": "TEST-one-driver-local-and-frontier",
       "type": "TEST",
       "name": "Treiber gegen zwei Backends ohne Verzweigung",
@@ -5216,7 +5790,37 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-operations-log",
+      "type": "TEST",
+      "name": "Dauerhaftes Betriebslog in graphcode",
+      "description": "Abnahme der Datei tests/operations-log.integration.test.ts: die graphcode-Seite des dauerhaften Logs. Das Verhalten des Logs selbst liegt im Store-Modul und wird dort geprueft; hier zaehlt, dass das Gate seine Eintraege wirklich schreibt und wiederfindet.",
+      "testRefs": [
+        {
+          "file": "tests/operations-log.integration.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-path-containment",
+      "type": "TEST",
+      "name": "Pfade bleiben im Repo",
+      "description": "Abnahme der Datei tests/security.path-containment.test.ts: die zwei im Audit reproduzierten Ausbrueche sind festgenagelt. Beide Senken hatten einen vom Graphen oder Agenten gelieferten Pfad ohne Eindaemmung an den Repo-Wurzelpfad geklebt. Realer Disk-Kuzu, echte Schreibversuche.",
+      "testRefs": [
+        {
+          "file": "tests/security.path-containment.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -5231,7 +5835,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -5248,12 +5852,16 @@
         {
           "file": "tests/audit.origin.test.ts",
           "tool": "vitest",
-          "level": "integration"
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
         },
         {
           "file": "tests/hooks.prompt-relay.test.ts",
           "tool": "vitest",
-          "level": "integration"
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -5268,7 +5876,22 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-read-format-param",
+      "type": "TEST",
+      "name": "Ausgabeformat der Lese-Werkzeuge",
+      "description": "Abnahme der Datei tests/mcp.read-format.test.ts: die Lese-Werkzeuge liefern standardmaessig JSON fuer die Agentenlogik und auf Wunsch eine round-trip-stabile Format-E-Scheibe im selben Dialekt wie der committete Graph. Ein Vertrag, zwei Darstellungen.",
+      "testRefs": [
+        {
+          "file": "tests/mcp.read-format.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -5287,7 +5910,7 @@
           "tool": "vitest",
           "level": "acceptance",
           "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -5304,7 +5927,7 @@
           "tool": "vitest",
           "level": "acceptance",
           "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -5322,7 +5945,22 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-realref-materialize",
+      "type": "TEST",
+      "name": "Kein Phantompfad hinter einer SCHEMA-Bindung",
+      "description": "Abnahme der Datei tests/export.realref-materialize.test.ts: der Export legt fuer jede gebundene SCHEMA ohne Datei einen z.unknown-Zod-Stub an, wie er es fuer eine gebundene TEST-Datei tut, und ueberschreibt nie eine vorhandene Datei. Ohne das bliebe im Graphen gebunden, was im Code nicht existiert.",
+      "testRefs": [
+        {
+          "file": "tests/export.realref-materialize.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -5340,6 +5978,21 @@
       "constraint": "small/local LLM succeeds"
     },
     {
+      "id": "TEST-reseed",
+      "type": "TEST",
+      "name": "Reseed auf den committeten Stand",
+      "description": "Abnahme der Datei tests/mcp.reseed.test.ts: graph_reseed synchronisiert den lebenden Store in-process zurueck auf den committeten Snapshot, verwirft dabei eine nicht exportierte Gate-Mutation und stellt die committeten Zahlen ohne Korruption wieder her.",
+      "testRefs": [
+        {
+          "file": "tests/mcp.reseed.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
       "id": "TEST-responsiveness",
       "type": "TEST",
       "name": "Responsiveness-Test (<0,2s)",
@@ -5351,6 +6004,36 @@
       "level": "performance",
       "tool": "benchmark",
       "constraint": "<0,2s, no LLM"
+    },
+    {
+      "id": "TEST-retro-kpi",
+      "type": "TEST",
+      "name": "KPI-Auswertung nach dem Projekt",
+      "description": "Abnahme der Datei tests/retro-kpi.test.ts: die Auswertung liefert deterministische Werte aus einer Fixture-Sitzung, und das entscheidende Signal stimmt: eine bewusst graph-lose Sitzung ergibt ein Graph-zu-Grep-Verhaeltnis unter eins.",
+      "testRefs": [
+        {
+          "file": "tests/retro-kpi.test.ts",
+          "tool": "vitest",
+          "level": "unit",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-rewind",
+      "type": "TEST",
+      "name": "Rueckspulen auf einen Commit",
+      "description": "Abnahme der Datei tests/rewind.test.ts: graphcode rewind stellt den Graphstand her, der an einem Ref committet war. Der Mechanismus selbst ist anderswo bewiesen; hier zaehlt das Verb als Bedienweg der Rueckhol-Haelfte.",
+      "testRefs": [
+        {
+          "file": "tests/rewind.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
     },
     {
       "id": "TEST-roundtrip",
@@ -5368,7 +6051,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -5385,22 +6068,78 @@
         {
           "file": "tests/audit.stats.test.ts",
           "tool": "vitest",
-          "level": "unit"
+          "level": "unit",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
     {
       "id": "TEST-schema-migration",
       "type": "TEST",
-      "name": "Schema-Migrations-Test",
-      "description": "Version-Bump → Graph re-validiert/migriert, Violations berichtet, Version aktualisiert. (FUNC-migrate-schema)",
+      "name": "Wache gegen Schema-Drift",
+      "description": "Abnahme der Datei tests/schema-guard.test.ts: der Store friert seine Kanten-Tabellen beim Anlegen ein; bekommt das Meta-Modell ein neues Paar, weist das eingefrorene Schema die Kante ab. Die Wache erkennt den Versatz und setzt den Store aus dem committeten Stand neu auf, statt ihn kaputt weiterzubenutzen.",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "method": "test",
-      "concept": true,
+      "concept": false,
       "level": "integration",
       "tool": "vitest",
-      "constraint": "version bump"
+      "constraint": "version bump",
+      "testRefs": [
+        {
+          "file": "tests/schema-guard.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-se-plan-ordering",
+      "type": "TEST",
+      "name": "Reihenfolge des Umsetzungsplans",
+      "description": "Abnahme der Datei tests/se-plan.ordering.test.ts: die Reihenfolge des Plans kommt aus der Abhaengigkeits-Topologie des Graphen, nicht aus dem Prompt-Text. Jede Voraussetzung steht vor dem, was sie braucht.",
+      "testRefs": [
+        {
+          "file": "tests/se-plan.ordering.test.ts",
+          "tool": "vitest",
+          "level": "unit",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-selective-test-audit",
+      "type": "TEST",
+      "name": "Auswahl-Resolver und Messinstrument",
+      "description": "Abnahme der Datei tests/test-selection.audit.test.ts: die Kantensemantik der Auswahl, die Paritaet zwischen Store-Pfad und Snapshot-Pfad, und die Fallback-Regel. Eine nicht aufloesbare Datei fuehrt zum Volllauf, nie zur leeren Auswahl.",
+      "testRefs": [
+        {
+          "file": "tests/test-selection.audit.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-session-lifecycle",
+      "type": "TEST",
+      "name": "Host stirbt mit seiner Sitzung",
+      "description": "Abnahme der Datei tests/session-lifecycle.test.ts: der Abbau laeuft in umgekehrter Reihenfolge mit dem Store-Lock zuletzt und laeuft nach einem Fehlschlag weiter. Ohne diese Eigenschaften kehrt der Zombie-Host zurueck.",
+      "testRefs": [
+        {
+          "file": "tests/session-lifecycle.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
     },
     {
       "id": "TEST-shared-views-no-fork",
@@ -5416,7 +6155,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -5431,7 +6170,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -5446,7 +6185,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -5466,7 +6205,22 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-status-verb",
+      "type": "TEST",
+      "name": "Abnahme des status-Verbs",
+      "description": "Abnahme der Datei tests/status.test.ts: eine antwortende URL zaehlt nur, wenn die Instanz dieses Repo bedient. Alle Effekte sind injiziert, damit der Befund nicht davon abhaengt, was zufaellig lokal laeuft.",
+      "testRefs": [
+        {
+          "file": "tests/status.test.ts",
+          "tool": "vitest",
+          "level": "unit",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -5483,7 +6237,37 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-steering-snapshot",
+      "type": "TEST",
+      "name": "Steuerung sieht die flachen Attribute",
+      "description": "Abnahme der Datei tests/steering-snapshot.test.ts: der Steuerungs- und Generierungspfad baut seine Sicht nicht mehr ueber den Umweg der Serialisierung, die die Attribute abflacht. Genau dieser Umweg machte Bindungen fuer die Regeln unsichtbar.",
+      "testRefs": [
+        {
+          "file": "tests/steering-snapshot.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-store-lock",
+      "type": "TEST",
+      "name": "Store-Besitz und Schreib-Serialisierung",
+      "description": "Abnahme der Datei tests/store-lock.test.ts: ein zweiter Schreiber auf demselben Store wird laut abgewiesen statt still ueberschrieben, ein verwaister Lock wird zurueckgeholt, und ein lebender bleibt unangetastet. Dazu die Serialisierung, damit sich Reseed und Mutation nie verschraenken.",
+      "testRefs": [
+        {
+          "file": "tests/store-lock.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -5498,6 +6282,21 @@
       "concept": true
     },
     {
+      "id": "TEST-target-profile",
+      "type": "TEST",
+      "name": "Zielprofil als Steuer-Konfiguration",
+      "description": "Abnahme der Datei tests/target-profile.test.ts: Schema, Laden und Konfliktpruefung des Zielprofils, dazu der Konfigurations-Default des Vorschlags-Werkzeugs gegen einen echten Disk-Kuzu. Die Konfliktpruefung ist ein Pfad, kein zweiter neben der Steuerung.",
+      "testRefs": [
+        {
+          "file": "tests/target-profile.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
       "id": "TEST-target-shifts-ranking",
       "type": "TEST",
       "name": "Ranking gegen zwei gegenlaeufige Zielvektoren",
@@ -5508,7 +6307,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -5526,7 +6325,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -5543,7 +6342,22 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-testreport",
+      "type": "TEST",
+      "name": "Rueckweg des Testergebnisses",
+      "description": "Abnahme der Datei tests/testreport.test.ts: das Ergebnis eines Laufs kommt in den Graphen und der Pruefreport wieder heraus. Vorher meldete die Ergebnis-Regel jeden TEST-Knoten als ergebnislos, waehrend die Suite vollstaendig gruen lief.",
+      "testRefs": [
+        {
+          "file": "tests/testreport.test.ts",
+          "tool": "vitest",
+          "level": "unit",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -5558,7 +6372,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
+          "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
     },
@@ -5574,6 +6388,81 @@
       "level": "acceptance",
       "tool": "benchmark + token counter",
       "constraint": "graphcode vs classic; <50% tokens"
+    },
+    {
+      "id": "TEST-uc-authoring-style",
+      "type": "TEST",
+      "name": "Stilregel fuer Use Cases als Linter",
+      "description": "Abnahme der Datei tests/se-author-uc.test.ts: die Stilregel ist ausfuehrbar statt Prosa. Hoechstens 25 Woerter, hoechstens zwei Fachbegriffe, jeder davon an einem Knoten geerdet, geprueft auch gegen den committeten Graphen.",
+      "testRefs": [
+        {
+          "file": "tests/se-author-uc.test.ts",
+          "tool": "vitest",
+          "level": "unit",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-upgrade",
+      "type": "TEST",
+      "name": "Abnahme des upgrade-Verbs",
+      "description": "Abnahme der Datei tests/upgrade.test.ts: die Reihenfolge macht den Befehl aus. Erst installieren, dann die Artefakte vom NEU installierten Build schreiben lassen, dann den alten Host beenden. Bleibt ein Schritt aus, steht das im Bericht statt als stiller Erfolg. npm und Signale sind injiziert, kein Netz.",
+      "testRefs": [
+        {
+          "file": "tests/upgrade.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:46:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-views-auditor",
+      "type": "TEST",
+      "name": "Sichten fuer den Auditor",
+      "description": "Abnahme der Datei tests/views.auditor.test.ts: die Nachweismatrix zeigt, auf welcher Ebene eine Anforderung sitzt, und die Verifikationsmatrix, welcher Test eine Schnittstelle zwischen zwei Funktionen abdeckt. Beides stand im Graphen und war ohne Lauf nicht lesbar.",
+      "testRefs": [
+        {
+          "file": "tests/views.auditor.test.ts",
+          "tool": "vitest",
+          "level": "unit",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-views-conformance",
+      "type": "TEST",
+      "name": "Eine Sicht liest nur Deklariertes",
+      "description": "Abnahme der Datei tests/views.conformance.test.ts: eine Sicht darf nur lesen, was Ontologie und Regeln deklarieren. Die Fehlerklasse dagegen ist die volle Konformitaet auf einer leeren Sicht, also ein gruener Bericht ueber nichts.",
+      "testRefs": [
+        {
+          "file": "tests/views.conformance.test.ts",
+          "tool": "vitest",
+          "level": "unit",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-violation-context",
+      "type": "TEST",
+      "name": "Reparatur-Kontext am Verstoss",
+      "description": "Abnahme der Datei tests/mcp.violation-context.test.ts: die Regel-Werkzeuge reichen den Reparatur-Kontext der Contracts durch, statt ihn flachzuklopfen. Wer einen Verstoss aufloest, bekommt Hinweis und Kandidaten aus derselben Antwort, ohne eine zweite Abfrage.",
+      "testRefs": [
+        {
+          "file": "tests/mcp.violation-context.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
     },
     {
       "id": "UC-code-quality",
@@ -11619,6 +12508,46 @@
       "type": "verify"
     },
     {
+      "source": "TEST-artifact-coupling",
+      "target": "REQ-steering-from-metrics",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-audit-retention",
+      "target": "REQ-audit-trail",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-audit-rules-passed",
+      "target": "REQ-audit-trail",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-audit-rules-passed",
+      "target": "REQ-rule-calibration",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-audit-trail-projection",
+      "target": "REQ-audit-trail",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-audit-trail-projection",
+      "target": "REQ-token-efficiency",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-auto-export",
+      "target": "REQ-doc-export",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-auto-export",
+      "target": "REQ-graph-snapshot-per-commit",
+      "type": "verify"
+    },
+    {
       "source": "TEST-batch-seed",
       "target": "REQ-batch-seed-performance",
       "type": "verify"
@@ -11638,6 +12567,16 @@
     {
       "source": "TEST-bootstrap",
       "target": "REQ-pre-import",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-bridge-follows-lock",
+      "target": "REQ-readonly-bridge",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-bridge-follows-lock",
+      "target": "REQ-single-kuzu-owner",
       "type": "verify"
     },
     {
@@ -11670,6 +12609,11 @@
     {
       "source": "TEST-capture",
       "target": "REQ-pre-capture",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-cli-run",
+      "target": "REQ-one-driver-local-and-frontier",
       "type": "verify"
     },
     {
@@ -11749,6 +12693,16 @@
       "type": "verify"
     },
     {
+      "source": "TEST-create-harness-smoke",
+      "target": "REQ-mutation-emits-event",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-create-harness-smoke",
+      "target": "REQ-trajectory-emit",
+      "type": "verify"
+    },
+    {
       "source": "TEST-dashboard-ontology-sync",
       "target": "REQ-dashboard-ontology-sync",
       "type": "verify",
@@ -11780,6 +12734,11 @@
       "type": "verify",
       "weight": 1,
       "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-deny-stale-read",
+      "target": "REQ-graph-is-ssot",
+      "type": "verify"
     },
     {
       "source": "TEST-distribution",
@@ -11834,6 +12793,76 @@
       "created_at": "2026-06-17T00:00:00.000Z"
     },
     {
+      "source": "TEST-edge-only-batch",
+      "target": "REQ-formatE-diff-dialect",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-executor-bestofn",
+      "target": "REQ-one-driver-local-and-frontier",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-executor-bestofn",
+      "target": "REQ-target-shifts-ranking",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-executor-preflight",
+      "target": "REQ-small-model-viable",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-export-graph-guard",
+      "target": "REQ-deterministic-serialization",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-export-graph-guard",
+      "target": "REQ-export-no-clobber",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-first-step",
+      "target": "REQ-steering-from-metrics",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-fit-advisory",
+      "target": "REQ-quality-metric",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-fit-advisory",
+      "target": "REQ-steering-from-metrics",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-formate-binding",
+      "target": "REQ-formatE-parity",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-formate-binding",
+      "target": "REQ-test-runnable-binding",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-formate-name",
+      "target": "REQ-formatE-diff-dialect",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-graph-authoring-guide",
+      "target": "REQ-import-se-ontology",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-graph-authoring-guide",
+      "target": "REQ-structural-rule-shared",
+      "type": "verify"
+    },
+    {
       "source": "TEST-graph-context-replaces-reading",
       "target": "REQ-graph-context-replaces-reading",
       "type": "verify"
@@ -11851,6 +12880,26 @@
       "type": "verify",
       "weight": 1,
       "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-graph-metrics",
+      "target": "REQ-quality-metric",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-graph-metrics",
+      "target": "REQ-single-measurement-path",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-graph-realize",
+      "target": "REQ-frame-binding",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-graph-realize",
+      "target": "REQ-gate-only-writes",
+      "type": "verify"
     },
     {
       "source": "TEST-graph-tests-operational",
@@ -11874,6 +12923,41 @@
       "weight": "1"
     },
     {
+      "source": "TEST-gve-autostart",
+      "target": "REQ-single-kuzu-owner",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-gve-supervision",
+      "target": "REQ-graceful-degradation",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-help-content-coverage",
+      "target": "REQ-readiness-transparent",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-help-contextual-dedup",
+      "target": "REQ-token-efficiency",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-help-projection",
+      "target": "REQ-readiness-transparent",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-help-tool",
+      "target": "REQ-mcp-tool-registry",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-help-tool",
+      "target": "REQ-readiness-transparent",
+      "type": "verify"
+    },
+    {
       "source": "TEST-hooks",
       "target": "REQ-hook-extension-points",
       "type": "verify"
@@ -11886,6 +12970,16 @@
     {
       "source": "TEST-hooks",
       "target": "REQ-precommit-timeout",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-host-shim",
+      "target": "REQ-single-kuzu-owner",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-host-shim",
+      "target": "REQ-single-write-door",
       "type": "verify"
     },
     {
@@ -11913,6 +13007,41 @@
     {
       "source": "TEST-impact-subgraph",
       "target": "REQ-subgraph-slicing",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-import-code-verb",
+      "target": "REQ-no-extraction",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-import-code-verb",
+      "target": "REQ-post-import",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-import-invariant",
+      "target": "REQ-bootstrap-through-gate",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-import-sys-anchor",
+      "target": "REQ-graph-integrity",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-inject-graph-slice",
+      "target": "REQ-precise-context",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-inject-graph-slice",
+      "target": "REQ-subgraph-slicing",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-intent-anchors-internal",
+      "target": "REQ-interactive-capture-suggest",
       "type": "verify"
     },
     {
@@ -12083,6 +13212,16 @@
       "type": "verify"
     },
     {
+      "source": "TEST-merge-no-duplicate-edge",
+      "target": "REQ-graph-integrity",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-merge-no-duplicate-edge",
+      "target": "REQ-post-merge-nodes",
+      "type": "verify"
+    },
+    {
       "source": "TEST-monotone-convergence",
       "target": "REQ-monotone-convergence",
       "type": "verify"
@@ -12119,6 +13258,31 @@
     {
       "source": "TEST-mutate-gate",
       "target": "REQ-structural-rule-shared",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-mutate-input-formate",
+      "target": "REQ-formatE-parity",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-mutate-input-formate",
+      "target": "REQ-single-write-door",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-mutate-schema-guard",
+      "target": "REQ-harness-schema-in-contracts",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-mutate-schema-guard",
+      "target": "REQ-structure-driven",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-mutate-violations",
+      "target": "REQ-token-efficiency",
       "type": "verify"
     },
     {
@@ -12169,6 +13333,11 @@
       "type": "verify"
     },
     {
+      "source": "TEST-nd-similarity",
+      "target": "REQ-rule-enforcement",
+      "type": "verify"
+    },
+    {
       "source": "TEST-no-direct-graph-write",
       "target": "REQ-gate-only-writes",
       "type": "verify",
@@ -12176,8 +13345,33 @@
       "created_at": "2026-06-18T00:00:00.000Z"
     },
     {
+      "source": "TEST-occ",
+      "target": "REQ-auto-persist-merge",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-occ",
+      "target": "REQ-single-write-door",
+      "type": "verify"
+    },
+    {
       "source": "TEST-one-driver-local-and-frontier",
       "target": "REQ-one-driver-local-and-frontier",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-operations-log",
+      "target": "REQ-audit-trail",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-path-containment",
+      "target": "REQ-gate-only-writes",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-path-containment",
+      "target": "REQ-graph-is-ssot",
       "type": "verify"
     },
     {
@@ -12193,6 +13387,16 @@
     {
       "source": "TEST-published-counts-match-code",
       "target": "REQ-published-counts-match-code",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-read-format-param",
+      "target": "REQ-formatE-parity",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-read-format-param",
+      "target": "REQ-query-precision",
       "type": "verify"
     },
     {
@@ -12232,6 +13436,11 @@
       "created_at": "2026-06-19T00:00:00.000Z"
     },
     {
+      "source": "TEST-realref-materialize",
+      "target": "REQ-testref-materialized",
+      "type": "verify"
+    },
+    {
       "source": "TEST-reduced-llm",
       "target": "REQ-graceful-degradation",
       "type": "verify"
@@ -12254,11 +13463,31 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "TEST-reseed",
+      "target": "REQ-graph-state-recall",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-reseed",
+      "target": "REQ-store-recovery",
+      "type": "verify"
+    },
+    {
       "source": "TEST-responsiveness",
       "target": "REQ-responsiveness",
       "type": "verify",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-retro-kpi",
+      "target": "REQ-quality-metric",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-rewind",
+      "target": "REQ-graph-state-recall",
+      "type": "verify"
     },
     {
       "source": "TEST-roundtrip",
@@ -12322,6 +13551,31 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "TEST-schema-migration",
+      "target": "REQ-store-recovery",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-se-plan-ordering",
+      "target": "REQ-structure-driven",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-selective-test-audit",
+      "target": "REQ-graph-tests-operational",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-selective-test-audit",
+      "target": "REQ-impact-based-testing",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-session-lifecycle",
+      "target": "REQ-single-kuzu-owner",
+      "type": "verify"
+    },
+    {
       "source": "TEST-shared-views-no-fork",
       "target": "REQ-shared-views-no-fork",
       "type": "verify",
@@ -12346,13 +13600,43 @@
       "created_at": "2026-06-18T00:00:00.000Z"
     },
     {
+      "source": "TEST-status-verb",
+      "target": "REQ-single-kuzu-owner",
+      "type": "verify"
+    },
+    {
       "source": "TEST-steering-loop",
       "target": "REQ-steering-from-metrics",
       "type": "verify"
     },
     {
+      "source": "TEST-steering-snapshot",
+      "target": "REQ-single-measurement-path",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-store-lock",
+      "target": "REQ-one-gate-per-repo",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-store-lock",
+      "target": "REQ-single-kuzu-owner",
+      "type": "verify"
+    },
+    {
       "source": "TEST-store-recovery",
       "target": "REQ-store-recovery",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-target-profile",
+      "target": "REQ-target-shifts-ranking",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-target-profile",
+      "target": "REQ-thresholds-from-config",
       "type": "verify"
     },
     {
@@ -12370,6 +13654,16 @@
     {
       "source": "TEST-testref-materialize",
       "target": "REQ-testref-materialized",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-testreport",
+      "target": "REQ-audit-trail",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-testreport",
+      "target": "REQ-test-runnable-binding",
       "type": "verify"
     },
     {
@@ -12394,6 +13688,51 @@
     {
       "source": "TEST-token-efficiency",
       "target": "REQ-token-efficiency",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-uc-authoring-style",
+      "target": "REQ-interactive-capture-suggest",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-upgrade",
+      "target": "REQ-install-idempotent",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-upgrade",
+      "target": "REQ-repo-update",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-views-auditor",
+      "target": "REQ-doc-export",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-views-auditor",
+      "target": "REQ-readiness-model",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-views-conformance",
+      "target": "REQ-doc-export",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-views-conformance",
+      "target": "REQ-shared-views-no-fork",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-violation-context",
+      "target": "REQ-precise-context",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-violation-context",
+      "target": "REQ-rule-enforcement",
       "type": "verify"
     },
     {
@@ -12886,5 +14225,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 120
+  "graphVersion": 130
 }

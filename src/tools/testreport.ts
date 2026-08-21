@@ -110,20 +110,32 @@ export function bindTestReportTools(ctx: ToolContext): MCPToolRegistry {
         // CR-SM-231b / CR-GC-338: das Ergebnis haengt PRO EINTRAG, nicht am Knoten. Ein Lauf,
         // der EINE von zwei Dateien betrifft, faerbt nur diese — „einer rot, einer gruen" ist
         // damit ueberhaupt erst darstellbar. Ein Knoten-Attribut konnte das nie.
-        const commands: MutateCommand[] = plan.assignments.map((a) => {
-          const node = nodes.find((n) => n.uid === a.testUid)!;
+        // EIN Kommando je Knoten, nicht je Zuordnung (CR-GC-386): die Kommandos werden aus
+        // dem Zustand VOR dem Batch gebaut, und `testRefs` ist ein Array-Attribut, das als
+        // Ganzes ersetzt wird. Bei einer Abnahme aus zwei Dateien überschrieb das zweite
+        // Kommando den Stempel des ersten — der Lauf war grün, die Evidenz für eine der
+        // beiden Dateien blieb verschwunden und VR-01 meldete sie dauerhaft als pending.
+        const byNode = new Map<string, typeof plan.assignments>();
+        for (const a of plan.assignments) {
+          const bucket = byNode.get(a.testUid);
+          if (bucket) bucket.push(a);
+          else byNode.set(a.testUid, [a]);
+        }
+        const ranAt = new Date().toISOString();
+        const commands: MutateCommand[] = [...byNode].map(([uid, assignments]) => {
+          const node = nodes.find((n) => n.uid === uid)!;
           const parsed = TestRefsSchema.safeParse(node.attributes?.testRefs);
           const refs = parsed.success ? parsed.data : [];
-          const ranAt = new Date().toISOString();
           return {
             op: 'update-node' as const,
             node: {
-              uid: a.testUid,
+              uid,
               type: node.type,
               attributes: {
-                testRefs: refs.map((r) =>
-                  samePath(r.file, a.file) ? { ...r, result: a.result, ranAt } : r,
-                ),
+                testRefs: refs.map((r) => {
+                  const hit = assignments.find((a) => samePath(r.file, a.file));
+                  return hit ? { ...r, result: hit.result, ranAt } : r;
+                }),
               },
             },
           };

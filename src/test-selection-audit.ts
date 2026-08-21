@@ -204,8 +204,14 @@ export interface Coverage {
 /** M1/M3 — was vom Repo überhaupt modelliert ist. */
 export function coverage(ctx: AuditContext): Coverage {
   const { graph, byFile, mods, allSources, allTests } = ctx;
+  // NUR TEST-Knoten zaehlen. `testRefs` an einem anderen Typ ist keine Abnahme, sondern
+  // ein Bindungs-Irrlaeufer — real vorgefunden an FUNC-upgrade, wo er dem Audit eine
+  // verankerte Datei vortaeuschte, die `graph_test_ingest` folgerichtig nicht aufloeste
+  // (CR-GC-385). Ein Instrument, das eine Bindung am falschen Typ gutschreibt, meldet
+  // genau die Vollstaendigkeit, die es pruefen soll.
   const anchored = new Set<string>();
   for (const node of graph.nodes) {
+    if (node.type !== 'TEST') continue;
     const refs = node.attributes?.testRefs as Array<{ file?: string }> | undefined;
     if (Array.isArray(refs)) for (const ref of refs) if (ref?.file) anchored.add(ref.file);
   }

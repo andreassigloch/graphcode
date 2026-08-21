@@ -24,7 +24,7 @@ Beschluss 2026-06-16: Die in diesem Graph definierte Struktur + Interfaces (6 MO
 
 priority: should · status: open · kinds: non-functional
 
-Verification ◀ `TEST-code-quality` (acceptance) · satisfy ◀ `SYS-graphcode` · allocate ▶ —
+Verification ◀ `TEST-code-quality` (acceptance) · `TEST-graph-realize` (integration) · satisfy ◀ `SYS-graphcode` · allocate ▶ —
 
 ### `REQ-graceful-degradation` — Betrieb ohne LLM (Degraded-Modus)
 
@@ -34,7 +34,7 @@ CONSTRAINT (ConOps): Harness voll funktionsfähig bei nicht erreichbarem LLM-Sid
 
 priority: should · status: open · kinds: non-functional
 
-Verification ◀ `TEST-reduced-llm` (acceptance) · satisfy ◀ `FCHAIN-modelfree-gate` · `SYS-graphcode` · allocate ▶ —
+Verification ◀ `TEST-gve-supervision` (integration) · `TEST-reduced-llm` (acceptance) · satisfy ◀ `FCHAIN-modelfree-gate` · `SYS-graphcode` · allocate ▶ —
 
 ### `REQ-greenfield-systemtest-dod` — Definition-of-Done: Greenfield-Systemtest
 
@@ -50,7 +50,7 @@ Architektur/Interfaces/Integration/Tests werden strikt aus dem governten Graph a
 
 priority: should · status: open · kinds: non-functional
 
-Verification ◀ `TEST-code-quality` (acceptance) · satisfy ◀ `SYS-graphcode` · allocate ▶ —
+Verification ◀ `TEST-code-quality` (acceptance) · `TEST-mutate-schema-guard` (integration) · `TEST-se-plan-ordering` (unit) · satisfy ◀ `SYS-graphcode` · allocate ▶ —
 
 ## 2  Akteure
 
@@ -184,7 +184,7 @@ Agent kann den SSOT nicht hand-editieren; jeder Write durch graph_mutate (mutate
 
 priority: should · status: open · kinds: non-functional
 
-Verification ◀ `TEST-no-direct-graph-write` · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
+Verification ◀ `TEST-graph-realize` (integration) · `TEST-no-direct-graph-write` · `TEST-path-containment` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
 
 ###### `REQ-graph-snapshot-per-commit` — Kanonischer Graph-Snapshot pro Commit
 
@@ -194,7 +194,7 @@ Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/gr
 
 priority: must · status: done
 
-Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
+Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
 
 ##### 3.1.1.2  `FUNC-evaluate-rules` — evaluateRules()
 
@@ -210,7 +210,7 @@ evaluateRules() gegen V3_RULES; error-Severity blockt den Apply. (L2)
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-evaluate-rules` · allocate ▶ `MOD-harness`
+Verification ◀ `TEST-mutate-gate` (integration) · `TEST-nd-similarity` (unit) · `TEST-violation-context` (integration) · satisfy ◀ `FUNC-evaluate-rules` · allocate ▶ `MOD-harness`
 
 ##### 3.1.1.3  `FUNC-save-graph` — saveGraph(graph)
 
@@ -258,7 +258,7 @@ post-apply/nightly: Trajectory/Outcome append-only nach .graphcode/*.jsonl, Form
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-learning-emit` (integration) · satisfy ◀ `FUNC-emit-trajectory` · allocate ▶ `MOD-hooks`
+Verification ◀ `TEST-create-harness-smoke` (integration) · `TEST-learning-emit` (integration) · satisfy ◀ `FUNC-emit-trajectory` · allocate ▶ `MOD-hooks`
 
 #### 3.1.2  `FCHAIN-capture` — Interaktive Erfassung (Text → suggest-Tier)
 
@@ -270,7 +270,7 @@ FCHAIN-capture: NL→Format-E agent-seitig (REQ-no-extraction); Resultat im sugg
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-capture` (integration) · satisfy ◀ `FCHAIN-capture` · allocate ▶ —
+Verification ◀ `TEST-capture` (integration) · `TEST-intent-anchors-internal` (unit) · `TEST-uc-authoring-style` (unit) · satisfy ◀ `FCHAIN-capture` · allocate ▶ —
 
 ##### `REQ-no-extraction` — Keine Extraktion in graphcode
 
@@ -278,7 +278,7 @@ Keine tree-sitter/AST/LLM-Extraktion; Extraktion ist Slicer-/graphify-Aufgabe. (
 
 priority: must · status: open · kinds: negative
 
-Verification ◀ `TEST-capture` (integration) · satisfy ◀ `FCHAIN-capture` · allocate ▶ —
+Verification ◀ `TEST-capture` (integration) · `TEST-import-code-verb` (integration) · satisfy ◀ `FCHAIN-capture` · allocate ▶ —
 
 ##### `REQ-post-capture` — Postcondition: Interaktive Erfassung (Text → suggest-Tier)
 
@@ -344,7 +344,7 @@ Agent kann den SSOT nicht hand-editieren; jeder Write durch graph_mutate (mutate
 
 priority: should · status: open · kinds: non-functional
 
-Verification ◀ `TEST-no-direct-graph-write` · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
+Verification ◀ `TEST-graph-realize` (integration) · `TEST-no-direct-graph-write` · `TEST-path-containment` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
 
 ###### `REQ-graph-snapshot-per-commit` — Kanonischer Graph-Snapshot pro Commit
 
@@ -354,7 +354,7 @@ Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/gr
 
 priority: must · status: done
 
-Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
+Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
 
 ##### 3.1.2.3  `FUNC-import` — importGraph(formatE, mode)
 
@@ -378,7 +378,7 @@ FUNC-import: Erstbefüllung ausschließlich über das mutate()-Gate; Quelle = Fo
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-bootstrap` (integration) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-harness`
+Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-harness`
 
 ###### `REQ-post-import` — Postcondition: importGraph(formatE, mode)
 
@@ -386,7 +386,7 @@ Graph durchs Gate befüllt; kein Direct-Write; Violations berichtet.
 
 priority: must · status: done · kinds: postcondition
 
-Verification ◀ `TEST-bootstrap` (integration) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-harness`
+Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-code-verb` (integration) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-harness`
 
 ###### `REQ-pre-import` — Precondition: importGraph(formatE, mode)
 
@@ -440,7 +440,7 @@ Stabile Sortierung → commit-/merge-arm; zwei Encodes byte-identisch. (R3)
 
 priority: should · status: open · kinds: non-functional
 
-Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-encode` · allocate ▶ `MOD-codec`
+Verification ◀ `TEST-export-graph-guard` (unit) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-encode` · allocate ▶ `MOD-codec`
 
 ###### `REQ-formatE-diff-dialect` — Format-E-Diff-Dialekt (R5)
 
@@ -448,7 +448,7 @@ CR-GC-103 R5: Diff-Dialekt +/-/~/M mit <operations><base_snapshot>ID@version + 1
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-encode` · allocate ▶ `MOD-codec`
+Verification ◀ `TEST-edge-only-batch` (integration) · `TEST-formate-name` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-encode` · allocate ▶ `MOD-codec`
 
 ###### `REQ-formatE-parity` — Format-E-Parity = contracts (L1)
 
@@ -456,7 +456,7 @@ CR-GC-103 L1: Format-E-Parität = contracts-Baseline; genau EIN Codec.
 
 priority: should · status: open · kinds: non-functional
 
-Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-encode` · allocate ▶ `MOD-codec`
+Verification ◀ `TEST-formate-binding` (integration) · `TEST-mutate-input-formate` (integration) · `TEST-read-format-param` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-encode` · allocate ▶ `MOD-codec`
 
 ###### `REQ-precise-context` — Präziser Kontext statt grep-Dump
 
@@ -466,7 +466,7 @@ Kontext = exakter Blast-Radius/Sub-Graph-Slice (Format-E) statt grep-Dump/Result
 
 priority: should · status: open · kinds: non-functional
 
-Verification ◀ `TEST-mvp-e2e` (e2e) · `TEST-token-efficiency` (acceptance) · satisfy ◀ `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-graph-impact` · allocate ▶ `MOD-codec` · `MOD-mcp-tools`
+Verification ◀ `TEST-inject-graph-slice` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-token-efficiency` (acceptance) · `TEST-violation-context` (integration) · satisfy ◀ `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-graph-impact` · allocate ▶ `MOD-codec` · `MOD-mcp-tools`
 
 ##### 3.1.3.2  `FUNC-decode` — decode(json)
 
@@ -508,7 +508,7 @@ Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Arte
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-merge` (integration) · satisfy ◀ `FUNC-merge-nodes` · allocate ▶ `MOD-codec`
+Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-merge-nodes` · allocate ▶ `MOD-codec`
 
 ###### `REQ-conflict-free-merge` — Conflict-free Graph-Merge
 
@@ -524,7 +524,7 @@ Conflict-free gemerged; keine verlorenen Knoten/Traces; deterministisch sortiert
 
 priority: must · status: open · kinds: postcondition
 
-Verification ◀ `TEST-merge` (integration) · satisfy ◀ `FUNC-merge-nodes` · allocate ▶ `MOD-codec`
+Verification ◀ `TEST-merge` (integration) · `TEST-merge-no-duplicate-edge` (integration) · satisfy ◀ `FUNC-merge-nodes` · allocate ▶ `MOD-codec`
 
 ###### `REQ-pre-merge-nodes` — Precondition: mergeNodes(graph)
 
@@ -576,7 +576,7 @@ CR-GC-101: audit_trail/audit_stats liefern Mutations-History/Statistik.
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
+Verification ◀ `TEST-audit-retention` (integration) · `TEST-audit-rules-passed` (integration) · `TEST-audit-trail-projection` (integration) · `TEST-mcp-stdio-server` (integration) · `TEST-operations-log` (integration) · `TEST-testreport` (unit) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
 
 ###### `REQ-precise-context` — Präziser Kontext statt grep-Dump
 
@@ -586,7 +586,7 @@ Kontext = exakter Blast-Radius/Sub-Graph-Slice (Format-E) statt grep-Dump/Result
 
 priority: should · status: open · kinds: non-functional
 
-Verification ◀ `TEST-mvp-e2e` (e2e) · `TEST-token-efficiency` (acceptance) · satisfy ◀ `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-graph-impact` · allocate ▶ `MOD-codec` · `MOD-mcp-tools`
+Verification ◀ `TEST-inject-graph-slice` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-token-efficiency` (acceptance) · `TEST-violation-context` (integration) · satisfy ◀ `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-graph-impact` · allocate ▶ `MOD-codec` · `MOD-mcp-tools`
 
 ###### `REQ-query-precision` — Query-Precision statt Kompression
 
@@ -594,7 +594,7 @@ graph_impact liefert exakten Blast-Radius als Format-E (Anti-grep, Ziel a). (R6/
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-impact-subgraph` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
+Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
 
 ###### `REQ-subgraph-slicing` — Sub-Graph-Slicing
 
@@ -602,7 +602,7 @@ Sub-Graph-Slicing + pruneToFit(maxTokens) als Context-Primitive. (R7)
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-impact-subgraph` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
+Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-inject-graph-slice` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
 
 ##### 3.1.4.2  `FUNC-mutate` — mutate(commands)
 
@@ -626,7 +626,7 @@ Agent kann den SSOT nicht hand-editieren; jeder Write durch graph_mutate (mutate
 
 priority: should · status: open · kinds: non-functional
 
-Verification ◀ `TEST-no-direct-graph-write` · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
+Verification ◀ `TEST-graph-realize` (integration) · `TEST-no-direct-graph-write` · `TEST-path-containment` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
 
 ###### `REQ-graph-snapshot-per-commit` — Kanonischer Graph-Snapshot pro Commit
 
@@ -636,7 +636,7 @@ Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/gr
 
 priority: must · status: done
 
-Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
+Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
 
 ### 3.2  `UC-deterministic-steering` — Deterministisch auf ein mehrdimensionales Ziel steuern
 
@@ -656,7 +656,7 @@ Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefer
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
 
 ##### 3.2.1.1  `FUNC-compute-readiness` — computeReadiness(graph, policy)
 
@@ -674,7 +674,7 @@ Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefer
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
 
 ##### 3.2.1.2  `FUNC-generation-step` — generationStep(graph, policy, intent)
 
@@ -692,7 +692,7 @@ Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefer
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
 
 ##### 3.2.1.3  `FUNC-rank-candidates` — rankCandidates(probes, focus)
 
@@ -710,7 +710,7 @@ Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefer
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
 
 ##### 3.2.1.4  `FUNC-mutate` — mutate(commands)
 
@@ -734,7 +734,7 @@ Agent kann den SSOT nicht hand-editieren; jeder Write durch graph_mutate (mutate
 
 priority: should · status: open · kinds: non-functional
 
-Verification ◀ `TEST-no-direct-graph-write` · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
+Verification ◀ `TEST-graph-realize` (integration) · `TEST-no-direct-graph-write` · `TEST-path-containment` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
 
 ###### `REQ-graph-snapshot-per-commit` — Kanonischer Graph-Snapshot pro Commit
 
@@ -744,7 +744,7 @@ Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/gr
 
 priority: must · status: done
 
-Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
+Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
 
 ##### 3.2.1.5  `FUNC-take-steering-snapshot` — takeSteeringSnapshot(graph, policy)
 
@@ -762,7 +762,7 @@ Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefer
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
 
 ##### 3.2.1.6  `FUNC-next-step` — nextStep(graph, policy)
 
@@ -780,7 +780,7 @@ Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefer
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
 
 ### 3.3  `UC-efficient-testing` — Effizientes, impact-basiertes Testen
 
@@ -798,7 +798,7 @@ Testset wird aus dem Impact-/Abhängigkeitsgraph bestimmt (richtige Tests statt 
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `FCHAIN-impact-testing` · allocate ▶ —
+Verification ◀ `TEST-mvp-e2e` (e2e) · `TEST-selective-test-audit` (integration) · satisfy ◀ `FCHAIN-impact-testing` · allocate ▶ —
 
 ##### `REQ-post-impact-testing` — Postcondition: Impact-basierte Testauswahl
 
@@ -830,7 +830,7 @@ Jeder TEST-Knoten traegt einen testRef (Datei plus Case, tool, level), sodass ei
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-test-runnable-binding` (unit) · satisfy ◀ `FUNC-deduce-tests` · `MOD-mcp-tools` · allocate ▶ `MOD-mcp-tools`
+Verification ◀ `TEST-formate-binding` (integration) · `TEST-test-runnable-binding` (unit) · `TEST-testreport` (unit) · satisfy ◀ `FUNC-deduce-tests` · `MOD-mcp-tools` · allocate ▶ `MOD-mcp-tools`
 
 ##### 3.3.1.2  `FUNC-graph-impact` — graph_impact(id, depth?)
 
@@ -846,7 +846,7 @@ CR-GC-101: audit_trail/audit_stats liefern Mutations-History/Statistik.
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
+Verification ◀ `TEST-audit-retention` (integration) · `TEST-audit-rules-passed` (integration) · `TEST-audit-trail-projection` (integration) · `TEST-mcp-stdio-server` (integration) · `TEST-operations-log` (integration) · `TEST-testreport` (unit) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
 
 ###### `REQ-precise-context` — Präziser Kontext statt grep-Dump
 
@@ -856,7 +856,7 @@ Kontext = exakter Blast-Radius/Sub-Graph-Slice (Format-E) statt grep-Dump/Result
 
 priority: should · status: open · kinds: non-functional
 
-Verification ◀ `TEST-mvp-e2e` (e2e) · `TEST-token-efficiency` (acceptance) · satisfy ◀ `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-graph-impact` · allocate ▶ `MOD-codec` · `MOD-mcp-tools`
+Verification ◀ `TEST-inject-graph-slice` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-token-efficiency` (acceptance) · `TEST-violation-context` (integration) · satisfy ◀ `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-graph-impact` · allocate ▶ `MOD-codec` · `MOD-mcp-tools`
 
 ###### `REQ-query-precision` — Query-Precision statt Kompression
 
@@ -864,7 +864,7 @@ graph_impact liefert exakten Blast-Radius als Format-E (Anti-grep, Ziel a). (R6/
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-impact-subgraph` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
+Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
 
 ###### `REQ-subgraph-slicing` — Sub-Graph-Slicing
 
@@ -872,7 +872,7 @@ Sub-Graph-Slicing + pruneToFit(maxTokens) als Context-Primitive. (R7)
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-impact-subgraph` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
+Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-inject-graph-slice` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
 
 ##### 3.3.1.3  `FUNC-resolve-tests-from-code` — Gerichtete code→REQ→TEST-Auflösung
 
@@ -888,7 +888,7 @@ Ein Code-Changeset (MOD/FUNC/git-diff→Knoten) → graph_tests → vitest run n
 
 priority: must · status: done
 
-Verification ◀ `TEST-graph-tests-operational` (integration) · satisfy ◀ `FUNC-resolve-tests-from-code` · allocate ▶ `MOD-mcp-tools`
+Verification ◀ `TEST-graph-tests-operational` (integration) · `TEST-selective-test-audit` (integration) · satisfy ◀ `FUNC-resolve-tests-from-code` · allocate ▶ `MOD-mcp-tools`
 
 ### 3.4  `UC-graph-time-travel` — Graph-Stand pro Commit wiederherstellbar
 
@@ -908,7 +908,7 @@ Ein frueherer Graph-Stand ist mit einem Kommando reproduzierbar: graphcode rewin
 
 priority: must · status: done
 
-Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-recall` · `FUNC-reseed` · `FUNC-rewind` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness`
+Verification ◀ `TEST-graph-time-travel` (integration) · `TEST-reseed` (integration) · `TEST-rewind` (integration) · satisfy ◀ `FCHAIN-recall` · `FUNC-reseed` · `FUNC-rewind` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness`
 
 ##### 3.4.1.1  `FUNC-rewind` — graphcode rewind <ref>
 
@@ -926,7 +926,7 @@ Ein frueherer Graph-Stand ist mit einem Kommando reproduzierbar: graphcode rewin
 
 priority: must · status: done
 
-Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-recall` · `FUNC-reseed` · `FUNC-rewind` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness`
+Verification ◀ `TEST-graph-time-travel` (integration) · `TEST-reseed` (integration) · `TEST-rewind` (integration) · satisfy ◀ `FCHAIN-recall` · `FUNC-reseed` · `FUNC-rewind` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness`
 
 ##### 3.4.1.2  `FUNC-reseed` — reseed(relPath)
 
@@ -944,7 +944,7 @@ Ein frueherer Graph-Stand ist mit einem Kommando reproduzierbar: graphcode rewin
 
 priority: must · status: done
 
-Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-recall` · `FUNC-reseed` · `FUNC-rewind` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness`
+Verification ◀ `TEST-graph-time-travel` (integration) · `TEST-reseed` (integration) · `TEST-rewind` (integration) · satisfy ◀ `FCHAIN-recall` · `FUNC-reseed` · `FUNC-rewind` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness`
 
 #### 3.4.2  `FCHAIN-snapshot-freshness` — Snapshot-Freshness (Aufzeichnen)
 
@@ -958,7 +958,7 @@ Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/gr
 
 priority: must · status: done
 
-Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
+Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
 
 ##### 3.4.2.1  `FUNC-mutate` — mutate(commands)
 
@@ -982,7 +982,7 @@ Agent kann den SSOT nicht hand-editieren; jeder Write durch graph_mutate (mutate
 
 priority: should · status: open · kinds: non-functional
 
-Verification ◀ `TEST-no-direct-graph-write` · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
+Verification ◀ `TEST-graph-realize` (integration) · `TEST-no-direct-graph-write` · `TEST-path-containment` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
 
 ###### `REQ-graph-snapshot-per-commit` — Kanonischer Graph-Snapshot pro Commit
 
@@ -992,7 +992,7 @@ Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/gr
 
 priority: must · status: done
 
-Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
+Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
 
 ##### 3.4.2.2  `FUNC-save-graph` — saveGraph(graph)
 
@@ -1026,7 +1026,7 @@ Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/gr
 
 priority: must · status: done
 
-Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
+Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
 
 ### 3.5  `UC-live-graph-view` — Modellstand live mitlesen
 
@@ -1046,7 +1046,7 @@ CONSTRAINT: Jede Graph-Mutation MUSS ein Live-Update-Event emittieren (SSE inval
 
 priority: should · status: done · kinds: non-functional
 
-Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FCHAIN-live-update` · `FUNC-emit-update-event` · allocate ▶ `MOD-hooks`
+Verification ◀ `TEST-create-harness-smoke` (integration) · `TEST-live-view` (integration) · satisfy ◀ `FCHAIN-live-update` · `FUNC-emit-update-event` · allocate ▶ `MOD-hooks`
 
 ##### 3.5.1.1  `FUNC-save-graph` — saveGraph(graph)
 
@@ -1088,7 +1088,7 @@ CONSTRAINT: Jede Graph-Mutation MUSS ein Live-Update-Event emittieren (SSE inval
 
 priority: should · status: done · kinds: non-functional
 
-Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FCHAIN-live-update` · `FUNC-emit-update-event` · allocate ▶ `MOD-hooks`
+Verification ◀ `TEST-create-harness-smoke` (integration) · `TEST-live-view` (integration) · satisfy ◀ `FCHAIN-live-update` · `FUNC-emit-update-event` · allocate ▶ `MOD-hooks`
 
 ###### `REQ-post-emit-update-event` — Postcondition: FUNC-emit-update-event
 
@@ -1204,7 +1204,7 @@ CR-GC-101: audit_trail/audit_stats liefern Mutations-History/Statistik.
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
+Verification ◀ `TEST-audit-retention` (integration) · `TEST-audit-rules-passed` (integration) · `TEST-audit-trail-projection` (integration) · `TEST-mcp-stdio-server` (integration) · `TEST-operations-log` (integration) · `TEST-testreport` (unit) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
 
 ###### `REQ-precise-context` — Präziser Kontext statt grep-Dump
 
@@ -1214,7 +1214,7 @@ Kontext = exakter Blast-Radius/Sub-Graph-Slice (Format-E) statt grep-Dump/Result
 
 priority: should · status: open · kinds: non-functional
 
-Verification ◀ `TEST-mvp-e2e` (e2e) · `TEST-token-efficiency` (acceptance) · satisfy ◀ `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-graph-impact` · allocate ▶ `MOD-codec` · `MOD-mcp-tools`
+Verification ◀ `TEST-inject-graph-slice` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-token-efficiency` (acceptance) · `TEST-violation-context` (integration) · satisfy ◀ `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-graph-impact` · allocate ▶ `MOD-codec` · `MOD-mcp-tools`
 
 ###### `REQ-query-precision` — Query-Precision statt Kompression
 
@@ -1222,7 +1222,7 @@ graph_impact liefert exakten Blast-Radius als Format-E (Anti-grep, Ziel a). (R6/
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-impact-subgraph` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
+Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
 
 ###### `REQ-subgraph-slicing` — Sub-Graph-Slicing
 
@@ -1230,7 +1230,7 @@ Sub-Graph-Slicing + pruneToFit(maxTokens) als Context-Primitive. (R7)
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-impact-subgraph` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
+Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-inject-graph-slice` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
 
 ##### 3.7.1.2  `FUNC-evaluate-rules` — evaluateRules()
 
@@ -1246,7 +1246,7 @@ evaluateRules() gegen V3_RULES; error-Severity blockt den Apply. (L2)
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-evaluate-rules` · allocate ▶ `MOD-harness`
+Verification ◀ `TEST-mutate-gate` (integration) · `TEST-nd-similarity` (unit) · `TEST-violation-context` (integration) · satisfy ◀ `FUNC-evaluate-rules` · allocate ▶ `MOD-harness`
 
 ##### 3.7.1.3  `FUNC-graph-suggest` — graph_suggest(weights)
 
@@ -1264,7 +1264,7 @@ Deterministische, modellfreie Gates/Regeln + Query-Precision halten kleine/lokal
 
 priority: should · status: open · kinds: non-functional
 
-Verification ◀ `TEST-mvp-e2e` (e2e) · `TEST-reduced-llm` (acceptance) · satisfy ◀ `FCHAIN-modelfree-gate` · `FUNC-graph-suggest` · allocate ▶ `MOD-mcp-tools`
+Verification ◀ `TEST-executor-preflight` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-reduced-llm` (acceptance) · satisfy ◀ `FCHAIN-modelfree-gate` · `FUNC-graph-suggest` · allocate ▶ `MOD-mcp-tools`
 
 ##### 3.7.1.4  `FUNC-mutate` — mutate(commands)
 
@@ -1288,7 +1288,7 @@ Agent kann den SSOT nicht hand-editieren; jeder Write durch graph_mutate (mutate
 
 priority: should · status: open · kinds: non-functional
 
-Verification ◀ `TEST-no-direct-graph-write` · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
+Verification ◀ `TEST-graph-realize` (integration) · `TEST-no-direct-graph-write` · `TEST-path-containment` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
 
 ###### `REQ-graph-snapshot-per-commit` — Kanonischer Graph-Snapshot pro Commit
 
@@ -1298,7 +1298,7 @@ Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/gr
 
 priority: must · status: done
 
-Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
+Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
 
 #### 3.7.2  `FCHAIN-agent-query` — Agent-Graph-Query (Impact + progressive Expansion)
 
@@ -1328,7 +1328,7 @@ Kontext = exakter Blast-Radius/Sub-Graph-Slice (Format-E) statt grep-Dump/Result
 
 priority: should · status: open · kinds: non-functional
 
-Verification ◀ `TEST-mvp-e2e` (e2e) · `TEST-token-efficiency` (acceptance) · satisfy ◀ `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-graph-impact` · allocate ▶ `MOD-codec` · `MOD-mcp-tools`
+Verification ◀ `TEST-inject-graph-slice` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-token-efficiency` (acceptance) · `TEST-violation-context` (integration) · satisfy ◀ `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-graph-impact` · allocate ▶ `MOD-codec` · `MOD-mcp-tools`
 
 ##### 3.7.2.1  `FUNC-graph-expand` — graph_expand(handle, branch, depth+1)
 
@@ -1354,7 +1354,7 @@ Kontext = exakter Blast-Radius/Sub-Graph-Slice (Format-E) statt grep-Dump/Result
 
 priority: should · status: open · kinds: non-functional
 
-Verification ◀ `TEST-mvp-e2e` (e2e) · `TEST-token-efficiency` (acceptance) · satisfy ◀ `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-graph-impact` · allocate ▶ `MOD-codec` · `MOD-mcp-tools`
+Verification ◀ `TEST-inject-graph-slice` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-token-efficiency` (acceptance) · `TEST-violation-context` (integration) · satisfy ◀ `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-graph-impact` · allocate ▶ `MOD-codec` · `MOD-mcp-tools`
 
 ###### `REQ-progressive-expansion` — Progressive Query-Expansion
 
@@ -1378,7 +1378,7 @@ CR-GC-101: audit_trail/audit_stats liefern Mutations-History/Statistik.
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
+Verification ◀ `TEST-audit-retention` (integration) · `TEST-audit-rules-passed` (integration) · `TEST-audit-trail-projection` (integration) · `TEST-mcp-stdio-server` (integration) · `TEST-operations-log` (integration) · `TEST-testreport` (unit) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
 
 ###### `REQ-precise-context` — Präziser Kontext statt grep-Dump
 
@@ -1388,7 +1388,7 @@ Kontext = exakter Blast-Radius/Sub-Graph-Slice (Format-E) statt grep-Dump/Result
 
 priority: should · status: open · kinds: non-functional
 
-Verification ◀ `TEST-mvp-e2e` (e2e) · `TEST-token-efficiency` (acceptance) · satisfy ◀ `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-graph-impact` · allocate ▶ `MOD-codec` · `MOD-mcp-tools`
+Verification ◀ `TEST-inject-graph-slice` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-token-efficiency` (acceptance) · `TEST-violation-context` (integration) · satisfy ◀ `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-graph-impact` · allocate ▶ `MOD-codec` · `MOD-mcp-tools`
 
 ###### `REQ-query-precision` — Query-Precision statt Kompression
 
@@ -1396,7 +1396,7 @@ graph_impact liefert exakten Blast-Radius als Format-E (Anti-grep, Ziel a). (R6/
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-impact-subgraph` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
+Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
 
 ###### `REQ-subgraph-slicing` — Sub-Graph-Slicing
 
@@ -1404,7 +1404,7 @@ Sub-Graph-Slicing + pruneToFit(maxTokens) als Context-Primitive. (R7)
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-impact-subgraph` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
+Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-inject-graph-slice` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
 
 #### 3.7.3  `FCHAIN-modelfree-gate` — Modellfreier Gate-Betrieb
 
@@ -1418,7 +1418,7 @@ CONSTRAINT (ConOps): Harness voll funktionsfähig bei nicht erreichbarem LLM-Sid
 
 priority: should · status: open · kinds: non-functional
 
-Verification ◀ `TEST-reduced-llm` (acceptance) · satisfy ◀ `FCHAIN-modelfree-gate` · `SYS-graphcode` · allocate ▶ —
+Verification ◀ `TEST-gve-supervision` (integration) · `TEST-reduced-llm` (acceptance) · satisfy ◀ `FCHAIN-modelfree-gate` · `SYS-graphcode` · allocate ▶ —
 
 ##### `REQ-post-modelfree-gate` — Postcondition: Modellfreier Gate-Betrieb
 
@@ -1444,7 +1444,7 @@ Deterministische, modellfreie Gates/Regeln + Query-Precision halten kleine/lokal
 
 priority: should · status: open · kinds: non-functional
 
-Verification ◀ `TEST-mvp-e2e` (e2e) · `TEST-reduced-llm` (acceptance) · satisfy ◀ `FCHAIN-modelfree-gate` · `FUNC-graph-suggest` · allocate ▶ `MOD-mcp-tools`
+Verification ◀ `TEST-executor-preflight` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-reduced-llm` (acceptance) · satisfy ◀ `FCHAIN-modelfree-gate` · `FUNC-graph-suggest` · allocate ▶ `MOD-mcp-tools`
 
 ##### 3.7.3.1  `FUNC-mutate` — mutate(commands)
 
@@ -1468,7 +1468,7 @@ Agent kann den SSOT nicht hand-editieren; jeder Write durch graph_mutate (mutate
 
 priority: should · status: open · kinds: non-functional
 
-Verification ◀ `TEST-no-direct-graph-write` · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
+Verification ◀ `TEST-graph-realize` (integration) · `TEST-no-direct-graph-write` · `TEST-path-containment` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
 
 ###### `REQ-graph-snapshot-per-commit` — Kanonischer Graph-Snapshot pro Commit
 
@@ -1478,7 +1478,7 @@ Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/gr
 
 priority: must · status: done
 
-Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
+Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
 
 ##### 3.7.3.2  `FUNC-evaluate-rules` — evaluateRules()
 
@@ -1494,7 +1494,7 @@ evaluateRules() gegen V3_RULES; error-Severity blockt den Apply. (L2)
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-evaluate-rules` · allocate ▶ `MOD-harness`
+Verification ◀ `TEST-mutate-gate` (integration) · `TEST-nd-similarity` (unit) · `TEST-violation-context` (integration) · satisfy ◀ `FUNC-evaluate-rules` · allocate ▶ `MOD-harness`
 
 ### 3.8  Funktionsketten ohne UC
 
@@ -1510,7 +1510,7 @@ human-readable Docs (SPEC/Architektur/CR-Liste/References) werden DETERMINISTISC
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
+Verification ◀ `TEST-auto-export` (integration) · `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · `TEST-views-auditor` (unit) · `TEST-views-conformance` (unit) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
 
 ##### 3.8.1.1  `FUNC-serve-stdio` — serveStdio()
 
@@ -1552,7 +1552,7 @@ human-readable Docs (SPEC/Architektur/CR-Liste/References) werden DETERMINISTISC
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
+Verification ◀ `TEST-auto-export` (integration) · `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · `TEST-views-auditor` (unit) · `TEST-views-conformance` (unit) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
 
 ###### `REQ-post-export-markdown` — Postcondition: exportMarkdown(graph, view)
 
@@ -1604,7 +1604,7 @@ Jeder TEST-Knoten traegt einen testRef (Datei plus Case, tool, level), sodass ei
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-test-runnable-binding` (unit) · satisfy ◀ `FUNC-deduce-tests` · `MOD-mcp-tools` · allocate ▶ `MOD-mcp-tools`
+Verification ◀ `TEST-formate-binding` (integration) · `TEST-test-runnable-binding` (unit) · `TEST-testreport` (unit) · satisfy ◀ `FUNC-deduce-tests` · `MOD-mcp-tools` · allocate ▶ `MOD-mcp-tools`
 
 ##### 3.9.1.4  `FUNC-graph-expand` — graph_expand(handle, branch, depth+1)
 
@@ -1630,7 +1630,7 @@ Kontext = exakter Blast-Radius/Sub-Graph-Slice (Format-E) statt grep-Dump/Result
 
 priority: should · status: open · kinds: non-functional
 
-Verification ◀ `TEST-mvp-e2e` (e2e) · `TEST-token-efficiency` (acceptance) · satisfy ◀ `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-graph-impact` · allocate ▶ `MOD-codec` · `MOD-mcp-tools`
+Verification ◀ `TEST-inject-graph-slice` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-token-efficiency` (acceptance) · `TEST-violation-context` (integration) · satisfy ◀ `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-graph-impact` · allocate ▶ `MOD-codec` · `MOD-mcp-tools`
 
 ###### `REQ-progressive-expansion` — Progressive Query-Expansion
 
@@ -1654,7 +1654,7 @@ CR-GC-101: audit_trail/audit_stats liefern Mutations-History/Statistik.
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
+Verification ◀ `TEST-audit-retention` (integration) · `TEST-audit-rules-passed` (integration) · `TEST-audit-trail-projection` (integration) · `TEST-mcp-stdio-server` (integration) · `TEST-operations-log` (integration) · `TEST-testreport` (unit) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
 
 ###### `REQ-precise-context` — Präziser Kontext statt grep-Dump
 
@@ -1664,7 +1664,7 @@ Kontext = exakter Blast-Radius/Sub-Graph-Slice (Format-E) statt grep-Dump/Result
 
 priority: should · status: open · kinds: non-functional
 
-Verification ◀ `TEST-mvp-e2e` (e2e) · `TEST-token-efficiency` (acceptance) · satisfy ◀ `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-graph-impact` · allocate ▶ `MOD-codec` · `MOD-mcp-tools`
+Verification ◀ `TEST-inject-graph-slice` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-token-efficiency` (acceptance) · `TEST-violation-context` (integration) · satisfy ◀ `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-graph-impact` · allocate ▶ `MOD-codec` · `MOD-mcp-tools`
 
 ###### `REQ-query-precision` — Query-Precision statt Kompression
 
@@ -1672,7 +1672,7 @@ graph_impact liefert exakten Blast-Radius als Format-E (Anti-grep, Ziel a). (R6/
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-impact-subgraph` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
+Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
 
 ###### `REQ-subgraph-slicing` — Sub-Graph-Slicing
 
@@ -1680,7 +1680,7 @@ Sub-Graph-Slicing + pruneToFit(maxTokens) als Context-Primitive. (R7)
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-impact-subgraph` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
+Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-inject-graph-slice` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
 
 ##### 3.9.1.6  `FUNC-harness-cli` — graphcode init/update/remove
 
@@ -1694,7 +1694,7 @@ Install/Update idempotent; alte Versionen überschrieben/gelöscht, nicht dupliz
 
 priority: should · status: open · kinds: non-functional
 
-Verification ◀ `TEST-cli-scaffold` (integration) · satisfy ◀ `FUNC-harness-cli` · allocate ▶ `MOD-cli`
+Verification ◀ `TEST-cli-scaffold` (integration) · `TEST-upgrade` (integration) · satisfy ◀ `FUNC-harness-cli` · allocate ▶ `MOD-cli`
 
 ###### `REQ-npx-distribution` — npx-CLI als Distribution
 
@@ -1742,7 +1742,7 @@ Update aktualisiert installierte Artefakte/Pfade, ohne den lokalen Graph-Store (
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-cli-scaffold` (integration) · satisfy ◀ `FUNC-harness-cli` · allocate ▶ `MOD-cli`
+Verification ◀ `TEST-cli-scaffold` (integration) · `TEST-upgrade` (integration) · satisfy ◀ `FUNC-harness-cli` · allocate ▶ `MOD-cli`
 
 ###### `REQ-self-contained-dist` — Self-contained Distribution
 
@@ -1786,7 +1786,7 @@ Ein Code-Changeset (MOD/FUNC/git-diff→Knoten) → graph_tests → vitest run n
 
 priority: must · status: done
 
-Verification ◀ `TEST-graph-tests-operational` (integration) · satisfy ◀ `FUNC-resolve-tests-from-code` · allocate ▶ `MOD-mcp-tools`
+Verification ◀ `TEST-graph-tests-operational` (integration) · `TEST-selective-test-audit` (integration) · satisfy ◀ `FUNC-resolve-tests-from-code` · allocate ▶ `MOD-mcp-tools`
 
 ##### 3.9.1.10  `FUNC-se-help` — Skill se:help
 
@@ -1890,7 +1890,7 @@ evaluateRules() gegen V3_RULES; error-Severity blockt den Apply. (L2)
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-evaluate-rules` · allocate ▶ `MOD-harness`
+Verification ◀ `TEST-mutate-gate` (integration) · `TEST-nd-similarity` (unit) · `TEST-violation-context` (integration) · satisfy ◀ `FUNC-evaluate-rules` · allocate ▶ `MOD-harness`
 
 ##### 3.9.2.3  `FUNC-mutate` — mutate(commands)
 
@@ -1914,7 +1914,7 @@ Agent kann den SSOT nicht hand-editieren; jeder Write durch graph_mutate (mutate
 
 priority: should · status: open · kinds: non-functional
 
-Verification ◀ `TEST-no-direct-graph-write` · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
+Verification ◀ `TEST-graph-realize` (integration) · `TEST-no-direct-graph-write` · `TEST-path-containment` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
 
 ###### `REQ-graph-snapshot-per-commit` — Kanonischer Graph-Snapshot pro Commit
 
@@ -1924,7 +1924,7 @@ Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/gr
 
 priority: must · status: done
 
-Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
+Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
 
 ##### 3.9.2.4  `FUNC-save-graph` — saveGraph(graph)
 
@@ -2004,7 +2004,7 @@ post-apply/nightly: Trajectory/Outcome append-only nach .graphcode/*.jsonl, Form
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-learning-emit` (integration) · satisfy ◀ `FUNC-emit-trajectory` · allocate ▶ `MOD-hooks`
+Verification ◀ `TEST-create-harness-smoke` (integration) · `TEST-learning-emit` (integration) · satisfy ◀ `FUNC-emit-trajectory` · allocate ▶ `MOD-hooks`
 
 ##### 3.9.3.3  `FUNC-encode` — encode(graph)
 
@@ -2020,7 +2020,7 @@ Stabile Sortierung → commit-/merge-arm; zwei Encodes byte-identisch. (R3)
 
 priority: should · status: open · kinds: non-functional
 
-Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-encode` · allocate ▶ `MOD-codec`
+Verification ◀ `TEST-export-graph-guard` (unit) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-encode` · allocate ▶ `MOD-codec`
 
 ###### `REQ-formatE-diff-dialect` — Format-E-Diff-Dialekt (R5)
 
@@ -2028,7 +2028,7 @@ CR-GC-103 R5: Diff-Dialekt +/-/~/M mit <operations><base_snapshot>ID@version + 1
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-encode` · allocate ▶ `MOD-codec`
+Verification ◀ `TEST-edge-only-batch` (integration) · `TEST-formate-name` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-encode` · allocate ▶ `MOD-codec`
 
 ###### `REQ-formatE-parity` — Format-E-Parity = contracts (L1)
 
@@ -2036,7 +2036,7 @@ CR-GC-103 L1: Format-E-Parität = contracts-Baseline; genau EIN Codec.
 
 priority: should · status: open · kinds: non-functional
 
-Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-encode` · allocate ▶ `MOD-codec`
+Verification ◀ `TEST-formate-binding` (integration) · `TEST-mutate-input-formate` (integration) · `TEST-read-format-param` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-encode` · allocate ▶ `MOD-codec`
 
 ###### `REQ-precise-context` — Präziser Kontext statt grep-Dump
 
@@ -2046,7 +2046,7 @@ Kontext = exakter Blast-Radius/Sub-Graph-Slice (Format-E) statt grep-Dump/Result
 
 priority: should · status: open · kinds: non-functional
 
-Verification ◀ `TEST-mvp-e2e` (e2e) · `TEST-token-efficiency` (acceptance) · satisfy ◀ `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-graph-impact` · allocate ▶ `MOD-codec` · `MOD-mcp-tools`
+Verification ◀ `TEST-inject-graph-slice` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-token-efficiency` (acceptance) · `TEST-violation-context` (integration) · satisfy ◀ `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-graph-impact` · allocate ▶ `MOD-codec` · `MOD-mcp-tools`
 
 ##### 3.9.3.4  `FUNC-graph-export-snapshot` — graph_export(views?)
 
@@ -2064,7 +2064,7 @@ Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/gr
 
 priority: must · status: done
 
-Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
+Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
 
 ##### 3.9.3.5  `FUNC-import` — importGraph(formatE, mode)
 
@@ -2088,7 +2088,7 @@ FUNC-import: Erstbefüllung ausschließlich über das mutate()-Gate; Quelle = Fo
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-bootstrap` (integration) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-harness`
+Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-harness`
 
 ###### `REQ-post-import` — Postcondition: importGraph(formatE, mode)
 
@@ -2096,7 +2096,7 @@ Graph durchs Gate befüllt; kein Direct-Write; Violations berichtet.
 
 priority: must · status: done · kinds: postcondition
 
-Verification ◀ `TEST-bootstrap` (integration) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-harness`
+Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-code-verb` (integration) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-harness`
 
 ###### `REQ-pre-import` — Precondition: importGraph(formatE, mode)
 
@@ -2120,7 +2120,7 @@ Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Arte
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-merge` (integration) · satisfy ◀ `FUNC-merge-nodes` · allocate ▶ `MOD-codec`
+Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-merge-nodes` · allocate ▶ `MOD-codec`
 
 ###### `REQ-conflict-free-merge` — Conflict-free Graph-Merge
 
@@ -2136,7 +2136,7 @@ Conflict-free gemerged; keine verlorenen Knoten/Traces; deterministisch sortiert
 
 priority: must · status: open · kinds: postcondition
 
-Verification ◀ `TEST-merge` (integration) · satisfy ◀ `FUNC-merge-nodes` · allocate ▶ `MOD-codec`
+Verification ◀ `TEST-merge` (integration) · `TEST-merge-no-duplicate-edge` (integration) · satisfy ◀ `FUNC-merge-nodes` · allocate ▶ `MOD-codec`
 
 ###### `REQ-pre-merge-nodes` — Precondition: mergeNodes(graph)
 
@@ -2188,7 +2188,7 @@ Genau ein Host-Prozess besitzt .graphcode/kuzu (single-writer; kein 2. DB-Handle
 
 priority: should · status: done · kinds: non-functional
 
-Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `FUNC-own-kuzu-host` · `MOD-harness` · allocate ▶ `MOD-host-bridge`
+Verification ◀ `TEST-bridge-follows-lock` (integration) · `TEST-gve-autostart` (unit) · `TEST-host-shim` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-session-lifecycle` (integration) · `TEST-status-verb` (unit) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-own-kuzu-host` · `MOD-harness` · allocate ▶ `MOD-host-bridge`
 
 ##### 3.9.3.9  `FUNC-reseed` — reseed(relPath)
 
@@ -2206,7 +2206,7 @@ Ein frueherer Graph-Stand ist mit einem Kommando reproduzierbar: graphcode rewin
 
 priority: must · status: done
 
-Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-recall` · `FUNC-reseed` · `FUNC-rewind` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness`
+Verification ◀ `TEST-graph-time-travel` (integration) · `TEST-reseed` (integration) · `TEST-rewind` (integration) · satisfy ◀ `FCHAIN-recall` · `FUNC-reseed` · `FUNC-rewind` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness`
 
 ##### 3.9.3.10  `FUNC-rewind` — graphcode rewind <ref>
 
@@ -2224,7 +2224,7 @@ Ein frueherer Graph-Stand ist mit einem Kommando reproduzierbar: graphcode rewin
 
 priority: must · status: done
 
-Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-recall` · `FUNC-reseed` · `FUNC-rewind` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness`
+Verification ◀ `TEST-graph-time-travel` (integration) · `TEST-reseed` (integration) · `TEST-rewind` (integration) · satisfy ◀ `FCHAIN-recall` · `FUNC-reseed` · `FUNC-rewind` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness`
 
 #### 3.9.4  `FUNC-block-messwerk` — Messwerk
 
@@ -2246,7 +2246,7 @@ Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefer
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
 
 ##### 3.9.4.2  `FUNC-compute-phase-readiness` — computePhaseReadiness(violations)
 
@@ -2262,7 +2262,7 @@ Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefer
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
 
 ##### 3.9.4.3  `FUNC-compute-readiness` — computeReadiness(graph, policy)
 
@@ -2280,7 +2280,7 @@ Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefer
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
 
 ##### 3.9.4.4  `FUNC-compute-steering-delta` — computeSteeringDelta(before, after)
 
@@ -2296,7 +2296,7 @@ Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefer
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
 
 ##### 3.9.4.5  `FUNC-fit-advisory` — computeFitAdvisory(before, after)
 
@@ -2312,7 +2312,7 @@ Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefer
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
 
 ##### 3.9.4.6  `FUNC-module-metrics` — moduleMetrics(graph)
 
@@ -2328,7 +2328,7 @@ Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefer
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
 
 ##### 3.9.4.7  `FUNC-score-completeness` — scoreCompleteness(gateId, graph)
 
@@ -2376,7 +2376,7 @@ Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefer
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
 
 #### 3.9.5  `FUNC-block-schaufenster` — Viewer
 
@@ -2424,7 +2424,7 @@ human-readable Docs (SPEC/Architektur/CR-Liste/References) werden DETERMINISTISC
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
+Verification ◀ `TEST-auto-export` (integration) · `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · `TEST-views-auditor` (unit) · `TEST-views-conformance` (unit) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
 
 ###### `REQ-post-export-markdown` — Postcondition: exportMarkdown(graph, view)
 
@@ -2456,7 +2456,7 @@ human-readable Docs (SPEC/Architektur/CR-Liste/References) werden DETERMINISTISC
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
+Verification ◀ `TEST-auto-export` (integration) · `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · `TEST-views-auditor` (unit) · `TEST-views-conformance` (unit) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
 
 ###### 3.9.5.2.3  `FUNC-view-changelog` — se-view-changelog (Change Log)
 
@@ -2472,7 +2472,7 @@ human-readable Docs (SPEC/Architektur/CR-Liste/References) werden DETERMINISTISC
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
+Verification ◀ `TEST-auto-export` (integration) · `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · `TEST-views-auditor` (unit) · `TEST-views-conformance` (unit) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
 
 ###### 3.9.5.2.4  `FUNC-view-conops` — se-view-conops (ConOps)
 
@@ -2488,7 +2488,7 @@ human-readable Docs (SPEC/Architektur/CR-Liste/References) werden DETERMINISTISC
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
+Verification ◀ `TEST-auto-export` (integration) · `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · `TEST-views-auditor` (unit) · `TEST-views-conformance` (unit) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
 
 ###### 3.9.5.2.5  `FUNC-view-icd` — se-view-icd (ICD)
 
@@ -2504,7 +2504,7 @@ human-readable Docs (SPEC/Architektur/CR-Liste/References) werden DETERMINISTISC
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
+Verification ◀ `TEST-auto-export` (integration) · `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · `TEST-views-auditor` (unit) · `TEST-views-conformance` (unit) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
 
 ###### 3.9.5.2.6  `FUNC-view-intplan` — se-view-intplan (Integrations-/Testplan)
 
@@ -2520,7 +2520,7 @@ human-readable Docs (SPEC/Architektur/CR-Liste/References) werden DETERMINISTISC
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
+Verification ◀ `TEST-auto-export` (integration) · `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · `TEST-views-auditor` (unit) · `TEST-views-conformance` (unit) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
 
 ###### 3.9.5.2.7  `FUNC-view-irr` — se-view-fmea (FMEA view)
 
@@ -2536,7 +2536,7 @@ human-readable Docs (SPEC/Architektur/CR-Liste/References) werden DETERMINISTISC
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
+Verification ◀ `TEST-auto-export` (integration) · `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · `TEST-views-auditor` (unit) · `TEST-views-conformance` (unit) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
 
 ###### 3.9.5.2.8  `FUNC-view-rtm` — se-view-rtm (RTM)
 
@@ -2552,7 +2552,7 @@ human-readable Docs (SPEC/Architektur/CR-Liste/References) werden DETERMINISTISC
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
+Verification ◀ `TEST-auto-export` (integration) · `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · `TEST-views-auditor` (unit) · `TEST-views-conformance` (unit) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
 
 ##### 3.9.5.3  `FUNC-block-live-dashboard` — Live-Kanal
 
@@ -2602,7 +2602,7 @@ CONSTRAINT: Jede Graph-Mutation MUSS ein Live-Update-Event emittieren (SSE inval
 
 priority: should · status: done · kinds: non-functional
 
-Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FCHAIN-live-update` · `FUNC-emit-update-event` · allocate ▶ `MOD-hooks`
+Verification ◀ `TEST-create-harness-smoke` (integration) · `TEST-live-view` (integration) · satisfy ◀ `FCHAIN-live-update` · `FUNC-emit-update-event` · allocate ▶ `MOD-hooks`
 
 ###### `REQ-post-emit-update-event` — Postcondition: FUNC-emit-update-event
 
@@ -2642,7 +2642,7 @@ Bridge read-only; keine Inbound-Mutations, Writes nur via MCP→mutate(). (RECOM
 
 priority: must · status: done · kinds: negative
 
-Verification ◀ `TEST-readonly-bridge` (integration) · satisfy ◀ `FUNC-serve-sse` · `MOD-host-bridge` · allocate ▶ `MOD-host-bridge`
+Verification ◀ `TEST-bridge-follows-lock` (integration) · `TEST-readonly-bridge` (integration) · satisfy ◀ `FUNC-serve-sse` · `MOD-host-bridge` · allocate ▶ `MOD-host-bridge`
 
 ###### 3.9.5.3.4  `FUNC-subscribe-updates` — subscribeUpdates()
 
@@ -2696,7 +2696,7 @@ Jedes Phase- und Impl-Gate exponiert seine Blocking-Elemente (welche CRs, Tests,
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-dashboard-readonly` (integration) · satisfy ◀ `FUNC-render-readiness` · `MOD-dashboard` · allocate ▶ `MOD-dashboard`
+Verification ◀ `TEST-dashboard-readonly` (integration) · `TEST-help-content-coverage` (unit) · `TEST-help-projection` (unit) · `TEST-help-tool` (integration) · satisfy ◀ `FUNC-render-readiness` · `MOD-dashboard` · allocate ▶ `MOD-dashboard`
 
 ###### 3.9.5.4.5  `FUNC-render-recommendations` — renderImprovementMeasures()
 
@@ -2718,7 +2718,7 @@ Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefer
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
 
 ##### 3.9.6.1  `FUNC-block-arch-optimierung` — Architektur-Optimierung
 
@@ -2742,7 +2742,7 @@ Deterministische, modellfreie Gates/Regeln + Query-Precision halten kleine/lokal
 
 priority: should · status: open · kinds: non-functional
 
-Verification ◀ `TEST-mvp-e2e` (e2e) · `TEST-reduced-llm` (acceptance) · satisfy ◀ `FCHAIN-modelfree-gate` · `FUNC-graph-suggest` · allocate ▶ `MOD-mcp-tools`
+Verification ◀ `TEST-executor-preflight` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-reduced-llm` (acceptance) · satisfy ◀ `FCHAIN-modelfree-gate` · `FUNC-graph-suggest` · allocate ▶ `MOD-mcp-tools`
 
 ##### 3.9.6.2  `FUNC-block-q-improvement` — Q-Improvement
 
@@ -2772,7 +2772,7 @@ Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefer
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
 
 ##### 3.9.6.3  `FUNC-block-se-steuerung` — SE-Prozess-Steuerung
 
@@ -2796,7 +2796,7 @@ Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefer
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
 
 ###### 3.9.6.3.2  `FUNC-rank-candidates` — rankCandidates(probes, focus)
 
@@ -2814,7 +2814,7 @@ Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefer
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
 
 ###### 3.9.6.3.3  `FUNC-se-conops` — Skill se-conops
 
@@ -3392,7 +3392,7 @@ graph_export verweigert, wenn es committete Elemente/Traces droppen wuerde: Empt
 
 priority: should · status: done · kinds: non-functional
 
-Verification ◀ `TEST-mcp-export-guard` (integration) · satisfy ◀ `MOD-mcp-tools` · allocate ▶ —
+Verification ◀ `TEST-export-graph-guard` (unit) · `TEST-mcp-export-guard` (integration) · satisfy ◀ `MOD-mcp-tools` · allocate ▶ —
 
 ### `REQ-graph-context-replaces-reading` — Praeziser Graph-Kontext ersetzt das Dokumentenlesen
 
@@ -3408,7 +3408,7 @@ Ein Validierungs-Pfad an EINEM Punkt (Gate): GraphCodeCodec.validate() erkennt z
 
 priority: should · status: done · kinds: non-functional
 
-Verification ◀ `TEST-codec-validation` (integration) · `TEST-graph-integrity` (integration) · satisfy ◀ `MOD-codec` · allocate ▶ —
+Verification ◀ `TEST-codec-validation` (integration) · `TEST-graph-integrity` (integration) · `TEST-import-sys-anchor` (integration) · `TEST-merge-no-duplicate-edge` (integration) · satisfy ◀ `MOD-codec` · allocate ▶ —
 
 ### `REQ-graph-is-ssot` — Graph ist Single Point of Truth
 
@@ -3416,7 +3416,7 @@ Der materialisierte Graph + die Live-Harness sind SSOT. docs/*.md sind historisc
 
 priority: should · status: done · kinds: non-functional
 
-Verification ◀ `TEST-graph-is-ssot` (integration) · satisfy ◀ — · allocate ▶ —
+Verification ◀ `TEST-deny-stale-read` (integration) · `TEST-graph-is-ssot` (integration) · `TEST-path-containment` (integration) · satisfy ◀ — · allocate ▶ —
 
 ### `REQ-harness-schema-in-contracts` — Harness-Schemas in contracts (D1)
 
@@ -3424,7 +3424,7 @@ CR-GC-100 Task 1 / D1: HarnessConfig/MutateCommand/MutateResult nach @sigloch/co
 
 priority: should · status: open · kinds: non-functional
 
-Verification ◀ `TEST-mcp-symmetry` (integration) · satisfy ◀ `MOD-harness` · allocate ▶ —
+Verification ◀ `TEST-mcp-symmetry` (integration) · `TEST-mutate-schema-guard` (integration) · satisfy ◀ `MOD-harness` · allocate ▶ —
 
 ### `REQ-hook-extension-points` — Drei Hook-Extension-Points
 
@@ -3448,7 +3448,7 @@ SE-Ontologie aus @sigloch/contracts/se importieren, nicht lokal neu definieren. 
 
 priority: should · status: open · kinds: non-functional
 
-Verification ◀ `TEST-dashboard-ontology-sync` (integration) · satisfy ◀ `MOD-harness` · allocate ▶ —
+Verification ◀ `TEST-dashboard-ontology-sync` (integration) · `TEST-graph-authoring-guide` (integration) · satisfy ◀ `MOD-harness` · allocate ▶ —
 
 ### `REQ-interface-schema` — Interface trägt ein Datenformat (SCHEMA)
 
@@ -3464,7 +3464,7 @@ CR-GC-101: Registry graph_elements/get_node/get_edges (read), graph_mutate (writ
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-mcp-readiness` (integration) · `TEST-mcp-stdio-server` (integration) · satisfy ◀ `MOD-mcp-tools` · allocate ▶ —
+Verification ◀ `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integration) · `TEST-mcp-stdio-server` (integration) · satisfy ◀ `MOD-mcp-tools` · allocate ▶ —
 
 ### `REQ-monotone-convergence` — Wiederholte Steuerung konvergiert monoton
 
@@ -3480,7 +3480,7 @@ Derselbe Steuerungs-Loop faehrt ein lokal laufendes Modell und ein Frontier-Mode
 
 priority: must · status: n/a
 
-Verification ◀ `TEST-one-driver-local-and-frontier` (integration) · satisfy ◀ — · allocate ▶ —
+Verification ◀ `TEST-cli-run` (integration) · `TEST-executor-bestofn` (integration) · `TEST-one-driver-local-and-frontier` (integration) · satisfy ◀ — · allocate ▶ —
 
 ### `REQ-one-gate-per-repo` — Ein Apply-Gate pro Repo
 
@@ -3488,7 +3488,7 @@ Jede Edit-Op (Mensch oder KI) durch denselben mutate()-Pfad; consumerType nur ge
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-mcp-symmetry` (integration) · `TEST-mutate-gate` (integration) · satisfy ◀ — · allocate ▶ —
+Verification ◀ `TEST-mcp-symmetry` (integration) · `TEST-mutate-gate` (integration) · `TEST-store-lock` (integration) · satisfy ◀ — · allocate ▶ —
 
 ### `REQ-phase-gate-not-skippable` — Ein Phasen-Gate ist nicht ueberspringbar
 
@@ -3528,7 +3528,7 @@ Qualität = graph-eigene Metriken: (1) 0 error-Violations am Commit, (2) REQ→T
 
 priority: should · status: open · kinds: non-functional
 
-Verification ◀ `TEST-code-quality` (acceptance) · satisfy ◀ `MOD-harness` · allocate ▶ —
+Verification ◀ `TEST-code-quality` (acceptance) · `TEST-fit-advisory` (integration) · `TEST-graph-metrics` (unit) · `TEST-retro-kpi` (unit) · satisfy ◀ `MOD-harness` · allocate ▶ —
 
 ### `REQ-readiness-model` — Readiness-Modell definiert (Phase/Impl/INCOSE)
 
@@ -3536,7 +3536,7 @@ Readiness-Modell fuer graphcode, definiert gegen @sigloch/contracts V3_RULES + d
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-readiness-model` (acceptance) · satisfy ◀ `MOD-mcp-tools` · allocate ▶ —
+Verification ◀ `TEST-readiness-model` (acceptance) · `TEST-views-auditor` (unit) · satisfy ◀ `MOD-mcp-tools` · allocate ▶ —
 
 ### `REQ-rule-calibration` — Regel-Kalibrierung aus der Aufzeichnung
 
@@ -3544,7 +3544,7 @@ Die Aufzeichnung erlaubt es, je Regel, je Modell und je Konsument die Blockadeha
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-rule-calibration` (unit) · satisfy ◀ `MOD-mcp-tools` · allocate ▶ —
+Verification ◀ `TEST-audit-rules-passed` (integration) · `TEST-rule-calibration` (unit) · satisfy ◀ `MOD-mcp-tools` · allocate ▶ —
 
 ### `REQ-shared-views-no-fork` — Geteilte View-Berechnung, kein Regel-Fork
 
@@ -3552,7 +3552,7 @@ views.ts (testmatrix/FMEA/RTM/IRR/NFR/arch…) aus aimprove → @sigloch/graph-a
 
 priority: must · status: done
 
-Verification ◀ `TEST-shared-views-no-fork` (integration) · satisfy ◀ `MOD-dashboard` · allocate ▶ —
+Verification ◀ `TEST-shared-views-no-fork` (integration) · `TEST-views-conformance` (unit) · satisfy ◀ `MOD-dashboard` · allocate ▶ —
 
 ### `REQ-single-measurement-path` — Ein Messpfad fuer alle Steuerungs-Oberflaechen
 
@@ -3560,7 +3560,7 @@ nextStep, generationStep und der steeringDelta-Zweig des dryRun-Verdicts liefern
 
 priority: must · status: n/a
 
-Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ — · allocate ▶ —
+Verification ◀ `TEST-graph-metrics` (unit) · `TEST-single-measurement-path` (unit) · `TEST-steering-snapshot` (integration) · satisfy ◀ — · allocate ▶ —
 
 ### `REQ-single-store` — Ein Store: Kuzu
 
@@ -3576,7 +3576,7 @@ Eine legale Mutation persistiert samt Attributen, eine Mutation ohne ihre Pflich
 
 priority: must · status: n/a
 
-Verification ◀ `TEST-single-write-door` (integration) · satisfy ◀ — · allocate ▶ —
+Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (integration) · `TEST-occ` (integration) · `TEST-single-write-door` (integration) · satisfy ◀ — · allocate ▶ —
 
 ### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
@@ -3584,7 +3584,7 @@ CONSTRAINT (ConOps): Recovery bei Kuzu Lock-Konflikt / abgestürztem Owner / kor
 
 priority: should · status: open · kinds: non-functional
 
-Verification ◀ `TEST-store-recovery` (integration) · satisfy ◀ `MOD-harness` · allocate ▶ —
+Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `MOD-harness` · allocate ▶ —
 
 ### `REQ-structural-rule-shared` — Trace-pair legality is one shared engine rule
 
@@ -3592,7 +3592,7 @@ Trace-pair legality is enforced by the one shared engine rule R-18 (@sigloch/con
 
 priority: must · status: done
 
-Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `MOD-harness` · allocate ▶ —
+Verification ◀ `TEST-graph-authoring-guide` (integration) · `TEST-mutate-gate` (integration) · satisfy ◀ `MOD-harness` · allocate ▶ —
 
 ### `REQ-target-shifts-ranking` — Die Zielrichtung verschiebt das Suggestion-Ranking
 
@@ -3600,7 +3600,7 @@ Ein Vorzeichenwechsel im Zielvektor negiert den Score jedes gemeinsamen Kandidat
 
 priority: must · status: n/a
 
-Verification ◀ `TEST-target-shifts-ranking` (unit) · satisfy ◀ — · allocate ▶ —
+Verification ◀ `TEST-executor-bestofn` (integration) · `TEST-target-profile` (integration) · `TEST-target-shifts-ranking` (unit) · satisfy ◀ — · allocate ▶ —
 
 ### `REQ-testref-materialized` — A bound testRef always resolves to a real file
 
@@ -3608,7 +3608,7 @@ Ein gebundener TEST-testRef loest immer auf eine reale Datei auf: graph_export m
 
 priority: must · status: done
 
-Verification ◀ `TEST-testref-materialize` (integration) · satisfy ◀ `MOD-docs` · `MOD-mcp-tools` · allocate ▶ —
+Verification ◀ `TEST-realref-materialize` (integration) · `TEST-testref-materialize` (integration) · satisfy ◀ `MOD-docs` · `MOD-mcp-tools` · allocate ▶ —
 
 ### `REQ-thresholds-from-config` — Urteilsschwellen kommen aus der Config, nicht aus dem Regelcode
 
@@ -3616,7 +3616,7 @@ Keine Urteilsschwelle steht als Literal im Regelcode: eine verschobene MetricPol
 
 priority: must · status: n/a
 
-Verification ◀ `TEST-thresholds-from-config` (unit) · satisfy ◀ — · allocate ▶ —
+Verification ◀ `TEST-target-profile` (integration) · `TEST-thresholds-from-config` (unit) · satisfy ◀ — · allocate ▶ —
 
 ### `REQ-token-efficiency` — Token-Effizienz gegenueber Datei-Kontext
 
@@ -3624,7 +3624,7 @@ Das System soll den Kontext einer Runde aus dem Graphen binden statt aus Datei-D
 
 priority: should · status: done · kinds: non-functional
 
-Verification ◀ `TEST-token-efficiency` (acceptance) · satisfy ◀ — · allocate ▶ —
+Verification ◀ `TEST-audit-trail-projection` (integration) · `TEST-help-contextual-dedup` (unit) · `TEST-mutate-violations` (integration) · `TEST-token-efficiency` (acceptance) · satisfy ◀ — · allocate ▶ —
 
 ### `REQ-versioned-cache` — Version-keyed Cache + Dirty-Flag (R11)
 
@@ -3654,365 +3654,713 @@ A/B ueber das Vorzeichen des Ziels mit echter Mutation und Messung vorher/nachhe
 
 verify ▶ `REQ-applied-suggestion-moves-target` · testRefs: `tests/steering.architecture-causality.test.ts`
 
-### 8.4  `TEST-batch-seed` — Batch-Seed UNWIND performance (automated)
+### 8.4  `TEST-artifact-coupling` — Artefakt-Zweig des Steuerungsbeweises
+
+Abnahme der Datei tests/steering.artifact-coupling.test.ts: die Steuerung wirkt auch auf die Artefakte, nicht nur auf das Ranking. Der Regler war bereits belegt, dieser Zweig schliesst die Kopplung zwischen gemessener Lage und erzeugtem Artefakt.
+
+verify ▶ `REQ-steering-from-metrics` · testRefs: `tests/steering.artifact-coupling.test.ts`
+
+### 8.5  `TEST-audit-retention` — Audit-Aufbewahrungs-Abnahme
+
+Abnahme der Datei tests/audit.retention.test.ts: compact() archiviert per Umbenennung und loescht nichts, und eine Abfrage sieht danach weiterhin, was archiviert wurde. Trennt Aufbewahrung von Sichtbarkeit, damit aus einer Kompaktierung nie stille Beweisvernichtung wird.
+
+verify ▶ `REQ-audit-trail` · testRefs: `tests/audit.retention.test.ts`
+
+### 8.6  `TEST-audit-rules-passed` — Bestandene Regeln im Audit
+
+Abnahme der Datei tests/audit.rules-passed.test.ts: der Audit-Eintrag einer angenommenen Mutation nennt die Regeln, die geprueft und bestanden wurden. Ohne diese positive Haelfte ist aus einem leeren violations-Feld nicht rekonstruierbar, ob eine Regel geprueft hat oder gar nicht lief.
+
+verify ▶ `REQ-audit-trail` · `REQ-rule-calibration` · testRefs: `tests/audit.rules-passed.test.ts`
+
+### 8.7  `TEST-audit-trail-projection` — Audit-Trail als schlanke Projektion
+
+Abnahme der Datei tests/audit.trail-projection.test.ts: audit_trail liefert eine Projektion statt der Rohsaetze, sodass ein Standardaufruf den Agenten nicht mit vollstaendigen Mutations-Batches flutet. Der Ausloeser war messbar: ein Default-Aufruf trug 163 KB, davon 79 Prozent Batch-Inhalt.
+
+verify ▶ `REQ-audit-trail` · `REQ-token-efficiency` · testRefs: `tests/audit.trail-projection.test.ts`
+
+### 8.8  `TEST-auto-export` — Export folgt der Mutation
+
+Abnahme der Datei tests/auto-export.test.ts: nach einer angewandten Mutation entsteht der Snapshot-Export, ohne dass jemand graph_export ruft, und er schreibt weder bei blockierten Batches noch doppelt. Geprueft werden die Eigenschaften des Ausloesens, nicht die Dateiinhalte.
+
+verify ▶ `REQ-doc-export` · `REQ-graph-snapshot-per-commit` · testRefs: `tests/auto-export.test.ts`
+
+### 8.9  `TEST-batch-seed` — Batch-Seed UNWIND performance (automated)
 
 tests/perf.batch-seed.test.ts: 5000 Nodes + 5000 compose-Edges via harness.importGraph → saveNodes/saveEdges auf real-disk Kuzu (temp dir); asserts UNWIND-Batch-Insert < 15s (per-Row-Floor ~30s) + Counts + verlustfreies attrs_json-Round-Trip nach Reload. Validiert vom graph-cypher-wasm-Paket-Suite (kuzu-adapter round-trip, rasentraktor L3). (CR-GC-120)
 
 verify ▶ `REQ-batch-seed-performance` · testRefs: `tests/perf.batch-seed.test.ts`
 
-### 8.5  `TEST-bootstrap` — Cold-Start-Import-Test
+### 8.10  `TEST-bootstrap` — Cold-Start-Import-Test
 
 Format-E-Import befüllt leeren Graphen ausschließlich durchs Gate; Direct-Write schlägt fehl. (FUNC-import)
 
 verify ▶ `REQ-bootstrap-through-gate` · `REQ-post-import` · `REQ-pre-import` · testRefs: `tests/bootstrap.test.ts`
 
-### 8.6  `TEST-cache` — Cache-Layering-Test
+### 8.11  `TEST-bridge-follows-lock` — Bridge folgt dem Lock
+
+Abnahme der Datei tests/host.bridge-attach.test.ts: der gewaehlte Host bedient die read-only HTTP-Bridge ueber sein eigenes Harness statt einen zweiten Prozess um den Store-Lock kaempfen zu lassen. Viewer und MCP-Sitzungen leben damit nebeneinander.
+
+verify ▶ `REQ-readonly-bridge` · `REQ-single-kuzu-owner` · testRefs: `tests/host.bridge-attach.test.ts`
+
+### 8.12  `TEST-cache` — Cache-Layering-Test
 
 Version-keyed Response-Cache + Dirty-Flag mappt auf Kuzu-Version; nur Onto+Rules stabil gecached, nie mit Live-Graph gemischt (Prefix-Hygiene). (CR-GC-102 R8/R11)
 
 verify ▶ `REQ-cache-layering` · `REQ-versioned-cache`
 
-### 8.7  `TEST-capture` — Interaktive-Erfassung-Test
+### 8.13  `TEST-capture` — Interaktive-Erfassung-Test
 
 Agent-Kandidaten laufen im suggest-Tier durchs Gate (kein auto-apply). (FCHAIN-capture)
 
 verify ▶ `REQ-interactive-capture-suggest` · `REQ-no-extraction` · `REQ-post-capture` · `REQ-pre-capture`
 
-### 8.8  `TEST-cli-scaffold` — CLI-Scaffold-Test
+### 8.14  `TEST-cli-run` — Abnahme des run-Verbs
+
+Abnahme der Datei tests/cli.run.test.ts: graphcode run laeuft ueber denselben executeRun-Pfad wie die CLI, liest seine Konfiguration aus der Umgebung und arbeitet gegen einen realen Disk-Store mit gescriptetem Modell-Backend. Kein Parallelweg neben dem Produktionspfad.
+
+verify ▶ `REQ-one-driver-local-and-frontier` · testRefs: `tests/cli.run.test.ts`
+
+### 8.15  `TEST-cli-scaffold` — CLI-Scaffold-Test
 
 graphcode init/update/remove against a mkdtemp temp repo (real node:fs): init scaffolds .graphcode/ + .mcp.json (npx form) + GRAPHCODE.md + package.json dep, idempotent re-run is byte-stable, update preserves the .graphcode/kuzu store, remove deletes all artifacts restlos. No localhost/Controller path. (CR-GC-112)
 
 verify ▶ `REQ-install-idempotent` · `REQ-post-harness-cli` · `REQ-pre-harness-cli` · `REQ-repo-install` · `REQ-repo-uninstall` · `REQ-repo-update` · testRefs: `tests/cli.scaffold.test.ts`
 
-### 8.9  `TEST-code-conformance` — Graph-code conformance test
+### 8.16  `TEST-code-conformance` — Graph-code conformance test
 
 Seedet den committeten SSOT-Graphen, laeuft checkCodeConformance gegen den realen src-Baum: 0 Violations (jeder Code-codeRef deklariert, jeder Prompt-codeRef existiert); ein falsches Symbol wird gefangen, also nicht vacuous. (CR-GC-206)
 
 verify ▶ `REQ-graph-code-conformance` · testRefs: `tests/conformance.test.ts`
 
-### 8.10  `TEST-code-quality` — Code-Quality-Gate-Test
+### 8.17  `TEST-code-quality` — Code-Quality-Gate-Test
 
 Regelverletzende Änderung wird vom Gate geblockt; konformer Graph bleibt driftfrei.
 
 verify ▶ `REQ-code-governed-quality` · `REQ-frame-binding` · `REQ-quality-metric` · `REQ-structure-driven`
 
-### 8.11  `TEST-codec-validation` — Codec-Validation-Test
+### 8.18  `TEST-codec-validation` — Codec-Validation-Test
 
 validate() flaggt strukturelle Defekte (Node/Edge-Typen, TRACE_PATTERNS-Paare, referenzielle Integritaet, doppelte UIDs) auf der Gate-Pruefung; ein zweiter Run-Artefakt fuer REQ-graph-integrity neben dem Integritaets-Test. (CR-GC-200/204)
 
 verify ▶ `REQ-graph-integrity` · testRefs: `tests/codec.validation.test.ts`
 
-### 8.12  `TEST-dashboard-ontology-sync` — Dashboard-Ontologie-Test
+### 8.19  `TEST-create-harness-smoke` — Produktionsverdrahtung der Fabrik
+
+Abnahme der Datei tests/smoke.create-harness.test.ts: die ausgelieferte Verdrahtung wird wirklich gefahren, nicht der direkte Konstruktor. Disk-Kuzu am vorgesehenen Ort und die Standard-Emitter fuer Live-Event und Trajektorie haengen dran.
+
+verify ▶ `REQ-mutation-emits-event` · `REQ-trajectory-emit` · testRefs: `tests/smoke.create-harness.test.ts`
+
+### 8.20  `TEST-dashboard-ontology-sync` — Dashboard-Ontologie-Test
 
 Readiness/Violations stammen aus @sigloch/contracts V3_RULES (Rule-IDs == contracts), keine Vorgänger-BQ-Regeln; valide Familie-REQs werfen keine BQ-Warnungen. (REQ-dashboard-ontology-sync)
 
 verify ▶ `REQ-dashboard-ontology-sync` · `REQ-import-se-ontology` · testRefs: `tests/readiness.ontology-sync.test.ts`
 
-### 8.13  `TEST-dashboard-readonly` — Dashboard-Panels-Abnahme
+### 8.21  `TEST-dashboard-readonly` — Dashboard-Panels-Abnahme
 
 Abnahme der Datei tests/panels.test.ts: der Viewer exponiert keinen Write- oder Trigger-Pfad und oeffnet kein zweites DB-Handle, die Readiness-Panels sind nachvollziehbar, und die Artefakt-Frische wird korrekt gemeldet. Verifiziert REQ-dashboard-readonly, REQ-readiness-transparent und REQ-artifact-freshness zusammen (CR-GC-383: eine Datei, eine Abnahme).
 
 verify ▶ `REQ-artifact-freshness` · `REQ-dashboard-readonly` · `REQ-readiness-transparent` · testRefs: `tests/panels.test.ts`
 
-### 8.14  `TEST-distribution` — Self-contained npx distribution (automated)
+### 8.22  `TEST-deny-stale-read` — Lesesperre gegen veraltete Dokumente
+
+Abnahme der Datei tests/hooks.deny-stale-read.test.ts: der echte PreToolUse-Shell-Hook wird mit dem JSON gefuettert, das der Host uebergibt. Eine Datei, die sich als INPUT-ONLY deklariert, wird blockiert und der Leser auf graph_context umgeleitet.
+
+verify ▶ `REQ-graph-is-ssot` · testRefs: `tests/hooks.deny-stale-read.test.ts`
+
+### 8.23  `TEST-distribution` — Self-contained npx distribution (automated)
 
 tests/distribution.test.ts: esbuild bundle inlines all @sigloch/* into dist/cli.js+index.js (registry externals kept, shebang preserved); published manifest has zero file:/@sigloch runtime deps; real npm pack → foreign npm install → bin runs init/--help without the sigloch source tree. Self-contained (CR-GC-121).
 
 verify ▶ `REQ-buildable-standalone` · `REQ-npx-distribution` · `REQ-repo-install` · `REQ-self-contained-dist` · testRefs: `tests/distribution.test.ts`
 
-### 8.15  `TEST-doc-export` — Doc-Re-Export-Test
+### 8.24  `TEST-doc-export` — Doc-Re-Export-Test
 
 exportMarkdown deterministisch (byte-identisch) + spiegelt Graph; GENERATED-Header. (FUNC-export-markdown)
 
 verify ▶ `REQ-doc-export` · `REQ-post-export-markdown` · `REQ-pre-export-markdown` · testRefs: `tests/exporter.test.ts`
 
-### 8.16  `TEST-docs-taxonomy` — Docs-Taxonomie-Inspektion
+### 8.25  `TEST-docs-taxonomy` — Docs-Taxonomie-Inspektion
 
 Views reproduzierbar & GENERATED-headered; records durable; kein docs/project mehr. (verify REQ-docs-taxonomy)
 
 verify ▶ `REQ-docs-taxonomy`
 
-### 8.17  `TEST-graph-context-replaces-reading` — Kontext-Slice als vollstaendige Definition-of-Done
+### 8.26  `TEST-edge-only-batch` — Reiner Kanten-Batch ohne Typ-Sektion
+
+Abnahme der Datei tests/mutate.edge-only-batch.test.ts: ein Format-E-Batch, der nur Kanten zwischen bereits vorhandenen Knoten zieht, braucht keine Typ-Sektionen. Vorher starb genau dieser Batch im Codec, obwohl der Typ im Store steht.
+
+verify ▶ `REQ-formatE-diff-dialect` · testRefs: `tests/mutate.edge-only-batch.test.ts`
+
+### 8.27  `TEST-executor-bestofn` — Best-of-N-Auswahl im Treiber
+
+Abnahme der Datei tests/executor.bestofn.test.ts: der Treiber waehlt aus mehreren Kandidaten deterministisch aus, und das Ranking folgt dem Ziel-Delta statt dem Volumen des Vorschlags. Reale Persistenz, gescriptetes Modell-Backend als einzige simulierte Grenze.
+
+verify ▶ `REQ-one-driver-local-and-frontier` · `REQ-target-shifts-ranking` · testRefs: `tests/executor.bestofn.test.ts`
+
+### 8.28  `TEST-executor-preflight` — Batch-Hygiene vor dem Gate
+
+Abnahme der Datei tests/executor.preflight.test.ts: der Preflight vervollstaendigt einen Batch deterministisch aus den Contracts-Importen, bevor das Gate urteilt, und bleibt bei Unsicherheit passiv. Er ist Hygiene, kein zweites Gate; genau daran haengt, dass kleine Modelle die Tuer treffen.
+
+verify ▶ `REQ-small-model-viable` · testRefs: `tests/executor.preflight.test.ts`
+
+### 8.29  `TEST-export-graph-guard` — Kanonizitaets-Wache des Exports
+
+Abnahme der Datei tests/export-graph-guard.test.ts: die Wache hinter scripts/export-graph.mjs erkennt einen Hand-Edit am SSOT und verweigert das Rendern, bleibt aber blind gegen den graphVersion-Stempel. Beide Haelften zaehlen: eine durch Aufweichen reparierte Wache ist schlimmer als eine kaputte.
+
+verify ▶ `REQ-deterministic-serialization` · `REQ-export-no-clobber` · testRefs: `tests/export-graph-guard.test.ts`
+
+### 8.30  `TEST-first-step` — Eine naechste Aktion beim Start
+
+Abnahme der Datei tests/mcp.first-step.test.ts: der gewaehlte Host nennt beim Hochfahren genau eine naechste Aktion statt einer Werkzeugliste. Das Onboarding scheiterte reproduzierbar an derselben Stelle, weil der Leser nach der Wahl-Zeile allein blieb.
+
+verify ▶ `REQ-steering-from-metrics` · testRefs: `tests/mcp.first-step.test.ts`
+
+### 8.31  `TEST-fit-advisory` — Delta-Advisory je Mutation
+
+Abnahme der Datei tests/harness.fit-advisory.test.ts: jede erfolgreiche Mutation traegt ein fitAdvisory mit Vorher, Nachher und Delta auf der Architektur-Ebene, auch im dryRun. Es ist eine Messung, kein Gate: tier und success bleiben davon unberuehrt.
+
+verify ▶ `REQ-quality-metric` · `REQ-steering-from-metrics` · testRefs: `tests/harness.fit-advisory.test.ts`
+
+### 8.32  `TEST-formate-binding` — Bindung ueber Format-E kommt an
+
+Abnahme der Datei tests/mutate.formate-binding.test.ts: eine per Format-E gesetzte realRef oder testRefs erreicht das Gate wirklich. Der gemessene Schaden war das Gegenteil: der Batch kam mit Bindungs-Verstoessen fuer jeden Knoten zurueck, obwohl die Bindung im Text stand.
+
+verify ▶ `REQ-formatE-parity` · `REQ-test-runnable-binding` · testRefs: `tests/mutate.formate-binding.test.ts`
+
+### 8.33  `TEST-formate-name` — Name-Attribut ist entdeckbar
+
+Abnahme der Datei tests/mutate.formate-name.test.ts: der Name reist als eigenes Attribut, und der Rueckfall auf die uid als Namen meldet sich laut. Der gemessene Schaden in einem Fremdrepo waren 87 von 134 Knoten, die ihre uid als Namen trugen.
+
+verify ▶ `REQ-formatE-diff-dialect` · testRefs: `tests/mutate.formate-name.test.ts`
+
+### 8.34  `TEST-graph-authoring-guide` — Legale Kanten aus dem Meta-Modell
+
+Abnahme der Datei tests/mcp.authoring-guide.test.ts: der Autoren-Leitfaden nennt die legalen anliegenden Kanten aus den importierten TRACE_PATTERNS, nie aus einem lokalen Fork. Er ist der Schreib-Zwilling von graph_context und wird VOR dem Anlegen eines Knotens gefragt.
+
+verify ▶ `REQ-import-se-ontology` · `REQ-structural-rule-shared` · testRefs: `tests/mcp.authoring-guide.test.ts`
+
+### 8.35  `TEST-graph-context-replaces-reading` — Kontext-Slice als vollstaendige Definition-of-Done
 
 Assertiert, dass der Kontext-Slice Spezifikation, verifizierenden Test, Datenfluesse und Modul-Zuordnung des Knotens enthaelt und begrenzt bleibt.
 
 verify ▶ `REQ-graph-context-replaces-reading` · testRefs: `tests/mcp.context.test.ts`
 
-### 8.18  `TEST-graph-integrity` — Graph-Integritaets-Test
+### 8.36  `TEST-graph-integrity` — Graph-Integritaets-Test
 
 validate() flaggt doppelte UIDs + alles bisher Abgedeckte (Typen, Edge-Pairs, referenzielle Integritaet); Integritaets-Test delegiert an validate(). (CR-GC-200)
 
 verify ▶ `REQ-graph-integrity` · testRefs: `tests/graph-integrity.test.ts`
 
-### 8.19  `TEST-graph-is-ssot` — Graph-is-SSOT-Test
+### 8.37  `TEST-graph-is-ssot` — Graph-is-SSOT-Test
 
 Der committete graphcode.graph.json ist deterministischer Export des Kuzu-Stores; Hand-Edit wird erkannt und verworfen, Views tragen GENERATED-Header. (REQ-graph-is-ssot)
 
 verify ▶ `REQ-graph-is-ssot` · testRefs: `tests/harness.import.test.ts`
 
-### 8.20  `TEST-graph-tests-operational` — Selektiver Testset auf dem echten SSOT
+### 8.38  `TEST-graph-metrics` — Modulkennzahlen je Modul
+
+Abnahme der Datei tests/metrics.test.ts: die Kennzahlen liegen je MOD vor, unabhaengig davon ob eine Regel feuert. Der Mangel war gemessen: die Regel meldete nur die Module ueber der Schwelle, fuer die uebrigen war ueber MCP gar kein Wert zu bekommen.
+
+verify ▶ `REQ-quality-metric` · `REQ-single-measurement-path` · testRefs: `tests/metrics.test.ts`
+
+### 8.39  `TEST-graph-realize` — Flaches Binden ueber das Gate
+
+Abnahme der Datei tests/mcp.realize.test.ts: graph_realize setzt die realRef einer FUNC und optional den testRefs-Eintrag einer Abnahme in einem flachen Aufruf, und zwar durch mutate. Kein paralleler Schreibweg neben dem Gate.
+
+verify ▶ `REQ-frame-binding` · `REQ-gate-only-writes` · testRefs: `tests/mcp.realize.test.ts`
+
+### 8.40  `TEST-graph-tests-operational` — Selektiver Testset auf dem echten SSOT
 
 Abnahme der Datei tests/mcp.tests-operational.test.ts: der reale committete Graph wird durchs Gate in einen Disk-Kuzu geseedet, ein CODE-ChangeSet loest ueber die gerichtete code-REQ-TEST-Traversierung die vollstaendige Menge betroffener Testdateien auf, jeder lauffaehige TEST zeigt auf eine existierende Datei, und konzeptionelle Knoten erscheinen unter unresolved. Eigenes Testobjekt neben TEST-test-runnable-binding, weil es einen eigenen Aufbau hat (CR-GC-383).
 
 verify ▶ `REQ-graph-tests-operational` · testRefs: `tests/mcp.tests-operational.test.ts`
 
-### 8.21  `TEST-graph-time-travel` — Time-Travel-Test: Snapshot-Freshness + Recall
+### 8.41  `TEST-graph-time-travel` — Time-Travel-Test: Snapshot-Freshness + Recall
 
 Realer Disk-Kuzu: mutate setzt den Drift-Marker, graph_export loescht ihn und materialisiert den Snapshot; Reseed eines aelteren Snapshots stellt exakt jenen Stand wieder her (git checkout + reseed = Recall) und hinterlaesst einen sauberen Working-State. (verifiziert REQ-graph-snapshot-per-commit, REQ-graph-state-recall)
 
 verify ▶ `REQ-graph-snapshot-per-commit` · `REQ-graph-state-recall` · testRefs: `tests/graph-timetravel.test.ts`
 
-### 8.22  `TEST-greenfield-systemtest` — Top-Level Greenfield System-Test
+### 8.42  `TEST-greenfield-systemtest` — Top-Level Greenfield System-Test
 
 Leeres Repo, ein Prompt (Web-App aus graphcode, Multiuser, Module maximal nutzen). Authoring: qwen3.6-35b-a3b (local) vs Opus 5 (frontier), je 3×, ein Host (Claude Code). Metriken/Run: readiness, reuse-coverage vs Modul-Graph-Golden, illegal/blocked, redundanz, tokens_in/out/reasoning, cost, wall_s. Best-fit → Impl-Plan durchs Gate → Coding (qwen-35b · devstral). Scorer regelbasiert, keine KI-Bewertung.
 
 verify ▶ `REQ-greenfield-systemtest-dod`
 
-### 8.23  `TEST-hooks` — Hook-Extension-Points-Test
+### 8.43  `TEST-gve-autostart` — Autostart-Wachen des Viewers
+
+Abnahme der Datei tests/gve-autostart.test.ts: der gewaehlte Host startet den Viewer nur, wenn die Wachen es erlauben. Geprueft werden Opt-out per Umgebung, Unterdrueckung im Testlauf und die Erkennung einer bereits laufenden Instanz ueber die erreichbare dashboard.url.
+
+verify ▶ `REQ-single-kuzu-owner` · testRefs: `tests/gve-autostart.test.ts`
+
+### 8.44  `TEST-gve-supervision` — Viewer wird am Leben gehalten
+
+Abnahme der Datei tests/gve-supervision.test.ts: stirbt der Viewer nach dem Start, startet der Host ihn neu, aber nur bis zu einer Grenze. Ausloeser war ein gesunder Host ohne Dashboard, den niemand bemerkte.
+
+verify ▶ `REQ-graceful-degradation` · testRefs: `tests/gve-supervision.test.ts`
+
+### 8.45  `TEST-help-content-coverage` — Hilfe deckt jedes lebende Token
+
+Abnahme der Datei tests/help-content.test.ts: die verfasste Plain- und SE-Ebene deckt jedes im Dashboard lebende Token, geprueft gegen die Registries statt gegen eine Handzaehlung. Eine neue Regel oder ein neues Artefakt faellt nur auf, wenn ihr Hilfe-Eintrag fehlt.
+
+verify ▶ `REQ-readiness-transparent` · testRefs: `tests/help-content.test.ts`
+
+### 8.46  `TEST-help-contextual-dedup` — Eine Massnahme je Regel, nicht je Verstoss
+
+Abnahme der Datei tests/help.contextual-dedup.test.ts: graph_help ohne Token liefert eine Massnahme je Regel statt je Verstoss. Da jede Massnahme eine vollstaendige Kopie des Hilfe-Eintrags traegt, waere die Verstoss-Variante ein Vielfaches an Text fuer dieselbe Aussage.
+
+verify ▶ `REQ-token-efficiency` · testRefs: `tests/help.contextual-dedup.test.ts`
+
+### 8.47  `TEST-help-projection` — Hilfe ist reine Projektion
+
+Abnahme der Datei tests/help.test.ts: die Hilfe rechnet ohne Datenbank. Jeder Eintrag traegt alle drei Ebenen, die Regel-Hilfe deckt die lebenden V3_RULES, und die kontextuelle Hilfe rankt Regel- und Erstellungs-Blocker gemeinsam, Fehler zuerst.
+
+verify ▶ `REQ-readiness-transparent` · testRefs: `tests/help.test.ts`
+
+### 8.48  `TEST-help-tool` — graph_help ueber MCP
+
+Abnahme der Datei tests/mcp.help.test.ts: graph_help erreicht die Hilfe-Datenschicht ueber MCP. Realer Disk-Kuzu auf einem Temp-Repo, ein Graph der eine Warnung ausloest, und der Nachweis, dass der Aufruf ohne Argument die kontextuellen Massnahmen liefert.
+
+verify ▶ `REQ-mcp-tool-registry` · `REQ-readiness-transparent` · testRefs: `tests/mcp.help.test.ts`
+
+### 8.49  `TEST-hooks` — Hook-Extension-Points-Test
 
 registerHook + runPreCommitHooks/runPostApplyHooks/scheduleNightlyBatch; pre-commit-Hook blockt eine Mutation; preCommitTimeout (default 5000ms) greift; Execution-Order deterministisch. (CR-GC-102)
 
 verify ▶ `REQ-hook-extension-points` · `REQ-hook-order-deterministic` · `REQ-precommit-timeout`
 
-### 8.24  `TEST-impact-subgraph` — graph_impact Subgraph-Test
+### 8.50  `TEST-host-shim` — Ein Schreibkanal ueber zwei Prozesse
+
+Abnahme der Datei tests/host-shim.test.ts: die Zwei-Prozess-Topologie auf Socket-Ebene, ein echter Host mit Store und ein echter Proxy-Registry-Client. Der Verlierer der Wahl bedient dieselbe Oberflaeche ueber stdio, ohne einen zweiten Schreibkanal zu oeffnen.
+
+verify ▶ `REQ-single-kuzu-owner` · `REQ-single-write-door` · testRefs: `tests/host-shim.test.ts`
+
+### 8.51  `TEST-impact-subgraph` — graph_impact Subgraph-Test
 
 graph_impact liefert nur den betroffenen Subgraphen (kein Full-Dump). (FCHAIN-agent-query)
 
 verify ▶ `REQ-post-agent-query` · `REQ-pre-agent-query` · `REQ-progressive-expansion` · `REQ-query-precision` · `REQ-subgraph-slicing` · testRefs: `tests/mcp.impact.test.ts`
 
-### 8.25  `TEST-interface-escalation` — Interface-Eskalations-Test
+### 8.52  `TEST-import-code-verb` — Abnahme des import-code-Verbs
+
+Abnahme der Datei tests/import-code-verb.test.ts: graphcode import-code faehrt den deterministischen Code-Import mit Reseed-Semantik ueber denselben executeImportCode-Pfad wie die CLI. Realer Disk-Store, echte Fixture-Dateien, die Dateisuche laeuft mit.
+
+verify ▶ `REQ-no-extraction` · `REQ-post-import` · testRefs: `tests/import-code-verb.test.ts`
+
+### 8.53  `TEST-import-invariant` — REQ-mit-Test-Invariante auf dem Import-Pfad
+
+Abnahme der Datei tests/harness.import-invariant.test.ts: der Massen-Import meldet jede REQ ohne verifizierenden TEST und verweigert bei entsprechender Option den Import ganz. Der Bypass am Gate vorbei ist damit nie stumm, so waren die historischen unverifizierten REQ hereingekommen.
+
+verify ▶ `REQ-bootstrap-through-gate` · testRefs: `tests/harness.import-invariant.test.ts`
+
+### 8.54  `TEST-import-sys-anchor` — Genau ein SYS-Anker nach jedem Import
+
+Abnahme der Datei tests/harness.import-sys-anchor.test.ts: jeder Import-Pfad hinterlaesst genau einen SYS-Knoten. An ihm haengen die Analyse-Frische-Stempel und die graphweiten Regeln, ein zweiter oder fehlender Anker macht sie unauswertbar.
+
+verify ▶ `REQ-graph-integrity` · testRefs: `tests/harness.import-sys-anchor.test.ts`
+
+### 8.55  `TEST-inject-graph-slice` — Task-Start-Scheibe im Agentenkontext
+
+Abnahme der Datei tests/hooks.inject-graph-slice.test.ts: der Bridge-Endpunkt liefert die Kontext-Scheibe zu einer uid, und der UserPromptSubmit-Hook schiebt sie in den Agentenkontext. Realer Disk-Kuzu, realer HTTP-Aufruf, echte Ground truth statt Stichprobe.
+
+verify ▶ `REQ-precise-context` · `REQ-subgraph-slicing` · testRefs: `tests/hooks.inject-graph-slice.test.ts`
+
+### 8.56  `TEST-intent-anchors-internal` — Intentions-Anker bleiben Interna
+
+Abnahme der Datei tests/intent-anchors-internal.test.ts: die Anker sind ein Steuerungs-Interna und werden dem Menschen nicht zur Bestaetigung vorgelegt. Der Begriff ist unserer, nicht seiner; eine Rueckfrage danach verlangt Vokabular, das der Gegenueber nicht hat.
+
+verify ▶ `REQ-interactive-capture-suggest` · testRefs: `tests/intent-anchors-internal.test.ts`
+
+### 8.57  `TEST-interface-escalation` — Interface-Eskalations-Test
 
 Direkter FLOW-Mutationsversuch eines Realisierungs-Agenten wird abgelehnt; nur der Eskalationspfad (CR an Facilitating-Agent → graph_impact → Gate) ändert ein Interface. (FCHAIN-interface-escalation)
 
 verify ▶ `REQ-interface-change-escalation` · `REQ-post-interface-escalation` · `REQ-pre-interface-escalation`
 
-### 8.26  `TEST-interface-schema` — Interface-Schema-Test
+### 8.58  `TEST-interface-schema` — Interface-Schema-Test
 
 Jeder FLOW hat ein SCHEMA (relation); ein FLOW ohne Datenformat ist ein Readiness-Blocker. (REQ-interface-schema)
 
 verify ▶ `REQ-interface-schema`
 
-### 8.27  `TEST-learning-emit` — Learning-Emission-Test
+### 8.59  `TEST-learning-emit` — Learning-Emission-Test
 
 post-apply schreibt Trajectory/Outcome append-only, Format stabil. (FUNC-emit-trajectory)
 
 verify ▶ `REQ-post-emit-trajectory` · `REQ-pre-emit-trajectory` · `REQ-trajectory-emit` · testRefs: `tests/hooks.learning-emit.test.ts`
 
-### 8.28  `TEST-live-event-contract` — Live-Event-Contract-Test
+### 8.60  `TEST-live-event-contract` — Live-Event-Contract-Test
 
 LiveUpdateEvent/UpdateDomain sind als Zod-Schema in @sigloch/contracts publiziert und werden von Dashboard und Bridge importiert (kein Fork). (REQ-live-event-in-contracts)
 
 verify ▶ `REQ-live-event-in-contracts` · testRefs: `tests/contract.live-event.test.ts`
 
-### 8.29  `TEST-live-view` — Live-Update-Event-Test
+### 8.61  `TEST-live-view` — Live-Update-Event-Test
 
 Jede Mutation emittiert genau ein Live-Update-Event (korrekte domains); Dashboard ohne Reload. (FUNC-emit-update-event)
 
 verify ▶ `REQ-mutation-emits-event` · `REQ-post-emit-update-event` · `REQ-pre-emit-update-event` · `REQ-versioned-broadcast` · testRefs: `tests/hooks.live-view.test.ts`
 
-### 8.30  `TEST-mcp-export` — MCP-Export-Test
+### 8.62  `TEST-mcp-export` — MCP-Export-Test
 
 graph_export serialisiert den live In-Memory-Graphen via exportGraphJson/exportMarkdown und schreibt docs/graph + docs/views unter den Repo-Root — schließt die Agent-Loop ueber MCP. (CR-GC-127)
 
 verify ▶ `REQ-doc-export` · testRefs: `tests/mcp.export.test.ts`
 
-### 8.31  `TEST-mcp-export-guard` — MCP-Export-Guard-Test
+### 8.63  `TEST-mcp-export-guard` — MCP-Export-Guard-Test
 
 MCP graph_export-Guard, drei Faelle: (a) leerer Graph wird verweigert, (b) Drop eines committeten Elements wird verweigert und die Datei bleibt unangetastet, (c) force:true ueberschreibt; Fresh-File-Export bleibt gruen. (CR-GC-202)
 
 verify ▶ `REQ-export-no-clobber` · testRefs: `tests/mcp.export-guard.test.ts`
 
-### 8.32  `TEST-mcp-readiness` — MCP-Readiness-Test
+### 8.64  `TEST-mcp-readiness` — MCP-Readiness-Test
 
 graph_readiness bindet scoreReadiness(harness) an die Registry und liefert den ReadinessReport ueber die MCP-Surface — Familie-Compliance (R-/RD-, nie BQ-) ist fuer einen Agenten erreichbar. (CR-GC-129)
 
 verify ▶ `REQ-mcp-tool-registry` · testRefs: `tests/mcp.readiness.test.ts`
 
-### 8.33  `TEST-mcp-stdio-server` — MCP-stdio-Server-Test
+### 8.65  `TEST-mcp-stdio-server` — MCP-stdio-Server-Test
 
 Registry served over the real MCP protocol (linked transport + disk Kuzu): listTools enumerates all tools, graph_mutate==mutate() incl. R-01 BLOCK, graph_impact bounded slice. (CR-GC-111)
 
 verify ▶ `REQ-audit-trail` · `REQ-mcp-gate-symmetry` · `REQ-mcp-tool-registry` · `REQ-single-transport` · testRefs: `tests/mcp.stdio-server.test.ts`
 
-### 8.34  `TEST-mcp-symmetry` — MCP-Symmetrie-Test
+### 8.66  `TEST-mcp-symmetry` — MCP-Symmetrie-Test
 
 MCP graph_mutate == in-process mutate(): identische Semantik/Violations. (FCHAIN-apply-gate, L2)
 
 verify ▶ `REQ-harness-schema-in-contracts` · `REQ-mcp-gate-symmetry` · `REQ-one-gate-per-repo` · testRefs: `tests/mcp.symmetry.test.ts`
 
-### 8.35  `TEST-member-name` — Member-Name-Derivation-Test
+### 8.67  `TEST-member-name` — Member-Name-Derivation-Test
 
 serveStdio leitet die Member-Identitaet aus dem Repo ab (package.json name unscoped, sonst Verzeichnisname) → graph_export schreibt docs/graph/<member>.graph.json. (CR-GC-128)
 
 verify ▶ `REQ-doc-export` · testRefs: `tests/mcp.member-name.test.ts`
 
-### 8.36  `TEST-merge` — Conflict-free-Merge-Test
+### 8.68  `TEST-merge` — Wiedereingliederung eines Zweigs
 
-Zwei Branch-Änderungen mergen conflict-free; keine verlorenen Knoten/Traces. (FUNC-merge-nodes)
+Abnahme der Datei tests/mcp.merge.test.ts: zwei Zweig-Aenderungen werden ohne Konflikt wieder zusammengefuehrt, ohne Knoten oder Kanten zu verlieren. Die Wiedereingliederung laeuft als Replay durchs Gate, nicht als Datei-Merge; echte Zwei-Store-Integration mit eigenem Disk-Kuzu und eigenem Audit-Log je Seite.
 
-verify ▶ `REQ-auto-persist-merge` · `REQ-conflict-free-merge` · `REQ-post-merge-nodes` · `REQ-pre-merge-nodes`
+verify ▶ `REQ-auto-persist-merge` · `REQ-conflict-free-merge` · `REQ-post-merge-nodes` · `REQ-pre-merge-nodes` · testRefs: `tests/mcp.merge.test.ts`
 
-### 8.37  `TEST-monotone-convergence` — Ratschen-Nachweis ueber die Rundensequenz
+### 8.69  `TEST-merge-no-duplicate-edge` — Keine Doppelkante nach dem Verschmelzen
+
+Abnahme der Datei tests/mutate.merge-dedupe.test.ts: das Verschmelzen zweier Knoten fuehrt eine identische Kante nur einmal, unabhaengig von der Reihenfolge, und Speicher und Disk zaehlen danach dasselbe. Auch der kanonische Snapshot schreibt ein Tripel nie zweimal.
+
+verify ▶ `REQ-graph-integrity` · `REQ-post-merge-nodes` · testRefs: `tests/mutate.merge-dedupe.test.ts`
+
+### 8.70  `TEST-monotone-convergence` — Ratschen-Nachweis ueber die Rundensequenz
 
 Faehrt den Steuerungs-Loop mit einem skriptierten Aktor und assertiert Monotonie, Netto-Fortschritt und Nicht-Kreisen.
 
 verify ▶ `REQ-monotone-convergence` · testRefs: `tests/steering.process-ratchet.test.ts`
 
-### 8.38  `TEST-mutate-gate` — mutate()-Gate Unit-Test
+### 8.71  `TEST-mutate-gate` — mutate()-Gate Unit-Test
 
 mutate() wendet an, gibt Violations zurück, blockt bei error-Severity. (FCHAIN-apply-gate)
 
 verify ▶ `REQ-confidence-tier` · `REQ-one-gate-per-repo` · `REQ-post-apply-gate` · `REQ-pre-apply-gate` · `REQ-rule-enforcement` · `REQ-structural-rule-shared` · testRefs: `tests/harness.gate.test.ts`
 
-### 8.39  `TEST-mvp-e2e` — MVP-1 E2E Acceptance
+### 8.72  `TEST-mutate-input-formate` — Format-E als Eingabe am Gate
+
+Abnahme der Datei tests/mcp.mutate-input.test.ts: ein Format-E-Block laeuft durch dieselbe Gate-Semantik wie Kommandos, ein Parse-Fehler wird zum Block-Verdikt statt zum Absturz, und der dryRun-Preview wird auditiert. Ein Eingabe-Codec, kein zweiter Schreibweg.
+
+verify ▶ `REQ-formatE-parity` · `REQ-single-write-door` · testRefs: `tests/mcp.mutate-input.test.ts`
+
+### 8.73  `TEST-mutate-schema-guard` — Fehlgeformte Kommandos werden hart abgelehnt
+
+Abnahme der Datei tests/mutate.schema-guard.test.ts: ein Batch mit falsch geschriebenen Operationen wird abgelehnt statt als Erfolg quittiert. Der Live-Befund war genau das: die Kommandos passierten das Gate mit success, ohne dass irgendetwas geschrieben wurde.
+
+verify ▶ `REQ-harness-schema-in-contracts` · `REQ-structure-driven` · testRefs: `tests/mutate.schema-guard.test.ts`
+
+### 8.74  `TEST-mutate-violations` — Verstoesse als Zusammenfassung
+
+Abnahme der Datei tests/mcp.mutate-violations.test.ts: graph_mutate antwortet standardmaessig mit einer Zusammenfassung statt dem vollstaendigen Ergebnis. Vorher trug jede Warnung ihren gesamten Kontext zurueck, was den Loewenanteil der Bytes ausmachte, ohne beim Reparieren zu helfen.
+
+verify ▶ `REQ-token-efficiency` · testRefs: `tests/mcp.mutate-violations.test.ts`
+
+### 8.75  `TEST-mvp-e2e` — MVP-1 E2E Acceptance
 
 End-to-End-Akzeptanz des MVP-1-Loops: neues Mitglied bootstrappen, Knoten durchs Gate spec’en, graph_impact liefert exakt den Blast-Radius (KNOW statt grep), Knoten implementieren, re-exportieren. Disk-Kuzu, keine Mocks. (CR-GC-123)
 
 verify ▶ `REQ-code-governed-quality` · `REQ-disk-persistence` · `REQ-impact-based-testing` · `REQ-post-impact-testing` · `REQ-pre-impact-testing` · `REQ-precise-context` · `REQ-single-kuzu-owner` · `REQ-single-store` · `REQ-small-model-viable` · testRefs: `tests/mvp-e2e.test.ts`
 
-### 8.40  `TEST-no-direct-graph-write` — No-Direct-Graph-Write-Test
+### 8.76  `TEST-nd-similarity` — Aehnlichkeits-Matrix fuer die ND-Regeln
+
+Abnahme der Datei tests/nd-similarity.test.ts: die Nah-Duplikat-Regeln der Contracts liefern erst mit injizierter Aehnlichkeits-Matrix Funde, und graphcode berechnet diese Matrizen deterministisch nach den dort dokumentierten Formeln.
+
+verify ▶ `REQ-rule-enforcement` · testRefs: `tests/nd-similarity.test.ts`
+
+### 8.77  `TEST-no-direct-graph-write` — No-Direct-Graph-Write-Test
 
 Direkter Edit/Write auf den committeten SSOT wird von der Harness verweigert; graph_mutate (MCP) gelingt + ist gate-validiert; CI verwirft hand-editiertes (Nicht-Export) JSON. (CR-GC-201)
 
 verify ▶ `REQ-gate-only-writes`
 
-### 8.41  `TEST-one-driver-local-and-frontier` — Treiber gegen zwei Backends ohne Verzweigung
+### 8.78  `TEST-occ` — Optimistische Nebenlaeufigkeit am Werkzeug
+
+Abnahme der Datei tests/mcp.occ.test.ts: ein Schreibzugriff traegt die graphVersion, die sein Autor gelesen hat; eine veraltete Basis wird abgelehnt und meldet die seither angewandten Batches zurueck. Damit verliert kein nebenlaeufiger Schreiber still seine Aenderung.
+
+verify ▶ `REQ-auto-persist-merge` · `REQ-single-write-door` · testRefs: `tests/mcp.occ.test.ts`
+
+### 8.79  `TEST-one-driver-local-and-frontier` — Treiber gegen zwei Backends ohne Verzweigung
 
 Faehrt den eingebetteten Executor gegen beide Backend-Konfigurationen und assertiert identische Loop-Semantik.
 
 verify ▶ `REQ-one-driver-local-and-frontier` · testRefs: `tests/executor.test.ts`
 
-### 8.42  `TEST-phase-gate-not-skippable` — Kein Handoff bei offenem Phasen-Gate
+### 8.80  `TEST-operations-log` — Dauerhaftes Betriebslog in graphcode
+
+Abnahme der Datei tests/operations-log.integration.test.ts: die graphcode-Seite des dauerhaften Logs. Das Verhalten des Logs selbst liegt im Store-Modul und wird dort geprueft; hier zaehlt, dass das Gate seine Eintraege wirklich schreibt und wiederfindet.
+
+verify ▶ `REQ-audit-trail` · testRefs: `tests/operations-log.integration.test.ts`
+
+### 8.81  `TEST-path-containment` — Pfade bleiben im Repo
+
+Abnahme der Datei tests/security.path-containment.test.ts: die zwei im Audit reproduzierten Ausbrueche sind festgenagelt. Beide Senken hatten einen vom Graphen oder Agenten gelieferten Pfad ohne Eindaemmung an den Repo-Wurzelpfad geklebt. Realer Disk-Kuzu, echte Schreibversuche.
+
+verify ▶ `REQ-gate-only-writes` · `REQ-graph-is-ssot` · testRefs: `tests/security.path-containment.test.ts`
+
+### 8.82  `TEST-phase-gate-not-skippable` — Kein Handoff bei offenem Phasen-Gate
 
 Graph mit erreichter Schwelle, aber offener Gate-Luecke; assertiert, dass die Zustandsmaschine nicht auf handoff geht.
 
 verify ▶ `REQ-phase-gate-not-skippable` · testRefs: `tests/generate.test.ts`
 
-### 8.43  `TEST-prompt-provenance` — Prompt-Provenienz-Test
+### 8.83  `TEST-prompt-provenance` — Prompt-Provenienz-Test
 
 Ein Record traegt Session, Modell und den Prompt im Wortlaut; ueber der Kappungsgrenze wird gekuerzt und das gesagt. Abwesenheit bleibt Abwesenheit statt leerem Feld, und bei zwei gleichzeitigen Sessions wird lieber nichts aufgezeichnet als ein geratenes Paar. (REQ-prompt-provenance)
 
 verify ▶ `REQ-prompt-provenance` · testRefs: `tests/audit.origin.test.ts`, `tests/hooks.prompt-relay.test.ts`
 
-### 8.44  `TEST-published-counts-match-code` — Doku-gegen-Code-Konformitaet der Zahlen
+### 8.84  `TEST-published-counts-match-code` — Doku-gegen-Code-Konformitaet der Zahlen
 
 Liest die kanonischen Zahl-Phrasen aus den publizierten Dokumenten und assertiert sie gegen contracts und die gebundene Tool-Registry.
 
 verify ▶ `REQ-published-counts-match-code` · testRefs: `tests/claims.conformance.test.ts`
 
-### 8.45  `TEST-readiness-completeness` — Readiness-Vollstaendigkeits-Abnahme
+### 8.85  `TEST-read-format-param` — Ausgabeformat der Lese-Werkzeuge
+
+Abnahme der Datei tests/mcp.read-format.test.ts: die Lese-Werkzeuge liefern standardmaessig JSON fuer die Agentenlogik und auf Wunsch eine round-trip-stabile Format-E-Scheibe im selben Dialekt wie der committete Graph. Ein Vertrag, zwei Darstellungen.
+
+verify ▶ `REQ-formatE-parity` · `REQ-query-precision` · testRefs: `tests/mcp.read-format.test.ts`
+
+### 8.86  `TEST-readiness-completeness` — Readiness-Vollstaendigkeits-Abnahme
 
 Abnahme der Datei tests/readiness.completeness.test.ts ueber alle vier Gates: UC ohne FCHAIN faellt bei SRR, die aktor-begrenzte Kette bei PDR, FLOW ohne SCHEMA bei CDR, fehlende Bindung bei TRR; die Coverage rechnet gegen die Source-Population und liefert einen einzigen Wert je Dimension. Verifiziert REQ-readiness-completeness, REQ-completeness-actor-bounded und REQ-completeness-single-value zusammen (CR-GC-383).
 
 verify ▶ `REQ-completeness-actor-bounded` · `REQ-completeness-single-value` · `REQ-readiness-completeness` · testRefs: `tests/readiness.completeness.test.ts`
 
-### 8.46  `TEST-readiness-model` — Readiness-Modell-Test
+### 8.87  `TEST-readiness-model` — Readiness-Modell-Test
 
 Acceptance-Test fuer das Readiness-Modell: INCOSE-Scope lean, Phase-Gates SRR/PDR/CDR/TRR als disjunkte und vollstaendige Partition der V3_RULES, Impl-Gates SAR/FCA/SVR/FRR aus MS + CR-Status; deterministische Unit-Faelle + SSOT-Integration, niemals BQ. (CR-GC-125)
 
 verify ▶ `REQ-readiness-model` · testRefs: `tests/readiness.model.test.ts`
 
-### 8.47  `TEST-readonly-bridge` — Host-Bridge-Abnahme
+### 8.88  `TEST-readonly-bridge` — Host-Bridge-Abnahme
 
 Abnahme der Datei tests/host.bridge.test.ts: die Bridge akzeptiert keine Inbound-Mutation, Writes gehen nur durch MCP mutate(), und der Health-Endpunkt meldet den echten Zustand des Hosts statt einer Konstanten. Verifiziert REQ-readonly-bridge und REQ-real-health-check zusammen (CR-GC-383).
 
 verify ▶ `REQ-readonly-bridge` · `REQ-real-health-check` · testRefs: `tests/host.bridge.test.ts`
 
-### 8.48  `TEST-reduced-llm` — Modellfrei-Gate-Test
+### 8.89  `TEST-realref-materialize` — Kein Phantompfad hinter einer SCHEMA-Bindung
+
+Abnahme der Datei tests/export.realref-materialize.test.ts: der Export legt fuer jede gebundene SCHEMA ohne Datei einen z.unknown-Zod-Stub an, wie er es fuer eine gebundene TEST-Datei tut, und ueberschreibt nie eine vorhandene Datei. Ohne das bliebe im Graphen gebunden, was im Code nicht existiert.
+
+verify ▶ `REQ-testref-materialized` · testRefs: `tests/export.realref-materialize.test.ts`
+
+### 8.90  `TEST-reduced-llm` — Modellfrei-Gate-Test
 
 Gate/Regel-Evaluation läuft ohne Modell-Call (localReachable=false) deterministisch; nur LLM-Zusatzfeatures degradieren.
 
 verify ▶ `REQ-graceful-degradation` · `REQ-post-modelfree-gate` · `REQ-pre-modelfree-gate` · `REQ-small-model-viable`
 
-### 8.49  `TEST-responsiveness` — Responsiveness-Test (<0,2s)
+### 8.91  `TEST-reseed` — Reseed auf den committeten Stand
+
+Abnahme der Datei tests/mcp.reseed.test.ts: graph_reseed synchronisiert den lebenden Store in-process zurueck auf den committeten Snapshot, verwirft dabei eine nicht exportierte Gate-Mutation und stellt die committeten Zahlen ohne Korruption wieder her.
+
+verify ▶ `REQ-graph-state-recall` · `REQ-store-recovery` · testRefs: `tests/mcp.reseed.test.ts`
+
+### 8.92  `TEST-responsiveness` — Responsiveness-Test (<0,2s)
 
 Draft-Apply + betroffener-Subgraph-Check antwortet < 0,2s (ohne LLM). (FCHAIN-apply-gate NFR)
 
 verify ▶ `REQ-responsiveness`
 
-### 8.50  `TEST-roundtrip` — Format-E Round-Trip Conformance
+### 8.93  `TEST-retro-kpi` — KPI-Auswertung nach dem Projekt
+
+Abnahme der Datei tests/retro-kpi.test.ts: die Auswertung liefert deterministische Werte aus einer Fixture-Sitzung, und das entscheidende Signal stimmt: eine bewusst graph-lose Sitzung ergibt ein Graph-zu-Grep-Verhaeltnis unter eins.
+
+verify ▶ `REQ-quality-metric` · testRefs: `tests/retro-kpi.test.ts`
+
+### 8.94  `TEST-rewind` — Rueckspulen auf einen Commit
+
+Abnahme der Datei tests/rewind.test.ts: graphcode rewind stellt den Graphstand her, der an einem Ref committet war. Der Mechanismus selbst ist anderswo bewiesen; hier zaehlt das Verb als Bedienweg der Rueckhol-Haelfte.
+
+verify ▶ `REQ-graph-state-recall` · testRefs: `tests/rewind.test.ts`
+
+### 8.95  `TEST-roundtrip` — Format-E Round-Trip Conformance
 
 decode(encode(g))==g; zwei Encodes byte-identisch. (FCHAIN-codec-roundtrip)
 
 verify ▶ `REQ-codec-validation` · `REQ-deterministic-serialization` · `REQ-formatE-diff-dialect` · `REQ-formatE-parity` · `REQ-post-codec-roundtrip` · `REQ-pre-codec-roundtrip` · `REQ-roundtrip-conformance` · testRefs: `tests/codec.roundtrip.test.ts`
 
-### 8.51  `TEST-rule-calibration` — Regel-Kalibrierungs-Test
+### 8.96  `TEST-rule-calibration` — Regel-Kalibrierungs-Test
 
 audit_stats aggregiert je Regel, je Modell und je Konsument; die Werte sind identisch zur jq-Zeile auf demselben Trail. Ein Record mit 20 Violations derselben Regel zaehlt eine Blockade und zwanzig Vorkommen; fehlendes rulesPassed liefert null statt einer Null. (REQ-rule-calibration)
 
 verify ▶ `REQ-rule-calibration` · testRefs: `tests/audit.stats.test.ts`
 
-### 8.52  `TEST-schema-migration` — Schema-Migrations-Test
+### 8.97  `TEST-schema-migration` — Wache gegen Schema-Drift
 
-Version-Bump → Graph re-validiert/migriert, Violations berichtet, Version aktualisiert. (FUNC-migrate-schema)
+Abnahme der Datei tests/schema-guard.test.ts: der Store friert seine Kanten-Tabellen beim Anlegen ein; bekommt das Meta-Modell ein neues Paar, weist das eingefrorene Schema die Kante ab. Die Wache erkennt den Versatz und setzt den Store aus dem committeten Stand neu auf, statt ihn kaputt weiterzubenutzen.
 
-verify ▶ `REQ-post-migrate-schema` · `REQ-pre-migrate-schema` · `REQ-schema-version-migration`
+verify ▶ `REQ-post-migrate-schema` · `REQ-pre-migrate-schema` · `REQ-schema-version-migration` · `REQ-store-recovery` · testRefs: `tests/schema-guard.test.ts`
 
-### 8.53  `TEST-shared-views-no-fork` — Shared-Views-No-Fork-Test
+### 8.98  `TEST-se-plan-ordering` — Reihenfolge des Umsetzungsplans
+
+Abnahme der Datei tests/se-plan.ordering.test.ts: die Reihenfolge des Plans kommt aus der Abhaengigkeits-Topologie des Graphen, nicht aus dem Prompt-Text. Jede Voraussetzung steht vor dem, was sie braucht.
+
+verify ▶ `REQ-structure-driven` · testRefs: `tests/se-plan.ordering.test.ts`
+
+### 8.99  `TEST-selective-test-audit` — Auswahl-Resolver und Messinstrument
+
+Abnahme der Datei tests/test-selection.audit.test.ts: die Kantensemantik der Auswahl, die Paritaet zwischen Store-Pfad und Snapshot-Pfad, und die Fallback-Regel. Eine nicht aufloesbare Datei fuehrt zum Volllauf, nie zur leeren Auswahl.
+
+verify ▶ `REQ-graph-tests-operational` · `REQ-impact-based-testing` · testRefs: `tests/test-selection.audit.test.ts`
+
+### 8.100  `TEST-session-lifecycle` — Host stirbt mit seiner Sitzung
+
+Abnahme der Datei tests/session-lifecycle.test.ts: der Abbau laeuft in umgekehrter Reihenfolge mit dem Store-Lock zuletzt und laeuft nach einem Fehlschlag weiter. Ohne diese Eigenschaften kehrt der Zombie-Host zurueck.
+
+verify ▶ `REQ-single-kuzu-owner` · testRefs: `tests/session-lifecycle.test.ts`
+
+### 8.101  `TEST-shared-views-no-fork` — Shared-Views-No-Fork-Test
 
 Die View-Berechnung liegt in @sigloch/graph-api-core; kein lokaler BQ-Regel-Fork (aimpro/src/contracts/se) mehr referenziert. (REQ-shared-views-no-fork)
 
 verify ▶ `REQ-shared-views-no-fork` · testRefs: `tests/views.no-fork.test.ts`
 
-### 8.54  `TEST-single-measurement-path` — Messpfad-Konsistenz ueber drei Oberflaechen
+### 8.102  `TEST-single-measurement-path` — Messpfad-Konsistenz ueber drei Oberflaechen
 
 Fixture mit attributgetragenen Bindungen; assertiert identische Violations und Scores ueber alle drei Oberflaechen und faellt rot, sobald eine auf das flache Export-Encoding zurueckfaellt.
 
 verify ▶ `REQ-single-measurement-path` · testRefs: `tests/steering.measurement-path.test.ts`
 
-### 8.55  `TEST-single-write-door` — Die eine Tuer, in einem Nachweis
+### 8.103  `TEST-single-write-door` — Die eine Tuer, in einem Nachweis
 
 Drei Assertionen in Folge: legale Mutation landet, illegale laesst den deterministischen Export identisch, Direktschreib-Versuch wird mit Exit-Code und Meldung abgewiesen.
 
 verify ▶ `REQ-single-write-door` · testRefs: `tests/gate.single-door.test.ts`
 
-### 8.56  `TEST-skills-mcp` — Skills-MCP-Conformance-Test
+### 8.104  `TEST-skills-mcp` — Skills-MCP-Conformance-Test
 
 Alle mitgelieferten .claude/commands/se*-Dateien sind MCP-getrieben: 0 Treffer fuer die abgeschaltete localhost:3001-API (/api/graph, /api/dashboard, GRAPH_API) und jedes Skill referenziert >=1 Tool aus der Live-Registry. "done = verifiziert" fuer die prompt-realisierten FUNCs von MOD-skills (se-view/* → REQ-doc-export). (CR-GC-132)
 
 verify ▶ `REQ-doc-export` · testRefs: `tests/skills.mcp-conformance.test.ts`
 
-### 8.57  `TEST-steering-loop` — Steuerungsschleifen-Test
+### 8.105  `TEST-status-verb` — Abnahme des status-Verbs
+
+Abnahme der Datei tests/status.test.ts: eine antwortende URL zaehlt nur, wenn die Instanz dieses Repo bedient. Alle Effekte sind injiziert, damit der Befund nicht davon abhaengt, was zufaellig lokal laeuft.
+
+verify ▶ `REQ-single-kuzu-owner` · testRefs: `tests/status.test.ts`
+
+### 8.106  `TEST-steering-loop` — Steuerungsschleifen-Test
 
 Die Schleife als Ganzes: nextStep leitet Fokus und Blocker aus demselben Snapshot ab, generationStep waehlt dieselbe Dimension, rankCandidates ordnet nach dem Fokus-Delta; Determinismus gegen wiederholte Laeufe.
 
 verify ▶ `REQ-steering-from-metrics` · testRefs: `tests/steering.test.ts`
 
-### 8.58  `TEST-store-recovery` — Store-Recovery-Test
+### 8.107  `TEST-steering-snapshot` — Steuerung sieht die flachen Attribute
+
+Abnahme der Datei tests/steering-snapshot.test.ts: der Steuerungs- und Generierungspfad baut seine Sicht nicht mehr ueber den Umweg der Serialisierung, die die Attribute abflacht. Genau dieser Umweg machte Bindungen fuer die Regeln unsichtbar.
+
+verify ▶ `REQ-single-measurement-path` · testRefs: `tests/steering-snapshot.test.ts`
+
+### 8.108  `TEST-store-lock` — Store-Besitz und Schreib-Serialisierung
+
+Abnahme der Datei tests/store-lock.test.ts: ein zweiter Schreiber auf demselben Store wird laut abgewiesen statt still ueberschrieben, ein verwaister Lock wird zurueckgeholt, und ein lebender bleibt unangetastet. Dazu die Serialisierung, damit sich Reseed und Mutation nie verschraenken.
+
+verify ▶ `REQ-one-gate-per-repo` · `REQ-single-kuzu-owner` · testRefs: `tests/store-lock.test.ts`
+
+### 8.109  `TEST-store-recovery` — Store-Recovery-Test
 
 Kuzu Lock-Konflikt / abgestuerzter Owner / korrupter Store: Lock-Erkennung + sicherer Re-Open; kein zweites DB-Handle. (ConOps Recovery)
 
 verify ▶ `REQ-store-recovery`
 
-### 8.59  `TEST-target-shifts-ranking` — Ranking gegen zwei gegenlaeufige Zielvektoren
+### 8.110  `TEST-target-profile` — Zielprofil als Steuer-Konfiguration
+
+Abnahme der Datei tests/target-profile.test.ts: Schema, Laden und Konfliktpruefung des Zielprofils, dazu der Konfigurations-Default des Vorschlags-Werkzeugs gegen einen echten Disk-Kuzu. Die Konfliktpruefung ist ein Pfad, kein zweiter neben der Steuerung.
+
+verify ▶ `REQ-target-shifts-ranking` · `REQ-thresholds-from-config` · testRefs: `tests/target-profile.test.ts`
+
+### 8.111  `TEST-target-shifts-ranking` — Ranking gegen zwei gegenlaeufige Zielvektoren
 
 Zwei Laeufe auf identischem Graphen, verschieden nur im Vorzeichen des Ziels; assertiert Score-Negation, Spitzenwechsel und Magnituden-Invarianz.
 
 verify ▶ `REQ-target-shifts-ranking` · testRefs: `tests/mcp.suggest.test.ts`
 
-### 8.60  `TEST-test-runnable-binding` — TestRef-Aufloesungs-Test
+### 8.112  `TEST-test-runnable-binding` — TestRef-Aufloesungs-Test
 
 Abnahme der Datei tests/mcp.tests-deduction.test.ts: ein impacted TEST-Knoten wird ueber testRefs eindeutig auf eine lauffaehige Datei aufgeloest, graph_tests erzeugt daraus ein selektives Run-Kommando ueber genau diese Dateien, und ein TEST ohne testRefs erscheint unter unresolved statt zu verschwinden. Synthetische Disk-Kuzu-Fixture.
 
 verify ▶ `REQ-test-runnable-binding` · testRefs: `tests/mcp.tests-deduction.test.ts`
 
-### 8.61  `TEST-testref-materialize` — Export stub-materialization test
+### 8.113  `TEST-testref-materialize` — Export stub-materialization test
 
 graph_export scaffoldt einen lauffaehigen it.todo-Stub fuer eine fehlende testRef-Datei, ueberschreibt nie eine existierende, ueberspringt concept-only; danach loest graph_tests auf die materialisierte Datei auf. (CR-GC-205 Item 4)
 
 verify ▶ `REQ-testref-materialized` · testRefs: `tests/export.testref-materialize.test.ts`
 
-### 8.62  `TEST-thresholds-from-config` — Schwelle als Knopf, nicht als Literal
+### 8.114  `TEST-testreport` — Rueckweg des Testergebnisses
+
+Abnahme der Datei tests/testreport.test.ts: das Ergebnis eines Laufs kommt in den Graphen und der Pruefreport wieder heraus. Vorher meldete die Ergebnis-Regel jeden TEST-Knoten als ergebnislos, waehrend die Suite vollstaendig gruen lief.
+
+verify ▶ `REQ-audit-trail` · `REQ-test-runnable-binding` · testRefs: `tests/testreport.test.ts`
+
+### 8.115  `TEST-thresholds-from-config` — Schwelle als Knopf, nicht als Literal
 
 Zwei Repos, identischer Graph, verschieden nur in graphcode.config.jsonc; assertiert das gekippte Urteil bei identischer Messung.
 
 verify ▶ `REQ-thresholds-from-config` · testRefs: `tests/config.test.ts`
 
-### 8.63  `TEST-token-efficiency` — Token-Budget-Test
+### 8.116  `TEST-token-efficiency` — Token-Budget-Test
 
 graph_impact-Kontext ist messbar kleiner als ein Volltext-/grep-Dump desselben Scopes (Token-Count-Assertion).
 
 verify ▶ `REQ-benchmark-harness` · `REQ-precise-context` · `REQ-token-efficiency`
+
+### 8.117  `TEST-uc-authoring-style` — Stilregel fuer Use Cases als Linter
+
+Abnahme der Datei tests/se-author-uc.test.ts: die Stilregel ist ausfuehrbar statt Prosa. Hoechstens 25 Woerter, hoechstens zwei Fachbegriffe, jeder davon an einem Knoten geerdet, geprueft auch gegen den committeten Graphen.
+
+verify ▶ `REQ-interactive-capture-suggest` · testRefs: `tests/se-author-uc.test.ts`
+
+### 8.118  `TEST-upgrade` — Abnahme des upgrade-Verbs
+
+Abnahme der Datei tests/upgrade.test.ts: die Reihenfolge macht den Befehl aus. Erst installieren, dann die Artefakte vom NEU installierten Build schreiben lassen, dann den alten Host beenden. Bleibt ein Schritt aus, steht das im Bericht statt als stiller Erfolg. npm und Signale sind injiziert, kein Netz.
+
+verify ▶ `REQ-install-idempotent` · `REQ-repo-update` · testRefs: `tests/upgrade.test.ts`
+
+### 8.119  `TEST-views-auditor` — Sichten fuer den Auditor
+
+Abnahme der Datei tests/views.auditor.test.ts: die Nachweismatrix zeigt, auf welcher Ebene eine Anforderung sitzt, und die Verifikationsmatrix, welcher Test eine Schnittstelle zwischen zwei Funktionen abdeckt. Beides stand im Graphen und war ohne Lauf nicht lesbar.
+
+verify ▶ `REQ-doc-export` · `REQ-readiness-model` · testRefs: `tests/views.auditor.test.ts`
+
+### 8.120  `TEST-views-conformance` — Eine Sicht liest nur Deklariertes
+
+Abnahme der Datei tests/views.conformance.test.ts: eine Sicht darf nur lesen, was Ontologie und Regeln deklarieren. Die Fehlerklasse dagegen ist die volle Konformitaet auf einer leeren Sicht, also ein gruener Bericht ueber nichts.
+
+verify ▶ `REQ-doc-export` · `REQ-shared-views-no-fork` · testRefs: `tests/views.conformance.test.ts`
+
+### 8.121  `TEST-violation-context` — Reparatur-Kontext am Verstoss
+
+Abnahme der Datei tests/mcp.violation-context.test.ts: die Regel-Werkzeuge reichen den Reparatur-Kontext der Contracts durch, statt ihn flachzuklopfen. Wer einen Verstoss aufloest, bekommt Hinweis und Kandidaten aus derselben Antwort, ohne eine zweite Abfrage.
+
+verify ▶ `REQ-precise-context` · `REQ-rule-enforcement` · testRefs: `tests/mcp.violation-context.test.ts`
 
 ## 9  Traceability summary
 

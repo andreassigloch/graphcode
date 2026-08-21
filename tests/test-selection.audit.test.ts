@@ -161,6 +161,23 @@ describe('Audit über das echte Repo', () => {
     expect(ctx.allTests).toContain('tests/test-selection.audit.test.ts');
   });
 
+  it('zählt eine testRefs-Bindung nur an einem TEST-Knoten als Verankerung', () => {
+    // Der reale Fund (CR-GC-385): `FUNC-upgrade` trug `testRefs` auf tests/upgrade.test.ts.
+    // Das Audit las die Datei als verankert, während graph_test_ingest sie nicht auflösen
+    // konnte — die Kennzahl behauptete Vollständigkeit, die das Gate nicht sah.
+    const graph = snapshotToGraph({
+      elements: [
+        { id: 'FUNC-x', type: 'FUNC', name: 'Func x', testRefs: [{ file: 'tests/alpha.test.ts', tool: 'vitest' }] },
+        { id: 'TEST-x', type: 'TEST', name: 'Test x', testRefs: [{ file: 'tests/beta.test.ts', tool: 'vitest' }] },
+      ],
+      traces: [],
+    });
+    const cov = coverage({ ...ctx, graph, allTests: ['tests/alpha.test.ts', 'tests/beta.test.ts'], allSources: [] });
+
+    expect(cov.tests.anchored).toBe(1);
+    expect(cov.tests.unanchored).toEqual(['tests/alpha.test.ts']);
+  });
+
   it('misst Recall gegen tatsächlich importierende Tests, nie gegen sich selbst', () => {
     const rec = recall(ctx);
 
