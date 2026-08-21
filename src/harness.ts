@@ -41,6 +41,7 @@ import {
   type RuleViolation,
 } from '@sigloch/contracts/harness';
 import { HookSystem } from './hooks.js';
+import { impactedTests } from './test-selection.js';
 import { CONFIG_FILENAME, DEFAULT_CONFIG, type LoadedConfig } from './config.js';
 import {
   DEFAULT_GRAPH_JSON,
@@ -292,67 +293,27 @@ export class GraphCodeHarness {
    *   - `allocate` (in)   : a MOD ← the FUNC allocated to it (the module's functions)
    *   - `verify`   (in)   : a spec ← the TEST that verifies it
    *
-   * This is NOT a second blast-radius: it consumes the SAME `getSubgraph` primitive
-   * graph_impact/graph_expand use (one `both`-direction fetch per root) and filters
-   * it by trace semantics — exactly as graph_expand prunes by edge type. A REQ
-   * changeset degenerates to `verify`-dependents only — identical to the path
-   * graph_tests took before (REQ → its verifying TESTs).
+   * This is NOT a second blast-radius: it filters ONE graph read by trace semantics —
+   * exactly as graph_expand prunes by edge type. A REQ changeset degenerates to
+   * `verify`-dependents only — identical to the path graph_tests took before
+   * (REQ → its verifying TESTs).
+   *
+   * The traversal itself lives in `./test-selection.ts` as a pure function over a
+   * loaded graph (CR-GC-381), because the measurement instrument
+   * `scripts/test-selection-audit.mjs` needs the SAME semantics over the committed
+   * snapshot — where no second Kuzu handle may exist (REQ-single-kuzu-owner). One
+   * implementation, two callers, no drift.
    *
    * Returns the directed subgraph: the changed nodes ∪ reached spec anchors ∪ the
    * TESTs verifying them. The TEST nodes are the impacted test set.
    */
   async testImpact(changeSet: string[], depth: number): Promise<Graph> {
-    // Directed BFS over the realization traces. Each discovered node is expanded by
-    // its 1-hop neighbourhood via the single getSubgraph primitive — a plain `both`
-    // fetch on the changeset would NOT reach the tests: `getSubgraph(both)` is the
+    // The full store read is the same primitive listElements() uses; a plain
+    // `getSubgraph(both)` fetch on the changeset would NOT reach the tests (it is the
     // UNION of pure-in and pure-out reachability, and a code node reaches its TESTs
-    // only by turning direction (`MOD →satisfy→ REQ ←verify← TEST`), which no single
-    // directed fetch captures. So we walk hop-by-hop, following the trace semantics:
-    //   - satisfy (out)  : cur → the REQ/UC it fulfils       → a spec anchor
-    //   - allocate (in)  : cur(MOD) ← the FUNC allocated to it → expand the function
-    //   - verify  (in)   : cur ← the TEST that verifies it    → an impacted test
-    // A REQ changeset degenerates to verify-dependents only (hop 0), identical to the
-    // path graph_tests took before. This is option (b) of CR-GC-204: an explicit
-    // code→REQ→TEST resolver over the single store traversal, not a second blast-radius.
-    const nodeMap = new Map<string, GraphNode>();
-    const edgeMap = new Map<string, GraphEdge>();
-    const anchors = new Set<string>(changeSet); // realization closure (changeset + specs it fulfils)
-    const testIds = new Set<string>();
-    const visited = new Set<string>();
-    // code→FUNC→REQ→TEST is up to ~3 directed hops; floor the budget so a code
-    // changeset resolves even at the default depth, allow callers to request deeper.
-    const maxHops = Math.max(depth, 4);
-
-    let frontier = [...changeSet];
-    for (let hop = 0; hop < maxHops && frontier.length > 0; hop++) {
-      const next: string[] = [];
-      for (const cur of frontier) {
-        if (visited.has(cur)) continue;
-        visited.add(cur);
-        const sub = await this.storage.getSubgraph(cur, 1, 'both');
-        for (const n of sub.nodes) nodeMap.set(n.uid, n);
-        for (const e of sub.edges) {
-          edgeMap.set(`${e.sourceId}|${e.edgeType}|${e.targetId}`, e);
-          if (e.edgeType === 'verify' && e.targetId === cur) {
-            testIds.add(e.sourceId); // TEST → cur (cur is a verified anchor)
-          } else if (e.edgeType === 'satisfy' && e.sourceId === cur && !anchors.has(e.targetId)) {
-            anchors.add(e.targetId); // cur → spec
-            next.push(e.targetId);
-          } else if (e.edgeType === 'allocate' && e.targetId === cur && !anchors.has(e.sourceId)) {
-            anchors.add(e.sourceId); // MOD ← FUNC
-            next.push(e.sourceId);
-          }
-        }
-      }
-      frontier = next;
-    }
-
-    // Assemble the directed subgraph: realization anchors ∪ impacted TESTs. The TEST
-    // nodes were captured as neighbours when their anchor was expanded, so nodeMap
-    // carries their full attributes (incl. testRef).
-    const keep = new Set<string>([...anchors, ...testIds]);
-    const nodes = [...keep].map((id) => nodeMap.get(id)).filter((n): n is GraphNode => n !== undefined);
-    const edges = [...edgeMap.values()].filter((e) => keep.has(e.sourceId) && keep.has(e.targetId));
+    // only by turning direction: `MOD →satisfy→ REQ ←verify← TEST`).
+    const graph = await this.storage.loadGraph(this.config.scope);
+    const { nodes, edges } = impactedTests(graph, changeSet, depth);
     return { nodes, edges };
   }
 

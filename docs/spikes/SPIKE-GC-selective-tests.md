@@ -129,8 +129,18 @@ nirgendwo lauffähig, auch nicht dort, wo sie entwickelt wurde.
 ### M8 — Das Potenzial
 
 Über die letzten 60 Commits, Auswahl = geänderte Testdateien ∪ direkt importierende Tests
-(Config-Änderung ⇒ Volllauf): **78 % weniger Testdatei-Läufe** (1368 statt 6360). Median 0 —
-36 der 60 Commits waren doc-/CR-only. Typischer Code-Commit: **3–8 von 106** Dateien.
+∪ Graph-Auswahl, mit ehrlichem Fallback (nicht auflösbare Datei oder Abhängigkeits-/Build-Änderung
+⇒ Volllauf):
+
+| | Dateiläufe über 60 Commits | gegenüber Volllauf |
+|---|---|---|
+| heutiges Modell, mit Fallback | 2975 | **53 % weniger** |
+| Decke: jede geänderte Datei hätte einen Knoten | 1639 | **74 % weniger** |
+| Volllauf (Ist-Zustand) | 6360 | — |
+
+Die Differenz zwischen 53 % und 74 % ist exakt der Preis der 46 unmodellierten Quelldateien.
+Median 0 — 36 der 60 Commits waren doc-/CR-only. Typischer Code-Commit: **3–8 von 106** Dateien.
+Zahlen reproduzierbar via `node scripts/test-selection-audit.mjs --commits 60` (CR-GC-381).
 
 Von 60 Commits berührten 21 `src/`; davon änderten **2** ausschließlich gebundene Dateien. Mit reiner
 Graph-Auswahl und ehrlichem Fallback griffe die Selektion heute also bei 2 von 21 Code-Commits.
@@ -171,7 +181,8 @@ Laufzeit zu holen.
 Die Auswahl **darf** heute nicht scharf geschaltet werden, und zwar nicht wegen eines Fehlers in
 `graph_tests`, sondern weil das Modell die Realität nicht abdeckt: 70 % der Quelldateien haben keinen
 Knoten, 55 % der Testobjekte keinen. Der Traversal tut, was er soll; er hat nur zu wenig, worüber er
-laufen kann. Der **Hebel** ist mit 78 % weniger Dateiläufen groß genug, um die Modellarbeit zu
+laufen kann. Der **Hebel** ist mit 74 % weniger Dateiläufen bei vollständigem Modell (53 % schon
+mit dem heutigen) groß genug, um die Modellarbeit zu
 rechtfertigen — bei linearer Laufzeit (`fileParallelism: false`) ist das direkt Wartezeit.
 
 ## 6. Falsifikationskriterium für die Verdrahtung

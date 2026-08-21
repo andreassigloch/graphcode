@@ -17,8 +17,8 @@ Familien-Graphen, Regelbefunde aus dem echten Evaluator (`@sigloch/contracts/se`
 
 Kernzahlen: 19 von 63 Quelldateien und 48 von 106 Testdateien sind überhaupt modelliert; die
 Graph-Auswahl trifft **13 %** der direkt koppelnden Tests (`src/upgrade.ts` → leere Auswahl,
-`src/rewind.ts` → die falsche Datei); Potenzial bei vollständigem Modell **78 %** weniger
-Testdatei-Läufe über die letzten 60 Commits.
+`src/rewind.ts` → die falsche Datei); Potenzial über die letzten 60 Commits **53 %** weniger
+Testdatei-Läufe mit dem heutigen Modell, **74 %** bei vollständigem.
 
 Nebenbefunde: 36 FUNC tragen das abgelöste `codeRef` neben `realRef` (13 widersprüchlich), R-29 ist
 16× verletzt (7 Dateien mit je 2–3 Knoten), `case` ist von genau einem Konsumenten genutzt, kein MOD
