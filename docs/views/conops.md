@@ -58,7 +58,7 @@ Als Entwickler will ich, dass jede Aenderung, meine wie die eines Agenten, durch
 
 Ausgeloest von: `ACTOR-claude-code` · `ACTOR-dashboard` · `ACTOR-developer` · `ACTOR-facilitating-agent` · `ACTOR-graphify` · `ACTOR-opencode` · `ACTOR-systems-engineer` · `ACTOR-vibe-coder`
 
-- `FCHAIN-apply-gate` — Apply-Gate-Ablauf (Governed Mutation): `FUNC-close-store` → `FUNC-emit-trajectory` → `FUNC-evaluate-rules` → `FUNC-load-graph` → `FUNC-mutate` → `FUNC-open-store` → `FUNC-save-graph`
+- `FCHAIN-apply-gate` — Apply-Gate-Ablauf (Governed Mutation): `FUNC-claim-store-lock` → `FUNC-close-store` → `FUNC-emit-trajectory` → `FUNC-evaluate-rules` → `FUNC-load-graph` → `FUNC-mutate` → `FUNC-open-store` → `FUNC-save-graph` → `FUNC-session-shutdown`
 - `FCHAIN-capture` — Interaktive Erfassung (Text → suggest-Tier): `FUNC-decode` → `FUNC-import` → `FUNC-mutate`
 - `FCHAIN-codec-roundtrip` — Format-E Round-Trip (encode∘decode): `FUNC-decode` → `FUNC-encode` → `FUNC-merge-nodes`
 - `FCHAIN-interface-escalation` — Interface-Änderungs-Eskalation: `FUNC-graph-impact` → `FUNC-mutate`

@@ -141,6 +141,8 @@ Belegt: 92/125 REQ bestanden (74%) — eine Kante ist kein Nachweis; ein REQ zä
 
 | Verbindung | via FLOW | FCHAIN | deckende TEST(s) | level | Ergebnis |
 |---|---|---|---|---|---|
+| `FUNC-claim-store-lock` → `FUNC-open-store` | `FLOW-store-ownership` | `FCHAIN-apply-gate` | `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, e2e, integration, performance | passed |
+| `FUNC-claim-store-lock` → `FUNC-session-shutdown` | `FLOW-store-ownership` | `FCHAIN-apply-gate` | `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, e2e, integration, performance | passed |
 | `FUNC-close-store` → `FUNC-emit-trajectory` | `FLOW-committed-graph` | `FCHAIN-apply-gate` | `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, e2e, integration, performance | passed |
 | `FUNC-close-store` → `FUNC-load-graph` | `FLOW-committed-graph` | `FCHAIN-apply-gate` | `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, e2e, integration, performance | passed |
 | `FUNC-compute-readiness` → `FUNC-generation-step` | `FLOW-dimension-readiness` | `FCHAIN-steering-loop` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` · `TEST-steering-loop` | integration | passed |
@@ -169,7 +171,9 @@ Belegt: 92/125 REQ bestanden (74%) — eine Kante ist kein Nachweis; ein REQ zä
 | `FUNC-save-graph` → `FUNC-graph-export-snapshot` | `FLOW-committed-graph` | `FCHAIN-snapshot-freshness` | `TEST-auto-export` · `TEST-graph-time-travel` | integration | passed |
 | `FUNC-save-graph` → `FUNC-load-graph` | `FLOW-committed-graph` | `FCHAIN-apply-gate` | `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, e2e, integration, performance | passed |
 | `FUNC-serve-stdio` → `FUNC-export-markdown` | `FLOW-export-request` | `FCHAIN-doc-export` | `TEST-auto-export` · `TEST-doc-export` · `TEST-mcp-export` · `TEST-member-name` · `TEST-skills-mcp` · `TEST-views-auditor` · `TEST-views-conformance` | conformance, integration, unit | passed |
+| `FUNC-session-shutdown` → `FUNC-emit-trajectory` | `FLOW-committed-graph` | `FCHAIN-apply-gate` | `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, e2e, integration, performance | passed |
+| `FUNC-session-shutdown` → `FUNC-load-graph` | `FLOW-committed-graph` | `FCHAIN-apply-gate` | `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, e2e, integration, performance | passed |
 | `FUNC-take-steering-snapshot` → `FUNC-compute-readiness` | `FLOW-steering-snapshot` | `FCHAIN-steering-loop` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` · `TEST-steering-loop` | integration | passed |
 | `FUNC-take-steering-snapshot` → `FUNC-next-step` | `FLOW-steering-snapshot` | `FCHAIN-steering-loop` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` · `TEST-steering-loop` | integration | passed |
 
-> 30/30 deklarierte FUNC↔FUNC-Verbindungen sind über die Kette TEST→REQ←FCHAIN→FUNC abgedeckt · 0 offen. Nur Paare mit gemeinsamer FCHAIN — Ko-Adjazenz an einer geteilten FLOW ist keine deklarierte Schnittstelle (CR-GC-315). Leeres level/Ergebnis = am TEST nicht gepflegt.
+> 34/34 deklarierte FUNC↔FUNC-Verbindungen sind über die Kette TEST→REQ←FCHAIN→FUNC abgedeckt · 0 offen. Nur Paare mit gemeinsamer FCHAIN — Ko-Adjazenz an einer geteilten FLOW ist keine deklarierte Schnittstelle (CR-GC-315). Leeres level/Ergebnis = am TEST nicht gepflegt.

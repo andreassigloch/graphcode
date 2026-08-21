@@ -49,7 +49,7 @@
 | `REQ-responsiveness` | `TEST-responsiveness` | `FCHAIN-apply-gate` | — |
 | `REQ-schema-version-migration` | `TEST-schema-migration` | `FUNC-migrate-schema` | `MOD-harness` |
 | `REQ-self-contained-dist` | `TEST-distribution` | `FUNC-harness-cli` | `MOD-cli` |
-| `REQ-single-kuzu-owner` | `TEST-bridge-follows-lock` · `TEST-gve-autostart` · `TEST-host-shim` · `TEST-mvp-e2e` · `TEST-session-lifecycle` · `TEST-status-verb` · `TEST-store-lock` | `FUNC-close-store` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `MOD-harness` | `MOD-harness` · `MOD-host-bridge` |
+| `REQ-single-kuzu-owner` | `TEST-bridge-follows-lock` · `TEST-gve-autostart` · `TEST-host-shim` · `TEST-mvp-e2e` · `TEST-session-lifecycle` · `TEST-status-verb` · `TEST-store-lock` | `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` · `MOD-harness` | `MOD-cli` · `MOD-harness` · `MOD-host-bridge` |
 | `REQ-single-store` | `TEST-mvp-e2e` | `MOD-harness` | — |
 | `REQ-single-transport` | `TEST-mcp-stdio-server` | `FUNC-serve-stdio` · `MOD-mcp-tools` | `MOD-mcp-tools` |
 | `REQ-store-recovery` | `TEST-reseed` · `TEST-schema-migration` · `TEST-store-recovery` | `MOD-harness` | — |
@@ -251,7 +251,7 @@
 | `REQ-schema-version-migration` | `TEST-schema-migration` | `FUNC-migrate-schema` | `MOD-harness` |
 | `REQ-self-contained-dist` | `TEST-distribution` | `FUNC-harness-cli` | `MOD-cli` |
 | `REQ-shared-views-no-fork` | `TEST-shared-views-no-fork` · `TEST-views-conformance` | `MOD-dashboard` | — |
-| `REQ-single-kuzu-owner` | `TEST-bridge-follows-lock` · `TEST-gve-autostart` · `TEST-host-shim` · `TEST-mvp-e2e` · `TEST-session-lifecycle` · `TEST-status-verb` · `TEST-store-lock` | `FUNC-close-store` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `MOD-harness` | `MOD-harness` · `MOD-host-bridge` |
+| `REQ-single-kuzu-owner` | `TEST-bridge-follows-lock` · `TEST-gve-autostart` · `TEST-host-shim` · `TEST-mvp-e2e` · `TEST-session-lifecycle` · `TEST-status-verb` · `TEST-store-lock` | `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` · `MOD-harness` | `MOD-cli` · `MOD-harness` · `MOD-host-bridge` |
 | `REQ-single-store` | `TEST-mvp-e2e` | `MOD-harness` | — |
 | `REQ-single-transport` | `TEST-mcp-stdio-server` | `FUNC-serve-stdio` · `MOD-mcp-tools` | `MOD-mcp-tools` |
 | `REQ-small-model-viable` | `TEST-executor-preflight` · `TEST-mvp-e2e` · `TEST-reduced-llm` | `FCHAIN-modelfree-gate` · `FUNC-graph-suggest` | `MOD-mcp-tools` |

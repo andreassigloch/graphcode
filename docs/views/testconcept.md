@@ -13,8 +13,8 @@
            ╱──────╲
           ╱  UC /   ╲       Use-case level · 7 UC
          ╱integration╲      ⚠ 7 / 7 UC exercised by a scenario test
-        ╱────────────╲      ✗ 30/48 FUNC↔FUNC connections tested  ← GAP
-       ╱  Function /   ╲     Function level · 88 FUNC
+        ╱────────────╲      ✗ 34/54 FUNC↔FUNC connections tested  ← GAP
+       ╱  Function /   ╲     Function level · 90 FUNC
       ╱      unit       ╲
      ╱───────────────────╲
 ```
@@ -23,11 +23,11 @@
 |---|---|---|---|---|---|
 | System | SYS (1) | E2E | 49 | 49 / 1 | ✓ |
 | Use-case | UC (7) | acceptance / integration | 88 | 7 / 7 scenario | ✓ |
-| Integration | FUNC↔FUNC (48 conn) | integration (chain) | 88 | 30 / 48 connections | ✗ 18 uncovered |
-| Function | FUNC (88) | unit | 73 | 88 / 88 | ✓ |
+| Integration | FUNC↔FUNC (54 conn) | integration (chain) | 88 | 34 / 54 connections | ✗ 20 uncovered |
+| Function | FUNC (90) | unit | 73 | 90 / 90 | ✓ |
 | (support) | — | conformance | 2 | codec round-trip | ✓ |
 
 > GENERATED — TEST level derived from the graph position of the REQ it verifies (SYS/UC/FUNC/FCHAIN),
 > not a testRef.level attribute; System, UC & Integration rows are DERIVED from coverage, so a missing
 > E2E run surfaces as ✗ (currently 49 E2E test(s)) and an untested FUNC↔FUNC connection (R-21)
-> surfaces as ✗ (30/48 covered) instead of being silently absent.
+> surfaces as ✗ (34/54 covered) instead of being silently absent.

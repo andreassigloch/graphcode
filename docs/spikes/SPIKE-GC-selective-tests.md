@@ -186,6 +186,32 @@ der ersatzlos entfällt. Die Auswahl bleibt dateiweise, was ohnehin der Granular
 entspricht: `vitest -t` filtert Fälle, lädt die Datei aber trotzdem — unterhalb der Datei ist keine
 Laufzeit zu holen.
 
+### M11 — Nach CR-GC-387: die Quellseite zur Hälfte, das Orakel als Hubproblem
+
+Stand nach CR-GC-387 (grobe Ebene + publizierte Harness-API + Batch 1 der feinen Ebene):
+
+| | M1 Quellseite | M2 Recall | M2 Auswahl | M8 Ersparnis |
+|---|---|---|---|---|
+| Spike-Ausgangslage | 19/65 (29 %) | 39/132 (30 %) | 95 | 52 % |
+| nach CR-GC-387 | 33/65 (51 %) | 54/147 (37 %) | 322 | 58 % |
+
+Zwei Korrekturen an der Deutung dieses Spikes:
+
+1. **M9 gilt nicht mehr.** Die grobe Ebene (`MOD.path`) wurde in CR-GC-382 auf der *unverankerten*
+   Testseite gemessen und dort zu Recht verworfen (3 von 20 Treffern). Auf der seit CR-GC-385
+   verankerten Testseite trifft dieselbe Mechanik **10 von 12** — sie rät nicht mehr falsch, sie
+   wählt zu viel (207 Dateiläufe für 12 Dateien). Sie bleibt gesetzt: Über-Auswahl kostet Wartezeit,
+   Unter-Auswahl kostet einen grünen Lauf ohne Test.
+2. **Das Orakel überschätzt bei einem Hub.** `src/harness.ts` trägt 69 der 147 gekoppelten Tests;
+   alle 70 importierenden Testdateien rufen dort `initialize()` — Aufsetzen, nicht Prüfgegenstand.
+   M2 wird deshalb ab hier zweimal ausgewiesen: **37 % gesamt, 42 % ohne `src/harness.ts`**. Das
+   Falsifikationskriterium (§6) bleibt bei 60 %, gemessen wird gegen beide Zahlen.
+
+Die verbleibende Lücke hat zwei benannte Ursachen, und keine davon heißt „mehr Knoten": das
+God-Object `src/harness.ts` (776 Zeilen, LCOM4=5 → CR-GC-388) und ein fehlender Betriebs-Use-Case
+für `graphcode init|upgrade|status|mcp`, ohne den `cli.ts`, `status.ts` und `scaffold-templates.ts`
+in keiner Wirkkette unterzubringen sind.
+
 ## 5. Befund
 
 Die Auswahl **darf** heute nicht scharf geschaltet werden, und zwar nicht wegen eines Fehlers in
@@ -214,6 +240,8 @@ Orakel = **Graph ∪ Direkt-Import-Netz**; eine geänderte Datei ohne Knoten ode
 | CR-GC-381 | Messinstrument (`scripts/test-selection-audit.mjs`), Traversal als reine Funktion |
 | CR-GC-382 | Modellbereinigung: `codeRef`-Grabsteine, `case` raus, R-29 auf 0, `path` je MOD |
 | CR-GC-383 | 58 fehlende Testobjekte verankern |
+| CR-GC-387 | Quellseite: grobe Ebene, publizierte Harness-API, Batch 1 (M11) |
+| CR-GC-388 | `src/harness.ts` schneiden — der Hub, an dem M2 hängt |
 | CR-SM-xxx | contracts: `case` ersatzlos streichen (Familie-Review + Bump) |
 
 @author andreas@siglochconsulting

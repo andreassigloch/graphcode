@@ -460,6 +460,7 @@
 | `FCHAIN-agent-query` | satisfy | `REQ-post-agent-query` |
 | `FCHAIN-agent-query` | satisfy | `REQ-pre-agent-query` |
 | `FCHAIN-agent-query` | satisfy | `REQ-precise-context` |
+| `FCHAIN-apply-gate` | compose | `FUNC-claim-store-lock` |
 | `FCHAIN-apply-gate` | compose | `FUNC-close-store` |
 | `FCHAIN-apply-gate` | compose | `FUNC-emit-trajectory` |
 | `FCHAIN-apply-gate` | compose | `FUNC-evaluate-rules` |
@@ -467,6 +468,7 @@
 | `FCHAIN-apply-gate` | compose | `FUNC-mutate` |
 | `FCHAIN-apply-gate` | compose | `FUNC-open-store` |
 | `FCHAIN-apply-gate` | compose | `FUNC-save-graph` |
+| `FCHAIN-apply-gate` | compose | `FUNC-session-shutdown` |
 | `FCHAIN-apply-gate` | satisfy | `REQ-code-governed-quality` |
 | `FCHAIN-apply-gate` | satisfy | `REQ-mcp-gate-symmetry` |
 | `FCHAIN-apply-gate` | satisfy | `REQ-post-apply-gate` |
@@ -538,6 +540,7 @@
 | `FLOW-bulk-formatE` | relation | `SCHEMA-format-e` |
 | `FLOW-capture-draft` | io | `FUNC-mutate` |
 | `FLOW-capture-draft` | relation | `SCHEMA-ontology-graph` |
+| `FLOW-cli-command` | io | `FUNC-claim-store-lock` |
 | `FLOW-cli-command` | io | `FUNC-harness-cli` |
 | `FLOW-cli-command` | io | `FUNC-rewind` |
 | `FLOW-cli-command` | relation | `SCHEMA-cli-command` |
@@ -624,6 +627,9 @@
 | `FLOW-steering-snapshot` | relation | `SCHEMA-steering-snapshot` |
 | `FLOW-steering-trigger` | io | `FUNC-take-steering-snapshot` |
 | `FLOW-steering-trigger` | relation | `SCHEMA-query-params` |
+| `FLOW-store-ownership` | io | `FUNC-open-store` |
+| `FLOW-store-ownership` | io | `FUNC-session-shutdown` |
+| `FLOW-store-ownership` | relation | `SCHEMA-lock-owner` |
 | `FLOW-suggest-result` | io | `ACTOR-developer` |
 | `FLOW-suggest-result` | relation | `SCHEMA-mutate-result` |
 | `FLOW-suggested-edit` | io | `FUNC-mutate` |
@@ -729,6 +735,9 @@
 | `FUNC-broadcast-diff` | satisfy | `REQ-versioned-broadcast` |
 | `FUNC-check-code-conformance` | allocate | `MOD-harness` |
 | `FUNC-check-code-conformance` | satisfy | `REQ-graph-code-conformance` |
+| `FUNC-claim-store-lock` | allocate | `MOD-harness` |
+| `FUNC-claim-store-lock` | io | `FLOW-store-ownership` |
+| `FUNC-claim-store-lock` | satisfy | `REQ-single-kuzu-owner` |
 | `FUNC-close-store` | allocate | `MOD-harness` |
 | `FUNC-close-store` | io | `FLOW-committed-graph` |
 | `FUNC-close-store` | satisfy | `REQ-single-kuzu-owner` |
@@ -908,6 +917,9 @@
 | `FUNC-serve-stdio` | io | `FLOW-export-request` |
 | `FUNC-serve-stdio` | satisfy | `REQ-agent-agnostic` |
 | `FUNC-serve-stdio` | satisfy | `REQ-single-transport` |
+| `FUNC-session-shutdown` | allocate | `MOD-cli` |
+| `FUNC-session-shutdown` | io | `FLOW-committed-graph` |
+| `FUNC-session-shutdown` | satisfy | `REQ-single-kuzu-owner` |
 | `FUNC-subscribe-updates` | allocate | `MOD-dashboard` |
 | `FUNC-take-steering-snapshot` | allocate | `MOD-steering` |
 | `FUNC-take-steering-snapshot` | io | `FLOW-measurement-vector` |

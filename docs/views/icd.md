@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 20 SCHEMA · 47 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 21 SCHEMA · 48 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -16,6 +16,7 @@
 | `SCHEMA-fit-advisory` | src/fit-advisory.ts#FitAdvisory | reviewed |
 | `SCHEMA-format-e` | extern definiert (kein realRef) | reviewed |
 | `SCHEMA-generation-step` | src/generate.ts#GenerationStep | reviewed |
+| `SCHEMA-lock-owner` | src/store-lock.ts#LockOwner | n/a |
 | `SCHEMA-markdown-view` | src/exporter.ts#MarkdownViewSchema | reviewed |
 | `SCHEMA-measurement-vector` | Konzept (noch kein Zod-Export) | reviewed |
 | `SCHEMA-metric-vector` | packages/se-optimizer/src/metrics.ts#MetricVector | reviewed |
@@ -41,8 +42,8 @@
 | `FLOW-branch-graphs` | `ACTOR-developer` | `FUNC-merge-nodes` |
 | `FLOW-bulk-formatE` | `ACTOR-graphify` | `FUNC-import` |
 | `FLOW-capture-draft` | `FUNC-decode` | `FUNC-mutate` |
-| `FLOW-cli-command` | `ACTOR-developer` | `FUNC-harness-cli` · `FUNC-rewind` |
-| `FLOW-committed-graph` | `FUNC-close-store` · `FUNC-save-graph` | `FUNC-emit-trajectory` · `FUNC-emit-update-event` · `FUNC-graph-export-snapshot` · `FUNC-load-graph` |
+| `FLOW-cli-command` | `ACTOR-developer` | `FUNC-claim-store-lock` · `FUNC-harness-cli` · `FUNC-rewind` |
+| `FLOW-committed-graph` | `FUNC-close-store` · `FUNC-save-graph` · `FUNC-session-shutdown` | `FUNC-emit-trajectory` · `FUNC-emit-update-event` · `FUNC-graph-export-snapshot` · `FUNC-load-graph` |
 | `FLOW-completeness` | `FUNC-score-completeness` | `FUNC-compute-phase-readiness` |
 | `FLOW-dimension-readiness` | `FUNC-compute-readiness` | `FUNC-generation-step` · `FUNC-next-step` |
 | `FLOW-draft-graph` | `FUNC-mutate` | `FUNC-evaluate-rules` |
@@ -76,6 +77,7 @@
 | `FLOW-steering-delta` | `FUNC-compute-steering-delta` | `FUNC-rank-candidates` |
 | `FLOW-steering-snapshot` | `FUNC-take-steering-snapshot` | `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-next-step` |
 | `FLOW-steering-trigger` | `ACTOR-developer` · `ACTOR-opencode` | `FUNC-take-steering-snapshot` |
+| `FLOW-store-ownership` | `FUNC-claim-store-lock` | `FUNC-open-store` · `FUNC-session-shutdown` |
 | `FLOW-suggest-result` | `FUNC-mutate` | `ACTOR-developer` |
 | `FLOW-suggested-edit` | `FUNC-graph-suggest` · `FUNC-rank-candidates` | `FUNC-mutate` |
 | `FLOW-trajectory` | `FUNC-emit-trajectory` | `ACTOR-learning-engine` |

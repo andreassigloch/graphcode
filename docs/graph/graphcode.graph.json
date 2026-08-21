@@ -1834,6 +1834,12 @@
       "concept": true
     },
     {
+      "id": "FLOW-store-ownership",
+      "type": "FLOW",
+      "name": "Store-Besitzanspruch",
+      "description": "Der Anspruch auf den Kuzu-Store eines Repos: gehalten, uebernommen oder verweigert."
+    },
+    {
       "id": "FLOW-suggest-result",
       "type": "FLOW",
       "name": "Suggest-Result",
@@ -2012,6 +2018,17 @@
       "realRef": {
         "file": "src/conformance.ts",
         "symbol": "conformanceViolations",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-claim-store-lock",
+      "type": "FUNC",
+      "name": "StoreLock",
+      "description": "Beansprucht den Store atomar und weist einen zweiten Schreiber laut ab, statt ihn still zu ueberschreiben.",
+      "realRef": {
+        "file": "src/store-lock.ts",
+        "symbol": "StoreLock",
         "lang": "ts"
       }
     },
@@ -2733,6 +2750,17 @@
       "realRef": {
         "file": "src/mcp-server.ts",
         "symbol": "serveStdio",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-session-shutdown",
+      "type": "FUNC",
+      "name": "SessionLifecycle",
+      "description": "Raeumt am Sessionende alle Ressourcen in umgekehrter Reihenfolge ab, den Store-Lock zuletzt.",
+      "realRef": {
+        "file": "src/session-lifecycle.ts",
+        "symbol": "SessionLifecycle",
         "lang": "ts"
       }
     },
@@ -4420,6 +4448,17 @@
       "realRef": {
         "file": "src/generate.ts",
         "symbol": "GenerationStep",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "SCHEMA-lock-owner",
+      "type": "SCHEMA",
+      "name": "LockOwner",
+      "description": "Halter des Store-Locks: Host, PID, Version, Zeitstempel.",
+      "realRef": {
+        "file": "src/store-lock.ts",
+        "symbol": "LockOwner",
         "lang": "ts"
       }
     },
@@ -9266,6 +9305,11 @@
     },
     {
       "source": "FCHAIN-apply-gate",
+      "target": "FUNC-claim-store-lock",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-apply-gate",
       "target": "FUNC-close-store",
       "type": "compose"
     },
@@ -9306,6 +9350,11 @@
       "type": "compose",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FCHAIN-apply-gate",
+      "target": "FUNC-session-shutdown",
+      "type": "compose"
     },
     {
       "source": "FCHAIN-apply-gate",
@@ -9735,6 +9784,11 @@
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-cli-command",
+      "target": "FUNC-claim-store-lock",
+      "type": "io"
     },
     {
       "source": "FLOW-cli-command",
@@ -10242,6 +10296,21 @@
     {
       "source": "FLOW-steering-trigger",
       "target": "SCHEMA-query-params",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-store-ownership",
+      "target": "FUNC-open-store",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-store-ownership",
+      "target": "FUNC-session-shutdown",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-store-ownership",
+      "target": "SCHEMA-lock-owner",
       "type": "relation"
     },
     {
@@ -10791,6 +10860,21 @@
     {
       "source": "FUNC-check-code-conformance",
       "target": "REQ-graph-code-conformance",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-claim-store-lock",
+      "target": "MOD-harness",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-claim-store-lock",
+      "target": "FLOW-store-ownership",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-claim-store-lock",
+      "target": "REQ-single-kuzu-owner",
       "type": "satisfy"
     },
     {
@@ -11867,6 +11951,21 @@
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-session-shutdown",
+      "target": "MOD-cli",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-session-shutdown",
+      "target": "FLOW-committed-graph",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-session-shutdown",
+      "target": "REQ-single-kuzu-owner",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-subscribe-updates",
@@ -14422,5 +14521,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 132
+  "graphVersion": 133
 }

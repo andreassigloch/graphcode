@@ -27,6 +27,7 @@
 | `FUNC-block-se-steuerung` | FUNC | SE-Prozess-Steuerung |
 | `FUNC-broadcast-diff` | FUNC | broadcastDiff(version) |
 | `FUNC-check-code-conformance` | FUNC | conformanceViolations(harness) |
+| `FUNC-claim-store-lock` | FUNC | StoreLock |
 | `FUNC-close-store` | FUNC | close() |
 | `FUNC-close-violations` | FUNC | Skill se:close-violations |
 | `FUNC-compute-phase-readiness` | FUNC | computePhaseReadiness(violations) |
@@ -86,6 +87,7 @@
 | `FUNC-seed-from-json` | FUNC | seedFromJson(relPath) |
 | `FUNC-serve-sse` | FUNC | serveSSE() |
 | `FUNC-serve-stdio` | FUNC | serveStdio() |
+| `FUNC-session-shutdown` | FUNC | SessionLifecycle |
 | `FUNC-subscribe-updates` | FUNC | subscribeUpdates() |
 | `FUNC-take-steering-snapshot` | FUNC | takeSteeringSnapshot(graph, policy) |
 | `FUNC-target-profile` | FUNC | Skill se:target-profile |
@@ -132,6 +134,7 @@
 | `FUNC-block-se-steuerung` | `MOD-steering` |
 | `FUNC-broadcast-diff` | `MOD-host-bridge` |
 | `FUNC-check-code-conformance` | `MOD-harness` |
+| `FUNC-claim-store-lock` | `MOD-harness` |
 | `FUNC-close-store` | `MOD-harness` |
 | `FUNC-close-violations` | `MOD-skills` |
 | `FUNC-compute-phase-readiness` | `MOD-steering` |
@@ -191,6 +194,7 @@
 | `FUNC-seed-from-json` | `MOD-harness` |
 | `FUNC-serve-sse` | `MOD-host-bridge` |
 | `FUNC-serve-stdio` | `MOD-mcp-tools` |
+| `FUNC-session-shutdown` | `MOD-cli` |
 | `FUNC-subscribe-updates` | `MOD-dashboard` |
 | `FUNC-take-steering-snapshot` | `MOD-steering` |
 | `FUNC-target-profile` | `MOD-skills` |
