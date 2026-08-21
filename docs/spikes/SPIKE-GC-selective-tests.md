@@ -145,20 +145,30 @@ Zahlen reproduzierbar via `node scripts/test-selection-audit.mjs --commits 60` (
 Von 60 Commits berührten 21 `src/`; davon änderten **2** ausschließlich gebundene Dateien. Mit reiner
 Graph-Auswahl und ehrlichem Fallback griffe die Selektion heute also bei 2 von 21 Code-Commits.
 
-### M9 — Die billige Vervollständigung liegt brach
+### M9 — Die billige Vervollständigung trägt nicht (gemessen und verworfen)
 
-Kein einziger der 11 MOD trägt `path` oder `realRef`. Dabei ist die MOD-Ebene grob genug und trotzdem
-nützlich — Testdateien, die je MOD erreichbar sind:
+Kein einziger der 11 MOD trägt `path` oder `realRef`. Die naheliegende Idee: die MOD-Ebene als
+grobe, vollständige Auflösung `Datei → MOD → FUNC → REQ → TEST` — je MOD sind 0–13 Testdateien
+erreichbar (Median 3), und drei Pfade (`src/tools`, `src/viewer`, `src/views`) würden 12 der
+46 unmodellierten Quelldateien auflösen.
 
-| MOD | Testdateien | MOD | Testdateien |
-|---|---|---|---|
-| `MOD-mcp-tools` | 13 | `MOD-docs` / `MOD-skills` | 5 |
-| `MOD-harness` | 9 | `MOD-cli` / `MOD-dashboard` / `MOD-hooks` / `MOD-host-bridge` | 3 |
-| `MOD-codec` | 4 | `MOD-steering` | 1 |
+**In CR-GC-382 real durchgeführt, gemessen, zurückgenommen.** Für die 12 so aufgelösten Dateien:
 
-`Datei → MOD → FUNC → REQ → TEST` deckt mit **11 Gate-Mutationen** den ganzen Baum ab — gegenüber
-44 neuen FUNC, die je vier Pflichten erfüllen müssten (CR-GC-366: REQ erfüllen, io-verdrahtet sein,
-in einer Wirkkette hängen, in einem MOD wohnen).
+| | Wert |
+|---|---|
+| ausgewählte Testdateiläufe | 100 |
+| tatsächlich direkt gekoppelte Tests | 20 |
+| davon getroffen | **3** |
+
+Die Gesamtauswahl stieg von 35 auf 129 Dateien, die Treffer von 17 auf 19. Schlimmer als die
+Ineffizienz ist die Semantik: Dateien, die vorher ehrlich in den **Volllauf** fielen, liefern jetzt
+eine Auswahl, die `complete` meldet und die wirklich koppelnden Tests **nicht** enthält — aus einem
+ehrlichen Volllauf wird ein selbstbewusst falscher Teil-Lauf.
+
+Ursache ist nicht die Grobheit an sich, sondern die unverankerte Testseite (M3): die TESTs, die
+diese Module wirklich abnehmen, existieren als Knoten gar nicht, also zeigt die MOD-Ebene auf die
+wenigen, die zufällig da sind. **Erst Testseite verankern, dann die grobe Ebene erneut messen** —
+in dieser Reihenfolge, nicht umgekehrt.
 
 ### M10 — `case` ist halb eingebaut
 

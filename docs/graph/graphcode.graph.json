@@ -1989,11 +1989,7 @@
       "description": "Versionierter Diff-Broadcast mit Late-Joiner-Cache an die Viewer; jede Mutation erhoeht die Version. (CR-GC-114)",
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
-      "codeRef": {
-        "file": "src/viewer/host.ts",
-        "symbol": "HostBridge",
-        "lang": "ts"
-      },
+      "codeRef": null,
       "realRef": {
         "file": "src/viewer/host.ts",
         "symbol": "broadcast",
@@ -2006,11 +2002,7 @@
       "name": "conformanceViolations(harness)",
       "description": "Extrahiert CodeFacts (extractCodeFacts, ts-Parser) und wertet die contracts RC-Regeln (RC-01 codeRef, RC-02 testRef) aus; scoreReadinessWithConformance mischt sie in die Readiness. Cross-Module-Call-Coverage Follow-up CR-GC-256. (CR-GC-206 -> CR-GC-253)",
       "status": "done",
-      "codeRef": {
-        "file": "src/conformance.ts",
-        "symbol": "conformanceViolations",
-        "lang": "ts"
-      },
+      "codeRef": null,
       "realRef": {
         "file": "src/conformance.ts",
         "symbol": "conformanceViolations",
@@ -2073,11 +2065,7 @@
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "updated_at": "2026-06-17T00:00:00.000Z",
-      "codeRef": {
-        "file": "src/codec.ts",
-        "symbol": "decode",
-        "lang": "ts"
-      },
+      "codeRef": null,
       "realRef": {
         "file": "src/codec.ts",
         "symbol": "decode",
@@ -2091,11 +2079,7 @@
       "description": "Bottom-up Test-Deduktion: mappt eine Aenderung (geaenderte Knoten-IDs oder git-diff zu Knoten) via graph_impact auf die betroffenen TEST-Knoten, loest jeden ueber testRef zu seinem lauffaehigen Artefakt auf und emittiert das minimale selektive Run-Kommando + Coverage. Kapselt graph_impact, kein Parallelpfad. (CR-GC-134)",
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
-      "codeRef": {
-        "file": "src/mcp-tools.ts",
-        "symbol": "bindToolsToHarness",
-        "lang": "ts"
-      },
+      "codeRef": null,
       "realRef": {
         "file": "src/tools/report.ts",
         "symbol": "graph_tests",
@@ -2110,11 +2094,7 @@
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "updated_at": "2026-07-20T00:00:00.000Z",
-      "codeRef": {
-        "file": "src/emit.ts",
-        "symbol": "materializeTrajectory",
-        "lang": "ts"
-      },
+      "codeRef": null,
       "realRef": {
         "file": "src/emit.ts",
         "symbol": "materializeTrajectory",
@@ -2129,11 +2109,7 @@
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "updated_at": "2026-06-17T00:00:00.000Z",
-      "codeRef": {
-        "file": "src/emit.ts",
-        "symbol": "makeUpdateEventHook",
-        "lang": "ts"
-      },
+      "codeRef": null,
       "realRef": {
         "file": "src/emit.ts",
         "symbol": "makeUpdateEventHook",
@@ -2148,11 +2124,7 @@
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "updated_at": "2026-06-17T00:00:00.000Z",
-      "codeRef": {
-        "file": "src/codec.ts",
-        "symbol": "encode",
-        "lang": "ts"
-      },
+      "codeRef": null,
       "realRef": {
         "file": "src/codec.ts",
         "symbol": "encode",
@@ -2167,11 +2139,7 @@
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "updated_at": "2026-06-17T00:00:00.000Z",
-      "codeRef": {
-        "file": "src/harness.ts",
-        "symbol": "runRules",
-        "lang": "ts"
-      },
+      "codeRef": null,
       "realRef": {
         "file": "src/harness.ts",
         "symbol": "evaluateRules",
@@ -2186,11 +2154,7 @@
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z",
-      "codeRef": {
-        "file": "src/exporter.ts",
-        "symbol": "exportMarkdown",
-        "lang": "ts"
-      },
+      "codeRef": null,
       "operatingMode": "export",
       "realRef": {
         "file": "src/exporter.ts",
@@ -2238,11 +2202,7 @@
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "updated_at": "2026-06-17T00:00:00.000Z",
-      "codeRef": {
-        "file": "src/harness.ts",
-        "symbol": "subgraph",
-        "lang": "ts"
-      },
+      "codeRef": null,
       "realRef": {
         "file": "src/harness.ts",
         "symbol": "subgraph",
@@ -2269,11 +2229,7 @@
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "updated_at": "2026-06-17T00:00:00.000Z",
-      "codeRef": {
-        "file": "src/harness.ts",
-        "symbol": "impact",
-        "lang": "ts"
-      },
+      "codeRef": null,
       "realRef": {
         "file": "src/harness.ts",
         "symbol": "impact",
@@ -2300,11 +2256,7 @@
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z",
-      "codeRef": {
-        "file": "src/scaffold.ts",
-        "symbol": "scaffold",
-        "lang": "ts"
-      },
+      "codeRef": null,
       "operatingMode": "lifecycle",
       "realRef": {
         "file": "src/scaffold.ts",
@@ -2319,11 +2271,7 @@
       "description": "Echter Funktions-Health: Store erreichbar, Gate funktional, Ontology/Rules/Contracts-Versionen, LLM/BYOK-Readiness. Quelle des Dashboard-FUNC-render-health. (CR-GC-114)",
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
-      "codeRef": {
-        "file": "src/viewer/host.ts",
-        "symbol": "HostBridge",
-        "lang": "ts"
-      },
+      "codeRef": null,
       "realRef": {
         "file": "src/viewer/host.ts",
         "symbol": "health",
@@ -2338,11 +2286,7 @@
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "updated_at": "2026-06-17T00:00:00.000Z",
-      "codeRef": {
-        "file": "src/harness.ts",
-        "symbol": "importGraph",
-        "lang": "ts"
-      },
+      "codeRef": null,
       "operatingMode": "bootstrap",
       "realRef": {
         "file": "src/harness.ts",
@@ -2402,11 +2346,7 @@
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "updated_at": "2026-06-17T00:00:00.000Z",
-      "codeRef": {
-        "file": "src/harness.ts",
-        "symbol": "mutate",
-        "lang": "ts"
-      },
+      "codeRef": null,
       "realRef": {
         "file": "src/harness.ts",
         "symbol": "mutate",
@@ -2432,11 +2372,7 @@
       "description": "Der Host-Prozess ist der einzige Kuzu-Owner pro Repo; die Bridge haelt kein zweites DB-Handle. (CR-GC-114)",
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
-      "codeRef": {
-        "file": "src/viewer/host.ts",
-        "symbol": "serveHost",
-        "lang": "ts"
-      },
+      "codeRef": null,
       "realRef": {
         "file": "src/viewer/host.ts",
         "symbol": "serveHost",
@@ -2462,11 +2398,7 @@
       "description": "INCOSE-Artifact-Panel: Readiness je Dokument/View (Testmatrix, FMEA, RTM, ImplPlan, IntPlan, ChangeLog, ConOps, IRR, NFR, ICD) aus dem Query-Layer (graph_query views) + graph_readiness. Repoint der aimprove ArtifactReadiness. Die offene View-Liste (RTM, IntPlan, ChangeLog, ConOps, IRR, ICD ohne se-view-Skill) ist genau der Rest-Scope von CR-GC-116. (CR-GC-115)",
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
-      "codeRef": {
-        "file": "src/viewer/panels.ts",
-        "symbol": "artifactsPanel",
-        "lang": "ts"
-      },
+      "codeRef": null,
       "external": true
     },
     {
@@ -2485,11 +2417,7 @@
       "description": "Echter Funktions-Health-Check, kein Prozess-Liveness-Licht: Kuzu-Store erreichbar, Apply-Gate funktional, Ontology/Rules/Contracts-Versionen, LLM/BYOK-Readiness (OpenCode, fuer spaeter). aimprove-spezifische Felder (Sessions/Patterns) entfernt. Quelle: Host-Bridge Health-Endpoint. (CR-GC-115)",
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
-      "codeRef": {
-        "file": "src/viewer/panels.ts",
-        "symbol": "healthPanel",
-        "lang": "ts"
-      },
+      "codeRef": null,
       "external": true
     },
     {
@@ -2499,11 +2427,7 @@
       "description": "Impact-Panel on-demand: exakter Blast-Radius via graph_impact statt gespeicherter aimprove-Impact-Assessments (Learning). Repoint der aimprove ImpactView auf die Live-Quelle. (CR-GC-115)",
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
-      "codeRef": {
-        "file": "src/viewer/panels.ts",
-        "symbol": "impactPanel",
-        "lang": "ts"
-      },
+      "codeRef": null,
       "external": true
     },
     {
@@ -2522,11 +2446,7 @@
       "description": "Readiness-Panel: Compliance + Phase-Gates SRR/PDR/CDR/TRR aus graph_readiness (V3_RULES, lean INCOSE). Repoint der aimprove StatusSection-Readiness-Bars + GateView. (CR-GC-115)",
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
-      "codeRef": {
-        "file": "src/viewer/panels.ts",
-        "symbol": "readinessPanel",
-        "lang": "ts"
-      },
+      "codeRef": null,
       "external": true
     },
     {
@@ -2536,11 +2456,7 @@
       "description": "Top-N hoechstbewertete Verbesserungsmassnahmen, deterministisch aus Graph-Defiziten abgeleitet (fehlende verify-Traces R-01, Orphans RD-01, Blast-Radius via graph_impact), nach Severity/Impact sortiert. Behalten aus aimprove TOP-Empfehlungen, aber graph-deduziert statt Learning-Vorschlag (kein Generator). (CR-GC-115)",
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
-      "codeRef": {
-        "file": "src/viewer/panels.ts",
-        "symbol": "recommendationsPanel",
-        "lang": "ts"
-      },
+      "codeRef": null,
       "external": true
     },
     {
@@ -2552,11 +2468,7 @@
       "created_at": "2026-06-16T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z",
       "external": false,
-      "codeRef": {
-        "file": ".claude/skills/se-view-arch.md",
-        "symbol": "se-view-arch",
-        "lang": "prompt"
-      },
+      "codeRef": null,
       "realRef": {
         "file": ".claude/commands/se-view/arch.md",
         "symbol": "se-view:arch",
@@ -2581,11 +2493,7 @@
       "name": "Gerichtete code→REQ→TEST-Auflösung",
       "description": "graph_tests akzeptiert ein Code-Changeset und traversiert gerichtet (geaenderter Knoten →satisfy/allocate→ REQ →verify→ TEST), nicht nur reines incoming-graph_impact. Wrappt EINEN Impact-/Traversal-Pfad, kein zweiter Blast-Radius.",
       "status": "done",
-      "codeRef": {
-        "file": "src/harness.ts",
-        "symbol": "testImpact",
-        "lang": "ts"
-      },
+      "codeRef": null,
       "realRef": {
         "file": "src/harness.ts",
         "symbol": "testImpact",
@@ -2612,11 +2520,7 @@
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "updated_at": "2026-06-17T00:00:00.000Z",
-      "codeRef": {
-        "file": "src/harness.ts",
-        "symbol": "persist",
-        "lang": "ts"
-      },
+      "codeRef": null,
       "realRef": {
         "file": "src/harness.ts",
         "symbol": "persist",
@@ -2630,10 +2534,7 @@
       "description": "Berechnet die Completeness-Dimension pro Gate: traversiert die Phase-Slice-Beine (Meta-Modell 1..*) ueber die treibende Source-Population und liefert covered/total + per-leg missing[]. Ergaenzt scorePhaseGate in src/readiness.ts; ein Gate ist passed nur wenn rule-clean UND completeness.covered==total. Config = statische Phase->Beine-Map, im Test gegen die Meta-Modell-Kardinalitaeten asserted (Drift-Lock). (CR-GC-250)",
       "status": "done",
       "concept": false,
-      "codeRef": {
-        "file": "src/readiness-completeness.ts",
-        "symbol": "scoreCompleteness"
-      },
+      "codeRef": null,
       "external": true
     },
     {
@@ -2753,11 +2654,7 @@
       "description": "Host-Prozess exponiert die SSE/WS-Route und leitet harness.onUpdateEvent read-only an die Live-Viewer weiter. Kein Express-REST im Core. (CR-GC-114)",
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
-      "codeRef": {
-        "file": "src/viewer/host.ts",
-        "symbol": "serveHost",
-        "lang": "ts"
-      },
+      "codeRef": null,
       "realRef": {
         "file": "src/viewer/host.ts",
         "symbol": "serveHost",
@@ -2771,11 +2668,7 @@
       "description": "Bindet die MCP-Tool-Registry headless an einen stdio-Transport; jeder Agent (Claude Code oder OpenCode, BYOK) ist ein gleichwertiger Client. Beweist agent-agnostisch + headless. (CR-GC-124)",
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
-      "codeRef": {
-        "file": "src/mcp-server.ts",
-        "symbol": "serveStdio",
-        "lang": "ts"
-      },
+      "codeRef": null,
       "realRef": {
         "file": "src/mcp-server.ts",
         "symbol": "serveStdio",
@@ -2789,11 +2682,7 @@
       "description": "SSE-Client: bei jedem Live-Update-Event (invalidate) werden die betroffenen Domains nachgeladen, ohne Reload. Gegenstueck zu emitUpdateEvent, konsumiert FLOW-live-event ueber die Host-Bridge. (CR-GC-115)",
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
-      "codeRef": {
-        "file": "src/viewer/panels.ts",
-        "symbol": "panelsForEvent",
-        "lang": "ts"
-      },
+      "codeRef": null,
       "external": true
     },
     {
@@ -2828,11 +2717,7 @@
       "external": false,
       "concept": false,
       "created_at": "2026-07-08T00:00:00.000Z",
-      "codeRef": {
-        "file": ".claude/skills/se-test.md",
-        "symbol": "se-test",
-        "lang": "prompt"
-      },
+      "codeRef": null,
       "realRef": {
         "file": ".claude/commands/se-test.md",
         "symbol": "se-test",
@@ -2848,11 +2733,7 @@
       "external": false,
       "concept": false,
       "created_at": "2026-07-08T00:00:00.000Z",
-      "codeRef": {
-        "file": ".claude/skills/se-test-ui.md",
-        "symbol": "se-test-ui",
-        "lang": "prompt"
-      },
+      "codeRef": null,
       "realRef": {
         "file": ".claude/commands/se-test-ui.md",
         "symbol": "se-test-ui",
@@ -2885,11 +2766,7 @@
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
       "external": false,
-      "codeRef": {
-        "file": ".claude/skills/se-view-changelog.md",
-        "symbol": "se-view-changelog",
-        "lang": "prompt"
-      },
+      "codeRef": null,
       "realRef": {
         "file": ".claude/commands/se-view/changelog.md",
         "symbol": "se-view:changelog",
@@ -2904,11 +2781,7 @@
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
       "external": false,
-      "codeRef": {
-        "file": ".claude/skills/se-view-conops.md",
-        "symbol": "se-view-conops",
-        "lang": "prompt"
-      },
+      "codeRef": null,
       "realRef": {
         "file": ".claude/commands/se-view/conops.md",
         "symbol": "se-view:conops",
@@ -2923,11 +2796,7 @@
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
       "external": false,
-      "codeRef": {
-        "file": ".claude/skills/se-view-icd.md",
-        "symbol": "se-view-icd",
-        "lang": "prompt"
-      },
+      "codeRef": null,
       "realRef": {
         "file": ".claude/commands/se-view/icd.md",
         "symbol": "se-view:icd",
@@ -2942,11 +2811,7 @@
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
       "external": false,
-      "codeRef": {
-        "file": ".claude/skills/se-view-intplan.md",
-        "symbol": "se-view-intplan",
-        "lang": "prompt"
-      },
+      "codeRef": null,
       "realRef": {
         "file": ".claude/commands/se-view/intplan.md",
         "symbol": "se-view:intplan",
@@ -2961,11 +2826,7 @@
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
       "external": false,
-      "codeRef": {
-        "file": ".claude/skills/se-view-fmea.md",
-        "symbol": "se-view-fmea",
-        "lang": "prompt"
-      },
+      "codeRef": null,
       "realRef": {
         "file": ".claude/commands/se-view/fmea.md",
         "symbol": "se-view:fmea",
@@ -2980,11 +2841,7 @@
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
       "external": false,
-      "codeRef": {
-        "file": ".claude/skills/se-view-rtm.md",
-        "symbol": "se-view-rtm",
-        "lang": "prompt"
-      },
+      "codeRef": null,
       "realRef": {
         "file": ".claude/commands/se-view/rtm.md",
         "symbol": "se-view:rtm",
@@ -3015,7 +2872,8 @@
       "name": "dashboard — Live-Viewer-App",
       "description": "graphcode-owned Dashboard-App, komponiert aus @sigloch/graph-renderer (Cytoscape) + dashboard-shell, konsumiert die Host-Bridge. Readiness/INCOSE-Panels gegen V3_RULES (CR-GC-107-Scorer). Hybrid-Entscheidung 2026-06-17.",
       "status": "done",
-      "created_at": "2026-06-17T00:00:00.000Z"
+      "created_at": "2026-06-17T00:00:00.000Z",
+      "path": null
     },
     {
       "id": "MOD-docs",
@@ -3024,7 +2882,8 @@
       "description": "App-spezifisches Rendering: Graph → Markdown-Views (deterministisch, GENERATED-Header). (REQ-doc-export, code-realisiert, target)",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "updated_at": "2026-06-18T00:00:00.000Z"
+      "updated_at": "2026-06-18T00:00:00.000Z",
+      "path": null
     },
     {
       "id": "MOD-harness",
@@ -3059,7 +2918,8 @@
       "description": "MCP-stdio Tool-Registry, an die Harness gebunden; read/write/query Tools. (SPEC §2.2)",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "updated_at": "2026-06-17T00:00:00.000Z"
+      "updated_at": "2026-06-17T00:00:00.000Z",
+      "path": null
     },
     {
       "id": "MOD-repo-root",
@@ -4722,7 +4582,6 @@
       "testRefs": [
         {
           "file": "tests/steering.architecture-causality.test.ts",
-          "case": "reverses the score sign of every shared candidate when the target flips",
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
@@ -5015,7 +4874,6 @@
       "testRefs": [
         {
           "file": "tests/mvp-e2e.test.ts",
-          "case": "UC-efficient-testing",
           "tool": "vitest",
           "level": "acceptance",
           "result": "passed",
@@ -5031,7 +4889,6 @@
       "testRefs": [
         {
           "file": "tests/mcp.context.test.ts",
-          "case": "returns EXACTLY the upstream spec-closure of FN-1",
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
@@ -5083,7 +4940,6 @@
       "testRefs": [
         {
           "file": "tests/mcp.tests-deduction.test.ts",
-          "case": "TEST-graph-tests-operational",
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
@@ -5369,7 +5225,6 @@
       "testRefs": [
         {
           "file": "tests/steering.process-ratchet.test.ts",
-          "case": "T-B3 — every batch the loop produced was legal at the gate, or the loop stopped there",
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
@@ -5434,7 +5289,6 @@
       "testRefs": [
         {
           "file": "tests/executor.test.ts",
-          "case": "an applied mutate ends the step — exactly one model call, node persisted",
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
@@ -5450,7 +5304,6 @@
       "testRefs": [
         {
           "file": "tests/generate.test.ts",
-          "case": "SYS mit Defiziten → expand fokussiert die schwächste Dimension mit konkreten Funden",
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
@@ -5488,7 +5341,6 @@
       "testRefs": [
         {
           "file": "tests/claims.conformance.test.ts",
-          "case": "states each count correctly wherever it appears",
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
@@ -5708,7 +5560,6 @@
       "testRefs": [
         {
           "file": "tests/steering.measurement-path.test.ts",
-          "case": "nextStep and generationStep report the same blocking errors and the same dimension scores",
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
@@ -5724,7 +5575,6 @@
       "testRefs": [
         {
           "file": "tests/gate.single-door.test.ts",
-          "case": "1 — a legal mutation lands and survives a reload, attributes intact",
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
@@ -5804,7 +5654,6 @@
       "testRefs": [
         {
           "file": "tests/mcp.suggest.test.ts",
-          "case": "liefert Fund-Ebene für feuernde Operator-Regeln, score-absteigend",
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
@@ -5855,7 +5704,6 @@
       "testRefs": [
         {
           "file": "tests/config.test.ts",
-          "case": "schemawidrige Datei → Abbruch mit Pfad UND Feld, kein stiller Default",
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
@@ -13199,5 +13047,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 114
+  "graphVersion": 118
 }
