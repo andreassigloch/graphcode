@@ -13,8 +13,31 @@ FUNC-Knoten, und damit sagt das Gate selbst, was vorher nur die Zeilenzahl sagte
 | RD-04 | 14 allocated FUNC children on one level (>11) |
 | MT-02 | LCOM4=5 — 14 FUNCs in 5 disconnected groups |
 
-`LCOM4=5` ist die eigentliche Aussage: die Klasse zerfällt in fünf Gruppen, die einander nicht
-berühren — fünf Zuständigkeiten in einer Datei.
+`LCOM4=5` ist deterministisch gerechnet, aber es sagt etwas anderes als „fünf Zuständigkeiten".
+
+**Wie die Zahl entsteht** (`moduleMetrics`, `@sigloch/contracts/se/metric-rules.ts`): Union-Find über
+die einem MOD zugeteilten FUNC, zwei Durchgänge — (1) zwei FUNC sind verbunden, wenn sie ein
+gemeinsames Ausgangsziel haben (derselbe FLOW als Ausgang oder dieselbe erfüllte REQ), (2) zusätzlich,
+wenn sie denselben FLOW in *irgendeiner* Richtung berühren. LCOM4 ist die Zahl der Komponenten.
+Reihenfolgeunabhängig, kein Schwellenwert, kein Modell — dieselbe Eingabe liefert immer dieselbe Zahl.
+
+**Was die Eingabe ist:** der modellierte Graph, nicht der Quelltext. Gelesen werden `allocate`, `io`
+und `satisfy` — keine Felder, keine Aufrufe, keine Imports von `harness.ts`. Die Zahl ist also so gut
+wie die modellierten FLOWs; ein fehlender FLOW erfindet eine Trennung, ein zu grober verdeckt eine.
+
+**Die tatsächlichen Komponenten** (Stand nach CR-GC-387) sind kein Fünferschnitt, sondern ein Klumpen
+plus vier Einzelgänger:
+
+| Komponente | FUNC |
+|---|---|
+| 1 (10) | claim-store-lock, close-store, evaluate-rules, import, load-graph, mutate, open-store, reseed, save-graph, seed-from-json |
+| 2 (1) | check-code-conformance |
+| 3 (1) | list-elements |
+| 4 (1) | migrate-schema |
+| 5 (1) | score-completeness |
+
+Dazu `cohesion`: 6 interne gegen 35 externe Verbindungen (Ratio 0,15). Die Metrik sagt damit
+„zusammenhanglos genug, um hinzusehen" — **wo** geschnitten wird, sagt sie nicht.
 
 ## Warum das die Testauswahl deckelt
 
@@ -26,9 +49,10 @@ zweimal aus — 37 % gesamt, 42 % ohne diese eine Datei.
 Nach einem Schnitt zeigt der Aufsetz-Import auf ein Lebenszyklus-Modul statt auf den ganzen Harness,
 und die Auswahl folgt dem Schnitt, ohne dass am Messgerät gedreht wird.
 
-## Schnittvorschlag (Ausgangspunkt, nicht Beschluss)
+## Schnittvorschlag (aus dem Quelltext gelesen, nicht aus der Metrik)
 
-Die fünf LCOM4-Gruppen sind der Kandidat für die Grenzen:
+Die Metrik liefert keine Grenzen (s. o.), nur den Anlass. Dieser Vorschlag kommt aus dem Lesen der
+776 Zeilen und ist der Ausgangspunkt für die Diskussion, kein Beschluss:
 
 1. **Lebenszyklus** — `initialize`, `close`, Store-Lock-Anbindung, Schema-Drift-Erkennung
 2. **Gate** — `mutate`, `evaluateRules`, Hook-Aufrufe, `persist`
@@ -36,6 +60,9 @@ Die fünf LCOM4-Gruppen sind der Kandidat für die Grenzen:
 4. **Import/Reseed** — `importGraph`, `seedFromJson`, `reseed`
 5. **Zugriffe** — die Getter (`getStore`, `getScope`, `getRepoRoot` …); Kandidat für eine
    schmale Kontext-Struktur statt einer Methode je Feld
+
+Ob der Schnitt trägt, zeigt die Metrik danach: der Zehner-Klumpen muss in mehrere MOD zerfallen,
+sonst wurde nur die Datei geteilt und nicht die Zuständigkeit.
 
 Die öffentliche Fassade `GraphCodeHarness` bleibt bestehen (sie ist in `src/index.ts` exportierte
 API) und delegiert — keine parallelen Pfade, kein zweiter Einstieg.
