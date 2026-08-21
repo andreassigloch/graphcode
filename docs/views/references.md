@@ -418,6 +418,9 @@
 | `CR-GC-317` | relation | `FUNC-view-rtm` |
 | `CR-GC-318` | relation | `FUNC-view-rtm` |
 | `CR-GC-319` | relation | `MOD-mcp-tools` |
+| `CR-GC-321` | relation | `FUNC-decode` |
+| `CR-GC-321` | relation | `FUNC-encode` |
+| `CR-GC-321` | relation | `FUNC-mutate` |
 | `CR-GC-330` | relation | `FUNC-emit-trajectory` |
 | `CR-GC-330` | relation | `MS-6-adoption` |
 | `CR-GC-330` | relation | `REQ-post-emit-trajectory` |
@@ -483,7 +486,6 @@
 | `FCHAIN-capture` | satisfy | `REQ-pre-capture` |
 | `FCHAIN-codec-roundtrip` | compose | `FUNC-decode` |
 | `FCHAIN-codec-roundtrip` | compose | `FUNC-encode` |
-| `FCHAIN-codec-roundtrip` | compose | `FUNC-merge-nodes` |
 | `FCHAIN-codec-roundtrip` | satisfy | `REQ-post-codec-roundtrip` |
 | `FCHAIN-codec-roundtrip` | satisfy | `REQ-pre-codec-roundtrip` |
 | `FCHAIN-codec-roundtrip` | satisfy | `REQ-roundtrip-conformance` |
@@ -503,10 +505,14 @@
 | `FCHAIN-interface-escalation` | satisfy | `REQ-pre-interface-escalation` |
 | `FCHAIN-live-update` | compose | `FUNC-broadcast-diff` |
 | `FCHAIN-live-update` | compose | `FUNC-emit-update-event` |
+| `FCHAIN-live-update` | compose | `FUNC-evaluate-rules` |
+| `FCHAIN-live-update` | compose | `FUNC-mutate` |
 | `FCHAIN-live-update` | compose | `FUNC-save-graph` |
 | `FCHAIN-live-update` | compose | `FUNC-serve-stdio` |
 | `FCHAIN-live-update` | compose | `FUNC-subscribe-updates` |
 | `FCHAIN-live-update` | satisfy | `REQ-mutation-emits-event` |
+| `FCHAIN-merge-branches` | compose | `FUNC-merge-nodes` |
+| `FCHAIN-merge-branches` | satisfy | `REQ-conflict-free-merge` |
 | `FCHAIN-modelfree-gate` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-modelfree-gate` | compose | `FUNC-mutate` |
 | `FCHAIN-modelfree-gate` | satisfy | `REQ-graceful-degradation` |
@@ -517,6 +523,7 @@
 | `FCHAIN-recall` | compose | `FUNC-rewind` |
 | `FCHAIN-recall` | compose | `FUNC-seed-from-json` |
 | `FCHAIN-recall` | satisfy | `REQ-graph-state-recall` |
+| `FCHAIN-snapshot-freshness` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-snapshot-freshness` | compose | `FUNC-graph-export-snapshot` |
 | `FCHAIN-snapshot-freshness` | compose | `FUNC-mutate` |
 | `FCHAIN-snapshot-freshness` | compose | `FUNC-save-graph` |
@@ -614,6 +621,7 @@
 | `FLOW-rendered-view` | io | `ACTOR-developer` |
 | `FLOW-rendered-view` | relation | `SCHEMA-markdown-view` |
 | `FLOW-round-findings` | io | `FUNC-graph-suggest` |
+| `FLOW-round-findings` | relation | `SCHEMA-mutate-result` |
 | `FLOW-round-prompt` | io | `ACTOR-claude-code` |
 | `FLOW-round-prompt` | io | `ACTOR-opencode` |
 | `FLOW-round-prompt` | io | `FUNC-rank-candidates` |
@@ -633,6 +641,7 @@
 | `FLOW-suggest-result` | io | `ACTOR-developer` |
 | `FLOW-suggest-result` | relation | `SCHEMA-mutate-result` |
 | `FLOW-suggested-edit` | io | `FUNC-mutate` |
+| `FLOW-suggested-edit` | relation | `SCHEMA-mutate-command` |
 | `FLOW-trajectory` | io | `ACTOR-learning-engine` |
 | `FLOW-trajectory` | relation | `SCHEMA-trajectory` |
 | `FLOW-version-bump` | io | `FUNC-migrate-schema` |
@@ -642,6 +651,7 @@
 | `FLOW-violations` | io | `FUNC-compute-phase-readiness` |
 | `FLOW-violations` | io | `FUNC-save-graph` |
 | `FLOW-violations` | relation | `SCHEMA-mutate-result` |
+| `FUNC-arch-fitness` | allocate | `MOD-metrics-engine` |
 | `FUNC-arch-fitness` | io | `FLOW-arch-fitness` |
 | `FUNC-arch-fitness` | satisfy | `REQ-steering-from-metrics` |
 | `FUNC-author-req` | allocate | `MOD-skills` |
@@ -745,6 +755,7 @@
 | `FUNC-compute-phase-readiness` | allocate | `MOD-steering` |
 | `FUNC-compute-phase-readiness` | io | `FLOW-phase-readiness` |
 | `FUNC-compute-phase-readiness` | satisfy | `REQ-steering-from-metrics` |
+| `FUNC-compute-readiness` | allocate | `MOD-metrics-engine` |
 | `FUNC-compute-readiness` | io | `FLOW-dimension-readiness` |
 | `FUNC-compute-readiness` | satisfy | `REQ-steering-from-metrics` |
 | `FUNC-compute-steering-delta` | allocate | `MOD-steering` |
@@ -850,6 +861,7 @@
 | `FUNC-migrate-schema` | satisfy | `REQ-post-migrate-schema` |
 | `FUNC-migrate-schema` | satisfy | `REQ-pre-migrate-schema` |
 | `FUNC-migrate-schema` | satisfy | `REQ-schema-version-migration` |
+| `FUNC-module-metrics` | allocate | `MOD-metrics-engine` |
 | `FUNC-module-metrics` | io | `FLOW-module-metrics` |
 | `FUNC-module-metrics` | satisfy | `REQ-steering-from-metrics` |
 | `FUNC-mutate` | allocate | `MOD-harness` |
@@ -859,6 +871,7 @@
 | `FUNC-mutate` | satisfy | `REQ-confidence-tier` |
 | `FUNC-mutate` | satisfy | `REQ-gate-only-writes` |
 | `FUNC-mutate` | satisfy | `REQ-graph-snapshot-per-commit` |
+| `FUNC-mutate` | satisfy | `REQ-single-write-door` |
 | `FUNC-next-step` | allocate | `MOD-steering` |
 | `FUNC-next-step` | io | `FLOW-round-prompt` |
 | `FUNC-next-step` | satisfy | `REQ-steering-from-metrics` |
@@ -925,6 +938,7 @@
 | `FUNC-take-steering-snapshot` | io | `FLOW-measurement-vector` |
 | `FUNC-take-steering-snapshot` | io | `FLOW-steering-snapshot` |
 | `FUNC-take-steering-snapshot` | io | `FLOW-violations` |
+| `FUNC-take-steering-snapshot` | satisfy | `REQ-single-measurement-path` |
 | `FUNC-take-steering-snapshot` | satisfy | `REQ-steering-from-metrics` |
 | `FUNC-target-profile` | allocate | `MOD-skills` |
 | `FUNC-test` | allocate | `MOD-skills` |
@@ -986,6 +1000,7 @@
 | `MOD-repo-root` | compose | `MOD-hooks` |
 | `MOD-repo-root` | compose | `MOD-host-bridge` |
 | `MOD-repo-root` | compose | `MOD-mcp-tools` |
+| `MOD-repo-root` | compose | `MOD-metrics-engine` |
 | `MOD-repo-root` | compose | `MOD-skills` |
 | `MOD-repo-root` | compose | `MOD-steering` |
 | `MS-1-specification` | compose | `UC-code-quality` |
@@ -1336,6 +1351,7 @@
 | `UC-efficient-testing` | compose | `REQ-post-impact-testing` |
 | `UC-efficient-testing` | compose | `REQ-pre-impact-testing` |
 | `UC-efficient-testing` | compose | `REQ-test-runnable-binding` |
+| `UC-graph-time-travel` | compose | `FCHAIN-merge-branches` |
 | `UC-graph-time-travel` | compose | `FCHAIN-recall` |
 | `UC-graph-time-travel` | compose | `FCHAIN-snapshot-freshness` |
 | `UC-graph-time-travel` | compose | `REQ-auto-persist-merge` |

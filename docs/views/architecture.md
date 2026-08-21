@@ -31,7 +31,7 @@
 | `FUNC-close-store` | FUNC | close() |
 | `FUNC-close-violations` | FUNC | Skill se:close-violations |
 | `FUNC-compute-phase-readiness` | FUNC | computePhaseReadiness(violations) |
-| `FUNC-compute-readiness` | FUNC | computeReadiness(graph, policy) |
+| `FUNC-compute-readiness` | FUNC | computeReadiness(graph) |
 | `FUNC-compute-steering-delta` | FUNC | computeSteeringDelta(before, after) |
 | `FUNC-decode` | FUNC | decode(json) |
 | `FUNC-deduce-tests` | FUNC | graph_tests(changeSet) |
@@ -111,6 +111,7 @@
 | `MOD-hooks` | MOD | hooks.ts — HookSystem |
 | `MOD-host-bridge` | MOD | host-bridge — SSE/WS Bridge |
 | `MOD-mcp-tools` | MOD | mcp-tools.ts — MCP-Registry |
+| `MOD-metrics-engine` | MOD | metrics-engine — Kenngroessen-Rechenkern |
 | `MOD-repo-root` | MOD | graphcode Projektwurzel |
 | `MOD-schema-migration` | MOD | Schema-Migration |
 | `MOD-skills` | MOD | skills/prompts — agent-realisierte Funktionen |
@@ -121,7 +122,7 @@
 
 | function | module |
 |---|---|
-| `FUNC-arch-fitness` | ⚠ nicht alloziert (R-22) |
+| `FUNC-arch-fitness` | `MOD-metrics-engine` |
 | `FUNC-author-req` | `MOD-skills` |
 | `FUNC-author-uc` | `MOD-skills` |
 | `FUNC-block-anschluss` | `MOD-repo-root` |
@@ -142,7 +143,7 @@
 | `FUNC-close-store` | `MOD-harness` |
 | `FUNC-close-violations` | `MOD-skills` |
 | `FUNC-compute-phase-readiness` | `MOD-steering` |
-| `FUNC-compute-readiness` | ⚠ nicht alloziert (R-22) |
+| `FUNC-compute-readiness` | `MOD-metrics-engine` |
 | `FUNC-compute-steering-delta` | `MOD-steering` |
 | `FUNC-decode` | `MOD-codec` |
 | `FUNC-deduce-tests` | `MOD-mcp-tools` |
@@ -166,7 +167,7 @@
 | `FUNC-load-graph` | `MOD-harness` |
 | `FUNC-merge-nodes` | `MOD-codec` |
 | `FUNC-migrate-schema` | `MOD-schema-migration` |
-| `FUNC-module-metrics` | ⚠ nicht alloziert (R-22) |
+| `FUNC-module-metrics` | `MOD-metrics-engine` |
 | `FUNC-mutate` | `MOD-harness` |
 | `FUNC-next-step` | `MOD-steering` |
 | `FUNC-open-store` | `MOD-harness` |

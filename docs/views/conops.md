@@ -60,7 +60,7 @@ Ausgeloest von: `ACTOR-claude-code` · `ACTOR-dashboard` · `ACTOR-developer` ·
 
 - `FCHAIN-apply-gate` — Apply-Gate-Ablauf (Governed Mutation): `FUNC-claim-store-lock` → `FUNC-close-store` → `FUNC-emit-trajectory` → `FUNC-evaluate-rules` → `FUNC-load-graph` → `FUNC-mutate` → `FUNC-open-store` → `FUNC-save-graph` → `FUNC-session-shutdown`
 - `FCHAIN-capture` — Interaktive Erfassung (Text → suggest-Tier): `FUNC-decode` → `FUNC-import` → `FUNC-mutate`
-- `FCHAIN-codec-roundtrip` — Format-E Round-Trip (encode∘decode): `FUNC-decode` → `FUNC-encode` → `FUNC-merge-nodes`
+- `FCHAIN-codec-roundtrip` — Format-E Round-Trip (encode∘decode): `FUNC-decode` → `FUNC-encode`
 - `FCHAIN-interface-escalation` — Interface-Änderungs-Eskalation: `FUNC-graph-impact` → `FUNC-mutate`
 
 ### `UC-deterministic-steering` — Deterministisch auf ein mehrdimensionales Ziel steuern
@@ -85,8 +85,9 @@ Als Entwickler will ich den Modellstand eines beliebigen Commits wiederherstelle
 
 Ausgeloest von: `ACTOR-developer`
 
+- `FCHAIN-merge-branches` — Zweig-Graphen konfliktfrei zusammenfuehren: `FUNC-merge-nodes`
 - `FCHAIN-recall` — Recall (Wiederherstellen): `FUNC-reseed` → `FUNC-rewind` → `FUNC-seed-from-json`
-- `FCHAIN-snapshot-freshness` — Snapshot-Freshness (Aufzeichnen): `FUNC-graph-export-snapshot` → `FUNC-mutate` → `FUNC-save-graph`
+- `FCHAIN-snapshot-freshness` — Snapshot-Freshness (Aufzeichnen): `FUNC-evaluate-rules` → `FUNC-graph-export-snapshot` → `FUNC-mutate` → `FUNC-save-graph`
 
 ### `UC-live-graph-view` — Modellstand live mitlesen
 
@@ -94,7 +95,7 @@ Als Entwickler will ich den aktuellen Modellstand live mitlesen, ohne die Ansich
 
 Ausgeloest von: `ACTOR-dashboard` · `ACTOR-developer`
 
-- `FCHAIN-live-update` — Live-Update-Kette (persist → emit → subscribe): `FUNC-broadcast-diff` → `FUNC-emit-update-event` → `FUNC-save-graph` → `FUNC-serve-stdio` → `FUNC-subscribe-updates`
+- `FCHAIN-live-update` — Live-Update-Kette (persist → emit → subscribe): `FUNC-broadcast-diff` → `FUNC-emit-update-event` → `FUNC-evaluate-rules` → `FUNC-mutate` → `FUNC-save-graph` → `FUNC-serve-stdio` → `FUNC-subscribe-updates`
 
 ### `UC-loop-closure` — Schwellen und Prompts am Trail kalibrieren
 
@@ -242,6 +243,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-317` | done | RTM nach A-SPICE-Ebenen gruppieren + Integrationsabdeckung | `FUNC-view-rtm` |
 | `CR-GC-318` | done | reqLevels lief nur ueber compose — satisfy-Bein fehlte | `FUNC-view-rtm` |
 | `CR-GC-319` | done | audit_trail lieferte Rohdatensaetze statt einer Projektion | `MOD-mcp-tools` |
+| `CR-GC-321` | done | __name in Format-E entdeckbar machen, stillen Namens-Fallback laut machen | `FUNC-decode` · `FUNC-encode` · `FUNC-mutate` |
 | `CR-GC-330` | done | Der Learning-Feed zieht in den eigenen Workspace | `FUNC-emit-trajectory` · `REQ-post-emit-trajectory` · `REQ-trajectory-emit` |
 | `CR-GC-331` | done | graphcode remove raeumt auch den Vorgaenger-Ordner weg | `FUNC-harness-cli` · `REQ-repo-uninstall` |
 | `CR-GC-339` | done | Artikel-Claims belastbar machen | `FUNC-export-markdown` |

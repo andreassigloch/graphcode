@@ -240,7 +240,11 @@ describe('UC-graph-time-travel is modelled, not just built (CR-GC-311)', () => {
       .map((t) => t.target)
       .filter((id) => graph.elements.some((e) => e.id === id && e.type === 'FCHAIN'));
 
-    expect(chains.sort()).toEqual(['FCHAIN-recall', 'FCHAIN-snapshot-freshness']);
+    // Die Zusicherung ist, dass die BEIDEN Ketten aus CR-GC-311 unter dem UC haengen —
+    // nicht, dass nie eine dritte dazukommt. Als exakte Liste brach der Test bei
+    // FCHAIN-merge-branches (CR-GC-389), einer fachlich korrekten Erweiterung desselben
+    // UC: der Zweig-Merge erfuellt REQ-conflict-free-merge, die schon an diesem UC haengt.
+    expect(chains).toEqual(expect.arrayContaining(['FCHAIN-recall', 'FCHAIN-snapshot-freshness']));
   });
 
   it('trips none of the UC/FCHAIN completeness rules any more', () => {

@@ -79,7 +79,8 @@
       "description": "Apply-Gate (mutate → V3_RULES → Disk-Kuzu) lauffähig statt Stub; löst D5/D1. Why: jede Edit durch EIN Gate (L1); der Vorgänger (Express+JSON) verletzt Kuzu/Disk/Rules-Constraints. (docs/cr/open/CR-GC-100)",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "updated_at": "2026-06-17T00:00:00.000Z"
+      "updated_at": "2026-06-17T00:00:00.000Z",
+      "commitRef": "4aa23b1"
     },
     {
       "id": "CR-GC-101",
@@ -88,7 +89,8 @@
       "description": "MCP-stdio-Surface: Agent nutzt Graph statt grep (Ziel a), graph_impact/expand, Gate-Symmetrie (L2). Why: präziser Blast-Radius = Token-/LLM-Effizienz; ohne MCP kein Agent-Zugriff. (docs/cr/open/CR-GC-101)",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "updated_at": "2026-06-17T00:00:00.000Z"
+      "updated_at": "2026-06-17T00:00:00.000Z",
+      "commitRef": "1a0c108"
     },
     {
       "id": "CR-GC-102",
@@ -97,7 +99,8 @@
       "description": "pre-commit/post-apply/nightly Extension-Points; Live-Event + Trajectory-Emission. Why: Kopplung an Dashboard (Ziel b) + Learning-Engine; deterministisch + blockierbar. (docs/cr/open/CR-GC-102)",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "updated_at": "2026-06-17T00:00:00.000Z"
+      "updated_at": "2026-06-17T00:00:00.000Z",
+      "commitRef": "1a0c108"
     },
     {
       "id": "CR-GC-103",
@@ -106,7 +109,8 @@
       "description": "Deterministischer Format-E-Codec (encode/decode), commit-/merge-arm, Validierung gegen SE_DESCRIPTOR. Why: conflict-free git-Merge + Ontologie-Konformität; genau EIN Codec (L1). (docs/cr/open/CR-GC-103)",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "updated_at": "2026-06-17T00:00:00.000Z"
+      "updated_at": "2026-06-17T00:00:00.000Z",
+      "commitRef": "1a0c108"
     },
     {
       "id": "CR-GC-104",
@@ -114,7 +118,8 @@
       "name": "Skills/Prompts-Modul",
       "description": "MOD-skills (.claude/commands/) + prompt-realisierte FUNC-render-views. Why: Skills/Prompts sind reale, zu managende Dateien = Modul; Allokation dorthin = prompt-realisiert (Skills = Funktionen). (docs/cr/done/CR-GC-104)",
       "status": "done",
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "commitRef": "551e2bc"
     },
     {
       "id": "CR-GC-105",
@@ -122,7 +127,8 @@
       "name": "Architektur-Verfeinerung",
       "description": "Kunden-Aktoren (Systems Engineer, Vibe Coder) + Realisierungs-Agent-Reframing; Interface-Eskalations-Prozess (FCHAIN + REQ + Facilitating-Agent); fehlende FCHAINs für efficient-testing + reduced-llm. Why: Mensch=Architektur/Nutzen, Agent=Realisierung; Interface-Drift kontrolliert; jeder UC ein Szenario. (docs/cr/open/CR-GC-105)",
       "status": "done",
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "commitRef": "4fc7a6c"
     },
     {
       "id": "CR-GC-106",
@@ -130,7 +136,8 @@
       "name": "Interface-Schemas",
       "description": "9 SCHEMA-Knoten (→ @sigloch/contracts Zod) + FLOW→SCHEMA für alle 28 Interfaces; REQ-interface-schema. Why: Datenvertrag = Code-Precondition (schema-before-code), schließt Readiness-Dimension schema=0. (docs/cr/open/CR-GC-106)",
       "status": "done",
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "commitRef": "2db8275"
     },
     {
       "id": "CR-GC-107",
@@ -139,7 +146,8 @@
       "description": "Readiness/Scorer nutzt @sigloch/contracts V3_RULES (via harness.evaluateRules) statt Vorgänger-BQ-Regeln (2.0.0). Why: heutige Readiness teils fremd-gemessen (155 BQ-Warnungen); nach Adoption echte Familie-Compliance. NEXT. (docs/cr/open/CR-GC-107)",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "updated_at": "2026-06-17T00:00:00.000Z"
+      "updated_at": "2026-06-17T00:00:00.000Z",
+      "commitRef": "78bd008"
     },
     {
       "id": "CR-GC-108",
@@ -147,7 +155,8 @@
       "name": "Test-Konzept im Graph + Benchmark-REQ",
       "description": "TEST-Metadaten (level/tool/constraint) am Graph → test-concept.md als View rekonstruierbar (se-view-testconcept); REQ-benchmark-harness + REQ-quality-metric (nur definiert, nicht gebaut). Why: Test-Konzept ist eine View, kein Hand-Doc; Benchmark-Bau ist Realisierung. (docs/cr/open/CR-GC-108)",
       "status": "done",
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "commitRef": "0193f67"
     },
     {
       "id": "CR-GC-109",
@@ -155,7 +164,8 @@
       "name": "Live-Event + View-Contract → contracts",
       "description": "Publish LiveUpdateEvent/View-Vertrag nach @sigloch/contracts (Phase 0). (docs/cr/open/CR-GC-109)",
       "status": "done",
-      "created_at": "2026-06-17T00:00:00.000Z"
+      "created_at": "2026-06-17T00:00:00.000Z",
+      "commitRef": "922af9c"
     },
     {
       "id": "CR-GC-110",
@@ -163,7 +173,8 @@
       "name": "views.ts → graph-api-core; BQ-Fork retiren",
       "description": "Geteilte View-Berechnung nach core; aimprove-Regel-Fork auflösen (Phase 0). (docs/cr/open/CR-GC-110)",
       "status": "done",
-      "created_at": "2026-06-17T00:00:00.000Z"
+      "created_at": "2026-06-17T00:00:00.000Z",
+      "commitRef": "00bf82b"
     },
     {
       "id": "CR-GC-111",
@@ -171,7 +182,8 @@
       "name": "MCP-stdio-Server + bin (graphcode mcp)",
       "description": "bindToolsToHarness an StdioServer, gate-symmetrisch (L2); .mcp.json + Hooks neu verdrahten. (docs/cr/open/CR-GC-111)",
       "status": "done",
-      "created_at": "2026-06-17T00:00:00.000Z"
+      "created_at": "2026-06-17T00:00:00.000Z",
+      "commitRef": "8734ff3"
     },
     {
       "id": "CR-GC-112",
@@ -179,7 +191,8 @@
       "name": "CLI graphcode init|update|remove",
       "description": "Neues Projekt scaffolden (.graphcode/, Seed-Import). (docs/cr/open/CR-GC-112) MVP: init eines NEUEN Mitglieds = leerer/Template-Graph + .mcp.json (graphcode mcp) + Guardrails + Deps.",
       "status": "done",
-      "created_at": "2026-06-17T00:00:00.000Z"
+      "created_at": "2026-06-17T00:00:00.000Z",
+      "commitRef": "d8c554d"
     },
     {
       "id": "CR-GC-113",
@@ -187,7 +200,8 @@
       "name": "Graph→Markdown Re-Exporter",
       "description": "Kuzu/Graph → commit-fähige docs (SSOT-Round-Trip); ersetzt Hand-Edits. (docs/cr/open/CR-GC-113)",
       "status": "done",
-      "created_at": "2026-06-17T00:00:00.000Z"
+      "created_at": "2026-06-17T00:00:00.000Z",
+      "commitRef": "5536bdf"
     },
     {
       "id": "CR-GC-114",
@@ -195,7 +209,8 @@
       "name": "Host + SSE/WS-Bridge",
       "description": "Single-Kuzu-Owner-Host + SSE-Route an onUpdateEvent (Live-Viewer-Feed). (docs/cr/open/CR-GC-114)",
       "status": "done",
-      "created_at": "2026-06-17T00:00:00.000Z"
+      "created_at": "2026-06-17T00:00:00.000Z",
+      "commitRef": "3ffd4f6"
     },
     {
       "id": "CR-GC-115",
@@ -203,7 +218,8 @@
       "name": "Dashboard-Viewer-App (Hybrid)",
       "description": "graph-renderer + shell, V3_RULES-gescort; aimprove-Komponenten repointen. (docs/cr/open/CR-GC-115)",
       "status": "done",
-      "created_at": "2026-06-17T00:00:00.000Z"
+      "created_at": "2026-06-17T00:00:00.000Z",
+      "commitRef": "461963c"
     },
     {
       "id": "CR-GC-116",
@@ -211,7 +227,8 @@
       "name": "Views/Skills an Live-Graph verdrahten",
       "description": "7 tote localhost:3001-Views auf MCP/Bridge umstellen + IRR-View ergänzen. (docs/cr/open/CR-GC-116)",
       "status": "done",
-      "created_at": "2026-06-17T00:00:00.000Z"
+      "created_at": "2026-06-17T00:00:00.000Z",
+      "commitRef": "fccbc71"
     },
     {
       "id": "CR-GC-117",
@@ -219,7 +236,8 @@
       "name": "Modell-Hygiene: V3_RULES-Violations schließen",
       "description": "61 R-01 (verify-Traces) + 14 RD-01 auflösen → Readiness ~0. (docs/cr/open/CR-GC-117)",
       "status": "done",
-      "created_at": "2026-06-17T00:00:00.000Z"
+      "created_at": "2026-06-17T00:00:00.000Z",
+      "commitRef": "361a1b5"
     },
     {
       "id": "CR-GC-118",
@@ -227,7 +245,8 @@
       "name": "Cleanup stale-at-all Knoten",
       "description": "Dual-Status-Bug (5 CRs), TEST-harness-install, REQ-dashboard-ontology-sync-Status. (docs/cr/open/CR-GC-118)",
       "status": "done",
-      "created_at": "2026-06-17T00:00:00.000Z"
+      "created_at": "2026-06-17T00:00:00.000Z",
+      "commitRef": "361a1b5"
     },
     {
       "id": "CR-GC-119",
@@ -236,7 +255,8 @@
       "description": "+REQ-docs-taxonomy (Litmus-Test) + mechanischer Rename-Sweep docs/project → docs/{views,records}. Why: graph-is-ssot interessiert nur „aus dem Graphen reproduzierbar?\". (docs/cr/open/CR-GC-119-docs-views-vs-records)",
       "status": "done",
       "created_at": "2026-06-17T00:00:00.000Z",
-      "updated_at": "2026-06-17T00:00:00.000Z"
+      "updated_at": "2026-06-17T00:00:00.000Z",
+      "commitRef": "ce71e8c"
     },
     {
       "id": "CR-GC-120",
@@ -244,7 +264,8 @@
       "name": "Batch-Seed/Import (UNWIND) — Scale",
       "description": "Per-Node/Edge-MERGE ist O(langsam): 10k Edges = 51s gemessen (SP-2). UNWIND-Batch-Insert → Seed/Import sub-Sekunde, damit 10k-Knoten real wird.",
       "status": "done",
-      "created_at": "2026-06-17T00:00:00.000Z"
+      "created_at": "2026-06-17T00:00:00.000Z",
+      "commitRef": "f5ca9d5"
     },
     {
       "id": "CR-GC-121",
@@ -252,7 +273,8 @@
       "name": "Distribution: npx-Paket, self-contained, agent-agnostic",
       "description": "graphcode als npm-Paket mit bin `npx @sigloch/graphcode init|update|remove`; versionierte (nicht file:) Deps fürs Publish; in beliebigem Fremd-Repo lauffähig. Voraussetzung fürs „neues Repo anlegen\".",
       "status": "done",
-      "created_at": "2026-06-17T00:00:00.000Z"
+      "created_at": "2026-06-17T00:00:00.000Z",
+      "commitRef": "618fccf"
     },
     {
       "id": "CR-GC-122",
@@ -260,7 +282,8 @@
       "name": "New-Member Bootstrap durchs Gate (Format-E Cold-Start)",
       "description": "Leeren Graphen eines NEUEN Familie-Mitglieds ausschließlich durchs mutate()-Gate befüllen (Quelle Format-E, kein Direct-Write); Cold-Start mit Template-SYS. Realisiert TEST-bootstrap.",
       "status": "done",
-      "created_at": "2026-06-17T00:00:00.000Z"
+      "created_at": "2026-06-17T00:00:00.000Z",
+      "commitRef": "7876666"
     },
     {
       "id": "CR-GC-123",
@@ -268,7 +291,8 @@
       "name": "MVP E2E-Acceptance: bootstrap → spec → KNOW-query → implement → re-export",
       "description": "End-to-End-Validierung der MVP-Definition: in einem Wegwerf-Repo ein neues Mitglied bootstrappen, ein paar Knoten durchs Gate spec’en, beweisen dass graph_impact die RICHTIGEN Elemente liefert (nicht grep), einen Knoten implementieren, re-exportieren. Realisiert die UC-Tests.",
       "status": "done",
-      "created_at": "2026-06-17T00:00:00.000Z"
+      "created_at": "2026-06-17T00:00:00.000Z",
+      "commitRef": "df2a9d0"
     },
     {
       "id": "CR-GC-124",
@@ -276,7 +300,8 @@
       "name": "OpenCode-Execution: agent-agnostic 2nd client, headless BYOK",
       "description": "graphcode headless von OpenCode getrieben (BYOK), als zweiter MCP-stdio-Client neben Claude Code — beweist die agent-agnostische + headless Claim (verriegelt: OpenCode-executed).",
       "status": "done",
-      "created_at": "2026-06-17T00:00:00.000Z"
+      "created_at": "2026-06-17T00:00:00.000Z",
+      "commitRef": "fccbc71"
     },
     {
       "id": "CR-GC-125",
@@ -284,7 +309,8 @@
       "name": "Readiness-Modell definieren & realisieren (Phase/Impl/INCOSE)",
       "description": "Definiert was Phase-Readiness/Impl-Readiness-Gates/INCOSE-Artifacts in graphcode-Begriffen bedeuten (V3_RULES + MS + Status), dann als Scorer/View realisieren. Subsumiert die offene INCOSE-Scope-Frage (voll vs. lean). Voraussetzung für CR-110/115/116. (docs/cr/open/CR-GC-125)",
       "status": "done",
-      "created_at": "2026-06-17T00:00:00.000Z"
+      "created_at": "2026-06-17T00:00:00.000Z",
+      "commitRef": "85e17fa"
     },
     {
       "id": "CR-GC-126",
@@ -292,7 +318,8 @@
       "name": "Query-Layer: Cypher, korrekte Impact-Richtung (KNOW statt guess)",
       "description": "graph_impact/expand/elements über Kuzu-Cypher statt TS-BFS; korrekte Blast-Radius-Richtung (eingehende Caller/Traces/Tests); TS-Mirror als Read-Pfad retiren. Major target: die richtigen Elemente WISSEN (Graph), nicht raten (grep). (SP-1/SP-2)",
       "status": "done",
-      "created_at": "2026-06-17T00:00:00.000Z"
+      "created_at": "2026-06-17T00:00:00.000Z",
+      "commitRef": "2a59668"
     },
     {
       "id": "CR-GC-127",
@@ -300,7 +327,8 @@
       "name": "graph_export als MCP-Tool — Agent-Loop ueber MCP geschlossen",
       "description": "DONE 2026-06-18. Der Re-Exporter (CR-GC-113) war nur als Library-Funktion und als Skript erreichbar; ueber die Agent-Surface fehlte damit der letzte MVP-1-Schritt. bindToolsToHarness bekam graph_export: serialisiert den LIVE harness.getGraph() via exportGraphJson/exportMarkdown und schreibt docs/graph/<name>.graph.json plus docs/views/*.md unter den Repo-Root. Dafuer neue Getter getRepoRoot() und getScope() in harness.ts. Live-E2E ueber realen CLI und MCP-stdio-Server durchlaufen: init, gate-mutate, graph_impact, implement, graph_export. (docs/cr/done/CR-GC-127)",
       "status": "done",
-      "created_at": "2026-06-18T00:00:00.000Z"
+      "created_at": "2026-06-18T00:00:00.000Z",
+      "commitRef": "7140499"
     },
     {
       "id": "CR-GC-128",
@@ -308,7 +336,8 @@
       "name": "Repo-abgeleiteter Member-Name + README-Setup",
       "description": "DONE 2026-06-18. serveStdio setzte die Harness-Scope hart auf graphcode, weshalb der Re-Export in einem Fremd-Repo als graphcode.graph.json landete. deriveMemberName(repoRoot) leitet den Namen jetzt aus dem unscoped package.json-Namen ab, faellt auf den Repo-Verzeichnisnamen und erst dann auf graphcode zurueck. README neu geschrieben auf den ausgelieferten Stand inklusive Quick-Start fuer ein neues Repo. 6 Testfaelle. (docs/cr/done/CR-GC-128)",
       "status": "done",
-      "created_at": "2026-06-18T00:00:00.000Z"
+      "created_at": "2026-06-18T00:00:00.000Z",
+      "commitRef": "1348a66"
     },
     {
       "id": "CR-GC-129",
@@ -316,7 +345,8 @@
       "name": "graph_readiness als MCP-Tool",
       "description": "DONE 2026-06-18. Die Skills se-review und se-status brauchen einen Readiness-Score, den frueher der stillgelegte localhost:3001-Endpunkt lieferte. scoreReadiness(harness) existierte, war aber ueber MCP nicht erreichbar. graph_readiness in bindToolsToHarness ergaenzt (Registry 11 auf 12 Tools), liefert den ReadinessReport mit Compliance-Score, violationsByRule und Dimensionen; Test gegen echtes Disk-Kuzu belegt, dass Familie-Regel-IDs den Score treiben. (docs/cr/done/CR-GC-129)",
       "status": "done",
-      "created_at": "2026-06-18T00:00:00.000Z"
+      "created_at": "2026-06-18T00:00:00.000Z",
+      "commitRef": "52ad1f5"
     },
     {
       "id": "CR-GC-130",
@@ -324,7 +354,8 @@
       "name": "Action-Skills (fmea/review/status) auf MCP umgestellt",
       "description": "DONE 2026-06-18. se-fmea, se-review und se-status riefen weiter curl gegen den mit CR-GC-111 stillgelegten localhost:3001-Endpunkt — ohne Migration liefen die SE-Workflows des MVP nicht. Die drei Skills fahren den Graphen jetzt ausschliesslich ueber MCP-Tools: Query ueber graph_elements/graph_get_node/graph_impact, Schreiben ueber graph_mutate (das Gate blockt neue Error-Violations statt still zu verwerfen), Violations ueber rules_get_violations, Score ueber graph_readiness. Veraltete Ontologie-Kuerzel auf die Live-Ontologie aus @sigloch/contracts/se gezogen. (docs/cr/done/CR-GC-130)",
       "status": "done",
-      "created_at": "2026-06-18T00:00:00.000Z"
+      "created_at": "2026-06-18T00:00:00.000Z",
+      "commitRef": "48cd5b9"
     },
     {
       "id": "CR-GC-131",
@@ -332,7 +363,8 @@
       "name": "View-Skills A (arch/nfr/trade) auf MCP umgestellt",
       "description": "DONE 2026-06-18. se-view-arch, se-view-nfr und se-view-trade lasen ihre Slices per curl vom stillgelegten Endpunkt. Neu holen sie die relevante Slice ueber die MCP-Query-Tools und rendern die View in der Agent-Antwort: Skills sind Prompts, der Agent ist der Renderer — kein server-seitiger View-Endpunkt, das ist der KNOW-via-Query-Entwurf. Konformitaet: 0 Treffer auf localhost:3001, GRAPH_API oder /api/graph. (docs/cr/done/CR-GC-131)",
       "status": "done",
-      "created_at": "2026-06-18T00:00:00.000Z"
+      "created_at": "2026-06-18T00:00:00.000Z",
+      "commitRef": "0ca8ed4"
     },
     {
       "id": "CR-GC-132",
@@ -340,7 +372,8 @@
       "name": "View-Skills B (testmatrix/testconcept/implplan) + Skill-Konformitaetstest",
       "description": "DONE 2026-06-18. Die letzten drei Skills auf dem toten Pfad wie in CR-GC-131 umgeschrieben. Wichtiger als die Umstellung ist die Verriegelung: tests/skills.mcp-conformance.test.ts (TEST-skills-mcp) greppt ALLE .claude/skills/*.md auf 0 Treffer fuer localhost:3001, GRAPH_API, /api/graph, /api/dashboard und verlangt je Skill mindestens eine MCP-Tool-Referenz. Damit ist done=verifiziert auch fuer die prompt-realisierten FUNCs, und MOD-skills konnte auf done gehen. (docs/cr/done/CR-GC-132)",
       "status": "done",
-      "created_at": "2026-06-18T00:00:00.000Z"
+      "created_at": "2026-06-18T00:00:00.000Z",
+      "commitRef": "7581646"
     },
     {
       "id": "CR-GC-133",
@@ -348,7 +381,8 @@
       "name": "Scaffold installiert die SE-Skills ins Ziel-Repo",
       "description": "DONE 2026-06-18. graphcode init legte .mcp.json, .graphcode/, GRAPHCODE.md und die Dependency an, aber keine SE-Skills — ein frisch initialisiertes Member-Repo bekam das governte Substrat mit null SE-Workflows. init/update kopieren jetzt die mitgelieferten .claude/skills/se-*.md idempotent ins Ziel (byte-identische Wiederholung = preserved), remove loescht sie restlos und pruned leere Verzeichnisse. .claude/skills in package.json files aufgenommen, damit sie im npm-Tarball ausgeliefert werden; der Distribution-Test installiert aus dem gepackten Tarball in ein Fremd-Repo. (docs/cr/done/CR-GC-133)",
       "status": "done",
-      "created_at": "2026-06-18T00:00:00.000Z"
+      "created_at": "2026-06-18T00:00:00.000Z",
+      "commitRef": "3ee86e0"
     },
     {
       "id": "CR-GC-134",
@@ -356,7 +390,8 @@
       "name": "Bottom-up Test-Deduktion (graph_tests)",
       "description": "graph_tests(changeSet) leitet aus einer Aenderung via graph_impact genau das betroffene TEST-Set ab und emittiert ein selektives Run-Kommando (Zeit/Token-Ersparnis + Qualitaet). Realisiert UC-efficient-testing + REQ-test-runnable-binding; braucht testRef am TEST-Element in @sigloch/contracts (Familie-weit, Minor-Version-Bump, Drift-Lock L1/L2). Kein Parallelpfad: kapselt graph_impact. (docs/cr/open/CR-GC-134)",
       "status": "done",
-      "created_at": "2026-06-19T00:00:00.000Z"
+      "created_at": "2026-06-19T00:00:00.000Z",
+      "commitRef": "48dee0c"
     },
     {
       "id": "CR-GC-200",
@@ -364,7 +399,8 @@
       "name": "Single graph-validator - uniqueness + de-dup",
       "description": "Ein Validierungs-Pfad: validate() erkennt doppelte UIDs; kein hand-gerollter validPairs-Klon in src/scripts/tests. (docs/cr/open/CR-GC-200)",
       "status": "done",
-      "created_at": "2026-06-18T00:00:00.000Z"
+      "created_at": "2026-06-18T00:00:00.000Z",
+      "commitRef": "24c6ffe"
     },
     {
       "id": "CR-GC-201",
@@ -372,7 +408,8 @@
       "name": "Enforce gate-only graph writes",
       "description": "Agent kann den SSOT nicht hand-editieren; jeder Write durch graph_mutate (mutate-Gate, L1). DONE 2026-06-20: PreToolUse deny-hook (.claude/hooks/deny-graph-write.sh) blockt Edit/Write auf docs/graph/*.graph.json + .graphcode/kuzu*; JSON = generierter Export (graph_export, lossless via attrs_json v0.2.0 + deterministische Sortierung, byte-identische Provenance). Follow-ups offen: Scaffolding in Ziel-Repos (FUNC-harness-cli), literaler CI-Provenance-Job. (CR-GC-201)",
       "status": "done",
-      "created_at": "2026-06-18T00:00:00.000Z"
+      "created_at": "2026-06-18T00:00:00.000Z",
+      "commitRef": "d0734b6"
     },
     {
       "id": "CR-GC-202",
@@ -380,7 +417,8 @@
       "name": "graph_export refuse-to-clobber guard",
       "description": "Empty- + Net-Deletion-Guard im MCP graph_export, force:true Opt-in; spiegelt die Guards von scripts/export-graph.mjs, macht Drift laut statt still. (docs/cr/open/CR-GC-202)",
       "status": "done",
-      "created_at": "2026-06-18T00:00:00.000Z"
+      "created_at": "2026-06-18T00:00:00.000Z",
+      "commitRef": "24c6ffe"
     },
     {
       "id": "CR-GC-203",
@@ -388,70 +426,80 @@
       "name": "Violation-resolution ergonomics & SSOT tooling",
       "description": "DX/tooling: surface fix_hint+candidate_targets through rules_get_violations (harness.runRules drops them today); graph_readiness summary mode (86k-char overflow); ranked R-01 candidates; in-process graph_reseed tool; se-close-violations skill; REQ-with-test authoring invariant (intrinsic proof) + close the seedFromJson/importGraph gate-bypass so no REQ enters without a verify-traced TEST. Remedial items 1-5 clear accrued unverified REQs; item 6 prevents accrual. Tooling/DX, not a code-quality claim. (CR-GC-203)",
       "status": "done",
-      "created_at": "2026-06-20T00:00:00.000Z"
+      "created_at": "2026-06-20T00:00:00.000Z",
+      "commitRef": "3fb67cf"
     },
     {
       "id": "CR-GC-204",
       "type": "CR",
       "name": "graph_tests operational",
       "description": "DONE 2026-06-21. harness.testImpact() als gerichteter code→REQ→TEST-BFS ueber das EINE getSubgraph-Primitiv, plus der Code-Changeset-Modus von graph_tests. testRef-Backfill ueber alle 35 lauffaehigen TEST-Knoten; die 14 rein konzeptionellen tragen explizit testRef null und concept true, statt einen Pfad vorzutaeuschen. Neuer Knoten TEST-codec-validation. Nachweis gegen False-Green: changeSet [MOD-codec, MOD-harness] loest graph-integrity + codec.validation + harness.gate auf, TEST-graph-tests-operational verriegelt Coverage und Deduktion. (docs/cr/done/CR-GC-204)",
-      "status": "done"
+      "status": "done",
+      "commitRef": "a30033c"
     },
     {
       "id": "CR-GC-205",
       "type": "CR",
       "name": "Enforce-don't-document — R-18 Strukturregel + ausfuehrbare Guardrails",
       "description": "DONE 2026-06-21, alle 5 Items. Item 1: R-18 macht die Trace-Paar-Legalitaet gegen TRACE_PATTERNS zur Engine-Regel — das Gate ruft seither KEIN separates codec.validate() mehr. Item 2: ausfuehrbare Guardrails statt Prosa-Vertrauen — NUL-/Binaer-Source-Guard als PreToolUse-Hook, Read-vor-Edit bewusst als Harness-Built-in ohne Zusatz-Hook (kein Parallelpfad), Tool- und Skill-Zaehlungen aus der Live-Registry abgeleitet statt als Magic Number. Item 3: CLAUDE.md auf die Sektion 'Erzwungen, nicht dokumentiert' eingedampft, jede Invariante zeigt auf ihren Enforcer. Item 4: R-19 (lauffaehiger TEST traegt testRef) plus Materialisierung fehlender Stubs als it.todo, kein Phantom-Pfad. Item 5: R-20 (realisierte FUNC traegt codeRef) plus Backfill ueber alle 36 FUNC-Knoten durchs Gate — 25 code-realisiert mit in src/ verifiziertem Symbol, 9 external, 2 concept; R-20 feuert danach 0x. Items 2 und 3 sind Dev-Prozess, nicht Produkt-Requirements, und bekommen deshalb bewusst keine Graph-Knoten. (docs/cr/done/CR-GC-205)",
-      "status": "done"
+      "status": "done",
+      "commitRef": "0ca86c2"
     },
     {
       "id": "CR-GC-206",
       "type": "CR",
       "name": "Graph-code LSP conformance — resolve FUNC codeRef symbols",
       "description": "Follow-up aus CR-205 Item 5: FUNC.codeRef-Symbole real aufloesen (TypeScript-Parser), nicht nur Praesenz pruefen. Cross-Module-Call-Coverage bleibt Follow-up.",
-      "status": "done"
+      "status": "done",
+      "commitRef": "10be29c"
     },
     {
       "id": "CR-GC-207",
       "type": "CR",
       "name": "Graph-first onboarding contract (GRAPHCODE.md + dialect marker)",
       "description": "DONE 2026-06-28: scaffolded GRAPHCODE.md carries the graph-first contract — graph is SSOT not docs; entry = MCP query (graph_readiness/graph_elements/graph_impact/graph_expand), never doc-ingest; Format-E dialect uid.TYPE (Name.SY.001 dead); SPEC.md = bootstrap input, do not read; run graph_export after seeding so JSON SSOT exists. docs/SPEC.md head now self-declares status: INPUT-ONLY (couples deny-stale-prose-read hook CR-214) + dialect-obsolete note. Realizes via src/scaffold.ts guardrailsContent(). Test: tests/cli.scaffold.test.ts. (CR-GC-207)",
-      "status": "done"
+      "status": "done",
+      "commitRef": "e4ec8f2"
     },
     {
       "id": "CR-GC-208",
       "type": "CR",
       "name": "Skill sync + surfacing (anti-drift for scaffolded se-* skills)",
       "description": "DONE 2026-06-28: `graphcode skills sync` CLI subcommand (src/cli.ts dispatch arm + syncSkills() in scaffold.ts) re-copies shipped se-*.md into target .claude/skills/, reports added|updated|unchanged per file, overwrites only on version: mismatch (missing=0); all 17 se-*.md carry version:1 frontmatter. GRAPHCODE.md gains a derived '## Available se-* skills' table (name→purpose) so agents call skills via the Skill tool, not ad-hoc. Conformance stays green. Test: tests/cli.scaffold.test.ts. (CR-GC-208)",
-      "status": "done"
+      "status": "done",
+      "commitRef": "01b088a"
     },
     {
       "id": "CR-GC-209",
       "type": "CR",
       "name": "se-plan generative impl/integration plan skill",
       "description": "DONE 2026-06-28: new generative skill .claude/skills/se-plan.md derives the build order from the graph depends-on DAG (relation edge with label depends-on), topo-sorts milestones, proposes CR cuts (max 5 files each), and writes MS/CR/relation through the gate. Forward dependency (lower id depends on higher id) and cycles are reported, never silently ordered. Testable core src/se-plan.ts (deriveImplPlan), distinct from the se-view:implplan render (no parallel path: view renders, plan creates). Test: tests/se-plan.ordering.test.ts. (CR-GC-209)",
-      "status": "done"
+      "status": "done",
+      "commitRef": "3a3c9b0"
     },
     {
       "id": "CR-GC-210",
       "type": "CR",
       "name": "Read-tool output-format contract (JSON vs Format-E)",
       "description": "DONE 2026-06-28: graph_elements and graph_get_edges gain an opt-in format input (json default, formatE). json stays the default (no breaking change for existing skills); formatE returns a round-trip-stable slice in the canonical uid.TYPE dialect via GraphCodeCodec.encode (re-importable by the same codec), not the non-round-trip raw FormatECodec form. graph_elements ships the selected nodes + induced edges; graph_get_edges ships the filtered edges + their endpoint nodes (no dangling). Tool descriptions document the contract (slice-tools impact/expand are always Format-E). Test: tests/mcp.read-format.test.ts (disk Kuzu, codec round-trip). (CR-GC-210)",
-      "status": "done"
+      "status": "done",
+      "commitRef": "169605f"
     },
     {
       "id": "CR-GC-211",
       "type": "CR",
       "name": "UC-authoring guardrail (terseness + jargon budget)",
       "description": "DONE 2026-06-28: se:author-uc skill (.claude/skills/se-author-uc.md) authors UC nodes terse (max 25 words, active, Actor/Verb/Object/Outcome, no impl detail) with a jargon budget (max 2 technical terms, each grounded in a SCHEMA/REQ node) and gate-mutates the UC + compose trace. Executable linter src/se-author-uc.ts (lintUc + groundedTermsFrom); style is a WARNING not a gate error (no engine-rule fork into contracts). Distinct from se-view:conops (renders) vs author (creates). Test: tests/se-author-uc.test.ts catches a too-long jargon-dense UC and runs over the committed graph. (CR-GC-211)",
-      "status": "done"
+      "status": "done",
+      "commitRef": "1a40bde"
     },
     {
       "id": "CR-GC-212",
       "type": "CR",
       "name": "Post-project KPI retro (se-retro + KPI standard)",
       "description": "DONE 2026-06-28: docs/KPI.md defines the 6 KPIs (graph-vs-grep ratio target >1, tool usage, tokens per net-LOC, plan conformance target 0, gate health applied/rejected + readiness delta, binding coverage R-19/R-20 target 100%) with definition+source+target. scripts/retro-kpi.mjs exports computeKpis + renderKpiTable (pure) and a main that reads a session JSON + auto-fills git net-LOC; reads audit+readiness over MCP, no 2nd DB handle. se-retro skill gathers the session data and interprets. Test: tests/retro-kpi.test.ts asserts deterministic values + a graph-less session yields ratio < 1. (CR-GC-212)",
-      "status": "done"
+      "status": "done",
+      "commitRef": "614d7f5"
     },
     {
       "id": "CR-GC-213",
@@ -459,28 +507,32 @@
       "name": "graph_context — knotenbezogenes Definition-of-Done-Kontextpaket",
       "description": "DONE 2026-06-26. Erste Realanwendung (graphify) zeigte die Ergonomie-Luecke, nicht ein Modellproblem: die Precise-Nav-Tools wurden 0-mal gerufen, stattdessen 31 Reads mit 171k Zeichen — ein Read von docs/SPEC.md liefert scheinbar alles in einem Call. Dazu eine Richtungs-Luecke: graph_impact liefert Downstream, zum Implementieren braucht man das Upstream-Spec-Closure. graph_context(id, depth) assembliert server-seitig ein Format-E-Slice aus Knoten, erfuellten REQ/UC, den verifizierenden TEST, den ausgetauschten FLOW/SCHEMA und dem allozierten MOD. Live-Smoke gegen das Selbstmodell: 3-Knoten-Bundle rund 250 Token. 7 Tests. (docs/cr/done/CR-GC-213)",
       "status": "done",
-      "created_at": "2026-06-26T00:00:00.000Z"
+      "created_at": "2026-06-26T00:00:00.000Z",
+      "commitRef": "bb361b9"
     },
     {
       "id": "CR-GC-214",
       "type": "CR",
       "name": "Read-side graph-first enforcement (deny-stale-prose-read hook)",
       "description": "DONE 2026-06-28: PreToolUse deny-hook (.claude/hooks/deny-stale-prose-read.sh) blocks Read of docs self-declaring status: INPUT-ONLY / SUPERSEDED-BY-GRAPH, redirects to graph_context/graph_elements/graph_readiness; GRAPHCODE_ALLOW_STALE_READ=1 escape-hatch. Scaffold ships+registers it (CR-GC-215). Test: tests/hooks.deny-stale-read.test.ts. (CR-GC-214)",
-      "status": "done"
+      "status": "done",
+      "commitRef": "99d7503"
     },
     {
       "id": "CR-GC-215",
       "type": "CR",
       "name": "Ship enforcement-hooks to consumer repos",
       "description": "DONE 2026-06-28 (deferral lifted): graphcode init/update copy .claude/hooks/deny-*.sh (write/binary/stale-read) into the target repo + register them in .claude/settings.json (idempotent merge, member hooks/keys preserved); remove strips only ours; package.json files[] ships hooks+settings. Realizes via src/scaffold.ts installHooks/removeHooks. Test: tests/cli.scaffold.test.ts. (CR-GC-215)",
-      "status": "done"
+      "status": "done",
+      "commitRef": "99d7503"
     },
     {
       "id": "CR-GC-216",
       "type": "CR",
       "name": "graph_realize ergonomic write-back affordance (write-twin of graph_context)",
       "description": "DONE 2026-06-28: flat graph_realize MCP tool in src/mcp-tools.ts wraps the 90% realize-mutation behind a flat schema (funcUid/file/symbol/lang?, testUid?/testFile?/testCase?/tool?) and runs through the same Apply-Gate via harness.mutate() (update-node, no parallel write path). Sets FUNC codeRef (R-20) + optional TEST testRef (R-19); returns the missingRefs delta (before/after/resolved) so the agent sees the realization confirmed. Unknown funcUid/testUid gives a clear error. Built for small local models that mis-guessed graph_mutate's nested union (SPIKE-GC-loop-executor-benchmark). Added to the agent-agnostic surface contract. Test: tests/mcp.realize.test.ts. (CR-GC-216)",
-      "status": "done"
+      "status": "done",
+      "commitRef": "b08ea55"
     },
     {
       "id": "CR-GC-217",
@@ -488,133 +540,152 @@
       "name": "Graph-State Time-Travel (commit-gebundener Snapshot)",
       "description": "DONE 2026-06-27. Ein frueherer Graph-Stand liess sich nicht zu passendem Code zurueckholen: Serialisierung und Restore existierten, die Bindung an die Git-Historie fehlte. Umgesetzt wurde Ansatz A, Scheibe 1 — der deterministische, verlustfreie und git-getrackte Snapshot docs/graph/graphcode.graph.json wird an den Commit gebunden, Restore laeuft ueber graph_reseed (CR-GC-203). Scheibe 2 wurde von CR-GC-218 abgeloest; B/C/D verworfen. Umnummeriert von CR-GC-216, weil eine parallele Session die Nummer belegt hatte. (docs/cr/done/CR-GC-217)",
       "status": "done",
-      "created_at": "2026-06-27T00:00:00.000Z"
+      "created_at": "2026-06-27T00:00:00.000Z",
+      "commitRef": "16fa892"
     },
     {
       "id": "CR-GC-218",
       "type": "CR",
       "name": "Concurrent-agent isolation and safe graph recall",
       "description": "DONE 2026-07-02 (was deferred draft): implemented O1+O2+O3, NOT O4 (O4 changes the locked one-owner-per-repo constraint, family-review-gated). O1 = scripts/gcw.mjs git-worktree wrapper; .graphcode is gitignored + repo-root-relative so each worktree gets its own Kuzu store automatically (per-worktree isolation without touching the constraint); retries .git/config.lock contention (claude-code#34645). O2 = src/store-lock.ts store-ownership lock (atomic O_EXCL lockfile + pid/host, reclaim only on positive-dead or old-corrupt); harness acquires on initialize, releases on close, so a 2nd writer on one store is refused loudly (StoreOwnershipError), enforcing REQ-single-kuzu-owner. O3 = in-process FIFO write-mutex so reseed never interleaves with mutate. Research: codegraph read-only (N/A); claude-flow/ruflo has the same bug, patches with SQLite WAL+retry which single-writer Kuzu rejects. docs/CONCURRENCY.md. Test: tests/store-lock.test.ts. (CR-GC-218)",
-      "status": "done"
+      "status": "done",
+      "commitRef": "15d6570"
     },
     {
       "id": "CR-GC-219",
       "type": "CR",
       "name": "Flatten redundant nested attributes field",
       "description": "DONE 2026-06-28: harness.importGraph spread `...rest` nested a literal `attributes` key as node.attributes.attributes (52 of 305 elements). Root-cause fix: shared elementToNode() in src/exporter.ts (used by harness.importGraph + scripts/export-graph.mjs, killing the duplicated inline mapping) flattens the nested object up one level, drops level/tool that merely restate testRef (18 redundant), drops empty {} (9), preserves operatingMode/zodDefinition/constraint as top-level attributes. Idempotent. Committed SSOT migrated + round-trip guard in tests/graph-integrity.test.ts. (CR-GC-219)",
-      "status": "done"
+      "status": "done",
+      "commitRef": "c92aa60"
     },
     {
       "id": "CR-GC-220",
       "type": "CR",
       "name": "Renderer: deterministic MarkdownView for every render-able artifact",
       "description": "DONE 2026-06-28: MarkdownViewSchema extended with 12 deterministic SE-artifact views (srs, nfr, rtm, icd, testconcept, testmatrix, intplan, changelog, fmea, conops, trade, implplan) in src/exporter-views.ts; exporter.ts stays under 500 lines. Each view is a pure stable-sorted projection of the graph (SRS in 29148 structure as a REQ-slice distinct from the full spec dump; TestConcept pyramid with a computed E2E gap marked when 0 system tests; RTM/VCRM matrices). scripts/export-graph.mjs renders all 16 views; two runs are byte-identical. Test: tests/exporter.test.ts. (CR-GC-220)",
-      "status": "done"
+      "status": "done",
+      "commitRef": "5a8d185"
     },
     {
       "id": "CR-GC-221",
       "type": "CR",
       "name": "Readiness: creations as gate precondition (phase + impl)",
       "description": "DONE 2026-06-28: ReadinessGate gains creationArtifacts[]; PHASE_GATE_CREATIONS map (SRR conops+assumption-review, PDR fmea+trade, CDR implplan, TRR none). A phase gate passes only if rule-clean AND every required creation is current (stale or absent blocks). scoreImplGate adds anti-vacuous-green: blocks when a phase creation is absent even with all CRs done. Creation currency comes from a CreationCurrencyProvider interface (CR-GC-221 defines the signature; default ABSENT_CREATION_PROVIDER, real classifier is CR-GC-222) threaded into computeReadiness as an optional arg, so 2-arg callers keep back-compat. Realizes via src/readiness.ts. Test: tests/readiness.model.test.ts. (CR-GC-221)",
-      "status": "done"
+      "status": "done",
+      "commitRef": "2449cb6"
     },
     {
       "id": "CR-GC-222",
       "type": "CR",
       "name": "Artefakt-Tab: render/analysis Kind-Split",
       "description": "DONE 2026-06-28: ArtifactStatus gains kind (render|analysis) + group (incose|graphcode) in src/viewer/panels.ts. Render rows keep the mtime classifier (artifactFreshness); analysis/creation rows use a scope-currency classifier (analysisFreshness) and are NEVER mtime-classified (staleVsGraph ignored for them). ARTIFACT_CATALOG is the SSOT for kind/group/label; IRR renamed to 'Assumption Review' (graphcode-specific group); labels are names not ids. creationCurrencyProvider() builds the CR-221 CreationCurrencyProvider from analysis currency. Test: tests/panels.test.ts. (CR-GC-222)",
-      "status": "done"
+      "status": "done",
+      "commitRef": "a5135a8"
     },
     {
       "id": "CR-GC-223",
       "type": "CR",
       "name": "Skills: Creation-Skills (FMEA-Rename + se-irr/se-conops/se-trade)",
       "description": "DONE 2026-06-28: renamed skill se-view-irr to se-view-fmea (FMEA render; rebound FUNC-view-irr codeRef in place, edges preserved) so no skill labels FMEA as IRR. New gate-only create skills: se-irr (Assumption Review, non-INCOSE, commit-pinned record then promote to CRs), se-conops (operational concerns before UC, writes operational REQ via gate), se-trade (Spike to CR, decision recorded as relation decides/superseded-by, no new element type). se-fmea points at se-view:fmea as its render. Conformance green (registry-derived counts). Test: tests/skills.mcp-conformance.test.ts. (CR-GC-223)",
-      "status": "done"
+      "status": "done",
+      "commitRef": "ade0655"
     },
     {
       "id": "CR-GC-224",
       "type": "CR",
       "name": "Skills: View-Skills Thin-Trigger (Gruppe A)",
       "description": "DONE 2026-06-28: group-A se-view skills (arch/icd/rtm/nfr/testconcept/testmatrix) rewritten as thin triggers (version bumped to 2) that call graph_export with the single matching view id and output the deterministic docs/views/<view>.md verbatim, no agent formatting. Eliminates the non-deterministic parallel render path against the CR-GC-220 exporter. Conformance green (each names the live graph_export tool, no dead path). Test: tests/skills.mcp-conformance.test.ts. (CR-GC-224)",
-      "status": "done"
+      "status": "done",
+      "commitRef": "0fc4c97"
     },
     {
       "id": "CR-GC-225",
       "type": "CR",
       "name": "Skills: View-Skills Thin-Trigger (Gruppe B)",
       "description": "DONE 2026-06-28: group-B se-view skills (implplan/intplan/changelog/conops/trade) rewritten as thin triggers (version 2) calling graph_export with the single matching view id and emitting the deterministic docs/views/<view>.md verbatim, no agent formatting. implplan renders the se-plan (CR-209) MS/CR; conops/trade render the se-conops/se-trade (CR-223) created structure; intplan is pure render. Eliminates the non-deterministic parallel render path. Conformance green. Test: tests/skills.mcp-conformance.test.ts. (CR-GC-225)",
-      "status": "done"
+      "status": "done",
+      "commitRef": "90ca60e"
     },
     {
       "id": "CR-GC-226",
       "type": "CR",
       "name": "Doku/Graph: lean=no-artifacts abloesen + Artefakt-Modell seeden",
       "description": "DONE 2026-06-28: redefined lean in src/readiness.ts header + IncoseScope comment (supersedes CR-125 no-artifacts stance): graph = SSOT, renders = deterministic projections, creations (ConOps/FMEA/Assumption/Trade/Impl-Plan) = lightweight judgment inputs + gate preconditions; only ASIL-D evidence stays full/non-graphcode. ADR-001 AD-8 updated to a pointer at readiness-artifact-model.md §3 (no new ADR). MS-6-adoption milestone + CR-GC-220..226 relation assignments already present in the graph. Views re-rendered. Closes the CR-220..226 substrate chain. (CR-GC-226)",
-      "status": "done"
+      "status": "done",
+      "commitRef": "7e2c4cb"
     },
     {
       "id": "CR-GC-227",
       "type": "CR",
       "name": "Help content layer (authored Plain/SE annotation, HELP_CONTENT)",
       "description": "DONE 2026-06-28: src/viewer/help-content.ts holds the authored two-layer help (plain + se) keyed on ruleId/gateId/panelId/artifactId, plus HELP_VOCAB (every ElementType + TraceType + depends-on) and the element-states note. Pure annotation over existing keys, no Rule/ElementType/TraceType/Pattern, no @sigloch/contracts bump (drift-lock not triggered). Derived fields (title/severity/owned-rules/tool-purpose) stay in V3_RULES/readiness/registry and are merged by the data layer (CR-228). Coverage pinned against the live registries (no hand-count): tests/help-content.test.ts. (CR-GC-227)",
-      "status": "done"
+      "status": "done",
+      "commitRef": "0d26615"
     },
     {
       "id": "CR-GC-228",
       "type": "CR",
       "name": "Help data layer (pure projection to HelpEntry, help.ts)",
       "description": "DONE 2026-06-28: src/viewer/help.ts is a pure projection (no DOM/HTTP/mutation, sibling of panels.ts): helpEntry(id) assembles a HelpEntry with all three layers (plain/se/exact-prompt) for any rule/gate/panel/artifact/token, merging authored HELP_CONTENT with derived V3_RULES/readiness/catalog fields; helpForRules() groups the full live rule set by owning gate; contextualHelp(readiness, violations) ranks BOTH rule violations (keyed ruleId) and CR-221 creation-not-done blockers (keyed artifact id from ReadinessGate.blocking[]), errors first. Roll-up not detection (always all 3 layers). readiness.ts exports creationBlockingMsg (single source, no parallel format). Test: tests/help.test.ts. (CR-GC-228)",
-      "status": "done"
+      "status": "done",
+      "commitRef": "711bad5"
     },
     {
       "id": "CR-GC-229",
       "type": "CR",
       "name": "Help surfaces (graph_help MCP tool + se:help skill)",
       "description": "DONE 2026-06-28: graph_help read-only MCP tool in src/mcp-tools.ts: no arg returns contextualHelp(readiness, violations) (ranked rule + creation blockers); { token } returns helpEntry(token) for any rule/gate/panel/artifact/vocab token (all 3 layers); unknown token throws a clean error listing valid kinds. se:help skill (.claude/skills/se-help.md, version 1) is the thin surface, auto-registered in the conformance/scaffold lists (registry-derived). Agent-agnostic surface contract (CR-124) updated to include graph_help. Test: tests/mcp.help.test.ts (disk Kuzu). (CR-GC-229)",
-      "status": "done"
+      "status": "done",
+      "commitRef": "f3ef28f"
     },
     {
       "id": "CR-GC-230",
       "type": "CR",
       "name": "Help docs (README + GRAPHCODE.md pointer to se:help)",
       "description": "DONE 2026-06-28: README.md gains a Help section (se:help <token> lookup, se:help contextual, graph_help tool) + graph_help in the MCP-tools table. GRAPHCODE.md scaffold (guardrailsContent) graph-first section now points at se:help as the live help entry (static contract advertises the dynamic one); written on both init and update. Test: tests/cli.scaffold.test.ts asserts GRAPHCODE.md names se:help/graph_help. Closes the help system (CR-227..230). (CR-GC-230)",
-      "status": "done"
+      "status": "done",
+      "commitRef": "6f4060e"
     },
     {
       "id": "CR-GC-231",
       "type": "CR",
       "name": "graph_authoring_guide meta-model edge guidance for graph-native authoring",
       "description": "DONE 2026-06-28: read-only graph_authoring_guide({type}) MCP tool surfaces the legal incident edges for an ElementType from the imported @sigloch/contracts/se TRACE_PATTERNS (never forked): outgoing [{edgeType,targetType,cardinality,description}], incoming [{edgeType,sourceType,...}], requiredAttrs from the node descriptor. Unknown type gives a clear error listing valid types. The write-side read-twin of graph_context (graph_context = definition-of-done to implement; graph_authoring_guide = legal structure to author). An agent queries it before emitting add-node/add-edge via graph_mutate (write stays gate-only). Renumbered from CR-GC-217 (collision with shipped time-travel). Test: tests/mcp.authoring-guide.test.ts; added to the agent-agnostic surface contract. (CR-GC-231)",
-      "status": "done"
+      "status": "done",
+      "commitRef": "0e1c44d"
     },
     {
       "id": "CR-GC-232",
       "type": "CR",
       "name": "Durables Command-Log (append-only Audit-Persistenz)",
       "description": "DONE 2026-07-03 (Scope-Amendment per User: Log-Handling gleich mit, sonst Technical Debt): src/audit-file.ts FileAuditLog (append-only JSONL neben dem Store — gleiche Verankerung wie der O2-Lock: pro Store, nie pro Repo). Eintraege tragen den MutateCommand-Batch (GraphcodeAuditEntry, Replay-Quelle fuer 234). Checkpoint-Record als Versions-Anker: latestVersion() ueberlebt jede Compaction; compact() archiviert + Checkpoint, Auto-Compaction ab Size-Threshold beim Bind; torn-tail-tolerant. Version-Kontinuitaet: Tool-Layer-Counter startet bei latestVersion() statt 0 (Monotonie fuer 233). graph_realize-Audit-Bypass geschlossen. Default in bindToolsToHarness; Tests injizieren InMemory. Nebenbefund gefixt: O2-Lock ankerte am repoRoot statt am Store (harness opts.lockDir + getStoreDir, 8 Live-SSOT-Tests). Test: tests/audit-file.test.ts. (CR-GC-232)",
-      "status": "done"
+      "status": "done",
+      "commitRef": "de1a99c"
     },
     {
       "id": "CR-GC-233",
       "type": "CR",
       "name": "OCC: graphVersion + baseVersion-Check am Gate",
       "description": "DONE 2026-07-03: OCC am Tool-Layer (src/mcp-tools.ts). graphVersion zaehlt nur applied Batches (ein Reject bewegt die Version nicht) und wird aus dem durablen Log rekonstruiert (latestVersion — ueberlebt Restart + Compaction). Read-Tools (elements/get_node/get_edges/impact/context/readiness) liefern graphVersion additiv mit; graph_mutate + graph_realize akzeptieren optionales baseVersion — veraltet → Reject (tier block, ruleId OCC) mit Delta-Report (applied Audit-Eintraege seit baseVersion inkl. Commands: der Agent sieht WAS sich aenderte, re-read, retry). Ohne baseVersion nur occWarning (sanfte Migration; Pflicht wird mit CR-235 evaluiert). Check+Gate+Record atomar ueber die Tool-Layer-Write-Chain (O3-Muster). Tool-Schema-lokal, kein Contracts-Bump. GRAPHCODE.md-Scaffold dokumentiert den Read→Mutate-Retry-Loop. Test: tests/mcp.occ.test.ts. (CR-GC-233)",
-      "status": "done"
+      "status": "done",
+      "commitRef": "c58f505"
     },
     {
       "id": "CR-GC-234",
       "type": "CR",
       "name": "graph_merge: Replay-basierte Branch-Reintegration (semantischer Rebase)",
       "description": "DONE 2026-07-03: src/merge.ts (readBranchLog + replayBranchLog) + MCP-Tool graph_merge. Branch-Command-Log (audit.jsonl des Worktrees, CR-232) wird ab dem Fork-Punkt (sinceVersion, CR-233) in Log-Reihenfolge durchs BESTEHENDE Gate re-applied (harness.mutate, O3-serialisiert — kein Parallelpfad); rejected Log-Eintraege und Checkpoints werden uebersprungen. Konflikte = Gate-Sprache: error-Violations auf der neuen Base (R-08/R-18/Delta) → conflicted[] mit Violations + fixHint; update-node auf geloeschtem Knoten → MERGE-Konflikt (Replay-Precondition gegen die Resurrection-Anomalie des Update-as-Upsert); bereits enthaltene Batches → skipped (idempotent, Re-Merge safe). dryRun = Merge-Preview ueber den neuen Gate-dryRun-Modus (kumulative In-Memory-Anwendung ohne Persist/Hooks/Marker, Restore via loadGraph) — Graph + Log byte-identisch. Applied/conflicted Batches landen im Ziel-Log (Version zaehlt weiter, OCC-konsistent). Kein Text-Merge, kein CRDT. Test: tests/mcp.merge.test.ts. (CR-GC-234)",
-      "status": "done"
+      "status": "done",
+      "commitRef": "a19dd97"
     },
     {
       "id": "CR-GC-235",
       "type": "CR",
       "name": "Ein Write-Channel: Host-owned Store, Sessions als Clients",
       "description": "DONE 2026-07-03 (Phase A, Socket-Shim): src/host-shim.ts + Election in serveStdio (src/mcp-server.ts). Der O2-Lock IST die Election: harness.initialize() gewinnt → Host (Store+Gate, bedient stdio UND Unix-Socket .graphcode/host.sock via startHostSocket); StoreOwnershipError → Verlierer degradiert zum duennen stdio→Socket-Proxy (buildProxyRegistry: identische Tool-Surface aus demselben bindToolsToHarness-Template, jeder Call via callHost geforwardet, Host re-parsed gegen dieselben Zod-Schemas — Gate-Symmetrie CR-124-analog, OCC wirkt ueber den Shim). Nach aussen bleibt MCP-stdio (Transport-Lock in Letter+Spirit; Socket = interner Shim-Hop, newline-JSON, kein HTTP). Host-Tod: ein Reconnect (Connect-Retry), dann EINE Re-Election (promote via Stale-Lock-Reclaim CR-218) und Weiterbetrieb als Host, sonst klarer HostGoneError; naechster mcp-Start gewinnt die Election — kein toter Zustand. Direkte zweite Harness-Instanz wird weiter refused (Election lebt OBERHALB der Harness; store-lock.test unveraendert). Ein Host pro Store/Worktree; docs/CONCURRENCY.md + GRAPHCODE.md-Scaffold aktualisiert. Phase B (streamable HTTP) bleibt eigener Familie-Entscheid. Test: tests/host-shim.test.ts. (CR-GC-235)",
-      "status": "done"
+      "status": "done",
+      "commitRef": "007b11f"
     },
     {
       "id": "CR-GC-236",
@@ -623,7 +694,8 @@
       "description": "DONE 2026-07-05: generatedHeader(name, title, subtitle) — Titel-Präfix und SSOT-Pfad (docs/graph/<name>.graph.json) folgen dem Export-Namen (graph_export {name} bzw. scope.systemId) statt hartkodiert 'graphcode'. Consumer-Repo-Views behaupten nicht mehr graphcode.graph.json als Source of truth. Eigener Export: die 12 SE-Views byte-identisch, die 4 Foundation-Views verlieren nur das alte GraphCode-Präfix. Byte-Determinismus unverändert (Name ist Export-Input). Dateien: src/exporter.ts, src/exporter-views.ts, src/mcp-tools.ts. Test: tests/exporter.test.ts (CR-GC-236-Block). Quelle: graph-view-edit Konzept-Review. (CR-GC-236)",
       "status": "done",
       "created_at": "2026-07-05T00:00:00.000Z",
-      "updated_at": "2026-07-05T00:00:00.000Z"
+      "updated_at": "2026-07-05T00:00:00.000Z",
+      "commitRef": "a3d5241"
     },
     {
       "id": "CR-GC-237",
@@ -632,7 +704,8 @@
       "description": "DONE 2026-07-05: Der gewählte Host (mcp- oder host-Kommando) serviert die read-only HTTP/SSE-Bridge, wenn GRAPHCODE_HOST_PORT gesetzt ist; init/update scaffolden einen deterministischen Per-Repo-Port in .mcp.json env. graphcode host crasht nicht mehr auf einem lebenden Owner. Fixt zusätzlich ein floating mkdir-Promise im Trajectory-Hook (unhandled rejection wenn eine Harness die Election verliert und nie mutiert). Folge-CR zu CR-GC-235 (Host-Election). (CR-GC-237)",
       "status": "done",
       "created_at": "2026-07-05T00:00:00.000Z",
-      "updated_at": "2026-07-05T00:00:00.000Z"
+      "updated_at": "2026-07-05T00:00:00.000Z",
+      "commitRef": "a7458ab"
     },
     {
       "id": "CR-GC-238",
@@ -641,7 +714,8 @@
       "description": "DONE 2026-07-05: applyCommands (harness.ts) führt die zwei CR-196-Ops aus contracts ≥0.5.0 aus. update-edge: Typwechsel/Flip/Attribut-Patch als EIN semantischer Op (Kante per sourceId, targetId, edgeType identifiziert; Attribut-only-Patch behält die Edge-Identität — kein delete des frisch upserteten Keys). merge-nodes: target absorbiert source, alle inzidenten Kanten umgehängt, source→target-Kanten kollabieren (kein Self-Loop), source gelöscht. Illegales Ergebnis blockt via Delta-Regeln R-18/R-08. Audit trägt den semantischen Command verbatim — ein Eintrag pro Op, Flip unterscheidbar von Delete+Add. merge.ts commandIsNoOp deckt beide Ops. Test: tests/harness.gate.test.ts. Quelle: graph-view-edit CR-GVE-D02; dort danach den delete+add-Interim-Pfad löschen. (CR-GC-238)",
       "status": "done",
       "created_at": "2026-07-05T00:00:00.000Z",
-      "updated_at": "2026-07-05T00:00:00.000Z"
+      "updated_at": "2026-07-05T00:00:00.000Z",
+      "commitRef": "662404a"
     },
     {
       "id": "CR-GC-239",
@@ -650,7 +724,8 @@
       "description": "DONE 2026-07-05: harness.applyMutation Step 0 parsed jeden eingehenden Command gegen MutateCommandSchema (contracts) — EIN Enforcement-Punkt für MCP- und in-process-Aufrufer. Shape-Fehler (z.B. op add_node mit flachen Feldern) blockt den GANZEN Batch: tier block, success false, Violation SCHEMA-01 mit Zod-Pfad + fixHint auf die kanonischen Shapes. Kein graphVersion-Bump, Audit schreibt result rejected (beides hängt bereits an success, CR-233). Vorher: stiller No-op mit success true, appliedCommands>0, mutations 0 — sechs Batches einer graph-view-edit-Session verloren. Applied-Batches mit 0 Mutationen warnen auf stderr (legitime No-ops: idempotentes delete-edge, update-edge auf verschwundene Kante). Test: tests/mutate.schema-guard.test.ts. (CR-GC-239)",
       "status": "done",
       "created_at": "2026-07-05T00:00:00.000Z",
-      "updated_at": "2026-07-05T00:00:00.000Z"
+      "updated_at": "2026-07-05T00:00:00.000Z",
+      "commitRef": "7166459"
     },
     {
       "id": "CR-GC-240",
@@ -658,7 +733,8 @@
       "name": "Testkonzept: Pyramiden-Ebene aus der Graph-Position statt aus einem level-Attribut",
       "description": "DONE 2026-07-07. renderTestConcept klassifizierte die Testpyramide ueber testLevel(n), das ein Attribut am TEST-Knoten las (testRef.level, sonst level). Reale TEST-Knoten tragen das praktisch nie, also fielen e2e, integration und unit auf 0 und alles landete in (unleveled) — die Pyramide degenerierte, obwohl jede REQ verifiziert war. Die Ebene folgt jetzt aus der Graph-Position: worauf der Test ueber REQ zielt, bestimmt unit, integration oder e2e. Vorgabe aus der graph-view-edit-Session: level is defined by graph position, nicht durch ein gepflegtes Attribut. (docs/cr/done/CR-GC-240)",
       "status": "done",
-      "created_at": "2026-07-07T00:00:00.000Z"
+      "created_at": "2026-07-07T00:00:00.000Z",
+      "commitRef": "c48749f"
     },
     {
       "id": "CR-GC-241",
@@ -666,7 +742,8 @@
       "name": "Host-Shim-Schreibbruecke exportieren (callHost/HOST_SOCK_BASENAME)",
       "description": "DONE 2026-07-07. CR-GC-235 baute .graphcode/host.sock, damit ein zweiter graphcode-mcp-Prozess Tool-Calls inklusive graph_mutate durch DASSELBE Apply-Gate proxyen kann, ohne ein zweites Kuzu-Handle zu oeffnen. Die Client-Seite callHost/HOST_SOCK_BASENAME in src/host-shim.ts stand aber nie in der Public-Export-Liste von src/index.ts. Ausloeser war der erste externe Konsument: graph-view-edit (CR-GVE-008) braucht genau diesen gegateten Schreibtransport fuer seine Edit-Flaeche. Der Datei-Header trug noch Open (implemented, pending review); die Datei liegt in done/. (docs/cr/done/CR-GC-241)",
       "status": "done",
-      "created_at": "2026-07-07T00:00:00.000Z"
+      "created_at": "2026-07-07T00:00:00.000Z",
+      "commitRef": "22f74b0"
     },
     {
       "id": "CR-GC-242",
@@ -674,7 +751,8 @@
       "name": "se-test-ui-Skill + die Red-First-Regel ausliefern",
       "description": "DONE 2026-07-08. graphcode liefert rund 24 se-*-Skills aus, aber keinen zum Test-ENTWURF. Die Retrospektive des graph-view-edit-Blind-Render-Vorfalls legte eine ganze Fehlerklasse offen: dutzende unit-getestete Module waren verwaist (von nichts importiert, ueber keine Geste erreichbar) und trotzdem gruen, weil jede Assertion die exportierte Funktion direkt rief; UI-Assertions prueften DOM-Praesenz statt gerenderter Pixel, 12 Views rendersten blind unentdeckt. Die Anleitung musste aus dem Paket kommen, weil graphcode skills sync Konsumenten-Skills ueberschreibt. (docs/cr/done/CR-GC-242)",
       "status": "done",
-      "created_at": "2026-07-08T00:00:00.000Z"
+      "created_at": "2026-07-08T00:00:00.000Z",
+      "commitRef": "140bf76"
     },
     {
       "id": "CR-GC-243",
@@ -682,21 +760,24 @@
       "name": "Lokale OCC (BaseVersionSchema) auf @sigloch/contracts migriert",
       "description": "DONE 2026-07-08. CR-GC-233 baute OCC (graphVersion/baseVersion, Stale-Reject plus Delta) bewusst ohne Contracts-Bump, mit lokalem BaseVersionSchema in mcp-tools.ts und der Notiz, die Promotion sei ein spaeterer Familie-Review. Der fand statt: sigloch-modules CR-199 und CR-200 haben graphcodes Form uebernommen, nicht umgekehrt, und sie als GraphVersionSchema, MutateOptionsSchema und MutateResultSchema.stale/staleDelta in contracts gelandet. Ohne diese Migration liefen zwei Formen parallel — genau der Parallelpfad, den CR-GC-205 verbietet. Umnummeriert von CR-GC-241, das doppelt vergeben war. (docs/cr/done/CR-GC-243)",
       "status": "done",
-      "created_at": "2026-07-08T00:00:00.000Z"
+      "created_at": "2026-07-08T00:00:00.000Z",
+      "commitRef": "38c3581"
     },
     {
       "id": "CR-GC-244",
       "type": "CR",
       "name": "Bundle-Staleness fix: rebundle-Disziplin statt Externalisierung",
       "description": "DONE 2026-07-09 (graphcode master 82b8001). Symptom: der lokale Dev-MCP-Server lief aus einem VERALTETEN esbuild-Bundle, das eine alte @sigloch/contracts-Momentaufnahme inlinte und still eine alte Ontologie erzwang (FUNC-FUNC-compose abgelehnt). Root Cause: das Bundle war nicht neu gebaut, nicht dass contracts inlined ist. Erst-Fix (Externalisierung von @sigloch/contracts) war die falsche Ebene: contracts ist ein file:-devDep aus sigloch-modules wie graph-api-core und graph-cypher-wasm (beide inlined) - keins ist ein publiziertes Registry-Paket. Externalisiert brach die published cli.js (import @sigloch/contracts zur Laufzeit, in Fremd-Install nicht aufloesbar -> ERR_MODULE_NOT_FOUND, REQ-self-contained-dist rot). Endgueltiger Fix: contracts wie seine Geschwister INLINEN; Staleness ist eine Rebuild-Sache (npm run bundle nach contracts-Aenderung; prepack rebundlet jede Tarball). distribution.test wieder gruen (Fremd-Install + Bin-Run). Alle 271 graphcode-Tests gruen.",
-      "status": "done"
+      "status": "done",
+      "commitRef": "b48ff54"
     },
     {
       "id": "CR-GC-247",
       "type": "CR",
       "name": "Zentralisiere Trace-Legalitaet in einem Checker",
       "description": "DONE 2026-07-09 (sigloch-modules main b13cacc): jede Edge-Legalitaets-Pruefung laeuft jetzt durch EIN isValidTrace(trace, descriptor.patterns) in graph-api-core. Entfernt die divergierten Parallel-Implementierungen: graph-service validateAndApplyEdge (SE/foreign-Fork kollabiert; der SE-Zweig war wegen name-casing 'SE' vs Descriptor 'se' ohnehin tot, SE-Edges liefen ueber validPairs) und format-e-codec (validPairs-Set ersetzt; honoriert jetzt '*'-Wildcards wie SESSION-produces->*, die das Set still verwarf). OntologyDescriptor exponiert patterns (SE=TRACE_PATTERNS); validPairs nur noch Format-E-Arrow/Menue-Enumeration; tracePatternsOf() leitet patterns aus validPairs fuer Fremd-Ontologien ab. Label = deskriptive Metadaten, kein Gate (nicht uniform durch Graph/Codec getragen; alte Legalitaet keyte nie darauf). Zusatz-Haertung: Node-Beschreibungen duerfen '->' enthalten (Arrow-Detektion nur vor dem Description-Pipe). 6 Dateien graph-api-core, alle Tests gruen. OFFEN separat: graphcode codec.ts validate() ist ein 5. validPairs-Checker (->CR-GC-248 Scope), und die @sigloch/contracts-Externalisierung aus CR-GC-244 bricht REQ-self-contained-dist (distribution.test rot) - braucht Entscheidung. Siblings: CR-GC-248, CR-GC-249.",
-      "status": "done"
+      "status": "done",
+      "commitRef": "fd40dee"
     },
     {
       "id": "CR-GC-248",
@@ -710,14 +791,16 @@
       "type": "CR",
       "name": "Auto-reseed bei Meta-Modell-Schema-Drift",
       "description": "DONE 2026-07-09 (graphcode master 88888cf). Ein persistenter Kuzu-Store friert seine Rel-Table FROM/TO-Paare bei Erstellung ein; wenn das SE-Meta-Modell spaeter ein Paar dazubekommt (z.B. FUNC->FUNC compose), lehnt das eingefrorene Schema die neue Kante ab ('Expected labels are ...'). Bisherige Handarbeit: rm .graphcode/kuzu* + reseed. Fix: harness.initialize() guarded auf einen FINGERPRINT der generierten DDL (src/schema-guard.ts: sha256 ueber generateSchema(descriptor).ddl). KEIN Versionsstring - das Schema haengt an Node-Types + TRACE_PATTERNS (Paaren), die META_MODEL_VERSION bumpen, NICHT ONTOLOGY_VERSION (= SE_DESCRIPTOR.version); ein Versions-Guard wuerde genau den Paar-Fall verpassen. Bei Mismatch: Store loeschen (init regeneriert DDL) + reseed aus committed SSOT, dann Marker neu stempeln. Laeuft nur in Produktions-Wiring (createHarness gibt storePath); Adapter-Injection-Tests lassen den Guard aus. 4 Dateien, alle 278 graphcode-Tests gruen.",
-      "status": "done"
+      "status": "done",
+      "commitRef": "d8a2d6a"
     },
     {
       "id": "CR-GC-250",
       "type": "CR",
       "name": "Readiness completeness pointer (cardinality-driven)",
       "description": "Readiness bekommt eine strukturelle Completeness-Dimension orthogonal zur Violation-Severity: ein Gate ist nicht gruen, solange ein vom Meta-Modell als 1..* markiertes Ketten-Bein seiner Phase unvollstaendig ist. Coverage ueber die treibende Source-Population (Abwesenheit zaehlt: 0 FCHAIN -> alle UC unvollstaendig -> SRR rot). Behebt graph-view-edit false-green (irr-3e4e26c A2/A12/A13): warning-severity + per-element-Regeln feuern nie auf abwesende Elemente. Warnings behalten Severity (keine Inflation). Ein Wert pro Gate im Dashboard, Per-Leg-Detail on-click. Kein neuer V3_RULE / kein contracts-Bump: liest die bestehenden Meta-Modell-Kardinalitaeten in src/readiness.ts. Spec: docs/proposals/readiness-completeness-pointer.md. (CR-GC-250)",
-      "status": "done"
+      "status": "done",
+      "commitRef": "242f1f6"
     },
     {
       "id": "CR-GC-251",
@@ -732,7 +815,8 @@
       "name": "Learning-Feed = Projektion aus dem Operations-Log",
       "description": "DONE 2026-07-20: trajectory.jsonl ist eine PROJEKTION des OperationsLog, materialisiert im Tool-Layer (recordAudit in src/mcp-tools.ts), kein Harness-Hook. Der Log-Write ist die eine Wahrheit, der Feed wird daraus abgeleitet, damit beide nicht divergieren koennen. Abhaengigkeit sigloch-modules CR-207 (Operations-Log im Store-Modul, bereits gelandet). Gotchas: ein roher harness.mutate() erzeugt keinen Feed (nur der Tool-Pfad projiziert), und der repoRoot wird erst im Write-Pfad gelesen, nie zur Bind-Zeit (Host-Shim-Proxy-Invariante CR-GC-235). Quelle: AiSE-Familien-Review 2026-07 (CR-F). Nachtrag 2026-07-26: dieser Knoten fehlte im Graph-SSOT (nur lokale CR-Datei), ergaenzt mit CR-GC-258. (CR-GC-252)",
       "status": "done",
-      "created_at": "2026-07-20T00:00:00.000Z"
+      "created_at": "2026-07-20T00:00:00.000Z",
+      "commitRef": "7438c37"
     },
     {
       "id": "CR-GC-253",
@@ -740,7 +824,8 @@
       "name": "Graph-Code-Konformanz als Readiness-Regel (RC-01/RC-02)",
       "description": "DONE 2026-07-13: die RC-Regeln (RC-01 codeRef loest auf, RC-02 testRef loest auf) leben in @sigloch/contracts se/conformance-rules.ts als pure Funktionen ueber dem Datenvertrag CodeFacts; contracts bleibt I/O-frei und browser-bundlebar. graphcode ist Facts-Provider und Executor: extractCodeFacts (TypeScript-Parser) in src/conformance.ts, scoreReadinessWithConformance mischt V3_RULES- und RC-Violations in EINEN Report, damit Drift in violationsByRule und den CDR/TRR-Gates sichtbar wird. typescript wurde dadurch Runtime-Dependency (Konformanz parst Code bei jedem Readiness-Call), Distribution-Test-Pin entsprechend erweitert. Der Check fand beim ersten Lauf 3 echte Drifts im graphcode-SSOT. Nachtrag 2026-07-26: dieser Knoten fehlte im Graph-SSOT (nur lokale CR-Datei), ergaenzt mit CR-GC-258. (CR-GC-253)",
       "status": "done",
-      "created_at": "2026-07-13T00:00:00.000Z"
+      "created_at": "2026-07-13T00:00:00.000Z",
+      "commitRef": "a52a894"
     },
     {
       "id": "CR-GC-254",
@@ -767,7 +852,8 @@
         "src/viewer/host.ts",
         "tests/security.path-containment.test.ts"
       ],
-      "closed_at": "2026-07-26T00:00:00.000Z"
+      "closed_at": "2026-07-26T00:00:00.000Z",
+      "commitRef": "e71e0b6"
     },
     {
       "id": "CR-GC-256",
@@ -785,7 +871,8 @@
         "src/tools/export.ts",
         "src/mcp-tools.ts"
       ],
-      "closed_at": "2026-07-26T00:00:00.000Z"
+      "closed_at": "2026-07-26T00:00:00.000Z",
+      "commitRef": "08e721d"
     },
     {
       "id": "CR-GC-257",
@@ -801,7 +888,8 @@
         "src/readiness.ts",
         "src/viewer/help-content.ts",
         "tests/exporter.test.ts"
-      ]
+      ],
+      "commitRef": "ad6151b"
     },
     {
       "id": "CR-GC-258",
@@ -817,7 +905,8 @@
         "scripts/gate-session.mjs",
         "src/exporter.ts",
         "src/exporter-views.ts"
-      ]
+      ],
+      "commitRef": "8b64084"
     },
     {
       "id": "CR-GC-259",
@@ -830,7 +919,8 @@
       "files": [
         "src/readiness.ts",
         "tests/readiness.model.test.ts"
-      ]
+      ],
+      "commitRef": "8b64084"
     },
     {
       "id": "CR-GC-260",
@@ -839,7 +929,8 @@
       "description": "BACKLOG (2026-07-26): vier Module ueber der 500-Zeilen-Grenze aus CLAUDE.md — src/exporter-views.ts 996 (2,0x), src/harness.ts 745, src/scaffold.ts 624, src/readiness.ts 608. src/mcp-tools.ts 1273 hat mit CR-GC-256 seinen eigenen CR. Die Grenze ist nicht Aesthetik: sie haelt ein Modul in einem Context-Window zuverlaessig editierbar. Trigger: pro Modul ziehen, wenn es das naechste Mal fachlich angefasst wird, NICHT als Sammel-Refactor (ein Verschiebe-Commit ueber 4 Module ist nicht review-bar und kollidiert mit paralleler Arbeit). Vorschlaege: exporter-views nach Zielgruppe trennen (INCOSE-Views vs graphcode-Views), Akzeptanz ist Byte-Determinismus aller 16 Views; readiness an der CR-GC-250-Naht (Completeness-Dimension raus, muss browser-safe bleiben); scaffold Templates von Lifecycle-Logik trennen; harness ZULETZT und vorsichtig (traegt Apply-Gate L1, Store-Lock O2, Write-Mutex O3 — nur der Import-/Seed-Pfad kaeme raus, das Gate bleibt). Reihenfolge nach steigendem Risiko: exporter-views, readiness, scaffold, harness; nach CR-GC-256. Detail: docs/cr/open/CR-GC-260-uebergrosse-module-aufteilen.md. (CR-GC-260)",
       "status": "done",
       "created_at": "2026-07-26T00:00:00.000Z",
-      "closed_at": "2026-07-26T00:00:00.000Z"
+      "closed_at": "2026-07-26T00:00:00.000Z",
+      "commitRef": "08e721d"
     },
     {
       "id": "CR-GC-261",
@@ -856,42 +947,48 @@
       "type": "CR",
       "name": "Registry-Deps statt esbuild-Inlining",
       "description": "DONE 2026-07-26. Weil ein publiziertes Manifest mit file:-Range nicht installierbar ist, inlinte esbuild.config.mjs alle @sigloch/-Module in dist/cli.js und dist/index.js. Drei Kosten: (1) kaputte Subpath-Exports, gebuendelt wurden nur die zwei Entrypoints, dist/harness.js (Export ./harness) importierte weiter bare @sigloch/graph-api-core und @sigloch/contracts/harness und war im Tarball nicht aufloesbar, ./mcp erbte das ueber seine Importkette, beide seit dem ersten Publish tot; (2) Bundle-Staleness, die Ontologie friert im Bundle ein, CR-GC-244 hatte den Versuch, contracts extern zu lassen, deshalb zurueckgerollt; (3) keine oeffentliche CI moeglich, publish.yml checkte das private sigloch-modules mit einem PAT aus, nur um die file:-Deps zu bauen. Nachdem CR-214 die fuenf Substrat-Pakete auf npm gebracht hat, entfaellt das Dilemma: die fuenf wandern von devDependencies (file:) nach dependencies mit Registry-Range, esbuild.config.mjs und das bundle-Script sind geloescht (prepack ist wieder nur build, kein zweiter Build-Pfad), scripts/ensure-siblings-built.sh und der pretest sind weg (es gibt keine Siblings mehr zu bauen), und ein neues link:siblings-Script macht die Familien-Arbeitsschleife explizit statt implizit ueber einen Manifest-Pfad. publish.yml ohne privaten Checkout und ohne SIBLINGS_REPO_TOKEN, npm ci statt npm install, plus Test-Schritt; neue ci.yml faehrt type-check, build und test bei Push/PR. Die Subpath-Exports bleiben und funktionieren dadurch von selbst. tests/distribution.test.ts traegt den neuen Vertrag: nicht mehr kein @sigloch-Import im Bundle, sondern kein file:-Range im Manifest plus ein echter Fremd-Install des Tarballs, in dem zusaetzlich @sigloch/graphcode/harness und /mcp aufgeloest werden, also genau der Bug, den dieser CR schliesst. 314/314 gruen gegen die Registry-Pakete. Detail: docs/cr/done/CR-GC-262-registry-deps-statt-inlining.md",
-      "status": "done"
+      "status": "done",
+      "commitRef": "10ba791"
     },
     {
       "id": "CR-GC-263",
       "type": "CR",
       "name": "OpenCode als First-Class-Client: opencode.json scaffolden",
       "description": "DONE 2026-07-26. Publish-Audit-Befund: init/update scaffolden nur .mcp.json (Claude-Host-Format); OpenCode liest opencode.json mit mcp-Block. Das eigene Benchmark-Rig (rig/dummy-slicer/opencode.json) beweist es, weil es dort von Hand verdrahtet wurde; das README behauptete trotzdem, OpenCode nehme .mcp.json auf. Damit war die agent-agnostische Claim nur zur Haelfte ausgeliefert: der MCP-Kern ist bewiesen agent-agnostisch (CR-GC-124), das Onboarding nicht. Fix: opencodeConfigContent() in scaffold-templates.ts schreibt denselben Server (npx -y @sigloch/graphcode mcp) in OpenCodes Schema (mcp.graphcode.type=local, command als argv-Array, environment.GRAPHCODE_HOST_PORT); init/update schreiben beide Host-Configs immer (kein --host-Flag = kein zweiter Konfigurationspfad; welcher Host das Repo oeffnet, ist zur init-Zeit nicht bekannt). Zweiter Befund aus demselben Pfad, mitgefixt weil sonst Parallelpfad: mcpConfigContent() ueberschrieb .mcp.json komplett (rettete nur GRAPHCODE_HOST_PORT) und remove loeschte die Datei ganz, d.h. ein Repo mit einem fremden MCP-Server verlor ihn bei graphcode init. Jetzt mergen beide Writer nur den eigenen Schluessel; hostConfigWithoutGraphcode() strippt beim remove nur uns und loescht die Datei nur, wenn nichts vom Nutzer uebrig bleibt (dieselbe Regel wie .claude/settings.json). Skills bleiben Claude-only und werden im README auch so benannt; die MCP-Tools sind der agent-agnostische Vertrag. 5 Dateien, 314 Tests gruen (6 neue Faelle in tests/cli.scaffold.test.ts). Detail: docs/cr/done/CR-GC-263-opencode-first-class-client.md",
-      "status": "done"
+      "status": "done",
+      "commitRef": "5826ead"
     },
     {
       "id": "CR-GC-264",
       "type": "CR",
       "name": "Public-Repo-Doc-Hygiene: Belege rein, Entstehungsgeschichte raus",
       "description": "DONE 2026-07-26. Zwei gegenlaeufige Fehler im getrackten Doc-Bestand, beide Vorbedingung fuers Public-Schalten. (1) Belege fehlten: docs/articles/01 und 03 verlinkten docs/spikes/SPIKE-GC-*.md als Quelle der 50x- und 27B-Zahlen, der Ordner war gitignored, also fuehrte im public Repo genau der Link ins Leere, der die Kernbehauptung stuetzt. Die drei Spike-Dateien enthalten keine internen Referenzen (geprueft: kein bok, kein Absolutpfad, kein Fremd-Repo) und sind ohne Redaktion veroeffentlichbar; sie sind jetzt getrackt, die Artikel-Links stimmen ohne Textaenderung. (2) Historie war drin: docs/views/spec.md (114 KB) und docs/views/cr-list.md (52 KB) kippen die vollstaendige interne CR-Prosa samt Pfaden nach docs/cr (gitignored) aus. Fuer beide realen Zielgruppen falsch: wer graphcode benutzt, sieht sie nie (das npm-Tarball traegt dist + .claude, keine Doku), wer mitarbeitet, braucht die Architektur-Views statt der Entstehungsgeschichte. Beide sind jetzt gitignored und aus dem Index, werden aber weiter erzeugt: kein Sonderfall im Exporter, graph_export bleibt deterministisch bei 16 Views. Restposten: ein toter Link in docs/proposals/document-specimens.md nach docs/records entfernt. Kein getracktes Markdown verlinkt mehr in einen gitignoreden Pfad. 4 Dateien. Detail: docs/cr/done/CR-GC-264-public-repo-doc-hygiene.md",
-      "status": "done"
+      "status": "done",
+      "commitRef": "4a6f2a1"
     },
     {
       "id": "CR-GC-265",
       "type": "CR",
       "name": "npm-Metadaten + Dependency-Range-Drift",
       "description": "DONE 2026-07-26. Drei Publish-Audit-Befunde am Manifest. (1) Die npm-Seite widersprach dem Produkt: description war 'Claude Code Sidecar Harness', das Gegenteil der agent-agnostischen Positionierung von README, ADR-001 und dem opencode.json-Scaffold aus CR-GC-263; keywords kannten weder opencode noch kuzu oder graph. (2) Kein Weg vom Paket zurueck zur Quelle: repository, homepage und bugs fehlten, npmjs.com zeigte keinen Repo-Link. Fuer ein Paket, dessen Verkaufsargument die nachlesbaren Belege sind, die teuerste fehlende Zeile. publishConfig.access=public steht jetzt im Manifest statt nur als CI-Flag. (3) Der gescaffoldete Dependency-Range war eingefroren: PACKAGE_RANGE stand seit CR-GC-121 als Literal '^0.1.0' in scaffold-templates.ts, waehrend publiziert 0.4.1 ist, d.h. init schrieb Consumern eine zu alte Linie in die package.json. Jetzt abgeleitet: packageVersion() liest die version aus der eigenen package.json (gleiche Aufloesung wie packagedSkillsDir, funktioniert in src/ wie im gebuendelten dist/), Range ist ^version, Fallback ^0 statt erfundener Nummer. Der Test vergleicht gegen dieselbe gelesene Quelle statt gegen ein Literal, sonst waere er der naechste Drift-Ort. 3 Dateien. Detail: docs/cr/done/CR-GC-265-npm-metadata-and-dep-range.md",
-      "status": "done"
+      "status": "done",
+      "commitRef": "7cb159e"
     },
     {
       "id": "CR-GC-266",
       "type": "CR",
       "name": "REQ-MOD allocate migrieren (CR-228 Teil A, graphcode-Seite)",
       "description": "DONE 2026-07-26. Familien-CR-228 Teil A (aimpro/docs/cr/open, Ontologie-Evolution: physisches MOD, satisfy-Dreiklang, realRef) entfernt das Trace-Pattern REQ nach MOD (allocate) und loescht R-24/R-25, die nur dieses Muster pruefen: allocate behandelt MOD faelschlich als REQ-Besitzer, Besitz liegt bei SYS/UC (compose), Erfuellung bei FUNC/FCHAIN/MOD/SYS (satisfy). graphcodes eigenes Modell trug 8 solche Kanten; sobald die contracts-Aenderung gebaut ist, lehnt schon das Kuzu-DDL sie ab (Expected labels are FUNC) und 28 Tests fallen. Aufgeschlagen ist der Befund beim Sibling-Rebuild im Publish-Audit, nicht theoretisch. Fix: Richtung drehen, Bedeutung behalten, aus REQ-allocate-MOD wird MOD-satisfy-REQ. Alle 8 Faelle sind Modul-Constraints (Dashboard strikt read-only, Bridge read-only, Health als echter Funktionscheck, versioned Diff-Broadcast, TEST hat lauffaehige Bindung), also genau die Aussage von MOD satisfy REQ. Jetzt statt nach CR-228, weil MOD-satisfy-REQ im committeten Meta-Modell bereits legal ist (seit CR-154) und unter 1.4.0 legal bleibt: die Migration ist in beiden Richtungen kompatibel. Durchs Gate mutiert, kein Hand-Edit am SSOT. Ergebnis: Compliance bleibt 1.0, die 8 R-24-Warnungen sind weg, 314/314 gruen. Offener Rest fuer den Tag, an dem CR-228 Teil A landet (bewusst nicht hier, weil er graphcode an die neue Version koppelt und gegen die alte bricht): die Fixture in tests/mcp.impact.test.ts baut selbst ein REQ-A allocate MOD-DEP, und src/readiness.ts listet R-24/R-25 in PHASE_GATE_RULES.CDR. Detail: docs/cr/done/CR-GC-266-req-mod-allocate-migration.md",
-      "status": "done"
+      "status": "done",
+      "commitRef": "8a620d1"
     },
     {
       "id": "CR-GC-267",
       "type": "CR",
       "name": "graphcode-client extrahieren: Host-Socket + View-Katalog",
       "description": "DONE 2026-07-26. Umnummeriert von CR-GC-264 (Nummernkollision mit CR-GC-264 Public-Repo-Doc-Hygiene, das parallel lief und schon im Graph steht). Problem: ein Clean-Room-Install des GVE-Tarballs zog 152 MB, davon 70 MB kuzu-wasm und 5,8 MB MCP-SDK, die GVE nie benutzt (der Viewer oeffnet per Governance nie ein Kuzu-Handle). GVE importiert aus graphcode acht Symbole: computeReadiness, vier Panel-Funktionen, VIEW_FILENAMES, callHost und HOST_SOCK_BASENAME, und keines davon beruehrt Kuzu oder MCP. Ein Subpath-Export loest das nicht, weil npm Dependencies pro Package aufloest und nicht pro Entry-Point, also musste es ein eigenes Package werden. Umgesetzt: @sigloch/graphcode-client@0.1.0 mit null Runtime-Deps liegt auf npm, graphcode 0.5.0 konsumiert es und re-exportiert callHost/HOST_SOCK_BASENAME, GVE zieht es ueber graphcode mit. Beweis statt Behauptung: die beiden Browser-E2E-Specs in GVE laufen gegen einen echten graphcode-mcp-Host ueber .graphcode/host.sock gruen, 506 Tests. Beim Publish nachgezogen (CR-214): LICENSE in files und ein prepublishOnly mit Tests, inklusive tests/unit/host-client.test.ts, das einen echten node:net-Server ueber eine echte Socket-Datei fuehrt, weil das Socket-Protokoll der Vertrag zwischen zwei Haelften ist, die nicht auseinanderdriften duerfen. Detail: docs/cr/done/CR-GC-267-graphcode-client-extraktion.md",
-      "status": "done"
+      "status": "done",
+      "commitRef": "dc47c74"
     },
     {
       "id": "CR-GC-268",
@@ -900,7 +997,8 @@
       "description": "DONE 2026-07-29, zusammen mit CR-GC-269 umgesetzt (beide fassen encode/decode an, getrennt haette der zweite den ersten sofort ueberschrieben). GraphCodeCodec.encode schrieb eine Zeile pro Kante und erbte die Fan-out-Reparatur aus sigloch-modules CR-SM-215 nicht, weil es Format-E direkt erzeugt statt ueber FormatECodec.serialize (es braucht die at-attr-Form fuer komma- und klammerhaltige Attributwerte). Auf dem eigenen SSOT-Graphen mit 369 Knoten und 751 Kanten waren das 751 Quell-UID-Vorkommen; gemessen mit cl100k_base 2101 UID-Token oder 4,3 Prozent des Gesamtprompts, und zwar auf dem Hot-Path graph_impact, graph_context, graph_expand. Fix: encode gruppiert den Edges-Block nach sourceId und edgeType, der Sortierschluessel wechselt von sourceId-targetId-edgeType auf sourceId-edgeType-targetId, damit Gruppen zusammenhaengend liegen; Kanten mit Attributen bleiben einzeilig. decode blieb unveraendert, der Parser beherrscht 1:n bereits. Ergebnis: 318 Kanten-Zeilen statt 751, Determinismus (REQ-deterministic-serialization) und Round-Trip (L3) unverletzt. Detail: docs/cr/done/CR-GC-268-codec-fanout-emit.md",
       "status": "done",
       "created_at": "2026-07-27T00:00:00.000Z",
-      "closed_at": "2026-07-29T00:00:00.000Z"
+      "closed_at": "2026-07-29T00:00:00.000Z",
+      "commitRef": "2431f89"
     },
     {
       "id": "CR-GC-269",
@@ -909,7 +1007,8 @@
       "description": "DONE 2026-07-29. src/codec.ts trug eine eigene UID-Kodierung, deren einziger Zweck war, dem Parser den Typ ueber einen Punkt-TYPE-Suffix unterzuschieben. Nach sigloch-modules CR-SM-216 liest der Parser den Typ aus der Knoten-Sektion, damit war die Kodierung toter Ballast und ein Parallelpfad zur Modul-Logik. Token-seitig kostete der Suffix 2510 UID-Token, also 5,1 Prozent jedes Graph-Prompts, kumuliert mit CR-GC-268 9,4 Prozent (49066 auf 44455). Fix: encodeUid und decodeUid geloescht, encode schreibt UIDs roh und gruppiert die Knoten in Typ-Sektionen, decode bezieht den Typ aus dem Parse-Ergebnis statt aus dem UID-Scan; Strict-Cross-Check aktiviert, ein Knoten unter falscher Typ-Sektion laesst decode werfen. Keine ID-Migration, der Kuzu-Store ist nicht betroffen (dort stand der Typ immer im Feld). Blocker CR-SM-215, CR-SM-216 und CR-GC-268 waren zum Abschluss gefallen. Detail: docs/cr/done/CR-GC-269-uid-typ-suffix-drop.md",
       "status": "done",
       "created_at": "2026-07-27T00:00:00.000Z",
-      "closed_at": "2026-07-29T00:00:00.000Z"
+      "closed_at": "2026-07-29T00:00:00.000Z",
+      "commitRef": "2431f89"
     },
     {
       "id": "CR-GC-270",
@@ -917,7 +1016,8 @@
       "name": "SERVER_VERSION aus package.json lesen",
       "description": "DONE 2026-07-28, Commit bdfb6ab, publiziert als 0.5.1. Der MCP-Handshake des publizierten Pakets meldete serverInfo.version 0.4.1 bei package.json 0.5.0, verifiziert am Artefakt im npx-Cache statt an der Quelle. Ursache war ein Literal SERVER_VERSION in src/mcp-server.ts, das jedes Release von Hand nachgezogen werden musste, und beim 0.5.0-Release unterblieb. Bricht nichts, macht aber jede Support-Frage irrefuehrend, weil die einzige Stelle, an der ein Nutzer die laufende Version sieht, die falsche nennt. Fix: readFileSync auf den relativ zu import.meta.url aufgeloesten Pfad zur package.json, kein JSON-Import (also kein rootDir-Problem) und keine generierte Datei, die wieder driften koennte; dist/mcp-server.js und src/mcp-server.ts liegen beide eine Ebene unter der Paketwurzel. Kein Fallback: fehlt die package.json, wirft der Server beim Start mit klarer Meldung statt eine geratene Version zu melden. Erzwungen statt dokumentiert: tests/distribution.test.ts vergleicht die gemeldete Version mit der aus package.json, durch Mutation einmal rot gesehen. 4 Dateien, Suite 315/315. Detail: docs/cr/done/CR-GC-270-server-version-aus-package-json.md",
       "status": "done",
-      "closed_at": "2026-07-28T00:00:00.000Z"
+      "closed_at": "2026-07-28T00:00:00.000Z",
+      "commitRef": "a2a9e6a"
     },
     {
       "id": "CR-GC-271",
@@ -926,7 +1026,8 @@
       "description": "DONE 2026-07-28, Commit dd24c32. Zwei Haelften aus BOK-CR-026 Schritt 1 und 1b. Problem A: src/exporter.ts und src/views/incose.ts lasen die SCHEMA-Bindung noch aus dem Legacy-Attribut zodDefinition, also Zod-Quelltext als String im Graphen, eine Kopie die niemand nachzieht; die aktuelle Bindung ist realRef mit file und optionalem symbol (R-26). Solange die Produzentenseite zodDefinition bediente, konnte sigloch-modules CR-SM-220 die Regeln SC-01 und SC-03 nicht entfernen, ohne die Views zu desynchronisieren. Jetzt wird realRef gelesen und der Zeiger gerendert, zodDefinition wird nicht als Fallback gelesen (kein Parallelpfad). Problem B: die Stub-Materialisierung war einseitig, fuer TEST legt der Export seit CR-GC-205 einen it.todo-Stub an, fuer SCHEMA nichts, eine SCHEMA konnte laut Graph gebunden sein waehrend die Datei fehlt. src/tools/export.ts legt jetzt analog eine Datei mit benanntem Export an (z.unknown mit TODO), ueberschreibt bestehende Dateien nie und erzeugt fuer realRef ohne symbol keinen Stub. 5 Dateien, Test tests/export.realref-materialize.test.ts. Detail: docs/cr/done/CR-GC-271-realref-produzent-und-stub.md",
       "status": "done",
       "created_at": "2026-07-27T00:00:00.000Z",
-      "closed_at": "2026-07-28T00:00:00.000Z"
+      "closed_at": "2026-07-28T00:00:00.000Z",
+      "commitRef": "a2a9e6a"
     },
     {
       "id": "CR-GC-272",
@@ -934,7 +1035,8 @@
       "name": "readiness + panels nach graphcode-client",
       "description": "DONE 2026-07-27, Commits 84ecc39 (client), 7cb159e (graphcode), 2185930 (GVE); nachtraeglich dokumentiert am 2026-07-28. Die Umsetzung lief direkt nach der Freigabe ohne vorheriges CR-Dokument, die Commits tragen deshalb die damals schon vergebene Nummer 265 (bei der Nummernvergabe wurde nur docs/cr/open geprueft, nicht done); die Commit-Referenzen bleiben bewusst falsch, ein History-Rewrite auf publizierten Commits waere die teurere Korrektur. Problem: nach CR-GC-267 hing graph-view-edit weiter an graphcode, weil Dashboard-Panels und Readiness-Projektion dort lagen. Gemessen im Clean-Room-Install 157 MB fuer einen Viewer, davon 70 MB kuzu-wasm, 23 MB typescript und 5,8 MB MCP-SDK, die er per Governance nie anfasst. Verschoben nach graphcode-client 0.2.0: readiness.ts, readiness-completeness.ts, viewer/panels.ts. Schnittkriterium: rein Daten rein, Daten raus; alles was Store, Gate oder Prozess braucht, bleibt im Substrat. Ein verdeckter Strang aufgeloest: panels.ts bezog LiveUpdateEvent und UpdateDomain scheinbar aus emit.ts, sie stammen aus contracts/harness und emit.ts reichte sie nur durch. Keine parallelen Pfade: graphcode behaelt an den drei Stellen Re-Export-Shims, eine Implementierung, alle 11 Importer unangetastet. Ergebnis: 157 MB auf 43 MB, 166 auf 63 Pakete, GVE-Suite 510/510, Schreibweg unveraendert ueber host.sock ins EINE Gate. 10 Dateien, bewusst ueber dem 6-Datei-Limit, weil ein kleinerer Schnitt einen Zwischenstand mit zwei Implementierungen hinterlassen haette. Detail: docs/cr/done/CR-GC-272-readiness-panels-nach-client.md",
       "status": "done",
-      "closed_at": "2026-07-27T00:00:00.000Z"
+      "closed_at": "2026-07-27T00:00:00.000Z",
+      "commitRef": "a2a9e6a"
     },
     {
       "id": "CR-GC-273",
@@ -942,7 +1044,8 @@
       "name": "graph_suggest: se-optimizer-Binding mit dryRun-Verdict",
       "description": "DONE 2026-07-29. Neues read-only MCP-Tool graph_suggest in eigener Tool-Gruppe src/tools/suggest.ts (report.ts-Size-Guard): duennes Binding auf se-optimizer 0.3.0 mit targetFor und suggestEdits. Gegeben eine Zielrichtung im sechsdimensionalen Metrikraum als Gewichte je Dimension, rankt es die feuernden Operator-Regeln nach dem Skalarprodukt aus Metrik-Delta und Zielrichtung. Spike-2-Design: ausgeliefert wird die Fund-Ebene (Violation, Richtung, Delta, Default-Messebene arch), ein konkreter Edit nur dann, wenn ein rule-spezifisches Fix-Template ihn deterministisch herleitet. Jeder Template-Edit laeuft als dryRun (CR-GC-234) durchs volle Gate und kommt mit 3-Tier-Verdict zurueck, nach jedem Preview restauriert loadGraph die In-Memory-Kopie. Nie auto-apply: anwenden geht nur ueber graph_mutate, Previews laufen auf der Tool-Schreibkette serializeToolWrite, kein Interleaving mit echten Writes. graphcode-Haelfte des aimpro-Fahrplans Schritt 3, Paket-Haelfte ist sigloch-modules CR-SM-225. Blocker bis zum Publish von se-optimizer 0.3.0 war distribution.test.ts (E404 beim Tarball-Install im Fremd-Repo), danach gruen ohne Code-Aenderung. 6 Dateien, Suite 321/321. Detail: docs/cr/done/CR-GC-273-graph-suggest.md",
       "status": "done",
-      "closed_at": "2026-07-29T00:00:00.000Z"
+      "closed_at": "2026-07-29T00:00:00.000Z",
+      "commitRef": "7175ae0"
     },
     {
       "id": "CR-GC-274",
@@ -1202,7 +1305,8 @@
       "name": "Auto-SYS-Node bei jedem Import",
       "description": "DONE 2026-08-07. ensureSystemNode(nodes, systemId) in harness-import.ts — EINE Entscheidungsstelle am Choke-Point importOntologyGraph, durch den alle Bulk-Pfade laufen (seedFromJsonFile, applyReseed); ImportTarget traegt dafuer neu systemId. Fuer import-code liegt die Anlage als add-node im selben Gate-Batch (auditiert als consumerId import-code). Zusatzfund mitgefixt: der import-code-Reseed haette einen VORHANDENEN SYS geloescht — der Stale-Filter raeumt alles weg, was die Extraktion nicht wieder anlegt, und graphify liefert nie ein SYS; Intention und analysisFreshness-Stamps waeren beim naechsten Code-Import verloren gewesen. SYS ist jetzt vom Stale-Filter ausgenommen. Bewusste AC-Abweichung: der Bulk-Pfad laeuft NICHT durchs Gate — importOntologyGraph ist per Konstruktion gate-frei (ImportTarget schneidet den Gate-Zugriff weg, der Pfad umgeht auch R-01); sein Kontrakt ist Store-aus-SSOT, nicht Mutation. AF-01..05 sind ausserdem gar nicht im Gate-Katalog (SE_DESCRIPTOR = V3_RULES + MT_RULES), nur in evaluateAllRules — der Test misst deshalb ueber takeSteeringSnapshot. Vier fremde Tests angepasst: Fixtures tragen jetzt eigenen SYS statt hochgezaehlter Erwartungen. 74 Testdateien / 489 Tests gruen. (docs/cr/done/CR-GC-302)",
       "status": "done",
-      "created_at": "2026-08-05T00:00:00.000Z"
+      "created_at": "2026-08-05T00:00:00.000Z",
+      "commitRef": "cba054d"
     },
     {
       "id": "CR-GC-303",
@@ -1210,7 +1314,8 @@
       "name": "Attribut-Abflachung macht Steering-Pfad regelblind",
       "description": "DONE 2026-08-07. takeSteeringSnapshot baute den OntologyGraph via JSON.parse(exportGraphJson(...)); exportGraphJson flacht node.attributes auf Top-Level ab, contracts-Regeln lesen element.attributes.x — R-19/R-20/VR-01/SC-04 und AF-01..05 waren im Steering-/Generate-Pfad blind bzw. dauerfeuernd. Fix: toOntologyGraph aus conformance.ts exportiert und in takeSteeringSnapshot direkt gemappt (ein Mapper, Export-Encoding unangetastet). Tiefere Root Cause als im CR beschrieben: OntologyElement hat TYPISIERTE Top-Level-Felder (kinds, asil, method) NEBEN dem attributes-Bag; der Mapper liess sie fallen, wodurch UC-05/UC-06 auf dem Conformance-Pfad still deaktiviert waren. toOntologyGraph hebt sie jetzt aus dem Bag heraus und behaelt den Bag. Ergebnis: PDR ist aus Modellinhalt erreichbar statt vom Encoding blockiert; 480 Tests gruen. Absorbiert CR-GC-299. (docs/cr/done/CR-GC-303)",
       "status": "done",
-      "created_at": "2026-08-05T00:00:00.000Z"
+      "created_at": "2026-08-05T00:00:00.000Z",
+      "commitRef": "454b49a"
     },
     {
       "id": "CR-GC-304",
@@ -1218,7 +1323,8 @@
       "name": "ConOps-View nach ISO 29148 neu schneiden",
       "description": "DONE 2026-08-07. Drei Defekte behoben: (1) renderConOps filterte REQ.kinds enthaelt 'operational' — ReqKind in contracts hat 7 Werte, 'operational' ist keiner davon, die Tabelle war strukturell unbefuellbar; (2) die View versprach 'actors/system/use-cases', rendert aber keinen einzigen UC — Operational Scenarios sind der ConOps-Kern und fehlten ganz; (3) die Aenderungssicht fehlte, obwohl das Meta-Modell seit CR-155 CR-relation auf UC/REQ/FUNC/MOD traegt. Neuschnitt gegen ISO 29148 5.2.4 aus Bestandskanten, sechs Abschnitte: SYS.description; system-/actor-gebundene non-functional REQ (13); ACTOR io UC (9 ACTOR); UC compose FCHAIN compose FUNC (6 UC, 1 ohne Ablauf ausgewiesen); Modes of Operation als benannte Luecke (kein MODE-Elementtyp, Drift-Lock L1/L2); CR-Buendel (63 CRs mit Impact-Kanten — reine CR-relation-MS ist Planung und bleibt im Changelog). docs/views/conops.md waechst von 1266 auf 16978 Bytes. Operationaler Scope ist eine GRAPH-POSITION, keine kind: eine non-functional REQ an genau einem MOD ist Design und bleibt draussen. 12 neue Tests, 7 davon vorher rot; 74 Testdateien / 501 Tests gruen. (docs/cr/done/CR-GC-304)",
       "status": "done",
-      "created_at": "2026-08-07T00:00:00.000Z"
+      "created_at": "2026-08-07T00:00:00.000Z",
+      "commitRef": "1440756"
     },
     {
       "id": "CR-GC-305",
@@ -1226,7 +1332,8 @@
       "name": "spec-View entfernen, srs bleibt",
       "description": "DONE 2026-08-08. @sigloch/graphcode-client 0.7.0 publiziert — MARKDOWN_VIEWS und VIEW_FILENAMES fuehren spec nicht mehr (16 auf 15 Views); graphcode und graph-view-edit auf ^0.7.0. Die View war ein Rohdump aller Elemente nach Typ und beantwortete dieselbe Frage wie srs (ISO-29148-Narrativ) mit anderer Vollstaendigkeit. Verifikationsreihenfolge bewusst gedreht: erst npm link in beide Konsumenten und alles gruen fahren, DANN publizieren — eine npm-Version laesst sich nicht zurueckziehen. Drei unabhaengige Signale, dass die View schon totes Gewicht war: GVE fuehrte sie als hidden mit Kommentar 'redundant zur editierbaren SRS', docs/views/spec.md war seit CR-GC-264 gitignored, und der Exporter-Kommentar musste die Abgrenzung eigens erklaeren. Abweichungen: GVE brauchte doch Code (toter DOC_OVERRIDES-Eintrag plus ein 16-Literal im Test), und es waren 6 statt 3 spec-Referenzen in exporter.test.ts — der Test 'SRS ungleich model spec' schrieb die Doppelung positiv fest und ist durch sein Gegenteil ersetzt: keine der 15 Views darf die typgruppierte Form wieder einfuehren. MarkdownViewSchema.parse('spec') wirft jetzt statt still zurueckzufallen. Gruen: client 29, graphcode 501 + Build, GVE 526. (docs/cr/done/CR-GC-305)",
       "status": "done",
-      "created_at": "2026-08-07T00:00:00.000Z"
+      "created_at": "2026-08-07T00:00:00.000Z",
+      "commitRef": "cc00df5"
     },
     {
       "id": "CR-GC-306",
@@ -1234,7 +1341,8 @@
       "name": "Onboarding: ein Start, Beispiel-Prompt, GVE-Adresse",
       "description": "DONE 2026-08-08. Befund staerker als angenommen: `graphcode mcp` startet DREI Dinge, nicht zwei — MCP-stdio, die read-only SSE-Bridge UND den GVE-Viewer selbst (maybeStartGve, abschaltbar per GRAPHCODE_NO_GVE=1). README dokumentierte keins davon richtig und machte `graphcode host` zum Normalweg, was neben einem laufenden Host den Store-Lock trifft. Umgesetzt: README nennt mcp als DEN Server und host als Fallback; Beispiel-Prompt als Schritt 3 im README und auf stderr beim Start (firstStepHint, genau eine Zeile statt Menue); GRAPHCODE.md bekommt einen Live-view-Abschnitt mit docs/views/dashboard.url als Adressquelle und ohne hartkodierten Port; docs/views/README.md grenzt views (deterministische Graph-Projektionen) gegen records (commit-gestempelte Urteilsdokumente wie irr.md) entlang des Ableitbarkeits-Kriteriums ab. Abweichung: das Leer-Kriterium ist die INTENT-EBENE (existiert UC oder REQ?), nicht die Elementzahl — nach CR-GC-302 traegt jeder Store einen SYS-Anker und import-code erzeugt FUNC/MOD ohne UC/REQ, ein count===0 haette beide auf den falschen Zweig geschickt. firstStepHint liegt in mcp-server.ts statt scaffold-templates.ts (kein Scaffold-Artefakt) und feuert nur nach der Erst-Wahl, nicht bei einer Promote-Neuwahl. Mitgefunden: die README-Sektion 'Viewer integration' schloss mit 'Until the renderer ships' — der Renderer wird laengst automatisch gestartet. 10 neue Tests, 8 davon vorher rot; 75 Testdateien / 511 Tests gruen. (docs/cr/done/CR-GC-306)",
       "status": "done",
-      "created_at": "2026-08-07T00:00:00.000Z"
+      "created_at": "2026-08-07T00:00:00.000Z",
+      "commitRef": "178a547"
     },
     {
       "id": "CR-GC-307",
@@ -1242,7 +1350,8 @@
       "name": "Intent-Anker sind Steuerungsinternes, nicht Kundendialog",
       "description": "DONE 2026-08-08. Der Begriff ist weg aus jedem Text, den ein Mensch liest; die Anker selbst bleiben (intentCoverage misst weiter an ihnen), geaendert hat sich nur WER sie sieht: niemand. Statt Bestaetigungsschritt werden sie still abgeleitet und die Config im Hintergrund gemerged; die Coverage-Zeile spricht Klartext ('Noch nirgends beschrieben: X. Fehlt dazu ein Use Case?'). Ist die Intention messbar zu duenn, stellt der Loop 2-3 FACHLICHE Rueckfragen in der Sprache des Kunden und der Prompt verbietet dem Modell ausdruecklich, nach Steuerungs-Einstellungen zu fragen. Der Ausloeser isIntentTooThin hat genau EINE Bedingung (unter 3 trennscharfe Inhaltswoerter nach Stopword- UND Generika-Filter) statt der zwei im CR — dieselbe Sache, sobald Generika im Extraktor gefiltert werden; ein Test pinnt, dass extractIntentAnchors und isIntentTooThin nicht auseinanderdriften. Abweichung: der Config-Write liegt in der Tool-Schicht (graph_generate in tools/suggest.ts), nicht in generate.ts — generationStep ist die reine deterministische Zustandsmaschine (N=1-AC aus CR-GC-295) und hat nicht mal einen repoRoot. persistIntentAnchors verweigert in drei Faellen: bestehende Anker, Anzahl ausserhalb 3..7 (sonst schriebe die Automatik eine schema-ungueltige Config, an der jeder spaetere Load wirft), unlesbare Datei — und merged, ein handgepflegter weights-Block ueberlebt. intentCoverage bleibt als maschinenlesbares Read-out unveraendert (Kontrastfall-Test). Erzwungen statt dokumentiert: ein Grep-Test ueber die String-Literale von generate.ts laesst den Begriff nicht zurueckkriechen. 12 neue Tests (11 vorher rot) plus zwei umgeschriebene CR-295-Tests; 76 Testdateien / 524 Tests gruen. (docs/cr/done/CR-GC-307)",
       "status": "done",
-      "created_at": "2026-08-07T00:00:00.000Z"
+      "created_at": "2026-08-07T00:00:00.000Z",
+      "commitRef": "4ab2c18"
     },
     {
       "id": "CR-GC-308",
@@ -1250,7 +1359,8 @@
       "name": "View-Exporter lesen nur deklarierte Kanten und Attribute",
       "description": "DONE 2026-08-08. Vier Exporter-Stellen lasen Kanten/Attribute, die die Ontologie nicht kennt — 'compliance 1.0 bei leerer View'. renderFmea liest jetzt die FM-01-Schluessel (severity/occurrence/detection statt S/O/D), die Mitigation ueber compose auf REQ[kinds enthaelt mitigation] statt ueber ein von R-18 verbotenes relation, und unterscheidet 'Test vorhanden' von 'Test bestanden' (FM-03, testResult passed). renderTrade und se-trade.md einigen sich auf attributes.label statt role. Der tote MS-compose-CR-Zweig ist an drei Stellen raus — Beleg, dass er wirklich tot war: implplan.md und changelog.md sind danach BYTE-IDENTISCH, der legale relation-Zweig trug sie die ganze Zeit. AP-Spalte ersatzlos gestrichen: CR-SM-229 (actionPriority/apMethod) ist nicht publiziert, die erfundene S>=8-Logik ist weg; stattdessen RPN = S*O*D, weil das exakt die Zahl ist, auf die FM-03 seine 100er-Schwelle legt — aus der Regel, nicht aus dem Exporter. Neu: tests/views.conformance.test.ts (12) als Waechter gegen die fuenfte Instanz; Kern-AC nachgewiesen, indem renderFmea testweise auf relation zurueckgebaut wurde (rot) und zurueckgerollt (gruen). Die Wurzel lag in den Skills: se-fmea.md nannte S/O/D nur als Markdown-Spalten und nie als Graph-Attribute — v2 traegt jetzt eine Attribut-Tabelle mit der jeweils lesenden Regel. 77 Testdateien / 536 Tests gruen. (docs/cr/done/CR-GC-308)",
       "status": "done",
-      "created_at": "2026-08-07T00:00:00.000Z"
+      "created_at": "2026-08-07T00:00:00.000Z",
+      "commitRef": "e4ac30d"
     },
     {
       "id": "CR-GC-309",
@@ -1258,7 +1368,8 @@
       "name": "graph_mutate echot Violations in voller Laenge",
       "description": "DONE 2026-08-08. violations:'summary'|'full' mit Default summary — context (und damit candidate_targets) entfaellt, ruleId/severity/message/fixHint/elementId bleiben. Gemessen an einer Feldtest-grossen Fixture: 30 Kommandos 60,6 KB auf 10,7 KB (5,7x, minus 82 Prozent), 60 Kommandos 203,8 KB auf 21,0 KB (9,7x, minus 90 Prozent) — ueberlinear, weil candidate_targets mit Batch mal Kandidaten skaliert und die verbleibenden message+fixHint nur linear. AC knapp verfehlt und nicht verschoben: gefordert war unter 10 KB, erreicht 10,7 KB; die Restmenge ist genau Message plus fixHint je Fund, und fixHint ist zwingend (der Treiber rendert ihn). applyIf NICHT gebaut: die Tests dafuer waren gruen, BEVOR etwas implementiert war — tier 'block' wird nur auf den Reject-Pfaden gesetzt, die nichts persistieren (der Erfolgspfad kann nur suggest oder auto-apply vergeben), also waeren beide Werte verhaltensgleich, ein Parallelpfad ohne Inhalt. Was der Schalter garantieren sollte, ist stattdessen als Invariante gepinnt, inklusive Stolperdraht: tier==='block' gilt genau dann, wenn nichts persistiert wurde. Zweiter Defekt: es gab ZWEI identische JSON.stringify().slice(0,6000)-Stellen, nicht eine — beide laufen jetzt ueber jsonCapped(), das ein kleineres GUELTIGES JSON mit den Top-Level-Skalaren liefert statt eines mitten im Objekt abgeschnittenen Blobs. Nicht verifiziert: die im CR ueberschlagene Kostenersparnis — der Kontrafaktik-Lauf existiert nicht. 78 Testdateien / 554 Tests gruen. (docs/cr/done/CR-GC-309)",
       "status": "done",
-      "created_at": "2026-08-07T00:00:00.000Z"
+      "created_at": "2026-08-07T00:00:00.000Z",
+      "commitRef": "45c888e"
     },
     {
       "id": "CR-GC-310",
@@ -1266,7 +1377,8 @@
       "name": "Format-E-Kantenbatches verlangen Neu-Deklaration vorhandener Knoten",
       "description": "DONE 2026-08-08. Der Codec nimmt jetzt options.resolveType entgegen und das MCP-Tool reicht es aus dem geladenen Graphen durch (ein Typ-Index, kein zweiter Speicher) — ein formatE-Batch, der nur Kanten zwischen bestehenden Knoten zieht, laeuft ohne Neu-Deklaration. Drei Sperren mussten fallen, nicht eine: die fehlende Durchreichung, der Implicit-Add-Guard und validate(), das seinen Typ ebenfalls nur aus dem Batch kannte. Grenze gehalten: eine unbekannte uid liefert weiter undefined und damit die bisherige Meldung — ein Tippfehler wird nicht stillschweigend zu einem neuen Knoten. Neu und bewusst hart: deklariert ein Batch eine uid mit einem anderen Typ als der Store sie fuehrt, ist das ein Fehler, kein stilles Umtypisieren. 6 Tests. (docs/cr/done/CR-GC-310)",
       "status": "done",
-      "created_at": "2026-08-07T00:00:00.000Z"
+      "created_at": "2026-08-07T00:00:00.000Z",
+      "commitRef": "d6f6c72"
     },
     {
       "id": "CR-GC-311",
@@ -1274,7 +1386,8 @@
       "name": "rewind/restore als CLI-Verb — UC-graph-time-travel realisieren",
       "description": "DONE 2026-08-08. Der ConOps-View fuehrte UC-graph-time-travel, ohne dass es einen Weg gab, einen frueheren Graph-Stand zurueckzuholen — die Rueckwaerts-Haelfte des Use Case war unrealisiert. Neu: src/rewind.ts mit executeRewind + RewindError, CLI-Verb graphcode rewind <ref> [--force]. Kernentscheidung: KEIN git checkout — der Snapshot wird per git show <commit>:<snapshot> direkt aus dem Objektspeicher gelesen, unter .graphcode/rewind-staged.graph.json zwischengelegt und ueber harness.reseed() eingespielt; der Arbeitsbaum wird nie angefasst, die Stage-Datei im finally entfernt. Bricht ab, solange un-exportierte Modell-Aenderungen anstehen (isExportPending) — --force verwirft sie bewusst. Reihenfolge der Pruefungen ist Teil des Vertrags: pending → resolveCommit → readSnapshotAt mit JSON-Validierung → stage → reseed, damit ein kaputter Snapshot den Store nie erreicht. 16 Tests. (docs/cr/done/CR-GC-311)",
       "status": "done",
-      "created_at": "2026-08-08T00:00:00.000Z"
+      "created_at": "2026-08-08T00:00:00.000Z",
+      "commitRef": "97a7256"
     },
     {
       "id": "CR-GC-312",
@@ -1282,7 +1395,8 @@
       "name": "SE_DESCRIPTOR trug 2 von 12 Regelfamilien — zehn Familien wertete niemand aus",
       "description": "DONE 2026-08-08. Befund: SE_DESCRIPTOR.rules enthielt nur V3_RULES und MT_RULES; UC/FC/SC/CR/AO/FM/VIEW/AF wurden zwar in contracts gepflegt, aber von keinem Konsumenten evaluiert — gemeldet wurden 2 Verletzungen, findbar waren 276. Zweiter Befund derselben Klasse: graph-api-core pinnte @sigloch/contracts auf ^2.0.0, waehrend die Familie auf ^3 stand — npm schachtelte eine zweite contracts@2.0.0, sodass das Gate im selben Prozess auf einem aelteren Regelstand lief als der Steering-Pfad. Fix: alle zehn Familien in den Katalog (32 auf 64 Regeln), Dep-Range auf ^3.2.0, eine einzige contracts-Instanz. Damit das Einschalten nicht 114 bestehende Fehler zu Gate-Blockern macht: neues Flag gating auf Rule/RuleViolation — severity sagt wie schlimm, gating sagt ob das Gate handelt; nur R-/RD-/MT- sind gating, der Rest ist sichtbar ohne zu blockieren. Dritter Befund: PHASE_GATE_RULES im graphcode-client war eine handgepflegte Liste, die contracts mit RULE_TO_PHASE bereits ersetzt hatte — sie wichen bei 21 von 33 Regeln voneinander ab. Jetzt abgeleitet statt dupliziert; vier Tests, die die Zuordnung hart verdrahtet hatten (und deshalb die Drift gruen liessen), schlagen sie nun nach. (docs/cr/done/CR-GC-312)",
       "status": "done",
-      "created_at": "2026-08-08T00:00:00.000Z"
+      "created_at": "2026-08-08T00:00:00.000Z",
+      "commitRef": "5d15c83"
     },
     {
       "id": "CR-GC-313",
@@ -1290,7 +1404,8 @@
       "name": "export-graph.mjs Guard kennt den graphVersion-Stamp nicht",
       "description": "DONE 2026-08-08. Der Canonicity-Guard verglich die committete SSOT byteweise mit einem Neu-Export; die einzige Differenz war der graphVersion-Trailer aus CR-GC-300, den das Skript nicht kannte — das Skript brach damit auf jedem Repo ab, obwohl der GENERATED-Header jeder der 15 Views darauf zeigt. Neu: isCanonicalSnapshot() in src/exporter.ts vergleicht stamp-blind, indem es den Trailer vor dem Vergleich abtrennt. Der Guard wurde NICHT aufgeweicht — die Kern-Akzeptanz war, dass eine SSOT mit echtem Hand-Edit weiter abgelehnt wird, und genau das ist der Inhalt der negativen Tests. Er war bis dahin ungetestet, was erklaert, warum CR-GC-300 ihn brechen konnte, ohne dass etwas rot wurde; 9 Tests schliessen diese Luecke. (docs/cr/done/CR-GC-313)",
       "status": "done",
-      "created_at": "2026-08-08T00:00:00.000Z"
+      "created_at": "2026-08-08T00:00:00.000Z",
+      "commitRef": "97a7256"
     },
     {
       "id": "CR-GC-314",
@@ -1298,7 +1413,8 @@
       "name": "Positive Entscheidungen im Audit-Trail (rulesPassed)",
       "description": "DONE 2026-08-08. violations hielt immer fest, was schiefging; was eine Mutation BESTAETIGT hat, stand nirgends — eine angenommene Mutation hinterliess ein leeres Feld, und 'R-18 hat diese Kante geprueft und durchgelassen' laesst sich aus 'keine Verletzung' nicht rekonstruieren. Ein Lernmechanismus kann mit der ersten Aussage arbeiten und mit der zweiten gar nicht. Neu auf AuditEntry: rulesPassed (Regel-IDs, nie Regeltext) und rulesetVersion aus dem GELADENEN Paket, nie aus Config. Kein zweiter Regellauf und keine neue Engine-API — reine Mengenarithmetik ueber Katalog und die bereits vorliegenden violations, die beiden Haelften sind damit innerhalb eines Records exakt komplementaer. Auch fuer abgelehnte Mutationen und dryRun-Previews aufgezeichnet. Tragende Entscheidung: audit_trail gibt das Feld per Default NICHT heraus (rund 60 Regel-IDs pro Eintrag bei Limit 50) — und zwar durch ABWESENHEIT, nicht durch ein leeres Array, sonst liest ein Konsument 'nichts bestanden' statt 'nicht aufgezeichnet'. Alte Records werden bewusst nicht nachgetragen: sie gegen einen Regelstand zu rekonstruieren, der zur Mutationszeit nicht galt, waere selbst eine Provenienz-Verletzung. (docs/cr/done/CR-GC-314)",
       "status": "done",
-      "created_at": "2026-08-08T00:00:00.000Z"
+      "created_at": "2026-08-08T00:00:00.000Z",
+      "commitRef": "10ec0c5"
     },
     {
       "id": "CR-GC-315",
@@ -1306,7 +1422,8 @@
       "name": "R-12 und R-21 feuerten auf Kanten, fuer die sie nie gedacht waren",
       "description": "DONE 2026-08-08 (contracts 3.2.0, RULES_VERSION 2.24.0). R-12 pruefte Redundanz ueber ALLE Kantentypen und zaehlte dabei Richtungspaare doppelt; jetzt auf compose/allocate/relation beschraenkt mit richtungsunabhaengigem Dedup-Schluessel. R-21 verlangte fuer JEDES FUNC-Paar einen gemeinsamen FCHAIN mit Integrationstest — auch fuer Paare, die in keiner gemeinsamen Wirkkette stehen und deshalb gar keinen haben koennen; jetzt schweigt die Regel fuer Paare ohne gemeinsamen FCHAIN. Auf dem committeten SSOT feuern beide Regeln danach 0x, inklusive der Ko-Adjazenz-Warnung FUNC-graph-export-snapshot → FUNC-reseed, die bis dahin bewusst stehen geblieben war. (docs/cr/done/CR-GC-315)",
       "status": "done",
-      "created_at": "2026-08-08T00:00:00.000Z"
+      "created_at": "2026-08-08T00:00:00.000Z",
+      "commitRef": "8247157"
     },
     {
       "id": "CR-GC-316",
@@ -1314,7 +1431,8 @@
       "name": "graph_help buendelt Massnahmen je Regel statt je Element",
       "description": "DONE 2026-08-08. Die kontextuelle Hilfe listete eine Massnahme pro verletzendem Element — bei einer Regel, die 40x feuert, 40 nahezu identische Bloecke. Jetzt nach ruleId gruppiert: ein Block je Regel mit count, hoechster Severity und bis zu MAX_EXAMPLE_ELEMENTS=5 Beispiel-uids. Reihenfolge war Bedingung, nicht Geschmack: dieser CR musste VOR dem Autorieren der 36 Plain/SE-Textpaare landen, sonst waere der tokenlose graph_help-Modus von 2 KB auf rund 178 KB gewachsen. (docs/cr/done/CR-GC-316)",
       "status": "done",
-      "created_at": "2026-08-08T00:00:00.000Z"
+      "created_at": "2026-08-08T00:00:00.000Z",
+      "commitRef": "a28834b"
     },
     {
       "id": "CR-GC-317",
@@ -1322,7 +1440,8 @@
       "name": "RTM nach A-SPICE-Ebenen gruppieren + Integrationsabdeckung",
       "description": "DONE 2026-08-08. Die Requirements-Traceability-Matrix warf System-, Funktions-, Komponenten- und Integrationsanforderungen in eine Liste. Die Ebene wird NICHT gelabelt, sondern vom Reporter aus der Anbindung erschlossen — SYS compose REQ ergibt system, UC ergibt functional, FUNC/MOD satisfy ergibt component, FCHAIN satisfy ergibt integration; das haelt die Ontologie frei von einem Prozessmodell-Attribut. Zusaetzlich eine Rolled-up-Integrationsabdeckung in der Testmatrix, die nur Paare mit gemeinsamem FCHAIN auswertet. Nachtrag im Abschluss statt still korrigiert: die erste Implementierung las nur compose und nur einen Hop, wodurch 64 von 111 REQs faelschlich als ankerlos erschienen — 63 davon haengen ueber satisfy. Die Zahl '69 ohne Anker' aus dem Zwischenbericht war damit falsch; korrigiert in CR-GC-318. (docs/cr/done/CR-GC-317)",
       "status": "done",
-      "created_at": "2026-08-08T00:00:00.000Z"
+      "created_at": "2026-08-08T00:00:00.000Z",
+      "commitRef": "93fabe0"
     },
     {
       "id": "CR-GC-318",
@@ -1330,7 +1449,8 @@
       "name": "reqLevels lief nur ueber compose — satisfy-Bein fehlte",
       "description": "DONE 2026-08-08. Korrektur zu CR-GC-317: die Ebenenherleitung folgte nur der compose-Kante und nur einen Hop, sodass jede REQ, die ueber satisfy an FUNC/MOD/FCHAIN haengt, als 'unassigned' in der RTM landete — 64 von 111. Jetzt laufen beide Beine rekursiv mit Zyklusschutz ueber ein seen-Set. Der Praezedenzfall stand die ganze Zeit daneben: levelsOfTest aus CR-GC-240 lief seit jeher ueber beide Kanten. (docs/cr/done/CR-GC-318)",
       "status": "done",
-      "created_at": "2026-08-08T00:00:00.000Z"
+      "created_at": "2026-08-08T00:00:00.000Z",
+      "commitRef": "a87c68f"
     },
     {
       "id": "CR-GC-319",
@@ -1338,7 +1458,8 @@
       "name": "audit_trail lieferte Rohdatensaetze statt einer Projektion",
       "description": "DONE 2026-08-08. Ein Default-Aufruf (limit 50) auf dem Trail dieses Repos war 162,6 KB, davon 79 Prozent die vollstaendigen mutate-Batches. Der Agent fragt den Trail, um zu erfahren WAS PASSIERT IST; der eine Konsument, der die Batches braucht, ist der Replay-Merge, und der liest die JSONL-Datei direkt, nie dieses Tool. Neu: projectAuditEntries als reine, exportierte Funktion — Basisfelder plus commandCount und opSummary (+n ~n -n), Violations auf ruleId/severity/message/elementId geschlankt; includeCommands und includeRulesPassed holen das Volle zurueck. Dieselbe Regel wie CR-GC-314: Schreiben ist nicht Ausliefern — der Record auf Platte bleibt vollstaendig. Gemessen am ECHTEN Trail, wie die Akzeptanz es verlangt: 17,0 KB aus 162,6 KB = 89,3 Prozent, nicht die geschaetzten 90. Die Schwelle steht auf dem gemessenen Wert mit der Begruendung daneben: die von REQ-T01 GEFORDERTEN Basisfelder sind allein rund 10 KB (200 Byte je Record, ueberwiegend JSON-Schluessel), die schlanken Violations weitere 6,3 KB — mehr geht nicht, ohne ein gefordertes Feld zu streichen. rulesetVersion reist seither mit includeRulesPassed statt in der Default-Antwort: beide beschreiben den Regelsatz, nicht das Ereignis. (docs/cr/done/CR-GC-319)",
       "status": "done",
-      "created_at": "2026-08-08T00:00:00.000Z"
+      "created_at": "2026-08-08T00:00:00.000Z",
+      "commitRef": "d6d28a2"
     },
     {
       "id": "CR-GC-320",
@@ -1346,7 +1467,8 @@
       "name": "executor.ts schneiden — Schritt 1 (Prompt · Ranking · Prosa-Recovery)",
       "description": "DONE 2026-08-08. src/executor.ts war mit 1503 Zeilen der groesste Ueberschreiter in src/ — 3x die 500-Zeilen-Grenze. Drei zustandsfreie Achsen ohne Closure-Bezug zum Runden-Loop herausgeschnitten: src/executor-prompt.ts (207 Zeilen: SYSTEM, EMIT_SUFFIX, IDLE_NUDGE, WITHHELD_TOOLS, AUTHORING_TOOLS, jsonCapped, buildRoundInjection), src/executor-rank.ts (106 Zeilen: TEMPERATURE_ANCHORS, temperatureSpread, deltaSum, focusDelta, totalDelta, rankCandidates, CandidateProbe), src/executor-parse.ts (108 Zeilen: extractMutateFromText, salvageCommands, extractToolCallFromText). Reines Verschieben, per diff gegen HEAD verifiziert: identisch bis auf die export-Praefixe, die der Modulschnitt erzwingt, und die in die Modul-Header gefalteten Abschnitts-Banner. Kein Re-Export-Barrel in executor.ts — die zwei Importeure (tests/executor.test.ts, tests/executor.bestofn.test.ts) ziehen auf die neuen Module um, keine Test-Assertion geaendert. Ergebnis executor.ts 1503 auf 1127 Zeilen. Ehrlicher Rest: 1127 ist weiter ueber 500; der verbleibende Block ist runExecutor mit den Closures loadGraphSnapshot/runPreflight, die stats/registry/trace/config teilen — das verlangt eine Factory und ist Refactoring, kein Verschieben. Entscheidung noch offen: Schritt 2 als Turn-Runner-Extraktion oder begruendete Ausnahme in src/README.md wie bei harness.ts. 85 Testdateien / 622 Tests gruen. (docs/cr/done/CR-GC-320)",
       "status": "done",
-      "created_at": "2026-08-08T00:00:00.000Z"
+      "created_at": "2026-08-08T00:00:00.000Z",
+      "commitRef": "db382b4"
     },
     {
       "id": "CR-GC-321",
@@ -1354,7 +1476,8 @@
       "name": "__name in Format-E entdeckbar machen, stillen Namens-Fallback laut machen",
       "description": "OPEN 2026-08-10. Format-E kann Namen setzen, nur nicht positional: der Name reist als Attribut __name, inline oder als @__name-Folgezeile. Nur steht __name in keiner Tool-Beschreibung (weder im formatE-Feld von graph_mutate noch in graph_authoring_guide) — einzige Fundstelle im Repo ist das Cold-Start-Template in src/bootstrap.ts. Und der Fallback schweigt: fehlt __name, setzt der Codec name gleich uid, ohne Violation, tier bleibt pass. Realer Schaden (Session 2026-08-10, Fremdrepo): 87 von 134 Knoten trugen ihren uid als Namen, sichtbar erst in den generierten Sichten (implplan.md zeigte CR-002 statt des Titels); Reparatur in drei Gate-Batches. Geplant: die formatE-Feldbeschreibung nennt beide __name-Formen und den Fallback, graph_authoring_guide liefert je Typ ein decodierbares formatEExample, und ein formatE-Batch ohne __name liefert nameWarning mit den betroffenen uids (Muster occWarning, aendert success, tier und violations nicht, greift auch im dryRun). Nicht-Ziele: kein drittes positionales Feld in Format-E, kein Block, und keine Contracts-Regel name-gleich-uid — die waere die staerkere Variante, kostet aber Familie-Review plus Version-Bump und ist ein eigener CR. (docs/cr/open/CR-GC-321)",
       "created_at": "2026-08-10T00:00:00.000Z",
-      "status": "open"
+      "status": "done",
+      "commitRef": "e2882cf"
     },
     {
       "id": "CR-GC-322",
@@ -1362,7 +1485,8 @@
       "name": "GRAPHCODE-STEERING.md — die Anleitung fuer den Menschen (Steuerung und docs/views/)",
       "description": "DONE 2026-08-11. Nach graphcode init lagen 17 Anleitungen im Repo und keine davon war fuer den Menschen geschrieben — alle .claude/commands/se-Skills sind Arbeitsanweisungen an den Agenten in Ontologie-Sprache, GRAPHCODE.md deklariert sich selbst als Harness-Guardrails. Neu: GRAPHCODE-STEERING.md wird von init und update ins Repo-Root geschrieben (Refresh wie GRAPHCODE.md, kein preserve) und von remove restlos entfernt. Es benennt die vier Steuerhebel des Menschen (Intent-Absatz, Beantworten der Domaenenfragen, Entscheidung zwischen vorgelegten Alternativen, Zielprofil in .graphcode/target-profile.json), liefert die woertlichen Startsaetze fuer beide Faelle (leeres Repo per se:generate, bestehendes Modell per graph_readiness) und erklaert docs/views/ als deterministischen Render, dessen Hand-Edit beim naechsten graph_export verschwindet. Die View-Tabelle ist derived aus MARKDOWN_VIEWS und VIEW_FILENAMES ueber VIEW_BLURBS als Record ueber MarkdownView — ein neuer View bricht die Kompilierung, bis er einen Satz hat; dashboard.url ist ausdruecklich als kein View ausgewiesen. Nebenbefund gefixt: guardrailsContent nannte zweimal .claude/skills/ als Skill-Ort, real schreibt installSkills nach .claude/commands/ und removeLegacySkills entfernt das Legacy-Layout aktiv. 85 Testdateien und 630 Tests gruen; vier Mutationsproben treffen je genau den zugehoerigen Test. (docs/cr/done/CR-GC-322)",
       "created_at": "2026-08-11T00:00:00.000Z",
-      "status": "done"
+      "status": "done",
+      "commitRef": "5bf6fea"
     },
     {
       "id": "CR-GC-330",
@@ -1491,6 +1615,12 @@
       "name": "Live-Update-Kette (persist → emit → subscribe)",
       "description": "Nach jeder Gate-Mutation: persist schreibt den Graphen nach Disk-Kuzu, makeUpdateEventHook emittiert das SSE-invalidate-Event (FLOW-live-event); die Host-Bridge broadcastet den versionierten Diff an die Viewer, die stdio-Tool-Schicht invalidiert ihren Response-Cache, das Dashboard laedt die betroffenen Domains ohne Reload nach. Integrationstest: TEST-live-view via REQ-mutation-emits-event.",
       "status": "reviewed"
+    },
+    {
+      "id": "FCHAIN-merge-branches",
+      "type": "FCHAIN",
+      "name": "Zweig-Graphen konfliktfrei zusammenfuehren",
+      "description": "Entwickler bringt zwei Zweig-Graphen ein, mergeNodes fuehrt sie regelbasiert zusammen, der zusammengefuehrte Graph geht an den Entwickler zurueck. Aus FCHAIN-codec-roundtrip geloest: mergeNodes arbeitet auf dem Graphen, nicht auf Format-E, und teilte mit encode/decode keinen Fluss."
     },
     {
       "id": "FCHAIN-modelfree-gate",
@@ -1895,7 +2025,7 @@
       "status": "done",
       "external": true,
       "realRef": {
-        "file": "packages/se-optimizer/src/metrics.ts",
+        "file": "packages/se-engine/src/metrics.ts",
         "symbol": "metrics",
         "lang": "ts"
       }
@@ -2069,12 +2199,12 @@
     {
       "id": "FUNC-compute-readiness",
       "type": "FUNC",
-      "name": "computeReadiness(graph, policy)",
+      "name": "computeReadiness(graph)",
       "description": "Projiziert den Regelstrom auf die acht Dimensionsscores (score = 1 minus Verstoesse durch applicable). Fremdpaket @sigloch/se-steering, deshalb external.",
       "status": "done",
       "external": true,
       "realRef": {
-        "file": "packages/se-steering/src/readiness-compute.ts",
+        "file": "packages/se-engine/src/readiness-compute.ts",
         "symbol": "computeReadiness",
         "lang": "ts"
       }
@@ -3034,6 +3164,12 @@
       "created_at": "2026-06-16T00:00:00.000Z",
       "updated_at": "2026-06-17T00:00:00.000Z",
       "path": "src/tools"
+    },
+    {
+      "id": "MOD-metrics-engine",
+      "type": "MOD",
+      "name": "metrics-engine — Kenngroessen-Rechenkern",
+      "description": "Rechnet die Kenngroessen, aus denen die Steuerung ihre Urteile zieht: Architektur-Fitness, Readiness-Dimensionen, Modulkennzahlen. Ausserhalb dieses Repos realisiert — metrics und computeReadiness in @sigloch/se-engine, moduleMetrics in @sigloch/contracts. Die Modulgrenze folgt der Aufgabe, nicht der Paketgrenze; se-optimizer und se-steering, auf die die alten Verweise zeigten, existieren nicht mehr."
     },
     {
       "id": "MOD-repo-root",
@@ -9122,6 +9258,21 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-321",
+      "target": "FUNC-decode",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-321",
+      "target": "FUNC-encode",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-321",
+      "target": "FUNC-mutate",
+      "type": "relation"
+    },
+    {
       "source": "CR-GC-330",
       "target": "FUNC-emit-trajectory",
       "type": "relation"
@@ -9488,11 +9639,6 @@
     },
     {
       "source": "FCHAIN-codec-roundtrip",
-      "target": "FUNC-merge-nodes",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-codec-roundtrip",
       "target": "REQ-post-codec-roundtrip",
       "type": "satisfy",
       "weight": 1,
@@ -9612,6 +9758,16 @@
     },
     {
       "source": "FCHAIN-live-update",
+      "target": "FUNC-evaluate-rules",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-live-update",
+      "target": "FUNC-mutate",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-live-update",
       "target": "FUNC-save-graph",
       "type": "compose"
     },
@@ -9628,6 +9784,16 @@
     {
       "source": "FCHAIN-live-update",
       "target": "REQ-mutation-emits-event",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-merge-branches",
+      "target": "FUNC-merge-nodes",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-merge-branches",
+      "target": "REQ-conflict-free-merge",
       "type": "satisfy"
     },
     {
@@ -9691,6 +9857,11 @@
       "source": "FCHAIN-recall",
       "target": "REQ-graph-state-recall",
       "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-snapshot-freshness",
+      "target": "FUNC-evaluate-rules",
+      "type": "compose"
     },
     {
       "source": "FCHAIN-snapshot-freshness",
@@ -10272,6 +10443,11 @@
       "type": "io"
     },
     {
+      "source": "FLOW-round-findings",
+      "target": "SCHEMA-mutate-result",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-round-prompt",
       "target": "ACTOR-claude-code",
       "type": "io"
@@ -10371,6 +10547,11 @@
       "type": "io"
     },
     {
+      "source": "FLOW-suggested-edit",
+      "target": "SCHEMA-mutate-command",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-trajectory",
       "target": "ACTOR-learning-engine",
       "type": "io",
@@ -10430,6 +10611,11 @@
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-arch-fitness",
+      "target": "MOD-metrics-engine",
+      "type": "allocate"
     },
     {
       "source": "FUNC-arch-fitness",
@@ -10949,6 +11135,11 @@
       "source": "FUNC-compute-phase-readiness",
       "target": "REQ-steering-from-metrics",
       "type": "satisfy"
+    },
+    {
+      "source": "FUNC-compute-readiness",
+      "target": "MOD-metrics-engine",
+      "type": "allocate"
     },
     {
       "source": "FUNC-compute-readiness",
@@ -11609,6 +11800,11 @@
     },
     {
       "source": "FUNC-module-metrics",
+      "target": "MOD-metrics-engine",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-module-metrics",
       "target": "FLOW-module-metrics",
       "type": "io"
     },
@@ -11658,6 +11854,11 @@
     {
       "source": "FUNC-mutate",
       "target": "REQ-graph-snapshot-per-commit",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-mutate",
+      "target": "REQ-single-write-door",
       "type": "satisfy"
     },
     {
@@ -12032,6 +12233,11 @@
     },
     {
       "source": "FUNC-take-steering-snapshot",
+      "target": "REQ-single-measurement-path",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-take-steering-snapshot",
       "target": "REQ-steering-from-metrics",
       "type": "satisfy"
     },
@@ -12381,6 +12587,11 @@
     {
       "source": "MOD-repo-root",
       "target": "MOD-mcp-tools",
+      "type": "compose"
+    },
+    {
+      "source": "MOD-repo-root",
+      "target": "MOD-metrics-engine",
       "type": "compose"
     },
     {
@@ -14343,6 +14554,11 @@
     },
     {
       "source": "UC-graph-time-travel",
+      "target": "FCHAIN-merge-branches",
+      "type": "compose"
+    },
+    {
+      "source": "UC-graph-time-travel",
       "target": "FCHAIN-recall",
       "type": "compose"
     },
@@ -14557,5 +14773,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 134
+  "graphVersion": 145
 }

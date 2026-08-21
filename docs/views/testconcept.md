@@ -24,7 +24,7 @@
 | System | SYS (1) | E2E | 49 | 49 / 1 | ✓ |
 | Use-case | UC (7) | acceptance / integration | 88 | 7 / 7 scenario | ✓ |
 | Integration | FUNC↔FUNC (54 conn) | integration (chain) | 88 | 34 / 54 connections | ✗ 20 uncovered |
-| Function | FUNC (90) | unit | 73 | 90 / 90 | ✓ |
+| Function | FUNC (90) | unit | 77 | 90 / 90 | ✓ |
 | (support) | — | conformance | 2 | codec round-trip | ✓ |
 
 > GENERATED — TEST level derived from the graph position of the REQ it verifies (SYS/UC/FUNC/FCHAIN),

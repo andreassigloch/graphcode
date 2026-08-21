@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 163 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 163 CR · 154 done · 8 open.
+Total: 163 CR · 155 done · 7 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -208,5 +208,5 @@ Total: 163 CR · 154 done · 8 open.
 | `CR-GC-318` | done | reqLevels lief nur ueber compose — satisfy-Bein fehlte |
 | `CR-GC-319` | done | audit_trail lieferte Rohdatensaetze statt einer Projektion |
 | `CR-GC-320` | done | executor.ts schneiden — Schritt 1 (Prompt · Ranking · Prosa-Recovery) |
-| `CR-GC-321` | open | __name in Format-E entdeckbar machen, stillen Namens-Fallback laut machen |
+| `CR-GC-321` | done | __name in Format-E entdeckbar machen, stillen Namens-Fallback laut machen |
 | `CR-GC-322` | done | GRAPHCODE-STEERING.md — die Anleitung fuer den Menschen (Steuerung und docs/views/) |
