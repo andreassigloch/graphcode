@@ -798,7 +798,7 @@ Testset wird aus dem Impact-/Abhängigkeitsgraph bestimmt (richtige Tests statt 
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-efficient-testing` (acceptance) · `TEST-mvp-e2e` (e2e) · satisfy ◀ `FCHAIN-impact-testing` · allocate ▶ —
+Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `FCHAIN-impact-testing` · allocate ▶ —
 
 ##### `REQ-post-impact-testing` — Postcondition: Impact-basierte Testauswahl
 
@@ -806,7 +806,7 @@ Genau die betroffenen Tests ausgewählt (bottom-up); nicht betroffene ausgelasse
 
 priority: must · status: open · kinds: postcondition
 
-Verification ◀ `TEST-efficient-testing` (acceptance) · satisfy ◀ `FCHAIN-impact-testing` · allocate ▶ —
+Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `FCHAIN-impact-testing` · allocate ▶ —
 
 ##### `REQ-pre-impact-testing` — Precondition: Impact-basierte Testauswahl
 
@@ -814,7 +814,7 @@ Geändertes Element bekannt; Graph geladen.
 
 priority: must · status: open · kinds: precondition
 
-Verification ◀ `TEST-efficient-testing` (acceptance) · satisfy ◀ `FCHAIN-impact-testing` · allocate ▶ —
+Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `FCHAIN-impact-testing` · allocate ▶ —
 
 ##### 3.3.1.1  `FUNC-deduce-tests` — graph_tests(changeSet)
 
@@ -1726,7 +1726,7 @@ Installation der Harness in ein beliebiges Repo mit einem Kommando: scaffolds .g
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-cli-scaffold` (integration) · `TEST-distribution` (e2e) · `TEST-scaffold-skills` (integration) · satisfy ◀ `FUNC-harness-cli` · allocate ▶ `MOD-cli`
+Verification ◀ `TEST-cli-scaffold` (integration) · `TEST-distribution` (e2e) · satisfy ◀ `FUNC-harness-cli` · allocate ▶ `MOD-cli`
 
 ###### `REQ-repo-uninstall` — Restlose Deinstallation
 
@@ -1764,7 +1764,7 @@ Der Health-Endpoint prueft Store-Erreichbarkeit, Gate-Funktion, Ontology/Rules/C
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-real-health-check` (integration) · satisfy ◀ `FUNC-health-endpoint` · `MOD-host-bridge` · allocate ▶ `MOD-host-bridge`
+Verification ◀ `TEST-readonly-bridge` (integration) · satisfy ◀ `FUNC-health-endpoint` · `MOD-host-bridge` · allocate ▶ `MOD-host-bridge`
 
 ##### 3.9.1.8  `FUNC-import-doc` — Skill se:import-doc
 
@@ -2342,7 +2342,7 @@ Jede FCHAIN ist actor-bounded: ein ACTOR->FLOW->FUNC(in chain) am Eintritt UND e
 
 priority: must · status: reviewed · kinds: functional
 
-Verification ◀ `TEST-completeness-actor-bounded` (acceptance) · satisfy ◀ `FUNC-score-completeness` · allocate ▶ `MOD-harness`
+Verification ◀ `TEST-readiness-completeness` (acceptance) · satisfy ◀ `FUNC-score-completeness` · allocate ▶ `MOD-harness`
 
 ###### `REQ-completeness-single-value` — Completeness: ein Wert pro Gate, Detail on-click
 
@@ -2350,7 +2350,7 @@ Das Readiness-Dashboard zeigt EINEN aggregierten Completeness-Wert pro Gate; die
 
 priority: should · status: reviewed · kinds: non-functional
 
-Verification ◀ `TEST-completeness-single-value` (acceptance) · satisfy ◀ `FUNC-score-completeness` · allocate ▶ `MOD-harness`
+Verification ◀ `TEST-readiness-completeness` (acceptance) · satisfy ◀ `FUNC-score-completeness` · allocate ▶ `MOD-harness`
 
 ###### `REQ-readiness-completeness` — Readiness Completeness-Dimension (cardinality-driven)
 
@@ -2670,7 +2670,7 @@ Dokumente und Prozessschritte sind gruen wenn live aus dem aktuellen Graph abgel
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-artifact-freshness` (integration) · satisfy ◀ `FUNC-render-artifacts` · `MOD-dashboard` · allocate ▶ `MOD-dashboard`
+Verification ◀ `TEST-dashboard-readonly` (integration) · satisfy ◀ `FUNC-render-artifacts` · `MOD-dashboard` · allocate ▶ `MOD-dashboard`
 
 ###### 3.9.5.4.2  `FUNC-render-health` — renderHealth()
 
@@ -2696,7 +2696,7 @@ Jedes Phase- und Impl-Gate exponiert seine Blocking-Elemente (welche CRs, Tests,
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-readiness-transparent` (integration) · satisfy ◀ `FUNC-render-readiness` · `MOD-dashboard` · allocate ▶ `MOD-dashboard`
+Verification ◀ `TEST-dashboard-readonly` (integration) · satisfy ◀ `FUNC-render-readiness` · `MOD-dashboard` · allocate ▶ `MOD-dashboard`
 
 ###### 3.9.5.4.5  `FUNC-render-recommendations` — renderImprovementMeasures()
 
@@ -3592,7 +3592,7 @@ Trace-pair legality is enforced by the one shared engine rule R-18 (@sigloch/con
 
 priority: must · status: done
 
-Verification ◀ `TEST-structural-rule-shared` (integration) · satisfy ◀ `MOD-harness` · allocate ▶ —
+Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `MOD-harness` · allocate ▶ —
 
 ### `REQ-target-shifts-ranking` — Die Zielrichtung verschiebt das Suggestion-Ranking
 
@@ -3654,409 +3654,361 @@ A/B ueber das Vorzeichen des Ziels mit echter Mutation und Messung vorher/nachhe
 
 verify ▶ `REQ-applied-suggestion-moves-target` · testRefs: `tests/steering.architecture-causality.test.ts`
 
-### 8.4  `TEST-artifact-freshness` — Artifact-Freshness-Test
-
-Ein Artifact ist gruen bei Graph-Ableitung, gelb bei materialisiertem aber veraltetem Doc (Graph neuer als Doc), rot wenn fehlend. (REQ-artifact-freshness)
-
-verify ▶ `REQ-artifact-freshness` · testRefs: `tests/panels.test.ts`
-
-### 8.5  `TEST-batch-seed` — Batch-Seed UNWIND performance (automated)
+### 8.4  `TEST-batch-seed` — Batch-Seed UNWIND performance (automated)
 
 tests/perf.batch-seed.test.ts: 5000 Nodes + 5000 compose-Edges via harness.importGraph → saveNodes/saveEdges auf real-disk Kuzu (temp dir); asserts UNWIND-Batch-Insert < 15s (per-Row-Floor ~30s) + Counts + verlustfreies attrs_json-Round-Trip nach Reload. Validiert vom graph-cypher-wasm-Paket-Suite (kuzu-adapter round-trip, rasentraktor L3). (CR-GC-120)
 
 verify ▶ `REQ-batch-seed-performance` · testRefs: `tests/perf.batch-seed.test.ts`
 
-### 8.6  `TEST-bootstrap` — Cold-Start-Import-Test
+### 8.5  `TEST-bootstrap` — Cold-Start-Import-Test
 
 Format-E-Import befüllt leeren Graphen ausschließlich durchs Gate; Direct-Write schlägt fehl. (FUNC-import)
 
 verify ▶ `REQ-bootstrap-through-gate` · `REQ-post-import` · `REQ-pre-import` · testRefs: `tests/bootstrap.test.ts`
 
-### 8.7  `TEST-cache` — Cache-Layering-Test
+### 8.6  `TEST-cache` — Cache-Layering-Test
 
 Version-keyed Response-Cache + Dirty-Flag mappt auf Kuzu-Version; nur Onto+Rules stabil gecached, nie mit Live-Graph gemischt (Prefix-Hygiene). (CR-GC-102 R8/R11)
 
 verify ▶ `REQ-cache-layering` · `REQ-versioned-cache`
 
-### 8.8  `TEST-capture` — Interaktive-Erfassung-Test
+### 8.7  `TEST-capture` — Interaktive-Erfassung-Test
 
 Agent-Kandidaten laufen im suggest-Tier durchs Gate (kein auto-apply). (FCHAIN-capture)
 
 verify ▶ `REQ-interactive-capture-suggest` · `REQ-no-extraction` · `REQ-post-capture` · `REQ-pre-capture`
 
-### 8.9  `TEST-cli-scaffold` — CLI-Scaffold-Test
+### 8.8  `TEST-cli-scaffold` — CLI-Scaffold-Test
 
 graphcode init/update/remove against a mkdtemp temp repo (real node:fs): init scaffolds .graphcode/ + .mcp.json (npx form) + GRAPHCODE.md + package.json dep, idempotent re-run is byte-stable, update preserves the .graphcode/kuzu store, remove deletes all artifacts restlos. No localhost/Controller path. (CR-GC-112)
 
 verify ▶ `REQ-install-idempotent` · `REQ-post-harness-cli` · `REQ-pre-harness-cli` · `REQ-repo-install` · `REQ-repo-uninstall` · `REQ-repo-update` · testRefs: `tests/cli.scaffold.test.ts`
 
-### 8.10  `TEST-code-conformance` — Graph-code conformance test
+### 8.9  `TEST-code-conformance` — Graph-code conformance test
 
 Seedet den committeten SSOT-Graphen, laeuft checkCodeConformance gegen den realen src-Baum: 0 Violations (jeder Code-codeRef deklariert, jeder Prompt-codeRef existiert); ein falsches Symbol wird gefangen, also nicht vacuous. (CR-GC-206)
 
 verify ▶ `REQ-graph-code-conformance` · testRefs: `tests/conformance.test.ts`
 
-### 8.11  `TEST-code-quality` — Code-Quality-Gate-Test
+### 8.10  `TEST-code-quality` — Code-Quality-Gate-Test
 
 Regelverletzende Änderung wird vom Gate geblockt; konformer Graph bleibt driftfrei.
 
 verify ▶ `REQ-code-governed-quality` · `REQ-frame-binding` · `REQ-quality-metric` · `REQ-structure-driven`
 
-### 8.12  `TEST-codec-validation` — Codec-Validation-Test
+### 8.11  `TEST-codec-validation` — Codec-Validation-Test
 
 validate() flaggt strukturelle Defekte (Node/Edge-Typen, TRACE_PATTERNS-Paare, referenzielle Integritaet, doppelte UIDs) auf der Gate-Pruefung; ein zweiter Run-Artefakt fuer REQ-graph-integrity neben dem Integritaets-Test. (CR-GC-200/204)
 
 verify ▶ `REQ-graph-integrity` · testRefs: `tests/codec.validation.test.ts`
 
-### 8.13  `TEST-completeness-actor-bounded` — FCHAIN-Actor-Grenze-Test
-
-Eine FCHAIN ohne ACTOR->FLOW->FUNC-Eintritt ODER ohne FUNC->FLOW->ACTOR-Austritt drueckt die PDR-Completeness < 1 und blockiert das Gate. (REQ-completeness-actor-bounded)
-
-verify ▶ `REQ-completeness-actor-bounded` · testRefs: `tests/readiness.completeness.test.ts`
-
-### 8.14  `TEST-completeness-single-value` — Completeness-Single-Value-Test
-
-graph_readiness liefert pro Gate genau EINEN completeness-Wert (covered/total) plus die Per-Leg-Missing-Liste fuer den on-click Drill-down. (REQ-completeness-single-value)
-
-verify ▶ `REQ-completeness-single-value` · testRefs: `tests/readiness.completeness.test.ts`
-
-### 8.15  `TEST-dashboard-ontology-sync` — Dashboard-Ontologie-Test
+### 8.12  `TEST-dashboard-ontology-sync` — Dashboard-Ontologie-Test
 
 Readiness/Violations stammen aus @sigloch/contracts V3_RULES (Rule-IDs == contracts), keine Vorgänger-BQ-Regeln; valide Familie-REQs werfen keine BQ-Warnungen. (REQ-dashboard-ontology-sync)
 
 verify ▶ `REQ-dashboard-ontology-sync` · `REQ-import-se-ontology` · testRefs: `tests/readiness.ontology-sync.test.ts`
 
-### 8.16  `TEST-dashboard-readonly` — Dashboard-Readonly-Test
+### 8.13  `TEST-dashboard-readonly` — Dashboard-Panels-Abnahme
 
-Der Viewer exponiert keinen Write- oder Trigger-Pfad und oeffnet kein zweites DB-Handle: nur Reads ueber die Host-Bridge, alle Writes gehen durch MCP mutate(). (REQ-dashboard-readonly)
+Abnahme der Datei tests/panels.test.ts: der Viewer exponiert keinen Write- oder Trigger-Pfad und oeffnet kein zweites DB-Handle, die Readiness-Panels sind nachvollziehbar, und die Artefakt-Frische wird korrekt gemeldet. Verifiziert REQ-dashboard-readonly, REQ-readiness-transparent und REQ-artifact-freshness zusammen (CR-GC-383: eine Datei, eine Abnahme).
 
-verify ▶ `REQ-dashboard-readonly` · testRefs: `tests/panels.test.ts`
+verify ▶ `REQ-artifact-freshness` · `REQ-dashboard-readonly` · `REQ-readiness-transparent` · testRefs: `tests/panels.test.ts`
 
-### 8.17  `TEST-distribution` — Self-contained npx distribution (automated)
+### 8.14  `TEST-distribution` — Self-contained npx distribution (automated)
 
 tests/distribution.test.ts: esbuild bundle inlines all @sigloch/* into dist/cli.js+index.js (registry externals kept, shebang preserved); published manifest has zero file:/@sigloch runtime deps; real npm pack → foreign npm install → bin runs init/--help without the sigloch source tree. Self-contained (CR-GC-121).
 
 verify ▶ `REQ-buildable-standalone` · `REQ-npx-distribution` · `REQ-repo-install` · `REQ-self-contained-dist` · testRefs: `tests/distribution.test.ts`
 
-### 8.18  `TEST-doc-export` — Doc-Re-Export-Test
+### 8.15  `TEST-doc-export` — Doc-Re-Export-Test
 
 exportMarkdown deterministisch (byte-identisch) + spiegelt Graph; GENERATED-Header. (FUNC-export-markdown)
 
 verify ▶ `REQ-doc-export` · `REQ-post-export-markdown` · `REQ-pre-export-markdown` · testRefs: `tests/exporter.test.ts`
 
-### 8.19  `TEST-docs-taxonomy` — Docs-Taxonomie-Inspektion
+### 8.16  `TEST-docs-taxonomy` — Docs-Taxonomie-Inspektion
 
 Views reproduzierbar & GENERATED-headered; records durable; kein docs/project mehr. (verify REQ-docs-taxonomy)
 
 verify ▶ `REQ-docs-taxonomy`
 
-### 8.20  `TEST-efficient-testing` — Impact-Testset-Test
-
-graph_impact(geänderter Knoten) liefert genau die betroffenen TEST-Knoten; nicht betroffene sind nicht im Set.
-
-verify ▶ `REQ-impact-based-testing` · `REQ-post-impact-testing` · `REQ-pre-impact-testing` · testRefs: `tests/mvp-e2e.test.ts`
-
-### 8.21  `TEST-graph-context-replaces-reading` — Kontext-Slice als vollstaendige Definition-of-Done
+### 8.17  `TEST-graph-context-replaces-reading` — Kontext-Slice als vollstaendige Definition-of-Done
 
 Assertiert, dass der Kontext-Slice Spezifikation, verifizierenden Test, Datenfluesse und Modul-Zuordnung des Knotens enthaelt und begrenzt bleibt.
 
 verify ▶ `REQ-graph-context-replaces-reading` · testRefs: `tests/mcp.context.test.ts`
 
-### 8.22  `TEST-graph-integrity` — Graph-Integritaets-Test
+### 8.18  `TEST-graph-integrity` — Graph-Integritaets-Test
 
 validate() flaggt doppelte UIDs + alles bisher Abgedeckte (Typen, Edge-Pairs, referenzielle Integritaet); Integritaets-Test delegiert an validate(). (CR-GC-200)
 
 verify ▶ `REQ-graph-integrity` · testRefs: `tests/graph-integrity.test.ts`
 
-### 8.23  `TEST-graph-is-ssot` — Graph-is-SSOT-Test
+### 8.19  `TEST-graph-is-ssot` — Graph-is-SSOT-Test
 
 Der committete graphcode.graph.json ist deterministischer Export des Kuzu-Stores; Hand-Edit wird erkannt und verworfen, Views tragen GENERATED-Header. (REQ-graph-is-ssot)
 
 verify ▶ `REQ-graph-is-ssot` · testRefs: `tests/harness.import.test.ts`
 
-### 8.24  `TEST-graph-tests-operational` — Code-Changeset → vollständiger selektiver Testset
+### 8.20  `TEST-graph-tests-operational` — Selektiver Testset auf dem echten SSOT
 
-Konzept-Test: changeSet=[MOD-x] → graph_tests resolved alle TESTs, die MOD-x verifizieren, auf die korrekten Dateien (inkl. mehrerer Dateien je REQ); + testRef-Coverage-Konformanz (alle lauffähigen TESTs tragen testRef, concept-only explizit unresolved). Tool: vitest. Constraint: kein false-green, keine übersehene berührte Datei.
+Abnahme der Datei tests/mcp.tests-operational.test.ts: der reale committete Graph wird durchs Gate in einen Disk-Kuzu geseedet, ein CODE-ChangeSet loest ueber die gerichtete code-REQ-TEST-Traversierung die vollstaendige Menge betroffener Testdateien auf, jeder lauffaehige TEST zeigt auf eine existierende Datei, und konzeptionelle Knoten erscheinen unter unresolved. Eigenes Testobjekt neben TEST-test-runnable-binding, weil es einen eigenen Aufbau hat (CR-GC-383).
 
-verify ▶ `REQ-graph-tests-operational` · testRefs: `tests/mcp.tests-deduction.test.ts`
+verify ▶ `REQ-graph-tests-operational` · testRefs: `tests/mcp.tests-operational.test.ts`
 
-### 8.25  `TEST-graph-time-travel` — Time-Travel-Test: Snapshot-Freshness + Recall
+### 8.21  `TEST-graph-time-travel` — Time-Travel-Test: Snapshot-Freshness + Recall
 
 Realer Disk-Kuzu: mutate setzt den Drift-Marker, graph_export loescht ihn und materialisiert den Snapshot; Reseed eines aelteren Snapshots stellt exakt jenen Stand wieder her (git checkout + reseed = Recall) und hinterlaesst einen sauberen Working-State. (verifiziert REQ-graph-snapshot-per-commit, REQ-graph-state-recall)
 
 verify ▶ `REQ-graph-snapshot-per-commit` · `REQ-graph-state-recall` · testRefs: `tests/graph-timetravel.test.ts`
 
-### 8.26  `TEST-greenfield-systemtest` — Top-Level Greenfield System-Test
+### 8.22  `TEST-greenfield-systemtest` — Top-Level Greenfield System-Test
 
 Leeres Repo, ein Prompt (Web-App aus graphcode, Multiuser, Module maximal nutzen). Authoring: qwen3.6-35b-a3b (local) vs Opus 5 (frontier), je 3×, ein Host (Claude Code). Metriken/Run: readiness, reuse-coverage vs Modul-Graph-Golden, illegal/blocked, redundanz, tokens_in/out/reasoning, cost, wall_s. Best-fit → Impl-Plan durchs Gate → Coding (qwen-35b · devstral). Scorer regelbasiert, keine KI-Bewertung.
 
 verify ▶ `REQ-greenfield-systemtest-dod`
 
-### 8.27  `TEST-hooks` — Hook-Extension-Points-Test
+### 8.23  `TEST-hooks` — Hook-Extension-Points-Test
 
 registerHook + runPreCommitHooks/runPostApplyHooks/scheduleNightlyBatch; pre-commit-Hook blockt eine Mutation; preCommitTimeout (default 5000ms) greift; Execution-Order deterministisch. (CR-GC-102)
 
 verify ▶ `REQ-hook-extension-points` · `REQ-hook-order-deterministic` · `REQ-precommit-timeout`
 
-### 8.28  `TEST-impact-subgraph` — graph_impact Subgraph-Test
+### 8.24  `TEST-impact-subgraph` — graph_impact Subgraph-Test
 
 graph_impact liefert nur den betroffenen Subgraphen (kein Full-Dump). (FCHAIN-agent-query)
 
 verify ▶ `REQ-post-agent-query` · `REQ-pre-agent-query` · `REQ-progressive-expansion` · `REQ-query-precision` · `REQ-subgraph-slicing` · testRefs: `tests/mcp.impact.test.ts`
 
-### 8.29  `TEST-interface-escalation` — Interface-Eskalations-Test
+### 8.25  `TEST-interface-escalation` — Interface-Eskalations-Test
 
 Direkter FLOW-Mutationsversuch eines Realisierungs-Agenten wird abgelehnt; nur der Eskalationspfad (CR an Facilitating-Agent → graph_impact → Gate) ändert ein Interface. (FCHAIN-interface-escalation)
 
 verify ▶ `REQ-interface-change-escalation` · `REQ-post-interface-escalation` · `REQ-pre-interface-escalation`
 
-### 8.30  `TEST-interface-schema` — Interface-Schema-Test
+### 8.26  `TEST-interface-schema` — Interface-Schema-Test
 
 Jeder FLOW hat ein SCHEMA (relation); ein FLOW ohne Datenformat ist ein Readiness-Blocker. (REQ-interface-schema)
 
 verify ▶ `REQ-interface-schema`
 
-### 8.31  `TEST-learning-emit` — Learning-Emission-Test
+### 8.27  `TEST-learning-emit` — Learning-Emission-Test
 
 post-apply schreibt Trajectory/Outcome append-only, Format stabil. (FUNC-emit-trajectory)
 
 verify ▶ `REQ-post-emit-trajectory` · `REQ-pre-emit-trajectory` · `REQ-trajectory-emit` · testRefs: `tests/hooks.learning-emit.test.ts`
 
-### 8.32  `TEST-live-event-contract` — Live-Event-Contract-Test
+### 8.28  `TEST-live-event-contract` — Live-Event-Contract-Test
 
 LiveUpdateEvent/UpdateDomain sind als Zod-Schema in @sigloch/contracts publiziert und werden von Dashboard und Bridge importiert (kein Fork). (REQ-live-event-in-contracts)
 
 verify ▶ `REQ-live-event-in-contracts` · testRefs: `tests/contract.live-event.test.ts`
 
-### 8.33  `TEST-live-view` — Live-Update-Event-Test
+### 8.29  `TEST-live-view` — Live-Update-Event-Test
 
 Jede Mutation emittiert genau ein Live-Update-Event (korrekte domains); Dashboard ohne Reload. (FUNC-emit-update-event)
 
 verify ▶ `REQ-mutation-emits-event` · `REQ-post-emit-update-event` · `REQ-pre-emit-update-event` · `REQ-versioned-broadcast` · testRefs: `tests/hooks.live-view.test.ts`
 
-### 8.34  `TEST-mcp-export` — MCP-Export-Test
+### 8.30  `TEST-mcp-export` — MCP-Export-Test
 
 graph_export serialisiert den live In-Memory-Graphen via exportGraphJson/exportMarkdown und schreibt docs/graph + docs/views unter den Repo-Root — schließt die Agent-Loop ueber MCP. (CR-GC-127)
 
 verify ▶ `REQ-doc-export` · testRefs: `tests/mcp.export.test.ts`
 
-### 8.35  `TEST-mcp-export-guard` — MCP-Export-Guard-Test
+### 8.31  `TEST-mcp-export-guard` — MCP-Export-Guard-Test
 
 MCP graph_export-Guard, drei Faelle: (a) leerer Graph wird verweigert, (b) Drop eines committeten Elements wird verweigert und die Datei bleibt unangetastet, (c) force:true ueberschreibt; Fresh-File-Export bleibt gruen. (CR-GC-202)
 
 verify ▶ `REQ-export-no-clobber` · testRefs: `tests/mcp.export-guard.test.ts`
 
-### 8.36  `TEST-mcp-readiness` — MCP-Readiness-Test
+### 8.32  `TEST-mcp-readiness` — MCP-Readiness-Test
 
 graph_readiness bindet scoreReadiness(harness) an die Registry und liefert den ReadinessReport ueber die MCP-Surface — Familie-Compliance (R-/RD-, nie BQ-) ist fuer einen Agenten erreichbar. (CR-GC-129)
 
 verify ▶ `REQ-mcp-tool-registry` · testRefs: `tests/mcp.readiness.test.ts`
 
-### 8.37  `TEST-mcp-stdio-server` — MCP-stdio-Server-Test
+### 8.33  `TEST-mcp-stdio-server` — MCP-stdio-Server-Test
 
 Registry served over the real MCP protocol (linked transport + disk Kuzu): listTools enumerates all tools, graph_mutate==mutate() incl. R-01 BLOCK, graph_impact bounded slice. (CR-GC-111)
 
 verify ▶ `REQ-audit-trail` · `REQ-mcp-gate-symmetry` · `REQ-mcp-tool-registry` · `REQ-single-transport` · testRefs: `tests/mcp.stdio-server.test.ts`
 
-### 8.38  `TEST-mcp-symmetry` — MCP-Symmetrie-Test
+### 8.34  `TEST-mcp-symmetry` — MCP-Symmetrie-Test
 
 MCP graph_mutate == in-process mutate(): identische Semantik/Violations. (FCHAIN-apply-gate, L2)
 
 verify ▶ `REQ-harness-schema-in-contracts` · `REQ-mcp-gate-symmetry` · `REQ-one-gate-per-repo` · testRefs: `tests/mcp.symmetry.test.ts`
 
-### 8.39  `TEST-member-name` — Member-Name-Derivation-Test
+### 8.35  `TEST-member-name` — Member-Name-Derivation-Test
 
 serveStdio leitet die Member-Identitaet aus dem Repo ab (package.json name unscoped, sonst Verzeichnisname) → graph_export schreibt docs/graph/<member>.graph.json. (CR-GC-128)
 
 verify ▶ `REQ-doc-export` · testRefs: `tests/mcp.member-name.test.ts`
 
-### 8.40  `TEST-merge` — Conflict-free-Merge-Test
+### 8.36  `TEST-merge` — Conflict-free-Merge-Test
 
 Zwei Branch-Änderungen mergen conflict-free; keine verlorenen Knoten/Traces. (FUNC-merge-nodes)
 
 verify ▶ `REQ-auto-persist-merge` · `REQ-conflict-free-merge` · `REQ-post-merge-nodes` · `REQ-pre-merge-nodes`
 
-### 8.41  `TEST-monotone-convergence` — Ratschen-Nachweis ueber die Rundensequenz
+### 8.37  `TEST-monotone-convergence` — Ratschen-Nachweis ueber die Rundensequenz
 
 Faehrt den Steuerungs-Loop mit einem skriptierten Aktor und assertiert Monotonie, Netto-Fortschritt und Nicht-Kreisen.
 
 verify ▶ `REQ-monotone-convergence` · testRefs: `tests/steering.process-ratchet.test.ts`
 
-### 8.42  `TEST-mutate-gate` — mutate()-Gate Unit-Test
+### 8.38  `TEST-mutate-gate` — mutate()-Gate Unit-Test
 
 mutate() wendet an, gibt Violations zurück, blockt bei error-Severity. (FCHAIN-apply-gate)
 
-verify ▶ `REQ-confidence-tier` · `REQ-one-gate-per-repo` · `REQ-post-apply-gate` · `REQ-pre-apply-gate` · `REQ-rule-enforcement` · testRefs: `tests/harness.gate.test.ts`
+verify ▶ `REQ-confidence-tier` · `REQ-one-gate-per-repo` · `REQ-post-apply-gate` · `REQ-pre-apply-gate` · `REQ-rule-enforcement` · `REQ-structural-rule-shared` · testRefs: `tests/harness.gate.test.ts`
 
-### 8.43  `TEST-mvp-e2e` — MVP-1 E2E Acceptance
+### 8.39  `TEST-mvp-e2e` — MVP-1 E2E Acceptance
 
 End-to-End-Akzeptanz des MVP-1-Loops: neues Mitglied bootstrappen, Knoten durchs Gate spec’en, graph_impact liefert exakt den Blast-Radius (KNOW statt grep), Knoten implementieren, re-exportieren. Disk-Kuzu, keine Mocks. (CR-GC-123)
 
-verify ▶ `REQ-code-governed-quality` · `REQ-disk-persistence` · `REQ-impact-based-testing` · `REQ-precise-context` · `REQ-single-kuzu-owner` · `REQ-single-store` · `REQ-small-model-viable` · testRefs: `tests/mvp-e2e.test.ts`
+verify ▶ `REQ-code-governed-quality` · `REQ-disk-persistence` · `REQ-impact-based-testing` · `REQ-post-impact-testing` · `REQ-pre-impact-testing` · `REQ-precise-context` · `REQ-single-kuzu-owner` · `REQ-single-store` · `REQ-small-model-viable` · testRefs: `tests/mvp-e2e.test.ts`
 
-### 8.44  `TEST-no-direct-graph-write` — No-Direct-Graph-Write-Test
+### 8.40  `TEST-no-direct-graph-write` — No-Direct-Graph-Write-Test
 
 Direkter Edit/Write auf den committeten SSOT wird von der Harness verweigert; graph_mutate (MCP) gelingt + ist gate-validiert; CI verwirft hand-editiertes (Nicht-Export) JSON. (CR-GC-201)
 
 verify ▶ `REQ-gate-only-writes`
 
-### 8.45  `TEST-one-driver-local-and-frontier` — Treiber gegen zwei Backends ohne Verzweigung
+### 8.41  `TEST-one-driver-local-and-frontier` — Treiber gegen zwei Backends ohne Verzweigung
 
 Faehrt den eingebetteten Executor gegen beide Backend-Konfigurationen und assertiert identische Loop-Semantik.
 
 verify ▶ `REQ-one-driver-local-and-frontier` · testRefs: `tests/executor.test.ts`
 
-### 8.46  `TEST-phase-gate-not-skippable` — Kein Handoff bei offenem Phasen-Gate
+### 8.42  `TEST-phase-gate-not-skippable` — Kein Handoff bei offenem Phasen-Gate
 
 Graph mit erreichter Schwelle, aber offener Gate-Luecke; assertiert, dass die Zustandsmaschine nicht auf handoff geht.
 
 verify ▶ `REQ-phase-gate-not-skippable` · testRefs: `tests/generate.test.ts`
 
-### 8.47  `TEST-prompt-provenance` — Prompt-Provenienz-Test
+### 8.43  `TEST-prompt-provenance` — Prompt-Provenienz-Test
 
 Ein Record traegt Session, Modell und den Prompt im Wortlaut; ueber der Kappungsgrenze wird gekuerzt und das gesagt. Abwesenheit bleibt Abwesenheit statt leerem Feld, und bei zwei gleichzeitigen Sessions wird lieber nichts aufgezeichnet als ein geratenes Paar. (REQ-prompt-provenance)
 
 verify ▶ `REQ-prompt-provenance` · testRefs: `tests/audit.origin.test.ts`, `tests/hooks.prompt-relay.test.ts`
 
-### 8.48  `TEST-published-counts-match-code` — Doku-gegen-Code-Konformitaet der Zahlen
+### 8.44  `TEST-published-counts-match-code` — Doku-gegen-Code-Konformitaet der Zahlen
 
 Liest die kanonischen Zahl-Phrasen aus den publizierten Dokumenten und assertiert sie gegen contracts und die gebundene Tool-Registry.
 
 verify ▶ `REQ-published-counts-match-code` · testRefs: `tests/claims.conformance.test.ts`
 
-### 8.49  `TEST-readiness-completeness` — Completeness-Dimension-Test
+### 8.45  `TEST-readiness-completeness` — Readiness-Vollstaendigkeits-Abnahme
 
-0-FCHAIN UC -> SRR completeness rot; vollstaendige Kette -> gruen; concept-TEST zaehlt bei CDR als complete, bei TRR nicht; Coverage ueber Source-Population (Abwesenheit zaehlt). Drift-Test: jedes 1..*-Bein des Meta-Modells ist genau einer Phase zugeordnet. (REQ-readiness-completeness)
+Abnahme der Datei tests/readiness.completeness.test.ts ueber alle vier Gates: UC ohne FCHAIN faellt bei SRR, die aktor-begrenzte Kette bei PDR, FLOW ohne SCHEMA bei CDR, fehlende Bindung bei TRR; die Coverage rechnet gegen die Source-Population und liefert einen einzigen Wert je Dimension. Verifiziert REQ-readiness-completeness, REQ-completeness-actor-bounded und REQ-completeness-single-value zusammen (CR-GC-383).
 
-verify ▶ `REQ-readiness-completeness` · testRefs: `tests/readiness.completeness.test.ts`
+verify ▶ `REQ-completeness-actor-bounded` · `REQ-completeness-single-value` · `REQ-readiness-completeness` · testRefs: `tests/readiness.completeness.test.ts`
 
-### 8.50  `TEST-readiness-model` — Readiness-Modell-Test
+### 8.46  `TEST-readiness-model` — Readiness-Modell-Test
 
 Acceptance-Test fuer das Readiness-Modell: INCOSE-Scope lean, Phase-Gates SRR/PDR/CDR/TRR als disjunkte und vollstaendige Partition der V3_RULES, Impl-Gates SAR/FCA/SVR/FRR aus MS + CR-Status; deterministische Unit-Faelle + SSOT-Integration, niemals BQ. (CR-GC-125)
 
 verify ▶ `REQ-readiness-model` · testRefs: `tests/readiness.model.test.ts`
 
-### 8.51  `TEST-readiness-transparent` — Readiness-Transparenz-Test
+### 8.47  `TEST-readonly-bridge` — Host-Bridge-Abnahme
 
-graph_readiness liefert pro Gate die Blocking-Liste (CRs/Tests/UCs/Violations); die Summe der Blocker erklaert den Score deterministisch. (REQ-readiness-transparent)
+Abnahme der Datei tests/host.bridge.test.ts: die Bridge akzeptiert keine Inbound-Mutation, Writes gehen nur durch MCP mutate(), und der Health-Endpunkt meldet den echten Zustand des Hosts statt einer Konstanten. Verifiziert REQ-readonly-bridge und REQ-real-health-check zusammen (CR-GC-383).
 
-verify ▶ `REQ-readiness-transparent` · testRefs: `tests/panels.test.ts`
+verify ▶ `REQ-readonly-bridge` · `REQ-real-health-check` · testRefs: `tests/host.bridge.test.ts`
 
-### 8.52  `TEST-readonly-bridge` — Readonly-Bridge-Test
-
-Die Bridge akzeptiert keine Inbound-Mutation; ein Schreibversuch ueber die Bridge wird abgelehnt, Writes gehen nur durch MCP mutate(). (REQ-readonly-bridge)
-
-verify ▶ `REQ-readonly-bridge` · testRefs: `tests/host.bridge.test.ts`
-
-### 8.53  `TEST-real-health-check` — Health-Funktionscheck-Test
-
-Der Health-Report enthaelt Store-, Gate-, Versions- und LLM-Readiness-Status und faellt bei Store- oder Gate-Ausfall auf nicht-ok, nicht nur bei Prozess-Stop. (REQ-real-health-check)
-
-verify ▶ `REQ-real-health-check` · testRefs: `tests/host.bridge.test.ts`
-
-### 8.54  `TEST-reduced-llm` — Modellfrei-Gate-Test
+### 8.48  `TEST-reduced-llm` — Modellfrei-Gate-Test
 
 Gate/Regel-Evaluation läuft ohne Modell-Call (localReachable=false) deterministisch; nur LLM-Zusatzfeatures degradieren.
 
 verify ▶ `REQ-graceful-degradation` · `REQ-post-modelfree-gate` · `REQ-pre-modelfree-gate` · `REQ-small-model-viable`
 
-### 8.55  `TEST-responsiveness` — Responsiveness-Test (<0,2s)
+### 8.49  `TEST-responsiveness` — Responsiveness-Test (<0,2s)
 
 Draft-Apply + betroffener-Subgraph-Check antwortet < 0,2s (ohne LLM). (FCHAIN-apply-gate NFR)
 
 verify ▶ `REQ-responsiveness`
 
-### 8.56  `TEST-roundtrip` — Format-E Round-Trip Conformance
+### 8.50  `TEST-roundtrip` — Format-E Round-Trip Conformance
 
 decode(encode(g))==g; zwei Encodes byte-identisch. (FCHAIN-codec-roundtrip)
 
 verify ▶ `REQ-codec-validation` · `REQ-deterministic-serialization` · `REQ-formatE-diff-dialect` · `REQ-formatE-parity` · `REQ-post-codec-roundtrip` · `REQ-pre-codec-roundtrip` · `REQ-roundtrip-conformance` · testRefs: `tests/codec.roundtrip.test.ts`
 
-### 8.57  `TEST-rule-calibration` — Regel-Kalibrierungs-Test
+### 8.51  `TEST-rule-calibration` — Regel-Kalibrierungs-Test
 
 audit_stats aggregiert je Regel, je Modell und je Konsument; die Werte sind identisch zur jq-Zeile auf demselben Trail. Ein Record mit 20 Violations derselben Regel zaehlt eine Blockade und zwanzig Vorkommen; fehlendes rulesPassed liefert null statt einer Null. (REQ-rule-calibration)
 
 verify ▶ `REQ-rule-calibration` · testRefs: `tests/audit.stats.test.ts`
 
-### 8.58  `TEST-scaffold-skills` — Scaffold-Installs-Skills-Test
-
-graphcode init/update kopiert die mitgelieferten .claude/commands/se*-Dateien in das Ziel-Repo, remove entfernt sie restlos (nur die graphcode-eigenen); end-to-end ueber den gepackten Tarball in einem Fremd-Repo verifiziert. Schliesst die MOD-skills/CR-GC-104-Drift: FUNC-harness-cli managt .claude/commands/. (CR-GC-133)
-
-verify ▶ `REQ-repo-install` · testRefs: `tests/cli.scaffold.test.ts`
-
-### 8.59  `TEST-schema-migration` — Schema-Migrations-Test
+### 8.52  `TEST-schema-migration` — Schema-Migrations-Test
 
 Version-Bump → Graph re-validiert/migriert, Violations berichtet, Version aktualisiert. (FUNC-migrate-schema)
 
 verify ▶ `REQ-post-migrate-schema` · `REQ-pre-migrate-schema` · `REQ-schema-version-migration`
 
-### 8.60  `TEST-shared-views-no-fork` — Shared-Views-No-Fork-Test
+### 8.53  `TEST-shared-views-no-fork` — Shared-Views-No-Fork-Test
 
 Die View-Berechnung liegt in @sigloch/graph-api-core; kein lokaler BQ-Regel-Fork (aimpro/src/contracts/se) mehr referenziert. (REQ-shared-views-no-fork)
 
 verify ▶ `REQ-shared-views-no-fork` · testRefs: `tests/views.no-fork.test.ts`
 
-### 8.61  `TEST-single-measurement-path` — Messpfad-Konsistenz ueber drei Oberflaechen
+### 8.54  `TEST-single-measurement-path` — Messpfad-Konsistenz ueber drei Oberflaechen
 
 Fixture mit attributgetragenen Bindungen; assertiert identische Violations und Scores ueber alle drei Oberflaechen und faellt rot, sobald eine auf das flache Export-Encoding zurueckfaellt.
 
 verify ▶ `REQ-single-measurement-path` · testRefs: `tests/steering.measurement-path.test.ts`
 
-### 8.62  `TEST-single-write-door` — Die eine Tuer, in einem Nachweis
+### 8.55  `TEST-single-write-door` — Die eine Tuer, in einem Nachweis
 
 Drei Assertionen in Folge: legale Mutation landet, illegale laesst den deterministischen Export identisch, Direktschreib-Versuch wird mit Exit-Code und Meldung abgewiesen.
 
 verify ▶ `REQ-single-write-door` · testRefs: `tests/gate.single-door.test.ts`
 
-### 8.63  `TEST-skills-mcp` — Skills-MCP-Conformance-Test
+### 8.56  `TEST-skills-mcp` — Skills-MCP-Conformance-Test
 
 Alle mitgelieferten .claude/commands/se*-Dateien sind MCP-getrieben: 0 Treffer fuer die abgeschaltete localhost:3001-API (/api/graph, /api/dashboard, GRAPH_API) und jedes Skill referenziert >=1 Tool aus der Live-Registry. "done = verifiziert" fuer die prompt-realisierten FUNCs von MOD-skills (se-view/* → REQ-doc-export). (CR-GC-132)
 
 verify ▶ `REQ-doc-export` · testRefs: `tests/skills.mcp-conformance.test.ts`
 
-### 8.64  `TEST-steering-loop` — Steuerungsschleifen-Test
+### 8.57  `TEST-steering-loop` — Steuerungsschleifen-Test
 
 Die Schleife als Ganzes: nextStep leitet Fokus und Blocker aus demselben Snapshot ab, generationStep waehlt dieselbe Dimension, rankCandidates ordnet nach dem Fokus-Delta; Determinismus gegen wiederholte Laeufe.
 
 verify ▶ `REQ-steering-from-metrics` · testRefs: `tests/steering.test.ts`
 
-### 8.65  `TEST-store-recovery` — Store-Recovery-Test
+### 8.58  `TEST-store-recovery` — Store-Recovery-Test
 
 Kuzu Lock-Konflikt / abgestuerzter Owner / korrupter Store: Lock-Erkennung + sicherer Re-Open; kein zweites DB-Handle. (ConOps Recovery)
 
 verify ▶ `REQ-store-recovery`
 
-### 8.66  `TEST-structural-rule-shared` — R-18 gate-block test
-
-Eine ungueltige Trace-Pair-Mutation in falscher Richtung (Quelle REQ statt TEST bei einer verify-Kante) wird vom Delta-Gate atomar als R-18-Engine-Violation abgelehnt (kein codec.validate-Aufruf, kein Partial-Persist). (CR-GC-205 Item 1)
-
-verify ▶ `REQ-structural-rule-shared` · testRefs: `tests/harness.gate.test.ts`
-
-### 8.67  `TEST-target-shifts-ranking` — Ranking gegen zwei gegenlaeufige Zielvektoren
+### 8.59  `TEST-target-shifts-ranking` — Ranking gegen zwei gegenlaeufige Zielvektoren
 
 Zwei Laeufe auf identischem Graphen, verschieden nur im Vorzeichen des Ziels; assertiert Score-Negation, Spitzenwechsel und Magnituden-Invarianz.
 
 verify ▶ `REQ-target-shifts-ranking` · testRefs: `tests/mcp.suggest.test.ts`
 
-### 8.68  `TEST-test-runnable-binding` — TestRef-Aufloesungs-Test
+### 8.60  `TEST-test-runnable-binding` — TestRef-Aufloesungs-Test
 
-Ein impacted TEST-Knoten wird ueber testRef eindeutig zu einer lauffaehigen Datei plus Case aufgeloest; graph_tests erzeugt daraus ein selektives Run-Kommando, das nur die betroffenen Tests enthaelt. (REQ-test-runnable-binding)
+Abnahme der Datei tests/mcp.tests-deduction.test.ts: ein impacted TEST-Knoten wird ueber testRefs eindeutig auf eine lauffaehige Datei aufgeloest, graph_tests erzeugt daraus ein selektives Run-Kommando ueber genau diese Dateien, und ein TEST ohne testRefs erscheint unter unresolved statt zu verschwinden. Synthetische Disk-Kuzu-Fixture.
 
 verify ▶ `REQ-test-runnable-binding` · testRefs: `tests/mcp.tests-deduction.test.ts`
 
-### 8.69  `TEST-testref-materialize` — Export stub-materialization test
+### 8.61  `TEST-testref-materialize` — Export stub-materialization test
 
 graph_export scaffoldt einen lauffaehigen it.todo-Stub fuer eine fehlende testRef-Datei, ueberschreibt nie eine existierende, ueberspringt concept-only; danach loest graph_tests auf die materialisierte Datei auf. (CR-GC-205 Item 4)
 
 verify ▶ `REQ-testref-materialized` · testRefs: `tests/export.testref-materialize.test.ts`
 
-### 8.70  `TEST-thresholds-from-config` — Schwelle als Knopf, nicht als Literal
+### 8.62  `TEST-thresholds-from-config` — Schwelle als Knopf, nicht als Literal
 
 Zwei Repos, identischer Graph, verschieden nur in graphcode.config.jsonc; assertiert das gekippte Urteil bei identischer Messung.
 
 verify ▶ `REQ-thresholds-from-config` · testRefs: `tests/config.test.ts`
 
-### 8.71  `TEST-token-efficiency` — Token-Budget-Test
+### 8.63  `TEST-token-efficiency` — Token-Budget-Test
 
 graph_impact-Kontext ist messbar kleiner als ein Volltext-/grep-Dump desselben Scopes (Token-Count-Assertion).
 

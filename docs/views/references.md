@@ -1023,7 +1023,6 @@
 | `TEST-advisory-roundtrip-latency` | verify | `REQ-advisory-roundtrip-latency` |
 | `TEST-agent-agnostic` | verify | `REQ-agent-agnostic` |
 | `TEST-applied-suggestion-moves-target` | verify | `REQ-applied-suggestion-moves-target` |
-| `TEST-artifact-freshness` | verify | `REQ-artifact-freshness` |
 | `TEST-batch-seed` | verify | `REQ-batch-seed-performance` |
 | `TEST-bootstrap` | verify | `REQ-bootstrap-through-gate` |
 | `TEST-bootstrap` | verify | `REQ-post-import` |
@@ -1046,11 +1045,11 @@
 | `TEST-code-quality` | verify | `REQ-quality-metric` |
 | `TEST-code-quality` | verify | `REQ-structure-driven` |
 | `TEST-codec-validation` | verify | `REQ-graph-integrity` |
-| `TEST-completeness-actor-bounded` | verify | `REQ-completeness-actor-bounded` |
-| `TEST-completeness-single-value` | verify | `REQ-completeness-single-value` |
 | `TEST-dashboard-ontology-sync` | verify | `REQ-dashboard-ontology-sync` |
 | `TEST-dashboard-ontology-sync` | verify | `REQ-import-se-ontology` |
+| `TEST-dashboard-readonly` | verify | `REQ-artifact-freshness` |
 | `TEST-dashboard-readonly` | verify | `REQ-dashboard-readonly` |
+| `TEST-dashboard-readonly` | verify | `REQ-readiness-transparent` |
 | `TEST-distribution` | verify | `REQ-buildable-standalone` |
 | `TEST-distribution` | verify | `REQ-npx-distribution` |
 | `TEST-distribution` | verify | `REQ-repo-install` |
@@ -1059,9 +1058,6 @@
 | `TEST-doc-export` | verify | `REQ-post-export-markdown` |
 | `TEST-doc-export` | verify | `REQ-pre-export-markdown` |
 | `TEST-docs-taxonomy` | verify | `REQ-docs-taxonomy` |
-| `TEST-efficient-testing` | verify | `REQ-impact-based-testing` |
-| `TEST-efficient-testing` | verify | `REQ-post-impact-testing` |
-| `TEST-efficient-testing` | verify | `REQ-pre-impact-testing` |
 | `TEST-graph-context-replaces-reading` | verify | `REQ-graph-context-replaces-reading` |
 | `TEST-graph-integrity` | verify | `REQ-graph-integrity` |
 | `TEST-graph-is-ssot` | verify | `REQ-graph-is-ssot` |
@@ -1110,9 +1106,12 @@
 | `TEST-mutate-gate` | verify | `REQ-post-apply-gate` |
 | `TEST-mutate-gate` | verify | `REQ-pre-apply-gate` |
 | `TEST-mutate-gate` | verify | `REQ-rule-enforcement` |
+| `TEST-mutate-gate` | verify | `REQ-structural-rule-shared` |
 | `TEST-mvp-e2e` | verify | `REQ-code-governed-quality` |
 | `TEST-mvp-e2e` | verify | `REQ-disk-persistence` |
 | `TEST-mvp-e2e` | verify | `REQ-impact-based-testing` |
+| `TEST-mvp-e2e` | verify | `REQ-post-impact-testing` |
+| `TEST-mvp-e2e` | verify | `REQ-pre-impact-testing` |
 | `TEST-mvp-e2e` | verify | `REQ-precise-context` |
 | `TEST-mvp-e2e` | verify | `REQ-single-kuzu-owner` |
 | `TEST-mvp-e2e` | verify | `REQ-single-store` |
@@ -1122,11 +1121,12 @@
 | `TEST-phase-gate-not-skippable` | verify | `REQ-phase-gate-not-skippable` |
 | `TEST-prompt-provenance` | verify | `REQ-prompt-provenance` |
 | `TEST-published-counts-match-code` | verify | `REQ-published-counts-match-code` |
+| `TEST-readiness-completeness` | verify | `REQ-completeness-actor-bounded` |
+| `TEST-readiness-completeness` | verify | `REQ-completeness-single-value` |
 | `TEST-readiness-completeness` | verify | `REQ-readiness-completeness` |
 | `TEST-readiness-model` | verify | `REQ-readiness-model` |
-| `TEST-readiness-transparent` | verify | `REQ-readiness-transparent` |
 | `TEST-readonly-bridge` | verify | `REQ-readonly-bridge` |
-| `TEST-real-health-check` | verify | `REQ-real-health-check` |
+| `TEST-readonly-bridge` | verify | `REQ-real-health-check` |
 | `TEST-reduced-llm` | verify | `REQ-graceful-degradation` |
 | `TEST-reduced-llm` | verify | `REQ-post-modelfree-gate` |
 | `TEST-reduced-llm` | verify | `REQ-pre-modelfree-gate` |
@@ -1140,7 +1140,6 @@
 | `TEST-roundtrip` | verify | `REQ-pre-codec-roundtrip` |
 | `TEST-roundtrip` | verify | `REQ-roundtrip-conformance` |
 | `TEST-rule-calibration` | verify | `REQ-rule-calibration` |
-| `TEST-scaffold-skills` | verify | `REQ-repo-install` |
 | `TEST-schema-migration` | verify | `REQ-post-migrate-schema` |
 | `TEST-schema-migration` | verify | `REQ-pre-migrate-schema` |
 | `TEST-schema-migration` | verify | `REQ-schema-version-migration` |
@@ -1150,7 +1149,6 @@
 | `TEST-skills-mcp` | verify | `REQ-doc-export` |
 | `TEST-steering-loop` | verify | `REQ-steering-from-metrics` |
 | `TEST-store-recovery` | verify | `REQ-store-recovery` |
-| `TEST-structural-rule-shared` | verify | `REQ-structural-rule-shared` |
 | `TEST-target-shifts-ranking` | verify | `REQ-target-shifts-ranking` |
 | `TEST-test-runnable-binding` | verify | `REQ-test-runnable-binding` |
 | `TEST-testref-materialize` | verify | `REQ-testref-materialized` |

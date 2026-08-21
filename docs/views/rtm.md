@@ -43,7 +43,7 @@
 | `REQ-precommit-timeout` | `TEST-hooks` | `MOD-hooks` | — |
 | `REQ-readiness-model` | `TEST-readiness-model` | `MOD-mcp-tools` | — |
 | `REQ-readonly-bridge` | `TEST-readonly-bridge` | `FUNC-serve-sse` · `MOD-host-bridge` | `MOD-host-bridge` |
-| `REQ-repo-install` | `TEST-cli-scaffold` · `TEST-distribution` · `TEST-scaffold-skills` | `FUNC-harness-cli` | `MOD-cli` |
+| `REQ-repo-install` | `TEST-cli-scaffold` · `TEST-distribution` | `FUNC-harness-cli` | `MOD-cli` |
 | `REQ-repo-uninstall` | `TEST-cli-scaffold` | `FUNC-harness-cli` | `MOD-cli` |
 | `REQ-repo-update` | `TEST-cli-scaffold` | `FUNC-harness-cli` | `MOD-cli` |
 | `REQ-responsiveness` | `TEST-responsiveness` | `FCHAIN-apply-gate` | — |
@@ -62,15 +62,15 @@
 |---|---|---|---|
 | `REQ-advisory-roundtrip-latency` | `TEST-advisory-roundtrip-latency` | `FCHAIN-advisory-roundtrip` | — |
 | `REQ-applied-suggestion-moves-target` | `TEST-applied-suggestion-moves-target` | — | — |
-| `REQ-artifact-freshness` | `TEST-artifact-freshness` | `FUNC-render-artifacts` · `MOD-dashboard` | `MOD-dashboard` |
+| `REQ-artifact-freshness` | `TEST-dashboard-readonly` | `FUNC-render-artifacts` · `MOD-dashboard` | `MOD-dashboard` |
 | `REQ-audit-trail` | `TEST-mcp-stdio-server` | `FUNC-graph-impact` | `MOD-mcp-tools` |
 | `REQ-auto-persist-merge` | `TEST-merge` | `FUNC-merge-nodes` | `MOD-codec` |
 | `REQ-bootstrap-through-gate` | `TEST-bootstrap` | `FUNC-import` | `MOD-harness` |
 | `REQ-cache-layering` | `TEST-cache` | `FUNC-graph-expand` | `MOD-mcp-tools` |
 | `REQ-code-governed-quality` | `TEST-code-quality` · `TEST-mvp-e2e` | `FCHAIN-apply-gate` · `FUNC-test` · `FUNC-test-ui` | `MOD-skills` |
 | `REQ-codec-validation` | `TEST-roundtrip` | `FUNC-decode` | `MOD-codec` |
-| `REQ-completeness-actor-bounded` | `TEST-completeness-actor-bounded` | `FUNC-score-completeness` | `MOD-harness` |
-| `REQ-completeness-single-value` | `TEST-completeness-single-value` | `FUNC-score-completeness` | `MOD-harness` |
+| `REQ-completeness-actor-bounded` | `TEST-readiness-completeness` | `FUNC-score-completeness` | `MOD-harness` |
+| `REQ-completeness-single-value` | `TEST-readiness-completeness` | `FUNC-score-completeness` | `MOD-harness` |
 | `REQ-confidence-tier` | `TEST-mutate-gate` | `FUNC-mutate` | `MOD-harness` |
 | `REQ-conflict-free-merge` | `TEST-merge` | `FUNC-merge-nodes` | `MOD-codec` |
 | `REQ-dashboard-ontology-sync` | `TEST-dashboard-ontology-sync` | `MOD-dashboard` | — |
@@ -83,7 +83,7 @@
 | `REQ-graph-snapshot-per-commit` | `TEST-graph-time-travel` | `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot` · `FUNC-mutate` | `MOD-harness` · `MOD-mcp-tools` |
 | `REQ-graph-state-recall` | `TEST-graph-time-travel` | `FCHAIN-recall` · `FUNC-reseed` · `FUNC-rewind` · `MOD-harness` | `MOD-cli` · `MOD-harness` |
 | `REQ-graph-tests-operational` | `TEST-graph-tests-operational` | `FUNC-resolve-tests-from-code` | `MOD-mcp-tools` |
-| `REQ-impact-based-testing` | `TEST-efficient-testing` · `TEST-mvp-e2e` | `FCHAIN-impact-testing` | — |
+| `REQ-impact-based-testing` | `TEST-mvp-e2e` | `FCHAIN-impact-testing` | — |
 | `REQ-interactive-capture-suggest` | `TEST-capture` | `FCHAIN-capture` | — |
 | `REQ-interface-change-escalation` | `TEST-interface-escalation` | `FCHAIN-interface-escalation` | — |
 | `REQ-mcp-gate-symmetry` | `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` | `FCHAIN-apply-gate` | — |
@@ -98,7 +98,7 @@
 | `REQ-post-codec-roundtrip` | `TEST-roundtrip` | `FCHAIN-codec-roundtrip` | — |
 | `REQ-post-emit-trajectory` | `TEST-learning-emit` | `FUNC-emit-trajectory` | `MOD-hooks` |
 | `REQ-post-emit-update-event` | `TEST-live-view` | `FUNC-emit-update-event` | `MOD-hooks` |
-| `REQ-post-impact-testing` | `TEST-efficient-testing` | `FCHAIN-impact-testing` | — |
+| `REQ-post-impact-testing` | `TEST-mvp-e2e` | `FCHAIN-impact-testing` | — |
 | `REQ-post-import` | `TEST-bootstrap` | `FUNC-import` | `MOD-harness` |
 | `REQ-post-interface-escalation` | `TEST-interface-escalation` | `FCHAIN-interface-escalation` | — |
 | `REQ-post-merge-nodes` | `TEST-merge` | `FUNC-merge-nodes` | `MOD-codec` |
@@ -109,7 +109,7 @@
 | `REQ-pre-codec-roundtrip` | `TEST-roundtrip` | `FCHAIN-codec-roundtrip` | — |
 | `REQ-pre-emit-trajectory` | `TEST-learning-emit` | `FUNC-emit-trajectory` | `MOD-hooks` |
 | `REQ-pre-emit-update-event` | `TEST-live-view` | `FUNC-emit-update-event` | `MOD-hooks` |
-| `REQ-pre-impact-testing` | `TEST-efficient-testing` | `FCHAIN-impact-testing` | — |
+| `REQ-pre-impact-testing` | `TEST-mvp-e2e` | `FCHAIN-impact-testing` | — |
 | `REQ-pre-import` | `TEST-bootstrap` | `FUNC-import` | `MOD-harness` |
 | `REQ-pre-interface-escalation` | `TEST-interface-escalation` | `FCHAIN-interface-escalation` | — |
 | `REQ-pre-merge-nodes` | `TEST-merge` | `FUNC-merge-nodes` | `MOD-codec` |
@@ -120,9 +120,9 @@
 | `REQ-quality-metric` | `TEST-code-quality` | `MOD-harness` | — |
 | `REQ-query-precision` | `TEST-impact-subgraph` | `FUNC-graph-impact` | `MOD-mcp-tools` |
 | `REQ-readiness-completeness` | `TEST-readiness-completeness` | `FUNC-score-completeness` | `MOD-harness` |
-| `REQ-readiness-transparent` | `TEST-readiness-transparent` | `FUNC-render-readiness` · `MOD-dashboard` | `MOD-dashboard` |
+| `REQ-readiness-transparent` | `TEST-dashboard-readonly` | `FUNC-render-readiness` · `MOD-dashboard` | `MOD-dashboard` |
 | `REQ-readonly-bridge` | `TEST-readonly-bridge` | `FUNC-serve-sse` · `MOD-host-bridge` | `MOD-host-bridge` |
-| `REQ-real-health-check` | `TEST-real-health-check` | `FUNC-health-endpoint` · `MOD-host-bridge` | `MOD-host-bridge` |
+| `REQ-real-health-check` | `TEST-readonly-bridge` | `FUNC-health-endpoint` · `MOD-host-bridge` | `MOD-host-bridge` |
 | `REQ-roundtrip-conformance` | `TEST-roundtrip` | `FCHAIN-codec-roundtrip` · `FUNC-decode` | `MOD-codec` |
 | `REQ-rule-calibration` | `TEST-rule-calibration` | `MOD-mcp-tools` | — |
 | `REQ-rule-enforcement` | `TEST-mutate-gate` | `FUNC-evaluate-rules` | `MOD-harness` |
@@ -148,7 +148,7 @@
 | `REQ-graceful-degradation` | `TEST-reduced-llm` | `FCHAIN-modelfree-gate` · `SYS-graphcode` | — |
 | `REQ-graph-snapshot-per-commit` | `TEST-graph-time-travel` | `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot` · `FUNC-mutate` | `MOD-harness` · `MOD-mcp-tools` |
 | `REQ-graph-state-recall` | `TEST-graph-time-travel` | `FCHAIN-recall` · `FUNC-reseed` · `FUNC-rewind` · `MOD-harness` | `MOD-cli` · `MOD-harness` |
-| `REQ-impact-based-testing` | `TEST-efficient-testing` · `TEST-mvp-e2e` | `FCHAIN-impact-testing` | — |
+| `REQ-impact-based-testing` | `TEST-mvp-e2e` | `FCHAIN-impact-testing` | — |
 | `REQ-interactive-capture-suggest` | `TEST-capture` | `FCHAIN-capture` | — |
 | `REQ-interface-change-escalation` | `TEST-interface-escalation` | `FCHAIN-interface-escalation` | — |
 | `REQ-mcp-gate-symmetry` | `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` | `FCHAIN-apply-gate` | — |
@@ -158,14 +158,14 @@
 | `REQ-post-apply-gate` | `TEST-mutate-gate` | `FCHAIN-apply-gate` | — |
 | `REQ-post-capture` | `TEST-capture` | `FCHAIN-capture` | — |
 | `REQ-post-codec-roundtrip` | `TEST-roundtrip` | `FCHAIN-codec-roundtrip` | — |
-| `REQ-post-impact-testing` | `TEST-efficient-testing` | `FCHAIN-impact-testing` | — |
+| `REQ-post-impact-testing` | `TEST-mvp-e2e` | `FCHAIN-impact-testing` | — |
 | `REQ-post-interface-escalation` | `TEST-interface-escalation` | `FCHAIN-interface-escalation` | — |
 | `REQ-post-modelfree-gate` | `TEST-reduced-llm` | `FCHAIN-modelfree-gate` | — |
 | `REQ-pre-agent-query` | `TEST-impact-subgraph` | `FCHAIN-agent-query` | — |
 | `REQ-pre-apply-gate` | `TEST-mutate-gate` | `FCHAIN-apply-gate` | — |
 | `REQ-pre-capture` | `TEST-capture` | `FCHAIN-capture` | — |
 | `REQ-pre-codec-roundtrip` | `TEST-roundtrip` | `FCHAIN-codec-roundtrip` | — |
-| `REQ-pre-impact-testing` | `TEST-efficient-testing` | `FCHAIN-impact-testing` | — |
+| `REQ-pre-impact-testing` | `TEST-mvp-e2e` | `FCHAIN-impact-testing` | — |
 | `REQ-pre-interface-escalation` | `TEST-interface-escalation` | `FCHAIN-interface-escalation` | — |
 | `REQ-pre-modelfree-gate` | `TEST-reduced-llm` | `FCHAIN-modelfree-gate` | — |
 | `REQ-precise-context` | `TEST-mvp-e2e` · `TEST-token-efficiency` | `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-graph-impact` | `MOD-codec` · `MOD-mcp-tools` |
@@ -179,7 +179,7 @@
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
 | `REQ-agent-agnostic` | `TEST-agent-agnostic` | `FUNC-serve-stdio` · `MOD-mcp-tools` | `MOD-mcp-tools` |
-| `REQ-artifact-freshness` | `TEST-artifact-freshness` | `FUNC-render-artifacts` · `MOD-dashboard` | `MOD-dashboard` |
+| `REQ-artifact-freshness` | `TEST-dashboard-readonly` | `FUNC-render-artifacts` · `MOD-dashboard` | `MOD-dashboard` |
 | `REQ-audit-trail` | `TEST-mcp-stdio-server` | `FUNC-graph-impact` | `MOD-mcp-tools` |
 | `REQ-auto-persist-merge` | `TEST-merge` | `FUNC-merge-nodes` | `MOD-codec` |
 | `REQ-batch-seed-performance` | `TEST-batch-seed` | `FUNC-import` | `MOD-harness` |
@@ -188,8 +188,8 @@
 | `REQ-cache-layering` | `TEST-cache` | `FUNC-graph-expand` | `MOD-mcp-tools` |
 | `REQ-code-governed-quality` | `TEST-code-quality` · `TEST-mvp-e2e` | `FCHAIN-apply-gate` · `FUNC-test` · `FUNC-test-ui` | `MOD-skills` |
 | `REQ-codec-validation` | `TEST-roundtrip` | `FUNC-decode` | `MOD-codec` |
-| `REQ-completeness-actor-bounded` | `TEST-completeness-actor-bounded` | `FUNC-score-completeness` | `MOD-harness` |
-| `REQ-completeness-single-value` | `TEST-completeness-single-value` | `FUNC-score-completeness` | `MOD-harness` |
+| `REQ-completeness-actor-bounded` | `TEST-readiness-completeness` | `FUNC-score-completeness` | `MOD-harness` |
+| `REQ-completeness-single-value` | `TEST-readiness-completeness` | `FUNC-score-completeness` | `MOD-harness` |
 | `REQ-confidence-tier` | `TEST-mutate-gate` | `FUNC-mutate` | `MOD-harness` |
 | `REQ-conflict-free-merge` | `TEST-merge` | `FUNC-merge-nodes` | `MOD-codec` |
 | `REQ-dashboard-ontology-sync` | `TEST-dashboard-ontology-sync` | `MOD-dashboard` | — |
@@ -239,10 +239,10 @@
 | `REQ-query-precision` | `TEST-impact-subgraph` | `FUNC-graph-impact` | `MOD-mcp-tools` |
 | `REQ-readiness-completeness` | `TEST-readiness-completeness` | `FUNC-score-completeness` | `MOD-harness` |
 | `REQ-readiness-model` | `TEST-readiness-model` | `MOD-mcp-tools` | — |
-| `REQ-readiness-transparent` | `TEST-readiness-transparent` | `FUNC-render-readiness` · `MOD-dashboard` | `MOD-dashboard` |
+| `REQ-readiness-transparent` | `TEST-dashboard-readonly` | `FUNC-render-readiness` · `MOD-dashboard` | `MOD-dashboard` |
 | `REQ-readonly-bridge` | `TEST-readonly-bridge` | `FUNC-serve-sse` · `MOD-host-bridge` | `MOD-host-bridge` |
-| `REQ-real-health-check` | `TEST-real-health-check` | `FUNC-health-endpoint` · `MOD-host-bridge` | `MOD-host-bridge` |
-| `REQ-repo-install` | `TEST-cli-scaffold` · `TEST-distribution` · `TEST-scaffold-skills` | `FUNC-harness-cli` | `MOD-cli` |
+| `REQ-real-health-check` | `TEST-readonly-bridge` | `FUNC-health-endpoint` · `MOD-host-bridge` | `MOD-host-bridge` |
+| `REQ-repo-install` | `TEST-cli-scaffold` · `TEST-distribution` | `FUNC-harness-cli` | `MOD-cli` |
 | `REQ-repo-uninstall` | `TEST-cli-scaffold` | `FUNC-harness-cli` | `MOD-cli` |
 | `REQ-repo-update` | `TEST-cli-scaffold` | `FUNC-harness-cli` | `MOD-cli` |
 | `REQ-roundtrip-conformance` | `TEST-roundtrip` | `FCHAIN-codec-roundtrip` · `FUNC-decode` | `MOD-codec` |
@@ -257,7 +257,7 @@
 | `REQ-small-model-viable` | `TEST-mvp-e2e` · `TEST-reduced-llm` | `FCHAIN-modelfree-gate` · `FUNC-graph-suggest` | `MOD-mcp-tools` |
 | `REQ-steering-from-metrics` | `TEST-steering-loop` | `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` | `MOD-steering` |
 | `REQ-store-recovery` | `TEST-store-recovery` | `MOD-harness` | — |
-| `REQ-structural-rule-shared` | `TEST-structural-rule-shared` | `MOD-harness` | — |
+| `REQ-structural-rule-shared` | `TEST-mutate-gate` | `MOD-harness` | — |
 | `REQ-subgraph-slicing` | `TEST-impact-subgraph` | `FUNC-graph-impact` | `MOD-mcp-tools` |
 | `REQ-test-runnable-binding` | `TEST-test-runnable-binding` | `FUNC-deduce-tests` · `MOD-mcp-tools` | `MOD-mcp-tools` |
 | `REQ-testref-materialized` | `TEST-testref-materialize` | `MOD-docs` · `MOD-mcp-tools` | — |

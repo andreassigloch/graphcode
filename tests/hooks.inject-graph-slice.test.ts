@@ -158,14 +158,18 @@ describe('CR-GC-367: Job-Scheibe beim Task-Start', () => {
         'FUNC-broadcast-diff', 'FUNC-health-endpoint', 'FUNC-own-kuzu-host', 'FUNC-serve-sse',
         'MOD-host-bridge', 'REQ-mutation-emits-event', 'REQ-readonly-bridge',
         'REQ-real-health-check', 'REQ-single-kuzu-owner', 'REQ-versioned-broadcast',
-        'TEST-readonly-bridge', 'TEST-real-health-check',
+        // CR-GC-383: eine Datei, eine Abnahme — TEST-real-health-check ist in
+        // TEST-readonly-bridge aufgegangen (beide banden tests/host.bridge.test.ts).
+        'TEST-readonly-bridge',
       ],
       'CR-GC-115': [
         'FUNC-render-artifacts', 'FUNC-render-graph', 'FUNC-render-health', 'FUNC-render-impact',
         'FUNC-render-impl-gates', 'FUNC-render-readiness', 'FUNC-render-recommendations',
         'FUNC-subscribe-updates', 'MOD-dashboard', 'REQ-artifact-freshness',
-        'REQ-dashboard-readonly', 'REQ-readiness-transparent', 'TEST-artifact-freshness',
-        'TEST-dashboard-readonly', 'TEST-readiness-transparent', 'UC-live-graph-view',
+        'REQ-dashboard-readonly', 'REQ-readiness-transparent',
+        // CR-GC-383: TEST-artifact-freshness + TEST-readiness-transparent sind in
+        // TEST-dashboard-readonly aufgegangen (alle drei banden tests/panels.test.ts).
+        'TEST-dashboard-readonly', 'UC-live-graph-view',
       ],
     };
 

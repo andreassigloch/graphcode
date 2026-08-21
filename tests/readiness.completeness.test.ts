@@ -1,6 +1,9 @@
 /**
- * TEST-readiness-completeness / TEST-completeness-actor-bounded /
- * TEST-completeness-single-value — CR-GC-250 acceptance.
+ * TEST-readiness-completeness — CR-GC-250 acceptance.
+ *
+ * EINE Abnahme über diese Datei (CR-GC-383): die früheren Knoten
+ * TEST-completeness-actor-bounded und TEST-completeness-single-value banden dieselbe
+ * Datei und sind hier aufgegangen; die Abnahme verifiziert alle drei REQ zusammen.
  *
  * Proves the structural completeness dimension closes the graph-view-edit
  * false-green (irr-3e4e26c A2/A12/A13): a gate reads NOT-green while a mandated

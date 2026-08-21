@@ -4590,24 +4590,6 @@
       ]
     },
     {
-      "id": "TEST-artifact-freshness",
-      "type": "TEST",
-      "name": "Artifact-Freshness-Test",
-      "description": "Ein Artifact ist gruen bei Graph-Ableitung, gelb bei materialisiertem aber veraltetem Doc (Graph neuer als Doc), rot wenn fehlend. (REQ-artifact-freshness)",
-      "status": "done",
-      "created_at": "2026-06-19T00:00:00.000Z",
-      "method": "test",
-      "testRefs": [
-        {
-          "file": "tests/panels.test.ts",
-          "tool": "vitest",
-          "level": "integration",
-          "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
-        }
-      ]
-    },
-    {
       "id": "TEST-batch-seed",
       "type": "TEST",
       "name": "Batch-Seed UNWIND performance (automated)",
@@ -4734,44 +4716,6 @@
       ]
     },
     {
-      "id": "TEST-completeness-actor-bounded",
-      "type": "TEST",
-      "name": "FCHAIN-Actor-Grenze-Test",
-      "description": "Eine FCHAIN ohne ACTOR->FLOW->FUNC-Eintritt ODER ohne FUNC->FLOW->ACTOR-Austritt drueckt die PDR-Completeness < 1 und blockiert das Gate. (REQ-completeness-actor-bounded)",
-      "status": "done",
-      "method": "test",
-      "concept": false,
-      "constraint": "FCHAIN without actor entry or exit flow -> PDR red",
-      "testRefs": [
-        {
-          "file": "tests/readiness.completeness.test.ts",
-          "tool": "vitest",
-          "level": "acceptance",
-          "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
-        }
-      ]
-    },
-    {
-      "id": "TEST-completeness-single-value",
-      "type": "TEST",
-      "name": "Completeness-Single-Value-Test",
-      "description": "graph_readiness liefert pro Gate genau EINEN completeness-Wert (covered/total) plus die Per-Leg-Missing-Liste fuer den on-click Drill-down. (REQ-completeness-single-value)",
-      "status": "done",
-      "method": "test",
-      "concept": false,
-      "constraint": "one completeness value per gate + per-leg detail available",
-      "testRefs": [
-        {
-          "file": "tests/readiness.completeness.test.ts",
-          "tool": "vitest",
-          "level": "acceptance",
-          "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
-        }
-      ]
-    },
-    {
       "id": "TEST-dashboard-ontology-sync",
       "type": "TEST",
       "name": "Dashboard-Ontologie-Test",
@@ -4796,8 +4740,8 @@
     {
       "id": "TEST-dashboard-readonly",
       "type": "TEST",
-      "name": "Dashboard-Readonly-Test",
-      "description": "Der Viewer exponiert keinen Write- oder Trigger-Pfad und oeffnet kein zweites DB-Handle: nur Reads ueber die Host-Bridge, alle Writes gehen durch MCP mutate(). (REQ-dashboard-readonly)",
+      "name": "Dashboard-Panels-Abnahme",
+      "description": "Abnahme der Datei tests/panels.test.ts: der Viewer exponiert keinen Write- oder Trigger-Pfad und oeffnet kein zweites DB-Handle, die Readiness-Panels sind nachvollziehbar, und die Artefakt-Frische wird korrekt gemeldet. Verifiziert REQ-dashboard-readonly, REQ-readiness-transparent und REQ-artifact-freshness zusammen (CR-GC-383: eine Datei, eine Abnahme).",
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
       "method": "test",
@@ -4862,26 +4806,6 @@
       "tool": "grep/structure-check"
     },
     {
-      "id": "TEST-efficient-testing",
-      "type": "TEST",
-      "name": "Impact-Testset-Test",
-      "description": "graph_impact(geänderter Knoten) liefert genau die betroffenen TEST-Knoten; nicht betroffene sind nicht im Set.",
-      "status": "done",
-      "created_at": "2026-06-16T00:00:00.000Z",
-      "method": "test",
-      "tool": "graph_impact assertion",
-      "constraint": "precision/recall vs full run",
-      "testRefs": [
-        {
-          "file": "tests/mvp-e2e.test.ts",
-          "tool": "vitest",
-          "level": "acceptance",
-          "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
-        }
-      ]
-    },
-    {
       "id": "TEST-graph-context-replaces-reading",
       "type": "TEST",
       "name": "Kontext-Slice als vollstaendige Definition-of-Done",
@@ -4934,16 +4858,16 @@
     {
       "id": "TEST-graph-tests-operational",
       "type": "TEST",
-      "name": "Code-Changeset → vollständiger selektiver Testset",
-      "description": "Konzept-Test: changeSet=[MOD-x] → graph_tests resolved alle TESTs, die MOD-x verifizieren, auf die korrekten Dateien (inkl. mehrerer Dateien je REQ); + testRef-Coverage-Konformanz (alle lauffähigen TESTs tragen testRef, concept-only explizit unresolved). Tool: vitest. Constraint: kein false-green, keine übersehene berührte Datei.",
+      "name": "Selektiver Testset auf dem echten SSOT",
+      "description": "Abnahme der Datei tests/mcp.tests-operational.test.ts: der reale committete Graph wird durchs Gate in einen Disk-Kuzu geseedet, ein CODE-ChangeSet loest ueber die gerichtete code-REQ-TEST-Traversierung die vollstaendige Menge betroffener Testdateien auf, jeder lauffaehige TEST zeigt auf eine existierende Datei, und konzeptionelle Knoten erscheinen unter unresolved. Eigenes Testobjekt neben TEST-test-runnable-binding, weil es einen eigenen Aufbau hat (CR-GC-383).",
       "status": "done",
       "testRefs": [
         {
-          "file": "tests/mcp.tests-deduction.test.ts",
+          "file": "tests/mcp.tests-operational.test.ts",
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
+          "ranAt": "2026-08-21T04:06:57.000Z"
         }
       ]
     },
@@ -5351,8 +5275,8 @@
     {
       "id": "TEST-readiness-completeness",
       "type": "TEST",
-      "name": "Completeness-Dimension-Test",
-      "description": "0-FCHAIN UC -> SRR completeness rot; vollstaendige Kette -> gruen; concept-TEST zaehlt bei CDR als complete, bei TRR nicht; Coverage ueber Source-Population (Abwesenheit zaehlt). Drift-Test: jedes 1..*-Bein des Meta-Modells ist genau einer Phase zugeordnet. (REQ-readiness-completeness)",
+      "name": "Readiness-Vollstaendigkeits-Abnahme",
+      "description": "Abnahme der Datei tests/readiness.completeness.test.ts ueber alle vier Gates: UC ohne FCHAIN faellt bei SRR, die aktor-begrenzte Kette bei PDR, FLOW ohne SCHEMA bei CDR, fehlende Bindung bei TRR; die Coverage rechnet gegen die Source-Population und liefert einen einzigen Wert je Dimension. Verifiziert REQ-readiness-completeness, REQ-completeness-actor-bounded und REQ-completeness-single-value zusammen (CR-GC-383).",
       "status": "done",
       "method": "test",
       "concept": false,
@@ -5385,46 +5309,10 @@
       ]
     },
     {
-      "id": "TEST-readiness-transparent",
-      "type": "TEST",
-      "name": "Readiness-Transparenz-Test",
-      "description": "graph_readiness liefert pro Gate die Blocking-Liste (CRs/Tests/UCs/Violations); die Summe der Blocker erklaert den Score deterministisch. (REQ-readiness-transparent)",
-      "status": "done",
-      "created_at": "2026-06-19T00:00:00.000Z",
-      "method": "test",
-      "testRefs": [
-        {
-          "file": "tests/panels.test.ts",
-          "tool": "vitest",
-          "level": "integration",
-          "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
-        }
-      ]
-    },
-    {
       "id": "TEST-readonly-bridge",
       "type": "TEST",
-      "name": "Readonly-Bridge-Test",
-      "description": "Die Bridge akzeptiert keine Inbound-Mutation; ein Schreibversuch ueber die Bridge wird abgelehnt, Writes gehen nur durch MCP mutate(). (REQ-readonly-bridge)",
-      "status": "done",
-      "created_at": "2026-06-19T00:00:00.000Z",
-      "method": "test",
-      "testRefs": [
-        {
-          "file": "tests/host.bridge.test.ts",
-          "tool": "vitest",
-          "level": "integration",
-          "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
-        }
-      ]
-    },
-    {
-      "id": "TEST-real-health-check",
-      "type": "TEST",
-      "name": "Health-Funktionscheck-Test",
-      "description": "Der Health-Report enthaelt Store-, Gate-, Versions- und LLM-Readiness-Status und faellt bei Store- oder Gate-Ausfall auf nicht-ok, nicht nur bei Prozess-Stop. (REQ-real-health-check)",
+      "name": "Host-Bridge-Abnahme",
+      "description": "Abnahme der Datei tests/host.bridge.test.ts: die Bridge akzeptiert keine Inbound-Mutation, Writes gehen nur durch MCP mutate(), und der Health-Endpunkt meldet den echten Zustand des Hosts statt einer Konstanten. Verifiziert REQ-readonly-bridge und REQ-real-health-check zusammen (CR-GC-383).",
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
       "method": "test",
@@ -5498,26 +5386,6 @@
           "file": "tests/audit.stats.test.ts",
           "tool": "vitest",
           "level": "unit"
-        }
-      ]
-    },
-    {
-      "id": "TEST-scaffold-skills",
-      "type": "TEST",
-      "name": "Scaffold-Installs-Skills-Test",
-      "description": "graphcode init/update kopiert die mitgelieferten .claude/commands/se*-Dateien in das Ziel-Repo, remove entfernt sie restlos (nur die graphcode-eigenen); end-to-end ueber den gepackten Tarball in einem Fremd-Repo verifiziert. Schliesst die MOD-skills/CR-GC-104-Drift: FUNC-harness-cli managt .claude/commands/. (CR-GC-133)",
-      "status": "done",
-      "created_at": "2026-06-18T00:00:00.000Z",
-      "method": "test",
-      "updated_at": "2026-06-18T00:00:00.000Z",
-      "constraint": "skills-shipped-and-scaffolded",
-      "testRefs": [
-        {
-          "file": "tests/cli.scaffold.test.ts",
-          "tool": "vitest",
-          "level": "integration",
-          "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
         }
       ]
     },
@@ -5630,23 +5498,6 @@
       "concept": true
     },
     {
-      "id": "TEST-structural-rule-shared",
-      "type": "TEST",
-      "name": "R-18 gate-block test",
-      "description": "Eine ungueltige Trace-Pair-Mutation in falscher Richtung (Quelle REQ statt TEST bei einer verify-Kante) wird vom Delta-Gate atomar als R-18-Engine-Violation abgelehnt (kein codec.validate-Aufruf, kein Partial-Persist). (CR-GC-205 Item 1)",
-      "status": "done",
-      "method": "test",
-      "testRefs": [
-        {
-          "file": "tests/harness.gate.test.ts",
-          "tool": "vitest",
-          "level": "integration",
-          "result": "passed",
-          "ranAt": "2026-08-15T13:34:09.409Z"
-        }
-      ]
-    },
-    {
       "id": "TEST-target-shifts-ranking",
       "type": "TEST",
       "name": "Ranking gegen zwei gegenlaeufige Zielvektoren",
@@ -5665,7 +5516,7 @@
       "id": "TEST-test-runnable-binding",
       "type": "TEST",
       "name": "TestRef-Aufloesungs-Test",
-      "description": "Ein impacted TEST-Knoten wird ueber testRef eindeutig zu einer lauffaehigen Datei plus Case aufgeloest; graph_tests erzeugt daraus ein selektives Run-Kommando, das nur die betroffenen Tests enthaelt. (REQ-test-runnable-binding)",
+      "description": "Abnahme der Datei tests/mcp.tests-deduction.test.ts: ein impacted TEST-Knoten wird ueber testRefs eindeutig auf eine lauffaehige Datei aufgeloest, graph_tests erzeugt daraus ein selektives Run-Kommando ueber genau diese Dateien, und ein TEST ohne testRefs erscheint unter unresolved statt zu verschwinden. Synthetische Disk-Kuzu-Fixture.",
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
       "method": "test",
@@ -11768,13 +11619,6 @@
       "type": "verify"
     },
     {
-      "source": "TEST-artifact-freshness",
-      "target": "REQ-artifact-freshness",
-      "type": "verify",
-      "weight": 1,
-      "created_at": "2026-06-19T00:00:00.000Z"
-    },
-    {
       "source": "TEST-batch-seed",
       "target": "REQ-batch-seed-performance",
       "type": "verify"
@@ -11905,16 +11749,6 @@
       "type": "verify"
     },
     {
-      "source": "TEST-completeness-actor-bounded",
-      "target": "REQ-completeness-actor-bounded",
-      "type": "verify"
-    },
-    {
-      "source": "TEST-completeness-single-value",
-      "target": "REQ-completeness-single-value",
-      "type": "verify"
-    },
-    {
       "source": "TEST-dashboard-ontology-sync",
       "target": "REQ-dashboard-ontology-sync",
       "type": "verify",
@@ -11928,7 +11762,21 @@
     },
     {
       "source": "TEST-dashboard-readonly",
+      "target": "REQ-artifact-freshness",
+      "type": "verify",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-dashboard-readonly",
       "target": "REQ-dashboard-readonly",
+      "type": "verify",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-dashboard-readonly",
+      "target": "REQ-readiness-transparent",
       "type": "verify",
       "weight": 1,
       "created_at": "2026-06-19T00:00:00.000Z"
@@ -11984,23 +11832,6 @@
       "type": "verify",
       "weight": 1,
       "created_at": "2026-06-17T00:00:00.000Z"
-    },
-    {
-      "source": "TEST-efficient-testing",
-      "target": "REQ-impact-based-testing",
-      "type": "verify",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "TEST-efficient-testing",
-      "target": "REQ-post-impact-testing",
-      "type": "verify"
-    },
-    {
-      "source": "TEST-efficient-testing",
-      "target": "REQ-pre-impact-testing",
-      "type": "verify"
     },
     {
       "source": "TEST-graph-context-replaces-reading",
@@ -12286,6 +12117,11 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "TEST-mutate-gate",
+      "target": "REQ-structural-rule-shared",
+      "type": "verify"
+    },
+    {
       "source": "TEST-mvp-e2e",
       "target": "REQ-code-governed-quality",
       "type": "verify"
@@ -12298,6 +12134,18 @@
     {
       "source": "TEST-mvp-e2e",
       "target": "REQ-impact-based-testing",
+      "type": "verify",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-mvp-e2e",
+      "target": "REQ-post-impact-testing",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-mvp-e2e",
+      "target": "REQ-pre-impact-testing",
       "type": "verify"
     },
     {
@@ -12349,6 +12197,16 @@
     },
     {
       "source": "TEST-readiness-completeness",
+      "target": "REQ-completeness-actor-bounded",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-readiness-completeness",
+      "target": "REQ-completeness-single-value",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-readiness-completeness",
       "target": "REQ-readiness-completeness",
       "type": "verify"
     },
@@ -12360,13 +12218,6 @@
       "created_at": "2026-06-18T00:00:00.000Z"
     },
     {
-      "source": "TEST-readiness-transparent",
-      "target": "REQ-readiness-transparent",
-      "type": "verify",
-      "weight": 1,
-      "created_at": "2026-06-19T00:00:00.000Z"
-    },
-    {
       "source": "TEST-readonly-bridge",
       "target": "REQ-readonly-bridge",
       "type": "verify",
@@ -12374,7 +12225,7 @@
       "created_at": "2026-06-19T00:00:00.000Z"
     },
     {
-      "source": "TEST-real-health-check",
+      "source": "TEST-readonly-bridge",
       "target": "REQ-real-health-check",
       "type": "verify",
       "weight": 1,
@@ -12454,13 +12305,6 @@
       "type": "verify"
     },
     {
-      "source": "TEST-scaffold-skills",
-      "target": "REQ-repo-install",
-      "type": "verify",
-      "weight": 1,
-      "created_at": "2026-06-18T00:00:00.000Z"
-    },
-    {
       "source": "TEST-schema-migration",
       "target": "REQ-post-migrate-schema",
       "type": "verify"
@@ -12509,11 +12353,6 @@
     {
       "source": "TEST-store-recovery",
       "target": "REQ-store-recovery",
-      "type": "verify"
-    },
-    {
-      "source": "TEST-structural-rule-shared",
-      "target": "REQ-structural-rule-shared",
       "type": "verify"
     },
     {
@@ -13047,5 +12886,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 118
+  "graphVersion": 120
 }

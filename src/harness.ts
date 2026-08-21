@@ -707,11 +707,17 @@ export class GraphCodeHarness {
           } catch {
             break; // same uid or unknown source → no-op
           }
-          this.graph = result.graph;
+          // graph-api-core's mergeNodes dedupes a rewired edge only against what it has
+          // ALREADY collected, so ordering decides: if the source's edge precedes the
+          // target's identical one, the pre-existing edge is appended unchecked and the
+          // graph carries the same (source, type, target) twice. Kuzu keys on that triple
+          // and silently keeps one — the in-memory graph then claims an edge the store
+          // does not have (CR-GC-384; upstream fix belongs in graph-api-core).
+          this.graph = { nodes: result.graph.nodes, edges: dedupeEdges(result.graph.edges) };
           for (const e of result.removedEdges) {
             delta.deleteEdges.push({ sourceId: e.sourceId, targetId: e.targetId, edgeType: e.edgeType });
           }
-          delta.upsertEdges.push(...result.addedEdges);
+          delta.upsertEdges.push(...dedupeEdges(result.addedEdges));
           delta.deleteNodes.push(result.removedNode);
           break;
         }
@@ -756,4 +762,15 @@ function cloneGraph(g: Graph): Graph {
     nodes: g.nodes.map((n) => ({ ...n, attributes: { ...n.attributes } })),
     edges: g.edges.map((e) => ({ ...e, attributes: { ...e.attributes } })),
   };
+}
+
+/** Edges by their store identity (source|type|target) — first occurrence wins. */
+function dedupeEdges(edges: GraphEdge[]): GraphEdge[] {
+  const seen = new Set<string>();
+  return edges.filter((e) => {
+    const key = `${e.sourceId}|${e.edgeType}|${e.targetId}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 }

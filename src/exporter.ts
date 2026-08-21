@@ -157,6 +157,11 @@ export function exportGraphJson(graph: Graph): string {
   const elements = [...graph.nodes]
     .sort((a, b) => a.uid.localeCompare(b.uid))
     .map(nodeToElement);
+  // Dedupe by the edge identity (source|type|target) — the SAME key Kuzu uses.
+  // A duplicate trace is not a second fact, and writing one makes the snapshot claim
+  // more edges than the store can ever hold: the reseed round-trip then reports a
+  // loss that never happened (CR-GC-384, observed after a merge-nodes batch).
+  const seen = new Set<string>();
   const traces = [...graph.edges]
     .sort(
       (a, b) =>
@@ -164,6 +169,12 @@ export function exportGraphJson(graph: Graph): string {
         a.edgeType.localeCompare(b.edgeType) ||
         a.targetId.localeCompare(b.targetId),
     )
+    .filter((e) => {
+      const key = `${e.sourceId}|${e.edgeType}|${e.targetId}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
     .map(edgeToTrace);
   return JSON.stringify({ elements, traces }, null, 2) + '\n';
 }

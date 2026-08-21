@@ -29,7 +29,8 @@ export const JOBS = [
       'MOD-host-bridge',
       'REQ-mutation-emits-event', 'REQ-readonly-bridge', 'REQ-real-health-check',
       'REQ-single-kuzu-owner', 'REQ-versioned-broadcast',
-      'TEST-readonly-bridge', 'TEST-real-health-check',
+      // CR-GC-383: TEST-real-health-check ist in TEST-readonly-bridge aufgegangen.
+      'TEST-readonly-bridge',
     ],
   },
   {
@@ -48,7 +49,8 @@ export const JOBS = [
       'FUNC-render-impl-gates', 'FUNC-render-readiness', 'FUNC-render-recommendations',
       'FUNC-subscribe-updates', 'MOD-dashboard',
       'REQ-artifact-freshness', 'REQ-dashboard-readonly', 'REQ-readiness-transparent',
-      'TEST-artifact-freshness', 'TEST-dashboard-readonly', 'TEST-readiness-transparent',
+      // CR-GC-383: die drei Panel-Abnahmen sind zu TEST-dashboard-readonly verschmolzen.
+      'TEST-dashboard-readonly',
       'UC-live-graph-view',
     ],
   },

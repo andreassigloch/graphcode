@@ -11,7 +11,7 @@
 | `REQ-advisory-roundtrip-latency` | ✓ | ✓ passed | `TEST-advisory-roundtrip-latency` |
 | `REQ-agent-agnostic` | ✓ | ✓ passed | `TEST-agent-agnostic` |
 | `REQ-applied-suggestion-moves-target` | ✓ | ✓ passed | `TEST-applied-suggestion-moves-target` |
-| `REQ-artifact-freshness` | ✓ | ✓ passed | `TEST-artifact-freshness` |
+| `REQ-artifact-freshness` | ✓ | ✓ passed | `TEST-dashboard-readonly` |
 | `REQ-audit-trail` | ✓ | ✓ passed | `TEST-mcp-stdio-server` |
 | `REQ-auto-persist-merge` | ✓ | ⚠ nie gelaufen | `TEST-merge` |
 | `REQ-batch-seed-performance` | ✓ | ✓ passed | `TEST-batch-seed` |
@@ -21,8 +21,8 @@
 | `REQ-cache-layering` | ✓ | ⚠ nie gelaufen | `TEST-cache` |
 | `REQ-code-governed-quality` | ✓ | ⚠ 1/2 passed | `TEST-code-quality` · `TEST-mvp-e2e` |
 | `REQ-codec-validation` | ✓ | ✓ passed | `TEST-roundtrip` |
-| `REQ-completeness-actor-bounded` | ✓ | ✓ passed | `TEST-completeness-actor-bounded` |
-| `REQ-completeness-single-value` | ✓ | ✓ passed | `TEST-completeness-single-value` |
+| `REQ-completeness-actor-bounded` | ✓ | ✓ passed | `TEST-readiness-completeness` |
+| `REQ-completeness-single-value` | ✓ | ✓ passed | `TEST-readiness-completeness` |
 | `REQ-confidence-tier` | ✓ | ✓ passed | `TEST-mutate-gate` |
 | `REQ-conflict-free-merge` | ✓ | ⚠ nie gelaufen | `TEST-merge` |
 | `REQ-dashboard-ontology-sync` | ✓ | ✓ passed | `TEST-dashboard-ontology-sync` |
@@ -48,7 +48,7 @@
 | `REQ-harness-schema-in-contracts` | ✓ | ✓ passed | `TEST-mcp-symmetry` |
 | `REQ-hook-extension-points` | ✓ | ⚠ nie gelaufen | `TEST-hooks` |
 | `REQ-hook-order-deterministic` | ✓ | ⚠ nie gelaufen | `TEST-hooks` |
-| `REQ-impact-based-testing` | ✓ | ✓ passed | `TEST-efficient-testing` · `TEST-mvp-e2e` |
+| `REQ-impact-based-testing` | ✓ | ✓ passed | `TEST-mvp-e2e` |
 | `REQ-import-se-ontology` | ✓ | ✓ passed | `TEST-dashboard-ontology-sync` |
 | `REQ-install-idempotent` | ✓ | ✓ passed | `TEST-cli-scaffold` |
 | `REQ-interactive-capture-suggest` | ✓ | ⚠ nie gelaufen | `TEST-capture` |
@@ -72,7 +72,7 @@
 | `REQ-post-emit-update-event` | ✓ | ✓ passed | `TEST-live-view` |
 | `REQ-post-export-markdown` | ✓ | ✓ passed | `TEST-doc-export` |
 | `REQ-post-harness-cli` | ✓ | ✓ passed | `TEST-cli-scaffold` |
-| `REQ-post-impact-testing` | ✓ | ✓ passed | `TEST-efficient-testing` |
+| `REQ-post-impact-testing` | ✓ | ✓ passed | `TEST-mvp-e2e` |
 | `REQ-post-import` | ✓ | ✓ passed | `TEST-bootstrap` |
 | `REQ-post-interface-escalation` | ✓ | ⚠ nie gelaufen | `TEST-interface-escalation` |
 | `REQ-post-merge-nodes` | ✓ | ⚠ nie gelaufen | `TEST-merge` |
@@ -86,7 +86,7 @@
 | `REQ-pre-emit-update-event` | ✓ | ✓ passed | `TEST-live-view` |
 | `REQ-pre-export-markdown` | ✓ | ✓ passed | `TEST-doc-export` |
 | `REQ-pre-harness-cli` | ✓ | ✓ passed | `TEST-cli-scaffold` |
-| `REQ-pre-impact-testing` | ✓ | ✓ passed | `TEST-efficient-testing` |
+| `REQ-pre-impact-testing` | ✓ | ✓ passed | `TEST-mvp-e2e` |
 | `REQ-pre-import` | ✓ | ✓ passed | `TEST-bootstrap` |
 | `REQ-pre-interface-escalation` | ✓ | ⚠ nie gelaufen | `TEST-interface-escalation` |
 | `REQ-pre-merge-nodes` | ✓ | ⚠ nie gelaufen | `TEST-merge` |
@@ -101,10 +101,10 @@
 | `REQ-query-precision` | ✓ | ✓ passed | `TEST-impact-subgraph` |
 | `REQ-readiness-completeness` | ✓ | ✓ passed | `TEST-readiness-completeness` |
 | `REQ-readiness-model` | ✓ | ✓ passed | `TEST-readiness-model` |
-| `REQ-readiness-transparent` | ✓ | ✓ passed | `TEST-readiness-transparent` |
+| `REQ-readiness-transparent` | ✓ | ✓ passed | `TEST-dashboard-readonly` |
 | `REQ-readonly-bridge` | ✓ | ✓ passed | `TEST-readonly-bridge` |
-| `REQ-real-health-check` | ✓ | ✓ passed | `TEST-real-health-check` |
-| `REQ-repo-install` | ✓ | ✓ passed | `TEST-cli-scaffold` · `TEST-distribution` · `TEST-scaffold-skills` |
+| `REQ-real-health-check` | ✓ | ✓ passed | `TEST-readonly-bridge` |
+| `REQ-repo-install` | ✓ | ✓ passed | `TEST-cli-scaffold` · `TEST-distribution` |
 | `REQ-repo-uninstall` | ✓ | ✓ passed | `TEST-cli-scaffold` |
 | `REQ-repo-update` | ✓ | ✓ passed | `TEST-cli-scaffold` |
 | `REQ-responsiveness` | ✓ | ⚠ nie gelaufen | `TEST-responsiveness` |
@@ -122,7 +122,7 @@
 | `REQ-small-model-viable` | ✓ | ⚠ 1/2 passed | `TEST-mvp-e2e` · `TEST-reduced-llm` |
 | `REQ-steering-from-metrics` | ✓ | ✓ passed | `TEST-steering-loop` |
 | `REQ-store-recovery` | ✓ | ⚠ nie gelaufen | `TEST-store-recovery` |
-| `REQ-structural-rule-shared` | ✓ | ✓ passed | `TEST-structural-rule-shared` |
+| `REQ-structural-rule-shared` | ✓ | ✓ passed | `TEST-mutate-gate` |
 | `REQ-structure-driven` | ✓ | ⚠ nie gelaufen | `TEST-code-quality` |
 | `REQ-subgraph-slicing` | ✓ | ✓ passed | `TEST-impact-subgraph` |
 | `REQ-target-shifts-ranking` | ✓ | ✓ passed | `TEST-target-shifts-ranking` |
