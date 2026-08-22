@@ -48,6 +48,7 @@ What that buys, measured rather than asserted, is the rest of the series:
 | [06 — Claims](06-claims.md) | the Q&A form, including what did *not* hold up |
 | [07 — The scoring landscape](07-the-scoring-landscape.md) | every number the system computes, and which ones judge |
 | [08 — Glossary](08-glossary.md) | the terms, pinned down |
+| [09 — The systems engineer's view](09-the-systems-engineer-view.md) | keep the thinking, drop the bookkeeping |
 
 ---
 
