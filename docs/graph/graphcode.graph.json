@@ -1561,7 +1561,9 @@
         "tests/gve-autostart.test.ts",
         "tests/gve-supervision.test.ts",
         "docs/cr/done/CR-GC-404-dashboard-gehoert-dem-repo.md"
-      ]
+      ],
+      "commitRef": "8133269",
+      "closed_at": "2026-08-22T00:00:00.000Z"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -16961,5 +16963,5 @@
       "weight": "1"
     }
   ],
-  "graphVersion": 188
+  "graphVersion": 189
 }
