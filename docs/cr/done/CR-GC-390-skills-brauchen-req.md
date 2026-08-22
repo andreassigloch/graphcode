@@ -1,6 +1,6 @@
 # CR-GC-390 — Skills sind FUNC, also gelten die vier Pflichten
 
-**Status:** open · **Angelegt:** 2026-08-21 · **Revidiert:** 2026-08-21 (Scope von „Skills brauchen REQ"
+**Status:** done (2026-08-22, graphVersion 145 → 157) · **Angelegt:** 2026-08-21 · **Revidiert:** 2026-08-21 (Scope von „Skills brauchen REQ"
 auf alle vier Pflichten erweitert) · **Basis:** `evaluateAllRules` @ graphVersion 145
 
 > Der Dateiname trägt noch den engeren Ursprungstitel. Umbenennen erst beim Abschluss, sonst zerreißt
@@ -139,13 +139,74 @@ Schritt 3 ist der Prüfstein: trägt das Muster nicht, ist Schritt 4 hinfällig.
 
 ## Definition of Done
 
-- [ ] Alle 25 Skill-FUNC ohne `R-02`/`R-20`/`R-22`/`R-30`/`R-31`
-- [ ] Beide neuen TESTs sind rot gesehen worden, bevor sie grün waren
-- [ ] `R-15` = 0; `IO-01` = 1, und der verbleibende Fall ist CR-GC-389s dokumentierte offene Sachfrage
-- [ ] Kein Skill hängt nur noch an `FUNC-block-*`
-- [ ] Alle Änderungen durch `mutate()` mit `baseVersion`, kein Hand-Edit
-- [ ] `scripts/export-graph.mjs` danach (nicht das `graph_export` des laufenden Servers)
-- [ ] `npm test` und `npm run build` grün
+- [x] Alle 25 Skill-FUNC ohne `R-02`/`R-20`/`R-22`/`R-30`/`R-31`
+- [x] Beide neuen TESTs sind rot gesehen worden, bevor sie grün waren
+- [x] `R-15` = 0; `IO-01` = 1, und der verbleibende Fall ist CR-GC-389s dokumentierte offene Sachfrage
+- [x] Kein Skill hängt nur noch an `FUNC-block-*`
+- [x] Alle Änderungen durch `mutate()` mit `baseVersion`, kein Hand-Edit
+- [x] `scripts/export-graph.mjs` danach (nicht das `graph_export` des laufenden Servers)
+- [x] `npm test` und `npm run build` grün
 
 **Dateien (4):** `docs/graph/graphcode.graph.json` · `tests/skill-report-measured.test.ts` ·
 `tests/skill-authoring-gate.test.ts` · dieses CR-Dokument.
+
+---
+
+## Ergebnis (2026-08-22, graphVersion 145 → 157, 12 Gate-Batches)
+
+**Alle 25 Skill-FUNC tragen jetzt alle fünf Pflichten.** Gemessen am Store, nicht geschätzt:
+
+| | vorher | nachher |
+|---|---|---|
+| Verstöße auf Skill-FUNC | 86 | **0** |
+| `R-19` / `R-20` (Bindung) | offen | **verschwunden aus `violationsByRule`** |
+| `R-15` | 1 | **0** |
+| `IO-01` | 2 | **1** |
+| Phase-Gate **TRR** | rot | **bestanden, 214/214** |
+| Phase-Gate **PDR** | rot | **bestanden, 34/34** |
+| Compliance | — | 0,962 (24 Elemente mit Fehlern, alle CR-Historie) |
+| `MOD-skills` LCOM4 | 13 | **4** |
+
+SRR (16/17) und CDR (50/51) bleiben offen — beides CR-GC-389s Restpunkte, nicht dieser CR.
+
+### Abweichungen vom Plan, jeweils mit Grund
+
+- **`REQ-skill-reports-measured-values` heißt `REQ-skill-reads-only`.** Die geplante Fassung
+  („jede *Zahl* aus der Messung") hätte für `se:help` nicht gestimmt — der Skill ist eine dünne
+  Fläche über `graph_help` und gibt keine Zahlen aus. Statt ihn auszuklammern trägt die REQ jetzt
+  die tatsächliche Invariante: *ein lesender Skill liest über die Registry und schreibt nicht*.
+  Die uid wurde mitgezogen, nicht stehengelassen — eine zweite tote ID im selben CR, der eine
+  beseitigt, wäre absurd gewesen.
+- **Beide TESTs sind Graph-getriebene Konformanz, kein Skill-Lauf.** Die geplante Fassung
+  („Skill-Lauf, Ausgabe gegen `graph_readiness`") ist nicht deterministisch ausführbar — ein
+  Skill ist ein Prompt. Und ihre andere Hälfte („abgelehnter Batch hinterlässt keinen Teilstand")
+  ist bereits abgedeckt: `harness.gate.test.ts` (d), `mutate.schema-guard.test.ts`,
+  `gate.single-door.test.ts` (3). Ein zweiter Test darauf wäre ein Parallelpfad gewesen.
+  Die Lücke, die keiner der drei sieht, ist: **liegen die Skills überhaupt auf diesem Gate?**
+  Genau das prüfen die zwei neuen Dateien — Grundgesamtheit aus der FCHAIN, Dateipfad aus der
+  `realRef`, Werkzeugnamen aus der Live-Registry. Ein neu hinzugefügtes MCP-Tool macht
+  `skill-report-measured` rot, bis jemand entscheidet, ob es liest oder schreibt.
+
+### Rot-Nachweis (alle drei vorgeführt, dann zurückgenommen)
+
+| Eingriff | Meldung |
+|---|---|
+| `graph_mutate` in `se-review.md` | *FUNC-se-review ist ein lesender Skill, nennt aber ein schreibendes Werkzeug* |
+| Gate-Werkzeug aus `author-req.md` entfernt | *FUNC-author-req nennt kein Gate-Werkzeug* |
+| `Write docs/graph/…graph.json` in `author-req.md` | *weist einen direkten Schreibzugriff auf die SSOT an* |
+
+### Zwei Funde, die nicht im Plan standen
+
+1. **Eine stale `gve`-Instanz hat die SSOT mitten im Lauf auf 145 zurückgerollt** (PID 9956,
+   `--repo …/graphcode`, gebootet lange vor dieser Sitzung). Der Store stand auf 155, die Datei
+   auf dem Stand davor. Gefunden hat es der Leerlauf-Wächter *„die Kette ist besetzt — sonst
+   prüft dieser Test nichts"*: ohne ihn wären beide neuen Tests grün über einer leeren
+   Grundgesamtheit gelaufen. Der Wächter bleibt deshalb drin.
+2. **Der Viewer liest `realRef`/`testRefs` nicht.** Sein Dashboard meldete `TRR 0/211`, der Store
+   sagt `214/214`. Ursache: `loadGraph` in graph-view-edits `vite.config.js` hebt nur
+   `status/asil/method/kinds` nach `attributes`; der Snapshot flacht aber alle Attribute auf die
+   oberste Ebene ab, also findet die Vollständigkeitsprüfung dort nie eine Bindung. Ein Fehler in
+   graph-view-edit, nicht im Modell — eigener CR, nicht dieser.
+
+**Nicht enthalten, unverändert offen:** die 38 Verstöße der 13 `FUNC-block-*` (→ CR-GC-391) und
+CR-GC-389s Frage, ob `FUNC-import`s Beschreibung zu seinem realRef passt.

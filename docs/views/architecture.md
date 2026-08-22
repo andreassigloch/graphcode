@@ -50,6 +50,7 @@
 | `FUNC-harness-cli` | FUNC | graphcode init/update/remove |
 | `FUNC-health-endpoint` | FUNC | healthEndpoint() |
 | `FUNC-import` | FUNC | importGraph(formatE, mode) |
+| `FUNC-import-code` | FUNC | Skill se:import-code |
 | `FUNC-import-doc` | FUNC | Skill se:import-doc |
 | `FUNC-list-elements` | FUNC | listElements(filter) |
 | `FUNC-load-graph` | FUNC | loadGraph() |
@@ -96,9 +97,9 @@
 | `FUNC-upgrade` | FUNC | executeUpgrade(opts) |
 | `FUNC-view-changelog` | FUNC | se-view-changelog (Change Log) |
 | `FUNC-view-conops` | FUNC | se-view-conops (ConOps) |
+| `FUNC-view-fmea` | FUNC | View se-view:fmea |
 | `FUNC-view-icd` | FUNC | se-view-icd (ICD) |
 | `FUNC-view-intplan` | FUNC | se-view-intplan (Integrations-/Testplan) |
-| `FUNC-view-irr` | FUNC | se-view-fmea (FMEA view) |
 | `FUNC-view-rtm` | FUNC | se-view-rtm (RTM) |
 | `MOD-cli` | MOD | cli — npx-Distribution & Lifecycle |
 | `MOD-codec` | MOD | codec.ts — GraphCodeCodec |
@@ -162,6 +163,7 @@
 | `FUNC-harness-cli` | `MOD-cli` |
 | `FUNC-health-endpoint` | `MOD-host-bridge` |
 | `FUNC-import` | `MOD-harness` |
+| `FUNC-import-code` | `MOD-skills` |
 | `FUNC-import-doc` | `MOD-skills` |
 | `FUNC-list-elements` | `MOD-element-slice` |
 | `FUNC-load-graph` | `MOD-harness` |
@@ -208,7 +210,7 @@
 | `FUNC-upgrade` | `MOD-cli` |
 | `FUNC-view-changelog` | `MOD-skills` |
 | `FUNC-view-conops` | `MOD-skills` |
+| `FUNC-view-fmea` | `MOD-skills` |
 | `FUNC-view-icd` | `MOD-skills` |
 | `FUNC-view-intplan` | `MOD-skills` |
-| `FUNC-view-irr` | `MOD-skills` |
 | `FUNC-view-rtm` | `MOD-skills` |

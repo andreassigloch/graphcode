@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 21 SCHEMA · 48 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 21 SCHEMA · 51 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -38,19 +38,20 @@
 |---|---|---|
 | `FLOW-action` | `FUNC-goal-steerer` | `ACTOR-claude-code` |
 | `FLOW-arch-fitness` | `FUNC-arch-fitness` | `FUNC-rank-candidates` |
+| `FLOW-authoring-request` | `ACTOR-systems-engineer` | `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-import-code` · `FUNC-import-doc` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` |
 | `FLOW-bootstrap-result` | `FUNC-import` | `ACTOR-developer` |
 | `FLOW-branch-graphs` | `ACTOR-developer` | `FUNC-merge-nodes` |
-| `FLOW-bulk-formatE` | `ACTOR-graphify` | `FUNC-import` |
+| `FLOW-bulk-formatE` | `ACTOR-graphify` · `FUNC-import-code` · `FUNC-import-doc` | `FUNC-import` |
 | `FLOW-capture-draft` | `FUNC-decode` | `FUNC-mutate` |
 | `FLOW-cli-command` | `ACTOR-developer` | `FUNC-claim-store-lock` · `FUNC-harness-cli` · `FUNC-rewind` |
 | `FLOW-committed-graph` | `FUNC-close-store` · `FUNC-save-graph` · `FUNC-session-shutdown` | `FUNC-emit-trajectory` · `FUNC-emit-update-event` · `FUNC-graph-export-snapshot` · `FUNC-load-graph` |
 | `FLOW-completeness` | `FUNC-score-completeness` | `FUNC-compute-phase-readiness` |
-| `FLOW-dimension-readiness` | `FUNC-compute-readiness` | `FUNC-generation-step` · `FUNC-next-step` |
+| `FLOW-dimension-readiness` | `FUNC-compute-readiness` | `FUNC-generation-step` · `FUNC-next-step` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-test` · `FUNC-test-ui` |
 | `FLOW-draft-graph` | `FUNC-mutate` | `FUNC-evaluate-rules` |
 | `FLOW-element-slice` | `FUNC-list-elements` | `ACTOR-claude-code` |
 | `FLOW-expand-request` | `ACTOR-claude-code` | `FUNC-graph-expand` |
 | `FLOW-expanded-subgraph` | `FUNC-graph-expand` | `ACTOR-claude-code` |
-| `FLOW-export-request` | `ACTOR-developer` · `FUNC-serve-stdio` | `FUNC-export-markdown` |
+| `FLOW-export-request` | `ACTOR-developer` · `FUNC-render-views` · `FUNC-serve-stdio` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` | `FUNC-export-markdown` |
 | `FLOW-fit-advisory` | `FUNC-fit-advisory` | `FUNC-rank-candidates` |
 | `FLOW-formatE-artifact` | `FUNC-encode` | `FUNC-decode` |
 | `FLOW-formatE-candidates` | `ACTOR-claude-code` | `FUNC-decode` |
@@ -65,7 +66,7 @@
 | `FLOW-merged-graph` | `FUNC-merge-nodes` | `ACTOR-developer` |
 | `FLOW-migrated-graph` | `FUNC-migrate-schema` | `ACTOR-developer` |
 | `FLOW-module-metrics` | `FUNC-module-metrics` | `ACTOR-dashboard` |
-| `FLOW-mutate-cmd` | `ACTOR-claude-code` · `ACTOR-developer` | `FUNC-mutate` |
+| `FLOW-mutate-cmd` | `ACTOR-claude-code` · `ACTOR-developer` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` | `FUNC-mutate` |
 | `FLOW-parsed-graph` | `FUNC-decode` | `ACTOR-developer` |
 | `FLOW-phase-readiness` | `FUNC-compute-phase-readiness` | `FUNC-generation-step` |
 | `FLOW-query-request` | `ACTOR-claude-code` | `FUNC-graph-impact` · `FUNC-list-elements` |
@@ -74,6 +75,8 @@
 | `FLOW-round-findings` | `FUNC-evaluate-rules` | `FUNC-graph-suggest` |
 | `FLOW-round-prompt` | `FUNC-generation-step` · `FUNC-next-step` | `ACTOR-claude-code` · `ACTOR-opencode` · `FUNC-rank-candidates` |
 | `FLOW-round-scope` | `FUNC-graph-impact` | `FUNC-evaluate-rules` |
+| `FLOW-skill-report` | `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-test` · `FUNC-test-ui` | `ACTOR-systems-engineer` |
+| `FLOW-skill-request` | `ACTOR-systems-engineer` | `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-test` · `FUNC-test-ui` |
 | `FLOW-steering-delta` | `FUNC-compute-steering-delta` | `FUNC-rank-candidates` |
 | `FLOW-steering-snapshot` | `FUNC-take-steering-snapshot` | `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-next-step` |
 | `FLOW-steering-trigger` | `ACTOR-developer` · `ACTOR-opencode` | `FUNC-take-steering-snapshot` |
@@ -82,5 +85,5 @@
 | `FLOW-suggested-edit` | `FUNC-graph-suggest` · `FUNC-rank-candidates` | `FUNC-mutate` |
 | `FLOW-trajectory` | `FUNC-emit-trajectory` | `ACTOR-learning-engine` |
 | `FLOW-version-bump` | `ACTOR-developer` | `FUNC-migrate-schema` |
-| `FLOW-view-request` | `ACTOR-developer` | `FUNC-render-views` |
-| `FLOW-violations` | `FUNC-evaluate-rules` · `FUNC-take-steering-snapshot` | `FUNC-compute-phase-readiness` · `FUNC-save-graph` |
+| `FLOW-view-request` | `ACTOR-developer` | `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` |
+| `FLOW-violations` | `FUNC-evaluate-rules` · `FUNC-take-steering-snapshot` | `FUNC-compute-phase-readiness` · `FUNC-save-graph` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` |

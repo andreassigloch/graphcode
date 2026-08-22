@@ -4,7 +4,7 @@
 
 # graphcode — Concept of Operations
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). OpsCon nach ISO/IEC/IEEE 29148 §5.2.4, projiziert aus dem Graphen: 9 ACTOR, 7 UC, 20 operationale REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). OpsCon nach ISO/IEC/IEEE 29148 §5.2.4, projiziert aus dem Graphen: 9 ACTOR, 8 UC, 20 operationale REQ. Deterministisch generiert.
 
 ## 1  System overview
 
@@ -42,7 +42,7 @@
 
 - `ACTOR-claude-code` — Claude Code — Realisierungs-Agent — triggert `UC-code-quality` · `UC-reduced-llm`
 - `ACTOR-dashboard` — Browser-Dashboard — triggert `UC-code-quality` · `UC-live-graph-view`
-- `ACTOR-developer` — Entwickler / Repo-Owner — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-efficient-testing` · `UC-graph-time-travel` · `UC-live-graph-view` · `UC-loop-closure` · `UC-reduced-llm`
+- `ACTOR-developer` — Entwickler / Repo-Owner — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-efficient-testing` · `UC-graph-time-travel` · `UC-live-graph-view` · `UC-loop-closure` · `UC-model-exchange` · `UC-reduced-llm`
 - `ACTOR-facilitating-agent` — Facilitating Agent — Architekt — triggert `UC-code-quality`
 - `ACTOR-graphify` — graphify (Slicer) — triggert `UC-code-quality`
 - `ACTOR-learning-engine` — Learning-Engine — triggert `UC-reduced-llm`
@@ -50,7 +50,7 @@
 - `ACTOR-systems-engineer` — Systems Engineer — triggert `UC-code-quality` · `UC-efficient-testing` · `UC-reduced-llm`
 - `ACTOR-vibe-coder` — Vibe Coder — triggert `UC-code-quality` · `UC-efficient-testing` · `UC-reduced-llm`
 
-## 4  Operational scenarios (7 UC)
+## 4  Operational scenarios (8 UC)
 
 ### `UC-code-quality` — Jede Aenderung geht durchs Gate
 
@@ -59,9 +59,10 @@ Als Entwickler will ich, dass jede Aenderung, meine wie die eines Agenten, durch
 Ausgeloest von: `ACTOR-claude-code` · `ACTOR-dashboard` · `ACTOR-developer` · `ACTOR-facilitating-agent` · `ACTOR-graphify` · `ACTOR-opencode` · `ACTOR-systems-engineer` · `ACTOR-vibe-coder`
 
 - `FCHAIN-apply-gate` — Apply-Gate-Ablauf (Governed Mutation): `FUNC-claim-store-lock` → `FUNC-close-store` → `FUNC-emit-trajectory` → `FUNC-evaluate-rules` → `FUNC-load-graph` → `FUNC-mutate` → `FUNC-open-store` → `FUNC-save-graph` → `FUNC-session-shutdown`
-- `FCHAIN-capture` — Interaktive Erfassung (Text → suggest-Tier): `FUNC-decode` → `FUNC-import` → `FUNC-mutate`
+- `FCHAIN-capture` — Interaktive Erfassung (Text → suggest-Tier): `FUNC-decode` → `FUNC-mutate`
 - `FCHAIN-codec-roundtrip` — Format-E Round-Trip (encode∘decode): `FUNC-decode` → `FUNC-encode`
 - `FCHAIN-interface-escalation` — Interface-Änderungs-Eskalation: `FUNC-graph-impact` → `FUNC-mutate`
+- `FCHAIN-skill-authoring` — Skill legt Modellknoten an: `FUNC-author-req` → `FUNC-author-uc` → `FUNC-close-violations` → `FUNC-mutate` → `FUNC-se-conops` → `FUNC-se-fmea` → `FUNC-se-generate` → `FUNC-se-irr` → `FUNC-se-plan` → `FUNC-se-trade` → `FUNC-target-profile`
 
 ### `UC-deterministic-steering` — Deterministisch auf ein mehrdimensionales Ziel steuern
 
@@ -69,6 +70,7 @@ Als Entwickler will ich, dass der naechste Schritt aus deterministisch gemessene
 
 Ausgeloest von: `ACTOR-developer` · `ACTOR-opencode`
 
+- `FCHAIN-skill-report` — Skill berichtet gemessenen Stand: `FUNC-compute-readiness` → `FUNC-evaluate-rules` → `FUNC-se-help` → `FUNC-se-retro` → `FUNC-se-review` → `FUNC-se-status` → `FUNC-test` → `FUNC-test-ui`
 - `FCHAIN-steering-loop` — Kenngroessen-Steuerungsschleife: `FUNC-compute-readiness` → `FUNC-generation-step` → `FUNC-mutate` → `FUNC-next-step` → `FUNC-rank-candidates` → `FUNC-take-steering-snapshot`
 
 ### `UC-efficient-testing` — Effizientes, impact-basiertes Testen
@@ -104,6 +106,15 @@ Als Betreiber des Regelwerks will ich an den aufgezeichneten Gate-Entscheidungen
 Ausgeloest von: `ACTOR-developer`
 
 — kein Betriebsablauf beschrieben (keine FCHAIN) —
+
+### `UC-model-exchange` — Modell ein- und ausgeben
+
+Als Entwickler will ich Modellstand aus Fremdquellen einlesen und als prueffaehiges Dokument herausgeben, damit Graph, Code und Dokumentation eine Quelle haben.
+
+Ausgeloest von: `ACTOR-developer`
+
+- `FCHAIN-doc-export` — Doc-Export (stdio → exporter): `FUNC-export-markdown` → `FUNC-render-views` → `FUNC-serve-stdio` → `FUNC-view-changelog` → `FUNC-view-conops` → `FUNC-view-fmea` → `FUNC-view-icd` → `FUNC-view-intplan` → `FUNC-view-rtm`
+- `FCHAIN-model-import` — Bestehenden Bestand einlesen: `FUNC-import` → `FUNC-import-code` → `FUNC-import-doc`
 
 ### `UC-reduced-llm` — Mit kleinem oder lokalem Modell arbeiten
 
@@ -143,7 +154,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-113` | done | Graph→Markdown Re-Exporter | `FUNC-export-markdown` · `MOD-docs` · `REQ-doc-export` · `REQ-post-export-markdown` · `REQ-pre-export-markdown` |
 | `CR-GC-114` | done | Host + SSE/WS-Bridge | `FUNC-broadcast-diff` · `FUNC-health-endpoint` · `FUNC-own-kuzu-host` · `FUNC-serve-sse` · `MOD-host-bridge` · `REQ-mutation-emits-event` · `REQ-readonly-bridge` · `REQ-versioned-broadcast` |
 | `CR-GC-115` | done | Dashboard-Viewer-App (Hybrid) | `FUNC-render-artifacts` · `FUNC-render-graph` · `FUNC-render-health` · `FUNC-render-impact` · `FUNC-render-impl-gates` · `FUNC-render-readiness` · `FUNC-render-recommendations` · `FUNC-subscribe-updates` · `MOD-dashboard` · `REQ-artifact-freshness` · `REQ-dashboard-ontology-sync` · `REQ-dashboard-readonly` · `REQ-readiness-transparent` · `REQ-real-health-check` · `UC-live-graph-view` |
-| `CR-GC-116` | done | Views/Skills an Live-Graph verdrahten | `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` · `MOD-skills` |
+| `CR-GC-116` | done | Views/Skills an Live-Graph verdrahten | `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · `MOD-skills` |
 | `CR-GC-117` | done | Modell-Hygiene: V3_RULES-Violations schließen | `REQ-graph-is-ssot` · `REQ-rule-enforcement` |
 | `CR-GC-118` | done | Cleanup stale-at-all Knoten | `REQ-graph-is-ssot` |
 | `CR-GC-119` | done | Docs-Taxonomie — Views vs Records | `MOD-docs` · `REQ-docs-taxonomy` |

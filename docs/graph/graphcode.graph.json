@@ -1623,6 +1623,12 @@
       "description": "Entwickler bringt zwei Zweig-Graphen ein, mergeNodes fuehrt sie regelbasiert zusammen, der zusammengefuehrte Graph geht an den Entwickler zurueck. Aus FCHAIN-codec-roundtrip geloest: mergeNodes arbeitet auf dem Graphen, nicht auf Format-E, und teilte mit encode/decode keinen Fluss."
     },
     {
+      "id": "FCHAIN-model-import",
+      "type": "FCHAIN",
+      "name": "Bestehenden Bestand einlesen",
+      "description": "Ein Mensch laesst eine bestehende Codebasis oder ein Dokument einlesen; der Slicer liefert Format-E, der Import legt den Bestand an."
+    },
+    {
       "id": "FCHAIN-modelfree-gate",
       "type": "FCHAIN",
       "name": "Modellfreier Gate-Betrieb",
@@ -1635,6 +1641,18 @@
       "type": "FCHAIN",
       "name": "Recall (Wiederherstellen)",
       "description": "Der Entwickler nennt einen Commit; rewind liest dessen Snapshot aus dem Git-Objektspeicher und reseed stellt den Store daraus her. Ergebnis: Modell und Code passen wieder zu demselben Commit."
+    },
+    {
+      "id": "FCHAIN-skill-authoring",
+      "type": "FCHAIN",
+      "name": "Skill legt Modellknoten an",
+      "description": "Ein Mensch beauftragt einen Autoren-Skill; der Skill legt Knoten und Kanten durch das Apply-Gate an."
+    },
+    {
+      "id": "FCHAIN-skill-report",
+      "type": "FCHAIN",
+      "name": "Skill berichtet gemessenen Stand",
+      "description": "Ein Mensch ruft einen lesenden Skill; der Skill zieht die Messung aus den Lesewerkzeugen und gibt sie als Bericht zurueck."
     },
     {
       "id": "FCHAIN-snapshot-freshness",
@@ -1663,6 +1681,12 @@
       "name": "Architektur-Fitness (R^6)",
       "description": "Sechs Topologiewerte ueber den ganzen Teilgraphen. Das einzige Signal der Schleife, das nicht aus dem Regelstrom stammt, und deshalb der Tiebreaker im Ranking.",
       "status": "reviewed"
+    },
+    {
+      "id": "FLOW-authoring-request",
+      "type": "FLOW",
+      "name": "Autoren-Auftrag",
+      "description": "Auftrag des Menschen an einen Autoren-Skill, mit Absicht und Zielausschnitt."
     },
     {
       "id": "FLOW-bootstrap-result",
@@ -1942,6 +1966,18 @@
       "concept": true
     },
     {
+      "id": "FLOW-skill-report",
+      "type": "FLOW",
+      "name": "Skill-Bericht",
+      "description": "Der gemessene Stand als Text zurueck an den Menschen."
+    },
+    {
+      "id": "FLOW-skill-request",
+      "type": "FLOW",
+      "name": "Skill-Aufruf",
+      "description": "Aufruf eines Skills durch den Menschen, mit Zielgraph und Optionen."
+    },
+    {
       "id": "FLOW-steering-delta",
       "type": "FLOW",
       "name": "Steering-Delta (vor/nach Kandidat)",
@@ -2036,9 +2072,7 @@
       "name": "Skill se:author-req",
       "description": "Prompt-realisierter Skill se:author-req: REQ mit verifizierendem TEST-Konzept in einem Batch — die REQ-with-test-Invariante.",
       "realRef": {
-        "file": ".claude/commands/se/author-req.md",
-        "symbol": "se-author-req",
-        "lang": "prompt"
+        "file": ".claude/commands/se/author-req.md"
       }
     },
     {
@@ -2047,9 +2081,7 @@
       "name": "Skill se:author-uc",
       "description": "Prompt-realisierter Skill se:author-uc: UC terse und jargonarm autorieren, mit compose-Trace durchs Gate.",
       "realRef": {
-        "file": ".claude/commands/se/author-uc.md",
-        "symbol": "se-author-uc",
-        "lang": "prompt"
+        "file": ".claude/commands/se/author-uc.md"
       }
     },
     {
@@ -2179,9 +2211,7 @@
       "name": "Skill se:close-violations",
       "description": "Prompt-realisierter Skill se:close-violations: den Graphen auf null Error-Verstoesse treiben — ranked verify/satisfy-Kanten durchs Gate.",
       "realRef": {
-        "file": ".claude/commands/se/close-violations.md",
-        "symbol": "se-close-violations",
-        "lang": "prompt"
+        "file": ".claude/commands/se/close-violations.md"
       }
     },
     {
@@ -2459,14 +2489,21 @@
       }
     },
     {
+      "id": "FUNC-import-code",
+      "type": "FUNC",
+      "name": "Skill se:import-code",
+      "description": "Prompt-realisierter Skill se:import-code: bestehende TypeScript-Codebasis deterministisch ueber graphify in den Graphen einlesen, Reseed-Semantik mit automatischem Backup.",
+      "realRef": {
+        "file": ".claude/commands/se/import-code.md"
+      }
+    },
+    {
       "id": "FUNC-import-doc",
       "type": "FUNC",
       "name": "Skill se:import-doc",
       "description": "Prompt-realisierter Skill se:import-doc: Dokument zweistufig importieren — Struktur vor KI, Merge nie Reseed.",
       "realRef": {
-        "file": ".claude/commands/se/import-doc.md",
-        "symbol": "se-import-doc",
-        "lang": "prompt"
+        "file": ".claude/commands/se/import-doc.md"
       }
     },
     {
@@ -2660,16 +2697,14 @@
       "id": "FUNC-render-views",
       "type": "FUNC",
       "name": "render graph→markdown views",
-      "description": "PROMPT-realisierter Graph→Markdown-Renderer via se-view-Commands (.claude/commands/se-view/*); erzeugt z.B. architecture-graph.md. Interim-Realisierung von REQ-doc-export, bis FUNC-export-markdown (code, MOD-docs) gebaut ist. Beweis: Skills = Funktionen (Allokation an MOD-skills = prompt-realisiert).",
+      "description": "PROMPT-realisierter Graph-nach-Markdown-Renderer via se-view-Commands. Steht fuer die View-Skills OHNE eigenen FUNC-Knoten (arch, implplan, nfr, testconcept, testmatrix, trade, srs, cr-list, references); realRef zeigt auf arch.md als deren Vertreter. Interim-Realisierung von REQ-doc-export, bis FUNC-export-markdown (code, MOD-docs) sie ersetzt.",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z",
       "external": false,
       "codeRef": null,
       "realRef": {
-        "file": ".claude/commands/se-view/arch.md",
-        "symbol": "se-view:arch",
-        "lang": "prompt"
+        "file": ".claude/commands/se-view/arch.md"
       }
     },
     {
@@ -2740,9 +2775,7 @@
       "name": "Skill se-conops",
       "description": "Prompt-realisierter Skill se-conops: Concept of Operations — Betriebsaspekte vor den Use Cases, als system-scoped REQ durchs Gate.",
       "realRef": {
-        "file": ".claude/commands/se-conops.md",
-        "symbol": "se-conops",
-        "lang": "prompt"
+        "file": ".claude/commands/se-conops.md"
       }
     },
     {
@@ -2751,9 +2784,7 @@
       "name": "Skill se-fmea",
       "description": "Prompt-realisierter Skill se-fmea: AIAG-VDA-FMEA auf System/Subsystem, Befunde in Graph und Spec.",
       "realRef": {
-        "file": ".claude/commands/se-fmea.md",
-        "symbol": "se-fmea",
-        "lang": "prompt"
+        "file": ".claude/commands/se-fmea.md"
       }
     },
     {
@@ -2762,9 +2793,7 @@
       "name": "Skill se:generate",
       "description": "Prompt-realisierter Skill se:generate: Kaltstart-Generierung aus Prosa-Intention, readiness-getriebener Loop durchs Gate.",
       "realRef": {
-        "file": ".claude/commands/se/generate.md",
-        "symbol": "se-generate",
-        "lang": "prompt"
+        "file": ".claude/commands/se/generate.md"
       }
     },
     {
@@ -2773,9 +2802,7 @@
       "name": "Skill se:help",
       "description": "Prompt-realisierter Skill se:help: jedes Dashboard-Element fuer beide Publikums-Seiten erklaeren.",
       "realRef": {
-        "file": ".claude/commands/se/help.md",
-        "symbol": "se-help",
-        "lang": "prompt"
+        "file": ".claude/commands/se/help.md"
       }
     },
     {
@@ -2784,9 +2811,7 @@
       "name": "Skill se-irr",
       "description": "Prompt-realisierter Skill se-irr: Assumption Review — unbewiesene Annahmen pinnen, tragende zu CRs promoten.",
       "realRef": {
-        "file": ".claude/commands/se-irr.md",
-        "symbol": "se-irr",
-        "lang": "prompt"
+        "file": ".claude/commands/se-irr.md"
       }
     },
     {
@@ -2795,9 +2820,7 @@
       "name": "Skill se-plan",
       "description": "Prompt-realisierter Skill se-plan: Implementierungsplan aus dem depends-on-DAG, CR-Schnitt aus graph_context-Slices.",
       "realRef": {
-        "file": ".claude/commands/se-plan.md",
-        "symbol": "se-plan",
-        "lang": "prompt"
+        "file": ".claude/commands/se-plan.md"
       }
     },
     {
@@ -2806,9 +2829,7 @@
       "name": "Skill se-retro",
       "description": "Prompt-realisierter Skill se-retro: Post-Projekt-Retro ueber die sechs graphcode-KPIs.",
       "realRef": {
-        "file": ".claude/commands/se-retro.md",
-        "symbol": "se-retro",
-        "lang": "prompt"
+        "file": ".claude/commands/se-retro.md"
       }
     },
     {
@@ -2817,9 +2838,7 @@
       "name": "Skill se-review",
       "description": "Prompt-realisierter Skill se-review: Readiness-Gate-Check — Blocker und naechste Schritte.",
       "realRef": {
-        "file": ".claude/commands/se-review.md",
-        "symbol": "se-review",
-        "lang": "prompt"
+        "file": ".claude/commands/se-review.md"
       }
     },
     {
@@ -2828,9 +2847,7 @@
       "name": "Skill se-status",
       "description": "Prompt-realisierter Skill se-status: SE-Projektstatus — Readiness, Verstoesse, Top-Fixes.",
       "realRef": {
-        "file": ".claude/commands/se-status.md",
-        "symbol": "se-status",
-        "lang": "prompt"
+        "file": ".claude/commands/se-status.md"
       }
     },
     {
@@ -2839,9 +2856,7 @@
       "name": "Skill se-trade",
       "description": "Prompt-realisierter Skill se-trade: Trade Study — Optionen bewerten, Entscheidung mit decides-Kanten im Graph.",
       "realRef": {
-        "file": ".claude/commands/se-trade.md",
-        "symbol": "se-trade",
-        "lang": "prompt"
+        "file": ".claude/commands/se-trade.md"
       }
     },
     {
@@ -2922,9 +2937,7 @@
       "name": "Skill se:target-profile",
       "description": "Prompt-realisierter Skill se:target-profile: R6-Zielgewichte vom Menschen elizitieren, Zielkonflikte sichtbar machen.",
       "realRef": {
-        "file": ".claude/commands/se/target-profile.md",
-        "symbol": "se-target-profile",
-        "lang": "prompt"
+        "file": ".claude/commands/se/target-profile.md"
       }
     },
     {
@@ -2938,9 +2951,7 @@
       "created_at": "2026-07-08T00:00:00.000Z",
       "codeRef": null,
       "realRef": {
-        "file": ".claude/commands/se-test.md",
-        "symbol": "se-test",
-        "lang": "prompt"
+        "file": ".claude/commands/se-test.md"
       }
     },
     {
@@ -2954,9 +2965,7 @@
       "created_at": "2026-07-08T00:00:00.000Z",
       "codeRef": null,
       "realRef": {
-        "file": ".claude/commands/se-test-ui.md",
-        "symbol": "se-test-ui",
-        "lang": "prompt"
+        "file": ".claude/commands/se-test-ui.md"
       }
     },
     {
@@ -2982,9 +2991,7 @@
       "external": false,
       "codeRef": null,
       "realRef": {
-        "file": ".claude/commands/se-view/changelog.md",
-        "symbol": "se-view:changelog",
-        "lang": "prompt"
+        "file": ".claude/commands/se-view/changelog.md"
       }
     },
     {
@@ -2997,9 +3004,16 @@
       "external": false,
       "codeRef": null,
       "realRef": {
-        "file": ".claude/commands/se-view/conops.md",
-        "symbol": "se-view:conops",
-        "lang": "prompt"
+        "file": ".claude/commands/se-view/conops.md"
+      }
+    },
+    {
+      "id": "FUNC-view-fmea",
+      "type": "FUNC",
+      "name": "View se-view:fmea",
+      "description": "Prompt-realisierte View: FMEA-Render aus risk-getaggten REQs mit S/O/D, Action Priority, Mitigation-Coverage und Verify-Luecken. Ersetzt die tote uid FUNC-view-irr; das Label IRR ist die separate Assumption-Review (se-irr).",
+      "realRef": {
+        "file": ".claude/commands/se-view/fmea.md"
       }
     },
     {
@@ -3012,9 +3026,7 @@
       "external": false,
       "codeRef": null,
       "realRef": {
-        "file": ".claude/commands/se-view/icd.md",
-        "symbol": "se-view:icd",
-        "lang": "prompt"
+        "file": ".claude/commands/se-view/icd.md"
       }
     },
     {
@@ -3027,24 +3039,7 @@
       "external": false,
       "codeRef": null,
       "realRef": {
-        "file": ".claude/commands/se-view/intplan.md",
-        "symbol": "se-view:intplan",
-        "lang": "prompt"
-      }
-    },
-    {
-      "id": "FUNC-view-irr",
-      "type": "FUNC",
-      "name": "se-view-fmea (FMEA view)",
-      "description": "Prompt-realisierte View: FMEA-Render aus risk-getaggten REQs (S/O/D, Action Priority, Mitigation-Coverage, Verify-Luecken). Skill von se-view-irr zu se-view-fmea umbenannt; das Label IRR ist jetzt die separate Assumption-Review (se-irr). (CR-GC-223)",
-      "status": "done",
-      "created_at": "2026-06-19T00:00:00.000Z",
-      "external": false,
-      "codeRef": null,
-      "realRef": {
-        "file": ".claude/commands/se-view/fmea.md",
-        "symbol": "se-view:fmea",
-        "lang": "prompt"
+        "file": ".claude/commands/se-view/intplan.md"
       }
     },
     {
@@ -3057,9 +3052,7 @@
       "external": false,
       "codeRef": null,
       "realRef": {
-        "file": ".claude/commands/se-view/rtm.md",
-        "symbol": "se-view:rtm",
-        "lang": "prompt"
+        "file": ".claude/commands/se-view/rtm.md"
       }
     },
     {
@@ -3761,6 +3754,18 @@
       "updated_at": "2026-06-18T00:00:00.000Z"
     },
     {
+      "id": "REQ-model-exchange-post",
+      "type": "REQ",
+      "name": "Nachbedingung Modellaustausch",
+      "description": "Nach einem Lauf steht der eingelesene Bestand als Graph-Zustand mit gesichertem Vorzustand, oder das erzeugte Dokument als Datei unter docs/views; beide tragen den graphVersion-Stempel des Laufs."
+    },
+    {
+      "id": "REQ-model-exchange-pre",
+      "type": "REQ",
+      "name": "Vorbedingung Modellaustausch",
+      "description": "Vor einem Ein- oder Auslesevorgang liegt ein Repo mit initialisiertem Store vor sowie ein lesbarer Fremdbestand: ein Format-E-Artefakt, ein TypeScript-Quellbaum oder ein Dokument."
+    },
+    {
       "id": "REQ-monotone-convergence",
       "type": "REQ",
       "name": "Wiederholte Steuerung konvergiert monoton",
@@ -4419,6 +4424,18 @@
       "type": "REQ",
       "name": "Genau eine Tuer in den Graphen",
       "description": "Eine legale Mutation persistiert samt Attributen, eine Mutation ohne ihre Pflichtkante wird blockiert und laesst den Store unveraendert, und ein direkter Schreibversuch am Gate vorbei wird abgewiesen."
+    },
+    {
+      "id": "REQ-skill-authors-through-gate",
+      "type": "REQ",
+      "name": "Autoren-Skill schreibt nur durchs Gate",
+      "description": "Ein Autoren-Skill erzeugt Knoten und Kanten ausschliesslich ueber graph_mutate oder graph_realize und weist an keiner Stelle einen direkten Schreibzugriff auf die Graph-SSOT an."
+    },
+    {
+      "id": "REQ-skill-reads-only",
+      "type": "REQ",
+      "name": "Lesender Skill liest und schreibt nicht",
+      "description": "Ein lesender Skill bezieht jede Aussage seiner Ausgabe aus mindestens einem lesenden Werkzeug der MCP-Registry (graph_readiness, rules_evaluate, rules_get_violations, graph_tests, audit_stats, graph_help, graph_elements) und ruft kein schreibendes Werkzeug auf."
     },
     {
       "id": "REQ-small-model-viable",
@@ -6464,6 +6481,36 @@
       ]
     },
     {
+      "id": "TEST-skill-authors-through-gate",
+      "type": "TEST",
+      "name": "Autoren-Skill nennt das Gate und keinen Seitenweg",
+      "description": "Fuer jede FUNC der Kette FCHAIN-skill-authoring: die per realRef gebundene Command-Datei nennt ein Schreibwerkzeug der LIVE-Registry und weist keinen direkten Schreibzugriff auf docs/graph an. Die Atomizitaet eines abgelehnten Batches deckt harness.gate.test.ts ab, nicht dieser Test.",
+      "testRefs": [
+        {
+          "file": "tests/skill-authoring-gate.test.ts",
+          "tool": "vitest",
+          "level": "conformance",
+          "result": "passed",
+          "ranAt": "2026-08-22T04:18:35.000Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-skill-reports-measured-values",
+      "type": "TEST",
+      "name": "Lesender Skill misst statt zu schaetzen",
+      "description": "Fuer jede FUNC der Kette FCHAIN-skill-report: die per realRef gebundene Command-Datei nennt mindestens ein Messwerkzeug aus der LIVE-Registry und kein schreibendes. Grundgesamtheit und Werkzeugnamen kommen aus Graph und Registry, nicht aus einer Liste im Test.",
+      "testRefs": [
+        {
+          "file": "tests/skill-report-measured.test.ts",
+          "tool": "vitest",
+          "level": "conformance",
+          "result": "passed",
+          "ranAt": "2026-08-22T04:18:35.000Z"
+        }
+      ]
+    },
+    {
       "id": "TEST-skills-mcp",
       "type": "TEST",
       "name": "Skills-MCP-Conformance-Test",
@@ -6787,6 +6834,12 @@
       "created_at": "2026-08-16T00:00:00.000Z"
     },
     {
+      "id": "UC-model-exchange",
+      "type": "UC",
+      "name": "Modell ein- und ausgeben",
+      "description": "Als Entwickler will ich Modellstand aus Fremdquellen einlesen und als prueffaehiges Dokument herausgeben, damit Graph, Code und Dokumentation eine Quelle haben."
+    },
+    {
       "id": "UC-reduced-llm",
       "type": "UC",
       "name": "Mit kleinem oder lokalem Modell arbeiten",
@@ -6943,6 +6996,11 @@
     },
     {
       "source": "ACTOR-developer",
+      "target": "UC-model-exchange",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-developer",
       "target": "UC-reduced-llm",
       "type": "io",
       "weight": 1,
@@ -6991,6 +7049,16 @@
     {
       "source": "ACTOR-opencode",
       "target": "UC-deterministic-steering",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-systems-engineer",
+      "target": "FLOW-authoring-request",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-systems-engineer",
+      "target": "FLOW-skill-request",
       "type": "io"
     },
     {
@@ -7835,6 +7903,13 @@
     },
     {
       "source": "CR-GC-116",
+      "target": "FUNC-view-fmea",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-116",
       "target": "FUNC-view-icd",
       "type": "relation",
       "weight": 1,
@@ -7843,13 +7918,6 @@
     {
       "source": "CR-GC-116",
       "target": "FUNC-view-intplan",
-      "type": "relation",
-      "weight": 1,
-      "created_at": "2026-06-19T00:00:00.000Z"
-    },
-    {
-      "source": "CR-GC-116",
-      "target": "FUNC-view-irr",
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-19T00:00:00.000Z"
@@ -9587,11 +9655,6 @@
     },
     {
       "source": "FCHAIN-capture",
-      "target": "FUNC-import",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-capture",
       "target": "FUNC-mutate",
       "type": "compose",
       "weight": 1,
@@ -9603,11 +9666,6 @@
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FCHAIN-capture",
-      "target": "REQ-no-extraction",
-      "type": "satisfy"
     },
     {
       "source": "FCHAIN-capture",
@@ -9665,7 +9723,42 @@
     },
     {
       "source": "FCHAIN-doc-export",
+      "target": "FUNC-render-views",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-doc-export",
       "target": "FUNC-serve-stdio",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-doc-export",
+      "target": "FUNC-view-changelog",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-doc-export",
+      "target": "FUNC-view-conops",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-doc-export",
+      "target": "FUNC-view-fmea",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-doc-export",
+      "target": "FUNC-view-icd",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-doc-export",
+      "target": "FUNC-view-intplan",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-doc-export",
+      "target": "FUNC-view-rtm",
       "type": "compose"
     },
     {
@@ -9797,6 +9890,31 @@
       "type": "satisfy"
     },
     {
+      "source": "FCHAIN-model-import",
+      "target": "FUNC-import",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-model-import",
+      "target": "FUNC-import-code",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-model-import",
+      "target": "FUNC-import-doc",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-model-import",
+      "target": "REQ-model-exchange-post",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-model-import",
+      "target": "REQ-no-extraction",
+      "type": "satisfy"
+    },
+    {
       "source": "FCHAIN-modelfree-gate",
       "target": "FUNC-evaluate-rules",
       "type": "compose",
@@ -9856,6 +9974,111 @@
     {
       "source": "FCHAIN-recall",
       "target": "REQ-graph-state-recall",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-skill-authoring",
+      "target": "FUNC-author-req",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-authoring",
+      "target": "FUNC-author-uc",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-authoring",
+      "target": "FUNC-close-violations",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-authoring",
+      "target": "FUNC-mutate",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-authoring",
+      "target": "FUNC-se-conops",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-authoring",
+      "target": "FUNC-se-fmea",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-authoring",
+      "target": "FUNC-se-generate",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-authoring",
+      "target": "FUNC-se-irr",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-authoring",
+      "target": "FUNC-se-plan",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-authoring",
+      "target": "FUNC-se-trade",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-authoring",
+      "target": "FUNC-target-profile",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-authoring",
+      "target": "REQ-skill-authors-through-gate",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-skill-report",
+      "target": "FUNC-compute-readiness",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-report",
+      "target": "FUNC-evaluate-rules",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-report",
+      "target": "FUNC-se-help",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-report",
+      "target": "FUNC-se-retro",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-report",
+      "target": "FUNC-se-review",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-report",
+      "target": "FUNC-se-status",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-report",
+      "target": "FUNC-test",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-report",
+      "target": "FUNC-test-ui",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-report",
+      "target": "REQ-skill-reads-only",
       "type": "satisfy"
     },
     {
@@ -9936,6 +10159,71 @@
     {
       "source": "FLOW-arch-fitness",
       "target": "SCHEMA-metric-vector",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-authoring-request",
+      "target": "FUNC-author-req",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-authoring-request",
+      "target": "FUNC-author-uc",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-authoring-request",
+      "target": "FUNC-close-violations",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-authoring-request",
+      "target": "FUNC-import-code",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-authoring-request",
+      "target": "FUNC-import-doc",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-authoring-request",
+      "target": "FUNC-se-conops",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-authoring-request",
+      "target": "FUNC-se-fmea",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-authoring-request",
+      "target": "FUNC-se-generate",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-authoring-request",
+      "target": "FUNC-se-irr",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-authoring-request",
+      "target": "FUNC-se-plan",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-authoring-request",
+      "target": "FUNC-se-trade",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-authoring-request",
+      "target": "FUNC-target-profile",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-authoring-request",
+      "target": "SCHEMA-query-params",
       "type": "relation"
     },
     {
@@ -10067,6 +10355,31 @@
     {
       "source": "FLOW-dimension-readiness",
       "target": "FUNC-next-step",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-dimension-readiness",
+      "target": "FUNC-se-retro",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-dimension-readiness",
+      "target": "FUNC-se-review",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-dimension-readiness",
+      "target": "FUNC-se-status",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-dimension-readiness",
+      "target": "FUNC-test",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-dimension-readiness",
+      "target": "FUNC-test-ui",
       "type": "io"
     },
     {
@@ -10473,6 +10786,51 @@
       "type": "io"
     },
     {
+      "source": "FLOW-skill-report",
+      "target": "ACTOR-systems-engineer",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-skill-report",
+      "target": "SCHEMA-markdown-view",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-skill-request",
+      "target": "FUNC-se-help",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-skill-request",
+      "target": "FUNC-se-retro",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-skill-request",
+      "target": "FUNC-se-review",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-skill-request",
+      "target": "FUNC-se-status",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-skill-request",
+      "target": "FUNC-test",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-skill-request",
+      "target": "FUNC-test-ui",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-skill-request",
+      "target": "SCHEMA-query-params",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-steering-delta",
       "target": "FUNC-rank-candidates",
       "type": "io"
@@ -10588,6 +10946,36 @@
     },
     {
       "source": "FLOW-view-request",
+      "target": "FUNC-view-changelog",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-view-request",
+      "target": "FUNC-view-conops",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-view-request",
+      "target": "FUNC-view-fmea",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-view-request",
+      "target": "FUNC-view-icd",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-view-request",
+      "target": "FUNC-view-intplan",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-view-request",
+      "target": "FUNC-view-rtm",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-view-request",
       "target": "SCHEMA-query-params",
       "type": "relation",
       "weight": 1,
@@ -10604,6 +10992,21 @@
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-violations",
+      "target": "FUNC-se-retro",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-violations",
+      "target": "FUNC-se-review",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-violations",
+      "target": "FUNC-se-status",
+      "type": "io"
     },
     {
       "source": "FLOW-violations",
@@ -10633,9 +11036,29 @@
       "type": "allocate"
     },
     {
+      "source": "FUNC-author-req",
+      "target": "FLOW-mutate-cmd",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-author-req",
+      "target": "REQ-skill-authors-through-gate",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-author-uc",
       "target": "MOD-skills",
       "type": "allocate"
+    },
+    {
+      "source": "FUNC-author-uc",
+      "target": "FLOW-mutate-cmd",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-author-uc",
+      "target": "REQ-skill-authors-through-gate",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-block-anschluss",
@@ -10675,6 +11098,11 @@
     {
       "source": "FUNC-block-anschluss",
       "target": "FUNC-health-endpoint",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-anschluss",
+      "target": "FUNC-import-code",
       "type": "compose"
     },
     {
@@ -10764,17 +11192,17 @@
     },
     {
       "source": "FUNC-block-dokumentenwerk",
+      "target": "FUNC-view-fmea",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-dokumentenwerk",
       "target": "FUNC-view-icd",
       "type": "compose"
     },
     {
       "source": "FUNC-block-dokumentenwerk",
       "target": "FUNC-view-intplan",
-      "type": "compose"
-    },
-    {
-      "source": "FUNC-block-dokumentenwerk",
-      "target": "FUNC-view-irr",
       "type": "compose"
     },
     {
@@ -11120,6 +11548,16 @@
       "source": "FUNC-close-violations",
       "target": "MOD-skills",
       "type": "allocate"
+    },
+    {
+      "source": "FUNC-close-violations",
+      "target": "FLOW-mutate-cmd",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-close-violations",
+      "target": "REQ-skill-authors-through-gate",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-compute-phase-readiness",
@@ -11689,9 +12127,34 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "FUNC-import-code",
+      "target": "MOD-skills",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-import-code",
+      "target": "FLOW-bulk-formatE",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-import-code",
+      "target": "REQ-no-extraction",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-import-doc",
       "target": "MOD-skills",
       "type": "allocate"
+    },
+    {
+      "source": "FUNC-import-doc",
+      "target": "FLOW-bulk-formatE",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-import-doc",
+      "target": "REQ-no-extraction",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-list-elements",
@@ -11988,6 +12451,11 @@
     },
     {
       "source": "FUNC-render-views",
+      "target": "FLOW-export-request",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-render-views",
       "target": "FLOW-rendered-view",
       "type": "io",
       "weight": 1,
@@ -12090,9 +12558,29 @@
       "type": "allocate"
     },
     {
+      "source": "FUNC-se-conops",
+      "target": "FLOW-mutate-cmd",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-se-conops",
+      "target": "REQ-skill-authors-through-gate",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-se-fmea",
       "target": "MOD-skills",
       "type": "allocate"
+    },
+    {
+      "source": "FUNC-se-fmea",
+      "target": "FLOW-mutate-cmd",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-se-fmea",
+      "target": "REQ-skill-authors-through-gate",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-se-generate",
@@ -12100,9 +12588,29 @@
       "type": "allocate"
     },
     {
+      "source": "FUNC-se-generate",
+      "target": "FLOW-mutate-cmd",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-se-generate",
+      "target": "REQ-skill-authors-through-gate",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-se-help",
       "target": "MOD-skills",
       "type": "allocate"
+    },
+    {
+      "source": "FUNC-se-help",
+      "target": "FLOW-skill-report",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-se-help",
+      "target": "REQ-skill-reads-only",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-se-irr",
@@ -12110,9 +12618,29 @@
       "type": "allocate"
     },
     {
+      "source": "FUNC-se-irr",
+      "target": "FLOW-mutate-cmd",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-se-irr",
+      "target": "REQ-skill-authors-through-gate",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-se-plan",
       "target": "MOD-skills",
       "type": "allocate"
+    },
+    {
+      "source": "FUNC-se-plan",
+      "target": "FLOW-mutate-cmd",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-se-plan",
+      "target": "REQ-skill-authors-through-gate",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-se-retro",
@@ -12120,9 +12648,29 @@
       "type": "allocate"
     },
     {
+      "source": "FUNC-se-retro",
+      "target": "FLOW-skill-report",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-se-retro",
+      "target": "REQ-skill-reads-only",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-se-review",
       "target": "MOD-skills",
       "type": "allocate"
+    },
+    {
+      "source": "FUNC-se-review",
+      "target": "FLOW-skill-report",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-se-review",
+      "target": "REQ-skill-reads-only",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-se-status",
@@ -12130,9 +12678,29 @@
       "type": "allocate"
     },
     {
+      "source": "FUNC-se-status",
+      "target": "FLOW-skill-report",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-se-status",
+      "target": "REQ-skill-reads-only",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-se-trade",
       "target": "MOD-skills",
       "type": "allocate"
+    },
+    {
+      "source": "FUNC-se-trade",
+      "target": "FLOW-mutate-cmd",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-se-trade",
+      "target": "REQ-skill-authors-through-gate",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-seed-from-json",
@@ -12247,9 +12815,24 @@
       "type": "allocate"
     },
     {
+      "source": "FUNC-target-profile",
+      "target": "FLOW-mutate-cmd",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-target-profile",
+      "target": "REQ-skill-authors-through-gate",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-test",
       "target": "MOD-skills",
       "type": "allocate"
+    },
+    {
+      "source": "FUNC-test",
+      "target": "FLOW-skill-report",
+      "type": "io"
     },
     {
       "source": "FUNC-test",
@@ -12260,6 +12843,11 @@
       "source": "FUNC-test-ui",
       "target": "MOD-skills",
       "type": "allocate"
+    },
+    {
+      "source": "FUNC-test-ui",
+      "target": "FLOW-skill-report",
+      "type": "io"
     },
     {
       "source": "FUNC-test-ui",
@@ -12280,6 +12868,11 @@
     },
     {
       "source": "FUNC-view-changelog",
+      "target": "FLOW-export-request",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-view-changelog",
       "target": "REQ-doc-export",
       "type": "satisfy",
       "weight": 1,
@@ -12294,6 +12887,30 @@
     },
     {
       "source": "FUNC-view-conops",
+      "target": "FLOW-export-request",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-view-conops",
+      "target": "REQ-doc-export",
+      "type": "satisfy",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-view-fmea",
+      "target": "MOD-skills",
+      "type": "allocate",
+      "weight": 1,
+      "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-view-fmea",
+      "target": "FLOW-export-request",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-view-fmea",
       "target": "REQ-doc-export",
       "type": "satisfy",
       "weight": 1,
@@ -12305,6 +12922,11 @@
       "type": "allocate",
       "weight": 1,
       "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-view-icd",
+      "target": "FLOW-export-request",
+      "type": "io"
     },
     {
       "source": "FUNC-view-icd",
@@ -12322,20 +12944,11 @@
     },
     {
       "source": "FUNC-view-intplan",
-      "target": "REQ-doc-export",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-19T00:00:00.000Z"
+      "target": "FLOW-export-request",
+      "type": "io"
     },
     {
-      "source": "FUNC-view-irr",
-      "target": "MOD-skills",
-      "type": "allocate",
-      "weight": 1,
-      "created_at": "2026-06-19T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-view-irr",
+      "source": "FUNC-view-intplan",
       "target": "REQ-doc-export",
       "type": "satisfy",
       "weight": 1,
@@ -12347,6 +12960,11 @@
       "type": "allocate",
       "weight": 1,
       "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-view-rtm",
+      "target": "FLOW-export-request",
+      "type": "io"
     },
     {
       "source": "FUNC-view-rtm",
@@ -13324,6 +13942,11 @@
     },
     {
       "source": "TEST-doc-export",
+      "target": "REQ-model-exchange-post",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-doc-export",
       "target": "REQ-post-export-markdown",
       "type": "verify"
     },
@@ -13554,6 +14177,16 @@
     {
       "source": "TEST-impact-subgraph",
       "target": "REQ-subgraph-slicing",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-import-code-verb",
+      "target": "REQ-model-exchange-post",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-import-code-verb",
+      "target": "REQ-model-exchange-pre",
       "type": "verify"
     },
     {
@@ -14136,6 +14769,16 @@
       "type": "verify"
     },
     {
+      "source": "TEST-skill-authors-through-gate",
+      "target": "REQ-skill-authors-through-gate",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-skill-reports-measured-values",
+      "target": "REQ-skill-reads-only",
+      "type": "verify"
+    },
+    {
       "source": "TEST-skills-mcp",
       "target": "REQ-doc-export",
       "type": "verify",
@@ -14308,6 +14951,11 @@
     },
     {
       "source": "UC-code-quality",
+      "target": "FCHAIN-skill-authoring",
+      "type": "compose"
+    },
+    {
+      "source": "UC-code-quality",
       "target": "REQ-audit-trail",
       "type": "compose"
     },
@@ -14466,6 +15114,11 @@
     },
     {
       "source": "UC-code-quality",
+      "target": "REQ-skill-authors-through-gate",
+      "type": "compose"
+    },
+    {
+      "source": "UC-code-quality",
       "target": "REQ-structure-driven",
       "type": "compose",
       "weight": 1,
@@ -14474,6 +15127,11 @@
     {
       "source": "UC-code-quality",
       "target": "REQ-trajectory-emit",
+      "type": "compose"
+    },
+    {
+      "source": "UC-deterministic-steering",
+      "target": "FCHAIN-skill-report",
       "type": "compose"
     },
     {
@@ -14499,6 +15157,11 @@
     {
       "source": "UC-deterministic-steering",
       "target": "REQ-single-measurement-path",
+      "type": "compose"
+    },
+    {
+      "source": "UC-deterministic-steering",
+      "target": "REQ-skill-reads-only",
       "type": "compose"
     },
     {
@@ -14694,6 +15357,31 @@
       "type": "compose"
     },
     {
+      "source": "UC-model-exchange",
+      "target": "FCHAIN-doc-export",
+      "type": "compose"
+    },
+    {
+      "source": "UC-model-exchange",
+      "target": "FCHAIN-model-import",
+      "type": "compose"
+    },
+    {
+      "source": "UC-model-exchange",
+      "target": "REQ-model-exchange-post",
+      "type": "compose"
+    },
+    {
+      "source": "UC-model-exchange",
+      "target": "REQ-model-exchange-pre",
+      "type": "compose"
+    },
+    {
+      "source": "UC-model-exchange",
+      "target": "REQ-no-extraction",
+      "type": "compose"
+    },
+    {
       "source": "UC-reduced-llm",
       "target": "FCHAIN-advisory-roundtrip",
       "type": "compose"
@@ -14773,5 +15461,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 145
+  "graphVersion": 157
 }

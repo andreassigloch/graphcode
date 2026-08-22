@@ -4,7 +4,7 @@
 
 # graphcode — Requirements Traceability Matrix (RTM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 125 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 129 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
 
 
 ### System (SYS.2) — 44 REQ
@@ -16,7 +16,7 @@
 | `REQ-benchmark-harness` | `TEST-token-efficiency` | `SYS-graphcode` | — |
 | `REQ-buildable-standalone` | `TEST-distribution` | `MOD-cli` | — |
 | `REQ-disk-persistence` | `TEST-mvp-e2e` | `FUNC-load-graph` · `FUNC-save-graph` | `MOD-harness` |
-| `REQ-doc-export` | `TEST-auto-export` · `TEST-doc-export` · `TEST-mcp-export` · `TEST-member-name` · `TEST-skills-mcp` · `TEST-views-auditor` · `TEST-views-conformance` | `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` | `MOD-docs` · `MOD-skills` |
+| `REQ-doc-export` | `TEST-auto-export` · `TEST-doc-export` · `TEST-mcp-export` · `TEST-member-name` · `TEST-skills-mcp` · `TEST-views-auditor` · `TEST-views-conformance` | `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` | `MOD-docs` · `MOD-skills` |
 | `REQ-docs-taxonomy` | `TEST-docs-taxonomy` | `MOD-docs` | — |
 | `REQ-export-no-clobber` | `TEST-export-graph-guard` · `TEST-mcp-export-guard` | `MOD-mcp-tools` | — |
 | `REQ-frame-binding` | `TEST-code-quality` · `TEST-graph-realize` | `SYS-graphcode` | — |
@@ -31,7 +31,7 @@
 | `REQ-install-idempotent` | `TEST-cli-scaffold` · `TEST-upgrade` | `FUNC-harness-cli` | `MOD-cli` |
 | `REQ-interface-schema` | `TEST-interface-schema` | `MOD-codec` | — |
 | `REQ-mcp-tool-registry` | `TEST-help-tool` · `TEST-mcp-readiness` · `TEST-mcp-stdio-server` | `MOD-mcp-tools` | — |
-| `REQ-no-extraction` | `TEST-capture` · `TEST-import-code-verb` | `FCHAIN-capture` | — |
+| `REQ-no-extraction` | `TEST-capture` · `TEST-import-code-verb` | `FCHAIN-model-import` · `FUNC-import-code` · `FUNC-import-doc` | `MOD-skills` |
 | `REQ-npx-distribution` | `TEST-distribution` | `FUNC-harness-cli` | `MOD-cli` |
 | `REQ-post-export-markdown` | `TEST-doc-export` | `FUNC-export-markdown` | `MOD-docs` |
 | `REQ-post-harness-cli` | `TEST-cli-scaffold` | `FUNC-harness-cli` | `MOD-cli` |
@@ -56,7 +56,7 @@
 | `REQ-token-efficiency` | `TEST-audit-trail-projection` · `TEST-help-contextual-dedup` · `TEST-mutate-violations` · `TEST-token-efficiency` | — | — |
 | `REQ-versioned-cache` | `TEST-cache` | `MOD-hooks` | — |
 
-### funktional (SWE.1) — 77 REQ
+### funktional (SWE.1) — 82 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -87,8 +87,11 @@
 | `REQ-interactive-capture-suggest` | `TEST-capture` · `TEST-intent-anchors-internal` · `TEST-uc-authoring-style` | `FCHAIN-capture` | — |
 | `REQ-interface-change-escalation` | `TEST-interface-escalation` | `FCHAIN-interface-escalation` | — |
 | `REQ-mcp-gate-symmetry` | `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` | `FCHAIN-apply-gate` | — |
+| `REQ-model-exchange-post` | `TEST-doc-export` · `TEST-import-code-verb` | `FCHAIN-model-import` | — |
+| `REQ-model-exchange-pre` | `TEST-import-code-verb` | — | — |
 | `REQ-monotone-convergence` | `TEST-monotone-convergence` | — | — |
 | `REQ-mutation-emits-event` | `TEST-create-harness-smoke` · `TEST-live-view` | `FCHAIN-live-update` · `FUNC-emit-update-event` | `MOD-hooks` |
+| `REQ-no-extraction` | `TEST-capture` · `TEST-import-code-verb` | `FCHAIN-model-import` · `FUNC-import-code` · `FUNC-import-doc` | `MOD-skills` |
 | `REQ-one-driver-local-and-frontier` | `TEST-cli-run` · `TEST-executor-bestofn` · `TEST-one-driver-local-and-frontier` | — | — |
 | `REQ-one-gate-per-repo` | `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-store-lock` | — | — |
 | `REQ-phase-gate-not-skippable` | `TEST-phase-gate-not-skippable` | — | — |
@@ -128,6 +131,8 @@
 | `REQ-rule-enforcement` | `TEST-mutate-gate` · `TEST-nd-similarity` · `TEST-violation-context` | `FUNC-evaluate-rules` | `MOD-harness` |
 | `REQ-single-measurement-path` | `TEST-graph-metrics` · `TEST-single-measurement-path` · `TEST-steering-snapshot` | `FUNC-take-steering-snapshot` | `MOD-steering` |
 | `REQ-single-write-door` | `TEST-host-shim` · `TEST-mutate-input-formate` · `TEST-occ` · `TEST-single-write-door` | `FUNC-mutate` | `MOD-harness` |
+| `REQ-skill-authors-through-gate` | `TEST-skill-authors-through-gate` | `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` | `MOD-skills` |
+| `REQ-skill-reads-only` | `TEST-skill-reports-measured-values` | `FCHAIN-skill-report` · `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` | `MOD-skills` |
 | `REQ-small-model-viable` | `TEST-executor-preflight` · `TEST-mvp-e2e` · `TEST-reduced-llm` | `FCHAIN-modelfree-gate` · `FUNC-graph-suggest` | `MOD-mcp-tools` |
 | `REQ-steering-from-metrics` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` · `TEST-steering-loop` | `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` | `MOD-metrics-engine` · `MOD-steering` |
 | `REQ-structure-driven` | `TEST-code-quality` · `TEST-mutate-schema-guard` · `TEST-se-plan-ordering` | `SYS-graphcode` | — |
@@ -138,14 +143,14 @@
 | `REQ-trajectory-emit` | `TEST-create-harness-smoke` · `TEST-learning-emit` | `FUNC-emit-trajectory` | `MOD-hooks` |
 | `REQ-versioned-broadcast` | `TEST-live-view` | `FUNC-broadcast-diff` · `FUNC-emit-update-event` · `MOD-host-bridge` | `MOD-hooks` · `MOD-host-bridge` |
 
-### Integration (SWE.4) — 32 REQ
+### Integration (SWE.4) — 35 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
 | `REQ-advisory-roundtrip-latency` | `TEST-advisory-roundtrip-latency` | `FCHAIN-advisory-roundtrip` | — |
 | `REQ-code-governed-quality` | `TEST-code-quality` · `TEST-mvp-e2e` | `FCHAIN-apply-gate` · `FUNC-test` · `FUNC-test-ui` | `MOD-skills` |
 | `REQ-conflict-free-merge` | `TEST-merge` | `FCHAIN-merge-branches` · `FUNC-merge-nodes` | `MOD-codec` |
-| `REQ-doc-export` | `TEST-auto-export` · `TEST-doc-export` · `TEST-mcp-export` · `TEST-member-name` · `TEST-skills-mcp` · `TEST-views-auditor` · `TEST-views-conformance` | `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` | `MOD-docs` · `MOD-skills` |
+| `REQ-doc-export` | `TEST-auto-export` · `TEST-doc-export` · `TEST-mcp-export` · `TEST-member-name` · `TEST-skills-mcp` · `TEST-views-auditor` · `TEST-views-conformance` | `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` | `MOD-docs` · `MOD-skills` |
 | `REQ-graceful-degradation` | `TEST-gve-supervision` · `TEST-reduced-llm` | `FCHAIN-modelfree-gate` · `SYS-graphcode` | — |
 | `REQ-graph-snapshot-per-commit` | `TEST-auto-export` · `TEST-graph-time-travel` | `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot` · `FUNC-mutate` | `MOD-harness` · `MOD-mcp-tools` |
 | `REQ-graph-state-recall` | `TEST-graph-time-travel` · `TEST-reseed` · `TEST-rewind` | `FCHAIN-recall` · `FUNC-reseed` · `FUNC-rewind` · `MOD-harness` | `MOD-cli` · `MOD-harness` |
@@ -153,8 +158,9 @@
 | `REQ-interactive-capture-suggest` | `TEST-capture` · `TEST-intent-anchors-internal` · `TEST-uc-authoring-style` | `FCHAIN-capture` | — |
 | `REQ-interface-change-escalation` | `TEST-interface-escalation` | `FCHAIN-interface-escalation` | — |
 | `REQ-mcp-gate-symmetry` | `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` | `FCHAIN-apply-gate` | — |
+| `REQ-model-exchange-post` | `TEST-doc-export` · `TEST-import-code-verb` | `FCHAIN-model-import` | — |
 | `REQ-mutation-emits-event` | `TEST-create-harness-smoke` · `TEST-live-view` | `FCHAIN-live-update` · `FUNC-emit-update-event` | `MOD-hooks` |
-| `REQ-no-extraction` | `TEST-capture` · `TEST-import-code-verb` | `FCHAIN-capture` | — |
+| `REQ-no-extraction` | `TEST-capture` · `TEST-import-code-verb` | `FCHAIN-model-import` · `FUNC-import-code` · `FUNC-import-doc` | `MOD-skills` |
 | `REQ-post-agent-query` | `TEST-impact-subgraph` | `FCHAIN-agent-query` | — |
 | `REQ-post-apply-gate` | `TEST-mutate-gate` | `FCHAIN-apply-gate` | — |
 | `REQ-post-capture` | `TEST-capture` | `FCHAIN-capture` | — |
@@ -172,10 +178,12 @@
 | `REQ-precise-context` | `TEST-inject-graph-slice` · `TEST-mvp-e2e` · `TEST-token-efficiency` · `TEST-violation-context` | `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-graph-impact` | `MOD-codec` · `MOD-mcp-tools` |
 | `REQ-responsiveness` | `TEST-responsiveness` | `FCHAIN-apply-gate` | — |
 | `REQ-roundtrip-conformance` | `TEST-roundtrip` | `FCHAIN-codec-roundtrip` · `FUNC-decode` | `MOD-codec` |
+| `REQ-skill-authors-through-gate` | `TEST-skill-authors-through-gate` | `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` | `MOD-skills` |
+| `REQ-skill-reads-only` | `TEST-skill-reports-measured-values` | `FCHAIN-skill-report` · `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` | `MOD-skills` |
 | `REQ-small-model-viable` | `TEST-executor-preflight` · `TEST-mvp-e2e` · `TEST-reduced-llm` | `FCHAIN-modelfree-gate` · `FUNC-graph-suggest` | `MOD-mcp-tools` |
 | `REQ-steering-from-metrics` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` · `TEST-steering-loop` | `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` | `MOD-metrics-engine` · `MOD-steering` |
 
-### Komponente (SWE.2/3) — 88 REQ
+### Komponente (SWE.2/3) — 91 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -197,7 +205,7 @@
 | `REQ-dashboard-readonly` | `TEST-dashboard-readonly` | `MOD-dashboard` | — |
 | `REQ-deterministic-serialization` | `TEST-export-graph-guard` · `TEST-roundtrip` | `FUNC-encode` | `MOD-codec` |
 | `REQ-disk-persistence` | `TEST-mvp-e2e` | `FUNC-load-graph` · `FUNC-save-graph` | `MOD-harness` |
-| `REQ-doc-export` | `TEST-auto-export` · `TEST-doc-export` · `TEST-mcp-export` · `TEST-member-name` · `TEST-skills-mcp` · `TEST-views-auditor` · `TEST-views-conformance` | `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-irr` · `FUNC-view-rtm` | `MOD-docs` · `MOD-skills` |
+| `REQ-doc-export` | `TEST-auto-export` · `TEST-doc-export` · `TEST-mcp-export` · `TEST-member-name` · `TEST-skills-mcp` · `TEST-views-auditor` · `TEST-views-conformance` | `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` | `MOD-docs` · `MOD-skills` |
 | `REQ-docs-taxonomy` | `TEST-docs-taxonomy` | `MOD-docs` | — |
 | `REQ-export-no-clobber` | `TEST-export-graph-guard` · `TEST-mcp-export-guard` | `MOD-mcp-tools` | — |
 | `REQ-formatE-diff-dialect` | `TEST-edge-only-batch` · `TEST-formate-name` · `TEST-roundtrip` | `FUNC-encode` | `MOD-codec` |
@@ -217,6 +225,7 @@
 | `REQ-live-event-in-contracts` | `TEST-live-event-contract` | `FUNC-emit-update-event` | `MOD-hooks` |
 | `REQ-mcp-tool-registry` | `TEST-help-tool` · `TEST-mcp-readiness` · `TEST-mcp-stdio-server` | `MOD-mcp-tools` | — |
 | `REQ-mutation-emits-event` | `TEST-create-harness-smoke` · `TEST-live-view` | `FCHAIN-live-update` · `FUNC-emit-update-event` | `MOD-hooks` |
+| `REQ-no-extraction` | `TEST-capture` · `TEST-import-code-verb` | `FCHAIN-model-import` · `FUNC-import-code` · `FUNC-import-doc` | `MOD-skills` |
 | `REQ-npx-distribution` | `TEST-distribution` | `FUNC-harness-cli` | `MOD-cli` |
 | `REQ-post-emit-trajectory` | `TEST-learning-emit` | `FUNC-emit-trajectory` | `MOD-hooks` |
 | `REQ-post-emit-update-event` | `TEST-live-view` | `FUNC-emit-update-event` | `MOD-hooks` |
@@ -257,6 +266,8 @@
 | `REQ-single-store` | `TEST-mvp-e2e` | `MOD-harness` | — |
 | `REQ-single-transport` | `TEST-mcp-stdio-server` | `FUNC-serve-stdio` · `MOD-mcp-tools` | `MOD-mcp-tools` |
 | `REQ-single-write-door` | `TEST-host-shim` · `TEST-mutate-input-formate` · `TEST-occ` · `TEST-single-write-door` | `FUNC-mutate` | `MOD-harness` |
+| `REQ-skill-authors-through-gate` | `TEST-skill-authors-through-gate` | `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` | `MOD-skills` |
+| `REQ-skill-reads-only` | `TEST-skill-reports-measured-values` | `FCHAIN-skill-report` · `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` | `MOD-skills` |
 | `REQ-small-model-viable` | `TEST-executor-preflight` · `TEST-mvp-e2e` · `TEST-reduced-llm` | `FCHAIN-modelfree-gate` · `FUNC-graph-suggest` | `MOD-mcp-tools` |
 | `REQ-steering-from-metrics` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` · `TEST-steering-loop` | `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` | `MOD-metrics-engine` · `MOD-steering` |
 | `REQ-store-recovery` | `TEST-reseed` · `TEST-schema-migration` · `TEST-store-recovery` | `MOD-harness` | — |
