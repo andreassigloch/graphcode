@@ -1,7 +1,12 @@
 # CR-GC-391 — Ein Rollup-FUNC schuldet nichts, was seine Blätter schulden
 
-**Status:** open · **Angelegt:** 2026-08-21 · **Umsetzung:** `sigloch-modules` (`@sigloch/contracts`),
-nicht in diesem Repo · **Basis:** `evaluateAllRules` @ graphVersion 145
+**Status:** done (upstream) · **Angelegt:** 2026-08-21 · **Geschlossen:** 2026-08-22 · **Umsetzung:**
+`sigloch-modules` (`@sigloch/contracts`), nicht in diesem Repo · **Basis:** `evaluateAllRules` @ graphVersion 145
+
+**Abschluss:** `CR-SM-256` ist done und mit `RULES_VERSION 6.1.0` ausgeliefert — `R-02` und `R-31`
+bekommen dieselbe Grundgesamtheit wie `R-30`: ausschließlich Blätter (FUNC ohne FUNC-Kind), ein
+geteilter Helper `decomposedFuncs` für alle drei. Gemessen dort: `R-02` 22 → 10, `R-31` 29 → 17.
+graphcode zieht contracts **6.1.0** bereits (`434235f`), die Änderung ist hier wirksam.
 
 > **Umsetzung liegt seit 2026-08-22 als `CR-SM-256` in `sigloch-modules` vor.** Dieser CR bleibt die
 > Analyse und die Messung am Selbstmodell; die Regeländerung wird dort geschnitten und geschlossen.

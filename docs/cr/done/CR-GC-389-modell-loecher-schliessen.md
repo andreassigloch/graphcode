@@ -1,6 +1,6 @@
 # CR-GC-389 — Die echten Löcher im Modell schließen
 
-**Status:** teilweise umgesetzt · **Angelegt:** 2026-08-21 · **Umgesetzt:** 2026-08-21 (graphVersion 136 → 145) · **Basis:** `rules_evaluate` @ graphVersion 136 (370 Violations)
+**Status:** done · **Angelegt:** 2026-08-21 · **Umgesetzt:** 2026-08-21 (graphVersion 136 → 145) · **Geschlossen:** 2026-08-22 (siehe *Abschluss* am Ende) · **Basis:** `rules_evaluate` @ graphVersion 136 (370 Violations)
 
 ## Problem
 
@@ -160,3 +160,22 @@ diese beiden Ketten da sind — nicht, dass nie eine dritte dazukommt.
 - `npm run build` grün · `npx vitest run` **856/857**; der eine Fehler ist der ETARGET oben
 - Alle Änderungen durch `mutate()` mit `baseVersion`, jeder Batch zuerst als `dryRun`
 - `scripts/export-graph.mjs` gelaufen (nicht das `graph_export` des laufenden Servers)
+
+---
+
+## Abschluss (2026-08-22) — der Rest ist überholt oder Backlog, keine offene Arbeit
+
+Der CR wurde als *teilweise umgesetzt* offengehalten wegen des Punktes „CR-History-Errors" im DoD.
+Vier der fünf Restpunkte sind seither anderweitig erledigt oder anderswo geschnitten; keiner ist
+noch offene Verdrahtungsarbeit an diesem CR.
+
+| Restpunkt | Wohin er gegangen ist |
+|---|---|
+| CR-History-Errors (`CR-R04`, 68) | **Erledigt upstream:** `CR-SM-255` verengt `CR-R04` auf CRs mit Status `open`/`in-progress` (und CRs ganz ohne Status). Dort am graphcode-Selbstmodell gemessen: 41 meldende CRs, 40 `done` + 1 `dropped`, **kein einziger offener** → 41 unbearbeitbare Befunde auf 0. Ausgeliefert in `RULES_VERSION 6.1.0`, hier installiert (`434235f`). |
+| `R-02`/`R-31` an den zwölf `FUNC-block-*` | **Erledigt upstream:** `CR-SM-256` (→ [CR-GC-391](CR-GC-391-rollup-func-blattregel.md), geschlossen). |
+| `RC-04`/`RC-05` nur in `graph_readiness` sichtbar | **Eigener CR:** [CR-GC-398](../open/CR-GC-398-eine-auswertungsflaeche.md) — eine Auswertungsfläche mit `source`/`skipped`. |
+| `tests/distribution.test.ts` rot (ETARGET) | **Erledigt:** `@sigloch/graph-view-edit@0.6.0` ist publiziert, der Range `^0.6.0` löst auf. |
+| `RD-01` (8) · `IO-01` (2) · `R-15`/`UC-03`/`FC-02` (3) | **Backlog, kein CR.** Alle dreizehn sind im Ergebnisteil oben einzeln belegt als **Sachfragen**, nicht als fehlende Kante: acht nachweislich unerfüllte REQ, zwei Widersprüche zwischen Beschreibung und realRef, drei Modellentscheidungen ohne Kandidaten. Sie bleiben als Findings in `rules_evaluate` sichtbar — das ist der richtige Ort dafür, ein offenes CR-Dokument fügt nichts hinzu. |
+
+Der Viewer-Doppeleintrag aus derselben Messreihe läuft als
+[CR-GC-401](../open/CR-GC-401-viewer-nur-noch-am-rand.md) weiter (vormals CR-GC-396, umnummeriert).

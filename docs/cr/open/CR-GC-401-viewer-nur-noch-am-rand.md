@@ -1,6 +1,8 @@
-# CR-GC-396 — Der Viewer steht zweimal im Modell
+# CR-GC-401 — Der Viewer steht zweimal im Modell
 
 **Status:** offen, Vorschlag · **Angelegt:** 2026-08-22
+**Umnummeriert:** 2026-08-22 von `CR-GC-396` — die Nummer war doppelt vergeben
+(`done/CR-GC-396-uc-repo-lebenszyklus.md`).
 **Herkunft:** Ablehnung von `sigloch-modules/docs/cr/done/CR-SM-257`. Dort sollten `R-02`, `R-30`
 und `R-31` Knoten mit `external: true` überspringen. Das wurde abgelehnt — die 21 Befunde, die es
 entfernt hätte, kommen nicht aus einer zu strengen Grammatik, sondern aus **diesem** Modellfehler.

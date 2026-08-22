@@ -1,6 +1,9 @@
 # CR-GC-361 — Das Ranking soll Fortschritt von Scheinfortschritt unterscheiden
 
-**Status:** done (Code) · **Umgesetzt:** 2026-08-21 · **Letztes AK offen:** Validierungslauf, blockiert durch CR-DRAFT-GC-359
+**Status:** done · **Umgesetzt:** 2026-08-21 (`ac3e5c0`) · **Geschlossen:** 2026-08-22
+**Nachtrag zum Abschluss:** Der Validierungslauf hängt an `CR-DRAFT-GC-359` (undici-Deckel) und damit an
+einem Draft, dessen Entscheidung offen ist. Der Code ist gebaut und unit-getestet; das CR wartet nicht
+auf Arbeit, sondern auf ein fremdes Messinstrument — es wird mit 359 mitgemessen, nicht hier offen gehalten.
 **Datum:** 2026-08-18
 **Vorgänger:** CR-GC-289 (Ziel-Delta-Ranking) · **Braucht zur Validierung:** CR-GC-359
 
