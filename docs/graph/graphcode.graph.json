@@ -1951,6 +1951,13 @@
       "concept": true
     },
     {
+      "id": "FLOW-round-injection",
+      "type": "FLOW",
+      "name": "Runden-Injektion",
+      "description": "Der zusammengesetzte Prompt-Zusatz einer Runde: Guide-Slice plus Element-Index. Wie der Runden-Scope ein informationeller Kontext ohne festes Wire-Format, kein Code-Vertrag.",
+      "status": "done"
+    },
+    {
       "id": "FLOW-round-prompt",
       "type": "FLOW",
       "name": "Runden-Prompt (naechster Schritt)",
@@ -2171,6 +2178,18 @@
       }
     },
     {
+      "id": "FUNC-build-round-injection",
+      "type": "FUNC",
+      "name": "buildRoundInjection",
+      "description": "Baut die Rundeninjektion aus Guide-Slice und Element-Index fuer die im Generierungsschritt gesetzten Fokus-Typen. Per Konfiguration abschaltbar, damit sich ihr Beitrag isoliert messen laesst.",
+      "status": "done",
+      "realRef": {
+        "file": "src/executor-prompt.ts",
+        "symbol": "buildRoundInjection",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "FUNC-check-code-conformance",
       "type": "FUNC",
       "name": "conformanceViolations(harness)",
@@ -2353,6 +2372,18 @@
       "realRef": {
         "file": "src/exporter.ts",
         "symbol": "exportMarkdown",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-extract-mutate",
+      "type": "FUNC",
+      "name": "extractMutateFromText",
+      "description": "Prosa-Recovery: holt ein Kommando-Objekt aus einer Modellantwort, die statt eines Tool-Calls Text geliefert hat. Findet keine Kommandos, gibt sie null zurueck statt zu raten.",
+      "status": "done",
+      "realRef": {
+        "file": "src/executor-parse.ts",
+        "symbol": "extractMutateFromText",
         "lang": "ts"
       }
     },
@@ -2577,6 +2608,18 @@
       }
     },
     {
+      "id": "FUNC-nd-similarity",
+      "type": "FUNC",
+      "name": "injectNDMatrices",
+      "description": "Rechnet die Near-Duplicate-Matrizen ueber FUNC und SCHEMA und haengt sie an den Graphen, bevor der volle Regelkatalog laeuft. Aufrufer ist die Steering-Momentaufnahme, nicht der Treiber.",
+      "status": "done",
+      "realRef": {
+        "file": "src/nd-similarity.ts",
+        "symbol": "injectNDMatrices",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "FUNC-next-step",
       "type": "FUNC",
       "name": "nextStep(graph, policy)",
@@ -2741,6 +2784,18 @@
       "realRef": {
         "file": "src/rewind.ts",
         "symbol": "executeRewind",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-run-executor",
+      "type": "FUNC",
+      "name": "runExecutor",
+      "description": "Die Treiberschleife selbst: baut die Tool-Specs, ruft das Backend rundenweise, wendet Mutationen ueber die Registry an und zaehlt Runden, Turns, Anwendungen und Rejections. Backend-Wechsel zwischen lokalem und Frontier-Modell ist Konfiguration, keine zweite Codeverzweigung.",
+      "status": "done",
+      "realRef": {
+        "file": "src/executor.ts",
+        "symbol": "runExecutor",
         "lang": "ts"
       }
     },
@@ -3120,6 +3175,13 @@
         "file": "src/element-slice.ts",
         "lang": "ts"
       },
+      "status": "done"
+    },
+    {
+      "id": "MOD-executor",
+      "type": "MOD",
+      "name": "executor — eingebetteter Treiber",
+      "description": "Treiberschleife hinter dem Verb graphcode run: Runden-Prompt, Modellaufruf, Kandidaten-Ranking, Prosa-Recovery. Fuenf flache Dateien unter src/, deshalb kein path-Praefix am Modul; die Zuordnung laeuft ueber die realRef der allozierten FUNC.",
       "status": "done"
     },
     {
@@ -10981,6 +11043,12 @@
     },
     {
       "source": "FCHAIN-steering-loop",
+      "target": "FUNC-build-round-injection",
+      "type": "compose",
+      "weight": "1"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
       "target": "FUNC-compute-phase-readiness",
       "type": "compose",
       "weight": "1"
@@ -10998,6 +11066,12 @@
     },
     {
       "source": "FCHAIN-steering-loop",
+      "target": "FUNC-extract-mutate",
+      "type": "compose",
+      "weight": "1"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
       "target": "FUNC-generation-step",
       "type": "compose"
     },
@@ -11008,6 +11082,12 @@
     },
     {
       "source": "FCHAIN-steering-loop",
+      "target": "FUNC-nd-similarity",
+      "type": "compose",
+      "weight": "1"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
       "target": "FUNC-next-step",
       "type": "compose"
     },
@@ -11015,6 +11095,12 @@
       "source": "FCHAIN-steering-loop",
       "target": "FUNC-rank-candidates",
       "type": "compose"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
+      "target": "FUNC-run-executor",
+      "type": "compose",
+      "weight": "1"
     },
     {
       "source": "FCHAIN-steering-loop",
@@ -11183,6 +11269,12 @@
       "source": "FLOW-cli-command",
       "target": "FUNC-rewind",
       "type": "io"
+    },
+    {
+      "source": "FLOW-cli-command",
+      "target": "FUNC-run-executor",
+      "type": "io",
+      "weight": "1"
     },
     {
       "source": "FLOW-cli-command",
@@ -11455,6 +11547,12 @@
     },
     {
       "source": "FLOW-graph-state",
+      "target": "FUNC-nd-similarity",
+      "type": "io",
+      "weight": "1"
+    },
+    {
+      "source": "FLOW-graph-state",
       "target": "FUNC-score-completeness",
       "type": "io",
       "weight": "1"
@@ -11688,6 +11786,12 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-round-injection",
+      "target": "FUNC-run-executor",
+      "type": "io",
+      "weight": "1"
+    },
+    {
       "source": "FLOW-round-prompt",
       "target": "ACTOR-claude-code",
       "type": "io"
@@ -11699,8 +11803,20 @@
     },
     {
       "source": "FLOW-round-prompt",
+      "target": "FUNC-build-round-injection",
+      "type": "io",
+      "weight": "1"
+    },
+    {
+      "source": "FLOW-round-prompt",
       "target": "FUNC-rank-candidates",
       "type": "io"
+    },
+    {
+      "source": "FLOW-round-prompt",
+      "target": "FUNC-run-executor",
+      "type": "io",
+      "weight": "1"
     },
     {
       "source": "FLOW-round-prompt",
@@ -12432,6 +12548,18 @@
       "created_at": "2026-06-19T00:00:00.000Z"
     },
     {
+      "source": "FUNC-build-round-injection",
+      "target": "MOD-executor",
+      "type": "allocate",
+      "weight": "1"
+    },
+    {
+      "source": "FUNC-build-round-injection",
+      "target": "FLOW-round-injection",
+      "type": "io",
+      "weight": "1"
+    },
+    {
       "source": "FUNC-check-code-conformance",
       "target": "MOD-conformance",
       "type": "allocate"
@@ -12766,6 +12894,18 @@
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-extract-mutate",
+      "target": "MOD-executor",
+      "type": "allocate",
+      "weight": "1"
+    },
+    {
+      "source": "FUNC-extract-mutate",
+      "target": "FLOW-mutate-cmd",
+      "type": "io",
+      "weight": "1"
     },
     {
       "source": "FUNC-fit-advisory",
@@ -13282,6 +13422,12 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-nd-similarity",
+      "target": "MOD-steering",
+      "type": "allocate",
+      "weight": "1"
+    },
+    {
       "source": "FUNC-next-step",
       "target": "MOD-steering",
       "type": "allocate"
@@ -13327,8 +13473,9 @@
     },
     {
       "source": "FUNC-rank-candidates",
-      "target": "MOD-steering",
-      "type": "allocate"
+      "target": "MOD-executor",
+      "type": "allocate",
+      "weight": "1"
     },
     {
       "source": "FUNC-rank-candidates",
@@ -13464,6 +13611,24 @@
       "source": "FUNC-rewind",
       "target": "REQ-graph-state-recall",
       "type": "satisfy"
+    },
+    {
+      "source": "FUNC-run-executor",
+      "target": "MOD-executor",
+      "type": "allocate",
+      "weight": "1"
+    },
+    {
+      "source": "FUNC-run-executor",
+      "target": "FLOW-mutate-cmd",
+      "type": "io",
+      "weight": "1"
+    },
+    {
+      "source": "FUNC-run-executor",
+      "target": "REQ-one-driver-local-and-frontier",
+      "type": "satisfy",
+      "weight": "1"
     },
     {
       "source": "FUNC-save-graph",
@@ -14155,6 +14320,12 @@
       "source": "MOD-repo-root",
       "target": "MOD-docs",
       "type": "compose"
+    },
+    {
+      "source": "MOD-repo-root",
+      "target": "MOD-executor",
+      "type": "compose",
+      "weight": "1"
     },
     {
       "source": "MOD-repo-root",
@@ -16451,5 +16622,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 168
+  "graphVersion": 171
 }

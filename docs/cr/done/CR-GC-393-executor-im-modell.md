@@ -1,7 +1,47 @@
 # CR-GC-393 — Der Executor existiert im Code, aber nicht im Modell
 
-**Status:** open · **Angelegt:** 2026-08-22 · **Basis:** graphVersion 168 · **Umsetzung:** dieses Repo
-(reine Modellarbeit durchs Gate, kein Code)
+**Status:** done 2026-08-22 · **Angelegt:** 2026-08-22 · **Basis:** graphVersion 168 →
+**171** · **Umsetzung:** dieses Repo (reine Modellarbeit durchs Gate, kein Code)
+
+## Ergebnis
+
+Vier Dateien sind aus der Unassigned-Liste verschwunden: `executor.ts`, `executor-prompt.ts`,
+`executor-parse.ts`, `nd-similarity.ts`. `run-verb.ts` steht weiter drin, wie im Umfang festgelegt.
+
+**Die Findings sind gestiegen, nicht gefallen: 137 → 144.** Das ist das Ergebnis, nicht ein Fehler
+davon. Solange die vier Dateien kein Modell hatten, konnte keine Regel sie prüfen; jetzt melden sie,
+was ihnen fehlt. Aufschlüsselung:
+
+| Regel | Δ | Grund |
+|---|---|---|
+| `RD-01` | −1 | `REQ-one-driver-local-and-frontier` hat mit `FUNC-run-executor` einen Erfüller |
+| `R-02` | +3 | Rundeninjektion, Prosa-Recovery und ND-Erkennung erfüllen **keine** REQ — es gibt keine, sie wurden nie als Anforderung geschrieben |
+| `R-31` | +2 | `extract-mutate` ohne modellierten Eingang, `nd-similarity` ohne Ausgang; beide Gegenstücke existieren im Code, aber als kein Fluss, den ich belegen könnte |
+| `RD-04` | +1 | `MOD-repo-root` hat mit `MOD-executor` zwölf Modul-Kinder, die Schwelle liegt bei elf |
+| `SC-04` | +1 | `FLOW-round-injection` trägt bewusst kein Wire-Format |
+| `RC-05` | +1 | eine bisher unsichtbare Modulgrenze wurde sichtbar |
+
+Zwei Korrekturen am geplanten Umfang, beide aus dem Code belegt:
+
+1. **`computeND` gibt es nicht.** `nd-similarity.ts` exportiert `computeND01Matrix`,
+   `computeND02Matrix` und `injectNDMatrices`. Der reale Aufrufer von `injectNDMatrices` ist
+   `steering-snapshot.ts:58`, **nicht** der Treiber. `FUNC-nd-similarity` ist deshalb an
+   `MOD-steering` alloziert, nicht an `MOD-executor` — der Knoten gehört dahin, wo er gerufen wird.
+2. **Kein `path` am Modul.** `resolveMod` matcht `file === path` oder `file.startsWith(path + '/')`.
+   Die Executor-Dateien liegen flach unter `src/`, ein Präfix `src/executor` würde
+   `src/executor.ts` nicht treffen. Die Zuordnung läuft ausschließlich über die `realRef` der
+   allozierten FUNC.
+
+Ein neuer FLOW: `FLOW-round-injection`, belegt an `executor.ts:1019` — dort wird das Ergebnis von
+`buildRoundInjection` in die Runde gegeben.
+
+`MOD-steering` nach dem Umhängen von `FUNC-rank-candidates`: 11 Funktionen, **21 statt 25**
+kreuzende Flüsse. `R-04` feuert weiter, der Wert ist besser.
+
+**Folge-Erkenntnis für die nächsten CRs:** die drei neuen `R-02` sind kein Kantenproblem. Runden-
+injektion, Prosa-Recovery und Near-Duplicate-Erkennung sind gebaut und getestet, aber niemand hat je
+eine Anforderung dafür geschrieben. Das gehört in einen eigenen CR mit `se:author-req`, nicht in
+eine nachgezogene satisfy-Kante auf eine REQ, die etwas anderes meint.
 
 ## Problem
 

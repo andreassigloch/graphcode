@@ -26,6 +26,7 @@
 | `FUNC-block-schaufenster` | FUNC | Viewer |
 | `FUNC-block-se-steuerung` | FUNC | SE-Prozess-Steuerung |
 | `FUNC-broadcast-diff` | FUNC | broadcastDiff(version) |
+| `FUNC-build-round-injection` | FUNC | buildRoundInjection |
 | `FUNC-check-code-conformance` | FUNC | conformanceViolations(harness) |
 | `FUNC-claim-store-lock` | FUNC | StoreLock |
 | `FUNC-close-store` | FUNC | close() |
@@ -40,6 +41,7 @@
 | `FUNC-encode` | FUNC | encode(graph) |
 | `FUNC-evaluate-rules` | FUNC | evaluateRules() |
 | `FUNC-export-markdown` | FUNC | exportMarkdown(graph, view) |
+| `FUNC-extract-mutate` | FUNC | extractMutateFromText |
 | `FUNC-fit-advisory` | FUNC | computeFitAdvisory(before, after) |
 | `FUNC-generation-step` | FUNC | generationStep(graph, policy, intent) |
 | `FUNC-goal-steerer` | FUNC | Autopilot |
@@ -58,6 +60,7 @@
 | `FUNC-migrate-schema` | FUNC | migrateSchema(from, to) |
 | `FUNC-module-metrics` | FUNC | moduleMetrics(graph) |
 | `FUNC-mutate` | FUNC | mutate(commands) |
+| `FUNC-nd-similarity` | FUNC | injectNDMatrices |
 | `FUNC-next-step` | FUNC | nextStep(graph, policy) |
 | `FUNC-open-store` | FUNC | initialize() |
 | `FUNC-own-kuzu-host` | FUNC | ownKuzu() |
@@ -73,6 +76,7 @@
 | `FUNC-reseed` | FUNC | reseed(relPath) |
 | `FUNC-resolve-tests-from-code` | FUNC | Gerichtete code→REQ→TEST-Auflösung |
 | `FUNC-rewind` | FUNC | graphcode rewind <ref> |
+| `FUNC-run-executor` | FUNC | runExecutor |
 | `FUNC-save-graph` | FUNC | saveGraph(graph) |
 | `FUNC-score-completeness` | FUNC | scoreCompleteness(gateId, graph) |
 | `FUNC-se-conops` | FUNC | Skill se-conops |
@@ -108,6 +112,7 @@
 | `MOD-dashboard` | MOD | dashboard — Live-Viewer-App |
 | `MOD-docs` | MOD | docs — Markdown-Re-Exporter |
 | `MOD-element-slice` | MOD | element-slice.ts — Element-Scheibe |
+| `MOD-executor` | MOD | executor — eingebetteter Treiber |
 | `MOD-harness` | MOD | harness.ts — GraphCodeHarness |
 | `MOD-hooks` | MOD | hooks.ts — HookSystem |
 | `MOD-host-bridge` | MOD | host-bridge — SSE/WS Bridge |
@@ -139,6 +144,7 @@
 | `FUNC-block-schaufenster` | `MOD-repo-root` |
 | `FUNC-block-se-steuerung` | `MOD-steering` |
 | `FUNC-broadcast-diff` | `MOD-host-bridge` |
+| `FUNC-build-round-injection` | `MOD-executor` |
 | `FUNC-check-code-conformance` | `MOD-conformance` |
 | `FUNC-claim-store-lock` | `MOD-harness` |
 | `FUNC-close-store` | `MOD-harness` |
@@ -153,6 +159,7 @@
 | `FUNC-encode` | `MOD-codec` |
 | `FUNC-evaluate-rules` | `MOD-harness` |
 | `FUNC-export-markdown` | `MOD-docs` |
+| `FUNC-extract-mutate` | `MOD-executor` |
 | `FUNC-fit-advisory` | `MOD-steering` |
 | `FUNC-generation-step` | `MOD-steering` |
 | `FUNC-goal-steerer` | `MOD-steering` |
@@ -171,10 +178,11 @@
 | `FUNC-migrate-schema` | `MOD-schema-migration` |
 | `FUNC-module-metrics` | `MOD-metrics-engine` |
 | `FUNC-mutate` | `MOD-harness` |
+| `FUNC-nd-similarity` | `MOD-steering` |
 | `FUNC-next-step` | `MOD-steering` |
 | `FUNC-open-store` | `MOD-harness` |
 | `FUNC-own-kuzu-host` | `MOD-host-bridge` |
-| `FUNC-rank-candidates` | `MOD-steering` |
+| `FUNC-rank-candidates` | `MOD-executor` |
 | `FUNC-render-artifacts` | `MOD-dashboard` |
 | `FUNC-render-graph` | `MOD-dashboard` |
 | `FUNC-render-health` | `MOD-dashboard` |
@@ -186,6 +194,7 @@
 | `FUNC-reseed` | `MOD-harness` |
 | `FUNC-resolve-tests-from-code` | `MOD-mcp-tools` |
 | `FUNC-rewind` | `MOD-cli` |
+| `FUNC-run-executor` | `MOD-executor` |
 | `FUNC-save-graph` | `MOD-harness` |
 | `FUNC-score-completeness` | `MOD-completeness` |
 | `FUNC-se-conops` | `MOD-skills` |
