@@ -1,6 +1,6 @@
 # CR-GC-400 — Der Perf-Spike misst das Modellwachstum, nicht die Engine
 
-**Status:** open · **Angelegt:** 2026-08-22 · **Umsetzung:** dieses Repo
+**Status:** done · **Angelegt:** 2026-08-22 · **Umgesetzt:** 2026-08-22 · **Umsetzung:** dieses Repo
 **Datei:** `tests/perf.advisory-roundtrip.spike.test.ts`
 
 ## Problem — der Test ist heute rot, und zwar zu Recht und aus dem falschen Grund
@@ -36,6 +36,19 @@ Engpass, die Regelauswertung ist es. Das ist die Aussage, für die der Spike geb
 geht verloren, sobald der Test wegen eines gerissenen Wanduhr-Budgets rot ist statt gelesen zu
 werden.
 
+## Die andere Hälfte liegt in sigloch-modules
+
+Dieser CR macht den Spike wieder lesbar; er erklärt die 22× nicht. Das tun zwei CRs im
+Regelsatz-Repo, und sie hängen an dieser Messung:
+
+- **CR-SM-260** (Profil je Regel) — die Rangliste, welche der 73 Regeln die Kurve trägt.
+  `read` bleibt bei 70 ms, also ist es die Regelauswertung, nicht der Store.
+- **CR-SM-261** (Adjazenz-Index + Memoisierung) — der Eingriff, **gegated auf CR-SM-260**.
+  Er nennt diesen CR als Perf-Wächter, ohne den die nächste Regel-Erweiterung unbemerkt bleibt.
+
+Wer nur einen der drei umsetzt, hat entweder eine Zahl ohne Ursache oder eine Optimierung ohne
+Wächter.
+
 ## Änderung
 
 **Fixer Eingang.** Der Klon zielt auf eine feste Größe (~2000 Knoten) statt auf einen Faktor der
@@ -63,3 +76,19 @@ und er kauft genau so lange Ruhe, bis jemand die nächsten 150 Knoten anlegt.
 - [ ] Der Realgrößen-Datenpunkt protokolliert, ohne zu assertieren — wie der Docstring es sagt.
 - [ ] Ein künstlich verlangsamter Regel-Pfad lässt den Test fallen — **rot gesehen**, sonst ist die
       neue Schwelle nur eine andere Zahl ohne Wirkung.
+
+---
+
+## Ergebnis (2026-08-22)
+
+| AK | Beleg |
+|---|---|
+| Eingang unabhängig von der SSOT-Größe | `buildFixedSizeGraph(base, FIXED_NODES)` — Kopien bis `FIXED_NODES = 2000`, dann exakt abgeschnitten, nur Kanten mit beidseitig überlebenden Enden. Knotenzahl ist invariant; Kopie 0 bleibt vollständig, `FUNC-mutate` also unangetastet. |
+| Titel nennen die gemessene Größe | Titel sind Template-Literale über die zur Collection-Zeit geladene SSOT: *live SSOT (667 nodes / 1746 edges)* und *fixed 2000 nodes / 5232 edges*. Sie können nicht mehr veralten. |
+| Assertion auf `ms/Knoten`, Schwelle begründet | `MAX_MS_PER_NODE = 7`, hergeleitet im Test aus drei Messpunkten (1,77 · 4,60 · 9,52 ms/Knoten bei 667 · 2000 · 3335). |
+| Realgröße protokolliert ohne Assertion | Der `expect` im ersten Fall ist ersatzlos entfallen; Hang-Guard ist der 60-s-Timeout, im Kommentar benannt. Damit gilt der Docstring wieder. |
+| **Rot gesehen** | Regel-Pfad künstlich 4× (`evaluateRules()` viermal statt einmal): `AssertionError: expected 7.668110250000002 to be less than 7`. Ungeslowt grün bei **4,51–4,60 ms/Knoten**. Die Schwelle hat also Wirkung und ist nicht nur eine andere Zahl. |
+
+**Gemessen nach der Änderung:** live 667 Knoten → 1182 ms (1,77 ms/Knoten) · fixed 2000 Knoten →
+9205 ms (4,60 ms/Knoten). Die Kernaussage des Spikes ist unverändert lesbar: `read` bleibt bei ~70 ms
+über alle Größen, die Regelauswertung trägt die Superlinearität (n^1,93).
