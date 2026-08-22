@@ -39,6 +39,15 @@ const CFG = {
   arms: [
     { label: 'qwen-35b', executor: 'opencode', model: process.env.LOCAL_MODEL ?? 'qwen3.6-35b-a3b-mlx' },
     { label: 'opus5', executor: 'claude', model: process.env.FRONTIER_MODEL ?? 'claude-opus-5' },
+    // Reasoning-Modell im FRONTIER-Harness statt im Emissions-Treiber. These
+    // (executor-abschlussbericht.md, "zwei überraschende Befunde" Punkt 1): das enge
+    // Emissions-Regime hilft kleinen Modellen und BESCHNEIDET denkende — es nimmt ihnen
+    // erst-explorieren-dann-bauen. qwen3.8 denkt, also gehört es auf die Opus-Seite
+    // dieser Trennlinie. Voraussetzung ist erst jetzt erfüllt: der `claude -p`-Harness
+    // sprengte 2026-06 noch das lokale Fenster (SPIKE-GC-loop-executor-benchmark: @22k
+    // Overflow, @40k lauffähig) — qwen3.8 lädt mit 119k Kontext.
+    { label: 'qwen38-claude', executor: 'claude', local: true,
+      model: process.env.LOCAL_CLAUDE_MODEL ?? 'qwen3.8-27b-mlx@4bit' },
   ],
 };
 
@@ -87,7 +96,14 @@ function authorViaClaude(dir, arm) {
   mcp.mcpServers.graphcode.args = MCP_ARGS;
   writeFileSync(mcpPath, JSON.stringify(mcp, null, 2));
   const baseEnv = { ...process.env };
-  delete baseEnv.ANTHROPIC_BASE_URL; delete baseEnv.ANTHROPIC_AUTH_TOKEN; // frontier = native
+  if (arm.local) {
+    // Lokaler Arm im Claude-Code-Harness: LM Studio bedient ein Anthropic-kompatibles
+    // /v1/messages inkl. tool_use (verifiziert), also treibt `claude -p` das lokale Modell.
+    baseEnv.ANTHROPIC_BASE_URL = CFG.lmstudio;
+    baseEnv.ANTHROPIC_AUTH_TOKEN = 'lmstudio-local';
+  } else {
+    delete baseEnv.ANTHROPIC_BASE_URL; delete baseEnv.ANTHROPIC_AUTH_TOKEN; // frontier = native
+  }
   const t0 = Date.now();
   const r = spawnSync(
     CFG.claudeBin,
