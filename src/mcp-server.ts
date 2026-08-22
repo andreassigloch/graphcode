@@ -22,9 +22,8 @@ import type { ZodObject, ZodRawShape } from 'zod/v4';
 import type { AuditLog, Graph } from '@sigloch/graph-api-core';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 import { createHarness, type GraphCodeHarness } from './index.js';
-import { exportGraphJson } from './exporter.js';
 import { bindToolsToHarness, type MCPTool, type MCPToolRegistry } from './mcp-tools.js';
-import { registerAutoExport } from './auto-export.js';
+import { registerAutoExport, type AutoExportHandle } from './auto-export.js';
 import { StoreOwnershipError } from './store-lock.js';
 import { SessionLifecycle } from './session-lifecycle.js';
 import { superviseGve } from './gve.js';
@@ -75,9 +74,8 @@ export function buildMcpServer(harness: GraphCodeHarness, auditLog?: AuditLog): 
  * proxies (CR-GC-235). Returns the registry to bind to this session's stdio.
  */
 async function bootHost(
-  repoRoot: string,
   harness: GraphCodeHarness,
-): Promise<{ registry: MCPToolRegistry; socket: HostSocket }> {
+): Promise<{ registry: MCPToolRegistry; socket: HostSocket; autoExport: AutoExportHandle }> {
   if (harness.getGraph().nodes.length === 0) {
     try {
       const seeded = await harness.seedFromJson();
@@ -94,46 +92,26 @@ async function bootHost(
     } catch {
       // No committed graph in this repo yet — serve the empty store.
     }
-  } else {
-    // Store already seeded → it is the runtime SSOT (REQ-graph-is-ssot). The
-    // committed JSON is its generated export; under CR-GC-201 (gate-only writes)
-    // the JSON can change ONLY via graph_export, so it must never drift ahead of
-    // the store. We do NOT auto-reseed here (that would clobber un-exported gate
-    // mutations) — we WARN, so a stale store or a pending export is visible
-    // instead of silently served (the failure mode that froze the store at an
-    // old snapshot). To adopt a newer committed JSON: stop the server, remove
-    // .graphcode/kuzu*, restart (seed-on-empty re-imports it).
-    try {
-      const committed = readFileSync(join(repoRoot, 'docs/graph/graphcode.graph.json'), 'utf8');
-      // Der CR-GC-300 graphVersion-Stamp ist Metadatum des Exports, kein Modell-
-      // Inhalt — fuer den Drift-Vergleich strippen und kanonisch re-serialisieren.
-      const committedCanonical = ((): string => {
-        const parsed = JSON.parse(committed) as Record<string, unknown>;
-        delete parsed.graphVersion;
-        return JSON.stringify(parsed, null, 2) + '\n';
-      })();
-      if (exportGraphJson(harness.getGraph()) !== committedCanonical) {
-        process.stderr.write(
-          '[graphcode] WARN: Kuzu store differs from docs/graph/graphcode.graph.json — ' +
-          'either run graph_export (store has un-exported mutations) or re-seed ' +
-          '(committed JSON is newer: stop, rm .graphcode/kuzu*, restart).\n',
-        );
-      }
-    } catch {
-      // No committed JSON to compare against — nothing to warn about.
-    }
   }
+  // CR-GC-392: KEIN Abgleich gegen die committete JSON mehr. Der Store IST die Quelle
+  // (REQ-graph-is-ssot) — der Boot laedt ihn, fertig. Der fruehere Vergleich lud nichts
+  // und entschied nichts; er warnte nur, und schon das legte nahe, die Datei koenne
+  // mitreden. Sie kann es nicht: sie ist das Export-Artefakt fuer git, Diff und Viewer.
+  // Dass sie zurueckfallen kann, ist kein Abgleichs-, sondern ein Vollstaendigkeitsproblem
+  // des Exports — deshalb der flush() beim Shutdown weiter unten. Die JSON wird oben nur
+  // noch fuer den EINEN Fall gelesen, in dem sie die Quelle ist: ein frischer Clone ohne
+  // Store (seed-on-empty).
   const registry = bindToolsToHarness(harness);
   // Der Export folgt der Mutation (CR-GC-323) — entprellt + single-flight. NUR hier, im
   // gewählten Host: er allein besitzt den Store und schreibt. Ein Proxy oder eine
   // Test-Registry bindet dieselben Tools, darf davon aber nichts ins Repo schreiben.
-  registerAutoExport(harness, registry.graph_export);
+  const autoExport = registerAutoExport(harness, registry.graph_export);
   // ONE write channel (CR-GC-235): the elected host also serves later sessions
   // over the local socket shim — an internal hop, not a second API surface.
   const socket = await startHostSocket(registry, join(harness.getStoreDir(), HOST_SOCK_BASENAME));
   // Der Handle wird gebraucht, nicht weggeworfen: beim Sessionende muss die Socket-Datei
   // weg, sonst zeigt sie auf einen toten Host (CR-GC-370).
-  return { registry, socket };
+  return { registry, socket, autoExport };
 }
 
 /**
@@ -205,7 +183,12 @@ export async function serveStdio(opts?: {
     // Aufbaureihenfolge = Registrierungsreihenfolge; abgeraeumt wird rueckwaerts,
     // der Store-Lock also zuletzt (CR-GC-370).
     lifecycle.add({ name: 'store lock', close: () => harness.close() });
-    const { registry, socket } = await bootHost(repoRoot, harness);
+    const { registry, socket, autoExport } = await bootHost(harness);
+    // Der Export folgt der Mutation entprellt (250 ms). Ohne diesen flush faellt das
+    // Artefakt bei einem Shutdown innerhalb des Fensters einen Batch hinter den Store
+    // zurueck — genau die Divergenz, die niemand mehr abgleicht (CR-GC-392). Registriert
+    // NACH dem store lock, wird also VOR ihm geschlossen: der Export braucht den Store.
+    lifecycle.add({ name: 'auto-export flush', close: () => autoExport.flush() });
     lifecycle.add({ name: 'host.sock', close: () => socket.close() });
     bootedGraph = harness.getGraph();
     bridge = await maybeStartBridge(repoRoot, harness);
