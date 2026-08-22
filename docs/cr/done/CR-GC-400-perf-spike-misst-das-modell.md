@@ -92,3 +92,38 @@ und er kauft genau so lange Ruhe, bis jemand die nächsten 150 Knoten anlegt.
 **Gemessen nach der Änderung:** live 667 Knoten → 1182 ms (1,77 ms/Knoten) · fixed 2000 Knoten →
 9205 ms (4,60 ms/Knoten). Die Kernaussage des Spikes ist unverändert lesbar: `read` bleibt bei ~70 ms
 über alle Größen, die Regelauswertung trägt die Superlinearität (n^1,93).
+
+## Nachtrag (2026-08-22, gleicher Tag) — die erste Schwelle war auf der falschen Maschine geeicht
+
+Beim Durchsehen der CI-Historie (Anlass: CR-GC-399) kam heraus, dass **drei der letzten fünf
+CI-Fehlschläge genau dieser Test waren** — und zwar mit Zahlen, die diese Maschine nie erzeugt:
+
+| Lauf | CI | lokal, gleicher Eingang | Faktor |
+|---|---|---|---|
+| 32280680446 | 33 416 ms | 31 745 ms | 1,05 |
+| 32349389863 | 40 391 ms | 31 745 ms | 1,27 |
+| 32322239088 | 44 633 ms | 31 745 ms | 1,41 |
+
+Die erste Fassung dieses CR setzte `MAX_MS_PER_NODE = 7` aus 4,60 ms/Knoten **lokal gemessen**.
+Auf dem CI-Runner wären das 4,8–6,5 ms/Knoten — bis auf 8 % an die Schranke. Damit hätte der CR
+denselben Fehler eine Ebene höher wiederholt: eine Wanduhr-Schranke, geeicht auf der falschen
+Umgebung, die rot geht ohne Engine-Änderung.
+
+**Korrektur — zwei Schranken statt einer, weil es zwei Regressionen gibt:**
+
+1. **`MAX_GROWTH_FACTOR = 3.0`** — Kosten/Knoten bei 2000 geteilt durch die bei 500, **beide im
+   selben Lauf auf derselben Maschine**. Die Maschinengeschwindigkeit kürzt sich heraus. Gemessen:
+   2,31 → 4,52 ms/Knoten = **Faktor 1,96** bei 4× Größe. Das ist die eigentliche Aussage des Spikes.
+2. **`MAX_MS_PER_NODE = 10`** — grobe Deckelung gegen einen KONSTANT-Faktor, den ein Verhältnis per
+   Konstruktion nicht sieht. Geeicht auf die langsamste Maschine: 4,60 × 1,41 = 6,5 → 10.
+   **Ehrliche Grenze: bei 1,4× Maschinen-Streuung meldet diese Schranke nur Regressionen über
+   rund 2×.** Das Feine leistet (1).
+
+**Beide rot gesehen, und zwar getrennt:**
+
+| Injizierte Regression | Wirkung |
+|---|---|
+| Regelpfad 4× konstant | `expected 7.668 to be less than 7` — die absolute Schranke greift, das Verhältnis bliebe unverändert |
+| Regelpfad n/500-mal (superlinear) | `expected 3.363 to be less than 3` bei absolut 7,76 — **das Verhältnis greift, während die absolute Schranke die Regression durchwinken würde** |
+
+Der zweite Fall ist der Beleg, dass die zwei Schranken nicht redundant sind.

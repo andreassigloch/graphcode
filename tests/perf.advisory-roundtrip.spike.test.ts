@@ -40,27 +40,40 @@ import type { OntologyGraph } from '@sigloch/contracts/se';
  *  to stay well inside the test timeout. */
 const FIXED_NODES = 2000;
 
+/** Zweiter fester Punkt, 4x kleiner — er dient als MASCHINEN-EICHUNG (siehe
+ *  MAX_GROWTH_FACTOR), nicht als eigener Messwert. */
+const SMALL_NODES = 500;
+
 /**
- * Cost ceiling at FIXED_NODES, in ms per node, for the whole four-step round.
+ * ZWEI Schranken, weil zwei verschiedene Regressionen existieren — und weil eine
+ * einzige Wanduhr-Zahl auf der falschen Maschine geeicht wird.
  *
- * Derivation. The round is superlinear in node count -- measured 2026-08-22,
- * this machine, disk Kuzu:
- *    667 nodes / 1746 edges ->  1182 ms = 1.77 ms/node   (live SSOT)
- *   2000 nodes / 5232 edges ->  9205 ms = 4.60 ms/node   (FIXED_NODES)
- *   3335 nodes / 8730 edges -> 31745 ms = 9.52 ms/node   (5x clone, CR-GC-400)
- * 5x the nodes cost 22x the time (n^1.93) -- which is exactly why a per-node
- * figure is only comparable AT A FIXED SIZE, and why this ceiling is bound to
- * FIXED_NODES rather than to whatever the live model happens to be.
+ * Belegt (CI-Historie, drei Läufe am 2026-08-19/20): der GitHub-Runner brauchte
+ * fuer denselben Eingang 33 416 / 40 391 / 44 633 ms, wo diese Maschine 31 745 ms
+ * mass — Faktor 1,05 bis 1,41. Eine absolute ms/Knoten-Schranke, hier eng geeicht,
+ * geht dort rot, ohne dass sich an der Engine etwas geaendert hat. Genau der Fehler,
+ * den CR-GC-400 abschaffen will, nur eine Ebene hoeher.
  *
- * 7 = the 4.60 ms/node measured at FIXED_NODES x ~1.5 for machine variance.
- * Deliberately tight: a rule path that gets 2x slower lands at ~7.6 ms/node
- * and MUST fail here (verified by running the rule step 4x -- CR-GC-400 AK
- * "rot gesehen"). A looser bound would pass that regression silently.
+ * (1) MAX_GROWTH_FACTOR — die eigentliche Aussage. Kosten pro Knoten bei
+ *     FIXED_NODES geteilt durch die bei SMALL_NODES, BEIDE in DIESEM Lauf auf
+ *     DIESER Maschine gemessen: die Maschinengeschwindigkeit kuerzt sich heraus.
+ *     Gemessen 2026-08-22: 4,60 / 2,27 = 2,03 bei 4x Groesse. Schranke 3,0.
+ *     Faengt eine Verschlechterung der SKALIERUNG (die Regelauswertung wird
+ *     ueberlinearer) — unabhaengig davon, wie schnell die Maschine ist.
  *
- * This is an ENGINE ceiling, not a product target. It cannot drift with the
- * model: the input is FIXED_NODES nodes whatever the live SSOT does.
+ * (2) MAX_MS_PER_NODE — grobe Deckelung gegen einen Konstant-Faktor, den ein
+ *     Verhaeltnis per Konstruktion NICHT sieht (ein gleichmaessig 2x langsamerer
+ *     Regelpfad laesst das Verhaeltnis unveraendert). Geeicht auf die LANGSAMSTE
+ *     Maschine, die den Test faehrt: 4,60 lokal x 1,41 (CI, schlechtester
+ *     beobachteter Fall) = 6,5 -> Schranke 10.
+ *     EHRLICHE GRENZE: bei 1,4x Maschinen-Streuung kann diese Schranke nur
+ *     Regressionen groesser als rund 2x melden. Das Feine leistet (1).
+ *
+ * Beide sind ENGINE-Schranken, keine Produktziele, und beide haengen an festen
+ * Eingangsgroessen — kein Knoten, den jemand anlegt, bewegt sie.
  */
-const MAX_MS_PER_NODE = 7;
+const MAX_GROWTH_FACTOR = 3.0;
+const MAX_MS_PER_NODE = 10;
 
 function makeConfig(repoRoot: string): HarnessConfig {
   return {
@@ -190,17 +203,33 @@ describe('SPIKE-GC-advisory-roundtrip-latency', () => {
     report(`live-size, ${REAL_GRAPH.elements.length} nodes`, rounds, REAL_GRAPH.elements.length);
   }, 60_000);
 
-  it(`fixed ${FIXED_NODES} nodes / ${FIXED_GRAPH.traces.length} edges: 3 rounds, assert ms/node`, async () => {
-    tmp = mkdtempSync(join(tmpdir(), 'graphcode-spike-fixed-'));
+  /** Ein Messpunkt fester Groesse: eigener Store, messen, aufraeumen. */
+  async function measureAt(nodes: number, label: string): Promise<number> {
+    tmp = mkdtempSync(join(tmpdir(), `graphcode-spike-${nodes}-`));
     const storage = new KuzuAdapter({ ontology: SE_DESCRIPTOR, path: join(tmp, 'kuzu') });
     harness = new GraphCodeHarness(makeConfig(tmp), storage);
     await harness.initialize();
-    await harness.importGraph(FIXED_GRAPH as any);
-
+    await harness.importGraph(buildFixedSizeGraph(REAL_GRAPH, nodes) as any);
     const rounds: Awaited<ReturnType<typeof measureRound>>[] = [];
     for (let i = 0; i < 3; i++) rounds.push(await measureRound(harness, 'FUNC-mutate'));
+    const total = report(label, rounds, nodes);
+    await harness.close();
+    rmSync(tmp, { recursive: true, force: true });
+    tmp = '';
+    return total / nodes;
+  }
 
-    const total = report(`fixed, ${FIXED_NODES} nodes`, rounds, FIXED_NODES);
-    expect(total / FIXED_NODES).toBeLessThan(MAX_MS_PER_NODE);
-  }, 120_000);
+  it(`Skalierung ${SMALL_NODES} -> ${FIXED_NODES} Knoten: feste Eingaenge, Maschine kuerzt sich raus`, async () => {
+    const small = await measureAt(SMALL_NODES, `calibration, ${SMALL_NODES} nodes`);
+    const big = await measureAt(FIXED_NODES, `fixed, ${FIXED_NODES} nodes`);
+    const growth = big / small;
+    // eslint-disable-next-line no-console
+    console.log(
+      `[SPIKE scaling] ${small.toFixed(2)} -> ${big.toFixed(2)} ms/node ` +
+        `= Faktor ${growth.toFixed(2)} bei ${FIXED_NODES / SMALL_NODES}x Groesse ` +
+        `(Schranken: Faktor < ${MAX_GROWTH_FACTOR}, absolut < ${MAX_MS_PER_NODE} ms/Knoten)`,
+    );
+    expect(growth).toBeLessThan(MAX_GROWTH_FACTOR);
+    expect(big).toBeLessThan(MAX_MS_PER_NODE);
+  }, 240_000);
 });
