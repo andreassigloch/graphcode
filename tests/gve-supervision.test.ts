@@ -1,112 +1,173 @@
 /**
- * TEST-gve-supervision — das Dashboard wird am Leben gehalten (CR-GC-371).
+ * TEST-gve-supervision — das Dashboard gehoert dem Repo, nicht der Session (CR-GC-371/404).
  *
- * Der Auslöser: ein gesunder Host ohne Dashboard, weil der Viewer irgendwann nach dem
- * Start starb und das niemand bemerkte. Diese Tests pinnen den Neustart, seine Grenze
- * und die eine Stelle, an der NICHT neu gestartet werden darf — das Sessionende.
- * Spawn, Zeit und Timer sind injiziert.
+ * Der erste Auslöser (371): ein gesunder Host ohne Dashboard, weil der Viewer irgendwann
+ * nach dem Start starb und das niemand bemerkte. Der zweite (404): der Viewer hing am
+ * Gewinner der Store-Wahl — wer das aelteste Fenster schloss, nahm allen anderen offenen
+ * Sessions das Dashboard mit. Diese Tests pinnen beides: den Neustart samt Grenze, und
+ * dass erst die LETZTE Session das Licht ausmacht.
+ *
+ * Spawn, Zeit, Timer, Probe und Kill sind injiziert — kein echter Viewer, kein Netz,
+ * keine echte PID.
  *
  * @author andreas@siglochconsulting
  */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { EventEmitter } from 'node:events';
-import { mkdtempSync, rmSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, rmSync, writeFileSync, existsSync, realpathSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import type { spawn, ChildProcess } from 'node:child_process';
-import { superviseGve } from '../src/gve.js';
-
-/** Ein Kind, das man sterben lassen kann — `exit` ist das Ereignis, um das es geht. */
-class FakeChild extends EventEmitter {
-  pid = 4242;
-  die(signal: NodeJS.Signals | null = null, code: number | null = 1): void {
-    this.emit('exit', code, signal);
-  }
-}
+import { attachGve } from '../src/gve.js';
+import { liveSessions, rememberedViewerPid } from '../src/gve-sessions.js';
 
 describe('TEST-gve-supervision', () => {
   let repo: string;
-  let children: FakeChild[];
-  let timers: Array<() => void>;
+  let spawned: number[];
+  let killed: number[];
+  let ticks: Array<() => void>;
   let clock: number;
+  /** Beantwortet die Identitaets-Probe: `true` = ein Viewer bedient dieses Repo. */
+  let serving: boolean;
+  let nextPid: number;
 
   const resolveGve = () => '/opt/node_modules/@sigloch/graph-view-edit/bin/gve.mjs';
 
+  /** Ein Spawn, der nur seine PID hinterlaesst — der Viewer selbst ist hier nicht der Punkt. */
   const spawnImpl = (() => {
-    const child = new FakeChild();
-    children.push(child);
-    return child as unknown as ChildProcess;
+    const pid = nextPid++;
+    spawned.push(pid);
+    return { pid, on: () => undefined } as unknown as ChildProcess;
   }) as unknown as typeof spawn;
 
-  const deps = () => ({
+  /** Die Probe antwortet nur, solange `serving` gilt — sonst wie ein toter Port. */
+  const fetchImpl = (async () => {
+    if (!serving) throw new Error('ECONNREFUSED');
+    return { ok: true, json: async () => ({ repoRoot: realpathSync(repo) }) };
+  }) as unknown as typeof fetch;
+
+  /** Der Viewer ist da: URL-Datei geschrieben, Probe antwortet. */
+  function viewerCameUp(): void {
+    mkdirSync(join(repo, 'docs', 'views'), { recursive: true });
+    writeFileSync(join(repo, 'docs', 'views', 'dashboard.url'), 'http://localhost:4317/\n');
+    serving = true;
+  }
+
+  const deps = (pid?: number) => ({
     env: {},
     spawnImpl,
     resolveGve,
+    fetchImpl,
+    pid,
+    killImpl: (p: number) => void killed.push(p),
     now: () => clock,
-    setTimeoutImpl: ((fn: () => void) => {
-      timers.push(fn);
+    setIntervalImpl: ((fn: () => void) => {
+      ticks.push(fn);
       return { unref: () => undefined } as unknown as NodeJS.Timeout;
-    }) as unknown as typeof setTimeout,
+    }) as unknown as typeof setInterval,
   });
 
-  /** Lässt alle fälligen Neustart-Timer laufen (der Neustart selbst ist asynchron). */
-  async function runTimers(): Promise<void> {
-    const due = timers.splice(0);
-    due.forEach((fn) => fn());
+  /** Laesst jeden Poll einmal laufen (der Durchlauf selbst ist asynchron). */
+  async function poll(): Promise<void> {
+    clock += 30_000; // ein Poll spaeter — die Spawn-Reservierung ist abgelaufen
+    ticks.forEach((fn) => fn());
     await new Promise((r) => setTimeout(r, 0));
   }
 
   beforeEach(() => {
     repo = mkdtempSync(join(tmpdir(), 'gve-sup-'));
-    children = [];
-    timers = [];
+    spawned = [];
+    killed = [];
+    ticks = [];
     clock = 1_000_000;
+    serving = false;
+    nextPid = 4242;
   });
   afterEach(() => rmSync(repo, { recursive: true, force: true }));
 
-  it('startet den Viewer neu, wenn er unerwartet stirbt', async () => {
-    const handle = await superviseGve(repo, deps());
-    expect(children).toHaveLength(1);
-    children[0].die('SIGSEGV');
-    expect(timers).toHaveLength(1);
-    await runTimers();
-    expect(children).toHaveLength(2);
+  it('startet den Viewer, wenn keiner dieses Repo bedient', async () => {
+    const handle = await attachGve(repo, deps());
     expect(handle).not.toBeNull();
+    expect(spawned).toEqual([4242]);
+    expect(rememberedViewerPid(repo)).toBe(4242);
   });
 
-  it('gibt nach drei Fehlversuchen auf, statt endlos zu starten', async () => {
-    await superviseGve(repo, deps());
-    for (let i = 0; i < 3; i++) {
-      children[children.length - 1].die(null, 1);
-      await runTimers();
-    }
-    expect(children).toHaveLength(4); // Erststart + 3 Neustarts
-    children[children.length - 1].die(null, 1);
-    expect(timers).toHaveLength(0); // kein vierter Neustart
+  it('startet ihn neu, wenn er unbemerkt stirbt — auch ohne Eltern-Kind-Band', async () => {
+    await attachGve(repo, deps());
+    viewerCameUp();
+    await poll();
+    expect(spawned).toHaveLength(1); // bedient: kein zweiter Start
+    serving = false; // der Viewer stirbt, niemand bekommt ein 'exit'
+    await poll();
+    expect(spawned).toEqual([4242, 4243]);
   });
 
-  it('setzt das Budget zurueck, wenn ein Viewer lange genug lief', async () => {
-    await superviseGve(repo, deps());
-    for (let i = 0; i < 3; i++) {
-      children[children.length - 1].die(null, 1);
-      await runTimers();
-    }
-    clock += 120_000; // der vierte laeuft zwei Minuten
-    children[children.length - 1].die(null, 1);
-    expect(timers).toHaveLength(1); // Budget zurueckgesetzt: wird wieder gestartet
+  it('gibt nach drei Startversuchen auf, statt endlos zu starten', async () => {
+    await attachGve(repo, deps()); // Versuch 1
+    await poll(); // 2
+    await poll(); // 3
+    expect(spawned).toHaveLength(3);
+    await poll();
+    await poll();
+    expect(spawned).toHaveLength(3); // kein vierter
   });
 
-  it('startet NICHT neu, nachdem stop() den Viewer beendet hat (Sessionende)', async () => {
-    const handle = await superviseGve(repo, deps());
+  it('setzt das Budget zurueck, wenn ein Viewer lange genug bediente', async () => {
+    await attachGve(repo, deps());
+    await poll();
+    await poll();
+    expect(spawned).toHaveLength(3); // Budget aufgebraucht
+    viewerCameUp();
+    clock += 120_000; // der letzte lief zwei Minuten
+    await poll();
+    serving = false;
+    await poll();
+    expect(spawned).toHaveLength(4); // Budget zurueckgesetzt: wird wieder gestartet
+  });
+
+  it('zwei Sessions starten EINEN Viewer, nicht zwei (Spawn-Reservierung)', async () => {
+    await attachGve(repo, deps(process.pid));
+    await attachGve(repo, deps(process.ppid));
+    expect(spawned).toHaveLength(1);
+  });
+
+  it('das Ende EINER Session laesst den Viewer stehen, solange eine zweite lebt', async () => {
+    const a = await attachGve(repo, deps(process.pid));
+    const b = await attachGve(repo, deps(process.ppid));
+    expect(liveSessions(repo)).toHaveLength(2);
+    a!.stop();
+    expect(killed).toEqual([]); // <- der CR: das Dashboard ueberlebt das erste Fenster
+    expect(rememberedViewerPid(repo)).toBe(4242);
+    b!.stop();
+    expect(killed).toEqual([4242]); // erst die letzte macht das Licht aus
+    expect(rememberedViewerPid(repo)).toBeNull();
+    expect(liveSessions(repo)).toEqual([]);
+  });
+
+  it('beendet nur, was graphcode selbst gestartet hat (Hand-Start bleibt stehen)', async () => {
+    viewerCameUp(); // jemand hat `gve --repo .` von Hand gestartet
+    const handle = await attachGve(repo, deps());
+    expect(spawned).toEqual([]);
     handle!.stop();
-    children[0].die('SIGTERM');
-    expect(timers).toHaveLength(0);
-    expect(children).toHaveLength(1);
+    expect(killed).toEqual([]);
   });
 
-  it('liefert keinen Handle, wenn gar kein Viewer startet (Opt-out)', async () => {
-    const handle = await superviseGve(repo, { ...deps(), env: { GRAPHCODE_NO_GVE: '1' } });
+  it('raeumt den Viewer eines hart gekillten Hosts ab (der Waisen-Pfad)', async () => {
+    // Ein Host, den das OS erschlagen hat: sein Session-Eintrag bleibt liegen, sein
+    // Viewer laeuft weiter. Bisher fand ihn niemand mehr — jetzt zaehlt der Eintrag
+    // nicht mehr mit, und die naechste Session, die geht, macht das Licht aus.
+    const dead = await attachGve(repo, deps(0x7ffffffe)); // PID, die es nicht gibt
+    void dead;
+    expect(spawned).toEqual([4242]);
+    const live = await attachGve(repo, deps(process.pid));
+    expect(liveSessions(repo)).toEqual([process.pid]);
+    live!.stop();
+    expect(killed).toEqual([4242]);
+  });
+
+  it('liefert keinen Handle und traegt keine Session ein, wenn GVE abgeschaltet ist', async () => {
+    const handle = await attachGve(repo, { ...deps(), env: { GRAPHCODE_NO_GVE: '1' } });
     expect(handle).toBeNull();
-    expect(children).toHaveLength(0);
+    expect(spawned).toEqual([]);
+    expect(existsSync(join(repo, '.graphcode', 'sessions'))).toBe(false);
   });
 });

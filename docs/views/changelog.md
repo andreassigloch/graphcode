@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 163 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 164 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 163 CR · 155 done · 7 open.
+Total: 164 CR · 156 done · 7 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -223,4 +223,6 @@ Total: 163 CR · 155 done · 7 open.
 
 ## (unassigned)
 
-— none —
+| CR | status | name |
+|---|---|---|
+| `CR-GC-404` | done | Dashboard gehoert dem Repo, nicht dem ersten Fenster |

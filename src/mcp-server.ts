@@ -26,7 +26,7 @@ import { bindToolsToHarness, type MCPTool, type MCPToolRegistry } from './mcp-to
 import { registerAutoExport, type AutoExportHandle } from './auto-export.js';
 import { StoreOwnershipError } from './store-lock.js';
 import { SessionLifecycle } from './session-lifecycle.js';
-import { superviseGve } from './gve.js';
+import { attachGve } from './gve.js';
 import { startHostSocket, buildProxyRegistry, HOST_SOCK_BASENAME, type HostSocket } from './host-shim.js';
 import { HostBridge } from './viewer/host.js';
 import type { LiveUpdateEvent } from './emit.js';
@@ -193,10 +193,6 @@ export async function serveStdio(opts?: {
     bootedGraph = harness.getGraph();
     bridge = await maybeStartBridge(repoRoot, harness);
     if (bridge) lifecycle.add({ name: 'http bridge', close: () => bridge!.stop() });
-    // Beaufsichtigt, nicht nur gestartet: stirbt der Viewer mitten in der Session,
-    // kommt er von selbst zurueck (CR-GC-371).
-    const gve = await superviseGve(repoRoot);
-    if (gve) lifecycle.add({ name: 'gve dashboard', close: () => gve.stop() });
     return registry;
   }
 
@@ -215,6 +211,12 @@ export async function serveStdio(opts?: {
       `[graphcode] client: store owned by pid ${err.owner.pid} — proxying stdio to ${socketPath}\n`,
     );
   }
+  // Das Dashboard gehoert dem REPO, nicht dem Wahlgewinner (CR-GC-404): angehaengt wird
+  // in BEIDEN Zweigen — sonst nimmt das Fenster, das zufaellig als erstes startete, beim
+  // Schliessen allen anderen Sessions den Viewer mit. Zuletzt registriert heisst zuerst
+  // abgeraeumt: der Viewer geht vor dem Store-Lock, wie eh und je.
+  const gve = await attachGve(repoRoot);
+  if (gve) lifecycle.add({ name: 'gve dashboard', close: () => gve.stop() });
   const server = bindRegistryToMcpServer(registry);
   await server.connect(new StdioServerTransport());
 }

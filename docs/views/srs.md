@@ -4466,19 +4466,25 @@ priority: must · status: n/a
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-skills`
 
-#### 3.10.8  `FUNC-gve-supervise` — superviseGve
+#### 3.10.8  `FUNC-gve-sessions` — liveSessions
 
-Startet und ueberwacht den externen Viewer-Prozess und haengt ihn an die Sitzungs-Lebensdauer, damit kein verwaister Viewer zurueckbleibt. Aufrufer ist der MCP-Server beim Hochfahren.
+Fuehrt Buch, welche Sitzungen eines Repos noch leben, damit der Viewer dem Repo gehoert und nicht der einzelnen Sitzung. Eintraege toter Prozesse werden beim Lesen entfernt.
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-cli`
 
-#### 3.10.9  `FUNC-host-socket` — startHostSocket
+#### 3.10.9  `FUNC-gve-supervise` — attachGve
+
+Haengt eine Sitzung an das Dashboard des Repos: sorgt dafuer, dass genau ein Viewer laeuft, haelt ihn per Umfrage am Leben und beendet ihn erst, wenn die letzte Sitzung des Repos geht. Aufrufer ist der MCP-Server beim Hochfahren, in beiden Zweigen (Wahlgewinner wie Proxy).
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-cli`
+
+#### 3.10.10  `FUNC-host-socket` — startHostSocket
 
 Oeffnet den Socket, ueber den ein zweiter Prozess Schreibaufrufe an den Besitzer des Stores weiterreicht, statt ein zweites Datenbank-Handle zu oeffnen.
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-host-bridge`
 
-#### 3.10.10  `FUNC-load-config` — loadGraphcodeConfig
+#### 3.10.11  `FUNC-load-config` — loadGraphcodeConfig
 
 Liest die Repo-Konfiguration und liefert die Urteilsschwellen als Policy. Keine Schwelle steht als Literal im Regelcode; eine verschobene Policy kippt dasselbe Urteil auf unveraendertem Graphen.
 
@@ -4492,7 +4498,7 @@ priority: must · status: n/a
 
 Verification ◀ `TEST-target-profile` (integration) · `TEST-thresholds-from-config` (unit) · satisfy ◀ `FUNC-load-config` · allocate ▶ `MOD-harness`
 
-#### 3.10.11  `FUNC-tool-context` — createToolContext
+#### 3.10.12  `FUNC-tool-context` — createToolContext
 
 Stellt jedem Werkzeugaufruf seinen Kontext bereit: Aufrufer, Repo-Wurzel und die Weiterleitung an den Besitzerprozess.
 
@@ -4970,7 +4976,7 @@ allocate ◀ `FUNC-block-anschluss` · `FUNC-block-gate` · `FUNC-block-gedaecht
 
 bin `npx @sigloch/graphcode init/update/remove`: self-contained Installer. App-spezifisch. (REQ-npx-distribution)
 
-allocate ◀ `FUNC-bootstrap` · `FUNC-cli-dispatch` · `FUNC-collect-status` · `FUNC-gve-supervise` · `FUNC-harness-cli` · `FUNC-import-code-verb` · `FUNC-rewind` · `FUNC-run-verb` · `FUNC-session-shutdown` · `FUNC-upgrade` · satisfy ▶ `REQ-buildable-standalone`
+allocate ◀ `FUNC-bootstrap` · `FUNC-cli-dispatch` · `FUNC-collect-status` · `FUNC-gve-sessions` · `FUNC-gve-supervise` · `FUNC-harness-cli` · `FUNC-import-code-verb` · `FUNC-rewind` · `FUNC-run-verb` · `FUNC-session-shutdown` · `FUNC-upgrade` · satisfy ▶ `REQ-buildable-standalone`
 
 #### 6.4.2  `MOD-codec` — codec.ts — GraphCodeCodec
 
@@ -5556,7 +5562,7 @@ verify ▶ `REQ-single-kuzu-owner` · testRefs: `tests/gve-autostart.test.ts`
 
 ### 8.44  `TEST-gve-supervision` — Viewer wird am Leben gehalten
 
-Abnahme der Datei tests/gve-supervision.test.ts: stirbt der Viewer nach dem Start, startet der Host ihn neu, aber nur bis zu einer Grenze. Ausloeser war ein gesunder Host ohne Dashboard, den niemand bemerkte.
+Abnahme der Datei tests/gve-supervision.test.ts: der Viewer gehoert dem Repo. Geprueft werden Neustart nach unbemerktem Tod samt Versuchsgrenze, dass zwei Sitzungen nur einen Viewer starten, dass das Ende einer Sitzung ihn stehen laesst solange eine zweite lebt, und dass erst die letzte ihn beendet — und nur den, den graphcode selbst gestartet hat.
 
 verify ▶ `REQ-graceful-degradation` · testRefs: `tests/gve-supervision.test.ts`
 

@@ -1547,6 +1547,23 @@
       "commitRef": "f1b365b"
     },
     {
+      "id": "CR-GC-404",
+      "type": "CR",
+      "name": "Dashboard gehoert dem Repo, nicht dem ersten Fenster",
+      "description": "DONE 2026-08-22. Befund aus den MCP-Logs von graphcodedemo: ein Host haelt den Viewer von 14:05 bis 20:25, fuenf spaeter gestartete Sitzungen haengen als Proxy daran, und mit dem Fenster des Ersten ist das Dashboard fuer alle weg. Ursache war die Zuordnung: der Viewer gehoerte dem Gewinner der Store-Wahl und wurde beim Ende genau dieser Sitzung getoetet; die uebrigen Sitzungen holten ihn erst zurueck, wenn ein Werkzeugaufruf zufaellig auf den toten Socket lief. Ein uebernommener Viewer stand ausserdem unter gar keiner Aufsicht mehr. Umgesetzt: jede Sitzung traegt sich in .graphcode/sessions ein und sorgt selbst dafuer, dass genau ein Viewer laeuft; die Aufsicht ist eine Umfrage alle zehn Sekunden statt einer Eltern-Kind-Bindung, wodurch auch eine Sitzung den Tod des Viewers bemerkt, die ihn nicht gestartet hat; eine Startreservierung mit Ablauffrist verhindert, dass mehrere Sitzungen mehrere Viewer starten; beendet wird der Viewer erst von der letzten Sitzung, und nur wenn graphcode ihn selbst gestartet hat. Nebenbei geschlossen: der Viewer eines hart getoeteten Hosts wird jetzt abgeraeumt statt unsterblich weiterzulaufen. Die alte Kind-Aufsicht ist geloescht, kein Parallelpfad.",
+      "status": "done",
+      "created_at": "2026-08-22T00:00:00.000Z",
+      "maxFiles": 6,
+      "files": [
+        "src/gve.ts",
+        "src/gve-sessions.ts",
+        "src/mcp-server.ts",
+        "tests/gve-autostart.test.ts",
+        "tests/gve-supervision.test.ts",
+        "docs/cr/done/CR-GC-404-dashboard-gehoert-dem-repo.md"
+      ]
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -2565,14 +2582,26 @@
       }
     },
     {
+      "id": "FUNC-gve-sessions",
+      "type": "FUNC",
+      "name": "liveSessions",
+      "description": "Fuehrt Buch, welche Sitzungen eines Repos noch leben, damit der Viewer dem Repo gehoert und nicht der einzelnen Sitzung. Eintraege toter Prozesse werden beim Lesen entfernt.",
+      "status": "done",
+      "realRef": {
+        "file": "src/gve-sessions.ts",
+        "symbol": "liveSessions",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "FUNC-gve-supervise",
       "type": "FUNC",
-      "name": "superviseGve",
-      "description": "Startet und ueberwacht den externen Viewer-Prozess und haengt ihn an die Sitzungs-Lebensdauer, damit kein verwaister Viewer zurueckbleibt. Aufrufer ist der MCP-Server beim Hochfahren.",
+      "name": "attachGve",
+      "description": "Haengt eine Sitzung an das Dashboard des Repos: sorgt dafuer, dass genau ein Viewer laeuft, haelt ihn per Umfrage am Leben und beendet ihn erst, wenn die letzte Sitzung des Repos geht. Aufrufer ist der MCP-Server beim Hochfahren, in beiden Zweigen (Wahlgewinner wie Proxy).",
       "status": "done",
       "realRef": {
         "file": "src/gve.ts",
-        "symbol": "superviseGve",
+        "symbol": "attachGve",
         "lang": "ts"
       }
     },
@@ -5744,7 +5773,7 @@
       "id": "TEST-gve-supervision",
       "type": "TEST",
       "name": "Viewer wird am Leben gehalten",
-      "description": "Abnahme der Datei tests/gve-supervision.test.ts: stirbt der Viewer nach dem Start, startet der Host ihn neu, aber nur bis zu einer Grenze. Ausloeser war ein gesunder Host ohne Dashboard, den niemand bemerkte.",
+      "description": "Abnahme der Datei tests/gve-supervision.test.ts: der Viewer gehoert dem Repo. Geprueft werden Neustart nach unbemerktem Tod samt Versuchsgrenze, dass zwei Sitzungen nur einen Viewer starten, dass das Ende einer Sitzung ihn stehen laesst solange eine zweite lebt, und dass erst die letzte ihn beendet — und nur den, den graphcode selbst gestartet hat.",
       "testRefs": [
         {
           "file": "tests/gve-supervision.test.ts",
@@ -10486,6 +10515,21 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-404",
+      "target": "FUNC-gve-sessions",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-404",
+      "target": "FUNC-gve-supervise",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-404",
+      "target": "MOD-cli",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -13318,6 +13362,11 @@
       "target": "REQ-target-shifts-ranking",
       "type": "satisfy",
       "weight": "1"
+    },
+    {
+      "source": "FUNC-gve-sessions",
+      "target": "MOD-cli",
+      "type": "allocate"
     },
     {
       "source": "FUNC-gve-supervise",
@@ -16912,5 +16961,5 @@
       "weight": "1"
     }
   ],
-  "graphVersion": 184
+  "graphVersion": 188
 }

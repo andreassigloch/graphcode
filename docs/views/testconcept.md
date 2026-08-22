@@ -14,7 +14,7 @@
           ╱  UC /   ╲       Use-case level · 9 UC
          ╱integration╲      ⚠ 9 / 9 UC exercised by a scenario test
         ╱────────────╲      ✗ 83/112 FUNC↔FUNC connections tested  ← GAP
-       ╱  Function /   ╲     Function level · 102 FUNC
+       ╱  Function /   ╲     Function level · 103 FUNC
       ╱      unit       ╲
      ╱───────────────────╲
 ```
@@ -24,7 +24,7 @@
 | System | SYS (1) | E2E | 49 | 49 / 1 | ✓ |
 | Use-case | UC (9) | acceptance / integration | 93 | 9 / 9 scenario | ✓ |
 | Integration | FUNC↔FUNC (112 conn) | integration (chain) | 93 | 83 / 112 connections | ✗ 29 uncovered |
-| Function | FUNC (102) | unit | 85 | 102 / 102 | ✓ |
+| Function | FUNC (103) | unit | 85 | 103 / 103 | ✓ |
 | (support) | — | conformance | 4 | codec round-trip | ✓ |
 
 > GENERATED — TEST level derived from the graph position of the REQ it verifies (SYS/UC/FUNC/FCHAIN),

@@ -298,6 +298,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-341` | done | Steuerungsnachweis II: Regel-Korrektheit und Prozess-Ratsche | `FUNC-compute-phase-readiness` · `FUNC-mutate` · `REQ-monotone-convergence` · `REQ-phase-gate-not-skippable` · `REQ-single-write-door` |
 | `CR-GC-342` | done | Eigenes Modell: Ableitungskette der Anforderungen | `FUNC-mutate` · `REQ-graph-context-replaces-reading` · `REQ-one-driver-local-and-frontier` |
 | `CR-GC-343` | done | Nachdokumentation ausgelieferter Funktion | `FUNC-export-markdown` · `REQ-published-counts-match-code` |
+| `CR-GC-404` | done | Dashboard gehoert dem Repo, nicht dem ersten Fenster | `FUNC-gve-sessions` · `FUNC-gve-supervise` · `MOD-cli` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

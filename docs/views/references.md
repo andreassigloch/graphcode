@@ -580,6 +580,9 @@
 | `CR-GC-343` | relation | `FUNC-export-markdown` |
 | `CR-GC-343` | relation | `MS-6-adoption` |
 | `CR-GC-343` | relation | `REQ-published-counts-match-code` |
+| `CR-GC-404` | relation | `FUNC-gve-sessions` |
+| `CR-GC-404` | relation | `FUNC-gve-supervise` |
+| `CR-GC-404` | relation | `MOD-cli` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-suggest` |
@@ -1081,6 +1084,7 @@
 | `FUNC-graph-suggest` | satisfy | `REQ-applied-suggestion-moves-target` |
 | `FUNC-graph-suggest` | satisfy | `REQ-small-model-viable` |
 | `FUNC-graph-suggest` | satisfy | `REQ-target-shifts-ranking` |
+| `FUNC-gve-sessions` | allocate | `MOD-cli` |
 | `FUNC-gve-supervise` | allocate | `MOD-cli` |
 | `FUNC-harness-cli` | allocate | `MOD-cli` |
 | `FUNC-harness-cli` | io | `FLOW-install-result` |

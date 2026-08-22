@@ -1,5 +1,5 @@
 /**
- * TEST-gve-autostart — maybeStartGve guards (gve.ts).
+ * TEST-gve-autostart — ensureViewer guards (gve.ts).
  *
  * The elected host auto-starts the GVE dashboard by default; these tests pin
  * the guards that keep that safe: opt-out env, test-runner suppression,
@@ -16,7 +16,8 @@ import { mkdtempSync, mkdirSync, writeFileSync, rmSync, realpathSync } from 'nod
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import type { spawn, ChildProcess } from 'node:child_process';
-import { maybeStartGve } from '../src/gve.js';
+import { ensureViewer } from '../src/gve.js';
+import { SPAWN_LOCK_TTL_MS } from '../src/gve-sessions.js';
 
 type SpawnCall = { bin: string; args: string[] };
 
@@ -51,14 +52,14 @@ describe('TEST-gve-autostart', () => {
   afterEach(() => rmSync(repo, { recursive: true, force: true }));
 
   it('GRAPHCODE_NO_GVE=1 skips the spawn (config opt-out)', async () => {
-    const child = await maybeStartGve(repo, { env: { GRAPHCODE_NO_GVE: '1' }, spawnImpl: fakeSpawn(calls) });
-    expect(child).toBeNull();
+    const r = await ensureViewer(repo, { env: { GRAPHCODE_NO_GVE: '1' }, spawnImpl: fakeSpawn(calls) });
+    expect(r.kind).toBe('unavailable');
     expect(calls).toHaveLength(0);
   });
 
   it('never spawns under a test/CI runner (VITEST / CI env)', async () => {
     for (const env of [{ VITEST: 'true' }, { CI: 'true' }]) {
-      expect(await maybeStartGve(repo, { env, spawnImpl: fakeSpawn(calls) })).toBeNull();
+      expect((await ensureViewer(repo, { env, spawnImpl: fakeSpawn(calls) })).kind).toBe('unavailable');
     }
     expect(calls).toHaveLength(0);
   });
@@ -66,12 +67,12 @@ describe('TEST-gve-autostart', () => {
   it('a dashboard.url serving THIS repo means already-serving — no second spawn', async () => {
     mkdirSync(join(repo, 'docs', 'views'), { recursive: true });
     writeFileSync(join(repo, 'docs', 'views', 'dashboard.url'), 'http://localhost:4317/\n');
-    const child = await maybeStartGve(repo, {
+    const r = await ensureViewer(repo, {
       env: {},
       spawnImpl: fakeSpawn(calls),
       fetchImpl: probe({ ok: true, repoRoot: realpathSync(repo) }),
     });
-    expect(child).toBeNull();
+    expect(r.kind).toBe('serving');
     expect(calls).toHaveLength(0);
     expect(probed).toEqual(['http://localhost:4317/api/dashboard']);
   });
@@ -81,12 +82,12 @@ describe('TEST-gve-autostart', () => {
     // the viewer reports the physical one, the caller may hold either.
     mkdirSync(join(repo, 'docs', 'views'), { recursive: true });
     writeFileSync(join(repo, 'docs', 'views', 'dashboard.url'), 'http://localhost:4317/\n');
-    const child = await maybeStartGve(repo, {
+    const r = await ensureViewer(repo, {
       env: {},
       spawnImpl: fakeSpawn(calls),
       fetchImpl: probe({ ok: true, repoRoot: repo }),
     });
-    expect(child).toBeNull();
+    expect(r.kind).toBe('serving');
     expect(calls).toHaveLength(0);
   });
 
@@ -95,7 +96,7 @@ describe('TEST-gve-autostart', () => {
     // routinely answered by a foreign viewer that bumped onto that port.
     mkdirSync(join(repo, 'docs', 'views'), { recursive: true });
     writeFileSync(join(repo, 'docs', 'views', 'dashboard.url'), 'http://localhost:4317/\n');
-    await maybeStartGve(repo, {
+    await ensureViewer(repo, {
       env: {},
       spawnImpl: fakeSpawn(calls),
       resolveGve,
@@ -112,9 +113,11 @@ describe('TEST-gve-autostart', () => {
   it('an instance without repoRoot is unidentifiable — spawn (pre-CR-GVE-237 viewer, non-GVE server)', async () => {
     mkdirSync(join(repo, 'docs', 'views'), { recursive: true });
     writeFileSync(join(repo, 'docs', 'views', 'dashboard.url'), 'http://localhost:4317/\n');
+    let clock = 1_000_000;
     for (const answer of [{ ok: true, repoRoot: undefined }, { ok: false, repoRoot: undefined }]) {
       calls.length = 0;
-      await maybeStartGve(repo, { env: {}, spawnImpl: fakeSpawn(calls), fetchImpl: probe(answer) });
+      clock += SPAWN_LOCK_TTL_MS + 1; // die Reservierung des vorigen Laufs ist abgelaufen
+      await ensureViewer(repo, { env: {}, spawnImpl: fakeSpawn(calls), fetchImpl: probe(answer), now: () => clock });
       expect(calls).toHaveLength(1);
     }
   });
@@ -122,7 +125,7 @@ describe('TEST-gve-autostart', () => {
   it('a STALE dashboard.url (probe fails) falls through to a fresh spawn', async () => {
     mkdirSync(join(repo, 'docs', 'views'), { recursive: true });
     writeFileSync(join(repo, 'docs', 'views', 'dashboard.url'), 'http://localhost:1/\n');
-    await maybeStartGve(repo, {
+    await ensureViewer(repo, {
       env: {},
       spawnImpl: fakeSpawn(calls),
       resolveGve,
@@ -134,7 +137,7 @@ describe('TEST-gve-autostart', () => {
   });
 
   it('starts the INSTALLED viewer with this node — no npx, no second download (CR-GC-369)', async () => {
-    await maybeStartGve(repo, { env: {}, spawnImpl: fakeSpawn(calls), resolveGve });
+    await ensureViewer(repo, { env: {}, spawnImpl: fakeSpawn(calls), resolveGve });
     expect(calls).toEqual([
       {
         bin: process.execPath,
@@ -144,26 +147,26 @@ describe('TEST-gve-autostart', () => {
   });
 
   it('resolves the viewer entry from the real dependency tree', async () => {
-    await maybeStartGve(repo, { env: {}, spawnImpl: fakeSpawn(calls) });
+    await ensureViewer(repo, { env: {}, spawnImpl: fakeSpawn(calls) });
     expect(calls).toHaveLength(1);
     expect(calls[0].bin).toBe(process.execPath);
     expect(calls[0].args[0]).toMatch(/graph-view-edit[/\\]bin[/\\]gve\.mjs$/);
   });
 
   it('an unresolvable viewer warns and serves without a dashboard — the gate stays up', async () => {
-    const child = await maybeStartGve(repo, {
+    const r = await ensureViewer(repo, {
       env: {},
       spawnImpl: fakeSpawn(calls),
       resolveGve: () => {
         throw new Error('MODULE_NOT_FOUND');
       },
     });
-    expect(child).toBeNull();
+    expect(r.kind).toBe('unavailable');
     expect(calls).toHaveLength(0);
   });
 
   it('GRAPHCODE_GVE_BIN overrides the launch command (space-split)', async () => {
-    await maybeStartGve(repo, {
+    await ensureViewer(repo, {
       env: { GRAPHCODE_GVE_BIN: 'node /opt/gve/bin/gve.mjs' },
       spawnImpl: fakeSpawn(calls),
     });
@@ -178,7 +181,7 @@ describe('TEST-gve-autostart', () => {
       SIGTERM: process.listenerCount('SIGTERM'),
       SIGHUP: process.listenerCount('SIGHUP'),
     };
-    await maybeStartGve(repo, { env: {}, spawnImpl: fakeSpawn(calls), resolveGve });
+    await ensureViewer(repo, { env: {}, spawnImpl: fakeSpawn(calls), resolveGve });
     expect(calls).toHaveLength(1);
     expect({
       exit: process.listenerCount('exit'),

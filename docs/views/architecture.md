@@ -55,7 +55,8 @@
 | `FUNC-graph-export-snapshot` | FUNC | graph_export(views?) |
 | `FUNC-graph-impact` | FUNC | graph_impact(id, depth?) |
 | `FUNC-graph-suggest` | FUNC | graph_suggest(weights) |
-| `FUNC-gve-supervise` | FUNC | superviseGve |
+| `FUNC-gve-sessions` | FUNC | liveSessions |
+| `FUNC-gve-supervise` | FUNC | attachGve |
 | `FUNC-harness-cli` | FUNC | graphcode init/update/remove |
 | `FUNC-health-endpoint` | FUNC | healthEndpoint() |
 | `FUNC-host-socket` | FUNC | startHostSocket |
@@ -180,6 +181,7 @@
 | `FUNC-graph-export-snapshot` | `MOD-mcp-tools` |
 | `FUNC-graph-impact` | `MOD-mcp-tools` |
 | `FUNC-graph-suggest` | `MOD-mcp-tools` |
+| `FUNC-gve-sessions` | `MOD-cli` |
 | `FUNC-gve-supervise` | `MOD-cli` |
 | `FUNC-harness-cli` | `MOD-cli` |
 | `FUNC-health-endpoint` | `MOD-host-bridge` |
