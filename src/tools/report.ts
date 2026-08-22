@@ -33,7 +33,7 @@ import {
   type ReadinessReport,
   type PhaseGateReadiness,
 } from '../readiness.js';
-import { scoreReadinessWithConformance, conformanceViolations } from '../conformance.js';
+import { evaluateAll, readinessOf, stripViolationContext, type Finding } from '../evaluation.js';
 import { loadTargetProfile, intentCoverage, type AnchorCoverage } from '../target-profile.js';
 import { helpEntry, contextualHelp, type HelpEntry, type ContextualMeasure } from '../viewer/help.js';
 import { formatEExampleFor } from '../authoring-example.js';
@@ -46,11 +46,37 @@ import type { ToolContext } from '../tool-context.js';
 // Input schemas
 // -------------------------------------------------------------------------
 
-const RulesEvaluateInputSchema = z.looseObject({});
+/**
+ * Detailtiefe der Lese-Flächen (CR-GC-398) — WÖRTLICH derselbe Parameter, den
+ * `graph_mutate` seit CR-GC-309 trägt. Anlass: sechsmal in einer Sitzung ist ein
+ * Tool-Result übergelaufen (750–850 KB bei 667 Knoten), weil `context` mit seinen
+ * candidate_targets den Löwenanteil der Bytes stellt und die Lese-Tools als
+ * einzige keine Projektion hatten.
+ */
+const detailField = z
+  .enum(['summary', 'full'])
+  .default('full')
+  .describe(
+    'full (Default) = das ungekürzte Finding inkl. `context` (candidate_targets/existing_traces). ' +
+      'summary lässt `context` weg — ruleId, severity, message, fixHint, elementId und source ' +
+      'bleiben, also alles zum Verstehen und Reparieren; `context` stellt den Löwenanteil der ' +
+      'Antwortbytes (gemessen: Ergebnisse über 750 KB bei 667 Knoten). Gleiche Semantik wie ' +
+      'graph_mutate.violations, aber SPIEGELVERKEHRTER Default: graph_mutate kürzt per Default, ' +
+      'die Diagnose-Tools liefern per Default voll — das ist die Zusage aus CR-GC-309 ("wer ' +
+      'candidate_targets braucht, fragt rules_get_violations"), verankert in mcp.mutate-violations. ' +
+      'Bei drohendem Überlauf hier explizit summary anfordern.',
+  );
+
+/** Default-Auflösung für Direktaufrufe des Handlers (Tests, In-Process) — dort
+ *  läuft kein Zod-Parse, der den Schema-Default einsetzen würde. */
+const detailOf = (d: 'summary' | 'full' | undefined): 'summary' | 'full' => d ?? 'full';
+
+const RulesEvaluateInputSchema = z.object({ detail: detailField });
 const GraphNextStepInputSchema = z.looseObject({});
 
 const RulesGetViolationsInputSchema = z.object({
   severity: z.enum(['error', 'warning', 'info']).optional(),
+  detail: detailField,
 });
 
 const GraphReadinessInputSchema = z.object({
@@ -99,18 +125,32 @@ const GraphTestsInputSchema = z.object({
 export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
   const { harness, auditLog, graphVersion } = ctx;
 
-  const rules_evaluate: MCPTool<z.infer<typeof RulesEvaluateInputSchema>, { violations: RuleViolation[] }> = {
+  /** Projektion der EINEN Ergebnisliste — nie eine zweite Erhebung (CR-GC-398). */
+  const project = (findings: Finding[], detail: 'summary' | 'full'): Finding[] =>
+    detail === 'full' ? findings : stripViolationContext(findings);
+
+  const rules_evaluate: MCPTool<
+    z.infer<typeof RulesEvaluateInputSchema>,
+    { violations: Finding[]; skipped: string[] }
+  > = {
     name: 'rules_evaluate',
-    description: 'Evaluate V3_RULES against the current in-memory graph. Read-only; does not mutate.',
+    description:
+      'Evaluate the governed graph: V3_RULES (in-memory) PLUS the RC code-conformance rules ' +
+      '(realRef/testRefs resolved against the real source tree). Read-only; does not mutate. ' +
+      'Every finding carries `source` ("rules" | "conformance"); `skipped` names the sources that ' +
+      'could NOT be evaluated (e.g. no readable repoRoot) — an empty `skipped` is what makes the ' +
+      'count interpretable (CR-GC-398). Identical population to rules_get_violations and ' +
+      'graph_readiness.violationsByRule; they differ only in filter and aggregation.',
     inputSchema: RulesEvaluateInputSchema,
-    async handler(_input) {
-      return { violations: harness.evaluateRules() };
+    async handler(input) {
+      const ev = evaluateAll(harness);
+      return { violations: project(ev.findings, detailOf(input.detail)), skipped: ev.skipped };
     },
   };
 
   const rules_get_violations: MCPTool<
     z.infer<typeof RulesGetViolationsInputSchema>,
-    { violations: RuleViolation[]; total: number }
+    { violations: Finding[]; total: number; skipped: string[] }
   > = {
     name: 'rules_get_violations',
     description:
@@ -120,9 +160,11 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
       'a TEST/FUNC to link.',
     inputSchema: RulesGetViolationsInputSchema,
     async handler(input) {
-      let violations = harness.evaluateRules();
-      if (input.severity) violations = violations.filter((v) => v.severity === input.severity);
-      return { violations, total: violations.length };
+      const ev = evaluateAll(harness);
+      const matched = input.severity
+        ? ev.findings.filter((v) => v.severity === input.severity)
+        : ev.findings;
+      return { violations: project(matched, detailOf(input.detail)), total: matched.length, skipped: ev.skipped };
     },
   };
 
@@ -178,6 +220,9 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
        * UC/REQ/FUNC adressiert ist. KPI, NIE ein Gate-Blocker — Abdeckung sagt
        * "adressiert", nicht "gut gelöst". null ohne Config/intentAnchors. */
       intentCoverage: AnchorCoverage[] | null;
+      /** CR-GC-398: die Quellen, die NICHT ausgewertet wurden. Leer = vollständig.
+       * Ohne dieses Feld ist violationsByRule nicht interpretierbar. */
+      skipped: string[];
     }
   > = {
     name: 'graph_readiness',
@@ -210,7 +255,9 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
       '+ the MS nodes + element status.',
     inputSchema: GraphReadinessInputSchema,
     async handler(input) {
-      const report = scoreReadinessWithConformance(harness);
+      // EINE Erhebung, drei Ableitungen (Report, Phase-Gates, skipped) — CR-GC-398.
+      const ev = evaluateAll(harness);
+      const report = readinessOf(ev, harness.getGraph());
       const phaseReadiness = computePhaseReadiness(report.violations);
       // Intent-Coverage (CR-GC-295): nur wenn die Config bestätigte Anker trägt;
       // der Loader prüft dabei auch die Zielkonflikt-Paare (Warning, kein Block).
@@ -228,6 +275,7 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
         [DIMENSION_READINESS_NAME]: dimensionReadiness(),
         graphVersion: graphVersion(),
         intentCoverage: coverage,
+        skipped: ev.skipped,
       };
     },
   };
@@ -343,12 +391,10 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
         }
         return entry;
       }
-      return {
-        measures: contextualHelp(scoreReadinessWithConformance(harness), [
-          ...harness.evaluateRules(),
-          ...conformanceViolations(harness),
-        ]),
-      };
+      // EINE Erhebung für Report UND Maßnahmenliste (CR-GC-398) — vorher liefen
+      // hier zwei Auswertungen nebeneinander, die auseinanderlaufen konnten.
+      const ev = evaluateAll(harness);
+      return { measures: contextualHelp(readinessOf(ev, harness.getGraph()), ev.findings) };
     },
   };
 

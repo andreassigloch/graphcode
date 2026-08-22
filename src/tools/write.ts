@@ -17,6 +17,7 @@ import { TestRefsSchema } from '@sigloch/contracts/se';
 import { readBranchLog, replayBranchLog, type MergeReport } from '../merge.js';
 import type { MCPTool, MCPToolRegistry } from '../mcp-tools.js';
 import { computeSteeringDelta, takeSteeringSnapshot, type SteeringDelta } from '../steering-snapshot.js';
+import { stripViolationContext } from '../evaluation.js';
 import type { ToolContext } from '../tool-context.js';
 
 // -------------------------------------------------------------------------
@@ -98,10 +99,9 @@ const GraphMutateInputSchema = z
  * eine undurchsichtige.
  */
 function summarizeViolations<T extends { violations: MutateResult['violations'] }>(result: T): T {
-  return {
-    ...result,
-    violations: result.violations.map(({ context: _context, ...rest }) => rest),
-  };
+  // CR-GC-398: EINE Implementierung der Projektion, geteilt mit rules_evaluate /
+  // rules_get_violations — sonst entsteht sie dreimal leicht verschieden.
+  return { ...result, violations: stripViolationContext(result.violations) };
 }
 
 /** Flat realize affordance (CR-GC-216) — the write-twin of graph_context, no nested union. */

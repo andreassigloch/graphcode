@@ -13,9 +13,9 @@
  *     only. Multi-language swap point for CR-GC-254 (ast-grep).
  *   - `conformanceViolations` : run the contracts RC rules over the facts and
  *     map them onto the harness RuleViolation shape.
- *   - `scoreReadinessWithConformance` : the product-facing readiness — V3_RULES
- *     violations (L2 gate) merged with RC violations, so drift shows up in
- *     `violationsByRule`, the CDR/TRR gates and the dashboard.
+ *
+ * Die ZUSAMMENFÜHRUNG beider Quellen (Graph-Regeln + RC) ist seit CR-GC-398 nicht
+ * mehr hier, sondern in `evaluation.ts` — eine Auswertungsfläche, drei Projektionen.
  *
  * `typescript` is a runtime dependency of this path (moved from devDeps in
  * CR-GC-253): a governance harness that resolves code bindings parses code at
@@ -40,7 +40,6 @@ import {
 } from '@sigloch/contracts/se';
 import type { RuleViolation } from '@sigloch/contracts/harness';
 import type { Graph } from '@sigloch/graph-api-core';
-import { computeReadiness, type ReadinessReport } from './readiness.js';
 
 type CGraph = Pick<Graph, 'nodes' | 'edges'>;
 
@@ -329,12 +328,7 @@ export function conformanceViolations(harness: Pick<ConformanceHarness, 'getGrap
   }));
 }
 
-/**
- * Product-facing readiness: V3_RULES (L2 gate) + RC conformance in ONE report.
- * Every readiness consumer (graph_readiness, graph_help, dashboard) goes
- * through this — plain `scoreReadiness` stays the pure/browser-safe primitive.
- */
-export function scoreReadinessWithConformance(harness: ConformanceHarness): ReadinessReport {
-  const violations = [...harness.evaluateRules(), ...conformanceViolations(harness)];
-  return computeReadiness(violations, harness.getGraph());
-}
+// `scoreReadinessWithConformance` ist nach `evaluation.ts` gewandert (CR-GC-398):
+// die Zusammenführung beider Quellen ist ab jetzt EINE Fläche, und die lebt dort.
+// Dieses Modul liefert nur noch die Konformanz-QUELLE (`conformanceViolations`),
+// nie eine zweite Gesamtauswertung.
