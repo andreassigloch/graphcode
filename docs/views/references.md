@@ -742,9 +742,12 @@
 | `FLOW-capture-draft` | io | `FUNC-mutate` |
 | `FLOW-capture-draft` | relation | `SCHEMA-ontology-graph` |
 | `FLOW-cli-command` | io | `FUNC-claim-store-lock` |
+| `FLOW-cli-command` | io | `FUNC-cli-dispatch` |
 | `FLOW-cli-command` | io | `FUNC-harness-cli` |
+| `FLOW-cli-command` | io | `FUNC-import-code-verb` |
 | `FLOW-cli-command` | io | `FUNC-rewind` |
 | `FLOW-cli-command` | io | `FUNC-run-executor` |
+| `FLOW-cli-command` | io | `FUNC-run-verb` |
 | `FLOW-cli-command` | relation | `SCHEMA-cli-command` |
 | `FLOW-committed-graph` | io | `FUNC-emit-trajectory` |
 | `FLOW-committed-graph` | io | `FUNC-emit-update-event` |
@@ -774,6 +777,7 @@
 | `FLOW-fit-advisory` | io | `FUNC-mutate` |
 | `FLOW-fit-advisory` | io | `FUNC-rank-candidates` |
 | `FLOW-fit-advisory` | relation | `SCHEMA-fit-advisory` |
+| `FLOW-formatE-artifact` | io | `FUNC-bootstrap` |
 | `FLOW-formatE-artifact` | io | `FUNC-decode` |
 | `FLOW-formatE-artifact` | relation | `SCHEMA-format-e` |
 | `FLOW-formatE-candidates` | io | `FUNC-decode` |
@@ -975,6 +979,9 @@
 | `FUNC-block-se-steuerung` | compose | `FUNC-se-review` |
 | `FUNC-block-se-steuerung` | compose | `FUNC-se-status` |
 | `FUNC-block-se-steuerung` | compose | `FUNC-se-trade` |
+| `FUNC-bootstrap` | allocate | `MOD-cli` |
+| `FUNC-bootstrap` | io | `FLOW-bootstrap-result` |
+| `FUNC-bootstrap` | satisfy | `REQ-bootstrap-through-gate` |
 | `FUNC-broadcast-diff` | allocate | `MOD-host-bridge` |
 | `FUNC-broadcast-diff` | satisfy | `REQ-versioned-broadcast` |
 | `FUNC-build-round-injection` | allocate | `MOD-executor` |
@@ -986,6 +993,8 @@
 | `FUNC-claim-store-lock` | allocate | `MOD-harness` |
 | `FUNC-claim-store-lock` | io | `FLOW-store-ownership` |
 | `FUNC-claim-store-lock` | satisfy | `REQ-single-kuzu-owner` |
+| `FUNC-cli-dispatch` | allocate | `MOD-cli` |
+| `FUNC-cli-dispatch` | satisfy | `REQ-npx-distribution` |
 | `FUNC-close-store` | allocate | `MOD-harness` |
 | `FUNC-close-store` | io | `FLOW-committed-graph` |
 | `FUNC-close-store` | satisfy | `REQ-single-kuzu-owner` |
@@ -1072,6 +1081,7 @@
 | `FUNC-graph-suggest` | satisfy | `REQ-applied-suggestion-moves-target` |
 | `FUNC-graph-suggest` | satisfy | `REQ-small-model-viable` |
 | `FUNC-graph-suggest` | satisfy | `REQ-target-shifts-ranking` |
+| `FUNC-gve-supervise` | allocate | `MOD-cli` |
 | `FUNC-harness-cli` | allocate | `MOD-cli` |
 | `FUNC-harness-cli` | io | `FLOW-install-result` |
 | `FUNC-harness-cli` | satisfy | `REQ-install-idempotent` |
@@ -1093,6 +1103,8 @@
 | `FUNC-import-code` | allocate | `MOD-skills` |
 | `FUNC-import-code` | io | `FLOW-bulk-formatE` |
 | `FUNC-import-code` | satisfy | `REQ-no-extraction` |
+| `FUNC-import-code-verb` | allocate | `MOD-cli` |
+| `FUNC-import-code-verb` | satisfy | `REQ-no-extraction` |
 | `FUNC-import-doc` | allocate | `MOD-skills` |
 | `FUNC-import-doc` | io | `FLOW-bulk-formatE` |
 | `FUNC-import-doc` | satisfy | `REQ-no-extraction` |
@@ -1161,6 +1173,8 @@
 | `FUNC-run-executor` | allocate | `MOD-executor` |
 | `FUNC-run-executor` | io | `FLOW-mutate-cmd` |
 | `FUNC-run-executor` | satisfy | `REQ-one-driver-local-and-frontier` |
+| `FUNC-run-verb` | allocate | `MOD-cli` |
+| `FUNC-run-verb` | satisfy | `REQ-one-driver-local-and-frontier` |
 | `FUNC-save-graph` | allocate | `MOD-harness` |
 | `FUNC-save-graph` | io | `FLOW-committed-graph` |
 | `FUNC-save-graph` | satisfy | `REQ-disk-persistence` |

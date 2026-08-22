@@ -25,10 +25,12 @@
 | `FUNC-block-reifegrad-sicht` | FUNC | Reifegrad-Sicht |
 | `FUNC-block-schaufenster` | FUNC | Viewer |
 | `FUNC-block-se-steuerung` | FUNC | SE-Prozess-Steuerung |
+| `FUNC-bootstrap` | FUNC | bootstrap |
 | `FUNC-broadcast-diff` | FUNC | broadcastDiff(version) |
 | `FUNC-build-round-injection` | FUNC | buildRoundInjection |
 | `FUNC-check-code-conformance` | FUNC | conformanceViolations(harness) |
 | `FUNC-claim-store-lock` | FUNC | StoreLock |
+| `FUNC-cli-dispatch` | FUNC | graphcode CLI-Dispatch |
 | `FUNC-close-store` | FUNC | close() |
 | `FUNC-close-violations` | FUNC | Skill se:close-violations |
 | `FUNC-compute-phase-readiness` | FUNC | computePhaseReadiness(violations) |
@@ -49,10 +51,12 @@
 | `FUNC-graph-export-snapshot` | FUNC | graph_export(views?) |
 | `FUNC-graph-impact` | FUNC | graph_impact(id, depth?) |
 | `FUNC-graph-suggest` | FUNC | graph_suggest(weights) |
+| `FUNC-gve-supervise` | FUNC | superviseGve |
 | `FUNC-harness-cli` | FUNC | graphcode init/update/remove |
 | `FUNC-health-endpoint` | FUNC | healthEndpoint() |
 | `FUNC-import` | FUNC | importGraph(formatE, mode) |
 | `FUNC-import-code` | FUNC | Skill se:import-code |
+| `FUNC-import-code-verb` | FUNC | executeImportCode |
 | `FUNC-import-doc` | FUNC | Skill se:import-doc |
 | `FUNC-list-elements` | FUNC | listElements(filter) |
 | `FUNC-load-graph` | FUNC | loadGraph() |
@@ -77,6 +81,7 @@
 | `FUNC-resolve-tests-from-code` | FUNC | Gerichtete code→REQ→TEST-Auflösung |
 | `FUNC-rewind` | FUNC | graphcode rewind <ref> |
 | `FUNC-run-executor` | FUNC | runExecutor |
+| `FUNC-run-verb` | FUNC | executeRun |
 | `FUNC-save-graph` | FUNC | saveGraph(graph) |
 | `FUNC-score-completeness` | FUNC | scoreCompleteness(gateId, graph) |
 | `FUNC-se-conops` | FUNC | Skill se-conops |
@@ -143,10 +148,12 @@
 | `FUNC-block-reifegrad-sicht` | `MOD-dashboard` |
 | `FUNC-block-schaufenster` | `MOD-repo-root` |
 | `FUNC-block-se-steuerung` | `MOD-steering` |
+| `FUNC-bootstrap` | `MOD-cli` |
 | `FUNC-broadcast-diff` | `MOD-host-bridge` |
 | `FUNC-build-round-injection` | `MOD-executor` |
 | `FUNC-check-code-conformance` | `MOD-conformance` |
 | `FUNC-claim-store-lock` | `MOD-harness` |
+| `FUNC-cli-dispatch` | `MOD-cli` |
 | `FUNC-close-store` | `MOD-harness` |
 | `FUNC-close-violations` | `MOD-skills` |
 | `FUNC-compute-phase-readiness` | `MOD-steering` |
@@ -167,10 +174,12 @@
 | `FUNC-graph-export-snapshot` | `MOD-mcp-tools` |
 | `FUNC-graph-impact` | `MOD-mcp-tools` |
 | `FUNC-graph-suggest` | `MOD-mcp-tools` |
+| `FUNC-gve-supervise` | `MOD-cli` |
 | `FUNC-harness-cli` | `MOD-cli` |
 | `FUNC-health-endpoint` | `MOD-host-bridge` |
 | `FUNC-import` | `MOD-harness` |
 | `FUNC-import-code` | `MOD-skills` |
+| `FUNC-import-code-verb` | `MOD-cli` |
 | `FUNC-import-doc` | `MOD-skills` |
 | `FUNC-list-elements` | `MOD-element-slice` |
 | `FUNC-load-graph` | `MOD-harness` |
@@ -195,6 +204,7 @@
 | `FUNC-resolve-tests-from-code` | `MOD-mcp-tools` |
 | `FUNC-rewind` | `MOD-cli` |
 | `FUNC-run-executor` | `MOD-executor` |
+| `FUNC-run-verb` | `MOD-cli` |
 | `FUNC-save-graph` | `MOD-harness` |
 | `FUNC-score-completeness` | `MOD-completeness` |
 | `FUNC-se-conops` | `MOD-skills` |

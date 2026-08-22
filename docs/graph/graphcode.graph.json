@@ -2164,6 +2164,18 @@
       "description": "Ebene-1-Block im Autopilot: SE-Prozess-Steuerung — readiness-getriebener Rundenschritt und Kandidaten-Ranking; treibt den Prozess von der schwaechsten Stelle zur naechsten."
     },
     {
+      "id": "FUNC-bootstrap",
+      "type": "FUNC",
+      "name": "bootstrap",
+      "description": "Kaltstart-Erstbefuellung: nimmt einen Format-E-Bestand und legt ihn ausschliesslich ueber das Apply-Gate an, nie per Direktschreiben. Liefert das Bootstrap-Ergebnis zurueck.",
+      "status": "done",
+      "realRef": {
+        "file": "src/bootstrap.ts",
+        "symbol": "bootstrap",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "FUNC-broadcast-diff",
       "type": "FUNC",
       "name": "broadcastDiff(version)",
@@ -2210,6 +2222,18 @@
       "realRef": {
         "file": "src/store-lock.ts",
         "symbol": "StoreLock",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-cli-dispatch",
+      "type": "FUNC",
+      "name": "graphcode CLI-Dispatch",
+      "description": "Der Einsprung des bin: liest Verb und Optionen, waehlt den Handler und setzt den Exit-Code. Selbst nicht exportiert, weil ihn kein Modul ruft, sondern der Prozessstart.",
+      "status": "done",
+      "realRef": {
+        "file": "src/cli.ts",
+        "symbol": "main",
         "lang": "ts"
       }
     },
@@ -2474,6 +2498,18 @@
       }
     },
     {
+      "id": "FUNC-gve-supervise",
+      "type": "FUNC",
+      "name": "superviseGve",
+      "description": "Startet und ueberwacht den externen Viewer-Prozess und haengt ihn an die Sitzungs-Lebensdauer, damit kein verwaister Viewer zurueckbleibt. Aufrufer ist der MCP-Server beim Hochfahren.",
+      "status": "done",
+      "realRef": {
+        "file": "src/gve.ts",
+        "symbol": "superviseGve",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "FUNC-harness-cli",
       "type": "FUNC",
       "name": "graphcode init|update|remove",
@@ -2526,6 +2562,18 @@
       "description": "Prompt-realisierter Skill se:import-code: bestehende TypeScript-Codebasis deterministisch ueber graphify in den Graphen einlesen, Reseed-Semantik mit automatischem Backup.",
       "realRef": {
         "file": ".claude/commands/se/import-code.md"
+      }
+    },
+    {
+      "id": "FUNC-import-code-verb",
+      "type": "FUNC",
+      "name": "executeImportCode",
+      "description": "Das Verb graphcode import-code: sammelt die TypeScript-Dateien und uebergibt sie dem externen Slicer. graphcode extrahiert dabei selbst nichts, es delegiert und nimmt das Ergebnis entgegen.",
+      "status": "done",
+      "realRef": {
+        "file": "src/import-code-verb.ts",
+        "symbol": "executeImportCode",
+        "lang": "ts"
       }
     },
     {
@@ -2796,6 +2844,18 @@
       "realRef": {
         "file": "src/executor.ts",
         "symbol": "runExecutor",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-run-verb",
+      "type": "FUNC",
+      "name": "executeRun",
+      "description": "Das Verb graphcode run: liest die Backend-Konfiguration aus der Umgebung und startet den eingebetteten Treiber. Der Wechsel zwischen lokalem und Frontier-Modell passiert hier als Konfiguration, nicht als zweiter Codepfad.",
+      "status": "done",
+      "realRef": {
+        "file": "src/run-verb.ts",
+        "symbol": "executeRun",
         "lang": "ts"
       }
     },
@@ -11290,10 +11350,22 @@
     },
     {
       "source": "FLOW-cli-command",
+      "target": "FUNC-cli-dispatch",
+      "type": "io",
+      "weight": "1"
+    },
+    {
+      "source": "FLOW-cli-command",
       "target": "FUNC-harness-cli",
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-cli-command",
+      "target": "FUNC-import-code-verb",
+      "type": "io",
+      "weight": "1"
     },
     {
       "source": "FLOW-cli-command",
@@ -11303,6 +11375,12 @@
     {
       "source": "FLOW-cli-command",
       "target": "FUNC-run-executor",
+      "type": "io",
+      "weight": "1"
+    },
+    {
+      "source": "FLOW-cli-command",
+      "target": "FUNC-run-verb",
       "type": "io",
       "weight": "1"
     },
@@ -11475,6 +11553,12 @@
       "source": "FLOW-fit-advisory",
       "target": "SCHEMA-fit-advisory",
       "type": "relation"
+    },
+    {
+      "source": "FLOW-formatE-artifact",
+      "target": "FUNC-bootstrap",
+      "type": "io",
+      "weight": "1"
     },
     {
       "source": "FLOW-formatE-artifact",
@@ -12564,6 +12648,24 @@
       "type": "compose"
     },
     {
+      "source": "FUNC-bootstrap",
+      "target": "MOD-cli",
+      "type": "allocate",
+      "weight": "1"
+    },
+    {
+      "source": "FUNC-bootstrap",
+      "target": "FLOW-bootstrap-result",
+      "type": "io",
+      "weight": "1"
+    },
+    {
+      "source": "FUNC-bootstrap",
+      "target": "REQ-bootstrap-through-gate",
+      "type": "satisfy",
+      "weight": "1"
+    },
+    {
       "source": "FUNC-broadcast-diff",
       "target": "MOD-host-bridge",
       "type": "allocate",
@@ -12624,6 +12726,18 @@
       "source": "FUNC-claim-store-lock",
       "target": "REQ-single-kuzu-owner",
       "type": "satisfy"
+    },
+    {
+      "source": "FUNC-cli-dispatch",
+      "target": "MOD-cli",
+      "type": "allocate",
+      "weight": "1"
+    },
+    {
+      "source": "FUNC-cli-dispatch",
+      "target": "REQ-npx-distribution",
+      "type": "satisfy",
+      "weight": "1"
     },
     {
       "source": "FUNC-close-store",
@@ -13140,6 +13254,12 @@
       "weight": "1"
     },
     {
+      "source": "FUNC-gve-supervise",
+      "target": "MOD-cli",
+      "type": "allocate",
+      "weight": "1"
+    },
+    {
       "source": "FUNC-harness-cli",
       "target": "MOD-cli",
       "type": "allocate",
@@ -13277,6 +13397,18 @@
       "source": "FUNC-import-code",
       "target": "REQ-no-extraction",
       "type": "satisfy"
+    },
+    {
+      "source": "FUNC-import-code-verb",
+      "target": "MOD-cli",
+      "type": "allocate",
+      "weight": "1"
+    },
+    {
+      "source": "FUNC-import-code-verb",
+      "target": "REQ-no-extraction",
+      "type": "satisfy",
+      "weight": "1"
     },
     {
       "source": "FUNC-import-doc",
@@ -13671,6 +13803,18 @@
     },
     {
       "source": "FUNC-run-executor",
+      "target": "REQ-one-driver-local-and-frontier",
+      "type": "satisfy",
+      "weight": "1"
+    },
+    {
+      "source": "FUNC-run-verb",
+      "target": "MOD-cli",
+      "type": "allocate",
+      "weight": "1"
+    },
+    {
+      "source": "FUNC-run-verb",
       "target": "REQ-one-driver-local-and-frontier",
       "type": "satisfy",
       "weight": "1"
@@ -16697,5 +16841,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 175
+  "graphVersion": 177
 }
