@@ -145,7 +145,7 @@
 | `REQ-subgraph-slicing` | `TEST-impact-subgraph` · `TEST-inject-graph-slice` | `FUNC-graph-impact` | `MOD-mcp-tools` |
 | `REQ-target-shifts-ranking` | `TEST-executor-bestofn` · `TEST-target-profile` · `TEST-target-shifts-ranking` | `FUNC-graph-suggest` | `MOD-mcp-tools` |
 | `REQ-test-runnable-binding` | `TEST-formate-binding` · `TEST-test-runnable-binding` · `TEST-testreport` | `FUNC-deduce-tests` · `MOD-mcp-tools` | `MOD-mcp-tools` |
-| `REQ-thresholds-from-config` | `TEST-target-profile` · `TEST-thresholds-from-config` | — | — |
+| `REQ-thresholds-from-config` | `TEST-target-profile` · `TEST-thresholds-from-config` | `FUNC-load-config` | `MOD-harness` |
 | `REQ-trajectory-emit` | `TEST-create-harness-smoke` · `TEST-learning-emit` | `FUNC-emit-trajectory` | `MOD-hooks` |
 | `REQ-versioned-broadcast` | `TEST-live-view` | `FUNC-broadcast-diff` · `FUNC-emit-update-event` · `MOD-host-bridge` | `MOD-hooks` · `MOD-host-bridge` |
 
@@ -189,7 +189,7 @@
 | `REQ-small-model-viable` | `TEST-executor-preflight` · `TEST-mvp-e2e` · `TEST-reduced-llm` | `FCHAIN-modelfree-gate` · `FUNC-graph-suggest` | `MOD-mcp-tools` |
 | `REQ-steering-from-metrics` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` · `TEST-steering-loop` | `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` | `MOD-executor` · `MOD-metrics-engine` · `MOD-steering` |
 
-### Komponente (SWE.2/3) — 100 REQ
+### Komponente (SWE.2/3) — 101 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -290,6 +290,7 @@
 | `REQ-target-shifts-ranking` | `TEST-executor-bestofn` · `TEST-target-profile` · `TEST-target-shifts-ranking` | `FUNC-graph-suggest` | `MOD-mcp-tools` |
 | `REQ-test-runnable-binding` | `TEST-formate-binding` · `TEST-test-runnable-binding` · `TEST-testreport` | `FUNC-deduce-tests` · `MOD-mcp-tools` | `MOD-mcp-tools` |
 | `REQ-testref-materialized` | `TEST-realref-materialize` · `TEST-testref-materialize` | `MOD-docs` · `MOD-mcp-tools` | — |
+| `REQ-thresholds-from-config` | `TEST-target-profile` · `TEST-thresholds-from-config` | `FUNC-load-config` | `MOD-harness` |
 | `REQ-trajectory-emit` | `TEST-create-harness-smoke` · `TEST-learning-emit` | `FUNC-emit-trajectory` | `MOD-hooks` |
 | `REQ-versioned-broadcast` | `TEST-live-view` | `FUNC-broadcast-diff` · `FUNC-emit-update-event` · `MOD-host-bridge` | `MOD-hooks` · `MOD-host-bridge` |
 | `REQ-versioned-cache` | `TEST-cache` | `MOD-hooks` | — |

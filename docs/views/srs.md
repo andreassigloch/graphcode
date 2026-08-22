@@ -370,7 +370,13 @@ priority: should · status: done · kinds: non-functional
 
 Verification ◀ `TEST-bridge-follows-lock` (integration) · `TEST-gve-autostart` (unit) · `TEST-host-shim` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-session-lifecycle` (integration) · `TEST-status-verb` (unit) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness` · `MOD-host-bridge`
 
-##### 3.1.1.11  `FUNC-own-kuzu-host` — ownKuzu()
+##### 3.1.1.11  `FUNC-create-harness` — createHarness
+
+Die Fabrik der oeffentlichen Programmierschnittstelle: baut den Harness mit Store, Regeln und Hooks und gibt genau einen Besitzer des Stores zurueck.
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-harness`
+
+##### 3.1.1.12  `FUNC-own-kuzu-host` — ownKuzu()
 
 > auch in: `FUNC-block-gedaechtnis`
 
@@ -1470,6 +1476,18 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-nd-similarity` (unit) · satisfy ◀ `FUNC-nd-similarity` · allocate ▶ `MOD-steering`
 
+##### 3.2.2.14  `FUNC-preflight` — preflightBatch
+
+Prueft einen Kandidaten-Batch vor dem Gate und vervollstaendigt, was mechanisch entscheidbar ist. Was unklar bleibt, geht unveraendert ans Gate statt geraten zu werden.
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-executor`
+
+##### 3.2.2.15  `FUNC-target-profile-load` — loadTargetProfile
+
+Laedt das Zielprofil und meldet Zielkonflikte. Das Profil ist Konfiguration neben dem Graphen, nicht Teil des Modells.
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-steering`
+
 ### 3.3  `UC-efficient-testing` — Effizientes, impact-basiertes Testen
 
 Als Entwickler will ich nur die richtigen Tests laufen lassen: der Impact-/Abhängigkeitsgraph bestimmt das selektive Testset; „erledigt" = „nachgewiesen".
@@ -1674,7 +1692,13 @@ priority: must · status: done
 
 Verification ◀ `TEST-graph-time-travel` (integration) · `TEST-reseed` (integration) · `TEST-rewind` (integration) · satisfy ◀ `FCHAIN-recall` · `FUNC-reseed` · `FUNC-rewind` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness`
 
-##### 3.4.2.2  `FUNC-reseed` — reseed(relPath)
+##### 3.4.2.2  `FUNC-apply-reseed` — applyReseed
+
+Setzt den Store aus einem Bestand neu auf, statt ihn zu ergaenzen. Legt vorher eine Sicherung an, weil ein Reseed kein Merge ist.
+
+io ◀ `FLOW-graph-snapshot` · io ▶ — · allocate ▶ `MOD-harness`
+
+##### 3.4.2.3  `FUNC-reseed` — reseed(relPath)
 
 > auch in: `FUNC-block-gedaechtnis`
 
@@ -1692,7 +1716,7 @@ priority: must · status: done
 
 Verification ◀ `TEST-graph-time-travel` (integration) · `TEST-reseed` (integration) · `TEST-rewind` (integration) · satisfy ◀ `FCHAIN-recall` · `FUNC-reseed` · `FUNC-rewind` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness`
 
-##### 3.4.2.3  `FUNC-seed-from-json` — seedFromJson(relPath)
+##### 3.4.2.4  `FUNC-seed-from-json` — seedFromJson(relPath)
 
 Erstbefuellung des Stores aus dem committeten Snapshot, ueber den Import-Port statt am Gate vorbei.
 
@@ -1708,6 +1732,12 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-bootstrap` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-cli` · `MOD-harness`
 
+##### 3.4.2.5  `FUNC-schema-guard` — schemaFingerprint
+
+Bildet den Fingerabdruck des Meta-Modell-Schemas und erkennt daran eine Drift zwischen Ontologie und angelegtem Store.
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-schema-migration`
+
 #### 3.4.3  `FCHAIN-snapshot-freshness` — Snapshot-Freshness (Aufzeichnen)
 
 Jede Modell-Mutation setzt den Drift-Marker, die Persistenz schreibt den Store, der Export materialisiert den kanonischen Snapshot und loescht den Marker. Ergebnis: kein Commit traegt einen Snapshot, der dem Live-Modell nachlaeuft.
@@ -1722,7 +1752,19 @@ priority: must · status: done
 
 Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
 
-##### 3.4.3.1  `FUNC-mutate` — mutate(commands)
+##### 3.4.3.1  `FUNC-auto-export` — registerAutoExport
+
+Haengt den Export an die Mutation: nach einer Aenderung folgt der Dateistand dem Store entprellt nach, damit das committete Artefakt nicht zurueckfaellt.
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-docs`
+
+##### 3.4.3.2  `FUNC-export-marker` — setExportPending
+
+Markiert nach einer Mutation, dass der Export dem Store hinterherhaengt, und raeumt die Marke wieder ab. Die Marke ist der einzige Hinweis darauf, dass Datei und Store auseinanderlaufen.
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-harness`
+
+##### 3.4.3.3  `FUNC-mutate` — mutate(commands)
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-modelfree-gate` · `FCHAIN-skill-authoring` · `FCHAIN-steering-loop` · `FUNC-block-gate`
 
@@ -1764,7 +1806,7 @@ priority: must · status: n/a
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (integration) · `TEST-occ` (integration) · `TEST-single-write-door` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
 
-##### 3.4.3.2  `FUNC-evaluate-rules` — evaluateRules()
+##### 3.4.3.4  `FUNC-evaluate-rules` — evaluateRules()
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-live-update` · `FCHAIN-modelfree-gate` · `FCHAIN-skill-report` · `FUNC-block-gate`
 
@@ -1780,7 +1822,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-mutate-gate` (integration) · `TEST-nd-similarity` (unit) · `TEST-violation-context` (integration) · satisfy ◀ `FUNC-evaluate-rules` · allocate ▶ `MOD-harness`
 
-##### 3.4.3.3  `FUNC-save-graph` — saveGraph(graph)
+##### 3.4.3.5  `FUNC-save-graph` — saveGraph(graph)
 
 > auch in: `FCHAIN-apply-gate` · `FCHAIN-live-update` · `FUNC-block-gate`
 
@@ -1798,7 +1840,7 @@ priority: should · status: open · kinds: non-functional
 
 Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `FUNC-load-graph` · `FUNC-save-graph` · allocate ▶ `MOD-harness`
 
-##### 3.4.3.4  `FUNC-graph-export-snapshot` — graph_export(views?)
+##### 3.4.3.6  `FUNC-graph-export-snapshot` — graph_export(views?)
 
 > auch in: `FUNC-block-gedaechtnis`
 
@@ -2776,7 +2818,13 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-distribution` (e2e) · satisfy ◀ `FUNC-cli-dispatch` · `FUNC-harness-cli` · allocate ▶ `MOD-cli`
 
-##### 3.9.1.3  `FUNC-harness-cli` — graphcode init/update/remove
+##### 3.9.1.3  `FUNC-collect-status` — collectStatus
+
+Sammelt den Betriebsstand eines Repos: laufender Host, installierte und angeheftete Version, und urteilt daraus ueber die Gesundheit.
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-cli`
+
+##### 3.9.1.4  `FUNC-harness-cli` — graphcode init/update/remove
 
 > auch in: `FUNC-block-anschluss`
 
@@ -2850,7 +2898,7 @@ priority: should · status: done · kinds: non-functional
 
 Verification ◀ `TEST-distribution` (e2e) · satisfy ◀ `FUNC-harness-cli` · allocate ▶ `MOD-cli`
 
-##### 3.9.1.4  `FUNC-run-verb` — executeRun
+##### 3.9.1.5  `FUNC-run-verb` — executeRun
 
 Das Verb graphcode run: liest die Backend-Konfiguration aus der Umgebung und startet den eingebetteten Treiber. Der Wechsel zwischen lokalem und Frontier-Modell passiert hier als Konfiguration, nicht als zweiter Codepfad.
 
@@ -2866,7 +2914,7 @@ priority: must · status: n/a
 
 Verification ◀ `TEST-cli-run` (integration) · `TEST-executor-bestofn` (integration) · `TEST-one-driver-local-and-frontier` (integration) · satisfy ◀ `FUNC-run-executor` · `FUNC-run-verb` · allocate ▶ `MOD-cli` · `MOD-executor`
 
-##### 3.9.1.5  `FUNC-session-shutdown` — SessionLifecycle
+##### 3.9.1.6  `FUNC-session-shutdown` — SessionLifecycle
 
 > auch in: `FCHAIN-apply-gate`
 
@@ -2884,7 +2932,7 @@ priority: should · status: done · kinds: non-functional
 
 Verification ◀ `TEST-bridge-follows-lock` (integration) · `TEST-gve-autostart` (unit) · `TEST-host-shim` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-session-lifecycle` (integration) · `TEST-status-verb` (unit) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness` · `MOD-host-bridge`
 
-##### 3.9.1.6  `FUNC-upgrade` — executeUpgrade(opts)
+##### 3.9.1.7  `FUNC-upgrade` — executeUpgrade(opts)
 
 Ein Befehl, der alles aktuell macht (CR-GC-377): Ziel aus der Registry (oder --to), Repo-Install ziehen, den NEU installierten Build seine eigenen Artefakte schreiben lassen (Re-Exec), den Host beenden, der auf altem Code weiterlaeuft. Ersetzt das Verb update ersatzlos, dessen Name log: es refreshte nur Artefakte. --check ist die reine Registry-Abfrage ohne Aenderung und macht eine separate Suchfunktion ueberfluessig. Kein stilles Downgrade: liegt die Registry hinter dem Installierten, bricht der Befehl ab und verlangt --to.
 
@@ -2892,13 +2940,19 @@ io ◀ — · io ▶ — · allocate ▶ `MOD-cli`
 
 ### 3.10  Funktionen ohne FCHAIN
 
-#### 3.10.1  `FUNC-block-anschluss` — Agenten-Anschluss
+#### 3.10.1  `FUNC-bind-tools` — bindToolsToHarness
+
+Bindet die Werkzeug-Registry an einen Harness, sodass jedes Werkzeug ueber dasselbe Gate schreibt wie ein Aufruf im Prozess.
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-mcp-tools`
+
+#### 3.10.2  `FUNC-block-anschluss` — Agenten-Anschluss
 
 Ebene-0-Block Sales-Sicht: der Arbeitsplatz des Coding-Agenten — praezise Fragen statt Volltextsuche. Realisiert durch seine Kinder.
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-repo-root`
 
-##### 3.10.1.1  `FUNC-author-req` — Skill se:author-req
+##### 3.10.2.1  `FUNC-author-req` — Skill se:author-req
 
 > auch in: `FCHAIN-skill-authoring`
 
@@ -2916,7 +2970,7 @@ priority: must · status: n/a
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-skills`
 
-##### 3.10.1.2  `FUNC-author-uc` — Skill se:author-uc
+##### 3.10.2.2  `FUNC-author-uc` — Skill se:author-uc
 
 > auch in: `FCHAIN-skill-authoring`
 
@@ -2934,7 +2988,7 @@ priority: must · status: n/a
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-skills`
 
-##### 3.10.1.3  `FUNC-deduce-tests` — graph_tests(changeSet)
+##### 3.10.2.3  `FUNC-deduce-tests` — graph_tests(changeSet)
 
 > auch in: `FCHAIN-impact-testing`
 
@@ -2950,7 +3004,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-formate-binding` (integration) · `TEST-test-runnable-binding` (unit) · `TEST-testreport` (unit) · satisfy ◀ `FUNC-deduce-tests` · `MOD-mcp-tools` · allocate ▶ `MOD-mcp-tools`
 
-##### 3.10.1.4  `FUNC-graph-expand` — graph_expand(handle, branch, depth+1)
+##### 3.10.2.4  `FUNC-graph-expand` — graph_expand(handle, branch, depth+1)
 
 > auch in: `FCHAIN-agent-query`
 
@@ -2984,7 +3038,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-impact-subgraph` (integration) · satisfy ◀ `FUNC-graph-expand` · allocate ▶ `MOD-mcp-tools`
 
-##### 3.10.1.5  `FUNC-graph-impact` — graph_impact(id, depth?)
+##### 3.10.2.5  `FUNC-graph-impact` — graph_impact(id, depth?)
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-impact-testing` · `FCHAIN-interface-escalation`
 
@@ -3028,7 +3082,7 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-inject-graph-slice` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
 
-##### 3.10.1.6  `FUNC-harness-cli` — graphcode init/update/remove
+##### 3.10.2.6  `FUNC-harness-cli` — graphcode init/update/remove
 
 > auch in: `FCHAIN-repo-lifecycle`
 
@@ -3102,7 +3156,7 @@ priority: should · status: done · kinds: non-functional
 
 Verification ◀ `TEST-distribution` (e2e) · satisfy ◀ `FUNC-harness-cli` · allocate ▶ `MOD-cli`
 
-##### 3.10.1.7  `FUNC-health-endpoint` — healthEndpoint()
+##### 3.10.2.7  `FUNC-health-endpoint` — healthEndpoint()
 
 Echter Funktions-Health: Store erreichbar, Gate funktional, Ontology/Rules/Contracts-Versionen, LLM/BYOK-Readiness. Quelle des Dashboard-FUNC-render-health. (CR-GC-114)
 
@@ -3116,7 +3170,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-readonly-bridge` (integration) · satisfy ◀ `FUNC-health-endpoint` · `MOD-host-bridge` · allocate ▶ `MOD-host-bridge`
 
-##### 3.10.1.8  `FUNC-import-code` — Skill se:import-code
+##### 3.10.2.8  `FUNC-import-code` — Skill se:import-code
 
 > auch in: `FCHAIN-model-import`
 
@@ -3134,7 +3188,7 @@ priority: must · status: open · kinds: negative
 
 Verification ◀ `TEST-capture` (integration) · `TEST-import-code-verb` (integration) · satisfy ◀ `FCHAIN-model-import` · `FUNC-import-code` · `FUNC-import-code-verb` · `FUNC-import-doc` · allocate ▶ `MOD-cli` · `MOD-skills`
 
-##### 3.10.1.9  `FUNC-import-doc` — Skill se:import-doc
+##### 3.10.2.9  `FUNC-import-doc` — Skill se:import-doc
 
 > auch in: `FCHAIN-model-import`
 
@@ -3152,7 +3206,7 @@ priority: must · status: open · kinds: negative
 
 Verification ◀ `TEST-capture` (integration) · `TEST-import-code-verb` (integration) · satisfy ◀ `FCHAIN-model-import` · `FUNC-import-code` · `FUNC-import-code-verb` · `FUNC-import-doc` · allocate ▶ `MOD-cli` · `MOD-skills`
 
-##### 3.10.1.10  `FUNC-resolve-tests-from-code` — Gerichtete code→REQ→TEST-Auflösung
+##### 3.10.2.10  `FUNC-resolve-tests-from-code` — Gerichtete code→REQ→TEST-Auflösung
 
 > auch in: `FCHAIN-impact-testing`
 
@@ -3168,7 +3222,7 @@ priority: must · status: done
 
 Verification ◀ `TEST-graph-tests-operational` (integration) · `TEST-selective-test-audit` (integration) · satisfy ◀ `FUNC-resolve-tests-from-code` · allocate ▶ `MOD-mcp-tools`
 
-##### 3.10.1.11  `FUNC-se-help` — Skill se:help
+##### 3.10.2.11  `FUNC-se-help` — Skill se:help
 
 > auch in: `FCHAIN-skill-report`
 
@@ -3186,7 +3240,7 @@ priority: must · status: n/a
 
 Verification ◀ `TEST-skill-reports-measured-values` (conformance) · satisfy ◀ `FCHAIN-skill-report` · `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · allocate ▶ `MOD-skills`
 
-##### 3.10.1.12  `FUNC-serve-stdio` — serveStdio()
+##### 3.10.2.12  `FUNC-serve-stdio` — serveStdio()
 
 > auch in: `FCHAIN-doc-export` · `FCHAIN-live-update`
 
@@ -3210,7 +3264,7 @@ priority: should · status: done · kinds: non-functional
 
 Verification ◀ `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-serve-stdio` · `MOD-mcp-tools` · allocate ▶ `MOD-mcp-tools`
 
-##### 3.10.1.13  `FUNC-target-profile` — Skill se:target-profile
+##### 3.10.2.13  `FUNC-target-profile` — Skill se:target-profile
 
 > auch in: `FCHAIN-skill-authoring`
 
@@ -3228,7 +3282,7 @@ priority: must · status: n/a
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-skills`
 
-##### 3.10.1.14  `FUNC-test` — se-test (red-first test design)
+##### 3.10.2.14  `FUNC-test` — se-test (red-first test design)
 
 > auch in: `FCHAIN-skill-report`
 
@@ -3246,7 +3300,7 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-code-quality` (acceptance) · `TEST-mvp-e2e` (e2e) · satisfy ◀ `FCHAIN-apply-gate` · `FUNC-test` · `FUNC-test-ui` · allocate ▶ `MOD-skills`
 
-##### 3.10.1.15  `FUNC-test-ui` — se-test-ui (UI test design)
+##### 3.10.2.15  `FUNC-test-ui` — se-test-ui (UI test design)
 
 > auch in: `FCHAIN-skill-report`
 
@@ -3264,13 +3318,13 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-code-quality` (acceptance) · `TEST-mvp-e2e` (e2e) · satisfy ◀ `FCHAIN-apply-gate` · `FUNC-test` · `FUNC-test-ui` · allocate ▶ `MOD-skills`
 
-#### 3.10.2  `FUNC-block-gate` — Qualitäts-Gate
+#### 3.10.3  `FUNC-block-gate` — Qualitäts-Gate
 
 Ebene-0-Block Sales-Sicht: jede Aenderung — von Mensch oder KI — geht durch dieselbe Pruefung; illegal wird nie gespeichert. Realisiert durch seine Kinder.
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-repo-root`
 
-##### 3.10.2.1  `FUNC-check-code-conformance` — conformanceViolations(harness)
+##### 3.10.3.1  `FUNC-check-code-conformance` — conformanceViolations(harness)
 
 > auch in: `FCHAIN-skill-report`
 
@@ -3286,7 +3340,7 @@ priority: must · status: done
 
 Verification ◀ `TEST-code-conformance` (integration) · satisfy ◀ `FUNC-check-code-conformance` · allocate ▶ `MOD-conformance`
 
-##### 3.10.2.2  `FUNC-evaluate-rules` — evaluateRules()
+##### 3.10.3.2  `FUNC-evaluate-rules` — evaluateRules()
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-live-update` · `FCHAIN-modelfree-gate` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness`
 
@@ -3302,7 +3356,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-mutate-gate` (integration) · `TEST-nd-similarity` (unit) · `TEST-violation-context` (integration) · satisfy ◀ `FUNC-evaluate-rules` · allocate ▶ `MOD-harness`
 
-##### 3.10.2.3  `FUNC-mutate` — mutate(commands)
+##### 3.10.3.3  `FUNC-mutate` — mutate(commands)
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-modelfree-gate` · `FCHAIN-skill-authoring` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop`
 
@@ -3344,7 +3398,7 @@ priority: must · status: n/a
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (integration) · `TEST-occ` (integration) · `TEST-single-write-door` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
 
-##### 3.10.2.4  `FUNC-save-graph` — saveGraph(graph)
+##### 3.10.3.4  `FUNC-save-graph` — saveGraph(graph)
 
 > auch in: `FCHAIN-apply-gate` · `FCHAIN-live-update` · `FCHAIN-snapshot-freshness`
 
@@ -3362,13 +3416,13 @@ priority: should · status: open · kinds: non-functional
 
 Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `FUNC-load-graph` · `FUNC-save-graph` · allocate ▶ `MOD-harness`
 
-#### 3.10.3  `FUNC-block-gedaechtnis` — Gedächtnis
+#### 3.10.4  `FUNC-block-gedaechtnis` — Gedächtnis
 
 Ebene-0-Block Sales-Sicht: das Modell als Text-Artefakt — versioniert, wiederherstellbar, zusammenfuehrbar. Realisiert durch seine Kinder.
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-repo-root`
 
-##### 3.10.3.1  `FUNC-decode` — decode(json)
+##### 3.10.4.1  `FUNC-decode` — decode(json)
 
 > auch in: `FCHAIN-capture` · `FCHAIN-codec-roundtrip`
 
@@ -3394,7 +3448,7 @@ priority: should · status: open · kinds: non-functional
 
 Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FCHAIN-codec-roundtrip` · `FUNC-decode` · allocate ▶ `MOD-codec`
 
-##### 3.10.3.2  `FUNC-emit-trajectory` — materializeTrajectory()
+##### 3.10.4.2  `FUNC-emit-trajectory` — materializeTrajectory()
 
 > auch in: `FCHAIN-apply-gate`
 
@@ -3426,7 +3480,7 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-create-harness-smoke` (integration) · `TEST-learning-emit` (integration) · satisfy ◀ `FUNC-emit-trajectory` · allocate ▶ `MOD-hooks`
 
-##### 3.10.3.3  `FUNC-encode` — encode(graph)
+##### 3.10.4.3  `FUNC-encode` — encode(graph)
 
 > auch in: `FCHAIN-codec-roundtrip`
 
@@ -3468,7 +3522,7 @@ priority: should · status: open · kinds: non-functional
 
 Verification ◀ `TEST-inject-graph-slice` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-token-efficiency` (acceptance) · `TEST-violation-context` (integration) · satisfy ◀ `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-graph-impact` · allocate ▶ `MOD-codec` · `MOD-mcp-tools`
 
-##### 3.10.3.4  `FUNC-graph-export-snapshot` — graph_export(views?)
+##### 3.10.4.4  `FUNC-graph-export-snapshot` — graph_export(views?)
 
 > auch in: `FCHAIN-snapshot-freshness`
 
@@ -3486,7 +3540,7 @@ priority: must · status: done
 
 Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
 
-##### 3.10.3.5  `FUNC-import` — importGraph(formatE, mode)
+##### 3.10.4.5  `FUNC-import` — importGraph(formatE, mode)
 
 > auch in: `FCHAIN-model-import`
 
@@ -3528,7 +3582,7 @@ priority: must · status: done · kinds: precondition
 
 Verification ◀ `TEST-bootstrap` (integration) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-harness`
 
-##### 3.10.3.6  `FUNC-merge-nodes` — mergeNodes(graph)
+##### 3.10.4.6  `FUNC-merge-nodes` — mergeNodes(graph)
 
 > auch in: `FCHAIN-merge-branches`
 
@@ -3570,7 +3624,7 @@ priority: must · status: open · kinds: precondition
 
 Verification ◀ `TEST-merge` (integration) · satisfy ◀ `FUNC-merge-nodes` · allocate ▶ `MOD-codec`
 
-##### 3.10.3.7  `FUNC-migrate-schema` — migrateSchema(from, to)
+##### 3.10.4.7  `FUNC-migrate-schema` — migrateSchema(from, to)
 
 Re-Validierung + Migration des Graphen bei ONTOLOGY/RULES_VERSION-Bump; Version am Artefakt mitgeführt.
 
@@ -3600,7 +3654,7 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-schema-migration` (integration) · satisfy ◀ `FUNC-migrate-schema` · allocate ▶ `MOD-schema-migration`
 
-##### 3.10.3.8  `FUNC-own-kuzu-host` — ownKuzu()
+##### 3.10.4.8  `FUNC-own-kuzu-host` — ownKuzu()
 
 > auch in: `FCHAIN-apply-gate`
 
@@ -3618,7 +3672,7 @@ priority: should · status: done · kinds: non-functional
 
 Verification ◀ `TEST-bridge-follows-lock` (integration) · `TEST-gve-autostart` (unit) · `TEST-host-shim` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-session-lifecycle` (integration) · `TEST-status-verb` (unit) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness` · `MOD-host-bridge`
 
-##### 3.10.3.9  `FUNC-reseed` — reseed(relPath)
+##### 3.10.4.9  `FUNC-reseed` — reseed(relPath)
 
 > auch in: `FCHAIN-recall`
 
@@ -3636,7 +3690,7 @@ priority: must · status: done
 
 Verification ◀ `TEST-graph-time-travel` (integration) · `TEST-reseed` (integration) · `TEST-rewind` (integration) · satisfy ◀ `FCHAIN-recall` · `FUNC-reseed` · `FUNC-rewind` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness`
 
-##### 3.10.3.10  `FUNC-rewind` — graphcode rewind <ref>
+##### 3.10.4.10  `FUNC-rewind` — graphcode rewind <ref>
 
 > auch in: `FCHAIN-recall`
 
@@ -3654,13 +3708,13 @@ priority: must · status: done
 
 Verification ◀ `TEST-graph-time-travel` (integration) · `TEST-reseed` (integration) · `TEST-rewind` (integration) · satisfy ◀ `FCHAIN-recall` · `FUNC-reseed` · `FUNC-rewind` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness`
 
-#### 3.10.4  `FUNC-block-messwerk` — Messwerk
+#### 3.10.5  `FUNC-block-messwerk` — Messwerk
 
 Ebene-0-Block Sales-Sicht: Kennzahlen aus dem Modell selbst — Reifegrad, Phasen-Gates, Architektur-Fitness — live, ohne KI. Realisiert durch seine Kinder.
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-repo-root`
 
-##### 3.10.4.1  `FUNC-arch-fitness` — metrics(graph, layer arch)
+##### 3.10.5.1  `FUNC-arch-fitness` — metrics(graph, layer arch)
 
 > auch in: `FCHAIN-steering-loop`
 
@@ -3678,7 +3732,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-executor` · `MOD-metrics-engine` · `MOD-steering`
 
-##### 3.10.4.2  `FUNC-compute-phase-readiness` — computePhaseReadiness(violations)
+##### 3.10.5.2  `FUNC-compute-phase-readiness` — computePhaseReadiness(violations)
 
 > auch in: `FCHAIN-skill-report` · `FCHAIN-steering-loop`
 
@@ -3696,7 +3750,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-executor` · `MOD-metrics-engine` · `MOD-steering`
 
-##### 3.10.4.3  `FUNC-compute-readiness` — computeReadiness(graph)
+##### 3.10.5.3  `FUNC-compute-readiness` — computeReadiness(graph)
 
 > auch in: `FCHAIN-skill-report` · `FCHAIN-steering-loop`
 
@@ -3714,7 +3768,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-executor` · `MOD-metrics-engine` · `MOD-steering`
 
-##### 3.10.4.4  `FUNC-compute-steering-delta` — computeSteeringDelta(before, after)
+##### 3.10.5.4  `FUNC-compute-steering-delta` — computeSteeringDelta(before, after)
 
 > auch in: `FCHAIN-steering-loop`
 
@@ -3732,7 +3786,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-executor` · `MOD-metrics-engine` · `MOD-steering`
 
-##### 3.10.4.5  `FUNC-fit-advisory` — computeFitAdvisory(before, after)
+##### 3.10.5.5  `FUNC-fit-advisory` — computeFitAdvisory(before, after)
 
 > auch in: `FCHAIN-apply-gate`
 
@@ -3750,7 +3804,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-executor` · `MOD-metrics-engine` · `MOD-steering`
 
-##### 3.10.4.6  `FUNC-module-metrics` — moduleMetrics(graph)
+##### 3.10.5.6  `FUNC-module-metrics` — moduleMetrics(graph)
 
 > auch in: `FCHAIN-skill-report`
 
@@ -3768,7 +3822,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-executor` · `MOD-metrics-engine` · `MOD-steering`
 
-##### 3.10.4.7  `FUNC-score-completeness` — scoreCompleteness(gateId, graph)
+##### 3.10.5.7  `FUNC-score-completeness` — scoreCompleteness(gateId, graph)
 
 > auch in: `FCHAIN-skill-report`
 
@@ -3800,7 +3854,7 @@ priority: must · status: reviewed · kinds: functional
 
 Verification ◀ `TEST-readiness-completeness` (acceptance) · satisfy ◀ `FUNC-score-completeness` · allocate ▶ `MOD-completeness`
 
-##### 3.10.4.8  `FUNC-take-steering-snapshot` — takeSteeringSnapshot(graph, policy)
+##### 3.10.5.8  `FUNC-take-steering-snapshot` — takeSteeringSnapshot(graph, policy)
 
 > auch in: `FCHAIN-steering-loop`
 
@@ -3836,37 +3890,37 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-executor` · `MOD-metrics-engine` · `MOD-steering`
 
-#### 3.10.5  `FUNC-block-schaufenster` — Viewer
+#### 3.10.6  `FUNC-block-schaufenster` — Viewer
 
 Ebene-0-Block Sales-Sicht: der Viewer fuer Dokumente, Architektur und Reifegrad — Live-Dashboard und fertige Ingenieurs-Dokumente, immer aktuell, nie von Hand gepflegt. Realisiert durch seine Kinder.
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-repo-root`
 
-##### 3.10.5.1  `FUNC-block-arch-sicht` — Architektur-Sicht
+##### 3.10.6.1  `FUNC-block-arch-sicht` — Architektur-Sicht
 
 Ebene-1-Block im Viewer: die Architektur-Sicht — Live-Graph und exakter Blast-Radius on demand.
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-dashboard`
 
-###### 3.10.5.1.1  `FUNC-render-graph` — renderGraph(elements, traces)
+###### 3.10.6.1.1  `FUNC-render-graph` — renderGraph(elements, traces)
 
 Pluggbarer Live-Graph-Mount-Slot im Dashboard. Datenquelle: graph_elements + graph_get_edges + rules_get_violations (nur V3_RULES, kein BQ). Der konkrete Cytoscape-Renderer (@sigloch/graph-renderer) wird hier eingehaengt und ist das naechste aise-family-Projekt (graph-view-edit), nicht in graphcode gebaut. aimproves OntologyView rendert keinen Node-Link-Graph (nur Histogramme). (CR-GC-115)
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-dashboard`
 
-###### 3.10.5.1.2  `FUNC-render-impact` — renderImpactPanel(id)
+###### 3.10.6.1.2  `FUNC-render-impact` — renderImpactPanel(id)
 
 Impact-Panel on-demand: exakter Blast-Radius via graph_impact statt gespeicherter aimprove-Impact-Assessments (Learning). Repoint der aimprove ImpactView auf die Live-Quelle. (CR-GC-115)
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-dashboard`
 
-##### 3.10.5.2  `FUNC-block-dokumentenwerk` — Dokumentenwerk
+##### 3.10.6.2  `FUNC-block-dokumentenwerk` — Dokumentenwerk
 
 Ebene-1-Block im Schaufenster: deterministische Dokument-Renders — Markdown-Export und die se-view-Sichten.
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-docs`
 
-###### 3.10.5.2.1  `FUNC-export-markdown` — exportMarkdown(graph, view)
+###### 3.10.6.2.1  `FUNC-export-markdown` — exportMarkdown(graph, view)
 
 > auch in: `FCHAIN-doc-export`
 
@@ -3900,7 +3954,7 @@ priority: must · status: done · kinds: precondition
 
 Verification ◀ `TEST-doc-export` (conformance) · satisfy ◀ `FUNC-export-markdown` · allocate ▶ `MOD-docs`
 
-###### 3.10.5.2.2  `FUNC-render-views` — render graph→markdown views
+###### 3.10.6.2.2  `FUNC-render-views` — render graph→markdown views
 
 > auch in: `FCHAIN-doc-export`
 
@@ -3918,7 +3972,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-auto-export` (integration) · `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · `TEST-views-auditor` (unit) · `TEST-views-conformance` (unit) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
 
-###### 3.10.5.2.3  `FUNC-view-changelog` — se-view-changelog (Change Log)
+###### 3.10.6.2.3  `FUNC-view-changelog` — se-view-changelog (Change Log)
 
 > auch in: `FCHAIN-doc-export`
 
@@ -3936,7 +3990,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-auto-export` (integration) · `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · `TEST-views-auditor` (unit) · `TEST-views-conformance` (unit) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
 
-###### 3.10.5.2.4  `FUNC-view-conops` — se-view-conops (ConOps)
+###### 3.10.6.2.4  `FUNC-view-conops` — se-view-conops (ConOps)
 
 > auch in: `FCHAIN-doc-export`
 
@@ -3954,7 +4008,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-auto-export` (integration) · `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · `TEST-views-auditor` (unit) · `TEST-views-conformance` (unit) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
 
-###### 3.10.5.2.5  `FUNC-view-fmea` — View se-view:fmea
+###### 3.10.6.2.5  `FUNC-view-fmea` — View se-view:fmea
 
 > auch in: `FCHAIN-doc-export`
 
@@ -3972,7 +4026,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-auto-export` (integration) · `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · `TEST-views-auditor` (unit) · `TEST-views-conformance` (unit) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
 
-###### 3.10.5.2.6  `FUNC-view-icd` — se-view-icd (ICD)
+###### 3.10.6.2.6  `FUNC-view-icd` — se-view-icd (ICD)
 
 > auch in: `FCHAIN-doc-export`
 
@@ -3990,7 +4044,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-auto-export` (integration) · `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · `TEST-views-auditor` (unit) · `TEST-views-conformance` (unit) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
 
-###### 3.10.5.2.7  `FUNC-view-intplan` — se-view-intplan (Integrations-/Testplan)
+###### 3.10.6.2.7  `FUNC-view-intplan` — se-view-intplan (Integrations-/Testplan)
 
 > auch in: `FCHAIN-doc-export`
 
@@ -4008,7 +4062,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-auto-export` (integration) · `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · `TEST-views-auditor` (unit) · `TEST-views-conformance` (unit) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
 
-###### 3.10.5.2.8  `FUNC-view-rtm` — se-view-rtm (RTM)
+###### 3.10.6.2.8  `FUNC-view-rtm` — se-view-rtm (RTM)
 
 > auch in: `FCHAIN-doc-export`
 
@@ -4026,13 +4080,13 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-auto-export` (integration) · `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · `TEST-views-auditor` (unit) · `TEST-views-conformance` (unit) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · allocate ▶ `MOD-docs` · `MOD-skills`
 
-##### 3.10.5.3  `FUNC-block-live-dashboard` — Live-Kanal
+##### 3.10.6.3  `FUNC-block-live-dashboard` — Live-Kanal
 
 Ebene-1-Block im Viewer: der Live-Transport — Update-Events, Diff-Broadcast, SSE-Verteilung an die Panels.
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-dashboard`
 
-###### 3.10.5.3.1  `FUNC-broadcast-diff` — broadcastDiff(version)
+###### 3.10.6.3.1  `FUNC-broadcast-diff` — broadcastDiff(version)
 
 > auch in: `FCHAIN-live-update`
 
@@ -4050,7 +4104,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FUNC-broadcast-diff` · `FUNC-emit-update-event` · `MOD-host-bridge` · allocate ▶ `MOD-hooks` · `MOD-host-bridge`
 
-###### 3.10.5.3.2  `FUNC-emit-update-event` — emitUpdateEvent(domains)
+###### 3.10.6.3.2  `FUNC-emit-update-event` — emitUpdateEvent(domains)
 
 > auch in: `FCHAIN-live-update`
 
@@ -4102,7 +4156,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FUNC-broadcast-diff` · `FUNC-emit-update-event` · `MOD-host-bridge` · allocate ▶ `MOD-hooks` · `MOD-host-bridge`
 
-###### 3.10.5.3.3  `FUNC-serve-sse` — serveSSE()
+###### 3.10.6.3.3  `FUNC-serve-sse` — serveSSE()
 
 > auch in: `FCHAIN-live-update`
 
@@ -4118,7 +4172,7 @@ priority: must · status: done · kinds: negative
 
 Verification ◀ `TEST-bridge-follows-lock` (integration) · `TEST-readonly-bridge` (integration) · satisfy ◀ `FUNC-serve-sse` · `MOD-host-bridge` · allocate ▶ `MOD-host-bridge`
 
-###### 3.10.5.3.4  `FUNC-subscribe-updates` — subscribeUpdates()
+###### 3.10.6.3.4  `FUNC-subscribe-updates` — subscribeUpdates()
 
 > auch in: `FCHAIN-live-update`
 
@@ -4126,13 +4180,13 @@ SSE-Client: bei jedem Live-Update-Event (invalidate) werden die betroffenen Doma
 
 io ◀ `FLOW-live-event` · io ▶ — · allocate ▶ `MOD-dashboard`
 
-##### 3.10.5.4  `FUNC-block-reifegrad-sicht` — Reifegrad-Sicht
+##### 3.10.6.4  `FUNC-block-reifegrad-sicht` — Reifegrad-Sicht
 
 Ebene-1-Block im Viewer: die Reifegrad-Sicht — Readiness, Phase-Gates, Artefakt-Panel, Empfehlungen, Funktions-Health.
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-dashboard`
 
-###### 3.10.5.4.1  `FUNC-render-artifacts` — renderArtifactReadiness(views)
+###### 3.10.6.4.1  `FUNC-render-artifacts` — renderArtifactReadiness(views)
 
 INCOSE-Artifact-Panel: Readiness je Dokument/View (Testmatrix, FMEA, RTM, ImplPlan, IntPlan, ChangeLog, ConOps, IRR, NFR, ICD) aus dem Query-Layer (graph_query views) + graph_readiness. Repoint der aimprove ArtifactReadiness. Die offene View-Liste (RTM, IntPlan, ChangeLog, ConOps, IRR, ICD ohne se-view-Skill) ist genau der Rest-Scope von CR-GC-116. (CR-GC-115)
 
@@ -4146,19 +4200,19 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-dashboard-readonly` (integration) · satisfy ◀ `FUNC-render-artifacts` · `MOD-dashboard` · allocate ▶ `MOD-dashboard`
 
-###### 3.10.5.4.2  `FUNC-render-health` — renderHealth()
+###### 3.10.6.4.2  `FUNC-render-health` — renderHealth()
 
 Echter Funktions-Health-Check, kein Prozess-Liveness-Licht: Kuzu-Store erreichbar, Apply-Gate funktional, Ontology/Rules/Contracts-Versionen, LLM/BYOK-Readiness (OpenCode, fuer spaeter). aimprove-spezifische Felder (Sessions/Patterns) entfernt. Quelle: Host-Bridge Health-Endpoint. (CR-GC-115)
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-dashboard`
 
-###### 3.10.5.4.3  `FUNC-render-impl-gates` — renderImplGates(report)
+###### 3.10.6.4.3  `FUNC-render-impl-gates` — renderImplGates(report)
 
 Impl-Gates-Panel: SAR/FCA/SVR/FRR + CR/MS-Burndown aus graph_readiness.implGates und den MS/CR-Knoten. In aimprove nie verdrahtet (0/9, 0/20, 0/4); graphcode macht die Query transparent: jedes Gate zeigt seine Blocking-Elemente als Drill-down. Repoint der aimprove ImplGates + CrBurndown. (CR-GC-115)
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-dashboard`
 
-###### 3.10.5.4.4  `FUNC-render-readiness` — renderReadinessPanel(report)
+###### 3.10.6.4.4  `FUNC-render-readiness` — renderReadinessPanel(report)
 
 Readiness-Panel: Compliance + Phase-Gates SRR/PDR/CDR/TRR aus graph_readiness (V3_RULES, lean INCOSE). Repoint der aimprove StatusSection-Readiness-Bars + GateView. (CR-GC-115)
 
@@ -4172,13 +4226,13 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-dashboard-readonly` (integration) · `TEST-help-content-coverage` (unit) · `TEST-help-projection` (unit) · `TEST-help-tool` (integration) · satisfy ◀ `FUNC-render-readiness` · `MOD-dashboard` · allocate ▶ `MOD-dashboard`
 
-###### 3.10.5.4.5  `FUNC-render-recommendations` — renderImprovementMeasures()
+###### 3.10.6.4.5  `FUNC-render-recommendations` — renderImprovementMeasures()
 
 Top-N hoechstbewertete Verbesserungsmassnahmen, deterministisch aus Graph-Defiziten abgeleitet (fehlende verify-Traces R-01, Orphans RD-01, Blast-Radius via graph_impact), nach Severity/Impact sortiert. Behalten aus aimprove TOP-Empfehlungen, aber graph-deduziert statt Learning-Vorschlag (kein Generator). (CR-GC-115)
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-dashboard`
 
-#### 3.10.6  `FUNC-goal-steerer` — Autopilot
+#### 3.10.7  `FUNC-goal-steerer` — Autopilot
 
 Ebene-0-Block Sales-Sicht: waehlt die schwaechste Stelle, laesst Kandidaten antreten, stoesst die naechste Runde an. Logischer Sammler der Schleifen-Entscheidungen: Fokuswahl, Kandidaten-Ranking, Advisory-Rueckweg, Operator-Vorschlaege. Realisiert durch seine Kinder; das Gate-Verdikt liegt beim Qualitaets-Gate.
 
@@ -4194,13 +4248,13 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-executor` · `MOD-metrics-engine` · `MOD-steering`
 
-##### 3.10.6.1  `FUNC-block-arch-optimierung` — Architektur-Optimierung
+##### 3.10.7.1  `FUNC-block-arch-optimierung` — Architektur-Optimierung
 
 Ebene-1-Block im Autopilot: Architektur-Optimierung — Operator-Vorschlaege entlang der R6-Fitness.
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-steering`
 
-###### 3.10.6.1.1  `FUNC-graph-suggest` — graph_suggest(weights)
+###### 3.10.7.1.1  `FUNC-graph-suggest` — graph_suggest(weights)
 
 > auch in: `FCHAIN-advisory-roundtrip`
 
@@ -4236,13 +4290,13 @@ priority: must · status: n/a
 
 Verification ◀ `TEST-executor-bestofn` (integration) · `TEST-target-profile` (integration) · `TEST-target-shifts-ranking` (unit) · satisfy ◀ `FUNC-graph-suggest` · allocate ▶ `MOD-mcp-tools`
 
-##### 3.10.6.2  `FUNC-block-q-improvement` — Q-Improvement
+##### 3.10.7.2  `FUNC-block-q-improvement` — Q-Improvement
 
 Ebene-1-Block im Autopilot: Qualitaets-Verbesserung — Fehler und Warnings abbauen; Fokus-Dimension und Top-Fixes an den Agenten.
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-steering`
 
-###### 3.10.6.2.1  `FUNC-close-violations` — Skill se:close-violations
+###### 3.10.7.2.1  `FUNC-close-violations` — Skill se:close-violations
 
 > auch in: `FCHAIN-skill-authoring`
 
@@ -4260,7 +4314,7 @@ priority: must · status: n/a
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-skills`
 
-###### 3.10.6.2.2  `FUNC-next-step` — nextStep(graph, policy)
+###### 3.10.7.2.2  `FUNC-next-step` — nextStep(graph, policy)
 
 > auch in: `FCHAIN-steering-loop`
 
@@ -4278,13 +4332,13 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-executor` · `MOD-metrics-engine` · `MOD-steering`
 
-##### 3.10.6.3  `FUNC-block-se-steuerung` — SE-Prozess-Steuerung
+##### 3.10.7.3  `FUNC-block-se-steuerung` — SE-Prozess-Steuerung
 
 Ebene-1-Block im Autopilot: SE-Prozess-Steuerung — readiness-getriebener Rundenschritt und Kandidaten-Ranking; treibt den Prozess von der schwaechsten Stelle zur naechsten.
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-steering`
 
-###### 3.10.6.3.1  `FUNC-generation-step` — generationStep(graph, policy, intent)
+###### 3.10.7.3.1  `FUNC-generation-step` — generationStep(graph, policy, intent)
 
 > auch in: `FCHAIN-steering-loop`
 
@@ -4318,7 +4372,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-executor` · `MOD-metrics-engine` · `MOD-steering`
 
-###### 3.10.6.3.2  `FUNC-rank-candidates` — rankCandidates(probes, focus)
+###### 3.10.7.3.2  `FUNC-rank-candidates` — rankCandidates(probes, focus)
 
 > auch in: `FCHAIN-steering-loop`
 
@@ -4336,7 +4390,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-executor` · `MOD-metrics-engine` · `MOD-steering`
 
-###### 3.10.6.3.3  `FUNC-se-conops` — Skill se-conops
+###### 3.10.7.3.3  `FUNC-se-conops` — Skill se-conops
 
 > auch in: `FCHAIN-skill-authoring`
 
@@ -4354,7 +4408,7 @@ priority: must · status: n/a
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-skills`
 
-###### 3.10.6.3.4  `FUNC-se-fmea` — Skill se-fmea
+###### 3.10.7.3.4  `FUNC-se-fmea` — Skill se-fmea
 
 > auch in: `FCHAIN-skill-authoring`
 
@@ -4372,7 +4426,7 @@ priority: must · status: n/a
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-skills`
 
-###### 3.10.6.3.5  `FUNC-se-generate` — Skill se:generate
+###### 3.10.7.3.5  `FUNC-se-generate` — Skill se:generate
 
 > auch in: `FCHAIN-skill-authoring`
 
@@ -4390,7 +4444,7 @@ priority: must · status: n/a
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-skills`
 
-###### 3.10.6.3.6  `FUNC-se-irr` — Skill se-irr
+###### 3.10.7.3.6  `FUNC-se-irr` — Skill se-irr
 
 > auch in: `FCHAIN-skill-authoring`
 
@@ -4408,7 +4462,7 @@ priority: must · status: n/a
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-skills`
 
-###### 3.10.6.3.7  `FUNC-se-plan` — Skill se-plan
+###### 3.10.7.3.7  `FUNC-se-plan` — Skill se-plan
 
 > auch in: `FCHAIN-skill-authoring`
 
@@ -4426,7 +4480,7 @@ priority: must · status: n/a
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-skills`
 
-###### 3.10.6.3.8  `FUNC-se-retro` — Skill se-retro
+###### 3.10.7.3.8  `FUNC-se-retro` — Skill se-retro
 
 > auch in: `FCHAIN-skill-report`
 
@@ -4444,7 +4498,7 @@ priority: must · status: n/a
 
 Verification ◀ `TEST-skill-reports-measured-values` (conformance) · satisfy ◀ `FCHAIN-skill-report` · `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · allocate ▶ `MOD-skills`
 
-###### 3.10.6.3.9  `FUNC-se-review` — Skill se-review
+###### 3.10.7.3.9  `FUNC-se-review` — Skill se-review
 
 > auch in: `FCHAIN-skill-report`
 
@@ -4462,7 +4516,7 @@ priority: must · status: n/a
 
 Verification ◀ `TEST-skill-reports-measured-values` (conformance) · satisfy ◀ `FCHAIN-skill-report` · `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · allocate ▶ `MOD-skills`
 
-###### 3.10.6.3.10  `FUNC-se-status` — Skill se-status
+###### 3.10.7.3.10  `FUNC-se-status` — Skill se-status
 
 > auch in: `FCHAIN-skill-report`
 
@@ -4480,7 +4534,7 @@ priority: must · status: n/a
 
 Verification ◀ `TEST-skill-reports-measured-values` (conformance) · satisfy ◀ `FCHAIN-skill-report` · `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · allocate ▶ `MOD-skills`
 
-###### 3.10.6.3.11  `FUNC-se-trade` — Skill se-trade
+###### 3.10.7.3.11  `FUNC-se-trade` — Skill se-trade
 
 > auch in: `FCHAIN-skill-authoring`
 
@@ -4498,11 +4552,37 @@ priority: must · status: n/a
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-skills`
 
-#### 3.10.7  `FUNC-gve-supervise` — superviseGve
+#### 3.10.8  `FUNC-gve-supervise` — superviseGve
 
 Startet und ueberwacht den externen Viewer-Prozess und haengt ihn an die Sitzungs-Lebensdauer, damit kein verwaister Viewer zurueckbleibt. Aufrufer ist der MCP-Server beim Hochfahren.
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-cli`
+
+#### 3.10.9  `FUNC-host-socket` — startHostSocket
+
+Oeffnet den Socket, ueber den ein zweiter Prozess Schreibaufrufe an den Besitzer des Stores weiterreicht, statt ein zweites Datenbank-Handle zu oeffnen.
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-host-bridge`
+
+#### 3.10.10  `FUNC-load-config` — loadGraphcodeConfig
+
+Liest die Repo-Konfiguration und liefert die Urteilsschwellen als Policy. Keine Schwelle steht als Literal im Regelcode; eine verschobene Policy kippt dasselbe Urteil auf unveraendertem Graphen.
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-harness`
+
+##### `REQ-thresholds-from-config` — Urteilsschwellen kommen aus der Config, nicht aus dem Regelcode
+
+Keine Urteilsschwelle steht als Literal im Regelcode: eine verschobene MetricPolicy kippt dasselbe Modul-Urteil auf unveraendertem Graphen, eine verschobene Fokus-Schwelle verschiebt das ready-Urteil ohne die Funde zu aendern.
+
+priority: must · status: n/a
+
+Verification ◀ `TEST-target-profile` (integration) · `TEST-thresholds-from-config` (unit) · satisfy ◀ `FUNC-load-config` · allocate ▶ `MOD-harness`
+
+#### 3.10.11  `FUNC-tool-context` — createToolContext
+
+Stellt jedem Werkzeugaufruf seinen Kontext bereit: Aufrufer, Repo-Wurzel und die Weiterleitung an den Besitzerprozess.
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-mcp-tools`
 
 ## 4  Schnittstellen
 
@@ -4630,7 +4710,7 @@ io ◀ `FUNC-mutate` · io ▶ `FUNC-take-steering-snapshot` · schema ▶ `SCHE
 
 Der kanonische, deterministische Snapshot docs/graph/<system>.graph.json — history-of-record. Der Export erzeugt ihn, rewind holt eine aeltere Fassung aus dem Git-Objektspeicher, reseed liest ihn.
 
-io ◀ `FUNC-graph-export-snapshot` · `FUNC-rewind` · io ▶ `ACTOR-developer` · `FUNC-open-store` · `FUNC-reseed` · `FUNC-seed-from-json` · schema ▶ `SCHEMA-ontology-graph`
+io ◀ `FUNC-graph-export-snapshot` · `FUNC-rewind` · io ▶ `ACTOR-developer` · `FUNC-apply-reseed` · `FUNC-open-store` · `FUNC-reseed` · `FUNC-seed-from-json` · schema ▶ `SCHEMA-ontology-graph`
 
 ### 4.22  `FLOW-graph-state` — Graph-State
 
@@ -4976,7 +5056,7 @@ allocate ◀ `FUNC-block-anschluss` · `FUNC-block-gate` · `FUNC-block-gedaecht
 
 bin `npx @sigloch/graphcode init/update/remove`: self-contained Installer. App-spezifisch. (REQ-npx-distribution)
 
-allocate ◀ `FUNC-bootstrap` · `FUNC-cli-dispatch` · `FUNC-gve-supervise` · `FUNC-harness-cli` · `FUNC-import-code-verb` · `FUNC-rewind` · `FUNC-run-verb` · `FUNC-session-shutdown` · `FUNC-upgrade` · satisfy ▶ `REQ-buildable-standalone`
+allocate ◀ `FUNC-bootstrap` · `FUNC-cli-dispatch` · `FUNC-collect-status` · `FUNC-gve-supervise` · `FUNC-harness-cli` · `FUNC-import-code-verb` · `FUNC-rewind` · `FUNC-run-verb` · `FUNC-session-shutdown` · `FUNC-upgrade` · satisfy ▶ `REQ-buildable-standalone`
 
 #### 6.4.2  `MOD-codec` — codec.ts — GraphCodeCodec
 
@@ -4994,19 +5074,19 @@ allocate ◀ `FUNC-block-arch-sicht` · `FUNC-block-live-dashboard` · `FUNC-blo
 
 App-spezifisches Rendering: Graph → Markdown-Views (deterministisch, GENERATED-Header). (REQ-doc-export, code-realisiert, target)
 
-allocate ◀ `FUNC-block-dokumentenwerk` · `FUNC-export-markdown` · satisfy ▶ `REQ-docs-taxonomy` · `REQ-testref-materialized`
+allocate ◀ `FUNC-auto-export` · `FUNC-block-dokumentenwerk` · `FUNC-export-markdown` · satisfy ▶ `REQ-docs-taxonomy` · `REQ-testref-materialized`
 
 #### 6.4.5  `MOD-executor` — executor — eingebetteter Treiber
 
 Treiberschleife hinter dem Verb graphcode run: Runden-Prompt, Modellaufruf, Kandidaten-Ranking, Prosa-Recovery. Fuenf flache Dateien unter src/, deshalb kein path-Praefix am Modul; die Zuordnung laeuft ueber die realRef der allozierten FUNC.
 
-allocate ◀ `FUNC-build-round-injection` · `FUNC-extract-mutate` · `FUNC-rank-candidates` · `FUNC-run-executor`
+allocate ◀ `FUNC-build-round-injection` · `FUNC-extract-mutate` · `FUNC-preflight` · `FUNC-rank-candidates` · `FUNC-run-executor`
 
 #### 6.4.6  `MOD-harness` — harness.ts — GraphCodeHarness
 
 Apply-Gate: loadGraph/saveGraph/mutate/evaluateRules/close gegen lokalen Kuzu. (SPEC §2.1)
 
-allocate ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-evaluate-rules` · `FUNC-import` · `FUNC-load-graph` · `FUNC-mutate` · `FUNC-open-store` · `FUNC-reseed` · `FUNC-save-graph` · `FUNC-seed-from-json` · satisfy ▶ `REQ-graph-state-recall` · `REQ-harness-schema-in-contracts` · `REQ-import-se-ontology` · `REQ-quality-metric` · `REQ-single-kuzu-owner` · `REQ-single-store` · `REQ-store-recovery` · `REQ-structural-rule-shared`
+allocate ◀ `FUNC-apply-reseed` · `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-evaluate-rules` · `FUNC-export-marker` · `FUNC-import` · `FUNC-load-config` · `FUNC-load-graph` · `FUNC-mutate` · `FUNC-open-store` · `FUNC-reseed` · `FUNC-save-graph` · `FUNC-seed-from-json` · satisfy ▶ `REQ-graph-state-recall` · `REQ-harness-schema-in-contracts` · `REQ-import-se-ontology` · `REQ-quality-metric` · `REQ-single-kuzu-owner` · `REQ-single-store` · `REQ-store-recovery` · `REQ-structural-rule-shared`
 
 #### 6.4.7  `MOD-hooks` — hooks.ts — HookSystem
 
@@ -5018,13 +5098,13 @@ allocate ◀ `FUNC-emit-trajectory` · `FUNC-emit-update-event` · satisfy ▶ `
 
 Host-Prozess (Single Kuzu Owner) exponiert graph-api-express + SSE-Route, verdrahtet an harness.onUpdateEvent. Versioned Diff-Broadcast an den Live-Viewer. Kein Express-REST im Core — die Bridge ist Host-Sache. (SPEC §5)
 
-allocate ◀ `FUNC-broadcast-diff` · `FUNC-health-endpoint` · `FUNC-own-kuzu-host` · `FUNC-serve-sse` · satisfy ▶ `REQ-readonly-bridge` · `REQ-real-health-check` · `REQ-versioned-broadcast`
+allocate ◀ `FUNC-broadcast-diff` · `FUNC-health-endpoint` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · `FUNC-serve-sse` · satisfy ▶ `REQ-readonly-bridge` · `REQ-real-health-check` · `REQ-versioned-broadcast`
 
 #### 6.4.9  `MOD-mcp-tools` — mcp-tools.ts — MCP-Registry
 
 MCP-stdio Tool-Registry, an die Harness gebunden; read/write/query Tools. (SPEC §2.2)
 
-allocate ◀ `FUNC-deduce-tests` · `FUNC-graph-expand` · `FUNC-graph-export-snapshot` · `FUNC-graph-impact` · `FUNC-graph-suggest` · `FUNC-resolve-tests-from-code` · `FUNC-serve-stdio` · satisfy ▶ `REQ-agent-agnostic` · `REQ-export-no-clobber` · `REQ-graph-context-replaces-reading` · `REQ-mcp-tool-registry` · `REQ-prompt-provenance` · `REQ-readiness-model` · `REQ-rule-calibration` · `REQ-single-transport` · `REQ-test-runnable-binding` · `REQ-testref-materialized`
+allocate ◀ `FUNC-bind-tools` · `FUNC-deduce-tests` · `FUNC-graph-expand` · `FUNC-graph-export-snapshot` · `FUNC-graph-impact` · `FUNC-graph-suggest` · `FUNC-resolve-tests-from-code` · `FUNC-serve-stdio` · `FUNC-tool-context` · satisfy ▶ `REQ-agent-agnostic` · `REQ-export-no-clobber` · `REQ-graph-context-replaces-reading` · `REQ-mcp-tool-registry` · `REQ-prompt-provenance` · `REQ-readiness-model` · `REQ-rule-calibration` · `REQ-single-transport` · `REQ-test-runnable-binding` · `REQ-testref-materialized`
 
 #### 6.4.10  `MOD-metrics-engine` — metrics-engine — Kenngroessen-Rechenkern
 
@@ -5042,13 +5122,13 @@ allocate ◀ `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` ·
 
 Der Steuerungskern als Modul: Snapshot und Delta (src/steering-snapshot.ts), Fokuswahl und Runden-Prompt (src/generate.ts), Advisory-Naechster-Schritt (src/steering.ts), Kandidaten-Rangfolge (src/executor-rank.ts). Code-realisiert; dieser CR schreibt keinen Code, die Dateien lagen bisher nur ohne Modellstelle da.
 
-allocate ◀ `FUNC-block-arch-optimierung` · `FUNC-block-q-improvement` · `FUNC-block-se-steuerung` · `FUNC-compute-phase-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-nd-similarity` · `FUNC-next-step` · `FUNC-take-steering-snapshot`
+allocate ◀ `FUNC-block-arch-optimierung` · `FUNC-block-q-improvement` · `FUNC-block-se-steuerung` · `FUNC-compute-phase-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-nd-similarity` · `FUNC-next-step` · `FUNC-take-steering-snapshot` · `FUNC-target-profile-load`
 
 ### 6.5  `MOD-schema-migration` — Schema-Migration
 
 Versionsmigration des Meta-Modells: modelliert, noch nicht realisiert.
 
-allocate ◀ `FUNC-migrate-schema`
+allocate ◀ `FUNC-migrate-schema` · `FUNC-schema-guard`
 
 ## 7  Cross-cutting Requirements
 
@@ -5267,14 +5347,6 @@ Ein gebundener TEST-testRef loest immer auf eine reale Datei auf: graph_export m
 priority: must · status: done
 
 Verification ◀ `TEST-realref-materialize` (integration) · `TEST-testref-materialize` (integration) · satisfy ◀ `MOD-docs` · `MOD-mcp-tools` · allocate ▶ —
-
-### `REQ-thresholds-from-config` — Urteilsschwellen kommen aus der Config, nicht aus dem Regelcode
-
-Keine Urteilsschwelle steht als Literal im Regelcode: eine verschobene MetricPolicy kippt dasselbe Modul-Urteil auf unveraendertem Graphen, eine verschobene Fokus-Schwelle verschiebt das ready-Urteil ohne die Funde zu aendern.
-
-priority: must · status: n/a
-
-Verification ◀ `TEST-target-profile` (integration) · `TEST-thresholds-from-config` (unit) · satisfy ◀ — · allocate ▶ —
 
 ### `REQ-token-efficiency` — Token-Effizienz gegenueber Datei-Kontext
 

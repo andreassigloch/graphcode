@@ -602,6 +602,7 @@
 | `FCHAIN-agent-query` | satisfy | `REQ-precise-context` |
 | `FCHAIN-apply-gate` | compose | `FUNC-claim-store-lock` |
 | `FCHAIN-apply-gate` | compose | `FUNC-close-store` |
+| `FCHAIN-apply-gate` | compose | `FUNC-create-harness` |
 | `FCHAIN-apply-gate` | compose | `FUNC-emit-trajectory` |
 | `FCHAIN-apply-gate` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-apply-gate` | compose | `FUNC-fit-advisory` |
@@ -670,12 +671,15 @@
 | `FCHAIN-modelfree-gate` | satisfy | `REQ-post-modelfree-gate` |
 | `FCHAIN-modelfree-gate` | satisfy | `REQ-pre-modelfree-gate` |
 | `FCHAIN-modelfree-gate` | satisfy | `REQ-small-model-viable` |
+| `FCHAIN-recall` | compose | `FUNC-apply-reseed` |
 | `FCHAIN-recall` | compose | `FUNC-reseed` |
 | `FCHAIN-recall` | compose | `FUNC-rewind` |
+| `FCHAIN-recall` | compose | `FUNC-schema-guard` |
 | `FCHAIN-recall` | compose | `FUNC-seed-from-json` |
 | `FCHAIN-recall` | satisfy | `REQ-graph-state-recall` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-bootstrap` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-cli-dispatch` |
+| `FCHAIN-repo-lifecycle` | compose | `FUNC-collect-status` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-harness-cli` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-run-verb` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-session-shutdown` |
@@ -705,7 +709,9 @@
 | `FCHAIN-skill-report` | compose | `FUNC-test` |
 | `FCHAIN-skill-report` | compose | `FUNC-test-ui` |
 | `FCHAIN-skill-report` | satisfy | `REQ-skill-reads-only` |
+| `FCHAIN-snapshot-freshness` | compose | `FUNC-auto-export` |
 | `FCHAIN-snapshot-freshness` | compose | `FUNC-evaluate-rules` |
+| `FCHAIN-snapshot-freshness` | compose | `FUNC-export-marker` |
 | `FCHAIN-snapshot-freshness` | compose | `FUNC-graph-export-snapshot` |
 | `FCHAIN-snapshot-freshness` | compose | `FUNC-mutate` |
 | `FCHAIN-snapshot-freshness` | compose | `FUNC-save-graph` |
@@ -720,9 +726,11 @@
 | `FCHAIN-steering-loop` | compose | `FUNC-mutate` |
 | `FCHAIN-steering-loop` | compose | `FUNC-nd-similarity` |
 | `FCHAIN-steering-loop` | compose | `FUNC-next-step` |
+| `FCHAIN-steering-loop` | compose | `FUNC-preflight` |
 | `FCHAIN-steering-loop` | compose | `FUNC-rank-candidates` |
 | `FCHAIN-steering-loop` | compose | `FUNC-run-executor` |
 | `FCHAIN-steering-loop` | compose | `FUNC-take-steering-snapshot` |
+| `FCHAIN-steering-loop` | compose | `FUNC-target-profile-load` |
 | `FCHAIN-steering-loop` | satisfy | `REQ-steering-from-metrics` |
 | `FLOW-action` | io | `ACTOR-claude-code` |
 | `FLOW-action` | relation | `SCHEMA-action` |
@@ -793,6 +801,7 @@
 | `FLOW-gate-verdict` | io | `FUNC-take-steering-snapshot` |
 | `FLOW-gate-verdict` | relation | `SCHEMA-mutate-result` |
 | `FLOW-graph-snapshot` | io | `ACTOR-developer` |
+| `FLOW-graph-snapshot` | io | `FUNC-apply-reseed` |
 | `FLOW-graph-snapshot` | io | `FUNC-open-store` |
 | `FLOW-graph-snapshot` | io | `FUNC-reseed` |
 | `FLOW-graph-snapshot` | io | `FUNC-seed-from-json` |
@@ -892,6 +901,7 @@
 | `FLOW-violations` | io | `FUNC-se-review` |
 | `FLOW-violations` | io | `FUNC-se-status` |
 | `FLOW-violations` | relation | `SCHEMA-mutate-result` |
+| `FUNC-apply-reseed` | allocate | `MOD-harness` |
 | `FUNC-arch-fitness` | allocate | `MOD-metrics-engine` |
 | `FUNC-arch-fitness` | io | `FLOW-arch-fitness` |
 | `FUNC-arch-fitness` | satisfy | `REQ-steering-from-metrics` |
@@ -901,6 +911,8 @@
 | `FUNC-author-uc` | allocate | `MOD-skills` |
 | `FUNC-author-uc` | io | `FLOW-mutate-cmd` |
 | `FUNC-author-uc` | satisfy | `REQ-skill-authors-through-gate` |
+| `FUNC-auto-export` | allocate | `MOD-docs` |
+| `FUNC-bind-tools` | allocate | `MOD-mcp-tools` |
 | `FUNC-block-anschluss` | allocate | `MOD-repo-root` |
 | `FUNC-block-anschluss` | compose | `FUNC-author-req` |
 | `FUNC-block-anschluss` | compose | `FUNC-author-uc` |
@@ -1009,6 +1021,7 @@
 | `FUNC-close-violations` | allocate | `MOD-skills` |
 | `FUNC-close-violations` | io | `FLOW-mutate-cmd` |
 | `FUNC-close-violations` | satisfy | `REQ-skill-authors-through-gate` |
+| `FUNC-collect-status` | allocate | `MOD-cli` |
 | `FUNC-compute-phase-readiness` | allocate | `MOD-steering` |
 | `FUNC-compute-phase-readiness` | io | `FLOW-phase-readiness` |
 | `FUNC-compute-phase-readiness` | satisfy | `REQ-steering-from-metrics` |
@@ -1018,6 +1031,7 @@
 | `FUNC-compute-steering-delta` | allocate | `MOD-steering` |
 | `FUNC-compute-steering-delta` | io | `FLOW-steering-delta` |
 | `FUNC-compute-steering-delta` | satisfy | `REQ-steering-from-metrics` |
+| `FUNC-create-harness` | allocate | `MOD-harness` |
 | `FUNC-decode` | allocate | `MOD-codec` |
 | `FUNC-decode` | io | `FLOW-capture-draft` |
 | `FUNC-decode` | io | `FLOW-parsed-graph` |
@@ -1052,6 +1066,7 @@
 | `FUNC-export-markdown` | satisfy | `REQ-doc-export` |
 | `FUNC-export-markdown` | satisfy | `REQ-post-export-markdown` |
 | `FUNC-export-markdown` | satisfy | `REQ-pre-export-markdown` |
+| `FUNC-export-marker` | allocate | `MOD-harness` |
 | `FUNC-extract-mutate` | allocate | `MOD-executor` |
 | `FUNC-extract-mutate` | io | `FLOW-mutate-cmd` |
 | `FUNC-extract-mutate` | satisfy | `REQ-prose-recovery` |
@@ -1102,6 +1117,7 @@
 | `FUNC-harness-cli` | satisfy | `REQ-self-contained-dist` |
 | `FUNC-health-endpoint` | allocate | `MOD-host-bridge` |
 | `FUNC-health-endpoint` | satisfy | `REQ-real-health-check` |
+| `FUNC-host-socket` | allocate | `MOD-host-bridge` |
 | `FUNC-import` | allocate | `MOD-harness` |
 | `FUNC-import` | io | `FLOW-bootstrap-result` |
 | `FUNC-import` | satisfy | `REQ-batch-seed-performance` |
@@ -1119,6 +1135,8 @@
 | `FUNC-list-elements` | allocate | `MOD-element-slice` |
 | `FUNC-list-elements` | io | `FLOW-element-slice` |
 | `FUNC-list-elements` | satisfy | `REQ-query-precision` |
+| `FUNC-load-config` | allocate | `MOD-harness` |
+| `FUNC-load-config` | satisfy | `REQ-thresholds-from-config` |
 | `FUNC-load-graph` | allocate | `MOD-harness` |
 | `FUNC-load-graph` | io | `FLOW-graph-state` |
 | `FUNC-load-graph` | satisfy | `REQ-disk-persistence` |
@@ -1154,6 +1172,7 @@
 | `FUNC-open-store` | satisfy | `REQ-single-kuzu-owner` |
 | `FUNC-own-kuzu-host` | allocate | `MOD-host-bridge` |
 | `FUNC-own-kuzu-host` | satisfy | `REQ-single-kuzu-owner` |
+| `FUNC-preflight` | allocate | `MOD-executor` |
 | `FUNC-rank-candidates` | allocate | `MOD-executor` |
 | `FUNC-rank-candidates` | io | `FLOW-suggested-edit` |
 | `FUNC-rank-candidates` | satisfy | `REQ-steering-from-metrics` |
@@ -1186,6 +1205,7 @@
 | `FUNC-save-graph` | allocate | `MOD-harness` |
 | `FUNC-save-graph` | io | `FLOW-committed-graph` |
 | `FUNC-save-graph` | satisfy | `REQ-disk-persistence` |
+| `FUNC-schema-guard` | allocate | `MOD-schema-migration` |
 | `FUNC-score-completeness` | allocate | `MOD-completeness` |
 | `FUNC-score-completeness` | io | `FLOW-completeness` |
 | `FUNC-score-completeness` | satisfy | `REQ-completeness-actor-bounded` |
@@ -1244,12 +1264,14 @@
 | `FUNC-target-profile` | allocate | `MOD-skills` |
 | `FUNC-target-profile` | io | `FLOW-mutate-cmd` |
 | `FUNC-target-profile` | satisfy | `REQ-skill-authors-through-gate` |
+| `FUNC-target-profile-load` | allocate | `MOD-steering` |
 | `FUNC-test` | allocate | `MOD-skills` |
 | `FUNC-test` | io | `FLOW-skill-report` |
 | `FUNC-test` | satisfy | `REQ-code-governed-quality` |
 | `FUNC-test-ui` | allocate | `MOD-skills` |
 | `FUNC-test-ui` | io | `FLOW-skill-report` |
 | `FUNC-test-ui` | satisfy | `REQ-code-governed-quality` |
+| `FUNC-tool-context` | allocate | `MOD-mcp-tools` |
 | `FUNC-upgrade` | allocate | `MOD-cli` |
 | `FUNC-view-changelog` | allocate | `MOD-skills` |
 | `FUNC-view-changelog` | io | `FLOW-export-request` |

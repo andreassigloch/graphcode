@@ -10,9 +10,12 @@
 
 | uid | type | name |
 |---|---|---|
+| `FUNC-apply-reseed` | FUNC | applyReseed |
 | `FUNC-arch-fitness` | FUNC | metrics(graph, layer arch) |
 | `FUNC-author-req` | FUNC | Skill se:author-req |
 | `FUNC-author-uc` | FUNC | Skill se:author-uc |
+| `FUNC-auto-export` | FUNC | registerAutoExport |
+| `FUNC-bind-tools` | FUNC | bindToolsToHarness |
 | `FUNC-block-anschluss` | FUNC | Agenten-Anschluss |
 | `FUNC-block-arch-optimierung` | FUNC | Architektur-Optimierung |
 | `FUNC-block-arch-sicht` | FUNC | Architektur-Sicht |
@@ -33,9 +36,11 @@
 | `FUNC-cli-dispatch` | FUNC | graphcode CLI-Dispatch |
 | `FUNC-close-store` | FUNC | close() |
 | `FUNC-close-violations` | FUNC | Skill se:close-violations |
+| `FUNC-collect-status` | FUNC | collectStatus |
 | `FUNC-compute-phase-readiness` | FUNC | computePhaseReadiness(violations) |
 | `FUNC-compute-readiness` | FUNC | computeReadiness(graph) |
 | `FUNC-compute-steering-delta` | FUNC | computeSteeringDelta(before, after) |
+| `FUNC-create-harness` | FUNC | createHarness |
 | `FUNC-decode` | FUNC | decode(json) |
 | `FUNC-deduce-tests` | FUNC | graph_tests(changeSet) |
 | `FUNC-emit-trajectory` | FUNC | materializeTrajectory() |
@@ -43,6 +48,7 @@
 | `FUNC-encode` | FUNC | encode(graph) |
 | `FUNC-evaluate-rules` | FUNC | evaluateRules() |
 | `FUNC-export-markdown` | FUNC | exportMarkdown(graph, view) |
+| `FUNC-export-marker` | FUNC | setExportPending |
 | `FUNC-extract-mutate` | FUNC | extractMutateFromText |
 | `FUNC-fit-advisory` | FUNC | computeFitAdvisory(before, after) |
 | `FUNC-generation-step` | FUNC | generationStep(graph, policy, intent) |
@@ -54,11 +60,13 @@
 | `FUNC-gve-supervise` | FUNC | superviseGve |
 | `FUNC-harness-cli` | FUNC | graphcode init/update/remove |
 | `FUNC-health-endpoint` | FUNC | healthEndpoint() |
+| `FUNC-host-socket` | FUNC | startHostSocket |
 | `FUNC-import` | FUNC | importGraph(formatE, mode) |
 | `FUNC-import-code` | FUNC | Skill se:import-code |
 | `FUNC-import-code-verb` | FUNC | executeImportCode |
 | `FUNC-import-doc` | FUNC | Skill se:import-doc |
 | `FUNC-list-elements` | FUNC | listElements(filter) |
+| `FUNC-load-config` | FUNC | loadGraphcodeConfig |
 | `FUNC-load-graph` | FUNC | loadGraph() |
 | `FUNC-merge-nodes` | FUNC | mergeNodes(graph) |
 | `FUNC-migrate-schema` | FUNC | migrateSchema(from, to) |
@@ -68,6 +76,7 @@
 | `FUNC-next-step` | FUNC | nextStep(graph, policy) |
 | `FUNC-open-store` | FUNC | initialize() |
 | `FUNC-own-kuzu-host` | FUNC | ownKuzu() |
+| `FUNC-preflight` | FUNC | preflightBatch |
 | `FUNC-rank-candidates` | FUNC | rankCandidates(probes, focus) |
 | `FUNC-render-artifacts` | FUNC | renderArtifactReadiness(views) |
 | `FUNC-render-graph` | FUNC | renderGraph(elements, traces) |
@@ -83,6 +92,7 @@
 | `FUNC-run-executor` | FUNC | runExecutor |
 | `FUNC-run-verb` | FUNC | executeRun |
 | `FUNC-save-graph` | FUNC | saveGraph(graph) |
+| `FUNC-schema-guard` | FUNC | schemaFingerprint |
 | `FUNC-score-completeness` | FUNC | scoreCompleteness(gateId, graph) |
 | `FUNC-se-conops` | FUNC | Skill se-conops |
 | `FUNC-se-fmea` | FUNC | Skill se-fmea |
@@ -101,8 +111,10 @@
 | `FUNC-subscribe-updates` | FUNC | subscribeUpdates() |
 | `FUNC-take-steering-snapshot` | FUNC | takeSteeringSnapshot(graph, policy) |
 | `FUNC-target-profile` | FUNC | Skill se:target-profile |
+| `FUNC-target-profile-load` | FUNC | loadTargetProfile |
 | `FUNC-test` | FUNC | se-test (red-first test design) |
 | `FUNC-test-ui` | FUNC | se-test-ui (UI test design) |
+| `FUNC-tool-context` | FUNC | createToolContext |
 | `FUNC-upgrade` | FUNC | executeUpgrade(opts) |
 | `FUNC-view-changelog` | FUNC | se-view-changelog (Change Log) |
 | `FUNC-view-conops` | FUNC | se-view-conops (ConOps) |
@@ -133,9 +145,12 @@
 
 | function | module |
 |---|---|
+| `FUNC-apply-reseed` | `MOD-harness` |
 | `FUNC-arch-fitness` | `MOD-metrics-engine` |
 | `FUNC-author-req` | `MOD-skills` |
 | `FUNC-author-uc` | `MOD-skills` |
+| `FUNC-auto-export` | `MOD-docs` |
+| `FUNC-bind-tools` | `MOD-mcp-tools` |
 | `FUNC-block-anschluss` | `MOD-repo-root` |
 | `FUNC-block-arch-optimierung` | `MOD-steering` |
 | `FUNC-block-arch-sicht` | `MOD-dashboard` |
@@ -156,9 +171,11 @@
 | `FUNC-cli-dispatch` | `MOD-cli` |
 | `FUNC-close-store` | `MOD-harness` |
 | `FUNC-close-violations` | `MOD-skills` |
+| `FUNC-collect-status` | `MOD-cli` |
 | `FUNC-compute-phase-readiness` | `MOD-steering` |
 | `FUNC-compute-readiness` | `MOD-metrics-engine` |
 | `FUNC-compute-steering-delta` | `MOD-steering` |
+| `FUNC-create-harness` | `MOD-harness` |
 | `FUNC-decode` | `MOD-codec` |
 | `FUNC-deduce-tests` | `MOD-mcp-tools` |
 | `FUNC-emit-trajectory` | `MOD-hooks` |
@@ -166,6 +183,7 @@
 | `FUNC-encode` | `MOD-codec` |
 | `FUNC-evaluate-rules` | `MOD-harness` |
 | `FUNC-export-markdown` | `MOD-docs` |
+| `FUNC-export-marker` | `MOD-harness` |
 | `FUNC-extract-mutate` | `MOD-executor` |
 | `FUNC-fit-advisory` | `MOD-steering` |
 | `FUNC-generation-step` | `MOD-steering` |
@@ -177,11 +195,13 @@
 | `FUNC-gve-supervise` | `MOD-cli` |
 | `FUNC-harness-cli` | `MOD-cli` |
 | `FUNC-health-endpoint` | `MOD-host-bridge` |
+| `FUNC-host-socket` | `MOD-host-bridge` |
 | `FUNC-import` | `MOD-harness` |
 | `FUNC-import-code` | `MOD-skills` |
 | `FUNC-import-code-verb` | `MOD-cli` |
 | `FUNC-import-doc` | `MOD-skills` |
 | `FUNC-list-elements` | `MOD-element-slice` |
+| `FUNC-load-config` | `MOD-harness` |
 | `FUNC-load-graph` | `MOD-harness` |
 | `FUNC-merge-nodes` | `MOD-codec` |
 | `FUNC-migrate-schema` | `MOD-schema-migration` |
@@ -191,6 +211,7 @@
 | `FUNC-next-step` | `MOD-steering` |
 | `FUNC-open-store` | `MOD-harness` |
 | `FUNC-own-kuzu-host` | `MOD-host-bridge` |
+| `FUNC-preflight` | `MOD-executor` |
 | `FUNC-rank-candidates` | `MOD-executor` |
 | `FUNC-render-artifacts` | `MOD-dashboard` |
 | `FUNC-render-graph` | `MOD-dashboard` |
@@ -206,6 +227,7 @@
 | `FUNC-run-executor` | `MOD-executor` |
 | `FUNC-run-verb` | `MOD-cli` |
 | `FUNC-save-graph` | `MOD-harness` |
+| `FUNC-schema-guard` | `MOD-schema-migration` |
 | `FUNC-score-completeness` | `MOD-completeness` |
 | `FUNC-se-conops` | `MOD-skills` |
 | `FUNC-se-fmea` | `MOD-skills` |
@@ -224,8 +246,10 @@
 | `FUNC-subscribe-updates` | `MOD-dashboard` |
 | `FUNC-take-steering-snapshot` | `MOD-steering` |
 | `FUNC-target-profile` | `MOD-skills` |
+| `FUNC-target-profile-load` | `MOD-steering` |
 | `FUNC-test` | `MOD-skills` |
 | `FUNC-test-ui` | `MOD-skills` |
+| `FUNC-tool-context` | `MOD-mcp-tools` |
 | `FUNC-upgrade` | `MOD-cli` |
 | `FUNC-view-changelog` | `MOD-skills` |
 | `FUNC-view-conops` | `MOD-skills` |

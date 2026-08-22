@@ -10,7 +10,7 @@ Was hier steht, bleibt **absichtlich** offen. Zwei Gründe zählen, jeder muss b
 Kein Eintrag darf hier landen, weil er *unbequem* ist. Wer einen Eintrag hinzufügt, nennt die
 Bedingung, unter der er wieder herauskommt.
 
-Stand: graphVersion 179.
+Stand: graphVersion 181.
 
 ---
 
@@ -56,6 +56,25 @@ exportieren Symbole, die kein anderes Modul ruft. Nach dem Kriterium aus CR-GC-3
 keinen Knoten; ein Knoten ohne Leser kostet Pflege und sagt nichts.
 **Kommt heraus, wenn:** eine dieser Dateien über eine Modulgrenze gerufen wird oder eine bislang
 unerfüllte REQ realisiert.
+
+### Kein Modul für testbare Skill-Kerne
+`src/se-plan.ts` (`deriveImplPlan`) und `src/se-author-uc.ts` (`lintUc`) sind echte, getestete
+TypeScript-Kerne hinter prompt-realisierten Skills. `MOD-skills` ist ausdrücklich
+*„skills/prompts — agent-realisierte Funktionen"*; ein TypeScript-Kern gehört dort nicht hinein, und
+ein eigenes Modul für zwei Dateien anzulegen ist mehr Struktur als Aussage.
+**Kommt heraus, wenn:** ein dritter solcher Kern entsteht — dann trägt ein eigenes Modul sich selbst.
+
+### `package-version.ts` wird über Modulgrenzen gerufen, sagt aber nichts
+Das Kriterium aus CR-GC-393 träfe zu, der Knoten trüge aber keine eigene Verantwortung im System.
+**Kommt heraus, wenn:** das Versionslesen Teil einer geprüften Zusicherung wird, etwa für die
+Pin-Prüfung beim Update.
+
+### `test-selection.ts` wäre ein Parallelpfad
+`impactedTests` ist die Implementierung hinter `FUNC-resolve-tests-from-code`, dessen `realRef` auf
+`harness.ts::testImpact` zeigt. Ein zweiter Knoten für dieselbe Verantwortung ist genau der
+Parallelpfad, den die Guardrails verbieten.
+**Kommt heraus, wenn:** entschieden wird, dass die `realRef` auf die Implementierung statt auf den
+Einstieg zeigen soll — dann wandert die Bindung, es entsteht kein zweiter Knoten.
 
 ### `REQ-published-counts-match-code` hat keinen Erfüller im Produktivcode
 Die Anforderung ist real und wird von `tests/claims.conformance.test.ts` scharf geprüft — aber

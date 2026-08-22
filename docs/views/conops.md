@@ -58,7 +58,7 @@ Als Entwickler will ich, dass jede Aenderung, meine wie die eines Agenten, durch
 
 Ausgeloest von: `ACTOR-claude-code` · `ACTOR-dashboard` · `ACTOR-developer` · `ACTOR-facilitating-agent` · `ACTOR-graphify` · `ACTOR-opencode` · `ACTOR-systems-engineer` · `ACTOR-vibe-coder`
 
-- `FCHAIN-apply-gate` — Apply-Gate-Ablauf (Governed Mutation): `FUNC-claim-store-lock` → `FUNC-close-store` → `FUNC-emit-trajectory` → `FUNC-evaluate-rules` → `FUNC-fit-advisory` → `FUNC-load-graph` → `FUNC-mutate` → `FUNC-open-store` → `FUNC-own-kuzu-host` → `FUNC-save-graph` → `FUNC-session-shutdown`
+- `FCHAIN-apply-gate` — Apply-Gate-Ablauf (Governed Mutation): `FUNC-claim-store-lock` → `FUNC-close-store` → `FUNC-create-harness` → `FUNC-emit-trajectory` → `FUNC-evaluate-rules` → `FUNC-fit-advisory` → `FUNC-load-graph` → `FUNC-mutate` → `FUNC-open-store` → `FUNC-own-kuzu-host` → `FUNC-save-graph` → `FUNC-session-shutdown`
 - `FCHAIN-capture` — Interaktive Erfassung (Text → suggest-Tier): `FUNC-decode` → `FUNC-mutate`
 - `FCHAIN-codec-roundtrip` — Format-E Round-Trip (encode∘decode): `FUNC-decode` → `FUNC-encode`
 - `FCHAIN-interface-escalation` — Interface-Änderungs-Eskalation: `FUNC-graph-impact` → `FUNC-mutate`
@@ -71,7 +71,7 @@ Als Entwickler will ich, dass der naechste Schritt aus deterministisch gemessene
 Ausgeloest von: `ACTOR-developer` · `ACTOR-opencode`
 
 - `FCHAIN-skill-report` — Skill berichtet gemessenen Stand: `FUNC-check-code-conformance` → `FUNC-compute-phase-readiness` → `FUNC-compute-readiness` → `FUNC-evaluate-rules` → `FUNC-module-metrics` → `FUNC-score-completeness` → `FUNC-se-help` → `FUNC-se-retro` → `FUNC-se-review` → `FUNC-se-status` → `FUNC-test` → `FUNC-test-ui`
-- `FCHAIN-steering-loop` — Kenngroessen-Steuerungsschleife: `FUNC-arch-fitness` → `FUNC-build-round-injection` → `FUNC-compute-phase-readiness` → `FUNC-compute-readiness` → `FUNC-compute-steering-delta` → `FUNC-extract-mutate` → `FUNC-generation-step` → `FUNC-mutate` → `FUNC-nd-similarity` → `FUNC-next-step` → `FUNC-rank-candidates` → `FUNC-run-executor` → `FUNC-take-steering-snapshot`
+- `FCHAIN-steering-loop` — Kenngroessen-Steuerungsschleife: `FUNC-arch-fitness` → `FUNC-build-round-injection` → `FUNC-compute-phase-readiness` → `FUNC-compute-readiness` → `FUNC-compute-steering-delta` → `FUNC-extract-mutate` → `FUNC-generation-step` → `FUNC-mutate` → `FUNC-nd-similarity` → `FUNC-next-step` → `FUNC-preflight` → `FUNC-rank-candidates` → `FUNC-run-executor` → `FUNC-take-steering-snapshot` → `FUNC-target-profile-load`
 
 ### `UC-efficient-testing` — Effizientes, impact-basiertes Testen
 
@@ -88,8 +88,8 @@ Als Entwickler will ich den Modellstand eines beliebigen Commits wiederherstelle
 Ausgeloest von: `ACTOR-developer`
 
 - `FCHAIN-merge-branches` — Zweig-Graphen konfliktfrei zusammenfuehren: `FUNC-merge-nodes`
-- `FCHAIN-recall` — Recall (Wiederherstellen): `FUNC-reseed` → `FUNC-rewind` → `FUNC-seed-from-json`
-- `FCHAIN-snapshot-freshness` — Snapshot-Freshness (Aufzeichnen): `FUNC-evaluate-rules` → `FUNC-graph-export-snapshot` → `FUNC-mutate` → `FUNC-save-graph`
+- `FCHAIN-recall` — Recall (Wiederherstellen): `FUNC-apply-reseed` → `FUNC-reseed` → `FUNC-rewind` → `FUNC-schema-guard` → `FUNC-seed-from-json`
+- `FCHAIN-snapshot-freshness` — Snapshot-Freshness (Aufzeichnen): `FUNC-auto-export` → `FUNC-evaluate-rules` → `FUNC-export-marker` → `FUNC-graph-export-snapshot` → `FUNC-mutate` → `FUNC-save-graph`
 
 ### `UC-live-graph-view` — Modellstand live mitlesen
 
@@ -132,7 +132,7 @@ Der Entwickler richtet ein Repo ein, faehrt Laeufe darin und beendet die Sitzung
 
 Ausgeloest von: `ACTOR-developer`
 
-- `FCHAIN-repo-lifecycle` — Repo-Lebenszyklus: `FUNC-bootstrap` → `FUNC-cli-dispatch` → `FUNC-harness-cli` → `FUNC-run-verb` → `FUNC-session-shutdown` → `FUNC-upgrade`
+- `FCHAIN-repo-lifecycle` — Repo-Lebenszyklus: `FUNC-bootstrap` → `FUNC-cli-dispatch` → `FUNC-collect-status` → `FUNC-harness-cli` → `FUNC-run-verb` → `FUNC-session-shutdown` → `FUNC-upgrade`
 
 ## 5  Modes of operation
 

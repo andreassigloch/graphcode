@@ -2068,6 +2068,18 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "id": "FUNC-apply-reseed",
+      "type": "FUNC",
+      "name": "applyReseed",
+      "description": "Setzt den Store aus einem Bestand neu auf, statt ihn zu ergaenzen. Legt vorher eine Sicherung an, weil ein Reseed kein Merge ist.",
+      "status": "done",
+      "realRef": {
+        "file": "src/harness-import.ts",
+        "symbol": "applyReseed",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "FUNC-arch-fitness",
       "type": "FUNC",
       "name": "metrics(graph, layer arch)",
@@ -2096,6 +2108,30 @@
       "description": "Prompt-realisierter Skill se:author-uc: UC terse und jargonarm autorieren, mit compose-Trace durchs Gate.",
       "realRef": {
         "file": ".claude/commands/se/author-uc.md"
+      }
+    },
+    {
+      "id": "FUNC-auto-export",
+      "type": "FUNC",
+      "name": "registerAutoExport",
+      "description": "Haengt den Export an die Mutation: nach einer Aenderung folgt der Dateistand dem Store entprellt nach, damit das committete Artefakt nicht zurueckfaellt.",
+      "status": "done",
+      "realRef": {
+        "file": "src/auto-export.ts",
+        "symbol": "registerAutoExport",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-bind-tools",
+      "type": "FUNC",
+      "name": "bindToolsToHarness",
+      "description": "Bindet die Werkzeug-Registry an einen Harness, sodass jedes Werkzeug ueber dasselbe Gate schreibt wie ein Aufruf im Prozess.",
+      "status": "done",
+      "realRef": {
+        "file": "src/mcp-tools.ts",
+        "symbol": "bindToolsToHarness",
+        "lang": "ts"
       }
     },
     {
@@ -2265,6 +2301,18 @@
       }
     },
     {
+      "id": "FUNC-collect-status",
+      "type": "FUNC",
+      "name": "collectStatus",
+      "description": "Sammelt den Betriebsstand eines Repos: laufender Host, installierte und angeheftete Version, und urteilt daraus ueber die Gesundheit.",
+      "status": "done",
+      "realRef": {
+        "file": "src/status.ts",
+        "symbol": "collectStatus",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "FUNC-compute-phase-readiness",
       "type": "FUNC",
       "name": "computePhaseReadiness(violations)",
@@ -2298,6 +2346,18 @@
       "realRef": {
         "file": "src/steering-snapshot.ts",
         "symbol": "computeSteeringDelta",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-create-harness",
+      "type": "FUNC",
+      "name": "createHarness",
+      "description": "Die Fabrik der oeffentlichen Programmierschnittstelle: baut den Harness mit Store, Regeln und Hooks und gibt genau einen Besitzer des Stores zurueck.",
+      "status": "done",
+      "realRef": {
+        "file": "src/index.ts",
+        "symbol": "createHarness",
         "lang": "ts"
       }
     },
@@ -2403,6 +2463,18 @@
       "realRef": {
         "file": "src/exporter.ts",
         "symbol": "exportMarkdown",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-export-marker",
+      "type": "FUNC",
+      "name": "setExportPending",
+      "description": "Markiert nach einer Mutation, dass der Export dem Store hinterherhaengt, und raeumt die Marke wieder ab. Die Marke ist der einzige Hinweis darauf, dass Datei und Store auseinanderlaufen.",
+      "status": "done",
+      "realRef": {
+        "file": "src/export-marker.ts",
+        "symbol": "setExportPending",
         "lang": "ts"
       }
     },
@@ -2547,6 +2619,18 @@
       }
     },
     {
+      "id": "FUNC-host-socket",
+      "type": "FUNC",
+      "name": "startHostSocket",
+      "description": "Oeffnet den Socket, ueber den ein zweiter Prozess Schreibaufrufe an den Besitzer des Stores weiterreicht, statt ein zweites Datenbank-Handle zu oeffnen.",
+      "status": "done",
+      "realRef": {
+        "file": "src/host-shim.ts",
+        "symbol": "startHostSocket",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "FUNC-import",
       "type": "FUNC",
       "name": "importGraph(formatE, mode)",
@@ -2600,6 +2684,18 @@
       "realRef": {
         "file": "src/element-slice.ts",
         "symbol": "listElements",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-load-config",
+      "type": "FUNC",
+      "name": "loadGraphcodeConfig",
+      "description": "Liest die Repo-Konfiguration und liefert die Urteilsschwellen als Policy. Keine Schwelle steht als Literal im Regelcode; eine verschobene Policy kippt dasselbe Urteil auf unveraendertem Graphen.",
+      "status": "done",
+      "realRef": {
+        "file": "src/config.ts",
+        "symbol": "loadGraphcodeConfig",
         "lang": "ts"
       }
     },
@@ -2708,6 +2804,18 @@
       "realRef": {
         "file": "src/viewer/host.ts",
         "symbol": "serveHost",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-preflight",
+      "type": "FUNC",
+      "name": "preflightBatch",
+      "description": "Prueft einen Kandidaten-Batch vor dem Gate und vervollstaendigt, was mechanisch entscheidbar ist. Was unklar bleibt, geht unveraendert ans Gate statt geraten zu werden.",
+      "status": "done",
+      "realRef": {
+        "file": "src/preflight.ts",
+        "symbol": "preflightBatch",
         "lang": "ts"
       }
     },
@@ -2878,6 +2986,18 @@
       "realRef": {
         "file": "src/harness.ts",
         "symbol": "persist",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-schema-guard",
+      "type": "FUNC",
+      "name": "schemaFingerprint",
+      "description": "Bildet den Fingerabdruck des Meta-Modell-Schemas und erkennt daran eine Drift zwischen Ontologie und angelegtem Store.",
+      "status": "done",
+      "realRef": {
+        "file": "src/schema-guard.ts",
+        "symbol": "schemaFingerprint",
         "lang": "ts"
       }
     },
@@ -3063,6 +3183,18 @@
       }
     },
     {
+      "id": "FUNC-target-profile-load",
+      "type": "FUNC",
+      "name": "loadTargetProfile",
+      "description": "Laedt das Zielprofil und meldet Zielkonflikte. Das Profil ist Konfiguration neben dem Graphen, nicht Teil des Modells.",
+      "status": "done",
+      "realRef": {
+        "file": "src/target-profile.ts",
+        "symbol": "loadTargetProfile",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "FUNC-test",
       "type": "FUNC",
       "name": "se-test (red-first test design)",
@@ -3088,6 +3220,18 @@
       "codeRef": null,
       "realRef": {
         "file": ".claude/commands/se-test-ui.md"
+      }
+    },
+    {
+      "id": "FUNC-tool-context",
+      "type": "FUNC",
+      "name": "createToolContext",
+      "description": "Stellt jedem Werkzeugaufruf seinen Kontext bereit: Aufrufer, Repo-Wurzel und die Weiterleitung an den Besitzerprozess.",
+      "status": "done",
+      "realRef": {
+        "file": "src/tool-context.ts",
+        "symbol": "createToolContext",
+        "lang": "ts"
       }
     },
     {
@@ -10568,6 +10712,12 @@
     },
     {
       "source": "FCHAIN-apply-gate",
+      "target": "FUNC-create-harness",
+      "type": "compose",
+      "weight": "1"
+    },
+    {
+      "source": "FCHAIN-apply-gate",
       "target": "FUNC-emit-trajectory",
       "type": "compose",
       "weight": 1,
@@ -10977,6 +11127,12 @@
     },
     {
       "source": "FCHAIN-recall",
+      "target": "FUNC-apply-reseed",
+      "type": "compose",
+      "weight": "1"
+    },
+    {
+      "source": "FCHAIN-recall",
       "target": "FUNC-reseed",
       "type": "compose"
     },
@@ -10984,6 +11140,12 @@
       "source": "FCHAIN-recall",
       "target": "FUNC-rewind",
       "type": "compose"
+    },
+    {
+      "source": "FCHAIN-recall",
+      "target": "FUNC-schema-guard",
+      "type": "compose",
+      "weight": "1"
     },
     {
       "source": "FCHAIN-recall",
@@ -11004,6 +11166,12 @@
       "source": "FCHAIN-repo-lifecycle",
       "target": "FUNC-cli-dispatch",
       "type": "compose"
+    },
+    {
+      "source": "FCHAIN-repo-lifecycle",
+      "target": "FUNC-collect-status",
+      "type": "compose",
+      "weight": "1"
     },
     {
       "source": "FCHAIN-repo-lifecycle",
@@ -11156,8 +11324,20 @@
     },
     {
       "source": "FCHAIN-snapshot-freshness",
+      "target": "FUNC-auto-export",
+      "type": "compose",
+      "weight": "1"
+    },
+    {
+      "source": "FCHAIN-snapshot-freshness",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
+    },
+    {
+      "source": "FCHAIN-snapshot-freshness",
+      "target": "FUNC-export-marker",
+      "type": "compose",
+      "weight": "1"
     },
     {
       "source": "FCHAIN-snapshot-freshness",
@@ -11237,6 +11417,12 @@
     },
     {
       "source": "FCHAIN-steering-loop",
+      "target": "FUNC-preflight",
+      "type": "compose",
+      "weight": "1"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
       "target": "FUNC-rank-candidates",
       "type": "compose"
     },
@@ -11250,6 +11436,12 @@
       "source": "FCHAIN-steering-loop",
       "target": "FUNC-take-steering-snapshot",
       "type": "compose"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
+      "target": "FUNC-target-profile-load",
+      "type": "compose",
+      "weight": "1"
     },
     {
       "source": "FCHAIN-steering-loop",
@@ -11656,6 +11848,12 @@
       "source": "FLOW-graph-snapshot",
       "target": "ACTOR-developer",
       "type": "io"
+    },
+    {
+      "source": "FLOW-graph-snapshot",
+      "target": "FUNC-apply-reseed",
+      "type": "io",
+      "weight": "1"
     },
     {
       "source": "FLOW-graph-snapshot",
@@ -12227,6 +12425,12 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "FUNC-apply-reseed",
+      "target": "MOD-harness",
+      "type": "allocate",
+      "weight": "1"
+    },
+    {
       "source": "FUNC-arch-fitness",
       "target": "MOD-metrics-engine",
       "type": "allocate"
@@ -12270,6 +12474,18 @@
       "source": "FUNC-author-uc",
       "target": "REQ-skill-authors-through-gate",
       "type": "satisfy"
+    },
+    {
+      "source": "FUNC-auto-export",
+      "target": "MOD-docs",
+      "type": "allocate",
+      "weight": "1"
+    },
+    {
+      "source": "FUNC-bind-tools",
+      "target": "MOD-mcp-tools",
+      "type": "allocate",
+      "weight": "1"
     },
     {
       "source": "FUNC-block-anschluss",
@@ -12824,6 +13040,12 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-collect-status",
+      "target": "MOD-cli",
+      "type": "allocate",
+      "weight": "1"
+    },
+    {
       "source": "FUNC-compute-phase-readiness",
       "target": "MOD-steering",
       "type": "allocate"
@@ -12867,6 +13089,12 @@
       "source": "FUNC-compute-steering-delta",
       "target": "REQ-steering-from-metrics",
       "type": "satisfy"
+    },
+    {
+      "source": "FUNC-create-harness",
+      "target": "MOD-harness",
+      "type": "allocate",
+      "weight": "1"
     },
     {
       "source": "FUNC-decode",
@@ -13097,6 +13325,12 @@
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-export-marker",
+      "target": "MOD-harness",
+      "type": "allocate",
+      "weight": "1"
     },
     {
       "source": "FUNC-extract-mutate",
@@ -13398,6 +13632,12 @@
       "created_at": "2026-06-19T00:00:00.000Z"
     },
     {
+      "source": "FUNC-host-socket",
+      "target": "MOD-host-bridge",
+      "type": "allocate",
+      "weight": "1"
+    },
+    {
       "source": "FUNC-import",
       "target": "MOD-harness",
       "type": "allocate",
@@ -13493,6 +13733,18 @@
       "source": "FUNC-list-elements",
       "target": "REQ-query-precision",
       "type": "satisfy"
+    },
+    {
+      "source": "FUNC-load-config",
+      "target": "MOD-harness",
+      "type": "allocate",
+      "weight": "1"
+    },
+    {
+      "source": "FUNC-load-config",
+      "target": "REQ-thresholds-from-config",
+      "type": "satisfy",
+      "weight": "1"
     },
     {
       "source": "FUNC-load-graph",
@@ -13703,6 +13955,12 @@
       "created_at": "2026-06-19T00:00:00.000Z"
     },
     {
+      "source": "FUNC-preflight",
+      "target": "MOD-executor",
+      "type": "allocate",
+      "weight": "1"
+    },
+    {
       "source": "FUNC-rank-candidates",
       "target": "MOD-executor",
       "type": "allocate",
@@ -13891,6 +14149,12 @@
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-schema-guard",
+      "target": "MOD-schema-migration",
+      "type": "allocate",
+      "weight": "1"
     },
     {
       "source": "FUNC-score-completeness",
@@ -14196,6 +14460,12 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-target-profile-load",
+      "target": "MOD-steering",
+      "type": "allocate",
+      "weight": "1"
+    },
+    {
       "source": "FUNC-test",
       "target": "MOD-skills",
       "type": "allocate"
@@ -14224,6 +14494,12 @@
       "source": "FUNC-test-ui",
       "target": "REQ-code-governed-quality",
       "type": "satisfy"
+    },
+    {
+      "source": "FUNC-tool-context",
+      "target": "MOD-mcp-tools",
+      "type": "allocate",
+      "weight": "1"
     },
     {
       "source": "FUNC-upgrade",
@@ -16924,5 +17200,5 @@
       "weight": "1"
     }
   ],
-  "graphVersion": 179
+  "graphVersion": 181
 }

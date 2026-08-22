@@ -56,7 +56,7 @@
 | `FLOW-formatE-artifact` | `FUNC-encode` | `FUNC-bootstrap` · `FUNC-decode` |
 | `FLOW-formatE-candidates` | `ACTOR-claude-code` | `FUNC-decode` |
 | `FLOW-gate-verdict` | `FUNC-mutate` | `FUNC-take-steering-snapshot` |
-| `FLOW-graph-snapshot` | `FUNC-graph-export-snapshot` · `FUNC-rewind` | `ACTOR-developer` · `FUNC-open-store` · `FUNC-reseed` · `FUNC-seed-from-json` |
+| `FLOW-graph-snapshot` | `FUNC-graph-export-snapshot` · `FUNC-rewind` | `ACTOR-developer` · `FUNC-apply-reseed` · `FUNC-open-store` · `FUNC-reseed` · `FUNC-seed-from-json` |
 | `FLOW-graph-state` | `ACTOR-developer` · `FUNC-load-graph` · `FUNC-open-store` | `FUNC-arch-fitness` · `FUNC-check-code-conformance` · `FUNC-close-store` · `FUNC-encode` · `FUNC-fit-advisory` · `FUNC-module-metrics` · `FUNC-nd-similarity` · `FUNC-score-completeness` |
 | `FLOW-impact-subgraph` | `FUNC-graph-impact` | `ACTOR-claude-code` · `FUNC-graph-expand` |
 | `FLOW-install-result` | `FUNC-harness-cli` | `ACTOR-developer` |
