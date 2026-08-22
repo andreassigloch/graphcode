@@ -19,7 +19,7 @@
 | `SCHEMA-lock-owner` | src/store-lock.ts#LockOwner | n/a |
 | `SCHEMA-markdown-view` | src/exporter.ts#MarkdownViewSchema | reviewed |
 | `SCHEMA-measurement-vector` | Konzept (noch kein Zod-Export) | reviewed |
-| `SCHEMA-metric-vector` | packages/se-optimizer/src/metrics.ts#MetricVector | reviewed |
+| `SCHEMA-metric-vector` | packages/se-engine/src/metrics.ts#MetricVector | reviewed |
 | `SCHEMA-module-metrics` | packages/contracts/src/se/metric-rules.ts#ModuleMetrics | reviewed |
 | `SCHEMA-mutate-command` | extern definiert (kein realRef) | reviewed |
 | `SCHEMA-mutate-result` | extern definiert (kein realRef) | reviewed |
@@ -52,12 +52,12 @@
 | `FLOW-expand-request` | `ACTOR-claude-code` | `FUNC-graph-expand` |
 | `FLOW-expanded-subgraph` | `FUNC-graph-expand` | `ACTOR-claude-code` |
 | `FLOW-export-request` | `ACTOR-developer` · `FUNC-render-views` · `FUNC-serve-stdio` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` | `FUNC-export-markdown` |
-| `FLOW-fit-advisory` | `FUNC-fit-advisory` | `FUNC-rank-candidates` |
+| `FLOW-fit-advisory` | `FUNC-fit-advisory` | `FUNC-mutate` · `FUNC-rank-candidates` |
 | `FLOW-formatE-artifact` | `FUNC-encode` | `FUNC-decode` |
 | `FLOW-formatE-candidates` | `ACTOR-claude-code` | `FUNC-decode` |
 | `FLOW-gate-verdict` | `FUNC-mutate` | `FUNC-take-steering-snapshot` |
 | `FLOW-graph-snapshot` | `FUNC-graph-export-snapshot` · `FUNC-rewind` | `ACTOR-developer` · `FUNC-open-store` · `FUNC-reseed` · `FUNC-seed-from-json` |
-| `FLOW-graph-state` | `ACTOR-developer` · `FUNC-load-graph` · `FUNC-open-store` | `FUNC-close-store` · `FUNC-encode` |
+| `FLOW-graph-state` | `ACTOR-developer` · `FUNC-load-graph` · `FUNC-open-store` | `FUNC-arch-fitness` · `FUNC-check-code-conformance` · `FUNC-close-store` · `FUNC-encode` · `FUNC-fit-advisory` · `FUNC-module-metrics` · `FUNC-score-completeness` |
 | `FLOW-impact-subgraph` | `FUNC-graph-impact` | `ACTOR-claude-code` · `FUNC-graph-expand` |
 | `FLOW-install-result` | `FUNC-harness-cli` | `ACTOR-developer` |
 | `FLOW-live-event` | `FUNC-emit-update-event` | `ACTOR-dashboard` · `FUNC-broadcast-diff` · `FUNC-serve-stdio` · `FUNC-subscribe-updates` |
@@ -65,7 +65,7 @@
 | `FLOW-measurement-vector` | `FUNC-take-steering-snapshot` | `FUNC-goal-steerer` |
 | `FLOW-merged-graph` | `FUNC-merge-nodes` | `ACTOR-developer` |
 | `FLOW-migrated-graph` | `FUNC-migrate-schema` | `ACTOR-developer` |
-| `FLOW-module-metrics` | `FUNC-module-metrics` | `ACTOR-dashboard` |
+| `FLOW-module-metrics` | `FUNC-module-metrics` | `ACTOR-dashboard` · `FUNC-evaluate-rules` |
 | `FLOW-mutate-cmd` | `ACTOR-claude-code` · `ACTOR-developer` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` | `FUNC-mutate` |
 | `FLOW-parsed-graph` | `FUNC-decode` | `ACTOR-developer` |
 | `FLOW-phase-readiness` | `FUNC-compute-phase-readiness` | `FUNC-generation-step` |
@@ -86,4 +86,4 @@
 | `FLOW-trajectory` | `FUNC-emit-trajectory` | `ACTOR-learning-engine` |
 | `FLOW-version-bump` | `ACTOR-developer` | `FUNC-migrate-schema` |
 | `FLOW-view-request` | `ACTOR-developer` | `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` |
-| `FLOW-violations` | `FUNC-evaluate-rules` · `FUNC-take-steering-snapshot` | `FUNC-compute-phase-readiness` · `FUNC-save-graph` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` |
+| `FLOW-violations` | `FUNC-check-code-conformance` · `FUNC-evaluate-rules` · `FUNC-take-steering-snapshot` | `FUNC-compute-phase-readiness` · `FUNC-save-graph` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` |

@@ -18,6 +18,35 @@ Total: 163 CR · 155 done · 7 open.
 | `CR-GC-108` | done | Test-Konzept im Graph + Benchmark-REQ |
 | `CR-GC-119` | done | Docs-Taxonomie — Views vs Records |
 
+## `MS-10-steering-views` — M10: A-SPICE & Steuerungssichten
+
+| CR | status | name |
+|---|---|---|
+| `CR-GC-299` | done | exporter.ts flacht attributes ab — abgeloest von CR-GC-303 |
+| `CR-GC-300` | done | graphVersion-Stempel im graph_export-Output |
+| `CR-GC-301` | open | A-SPICE-Nachschaerfungen: R-21-Level-Check, Auditor-Sicht, SUP.9/SUP.10 |
+| `CR-GC-302` | done | Auto-SYS-Node bei jedem Import |
+| `CR-GC-303` | done | Attribut-Abflachung macht Steering-Pfad regelblind |
+| `CR-GC-304` | done | ConOps-View nach ISO 29148 neu schneiden |
+| `CR-GC-305` | done | spec-View entfernen, srs bleibt |
+| `CR-GC-306` | done | Onboarding: ein Start, Beispiel-Prompt, GVE-Adresse |
+| `CR-GC-307` | done | Intent-Anker sind Steuerungsinternes, nicht Kundendialog |
+| `CR-GC-308` | done | View-Exporter lesen nur deklarierte Kanten und Attribute |
+| `CR-GC-309` | done | graph_mutate echot Violations in voller Laenge |
+| `CR-GC-310` | done | Format-E-Kantenbatches verlangen Neu-Deklaration vorhandener Knoten |
+| `CR-GC-311` | done | rewind/restore als CLI-Verb — UC-graph-time-travel realisieren |
+| `CR-GC-312` | done | SE_DESCRIPTOR trug 2 von 12 Regelfamilien — zehn Familien wertete niemand aus |
+| `CR-GC-313` | done | export-graph.mjs Guard kennt den graphVersion-Stamp nicht |
+| `CR-GC-314` | done | Positive Entscheidungen im Audit-Trail (rulesPassed) |
+| `CR-GC-315` | done | R-12 und R-21 feuerten auf Kanten, fuer die sie nie gedacht waren |
+| `CR-GC-316` | done | graph_help buendelt Massnahmen je Regel statt je Element |
+| `CR-GC-317` | done | RTM nach A-SPICE-Ebenen gruppieren + Integrationsabdeckung |
+| `CR-GC-318` | done | reqLevels lief nur ueber compose — satisfy-Bein fehlte |
+| `CR-GC-319` | done | audit_trail lieferte Rohdatensaetze statt einer Projektion |
+| `CR-GC-320` | done | executor.ts schneiden — Schritt 1 (Prompt · Ranking · Prosa-Recovery) |
+| `CR-GC-321` | done | __name in Format-E entdeckbar machen, stillen Namens-Fallback laut machen |
+| `CR-GC-322` | done | GRAPHCODE-STEERING.md — die Anleitung fuer den Menschen (Steuerung und docs/views/) |
+
 ## `MS-2-coding-vv` — M2: Coding & V&V
 
 | CR | status | name |
@@ -74,13 +103,23 @@ Total: 163 CR · 155 done · 7 open.
 | `CR-GC-204` | done | graph_tests operational |
 | `CR-GC-205` | done | Enforce-don't-document — R-18 Strukturregel + ausfuehrbare Guardrails |
 | `CR-GC-206` | done | Graph-code LSP conformance — resolve FUNC codeRef symbols |
+| `CR-GC-210` | done | Read-tool output-format contract (JSON vs Format-E) |
+| `CR-GC-212` | done | Post-project KPI retro (se-retro + KPI standard) |
 | `CR-GC-213` | done | graph_context — knotenbezogenes Definition-of-Done-Kontextpaket |
+| `CR-GC-216` | done | graph_realize ergonomic write-back affordance (write-twin of graph_context) |
 | `CR-GC-217` | done | Graph-State Time-Travel (commit-gebundener Snapshot) |
+| `CR-GC-219` | done | Flatten redundant nested attributes field |
 
 ## `MS-6-adoption` — M6: Adoption & Artifact-Model
 
 | CR | status | name |
 |---|---|---|
+| `CR-GC-207` | done | Graph-first onboarding contract (GRAPHCODE.md + dialect marker) |
+| `CR-GC-208` | done | Skill sync + surfacing (anti-drift for scaffolded se-* skills) |
+| `CR-GC-209` | done | se-plan generative impl/integration plan skill |
+| `CR-GC-211` | done | UC-authoring guardrail (terseness + jargon budget) |
+| `CR-GC-214` | done | Read-side graph-first enforcement (deny-stale-prose-read hook) |
+| `CR-GC-215` | done | Ship enforcement-hooks to consumer repos |
 | `CR-GC-220` | done | Renderer: deterministic MarkdownView for every render-able artifact |
 | `CR-GC-221` | done | Readiness: creations as gate precondition (phase + impl) |
 | `CR-GC-222` | done | Artefakt-Tab: render/analysis Kind-Split |
@@ -88,9 +127,15 @@ Total: 163 CR · 155 done · 7 open.
 | `CR-GC-224` | done | Skills: View-Skills Thin-Trigger (Gruppe A) |
 | `CR-GC-225` | done | Skills: View-Skills Thin-Trigger (Gruppe B) |
 | `CR-GC-226` | done | Doku/Graph: lean=no-artifacts abloesen + Artefakt-Modell seeden |
+| `CR-GC-227` | done | Help content layer (authored Plain/SE annotation, HELP_CONTENT) |
+| `CR-GC-228` | done | Help data layer (pure projection to HelpEntry, help.ts) |
+| `CR-GC-229` | done | Help surfaces (graph_help MCP tool + se:help skill) |
+| `CR-GC-230` | done | Help docs (README + GRAPHCODE.md pointer to se:help) |
+| `CR-GC-231` | done | graph_authoring_guide meta-model edge guidance for graph-native authoring |
 | `CR-GC-236` | done | Export-Header: Member-Name statt hartkodiertem graphcode |
 | `CR-GC-238` | done | applyCommands: update-edge + merge-nodes ausführen |
 | `CR-GC-239` | done | Gate lehnt malformed Commands hart ab |
+| `CR-GC-242` | done | se-test-ui-Skill + die Red-First-Regel ausliefern |
 | `CR-GC-330` | done | Der Learning-Feed zieht in den eigenen Workspace |
 | `CR-GC-331` | done | graphcode remove raeumt auch den Vorgaenger-Ordner weg |
 | `CR-GC-339` | done | Artikel-Claims belastbar machen |
@@ -103,36 +148,20 @@ Total: 163 CR · 155 done · 7 open.
 
 | CR | status | name |
 |---|---|---|
+| `CR-GC-218` | done | Concurrent-agent isolation and safe graph recall |
 | `CR-GC-232` | done | Durables Command-Log (append-only Audit-Persistenz) |
 | `CR-GC-233` | done | OCC: graphVersion + baseVersion-Check am Gate |
 | `CR-GC-234` | done | graph_merge: Replay-basierte Branch-Reintegration (semantischer Rebase) |
 | `CR-GC-235` | done | Ein Write-Channel: Host-owned Store, Sessions als Clients |
 | `CR-GC-237` | done | HTTP-Bridge folgt dem Store-Lock |
+| `CR-GC-240` | done | Testkonzept: Pyramiden-Ebene aus der Graph-Position statt aus einem level-Attribut |
+| `CR-GC-241` | done | Host-Shim-Schreibbruecke exportieren (callHost/HOST_SOCK_BASENAME) |
 | `CR-GC-243` | done | Lokale OCC (BaseVersionSchema) auf @sigloch/contracts migriert |
 
-## (unassigned)
+## `MS-8-hardening` — M8: Hardening & Konformanz
 
 | CR | status | name |
 |---|---|---|
-| `CR-GC-207` | done | Graph-first onboarding contract (GRAPHCODE.md + dialect marker) |
-| `CR-GC-208` | done | Skill sync + surfacing (anti-drift for scaffolded se-* skills) |
-| `CR-GC-209` | done | se-plan generative impl/integration plan skill |
-| `CR-GC-210` | done | Read-tool output-format contract (JSON vs Format-E) |
-| `CR-GC-211` | done | UC-authoring guardrail (terseness + jargon budget) |
-| `CR-GC-212` | done | Post-project KPI retro (se-retro + KPI standard) |
-| `CR-GC-214` | done | Read-side graph-first enforcement (deny-stale-prose-read hook) |
-| `CR-GC-215` | done | Ship enforcement-hooks to consumer repos |
-| `CR-GC-216` | done | graph_realize ergonomic write-back affordance (write-twin of graph_context) |
-| `CR-GC-218` | done | Concurrent-agent isolation and safe graph recall |
-| `CR-GC-219` | done | Flatten redundant nested attributes field |
-| `CR-GC-227` | done | Help content layer (authored Plain/SE annotation, HELP_CONTENT) |
-| `CR-GC-228` | done | Help data layer (pure projection to HelpEntry, help.ts) |
-| `CR-GC-229` | done | Help surfaces (graph_help MCP tool + se:help skill) |
-| `CR-GC-230` | done | Help docs (README + GRAPHCODE.md pointer to se:help) |
-| `CR-GC-231` | done | graph_authoring_guide meta-model edge guidance for graph-native authoring |
-| `CR-GC-240` | done | Testkonzept: Pyramiden-Ebene aus der Graph-Position statt aus einem level-Attribut |
-| `CR-GC-241` | done | Host-Shim-Schreibbruecke exportieren (callHost/HOST_SOCK_BASENAME) |
-| `CR-GC-242` | done | se-test-ui-Skill + die Red-First-Regel ausliefern |
 | `CR-GC-244` | done | Bundle-Staleness fix: rebundle-Disziplin statt Externalisierung |
 | `CR-GC-247` | done | Zentralisiere Trace-Legalitaet in einem Checker |
 | `CR-GC-248` | dropped | DROPPED: generisches Kuzu Element/Trace-Schema |
@@ -160,6 +189,11 @@ Total: 163 CR · 155 done · 7 open.
 | `CR-GC-270` | done | SERVER_VERSION aus package.json lesen |
 | `CR-GC-271` | done | SCHEMA-Bindung: zodDefinition raus, realRef-Stub materialisieren |
 | `CR-GC-272` | done | readiness + panels nach graphcode-client |
+
+## `MS-9-generation` — M9: Executor & Generierung
+
+| CR | status | name |
+|---|---|---|
 | `CR-GC-273` | done | graph_suggest: se-optimizer-Binding mit dryRun-Verdict |
 | `CR-GC-274` | done | Fit-Gate Haertegrad 1: Delta-m-Advisory am Apply-Gate |
 | `CR-GC-275` | done | graph_generate — der Kaltstart-Generierungstreiber |
@@ -186,27 +220,7 @@ Total: 163 CR · 155 done · 7 open.
 | `CR-GC-296` | done | phase_readiness konsumieren + Sprachregelung |
 | `CR-GC-297` | open | Injection-Default backend-abhaengig |
 | `CR-GC-298` | done | se:import-code-Skill + graphcode-import-code-Verb (graphify-Extraktor angeschlossen) |
-| `CR-GC-299` | done | exporter.ts flacht attributes ab — abgeloest von CR-GC-303 |
-| `CR-GC-300` | done | graphVersion-Stempel im graph_export-Output |
-| `CR-GC-301` | open | A-SPICE-Nachschaerfungen: R-21-Level-Check, Auditor-Sicht, SUP.9/SUP.10 |
-| `CR-GC-302` | done | Auto-SYS-Node bei jedem Import |
-| `CR-GC-303` | done | Attribut-Abflachung macht Steering-Pfad regelblind |
-| `CR-GC-304` | done | ConOps-View nach ISO 29148 neu schneiden |
-| `CR-GC-305` | done | spec-View entfernen, srs bleibt |
-| `CR-GC-306` | done | Onboarding: ein Start, Beispiel-Prompt, GVE-Adresse |
-| `CR-GC-307` | done | Intent-Anker sind Steuerungsinternes, nicht Kundendialog |
-| `CR-GC-308` | done | View-Exporter lesen nur deklarierte Kanten und Attribute |
-| `CR-GC-309` | done | graph_mutate echot Violations in voller Laenge |
-| `CR-GC-310` | done | Format-E-Kantenbatches verlangen Neu-Deklaration vorhandener Knoten |
-| `CR-GC-311` | done | rewind/restore als CLI-Verb — UC-graph-time-travel realisieren |
-| `CR-GC-312` | done | SE_DESCRIPTOR trug 2 von 12 Regelfamilien — zehn Familien wertete niemand aus |
-| `CR-GC-313` | done | export-graph.mjs Guard kennt den graphVersion-Stamp nicht |
-| `CR-GC-314` | done | Positive Entscheidungen im Audit-Trail (rulesPassed) |
-| `CR-GC-315` | done | R-12 und R-21 feuerten auf Kanten, fuer die sie nie gedacht waren |
-| `CR-GC-316` | done | graph_help buendelt Massnahmen je Regel statt je Element |
-| `CR-GC-317` | done | RTM nach A-SPICE-Ebenen gruppieren + Integrationsabdeckung |
-| `CR-GC-318` | done | reqLevels lief nur ueber compose — satisfy-Bein fehlte |
-| `CR-GC-319` | done | audit_trail lieferte Rohdatensaetze statt einer Projektion |
-| `CR-GC-320` | done | executor.ts schneiden — Schritt 1 (Prompt · Ranking · Prosa-Recovery) |
-| `CR-GC-321` | done | __name in Format-E entdeckbar machen, stillen Namens-Fallback laut machen |
-| `CR-GC-322` | done | GRAPHCODE-STEERING.md — die Anleitung fuer den Menschen (Steuerung und docs/views/) |
+
+## (unassigned)
+
+— none —

@@ -258,21 +258,23 @@ priority: should · status: open · kinds: non-functional
 
 Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `FUNC-load-graph` · `FUNC-save-graph` · allocate ▶ `MOD-harness`
 
-##### 3.1.1.6  `FUNC-session-shutdown` — SessionLifecycle
+##### 3.1.1.6  `FUNC-fit-advisory` — computeFitAdvisory(before, after)
 
-Raeumt am Sessionende alle Ressourcen in umgekehrter Reihenfolge ab, den Store-Lock zuletzt.
+> auch in: `FUNC-block-messwerk`
 
-io ◀ `FLOW-store-ownership` · io ▶ `FLOW-committed-graph` · allocate ▶ `MOD-cli`
+Bewertet einen Kandidaten im R^6-Metrikraum vor und nach der probierten Mutation und liefert die Richtung als Advisory. Die Metrik rankt, das Gate urteilt.
 
-###### `REQ-single-kuzu-owner` — Single Kuzu-Owner
+io ◀ `FLOW-graph-state` · io ▶ `FLOW-fit-advisory` · allocate ▶ `MOD-steering`
 
-> auch unter: `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-open-store` · `FUNC-own-kuzu-host`
+###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
 
-Genau ein Host-Prozess besitzt .graphcode/kuzu (single-writer; kein 2. DB-Handle). (SPEC §4, L1)
+> auch unter: `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot`
 
-priority: should · status: done · kinds: non-functional
+Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefert Regelstrom und Projektionen, daraus waehlt die Steuerung die schwaechste Dimension, rankt Kandidaten nach dem Delta derselben Groessen und uebergibt das Ergebnis dem Apply-Gate. Deterministisch: gleicher Graph, gleiche Empfehlung.
 
-Verification ◀ `TEST-bridge-follows-lock` (integration) · `TEST-gve-autostart` (unit) · `TEST-host-shim` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-session-lifecycle` (integration) · `TEST-status-verb` (unit) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness` · `MOD-host-bridge`
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-metrics-engine` · `MOD-steering`
 
 ##### 3.1.1.7  `FUNC-mutate` — mutate(commands)
 
@@ -280,7 +282,7 @@ Verification ◀ `TEST-bridge-follows-lock` (integration) · `TEST-gve-autostart
 
 Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)
 
-io ◀ `FLOW-capture-draft` · `FLOW-mutate-cmd` · `FLOW-suggested-edit` · io ▶ `FLOW-draft-graph` · `FLOW-gate-verdict` · `FLOW-suggest-result` · allocate ▶ `MOD-harness`
+io ◀ `FLOW-capture-draft` · `FLOW-fit-advisory` · `FLOW-mutate-cmd` · `FLOW-suggested-edit` · io ▶ `FLOW-draft-graph` · `FLOW-gate-verdict` · `FLOW-suggest-result` · allocate ▶ `MOD-harness`
 
 ###### `REQ-confidence-tier` — Confidence/Tier am MutateResult
 
@@ -322,7 +324,7 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (
 
 Regel-Engine gegen V3_RULES; Violations {ruleId,severity,elementId}; kein lokaler Parser (L2).
 
-io ◀ `FLOW-draft-graph` · `FLOW-round-scope` · io ▶ `FLOW-round-findings` · `FLOW-violations` · allocate ▶ `MOD-harness`
+io ◀ `FLOW-draft-graph` · `FLOW-module-metrics` · `FLOW-round-scope` · io ▶ `FLOW-round-findings` · `FLOW-violations` · allocate ▶ `MOD-harness`
 
 ###### `REQ-rule-enforcement` — Regel-Enforcement (V3_RULES)
 
@@ -349,6 +351,40 @@ Persistenz auf Disk (.graphcode/kuzu/), kein :memory:. (SPEC §4)
 priority: should · status: open · kinds: non-functional
 
 Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `FUNC-load-graph` · `FUNC-save-graph` · allocate ▶ `MOD-harness`
+
+##### 3.1.1.10  `FUNC-session-shutdown` — SessionLifecycle
+
+Raeumt am Sessionende alle Ressourcen in umgekehrter Reihenfolge ab, den Store-Lock zuletzt.
+
+io ◀ `FLOW-store-ownership` · io ▶ `FLOW-committed-graph` · allocate ▶ `MOD-cli`
+
+###### `REQ-single-kuzu-owner` — Single Kuzu-Owner
+
+> auch unter: `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-open-store` · `FUNC-own-kuzu-host`
+
+Genau ein Host-Prozess besitzt .graphcode/kuzu (single-writer; kein 2. DB-Handle). (SPEC §4, L1)
+
+priority: should · status: done · kinds: non-functional
+
+Verification ◀ `TEST-bridge-follows-lock` (integration) · `TEST-gve-autostart` (unit) · `TEST-host-shim` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-session-lifecycle` (integration) · `TEST-status-verb` (unit) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness` · `MOD-host-bridge`
+
+##### 3.1.1.11  `FUNC-own-kuzu-host` — ownKuzu()
+
+> auch in: `FUNC-block-gedaechtnis`
+
+Der Host-Prozess ist der einzige Kuzu-Owner pro Repo; die Bridge haelt kein zweites DB-Handle. (CR-GC-114)
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-host-bridge`
+
+###### `REQ-single-kuzu-owner` — Single Kuzu-Owner
+
+> auch unter: `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-open-store` · `FUNC-session-shutdown`
+
+Genau ein Host-Prozess besitzt .graphcode/kuzu (single-writer; kein 2. DB-Handle). (SPEC §4, L1)
+
+priority: should · status: done · kinds: non-functional
+
+Verification ◀ `TEST-bridge-follows-lock` (integration) · `TEST-gve-autostart` (unit) · `TEST-host-shim` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-session-lifecycle` (integration) · `TEST-status-verb` (unit) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness` · `MOD-host-bridge`
 
 #### 3.1.2  `FCHAIN-capture` — Interaktive Erfassung (Text → suggest-Tier)
 
@@ -410,7 +446,7 @@ Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FCHAIN-codec-rou
 
 Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)
 
-io ◀ `FLOW-capture-draft` · `FLOW-mutate-cmd` · `FLOW-suggested-edit` · io ▶ `FLOW-draft-graph` · `FLOW-gate-verdict` · `FLOW-suggest-result` · allocate ▶ `MOD-harness`
+io ◀ `FLOW-capture-draft` · `FLOW-fit-advisory` · `FLOW-mutate-cmd` · `FLOW-suggested-edit` · io ▶ `FLOW-draft-graph` · `FLOW-gate-verdict` · `FLOW-suggest-result` · allocate ▶ `MOD-harness`
 
 ###### `REQ-confidence-tier` — Confidence/Tier am MutateResult
 
@@ -622,7 +658,7 @@ Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-inject-graph-slic
 
 Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)
 
-io ◀ `FLOW-capture-draft` · `FLOW-mutate-cmd` · `FLOW-suggested-edit` · io ▶ `FLOW-draft-graph` · `FLOW-gate-verdict` · `FLOW-suggest-result` · allocate ▶ `MOD-harness`
+io ◀ `FLOW-capture-draft` · `FLOW-fit-advisory` · `FLOW-mutate-cmd` · `FLOW-suggested-edit` · io ▶ `FLOW-draft-graph` · `FLOW-gate-verdict` · `FLOW-suggest-result` · allocate ▶ `MOD-harness`
 
 ###### `REQ-confidence-tier` — Confidence/Tier am MutateResult
 
@@ -696,7 +732,7 @@ Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ 
 
 Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)
 
-io ◀ `FLOW-capture-draft` · `FLOW-mutate-cmd` · `FLOW-suggested-edit` · io ▶ `FLOW-draft-graph` · `FLOW-gate-verdict` · `FLOW-suggest-result` · allocate ▶ `MOD-harness`
+io ◀ `FLOW-capture-draft` · `FLOW-fit-advisory` · `FLOW-mutate-cmd` · `FLOW-suggested-edit` · io ▶ `FLOW-draft-graph` · `FLOW-gate-verdict` · `FLOW-suggest-result` · allocate ▶ `MOD-harness`
 
 ###### `REQ-confidence-tier` — Confidence/Tier am MutateResult
 
@@ -914,17 +950,33 @@ priority: must · status: n/a
 
 Verification ◀ `TEST-skill-reports-measured-values` (conformance) · satisfy ◀ `FCHAIN-skill-report` · `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · allocate ▶ `MOD-skills`
 
-##### 3.2.1.1  `FUNC-compute-readiness` — computeReadiness(graph)
+##### 3.2.1.1  `FUNC-check-code-conformance` — conformanceViolations(harness)
+
+> auch in: `FUNC-block-gate`
+
+Extrahiert CodeFacts (extractCodeFacts, ts-Parser) und wertet die contracts RC-Regeln (RC-01 codeRef, RC-02 testRef) aus; scoreReadinessWithConformance mischt sie in die Readiness. Cross-Module-Call-Coverage Follow-up CR-GC-256. (CR-GC-206 -> CR-GC-253)
+
+io ◀ `FLOW-graph-state` · io ▶ `FLOW-violations` · allocate ▶ `MOD-conformance`
+
+###### `REQ-graph-code-conformance` — FUNC codeRef resolves to a real declared symbol
+
+Jeder FUNC.codeRef loest auf ein real deklariertes Symbol in seiner Datei auf (TypeScript-Parser, kein Substring-Match); prompt-realisierte FUNCs (lang prompt): die Skill-Datei existiert. Macht das R-20-Backfill verifizierbar statt nur vorhanden. (CR-GC-206)
+
+priority: must · status: done
+
+Verification ◀ `TEST-code-conformance` (integration) · satisfy ◀ `FUNC-check-code-conformance` · allocate ▶ `MOD-conformance`
+
+##### 3.2.1.2  `FUNC-compute-phase-readiness` — computePhaseReadiness(violations)
 
 > auch in: `FCHAIN-steering-loop` · `FUNC-block-messwerk`
 
-Projiziert den Regelstrom auf die acht Dimensionsscores (score = 1 minus Verstoesse durch applicable). Fremdpaket @sigloch/se-steering, deshalb external.
+Projiziert denselben Regelstrom auf die Phasen-Gates SRR/PDR/CDR/TRR: je Gate abgedeckte gegen alle Regel-IDs plus die fehlenden. Die zweite Achse neben den Dimensionen, aus einer Quelle.
 
-io ◀ `FLOW-steering-snapshot` · io ▶ `FLOW-dimension-readiness` · allocate ▶ `MOD-metrics-engine`
+io ◀ `FLOW-completeness` · `FLOW-violations` · io ▶ `FLOW-phase-readiness` · allocate ▶ `MOD-steering`
 
 ###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
 
-> auch unter: `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot`
+> auch unter: `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot`
 
 Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefert Regelstrom und Projektionen, daraus waehlt die Steuerung die schwaechste Dimension, rankt Kandidaten nach dem Delta derselben Groessen und uebergibt das Ergebnis dem Apply-Gate. Deterministisch: gleicher Graph, gleiche Empfehlung.
 
@@ -932,7 +984,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-metrics-engine` · `MOD-steering`
 
-##### 3.2.1.2  `FUNC-se-retro` — Skill se-retro
+##### 3.2.1.3  `FUNC-se-retro` — Skill se-retro
 
 > auch in: `FUNC-block-se-steuerung`
 
@@ -950,7 +1002,7 @@ priority: must · status: n/a
 
 Verification ◀ `TEST-skill-reports-measured-values` (conformance) · satisfy ◀ `FCHAIN-skill-report` · `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · allocate ▶ `MOD-skills`
 
-##### 3.2.1.3  `FUNC-se-review` — Skill se-review
+##### 3.2.1.4  `FUNC-se-review` — Skill se-review
 
 > auch in: `FUNC-block-se-steuerung`
 
@@ -968,7 +1020,7 @@ priority: must · status: n/a
 
 Verification ◀ `TEST-skill-reports-measured-values` (conformance) · satisfy ◀ `FCHAIN-skill-report` · `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · allocate ▶ `MOD-skills`
 
-##### 3.2.1.4  `FUNC-se-status` — Skill se-status
+##### 3.2.1.5  `FUNC-se-status` — Skill se-status
 
 > auch in: `FUNC-block-se-steuerung`
 
@@ -986,7 +1038,25 @@ priority: must · status: n/a
 
 Verification ◀ `TEST-skill-reports-measured-values` (conformance) · satisfy ◀ `FCHAIN-skill-report` · `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · allocate ▶ `MOD-skills`
 
-##### 3.2.1.5  `FUNC-test` — se-test (red-first test design)
+##### 3.2.1.6  `FUNC-compute-readiness` — computeReadiness(graph)
+
+> auch in: `FCHAIN-steering-loop` · `FUNC-block-messwerk`
+
+Projiziert den Regelstrom auf die acht Dimensionsscores (score = 1 minus Verstoesse durch applicable). Fremdpaket @sigloch/se-steering, deshalb external.
+
+io ◀ `FLOW-steering-snapshot` · io ▶ `FLOW-dimension-readiness` · allocate ▶ `MOD-metrics-engine`
+
+###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
+
+> auch unter: `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot`
+
+Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefert Regelstrom und Projektionen, daraus waehlt die Steuerung die schwaechste Dimension, rankt Kandidaten nach dem Delta derselben Groessen und uebergibt das Ergebnis dem Apply-Gate. Deterministisch: gleicher Graph, gleiche Empfehlung.
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-metrics-engine` · `MOD-steering`
+
+##### 3.2.1.7  `FUNC-test` — se-test (red-first test design)
 
 > auch in: `FUNC-block-anschluss`
 
@@ -1004,7 +1074,7 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-code-quality` (acceptance) · `TEST-mvp-e2e` (e2e) · satisfy ◀ `FCHAIN-apply-gate` · `FUNC-test` · `FUNC-test-ui` · allocate ▶ `MOD-skills`
 
-##### 3.2.1.6  `FUNC-test-ui` — se-test-ui (UI test design)
+##### 3.2.1.8  `FUNC-test-ui` — se-test-ui (UI test design)
 
 > auch in: `FUNC-block-anschluss`
 
@@ -1022,13 +1092,31 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-code-quality` (acceptance) · `TEST-mvp-e2e` (e2e) · satisfy ◀ `FCHAIN-apply-gate` · `FUNC-test` · `FUNC-test-ui` · allocate ▶ `MOD-skills`
 
-##### 3.2.1.7  `FUNC-evaluate-rules` — evaluateRules()
+##### 3.2.1.9  `FUNC-module-metrics` — moduleMetrics(graph)
+
+> auch in: `FUNC-block-messwerk`
+
+Projiziert den Graphen auf die Modulkennzahlen je MOD (Instabilitaet, LCOM4, Kohaesion) — dieselbe Rechnung, aus der MT-01/MT-02 ihre Verstoesse ableiten. Fremdpaket @sigloch/contracts, deshalb external.
+
+io ◀ `FLOW-graph-state` · io ▶ `FLOW-module-metrics` · allocate ▶ `MOD-metrics-engine`
+
+###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
+
+> auch unter: `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot`
+
+Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefert Regelstrom und Projektionen, daraus waehlt die Steuerung die schwaechste Dimension, rankt Kandidaten nach dem Delta derselben Groessen und uebergibt das Ergebnis dem Apply-Gate. Deterministisch: gleicher Graph, gleiche Empfehlung.
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-metrics-engine` · `MOD-steering`
+
+##### 3.2.1.10  `FUNC-evaluate-rules` — evaluateRules()
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-live-update` · `FCHAIN-modelfree-gate` · `FCHAIN-snapshot-freshness` · `FUNC-block-gate`
 
 Regel-Engine gegen V3_RULES; Violations {ruleId,severity,elementId}; kein lokaler Parser (L2).
 
-io ◀ `FLOW-draft-graph` · `FLOW-round-scope` · io ▶ `FLOW-round-findings` · `FLOW-violations` · allocate ▶ `MOD-harness`
+io ◀ `FLOW-draft-graph` · `FLOW-module-metrics` · `FLOW-round-scope` · io ▶ `FLOW-round-findings` · `FLOW-violations` · allocate ▶ `MOD-harness`
 
 ###### `REQ-rule-enforcement` — Regel-Enforcement (V3_RULES)
 
@@ -1038,7 +1126,39 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-mutate-gate` (integration) · `TEST-nd-similarity` (unit) · `TEST-violation-context` (integration) · satisfy ◀ `FUNC-evaluate-rules` · allocate ▶ `MOD-harness`
 
-##### 3.2.1.8  `FUNC-se-help` — Skill se:help
+##### 3.2.1.11  `FUNC-score-completeness` — scoreCompleteness(gateId, graph)
+
+> auch in: `FUNC-block-messwerk`
+
+Berechnet die Completeness-Dimension pro Gate: traversiert die Phase-Slice-Beine (Meta-Modell 1..*) ueber die treibende Source-Population und liefert covered/total + per-leg missing[]. Ergaenzt scorePhaseGate in src/readiness.ts; ein Gate ist passed nur wenn rule-clean UND completeness.covered==total. Config = statische Phase->Beine-Map, im Test gegen die Meta-Modell-Kardinalitaeten asserted (Drift-Lock). (CR-GC-250)
+
+io ◀ `FLOW-graph-state` · io ▶ `FLOW-completeness` · allocate ▶ `MOD-completeness`
+
+###### `REQ-completeness-actor-bounded` — FCHAIN actor-bounded (Trigger + Consumer)
+
+Jede FCHAIN ist actor-bounded: ein ACTOR->FLOW->FUNC(in chain) am Eintritt UND ein FUNC(in chain)->FLOW->ACTOR am Austritt. Eine FCHAIN ohne Trigger oder ohne Consumer ist eine hohle Kette und darf das PDR-Gate nicht gruen passieren. Teil der PDR-Completeness-Slice. (CR-GC-250)
+
+priority: must · status: reviewed · kinds: functional
+
+Verification ◀ `TEST-readiness-completeness` (acceptance) · satisfy ◀ `FUNC-score-completeness` · allocate ▶ `MOD-completeness`
+
+###### `REQ-completeness-single-value` — Completeness: ein Wert pro Gate, Detail on-click
+
+Das Readiness-Dashboard zeigt EINEN aggregierten Completeness-Wert pro Gate; die Per-Leg-Aufschluesselung (welches Bein, welche Source-Elemente unvollstaendig) erscheint on-click als Drill-down. Ruhiger Wert im Panel, Details on-demand. (CR-GC-250)
+
+priority: should · status: reviewed · kinds: non-functional
+
+Verification ◀ `TEST-readiness-completeness` (acceptance) · satisfy ◀ `FUNC-score-completeness` · allocate ▶ `MOD-completeness`
+
+###### `REQ-readiness-completeness` — Readiness Completeness-Dimension (cardinality-driven)
+
+Readiness traegt eine strukturelle Completeness-Dimension pro Gate, orthogonal zur Violation-Severity: ein Gate ist NICHT gruen, solange ein vom Meta-Modell als 1..* markiertes Ketten-Bein seiner Phase unvollstaendig ist. Coverage wird ueber die TREIBENDE Source-Population gemessen -> Abwesenheit zaehlt (0 FCHAIN -> alle UC unvollstaendig -> SRR rot). Warnings behalten ihre Severity (keine Inflation); das Gate-Urteil ergaenzt die Completeness-Invariante. Phase-Slices: SRR {UC->FCHAIN, UC->REQ}, PDR {FCHAIN->FUNC, FUNC->satisfy, FUNC->MOD}, CDR {REQ<-verify-TEST, FLOW->SCHEMA}, TRR {testRef/codeRef non-concept}. concept:true gilt bis CDR, zaehlt erst ab TRR nicht als complete. (CR-GC-250)
+
+priority: must · status: reviewed · kinds: functional
+
+Verification ◀ `TEST-readiness-completeness` (acceptance) · satisfy ◀ `FUNC-score-completeness` · allocate ▶ `MOD-completeness`
+
+##### 3.2.1.12  `FUNC-se-help` — Skill se:help
 
 > auch in: `FUNC-block-anschluss`
 
@@ -1070,17 +1190,17 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-metrics-engine` · `MOD-steering`
 
-##### 3.2.2.1  `FUNC-compute-readiness` — computeReadiness(graph)
+##### 3.2.2.1  `FUNC-arch-fitness` — metrics(graph, layer arch)
 
-> auch in: `FCHAIN-skill-report` · `FUNC-block-messwerk`
+> auch in: `FUNC-block-messwerk`
 
-Projiziert den Regelstrom auf die acht Dimensionsscores (score = 1 minus Verstoesse durch applicable). Fremdpaket @sigloch/se-steering, deshalb external.
+Misst die Architektur-Topologie als Vektor in R^6 — das einzige Signal der Schleife, das nicht aus dem Regelstrom stammt, und deshalb im Ranking der Tiebreaker. Fremdpaket @sigloch/se-optimizer, deshalb external.
 
-io ◀ `FLOW-steering-snapshot` · io ▶ `FLOW-dimension-readiness` · allocate ▶ `MOD-metrics-engine`
+io ◀ `FLOW-graph-state` · io ▶ `FLOW-arch-fitness` · allocate ▶ `MOD-metrics-engine`
 
 ###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
 
-> auch unter: `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot`
+> auch unter: `FCHAIN-steering-loop` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot`
 
 Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefert Regelstrom und Projektionen, daraus waehlt die Steuerung die schwaechste Dimension, rankt Kandidaten nach dem Delta derselben Groessen und uebergibt das Ergebnis dem Apply-Gate. Deterministisch: gleicher Graph, gleiche Empfehlung.
 
@@ -1088,25 +1208,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-metrics-engine` · `MOD-steering`
 
-##### 3.2.2.2  `FUNC-generation-step` — generationStep(graph, policy, intent)
-
-> auch in: `FUNC-block-se-steuerung`
-
-Waehlt aus den Dimensionsscores die schwaechste Dimension unter der Fokus-Schwelle und stellt daraus den Runden-Prompt zusammen: Fokus-Typen, Fund-Fenster, Gate-Protokoll, Handoff-Bedingung.
-
-io ◀ `FLOW-dimension-readiness` · `FLOW-phase-readiness` · io ▶ `FLOW-round-prompt` · allocate ▶ `MOD-steering`
-
-###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
-
-> auch unter: `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot`
-
-Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefert Regelstrom und Projektionen, daraus waehlt die Steuerung die schwaechste Dimension, rankt Kandidaten nach dem Delta derselben Groessen und uebergibt das Ergebnis dem Apply-Gate. Deterministisch: gleicher Graph, gleiche Empfehlung.
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-metrics-engine` · `MOD-steering`
-
-##### 3.2.2.3  `FUNC-rank-candidates` — rankCandidates(probes, focus)
+##### 3.2.2.2  `FUNC-rank-candidates` — rankCandidates(probes, focus)
 
 > auch in: `FUNC-block-se-steuerung`
 
@@ -1124,13 +1226,13 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-metrics-engine` · `MOD-steering`
 
-##### 3.2.2.4  `FUNC-mutate` — mutate(commands)
+##### 3.2.2.3  `FUNC-mutate` — mutate(commands)
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-modelfree-gate` · `FCHAIN-skill-authoring` · `FCHAIN-snapshot-freshness` · `FUNC-block-gate`
 
 Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)
 
-io ◀ `FLOW-capture-draft` · `FLOW-mutate-cmd` · `FLOW-suggested-edit` · io ▶ `FLOW-draft-graph` · `FLOW-gate-verdict` · `FLOW-suggest-result` · allocate ▶ `MOD-harness`
+io ◀ `FLOW-capture-draft` · `FLOW-fit-advisory` · `FLOW-mutate-cmd` · `FLOW-suggested-edit` · io ▶ `FLOW-draft-graph` · `FLOW-gate-verdict` · `FLOW-suggest-result` · allocate ▶ `MOD-harness`
 
 ###### `REQ-confidence-tier` — Confidence/Tier am MutateResult
 
@@ -1166,13 +1268,23 @@ priority: must · status: n/a
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (integration) · `TEST-occ` (integration) · `TEST-single-write-door` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
 
-##### 3.2.2.5  `FUNC-take-steering-snapshot` — takeSteeringSnapshot(graph, policy)
+##### 3.2.2.4  `FUNC-take-steering-snapshot` — takeSteeringSnapshot(graph, policy)
 
 > auch in: `FUNC-block-messwerk`
 
 Der EINE Messpfad: mappt den Graphen ueber toOntologyGraph, injiziert die ND-Matrizen und wertet den vollen Regelkatalog aus; liefert Regelstrom, blockierende Fehler und den Readiness-Report in EINEM Objekt. Jede weitere Kenngroesse ist eine Projektion davon, keine zweite Messung.
 
 io ◀ `FLOW-gate-verdict` · `FLOW-steering-trigger` · io ▶ `FLOW-measurement-vector` · `FLOW-steering-snapshot` · `FLOW-violations` · allocate ▶ `MOD-steering`
+
+###### `REQ-applied-suggestion-moves-target` — Eine angewandte Suggestion bewegt den Zielvektor in Zielrichtung
+
+> auch unter: `FUNC-graph-suggest`
+
+Wird die bestbewertete anwendbare Suggestion real durchs Gate angewandt, bewegt sich die adressierte Metrik-Komponente mit dem Vorzeichen des Ziels und um den vorhergesagten Betrag; jede reale Regression war vorher angesagt.
+
+priority: must · status: n/a
+
+Verification ◀ `TEST-applied-suggestion-moves-target` (integration) · satisfy ◀ `FUNC-graph-suggest` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-mcp-tools` · `MOD-steering`
 
 ###### `REQ-single-measurement-path` — Ein Messpfad fuer alle Steuerungs-Oberflaechen
 
@@ -1192,7 +1304,59 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-metrics-engine` · `MOD-steering`
 
-##### 3.2.2.6  `FUNC-next-step` — nextStep(graph, policy)
+##### 3.2.2.5  `FUNC-compute-readiness` — computeReadiness(graph)
+
+> auch in: `FCHAIN-skill-report` · `FUNC-block-messwerk`
+
+Projiziert den Regelstrom auf die acht Dimensionsscores (score = 1 minus Verstoesse durch applicable). Fremdpaket @sigloch/se-steering, deshalb external.
+
+io ◀ `FLOW-steering-snapshot` · io ▶ `FLOW-dimension-readiness` · allocate ▶ `MOD-metrics-engine`
+
+###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
+
+> auch unter: `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot`
+
+Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefert Regelstrom und Projektionen, daraus waehlt die Steuerung die schwaechste Dimension, rankt Kandidaten nach dem Delta derselben Groessen und uebergibt das Ergebnis dem Apply-Gate. Deterministisch: gleicher Graph, gleiche Empfehlung.
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-metrics-engine` · `MOD-steering`
+
+##### 3.2.2.6  `FUNC-generation-step` — generationStep(graph, policy, intent)
+
+> auch in: `FUNC-block-se-steuerung`
+
+Waehlt aus den Dimensionsscores die schwaechste Dimension unter der Fokus-Schwelle und stellt daraus den Runden-Prompt zusammen: Fokus-Typen, Fund-Fenster, Gate-Protokoll, Handoff-Bedingung.
+
+io ◀ `FLOW-dimension-readiness` · `FLOW-phase-readiness` · io ▶ `FLOW-round-prompt` · allocate ▶ `MOD-steering`
+
+###### `REQ-monotone-convergence` — Wiederholte Steuerung konvergiert monoton
+
+Ueber aufeinanderfolgende Runden faellt die Phase-Gate-Abdeckung nie zurueck und die Zahl blockierender Verstoesse steigt nie; ein Fund-Set wird hoechstens einmal erneut aufgerufen und nach dem Zuruecksetzen nicht wieder.
+
+priority: must · status: n/a
+
+Verification ◀ `TEST-monotone-convergence` (integration) · satisfy ◀ `FUNC-generation-step` · allocate ▶ `MOD-steering`
+
+###### `REQ-phase-gate-not-skippable` — Ein Phasen-Gate ist nicht ueberspringbar
+
+Auch bei erreichter Readiness-Schwelle und null blockierenden Verstoessen bleibt der Handoff aus, solange das aktuelle Phasen-Gate nicht regel-vollstaendig ist.
+
+priority: must · status: n/a
+
+Verification ◀ `TEST-phase-gate-not-skippable` (unit) · satisfy ◀ `FUNC-generation-step` · allocate ▶ `MOD-steering`
+
+###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
+
+> auch unter: `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot`
+
+Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefert Regelstrom und Projektionen, daraus waehlt die Steuerung die schwaechste Dimension, rankt Kandidaten nach dem Delta derselben Groessen und uebergibt das Ergebnis dem Apply-Gate. Deterministisch: gleicher Graph, gleiche Empfehlung.
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-metrics-engine` · `MOD-steering`
+
+##### 3.2.2.7  `FUNC-next-step` — nextStep(graph, policy)
 
 > auch in: `FUNC-block-q-improvement`
 
@@ -1203,6 +1367,42 @@ io ◀ `FLOW-dimension-readiness` · `FLOW-steering-snapshot` · io ▶ `FLOW-ro
 ###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
 
 > auch unter: `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot`
+
+Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefert Regelstrom und Projektionen, daraus waehlt die Steuerung die schwaechste Dimension, rankt Kandidaten nach dem Delta derselben Groessen und uebergibt das Ergebnis dem Apply-Gate. Deterministisch: gleicher Graph, gleiche Empfehlung.
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-metrics-engine` · `MOD-steering`
+
+##### 3.2.2.8  `FUNC-compute-steering-delta` — computeSteeringDelta(before, after)
+
+> auch in: `FUNC-block-messwerk`
+
+Differenz zweier Snapshots: blockierende Fehler vorher und nachher plus Score-Delta je Dimension. Dimensionen ohne Grundgesamtheit auf beiden Seiten entfallen, weil ihr Score dort konstruktiv 0 ist und nicht perfekt.
+
+io ◀ `FLOW-steering-snapshot` · io ▶ `FLOW-steering-delta` · allocate ▶ `MOD-steering`
+
+###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
+
+> auch unter: `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot`
+
+Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefert Regelstrom und Projektionen, daraus waehlt die Steuerung die schwaechste Dimension, rankt Kandidaten nach dem Delta derselben Groessen und uebergibt das Ergebnis dem Apply-Gate. Deterministisch: gleicher Graph, gleiche Empfehlung.
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-metrics-engine` · `MOD-steering`
+
+##### 3.2.2.9  `FUNC-compute-phase-readiness` — computePhaseReadiness(violations)
+
+> auch in: `FCHAIN-skill-report` · `FUNC-block-messwerk`
+
+Projiziert denselben Regelstrom auf die Phasen-Gates SRR/PDR/CDR/TRR: je Gate abgedeckte gegen alle Regel-IDs plus die fehlenden. Die zweite Achse neben den Dimensionen, aus einer Quelle.
+
+io ◀ `FLOW-completeness` · `FLOW-violations` · io ▶ `FLOW-phase-readiness` · allocate ▶ `MOD-steering`
+
+###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
+
+> auch unter: `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot`
 
 Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefert Regelstrom und Projektionen, daraus waehlt die Steuerung die schwaechste Dimension, rankt Kandidaten nach dem Delta derselben Groessen und uebergibt das Ergebnis dem Apply-Gate. Deterministisch: gleicher Graph, gleiche Empfehlung.
 
@@ -1468,7 +1668,7 @@ Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (i
 
 Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)
 
-io ◀ `FLOW-capture-draft` · `FLOW-mutate-cmd` · `FLOW-suggested-edit` · io ▶ `FLOW-draft-graph` · `FLOW-gate-verdict` · `FLOW-suggest-result` · allocate ▶ `MOD-harness`
+io ◀ `FLOW-capture-draft` · `FLOW-fit-advisory` · `FLOW-mutate-cmd` · `FLOW-suggested-edit` · io ▶ `FLOW-draft-graph` · `FLOW-gate-verdict` · `FLOW-suggest-result` · allocate ▶ `MOD-harness`
 
 ###### `REQ-confidence-tier` — Confidence/Tier am MutateResult
 
@@ -1510,7 +1710,7 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (
 
 Regel-Engine gegen V3_RULES; Violations {ruleId,severity,elementId}; kein lokaler Parser (L2).
 
-io ◀ `FLOW-draft-graph` · `FLOW-round-scope` · io ▶ `FLOW-round-findings` · `FLOW-violations` · allocate ▶ `MOD-harness`
+io ◀ `FLOW-draft-graph` · `FLOW-module-metrics` · `FLOW-round-scope` · io ▶ `FLOW-round-findings` · `FLOW-violations` · allocate ▶ `MOD-harness`
 
 ###### `REQ-rule-enforcement` — Regel-Enforcement (V3_RULES)
 
@@ -1582,7 +1782,7 @@ Verification ◀ `TEST-create-harness-smoke` (integration) · `TEST-live-view` (
 
 Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)
 
-io ◀ `FLOW-capture-draft` · `FLOW-mutate-cmd` · `FLOW-suggested-edit` · io ▶ `FLOW-draft-graph` · `FLOW-gate-verdict` · `FLOW-suggest-result` · allocate ▶ `MOD-harness`
+io ◀ `FLOW-capture-draft` · `FLOW-fit-advisory` · `FLOW-mutate-cmd` · `FLOW-suggested-edit` · io ▶ `FLOW-draft-graph` · `FLOW-gate-verdict` · `FLOW-suggest-result` · allocate ▶ `MOD-harness`
 
 ###### `REQ-confidence-tier` — Confidence/Tier am MutateResult
 
@@ -1624,7 +1824,7 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (
 
 Regel-Engine gegen V3_RULES; Violations {ruleId,severity,elementId}; kein lokaler Parser (L2).
 
-io ◀ `FLOW-draft-graph` · `FLOW-round-scope` · io ▶ `FLOW-round-findings` · `FLOW-violations` · allocate ▶ `MOD-harness`
+io ◀ `FLOW-draft-graph` · `FLOW-module-metrics` · `FLOW-round-scope` · io ▶ `FLOW-round-findings` · `FLOW-violations` · allocate ▶ `MOD-harness`
 
 ###### `REQ-rule-enforcement` — Regel-Enforcement (V3_RULES)
 
@@ -1753,6 +1953,22 @@ Verification ◀ `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-serv
 SSE-Client: bei jedem Live-Update-Event (invalidate) werden die betroffenen Domains nachgeladen, ohne Reload. Gegenstueck zu emitUpdateEvent, konsumiert FLOW-live-event ueber die Host-Bridge. (CR-GC-115)
 
 io ◀ `FLOW-live-event` · io ▶ — · allocate ▶ `MOD-dashboard`
+
+##### 3.5.1.8  `FUNC-serve-sse` — serveSSE()
+
+> auch in: `FUNC-block-live-dashboard`
+
+Host-Prozess exponiert die SSE/WS-Route und leitet harness.onUpdateEvent read-only an die Live-Viewer weiter. Kein Express-REST im Core. (CR-GC-114)
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-host-bridge`
+
+###### `REQ-readonly-bridge` — Read-only Bridge
+
+Bridge read-only; keine Inbound-Mutations, Writes nur via MCP→mutate(). (RECOMMENDATIONS)
+
+priority: must · status: done · kinds: negative
+
+Verification ◀ `TEST-bridge-follows-lock` (integration) · `TEST-readonly-bridge` (integration) · satisfy ◀ `FUNC-serve-sse` · `MOD-host-bridge` · allocate ▶ `MOD-host-bridge`
 
 ### 3.6  `UC-loop-closure` — Schwellen und Prompts am Trail kalibrieren
 
@@ -1972,7 +2188,7 @@ Ein Mensch laesst eine bestehende Codebasis oder ein Dokument einlesen; der Slic
 
 Nach einem Lauf steht der eingelesene Bestand als Graph-Zustand mit gesichertem Vorzustand, oder das erzeugte Dokument als Datei unter docs/views; beide tragen den graphVersion-Stempel des Laufs.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: postcondition
 
 Verification ◀ `TEST-doc-export` (conformance) · `TEST-import-code-verb` (integration) · satisfy ◀ `FCHAIN-model-import` · allocate ▶ —
 
@@ -2132,7 +2348,7 @@ Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-inject-graph-slic
 
 Regel-Engine gegen V3_RULES; Violations {ruleId,severity,elementId}; kein lokaler Parser (L2).
 
-io ◀ `FLOW-draft-graph` · `FLOW-round-scope` · io ▶ `FLOW-round-findings` · `FLOW-violations` · allocate ▶ `MOD-harness`
+io ◀ `FLOW-draft-graph` · `FLOW-module-metrics` · `FLOW-round-scope` · io ▶ `FLOW-round-findings` · `FLOW-violations` · allocate ▶ `MOD-harness`
 
 ###### `REQ-rule-enforcement` — Regel-Enforcement (V3_RULES)
 
@@ -2150,6 +2366,16 @@ Duennes Binding auf @sigloch/se-optimizer (targetFor/suggestEdits): rankt die fe
 
 io ◀ `FLOW-round-findings` · io ▶ `FLOW-suggested-edit` · allocate ▶ `MOD-mcp-tools`
 
+###### `REQ-applied-suggestion-moves-target` — Eine angewandte Suggestion bewegt den Zielvektor in Zielrichtung
+
+> auch unter: `FUNC-take-steering-snapshot`
+
+Wird die bestbewertete anwendbare Suggestion real durchs Gate angewandt, bewegt sich die adressierte Metrik-Komponente mit dem Vorzeichen des Ziels und um den vorhergesagten Betrag; jede reale Regression war vorher angesagt.
+
+priority: must · status: n/a
+
+Verification ◀ `TEST-applied-suggestion-moves-target` (integration) · satisfy ◀ `FUNC-graph-suggest` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-mcp-tools` · `MOD-steering`
+
 ###### `REQ-small-model-viable` — Kleine/lokale LLMs tragfähig
 
 > auch unter: `FCHAIN-modelfree-gate`
@@ -2160,13 +2386,21 @@ priority: should · status: open · kinds: non-functional
 
 Verification ◀ `TEST-executor-preflight` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-reduced-llm` (acceptance) · satisfy ◀ `FCHAIN-modelfree-gate` · `FUNC-graph-suggest` · allocate ▶ `MOD-mcp-tools`
 
+###### `REQ-target-shifts-ranking` — Die Zielrichtung verschiebt das Suggestion-Ranking
+
+Ein Vorzeichenwechsel im Zielvektor negiert den Score jedes gemeinsamen Kandidaten und stellt eine andere Suggestion an die Spitze; die Magnitude des Ziels aendert weder Reihenfolge noch Score.
+
+priority: must · status: n/a
+
+Verification ◀ `TEST-executor-bestofn` (integration) · `TEST-target-profile` (integration) · `TEST-target-shifts-ranking` (unit) · satisfy ◀ `FUNC-graph-suggest` · allocate ▶ `MOD-mcp-tools`
+
 ##### 3.8.1.4  `FUNC-mutate` — mutate(commands)
 
 > auch in: `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-modelfree-gate` · `FCHAIN-skill-authoring` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FUNC-block-gate`
 
 Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)
 
-io ◀ `FLOW-capture-draft` · `FLOW-mutate-cmd` · `FLOW-suggested-edit` · io ▶ `FLOW-draft-graph` · `FLOW-gate-verdict` · `FLOW-suggest-result` · allocate ▶ `MOD-harness`
+io ◀ `FLOW-capture-draft` · `FLOW-fit-advisory` · `FLOW-mutate-cmd` · `FLOW-suggested-edit` · io ▶ `FLOW-draft-graph` · `FLOW-gate-verdict` · `FLOW-suggest-result` · allocate ▶ `MOD-harness`
 
 ###### `REQ-confidence-tier` — Confidence/Tier am MutateResult
 
@@ -2372,7 +2606,7 @@ Verification ◀ `TEST-executor-preflight` (integration) · `TEST-mvp-e2e` (e2e)
 
 Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)
 
-io ◀ `FLOW-capture-draft` · `FLOW-mutate-cmd` · `FLOW-suggested-edit` · io ▶ `FLOW-draft-graph` · `FLOW-gate-verdict` · `FLOW-suggest-result` · allocate ▶ `MOD-harness`
+io ◀ `FLOW-capture-draft` · `FLOW-fit-advisory` · `FLOW-mutate-cmd` · `FLOW-suggested-edit` · io ▶ `FLOW-draft-graph` · `FLOW-gate-verdict` · `FLOW-suggest-result` · allocate ▶ `MOD-harness`
 
 ###### `REQ-confidence-tier` — Confidence/Tier am MutateResult
 
@@ -2414,7 +2648,7 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (
 
 Regel-Engine gegen V3_RULES; Violations {ruleId,severity,elementId}; kein lokaler Parser (L2).
 
-io ◀ `FLOW-draft-graph` · `FLOW-round-scope` · io ▶ `FLOW-round-findings` · `FLOW-violations` · allocate ▶ `MOD-harness`
+io ◀ `FLOW-draft-graph` · `FLOW-module-metrics` · `FLOW-round-scope` · io ▶ `FLOW-round-findings` · `FLOW-violations` · allocate ▶ `MOD-harness`
 
 ###### `REQ-rule-enforcement` — Regel-Enforcement (V3_RULES)
 
@@ -2802,9 +3036,11 @@ io ◀ — · io ▶ — · allocate ▶ `MOD-repo-root`
 
 ##### 3.9.2.1  `FUNC-check-code-conformance` — conformanceViolations(harness)
 
+> auch in: `FCHAIN-skill-report`
+
 Extrahiert CodeFacts (extractCodeFacts, ts-Parser) und wertet die contracts RC-Regeln (RC-01 codeRef, RC-02 testRef) aus; scoreReadinessWithConformance mischt sie in die Readiness. Cross-Module-Call-Coverage Follow-up CR-GC-256. (CR-GC-206 -> CR-GC-253)
 
-io ◀ — · io ▶ — · allocate ▶ `MOD-conformance`
+io ◀ `FLOW-graph-state` · io ▶ `FLOW-violations` · allocate ▶ `MOD-conformance`
 
 ###### `REQ-graph-code-conformance` — FUNC codeRef resolves to a real declared symbol
 
@@ -2820,7 +3056,7 @@ Verification ◀ `TEST-code-conformance` (integration) · satisfy ◀ `FUNC-chec
 
 Regel-Engine gegen V3_RULES; Violations {ruleId,severity,elementId}; kein lokaler Parser (L2).
 
-io ◀ `FLOW-draft-graph` · `FLOW-round-scope` · io ▶ `FLOW-round-findings` · `FLOW-violations` · allocate ▶ `MOD-harness`
+io ◀ `FLOW-draft-graph` · `FLOW-module-metrics` · `FLOW-round-scope` · io ▶ `FLOW-round-findings` · `FLOW-violations` · allocate ▶ `MOD-harness`
 
 ###### `REQ-rule-enforcement` — Regel-Enforcement (V3_RULES)
 
@@ -2836,7 +3072,7 @@ Verification ◀ `TEST-mutate-gate` (integration) · `TEST-nd-similarity` (unit)
 
 Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)
 
-io ◀ `FLOW-capture-draft` · `FLOW-mutate-cmd` · `FLOW-suggested-edit` · io ▶ `FLOW-draft-graph` · `FLOW-gate-verdict` · `FLOW-suggest-result` · allocate ▶ `MOD-harness`
+io ◀ `FLOW-capture-draft` · `FLOW-fit-advisory` · `FLOW-mutate-cmd` · `FLOW-suggested-edit` · io ▶ `FLOW-draft-graph` · `FLOW-gate-verdict` · `FLOW-suggest-result` · allocate ▶ `MOD-harness`
 
 ###### `REQ-confidence-tier` — Confidence/Tier am MutateResult
 
@@ -3130,6 +3366,8 @@ Verification ◀ `TEST-schema-migration` (integration) · satisfy ◀ `FUNC-migr
 
 ##### 3.9.3.8  `FUNC-own-kuzu-host` — ownKuzu()
 
+> auch in: `FCHAIN-apply-gate`
+
 Der Host-Prozess ist der einzige Kuzu-Owner pro Repo; die Bridge haelt kein zweites DB-Handle. (CR-GC-114)
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-host-bridge`
@@ -3188,9 +3426,11 @@ io ◀ — · io ▶ — · allocate ▶ `MOD-repo-root`
 
 ##### 3.9.4.1  `FUNC-arch-fitness` — metrics(graph, layer arch)
 
+> auch in: `FCHAIN-steering-loop`
+
 Misst die Architektur-Topologie als Vektor in R^6 — das einzige Signal der Schleife, das nicht aus dem Regelstrom stammt, und deshalb im Ranking der Tiebreaker. Fremdpaket @sigloch/se-optimizer, deshalb external.
 
-io ◀ — · io ▶ `FLOW-arch-fitness` · allocate ▶ `MOD-metrics-engine`
+io ◀ `FLOW-graph-state` · io ▶ `FLOW-arch-fitness` · allocate ▶ `MOD-metrics-engine`
 
 ###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
 
@@ -3203,6 +3443,8 @@ priority: must · status: done · kinds: functional
 Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-metrics-engine` · `MOD-steering`
 
 ##### 3.9.4.2  `FUNC-compute-phase-readiness` — computePhaseReadiness(violations)
+
+> auch in: `FCHAIN-skill-report` · `FCHAIN-steering-loop`
 
 Projiziert denselben Regelstrom auf die Phasen-Gates SRR/PDR/CDR/TRR: je Gate abgedeckte gegen alle Regel-IDs plus die fehlenden. Die zweite Achse neben den Dimensionen, aus einer Quelle.
 
@@ -3238,6 +3480,8 @@ Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (in
 
 ##### 3.9.4.4  `FUNC-compute-steering-delta` — computeSteeringDelta(before, after)
 
+> auch in: `FCHAIN-steering-loop`
+
 Differenz zweier Snapshots: blockierende Fehler vorher und nachher plus Score-Delta je Dimension. Dimensionen ohne Grundgesamtheit auf beiden Seiten entfallen, weil ihr Score dort konstruktiv 0 ist und nicht perfekt.
 
 io ◀ `FLOW-steering-snapshot` · io ▶ `FLOW-steering-delta` · allocate ▶ `MOD-steering`
@@ -3254,9 +3498,11 @@ Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (in
 
 ##### 3.9.4.5  `FUNC-fit-advisory` — computeFitAdvisory(before, after)
 
+> auch in: `FCHAIN-apply-gate`
+
 Bewertet einen Kandidaten im R^6-Metrikraum vor und nach der probierten Mutation und liefert die Richtung als Advisory. Die Metrik rankt, das Gate urteilt.
 
-io ◀ — · io ▶ `FLOW-fit-advisory` · allocate ▶ `MOD-steering`
+io ◀ `FLOW-graph-state` · io ▶ `FLOW-fit-advisory` · allocate ▶ `MOD-steering`
 
 ###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
 
@@ -3270,9 +3516,11 @@ Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (in
 
 ##### 3.9.4.6  `FUNC-module-metrics` — moduleMetrics(graph)
 
+> auch in: `FCHAIN-skill-report`
+
 Projiziert den Graphen auf die Modulkennzahlen je MOD (Instabilitaet, LCOM4, Kohaesion) — dieselbe Rechnung, aus der MT-01/MT-02 ihre Verstoesse ableiten. Fremdpaket @sigloch/contracts, deshalb external.
 
-io ◀ — · io ▶ `FLOW-module-metrics` · allocate ▶ `MOD-metrics-engine`
+io ◀ `FLOW-graph-state` · io ▶ `FLOW-module-metrics` · allocate ▶ `MOD-metrics-engine`
 
 ###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
 
@@ -3286,9 +3534,11 @@ Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (in
 
 ##### 3.9.4.7  `FUNC-score-completeness` — scoreCompleteness(gateId, graph)
 
+> auch in: `FCHAIN-skill-report`
+
 Berechnet die Completeness-Dimension pro Gate: traversiert die Phase-Slice-Beine (Meta-Modell 1..*) ueber die treibende Source-Population und liefert covered/total + per-leg missing[]. Ergaenzt scorePhaseGate in src/readiness.ts; ein Gate ist passed nur wenn rule-clean UND completeness.covered==total. Config = statische Phase->Beine-Map, im Test gegen die Meta-Modell-Kardinalitaeten asserted (Drift-Lock). (CR-GC-250)
 
-io ◀ — · io ▶ `FLOW-completeness` · allocate ▶ `MOD-completeness`
+io ◀ `FLOW-graph-state` · io ▶ `FLOW-completeness` · allocate ▶ `MOD-completeness`
 
 ###### `REQ-completeness-actor-bounded` — FCHAIN actor-bounded (Trigger + Consumer)
 
@@ -3321,6 +3571,16 @@ Verification ◀ `TEST-readiness-completeness` (acceptance) · satisfy ◀ `FUNC
 Der EINE Messpfad: mappt den Graphen ueber toOntologyGraph, injiziert die ND-Matrizen und wertet den vollen Regelkatalog aus; liefert Regelstrom, blockierende Fehler und den Readiness-Report in EINEM Objekt. Jede weitere Kenngroesse ist eine Projektion davon, keine zweite Messung.
 
 io ◀ `FLOW-gate-verdict` · `FLOW-steering-trigger` · io ▶ `FLOW-measurement-vector` · `FLOW-steering-snapshot` · `FLOW-violations` · allocate ▶ `MOD-steering`
+
+###### `REQ-applied-suggestion-moves-target` — Eine angewandte Suggestion bewegt den Zielvektor in Zielrichtung
+
+> auch unter: `FUNC-graph-suggest`
+
+Wird die bestbewertete anwendbare Suggestion real durchs Gate angewandt, bewegt sich die adressierte Metrik-Komponente mit dem Vorzeichen des Ziels und um den vorhergesagten Betrag; jede reale Regression war vorher angesagt.
+
+priority: must · status: n/a
+
+Verification ◀ `TEST-applied-suggestion-moves-target` (integration) · satisfy ◀ `FUNC-graph-suggest` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-mcp-tools` · `MOD-steering`
 
 ###### `REQ-single-measurement-path` — Ein Messpfad fuer alle Steuerungs-Oberflaechen
 
@@ -3608,6 +3868,8 @@ Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FUNC-broadcast-d
 
 ###### 3.9.5.3.3  `FUNC-serve-sse` — serveSSE()
 
+> auch in: `FCHAIN-live-update`
+
 Host-Prozess exponiert die SSE/WS-Route und leitet harness.onUpdateEvent read-only an die Live-Viewer weiter. Kein Express-REST im Core. (CR-GC-114)
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-host-bridge`
@@ -3710,6 +3972,16 @@ Duennes Binding auf @sigloch/se-optimizer (targetFor/suggestEdits): rankt die fe
 
 io ◀ `FLOW-round-findings` · io ▶ `FLOW-suggested-edit` · allocate ▶ `MOD-mcp-tools`
 
+###### `REQ-applied-suggestion-moves-target` — Eine angewandte Suggestion bewegt den Zielvektor in Zielrichtung
+
+> auch unter: `FUNC-take-steering-snapshot`
+
+Wird die bestbewertete anwendbare Suggestion real durchs Gate angewandt, bewegt sich die adressierte Metrik-Komponente mit dem Vorzeichen des Ziels und um den vorhergesagten Betrag; jede reale Regression war vorher angesagt.
+
+priority: must · status: n/a
+
+Verification ◀ `TEST-applied-suggestion-moves-target` (integration) · satisfy ◀ `FUNC-graph-suggest` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-mcp-tools` · `MOD-steering`
+
 ###### `REQ-small-model-viable` — Kleine/lokale LLMs tragfähig
 
 > auch unter: `FCHAIN-modelfree-gate`
@@ -3719,6 +3991,14 @@ Deterministische, modellfreie Gates/Regeln + Query-Precision halten kleine/lokal
 priority: should · status: open · kinds: non-functional
 
 Verification ◀ `TEST-executor-preflight` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-reduced-llm` (acceptance) · satisfy ◀ `FCHAIN-modelfree-gate` · `FUNC-graph-suggest` · allocate ▶ `MOD-mcp-tools`
+
+###### `REQ-target-shifts-ranking` — Die Zielrichtung verschiebt das Suggestion-Ranking
+
+Ein Vorzeichenwechsel im Zielvektor negiert den Score jedes gemeinsamen Kandidaten und stellt eine andere Suggestion an die Spitze; die Magnitude des Ziels aendert weder Reihenfolge noch Score.
+
+priority: must · status: n/a
+
+Verification ◀ `TEST-executor-bestofn` (integration) · `TEST-target-profile` (integration) · `TEST-target-shifts-ranking` (unit) · satisfy ◀ `FUNC-graph-suggest` · allocate ▶ `MOD-mcp-tools`
 
 ##### 3.9.6.2  `FUNC-block-q-improvement` — Q-Improvement
 
@@ -3775,6 +4055,22 @@ io ◀ — · io ▶ — · allocate ▶ `MOD-steering`
 Waehlt aus den Dimensionsscores die schwaechste Dimension unter der Fokus-Schwelle und stellt daraus den Runden-Prompt zusammen: Fokus-Typen, Fund-Fenster, Gate-Protokoll, Handoff-Bedingung.
 
 io ◀ `FLOW-dimension-readiness` · `FLOW-phase-readiness` · io ▶ `FLOW-round-prompt` · allocate ▶ `MOD-steering`
+
+###### `REQ-monotone-convergence` — Wiederholte Steuerung konvergiert monoton
+
+Ueber aufeinanderfolgende Runden faellt die Phase-Gate-Abdeckung nie zurueck und die Zahl blockierender Verstoesse steigt nie; ein Fund-Set wird hoechstens einmal erneut aufgerufen und nach dem Zuruecksetzen nicht wieder.
+
+priority: must · status: n/a
+
+Verification ◀ `TEST-monotone-convergence` (integration) · satisfy ◀ `FUNC-generation-step` · allocate ▶ `MOD-steering`
+
+###### `REQ-phase-gate-not-skippable` — Ein Phasen-Gate ist nicht ueberspringbar
+
+Auch bei erreichter Readiness-Schwelle und null blockierenden Verstoessen bleibt der Handoff aus, solange das aktuelle Phasen-Gate nicht regel-vollstaendig ist.
+
+priority: must · status: n/a
+
+Verification ◀ `TEST-phase-gate-not-skippable` (unit) · satisfy ◀ `FUNC-generation-step` · allocate ▶ `MOD-steering`
 
 ###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
 
@@ -4074,7 +4370,7 @@ io ◀ `ACTOR-developer` · `FUNC-render-views` · `FUNC-serve-stdio` · `FUNC-v
 
 Richtung und Regressionen eines Kandidaten im R^6-Metrikraum. Reine Messung: rankt, urteilt nicht.
 
-io ◀ `FUNC-fit-advisory` · io ▶ `FUNC-rank-candidates` · schema ▶ `SCHEMA-fit-advisory`
+io ◀ `FUNC-fit-advisory` · io ▶ `FUNC-mutate` · `FUNC-rank-candidates` · schema ▶ `SCHEMA-fit-advisory`
 
 ### 4.18  `FLOW-formatE-artifact` — Format-E-Artefakt
 
@@ -4104,7 +4400,7 @@ io ◀ `FUNC-graph-export-snapshot` · `FUNC-rewind` · io ▶ `ACTOR-developer`
 
 Aktueller OntologyGraph (in-memory).
 
-io ◀ `ACTOR-developer` · `FUNC-load-graph` · `FUNC-open-store` · io ▶ `FUNC-close-store` · `FUNC-encode` · schema ▶ `SCHEMA-ontology-graph`
+io ◀ `ACTOR-developer` · `FUNC-load-graph` · `FUNC-open-store` · io ▶ `FUNC-arch-fitness` · `FUNC-check-code-conformance` · `FUNC-close-store` · `FUNC-encode` · `FUNC-fit-advisory` · `FUNC-module-metrics` · `FUNC-score-completeness` · schema ▶ `SCHEMA-ontology-graph`
 
 ### 4.23  `FLOW-impact-subgraph` — Impact-Subgraph
 
@@ -4152,7 +4448,7 @@ io ◀ `FUNC-migrate-schema` · io ▶ `ACTOR-developer` · schema ▶ `SCHEMA-o
 
 Instabilitaet, LCOM4, Kohaesion je Modul plus die geltende Urteils-Policy und ihre Herkunft. Wert und Schwelle verlassen den Host zusammen, damit die Anzeige keinen eigenen Zielwert braucht (CR-GC-329).
 
-io ◀ `FUNC-module-metrics` · io ▶ `ACTOR-dashboard` · schema ▶ `SCHEMA-module-metrics`
+io ◀ `FUNC-module-metrics` · io ▶ `ACTOR-dashboard` · `FUNC-evaluate-rules` · schema ▶ `SCHEMA-module-metrics`
 
 ### 4.31  `FLOW-mutate-cmd` — Mutate-Command
 
@@ -4278,7 +4574,7 @@ io ◀ `ACTOR-developer` · io ▶ `FUNC-render-views` · `FUNC-view-changelog` 
 
 Regel-Violations {ruleId,severity,elementId}.
 
-io ◀ `FUNC-evaluate-rules` · `FUNC-take-steering-snapshot` · io ▶ `FUNC-compute-phase-readiness` · `FUNC-save-graph` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · schema ▶ `SCHEMA-mutate-result`
+io ◀ `FUNC-check-code-conformance` · `FUNC-evaluate-rules` · `FUNC-take-steering-snapshot` · io ▶ `FUNC-compute-phase-readiness` · `FUNC-save-graph` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · schema ▶ `SCHEMA-mutate-result`
 
 ## 5  Schemata
 
@@ -4480,7 +4776,7 @@ allocate ◀ `FUNC-broadcast-diff` · `FUNC-health-endpoint` · `FUNC-own-kuzu-h
 
 MCP-stdio Tool-Registry, an die Harness gebunden; read/write/query Tools. (SPEC §2.2)
 
-allocate ◀ `FUNC-deduce-tests` · `FUNC-graph-expand` · `FUNC-graph-export-snapshot` · `FUNC-graph-impact` · `FUNC-graph-suggest` · `FUNC-resolve-tests-from-code` · `FUNC-serve-stdio` · satisfy ▶ `REQ-agent-agnostic` · `REQ-export-no-clobber` · `REQ-mcp-tool-registry` · `REQ-prompt-provenance` · `REQ-readiness-model` · `REQ-rule-calibration` · `REQ-single-transport` · `REQ-test-runnable-binding` · `REQ-testref-materialized`
+allocate ◀ `FUNC-deduce-tests` · `FUNC-graph-expand` · `FUNC-graph-export-snapshot` · `FUNC-graph-impact` · `FUNC-graph-suggest` · `FUNC-resolve-tests-from-code` · `FUNC-serve-stdio` · satisfy ▶ `REQ-agent-agnostic` · `REQ-export-no-clobber` · `REQ-graph-context-replaces-reading` · `REQ-mcp-tool-registry` · `REQ-prompt-provenance` · `REQ-readiness-model` · `REQ-rule-calibration` · `REQ-single-transport` · `REQ-test-runnable-binding` · `REQ-testref-materialized`
 
 #### 6.4.9  `MOD-metrics-engine` — metrics-engine — Kenngroessen-Rechenkern
 
@@ -4507,14 +4803,6 @@ Versionsmigration des Meta-Modells: modelliert, noch nicht realisiert.
 allocate ◀ `FUNC-migrate-schema`
 
 ## 7  Cross-cutting Requirements
-
-### `REQ-applied-suggestion-moves-target` — Eine angewandte Suggestion bewegt den Zielvektor in Zielrichtung
-
-Wird die bestbewertete anwendbare Suggestion real durchs Gate angewandt, bewegt sich die adressierte Metrik-Komponente mit dem Vorzeichen des Ziels und um den vorhergesagten Betrag; jede reale Regression war vorher angesagt.
-
-priority: must · status: n/a
-
-Verification ◀ `TEST-applied-suggestion-moves-target` (integration) · satisfy ◀ — · allocate ▶ —
 
 ### `REQ-buildable-standalone` — Standalone baufähig (D5)
 
@@ -4562,7 +4850,7 @@ Ein Aufruf liefert die vollstaendige Definition-of-Done eines Realisierungsknote
 
 priority: must · status: n/a
 
-Verification ◀ `TEST-graph-context-replaces-reading` (unit) · satisfy ◀ — · allocate ▶ —
+Verification ◀ `TEST-graph-context-replaces-reading` (unit) · satisfy ◀ `MOD-mcp-tools` · allocate ▶ —
 
 ### `REQ-graph-integrity` — Graph-Integritaet: ein Validator
 
@@ -4632,17 +4920,9 @@ Verification ◀ `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integra
 
 Vor einem Ein- oder Auslesevorgang liegt ein Repo mit initialisiertem Store vor sowie ein lesbarer Fremdbestand: ein Format-E-Artefakt, ein TypeScript-Quellbaum oder ein Dokument.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: precondition
 
 Verification ◀ `TEST-import-code-verb` (integration) · satisfy ◀ — · allocate ▶ —
-
-### `REQ-monotone-convergence` — Wiederholte Steuerung konvergiert monoton
-
-Ueber aufeinanderfolgende Runden faellt die Phase-Gate-Abdeckung nie zurueck und die Zahl blockierender Verstoesse steigt nie; ein Fund-Set wird hoechstens einmal erneut aufgerufen und nach dem Zuruecksetzen nicht wieder.
-
-priority: must · status: n/a
-
-Verification ◀ `TEST-monotone-convergence` (integration) · satisfy ◀ — · allocate ▶ —
 
 ### `REQ-one-driver-local-and-frontier` — Ein Treiber fuer lokale und Frontier-Modelle
 
@@ -4659,14 +4939,6 @@ Jede Edit-Op (Mensch oder KI) durch denselben mutate()-Pfad; consumerType nur ge
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-mcp-symmetry` (integration) · `TEST-mutate-gate` (integration) · `TEST-store-lock` (integration) · satisfy ◀ — · allocate ▶ —
-
-### `REQ-phase-gate-not-skippable` — Ein Phasen-Gate ist nicht ueberspringbar
-
-Auch bei erreichter Readiness-Schwelle und null blockierenden Verstoessen bleibt der Handoff aus, solange das aktuelle Phasen-Gate nicht regel-vollstaendig ist.
-
-priority: must · status: n/a
-
-Verification ◀ `TEST-phase-gate-not-skippable` (unit) · satisfy ◀ — · allocate ▶ —
 
 ### `REQ-precommit-timeout` — pre-commit blockierbar + Timeout
 
@@ -4747,14 +5019,6 @@ Trace-pair legality is enforced by the one shared engine rule R-18 (@sigloch/con
 priority: must · status: done
 
 Verification ◀ `TEST-graph-authoring-guide` (integration) · `TEST-mutate-gate` (integration) · satisfy ◀ `MOD-harness` · allocate ▶ —
-
-### `REQ-target-shifts-ranking` — Die Zielrichtung verschiebt das Suggestion-Ranking
-
-Ein Vorzeichenwechsel im Zielvektor negiert den Score jedes gemeinsamen Kandidaten und stellt eine andere Suggestion an die Spitze; die Magnitude des Ziels aendert weder Reihenfolge noch Score.
-
-priority: must · status: n/a
-
-Verification ◀ `TEST-executor-bestofn` (integration) · `TEST-target-profile` (integration) · `TEST-target-shifts-ranking` (unit) · satisfy ◀ — · allocate ▶ —
 
 ### `REQ-testref-materialized` — A bound testRef always resolves to a real file
 

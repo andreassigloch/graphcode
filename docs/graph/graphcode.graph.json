@@ -3203,6 +3203,13 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "id": "MS-10-steering-views",
+      "type": "MS",
+      "name": "M10: A-SPICE & Steuerungssichten",
+      "description": "A-SPICE-Nachschaerfung, Vollstaendigkeit der Regelfamilien, View-Exporter auf deklarierte Kanten, Steuerungsdokumentation und Zeitreise. Umfasst CR-GC-299 bis CR-GC-322.",
+      "status": "draft"
+    },
+    {
       "id": "MS-2-coding-vv",
       "type": "MS",
       "name": "M2: Coding & V&V",
@@ -3246,6 +3253,20 @@
       "type": "MS",
       "name": "Enterprise concurrency & merge (one write channel)",
       "description": "Enterprise-Merge-Ladder: durables Command-Log → OCC → Replay-Merge → Host-Topologie (ONE database, one write channel, multiple read). Beendet den manuellen Graph-Merge; Architektur-Vorlage für den aise-Nachfolger. (docs/CONCURRENCY.md)",
+      "status": "draft"
+    },
+    {
+      "id": "MS-8-hardening",
+      "type": "MS",
+      "name": "M8: Hardening & Konformanz",
+      "description": "Post-MVP2-Hardening: Trace-Legalitaet zentralisiert, Code-Konformanz als Readiness-Regel, Modul-Schnitt entlang der Kohaesion, Dependency- und Distributionshygiene. Umfasst CR-GC-244 bis CR-GC-272.",
+      "status": "draft"
+    },
+    {
+      "id": "MS-9-generation",
+      "type": "MS",
+      "name": "M9: Executor & Generierung",
+      "description": "Embedded Executor und Kaltstart-Generierung: Runden-Prompt-Injektion, Best-of-N-Ranking, Near-Duplicate-Erkennung, Zielprofil und Fit-Gate. Umfasst CR-GC-273 bis CR-GC-298.",
       "status": "draft"
     },
     {
@@ -3757,13 +3778,19 @@
       "id": "REQ-model-exchange-post",
       "type": "REQ",
       "name": "Nachbedingung Modellaustausch",
-      "description": "Nach einem Lauf steht der eingelesene Bestand als Graph-Zustand mit gesichertem Vorzustand, oder das erzeugte Dokument als Datei unter docs/views; beide tragen den graphVersion-Stempel des Laufs."
+      "description": "Nach einem Lauf steht der eingelesene Bestand als Graph-Zustand mit gesichertem Vorzustand, oder das erzeugte Dokument als Datei unter docs/views; beide tragen den graphVersion-Stempel des Laufs.",
+      "kinds": [
+        "postcondition"
+      ]
     },
     {
       "id": "REQ-model-exchange-pre",
       "type": "REQ",
       "name": "Vorbedingung Modellaustausch",
-      "description": "Vor einem Ein- oder Auslesevorgang liegt ein Repo mit initialisiertem Store vor sowie ein lesbarer Fremdbestand: ein Format-E-Artefakt, ein TypeScript-Quellbaum oder ein Dokument."
+      "description": "Vor einem Ein- oder Auslesevorgang liegt ein Repo mit initialisiertem Store vor sowie ein lesbarer Fremdbestand: ein Format-E-Artefakt, ein TypeScript-Quellbaum oder ein Dokument.",
+      "kinds": [
+        "precondition"
+      ]
     },
     {
       "id": "REQ-monotone-convergence",
@@ -4685,7 +4712,7 @@
       "status": "reviewed",
       "external": true,
       "realRef": {
-        "file": "packages/se-optimizer/src/metrics.ts",
+        "file": "packages/se-engine/src/metrics.ts",
         "symbol": "MetricVector",
         "lang": "ts"
       }
@@ -7546,6 +7573,18 @@
     },
     {
       "source": "CR-GC-109",
+      "target": "FUNC-emit-trajectory",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-109",
+      "target": "FUNC-emit-update-event",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-109",
       "target": "MS-4-mvp2",
       "type": "relation",
       "weight": 1,
@@ -7592,6 +7631,12 @@
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-111",
+      "target": "FUNC-serve-stdio",
+      "type": "relation",
+      "weight": "1"
     },
     {
       "source": "CR-GC-111",
@@ -8158,6 +8203,12 @@
     },
     {
       "source": "CR-GC-125",
+      "target": "FUNC-compute-phase-readiness",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-125",
       "target": "MOD-dashboard",
       "type": "relation",
       "weight": 1,
@@ -8477,6 +8528,12 @@
     },
     {
       "source": "CR-GC-206",
+      "target": "FUNC-check-code-conformance",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-206",
       "target": "MS-5-efficiency",
       "type": "relation"
     },
@@ -8484,6 +8541,78 @@
       "source": "CR-GC-206",
       "target": "REQ-graph-code-conformance",
       "type": "relation"
+    },
+    {
+      "source": "CR-GC-207",
+      "target": "FUNC-harness-cli",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-207",
+      "target": "MS-6-adoption",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-208",
+      "target": "FUNC-harness-cli",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-208",
+      "target": "MS-6-adoption",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-209",
+      "target": "FUNC-se-plan",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-209",
+      "target": "MS-6-adoption",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-210",
+      "target": "FUNC-list-elements",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-210",
+      "target": "MS-5-efficiency",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-211",
+      "target": "FUNC-author-uc",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-211",
+      "target": "MS-6-adoption",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-212",
+      "target": "FUNC-se-retro",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-212",
+      "target": "MS-5-efficiency",
+      "type": "relation",
+      "weight": "1"
     },
     {
       "source": "CR-GC-213",
@@ -8499,6 +8628,48 @@
       "source": "CR-GC-213",
       "target": "REQ-precise-context",
       "type": "relation"
+    },
+    {
+      "source": "CR-GC-214",
+      "target": "FUNC-harness-cli",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-214",
+      "target": "MOD-hooks",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-214",
+      "target": "MS-6-adoption",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-215",
+      "target": "FUNC-harness-cli",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-215",
+      "target": "MS-6-adoption",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-216",
+      "target": "MOD-mcp-tools",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-216",
+      "target": "MS-5-efficiency",
+      "type": "relation",
+      "weight": "1"
     },
     {
       "source": "CR-GC-217",
@@ -8526,9 +8697,39 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-218",
+      "target": "FUNC-claim-store-lock",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-218",
+      "target": "MS-7-concurrency",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-219",
+      "target": "FUNC-export-markdown",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-219",
+      "target": "MS-5-efficiency",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
       "source": "CR-GC-220",
       "target": "MS-6-adoption",
       "type": "relation"
+    },
+    {
+      "source": "CR-GC-221",
+      "target": "FUNC-compute-phase-readiness",
+      "type": "relation",
+      "weight": "1"
     },
     {
       "source": "CR-GC-221",
@@ -8557,8 +8758,74 @@
     },
     {
       "source": "CR-GC-226",
+      "target": "FUNC-compute-phase-readiness",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-226",
       "target": "MS-6-adoption",
       "type": "relation"
+    },
+    {
+      "source": "CR-GC-227",
+      "target": "FUNC-se-help",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-227",
+      "target": "MS-6-adoption",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-228",
+      "target": "FUNC-se-help",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-228",
+      "target": "MS-6-adoption",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-229",
+      "target": "FUNC-se-help",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-229",
+      "target": "MS-6-adoption",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-230",
+      "target": "MOD-docs",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-230",
+      "target": "MS-6-adoption",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-231",
+      "target": "MOD-mcp-tools",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-231",
+      "target": "MS-6-adoption",
+      "type": "relation",
+      "weight": "1"
     },
     {
       "source": "CR-GC-232",
@@ -8577,8 +8844,20 @@
     },
     {
       "source": "CR-GC-235",
+      "target": "FUNC-serve-stdio",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-235",
       "target": "MS-7-concurrency",
       "type": "relation"
+    },
+    {
+      "source": "CR-GC-236",
+      "target": "FUNC-export-markdown",
+      "type": "relation",
+      "weight": "1"
     },
     {
       "source": "CR-GC-236",
@@ -8611,6 +8890,12 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-240",
+      "target": "MS-7-concurrency",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
       "source": "CR-GC-241",
       "target": "FUNC-own-kuzu-host",
       "type": "relation"
@@ -8621,6 +8906,12 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-241",
+      "target": "MS-7-concurrency",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
       "source": "CR-GC-242",
       "target": "FUNC-test-ui",
       "type": "relation"
@@ -8629,6 +8920,12 @@
       "source": "CR-GC-242",
       "target": "MOD-skills",
       "type": "relation"
+    },
+    {
+      "source": "CR-GC-242",
+      "target": "MS-6-adoption",
+      "type": "relation",
+      "weight": "1"
     },
     {
       "source": "CR-GC-243",
@@ -8652,6 +8949,12 @@
     },
     {
       "source": "CR-GC-244",
+      "target": "MS-8-hardening",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-244",
       "target": "REQ-self-contained-dist",
       "type": "relation"
     },
@@ -8659,6 +8962,12 @@
       "source": "CR-GC-247",
       "target": "MOD-codec",
       "type": "relation"
+    },
+    {
+      "source": "CR-GC-247",
+      "target": "MS-8-hardening",
+      "type": "relation",
+      "weight": "1"
     },
     {
       "source": "CR-GC-247",
@@ -8671,14 +8980,32 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-248",
+      "target": "MS-8-hardening",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
       "source": "CR-GC-249",
       "target": "MOD-harness",
       "type": "relation"
     },
     {
+      "source": "CR-GC-249",
+      "target": "MS-8-hardening",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
       "source": "CR-GC-250",
       "target": "FUNC-score-completeness",
       "type": "relation"
+    },
+    {
+      "source": "CR-GC-250",
+      "target": "MS-8-hardening",
+      "type": "relation",
+      "weight": "1"
     },
     {
       "source": "CR-GC-250",
@@ -8707,6 +9034,12 @@
     },
     {
       "source": "CR-GC-251",
+      "target": "MS-8-hardening",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-251",
       "target": "REQ-rule-enforcement",
       "type": "relation"
     },
@@ -8716,9 +9049,21 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-252",
+      "target": "MS-8-hardening",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
       "source": "CR-GC-253",
       "target": "FUNC-check-code-conformance",
       "type": "relation"
+    },
+    {
+      "source": "CR-GC-253",
+      "target": "MS-8-hardening",
+      "type": "relation",
+      "weight": "1"
     },
     {
       "source": "CR-GC-254",
@@ -8726,9 +9071,21 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-254",
+      "target": "MS-8-hardening",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
       "source": "CR-GC-255",
       "target": "FUNC-serve-sse",
       "type": "relation"
+    },
+    {
+      "source": "CR-GC-255",
+      "target": "MS-8-hardening",
+      "type": "relation",
+      "weight": "1"
     },
     {
       "source": "CR-GC-255",
@@ -8752,6 +9109,12 @@
     },
     {
       "source": "CR-GC-256",
+      "target": "MS-8-hardening",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-256",
       "target": "REQ-mcp-tool-registry",
       "type": "relation"
     },
@@ -8767,6 +9130,12 @@
     },
     {
       "source": "CR-GC-257",
+      "target": "MS-8-hardening",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-257",
       "target": "REQ-rule-enforcement",
       "type": "relation"
     },
@@ -8774,6 +9143,12 @@
       "source": "CR-GC-258",
       "target": "FUNC-export-markdown",
       "type": "relation"
+    },
+    {
+      "source": "CR-GC-258",
+      "target": "MS-8-hardening",
+      "type": "relation",
+      "weight": "1"
     },
     {
       "source": "CR-GC-258",
@@ -8786,14 +9161,116 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-259",
+      "target": "MS-8-hardening",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
       "source": "CR-GC-260",
       "target": "FUNC-export-markdown",
       "type": "relation"
     },
     {
+      "source": "CR-GC-260",
+      "target": "MS-8-hardening",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
       "source": "CR-GC-261",
       "target": "FUNC-score-completeness",
       "type": "relation"
+    },
+    {
+      "source": "CR-GC-261",
+      "target": "MS-8-hardening",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-262",
+      "target": "FUNC-harness-cli",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-262",
+      "target": "MS-8-hardening",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-263",
+      "target": "FUNC-harness-cli",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-263",
+      "target": "MS-8-hardening",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-264",
+      "target": "MOD-docs",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-264",
+      "target": "MS-8-hardening",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-265",
+      "target": "MOD-repo-root",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-265",
+      "target": "MS-8-hardening",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-266",
+      "target": "FUNC-compute-readiness",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-266",
+      "target": "MS-8-hardening",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-267",
+      "target": "FUNC-check-code-conformance",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-267",
+      "target": "FUNC-export-markdown",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-267",
+      "target": "MOD-host-bridge",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-267",
+      "target": "MS-8-hardening",
+      "type": "relation",
+      "weight": "1"
     },
     {
       "source": "CR-GC-268",
@@ -8804,6 +9281,12 @@
       "source": "CR-GC-268",
       "target": "MOD-codec",
       "type": "relation"
+    },
+    {
+      "source": "CR-GC-268",
+      "target": "MS-8-hardening",
+      "type": "relation",
+      "weight": "1"
     },
     {
       "source": "CR-GC-268",
@@ -8827,6 +9310,12 @@
     },
     {
       "source": "CR-GC-269",
+      "target": "MS-8-hardening",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-269",
       "target": "REQ-roundtrip-conformance",
       "type": "relation"
     },
@@ -8834,6 +9323,12 @@
       "source": "CR-GC-270",
       "target": "FUNC-serve-stdio",
       "type": "relation"
+    },
+    {
+      "source": "CR-GC-270",
+      "target": "MS-8-hardening",
+      "type": "relation",
+      "weight": "1"
     },
     {
       "source": "CR-GC-270",
@@ -8851,6 +9346,12 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-271",
+      "target": "MS-8-hardening",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
       "source": "CR-GC-272",
       "target": "FUNC-render-readiness",
       "type": "relation"
@@ -8862,6 +9363,12 @@
     },
     {
       "source": "CR-GC-272",
+      "target": "MS-8-hardening",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-272",
       "target": "REQ-self-contained-dist",
       "type": "relation"
     },
@@ -8869,6 +9376,12 @@
       "source": "CR-GC-273",
       "target": "FUNC-serve-stdio",
       "type": "relation"
+    },
+    {
+      "source": "CR-GC-273",
+      "target": "MS-9-generation",
+      "type": "relation",
+      "weight": "1"
     },
     {
       "source": "CR-GC-273",
@@ -8886,6 +9399,12 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-274",
+      "target": "MS-9-generation",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
       "source": "CR-GC-275",
       "target": "FUNC-graph-suggest",
       "type": "relation"
@@ -8894,6 +9413,12 @@
       "source": "CR-GC-275",
       "target": "MOD-mcp-tools",
       "type": "relation"
+    },
+    {
+      "source": "CR-GC-275",
+      "target": "MS-9-generation",
+      "type": "relation",
+      "weight": "1"
     },
     {
       "source": "CR-GC-276",
@@ -8911,6 +9436,12 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-276",
+      "target": "MS-9-generation",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
       "source": "CR-GC-277",
       "target": "FUNC-harness-cli",
       "type": "relation"
@@ -8921,6 +9452,12 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-277",
+      "target": "MS-9-generation",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
       "source": "CR-GC-278",
       "target": "FUNC-graph-suggest",
       "type": "relation"
@@ -8929,6 +9466,12 @@
       "source": "CR-GC-278",
       "target": "MOD-cli",
       "type": "relation"
+    },
+    {
+      "source": "CR-GC-278",
+      "target": "MS-9-generation",
+      "type": "relation",
+      "weight": "1"
     },
     {
       "source": "CR-GC-278",
@@ -8947,6 +9490,12 @@
     },
     {
       "source": "CR-GC-279",
+      "target": "MS-9-generation",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-279",
       "target": "UC-reduced-llm",
       "type": "relation"
     },
@@ -8954,6 +9503,12 @@
       "source": "CR-GC-280",
       "target": "FUNC-graph-suggest",
       "type": "relation"
+    },
+    {
+      "source": "CR-GC-280",
+      "target": "MS-9-generation",
+      "type": "relation",
+      "weight": "1"
     },
     {
       "source": "CR-GC-280",
@@ -8964,6 +9519,12 @@
       "source": "CR-GC-281",
       "target": "FUNC-graph-suggest",
       "type": "relation"
+    },
+    {
+      "source": "CR-GC-281",
+      "target": "MS-9-generation",
+      "type": "relation",
+      "weight": "1"
     },
     {
       "source": "CR-GC-281",
@@ -8974,6 +9535,12 @@
       "source": "CR-GC-282",
       "target": "FUNC-graph-suggest",
       "type": "relation"
+    },
+    {
+      "source": "CR-GC-282",
+      "target": "MS-9-generation",
+      "type": "relation",
+      "weight": "1"
     },
     {
       "source": "CR-GC-282",
@@ -8991,6 +9558,12 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-283",
+      "target": "MS-9-generation",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
       "source": "CR-GC-284",
       "target": "FUNC-graph-suggest",
       "type": "relation"
@@ -9001,9 +9574,21 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-284",
+      "target": "MS-9-generation",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
       "source": "CR-GC-285",
       "target": "FUNC-graph-suggest",
       "type": "relation"
+    },
+    {
+      "source": "CR-GC-285",
+      "target": "MS-9-generation",
+      "type": "relation",
+      "weight": "1"
     },
     {
       "source": "CR-GC-285",
@@ -9014,6 +9599,12 @@
       "source": "CR-GC-286",
       "target": "FUNC-mutate",
       "type": "relation"
+    },
+    {
+      "source": "CR-GC-286",
+      "target": "MS-9-generation",
+      "type": "relation",
+      "weight": "1"
     },
     {
       "source": "CR-GC-286",
@@ -9031,6 +9622,12 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-287",
+      "target": "MS-9-generation",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
       "source": "CR-GC-288",
       "target": "FUNC-graph-suggest",
       "type": "relation"
@@ -9039,6 +9636,12 @@
       "source": "CR-GC-288",
       "target": "FUNC-mutate",
       "type": "relation"
+    },
+    {
+      "source": "CR-GC-288",
+      "target": "MS-9-generation",
+      "type": "relation",
+      "weight": "1"
     },
     {
       "source": "CR-GC-289",
@@ -9051,14 +9654,32 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-289",
+      "target": "MS-9-generation",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
       "source": "CR-GC-290",
       "target": "FUNC-graph-suggest",
       "type": "relation"
     },
     {
+      "source": "CR-GC-290",
+      "target": "MS-9-generation",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
       "source": "CR-GC-291",
       "target": "FUNC-graph-suggest",
       "type": "relation"
+    },
+    {
+      "source": "CR-GC-291",
+      "target": "MS-9-generation",
+      "type": "relation",
+      "weight": "1"
     },
     {
       "source": "CR-GC-291",
@@ -9071,9 +9692,21 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-292",
+      "target": "MS-9-generation",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
       "source": "CR-GC-293",
       "target": "FUNC-graph-suggest",
       "type": "relation"
+    },
+    {
+      "source": "CR-GC-293",
+      "target": "MS-9-generation",
+      "type": "relation",
+      "weight": "1"
     },
     {
       "source": "CR-GC-293",
@@ -9091,6 +9724,12 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-294",
+      "target": "MS-9-generation",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
       "source": "CR-GC-295",
       "target": "FUNC-graph-suggest",
       "type": "relation"
@@ -9101,6 +9740,12 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-295",
+      "target": "MS-9-generation",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
       "source": "CR-GC-296",
       "target": "FUNC-graph-suggest",
       "type": "relation"
@@ -9109,6 +9754,12 @@
       "source": "CR-GC-296",
       "target": "FUNC-score-completeness",
       "type": "relation"
+    },
+    {
+      "source": "CR-GC-296",
+      "target": "MS-9-generation",
+      "type": "relation",
+      "weight": "1"
     },
     {
       "source": "CR-GC-296",
@@ -9126,6 +9777,12 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-297",
+      "target": "MS-9-generation",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
       "source": "CR-GC-298",
       "target": "FUNC-harness-cli",
       "type": "relation"
@@ -9141,6 +9798,12 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-298",
+      "target": "MS-9-generation",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
       "source": "CR-GC-299",
       "target": "FUNC-export-markdown",
       "type": "relation"
@@ -9149,6 +9812,12 @@
       "source": "CR-GC-299",
       "target": "MOD-docs",
       "type": "relation"
+    },
+    {
+      "source": "CR-GC-299",
+      "target": "MS-10-steering-views",
+      "type": "relation",
+      "weight": "1"
     },
     {
       "source": "CR-GC-300",
@@ -9161,6 +9830,12 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-300",
+      "target": "MS-10-steering-views",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
       "source": "CR-GC-301",
       "target": "FUNC-view-rtm",
       "type": "relation"
@@ -9171,9 +9846,21 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-301",
+      "target": "MS-10-steering-views",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
       "source": "CR-GC-302",
       "target": "FUNC-import",
       "type": "relation"
+    },
+    {
+      "source": "CR-GC-302",
+      "target": "MS-10-steering-views",
+      "type": "relation",
+      "weight": "1"
     },
     {
       "source": "CR-GC-303",
@@ -9184,6 +9871,12 @@
       "source": "CR-GC-303",
       "target": "FUNC-graph-suggest",
       "type": "relation"
+    },
+    {
+      "source": "CR-GC-303",
+      "target": "MS-10-steering-views",
+      "type": "relation",
+      "weight": "1"
     },
     {
       "source": "CR-GC-304",
@@ -9201,6 +9894,12 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-304",
+      "target": "MS-10-steering-views",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
       "source": "CR-GC-305",
       "target": "FUNC-export-markdown",
       "type": "relation"
@@ -9214,6 +9913,12 @@
       "source": "CR-GC-305",
       "target": "MOD-docs",
       "type": "relation"
+    },
+    {
+      "source": "CR-GC-305",
+      "target": "MS-10-steering-views",
+      "type": "relation",
+      "weight": "1"
     },
     {
       "source": "CR-GC-306",
@@ -9231,6 +9936,12 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-306",
+      "target": "MS-10-steering-views",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
       "source": "CR-GC-307",
       "target": "FUNC-graph-suggest",
       "type": "relation"
@@ -9239,6 +9950,12 @@
       "source": "CR-GC-307",
       "target": "MOD-skills",
       "type": "relation"
+    },
+    {
+      "source": "CR-GC-307",
+      "target": "MS-10-steering-views",
+      "type": "relation",
+      "weight": "1"
     },
     {
       "source": "CR-GC-308",
@@ -9251,9 +9968,21 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-308",
+      "target": "MS-10-steering-views",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
       "source": "CR-GC-309",
       "target": "FUNC-mutate",
       "type": "relation"
+    },
+    {
+      "source": "CR-GC-309",
+      "target": "MS-10-steering-views",
+      "type": "relation",
+      "weight": "1"
     },
     {
       "source": "CR-GC-310",
@@ -9266,9 +9995,21 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-310",
+      "target": "MS-10-steering-views",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
       "source": "CR-GC-311",
       "target": "FUNC-rewind",
       "type": "relation"
+    },
+    {
+      "source": "CR-GC-311",
+      "target": "MS-10-steering-views",
+      "type": "relation",
+      "weight": "1"
     },
     {
       "source": "CR-GC-311",
@@ -9286,6 +10027,12 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-312",
+      "target": "MS-10-steering-views",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
       "source": "CR-GC-313",
       "target": "FUNC-export-markdown",
       "type": "relation"
@@ -9296,9 +10043,21 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-313",
+      "target": "MS-10-steering-views",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
       "source": "CR-GC-314",
       "target": "FUNC-mutate",
       "type": "relation"
+    },
+    {
+      "source": "CR-GC-314",
+      "target": "MS-10-steering-views",
+      "type": "relation",
+      "weight": "1"
     },
     {
       "source": "CR-GC-315",
@@ -9306,9 +10065,21 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-315",
+      "target": "MS-10-steering-views",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
       "source": "CR-GC-316",
       "target": "MOD-mcp-tools",
       "type": "relation"
+    },
+    {
+      "source": "CR-GC-316",
+      "target": "MS-10-steering-views",
+      "type": "relation",
+      "weight": "1"
     },
     {
       "source": "CR-GC-317",
@@ -9316,14 +10087,44 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-317",
+      "target": "MS-10-steering-views",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
       "source": "CR-GC-318",
       "target": "FUNC-view-rtm",
       "type": "relation"
     },
     {
+      "source": "CR-GC-318",
+      "target": "MS-10-steering-views",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
       "source": "CR-GC-319",
       "target": "MOD-mcp-tools",
       "type": "relation"
+    },
+    {
+      "source": "CR-GC-319",
+      "target": "MS-10-steering-views",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-320",
+      "target": "FUNC-rank-candidates",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-320",
+      "target": "MS-10-steering-views",
+      "type": "relation",
+      "weight": "1"
     },
     {
       "source": "CR-GC-321",
@@ -9339,6 +10140,30 @@
       "source": "CR-GC-321",
       "target": "FUNC-mutate",
       "type": "relation"
+    },
+    {
+      "source": "CR-GC-321",
+      "target": "MS-10-steering-views",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-322",
+      "target": "FUNC-harness-cli",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-322",
+      "target": "MOD-docs",
+      "type": "relation",
+      "weight": "1"
+    },
+    {
+      "source": "CR-GC-322",
+      "target": "MS-10-steering-views",
+      "type": "relation",
+      "weight": "1"
     },
     {
       "source": "CR-GC-330",
@@ -9586,6 +10411,12 @@
     },
     {
       "source": "FCHAIN-apply-gate",
+      "target": "FUNC-fit-advisory",
+      "type": "compose",
+      "weight": "1"
+    },
+    {
+      "source": "FCHAIN-apply-gate",
       "target": "FUNC-load-graph",
       "type": "compose"
     },
@@ -9600,6 +10431,12 @@
       "source": "FCHAIN-apply-gate",
       "target": "FUNC-open-store",
       "type": "compose"
+    },
+    {
+      "source": "FCHAIN-apply-gate",
+      "target": "FUNC-own-kuzu-host",
+      "type": "compose",
+      "weight": "1"
     },
     {
       "source": "FCHAIN-apply-gate",
@@ -9866,6 +10703,12 @@
     },
     {
       "source": "FCHAIN-live-update",
+      "target": "FUNC-serve-sse",
+      "type": "compose",
+      "weight": "1"
+    },
+    {
+      "source": "FCHAIN-live-update",
       "target": "FUNC-serve-stdio",
       "type": "compose"
     },
@@ -10038,6 +10881,18 @@
     },
     {
       "source": "FCHAIN-skill-report",
+      "target": "FUNC-check-code-conformance",
+      "type": "compose",
+      "weight": "1"
+    },
+    {
+      "source": "FCHAIN-skill-report",
+      "target": "FUNC-compute-phase-readiness",
+      "type": "compose",
+      "weight": "1"
+    },
+    {
+      "source": "FCHAIN-skill-report",
       "target": "FUNC-compute-readiness",
       "type": "compose"
     },
@@ -10045,6 +10900,18 @@
       "source": "FCHAIN-skill-report",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-report",
+      "target": "FUNC-module-metrics",
+      "type": "compose",
+      "weight": "1"
+    },
+    {
+      "source": "FCHAIN-skill-report",
+      "target": "FUNC-score-completeness",
+      "type": "compose",
+      "weight": "1"
     },
     {
       "source": "FCHAIN-skill-report",
@@ -10108,8 +10975,26 @@
     },
     {
       "source": "FCHAIN-steering-loop",
+      "target": "FUNC-arch-fitness",
+      "type": "compose",
+      "weight": "1"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
+      "target": "FUNC-compute-phase-readiness",
+      "type": "compose",
+      "weight": "1"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
       "target": "FUNC-compute-readiness",
       "type": "compose"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
+      "target": "FUNC-compute-steering-delta",
+      "type": "compose",
+      "weight": "1"
     },
     {
       "source": "FCHAIN-steering-loop",
@@ -10455,6 +11340,12 @@
     },
     {
       "source": "FLOW-fit-advisory",
+      "target": "FUNC-mutate",
+      "type": "io",
+      "weight": "1"
+    },
+    {
+      "source": "FLOW-fit-advisory",
       "target": "FUNC-rank-candidates",
       "type": "io"
     },
@@ -10528,6 +11419,18 @@
     },
     {
       "source": "FLOW-graph-state",
+      "target": "FUNC-arch-fitness",
+      "type": "io",
+      "weight": "1"
+    },
+    {
+      "source": "FLOW-graph-state",
+      "target": "FUNC-check-code-conformance",
+      "type": "io",
+      "weight": "1"
+    },
+    {
+      "source": "FLOW-graph-state",
       "target": "FUNC-close-store",
       "type": "io"
     },
@@ -10537,6 +11440,24 @@
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-graph-state",
+      "target": "FUNC-fit-advisory",
+      "type": "io",
+      "weight": "1"
+    },
+    {
+      "source": "FLOW-graph-state",
+      "target": "FUNC-module-metrics",
+      "type": "io",
+      "weight": "1"
+    },
+    {
+      "source": "FLOW-graph-state",
+      "target": "FUNC-score-completeness",
+      "type": "io",
+      "weight": "1"
     },
     {
       "source": "FLOW-graph-state",
@@ -10665,6 +11586,12 @@
       "source": "FLOW-module-metrics",
       "target": "ACTOR-dashboard",
       "type": "io"
+    },
+    {
+      "source": "FLOW-module-metrics",
+      "target": "FUNC-evaluate-rules",
+      "type": "io",
+      "weight": "1"
     },
     {
       "source": "FLOW-module-metrics",
@@ -11511,6 +12438,12 @@
     },
     {
       "source": "FUNC-check-code-conformance",
+      "target": "FLOW-violations",
+      "type": "io",
+      "weight": "1"
+    },
+    {
+      "source": "FUNC-check-code-conformance",
       "target": "REQ-graph-code-conformance",
       "type": "satisfy"
     },
@@ -11861,6 +12794,18 @@
     },
     {
       "source": "FUNC-generation-step",
+      "target": "REQ-monotone-convergence",
+      "type": "satisfy",
+      "weight": "1"
+    },
+    {
+      "source": "FUNC-generation-step",
+      "target": "REQ-phase-gate-not-skippable",
+      "type": "satisfy",
+      "weight": "1"
+    },
+    {
+      "source": "FUNC-generation-step",
       "target": "REQ-steering-from-metrics",
       "type": "satisfy"
     },
@@ -11999,8 +12944,20 @@
     },
     {
       "source": "FUNC-graph-suggest",
+      "target": "REQ-applied-suggestion-moves-target",
+      "type": "satisfy",
+      "weight": "1"
+    },
+    {
+      "source": "FUNC-graph-suggest",
       "target": "REQ-small-model-viable",
       "type": "satisfy"
+    },
+    {
+      "source": "FUNC-graph-suggest",
+      "target": "REQ-target-shifts-ranking",
+      "type": "satisfy",
+      "weight": "1"
     },
     {
       "source": "FUNC-harness-cli",
@@ -12801,6 +13758,12 @@
     },
     {
       "source": "FUNC-take-steering-snapshot",
+      "target": "REQ-applied-suggestion-moves-target",
+      "type": "satisfy",
+      "weight": "1"
+    },
+    {
+      "source": "FUNC-take-steering-snapshot",
       "target": "REQ-single-measurement-path",
       "type": "satisfy"
     },
@@ -13128,6 +14091,12 @@
     },
     {
       "source": "MOD-mcp-tools",
+      "target": "REQ-graph-context-replaces-reading",
+      "type": "satisfy",
+      "weight": "1"
+    },
+    {
+      "source": "MOD-mcp-tools",
       "target": "REQ-mcp-tool-registry",
       "type": "satisfy",
       "weight": 1,
@@ -13244,6 +14213,13 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "MS-10-steering-views",
+      "target": "MS-9-generation",
+      "type": "relation",
+      "label": "depends-on",
+      "weight": "1"
+    },
+    {
       "source": "MS-2-coding-vv",
       "target": "MS-1-specification",
       "type": "relation",
@@ -13314,6 +14290,20 @@
       "source": "MS-6-adoption",
       "target": "UC-graph-time-travel",
       "type": "compose"
+    },
+    {
+      "source": "MS-8-hardening",
+      "target": "MS-7-concurrency",
+      "type": "relation",
+      "label": "depends-on",
+      "weight": "1"
+    },
+    {
+      "source": "MS-9-generation",
+      "target": "MS-8-hardening",
+      "type": "relation",
+      "label": "depends-on",
+      "weight": "1"
     },
     {
       "source": "REQ-graph-is-ssot",
@@ -15461,5 +16451,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 157
+  "graphVersion": 168
 }

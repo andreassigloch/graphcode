@@ -288,21 +288,28 @@ function renderArchitecture(graph: Graph, name: string): string {
   return lines.join('\n');
 }
 
-/** CR list (the `cr-list` view): every CR node with status. */
+/**
+ * CR list (the `cr-list` view): every CR node as a collapsed rollup, newest uid
+ * first. Summary carries uid/name/status only; the description is the body.
+ */
 function renderCrList(graph: Graph, name: string): string {
   const header = generatedHeader(
     name,
     'Change-Requests',
-    'Alle CR-Knoten, sortiert nach uid. Deterministisch generiert.',
+    'Alle CR-Knoten als Rollup, neuester zuerst. Deterministisch generiert.',
   );
-  const crs = nodesOfTypes(graph, ['CR']);
+  const crs = nodesOfTypes(graph, ['CR']).reverse();
   const lines: string[] = [header];
-  lines.push('| uid | name | status | description |', '|---|---|---|---|');
   for (const n of crs) {
     const status = String(n.attributes['status'] ?? '');
-    lines.push(`| \`${n.uid}\` | ${cell(n.name)} | ${status} | ${cell(n.description ?? '')} |`);
+    const suffix = status ? ` — ${status}` : '';
+    lines.push('<details>');
+    lines.push(`<summary><code>${n.uid}</code> · ${cell(n.name)}${suffix}</summary>`);
+    const body = cell(n.description ?? '');
+    if (body) lines.push('', body, '');
+    lines.push('</details>', '');
   }
-  lines.push('');
+  if (crs.length === 0) lines.push('_Keine CR im Graph._', '');
   return lines.join('\n');
 }
 

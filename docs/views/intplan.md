@@ -4,9 +4,9 @@
 
 # graphcode — Integration & Test Plan
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 7 MS · Impl-Gates, depends-on Tier-Order. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 10 MS · Impl-Gates, depends-on Tier-Order. Deterministisch generiert.
 
-Tier order:  MS-1-specification  ──▶  MS-2-coding-vv  ──▶  MS-3-mvp-readiness  ──▶  MS-4-mvp2  ──▶  MS-5-efficiency  ──▶  MS-6-adoption  ──▶  MS-7-concurrency
+Tier order:  MS-1-specification  ──▶  MS-2-coding-vv  ──▶  MS-3-mvp-readiness  ──▶  MS-4-mvp2  ──▶  MS-5-efficiency  ──▶  MS-6-adoption  ──▶  MS-7-concurrency  ──▶  MS-8-hardening  ──▶  MS-9-generation  ──▶  MS-10-steering-views
 
 | Milestone | status | CRs (open) | blocking |
 |---|---|---|---|
@@ -14,8 +14,11 @@ Tier order:  MS-1-specification  ──▶  MS-2-coding-vv  ──▶  MS-3-mvp-
 | `MS-2-coding-vv` | done | 0 / 5 | — |
 | `MS-3-mvp-readiness` | done | 0 / 17 | — |
 | `MS-4-mvp2` | draft | 0 / 12 | — |
-| `MS-5-efficiency` | draft | 0 / 5 | — |
-| `MS-6-adoption` | draft | 0 / 17 | — |
-| `MS-7-concurrency` | draft | 0 / 6 | — |
+| `MS-5-efficiency` | draft | 0 / 9 | — |
+| `MS-6-adoption` | draft | 0 / 29 | — |
+| `MS-7-concurrency` | draft | 0 / 9 | — |
+| `MS-8-hardening` | draft | 3 / 27 | `CR-GC-251` · `CR-GC-254` · `CR-GC-261` |
+| `MS-9-generation` | draft | 3 / 26 | `CR-GC-283` · `CR-GC-294` · `CR-GC-297` |
+| `MS-10-steering-views` | draft | 1 / 24 | `CR-GC-301` |
 
 > GENERATED — renders the milestones/CRs the Impl Plan created. Originates nothing.
