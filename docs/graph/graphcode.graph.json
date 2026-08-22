@@ -3872,6 +3872,16 @@
       ]
     },
     {
+      "id": "REQ-near-duplicate-detection",
+      "type": "REQ",
+      "name": "Near-Duplicates werden vor der vollen Katalog-Auswertung erkannt",
+      "description": "Vor jeder vollen Regelkatalog-Auswertung haengen Aehnlichkeitsmatrizen ueber FUNC und SCHEMA am Graphen, sodass ND-01 und ND-02 genau die Duplikat-Paare melden und ein verschiedenes Paar deutlich darunter bleibt. Ohne diese Injektion melden beide Regeln nichts. ND ist nie eine Gate-Regel: der Apply-Gate-Katalog enthaelt sie nicht.",
+      "status": "done",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-no-extraction",
       "type": "REQ",
       "name": "Keine Extraktion in graphcode",
@@ -4277,6 +4287,16 @@
       ]
     },
     {
+      "id": "REQ-prose-recovery",
+      "type": "REQ",
+      "name": "Eine als Text gelieferte Mutation wird repariert, nicht verworfen",
+      "description": "Antwortet das Modell mit Prosa statt einem Tool-Call, wird ein darin enthaltenes Kommando-Objekt herausgeloest und durch dasselbe Apply-Gate geschickt wie ein regulaerer Aufruf. Enthaelt der Text kein Kommando, liefert die Extraktion null und die Runde bekommt genau einen Anstoss, statt dass geraten oder still verworfen wird.",
+      "status": "done",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-published-counts-match-code",
       "type": "REQ",
       "name": "Publizierte Zahlen stimmen mit der lebenden Quelle",
@@ -4402,6 +4422,16 @@
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
         "non-functional"
+      ]
+    },
+    {
+      "id": "REQ-round-prompt-injection",
+      "type": "REQ",
+      "name": "Der Runden-Prompt traegt Leitfaden und Elementindex",
+      "description": "Jede Generierungsrunde bekommt den Autorenleitfaden der gesetzten Fokus-Typen und einen Index der vorhandenen Elemente in den Prompt. Uebersteigt der Index sein Zeichenbudget, wird er deterministisch auf die Fokus-Typen gefiltert statt abgeschnitten. Die Injektion ist per Konfiguration abschaltbar, damit ihr Beitrag isoliert messbar bleibt.",
+      "status": "done",
+      "kinds": [
+        "functional"
       ]
     },
     {
@@ -6162,8 +6192,8 @@
     {
       "id": "TEST-one-driver-local-and-frontier",
       "type": "TEST",
-      "name": "Treiber gegen zwei Backends ohne Verzweigung",
-      "description": "Faehrt den eingebetteten Executor gegen beide Backend-Konfigurationen und assertiert identische Loop-Semantik.",
+      "name": "Executor-Abnahme: ein Treiber, Injektion, Prosa-Recovery",
+      "description": "Die Abnahme der Datei tests/executor.test.ts. Faehrt den eingebetteten Executor gegen beide Backend-Konfigurationen und assertiert identische Loop-Semantik; prueft zusaetzlich, dass der Runden-Prompt Leitfaden und Elementindex traegt und beim Abschalten der Injektion verliert, und dass eine als Text gelieferte Mutation durchs Gate repariert statt still verworfen wird. Der Knoten traegt weiter seine urspruengliche uid, weil R-29 die Datei genau einer Abnahme zuweist.",
       "testRefs": [
         {
           "file": "tests/executor.test.ts",
@@ -12560,6 +12590,11 @@
       "weight": "1"
     },
     {
+      "source": "FUNC-build-round-injection",
+      "target": "REQ-round-prompt-injection",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-check-code-conformance",
       "target": "MOD-conformance",
       "type": "allocate"
@@ -12906,6 +12941,11 @@
       "target": "FLOW-mutate-cmd",
       "type": "io",
       "weight": "1"
+    },
+    {
+      "source": "FUNC-extract-mutate",
+      "target": "REQ-prose-recovery",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-fit-advisory",
@@ -13426,6 +13466,11 @@
       "target": "MOD-steering",
       "type": "allocate",
       "weight": "1"
+    },
+    {
+      "source": "FUNC-nd-similarity",
+      "target": "REQ-near-duplicate-detection",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-next-step",
@@ -15673,6 +15718,11 @@
     },
     {
       "source": "TEST-nd-similarity",
+      "target": "REQ-near-duplicate-detection",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-nd-similarity",
       "target": "REQ-rule-enforcement",
       "type": "verify"
     },
@@ -15696,6 +15746,16 @@
     {
       "source": "TEST-one-driver-local-and-frontier",
       "target": "REQ-one-driver-local-and-frontier",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-one-driver-local-and-frontier",
+      "target": "REQ-prose-recovery",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-one-driver-local-and-frontier",
+      "target": "REQ-round-prompt-injection",
       "type": "verify"
     },
     {
@@ -16312,6 +16372,11 @@
     },
     {
       "source": "UC-deterministic-steering",
+      "target": "REQ-near-duplicate-detection",
+      "type": "compose"
+    },
+    {
+      "source": "UC-deterministic-steering",
       "target": "REQ-phase-gate-not-skippable",
       "type": "compose"
     },
@@ -16606,7 +16671,17 @@
     },
     {
       "source": "UC-reduced-llm",
+      "target": "REQ-prose-recovery",
+      "type": "compose"
+    },
+    {
+      "source": "UC-reduced-llm",
       "target": "REQ-query-precision",
+      "type": "compose"
+    },
+    {
+      "source": "UC-reduced-llm",
+      "target": "REQ-round-prompt-injection",
       "type": "compose"
     },
     {
@@ -16622,5 +16697,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 171
+  "graphVersion": 175
 }

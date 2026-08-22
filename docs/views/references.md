@@ -979,6 +979,7 @@
 | `FUNC-broadcast-diff` | satisfy | `REQ-versioned-broadcast` |
 | `FUNC-build-round-injection` | allocate | `MOD-executor` |
 | `FUNC-build-round-injection` | io | `FLOW-round-injection` |
+| `FUNC-build-round-injection` | satisfy | `REQ-round-prompt-injection` |
 | `FUNC-check-code-conformance` | allocate | `MOD-conformance` |
 | `FUNC-check-code-conformance` | io | `FLOW-violations` |
 | `FUNC-check-code-conformance` | satisfy | `REQ-graph-code-conformance` |
@@ -1036,6 +1037,7 @@
 | `FUNC-export-markdown` | satisfy | `REQ-pre-export-markdown` |
 | `FUNC-extract-mutate` | allocate | `MOD-executor` |
 | `FUNC-extract-mutate` | io | `FLOW-mutate-cmd` |
+| `FUNC-extract-mutate` | satisfy | `REQ-prose-recovery` |
 | `FUNC-fit-advisory` | allocate | `MOD-steering` |
 | `FUNC-fit-advisory` | io | `FLOW-fit-advisory` |
 | `FUNC-fit-advisory` | satisfy | `REQ-steering-from-metrics` |
@@ -1123,6 +1125,7 @@
 | `FUNC-mutate` | satisfy | `REQ-graph-snapshot-per-commit` |
 | `FUNC-mutate` | satisfy | `REQ-single-write-door` |
 | `FUNC-nd-similarity` | allocate | `MOD-steering` |
+| `FUNC-nd-similarity` | satisfy | `REQ-near-duplicate-detection` |
 | `FUNC-next-step` | allocate | `MOD-steering` |
 | `FUNC-next-step` | io | `FLOW-round-prompt` |
 | `FUNC-next-step` | satisfy | `REQ-steering-from-metrics` |
@@ -1520,11 +1523,14 @@
 | `TEST-mvp-e2e` | verify | `REQ-single-kuzu-owner` |
 | `TEST-mvp-e2e` | verify | `REQ-single-store` |
 | `TEST-mvp-e2e` | verify | `REQ-small-model-viable` |
+| `TEST-nd-similarity` | verify | `REQ-near-duplicate-detection` |
 | `TEST-nd-similarity` | verify | `REQ-rule-enforcement` |
 | `TEST-no-direct-graph-write` | verify | `REQ-gate-only-writes` |
 | `TEST-occ` | verify | `REQ-auto-persist-merge` |
 | `TEST-occ` | verify | `REQ-single-write-door` |
 | `TEST-one-driver-local-and-frontier` | verify | `REQ-one-driver-local-and-frontier` |
+| `TEST-one-driver-local-and-frontier` | verify | `REQ-prose-recovery` |
+| `TEST-one-driver-local-and-frontier` | verify | `REQ-round-prompt-injection` |
 | `TEST-operations-log` | verify | `REQ-audit-trail` |
 | `TEST-path-containment` | verify | `REQ-gate-only-writes` |
 | `TEST-path-containment` | verify | `REQ-graph-is-ssot` |
@@ -1639,6 +1645,7 @@
 | `UC-deterministic-steering` | compose | `FCHAIN-steering-loop` |
 | `UC-deterministic-steering` | compose | `REQ-applied-suggestion-moves-target` |
 | `UC-deterministic-steering` | compose | `REQ-monotone-convergence` |
+| `UC-deterministic-steering` | compose | `REQ-near-duplicate-detection` |
 | `UC-deterministic-steering` | compose | `REQ-phase-gate-not-skippable` |
 | `UC-deterministic-steering` | compose | `REQ-single-measurement-path` |
 | `UC-deterministic-steering` | compose | `REQ-skill-reads-only` |
@@ -1693,6 +1700,8 @@
 | `UC-reduced-llm` | compose | `REQ-pre-agent-query` |
 | `UC-reduced-llm` | compose | `REQ-pre-modelfree-gate` |
 | `UC-reduced-llm` | compose | `REQ-progressive-expansion` |
+| `UC-reduced-llm` | compose | `REQ-prose-recovery` |
 | `UC-reduced-llm` | compose | `REQ-query-precision` |
+| `UC-reduced-llm` | compose | `REQ-round-prompt-injection` |
 | `UC-reduced-llm` | compose | `REQ-small-model-viable` |
 | `UC-reduced-llm` | compose | `REQ-subgraph-slicing` |

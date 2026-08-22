@@ -4,7 +4,7 @@
 
 # graphcode — Verification Cross-Reference Matrix (VCRM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 129 REQ rows. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 132 REQ rows. Deterministisch generiert.
 
 | REQ | verify-Kante | Lauf-Ergebnis | verifying TEST(s) |
 |---|---|---|---|
@@ -61,6 +61,7 @@
 | `REQ-model-exchange-pre` | ✓ | ✓ passed | `TEST-import-code-verb` |
 | `REQ-monotone-convergence` | ✓ | ✓ passed | `TEST-monotone-convergence` |
 | `REQ-mutation-emits-event` | ✓ | ✓ passed | `TEST-create-harness-smoke` · `TEST-live-view` |
+| `REQ-near-duplicate-detection` | ✓ | ✓ passed | `TEST-nd-similarity` |
 | `REQ-no-extraction` | ✓ | ⚠ 1/2 passed | `TEST-capture` · `TEST-import-code-verb` |
 | `REQ-npx-distribution` | ✓ | ✗ failed | `TEST-distribution` |
 | `REQ-one-driver-local-and-frontier` | ✓ | ✓ passed | `TEST-cli-run` · `TEST-executor-bestofn` · `TEST-one-driver-local-and-frontier` |
@@ -98,6 +99,7 @@
 | `REQ-precommit-timeout` | ✓ | ⚠ nie gelaufen | `TEST-hooks` |
 | `REQ-progressive-expansion` | ✓ | ✓ passed | `TEST-impact-subgraph` |
 | `REQ-prompt-provenance` | ✓ | ✓ passed | `TEST-prompt-provenance` |
+| `REQ-prose-recovery` | ✓ | ✓ passed | `TEST-one-driver-local-and-frontier` |
 | `REQ-published-counts-match-code` | ✓ | ✓ passed | `TEST-published-counts-match-code` |
 | `REQ-quality-metric` | ✓ | ⚠ 3/4 passed | `TEST-code-quality` · `TEST-fit-advisory` · `TEST-graph-metrics` · `TEST-retro-kpi` |
 | `REQ-query-precision` | ✓ | ✓ passed | `TEST-impact-subgraph` · `TEST-read-format-param` |
@@ -110,6 +112,7 @@
 | `REQ-repo-uninstall` | ✓ | ✓ passed | `TEST-cli-scaffold` |
 | `REQ-repo-update` | ✓ | ✓ passed | `TEST-cli-scaffold` · `TEST-upgrade` |
 | `REQ-responsiveness` | ✓ | ⚠ nie gelaufen | `TEST-responsiveness` |
+| `REQ-round-prompt-injection` | ✓ | ✓ passed | `TEST-one-driver-local-and-frontier` |
 | `REQ-roundtrip-conformance` | ✓ | ✓ passed | `TEST-roundtrip` |
 | `REQ-rule-calibration` | ✓ | ✓ passed | `TEST-audit-rules-passed` · `TEST-rule-calibration` |
 | `REQ-rule-enforcement` | ✓ | ✓ passed | `TEST-mutate-gate` · `TEST-nd-similarity` · `TEST-violation-context` |
@@ -138,8 +141,8 @@
 | `REQ-versioned-broadcast` | ✓ | ✓ passed | `TEST-live-view` |
 | `REQ-versioned-cache` | ✓ | ⚠ nie gelaufen | `TEST-cache` |
 
-Coverage: 129/129 REQ mit verify-Kante (100%) · 0 offen (R-01).
-Belegt: 96/129 REQ bestanden (74%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
+Coverage: 132/132 REQ mit verify-Kante (100%) · 0 offen (R-01).
+Belegt: 99/132 REQ bestanden (75%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
 
 ## Integrationsabdeckung (rolled-up)
 

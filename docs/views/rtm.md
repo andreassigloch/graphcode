@@ -4,7 +4,7 @@
 
 # graphcode — Requirements Traceability Matrix (RTM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 129 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 132 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
 
 
 ### System (SYS.2) — 44 REQ
@@ -56,7 +56,7 @@
 | `REQ-token-efficiency` | `TEST-audit-trail-projection` · `TEST-help-contextual-dedup` · `TEST-mutate-violations` · `TEST-token-efficiency` | — | — |
 | `REQ-versioned-cache` | `TEST-cache` | `MOD-hooks` | — |
 
-### funktional (SWE.1) — 82 REQ
+### funktional (SWE.1) — 85 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -91,6 +91,7 @@
 | `REQ-model-exchange-pre` | `TEST-import-code-verb` | — | — |
 | `REQ-monotone-convergence` | `TEST-monotone-convergence` | `FUNC-generation-step` | `MOD-steering` |
 | `REQ-mutation-emits-event` | `TEST-create-harness-smoke` · `TEST-live-view` | `FCHAIN-live-update` · `FUNC-emit-update-event` | `MOD-hooks` |
+| `REQ-near-duplicate-detection` | `TEST-nd-similarity` | `FUNC-nd-similarity` | `MOD-steering` |
 | `REQ-no-extraction` | `TEST-capture` · `TEST-import-code-verb` | `FCHAIN-model-import` · `FUNC-import-code` · `FUNC-import-doc` | `MOD-skills` |
 | `REQ-one-driver-local-and-frontier` | `TEST-cli-run` · `TEST-executor-bestofn` · `TEST-one-driver-local-and-frontier` | `FUNC-run-executor` | `MOD-executor` |
 | `REQ-one-gate-per-repo` | `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-store-lock` | — | — |
@@ -119,6 +120,7 @@
 | `REQ-pre-modelfree-gate` | `TEST-reduced-llm` | `FCHAIN-modelfree-gate` | — |
 | `REQ-progressive-expansion` | `TEST-impact-subgraph` | `FUNC-graph-expand` | `MOD-mcp-tools` |
 | `REQ-prompt-provenance` | `TEST-prompt-provenance` | `MOD-mcp-tools` | — |
+| `REQ-prose-recovery` | `TEST-one-driver-local-and-frontier` | `FUNC-extract-mutate` | `MOD-executor` |
 | `REQ-published-counts-match-code` | `TEST-published-counts-match-code` | — | — |
 | `REQ-quality-metric` | `TEST-code-quality` · `TEST-fit-advisory` · `TEST-graph-metrics` · `TEST-retro-kpi` | `MOD-harness` | — |
 | `REQ-query-precision` | `TEST-impact-subgraph` · `TEST-read-format-param` | `FUNC-graph-impact` · `FUNC-list-elements` | `MOD-element-slice` · `MOD-mcp-tools` |
@@ -126,6 +128,7 @@
 | `REQ-readiness-transparent` | `TEST-dashboard-readonly` · `TEST-help-content-coverage` · `TEST-help-projection` · `TEST-help-tool` | `FUNC-render-readiness` · `MOD-dashboard` | `MOD-dashboard` |
 | `REQ-readonly-bridge` | `TEST-bridge-follows-lock` · `TEST-readonly-bridge` | `FUNC-serve-sse` · `MOD-host-bridge` | `MOD-host-bridge` |
 | `REQ-real-health-check` | `TEST-readonly-bridge` | `FUNC-health-endpoint` · `MOD-host-bridge` | `MOD-host-bridge` |
+| `REQ-round-prompt-injection` | `TEST-one-driver-local-and-frontier` | `FUNC-build-round-injection` | `MOD-executor` |
 | `REQ-roundtrip-conformance` | `TEST-roundtrip` | `FCHAIN-codec-roundtrip` · `FUNC-decode` | `MOD-codec` |
 | `REQ-rule-calibration` | `TEST-audit-rules-passed` · `TEST-rule-calibration` | `MOD-mcp-tools` | — |
 | `REQ-rule-enforcement` | `TEST-mutate-gate` · `TEST-nd-similarity` · `TEST-violation-context` | `FUNC-evaluate-rules` | `MOD-harness` |
@@ -183,7 +186,7 @@
 | `REQ-small-model-viable` | `TEST-executor-preflight` · `TEST-mvp-e2e` · `TEST-reduced-llm` | `FCHAIN-modelfree-gate` · `FUNC-graph-suggest` | `MOD-mcp-tools` |
 | `REQ-steering-from-metrics` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` · `TEST-steering-loop` | `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` | `MOD-executor` · `MOD-metrics-engine` · `MOD-steering` |
 
-### Komponente (SWE.2/3) — 97 REQ
+### Komponente (SWE.2/3) — 100 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -228,6 +231,7 @@
 | `REQ-mcp-tool-registry` | `TEST-help-tool` · `TEST-mcp-readiness` · `TEST-mcp-stdio-server` | `MOD-mcp-tools` | — |
 | `REQ-monotone-convergence` | `TEST-monotone-convergence` | `FUNC-generation-step` | `MOD-steering` |
 | `REQ-mutation-emits-event` | `TEST-create-harness-smoke` · `TEST-live-view` | `FCHAIN-live-update` · `FUNC-emit-update-event` | `MOD-hooks` |
+| `REQ-near-duplicate-detection` | `TEST-nd-similarity` | `FUNC-nd-similarity` | `MOD-steering` |
 | `REQ-no-extraction` | `TEST-capture` · `TEST-import-code-verb` | `FCHAIN-model-import` · `FUNC-import-code` · `FUNC-import-doc` | `MOD-skills` |
 | `REQ-npx-distribution` | `TEST-distribution` | `FUNC-harness-cli` | `MOD-cli` |
 | `REQ-one-driver-local-and-frontier` | `TEST-cli-run` · `TEST-executor-bestofn` · `TEST-one-driver-local-and-frontier` | `FUNC-run-executor` | `MOD-executor` |
@@ -250,6 +254,7 @@
 | `REQ-precommit-timeout` | `TEST-hooks` | `MOD-hooks` | — |
 | `REQ-progressive-expansion` | `TEST-impact-subgraph` | `FUNC-graph-expand` | `MOD-mcp-tools` |
 | `REQ-prompt-provenance` | `TEST-prompt-provenance` | `MOD-mcp-tools` | — |
+| `REQ-prose-recovery` | `TEST-one-driver-local-and-frontier` | `FUNC-extract-mutate` | `MOD-executor` |
 | `REQ-quality-metric` | `TEST-code-quality` · `TEST-fit-advisory` · `TEST-graph-metrics` · `TEST-retro-kpi` | `MOD-harness` | — |
 | `REQ-query-precision` | `TEST-impact-subgraph` · `TEST-read-format-param` | `FUNC-graph-impact` · `FUNC-list-elements` | `MOD-element-slice` · `MOD-mcp-tools` |
 | `REQ-readiness-completeness` | `TEST-readiness-completeness` | `FUNC-score-completeness` | `MOD-completeness` |
@@ -260,6 +265,7 @@
 | `REQ-repo-install` | `TEST-cli-scaffold` · `TEST-distribution` | `FUNC-harness-cli` | `MOD-cli` |
 | `REQ-repo-uninstall` | `TEST-cli-scaffold` | `FUNC-harness-cli` | `MOD-cli` |
 | `REQ-repo-update` | `TEST-cli-scaffold` · `TEST-upgrade` | `FUNC-harness-cli` | `MOD-cli` |
+| `REQ-round-prompt-injection` | `TEST-one-driver-local-and-frontier` | `FUNC-build-round-injection` | `MOD-executor` |
 | `REQ-roundtrip-conformance` | `TEST-roundtrip` | `FCHAIN-codec-roundtrip` · `FUNC-decode` | `MOD-codec` |
 | `REQ-rule-calibration` | `TEST-audit-rules-passed` · `TEST-rule-calibration` | `MOD-mcp-tools` | — |
 | `REQ-rule-enforcement` | `TEST-mutate-gate` · `TEST-nd-similarity` · `TEST-violation-context` | `FUNC-evaluate-rules` | `MOD-harness` |

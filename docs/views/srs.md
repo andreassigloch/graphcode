@@ -4,7 +4,7 @@
 
 # graphcode — System Requirements Specification · SRS-graphcode
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 129 REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 132 REQ. Deterministisch generiert.
 
 ## 1  Scope
 
@@ -1362,6 +1362,14 @@ Baut die Rundeninjektion aus Guide-Slice und Element-Index fuer die im Generieru
 
 io ◀ `FLOW-round-prompt` · io ▶ `FLOW-round-injection` · allocate ▶ `MOD-executor`
 
+###### `REQ-round-prompt-injection` — Der Runden-Prompt traegt Leitfaden und Elementindex
+
+Jede Generierungsrunde bekommt den Autorenleitfaden der gesetzten Fokus-Typen und einen Index der vorhandenen Elemente in den Prompt. Uebersteigt der Index sein Zeichenbudget, wird er deterministisch auf die Fokus-Typen gefiltert statt abgeschnitten. Die Injektion ist per Konfiguration abschaltbar, damit ihr Beitrag isoliert messbar bleibt.
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-one-driver-local-and-frontier` (integration) · satisfy ◀ `FUNC-build-round-injection` · allocate ▶ `MOD-executor`
+
 ##### 3.2.2.8  `FUNC-run-executor` — runExecutor
 
 Die Treiberschleife selbst: baut die Tool-Specs, ruft das Backend rundenweise, wendet Mutationen ueber die Registry an und zaehlt Runden, Turns, Anwendungen und Rejections. Backend-Wechsel zwischen lokalem und Frontier-Modell ist Konfiguration, keine zweite Codeverzweigung.
@@ -1436,11 +1444,27 @@ Prosa-Recovery: holt ein Kommando-Objekt aus einer Modellantwort, die statt eine
 
 io ◀ — · io ▶ `FLOW-mutate-cmd` · allocate ▶ `MOD-executor`
 
+###### `REQ-prose-recovery` — Eine als Text gelieferte Mutation wird repariert, nicht verworfen
+
+Antwortet das Modell mit Prosa statt einem Tool-Call, wird ein darin enthaltenes Kommando-Objekt herausgeloest und durch dasselbe Apply-Gate geschickt wie ein regulaerer Aufruf. Enthaelt der Text kein Kommando, liefert die Extraktion null und die Runde bekommt genau einen Anstoss, statt dass geraten oder still verworfen wird.
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-one-driver-local-and-frontier` (integration) · satisfy ◀ `FUNC-extract-mutate` · allocate ▶ `MOD-executor`
+
 ##### 3.2.2.13  `FUNC-nd-similarity` — injectNDMatrices
 
 Rechnet die Near-Duplicate-Matrizen ueber FUNC und SCHEMA und haengt sie an den Graphen, bevor der volle Regelkatalog laeuft. Aufrufer ist die Steering-Momentaufnahme, nicht der Treiber.
 
 io ◀ `FLOW-graph-state` · io ▶ — · allocate ▶ `MOD-steering`
+
+###### `REQ-near-duplicate-detection` — Near-Duplicates werden vor der vollen Katalog-Auswertung erkannt
+
+Vor jeder vollen Regelkatalog-Auswertung haengen Aehnlichkeitsmatrizen ueber FUNC und SCHEMA am Graphen, sodass ND-01 und ND-02 genau die Duplikat-Paare melden und ein verschiedenes Paar deutlich darunter bleibt. Ohne diese Injektion melden beide Regeln nichts. ND ist nie eine Gate-Regel: der Apply-Gate-Katalog enthaelt sie nicht.
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-nd-similarity` (unit) · satisfy ◀ `FUNC-nd-similarity` · allocate ▶ `MOD-steering`
 
 ### 3.3  `UC-efficient-testing` — Effizientes, impact-basiertes Testen
 
@@ -5544,7 +5568,7 @@ verify ▶ `REQ-code-governed-quality` · `REQ-disk-persistence` · `REQ-impact-
 
 Abnahme der Datei tests/nd-similarity.test.ts: die Nah-Duplikat-Regeln der Contracts liefern erst mit injizierter Aehnlichkeits-Matrix Funde, und graphcode berechnet diese Matrizen deterministisch nach den dort dokumentierten Formeln.
 
-verify ▶ `REQ-rule-enforcement` · testRefs: `tests/nd-similarity.test.ts`
+verify ▶ `REQ-near-duplicate-detection` · `REQ-rule-enforcement` · testRefs: `tests/nd-similarity.test.ts`
 
 ### 8.77  `TEST-no-direct-graph-write` — No-Direct-Graph-Write-Test
 
@@ -5558,11 +5582,11 @@ Abnahme der Datei tests/mcp.occ.test.ts: ein Schreibzugriff traegt die graphVers
 
 verify ▶ `REQ-auto-persist-merge` · `REQ-single-write-door` · testRefs: `tests/mcp.occ.test.ts`
 
-### 8.79  `TEST-one-driver-local-and-frontier` — Treiber gegen zwei Backends ohne Verzweigung
+### 8.79  `TEST-one-driver-local-and-frontier` — Executor-Abnahme: ein Treiber, Injektion, Prosa-Recovery
 
-Faehrt den eingebetteten Executor gegen beide Backend-Konfigurationen und assertiert identische Loop-Semantik.
+Die Abnahme der Datei tests/executor.test.ts. Faehrt den eingebetteten Executor gegen beide Backend-Konfigurationen und assertiert identische Loop-Semantik; prueft zusaetzlich, dass der Runden-Prompt Leitfaden und Elementindex traegt und beim Abschalten der Injektion verliert, und dass eine als Text gelieferte Mutation durchs Gate repariert statt still verworfen wird. Der Knoten traegt weiter seine urspruengliche uid, weil R-29 die Datei genau einer Abnahme zuweist.
 
-verify ▶ `REQ-one-driver-local-and-frontier` · testRefs: `tests/executor.test.ts`
+verify ▶ `REQ-one-driver-local-and-frontier` · `REQ-prose-recovery` · `REQ-round-prompt-injection` · testRefs: `tests/executor.test.ts`
 
 ### 8.80  `TEST-operations-log` — Dauerhaftes Betriebslog in graphcode
 
@@ -5830,4 +5854,4 @@ verify ▶ `REQ-precise-context` · `REQ-rule-enforcement` · testRefs: `tests/m
 
 ## 9  Traceability summary
 
-129 REQ · 129 verified · 0 without a verifying TEST (R-01).
+132 REQ · 132 verified · 0 without a verifying TEST (R-01).
