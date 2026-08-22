@@ -3,6 +3,11 @@
 **Status:** open · **Angelegt:** 2026-08-21 · **Umsetzung:** `sigloch-modules` (`@sigloch/contracts`),
 nicht in diesem Repo · **Basis:** `evaluateAllRules` @ graphVersion 145
 
+> **Umsetzung liegt seit 2026-08-22 als `CR-SM-256` in `sigloch-modules` vor.** Dieser CR bleibt die
+> Analyse und die Messung am Selbstmodell; die Regeländerung wird dort geschnitten und geschlossen.
+> Neu gemessen bei graphVersion 168: die zwölf `FUNC-block-*` tragen 24 Findings aus `R-02` und
+> `R-31`, je 12.
+
 ## Problem — eine Regel-Inkonsistenz, kein Modellfehler
 
 Ein zerlegter FUNC (`FUNC -compose-> FUNC`) ist ein Rollup seiner Kinder. Zwei Regeln behandeln ihn
