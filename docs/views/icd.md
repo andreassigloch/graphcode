@@ -60,7 +60,7 @@
 | `FLOW-graph-state` | `ACTOR-developer` · `FUNC-load-graph` · `FUNC-open-store` | `FUNC-arch-fitness` · `FUNC-check-code-conformance` · `FUNC-close-store` · `FUNC-encode` · `FUNC-fit-advisory` · `FUNC-module-metrics` · `FUNC-nd-similarity` · `FUNC-score-completeness` |
 | `FLOW-impact-subgraph` | `FUNC-graph-impact` | `ACTOR-claude-code` · `FUNC-graph-expand` |
 | `FLOW-install-result` | `FUNC-harness-cli` | `ACTOR-developer` |
-| `FLOW-live-event` | `FUNC-emit-update-event` | `ACTOR-dashboard` · `FUNC-broadcast-diff` · `FUNC-serve-stdio` · `FUNC-subscribe-updates` |
+| `FLOW-live-event` | `FUNC-emit-update-event` | `ACTOR-dashboard` · `FUNC-broadcast-diff` · `FUNC-serve-stdio` |
 | `FLOW-markdown-docs` | `FUNC-export-markdown` | `ACTOR-developer` |
 | `FLOW-measurement-vector` | `FUNC-take-steering-snapshot` | `FUNC-goal-steerer` |
 | `FLOW-merged-graph` | `FUNC-merge-nodes` | `ACTOR-developer` |

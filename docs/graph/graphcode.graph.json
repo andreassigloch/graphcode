@@ -2147,12 +2147,6 @@
       "description": "Ebene-1-Block im Autopilot: Architektur-Optimierung — Operator-Vorschlaege entlang der R6-Fitness."
     },
     {
-      "id": "FUNC-block-arch-sicht",
-      "type": "FUNC",
-      "name": "Architektur-Sicht",
-      "description": "Ebene-1-Block im Viewer: die Architektur-Sicht — Live-Graph und exakter Blast-Radius on demand."
-    },
-    {
       "id": "FUNC-block-dokumentenwerk",
       "type": "FUNC",
       "name": "Dokumentenwerk",
@@ -2187,12 +2181,6 @@
       "type": "FUNC",
       "name": "Q-Improvement",
       "description": "Ebene-1-Block im Autopilot: Qualitaets-Verbesserung — Fehler und Warnings abbauen; Fokus-Dimension und Top-Fixes an den Agenten."
-    },
-    {
-      "id": "FUNC-block-reifegrad-sicht",
-      "type": "FUNC",
-      "name": "Reifegrad-Sicht",
-      "description": "Ebene-1-Block im Viewer: die Reifegrad-Sicht — Readiness, Phase-Gates, Artefakt-Panel, Empfehlungen, Funktions-Health."
     },
     {
       "id": "FUNC-block-schaufenster",
@@ -2832,74 +2820,6 @@
       }
     },
     {
-      "id": "FUNC-render-artifacts",
-      "type": "FUNC",
-      "name": "renderArtifactReadiness(views)",
-      "description": "INCOSE-Artifact-Panel: Readiness je Dokument/View (Testmatrix, FMEA, RTM, ImplPlan, IntPlan, ChangeLog, ConOps, IRR, NFR, ICD) aus dem Query-Layer (graph_query views) + graph_readiness. Repoint der aimprove ArtifactReadiness. Die offene View-Liste (RTM, IntPlan, ChangeLog, ConOps, IRR, ICD ohne se-view-Skill) ist genau der Rest-Scope von CR-GC-116. (CR-GC-115)",
-      "status": "done",
-      "created_at": "2026-06-19T00:00:00.000Z",
-      "codeRef": null,
-      "external": true
-    },
-    {
-      "id": "FUNC-render-graph",
-      "type": "FUNC",
-      "name": "renderGraph(elements, traces)",
-      "description": "Pluggbarer Live-Graph-Mount-Slot im Dashboard. Datenquelle: graph_elements + graph_get_edges + rules_get_violations (nur V3_RULES, kein BQ). Der konkrete Cytoscape-Renderer (@sigloch/graph-renderer) wird hier eingehaengt und ist das naechste aise-family-Projekt (graph-view-edit), nicht in graphcode gebaut. aimproves OntologyView rendert keinen Node-Link-Graph (nur Histogramme). (CR-GC-115)",
-      "status": "done",
-      "created_at": "2026-06-19T00:00:00.000Z",
-      "external": true
-    },
-    {
-      "id": "FUNC-render-health",
-      "type": "FUNC",
-      "name": "renderHealth()",
-      "description": "Echter Funktions-Health-Check, kein Prozess-Liveness-Licht: Kuzu-Store erreichbar, Apply-Gate funktional, Ontology/Rules/Contracts-Versionen, LLM/BYOK-Readiness (OpenCode, fuer spaeter). aimprove-spezifische Felder (Sessions/Patterns) entfernt. Quelle: Host-Bridge Health-Endpoint. (CR-GC-115)",
-      "status": "done",
-      "created_at": "2026-06-19T00:00:00.000Z",
-      "codeRef": null,
-      "external": true
-    },
-    {
-      "id": "FUNC-render-impact",
-      "type": "FUNC",
-      "name": "renderImpactPanel(id)",
-      "description": "Impact-Panel on-demand: exakter Blast-Radius via graph_impact statt gespeicherter aimprove-Impact-Assessments (Learning). Repoint der aimprove ImpactView auf die Live-Quelle. (CR-GC-115)",
-      "status": "done",
-      "created_at": "2026-06-19T00:00:00.000Z",
-      "codeRef": null,
-      "external": true
-    },
-    {
-      "id": "FUNC-render-impl-gates",
-      "type": "FUNC",
-      "name": "renderImplGates(report)",
-      "description": "Impl-Gates-Panel: SAR/FCA/SVR/FRR + CR/MS-Burndown aus graph_readiness.implGates und den MS/CR-Knoten. In aimprove nie verdrahtet (0/9, 0/20, 0/4); graphcode macht die Query transparent: jedes Gate zeigt seine Blocking-Elemente als Drill-down. Repoint der aimprove ImplGates + CrBurndown. (CR-GC-115)",
-      "status": "done",
-      "created_at": "2026-06-19T00:00:00.000Z",
-      "external": true
-    },
-    {
-      "id": "FUNC-render-readiness",
-      "type": "FUNC",
-      "name": "renderReadinessPanel(report)",
-      "description": "Readiness-Panel: Compliance + Phase-Gates SRR/PDR/CDR/TRR aus graph_readiness (V3_RULES, lean INCOSE). Repoint der aimprove StatusSection-Readiness-Bars + GateView. (CR-GC-115)",
-      "status": "done",
-      "created_at": "2026-06-19T00:00:00.000Z",
-      "codeRef": null,
-      "external": true
-    },
-    {
-      "id": "FUNC-render-recommendations",
-      "type": "FUNC",
-      "name": "renderImprovementMeasures()",
-      "description": "Top-N hoechstbewertete Verbesserungsmassnahmen, deterministisch aus Graph-Defiziten abgeleitet (fehlende verify-Traces R-01, Orphans RD-01, Blast-Radius via graph_impact), nach Severity/Impact sortiert. Behalten aus aimprove TOP-Empfehlungen, aber graph-deduziert statt Learning-Vorschlag (kein Generator). (CR-GC-115)",
-      "status": "done",
-      "created_at": "2026-06-19T00:00:00.000Z",
-      "codeRef": null,
-      "external": true
-    },
-    {
       "id": "FUNC-render-views",
       "type": "FUNC",
       "name": "render graph→markdown views",
@@ -3152,16 +3072,6 @@
       }
     },
     {
-      "id": "FUNC-subscribe-updates",
-      "type": "FUNC",
-      "name": "subscribeUpdates()",
-      "description": "SSE-Client: bei jedem Live-Update-Event (invalidate) werden die betroffenen Domains nachgeladen, ohne Reload. Gegenstueck zu emitUpdateEvent, konsumiert FLOW-live-event ueber die Host-Bridge. (CR-GC-115)",
-      "status": "done",
-      "created_at": "2026-06-19T00:00:00.000Z",
-      "codeRef": null,
-      "external": true
-    },
-    {
       "id": "FUNC-take-steering-snapshot",
       "type": "FUNC",
       "name": "takeSteeringSnapshot(graph, policy)",
@@ -3362,10 +3272,11 @@
       "id": "MOD-dashboard",
       "type": "MOD",
       "name": "dashboard — Live-Viewer-App",
-      "description": "graphcode-owned Dashboard-App, komponiert aus @sigloch/graph-renderer (Cytoscape) + dashboard-shell, konsumiert die Host-Bridge. Readiness/INCOSE-Panels gegen V3_RULES (CR-GC-107-Scorer). Hybrid-Entscheidung 2026-06-17.",
+      "description": "Nachbarsystem: das Paket @sigloch/graph-view-edit. Live-Viewer und Editor auf dem Graphen, eigenes Repo, eigener Release. graphcode modelliert nur den RAND dazu — ACTOR-dashboard, gespeist von FLOW-live-event mit SCHEMA-update-event und von FLOW-module-metrics. Das Innenleben des Pakets steht bewusst NICHT im Modell: es waere die erfundene Struktur eines fremden Repos und beim naechsten Fremd-Release stillschweigend falsch. Der MOD bleibt als Paketgrenze bestehen, weil er fuenf REQ erfuellt, die kein ACTOR tragen kann. Frueher graphcode-owned mit path src/viewer — seit dem Carve-Out beides falsch (CR-GC-401).",
       "status": "done",
       "created_at": "2026-06-17T00:00:00.000Z",
-      "path": "src/viewer"
+      "path": null,
+      "external": true
     },
     {
       "id": "MOD-docs",
@@ -8130,62 +8041,6 @@
     },
     {
       "source": "CR-GC-115",
-      "target": "FUNC-render-artifacts",
-      "type": "relation",
-      "weight": 1,
-      "created_at": "2026-06-19T00:00:00.000Z"
-    },
-    {
-      "source": "CR-GC-115",
-      "target": "FUNC-render-graph",
-      "type": "relation",
-      "weight": 1,
-      "created_at": "2026-06-19T00:00:00.000Z"
-    },
-    {
-      "source": "CR-GC-115",
-      "target": "FUNC-render-health",
-      "type": "relation",
-      "weight": 1,
-      "created_at": "2026-06-19T00:00:00.000Z"
-    },
-    {
-      "source": "CR-GC-115",
-      "target": "FUNC-render-impact",
-      "type": "relation",
-      "weight": 1,
-      "created_at": "2026-06-19T00:00:00.000Z"
-    },
-    {
-      "source": "CR-GC-115",
-      "target": "FUNC-render-impl-gates",
-      "type": "relation",
-      "weight": 1,
-      "created_at": "2026-06-19T00:00:00.000Z"
-    },
-    {
-      "source": "CR-GC-115",
-      "target": "FUNC-render-readiness",
-      "type": "relation",
-      "weight": 1,
-      "created_at": "2026-06-19T00:00:00.000Z"
-    },
-    {
-      "source": "CR-GC-115",
-      "target": "FUNC-render-recommendations",
-      "type": "relation",
-      "weight": 1,
-      "created_at": "2026-06-19T00:00:00.000Z"
-    },
-    {
-      "source": "CR-GC-115",
-      "target": "FUNC-subscribe-updates",
-      "type": "relation",
-      "weight": 1,
-      "created_at": "2026-06-19T00:00:00.000Z"
-    },
-    {
-      "source": "CR-GC-115",
       "target": "MOD-dashboard",
       "type": "relation",
       "weight": 1,
@@ -9668,11 +9523,6 @@
     },
     {
       "source": "CR-GC-272",
-      "target": "FUNC-render-readiness",
-      "type": "relation"
-    },
-    {
-      "source": "CR-GC-272",
       "target": "FUNC-score-completeness",
       "type": "relation"
     },
@@ -11035,11 +10885,6 @@
     },
     {
       "source": "FCHAIN-live-update",
-      "target": "FUNC-subscribe-updates",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-live-update",
       "target": "REQ-mutation-emits-event",
       "type": "satisfy"
     },
@@ -11982,13 +11827,6 @@
     },
     {
       "source": "FLOW-live-event",
-      "target": "FUNC-subscribe-updates",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-19T00:00:00.000Z"
-    },
-    {
-      "source": "FLOW-live-event",
       "target": "SCHEMA-update-event",
       "type": "relation",
       "weight": 1,
@@ -12578,21 +12416,6 @@
       "type": "compose"
     },
     {
-      "source": "FUNC-block-arch-sicht",
-      "target": "MOD-dashboard",
-      "type": "allocate"
-    },
-    {
-      "source": "FUNC-block-arch-sicht",
-      "target": "FUNC-render-graph",
-      "type": "compose"
-    },
-    {
-      "source": "FUNC-block-arch-sicht",
-      "target": "FUNC-render-impact",
-      "type": "compose"
-    },
-    {
       "source": "FUNC-block-dokumentenwerk",
       "target": "MOD-docs",
       "type": "allocate"
@@ -12719,7 +12542,7 @@
     },
     {
       "source": "FUNC-block-live-dashboard",
-      "target": "MOD-dashboard",
+      "target": "MOD-host-bridge",
       "type": "allocate"
     },
     {
@@ -12735,11 +12558,6 @@
     {
       "source": "FUNC-block-live-dashboard",
       "target": "FUNC-serve-sse",
-      "type": "compose"
-    },
-    {
-      "source": "FUNC-block-live-dashboard",
-      "target": "FUNC-subscribe-updates",
       "type": "compose"
     },
     {
@@ -12803,44 +12621,9 @@
       "type": "compose"
     },
     {
-      "source": "FUNC-block-reifegrad-sicht",
-      "target": "MOD-dashboard",
-      "type": "allocate"
-    },
-    {
-      "source": "FUNC-block-reifegrad-sicht",
-      "target": "FUNC-render-artifacts",
-      "type": "compose"
-    },
-    {
-      "source": "FUNC-block-reifegrad-sicht",
-      "target": "FUNC-render-health",
-      "type": "compose"
-    },
-    {
-      "source": "FUNC-block-reifegrad-sicht",
-      "target": "FUNC-render-impl-gates",
-      "type": "compose"
-    },
-    {
-      "source": "FUNC-block-reifegrad-sicht",
-      "target": "FUNC-render-readiness",
-      "type": "compose"
-    },
-    {
-      "source": "FUNC-block-reifegrad-sicht",
-      "target": "FUNC-render-recommendations",
-      "type": "compose"
-    },
-    {
       "source": "FUNC-block-schaufenster",
       "target": "MOD-repo-root",
       "type": "allocate"
-    },
-    {
-      "source": "FUNC-block-schaufenster",
-      "target": "FUNC-block-arch-sicht",
-      "type": "compose"
     },
     {
       "source": "FUNC-block-schaufenster",
@@ -12850,11 +12633,6 @@
     {
       "source": "FUNC-block-schaufenster",
       "target": "FUNC-block-live-dashboard",
-      "type": "compose"
-    },
-    {
-      "source": "FUNC-block-schaufenster",
-      "target": "FUNC-block-reifegrad-sicht",
       "type": "compose"
     },
     {
@@ -13977,65 +13755,6 @@
       "type": "satisfy"
     },
     {
-      "source": "FUNC-render-artifacts",
-      "target": "MOD-dashboard",
-      "type": "allocate",
-      "weight": 1,
-      "created_at": "2026-06-19T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-render-artifacts",
-      "target": "REQ-artifact-freshness",
-      "type": "satisfy"
-    },
-    {
-      "source": "FUNC-render-graph",
-      "target": "MOD-dashboard",
-      "type": "allocate",
-      "weight": 1,
-      "created_at": "2026-06-19T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-render-health",
-      "target": "MOD-dashboard",
-      "type": "allocate",
-      "weight": 1,
-      "created_at": "2026-06-19T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-render-impact",
-      "target": "MOD-dashboard",
-      "type": "allocate",
-      "weight": 1,
-      "created_at": "2026-06-19T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-render-impl-gates",
-      "target": "MOD-dashboard",
-      "type": "allocate",
-      "weight": 1,
-      "created_at": "2026-06-19T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-render-readiness",
-      "target": "MOD-dashboard",
-      "type": "allocate",
-      "weight": 1,
-      "created_at": "2026-06-19T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-render-readiness",
-      "target": "REQ-readiness-transparent",
-      "type": "satisfy"
-    },
-    {
-      "source": "FUNC-render-recommendations",
-      "target": "MOD-dashboard",
-      "type": "allocate",
-      "weight": 1,
-      "created_at": "2026-06-19T00:00:00.000Z"
-    },
-    {
       "source": "FUNC-render-views",
       "target": "MOD-skills",
       "type": "allocate",
@@ -14400,13 +14119,6 @@
       "source": "FUNC-session-shutdown",
       "target": "REQ-single-kuzu-owner",
       "type": "satisfy"
-    },
-    {
-      "source": "FUNC-subscribe-updates",
-      "target": "MOD-dashboard",
-      "type": "allocate",
-      "weight": 1,
-      "created_at": "2026-06-19T00:00:00.000Z"
     },
     {
       "source": "FUNC-take-steering-snapshot",
@@ -17200,5 +16912,5 @@
       "weight": "1"
     }
   ],
-  "graphVersion": 181
+  "graphVersion": 184
 }

@@ -62,7 +62,7 @@
 |---|---|---|---|
 | `REQ-advisory-roundtrip-latency` | `TEST-advisory-roundtrip-latency` | `FCHAIN-advisory-roundtrip` | — |
 | `REQ-applied-suggestion-moves-target` | `TEST-applied-suggestion-moves-target` | `FUNC-graph-suggest` · `FUNC-take-steering-snapshot` | `MOD-mcp-tools` · `MOD-steering` |
-| `REQ-artifact-freshness` | `TEST-dashboard-readonly` | `FUNC-render-artifacts` · `MOD-dashboard` | `MOD-dashboard` |
+| `REQ-artifact-freshness` | `TEST-dashboard-readonly` | `MOD-dashboard` | — |
 | `REQ-audit-trail` | `TEST-audit-retention` · `TEST-audit-rules-passed` · `TEST-audit-trail-projection` · `TEST-mcp-stdio-server` · `TEST-operations-log` · `TEST-testreport` | `FUNC-graph-impact` | `MOD-mcp-tools` |
 | `REQ-auto-persist-merge` | `TEST-merge` · `TEST-occ` | `FUNC-merge-nodes` | `MOD-codec` |
 | `REQ-bootstrap-through-gate` | `TEST-bootstrap` · `TEST-import-invariant` | `FUNC-bootstrap` · `FUNC-import` · `FUNC-seed-from-json` | `MOD-cli` · `MOD-harness` |
@@ -127,7 +127,7 @@
 | `REQ-quality-metric` | `TEST-code-quality` · `TEST-fit-advisory` · `TEST-graph-metrics` · `TEST-retro-kpi` | `MOD-harness` | — |
 | `REQ-query-precision` | `TEST-impact-subgraph` · `TEST-read-format-param` | `FUNC-graph-impact` · `FUNC-list-elements` | `MOD-element-slice` · `MOD-mcp-tools` |
 | `REQ-readiness-completeness` | `TEST-readiness-completeness` | `FUNC-score-completeness` | `MOD-completeness` |
-| `REQ-readiness-transparent` | `TEST-dashboard-readonly` · `TEST-help-content-coverage` · `TEST-help-projection` · `TEST-help-tool` | `FUNC-render-readiness` · `MOD-dashboard` | `MOD-dashboard` |
+| `REQ-readiness-transparent` | `TEST-dashboard-readonly` · `TEST-help-content-coverage` · `TEST-help-projection` · `TEST-help-tool` | `MOD-dashboard` | — |
 | `REQ-readonly-bridge` | `TEST-bridge-follows-lock` · `TEST-readonly-bridge` | `FUNC-serve-sse` · `MOD-host-bridge` | `MOD-host-bridge` |
 | `REQ-real-health-check` | `TEST-readonly-bridge` | `FUNC-health-endpoint` · `MOD-host-bridge` | `MOD-host-bridge` |
 | `REQ-repo-update` | `TEST-cli-scaffold` · `TEST-upgrade` | `FUNC-harness-cli` | `MOD-cli` |
@@ -195,7 +195,7 @@
 |---|---|---|---|
 | `REQ-agent-agnostic` | `TEST-agent-agnostic` | `FUNC-serve-stdio` · `MOD-mcp-tools` | `MOD-mcp-tools` |
 | `REQ-applied-suggestion-moves-target` | `TEST-applied-suggestion-moves-target` | `FUNC-graph-suggest` · `FUNC-take-steering-snapshot` | `MOD-mcp-tools` · `MOD-steering` |
-| `REQ-artifact-freshness` | `TEST-dashboard-readonly` | `FUNC-render-artifacts` · `MOD-dashboard` | `MOD-dashboard` |
+| `REQ-artifact-freshness` | `TEST-dashboard-readonly` | `MOD-dashboard` | — |
 | `REQ-audit-trail` | `TEST-audit-retention` · `TEST-audit-rules-passed` · `TEST-audit-trail-projection` · `TEST-mcp-stdio-server` · `TEST-operations-log` · `TEST-testreport` | `FUNC-graph-impact` | `MOD-mcp-tools` |
 | `REQ-auto-persist-merge` | `TEST-merge` · `TEST-occ` | `FUNC-merge-nodes` | `MOD-codec` |
 | `REQ-batch-seed-performance` | `TEST-batch-seed` | `FUNC-import` | `MOD-harness` |
@@ -262,7 +262,7 @@
 | `REQ-query-precision` | `TEST-impact-subgraph` · `TEST-read-format-param` | `FUNC-graph-impact` · `FUNC-list-elements` | `MOD-element-slice` · `MOD-mcp-tools` |
 | `REQ-readiness-completeness` | `TEST-readiness-completeness` | `FUNC-score-completeness` | `MOD-completeness` |
 | `REQ-readiness-model` | `TEST-readiness-model` · `TEST-views-auditor` | `MOD-mcp-tools` | — |
-| `REQ-readiness-transparent` | `TEST-dashboard-readonly` · `TEST-help-content-coverage` · `TEST-help-projection` · `TEST-help-tool` | `FUNC-render-readiness` · `MOD-dashboard` | `MOD-dashboard` |
+| `REQ-readiness-transparent` | `TEST-dashboard-readonly` · `TEST-help-content-coverage` · `TEST-help-projection` · `TEST-help-tool` | `MOD-dashboard` | — |
 | `REQ-readonly-bridge` | `TEST-bridge-follows-lock` · `TEST-readonly-bridge` | `FUNC-serve-sse` · `MOD-host-bridge` | `MOD-host-bridge` |
 | `REQ-real-health-check` | `TEST-readonly-bridge` | `FUNC-health-endpoint` · `MOD-host-bridge` | `MOD-host-bridge` |
 | `REQ-repo-install` | `TEST-cli-scaffold` · `TEST-distribution` | `FUNC-harness-cli` | `MOD-cli` |

@@ -173,7 +173,6 @@ Belegt: 99/132 REQ bestanden (75%) — eine Kante ist kein Nachweis; ein REQ zä
 | `FUNC-decode` → `FUNC-mutate` | `FLOW-capture-draft` | `FCHAIN-capture` | `TEST-capture` · `TEST-intent-anchors-internal` · `TEST-uc-authoring-style` | integration, unit | passed |
 | `FUNC-emit-update-event` → `FUNC-broadcast-diff` | `FLOW-live-event` | `FCHAIN-live-update` | `TEST-create-harness-smoke` · `TEST-live-view` | integration | passed |
 | `FUNC-emit-update-event` → `FUNC-serve-stdio` | `FLOW-live-event` | `FCHAIN-live-update` | `TEST-create-harness-smoke` · `TEST-live-view` | integration | passed |
-| `FUNC-emit-update-event` → `FUNC-subscribe-updates` | `FLOW-live-event` | `FCHAIN-live-update` | `TEST-create-harness-smoke` · `TEST-live-view` | integration | passed |
 | `FUNC-encode` → `FUNC-decode` | `FLOW-formatE-artifact` | `FCHAIN-codec-roundtrip` | `TEST-roundtrip` | conformance | passed |
 | `FUNC-evaluate-rules` → `FUNC-compute-phase-readiness` | `FLOW-violations` | `FCHAIN-skill-report` | `TEST-skill-reports-measured-values` | conformance | passed |
 | `FUNC-evaluate-rules` → `FUNC-graph-suggest` | `FLOW-round-findings` | `FCHAIN-advisory-roundtrip` | `TEST-advisory-roundtrip-latency` | performance | passed |
@@ -233,4 +232,4 @@ Belegt: 99/132 REQ bestanden (75%) — eine Kante ist kein Nachweis; ein REQ zä
 | `FUNC-view-intplan` → `FUNC-export-markdown` | `FLOW-export-request` | `FCHAIN-doc-export` | `TEST-auto-export` · `TEST-doc-export` · `TEST-mcp-export` · `TEST-member-name` · `TEST-skills-mcp` · `TEST-views-auditor` · `TEST-views-conformance` | conformance, integration, unit | passed |
 | `FUNC-view-rtm` → `FUNC-export-markdown` | `FLOW-export-request` | `FCHAIN-doc-export` | `TEST-auto-export` · `TEST-doc-export` · `TEST-mcp-export` · `TEST-member-name` · `TEST-skills-mcp` · `TEST-views-auditor` · `TEST-views-conformance` | conformance, integration, unit | passed |
 
-> 84/84 deklarierte FUNC↔FUNC-Verbindungen sind über die Kette TEST→REQ←FCHAIN→FUNC abgedeckt · 0 offen. Nur Paare mit gemeinsamer FCHAIN — Ko-Adjazenz an einer geteilten FLOW ist keine deklarierte Schnittstelle (CR-GC-315). Leeres level/Ergebnis = am TEST nicht gepflegt.
+> 83/83 deklarierte FUNC↔FUNC-Verbindungen sind über die Kette TEST→REQ←FCHAIN→FUNC abgedeckt · 0 offen. Nur Paare mit gemeinsamer FCHAIN — Ko-Adjazenz an einer geteilten FLOW ist keine deklarierte Schnittstelle (CR-GC-315). Leeres level/Ergebnis = am TEST nicht gepflegt.

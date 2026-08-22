@@ -18,14 +18,12 @@
 | `FUNC-bind-tools` | FUNC | bindToolsToHarness |
 | `FUNC-block-anschluss` | FUNC | Agenten-Anschluss |
 | `FUNC-block-arch-optimierung` | FUNC | Architektur-Optimierung |
-| `FUNC-block-arch-sicht` | FUNC | Architektur-Sicht |
 | `FUNC-block-dokumentenwerk` | FUNC | Dokumentenwerk |
 | `FUNC-block-gate` | FUNC | Qualitäts-Gate |
 | `FUNC-block-gedaechtnis` | FUNC | Gedächtnis |
 | `FUNC-block-live-dashboard` | FUNC | Live-Kanal |
 | `FUNC-block-messwerk` | FUNC | Messwerk |
 | `FUNC-block-q-improvement` | FUNC | Q-Improvement |
-| `FUNC-block-reifegrad-sicht` | FUNC | Reifegrad-Sicht |
 | `FUNC-block-schaufenster` | FUNC | Viewer |
 | `FUNC-block-se-steuerung` | FUNC | SE-Prozess-Steuerung |
 | `FUNC-bootstrap` | FUNC | bootstrap |
@@ -78,13 +76,6 @@
 | `FUNC-own-kuzu-host` | FUNC | ownKuzu() |
 | `FUNC-preflight` | FUNC | preflightBatch |
 | `FUNC-rank-candidates` | FUNC | rankCandidates(probes, focus) |
-| `FUNC-render-artifacts` | FUNC | renderArtifactReadiness(views) |
-| `FUNC-render-graph` | FUNC | renderGraph(elements, traces) |
-| `FUNC-render-health` | FUNC | renderHealth() |
-| `FUNC-render-impact` | FUNC | renderImpactPanel(id) |
-| `FUNC-render-impl-gates` | FUNC | renderImplGates(report) |
-| `FUNC-render-readiness` | FUNC | renderReadinessPanel(report) |
-| `FUNC-render-recommendations` | FUNC | renderImprovementMeasures() |
 | `FUNC-render-views` | FUNC | render graph→markdown views |
 | `FUNC-reseed` | FUNC | reseed(relPath) |
 | `FUNC-resolve-tests-from-code` | FUNC | Gerichtete code→REQ→TEST-Auflösung |
@@ -108,7 +99,6 @@
 | `FUNC-serve-sse` | FUNC | serveSSE() |
 | `FUNC-serve-stdio` | FUNC | serveStdio() |
 | `FUNC-session-shutdown` | FUNC | SessionLifecycle |
-| `FUNC-subscribe-updates` | FUNC | subscribeUpdates() |
 | `FUNC-take-steering-snapshot` | FUNC | takeSteeringSnapshot(graph, policy) |
 | `FUNC-target-profile` | FUNC | Skill se:target-profile |
 | `FUNC-target-profile-load` | FUNC | loadTargetProfile |
@@ -153,14 +143,12 @@
 | `FUNC-bind-tools` | `MOD-mcp-tools` |
 | `FUNC-block-anschluss` | `MOD-repo-root` |
 | `FUNC-block-arch-optimierung` | `MOD-steering` |
-| `FUNC-block-arch-sicht` | `MOD-dashboard` |
 | `FUNC-block-dokumentenwerk` | `MOD-docs` |
 | `FUNC-block-gate` | `MOD-repo-root` |
 | `FUNC-block-gedaechtnis` | `MOD-repo-root` |
-| `FUNC-block-live-dashboard` | `MOD-dashboard` |
+| `FUNC-block-live-dashboard` | `MOD-host-bridge` |
 | `FUNC-block-messwerk` | `MOD-repo-root` |
 | `FUNC-block-q-improvement` | `MOD-steering` |
-| `FUNC-block-reifegrad-sicht` | `MOD-dashboard` |
 | `FUNC-block-schaufenster` | `MOD-repo-root` |
 | `FUNC-block-se-steuerung` | `MOD-steering` |
 | `FUNC-bootstrap` | `MOD-cli` |
@@ -213,13 +201,6 @@
 | `FUNC-own-kuzu-host` | `MOD-host-bridge` |
 | `FUNC-preflight` | `MOD-executor` |
 | `FUNC-rank-candidates` | `MOD-executor` |
-| `FUNC-render-artifacts` | `MOD-dashboard` |
-| `FUNC-render-graph` | `MOD-dashboard` |
-| `FUNC-render-health` | `MOD-dashboard` |
-| `FUNC-render-impact` | `MOD-dashboard` |
-| `FUNC-render-impl-gates` | `MOD-dashboard` |
-| `FUNC-render-readiness` | `MOD-dashboard` |
-| `FUNC-render-recommendations` | `MOD-dashboard` |
 | `FUNC-render-views` | `MOD-skills` |
 | `FUNC-reseed` | `MOD-harness` |
 | `FUNC-resolve-tests-from-code` | `MOD-mcp-tools` |
@@ -243,7 +224,6 @@
 | `FUNC-serve-sse` | `MOD-host-bridge` |
 | `FUNC-serve-stdio` | `MOD-mcp-tools` |
 | `FUNC-session-shutdown` | `MOD-cli` |
-| `FUNC-subscribe-updates` | `MOD-dashboard` |
 | `FUNC-take-steering-snapshot` | `MOD-steering` |
 | `FUNC-target-profile` | `MOD-skills` |
 | `FUNC-target-profile-load` | `MOD-steering` |

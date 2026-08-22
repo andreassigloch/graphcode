@@ -97,7 +97,7 @@ Als Entwickler will ich den aktuellen Modellstand live mitlesen, ohne die Ansich
 
 Ausgeloest von: `ACTOR-dashboard` · `ACTOR-developer`
 
-- `FCHAIN-live-update` — Live-Update-Kette (persist → emit → subscribe): `FUNC-broadcast-diff` → `FUNC-emit-update-event` → `FUNC-evaluate-rules` → `FUNC-mutate` → `FUNC-save-graph` → `FUNC-serve-sse` → `FUNC-serve-stdio` → `FUNC-subscribe-updates`
+- `FCHAIN-live-update` — Live-Update-Kette (persist → emit → subscribe): `FUNC-broadcast-diff` → `FUNC-emit-update-event` → `FUNC-evaluate-rules` → `FUNC-mutate` → `FUNC-save-graph` → `FUNC-serve-sse` → `FUNC-serve-stdio`
 
 ### `UC-loop-closure` — Schwellen und Prompts am Trail kalibrieren
 
@@ -161,7 +161,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-112` | done | CLI graphcode init/update/remove | `FUNC-harness-cli` · `MOD-cli` · `REQ-post-harness-cli` · `REQ-pre-harness-cli` |
 | `CR-GC-113` | done | Graph→Markdown Re-Exporter | `FUNC-export-markdown` · `MOD-docs` · `REQ-doc-export` · `REQ-post-export-markdown` · `REQ-pre-export-markdown` |
 | `CR-GC-114` | done | Host + SSE/WS-Bridge | `FUNC-broadcast-diff` · `FUNC-health-endpoint` · `FUNC-own-kuzu-host` · `FUNC-serve-sse` · `MOD-host-bridge` · `REQ-mutation-emits-event` · `REQ-readonly-bridge` · `REQ-versioned-broadcast` |
-| `CR-GC-115` | done | Dashboard-Viewer-App (Hybrid) | `FUNC-render-artifacts` · `FUNC-render-graph` · `FUNC-render-health` · `FUNC-render-impact` · `FUNC-render-impl-gates` · `FUNC-render-readiness` · `FUNC-render-recommendations` · `FUNC-subscribe-updates` · `MOD-dashboard` · `REQ-artifact-freshness` · `REQ-dashboard-ontology-sync` · `REQ-dashboard-readonly` · `REQ-readiness-transparent` · `REQ-real-health-check` · `UC-live-graph-view` |
+| `CR-GC-115` | done | Dashboard-Viewer-App (Hybrid) | `MOD-dashboard` · `REQ-artifact-freshness` · `REQ-dashboard-ontology-sync` · `REQ-dashboard-readonly` · `REQ-readiness-transparent` · `REQ-real-health-check` · `UC-live-graph-view` |
 | `CR-GC-116` | done | Views/Skills an Live-Graph verdrahten | `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · `MOD-skills` |
 | `CR-GC-117` | done | Modell-Hygiene: V3_RULES-Violations schließen | `REQ-graph-is-ssot` · `REQ-rule-enforcement` |
 | `CR-GC-118` | done | Cleanup stale-at-all Knoten | `REQ-graph-is-ssot` |
@@ -240,7 +240,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-269` | done | encodeUid/decodeUid entfernen (Format-E v2) | `FUNC-decode` · `FUNC-encode` · `MOD-codec` · `REQ-roundtrip-conformance` |
 | `CR-GC-270` | done | SERVER_VERSION aus package.json lesen | `FUNC-serve-stdio` · `REQ-npx-distribution` |
 | `CR-GC-271` | done | SCHEMA-Bindung: zodDefinition raus, realRef-Stub materialisieren | `FUNC-export-markdown` · `MOD-docs` |
-| `CR-GC-272` | done | readiness + panels nach graphcode-client | `FUNC-render-readiness` · `FUNC-score-completeness` · `REQ-self-contained-dist` |
+| `CR-GC-272` | done | readiness + panels nach graphcode-client | `FUNC-score-completeness` · `REQ-self-contained-dist` |
 | `CR-GC-273` | done | graph_suggest: se-optimizer-Binding mit dryRun-Verdict | `FUNC-serve-stdio` · `REQ-mcp-tool-registry` |
 | `CR-GC-274` | done | Fit-Gate Haertegrad 1: Delta-m-Advisory am Apply-Gate | `FUNC-mutate` · `MOD-harness` |
 | `CR-GC-275` | done | graph_generate — der Kaltstart-Generierungstreiber | `FUNC-graph-suggest` · `MOD-mcp-tools` |
