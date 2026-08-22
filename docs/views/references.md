@@ -32,6 +32,7 @@
 | `ACTOR-developer` | io | `UC-loop-closure` |
 | `ACTOR-developer` | io | `UC-model-exchange` |
 | `ACTOR-developer` | io | `UC-reduced-llm` |
+| `ACTOR-developer` | io | `UC-repo-lifecycle` |
 | `ACTOR-facilitating-agent` | io | `UC-code-quality` |
 | `ACTOR-graphify` | io | `FLOW-bulk-formatE` |
 | `ACTOR-graphify` | io | `UC-code-quality` |
@@ -659,6 +660,7 @@
 | `FCHAIN-merge-branches` | satisfy | `REQ-conflict-free-merge` |
 | `FCHAIN-model-import` | compose | `FUNC-import` |
 | `FCHAIN-model-import` | compose | `FUNC-import-code` |
+| `FCHAIN-model-import` | compose | `FUNC-import-code-verb` |
 | `FCHAIN-model-import` | compose | `FUNC-import-doc` |
 | `FCHAIN-model-import` | satisfy | `REQ-model-exchange-post` |
 | `FCHAIN-model-import` | satisfy | `REQ-no-extraction` |
@@ -672,6 +674,12 @@
 | `FCHAIN-recall` | compose | `FUNC-rewind` |
 | `FCHAIN-recall` | compose | `FUNC-seed-from-json` |
 | `FCHAIN-recall` | satisfy | `REQ-graph-state-recall` |
+| `FCHAIN-repo-lifecycle` | compose | `FUNC-bootstrap` |
+| `FCHAIN-repo-lifecycle` | compose | `FUNC-cli-dispatch` |
+| `FCHAIN-repo-lifecycle` | compose | `FUNC-harness-cli` |
+| `FCHAIN-repo-lifecycle` | compose | `FUNC-run-verb` |
+| `FCHAIN-repo-lifecycle` | compose | `FUNC-session-shutdown` |
+| `FCHAIN-repo-lifecycle` | compose | `FUNC-upgrade` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-author-req` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-author-uc` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-close-violations` |
@@ -1719,3 +1727,8 @@
 | `UC-reduced-llm` | compose | `REQ-round-prompt-injection` |
 | `UC-reduced-llm` | compose | `REQ-small-model-viable` |
 | `UC-reduced-llm` | compose | `REQ-subgraph-slicing` |
+| `UC-repo-lifecycle` | compose | `FCHAIN-repo-lifecycle` |
+| `UC-repo-lifecycle` | compose | `REQ-bootstrap-through-gate` |
+| `UC-repo-lifecycle` | compose | `REQ-install-idempotent` |
+| `UC-repo-lifecycle` | compose | `REQ-npx-distribution` |
+| `UC-repo-lifecycle` | compose | `REQ-repo-update` |

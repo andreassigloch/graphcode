@@ -1643,6 +1643,13 @@
       "description": "Der Entwickler nennt einen Commit; rewind liest dessen Snapshot aus dem Git-Objektspeicher und reseed stellt den Store daraus her. Ergebnis: Modell und Code passen wieder zu demselben Commit."
     },
     {
+      "id": "FCHAIN-repo-lifecycle",
+      "type": "FCHAIN",
+      "name": "Repo-Lebenszyklus",
+      "description": "Einrichten, erstbefuellen, Verb waehlen, Lauf fahren, aktualisieren, Sitzung beenden. Die Reihenfolge, die ein Entwickler an der Kommandozeile wirklich durchlaeuft.",
+      "status": "reviewed"
+    },
+    {
       "id": "FCHAIN-skill-authoring",
       "type": "FCHAIN",
       "name": "Skill legt Modellknoten an",
@@ -7026,6 +7033,13 @@
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "id": "UC-repo-lifecycle",
+      "type": "UC",
+      "name": "Repo einrichten und betreiben",
+      "description": "Der Entwickler richtet ein Repo ein, faehrt Laeufe darin und beendet die Sitzung; danach ist das Repo arbeitsfaehig und kein Prozess bleibt zurueck.",
+      "status": "reviewed"
     }
   ],
   "traces": [
@@ -7184,6 +7198,11 @@
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "ACTOR-developer",
+      "target": "UC-repo-lifecycle",
+      "type": "io"
     },
     {
       "source": "ACTOR-facilitating-agent",
@@ -10896,6 +10915,11 @@
     },
     {
       "source": "FCHAIN-model-import",
+      "target": "FUNC-import-code-verb",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-model-import",
       "target": "FUNC-import-doc",
       "type": "compose"
     },
@@ -10970,6 +10994,36 @@
       "source": "FCHAIN-recall",
       "target": "REQ-graph-state-recall",
       "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-repo-lifecycle",
+      "target": "FUNC-bootstrap",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-repo-lifecycle",
+      "target": "FUNC-cli-dispatch",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-repo-lifecycle",
+      "target": "FUNC-harness-cli",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-repo-lifecycle",
+      "target": "FUNC-run-verb",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-repo-lifecycle",
+      "target": "FUNC-session-shutdown",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-repo-lifecycle",
+      "target": "FUNC-upgrade",
+      "type": "compose"
     },
     {
       "source": "FCHAIN-skill-authoring",
@@ -16839,7 +16893,36 @@
       "source": "UC-reduced-llm",
       "target": "REQ-subgraph-slicing",
       "type": "compose"
+    },
+    {
+      "source": "UC-repo-lifecycle",
+      "target": "FCHAIN-repo-lifecycle",
+      "type": "compose"
+    },
+    {
+      "source": "UC-repo-lifecycle",
+      "target": "REQ-bootstrap-through-gate",
+      "type": "compose",
+      "weight": "1"
+    },
+    {
+      "source": "UC-repo-lifecycle",
+      "target": "REQ-install-idempotent",
+      "type": "compose",
+      "weight": "1"
+    },
+    {
+      "source": "UC-repo-lifecycle",
+      "target": "REQ-npx-distribution",
+      "type": "compose",
+      "weight": "1"
+    },
+    {
+      "source": "UC-repo-lifecycle",
+      "target": "REQ-repo-update",
+      "type": "compose",
+      "weight": "1"
     }
   ],
-  "graphVersion": 177
+  "graphVersion": 179
 }

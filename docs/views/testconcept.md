@@ -11,8 +11,8 @@
              ╱E2╲          System level · SYS-graphcode
             ╱ E  ╲         ✓ 49 E2E test(s)
            ╱──────╲
-          ╱  UC /   ╲       Use-case level · 8 UC
-         ╱integration╲      ⚠ 8 / 8 UC exercised by a scenario test
+          ╱  UC /   ╲       Use-case level · 9 UC
+         ╱integration╲      ⚠ 9 / 9 UC exercised by a scenario test
         ╱────────────╲      ✗ 83/111 FUNC↔FUNC connections tested  ← GAP
        ╱  Function /   ╲     Function level · 100 FUNC
       ╱      unit       ╲
@@ -22,8 +22,8 @@
 | Level | Element | Test kind | Tests | Coverage | Verdict |
 |---|---|---|---|---|---|
 | System | SYS (1) | E2E | 49 | 49 / 1 | ✓ |
-| Use-case | UC (8) | acceptance / integration | 90 | 8 / 8 scenario | ✓ |
-| Integration | FUNC↔FUNC (111 conn) | integration (chain) | 90 | 83 / 111 connections | ✗ 28 uncovered |
+| Use-case | UC (9) | acceptance / integration | 93 | 9 / 9 scenario | ✓ |
+| Integration | FUNC↔FUNC (111 conn) | integration (chain) | 93 | 83 / 111 connections | ✗ 28 uncovered |
 | Function | FUNC (100) | unit | 88 | 100 / 100 | ✓ |
 | (support) | — | conformance | 4 | codec round-trip | ✓ |
 

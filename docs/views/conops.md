@@ -4,7 +4,7 @@
 
 # graphcode — Concept of Operations
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). OpsCon nach ISO/IEC/IEEE 29148 §5.2.4, projiziert aus dem Graphen: 9 ACTOR, 8 UC, 20 operationale REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). OpsCon nach ISO/IEC/IEEE 29148 §5.2.4, projiziert aus dem Graphen: 9 ACTOR, 9 UC, 20 operationale REQ. Deterministisch generiert.
 
 ## 1  System overview
 
@@ -42,7 +42,7 @@
 
 - `ACTOR-claude-code` — Claude Code — Realisierungs-Agent — triggert `UC-code-quality` · `UC-reduced-llm`
 - `ACTOR-dashboard` — Browser-Dashboard — triggert `UC-code-quality` · `UC-live-graph-view`
-- `ACTOR-developer` — Entwickler / Repo-Owner — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-efficient-testing` · `UC-graph-time-travel` · `UC-live-graph-view` · `UC-loop-closure` · `UC-model-exchange` · `UC-reduced-llm`
+- `ACTOR-developer` — Entwickler / Repo-Owner — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-efficient-testing` · `UC-graph-time-travel` · `UC-live-graph-view` · `UC-loop-closure` · `UC-model-exchange` · `UC-reduced-llm` · `UC-repo-lifecycle`
 - `ACTOR-facilitating-agent` — Facilitating Agent — Architekt — triggert `UC-code-quality`
 - `ACTOR-graphify` — graphify (Slicer) — triggert `UC-code-quality`
 - `ACTOR-learning-engine` — Learning-Engine — triggert `UC-reduced-llm`
@@ -50,7 +50,7 @@
 - `ACTOR-systems-engineer` — Systems Engineer — triggert `UC-code-quality` · `UC-efficient-testing` · `UC-reduced-llm`
 - `ACTOR-vibe-coder` — Vibe Coder — triggert `UC-code-quality` · `UC-efficient-testing` · `UC-reduced-llm`
 
-## 4  Operational scenarios (8 UC)
+## 4  Operational scenarios (9 UC)
 
 ### `UC-code-quality` — Jede Aenderung geht durchs Gate
 
@@ -114,7 +114,7 @@ Als Entwickler will ich Modellstand aus Fremdquellen einlesen und als prueffaehi
 Ausgeloest von: `ACTOR-developer`
 
 - `FCHAIN-doc-export` — Doc-Export (stdio → exporter): `FUNC-export-markdown` → `FUNC-render-views` → `FUNC-serve-stdio` → `FUNC-view-changelog` → `FUNC-view-conops` → `FUNC-view-fmea` → `FUNC-view-icd` → `FUNC-view-intplan` → `FUNC-view-rtm`
-- `FCHAIN-model-import` — Bestehenden Bestand einlesen: `FUNC-import` → `FUNC-import-code` → `FUNC-import-doc`
+- `FCHAIN-model-import` — Bestehenden Bestand einlesen: `FUNC-import` → `FUNC-import-code` → `FUNC-import-code-verb` → `FUNC-import-doc`
 
 ### `UC-reduced-llm` — Mit kleinem oder lokalem Modell arbeiten
 
@@ -125,6 +125,14 @@ Ausgeloest von: `ACTOR-claude-code` · `ACTOR-developer` · `ACTOR-learning-engi
 - `FCHAIN-advisory-roundtrip` — Advisory Roundtrip (Read -> Status -> Propose -> Apply): `FUNC-evaluate-rules` → `FUNC-graph-impact` → `FUNC-graph-suggest` → `FUNC-mutate`
 - `FCHAIN-agent-query` — Agent-Graph-Query (Impact + progressive Expansion): `FUNC-graph-expand` → `FUNC-graph-impact` → `FUNC-list-elements`
 - `FCHAIN-modelfree-gate` — Modellfreier Gate-Betrieb: `FUNC-evaluate-rules` → `FUNC-mutate`
+
+### `UC-repo-lifecycle` — Repo einrichten und betreiben
+
+Der Entwickler richtet ein Repo ein, faehrt Laeufe darin und beendet die Sitzung; danach ist das Repo arbeitsfaehig und kein Prozess bleibt zurueck.
+
+Ausgeloest von: `ACTOR-developer`
+
+- `FCHAIN-repo-lifecycle` — Repo-Lebenszyklus: `FUNC-bootstrap` → `FUNC-cli-dispatch` → `FUNC-harness-cli` → `FUNC-run-verb` → `FUNC-session-shutdown` → `FUNC-upgrade`
 
 ## 5  Modes of operation
 
