@@ -26,6 +26,15 @@ Emissionspfad. Beides ist vertretbar, keins ist aus dem Code ableitbar.
 **Kommt heraus, wenn:** jemand den Modulschnitt zwischen Hooks und Emission entscheidet — dann
 zusammen mit dem `MOD-cli`-Schnitt (LCOM4=5) in einem Architektur-CR.
 
+### `MT-02` kennt die Modulart nicht
+LCOM4 misst geteilte Ziele. Für ein Implementierungsmodul ist Zerfall ein Defekt, für eine Fassade
+das gewünschte Ergebnis, und für einen Container aus `FUNC-block-*` ist er per Konstruktion
+garantiert — CR-SM-256 verbietet Rollup-Blöcken gerade die io-Kanten, über die LCOM4 verbindet.
+Dieselbe Zahl bedeutet an drei Stellen drei Verschiedenes.
+**Status:** als `CR-SM-263` nach sigloch-modules gegeben, Entscheidung offen — Ausnahme, Umkehrung
+oder nur Lesekonvention.
+**Kommt heraus, wenn:** die Entscheidung fällt.
+
 ### `SC-04` verlangt ein Datenformat für einen bewusst formatlosen Fluss
 `FLOW-round-scope` trägt in seiner eigenen Beschreibung *„kein festes Wire-Format —
 informationeller Rundenkontext"*. `SC-04` fordert trotzdem eine SCHEMA-Bindung. Dasselbe gilt seit
