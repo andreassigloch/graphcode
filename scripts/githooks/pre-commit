@@ -1,5 +1,6 @@
 #!/bin/bash
 # CR-GC-217 — pre-commit graph-snapshot freshness guard.
+# CR-GC-399 — Spurwahl ansagen statt schweigend entscheiden.
 #
 # Every commit must carry a graph snapshot (docs/graph/*.graph.json) that FITS the
 # code (REQ-graph-snapshot-per-commit). The committed snapshot is the SSOT at rest /
@@ -14,6 +15,15 @@
 #
 #  2. Exported but unstaged — graph_export wrote the snapshot/views but they weren't
 #     `git add`ed. → auto-stage them so the commit is self-consistent.
+#
+# Der Hook FÜHRT KEINE TESTS AUS. Er sagt an, welche Spur zu diesem Diff gehört.
+# Begründung (CR-GC-399, gemessen an der CI-Historie): fünf von sechs roten CI-Läufen
+# waren CLEAN-MACHINE-Fehler (Lock-Drift, unpublizierte Dependency, Maschinen-Tempo) —
+# die lokale Suite kann sie prinzipiell nicht sehen. Sie im pre-commit zu fahren würde
+# jeden Code-Commit 6,5 Minuten kosten und keinen dieser Fehler fangen. CI bleibt die
+# Durchsetzung; der Hook macht die Wahl SICHTBAR, weil ein schweigend entscheidender
+# Hook mehr Zeit kostet als er spart (er hat dreimal einen beabsichtigten
+# Zwei-Commit-Schnitt zunichtegemacht, bevor `git config --get core.hooksPath` es erklärte).
 #
 # Install once per clone:  git config core.hooksPath scripts/githooks
 
@@ -40,6 +50,35 @@ for snap in docs/graph/*.graph.json; do
 done
 
 # Generated dirs only — both are graph_export output (decision #2a: auto-stage).
+# Was der Hook SELBST dazustellt, wird benannt: dieses stille Einsammeln hat einen
+# beabsichtigten Zwei-Commit-Schnitt zunichtegemacht (CR-GC-399).
+before=$(git diff --cached --name-only | sort)
 [ -d docs/graph ] && git add docs/graph
 [ -d docs/views ] && git add docs/views
+after=$(git diff --cached --name-only | sort)
+added=$(comm -13 <(echo "$before") <(echo "$after") | tr '\n' ' ')
+[ -n "${added// /}" ] && echo "[pre-commit] selbst dazugestaged: $added" >&2
+
+# (3) Spurwahl (CR-GC-399) — nach dem FINALEN Inhalt des Commits, inkl. (2).
+#     Volle Spur, sobald irgendetwas Ausführbares oder die Abhängigkeiten im Spiel
+#     sind; Modell-Spur nur bei reinen Modell-/Doku-Änderungen. Alles Unbekannte
+#     zählt als volle Spur — ein Hook, der im Zweifel abkürzt, ist nutzlos.
+staged=$(git diff --cached --name-only)
+reason=""
+while IFS= read -r f; do
+  [ -z "$f" ] && continue
+  case "$f" in
+    docs/graph/*|docs/views/*|docs/cr/*|docs/*.md|*.md) ;;
+    *) reason="$f"; break ;;
+  esac
+done <<< "$staged"
+
+if [ -n "$reason" ]; then
+  echo "[pre-commit] Spur: VOLL — $reason liegt ausserhalb von docs/." >&2
+  echo "[pre-commit]   -> npm test          (113 Dateien, ~6.5 min)" >&2
+  echo "[pre-commit]   CI faehrt sie ohnehin; lokal fangen nur diese die Clean-Machine-Fehler." >&2
+else
+  echo "[pre-commit] Spur: MODELL — nur docs/ im Diff." >&2
+  echo "[pre-commit]   -> npm run verify:model   (31 Dateien, ~45 s)" >&2
+fi
 exit 0
