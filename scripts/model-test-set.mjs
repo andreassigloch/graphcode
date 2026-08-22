@@ -18,6 +18,12 @@
 /** Was einen Test modellrelevant macht. Ein Kriterium, zwei Anwender. */
 export const MODEL_TEST_PATTERNS = [
   /docs\/graph/,
+  // CR-GC-401 hat die Luecke gezeigt: `join(REPO, 'docs', 'graph', 'x.graph.json')`
+  // baut den Pfad SEGMENTIERT — der Literal-String `docs/graph` kommt nie vor. Sechs
+  // Testdateien sind so durch das erste Muster gefallen, eine davon (die Job-Scheibe)
+  // ist bei der naechsten Modellaenderung prompt rot geworden, waehrend `verify:model`
+  // 243/243 gruen meldete. Der Dateiname ist die robustere Spur als der Verzeichnispfad.
+  /graph\.json/,
   /RULES_VERSION|ONTOLOGY_VERSION|V3_RULES|SE_DESCRIPTOR\.rules/,
 ];
 
@@ -59,6 +65,14 @@ export const INCLUDED = [
   'tests/views.auditor.test.ts',
   'tests/views.no-fork.test.ts',
   'tests/verify-model.completeness.test.ts',
+  // Nachtrag CR-GC-401: diese fuenf bauen den SSOT-Pfad segmentiert und sind dem
+  // ersten Muster entkommen. `hooks.inject-graph-slice` haelt eine Ground-Truth-Liste
+  // realer uids und faellt bei jeder Loeschung — genau der Fall, den die Spur decken muss.
+  'tests/hooks.inject-graph-slice.test.ts',
+  'tests/mcp.member-name.test.ts',
+  'tests/schema-guard.test.ts',
+  'tests/skill-authoring-gate.test.ts',
+  'tests/skill-report-measured.test.ts',
 ];
 
 /**

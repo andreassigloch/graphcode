@@ -146,3 +146,41 @@ erfüllen **kann**, ist ein eigener Befund → **[CR-GC-403](../open/CR-GC-403-d
 aber durch ein `git add -A tests` in den Commit von CR-GC-400 (`6585de0`) mitgezogen. Nicht
 nachträglich getrennt, weil die Branch parallel von einer anderen Session beschrieben wird und ein
 History-Rewrite dort Schaden anrichtet.
+
+---
+
+## Nachtrag (2026-08-22, gleicher Tag) — das Kriterium hatte ein Loch, gefunden von CR-GC-401
+
+`verify:model` meldete nach der Modelländerung aus [CR-GC-401](CR-GC-401-viewer-nur-noch-am-rand.md)
+**243/243 grün** — die volle Suite fand trotzdem einen echten Fehlschlag:
+
+```
+CR-GC-115: Scheibe verfehlt real geaenderte Knoten:
+  expected [ 'FUNC-render-artifacts', …(7) ] to deeply equal []
+  tests/hooks.inject-graph-slice.test.ts
+```
+
+**Root Cause.** Das erste Muster war `/docs\/graph/` — ein Verzeichnis-Literal. Sechs Testdateien
+bauen den Pfad aber SEGMENTIERT:
+
+```js
+readFileSync(join(REPO, 'docs', 'graph', 'graphcode.graph.json'), 'utf8')
+```
+
+Der String `docs/graph` kommt darin nie vor. Genau die Sorte stille Lücke, gegen die der
+Vollständigkeits-Test gebaut wurde — er hat sie nicht gesehen, weil er das lückenhafte Kriterium
+selbst benutzt. **Ein Wächter ist nur so gut wie sein Kriterium.**
+
+**Fix.** Drittes Muster `/graph\.json/` — der Dateiname ist die robustere Spur als der
+Verzeichnispfad. Damit fallen fünf weitere Dateien in die Spur:
+`hooks.inject-graph-slice`, `mcp.member-name`, `schema-guard`, `skill-authoring-gate`,
+`skill-report-measured`. Der Wächter wurde beim Erweitern **erneut rot gesehen** und hat alle fünf
+namentlich genannt.
+
+**Neue Kennzahl:** 37 Dateien, 283 Tests, **57 s** — weiter unter der 60-s-Vorgabe, aber ohne
+Reserve. Wächst die Menge weiter, ist die Vorgabe zu prüfen, nicht die Menge zu beschneiden.
+
+**Stand der Spur nach dem Nachtrag:** 281/283. Die zwei offenen Fehlschläge gehören NICHT zu diesem
+CR: `FUNC-gve-supervise.realRef.symbol 'superviseGve' is not declared in 'src/gve.ts'` — eine
+parallel laufende Session baut `src/gve.ts` gerade um (198+/125−, uncommitted). Das ist RC-01, das
+korrekt anschlägt.

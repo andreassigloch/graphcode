@@ -163,9 +163,13 @@ describe('CR-GC-367: Job-Scheibe beim Task-Start', () => {
         'TEST-readonly-bridge',
       ],
       'CR-GC-115': [
-        'FUNC-render-artifacts', 'FUNC-render-graph', 'FUNC-render-health', 'FUNC-render-impact',
-        'FUNC-render-impl-gates', 'FUNC-render-readiness', 'FUNC-render-recommendations',
-        'FUNC-subscribe-updates', 'MOD-dashboard', 'REQ-artifact-freshness',
+        // CR-GC-401: die acht `FUNC-render-*`/`FUNC-subscribe-updates` sind GELOESCHT —
+        // sie bildeten das Innenleben des Fremdpakets @sigloch/graph-view-edit nach.
+        // CR-GC-115 hat sie damals wirklich angefasst, aber eine Scheibe des HEUTIGEN
+        // Modells kann keine Knoten enthalten, die es nicht mehr gibt. Die Ground Truth
+        // ist die Menge der real geaenderten Knoten, die noch EXISTIEREN. Gleiche
+        // Pflege wie bei den TEST-Zusammenlegungen aus CR-GC-383 zwei Zeilen tiefer.
+        'MOD-dashboard', 'REQ-artifact-freshness',
         'REQ-dashboard-readonly', 'REQ-readiness-transparent',
         // CR-GC-383: TEST-artifact-freshness + TEST-readiness-transparent sind in
         // TEST-dashboard-readonly aufgegangen (alle drei banden tests/panels.test.ts).
