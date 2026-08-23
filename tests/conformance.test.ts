@@ -61,6 +61,60 @@ describe('TEST-code-conformance: realRef/testRefs resolve as RC readiness rules 
     expect(rcErrors).toEqual([]);
   });
 
+  // CR-SM-262: RC-06 haengt VOLLSTAENDIG an diesem Extraktor. Ohne `declaredDependencies` ist
+  // die Regel per Vertrag stumm (s. `CodeFactsSchema`) — ein Extraktor, der das Feld nicht
+  // fuellt, macht sie zu totem Code, ohne dass irgendetwas rot wuerde. Deshalb hier und nicht
+  // nur drueben in contracts.
+  it('liest die deklarierten Dependencies aus der package.json — der Eingang fuer RC-06', () => {
+    const facts = extractCodeFacts(harness.getGraph(), REPO_ROOT);
+    expect(facts.declaredDependencies).toBeDefined();
+    // Die Familie selbst muss drinstehen, sonst liest die Regel die falsche Datei.
+    expect(facts.declaredDependencies).toContain('@sigloch/contracts');
+    // devDependencies zaehlen mit — vitest steht dort, nicht in dependencies.
+    expect(facts.declaredDependencies).toContain('vitest');
+  });
+
+  it('kein Repo = nicht nachgesehen: `undefined`, nicht die leere Liste', () => {
+    // Die Unterscheidung ist die ganze Sicherung gegen einen Massenbefund: "gar nicht
+    // nachgesehen" darf nicht als "deklariert nichts" gelesen werden.
+    expect(extractCodeFacts(harness.getGraph(), join(tmp, 'kein-repo')).declaredDependencies)
+      .toBeUndefined();
+  });
+
+  it('faengt eine externe Bindung an ein Paket, das es nicht gibt → RC-06 (nicht vacuous)', () => {
+    // Der historische Fall, nachgestellt: bis CR-SM-262 trug `SCHEMA-metric-vector` genau diese
+    // Bindung, und `@sigloch/se-optimizer` gibt es seit CR-SM-248 nicht mehr. Ohne diesen Fall
+    // waere der Sauber-Test unten auch dann gruen, wenn die Regel gar nicht laeuft.
+    const g = harness.getGraph();
+    const target = g.nodes.find((n) => n.attributes?.external === true) ?? g.nodes[0];
+    const broken: typeof g = {
+      nodes: g.nodes.map((n) =>
+        n.uid === target.uid
+          ? {
+              ...n,
+              attributes: {
+                ...n.attributes,
+                external: true,
+                realRef: { file: 'packages/se-optimizer/src/metrics.ts', symbol: 'MetricVector', lang: 'ts' },
+              },
+            }
+          : n,
+      ),
+      edges: g.edges,
+    };
+    const violations = conformanceViolations({ getGraph: () => broken, getRepoRoot: () => REPO_ROOT });
+    expect(
+      violations.some((v) => v.ruleId === 'RC-06' && v.elementId === target.uid && /@sigloch\/se-optimizer/.test(v.message)),
+    ).toBe(true);
+  });
+
+  it('das committete Selbstmodell ist RC-06-sauber — jede externe Bindung nennt ein Paket, das es gibt', () => {
+    const rc06 = conformanceViolations(harness).filter((v) => v.ruleId === 'RC-06');
+    // Die Null ist der REPARIERTE Zustand: vor CR-SM-262 trug `SCHEMA-metric-vector` eine
+    // Bindung an `packages/se-optimizer/`, ein Paket, das CR-SM-248 aufgeloest hat.
+    expect(rc06.map((v) => `${v.elementId}: ${v.message}`)).toEqual([]);
+  });
+
   it('catches a realRef pointing at a symbol that is not declared → RC-01 (not vacuous)', () => {
     const g = harness.getGraph();
     const broken: typeof g = {

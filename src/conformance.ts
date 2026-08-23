@@ -146,7 +146,38 @@ export function extractCodeFacts(graph: CGraph, repoRoot: string): CodeFacts {
     }
     files[rel] = { exists: true, ...parseFileFacts(readFileSync(abs, 'utf8'), abs) };
   }
-  return { files, importEdges: extractImportEdges(repoRoot) };
+  return {
+    files,
+    importEdges: extractImportEdges(repoRoot),
+    declaredDependencies: extractDeclaredDependencies(repoRoot),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// CR-SM-262: die Paketnamen, von denen dieses Repo abhaengt — der Eingang fuer RC-06.
+//
+// RC-01..03 ueberspringen `external === true`, weil der Pfad eines fremden Pakets hier nicht
+// aufloesbar ist. Der PAKETNAME ist es: eine `realRef` der Form `packages/<name>/…` behauptet
+// ein Workspace-Paket, und `@sigloch/<name>` muss dann in den dependencies stehen. Ohne diese
+// Liste ist RC-06 dauerhaft stumm (so steht es in `CodeFactsSchema`), die Regel haengt also
+// vollstaendig an dieser Funktion.
+//
+// `undefined` heisst "nicht nachgesehen" und schaltet die Regel ab — genau dann, wenn keine
+// lesbare package.json da ist. Eine leere Liste waere die andere Aussage ("deklariert nichts")
+// und wuerde jede externe Bindung auf einmal melden; die beiden duerfen nicht verschmelzen.
+// ---------------------------------------------------------------------------
+function extractDeclaredDependencies(repoRoot: string): string[] | undefined {
+  const pkgPath = join(repoRoot, 'package.json');
+  if (!existsSync(pkgPath)) return undefined;
+  try {
+    const pkg = JSON.parse(readFileSync(pkgPath, 'utf8')) as {
+      dependencies?: Record<string, string>;
+      devDependencies?: Record<string, string>;
+    };
+    return [...Object.keys(pkg.dependencies ?? {}), ...Object.keys(pkg.devDependencies ?? {})];
+  } catch {
+    return undefined; // unlesbar = nicht nachgesehen, nicht "deklariert nichts"
+  }
 }
 
 // ---------------------------------------------------------------------------
