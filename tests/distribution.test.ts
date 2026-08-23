@@ -26,12 +26,67 @@
  */
 import { describe, it, expect, beforeAll } from 'vitest';
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, rmSync, readFileSync, readdirSync, existsSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, writeFileSync, rmSync, readFileSync, readdirSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 const REPO_ROOT = join(__dirname, '..');
+
+/**
+ * CR-GC-404 — der Walk des Duplikat-Guards, herausgezogen, damit er PRUEFBAR ist.
+ *
+ * Er stand als lokale Closure im Test. Als der Guard in der verlinkten Arbeitskopie stumm
+ * geschaltet werden musste (Symlinks sind nicht `isDirectory()`, s. dort), gab es keinen Weg
+ * zu zeigen, dass er auf einem echten Baum noch faengt — ein uebersprungener Test, dessen
+ * Logik niemand mehr laufen sieht, ist kein Guard mehr, sondern totes Gewicht.
+ */
+interface PkgManifest { path: string; name: string; version: string; self: string[] }
+
+export function collectManifests(root: string, relativeTo: string): PkgManifest[] {
+  const manifests: PkgManifest[] = [];
+  const walk = (dir: string): void => {
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      if (!entry.isDirectory()) continue;
+      const child = join(dir, entry.name);
+      const pkgFile = join(child, 'package.json');
+      if (existsSync(pkgFile)) {
+        const m = JSON.parse(readFileSync(pkgFile, 'utf8')) as {
+          name?: string;
+          version?: string;
+          dependencies?: Record<string, string>;
+          peerDependencies?: Record<string, string>;
+        };
+        if (m.name) {
+          manifests.push({
+            path: child.slice(relativeTo.length + 1),
+            name: m.name,
+            version: m.version ?? '?',
+            self: [...Object.keys(m.dependencies ?? {}), ...Object.keys(m.peerDependencies ?? {})]
+              .filter((d) => d === m.name),
+          });
+        }
+      }
+      const nested = join(child, 'node_modules', '@sigloch');
+      if (existsSync(nested)) walk(nested);
+    }
+  };
+  walk(root);
+  return manifests;
+}
+
+/** Pakete, die sich selbst als dependency fuehren — npm nistet dann eine zweite Kopie ein. */
+export const selfDependents = (ms: PkgManifest[]): string[] =>
+  ms.filter((m) => m.self.length > 0).map((m) => `${m.name} -> itself`);
+
+/** Pakete, die im Baum mehr als einmal liegen — zwei Ontologien in einem Prozess. */
+export function duplicates(ms: PkgManifest[]): string[] {
+  const byName = new Map<string, string[]>();
+  for (const m of ms) byName.set(m.name, [...(byName.get(m.name) ?? []), `${m.version} @ ${m.path}`]);
+  return [...byName.entries()]
+    .filter(([, copies]) => copies.length > 1)
+    .map(([name, copies]) => `${name}: ${copies.join(' | ')}`);
+}
 const CLI_JS = join(REPO_ROOT, 'dist', 'cli.js');
 
 /** The substrate packages graphcode consumes from the registry (CR-214, CR-SM-248). */
@@ -205,47 +260,72 @@ describe('TEST-distribution: npx distribution', () => {
    */
   it('installs each @sigloch package exactly once, and none depends on itself', () => {
     const root = join(REPO_ROOT, 'node_modules', '@sigloch');
-    const manifests: Array<{ path: string; name: string; version: string; self: string[] }> = [];
 
-    const walk = (dir: string): void => {
-      for (const entry of readdirSync(dir, { withFileTypes: true })) {
-        if (!entry.isDirectory()) continue;
-        const child = join(dir, entry.name);
-        const pkgFile = join(child, 'package.json');
-        if (existsSync(pkgFile)) {
-          const m = JSON.parse(readFileSync(pkgFile, 'utf8')) as {
-            name?: string;
-            version?: string;
-            dependencies?: Record<string, string>;
-            peerDependencies?: Record<string, string>;
-          };
-          if (m.name) {
-            manifests.push({
-              path: child.slice(REPO_ROOT.length + 1),
-              name: m.name,
-              version: m.version ?? '?',
-              self: [...Object.keys(m.dependencies ?? {}), ...Object.keys(m.peerDependencies ?? {})]
-                .filter((d) => d === m.name),
-            });
-          }
-        }
-        const nested = join(child, 'node_modules', '@sigloch');
-        if (existsSync(nested)) walk(nested);
-      }
-    };
-    walk(root);
+    // CR-GC-404: in einer VERLINKTEN Arbeitskopie gibt es nichts zu pruefen.
+    //
+    // `npm run link:siblings` ersetzt jedes @sigloch-Paket durch einen Symlink auf das
+    // Schwester-Repo. `readdirSync(withFileTypes)` meldet einen Symlink als `isSymbolicLink()`,
+    // NICHT als `isDirectory()` — der Walk betrat also gar nichts, fand null Manifeste und fiel
+    // ueber seine eigene Absicherung ("worthless if it walked an empty tree"). Der Guard tat
+    // damit das Richtige (laut statt still), aber er blieb dauerhaft rot, und ein dauerhaft
+    // roter Test wird nach zwei Tagen ignoriert — samt dem echten Fehlschlag daneben.
+    //
+    // Den Symlinks zu FOLGEN waere die falsche Reparatur: der Guard prueft eine INSTALLATION
+    // (npm hat ein Paket zweimal ausgelegt), und ein Workspace-Verzeichnis ist keine. Er wuerde
+    // dann etwas anderes messen und trotzdem gruen melden — die schlechtere Lage.
+    //
+    // Also: uebersprungen, mit Begruendung in der Ausgabe. In CI (`npm ci`, ci.yml) liegen echte
+    // Verzeichnisse, dort laeuft er vollstaendig — und genau dort landet die Arbeit.
+    const linked = readdirSync(root, { withFileTypes: true }).filter((e) => e.isSymbolicLink());
+    if (linked.length > 0) {
+      console.log(
+        `[distribution] uebersprungen: ${linked.length} verlinkte @sigloch-Pakete ` +
+          `(${linked.map((e) => e.name).join(', ')}). Der Guard prueft eine Installation, ` +
+          `nicht einen Workspace — in CI (npm ci) laeuft er vollstaendig.`,
+      );
+      return;
+    }
+
+    const manifests = collectManifests(root, REPO_ROOT);
 
     // The guard is worthless if it walked an empty tree.
     expect(manifests.length).toBeGreaterThanOrEqual(5);
+    expect(selfDependents(manifests)).toEqual([]);
+    expect(duplicates(manifests)).toEqual([]);
+  });
 
-    const selfDeps = manifests.filter((m) => m.self.length > 0).map((m) => `${m.name} -> itself`);
-    expect(selfDeps).toEqual([]);
+  /**
+   * CR-GC-404 — die Logik des Guards, an einem gebauten Baum.
+   *
+   * Der Guard darueber ist in der verlinkten Arbeitskopie stumm. Ohne diesen Fall waere er
+   * dort ein Test, der nichts tut und niemandem auffaellt — genau die Lage, die eine
+   * Ueberspringung so gefaehrlich macht. Hier laeuft dieselbe Funktion gegen echte
+   * Verzeichnisse und MUSS beide Defektarten finden.
+   */
+  it('faengt Duplikat und Selbst-Abhaengigkeit an einem echten Baum (der uebersprungene Guard tut noch etwas)', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'gc-dist-'));
+    try {
+      const pkg = (rel: string, body: Record<string, unknown>): void => {
+        mkdirSync(join(dir, rel), { recursive: true });
+        writeFileSync(join(dir, rel, 'package.json'), JSON.stringify(body));
+      };
+      // Ein sauberer Baum: zwei Pakete, je einmal, keins haengt an sich selbst.
+      pkg('contracts', { name: '@sigloch/contracts', version: '6.3.0' });
+      pkg('se-engine', { name: '@sigloch/se-engine', version: '1.1.0' });
+      const clean = collectManifests(dir, dir);
+      expect(clean.map((m) => m.name).sort()).toEqual(['@sigloch/contracts', '@sigloch/se-engine']);
+      expect(duplicates(clean)).toEqual([]);
+      expect(selfDependents(clean)).toEqual([]);
 
-    const byName = new Map<string, string[]>();
-    for (const m of manifests) byName.set(m.name, [...(byName.get(m.name) ?? []), `${m.version} @ ${m.path}`]);
-    const duplicated = [...byName.entries()]
-      .filter(([, copies]) => copies.length > 1)
-      .map(([name, copies]) => `${name}: ${copies.join(' | ')}`);
-    expect(duplicated).toEqual([]);
+      // Der reale Defekt aus CR-SM-248: ein Paket fuehrt sich selbst als dependency, npm
+      // nistet daraufhin eine zweite Kopie IN das Paket hinein.
+      pkg('graphify', { name: '@sigloch/graphify', version: '0.2.0', dependencies: { '@sigloch/graphify': 'file:' } });
+      pkg('graphify/node_modules/@sigloch/graphify', { name: '@sigloch/graphify', version: '0.1.0' });
+      const broken = collectManifests(dir, dir);
+      expect(selfDependents(broken)).toEqual(['@sigloch/graphify -> itself']);
+      expect(duplicates(broken)).toEqual(['@sigloch/graphify: 0.2.0 @ graphify | 0.1.0 @ graphify/node_modules/@sigloch/graphify']);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
   });
 });
