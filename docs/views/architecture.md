@@ -17,15 +17,19 @@
 | `FUNC-auto-export` | FUNC | registerAutoExport |
 | `FUNC-bind-tools` | FUNC | bindToolsToHarness |
 | `FUNC-block-anschluss` | FUNC | Agenten-Anschluss |
+| `FUNC-block-antrieb` | FUNC | Antrieb |
 | `FUNC-block-arch-optimierung` | FUNC | Architektur-Optimierung |
+| `FUNC-block-betrieb` | FUNC | Betrieb |
 | `FUNC-block-dokumentenwerk` | FUNC | Dokumentenwerk |
 | `FUNC-block-gate` | FUNC | Qualitäts-Gate |
 | `FUNC-block-gedaechtnis` | FUNC | Gedächtnis |
 | `FUNC-block-live-dashboard` | FUNC | Live-Kanal |
 | `FUNC-block-messwerk` | FUNC | Messwerk |
 | `FUNC-block-q-improvement` | FUNC | Q-Improvement |
+| `FUNC-block-ruestzeug` | FUNC | Werkzeug & Konfiguration |
 | `FUNC-block-schaufenster` | FUNC | Viewer |
 | `FUNC-block-se-steuerung` | FUNC | SE-Prozess-Steuerung |
+| `FUNC-block-speicherwerk` | FUNC | Speicherwerk |
 | `FUNC-bootstrap` | FUNC | bootstrap |
 | `FUNC-broadcast-diff` | FUNC | broadcastDiff(version) |
 | `FUNC-build-round-injection` | FUNC | buildRoundInjection |
@@ -143,15 +147,19 @@
 | `FUNC-auto-export` | `MOD-docs` |
 | `FUNC-bind-tools` | `MOD-mcp-tools` |
 | `FUNC-block-anschluss` | `MOD-repo-root` |
+| `FUNC-block-antrieb` | `MOD-repo-root` |
 | `FUNC-block-arch-optimierung` | `MOD-steering` |
+| `FUNC-block-betrieb` | `MOD-repo-root` |
 | `FUNC-block-dokumentenwerk` | `MOD-docs` |
 | `FUNC-block-gate` | `MOD-repo-root` |
 | `FUNC-block-gedaechtnis` | `MOD-repo-root` |
 | `FUNC-block-live-dashboard` | `MOD-host-bridge` |
 | `FUNC-block-messwerk` | `MOD-repo-root` |
 | `FUNC-block-q-improvement` | `MOD-steering` |
+| `FUNC-block-ruestzeug` | `MOD-repo-root` |
 | `FUNC-block-schaufenster` | `MOD-repo-root` |
 | `FUNC-block-se-steuerung` | `MOD-steering` |
+| `FUNC-block-speicherwerk` | `MOD-repo-root` |
 | `FUNC-bootstrap` | `MOD-cli` |
 | `FUNC-broadcast-diff` | `MOD-host-bridge` |
 | `FUNC-build-round-injection` | `MOD-executor` |
