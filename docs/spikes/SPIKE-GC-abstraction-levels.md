@@ -1,7 +1,8 @@
 # SPIKE-GC-abstraction-levels — Zwei Übersichtsebenen aus dem Modell
 
 **Status:** GESTARTET 2026-08-16 (Runde 1: Testcase 1, Blockschnitt-Entwurf vor Gate-Write)
-**Herkunft:** Review 2026-08-16 (`docs/review.md` §5) — die Ontologie kodiert die Ebenen-Leiter,
+**Herkunft:** Review 2026-08-16 (`docs/review.md` §5, gelöscht 2026-08-24 — Git-History) — die
+Ontologie kodiert die Ebenen-Leiter,
 der eigene Graph nutzt sie nicht (4× FUNC-in-FUNC bei 55 FUNCs, 0× MOD-in-MOD bei 10 MODs).
 **Typ:** Handexperiment am eigenen Graphen. Kein Code, keine neuen Regeln, keine neuen Skills —
 erst der Nachweis, dass die Abstraktion trägt, dann Werkzeug-CRs.

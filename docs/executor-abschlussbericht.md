@@ -1,7 +1,8 @@
 # Abschlussbericht: Embedded Executor — Local & Frontier auf einer Methode
 
 *2026-08-01. Abschluss des Programms aus `docs/executor-harness-analysis.md` und
-`docs/executor-bigpicture.md`: CR-GC-278…282, Läufe v1–v14 (devstral) plus
+`docs/executor-bigpicture.md` (beide Arbeitsanalysen 2026-08-24 aufgeräumt — Git-History):
+CR-GC-278…282, Läufe v1–v14 (devstral) plus
 Opus 5 und Haiku 4.5 durch DENSELBEN Treiber. Alle Zahlen gemessen, n=1 je Arm
 sofern nicht anders vermerkt.*
 

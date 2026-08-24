@@ -1,8 +1,9 @@
 # graphcode — Externe Landschaft (rolling)
 
 > **Rolling-Datei, kein REQ, kein Bootstrap-Input.** Fremde Code-Graph-Tools + deren
-> Benchmark-Behauptungen, gegen graphcodes USPs geprüft. Wird pro Review fortgeschrieben —
-> anders als `RECOMMENDATIONS.md` (eingefrorener R1–R14-Bootstrap, INPUT-ONLY).
+> Benchmark-Behauptungen, gegen graphcodes USPs geprüft. Wird pro Review fortgeschrieben.
+> (Der frühere R1–R14-Bootstrap `RECOMMENDATIONS.md` ist gelöscht — 2026-08-24; SSOT sind die
+> Graph-REQs + `bok/docs/research/graphify-comparison.md` / `graphengine-efficiency.md`.)
 > **Stand: 2026-08-18** (Stern-/Lizenz-/Datums-Zahlen via `gh api repos/<n>` verifiziert).
 
 ## Kernaussage
@@ -90,7 +91,7 @@ Tours, die beim nächsten Commit veralten. Höchste Kosten, kürzeste Halbwertsz
 | L1 | **PreToolUse-Graph-Slice-Injektion** auf dem Discovery-Pfad (Read/Grep/Glob) — macht den Graph zum Default statt zur Wahl des Agents | GitNexus PreToolUse | `CR-DRAFT-GC-361` |
 | L2 | **Token-budgetierter Subgraph**: `graph_context(budget: n)` liefert die größte kohärente Scheibe unter n Token statt fixer Tiefe — bedient `graphcode run` / Local-LLM | graphify-mcp | `CR-DRAFT-GC-362` |
 | L3 | **Freshness-Banner inline im Read-Ergebnis** (AF-01..05 in `graph_context`/`graph_impact`, nicht nur in `readiness`) | CodeGraph ⚠️ / GitNexus PostToolUse | `CR-DRAFT-GC-363` |
-| L4 | **Confidence-Tags mit Klartext-Begründung** (`EXTRACTED`/`INFERRED`/`AMBIGUOUS`) — = R1, offen. Der Begründungsstring ist das, was einen Slicer-Vorschlag gate-prüfbar macht | Graphify | (R1, `RECOMMENDATIONS.md`) |
+| L4 | **Confidence-Tags mit Klartext-Begründung** (`EXTRACTED`/`INFERRED`/`AMBIGUOUS`) — = R1, offen. Der Begründungsstring ist das, was einen Slicer-Vorschlag gate-prüfbar macht | Graphify | (R1 — Graph-REQ, Bootstrap-Prosa gelöscht) |
 | L5 | **Benchmark-Hygiene**: ein geteiltes Modell, Spend-Ledger, Zweit-Judge-Validierung, **Coverage als Primärachse** statt Kosten | Graphify-Harness | offen |
 
 **Nicht adoptieren:** Leiden-Communities · LLM-Summaries zur Index-Zeit · Vector-Store ·
