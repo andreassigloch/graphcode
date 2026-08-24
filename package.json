@@ -46,7 +46,7 @@
     "@modelcontextprotocol/sdk": "^1.29.0",
     "@sigloch/contracts": "^6.0.0",
     "@sigloch/graph-api-core": "^5.1.0",
-    "@sigloch/graph-view-edit": "^0.6.0",
+    "@sigloch/graph-view-edit": "^0.7.0",
     "@sigloch/graphcode-client": "^1.1.0",
     "@sigloch/graphify": "^0.2.0",
     "@sigloch/learning-core": "^0.2.0",
