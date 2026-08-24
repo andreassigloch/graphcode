@@ -5114,7 +5114,18 @@
       "name": "GraphCode",
       "description": "Headless Claude-Code-Sidecar-Governance-Harness: Store + Apply-Gate + Hooks + Learning-Emission, eine Instanz pro Repo. Carve-Out aus aimprove. (README, SPEC §0)",
       "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "analysisFreshness": {
+        "conops": {
+          "graphVersion": 191
+        },
+        "implplan": {
+          "graphVersion": 191
+        },
+        "assumption-review": {
+          "graphVersion": 0
+        }
+      }
     },
     {
       "id": "TEST-advisory-roundtrip-latency",
@@ -17157,5 +17168,5 @@
       "weight": "1"
     }
   ],
-  "graphVersion": 190
+  "graphVersion": 191
 }

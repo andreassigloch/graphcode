@@ -1,6 +1,14 @@
 # CR-GC-402 — Dashboard rechnet eine zweite Wahrheit
 
-**Status:** draft — Befund gemessen, Fix-Ort zu entscheiden (GVE-Loader vs. gemeinsamer Codec).
+**Status:** teilweise umgesetzt (2026-08-24) — Loader-Hälfte erledigt, besser als Option A:
+`loadGraph()` nutzt jetzt die publizierte Inverse `fromOntologyGraph` (CR-SM-254) statt eines
+handgerollten Mirrors (graph-view-edit 0.7.1, Regression in `tests/vite-config-load-graph.test.mjs`).
+Verifiziert am graphcode-SSOT: beide Rechenwege liefern identische Regelmengen bis auf die
+**bekannten Rest-Deltas**: (1) RC-01..06 fehlen dashboard-seitig bewusst (CodeFacts nur am
+Checkout), (2) **MT-01** feuert dashboard-seitig 1×, hostseitig 0× — `DefaultRuleEngine.evaluate()`
+reicht keine MetricPolicy durch (`rule.evaluate(graph)` einargumentig), das Dashboard urteilt mit
+`DEFAULT_METRIC_POLICY` statt `graphcode.config.jsonc` (`instability: null`). Beides löst erst
+**Option C** (Dashboard fragt den Host) bzw. ein Policy-Parameter in graph-api-core.
 **Datum:** 2026-08-22
 **Herkunft:** Vorbereitung der Kundenvorführung in `graphcodedemo` (City People Mover, 195 Elemente).
 Aufgefallen, weil das Dashboard auf der Leinwand dem Chat widersprochen hätte.
