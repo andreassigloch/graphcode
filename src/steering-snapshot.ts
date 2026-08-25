@@ -13,6 +13,7 @@
  *
  * @author andreas@siglochconsulting
  */
+import { z } from 'zod/v4';
 import type { Graph } from '@sigloch/graph-api-core';
 import type { OntologyGraph, MetricPolicy } from '@sigloch/contracts/se';
 import { evaluateAllRules } from '@sigloch/contracts/se';
@@ -65,22 +66,28 @@ export function takeSteeringSnapshot(
   };
 }
 
-export interface SteeringDimensionDelta {
-  before: number;
-  after: number;
-  delta: number;
-}
+export const SteeringDimensionDelta = z.object({
+  before: z.number(),
+  after: z.number(),
+  delta: z.number(),
+});
+export type SteeringDimensionDelta = z.infer<typeof SteeringDimensionDelta>;
 
 /**
  * Steuerungs-Fortschritt einer (probierten) Mutation im Readiness-Raum:
  * blockingErrors vorher/nachher + Score-Delta je Dimension. Dimensionen mit
  * applicable=0 auf BEIDEN Seiten entfallen (dort ist der Score konstruktiv 0,
  * nicht "perfekt").
+ *
+ * Zod, nicht `interface` (SCHEMA-steering-delta): das Delta hängt am dryRun-
+ * Verdict von `graph_mutate` und wird im Best-of-N-Ranking aus einem
+ * Tool-Ergebnis gelesen — dort war es bis hierher ein blanker Cast.
  */
-export interface SteeringDelta {
-  blockingErrors: { before: number; after: number };
-  dimensions: Record<string, SteeringDimensionDelta>;
-}
+export const SteeringDelta = z.object({
+  blockingErrors: z.object({ before: z.number(), after: z.number() }),
+  dimensions: z.record(z.string(), SteeringDimensionDelta),
+});
+export type SteeringDelta = z.infer<typeof SteeringDelta>;
 
 /** Delta zweier Snapshots — deterministisch, reine Daten (kein Zeitstempel). */
 export function computeSteeringDelta(before: SteeringSnapshot, after: SteeringSnapshot): SteeringDelta {

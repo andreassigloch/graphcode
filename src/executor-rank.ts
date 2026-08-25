@@ -8,7 +8,8 @@
  * @author andreas@siglochconsulting
  */
 import type { MutateResult } from '@sigloch/contracts/harness';
-import type { SteeringDelta } from './steering-snapshot.js';
+import { FitAdvisory } from './fit-advisory.js';
+import { SteeringDelta } from './steering-snapshot.js';
 
 /** Anker des Kandidaten-Samplings — gemessene Jaccard-Spreizung 0.45/0.18/0.14
  * bei temp 0.15/0.4/0.7 (Design-Runde CR-GC-288). */
@@ -38,8 +39,14 @@ export interface CandidateProbe {
   verdict:
     | (Partial<MutateResult> & {
         success: boolean;
-        fitAdvisory?: { delta?: number[] };
-        steeringDelta?: SteeringDelta;
+        /**
+         * Δm-Advisory und Readiness-Delta, wie sie aus dem `graph_mutate`-Verdict
+         * kommen: `unknown`, weil der Executor das Tool-Ergebnis der Registry nur
+         * castet. Erst `fitAdvisoryOf`/`steeringDeltaOf` machen daraus Daten —
+         * kein Ranking-Kriterium liest hier ungeprüft.
+         */
+        fitAdvisory?: unknown;
+        steeringDelta?: unknown;
       })
     | null;
   /**
@@ -52,15 +59,38 @@ export interface CandidateProbe {
 
 const TIER_RANK: Record<string, number> = { 'auto-apply': 2, suggest: 1, block: 0 };
 
+/**
+ * Das Δm-Advisory eines Verdicts als GEPRÜFTE Daten (SCHEMA-fit-advisory) —
+ * `null`, wenn es fehlt oder den Vertrag nicht erfüllt.
+ *
+ * Hier überquert das Advisory seine modellierte Schnittstelle: `runExecutor`
+ * castet die Antwort von `graph_mutate` aus der Tool-Registry (`unknown`) auf
+ * `MutateOutcome`; ab dort wurde bis hierher blind `.fitAdvisory.delta`
+ * gelesen. Ein `delta`, das kein Zahlen-Array ist, ließ `reduce` werfen oder
+ * — über `?? []` — einen erfundenen Nullwert ins Ranking laufen. Der einzige
+ * ehrliche Umgang mit Fremddaten ist, sie zu prüfen: was den Vertrag nicht
+ * erfüllt, ist KEIN Messwert und rankt deshalb als „keine Messung", nicht als 0-Messung.
+ */
+export function fitAdvisoryOf(verdict: CandidateProbe['verdict']): FitAdvisory | null {
+  const parsed = FitAdvisory.safeParse(verdict?.fitAdvisory);
+  return parsed.success ? parsed.data : null;
+}
+
+/** Dasselbe für das Readiness-Delta (SCHEMA-steering-delta) — s. `fitAdvisoryOf`. */
+export function steeringDeltaOf(verdict: CandidateProbe['verdict']): SteeringDelta | null {
+  const parsed = SteeringDelta.safeParse(verdict?.steeringDelta);
+  return parsed.success ? parsed.data : null;
+}
+
 /** Σ der fitAdvisory-Deltas (layer:arch) — das Δm-Kriterium des Rankings. */
 export function deltaSum(verdict: CandidateProbe['verdict']): number {
-  return (verdict?.fitAdvisory?.delta ?? []).reduce((s, x) => s + x, 0);
+  return (fitAdvisoryOf(verdict)?.delta ?? []).reduce((s, x) => s + x, 0);
 }
 
 /** Score-Delta der Fokus-Dimension aus dem steeringDelta des dryRun-Verdicts (CR-GC-289). */
 export function focusDelta(verdict: CandidateProbe['verdict'], focusDimension?: string | null): number {
   if (!focusDimension) return 0;
-  return verdict?.steeringDelta?.dimensions[focusDimension]?.delta ?? 0;
+  return steeringDeltaOf(verdict)?.dimensions[focusDimension]?.delta ?? 0;
 }
 
 /**
@@ -98,14 +128,14 @@ export function effectiveFocusDelta(
 
 /** Gesamt-Readiness-Delta: ungewichtete Summe der Score-Deltas aller Dimensionen. */
 export function totalDelta(verdict: CandidateProbe['verdict']): number {
-  const sd = verdict?.steeringDelta;
+  const sd = steeringDeltaOf(verdict);
   if (!sd) return 0;
   return Object.values(sd.dimensions).reduce((s, d) => s + d.delta, 0);
 }
 
 /** blockingErrors-ANSTIEG (Steering-Katalog) — strikt schlechter, nie belohnt. */
 function blockingRise(verdict: CandidateProbe['verdict']): number {
-  const b = verdict?.steeringDelta?.blockingErrors;
+  const b = steeringDeltaOf(verdict)?.blockingErrors;
   return b ? Math.max(0, b.after - b.before) : 0;
 }
 

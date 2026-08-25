@@ -47,22 +47,30 @@ export {
 // an imported rule→X map" pattern RULE_TO_DIMENSION already uses in
 // generate.ts/steering.ts, just keyed by phase gate instead of topic dimension.
 // ---------------------------------------------------------------------------
+import { z } from 'zod/v4';
 import { RULE_TO_PHASE, PhaseGate, type PhaseGateType } from '@sigloch/contracts/se';
 
 /** INCOSE technical-review gates, in lifecycle order — the Handoff precondition
  * walks this order to find the "current" (first incomplete) gate. */
 export const PHASE_GATE_ORDER: readonly PhaseGateType[] = PhaseGate.options;
 
-/** One phase-gate's rule coverage (CR-GC-296). */
-export interface PhaseGateReadiness {
-  gate: PhaseGateType;
+/**
+ * One phase-gate's rule coverage (CR-GC-296).
+ *
+ * Zod (SCHEMA-phase-readiness), damit der Vertrag maschinell prüfbar ist statt
+ * nur compile-time: die Liste reist als `GenerationStep.phaseReadiness` über
+ * MCP-stdio und wird beim Executor mit dem GenerationStep zusammen geparst.
+ */
+export const PhaseGateReadiness = z.object({
+  gate: PhaseGate,
   /** Rules mapped to this gate with NO open violation (any severity). */
-  covered: number;
+  covered: z.number().int().nonnegative(),
   /** Total distinct rule IDs RULE_TO_PHASE maps to this gate. */
-  total: number;
+  total: z.number().int().nonnegative(),
   /** Rule IDs mapped to this gate that still carry ≥1 open violation, sorted. */
-  missing: string[];
-}
+  missing: z.array(z.string()),
+});
+export type PhaseGateReadiness = z.infer<typeof PhaseGateReadiness>;
 
 /** Minimal violation shape phase_readiness needs. Every violation stream in this
  * repo carries a rule id — camelCase `ruleId` (`@sigloch/contracts/harness`

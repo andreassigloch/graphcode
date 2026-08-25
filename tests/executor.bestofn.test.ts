@@ -150,9 +150,23 @@ describe('Best-of-N ranking (pur, deterministisch)', () => {
   const cand = (index: number, verdict: Record<string, unknown> | null) =>
     ({ index, verdict }) as Parameters<typeof rankCandidates>[0][number];
 
+  /**
+   * Ein VOLLSTÄNDIGES fitAdvisory, wie `harness.mutate()` es emittiert
+   * (CR-GC-413): das Ranking prüft den Vertrag SCHEMA-fit-advisory jetzt per
+   * safeParse, eine abgekürzte `{delta}`-Attrappe ist keine Messung mehr.
+   */
+  const fit = (delta: number[]) => ({
+    layer: 'arch' as const,
+    dimensions: delta.map((_, i) => `d${i}`),
+    before: delta.map(() => 0),
+    after: [...delta],
+    delta,
+    regressions: delta.flatMap((d, i) => (d < 0 ? [`d${i}`] : [])),
+  });
+
   it('ohne Ziel-Delta bleibt tier die Präferenz: auto-apply schlägt suggest trotz schlechterem Δm', () => {
-    const a = cand(0, { success: true, tier: 'suggest', fitAdvisory: { delta: [0.9] }, mutations: 99 });
-    const b = cand(1, { success: true, tier: 'auto-apply', fitAdvisory: { delta: [-0.5] }, mutations: 1 });
+    const a = cand(0, { success: true, tier: 'suggest', fitAdvisory: fit([0.9]), mutations: 99 });
+    const b = cand(1, { success: true, tier: 'auto-apply', fitAdvisory: fit([-0.5]), mutations: 1 });
     expect(rankCandidates([a, b])[0]).toBe(b);
   });
 
@@ -177,8 +191,8 @@ describe('Best-of-N ranking (pur, deterministisch)', () => {
   });
 
   it('Gleichstand im tier, kein steeringDelta → Δm (layer:arch) entscheidet — der Tiebreaker', () => {
-    const a = cand(0, { success: true, tier: 'suggest', fitAdvisory: { delta: [-0.2, 0.1] }, mutations: 99 });
-    const b = cand(1, { success: true, tier: 'suggest', fitAdvisory: { delta: [0.1, 0.05] }, mutations: 1 });
+    const a = cand(0, { success: true, tier: 'suggest', fitAdvisory: fit([-0.2, 0.1]), mutations: 99 });
+    const b = cand(1, { success: true, tier: 'suggest', fitAdvisory: fit([0.1, 0.05]), mutations: 1 });
     expect(deltaSum(a.verdict)).toBeCloseTo(-0.1);
     expect(deltaSum(b.verdict)).toBeCloseTo(0.15);
     expect(rankCandidates([a, b])[0]).toBe(b);
@@ -195,12 +209,12 @@ describe('Best-of-N ranking (pur, deterministisch)', () => {
     // a: besserer Gesamt-Fortschritt + Δm + Volumen, aber NICHT auf der Fokus-Dimension.
     const a = cand(0, {
       success: true, tier: 'suggest', mutations: 40,
-      fitAdvisory: { delta: [2.0] },
+      fitAdvisory: fit([2.0]),
       steeringDelta: steering(0, 0, { arch: 0.3, alloc: 0.2 }),
     });
     const b = cand(1, {
       success: true, tier: 'suggest', mutations: 12,
-      fitAdvisory: { delta: [0] },
+      fitAdvisory: fit([0]),
       steeringDelta: steering(0, 0, { req: 0.04 }),
     });
     expect(focusDelta(b.verdict, 'req')).toBeCloseTo(0.04);

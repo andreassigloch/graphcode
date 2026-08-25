@@ -16,39 +16,48 @@
  * Determinismus-Split des Architekturgenerator-Modells (UMI urteilt, Operator-
  * Wahl bleibt deterministisch).
  */
+import { z } from 'zod/v4';
 import type { Graph } from '@sigloch/graph-api-core';
 import { RULE_TO_DIMENSION } from '@sigloch/contracts/se';
 import type { MetricPolicy } from '@sigloch/contracts/se';
 import { takeSteeringSnapshot } from './steering-snapshot.js';
-import { computePhaseReadiness, currentPhaseGate, type PhaseGateReadiness } from './readiness.js';
+import { computePhaseReadiness, currentPhaseGate, PhaseGateReadiness } from './readiness.js';
 import { isIntentTooThin, intentCoverage, type LoadedTargetProfile } from './target-profile.js';
 
-export interface GenerationStep {
+/**
+ * Datenvertrag der Generierungs-Instruktion (SCHEMA-generation-step) — Zod, nicht
+ * `interface`: der Step ist das Ergebnis des MCP-Tools `graph_generate` und damit
+ * die Grenze zwischen Substrat und Agent/Executor. Der eingebettete Executor hat
+ * ihn bisher blank gecastet; `GenerationStep.parse` in `runExecutor` macht daraus
+ * einen erzwungenen Vertrag.
+ */
+export const GenerationStep = z.object({
   /** seed = leerer Graph; expand = Deficit-getriebene Verdichtung; handoff = Schwelle erreicht. */
-  phase: 'seed' | 'expand' | 'handoff';
+  phase: z.enum(['seed', 'expand', 'handoff']),
   /** true genau in phase 'handoff' — die Struktur trägt, weiter mit graph_suggest. */
-  done: boolean;
+  done: z.boolean(),
   /** Die konkrete generative Instruktion für den MCP-Host. */
-  prompt: string;
+  prompt: z.string(),
   /** Readiness-Stand je anwendbarer Dimension. */
-  readiness: { dimension: string; score: number; violations: number }[];
-  threshold: number;
+  readiness: z.array(z.object({ dimension: z.string(), score: z.number(), violations: z.number() })),
+  threshold: z.number(),
   /** Error-Violations (Gate-Blocker) — müssen vor dem Handoff auf 0. */
-  blockingErrors: number;
+  blockingErrors: z.number(),
   /** SRR/PDR/CDR/TRR Regelabdeckung (CR-GC-296, RULE_TO_PHASE) — die zweite
    * Handoff-Bedingung neben Schwelle + blockingErrors: das AKTUELLE Gate
    * (erstes unvollständiges in SRR→PDR→CDR→TRR) muss covered===total sein. */
-  phaseReadiness: PhaseGateReadiness[];
+  phaseReadiness: z.array(PhaseGateReadiness),
   /** Stabiler Identifikator des fokussierten Fund-Sets (CR-GC-281):
    * `${dimension}:${element_ids sortiert, komma-getrennt}`. null wenn kein
    * Fokus (seed/handoff/keine regelbaren Funde). */
-  focusKey: string | null;
+  focusKey: z.string().nullable(),
   /** Fokus-Elementtypen des Schritts (CR-GC-285): `DIMENSION_FOCUS_TYPES` der
    * Fokus-Dimension bzw. der seed-Phase; leer bei handoff/keinem Fokus. Der
    * Executor injiziert dafür Guide-Slice + Element-Index in den Runden-Prompt,
    * ohne den Prompt-String parsen zu müssen. */
-  focusTypes: string[];
-}
+  focusTypes: z.array(z.string()),
+});
+export type GenerationStep = z.infer<typeof GenerationStep>;
 
 /** Wer die Kandidaten-Auswahl macht (CR-GC-288): 'host' = der MCP-Client vergleicht
  * selbst per dryRun (Protokoll-Prosa im Prompt); 'driver' = der Best-of-N-Treiber

@@ -23,7 +23,7 @@ import { z } from 'zod/v4';
 import type { MutateResult } from '@sigloch/contracts/harness';
 import type { FitAdvisory } from './fit-advisory.js';
 import type { MCPToolRegistry } from './mcp-tools.js';
-import type { GenerationStep } from './generate.js';
+import { GenerationStep } from './generate.js';
 import { preflightBatch, type PreflightKnown } from './preflight.js';
 import {
   duplicateHits,
@@ -981,7 +981,12 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
     if (opts.intent) genInput.intent = opts.intent;
     if (deferred.size > 0) genInput.defer = [...deferred];
     if (bestOfN) genInput.selection = 'driver';
-    const gen = (await registry['graph_generate'].handler(genInput)) as GenerationStep;
+    // Die Tool-Registry liefert `unknown` — bis hierher stand hier ein blanker
+    // `as GenerationStep`. Damit lief eine kaputte oder gewanderte Tool-Antwort
+    // still weiter: `gen.phase`/`gen.focusKey` wären `undefined`, die
+    // Stagnations- und Defer-Logik hätte auf Nichts gesteuert. `parse` bricht
+    // laut ab — der Vertrag SCHEMA-generation-step gilt an genau dieser Grenze.
+    const gen = GenerationStep.parse(await registry['graph_generate'].handler(genInput));
     stats.genRounds = round + 1;
     trace(`[generate ${round + 1}] phase=${gen.phase} done=${gen.done}`);
     if (gen.done) {
