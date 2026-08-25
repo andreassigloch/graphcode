@@ -24,9 +24,18 @@
  *      (`init`) with NO sigloch source tree present.
  *   3. Both entrypoints AND the subpath exports resolve in that foreign repo.
  */
-import { describe, it, expect, beforeAll } from 'vitest';
+import { describe, it, expect, beforeAll, beforeEach, afterEach } from 'vitest';
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, mkdirSync, writeFileSync, rmSync, readFileSync, readdirSync, existsSync } from 'node:fs';
+import {
+  mkdtempSync,
+  mkdirSync,
+  writeFileSync,
+  rmSync,
+  readFileSync,
+  readdirSync,
+  existsSync,
+  symlinkSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -86,6 +95,49 @@ export function duplicates(ms: PkgManifest[]): string[] {
   return [...byName.entries()]
     .filter(([, copies]) => copies.length > 1)
     .map(([name, copies]) => `${name}: ${copies.join(' | ')}`);
+}
+
+/**
+ * CR-GC-403 — das URTEIL des Guards, als Funktion.
+ *
+ * Der Guard muss VIER Lagen unterscheiden, nicht zwei. CR-GC-404 hatte drei davon auf
+ * "irgendein Symlink → uebersprungen" zusammengezogen; damit deckelte ein EINZELNER Link
+ * (npm link auf genau ein Schwester-Repo ist der uebliche Fall) den Guard ueber dem Rest
+ * des Baums still ab, und ein leerer/fehlender Baum war von einem verlinkten nicht mehr
+ * zu unterscheiden.
+ */
+export type TreeVerdict =
+  | { kind: 'missing' }
+  | { kind: 'empty' }
+  | { kind: 'linked'; links: string[] }
+  | {
+      kind: 'installed';
+      dirs: string[];
+      links: string[];
+      manifests: number;
+      selfDeps: string[];
+      dupes: string[];
+    };
+
+export function auditSiglochTree(root: string, relativeTo: string): TreeVerdict {
+  if (!existsSync(root)) return { kind: 'missing' };
+  const entries = readdirSync(root, { withFileTypes: true });
+  if (entries.length === 0) return { kind: 'empty' };
+  const links = entries.filter((e) => e.isSymbolicLink()).map((e) => e.name);
+  const dirs = entries.filter((e) => e.isDirectory()).map((e) => e.name);
+  // Nur ein Baum, der GANZ aus Symlinks besteht, ist ein Workspace. Ein einzelner Link
+  // (`npm link` auf EIN Schwester-Repo) darf den Guard ueber dem Rest nicht abdecken —
+  // sonst haette das Ueberspringen genau die stille Wirkung, die es vermeiden soll.
+  if (links.length === entries.length) return { kind: 'linked', links };
+  const manifests = collectManifests(root, relativeTo);
+  return {
+    kind: 'installed',
+    dirs,
+    links,
+    manifests: manifests.length,
+    selfDeps: selfDependents(manifests),
+    dupes: duplicates(manifests),
+  };
 }
 const CLI_JS = join(REPO_ROOT, 'dist', 'cli.js');
 
@@ -260,38 +312,132 @@ describe('TEST-distribution: npx distribution', () => {
    */
   it('installs each @sigloch package exactly once, and none depends on itself', () => {
     const root = join(REPO_ROOT, 'node_modules', '@sigloch');
+    const verdict = auditSiglochTree(root, REPO_ROOT);
 
-    // CR-GC-404: in einer VERLINKTEN Arbeitskopie gibt es nichts zu pruefen.
-    //
-    // `npm run link:siblings` ersetzt jedes @sigloch-Paket durch einen Symlink auf das
-    // Schwester-Repo. `readdirSync(withFileTypes)` meldet einen Symlink als `isSymbolicLink()`,
-    // NICHT als `isDirectory()` — der Walk betrat also gar nichts, fand null Manifeste und fiel
-    // ueber seine eigene Absicherung ("worthless if it walked an empty tree"). Der Guard tat
-    // damit das Richtige (laut statt still), aber er blieb dauerhaft rot, und ein dauerhaft
-    // roter Test wird nach zwei Tagen ignoriert — samt dem echten Fehlschlag daneben.
-    //
-    // Den Symlinks zu FOLGEN waere die falsche Reparatur: der Guard prueft eine INSTALLATION
-    // (npm hat ein Paket zweimal ausgelegt), und ein Workspace-Verzeichnis ist keine. Er wuerde
-    // dann etwas anderes messen und trotzdem gruen melden — die schlechtere Lage.
-    //
-    // Also: uebersprungen, mit Begruendung in der Ausgabe. In CI (`npm ci`, ci.yml) liegen echte
-    // Verzeichnisse, dort laeuft er vollstaendig — und genau dort landet die Arbeit.
-    const linked = readdirSync(root, { withFileTypes: true }).filter((e) => e.isSymbolicLink());
-    if (linked.length > 0) {
+    // VERLINKTE Arbeitskopie (CR-GC-404/403): `npm run link:siblings` ersetzt JEDES
+    // @sigloch-Paket durch einen Symlink auf das Schwester-Repo. Den Symlinks zu FOLGEN
+    // waere die falsche Reparatur: der Guard prueft eine INSTALLATION (npm hat ein Paket
+    // zweimal ausgelegt), und ein Workspace-Verzeichnis ist keine. Also uebersprungen —
+    // mit Begruendung in der Ausgabe, kein stiller Deckel. In CI (`npm ci`) liegen echte
+    // Verzeichnisse, dort laeuft er vollstaendig.
+    if (verdict.kind === 'linked') {
       console.log(
-        `[distribution] uebersprungen: ${linked.length} verlinkte @sigloch-Pakete ` +
-          `(${linked.map((e) => e.name).join(', ')}). Der Guard prueft eine Installation, ` +
-          `nicht einen Workspace — in CI (npm ci) laeuft er vollstaendig.`,
+        `[distribution] uebersprungen: alle ${verdict.links.length} @sigloch-Eintraege sind ` +
+          `Symlinks (${verdict.links.join(', ')}). Der Guard prueft eine Installation, nicht ` +
+          `einen Workspace — in CI (npm ci) laeuft er vollstaendig. ` +
+          `\`npm install\` stellt den pruefbaren Zustand wieder her.`,
       );
       return;
     }
 
-    const manifests = collectManifests(root, REPO_ROOT);
+    // LEER oder FEHLEND ist NICHT dasselbe wie verlinkt und wird nie uebersprungen: dort
+    // ist der Baum kaputt, und ein Guard, der eine kaputte Installation wegwinkt, ist
+    // schlimmer als keiner (CR-GC-403, Akzeptanzkriterium 3).
+    expect(
+      verdict.kind,
+      verdict.kind === 'missing'
+        ? `${root} existiert nicht — hier ist weder etwas installiert noch etwas verlinkt. ` +
+            'Kein Ueberspringen: `npm install` fehlt.'
+        : `${root} ist LEER — kein Verzeichnis, kein Symlink. Das ist keine verlinkte ` +
+            'Arbeitskopie, sondern eine kaputte Installation.',
+    ).toBe('installed');
+    if (verdict.kind !== 'installed') return; // Narrowing; die Assertion oben hat schon rot gemeldet.
 
-    // The guard is worthless if it walked an empty tree.
-    expect(manifests.length).toBeGreaterThanOrEqual(5);
-    expect(selfDependents(manifests)).toEqual([]);
-    expect(duplicates(manifests)).toEqual([]);
+    // Teilweise verlinkt (npm link auf EIN Schwester-Repo) bleibt pruefbar: die echten
+    // Verzeichnisse werden gelaufen, nur die Links fehlen im Nenner.
+    if (verdict.links.length > 0) {
+      console.log(
+        `[distribution] teilweise verlinkt (${verdict.links.join(', ')}) — die ` +
+          `${verdict.dirs.length} echten Verzeichnisse werden trotzdem geprueft.`,
+      );
+    }
+
+    // Der Guard ist wertlos, wenn er einen leeren Baum gelaufen ist: jedes echte
+    // Verzeichnis muss ein Manifest geliefert haben.
+    expect(verdict.manifests).toBeGreaterThanOrEqual(verdict.dirs.length);
+    if (verdict.links.length === 0) expect(verdict.manifests).toBeGreaterThanOrEqual(5);
+    expect(verdict.selfDeps).toEqual([]);
+    expect(verdict.dupes).toEqual([]);
+  });
+
+  /**
+   * CR-GC-403 — die vier Lagen, an echten Verzeichnissen und echten Symlinks.
+   *
+   * Ohne diesen Fall waere das Ueberspringen ein Versprechen ohne Beleg. Hier laeuft
+   * dieselbe Urteilsfunktion, die der Guard oben benutzt, gegen einen gebauten Baum:
+   * sauber, selbst-abhaengig, ganz verlinkt, teilweise verlinkt, leer, fehlend.
+   */
+  describe('CR-GC-403: der Guard unterscheidet Installation, Workspace und kaputten Baum', () => {
+    let dir: string;
+    const pkg = (rel: string, body: Record<string, unknown>): string => {
+      mkdirSync(join(dir, rel), { recursive: true });
+      writeFileSync(join(dir, rel, 'package.json'), JSON.stringify(body));
+      return join(dir, rel);
+    };
+
+    beforeEach(() => {
+      dir = mkdtempSync(join(tmpdir(), 'gc-403-'));
+    });
+    afterEach(() => {
+      rmSync(dir, { recursive: true, force: true });
+    });
+
+    it('installierter Baum, sauber: geprueft, keine Befunde', () => {
+      mkdirSync(join(dir, 'root'));
+      pkg('root/contracts', { name: '@sigloch/contracts', version: '6.3.0' });
+      pkg('root/se-engine', { name: '@sigloch/se-engine', version: '1.1.0' });
+      const v = auditSiglochTree(join(dir, 'root'), dir);
+      expect(v.kind).toBe('installed');
+      if (v.kind !== 'installed') return;
+      expect(v.dirs.sort()).toEqual(['contracts', 'se-engine']);
+      expect(v.manifests).toBe(2);
+      expect(v.selfDeps).toEqual([]);
+      expect(v.dupes).toEqual([]);
+    });
+
+    it('GANZ verlinkt: uebersprungen, mit den Namen der Links im Urteil', () => {
+      mkdirSync(join(dir, 'root'));
+      const real = pkg('workspace/contracts', { name: '@sigloch/contracts', version: '6.3.0' });
+      const real2 = pkg('workspace/se-engine', { name: '@sigloch/se-engine', version: '1.1.0' });
+      symlinkSync(real, join(dir, 'root', 'contracts'));
+      symlinkSync(real2, join(dir, 'root', 'se-engine'));
+      const v = auditSiglochTree(join(dir, 'root'), dir);
+      expect(v.kind).toBe('linked');
+      if (v.kind !== 'linked') return;
+      expect(v.links.sort()).toEqual(['contracts', 'se-engine']);
+    });
+
+    it('TEILWEISE verlinkt: nicht uebersprungen — der Self-Dep im echten Verzeichnis wird gefunden', () => {
+      mkdirSync(join(dir, 'root'));
+      const real = pkg('workspace/contracts', { name: '@sigloch/contracts', version: '6.3.0' });
+      symlinkSync(real, join(dir, 'root', 'contracts'));
+      // Der reale Defekt aus CR-SM-248, kuenstlich eingesetzt: ein Paket fuehrt sich selbst
+      // als dependency, npm nistet daraufhin eine zweite Kopie IN das Paket hinein.
+      pkg('root/graphify', {
+        name: '@sigloch/graphify',
+        version: '0.2.0',
+        dependencies: { '@sigloch/graphify': 'file:' },
+      });
+      pkg('root/graphify/node_modules/@sigloch/graphify', { name: '@sigloch/graphify', version: '0.1.0' });
+      const v = auditSiglochTree(join(dir, 'root'), dir);
+      expect(v.kind).toBe('installed');
+      if (v.kind !== 'installed') return;
+      expect(v.links).toEqual(['contracts']);
+      expect(v.dirs).toEqual(['graphify']);
+      expect(v.selfDeps).toEqual(['@sigloch/graphify -> itself']);
+      expect(v.dupes).toEqual([
+        '@sigloch/graphify: 0.2.0 @ root/graphify | 0.1.0 @ root/graphify/node_modules/@sigloch/graphify',
+      ]);
+    });
+
+    it('LEER ist nicht verlinkt: eigenes Urteil, nie uebersprungen', () => {
+      mkdirSync(join(dir, 'root'));
+      expect(auditSiglochTree(join(dir, 'root'), dir).kind).toBe('empty');
+    });
+
+    it('FEHLEND ist ein Urteil, kein ENOENT-Absturz', () => {
+      expect(auditSiglochTree(join(dir, 'gibt-es-nicht'), dir).kind).toBe('missing');
+    });
   });
 
   /**
