@@ -1920,6 +1920,12 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "id": "FLOW-metric-policy",
+      "type": "FLOW",
+      "name": "Urteils-Policy",
+      "description": "Die geltenden Urteilsschwellen: wie der Mensch sie in graphcode.config.jsonc schreibt und wie sie nach dem Auffuellen mit DEFAULT_METRIC_POLICY gelten. Dieselbe Form in zwei Fassungen, deshalb ein Vertrag. Keine Schwelle steht als Literal im Regelcode."
+    },
+    {
       "id": "FLOW-migrated-graph",
       "type": "FLOW",
       "name": "Migrated-Graph",
@@ -5063,6 +5069,18 @@
       "concept": true
     },
     {
+      "id": "SCHEMA-metric-policy",
+      "type": "SCHEMA",
+      "name": "MetricPolicy",
+      "description": "Die Schwellen je Urteil: instability, lcom4, crossingFlows, riskRpn, moduleSize. Aus @sigloch/contracts, deshalb external.",
+      "external": true,
+      "realRef": {
+        "file": "packages/contracts/src/se/policy.ts",
+        "symbol": "MetricPolicy",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "SCHEMA-metric-vector",
       "type": "SCHEMA",
       "name": "MetricVector",
@@ -7375,6 +7393,11 @@
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "ACTOR-developer",
+      "target": "FLOW-metric-policy",
+      "type": "io"
     },
     {
       "source": "ACTOR-developer",
@@ -12195,6 +12218,26 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "FLOW-metric-policy",
+      "target": "FUNC-evaluate-rules",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-metric-policy",
+      "target": "FUNC-load-config",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-metric-policy",
+      "target": "FUNC-take-steering-snapshot",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-metric-policy",
+      "target": "SCHEMA-metric-policy",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-migrated-graph",
       "target": "ACTOR-developer",
       "type": "io",
@@ -14186,6 +14229,11 @@
       "target": "MOD-harness",
       "type": "allocate",
       "weight": "1"
+    },
+    {
+      "source": "FUNC-load-config",
+      "target": "FLOW-metric-policy",
+      "type": "io"
     },
     {
       "source": "FUNC-load-config",
@@ -17711,5 +17759,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 198
+  "graphVersion": 199
 }

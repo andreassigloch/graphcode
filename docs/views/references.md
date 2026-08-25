@@ -20,6 +20,7 @@
 | `ACTOR-developer` | io | `FLOW-cli-command` |
 | `ACTOR-developer` | io | `FLOW-export-request` |
 | `ACTOR-developer` | io | `FLOW-graph-state` |
+| `ACTOR-developer` | io | `FLOW-metric-policy` |
 | `ACTOR-developer` | io | `FLOW-mutate-cmd` |
 | `ACTOR-developer` | io | `FLOW-steering-trigger` |
 | `ACTOR-developer` | io | `FLOW-version-bump` |
@@ -846,6 +847,10 @@
 | `FLOW-measurement-vector` | relation | `SCHEMA-measurement-vector` |
 | `FLOW-merged-graph` | io | `ACTOR-developer` |
 | `FLOW-merged-graph` | relation | `SCHEMA-ontology-graph` |
+| `FLOW-metric-policy` | io | `FUNC-evaluate-rules` |
+| `FLOW-metric-policy` | io | `FUNC-load-config` |
+| `FLOW-metric-policy` | io | `FUNC-take-steering-snapshot` |
+| `FLOW-metric-policy` | relation | `SCHEMA-metric-policy` |
 | `FLOW-migrated-graph` | io | `ACTOR-developer` |
 | `FLOW-migrated-graph` | relation | `SCHEMA-ontology-graph` |
 | `FLOW-module-metrics` | io | `ACTOR-dashboard` |
@@ -1208,6 +1213,7 @@
 | `FUNC-list-elements` | io | `FLOW-element-slice` |
 | `FUNC-list-elements` | satisfy | `REQ-query-precision` |
 | `FUNC-load-config` | allocate | `MOD-harness` |
+| `FUNC-load-config` | io | `FLOW-metric-policy` |
 | `FUNC-load-config` | satisfy | `REQ-thresholds-from-config` |
 | `FUNC-load-graph` | allocate | `MOD-harness` |
 | `FUNC-load-graph` | io | `FLOW-graph-state` |
