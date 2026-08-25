@@ -34,6 +34,7 @@ import {
   type PhaseGateReadiness,
 } from '../readiness.js';
 import { evaluateAll, readinessOf, stripViolationContext, type Finding } from '../evaluation.js';
+import { groupViolations, type ViolationGroup } from '@sigloch/graphcode-client';
 import { loadTargetProfile, intentCoverage, type AnchorCoverage } from '../target-profile.js';
 import { helpEntry, contextualHelp, type HelpEntry, type ContextualMeasure } from '../viewer/help.js';
 import { formatEExampleFor } from '../authoring-example.js';
@@ -55,22 +56,31 @@ import type { ToolContext } from '../tool-context.js';
  * einzige keine Projektion hatten.
  */
 const detailField = z
-  .enum(['summary', 'full'])
+  .enum(['summary', 'full', 'grouped'])
   .default('full')
   .describe(
     'full (Default) = das ungekürzte Finding inkl. `context` (candidate_targets/existing_traces). ' +
       'summary lässt `context` weg — ruleId, severity, message, fixHint, elementId und source ' +
       'bleiben, also alles zum Verstehen und Reparieren; `context` stellt den Löwenanteil der ' +
-      'Antwortbytes (gemessen: Ergebnisse über 750 KB bei 667 Knoten). Gleiche Semantik wie ' +
-      'graph_mutate.violations, aber SPIEGELVERKEHRTER Default: graph_mutate kürzt per Default, ' +
-      'die Diagnose-Tools liefern per Default voll — das ist die Zusage aus CR-GC-309 ("wer ' +
-      'candidate_targets braucht, fragt rules_get_violations"), verankert in mcp.mutate-violations. ' +
-      'Bei drohendem Überlauf hier explizit summary anfordern.',
+      'Antwortbytes (gemessen: Ergebnisse über 750 KB bei 667 Knoten). ' +
+      'grouped (CR-GC-411) = die Mittel-Ebene: EINE Gruppe je ruleId mit {ruleId, severity, count, ' +
+      'message, fixHint, elementIds, elementIdsOmitted}, absteigend nach count. Erst gruppieren, ' +
+      'dann kappen — `count` zählt über die UNGEKAPPTEN Verstöße, `elementIdsOmitted` benennt die ' +
+      'Kappung (10 Element-IDs je Gruppe). Für die Diagnose "welche Regeln feuern, an welchen ' +
+      'Elementen" ohne Zeile-pro-Verstoß-Rauschen; `total` bei rules_get_violations bleibt die ' +
+      'Zahl der VERSTÖSSE, nicht der Gruppen. Wer die Element-IDs vollständig braucht, nimmt summary. ' +
+      'Gleiche Semantik wie graph_mutate.violations, aber SPIEGELVERKEHRTER Default: graph_mutate ' +
+      'kürzt per Default, die Diagnose-Tools liefern per Default voll — das ist die Zusage aus ' +
+      'CR-GC-309 ("wer candidate_targets braucht, fragt rules_get_violations"), verankert in ' +
+      'mcp.mutate-violations. Bei drohendem Überlauf hier explizit summary oder grouped anfordern.',
   );
+
+/** Die drei Projektionen EINER Ergebnisliste (CR-GC-398 + CR-GC-411). */
+type Detail = 'summary' | 'full' | 'grouped';
 
 /** Default-Auflösung für Direktaufrufe des Handlers (Tests, In-Process) — dort
  *  läuft kein Zod-Parse, der den Schema-Default einsetzen würde. */
-const detailOf = (d: 'summary' | 'full' | undefined): 'summary' | 'full' => d ?? 'full';
+const detailOf = (d: Detail | undefined): Detail => d ?? 'full';
 
 const RulesEvaluateInputSchema = z.object({ detail: detailField });
 const GraphNextStepInputSchema = z.looseObject({});
@@ -126,13 +136,21 @@ const GraphTestsInputSchema = z.object({
 export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
   const { harness, auditLog, graphVersion } = ctx;
 
-  /** Projektion der EINEN Ergebnisliste — nie eine zweite Erhebung (CR-GC-398). */
-  const project = (findings: Finding[], detail: 'summary' | 'full'): Finding[] =>
-    detail === 'full' ? findings : stripViolationContext(findings);
+  /**
+   * Projektion der EINEN Ergebnisliste — nie eine zweite Erhebung (CR-GC-398).
+   * `grouped` (CR-GC-411) delegiert an die SSOT-Aggregation aus
+   * @sigloch/graphcode-client, dieselbe, die das gve-Dashboard rendert — kein
+   * zweiter Gruppierungspfad in der Familie.
+   */
+  const project = (findings: Finding[], detail: Detail): Finding[] | ViolationGroup[] => {
+    if (detail === 'full') return findings;
+    if (detail === 'grouped') return groupViolations(findings);
+    return stripViolationContext(findings);
+  };
 
   const rules_evaluate: MCPTool<
     z.infer<typeof RulesEvaluateInputSchema>,
-    { violations: Finding[]; skipped: string[] }
+    { violations: Finding[] | ViolationGroup[]; skipped: string[] }
   > = {
     name: 'rules_evaluate',
     description:
@@ -151,7 +169,7 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
 
   const rules_get_violations: MCPTool<
     z.infer<typeof RulesGetViolationsInputSchema>,
-    { violations: Finding[]; total: number; skipped: string[] }
+    { violations: Finding[] | ViolationGroup[]; total: number; skipped: string[] }
   > = {
     name: 'rules_get_violations',
     description:
@@ -165,6 +183,9 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
       const matched = input.severity
         ? ev.findings.filter((v) => v.severity === input.severity)
         : ev.findings;
+      // `total` ist die Zahl der VERSTÖSSE, nie der Gruppen — auch bei
+      // detail:'grouped' (CR-GC-411): die gefilterte Grundgesamtheit ist die
+      // Aussage, die Projektion ändert nur ihre Darstellung.
       return { violations: project(matched, detailOf(input.detail)), total: matched.length, skipped: ev.skipped };
     },
   };

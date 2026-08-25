@@ -24,6 +24,7 @@ import { GraphCodeHarness } from '../src/harness.js';
 import { bindToolsToHarness } from '../src/mcp-tools.js';
 import { evaluateAll } from '../src/evaluation.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
+import { groupViolations, type ViolationGroup } from '@sigloch/graphcode-client';
 
 const REPO_ROOT = process.cwd();
 
@@ -125,5 +126,62 @@ describe('TEST-evaluation-reconciliation: eine Auswertungsfläche (CR-GC-398)', 
     expect(summary.total).toBe(full.total);
     expect(summary.violations.every((v) => v.context === undefined)).toBe(true);
     expect(full.violations.some((v) => v.context !== undefined)).toBe(true);
+  });
+
+  it('detail:"grouped" zählt über die UNGEKAPPTE Grundgesamtheit, `total` bleibt die Verstoßzahl', async () => {
+    const full = await tools.rules_get_violations.handler({ detail: 'full' });
+    const grouped = await tools.rules_get_violations.handler({ detail: 'grouped' });
+    const groups = grouped.violations as ViolationGroup[];
+
+    // `total` ist die Zahl der VERSTÖSSE, nicht der Gruppen (CR-GC-411).
+    expect(grouped.total).toBe(full.total);
+    expect(groups.length).toBeLessThan(grouped.total);
+    expect(groups.reduce((a, g) => a + g.count, 0)).toBe(grouped.total);
+
+    // Jede Regel genau einmal, absteigend nach count.
+    expect(new Set(groups.map((g) => g.ruleId)).size).toBe(groups.length);
+    expect([...groups].sort((a, b) => b.count - a.count).map((g) => g.ruleId)).toEqual(
+      groups.map((g) => g.ruleId),
+    );
+
+    // Erst gruppieren, dann kappen: die Kappung ist benannt, nie still.
+    for (const g of groups) {
+      expect(g.elementIds.length).toBeLessThanOrEqual(10);
+      expect(g.elementIds.length + g.elementIdsOmitted).toBeLessThanOrEqual(g.count);
+    }
+
+    // KEINE zweite Aggregation im Tool-Layer: die Antwort ist Zeichen für Zeichen
+    // die SSOT-Funktion aus @sigloch/graphcode-client auf DERSELBEN Grundgesamtheit.
+    // Ein lokaler Nachbau (und damit auch ein cap-then-count) würde hier abweichen;
+    // das Verhalten über der Kappgrenze deckt die Unit-Suite des Pakets ab.
+    expect(groups).toEqual(groupViolations(evaluateAll(harness).findings));
+
+    // Dieselbe Grundgesamtheit auch über rules_evaluate.
+    const evaluated = await tools.rules_evaluate.handler({ detail: 'grouped' });
+    expect((evaluated.violations as ViolationGroup[]).map((g) => g.ruleId)).toEqual(
+      groups.map((g) => g.ruleId),
+    );
+  });
+
+  it('Antwortgröße auf dem REALEN Graphen: grouped ≪ summary ≪ full', async () => {
+    const bytes = async (detail: 'full' | 'summary' | 'grouped'): Promise<number> =>
+      Buffer.byteLength(JSON.stringify(await tools.rules_evaluate.handler({ detail })), 'utf8');
+
+    const [fullBytes, summaryBytes, groupedBytes] = [
+      await bytes('full'),
+      await bytes('summary'),
+      await bytes('grouped'),
+    ];
+
+    // Das offene Akzeptanzkriterium aus CR-GC-411. Gemessen am 688-Element-Graphen
+    // dieses Repos (30 Verstöße): full 33 971 · summary 7 406 · grouped 4 469 Bytes.
+    // Der Faktor gegen `full` wächst mit der Zahl der Verstöße (context dominiert);
+    // die Schranke hier ist bewusst die konservative, damit sie auf einem roteren
+    // Graphen nicht kippt.
+    // eslint-disable-next-line no-console
+    console.log(`CR-GC-411 Antwortgröße: full=${fullBytes} summary=${summaryBytes} grouped=${groupedBytes}`);
+    expect(groupedBytes).toBeLessThan(summaryBytes);
+    expect(summaryBytes).toBeLessThan(fullBytes);
+    expect(groupedBytes * 4).toBeLessThan(fullBytes);
   });
 });
