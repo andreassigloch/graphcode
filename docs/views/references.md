@@ -608,6 +608,7 @@
 | `FCHAIN-apply-gate` | compose | `FUNC-own-kuzu-host` |
 | `FCHAIN-apply-gate` | compose | `FUNC-save-graph` |
 | `FCHAIN-apply-gate` | compose | `FUNC-session-shutdown` |
+| `FCHAIN-apply-gate` | compose | `FUNC-tool-context` |
 | `FCHAIN-apply-gate` | satisfy | `REQ-code-governed-quality` |
 | `FCHAIN-apply-gate` | satisfy | `REQ-mcp-gate-symmetry` |
 | `FCHAIN-apply-gate` | satisfy | `REQ-post-apply-gate` |
@@ -683,7 +684,6 @@
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-harness-cli` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-run-verb` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-session-shutdown` |
-| `FCHAIN-repo-lifecycle` | compose | `FUNC-tool-context` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-upgrade` |
 | `FCHAIN-repo-lifecycle` | satisfy | `REQ-session-leaves-nothing-behind` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-author-req` |
@@ -808,6 +808,7 @@
 | `FLOW-formatE-candidates` | io | `FUNC-decode` |
 | `FLOW-formatE-candidates` | relation | `SCHEMA-format-e` |
 | `FLOW-gate-verdict` | io | `FUNC-take-steering-snapshot` |
+| `FLOW-gate-verdict` | io | `FUNC-tool-context` |
 | `FLOW-gate-verdict` | relation | `SCHEMA-mutate-result` |
 | `FLOW-graph-snapshot` | io | `ACTOR-developer` |
 | `FLOW-graph-snapshot` | io | `FUNC-apply-reseed` |
@@ -1344,6 +1345,7 @@
 | `FUNC-test-ui` | io | `FLOW-skill-report` |
 | `FUNC-test-ui` | satisfy | `REQ-code-governed-quality` |
 | `FUNC-tool-context` | allocate | `MOD-mcp-tools` |
+| `FUNC-tool-context` | io | `FLOW-trajectory` |
 | `FUNC-tool-context` | satisfy | `REQ-mcp-gate-symmetry` |
 | `FUNC-upgrade` | allocate | `MOD-cli` |
 | `FUNC-upgrade` | io | `FLOW-install-result` |

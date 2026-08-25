@@ -370,7 +370,25 @@ priority: should · status: open · kinds: non-functional
 
 Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `FUNC-load-graph` · `FUNC-save-graph` · allocate ▶ `MOD-harness`
 
-##### 3.1.1.10  `FUNC-own-kuzu-host` — ownKuzu()
+##### 3.1.1.10  `FUNC-tool-context` — createToolContext
+
+> auch in: `FUNC-block-ruestzeug`
+
+Stellt jedem Werkzeugaufruf seinen Kontext bereit: Aufrufer, Repo-Wurzel und die Weiterleitung an den Besitzerprozess.
+
+io ◀ `FLOW-gate-verdict` · io ▶ `FLOW-trajectory` · allocate ▶ `MOD-mcp-tools`
+
+###### `REQ-mcp-gate-symmetry` — MCP-Gate-Symmetrie (L2)
+
+> auch unter: `FCHAIN-apply-gate`
+
+CR-GC-101 L2: MCP graph_mutate == in-process mutate() — identische Semantik, identisches Violations-Dict (end-to-end).
+
+priority: should · status: done · kinds: non-functional
+
+Verification ◀ `TEST-mcp-stdio-server` (integration) · `TEST-mcp-symmetry` (integration) · satisfy ◀ `FCHAIN-apply-gate` · `FUNC-tool-context` · allocate ▶ `MOD-mcp-tools`
+
+##### 3.1.1.11  `FUNC-own-kuzu-host` — ownKuzu()
 
 > auch in: `FUNC-block-gedaechtnis`
 
@@ -388,7 +406,7 @@ priority: should · status: done · kinds: non-functional
 
 Verification ◀ `TEST-bridge-follows-lock` (integration) · `TEST-gve-autostart` (unit) · `TEST-host-shim` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-session-lifecycle` (integration) · `TEST-status-verb` (unit) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness` · `MOD-host-bridge`
 
-##### 3.1.1.11  `FUNC-session-shutdown` — SessionLifecycle
+##### 3.1.1.12  `FUNC-session-shutdown` — SessionLifecycle
 
 > auch in: `FCHAIN-repo-lifecycle` · `FUNC-block-betrieb`
 
@@ -406,7 +424,7 @@ priority: should · status: done · kinds: non-functional
 
 Verification ◀ `TEST-bridge-follows-lock` (integration) · `TEST-gve-autostart` (unit) · `TEST-host-shim` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-session-lifecycle` (integration) · `TEST-status-verb` (unit) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness` · `MOD-host-bridge`
 
-##### 3.1.1.12  `FUNC-create-harness` — createHarness
+##### 3.1.1.13  `FUNC-create-harness` — createHarness
 
 > auch in: `FUNC-block-speicherwerk`
 
@@ -424,7 +442,7 @@ priority: should · status: done · kinds: non-functional
 
 Verification ◀ `TEST-bridge-follows-lock` (integration) · `TEST-gve-autostart` (unit) · `TEST-host-shim` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-session-lifecycle` (integration) · `TEST-status-verb` (unit) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness` · `MOD-host-bridge`
 
-##### 3.1.1.13  `FUNC-host-socket` — startHostSocket
+##### 3.1.1.14  `FUNC-host-socket` — startHostSocket
 
 > auch in: `FUNC-block-betrieb`
 
@@ -3228,24 +3246,6 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-cli-scaffold` (integration) · `TEST-upgrade` (integration) · satisfy ◀ `FUNC-harness-cli` · `FUNC-upgrade` · allocate ▶ `MOD-cli`
 
-##### 3.9.1.12  `FUNC-tool-context` — createToolContext
-
-> auch in: `FUNC-block-ruestzeug`
-
-Stellt jedem Werkzeugaufruf seinen Kontext bereit: Aufrufer, Repo-Wurzel und die Weiterleitung an den Besitzerprozess.
-
-io ◀ — · io ▶ — · allocate ▶ `MOD-mcp-tools`
-
-###### `REQ-mcp-gate-symmetry` — MCP-Gate-Symmetrie (L2)
-
-> auch unter: `FCHAIN-apply-gate`
-
-CR-GC-101 L2: MCP graph_mutate == in-process mutate() — identische Semantik, identisches Violations-Dict (end-to-end).
-
-priority: should · status: done · kinds: non-functional
-
-Verification ◀ `TEST-mcp-stdio-server` (integration) · `TEST-mcp-symmetry` (integration) · satisfy ◀ `FCHAIN-apply-gate` · `FUNC-tool-context` · allocate ▶ `MOD-mcp-tools`
-
 ### 3.10  Funktionen ohne FCHAIN
 
 #### 3.10.1  `FUNC-block-anschluss` — Agenten-Anschluss
@@ -4570,11 +4570,11 @@ Verification ◀ `TEST-executor-bestofn` (integration) · `TEST-target-profile` 
 
 ##### 3.10.7.7  `FUNC-tool-context` — createToolContext
 
-> auch in: `FCHAIN-repo-lifecycle`
+> auch in: `FCHAIN-apply-gate`
 
 Stellt jedem Werkzeugaufruf seinen Kontext bereit: Aufrufer, Repo-Wurzel und die Weiterleitung an den Besitzerprozess.
 
-io ◀ — · io ▶ — · allocate ▶ `MOD-mcp-tools`
+io ◀ `FLOW-gate-verdict` · io ▶ `FLOW-trajectory` · allocate ▶ `MOD-mcp-tools`
 
 ###### `REQ-mcp-gate-symmetry` — MCP-Gate-Symmetrie (L2)
 
@@ -5486,7 +5486,7 @@ io ◀ `ACTOR-claude-code` · io ▶ `FUNC-decode` · schema ▶ `SCHEMA-format-
 
 Das Urteil des Apply-Gates ueber die angewendete oder probierte Mutation: success, tier, Violations, Confidence. Es schliesst die Schleife, weil der naechste Snapshot darauf misst.
 
-io ◀ `FUNC-mutate` · io ▶ `FUNC-take-steering-snapshot` · schema ▶ `SCHEMA-mutate-result`
+io ◀ `FUNC-mutate` · io ▶ `FUNC-take-steering-snapshot` · `FUNC-tool-context` · schema ▶ `SCHEMA-mutate-result`
 
 ### 4.21  `FLOW-graph-snapshot` — Graph-Snapshot (SSOT-at-rest)
 
@@ -5684,7 +5684,7 @@ io ◀ `FUNC-deduce-tests` · io ▶ `ACTOR-claude-code` · schema ▶ `SCHEMA-t
 
 append-only Lern-Emission.
 
-io ◀ `FUNC-emit-trajectory` · io ▶ `ACTOR-learning-engine` · schema ▶ `SCHEMA-trajectory`
+io ◀ `FUNC-emit-trajectory` · `FUNC-tool-context` · io ▶ `ACTOR-learning-engine` · schema ▶ `SCHEMA-trajectory`
 
 ### 4.54  `FLOW-version-bump` — Version-Bump
 

@@ -10842,6 +10842,11 @@
     },
     {
       "source": "FCHAIN-apply-gate",
+      "target": "FUNC-tool-context",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-apply-gate",
       "target": "REQ-code-governed-quality",
       "type": "satisfy"
     },
@@ -11275,11 +11280,6 @@
     {
       "source": "FCHAIN-repo-lifecycle",
       "target": "FUNC-session-shutdown",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-repo-lifecycle",
-      "target": "FUNC-tool-context",
       "type": "compose"
     },
     {
@@ -11971,6 +11971,11 @@
     {
       "source": "FLOW-gate-verdict",
       "target": "FUNC-take-steering-snapshot",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-gate-verdict",
+      "target": "FUNC-tool-context",
       "type": "io"
     },
     {
@@ -14934,6 +14939,11 @@
     },
     {
       "source": "FUNC-tool-context",
+      "target": "FLOW-trajectory",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-tool-context",
       "target": "REQ-mcp-gate-symmetry",
       "type": "satisfy"
     },
@@ -17701,5 +17711,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 197
+  "graphVersion": 198
 }
