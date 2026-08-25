@@ -14,6 +14,7 @@ import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { StoreLock, StoreOwnershipError } from '../src/store-lock.js';
 import { readPackageVersion } from '../src/package-version.js';
+import { readHostStatus } from '../src/status.js';
 import { GraphCodeHarness } from '../src/harness.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
 
@@ -213,5 +214,56 @@ describe('TEST-store-lock (CR-GC-372): Puls statt nur PID', () => {
     owner.acquire();
     rmSync(lockPath, { force: true });
     expect(owner.heartbeat()).toBe(false);
+  });
+});
+
+describe('TEST-store-lock (CR-GC-420): der Lock ist ein Vertrag, kein Cast', () => {
+  let dir: string;
+  let lockPath: string;
+
+  beforeEach(() => {
+    dir = mkdtempSync(join(tmpdir(), 'graphcode-contract-'));
+    lockPath = join(dir, '.graphcode', 'owner.lock');
+    mkdirSync(join(dir, '.graphcode'), { recursive: true });
+  });
+  afterEach(() => rmSync(dir, { recursive: true, force: true }));
+
+  /** Altert die Lock-Datei um `ms`, ohne zu warten. */
+  function age(ms: number): void {
+    const t = new Date(Date.now() - ms);
+    utimesSync(lockPath, t, t);
+  }
+
+  it('holt einen FRISCHEN Lock OHNE pid nicht zurück — auch nicht auf demselben Rechner', () => {
+    // Format-Drift/abgeschnittener Write, der zufaellig gueltiges JSON hinterlaesst.
+    // Vor CR-GC-420 lief das in `pidAlive(undefined)` → `process.kill(undefined, 0)`
+    // wirft TypeError (ERR_INVALID_ARG_TYPE), NICHT EPERM ⇒ „Prozess nachweislich weg"
+    // ⇒ rmSync auf den Lock eines moeglicherweise lebenden Owners.
+    writeFileSync(lockPath, JSON.stringify({ hostname: hostname(), startedAt: new Date().toISOString() }));
+    expect(() => new StoreLock(lockPath).acquire()).toThrow(StoreOwnershipError);
+    expect(existsSync(lockPath)).toBe(true); // nicht geklaut
+  });
+
+  it('behandelt einen unvollständigen Lock wie einen korrupten: erst nach der Gnadenfrist', () => {
+    writeFileSync(lockPath, JSON.stringify({ pid: process.pid })); // hostname/startedAt fehlen
+    expect(() => new StoreLock(lockPath).acquire()).toThrow(StoreOwnershipError);
+    age(60_000); // ueber STALE_CORRUPT_MS hinaus
+    const lock = new StoreLock(lockPath);
+    expect(() => lock.acquire()).not.toThrow();
+    lock.release();
+  });
+
+  it('lässt eine nicht-numerische pid nicht als „Prozess ist tot" durchgehen', () => {
+    writeFileSync(
+      lockPath,
+      JSON.stringify({ pid: '4242', hostname: hostname(), startedAt: new Date().toISOString() }),
+    );
+    expect(() => new StoreLock(lockPath).acquire()).toThrow(StoreOwnershipError);
+    expect(existsSync(lockPath)).toBe(true);
+  });
+
+  it('status.ts liest denselben Vertrag: ein unvollständiger Lock ist kein laufender Host', () => {
+    writeFileSync(lockPath, JSON.stringify({ pid: process.pid, hostname: hostname() })); // kein startedAt
+    expect(readHostStatus(dir, { pidAlive: () => true, hostnameImpl: hostname }).state).toBe('stale');
   });
 });

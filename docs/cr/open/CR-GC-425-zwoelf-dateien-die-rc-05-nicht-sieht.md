@@ -1,8 +1,9 @@
-# CR-GC-425 — Elf Dateien, die RC-05 nicht prüfen kann
+# CR-GC-425 — Zwölf Dateien, die RC-05 nicht prüfen kann
 
 **Status:** open (Befund, kein Fix) · **Angelegt:** 2026-08-25
 **Herkunft:** CR-DRAFT-GC-409 §C. CR-GC-423 hat die drei RC-05-Befunde geschlossen,
-CR-GC-424 sechs der 17 nicht zugeordneten Dateien. Diese elf bleiben — und ohne diesen
+CR-GC-424 sechs der 17 nicht zugeordneten Dateien. Diese zwölf bleiben (elf davon plus
+`src/lock-owner-contract.ts`, das CR-GC-420 danach neu angelegt hat) — und ohne diesen
 CR bleiben sie **unsichtbar**, weil die Liste nur als Anhang einer RC-05-Meldung existierte
 und mit deren Verschwinden mit verschwunden ist.
 
@@ -15,14 +16,14 @@ geprüft: ihre Importe dürfen jede Modulgrenze überqueren, ohne dass ein Befun
 
 ## Impact
 
-11 der 176 Import-Endpunkte unter `src/` liegen außerhalb der Prüfung. Kein aktueller
+12 der 178 Import-Endpunkte unter `src/` liegen außerhalb der Prüfung. Kein aktueller
 Fehlbefund — nachgerechnet gegen die realen Import-Kanten entsteht bei keiner plausiblen
 Zuordnung eine neue Modulgrenze. Es ist eine **Prüflücke**, kein Defekt: `graph_impact` und
 RC-05 sagen über diese Dateien nichts, und sagen auch nicht, dass sie nichts sagen.
 
-## Die elf, nach Ursache getrennt
+## Die zwölf, nach Ursache getrennt
 
-### A · Vier Dateien SIND im Modell — als SCHEMA, nicht als FUNC (Regel-Lücke)
+### A · Fünf Dateien SIND im Modell — als SCHEMA, nicht als FUNC (Regel-Lücke)
 
 | Datei | Modellknoten |
 |---|---|
@@ -30,8 +31,10 @@ RC-05 sagen über diese Dateien nichts, und sagen auch nicht, dass sie nichts sa
 | `src/schema-fingerprint-contract.ts` | SCHEMA-schema-fingerprint |
 | `src/target-profile-contract.ts` | SCHEMA-target-profile |
 | `src/test-selection.ts` | SCHEMA-impacted-tests, SCHEMA-test-selection |
+| `src/lock-owner-contract.ts` | SCHEMA-lock-owner (nachgetragen mit CR-GC-420) |
 
-Diese vier sind das Ergebnis von Gruppe A (CR-GC-412/416/419/421): reine Zod-Vertragsdateien.
+Diese fünf sind das Ergebnis von Gruppe A (CR-GC-412/416/419/421) und CR-GC-420: reine
+Zod-Vertragsdateien.
 Sie tragen eine `realRef` — aber an einem **SCHEMA**, und RC-05 liest nur FUNC-realRefs.
 Eine FUNC dafür zu erfinden wäre falsch: in diesen Dateien steht kein Verhalten.
 
@@ -62,7 +65,7 @@ sie zuarbeiten. Für sie ist eine eigene FUNC Modell-Inflation.
 
 1. **Billigster vollständiger Fix — contracts-CR: `MOD.path` als Liste.** `resolveMod` prüft
    heute ein einzelnes Präfix; eine Liste (`path: string | string[]`, gleiche
-   Longest-Prefix-Auflösung) würde alle elf Dateien ohne eine einzige erfundene FUNC zuordnen —
+   Longest-Prefix-Auflösung) würde alle zwölf Dateien ohne eine einzige erfundene FUNC zuordnen —
    MOD-cli benennt seine flachen Dateien, MOD-mcp-tools die seinen. Kosten: ein
    `@sigloch/contracts`-Version-Bump, Drift-Lock L1/L2 → Familie-Review.
 2. **Alternativ/ergänzend:** RC-05 zusätzlich SCHEMA-realRefs lesen. Braucht eine Regel dafür,
@@ -74,7 +77,7 @@ sie zuarbeiten. Für sie ist eine eigene FUNC Modell-Inflation.
    eine Compliance-Zahl ohne ihre Grundgesamtheit ist nicht interpretierbar.
 
 **Benötigte Entscheidung:** ob (1) als contracts-CR aufgesetzt wird — ohne sie bleibt die
-Zuordnung dieser elf Dateien in diesem Repo nicht ehrlich schließbar.
+Zuordnung dieser zwölf Dateien in diesem Repo nicht ehrlich schließbar.
 
 ## Nicht Teil dieses CR
 

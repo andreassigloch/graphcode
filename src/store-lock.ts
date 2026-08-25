@@ -21,6 +21,7 @@
 import { openSync, writeSync, closeSync, readFileSync, rmSync, mkdirSync, statSync, existsSync, utimesSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { hostname } from 'node:os';
+import { LockOwner } from './lock-owner-contract.js';
 import { readPackageVersion } from './package-version.js';
 
 /** Grace period after which an UNPARSEABLE lockfile is treated as stale (a mid-write window is sub-second). */
@@ -37,23 +38,20 @@ const HEARTBEAT_MS = 30_000;
  */
 const STALE_HEARTBEAT_MS = 90_000;
 
-/** Identity written into the lockfile so only the true owner releases it. */
-export interface LockOwner {
-  pid: number;
-  hostname: string;
-  startedAt: string;
-  /**
-   * Der Build, der den Store gerade besitzt (CR-GC-376).
-   *
-   * Ein Prozess lebt weiter mit dem Code, mit dem er gebootet hat: wer im Terminal
-   * ein neueres `graphcode` tippt, sieht dessen Zahlen — der Host im selben Repo
-   * kann ein älteres Paket fahren und damit eine andere Ontologie. Der Stempel ist
-   * die EINZIGE lokale Quelle für „welcher Build besitzt den Store", ohne den Host
-   * zu befragen (`status` ist read-only und darf nie an einem toten Port hängen).
-   * Fehlt das Feld, stammt der Lock von einem Owner vor diesem CR — unbekannt, nicht
-   * gleich.
-   */
-  version?: string;
+/**
+ * DER Leser des Lockfiles — eine Datei, ein Vertrag, eine Auslegung (CR-GC-420).
+ *
+ * `null` heißt „kein benennbarer Owner": Datei fehlt, ist unlesbar, ist kein JSON
+ * oder erfüllt den Vertrag nicht. Alle drei Fälle sind für den Aufrufer derselbe —
+ * er darf aus keinem von ihnen schließen, dass der bisherige Owner tot ist.
+ */
+export function readLockOwner(lockPath: string): LockOwner | null {
+  try {
+    const parsed = LockOwner.safeParse(JSON.parse(readFileSync(lockPath, 'utf8')));
+    return parsed.success ? parsed.data : null;
+  } catch {
+    return null;
+  }
 }
 
 /** Thrown when the store is already owned by a live process (a second writer is refused). */
@@ -173,11 +171,7 @@ export class StoreLock {
   }
 
   private readOwner(): LockOwner | null {
-    try {
-      return JSON.parse(readFileSync(this.lockPath, 'utf8')) as LockOwner;
-    } catch {
-      return null;
-    }
+    return readLockOwner(this.lockPath);
   }
 
   /** Remove the lockfile IFF it is provably stale; return whether it was reclaimed. */
@@ -212,6 +206,11 @@ export class StoreLock {
   }
 
   private pidAlive(pid: number): boolean {
+    // Zweite Verteidigungslinie hinter dem Vertrag (CR-GC-420): eine nicht-numerische
+    // PID darf NIE als „nachweislich weg" gelten. `process.kill(undefined, 0)` wirft
+    // TypeError (ERR_INVALID_ARG_TYPE), nicht EPERM — ein `false` an dieser Stelle
+    // löscht den Lock eines möglicherweise lebenden Owners.
+    if (!Number.isInteger(pid) || pid <= 0) return true;
     try {
       process.kill(pid, 0);
       return true; // signal delivered → alive

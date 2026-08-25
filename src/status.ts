@@ -33,6 +33,7 @@ import { hostname } from 'node:os';
 import { deriveMemberName } from './mcp-server.js';
 import { readPackageVersion } from './package-version.js';
 import { PACKAGE_NAME } from './scaffold-templates.js';
+import { readLockOwner } from './store-lock.js';
 
 /** Wie lange auf die Identitätsantwort eines Viewers gewartet wird. */
 const PROBE_TIMEOUT_MS = 750;
@@ -119,27 +120,22 @@ function defaultPidAlive(pid: number): boolean {
   }
 }
 
-/** Host-Zustand aus `.graphcode/owner.lock` — derselben Datei, die `StoreLock` schreibt. */
+/**
+ * Host-Zustand aus `.graphcode/owner.lock` — derselben Datei, die `StoreLock` schreibt,
+ * gelesen über DENSELBEN Vertrag (`readLockOwner`, CR-GC-420). Die frühere lokale
+ * `typeof`-Prüfung ist gelöscht: ein Vertrag mit zwei Auslegungen ist ein Parallelpfad.
+ */
 export function readHostStatus(repoRoot: string, deps: StatusDeps = {}): HostStatus {
   const lockPath = join(repoRoot, '.graphcode', 'owner.lock');
   if (!existsSync(lockPath)) return { state: 'none' };
-  let owner: { pid?: unknown; hostname?: unknown; startedAt?: unknown; version?: unknown };
-  try {
-    owner = JSON.parse(readFileSync(lockPath, 'utf8')) as typeof owner;
-  } catch {
-    return { state: 'stale' }; // unlesbar = kein Owner, den man benennen könnte
-  }
-  if (typeof owner.pid !== 'number') return { state: 'stale' };
-  const base = {
-    pid: owner.pid,
-    hostname: typeof owner.hostname === 'string' ? owner.hostname : undefined,
-    startedAt: typeof owner.startedAt === 'string' ? owner.startedAt : undefined,
-    version: typeof owner.version === 'string' ? owner.version : undefined,
-  };
+  const owner = readLockOwner(lockPath);
+  // Unlesbar oder nicht vertragskonform = kein Owner, den man benennen könnte.
+  if (!owner) return { state: 'stale' };
+  const base = { pid: owner.pid, hostname: owner.hostname, startedAt: owner.startedAt, version: owner.version };
   // Fremder Host: Liveness ist von hier aus nicht prüfbar — als laufend melden statt
   // einen fremden Rechner für tot zu erklären (dieselbe Vorsicht wie StoreLock).
   const here = (deps.hostnameImpl ?? hostname)();
-  if (base.hostname && base.hostname !== here) return { state: 'running', ...base };
+  if (owner.hostname !== here) return { state: 'running', ...base };
   const alive = (deps.pidAlive ?? defaultPidAlive)(owner.pid);
   return { state: alive ? 'running' : 'stale', ...base };
 }

@@ -5064,7 +5064,7 @@
       "name": "LockOwner",
       "description": "Halter des Store-Locks: Host, PID, Version, Zeitstempel.",
       "realRef": {
-        "file": "src/store-lock.ts",
+        "file": "src/lock-owner-contract.ts",
         "symbol": "LockOwner",
         "lang": "ts"
       }
@@ -17878,5 +17878,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 204
+  "graphVersion": 205
 }

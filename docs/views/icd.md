@@ -18,7 +18,7 @@
 | `SCHEMA-generation-step` | src/generate.ts#GenerationStep | reviewed |
 | `SCHEMA-health-report` | src/viewer/health.ts#HealthPayloadSchema | n/a |
 | `SCHEMA-impacted-tests` | src/test-selection.ts#TestImpactResultSchema | n/a |
-| `SCHEMA-lock-owner` | src/store-lock.ts#LockOwner | n/a |
+| `SCHEMA-lock-owner` | src/lock-owner-contract.ts#LockOwner | n/a |
 | `SCHEMA-markdown-view` | src/exporter.ts#MarkdownViewSchema | reviewed |
 | `SCHEMA-measurement-vector` | Konzept (noch kein Zod-Export) | reviewed |
 | `SCHEMA-metric-policy` | packages/contracts/src/se/policy.ts#MetricPolicy | n/a |
