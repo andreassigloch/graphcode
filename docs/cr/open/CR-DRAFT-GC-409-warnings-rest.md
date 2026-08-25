@@ -48,6 +48,15 @@ markieren wäre falsch — es sind graphcode-eigene Schemas.
 
 ## C · Braucht Code oder MOD-Zuordnung: RC-05 ×5 + 13 unassigned files
 
+> **Stand 2026-08-25 (graphVersion 204): abgearbeitet.** Ausgangslage war nicht ×5/13,
+> sondern **RC-05 ×3 / 17 unassigned** — Gruppe A hatte zwei RC-05 als Nebeneffekt
+> geschlossen und mit den vier neuen Vertragsmodulen vier Dateien hinzugefügt.
+> CR-GC-423 (drei io-Kanten für die drei echten Modulgrenzen) → **RC-05 3 → 0**;
+> CR-GC-424 (MOD-path für `src/viewer` + `src/hooks.ts`, FUNC-merge-nodes realisiert)
+> → **unassigned 17 → 11**. Keine neue Regel-ID, Gesamtzahl 35 → 32.
+> Die letzten 11 sind ohne contracts-Änderung nicht ehrlich zuordenbar — Befund und
+> Entscheidungsvorlage in **CR-GC-425**.
+
 Restliche undokumentierte Modulimporte (docs↔harness, cli→docs, harness→docs/
 element-slice/schema-migration, mcp-tools→codec/conformance/steering) und die 13
 keiner MOD zugeordneten Dateien (u.a. merge.ts, hooks.ts, testreport.ts,
