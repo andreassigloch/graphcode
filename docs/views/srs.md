@@ -1738,15 +1738,15 @@ FUNC-merge-nodes: Branch-/Multi-Dev-Merge conflict-free (deterministische Serial
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-merge` (integration) · satisfy ◀ `FCHAIN-merge-branches` · `FUNC-merge-nodes` · allocate ▶ `MOD-codec`
+Verification ◀ `TEST-merge` (integration) · satisfy ◀ `FCHAIN-merge-branches` · `FUNC-merge-nodes` · allocate ▶ `MOD-harness`
 
-##### 3.4.1.1  `FUNC-merge-nodes` — mergeNodes(graph)
+##### 3.4.1.1  `FUNC-merge-nodes` — replayBranchLog(log, sinceVersion)
 
 > auch in: `FUNC-block-gedaechtnis`
 
-Conflict-free Merge via merge_nodes + deterministischer Serialisierung; keine verlorenen Knoten/Traces.
+Reintegriert einen Branch, indem sein Kommando-Log nach dem Fork-Punkt in Log-Reihenfolge durch dasselbe Apply-Gate erneut angewendet wird (CR-GC-234, semantischer Rebase statt Text-Merge der graph.json). Konflikte sprechen Gate-Sprache: eine Charge, die auf der neuen Basis eine Error-Violation erzeugt oder einen geloeschten Knoten wiederbeleben wuerde, wird uebersprungen und mit Violations gemeldet; eine bereits enthaltene Charge gilt als idempotent.
 
-io ◀ `FLOW-branch-graphs` · io ▶ `FLOW-merged-graph` · allocate ▶ `MOD-codec`
+io ◀ `FLOW-branch-graphs` · io ▶ `FLOW-merged-graph` · allocate ▶ `MOD-harness`
 
 ###### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
 
@@ -1756,7 +1756,7 @@ Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Arte
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-merge-nodes` · allocate ▶ `MOD-codec` · `MOD-docs`
+Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-merge-nodes` · allocate ▶ `MOD-docs` · `MOD-harness`
 
 ###### `REQ-conflict-free-merge` — Conflict-free Graph-Merge
 
@@ -1766,7 +1766,7 @@ FUNC-merge-nodes: Branch-/Multi-Dev-Merge conflict-free (deterministische Serial
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-merge` (integration) · satisfy ◀ `FCHAIN-merge-branches` · `FUNC-merge-nodes` · allocate ▶ `MOD-codec`
+Verification ◀ `TEST-merge` (integration) · satisfy ◀ `FCHAIN-merge-branches` · `FUNC-merge-nodes` · allocate ▶ `MOD-harness`
 
 ###### `REQ-post-merge-nodes` — Postcondition: mergeNodes(graph)
 
@@ -1774,7 +1774,7 @@ Conflict-free gemerged; keine verlorenen Knoten/Traces; deterministisch sortiert
 
 priority: must · status: open · kinds: postcondition
 
-Verification ◀ `TEST-merge` (integration) · `TEST-merge-no-duplicate-edge` (integration) · satisfy ◀ `FUNC-merge-nodes` · allocate ▶ `MOD-codec`
+Verification ◀ `TEST-merge` (integration) · `TEST-merge-no-duplicate-edge` (integration) · satisfy ◀ `FUNC-merge-nodes` · allocate ▶ `MOD-harness`
 
 ###### `REQ-pre-merge-nodes` — Precondition: mergeNodes(graph)
 
@@ -1782,7 +1782,7 @@ Zwei (oder mehr) Branch-Versionen des committed Graph-Artefakts.
 
 priority: must · status: open · kinds: precondition
 
-Verification ◀ `TEST-merge` (integration) · satisfy ◀ `FUNC-merge-nodes` · allocate ▶ `MOD-codec`
+Verification ◀ `TEST-merge` (integration) · satisfy ◀ `FUNC-merge-nodes` · allocate ▶ `MOD-harness`
 
 #### 3.4.2  `FCHAIN-recall` — Recall (Wiederherstellen)
 
@@ -1994,7 +1994,7 @@ Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Arte
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-merge-nodes` · allocate ▶ `MOD-codec` · `MOD-docs`
+Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-merge-nodes` · allocate ▶ `MOD-docs` · `MOD-harness`
 
 ##### 3.4.3.6  `FUNC-graph-export-snapshot` — graph_export(views?)
 
@@ -4194,13 +4194,13 @@ priority: must · status: done · kinds: precondition
 
 Verification ◀ `TEST-bootstrap` (integration) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-harness`
 
-##### 3.10.5.6  `FUNC-merge-nodes` — mergeNodes(graph)
+##### 3.10.5.6  `FUNC-merge-nodes` — replayBranchLog(log, sinceVersion)
 
 > auch in: `FCHAIN-merge-branches`
 
-Conflict-free Merge via merge_nodes + deterministischer Serialisierung; keine verlorenen Knoten/Traces.
+Reintegriert einen Branch, indem sein Kommando-Log nach dem Fork-Punkt in Log-Reihenfolge durch dasselbe Apply-Gate erneut angewendet wird (CR-GC-234, semantischer Rebase statt Text-Merge der graph.json). Konflikte sprechen Gate-Sprache: eine Charge, die auf der neuen Basis eine Error-Violation erzeugt oder einen geloeschten Knoten wiederbeleben wuerde, wird uebersprungen und mit Violations gemeldet; eine bereits enthaltene Charge gilt als idempotent.
 
-io ◀ `FLOW-branch-graphs` · io ▶ `FLOW-merged-graph` · allocate ▶ `MOD-codec`
+io ◀ `FLOW-branch-graphs` · io ▶ `FLOW-merged-graph` · allocate ▶ `MOD-harness`
 
 ###### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
 
@@ -4210,7 +4210,7 @@ Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Arte
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-merge-nodes` · allocate ▶ `MOD-codec` · `MOD-docs`
+Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-merge-nodes` · allocate ▶ `MOD-docs` · `MOD-harness`
 
 ###### `REQ-conflict-free-merge` — Conflict-free Graph-Merge
 
@@ -4220,7 +4220,7 @@ FUNC-merge-nodes: Branch-/Multi-Dev-Merge conflict-free (deterministische Serial
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-merge` (integration) · satisfy ◀ `FCHAIN-merge-branches` · `FUNC-merge-nodes` · allocate ▶ `MOD-codec`
+Verification ◀ `TEST-merge` (integration) · satisfy ◀ `FCHAIN-merge-branches` · `FUNC-merge-nodes` · allocate ▶ `MOD-harness`
 
 ###### `REQ-post-merge-nodes` — Postcondition: mergeNodes(graph)
 
@@ -4228,7 +4228,7 @@ Conflict-free gemerged; keine verlorenen Knoten/Traces; deterministisch sortiert
 
 priority: must · status: open · kinds: postcondition
 
-Verification ◀ `TEST-merge` (integration) · `TEST-merge-no-duplicate-edge` (integration) · satisfy ◀ `FUNC-merge-nodes` · allocate ▶ `MOD-codec`
+Verification ◀ `TEST-merge` (integration) · `TEST-merge-no-duplicate-edge` (integration) · satisfy ◀ `FUNC-merge-nodes` · allocate ▶ `MOD-harness`
 
 ###### `REQ-pre-merge-nodes` — Precondition: mergeNodes(graph)
 
@@ -4236,7 +4236,7 @@ Zwei (oder mehr) Branch-Versionen des committed Graph-Artefakts.
 
 priority: must · status: open · kinds: precondition
 
-Verification ◀ `TEST-merge` (integration) · satisfy ◀ `FUNC-merge-nodes` · allocate ▶ `MOD-codec`
+Verification ◀ `TEST-merge` (integration) · satisfy ◀ `FUNC-merge-nodes` · allocate ▶ `MOD-harness`
 
 ##### 3.10.5.7  `FUNC-own-kuzu-host` — ownKuzu()
 
@@ -4930,7 +4930,7 @@ Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Arte
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-merge-nodes` · allocate ▶ `MOD-codec` · `MOD-docs`
+Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-merge-nodes` · allocate ▶ `MOD-docs` · `MOD-harness`
 
 ##### 3.10.9.3  `FUNC-bootstrap` — bootstrap
 
@@ -5974,7 +5974,7 @@ allocate ◀ `FUNC-bootstrap` · `FUNC-cli-dispatch` · `FUNC-collect-status` ·
 
 Format-E ↔ OntologyGraph, deterministische Serialisierung, Validierung gegen SE-Ontologie. (SPEC §2.4)
 
-allocate ◀ `FUNC-decode` · `FUNC-encode` · `FUNC-merge-nodes` · satisfy ▶ `REQ-graph-integrity` · `REQ-interface-schema`
+allocate ◀ `FUNC-decode` · `FUNC-encode` · satisfy ▶ `REQ-graph-integrity` · `REQ-interface-schema`
 
 #### 6.4.3  `MOD-dashboard` — dashboard — Live-Viewer-App
 
@@ -5998,7 +5998,7 @@ allocate ◀ `FUNC-build-round-injection` · `FUNC-extract-mutate` · `FUNC-pref
 
 Apply-Gate: loadGraph/saveGraph/mutate/evaluateRules/close gegen lokalen Kuzu. (SPEC §2.1)
 
-allocate ◀ `FUNC-apply-reseed` · `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-evaluate-rules` · `FUNC-export-marker` · `FUNC-import` · `FUNC-load-config` · `FUNC-load-graph` · `FUNC-mutate` · `FUNC-open-store` · `FUNC-reseed` · `FUNC-save-graph` · `FUNC-seed-from-json` · satisfy ▶ `REQ-graph-state-recall` · `REQ-harness-schema-in-contracts` · `REQ-import-se-ontology` · `REQ-quality-metric` · `REQ-single-kuzu-owner` · `REQ-single-store` · `REQ-store-recovery` · `REQ-structural-rule-shared`
+allocate ◀ `FUNC-apply-reseed` · `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-evaluate-rules` · `FUNC-export-marker` · `FUNC-import` · `FUNC-load-config` · `FUNC-load-graph` · `FUNC-merge-nodes` · `FUNC-mutate` · `FUNC-open-store` · `FUNC-reseed` · `FUNC-save-graph` · `FUNC-seed-from-json` · satisfy ▶ `REQ-graph-state-recall` · `REQ-harness-schema-in-contracts` · `REQ-import-se-ontology` · `REQ-quality-metric` · `REQ-single-kuzu-owner` · `REQ-single-store` · `REQ-store-recovery` · `REQ-structural-rule-shared`
 
 #### 6.4.7  `MOD-hooks` — hooks.ts — HookSystem
 

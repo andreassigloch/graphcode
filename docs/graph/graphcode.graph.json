@@ -2811,12 +2811,17 @@
     {
       "id": "FUNC-merge-nodes",
       "type": "FUNC",
-      "name": "mergeNodes(graph)",
-      "description": "Conflict-free Merge via merge_nodes + deterministischer Serialisierung; keine verlorenen Knoten/Traces.",
+      "name": "replayBranchLog(log, sinceVersion)",
+      "description": "Reintegriert einen Branch, indem sein Kommando-Log nach dem Fork-Punkt in Log-Reihenfolge durch dasselbe Apply-Gate erneut angewendet wird (CR-GC-234, semantischer Rebase statt Text-Merge der graph.json). Konflikte sprechen Gate-Sprache: eine Charge, die auf der neuen Basis eine Error-Violation erzeugt oder einen geloeschten Knoten wiederbeleben wuerde, wird uebersprungen und mit Violations gemeldet; eine bereits enthaltene Charge gilt als idempotent.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "concept": true,
-      "operatingMode": "merge"
+      "concept": null,
+      "operatingMode": "merge",
+      "realRef": {
+        "file": "src/merge.ts",
+        "symbol": "replayBranchLog",
+        "lang": "ts"
+      }
     },
     {
       "id": "FUNC-migrate-schema",
@@ -3432,7 +3437,8 @@
       "description": "pre-commit / post-apply / nightly-batch Extension-Points. (SPEC §2.3)",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "updated_at": "2026-06-17T00:00:00.000Z"
+      "updated_at": "2026-06-17T00:00:00.000Z",
+      "path": "src/hooks.ts"
     },
     {
       "id": "MOD-host-bridge",
@@ -3440,7 +3446,8 @@
       "name": "host-bridge — SSE/WS Bridge",
       "description": "Host-Prozess (Single Kuzu Owner) exponiert graph-api-express + SSE-Route, verdrahtet an harness.onUpdateEvent. Versioned Diff-Broadcast an den Live-Viewer. Kein Express-REST im Core — die Bridge ist Host-Sache. (SPEC §5)",
       "status": "done",
-      "created_at": "2026-06-17T00:00:00.000Z"
+      "created_at": "2026-06-17T00:00:00.000Z",
+      "path": "src/viewer"
     },
     {
       "id": "MOD-mcp-tools",
@@ -14352,10 +14359,8 @@
     },
     {
       "source": "FUNC-merge-nodes",
-      "target": "MOD-codec",
-      "type": "allocate",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "target": "MOD-harness",
+      "type": "allocate"
     },
     {
       "source": "FUNC-merge-nodes",
@@ -17873,5 +17878,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 202
+  "graphVersion": 204
 }

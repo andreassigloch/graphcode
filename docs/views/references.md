@@ -1229,7 +1229,7 @@
 | `FUNC-load-graph` | allocate | `MOD-harness` |
 | `FUNC-load-graph` | io | `FLOW-graph-state` |
 | `FUNC-load-graph` | satisfy | `REQ-disk-persistence` |
-| `FUNC-merge-nodes` | allocate | `MOD-codec` |
+| `FUNC-merge-nodes` | allocate | `MOD-harness` |
 | `FUNC-merge-nodes` | io | `FLOW-merged-graph` |
 | `FUNC-merge-nodes` | satisfy | `REQ-auto-persist-merge` |
 | `FUNC-merge-nodes` | satisfy | `REQ-conflict-free-merge` |

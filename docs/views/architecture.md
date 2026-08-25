@@ -71,7 +71,7 @@
 | `FUNC-list-elements` | FUNC | listElements(filter) |
 | `FUNC-load-config` | FUNC | loadGraphcodeConfig |
 | `FUNC-load-graph` | FUNC | loadGraph() |
-| `FUNC-merge-nodes` | FUNC | mergeNodes(graph) |
+| `FUNC-merge-nodes` | FUNC | replayBranchLog(log, sinceVersion) |
 | `FUNC-migrate-schema` | FUNC | migrateSchema(from, to) |
 | `FUNC-module-metrics` | FUNC | moduleMetrics(graph) |
 | `FUNC-mutate` | FUNC | mutate(commands) |
@@ -201,7 +201,7 @@
 | `FUNC-list-elements` | `MOD-element-slice` |
 | `FUNC-load-config` | `MOD-harness` |
 | `FUNC-load-graph` | `MOD-harness` |
-| `FUNC-merge-nodes` | `MOD-codec` |
+| `FUNC-merge-nodes` | `MOD-harness` |
 | `FUNC-migrate-schema` | `MOD-schema-migration` |
 | `FUNC-module-metrics` | `MOD-metrics-engine` |
 | `FUNC-mutate` | `MOD-harness` |
