@@ -4,7 +4,7 @@
 
 # graphcode — Verification Cross-Reference Matrix (VCRM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 135 REQ rows. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 136 REQ rows. Deterministisch generiert.
 
 | REQ | verify-Kante | Lauf-Ergebnis | verifying TEST(s) |
 |---|---|---|---|
@@ -118,6 +118,7 @@
 | `REQ-rule-enforcement` | ✓ | ✓ passed | `TEST-mutate-gate` · `TEST-nd-similarity` · `TEST-violation-context` |
 | `REQ-schema-version-migration` | ✓ | ✓ passed | `TEST-schema-migration` |
 | `REQ-self-contained-dist` | ✓ | ✗ failed | `TEST-distribution` |
+| `REQ-session-leaves-nothing-behind` | ✓ | ✓ passed | `TEST-repo-lifecycle` |
 | `REQ-shared-views-no-fork` | ✓ | ✓ passed | `TEST-shared-views-no-fork` · `TEST-views-conformance` |
 | `REQ-single-kuzu-owner` | ✓ | ✓ passed | `TEST-bridge-follows-lock` · `TEST-gve-autostart` · `TEST-host-shim` · `TEST-mvp-e2e` · `TEST-session-lifecycle` · `TEST-status-verb` · `TEST-store-lock` |
 | `REQ-single-measurement-path` | ✓ | ✓ passed | `TEST-graph-metrics` · `TEST-single-measurement-path` · `TEST-steering-snapshot` |
@@ -144,8 +145,8 @@
 | `REQ-versioned-cache` | ✓ | ⚠ nie gelaufen | `TEST-cache` |
 | `REQ-viewer-owned-by-repo` | ✓ | ✓ passed | `TEST-gve-autostart` · `TEST-gve-supervision` |
 
-Coverage: 135/135 REQ mit verify-Kante (100%) · 0 offen (R-01).
-Belegt: 102/135 REQ bestanden (76%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
+Coverage: 136/136 REQ mit verify-Kante (100%) · 0 offen (R-01).
+Belegt: 103/136 REQ bestanden (76%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
 
 ## Integrationsabdeckung (rolled-up)
 
@@ -161,7 +162,13 @@ Belegt: 102/135 REQ bestanden (76%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-check-code-conformance` → `FUNC-se-status` | `FLOW-violations` | `FCHAIN-skill-report` | `TEST-skill-reports-measured-values` | conformance | passed |
 | `FUNC-claim-store-lock` → `FUNC-open-store` | `FLOW-store-ownership` | `FCHAIN-apply-gate` | `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, e2e, integration, performance | passed |
 | `FUNC-claim-store-lock` → `FUNC-own-kuzu-host` | `FLOW-store-ownership` | `FCHAIN-apply-gate` | `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, e2e, integration, performance | passed |
-| `FUNC-claim-store-lock` → `FUNC-session-shutdown` | `FLOW-store-ownership` | `FCHAIN-apply-gate` | `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, e2e, integration, performance | passed |
+| `FUNC-claim-store-lock` → `FUNC-session-shutdown` | `FLOW-store-ownership` | `FCHAIN-apply-gate` · `FCHAIN-repo-lifecycle` | `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-repo-lifecycle` · `TEST-responsiveness` | acceptance, e2e, integration, performance | passed |
+| `FUNC-cli-dispatch` → `FUNC-bootstrap` | `FLOW-cli-command` | `FCHAIN-repo-lifecycle` | `TEST-repo-lifecycle` | integration | passed |
+| `FUNC-cli-dispatch` → `FUNC-claim-store-lock` | `FLOW-cli-command` | `FCHAIN-repo-lifecycle` | `TEST-repo-lifecycle` | integration | passed |
+| `FUNC-cli-dispatch` → `FUNC-collect-status` | `FLOW-cli-command` | `FCHAIN-repo-lifecycle` | `TEST-repo-lifecycle` | integration | passed |
+| `FUNC-cli-dispatch` → `FUNC-harness-cli` | `FLOW-cli-command` | `FCHAIN-repo-lifecycle` | `TEST-repo-lifecycle` | integration | passed |
+| `FUNC-cli-dispatch` → `FUNC-run-verb` | `FLOW-cli-command` | `FCHAIN-repo-lifecycle` | `TEST-repo-lifecycle` | integration | passed |
+| `FUNC-cli-dispatch` → `FUNC-upgrade` | `FLOW-cli-command` | `FCHAIN-repo-lifecycle` | `TEST-repo-lifecycle` | integration | passed |
 | `FUNC-close-store` → `FUNC-emit-trajectory` | `FLOW-committed-graph` | `FCHAIN-apply-gate` | `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, e2e, integration, performance | passed |
 | `FUNC-close-store` → `FUNC-load-graph` | `FLOW-committed-graph` | `FCHAIN-apply-gate` | `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, e2e, integration, performance | passed |
 | `FUNC-close-violations` → `FUNC-mutate` | `FLOW-mutate-cmd` | `FCHAIN-skill-authoring` | `TEST-skill-authors-through-gate` | conformance | passed |
@@ -251,4 +258,4 @@ Belegt: 102/135 REQ bestanden (76%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-view-intplan` → `FUNC-export-markdown` | `FLOW-export-request` | `FCHAIN-doc-export` | `TEST-auto-export` · `TEST-doc-export` · `TEST-mcp-export` · `TEST-member-name` · `TEST-skills-mcp` · `TEST-views-auditor` · `TEST-views-conformance` | conformance, integration, unit | passed |
 | `FUNC-view-rtm` → `FUNC-export-markdown` | `FLOW-export-request` | `FCHAIN-doc-export` | `TEST-auto-export` · `TEST-doc-export` · `TEST-mcp-export` · `TEST-member-name` · `TEST-skills-mcp` · `TEST-views-auditor` · `TEST-views-conformance` | conformance, integration, unit | passed |
 
-> 99/99 deklarierte FUNC↔FUNC-Verbindungen sind über die Kette TEST→REQ←FCHAIN→FUNC abgedeckt · 0 offen. Nur Paare mit gemeinsamer FCHAIN — Ko-Adjazenz an einer geteilten FLOW ist keine deklarierte Schnittstelle (CR-GC-315). Leeres level/Ergebnis = am TEST nicht gepflegt.
+> 105/105 deklarierte FUNC↔FUNC-Verbindungen sind über die Kette TEST→REQ←FCHAIN→FUNC abgedeckt · 0 offen. Nur Paare mit gemeinsamer FCHAIN — Ko-Adjazenz an einer geteilten FLOW ist keine deklarierte Schnittstelle (CR-GC-315). Leeres level/Ergebnis = am TEST nicht gepflegt.

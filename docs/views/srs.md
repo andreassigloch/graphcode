@@ -4,7 +4,7 @@
 
 # graphcode — System Requirements Specification · SRS-graphcode
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 135 REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 136 REQ. Deterministisch generiert.
 
 ## 1  Scope
 
@@ -166,7 +166,7 @@ Verification ◀ `TEST-responsiveness` (performance) · satisfy ◀ `FCHAIN-appl
 
 ##### 3.1.1.1  `FUNC-claim-store-lock` — StoreLock
 
-> auch in: `FUNC-block-speicherwerk`
+> auch in: `FCHAIN-repo-lifecycle` · `FUNC-block-speicherwerk`
 
 Beansprucht den Store atomar und weist einen zweiten Schreiber laut ab, statt ihn still zu ueberschreiben.
 
@@ -2966,6 +2966,14 @@ io ◀ `ACTOR-developer`
 
 Einrichten, erstbefuellen, Verb waehlen, Lauf fahren, aktualisieren, Sitzung beenden. Die Reihenfolge, die ein Entwickler an der Kommandozeile wirklich durchlaeuft.
 
+##### `REQ-session-leaves-nothing-behind` — Sitzungsende hinterlaesst nichts
+
+Nach dem Ende einer Sitzung muss der Store-Lock freigegeben und der Sitzungseintrag entfernt sein; abgeraeumt wird genau einmal und in umgekehrter Aufbaureihenfolge, der Store-Lock zuletzt.
+
+priority: must · status: n/a
+
+Verification ◀ `TEST-repo-lifecycle` (integration) · satisfy ◀ `FCHAIN-repo-lifecycle` · allocate ▶ —
+
 ##### 3.9.1.1  `FUNC-bind-tools` — bindToolsToHarness
 
 > auch in: `FUNC-block-ruestzeug`
@@ -2982,7 +2990,25 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integration) · `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-bind-tools` · `MOD-mcp-tools` · allocate ▶ `MOD-mcp-tools`
 
-##### 3.9.1.2  `FUNC-bootstrap` — bootstrap
+##### 3.9.1.2  `FUNC-cli-dispatch` — graphcode CLI-Dispatch
+
+> auch in: `FUNC-block-betrieb`
+
+Der Einsprung des bin: liest Verb und Optionen, waehlt den Handler und setzt den Exit-Code. Selbst nicht exportiert, weil ihn kein Modul ruft, sondern der Prozessstart.
+
+io ◀ `FLOW-cli-command` · io ▶ `FLOW-cli-command` · allocate ▶ `MOD-cli`
+
+###### `REQ-npx-distribution` — npx-CLI als Distribution
+
+> auch unter: `FUNC-harness-cli`
+
+Distribution als npm-Paket mit bin `npx @sigloch/graphcode init/update/remove`. GATED auf REQ-buildable-standalone + CR-GC-100..103.
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-distribution` (e2e) · satisfy ◀ `FUNC-cli-dispatch` · `FUNC-harness-cli` · allocate ▶ `MOD-cli`
+
+##### 3.9.1.3  `FUNC-bootstrap` — bootstrap
 
 > auch in: `FUNC-block-speicherwerk`
 
@@ -3000,25 +3026,43 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-bootstrap` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-cli` · `MOD-harness`
 
-##### 3.9.1.3  `FUNC-cli-dispatch` — graphcode CLI-Dispatch
+##### 3.9.1.4  `FUNC-claim-store-lock` — StoreLock
 
-> auch in: `FUNC-block-betrieb`
+> auch in: `FCHAIN-apply-gate` · `FUNC-block-speicherwerk`
 
-Der Einsprung des bin: liest Verb und Optionen, waehlt den Handler und setzt den Exit-Code. Selbst nicht exportiert, weil ihn kein Modul ruft, sondern der Prozessstart.
+Beansprucht den Store atomar und weist einen zweiten Schreiber laut ab, statt ihn still zu ueberschreiben.
 
-io ◀ `FLOW-cli-command` · io ▶ — · allocate ▶ `MOD-cli`
+io ◀ `FLOW-cli-command` · io ▶ `FLOW-store-ownership` · allocate ▶ `MOD-harness`
 
-###### `REQ-npx-distribution` — npx-CLI als Distribution
+###### `REQ-single-kuzu-owner` — Single Kuzu-Owner
 
-> auch unter: `FUNC-harness-cli`
+> auch unter: `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown`
 
-Distribution als npm-Paket mit bin `npx @sigloch/graphcode init/update/remove`. GATED auf REQ-buildable-standalone + CR-GC-100..103.
+Genau ein Host-Prozess besitzt .graphcode/kuzu (single-writer; kein 2. DB-Handle). (SPEC §4, L1)
 
-priority: must · status: done · kinds: functional
+priority: should · status: done · kinds: non-functional
 
-Verification ◀ `TEST-distribution` (e2e) · satisfy ◀ `FUNC-cli-dispatch` · `FUNC-harness-cli` · allocate ▶ `MOD-cli`
+Verification ◀ `TEST-bridge-follows-lock` (integration) · `TEST-gve-autostart` (unit) · `TEST-host-shim` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-session-lifecycle` (integration) · `TEST-status-verb` (unit) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness` · `MOD-host-bridge`
 
-##### 3.9.1.4  `FUNC-collect-status` — collectStatus
+##### 3.9.1.5  `FUNC-session-shutdown` — SessionLifecycle
+
+> auch in: `FCHAIN-apply-gate` · `FUNC-block-betrieb`
+
+Raeumt am Sessionende alle Ressourcen in umgekehrter Reihenfolge ab, den Store-Lock zuletzt.
+
+io ◀ `FLOW-store-ownership` · io ▶ `FLOW-committed-graph` · allocate ▶ `MOD-cli`
+
+###### `REQ-single-kuzu-owner` — Single Kuzu-Owner
+
+> auch unter: `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host`
+
+Genau ein Host-Prozess besitzt .graphcode/kuzu (single-writer; kein 2. DB-Handle). (SPEC §4, L1)
+
+priority: should · status: done · kinds: non-functional
+
+Verification ◀ `TEST-bridge-follows-lock` (integration) · `TEST-gve-autostart` (unit) · `TEST-host-shim` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-session-lifecycle` (integration) · `TEST-status-verb` (unit) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness` · `MOD-host-bridge`
+
+##### 3.9.1.6  `FUNC-collect-status` — collectStatus
 
 > auch in: `FUNC-block-betrieb`
 
@@ -3035,42 +3079,6 @@ Der Health-Endpoint prueft Store-Erreichbarkeit, Gate-Funktion, Ontology/Rules/C
 priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-readonly-bridge` (integration) · satisfy ◀ `FUNC-collect-status` · `FUNC-health-endpoint` · `MOD-host-bridge` · allocate ▶ `MOD-cli` · `MOD-host-bridge`
-
-##### 3.9.1.5  `FUNC-gve-sessions` — liveSessions
-
-> auch in: `FUNC-block-betrieb`
-
-Fuehrt Buch, welche Sitzungen eines Repos noch leben, damit der Viewer dem Repo gehoert und nicht der einzelnen Sitzung. Eintraege toter Prozesse werden beim Lesen entfernt.
-
-io ◀ — · io ▶ — · allocate ▶ `MOD-cli`
-
-###### `REQ-viewer-owned-by-repo` — Viewer gehoert dem Repo
-
-> auch unter: `FUNC-gve-supervise`
-
-Der Live-Viewer gehoert dem Repo, nicht der einzelnen Sitzung: jede Sitzung traegt sich ein, genau ein Viewer laeuft (Startreservierung mit Ablauffrist), eine Umfrage bemerkt seinen Tod, und erst die letzte Sitzung beendet ihn — nur wenn graphcode ihn selbst gestartet hat. (CR-GC-404)
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-gve-autostart` (unit) · `TEST-gve-supervision` (integration) · satisfy ◀ `FUNC-gve-sessions` · `FUNC-gve-supervise` · allocate ▶ `MOD-cli`
-
-##### 3.9.1.6  `FUNC-gve-supervise` — attachGve
-
-> auch in: `FUNC-block-betrieb`
-
-Haengt eine Sitzung an das Dashboard des Repos: sorgt dafuer, dass genau ein Viewer laeuft, haelt ihn per Umfrage am Leben und beendet ihn erst, wenn die letzte Sitzung des Repos geht. Aufrufer ist der MCP-Server beim Hochfahren, in beiden Zweigen (Wahlgewinner wie Proxy).
-
-io ◀ — · io ▶ — · allocate ▶ `MOD-cli`
-
-###### `REQ-viewer-owned-by-repo` — Viewer gehoert dem Repo
-
-> auch unter: `FUNC-gve-sessions`
-
-Der Live-Viewer gehoert dem Repo, nicht der einzelnen Sitzung: jede Sitzung traegt sich ein, genau ein Viewer laeuft (Startreservierung mit Ablauffrist), eine Umfrage bemerkt seinen Tod, und erst die letzte Sitzung beendet ihn — nur wenn graphcode ihn selbst gestartet hat. (CR-GC-404)
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-gve-autostart` (unit) · `TEST-gve-supervision` (integration) · satisfy ◀ `FUNC-gve-sessions` · `FUNC-gve-supervise` · allocate ▶ `MOD-cli`
 
 ##### 3.9.1.7  `FUNC-harness-cli` — graphcode init/update/remove
 
@@ -3166,43 +3174,7 @@ priority: must · status: n/a
 
 Verification ◀ `TEST-cli-run` (integration) · `TEST-executor-bestofn` (integration) · `TEST-one-driver-local-and-frontier` (integration) · satisfy ◀ `FUNC-run-executor` · `FUNC-run-verb` · allocate ▶ `MOD-cli` · `MOD-executor`
 
-##### 3.9.1.9  `FUNC-session-shutdown` — SessionLifecycle
-
-> auch in: `FCHAIN-apply-gate` · `FUNC-block-betrieb`
-
-Raeumt am Sessionende alle Ressourcen in umgekehrter Reihenfolge ab, den Store-Lock zuletzt.
-
-io ◀ `FLOW-store-ownership` · io ▶ `FLOW-committed-graph` · allocate ▶ `MOD-cli`
-
-###### `REQ-single-kuzu-owner` — Single Kuzu-Owner
-
-> auch unter: `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host`
-
-Genau ein Host-Prozess besitzt .graphcode/kuzu (single-writer; kein 2. DB-Handle). (SPEC §4, L1)
-
-priority: should · status: done · kinds: non-functional
-
-Verification ◀ `TEST-bridge-follows-lock` (integration) · `TEST-gve-autostart` (unit) · `TEST-host-shim` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-session-lifecycle` (integration) · `TEST-status-verb` (unit) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness` · `MOD-host-bridge`
-
-##### 3.9.1.10  `FUNC-tool-context` — createToolContext
-
-> auch in: `FUNC-block-ruestzeug`
-
-Stellt jedem Werkzeugaufruf seinen Kontext bereit: Aufrufer, Repo-Wurzel und die Weiterleitung an den Besitzerprozess.
-
-io ◀ — · io ▶ — · allocate ▶ `MOD-mcp-tools`
-
-###### `REQ-mcp-gate-symmetry` — MCP-Gate-Symmetrie (L2)
-
-> auch unter: `FCHAIN-apply-gate`
-
-CR-GC-101 L2: MCP graph_mutate == in-process mutate() — identische Semantik, identisches Violations-Dict (end-to-end).
-
-priority: should · status: done · kinds: non-functional
-
-Verification ◀ `TEST-mcp-stdio-server` (integration) · `TEST-mcp-symmetry` (integration) · satisfy ◀ `FCHAIN-apply-gate` · `FUNC-tool-context` · allocate ▶ `MOD-mcp-tools`
-
-##### 3.9.1.11  `FUNC-upgrade` — executeUpgrade(opts)
+##### 3.9.1.9  `FUNC-upgrade` — executeUpgrade(opts)
 
 > auch in: `FUNC-block-betrieb`
 
@@ -3219,6 +3191,60 @@ Update aktualisiert installierte Artefakte/Pfade, ohne den lokalen Graph-Store (
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-cli-scaffold` (integration) · `TEST-upgrade` (integration) · satisfy ◀ `FUNC-harness-cli` · `FUNC-upgrade` · allocate ▶ `MOD-cli`
+
+##### 3.9.1.10  `FUNC-gve-sessions` — liveSessions
+
+> auch in: `FUNC-block-betrieb`
+
+Fuehrt Buch, welche Sitzungen eines Repos noch leben, damit der Viewer dem Repo gehoert und nicht der einzelnen Sitzung. Eintraege toter Prozesse werden beim Lesen entfernt.
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-cli`
+
+###### `REQ-viewer-owned-by-repo` — Viewer gehoert dem Repo
+
+> auch unter: `FUNC-gve-supervise`
+
+Der Live-Viewer gehoert dem Repo, nicht der einzelnen Sitzung: jede Sitzung traegt sich ein, genau ein Viewer laeuft (Startreservierung mit Ablauffrist), eine Umfrage bemerkt seinen Tod, und erst die letzte Sitzung beendet ihn — nur wenn graphcode ihn selbst gestartet hat. (CR-GC-404)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-gve-autostart` (unit) · `TEST-gve-supervision` (integration) · satisfy ◀ `FUNC-gve-sessions` · `FUNC-gve-supervise` · allocate ▶ `MOD-cli`
+
+##### 3.9.1.11  `FUNC-gve-supervise` — attachGve
+
+> auch in: `FUNC-block-betrieb`
+
+Haengt eine Sitzung an das Dashboard des Repos: sorgt dafuer, dass genau ein Viewer laeuft, haelt ihn per Umfrage am Leben und beendet ihn erst, wenn die letzte Sitzung des Repos geht. Aufrufer ist der MCP-Server beim Hochfahren, in beiden Zweigen (Wahlgewinner wie Proxy).
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-cli`
+
+###### `REQ-viewer-owned-by-repo` — Viewer gehoert dem Repo
+
+> auch unter: `FUNC-gve-sessions`
+
+Der Live-Viewer gehoert dem Repo, nicht der einzelnen Sitzung: jede Sitzung traegt sich ein, genau ein Viewer laeuft (Startreservierung mit Ablauffrist), eine Umfrage bemerkt seinen Tod, und erst die letzte Sitzung beendet ihn — nur wenn graphcode ihn selbst gestartet hat. (CR-GC-404)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-gve-autostart` (unit) · `TEST-gve-supervision` (integration) · satisfy ◀ `FUNC-gve-sessions` · `FUNC-gve-supervise` · allocate ▶ `MOD-cli`
+
+##### 3.9.1.12  `FUNC-tool-context` — createToolContext
+
+> auch in: `FUNC-block-ruestzeug`
+
+Stellt jedem Werkzeugaufruf seinen Kontext bereit: Aufrufer, Repo-Wurzel und die Weiterleitung an den Besitzerprozess.
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-mcp-tools`
+
+###### `REQ-mcp-gate-symmetry` — MCP-Gate-Symmetrie (L2)
+
+> auch unter: `FCHAIN-apply-gate`
+
+CR-GC-101 L2: MCP graph_mutate == in-process mutate() — identische Semantik, identisches Violations-Dict (end-to-end).
+
+priority: should · status: done · kinds: non-functional
+
+Verification ◀ `TEST-mcp-stdio-server` (integration) · `TEST-mcp-symmetry` (integration) · satisfy ◀ `FCHAIN-apply-gate` · `FUNC-tool-context` · allocate ▶ `MOD-mcp-tools`
 
 ### 3.10  Funktionen ohne FCHAIN
 
@@ -3702,7 +3728,7 @@ io ◀ — · io ▶ — · allocate ▶ `MOD-repo-root`
 
 Der Einsprung des bin: liest Verb und Optionen, waehlt den Handler und setzt den Exit-Code. Selbst nicht exportiert, weil ihn kein Modul ruft, sondern der Prozessstart.
 
-io ◀ `FLOW-cli-command` · io ▶ — · allocate ▶ `MOD-cli`
+io ◀ `FLOW-cli-command` · io ▶ `FLOW-cli-command` · allocate ▶ `MOD-cli`
 
 ###### `REQ-npx-distribution` — npx-CLI als Distribution
 
@@ -4886,7 +4912,7 @@ Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (inte
 
 ##### 3.10.9.4  `FUNC-claim-store-lock` — StoreLock
 
-> auch in: `FCHAIN-apply-gate`
+> auch in: `FCHAIN-apply-gate` · `FCHAIN-repo-lifecycle`
 
 Beansprucht den Store atomar und weist einen zweiten Schreiber laut ab, statt ihn still zu ueberschreiben.
 
@@ -5388,7 +5414,7 @@ io ◀ `FUNC-decode` · io ▶ `FUNC-mutate` · schema ▶ `SCHEMA-ontology-grap
 
 mcp / host / run / import-code / rewind / init / update / remove / skills sync.
 
-io ◀ `ACTOR-developer` · io ▶ `FUNC-bootstrap` · `FUNC-claim-store-lock` · `FUNC-cli-dispatch` · `FUNC-collect-status` · `FUNC-create-harness` · `FUNC-harness-cli` · `FUNC-import-code-verb` · `FUNC-rewind` · `FUNC-run-executor` · `FUNC-run-verb` · `FUNC-upgrade` · schema ▶ `SCHEMA-cli-command`
+io ◀ `ACTOR-developer` · `FUNC-cli-dispatch` · io ▶ `FUNC-bootstrap` · `FUNC-claim-store-lock` · `FUNC-cli-dispatch` · `FUNC-collect-status` · `FUNC-create-harness` · `FUNC-harness-cli` · `FUNC-import-code-verb` · `FUNC-rewind` · `FUNC-run-executor` · `FUNC-run-verb` · `FUNC-upgrade` · schema ▶ `SCHEMA-cli-command`
 
 ### 4.9  `FLOW-committed-graph` — Committed-Graph
 
@@ -6704,199 +6730,205 @@ Gate/Regel-Evaluation läuft ohne Modell-Call (localReachable=false) determinist
 
 verify ▶ `REQ-graceful-degradation` · `REQ-post-modelfree-gate` · `REQ-pre-modelfree-gate` · `REQ-small-model-viable`
 
-### 8.91  `TEST-reseed` — Reseed auf den committeten Stand
+### 8.91  `TEST-repo-lifecycle` — Repo-Lebenszyklus raeumt vollstaendig ab
+
+Faehrt den Lebenszyklus auf echtem Disk-Kuzu: Lock nehmen, Sitzung eintragen, zweiter Owner scheitert, dann Abbau ueber SessionLifecycle. Danach ist der Lock frei und kein Sitzungseintrag uebrig.
+
+verify ▶ `REQ-session-leaves-nothing-behind` · testRefs: `tests/repo-lifecycle.integration.test.ts`
+
+### 8.92  `TEST-reseed` — Reseed auf den committeten Stand
 
 Abnahme der Datei tests/mcp.reseed.test.ts: graph_reseed synchronisiert den lebenden Store in-process zurueck auf den committeten Snapshot, verwirft dabei eine nicht exportierte Gate-Mutation und stellt die committeten Zahlen ohne Korruption wieder her.
 
 verify ▶ `REQ-graph-state-recall` · `REQ-store-recovery` · testRefs: `tests/mcp.reseed.test.ts`
 
-### 8.92  `TEST-responsiveness` — Responsiveness-Test (<0,2s)
+### 8.93  `TEST-responsiveness` — Responsiveness-Test (<0,2s)
 
 Draft-Apply + betroffener-Subgraph-Check antwortet < 0,2s (ohne LLM). (FCHAIN-apply-gate NFR)
 
 verify ▶ `REQ-responsiveness`
 
-### 8.93  `TEST-retro-kpi` — KPI-Auswertung nach dem Projekt
+### 8.94  `TEST-retro-kpi` — KPI-Auswertung nach dem Projekt
 
 Abnahme der Datei tests/retro-kpi.test.ts: die Auswertung liefert deterministische Werte aus einer Fixture-Sitzung, und das entscheidende Signal stimmt: eine bewusst graph-lose Sitzung ergibt ein Graph-zu-Grep-Verhaeltnis unter eins.
 
 verify ▶ `REQ-quality-metric` · testRefs: `tests/retro-kpi.test.ts`
 
-### 8.94  `TEST-rewind` — Rueckspulen auf einen Commit
+### 8.95  `TEST-rewind` — Rueckspulen auf einen Commit
 
 Abnahme der Datei tests/rewind.test.ts: graphcode rewind stellt den Graphstand her, der an einem Ref committet war. Der Mechanismus selbst ist anderswo bewiesen; hier zaehlt das Verb als Bedienweg der Rueckhol-Haelfte.
 
 verify ▶ `REQ-graph-state-recall` · testRefs: `tests/rewind.test.ts`
 
-### 8.95  `TEST-roundtrip` — Format-E Round-Trip Conformance
+### 8.96  `TEST-roundtrip` — Format-E Round-Trip Conformance
 
 decode(encode(g))==g; zwei Encodes byte-identisch. (FCHAIN-codec-roundtrip)
 
 verify ▶ `REQ-codec-validation` · `REQ-deterministic-serialization` · `REQ-formatE-diff-dialect` · `REQ-formatE-parity` · `REQ-post-codec-roundtrip` · `REQ-pre-codec-roundtrip` · `REQ-roundtrip-conformance` · testRefs: `tests/codec.roundtrip.test.ts`
 
-### 8.96  `TEST-rule-calibration` — Regel-Kalibrierungs-Test
+### 8.97  `TEST-rule-calibration` — Regel-Kalibrierungs-Test
 
 audit_stats aggregiert je Regel, je Modell und je Konsument; die Werte sind identisch zur jq-Zeile auf demselben Trail. Ein Record mit 20 Violations derselben Regel zaehlt eine Blockade und zwanzig Vorkommen; fehlendes rulesPassed liefert null statt einer Null. (REQ-rule-calibration)
 
 verify ▶ `REQ-rule-calibration` · testRefs: `tests/audit.stats.test.ts`
 
-### 8.97  `TEST-schema-migration` — Wache gegen Schema-Drift
+### 8.98  `TEST-schema-migration` — Wache gegen Schema-Drift
 
 Abnahme der Datei tests/schema-guard.test.ts: der Store friert seine Kanten-Tabellen beim Anlegen ein; bekommt das Meta-Modell ein neues Paar, weist das eingefrorene Schema die Kante ab. Die Wache erkennt den Versatz und setzt den Store aus dem committeten Stand neu auf, statt ihn kaputt weiterzubenutzen.
 
 verify ▶ `REQ-post-migrate-schema` · `REQ-pre-migrate-schema` · `REQ-schema-version-migration` · `REQ-store-recovery` · testRefs: `tests/schema-guard.test.ts`
 
-### 8.98  `TEST-se-plan-ordering` — Reihenfolge des Umsetzungsplans
+### 8.99  `TEST-se-plan-ordering` — Reihenfolge des Umsetzungsplans
 
 Abnahme der Datei tests/se-plan.ordering.test.ts: die Reihenfolge des Plans kommt aus der Abhaengigkeits-Topologie des Graphen, nicht aus dem Prompt-Text. Jede Voraussetzung steht vor dem, was sie braucht.
 
 verify ▶ `REQ-structure-driven` · testRefs: `tests/se-plan.ordering.test.ts`
 
-### 8.99  `TEST-selective-test-audit` — Auswahl-Resolver und Messinstrument
+### 8.100  `TEST-selective-test-audit` — Auswahl-Resolver und Messinstrument
 
 Abnahme der Datei tests/test-selection.audit.test.ts: die Kantensemantik der Auswahl, die Paritaet zwischen Store-Pfad und Snapshot-Pfad, und die Fallback-Regel. Eine nicht aufloesbare Datei fuehrt zum Volllauf, nie zur leeren Auswahl.
 
 verify ▶ `REQ-graph-tests-operational` · `REQ-impact-based-testing` · testRefs: `tests/test-selection.audit.test.ts`
 
-### 8.100  `TEST-session-lifecycle` — Host stirbt mit seiner Sitzung
+### 8.101  `TEST-session-lifecycle` — Host stirbt mit seiner Sitzung
 
 Abnahme der Datei tests/session-lifecycle.test.ts: der Abbau laeuft in umgekehrter Reihenfolge mit dem Store-Lock zuletzt und laeuft nach einem Fehlschlag weiter. Ohne diese Eigenschaften kehrt der Zombie-Host zurueck.
 
 verify ▶ `REQ-single-kuzu-owner` · testRefs: `tests/session-lifecycle.test.ts`
 
-### 8.101  `TEST-shared-views-no-fork` — Shared-Views-No-Fork-Test
+### 8.102  `TEST-shared-views-no-fork` — Shared-Views-No-Fork-Test
 
 Die View-Berechnung liegt in @sigloch/graph-api-core; kein lokaler BQ-Regel-Fork (aimpro/src/contracts/se) mehr referenziert. (REQ-shared-views-no-fork)
 
 verify ▶ `REQ-shared-views-no-fork` · testRefs: `tests/views.no-fork.test.ts`
 
-### 8.102  `TEST-single-measurement-path` — Messpfad-Konsistenz ueber drei Oberflaechen
+### 8.103  `TEST-single-measurement-path` — Messpfad-Konsistenz ueber drei Oberflaechen
 
 Fixture mit attributgetragenen Bindungen; assertiert identische Violations und Scores ueber alle drei Oberflaechen und faellt rot, sobald eine auf das flache Export-Encoding zurueckfaellt.
 
 verify ▶ `REQ-single-measurement-path` · testRefs: `tests/steering.measurement-path.test.ts`
 
-### 8.103  `TEST-single-write-door` — Die eine Tuer, in einem Nachweis
+### 8.104  `TEST-single-write-door` — Die eine Tuer, in einem Nachweis
 
 Drei Assertionen in Folge: legale Mutation landet, illegale laesst den deterministischen Export identisch, Direktschreib-Versuch wird mit Exit-Code und Meldung abgewiesen.
 
 verify ▶ `REQ-single-write-door` · testRefs: `tests/gate.single-door.test.ts`
 
-### 8.104  `TEST-skill-authors-through-gate` — Autoren-Skill nennt das Gate und keinen Seitenweg
+### 8.105  `TEST-skill-authors-through-gate` — Autoren-Skill nennt das Gate und keinen Seitenweg
 
 Fuer jede FUNC der Kette FCHAIN-skill-authoring: die per realRef gebundene Command-Datei nennt ein Schreibwerkzeug der LIVE-Registry und weist keinen direkten Schreibzugriff auf docs/graph an. Die Atomizitaet eines abgelehnten Batches deckt harness.gate.test.ts ab, nicht dieser Test.
 
 verify ▶ `REQ-skill-authors-through-gate` · testRefs: `tests/skill-authoring-gate.test.ts`
 
-### 8.105  `TEST-skill-reports-measured-values` — Lesender Skill misst statt zu schaetzen
+### 8.106  `TEST-skill-reports-measured-values` — Lesender Skill misst statt zu schaetzen
 
 Fuer jede FUNC der Kette FCHAIN-skill-report: die per realRef gebundene Command-Datei nennt mindestens ein Messwerkzeug aus der LIVE-Registry und kein schreibendes. Grundgesamtheit und Werkzeugnamen kommen aus Graph und Registry, nicht aus einer Liste im Test.
 
 verify ▶ `REQ-skill-reads-only` · testRefs: `tests/skill-report-measured.test.ts`
 
-### 8.106  `TEST-skills-mcp` — Skills-MCP-Conformance-Test
+### 8.107  `TEST-skills-mcp` — Skills-MCP-Conformance-Test
 
 Alle mitgelieferten .claude/commands/se*-Dateien sind MCP-getrieben: 0 Treffer fuer die abgeschaltete localhost:3001-API (/api/graph, /api/dashboard, GRAPH_API) und jedes Skill referenziert >=1 Tool aus der Live-Registry. "done = verifiziert" fuer die prompt-realisierten FUNCs von MOD-skills (se-view/* → REQ-doc-export). (CR-GC-132)
 
 verify ▶ `REQ-doc-export` · testRefs: `tests/skills.mcp-conformance.test.ts`
 
-### 8.107  `TEST-status-verb` — Abnahme des status-Verbs
+### 8.108  `TEST-status-verb` — Abnahme des status-Verbs
 
 Abnahme der Datei tests/status.test.ts: eine antwortende URL zaehlt nur, wenn die Instanz dieses Repo bedient. Alle Effekte sind injiziert, damit der Befund nicht davon abhaengt, was zufaellig lokal laeuft.
 
 verify ▶ `REQ-single-kuzu-owner` · testRefs: `tests/status.test.ts`
 
-### 8.108  `TEST-steering-loop` — Steuerungsschleifen-Test
+### 8.109  `TEST-steering-loop` — Steuerungsschleifen-Test
 
 Die Schleife als Ganzes: nextStep leitet Fokus und Blocker aus demselben Snapshot ab, generationStep waehlt dieselbe Dimension, rankCandidates ordnet nach dem Fokus-Delta; Determinismus gegen wiederholte Laeufe.
 
 verify ▶ `REQ-steering-from-metrics` · `REQ-steering-post` · `REQ-steering-pre` · testRefs: `tests/steering.test.ts`
 
-### 8.109  `TEST-steering-snapshot` — Steuerung sieht die flachen Attribute
+### 8.110  `TEST-steering-snapshot` — Steuerung sieht die flachen Attribute
 
 Abnahme der Datei tests/steering-snapshot.test.ts: der Steuerungs- und Generierungspfad baut seine Sicht nicht mehr ueber den Umweg der Serialisierung, die die Attribute abflacht. Genau dieser Umweg machte Bindungen fuer die Regeln unsichtbar.
 
 verify ▶ `REQ-single-measurement-path` · testRefs: `tests/steering-snapshot.test.ts`
 
-### 8.110  `TEST-store-lock` — Store-Besitz und Schreib-Serialisierung
+### 8.111  `TEST-store-lock` — Store-Besitz und Schreib-Serialisierung
 
 Abnahme der Datei tests/store-lock.test.ts: ein zweiter Schreiber auf demselben Store wird laut abgewiesen statt still ueberschrieben, ein verwaister Lock wird zurueckgeholt, und ein lebender bleibt unangetastet. Dazu die Serialisierung, damit sich Reseed und Mutation nie verschraenken.
 
 verify ▶ `REQ-one-gate-per-repo` · `REQ-single-kuzu-owner` · testRefs: `tests/store-lock.test.ts`
 
-### 8.111  `TEST-store-recovery` — Store-Recovery-Test
+### 8.112  `TEST-store-recovery` — Store-Recovery-Test
 
 Kuzu Lock-Konflikt / abgestuerzter Owner / korrupter Store: Lock-Erkennung + sicherer Re-Open; kein zweites DB-Handle. (ConOps Recovery)
 
 verify ▶ `REQ-store-recovery`
 
-### 8.112  `TEST-target-profile` — Zielprofil als Steuer-Konfiguration
+### 8.113  `TEST-target-profile` — Zielprofil als Steuer-Konfiguration
 
 Abnahme der Datei tests/target-profile.test.ts: Schema, Laden und Konfliktpruefung des Zielprofils, dazu der Konfigurations-Default des Vorschlags-Werkzeugs gegen einen echten Disk-Kuzu. Die Konfliktpruefung ist ein Pfad, kein zweiter neben der Steuerung.
 
 verify ▶ `REQ-target-shifts-ranking` · `REQ-thresholds-from-config` · testRefs: `tests/target-profile.test.ts`
 
-### 8.113  `TEST-target-shifts-ranking` — Ranking gegen zwei gegenlaeufige Zielvektoren
+### 8.114  `TEST-target-shifts-ranking` — Ranking gegen zwei gegenlaeufige Zielvektoren
 
 Zwei Laeufe auf identischem Graphen, verschieden nur im Vorzeichen des Ziels; assertiert Score-Negation, Spitzenwechsel und Magnituden-Invarianz.
 
 verify ▶ `REQ-target-shifts-ranking` · testRefs: `tests/mcp.suggest.test.ts`
 
-### 8.114  `TEST-test-runnable-binding` — TestRef-Aufloesungs-Test
+### 8.115  `TEST-test-runnable-binding` — TestRef-Aufloesungs-Test
 
 Abnahme der Datei tests/mcp.tests-deduction.test.ts: ein impacted TEST-Knoten wird ueber testRefs eindeutig auf eine lauffaehige Datei aufgeloest, graph_tests erzeugt daraus ein selektives Run-Kommando ueber genau diese Dateien, und ein TEST ohne testRefs erscheint unter unresolved statt zu verschwinden. Synthetische Disk-Kuzu-Fixture.
 
 verify ▶ `REQ-test-runnable-binding` · testRefs: `tests/mcp.tests-deduction.test.ts`
 
-### 8.115  `TEST-testref-materialize` — Export stub-materialization test
+### 8.116  `TEST-testref-materialize` — Export stub-materialization test
 
 graph_export scaffoldt einen lauffaehigen it.todo-Stub fuer eine fehlende testRef-Datei, ueberschreibt nie eine existierende, ueberspringt concept-only; danach loest graph_tests auf die materialisierte Datei auf. (CR-GC-205 Item 4)
 
 verify ▶ `REQ-testref-materialized` · testRefs: `tests/export.testref-materialize.test.ts`
 
-### 8.116  `TEST-testreport` — Rueckweg des Testergebnisses
+### 8.117  `TEST-testreport` — Rueckweg des Testergebnisses
 
 Abnahme der Datei tests/testreport.test.ts: das Ergebnis eines Laufs kommt in den Graphen und der Pruefreport wieder heraus. Vorher meldete die Ergebnis-Regel jeden TEST-Knoten als ergebnislos, waehrend die Suite vollstaendig gruen lief.
 
 verify ▶ `REQ-audit-trail` · `REQ-test-runnable-binding` · testRefs: `tests/testreport.test.ts`
 
-### 8.117  `TEST-thresholds-from-config` — Schwelle als Knopf, nicht als Literal
+### 8.118  `TEST-thresholds-from-config` — Schwelle als Knopf, nicht als Literal
 
 Zwei Repos, identischer Graph, verschieden nur in graphcode.config.jsonc; assertiert das gekippte Urteil bei identischer Messung.
 
 verify ▶ `REQ-thresholds-from-config` · testRefs: `tests/config.test.ts`
 
-### 8.118  `TEST-token-efficiency` — Token-Budget-Test
+### 8.119  `TEST-token-efficiency` — Token-Budget-Test
 
 graph_impact-Kontext ist messbar kleiner als ein Volltext-/grep-Dump desselben Scopes (Token-Count-Assertion).
 
 verify ▶ `REQ-benchmark-harness` · `REQ-precise-context` · `REQ-token-efficiency`
 
-### 8.119  `TEST-uc-authoring-style` — Stilregel fuer Use Cases als Linter
+### 8.120  `TEST-uc-authoring-style` — Stilregel fuer Use Cases als Linter
 
 Abnahme der Datei tests/se-author-uc.test.ts: die Stilregel ist ausfuehrbar statt Prosa. Hoechstens 25 Woerter, hoechstens zwei Fachbegriffe, jeder davon an einem Knoten geerdet, geprueft auch gegen den committeten Graphen.
 
 verify ▶ `REQ-interactive-capture-suggest` · testRefs: `tests/se-author-uc.test.ts`
 
-### 8.120  `TEST-upgrade` — Abnahme des upgrade-Verbs
+### 8.121  `TEST-upgrade` — Abnahme des upgrade-Verbs
 
 Abnahme der Datei tests/upgrade.test.ts: die Reihenfolge macht den Befehl aus. Erst installieren, dann die Artefakte vom NEU installierten Build schreiben lassen, dann den alten Host beenden. Bleibt ein Schritt aus, steht das im Bericht statt als stiller Erfolg. npm und Signale sind injiziert, kein Netz.
 
 verify ▶ `REQ-install-idempotent` · `REQ-repo-update` · testRefs: `tests/upgrade.test.ts`
 
-### 8.121  `TEST-views-auditor` — Sichten fuer den Auditor
+### 8.122  `TEST-views-auditor` — Sichten fuer den Auditor
 
 Abnahme der Datei tests/views.auditor.test.ts: die Nachweismatrix zeigt, auf welcher Ebene eine Anforderung sitzt, und die Verifikationsmatrix, welcher Test eine Schnittstelle zwischen zwei Funktionen abdeckt. Beides stand im Graphen und war ohne Lauf nicht lesbar.
 
 verify ▶ `REQ-doc-export` · `REQ-readiness-model` · testRefs: `tests/views.auditor.test.ts`
 
-### 8.122  `TEST-views-conformance` — Eine Sicht liest nur Deklariertes
+### 8.123  `TEST-views-conformance` — Eine Sicht liest nur Deklariertes
 
 Abnahme der Datei tests/views.conformance.test.ts: eine Sicht darf nur lesen, was Ontologie und Regeln deklarieren. Die Fehlerklasse dagegen ist die volle Konformitaet auf einer leeren Sicht, also ein gruener Bericht ueber nichts.
 
 verify ▶ `REQ-doc-export` · `REQ-shared-views-no-fork` · testRefs: `tests/views.conformance.test.ts`
 
-### 8.123  `TEST-violation-context` — Reparatur-Kontext am Verstoss
+### 8.124  `TEST-violation-context` — Reparatur-Kontext am Verstoss
 
 Abnahme der Datei tests/mcp.violation-context.test.ts: die Regel-Werkzeuge reichen den Reparatur-Kontext der Contracts durch, statt ihn flachzuklopfen. Wer einen Verstoss aufloest, bekommt Hinweis und Kandidaten aus derselben Antwort, ohne eine zweite Abfrage.
 
@@ -6904,4 +6936,4 @@ verify ▶ `REQ-precise-context` · `REQ-rule-enforcement` · testRefs: `tests/m
 
 ## 9  Traceability summary
 
-135 REQ · 135 verified · 0 without a verifying TEST (R-01).
+136 REQ · 136 verified · 0 without a verifying TEST (R-01).

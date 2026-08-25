@@ -4693,6 +4693,12 @@
       "updated_at": "2026-06-18T00:00:00.000Z"
     },
     {
+      "id": "REQ-session-leaves-nothing-behind",
+      "type": "REQ",
+      "name": "Sitzungsende hinterlaesst nichts",
+      "description": "Nach dem Ende einer Sitzung muss der Store-Lock freigegeben und der Sitzungseintrag entfernt sein; abgeraeumt wird genau einmal und in umgekehrter Aufbaureihenfolge, der Store-Lock zuletzt."
+    },
+    {
       "id": "REQ-shared-views-no-fork",
       "type": "REQ",
       "name": "Geteilte View-Berechnung, kein Regel-Fork",
@@ -6662,6 +6668,23 @@
       "level": "acceptance",
       "tool": "benchmark, 2 LLMs",
       "constraint": "small/local LLM succeeds"
+    },
+    {
+      "id": "TEST-repo-lifecycle",
+      "type": "TEST",
+      "name": "Repo-Lebenszyklus raeumt vollstaendig ab",
+      "description": "Faehrt den Lebenszyklus auf echtem Disk-Kuzu: Lock nehmen, Sitzung eintragen, zweiter Owner scheitert, dann Abbau ueber SessionLifecycle. Danach ist der Lock frei und kein Sitzungseintrag uebrig.",
+      "method": "test",
+      "constraint": "Disk-Kuzu im Temp-Verzeichnis",
+      "testRefs": [
+        {
+          "file": "tests/repo-lifecycle.integration.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-08-25T12:19:08.000Z"
+        }
+      ]
     },
     {
       "id": "TEST-reseed",
@@ -11198,6 +11221,11 @@
     },
     {
       "source": "FCHAIN-repo-lifecycle",
+      "target": "FUNC-claim-store-lock",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-repo-lifecycle",
       "target": "FUNC-cli-dispatch",
       "type": "compose"
     },
@@ -11241,6 +11269,11 @@
       "source": "FCHAIN-repo-lifecycle",
       "target": "FUNC-upgrade",
       "type": "compose"
+    },
+    {
+      "source": "FCHAIN-repo-lifecycle",
+      "target": "REQ-session-leaves-nothing-behind",
+      "type": "satisfy"
     },
     {
       "source": "FCHAIN-skill-authoring",
@@ -13294,6 +13327,11 @@
       "target": "MOD-cli",
       "type": "allocate",
       "weight": "1"
+    },
+    {
+      "source": "FUNC-cli-dispatch",
+      "target": "FLOW-cli-command",
+      "type": "io"
     },
     {
       "source": "FUNC-cli-dispatch",
@@ -16712,6 +16750,11 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "TEST-repo-lifecycle",
+      "target": "REQ-session-leaves-nothing-behind",
+      "type": "verify"
+    },
+    {
       "source": "TEST-reseed",
       "target": "REQ-graph-state-recall",
       "type": "verify"
@@ -17607,9 +17650,14 @@
     },
     {
       "source": "UC-repo-lifecycle",
+      "target": "REQ-session-leaves-nothing-behind",
+      "type": "compose"
+    },
+    {
+      "source": "UC-repo-lifecycle",
       "target": "REQ-viewer-owned-by-repo",
       "type": "compose"
     }
   ],
-  "graphVersion": 195
+  "graphVersion": 196
 }

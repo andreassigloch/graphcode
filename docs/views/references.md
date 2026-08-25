@@ -675,6 +675,7 @@
 | `FCHAIN-recall` | satisfy | `REQ-graph-state-recall` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-bind-tools` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-bootstrap` |
+| `FCHAIN-repo-lifecycle` | compose | `FUNC-claim-store-lock` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-cli-dispatch` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-collect-status` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-gve-sessions` |
@@ -684,6 +685,7 @@
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-session-shutdown` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-tool-context` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-upgrade` |
+| `FCHAIN-repo-lifecycle` | satisfy | `REQ-session-leaves-nothing-behind` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-author-req` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-author-uc` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-close-violations` |
@@ -1063,6 +1065,7 @@
 | `FUNC-claim-store-lock` | io | `FLOW-store-ownership` |
 | `FUNC-claim-store-lock` | satisfy | `REQ-single-kuzu-owner` |
 | `FUNC-cli-dispatch` | allocate | `MOD-cli` |
+| `FUNC-cli-dispatch` | io | `FLOW-cli-command` |
 | `FUNC-cli-dispatch` | satisfy | `REQ-npx-distribution` |
 | `FUNC-close-store` | allocate | `MOD-harness` |
 | `FUNC-close-store` | io | `FLOW-committed-graph` |
@@ -1663,6 +1666,7 @@
 | `TEST-reduced-llm` | verify | `REQ-post-modelfree-gate` |
 | `TEST-reduced-llm` | verify | `REQ-pre-modelfree-gate` |
 | `TEST-reduced-llm` | verify | `REQ-small-model-viable` |
+| `TEST-repo-lifecycle` | verify | `REQ-session-leaves-nothing-behind` |
 | `TEST-reseed` | verify | `REQ-graph-state-recall` |
 | `TEST-reseed` | verify | `REQ-store-recovery` |
 | `TEST-responsiveness` | verify | `REQ-responsiveness` |
@@ -1829,4 +1833,5 @@
 | `UC-repo-lifecycle` | compose | `REQ-post-harness-cli` |
 | `UC-repo-lifecycle` | compose | `REQ-pre-harness-cli` |
 | `UC-repo-lifecycle` | compose | `REQ-repo-update` |
+| `UC-repo-lifecycle` | compose | `REQ-session-leaves-nothing-behind` |
 | `UC-repo-lifecycle` | compose | `REQ-viewer-owned-by-repo` |
