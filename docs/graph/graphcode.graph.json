@@ -2079,6 +2079,12 @@
       "concept": true
     },
     {
+      "id": "FLOW-target-profile",
+      "type": "FLOW",
+      "name": "Zielprofil",
+      "description": "Das Zielprofil eines Repos in .graphcode/target-profile.json: R6-Zielgewichte und die 3-7 Intentions-Anker. Vom Skill geschrieben, beim Laden geprueft, von Runden-Prompt und Suggestion-Ranking gelesen."
+    },
+    {
       "id": "FLOW-test-selection",
       "type": "FLOW",
       "name": "Selektive Testauswahl",
@@ -5203,6 +5209,17 @@
       "realRef": {
         "file": "src/steering-snapshot.ts",
         "symbol": "SteeringSnapshot",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "SCHEMA-target-profile",
+      "type": "SCHEMA",
+      "name": "TargetProfile",
+      "description": "weights (6 Dimensionen in [-1,1]) und intentAnchors (3-7 Strings). Der Vertrag der Zielprofil-Datei, die zwei Schreiber und einen Leser hat.",
+      "realRef": {
+        "file": "src/target-profile-contract.ts",
+        "symbol": "TargetProfileSchema",
         "lang": "ts"
       }
     },
@@ -12559,6 +12576,26 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-target-profile",
+      "target": "FUNC-generation-step",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-target-profile",
+      "target": "FUNC-graph-suggest",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-target-profile",
+      "target": "FUNC-target-profile-load",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-target-profile",
+      "target": "SCHEMA-target-profile",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-test-selection",
       "target": "ACTOR-claude-code",
       "type": "io"
@@ -14935,6 +14972,11 @@
     },
     {
       "source": "FUNC-target-profile",
+      "target": "FLOW-target-profile",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-target-profile",
       "target": "REQ-skill-authors-through-gate",
       "type": "satisfy"
     },
@@ -14943,6 +14985,11 @@
       "target": "MOD-steering",
       "type": "allocate",
       "weight": "1"
+    },
+    {
+      "source": "FUNC-target-profile-load",
+      "target": "FLOW-target-profile",
+      "type": "io"
     },
     {
       "source": "FUNC-target-profile-load",
@@ -17759,5 +17806,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 199
+  "graphVersion": 200
 }

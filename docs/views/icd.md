@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 26 SCHEMA · 58 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 27 SCHEMA · 59 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -33,6 +33,7 @@
 | `SCHEMA-session-registry` | src/gve-session-contract.ts#SessionEntrySchema | n/a |
 | `SCHEMA-steering-delta` | src/steering-snapshot.ts#SteeringDelta | reviewed |
 | `SCHEMA-steering-snapshot` | src/steering-snapshot.ts#SteeringSnapshot | reviewed |
+| `SCHEMA-target-profile` | src/target-profile-contract.ts#TargetProfileSchema | n/a |
 | `SCHEMA-test-selection` | src/test-selection.ts#TestSelectionSchema | n/a |
 | `SCHEMA-trajectory` | extern definiert (kein realRef) | reviewed |
 | `SCHEMA-update-event` | extern definiert (kein realRef) | reviewed |
@@ -93,6 +94,7 @@
 | `FLOW-store-ownership` | `FUNC-claim-store-lock` · `FUNC-create-harness` | `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` |
 | `FLOW-suggest-result` | `FUNC-mutate` | `ACTOR-developer` |
 | `FLOW-suggested-edit` | `FUNC-graph-suggest` · `FUNC-rank-candidates` | `FUNC-mutate` |
+| `FLOW-target-profile` | `FUNC-target-profile` · `FUNC-target-profile-load` | `FUNC-generation-step` · `FUNC-graph-suggest` · `FUNC-target-profile-load` |
 | `FLOW-test-selection` | `FUNC-deduce-tests` | `ACTOR-claude-code` |
 | `FLOW-trajectory` | `FUNC-emit-trajectory` · `FUNC-tool-context` | `ACTOR-learning-engine` |
 | `FLOW-version-bump` | `ACTOR-developer` | `FUNC-migrate-schema` |

@@ -910,6 +910,10 @@
 | `FLOW-suggest-result` | relation | `SCHEMA-mutate-result` |
 | `FLOW-suggested-edit` | io | `FUNC-mutate` |
 | `FLOW-suggested-edit` | relation | `SCHEMA-mutate-command` |
+| `FLOW-target-profile` | io | `FUNC-generation-step` |
+| `FLOW-target-profile` | io | `FUNC-graph-suggest` |
+| `FLOW-target-profile` | io | `FUNC-target-profile-load` |
+| `FLOW-target-profile` | relation | `SCHEMA-target-profile` |
 | `FLOW-test-selection` | io | `ACTOR-claude-code` |
 | `FLOW-test-selection` | relation | `SCHEMA-test-selection` |
 | `FLOW-trajectory` | io | `ACTOR-learning-engine` |
@@ -1341,8 +1345,10 @@
 | `FUNC-take-steering-snapshot` | satisfy | `REQ-steering-post` |
 | `FUNC-target-profile` | allocate | `MOD-skills` |
 | `FUNC-target-profile` | io | `FLOW-mutate-cmd` |
+| `FUNC-target-profile` | io | `FLOW-target-profile` |
 | `FUNC-target-profile` | satisfy | `REQ-skill-authors-through-gate` |
 | `FUNC-target-profile-load` | allocate | `MOD-steering` |
+| `FUNC-target-profile-load` | io | `FLOW-target-profile` |
 | `FUNC-target-profile-load` | satisfy | `REQ-target-shifts-ranking` |
 | `FUNC-test` | allocate | `MOD-skills` |
 | `FUNC-test` | io | `FLOW-skill-report` |

@@ -992,7 +992,7 @@ Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ 
 
 Prompt-realisierter Skill se:target-profile: R6-Zielgewichte vom Menschen elizitieren, Zielkonflikte sichtbar machen.
 
-io ◀ `FLOW-authoring-request` · io ▶ `FLOW-mutate-cmd` · allocate ▶ `MOD-skills`
+io ◀ `FLOW-authoring-request` · io ▶ `FLOW-mutate-cmd` · `FLOW-target-profile` · allocate ▶ `MOD-skills`
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
@@ -1390,7 +1390,7 @@ Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (in
 
 Waehlt aus den Dimensionsscores die schwaechste Dimension unter der Fokus-Schwelle und stellt daraus den Runden-Prompt zusammen: Fokus-Typen, Fund-Fenster, Gate-Protokoll, Handoff-Bedingung.
 
-io ◀ `FLOW-dimension-readiness` · `FLOW-phase-readiness` · io ▶ `FLOW-round-prompt` · allocate ▶ `MOD-steering`
+io ◀ `FLOW-dimension-readiness` · `FLOW-phase-readiness` · `FLOW-target-profile` · io ▶ `FLOW-round-prompt` · allocate ▶ `MOD-steering`
 
 ###### `REQ-monotone-convergence` — Wiederholte Steuerung konvergiert monoton
 
@@ -1598,7 +1598,7 @@ Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (in
 
 Laedt das Zielprofil und meldet Zielkonflikte. Das Profil ist Konfiguration neben dem Graphen, nicht Teil des Modells.
 
-io ◀ — · io ▶ — · allocate ▶ `MOD-steering`
+io ◀ `FLOW-target-profile` · io ▶ `FLOW-target-profile` · allocate ▶ `MOD-steering`
 
 ###### `REQ-target-shifts-ranking` — Die Zielrichtung verschiebt das Suggestion-Ranking
 
@@ -2718,7 +2718,7 @@ Verification ◀ `TEST-mutate-gate` (integration) · `TEST-nd-similarity` (unit)
 
 Duennes Binding auf @sigloch/se-optimizer (targetFor/suggestEdits): rankt die feuernden Operator-Regeln nach dem Skalarprodukt aus Metrik-Delta und Zielrichtung im R^6-Metrikraum; liefert die Fund-Ebene, Template-Edits laufen als dryRun durchs Gate. Nie auto-apply. (CR-GC-273)
 
-io ◀ `FLOW-round-findings` · io ▶ `FLOW-suggested-edit` · allocate ▶ `MOD-mcp-tools`
+io ◀ `FLOW-round-findings` · `FLOW-target-profile` · io ▶ `FLOW-suggested-edit` · allocate ▶ `MOD-mcp-tools`
 
 ###### `REQ-applied-suggestion-moves-target` — Eine angewandte Suggestion bewegt den Zielvektor in Zielrichtung
 
@@ -3578,7 +3578,7 @@ Verification ◀ `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-serv
 
 Prompt-realisierter Skill se:target-profile: R6-Zielgewichte vom Menschen elizitieren, Zielkonflikte sichtbar machen.
 
-io ◀ `FLOW-authoring-request` · io ▶ `FLOW-mutate-cmd` · allocate ▶ `MOD-skills`
+io ◀ `FLOW-authoring-request` · io ▶ `FLOW-mutate-cmd` · `FLOW-target-profile` · allocate ▶ `MOD-skills`
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
@@ -4556,7 +4556,7 @@ Verification ◀ `TEST-schema-migration` (integration) · satisfy ◀ `FUNC-migr
 
 Laedt das Zielprofil und meldet Zielkonflikte. Das Profil ist Konfiguration neben dem Graphen, nicht Teil des Modells.
 
-io ◀ — · io ▶ — · allocate ▶ `MOD-steering`
+io ◀ `FLOW-target-profile` · io ▶ `FLOW-target-profile` · allocate ▶ `MOD-steering`
 
 ###### `REQ-target-shifts-ranking` — Die Zielrichtung verschiebt das Suggestion-Ranking
 
@@ -5072,7 +5072,7 @@ io ◀ — · io ▶ — · allocate ▶ `MOD-steering`
 
 Duennes Binding auf @sigloch/se-optimizer (targetFor/suggestEdits): rankt die feuernden Operator-Regeln nach dem Skalarprodukt aus Metrik-Delta und Zielrichtung im R^6-Metrikraum; liefert die Fund-Ebene, Template-Edits laufen als dryRun durchs Gate. Nie auto-apply. (CR-GC-273)
 
-io ◀ `FLOW-round-findings` · io ▶ `FLOW-suggested-edit` · allocate ▶ `MOD-mcp-tools`
+io ◀ `FLOW-round-findings` · `FLOW-target-profile` · io ▶ `FLOW-suggested-edit` · allocate ▶ `MOD-mcp-tools`
 
 ###### `REQ-applied-suggestion-moves-target` — Eine angewandte Suggestion bewegt den Zielvektor in Zielrichtung
 
@@ -5158,7 +5158,7 @@ io ◀ — · io ▶ — · allocate ▶ `MOD-steering`
 
 Waehlt aus den Dimensionsscores die schwaechste Dimension unter der Fokus-Schwelle und stellt daraus den Runden-Prompt zusammen: Fokus-Typen, Fund-Fenster, Gate-Protokoll, Handoff-Bedingung.
 
-io ◀ `FLOW-dimension-readiness` · `FLOW-phase-readiness` · io ▶ `FLOW-round-prompt` · allocate ▶ `MOD-steering`
+io ◀ `FLOW-dimension-readiness` · `FLOW-phase-readiness` · `FLOW-target-profile` · io ▶ `FLOW-round-prompt` · allocate ▶ `MOD-steering`
 
 ###### `REQ-monotone-convergence` — Wiederholte Steuerung konvergiert monoton
 
@@ -5680,37 +5680,43 @@ Der von propose bestbewertete Kandidaten-Fix (Template-Edit, dryRun-verifiziert)
 
 io ◀ `FUNC-graph-suggest` · `FUNC-rank-candidates` · io ▶ `FUNC-mutate` · schema ▶ `SCHEMA-mutate-command`
 
-### 4.53  `FLOW-test-selection` — Selektive Testauswahl
+### 4.53  `FLOW-target-profile` — Zielprofil
+
+Das Zielprofil eines Repos in .graphcode/target-profile.json: R6-Zielgewichte und die 3-7 Intentions-Anker. Vom Skill geschrieben, beim Laden geprueft, von Runden-Prompt und Suggestion-Ranking gelesen.
+
+io ◀ `FUNC-target-profile` · `FUNC-target-profile-load` · io ▶ `FUNC-generation-step` · `FUNC-graph-suggest` · `FUNC-target-profile-load` · schema ▶ `SCHEMA-target-profile`
+
+### 4.54  `FLOW-test-selection` — Selektive Testauswahl
 
 Das minimale selektive Laufkommando mit den aufgeloesten TESTs, den Coverage-Zahlen und dem, was unaufloesbar blieb.
 
 io ◀ `FUNC-deduce-tests` · io ▶ `ACTOR-claude-code` · schema ▶ `SCHEMA-test-selection`
 
-### 4.54  `FLOW-trajectory` — Trajectory/Outcome
+### 4.55  `FLOW-trajectory` — Trajectory/Outcome
 
 append-only Lern-Emission.
 
 io ◀ `FUNC-emit-trajectory` · `FUNC-tool-context` · io ▶ `ACTOR-learning-engine` · schema ▶ `SCHEMA-trajectory`
 
-### 4.55  `FLOW-version-bump` — Version-Bump
+### 4.56  `FLOW-version-bump` — Version-Bump
 
 Neue ONTOLOGY/RULES_VERSION aus contracts/se.
 
 io ◀ `ACTOR-developer` · io ▶ `FUNC-migrate-schema` · schema ▶ `SCHEMA-query-params`
 
-### 4.56  `FLOW-view-request` — View-Request
+### 4.57  `FLOW-view-request` — View-Request
 
 Welche View gerendert werden soll (arch/status/...).
 
 io ◀ `ACTOR-developer` · io ▶ `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · schema ▶ `SCHEMA-query-params`
 
-### 4.57  `FLOW-viewer-stream` — Viewer-Stream
+### 4.58  `FLOW-viewer-stream` — Viewer-Stream
 
 Der versionierte SSE/WS-Strom an die Live-Viewer: Update-Events mit Late-Joiner-Cache, strikt read-only.
 
 io ◀ `FUNC-broadcast-diff` · `FUNC-serve-sse` · io ▶ `ACTOR-dashboard` · schema ▶ `SCHEMA-update-event`
 
-### 4.58  `FLOW-violations` — Violations
+### 4.59  `FLOW-violations` — Violations
 
 Regel-Violations {ruleId,severity,elementId}.
 
@@ -5856,19 +5862,25 @@ Gemappter OntologyGraph mit injizierten ND-Matrizen, Violations des vollen Katal
 
 schema ◀ `FLOW-steering-snapshot`
 
-### 5.24  `SCHEMA-test-selection` — TestSelection
+### 5.24  `SCHEMA-target-profile` — TargetProfile
+
+weights (6 Dimensionen in [-1,1]) und intentAnchors (3-7 Strings). Der Vertrag der Zielprofil-Datei, die zwei Schreiber und einen Leser hat.
+
+schema ◀ `FLOW-target-profile`
+
+### 5.25  `SCHEMA-test-selection` — TestSelection
 
 command, tests mit testRefs, coverage, unresolved. Der Vertrag der graph_tests-Antwort.
 
 schema ◀ `FLOW-test-selection`
 
-### 5.25  `SCHEMA-trajectory` — Trajectory/Outcome
+### 5.26  `SCHEMA-trajectory` — Trajectory/Outcome
 
 append-only Lern-Emission. @sigloch/learning-core.
 
 schema ◀ `FLOW-trajectory`
 
-### 5.26  `SCHEMA-update-event` — UpdateEvent
+### 5.27  `SCHEMA-update-event` — UpdateEvent
 
 SSE invalidate Event.
 

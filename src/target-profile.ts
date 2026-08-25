@@ -19,33 +19,24 @@
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
-import { z } from 'zod/v4';
 import { tokens } from './nd-similarity.js';
+import {
+  TargetWeightsSchema,
+  TargetProfileSchema,
+  type TargetWeights,
+  type TargetProfile,
+} from './target-profile-contract.js';
 
 // ---------------------------------------------------------------------------
-// Schema — die 6 MetricVector-Dimensionen, Gewicht je Dimension in [-1,1]
+// Schema — die 6 MetricVector-Dimensionen, Gewicht je Dimension in [-1,1].
+// Seit CR-GC-419 in `./target-profile-contract.ts`: die Datei hat zwei Schreiber
+// (der Skill se:target-profile und ein Hand-Edit) und einen Leser hier — der
+// Vertrag gehoert keiner der Seiten. Hier nur re-exportiert, damit bestehende
+// Importe eine Definition sehen; es gibt weiterhin genau eine.
 // ---------------------------------------------------------------------------
 
-const weight = z.number().min(-1).max(1);
-
-/** Die Gewichts-Form ist identisch zum graph_suggest-`target`-Input — suggest.ts importiert sie (kein Parallelpfad). */
-export const TargetWeightsSchema = z.strictObject({
-  modifiability: weight.optional(),
-  faultTolerance: weight.optional(),
-  flowEfficiency: weight.optional(),
-  coherence: weight.optional(),
-  viability: weight.optional(),
-  scalability: weight.optional(),
-});
-export type TargetWeights = z.infer<typeof TargetWeightsSchema>;
-
-export const TargetProfileSchema = z.strictObject({
-  /** ℝ⁶-Zielrichtung; leer = unentschieden (Gleichgewichtung, CR-289-Verhalten). */
-  weights: TargetWeightsSchema.default({}),
-  /** Die 3–7 inhaltlichen Kernthemen der Intention, vom Menschen bestätigt. */
-  intentAnchors: z.array(z.string().min(1)).min(3).max(7).optional(),
-});
-export type TargetProfile = z.infer<typeof TargetProfileSchema>;
+export { TargetWeightsSchema, TargetProfileSchema };
+export type { TargetWeights, TargetProfile };
 
 /** Pfad relativ zum Repo-Root — committet (Ausnahme vom .graphcode/-gitignore). */
 export const TARGET_PROFILE_REL = join('.graphcode', 'target-profile.json');
