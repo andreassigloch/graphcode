@@ -18,6 +18,7 @@
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { hostname } from 'node:os';
+import { SessionEntrySchema, type SessionEntry } from './gve-session-contract.js';
 
 /** Wo die Sessions eines Repos stehen — neben Store und Lock, also gitignored. */
 export function sessionsDir(repoRoot: string): string {
@@ -49,11 +50,8 @@ function isAlive(pid: number): boolean {
   }
 }
 
-interface SessionEntry {
-  pid: number;
-  hostname: string;
-  startedAt: string;
-}
+// Der Eintrags-Vertrag wohnt seit CR-GC-416 in `./gve-session-contract.ts` —
+// er quert eine Prozessgrenze und gehoert deshalb keiner der beiden Seiten.
 
 /** Diese Session braucht ein Dashboard. Idempotent. */
 export function registerSession(repoRoot: string, pid: number = process.pid): void {
@@ -83,11 +81,14 @@ export function liveSessions(repoRoot: string): number[] {
   const alive: number[] = [];
   for (const name of readdirSync(dir)) {
     const file = join(dir, name);
-    let entry: SessionEntry | null = null;
+    // Geprueft, nicht gecastet (CR-GC-416): ein Eintrag ohne `hostname` waere sonst
+    // als "anderer Rechner" durchgerutscht — die Sitzung zaehlte nicht mehr mit, und
+    // der Viewer ging zu frueh aus. Formfremd ist genauso wertlos wie unlesbar.
+    let entry: SessionEntry;
     try {
-      entry = JSON.parse(readFileSync(file, 'utf8')) as SessionEntry;
+      entry = SessionEntrySchema.parse(JSON.parse(readFileSync(file, 'utf8')));
     } catch {
-      rmSync(file, { force: true }); // unlesbar = wertlos
+      rmSync(file, { force: true }); // unlesbar oder formfremd = wertlos
       continue;
     }
     if (entry.hostname !== me) continue;

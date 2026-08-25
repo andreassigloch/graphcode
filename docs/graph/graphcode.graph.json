@@ -2011,6 +2011,12 @@
       "concept": true
     },
     {
+      "id": "FLOW-session-registry",
+      "type": "FLOW",
+      "name": "Sitzungsregister",
+      "description": "Die Sitzungseintraege eines Repos unter .graphcode/sessions: je lebender Sitzung PID, Rechner und Startzeit. Geschrieben von der Sitzung selbst, gelesen und von toten Eintraegen befreit beim Zaehlen."
+    },
+    {
       "id": "FLOW-skill-report",
       "type": "FLOW",
       "name": "Skill-Bericht",
@@ -5144,6 +5150,17 @@
       "realRef": {
         "file": "packages/contracts/src/se/readiness.ts",
         "symbol": "ReadinessReport",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "SCHEMA-session-registry",
+      "type": "SCHEMA",
+      "name": "SessionEntry",
+      "description": "pid, hostname, startedAt. Der Vertrag eines Sitzungseintrags, der eine Prozessgrenze quert.",
+      "realRef": {
+        "file": "src/gve-session-contract.ts",
+        "symbol": "SessionEntrySchema",
         "lang": "ts"
       }
     },
@@ -11704,6 +11721,11 @@
     },
     {
       "source": "FLOW-cli-command",
+      "target": "FUNC-gve-supervise",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-cli-command",
       "target": "FUNC-harness-cli",
       "type": "io",
       "weight": 1,
@@ -12348,6 +12370,16 @@
       "source": "FLOW-round-scope",
       "target": "FUNC-evaluate-rules",
       "type": "io"
+    },
+    {
+      "source": "FLOW-session-registry",
+      "target": "FUNC-gve-sessions",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-session-registry",
+      "target": "SCHEMA-session-registry",
+      "type": "relation"
     },
     {
       "source": "FLOW-skill-report",
@@ -13908,6 +13940,11 @@
     },
     {
       "source": "FUNC-gve-sessions",
+      "target": "FLOW-session-registry",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-gve-sessions",
       "target": "REQ-viewer-owned-by-repo",
       "type": "satisfy"
     },
@@ -13916,6 +13953,11 @@
       "target": "MOD-cli",
       "type": "allocate",
       "weight": "1"
+    },
+    {
+      "source": "FUNC-gve-supervise",
+      "target": "FLOW-session-registry",
+      "type": "io"
     },
     {
       "source": "FUNC-gve-supervise",
@@ -17659,5 +17701,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 196
+  "graphVersion": 197
 }

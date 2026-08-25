@@ -765,6 +765,7 @@
 | `FLOW-cli-command` | io | `FUNC-cli-dispatch` |
 | `FLOW-cli-command` | io | `FUNC-collect-status` |
 | `FLOW-cli-command` | io | `FUNC-create-harness` |
+| `FLOW-cli-command` | io | `FUNC-gve-supervise` |
 | `FLOW-cli-command` | io | `FUNC-harness-cli` |
 | `FLOW-cli-command` | io | `FUNC-import-code-verb` |
 | `FLOW-cli-command` | io | `FUNC-rewind` |
@@ -876,6 +877,8 @@
 | `FLOW-round-prompt` | io | `FUNC-run-executor` |
 | `FLOW-round-prompt` | relation | `SCHEMA-generation-step` |
 | `FLOW-round-scope` | io | `FUNC-evaluate-rules` |
+| `FLOW-session-registry` | io | `FUNC-gve-sessions` |
+| `FLOW-session-registry` | relation | `SCHEMA-session-registry` |
 | `FLOW-skill-report` | io | `ACTOR-systems-engineer` |
 | `FLOW-skill-report` | relation | `SCHEMA-markdown-view` |
 | `FLOW-skill-request` | io | `FUNC-se-help` |
@@ -1163,8 +1166,10 @@
 | `FUNC-graph-suggest` | satisfy | `REQ-small-model-viable` |
 | `FUNC-graph-suggest` | satisfy | `REQ-target-shifts-ranking` |
 | `FUNC-gve-sessions` | allocate | `MOD-cli` |
+| `FUNC-gve-sessions` | io | `FLOW-session-registry` |
 | `FUNC-gve-sessions` | satisfy | `REQ-viewer-owned-by-repo` |
 | `FUNC-gve-supervise` | allocate | `MOD-cli` |
+| `FUNC-gve-supervise` | io | `FLOW-session-registry` |
 | `FUNC-gve-supervise` | satisfy | `REQ-viewer-owned-by-repo` |
 | `FUNC-harness-cli` | allocate | `MOD-cli` |
 | `FUNC-harness-cli` | io | `FLOW-install-result` |

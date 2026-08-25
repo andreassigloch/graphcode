@@ -3080,7 +3080,43 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-readonly-bridge` (integration) · satisfy ◀ `FUNC-collect-status` · `FUNC-health-endpoint` · `MOD-host-bridge` · allocate ▶ `MOD-cli` · `MOD-host-bridge`
 
-##### 3.9.1.7  `FUNC-harness-cli` — graphcode init/update/remove
+##### 3.9.1.7  `FUNC-gve-supervise` — attachGve
+
+> auch in: `FUNC-block-betrieb`
+
+Haengt eine Sitzung an das Dashboard des Repos: sorgt dafuer, dass genau ein Viewer laeuft, haelt ihn per Umfrage am Leben und beendet ihn erst, wenn die letzte Sitzung des Repos geht. Aufrufer ist der MCP-Server beim Hochfahren, in beiden Zweigen (Wahlgewinner wie Proxy).
+
+io ◀ `FLOW-cli-command` · io ▶ `FLOW-session-registry` · allocate ▶ `MOD-cli`
+
+###### `REQ-viewer-owned-by-repo` — Viewer gehoert dem Repo
+
+> auch unter: `FUNC-gve-sessions`
+
+Der Live-Viewer gehoert dem Repo, nicht der einzelnen Sitzung: jede Sitzung traegt sich ein, genau ein Viewer laeuft (Startreservierung mit Ablauffrist), eine Umfrage bemerkt seinen Tod, und erst die letzte Sitzung beendet ihn — nur wenn graphcode ihn selbst gestartet hat. (CR-GC-404)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-gve-autostart` (unit) · `TEST-gve-supervision` (integration) · satisfy ◀ `FUNC-gve-sessions` · `FUNC-gve-supervise` · allocate ▶ `MOD-cli`
+
+##### 3.9.1.8  `FUNC-gve-sessions` — liveSessions
+
+> auch in: `FUNC-block-betrieb`
+
+Fuehrt Buch, welche Sitzungen eines Repos noch leben, damit der Viewer dem Repo gehoert und nicht der einzelnen Sitzung. Eintraege toter Prozesse werden beim Lesen entfernt.
+
+io ◀ `FLOW-session-registry` · io ▶ `FLOW-session-registry` · allocate ▶ `MOD-cli`
+
+###### `REQ-viewer-owned-by-repo` — Viewer gehoert dem Repo
+
+> auch unter: `FUNC-gve-supervise`
+
+Der Live-Viewer gehoert dem Repo, nicht der einzelnen Sitzung: jede Sitzung traegt sich ein, genau ein Viewer laeuft (Startreservierung mit Ablauffrist), eine Umfrage bemerkt seinen Tod, und erst die letzte Sitzung beendet ihn — nur wenn graphcode ihn selbst gestartet hat. (CR-GC-404)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-gve-autostart` (unit) · `TEST-gve-supervision` (integration) · satisfy ◀ `FUNC-gve-sessions` · `FUNC-gve-supervise` · allocate ▶ `MOD-cli`
+
+##### 3.9.1.9  `FUNC-harness-cli` — graphcode init/update/remove
 
 > auch in: `FUNC-block-anschluss`
 
@@ -3156,7 +3192,7 @@ priority: should · status: done · kinds: non-functional
 
 Verification ◀ `TEST-distribution` (e2e) · satisfy ◀ `FUNC-harness-cli` · allocate ▶ `MOD-cli`
 
-##### 3.9.1.8  `FUNC-run-verb` — executeRun
+##### 3.9.1.10  `FUNC-run-verb` — executeRun
 
 > auch in: `FUNC-block-betrieb`
 
@@ -3174,7 +3210,7 @@ priority: must · status: n/a
 
 Verification ◀ `TEST-cli-run` (integration) · `TEST-executor-bestofn` (integration) · `TEST-one-driver-local-and-frontier` (integration) · satisfy ◀ `FUNC-run-executor` · `FUNC-run-verb` · allocate ▶ `MOD-cli` · `MOD-executor`
 
-##### 3.9.1.9  `FUNC-upgrade` — executeUpgrade(opts)
+##### 3.9.1.11  `FUNC-upgrade` — executeUpgrade(opts)
 
 > auch in: `FUNC-block-betrieb`
 
@@ -3191,42 +3227,6 @@ Update aktualisiert installierte Artefakte/Pfade, ohne den lokalen Graph-Store (
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-cli-scaffold` (integration) · `TEST-upgrade` (integration) · satisfy ◀ `FUNC-harness-cli` · `FUNC-upgrade` · allocate ▶ `MOD-cli`
-
-##### 3.9.1.10  `FUNC-gve-sessions` — liveSessions
-
-> auch in: `FUNC-block-betrieb`
-
-Fuehrt Buch, welche Sitzungen eines Repos noch leben, damit der Viewer dem Repo gehoert und nicht der einzelnen Sitzung. Eintraege toter Prozesse werden beim Lesen entfernt.
-
-io ◀ — · io ▶ — · allocate ▶ `MOD-cli`
-
-###### `REQ-viewer-owned-by-repo` — Viewer gehoert dem Repo
-
-> auch unter: `FUNC-gve-supervise`
-
-Der Live-Viewer gehoert dem Repo, nicht der einzelnen Sitzung: jede Sitzung traegt sich ein, genau ein Viewer laeuft (Startreservierung mit Ablauffrist), eine Umfrage bemerkt seinen Tod, und erst die letzte Sitzung beendet ihn — nur wenn graphcode ihn selbst gestartet hat. (CR-GC-404)
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-gve-autostart` (unit) · `TEST-gve-supervision` (integration) · satisfy ◀ `FUNC-gve-sessions` · `FUNC-gve-supervise` · allocate ▶ `MOD-cli`
-
-##### 3.9.1.11  `FUNC-gve-supervise` — attachGve
-
-> auch in: `FUNC-block-betrieb`
-
-Haengt eine Sitzung an das Dashboard des Repos: sorgt dafuer, dass genau ein Viewer laeuft, haelt ihn per Umfrage am Leben und beendet ihn erst, wenn die letzte Sitzung des Repos geht. Aufrufer ist der MCP-Server beim Hochfahren, in beiden Zweigen (Wahlgewinner wie Proxy).
-
-io ◀ — · io ▶ — · allocate ▶ `MOD-cli`
-
-###### `REQ-viewer-owned-by-repo` — Viewer gehoert dem Repo
-
-> auch unter: `FUNC-gve-sessions`
-
-Der Live-Viewer gehoert dem Repo, nicht der einzelnen Sitzung: jede Sitzung traegt sich ein, genau ein Viewer laeuft (Startreservierung mit Ablauffrist), eine Umfrage bemerkt seinen Tod, und erst die letzte Sitzung beendet ihn — nur wenn graphcode ihn selbst gestartet hat. (CR-GC-404)
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-gve-autostart` (unit) · `TEST-gve-supervision` (integration) · satisfy ◀ `FUNC-gve-sessions` · `FUNC-gve-supervise` · allocate ▶ `MOD-cli`
 
 ##### 3.9.1.12  `FUNC-tool-context` — createToolContext
 
@@ -3764,7 +3764,7 @@ Verification ◀ `TEST-readonly-bridge` (integration) · satisfy ◀ `FUNC-colle
 
 Fuehrt Buch, welche Sitzungen eines Repos noch leben, damit der Viewer dem Repo gehoert und nicht der einzelnen Sitzung. Eintraege toter Prozesse werden beim Lesen entfernt.
 
-io ◀ — · io ▶ — · allocate ▶ `MOD-cli`
+io ◀ `FLOW-session-registry` · io ▶ `FLOW-session-registry` · allocate ▶ `MOD-cli`
 
 ###### `REQ-viewer-owned-by-repo` — Viewer gehoert dem Repo
 
@@ -3782,7 +3782,7 @@ Verification ◀ `TEST-gve-autostart` (unit) · `TEST-gve-supervision` (integrat
 
 Haengt eine Sitzung an das Dashboard des Repos: sorgt dafuer, dass genau ein Viewer laeuft, haelt ihn per Umfrage am Leben und beendet ihn erst, wenn die letzte Sitzung des Repos geht. Aufrufer ist der MCP-Server beim Hochfahren, in beiden Zweigen (Wahlgewinner wie Proxy).
 
-io ◀ — · io ▶ — · allocate ▶ `MOD-cli`
+io ◀ `FLOW-cli-command` · io ▶ `FLOW-session-registry` · allocate ▶ `MOD-cli`
 
 ###### `REQ-viewer-owned-by-repo` — Viewer gehoert dem Repo
 
@@ -5414,7 +5414,7 @@ io ◀ `FUNC-decode` · io ▶ `FUNC-mutate` · schema ▶ `SCHEMA-ontology-grap
 
 mcp / host / run / import-code / rewind / init / update / remove / skills sync.
 
-io ◀ `ACTOR-developer` · `FUNC-cli-dispatch` · io ▶ `FUNC-bootstrap` · `FUNC-claim-store-lock` · `FUNC-cli-dispatch` · `FUNC-collect-status` · `FUNC-create-harness` · `FUNC-harness-cli` · `FUNC-import-code-verb` · `FUNC-rewind` · `FUNC-run-executor` · `FUNC-run-verb` · `FUNC-upgrade` · schema ▶ `SCHEMA-cli-command`
+io ◀ `ACTOR-developer` · `FUNC-cli-dispatch` · io ▶ `FUNC-bootstrap` · `FUNC-claim-store-lock` · `FUNC-cli-dispatch` · `FUNC-collect-status` · `FUNC-create-harness` · `FUNC-gve-supervise` · `FUNC-harness-cli` · `FUNC-import-code-verb` · `FUNC-rewind` · `FUNC-run-executor` · `FUNC-run-verb` · `FUNC-upgrade` · schema ▶ `SCHEMA-cli-command`
 
 ### 4.9  `FLOW-committed-graph` — Committed-Graph
 
@@ -5620,85 +5620,91 @@ Der durch read gebundene Blast-Radius/Kontext, der informiert, was status als of
 
 io ◀ `FUNC-graph-impact` · io ▶ `FUNC-evaluate-rules` · schema ▶ —
 
-### 4.43  `FLOW-skill-report` — Skill-Bericht
+### 4.43  `FLOW-session-registry` — Sitzungsregister
+
+Die Sitzungseintraege eines Repos unter .graphcode/sessions: je lebender Sitzung PID, Rechner und Startzeit. Geschrieben von der Sitzung selbst, gelesen und von toten Eintraegen befreit beim Zaehlen.
+
+io ◀ `FUNC-gve-sessions` · `FUNC-gve-supervise` · io ▶ `FUNC-gve-sessions` · schema ▶ `SCHEMA-session-registry`
+
+### 4.44  `FLOW-skill-report` — Skill-Bericht
 
 Der gemessene Stand als Text zurueck an den Menschen.
 
 io ◀ `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-test` · `FUNC-test-ui` · io ▶ `ACTOR-systems-engineer` · schema ▶ `SCHEMA-markdown-view`
 
-### 4.44  `FLOW-skill-request` — Skill-Aufruf
+### 4.45  `FLOW-skill-request` — Skill-Aufruf
 
 Aufruf eines Skills durch den Menschen, mit Zielgraph und Optionen.
 
 io ◀ `ACTOR-systems-engineer` · io ▶ `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-test` · `FUNC-test-ui` · schema ▶ `SCHEMA-query-params`
 
-### 4.45  `FLOW-steering-delta` — Steering-Delta (vor/nach Kandidat)
+### 4.46  `FLOW-steering-delta` — Steering-Delta (vor/nach Kandidat)
 
 Blockierende Fehler vorher und nachher plus Score-Delta je Dimension. Das erste Sachkriterium der Kandidaten-Rangfolge.
 
 io ◀ `FUNC-compute-steering-delta` · io ▶ `FUNC-rank-candidates` · schema ▶ `SCHEMA-steering-delta`
 
-### 4.46  `FLOW-steering-snapshot` — Steering-Snapshot
+### 4.47  `FLOW-steering-snapshot` — Steering-Snapshot
 
 Das Ergebnis der EINEN Messung: gemappter Graph, voller Regelstrom, blockierende Fehler, Readiness-Report. Alles Weitere ist Projektion davon.
 
 io ◀ `FUNC-take-steering-snapshot` · io ▶ `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-next-step` · schema ▶ `SCHEMA-steering-snapshot`
 
-### 4.47  `FLOW-steering-trigger` — Runden-Ausloeser
+### 4.48  `FLOW-steering-trigger` — Runden-Ausloeser
 
 Der Wunsch, eine Steuerungsrunde zu fahren, mit ihren Parametern: Intent, zurueckgestellte Fokus-Schluessel, Auswahlmodus. Mensch und lokaler Executor loesen dieselbe Kette aus, nur die Taktung unterscheidet sich.
 
 io ◀ `ACTOR-developer` · `ACTOR-opencode` · `FUNC-run-verb` · io ▶ `FUNC-take-steering-snapshot` · schema ▶ `SCHEMA-query-params`
 
-### 4.48  `FLOW-store-ownership` — Store-Besitzanspruch
+### 4.49  `FLOW-store-ownership` — Store-Besitzanspruch
 
 Der Anspruch auf den Kuzu-Store eines Repos: gehalten, uebernommen oder verweigert.
 
 io ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · io ▶ `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` · schema ▶ `SCHEMA-lock-owner`
 
-### 4.49  `FLOW-suggest-result` — Suggest-Result
+### 4.50  `FLOW-suggest-result` — Suggest-Result
 
 Confidence-getaggte Vorschläge (suggest-Tier).
 
 io ◀ `FUNC-mutate` · io ▶ `ACTOR-developer` · schema ▶ `SCHEMA-mutate-result`
 
-### 4.50  `FLOW-suggested-edit` — Suggested Edit (ranked candidate)
+### 4.51  `FLOW-suggested-edit` — Suggested Edit (ranked candidate)
 
 Der von propose bestbewertete Kandidaten-Fix (Template-Edit, dryRun-verifiziert), der apply als MutateCommand-Eingabe erreicht - nur wenn der Konsument ihn uebernimmt, nie automatisch.
 
 io ◀ `FUNC-graph-suggest` · `FUNC-rank-candidates` · io ▶ `FUNC-mutate` · schema ▶ `SCHEMA-mutate-command`
 
-### 4.51  `FLOW-test-selection` — Selektive Testauswahl
+### 4.52  `FLOW-test-selection` — Selektive Testauswahl
 
 Das minimale selektive Laufkommando mit den aufgeloesten TESTs, den Coverage-Zahlen und dem, was unaufloesbar blieb.
 
 io ◀ `FUNC-deduce-tests` · io ▶ `ACTOR-claude-code` · schema ▶ `SCHEMA-test-selection`
 
-### 4.52  `FLOW-trajectory` — Trajectory/Outcome
+### 4.53  `FLOW-trajectory` — Trajectory/Outcome
 
 append-only Lern-Emission.
 
 io ◀ `FUNC-emit-trajectory` · io ▶ `ACTOR-learning-engine` · schema ▶ `SCHEMA-trajectory`
 
-### 4.53  `FLOW-version-bump` — Version-Bump
+### 4.54  `FLOW-version-bump` — Version-Bump
 
 Neue ONTOLOGY/RULES_VERSION aus contracts/se.
 
 io ◀ `ACTOR-developer` · io ▶ `FUNC-migrate-schema` · schema ▶ `SCHEMA-query-params`
 
-### 4.54  `FLOW-view-request` — View-Request
+### 4.55  `FLOW-view-request` — View-Request
 
 Welche View gerendert werden soll (arch/status/...).
 
 io ◀ `ACTOR-developer` · io ▶ `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · schema ▶ `SCHEMA-query-params`
 
-### 4.55  `FLOW-viewer-stream` — Viewer-Stream
+### 4.56  `FLOW-viewer-stream` — Viewer-Stream
 
 Der versionierte SSE/WS-Strom an die Live-Viewer: Update-Events mit Late-Joiner-Cache, strikt read-only.
 
 io ◀ `FUNC-broadcast-diff` · `FUNC-serve-sse` · io ▶ `ACTOR-dashboard` · schema ▶ `SCHEMA-update-event`
 
-### 4.56  `FLOW-violations` — Violations
+### 4.57  `FLOW-violations` — Violations
 
 Regel-Violations {ruleId,severity,elementId}.
 
@@ -5820,31 +5826,37 @@ Je Dimension score, violations, applicable, ready. Aus @sigloch/contracts, desha
 
 schema ◀ `FLOW-dimension-readiness`
 
-### 5.20  `SCHEMA-steering-delta` — SteeringDelta
+### 5.20  `SCHEMA-session-registry` — SessionEntry
+
+pid, hostname, startedAt. Der Vertrag eines Sitzungseintrags, der eine Prozessgrenze quert.
+
+schema ◀ `FLOW-session-registry`
+
+### 5.21  `SCHEMA-steering-delta` — SteeringDelta
 
 blockingErrors vorher und nachher plus je Dimension before, after, delta.
 
 schema ◀ `FLOW-steering-delta`
 
-### 5.21  `SCHEMA-steering-snapshot` — SteeringSnapshot
+### 5.22  `SCHEMA-steering-snapshot` — SteeringSnapshot
 
 Gemappter OntologyGraph mit injizierten ND-Matrizen, Violations des vollen Katalogs, Zahl der blockierenden Fehler, Readiness-Report.
 
 schema ◀ `FLOW-steering-snapshot`
 
-### 5.22  `SCHEMA-test-selection` — TestSelection
+### 5.23  `SCHEMA-test-selection` — TestSelection
 
 command, tests mit testRefs, coverage, unresolved. Der Vertrag der graph_tests-Antwort.
 
 schema ◀ `FLOW-test-selection`
 
-### 5.23  `SCHEMA-trajectory` — Trajectory/Outcome
+### 5.24  `SCHEMA-trajectory` — Trajectory/Outcome
 
 append-only Lern-Emission. @sigloch/learning-core.
 
 schema ◀ `FLOW-trajectory`
 
-### 5.24  `SCHEMA-update-event` — UpdateEvent
+### 5.25  `SCHEMA-update-event` — UpdateEvent
 
 SSE invalidate Event.
 

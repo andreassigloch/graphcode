@@ -164,6 +164,19 @@ describe('TEST-gve-supervision', () => {
     expect(killed).toEqual([4242]);
   });
 
+  // CR-GC-416 — FLOW-session-registry hat seit diesem CR einen Vertrag. Vorher las
+  // `liveSessions` den Eintrag mit einem ungeprueften Cast: ein Eintrag ohne
+  // `hostname` galt als "anderer Rechner", zaehlte nicht mit und blieb liegen — und
+  // die letzte lebende Sitzung machte das Licht aus, obwohl noch eine da war.
+  it('verwirft einen formfremden Sitzungseintrag, statt ihn als fremden Rechner zu lesen', async () => {
+    await attachGve(repo, deps(process.pid));
+    const bogus = join(repo, '.graphcode', 'sessions', '999999');
+    writeFileSync(bogus, JSON.stringify({ pid: 999999, startedAt: '2026-08-25T00:00:00.000Z' })); // kein hostname
+
+    expect(liveSessions(repo)).toEqual([process.pid]);
+    expect(existsSync(bogus)).toBe(false); // formfremd = wertlos, wie unlesbar
+  });
+
   it('liefert keinen Handle und traegt keine Session ein, wenn GVE abgeschaltet ist', async () => {
     const handle = await attachGve(repo, { ...deps(), env: { GRAPHCODE_NO_GVE: '1' } });
     expect(handle).toBeNull();
