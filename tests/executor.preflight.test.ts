@@ -48,6 +48,7 @@ function toolCallResponse(id: string, input: unknown): ModelResponse {
   return {
     text: '',
     toolCalls: [{ id, name: 'graphcode_graph_mutate', input }],
+    stopReason: 'tool_use',
     assistantMsg: {
       role: 'assistant',
       content: null,

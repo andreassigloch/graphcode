@@ -60,6 +60,7 @@ function toolCallResponse(id: string, input: unknown): ModelResponse {
   return {
     text: '',
     toolCalls: [{ id, name: 'graphcode_graph_mutate', input }],
+    stopReason: 'tool_use',
     assistantMsg: {
       role: 'assistant',
       content: null,
@@ -225,6 +226,7 @@ describe('executor (CR-GC-278)', () => {
     const prose = (batch: unknown): ModelResponse => ({
       text: 'Hier der Batch:\n' + JSON.stringify(batch),
       toolCalls: [],
+      stopReason: 'end_turn',
       assistantMsg: { role: 'assistant', content: 'unused' },
       usage,
     });
@@ -284,6 +286,7 @@ describe('executor (CR-GC-278)', () => {
     const idle: ModelResponse = {
       text: 'Ich analysiere zunächst die Anforderungen in Prosa …',
       toolCalls: [],
+      stopReason: 'end_turn',
       assistantMsg: { role: 'assistant', content: 'unused' },
       usage,
     };
@@ -334,6 +337,7 @@ describe('executor (CR-GC-278)', () => {
     const textCall: ModelResponse = {
       text: 'Ich prüfe zunächst: graphcode_graph_readiness[ARGS]{}',
       toolCalls: [],
+      stopReason: 'end_turn',
       assistantMsg: { role: 'assistant', content: 'unused' },
       usage,
     };
@@ -357,6 +361,7 @@ describe('executor (CR-GC-278)', () => {
     const textMutate: ModelResponse = {
       text: 'graphcode_graph_mutate[ARGS]' + JSON.stringify(VALID_SEED_BATCH),
       toolCalls: [],
+      stopReason: 'end_turn',
       assistantMsg: { role: 'assistant', content: 'unused' },
       usage,
     };
@@ -406,6 +411,7 @@ describe('executor (CR-GC-278)', () => {
     const readTurn = (id: string): ModelResponse => ({
       text: '',
       toolCalls: [{ id, name: 'graphcode_graph_readiness', input: {} }],
+      stopReason: 'tool_use',
       assistantMsg: { role: 'assistant', content: null },
       usage,
     });
@@ -476,6 +482,7 @@ describe('executor (CR-GC-278)', () => {
     const idle: ModelResponse = {
       text: 'Ich denke weiter nach …',
       toolCalls: [],
+      stopReason: 'end_turn',
       assistantMsg: { role: 'assistant', content: 'unused' },
       usage,
     };

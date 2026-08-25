@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 28 SCHEMA · 60 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 30 SCHEMA · 62 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -13,6 +13,7 @@
 | `SCHEMA-action` | Konzept (noch kein Zod-Export) | reviewed |
 | `SCHEMA-cli-command` | src/scaffold.ts#CliCommandSchema | reviewed |
 | `SCHEMA-completeness` | packages/graphcode-client/src/readiness-completeness.ts#GateCompleteness | reviewed |
+| `SCHEMA-export-pending` | src/export-pending-contract.ts#ExportPending | n/a |
 | `SCHEMA-fit-advisory` | src/fit-advisory.ts#FitAdvisory | reviewed |
 | `SCHEMA-format-e` | extern definiert (kein realRef) | reviewed |
 | `SCHEMA-generation-step` | src/generate.ts#GenerationStep | reviewed |
@@ -23,6 +24,7 @@
 | `SCHEMA-measurement-vector` | Konzept (noch kein Zod-Export) | reviewed |
 | `SCHEMA-metric-policy` | packages/contracts/src/se/policy.ts#MetricPolicy | n/a |
 | `SCHEMA-metric-vector` | packages/se-engine/src/metrics.ts#MetricVector | reviewed |
+| `SCHEMA-model-answer` | src/model-answer-contract.ts#ModelAnswer | n/a |
 | `SCHEMA-module-metrics` | packages/contracts/src/se/metric-rules.ts#ModuleMetrics | reviewed |
 | `SCHEMA-mutate-command` | extern definiert (kein realRef) | reviewed |
 | `SCHEMA-mutate-result` | extern definiert (kein realRef) | reviewed |
@@ -51,13 +53,14 @@
 | `FLOW-bulk-formatE` | `ACTOR-graphify` · `FUNC-import-code` · `FUNC-import-doc` | `FUNC-import` |
 | `FLOW-capture-draft` | `FUNC-decode` | `FUNC-mutate` |
 | `FLOW-cli-command` | `ACTOR-developer` · `FUNC-cli-dispatch` | `FUNC-bootstrap` · `FUNC-claim-store-lock` · `FUNC-cli-dispatch` · `FUNC-collect-status` · `FUNC-create-harness` · `FUNC-gve-supervise` · `FUNC-harness-cli` · `FUNC-import-code-verb` · `FUNC-rewind` · `FUNC-run-executor` · `FUNC-run-verb` · `FUNC-upgrade` |
-| `FLOW-committed-graph` | `FUNC-close-store` · `FUNC-save-graph` · `FUNC-session-shutdown` | `FUNC-auto-export` · `FUNC-emit-trajectory` · `FUNC-emit-update-event` · `FUNC-graph-export-snapshot` · `FUNC-load-graph` |
+| `FLOW-committed-graph` | `FUNC-close-store` · `FUNC-save-graph` · `FUNC-session-shutdown` | `FUNC-auto-export` · `FUNC-emit-trajectory` · `FUNC-emit-update-event` · `FUNC-export-marker` · `FUNC-graph-export-snapshot` · `FUNC-load-graph` |
 | `FLOW-completeness` | `FUNC-score-completeness` | `FUNC-compute-phase-readiness` |
 | `FLOW-dimension-readiness` | `FUNC-compute-readiness` | `FUNC-generation-step` · `FUNC-next-step` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-test` · `FUNC-test-ui` |
 | `FLOW-draft-graph` | `FUNC-mutate` | `FUNC-evaluate-rules` |
 | `FLOW-element-slice` | `FUNC-list-elements` | `ACTOR-claude-code` |
 | `FLOW-expand-request` | `ACTOR-claude-code` | `FUNC-graph-expand` |
 | `FLOW-expanded-subgraph` | `FUNC-graph-expand` | `ACTOR-claude-code` |
+| `FLOW-export-pending` | `FUNC-export-marker` | `ACTOR-developer` |
 | `FLOW-export-request` | `ACTOR-developer` · `FUNC-auto-export` · `FUNC-render-views` · `FUNC-serve-stdio` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` | `FUNC-export-markdown` |
 | `FLOW-fit-advisory` | `FUNC-fit-advisory` | `FUNC-mutate` · `FUNC-rank-candidates` |
 | `FLOW-formatE-artifact` | `FUNC-encode` | `FUNC-bootstrap` · `FUNC-decode` |
@@ -75,6 +78,7 @@
 | `FLOW-merged-graph` | `FUNC-merge-nodes` | `ACTOR-developer` |
 | `FLOW-metric-policy` | `ACTOR-developer` · `FUNC-load-config` | `FUNC-evaluate-rules` · `FUNC-load-config` · `FUNC-take-steering-snapshot` |
 | `FLOW-migrated-graph` | `FUNC-migrate-schema` | `ACTOR-developer` |
+| `FLOW-model-answer` | `FUNC-run-executor` | `FUNC-extract-mutate` |
 | `FLOW-module-metrics` | `FUNC-module-metrics` | `ACTOR-dashboard` · `FUNC-evaluate-rules` |
 | `FLOW-mutate-cmd` | `ACTOR-claude-code` · `ACTOR-developer` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-extract-mutate` · `FUNC-host-socket` · `FUNC-preflight` · `FUNC-run-executor` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` | `FUNC-host-socket` · `FUNC-mutate` · `FUNC-preflight` |
 | `FLOW-parsed-graph` | `FUNC-decode` | `ACTOR-developer` |

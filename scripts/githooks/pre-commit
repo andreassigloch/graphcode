@@ -33,7 +33,21 @@ cd "$repo_root"
 
 # (1) un-exported live mutations → block.
 if [ -f ".graphcode/EXPORT_PENDING" ]; then
-  echo "BLOCKED (CR-GC-217): the live graph has un-exported mutations." >&2
+  # CR-GC-426: die Marke trägt Inhalt ({"since","versionsBehind"}) und sagt damit,
+  # WIE WEIT der Snapshot zurückhängt — nicht mehr nur DASS. Zwei Skalare, kein
+  # Nachbau des Vertrags: die Auslegung steht in src/export-pending-contract.ts.
+  # Eine Marke ohne Inhalt (graphcode vor CR-GC-426) blockt unverändert weiter.
+  marker=$(tr -d '\n' < ".graphcode/EXPORT_PENDING")
+  since=$(printf '%s' "$marker" | sed -n 's/.*"since"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p')
+  behind=$(printf '%s' "$marker" | sed -n 's/.*"versionsBehind"[[:space:]]*:[[:space:]]*\([0-9][0-9]*\).*/\1/p')
+  if [ -n "$since" ] && [ -n "$behind" ]; then
+    echo "BLOCKED (CR-GC-217): the live graph has un-exported mutations —" >&2
+    echo "  $behind Mutations-Batch(es) seit $since; so weit haengt der Snapshot zurueck." >&2
+  else
+    echo "BLOCKED (CR-GC-217): the live graph has un-exported mutations." >&2
+    echo "  (Marke ohne Inhalt — geschrieben von einem graphcode vor CR-GC-426;" >&2
+    echo "   der Rueckstand ist an ihr nicht abzulesen.)" >&2
+  fi
   echo "Run the graph_export MCP tool so the committed snapshot fits this commit," >&2
   echo "then stage docs/graph + docs/views and commit again." >&2
   echo "(Single-writer: the hook can't export while the MCP server owns the Kuzu store.)" >&2

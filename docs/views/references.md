@@ -778,6 +778,7 @@
 | `FLOW-committed-graph` | io | `FUNC-auto-export` |
 | `FLOW-committed-graph` | io | `FUNC-emit-trajectory` |
 | `FLOW-committed-graph` | io | `FUNC-emit-update-event` |
+| `FLOW-committed-graph` | io | `FUNC-export-marker` |
 | `FLOW-committed-graph` | io | `FUNC-graph-export-snapshot` |
 | `FLOW-committed-graph` | io | `FUNC-load-graph` |
 | `FLOW-committed-graph` | relation | `SCHEMA-ontology-graph` |
@@ -799,6 +800,8 @@
 | `FLOW-expand-request` | relation | `SCHEMA-query-params` |
 | `FLOW-expanded-subgraph` | io | `ACTOR-claude-code` |
 | `FLOW-expanded-subgraph` | relation | `SCHEMA-format-e` |
+| `FLOW-export-pending` | io | `ACTOR-developer` |
+| `FLOW-export-pending` | relation | `SCHEMA-export-pending` |
 | `FLOW-export-request` | io | `FUNC-export-markdown` |
 | `FLOW-export-request` | relation | `SCHEMA-query-params` |
 | `FLOW-fit-advisory` | io | `FUNC-mutate` |
@@ -857,6 +860,8 @@
 | `FLOW-metric-policy` | relation | `SCHEMA-metric-policy` |
 | `FLOW-migrated-graph` | io | `ACTOR-developer` |
 | `FLOW-migrated-graph` | relation | `SCHEMA-ontology-graph` |
+| `FLOW-model-answer` | io | `FUNC-extract-mutate` |
+| `FLOW-model-answer` | relation | `SCHEMA-model-answer` |
 | `FLOW-module-metrics` | io | `ACTOR-dashboard` |
 | `FLOW-module-metrics` | io | `FUNC-evaluate-rules` |
 | `FLOW-module-metrics` | relation | `SCHEMA-module-metrics` |
@@ -1144,6 +1149,7 @@
 | `FUNC-export-markdown` | satisfy | `REQ-post-export-markdown` |
 | `FUNC-export-markdown` | satisfy | `REQ-pre-export-markdown` |
 | `FUNC-export-marker` | allocate | `MOD-harness` |
+| `FUNC-export-marker` | io | `FLOW-export-pending` |
 | `FUNC-export-marker` | satisfy | `REQ-graph-snapshot-per-commit` |
 | `FUNC-extract-mutate` | allocate | `MOD-executor` |
 | `FUNC-extract-mutate` | io | `FLOW-mutate-cmd` |
@@ -1284,6 +1290,7 @@
 | `FUNC-rewind` | io | `FLOW-graph-snapshot` |
 | `FUNC-rewind` | satisfy | `REQ-graph-state-recall` |
 | `FUNC-run-executor` | allocate | `MOD-executor` |
+| `FUNC-run-executor` | io | `FLOW-model-answer` |
 | `FUNC-run-executor` | io | `FLOW-mutate-cmd` |
 | `FUNC-run-executor` | satisfy | `REQ-one-driver-local-and-frontier` |
 | `FUNC-run-verb` | allocate | `MOD-cli` |

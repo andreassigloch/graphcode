@@ -1,7 +1,27 @@
 # CR-GC-422 — Drei FUNCs ohne ehrlichen FLOW
 
-**Status:** open — Befund, keine Umsetzung. Braucht eine Entscheidung, keinen Code.
+**Status:** open — **nur noch §1**. §2 und §3 sind entschieden und umgesetzt, siehe
+[CR-GC-426](../done/CR-GC-426-zwei-fluesse-bekommen-einen-vertrag.md) (2026-08-25).
 **Herkunft:** CR-GC-409 §A, Rest nach CR-GC-412/414/415/416/417/418/419/421.
+
+## Stand 2026-08-25 — die Entscheidung des Auftraggebers
+
+> „Die Roh-Antwort der LLM ist doch eigentlich gar kein Grenzfall, Schema einziehen."
+
+Und das Prinzip dahinter, das auch §2 trifft: graphcode modelliert auch mechanische und
+elektrische Systeme — wenn ein Kunde auf einen Bildschirm tippt, brauchen wir ebenfalls
+etwas, das den Fluss **so gut es geht prüfbar** beschreibt. Ein Fluss ohne Wire-Format ist
+also kein Grund, gar keinen Vertrag zu haben: der Inhalt mag unstrukturiert sein, die
+**Hülle** ist es nie.
+
+- **§2 erledigt** (Variante b): die Marke trägt `{ since, versionsBehind }`, der Hook sagt
+  jetzt, wie weit der Snapshot zurückhängt; alte Marken ohne Inhalt blocken unverändert.
+  Zum abweichenden zweiten Feld siehe CR-GC-426 §3.
+- **§3 erledigt**: `SCHEMA-model-answer` über Text, Tool-Calls und Stop-Grund, geprüft in
+  der Draht-Form **jedes** Backends beim Empfang; `FLOW-model-answer` verdrahtet.
+- **§1 ist der einzige Rest.** R-31 meldet nur noch `FUNC-bind-tools` (3 → 1).
+
+Der Befund unten bleibt unverändert stehen, damit die Herleitung nachlesbar ist.
 
 Nach dem Abarbeiten von Gruppe A bleiben drei R-31 stehen. Für keinen der drei
 gibt es einen FLOW, den man ohne Erfindung ziehen kann. Der Befund steht hier,

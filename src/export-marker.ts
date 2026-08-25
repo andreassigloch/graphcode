@@ -18,8 +18,9 @@
  *
  * @author andreas@siglochconsulting
  */
-import { mkdirSync, writeFileSync, rmSync, existsSync } from 'node:fs';
+import { mkdirSync, writeFileSync, readFileSync, rmSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
+import { ExportPending } from './export-pending-contract.js';
 
 /** Marker path relative to a repo root (gitignored via `.graphcode/`). */
 export const EXPORT_PENDING_REL = '.graphcode/EXPORT_PENDING';
@@ -28,12 +29,44 @@ function markerPath(repoRoot: string): string {
   return join(repoRoot, EXPORT_PENDING_REL);
 }
 
-/** The live model changed and has NOT been re-exported to the committed snapshot. */
+/**
+ * Wie weit der committete Snapshot zurückhängt (CR-GC-426) — `null`, wenn keine
+ * Marke liegt ODER sie keinen Vertrag erfüllt.
+ *
+ * Der zweite Fall ist der ABWÄRTSKOMPATIBLE: eine Marke, die ein graphcode vor
+ * CR-GC-426 geschrieben hat, trägt einen Prosasatz statt JSON. Sie bleibt eine
+ * gültige Marke — `isExportPending` sagt weiter „ja" und der Hook blockt weiter —
+ * nur die Frage „wie weit" ist an ihr nicht zu beantworten. Geraten wird nicht.
+ */
+export function readExportPending(repoRoot: string): ExportPending | null {
+  const p = markerPath(repoRoot);
+  if (!existsSync(p)) return null;
+  let raw: unknown;
+  try {
+    raw = JSON.parse(readFileSync(p, 'utf8'));
+  } catch {
+    return null; // Prosa-Marke (vor CR-GC-426) oder halb geschriebene Datei.
+  }
+  const parsed = ExportPending.safeParse(raw);
+  return parsed.success ? parsed.data : null;
+}
+
+/**
+ * The live model changed and has NOT been re-exported to the committed snapshot.
+ *
+ * Die Marke ZÄHLT (CR-GC-426): der erste Aufruf setzt `since`, jeder weitere erhöht
+ * nur `versionsBehind` — `since` ist der Zeitpunkt, ab dem der Snapshot zurückliegt,
+ * nicht der der letzten Mutation. Liegt eine vertragslose Altmarke, beginnt die
+ * Zählung neu; das ist die ehrliche Auskunft, denn ihr Rückstand ist nicht bekannt.
+ */
 export function setExportPending(repoRoot: string): void {
   const p = markerPath(repoRoot);
   mkdirSync(dirname(p), { recursive: true });
-  // Existence is the signal; the text is for a human running `cat` on the marker.
-  writeFileSync(p, 'live graph mutated since last graph_export — run graph_export before commit\n');
+  const prev = readExportPending(repoRoot);
+  const next: ExportPending = prev
+    ? { since: prev.since, versionsBehind: prev.versionsBehind + 1 }
+    : { since: new Date().toISOString(), versionsBehind: 1 };
+  writeFileSync(p, JSON.stringify(next) + '\n');
 }
 
 /** The committed snapshot is back in sync with the live model (export or reseed). */

@@ -65,6 +65,7 @@ function toolCallResponse(id: string, input: unknown): ModelResponse {
   return {
     text: '',
     toolCalls: [{ id, name: 'graphcode_graph_mutate', input }],
+    stopReason: 'tool_use',
     assistantMsg: {
       role: 'assistant',
       content: null,
@@ -77,7 +78,7 @@ function toolCallResponse(id: string, input: unknown): ModelResponse {
 }
 
 function textResponse(text: string): ModelResponse {
-  return { text, toolCalls: [], assistantMsg: { role: 'assistant', content: text }, usage };
+  return { text, toolCalls: [], stopReason: 'end_turn', assistantMsg: { role: 'assistant', content: text }, usage };
 }
 
 // --- Kandidaten-Batches mit empirisch verifizierten Gate-Verdicts (dryRun) ----

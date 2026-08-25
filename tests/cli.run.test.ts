@@ -56,6 +56,7 @@ const SEED_RESPONSE: ModelResponse = {
       },
     },
   ],
+  stopReason: 'tool_use',
   assistantMsg: { role: 'assistant', content: null },
   usage: { in: 10, out: 10, reasoning: 0 },
 };
@@ -219,6 +220,7 @@ describe('executeRun (CR-GC-279)', () => {
     const idle: ModelResponse = {
       text: 'nur Prosa, kein Batch',
       toolCalls: [],
+      stopReason: 'end_turn',
       assistantMsg: { role: 'assistant', content: 'unused' },
       usage: { in: 1, out: 1, reasoning: 0 },
     };

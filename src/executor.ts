@@ -32,6 +32,16 @@ import {
   type IndexedElement,
 } from './nd-similarity.js';
 import type { SteeringDelta } from './steering-snapshot.js';
+// Der Antwortvertrag des Backends (CR-GC-426, SCHEMA-model-answer): geprüft am
+// Empfang, in der Draht-Form JEDES Backends — nicht erst im Prosa-Parser.
+import {
+  ModelAnswer,
+  ModelToolCall,
+  BackendFailure,
+  AnthropicWireAnswer,
+  OpenAiWireAnswer,
+  describeWireIssues,
+} from './model-answer-contract.js';
 // Die drei zustandsfreien Executor-Achsen (CR-GC-320) — Prompt/Injektion,
 // Best-of-N-Ranking, Prosa-Recovery. Kein Re-Export von hier: wer sie braucht,
 // importiert das jeweilige Modul direkt (keine parallelen Pfade).
@@ -111,20 +121,13 @@ export const ExecutorConfigSchema = z.object({
 });
 export type ExecutorConfig = z.infer<typeof ExecutorConfigSchema>;
 
-export interface ModelToolCall {
-  id: string;
-  name: string;
-  input: unknown;
-}
-
-/** Normalisierte Backend-Antwort — beide Backends liefern genau diese Form. */
-export interface ModelResponse {
-  text: string;
-  toolCalls: ModelToolCall[];
-  /** Backend-shaped assistant message, unverändert in die History gepusht. */
-  assistantMsg: unknown;
-  usage: { in: number; out: number; reasoning: number };
-}
+/**
+ * Der Name, unter dem die Treiberschleife den Antwortvertrag führt (CR-GC-426).
+ * EIN Typ, zwei Namen — die Form ist `SCHEMA-model-answer` und wird in
+ * `model-answer-contract.ts` definiert, nicht hier noch einmal.
+ */
+export type ModelResponse = ModelAnswer;
+export type { ModelToolCall };
 
 export type CallModel = (
   system: string,
@@ -333,24 +336,31 @@ export function buildCallModel(config: ExecutorConfig): CallModel {
         }),
         signal: AbortSignal.timeout(config.callTimeoutMs),
       });
-      const j = (await r.json()) as {
-        type?: string;
-        error?: unknown;
-        content?: { type: string; id?: string; name?: string; input?: unknown; text?: string }[];
-        usage?: { input_tokens?: number; output_tokens?: number };
-      };
-      if (j.type === 'error' || j.error) {
-        throw new Error('backend: ' + JSON.stringify(j.error ?? j).slice(0, 300));
+      const raw: unknown = await r.json();
+      if (BackendFailure.safeParse(raw).success) {
+        throw new Error('backend: ' + JSON.stringify(raw).slice(0, 300));
       }
-      const content = j.content ?? [];
-      return {
+      const wire = AnthropicWireAnswer.safeParse(raw);
+      if (!wire.success) {
+        throw new Error(
+          'backend answer breaks SCHEMA-model-answer (anthropic wire): ' +
+            describeWireIssues(wire.error),
+        );
+      }
+      const content = wire.data.content;
+      return ModelAnswer.parse({
         text: content.filter((b) => b.type === 'text').map((b) => b.text ?? '').join(''),
         toolCalls: content
           .filter((b) => b.type === 'tool_use')
           .map((b) => ({ id: b.id ?? '', name: b.name ?? '', input: b.input })),
+        stopReason: wire.data.stop_reason ?? null,
         assistantMsg: { role: 'assistant', content },
-        usage: { in: j.usage?.input_tokens ?? 0, out: j.usage?.output_tokens ?? 0, reasoning: 0 },
-      };
+        usage: {
+          in: wire.data.usage?.input_tokens ?? 0,
+          out: wire.data.usage?.output_tokens ?? 0,
+          reasoning: 0,
+        },
+      });
     };
   }
   return async (system, messages, tools, opts) => {
@@ -371,36 +381,33 @@ export function buildCallModel(config: ExecutorConfig): CallModel {
       }),
       signal: AbortSignal.timeout(config.callTimeoutMs),
     });
-    const j = (await r.json()) as {
-      error?: unknown;
-      choices?: {
-        message?: {
-          content?: string;
-          tool_calls?: { id: string; function: { name: string; arguments: string } }[];
-        };
-      }[];
-      usage?: {
-        prompt_tokens?: number;
-        completion_tokens?: number;
-        completion_tokens_details?: { reasoning_tokens?: number };
-      };
-    };
-    if (j.error) throw new Error('backend: ' + JSON.stringify(j.error).slice(0, 300));
-    const msg = j.choices?.[0]?.message ?? {};
-    return {
+    const raw: unknown = await r.json();
+    if (BackendFailure.safeParse(raw).success) {
+      throw new Error('backend: ' + JSON.stringify(raw).slice(0, 300));
+    }
+    const wire = OpenAiWireAnswer.safeParse(raw);
+    if (!wire.success) {
+      throw new Error(
+        'backend answer breaks SCHEMA-model-answer (openai wire): ' + describeWireIssues(wire.error),
+      );
+    }
+    const choice = wire.data.choices[0];
+    const msg = choice?.message ?? {};
+    return ModelAnswer.parse({
       text: msg.content ?? '',
       toolCalls: (msg.tool_calls ?? []).map((c) => ({
         id: c.id,
         name: c.function.name,
         input: safeParse(c.function.arguments),
       })),
+      stopReason: choice?.finish_reason ?? null,
       assistantMsg: msg,
       usage: {
-        in: j.usage?.prompt_tokens ?? 0,
-        out: j.usage?.completion_tokens ?? 0,
-        reasoning: j.usage?.completion_tokens_details?.reasoning_tokens ?? 0,
+        in: wire.data.usage?.prompt_tokens ?? 0,
+        out: wire.data.usage?.completion_tokens ?? 0,
+        reasoning: wire.data.usage?.completion_tokens_details?.reasoning_tokens ?? 0,
       },
-    };
+    });
   };
 }
 
@@ -710,7 +717,11 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
       stats.tokensReasoning += resp.usage.reasoning;
       trace(
         `  ${label}.${turn + 1}: ` +
-          (resp.toolCalls.map((c) => c.name.replace('graphcode_', '')).join(',') || '(no calls)'),
+          (resp.toolCalls.map((c) => c.name.replace('graphcode_', '')).join(',') ||
+            // CR-GC-426: OHNE den Stop-Grund sieht eine am Token-Budget abgeschnittene
+            // Antwort genauso aus wie eine geschwaetzige — beide "(no calls)". Der
+            // Salvage-Pfad unten existiert nur fuer die erste; die Spur muss sie trennen.
+            `(no calls, stop=${resp.stopReason ?? 'unbekannt'})`),
       );
 
       if (resp.toolCalls.length === 0) {
@@ -1051,7 +1062,11 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
       stats.tokensReasoning += resp.usage.reasoning;
       trace(
         `  ${round + 1}.${turn + 1}: ` +
-          (resp.toolCalls.map((c) => c.name.replace('graphcode_', '')).join(',') || '(no calls)'),
+          (resp.toolCalls.map((c) => c.name.replace('graphcode_', '')).join(',') ||
+            // CR-GC-426: OHNE den Stop-Grund sieht eine am Token-Budget abgeschnittene
+            // Antwort genauso aus wie eine geschwaetzige — beide "(no calls)". Der
+            // Salvage-Pfad unten existiert nur fuer die erste; die Spur muss sie trennen.
+            `(no calls, stop=${resp.stopReason ?? 'unbekannt'})`),
       );
 
       if (resp.toolCalls.length === 0) {

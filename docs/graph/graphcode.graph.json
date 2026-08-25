@@ -1813,6 +1813,12 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "id": "FLOW-export-pending",
+      "type": "FLOW",
+      "name": "Export-Rueckstand",
+      "description": "Die Drift-Marke unter .graphcode: sagt, dass und wie weit der committete Snapshot dem lebenden Store nachlaeuft. Der pre-commit-Hook liest sie, ohne den Kuzu-Store zu oeffnen."
+    },
+    {
       "id": "FLOW-export-request",
       "type": "FLOW",
       "name": "Export-Request",
@@ -1938,6 +1944,12 @@
       "description": "Re-validierter/migrierter Graph + Report.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "id": "FLOW-model-answer",
+      "type": "FLOW",
+      "name": "Modellantwort",
+      "description": "Die Roh-Antwort des Modells auf einen Runden-Prompt. Traegt Text, Werkzeugaufrufe und den Stop-Grund; fehlt der Werkzeugaufruf, ist der Text die einzige Spur, aus der die Prosa-Recovery ein Kommando holt."
     },
     {
       "id": "FLOW-module-metrics",
@@ -5003,6 +5015,17 @@
       }
     },
     {
+      "id": "SCHEMA-export-pending",
+      "type": "SCHEMA",
+      "name": "ExportPending",
+      "description": "Inhalt der Drift-Marke: Zeitpunkt der ersten un-exportierten Mutation und Zahl der angewandten Batches seit dem letzten Export.",
+      "realRef": {
+        "file": "src/export-pending-contract.ts",
+        "symbol": "ExportPending",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "SCHEMA-fit-advisory",
       "type": "SCHEMA",
       "name": "FitAdvisory",
@@ -5115,6 +5138,17 @@
       "realRef": {
         "file": "packages/se-engine/src/metrics.ts",
         "symbol": "MetricVector",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "SCHEMA-model-answer",
+      "type": "SCHEMA",
+      "name": "ModelAnswer",
+      "description": "Die normalisierte Antwort des Modells: Text, angeforderte Werkzeugaufrufe, Stop-Grund und Verbrauchszahlen. Geprueft wird sie in der Draht-Form jedes Backends beim Empfang, nicht erst im Prosa-Parser.",
+      "realRef": {
+        "file": "src/model-answer-contract.ts",
+        "symbol": "ModelAnswer",
         "lang": "ts"
       }
     },
@@ -11861,6 +11895,11 @@
     },
     {
       "source": "FLOW-committed-graph",
+      "target": "FUNC-export-marker",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-committed-graph",
       "target": "FUNC-graph-export-snapshot",
       "type": "io"
     },
@@ -11977,6 +12016,16 @@
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-export-pending",
+      "target": "ACTOR-developer",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-export-pending",
+      "target": "SCHEMA-export-pending",
+      "type": "relation"
     },
     {
       "source": "FLOW-export-request",
@@ -12316,6 +12365,16 @@
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-model-answer",
+      "target": "FUNC-extract-mutate",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-model-answer",
+      "target": "SCHEMA-model-answer",
+      "type": "relation"
     },
     {
       "source": "FLOW-module-metrics",
@@ -13870,6 +13929,11 @@
     },
     {
       "source": "FUNC-export-marker",
+      "target": "FLOW-export-pending",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-export-marker",
       "target": "REQ-graph-snapshot-per-commit",
       "type": "satisfy"
     },
@@ -14671,6 +14735,11 @@
       "target": "MOD-executor",
       "type": "allocate",
       "weight": "1"
+    },
+    {
+      "source": "FUNC-run-executor",
+      "target": "FLOW-model-answer",
+      "type": "io"
     },
     {
       "source": "FUNC-run-executor",
@@ -17878,5 +17947,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 205
+  "graphVersion": 206
 }
