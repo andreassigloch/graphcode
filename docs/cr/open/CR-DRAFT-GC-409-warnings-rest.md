@@ -12,6 +12,14 @@ CR-fähig (≤6 Dateien).
 
 ## A · Braucht neue FLOW+SCHEMA-Verträge (Modell + je 1 Zod-Symbol im Code)
 
+> **Stand 2026-08-25 (graphVersion 201): abgearbeitet.** CR-GC-412 (Test-Selektion),
+> 414 (Health), 415 (Repo-Lebenszyklus-Abnahme + cli-dispatch + claim-store-lock),
+> 416 (Session-Registry), 417 (Werkzeugkontext), 418 (Urteils-Policy),
+> 419 (Zielprofil), 421 (Schema-Migration).
+> **R-31 13 → 3, IO-01 1 → 0, R-30 1 → 0.** Kein neues R-21.
+> Offen bleiben `bind-tools`, `export-marker`, `extract-mutate` — je ein Befund
+> ohne ehrlichen FLOW, festgehalten in **CR-GC-422**.
+
 R-31 ×13, IO-01 ×1, R-30 ×1. Die restlichen unverdrahteten FUNCs haben keinen
 existierenden FLOW, an den sie ehrlich anschließen; jeder neue FLOW braucht sein
 SCHEMA (sonst tauscht man R-31 gegen SC-04).

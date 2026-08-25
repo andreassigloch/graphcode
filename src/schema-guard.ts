@@ -19,6 +19,7 @@ import { createHash } from 'node:crypto';
 import { readFileSync, writeFileSync, existsSync, rmSync } from 'node:fs';
 import { generateSchema } from '@sigloch/graph-api-core/kuzu';
 import type { OntologyDescriptor } from '@sigloch/graph-api-core';
+import { SchemaFingerprintSchema } from './schema-fingerprint-contract.js';
 
 /** Marker file (next to the Kuzu store) holding the schema fingerprint. */
 export const SCHEMA_FINGERPRINT_BASENAME = 'ontology.schema';
@@ -33,12 +34,21 @@ export function schemaFingerprint(ontology: OntologyDescriptor): string {
   return createHash('sha256').update(ddl).digest('hex').slice(0, 16);
 }
 
-/** Read the stored schema fingerprint, or null if the marker is absent/unreadable. */
+/**
+ * Read the stored schema fingerprint, or null if the marker is absent, unreadable
+ * or malformed.
+ *
+ * CR-GC-421: malformed counts as absent. This marker decides whether the store is
+ * DELETED and reseeded; a truncated or half-written file used to compare simply as
+ * "different", so a broken byte wiped the store. A missing marker explicitly does
+ * not do that (it is adopted at the current fingerprint) — a malformed one must
+ * behave the same.
+ */
 export function readStoredFingerprint(storeDir: string): string | null {
   const p = join(storeDir, SCHEMA_FINGERPRINT_BASENAME);
   if (!existsSync(p)) return null;
   try {
-    return readFileSync(p, 'utf8').trim() || null;
+    return SchemaFingerprintSchema.parse(readFileSync(p, 'utf8').trim());
   } catch {
     return null;
   }

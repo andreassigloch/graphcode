@@ -672,7 +672,6 @@
 | `FCHAIN-recall` | compose | `FUNC-apply-reseed` |
 | `FCHAIN-recall` | compose | `FUNC-reseed` |
 | `FCHAIN-recall` | compose | `FUNC-rewind` |
-| `FCHAIN-recall` | compose | `FUNC-schema-guard` |
 | `FCHAIN-recall` | compose | `FUNC-seed-from-json` |
 | `FCHAIN-recall` | satisfy | `REQ-graph-state-recall` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-bind-tools` |
@@ -687,6 +686,8 @@
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-session-shutdown` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-upgrade` |
 | `FCHAIN-repo-lifecycle` | satisfy | `REQ-session-leaves-nothing-behind` |
+| `FCHAIN-schema-migration` | compose | `FUNC-migrate-schema` |
+| `FCHAIN-schema-migration` | compose | `FUNC-schema-guard` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-author-req` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-author-uc` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-close-violations` |
@@ -883,6 +884,8 @@
 | `FLOW-round-prompt` | io | `FUNC-run-executor` |
 | `FLOW-round-prompt` | relation | `SCHEMA-generation-step` |
 | `FLOW-round-scope` | io | `FUNC-evaluate-rules` |
+| `FLOW-schema-fingerprint` | io | `FUNC-open-store` |
+| `FLOW-schema-fingerprint` | relation | `SCHEMA-schema-fingerprint` |
 | `FLOW-session-registry` | io | `FUNC-gve-sessions` |
 | `FLOW-session-registry` | relation | `SCHEMA-session-registry` |
 | `FLOW-skill-report` | io | `ACTOR-systems-engineer` |
@@ -919,6 +922,7 @@
 | `FLOW-trajectory` | io | `ACTOR-learning-engine` |
 | `FLOW-trajectory` | relation | `SCHEMA-trajectory` |
 | `FLOW-version-bump` | io | `FUNC-migrate-schema` |
+| `FLOW-version-bump` | io | `FUNC-schema-guard` |
 | `FLOW-version-bump` | relation | `SCHEMA-query-params` |
 | `FLOW-view-request` | io | `FUNC-render-views` |
 | `FLOW-view-request` | io | `FUNC-view-changelog` |
@@ -1286,6 +1290,7 @@
 | `FUNC-save-graph` | io | `FLOW-committed-graph` |
 | `FUNC-save-graph` | satisfy | `REQ-disk-persistence` |
 | `FUNC-schema-guard` | allocate | `MOD-schema-migration` |
+| `FUNC-schema-guard` | io | `FLOW-schema-fingerprint` |
 | `FUNC-schema-guard` | satisfy | `REQ-schema-version-migration` |
 | `FUNC-score-completeness` | allocate | `MOD-completeness` |
 | `FUNC-score-completeness` | io | `FLOW-completeness` |
@@ -1846,6 +1851,7 @@
 | `UC-reduced-llm` | compose | `REQ-small-model-viable` |
 | `UC-reduced-llm` | compose | `REQ-subgraph-slicing` |
 | `UC-repo-lifecycle` | compose | `FCHAIN-repo-lifecycle` |
+| `UC-repo-lifecycle` | compose | `FCHAIN-schema-migration` |
 | `UC-repo-lifecycle` | compose | `REQ-bootstrap-through-gate` |
 | `UC-repo-lifecycle` | compose | `REQ-install-idempotent` |
 | `UC-repo-lifecycle` | compose | `REQ-npx-distribution` |

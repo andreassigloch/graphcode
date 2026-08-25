@@ -69,8 +69,27 @@ describe('schemaFingerprint / marker (CR-GC-249 unit)', () => {
     const dir = mkdtempSync(join(tmpdir(), 'gc-fp-'));
     try {
       expect(readStoredFingerprint(dir)).toBeNull();
-      writeStoredFingerprint(dir, 'abc123');
-      expect(readStoredFingerprint(dir)).toBe('abc123');
+      // Kein erfundener Wert: der Marker traegt die Form, die schemaFingerprint liefert
+      // (SCHEMA-schema-fingerprint) — ein Platzhalter wuerde eine Form pinnen, die es nicht gibt.
+      const fp = schemaFingerprint(SE_DESCRIPTOR);
+      writeStoredFingerprint(dir, fp);
+      expect(readStoredFingerprint(dir)).toBe(fp);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  // CR-GC-421 — formfremd zaehlt wie fehlend. Der Marker entscheidet, ob der Store
+  // WEGGEWORFEN wird; ein halb geschriebener verglich sich bisher schlicht als
+  // "anders", und ein kaputtes Byte wischte den Store. Ein fehlender tut das
+  // ausdruecklich nicht, ein unlesbarer seit jeher auch nicht.
+  it('ein formfremder Marker liest null — nicht "anderer Schemastand"', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'gc-fp-bad-'));
+    try {
+      for (const bad of ['abc123', 'stale-fingerprint', schemaFingerprint(SE_DESCRIPTOR).slice(0, 8)]) {
+        writeFileSync(join(dir, SCHEMA_FINGERPRINT_BASENAME), `${bad}\n`);
+        expect(readStoredFingerprint(dir), bad).toBeNull();
+      }
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
@@ -118,8 +137,10 @@ describe('harness schema-drift guard (CR-GC-249 integration)', () => {
     const h1 = newHarness();
     await h1.initialize();
     await h1.close();
-    // Simulate a meta-model bump since this store's schema was frozen.
-    writeFileSync(join(markerDir, SCHEMA_FINGERPRINT_BASENAME), 'stale-fingerprint\n');
+    // Simulate a meta-model bump since this store's schema was frozen. Der Wert hat die
+    // ECHTE Fingerabdruck-Form (CR-GC-421) — "irgendein Text" waere ein kaputter Marker,
+    // nicht ein aelterer Schemastand, und das sind zwei verschiedene Faelle.
+    writeFileSync(join(markerDir, SCHEMA_FINGERPRINT_BASENAME), '0123456789abcdef\n');
 
     const h2 = newHarness();
     await h2.initialize();

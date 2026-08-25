@@ -188,7 +188,7 @@ Verification ◀ `TEST-bridge-follows-lock` (integration) · `TEST-gve-autostart
 
 Beansprucht die alleinige Store-Ownership, erkennt Meta-Modell-Drift und oeffnet den Kuzu-Store.
 
-io ◀ `FLOW-graph-snapshot` · `FLOW-store-ownership` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-harness`
+io ◀ `FLOW-graph-snapshot` · `FLOW-schema-fingerprint` · `FLOW-store-ownership` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-harness`
 
 ###### `REQ-single-kuzu-owner` — Single Kuzu-Owner
 
@@ -1870,24 +1870,6 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-bootstrap` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-cli` · `MOD-harness`
 
-##### 3.4.2.5  `FUNC-schema-guard` — schemaFingerprint
-
-> auch in: `FUNC-block-ruestzeug`
-
-Bildet den Fingerabdruck des Meta-Modell-Schemas und erkennt daran eine Drift zwischen Ontologie und angelegtem Store.
-
-io ◀ — · io ▶ — · allocate ▶ `MOD-schema-migration`
-
-###### `REQ-schema-version-migration` — Schema-Versions-Migration
-
-> auch unter: `FUNC-migrate-schema`
-
-FUNC-migrate-schema: bei Version-Bump re-validieren/migrieren, Violations berichten, Version mitführen.
-
-priority: must · status: open · kinds: functional
-
-Verification ◀ `TEST-schema-migration` (integration) · satisfy ◀ `FUNC-migrate-schema` · `FUNC-schema-guard` · allocate ▶ `MOD-schema-migration`
-
 #### 3.4.3  `FCHAIN-snapshot-freshness` — Snapshot-Freshness (Aufzeichnen)
 
 Jede Modell-Mutation setzt den Drift-Marker, die Persistenz schreibt den Store, der Export materialisiert den kanonischen Snapshot und loescht den Marker. Ergebnis: kein Commit traegt einen Snapshot, der dem Live-Modell nachlaeuft.
@@ -3246,6 +3228,62 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-cli-scaffold` (integration) · `TEST-upgrade` (integration) · satisfy ◀ `FUNC-harness-cli` · `FUNC-upgrade` · allocate ▶ `MOD-cli`
 
+#### 3.9.2  `FCHAIN-schema-migration` — Schema-Migration bei Version-Bump
+
+Version-Bump erkennen und den Stand nachziehen: Fingerabdruck der generierten DDL bilden, Drift gegen den Marker am Store feststellen, den Graphen re-validieren und migrieren.
+
+##### 3.9.2.1  `FUNC-migrate-schema` — migrateSchema(from, to)
+
+> auch in: `FUNC-block-ruestzeug`
+
+Re-Validierung + Migration des Graphen bei ONTOLOGY/RULES_VERSION-Bump; Version am Artefakt mitgeführt.
+
+io ◀ `FLOW-version-bump` · io ▶ `FLOW-migrated-graph` · allocate ▶ `MOD-schema-migration`
+
+###### `REQ-post-migrate-schema` — Postcondition: migrateSchema(from, to)
+
+Graph re-validiert/migriert; Violations berichtet; Artefakt-Version aktualisiert.
+
+priority: must · status: open · kinds: postcondition
+
+Verification ◀ `TEST-schema-migration` (integration) · satisfy ◀ `FUNC-migrate-schema` · allocate ▶ `MOD-schema-migration`
+
+###### `REQ-pre-migrate-schema` — Precondition: migrateSchema(from, to)
+
+Version-Bump in contracts/se; bestehender Graph auf alter Version.
+
+priority: must · status: open · kinds: precondition
+
+Verification ◀ `TEST-schema-migration` (integration) · satisfy ◀ `FUNC-migrate-schema` · allocate ▶ `MOD-schema-migration`
+
+###### `REQ-schema-version-migration` — Schema-Versions-Migration
+
+> auch unter: `FUNC-schema-guard`
+
+FUNC-migrate-schema: bei Version-Bump re-validieren/migrieren, Violations berichten, Version mitführen.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-schema-migration` (integration) · satisfy ◀ `FUNC-migrate-schema` · `FUNC-schema-guard` · allocate ▶ `MOD-schema-migration`
+
+##### 3.9.2.2  `FUNC-schema-guard` — schemaFingerprint
+
+> auch in: `FUNC-block-ruestzeug`
+
+Bildet den Fingerabdruck des Meta-Modell-Schemas und erkennt daran eine Drift zwischen Ontologie und angelegtem Store.
+
+io ◀ `FLOW-version-bump` · io ▶ `FLOW-schema-fingerprint` · allocate ▶ `MOD-schema-migration`
+
+###### `REQ-schema-version-migration` — Schema-Versions-Migration
+
+> auch unter: `FUNC-migrate-schema`
+
+FUNC-migrate-schema: bei Version-Bump re-validieren/migrieren, Violations berichten, Version mitführen.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-schema-migration` (integration) · satisfy ◀ `FUNC-migrate-schema` · `FUNC-schema-guard` · allocate ▶ `MOD-schema-migration`
+
 ### 3.10  Funktionen ohne FCHAIN
 
 #### 3.10.1  `FUNC-block-anschluss` — Agenten-Anschluss
@@ -4502,6 +4540,8 @@ Verification ◀ `TEST-target-profile` (integration) · `TEST-thresholds-from-co
 
 ##### 3.10.7.4  `FUNC-migrate-schema` — migrateSchema(from, to)
 
+> auch in: `FCHAIN-schema-migration`
+
 Re-Validierung + Migration des Graphen bei ONTOLOGY/RULES_VERSION-Bump; Version am Artefakt mitgeführt.
 
 io ◀ `FLOW-version-bump` · io ▶ `FLOW-migrated-graph` · allocate ▶ `MOD-schema-migration`
@@ -4534,11 +4574,11 @@ Verification ◀ `TEST-schema-migration` (integration) · satisfy ◀ `FUNC-migr
 
 ##### 3.10.7.5  `FUNC-schema-guard` — schemaFingerprint
 
-> auch in: `FCHAIN-recall`
+> auch in: `FCHAIN-schema-migration`
 
 Bildet den Fingerabdruck des Meta-Modell-Schemas und erkennt daran eine Drift zwischen Ontologie und angelegtem Store.
 
-io ◀ — · io ▶ — · allocate ▶ `MOD-schema-migration`
+io ◀ `FLOW-version-bump` · io ▶ `FLOW-schema-fingerprint` · allocate ▶ `MOD-schema-migration`
 
 ###### `REQ-schema-version-migration` — Schema-Versions-Migration
 
@@ -5006,7 +5046,7 @@ Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `FUNC-load-graph` · `FUNC-
 
 Beansprucht die alleinige Store-Ownership, erkennt Meta-Modell-Drift und oeffnet den Kuzu-Store.
 
-io ◀ `FLOW-graph-snapshot` · `FLOW-store-ownership` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-harness`
+io ◀ `FLOW-graph-snapshot` · `FLOW-schema-fingerprint` · `FLOW-store-ownership` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-harness`
 
 ###### `REQ-single-kuzu-owner` — Single Kuzu-Owner
 
@@ -5626,97 +5666,103 @@ Der durch read gebundene Blast-Radius/Kontext, der informiert, was status als of
 
 io ◀ `FUNC-graph-impact` · io ▶ `FUNC-evaluate-rules` · schema ▶ —
 
-### 4.44  `FLOW-session-registry` — Sitzungsregister
+### 4.44  `FLOW-schema-fingerprint` — Schema-Fingerabdruck
+
+Der Fingerabdruck der generierten DDL als Marker neben dem Store: 16 Hex-Zeichen. Beim Anlegen gestempelt, beim naechsten Start gelesen - er entscheidet, ob der Store weggeworfen und neu befuellt wird.
+
+io ◀ `FUNC-schema-guard` · io ▶ `FUNC-open-store` · schema ▶ `SCHEMA-schema-fingerprint`
+
+### 4.45  `FLOW-session-registry` — Sitzungsregister
 
 Die Sitzungseintraege eines Repos unter .graphcode/sessions: je lebender Sitzung PID, Rechner und Startzeit. Geschrieben von der Sitzung selbst, gelesen und von toten Eintraegen befreit beim Zaehlen.
 
 io ◀ `FUNC-gve-sessions` · `FUNC-gve-supervise` · io ▶ `FUNC-gve-sessions` · schema ▶ `SCHEMA-session-registry`
 
-### 4.45  `FLOW-skill-report` — Skill-Bericht
+### 4.46  `FLOW-skill-report` — Skill-Bericht
 
 Der gemessene Stand als Text zurueck an den Menschen.
 
 io ◀ `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-test` · `FUNC-test-ui` · io ▶ `ACTOR-systems-engineer` · schema ▶ `SCHEMA-markdown-view`
 
-### 4.46  `FLOW-skill-request` — Skill-Aufruf
+### 4.47  `FLOW-skill-request` — Skill-Aufruf
 
 Aufruf eines Skills durch den Menschen, mit Zielgraph und Optionen.
 
 io ◀ `ACTOR-systems-engineer` · io ▶ `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-test` · `FUNC-test-ui` · schema ▶ `SCHEMA-query-params`
 
-### 4.47  `FLOW-steering-delta` — Steering-Delta (vor/nach Kandidat)
+### 4.48  `FLOW-steering-delta` — Steering-Delta (vor/nach Kandidat)
 
 Blockierende Fehler vorher und nachher plus Score-Delta je Dimension. Das erste Sachkriterium der Kandidaten-Rangfolge.
 
 io ◀ `FUNC-compute-steering-delta` · io ▶ `FUNC-rank-candidates` · schema ▶ `SCHEMA-steering-delta`
 
-### 4.48  `FLOW-steering-snapshot` — Steering-Snapshot
+### 4.49  `FLOW-steering-snapshot` — Steering-Snapshot
 
 Das Ergebnis der EINEN Messung: gemappter Graph, voller Regelstrom, blockierende Fehler, Readiness-Report. Alles Weitere ist Projektion davon.
 
 io ◀ `FUNC-take-steering-snapshot` · io ▶ `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-next-step` · schema ▶ `SCHEMA-steering-snapshot`
 
-### 4.49  `FLOW-steering-trigger` — Runden-Ausloeser
+### 4.50  `FLOW-steering-trigger` — Runden-Ausloeser
 
 Der Wunsch, eine Steuerungsrunde zu fahren, mit ihren Parametern: Intent, zurueckgestellte Fokus-Schluessel, Auswahlmodus. Mensch und lokaler Executor loesen dieselbe Kette aus, nur die Taktung unterscheidet sich.
 
 io ◀ `ACTOR-developer` · `ACTOR-opencode` · `FUNC-run-verb` · io ▶ `FUNC-take-steering-snapshot` · schema ▶ `SCHEMA-query-params`
 
-### 4.50  `FLOW-store-ownership` — Store-Besitzanspruch
+### 4.51  `FLOW-store-ownership` — Store-Besitzanspruch
 
 Der Anspruch auf den Kuzu-Store eines Repos: gehalten, uebernommen oder verweigert.
 
 io ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · io ▶ `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` · schema ▶ `SCHEMA-lock-owner`
 
-### 4.51  `FLOW-suggest-result` — Suggest-Result
+### 4.52  `FLOW-suggest-result` — Suggest-Result
 
 Confidence-getaggte Vorschläge (suggest-Tier).
 
 io ◀ `FUNC-mutate` · io ▶ `ACTOR-developer` · schema ▶ `SCHEMA-mutate-result`
 
-### 4.52  `FLOW-suggested-edit` — Suggested Edit (ranked candidate)
+### 4.53  `FLOW-suggested-edit` — Suggested Edit (ranked candidate)
 
 Der von propose bestbewertete Kandidaten-Fix (Template-Edit, dryRun-verifiziert), der apply als MutateCommand-Eingabe erreicht - nur wenn der Konsument ihn uebernimmt, nie automatisch.
 
 io ◀ `FUNC-graph-suggest` · `FUNC-rank-candidates` · io ▶ `FUNC-mutate` · schema ▶ `SCHEMA-mutate-command`
 
-### 4.53  `FLOW-target-profile` — Zielprofil
+### 4.54  `FLOW-target-profile` — Zielprofil
 
 Das Zielprofil eines Repos in .graphcode/target-profile.json: R6-Zielgewichte und die 3-7 Intentions-Anker. Vom Skill geschrieben, beim Laden geprueft, von Runden-Prompt und Suggestion-Ranking gelesen.
 
 io ◀ `FUNC-target-profile` · `FUNC-target-profile-load` · io ▶ `FUNC-generation-step` · `FUNC-graph-suggest` · `FUNC-target-profile-load` · schema ▶ `SCHEMA-target-profile`
 
-### 4.54  `FLOW-test-selection` — Selektive Testauswahl
+### 4.55  `FLOW-test-selection` — Selektive Testauswahl
 
 Das minimale selektive Laufkommando mit den aufgeloesten TESTs, den Coverage-Zahlen und dem, was unaufloesbar blieb.
 
 io ◀ `FUNC-deduce-tests` · io ▶ `ACTOR-claude-code` · schema ▶ `SCHEMA-test-selection`
 
-### 4.55  `FLOW-trajectory` — Trajectory/Outcome
+### 4.56  `FLOW-trajectory` — Trajectory/Outcome
 
 append-only Lern-Emission.
 
 io ◀ `FUNC-emit-trajectory` · `FUNC-tool-context` · io ▶ `ACTOR-learning-engine` · schema ▶ `SCHEMA-trajectory`
 
-### 4.56  `FLOW-version-bump` — Version-Bump
+### 4.57  `FLOW-version-bump` — Version-Bump
 
 Neue ONTOLOGY/RULES_VERSION aus contracts/se.
 
-io ◀ `ACTOR-developer` · io ▶ `FUNC-migrate-schema` · schema ▶ `SCHEMA-query-params`
+io ◀ `ACTOR-developer` · io ▶ `FUNC-migrate-schema` · `FUNC-schema-guard` · schema ▶ `SCHEMA-query-params`
 
-### 4.57  `FLOW-view-request` — View-Request
+### 4.58  `FLOW-view-request` — View-Request
 
 Welche View gerendert werden soll (arch/status/...).
 
 io ◀ `ACTOR-developer` · io ▶ `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · schema ▶ `SCHEMA-query-params`
 
-### 4.58  `FLOW-viewer-stream` — Viewer-Stream
+### 4.59  `FLOW-viewer-stream` — Viewer-Stream
 
 Der versionierte SSE/WS-Strom an die Live-Viewer: Update-Events mit Late-Joiner-Cache, strikt read-only.
 
 io ◀ `FUNC-broadcast-diff` · `FUNC-serve-sse` · io ▶ `ACTOR-dashboard` · schema ▶ `SCHEMA-update-event`
 
-### 4.59  `FLOW-violations` — Violations
+### 4.60  `FLOW-violations` — Violations
 
 Regel-Violations {ruleId,severity,elementId}.
 
@@ -5844,43 +5890,49 @@ Je Dimension score, violations, applicable, ready. Aus @sigloch/contracts, desha
 
 schema ◀ `FLOW-dimension-readiness`
 
-### 5.21  `SCHEMA-session-registry` — SessionEntry
+### 5.21  `SCHEMA-schema-fingerprint` — SchemaFingerprint
+
+Die ersten 16 Hex-Zeichen eines SHA-256 ueber die generierte DDL. Die Laenge ist Teil des Vertrags: sie unterscheidet einen aelteren Schemastand von einer kaputten Datei.
+
+schema ◀ `FLOW-schema-fingerprint`
+
+### 5.22  `SCHEMA-session-registry` — SessionEntry
 
 pid, hostname, startedAt. Der Vertrag eines Sitzungseintrags, der eine Prozessgrenze quert.
 
 schema ◀ `FLOW-session-registry`
 
-### 5.22  `SCHEMA-steering-delta` — SteeringDelta
+### 5.23  `SCHEMA-steering-delta` — SteeringDelta
 
 blockingErrors vorher und nachher plus je Dimension before, after, delta.
 
 schema ◀ `FLOW-steering-delta`
 
-### 5.23  `SCHEMA-steering-snapshot` — SteeringSnapshot
+### 5.24  `SCHEMA-steering-snapshot` — SteeringSnapshot
 
 Gemappter OntologyGraph mit injizierten ND-Matrizen, Violations des vollen Katalogs, Zahl der blockierenden Fehler, Readiness-Report.
 
 schema ◀ `FLOW-steering-snapshot`
 
-### 5.24  `SCHEMA-target-profile` — TargetProfile
+### 5.25  `SCHEMA-target-profile` — TargetProfile
 
 weights (6 Dimensionen in [-1,1]) und intentAnchors (3-7 Strings). Der Vertrag der Zielprofil-Datei, die zwei Schreiber und einen Leser hat.
 
 schema ◀ `FLOW-target-profile`
 
-### 5.25  `SCHEMA-test-selection` — TestSelection
+### 5.26  `SCHEMA-test-selection` — TestSelection
 
 command, tests mit testRefs, coverage, unresolved. Der Vertrag der graph_tests-Antwort.
 
 schema ◀ `FLOW-test-selection`
 
-### 5.26  `SCHEMA-trajectory` — Trajectory/Outcome
+### 5.27  `SCHEMA-trajectory` — Trajectory/Outcome
 
 append-only Lern-Emission. @sigloch/learning-core.
 
 schema ◀ `FLOW-trajectory`
 
-### 5.27  `SCHEMA-update-event` — UpdateEvent
+### 5.28  `SCHEMA-update-event` — UpdateEvent
 
 SSE invalidate Event.
 

@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 27 SCHEMA · 59 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 28 SCHEMA · 60 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -30,6 +30,7 @@
 | `SCHEMA-phase-readiness` | src/readiness.ts#PhaseGateReadiness | reviewed |
 | `SCHEMA-query-params` | Konzept (noch kein Zod-Export) | reviewed |
 | `SCHEMA-readiness-report` | packages/contracts/src/se/readiness.ts#ReadinessReport | reviewed |
+| `SCHEMA-schema-fingerprint` | src/schema-fingerprint-contract.ts#SchemaFingerprintSchema | n/a |
 | `SCHEMA-session-registry` | src/gve-session-contract.ts#SessionEntrySchema | n/a |
 | `SCHEMA-steering-delta` | src/steering-snapshot.ts#SteeringDelta | reviewed |
 | `SCHEMA-steering-snapshot` | src/steering-snapshot.ts#SteeringSnapshot | reviewed |
@@ -85,6 +86,7 @@
 | `FLOW-round-injection` | `FUNC-build-round-injection` | `FUNC-run-executor` |
 | `FLOW-round-prompt` | `FUNC-generation-step` · `FUNC-next-step` | `ACTOR-claude-code` · `ACTOR-opencode` · `FUNC-build-round-injection` · `FUNC-rank-candidates` · `FUNC-run-executor` |
 | `FLOW-round-scope` | `FUNC-graph-impact` | `FUNC-evaluate-rules` |
+| `FLOW-schema-fingerprint` | `FUNC-schema-guard` | `FUNC-open-store` |
 | `FLOW-session-registry` | `FUNC-gve-sessions` · `FUNC-gve-supervise` | `FUNC-gve-sessions` |
 | `FLOW-skill-report` | `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-test` · `FUNC-test-ui` | `ACTOR-systems-engineer` |
 | `FLOW-skill-request` | `ACTOR-systems-engineer` | `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-test` · `FUNC-test-ui` |
@@ -97,7 +99,7 @@
 | `FLOW-target-profile` | `FUNC-target-profile` · `FUNC-target-profile-load` | `FUNC-generation-step` · `FUNC-graph-suggest` · `FUNC-target-profile-load` |
 | `FLOW-test-selection` | `FUNC-deduce-tests` | `ACTOR-claude-code` |
 | `FLOW-trajectory` | `FUNC-emit-trajectory` · `FUNC-tool-context` | `ACTOR-learning-engine` |
-| `FLOW-version-bump` | `ACTOR-developer` | `FUNC-migrate-schema` |
+| `FLOW-version-bump` | `ACTOR-developer` | `FUNC-migrate-schema` · `FUNC-schema-guard` |
 | `FLOW-view-request` | `ACTOR-developer` | `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` |
 | `FLOW-viewer-stream` | `FUNC-broadcast-diff` · `FUNC-serve-sse` | `ACTOR-dashboard` |
 | `FLOW-violations` | `FUNC-check-code-conformance` · `FUNC-evaluate-rules` · `FUNC-take-steering-snapshot` | `FUNC-compute-phase-readiness` · `FUNC-health-endpoint` · `FUNC-save-graph` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` |

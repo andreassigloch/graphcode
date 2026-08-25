@@ -88,7 +88,7 @@ Als Entwickler will ich den Modellstand eines beliebigen Commits wiederherstelle
 Ausgeloest von: `ACTOR-developer`
 
 - `FCHAIN-merge-branches` — Zweig-Graphen konfliktfrei zusammenfuehren: `FUNC-merge-nodes`
-- `FCHAIN-recall` — Recall (Wiederherstellen): `FUNC-apply-reseed` → `FUNC-reseed` → `FUNC-rewind` → `FUNC-schema-guard` → `FUNC-seed-from-json`
+- `FCHAIN-recall` — Recall (Wiederherstellen): `FUNC-apply-reseed` → `FUNC-reseed` → `FUNC-rewind` → `FUNC-seed-from-json`
 - `FCHAIN-snapshot-freshness` — Snapshot-Freshness (Aufzeichnen): `FUNC-auto-export` → `FUNC-evaluate-rules` → `FUNC-export-marker` → `FUNC-graph-export-snapshot` → `FUNC-mutate` → `FUNC-save-graph`
 
 ### `UC-live-graph-view` — Modellstand live mitlesen
@@ -133,6 +133,7 @@ Der Entwickler richtet ein Repo ein, faehrt Laeufe darin und beendet die Sitzung
 Ausgeloest von: `ACTOR-developer`
 
 - `FCHAIN-repo-lifecycle` — Repo-Lebenszyklus: `FUNC-bind-tools` → `FUNC-bootstrap` → `FUNC-claim-store-lock` → `FUNC-cli-dispatch` → `FUNC-collect-status` → `FUNC-gve-sessions` → `FUNC-gve-supervise` → `FUNC-harness-cli` → `FUNC-run-verb` → `FUNC-session-shutdown` → `FUNC-upgrade`
+- `FCHAIN-schema-migration` — Schema-Migration bei Version-Bump: `FUNC-migrate-schema` → `FUNC-schema-guard`
 
 ## 5  Modes of operation
 
