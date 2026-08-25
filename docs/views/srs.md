@@ -64,7 +64,7 @@ io ▶ `FLOW-expand-request` · `FLOW-formatE-candidates` · `FLOW-mutate-cmd` �
 
 SSE/WS read-only Viewer; Live-Q-Status-Visualisierung (Ziel b). (SPEC §5 Kanal 2)
 
-io ▶ `UC-code-quality` · `UC-live-graph-view` · io ◀ `FLOW-live-event` · `FLOW-module-metrics` · `FLOW-viewer-stream`
+io ▶ `UC-code-quality` · `UC-live-graph-view` · io ◀ `FLOW-health-report` · `FLOW-live-event` · `FLOW-module-metrics` · `FLOW-viewer-stream`
 
 ### 2.3  `ACTOR-developer` — Entwickler / Repo-Owner
 
@@ -2034,25 +2034,7 @@ priority: should · status: done · kinds: non-functional
 
 Verification ◀ `TEST-create-harness-smoke` (integration) · `TEST-live-view` (integration) · satisfy ◀ `FCHAIN-live-update` · `FUNC-emit-update-event` · allocate ▶ `MOD-hooks`
 
-##### 3.5.1.1  `FUNC-health-endpoint` — healthEndpoint()
-
-> auch in: `FUNC-block-anschluss`
-
-Echter Funktions-Health: Store erreichbar, Gate funktional, Ontology/Rules/Contracts-Versionen, LLM/BYOK-Readiness. Quelle des Dashboard-FUNC-render-health. (CR-GC-114)
-
-io ◀ — · io ▶ — · allocate ▶ `MOD-host-bridge`
-
-###### `REQ-real-health-check` — Health = echter Funktionscheck
-
-> auch unter: `FUNC-collect-status`
-
-Der Health-Endpoint prueft Store-Erreichbarkeit, Gate-Funktion, Ontology/Rules/Contracts-Versionen und LLM/BYOK-Readiness, nicht nur Prozess-Liveness. aimprove-spezifische Felder (Sessions/Patterns) sind kein Health-Signal und werden entfernt.
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-readonly-bridge` (integration) · satisfy ◀ `FUNC-collect-status` · `FUNC-health-endpoint` · `MOD-host-bridge` · allocate ▶ `MOD-cli` · `MOD-host-bridge`
-
-##### 3.5.1.2  `FUNC-mutate` — mutate(commands)
+##### 3.5.1.1  `FUNC-mutate` — mutate(commands)
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-interface-escalation` · `FCHAIN-modelfree-gate` · `FCHAIN-skill-authoring` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FUNC-block-gate`
 
@@ -2094,7 +2076,7 @@ priority: must · status: n/a
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (integration) · `TEST-occ` (integration) · `TEST-single-write-door` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
 
-##### 3.5.1.3  `FUNC-evaluate-rules` — evaluateRules()
+##### 3.5.1.2  `FUNC-evaluate-rules` — evaluateRules()
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-modelfree-gate` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FUNC-block-gate`
 
@@ -2109,6 +2091,24 @@ evaluateRules() gegen V3_RULES; error-Severity blockt den Apply. (L2)
 priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-mutate-gate` (integration) · `TEST-nd-similarity` (unit) · `TEST-violation-context` (integration) · satisfy ◀ `FUNC-evaluate-rules` · allocate ▶ `MOD-harness`
+
+##### 3.5.1.3  `FUNC-health-endpoint` — healthEndpoint()
+
+> auch in: `FUNC-block-anschluss`
+
+Echter Funktions-Health: Store erreichbar, Gate funktional, Ontology/Rules/Contracts-Versionen, LLM/BYOK-Readiness. Quelle des Dashboard-FUNC-render-health. (CR-GC-114)
+
+io ◀ `FLOW-violations` · io ▶ `FLOW-health-report` · allocate ▶ `MOD-host-bridge`
+
+###### `REQ-real-health-check` — Health = echter Funktionscheck
+
+> auch unter: `FUNC-collect-status`
+
+Der Health-Endpoint prueft Store-Erreichbarkeit, Gate-Funktion, Ontology/Rules/Contracts-Versionen und LLM/BYOK-Readiness, nicht nur Prozess-Liveness. aimprove-spezifische Felder (Sessions/Patterns) sind kein Health-Signal und werden entfernt.
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-readonly-bridge` (integration) · satisfy ◀ `FUNC-collect-status` · `FUNC-health-endpoint` · `MOD-host-bridge` · allocate ▶ `MOD-cli` · `MOD-host-bridge`
 
 ##### 3.5.1.4  `FUNC-save-graph` — saveGraph(graph)
 
@@ -3440,7 +3440,7 @@ Verification ◀ `TEST-distribution` (e2e) · satisfy ◀ `FUNC-harness-cli` · 
 
 Echter Funktions-Health: Store erreichbar, Gate funktional, Ontology/Rules/Contracts-Versionen, LLM/BYOK-Readiness. Quelle des Dashboard-FUNC-render-health. (CR-GC-114)
 
-io ◀ — · io ▶ — · allocate ▶ `MOD-host-bridge`
+io ◀ `FLOW-violations` · io ▶ `FLOW-health-report` · allocate ▶ `MOD-host-bridge`
 
 ###### `REQ-real-health-check` — Health = echter Funktionscheck
 
@@ -5474,203 +5474,209 @@ Aktueller OntologyGraph (in-memory).
 
 io ◀ `ACTOR-developer` · `FUNC-load-graph` · `FUNC-nd-similarity` · `FUNC-open-store` · `FUNC-own-kuzu-host` · io ▶ `FUNC-arch-fitness` · `FUNC-check-code-conformance` · `FUNC-close-store` · `FUNC-encode` · `FUNC-fit-advisory` · `FUNC-module-metrics` · `FUNC-nd-similarity` · `FUNC-score-completeness` · schema ▶ `SCHEMA-ontology-graph`
 
-### 4.23  `FLOW-impact-subgraph` — Impact-Subgraph
+### 4.23  `FLOW-health-report` — Health-Report
+
+Der gemessene Funktionszustand des Hosts: Store erreichbar, Gate arbeitsfaehig, Knotenzahl, die geltenden Ontologie-/Regel-/Meta-Modell-Versionen und die Zahl der angehaengten Viewer.
+
+io ◀ `FUNC-health-endpoint` · io ▶ `ACTOR-dashboard` · schema ▶ `SCHEMA-health-report`
+
+### 4.24  `FLOW-impact-subgraph` — Impact-Subgraph
 
 Exakter Blast-Radius als Format-E + Cursor.
 
 io ◀ `FUNC-graph-impact` · io ▶ `ACTOR-claude-code` · `FUNC-graph-expand` · `FUNC-mutate` · schema ▶ `SCHEMA-format-e`
 
-### 4.24  `FLOW-impacted-tests` — Betroffene Tests
+### 4.25  `FLOW-impacted-tests` — Betroffene Tests
 
 Der gerichtete Auswahl-Teilgraph einer Aenderung: erreichte Knoten und Kanten plus die getrennt gefuehrten Anker- und TEST-uids. Uebergabe von der Aufloesung an das Werkzeug.
 
 io ◀ `FUNC-resolve-tests-from-code` · io ▶ `FUNC-deduce-tests` · schema ▶ `SCHEMA-impacted-tests`
 
-### 4.25  `FLOW-install-result` — Lifecycle-Result
+### 4.26  `FLOW-install-result` — Lifecycle-Result
 
 Ergebnis der CLI-Lifecycle-Verben an den Entwickler: Scaffold-, Update-, Remove-, Status- und Upgrade-Ausgang.
 
 io ◀ `FUNC-collect-status` · `FUNC-harness-cli` · `FUNC-upgrade` · io ▶ `ACTOR-developer` · schema ▶ `SCHEMA-cli-command`
 
-### 4.26  `FLOW-live-event` — Live-Update-Event
+### 4.27  `FLOW-live-event` — Live-Update-Event
 
 SSE invalidate (graph/rules/readiness/suggestions).
 
 io ◀ `FUNC-emit-update-event` · io ▶ `ACTOR-dashboard` · `FUNC-broadcast-diff` · `FUNC-serve-sse` · `FUNC-serve-stdio` · schema ▶ `SCHEMA-update-event`
 
-### 4.27  `FLOW-markdown-docs` — Markdown-Docs
+### 4.28  `FLOW-markdown-docs` — Markdown-Docs
 
 Generierte Markdown-Views (GENERATED-Header).
 
 io ◀ `FUNC-export-markdown` · io ▶ `ACTOR-developer` · schema ▶ `SCHEMA-markdown-view`
 
-### 4.28  `FLOW-measurement-vector` — Messvektor
+### 4.29  `FLOW-measurement-vector` — Messvektor
 
 Der gemeinsame Eingang der vier Entscheidungen: der gemessene Zustand als Vektor, unabhaengig davon, welche Projektion ihn fuellt. Erst mit diesem Vertrag ist die Gleichheit der vier Signaturen geprueft statt behauptet.
 
 io ◀ `FUNC-take-steering-snapshot` · io ▶ `FUNC-goal-steerer` · schema ▶ `SCHEMA-measurement-vector`
 
-### 4.29  `FLOW-merged-graph` — Merged-Graph
+### 4.30  `FLOW-merged-graph` — Merged-Graph
 
 Conflict-free gemergter Graph.
 
 io ◀ `FUNC-merge-nodes` · io ▶ `ACTOR-developer` · schema ▶ `SCHEMA-ontology-graph`
 
-### 4.30  `FLOW-migrated-graph` — Migrated-Graph
+### 4.31  `FLOW-migrated-graph` — Migrated-Graph
 
 Re-validierter/migrierter Graph + Report.
 
 io ◀ `FUNC-migrate-schema` · io ▶ `ACTOR-developer` · schema ▶ `SCHEMA-ontology-graph`
 
-### 4.31  `FLOW-module-metrics` — Modulkennzahlen je MOD
+### 4.32  `FLOW-module-metrics` — Modulkennzahlen je MOD
 
 Instabilitaet, LCOM4, Kohaesion je Modul plus die geltende Urteils-Policy und ihre Herkunft. Wert und Schwelle verlassen den Host zusammen, damit die Anzeige keinen eigenen Zielwert braucht (CR-GC-329).
 
 io ◀ `FUNC-module-metrics` · io ▶ `ACTOR-dashboard` · `FUNC-evaluate-rules` · schema ▶ `SCHEMA-module-metrics`
 
-### 4.32  `FLOW-mutate-cmd` — Mutate-Command
+### 4.33  `FLOW-mutate-cmd` — Mutate-Command
 
 Edit-Op (add/update/delete) vom Agent/Mensch.
 
 io ◀ `ACTOR-claude-code` · `ACTOR-developer` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-extract-mutate` · `FUNC-host-socket` · `FUNC-preflight` · `FUNC-run-executor` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` · io ▶ `FUNC-host-socket` · `FUNC-mutate` · `FUNC-preflight` · schema ▶ `SCHEMA-mutate-command`
 
-### 4.33  `FLOW-parsed-graph` — Parsed-Graph
+### 4.34  `FLOW-parsed-graph` — Parsed-Graph
 
 Aus Format-E rekonstruierter Graph (== Original).
 
 io ◀ `FUNC-decode` · io ▶ `ACTOR-developer` · schema ▶ `SCHEMA-ontology-graph`
 
-### 4.34  `FLOW-phase-readiness` — Phasen-Readiness (SRR/PDR/CDR/TRR)
+### 4.35  `FLOW-phase-readiness` — Phasen-Readiness (SRR/PDR/CDR/TRR)
 
 Dieselbe Regelauswertung auf die Phasen-Gates projiziert: je Gate abgedeckte gegen alle Regel-IDs plus die fehlenden. Die zweite Achse, nicht die zweite Messung.
 
 io ◀ `FUNC-compute-phase-readiness` · io ▶ `FUNC-generation-step` · schema ▶ `SCHEMA-phase-readiness`
 
-### 4.35  `FLOW-query-request` — Query-Request
+### 4.36  `FLOW-query-request` — Query-Request
 
 elementId + depth.
 
 io ◀ `ACTOR-claude-code` · io ▶ `FUNC-deduce-tests` · `FUNC-graph-impact` · `FUNC-list-elements` · `FUNC-resolve-tests-from-code` · schema ▶ `SCHEMA-query-params`
 
-### 4.36  `FLOW-recalled-state` — Wiederhergestellter Graph-Stand
+### 4.37  `FLOW-recalled-state` — Wiederhergestellter Graph-Stand
 
 Der Live-Store nach dem Reseed: Modell und Code gehoeren wieder zu demselben Commit, der Drift-Marker ist geloescht.
 
 io ◀ `FUNC-apply-reseed` · `FUNC-reseed` · `FUNC-seed-from-json` · io ▶ `ACTOR-developer` · schema ▶ `SCHEMA-ontology-graph`
 
-### 4.37  `FLOW-rendered-view` — Rendered-View
+### 4.38  `FLOW-rendered-view` — Rendered-View
 
 Generierte Markdown-View, z.B. architecture-graph.md.
 
 io ◀ `FUNC-render-views` · io ▶ `ACTOR-developer` · schema ▶ `SCHEMA-markdown-view`
 
-### 4.38  `FLOW-round-findings` — Round Findings (open violations)
+### 4.39  `FLOW-round-findings` — Round Findings (open violations)
 
 Die von status offen gemeldeten Regelverletzungen, die propose als Rang-Eingabe nimmt (graph_suggest rankt genau die feuernden Operator-Regeln).
 
 io ◀ `FUNC-evaluate-rules` · io ▶ `FUNC-graph-suggest` · schema ▶ `SCHEMA-mutate-result`
 
-### 4.39  `FLOW-round-injection` — Runden-Injektion
+### 4.40  `FLOW-round-injection` — Runden-Injektion
 
 Der zusammengesetzte Prompt-Zusatz einer Runde: Guide-Slice plus Element-Index. Wie der Runden-Scope ein informationeller Kontext ohne festes Wire-Format, kein Code-Vertrag.
 
 io ◀ `FUNC-build-round-injection` · io ▶ `FUNC-run-executor` · schema ▶ —
 
-### 4.40  `FLOW-round-prompt` — Runden-Prompt (naechster Schritt)
+### 4.41  `FLOW-round-prompt` — Runden-Prompt (naechster Schritt)
 
 Der aus dem Messzustand abgeleitete naechste Schritt: Fokus-Dimension, Fokus-Typen, Fund-Fenster, Gate-Protokoll, Handoff-Bedingung.
 
 io ◀ `FUNC-generation-step` · `FUNC-next-step` · io ▶ `ACTOR-claude-code` · `ACTOR-opencode` · `FUNC-build-round-injection` · `FUNC-rank-candidates` · `FUNC-run-executor` · schema ▶ `SCHEMA-generation-step`
 
-### 4.41  `FLOW-round-scope` — Round Scope (bounded slice)
+### 4.42  `FLOW-round-scope` — Round Scope (bounded slice)
 
 Der durch read gebundene Blast-Radius/Kontext, der informiert, was status als offen prueft. Kein festes Wire-Format - informationeller Rundenkontext, kein Code-Datenvertrag.
 
 io ◀ `FUNC-graph-impact` · io ▶ `FUNC-evaluate-rules` · schema ▶ —
 
-### 4.42  `FLOW-skill-report` — Skill-Bericht
+### 4.43  `FLOW-skill-report` — Skill-Bericht
 
 Der gemessene Stand als Text zurueck an den Menschen.
 
 io ◀ `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-test` · `FUNC-test-ui` · io ▶ `ACTOR-systems-engineer` · schema ▶ `SCHEMA-markdown-view`
 
-### 4.43  `FLOW-skill-request` — Skill-Aufruf
+### 4.44  `FLOW-skill-request` — Skill-Aufruf
 
 Aufruf eines Skills durch den Menschen, mit Zielgraph und Optionen.
 
 io ◀ `ACTOR-systems-engineer` · io ▶ `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-test` · `FUNC-test-ui` · schema ▶ `SCHEMA-query-params`
 
-### 4.44  `FLOW-steering-delta` — Steering-Delta (vor/nach Kandidat)
+### 4.45  `FLOW-steering-delta` — Steering-Delta (vor/nach Kandidat)
 
 Blockierende Fehler vorher und nachher plus Score-Delta je Dimension. Das erste Sachkriterium der Kandidaten-Rangfolge.
 
 io ◀ `FUNC-compute-steering-delta` · io ▶ `FUNC-rank-candidates` · schema ▶ `SCHEMA-steering-delta`
 
-### 4.45  `FLOW-steering-snapshot` — Steering-Snapshot
+### 4.46  `FLOW-steering-snapshot` — Steering-Snapshot
 
 Das Ergebnis der EINEN Messung: gemappter Graph, voller Regelstrom, blockierende Fehler, Readiness-Report. Alles Weitere ist Projektion davon.
 
 io ◀ `FUNC-take-steering-snapshot` · io ▶ `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-next-step` · schema ▶ `SCHEMA-steering-snapshot`
 
-### 4.46  `FLOW-steering-trigger` — Runden-Ausloeser
+### 4.47  `FLOW-steering-trigger` — Runden-Ausloeser
 
 Der Wunsch, eine Steuerungsrunde zu fahren, mit ihren Parametern: Intent, zurueckgestellte Fokus-Schluessel, Auswahlmodus. Mensch und lokaler Executor loesen dieselbe Kette aus, nur die Taktung unterscheidet sich.
 
 io ◀ `ACTOR-developer` · `ACTOR-opencode` · `FUNC-run-verb` · io ▶ `FUNC-take-steering-snapshot` · schema ▶ `SCHEMA-query-params`
 
-### 4.47  `FLOW-store-ownership` — Store-Besitzanspruch
+### 4.48  `FLOW-store-ownership` — Store-Besitzanspruch
 
 Der Anspruch auf den Kuzu-Store eines Repos: gehalten, uebernommen oder verweigert.
 
 io ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · io ▶ `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` · schema ▶ `SCHEMA-lock-owner`
 
-### 4.48  `FLOW-suggest-result` — Suggest-Result
+### 4.49  `FLOW-suggest-result` — Suggest-Result
 
 Confidence-getaggte Vorschläge (suggest-Tier).
 
 io ◀ `FUNC-mutate` · io ▶ `ACTOR-developer` · schema ▶ `SCHEMA-mutate-result`
 
-### 4.49  `FLOW-suggested-edit` — Suggested Edit (ranked candidate)
+### 4.50  `FLOW-suggested-edit` — Suggested Edit (ranked candidate)
 
 Der von propose bestbewertete Kandidaten-Fix (Template-Edit, dryRun-verifiziert), der apply als MutateCommand-Eingabe erreicht - nur wenn der Konsument ihn uebernimmt, nie automatisch.
 
 io ◀ `FUNC-graph-suggest` · `FUNC-rank-candidates` · io ▶ `FUNC-mutate` · schema ▶ `SCHEMA-mutate-command`
 
-### 4.50  `FLOW-test-selection` — Selektive Testauswahl
+### 4.51  `FLOW-test-selection` — Selektive Testauswahl
 
 Das minimale selektive Laufkommando mit den aufgeloesten TESTs, den Coverage-Zahlen und dem, was unaufloesbar blieb.
 
 io ◀ `FUNC-deduce-tests` · io ▶ `ACTOR-claude-code` · schema ▶ `SCHEMA-test-selection`
 
-### 4.51  `FLOW-trajectory` — Trajectory/Outcome
+### 4.52  `FLOW-trajectory` — Trajectory/Outcome
 
 append-only Lern-Emission.
 
 io ◀ `FUNC-emit-trajectory` · io ▶ `ACTOR-learning-engine` · schema ▶ `SCHEMA-trajectory`
 
-### 4.52  `FLOW-version-bump` — Version-Bump
+### 4.53  `FLOW-version-bump` — Version-Bump
 
 Neue ONTOLOGY/RULES_VERSION aus contracts/se.
 
 io ◀ `ACTOR-developer` · io ▶ `FUNC-migrate-schema` · schema ▶ `SCHEMA-query-params`
 
-### 4.53  `FLOW-view-request` — View-Request
+### 4.54  `FLOW-view-request` — View-Request
 
 Welche View gerendert werden soll (arch/status/...).
 
 io ◀ `ACTOR-developer` · io ▶ `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · schema ▶ `SCHEMA-query-params`
 
-### 4.54  `FLOW-viewer-stream` — Viewer-Stream
+### 4.55  `FLOW-viewer-stream` — Viewer-Stream
 
 Der versionierte SSE/WS-Strom an die Live-Viewer: Update-Events mit Late-Joiner-Cache, strikt read-only.
 
 io ◀ `FUNC-broadcast-diff` · `FUNC-serve-sse` · io ▶ `ACTOR-dashboard` · schema ▶ `SCHEMA-update-event`
 
-### 4.55  `FLOW-violations` — Violations
+### 4.56  `FLOW-violations` — Violations
 
 Regel-Violations {ruleId,severity,elementId}.
 
-io ◀ `FUNC-check-code-conformance` · `FUNC-evaluate-rules` · `FUNC-take-steering-snapshot` · io ▶ `FUNC-compute-phase-readiness` · `FUNC-save-graph` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · schema ▶ `SCHEMA-mutate-result`
+io ◀ `FUNC-check-code-conformance` · `FUNC-evaluate-rules` · `FUNC-take-steering-snapshot` · io ▶ `FUNC-compute-phase-readiness` · `FUNC-health-endpoint` · `FUNC-save-graph` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · schema ▶ `SCHEMA-mutate-result`
 
 ## 5  Schemata
 
@@ -5710,103 +5716,109 @@ Fokus-Schluessel und -Typen, Readiness-Auszug, Fund-Fenster, Gate-Protokoll, Han
 
 schema ◀ `FLOW-round-prompt`
 
-### 5.7  `SCHEMA-impacted-tests` — TestImpactResult
+### 5.7  `SCHEMA-health-report` — HealthPayload
+
+status, store, gate, nodeCount, versions, sseClients. Der Vertrag der GET /health-Antwort.
+
+schema ◀ `FLOW-health-report`
+
+### 5.8  `SCHEMA-impacted-tests` — TestImpactResult
 
 nodes, edges, anchors, testIds. Der Vertrag von impactedTests am Modulrand.
 
 schema ◀ `FLOW-impacted-tests`
 
-### 5.8  `SCHEMA-lock-owner` — LockOwner
+### 5.9  `SCHEMA-lock-owner` — LockOwner
 
 Halter des Store-Locks: Host, PID, Version, Zeitstempel.
 
 schema ◀ `FLOW-store-ownership`
 
-### 5.9  `SCHEMA-markdown-view` — MarkdownView
+### 5.10  `SCHEMA-markdown-view` — MarkdownView
 
 Generierte human-readable View mit GENERATED-Header.
 
 schema ◀ `FLOW-markdown-docs` · `FLOW-rendered-view` · `FLOW-skill-report`
 
-### 5.10  `SCHEMA-measurement-vector` — Messvektor (Vertrag der vier Entscheidungen)
+### 5.11  `SCHEMA-measurement-vector` — Messvektor (Vertrag der vier Entscheidungen)
 
 Der gemeinsame Eingang: Regelstrom plus Projektionen, so weit die jeweilige Entscheidung sie braucht. Bewusst spec-only, weil er heute in vier Signaturen verstreut ist; sein Zweck ist, diese Verstreuung sichtbar zu halten.
 
 schema ◀ `FLOW-measurement-vector`
 
-### 5.11  `SCHEMA-metric-vector` — MetricVector
+### 5.12  `SCHEMA-metric-vector` — MetricVector
 
 Sechs Topologiedimensionen: modifiability, faultTolerance, flowEfficiency, coherence, viability, scalability. Aus @sigloch/se-optimizer, deshalb external.
 
 schema ◀ `FLOW-arch-fitness`
 
-### 5.12  `SCHEMA-module-metrics` — ModuleMetrics
+### 5.13  `SCHEMA-module-metrics` — ModuleMetrics
 
 Je MOD allocatedFuncs, fanIn, fanOut, instability, lcom4, cohesion; null heisst nicht messbar, nie null Prozent. Aus @sigloch/contracts, deshalb external.
 
 schema ◀ `FLOW-module-metrics`
 
-### 5.13  `SCHEMA-mutate-command` — MutateCommand
+### 5.14  `SCHEMA-mutate-command` — MutateCommand
 
 Edit-Operation durch das Gate. @sigloch/contracts harness (D1).
 
 schema ◀ `FLOW-mutate-cmd` · `FLOW-suggested-edit`
 
-### 5.14  `SCHEMA-mutate-result` — MutateResult
+### 5.15  `SCHEMA-mutate-result` — MutateResult
 
 Apply-Ergebnis + Violations + Confidence/Tier. @sigloch/contracts harness (D1).
 
 schema ◀ `FLOW-bootstrap-result` · `FLOW-gate-verdict` · `FLOW-round-findings` · `FLOW-suggest-result` · `FLOW-violations`
 
-### 5.15  `SCHEMA-ontology-graph` — OntologyGraph
+### 5.16  `SCHEMA-ontology-graph` — OntologyGraph
 
 Elements (13 ElementTypes) + Traces (7 TraceTypes). @sigloch/contracts/se.
 
 schema ◀ `FLOW-branch-graphs` · `FLOW-capture-draft` · `FLOW-committed-graph` · `FLOW-draft-graph` · `FLOW-element-slice` · `FLOW-graph-snapshot` · `FLOW-graph-state` · `FLOW-merged-graph` · `FLOW-migrated-graph` · `FLOW-parsed-graph` · `FLOW-recalled-state`
 
-### 5.16  `SCHEMA-phase-readiness` — PhaseGateReadiness
+### 5.17  `SCHEMA-phase-readiness` — PhaseGateReadiness
 
 Je Gate: abgedeckte und alle Regel-IDs plus die fehlenden.
 
 schema ◀ `FLOW-phase-readiness`
 
-### 5.17  `SCHEMA-query-params` — QueryParams
+### 5.18  `SCHEMA-query-params` — QueryParams
 
 Query-/Request-Parameter.
 
 schema ◀ `FLOW-authoring-request` · `FLOW-expand-request` · `FLOW-export-request` · `FLOW-query-request` · `FLOW-skill-request` · `FLOW-steering-trigger` · `FLOW-version-bump` · `FLOW-view-request`
 
-### 5.18  `SCHEMA-readiness-report` — ReadinessReportType
+### 5.19  `SCHEMA-readiness-report` — ReadinessReportType
 
 Je Dimension score, violations, applicable, ready. Aus @sigloch/contracts, deshalb external.
 
 schema ◀ `FLOW-dimension-readiness`
 
-### 5.19  `SCHEMA-steering-delta` — SteeringDelta
+### 5.20  `SCHEMA-steering-delta` — SteeringDelta
 
 blockingErrors vorher und nachher plus je Dimension before, after, delta.
 
 schema ◀ `FLOW-steering-delta`
 
-### 5.20  `SCHEMA-steering-snapshot` — SteeringSnapshot
+### 5.21  `SCHEMA-steering-snapshot` — SteeringSnapshot
 
 Gemappter OntologyGraph mit injizierten ND-Matrizen, Violations des vollen Katalogs, Zahl der blockierenden Fehler, Readiness-Report.
 
 schema ◀ `FLOW-steering-snapshot`
 
-### 5.21  `SCHEMA-test-selection` — TestSelection
+### 5.22  `SCHEMA-test-selection` — TestSelection
 
 command, tests mit testRefs, coverage, unresolved. Der Vertrag der graph_tests-Antwort.
 
 schema ◀ `FLOW-test-selection`
 
-### 5.22  `SCHEMA-trajectory` — Trajectory/Outcome
+### 5.23  `SCHEMA-trajectory` — Trajectory/Outcome
 
 append-only Lern-Emission. @sigloch/learning-core.
 
 schema ◀ `FLOW-trajectory`
 
-### 5.23  `SCHEMA-update-event` — UpdateEvent
+### 5.24  `SCHEMA-update-event` — UpdateEvent
 
 SSE invalidate Event.
 

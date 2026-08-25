@@ -821,6 +821,8 @@
 | `FLOW-graph-state` | io | `FUNC-nd-similarity` |
 | `FLOW-graph-state` | io | `FUNC-score-completeness` |
 | `FLOW-graph-state` | relation | `SCHEMA-ontology-graph` |
+| `FLOW-health-report` | io | `ACTOR-dashboard` |
+| `FLOW-health-report` | relation | `SCHEMA-health-report` |
 | `FLOW-impact-subgraph` | io | `ACTOR-claude-code` |
 | `FLOW-impact-subgraph` | io | `FUNC-graph-expand` |
 | `FLOW-impact-subgraph` | io | `FUNC-mutate` |
@@ -914,6 +916,7 @@
 | `FLOW-viewer-stream` | io | `ACTOR-dashboard` |
 | `FLOW-viewer-stream` | relation | `SCHEMA-update-event` |
 | `FLOW-violations` | io | `FUNC-compute-phase-readiness` |
+| `FLOW-violations` | io | `FUNC-health-endpoint` |
 | `FLOW-violations` | io | `FUNC-save-graph` |
 | `FLOW-violations` | io | `FUNC-se-retro` |
 | `FLOW-violations` | io | `FUNC-se-review` |
@@ -1171,6 +1174,7 @@
 | `FUNC-harness-cli` | satisfy | `REQ-repo-update` |
 | `FUNC-harness-cli` | satisfy | `REQ-self-contained-dist` |
 | `FUNC-health-endpoint` | allocate | `MOD-host-bridge` |
+| `FUNC-health-endpoint` | io | `FLOW-health-report` |
 | `FUNC-health-endpoint` | satisfy | `REQ-real-health-check` |
 | `FUNC-host-socket` | allocate | `MOD-host-bridge` |
 | `FUNC-host-socket` | io | `FLOW-mutate-cmd` |

@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 23 SCHEMA · 55 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 24 SCHEMA · 56 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -16,6 +16,7 @@
 | `SCHEMA-fit-advisory` | src/fit-advisory.ts#FitAdvisory | reviewed |
 | `SCHEMA-format-e` | extern definiert (kein realRef) | reviewed |
 | `SCHEMA-generation-step` | src/generate.ts#GenerationStep | reviewed |
+| `SCHEMA-health-report` | src/viewer/health.ts#HealthPayloadSchema | n/a |
 | `SCHEMA-impacted-tests` | src/test-selection.ts#TestImpactResultSchema | n/a |
 | `SCHEMA-lock-owner` | src/store-lock.ts#LockOwner | n/a |
 | `SCHEMA-markdown-view` | src/exporter.ts#MarkdownViewSchema | reviewed |
@@ -60,6 +61,7 @@
 | `FLOW-gate-verdict` | `FUNC-mutate` | `FUNC-take-steering-snapshot` |
 | `FLOW-graph-snapshot` | `FUNC-graph-export-snapshot` · `FUNC-rewind` | `ACTOR-developer` · `FUNC-apply-reseed` · `FUNC-open-store` · `FUNC-reseed` · `FUNC-seed-from-json` |
 | `FLOW-graph-state` | `ACTOR-developer` · `FUNC-load-graph` · `FUNC-nd-similarity` · `FUNC-open-store` · `FUNC-own-kuzu-host` | `FUNC-arch-fitness` · `FUNC-check-code-conformance` · `FUNC-close-store` · `FUNC-encode` · `FUNC-fit-advisory` · `FUNC-module-metrics` · `FUNC-nd-similarity` · `FUNC-score-completeness` |
+| `FLOW-health-report` | `FUNC-health-endpoint` | `ACTOR-dashboard` |
 | `FLOW-impact-subgraph` | `FUNC-graph-impact` | `ACTOR-claude-code` · `FUNC-graph-expand` · `FUNC-mutate` |
 | `FLOW-impacted-tests` | `FUNC-resolve-tests-from-code` | `FUNC-deduce-tests` |
 | `FLOW-install-result` | `FUNC-collect-status` · `FUNC-harness-cli` · `FUNC-upgrade` | `ACTOR-developer` |
@@ -92,4 +94,4 @@
 | `FLOW-version-bump` | `ACTOR-developer` | `FUNC-migrate-schema` |
 | `FLOW-view-request` | `ACTOR-developer` | `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` |
 | `FLOW-viewer-stream` | `FUNC-broadcast-diff` · `FUNC-serve-sse` | `ACTOR-dashboard` |
-| `FLOW-violations` | `FUNC-check-code-conformance` · `FUNC-evaluate-rules` · `FUNC-take-steering-snapshot` | `FUNC-compute-phase-readiness` · `FUNC-save-graph` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` |
+| `FLOW-violations` | `FUNC-check-code-conformance` · `FUNC-evaluate-rules` · `FUNC-take-steering-snapshot` | `FUNC-compute-phase-readiness` · `FUNC-health-endpoint` · `FUNC-save-graph` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` |

@@ -25,8 +25,6 @@ import { KuzuAdapter } from './helpers/store.js';
 import { GraphCodeHarness } from '../src/harness.js';
 import { bindToolsToHarness, type MCPToolRegistry } from '../src/mcp-tools.js';
 import { GenerationStep } from '../src/generate.js';
-import { FitAdvisory } from '../src/fit-advisory.js';
-import { SteeringDelta } from '../src/steering-snapshot.js';
 import { runExecutor, ExecutorConfigSchema, type CallModel } from '../src/executor.js';
 import {
   fitAdvisoryOf,

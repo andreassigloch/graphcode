@@ -1860,6 +1860,12 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "id": "FLOW-health-report",
+      "type": "FLOW",
+      "name": "Health-Report",
+      "description": "Der gemessene Funktionszustand des Hosts: Store erreichbar, Gate arbeitsfaehig, Knotenzahl, die geltenden Ontologie-/Regel-/Meta-Modell-Versionen und die Zahl der angehaengten Viewer."
+    },
+    {
       "id": "FLOW-impact-subgraph",
       "type": "FLOW",
       "name": "Impact-Subgraph",
@@ -4984,6 +4990,17 @@
       "realRef": {
         "file": "src/generate.ts",
         "symbol": "GenerationStep",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "SCHEMA-health-report",
+      "type": "SCHEMA",
+      "name": "HealthPayload",
+      "description": "status, store, gate, nodeCount, versions, sseClients. Der Vertrag der GET /health-Antwort.",
+      "realRef": {
+        "file": "src/viewer/health.ts",
+        "symbol": "HealthPayloadSchema",
         "lang": "ts"
       }
     },
@@ -11993,6 +12010,16 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "FLOW-health-report",
+      "target": "ACTOR-dashboard",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-health-report",
+      "target": "SCHEMA-health-report",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-impact-subgraph",
       "target": "ACTOR-claude-code",
       "type": "io",
@@ -12513,6 +12540,11 @@
     {
       "source": "FLOW-violations",
       "target": "FUNC-compute-phase-readiness",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-violations",
+      "target": "FUNC-health-endpoint",
       "type": "io"
     },
     {
@@ -13928,6 +13960,11 @@
       "type": "allocate",
       "weight": 1,
       "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-health-endpoint",
+      "target": "FLOW-health-report",
+      "type": "io"
     },
     {
       "source": "FUNC-health-endpoint",
@@ -17574,5 +17611,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 194
+  "graphVersion": 195
 }
