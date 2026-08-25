@@ -78,7 +78,11 @@ export type { CliCommand, InstallResult } from './scaffold.js';
 // Kuzu store and serves /health + /events (SSE) to a live viewer. Read-only:
 // no mutating HTTP verb is reachable (the write path is MCP-stdio).
 export { HostBridge, serveHost } from './viewer/host.js';
-export type { HostBridgeOptions, HealthPayload } from './viewer/host.js';
+export type { HostBridgeOptions } from './viewer/host.js';
+// SCHEMA-health-report (CR-GC-414) — der Vertrag der /health-Antwort, damit ein
+// Konsument die Form pruefen kann statt sie zu erraten.
+export { HealthPayloadSchema } from './viewer/health.js';
+export type { HealthPayload } from './viewer/health.js';
 
 // Write-path shim client (CR-GC-241, formalizing CR-GC-235's Phase A internal
 // mechanism as a public export): forwards ONE MCP tool call — including

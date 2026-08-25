@@ -26,6 +26,7 @@ import {
 import { LiveUpdateEventSchema } from '@sigloch/contracts/harness';
 import type { MutateCommand } from '@sigloch/contracts/harness';
 import { HostBridge } from '../src/viewer/host.js';
+import { HealthPayloadSchema } from '../src/viewer/health.js';
 
 /** One parsed SSE frame: id + event name + JSON-decoded data. */
 interface SseFrame {
@@ -86,6 +87,21 @@ describe('TEST-readonly-bridge: host owns Kuzu and serves a read-only SSE surfac
     expect(versions.metaModel).toBe(META_MODEL_VERSION);
     expect(typeof versions.ruleCount).toBe('number');
     expect(versions.ruleCount as number).toBeGreaterThan(0);
+  });
+
+  // CR-GC-414 — FLOW-health-report hat seit diesem CR einen Vertrag. Vorher verliess
+  // die Antwort den Host als nacktes Interface: ein fehlendes Feld wurde im Viewer
+  // als "degraded" gelesen, also als Aussage ueber den Store statt als kaputte Antwort.
+  it('(a2) die /health-Antwort erfuellt SCHEMA-health-report', async () => {
+    const body = await (await fetch(`${baseUrl}/health`)).json();
+
+    expect(HealthPayloadSchema.safeParse(body).success).toBe(true);
+  });
+
+  it('(a3) eine Antwort ohne versions passiert SCHEMA-health-report NICHT', () => {
+    const truncated = { status: 'ok', store: 'reachable', gate: 'functional', nodeCount: 1, sseClients: 0 };
+
+    expect(HealthPayloadSchema.safeParse(truncated).success).toBe(false);
   });
 
   it('(b) a real gate mutation emits EXACTLY ONE invalidate SSE frame with a monotonic id', async () => {

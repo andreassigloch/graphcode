@@ -53,6 +53,7 @@ import { buildJobSlice } from '../tools/read.js';
 import { createHarness, type GraphCodeHarness } from '../index.js';
 import { deriveMemberName } from '../mcp-server.js';
 import type { LiveUpdateEvent } from '../emit.js';
+import { HealthPayloadSchema, type HealthPayload } from './health.js';
 
 /** A connected SSE client: its raw response stream. */
 type SseClient = ServerResponse;
@@ -73,25 +74,8 @@ export interface HostBridgeOptions {
   harness?: GraphCodeHarness;
 }
 
-/** Live health payload for `GET /health` (REQ-real-health-check). */
-export interface HealthPayload {
-  status: 'ok' | 'degraded';
-  /** Store reachable — proven by a real query, not a flag. */
-  store: 'reachable' | 'unreachable';
-  /** Gate functional — proven by a real rule-eval, not a flag. */
-  gate: 'functional' | 'broken';
-  /** Node count returned by the live store query. */
-  nodeCount: number;
-  /** SE schema versions the gate enforces (imported, never forked). */
-  versions: {
-    ontology: string;
-    rules: string;
-    metaModel: string;
-    ruleCount: number;
-  };
-  /** Number of currently connected SSE clients. */
-  sseClients: number;
-}
+// Der Health-Vertrag wohnt seit CR-GC-414 in `./health.ts` — importiert, nicht
+// hier zweitdefiniert. Wer ihn braucht, holt ihn dort (oder aus `src/index.ts`).
 
 /**
  * HostBridge — owns the harness (single Kuzu owner) and the read-only HTTP
@@ -343,7 +327,11 @@ export class HostBridge {
       gate = 'broken';
     }
 
-    return {
+    // FLOW-health-report: die Antwort passiert ihren Vertrag, BEVOR sie den Host
+    // verlaesst (SCHEMA-health-report). Der Konsument ist ein fremder Prozess — ein
+    // fehlendes Feld waere dort als "degraded" gelesen worden, also als Aussage
+    // ueber den Store statt als das, was es ist: eine kaputte Antwort.
+    return HealthPayloadSchema.parse({
       status: store === 'reachable' && gate === 'functional' ? 'ok' : 'degraded',
       store,
       gate,
@@ -355,7 +343,7 @@ export class HostBridge {
         ruleCount: V3_RULES.length,
       },
       sseClients: this.clients.size,
-    };
+    });
   }
 }
 
