@@ -1,6 +1,6 @@
 # CR-GC-407 — Spike: Konvergenz-Zeuge über der Steering-Trajektorie
 
-**Status:** open · **Angelegt:** 2026-08-24 · **Typ:** Spike (Timebox 1 Session)
+**Status:** open · **Ergebnis: No-Go (2026-08-25)** · **Angelegt:** 2026-08-24 · **Typ:** Spike (Timebox 1 Session)
 **Frage:** Unterscheidet ein skalarer Zeuge + Zustands-Archiv zuverlässig Optimierung von
 Kreisverkehr — oder ist das nur eine weitere Komplexitätsdimension?
 
@@ -95,3 +95,36 @@ Der Spike ist ein **No-Go** (= weitere Komplexitätsdimension, nicht bauen), wen
 1. `tests/steering.convergence-witness.spike.test.ts`
 2. optional `tests/helpers/witness.ts` (Zeuge + Hash + Sequenz-Klassifikator, nur test-seitig)
 3. dieser CR (Ergebnis-Nachtrag wie bei CR-GC-400)
+
+---
+
+## Ergebnis (2026-08-25) — **No-Go**
+
+**Die Zahl: Totzone 100 % (16/16 Schritte mit Δ(w·m) == 0)** auf der konvergenten Sequenz —
+Kill-Kriterium 1 (Schwelle ~50 %) ist maximal verletzt. Der skalare Zeuge hat auf realen
+Violation-schließenden Schritten **keine** Trennschärfe: verify/satisfy-Kanten liegen außerhalb
+des arch-Layers, der ℝ⁶-Vektor bewegt sich nicht (Paar-Delta exakt `[0,0,0,0,0,0]`, direkt am
+Messpfad geprobt). Die konvergente Sequenz klassifiziert als `stationary` — echte Konvergenz ist
+für den Zeugen vom Stillstand **ununterscheidbar**. Die in §Kill-Kriterien benannte Vermutung
+("UC/REQ/TEST-Arbeit bewegt ihn evtl. gar nicht") ist damit gemessen, nicht mehr Vermutung.
+
+| AK | Beleg |
+|---|---|
+| Konstruierter Zyklus erkannt, **rot gesehen** | 6-FUNC-Fixture, A(a→d)→B(a→e)→C(b→c)→A durchs echte Gate. Paar-Deltas je Schritt positiv: Schritt 1 hebt scalability (+1,25), Schritt 2 modifiability (+0,76) + coherence (+0,83), Schritt 3 flowEfficiency (+1,33) — jeder Schritt sieht wie Fortschritt aus. Mit temporär deaktiviertem Archiv schlug der Test fehl: `expected 'cyclic', received 'progressing'` (rot). Mit Archiv: Hash-Revisit `{at: 3, seenAt: 0}` ⇒ `cyclic`. Die Witness-only-Sicht (anonymisierte Hashes) bleibt als Negativ-Kontrolle im Test: `progressing`, Kreis unsichtbar. |
+| Konvergente Sequenz: kein Fehlalarm, Verlauf protokolliert | SSOT-Kopie (667 Elemente), degradiert um 12 verify- + 4 satisfy-Kanten, 16 schließende Gate-Mutationen. Alle 17 Hashes distinct, kein Revisit ⇒ Detektor feuert nicht. Zeugen-Verlauf: konstant 3,4895 über alle 17 Zustände (Monotonie im entarteten Sinn — flach, nie steigend; Spec-Erwartung „Zeuge steigt" widerlegt). |
+| Stationäre Sequenz als „fertig" klassifiziert | 5 No-Op-nahe Doku-Mutationen auf dem Fixture: Zeuge konstant 2,4167, jeder Zustand neuer Hash (Doku ändert sich), kein Revisit ⇒ `stationary`, nicht `cyclic`. |
+| Totzonen-Anteil gemessen | **1,0** (16/16). Gemessen im Test, geloggt, nicht geschätzt. |
+| Entscheidung dokumentiert | Dieser Abschnitt. |
+| Kein Produktionscode | Diff: `tests/steering.convergence-witness.spike.test.ts` + `tests/helpers/witness.ts` + dieser CR + Vermerk in CR-DRAFT-GC-410. |
+
+**Befund jenseits der Entscheidung (festgehalten, nicht schöngerechnet):** die zwei Zutaten
+trennen sich in der Messung. Das **Zustands-Archiv allein** (Hash des kanonischen Exports) hat
+beide Prüfungen bestanden — Zyklus erkannt, null Fehlalarme auf 17 konvergenten + 6 stationären
+Zuständen; das Gate stempelt keine Zeitstempel in den Graph, Zustände sind byte-identisch
+wiederfindbar. Was **nicht** funktioniert, ist die andere Hälfte: „fertig" von „läuft noch" zu
+unterscheiden war Aufgabe des Skalars, und der ist auf realer Steering-Arbeit blind. Ein anderer
+Zeuge (z. B. die 8 `dimension_readiness`-Scores, layer-übergreifend) wäre ein **neuer Spike** mit
+eigenen Kill-Kriterien — ausdrücklich nicht dieser CR.
+
+**Konsequenz für CR-DRAFT-GC-410:** Teil 1 (Zeugen-Stempel je Mutation) entfällt; das Spiderweb
+bleibt Live-Ist ohne Verlauf (dort vermerkt).

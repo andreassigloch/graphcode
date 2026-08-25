@@ -80,6 +80,11 @@ export const INCLUDED = [
  * Entscheidung bleibt und nicht zu einer stillen Lücke wird.
  */
 export const EXCLUDED = {
+  'tests/steering.convergence-witness.spike.test.ts':
+    'Konvergenz-Zeugen-Spike (CR-GC-407). Liest die SSOT nur als realistisch grosses ' +
+    'Fixture (degradierte Kopie in einem Temp-Store); assertiert werden Zeugen-/Archiv-' +
+    'Eigenschaften der Sequenzen, kein Modellinhalt — keine uid-Pins, eine ' +
+    'Modellaenderung kann ihn nicht sinnvoll rot machen. Kostet allein ~5 s Gate-Lauf.',
   'tests/perf.advisory-roundtrip.spike.test.ts':
     'Perf-Spike. Liest die SSOT nur noch für einen Datenpunkt, der seit CR-GC-400 ' +
     'NICHT mehr assertiert; die Assertion hängt an einem modellunabhängigen Eingang ' +

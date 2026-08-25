@@ -1,6 +1,6 @@
 # CR-DRAFT-GC-410 — Flugschreiber: Spiderweb + Konvergenz-Zeuge im Dashboard
 
-**Status:** DRAFT — gated auf das Go von CR-GC-407 · **Angelegt:** 2026-08-25
+**Status:** DRAFT — **CR-GC-407: No-Go (2026-08-25)**, Teil 1 entfällt, vor Start neu schneiden · **Angelegt:** 2026-08-25
 **Herkunft:** Dashboard-Review 2026-08-25 („die Arbeit des Autopilot sichtbar machen —
 Kernfeature, ich kann es weder sehen noch beweisen")
 **Mockup:** https://claude.ai/code/artifact/fadb2183-75ec-47ae-a72c-d0d0c1dd5e5c
@@ -29,6 +29,17 @@ nichts längs (CR-GC-407 §4).
 Der Spike CR-GC-407 validiert genau diesen Zeugen (Trennschärfe, Totzone, Fehlalarm).
 Vor dem Spike-Ergebnis wäre der Stempel eine ungeprüfte 7. Metrik-Dimension — bei No-Go
 entfällt Teil 1, und das Spiderweb bleibt auf Live-Ist ohne Verlauf (dann neu schneiden).
+
+**Spike-Ergebnis (2026-08-25): No-Go.** Totzone 100 % — der ℝ⁶-Zeuge w·m(G) bewegt sich auf
+16/16 realen Violation-schließenden Mutationen nicht (verify/satisfy liegen außerhalb layer
+'arch'); echte Konvergenz ist vom Stillstand ununterscheidbar (CR-GC-407 §Ergebnis). Damit gilt
+der No-Go-Fall: **Teil 1 (Zeugen-/Hash-Stempel je Mutation) entfällt; das Spiderweb zeigt nur
+Live-Ist ohne Verlauf.** Der CR ist vor dem Start auf diesen Schnitt zu reduzieren (Teil 2 ohne
+Zeugen-Linie/Wiederbesuch-Markierung; Start-Ring nur, wenn er ohne Stempel aus einer anderen
+Quelle kommt). Nebenbefund aus dem Spike, falls je ein Verlaufs-Stempel neu erwogen wird: das
+Zustands-Archiv (Export-Hash) allein war zuverlässig (Zyklus erkannt, null Fehlalarme); ein
+tragfähiger Fortschritts-Zeuge bräuchte eine andere Messgröße als m(G, layer 'arch') — das wäre
+ein neuer Spike, nicht dieser CR.
 
 ## Akzeptanzkriterien (bei Go zu präzisieren)
 
