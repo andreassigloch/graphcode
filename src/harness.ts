@@ -41,7 +41,7 @@ import {
   type RuleViolation,
 } from '@sigloch/contracts/harness';
 import { HookSystem } from './hooks.js';
-import { impactedTests } from './test-selection.js';
+import { impactedTests, TestImpactResultSchema } from './test-selection.js';
 import { CONFIG_FILENAME, DEFAULT_CONFIG, type LoadedConfig } from './config.js';
 import {
   DEFAULT_GRAPH_JSON,
@@ -324,8 +324,11 @@ export class GraphCodeHarness {
     // UNION of pure-in and pure-out reachability, and a code node reaches its TESTs
     // only by turning direction: `MOD →satisfy→ REQ ←verify← TEST`).
     const graph = await this.storage.loadGraph(this.config.scope);
-    const { nodes, edges } = impactedTests(graph, changeSet, depth);
-    return { nodes, edges };
+    // FLOW-impacted-tests: der Resolver-Output passiert seinen Vertrag, BEVOR er die
+    // Modulgrenze verlaesst (SCHEMA-impacted-tests). Ein leises `anchors: undefined`
+    // waere hier sonst erst beim Konsumenten als leere Auswahl sichtbar geworden.
+    const resolved = TestImpactResultSchema.parse(impactedTests(graph, changeSet, depth));
+    return { nodes: resolved.nodes as GraphNode[], edges: resolved.edges as GraphEdge[] };
   }
 
   /**

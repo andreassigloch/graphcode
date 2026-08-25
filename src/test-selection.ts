@@ -19,7 +19,28 @@
  *
  * @author andreas@siglochconsulting
  */
+import { z } from 'zod/v4';
 import type { Graph, GraphNode, GraphEdge } from '@sigloch/graph-api-core';
+import { TestRefsSchema } from '@sigloch/contracts/se';
+
+/**
+ * SCHEMA-impacted-tests — the contract of `impactedTests()` as it crosses the
+ * module boundary into `harness.testImpact()` (FLOW-impacted-tests).
+ *
+ * `nodes`/`edges` stay `unknown`-shaped on purpose: they are `GraphNode`/`GraphEdge`
+ * of `@sigloch/graph-api-core`, whose own contract lives there — re-declaring their
+ * fields here would fork a foreign schema (a parallel path). What this schema owns
+ * is THIS module's addition: that a resolution run always separates out `anchors`
+ * and `testIds`, and that both are uid lists.
+ */
+export const TestImpactResultSchema = z.object({
+  nodes: z.array(z.unknown()),
+  edges: z.array(z.unknown()),
+  /** The realization closure: changeset ∪ the spec nodes it fulfils. */
+  anchors: z.array(z.string()),
+  /** The impacted TEST nodes (uids) — the selective test set. */
+  testIds: z.array(z.string()),
+});
 
 /** Result of a resolution run: the directed subgraph plus the ids it separated out. */
 export interface TestImpactResult extends Graph {
@@ -28,6 +49,32 @@ export interface TestImpactResult extends Graph {
   /** The impacted TEST nodes (uids) — the selective test set. */
   testIds: string[];
 }
+
+/**
+ * SCHEMA-test-selection — the contract of the `graph_tests` answer
+ * (FLOW-test-selection): the minimal selective run command, the resolved TESTs
+ * with their runnable bindings, the coverage counters, and what stayed unresolved.
+ *
+ * Declared here and not in the tool file because this module is the single source
+ * of the selection semantics; the tool renders it, it does not define it.
+ */
+export const TestSelectionSchema = z.object({
+  /** `vitest run <only-affected-files>` — never the full suite. */
+  command: z.string(),
+  tests: z.array(z.object({ id: z.string(), name: z.string(), testRefs: TestRefsSchema })),
+  coverage: z.object({
+    changeSet: z.array(z.string()),
+    impactedNodes: z.number().int().nonnegative(),
+    impactedTests: z.number().int().nonnegative(),
+    resolved: z.number().int().nonnegative(),
+    files: z.array(z.string()),
+  }),
+  /** TESTs without a resolvable `testRefs` — reported, never silently dropped. */
+  unresolved: z.array(z.object({ id: z.string(), name: z.string(), reason: z.string() })),
+});
+
+/** The `graph_tests` answer shape, derived from its schema — no second declaration. */
+export type TestSelection = z.infer<typeof TestSelectionSchema>;
 
 /**
  * code/spec changeset → impacted TESTs over the realization traces.

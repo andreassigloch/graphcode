@@ -1868,6 +1868,12 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "id": "FLOW-impacted-tests",
+      "type": "FLOW",
+      "name": "Betroffene Tests",
+      "description": "Der gerichtete Auswahl-Teilgraph einer Aenderung: erreichte Knoten und Kanten plus die getrennt gefuehrten Anker- und TEST-uids. Uebergabe von der Aufloesung an das Werkzeug."
+    },
+    {
       "id": "FLOW-install-result",
       "type": "FLOW",
       "name": "Lifecycle-Result",
@@ -2053,6 +2059,12 @@
       "description": "Der von propose bestbewertete Kandidaten-Fix (Template-Edit, dryRun-verifiziert), der apply als MutateCommand-Eingabe erreicht - nur wenn der Konsument ihn uebernimmt, nie automatisch.",
       "status": "reviewed",
       "concept": true
+    },
+    {
+      "id": "FLOW-test-selection",
+      "type": "FLOW",
+      "name": "Selektive Testauswahl",
+      "description": "Das minimale selektive Laufkommando mit den aufgeloesten TESTs, den Coverage-Zahlen und dem, was unaufloesbar blieb."
     },
     {
       "id": "FLOW-trajectory",
@@ -4976,6 +4988,17 @@
       }
     },
     {
+      "id": "SCHEMA-impacted-tests",
+      "type": "SCHEMA",
+      "name": "TestImpactResult",
+      "description": "nodes, edges, anchors, testIds. Der Vertrag von impactedTests am Modulrand.",
+      "realRef": {
+        "file": "src/test-selection.ts",
+        "symbol": "TestImpactResultSchema",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "SCHEMA-lock-owner",
       "type": "SCHEMA",
       "name": "LockOwner",
@@ -5122,6 +5145,17 @@
       "realRef": {
         "file": "src/steering-snapshot.ts",
         "symbol": "SteeringSnapshot",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "SCHEMA-test-selection",
+      "type": "SCHEMA",
+      "name": "TestSelection",
+      "description": "command, tests mit testRefs, coverage, unresolved. Der Vertrag der graph_tests-Antwort.",
+      "realRef": {
+        "file": "src/test-selection.ts",
+        "symbol": "TestSelectionSchema",
         "lang": "ts"
       }
     },
@@ -11983,6 +12017,16 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "FLOW-impacted-tests",
+      "target": "FUNC-deduce-tests",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-impacted-tests",
+      "target": "SCHEMA-impacted-tests",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-install-result",
       "target": "ACTOR-developer",
       "type": "io",
@@ -12141,6 +12185,11 @@
     },
     {
       "source": "FLOW-query-request",
+      "target": "FUNC-deduce-tests",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-query-request",
       "target": "FUNC-graph-impact",
       "type": "io",
       "weight": 1,
@@ -12149,6 +12198,11 @@
     {
       "source": "FLOW-query-request",
       "target": "FUNC-list-elements",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-query-request",
+      "target": "FUNC-resolve-tests-from-code",
       "type": "io"
     },
     {
@@ -12362,6 +12416,16 @@
     {
       "source": "FLOW-suggested-edit",
       "target": "SCHEMA-mutate-command",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-test-selection",
+      "target": "ACTOR-claude-code",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-test-selection",
+      "target": "SCHEMA-test-selection",
       "type": "relation"
     },
     {
@@ -13356,6 +13420,11 @@
     },
     {
       "source": "FUNC-deduce-tests",
+      "target": "FLOW-test-selection",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-deduce-tests",
       "target": "REQ-test-runnable-binding",
       "type": "satisfy"
     },
@@ -14302,6 +14371,11 @@
       "source": "FUNC-resolve-tests-from-code",
       "target": "MOD-mcp-tools",
       "type": "allocate"
+    },
+    {
+      "source": "FUNC-resolve-tests-from-code",
+      "target": "FLOW-impacted-tests",
+      "type": "io"
     },
     {
       "source": "FUNC-resolve-tests-from-code",
@@ -17500,5 +17574,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 193
+  "graphVersion": 194
 }

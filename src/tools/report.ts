@@ -37,6 +37,7 @@ import { evaluateAll, readinessOf, stripViolationContext, type Finding } from '.
 import { loadTargetProfile, intentCoverage, type AnchorCoverage } from '../target-profile.js';
 import { helpEntry, contextualHelp, type HelpEntry, type ContextualMeasure } from '../viewer/help.js';
 import { formatEExampleFor } from '../authoring-example.js';
+import { TestSelectionSchema } from '../test-selection.js';
 import { nextStep } from '../steering.js';
 import type { NextStepResult } from '../steering.js';
 import type { MCPTool, MCPToolRegistry } from '../mcp-tools.js';
@@ -350,7 +351,11 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
       const fileList = [...files].sort();
       const command = fileList.length > 0 ? `vitest run ${fileList.join(' ')}` : 'vitest run --passWithNoTests';
 
-      return {
+      // FLOW-test-selection: die Werkzeugantwort passiert ihren Vertrag am
+      // Werkzeugrand (SCHEMA-test-selection). Der Konsument ist ein Agent, der auf
+      // `command` blind ein Testkommando faehrt — eine formfremde Antwort muss hier
+      // scheitern, nicht dort.
+      return TestSelectionSchema.parse({
         command,
         tests,
         coverage: {
@@ -361,7 +366,7 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
           files: fileList,
         },
         unresolved,
-      };
+      });
     },
   };
 

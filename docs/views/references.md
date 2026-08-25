@@ -825,6 +825,8 @@
 | `FLOW-impact-subgraph` | io | `FUNC-graph-expand` |
 | `FLOW-impact-subgraph` | io | `FUNC-mutate` |
 | `FLOW-impact-subgraph` | relation | `SCHEMA-format-e` |
+| `FLOW-impacted-tests` | io | `FUNC-deduce-tests` |
+| `FLOW-impacted-tests` | relation | `SCHEMA-impacted-tests` |
 | `FLOW-install-result` | io | `ACTOR-developer` |
 | `FLOW-install-result` | relation | `SCHEMA-cli-command` |
 | `FLOW-live-event` | io | `ACTOR-dashboard` |
@@ -851,8 +853,10 @@
 | `FLOW-parsed-graph` | relation | `SCHEMA-ontology-graph` |
 | `FLOW-phase-readiness` | io | `FUNC-generation-step` |
 | `FLOW-phase-readiness` | relation | `SCHEMA-phase-readiness` |
+| `FLOW-query-request` | io | `FUNC-deduce-tests` |
 | `FLOW-query-request` | io | `FUNC-graph-impact` |
 | `FLOW-query-request` | io | `FUNC-list-elements` |
+| `FLOW-query-request` | io | `FUNC-resolve-tests-from-code` |
 | `FLOW-query-request` | relation | `SCHEMA-query-params` |
 | `FLOW-recalled-state` | io | `ACTOR-developer` |
 | `FLOW-recalled-state` | relation | `SCHEMA-ontology-graph` |
@@ -893,6 +897,8 @@
 | `FLOW-suggest-result` | relation | `SCHEMA-mutate-result` |
 | `FLOW-suggested-edit` | io | `FUNC-mutate` |
 | `FLOW-suggested-edit` | relation | `SCHEMA-mutate-command` |
+| `FLOW-test-selection` | io | `ACTOR-claude-code` |
+| `FLOW-test-selection` | relation | `SCHEMA-test-selection` |
 | `FLOW-trajectory` | io | `ACTOR-learning-engine` |
 | `FLOW-trajectory` | relation | `SCHEMA-trajectory` |
 | `FLOW-version-bump` | io | `FUNC-migrate-schema` |
@@ -1082,6 +1088,7 @@
 | `FUNC-decode` | satisfy | `REQ-codec-validation` |
 | `FUNC-decode` | satisfy | `REQ-roundtrip-conformance` |
 | `FUNC-deduce-tests` | allocate | `MOD-mcp-tools` |
+| `FUNC-deduce-tests` | io | `FLOW-test-selection` |
 | `FUNC-deduce-tests` | satisfy | `REQ-test-runnable-binding` |
 | `FUNC-emit-trajectory` | allocate | `MOD-hooks` |
 | `FUNC-emit-trajectory` | io | `FLOW-trajectory` |
@@ -1241,6 +1248,7 @@
 | `FUNC-reseed` | io | `FLOW-recalled-state` |
 | `FUNC-reseed` | satisfy | `REQ-graph-state-recall` |
 | `FUNC-resolve-tests-from-code` | allocate | `MOD-mcp-tools` |
+| `FUNC-resolve-tests-from-code` | io | `FLOW-impacted-tests` |
 | `FUNC-resolve-tests-from-code` | satisfy | `REQ-graph-tests-operational` |
 | `FUNC-rewind` | allocate | `MOD-cli` |
 | `FUNC-rewind` | io | `FLOW-graph-snapshot` |

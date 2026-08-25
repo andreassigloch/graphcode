@@ -27,7 +27,8 @@ import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import type { Graph } from '@sigloch/graph-api-core';
 import { KuzuAdapter } from './helpers/store.js';
 import { GraphCodeHarness } from '../src/harness.js';
-import { impactedTests } from '../src/test-selection.js';
+import { bindToolsToHarness } from '../src/mcp-tools.js';
+import { impactedTests, TestImpactResultSchema, TestSelectionSchema } from '../src/test-selection.js';
 import {
   buildContext,
   coverage,
@@ -140,6 +141,42 @@ describe('Parität: Store-Pfad und Snapshot-Pfad sehen dasselbe', () => {
     const uids = (g: { nodes: Array<{ uid: string }> }): string[] => g.nodes.map((n) => n.uid).sort();
     expect(uids(viaStore)).toEqual(uids(viaFunction));
     expect(uids(viaStore)).toContain('TEST-CODE');
+  });
+
+  // ---------------------------------------------------------------------------
+  // CR-GC-412 — die zwei Datenverträge der Auswahlkette (FLOW-impacted-tests,
+  // FLOW-test-selection). Vorher überquerten beide Übergaben die Modulgrenze als
+  // nacktes TS-Interface: eine formfremde Antwort wäre erst beim Agenten als leere
+  // Auswahl aufgefallen, also als grüner Lauf ohne gelaufenen Test.
+  // ---------------------------------------------------------------------------
+  it('FLOW-impacted-tests: der Resolver-Output erfüllt SCHEMA-impacted-tests', async () => {
+    const loaded = await harness.getStore().loadGraph(harness.getScope());
+    const parsed = TestImpactResultSchema.parse(impactedTests(loaded, ['MOD-1'], 1));
+
+    expect(parsed.testIds).toEqual(['TEST-CODE']);
+    expect(parsed.anchors).toContain('REQ-1');
+  });
+
+  it('FLOW-impacted-tests: eine Auswahl ohne testIds passiert den Vertrag NICHT', () => {
+    const withoutIds = { nodes: [], edges: [], anchors: [] };
+
+    expect(TestImpactResultSchema.safeParse(withoutIds).success).toBe(false);
+  });
+
+  it('FLOW-test-selection: die graph_tests-Antwort erfüllt SCHEMA-test-selection', async () => {
+    const registry = bindToolsToHarness(harness);
+    const answer = await registry['graph_tests'].handler({ changeSet: ['MOD-1'], depth: 1 });
+
+    // Dass der Handler selbst parst, erzwingt RC-04 am Modell (SCHEMA-test-selection
+    // ist an FLOW-test-selection gebunden); hier steht, dass die Form auch STIMMT.
+    expect(TestSelectionSchema.safeParse(answer).success).toBe(true);
+    expect((answer as { command: string }).command).toContain('tests/alpha.test.ts');
+  });
+
+  it('FLOW-test-selection: eine Antwort ohne coverage passiert den Vertrag NICHT', () => {
+    const withoutCoverage = { command: 'vitest run', tests: [], unresolved: [] };
+
+    expect(TestSelectionSchema.safeParse(withoutCoverage).success).toBe(false);
   });
 });
 
