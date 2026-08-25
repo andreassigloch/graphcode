@@ -592,7 +592,7 @@ Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FCHAIN-codec-rou
 
 Deterministische Format-E-Serialisierung (stabile Sortierung), Diff-Dialekt. (CR-GC-103, R3/R5)
 
-io ◀ `FLOW-graph-state` · io ▶ `FLOW-formatE-artifact` · allocate ▶ `MOD-codec`
+io ◀ `FLOW-graph-state` · `FLOW-impact-subgraph` · io ▶ `FLOW-formatE-artifact` · allocate ▶ `MOD-codec`
 
 ###### `REQ-deterministic-serialization` — Deterministische Serialisierung
 
@@ -2700,7 +2700,7 @@ Verification ◀ `TEST-mutate-gate` (integration) · `TEST-nd-similarity` (unit)
 
 Duennes Binding auf @sigloch/se-optimizer (targetFor/suggestEdits): rankt die feuernden Operator-Regeln nach dem Skalarprodukt aus Metrik-Delta und Zielrichtung im R^6-Metrikraum; liefert die Fund-Ebene, Template-Edits laufen als dryRun durchs Gate. Nie auto-apply. (CR-GC-273)
 
-io ◀ `FLOW-round-findings` · `FLOW-target-profile` · io ▶ `FLOW-suggested-edit` · allocate ▶ `MOD-mcp-tools`
+io ◀ `FLOW-graph-state` · `FLOW-round-findings` · `FLOW-target-profile` · io ▶ `FLOW-suggested-edit` · allocate ▶ `MOD-mcp-tools`
 
 ###### `REQ-applied-suggestion-moves-target` — Eine angewandte Suggestion bewegt den Zielvektor in Zielrichtung
 
@@ -2846,7 +2846,7 @@ Verification ◀ `TEST-impact-subgraph` (integration) · satisfy ◀ `FUNC-graph
 
 Liefert eine nach Typ und Suchbegriff gefilterte Element-Scheibe aus dem Store.
 
-io ◀ `FLOW-query-request` · io ▶ `FLOW-element-slice` · allocate ▶ `MOD-element-slice`
+io ◀ `FLOW-graph-state` · `FLOW-query-request` · io ▶ `FLOW-element-slice` · allocate ▶ `MOD-element-slice`
 
 ###### `REQ-query-precision` — Query-Precision statt Kompression
 
@@ -4098,7 +4098,7 @@ Verification ◀ `TEST-create-harness-smoke` (integration) · `TEST-learning-emi
 
 Deterministische Format-E-Serialisierung (stabile Sortierung), Diff-Dialekt. (CR-GC-103, R3/R5)
 
-io ◀ `FLOW-graph-state` · io ▶ `FLOW-formatE-artifact` · allocate ▶ `MOD-codec`
+io ◀ `FLOW-graph-state` · `FLOW-impact-subgraph` · io ▶ `FLOW-formatE-artifact` · allocate ▶ `MOD-codec`
 
 ###### `REQ-deterministic-serialization` — Deterministische Serialisierung
 
@@ -4510,7 +4510,7 @@ Verification ◀ `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integra
 
 Liefert eine nach Typ und Suchbegriff gefilterte Element-Scheibe aus dem Store.
 
-io ◀ `FLOW-query-request` · io ▶ `FLOW-element-slice` · allocate ▶ `MOD-element-slice`
+io ◀ `FLOW-graph-state` · `FLOW-query-request` · io ▶ `FLOW-element-slice` · allocate ▶ `MOD-element-slice`
 
 ###### `REQ-query-precision` — Query-Precision statt Kompression
 
@@ -5112,7 +5112,7 @@ io ◀ — · io ▶ — · allocate ▶ `MOD-steering`
 
 Duennes Binding auf @sigloch/se-optimizer (targetFor/suggestEdits): rankt die feuernden Operator-Regeln nach dem Skalarprodukt aus Metrik-Delta und Zielrichtung im R^6-Metrikraum; liefert die Fund-Ebene, Template-Edits laufen als dryRun durchs Gate. Nie auto-apply. (CR-GC-273)
 
-io ◀ `FLOW-round-findings` · `FLOW-target-profile` · io ▶ `FLOW-suggested-edit` · allocate ▶ `MOD-mcp-tools`
+io ◀ `FLOW-graph-state` · `FLOW-round-findings` · `FLOW-target-profile` · io ▶ `FLOW-suggested-edit` · allocate ▶ `MOD-mcp-tools`
 
 ###### `REQ-applied-suggestion-moves-target` — Eine angewandte Suggestion bewegt den Zielvektor in Zielrichtung
 
@@ -5538,7 +5538,7 @@ io ◀ `FUNC-graph-export-snapshot` · `FUNC-rewind` · io ▶ `ACTOR-developer`
 
 Aktueller OntologyGraph (in-memory).
 
-io ◀ `ACTOR-developer` · `FUNC-load-graph` · `FUNC-nd-similarity` · `FUNC-open-store` · `FUNC-own-kuzu-host` · io ▶ `FUNC-arch-fitness` · `FUNC-check-code-conformance` · `FUNC-close-store` · `FUNC-encode` · `FUNC-fit-advisory` · `FUNC-module-metrics` · `FUNC-nd-similarity` · `FUNC-score-completeness` · schema ▶ `SCHEMA-ontology-graph`
+io ◀ `ACTOR-developer` · `FUNC-load-graph` · `FUNC-nd-similarity` · `FUNC-open-store` · `FUNC-own-kuzu-host` · io ▶ `FUNC-arch-fitness` · `FUNC-check-code-conformance` · `FUNC-close-store` · `FUNC-encode` · `FUNC-fit-advisory` · `FUNC-graph-suggest` · `FUNC-list-elements` · `FUNC-module-metrics` · `FUNC-nd-similarity` · `FUNC-score-completeness` · schema ▶ `SCHEMA-ontology-graph`
 
 ### 4.23  `FLOW-health-report` — Health-Report
 
@@ -5550,7 +5550,7 @@ io ◀ `FUNC-health-endpoint` · io ▶ `ACTOR-dashboard` · schema ▶ `SCHEMA-
 
 Exakter Blast-Radius als Format-E + Cursor.
 
-io ◀ `FUNC-graph-impact` · io ▶ `ACTOR-claude-code` · `FUNC-graph-expand` · `FUNC-mutate` · schema ▶ `SCHEMA-format-e`
+io ◀ `FUNC-graph-impact` · io ▶ `ACTOR-claude-code` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-mutate` · schema ▶ `SCHEMA-format-e`
 
 ### 4.25  `FLOW-impacted-tests` — Betroffene Tests
 

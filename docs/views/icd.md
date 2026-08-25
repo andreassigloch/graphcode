@@ -64,9 +64,9 @@
 | `FLOW-formatE-candidates` | `ACTOR-claude-code` | `FUNC-decode` |
 | `FLOW-gate-verdict` | `FUNC-mutate` | `FUNC-take-steering-snapshot` · `FUNC-tool-context` |
 | `FLOW-graph-snapshot` | `FUNC-graph-export-snapshot` · `FUNC-rewind` | `ACTOR-developer` · `FUNC-apply-reseed` · `FUNC-open-store` · `FUNC-reseed` · `FUNC-seed-from-json` |
-| `FLOW-graph-state` | `ACTOR-developer` · `FUNC-load-graph` · `FUNC-nd-similarity` · `FUNC-open-store` · `FUNC-own-kuzu-host` | `FUNC-arch-fitness` · `FUNC-check-code-conformance` · `FUNC-close-store` · `FUNC-encode` · `FUNC-fit-advisory` · `FUNC-module-metrics` · `FUNC-nd-similarity` · `FUNC-score-completeness` |
+| `FLOW-graph-state` | `ACTOR-developer` · `FUNC-load-graph` · `FUNC-nd-similarity` · `FUNC-open-store` · `FUNC-own-kuzu-host` | `FUNC-arch-fitness` · `FUNC-check-code-conformance` · `FUNC-close-store` · `FUNC-encode` · `FUNC-fit-advisory` · `FUNC-graph-suggest` · `FUNC-list-elements` · `FUNC-module-metrics` · `FUNC-nd-similarity` · `FUNC-score-completeness` |
 | `FLOW-health-report` | `FUNC-health-endpoint` | `ACTOR-dashboard` |
-| `FLOW-impact-subgraph` | `FUNC-graph-impact` | `ACTOR-claude-code` · `FUNC-graph-expand` · `FUNC-mutate` |
+| `FLOW-impact-subgraph` | `FUNC-graph-impact` | `ACTOR-claude-code` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-mutate` |
 | `FLOW-impacted-tests` | `FUNC-resolve-tests-from-code` | `FUNC-deduce-tests` |
 | `FLOW-install-result` | `FUNC-collect-status` · `FUNC-harness-cli` · `FUNC-upgrade` | `ACTOR-developer` |
 | `FLOW-live-event` | `FUNC-emit-update-event` | `ACTOR-dashboard` · `FUNC-broadcast-diff` · `FUNC-serve-sse` · `FUNC-serve-stdio` |

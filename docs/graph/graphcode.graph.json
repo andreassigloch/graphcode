@@ -12113,6 +12113,16 @@
     },
     {
       "source": "FLOW-graph-state",
+      "target": "FUNC-graph-suggest",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-graph-state",
+      "target": "FUNC-list-elements",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-graph-state",
       "target": "FUNC-module-metrics",
       "type": "io",
       "weight": "1"
@@ -12152,6 +12162,11 @@
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-impact-subgraph",
+      "target": "FUNC-encode",
+      "type": "io"
     },
     {
       "source": "FLOW-impact-subgraph",
@@ -17858,5 +17873,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 201
+  "graphVersion": 202
 }

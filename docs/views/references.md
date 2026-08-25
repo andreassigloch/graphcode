@@ -823,6 +823,8 @@
 | `FLOW-graph-state` | io | `FUNC-close-store` |
 | `FLOW-graph-state` | io | `FUNC-encode` |
 | `FLOW-graph-state` | io | `FUNC-fit-advisory` |
+| `FLOW-graph-state` | io | `FUNC-graph-suggest` |
+| `FLOW-graph-state` | io | `FUNC-list-elements` |
 | `FLOW-graph-state` | io | `FUNC-module-metrics` |
 | `FLOW-graph-state` | io | `FUNC-nd-similarity` |
 | `FLOW-graph-state` | io | `FUNC-score-completeness` |
@@ -830,6 +832,7 @@
 | `FLOW-health-report` | io | `ACTOR-dashboard` |
 | `FLOW-health-report` | relation | `SCHEMA-health-report` |
 | `FLOW-impact-subgraph` | io | `ACTOR-claude-code` |
+| `FLOW-impact-subgraph` | io | `FUNC-encode` |
 | `FLOW-impact-subgraph` | io | `FUNC-graph-expand` |
 | `FLOW-impact-subgraph` | io | `FUNC-mutate` |
 | `FLOW-impact-subgraph` | relation | `SCHEMA-format-e` |
