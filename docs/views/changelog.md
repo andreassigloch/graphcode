@@ -189,6 +189,7 @@ Total: 164 CR · 156 done · 7 open.
 | `CR-GC-270` | done | SERVER_VERSION aus package.json lesen |
 | `CR-GC-271` | done | SCHEMA-Bindung: zodDefinition raus, realRef-Stub materialisieren |
 | `CR-GC-272` | done | readiness + panels nach graphcode-client |
+| `CR-GC-404` | done | Dashboard gehoert dem Repo, nicht dem ersten Fenster |
 
 ## `MS-9-generation` — M9: Executor & Generierung
 
@@ -223,6 +224,4 @@ Total: 164 CR · 156 done · 7 open.
 
 ## (unassigned)
 
-| CR | status | name |
-|---|---|---|
-| `CR-GC-404` | done | Dashboard gehoert dem Repo, nicht dem ersten Fenster |
+— none —

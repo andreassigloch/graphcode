@@ -160,6 +160,7 @@ depends-on:  MS-1-specification  ◀  MS-2-coding-vv  ◀  MS-3-mvp-readiness  �
 | `CR-GC-270` | done | SERVER_VERSION aus package.json lesen |
 | `CR-GC-271` | done | SCHEMA-Bindung: zodDefinition raus, realRef-Stub materialisieren |
 | `CR-GC-272` | done | readiness + panels nach graphcode-client |
+| `CR-GC-404` | done | Dashboard gehoert dem Repo, nicht dem ersten Fenster |
 
 ## `MS-9-generation` — M9: Executor & Generierung · status: draft
 

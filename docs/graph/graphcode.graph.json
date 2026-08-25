@@ -1870,8 +1870,8 @@
     {
       "id": "FLOW-install-result",
       "type": "FLOW",
-      "name": "Install-Result",
-      "description": "Scaffold-/Update-/Remove-Ergebnis.",
+      "name": "Lifecycle-Result",
+      "description": "Ergebnis der CLI-Lifecycle-Verben an den Entwickler: Scaffold-, Update-, Remove-, Status- und Upgrade-Ausgang.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z"
     },
@@ -2077,6 +2077,13 @@
       "description": "Welche View gerendert werden soll (arch/status/...).",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "id": "FLOW-viewer-stream",
+      "type": "FLOW",
+      "name": "Viewer-Stream",
+      "description": "Der versionierte SSE/WS-Strom an die Live-Viewer: Update-Events mit Late-Joiner-Cache, strikt read-only.",
+      "status": "reviewed"
     },
     {
       "id": "FLOW-violations",
@@ -4755,6 +4762,26 @@
       ]
     },
     {
+      "id": "REQ-steering-post",
+      "type": "REQ",
+      "name": "Nachbedingung Steuerungsrunde",
+      "description": "Nach einer Steuerungsrunde liegt die Empfehlung deterministisch aus genau einem Mess-Snapshot vor: derselbe Graph liefert dieselbe Empfehlung, und die Messung hat den Graphen nicht veraendert.",
+      "status": "reviewed",
+      "kinds": [
+        "postcondition"
+      ]
+    },
+    {
+      "id": "REQ-steering-pre",
+      "type": "REQ",
+      "name": "Vorbedingung Steuerungsrunde",
+      "description": "Vor einer Steuerungsrunde ist der Store initialisiert, der Graph geladen und der Regelkatalog samt Urteils-Policy verfuegbar.",
+      "status": "reviewed",
+      "kinds": [
+        "precondition"
+      ]
+    },
+    {
       "id": "REQ-store-recovery",
       "type": "REQ",
       "name": "Store-Recovery (Recovery-Modus)",
@@ -4865,6 +4892,16 @@
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
         "non-functional"
+      ]
+    },
+    {
+      "id": "REQ-viewer-owned-by-repo",
+      "type": "REQ",
+      "name": "Viewer gehoert dem Repo",
+      "description": "Der Live-Viewer gehoert dem Repo, nicht der einzelnen Sitzung: jede Sitzung traegt sich ein, genau ein Viewer laeuft (Startreservierung mit Ablauffrist), eine Umfrage bemerkt seinen Tod, und erst die letzte Sitzung beendet ihn — nur wenn graphcode ihn selbst gestartet hat. (CR-GC-404)",
+      "status": "done",
+      "kinds": [
+        "functional"
       ]
     },
     {
@@ -5117,10 +5154,10 @@
       "created_at": "2026-06-16T00:00:00.000Z",
       "analysisFreshness": {
         "conops": {
-          "graphVersion": 191
+          "graphVersion": 193
         },
         "implplan": {
-          "graphVersion": 191
+          "graphVersion": 193
         },
         "assumption-review": {
           "graphVersion": 0
@@ -10567,6 +10604,11 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-404",
+      "target": "MS-8-hardening",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -10666,6 +10708,11 @@
       "target": "FUNC-fit-advisory",
       "type": "compose",
       "weight": "1"
+    },
+    {
+      "source": "FCHAIN-apply-gate",
+      "target": "FUNC-host-socket",
+      "type": "compose"
     },
     {
       "source": "FCHAIN-apply-gate",
@@ -10945,6 +10992,11 @@
     },
     {
       "source": "FCHAIN-live-update",
+      "target": "FUNC-health-endpoint",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-live-update",
       "target": "FUNC-mutate",
       "type": "compose"
     },
@@ -11085,6 +11137,11 @@
     },
     {
       "source": "FCHAIN-repo-lifecycle",
+      "target": "FUNC-bind-tools",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-repo-lifecycle",
       "target": "FUNC-bootstrap",
       "type": "compose"
     },
@@ -11101,6 +11158,16 @@
     },
     {
       "source": "FCHAIN-repo-lifecycle",
+      "target": "FUNC-gve-sessions",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-repo-lifecycle",
+      "target": "FUNC-gve-supervise",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-repo-lifecycle",
       "target": "FUNC-harness-cli",
       "type": "compose"
     },
@@ -11112,6 +11179,11 @@
     {
       "source": "FCHAIN-repo-lifecycle",
       "target": "FUNC-session-shutdown",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-repo-lifecycle",
+      "target": "FUNC-tool-context",
       "type": "compose"
     },
     {
@@ -11327,6 +11399,11 @@
     },
     {
       "source": "FCHAIN-steering-loop",
+      "target": "FUNC-load-config",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
       "target": "FUNC-mutate",
       "type": "compose"
     },
@@ -11517,6 +11594,11 @@
     },
     {
       "source": "FLOW-cli-command",
+      "target": "FUNC-bootstrap",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-cli-command",
       "target": "FUNC-claim-store-lock",
       "type": "io"
     },
@@ -11525,6 +11607,16 @@
       "target": "FUNC-cli-dispatch",
       "type": "io",
       "weight": "1"
+    },
+    {
+      "source": "FLOW-cli-command",
+      "target": "FUNC-collect-status",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-cli-command",
+      "target": "FUNC-create-harness",
+      "type": "io"
     },
     {
       "source": "FLOW-cli-command",
@@ -11558,10 +11650,20 @@
     },
     {
       "source": "FLOW-cli-command",
+      "target": "FUNC-upgrade",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-cli-command",
       "target": "SCHEMA-cli-command",
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-committed-graph",
+      "target": "FUNC-auto-export",
+      "type": "io"
     },
     {
       "source": "FLOW-committed-graph",
@@ -11870,6 +11972,11 @@
     },
     {
       "source": "FLOW-impact-subgraph",
+      "target": "FUNC-mutate",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-impact-subgraph",
       "target": "SCHEMA-format-e",
       "type": "relation",
       "weight": 1,
@@ -11899,6 +12006,11 @@
     {
       "source": "FLOW-live-event",
       "target": "FUNC-broadcast-diff",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-live-event",
+      "target": "FUNC-serve-sse",
       "type": "io"
     },
     {
@@ -11983,7 +12095,17 @@
     },
     {
       "source": "FLOW-mutate-cmd",
+      "target": "FUNC-host-socket",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-mutate-cmd",
       "target": "FUNC-mutate",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-mutate-cmd",
+      "target": "FUNC-preflight",
       "type": "io"
     },
     {
@@ -12205,6 +12327,11 @@
     },
     {
       "source": "FLOW-store-ownership",
+      "target": "FUNC-own-kuzu-host",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-store-ownership",
       "target": "FUNC-session-shutdown",
       "type": "io"
     },
@@ -12310,6 +12437,16 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "FLOW-viewer-stream",
+      "target": "ACTOR-dashboard",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-viewer-stream",
+      "target": "SCHEMA-update-event",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-violations",
       "target": "FUNC-compute-phase-readiness",
       "type": "io"
@@ -12348,6 +12485,16 @@
       "target": "MOD-harness",
       "type": "allocate",
       "weight": "1"
+    },
+    {
+      "source": "FUNC-apply-reseed",
+      "target": "FLOW-recalled-state",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-apply-reseed",
+      "target": "REQ-graph-state-recall",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-arch-fitness",
@@ -12401,10 +12548,25 @@
       "weight": "1"
     },
     {
+      "source": "FUNC-auto-export",
+      "target": "FLOW-export-request",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-auto-export",
+      "target": "REQ-auto-persist-merge",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-bind-tools",
       "target": "MOD-mcp-tools",
       "type": "allocate",
       "weight": "1"
+    },
+    {
+      "source": "FUNC-bind-tools",
+      "target": "REQ-mcp-tool-registry",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-block-anschluss",
@@ -12973,6 +13135,11 @@
     },
     {
       "source": "FUNC-broadcast-diff",
+      "target": "FLOW-viewer-stream",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-broadcast-diff",
       "target": "REQ-versioned-broadcast",
       "type": "satisfy",
       "weight": 1,
@@ -13075,6 +13242,16 @@
       "weight": "1"
     },
     {
+      "source": "FUNC-collect-status",
+      "target": "FLOW-install-result",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-collect-status",
+      "target": "REQ-real-health-check",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-compute-phase-readiness",
       "target": "MOD-steering",
       "type": "allocate"
@@ -13124,6 +13301,16 @@
       "target": "MOD-harness",
       "type": "allocate",
       "weight": "1"
+    },
+    {
+      "source": "FUNC-create-harness",
+      "target": "FLOW-store-ownership",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-create-harness",
+      "target": "REQ-single-kuzu-owner",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-decode",
@@ -13362,6 +13549,11 @@
       "weight": "1"
     },
     {
+      "source": "FUNC-export-marker",
+      "target": "REQ-graph-snapshot-per-commit",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-extract-mutate",
       "target": "MOD-executor",
       "type": "allocate",
@@ -13576,10 +13768,20 @@
       "type": "allocate"
     },
     {
+      "source": "FUNC-gve-sessions",
+      "target": "REQ-viewer-owned-by-repo",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-gve-supervise",
       "target": "MOD-cli",
       "type": "allocate",
       "weight": "1"
+    },
+    {
+      "source": "FUNC-gve-supervise",
+      "target": "REQ-viewer-owned-by-repo",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-harness-cli",
@@ -13672,6 +13874,16 @@
       "weight": "1"
     },
     {
+      "source": "FUNC-host-socket",
+      "target": "FLOW-mutate-cmd",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-host-socket",
+      "target": "REQ-single-kuzu-owner",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-import",
       "target": "MOD-harness",
       "type": "allocate",
@@ -13731,6 +13943,16 @@
       "target": "MOD-cli",
       "type": "allocate",
       "weight": "1"
+    },
+    {
+      "source": "FUNC-import-code-verb",
+      "target": "FLOW-bootstrap-result",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-import-code-verb",
+      "target": "REQ-model-exchange-pre",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-import-code-verb",
@@ -13941,6 +14163,11 @@
     },
     {
       "source": "FUNC-nd-similarity",
+      "target": "FLOW-graph-state",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-nd-similarity",
       "target": "REQ-near-duplicate-detection",
       "type": "satisfy"
     },
@@ -13975,11 +14202,21 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-open-store",
+      "target": "REQ-steering-pre",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-own-kuzu-host",
       "target": "MOD-host-bridge",
       "type": "allocate",
       "weight": 1,
       "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-own-kuzu-host",
+      "target": "FLOW-graph-state",
+      "type": "io"
     },
     {
       "source": "FUNC-own-kuzu-host",
@@ -13993,6 +14230,16 @@
       "target": "MOD-executor",
       "type": "allocate",
       "weight": "1"
+    },
+    {
+      "source": "FUNC-preflight",
+      "target": "FLOW-mutate-cmd",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-preflight",
+      "target": "REQ-small-model-viable",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-rank-candidates",
@@ -14102,6 +14349,11 @@
     },
     {
       "source": "FUNC-run-verb",
+      "target": "FLOW-steering-trigger",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-run-verb",
       "target": "REQ-one-driver-local-and-frontier",
       "type": "satisfy",
       "weight": "1"
@@ -14130,6 +14382,11 @@
       "target": "MOD-schema-migration",
       "type": "allocate",
       "weight": "1"
+    },
+    {
+      "source": "FUNC-schema-guard",
+      "target": "REQ-schema-version-migration",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-score-completeness",
@@ -14330,6 +14587,11 @@
     },
     {
       "source": "FUNC-serve-sse",
+      "target": "FLOW-viewer-stream",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-serve-sse",
       "target": "REQ-readonly-bridge",
       "type": "satisfy",
       "weight": 1,
@@ -14413,6 +14675,11 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-take-steering-snapshot",
+      "target": "REQ-steering-post",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-target-profile",
       "target": "MOD-skills",
       "type": "allocate"
@@ -14432,6 +14699,11 @@
       "target": "MOD-steering",
       "type": "allocate",
       "weight": "1"
+    },
+    {
+      "source": "FUNC-target-profile-load",
+      "target": "REQ-target-shifts-ranking",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-test",
@@ -14470,9 +14742,24 @@
       "weight": "1"
     },
     {
+      "source": "FUNC-tool-context",
+      "target": "REQ-mcp-gate-symmetry",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-upgrade",
       "target": "MOD-cli",
       "type": "allocate"
+    },
+    {
+      "source": "FUNC-upgrade",
+      "target": "FLOW-install-result",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-upgrade",
+      "target": "REQ-repo-update",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-view-changelog",
@@ -15746,8 +16033,18 @@
       "type": "verify"
     },
     {
+      "source": "TEST-gve-autostart",
+      "target": "REQ-viewer-owned-by-repo",
+      "type": "verify"
+    },
+    {
       "source": "TEST-gve-supervision",
       "target": "REQ-graceful-degradation",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-gve-supervision",
+      "target": "REQ-viewer-owned-by-repo",
       "type": "verify"
     },
     {
@@ -16459,6 +16756,16 @@
       "type": "verify"
     },
     {
+      "source": "TEST-steering-loop",
+      "target": "REQ-steering-post",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-steering-loop",
+      "target": "REQ-steering-pre",
+      "type": "verify"
+    },
+    {
       "source": "TEST-steering-snapshot",
       "target": "REQ-single-measurement-path",
       "type": "verify"
@@ -16839,6 +17146,16 @@
     },
     {
       "source": "UC-deterministic-steering",
+      "target": "REQ-steering-post",
+      "type": "compose"
+    },
+    {
+      "source": "UC-deterministic-steering",
+      "target": "REQ-steering-pre",
+      "type": "compose"
+    },
+    {
+      "source": "UC-deterministic-steering",
       "target": "REQ-target-shifts-ranking",
       "type": "compose"
     },
@@ -17163,10 +17480,25 @@
     },
     {
       "source": "UC-repo-lifecycle",
+      "target": "REQ-post-harness-cli",
+      "type": "compose"
+    },
+    {
+      "source": "UC-repo-lifecycle",
+      "target": "REQ-pre-harness-cli",
+      "type": "compose"
+    },
+    {
+      "source": "UC-repo-lifecycle",
       "target": "REQ-repo-update",
       "type": "compose",
       "weight": "1"
+    },
+    {
+      "source": "UC-repo-lifecycle",
+      "target": "REQ-viewer-owned-by-repo",
+      "type": "compose"
     }
   ],
-  "graphVersion": 191
+  "graphVersion": 193
 }

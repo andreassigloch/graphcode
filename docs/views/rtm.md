@@ -4,7 +4,7 @@
 
 # graphcode — Requirements Traceability Matrix (RTM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 132 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 135 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
 
 
 ### System (SYS.2) — 44 REQ
@@ -30,7 +30,7 @@
 | `REQ-import-se-ontology` | `TEST-dashboard-ontology-sync` · `TEST-graph-authoring-guide` | `MOD-harness` | — |
 | `REQ-install-idempotent` | `TEST-cli-scaffold` · `TEST-upgrade` | `FUNC-harness-cli` | `MOD-cli` |
 | `REQ-interface-schema` | `TEST-interface-schema` | `MOD-codec` | — |
-| `REQ-mcp-tool-registry` | `TEST-help-tool` · `TEST-mcp-readiness` · `TEST-mcp-stdio-server` | `MOD-mcp-tools` | — |
+| `REQ-mcp-tool-registry` | `TEST-help-tool` · `TEST-mcp-readiness` · `TEST-mcp-stdio-server` | `FUNC-bind-tools` · `MOD-mcp-tools` | `MOD-mcp-tools` |
 | `REQ-no-extraction` | `TEST-capture` · `TEST-import-code-verb` | `FCHAIN-model-import` · `FUNC-import-code` · `FUNC-import-code-verb` · `FUNC-import-doc` | `MOD-cli` · `MOD-skills` |
 | `REQ-npx-distribution` | `TEST-distribution` | `FUNC-cli-dispatch` · `FUNC-harness-cli` | `MOD-cli` |
 | `REQ-post-export-markdown` | `TEST-doc-export` | `FUNC-export-markdown` | `MOD-docs` |
@@ -45,18 +45,18 @@
 | `REQ-readonly-bridge` | `TEST-bridge-follows-lock` · `TEST-readonly-bridge` | `FUNC-serve-sse` · `MOD-host-bridge` | `MOD-host-bridge` |
 | `REQ-repo-install` | `TEST-cli-scaffold` · `TEST-distribution` | `FUNC-harness-cli` | `MOD-cli` |
 | `REQ-repo-uninstall` | `TEST-cli-scaffold` | `FUNC-harness-cli` | `MOD-cli` |
-| `REQ-repo-update` | `TEST-cli-scaffold` · `TEST-upgrade` | `FUNC-harness-cli` | `MOD-cli` |
+| `REQ-repo-update` | `TEST-cli-scaffold` · `TEST-upgrade` | `FUNC-harness-cli` · `FUNC-upgrade` | `MOD-cli` |
 | `REQ-responsiveness` | `TEST-responsiveness` | `FCHAIN-apply-gate` | — |
-| `REQ-schema-version-migration` | `TEST-schema-migration` | `FUNC-migrate-schema` | `MOD-schema-migration` |
+| `REQ-schema-version-migration` | `TEST-schema-migration` | `FUNC-migrate-schema` · `FUNC-schema-guard` | `MOD-schema-migration` |
 | `REQ-self-contained-dist` | `TEST-distribution` | `FUNC-harness-cli` | `MOD-cli` |
-| `REQ-single-kuzu-owner` | `TEST-bridge-follows-lock` · `TEST-gve-autostart` · `TEST-host-shim` · `TEST-mvp-e2e` · `TEST-session-lifecycle` · `TEST-status-verb` · `TEST-store-lock` | `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` · `MOD-harness` | `MOD-cli` · `MOD-harness` · `MOD-host-bridge` |
+| `REQ-single-kuzu-owner` | `TEST-bridge-follows-lock` · `TEST-gve-autostart` · `TEST-host-shim` · `TEST-mvp-e2e` · `TEST-session-lifecycle` · `TEST-status-verb` · `TEST-store-lock` | `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` · `MOD-harness` | `MOD-cli` · `MOD-harness` · `MOD-host-bridge` |
 | `REQ-single-store` | `TEST-mvp-e2e` | `MOD-harness` | — |
 | `REQ-single-transport` | `TEST-mcp-stdio-server` | `FUNC-serve-stdio` · `MOD-mcp-tools` | `MOD-mcp-tools` |
 | `REQ-store-recovery` | `TEST-reseed` · `TEST-schema-migration` · `TEST-store-recovery` | `MOD-harness` | — |
 | `REQ-token-efficiency` | `TEST-audit-trail-projection` · `TEST-help-contextual-dedup` · `TEST-mutate-violations` · `TEST-token-efficiency` | — | — |
 | `REQ-versioned-cache` | `TEST-cache` | `MOD-hooks` | — |
 
-### funktional (SWE.1) — 88 REQ
+### funktional (SWE.1) — 93 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -64,7 +64,7 @@
 | `REQ-applied-suggestion-moves-target` | `TEST-applied-suggestion-moves-target` | `FUNC-graph-suggest` · `FUNC-take-steering-snapshot` | `MOD-mcp-tools` · `MOD-steering` |
 | `REQ-artifact-freshness` | `TEST-dashboard-readonly` | `MOD-dashboard` | — |
 | `REQ-audit-trail` | `TEST-audit-retention` · `TEST-audit-rules-passed` · `TEST-audit-trail-projection` · `TEST-mcp-stdio-server` · `TEST-operations-log` · `TEST-testreport` | `FUNC-graph-impact` | `MOD-mcp-tools` |
-| `REQ-auto-persist-merge` | `TEST-merge` · `TEST-occ` | `FUNC-merge-nodes` | `MOD-codec` |
+| `REQ-auto-persist-merge` | `TEST-merge` · `TEST-occ` | `FUNC-auto-export` · `FUNC-merge-nodes` | `MOD-codec` · `MOD-docs` |
 | `REQ-bootstrap-through-gate` | `TEST-bootstrap` · `TEST-import-invariant` | `FUNC-bootstrap` · `FUNC-import` · `FUNC-seed-from-json` | `MOD-cli` · `MOD-harness` |
 | `REQ-cache-layering` | `TEST-cache` | `FUNC-graph-expand` | `MOD-mcp-tools` |
 | `REQ-code-governed-quality` | `TEST-code-quality` · `TEST-mvp-e2e` | `FCHAIN-apply-gate` · `FUNC-test` · `FUNC-test-ui` | `MOD-skills` |
@@ -80,16 +80,16 @@
 | `REQ-formatE-parity` | `TEST-formate-binding` · `TEST-mutate-input-formate` · `TEST-read-format-param` · `TEST-roundtrip` | `FUNC-encode` | `MOD-codec` |
 | `REQ-gate-only-writes` | `TEST-graph-realize` · `TEST-no-direct-graph-write` · `TEST-path-containment` | `FUNC-mutate` | `MOD-harness` |
 | `REQ-graph-context-replaces-reading` | `TEST-graph-context-replaces-reading` | `MOD-mcp-tools` | — |
-| `REQ-graph-snapshot-per-commit` | `TEST-auto-export` · `TEST-graph-time-travel` | `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot` · `FUNC-mutate` | `MOD-harness` · `MOD-mcp-tools` |
-| `REQ-graph-state-recall` | `TEST-graph-time-travel` · `TEST-reseed` · `TEST-rewind` | `FCHAIN-recall` · `FUNC-reseed` · `FUNC-rewind` · `MOD-harness` | `MOD-cli` · `MOD-harness` |
+| `REQ-graph-snapshot-per-commit` | `TEST-auto-export` · `TEST-graph-time-travel` | `FCHAIN-snapshot-freshness` · `FUNC-export-marker` · `FUNC-graph-export-snapshot` · `FUNC-mutate` | `MOD-harness` · `MOD-mcp-tools` |
+| `REQ-graph-state-recall` | `TEST-graph-time-travel` · `TEST-reseed` · `TEST-rewind` | `FCHAIN-recall` · `FUNC-apply-reseed` · `FUNC-reseed` · `FUNC-rewind` · `MOD-harness` | `MOD-cli` · `MOD-harness` |
 | `REQ-graph-tests-operational` | `TEST-graph-tests-operational` · `TEST-selective-test-audit` | `FUNC-resolve-tests-from-code` | `MOD-mcp-tools` |
 | `REQ-impact-based-testing` | `TEST-mvp-e2e` · `TEST-selective-test-audit` | `FCHAIN-impact-testing` | — |
 | `REQ-install-idempotent` | `TEST-cli-scaffold` · `TEST-upgrade` | `FUNC-harness-cli` | `MOD-cli` |
 | `REQ-interactive-capture-suggest` | `TEST-capture` · `TEST-intent-anchors-internal` · `TEST-uc-authoring-style` | `FCHAIN-capture` | — |
 | `REQ-interface-change-escalation` | `TEST-interface-escalation` | `FCHAIN-interface-escalation` | — |
-| `REQ-mcp-gate-symmetry` | `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` | `FCHAIN-apply-gate` | — |
+| `REQ-mcp-gate-symmetry` | `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` | `FCHAIN-apply-gate` · `FUNC-tool-context` | `MOD-mcp-tools` |
 | `REQ-model-exchange-post` | `TEST-doc-export` · `TEST-import-code-verb` | `FCHAIN-model-import` | — |
-| `REQ-model-exchange-pre` | `TEST-import-code-verb` | — | — |
+| `REQ-model-exchange-pre` | `TEST-import-code-verb` | `FUNC-import-code-verb` | `MOD-cli` |
 | `REQ-monotone-convergence` | `TEST-monotone-convergence` | `FUNC-generation-step` | `MOD-steering` |
 | `REQ-mutation-emits-event` | `TEST-create-harness-smoke` · `TEST-live-view` | `FCHAIN-live-update` · `FUNC-emit-update-event` | `MOD-hooks` |
 | `REQ-near-duplicate-detection` | `TEST-nd-similarity` | `FUNC-nd-similarity` | `MOD-steering` |
@@ -104,6 +104,7 @@
 | `REQ-post-codec-roundtrip` | `TEST-roundtrip` | `FCHAIN-codec-roundtrip` | — |
 | `REQ-post-emit-trajectory` | `TEST-learning-emit` | `FUNC-emit-trajectory` | `MOD-hooks` |
 | `REQ-post-emit-update-event` | `TEST-live-view` | `FUNC-emit-update-event` | `MOD-hooks` |
+| `REQ-post-harness-cli` | `TEST-cli-scaffold` | `FUNC-harness-cli` | `MOD-cli` |
 | `REQ-post-impact-testing` | `TEST-mvp-e2e` | `FCHAIN-impact-testing` | — |
 | `REQ-post-import` | `TEST-bootstrap` · `TEST-import-code-verb` | `FUNC-import` | `MOD-harness` |
 | `REQ-post-interface-escalation` | `TEST-interface-escalation` | `FCHAIN-interface-escalation` | — |
@@ -115,6 +116,7 @@
 | `REQ-pre-codec-roundtrip` | `TEST-roundtrip` | `FCHAIN-codec-roundtrip` | — |
 | `REQ-pre-emit-trajectory` | `TEST-learning-emit` | `FUNC-emit-trajectory` | `MOD-hooks` |
 | `REQ-pre-emit-update-event` | `TEST-live-view` | `FUNC-emit-update-event` | `MOD-hooks` |
+| `REQ-pre-harness-cli` | `TEST-cli-scaffold` | `FUNC-harness-cli` | `MOD-cli` |
 | `REQ-pre-impact-testing` | `TEST-mvp-e2e` | `FCHAIN-impact-testing` | — |
 | `REQ-pre-import` | `TEST-bootstrap` | `FUNC-import` | `MOD-harness` |
 | `REQ-pre-interface-escalation` | `TEST-interface-escalation` | `FCHAIN-interface-escalation` | — |
@@ -129,8 +131,8 @@
 | `REQ-readiness-completeness` | `TEST-readiness-completeness` | `FUNC-score-completeness` | `MOD-completeness` |
 | `REQ-readiness-transparent` | `TEST-dashboard-readonly` · `TEST-help-content-coverage` · `TEST-help-projection` · `TEST-help-tool` | `MOD-dashboard` | — |
 | `REQ-readonly-bridge` | `TEST-bridge-follows-lock` · `TEST-readonly-bridge` | `FUNC-serve-sse` · `MOD-host-bridge` | `MOD-host-bridge` |
-| `REQ-real-health-check` | `TEST-readonly-bridge` | `FUNC-health-endpoint` · `MOD-host-bridge` | `MOD-host-bridge` |
-| `REQ-repo-update` | `TEST-cli-scaffold` · `TEST-upgrade` | `FUNC-harness-cli` | `MOD-cli` |
+| `REQ-real-health-check` | `TEST-readonly-bridge` | `FUNC-collect-status` · `FUNC-health-endpoint` · `MOD-host-bridge` | `MOD-cli` · `MOD-host-bridge` |
+| `REQ-repo-update` | `TEST-cli-scaffold` · `TEST-upgrade` | `FUNC-harness-cli` · `FUNC-upgrade` | `MOD-cli` |
 | `REQ-round-prompt-injection` | `TEST-one-driver-local-and-frontier` | `FUNC-build-round-injection` | `MOD-executor` |
 | `REQ-roundtrip-conformance` | `TEST-roundtrip` | `FCHAIN-codec-roundtrip` · `FUNC-decode` | `MOD-codec` |
 | `REQ-rule-calibration` | `TEST-audit-rules-passed` · `TEST-rule-calibration` | `MOD-mcp-tools` | — |
@@ -139,15 +141,18 @@
 | `REQ-single-write-door` | `TEST-host-shim` · `TEST-mutate-input-formate` · `TEST-occ` · `TEST-single-write-door` | `FUNC-mutate` | `MOD-harness` |
 | `REQ-skill-authors-through-gate` | `TEST-skill-authors-through-gate` | `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` | `MOD-skills` |
 | `REQ-skill-reads-only` | `TEST-skill-reports-measured-values` | `FCHAIN-skill-report` · `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` | `MOD-skills` |
-| `REQ-small-model-viable` | `TEST-executor-preflight` · `TEST-mvp-e2e` · `TEST-reduced-llm` | `FCHAIN-modelfree-gate` · `FUNC-graph-suggest` | `MOD-mcp-tools` |
+| `REQ-small-model-viable` | `TEST-executor-preflight` · `TEST-mvp-e2e` · `TEST-reduced-llm` | `FCHAIN-modelfree-gate` · `FUNC-graph-suggest` · `FUNC-preflight` | `MOD-executor` · `MOD-mcp-tools` |
 | `REQ-steering-from-metrics` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` · `TEST-steering-loop` | `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` | `MOD-executor` · `MOD-metrics-engine` · `MOD-steering` |
+| `REQ-steering-post` | `TEST-steering-loop` | `FUNC-take-steering-snapshot` | `MOD-steering` |
+| `REQ-steering-pre` | `TEST-steering-loop` | `FUNC-open-store` | `MOD-harness` |
 | `REQ-structure-driven` | `TEST-code-quality` · `TEST-mutate-schema-guard` · `TEST-se-plan-ordering` | `SYS-graphcode` | — |
 | `REQ-subgraph-slicing` | `TEST-impact-subgraph` · `TEST-inject-graph-slice` | `FUNC-graph-impact` | `MOD-mcp-tools` |
-| `REQ-target-shifts-ranking` | `TEST-executor-bestofn` · `TEST-target-profile` · `TEST-target-shifts-ranking` | `FUNC-graph-suggest` | `MOD-mcp-tools` |
+| `REQ-target-shifts-ranking` | `TEST-executor-bestofn` · `TEST-target-profile` · `TEST-target-shifts-ranking` | `FUNC-graph-suggest` · `FUNC-target-profile-load` | `MOD-mcp-tools` · `MOD-steering` |
 | `REQ-test-runnable-binding` | `TEST-formate-binding` · `TEST-test-runnable-binding` · `TEST-testreport` | `FUNC-deduce-tests` · `MOD-mcp-tools` | `MOD-mcp-tools` |
 | `REQ-thresholds-from-config` | `TEST-target-profile` · `TEST-thresholds-from-config` | `FUNC-load-config` | `MOD-harness` |
 | `REQ-trajectory-emit` | `TEST-create-harness-smoke` · `TEST-learning-emit` | `FUNC-emit-trajectory` | `MOD-hooks` |
 | `REQ-versioned-broadcast` | `TEST-live-view` | `FUNC-broadcast-diff` · `FUNC-emit-update-event` · `MOD-host-bridge` | `MOD-hooks` · `MOD-host-bridge` |
+| `REQ-viewer-owned-by-repo` | `TEST-gve-autostart` · `TEST-gve-supervision` | `FUNC-gve-sessions` · `FUNC-gve-supervise` | `MOD-cli` |
 
 ### Integration (SWE.4) — 35 REQ
 
@@ -158,12 +163,12 @@
 | `REQ-conflict-free-merge` | `TEST-merge` | `FCHAIN-merge-branches` · `FUNC-merge-nodes` | `MOD-codec` |
 | `REQ-doc-export` | `TEST-auto-export` · `TEST-doc-export` · `TEST-mcp-export` · `TEST-member-name` · `TEST-skills-mcp` · `TEST-views-auditor` · `TEST-views-conformance` | `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` | `MOD-docs` · `MOD-skills` |
 | `REQ-graceful-degradation` | `TEST-gve-supervision` · `TEST-reduced-llm` | `FCHAIN-modelfree-gate` · `SYS-graphcode` | — |
-| `REQ-graph-snapshot-per-commit` | `TEST-auto-export` · `TEST-graph-time-travel` | `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot` · `FUNC-mutate` | `MOD-harness` · `MOD-mcp-tools` |
-| `REQ-graph-state-recall` | `TEST-graph-time-travel` · `TEST-reseed` · `TEST-rewind` | `FCHAIN-recall` · `FUNC-reseed` · `FUNC-rewind` · `MOD-harness` | `MOD-cli` · `MOD-harness` |
+| `REQ-graph-snapshot-per-commit` | `TEST-auto-export` · `TEST-graph-time-travel` | `FCHAIN-snapshot-freshness` · `FUNC-export-marker` · `FUNC-graph-export-snapshot` · `FUNC-mutate` | `MOD-harness` · `MOD-mcp-tools` |
+| `REQ-graph-state-recall` | `TEST-graph-time-travel` · `TEST-reseed` · `TEST-rewind` | `FCHAIN-recall` · `FUNC-apply-reseed` · `FUNC-reseed` · `FUNC-rewind` · `MOD-harness` | `MOD-cli` · `MOD-harness` |
 | `REQ-impact-based-testing` | `TEST-mvp-e2e` · `TEST-selective-test-audit` | `FCHAIN-impact-testing` | — |
 | `REQ-interactive-capture-suggest` | `TEST-capture` · `TEST-intent-anchors-internal` · `TEST-uc-authoring-style` | `FCHAIN-capture` | — |
 | `REQ-interface-change-escalation` | `TEST-interface-escalation` | `FCHAIN-interface-escalation` | — |
-| `REQ-mcp-gate-symmetry` | `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` | `FCHAIN-apply-gate` | — |
+| `REQ-mcp-gate-symmetry` | `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` | `FCHAIN-apply-gate` · `FUNC-tool-context` | `MOD-mcp-tools` |
 | `REQ-model-exchange-post` | `TEST-doc-export` · `TEST-import-code-verb` | `FCHAIN-model-import` | — |
 | `REQ-mutation-emits-event` | `TEST-create-harness-smoke` · `TEST-live-view` | `FCHAIN-live-update` · `FUNC-emit-update-event` | `MOD-hooks` |
 | `REQ-no-extraction` | `TEST-capture` · `TEST-import-code-verb` | `FCHAIN-model-import` · `FUNC-import-code` · `FUNC-import-code-verb` · `FUNC-import-doc` | `MOD-cli` · `MOD-skills` |
@@ -186,10 +191,10 @@
 | `REQ-roundtrip-conformance` | `TEST-roundtrip` | `FCHAIN-codec-roundtrip` · `FUNC-decode` | `MOD-codec` |
 | `REQ-skill-authors-through-gate` | `TEST-skill-authors-through-gate` | `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` | `MOD-skills` |
 | `REQ-skill-reads-only` | `TEST-skill-reports-measured-values` | `FCHAIN-skill-report` · `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` | `MOD-skills` |
-| `REQ-small-model-viable` | `TEST-executor-preflight` · `TEST-mvp-e2e` · `TEST-reduced-llm` | `FCHAIN-modelfree-gate` · `FUNC-graph-suggest` | `MOD-mcp-tools` |
+| `REQ-small-model-viable` | `TEST-executor-preflight` · `TEST-mvp-e2e` · `TEST-reduced-llm` | `FCHAIN-modelfree-gate` · `FUNC-graph-suggest` · `FUNC-preflight` | `MOD-executor` · `MOD-mcp-tools` |
 | `REQ-steering-from-metrics` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` · `TEST-steering-loop` | `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` | `MOD-executor` · `MOD-metrics-engine` · `MOD-steering` |
 
-### Komponente (SWE.2/3) — 101 REQ
+### Komponente (SWE.2/3) — 106 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -197,7 +202,7 @@
 | `REQ-applied-suggestion-moves-target` | `TEST-applied-suggestion-moves-target` | `FUNC-graph-suggest` · `FUNC-take-steering-snapshot` | `MOD-mcp-tools` · `MOD-steering` |
 | `REQ-artifact-freshness` | `TEST-dashboard-readonly` | `MOD-dashboard` | — |
 | `REQ-audit-trail` | `TEST-audit-retention` · `TEST-audit-rules-passed` · `TEST-audit-trail-projection` · `TEST-mcp-stdio-server` · `TEST-operations-log` · `TEST-testreport` | `FUNC-graph-impact` | `MOD-mcp-tools` |
-| `REQ-auto-persist-merge` | `TEST-merge` · `TEST-occ` | `FUNC-merge-nodes` | `MOD-codec` |
+| `REQ-auto-persist-merge` | `TEST-merge` · `TEST-occ` | `FUNC-auto-export` · `FUNC-merge-nodes` | `MOD-codec` · `MOD-docs` |
 | `REQ-batch-seed-performance` | `TEST-batch-seed` | `FUNC-import` | `MOD-harness` |
 | `REQ-bootstrap-through-gate` | `TEST-bootstrap` · `TEST-import-invariant` | `FUNC-bootstrap` · `FUNC-import` · `FUNC-seed-from-json` | `MOD-cli` · `MOD-harness` |
 | `REQ-buildable-standalone` | `TEST-distribution` | `MOD-cli` | — |
@@ -221,8 +226,8 @@
 | `REQ-graph-code-conformance` | `TEST-code-conformance` | `FUNC-check-code-conformance` | `MOD-conformance` |
 | `REQ-graph-context-replaces-reading` | `TEST-graph-context-replaces-reading` | `MOD-mcp-tools` | — |
 | `REQ-graph-integrity` | `TEST-codec-validation` · `TEST-graph-integrity` · `TEST-import-sys-anchor` · `TEST-merge-no-duplicate-edge` | `MOD-codec` | — |
-| `REQ-graph-snapshot-per-commit` | `TEST-auto-export` · `TEST-graph-time-travel` | `FCHAIN-snapshot-freshness` · `FUNC-graph-export-snapshot` · `FUNC-mutate` | `MOD-harness` · `MOD-mcp-tools` |
-| `REQ-graph-state-recall` | `TEST-graph-time-travel` · `TEST-reseed` · `TEST-rewind` | `FCHAIN-recall` · `FUNC-reseed` · `FUNC-rewind` · `MOD-harness` | `MOD-cli` · `MOD-harness` |
+| `REQ-graph-snapshot-per-commit` | `TEST-auto-export` · `TEST-graph-time-travel` | `FCHAIN-snapshot-freshness` · `FUNC-export-marker` · `FUNC-graph-export-snapshot` · `FUNC-mutate` | `MOD-harness` · `MOD-mcp-tools` |
+| `REQ-graph-state-recall` | `TEST-graph-time-travel` · `TEST-reseed` · `TEST-rewind` | `FCHAIN-recall` · `FUNC-apply-reseed` · `FUNC-reseed` · `FUNC-rewind` · `MOD-harness` | `MOD-cli` · `MOD-harness` |
 | `REQ-graph-tests-operational` | `TEST-graph-tests-operational` · `TEST-selective-test-audit` | `FUNC-resolve-tests-from-code` | `MOD-mcp-tools` |
 | `REQ-harness-schema-in-contracts` | `TEST-mcp-symmetry` · `TEST-mutate-schema-guard` | `MOD-harness` | — |
 | `REQ-hook-extension-points` | `TEST-hooks` | `MOD-hooks` | — |
@@ -231,7 +236,9 @@
 | `REQ-install-idempotent` | `TEST-cli-scaffold` · `TEST-upgrade` | `FUNC-harness-cli` | `MOD-cli` |
 | `REQ-interface-schema` | `TEST-interface-schema` | `MOD-codec` | — |
 | `REQ-live-event-in-contracts` | `TEST-live-event-contract` | `FUNC-emit-update-event` | `MOD-hooks` |
-| `REQ-mcp-tool-registry` | `TEST-help-tool` · `TEST-mcp-readiness` · `TEST-mcp-stdio-server` | `MOD-mcp-tools` | — |
+| `REQ-mcp-gate-symmetry` | `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` | `FCHAIN-apply-gate` · `FUNC-tool-context` | `MOD-mcp-tools` |
+| `REQ-mcp-tool-registry` | `TEST-help-tool` · `TEST-mcp-readiness` · `TEST-mcp-stdio-server` | `FUNC-bind-tools` · `MOD-mcp-tools` | `MOD-mcp-tools` |
+| `REQ-model-exchange-pre` | `TEST-import-code-verb` | `FUNC-import-code-verb` | `MOD-cli` |
 | `REQ-monotone-convergence` | `TEST-monotone-convergence` | `FUNC-generation-step` | `MOD-steering` |
 | `REQ-mutation-emits-event` | `TEST-create-harness-smoke` · `TEST-live-view` | `FCHAIN-live-update` · `FUNC-emit-update-event` | `MOD-hooks` |
 | `REQ-near-duplicate-detection` | `TEST-nd-similarity` | `FUNC-nd-similarity` | `MOD-steering` |
@@ -264,35 +271,38 @@
 | `REQ-readiness-model` | `TEST-readiness-model` · `TEST-views-auditor` | `MOD-mcp-tools` | — |
 | `REQ-readiness-transparent` | `TEST-dashboard-readonly` · `TEST-help-content-coverage` · `TEST-help-projection` · `TEST-help-tool` | `MOD-dashboard` | — |
 | `REQ-readonly-bridge` | `TEST-bridge-follows-lock` · `TEST-readonly-bridge` | `FUNC-serve-sse` · `MOD-host-bridge` | `MOD-host-bridge` |
-| `REQ-real-health-check` | `TEST-readonly-bridge` | `FUNC-health-endpoint` · `MOD-host-bridge` | `MOD-host-bridge` |
+| `REQ-real-health-check` | `TEST-readonly-bridge` | `FUNC-collect-status` · `FUNC-health-endpoint` · `MOD-host-bridge` | `MOD-cli` · `MOD-host-bridge` |
 | `REQ-repo-install` | `TEST-cli-scaffold` · `TEST-distribution` | `FUNC-harness-cli` | `MOD-cli` |
 | `REQ-repo-uninstall` | `TEST-cli-scaffold` | `FUNC-harness-cli` | `MOD-cli` |
-| `REQ-repo-update` | `TEST-cli-scaffold` · `TEST-upgrade` | `FUNC-harness-cli` | `MOD-cli` |
+| `REQ-repo-update` | `TEST-cli-scaffold` · `TEST-upgrade` | `FUNC-harness-cli` · `FUNC-upgrade` | `MOD-cli` |
 | `REQ-round-prompt-injection` | `TEST-one-driver-local-and-frontier` | `FUNC-build-round-injection` | `MOD-executor` |
 | `REQ-roundtrip-conformance` | `TEST-roundtrip` | `FCHAIN-codec-roundtrip` · `FUNC-decode` | `MOD-codec` |
 | `REQ-rule-calibration` | `TEST-audit-rules-passed` · `TEST-rule-calibration` | `MOD-mcp-tools` | — |
 | `REQ-rule-enforcement` | `TEST-mutate-gate` · `TEST-nd-similarity` · `TEST-violation-context` | `FUNC-evaluate-rules` | `MOD-harness` |
-| `REQ-schema-version-migration` | `TEST-schema-migration` | `FUNC-migrate-schema` | `MOD-schema-migration` |
+| `REQ-schema-version-migration` | `TEST-schema-migration` | `FUNC-migrate-schema` · `FUNC-schema-guard` | `MOD-schema-migration` |
 | `REQ-self-contained-dist` | `TEST-distribution` | `FUNC-harness-cli` | `MOD-cli` |
 | `REQ-shared-views-no-fork` | `TEST-shared-views-no-fork` · `TEST-views-conformance` | `MOD-dashboard` | — |
-| `REQ-single-kuzu-owner` | `TEST-bridge-follows-lock` · `TEST-gve-autostart` · `TEST-host-shim` · `TEST-mvp-e2e` · `TEST-session-lifecycle` · `TEST-status-verb` · `TEST-store-lock` | `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` · `MOD-harness` | `MOD-cli` · `MOD-harness` · `MOD-host-bridge` |
+| `REQ-single-kuzu-owner` | `TEST-bridge-follows-lock` · `TEST-gve-autostart` · `TEST-host-shim` · `TEST-mvp-e2e` · `TEST-session-lifecycle` · `TEST-status-verb` · `TEST-store-lock` | `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` · `MOD-harness` | `MOD-cli` · `MOD-harness` · `MOD-host-bridge` |
 | `REQ-single-measurement-path` | `TEST-graph-metrics` · `TEST-single-measurement-path` · `TEST-steering-snapshot` | `FUNC-take-steering-snapshot` | `MOD-steering` |
 | `REQ-single-store` | `TEST-mvp-e2e` | `MOD-harness` | — |
 | `REQ-single-transport` | `TEST-mcp-stdio-server` | `FUNC-serve-stdio` · `MOD-mcp-tools` | `MOD-mcp-tools` |
 | `REQ-single-write-door` | `TEST-host-shim` · `TEST-mutate-input-formate` · `TEST-occ` · `TEST-single-write-door` | `FUNC-mutate` | `MOD-harness` |
 | `REQ-skill-authors-through-gate` | `TEST-skill-authors-through-gate` | `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` | `MOD-skills` |
 | `REQ-skill-reads-only` | `TEST-skill-reports-measured-values` | `FCHAIN-skill-report` · `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` | `MOD-skills` |
-| `REQ-small-model-viable` | `TEST-executor-preflight` · `TEST-mvp-e2e` · `TEST-reduced-llm` | `FCHAIN-modelfree-gate` · `FUNC-graph-suggest` | `MOD-mcp-tools` |
+| `REQ-small-model-viable` | `TEST-executor-preflight` · `TEST-mvp-e2e` · `TEST-reduced-llm` | `FCHAIN-modelfree-gate` · `FUNC-graph-suggest` · `FUNC-preflight` | `MOD-executor` · `MOD-mcp-tools` |
 | `REQ-steering-from-metrics` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` · `TEST-steering-loop` | `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` | `MOD-executor` · `MOD-metrics-engine` · `MOD-steering` |
+| `REQ-steering-post` | `TEST-steering-loop` | `FUNC-take-steering-snapshot` | `MOD-steering` |
+| `REQ-steering-pre` | `TEST-steering-loop` | `FUNC-open-store` | `MOD-harness` |
 | `REQ-store-recovery` | `TEST-reseed` · `TEST-schema-migration` · `TEST-store-recovery` | `MOD-harness` | — |
 | `REQ-structural-rule-shared` | `TEST-graph-authoring-guide` · `TEST-mutate-gate` | `MOD-harness` | — |
 | `REQ-subgraph-slicing` | `TEST-impact-subgraph` · `TEST-inject-graph-slice` | `FUNC-graph-impact` | `MOD-mcp-tools` |
-| `REQ-target-shifts-ranking` | `TEST-executor-bestofn` · `TEST-target-profile` · `TEST-target-shifts-ranking` | `FUNC-graph-suggest` | `MOD-mcp-tools` |
+| `REQ-target-shifts-ranking` | `TEST-executor-bestofn` · `TEST-target-profile` · `TEST-target-shifts-ranking` | `FUNC-graph-suggest` · `FUNC-target-profile-load` | `MOD-mcp-tools` · `MOD-steering` |
 | `REQ-test-runnable-binding` | `TEST-formate-binding` · `TEST-test-runnable-binding` · `TEST-testreport` | `FUNC-deduce-tests` · `MOD-mcp-tools` | `MOD-mcp-tools` |
 | `REQ-testref-materialized` | `TEST-realref-materialize` · `TEST-testref-materialize` | `MOD-docs` · `MOD-mcp-tools` | — |
 | `REQ-thresholds-from-config` | `TEST-target-profile` · `TEST-thresholds-from-config` | `FUNC-load-config` | `MOD-harness` |
 | `REQ-trajectory-emit` | `TEST-create-harness-smoke` · `TEST-learning-emit` | `FUNC-emit-trajectory` | `MOD-hooks` |
 | `REQ-versioned-broadcast` | `TEST-live-view` | `FUNC-broadcast-diff` · `FUNC-emit-update-event` · `MOD-host-bridge` | `MOD-hooks` · `MOD-host-bridge` |
 | `REQ-versioned-cache` | `TEST-cache` | `MOD-hooks` | — |
+| `REQ-viewer-owned-by-repo` | `TEST-gve-autostart` · `TEST-gve-supervision` | `FUNC-gve-sessions` · `FUNC-gve-supervise` | `MOD-cli` |
 
 > Coverage gap = 0 REQ without verify (R-01). Ebene = gefundener Pfad zum zuordnenden Element: SYS -compose-> System · UC -compose-> funktional · FCHAIN -satisfy-> Integration · FUNC/MOD -satisfy-> Komponente. REQ -compose-> REQ erbt die Ebene des Elternteils (keine eigene). Ein REQ, das über mehrere Wege zugeordnet ist, steht in mehreren Gruppen.
