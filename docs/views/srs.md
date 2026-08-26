@@ -58,63 +58,61 @@ Verification ◀ `TEST-code-quality` (acceptance) · `TEST-mutate-schema-guard` 
 
 Realisierungs-Agent unter graphcode-Kontrolle (OpenCode-executed); MCP-stdio-Client; nutzt den Graphen statt grep (Ziel a). Delegierte HOW-Ebene. (SPEC §5 Kanal 1)
 
-io ▶ `FLOW-expand-request` · `FLOW-formatE-candidates` · `FLOW-mutate-cmd` · `FLOW-query-request` · `UC-code-quality` · `UC-reduced-llm` · io ◀ `FLOW-action` · `FLOW-element-slice` · `FLOW-expanded-subgraph` · `FLOW-impact-subgraph` · `FLOW-round-prompt` · `FLOW-test-selection`
+io ▶ `FLOW-expand-request` · `FLOW-formatE-candidates` · `FLOW-mutate-cmd` · `FLOW-query-request` · io ◀ `FLOW-action` · `FLOW-element-slice` · `FLOW-expanded-subgraph` · `FLOW-impact-subgraph` · `FLOW-round-prompt` · `FLOW-test-selection`
 
 ### 2.2  `ACTOR-dashboard` — Browser-Dashboard
 
 SSE/WS read-only Viewer; Live-Q-Status-Visualisierung (Ziel b). (SPEC §5 Kanal 2)
 
-io ▶ `UC-code-quality` · `UC-live-graph-view` · io ◀ `FLOW-health-report` · `FLOW-live-event` · `FLOW-module-metrics` · `FLOW-viewer-stream`
+io ▶ — · io ◀ `FLOW-health-report` · `FLOW-live-event` · `FLOW-module-metrics` · `FLOW-viewer-stream`
 
 ### 2.3  `ACTOR-developer` — Entwickler / Repo-Owner
 
 Kunde/Nutzer: will exzellente Code-Qualität bei effizientem Testen und minimalem Token-/LLM-Aufwand.
 
-io ▶ `FLOW-branch-graphs` · `FLOW-cli-command` · `FLOW-export-request` · `FLOW-graph-state` · `FLOW-metric-policy` · `FLOW-mutate-cmd` · `FLOW-steering-trigger` · `FLOW-version-bump` · `FLOW-view-request` · `UC-code-quality` · `UC-deterministic-steering` · `UC-efficient-testing` · `UC-graph-time-travel` · `UC-live-graph-view` · `UC-loop-closure` · `UC-model-exchange` · `UC-reduced-llm` · `UC-repo-lifecycle` · io ◀ `FLOW-bootstrap-result` · `FLOW-export-pending` · `FLOW-graph-snapshot` · `FLOW-install-result` · `FLOW-markdown-docs` · `FLOW-merged-graph` · `FLOW-migrated-graph` · `FLOW-parsed-graph` · `FLOW-recalled-state` · `FLOW-rendered-view` · `FLOW-suggest-result`
+io ▶ `FLOW-branch-graphs` · `FLOW-cli-command` · `FLOW-export-request` · `FLOW-graph-state` · `FLOW-metric-policy` · `FLOW-mutate-cmd` · `FLOW-steering-trigger` · `FLOW-version-bump` · `FLOW-view-request` · io ◀ `FLOW-bootstrap-result` · `FLOW-export-pending` · `FLOW-graph-snapshot` · `FLOW-install-result` · `FLOW-markdown-docs` · `FLOW-merged-graph` · `FLOW-migrated-graph` · `FLOW-parsed-graph` · `FLOW-recalled-state` · `FLOW-rendered-view` · `FLOW-suggest-result` · `FLOW-test-selection`
 
 ### 2.4  `ACTOR-facilitating-agent` — Facilitating Agent — Architekt
 
 Gegateter Agent mit Architektur-Autorität: bearbeitet Interface-Änderungs-Eskalationen — Impact-Analyse, Gate-Entscheidung, Dependents koordinieren.
 
-io ▶ `UC-code-quality` · io ◀ —
+io ▶ `FLOW-authoring-request` · io ◀ —
 
 ### 2.5  `ACTOR-graphify` — graphify (Slicer)
 
 Externes Slicer-System; produziert Format-E aus großen Code/Docs zum Import. graphcode extrahiert NICHT selbst (REQ-no-extraction).
 
-io ▶ `FLOW-bulk-formatE` · `UC-code-quality` · io ◀ —
+io ▶ `FLOW-bulk-formatE` · io ◀ —
 
 ### 2.6  `ACTOR-learning-engine` — Learning-Engine
 
 Consumer der post-apply/nightly Trajectory-/Outcome-Emissionen. (SPEC §2.3)
 
-io ▶ `UC-reduced-llm` · io ◀ `FLOW-trajectory`
+io ▶ `FLOW-metric-policy` · io ◀ `FLOW-trajectory`
 
 ### 2.7  `ACTOR-opencode` — OpenCode — headless Execution-Runtime
 
 OpenCode-Sidecar (BYOK): headless Agent-Runtime, agent-agnostischer MCP-stdio-Client; treibt Spec/Impl autonom. graphcode ist OpenCode-executed (verriegelt). Claude Code = der interaktive Zwillings-Client.
 
-io ▶ `FLOW-steering-trigger` · `UC-code-quality` · `UC-deterministic-steering` · io ◀ `FLOW-round-prompt`
+io ▶ `FLOW-mutate-cmd` · `FLOW-steering-trigger` · io ◀ `FLOW-round-prompt`
 
 ### 2.8  `ACTOR-systems-engineer` — Systems Engineer
 
 Kunde: arbeitet auf Architektur-/Nutzen-Ebene (UC/REQ/FUNC/FCHAIN), delegiert Realisierung an gegatete Agenten. Die WAS-Ebene.
 
-io ▶ `FLOW-authoring-request` · `FLOW-skill-request` · `UC-code-quality` · `UC-efficient-testing` · `UC-reduced-llm` · io ◀ `FLOW-skill-report`
+io ▶ `FLOW-authoring-request` · `FLOW-skill-request` · io ◀ `FLOW-skill-report` · `FLOW-test-selection` · `FLOW-violations`
 
 ### 2.9  `ACTOR-vibe-coder` — Vibe Coder
 
 Kunde: denkt in Architektur + Kundennutzen, delegiert Code-Realisierung an graphcode-kontrollierte Agenten. Die WAS-Ebene.
 
-io ▶ `UC-code-quality` · `UC-efficient-testing` · `UC-reduced-llm` · io ◀ —
+io ▶ `FLOW-cli-command` · io ◀ —
 
 ## 3  Use Cases & Verhalten
 
 ### 3.1  `UC-code-quality` — Jede Aenderung geht durchs Gate
 
 Als Entwickler will ich, dass jede Aenderung, meine wie die eines Agenten, durch dasselbe Apply-Gate laeuft und gegen dieselben Regeln geprueft wird.
-
-io ◀ `ACTOR-claude-code` · `ACTOR-dashboard` · `ACTOR-developer` · `ACTOR-facilitating-agent` · `ACTOR-graphify` · `ACTOR-opencode` · `ACTOR-systems-engineer` · `ACTOR-vibe-coder`
 
 #### 3.1.1  `FCHAIN-apply-gate` — Apply-Gate-Ablauf (Governed Mutation)
 
@@ -1008,8 +1006,6 @@ Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ 
 
 Als Entwickler will ich, dass der naechste Schritt aus deterministisch gemessenen Kenngroessen folgt und nicht aus einer Modell-Meinung, sodass jede Runde nachvollziehbar auf ein mehrdimensionales Ziel zulaeuft.
 
-io ◀ `ACTOR-developer` · `ACTOR-opencode`
-
 #### 3.2.1  `FCHAIN-skill-report` — Skill berichtet gemessenen Stand
 
 Ein Mensch ruft einen lesenden Skill; der Skill zieht die Messung aus den Lesewerkzeugen und gibt sie als Bericht zurueck.
@@ -1614,8 +1610,6 @@ Verification ◀ `TEST-executor-bestofn` (integration) · `TEST-target-profile` 
 
 Als Entwickler will ich nur die richtigen Tests laufen lassen: der Impact-/Abhängigkeitsgraph bestimmt das selektive Testset; „erledigt" = „nachgewiesen".
 
-io ◀ `ACTOR-developer` · `ACTOR-systems-engineer` · `ACTOR-vibe-coder`
-
 #### 3.3.1  `FCHAIN-impact-testing` — Impact-basierte Testauswahl
 
 Geändertes Element → graph_impact → exakt betroffene TEST-Knoten → bottom-up ausführen (REQ-Tests → FCHAIN → UC).
@@ -1723,8 +1717,6 @@ Verification ◀ `TEST-formate-binding` (integration) · `TEST-test-runnable-bin
 ### 3.4  `UC-graph-time-travel` — Graph-Stand pro Commit wiederherstellbar
 
 Als Entwickler will ich den Modellstand eines beliebigen Commits wiederherstellen, damit Modell und Code zu jedem Zeitpunkt zusammenpassen.
-
-io ◀ `ACTOR-developer`
 
 #### 3.4.1  `FCHAIN-merge-branches` — Zweig-Graphen konfliktfrei zusammenfuehren
 
@@ -2018,8 +2010,6 @@ Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (i
 
 Als Entwickler will ich den aktuellen Modellstand live mitlesen, ohne die Ansicht neu zu laden, damit ich die Wirkung jeder Aenderung sofort sehe.
 
-io ◀ `ACTOR-dashboard` · `ACTOR-developer`
-
 #### 3.5.1  `FCHAIN-live-update` — Live-Update-Kette (persist → emit → subscribe)
 
 Nach jeder Gate-Mutation: persist schreibt den Graphen nach Disk-Kuzu, makeUpdateEventHook emittiert das SSE-invalidate-Event (FLOW-live-event); die Host-Bridge broadcastet den versionierten Diff an die Viewer, die stdio-Tool-Schicht invalidiert ihren Response-Cache, das Dashboard laedt die betroffenen Domains ohne Reload nach. Integrationstest: TEST-live-view via REQ-mutation-emits-event.
@@ -2242,13 +2232,9 @@ Verification ◀ `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-serv
 
 Als Betreiber des Regelwerks will ich an den aufgezeichneten Gate-Entscheidungen ablesen, welche Regel bei wem wie oft blockt, damit ich Schwellen und Prompt-Vorlagen an Messwerten justiere statt an Vermutungen.
 
-io ◀ `ACTOR-developer`
-
 ### 3.7  `UC-model-exchange` — Modell ein- und ausgeben
 
 Als Entwickler will ich Modellstand aus Fremdquellen einlesen und als prueffaehiges Dokument herausgeben, damit Graph, Code und Dokumentation eine Quelle haben.
-
-io ◀ `ACTOR-developer`
 
 #### 3.7.1  `FCHAIN-doc-export` — Doc-Export (stdio → exporter)
 
@@ -2577,8 +2563,6 @@ Verification ◀ `TEST-capture` (integration) · `TEST-import-code-verb` (integr
 ### 3.8  `UC-reduced-llm` — Mit kleinem oder lokalem Modell arbeiten
 
 Als Entwickler will ich anspruchsvolle Aenderungen mit einem kleinen oder lokalen Modell fahren, weil Gate und praezise Graph-Abfragen die Arbeit tragen, die sonst das Modell leisten muesste.
-
-io ◀ `ACTOR-claude-code` · `ACTOR-developer` · `ACTOR-learning-engine` · `ACTOR-systems-engineer` · `ACTOR-vibe-coder`
 
 #### 3.8.1  `FCHAIN-advisory-roundtrip` — Advisory Roundtrip (Read -> Status -> Propose -> Apply)
 
@@ -2959,8 +2943,6 @@ Verification ◀ `TEST-mutate-gate` (integration) · `TEST-nd-similarity` (unit)
 ### 3.9  `UC-repo-lifecycle` — Repo einrichten und betreiben
 
 Der Entwickler richtet ein Repo ein, faehrt Laeufe darin und beendet die Sitzung; danach ist das Repo arbeitsfaehig und kein Prozess bleibt zurueck.
-
-io ◀ `ACTOR-developer`
 
 #### 3.9.1  `FCHAIN-repo-lifecycle` — Repo-Lebenszyklus
 
@@ -5424,7 +5406,7 @@ io ◀ `FUNC-arch-fitness` · io ▶ `FUNC-rank-candidates` · schema ▶ `SCHEM
 
 Auftrag des Menschen an einen Autoren-Skill, mit Absicht und Zielausschnitt.
 
-io ◀ `ACTOR-systems-engineer` · io ▶ `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-import-code` · `FUNC-import-doc` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` · schema ▶ `SCHEMA-query-params`
+io ◀ `ACTOR-facilitating-agent` · `ACTOR-systems-engineer` · io ▶ `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-import-code` · `FUNC-import-doc` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` · schema ▶ `SCHEMA-query-params`
 
 ### 4.4  `FLOW-bootstrap-result` — Bootstrap-Result
 
@@ -5454,7 +5436,7 @@ io ◀ `FUNC-decode` · io ▶ `FUNC-mutate` · schema ▶ `SCHEMA-ontology-grap
 
 mcp / host / run / import-code / rewind / init / update / remove / skills sync.
 
-io ◀ `ACTOR-developer` · `FUNC-cli-dispatch` · io ▶ `FUNC-bootstrap` · `FUNC-claim-store-lock` · `FUNC-cli-dispatch` · `FUNC-collect-status` · `FUNC-create-harness` · `FUNC-gve-supervise` · `FUNC-harness-cli` · `FUNC-import-code-verb` · `FUNC-rewind` · `FUNC-run-executor` · `FUNC-run-verb` · `FUNC-upgrade` · schema ▶ `SCHEMA-cli-command`
+io ◀ `ACTOR-developer` · `ACTOR-vibe-coder` · `FUNC-cli-dispatch` · io ▶ `FUNC-bootstrap` · `FUNC-claim-store-lock` · `FUNC-cli-dispatch` · `FUNC-collect-status` · `FUNC-create-harness` · `FUNC-gve-supervise` · `FUNC-harness-cli` · `FUNC-import-code-verb` · `FUNC-rewind` · `FUNC-run-executor` · `FUNC-run-verb` · `FUNC-upgrade` · schema ▶ `SCHEMA-cli-command`
 
 ### 4.9  `FLOW-committed-graph` — Committed-Graph
 
@@ -5598,7 +5580,7 @@ io ◀ `FUNC-merge-nodes` · io ▶ `ACTOR-developer` · schema ▶ `SCHEMA-onto
 
 Die geltenden Urteilsschwellen: wie der Mensch sie in graphcode.config.jsonc schreibt und wie sie nach dem Auffuellen mit DEFAULT_METRIC_POLICY gelten. Dieselbe Form in zwei Fassungen, deshalb ein Vertrag. Keine Schwelle steht als Literal im Regelcode.
 
-io ◀ `ACTOR-developer` · `FUNC-load-config` · io ▶ `FUNC-evaluate-rules` · `FUNC-load-config` · `FUNC-take-steering-snapshot` · schema ▶ `SCHEMA-metric-policy`
+io ◀ `ACTOR-developer` · `ACTOR-learning-engine` · `FUNC-load-config` · io ▶ `FUNC-evaluate-rules` · `FUNC-load-config` · `FUNC-take-steering-snapshot` · schema ▶ `SCHEMA-metric-policy`
 
 ### 4.33  `FLOW-migrated-graph` — Migrated-Graph
 
@@ -5622,7 +5604,7 @@ io ◀ `FUNC-module-metrics` · io ▶ `ACTOR-dashboard` · `FUNC-evaluate-rules
 
 Edit-Op (add/update/delete) vom Agent/Mensch.
 
-io ◀ `ACTOR-claude-code` · `ACTOR-developer` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-extract-mutate` · `FUNC-host-socket` · `FUNC-preflight` · `FUNC-run-executor` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` · io ▶ `FUNC-host-socket` · `FUNC-mutate` · `FUNC-preflight` · schema ▶ `SCHEMA-mutate-command`
+io ◀ `ACTOR-claude-code` · `ACTOR-developer` · `ACTOR-opencode` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-extract-mutate` · `FUNC-host-socket` · `FUNC-preflight` · `FUNC-run-executor` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` · io ▶ `FUNC-host-socket` · `FUNC-mutate` · `FUNC-preflight` · schema ▶ `SCHEMA-mutate-command`
 
 ### 4.37  `FLOW-parsed-graph` — Parsed-Graph
 
@@ -5748,7 +5730,7 @@ io ◀ `FUNC-target-profile` · `FUNC-target-profile-load` · io ▶ `FUNC-gener
 
 Das minimale selektive Laufkommando mit den aufgeloesten TESTs, den Coverage-Zahlen und dem, was unaufloesbar blieb.
 
-io ◀ `FUNC-deduce-tests` · io ▶ `ACTOR-claude-code` · schema ▶ `SCHEMA-test-selection`
+io ◀ `FUNC-deduce-tests` · io ▶ `ACTOR-claude-code` · `ACTOR-developer` · `ACTOR-systems-engineer` · schema ▶ `SCHEMA-test-selection`
 
 ### 4.58  `FLOW-trajectory` — Trajectory/Outcome
 
@@ -5778,7 +5760,7 @@ io ◀ `FUNC-broadcast-diff` · `FUNC-serve-sse` · io ▶ `ACTOR-dashboard` · 
 
 Regel-Violations {ruleId,severity,elementId}.
 
-io ◀ `FUNC-check-code-conformance` · `FUNC-evaluate-rules` · `FUNC-take-steering-snapshot` · io ▶ `FUNC-compute-phase-readiness` · `FUNC-health-endpoint` · `FUNC-save-graph` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · schema ▶ `SCHEMA-mutate-result`
+io ◀ `FUNC-check-code-conformance` · `FUNC-evaluate-rules` · `FUNC-take-steering-snapshot` · io ▶ `ACTOR-systems-engineer` · `FUNC-compute-phase-readiness` · `FUNC-health-endpoint` · `FUNC-save-graph` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · schema ▶ `SCHEMA-mutate-result`
 
 ## 5  Schemata
 

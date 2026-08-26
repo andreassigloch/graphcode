@@ -7420,34 +7420,6 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
-      "source": "ACTOR-claude-code",
-      "target": "UC-code-quality",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "ACTOR-claude-code",
-      "target": "UC-reduced-llm",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "ACTOR-dashboard",
-      "target": "UC-code-quality",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "ACTOR-dashboard",
-      "target": "UC-live-graph-view",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-17T00:00:00.000Z"
-    },
-    {
       "source": "ACTOR-developer",
       "target": "FLOW-branch-graphs",
       "type": "io",
@@ -7505,64 +7477,9 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
-      "source": "ACTOR-developer",
-      "target": "UC-code-quality",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "ACTOR-developer",
-      "target": "UC-deterministic-steering",
-      "type": "io"
-    },
-    {
-      "source": "ACTOR-developer",
-      "target": "UC-efficient-testing",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "ACTOR-developer",
-      "target": "UC-graph-time-travel",
-      "type": "io"
-    },
-    {
-      "source": "ACTOR-developer",
-      "target": "UC-live-graph-view",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-17T00:00:00.000Z"
-    },
-    {
-      "source": "ACTOR-developer",
-      "target": "UC-loop-closure",
-      "type": "io"
-    },
-    {
-      "source": "ACTOR-developer",
-      "target": "UC-model-exchange",
-      "type": "io"
-    },
-    {
-      "source": "ACTOR-developer",
-      "target": "UC-reduced-llm",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "ACTOR-developer",
-      "target": "UC-repo-lifecycle",
-      "type": "io"
-    },
-    {
       "source": "ACTOR-facilitating-agent",
-      "target": "UC-code-quality",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "target": "FLOW-authoring-request",
+      "type": "io"
     },
     {
       "source": "ACTOR-graphify",
@@ -7572,34 +7489,18 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
-      "source": "ACTOR-graphify",
-      "target": "UC-code-quality",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
       "source": "ACTOR-learning-engine",
-      "target": "UC-reduced-llm",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "ACTOR-opencode",
-      "target": "FLOW-steering-trigger",
+      "target": "FLOW-metric-policy",
       "type": "io"
     },
     {
       "source": "ACTOR-opencode",
-      "target": "UC-code-quality",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-17T00:00:00.000Z"
+      "target": "FLOW-mutate-cmd",
+      "type": "io"
     },
     {
       "source": "ACTOR-opencode",
-      "target": "UC-deterministic-steering",
+      "target": "FLOW-steering-trigger",
       "type": "io"
     },
     {
@@ -7613,46 +7514,9 @@
       "type": "io"
     },
     {
-      "source": "ACTOR-systems-engineer",
-      "target": "UC-code-quality",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "ACTOR-systems-engineer",
-      "target": "UC-efficient-testing",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "ACTOR-systems-engineer",
-      "target": "UC-reduced-llm",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
       "source": "ACTOR-vibe-coder",
-      "target": "UC-code-quality",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "ACTOR-vibe-coder",
-      "target": "UC-efficient-testing",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "ACTOR-vibe-coder",
-      "target": "UC-reduced-llm",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "target": "FLOW-cli-command",
+      "type": "io"
     },
     {
       "source": "CR-GC-100",
@@ -12720,6 +12584,16 @@
     },
     {
       "source": "FLOW-test-selection",
+      "target": "ACTOR-developer",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-test-selection",
+      "target": "ACTOR-systems-engineer",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-test-selection",
       "target": "SCHEMA-test-selection",
       "type": "relation"
     },
@@ -12809,6 +12683,11 @@
       "source": "FLOW-viewer-stream",
       "target": "SCHEMA-update-event",
       "type": "relation"
+    },
+    {
+      "source": "FLOW-violations",
+      "target": "ACTOR-systems-engineer",
+      "type": "io"
     },
     {
       "source": "FLOW-violations",
@@ -17967,5 +17846,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 207
+  "graphVersion": 208
 }
