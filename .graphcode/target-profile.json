@@ -1,0 +1,18 @@
+{
+  "weights": {
+    "coherence": 1,
+    "modifiability": 0.7,
+    "faultTolerance": 0.3,
+    "flowEfficiency": 0,
+    "viability": 0,
+    "scalability": 0
+  },
+  "intentAnchors": [
+    "gate-only-writes",
+    "graph-ist-ssot",
+    "agent-agnostisch",
+    "regeln-erzwungen-statt-dokumentiert",
+    "keine-parallelen-pfade",
+    "kuzu-single-writer"
+  ]
+}
