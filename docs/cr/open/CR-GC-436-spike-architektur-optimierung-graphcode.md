@@ -181,3 +181,94 @@ MOD-Kohäsion steigt. Das ist ein Befund über die **Metrik** (zwei Nenner, s. o
 1. `tests/arch.optimization-dry-run.spike.test.ts` — der Spike-Treiber (Lauf A + Lauf B)
 2. `scripts/spike-arch-code-impact.mjs` — die Code-Evaluierung (realRef → Datei → Zielmodul)
 3. dieser CR (Ergebnis-Nachtrag)
+
+---
+
+# Ergebnis-Nachtrag (2026-08-26, Auftraggeber-Zuschnitt)
+
+**Geänderter Zuschnitt (Auftraggeber, wörtlich):** Start auf den beiden Top-Sichten
+(Top-Level-Funktionssicht, Top-MOD-Sicht), Ziel Kreuz-und-quer-Verlinkungen und parallele
+Pfade vermeiden, **Verbesserungsvorschlag ohne Code-Änderung**, Bewertung aus Coder-Sicht —
+„es muss die Codequalität sichtbar verbessern, nicht nur die 2 oder mehr Kennzahlen
+optimieren". Damit entfällt Lauf A (greedy, hätte ohne CR-GC-435 ohnehin bei Kill 1
+geendet); Lauf B wurde als **In-Memory-Simulation** gefahren (kein Gate, kein Store —
+noch trockener als geplant). Skripte: `scripts/spike-arch-top-views.mjs` (Vermessung),
+`scripts/spike-arch-handschnitt.mjs` (Vorschlag vorher/nachher). SSOT nachweislich
+unangetastet (nur Lesezugriff, `git status` sauber).
+
+**Schritt 0:** contracts 9.1.0 (Link-Modus, `aise local on`), graphVersion 208,
+CR-GC-435 offen. Baseline-Verstöße: unverändert gegenüber der Ausgangslage-Tabelle.
+Die „72 Verbindungen" aus dem Auftrag waren mit keiner der drei Zählweisen reproduzierbar
+(Blöcke ohne ACTORen: 53 Kanten / 80 Instanzen · mit ACTORen: 106 / 163 · gve-Netzkanten
+zugeklappt: 101) — vermutlich ein UI-Zustand mit teilgeöffneten Blöcken; die Zählweise
+steht deshalb an jeder Zahl.
+
+## Gemessen (graphVersion 208)
+
+| | vorher | nachher (Handschnitt) |
+|---|---|---|
+| Blatt-Verbindungen intern | 35 / 204 = **17,2 %** | 54 / 275 = **19,6 %** |
+| Q deklarierter Schnitt (CNM-Referenz 0,60) | **−0,016** | **0,003** |
+| Sicht 1: Kanten / parallel-überzählig / bidirektional | 53 / 27 / 15 | 54 / 22 / 16 |
+| Sicht 2: MOD-Paare / Kanten | 47 / 62 | 40 / 55 |
+| Module mit 0 internen Verbindungen | 5 | 2 (surface bewusst, live strukturell) |
+
+Handschnitt = 8 Ziel-Module aus den CNM-Communities (store · gate · codec · mcp-tools ·
+steering · views · cli · live, plus agent-surface und extern metrics-engine), Splitter-Module
+aufgelöst, Blöcke zu ihren Kindern, drei code-gedeckte FLOW-Konsolidierungen
+(5 Mess-Flows → steering-snapshot, fit-advisory+steering-delta → gate-verdict,
+graph-snapshot → graph-state).
+
+## Die drei tragenden Befunde
+
+1. **Der deklarierte Schnitt ist statistisch Zufall.** Q=−0,016 gegen eine natürliche
+   Community-Struktur von Q=0,595. Die These der Ausgangslage („Namensvergabe") ist belegt.
+2. **Umhängen allein bewegt fast nichts.** Der beste Handschnitt hebt den internen Anteil
+   von 17,2 % auf 19,6 % und lässt Q bei ≈0. Ursache ist kein schlechter Schnitt, sondern
+   die Systemform: graphcode ist eine Pipeline um einen geteilten Zustand (`FLOW-graph-state`:
+   13 FUNCs über 9 Module; `mutate-cmd`, `cli-command`, `committed-graph` ähnlich). Ein
+   Substrat, bei dem alles den Graphen liest, hat wenig modulinterne Flüsse — egal wie man
+   die Modulnamen verteilt.
+3. **Die Kennzahl ist hub-empfindlich — die Falle aus dem Auftrag, nachgewiesen.** Die
+   FLOW-Konsolidierung erzeugte +71 abgeleitete „Verbindungen" (204→275), weil Paare als
+   producer×consumer je FLOW gezählt werden — im Code entsteht dabei **keine** neue Kopplung.
+   Wer auf die Ratio optimiert, kann sie durch Flow-Splitting verbessern und durch ehrliche
+   Bündelung verschlechtern. Zweitbefund derselben Klasse: Pipeline-/Adapter-Module (live)
+   messen strukturell 0 intern. → Messproblem, gehört in die CR-SM-223-Validierung.
+
+## Coder-Bewertung (die geforderte Hälfte)
+
+**Was Codequalität sichtbar verbessert — und was der Spike als Vorlage liefert:**
+
+- **Verzeichnis-Abbildung des 8er-Schnitts** (= CR-GC-429 §4): 58 flache `src/`-Dateien in
+  die 8 Modulverzeichnisse. Das ist der eine Umbau, den ein Coder sofort sieht (Navigation,
+  Ownership, Import-Richtung wird im Pfad lesbar). Er hängt am Dateisystem, nicht an
+  Graph-Umhängungen. Umfang: ~50 Dateien bewegen, Importe mechanisch nachziehen — in
+  ≤6-Dateien-CRs je Zielverzeichnis schneidbar; `src/index.ts`-Oberfläche bleibt (nur
+  interne Importpfade ändern sich).
+- **`harness.ts`-Split store/gate:** der Schnitt trennt Lifecycle/Store von mutate/Regel-Lauf —
+  heute eine Datei. Realer Datei-Split, ~3–4 Dateien, echte Verantwortungstrennung.
+- **Flow-Konsolidierung Modell→Code-Ehrlichkeit:** die ×8-Parallelkante
+  `messwerk→goal-steerer` bündelt der Code längst (`SteeringSnapshot`, `MutateResult` mit
+  fitAdvisory/steeringDelta). Das Modell auf die Code-Bündel zu ziehen kostet keinen Code
+  und nimmt Sicht 1 fünf überzählige Parallelkanten.
+- **Splitter-Module auflösen** (hooks/schema-migration/conformance/element-slice/
+  completeness): Kartenpflege, Dateien liegen schon richtig — 0 Dateibewegungen.
+
+**Was nur Kennzahlen bewegt — abgelehnt:**
+
+- Blöcke/skills umallozieren: `MOD-skills` sind 25 Markdown-Treiber in **einem** Verzeichnis
+  (`.claude/commands/`) — jede Verteilung auf Fach-Module widerspräche der Platte. 0-Kohäsion
+  ist dort Kategorie (Bedienschicht), kein Defekt → umbenennen in `MOD-agent-surface`, fertig.
+- Optimierung auf die Kohäsions-Ratio: siehe Befund 3.
+
+## Entscheidungsvorlage
+
+**No-Go** für die Spike-Frage im engen Sinn („Modulschnitt allein durch Umhängen von
+Allokationen messbar verbessern"): tragende Zahl **17,2 % → 19,6 %** bei Q≈0 —
+Kill-Kriterium 2. **GO-Empfehlung** für die drei code-getragenen Ableger, die der Spike
+als Nebenprodukt spezifiziert hat: (a) CR-GC-429 §4 mit dem 8er-Schnitt als Zielbild,
+(b) `harness.ts`-Split store/gate, (c) Flow-Konsolidierung + Splitter-/Block-Bereinigung
+als Modellpflege (braucht CR-GC-435 fürs Umhängen). Dazu der Metrik-Befund an
+sigloch-modules (Hub-Empfindlichkeit des Kohäsions-Nenners, Pipeline-Null).
+Entscheidung liegt beim Auftraggeber.
