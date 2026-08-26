@@ -27,7 +27,12 @@ import { FormatECodec, SE_DESCRIPTOR, FileOperationsLog } from '@sigloch/graph-a
 import { RULES_VERSION } from '@sigloch/contracts/se';
 import type { MutateCommand, MutateResult, StaleDelta, StaleDeltaEntry } from '@sigloch/contracts/harness';
 import { GraphCodeCodec } from './codec.js';
-import { materializeTrajectory } from './emit.js';
+import {
+  materializeTrajectory,
+  type EditSource,
+  type MutationTrigger,
+  type TrajectoryStamps,
+} from './emit.js';
 // The per-repo workspace dir is named ONCE (scaffold-templates); the feed lands in
 // graphcode's own workspace, not the predecessor's `.aimprove/` (CR-GC-330).
 import { GRAPHCODE_DIR } from './scaffold-templates.js';
@@ -161,6 +166,16 @@ function readRelayedPrompt(
   return mine.length === 1 ? mine[0] : null;
 }
 
+/** A template edit as graph_suggest delivers it — the identity editSource matches on. */
+export interface TemplateEdit {
+  source: string;
+  target: string;
+  type: string;
+}
+
+/** An audit entry plus the CR-GC-434 trigger stamps (JSONL passes them through verbatim). */
+export type StampedAuditEntry = AuditEntry & TrajectoryStamps;
+
 /** Everything a tool group needs; the state behind it exists once per bound registry. */
 export interface ToolContext {
   readonly harness: GraphCodeHarness;
@@ -171,8 +186,34 @@ export interface ToolContext {
   readonly gcCodec: GraphCodeCodec;
   /** Read accessor for the applied-batch counter (never a settable field). */
   graphVersion(): number;
-  /** The ONLY writer of the version + the audit log (no audit bypass, CR-GC-232). */
-  recordAudit(consumerId: string, result: MutateResult, commands?: MutateCommand[]): Promise<void>;
+  /**
+   * The ONLY writer of the version + the audit log (no audit bypass, CR-GC-232).
+   * `stamps` (CR-GC-434) carries what only the GATE PATH can determine — the
+   * violations the batch closed (respondsTo) and whether it was a delivered
+   * template edit (editSource); `trigger` and `consultedTools` are derived HERE,
+   * out of band, from the same provenance the record already carries.
+   */
+  recordAudit(
+    consumerId: string,
+    result: MutateResult,
+    commands?: MutateCommand[],
+    stamps?: Pick<TrajectoryStamps, 'respondsTo' | 'editSource'>,
+  ): Promise<void>;
+  /**
+   * Note a READ tool that completed (CR-GC-434) — names only, no payload, no second
+   * audit surface. Drained onto the next recorded mutation as `consultedTools`.
+   * Shares the CR-GC-354 single-session assumption: one context, one writing session.
+   */
+  noteConsulted(toolName: string): void;
+  /**
+   * Note the template edits graph_suggest DELIVERED (CR-GC-434) — the identity set
+   * `classifyEditSource` matches against. Session-local by construction: a template
+   * delivered by another process cannot be recognized and stamps 'authored'
+   * (a documented false negative, never a guess in the other direction).
+   */
+  noteTemplateEdits(edits: TemplateEdit[]): void;
+  /** 'suggestion-template' iff the whole batch is delivered template edits; else 'authored'. */
+  classifyEditSource(commands: MutateCommand[]): EditSource;
   /**
    * Audit a dryRun preview as `operation:'validate'` (CR-GC-276, F2-Evidenz):
    * Vorschlag + Verdict landen im Log, die Version bewegt sich NICHT (nichts
@@ -232,6 +273,62 @@ export function createToolContext(
     _origin = { ...origin };
   }
 
+  // -------------------------------------------------------------------------
+  // Trigger stamps (CR-GC-434) - session-local recording state.
+  // -------------------------------------------------------------------------
+
+  /** Read tools completed since the last recorded mutation (names, first-call order). */
+  let _consulted: string[] = [];
+  function noteConsulted(toolName: string): void {
+    if (!_consulted.includes(toolName)) _consulted.push(toolName);
+  }
+
+  const templateEditKey = (e: TemplateEdit): string => `${e.source}|${e.target}|${e.type}`;
+  /** Template edits graph_suggest delivered in THIS session (identity set for editSource). */
+  const _deliveredTemplateEdits = new Set<string>();
+  function noteTemplateEdits(edits: TemplateEdit[]): void {
+    for (const e of edits) _deliveredTemplateEdits.add(templateEditKey(e));
+  }
+
+  /**
+   * 'suggestion-template' iff the batch is non-empty and EVERY command is an
+   * add-edge matching a template edit graph_suggest delivered in this session.
+   * Everything else is by definition the author's own formulation - including a
+   * template edit delivered by another process, which this session cannot
+   * recognize (documented false negative; the safe direction).
+   */
+  function classifyEditSource(commands: MutateCommand[]): EditSource {
+    if (commands.length === 0) return 'authored';
+    const allTemplated = commands.every(
+      (cmd) =>
+        cmd.op === 'add-edge' &&
+        _deliveredTemplateEdits.has(
+          templateEditKey({ source: cmd.edge.sourceId, target: cmd.edge.targetId, type: cmd.edge.edgeType }),
+        ),
+    );
+    return allTemplated ? 'suggestion-template' : 'authored';
+  }
+
+  /**
+   * The prompt identity of the LAST recorded mutation - the freshness anchor for
+   * `trigger`: a mutation under a prompt not seen before is 'human-order', every
+   * further one under the same prompt is 'agent-round'. Previews do not consume
+   * freshness (a dryRun is consultation, not mutation).
+   */
+  let _lastPromptIdentity: string | null = null;
+  function triggerStamp(relayed: { sessionId: string; prompt: string } | null): { trigger?: MutationTrigger } {
+    // Same precedence as provenance(): an explicit origin prompt wins over the relay.
+    const identity = _origin.intent
+      ? `origin:${_origin.intent}`
+      : relayed
+        ? `relay:${relayed.sessionId}:${relayed.prompt}`
+        : null;
+    if (identity === null) return {}; // no prompt known => NOT RECORDED, never guessed
+    const fresh = identity !== _lastPromptIdentity;
+    _lastPromptIdentity = identity;
+    return { trigger: fresh ? 'human-order' : 'agent-round' };
+  }
+
   /**
    * The provenance half of a record (CR-GC-354): who, and on which prompt.
    *
@@ -241,8 +338,14 @@ export function createToolContext(
    * `intentTruncated` appears only when a cut actually happened: emitting `false` on the
    * 372-of-379 records that fit would be noise claiming to be information.
    */
-  function provenance(): Pick<AuditEntry, 'sessionId' | 'model' | 'intent' | 'intentTruncated'> {
-    const relayed = _origin.intent ? null : readRelayedPrompt(harness.getRepoRoot(), _ownerPid);
+  /** The relay read for the CURRENT record - computed once, shared by provenance + trigger. */
+  function currentRelay(): { sessionId: string; prompt: string } | null {
+    return _origin.intent ? null : readRelayedPrompt(harness.getRepoRoot(), _ownerPid);
+  }
+
+  function provenance(
+    relayed: { sessionId: string; prompt: string } | null,
+  ): Pick<AuditEntry, 'sessionId' | 'model' | 'intent' | 'intentTruncated'> {
     const out: Pick<AuditEntry, 'sessionId' | 'model' | 'intent' | 'intentTruncated'> = {
       // A relayed prompt brings the CLIENT's session id, which is strictly better provenance
       // than our minted one: it is the same id that names the transcript in ~/.claude/projects,
@@ -295,9 +398,20 @@ export function createToolContext(
     consumerId: string,
     result: MutateResult,
     commands?: MutateCommand[],
+    stamps?: Pick<TrajectoryStamps, 'respondsTo' | 'editSource'>,
   ): Promise<void> {
     if (result.success) _graphVersion += 1;
-    const entry: AuditEntry = {
+    const relayed = currentRelay();
+    // CR-GC-434: drain the consultation window - the reads since the LAST recorded
+    // mutation belong to THIS one. Always an array on a mutate record: [] is the
+    // determined statement "provably no consultation", never a gap. respondsTo /
+    // editSource come from the gate path when it could determine them; absent
+    // otherwise (e.g. a merge-replayed foreign batch's editSource) - the CR-GC-354
+    // asymmetry, never a guess. Raw in-process harness.mutate() bypassing the tool
+    // layer stays the documented CR-GC-252 gap: no log entry, no feed, no stamps.
+    const consultedTools = _consulted;
+    _consulted = [];
+    const entry: StampedAuditEntry = {
       id: `audit-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       timestamp: new Date().toISOString(),
       consumerId,
@@ -308,7 +422,11 @@ export function createToolContext(
       graphVersion: _graphVersion,
       commands,
       ...positiveHalf(result),
-      ...provenance(),
+      ...provenance(relayed),
+      consultedTools,
+      ...triggerStamp(relayed),
+      ...(stamps?.respondsTo !== undefined ? { respondsTo: stamps.respondsTo } : {}),
+      ...(stamps?.editSource !== undefined ? { editSource: stamps.editSource } : {}),
     };
     await auditLog.record(entry);
     // Re-project the feed from the log as the single source (CR-252). The write
@@ -339,7 +457,9 @@ export function createToolContext(
       graphVersion: _graphVersion,
       commands,
       ...positiveHalf(result),
-      ...provenance(),
+      // CR-GC-434: NO stamps on a preview - a dryRun is consultation, not mutation.
+      // It neither drains the consulted window nor consumes prompt freshness.
+      ...provenance(currentRelay()),
     };
     await auditLog.record(entry);
     await materializeTrajectory(auditLog, join(harness.getRepoRoot(), GRAPHCODE_DIR));
@@ -446,6 +566,9 @@ export function createToolContext(
     graphVersion: () => _graphVersion,
     recordAudit,
     recordPreview,
+    noteConsulted,
+    noteTemplateEdits,
+    classifyEditSource,
     setOrigin,
     sessionId: () => _sessionId,
     ownerPid: () => _ownerPid,

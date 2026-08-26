@@ -55,6 +55,57 @@ export interface MCPTool<TInput = unknown, TOutput = unknown> {
 export type MCPToolRegistry = Record<string, MCPTool<any, any>>;
 
 // ---------------------------------------------------------------------------
+// Consultation tracking (CR-GC-434)
+// ---------------------------------------------------------------------------
+
+/**
+ * Tools whose calls are NOT consultation: the gated writes (they ARE the mutation
+ * the stamps describe, incl. graph_test_ingest) and graph_export (a file
+ * materialization, not steering input).
+ */
+const NON_CONSULTING_TOOLS = new Set([
+  'graph_mutate',
+  'graph_realize',
+  'graph_merge',
+  'graph_reseed',
+  'graph_test_ingest',
+  'graph_export',
+]);
+
+/**
+ * Wrap every READ tool so a completed call notes its NAME on the context
+ * (CR-GC-434 `consultedTools` — names only, no payload, no second audit surface).
+ * ONE wrapping point for all groups instead of per-tool edits; a throwing handler
+ * delivered nothing and is not noted. graph_suggest additionally registers the
+ * template edits it DELIVERED, the identity set `editSource` matches against —
+ * closing exactly the CR-GC-432 gap "ob das Template benutzt wurde, ist nirgends
+ * gestempelt".
+ */
+function withConsultationTracking(registry: MCPToolRegistry, ctx: ToolContext): MCPToolRegistry {
+  const wrapped: MCPToolRegistry = {};
+  for (const [name, tool] of Object.entries(registry)) {
+    if (NON_CONSULTING_TOOLS.has(name)) {
+      wrapped[name] = tool;
+      continue;
+    }
+    wrapped[name] = {
+      ...tool,
+      async handler(input: unknown) {
+        const out = await tool.handler(input);
+        ctx.noteConsulted(name);
+        if (name === 'graph_suggest') {
+          const suggestions = (out as { suggestions?: Array<{ edit?: { source: string; target: string; type: string } }> })
+            .suggestions;
+          ctx.noteTemplateEdits((suggestions ?? []).flatMap((s) => (s.edit ? [s.edit] : [])));
+        }
+        return out;
+      },
+    };
+  }
+  return wrapped;
+}
+
+// ---------------------------------------------------------------------------
 // Factory
 // ---------------------------------------------------------------------------
 
@@ -87,16 +138,21 @@ export function bindToolsWithContext(
 
   return {
     ctx,
-    registry: {
-      ...bindReadTools(ctx),
-      ...bindWriteTools(ctx),
-      ...bindReportTools(ctx),
-      ...bindAuditTools(ctx),
-      ...bindExportTools(ctx),
-      ...bindSuggestTools(ctx),
-      ...bindMetricsTools(ctx),
-      ...bindTestReportTools(ctx),
-    },
+    // CR-GC-434: one wrapping point for consultedTools/template-edit capture —
+    // the groups stay unchanged, the registry surface (names/schemas) is identical.
+    registry: withConsultationTracking(
+      {
+        ...bindReadTools(ctx),
+        ...bindWriteTools(ctx),
+        ...bindReportTools(ctx),
+        ...bindAuditTools(ctx),
+        ...bindExportTools(ctx),
+        ...bindSuggestTools(ctx),
+        ...bindMetricsTools(ctx),
+        ...bindTestReportTools(ctx),
+      },
+      ctx,
+    ),
   };
 }
 

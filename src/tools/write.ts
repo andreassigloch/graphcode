@@ -18,7 +18,36 @@ import { readBranchLog, replayBranchLog, type MergeReport } from '../merge.js';
 import type { MCPTool, MCPToolRegistry } from '../mcp-tools.js';
 import { computeSteeringDelta, takeSteeringSnapshot, type SteeringDelta } from '../steering-snapshot.js';
 import { stripViolationContext } from '../evaluation.js';
+import type { RespondsToViolation } from '../emit.js';
 import type { ToolContext } from '../tool-context.js';
+
+// -------------------------------------------------------------------------
+// respondsTo (CR-GC-434) — which pre-existing violation a mutation ANSWERED.
+// -------------------------------------------------------------------------
+
+/** Identity a violation keeps across a mutation: rule + element. */
+const violationIdentity = (v: RuleViolation): string => `${v.ruleId}|${v.elementId ?? ''}`;
+
+/**
+ * The gate violations (error/warning) present BEFORE a mutation and gone AFTER it —
+ * a measured before/after delta over `harness.evaluateRules()`, never an inference
+ * from hints or prompts. `info` findings are excluded: they are per-element
+ * confirmations (VR-01), and "answered an info" is noise, not an episode. [] means
+ * DETERMINED: this mutation closed nothing (the CR-GC-434 explicit empty).
+ */
+export function resolvedViolations(before: RuleViolation[], after: RuleViolation[]): RespondsToViolation[] {
+  const remaining = new Set(after.map(violationIdentity));
+  const seen = new Set<string>();
+  const out: RespondsToViolation[] = [];
+  for (const v of before) {
+    if (v.severity !== 'error' && v.severity !== 'warning') continue;
+    const key = violationIdentity(v);
+    if (remaining.has(key) || seen.has(key)) continue;
+    seen.add(key);
+    out.push({ ruleId: v.ruleId, ...(v.elementId ? { elementId: v.elementId } : {}) });
+  }
+  return out;
+}
 
 // -------------------------------------------------------------------------
 // Input schemas
@@ -210,10 +239,12 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
     'no baseVersion supplied — OCC check skipped (lost-update window). Pass the graphVersion ' +
     'your last read returned as baseVersion (CR-GC-233).';
 
-  const missingRefIds = (): Set<string> =>
+  // Takes the ALREADY-evaluated violation list (CR-GC-434): the same evaluateRules
+  // run now feeds both the missingRefs delta and the respondsTo stamp — one
+  // measurement, not two.
+  const missingRefIds = (violations: RuleViolation[]): Set<string> =>
     new Set(
-      harness
-        .evaluateRules()
+      violations
         // R-19 testRefs, R-20 FUNC realRef, R-26 SCHEMA realRef (CR-211/228) — the presence rules
         // whose binding graph_realize resolves; the delta confirms the realization.
         .filter((v) => v.ruleId === 'R-19' || v.ruleId === 'R-20' || v.ruleId === 'R-26')
@@ -314,6 +345,11 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
         // graph_readiness lesbar; die Doppel-Evaluierung pro echtem Write wäre
         // reine Kostenstelle ohne Konsument (Entscheidung dokumentiert im CR).
         const steeringBefore = input.dryRun ? takeSteeringSnapshot(harness.getGraph(), harness.getMetricPolicy(), harness.getFocusThreshold()) : null;
+        // respondsTo-Baseline (CR-GC-434) — NUR auf dem Apply-Pfad: der Preview
+        // trägt keine Stempel. Eine evaluateRules-Messung vor dem Gate; die
+        // Nachher-Seite fällt nur bei success an (bei Rejection ist der Zustand
+        // unverändert, das Delta wäre leer).
+        const respondsBaseline = input.dryRun ? null : harness.evaluateRules();
         // L2: identical semantics — delegate straight to the gate, no bypass.
         // Cast: MCP transports deserialize commands as plain objects; harness.mutate()
         // validates internally via MutateCommandSchema.
@@ -335,7 +371,13 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
           // und der Apply verliert die Namen.
           return { ...previewOut, graphVersion: graphVersion(), ...(nameWarning ? { nameWarning } : {}) };
         }
-        await recordAudit(input.consumerId, result, commands);
+        // CR-GC-434: die Gate-Pfad-Stempel — welche Alt-Violations der Batch
+        // schloss (gemessenes Vorher/Nachher-Delta) und ob er ein von
+        // graph_suggest gelieferter Template-Edit war.
+        await recordAudit(input.consumerId, result, commands, {
+          respondsTo: result.success ? resolvedViolations(respondsBaseline!, harness.evaluateRules()) : [],
+          editSource: ctx.classifyEditSource(commands),
+        });
         const out = input.violations === 'full' ? result : summarizeViolations(result);
         return {
           ...out,
@@ -432,7 +474,8 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
       }
 
       return serializeToolWrite(async () => {
-        const before = missingRefIds();
+        const beforeAll = harness.evaluateRules();
+        const before = missingRefIds(beforeAll);
         const stale = await occReject(input.consumerId, input.baseVersion, commands);
         if (stale) {
           return {
@@ -448,9 +491,15 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
           };
         }
         const result = await harness.mutate(commands);
+        const afterAll = harness.evaluateRules();
         // No audit bypass (CR-GC-232): realize writes are logged like any gated write.
-        await recordAudit(input.consumerId, result, commands);
-        const after = missingRefIds();
+        // CR-GC-434: a realize batch is built from the flat input — always 'authored';
+        // respondsTo is the same measured before/after delta as on graph_mutate.
+        await recordAudit(input.consumerId, result, commands, {
+          respondsTo: result.success ? resolvedViolations(beforeAll, afterAll) : [],
+          editSource: 'authored',
+        });
+        const after = missingRefIds(afterAll);
         return {
           success: result.success,
           tier: result.tier,
@@ -488,12 +537,25 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
       const logPath = isAbsolute(input.log) ? input.log : join(harness.getRepoRoot(), input.log);
       const entries = readBranchLog(logPath, input.sinceVersion);
       return serializeToolWrite(async () => {
+        // CR-GC-434: respondsTo per replayed batch — the batches are sequential, so
+        // each batch's before-state is the previous batch's after-state. editSource
+        // stays ABSENT: the batch was authored on the branch, this session cannot
+        // know whether a template produced it (absence = not recorded, never a guess).
+        let mergeBaseline = input.dryRun ? null : harness.evaluateRules();
         const report = await replayBranchLog(harness, entries, {
           dryRun: input.dryRun,
           // Real merge: every replayed batch lands in the TARGET's durable log like
           // any gated write (applied → version++, conflicted → logged rejected).
           // A dry run records NOTHING (byte-identical log guarantee).
-          onBatchResult: input.dryRun ? undefined : (result, commands) => recordAudit(input.consumerId, result, commands),
+          onBatchResult: input.dryRun
+            ? undefined
+            : async (result, commands) => {
+                const after = harness.evaluateRules();
+                await recordAudit(input.consumerId, result, commands, {
+                  respondsTo: result.success ? resolvedViolations(mergeBaseline!, after) : [],
+                });
+                mergeBaseline = after;
+              },
         });
         report.sinceVersion = input.sinceVersion;
         // Dry run: the gate's dryRun mode accumulated the preview in the in-memory

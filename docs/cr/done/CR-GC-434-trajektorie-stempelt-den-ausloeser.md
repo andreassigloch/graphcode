@@ -1,6 +1,6 @@
 # CR-GC-434 — Die Trajektorie stempelt den Auslöser, sonst bleibt Claim A unbeweisbar
 
-**Status:** open · **Angelegt:** 2026-08-26 · **Priorität: hoch — Voraussetzung für einen Kern-Claim**
+**Status:** done · **Angelegt:** 2026-08-26 · **Abgeschlossen:** 2026-08-26
 **Herkunft:** direkte Konsequenz aus CR-GC-432 (Falsifikation Claim A, Ergebnis: **nicht messbar**).
 
 ## Warum
@@ -52,15 +52,38 @@ heute lässt sich nicht einmal auszählen, ob `graph_suggest` in realen Runden j
 
 ## Akzeptanzkriterien
 
-- [ ] Jede applied Mutation trägt die vier Felder; fehlende Information ist **explizit leer**,
-      nie geraten (Test, vorher rot).
-- [ ] `trigger` unterscheidet nachweisbar die zwei Fälle — Test mit je einem echten Lauf.
-- [ ] `consultedTools` erfasst `graph_next_step`/`graph_suggest`; ein Lauf ohne Abruf ist als
-      solcher erkennbar.
-- [ ] Der raw-`mutate`-Pfad ohne Feed bleibt dokumentierte Lücke (CR-GC-252-Verhalten), nicht
-      still.
-- [ ] Mehraufwand je Mutation gemessen und genannt.
-- [ ] CR-GC-432 kann mit den neuen Stempeln **wiederholt** werden — das ist der Zweck.
+- [x] Jede applied Mutation trägt die vier Felder; fehlende Information ist **explizit leer**,
+      nie geraten (Test, vorher rot — `tests/trajectory-stamps.test.ts`, 6/6 erst rot, dann grün).
+- [x] `trigger` unterscheidet nachweisbar die zwei Fälle — Test mit je einem echten Lauf.
+- [x] `consultedTools` erfasst `graph_next_step`/`graph_suggest`; ein Lauf ohne Abruf ist als
+      solcher erkennbar (`[]`).
+- [x] Der raw-`mutate`-Pfad ohne Feed bleibt dokumentierte Lücke (CR-GC-252-Verhalten), nicht
+      still — benannt in `TrajectoryStamps` (emit.ts) und am `recordAudit`-Stempelblock.
+- [x] Mehraufwand je Mutation gemessen und genannt: **~82 ms je applied Mutation** auf dem realen
+      Repo-Graphen (688 Knoten / 1849 Kanten) — zwei zusätzliche `evaluateRules`-Läufe à 41 ms
+      (Vorher-Baseline + Nachher-Delta für `respondsTo`); Rejection: ein Lauf (~41 ms).
+- [x] CR-GC-432 kann mit den neuen Stempeln **wiederholt** werden — das ist der Zweck.
+
+## Umsetzung (2026-08-26)
+
+- **Semantik `trigger`:** mechanisch aus der Prompt-Identität (CR-GC-354/356-Provenance):
+  erste Mutation unter neuem verbatim Prompt = `human-order`, jede weitere unter demselben
+  Prompt = `agent-round`; ohne bekannten Prompt fehlt das Feld (Absenz = nicht erfasst).
+- **`respondsTo` ist eine Liste** von `{ruleId, elementId}`: ein Batch kann mehrere
+  Alt-Violations schließen — eine davon zu wählen wäre geraten. `[]` = gemessen „keine".
+  Population: `harness.evaluateRules()` (Gate-Regeln, error/warning; info ist Rauschen).
+- **`editSource`:** Batch = vollständig aus in DIESER Session von `graph_suggest` gelieferten
+  Template-Edits ⇒ `suggestion-template`, sonst `authored`. Merge-Replays fremder Batches
+  tragen KEIN `editSource` (nicht ermittelbar, nie geraten); `graph_test_ingest`-Records tragen
+  nur die zwei zentralen Stempel (`consultedTools`/`trigger`).
+- **dryRun-Previews** (operation `validate`) tragen keine Stempel: sie sind Konsultation,
+  leeren weder das consulted-Fenster noch verbrauchen sie Prompt-Frische.
+- **Projektion:** Stempel reiten lokal auf der `projectTrajectory`-Basiszeile
+  (`projectStamps`, emit.ts); Promotion in `@sigloch/learning-core.TrajectorySchema` =
+  Familie-Version-Bump, bewusst nicht lokal geforkt.
+- Dateien: `src/emit.ts` (Schema/Projektion), `src/tool-context.ts` (recordAudit-Stempel),
+  `src/tools/write.ts` (Gate-Pfad), `src/mcp-tools.ts` (Read-Tool-Erfassung, ein Wrap-Punkt),
+  `tests/trajectory-stamps.test.ts`. Suite: 123 Dateien / 971 Tests grün.
 
 ## Folge
 
