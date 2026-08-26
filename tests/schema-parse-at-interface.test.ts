@@ -22,10 +22,10 @@ import { join } from 'node:path';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 import { KuzuAdapter } from './helpers/store.js';
-import { GraphCodeHarness } from '../src/harness.js';
-import { bindToolsToHarness, type MCPToolRegistry } from '../src/mcp-tools.js';
-import { GenerationStep } from '../src/generate.js';
-import { runExecutor, ExecutorConfigSchema, type CallModel } from '../src/executor.js';
+import { GraphCodeHarness } from '../src/harness/harness.js';
+import { bindToolsToHarness, type MCPToolRegistry } from '../src/tools/mcp-tools.js';
+import { GenerationStep } from '../src/steering/generate.js';
+import { runExecutor, ExecutorConfigSchema, type CallModel } from '../src/executor/executor.js';
 import {
   fitAdvisoryOf,
   steeringDeltaOf,
@@ -33,7 +33,7 @@ import {
   focusDelta,
   totalDelta,
   rankCandidates,
-} from '../src/executor-rank.js';
+} from '../src/executor/executor-rank.js';
 
 // ---------------------------------------------------------------------------
 // SCHEMA-fit-advisory + SCHEMA-steering-delta — Ranking-Grenze (executor-rank)

@@ -27,15 +27,15 @@ import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { ALL_RULE_DEFS, DIMENSION_READINESS_NAME } from '@sigloch/contracts/se';
-import { GraphCodeHarness } from '../src/harness.js';
-import { bindToolsToHarness } from '../src/mcp-tools.js';
+import { GraphCodeHarness } from '../src/harness/harness.js';
+import { bindToolsToHarness } from '../src/tools/mcp-tools.js';
 import {
   evaluateAll,
   ruleCatalogs,
   unevaluatedRuleIds,
   SKIPPED_RULE_PREFIX,
   type EvaluationHarness,
-} from '../src/evaluation.js';
+} from '../src/conformance/evaluation.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 
 /**

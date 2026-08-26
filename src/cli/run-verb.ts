@@ -9,16 +9,16 @@
  *
  * @author andreas@siglochconsulting
  */
-import { createHarness } from './index.js';
-import { bindToolsWithContext } from './mcp-tools.js';
-import { deriveMemberName } from './mcp-server.js';
+import { createHarness } from '../index.js';
+import { bindToolsWithContext } from '../tools/mcp-tools.js';
+import { deriveMemberName } from '../tools/mcp-server.js';
 import {
   ExecutorConfigSchema,
   runExecutor,
   type CallModel,
   type ExecutorConfig,
   type ExecutorStats,
-} from './executor.js';
+} from '../executor/executor.js';
 
 /**
  * Env → ExecutorConfig. Explizit, keine stillen Fallbacks: fehlende

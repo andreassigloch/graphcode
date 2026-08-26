@@ -44,7 +44,7 @@ import {
   rmSync,
 } from 'node:fs';
 import { z } from 'zod/v4';
-import { KUZU_DIR } from './index.js';
+import { KUZU_DIR } from '../index.js';
 import {
   PACKAGE_NAME,
   PACKAGE_RANGE,

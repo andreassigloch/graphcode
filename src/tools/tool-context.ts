@@ -19,23 +19,23 @@ import { join } from 'node:path';
 import { readdirSync, readFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
-import type { GraphCodeHarness } from './harness.js';
+import type { GraphCodeHarness } from '../harness/harness.js';
 import type { AuditLog, AuditEntry, OperationsLog } from '@sigloch/graph-api-core';
 import { FormatECodec, SE_DESCRIPTOR, FileOperationsLog } from '@sigloch/graph-api-core';
 // CR-GC-314 REQ-A02: the rule-set version comes from the LOADED package, never from
 // config — otherwise the trail records a claim instead of a fact.
 import { RULES_VERSION } from '@sigloch/contracts/se';
 import type { MutateCommand, MutateResult, StaleDelta, StaleDeltaEntry } from '@sigloch/contracts/harness';
-import { GraphCodeCodec } from './codec.js';
+import { GraphCodeCodec } from '../codec/codec.js';
 import {
   materializeTrajectory,
   type EditSource,
   type MutationTrigger,
   type TrajectoryStamps,
-} from './emit.js';
+} from '../hooks/emit.js';
 // The per-repo workspace dir is named ONCE (scaffold-templates); the feed lands in
 // graphcode's own workspace, not the predecessor's `.aimprove/` (CR-GC-330).
-import { GRAPHCODE_DIR } from './scaffold-templates.js';
+import { GRAPHCODE_DIR } from '../cli/scaffold-templates.js';
 
 /**
  * Truncation policy for `AuditEntry.intent` (CR-GC-354). The CONTRACT says the prompt is

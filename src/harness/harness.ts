@@ -40,8 +40,8 @@ import {
   type MutateResult,
   type RuleViolation,
 } from '@sigloch/contracts/harness';
-import { HookSystem } from './hooks.js';
-import { impactedTests, TestImpactResultSchema } from './test-selection.js';
+import { HookSystem } from '../hooks/hooks.js';
+import { impactedTests, TestImpactResultSchema } from '../tools/test-selection.js';
 import { CONFIG_FILENAME, DEFAULT_CONFIG, type LoadedConfig } from './config.js';
 import {
   DEFAULT_GRAPH_JSON,
@@ -52,15 +52,15 @@ import {
   type OntologyJson,
 } from './harness-import.js';
 import { StoreLock } from './store-lock.js';
-import { listElements, type ElementFilter } from './element-slice.js';
+import { listElements, type ElementFilter } from '../element-slice/element-slice.js';
 import { setExportPending } from './export-marker.js';
-import { computeFitAdvisory, type FitAdvisory } from './fit-advisory.js';
+import { computeFitAdvisory, type FitAdvisory } from '../steering/fit-advisory.js';
 import {
   schemaFingerprint,
   readStoredFingerprint,
   writeStoredFingerprint,
   resetKuzuStore,
-} from './schema-guard.js';
+} from '../schema-migration/schema-guard.js';
 
 
 export class GraphCodeHarness {

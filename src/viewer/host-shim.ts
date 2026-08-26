@@ -22,7 +22,7 @@
  * @author andreas@siglochconsulting
  */
 import { createServer, type Server, type Socket } from 'node:net';
-import { beginProxiedCall, endProxiedCall } from './tool-context.js';
+import { beginProxiedCall, endProxiedCall } from '../tools/tool-context.js';
 import { rmSync } from 'node:fs';
 import type { AuditLog } from '@sigloch/graph-api-core';
 import {
@@ -31,8 +31,8 @@ import {
   type ShimRequest,
   type ShimResponse,
 } from '@sigloch/graphcode-client';
-import type { GraphCodeHarness } from './harness.js';
-import { bindToolsToHarness, type MCPToolRegistry } from './mcp-tools.js';
+import type { GraphCodeHarness } from '../harness/harness.js';
+import { bindToolsToHarness, type MCPToolRegistry } from '../tools/mcp-tools.js';
 
 // The CLIENT half (socket name, wire types, `callHost`) lives in
 // @sigloch/graphcode-client (CR-GC-264) so a consumer that only forwards tool

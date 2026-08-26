@@ -25,10 +25,10 @@ import { join } from 'node:path';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 import { KuzuAdapter } from './helpers/store.js';
-import { GraphCodeHarness } from '../src/harness.js';
-import { StoreOwnershipError } from '../src/store-lock.js';
-import { SessionLifecycle } from '../src/session-lifecycle.js';
-import { registerSession, unregisterSession, liveSessions } from '../src/gve-sessions.js';
+import { GraphCodeHarness } from '../src/harness/harness.js';
+import { StoreOwnershipError } from '../src/harness/store-lock.js';
+import { SessionLifecycle } from '../src/cli/session-lifecycle.js';
+import { registerSession, unregisterSession, liveSessions } from '../src/cli/gve-sessions.js';
 
 const config = (repoRoot: string): HarnessConfig => ({
   repoRoot,

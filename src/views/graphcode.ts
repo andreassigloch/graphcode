@@ -14,7 +14,7 @@
  * @author andreas@siglochconsulting
  */
 import type { Graph, GraphNode } from '@sigloch/graph-api-core';
-import { generatedHeader, cell } from '../exporter.js';
+import { generatedHeader, cell } from './exporter.js';
 import { nodesOfType, nodeIndex, adjacency, reqKinds, status, ref, refList, topoOrderMilestones, testResult } from './helpers.js';
 
 // ---------------------------------------------------------------------------

@@ -25,17 +25,17 @@
 import { z } from 'zod/v4';
 import type { MutateResult } from '@sigloch/contracts/harness';
 import { targetFor, suggestEdits, type Suggestion } from '@sigloch/se-engine';
-import { toOntologyGraph } from '../conformance.js';
-import { generationStep, type GenerationStep } from '../generate.js';
+import { toOntologyGraph } from '../conformance/conformance.js';
+import { generationStep, type GenerationStep } from '../steering/generate.js';
 import {
   TargetWeightsSchema,
   loadTargetProfile,
   extractIntentAnchors,
   isIntentTooThin,
   persistIntentAnchors,
-} from '../target-profile.js';
-import type { MCPTool, MCPToolRegistry } from '../mcp-tools.js';
-import type { ToolContext } from '../tool-context.js';
+} from '../steering/target-profile.js';
+import type { MCPTool, MCPToolRegistry } from './mcp-tools.js';
+import type { ToolContext } from './tool-context.js';
 
 // -------------------------------------------------------------------------
 // Input schema

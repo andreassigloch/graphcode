@@ -9,8 +9,8 @@
  * @author andreas@siglochconsulting
  */
 import { ElementType } from '@sigloch/contracts/se';
-import type { MCPToolRegistry } from './mcp-tools.js';
-import type { GenerationStep } from './generate.js';
+import type { MCPToolRegistry } from '../tools/mcp-tools.js';
+import type { GenerationStep } from '../steering/generate.js';
 
 // ---------------------------------------------------------------------------
 // System-Prompt — bewusst ~1 Seite; die Methode kommt aus graph_generate.

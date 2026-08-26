@@ -15,7 +15,7 @@
  */
 import { describe, it, expect } from 'vitest';
 import type { Graph } from '@sigloch/graph-api-core';
-import { firstStepHint } from '../src/mcp-server.js';
+import { firstStepHint } from '../src/tools/mcp-server.js';
 
 function g(types: string[]): Graph {
   return {

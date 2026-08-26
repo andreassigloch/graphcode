@@ -20,9 +20,9 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import { GraphCodeHarness } from '../src/harness.js';
-import { bindToolsToHarness } from '../src/mcp-tools.js';
-import { isExportPending, EXPORT_PENDING_REL } from '../src/export-marker.js';
+import { GraphCodeHarness } from '../src/harness/harness.js';
+import { bindToolsToHarness } from '../src/tools/mcp-tools.js';
+import { isExportPending, EXPORT_PENDING_REL } from '../src/harness/export-marker.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
 
 const SNAPSHOT_REL = 'docs/graph/graphcode.graph.json';

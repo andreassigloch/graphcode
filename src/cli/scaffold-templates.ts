@@ -14,10 +14,9 @@
  *
  * @author andreas@siglochconsulting
  */
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { join } from 'node:path';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
-import { readPackageVersion } from './package-version.js';
+import { readPackageVersion, packageRootDir } from './package-version.js';
 import { MARKDOWN_VIEWS, VIEW_FILENAMES, type MarkdownView } from '@sigloch/graphcode-client';
 
 /** The distribution package a member repo depends on. */
@@ -101,7 +100,7 @@ export const SETTINGS_FILE = join('.claude', 'settings.json');
  * package.json `files`, so the npm tarball carries them (REQ-self-contained-dist).
  */
 export function packagedSkillsDir(): string {
-  return join(dirname(fileURLToPath(import.meta.url)), '..', COMMANDS_DIR);
+  return join(packageRootDir(), COMMANDS_DIR);
 }
 
 /**
@@ -164,12 +163,12 @@ export type SettingsShape = {
 
 /** The `.claude/hooks/` dir shipped INSIDE this package (dev: repo root; bundled: package root). */
 export function packagedHooksDir(): string {
-  return join(dirname(fileURLToPath(import.meta.url)), '..', HOOKS_DIR);
+  return join(packageRootDir(), HOOKS_DIR);
 }
 
 /** This package's own `settings.json` — the single source for WHICH hooks get registered. */
 export function packagedSettingsPath(): string {
-  return join(dirname(fileURLToPath(import.meta.url)), '..', SETTINGS_FILE);
+  return join(packageRootDir(), SETTINGS_FILE);
 }
 
 /**

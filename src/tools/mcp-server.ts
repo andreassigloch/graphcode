@@ -21,16 +21,16 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import type { ZodObject, ZodRawShape } from 'zod/v4';
 import type { AuditLog, Graph } from '@sigloch/graph-api-core';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
-import { createHarness, type GraphCodeHarness } from './index.js';
+import { createHarness, type GraphCodeHarness } from '../index.js';
 import { bindToolsToHarness, type MCPTool, type MCPToolRegistry } from './mcp-tools.js';
-import { registerAutoExport, type AutoExportHandle } from './auto-export.js';
-import { StoreOwnershipError } from './store-lock.js';
-import { SessionLifecycle } from './session-lifecycle.js';
-import { attachGve } from './gve.js';
-import { startHostSocket, buildProxyRegistry, HOST_SOCK_BASENAME, type HostSocket } from './host-shim.js';
-import { HostBridge } from './viewer/host.js';
-import type { LiveUpdateEvent } from './emit.js';
-import { readPackageVersion } from './package-version.js';
+import { registerAutoExport, type AutoExportHandle } from '../views/auto-export.js';
+import { StoreOwnershipError } from '../harness/store-lock.js';
+import { SessionLifecycle } from '../cli/session-lifecycle.js';
+import { attachGve } from '../cli/gve.js';
+import { startHostSocket, buildProxyRegistry, HOST_SOCK_BASENAME, type HostSocket } from '../viewer/host-shim.js';
+import { HostBridge } from '../viewer/host.js';
+import type { LiveUpdateEvent } from '../hooks/emit.js';
+import { readPackageVersion } from '../cli/package-version.js';
 
 // Der Handshake nennt dieselbe Zahl wie Lock-Stempel und `status` — ein Leser für alle (CR-GC-376).
 export { readPackageVersion };

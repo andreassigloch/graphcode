@@ -26,8 +26,8 @@ import { join } from 'node:path';
 import type { MutateCommand, LiveUpdateEvent } from '@sigloch/contracts/harness';
 import { createHarness, type GraphCodeHarness } from '../src/index.js';
 import { HostBridge } from '../src/viewer/host.js';
-import { maybeStartBridge } from '../src/mcp-server.js';
-import { StoreOwnershipError } from '../src/store-lock.js';
+import { maybeStartBridge } from '../src/tools/mcp-server.js';
+import { StoreOwnershipError } from '../src/harness/store-lock.js';
 
 describe('TEST-bridge-follows-lock: elected host serves the read-only bridge (CR-GC-237)', () => {
   let tmp: string;

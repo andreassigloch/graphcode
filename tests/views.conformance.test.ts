@@ -22,7 +22,7 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { TRACE_PATTERNS } from '@sigloch/contracts/se';
 import type { Graph } from '@sigloch/graph-api-core';
-import { exportMarkdown, MARKDOWN_VIEWS } from '../src/exporter.js';
+import { exportMarkdown, MARKDOWN_VIEWS } from '../src/views/exporter.js';
 
 /**
  * Comments stripped. These greps assert what the CODE reads — the doc comments

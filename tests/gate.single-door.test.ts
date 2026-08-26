@@ -28,8 +28,8 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import { GraphCodeHarness } from '../src/harness.js';
-import { exportGraphJson } from '../src/exporter.js';
+import { GraphCodeHarness } from '../src/harness/harness.js';
+import { exportGraphJson } from '../src/views/exporter.js';
 import { ARCH_FIXTURE, makeSteeringConfig } from './fixtures/steering-graphs.js';
 
 const HOOK = join(__dirname, '..', '.claude', 'hooks', 'deny-graph-write.sh');

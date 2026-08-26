@@ -12,10 +12,10 @@ import { tmpdir, hostname } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import { StoreLock, StoreOwnershipError } from '../src/store-lock.js';
-import { readPackageVersion } from '../src/package-version.js';
-import { readHostStatus } from '../src/status.js';
-import { GraphCodeHarness } from '../src/harness.js';
+import { StoreLock, StoreOwnershipError } from '../src/harness/store-lock.js';
+import { readPackageVersion } from '../src/cli/package-version.js';
+import { readHostStatus } from '../src/cli/status.js';
+import { GraphCodeHarness } from '../src/harness/harness.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
 
 describe('TEST-store-lock (CR-GC-218 O2): store-ownership lock', () => {

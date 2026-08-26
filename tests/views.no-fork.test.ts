@@ -15,8 +15,12 @@ import { join } from 'node:path';
 
 const SRC = join(__dirname, '..', 'src');
 
+// CR-GC-429 §4: ein Modul, ein Verzeichnis — der Scan muss rekursiv sein, sonst
+// prueft er nach dem Umzug nur noch die zwei Wurzel-Einstiege.
 function srcFiles(): string[] {
-  return readdirSync(SRC).filter((f) => f.endsWith('.ts'));
+  return readdirSync(SRC, { recursive: true })
+    .map(String)
+    .filter((f) => f.endsWith('.ts'));
 }
 
 /** Import specifiers (the module path in `from '...'`) per source file. */
@@ -51,7 +55,7 @@ describe('TEST-shared-views-no-fork: graphcode imports the shared rule base, no 
 
   it('the rule engine + ontology are sourced from the family package, not redefined locally', () => {
     // harness.ts is the single rule-evaluation owner; it must pull the shared engine.
-    const harness = readFileSync(join(SRC, 'harness.ts'), 'utf8');
+    const harness = readFileSync(join(SRC, 'harness', 'harness.ts'), 'utf8');
     expect(harness).toMatch(/SE_DESCRIPTOR/);
     expect(harness).toMatch(/from\s+['"]@sigloch\/graph-api-core['"]/);
     // No local definition of the V3 rule set (a fork would declare its own).

@@ -26,8 +26,8 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR, type Graph } from '@sigloch/graph-api-core';
-import { GraphCodeHarness } from '../src/harness.js';
-import { computeFitAdvisory } from '../src/fit-advisory.js';
+import { GraphCodeHarness } from '../src/harness/harness.js';
+import { computeFitAdvisory } from '../src/steering/fit-advisory.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
 import { witnessSample, classifySequence, type WitnessSample } from './helpers/witness.js';
 

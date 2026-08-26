@@ -18,8 +18,8 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { Graph, GraphNode, GraphEdge } from '@sigloch/graph-api-core';
-import { GraphCodeCodec } from '../src/codec.js';
-import { elementToNode } from '../src/exporter.js';
+import { GraphCodeCodec } from '../src/codec/codec.js';
+import { elementToNode } from '../src/views/exporter.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 

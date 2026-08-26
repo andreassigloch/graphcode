@@ -8,8 +8,8 @@
  * @author andreas@siglochconsulting
  */
 import type { MutateResult } from '@sigloch/contracts/harness';
-import { FitAdvisory } from './fit-advisory.js';
-import { SteeringDelta } from './steering-snapshot.js';
+import { FitAdvisory } from '../steering/fit-advisory.js';
+import { SteeringDelta } from '../steering/steering-snapshot.js';
 
 /** Anker des Kandidaten-Samplings — gemessene Jaccard-Spreizung 0.45/0.18/0.14
  * bei temp 0.15/0.4/0.7 (Design-Runde CR-GC-288). */

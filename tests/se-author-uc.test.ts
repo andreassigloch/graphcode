@@ -9,7 +9,7 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { lintUc, groundedTermsFrom, UC_MAX_WORDS } from '../src/se-author-uc.js';
+import { lintUc, groundedTermsFrom, UC_MAX_WORDS } from '../src/tools/se-author-uc.js';
 
 interface Element {
   id: string;

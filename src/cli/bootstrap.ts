@@ -27,8 +27,8 @@ import { z } from 'zod/v4';
 import type { Graph } from '@sigloch/graph-api-core';
 import type { MutateCommand, MutateResult } from '@sigloch/contracts/harness';
 import { MutateResultSchema } from '@sigloch/contracts/harness';
-import { GraphCodeHarness } from './harness.js';
-import { GraphCodeCodec } from './codec.js';
+import { GraphCodeHarness } from '../harness/harness.js';
+import { GraphCodeCodec } from '../codec/codec.js';
 
 /**
  * BootstrapResult (FLOW-bootstrap-result → SCHEMA-mutate-result): the gate

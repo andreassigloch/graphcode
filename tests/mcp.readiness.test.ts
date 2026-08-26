@@ -17,9 +17,9 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import { GraphCodeHarness } from '../src/harness.js';
-import { bindToolsToHarness } from '../src/mcp-tools.js';
-import { getFamilyRuleIds } from '../src/readiness.js';
+import { GraphCodeHarness } from '../src/harness/harness.js';
+import { bindToolsToHarness } from '../src/tools/mcp-tools.js';
+import { getFamilyRuleIds } from '../src/steering/readiness.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
 
 function makeHarness(repoRoot: string): GraphCodeHarness {

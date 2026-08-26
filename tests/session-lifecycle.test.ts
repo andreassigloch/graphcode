@@ -9,7 +9,7 @@
  * @author andreas@siglochconsulting
  */
 import { describe, it, expect } from 'vitest';
-import { SessionLifecycle } from '../src/session-lifecycle.js';
+import { SessionLifecycle } from '../src/cli/session-lifecycle.js';
 
 interface Harness {
   lc: SessionLifecycle;

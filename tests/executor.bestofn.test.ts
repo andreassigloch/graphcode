@@ -23,7 +23,7 @@ import {
   ExecutorConfigSchema,
   type ModelResponse,
   type CallModel,
-} from '../src/executor.js';
+} from '../src/executor/executor.js';
 import {
   rankCandidates,
   effectiveFocusDelta,
@@ -32,7 +32,7 @@ import {
   totalDelta,
   temperatureSpread,
   TEMPERATURE_ANCHORS,
-} from '../src/executor-rank.js';
+} from '../src/executor/executor-rank.js';
 
 const config = (over: Record<string, unknown> = {}) =>
   ExecutorConfigSchema.parse({

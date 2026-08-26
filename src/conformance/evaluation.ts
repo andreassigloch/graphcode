@@ -37,7 +37,7 @@ import type { Graph } from '@sigloch/graph-api-core';
 import { ALL_RULE_DEFS, PHASE_READINESS_NAME, DIMENSION_READINESS_NAME } from '@sigloch/contracts/se';
 import { conformanceEvaluation, type ConformanceHarness } from './conformance.js';
 import type { ImportCoverage } from '@sigloch/contracts/se';
-import { computeReadiness, type ReadinessReport } from './readiness.js';
+import { computeReadiness, type ReadinessReport } from '../steering/readiness.js';
 
 type CGraph = Pick<Graph, 'nodes' | 'edges'>;
 

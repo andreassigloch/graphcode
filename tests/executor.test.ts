@@ -20,15 +20,15 @@ import {
   ExecutorConfigSchema,
   type ModelResponse,
   type CallModel,
-} from '../src/executor.js';
+} from '../src/executor/executor.js';
 import {
   buildRoundInjection,
   INDEX_CHAR_BUDGET,
   TOOL_RESULT_CHAR_BUDGET,
   jsonCapped,
   SYSTEM,
-} from '../src/executor-prompt.js';
-import { extractMutateFromText, extractToolCallFromText } from '../src/executor-parse.js';
+} from '../src/executor/executor-prompt.js';
+import { extractMutateFromText, extractToolCallFromText } from '../src/executor/executor-parse.js';
 import { ElementType } from '@sigloch/contracts/se';
 
 const CONFIG = ExecutorConfigSchema.parse({

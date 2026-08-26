@@ -27,10 +27,10 @@
 import { execFileSync } from 'node:child_process';
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
-import { createHarness } from './index.js';
-import { deriveMemberName } from './mcp-server.js';
-import { DEFAULT_GRAPH_JSON } from './harness-import.js';
-import { isExportPending, EXPORT_PENDING_REL } from './export-marker.js';
+import { createHarness } from '../index.js';
+import { deriveMemberName } from '../tools/mcp-server.js';
+import { DEFAULT_GRAPH_JSON } from '../harness/harness-import.js';
+import { isExportPending, EXPORT_PENDING_REL } from '../harness/export-marker.js';
 
 export interface RewindSummary {
   /** The git ref that was recalled, verbatim as given. */

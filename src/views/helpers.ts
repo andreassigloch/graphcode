@@ -13,7 +13,7 @@
  * @author andreas@siglochconsulting
  */
 import type { Graph, GraphNode } from '@sigloch/graph-api-core';
-import { byUid } from '../exporter.js';
+import { byUid } from './exporter.js';
 
 export function nodesOfType(graph: Graph, type: string): GraphNode[] {
   return graph.nodes.filter((n) => n.type === type).sort(byUid);

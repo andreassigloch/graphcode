@@ -14,7 +14,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { mkdtempSync, mkdirSync, writeFileSync, rmSync, existsSync, realpathSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { executeUpgrade, formatUpgrade, UpgradeError, type UpgradeDeps } from '../src/upgrade.js';
+import { executeUpgrade, formatUpgrade, UpgradeError, type UpgradeDeps } from '../src/cli/upgrade.js';
 
 describe('TEST-upgrade (CR-GC-377)', () => {
   let repo: string;

@@ -51,8 +51,8 @@ import type { HarnessConfig } from '@sigloch/contracts/harness';
 import { FormatECodec, SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { buildJobSlice } from '../tools/read.js';
 import { createHarness, type GraphCodeHarness } from '../index.js';
-import { deriveMemberName } from '../mcp-server.js';
-import type { LiveUpdateEvent } from '../emit.js';
+import { deriveMemberName } from '../tools/mcp-server.js';
+import type { LiveUpdateEvent } from '../hooks/emit.js';
 import { HealthPayloadSchema, type HealthPayload } from './health.js';
 
 /** A connected SSE client: its raw response stream. */

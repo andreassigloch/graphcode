@@ -11,33 +11,33 @@
 | Interface (SCHEMA) | Contract (realRef) | status |
 |---|---|---|
 | `SCHEMA-action` | Konzept (noch kein Zod-Export) | reviewed |
-| `SCHEMA-cli-command` | src/scaffold.ts#CliCommandSchema | reviewed |
+| `SCHEMA-cli-command` | src/cli/scaffold.ts#CliCommandSchema | reviewed |
 | `SCHEMA-completeness` | packages/graphcode-client/src/readiness-completeness.ts#GateCompleteness | reviewed |
-| `SCHEMA-export-pending` | src/export-pending-contract.ts#ExportPending | n/a |
-| `SCHEMA-fit-advisory` | src/fit-advisory.ts#FitAdvisory | reviewed |
+| `SCHEMA-export-pending` | src/harness/export-pending-contract.ts#ExportPending | n/a |
+| `SCHEMA-fit-advisory` | src/steering/fit-advisory.ts#FitAdvisory | reviewed |
 | `SCHEMA-format-e` | extern definiert (kein realRef) | reviewed |
-| `SCHEMA-generation-step` | src/generate.ts#GenerationStep | reviewed |
+| `SCHEMA-generation-step` | src/steering/generate.ts#GenerationStep | reviewed |
 | `SCHEMA-health-report` | src/viewer/health.ts#HealthPayloadSchema | n/a |
-| `SCHEMA-impacted-tests` | src/test-selection.ts#TestImpactResultSchema | n/a |
-| `SCHEMA-lock-owner` | src/lock-owner-contract.ts#LockOwner | n/a |
-| `SCHEMA-markdown-view` | src/exporter.ts#MarkdownViewSchema | reviewed |
+| `SCHEMA-impacted-tests` | src/tools/test-selection.ts#TestImpactResultSchema | n/a |
+| `SCHEMA-lock-owner` | src/harness/lock-owner-contract.ts#LockOwner | n/a |
+| `SCHEMA-markdown-view` | src/views/exporter.ts#MarkdownViewSchema | reviewed |
 | `SCHEMA-measurement-vector` | Konzept (noch kein Zod-Export) | reviewed |
 | `SCHEMA-metric-policy` | packages/contracts/src/se/policy.ts#MetricPolicy | n/a |
 | `SCHEMA-metric-vector` | packages/se-engine/src/metrics.ts#MetricVector | reviewed |
-| `SCHEMA-model-answer` | src/model-answer-contract.ts#ModelAnswer | n/a |
+| `SCHEMA-model-answer` | src/executor/model-answer-contract.ts#ModelAnswer | n/a |
 | `SCHEMA-module-metrics` | packages/contracts/src/se/metric-rules.ts#ModuleMetrics | reviewed |
 | `SCHEMA-mutate-command` | extern definiert (kein realRef) | reviewed |
 | `SCHEMA-mutate-result` | extern definiert (kein realRef) | reviewed |
 | `SCHEMA-ontology-graph` | extern definiert (kein realRef) | reviewed |
-| `SCHEMA-phase-readiness` | src/readiness.ts#PhaseGateReadiness | reviewed |
+| `SCHEMA-phase-readiness` | src/steering/readiness.ts#PhaseGateReadiness | reviewed |
 | `SCHEMA-query-params` | Konzept (noch kein Zod-Export) | reviewed |
 | `SCHEMA-readiness-report` | packages/contracts/src/se/readiness.ts#ReadinessReport | reviewed |
-| `SCHEMA-schema-fingerprint` | src/schema-fingerprint-contract.ts#SchemaFingerprintSchema | n/a |
-| `SCHEMA-session-registry` | src/gve-session-contract.ts#SessionEntrySchema | n/a |
-| `SCHEMA-steering-delta` | src/steering-snapshot.ts#SteeringDelta | reviewed |
-| `SCHEMA-steering-snapshot` | src/steering-snapshot.ts#SteeringSnapshot | reviewed |
-| `SCHEMA-target-profile` | src/target-profile-contract.ts#TargetProfileSchema | n/a |
-| `SCHEMA-test-selection` | src/test-selection.ts#TestSelectionSchema | n/a |
+| `SCHEMA-schema-fingerprint` | src/schema-migration/schema-fingerprint-contract.ts#SchemaFingerprintSchema | n/a |
+| `SCHEMA-session-registry` | src/cli/gve-session-contract.ts#SessionEntrySchema | n/a |
+| `SCHEMA-steering-delta` | src/steering/steering-snapshot.ts#SteeringDelta | reviewed |
+| `SCHEMA-steering-snapshot` | src/steering/steering-snapshot.ts#SteeringSnapshot | reviewed |
+| `SCHEMA-target-profile` | src/steering/target-profile-contract.ts#TargetProfileSchema | n/a |
+| `SCHEMA-test-selection` | src/tools/test-selection.ts#TestSelectionSchema | n/a |
 | `SCHEMA-trajectory` | extern definiert (kein realRef) | reviewed |
 | `SCHEMA-update-event` | extern definiert (kein realRef) | reviewed |
 

@@ -14,12 +14,12 @@ import { isAbsolute, join } from 'node:path';
 import type { MutateCommand, MutateResult, RuleViolation, StaleDelta } from '@sigloch/contracts/harness';
 import { GraphVersionSchema } from '@sigloch/contracts/harness';
 import { TestRefsSchema } from '@sigloch/contracts/se';
-import { readBranchLog, replayBranchLog, type MergeReport } from '../merge.js';
-import type { MCPTool, MCPToolRegistry } from '../mcp-tools.js';
-import { computeSteeringDelta, takeSteeringSnapshot, type SteeringDelta } from '../steering-snapshot.js';
-import { stripViolationContext } from '../evaluation.js';
-import type { RespondsToViolation } from '../emit.js';
-import type { ToolContext } from '../tool-context.js';
+import { readBranchLog, replayBranchLog, type MergeReport } from '../harness/merge.js';
+import type { MCPTool, MCPToolRegistry } from './mcp-tools.js';
+import { computeSteeringDelta, takeSteeringSnapshot, type SteeringDelta } from '../steering/steering-snapshot.js';
+import { stripViolationContext } from '../conformance/evaluation.js';
+import type { RespondsToViolation } from '../hooks/emit.js';
+import type { ToolContext } from './tool-context.js';
 
 // -------------------------------------------------------------------------
 // respondsTo (CR-GC-434) — which pre-existing violation a mutation ANSWERED.

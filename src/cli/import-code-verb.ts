@@ -26,10 +26,10 @@ import {
   type MutateTransportResult,
 } from '@sigloch/graphify';
 import type { MutateResult } from '@sigloch/contracts/harness';
-import { createHarness } from './index.js';
-import { bindToolsToHarness } from './mcp-tools.js';
-import { deriveMemberName } from './mcp-server.js';
-import { exportGraphJson } from './exporter.js';
+import { createHarness } from '../index.js';
+import { bindToolsToHarness } from '../tools/mcp-tools.js';
+import { deriveMemberName } from '../tools/mcp-server.js';
+import { exportGraphJson } from '../views/exporter.js';
 
 /** Verzeichnisse, die nie Quell-Code des Repos sind (Dot-Dirs sind separat ausgeschlossen). */
 const SKIP_DIRS = new Set(['node_modules', 'dist', 'build', 'coverage']);

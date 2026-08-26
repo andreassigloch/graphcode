@@ -21,17 +21,17 @@ import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 import { z } from 'zod/v4';
 import type { MutateResult } from '@sigloch/contracts/harness';
-import type { FitAdvisory } from './fit-advisory.js';
-import type { MCPToolRegistry } from './mcp-tools.js';
-import { GenerationStep } from './generate.js';
+import type { FitAdvisory } from '../steering/fit-advisory.js';
+import type { MCPToolRegistry } from '../tools/mcp-tools.js';
+import { GenerationStep } from '../steering/generate.js';
 import { preflightBatch, type PreflightKnown } from './preflight.js';
 import {
   duplicateHits,
   renderDuplicateHints,
   type DuplicateHit,
   type IndexedElement,
-} from './nd-similarity.js';
-import type { SteeringDelta } from './steering-snapshot.js';
+} from '../steering/nd-similarity.js';
+import type { SteeringDelta } from '../steering/steering-snapshot.js';
 // Der Antwortvertrag des Backends (CR-GC-426, SCHEMA-model-answer): geprüft am
 // Empfang, in der Draht-Form JEDES Backends — nicht erst im Prosa-Parser.
 import {

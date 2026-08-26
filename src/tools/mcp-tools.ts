@@ -29,16 +29,16 @@
 
 import type { ZodType } from 'zod/v4';
 import type { AuditLog } from '@sigloch/graph-api-core';
-import type { GraphCodeHarness } from './harness.js';
+import type { GraphCodeHarness } from '../harness/harness.js';
 import { createToolContext, type ToolContext } from './tool-context.js';
-import { bindReadTools } from './tools/read.js';
-import { bindWriteTools } from './tools/write.js';
-import { bindReportTools } from './tools/report.js';
-import { bindAuditTools } from './tools/audit.js';
-import { bindExportTools } from './tools/export.js';
-import { bindSuggestTools } from './tools/suggest.js';
-import { bindMetricsTools } from './tools/metrics.js';
-import { bindTestReportTools } from './tools/testreport.js';
+import { bindReadTools } from './read.js';
+import { bindWriteTools } from './write.js';
+import { bindReportTools } from './report.js';
+import { bindAuditTools } from './audit.js';
+import { bindExportTools } from './export.js';
+import { bindSuggestTools } from './suggest.js';
+import { bindMetricsTools } from './metrics.js';
+import { bindTestReportTools } from './testreport.js';
 
 // ---------------------------------------------------------------------------
 // Public types

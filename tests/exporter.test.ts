@@ -20,14 +20,14 @@ import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import type { Graph } from '@sigloch/graph-api-core';
-import { GraphCodeHarness } from '../src/harness.js';
+import { GraphCodeHarness } from '../src/harness/harness.js';
 import {
   exportGraphJson,
   exportMarkdown,
   MARKDOWN_VIEWS,
   MarkdownViewSchema,
   VIEW_FILENAMES,
-} from '../src/exporter.js';
+} from '../src/views/exporter.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 
 const REPO_ROOT = join(__dirname, '..');

@@ -20,10 +20,10 @@
 
 import { z } from 'zod/v4';
 import { moduleMetrics, type ModuleMetrics, type MetricPolicy } from '@sigloch/contracts/se';
-import type { PolicySource } from '../config.js';
-import { toOntologyGraph } from '../conformance.js';
-import type { MCPTool, MCPToolRegistry } from '../mcp-tools.js';
-import type { ToolContext } from '../tool-context.js';
+import type { PolicySource } from '../harness/config.js';
+import { toOntologyGraph } from '../conformance/conformance.js';
+import type { MCPTool, MCPToolRegistry } from './mcp-tools.js';
+import type { ToolContext } from './tool-context.js';
 
 const GraphMetricsInputSchema = z.looseObject({});
 

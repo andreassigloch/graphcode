@@ -1,28 +1,35 @@
 # src/ — realized in M2 (Coding & V&V)
 
 The runtime modules are **realized from the graph spec** (`docs/graph/graphcode.graph.json`),
-not hand-stubbed. Early carve-out stubs were removed (non-compliant with the model).
+not hand-stubbed.
 
-| File | Module (graph) | CR |
-|---|---|---|
-| `harness.ts` | `MOD-harness` (Apply-Gate / evaluateRules / store-lock O2 / write-mutex O3) | CR-GC-100 |
-| `harness-import.ts` | `MOD-harness` — the non-gated import/seed/reseed path | CR-GC-260 |
-| `mcp-tools.ts` | `MOD-mcp-tools` — composition root: builds the `ToolContext`, merges the four groups | CR-GC-101 |
-| `tool-context.ts` | `MOD-mcp-tools` — the ONE carrier of `graphVersion` + the tool write chain | CR-GC-256 |
-| `tools/{read,write,report,export}.ts` | `MOD-mcp-tools` — the 20 tools, one module per group | CR-GC-256 |
-| `hooks.ts` | `MOD-hooks` (pre-commit / post-apply / nightly) | CR-GC-102 |
-| `codec.ts` | `MOD-codec` (encode / decode / merge-nodes, Format-E) | CR-GC-103 |
-| `exporter.ts` | `MOD-docs` — graph→JSON/Markdown entry + the `generatedHeader`/`byUid`/`cell` primitives | CR-GC-113 |
-| `views/{helpers,srs,incose,graphcode}.ts` | `MOD-docs` — the 16 deterministic view projections | CR-GC-260 |
-| `readiness.ts` | `MOD-readiness` — compliance + phase/impl gates + the report | CR-GC-107 |
-| `readiness-completeness.ts` | `MOD-readiness` — the completeness dimension (browser-safe) | CR-GC-260 |
-| `scaffold.ts` | `MOD-cli` — idempotent init / update / remove mechanics | CR-GC-121 |
-| `scaffold-templates.ts` | `MOD-cli` — the catalog of installed artifacts + their bytes | CR-GC-260 |
-| `cli.ts` | `MOD-cli` (npx init / update / remove) | CR-GC-112 |
+**One module, one directory (CR-GC-429 §4):** the file system agrees with the graph's
+`FUNC -allocate-> MOD [0..1]` grammar — each directory below is one `MOD-*`, and
+`MOD.path` in the graph points at it. Only the two package entry points stay at the root.
+
+| Directory | Module (graph) |
+|---|---|
+| `index.ts`, `cli.ts` | entry points (`main`/`bin`) — bound via `realRef`, not by path |
+| `harness/` | `MOD-harness` — Apply-Gate, store lifecycle, import/reseed, merge, config |
+| `cli/` | `MOD-cli` — scaffold/init/update, verbs (run/rewind/import-code), status, gve, session lifecycle |
+| `codec/` | `MOD-codec` — Format-E encode/decode |
+| `conformance/` | `MOD-conformance` — CodeFacts extraction, RC rules, the ONE evaluation surface, test-report ingest |
+| `completeness/` | `MOD-completeness` — the completeness dimension (browser-safe) |
+| `element-slice/` | `MOD-element-slice` — element listing/slicing |
+| `executor/` | `MOD-executor` — embedded run loop (prompt/parse/rank/preflight) |
+| `hooks/` | `MOD-hooks` — pre-commit / post-apply / event + trajectory emit |
+| `schema-migration/` | `MOD-schema-migration` — schema fingerprint + guard |
+| `steering/` | `MOD-steering` — snapshot, next-step, generate, fit-advisory, readiness, target profile |
+| `tools/` | `MOD-mcp-tools` — MCP server + registry, the tool groups, authoring/test-selection surfaces |
+| `viewer/` | `MOD-host-bridge` — SSE/WS host, host-shim, health, help, panels |
+| `views/` | `MOD-docs` — exporter + the deterministic view projections |
+
+`MOD-skills` lives under `.claude/commands/` (already structured); `MOD-dashboard` is the
+neighbour package `@sigloch/graph-view-edit`; `MOD-metrics-engine` binds externally into
+sigloch-modules; `MOD-repo-root` owns no files.
 
 **Module size:** 500 lines per file (`CLAUDE.md`). Two documented exceptions, tracked in
-CR-GC-261: `readiness.ts` (505 — the next seam is imported by 6 files) and `harness.ts` (712 —
-reaching 500 would mean moving the Apply-Gate, which is a governance change, not a formatting one).
+CR-GC-261: `steering/readiness.ts` and `harness/harness.ts` (moving the Apply-Gate is a
+governance change, not a formatting one).
 
-Interfaces are the `FLOW→SCHEMA` contracts (`@sigloch/contracts` Zod). Deps: `file:` (dev) → versioned (publish).
-Start: **CR-GC-100** — Task 0 = tsconfig + align to the real `@sigloch/graph-api-core` API; Task 1 = D1 `/harness` export in contracts.
+Interfaces are the `FLOW→SCHEMA` contracts (`@sigloch/contracts` Zod).

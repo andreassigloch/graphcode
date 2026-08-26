@@ -8,7 +8,7 @@ import type { Graph } from '@sigloch/graph-api-core';
 import type { RuleViolation } from '@sigloch/contracts/harness';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { RULE_TO_PHASE } from '@sigloch/contracts/se';
-import { computeReadiness, ABSENT_CREATION_PROVIDER } from '../src/readiness.js';
+import { computeReadiness, ABSENT_CREATION_PROVIDER } from '../src/steering/readiness.js';
 import { helpEntry, helpForRules, contextualHelp } from '../src/viewer/help.js';
 
 describe('TEST-help-projection (CR-GC-228): help.ts projects HELP_CONTENT + the live sources', () => {

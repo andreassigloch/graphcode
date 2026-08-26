@@ -20,9 +20,9 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import { GraphCodeHarness } from '../src/harness.js';
-import { bindToolsToHarness } from '../src/mcp-tools.js';
-import { evaluateAll } from '../src/evaluation.js';
+import { GraphCodeHarness } from '../src/harness/harness.js';
+import { bindToolsToHarness } from '../src/tools/mcp-tools.js';
+import { evaluateAll } from '../src/conformance/evaluation.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 import { groupViolations, type ViolationGroup } from '@sigloch/graphcode-client';
 

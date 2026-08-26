@@ -23,8 +23,8 @@
  *
  * @author andreas@siglochconsulting
  */
-import type { GraphCodeHarness } from './harness.js';
-import type { MCPTool } from './mcp-tools.js';
+import type { GraphCodeHarness } from '../harness/harness.js';
+import type { MCPTool } from '../tools/mcp-tools.js';
 
 /** Ruhezeit nach der letzten Mutation, bevor exportiert wird. */
 export const AUTO_EXPORT_DEBOUNCE_MS = 250;

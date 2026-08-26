@@ -48,7 +48,7 @@ import {
   GraphCodeHarness,
 } from '../src/index.js';
 import type { MutateCommand } from '@sigloch/contracts/harness';
-import { deriveHostPort, PACKAGE_SPEC } from '../src/scaffold-templates.js';
+import { deriveHostPort, PACKAGE_SPEC } from '../src/cli/scaffold-templates.js';
 
 // Startzeile mit fester Version (CR-GC-378) — gegen die Konstante, nicht gegen ein Literal.
 const PKG = PACKAGE_SPEC;

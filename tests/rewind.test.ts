@@ -23,10 +23,10 @@ import { mkdtempSync, mkdirSync, rmSync, writeFileSync, existsSync, readFileSync
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { evaluateAllRules } from '@sigloch/contracts/se';
-import { executeRewind, RewindError } from '../src/rewind.js';
+import { executeRewind, RewindError } from '../src/cli/rewind.js';
 import { createHarness } from '../src/index.js';
-import { setExportPending, isExportPending } from '../src/export-marker.js';
-import { DEFAULT_GRAPH_JSON } from '../src/harness-import.js';
+import { setExportPending, isExportPending } from '../src/harness/export-marker.js';
+import { DEFAULT_GRAPH_JSON } from '../src/harness/harness-import.js';
 
 function git(cwd: string, ...args: string[]): string {
   return execFileSync('git', args, { cwd, encoding: 'utf8' });

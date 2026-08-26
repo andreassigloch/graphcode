@@ -11,7 +11,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { mkdtempSync, mkdirSync, writeFileSync, rmSync, symlinkSync, realpathSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { collectStatus, formatStatus, statusIsHealthy } from '../src/status.js';
+import { collectStatus, formatStatus, statusIsHealthy } from '../src/cli/status.js';
 
 describe('TEST-status', () => {
   let repo: string;

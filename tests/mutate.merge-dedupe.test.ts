@@ -24,8 +24,8 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { KuzuAdapter } from './helpers/store.js';
-import { GraphCodeHarness } from '../src/harness.js';
-import { exportGraphJson } from '../src/exporter.js';
+import { GraphCodeHarness } from '../src/harness/harness.js';
+import { exportGraphJson } from '../src/views/exporter.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 
 function makeConfig(repoRoot: string): HarnessConfig {

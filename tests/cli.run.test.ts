@@ -9,8 +9,8 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { AUDIT_FILE, type AuditEntry } from '@sigloch/graph-api-core';
 import { createHarness } from '../src/index.js';
-import { executeRun, parseExecutorEnv } from '../src/run-verb.js';
-import { ExecutorConfigSchema, buildCallModel, type ModelResponse } from '../src/executor.js';
+import { executeRun, parseExecutorEnv } from '../src/cli/run-verb.js';
+import { ExecutorConfigSchema, buildCallModel, type ModelResponse } from '../src/executor/executor.js';
 
 const SEED_RESPONSE: ModelResponse = {
   text: '',

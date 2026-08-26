@@ -23,9 +23,9 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import { GraphCodeHarness } from '../src/harness.js';
-import { bindToolsToHarness } from '../src/mcp-tools.js';
-import { registerAutoExport, AUTO_EXPORT_DEBOUNCE_MS, type AutoExportHandle } from '../src/auto-export.js';
+import { GraphCodeHarness } from '../src/harness/harness.js';
+import { bindToolsToHarness } from '../src/tools/mcp-tools.js';
+import { registerAutoExport, AUTO_EXPORT_DEBOUNCE_MS, type AutoExportHandle } from '../src/views/auto-export.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 
 const SNAPSHOT = 'docs/graph/graphcode.graph.json';
@@ -98,13 +98,13 @@ describe('CR-GC-392: Shutdown im Entprell-Fenster laesst kein unvollstaendiges A
   it('der Host verdrahtet den flush in den Shutdown — nicht nur die Funktion existiert', () => {
     // Verhaltenstests oben koennen nicht sehen, ob bootHost den Handle noch wegwirft
     // (genau der Fehler, den dieser CR behebt). Diese Zeile ist die Verdrahtung.
-    const src = readFileSync(join(__dirname, '..', 'src', 'mcp-server.ts'), 'utf8');
+    const src = readFileSync(join(__dirname, '..', 'src', 'tools', 'mcp-server.ts'), 'utf8');
     expect(src).toMatch(/lifecycle\.add\(\{\s*name:\s*'auto-export flush',\s*close:\s*\(\)\s*=>\s*autoExport\.flush\(\)/);
   });
 
   it('der Boot gleicht NICHT mehr gegen die committete JSON ab', () => {
     // Der Store ist die Quelle; ein Abgleich beim Start suggeriert, die Datei koenne mitreden.
-    const src = readFileSync(join(__dirname, '..', 'src', 'mcp-server.ts'), 'utf8');
+    const src = readFileSync(join(__dirname, '..', 'src', 'tools', 'mcp-server.ts'), 'utf8');
     expect(src).not.toMatch(/Kuzu store differs from/);
   });
 });

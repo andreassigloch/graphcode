@@ -26,13 +26,13 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import { GraphCodeHarness } from '../src/harness.js';
-import { bindToolsToHarness, type MCPToolRegistry } from '../src/mcp-tools.js';
-import { nextStep } from '../src/steering.js';
-import { generationStep } from '../src/generate.js';
-import { takeSteeringSnapshot } from '../src/steering-snapshot.js';
+import { GraphCodeHarness } from '../src/harness/harness.js';
+import { bindToolsToHarness, type MCPToolRegistry } from '../src/tools/mcp-tools.js';
+import { nextStep } from '../src/steering/steering.js';
+import { generationStep } from '../src/steering/generate.js';
+import { takeSteeringSnapshot } from '../src/steering/steering-snapshot.js';
 import { ARCH_FIXTURE, makeSteeringConfig } from './fixtures/steering-graphs.js';
-import type { SteeringDelta } from '../src/steering-snapshot.js';
+import type { SteeringDelta } from '../src/steering/steering-snapshot.js';
 
 /** The attribute-borne bindings whose judgement flips on a flattened encoding. */
 const ATTRIBUTE_BORNE_RULES = ['R-19', 'R-20', 'R-26', 'VR-01', 'AF-01', 'AF-02', 'AF-03', 'AF-04', 'AF-05'];

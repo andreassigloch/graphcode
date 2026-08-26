@@ -26,10 +26,10 @@ import {
   CONFIG_FILENAME,
   DEFAULT_CONFIG,
   DEFAULT_FOCUS_THRESHOLD,
-} from '../src/config.js';
+} from '../src/harness/config.js';
 import { createHarness } from '../src/index.js';
-import { bindToolsToHarness } from '../src/mcp-tools.js';
-import type { GraphCodeHarness } from '../src/harness.js';
+import { bindToolsToHarness } from '../src/tools/mcp-tools.js';
+import type { GraphCodeHarness } from '../src/harness/harness.js';
 
 const roots: string[] = [];
 const harnesses: GraphCodeHarness[] = [];

@@ -17,8 +17,8 @@ import { mkdtempSync, mkdirSync, rmSync, writeFileSync, existsSync, realpathSync
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import type { spawn, ChildProcess } from 'node:child_process';
-import { attachGve } from '../src/gve.js';
-import { liveSessions, rememberedViewerPid } from '../src/gve-sessions.js';
+import { attachGve } from '../src/cli/gve.js';
+import { liveSessions, rememberedViewerPid } from '../src/cli/gve-sessions.js';
 
 describe('TEST-gve-supervision', () => {
   let repo: string;

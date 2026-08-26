@@ -26,9 +26,9 @@
 import { z } from 'zod/v4';
 import type { Graph, GraphNode, GraphEdge } from '@sigloch/graph-api-core';
 import { TestRefsSchema, RealRefSchema, type TestRef, type RealRef } from '@sigloch/contracts/se';
-import { renderSrs } from './views/srs.js';
-import { renderNfr, renderRtm, renderIcd, renderTestConcept, renderTestMatrix, renderIntPlan } from './views/incose.js';
-import { renderChangelog, renderFmea, renderConOps, renderTrade, renderImplPlan } from './views/graphcode.js';
+import { renderSrs } from './srs.js';
+import { renderNfr, renderRtm, renderIcd, renderTestConcept, renderTestMatrix, renderIntPlan } from './incose.js';
+import { renderChangelog, renderFmea, renderConOps, renderTrade, renderImplPlan } from './graphcode.js';
 
 // ---------------------------------------------------------------------------
 // SCHEMA-markdown-view — app-specific, NOT in @sigloch/contracts.

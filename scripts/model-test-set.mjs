@@ -87,6 +87,11 @@ export const INCLUDED = [
  * Entscheidung bleibt und nicht zu einer stillen Lücke wird.
  */
 export const EXCLUDED = {
+  'tests/arch.optimization-dry-run.spike.test.ts':
+    'Arch-Optimierungs-Spike (CR-GC-436, abgeschlossen No-Go). Liest die SSOT nur als ' +
+    'Startzustand in einen eigenen Temp-Store und assertiert Spike-Messwerte (Kohaesion, ' +
+    'Q, Befund-Bilanz) plus den Unveraendert-Hash der SSOT — kein Modellinhalt, den die ' +
+    'Modell-Spur decken muesste; kostet zwei volle Gate-Laeufe.',
   'tests/steering.convergence-witness.spike.test.ts':
     'Konvergenz-Zeugen-Spike (CR-GC-407). Liest die SSOT nur als realistisch grosses ' +
     'Fixture (degradierte Kopie in einem Temp-Store); assertiert werden Zeugen-/Archiv-' +

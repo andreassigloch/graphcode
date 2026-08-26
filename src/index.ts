@@ -14,31 +14,31 @@ import { z } from 'zod/v4';
 import { KuzuAdapter } from '@sigloch/graph-api-core/kuzu';
 import { createSeDescriptor } from '@sigloch/graph-api-core';
 import { HarnessConfigSchema } from '@sigloch/contracts/harness';
-import { GraphCodeHarness } from './harness.js';
-import { loadGraphcodeConfig } from './config.js';
-import { HookSystem } from './hooks.js';
-import { registerEmitters } from './emit.js';
+import { GraphCodeHarness } from './harness/harness.js';
+import { loadGraphcodeConfig } from './harness/config.js';
+import { HookSystem } from './hooks/hooks.js';
+import { registerEmitters } from './hooks/emit.js';
 
-export { GraphCodeHarness } from './harness.js';
-export { HookSystem } from './hooks.js';
-export type { HookType, HookResult, HookData, HookHandler, HookOptions, HookSystemConfig } from './hooks.js';
+export { GraphCodeHarness } from './harness/harness.js';
+export { HookSystem } from './hooks/hooks.js';
+export type { HookType, HookResult, HookData, HookHandler, HookOptions, HookSystemConfig } from './hooks/hooks.js';
 
 // MCP-stdio tool surface (CR-GC-101) — graph instead of grep, gate-symmetric writes.
-export { bindToolsToHarness } from './mcp-tools.js';
-export type { MCPTool, MCPToolRegistry } from './mcp-tools.js';
+export { bindToolsToHarness } from './tools/mcp-tools.js';
+export type { MCPTool, MCPToolRegistry } from './tools/mcp-tools.js';
 
 // MCP-stdio server (CR-GC-111) — bind the registry to @modelcontextprotocol/sdk
 // over stdio (REQ-single-transport); `graphcode mcp` (src/cli.ts) is the entry.
-export { bindRegistryToMcpServer, buildMcpServer, serveStdio } from './mcp-server.js';
+export { bindRegistryToMcpServer, buildMcpServer, serveStdio } from './tools/mcp-server.js';
 
 // Hook emission (CR-GC-102) — live-update event + version cache. The learning
 // feed is a projection of the operations log (CR-252, materializeTrajectory), not
 // a hook — no parallel write path.
-export { registerEmitters, computeDomains, makeUpdateEventHook, materializeTrajectory, ResponseCache } from './emit.js';
-export type { UpdateDomain, LiveUpdateEvent, RegisterEmittersOptions } from './emit.js';
+export { registerEmitters, computeDomains, makeUpdateEventHook, materializeTrajectory, ResponseCache } from './hooks/emit.js';
+export type { UpdateDomain, LiveUpdateEvent, RegisterEmittersOptions } from './hooks/emit.js';
 
 // Format-E codec (CR-GC-103) — deterministic, commit-/merge-safe round-trip.
-export { GraphCodeCodec } from './codec.js';
+export { GraphCodeCodec } from './codec/codec.js';
 
 // Graph→Markdown/JSON re-exporter (CR-GC-113, MOD-docs) — the single SSOT sync
 // path: render the live in-memory graph back into commit-able docs.
@@ -50,22 +50,22 @@ export {
   MarkdownViewSchema,
   MARKDOWN_VIEWS,
   VIEW_FILENAMES,
-} from './exporter.js';
-export type { MarkdownView } from './exporter.js';
+} from './views/exporter.js';
+export type { MarkdownView } from './views/exporter.js';
 
 // New-member bootstrap (CR-GC-122) — fill an EMPTY member graph from ungoverned
 // Format-E THROUGH the gate (FUNC-import / REQ-bootstrap-through-gate). Distinct
 // from harness.seedFromJson() (a direct load of the already-governed SSOT).
-export { bootstrap, TEMPLATE_FORMAT_E, BootstrapResultSchema } from './bootstrap.js';
-export type { BootstrapResult, BootstrapMode } from './bootstrap.js';
+export { bootstrap, TEMPLATE_FORMAT_E, BootstrapResultSchema } from './cli/bootstrap.js';
+export type { BootstrapResult, BootstrapMode } from './cli/bootstrap.js';
 
 // Readiness scorer (CR-GC-107) — family compliance from contracts V3_RULES (L2), no foreign BQ rules.
-export { scoreReadiness, computeReadiness, getFamilyRuleIds } from './readiness.js';
-export type { ReadinessReport, ReadinessDimension } from './readiness.js';
+export { scoreReadiness, computeReadiness, getFamilyRuleIds } from './steering/readiness.js';
+export type { ReadinessReport, ReadinessDimension } from './steering/readiness.js';
 
 // CLI scaffold lifecycle (CR-GC-112) — self-contained `init|update|remove` installer (MOD-cli).
-export { scaffold, CliCommandSchema, InstallResultSchema } from './scaffold.js';
-export type { CliCommand, InstallResult } from './scaffold.js';
+export { scaffold, CliCommandSchema, InstallResultSchema } from './cli/scaffold.js';
+export type { CliCommand, InstallResult } from './cli/scaffold.js';
 
 // ===========================================================================
 // Viewer surface (`src/viewer/`) — PROVISIONAL. The read-only data layer an
@@ -96,8 +96,8 @@ export type { HealthPayload } from './viewer/health.js';
 // exported alongside it purely for consumer-side integration TESTS — spin up
 // a real temp-disk harness + its own throwaway socket to test callHost
 // end-to-end, instead of pointing at (and risking mutating) a live repo.
-export { callHost, HOST_SOCK_BASENAME, startHostSocket } from './host-shim.js';
-export type { HostSocket } from './host-shim.js';
+export { callHost, HOST_SOCK_BASENAME, startHostSocket } from './viewer/host-shim.js';
+export type { HostSocket } from './viewer/host-shim.js';
 
 // Headless dashboard data-layer (CR-GC-115, MOD-dashboard) — pure read-only
 // shapers over the MCP tools; the external graph-view-edit renderer consumes
@@ -139,8 +139,8 @@ export type {
 } from '@sigloch/contracts/harness';
 
 // Implementation-plan ordering (CR-GC-209) — the testable core behind the `se-plan` skill.
-export { deriveImplPlan } from './se-plan.js';
-export type { ImplPlanResult } from './se-plan.js';
+export { deriveImplPlan } from './steering/se-plan.js';
+export type { ImplPlanResult } from './steering/se-plan.js';
 
 // Durable operations log (CR-GC-232 → CR-207) — the one family-wide implementation
 // now lives in the store module (@sigloch/graph-api-core); re-exported here for the
@@ -165,8 +165,8 @@ export {
   CONFIG_FILENAME,
   DEFAULT_CONFIG,
   DEFAULT_FOCUS_THRESHOLD,
-} from './config.js';
-export type { GraphcodeConfig, LoadedConfig, PolicySource } from './config.js';
+} from './harness/config.js';
+export type { GraphcodeConfig, LoadedConfig, PolicySource } from './harness/config.js';
 
 /** Default Kuzu store location relative to the repo root. */
 export const KUZU_DIR = '.graphcode/kuzu';
@@ -185,7 +185,7 @@ export const KUZU_DIR = '.graphcode/kuzu';
 export async function createHarness(
   config: z.input<typeof HarnessConfigSchema>,
   opts?: {
-    onUpdateEvent?: (event: import('./emit.js').LiveUpdateEvent) => void;
+    onUpdateEvent?: (event: import('./hooks/emit.js').LiveUpdateEvent) => void;
     /** Store-Lock entzogen (CR-GC-372) — der Aufrufer beendet seine Session. */
     onLockLost?: () => void;
   },

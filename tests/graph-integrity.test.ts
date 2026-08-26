@@ -14,7 +14,7 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { GraphCodeCodec } from '../src/codec.js';
+import { GraphCodeCodec } from '../src/codec/codec.js';
 import type { Graph } from '@sigloch/graph-api-core';
 
 const GRAPH = join(__dirname, '..', 'docs/graph/graphcode.graph.json');

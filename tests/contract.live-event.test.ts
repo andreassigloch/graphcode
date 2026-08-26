@@ -18,8 +18,8 @@ import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { LiveUpdateEventSchema } from '@sigloch/contracts/harness';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
-import { GraphCodeHarness } from '../src/harness.js';
-import { registerEmitters, type LiveUpdateEvent } from '../src/emit.js';
+import { GraphCodeHarness } from '../src/harness/harness.js';
+import { registerEmitters, type LiveUpdateEvent } from '../src/hooks/emit.js';
 
 describe('TEST-live-event-contract: LiveUpdateEvent schema is the single SSE contract', () => {
   describe('the published schema validates the contract', () => {

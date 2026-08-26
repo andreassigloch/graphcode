@@ -13,10 +13,10 @@
 import { join, dirname, resolve, relative, isAbsolute, basename } from 'node:path';
 import { mkdirSync, writeFileSync, existsSync, readFileSync, renameSync, unlinkSync } from 'node:fs';
 import { z } from 'zod/v4';
-import { exportGraphJson, exportMarkdown, renderTestStubs, renderSchemaStubs, MarkdownViewSchema, MARKDOWN_VIEWS, VIEW_FILENAMES } from '../exporter.js';
-import { clearExportPending } from '../export-marker.js';
-import type { MCPTool, MCPToolRegistry } from '../mcp-tools.js';
-import type { ToolContext } from '../tool-context.js';
+import { exportGraphJson, exportMarkdown, renderTestStubs, renderSchemaStubs, MarkdownViewSchema, MARKDOWN_VIEWS, VIEW_FILENAMES } from '../views/exporter.js';
+import { clearExportPending } from '../harness/export-marker.js';
+import type { MCPTool, MCPToolRegistry } from './mcp-tools.js';
+import type { ToolContext } from './tool-context.js';
 import type { AuditEntry } from '@sigloch/graph-api-core';
 import type { MutateCommand } from '@sigloch/contracts/harness';
 

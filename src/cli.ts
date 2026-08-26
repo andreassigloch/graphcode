@@ -30,15 +30,15 @@
  *
  * @author andreas@siglochconsulting
  */
-import { serveStdio } from './mcp-server.js';
+import { serveStdio } from './tools/mcp-server.js';
 import { serveHost } from './viewer/host.js';
-import { StoreOwnershipError } from './store-lock.js';
-import { scaffold, syncSkills, type CliCommand } from './scaffold.js';
-import { executeRun, parseExecutorEnv } from './run-verb.js';
-import { executeImportCode } from './import-code-verb.js';
-import { executeRewind, RewindError } from './rewind.js';
-import { collectStatus, formatStatus, statusIsHealthy } from './status.js';
-import { executeUpgrade, formatUpgrade, UpgradeError } from './upgrade.js';
+import { StoreOwnershipError } from './harness/store-lock.js';
+import { scaffold, syncSkills, type CliCommand } from './cli/scaffold.js';
+import { executeRun, parseExecutorEnv } from './cli/run-verb.js';
+import { executeImportCode } from './cli/import-code-verb.js';
+import { executeRewind, RewindError } from './cli/rewind.js';
+import { collectStatus, formatStatus, statusIsHealthy } from './cli/status.js';
+import { executeUpgrade, formatUpgrade, UpgradeError } from './cli/upgrade.js';
 
 const USAGE = `graphcode — governed graph substrate (MCP-stdio)
 

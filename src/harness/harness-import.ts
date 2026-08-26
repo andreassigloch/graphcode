@@ -19,7 +19,7 @@
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import type { Graph, GraphNode, GraphEdge, StorageAdapter } from '@sigloch/graph-api-core';
-import { elementToNode } from './exporter.js';
+import { elementToNode } from '../views/exporter.js';
 import { clearExportPending } from './export-marker.js';
 
 /** Default location of the committed SSOT graph, relative to the repo root. */

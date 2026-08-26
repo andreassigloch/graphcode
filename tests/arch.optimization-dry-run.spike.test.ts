@@ -43,9 +43,9 @@ import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { metrics, toArray, buildAdjacency, detectCommunities, modularityOf, modularityQ } from '@sigloch/se-engine';
 import { moduleMetrics } from '@sigloch/contracts/se';
 import type { MutateCommand } from '@sigloch/contracts/harness';
-import { GraphCodeHarness } from '../src/harness.js';
-import { bindToolsToHarness, type MCPToolRegistry } from '../src/mcp-tools.js';
-import { toOntologyGraph } from '../src/conformance.js';
+import { GraphCodeHarness } from '../src/harness/harness.js';
+import { bindToolsToHarness, type MCPToolRegistry } from '../src/tools/mcp-tools.js';
+import { toOntologyGraph } from '../src/conformance/conformance.js';
 import { makeSteeringConfig, type FixtureGraph } from './fixtures/steering-graphs.js';
 import type { GraphSuggestResult } from '../src/tools/suggest.js';
 

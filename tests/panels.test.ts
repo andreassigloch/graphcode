@@ -17,8 +17,8 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import { GraphCodeHarness } from '../src/harness.js';
-import { scoreReadiness } from '../src/readiness.js';
+import { GraphCodeHarness } from '../src/harness/harness.js';
+import { scoreReadiness } from '../src/steering/readiness.js';
 import {
   readinessPanel,
   recommendationsPanel,
@@ -31,7 +31,7 @@ import {
   panelsForEvent,
 } from '../src/viewer/panels.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
-import type { LiveUpdateEvent } from '../src/emit.js';
+import type { LiveUpdateEvent } from '../src/hooks/emit.js';
 
 function makeConfig(repoRoot: string): HarnessConfig {
   return {

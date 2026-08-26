@@ -28,7 +28,7 @@ import type { AuditLog } from '@sigloch/graph-api-core';
 import { projectTrajectory } from '@sigloch/learning-core';
 // Der Feed-Dateiname steht einmal (scaffold-templates) — dieselbe Konstante, die
 // `graphcode remove` beim Aufräumen der Alt-Kopie liest (CR-GC-331).
-import { TRAJECTORY_FILE } from './scaffold-templates.js';
+import { TRAJECTORY_FILE } from '../cli/scaffold-templates.js';
 import type { HookSystem } from './hooks.js';
 import type { HookData, HookResult } from './hooks.js';
 

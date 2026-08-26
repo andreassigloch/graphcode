@@ -27,13 +27,13 @@ import {
   type ReadinessScoreType,
   type ImportCoverage,
 } from '@sigloch/contracts/se';
-import { takeSteeringSnapshot } from '../steering-snapshot.js';
+import { takeSteeringSnapshot } from '../steering/steering-snapshot.js';
 import {
   summarizeReadiness,
   computePhaseReadiness,
   type ReadinessReport,
   type PhaseGateReadiness,
-} from '../readiness.js';
+} from '../steering/readiness.js';
 import {
   evaluateAll,
   readinessOf,
@@ -41,16 +41,16 @@ import {
   stripViolationContext,
   type Finding,
   type RuleCatalogs,
-} from '../evaluation.js';
+} from '../conformance/evaluation.js';
 import { groupViolations, type ViolationGroup } from '@sigloch/graphcode-client';
-import { loadTargetProfile, intentCoverage, type AnchorCoverage } from '../target-profile.js';
+import { loadTargetProfile, intentCoverage, type AnchorCoverage } from '../steering/target-profile.js';
 import { helpEntry, contextualHelp, type HelpEntry, type ContextualMeasure } from '../viewer/help.js';
-import { formatEExampleFor } from '../authoring-example.js';
-import { TestSelectionSchema } from '../test-selection.js';
-import { nextStep } from '../steering.js';
-import type { NextStepResult } from '../steering.js';
-import type { MCPTool, MCPToolRegistry } from '../mcp-tools.js';
-import type { ToolContext } from '../tool-context.js';
+import { formatEExampleFor } from './authoring-example.js';
+import { TestSelectionSchema } from './test-selection.js';
+import { nextStep } from '../steering/steering.js';
+import type { NextStepResult } from '../steering/steering.js';
+import type { MCPTool, MCPToolRegistry } from './mcp-tools.js';
+import type { ToolContext } from './tool-context.js';
 
 // -------------------------------------------------------------------------
 // Input schemas

@@ -28,9 +28,9 @@ import {
   verificationReport,
   type RunnerFileResult,
   type VerificationReport,
-} from '../testreport.js';
-import type { MCPTool, MCPToolRegistry } from '../mcp-tools.js';
-import type { ToolContext } from '../tool-context.js';
+} from '../conformance/testreport.js';
+import type { MCPTool, MCPToolRegistry } from './mcp-tools.js';
+import type { ToolContext } from './tool-context.js';
 
 const GraphTestIngestInputSchema = z
   .object({

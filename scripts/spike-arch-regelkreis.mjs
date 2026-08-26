@@ -13,7 +13,7 @@ import { dirname, join } from 'node:path';
 import { moduleMetrics } from '@sigloch/contracts/se';
 import { buildAdjacency, detectCommunities, modularityOf, modularityQ } from '@sigloch/se-engine';
 import { elementToNode } from '../dist/index.js';
-import { toOntologyGraph } from '../dist/conformance.js';
+import { toOntologyGraph } from '../dist/conformance/conformance.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const raw = JSON.parse(readFileSync(join(ROOT, 'docs/graph/graphcode.graph.json'), 'utf8'));
