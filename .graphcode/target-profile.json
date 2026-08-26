@@ -1,11 +1,11 @@
 {
   "weights": {
     "coherence": 1,
-    "modifiability": 0.7,
-    "faultTolerance": 0.3,
-    "flowEfficiency": 0,
-    "viability": 0,
-    "scalability": 0
+    "modifiability": 0,
+    "faultTolerance": 0,
+    "flowEfficiency": 0.4,
+    "viability": 0.4,
+    "scalability": -0.2
   },
   "intentAnchors": [
     "gate-only-writes",
@@ -13,6 +13,7 @@
     "agent-agnostisch",
     "regeln-erzwungen-statt-dokumentiert",
     "keine-parallelen-pfade",
-    "kuzu-single-writer"
+    "kuzu-single-writer",
+    "kernel-hub-fuenf-vertraege"
   ]
 }
