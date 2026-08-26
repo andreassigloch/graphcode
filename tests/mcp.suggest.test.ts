@@ -57,12 +57,18 @@ describe('graph_suggest (CR-GC-273): Fund + Richtung + Δm, Template-Edit mit dr
     rmSync(tmp, { recursive: true, force: true });
   });
 
-  it('liefert Fund-Ebene für feuernde Operator-Regeln, score-absteigend', async () => {
+  it('liefert Fund-Ebene für feuernde Operator-Regeln, score-absteigend je Gruppe', async () => {
     const res = (await tools.graph_suggest.handler({ target: { coherence: 1 } })) as GraphSuggestResult;
     expect(res.target.length).toBe(6);
     expect(res.suggestions.length).toBeGreaterThan(0);
+    // CR-GC-431: zwei Gruppen — anwendbar mit positivem Δm zuerst, dann der Rest;
+    // INNERHALB jeder Gruppe score-absteigend. Eine globale Monotonie gäbe es nur,
+    // wenn ein unanwendbarer Fund einen anwendbaren Zug verdrängen dürfte.
+    const group = (s: (typeof res.suggestions)[number]) => (s.applicable && s.score > 0 ? 0 : 1);
     for (let i = 1; i < res.suggestions.length; i++) {
-      expect(res.suggestions[i - 1].score).toBeGreaterThanOrEqual(res.suggestions[i].score);
+      const [prev, cur] = [res.suggestions[i - 1], res.suggestions[i]];
+      expect(group(prev)).toBeLessThanOrEqual(group(cur));
+      if (group(prev) === group(cur)) expect(prev.score).toBeGreaterThanOrEqual(cur.score);
     }
     for (const s of res.suggestions) {
       expect(s.elementId.length).toBeGreaterThan(0);
@@ -111,18 +117,39 @@ describe('graph_suggest (CR-GC-273): Fund + Richtung + Δm, Template-Edit mit dr
     expect(arch.layerMismatch).toBeUndefined();
   });
 
-  it('das Verdict trägt das Δm des Gate-Advisorys, nicht nur den Tier', async () => {
+  it('das Verdict trägt das Δm des Gate-Advisorys — und genau das wird publiziert (CR-GC-431)', async () => {
     const res = (await tools.graph_suggest.handler({ target: { coherence: 1 }, k: 20, layer: 'all' })) as GraphSuggestResult;
     const withEdit = res.suggestions.find((s) => s.verdict);
     expect(withEdit, 'kein Template-Edit in der Fixture — der Test hätte kein Subjekt').toBeDefined();
     // Sechs Komponenten, dieselbe kanonische Ordnung wie `target` und `delta`.
     expect(withEdit!.verdict!.fitDelta.length).toBe(6);
-    // Und es ist die ADVISORY-Zahl, nicht die Ranking-Zahl: CR-1 -relation-> FUNC-parse
-    // bewegt den Architektur-Teilgraphen nicht (CR ist kein ARCH_TYPE), während das
-    // Ranking auf 'all' sehr wohl einen Ausschlag sieht. Genau dieser Unterschied ist
-    // der Grund für `layerMismatch`.
+    // CR-1 -relation-> FUNC-parse bewegt den Architektur-Teilgraphen nicht (CR ist
+    // kein ARCH_TYPE) — das Advisory ist also null.
     expect(withEdit!.verdict!.fitDelta.every((d) => d === 0)).toBe(true);
-    expect(withEdit!.delta.some((d) => d !== 0)).toBe(true);
+    // CR-GC-431: publiziert wird GENAU diese Zahl, nicht mehr das Δm der generischen
+    // Sonde. Vorher zeigte `delta` hier einen Ausschlag auf 'all', während der
+    // ausgelieferte Edit den arch-Teilgraphen gar nicht bewegt — zwei Zahlen für
+    // dieselbe Änderung, die prominente davon die falsche.
+    expect(withEdit!.applicable).toBe(true);
+    expect(withEdit!.delta).toEqual(withEdit!.verdict!.fitDelta);
+    expect(withEdit!.score).toBe(0);
+    // Der Ebenen-Unterschied verschwindet dadurch nicht — er ist nur benannt:
+    // anwendbare Scores messen auf 'arch', Fund-Zeilen auf 'all'.
+    expect(res.layerMismatch).toContain('applicable:true');
+  });
+
+  // CR-GC-431 — Fund-only muss ohne Rückschluss aus dem fehlenden `edit` erkennbar
+  // sein, und darf nicht über einem anwendbaren Zug ranken.
+  it('markiert jede Suggestion als anwendbar oder nicht — Fund-only rankt nie oben', async () => {
+    const res = (await tools.graph_suggest.handler({ target: { coherence: 1 }, k: 20, layer: 'arch' })) as GraphSuggestResult;
+    for (const s of res.suggestions) expect(typeof s.applicable, `${s.ruleId} ohne applicable-Flag`).toBe('boolean');
+    // R-01 (REQ ohne verifizierenden TEST) hat kein Fix-Template — Fund-Ebene.
+    const r01 = res.suggestions.find((s) => s.ruleId === 'R-01');
+    expect(r01?.applicable).toBe(false);
+    expect(r01?.edit).toBeUndefined();
+    const lastApplicable = res.suggestions.reduce((acc, s, i) => (s.applicable && s.score > 0 ? i : acc), -1);
+    const firstInapplicable = res.suggestions.findIndex((s) => !(s.applicable && s.score > 0));
+    if (lastApplicable >= 0 && firstInapplicable >= 0) expect(firstInapplicable).toBeGreaterThan(lastApplicable);
   });
 
   it('ist deterministisch', async () => {

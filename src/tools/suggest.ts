@@ -13,6 +13,14 @@
  * geschickt (CR-GC-234) und kommt mit dem 3-Tier-Verdict zurück; anwenden
  * muss ihn der Consumer selbst über graph_mutate. Nach jedem Preview wird
  * die In-Memory-Kopie via loadGraph() restauriert — das Tool ist read-only.
+ *
+ * CR-GC-431 — die publizierte Zahl gehört dem ausgelieferten Edit: se-engines
+ * `score` ist das Δm einer generischen Operator-SONDE (`applyRule`), der Edit
+ * kommt aber aus einem zweiten Pfad (`fix-templates`). Beide Zahlen im selben
+ * Objekt wichen bis zum umgekehrten Vorzeichen voneinander ab, und die falsche
+ * stand im Ranking-Feld. Hier wird deshalb umgerankt: wo ein Edit anwendbar
+ * ist, sind `score`/`delta` das Δm DIESES Edits — genommen aus dem Gate-
+ * Advisory, das ohnehin für den dryRun anfällt (kein zweiter Messpfad).
  */
 import { z } from 'zod/v4';
 import type { MutateResult } from '@sigloch/contracts/harness';
@@ -67,12 +75,40 @@ export interface SuggestVerdict {
    * Vorher wurde die Zahl weggeworfen, sodass ein Treiber sie nur über einen
    * eigenen `graph_mutate`-dryRun bekam — und dann ohne den Hinweis, dass sie
    * von einer anderen Ebene stammt als sein Ranking.
+   *
+   * Seit CR-GC-431 ist das zugleich die QUELLE von `score`/`delta` einer
+   * anwendbaren Suggestion — eine Messung, nicht zwei.
    */
   fitDelta: number[];
 }
 
+/**
+ * Eine gerankte Suggestion (CR-GC-431).
+ *
+ * `applicable: true` heißt: ein Template-Edit liegt bei UND das Gate hat ihn im
+ * dryRun durchgelassen — dann messen `score`/`delta` GENAU DIESEN Edit (Quelle:
+ * `verdict.fitDelta`, das Gate-Advisory auf `advisoryLayer`).
+ *
+ * `applicable: false` heißt: es gibt nichts anzuwenden — entweder Fund-Ebene
+ * ohne Template-Edit, oder das Gate hat den Edit abgelehnt (`verdict.success:
+ * false`). Dann stammen `score`/`delta` aus der generischen Operator-Sonde
+ * (`applyRule`) und beschreiben die Hebelwirkung des FUNDES, keinen Zug, den
+ * jemand ausführen könnte. Solche Zeilen ranken nie über einer anwendbaren
+ * Suggestion mit positivem Δm.
+ */
+export type RankedSuggestion = Suggestion & { applicable: boolean; verdict?: SuggestVerdict };
+
 /** Messebene, auf der `harness.mutate()` sein `fitAdvisory` bildet (CR-GC-274). */
 const ADVISORY_LAYER = 'arch' as const;
+
+/** Numerischer Schlupf: darunter ist ein Score „flach", keine Verbesserung. */
+const SCORE_EPS = 1e-12;
+
+/** L2-normalisierte Zielrichtung t̂ — dieselbe Normierung wie in se-engine. */
+function unitTarget(target: number[]): number[] {
+  const n = Math.sqrt(target.reduce((s, x) => s + x * x, 0));
+  return n < 1e-12 ? target : target.map((x) => x / n);
+}
 
 export interface GraphSuggestResult {
   /** Aufgelöster Zielvektor (ℝ⁶, kanonische Dimensionsordnung). */
@@ -83,7 +119,8 @@ export interface GraphSuggestResult {
    * Messebene des GATE-ADVISORYS (`verdict.fitDelta`) — heute fest `'arch'`.
    * Zwei Zahlen, zwei Ebenen: ohne diese Angabe konnte ein Treiber auf `'all'`
    * ranken und ein Δ von 0 aus dem Advisory lesen, ohne dass irgendetwas den
-   * Widerspruch benannte.
+   * Widerspruch benannte. Seit CR-GC-431 ist das zugleich die Messebene von
+   * `score`/`delta` jeder ANWENDBAREN Suggestion.
    */
   advisoryLayer: typeof ADVISORY_LAYER;
   /**
@@ -91,7 +128,7 @@ export interface GraphSuggestResult {
    * und keine Warnung im Log — ein Satz IM ERGEBNIS, weil genau dort gelesen wird.
    */
   layerMismatch?: string;
-  suggestions: (Suggestion & { verdict?: SuggestVerdict })[];
+  suggestions: RankedSuggestion[];
 }
 
 // -------------------------------------------------------------------------
@@ -105,12 +142,15 @@ export function bindSuggestTools(ctx: ToolContext): MCPToolRegistry {
     name: 'graph_suggest',
     description:
       'Greedy-1-Schritt-Optimierungsvorschläge: ranke die feuernden Operator-Regeln danach, wie weit ' +
-      'ihr Edit den Graphen entlang der Zielrichtung im 6-Metrik-Raum bewegt (score = Δm·t̂). Liefert ' +
-      'die Fund-Ebene (Violation + Richtung + Δm); ein konkreter Edit nur aus rule-spezifischen ' +
-      'Fix-Templates — jeder mit dryRun-Gate-Verdict (3-Tier) inkl. dessen Δm als verdict.fitDelta. ' +
-      'ZWEI MESSEBENEN: `layer` ist die Ebene des Rankings, `advisoryLayer` die des Gate-Advisorys ' +
-      "(fest 'arch'). Laufen sie auseinander, sagt das Feld `layerMismatch` es im Ergebnis — die " +
-      'Zahlen sind dann nicht vergleichbar. Wendet NIE selbst an: Edits gehen über graph_mutate. ' +
+      'ein Edit den Graphen entlang der Zielrichtung im 6-Metrik-Raum bewegt (score = Δm·t̂). ' +
+      'WAS score MISST (CR-GC-431): bei `applicable:true` das Δm GENAU DES beigelegten Template-Edits ' +
+      '— dieselbe Zahl wie verdict.fitDelta (Gate-Advisory), nur auf die Zielrichtung projiziert. Bei ' +
+      '`applicable:false` gibt es nichts anzuwenden (Fund ohne Template-Edit oder ein vom Gate ' +
+      'abgelehnter Edit); dann misst score die generische Operator-Sonde, also die Hebelwirkung des ' +
+      'FUNDES, keinen ausführbaren Zug. Anwendbares mit positivem Δm rankt immer über Nicht-Anwendbarem. ' +
+      'ZWEI MESSEBENEN: `layer` ist die Ebene des Fund-Rankings, `advisoryLayer` die des Gate-Advisorys ' +
+      "(fest 'arch') und damit der anwendbaren Scores. Laufen sie auseinander, sagt das Feld " +
+      '`layerMismatch` es im Ergebnis. Wendet NIE selbst an: Edits gehen über graph_mutate. ' +
       'Read-only; die Metrik rankt, das Gate urteilt.',
     inputSchema: GraphSuggestInputSchema,
     async handler(input) {
@@ -120,7 +160,10 @@ export function bindSuggestTools(ctx: ToolContext): MCPToolRegistry {
       // fehlt auch die Datei, bleibt das Ziel leer — Verhalten wie vor dem CR.
       const weights = input.target ?? loadTargetProfile(harness.getRepoRoot())?.profile.weights ?? {};
       const target = targetFor(weights);
-      const suggestions = suggestEdits(og, target, { k: input.k, layer: input.layer });
+      // CR-GC-431: ALLE Kandidaten holen, nicht die Top-k der Sonde. Das k-Fenster
+      // wird erst NACH dem Umranken auf das Edit-Δm geschnitten — sonst fiele ein
+      // gut bewerteter Edit heraus, weil die generische Sonde ihn niedrig rankte.
+      const suggestions = suggestEdits(og, target, { layer: input.layer });
 
       // dryRun-Preview der Template-Edits auf der Schreibkette (kein Interleaving
       // mit echten Writes); nach jedem Preview zurück auf die Disk-Basis, damit
@@ -147,6 +190,34 @@ export function bindSuggestTools(ctx: ToolContext): MCPToolRegistry {
         return out;
       });
 
+      // CR-GC-431 — die publizierte Zahl misst das, was ausgeliefert wird:
+      // Wo ein Template-Edit anwendbar ist, sind `score`/`delta` das Δm GENAU
+      // DIESES Edits (Quelle: das Gate-Advisory oben, kein zweiter Messpfad).
+      // Vorher rankte hier das Δm einer generischen Operator-Sonde, während im
+      // selben Objekt ein anderer Edit lag — bis hin zum umgekehrten Vorzeichen.
+      const t = unitTarget(target);
+      const ranked: RankedSuggestion[] = suggestions.map((s, i) => {
+        const verdict = verdicts[i];
+        // Anwendbar = Edit vorhanden UND vom Gate durchgelassen UND ein
+        // vollständiges Advisory-Δm da. Ein geblockter Edit hat kein fitAdvisory
+        // (harness.applyMutation liefert es nur bei success) — dann bleibt die
+        // Sonde stehen, aber als nicht anwendbar markiert.
+        const editDelta = verdict?.success && verdict.fitDelta.length === target.length ? verdict.fitDelta : null;
+        if (!editDelta) return { ...s, applicable: false, ...(verdict ? { verdict } : {}) };
+        return {
+          ...s,
+          delta: editDelta,
+          score: editDelta.reduce((sum, x, d) => sum + x * t[d], 0),
+          applicable: true,
+          verdict,
+        };
+      });
+      // Anwendbares mit positivem Δm zuerst — sonst stünde ein Fund, den niemand
+      // ausführen kann, weiter über einem Zug, den das Gate durchlässt. Innerhalb
+      // beider Gruppen: Score absteigend, Tiebreak ruleId (deterministisch).
+      const rankGroup = (s: RankedSuggestion) => (s.applicable && s.score > SCORE_EPS ? 0 : 1);
+      ranked.sort((a, b) => rankGroup(a) - rankGroup(b) || b.score - a.score || a.ruleId.localeCompare(b.ruleId));
+
       return {
         target,
         layer: input.layer,
@@ -156,10 +227,13 @@ export function bindSuggestTools(ctx: ToolContext): MCPToolRegistry {
               layerMismatch:
                 `Ranking auf layer:'${input.layer}', Gate-Advisory (verdict.fitDelta) auf ` +
                 `layer:'${ADVISORY_LAYER}' — die beiden Zahlen sind NICHT vergleichbar. ` +
+                `Konkret: score/delta einer Suggestion mit applicable:true stammen aus dem ` +
+                `Advisory und messen auf layer:'${ADVISORY_LAYER}', die der Fund-Zeilen ` +
+                `(applicable:false) auf layer:'${input.layer}'. ` +
                 `Für eine Kette aus einer Ebene: layer:'${ADVISORY_LAYER}' ranken.`,
             }
           : {}),
-        suggestions: suggestions.map((s, i) => (verdicts[i] ? { ...s, verdict: verdicts[i] } : s)),
+        suggestions: ranked.slice(0, input.k),
       };
     },
   };

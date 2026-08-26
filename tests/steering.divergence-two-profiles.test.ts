@@ -21,17 +21,26 @@
  *
  * TWO RANKINGS, MEASURED SIDE BY SIDE — the finding this spike turns on:
  *
- *   `probe`     rank by `suggestion.score`. This is the number `graph_suggest`
- *               publishes, and it is the Δm of se-engine's GENERIC probe edge
- *               (`applyRule`), not of the template edit that ships with it.
+ *   `probe`     rank by `suggestion.score` — whatever `graph_suggest` publishes.
+ *               At the time of the spike that was the Δm of se-engine's GENERIC
+ *               probe edge (`applyRule`), not of the template edit shipping with
+ *               it; since CR-GC-431 it is the delivered edit's own Δm.
  *   `advisory`  rank by `suggestion.verdict.fitDelta · t̂`. That is the gate's own
  *               dryRun advisory for THE EDIT THAT WOULD BE APPLIED, on the same
  *               `'arch'` layer. It ships in the same response.
  *
- * The two disagree in SIGN for R-22 on this fixture, so which number the driver
- * believes decides whether a run moves at all. Both are recorded; the claim is
+ * The two disagreed in SIGN for R-22 on this fixture, so which number the driver
+ * believed decided whether a run moved at all. Both are recorded; the claim is
  * evaluated on `advisory`, because a perfect actuator uses the best information
- * the tool gives it, and the probe/advisory gap is reported as its own finding.
+ * the tool gives it, and the probe/advisory gap was reported as its own finding.
+ *
+ * THAT GAP IS CLOSED (CR-GC-431): `graph_suggest` now publishes, for every
+ * APPLICABLE suggestion, the Δm of the edit it hands out — the same number as
+ * `verdict.fitDelta`. The two rankings below therefore coincide today, and the
+ * sign-conflict section at the end prints `none`. The `probe` run is kept as the
+ * live proof of that: it is the control that would go back to 1/0 steps the day
+ * the published number stops describing the delivered edit. The regression that
+ * pins it is `tests/suggest.ranks-the-delivered-edit.test.ts`.
  *
  * MEASUREMENT LAYER: rank, measure and judge all on `'arch'` — `graph_suggest`'s
  * default, the layer the gate's `fitAdvisory` uses (CR-GC-352), and the layer the
@@ -84,7 +93,7 @@ interface AppliedStep {
   n: number;
   ruleId: string;
   edit: string;
-  /** `graph_suggest`'s published score — the GENERIC probe's Δm on the unit target. */
+  /** `graph_suggest`'s PUBLISHED score (pre-CR-GC-431: the generic probe's Δm). */
   probeScore: number;
   /** The gate advisory's Δm for the ACTUAL edit, on the unit target. */
   advisoryScore: number;
