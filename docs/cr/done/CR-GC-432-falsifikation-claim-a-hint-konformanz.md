@@ -1,7 +1,9 @@
 # CR-GC-432 — Spike: Falsifikation von Kern-Claim A („Die Regeln lassen Agenten selbst steuern")
 
-**Status:** open · **Ergebnis: NO-GO — Claim A ist mit dem heutigen Bestand nicht messbar (2026-08-26)** ·
+**Status:** done — 2026-08-26 (Spike-Ergebnis dokumentiert, alle AK belegt) ·
+**Ergebnis: NO-GO — Claim A ist mit dem heutigen Bestand nicht messbar (2026-08-26)** ·
 **Angelegt:** 2026-08-26 · **Typ:** Spike (Timebox 1 Session)
+**Folgearbeit (nicht hier):** die drei fehlenden Stempel → **CR-GC-434** (offen).
 **Frage:** Folgten die **realen** Reparaturen in der History den **Regel-Hinweisen**? Wenn ja, hat
 die Regel gesteuert; wenn die Violation auf anderem Weg verschwand (Löschung, veränderte
 Grundgesamtheit, Zufall), hat sie es nicht.

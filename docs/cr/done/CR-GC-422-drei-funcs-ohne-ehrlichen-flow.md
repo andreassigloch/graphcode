@@ -1,8 +1,24 @@
 # CR-GC-422 — Drei FUNCs ohne ehrlichen FLOW
 
-**Status:** open — **nur noch §1**. §2 und §3 sind entschieden und umgesetzt, siehe
-[CR-GC-426](../done/CR-GC-426-zwei-fluesse-bekommen-einen-vertrag.md) (2026-08-25).
+**Status:** done — 2026-08-26. §2 und §3 sind umgesetzt
+([CR-GC-426](CR-GC-426-zwei-fluesse-bekommen-einen-vertrag.md), 2026-08-25); §1 ist
+**entschieden** — die Familie-Frage ist mit **CR-SM-267 (Option A, 2026-08-25)** beantwortet:
+R-31 bekommt **keine** Ausnahme für Kompositionswurzeln, tragende Zahl **1 von 302**
+familienweit. Damit bleibt `FUNC-bind-tools` dauerhaft eine R-31-*warning* mit dokumentierter
+Begründung — genau der Zustand, den dieser CR festhält. In graphcode ist nichts mehr zu tun;
+der CR ist Befund + Entscheidungsnachweis.
 **Herkunft:** CR-GC-409 §A, Rest nach CR-GC-412/414/415/416/417/418/419/421.
+
+## Abschluss-Nachtrag (2026-08-26)
+
+| § | Gegenstand | Ausgang |
+|---|---|---|
+| 1 | `FUNC-bind-tools` — Kompositionswurzel ohne Datenfluss | **CR-SM-267 = Option A**: keine Regel-Ausnahme, der Befund bleibt stehen. Kein Bump, kein Code. |
+| 2 | `FUNC-export-marker` — Existenz ist das Signal | Variante b umgesetzt (CR-GC-426): Marke trägt `{ since, versionsBehind }`. |
+| 3 | `FUNC-extract-mutate` — unstrukturierter Eingang | `SCHEMA-model-answer` + `FLOW-model-answer` umgesetzt (CR-GC-426). |
+
+Die unter „Kein Regel-Tausch" festgehaltene Warnung gilt weiter: die Kante für §1 darf auch
+künftig nicht „zur Sicherheit" gezogen werden.
 
 ## Stand 2026-08-25 — die Entscheidung des Auftraggebers
 

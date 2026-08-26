@@ -1,7 +1,10 @@
 # CR-GC-427 — Spike: Nachweis der Autopilot-Arbeit aus der echten History
 
-**Status:** open · **Ergebnis: GO — eine Kennzahl, eine Darstellung (2026-08-25)** ·
+**Status:** done — 2026-08-26 (Spike-Ergebnis dokumentiert, alle AK belegt) ·
+**Ergebnis: GO — eine Kennzahl, eine Darstellung (2026-08-25)** ·
 **Angelegt:** 2026-08-25 · **Typ:** Spike (Timebox 1 Session)
+**Folgearbeit (nicht hier):** die empfohlene Darstellung bauen — Aufnahme in CR-DRAFT-GC-410
+beim Neuschnitt.
 **Frage:** Lässt sich aus dem vorhandenen Bestand ein **Nachweis** rechnen, den ein Dritter
 akzeptiert — „der Autopilot hat gearbeitet, und die Arbeit hat gewirkt" — und in welcher
 Darstellung ist er auf einen Blick lesbar?
@@ -81,15 +84,15 @@ Ein Skript rechnet über die 73 historischen Stände:
 
 ## Akzeptanzkriterien
 
-- [ ] Zeitreihe über alle auswertbaren der 73 Stände liegt vor; nicht auswertbare Stände sind
+- [x] Zeitreihe über alle auswertbaren der 73 Stände liegt vor; nicht auswertbare Stände sind
       **gezählt und benannt**, nicht stillschweigend übersprungen.
-- [ ] Je Kandidaten-Kennzahl: Verlauf + ob sie die Kill-Kriterien besteht.
-- [ ] Löschen-Gegenprobe beziffert (Elementzahl-Verlauf neben Violation-Verlauf).
-- [ ] Regel-Artefakt-Gegenprobe gerechnet (eingeschränkte Regelmenge).
-- [ ] Hash-Wiederbesuche in der realen History: Zahl genannt (auch wenn 0).
-- [ ] **Empfehlung:** welche **eine** Kennzahl und welche **eine** Darstellung den Nachweis
+- [x] Je Kandidaten-Kennzahl: Verlauf + ob sie die Kill-Kriterien besteht.
+- [x] Löschen-Gegenprobe beziffert (Elementzahl-Verlauf neben Violation-Verlauf).
+- [x] Regel-Artefakt-Gegenprobe gerechnet (eingeschränkte Regelmenge).
+- [x] Hash-Wiederbesuche in der realen History: Zahl genannt (auch wenn 0).
+- [x] **Empfehlung:** welche **eine** Kennzahl und welche **eine** Darstellung den Nachweis
       tragen — oder begründetes No-Go mit der Zahl.
-- [ ] Diff berührt nur `scripts/` und diesen CR.
+- [x] Diff berührt nur `scripts/` und diesen CR.
 
 ## Dateien (≤ 2)
 

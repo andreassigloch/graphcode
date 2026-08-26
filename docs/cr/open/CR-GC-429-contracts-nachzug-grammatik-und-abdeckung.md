@@ -8,6 +8,10 @@ sigloch-modules-Repo am 2026-08-25/26.
 Die Regeln leben im Paket, nicht in diesem Repo: **nichts hiervon ist vor dem Release machbar.**
 Die contracts-Seite ist gebaut und committet; hier steht ausschließlich, was graphcode schuldet.
 
+**Führender CR für die RC-05-Prüflücke:** [CR-GC-425](../done/CR-GC-425-zwoelf-dateien-die-rc-05-nicht-sieht.md)
+(Befund, 2026-08-26 geschlossen) ist hierher konsolidiert — §2 trägt das Durchreichen der
+Abdeckungszahl, §4 das Aufräumen, das die zwölf Dateien tatsächlich zuordnet.
+
 **Was sich im Paket geändert hat:** ONTOLOGY 7.0.0 → 8.0.0, META_MODEL 2.0.0 → 4.0.0,
 RULES 6.3.0 → 9.1.0. Fünf Trace-Patterns entfallen (`ACTOR -io-> UC`, `MOD -io-> MOD`,
 `MS -compose-> MS`, `FLOW -io-> UC`, `SESSION -produces-> *`), mit ihnen der TraceType `produces`,

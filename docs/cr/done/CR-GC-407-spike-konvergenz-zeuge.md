@@ -1,6 +1,9 @@
 # CR-GC-407 — Spike: Konvergenz-Zeuge über der Steering-Trajektorie
 
-**Status:** open · **Ergebnis: No-Go (2026-08-25)** · **Angelegt:** 2026-08-24 · **Typ:** Spike (Timebox 1 Session)
+**Status:** done — 2026-08-26 (Spike-Ergebnis dokumentiert, alle AK belegt) ·
+**Ergebnis: No-Go (2026-08-25)** · **Angelegt:** 2026-08-24 · **Typ:** Spike (Timebox 1 Session)
+**Folgearbeit (nicht hier):** Teil 1 von CR-DRAFT-GC-410 entfällt; ein anderer Zeuge wäre ein
+neuer Spike mit eigenen Kill-Kriterien.
 **Frage:** Unterscheidet ein skalarer Zeuge + Zustands-Archiv zuverlässig Optimierung von
 Kreisverkehr — oder ist das nur eine weitere Komplexitätsdimension?
 
@@ -81,14 +84,14 @@ Der Spike ist ein **No-Go** (= weitere Komplexitätsdimension, nicht bauen), wen
 
 ## Akzeptanzkriterien
 
-- [ ] Konstruierter Zyklus: Paar-Deltas je Schritt positiv **und** Detektor (Zeuge + Hash-Revisit)
+- [x] Konstruierter Zyklus: Paar-Deltas je Schritt positiv **und** Detektor (Zeuge + Hash-Revisit)
       erkennt den Kreis — rot gesehen.
-- [ ] Konvergente Sequenz: kein Fehlalarm; Monotonie-Verlauf des Zeugen protokolliert.
-- [ ] Stationäre Sequenz: als „fertig" klassifiziert, nicht als Schleife.
-- [ ] Totzonen-Anteil (Δ==0) der konvergenten Sequenz gemessen und im Ergebnis genannt.
-- [ ] **Entscheidung im CR dokumentiert:** Go (mit Schnitt des Folge-CR) oder No-Go (mit der
+- [x] Konvergente Sequenz: kein Fehlalarm; Monotonie-Verlauf des Zeugen protokolliert.
+- [x] Stationäre Sequenz: als „fertig" klassifiziert, nicht als Schleife.
+- [x] Totzonen-Anteil (Δ==0) der konvergenten Sequenz gemessen und im Ergebnis genannt.
+- [x] **Entscheidung im CR dokumentiert:** Go (mit Schnitt des Folge-CR) oder No-Go (mit der
       Zahl, die es begründet). Beides ist ein gültiges Spike-Ergebnis.
-- [ ] Kein Produktionscode geändert (Diff berührt nur `tests/` + diesen CR).
+- [x] Kein Produktionscode geändert (Diff berührt nur `tests/` + diesen CR).
 
 ## Dateien (≤ 3)
 

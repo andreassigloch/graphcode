@@ -1,6 +1,10 @@
 # CR-GC-409 — Restliche Warnings: was Code, Architektur oder eine Entscheidung braucht
 
 **Status:** draft — Bestandsaufnahme nach dem Modell-Abbau vom 2026-08-25 (graphVersion 193).
+**Stand 2026-08-26: A, B und C sind abgearbeitet und geschlossen** (A → CR-GC-412..421/426, Rest
+entschieden in CR-GC-422 · B → CR-GC-413 · C → CR-GC-423/424, Rest konsolidiert in CR-GC-429).
+**Offen bleiben D und E** — beides Entscheidungen des Auftraggebers bzw. Familie-Review, deshalb
+bleibt dieser CR offen; F löst sich mit CR-GC-346 und dem Schließen der MS-8/MS-9-CRs.
 **Herkunft:** Warnings-Abbau-Session. Ausgangslage 106 Violations, nach den reinen
 Modell-Fixes (satisfy/compose/io-Kanten, 2 neue REQ, 1 neuer FLOW, AF-Stamps) **52**.
 Geschlossen: R-02 14→0, R-30 8→1, R-31 26→13, RD-01 2→1, MS-03 1→0, RC-05 11→5
@@ -40,6 +44,9 @@ R-21 (Integrationstest-Pflicht der entstehenden Kettenpaare) — gemessen im dry
 geben, dann verdrahten. Gleiches Muster bei claim-store-lock/session-shutdown.
 
 ## B · Braucht Code: RC-04 ×6 — Schema am Interface nicht geparst
+
+> **Stand 2026-08-25: abgearbeitet — CR-GC-413.** Der Befund im Code war ein anderer als hier
+> vermutet: alle sechs waren TypeScript-`interface`, kein vergessener `.parse()`-Aufruf.
 
 FitAdvisory, GenerationStep, LockOwner, PhaseGateReadiness, SteeringDelta,
 SteeringSnapshot: je ein `.parse()`/`.safeParse()` am modellierten Interface

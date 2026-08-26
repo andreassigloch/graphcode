@@ -1,7 +1,10 @@
 # CR-GC-430 — Spike: Divergenz-Nachweis — sieht ein Graph unter zwei Zielprofilen wirklich anders aus?
 
-**Status:** Ergebnis: GO mit einer benannten Einschränkung — Claim B über n Schritte belegt (2026-08-26)
+**Status:** done — 2026-08-26 (Spike-Ergebnis dokumentiert, Kill-Kriterien und Placebo belegt) ·
+**Ergebnis: GO mit einer benannten Einschränkung — Claim B über n Schritte belegt (2026-08-26)**
 **Angelegt:** 2026-08-26 · **Typ:** Spike (Timebox 1 Session)
+**Folgearbeit (nicht hier):** der Rank-Fix ist als CR-GC-431 gebaut und geschlossen; der
+Spike mit einem realen Modell statt des skriptierten Aktors bleibt ein eigener Spike.
 **Beweist Kern-Claim B:** *„Zieldimensionen steuern die Architektur des Graphen."*
 
 ## Warum dieser Spike, obwohl CR-GC-340 schon existiert

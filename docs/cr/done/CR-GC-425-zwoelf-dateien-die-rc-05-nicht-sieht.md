@@ -1,6 +1,10 @@
 # CR-GC-425 — Zwölf Dateien, die RC-05 nicht prüfen kann
 
-**Status:** open (Befund, kein Fix) · **Angelegt:** 2026-08-25
+**Status:** done — 2026-08-26, **konsolidiert nach
+[CR-GC-429](../open/CR-GC-429-contracts-nachzug-grammatik-und-abdeckung.md)** (führender CR).
+Die unter „Fix-Vorschlag" benötigte Entscheidung ist gefallen (**CR-SM-268, 2026-08-26**), damit
+ist dieser Befund-CR erschöpft; die verbleibende Arbeit steht vollständig in CR-GC-429.
+**Angelegt:** 2026-08-25
 **Herkunft:** CR-DRAFT-GC-409 §C. CR-GC-423 hat die drei RC-05-Befunde geschlossen,
 CR-GC-424 sechs der 17 nicht zugeordneten Dateien. Diese zwölf bleiben (elf davon plus
 `src/lock-owner-contract.ts`, das CR-GC-420 danach neu angelegt hat) — und ohne diesen
@@ -81,4 +85,21 @@ Zuordnung dieser zwölf Dateien in diesem Repo nicht ehrlich schließbar.
 
 ## Nicht Teil dieses CR
 
-Kein Code, kein Modell-Schreibvorgang. Der CR bleibt offen, bis die Entscheidung fällt.
+Kein Code, kein Modell-Schreibvorgang.
+
+---
+
+## Entscheidung + Abschluss (2026-08-26)
+
+Der Fix-Vorschlag ist als **CR-SM-268** aufgesetzt und dort **abgeschlossen**:
+
+| Vorschlag oben | Ausgang in CR-SM-268 |
+|---|---|
+| **(1)** `MOD.path` als Liste | **abgelehnt** — aufgeräumt wird die Ablage, nicht der Vertrag. Ein mehrwertiges `path` hätte die unaufgeräumte Ablage in den Vertrag geschrieben; dazu ist `FUNC -allocate-> MOD [0..1]` jetzt Grammatik. Ein Verzeichnis je Modul ist die Antwort. |
+| **(2)** RC-05 liest SCHEMA-realRefs | nicht weiterverfolgt (löst nur Gruppe A, teurer). |
+| **(3)** Prüflücke sichtbar machen | **gebaut** (Option d): `importCoverage(graph, facts)` in contracts RULES 9.1.0 — Messgröße auf der Auswertungsfläche neben `skipped`, nicht Befund im Regelstrom. |
+
+**Wo die Arbeit jetzt steht:** vollständig in **CR-GC-429** — §2 (`importCoverage` durchreichen)
+und §4 (ein Modul, ein Verzeichnis; Abnahme `unassigned: []`, heute 14). Dieser CR wird deshalb
+geschlossen und nicht parallel weitergeführt; die Liste der zwölf bleibt hier als Herleitung
+lesbar.
