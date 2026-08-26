@@ -1,7 +1,40 @@
 # CR-GC-435 — Fix-Templates können nur anhängen, nicht umhängen
 
-**Status:** offen · **Angelegt:** 2026-08-26 · **Typ:** Fix (Vorschlagspfad) + Konzept (Code-Kopplung)
+**Status:** **ABGESCHLOSSEN** (2026-08-26) · **Angelegt:** 2026-08-26 · **Typ:** Fix (Vorschlagspfad) + Konzept (Code-Kopplung)
 **Betrifft:** `graph_suggest` · `@sigloch/se-engine` fix-templates · Apply-Gate-Batch-Semantik
+
+## Ergebnis
+
+**Option A umgesetzt** (inkl. der C-Hälfte), zweigeteilt:
+
+- **se-engine 1.4.0** (sigloch-modules `c9ddff3`, CR-SM-273): `SuggestedEdit` + `retire?`
+  (die eine weichende Kante, hergeleitet aus `BOUNDED_PATTERNS`/`maxOccurs` — kein
+  contracts-Bump, beides existiert seit META_MODEL 4.0.0) + `codeImpact?` (Datei+Zielmodul,
+  nur beim Umhängen einer realisierten Quelle). Macht kein einzelnes retire den Edit legal
+  → kein Edit (Option C). 5 neue Unit-Tests, Suite 83/83.
+- **graphcode**: `graph_suggest` schickt den Verbund `[delete-edge(retire), add-edge(edit)]`
+  als EINEN Gate-dryRun; `verdict.fitDelta`/`score` messen denselben Batch, der ausgeliefert
+  wird. Kein Grammatikwissen lokal — welche Kante weicht, sagt se-engine.
+
+**Gemessen nach dem Fix** (`tests/suggest.rehang.test.ts`): am Repo-Graphen ist
+`R-23 @MOD-dashboard` jetzt `applicable:true` — Edit `FUNC-block-schaufenster
+-allocate-> MOD-dashboard` mit `retire: FUNC-block-schaufenster -allocate-> MOD-repo-root`,
+ohne `codeImpact` (Rollup-FUNC ohne realRef, kein Rauschen). Vorher: kein anwendbarer
+Arch-Vorschlag. Rot-zuerst belegt: ohne den Batch-dryRun bleibt derselbe Vorschlag
+`applicable:false` (Test gegen den alten `suggest.ts`-Stand gemessen), und das nackte
+`add-edge` blockt mit R-18.
+
+**Entscheidung „externes MOD"** (letztes AC): die Templates bekommen in DIESEM CR keinen
+Begriff von „extern" — der Befund (`MOD-dashboard` ist ein Nachbarsystem) bleibt ein
+eigener CR-Kandidat in se-engine/contracts (`external`-Attribut existiert dort bereits als
+Realisierungs-Exemption, s. Memory „external = Realisierung"); ob er gezogen wird,
+entscheidet der Auftraggeber.
+
+**Publish-Status:** se-engine 1.4.0 ist committed, NICHT publiziert. Bis zum Publish läuft
+graphcode im Link-Modus (`npm run link:siblings`); `package.json` trägt schon `^1.4.0`,
+darum sind `tests/lockfile-sync.test.ts` und `tests/distribution.test.ts` bis dahin rot
+(Lock-Spiegel hinterher, Tarball-Install findet 1.4.0 nicht in der Registry). Nach dem
+Publish: `npm install` in graphcode löst den Link und zieht Lock + beide Tests grün.
 
 ## Root Cause
 
@@ -175,24 +208,26 @@ heute nicht durch — das Werkzeug muss den Verbund als Batch schicken, sonst ur
 
 ## Akzeptanzkriterien
 
-- [ ] Ein Test belegt am **echten Gate mit Disk-Persistenz**: Batch `[delete-edge(FUNC→MOD-alt),
+- [x] Ein Test belegt am **echten Gate mit Disk-Persistenz**: Batch `[delete-edge(FUNC→MOD-alt),
       add-edge(FUNC→MOD-neu)]` kommt durch, und nach `loadGraph()` steht **aus dem Store
       zurückgelesen** genau eine Allokation. Rot-zuerst: derselbe Test ohne das `delete-edge`
-      muss mit R-18 blocken.
-- [ ] Ein Test belegt die Gegenprobe zum bekannten Fallstrick: delete+add **derselben** Kante in
+      muss mit R-18 blocken. → `tests/suggest.rehang.test.ts` (DIVERGENCE_FIXTURE, Disk-Kuzu).
+- [x] Ein Test belegt die Gegenprobe zum bekannten Fallstrick: delete+add **derselben** Kante in
       einem Batch führt zu Store≠Memory — damit die Grenze dokumentiert **und** erzwungen ist,
-      nicht nur behauptet.
-- [ ] `graph_suggest` liefert auf dem Repo-Graphen mindestens einen Vorschlag mit
-      `applicable: true` auf `layer:'arch'` (heute: keinen).
-- [ ] Der dryRun in `suggest.ts` prüft den **vollständigen** Verbund-Batch, nicht nur die
+      nicht nur behauptet. → dritter Fall in `tests/suggest.rehang.test.ts`.
+- [x] `graph_suggest` liefert auf dem Repo-Graphen mindestens einen Vorschlag mit
+      `applicable: true` auf `layer:'arch'` (heute: keinen). → gemessen: `R-23 @MOD-dashboard`
+      mit retire (s. Ergebnis).
+- [x] Der dryRun in `suggest.ts` prüft den **vollständigen** Verbund-Batch, nicht nur die
       additive Kante; `verdict.fitDelta`/`score` messen denselben Batch, der ausgeliefert wird.
-- [ ] Ein Umhäng-Vorschlag auf eine FUNC **mit** `realRef` weist im Ergebnis aus, dass er
+- [x] Ein Umhäng-Vorschlag auf eine FUNC **mit** `realRef` weist im Ergebnis aus, dass er
       Code-Arbeit nach sich zieht — mindestens die betroffene Datei und das Zielmodul benannt.
       Ein Vorschlag auf eine FUNC ohne `realRef` tut das nicht (kein Rauschen).
-- [ ] Kein Grammatik-/Kardinalitätswissen in `graphcode` — die Herleitung, welche Kante weichen
+      → `codeImpact` am `SuggestedEdit`, Herleitung + beide Richtungen in se-engine getestet.
+- [x] Kein Grammatik-/Kardinalitätswissen in `graphcode` — die Herleitung, welche Kante weichen
       muss, bleibt in `@sigloch/se-engine`/`@sigloch/contracts`.
-- [ ] Entscheidung dokumentiert, ob die Templates einen Begriff von „externem MOD" brauchen
-      (eigener CR) oder nicht.
+- [x] Entscheidung dokumentiert, ob die Templates einen Begriff von „externem MOD" brauchen
+      (eigener CR) oder nicht. → eigener CR-Kandidat, nicht hier (s. Ergebnis).
 
 ## Dateien (≤ 6)
 

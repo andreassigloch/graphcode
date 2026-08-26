@@ -151,7 +151,11 @@ export function bindSuggestTools(ctx: ToolContext): MCPToolRegistry {
       'ZWEI MESSEBENEN: `layer` ist die Ebene des Fund-Rankings, `advisoryLayer` die des Gate-Advisorys ' +
       "(fest 'arch') und damit der anwendbaren Scores. Laufen sie auseinander, sagt das Feld " +
       '`layerMismatch` es im Ergebnis. Wendet NIE selbst an: Edits gehen über graph_mutate. ' +
-      'Read-only; die Metrik rankt, das Gate urteilt.',
+      'UMHÄNGEN (CR-GC-435): trägt ein Edit `retire`, ist das die Kante, die laut Kardinalitäts-' +
+      'Obergrenze weichen muss — anwenden als EIN graph_mutate-Batch [delete-edge(retire), ' +
+      'add-edge(edit)], nie als zwei Aufrufe; genau diesen Verbund hat der dryRun beurteilt. ' +
+      'Ein `codeImpact` benennt Datei+Zielmodul, wenn das Umhängen einer realisierten FUNC ' +
+      'Code-Arbeit nach sich zieht. Read-only; die Metrik rankt, das Gate urteilt.',
     inputSchema: GraphSuggestInputSchema,
     async handler(input) {
       // CR-GC-324: der EINE Mapper statt des flachen Export-Encodings.
@@ -175,8 +179,21 @@ export function bindSuggestTools(ctx: ToolContext): MCPToolRegistry {
             out.push(undefined);
             continue;
           }
+          // CR-GC-435: der dryRun urteilt über den VOLLSTÄNDIGEN Verbund — trägt
+          // der Template-Edit ein `retire` (Umhängen: die Kante, die laut
+          // Kardinalitäts-Obergrenze weichen muss), gehen delete+add als EIN
+          // Batch durchs Gate. Das Gate bewertet nur den Endzustand; der
+          // Zwischenzustand „zwei Allokationen" wird nie gemessen. Verschiedene
+          // Kanten-Schlüssel — der persist-Fallstrick (deletes last) greift nur
+          // bei delete+add DERSELBEN Kante. Welche Kante weicht, hat se-engine
+          // hergeleitet; hier wird kein Grammatikwissen nachgebaut.
           const res = await harness.mutate(
-            [{ op: 'add-edge', edge: { sourceId: s.edit.source, targetId: s.edit.target, edgeType: s.edit.type, attributes: {} } }],
+            [
+              ...(s.edit.retire
+                ? [{ op: 'delete-edge' as const, edge: { sourceId: s.edit.retire.source, targetId: s.edit.retire.target, edgeType: s.edit.retire.type } }]
+                : []),
+              { op: 'add-edge' as const, edge: { sourceId: s.edit.source, targetId: s.edit.target, edgeType: s.edit.type, attributes: {} } },
+            ],
             { dryRun: true },
           );
           await harness.loadGraph();

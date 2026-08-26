@@ -65,6 +65,10 @@ export const INCLUDED = [
   'tests/se-author-uc.test.ts',
   'tests/security.path-containment.test.ts',
   'tests/smoke.create-harness.test.ts',
+  // CR-GC-435: misst am Repo-Graphen, ob mindestens ein Arch-Vorschlag anwendbar
+  // ist (Umhängen via retire) — eine Modelländerung an den Allokationen ändert
+  // genau diesen Befund.
+  'tests/suggest.rehang.test.ts',
   'tests/views.auditor.test.ts',
   'tests/views.no-fork.test.ts',
   'tests/verify-model.completeness.test.ts',
