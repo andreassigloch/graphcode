@@ -35,7 +35,8 @@ import { existsSync } from 'node:fs';
 import type { RuleViolation } from '@sigloch/contracts/harness';
 import type { Graph } from '@sigloch/graph-api-core';
 import { ALL_RULE_DEFS, PHASE_READINESS_NAME, DIMENSION_READINESS_NAME } from '@sigloch/contracts/se';
-import { conformanceViolations, type ConformanceHarness } from './conformance.js';
+import { conformanceEvaluation, type ConformanceHarness } from './conformance.js';
+import type { ImportCoverage } from '@sigloch/contracts/se';
 import { computeReadiness, type ReadinessReport } from './readiness.js';
 
 type CGraph = Pick<Graph, 'nodes' | 'edges'>;
@@ -75,6 +76,16 @@ export interface Evaluation {
    * weder an, welche Fläche gefragt wurde, noch mit welchem Katalog.
    */
   skipped: string[];
+  /**
+   * Abdeckung des Import-Graphen (CR-GC-429 §2 / CR-SM-268 Teil 2) — das
+   * GESCHWISTER von `skipped`, nie damit zusammengelegt: `skipped` heißt „diese
+   * Quelle wurde GAR NICHT ausgewertet", die Abdeckung heißt „ausgewertet, und
+   * ein Teil fällt trotzdem durch" (`unassigned` benennt die Dateien, die weder
+   * über eine realRef-gebundene FUNC noch über ein `MOD.path`-Präfix einer MOD
+   * zuzuordnen waren — RC-05 war für sie blind). `null` genau dann, wenn die
+   * Quelle `conformance` in `skipped` steht — nie eine stille 0.
+   */
+  importCoverage: ImportCoverage | null;
 }
 
 /**
@@ -158,16 +169,19 @@ export function evaluateAll(harness: EvaluationHarness): Evaluation {
   );
 
   const repoRoot = harness.getRepoRoot();
+  let importCoverage: ImportCoverage | null = null;
   if (!repoRoot || !existsSync(repoRoot)) {
     skipped.push('conformance');
   } else {
     try {
-      for (const v of conformanceViolations(harness)) findings.push({ ...v, source: 'conformance' });
+      const conf = conformanceEvaluation(harness);
+      for (const v of conf.violations) findings.push({ ...v, source: 'conformance' });
+      importCoverage = conf.importCoverage;
     } catch {
       skipped.push('conformance');
     }
   }
-  return { findings, skipped };
+  return { findings, skipped, importCoverage };
 }
 
 /**

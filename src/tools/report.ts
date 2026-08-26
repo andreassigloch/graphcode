@@ -25,6 +25,7 @@ import {
   DIMENSION_READINESS_NAME,
   ReadinessDimension,
   type ReadinessScoreType,
+  type ImportCoverage,
 } from '@sigloch/contracts/se';
 import { takeSteeringSnapshot } from '../steering-snapshot.js';
 import {
@@ -157,7 +158,7 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
 
   const rules_evaluate: MCPTool<
     z.infer<typeof RulesEvaluateInputSchema>,
-    { violations: Finding[] | ViolationGroup[]; skipped: string[] }
+    { violations: Finding[] | ViolationGroup[]; skipped: string[]; importCoverage: ImportCoverage | null }
   > = {
     name: 'rules_evaluate',
     description:
@@ -173,11 +174,21 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
       '"0 errors" knows it means "0 under the loaded catalog". Identical population to ' +
       'rules_get_violations and graph_readiness.violationsByRule (they differ only in filter and ' +
       `aggregation) — but NOT to graph_readiness.${DIMENSION_READINESS_NAME}, which is scored from ` +
-      'the full contracts catalog including those rules (see graph_readiness.catalogs).',
+      'the full contracts catalog including those rules (see graph_readiness.catalogs). ' +
+      '`importCoverage` (CR-GC-429 §2 / CR-SM-268) is the SIBLING of `skipped`, never merged into ' +
+      'it: skipped means "this source was not evaluated at all", importCoverage means "evaluated, ' +
+      'and part of the import graph still fell through" — {endpoints, assigned, unassigned[]}, where ' +
+      'unassigned NAMES every import-endpoint file that resolves to no MOD (neither via a bound ' +
+      'FUNC realRef nor a MOD.path prefix), i.e. the files RC-05 could not judge. null exactly when ' +
+      '`skipped` contains "conformance" — a value that is not measurable is never a silent zero.',
     inputSchema: RulesEvaluateInputSchema,
     async handler(input) {
       const ev = evaluateAll(harness);
-      return { violations: project(ev.findings, detailOf(input.detail)), skipped: ev.skipped };
+      return {
+        violations: project(ev.findings, detailOf(input.detail)),
+        skipped: ev.skipped,
+        importCoverage: ev.importCoverage,
+      };
     },
   };
 

@@ -33,8 +33,10 @@ import {
   RealRefSchema,
   TestRefsSchema,
   evaluateConformanceRules,
+  importCoverage,
   type CodeFacts,
   type FileFacts,
+  type ImportCoverage,
   type ImportEdge,
   type OntologyGraph,
 } from '@sigloch/contracts/se';
@@ -346,17 +348,43 @@ export interface ConformanceHarness {
   getRepoRoot(): string;
 }
 
-/** RC violations of the live graph, in the harness RuleViolation shape. */
-export function conformanceViolations(harness: Pick<ConformanceHarness, 'getGraph' | 'getRepoRoot'>): RuleViolation[] {
+/** Das Ergebnis EINER Konformanz-Erhebung: Befunde + die Abdeckungs-MESSUNG. */
+export interface ConformanceEvaluation {
+  violations: RuleViolation[];
+  /**
+   * Wie viel des Import-Graphen die RC-Auflösung überhaupt ansehen konnte
+   * (CR-GC-429 §2 / CR-SM-268 Teil 2). Eine Messung über den Lauf, kein Befund —
+   * derselbe `buildModResolver` wie RC-05, aus DENSELBEN facts, nie eine zweite
+   * Extraktion.
+   */
+  importCoverage: ImportCoverage;
+}
+
+/**
+ * DIE Konformanz-Erhebung: Regeln + Abdeckung aus EINEM (graph, facts)-Paar.
+ * `conformanceViolations` ist eine Projektion hiervon, nie ein zweiter Pfad.
+ */
+export function conformanceEvaluation(
+  harness: Pick<ConformanceHarness, 'getGraph' | 'getRepoRoot'>,
+): ConformanceEvaluation {
   const graph = harness.getGraph();
   const facts = extractCodeFacts(graph, harness.getRepoRoot());
-  return evaluateConformanceRules(toOntologyGraph(graph), facts).map((v) => ({
-    ruleId: v.rule_id,
-    severity: v.severity,
-    elementId: v.element_id,
-    message: v.message,
-    fixHint: v.fix_hint,
-  }));
+  const onto = toOntologyGraph(graph);
+  return {
+    violations: evaluateConformanceRules(onto, facts).map((v) => ({
+      ruleId: v.rule_id,
+      severity: v.severity,
+      elementId: v.element_id,
+      message: v.message,
+      fixHint: v.fix_hint,
+    })),
+    importCoverage: importCoverage(onto, facts),
+  };
+}
+
+/** RC violations of the live graph, in the harness RuleViolation shape. */
+export function conformanceViolations(harness: Pick<ConformanceHarness, 'getGraph' | 'getRepoRoot'>): RuleViolation[] {
+  return conformanceEvaluation(harness).violations;
 }
 
 // `scoreReadinessWithConformance` ist nach `evaluation.ts` gewandert (CR-GC-398):

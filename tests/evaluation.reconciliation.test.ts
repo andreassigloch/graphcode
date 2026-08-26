@@ -169,6 +169,31 @@ describe('TEST-evaluation-reconciliation: eine Auswertungsfläche (CR-GC-398)', 
     );
   });
 
+  it('importCoverage reist neben `skipped` — getrennt, nie zusammengelegt (CR-GC-429 §2)', async () => {
+    // `skipped` = „Quelle gar nicht ausgewertet"; `importCoverage` = „ausgewertet,
+    // und ein Teil fällt trotzdem durch". Zwei Zustände, zwei Felder (CR-SM-268).
+    const { importCoverage, skipped } = await tools.rules_evaluate.handler({ detail: 'summary' });
+    expect(skipped.filter((s) => !s.startsWith('rule:'))).toEqual([]); // Quelle lief
+    expect(importCoverage).not.toBeNull();
+    expect(importCoverage!.endpoints).toBeGreaterThan(0);
+    expect(importCoverage!.assigned + importCoverage!.unassigned.length).toBe(
+      importCoverage!.endpoints,
+    );
+    // Die Lücke ist BENANNT, nicht gezählt — sonst ist sie nicht schließbar.
+    expect(Array.isArray(importCoverage!.unassigned)).toBe(true);
+  });
+
+  it('fällt die Konformanz-Quelle aus, ist importCoverage null — nie eine stille 0', async () => {
+    const degraded = evaluateAll({
+      evaluateRules: () => harness.evaluateRules(),
+      getGraph: () => harness.getGraph(),
+      getRepoRoot: () => join(tmp, 'does-not-exist'),
+      getLoadedRuleIds: () => harness.getLoadedRuleIds(),
+    });
+    expect(degraded.skipped).toContain('conformance');
+    expect(degraded.importCoverage).toBeNull();
+  });
+
   it('Antwortgröße auf dem REALEN Graphen: grouped ≪ summary ≪ full', async () => {
     const bytes = async (detail: 'full' | 'summary' | 'grouped'): Promise<number> =>
       Buffer.byteLength(JSON.stringify(await tools.rules_evaluate.handler({ detail })), 'utf8');
