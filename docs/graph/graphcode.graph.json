@@ -15519,12 +15519,27 @@
     },
     {
       "source": "MOD-repo-root",
+      "target": "MOD-completeness",
+      "type": "compose"
+    },
+    {
+      "source": "MOD-repo-root",
+      "target": "MOD-conformance",
+      "type": "compose"
+    },
+    {
+      "source": "MOD-repo-root",
       "target": "MOD-dashboard",
       "type": "compose"
     },
     {
       "source": "MOD-repo-root",
       "target": "MOD-docs",
+      "type": "compose"
+    },
+    {
+      "source": "MOD-repo-root",
+      "target": "MOD-element-slice",
       "type": "compose"
     },
     {
@@ -15556,6 +15571,11 @@
     {
       "source": "MOD-repo-root",
       "target": "MOD-metrics-engine",
+      "type": "compose"
+    },
+    {
+      "source": "MOD-repo-root",
+      "target": "MOD-schema-migration",
       "type": "compose"
     },
     {
@@ -17947,5 +17967,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 206
+  "graphVersion": 207
 }

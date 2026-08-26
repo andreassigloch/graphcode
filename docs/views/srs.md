@@ -5964,107 +5964,107 @@ schema ◀ `FLOW-live-event` · `FLOW-viewer-stream`
 
 ## 6  Architektur
 
-### 6.1  `MOD-completeness` — readiness-completeness — Gate-Vollstaendigkeit
-
-Vollstaendigkeit je Gate, realisiert im Paket @sigloch/graphcode-client statt in diesem Repo.
-
-allocate ◀ `FUNC-score-completeness`
-
-### 6.2  `MOD-conformance` — conformance.ts — Code-Konformitaet
-
-Prueft, ob eine Bindung im Modell auf ein real deklariertes Symbol zeigt.
-
-allocate ◀ `FUNC-check-code-conformance`
-
-### 6.3  `MOD-element-slice` — element-slice.ts — Element-Scheibe
-
-Gefilterte Leseansicht auf den Store: Typ- und Substring-Filter, keine Mutation, kein Hook, kein Persist.
-
-allocate ◀ `FUNC-list-elements`
-
-### 6.4  `MOD-repo-root` — graphcode Projektwurzel
+### 6.1  `MOD-repo-root` — graphcode Projektwurzel
 
 Ebene-0-Modul: das Wurzelverzeichnis des Projekts — ein Repo, ein npm-Paket, ein Kuzu-Store. Enthaelt alle Module; die Ebene-0-Funktionsbloecke sind hierhin allokiert.
 
 allocate ◀ `FUNC-block-anschluss` · `FUNC-block-antrieb` · `FUNC-block-betrieb` · `FUNC-block-gate` · `FUNC-block-gedaechtnis` · `FUNC-block-messwerk` · `FUNC-block-ruestzeug` · `FUNC-block-schaufenster` · `FUNC-block-speicherwerk`
 
-#### 6.4.1  `MOD-cli` — cli — npx-Distribution & Lifecycle
+#### 6.1.1  `MOD-cli` — cli — npx-Distribution & Lifecycle
 
 bin `npx @sigloch/graphcode init/update/remove`: self-contained Installer. App-spezifisch. (REQ-npx-distribution)
 
 allocate ◀ `FUNC-bootstrap` · `FUNC-cli-dispatch` · `FUNC-collect-status` · `FUNC-gve-sessions` · `FUNC-gve-supervise` · `FUNC-harness-cli` · `FUNC-import-code-verb` · `FUNC-rewind` · `FUNC-run-verb` · `FUNC-session-shutdown` · `FUNC-upgrade` · satisfy ▶ `REQ-buildable-standalone`
 
-#### 6.4.2  `MOD-codec` — codec.ts — GraphCodeCodec
+#### 6.1.2  `MOD-codec` — codec.ts — GraphCodeCodec
 
 Format-E ↔ OntologyGraph, deterministische Serialisierung, Validierung gegen SE-Ontologie. (SPEC §2.4)
 
 allocate ◀ `FUNC-decode` · `FUNC-encode` · satisfy ▶ `REQ-graph-integrity` · `REQ-interface-schema`
 
-#### 6.4.3  `MOD-dashboard` — dashboard — Live-Viewer-App
+#### 6.1.3  `MOD-completeness` — readiness-completeness — Gate-Vollstaendigkeit
+
+Vollstaendigkeit je Gate, realisiert im Paket @sigloch/graphcode-client statt in diesem Repo.
+
+allocate ◀ `FUNC-score-completeness`
+
+#### 6.1.4  `MOD-conformance` — conformance.ts — Code-Konformitaet
+
+Prueft, ob eine Bindung im Modell auf ein real deklariertes Symbol zeigt.
+
+allocate ◀ `FUNC-check-code-conformance`
+
+#### 6.1.5  `MOD-dashboard` — dashboard — Live-Viewer-App
 
 Nachbarsystem: das Paket @sigloch/graph-view-edit. Live-Viewer und Editor auf dem Graphen, eigenes Repo, eigener Release. graphcode modelliert nur den RAND dazu — ACTOR-dashboard, gespeist von FLOW-live-event mit SCHEMA-update-event und von FLOW-module-metrics. Das Innenleben des Pakets steht bewusst NICHT im Modell: es waere die erfundene Struktur eines fremden Repos und beim naechsten Fremd-Release stillschweigend falsch. Der MOD bleibt als Paketgrenze bestehen, weil er fuenf REQ erfuellt, die kein ACTOR tragen kann. Frueher graphcode-owned mit path src/viewer — seit dem Carve-Out beides falsch (CR-GC-401).
 
 allocate ◀ — · satisfy ▶ `REQ-artifact-freshness` · `REQ-dashboard-ontology-sync` · `REQ-dashboard-readonly` · `REQ-readiness-transparent` · `REQ-shared-views-no-fork`
 
-#### 6.4.4  `MOD-docs` — docs — Markdown-Re-Exporter
+#### 6.1.6  `MOD-docs` — docs — Markdown-Re-Exporter
 
 App-spezifisches Rendering: Graph → Markdown-Views (deterministisch, GENERATED-Header). (REQ-doc-export, code-realisiert, target)
 
 allocate ◀ `FUNC-auto-export` · `FUNC-block-dokumentenwerk` · `FUNC-export-markdown` · satisfy ▶ `REQ-docs-taxonomy` · `REQ-testref-materialized`
 
-#### 6.4.5  `MOD-executor` — executor — eingebetteter Treiber
+#### 6.1.7  `MOD-element-slice` — element-slice.ts — Element-Scheibe
+
+Gefilterte Leseansicht auf den Store: Typ- und Substring-Filter, keine Mutation, kein Hook, kein Persist.
+
+allocate ◀ `FUNC-list-elements`
+
+#### 6.1.8  `MOD-executor` — executor — eingebetteter Treiber
 
 Treiberschleife hinter dem Verb graphcode run: Runden-Prompt, Modellaufruf, Kandidaten-Ranking, Prosa-Recovery. Fuenf flache Dateien unter src/, deshalb kein path-Praefix am Modul; die Zuordnung laeuft ueber die realRef der allozierten FUNC.
 
 allocate ◀ `FUNC-build-round-injection` · `FUNC-extract-mutate` · `FUNC-preflight` · `FUNC-rank-candidates` · `FUNC-run-executor`
 
-#### 6.4.6  `MOD-harness` — harness.ts — GraphCodeHarness
+#### 6.1.9  `MOD-harness` — harness.ts — GraphCodeHarness
 
 Apply-Gate: loadGraph/saveGraph/mutate/evaluateRules/close gegen lokalen Kuzu. (SPEC §2.1)
 
 allocate ◀ `FUNC-apply-reseed` · `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-evaluate-rules` · `FUNC-export-marker` · `FUNC-import` · `FUNC-load-config` · `FUNC-load-graph` · `FUNC-merge-nodes` · `FUNC-mutate` · `FUNC-open-store` · `FUNC-reseed` · `FUNC-save-graph` · `FUNC-seed-from-json` · satisfy ▶ `REQ-graph-state-recall` · `REQ-harness-schema-in-contracts` · `REQ-import-se-ontology` · `REQ-quality-metric` · `REQ-single-kuzu-owner` · `REQ-single-store` · `REQ-store-recovery` · `REQ-structural-rule-shared`
 
-#### 6.4.7  `MOD-hooks` — hooks.ts — HookSystem
+#### 6.1.10  `MOD-hooks` — hooks.ts — HookSystem
 
 pre-commit / post-apply / nightly-batch Extension-Points. (SPEC §2.3)
 
 allocate ◀ `FUNC-emit-trajectory` · `FUNC-emit-update-event` · satisfy ▶ `REQ-hook-extension-points` · `REQ-hook-order-deterministic` · `REQ-precommit-timeout` · `REQ-versioned-cache`
 
-#### 6.4.8  `MOD-host-bridge` — host-bridge — SSE/WS Bridge
+#### 6.1.11  `MOD-host-bridge` — host-bridge — SSE/WS Bridge
 
 Host-Prozess (Single Kuzu Owner) exponiert graph-api-express + SSE-Route, verdrahtet an harness.onUpdateEvent. Versioned Diff-Broadcast an den Live-Viewer. Kein Express-REST im Core — die Bridge ist Host-Sache. (SPEC §5)
 
 allocate ◀ `FUNC-block-live-dashboard` · `FUNC-broadcast-diff` · `FUNC-health-endpoint` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · `FUNC-serve-sse` · satisfy ▶ `REQ-readonly-bridge` · `REQ-real-health-check` · `REQ-versioned-broadcast`
 
-#### 6.4.9  `MOD-mcp-tools` — mcp-tools.ts — MCP-Registry
+#### 6.1.12  `MOD-mcp-tools` — mcp-tools.ts — MCP-Registry
 
 MCP-stdio Tool-Registry, an die Harness gebunden; read/write/query Tools. (SPEC §2.2)
 
 allocate ◀ `FUNC-bind-tools` · `FUNC-deduce-tests` · `FUNC-graph-expand` · `FUNC-graph-export-snapshot` · `FUNC-graph-impact` · `FUNC-graph-suggest` · `FUNC-resolve-tests-from-code` · `FUNC-serve-stdio` · `FUNC-tool-context` · satisfy ▶ `REQ-agent-agnostic` · `REQ-export-no-clobber` · `REQ-graph-context-replaces-reading` · `REQ-mcp-tool-registry` · `REQ-prompt-provenance` · `REQ-readiness-model` · `REQ-rule-calibration` · `REQ-single-transport` · `REQ-test-runnable-binding` · `REQ-testref-materialized`
 
-#### 6.4.10  `MOD-metrics-engine` — metrics-engine — Kenngroessen-Rechenkern
+#### 6.1.13  `MOD-metrics-engine` — metrics-engine — Kenngroessen-Rechenkern
 
 Rechnet die Kenngroessen, aus denen die Steuerung ihre Urteile zieht: Architektur-Fitness, Readiness-Dimensionen, Modulkennzahlen. Ausserhalb dieses Repos realisiert — metrics und computeReadiness in @sigloch/se-engine, moduleMetrics in @sigloch/contracts. Die Modulgrenze folgt der Aufgabe, nicht der Paketgrenze; se-optimizer und se-steering, auf die die alten Verweise zeigten, existieren nicht mehr.
 
 allocate ◀ `FUNC-arch-fitness` · `FUNC-compute-readiness` · `FUNC-module-metrics`
 
-#### 6.4.11  `MOD-skills` — skills/prompts — agent-realisierte Funktionen
+#### 6.1.14  `MOD-schema-migration` — Schema-Migration
+
+Versionsmigration des Meta-Modells: modelliert, noch nicht realisiert.
+
+allocate ◀ `FUNC-migrate-schema` · `FUNC-schema-guard`
+
+#### 6.1.15  `MOD-skills` — skills/prompts — agent-realisierte Funktionen
 
 App-spezifisches Modul: .claude/commands/ (+ Prompts) — Skill-/Prompt-Definitionen als agent-ausgeführte Funktionen (z.B. se-view/* Graph→Markdown-Views). Lifecycle via FUNC-harness-cli. Allokation hierher = prompt-realisiert (vs. code-realisiert in den übrigen MODs). Beweis: Skills = Funktionen.
 
 allocate ◀ `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-import-code` · `FUNC-import-doc` · `FUNC-render-views` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-help` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-se-trade` · `FUNC-target-profile` · `FUNC-test` · `FUNC-test-ui` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm`
 
-#### 6.4.12  `MOD-steering` — steering — Kenngroessen-Steuerungskern
+#### 6.1.16  `MOD-steering` — steering — Kenngroessen-Steuerungskern
 
 Der Steuerungskern als Modul: Snapshot und Delta (src/steering-snapshot.ts), Fokuswahl und Runden-Prompt (src/generate.ts), Advisory-Naechster-Schritt (src/steering.ts), Kandidaten-Rangfolge (src/executor-rank.ts). Code-realisiert; dieser CR schreibt keinen Code, die Dateien lagen bisher nur ohne Modellstelle da.
 
 allocate ◀ `FUNC-block-arch-optimierung` · `FUNC-block-q-improvement` · `FUNC-block-se-steuerung` · `FUNC-compute-phase-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-nd-similarity` · `FUNC-next-step` · `FUNC-take-steering-snapshot` · `FUNC-target-profile-load`
-
-### 6.5  `MOD-schema-migration` — Schema-Migration
-
-Versionsmigration des Meta-Modells: modelliert, noch nicht realisiert.
-
-allocate ◀ `FUNC-migrate-schema` · `FUNC-schema-guard`
 
 ## 7  Cross-cutting Requirements
 
