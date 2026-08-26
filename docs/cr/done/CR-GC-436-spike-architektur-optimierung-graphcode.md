@@ -1,6 +1,6 @@
 # CR-GC-436 — Spike: echte Architektur-Optimierung von graphcode (Trockenübung im Graph)
 
-**Status:** offen · **Angelegt:** 2026-08-26 · **Typ:** Spike (Timebox 1 Session)
+**Status:** **ABGESCHLOSSEN** (2026-08-26) · **Angelegt:** 2026-08-26 · **Typ:** Spike (Timebox 1 Session)
 **Vorgänger:** CR-GC-407 (No-Go) · CR-GC-408 (No-Go) · CR-GC-427 (GO) · CR-GC-430 (GO) ·
 CR-GC-432 (nicht messbar) — deren Wert kam aus scharfen Kill-Kriterien; hier gilt dasselbe.
 **Hängt ab von:** [CR-GC-435](CR-GC-435-fix-templates-koennen-nur-anhaengen.md) (Umhängen)
@@ -157,24 +157,25 @@ MOD-Kohäsion steigt. Das ist ein Befund über die **Metrik** (zwei Nenner, s. o
 
 ## Akzeptanzkriterien
 
-- [ ] Vorbedingungen aus Schritt 0 beantwortet und im Ergebnis notiert (contracts-Version,
-      Baseline-Verstöße, CR-GC-435-Stand).
-- [ ] Alle Läufe über das echte Gate, Disk-Kuzu im Temp-Verzeichnis, Endwerte aus dem Store
+- [x] Vorbedingungen aus Schritt 0 beantwortet und im Ergebnis notiert (contracts-Version,
+      Baseline-Verstöße, CR-GC-435-Stand). → Nachtrag 1 + 2.
+- [x] Alle Läufe über das echte Gate, Disk-Kuzu im Temp-Verzeichnis, Endwerte aus dem Store
       zurückgelesen. Der produktive Store und `docs/graph/*.graph.json` sind nachweislich
-      unverändert (Hash vorher/nachher).
-- [ ] Kohäsion je Modul **und** gesamt, vorher/nachher, tabellarisch — inkl. der fünf Module mit
-      heute 0 internen Verbindungen.
-- [ ] ℝ⁶-Vektor vorher/nachher **und** die Projektion auf das hinterlegte Zielprofil: **eine**
-      Zahl. Der Unterschied MOD-Kohäsion vs. `coherence` explizit benannt.
-- [ ] Befund-Bilanz getrennt nach geschlossen / neu entstanden, je Regel-ID.
-- [ ] Lauf A (greedy) und Lauf B (Handschnitt) nebeneinander — der Abstand ist die Aussage über
-      den heutigen Autopiloten.
-- [ ] Code-Evaluierung: Liste der Dateien, die wandern müssten, mit Zielmodul; Schätzung der
+      unverändert (Hash vorher/nachher). → Nachtrag 2 (Nachtrag 1 war in-memory).
+- [x] Kohäsion je Modul **und** gesamt, vorher/nachher, tabellarisch — inkl. der fünf Module mit
+      heute 0 internen Verbindungen. → Modultabellen im Testoutput, Summen in den Nachträgen.
+- [x] ℝ⁶-Vektor vorher/nachher **und** die Projektion auf das hinterlegte Zielprofil: **eine**
+      Zahl. Der Unterschied MOD-Kohäsion vs. `coherence` explizit benannt. → Nachtrag 2.
+- [x] Befund-Bilanz getrennt nach geschlossen / neu entstanden, je Regel-ID. → Nachtrag 2.
+- [x] Lauf A (greedy) und Lauf B (Handschnitt) nebeneinander — der Abstand ist die Aussage über
+      den heutigen Autopiloten. → 1 Zug vs. voller Schnitt, Nachtrag 2.
+- [x] Code-Evaluierung: Liste der Dateien, die wandern müssten, mit Zielmodul; Schätzung der
       Importänderungen; RC-05-Bilanz vor/nach hypothetischem Umzug; benannte Bruchstellen an der
-      öffentlichen Oberfläche.
-- [ ] **Entscheidungsvorlage:** GO oder No-Go mit der tragenden Zahl und dem greifenden
-      Kill-Kriterium. Kein „teils/teils" ohne benannte Zahl.
-- [ ] Diff berührt nur `tests/` bzw. `scripts/` und diesen CR.
+      öffentlichen Oberfläche. → Nachtrag 1 (Coder-Bewertung); RC-05 im Temp-Rig nicht messbar
+      (repoRoot-Artefakt, Nachtrag 2 Schritt 0), bleibt Schätzung.
+- [x] **Entscheidungsvorlage:** GO oder No-Go mit der tragenden Zahl und dem greifenden
+      Kill-Kriterium. Kein „teils/teils" ohne benannte Zahl. → No-Go, 17,2 % → 19,6 % bei Q≈0.
+- [x] Diff berührt nur `tests/` bzw. `scripts/` und diesen CR.
 
 ## Dateien (≤ 3)
 
@@ -271,4 +272,84 @@ als Nebenprodukt spezifiziert hat: (a) CR-GC-429 §4 mit dem 8er-Schnitt als Zie
 (b) `harness.ts`-Split store/gate, (c) Flow-Konsolidierung + Splitter-/Block-Bereinigung
 als Modellpflege (braucht CR-GC-435 fürs Umhängen). Dazu der Metrik-Befund an
 sigloch-modules (Hub-Empfindlichkeit des Kohäsions-Nenners, Pipeline-Null).
+Entscheidung liegt beim Auftraggeber.
+
+---
+
+# Nachtrag 2 (2026-08-26, nach CR-GC-435 — die Gate-harte Hälfte)
+
+CR-GC-435 ist da (se-engine 1.4.0 im Link-Modus, retire-Verbund im Vorschlagspfad) — damit
+konnten beide Läufe wie ursprünglich spezifiziert gefahren werden: **echtes Gate**
+(`harness.mutate()`), je Lauf eigener **Disk-Kuzu** in `mkdtempSync` (danach `rmSync`),
+Endwerte per `loadGraph()` **aus dem Store**, Währung `layer:'arch'`. Treiber:
+`tests/arch.optimization-dry-run.spike.test.ts` (2/2 grün). SSOT nachweislich unangetastet:
+SHA-256 von `docs/graph/graphcode.graph.json` vorher = nachher (`951146a2…`), im Test asserted.
+
+**Schritt 0:** contracts **9.1.0** (Link-Modus; `package.json` verlangt `>=9.1 <10`),
+graphVersion 208. Baseline-Vorlast im Rig: **300 Verstöße** (R-18×60, RC-02×110, RC-01×87,
+RC-03×14, R-04×5, RD-04×5, MT-02×3, R-23×1, …). Die RC-\*-Zahlen sind ein **Artefakt des
+Temp-repoRoot** (realRef/testRefs lösen dort nicht auf) — der Rig taugt deshalb nicht für die
+RC-05-Bilanz; die Code-Hälfte bleibt die Schätzung aus Nachtrag 1.
+
+## Lauf A — greedy (Reichweite des Autopiloten)
+
+- **Genau 1 Zug**, dann Erschöpfung: `[R-23] FUNC-block-schaufenster -allocate->
+  MOD-dashboard (retire MOD-repo-root)` — exakt der CR-GC-435-Fall.
+- Versprochen 0.0081 = realisiert 0.0081 (Projektion aufs Zielprofil; **keine 407-Falle**).
+- Kohäsion/Q/Blatt-intern: **unverändert** (17,2 %, Q −0.016).
+- Der eine Zug ist fachlich sogar **falsch**: `MOD-dashboard` ist ein Nachbarsystem
+  (CR-GC-435-Nebenbefund — Templates kennen „extern" nicht).
+- Befund-Bilanz: 2 geschlossen (R-23, CR-R03), 1 neu (CR-R03).
+
+## Lauf B — Handschnitt (8er-Schnitt) als Gate-Batches
+
+Drei Batches (merge-nodes-Renames + FLOW/SCHEMA-Konsolidierung · 29 Umhängungen als
+`[delete-edge, add-edge]` · Splitter-MODs in Nachfolger gemergt) — alle durchs Gate, alle
+Umhängungen nach `loadGraph()` aus dem Store verifiziert. **Bestätigt die In-Memory-Zahlen
+exakt:** intern 17,2 % → 19,6 %, Q −0.016 → 0.004, 0-intern 5 → 2, coherence 3.639 → 3.703,
+scalability 3.574 → 4.102, modifiability 2.813 → 2.760; Projektion aufs Zielprofil **+0.0215**.
+
+**Was NUR das Gate zeigte (die In-Memory-Simulation war an beidem blind):**
+
+1. **FLOW-Konsolidierung erzwingt SCHEMA-Konsolidierung.** R-18 blockte: „FLOW-steering-snapshot
+   has 5 relation traces to SCHEMA — the meta-model allows at most 1". 6 SCHEMA-Merges wurden
+   nötig, die der Handschnitt nicht geplant hatte. Jeder künftige FLOW-Merge-CR muss die
+   Datenverträge mit konsolidieren.
+2. **Umbenennen-per-merge re-keyt Vorlast.** Die grammatik-illegalen `MOD -satisfy-> REQ`-Kanten
+   (Teil der 60 R-18-Vorlast) tauchen am neuen MOD als **neu eingeführte** Fehler auf und blocken
+   unter der Delta-Semantik. Der saubere Zielzustand lässt sie fallen — dadurch werden 11 REQs
+   ehrlich „unresolved" (RD-01×11 neu). Der eigentliche Fix (satisfy auf FUNC-Ebene) ist
+   Modellpflege, eigener CR-Kandidat.
+
+Befund-Bilanz: **13 geschlossen** (darunter R-18×4 = echter Vorlast-Abbau), **19 neu** (alle
+warning/info: RD-01×11, RD-04×3, R-04×2, R-23×1 auf dem geleerten Container `MOD-repo-root`, …).
+Nur Arch-Befunde (R-04/RD-04/MT-02): 5 zu, 6 auf = **netto −1** — die größeren Zielmodule
+feuern die Größen-/Kopplungsregeln, die die kleinen inkohärenten nie trafen.
+
+## Regelkreis-Variante (Trockenübung, in-memory — `scripts/spike-arch-regelkreis.mjs`)
+
+5 Zielmodule + Verträge auf 5 Kern-FLOWs konsolidiert (35 FLOW-, 8 SCHEMA-Merges): intern
+30,6 % — aber die Paar-Zahl explodiert 204 → 791 (Hub-Inflation, Befund 3 erneut belegt),
+Q(dekl.) bleibt ≈ 0. Der echte Gewinn liegt in der Draufsicht: **Sicht 2 kollabiert von 47
+MOD-Paaren auf 10.** Bewusst in-memory belassen — der Wert ist das Kantenbild, nicht der
+Store-Nachweis; das Skript ist als dritte Trockenübung eingecheckt.
+
+## Kill-Kriterien-Ausgang (gate-hart)
+
+| # | Kriterium | Ausgang |
+|---|---|---|
+| 1 | Nicht anwendbar | **bestanden** dank CR-GC-435 — aber Reichweite = 1 Zug, und der ist fachlich falsch (externes MOD) |
+| 2 | Kohäsion steigt nicht messbar | **greift**: 17,2 % → 19,6 % bei Q≈0 |
+| 3 | Mehr kaputt als heil | **greift knapp**: Arch-Befunde netto −1 (Gesamt 13 zu / 19 auf, alle neuen warning/info, 4 R-18-errors Vorlast abgebaut) |
+| 4 | Richtungslos | greift **nicht**: versprochen = realisiert (A), Projektion +0.0215 (B) |
+| 5 | Der Code trägt es nicht | unverändert aus Nachtrag 1: der wertvolle Umbau ist der Datei-/Verzeichnis-Schnitt (CR-GC-429 §4), nicht die Graph-Umhängung |
+
+## Entscheidungsvorlage (final)
+
+**No-Go** für „Modulschnitt allein durch Umhängen von Allokationen" — jetzt gate-hart belegt:
+tragende Zahl **17,2 % → 19,6 % bei Q≈0**, Autopilot-Reichweite **1 Zug**. **GO-Empfehlung**
+für die code-getragenen Ableger (a)–(c) aus Nachtrag 1 bleibt; neu aus dem Gate: (d) SCHEMA-
+Konsolidierung gehört in jeden FLOW-Merge-CR, (e) die 11 per MOD-satisfy „versorgten" REQs
+brauchen FUNC-Ebene-satisfies (Modellpflege-CR), (f) Umbenennungs-Gotcha: merge-nodes macht
+Vorlast der Quelle zu blockenden Neu-Verstößen — vor jedem Rename die Vorlast klären.
 Entscheidung liegt beim Auftraggeber.
