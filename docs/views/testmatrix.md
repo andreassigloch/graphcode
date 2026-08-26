@@ -4,7 +4,7 @@
 
 # graphcode — Verification Cross-Reference Matrix (VCRM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 136 REQ rows. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 137 REQ rows. Deterministisch generiert.
 
 | REQ | verify-Kante | Lauf-Ergebnis | verifying TEST(s) |
 |---|---|---|---|
@@ -131,6 +131,7 @@
 | `REQ-steering-from-metrics` | ✓ | ✓ passed | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` · `TEST-steering-loop` |
 | `REQ-steering-post` | ✓ | ✓ passed | `TEST-steering-loop` |
 | `REQ-steering-pre` | ✓ | ✓ passed | `TEST-steering-loop` |
+| `REQ-store-owner-lifecycle` | ✓ | ✓ passed | `TEST-host-shim` · `TEST-session-lifecycle` · `TEST-store-lock` |
 | `REQ-store-recovery` | ✓ | ⚠ 2/3 passed | `TEST-reseed` · `TEST-schema-migration` · `TEST-store-recovery` |
 | `REQ-structural-rule-shared` | ✓ | ✓ passed | `TEST-graph-authoring-guide` · `TEST-mutate-gate` |
 | `REQ-structure-driven` | ✓ | ⚠ 2/3 passed | `TEST-code-quality` · `TEST-mutate-schema-guard` · `TEST-se-plan-ordering` |
@@ -145,8 +146,8 @@
 | `REQ-versioned-cache` | ✓ | ⚠ nie gelaufen | `TEST-cache` |
 | `REQ-viewer-owned-by-repo` | ✓ | ✓ passed | `TEST-gve-autostart` · `TEST-gve-supervision` |
 
-Coverage: 136/136 REQ mit verify-Kante (100%) · 0 offen (R-01).
-Belegt: 103/136 REQ bestanden (76%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
+Coverage: 137/137 REQ mit verify-Kante (100%) · 0 offen (R-01).
+Belegt: 104/137 REQ bestanden (76%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
 
 ## Integrationsabdeckung (rolled-up)
 

@@ -3599,13 +3599,19 @@
       "name": "Agent-agnostische MCP-Surface",
       "description": "Die MCP-stdio-Surface ist agent-agnostisch: Claude Code UND OpenCode (und jeder MCP-Client) treiben dieselbe Harness durchs selbe Gate; keine client-spezifischen Annahmen. (CLAUDE.md verriegelt: OpenCode-executed, Claude Code = ein Client)",
       "status": "done",
-      "created_at": "2026-06-17T00:00:00.000Z"
+      "created_at": "2026-06-17T00:00:00.000Z",
+      "kinds": [
+        "non-functional"
+      ]
     },
     {
       "id": "REQ-applied-suggestion-moves-target",
       "type": "REQ",
       "name": "Eine angewandte Suggestion bewegt den Zielvektor in Zielrichtung",
-      "description": "Wird die bestbewertete anwendbare Suggestion real durchs Gate angewandt, bewegt sich die adressierte Metrik-Komponente mit dem Vorzeichen des Ziels und um den vorhergesagten Betrag; jede reale Regression war vorher angesagt."
+      "description": "Wird die bestbewertete anwendbare Suggestion real durchs Gate angewandt, bewegt sich die adressierte Metrik-Komponente mit dem Vorzeichen des Ziels und um den vorhergesagten Betrag; jede reale Regression war vorher angesagt.",
+      "kinds": [
+        "functional"
+      ]
     },
     {
       "id": "REQ-artifact-freshness",
@@ -3615,7 +3621,7 @@
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
       "kinds": [
-        "functional"
+        "non-functional"
       ]
     },
     {
@@ -3645,7 +3651,10 @@
       "type": "REQ",
       "name": "Batch-Seed/Import Performance (UNWIND)",
       "description": "Seed/Import muss batch-skalieren: per-Row-MERGE ist O(langsam) (10k Edges ~51s, SP-2). UNWIND-Batch-Insert (gruppiert je Label/Edge-Table, Werte inline via escapeString) liefert 5k Nodes + 5k Edges < 15s (gemessen 5.3s, 5.6x schneller; Edges 9.6x). Interface unverändert (StorageAdapter.saveNodes/saveEdges), kein Parallelpfad. (CR-GC-120)",
-      "status": "done"
+      "status": "done",
+      "kinds": [
+        "non-functional"
+      ]
     },
     {
       "id": "REQ-benchmark-harness",
@@ -3765,7 +3774,7 @@
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
-        "functional"
+        "non-functional"
       ]
     },
     {
@@ -3776,7 +3785,7 @@
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
       "kinds": [
-        "negative"
+        "non-functional"
       ]
     },
     {
@@ -3895,13 +3904,19 @@
       "type": "REQ",
       "name": "FUNC codeRef resolves to a real declared symbol",
       "description": "Jeder FUNC.codeRef loest auf ein real deklariertes Symbol in seiner Datei auf (TypeScript-Parser, kein Substring-Match); prompt-realisierte FUNCs (lang prompt): die Skill-Datei existiert. Macht das R-20-Backfill verifizierbar statt nur vorhanden. (CR-GC-206)",
-      "status": "done"
+      "status": "done",
+      "kinds": [
+        "functional"
+      ]
     },
     {
       "id": "REQ-graph-context-replaces-reading",
       "type": "REQ",
       "name": "Praeziser Graph-Kontext ersetzt das Dokumentenlesen",
-      "description": "Ein Aufruf liefert die vollstaendige Definition-of-Done eines Realisierungsknotens als begrenzten Slice, sodass das Modell aus dem Graphen implementiert statt die Spezifikation zu lesen."
+      "description": "Ein Aufruf liefert die vollstaendige Definition-of-Done eines Realisierungsknotens als begrenzten Slice, sodass das Modell aus dem Graphen implementiert statt die Spezifikation zu lesen.",
+      "kinds": [
+        "non-functional"
+      ]
     },
     {
       "id": "REQ-graph-integrity",
@@ -3930,21 +3945,30 @@
       "type": "REQ",
       "name": "Kanonischer Graph-Snapshot pro Commit",
       "description": "Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/graph/*.graph.json), der zum Code dieses Commits passt. Un-exportierte Modell-Mutationen blockieren den Commit ueber den single-writer-sicheren Drift-Marker .graphcode/EXPORT_PENDING (vom Gate auf mutate gesetzt, von graph_export/graph_reseed geloescht); der pre-commit-Hook staged die generierten Artefakte automatisch. (CR-GC-217)",
-      "status": "done"
+      "status": "done",
+      "kinds": [
+        "functional"
+      ]
     },
     {
       "id": "REQ-graph-state-recall",
       "type": "REQ",
       "name": "Frueheren Graph-Stand reproduzieren",
       "description": "Ein frueherer Graph-Stand ist mit einem Kommando reproduzierbar: graphcode rewind <ref> liest den committeten Snapshot aus dem Git-Objektspeicher und reseedet den Store daraus. Der committete Snapshot ist SSOT-at-rest / history-of-record, der Kuzu-Store eine abgeleitete Working-Copy; reseed loescht+reimportiert in-process hinter dem Single-Writer (kein zweites Handle). Der Working-Tree wird nicht angefasst. (CR-GC-217, CR-GC-311)",
-      "status": "done"
+      "status": "done",
+      "kinds": [
+        "functional"
+      ]
     },
     {
       "id": "REQ-graph-tests-operational",
       "type": "REQ",
       "name": "graph_tests liefert den korrekten selektiven Testset für einen Code-Change",
       "description": "Ein Code-Changeset (MOD/FUNC/git-diff→Knoten) → graph_tests → vitest run nur-betroffene-Dateien, das JEDE vom Change berührte Testdatei enthält (kein false-green) und unbeteiligte ausschliesst. Erfordert testRef auf allen lauffähigen TESTs + gerichtete Auflösung statt reinem incoming-impact.",
-      "status": "done"
+      "status": "done",
+      "kinds": [
+        "functional"
+      ]
     },
     {
       "id": "REQ-greenfield-systemtest-dod",
@@ -3975,7 +3999,7 @@
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
-        "functional"
+        "non-functional"
       ]
     },
     {
@@ -4061,7 +4085,10 @@
       "name": "Live-Event-Contract in @sigloch/contracts",
       "description": "LiveUpdateEvent/UpdateDomain (heute nur graphcode src/emit.ts) als Zod-Schema nach @sigloch/contracts publishen, damit Dashboard/Bridge denselben Vertrag importieren (kein Fork). Analog D1.",
       "status": "done",
-      "created_at": "2026-06-17T00:00:00.000Z"
+      "created_at": "2026-06-17T00:00:00.000Z",
+      "kinds": [
+        "non-functional"
+      ]
     },
     {
       "id": "REQ-mcp-gate-symmetry",
@@ -4109,7 +4136,10 @@
       "id": "REQ-monotone-convergence",
       "type": "REQ",
       "name": "Wiederholte Steuerung konvergiert monoton",
-      "description": "Ueber aufeinanderfolgende Runden faellt die Phase-Gate-Abdeckung nie zurueck und die Zahl blockierender Verstoesse steigt nie; ein Fund-Set wird hoechstens einmal erneut aufgerufen und nach dem Zuruecksetzen nicht wieder."
+      "description": "Ueber aufeinanderfolgende Runden faellt die Phase-Gate-Abdeckung nie zurueck und die Zahl blockierender Verstoesse steigt nie; ein Fund-Set wird hoechstens einmal erneut aufgerufen und nach dem Zuruecksetzen nicht wieder.",
+      "kinds": [
+        "non-functional"
+      ]
     },
     {
       "id": "REQ-mutation-emits-event",
@@ -4140,7 +4170,7 @@
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
-        "negative"
+        "functional"
       ]
     },
     {
@@ -4159,7 +4189,10 @@
       "id": "REQ-one-driver-local-and-frontier",
       "type": "REQ",
       "name": "Ein Treiber fuer lokale und Frontier-Modelle",
-      "description": "Derselbe Steuerungs-Loop faehrt ein lokal laufendes Modell und ein Frontier-Modell ohne Code-Verzweigung; der Backend-Wechsel ist Konfiguration, nicht ein zweiter Pfad."
+      "description": "Derselbe Steuerungs-Loop faehrt ein lokal laufendes Modell und ein Frontier-Modell ohne Code-Verzweigung; der Backend-Wechsel ist Konfiguration, nicht ein zweiter Pfad.",
+      "kinds": [
+        "functional"
+      ]
     },
     {
       "id": "REQ-one-gate-per-repo",
@@ -4176,7 +4209,10 @@
       "id": "REQ-phase-gate-not-skippable",
       "type": "REQ",
       "name": "Ein Phasen-Gate ist nicht ueberspringbar",
-      "description": "Auch bei erreichter Readiness-Schwelle und null blockierenden Verstoessen bleibt der Handoff aus, solange das aktuelle Phasen-Gate nicht regel-vollstaendig ist."
+      "description": "Auch bei erreichter Readiness-Schwelle und null blockierenden Verstoessen bleibt der Handoff aus, solange das aktuelle Phasen-Gate nicht regel-vollstaendig ist.",
+      "kinds": [
+        "non-functional"
+      ]
     },
     {
       "id": "REQ-post-agent-query",
@@ -4534,7 +4570,7 @@
       "status": "done",
       "created_at": "2026-08-16T00:00:00.000Z",
       "kinds": [
-        "functional"
+        "non-functional"
       ]
     },
     {
@@ -4551,7 +4587,10 @@
       "id": "REQ-published-counts-match-code",
       "type": "REQ",
       "name": "Publizierte Zahlen stimmen mit der lebenden Quelle",
-      "description": "Jede in den publizierten Dokumenten genannte Anzahl von Elementtypen, Verbindungstypen, legalen Verbindungsmustern, Regeln, Readiness-Dimensionen und MCP-Tools wird gegen Ontologie und Tool-Registry geprueft; eine Abweichung nennt Datei, Zeile, erwarteten und gefundenen Wert."
+      "description": "Jede in den publizierten Dokumenten genannte Anzahl von Elementtypen, Verbindungstypen, legalen Verbindungsmustern, Regeln, Readiness-Dimensionen und MCP-Tools wird gegen Ontologie und Tool-Registry geprueft; eine Abweichung nennt Datei, Zeile, erwarteten und gefundenen Wert.",
+      "kinds": [
+        "non-functional"
+      ]
     },
     {
       "id": "REQ-quality-metric",
@@ -4605,7 +4644,7 @@
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
       "kinds": [
-        "functional"
+        "non-functional"
       ]
     },
     {
@@ -4616,7 +4655,7 @@
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
-        "negative"
+        "non-functional"
       ]
     },
     {
@@ -4704,7 +4743,7 @@
       "status": "open",
       "created_at": "2026-08-16T00:00:00.000Z",
       "kinds": [
-        "functional"
+        "non-functional"
       ]
     },
     {
@@ -4745,7 +4784,10 @@
       "id": "REQ-session-leaves-nothing-behind",
       "type": "REQ",
       "name": "Sitzungsende hinterlaesst nichts",
-      "description": "Nach dem Ende einer Sitzung muss der Store-Lock freigegeben und der Sitzungseintrag entfernt sein; abgeraeumt wird genau einmal und in umgekehrter Aufbaureihenfolge, der Store-Lock zuletzt."
+      "description": "Nach dem Ende einer Sitzung muss der Store-Lock freigegeben und der Sitzungseintrag entfernt sein; abgeraeumt wird genau einmal und in umgekehrter Aufbaureihenfolge, der Store-Lock zuletzt.",
+      "kinds": [
+        "functional"
+      ]
     },
     {
       "id": "REQ-shared-views-no-fork",
@@ -4753,7 +4795,10 @@
       "name": "Geteilte View-Berechnung, kein Regel-Fork",
       "description": "views.ts (testmatrix/FMEA/RTM/IRR/NFR/arch…) aus aimprove → @sigloch/graph-api-core; lokalen BQ-Regel-Fork (aimpro/src/contracts/se) retiren oder via Familie-Review nach contracts migrieren (Drift-Lock L1/L2).",
       "status": "done",
-      "created_at": "2026-06-17T00:00:00.000Z"
+      "created_at": "2026-06-17T00:00:00.000Z",
+      "kinds": [
+        "non-functional"
+      ]
     },
     {
       "id": "REQ-single-kuzu-owner",
@@ -4770,7 +4815,10 @@
       "id": "REQ-single-measurement-path",
       "type": "REQ",
       "name": "Ein Messpfad fuer alle Steuerungs-Oberflaechen",
-      "description": "nextStep, generationStep und der steeringDelta-Zweig des dryRun-Verdicts liefern fuer denselben Graphen dieselbe Violation-Menge, dieselben Dimensions-Scores und dieselbe Zahl blockierender Verstoesse."
+      "description": "nextStep, generationStep und der steeringDelta-Zweig des dryRun-Verdicts liefern fuer denselben Graphen dieselbe Violation-Menge, dieselben Dimensions-Scores und dieselbe Zahl blockierender Verstoesse.",
+      "kinds": [
+        "non-functional"
+      ]
     },
     {
       "id": "REQ-single-store",
@@ -4799,19 +4847,28 @@
       "id": "REQ-single-write-door",
       "type": "REQ",
       "name": "Genau eine Tuer in den Graphen",
-      "description": "Eine legale Mutation persistiert samt Attributen, eine Mutation ohne ihre Pflichtkante wird blockiert und laesst den Store unveraendert, und ein direkter Schreibversuch am Gate vorbei wird abgewiesen."
+      "description": "Eine legale Mutation persistiert samt Attributen, eine Mutation ohne ihre Pflichtkante wird blockiert und laesst den Store unveraendert, und ein direkter Schreibversuch am Gate vorbei wird abgewiesen.",
+      "kinds": [
+        "functional"
+      ]
     },
     {
       "id": "REQ-skill-authors-through-gate",
       "type": "REQ",
       "name": "Autoren-Skill schreibt nur durchs Gate",
-      "description": "Ein Autoren-Skill erzeugt Knoten und Kanten ausschliesslich ueber graph_mutate oder graph_realize und weist an keiner Stelle einen direkten Schreibzugriff auf die Graph-SSOT an."
+      "description": "Ein Autoren-Skill erzeugt Knoten und Kanten ausschliesslich ueber graph_mutate oder graph_realize und weist an keiner Stelle einen direkten Schreibzugriff auf die Graph-SSOT an.",
+      "kinds": [
+        "functional"
+      ]
     },
     {
       "id": "REQ-skill-reads-only",
       "type": "REQ",
       "name": "Lesender Skill liest und schreibt nicht",
-      "description": "Ein lesender Skill bezieht jede Aussage seiner Ausgabe aus mindestens einem lesenden Werkzeug der MCP-Registry (graph_readiness, rules_evaluate, rules_get_violations, graph_tests, audit_stats, graph_help, graph_elements) und ruft kein schreibendes Werkzeug auf."
+      "description": "Ein lesender Skill bezieht jede Aussage seiner Ausgabe aus mindestens einem lesenden Werkzeug der MCP-Registry (graph_readiness, rules_evaluate, rules_get_violations, graph_tests, audit_stats, graph_help, graph_elements) und ruft kein schreibendes Werkzeug auf.",
+      "kinds": [
+        "functional"
+      ]
     },
     {
       "id": "REQ-small-model-viable",
@@ -4855,6 +4912,16 @@
       ]
     },
     {
+      "id": "REQ-store-owner-lifecycle",
+      "type": "REQ",
+      "name": "Store-Besitz als Protokoll",
+      "description": "Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.",
+      "kinds": [
+        "functional"
+      ],
+      "status": "approved"
+    },
+    {
       "id": "REQ-store-recovery",
       "type": "REQ",
       "name": "Store-Recovery (Recovery-Modus)",
@@ -4870,7 +4937,10 @@
       "type": "REQ",
       "name": "Trace-pair legality is one shared engine rule",
       "description": "Trace-pair legality is enforced by the one shared engine rule R-18 (@sigloch/contracts/se), not a consumer-local validator. graphcodes Gate lehnt strukturell-invalide Mutationen via Engine ab (kein separater codec.validate-Aufruf); jeder Konsument der die Engine laeuft erbt die Pruefung. (CR-GC-205 Item 1)",
-      "status": "done"
+      "status": "done",
+      "kinds": [
+        "non-functional"
+      ]
     },
     {
       "id": "REQ-structure-driven",
@@ -4898,7 +4968,10 @@
       "id": "REQ-target-shifts-ranking",
       "type": "REQ",
       "name": "Die Zielrichtung verschiebt das Suggestion-Ranking",
-      "description": "Ein Vorzeichenwechsel im Zielvektor negiert den Score jedes gemeinsamen Kandidaten und stellt eine andere Suggestion an die Spitze; die Magnitude des Ziels aendert weder Reihenfolge noch Score."
+      "description": "Ein Vorzeichenwechsel im Zielvektor negiert den Score jedes gemeinsamen Kandidaten und stellt eine andere Suggestion an die Spitze; die Magnitude des Ziels aendert weder Reihenfolge noch Score.",
+      "kinds": [
+        "functional"
+      ]
     },
     {
       "id": "REQ-test-runnable-binding",
@@ -4916,13 +4989,19 @@
       "type": "REQ",
       "name": "A bound testRef always resolves to a real file",
       "description": "Ein gebundener TEST-testRef loest immer auf eine reale Datei auf: graph_export materialisiert einen it.todo-Stub fuer jede fehlende testRef-Datei (kein Phantom-Pfad, kein false-green); R-19 macht einen ungebundenen lauffaehigen TEST als Warning sichtbar; concept-only TESTs (concept:true) sind ausgenommen. (CR-GC-205 Item 4)",
-      "status": "done"
+      "status": "done",
+      "kinds": [
+        "non-functional"
+      ]
     },
     {
       "id": "REQ-thresholds-from-config",
       "type": "REQ",
       "name": "Urteilsschwellen kommen aus der Config, nicht aus dem Regelcode",
-      "description": "Keine Urteilsschwelle steht als Literal im Regelcode: eine verschobene MetricPolicy kippt dasselbe Modul-Urteil auf unveraendertem Graphen, eine verschobene Fokus-Schwelle verschiebt das ready-Urteil ohne die Funde zu aendern."
+      "description": "Keine Urteilsschwelle steht als Literal im Regelcode: eine verschobene MetricPolicy kippt dasselbe Modul-Urteil auf unveraendertem Graphen, eine verschobene Fokus-Schwelle verschiebt das ready-Urteil ohne die Funde zu aendern.",
+      "kinds": [
+        "functional"
+      ]
     },
     {
       "id": "REQ-token-efficiency",
@@ -13438,7 +13517,7 @@
     },
     {
       "source": "FUNC-claim-store-lock",
-      "target": "REQ-single-kuzu-owner",
+      "target": "REQ-store-owner-lifecycle",
       "type": "satisfy"
     },
     {
@@ -13470,7 +13549,7 @@
     },
     {
       "source": "FUNC-close-store",
-      "target": "REQ-single-kuzu-owner",
+      "target": "REQ-store-owner-lifecycle",
       "type": "satisfy"
     },
     {
@@ -13531,6 +13610,11 @@
     },
     {
       "source": "FUNC-compute-readiness",
+      "target": "REQ-readiness-model",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-compute-readiness",
       "target": "REQ-steering-from-metrics",
       "type": "satisfy"
     },
@@ -13562,7 +13646,7 @@
     },
     {
       "source": "FUNC-create-harness",
-      "target": "REQ-single-kuzu-owner",
+      "target": "REQ-store-owner-lifecycle",
       "type": "satisfy"
     },
     {
@@ -13589,13 +13673,6 @@
     {
       "source": "FUNC-decode",
       "target": "REQ-codec-validation",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-decode",
-      "target": "REQ-roundtrip-conformance",
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
@@ -13668,18 +13745,6 @@
     },
     {
       "source": "FUNC-emit-update-event",
-      "target": "REQ-live-event-in-contracts",
-      "type": "satisfy"
-    },
-    {
-      "source": "FUNC-emit-update-event",
-      "target": "REQ-mutation-emits-event",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-emit-update-event",
       "target": "REQ-post-emit-update-event",
       "type": "satisfy",
       "weight": 1,
@@ -13715,29 +13780,10 @@
     },
     {
       "source": "FUNC-encode",
-      "target": "REQ-deterministic-serialization",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-encode",
       "target": "REQ-formatE-diff-dialect",
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-encode",
-      "target": "REQ-formatE-parity",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-encode",
-      "target": "REQ-precise-context",
-      "type": "satisfy"
     },
     {
       "source": "FUNC-evaluate-rules",
@@ -13860,18 +13906,6 @@
     },
     {
       "source": "FUNC-generation-step",
-      "target": "REQ-monotone-convergence",
-      "type": "satisfy",
-      "weight": "1"
-    },
-    {
-      "source": "FUNC-generation-step",
-      "target": "REQ-phase-gate-not-skippable",
-      "type": "satisfy",
-      "weight": "1"
-    },
-    {
-      "source": "FUNC-generation-step",
       "target": "REQ-steering-from-metrics",
       "type": "satisfy"
     },
@@ -13918,18 +13952,6 @@
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-graph-expand",
-      "target": "REQ-cache-layering",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-graph-expand",
-      "target": "REQ-precise-context",
-      "type": "satisfy"
     },
     {
       "source": "FUNC-graph-expand",
@@ -13981,11 +14003,6 @@
     },
     {
       "source": "FUNC-graph-impact",
-      "target": "REQ-precise-context",
-      "type": "satisfy"
-    },
-    {
-      "source": "FUNC-graph-impact",
       "target": "REQ-query-precision",
       "type": "satisfy",
       "weight": 1,
@@ -14013,11 +14030,6 @@
       "target": "REQ-applied-suggestion-moves-target",
       "type": "satisfy",
       "weight": "1"
-    },
-    {
-      "source": "FUNC-graph-suggest",
-      "target": "REQ-small-model-viable",
-      "type": "satisfy"
     },
     {
       "source": "FUNC-graph-suggest",
@@ -14072,13 +14084,6 @@
     },
     {
       "source": "FUNC-harness-cli",
-      "target": "REQ-install-idempotent",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-harness-cli",
       "target": "REQ-npx-distribution",
       "type": "satisfy",
       "weight": 1,
@@ -14120,13 +14125,6 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
-      "source": "FUNC-harness-cli",
-      "target": "REQ-self-contained-dist",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
       "source": "FUNC-health-endpoint",
       "target": "MOD-host-bridge",
       "type": "allocate",
@@ -14158,7 +14156,7 @@
     },
     {
       "source": "FUNC-host-socket",
-      "target": "REQ-single-kuzu-owner",
+      "target": "REQ-store-owner-lifecycle",
       "type": "satisfy"
     },
     {
@@ -14174,11 +14172,6 @@
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-import",
-      "target": "REQ-batch-seed-performance",
-      "type": "satisfy"
     },
     {
       "source": "FUNC-import",
@@ -14297,7 +14290,7 @@
     },
     {
       "source": "FUNC-load-graph",
-      "target": "REQ-disk-persistence",
+      "target": "REQ-auto-persist-merge",
       "type": "satisfy"
     },
     {
@@ -14423,11 +14416,6 @@
     },
     {
       "source": "FUNC-mutate",
-      "target": "REQ-gate-only-writes",
-      "type": "satisfy"
-    },
-    {
-      "source": "FUNC-mutate",
       "target": "REQ-graph-snapshot-per-commit",
       "type": "satisfy"
     },
@@ -14479,12 +14467,12 @@
     },
     {
       "source": "FUNC-open-store",
-      "target": "REQ-single-kuzu-owner",
+      "target": "REQ-steering-pre",
       "type": "satisfy"
     },
     {
       "source": "FUNC-open-store",
-      "target": "REQ-steering-pre",
+      "target": "REQ-store-owner-lifecycle",
       "type": "satisfy"
     },
     {
@@ -14501,10 +14489,8 @@
     },
     {
       "source": "FUNC-own-kuzu-host",
-      "target": "REQ-single-kuzu-owner",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-19T00:00:00.000Z"
+      "target": "REQ-store-owner-lifecycle",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-preflight",
@@ -14516,11 +14502,6 @@
       "source": "FUNC-preflight",
       "target": "FLOW-mutate-cmd",
       "type": "io"
-    },
-    {
-      "source": "FUNC-preflight",
-      "target": "REQ-small-model-viable",
-      "type": "satisfy"
     },
     {
       "source": "FUNC-rank-candidates",
@@ -14663,10 +14644,8 @@
     },
     {
       "source": "FUNC-save-graph",
-      "target": "REQ-disk-persistence",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "target": "REQ-auto-persist-merge",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-schema-guard",
@@ -14697,11 +14676,6 @@
     {
       "source": "FUNC-score-completeness",
       "target": "REQ-completeness-actor-bounded",
-      "type": "satisfy"
-    },
-    {
-      "source": "FUNC-score-completeness",
-      "target": "REQ-completeness-single-value",
       "type": "satisfy"
     },
     {
@@ -14888,10 +14862,8 @@
     },
     {
       "source": "FUNC-serve-sse",
-      "target": "REQ-readonly-bridge",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-19T00:00:00.000Z"
+      "target": "REQ-versioned-broadcast",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-serve-stdio",
@@ -14907,17 +14879,8 @@
     },
     {
       "source": "FUNC-serve-stdio",
-      "target": "REQ-agent-agnostic",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-19T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-serve-stdio",
-      "target": "REQ-single-transport",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-19T00:00:00.000Z"
+      "target": "REQ-mcp-tool-registry",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-session-shutdown",
@@ -14931,7 +14894,7 @@
     },
     {
       "source": "FUNC-session-shutdown",
-      "target": "REQ-single-kuzu-owner",
+      "target": "REQ-session-leaves-nothing-behind",
       "type": "satisfy"
     },
     {
@@ -14959,11 +14922,6 @@
       "target": "REQ-applied-suggestion-moves-target",
       "type": "satisfy",
       "weight": "1"
-    },
-    {
-      "source": "FUNC-take-steering-snapshot",
-      "target": "REQ-single-measurement-path",
-      "type": "satisfy"
     },
     {
       "source": "FUNC-take-steering-snapshot",
@@ -15054,7 +15012,7 @@
     },
     {
       "source": "FUNC-tool-context",
-      "target": "REQ-mcp-gate-symmetry",
+      "target": "REQ-mcp-tool-registry",
       "type": "satisfy"
     },
     {
@@ -15192,6 +15150,26 @@
       "type": "satisfy"
     },
     {
+      "source": "MOD-cli",
+      "target": "REQ-install-idempotent",
+      "type": "satisfy"
+    },
+    {
+      "source": "MOD-cli",
+      "target": "REQ-self-contained-dist",
+      "type": "satisfy"
+    },
+    {
+      "source": "MOD-codec",
+      "target": "REQ-deterministic-serialization",
+      "type": "satisfy"
+    },
+    {
+      "source": "MOD-codec",
+      "target": "REQ-formatE-parity",
+      "type": "satisfy"
+    },
+    {
       "source": "MOD-codec",
       "target": "REQ-graph-integrity",
       "type": "satisfy",
@@ -15201,6 +15179,11 @@
     {
       "source": "MOD-codec",
       "target": "REQ-interface-schema",
+      "type": "satisfy"
+    },
+    {
+      "source": "MOD-completeness",
+      "target": "REQ-completeness-single-value",
       "type": "satisfy"
     },
     {
@@ -15240,7 +15223,17 @@
     },
     {
       "source": "MOD-harness",
-      "target": "REQ-graph-state-recall",
+      "target": "REQ-batch-seed-performance",
+      "type": "satisfy"
+    },
+    {
+      "source": "MOD-harness",
+      "target": "REQ-disk-persistence",
+      "type": "satisfy"
+    },
+    {
+      "source": "MOD-harness",
+      "target": "REQ-gate-only-writes",
       "type": "satisfy"
     },
     {
@@ -15298,6 +15291,11 @@
     },
     {
       "source": "MOD-hooks",
+      "target": "REQ-live-event-in-contracts",
+      "type": "satisfy"
+    },
+    {
+      "source": "MOD-hooks",
       "target": "REQ-precommit-timeout",
       "type": "satisfy",
       "weight": 1,
@@ -15316,21 +15314,16 @@
       "type": "satisfy"
     },
     {
-      "source": "MOD-host-bridge",
-      "target": "REQ-real-health-check",
-      "type": "satisfy"
-    },
-    {
-      "source": "MOD-host-bridge",
-      "target": "REQ-versioned-broadcast",
-      "type": "satisfy"
-    },
-    {
       "source": "MOD-mcp-tools",
       "target": "REQ-agent-agnostic",
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "MOD-mcp-tools",
+      "target": "REQ-cache-layering",
+      "type": "satisfy"
     },
     {
       "source": "MOD-mcp-tools",
@@ -15347,22 +15340,8 @@
     },
     {
       "source": "MOD-mcp-tools",
-      "target": "REQ-mcp-tool-registry",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "MOD-mcp-tools",
       "target": "REQ-prompt-provenance",
       "type": "satisfy"
-    },
-    {
-      "source": "MOD-mcp-tools",
-      "target": "REQ-readiness-model",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-18T00:00:00.000Z"
     },
     {
       "source": "MOD-mcp-tools",
@@ -15375,11 +15354,6 @@
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "MOD-mcp-tools",
-      "target": "REQ-test-runnable-binding",
-      "type": "satisfy"
     },
     {
       "source": "MOD-mcp-tools",
@@ -15466,6 +15440,21 @@
       "source": "MOD-repo-root",
       "target": "MOD-steering",
       "type": "compose"
+    },
+    {
+      "source": "MOD-steering",
+      "target": "REQ-monotone-convergence",
+      "type": "satisfy"
+    },
+    {
+      "source": "MOD-steering",
+      "target": "REQ-phase-gate-not-skippable",
+      "type": "satisfy"
+    },
+    {
+      "source": "MOD-steering",
+      "target": "REQ-single-measurement-path",
+      "type": "satisfy"
     },
     {
       "source": "MS-1-specification",
@@ -15608,6 +15597,11 @@
       "type": "compose",
       "weight": 1,
       "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "REQ-single-kuzu-owner",
+      "target": "REQ-store-owner-lifecycle",
+      "type": "compose"
     },
     {
       "source": "REQ-token-efficiency",
@@ -15896,11 +15890,6 @@
     },
     {
       "source": "SYS-graphcode",
-      "target": "REQ-benchmark-harness",
-      "type": "satisfy"
-    },
-    {
-      "source": "SYS-graphcode",
       "target": "REQ-frame-binding",
       "type": "satisfy"
     },
@@ -15910,11 +15899,6 @@
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "SYS-graphcode",
-      "target": "REQ-greenfield-systemtest-dod",
-      "type": "satisfy"
     },
     {
       "source": "SYS-graphcode",
@@ -16426,6 +16410,11 @@
     {
       "source": "TEST-host-shim",
       "target": "REQ-single-write-door",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-host-shim",
+      "target": "REQ-store-owner-lifecycle",
       "type": "verify"
     },
     {
@@ -17048,6 +17037,11 @@
       "type": "verify"
     },
     {
+      "source": "TEST-session-lifecycle",
+      "target": "REQ-store-owner-lifecycle",
+      "type": "verify"
+    },
+    {
       "source": "TEST-shared-views-no-fork",
       "target": "REQ-shared-views-no-fork",
       "type": "verify",
@@ -17114,6 +17108,11 @@
     {
       "source": "TEST-store-lock",
       "target": "REQ-single-kuzu-owner",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-store-lock",
+      "target": "REQ-store-owner-lifecycle",
       "type": "verify"
     },
     {
@@ -17846,5 +17845,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 208
+  "graphVersion": 209
 }

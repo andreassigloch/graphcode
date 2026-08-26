@@ -4,19 +4,11 @@
 
 # graphcode — System Requirements Specification · SRS-graphcode
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 136 REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 137 REQ. Deterministisch generiert.
 
 ## 1  Scope
 
 `SYS-graphcode` — Headless Claude-Code-Sidecar-Governance-Harness: Store + Apply-Gate + Hooks + Learning-Emission, eine Instanz pro Repo. Carve-Out aus aimprove. (README, SPEC §0)
-
-### `REQ-benchmark-harness` — Benchmark-Harness (graphcode vs classic)
-
-Setting zum Vergleich graphcode-Modus vs. Claude-Code-classic über eine fixe Task-Suite, 2 LLMs (groß + klein/lokal), mit Token-Counter + Quality-Scorer. Liefert task×mode×LLM → {tokens, success, quality} und belegt token-efficiency + reduced-llm + code-quality. NUR Requirement — Harness-Bau ist Realisierung (eigene CR).
-
-priority: must · status: open · kinds: functional
-
-Verification ◀ `TEST-token-efficiency` (acceptance) · satisfy ◀ `SYS-graphcode` · allocate ▶ —
 
 ### `REQ-frame-binding` — Frame ist bindend für Realisierung
 
@@ -35,14 +27,6 @@ CONSTRAINT (ConOps): Harness voll funktionsfähig bei nicht erreichbarem LLM-Sid
 priority: should · status: open · kinds: non-functional
 
 Verification ◀ `TEST-gve-supervision` (integration) · `TEST-reduced-llm` (acceptance) · satisfy ◀ `FCHAIN-modelfree-gate` · `SYS-graphcode` · allocate ▶ —
-
-### `REQ-greenfield-systemtest-dod` — Definition-of-Done: Greenfield-Systemtest
-
-Der End-to-End-Nachweis für reduced-llm + token-efficiency + code-quality: leeres Repo, ein Prompt (Web-App aus graphcode, Multiuser, Module maximal genutzt). Authoring qwen3.6-35b-a3b (local) vs. Opus 5 (frontier), je 3×, ein Host (Claude Code). Scoring regelbasiert: readiness, reuse-coverage vs. Modul-Graph-Golden, illegal/blocked, redundanz, tokens_in/out/reasoning, cost, wall_s. Best-fit → Impl-Plan durchs Gate → Coding (qwen-35b · devstral).
-
-priority: must · status: open · kinds: functional
-
-Verification ◀ `TEST-greenfield-systemtest` (acceptance) · satisfy ◀ `SYS-graphcode` · allocate ▶ —
 
 ### `REQ-structure-driven` — Struktur-getrieben (Schema-first)
 
@@ -130,13 +114,11 @@ Verification ◀ `TEST-code-quality` (acceptance) · `TEST-mvp-e2e` (e2e) · sat
 
 ##### `REQ-mcp-gate-symmetry` — MCP-Gate-Symmetrie (L2)
 
-> auch unter: `FUNC-tool-context`
-
 CR-GC-101 L2: MCP graph_mutate == in-process mutate() — identische Semantik, identisches Violations-Dict (end-to-end).
 
 priority: should · status: done · kinds: non-functional
 
-Verification ◀ `TEST-mcp-stdio-server` (integration) · `TEST-mcp-symmetry` (integration) · satisfy ◀ `FCHAIN-apply-gate` · `FUNC-tool-context` · allocate ▶ `MOD-mcp-tools`
+Verification ◀ `TEST-mcp-stdio-server` (integration) · `TEST-mcp-symmetry` (integration) · satisfy ◀ `FCHAIN-apply-gate` · allocate ▶ —
 
 ##### `REQ-post-apply-gate` — Postcondition: Apply-Gate-Ablauf (Governed Mutation)
 
@@ -170,15 +152,15 @@ Beansprucht den Store atomar und weist einen zweiten Schreiber laut ab, statt ih
 
 io ◀ `FLOW-cli-command` · io ▶ `FLOW-store-ownership` · allocate ▶ `MOD-harness`
 
-###### `REQ-single-kuzu-owner` — Single Kuzu-Owner
+###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
 
-> auch unter: `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown`
+> auch unter: `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host`
 
-Genau ein Host-Prozess besitzt .graphcode/kuzu (single-writer; kein 2. DB-Handle). (SPEC §4, L1)
+Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
 
-priority: should · status: done · kinds: non-functional
+priority: must · status: approved · kinds: functional
 
-Verification ◀ `TEST-bridge-follows-lock` (integration) · `TEST-gve-autostart` (unit) · `TEST-host-shim` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-session-lifecycle` (integration) · `TEST-status-verb` (unit) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness` · `MOD-host-bridge`
+Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-harness` · `MOD-host-bridge`
 
 ##### 3.1.1.2  `FUNC-open-store` — initialize()
 
@@ -188,16 +170,6 @@ Beansprucht die alleinige Store-Ownership, erkennt Meta-Modell-Drift und oeffnet
 
 io ◀ `FLOW-graph-snapshot` · `FLOW-schema-fingerprint` · `FLOW-store-ownership` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-harness`
 
-###### `REQ-single-kuzu-owner` — Single Kuzu-Owner
-
-> auch unter: `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown`
-
-Genau ein Host-Prozess besitzt .graphcode/kuzu (single-writer; kein 2. DB-Handle). (SPEC §4, L1)
-
-priority: should · status: done · kinds: non-functional
-
-Verification ◀ `TEST-bridge-follows-lock` (integration) · `TEST-gve-autostart` (unit) · `TEST-host-shim` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-session-lifecycle` (integration) · `TEST-status-verb` (unit) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness` · `MOD-host-bridge`
-
 ###### `REQ-steering-pre` — Vorbedingung Steuerungsrunde
 
 Vor einer Steuerungsrunde ist der Store initialisiert, der Graph geladen und der Regelkatalog samt Urteils-Policy verfuegbar.
@@ -205,6 +177,16 @@ Vor einer Steuerungsrunde ist der Store initialisiert, der Graph geladen und der
 priority: must · status: reviewed · kinds: precondition
 
 Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FUNC-open-store` · allocate ▶ `MOD-harness`
+
+###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
+
+> auch unter: `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-own-kuzu-host`
+
+Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
+
+priority: must · status: approved · kinds: functional
+
+Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-harness` · `MOD-host-bridge`
 
 ##### 3.1.1.3  `FUNC-close-store` — close()
 
@@ -214,15 +196,15 @@ Faehrt den Store herunter und gibt die Ownership wieder frei.
 
 io ◀ `FLOW-graph-state` · io ▶ `FLOW-committed-graph` · allocate ▶ `MOD-harness`
 
-###### `REQ-single-kuzu-owner` — Single Kuzu-Owner
+###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
 
-> auch unter: `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown`
+> auch unter: `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host`
 
-Genau ein Host-Prozess besitzt .graphcode/kuzu (single-writer; kein 2. DB-Handle). (SPEC §4, L1)
+Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
 
-priority: should · status: done · kinds: non-functional
+priority: must · status: approved · kinds: functional
 
-Verification ◀ `TEST-bridge-follows-lock` (integration) · `TEST-gve-autostart` (unit) · `TEST-host-shim` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-session-lifecycle` (integration) · `TEST-status-verb` (unit) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness` · `MOD-host-bridge`
+Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-harness` · `MOD-host-bridge`
 
 ##### 3.1.1.4  `FUNC-emit-trajectory` — materializeTrajectory()
 
@@ -264,15 +246,15 @@ Laedt den persistierten Graphen in die Arbeitskopie des Gates.
 
 io ◀ `FLOW-committed-graph` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-harness`
 
-###### `REQ-disk-persistence` — Disk-Persistenz
+###### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
 
-> auch unter: `FUNC-save-graph`
+> auch unter: `FUNC-auto-export` · `FUNC-merge-nodes` · `FUNC-save-graph`
 
-Persistenz auf Disk (.graphcode/kuzu/), kein :memory:. (SPEC §4)
+Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Artefakt. (R2)
 
-priority: should · status: open · kinds: non-functional
+priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `FUNC-load-graph` · `FUNC-save-graph` · allocate ▶ `MOD-harness`
+Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-load-graph` · `FUNC-merge-nodes` · `FUNC-save-graph` · allocate ▶ `MOD-docs` · `MOD-harness`
 
 ##### 3.1.1.6  `FUNC-fit-advisory` — computeFitAdvisory(before, after)
 
@@ -308,21 +290,13 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
 
-###### `REQ-gate-only-writes` — Gate-only Graph-Writes
-
-Agent kann den SSOT nicht hand-editieren; jeder Write durch graph_mutate (mutate-Gate, L1). Deny-Rule + PreToolUse-Hook auf Edit/Write von docs/graph/*.graph.json + .graphcode/kuzu; JSON ist generierter Export, Live-Truth ist Kuzu. (CR-GC-201)
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-graph-realize` (integration) · `TEST-no-direct-graph-write` · `TEST-path-containment` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
-
 ###### `REQ-graph-snapshot-per-commit` — Kanonischer Graph-Snapshot pro Commit
 
 > auch unter: `FCHAIN-snapshot-freshness` · `FUNC-export-marker` · `FUNC-graph-export-snapshot`
 
 Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/graph/*.graph.json), der zum Code dieses Commits passt. Un-exportierte Modell-Mutationen blockieren den Commit ueber den single-writer-sicheren Drift-Marker .graphcode/EXPORT_PENDING (vom Gate auf mutate gesetzt, von graph_export/graph_reseed geloescht); der pre-commit-Hook staged die generierten Artefakte automatisch. (CR-GC-217)
 
-priority: must · status: done
+priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-export-marker` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
 
@@ -330,7 +304,7 @@ Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (i
 
 Eine legale Mutation persistiert samt Attributen, eine Mutation ohne ihre Pflichtkante wird blockiert und laesst den Store unveraendert, und ein direkter Schreibversuch am Gate vorbei wird abgewiesen.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (integration) · `TEST-occ` (integration) · `TEST-single-write-door` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
 
@@ -358,15 +332,15 @@ Persistiert in-memory Graph nach Disk-Kuzu, falls keine error-Violations. (SPEC 
 
 io ◀ `FLOW-violations` · io ▶ `FLOW-committed-graph` · allocate ▶ `MOD-harness`
 
-###### `REQ-disk-persistence` — Disk-Persistenz
+###### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
 
-> auch unter: `FUNC-load-graph`
+> auch unter: `FUNC-auto-export` · `FUNC-load-graph` · `FUNC-merge-nodes`
 
-Persistenz auf Disk (.graphcode/kuzu/), kein :memory:. (SPEC §4)
+Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Artefakt. (R2)
 
-priority: should · status: open · kinds: non-functional
+priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `FUNC-load-graph` · `FUNC-save-graph` · allocate ▶ `MOD-harness`
+Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-load-graph` · `FUNC-merge-nodes` · `FUNC-save-graph` · allocate ▶ `MOD-docs` · `MOD-harness`
 
 ##### 3.1.1.10  `FUNC-tool-context` — createToolContext
 
@@ -376,15 +350,15 @@ Stellt jedem Werkzeugaufruf seinen Kontext bereit: Aufrufer, Repo-Wurzel und die
 
 io ◀ `FLOW-gate-verdict` · io ▶ `FLOW-trajectory` · allocate ▶ `MOD-mcp-tools`
 
-###### `REQ-mcp-gate-symmetry` — MCP-Gate-Symmetrie (L2)
+###### `REQ-mcp-tool-registry` — MCP-Tool-Registry an Harness gebunden
 
-> auch unter: `FCHAIN-apply-gate`
+> auch unter: `FUNC-bind-tools` · `FUNC-serve-stdio`
 
-CR-GC-101 L2: MCP graph_mutate == in-process mutate() — identische Semantik, identisches Violations-Dict (end-to-end).
+CR-GC-101: Registry graph_elements/get_node/get_edges (read), graph_mutate (write durchs Gate), rules_evaluate/get_violations, audit_trail/stats — via bindToolsToHarness.
 
-priority: should · status: done · kinds: non-functional
+priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-mcp-stdio-server` (integration) · `TEST-mcp-symmetry` (integration) · satisfy ◀ `FCHAIN-apply-gate` · `FUNC-tool-context` · allocate ▶ `MOD-mcp-tools`
+Verification ◀ `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integration) · `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-bind-tools` · `FUNC-serve-stdio` · `FUNC-tool-context` · allocate ▶ `MOD-mcp-tools`
 
 ##### 3.1.1.11  `FUNC-own-kuzu-host` — ownKuzu()
 
@@ -394,15 +368,15 @@ Der Host-Prozess ist der einzige Kuzu-Owner pro Repo; die Bridge haelt kein zwei
 
 io ◀ `FLOW-store-ownership` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-host-bridge`
 
-###### `REQ-single-kuzu-owner` — Single Kuzu-Owner
+###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
 
-> auch unter: `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-session-shutdown`
+> auch unter: `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store`
 
-Genau ein Host-Prozess besitzt .graphcode/kuzu (single-writer; kein 2. DB-Handle). (SPEC §4, L1)
+Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
 
-priority: should · status: done · kinds: non-functional
+priority: must · status: approved · kinds: functional
 
-Verification ◀ `TEST-bridge-follows-lock` (integration) · `TEST-gve-autostart` (unit) · `TEST-host-shim` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-session-lifecycle` (integration) · `TEST-status-verb` (unit) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness` · `MOD-host-bridge`
+Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-harness` · `MOD-host-bridge`
 
 ##### 3.1.1.12  `FUNC-session-shutdown` — SessionLifecycle
 
@@ -412,15 +386,15 @@ Raeumt am Sessionende alle Ressourcen in umgekehrter Reihenfolge ab, den Store-L
 
 io ◀ `FLOW-store-ownership` · io ▶ `FLOW-committed-graph` · allocate ▶ `MOD-cli`
 
-###### `REQ-single-kuzu-owner` — Single Kuzu-Owner
+###### `REQ-session-leaves-nothing-behind` — Sitzungsende hinterlaesst nichts
 
-> auch unter: `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host`
+> auch unter: `FCHAIN-repo-lifecycle`
 
-Genau ein Host-Prozess besitzt .graphcode/kuzu (single-writer; kein 2. DB-Handle). (SPEC §4, L1)
+Nach dem Ende einer Sitzung muss der Store-Lock freigegeben und der Sitzungseintrag entfernt sein; abgeraeumt wird genau einmal und in umgekehrter Aufbaureihenfolge, der Store-Lock zuletzt.
 
-priority: should · status: done · kinds: non-functional
+priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-bridge-follows-lock` (integration) · `TEST-gve-autostart` (unit) · `TEST-host-shim` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-session-lifecycle` (integration) · `TEST-status-verb` (unit) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness` · `MOD-host-bridge`
+Verification ◀ `TEST-repo-lifecycle` (integration) · satisfy ◀ `FCHAIN-repo-lifecycle` · `FUNC-session-shutdown` · allocate ▶ `MOD-cli`
 
 ##### 3.1.1.13  `FUNC-create-harness` — createHarness
 
@@ -430,15 +404,15 @@ Die Fabrik der oeffentlichen Programmierschnittstelle: baut den Harness mit Stor
 
 io ◀ `FLOW-cli-command` · io ▶ `FLOW-store-ownership` · allocate ▶ `MOD-harness`
 
-###### `REQ-single-kuzu-owner` — Single Kuzu-Owner
+###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
 
-> auch unter: `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown`
+> auch unter: `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host`
 
-Genau ein Host-Prozess besitzt .graphcode/kuzu (single-writer; kein 2. DB-Handle). (SPEC §4, L1)
+Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
 
-priority: should · status: done · kinds: non-functional
+priority: must · status: approved · kinds: functional
 
-Verification ◀ `TEST-bridge-follows-lock` (integration) · `TEST-gve-autostart` (unit) · `TEST-host-shim` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-session-lifecycle` (integration) · `TEST-status-verb` (unit) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness` · `MOD-host-bridge`
+Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-harness` · `MOD-host-bridge`
 
 ##### 3.1.1.14  `FUNC-host-socket` — startHostSocket
 
@@ -448,15 +422,15 @@ Oeffnet den Socket, ueber den ein zweiter Prozess Schreibaufrufe an den Besitzer
 
 io ◀ `FLOW-mutate-cmd` · io ▶ `FLOW-mutate-cmd` · allocate ▶ `MOD-host-bridge`
 
-###### `REQ-single-kuzu-owner` — Single Kuzu-Owner
+###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
 
-> auch unter: `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown`
+> auch unter: `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-open-store` · `FUNC-own-kuzu-host`
 
-Genau ein Host-Prozess besitzt .graphcode/kuzu (single-writer; kein 2. DB-Handle). (SPEC §4, L1)
+Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
 
-priority: should · status: done · kinds: non-functional
+priority: must · status: approved · kinds: functional
 
-Verification ◀ `TEST-bridge-follows-lock` (integration) · `TEST-gve-autostart` (unit) · `TEST-host-shim` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-session-lifecycle` (integration) · `TEST-status-verb` (unit) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness` · `MOD-host-bridge`
+Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-harness` · `MOD-host-bridge`
 
 #### 3.1.2  `FCHAIN-capture` — Interaktive Erfassung (Text → suggest-Tier)
 
@@ -502,16 +476,6 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-codec`
 
-###### `REQ-roundtrip-conformance` — Round-Trip-Conformance
-
-> auch unter: `FCHAIN-codec-roundtrip`
-
-decode(encode(g)) == g modulo Whitespace (rasentraktor-Fixture). (L3)
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FCHAIN-codec-roundtrip` · `FUNC-decode` · allocate ▶ `MOD-codec`
-
 ##### 3.1.2.2  `FUNC-mutate` — mutate(commands)
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-modelfree-gate` · `FCHAIN-skill-authoring` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FUNC-block-gate`
@@ -528,21 +492,13 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
 
-###### `REQ-gate-only-writes` — Gate-only Graph-Writes
-
-Agent kann den SSOT nicht hand-editieren; jeder Write durch graph_mutate (mutate-Gate, L1). Deny-Rule + PreToolUse-Hook auf Edit/Write von docs/graph/*.graph.json + .graphcode/kuzu; JSON ist generierter Export, Live-Truth ist Kuzu. (CR-GC-201)
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-graph-realize` (integration) · `TEST-no-direct-graph-write` · `TEST-path-containment` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
-
 ###### `REQ-graph-snapshot-per-commit` — Kanonischer Graph-Snapshot pro Commit
 
 > auch unter: `FCHAIN-snapshot-freshness` · `FUNC-export-marker` · `FUNC-graph-export-snapshot`
 
 Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/graph/*.graph.json), der zum Code dieses Commits passt. Un-exportierte Modell-Mutationen blockieren den Commit ueber den single-writer-sicheren Drift-Marker .graphcode/EXPORT_PENDING (vom Gate auf mutate gesetzt, von graph_export/graph_reseed geloescht); der pre-commit-Hook staged die generierten Artefakte automatisch. (CR-GC-217)
 
-priority: must · status: done
+priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-export-marker` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
 
@@ -550,7 +506,7 @@ Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (i
 
 Eine legale Mutation persistiert samt Attributen, eine Mutation ohne ihre Pflichtkante wird blockiert und laesst den Store unveraendert, und ein direkter Schreibversuch am Gate vorbei wird abgewiesen.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (integration) · `TEST-occ` (integration) · `TEST-single-write-door` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
 
@@ -576,13 +532,11 @@ Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FCHAIN-codec-rou
 
 ##### `REQ-roundtrip-conformance` — Round-Trip-Conformance
 
-> auch unter: `FUNC-decode`
-
 decode(encode(g)) == g modulo Whitespace (rasentraktor-Fixture). (L3)
 
 priority: should · status: open · kinds: non-functional
 
-Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FCHAIN-codec-roundtrip` · `FUNC-decode` · allocate ▶ `MOD-codec`
+Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FCHAIN-codec-roundtrip` · allocate ▶ —
 
 ##### 3.1.3.1  `FUNC-encode` — encode(graph)
 
@@ -592,14 +546,6 @@ Deterministische Format-E-Serialisierung (stabile Sortierung), Diff-Dialekt. (CR
 
 io ◀ `FLOW-graph-state` · `FLOW-impact-subgraph` · io ▶ `FLOW-formatE-artifact` · allocate ▶ `MOD-codec`
 
-###### `REQ-deterministic-serialization` — Deterministische Serialisierung
-
-Stabile Sortierung → commit-/merge-arm; zwei Encodes byte-identisch. (R3)
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-export-graph-guard` (unit) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-encode` · allocate ▶ `MOD-codec`
-
 ###### `REQ-formatE-diff-dialect` — Format-E-Diff-Dialekt (R5)
 
 CR-GC-103 R5: Diff-Dialekt +/-/~/M mit <operations><base_snapshot>ID@version + 1:N-Grouping; implicit-add VERWERFEN.
@@ -607,24 +553,6 @@ CR-GC-103 R5: Diff-Dialekt +/-/~/M mit <operations><base_snapshot>ID@version + 1
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-edge-only-batch` (integration) · `TEST-formate-name` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-encode` · allocate ▶ `MOD-codec`
-
-###### `REQ-formatE-parity` — Format-E-Parity = contracts (L1)
-
-CR-GC-103 L1: Format-E-Parität = contracts-Baseline; genau EIN Codec.
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-formate-binding` (integration) · `TEST-mutate-input-formate` (integration) · `TEST-read-format-param` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-encode` · allocate ▶ `MOD-codec`
-
-###### `REQ-precise-context` — Präziser Kontext statt grep-Dump
-
-> auch unter: `FCHAIN-agent-query` · `FUNC-graph-expand` · `FUNC-graph-impact`
-
-Kontext = exakter Blast-Radius/Sub-Graph-Slice (Format-E) statt grep-Dump/Result-Kompression.
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-inject-graph-slice` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-token-efficiency` (acceptance) · `TEST-violation-context` (integration) · satisfy ◀ `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-graph-impact` · allocate ▶ `MOD-codec` · `MOD-mcp-tools`
 
 ##### 3.1.3.2  `FUNC-decode` — decode(json)
 
@@ -641,16 +569,6 @@ CR-GC-103: encode/decode validiert gegen SE_DESCRIPTOR; ungültige Typen → Val
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-codec`
-
-###### `REQ-roundtrip-conformance` — Round-Trip-Conformance
-
-> auch unter: `FCHAIN-codec-roundtrip`
-
-decode(encode(g)) == g modulo Whitespace (rasentraktor-Fixture). (L3)
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FCHAIN-codec-roundtrip` · `FUNC-decode` · allocate ▶ `MOD-codec`
 
 #### 3.1.4  `FCHAIN-interface-escalation` — Interface-Änderungs-Eskalation
 
@@ -696,16 +614,6 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-audit-retention` (integration) · `TEST-audit-rules-passed` (integration) · `TEST-audit-trail-projection` (integration) · `TEST-mcp-stdio-server` (integration) · `TEST-operations-log` (integration) · `TEST-testreport` (unit) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
 
-###### `REQ-precise-context` — Präziser Kontext statt grep-Dump
-
-> auch unter: `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand`
-
-Kontext = exakter Blast-Radius/Sub-Graph-Slice (Format-E) statt grep-Dump/Result-Kompression.
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-inject-graph-slice` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-token-efficiency` (acceptance) · `TEST-violation-context` (integration) · satisfy ◀ `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-graph-impact` · allocate ▶ `MOD-codec` · `MOD-mcp-tools`
-
 ###### `REQ-query-precision` — Query-Precision statt Kompression
 
 > auch unter: `FUNC-list-elements`
@@ -740,21 +648,13 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
 
-###### `REQ-gate-only-writes` — Gate-only Graph-Writes
-
-Agent kann den SSOT nicht hand-editieren; jeder Write durch graph_mutate (mutate-Gate, L1). Deny-Rule + PreToolUse-Hook auf Edit/Write von docs/graph/*.graph.json + .graphcode/kuzu; JSON ist generierter Export, Live-Truth ist Kuzu. (CR-GC-201)
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-graph-realize` (integration) · `TEST-no-direct-graph-write` · `TEST-path-containment` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
-
 ###### `REQ-graph-snapshot-per-commit` — Kanonischer Graph-Snapshot pro Commit
 
 > auch unter: `FCHAIN-snapshot-freshness` · `FUNC-export-marker` · `FUNC-graph-export-snapshot`
 
 Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/graph/*.graph.json), der zum Code dieses Commits passt. Un-exportierte Modell-Mutationen blockieren den Commit ueber den single-writer-sicheren Drift-Marker .graphcode/EXPORT_PENDING (vom Gate auf mutate gesetzt, von graph_export/graph_reseed geloescht); der pre-commit-Hook staged die generierten Artefakte automatisch. (CR-GC-217)
 
-priority: must · status: done
+priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-export-marker` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
 
@@ -762,7 +662,7 @@ Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (i
 
 Eine legale Mutation persistiert samt Attributen, eine Mutation ohne ihre Pflichtkante wird blockiert und laesst den Store unveraendert, und ein direkter Schreibversuch am Gate vorbei wird abgewiesen.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (integration) · `TEST-occ` (integration) · `TEST-single-write-door` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
 
@@ -776,7 +676,7 @@ Ein Mensch beauftragt einen Autoren-Skill; der Skill legt Knoten und Kanten durc
 
 Ein Autoren-Skill erzeugt Knoten und Kanten ausschliesslich ueber graph_mutate oder graph_realize und weist an keiner Stelle einen direkten Schreibzugriff auf die Graph-SSOT an.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-skills`
 
@@ -794,7 +694,7 @@ io ◀ `FLOW-authoring-request` · io ▶ `FLOW-mutate-cmd` · allocate ▶ `MOD
 
 Ein Autoren-Skill erzeugt Knoten und Kanten ausschliesslich ueber graph_mutate oder graph_realize und weist an keiner Stelle einen direkten Schreibzugriff auf die Graph-SSOT an.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-skills`
 
@@ -814,21 +714,13 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
 
-###### `REQ-gate-only-writes` — Gate-only Graph-Writes
-
-Agent kann den SSOT nicht hand-editieren; jeder Write durch graph_mutate (mutate-Gate, L1). Deny-Rule + PreToolUse-Hook auf Edit/Write von docs/graph/*.graph.json + .graphcode/kuzu; JSON ist generierter Export, Live-Truth ist Kuzu. (CR-GC-201)
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-graph-realize` (integration) · `TEST-no-direct-graph-write` · `TEST-path-containment` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
-
 ###### `REQ-graph-snapshot-per-commit` — Kanonischer Graph-Snapshot pro Commit
 
 > auch unter: `FCHAIN-snapshot-freshness` · `FUNC-export-marker` · `FUNC-graph-export-snapshot`
 
 Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/graph/*.graph.json), der zum Code dieses Commits passt. Un-exportierte Modell-Mutationen blockieren den Commit ueber den single-writer-sicheren Drift-Marker .graphcode/EXPORT_PENDING (vom Gate auf mutate gesetzt, von graph_export/graph_reseed geloescht); der pre-commit-Hook staged die generierten Artefakte automatisch. (CR-GC-217)
 
-priority: must · status: done
+priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-export-marker` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
 
@@ -836,7 +728,7 @@ Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (i
 
 Eine legale Mutation persistiert samt Attributen, eine Mutation ohne ihre Pflichtkante wird blockiert und laesst den Store unveraendert, und ein direkter Schreibversuch am Gate vorbei wird abgewiesen.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (integration) · `TEST-occ` (integration) · `TEST-single-write-door` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
 
@@ -854,7 +746,7 @@ io ◀ `FLOW-authoring-request` · io ▶ `FLOW-mutate-cmd` · allocate ▶ `MOD
 
 Ein Autoren-Skill erzeugt Knoten und Kanten ausschliesslich ueber graph_mutate oder graph_realize und weist an keiner Stelle einen direkten Schreibzugriff auf die Graph-SSOT an.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-skills`
 
@@ -872,7 +764,7 @@ io ◀ `FLOW-authoring-request` · io ▶ `FLOW-mutate-cmd` · allocate ▶ `MOD
 
 Ein Autoren-Skill erzeugt Knoten und Kanten ausschliesslich ueber graph_mutate oder graph_realize und weist an keiner Stelle einen direkten Schreibzugriff auf die Graph-SSOT an.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-skills`
 
@@ -890,7 +782,7 @@ io ◀ `FLOW-authoring-request` · io ▶ `FLOW-mutate-cmd` · allocate ▶ `MOD
 
 Ein Autoren-Skill erzeugt Knoten und Kanten ausschliesslich ueber graph_mutate oder graph_realize und weist an keiner Stelle einen direkten Schreibzugriff auf die Graph-SSOT an.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-skills`
 
@@ -908,7 +800,7 @@ io ◀ `FLOW-authoring-request` · io ▶ `FLOW-mutate-cmd` · allocate ▶ `MOD
 
 Ein Autoren-Skill erzeugt Knoten und Kanten ausschliesslich ueber graph_mutate oder graph_realize und weist an keiner Stelle einen direkten Schreibzugriff auf die Graph-SSOT an.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-skills`
 
@@ -926,7 +818,7 @@ io ◀ `FLOW-authoring-request` · io ▶ `FLOW-mutate-cmd` · allocate ▶ `MOD
 
 Ein Autoren-Skill erzeugt Knoten und Kanten ausschliesslich ueber graph_mutate oder graph_realize und weist an keiner Stelle einen direkten Schreibzugriff auf die Graph-SSOT an.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-skills`
 
@@ -944,7 +836,7 @@ io ◀ `FLOW-authoring-request` · io ▶ `FLOW-mutate-cmd` · allocate ▶ `MOD
 
 Ein Autoren-Skill erzeugt Knoten und Kanten ausschliesslich ueber graph_mutate oder graph_realize und weist an keiner Stelle einen direkten Schreibzugriff auf die Graph-SSOT an.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-skills`
 
@@ -962,7 +854,7 @@ io ◀ `FLOW-authoring-request` · io ▶ `FLOW-mutate-cmd` · allocate ▶ `MOD
 
 Ein Autoren-Skill erzeugt Knoten und Kanten ausschliesslich ueber graph_mutate oder graph_realize und weist an keiner Stelle einen direkten Schreibzugriff auf die Graph-SSOT an.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-skills`
 
@@ -980,7 +872,7 @@ io ◀ `FLOW-authoring-request` · io ▶ `FLOW-mutate-cmd` · allocate ▶ `MOD
 
 Ein Autoren-Skill erzeugt Knoten und Kanten ausschliesslich ueber graph_mutate oder graph_realize und weist an keiner Stelle einen direkten Schreibzugriff auf die Graph-SSOT an.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-skills`
 
@@ -998,7 +890,7 @@ io ◀ `FLOW-authoring-request` · io ▶ `FLOW-mutate-cmd` · `FLOW-target-prof
 
 Ein Autoren-Skill erzeugt Knoten und Kanten ausschliesslich ueber graph_mutate oder graph_realize und weist an keiner Stelle einen direkten Schreibzugriff auf die Graph-SSOT an.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-skills`
 
@@ -1016,7 +908,7 @@ Ein Mensch ruft einen lesenden Skill; der Skill zieht die Messung aus den Lesewe
 
 Ein lesender Skill bezieht jede Aussage seiner Ausgabe aus mindestens einem lesenden Werkzeug der MCP-Registry (graph_readiness, rules_evaluate, rules_get_violations, graph_tests, audit_stats, graph_help, graph_elements) und ruft kein schreibendes Werkzeug auf.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-reports-measured-values` (conformance) · satisfy ◀ `FCHAIN-skill-report` · `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · allocate ▶ `MOD-skills`
 
@@ -1032,7 +924,7 @@ io ◀ `FLOW-graph-state` · io ▶ `FLOW-violations` · allocate ▶ `MOD-confo
 
 Jeder FUNC.codeRef loest auf ein real deklariertes Symbol in seiner Datei auf (TypeScript-Parser, kein Substring-Match); prompt-realisierte FUNCs (lang prompt): die Skill-Datei existiert. Macht das R-20-Backfill verifizierbar statt nur vorhanden. (CR-GC-206)
 
-priority: must · status: done
+priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-code-conformance` (integration) · satisfy ◀ `FUNC-check-code-conformance` · allocate ▶ `MOD-conformance`
 
@@ -1068,7 +960,7 @@ io ◀ `FLOW-dimension-readiness` · `FLOW-skill-request` · `FLOW-violations` �
 
 Ein lesender Skill bezieht jede Aussage seiner Ausgabe aus mindestens einem lesenden Werkzeug der MCP-Registry (graph_readiness, rules_evaluate, rules_get_violations, graph_tests, audit_stats, graph_help, graph_elements) und ruft kein schreibendes Werkzeug auf.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-reports-measured-values` (conformance) · satisfy ◀ `FCHAIN-skill-report` · `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · allocate ▶ `MOD-skills`
 
@@ -1086,7 +978,7 @@ io ◀ `FLOW-dimension-readiness` · `FLOW-skill-request` · `FLOW-violations` �
 
 Ein lesender Skill bezieht jede Aussage seiner Ausgabe aus mindestens einem lesenden Werkzeug der MCP-Registry (graph_readiness, rules_evaluate, rules_get_violations, graph_tests, audit_stats, graph_help, graph_elements) und ruft kein schreibendes Werkzeug auf.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-reports-measured-values` (conformance) · satisfy ◀ `FCHAIN-skill-report` · `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · allocate ▶ `MOD-skills`
 
@@ -1104,7 +996,7 @@ io ◀ `FLOW-dimension-readiness` · `FLOW-skill-request` · `FLOW-violations` �
 
 Ein lesender Skill bezieht jede Aussage seiner Ausgabe aus mindestens einem lesenden Werkzeug der MCP-Registry (graph_readiness, rules_evaluate, rules_get_violations, graph_tests, audit_stats, graph_help, graph_elements) und ruft kein schreibendes Werkzeug auf.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-reports-measured-values` (conformance) · satisfy ◀ `FCHAIN-skill-report` · `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · allocate ▶ `MOD-skills`
 
@@ -1115,6 +1007,14 @@ Verification ◀ `TEST-skill-reports-measured-values` (conformance) · satisfy �
 Projiziert den Regelstrom auf die acht Dimensionsscores (score = 1 minus Verstoesse durch applicable). Fremdpaket @sigloch/se-steering, deshalb external.
 
 io ◀ `FLOW-steering-snapshot` · io ▶ `FLOW-dimension-readiness` · allocate ▶ `MOD-metrics-engine`
+
+###### `REQ-readiness-model` — Readiness-Modell definiert (Phase/Impl/INCOSE)
+
+Readiness-Modell fuer graphcode, definiert gegen @sigloch/contracts V3_RULES + die MS-Meilensteine + Element-Status (keine aimprove-BQ-Heuristik). INCOSE-Scope LEAN: der gegatete Graph ist das einzige SE-Artefakt. Phase-Readiness SRR/PDR/CDR/TRR ist eine disjunkte, vollstaendige Partition der 15 Element-Regeln; Implementation-Readiness SAR/FCA/SVR/FRR bindet die Meilenstein-Tiers MS-1..4 (ready wenn zugeordnete CRs done + Scope fehlerfrei) und deckt die 2 MS-Regeln ab. Realisiert im Scorer src/readiness.ts, exponiert ueber graph_readiness. (CR-GC-125)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-readiness-model` (acceptance) · `TEST-views-auditor` (unit) · satisfy ◀ `FUNC-compute-readiness` · allocate ▶ `MOD-metrics-engine`
 
 ###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
 
@@ -1212,14 +1112,6 @@ priority: must · status: reviewed · kinds: functional
 
 Verification ◀ `TEST-readiness-completeness` (acceptance) · satisfy ◀ `FUNC-score-completeness` · allocate ▶ `MOD-completeness`
 
-###### `REQ-completeness-single-value` — Completeness: ein Wert pro Gate, Detail on-click
-
-Das Readiness-Dashboard zeigt EINEN aggregierten Completeness-Wert pro Gate; die Per-Leg-Aufschluesselung (welches Bein, welche Source-Elemente unvollstaendig) erscheint on-click als Drill-down. Ruhiger Wert im Panel, Details on-demand. (CR-GC-250)
-
-priority: should · status: reviewed · kinds: non-functional
-
-Verification ◀ `TEST-readiness-completeness` (acceptance) · satisfy ◀ `FUNC-score-completeness` · allocate ▶ `MOD-completeness`
-
 ###### `REQ-readiness-completeness` — Readiness Completeness-Dimension (cardinality-driven)
 
 Readiness traegt eine strukturelle Completeness-Dimension pro Gate, orthogonal zur Violation-Severity: ein Gate ist NICHT gruen, solange ein vom Meta-Modell als 1..* markiertes Ketten-Bein seiner Phase unvollstaendig ist. Coverage wird ueber die TREIBENDE Source-Population gemessen -> Abwesenheit zaehlt (0 FCHAIN -> alle UC unvollstaendig -> SRR rot). Warnings behalten ihre Severity (keine Inflation); das Gate-Urteil ergaenzt die Completeness-Invariante. Phase-Slices: SRR {UC->FCHAIN, UC->REQ}, PDR {FCHAIN->FUNC, FUNC->satisfy, FUNC->MOD}, CDR {REQ<-verify-TEST, FLOW->SCHEMA}, TRR {testRef/codeRef non-concept}. concept:true gilt bis CDR, zaehlt erst ab TRR nicht als complete. (CR-GC-250)
@@ -1242,7 +1134,7 @@ io ◀ `FLOW-skill-request` · io ▶ `FLOW-skill-report` · allocate ▶ `MOD-s
 
 Ein lesender Skill bezieht jede Aussage seiner Ausgabe aus mindestens einem lesenden Werkzeug der MCP-Registry (graph_readiness, rules_evaluate, rules_get_violations, graph_tests, audit_stats, graph_help, graph_elements) und ruft kein schreibendes Werkzeug auf.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-reports-measured-values` (conformance) · satisfy ◀ `FCHAIN-skill-report` · `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · allocate ▶ `MOD-skills`
 
@@ -1272,7 +1164,7 @@ io ◀ `FLOW-metric-policy` · io ▶ `FLOW-metric-policy` · allocate ▶ `MOD-
 
 Keine Urteilsschwelle steht als Literal im Regelcode: eine verschobene MetricPolicy kippt dasselbe Modul-Urteil auf unveraendertem Graphen, eine verschobene Fokus-Schwelle verschiebt das ready-Urteil ohne die Funde zu aendern.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-target-profile` (integration) · `TEST-thresholds-from-config` (unit) · satisfy ◀ `FUNC-load-config` · allocate ▶ `MOD-harness`
 
@@ -1290,17 +1182,9 @@ io ◀ `FLOW-gate-verdict` · `FLOW-metric-policy` · `FLOW-steering-trigger` ·
 
 Wird die bestbewertete anwendbare Suggestion real durchs Gate angewandt, bewegt sich die adressierte Metrik-Komponente mit dem Vorzeichen des Ziels und um den vorhergesagten Betrag; jede reale Regression war vorher angesagt.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-applied-suggestion-moves-target` (integration) · satisfy ◀ `FUNC-graph-suggest` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-mcp-tools` · `MOD-steering`
-
-###### `REQ-single-measurement-path` — Ein Messpfad fuer alle Steuerungs-Oberflaechen
-
-nextStep, generationStep und der steeringDelta-Zweig des dryRun-Verdicts liefern fuer denselben Graphen dieselbe Violation-Menge, dieselben Dimensions-Scores und dieselbe Zahl blockierender Verstoesse.
-
-priority: must · status: n/a
-
-Verification ◀ `TEST-graph-metrics` (unit) · `TEST-single-measurement-path` (unit) · `TEST-steering-snapshot` (integration) · satisfy ◀ `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
 
 ###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
 
@@ -1328,6 +1212,14 @@ Projiziert den Regelstrom auf die acht Dimensionsscores (score = 1 minus Verstoe
 
 io ◀ `FLOW-steering-snapshot` · io ▶ `FLOW-dimension-readiness` · allocate ▶ `MOD-metrics-engine`
 
+###### `REQ-readiness-model` — Readiness-Modell definiert (Phase/Impl/INCOSE)
+
+Readiness-Modell fuer graphcode, definiert gegen @sigloch/contracts V3_RULES + die MS-Meilensteine + Element-Status (keine aimprove-BQ-Heuristik). INCOSE-Scope LEAN: der gegatete Graph ist das einzige SE-Artefakt. Phase-Readiness SRR/PDR/CDR/TRR ist eine disjunkte, vollstaendige Partition der 15 Element-Regeln; Implementation-Readiness SAR/FCA/SVR/FRR bindet die Meilenstein-Tiers MS-1..4 (ready wenn zugeordnete CRs done + Scope fehlerfrei) und deckt die 2 MS-Regeln ab. Realisiert im Scorer src/readiness.ts, exponiert ueber graph_readiness. (CR-GC-125)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-readiness-model` (acceptance) · `TEST-views-auditor` (unit) · satisfy ◀ `FUNC-compute-readiness` · allocate ▶ `MOD-metrics-engine`
+
 ###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
 
 > auch unter: `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot`
@@ -1345,22 +1237,6 @@ Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (in
 Waehlt aus den Dimensionsscores die schwaechste Dimension unter der Fokus-Schwelle und stellt daraus den Runden-Prompt zusammen: Fokus-Typen, Fund-Fenster, Gate-Protokoll, Handoff-Bedingung.
 
 io ◀ `FLOW-dimension-readiness` · `FLOW-phase-readiness` · `FLOW-target-profile` · io ▶ `FLOW-round-prompt` · allocate ▶ `MOD-steering`
-
-###### `REQ-monotone-convergence` — Wiederholte Steuerung konvergiert monoton
-
-Ueber aufeinanderfolgende Runden faellt die Phase-Gate-Abdeckung nie zurueck und die Zahl blockierender Verstoesse steigt nie; ein Fund-Set wird hoechstens einmal erneut aufgerufen und nach dem Zuruecksetzen nicht wieder.
-
-priority: must · status: n/a
-
-Verification ◀ `TEST-monotone-convergence` (integration) · satisfy ◀ `FUNC-generation-step` · allocate ▶ `MOD-steering`
-
-###### `REQ-phase-gate-not-skippable` — Ein Phasen-Gate ist nicht ueberspringbar
-
-Auch bei erreichter Readiness-Schwelle und null blockierenden Verstoessen bleibt der Handoff aus, solange das aktuelle Phasen-Gate nicht regel-vollstaendig ist.
-
-priority: must · status: n/a
-
-Verification ◀ `TEST-phase-gate-not-skippable` (unit) · satisfy ◀ `FUNC-generation-step` · allocate ▶ `MOD-steering`
 
 ###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
 
@@ -1402,7 +1278,7 @@ io ◀ `FLOW-cli-command` · `FLOW-round-injection` · `FLOW-round-prompt` · io
 
 Derselbe Steuerungs-Loop faehrt ein lokal laufendes Modell und ein Frontier-Modell ohne Code-Verzweigung; der Backend-Wechsel ist Konfiguration, nicht ein zweiter Pfad.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-cli-run` (integration) · `TEST-executor-bestofn` (integration) · `TEST-one-driver-local-and-frontier` (integration) · satisfy ◀ `FUNC-run-executor` · `FUNC-run-verb` · allocate ▶ `MOD-cli` · `MOD-executor`
 
@@ -1438,21 +1314,13 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
 
-###### `REQ-gate-only-writes` — Gate-only Graph-Writes
-
-Agent kann den SSOT nicht hand-editieren; jeder Write durch graph_mutate (mutate-Gate, L1). Deny-Rule + PreToolUse-Hook auf Edit/Write von docs/graph/*.graph.json + .graphcode/kuzu; JSON ist generierter Export, Live-Truth ist Kuzu. (CR-GC-201)
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-graph-realize` (integration) · `TEST-no-direct-graph-write` · `TEST-path-containment` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
-
 ###### `REQ-graph-snapshot-per-commit` — Kanonischer Graph-Snapshot pro Commit
 
 > auch unter: `FCHAIN-snapshot-freshness` · `FUNC-export-marker` · `FUNC-graph-export-snapshot`
 
 Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/graph/*.graph.json), der zum Code dieses Commits passt. Un-exportierte Modell-Mutationen blockieren den Commit ueber den single-writer-sicheren Drift-Marker .graphcode/EXPORT_PENDING (vom Gate auf mutate gesetzt, von graph_export/graph_reseed geloescht); der pre-commit-Hook staged die generierten Artefakte automatisch. (CR-GC-217)
 
-priority: must · status: done
+priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-export-marker` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
 
@@ -1460,7 +1328,7 @@ Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (i
 
 Eine legale Mutation persistiert samt Attributen, eine Mutation ohne ihre Pflichtkante wird blockiert und laesst den Store unveraendert, und ein direkter Schreibversuch am Gate vorbei wird abgewiesen.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (integration) · `TEST-occ` (integration) · `TEST-single-write-door` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
 
@@ -1471,16 +1339,6 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (
 Prueft einen Kandidaten-Batch vor dem Gate und vervollstaendigt, was mechanisch entscheidbar ist. Was unklar bleibt, geht unveraendert ans Gate statt geraten zu werden.
 
 io ◀ `FLOW-mutate-cmd` · io ▶ `FLOW-mutate-cmd` · allocate ▶ `MOD-executor`
-
-###### `REQ-small-model-viable` — Kleine/lokale LLMs tragfähig
-
-> auch unter: `FCHAIN-modelfree-gate` · `FUNC-graph-suggest`
-
-Deterministische, modellfreie Gates/Regeln + Query-Precision halten kleine/lokale LLMs tragfähig; Kern läuft ohne LLM (degraded).
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-executor-preflight` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-reduced-llm` (acceptance) · satisfy ◀ `FCHAIN-modelfree-gate` · `FUNC-graph-suggest` · `FUNC-preflight` · allocate ▶ `MOD-executor` · `MOD-mcp-tools`
 
 ##### 3.2.2.10  `FUNC-rank-candidates` — rankCandidates(probes, focus)
 
@@ -1602,7 +1460,7 @@ io ◀ `FLOW-target-profile` · io ▶ `FLOW-target-profile` · allocate ▶ `MO
 
 Ein Vorzeichenwechsel im Zielvektor negiert den Score jedes gemeinsamen Kandidaten und stellt eine andere Suggestion an die Spitze; die Magnitude des Ziels aendert weder Reihenfolge noch Score.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-executor-bestofn` (integration) · `TEST-target-profile` (integration) · `TEST-target-shifts-ranking` (unit) · satisfy ◀ `FUNC-graph-suggest` · `FUNC-target-profile-load` · allocate ▶ `MOD-mcp-tools` · `MOD-steering`
 
@@ -1654,16 +1512,6 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-audit-retention` (integration) · `TEST-audit-rules-passed` (integration) · `TEST-audit-trail-projection` (integration) · `TEST-mcp-stdio-server` (integration) · `TEST-operations-log` (integration) · `TEST-testreport` (unit) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
 
-###### `REQ-precise-context` — Präziser Kontext statt grep-Dump
-
-> auch unter: `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand`
-
-Kontext = exakter Blast-Radius/Sub-Graph-Slice (Format-E) statt grep-Dump/Result-Kompression.
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-inject-graph-slice` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-token-efficiency` (acceptance) · `TEST-violation-context` (integration) · satisfy ◀ `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-graph-impact` · allocate ▶ `MOD-codec` · `MOD-mcp-tools`
-
 ###### `REQ-query-precision` — Query-Precision statt Kompression
 
 > auch unter: `FUNC-list-elements`
@@ -1694,7 +1542,7 @@ io ◀ `FLOW-query-request` · io ▶ `FLOW-impacted-tests` · allocate ▶ `MOD
 
 Ein Code-Changeset (MOD/FUNC/git-diff→Knoten) → graph_tests → vitest run nur-betroffene-Dateien, das JEDE vom Change berührte Testdatei enthält (kein false-green) und unbeteiligte ausschliesst. Erfordert testRef auf allen lauffähigen TESTs + gerichtete Auflösung statt reinem incoming-impact.
 
-priority: must · status: done
+priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-graph-tests-operational` (integration) · `TEST-selective-test-audit` (integration) · satisfy ◀ `FUNC-resolve-tests-from-code` · allocate ▶ `MOD-mcp-tools`
 
@@ -1712,7 +1560,7 @@ Jeder TEST-Knoten traegt einen testRef (Datei plus Case, tool, level), sodass ei
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-formate-binding` (integration) · `TEST-test-runnable-binding` (unit) · `TEST-testreport` (unit) · satisfy ◀ `FUNC-deduce-tests` · `MOD-mcp-tools` · allocate ▶ `MOD-mcp-tools`
+Verification ◀ `TEST-formate-binding` (integration) · `TEST-test-runnable-binding` (unit) · `TEST-testreport` (unit) · satisfy ◀ `FUNC-deduce-tests` · allocate ▶ `MOD-mcp-tools`
 
 ### 3.4  `UC-graph-time-travel` — Graph-Stand pro Commit wiederherstellbar
 
@@ -1742,13 +1590,13 @@ io ◀ `FLOW-branch-graphs` · io ▶ `FLOW-merged-graph` · allocate ▶ `MOD-h
 
 ###### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
 
-> auch unter: `FUNC-auto-export`
+> auch unter: `FUNC-auto-export` · `FUNC-load-graph` · `FUNC-save-graph`
 
 Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Artefakt. (R2)
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-merge-nodes` · allocate ▶ `MOD-docs` · `MOD-harness`
+Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-load-graph` · `FUNC-merge-nodes` · `FUNC-save-graph` · allocate ▶ `MOD-docs` · `MOD-harness`
 
 ###### `REQ-conflict-free-merge` — Conflict-free Graph-Merge
 
@@ -1786,9 +1634,9 @@ Der Entwickler nennt einen Commit; rewind liest dessen Snapshot aus dem Git-Obje
 
 Ein frueherer Graph-Stand ist mit einem Kommando reproduzierbar: graphcode rewind <ref> liest den committeten Snapshot aus dem Git-Objektspeicher und reseedet den Store daraus. Der committete Snapshot ist SSOT-at-rest / history-of-record, der Kuzu-Store eine abgeleitete Working-Copy; reseed loescht+reimportiert in-process hinter dem Single-Writer (kein zweites Handle). Der Working-Tree wird nicht angefasst. (CR-GC-217, CR-GC-311)
 
-priority: must · status: done
+priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-graph-time-travel` (integration) · `TEST-reseed` (integration) · `TEST-rewind` (integration) · satisfy ◀ `FCHAIN-recall` · `FUNC-apply-reseed` · `FUNC-reseed` · `FUNC-rewind` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness`
+Verification ◀ `TEST-graph-time-travel` (integration) · `TEST-reseed` (integration) · `TEST-rewind` (integration) · satisfy ◀ `FCHAIN-recall` · `FUNC-apply-reseed` · `FUNC-reseed` · `FUNC-rewind` · allocate ▶ `MOD-cli` · `MOD-harness`
 
 ##### 3.4.2.1  `FUNC-rewind` — graphcode rewind <ref>
 
@@ -1804,9 +1652,9 @@ io ◀ `FLOW-cli-command` · io ▶ `FLOW-graph-snapshot` · allocate ▶ `MOD-c
 
 Ein frueherer Graph-Stand ist mit einem Kommando reproduzierbar: graphcode rewind <ref> liest den committeten Snapshot aus dem Git-Objektspeicher und reseedet den Store daraus. Der committete Snapshot ist SSOT-at-rest / history-of-record, der Kuzu-Store eine abgeleitete Working-Copy; reseed loescht+reimportiert in-process hinter dem Single-Writer (kein zweites Handle). Der Working-Tree wird nicht angefasst. (CR-GC-217, CR-GC-311)
 
-priority: must · status: done
+priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-graph-time-travel` (integration) · `TEST-reseed` (integration) · `TEST-rewind` (integration) · satisfy ◀ `FCHAIN-recall` · `FUNC-apply-reseed` · `FUNC-reseed` · `FUNC-rewind` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness`
+Verification ◀ `TEST-graph-time-travel` (integration) · `TEST-reseed` (integration) · `TEST-rewind` (integration) · satisfy ◀ `FCHAIN-recall` · `FUNC-apply-reseed` · `FUNC-reseed` · `FUNC-rewind` · allocate ▶ `MOD-cli` · `MOD-harness`
 
 ##### 3.4.2.2  `FUNC-apply-reseed` — applyReseed
 
@@ -1822,9 +1670,9 @@ io ◀ `FLOW-graph-snapshot` · io ▶ `FLOW-recalled-state` · allocate ▶ `MO
 
 Ein frueherer Graph-Stand ist mit einem Kommando reproduzierbar: graphcode rewind <ref> liest den committeten Snapshot aus dem Git-Objektspeicher und reseedet den Store daraus. Der committete Snapshot ist SSOT-at-rest / history-of-record, der Kuzu-Store eine abgeleitete Working-Copy; reseed loescht+reimportiert in-process hinter dem Single-Writer (kein zweites Handle). Der Working-Tree wird nicht angefasst. (CR-GC-217, CR-GC-311)
 
-priority: must · status: done
+priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-graph-time-travel` (integration) · `TEST-reseed` (integration) · `TEST-rewind` (integration) · satisfy ◀ `FCHAIN-recall` · `FUNC-apply-reseed` · `FUNC-reseed` · `FUNC-rewind` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness`
+Verification ◀ `TEST-graph-time-travel` (integration) · `TEST-reseed` (integration) · `TEST-rewind` (integration) · satisfy ◀ `FCHAIN-recall` · `FUNC-apply-reseed` · `FUNC-reseed` · `FUNC-rewind` · allocate ▶ `MOD-cli` · `MOD-harness`
 
 ##### 3.4.2.3  `FUNC-reseed` — reseed(relPath)
 
@@ -1840,9 +1688,9 @@ io ◀ `FLOW-graph-snapshot` · io ▶ `FLOW-recalled-state` · allocate ▶ `MO
 
 Ein frueherer Graph-Stand ist mit einem Kommando reproduzierbar: graphcode rewind <ref> liest den committeten Snapshot aus dem Git-Objektspeicher und reseedet den Store daraus. Der committete Snapshot ist SSOT-at-rest / history-of-record, der Kuzu-Store eine abgeleitete Working-Copy; reseed loescht+reimportiert in-process hinter dem Single-Writer (kein zweites Handle). Der Working-Tree wird nicht angefasst. (CR-GC-217, CR-GC-311)
 
-priority: must · status: done
+priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-graph-time-travel` (integration) · `TEST-reseed` (integration) · `TEST-rewind` (integration) · satisfy ◀ `FCHAIN-recall` · `FUNC-apply-reseed` · `FUNC-reseed` · `FUNC-rewind` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness`
+Verification ◀ `TEST-graph-time-travel` (integration) · `TEST-reseed` (integration) · `TEST-rewind` (integration) · satisfy ◀ `FCHAIN-recall` · `FUNC-apply-reseed` · `FUNC-reseed` · `FUNC-rewind` · allocate ▶ `MOD-cli` · `MOD-harness`
 
 ##### 3.4.2.4  `FUNC-seed-from-json` — seedFromJson(relPath)
 
@@ -1872,7 +1720,7 @@ Jede Modell-Mutation setzt den Drift-Marker, die Persistenz schreibt den Store, 
 
 Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/graph/*.graph.json), der zum Code dieses Commits passt. Un-exportierte Modell-Mutationen blockieren den Commit ueber den single-writer-sicheren Drift-Marker .graphcode/EXPORT_PENDING (vom Gate auf mutate gesetzt, von graph_export/graph_reseed geloescht); der pre-commit-Hook staged die generierten Artefakte automatisch. (CR-GC-217)
 
-priority: must · status: done
+priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-export-marker` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
 
@@ -1892,21 +1740,13 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
 
-###### `REQ-gate-only-writes` — Gate-only Graph-Writes
-
-Agent kann den SSOT nicht hand-editieren; jeder Write durch graph_mutate (mutate-Gate, L1). Deny-Rule + PreToolUse-Hook auf Edit/Write von docs/graph/*.graph.json + .graphcode/kuzu; JSON ist generierter Export, Live-Truth ist Kuzu. (CR-GC-201)
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-graph-realize` (integration) · `TEST-no-direct-graph-write` · `TEST-path-containment` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
-
 ###### `REQ-graph-snapshot-per-commit` — Kanonischer Graph-Snapshot pro Commit
 
 > auch unter: `FCHAIN-snapshot-freshness` · `FUNC-export-marker` · `FUNC-graph-export-snapshot`
 
 Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/graph/*.graph.json), der zum Code dieses Commits passt. Un-exportierte Modell-Mutationen blockieren den Commit ueber den single-writer-sicheren Drift-Marker .graphcode/EXPORT_PENDING (vom Gate auf mutate gesetzt, von graph_export/graph_reseed geloescht); der pre-commit-Hook staged die generierten Artefakte automatisch. (CR-GC-217)
 
-priority: must · status: done
+priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-export-marker` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
 
@@ -1914,7 +1754,7 @@ Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (i
 
 Eine legale Mutation persistiert samt Attributen, eine Mutation ohne ihre Pflichtkante wird blockiert und laesst den Store unveraendert, und ein direkter Schreibversuch am Gate vorbei wird abgewiesen.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (integration) · `TEST-occ` (integration) · `TEST-single-write-door` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
 
@@ -1942,15 +1782,15 @@ Persistiert in-memory Graph nach Disk-Kuzu, falls keine error-Violations. (SPEC 
 
 io ◀ `FLOW-violations` · io ▶ `FLOW-committed-graph` · allocate ▶ `MOD-harness`
 
-###### `REQ-disk-persistence` — Disk-Persistenz
+###### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
 
-> auch unter: `FUNC-load-graph`
+> auch unter: `FUNC-auto-export` · `FUNC-load-graph` · `FUNC-merge-nodes`
 
-Persistenz auf Disk (.graphcode/kuzu/), kein :memory:. (SPEC §4)
+Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Artefakt. (R2)
 
-priority: should · status: open · kinds: non-functional
+priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `FUNC-load-graph` · `FUNC-save-graph` · allocate ▶ `MOD-harness`
+Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-load-graph` · `FUNC-merge-nodes` · `FUNC-save-graph` · allocate ▶ `MOD-docs` · `MOD-harness`
 
 ##### 3.4.3.4  `FUNC-auto-export` — registerAutoExport
 
@@ -1962,13 +1802,13 @@ io ◀ `FLOW-committed-graph` · io ▶ `FLOW-export-request` · allocate ▶ `M
 
 ###### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
 
-> auch unter: `FUNC-merge-nodes`
+> auch unter: `FUNC-load-graph` · `FUNC-merge-nodes` · `FUNC-save-graph`
 
 Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Artefakt. (R2)
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-merge-nodes` · allocate ▶ `MOD-docs` · `MOD-harness`
+Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-load-graph` · `FUNC-merge-nodes` · `FUNC-save-graph` · allocate ▶ `MOD-docs` · `MOD-harness`
 
 ##### 3.4.3.5  `FUNC-export-marker` — setExportPending
 
@@ -1984,7 +1824,7 @@ io ◀ `FLOW-committed-graph` · io ▶ `FLOW-export-pending` · allocate ▶ `M
 
 Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/graph/*.graph.json), der zum Code dieses Commits passt. Un-exportierte Modell-Mutationen blockieren den Commit ueber den single-writer-sicheren Drift-Marker .graphcode/EXPORT_PENDING (vom Gate auf mutate gesetzt, von graph_export/graph_reseed geloescht); der pre-commit-Hook staged die generierten Artefakte automatisch. (CR-GC-217)
 
-priority: must · status: done
+priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-export-marker` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
 
@@ -2002,7 +1842,7 @@ io ◀ `FLOW-committed-graph` · io ▶ `FLOW-graph-snapshot` · allocate ▶ `M
 
 Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/graph/*.graph.json), der zum Code dieses Commits passt. Un-exportierte Modell-Mutationen blockieren den Commit ueber den single-writer-sicheren Drift-Marker .graphcode/EXPORT_PENDING (vom Gate auf mutate gesetzt, von graph_export/graph_reseed geloescht); der pre-commit-Hook staged die generierten Artefakte automatisch. (CR-GC-217)
 
-priority: must · status: done
+priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-export-marker` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
 
@@ -2016,13 +1856,11 @@ Nach jeder Gate-Mutation: persist schreibt den Graphen nach Disk-Kuzu, makeUpdat
 
 ##### `REQ-mutation-emits-event` — Mutation emittiert Live-Update-Event
 
-> auch unter: `FUNC-emit-update-event`
-
 CONSTRAINT: Jede Graph-Mutation MUSS ein Live-Update-Event emittieren (SSE invalidate, domains graph/rules/readiness/suggestions). Beleg: aimprove import emittiert keins → Dashboard-Lag ~90s. Fix: alle Write-Pfade einheitlich.
 
 priority: should · status: done · kinds: non-functional
 
-Verification ◀ `TEST-create-harness-smoke` (integration) · `TEST-live-view` (integration) · satisfy ◀ `FCHAIN-live-update` · `FUNC-emit-update-event` · allocate ▶ `MOD-hooks`
+Verification ◀ `TEST-create-harness-smoke` (integration) · `TEST-live-view` (integration) · satisfy ◀ `FCHAIN-live-update` · allocate ▶ —
 
 ##### 3.5.1.1  `FUNC-mutate` — mutate(commands)
 
@@ -2040,21 +1878,13 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
 
-###### `REQ-gate-only-writes` — Gate-only Graph-Writes
-
-Agent kann den SSOT nicht hand-editieren; jeder Write durch graph_mutate (mutate-Gate, L1). Deny-Rule + PreToolUse-Hook auf Edit/Write von docs/graph/*.graph.json + .graphcode/kuzu; JSON ist generierter Export, Live-Truth ist Kuzu. (CR-GC-201)
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-graph-realize` (integration) · `TEST-no-direct-graph-write` · `TEST-path-containment` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
-
 ###### `REQ-graph-snapshot-per-commit` — Kanonischer Graph-Snapshot pro Commit
 
 > auch unter: `FCHAIN-snapshot-freshness` · `FUNC-export-marker` · `FUNC-graph-export-snapshot`
 
 Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/graph/*.graph.json), der zum Code dieses Commits passt. Un-exportierte Modell-Mutationen blockieren den Commit ueber den single-writer-sicheren Drift-Marker .graphcode/EXPORT_PENDING (vom Gate auf mutate gesetzt, von graph_export/graph_reseed geloescht); der pre-commit-Hook staged die generierten Artefakte automatisch. (CR-GC-217)
 
-priority: must · status: done
+priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-export-marker` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
 
@@ -2062,7 +1892,7 @@ Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (i
 
 Eine legale Mutation persistiert samt Attributen, eine Mutation ohne ihre Pflichtkante wird blockiert und laesst den Store unveraendert, und ein direkter Schreibversuch am Gate vorbei wird abgewiesen.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (integration) · `TEST-occ` (integration) · `TEST-single-write-door` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
 
@@ -2098,7 +1928,7 @@ Der Health-Endpoint prueft Store-Erreichbarkeit, Gate-Funktion, Ontology/Rules/C
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-readonly-bridge` (integration) · satisfy ◀ `FUNC-collect-status` · `FUNC-health-endpoint` · `MOD-host-bridge` · allocate ▶ `MOD-cli` · `MOD-host-bridge`
+Verification ◀ `TEST-readonly-bridge` (integration) · satisfy ◀ `FUNC-collect-status` · `FUNC-health-endpoint` · allocate ▶ `MOD-cli` · `MOD-host-bridge`
 
 ##### 3.5.1.4  `FUNC-save-graph` — saveGraph(graph)
 
@@ -2108,15 +1938,15 @@ Persistiert in-memory Graph nach Disk-Kuzu, falls keine error-Violations. (SPEC 
 
 io ◀ `FLOW-violations` · io ▶ `FLOW-committed-graph` · allocate ▶ `MOD-harness`
 
-###### `REQ-disk-persistence` — Disk-Persistenz
+###### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
 
-> auch unter: `FUNC-load-graph`
+> auch unter: `FUNC-auto-export` · `FUNC-load-graph` · `FUNC-merge-nodes`
 
-Persistenz auf Disk (.graphcode/kuzu/), kein :memory:. (SPEC §4)
+Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Artefakt. (R2)
 
-priority: should · status: open · kinds: non-functional
+priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `FUNC-load-graph` · `FUNC-save-graph` · allocate ▶ `MOD-harness`
+Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-load-graph` · `FUNC-merge-nodes` · `FUNC-save-graph` · allocate ▶ `MOD-docs` · `MOD-harness`
 
 ##### 3.5.1.5  `FUNC-emit-update-event` — emitUpdateEvent(domains)
 
@@ -2125,24 +1955,6 @@ Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `FUNC-load-graph` · `FUNC-
 Live-Update-Event (SSE invalidate) bei jeder Mutation; Basis des read-only Dashboards. (R9)
 
 io ◀ `FLOW-committed-graph` · io ▶ `FLOW-live-event` · allocate ▶ `MOD-hooks`
-
-###### `REQ-live-event-in-contracts` — Live-Event-Contract in @sigloch/contracts
-
-LiveUpdateEvent/UpdateDomain (heute nur graphcode src/emit.ts) als Zod-Schema nach @sigloch/contracts publishen, damit Dashboard/Bridge denselben Vertrag importieren (kein Fork). Analog D1.
-
-priority: must · status: done
-
-Verification ◀ `TEST-live-event-contract` (integration) · satisfy ◀ `FUNC-emit-update-event` · allocate ▶ `MOD-hooks`
-
-###### `REQ-mutation-emits-event` — Mutation emittiert Live-Update-Event
-
-> auch unter: `FCHAIN-live-update`
-
-CONSTRAINT: Jede Graph-Mutation MUSS ein Live-Update-Event emittieren (SSE invalidate, domains graph/rules/readiness/suggestions). Beleg: aimprove import emittiert keins → Dashboard-Lag ~90s. Fix: alle Write-Pfade einheitlich.
-
-priority: should · status: done · kinds: non-functional
-
-Verification ◀ `TEST-create-harness-smoke` (integration) · `TEST-live-view` (integration) · satisfy ◀ `FCHAIN-live-update` · `FUNC-emit-update-event` · allocate ▶ `MOD-hooks`
 
 ###### `REQ-post-emit-update-event` — Postcondition: FUNC-emit-update-event
 
@@ -2162,13 +1974,13 @@ Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FUNC-emit-update
 
 ###### `REQ-versioned-broadcast` — Versioned Diff-Broadcast
 
-> auch unter: `FUNC-broadcast-diff`
+> auch unter: `FUNC-broadcast-diff` · `FUNC-serve-sse`
 
 Versioned Diff-Broadcast an Dashboard (read-only, Late-Joiner-Cache). (R9)
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FUNC-broadcast-diff` · `FUNC-emit-update-event` · `MOD-host-bridge` · allocate ▶ `MOD-hooks` · `MOD-host-bridge`
+Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FUNC-broadcast-diff` · `FUNC-emit-update-event` · `FUNC-serve-sse` · allocate ▶ `MOD-hooks` · `MOD-host-bridge`
 
 ##### 3.5.1.6  `FUNC-broadcast-diff` — broadcastDiff(version)
 
@@ -2180,13 +1992,13 @@ io ◀ `FLOW-live-event` · io ▶ `FLOW-viewer-stream` · allocate ▶ `MOD-hos
 
 ###### `REQ-versioned-broadcast` — Versioned Diff-Broadcast
 
-> auch unter: `FUNC-emit-update-event`
+> auch unter: `FUNC-emit-update-event` · `FUNC-serve-sse`
 
 Versioned Diff-Broadcast an Dashboard (read-only, Late-Joiner-Cache). (R9)
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FUNC-broadcast-diff` · `FUNC-emit-update-event` · `MOD-host-bridge` · allocate ▶ `MOD-hooks` · `MOD-host-bridge`
+Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FUNC-broadcast-diff` · `FUNC-emit-update-event` · `FUNC-serve-sse` · allocate ▶ `MOD-hooks` · `MOD-host-bridge`
 
 ##### 3.5.1.7  `FUNC-serve-sse` — serveSSE()
 
@@ -2196,13 +2008,15 @@ Host-Prozess exponiert die SSE/WS-Route und leitet harness.onUpdateEvent read-on
 
 io ◀ `FLOW-live-event` · io ▶ `FLOW-viewer-stream` · allocate ▶ `MOD-host-bridge`
 
-###### `REQ-readonly-bridge` — Read-only Bridge
+###### `REQ-versioned-broadcast` — Versioned Diff-Broadcast
 
-Bridge read-only; keine Inbound-Mutations, Writes nur via MCP→mutate(). (RECOMMENDATIONS)
+> auch unter: `FUNC-broadcast-diff` · `FUNC-emit-update-event`
 
-priority: must · status: done · kinds: negative
+Versioned Diff-Broadcast an Dashboard (read-only, Late-Joiner-Cache). (R9)
 
-Verification ◀ `TEST-bridge-follows-lock` (integration) · `TEST-readonly-bridge` (integration) · satisfy ◀ `FUNC-serve-sse` · `MOD-host-bridge` · allocate ▶ `MOD-host-bridge`
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FUNC-broadcast-diff` · `FUNC-emit-update-event` · `FUNC-serve-sse` · allocate ▶ `MOD-hooks` · `MOD-host-bridge`
 
 ##### 3.5.1.8  `FUNC-serve-stdio` — serveStdio()
 
@@ -2212,21 +2026,15 @@ Bindet die MCP-Tool-Registry headless an einen stdio-Transport; jeder Agent (Cla
 
 io ◀ `FLOW-live-event` · io ▶ `FLOW-export-request` · allocate ▶ `MOD-mcp-tools`
 
-###### `REQ-agent-agnostic` — Agent-agnostische MCP-Surface
+###### `REQ-mcp-tool-registry` — MCP-Tool-Registry an Harness gebunden
 
-Die MCP-stdio-Surface ist agent-agnostisch: Claude Code UND OpenCode (und jeder MCP-Client) treiben dieselbe Harness durchs selbe Gate; keine client-spezifischen Annahmen. (CLAUDE.md verriegelt: OpenCode-executed, Claude Code = ein Client)
+> auch unter: `FUNC-bind-tools` · `FUNC-tool-context`
 
-priority: must · status: done
+CR-GC-101: Registry graph_elements/get_node/get_edges (read), graph_mutate (write durchs Gate), rules_evaluate/get_violations, audit_trail/stats — via bindToolsToHarness.
 
-Verification ◀ `TEST-agent-agnostic` (integration) · satisfy ◀ `FUNC-serve-stdio` · `MOD-mcp-tools` · allocate ▶ `MOD-mcp-tools`
+priority: must · status: done · kinds: functional
 
-###### `REQ-single-transport` — Ein Transport: MCP-stdio
-
-Genau ein Transport = MCP-stdio; kein Express-REST/HTTP im Harness-Core. (SPEC §0, §5)
-
-priority: should · status: done · kinds: non-functional
-
-Verification ◀ `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-serve-stdio` · `MOD-mcp-tools` · allocate ▶ `MOD-mcp-tools`
+Verification ◀ `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integration) · `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-bind-tools` · `FUNC-serve-stdio` · `FUNC-tool-context` · allocate ▶ `MOD-mcp-tools`
 
 ### 3.6  `UC-loop-closure` — Schwellen und Prompts am Trail kalibrieren
 
@@ -2310,21 +2118,15 @@ Bindet die MCP-Tool-Registry headless an einen stdio-Transport; jeder Agent (Cla
 
 io ◀ `FLOW-live-event` · io ▶ `FLOW-export-request` · allocate ▶ `MOD-mcp-tools`
 
-###### `REQ-agent-agnostic` — Agent-agnostische MCP-Surface
+###### `REQ-mcp-tool-registry` — MCP-Tool-Registry an Harness gebunden
 
-Die MCP-stdio-Surface ist agent-agnostisch: Claude Code UND OpenCode (und jeder MCP-Client) treiben dieselbe Harness durchs selbe Gate; keine client-spezifischen Annahmen. (CLAUDE.md verriegelt: OpenCode-executed, Claude Code = ein Client)
+> auch unter: `FUNC-bind-tools` · `FUNC-tool-context`
 
-priority: must · status: done
+CR-GC-101: Registry graph_elements/get_node/get_edges (read), graph_mutate (write durchs Gate), rules_evaluate/get_violations, audit_trail/stats — via bindToolsToHarness.
 
-Verification ◀ `TEST-agent-agnostic` (integration) · satisfy ◀ `FUNC-serve-stdio` · `MOD-mcp-tools` · allocate ▶ `MOD-mcp-tools`
+priority: must · status: done · kinds: functional
 
-###### `REQ-single-transport` — Ein Transport: MCP-stdio
-
-Genau ein Transport = MCP-stdio; kein Express-REST/HTTP im Harness-Core. (SPEC §0, §5)
-
-priority: should · status: done · kinds: non-functional
-
-Verification ◀ `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-serve-stdio` · `MOD-mcp-tools` · allocate ▶ `MOD-mcp-tools`
+Verification ◀ `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integration) · `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-bind-tools` · `FUNC-serve-stdio` · `FUNC-tool-context` · allocate ▶ `MOD-mcp-tools`
 
 ##### 3.7.1.4  `FUNC-view-changelog` — se-view-changelog (Change Log)
 
@@ -2452,7 +2254,7 @@ Verification ◀ `TEST-doc-export` (conformance) · `TEST-import-code-verb` (int
 
 Keine tree-sitter/AST/LLM-Extraktion; Extraktion ist Slicer-/graphify-Aufgabe. (RECOMMENDATIONS)
 
-priority: must · status: open · kinds: negative
+priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-capture` (integration) · `TEST-import-code-verb` (integration) · satisfy ◀ `FCHAIN-model-import` · `FUNC-import-code` · `FUNC-import-code-verb` · `FUNC-import-doc` · allocate ▶ `MOD-cli` · `MOD-skills`
 
@@ -2470,7 +2272,7 @@ io ◀ `FLOW-authoring-request` · io ▶ `FLOW-bulk-formatE` · allocate ▶ `M
 
 Keine tree-sitter/AST/LLM-Extraktion; Extraktion ist Slicer-/graphify-Aufgabe. (RECOMMENDATIONS)
 
-priority: must · status: open · kinds: negative
+priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-capture` (integration) · `TEST-import-code-verb` (integration) · satisfy ◀ `FCHAIN-model-import` · `FUNC-import-code` · `FUNC-import-code-verb` · `FUNC-import-doc` · allocate ▶ `MOD-cli` · `MOD-skills`
 
@@ -2481,14 +2283,6 @@ Verification ◀ `TEST-capture` (integration) · `TEST-import-code-verb` (integr
 Format-E-Bulk-Import (replace/merge) ausschließlich durchs Gate; Cold-Start aus graphify/Slicer-Output.
 
 io ◀ `FLOW-bulk-formatE` · io ▶ `FLOW-bootstrap-result` · allocate ▶ `MOD-harness`
-
-###### `REQ-batch-seed-performance` — Batch-Seed/Import Performance (UNWIND)
-
-Seed/Import muss batch-skalieren: per-Row-MERGE ist O(langsam) (10k Edges ~51s, SP-2). UNWIND-Batch-Insert (gruppiert je Label/Edge-Table, Werte inline via escapeString) liefert 5k Nodes + 5k Edges < 15s (gemessen 5.3s, 5.6x schneller; Edges 9.6x). Interface unverändert (StorageAdapter.saveNodes/saveEdges), kein Parallelpfad. (CR-GC-120)
-
-priority: must · status: done
-
-Verification ◀ `TEST-batch-seed` (performance) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-harness`
 
 ###### `REQ-bootstrap-through-gate` — Erstbefüllung nur durchs Gate
 
@@ -2538,7 +2332,7 @@ Verification ◀ `TEST-import-code-verb` (integration) · satisfy ◀ `FUNC-impo
 
 Keine tree-sitter/AST/LLM-Extraktion; Extraktion ist Slicer-/graphify-Aufgabe. (RECOMMENDATIONS)
 
-priority: must · status: open · kinds: negative
+priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-capture` (integration) · `TEST-import-code-verb` (integration) · satisfy ◀ `FCHAIN-model-import` · `FUNC-import-code` · `FUNC-import-code-verb` · `FUNC-import-doc` · allocate ▶ `MOD-cli` · `MOD-skills`
 
@@ -2556,7 +2350,7 @@ io ◀ `FLOW-authoring-request` · io ▶ `FLOW-bulk-formatE` · allocate ▶ `M
 
 Keine tree-sitter/AST/LLM-Extraktion; Extraktion ist Slicer-/graphify-Aufgabe. (RECOMMENDATIONS)
 
-priority: must · status: open · kinds: negative
+priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-capture` (integration) · `TEST-import-code-verb` (integration) · satisfy ◀ `FCHAIN-model-import` · `FUNC-import-code` · `FUNC-import-code-verb` · `FUNC-import-doc` · allocate ▶ `MOD-cli` · `MOD-skills`
 
@@ -2592,16 +2386,6 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-audit-retention` (integration) · `TEST-audit-rules-passed` (integration) · `TEST-audit-trail-projection` (integration) · `TEST-mcp-stdio-server` (integration) · `TEST-operations-log` (integration) · `TEST-testreport` (unit) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
 
-###### `REQ-precise-context` — Präziser Kontext statt grep-Dump
-
-> auch unter: `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand`
-
-Kontext = exakter Blast-Radius/Sub-Graph-Slice (Format-E) statt grep-Dump/Result-Kompression.
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-inject-graph-slice` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-token-efficiency` (acceptance) · `TEST-violation-context` (integration) · satisfy ◀ `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-graph-impact` · allocate ▶ `MOD-codec` · `MOD-mcp-tools`
-
 ###### `REQ-query-precision` — Query-Precision statt Kompression
 
 > auch unter: `FUNC-list-elements`
@@ -2636,21 +2420,13 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
 
-###### `REQ-gate-only-writes` — Gate-only Graph-Writes
-
-Agent kann den SSOT nicht hand-editieren; jeder Write durch graph_mutate (mutate-Gate, L1). Deny-Rule + PreToolUse-Hook auf Edit/Write von docs/graph/*.graph.json + .graphcode/kuzu; JSON ist generierter Export, Live-Truth ist Kuzu. (CR-GC-201)
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-graph-realize` (integration) · `TEST-no-direct-graph-write` · `TEST-path-containment` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
-
 ###### `REQ-graph-snapshot-per-commit` — Kanonischer Graph-Snapshot pro Commit
 
 > auch unter: `FCHAIN-snapshot-freshness` · `FUNC-export-marker` · `FUNC-graph-export-snapshot`
 
 Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/graph/*.graph.json), der zum Code dieses Commits passt. Un-exportierte Modell-Mutationen blockieren den Commit ueber den single-writer-sicheren Drift-Marker .graphcode/EXPORT_PENDING (vom Gate auf mutate gesetzt, von graph_export/graph_reseed geloescht); der pre-commit-Hook staged die generierten Artefakte automatisch. (CR-GC-217)
 
-priority: must · status: done
+priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-export-marker` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
 
@@ -2658,7 +2434,7 @@ Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (i
 
 Eine legale Mutation persistiert samt Attributen, eine Mutation ohne ihre Pflichtkante wird blockiert und laesst den Store unveraendert, und ein direkter Schreibversuch am Gate vorbei wird abgewiesen.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (integration) · `TEST-occ` (integration) · `TEST-single-write-door` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
 
@@ -2692,19 +2468,9 @@ io ◀ `FLOW-graph-state` · `FLOW-round-findings` · `FLOW-target-profile` · i
 
 Wird die bestbewertete anwendbare Suggestion real durchs Gate angewandt, bewegt sich die adressierte Metrik-Komponente mit dem Vorzeichen des Ziels und um den vorhergesagten Betrag; jede reale Regression war vorher angesagt.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-applied-suggestion-moves-target` (integration) · satisfy ◀ `FUNC-graph-suggest` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-mcp-tools` · `MOD-steering`
-
-###### `REQ-small-model-viable` — Kleine/lokale LLMs tragfähig
-
-> auch unter: `FCHAIN-modelfree-gate` · `FUNC-preflight`
-
-Deterministische, modellfreie Gates/Regeln + Query-Precision halten kleine/lokale LLMs tragfähig; Kern läuft ohne LLM (degraded).
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-executor-preflight` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-reduced-llm` (acceptance) · satisfy ◀ `FCHAIN-modelfree-gate` · `FUNC-graph-suggest` · `FUNC-preflight` · allocate ▶ `MOD-executor` · `MOD-mcp-tools`
 
 ###### `REQ-target-shifts-ranking` — Die Zielrichtung verschiebt das Suggestion-Ranking
 
@@ -2712,7 +2478,7 @@ Verification ◀ `TEST-executor-preflight` (integration) · `TEST-mvp-e2e` (e2e)
 
 Ein Vorzeichenwechsel im Zielvektor negiert den Score jedes gemeinsamen Kandidaten und stellt eine andere Suggestion an die Spitze; die Magnitude des Ziels aendert weder Reihenfolge noch Score.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-executor-bestofn` (integration) · `TEST-target-profile` (integration) · `TEST-target-shifts-ranking` (unit) · satisfy ◀ `FUNC-graph-suggest` · `FUNC-target-profile-load` · allocate ▶ `MOD-mcp-tools` · `MOD-steering`
 
@@ -2738,13 +2504,11 @@ Verification ◀ `TEST-impact-subgraph` (integration) · satisfy ◀ `FCHAIN-age
 
 ##### `REQ-precise-context` — Präziser Kontext statt grep-Dump
 
-> auch unter: `FUNC-encode` · `FUNC-graph-expand` · `FUNC-graph-impact`
-
 Kontext = exakter Blast-Radius/Sub-Graph-Slice (Format-E) statt grep-Dump/Result-Kompression.
 
 priority: should · status: open · kinds: non-functional
 
-Verification ◀ `TEST-inject-graph-slice` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-token-efficiency` (acceptance) · `TEST-violation-context` (integration) · satisfy ◀ `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-graph-impact` · allocate ▶ `MOD-codec` · `MOD-mcp-tools`
+Verification ◀ `TEST-inject-graph-slice` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-token-efficiency` (acceptance) · `TEST-violation-context` (integration) · satisfy ◀ `FCHAIN-agent-query` · allocate ▶ —
 
 ##### 3.8.2.1  `FUNC-graph-impact` — graph_impact(id, depth?)
 
@@ -2761,16 +2525,6 @@ CR-GC-101: audit_trail/audit_stats liefern Mutations-History/Statistik.
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-audit-retention` (integration) · `TEST-audit-rules-passed` (integration) · `TEST-audit-trail-projection` (integration) · `TEST-mcp-stdio-server` (integration) · `TEST-operations-log` (integration) · `TEST-testreport` (unit) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
-
-###### `REQ-precise-context` — Präziser Kontext statt grep-Dump
-
-> auch unter: `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand`
-
-Kontext = exakter Blast-Radius/Sub-Graph-Slice (Format-E) statt grep-Dump/Result-Kompression.
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-inject-graph-slice` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-token-efficiency` (acceptance) · `TEST-violation-context` (integration) · satisfy ◀ `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-graph-impact` · allocate ▶ `MOD-codec` · `MOD-mcp-tools`
 
 ###### `REQ-query-precision` — Query-Precision statt Kompression
 
@@ -2797,24 +2551,6 @@ Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-inject-graph-slic
 Progressive On-Demand-Kuzu-Re-Traversierung; kein Originals-Store. (CR-GC-101, R13)
 
 io ◀ `FLOW-expand-request` · `FLOW-impact-subgraph` · io ▶ `FLOW-expanded-subgraph` · allocate ▶ `MOD-mcp-tools`
-
-###### `REQ-cache-layering` — Prompt-Cache-Layering
-
-Nur Onto+Rules stabil cachen, nie mit Live-Graph; Prefix-Hygiene. (R8/R14)
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-cache` (integration) · satisfy ◀ `FUNC-graph-expand` · allocate ▶ `MOD-mcp-tools`
-
-###### `REQ-precise-context` — Präziser Kontext statt grep-Dump
-
-> auch unter: `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-impact`
-
-Kontext = exakter Blast-Radius/Sub-Graph-Slice (Format-E) statt grep-Dump/Result-Kompression.
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-inject-graph-slice` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-token-efficiency` (acceptance) · `TEST-violation-context` (integration) · satisfy ◀ `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-graph-impact` · allocate ▶ `MOD-codec` · `MOD-mcp-tools`
 
 ###### `REQ-progressive-expansion` — Progressive Query-Expansion
 
@@ -2874,13 +2610,11 @@ Verification ◀ `TEST-reduced-llm` (acceptance) · satisfy ◀ `FCHAIN-modelfre
 
 ##### `REQ-small-model-viable` — Kleine/lokale LLMs tragfähig
 
-> auch unter: `FUNC-graph-suggest` · `FUNC-preflight`
-
 Deterministische, modellfreie Gates/Regeln + Query-Precision halten kleine/lokale LLMs tragfähig; Kern läuft ohne LLM (degraded).
 
 priority: should · status: open · kinds: non-functional
 
-Verification ◀ `TEST-executor-preflight` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-reduced-llm` (acceptance) · satisfy ◀ `FCHAIN-modelfree-gate` · `FUNC-graph-suggest` · `FUNC-preflight` · allocate ▶ `MOD-executor` · `MOD-mcp-tools`
+Verification ◀ `TEST-executor-preflight` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-reduced-llm` (acceptance) · satisfy ◀ `FCHAIN-modelfree-gate` · allocate ▶ —
 
 ##### 3.8.3.1  `FUNC-mutate` — mutate(commands)
 
@@ -2898,21 +2632,13 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
 
-###### `REQ-gate-only-writes` — Gate-only Graph-Writes
-
-Agent kann den SSOT nicht hand-editieren; jeder Write durch graph_mutate (mutate-Gate, L1). Deny-Rule + PreToolUse-Hook auf Edit/Write von docs/graph/*.graph.json + .graphcode/kuzu; JSON ist generierter Export, Live-Truth ist Kuzu. (CR-GC-201)
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-graph-realize` (integration) · `TEST-no-direct-graph-write` · `TEST-path-containment` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
-
 ###### `REQ-graph-snapshot-per-commit` — Kanonischer Graph-Snapshot pro Commit
 
 > auch unter: `FCHAIN-snapshot-freshness` · `FUNC-export-marker` · `FUNC-graph-export-snapshot`
 
 Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/graph/*.graph.json), der zum Code dieses Commits passt. Un-exportierte Modell-Mutationen blockieren den Commit ueber den single-writer-sicheren Drift-Marker .graphcode/EXPORT_PENDING (vom Gate auf mutate gesetzt, von graph_export/graph_reseed geloescht); der pre-commit-Hook staged die generierten Artefakte automatisch. (CR-GC-217)
 
-priority: must · status: done
+priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-export-marker` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
 
@@ -2920,7 +2646,7 @@ Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (i
 
 Eine legale Mutation persistiert samt Attributen, eine Mutation ohne ihre Pflichtkante wird blockiert und laesst den Store unveraendert, und ein direkter Schreibversuch am Gate vorbei wird abgewiesen.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (integration) · `TEST-occ` (integration) · `TEST-single-write-door` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
 
@@ -2950,11 +2676,13 @@ Einrichten, erstbefuellen, Verb waehlen, Lauf fahren, aktualisieren, Sitzung bee
 
 ##### `REQ-session-leaves-nothing-behind` — Sitzungsende hinterlaesst nichts
 
+> auch unter: `FUNC-session-shutdown`
+
 Nach dem Ende einer Sitzung muss der Store-Lock freigegeben und der Sitzungseintrag entfernt sein; abgeraeumt wird genau einmal und in umgekehrter Aufbaureihenfolge, der Store-Lock zuletzt.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-repo-lifecycle` (integration) · satisfy ◀ `FCHAIN-repo-lifecycle` · allocate ▶ —
+Verification ◀ `TEST-repo-lifecycle` (integration) · satisfy ◀ `FCHAIN-repo-lifecycle` · `FUNC-session-shutdown` · allocate ▶ `MOD-cli`
 
 ##### 3.9.1.1  `FUNC-bind-tools` — bindToolsToHarness
 
@@ -2966,11 +2694,13 @@ io ◀ — · io ▶ — · allocate ▶ `MOD-mcp-tools`
 
 ###### `REQ-mcp-tool-registry` — MCP-Tool-Registry an Harness gebunden
 
+> auch unter: `FUNC-serve-stdio` · `FUNC-tool-context`
+
 CR-GC-101: Registry graph_elements/get_node/get_edges (read), graph_mutate (write durchs Gate), rules_evaluate/get_violations, audit_trail/stats — via bindToolsToHarness.
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integration) · `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-bind-tools` · `MOD-mcp-tools` · allocate ▶ `MOD-mcp-tools`
+Verification ◀ `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integration) · `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-bind-tools` · `FUNC-serve-stdio` · `FUNC-tool-context` · allocate ▶ `MOD-mcp-tools`
 
 ##### 3.9.1.2  `FUNC-cli-dispatch` — graphcode CLI-Dispatch
 
@@ -3016,15 +2746,15 @@ Beansprucht den Store atomar und weist einen zweiten Schreiber laut ab, statt ih
 
 io ◀ `FLOW-cli-command` · io ▶ `FLOW-store-ownership` · allocate ▶ `MOD-harness`
 
-###### `REQ-single-kuzu-owner` — Single Kuzu-Owner
+###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
 
-> auch unter: `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown`
+> auch unter: `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host`
 
-Genau ein Host-Prozess besitzt .graphcode/kuzu (single-writer; kein 2. DB-Handle). (SPEC §4, L1)
+Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
 
-priority: should · status: done · kinds: non-functional
+priority: must · status: approved · kinds: functional
 
-Verification ◀ `TEST-bridge-follows-lock` (integration) · `TEST-gve-autostart` (unit) · `TEST-host-shim` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-session-lifecycle` (integration) · `TEST-status-verb` (unit) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness` · `MOD-host-bridge`
+Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-harness` · `MOD-host-bridge`
 
 ##### 3.9.1.5  `FUNC-session-shutdown` — SessionLifecycle
 
@@ -3034,15 +2764,15 @@ Raeumt am Sessionende alle Ressourcen in umgekehrter Reihenfolge ab, den Store-L
 
 io ◀ `FLOW-store-ownership` · io ▶ `FLOW-committed-graph` · allocate ▶ `MOD-cli`
 
-###### `REQ-single-kuzu-owner` — Single Kuzu-Owner
+###### `REQ-session-leaves-nothing-behind` — Sitzungsende hinterlaesst nichts
 
-> auch unter: `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host`
+> auch unter: `FCHAIN-repo-lifecycle`
 
-Genau ein Host-Prozess besitzt .graphcode/kuzu (single-writer; kein 2. DB-Handle). (SPEC §4, L1)
+Nach dem Ende einer Sitzung muss der Store-Lock freigegeben und der Sitzungseintrag entfernt sein; abgeraeumt wird genau einmal und in umgekehrter Aufbaureihenfolge, der Store-Lock zuletzt.
 
-priority: should · status: done · kinds: non-functional
+priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-bridge-follows-lock` (integration) · `TEST-gve-autostart` (unit) · `TEST-host-shim` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-session-lifecycle` (integration) · `TEST-status-verb` (unit) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness` · `MOD-host-bridge`
+Verification ◀ `TEST-repo-lifecycle` (integration) · satisfy ◀ `FCHAIN-repo-lifecycle` · `FUNC-session-shutdown` · allocate ▶ `MOD-cli`
 
 ##### 3.9.1.6  `FUNC-collect-status` — collectStatus
 
@@ -3060,7 +2790,7 @@ Der Health-Endpoint prueft Store-Erreichbarkeit, Gate-Funktion, Ontology/Rules/C
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-readonly-bridge` (integration) · satisfy ◀ `FUNC-collect-status` · `FUNC-health-endpoint` · `MOD-host-bridge` · allocate ▶ `MOD-cli` · `MOD-host-bridge`
+Verification ◀ `TEST-readonly-bridge` (integration) · satisfy ◀ `FUNC-collect-status` · `FUNC-health-endpoint` · allocate ▶ `MOD-cli` · `MOD-host-bridge`
 
 ##### 3.9.1.7  `FUNC-gve-supervise` — attachGve
 
@@ -3105,14 +2835,6 @@ Verification ◀ `TEST-gve-autostart` (unit) · `TEST-gve-supervision` (integrat
 npx-CLI Lifecycle: scaffolds/aktualisiert/entfernt .graphcode/, .claude/hooks, .mcp.json, Controller — idempotent, self-contained.
 
 io ◀ `FLOW-cli-command` · io ▶ `FLOW-install-result` · allocate ▶ `MOD-cli`
-
-###### `REQ-install-idempotent` — Idempotent, keine parallelen Pfade
-
-Install/Update idempotent; alte Versionen überschrieben/gelöscht, nicht dupliziert.
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-cli-scaffold` (integration) · `TEST-upgrade` (integration) · satisfy ◀ `FUNC-harness-cli` · allocate ▶ `MOD-cli`
 
 ###### `REQ-npx-distribution` — npx-CLI als Distribution
 
@@ -3166,14 +2888,6 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-cli-scaffold` (integration) · `TEST-upgrade` (integration) · satisfy ◀ `FUNC-harness-cli` · `FUNC-upgrade` · allocate ▶ `MOD-cli`
 
-###### `REQ-self-contained-dist` — Self-contained Distribution
-
-Zielprojekt darf NICHT von einer Kopie des aimprove-Quellbaums abhängen; Distribution self-contained (versionierte Deps). Blockiert auf D5 + CR-GC-100..103.
-
-priority: should · status: done · kinds: non-functional
-
-Verification ◀ `TEST-distribution` (e2e) · satisfy ◀ `FUNC-harness-cli` · allocate ▶ `MOD-cli`
-
 ##### 3.9.1.10  `FUNC-run-verb` — executeRun
 
 > auch in: `FUNC-block-betrieb`
@@ -3188,7 +2902,7 @@ io ◀ `FLOW-cli-command` · io ▶ `FLOW-steering-trigger` · allocate ▶ `MOD
 
 Derselbe Steuerungs-Loop faehrt ein lokal laufendes Modell und ein Frontier-Modell ohne Code-Verzweigung; der Backend-Wechsel ist Konfiguration, nicht ein zweiter Pfad.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-cli-run` (integration) · `TEST-executor-bestofn` (integration) · `TEST-one-driver-local-and-frontier` (integration) · satisfy ◀ `FUNC-run-executor` · `FUNC-run-verb` · allocate ▶ `MOD-cli` · `MOD-executor`
 
@@ -3288,7 +3002,7 @@ io ◀ `FLOW-authoring-request` · io ▶ `FLOW-mutate-cmd` · allocate ▶ `MOD
 
 Ein Autoren-Skill erzeugt Knoten und Kanten ausschliesslich ueber graph_mutate oder graph_realize und weist an keiner Stelle einen direkten Schreibzugriff auf die Graph-SSOT an.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-skills`
 
@@ -3306,7 +3020,7 @@ io ◀ `FLOW-authoring-request` · io ▶ `FLOW-mutate-cmd` · allocate ▶ `MOD
 
 Ein Autoren-Skill erzeugt Knoten und Kanten ausschliesslich ueber graph_mutate oder graph_realize und weist an keiner Stelle einen direkten Schreibzugriff auf die Graph-SSOT an.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-skills`
 
@@ -3324,7 +3038,7 @@ Jeder TEST-Knoten traegt einen testRef (Datei plus Case, tool, level), sodass ei
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-formate-binding` (integration) · `TEST-test-runnable-binding` (unit) · `TEST-testreport` (unit) · satisfy ◀ `FUNC-deduce-tests` · `MOD-mcp-tools` · allocate ▶ `MOD-mcp-tools`
+Verification ◀ `TEST-formate-binding` (integration) · `TEST-test-runnable-binding` (unit) · `TEST-testreport` (unit) · satisfy ◀ `FUNC-deduce-tests` · allocate ▶ `MOD-mcp-tools`
 
 ##### 3.10.1.4  `FUNC-graph-expand` — graph_expand(handle, branch, depth+1)
 
@@ -3333,24 +3047,6 @@ Verification ◀ `TEST-formate-binding` (integration) · `TEST-test-runnable-bin
 Progressive On-Demand-Kuzu-Re-Traversierung; kein Originals-Store. (CR-GC-101, R13)
 
 io ◀ `FLOW-expand-request` · `FLOW-impact-subgraph` · io ▶ `FLOW-expanded-subgraph` · allocate ▶ `MOD-mcp-tools`
-
-###### `REQ-cache-layering` — Prompt-Cache-Layering
-
-Nur Onto+Rules stabil cachen, nie mit Live-Graph; Prefix-Hygiene. (R8/R14)
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-cache` (integration) · satisfy ◀ `FUNC-graph-expand` · allocate ▶ `MOD-mcp-tools`
-
-###### `REQ-precise-context` — Präziser Kontext statt grep-Dump
-
-> auch unter: `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-impact`
-
-Kontext = exakter Blast-Radius/Sub-Graph-Slice (Format-E) statt grep-Dump/Result-Kompression.
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-inject-graph-slice` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-token-efficiency` (acceptance) · `TEST-violation-context` (integration) · satisfy ◀ `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-graph-impact` · allocate ▶ `MOD-codec` · `MOD-mcp-tools`
 
 ###### `REQ-progressive-expansion` — Progressive Query-Expansion
 
@@ -3375,16 +3071,6 @@ CR-GC-101: audit_trail/audit_stats liefern Mutations-History/Statistik.
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-audit-retention` (integration) · `TEST-audit-rules-passed` (integration) · `TEST-audit-trail-projection` (integration) · `TEST-mcp-stdio-server` (integration) · `TEST-operations-log` (integration) · `TEST-testreport` (unit) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-mcp-tools`
-
-###### `REQ-precise-context` — Präziser Kontext statt grep-Dump
-
-> auch unter: `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand`
-
-Kontext = exakter Blast-Radius/Sub-Graph-Slice (Format-E) statt grep-Dump/Result-Kompression.
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-inject-graph-slice` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-token-efficiency` (acceptance) · `TEST-violation-context` (integration) · satisfy ◀ `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-graph-impact` · allocate ▶ `MOD-codec` · `MOD-mcp-tools`
 
 ###### `REQ-query-precision` — Query-Precision statt Kompression
 
@@ -3411,14 +3097,6 @@ Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-inject-graph-slic
 npx-CLI Lifecycle: scaffolds/aktualisiert/entfernt .graphcode/, .claude/hooks, .mcp.json, Controller — idempotent, self-contained.
 
 io ◀ `FLOW-cli-command` · io ▶ `FLOW-install-result` · allocate ▶ `MOD-cli`
-
-###### `REQ-install-idempotent` — Idempotent, keine parallelen Pfade
-
-Install/Update idempotent; alte Versionen überschrieben/gelöscht, nicht dupliziert.
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-cli-scaffold` (integration) · `TEST-upgrade` (integration) · satisfy ◀ `FUNC-harness-cli` · allocate ▶ `MOD-cli`
 
 ###### `REQ-npx-distribution` — npx-CLI als Distribution
 
@@ -3472,14 +3150,6 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-cli-scaffold` (integration) · `TEST-upgrade` (integration) · satisfy ◀ `FUNC-harness-cli` · `FUNC-upgrade` · allocate ▶ `MOD-cli`
 
-###### `REQ-self-contained-dist` — Self-contained Distribution
-
-Zielprojekt darf NICHT von einer Kopie des aimprove-Quellbaums abhängen; Distribution self-contained (versionierte Deps). Blockiert auf D5 + CR-GC-100..103.
-
-priority: should · status: done · kinds: non-functional
-
-Verification ◀ `TEST-distribution` (e2e) · satisfy ◀ `FUNC-harness-cli` · allocate ▶ `MOD-cli`
-
 ##### 3.10.1.7  `FUNC-health-endpoint` — healthEndpoint()
 
 > auch in: `FCHAIN-live-update`
@@ -3496,7 +3166,7 @@ Der Health-Endpoint prueft Store-Erreichbarkeit, Gate-Funktion, Ontology/Rules/C
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-readonly-bridge` (integration) · satisfy ◀ `FUNC-collect-status` · `FUNC-health-endpoint` · `MOD-host-bridge` · allocate ▶ `MOD-cli` · `MOD-host-bridge`
+Verification ◀ `TEST-readonly-bridge` (integration) · satisfy ◀ `FUNC-collect-status` · `FUNC-health-endpoint` · allocate ▶ `MOD-cli` · `MOD-host-bridge`
 
 ##### 3.10.1.8  `FUNC-import-code` — Skill se:import-code
 
@@ -3512,7 +3182,7 @@ io ◀ `FLOW-authoring-request` · io ▶ `FLOW-bulk-formatE` · allocate ▶ `M
 
 Keine tree-sitter/AST/LLM-Extraktion; Extraktion ist Slicer-/graphify-Aufgabe. (RECOMMENDATIONS)
 
-priority: must · status: open · kinds: negative
+priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-capture` (integration) · `TEST-import-code-verb` (integration) · satisfy ◀ `FCHAIN-model-import` · `FUNC-import-code` · `FUNC-import-code-verb` · `FUNC-import-doc` · allocate ▶ `MOD-cli` · `MOD-skills`
 
@@ -3530,7 +3200,7 @@ io ◀ `FLOW-authoring-request` · io ▶ `FLOW-bulk-formatE` · allocate ▶ `M
 
 Keine tree-sitter/AST/LLM-Extraktion; Extraktion ist Slicer-/graphify-Aufgabe. (RECOMMENDATIONS)
 
-priority: must · status: open · kinds: negative
+priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-capture` (integration) · `TEST-import-code-verb` (integration) · satisfy ◀ `FCHAIN-model-import` · `FUNC-import-code` · `FUNC-import-code-verb` · `FUNC-import-doc` · allocate ▶ `MOD-cli` · `MOD-skills`
 
@@ -3546,7 +3216,7 @@ io ◀ `FLOW-query-request` · io ▶ `FLOW-impacted-tests` · allocate ▶ `MOD
 
 Ein Code-Changeset (MOD/FUNC/git-diff→Knoten) → graph_tests → vitest run nur-betroffene-Dateien, das JEDE vom Change berührte Testdatei enthält (kein false-green) und unbeteiligte ausschliesst. Erfordert testRef auf allen lauffähigen TESTs + gerichtete Auflösung statt reinem incoming-impact.
 
-priority: must · status: done
+priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-graph-tests-operational` (integration) · `TEST-selective-test-audit` (integration) · satisfy ◀ `FUNC-resolve-tests-from-code` · allocate ▶ `MOD-mcp-tools`
 
@@ -3564,7 +3234,7 @@ io ◀ `FLOW-skill-request` · io ▶ `FLOW-skill-report` · allocate ▶ `MOD-s
 
 Ein lesender Skill bezieht jede Aussage seiner Ausgabe aus mindestens einem lesenden Werkzeug der MCP-Registry (graph_readiness, rules_evaluate, rules_get_violations, graph_tests, audit_stats, graph_help, graph_elements) und ruft kein schreibendes Werkzeug auf.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-reports-measured-values` (conformance) · satisfy ◀ `FCHAIN-skill-report` · `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · allocate ▶ `MOD-skills`
 
@@ -3576,21 +3246,15 @@ Bindet die MCP-Tool-Registry headless an einen stdio-Transport; jeder Agent (Cla
 
 io ◀ `FLOW-live-event` · io ▶ `FLOW-export-request` · allocate ▶ `MOD-mcp-tools`
 
-###### `REQ-agent-agnostic` — Agent-agnostische MCP-Surface
+###### `REQ-mcp-tool-registry` — MCP-Tool-Registry an Harness gebunden
 
-Die MCP-stdio-Surface ist agent-agnostisch: Claude Code UND OpenCode (und jeder MCP-Client) treiben dieselbe Harness durchs selbe Gate; keine client-spezifischen Annahmen. (CLAUDE.md verriegelt: OpenCode-executed, Claude Code = ein Client)
+> auch unter: `FUNC-bind-tools` · `FUNC-tool-context`
 
-priority: must · status: done
+CR-GC-101: Registry graph_elements/get_node/get_edges (read), graph_mutate (write durchs Gate), rules_evaluate/get_violations, audit_trail/stats — via bindToolsToHarness.
 
-Verification ◀ `TEST-agent-agnostic` (integration) · satisfy ◀ `FUNC-serve-stdio` · `MOD-mcp-tools` · allocate ▶ `MOD-mcp-tools`
+priority: must · status: done · kinds: functional
 
-###### `REQ-single-transport` — Ein Transport: MCP-stdio
-
-Genau ein Transport = MCP-stdio; kein Express-REST/HTTP im Harness-Core. (SPEC §0, §5)
-
-priority: should · status: done · kinds: non-functional
-
-Verification ◀ `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-serve-stdio` · `MOD-mcp-tools` · allocate ▶ `MOD-mcp-tools`
+Verification ◀ `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integration) · `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-bind-tools` · `FUNC-serve-stdio` · `FUNC-tool-context` · allocate ▶ `MOD-mcp-tools`
 
 ##### 3.10.1.13  `FUNC-target-profile` — Skill se:target-profile
 
@@ -3606,7 +3270,7 @@ io ◀ `FLOW-authoring-request` · io ▶ `FLOW-mutate-cmd` · `FLOW-target-prof
 
 Ein Autoren-Skill erzeugt Knoten und Kanten ausschliesslich ueber graph_mutate oder graph_realize und weist an keiner Stelle einen direkten Schreibzugriff auf die Graph-SSOT an.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-skills`
 
@@ -3708,16 +3372,6 @@ Prueft einen Kandidaten-Batch vor dem Gate und vervollstaendigt, was mechanisch 
 
 io ◀ `FLOW-mutate-cmd` · io ▶ `FLOW-mutate-cmd` · allocate ▶ `MOD-executor`
 
-###### `REQ-small-model-viable` — Kleine/lokale LLMs tragfähig
-
-> auch unter: `FCHAIN-modelfree-gate` · `FUNC-graph-suggest`
-
-Deterministische, modellfreie Gates/Regeln + Query-Precision halten kleine/lokale LLMs tragfähig; Kern läuft ohne LLM (degraded).
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-executor-preflight` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-reduced-llm` (acceptance) · satisfy ◀ `FCHAIN-modelfree-gate` · `FUNC-graph-suggest` · `FUNC-preflight` · allocate ▶ `MOD-executor` · `MOD-mcp-tools`
-
 ##### 3.10.2.5  `FUNC-run-executor` — runExecutor
 
 > auch in: `FCHAIN-steering-loop`
@@ -3732,7 +3386,7 @@ io ◀ `FLOW-cli-command` · `FLOW-round-injection` · `FLOW-round-prompt` · io
 
 Derselbe Steuerungs-Loop faehrt ein lokal laufendes Modell und ein Frontier-Modell ohne Code-Verzweigung; der Backend-Wechsel ist Konfiguration, nicht ein zweiter Pfad.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-cli-run` (integration) · `TEST-executor-bestofn` (integration) · `TEST-one-driver-local-and-frontier` (integration) · satisfy ◀ `FUNC-run-executor` · `FUNC-run-verb` · allocate ▶ `MOD-cli` · `MOD-executor`
 
@@ -3776,7 +3430,7 @@ Der Health-Endpoint prueft Store-Erreichbarkeit, Gate-Funktion, Ontology/Rules/C
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-readonly-bridge` (integration) · satisfy ◀ `FUNC-collect-status` · `FUNC-health-endpoint` · `MOD-host-bridge` · allocate ▶ `MOD-cli` · `MOD-host-bridge`
+Verification ◀ `TEST-readonly-bridge` (integration) · satisfy ◀ `FUNC-collect-status` · `FUNC-health-endpoint` · allocate ▶ `MOD-cli` · `MOD-host-bridge`
 
 ##### 3.10.3.3  `FUNC-gve-sessions` — liveSessions
 
@@ -3822,15 +3476,15 @@ Oeffnet den Socket, ueber den ein zweiter Prozess Schreibaufrufe an den Besitzer
 
 io ◀ `FLOW-mutate-cmd` · io ▶ `FLOW-mutate-cmd` · allocate ▶ `MOD-host-bridge`
 
-###### `REQ-single-kuzu-owner` — Single Kuzu-Owner
+###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
 
-> auch unter: `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown`
+> auch unter: `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-open-store` · `FUNC-own-kuzu-host`
 
-Genau ein Host-Prozess besitzt .graphcode/kuzu (single-writer; kein 2. DB-Handle). (SPEC §4, L1)
+Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
 
-priority: should · status: done · kinds: non-functional
+priority: must · status: approved · kinds: functional
 
-Verification ◀ `TEST-bridge-follows-lock` (integration) · `TEST-gve-autostart` (unit) · `TEST-host-shim` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-session-lifecycle` (integration) · `TEST-status-verb` (unit) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness` · `MOD-host-bridge`
+Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-harness` · `MOD-host-bridge`
 
 ##### 3.10.3.6  `FUNC-import-code-verb` — executeImportCode
 
@@ -3854,7 +3508,7 @@ Verification ◀ `TEST-import-code-verb` (integration) · satisfy ◀ `FUNC-impo
 
 Keine tree-sitter/AST/LLM-Extraktion; Extraktion ist Slicer-/graphify-Aufgabe. (RECOMMENDATIONS)
 
-priority: must · status: open · kinds: negative
+priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-capture` (integration) · `TEST-import-code-verb` (integration) · satisfy ◀ `FCHAIN-model-import` · `FUNC-import-code` · `FUNC-import-code-verb` · `FUNC-import-doc` · allocate ▶ `MOD-cli` · `MOD-skills`
 
@@ -3872,7 +3526,7 @@ io ◀ `FLOW-cli-command` · io ▶ `FLOW-steering-trigger` · allocate ▶ `MOD
 
 Derselbe Steuerungs-Loop faehrt ein lokal laufendes Modell und ein Frontier-Modell ohne Code-Verzweigung; der Backend-Wechsel ist Konfiguration, nicht ein zweiter Pfad.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-cli-run` (integration) · `TEST-executor-bestofn` (integration) · `TEST-one-driver-local-and-frontier` (integration) · satisfy ◀ `FUNC-run-executor` · `FUNC-run-verb` · allocate ▶ `MOD-cli` · `MOD-executor`
 
@@ -3884,15 +3538,15 @@ Raeumt am Sessionende alle Ressourcen in umgekehrter Reihenfolge ab, den Store-L
 
 io ◀ `FLOW-store-ownership` · io ▶ `FLOW-committed-graph` · allocate ▶ `MOD-cli`
 
-###### `REQ-single-kuzu-owner` — Single Kuzu-Owner
+###### `REQ-session-leaves-nothing-behind` — Sitzungsende hinterlaesst nichts
 
-> auch unter: `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host`
+> auch unter: `FCHAIN-repo-lifecycle`
 
-Genau ein Host-Prozess besitzt .graphcode/kuzu (single-writer; kein 2. DB-Handle). (SPEC §4, L1)
+Nach dem Ende einer Sitzung muss der Store-Lock freigegeben und der Sitzungseintrag entfernt sein; abgeraeumt wird genau einmal und in umgekehrter Aufbaureihenfolge, der Store-Lock zuletzt.
 
-priority: should · status: done · kinds: non-functional
+priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-bridge-follows-lock` (integration) · `TEST-gve-autostart` (unit) · `TEST-host-shim` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-session-lifecycle` (integration) · `TEST-status-verb` (unit) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness` · `MOD-host-bridge`
+Verification ◀ `TEST-repo-lifecycle` (integration) · satisfy ◀ `FCHAIN-repo-lifecycle` · `FUNC-session-shutdown` · allocate ▶ `MOD-cli`
 
 ##### 3.10.3.9  `FUNC-upgrade` — executeUpgrade(opts)
 
@@ -3930,7 +3584,7 @@ io ◀ `FLOW-graph-state` · io ▶ `FLOW-violations` · allocate ▶ `MOD-confo
 
 Jeder FUNC.codeRef loest auf ein real deklariertes Symbol in seiner Datei auf (TypeScript-Parser, kein Substring-Match); prompt-realisierte FUNCs (lang prompt): die Skill-Datei existiert. Macht das R-20-Backfill verifizierbar statt nur vorhanden. (CR-GC-206)
 
-priority: must · status: done
+priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-code-conformance` (integration) · satisfy ◀ `FUNC-check-code-conformance` · allocate ▶ `MOD-conformance`
 
@@ -3966,21 +3620,13 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
 
-###### `REQ-gate-only-writes` — Gate-only Graph-Writes
-
-Agent kann den SSOT nicht hand-editieren; jeder Write durch graph_mutate (mutate-Gate, L1). Deny-Rule + PreToolUse-Hook auf Edit/Write von docs/graph/*.graph.json + .graphcode/kuzu; JSON ist generierter Export, Live-Truth ist Kuzu. (CR-GC-201)
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-graph-realize` (integration) · `TEST-no-direct-graph-write` · `TEST-path-containment` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
-
 ###### `REQ-graph-snapshot-per-commit` — Kanonischer Graph-Snapshot pro Commit
 
 > auch unter: `FCHAIN-snapshot-freshness` · `FUNC-export-marker` · `FUNC-graph-export-snapshot`
 
 Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/graph/*.graph.json), der zum Code dieses Commits passt. Un-exportierte Modell-Mutationen blockieren den Commit ueber den single-writer-sicheren Drift-Marker .graphcode/EXPORT_PENDING (vom Gate auf mutate gesetzt, von graph_export/graph_reseed geloescht); der pre-commit-Hook staged die generierten Artefakte automatisch. (CR-GC-217)
 
-priority: must · status: done
+priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-export-marker` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
 
@@ -3988,7 +3634,7 @@ Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (i
 
 Eine legale Mutation persistiert samt Attributen, eine Mutation ohne ihre Pflichtkante wird blockiert und laesst den Store unveraendert, und ein direkter Schreibversuch am Gate vorbei wird abgewiesen.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (integration) · `TEST-occ` (integration) · `TEST-single-write-door` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-harness`
 
@@ -4000,15 +3646,15 @@ Persistiert in-memory Graph nach Disk-Kuzu, falls keine error-Violations. (SPEC 
 
 io ◀ `FLOW-violations` · io ▶ `FLOW-committed-graph` · allocate ▶ `MOD-harness`
 
-###### `REQ-disk-persistence` — Disk-Persistenz
+###### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
 
-> auch unter: `FUNC-load-graph`
+> auch unter: `FUNC-auto-export` · `FUNC-load-graph` · `FUNC-merge-nodes`
 
-Persistenz auf Disk (.graphcode/kuzu/), kein :memory:. (SPEC §4)
+Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Artefakt. (R2)
 
-priority: should · status: open · kinds: non-functional
+priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `FUNC-load-graph` · `FUNC-save-graph` · allocate ▶ `MOD-harness`
+Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-load-graph` · `FUNC-merge-nodes` · `FUNC-save-graph` · allocate ▶ `MOD-docs` · `MOD-harness`
 
 #### 3.10.5  `FUNC-block-gedaechtnis` — Gedächtnis
 
@@ -4031,16 +3677,6 @@ CR-GC-103: encode/decode validiert gegen SE_DESCRIPTOR; ungültige Typen → Val
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-codec`
-
-###### `REQ-roundtrip-conformance` — Round-Trip-Conformance
-
-> auch unter: `FCHAIN-codec-roundtrip`
-
-decode(encode(g)) == g modulo Whitespace (rasentraktor-Fixture). (L3)
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FCHAIN-codec-roundtrip` · `FUNC-decode` · allocate ▶ `MOD-codec`
 
 ##### 3.10.5.2  `FUNC-emit-trajectory` — materializeTrajectory()
 
@@ -4082,14 +3718,6 @@ Deterministische Format-E-Serialisierung (stabile Sortierung), Diff-Dialekt. (CR
 
 io ◀ `FLOW-graph-state` · `FLOW-impact-subgraph` · io ▶ `FLOW-formatE-artifact` · allocate ▶ `MOD-codec`
 
-###### `REQ-deterministic-serialization` — Deterministische Serialisierung
-
-Stabile Sortierung → commit-/merge-arm; zwei Encodes byte-identisch. (R3)
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-export-graph-guard` (unit) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-encode` · allocate ▶ `MOD-codec`
-
 ###### `REQ-formatE-diff-dialect` — Format-E-Diff-Dialekt (R5)
 
 CR-GC-103 R5: Diff-Dialekt +/-/~/M mit <operations><base_snapshot>ID@version + 1:N-Grouping; implicit-add VERWERFEN.
@@ -4097,24 +3725,6 @@ CR-GC-103 R5: Diff-Dialekt +/-/~/M mit <operations><base_snapshot>ID@version + 1
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-edge-only-batch` (integration) · `TEST-formate-name` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-encode` · allocate ▶ `MOD-codec`
-
-###### `REQ-formatE-parity` — Format-E-Parity = contracts (L1)
-
-CR-GC-103 L1: Format-E-Parität = contracts-Baseline; genau EIN Codec.
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-formate-binding` (integration) · `TEST-mutate-input-formate` (integration) · `TEST-read-format-param` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-encode` · allocate ▶ `MOD-codec`
-
-###### `REQ-precise-context` — Präziser Kontext statt grep-Dump
-
-> auch unter: `FCHAIN-agent-query` · `FUNC-graph-expand` · `FUNC-graph-impact`
-
-Kontext = exakter Blast-Radius/Sub-Graph-Slice (Format-E) statt grep-Dump/Result-Kompression.
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-inject-graph-slice` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-token-efficiency` (acceptance) · `TEST-violation-context` (integration) · satisfy ◀ `FCHAIN-agent-query` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-graph-impact` · allocate ▶ `MOD-codec` · `MOD-mcp-tools`
 
 ##### 3.10.5.4  `FUNC-graph-export-snapshot` — graph_export(views?)
 
@@ -4130,7 +3740,7 @@ io ◀ `FLOW-committed-graph` · io ▶ `FLOW-graph-snapshot` · allocate ▶ `M
 
 Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/graph/*.graph.json), der zum Code dieses Commits passt. Un-exportierte Modell-Mutationen blockieren den Commit ueber den single-writer-sicheren Drift-Marker .graphcode/EXPORT_PENDING (vom Gate auf mutate gesetzt, von graph_export/graph_reseed geloescht); der pre-commit-Hook staged die generierten Artefakte automatisch. (CR-GC-217)
 
-priority: must · status: done
+priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-export-marker` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
 
@@ -4141,14 +3751,6 @@ Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (i
 Format-E-Bulk-Import (replace/merge) ausschließlich durchs Gate; Cold-Start aus graphify/Slicer-Output.
 
 io ◀ `FLOW-bulk-formatE` · io ▶ `FLOW-bootstrap-result` · allocate ▶ `MOD-harness`
-
-###### `REQ-batch-seed-performance` — Batch-Seed/Import Performance (UNWIND)
-
-Seed/Import muss batch-skalieren: per-Row-MERGE ist O(langsam) (10k Edges ~51s, SP-2). UNWIND-Batch-Insert (gruppiert je Label/Edge-Table, Werte inline via escapeString) liefert 5k Nodes + 5k Edges < 15s (gemessen 5.3s, 5.6x schneller; Edges 9.6x). Interface unverändert (StorageAdapter.saveNodes/saveEdges), kein Parallelpfad. (CR-GC-120)
-
-priority: must · status: done
-
-Verification ◀ `TEST-batch-seed` (performance) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-harness`
 
 ###### `REQ-bootstrap-through-gate` — Erstbefüllung nur durchs Gate
 
@@ -4186,13 +3788,13 @@ io ◀ `FLOW-branch-graphs` · io ▶ `FLOW-merged-graph` · allocate ▶ `MOD-h
 
 ###### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
 
-> auch unter: `FUNC-auto-export`
+> auch unter: `FUNC-auto-export` · `FUNC-load-graph` · `FUNC-save-graph`
 
 Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Artefakt. (R2)
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-merge-nodes` · allocate ▶ `MOD-docs` · `MOD-harness`
+Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-load-graph` · `FUNC-merge-nodes` · `FUNC-save-graph` · allocate ▶ `MOD-docs` · `MOD-harness`
 
 ###### `REQ-conflict-free-merge` — Conflict-free Graph-Merge
 
@@ -4228,15 +3830,15 @@ Der Host-Prozess ist der einzige Kuzu-Owner pro Repo; die Bridge haelt kein zwei
 
 io ◀ `FLOW-store-ownership` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-host-bridge`
 
-###### `REQ-single-kuzu-owner` — Single Kuzu-Owner
+###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
 
-> auch unter: `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-session-shutdown`
+> auch unter: `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store`
 
-Genau ein Host-Prozess besitzt .graphcode/kuzu (single-writer; kein 2. DB-Handle). (SPEC §4, L1)
+Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
 
-priority: should · status: done · kinds: non-functional
+priority: must · status: approved · kinds: functional
 
-Verification ◀ `TEST-bridge-follows-lock` (integration) · `TEST-gve-autostart` (unit) · `TEST-host-shim` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-session-lifecycle` (integration) · `TEST-status-verb` (unit) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness` · `MOD-host-bridge`
+Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-harness` · `MOD-host-bridge`
 
 ##### 3.10.5.8  `FUNC-reseed` — reseed(relPath)
 
@@ -4252,9 +3854,9 @@ io ◀ `FLOW-graph-snapshot` · io ▶ `FLOW-recalled-state` · allocate ▶ `MO
 
 Ein frueherer Graph-Stand ist mit einem Kommando reproduzierbar: graphcode rewind <ref> liest den committeten Snapshot aus dem Git-Objektspeicher und reseedet den Store daraus. Der committete Snapshot ist SSOT-at-rest / history-of-record, der Kuzu-Store eine abgeleitete Working-Copy; reseed loescht+reimportiert in-process hinter dem Single-Writer (kein zweites Handle). Der Working-Tree wird nicht angefasst. (CR-GC-217, CR-GC-311)
 
-priority: must · status: done
+priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-graph-time-travel` (integration) · `TEST-reseed` (integration) · `TEST-rewind` (integration) · satisfy ◀ `FCHAIN-recall` · `FUNC-apply-reseed` · `FUNC-reseed` · `FUNC-rewind` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness`
+Verification ◀ `TEST-graph-time-travel` (integration) · `TEST-reseed` (integration) · `TEST-rewind` (integration) · satisfy ◀ `FCHAIN-recall` · `FUNC-apply-reseed` · `FUNC-reseed` · `FUNC-rewind` · allocate ▶ `MOD-cli` · `MOD-harness`
 
 ##### 3.10.5.9  `FUNC-rewind` — graphcode rewind <ref>
 
@@ -4270,9 +3872,9 @@ io ◀ `FLOW-cli-command` · io ▶ `FLOW-graph-snapshot` · allocate ▶ `MOD-c
 
 Ein frueherer Graph-Stand ist mit einem Kommando reproduzierbar: graphcode rewind <ref> liest den committeten Snapshot aus dem Git-Objektspeicher und reseedet den Store daraus. Der committete Snapshot ist SSOT-at-rest / history-of-record, der Kuzu-Store eine abgeleitete Working-Copy; reseed loescht+reimportiert in-process hinter dem Single-Writer (kein zweites Handle). Der Working-Tree wird nicht angefasst. (CR-GC-217, CR-GC-311)
 
-priority: must · status: done
+priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-graph-time-travel` (integration) · `TEST-reseed` (integration) · `TEST-rewind` (integration) · satisfy ◀ `FCHAIN-recall` · `FUNC-apply-reseed` · `FUNC-reseed` · `FUNC-rewind` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness`
+Verification ◀ `TEST-graph-time-travel` (integration) · `TEST-reseed` (integration) · `TEST-rewind` (integration) · satisfy ◀ `FCHAIN-recall` · `FUNC-apply-reseed` · `FUNC-reseed` · `FUNC-rewind` · allocate ▶ `MOD-cli` · `MOD-harness`
 
 #### 3.10.6  `FUNC-block-messwerk` — Messwerk
 
@@ -4323,6 +3925,14 @@ Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (in
 Projiziert den Regelstrom auf die acht Dimensionsscores (score = 1 minus Verstoesse durch applicable). Fremdpaket @sigloch/se-steering, deshalb external.
 
 io ◀ `FLOW-steering-snapshot` · io ▶ `FLOW-dimension-readiness` · allocate ▶ `MOD-metrics-engine`
+
+###### `REQ-readiness-model` — Readiness-Modell definiert (Phase/Impl/INCOSE)
+
+Readiness-Modell fuer graphcode, definiert gegen @sigloch/contracts V3_RULES + die MS-Meilensteine + Element-Status (keine aimprove-BQ-Heuristik). INCOSE-Scope LEAN: der gegatete Graph ist das einzige SE-Artefakt. Phase-Readiness SRR/PDR/CDR/TRR ist eine disjunkte, vollstaendige Partition der 15 Element-Regeln; Implementation-Readiness SAR/FCA/SVR/FRR bindet die Meilenstein-Tiers MS-1..4 (ready wenn zugeordnete CRs done + Scope fehlerfrei) und deckt die 2 MS-Regeln ab. Realisiert im Scorer src/readiness.ts, exponiert ueber graph_readiness. (CR-GC-125)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-readiness-model` (acceptance) · `TEST-views-auditor` (unit) · satisfy ◀ `FUNC-compute-readiness` · allocate ▶ `MOD-metrics-engine`
 
 ###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
 
@@ -4404,14 +4014,6 @@ priority: must · status: reviewed · kinds: functional
 
 Verification ◀ `TEST-readiness-completeness` (acceptance) · satisfy ◀ `FUNC-score-completeness` · allocate ▶ `MOD-completeness`
 
-###### `REQ-completeness-single-value` — Completeness: ein Wert pro Gate, Detail on-click
-
-Das Readiness-Dashboard zeigt EINEN aggregierten Completeness-Wert pro Gate; die Per-Leg-Aufschluesselung (welches Bein, welche Source-Elemente unvollstaendig) erscheint on-click als Drill-down. Ruhiger Wert im Panel, Details on-demand. (CR-GC-250)
-
-priority: should · status: reviewed · kinds: non-functional
-
-Verification ◀ `TEST-readiness-completeness` (acceptance) · satisfy ◀ `FUNC-score-completeness` · allocate ▶ `MOD-completeness`
-
 ###### `REQ-readiness-completeness` — Readiness Completeness-Dimension (cardinality-driven)
 
 Readiness traegt eine strukturelle Completeness-Dimension pro Gate, orthogonal zur Violation-Severity: ein Gate ist NICHT gruen, solange ein vom Meta-Modell als 1..* markiertes Ketten-Bein seiner Phase unvollstaendig ist. Coverage wird ueber die TREIBENDE Source-Population gemessen -> Abwesenheit zaehlt (0 FCHAIN -> alle UC unvollstaendig -> SRR rot). Warnings behalten ihre Severity (keine Inflation); das Gate-Urteil ergaenzt die Completeness-Invariante. Phase-Slices: SRR {UC->FCHAIN, UC->REQ}, PDR {FCHAIN->FUNC, FUNC->satisfy, FUNC->MOD}, CDR {REQ<-verify-TEST, FLOW->SCHEMA}, TRR {testRef/codeRef non-concept}. concept:true gilt bis CDR, zaehlt erst ab TRR nicht als complete. (CR-GC-250)
@@ -4434,17 +4036,9 @@ io ◀ `FLOW-gate-verdict` · `FLOW-metric-policy` · `FLOW-steering-trigger` ·
 
 Wird die bestbewertete anwendbare Suggestion real durchs Gate angewandt, bewegt sich die adressierte Metrik-Komponente mit dem Vorzeichen des Ziels und um den vorhergesagten Betrag; jede reale Regression war vorher angesagt.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-applied-suggestion-moves-target` (integration) · satisfy ◀ `FUNC-graph-suggest` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-mcp-tools` · `MOD-steering`
-
-###### `REQ-single-measurement-path` — Ein Messpfad fuer alle Steuerungs-Oberflaechen
-
-nextStep, generationStep und der steeringDelta-Zweig des dryRun-Verdicts liefern fuer denselben Graphen dieselbe Violation-Menge, dieselben Dimensions-Scores und dieselbe Zahl blockierender Verstoesse.
-
-priority: must · status: n/a
-
-Verification ◀ `TEST-graph-metrics` (unit) · `TEST-single-measurement-path` (unit) · `TEST-steering-snapshot` (integration) · satisfy ◀ `FUNC-take-steering-snapshot` · allocate ▶ `MOD-steering`
 
 ###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
 
@@ -4480,11 +4074,13 @@ io ◀ — · io ▶ — · allocate ▶ `MOD-mcp-tools`
 
 ###### `REQ-mcp-tool-registry` — MCP-Tool-Registry an Harness gebunden
 
+> auch unter: `FUNC-serve-stdio` · `FUNC-tool-context`
+
 CR-GC-101: Registry graph_elements/get_node/get_edges (read), graph_mutate (write durchs Gate), rules_evaluate/get_violations, audit_trail/stats — via bindToolsToHarness.
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integration) · `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-bind-tools` · `MOD-mcp-tools` · allocate ▶ `MOD-mcp-tools`
+Verification ◀ `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integration) · `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-bind-tools` · `FUNC-serve-stdio` · `FUNC-tool-context` · allocate ▶ `MOD-mcp-tools`
 
 ##### 3.10.7.2  `FUNC-list-elements` — listElements(filter)
 
@@ -4516,7 +4112,7 @@ io ◀ `FLOW-metric-policy` · io ▶ `FLOW-metric-policy` · allocate ▶ `MOD-
 
 Keine Urteilsschwelle steht als Literal im Regelcode: eine verschobene MetricPolicy kippt dasselbe Modul-Urteil auf unveraendertem Graphen, eine verschobene Fokus-Schwelle verschiebt das ready-Urteil ohne die Funde zu aendern.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-target-profile` (integration) · `TEST-thresholds-from-config` (unit) · satisfy ◀ `FUNC-load-config` · allocate ▶ `MOD-harness`
 
@@ -4586,7 +4182,7 @@ io ◀ `FLOW-target-profile` · io ▶ `FLOW-target-profile` · allocate ▶ `MO
 
 Ein Vorzeichenwechsel im Zielvektor negiert den Score jedes gemeinsamen Kandidaten und stellt eine andere Suggestion an die Spitze; die Magnitude des Ziels aendert weder Reihenfolge noch Score.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-executor-bestofn` (integration) · `TEST-target-profile` (integration) · `TEST-target-shifts-ranking` (unit) · satisfy ◀ `FUNC-graph-suggest` · `FUNC-target-profile-load` · allocate ▶ `MOD-mcp-tools` · `MOD-steering`
 
@@ -4598,15 +4194,15 @@ Stellt jedem Werkzeugaufruf seinen Kontext bereit: Aufrufer, Repo-Wurzel und die
 
 io ◀ `FLOW-gate-verdict` · io ▶ `FLOW-trajectory` · allocate ▶ `MOD-mcp-tools`
 
-###### `REQ-mcp-gate-symmetry` — MCP-Gate-Symmetrie (L2)
+###### `REQ-mcp-tool-registry` — MCP-Tool-Registry an Harness gebunden
 
-> auch unter: `FCHAIN-apply-gate`
+> auch unter: `FUNC-bind-tools` · `FUNC-serve-stdio`
 
-CR-GC-101 L2: MCP graph_mutate == in-process mutate() — identische Semantik, identisches Violations-Dict (end-to-end).
+CR-GC-101: Registry graph_elements/get_node/get_edges (read), graph_mutate (write durchs Gate), rules_evaluate/get_violations, audit_trail/stats — via bindToolsToHarness.
 
-priority: should · status: done · kinds: non-functional
+priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-mcp-stdio-server` (integration) · `TEST-mcp-symmetry` (integration) · satisfy ◀ `FCHAIN-apply-gate` · `FUNC-tool-context` · allocate ▶ `MOD-mcp-tools`
+Verification ◀ `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integration) · `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-bind-tools` · `FUNC-serve-stdio` · `FUNC-tool-context` · allocate ▶ `MOD-mcp-tools`
 
 #### 3.10.8  `FUNC-block-schaufenster` — Viewer
 
@@ -4796,13 +4392,13 @@ io ◀ `FLOW-live-event` · io ▶ `FLOW-viewer-stream` · allocate ▶ `MOD-hos
 
 ###### `REQ-versioned-broadcast` — Versioned Diff-Broadcast
 
-> auch unter: `FUNC-emit-update-event`
+> auch unter: `FUNC-emit-update-event` · `FUNC-serve-sse`
 
 Versioned Diff-Broadcast an Dashboard (read-only, Late-Joiner-Cache). (R9)
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FUNC-broadcast-diff` · `FUNC-emit-update-event` · `MOD-host-bridge` · allocate ▶ `MOD-hooks` · `MOD-host-bridge`
+Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FUNC-broadcast-diff` · `FUNC-emit-update-event` · `FUNC-serve-sse` · allocate ▶ `MOD-hooks` · `MOD-host-bridge`
 
 ###### 3.10.8.2.2  `FUNC-emit-update-event` — emitUpdateEvent(domains)
 
@@ -4811,24 +4407,6 @@ Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FUNC-broadcast-d
 Live-Update-Event (SSE invalidate) bei jeder Mutation; Basis des read-only Dashboards. (R9)
 
 io ◀ `FLOW-committed-graph` · io ▶ `FLOW-live-event` · allocate ▶ `MOD-hooks`
-
-###### `REQ-live-event-in-contracts` — Live-Event-Contract in @sigloch/contracts
-
-LiveUpdateEvent/UpdateDomain (heute nur graphcode src/emit.ts) als Zod-Schema nach @sigloch/contracts publishen, damit Dashboard/Bridge denselben Vertrag importieren (kein Fork). Analog D1.
-
-priority: must · status: done
-
-Verification ◀ `TEST-live-event-contract` (integration) · satisfy ◀ `FUNC-emit-update-event` · allocate ▶ `MOD-hooks`
-
-###### `REQ-mutation-emits-event` — Mutation emittiert Live-Update-Event
-
-> auch unter: `FCHAIN-live-update`
-
-CONSTRAINT: Jede Graph-Mutation MUSS ein Live-Update-Event emittieren (SSE invalidate, domains graph/rules/readiness/suggestions). Beleg: aimprove import emittiert keins → Dashboard-Lag ~90s. Fix: alle Write-Pfade einheitlich.
-
-priority: should · status: done · kinds: non-functional
-
-Verification ◀ `TEST-create-harness-smoke` (integration) · `TEST-live-view` (integration) · satisfy ◀ `FCHAIN-live-update` · `FUNC-emit-update-event` · allocate ▶ `MOD-hooks`
 
 ###### `REQ-post-emit-update-event` — Postcondition: FUNC-emit-update-event
 
@@ -4848,13 +4426,13 @@ Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FUNC-emit-update
 
 ###### `REQ-versioned-broadcast` — Versioned Diff-Broadcast
 
-> auch unter: `FUNC-broadcast-diff`
+> auch unter: `FUNC-broadcast-diff` · `FUNC-serve-sse`
 
 Versioned Diff-Broadcast an Dashboard (read-only, Late-Joiner-Cache). (R9)
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FUNC-broadcast-diff` · `FUNC-emit-update-event` · `MOD-host-bridge` · allocate ▶ `MOD-hooks` · `MOD-host-bridge`
+Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FUNC-broadcast-diff` · `FUNC-emit-update-event` · `FUNC-serve-sse` · allocate ▶ `MOD-hooks` · `MOD-host-bridge`
 
 ###### 3.10.8.2.3  `FUNC-serve-sse` — serveSSE()
 
@@ -4864,13 +4442,15 @@ Host-Prozess exponiert die SSE/WS-Route und leitet harness.onUpdateEvent read-on
 
 io ◀ `FLOW-live-event` · io ▶ `FLOW-viewer-stream` · allocate ▶ `MOD-host-bridge`
 
-###### `REQ-readonly-bridge` — Read-only Bridge
+###### `REQ-versioned-broadcast` — Versioned Diff-Broadcast
 
-Bridge read-only; keine Inbound-Mutations, Writes nur via MCP→mutate(). (RECOMMENDATIONS)
+> auch unter: `FUNC-broadcast-diff` · `FUNC-emit-update-event`
 
-priority: must · status: done · kinds: negative
+Versioned Diff-Broadcast an Dashboard (read-only, Late-Joiner-Cache). (R9)
 
-Verification ◀ `TEST-bridge-follows-lock` (integration) · `TEST-readonly-bridge` (integration) · satisfy ◀ `FUNC-serve-sse` · `MOD-host-bridge` · allocate ▶ `MOD-host-bridge`
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FUNC-broadcast-diff` · `FUNC-emit-update-event` · `FUNC-serve-sse` · allocate ▶ `MOD-hooks` · `MOD-host-bridge`
 
 #### 3.10.9  `FUNC-block-speicherwerk` — Speicherwerk
 
@@ -4892,9 +4472,9 @@ io ◀ `FLOW-graph-snapshot` · io ▶ `FLOW-recalled-state` · allocate ▶ `MO
 
 Ein frueherer Graph-Stand ist mit einem Kommando reproduzierbar: graphcode rewind <ref> liest den committeten Snapshot aus dem Git-Objektspeicher und reseedet den Store daraus. Der committete Snapshot ist SSOT-at-rest / history-of-record, der Kuzu-Store eine abgeleitete Working-Copy; reseed loescht+reimportiert in-process hinter dem Single-Writer (kein zweites Handle). Der Working-Tree wird nicht angefasst. (CR-GC-217, CR-GC-311)
 
-priority: must · status: done
+priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-graph-time-travel` (integration) · `TEST-reseed` (integration) · `TEST-rewind` (integration) · satisfy ◀ `FCHAIN-recall` · `FUNC-apply-reseed` · `FUNC-reseed` · `FUNC-rewind` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness`
+Verification ◀ `TEST-graph-time-travel` (integration) · `TEST-reseed` (integration) · `TEST-rewind` (integration) · satisfy ◀ `FCHAIN-recall` · `FUNC-apply-reseed` · `FUNC-reseed` · `FUNC-rewind` · allocate ▶ `MOD-cli` · `MOD-harness`
 
 ##### 3.10.9.2  `FUNC-auto-export` — registerAutoExport
 
@@ -4906,13 +4486,13 @@ io ◀ `FLOW-committed-graph` · io ▶ `FLOW-export-request` · allocate ▶ `M
 
 ###### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
 
-> auch unter: `FUNC-merge-nodes`
+> auch unter: `FUNC-load-graph` · `FUNC-merge-nodes` · `FUNC-save-graph`
 
 Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Artefakt. (R2)
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-merge-nodes` · allocate ▶ `MOD-docs` · `MOD-harness`
+Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-load-graph` · `FUNC-merge-nodes` · `FUNC-save-graph` · allocate ▶ `MOD-docs` · `MOD-harness`
 
 ##### 3.10.9.3  `FUNC-bootstrap` — bootstrap
 
@@ -4940,15 +4520,15 @@ Beansprucht den Store atomar und weist einen zweiten Schreiber laut ab, statt ih
 
 io ◀ `FLOW-cli-command` · io ▶ `FLOW-store-ownership` · allocate ▶ `MOD-harness`
 
-###### `REQ-single-kuzu-owner` — Single Kuzu-Owner
+###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
 
-> auch unter: `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown`
+> auch unter: `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host`
 
-Genau ein Host-Prozess besitzt .graphcode/kuzu (single-writer; kein 2. DB-Handle). (SPEC §4, L1)
+Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
 
-priority: should · status: done · kinds: non-functional
+priority: must · status: approved · kinds: functional
 
-Verification ◀ `TEST-bridge-follows-lock` (integration) · `TEST-gve-autostart` (unit) · `TEST-host-shim` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-session-lifecycle` (integration) · `TEST-status-verb` (unit) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness` · `MOD-host-bridge`
+Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-harness` · `MOD-host-bridge`
 
 ##### 3.10.9.5  `FUNC-close-store` — close()
 
@@ -4958,15 +4538,15 @@ Faehrt den Store herunter und gibt die Ownership wieder frei.
 
 io ◀ `FLOW-graph-state` · io ▶ `FLOW-committed-graph` · allocate ▶ `MOD-harness`
 
-###### `REQ-single-kuzu-owner` — Single Kuzu-Owner
+###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
 
-> auch unter: `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown`
+> auch unter: `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host`
 
-Genau ein Host-Prozess besitzt .graphcode/kuzu (single-writer; kein 2. DB-Handle). (SPEC §4, L1)
+Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
 
-priority: should · status: done · kinds: non-functional
+priority: must · status: approved · kinds: functional
 
-Verification ◀ `TEST-bridge-follows-lock` (integration) · `TEST-gve-autostart` (unit) · `TEST-host-shim` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-session-lifecycle` (integration) · `TEST-status-verb` (unit) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness` · `MOD-host-bridge`
+Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-harness` · `MOD-host-bridge`
 
 ##### 3.10.9.6  `FUNC-create-harness` — createHarness
 
@@ -4976,15 +4556,15 @@ Die Fabrik der oeffentlichen Programmierschnittstelle: baut den Harness mit Stor
 
 io ◀ `FLOW-cli-command` · io ▶ `FLOW-store-ownership` · allocate ▶ `MOD-harness`
 
-###### `REQ-single-kuzu-owner` — Single Kuzu-Owner
+###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
 
-> auch unter: `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown`
+> auch unter: `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host`
 
-Genau ein Host-Prozess besitzt .graphcode/kuzu (single-writer; kein 2. DB-Handle). (SPEC §4, L1)
+Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
 
-priority: should · status: done · kinds: non-functional
+priority: must · status: approved · kinds: functional
 
-Verification ◀ `TEST-bridge-follows-lock` (integration) · `TEST-gve-autostart` (unit) · `TEST-host-shim` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-session-lifecycle` (integration) · `TEST-status-verb` (unit) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness` · `MOD-host-bridge`
+Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-harness` · `MOD-host-bridge`
 
 ##### 3.10.9.7  `FUNC-export-marker` — setExportPending
 
@@ -5000,7 +4580,7 @@ io ◀ `FLOW-committed-graph` · io ▶ `FLOW-export-pending` · allocate ▶ `M
 
 Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/graph/*.graph.json), der zum Code dieses Commits passt. Un-exportierte Modell-Mutationen blockieren den Commit ueber den single-writer-sicheren Drift-Marker .graphcode/EXPORT_PENDING (vom Gate auf mutate gesetzt, von graph_export/graph_reseed geloescht); der pre-commit-Hook staged die generierten Artefakte automatisch. (CR-GC-217)
 
-priority: must · status: done
+priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-export-marker` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-harness` · `MOD-mcp-tools`
 
@@ -5012,15 +4592,15 @@ Laedt den persistierten Graphen in die Arbeitskopie des Gates.
 
 io ◀ `FLOW-committed-graph` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-harness`
 
-###### `REQ-disk-persistence` — Disk-Persistenz
+###### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
 
-> auch unter: `FUNC-save-graph`
+> auch unter: `FUNC-auto-export` · `FUNC-merge-nodes` · `FUNC-save-graph`
 
-Persistenz auf Disk (.graphcode/kuzu/), kein :memory:. (SPEC §4)
+Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Artefakt. (R2)
 
-priority: should · status: open · kinds: non-functional
+priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `FUNC-load-graph` · `FUNC-save-graph` · allocate ▶ `MOD-harness`
+Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-load-graph` · `FUNC-merge-nodes` · `FUNC-save-graph` · allocate ▶ `MOD-docs` · `MOD-harness`
 
 ##### 3.10.9.9  `FUNC-open-store` — initialize()
 
@@ -5030,16 +4610,6 @@ Beansprucht die alleinige Store-Ownership, erkennt Meta-Modell-Drift und oeffnet
 
 io ◀ `FLOW-graph-snapshot` · `FLOW-schema-fingerprint` · `FLOW-store-ownership` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-harness`
 
-###### `REQ-single-kuzu-owner` — Single Kuzu-Owner
-
-> auch unter: `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown`
-
-Genau ein Host-Prozess besitzt .graphcode/kuzu (single-writer; kein 2. DB-Handle). (SPEC §4, L1)
-
-priority: should · status: done · kinds: non-functional
-
-Verification ◀ `TEST-bridge-follows-lock` (integration) · `TEST-gve-autostart` (unit) · `TEST-host-shim` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-session-lifecycle` (integration) · `TEST-status-verb` (unit) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` · `MOD-harness` · allocate ▶ `MOD-cli` · `MOD-harness` · `MOD-host-bridge`
-
 ###### `REQ-steering-pre` — Vorbedingung Steuerungsrunde
 
 Vor einer Steuerungsrunde ist der Store initialisiert, der Graph geladen und der Regelkatalog samt Urteils-Policy verfuegbar.
@@ -5047,6 +4617,16 @@ Vor einer Steuerungsrunde ist der Store initialisiert, der Graph geladen und der
 priority: must · status: reviewed · kinds: precondition
 
 Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FUNC-open-store` · allocate ▶ `MOD-harness`
+
+###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
+
+> auch unter: `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-own-kuzu-host`
+
+Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
+
+priority: must · status: approved · kinds: functional
+
+Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-harness` · `MOD-host-bridge`
 
 ##### 3.10.9.10  `FUNC-seed-from-json` — seedFromJson(relPath)
 
@@ -5102,19 +4682,9 @@ io ◀ `FLOW-graph-state` · `FLOW-round-findings` · `FLOW-target-profile` · i
 
 Wird die bestbewertete anwendbare Suggestion real durchs Gate angewandt, bewegt sich die adressierte Metrik-Komponente mit dem Vorzeichen des Ziels und um den vorhergesagten Betrag; jede reale Regression war vorher angesagt.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-applied-suggestion-moves-target` (integration) · satisfy ◀ `FUNC-graph-suggest` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-mcp-tools` · `MOD-steering`
-
-###### `REQ-small-model-viable` — Kleine/lokale LLMs tragfähig
-
-> auch unter: `FCHAIN-modelfree-gate` · `FUNC-preflight`
-
-Deterministische, modellfreie Gates/Regeln + Query-Precision halten kleine/lokale LLMs tragfähig; Kern läuft ohne LLM (degraded).
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-executor-preflight` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-reduced-llm` (acceptance) · satisfy ◀ `FCHAIN-modelfree-gate` · `FUNC-graph-suggest` · `FUNC-preflight` · allocate ▶ `MOD-executor` · `MOD-mcp-tools`
 
 ###### `REQ-target-shifts-ranking` — Die Zielrichtung verschiebt das Suggestion-Ranking
 
@@ -5122,7 +4692,7 @@ Verification ◀ `TEST-executor-preflight` (integration) · `TEST-mvp-e2e` (e2e)
 
 Ein Vorzeichenwechsel im Zielvektor negiert den Score jedes gemeinsamen Kandidaten und stellt eine andere Suggestion an die Spitze; die Magnitude des Ziels aendert weder Reihenfolge noch Score.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-executor-bestofn` (integration) · `TEST-target-profile` (integration) · `TEST-target-shifts-ranking` (unit) · satisfy ◀ `FUNC-graph-suggest` · `FUNC-target-profile-load` · allocate ▶ `MOD-mcp-tools` · `MOD-steering`
 
@@ -5146,7 +4716,7 @@ io ◀ `FLOW-authoring-request` · io ▶ `FLOW-mutate-cmd` · allocate ▶ `MOD
 
 Ein Autoren-Skill erzeugt Knoten und Kanten ausschliesslich ueber graph_mutate oder graph_realize und weist an keiner Stelle einen direkten Schreibzugriff auf die Graph-SSOT an.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-skills`
 
@@ -5181,22 +4751,6 @@ io ◀ — · io ▶ — · allocate ▶ `MOD-steering`
 Waehlt aus den Dimensionsscores die schwaechste Dimension unter der Fokus-Schwelle und stellt daraus den Runden-Prompt zusammen: Fokus-Typen, Fund-Fenster, Gate-Protokoll, Handoff-Bedingung.
 
 io ◀ `FLOW-dimension-readiness` · `FLOW-phase-readiness` · `FLOW-target-profile` · io ▶ `FLOW-round-prompt` · allocate ▶ `MOD-steering`
-
-###### `REQ-monotone-convergence` — Wiederholte Steuerung konvergiert monoton
-
-Ueber aufeinanderfolgende Runden faellt die Phase-Gate-Abdeckung nie zurueck und die Zahl blockierender Verstoesse steigt nie; ein Fund-Set wird hoechstens einmal erneut aufgerufen und nach dem Zuruecksetzen nicht wieder.
-
-priority: must · status: n/a
-
-Verification ◀ `TEST-monotone-convergence` (integration) · satisfy ◀ `FUNC-generation-step` · allocate ▶ `MOD-steering`
-
-###### `REQ-phase-gate-not-skippable` — Ein Phasen-Gate ist nicht ueberspringbar
-
-Auch bei erreichter Readiness-Schwelle und null blockierenden Verstoessen bleibt der Handoff aus, solange das aktuelle Phasen-Gate nicht regel-vollstaendig ist.
-
-priority: must · status: n/a
-
-Verification ◀ `TEST-phase-gate-not-skippable` (unit) · satisfy ◀ `FUNC-generation-step` · allocate ▶ `MOD-steering`
 
 ###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
 
@@ -5240,7 +4794,7 @@ io ◀ `FLOW-authoring-request` · io ▶ `FLOW-mutate-cmd` · allocate ▶ `MOD
 
 Ein Autoren-Skill erzeugt Knoten und Kanten ausschliesslich ueber graph_mutate oder graph_realize und weist an keiner Stelle einen direkten Schreibzugriff auf die Graph-SSOT an.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-skills`
 
@@ -5258,7 +4812,7 @@ io ◀ `FLOW-authoring-request` · io ▶ `FLOW-mutate-cmd` · allocate ▶ `MOD
 
 Ein Autoren-Skill erzeugt Knoten und Kanten ausschliesslich ueber graph_mutate oder graph_realize und weist an keiner Stelle einen direkten Schreibzugriff auf die Graph-SSOT an.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-skills`
 
@@ -5276,7 +4830,7 @@ io ◀ `FLOW-authoring-request` · io ▶ `FLOW-mutate-cmd` · allocate ▶ `MOD
 
 Ein Autoren-Skill erzeugt Knoten und Kanten ausschliesslich ueber graph_mutate oder graph_realize und weist an keiner Stelle einen direkten Schreibzugriff auf die Graph-SSOT an.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-skills`
 
@@ -5294,7 +4848,7 @@ io ◀ `FLOW-authoring-request` · io ▶ `FLOW-mutate-cmd` · allocate ▶ `MOD
 
 Ein Autoren-Skill erzeugt Knoten und Kanten ausschliesslich ueber graph_mutate oder graph_realize und weist an keiner Stelle einen direkten Schreibzugriff auf die Graph-SSOT an.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-skills`
 
@@ -5312,7 +4866,7 @@ io ◀ `FLOW-authoring-request` · io ▶ `FLOW-mutate-cmd` · allocate ▶ `MOD
 
 Ein Autoren-Skill erzeugt Knoten und Kanten ausschliesslich ueber graph_mutate oder graph_realize und weist an keiner Stelle einen direkten Schreibzugriff auf die Graph-SSOT an.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-skills`
 
@@ -5330,7 +4884,7 @@ io ◀ `FLOW-dimension-readiness` · `FLOW-skill-request` · `FLOW-violations` �
 
 Ein lesender Skill bezieht jede Aussage seiner Ausgabe aus mindestens einem lesenden Werkzeug der MCP-Registry (graph_readiness, rules_evaluate, rules_get_violations, graph_tests, audit_stats, graph_help, graph_elements) und ruft kein schreibendes Werkzeug auf.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-reports-measured-values` (conformance) · satisfy ◀ `FCHAIN-skill-report` · `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · allocate ▶ `MOD-skills`
 
@@ -5348,7 +4902,7 @@ io ◀ `FLOW-dimension-readiness` · `FLOW-skill-request` · `FLOW-violations` �
 
 Ein lesender Skill bezieht jede Aussage seiner Ausgabe aus mindestens einem lesenden Werkzeug der MCP-Registry (graph_readiness, rules_evaluate, rules_get_violations, graph_tests, audit_stats, graph_help, graph_elements) und ruft kein schreibendes Werkzeug auf.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-reports-measured-values` (conformance) · satisfy ◀ `FCHAIN-skill-report` · `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · allocate ▶ `MOD-skills`
 
@@ -5366,7 +4920,7 @@ io ◀ `FLOW-dimension-readiness` · `FLOW-skill-request` · `FLOW-violations` �
 
 Ein lesender Skill bezieht jede Aussage seiner Ausgabe aus mindestens einem lesenden Werkzeug der MCP-Registry (graph_readiness, rules_evaluate, rules_get_violations, graph_tests, audit_stats, graph_help, graph_elements) und ruft kein schreibendes Werkzeug auf.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-reports-measured-values` (conformance) · satisfy ◀ `FCHAIN-skill-report` · `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · allocate ▶ `MOD-skills`
 
@@ -5384,7 +4938,7 @@ io ◀ `FLOW-authoring-request` · io ▶ `FLOW-mutate-cmd` · allocate ▶ `MOD
 
 Ein Autoren-Skill erzeugt Knoten und Kanten ausschliesslich ueber graph_mutate oder graph_realize und weist an keiner Stelle einen direkten Schreibzugriff auf die Graph-SSOT an.
 
-priority: must · status: n/a
+priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-skills`
 
@@ -5956,19 +5510,19 @@ allocate ◀ `FUNC-block-anschluss` · `FUNC-block-antrieb` · `FUNC-block-betri
 
 bin `npx @sigloch/graphcode init/update/remove`: self-contained Installer. App-spezifisch. (REQ-npx-distribution)
 
-allocate ◀ `FUNC-bootstrap` · `FUNC-cli-dispatch` · `FUNC-collect-status` · `FUNC-gve-sessions` · `FUNC-gve-supervise` · `FUNC-harness-cli` · `FUNC-import-code-verb` · `FUNC-rewind` · `FUNC-run-verb` · `FUNC-session-shutdown` · `FUNC-upgrade` · satisfy ▶ `REQ-buildable-standalone`
+allocate ◀ `FUNC-bootstrap` · `FUNC-cli-dispatch` · `FUNC-collect-status` · `FUNC-gve-sessions` · `FUNC-gve-supervise` · `FUNC-harness-cli` · `FUNC-import-code-verb` · `FUNC-rewind` · `FUNC-run-verb` · `FUNC-session-shutdown` · `FUNC-upgrade` · satisfy ▶ `REQ-buildable-standalone` · `REQ-install-idempotent` · `REQ-self-contained-dist`
 
 #### 6.1.2  `MOD-codec` — codec.ts — GraphCodeCodec
 
 Format-E ↔ OntologyGraph, deterministische Serialisierung, Validierung gegen SE-Ontologie. (SPEC §2.4)
 
-allocate ◀ `FUNC-decode` · `FUNC-encode` · satisfy ▶ `REQ-graph-integrity` · `REQ-interface-schema`
+allocate ◀ `FUNC-decode` · `FUNC-encode` · satisfy ▶ `REQ-deterministic-serialization` · `REQ-formatE-parity` · `REQ-graph-integrity` · `REQ-interface-schema`
 
 #### 6.1.3  `MOD-completeness` — readiness-completeness — Gate-Vollstaendigkeit
 
 Vollstaendigkeit je Gate, realisiert im Paket @sigloch/graphcode-client statt in diesem Repo.
 
-allocate ◀ `FUNC-score-completeness`
+allocate ◀ `FUNC-score-completeness` · satisfy ▶ `REQ-completeness-single-value`
 
 #### 6.1.4  `MOD-conformance` — conformance.ts — Code-Konformitaet
 
@@ -6004,25 +5558,25 @@ allocate ◀ `FUNC-build-round-injection` · `FUNC-extract-mutate` · `FUNC-pref
 
 Apply-Gate: loadGraph/saveGraph/mutate/evaluateRules/close gegen lokalen Kuzu. (SPEC §2.1)
 
-allocate ◀ `FUNC-apply-reseed` · `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-evaluate-rules` · `FUNC-export-marker` · `FUNC-import` · `FUNC-load-config` · `FUNC-load-graph` · `FUNC-merge-nodes` · `FUNC-mutate` · `FUNC-open-store` · `FUNC-reseed` · `FUNC-save-graph` · `FUNC-seed-from-json` · satisfy ▶ `REQ-graph-state-recall` · `REQ-harness-schema-in-contracts` · `REQ-import-se-ontology` · `REQ-quality-metric` · `REQ-single-kuzu-owner` · `REQ-single-store` · `REQ-store-recovery` · `REQ-structural-rule-shared`
+allocate ◀ `FUNC-apply-reseed` · `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-evaluate-rules` · `FUNC-export-marker` · `FUNC-import` · `FUNC-load-config` · `FUNC-load-graph` · `FUNC-merge-nodes` · `FUNC-mutate` · `FUNC-open-store` · `FUNC-reseed` · `FUNC-save-graph` · `FUNC-seed-from-json` · satisfy ▶ `REQ-batch-seed-performance` · `REQ-disk-persistence` · `REQ-gate-only-writes` · `REQ-harness-schema-in-contracts` · `REQ-import-se-ontology` · `REQ-quality-metric` · `REQ-single-kuzu-owner` · `REQ-single-store` · `REQ-store-recovery` · `REQ-structural-rule-shared`
 
 #### 6.1.10  `MOD-hooks` — hooks.ts — HookSystem
 
 pre-commit / post-apply / nightly-batch Extension-Points. (SPEC §2.3)
 
-allocate ◀ `FUNC-emit-trajectory` · `FUNC-emit-update-event` · satisfy ▶ `REQ-hook-extension-points` · `REQ-hook-order-deterministic` · `REQ-precommit-timeout` · `REQ-versioned-cache`
+allocate ◀ `FUNC-emit-trajectory` · `FUNC-emit-update-event` · satisfy ▶ `REQ-hook-extension-points` · `REQ-hook-order-deterministic` · `REQ-live-event-in-contracts` · `REQ-precommit-timeout` · `REQ-versioned-cache`
 
 #### 6.1.11  `MOD-host-bridge` — host-bridge — SSE/WS Bridge
 
 Host-Prozess (Single Kuzu Owner) exponiert graph-api-express + SSE-Route, verdrahtet an harness.onUpdateEvent. Versioned Diff-Broadcast an den Live-Viewer. Kein Express-REST im Core — die Bridge ist Host-Sache. (SPEC §5)
 
-allocate ◀ `FUNC-block-live-dashboard` · `FUNC-broadcast-diff` · `FUNC-health-endpoint` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · `FUNC-serve-sse` · satisfy ▶ `REQ-readonly-bridge` · `REQ-real-health-check` · `REQ-versioned-broadcast`
+allocate ◀ `FUNC-block-live-dashboard` · `FUNC-broadcast-diff` · `FUNC-health-endpoint` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · `FUNC-serve-sse` · satisfy ▶ `REQ-readonly-bridge`
 
 #### 6.1.12  `MOD-mcp-tools` — mcp-tools.ts — MCP-Registry
 
 MCP-stdio Tool-Registry, an die Harness gebunden; read/write/query Tools. (SPEC §2.2)
 
-allocate ◀ `FUNC-bind-tools` · `FUNC-deduce-tests` · `FUNC-graph-expand` · `FUNC-graph-export-snapshot` · `FUNC-graph-impact` · `FUNC-graph-suggest` · `FUNC-resolve-tests-from-code` · `FUNC-serve-stdio` · `FUNC-tool-context` · satisfy ▶ `REQ-agent-agnostic` · `REQ-export-no-clobber` · `REQ-graph-context-replaces-reading` · `REQ-mcp-tool-registry` · `REQ-prompt-provenance` · `REQ-readiness-model` · `REQ-rule-calibration` · `REQ-single-transport` · `REQ-test-runnable-binding` · `REQ-testref-materialized`
+allocate ◀ `FUNC-bind-tools` · `FUNC-deduce-tests` · `FUNC-graph-expand` · `FUNC-graph-export-snapshot` · `FUNC-graph-impact` · `FUNC-graph-suggest` · `FUNC-resolve-tests-from-code` · `FUNC-serve-stdio` · `FUNC-tool-context` · satisfy ▶ `REQ-agent-agnostic` · `REQ-cache-layering` · `REQ-export-no-clobber` · `REQ-graph-context-replaces-reading` · `REQ-prompt-provenance` · `REQ-rule-calibration` · `REQ-single-transport` · `REQ-testref-materialized`
 
 #### 6.1.13  `MOD-metrics-engine` — metrics-engine — Kenngroessen-Rechenkern
 
@@ -6046,17 +5600,41 @@ allocate ◀ `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` ·
 
 Der Steuerungskern als Modul: Snapshot und Delta (src/steering-snapshot.ts), Fokuswahl und Runden-Prompt (src/generate.ts), Advisory-Naechster-Schritt (src/steering.ts), Kandidaten-Rangfolge (src/executor-rank.ts). Code-realisiert; dieser CR schreibt keinen Code, die Dateien lagen bisher nur ohne Modellstelle da.
 
-allocate ◀ `FUNC-block-arch-optimierung` · `FUNC-block-q-improvement` · `FUNC-block-se-steuerung` · `FUNC-compute-phase-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-nd-similarity` · `FUNC-next-step` · `FUNC-take-steering-snapshot` · `FUNC-target-profile-load`
+allocate ◀ `FUNC-block-arch-optimierung` · `FUNC-block-q-improvement` · `FUNC-block-se-steuerung` · `FUNC-compute-phase-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-nd-similarity` · `FUNC-next-step` · `FUNC-take-steering-snapshot` · `FUNC-target-profile-load` · satisfy ▶ `REQ-monotone-convergence` · `REQ-phase-gate-not-skippable` · `REQ-single-measurement-path`
 
 ## 7  Cross-cutting Requirements
+
+### `REQ-agent-agnostic` — Agent-agnostische MCP-Surface
+
+Die MCP-stdio-Surface ist agent-agnostisch: Claude Code UND OpenCode (und jeder MCP-Client) treiben dieselbe Harness durchs selbe Gate; keine client-spezifischen Annahmen. (CLAUDE.md verriegelt: OpenCode-executed, Claude Code = ein Client)
+
+priority: should · status: done · kinds: non-functional
+
+Verification ◀ `TEST-agent-agnostic` (integration) · satisfy ◀ `MOD-mcp-tools` · allocate ▶ —
 
 ### `REQ-artifact-freshness` — Artifact-Ampel-Semantik gruen gelb rot
 
 Dokumente und Prozessschritte sind gruen wenn live aus dem aktuellen Graph abgeleitet, gelb wenn ein materialisiertes Doc existiert aber der Graph sich seither geaendert hat (stale), rot wenn noch nicht existent.
 
-priority: must · status: done · kinds: functional
+priority: should · status: done · kinds: non-functional
 
 Verification ◀ `TEST-dashboard-readonly` (integration) · satisfy ◀ `MOD-dashboard` · allocate ▶ —
+
+### `REQ-batch-seed-performance` — Batch-Seed/Import Performance (UNWIND)
+
+Seed/Import muss batch-skalieren: per-Row-MERGE ist O(langsam) (10k Edges ~51s, SP-2). UNWIND-Batch-Insert (gruppiert je Label/Edge-Table, Werte inline via escapeString) liefert 5k Nodes + 5k Edges < 15s (gemessen 5.3s, 5.6x schneller; Edges 9.6x). Interface unverändert (StorageAdapter.saveNodes/saveEdges), kein Parallelpfad. (CR-GC-120)
+
+priority: should · status: done · kinds: non-functional
+
+Verification ◀ `TEST-batch-seed` (performance) · satisfy ◀ `MOD-harness` · allocate ▶ —
+
+### `REQ-benchmark-harness` — Benchmark-Harness (graphcode vs classic)
+
+Setting zum Vergleich graphcode-Modus vs. Claude-Code-classic über eine fixe Task-Suite, 2 LLMs (groß + klein/lokal), mit Token-Counter + Quality-Scorer. Liefert task×mode×LLM → {tokens, success, quality} und belegt token-efficiency + reduced-llm + code-quality. NUR Requirement — Harness-Bau ist Realisierung (eigene CR).
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-token-efficiency` (acceptance) · satisfy ◀ — · allocate ▶ —
 
 ### `REQ-buildable-standalone` — Standalone baufähig (D5)
 
@@ -6066,11 +5644,27 @@ priority: should · status: done · kinds: non-functional
 
 Verification ◀ `TEST-distribution` (e2e) · satisfy ◀ `MOD-cli` · allocate ▶ —
 
+### `REQ-cache-layering` — Prompt-Cache-Layering
+
+Nur Onto+Rules stabil cachen, nie mit Live-Graph; Prefix-Hygiene. (R8/R14)
+
+priority: should · status: open · kinds: non-functional
+
+Verification ◀ `TEST-cache` (integration) · satisfy ◀ `MOD-mcp-tools` · allocate ▶ —
+
+### `REQ-completeness-single-value` — Completeness: ein Wert pro Gate, Detail on-click
+
+Das Readiness-Dashboard zeigt EINEN aggregierten Completeness-Wert pro Gate; die Per-Leg-Aufschluesselung (welches Bein, welche Source-Elemente unvollstaendig) erscheint on-click als Drill-down. Ruhiger Wert im Panel, Details on-demand. (CR-GC-250)
+
+priority: should · status: reviewed · kinds: non-functional
+
+Verification ◀ `TEST-readiness-completeness` (acceptance) · satisfy ◀ `MOD-completeness` · allocate ▶ —
+
 ### `REQ-dashboard-ontology-sync` — Dashboard/Readiness nutzt SE-Ontologie + V3_RULES
 
 Das Dashboard/Readiness-Scorer MUSS gegen @sigloch/contracts Ontologie + V3_RULES evaluieren (via harness.evaluateRules, L2) — nicht die aimprove-Vorgänger-Regeln (rules 2.0.0, BQ-06/BQ-02 INCOSE). Heutige 155 BQ-Warnungen messen unsere REQs gegen eine Fremd-Regelbasis; nach Adoption echte Familie-Compliance. (NEXT REQ 2026-06-17)
 
-priority: must · status: done · kinds: functional
+priority: should · status: done · kinds: non-functional
 
 Verification ◀ `TEST-dashboard-ontology-sync` (integration) · satisfy ◀ `MOD-dashboard` · allocate ▶ —
 
@@ -6078,9 +5672,25 @@ Verification ◀ `TEST-dashboard-ontology-sync` (integration) · satisfy ◀ `MO
 
 CONSTRAINT: Der Viewer ist strikt read-only. Kein Write-Pfad aus dem Browser (kein mutate/analyze/optimize/nightly-Trigger), kein Projekt-Switching (Single-Repo-Owner, CR-195e), Konsum nur ueber die Host-Bridge. Beleg: aimprove-Dashboard mischte Generator/Optimizer-Trigger ein; graphcode ist Harness-only.
 
-priority: must · status: done · kinds: negative
+priority: should · status: done · kinds: non-functional
 
 Verification ◀ `TEST-dashboard-readonly` (integration) · satisfy ◀ `MOD-dashboard` · allocate ▶ —
+
+### `REQ-deterministic-serialization` — Deterministische Serialisierung
+
+Stabile Sortierung → commit-/merge-arm; zwei Encodes byte-identisch. (R3)
+
+priority: should · status: open · kinds: non-functional
+
+Verification ◀ `TEST-export-graph-guard` (unit) · `TEST-roundtrip` (conformance) · satisfy ◀ `MOD-codec` · allocate ▶ —
+
+### `REQ-disk-persistence` — Disk-Persistenz
+
+Persistenz auf Disk (.graphcode/kuzu/), kein :memory:. (SPEC §4)
+
+priority: should · status: open · kinds: non-functional
+
+Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `MOD-harness` · allocate ▶ —
 
 ### `REQ-docs-taxonomy` — Docs-Taxonomie: Views vs Records (Litmus-Test)
 
@@ -6098,11 +5708,27 @@ priority: should · status: done · kinds: non-functional
 
 Verification ◀ `TEST-export-graph-guard` (unit) · `TEST-mcp-export-guard` (integration) · satisfy ◀ `MOD-mcp-tools` · allocate ▶ —
 
+### `REQ-formatE-parity` — Format-E-Parity = contracts (L1)
+
+CR-GC-103 L1: Format-E-Parität = contracts-Baseline; genau EIN Codec.
+
+priority: should · status: open · kinds: non-functional
+
+Verification ◀ `TEST-formate-binding` (integration) · `TEST-mutate-input-formate` (integration) · `TEST-read-format-param` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `MOD-codec` · allocate ▶ —
+
+### `REQ-gate-only-writes` — Gate-only Graph-Writes
+
+Agent kann den SSOT nicht hand-editieren; jeder Write durch graph_mutate (mutate-Gate, L1). Deny-Rule + PreToolUse-Hook auf Edit/Write von docs/graph/*.graph.json + .graphcode/kuzu; JSON ist generierter Export, Live-Truth ist Kuzu. (CR-GC-201)
+
+priority: should · status: open · kinds: non-functional
+
+Verification ◀ `TEST-graph-realize` (integration) · `TEST-no-direct-graph-write` · `TEST-path-containment` (integration) · satisfy ◀ `MOD-harness` · allocate ▶ —
+
 ### `REQ-graph-context-replaces-reading` — Praeziser Graph-Kontext ersetzt das Dokumentenlesen
 
 Ein Aufruf liefert die vollstaendige Definition-of-Done eines Realisierungsknotens als begrenzten Slice, sodass das Modell aus dem Graphen implementiert statt die Spezifikation zu lesen.
 
-priority: must · status: n/a
+priority: should · status: n/a · kinds: non-functional
 
 Verification ◀ `TEST-graph-context-replaces-reading` (unit) · satisfy ◀ `MOD-mcp-tools` · allocate ▶ —
 
@@ -6122,6 +5748,14 @@ priority: should · status: done · kinds: non-functional
 
 Verification ◀ `TEST-deny-stale-read` (integration) · `TEST-graph-is-ssot` (integration) · `TEST-path-containment` (integration) · satisfy ◀ — · allocate ▶ —
 
+### `REQ-greenfield-systemtest-dod` — Definition-of-Done: Greenfield-Systemtest
+
+Der End-to-End-Nachweis für reduced-llm + token-efficiency + code-quality: leeres Repo, ein Prompt (Web-App aus graphcode, Multiuser, Module maximal genutzt). Authoring qwen3.6-35b-a3b (local) vs. Opus 5 (frontier), je 3×, ein Host (Claude Code). Scoring regelbasiert: readiness, reuse-coverage vs. Modul-Graph-Golden, illegal/blocked, redundanz, tokens_in/out/reasoning, cost, wall_s. Best-fit → Impl-Plan durchs Gate → Coding (qwen-35b · devstral).
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-greenfield-systemtest` (acceptance) · satisfy ◀ — · allocate ▶ —
+
 ### `REQ-harness-schema-in-contracts` — Harness-Schemas in contracts (D1)
 
 CR-GC-100 Task 1 / D1: HarnessConfig/MutateCommand/MutateResult nach @sigloch/contracts (eigener harness-Export, NICHT /se), importieren, lokale Defs löschen.
@@ -6134,7 +5768,7 @@ Verification ◀ `TEST-mcp-symmetry` (integration) · `TEST-mutate-schema-guard`
 
 CR-GC-102: registerHook(type, handler) + runPreCommitHooks/runPostApplyHooks/scheduleNightlyBatch; Storage .graphcode/hooks/.
 
-priority: must · status: open · kinds: functional
+priority: should · status: open · kinds: non-functional
 
 Verification ◀ `TEST-hooks` (integration) · satisfy ◀ `MOD-hooks` · allocate ▶ —
 
@@ -6154,6 +5788,14 @@ priority: should · status: open · kinds: non-functional
 
 Verification ◀ `TEST-dashboard-ontology-sync` (integration) · `TEST-graph-authoring-guide` (integration) · satisfy ◀ `MOD-harness` · allocate ▶ —
 
+### `REQ-install-idempotent` — Idempotent, keine parallelen Pfade
+
+Install/Update idempotent; alte Versionen überschrieben/gelöscht, nicht dupliziert.
+
+priority: should · status: open · kinds: non-functional
+
+Verification ◀ `TEST-cli-scaffold` (integration) · `TEST-upgrade` (integration) · satisfy ◀ `MOD-cli` · allocate ▶ —
+
 ### `REQ-interface-schema` — Interface trägt ein Datenformat (SCHEMA)
 
 Jeder FLOW (Interface) hat ein SCHEMA (Layer 2, Datenformat) — referenziert @sigloch/contracts Zod. Code-Precondition: ohne Datenvertrag rät der Agent das Format. (3-Schichten-Interface-Modell)
@@ -6162,6 +5804,22 @@ priority: should · status: open · kinds: non-functional
 
 Verification ◀ `TEST-interface-schema` (inspection) · satisfy ◀ `MOD-codec` · allocate ▶ —
 
+### `REQ-live-event-in-contracts` — Live-Event-Contract in @sigloch/contracts
+
+LiveUpdateEvent/UpdateDomain (heute nur graphcode src/emit.ts) als Zod-Schema nach @sigloch/contracts publishen, damit Dashboard/Bridge denselben Vertrag importieren (kein Fork). Analog D1.
+
+priority: should · status: done · kinds: non-functional
+
+Verification ◀ `TEST-live-event-contract` (integration) · satisfy ◀ `MOD-hooks` · allocate ▶ —
+
+### `REQ-monotone-convergence` — Wiederholte Steuerung konvergiert monoton
+
+Ueber aufeinanderfolgende Runden faellt die Phase-Gate-Abdeckung nie zurueck und die Zahl blockierender Verstoesse steigt nie; ein Fund-Set wird hoechstens einmal erneut aufgerufen und nach dem Zuruecksetzen nicht wieder.
+
+priority: should · status: n/a · kinds: non-functional
+
+Verification ◀ `TEST-monotone-convergence` (integration) · satisfy ◀ `MOD-steering` · allocate ▶ —
+
 ### `REQ-one-gate-per-repo` — Ein Apply-Gate pro Repo
 
 Jede Edit-Op (Mensch oder KI) durch denselben mutate()-Pfad; consumerType nur geloggt. (SPEC §3, L1)
@@ -6169,6 +5827,14 @@ Jede Edit-Op (Mensch oder KI) durch denselben mutate()-Pfad; consumerType nur ge
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-mcp-symmetry` (integration) · `TEST-mutate-gate` (integration) · `TEST-store-lock` (integration) · satisfy ◀ — · allocate ▶ —
+
+### `REQ-phase-gate-not-skippable` — Ein Phasen-Gate ist nicht ueberspringbar
+
+Auch bei erreichter Readiness-Schwelle und null blockierenden Verstoessen bleibt der Handoff aus, solange das aktuelle Phasen-Gate nicht regel-vollstaendig ist.
+
+priority: should · status: n/a · kinds: non-functional
+
+Verification ◀ `TEST-phase-gate-not-skippable` (unit) · satisfy ◀ `MOD-steering` · allocate ▶ —
 
 ### `REQ-precommit-timeout` — pre-commit blockierbar + Timeout
 
@@ -6182,7 +5848,7 @@ Verification ◀ `TEST-hooks` (integration) · satisfy ◀ `MOD-hooks` · alloca
 
 Jede Gate-Entscheidung ist ihrem Urheber, also Session und Modell, und ihrem ausloesenden Prompt im Wortlaut zuordenbar. Die Aufzeichnung ist abgeleitet, nie vom Konsumenten deklariert, und Abwesenheit bedeutet nicht aufgezeichnet, nie leerer Prompt. (CR-GC-354)
 
-priority: must · status: done · kinds: functional
+priority: should · status: done · kinds: non-functional
 
 Verification ◀ `TEST-prompt-provenance` (integration) · satisfy ◀ `MOD-mcp-tools` · allocate ▶ —
 
@@ -6190,7 +5856,7 @@ Verification ◀ `TEST-prompt-provenance` (integration) · satisfy ◀ `MOD-mcp-
 
 Jede in den publizierten Dokumenten genannte Anzahl von Elementtypen, Verbindungstypen, legalen Verbindungsmustern, Regeln, Readiness-Dimensionen und MCP-Tools wird gegen Ontologie und Tool-Registry geprueft; eine Abweichung nennt Datei, Zeile, erwarteten und gefundenen Wert.
 
-priority: must · status: n/a
+priority: should · status: n/a · kinds: non-functional
 
 Verification ◀ `TEST-published-counts-match-code` (unit) · satisfy ◀ — · allocate ▶ —
 
@@ -6202,37 +5868,61 @@ priority: should · status: open · kinds: non-functional
 
 Verification ◀ `TEST-code-quality` (acceptance) · `TEST-fit-advisory` (integration) · `TEST-graph-metrics` (unit) · `TEST-retro-kpi` (unit) · satisfy ◀ `MOD-harness` · allocate ▶ —
 
-### `REQ-readiness-model` — Readiness-Modell definiert (Phase/Impl/INCOSE)
-
-Readiness-Modell fuer graphcode, definiert gegen @sigloch/contracts V3_RULES + die MS-Meilensteine + Element-Status (keine aimprove-BQ-Heuristik). INCOSE-Scope LEAN: der gegatete Graph ist das einzige SE-Artefakt. Phase-Readiness SRR/PDR/CDR/TRR ist eine disjunkte, vollstaendige Partition der 15 Element-Regeln; Implementation-Readiness SAR/FCA/SVR/FRR bindet die Meilenstein-Tiers MS-1..4 (ready wenn zugeordnete CRs done + Scope fehlerfrei) und deckt die 2 MS-Regeln ab. Realisiert im Scorer src/readiness.ts, exponiert ueber graph_readiness. (CR-GC-125)
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-readiness-model` (acceptance) · `TEST-views-auditor` (unit) · satisfy ◀ `MOD-mcp-tools` · allocate ▶ —
-
 ### `REQ-readiness-transparent` — Readiness-Query transparent
 
 Jedes Phase- und Impl-Gate exponiert seine Blocking-Elemente (welche CRs, Tests, UCs, Violations den Score druecken), sodass der Score auditierbar ist und keine Black-Box. In aimprove waren die Impl-Gates nie verdrahtet (0/9, 0/20, 0/4); graphcode macht die Herleitung transparent.
 
-priority: must · status: done · kinds: functional
+priority: should · status: done · kinds: non-functional
 
 Verification ◀ `TEST-dashboard-readonly` (integration) · `TEST-help-content-coverage` (unit) · `TEST-help-projection` (unit) · `TEST-help-tool` (integration) · satisfy ◀ `MOD-dashboard` · allocate ▶ —
+
+### `REQ-readonly-bridge` — Read-only Bridge
+
+Bridge read-only; keine Inbound-Mutations, Writes nur via MCP→mutate(). (RECOMMENDATIONS)
+
+priority: should · status: done · kinds: non-functional
+
+Verification ◀ `TEST-bridge-follows-lock` (integration) · `TEST-readonly-bridge` (integration) · satisfy ◀ `MOD-host-bridge` · allocate ▶ —
 
 ### `REQ-rule-calibration` — Regel-Kalibrierung aus der Aufzeichnung
 
 Die Aufzeichnung erlaubt es, je Regel, je Modell und je Konsument die Blockadehaeufigkeit und das Ergebnis ueber die Zeit auszuwerten. Das ist die Eingangsgroesse jeder Schwellenentscheidung; ohne sie bleibt jede Schwelle eine Setzung. (CR-GC-346)
 
-priority: must · status: open · kinds: functional
+priority: should · status: open · kinds: non-functional
 
 Verification ◀ `TEST-audit-rules-passed` (integration) · `TEST-rule-calibration` (unit) · satisfy ◀ `MOD-mcp-tools` · allocate ▶ —
+
+### `REQ-self-contained-dist` — Self-contained Distribution
+
+Zielprojekt darf NICHT von einer Kopie des aimprove-Quellbaums abhängen; Distribution self-contained (versionierte Deps). Blockiert auf D5 + CR-GC-100..103.
+
+priority: should · status: done · kinds: non-functional
+
+Verification ◀ `TEST-distribution` (e2e) · satisfy ◀ `MOD-cli` · allocate ▶ —
 
 ### `REQ-shared-views-no-fork` — Geteilte View-Berechnung, kein Regel-Fork
 
 views.ts (testmatrix/FMEA/RTM/IRR/NFR/arch…) aus aimprove → @sigloch/graph-api-core; lokalen BQ-Regel-Fork (aimpro/src/contracts/se) retiren oder via Familie-Review nach contracts migrieren (Drift-Lock L1/L2).
 
-priority: must · status: done
+priority: should · status: done · kinds: non-functional
 
 Verification ◀ `TEST-shared-views-no-fork` (integration) · `TEST-views-conformance` (unit) · satisfy ◀ `MOD-dashboard` · allocate ▶ —
+
+### `REQ-single-kuzu-owner` — Single Kuzu-Owner
+
+Genau ein Host-Prozess besitzt .graphcode/kuzu (single-writer; kein 2. DB-Handle). (SPEC §4, L1)
+
+priority: should · status: done · kinds: non-functional
+
+Verification ◀ `TEST-bridge-follows-lock` (integration) · `TEST-gve-autostart` (unit) · `TEST-host-shim` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-session-lifecycle` (integration) · `TEST-status-verb` (unit) · `TEST-store-lock` (integration) · satisfy ◀ `MOD-harness` · allocate ▶ —
+
+### `REQ-single-measurement-path` — Ein Messpfad fuer alle Steuerungs-Oberflaechen
+
+nextStep, generationStep und der steeringDelta-Zweig des dryRun-Verdicts liefern fuer denselben Graphen dieselbe Violation-Menge, dieselben Dimensions-Scores und dieselbe Zahl blockierender Verstoesse.
+
+priority: should · status: n/a · kinds: non-functional
+
+Verification ◀ `TEST-graph-metrics` (unit) · `TEST-single-measurement-path` (unit) · `TEST-steering-snapshot` (integration) · satisfy ◀ `MOD-steering` · allocate ▶ —
 
 ### `REQ-single-store` — Ein Store: Kuzu
 
@@ -6241,6 +5931,14 @@ Genau ein Store = Kuzu (embedded native+WASM, Cypher). Kein Neo4j. (SPEC §0)
 priority: should · status: open · kinds: non-functional
 
 Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `MOD-harness` · allocate ▶ —
+
+### `REQ-single-transport` — Ein Transport: MCP-stdio
+
+Genau ein Transport = MCP-stdio; kein Express-REST/HTTP im Harness-Core. (SPEC §0, §5)
+
+priority: should · status: done · kinds: non-functional
+
+Verification ◀ `TEST-mcp-stdio-server` (integration) · satisfy ◀ `MOD-mcp-tools` · allocate ▶ —
 
 ### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
@@ -6254,7 +5952,7 @@ Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integra
 
 Trace-pair legality is enforced by the one shared engine rule R-18 (@sigloch/contracts/se), not a consumer-local validator. graphcodes Gate lehnt strukturell-invalide Mutationen via Engine ab (kein separater codec.validate-Aufruf); jeder Konsument der die Engine laeuft erbt die Pruefung. (CR-GC-205 Item 1)
 
-priority: must · status: done
+priority: should · status: done · kinds: non-functional
 
 Verification ◀ `TEST-graph-authoring-guide` (integration) · `TEST-mutate-gate` (integration) · satisfy ◀ `MOD-harness` · allocate ▶ —
 
@@ -6262,7 +5960,7 @@ Verification ◀ `TEST-graph-authoring-guide` (integration) · `TEST-mutate-gate
 
 Ein gebundener TEST-testRef loest immer auf eine reale Datei auf: graph_export materialisiert einen it.todo-Stub fuer jede fehlende testRef-Datei (kein Phantom-Pfad, kein false-green); R-19 macht einen ungebundenen lauffaehigen TEST als Warning sichtbar; concept-only TESTs (concept:true) sind ausgenommen. (CR-GC-205 Item 4)
 
-priority: must · status: done
+priority: should · status: done · kinds: non-functional
 
 Verification ◀ `TEST-realref-materialize` (integration) · `TEST-testref-materialize` (integration) · satisfy ◀ `MOD-docs` · `MOD-mcp-tools` · allocate ▶ —
 
@@ -6582,7 +6280,7 @@ verify ▶ `REQ-hook-extension-points` · `REQ-hook-order-deterministic` · `REQ
 
 Abnahme der Datei tests/host-shim.test.ts: die Zwei-Prozess-Topologie auf Socket-Ebene, ein echter Host mit Store und ein echter Proxy-Registry-Client. Der Verlierer der Wahl bedient dieselbe Oberflaeche ueber stdio, ohne einen zweiten Schreibkanal zu oeffnen.
 
-verify ▶ `REQ-single-kuzu-owner` · `REQ-single-write-door` · testRefs: `tests/host-shim.test.ts`
+verify ▶ `REQ-single-kuzu-owner` · `REQ-single-write-door` · `REQ-store-owner-lifecycle` · testRefs: `tests/host-shim.test.ts`
 
 ### 8.51  `TEST-impact-subgraph` — graph_impact Subgraph-Test
 
@@ -6888,7 +6586,7 @@ verify ▶ `REQ-graph-tests-operational` · `REQ-impact-based-testing` · testRe
 
 Abnahme der Datei tests/session-lifecycle.test.ts: der Abbau laeuft in umgekehrter Reihenfolge mit dem Store-Lock zuletzt und laeuft nach einem Fehlschlag weiter. Ohne diese Eigenschaften kehrt der Zombie-Host zurueck.
 
-verify ▶ `REQ-single-kuzu-owner` · testRefs: `tests/session-lifecycle.test.ts`
+verify ▶ `REQ-single-kuzu-owner` · `REQ-store-owner-lifecycle` · testRefs: `tests/session-lifecycle.test.ts`
 
 ### 8.102  `TEST-shared-views-no-fork` — Shared-Views-No-Fork-Test
 
@@ -6948,7 +6646,7 @@ verify ▶ `REQ-single-measurement-path` · testRefs: `tests/steering-snapshot.t
 
 Abnahme der Datei tests/store-lock.test.ts: ein zweiter Schreiber auf demselben Store wird laut abgewiesen statt still ueberschrieben, ein verwaister Lock wird zurueckgeholt, und ein lebender bleibt unangetastet. Dazu die Serialisierung, damit sich Reseed und Mutation nie verschraenken.
 
-verify ▶ `REQ-one-gate-per-repo` · `REQ-single-kuzu-owner` · testRefs: `tests/store-lock.test.ts`
+verify ▶ `REQ-one-gate-per-repo` · `REQ-single-kuzu-owner` · `REQ-store-owner-lifecycle` · testRefs: `tests/store-lock.test.ts`
 
 ### 8.112  `TEST-store-recovery` — Store-Recovery-Test
 
@@ -7030,4 +6728,4 @@ verify ▶ `REQ-precise-context` · `REQ-rule-enforcement` · testRefs: `tests/m
 
 ## 9  Traceability summary
 
-136 REQ · 136 verified · 0 without a verifying TEST (R-01).
+137 REQ · 137 verified · 0 without a verifying TEST (R-01).

@@ -4,7 +4,7 @@
 
 # graphcode — Concept of Operations
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). OpsCon nach ISO/IEC/IEEE 29148 §5.2.4, projiziert aus dem Graphen: 9 ACTOR, 9 UC, 20 operationale REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). OpsCon nach ISO/IEC/IEEE 29148 §5.2.4, projiziert aus dem Graphen: 9 ACTOR, 9 UC, 24 operationale REQ. Deterministisch generiert.
 
 ## 1  System overview
 
@@ -14,17 +14,21 @@
 
 | Constraint | Aussage | status |
 |---|---|---|
+| `REQ-agent-agnostic` | Die MCP-stdio-Surface ist agent-agnostisch: Claude Code UND OpenCode (und jeder MCP-Client) treiben dieselbe Harness durchs selbe Gate; keine client-spezifischen Annahmen. (CLAUDE.md verriegelt: OpenCode-executed, Claude Code = ein Client) | done |
+| `REQ-batch-seed-performance` | Seed/Import muss batch-skalieren: per-Row-MERGE ist O(langsam) (10k Edges ~51s, SP-2). UNWIND-Batch-Insert (gruppiert je Label/Edge-Table, Werte inline via escapeString) liefert 5k Nodes + 5k Edges < 15s (gemessen 5.3s, 5.6x schneller; Edges 9.6x). Interface unverändert (StorageAdapter.saveNodes/saveEdges), kein Parallelpfad. (CR-GC-120) | done |
 | `REQ-buildable-standalone` | CR-GC-100 Task 0 / SPEC §8 D5 (Blocker): workspace:*-Deps auflösen (versionierte/file-Deps), npm install + tsc --noEmit grün — vor jedem Code. | done |
 | `REQ-disk-persistence` | Persistenz auf Disk (.graphcode/kuzu/), kein :memory:. (SPEC §4) | open |
 | `REQ-frame-binding` | Beschluss 2026-06-16: Die in diesem Graph definierte Struktur + Interfaces (6 MOD, 4 Customer-UC, FUNC/FCHAIN/FLOW/REQ + SE-Ontologie/TRACE_PATTERNS) sind BINDEND für die Realisierung. Ergänzungen NUR, wenn sie in die vordefinierten Boxen passen (neue FUNC/FLOW/REQ/TEST an bestehendem MOD/UC durchs Gate). Strukturelle Änderungen — neues sigloch-modules-Shared, neuer ElementType/TraceType, neue Customer-UC/MOD — brauchen Familie-Review. | open |
 | `REQ-graceful-degradation` | CONSTRAINT (ConOps): Harness voll funktionsfähig bei nicht erreichbarem LLM-Sidecar — Gate/Regeln deterministisch, kein Modell-Call. | open |
 | `REQ-graph-is-ssot` | Der materialisierte Graph + die Live-Harness sind SSOT. docs/*.md sind historischer Input (Bootstrap). Modelländerungen am Graph (mutate/import), dann Re-Export. (2026-06-14) | done |
 | `REQ-harness-schema-in-contracts` | CR-GC-100 Task 1 / D1: HarnessConfig/MutateCommand/MutateResult nach @sigloch/contracts (eigener harness-Export, NICHT /se), importieren, lokale Defs löschen. | open |
+| `REQ-hook-extension-points` | CR-GC-102: registerHook(type, handler) + runPreCommitHooks/runPostApplyHooks/scheduleNightlyBatch; Storage .graphcode/hooks/. | open |
 | `REQ-hook-order-deterministic` | CR-GC-102 L3: Hook-Execution-Order stabil/deterministisch. | open |
 | `REQ-import-se-ontology` | SE-Ontologie aus @sigloch/contracts/se importieren, nicht lokal neu definieren. (SPEC §1, Drift D1) | open |
 | `REQ-install-idempotent` | Install/Update idempotent; alte Versionen überschrieben/gelöscht, nicht dupliziert. | open |
 | `REQ-interface-schema` | Jeder FLOW (Interface) hat ein SCHEMA (Layer 2, Datenformat) — referenziert @sigloch/contracts Zod. Code-Precondition: ohne Datenvertrag rät der Agent das Format. (3-Schichten-Interface-Modell) | open |
 | `REQ-precommit-timeout` | CR-GC-102: pre-commit-Hook kann eine Mutation blocken; preCommitTimeout (default 5000ms). | open |
+| `REQ-readonly-bridge` | Bridge read-only; keine Inbound-Mutations, Writes nur via MCP→mutate(). (RECOMMENDATIONS) | done |
 | `REQ-responsiveness` | Bindende NFR (Familie §6b): erste Reaktion < 0,2s (UI+Transport+Store-Query+Onto-/Rule-Check, ohne LLM). Draft-Apply sofort + nur betroffener Subgraph geprüft; volle Konsistenz am Commit. End-to-end über FCHAIN-apply-gate. | open |
 | `REQ-self-contained-dist` | Zielprojekt darf NICHT von einer Kopie des aimprove-Quellbaums abhängen; Distribution self-contained (versionierte Deps). Blockiert auf D5 + CR-GC-100..103. | done |
 | `REQ-single-kuzu-owner` | Genau ein Host-Prozess besitzt .graphcode/kuzu (single-writer; kein 2. DB-Handle). (SPEC §4, L1) | done |
@@ -40,21 +44,23 @@
 
 ## 3  User classes & involved personnel (9)
 
-- `ACTOR-claude-code` — Claude Code — Realisierungs-Agent — keine UC-Kopplung im Graph
-- `ACTOR-dashboard` — Browser-Dashboard — keine UC-Kopplung im Graph
-- `ACTOR-developer` — Entwickler / Repo-Owner — keine UC-Kopplung im Graph
-- `ACTOR-facilitating-agent` — Facilitating Agent — Architekt — keine UC-Kopplung im Graph
-- `ACTOR-graphify` — graphify (Slicer) — keine UC-Kopplung im Graph
-- `ACTOR-learning-engine` — Learning-Engine — keine UC-Kopplung im Graph
-- `ACTOR-opencode` — OpenCode — headless Execution-Runtime — keine UC-Kopplung im Graph
-- `ACTOR-systems-engineer` — Systems Engineer — keine UC-Kopplung im Graph
-- `ACTOR-vibe-coder` — Vibe Coder — keine UC-Kopplung im Graph
+- `ACTOR-claude-code` — Claude Code — Realisierungs-Agent — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-efficient-testing` · `UC-graph-time-travel` · `UC-live-graph-view` · `UC-reduced-llm`
+- `ACTOR-dashboard` — Browser-Dashboard — triggert `UC-deterministic-steering` · `UC-live-graph-view`
+- `ACTOR-developer` — Entwickler / Repo-Owner — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-efficient-testing` · `UC-graph-time-travel` · `UC-live-graph-view` · `UC-model-exchange` · `UC-reduced-llm` · `UC-repo-lifecycle`
+- `ACTOR-facilitating-agent` — Facilitating Agent — Architekt — triggert `UC-code-quality` · `UC-model-exchange`
+- `ACTOR-graphify` — graphify (Slicer) — triggert `UC-model-exchange`
+- `ACTOR-learning-engine` — Learning-Engine — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-graph-time-travel` · `UC-live-graph-view` · `UC-reduced-llm`
+- `ACTOR-opencode` — OpenCode — headless Execution-Runtime — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-graph-time-travel` · `UC-live-graph-view` · `UC-reduced-llm`
+- `ACTOR-systems-engineer` — Systems Engineer — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-efficient-testing` · `UC-graph-time-travel` · `UC-live-graph-view` · `UC-model-exchange` · `UC-reduced-llm`
+- `ACTOR-vibe-coder` — Vibe Coder — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-graph-time-travel` · `UC-model-exchange` · `UC-repo-lifecycle`
 
 ## 4  Operational scenarios (9 UC)
 
 ### `UC-code-quality` — Jede Aenderung geht durchs Gate
 
 Als Entwickler will ich, dass jede Aenderung, meine wie die eines Agenten, durch dasselbe Apply-Gate laeuft und gegen dieselben Regeln geprueft wird.
+
+Ausgeloest von: `ACTOR-claude-code` · `ACTOR-developer` · `ACTOR-facilitating-agent` · `ACTOR-learning-engine` · `ACTOR-opencode` · `ACTOR-systems-engineer` · `ACTOR-vibe-coder`
 
 - `FCHAIN-apply-gate` — Apply-Gate-Ablauf (Governed Mutation): `FUNC-claim-store-lock` → `FUNC-close-store` → `FUNC-create-harness` → `FUNC-emit-trajectory` → `FUNC-evaluate-rules` → `FUNC-fit-advisory` → `FUNC-host-socket` → `FUNC-load-graph` → `FUNC-mutate` → `FUNC-open-store` → `FUNC-own-kuzu-host` → `FUNC-save-graph` → `FUNC-session-shutdown` → `FUNC-tool-context`
 - `FCHAIN-capture` — Interaktive Erfassung (Text → suggest-Tier): `FUNC-decode` → `FUNC-mutate`
@@ -66,6 +72,8 @@ Als Entwickler will ich, dass jede Aenderung, meine wie die eines Agenten, durch
 
 Als Entwickler will ich, dass der naechste Schritt aus deterministisch gemessenen Kenngroessen folgt und nicht aus einer Modell-Meinung, sodass jede Runde nachvollziehbar auf ein mehrdimensionales Ziel zulaeuft.
 
+Ausgeloest von: `ACTOR-claude-code` · `ACTOR-dashboard` · `ACTOR-developer` · `ACTOR-learning-engine` · `ACTOR-opencode` · `ACTOR-systems-engineer` · `ACTOR-vibe-coder`
+
 - `FCHAIN-skill-report` — Skill berichtet gemessenen Stand: `FUNC-check-code-conformance` → `FUNC-compute-phase-readiness` → `FUNC-compute-readiness` → `FUNC-evaluate-rules` → `FUNC-module-metrics` → `FUNC-score-completeness` → `FUNC-se-help` → `FUNC-se-retro` → `FUNC-se-review` → `FUNC-se-status` → `FUNC-test` → `FUNC-test-ui`
 - `FCHAIN-steering-loop` — Kenngroessen-Steuerungsschleife: `FUNC-arch-fitness` → `FUNC-build-round-injection` → `FUNC-compute-phase-readiness` → `FUNC-compute-readiness` → `FUNC-compute-steering-delta` → `FUNC-extract-mutate` → `FUNC-generation-step` → `FUNC-load-config` → `FUNC-mutate` → `FUNC-nd-similarity` → `FUNC-next-step` → `FUNC-preflight` → `FUNC-rank-candidates` → `FUNC-run-executor` → `FUNC-take-steering-snapshot` → `FUNC-target-profile-load`
 
@@ -73,11 +81,15 @@ Als Entwickler will ich, dass der naechste Schritt aus deterministisch gemessene
 
 Als Entwickler will ich nur die richtigen Tests laufen lassen: der Impact-/Abhängigkeitsgraph bestimmt das selektive Testset; „erledigt" = „nachgewiesen".
 
+Ausgeloest von: `ACTOR-claude-code` · `ACTOR-developer` · `ACTOR-systems-engineer`
+
 - `FCHAIN-impact-testing` — Impact-basierte Testauswahl: `FUNC-deduce-tests` → `FUNC-graph-impact` → `FUNC-resolve-tests-from-code`
 
 ### `UC-graph-time-travel` — Graph-Stand pro Commit wiederherstellbar
 
 Als Entwickler will ich den Modellstand eines beliebigen Commits wiederherstellen, damit Modell und Code zu jedem Zeitpunkt zusammenpassen.
+
+Ausgeloest von: `ACTOR-claude-code` · `ACTOR-developer` · `ACTOR-learning-engine` · `ACTOR-opencode` · `ACTOR-systems-engineer` · `ACTOR-vibe-coder`
 
 - `FCHAIN-merge-branches` — Zweig-Graphen konfliktfrei zusammenfuehren: `FUNC-merge-nodes`
 - `FCHAIN-recall` — Recall (Wiederherstellen): `FUNC-apply-reseed` → `FUNC-reseed` → `FUNC-rewind` → `FUNC-seed-from-json`
@@ -86,6 +98,8 @@ Als Entwickler will ich den Modellstand eines beliebigen Commits wiederherstelle
 ### `UC-live-graph-view` — Modellstand live mitlesen
 
 Als Entwickler will ich den aktuellen Modellstand live mitlesen, ohne die Ansicht neu zu laden, damit ich die Wirkung jeder Aenderung sofort sehe.
+
+Ausgeloest von: `ACTOR-claude-code` · `ACTOR-dashboard` · `ACTOR-developer` · `ACTOR-learning-engine` · `ACTOR-opencode` · `ACTOR-systems-engineer`
 
 - `FCHAIN-live-update` — Live-Update-Kette (persist → emit → subscribe): `FUNC-broadcast-diff` → `FUNC-emit-update-event` → `FUNC-evaluate-rules` → `FUNC-health-endpoint` → `FUNC-mutate` → `FUNC-save-graph` → `FUNC-serve-sse` → `FUNC-serve-stdio`
 
@@ -99,12 +113,16 @@ Als Betreiber des Regelwerks will ich an den aufgezeichneten Gate-Entscheidungen
 
 Als Entwickler will ich Modellstand aus Fremdquellen einlesen und als prueffaehiges Dokument herausgeben, damit Graph, Code und Dokumentation eine Quelle haben.
 
+Ausgeloest von: `ACTOR-developer` · `ACTOR-facilitating-agent` · `ACTOR-graphify` · `ACTOR-systems-engineer` · `ACTOR-vibe-coder`
+
 - `FCHAIN-doc-export` — Doc-Export (stdio → exporter): `FUNC-export-markdown` → `FUNC-render-views` → `FUNC-serve-stdio` → `FUNC-view-changelog` → `FUNC-view-conops` → `FUNC-view-fmea` → `FUNC-view-icd` → `FUNC-view-intplan` → `FUNC-view-rtm`
 - `FCHAIN-model-import` — Bestehenden Bestand einlesen: `FUNC-import` → `FUNC-import-code` → `FUNC-import-code-verb` → `FUNC-import-doc`
 
 ### `UC-reduced-llm` — Mit kleinem oder lokalem Modell arbeiten
 
 Als Entwickler will ich anspruchsvolle Aenderungen mit einem kleinen oder lokalen Modell fahren, weil Gate und praezise Graph-Abfragen die Arbeit tragen, die sonst das Modell leisten muesste.
+
+Ausgeloest von: `ACTOR-claude-code` · `ACTOR-developer` · `ACTOR-learning-engine` · `ACTOR-opencode` · `ACTOR-systems-engineer`
 
 - `FCHAIN-advisory-roundtrip` — Advisory Roundtrip (Read -> Status -> Propose -> Apply): `FUNC-evaluate-rules` → `FUNC-graph-impact` → `FUNC-graph-suggest` → `FUNC-mutate`
 - `FCHAIN-agent-query` — Agent-Graph-Query (Impact + progressive Expansion): `FUNC-graph-expand` → `FUNC-graph-impact` → `FUNC-list-elements`
@@ -113,6 +131,8 @@ Als Entwickler will ich anspruchsvolle Aenderungen mit einem kleinen oder lokale
 ### `UC-repo-lifecycle` — Repo einrichten und betreiben
 
 Der Entwickler richtet ein Repo ein, faehrt Laeufe darin und beendet die Sitzung; danach ist das Repo arbeitsfaehig und kein Prozess bleibt zurueck.
+
+Ausgeloest von: `ACTOR-developer` · `ACTOR-vibe-coder`
 
 - `FCHAIN-repo-lifecycle` — Repo-Lebenszyklus: `FUNC-bind-tools` → `FUNC-bootstrap` → `FUNC-claim-store-lock` → `FUNC-cli-dispatch` → `FUNC-collect-status` → `FUNC-gve-sessions` → `FUNC-gve-supervise` → `FUNC-harness-cli` → `FUNC-run-verb` → `FUNC-session-shutdown` → `FUNC-upgrade`
 - `FCHAIN-schema-migration` — Schema-Migration bei Version-Bump: `FUNC-migrate-schema` → `FUNC-schema-guard`
