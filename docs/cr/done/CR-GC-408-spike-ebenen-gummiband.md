@@ -1,6 +1,18 @@
 # CR-GC-408 — Spike: Ebenen-Reife vor Tiefe — Nachweis am aise-Bestand, Steuerung als Gummiband
 
-**Status:** open · **Ergebnis: No-Go (2026-08-25)** · **Angelegt:** 2026-08-24 · **Typ:** Spike (Timebox 1 Session)
+**Status:** done (2026-08-25) · **Ergebnis: No-Go** · **Angelegt:** 2026-08-24 · **Typ:** Spike (Timebox 1 Session)
+
+> **Einordnung beim Schließen (2026-08-25).** Widerlegt ist **dieser Score**, nicht das
+> Gummiband-Prinzip: die Advisory-Mechanik (fitAdvisory, `dimension_readiness` →
+> `graph_next_step`) war nicht Gegenstand des Spikes und läuft unverändert. Der tragende
+> Grund für das No-Go ist eine **fehlende Grundgesamtheit** — 5 der 6 Graphen haben gar
+> keine Blockebene (graphcodedemo: 24/24 blocklos), und graphcode hat seine erst per
+> Retrofit bekommen (CR-GC-405). Ein Score kann nicht zwischen „Ebene fehlt" und „Ebene
+> nicht nötig" trennen, wenn die Vergleichsgruppe praktisch leer ist; genau daher auch die
+> zirkuläre Rework-Korrelation (+0,951).
+> **Der eigentliche Ertrag des Spikes ist der Nebenbefund:** die *vorhandenen*
+> Steuersignale melden Abwesenheit als Reife (`uc` = 0,997 bei 0 UCs) → **CR-SM-270**.
+> Bevor ein neues Signal ans Gummiband kommt, gehören die bestehenden repariert.
 **Frage:** Bringt ein Ebenen-bewusster Authoring-Einstieg (Top-FUNC aus UCs, Zigzag, Tiefe je Ast)
 den Use Case *„Abstraktion zum Verständnis und Management komplexer Systeme"* messbar weiter —
 oder addieren wir nur eine Komplexitätsdimension? Nachweis auf den **realen aise-Graphen**, nicht
