@@ -1,6 +1,30 @@
 # CR-GC-429 — Nachzug auf contracts 9.1.0: Grammatik-Härtung, Abdeckungszahl, Verzeichnisse
 
-**Status:** offen — Release-Zug vorbereitet; §1 und der io-Teil von §3 sind **erledigt** (2026-08-26).
+**Status:** **ABGESCHLOSSEN** (2026-08-26) — alle fünf Paragraphen umgesetzt.
+
+**Abschluss 2026-08-26 (§2/§3-Rest/§4):**
+- **§2** `importCoverage` reist in `rules_evaluate` neben `skipped` (`src/conformance/evaluation.ts`
+  `evaluateAll` → `Evaluation.importCoverage`, `null` genau wenn `skipped` „conformance" enthält;
+  EINE Erhebung: `conformanceEvaluation` liefert Regeln + Messung aus demselben (graph, facts)-Paar).
+- **§3-Rest** satisfy-kinds-Schuld vollständig abgetragen (R-18: 87 → **0** errors, graphVersion 209):
+  32 REQs klassifiziert (13 functional, 19 non-functional; die drei `negative` wie beschlossen —
+  dashboard-readonly/readonly-bridge → non-functional, no-extraction → functional), 74 illegale
+  satisfy-Kanten gelöscht, 29 legale ersetzt/ergänzt. Der eine Rest-Reject
+  `FUNC-serve-sse -satisfy-> REQ-readonly-bridge` ist **gelöscht** (MOD-host-bridge trägt den
+  Constraint; serve-sse erfüllt stattdessen REQ-versioned-broadcast). Neu:
+  `REQ-store-owner-lifecycle` (functional, Kind von REQ-single-kuzu-owner) als Verhaltens-Heimat
+  der sechs Store-Lifecycle-FUNCs, verifiziert von TEST-store-lock/-session-lifecycle/-host-shim.
+  Ehrlich offen gelassen (warnings): RD-01 REQ-benchmark-harness + REQ-greenfield-systemtest-dod
+  (nichts realisiert sie), R-02 FUNC-preflight (sein Verhaltens-REQ ist nicht modelliert).
+- **§4** 56 flache `src/`-Dateien in 13 Modulverzeichnisse (nur `index.ts`/`cli.ts` bleiben als
+  Entry-Points in der Wurzel, per realRef gebunden); `realRef.file` aller 70 gebundenen Elemente +
+  `MOD.path` der 10 pfadlosen MODs übers Gate nachgezogen (graphVersion 210). Abweichung vom
+  CR-Text: `MOD-completeness` HAT eine Datei (`readiness-completeness.ts`) und bekam deshalb doch
+  ein Verzeichnis. **Abnahme erfüllt: `importCoverage` = 73/73, `unassigned: []`** (vorher 14).
+  Dividende: RC-05 sieht jetzt den vorher unsichtbaren Import MOD-docs → MOD-conformance
+  (`views/incose.ts` → `conformance/testreport.ts`) — als Warning offen, dokumentieren oder kappen.
+- Testbasis: 977/979 grün; rot bleiben nur die zwei dokumentierten Publish-Pending-Fälle
+  (lockfile-sync-Spiegel + distribution-Tarball-Install, `@sigloch/se-engine@1.4.0` unpubliziert).
 
 **Stand 2026-08-26:** §1 komplett (preflight mit kinds-Auflösung Graph ∪ Batch,
 nd-similarity/generate/help-content bereinigt; parseFormatE-resolveKinds entfiel —
