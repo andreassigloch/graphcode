@@ -153,13 +153,7 @@ function run(cmd: string, args: string[], cwd: string): string {
   return execFileSync(cmd, args, { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
 }
 
-// Release-Zug 2026-08 (Auftraggeber-Entscheid): bis zum Publish geskippt — der echte
-// foreign `npm install` des Tarballs löst gegen die Registry auf, und das Manifest
-// verlangt @sigloch/graphcode-client@^1.3.0 + contracts >=6 <10, die erst im Zug
-// publiziert werden (ETARGET bis dahin, CR-GC-411 Teil 2/3). Nach `aise release
-// publish`: Skip entfernen — der Test ist dann der Nachweis der frischen
-// Installierbarkeit.
-describe.skip('TEST-distribution: npx distribution', () => {
+describe('TEST-distribution: npx distribution', () => {
   beforeAll(() => {
     run('npm', ['run', 'build'], REPO_ROOT);
   }, 120_000);
