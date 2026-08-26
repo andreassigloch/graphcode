@@ -167,6 +167,21 @@ export class GraphCodeHarness {
   }
 
   /**
+   * Die Regel-IDs, die DIESE Harness geladen hat (CR-GC-428) — der Katalog, den
+   * `evaluateRules()` und damit das Gate wirklich fährt.
+   *
+   * Gebraucht, weil er kleiner ist als `ALL_RULE_DEFS`: der Steering-Pfad wertet
+   * zusätzlich die BQ- und ND-Regeln aus (CR-GC-287: ND bleibt Steering, nie
+   * Gate-Blocker).
+   * Ohne diese Liste müsste die Auswertungsfläche die Differenz als Konstante
+   * pflegen — und eine gepflegte Tabelle driftet (CR-SM-235). Ausgelesen aus dem
+   * registrierten Descriptor, nie notiert.
+   */
+  getLoadedRuleIds(): string[] {
+    return (this.descriptor.rules ?? []).map((rule) => rule.id);
+  }
+
+  /**
    * „Ist diese Dimension zu schwach?" — die EINE Zahl fuer Fokuswahl und `ready`-Flag
    * (CR-GC-329). Seit contracts 4.0.0 (CR-SM-235) verlangt `computeReadiness` sie als
    * Parameter ohne Default: se-steering hatte 0.7, `generate.ts` 0.8, und der Konsument

@@ -33,7 +33,14 @@ import {
   type ReadinessReport,
   type PhaseGateReadiness,
 } from '../readiness.js';
-import { evaluateAll, readinessOf, stripViolationContext, type Finding } from '../evaluation.js';
+import {
+  evaluateAll,
+  readinessOf,
+  ruleCatalogs,
+  stripViolationContext,
+  type Finding,
+  type RuleCatalogs,
+} from '../evaluation.js';
 import { groupViolations, type ViolationGroup } from '@sigloch/graphcode-client';
 import { loadTargetProfile, intentCoverage, type AnchorCoverage } from '../target-profile.js';
 import { helpEntry, contextualHelp, type HelpEntry, type ContextualMeasure } from '../viewer/help.js';
@@ -156,10 +163,17 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
     description:
       'Evaluate the governed graph: V3_RULES (in-memory) PLUS the RC code-conformance rules ' +
       '(realRef/testRefs resolved against the real source tree). Read-only; does not mutate. ' +
-      'Every finding carries `source` ("rules" | "conformance"); `skipped` names the sources that ' +
-      'could NOT be evaluated (e.g. no readable repoRoot) — an empty `skipped` is what makes the ' +
-      'count interpretable (CR-GC-398). Identical population to rules_get_violations and ' +
-      'graph_readiness.violationsByRule; they differ only in filter and aggregation.',
+      'Every finding carries `source` ("rules" | "conformance"); `skipped` names EVERYTHING left ' +
+      'out, on both levels — a source that could NOT be evaluated ("conformance", e.g. no readable ' +
+      'repoRoot) and every contracts rule the loaded catalog does not carry ("rule:ND-01"). An ' +
+      'empty `skipped` is what makes the count interpretable (CR-GC-398/428), and it now means ' +
+      'nothing was left out at all. The `rule:*` entries are DERIVED (ALL_RULE_DEFS minus the ' +
+      'loaded catalog), never a maintained list: they are the BQ-*/ND-* rules only the steering ' +
+      'path evaluates (CR-GC-287 — ND stays steering, never a gate blocker), so a reader of ' +
+      '"0 errors" knows it means "0 under the loaded catalog". Identical population to ' +
+      'rules_get_violations and graph_readiness.violationsByRule (they differ only in filter and ' +
+      `aggregation) — but NOT to graph_readiness.${DIMENSION_READINESS_NAME}, which is scored from ` +
+      'the full contracts catalog including those rules (see graph_readiness.catalogs).',
     inputSchema: RulesEvaluateInputSchema,
     async handler(input) {
       const ev = evaluateAll(harness);
@@ -176,7 +190,9 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
       'Return current rule violations, optionally filtered by severity. Each violation carries ' +
       'fixHint + context (candidate_targets, existing_traces) from the contracts rule (CR-GC-203 ' +
       'item 1), so an agent can resolve R-01/RD-01 from the payload — no extra queries to find ' +
-      'a TEST/FUNC to link.',
+      'a TEST/FUNC to link. `skipped` carries the same two-level omission list as rules_evaluate ' +
+      '(sources + `rule:*` IDs the loaded catalog does not evaluate); `total` counts the ' +
+      'violations of the EVALUATED rules, so it is only interpretable together with it.',
     inputSchema: RulesGetViolationsInputSchema,
     async handler(input) {
       const ev = evaluateAll(harness);
@@ -242,9 +258,15 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
        * UC/REQ/FUNC adressiert ist. KPI, NIE ein Gate-Blocker — Abdeckung sagt
        * "adressiert", nicht "gut gelöst". null ohne Config/intentAnchors. */
       intentCoverage: AnchorCoverage[] | null;
-      /** CR-GC-398: die Quellen, die NICHT ausgewertet wurden. Leer = vollständig.
-       * Ohne dieses Feld ist violationsByRule nicht interpretierbar. */
+      /** CR-GC-398/428: was NICHT ausgewertet wurde — Quellen UND nicht geladene
+       * Regeln (`rule:*`). Leer = vollständig. Ohne dieses Feld ist
+       * violationsByRule nicht interpretierbar. */
       skipped: string[];
+      /** CR-GC-428: aus welchem Regelkatalog welcher Zahlenblock stammt. Die
+       * Verstoßzahlen kommen aus dem geladenen Gate-Katalog, dimension_readiness
+       * aus dem vollen contracts-Katalog — bisher stand das nur im Beschreibungs-
+       * text, nie am Ergebnis. */
+      catalogs: RuleCatalogs;
     }
   > = {
     name: 'graph_readiness',
@@ -260,12 +282,16 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
       'axis: per-gate rule coverage (covered/total distinct rule IDs from RULE_TO_PHASE with zero open ' +
       'violations, any severity, + the missing rule IDs) — orthogonal to phaseGates\' element-completeness; ' +
       `${DIMENSION_READINESS_NAME} (CR-GC-325) — the 8 RULE_TO_DIMENSION topic scores ` +
-      '(req/uc/arch/alloc/ver/schema/cr/ms), the OTHER projection of the same rule stream: each with ' +
+      '(req/uc/arch/alloc/ver/schema/cr/ms), the OTHER projection of the rule stream — scored from ' +
+      'the FULL contracts catalog (evaluateAllRules incl. BQ-*/ND-*), i.e. a WIDER population than ' +
+      'violationsByRule; `catalogs` (CR-GC-428) names per block which catalog it came from: each with ' +
       'score, violations, applicable (the denominator — a score is not interpretable without it) and ' +
       'ready (contracts threshold, not a graphcode policy). Steering values, NOT a gate: the gates stay ' +
       'the pass/fail authority. Computed from the same steering snapshot graph_next_step uses, so the ' +
       'number a dashboard shows is the one the recommendation came from; ' +
-      'violationsByRule (keyed by contracts rule-ID — R-/RD-/MS-, never BQ-*); intentCoverage ' +
+      'violationsByRule (keyed by contracts rule-ID — R-/RD-/MS-, never BQ-*: those rules are not in ' +
+      'the loaded gate catalog at all, which is why they are named in `skipped`/`catalogs.notInGate` ' +
+      'instead of silently reading as zero); intentCoverage ' +
       '(CR-GC-295: per content theme from .graphcode/target-profile.json, whether/where it is ' +
       'addressed in UC/REQ/FUNC — a KPI, never a gate blocker; null without config. CR-GC-307: the themes are ' +
       'derived and persisted in the BACKGROUND, never confirmed by the human — this read-out is machine-facing, ' +
@@ -298,6 +324,7 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
         graphVersion: graphVersion(),
         intentCoverage: coverage,
         skipped: ev.skipped,
+        catalogs: ruleCatalogs(harness),
       };
     },
   };

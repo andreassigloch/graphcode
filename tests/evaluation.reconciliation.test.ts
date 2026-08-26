@@ -68,7 +68,10 @@ describe('TEST-evaluation-reconciliation: eine Auswertungsfläche (CR-GC-398)', 
 
   it('die Konformanz-Quelle ist hier wirklich aktiv — sonst prüft der Test nichts', async () => {
     const ev = evaluateAll(harness);
-    expect(ev.skipped).toEqual([]);
+    // Keine QUELLE ausgelassen. Die Regel-Ebene (`rule:*`, CR-GC-428) steht in
+    // derselben Liste und gehört nicht hierher — sie ist Gegenstand von
+    // tests/evaluation.rule-catalog.test.ts.
+    expect(ev.skipped.filter((s) => !s.startsWith('rule:'))).toEqual([]);
     // Wäre diese Zahl 0, wäre die Versöhnung unten trivial erfüllt und blind.
     expect(ev.findings.filter((f) => f.source === 'conformance').length).toBeGreaterThan(0);
   });
@@ -92,7 +95,7 @@ describe('TEST-evaluation-reconciliation: eine Auswertungsfläche (CR-GC-398)', 
 
   it('jedes Finding trägt seine Herkunft, und RC-Findings sind über ALLE Flächen sichtbar', async () => {
     const { violations, skipped } = await tools.rules_evaluate.handler({});
-    expect(skipped).toEqual([]);
+    expect(skipped.filter((s) => !s.startsWith('rule:'))).toEqual([]);
     expect(violations.every((v) => v.source === 'rules' || v.source === 'conformance')).toBe(true);
 
     // Die konkrete Lücke aus dem CR: RC-Regeln waren in rules_* unsichtbar (stumm 0),
@@ -112,9 +115,12 @@ describe('TEST-evaluation-reconciliation: eine Auswertungsfläche (CR-GC-398)', 
       evaluateRules: () => harness.evaluateRules(),
       getGraph: () => harness.getGraph(),
       getRepoRoot: () => join(tmp, 'does-not-exist'),
+      getLoadedRuleIds: () => harness.getLoadedRuleIds(),
     });
 
-    expect(degraded.skipped).toEqual(['conformance']);
+    // Die Quelle steht in DERSELBEN Liste wie die nicht geladenen Regeln
+    // (CR-GC-428) — dazugekommen ist genau sie, sonst nichts.
+    expect(degraded.skipped).toEqual([...full.skipped, 'conformance']);
     expect(degraded.findings.every((f) => f.source === 'rules')).toBe(true);
     expect(degraded.findings.length).toBeLessThan(full.findings.length);
   });

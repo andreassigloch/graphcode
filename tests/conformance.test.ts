@@ -145,6 +145,9 @@ describe('TEST-code-conformance: realRef/testRefs resolve as RC readiness rules 
       evaluateRules: () => harness.evaluateRules(),
       getGraph: () => broken,
       getRepoRoot: () => REPO_ROOT,
+      // CR-GC-428: die Auswertung weist auch aus, welche Regeln der geladene
+      // Katalog NICHT führt — dafür braucht sie ihn.
+      getLoadedRuleIds: () => harness.getLoadedRuleIds(),
     });
     expect(report.violationsByRule['RC-01']).toBe(1);
     // WHICH gate owns RC-01 is the readiness model's business, not this test's — since

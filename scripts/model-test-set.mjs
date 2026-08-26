@@ -39,6 +39,9 @@ export const INCLUDED = [
   'tests/codec.roundtrip.test.ts',
   'tests/conformance.test.ts',
   'tests/evaluation.reconciliation.test.ts',
+  // CR-GC-428: prüft die Differenz der beiden Regelkataloge gegen ALL_RULE_DEFS —
+  // ein contracts-Bump, der eine Regel nur ins Steering legt, muss hier auffallen.
+  'tests/evaluation.rule-catalog.test.ts',
   'tests/executor.preflight.test.ts',
   'tests/export-graph-guard.test.ts',
   'tests/exporter.test.ts',

@@ -1,6 +1,6 @@
 # CR-GC-428 — Zwei Regelkataloge, eine Zahl: `skipped: []` behauptet Vollständigkeit, die es nicht gibt
 
-**Status:** open · **Angelegt:** 2026-08-26
+**Status:** done (2026-08-26) · **Angelegt:** 2026-08-26
 **Herkunft:** Trigger-Analyse 2026-08-25/26. `graph_next_step` nennt als Fokus-Treiber
 `BQ-06 ×129` und `BQ-02 ×117`; `rules_evaluate` meldet zur selben Zeit **29** Verstöße und
 kennt keine einzige BQ-Regel.
@@ -76,14 +76,14 @@ wäre „keine Fehler unter den 66 geladenen Regeln".
 
 ## Akzeptanzkriterien
 
-- [ ] `rules_evaluate` nennt die 7 nicht ausgewerteten Regel-IDs; die Liste ist **abgeleitet**
+- [x] `rules_evaluate` nennt die 7 nicht ausgewerteten Regel-IDs; die Liste ist **abgeleitet**
       (Test: eine Regel künstlich aus dem Descriptor entfernen → sie erscheint, ohne dass
       jemand eine Tabelle pflegt — vorher rot gesehen).
-- [ ] `skipped: []` bedeutet danach beweisbar „nichts ausgelassen".
-- [ ] `graph_readiness` weist die Katalog-Herkunft je Zahlenblock aus.
-- [ ] Die Beschreibung von `rules_evaluate` behauptet keine identische Grundgesamtheit mehr,
+- [x] `skipped: []` bedeutet danach beweisbar „nichts ausgelassen".
+- [x] `graph_readiness` weist die Katalog-Herkunft je Zahlenblock aus.
+- [x] Die Beschreibung von `rules_evaluate` behauptet keine identische Grundgesamtheit mehr,
       wo keine ist.
-- [ ] Ein Test pinnt die Differenz der beiden Kataloge — wächst sie, schlägt er fehl
+- [x] Ein Test pinnt die Differenz der beiden Kataloge — wächst sie, schlägt er fehl
       (Drift-Wächter, kein Zahlen-Snapshot).
 
 ## Dateien (≤ 5)
@@ -93,3 +93,48 @@ wäre „keine Fehler unter den 66 geladenen Regeln".
 3. ggf. `src/harness.ts` (Zugriff auf den geladenen Katalog)
 4. Test
 5. dieser CR
+
+## Umsetzung (2026-08-26)
+
+**Eine Liste, zwei Ebenen.** `skipped` nennt ab jetzt QUELLEN (`conformance`) **und**
+Regeln (`rule:ND-01`) — nicht zwei Felder, damit die Frage „was wurde ausgelassen?"
+eine Antwort hat und `skipped: []` beweisbar „nichts" heißt. Sichtbar in
+`rules_evaluate`, `rules_get_violations` und `graph_readiness` (dieselbe Liste,
+`evaluateAll` erhebt sie einmal).
+
+**Abgeleitet, nicht gepflegt.** `unevaluatedRuleIds(loaded)` = `ALL_RULE_DEFS` minus
+dem geladenen Katalog; der geladene Katalog kommt live aus
+`GraphCodeHarness.getLoadedRuleIds()` (dem registrierten Descriptor DIESER Harness,
+nicht dem Default-Descriptor). Nirgends steht eine Regel-ID als Konstante — außer im
+Drift-Wächter des Tests, und genau dort soll sie stehen.
+
+**Katalog-Herkunft am Ergebnis:** `graph_readiness.catalogs` = `{gate, steering,
+notInGate}` mit gezählten `ruleCount` und den Feldern, die aus dem jeweiligen Katalog
+entstehen (`gate`: compliance/violations/violationsByRule/phaseGates/implGates/
+`phase_readiness` · `steering`: `dimension_readiness`).
+
+**Nicht angefasst:** Blockier-Semantik, Delta-Semantik, Regelquelle, Katalogschnitt.
+ND/BQ bleiben Steering (CR-GC-287). Kein Modell-Schreibvorgang.
+
+**Test:** `tests/evaluation.rule-catalog.test.ts` (8 Fälle, realer Disk-Kuzu, echte
+Harness). Ohne die Quelländerung 7 von 8 rot gesehen. Enthält den Drift-Wächter
+(Differenz == die sieben akzeptierten Regeln, ND-01/ND-02 als `error` gepinnt) und den
+Ableitungs-Nachweis: eine ECHTE geladene Regel aus dem Katalog genommen → sie erscheint
+von selbst in `skipped`.
+
+**Umfang:** 3 Quelldateien + 1 neuer Test; zusätzlich drei erzwungene Einzeiler
+(`tests/conformance.test.ts` und `tests/evaluation.reconciliation.test.ts` reichen den
+Katalog an ihre Duck-Ports durch, `scripts/model-test-set.mjs` nimmt den neuen Test in
+die Modell-Spur).
+
+**Vorbestehend rot (nicht Gegenstand dieses CR, hier nur protokolliert):** das Repo
+läuft gerade auf verlinkten Arbeitskopien der `@sigloch/*`-Pakete
+(`node_modules/@sigloch/* → sigloch-modules/packages/*`). Deren Meta-Modell weist beim
+Import der committeten SSOT die Kante `ACTOR-claude-code → UC-code-quality` ab
+(„Expected labels are FLOW, ACTOR, FUNC"), weshalb jede Suite, die den Repo-Graphen
+lädt, schon auf `master` ohne diese Änderung in `beforeAll` scheitert — u. a.
+`tests/evaluation.reconciliation.test.ts` und `tests/conformance.test.ts`. Ebenso
+vorbestehend: 13 `tsc`-Fehler in `generate.ts`/`steering*.ts`/`report.ts`
+(`score: number | null`, fehlendes `coreApplicable`) aus derselben Paket-Drift, sowie
+`distribution` / `lockfile-sync` (ETARGET `@sigloch/graphcode-client@^1.3.0` noch nicht
+publiziert). Auf `master` gestasht gegengeprüft: identische Fehlermenge.
