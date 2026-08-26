@@ -1,6 +1,7 @@
 # CR-DRAFT-GC-433 — Triggerkonzept: die Optimierung im Nicht-Auto-Modus anstoßen und sehen
 
-**Status:** DRAFT — Konzept, braucht eine Entscheidung · **Angelegt:** 2026-08-26
+**Status:** DRAFT — Entscheidungen getroffen (2026-08-26, s. Entwurf), Start wartet auf CR-GC-431 · **Angelegt:** 2026-08-26
+**Entwurf (final):** https://claude.ai/code/artifact/e555fc68-f3de-412c-96d1-4d807131f1fa
 **Herkunft:** Auftraggeber 2026-08-26, wörtlich: *„wenn wir nicht im Automodus unterwegs sind,
 weiß der Kunde ja gar nicht, was unsere Regel- und Architekturmaschine vorschlägt. Das
 Triggerkonzept fehlt uns völlig."*
@@ -35,18 +36,20 @@ prominent machen. **431 ist Voraussetzung, nicht Nachbar.**
    `graph_next_step` wird sichtbar, statt nur im Autopilot-Loop zu leben. Offene Frage: als
    Dashboard-Zeile, als Hook-Ausgabe nach `mutate`, oder beides.
 
-## Die Vorfrage, die zuerst zu entscheiden ist
+## Die Vorfrage — entschieden: (a)
 
 **Architektur gehört an den Anfang, nicht ans Ende** (Auftraggeber, 2026-08-26): *„mit den
 Func-of-Func und den Wirkketten und der Allokation FUNC zu Modulen bestimme ich die Architektur,
 DAS ist Prio. Der Rest ist Hygiene."*
 
 Heute ist die Reihenfolge umgekehrt: der Handoff auf `graph_suggest` liegt hinter „alles grün".
-Solange das so bleibt, ist jeder Trigger ein Pflaster auf einer falschen Reihenfolge. Zu
-entscheiden ist deshalb **zuerst**, ob der Architektur-Kanal
-- (a) parallel zur Hygiene dauerhaft offen ist (Empfehlung), oder
-- (b) am Anfang liegt und die Hygiene folgt, oder
-- (c) wie heute am Ende bleibt und nur sichtbarer wird.
+Solange das so bleibt, ist jeder Trigger ein Pflaster auf einer falschen Reihenfolge. Zur Wahl
+standen: (a) Architektur-Kanal parallel zur Hygiene dauerhaft offen · (b) Architektur zuerst,
+Hygiene folgt · (c) wie heute am Ende, nur sichtbarer.
+
+**Entschieden (2026-08-26, Entwurf oben): (a).** Die Zeile „Der nächste Zug" steht permanent
+im Dashboard — Architektur- und Hygiene-Empfehlung nebeneinander, kein Handoff-Endzustand als
+Voraussetzung.
 
 Belege für (a)/(b) aus dem Bestand: graphcode selbst hat nach 206 gegateten Mutationen, null
 Fehlern und acht Dimensionen `ready:true` den Handoff **nie erreicht** (`graph_next_step` sagt
@@ -59,14 +62,21 @@ nicht aus einer Architektur-Entscheidung.
 - Keine neue Metrik, keine 7. Dimension.
 - Kein Trigger, bevor CR-GC-431 die Ranking-Zahl korrigiert hat.
 
-## Benötigte Entscheidungen
+## Entscheidungen (getroffen 2026-08-26, siehe Entwurf)
 
-1. Reihenfolge (a) / (b) / (c) — ohne sie ist der Rest Beschäftigung.
-2. Welche der drei Trigger-Arten gebaut werden (sie schließen sich nicht aus; 2 hat die größte
-   Wirkung pro Aufwand, 1 die kleinste Angriffsfläche).
-3. Ob der Rundenprompt auch außerhalb des Autopilot-Loops sichtbar wird.
+1. Reihenfolge: **(a)** — Architektur-Kanal permanent parallel zur Hygiene.
+2. Trigger-Arten: **alle drei** — im Entwurf als eine Fläche: permanente Zeile „Der nächste
+   Zug" (Art 3), Karte 2 „Wo steht die Architektur?" mit graph_suggest-Befunden gegen das
+   Zielprofil (Art 2), Button `/se:optimize` (Art 1).
+3. Rundenschritt außerhalb des Autopilot-Loops: **ja** — als die permanente Dashboard-Zeile.
 
-## Dateien (bei Freigabe zu schneiden)
+## Dateien (beim Start zu schneiden)
 
-Je Trigger ein eigener CR: Skill (`.claude/commands/se/`), gve-Dashboard-Karte (eigener CR im
-gve-Repo), Rundenschritt-Sichtbarkeit (`src/generate.ts` + Konsument).
+Je Trigger ein eigener CR:
+- **Art 1:** Skill `/se:optimize` (`.claude/skills/`) — graphcode-Repo.
+- **Art 2 + 3:** Zeile „Der nächste Zug" + Karte 2 nach Entwurf — eigener CR im gve-Repo;
+  Datenquelle `graph_next_step`/`graph_suggest`, ggf. SSE-Bridge-Erweiterung in graphcode.
+- Karte 1 des Entwurfs („Wirkt die Arbeit?") läuft als CR-DRAFT-GC-410, nicht hier.
+
+**Voraussetzung unverändert:** CR-GC-431 (Ranking nach ausgeliefertem Edit) vor Art 1 + 2 —
+der Entwurf zeigt selbst warum: „13 Befunde, 0 anwendbar".

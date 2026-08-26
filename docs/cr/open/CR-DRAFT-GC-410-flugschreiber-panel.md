@@ -1,9 +1,10 @@
-# CR-DRAFT-GC-410 — Flugschreiber: Spiderweb + Konvergenz-Zeuge im Dashboard
+# CR-DRAFT-GC-410 — Flugschreiber: „Wirkt die Arbeit?" — Zustands-Pfad im Dashboard
 
-**Status:** DRAFT — **CR-GC-407: No-Go (2026-08-25)**, Teil 1 entfällt, vor Start neu schneiden · **Angelegt:** 2026-08-25
+**Status:** DRAFT — neu geschnitten 2026-08-26 (No-Go CR-GC-407 eingearbeitet) · **Angelegt:** 2026-08-25
 **Herkunft:** Dashboard-Review 2026-08-25 („die Arbeit des Autopilot sichtbar machen —
 Kernfeature, ich kann es weder sehen noch beweisen")
-**Mockup:** https://claude.ai/code/artifact/fadb2183-75ec-47ae-a72c-d0d0c1dd5e5c
+**Entwurf (final, Karte 1):** https://claude.ai/code/artifact/e555fc68-f3de-412c-96d1-4d807131f1fa
+**Mockup (alt, überholt durch No-Go):** https://claude.ai/code/artifact/fadb2183-75ec-47ae-a72c-d0d0c1dd5e5c
 
 ## Problem
 
@@ -13,42 +14,44 @@ trajectory.jsonl. Ob die Arbeit **Fortschritt** ist (Optimierung vs. Kreisverkeh
 trägt keinen Zustands-Messwert je Mutation — alles rechnet quer (Zustand vs. Zustand),
 nichts längs (CR-GC-407 §4).
 
-## Änderung (zwei Teile, ein Schnitt)
+## Änderung (Neuschnitt 2026-08-26 nach No-Go)
 
-1. **Stempel je applied Mutation** in trajectory.jsonl: die 8 `dimension_readiness`-Scores
-   + der skalarisierte ℝ⁶-Zeuge `w·m(G)` (target-profile-Gewichte, leer ⇒ Gleichgewichtung)
-   + Export-Hash für das Zustands-Archiv. Berechnung ausschließlich über den vorhandenen
-   Mapper/Snapshot-Pfad (`toOntologyGraph` + se-engine `metrics` — kein zweiter Messpfad,
-   CR-GC-303/324-Lehre). Erweiterung in `recordAudit`/Trajectory-Projektion.
-2. **gve-Panel** (Folge im gve-Repo): Spiderweb der 8 Dimensionen — Ist (live), Session-Start
-   (aus dem ersten Stempel der Session), Ziel-Ring — plus Zeugen-Linie über den Mutationen
-   mit Plateau-/Wiederbesuch-Markierung. Layout nach Mockup.
+Kein Stempel je Mutation, kein ℝ⁶-Zeuge, kein Spiderweb-Verlauf. Stattdessen die Quer-Messung,
+die der Spike als zuverlässig auswies (Zustands-Archiv): **Karte „Wirkt die Arbeit?"** im
+gve-Dashboard, Layout nach Entwurf (Karte 1):
 
-## Warum gated
+- **Pfad in Commit-Reihenfolge:** je exportiertem Graph-Stand (Git-History von
+  `docs/graph/*.graph.json`, heute 73 Stände) Elemente gegen offene Regelverstöße; nach rechts
+  = gebaut, nach unten = gebunden. Referenzlinie „wenn jedes neue Element seine Verstöße
+  mitbrächte".
+- **Bewertung je Stand über den vorhandenen Messpfad** (Mapper + Engine-Regeln — kein zweiter
+  Messpfad, CR-GC-303/324-Lehre); Ergebnis je Commit-Hash cachebar, da Stände unveränderlich.
+- **Sekundärbefund:** error-freie Stände als Gate-Wirkungs-Nachweis („23 der letzten 24 ohne
+  error").
 
-Der Spike CR-GC-407 validiert genau diesen Zeugen (Trennschärfe, Totzone, Fehlalarm).
-Vor dem Spike-Ergebnis wäre der Stempel eine ungeprüfte 7. Metrik-Dimension — bei No-Go
-entfällt Teil 1, und das Spiderweb bleibt auf Live-Ist ohne Verlauf (dann neu schneiden).
+Reine Lese-/Render-Funktion: trajectory.jsonl und `recordAudit` bleiben unberührt. Das
+Spiderweb entfällt; „Wo steht die Architektur?" (Karte 2 des Entwurfs) läuft unter
+CR-DRAFT-GC-433, nicht hier.
 
-**Spike-Ergebnis (2026-08-25): No-Go.** Totzone 100 % — der ℝ⁶-Zeuge w·m(G) bewegt sich auf
-16/16 realen Violation-schließenden Mutationen nicht (verify/satisfy liegen außerhalb layer
-'arch'); echte Konvergenz ist vom Stillstand ununterscheidbar (CR-GC-407 §Ergebnis). Damit gilt
-der No-Go-Fall: **Teil 1 (Zeugen-/Hash-Stempel je Mutation) entfällt; das Spiderweb zeigt nur
-Live-Ist ohne Verlauf.** Der CR ist vor dem Start auf diesen Schnitt zu reduzieren (Teil 2 ohne
-Zeugen-Linie/Wiederbesuch-Markierung; Start-Ring nur, wenn er ohne Stempel aus einer anderen
-Quelle kommt). Nebenbefund aus dem Spike, falls je ein Verlaufs-Stempel neu erwogen wird: das
-Zustands-Archiv (Export-Hash) allein war zuverlässig (Zyklus erkannt, null Fehlalarme); ein
-tragfähiger Fortschritts-Zeuge bräuchte eine andere Messgröße als m(G, layer 'arch') — das wäre
-ein neuer Spike, nicht dieser CR.
+## Historie: warum der ursprüngliche Schnitt fiel
 
-## Akzeptanzkriterien (bei Go zu präzisieren)
+Der Spike CR-GC-407 sollte den ℝ⁶-Zeugen validieren (Trennschärfe, Totzone, Fehlalarm).
+**Ergebnis (2026-08-25): No-Go.** Totzone 100 % — w·m(G) bewegt sich auf 16/16 realen
+Violation-schließenden Mutationen nicht (verify/satisfy liegen außerhalb layer 'arch'); echte
+Konvergenz ist vom Stillstand ununterscheidbar (CR-GC-407 §Ergebnis). Nebenbefund, der den
+Neuschnitt trägt: das Zustands-Archiv (Export-Hash) allein war zuverlässig — Zyklus erkannt,
+null Fehlalarme. Ein Längs-Zeuge bräuchte eine andere Messgröße; das wäre ein neuer Spike,
+nicht dieser CR.
 
-- [ ] Jede applied Mutation stempelt Dimension-Scores + Zeuge + Hash; raw-mutate-Pfad ohne
-      Feed bleibt dokumentierte Lücke (CR-GC-252-Verhalten).
-- [ ] Kein zweiter Messpfad (Diff berührt keine eigene Metrik-Berechnung).
-- [ ] gve zeichnet Start-Ring und Zeugen-Linie aus echten Stempeln (Fixture-Test).
-- [ ] Mehraufwand pro mutate gemessen und im CR genannt.
+## Akzeptanzkriterien
 
-## Dateien (Schätzung, bei Go schneiden)
+- [ ] gve rendert Karte 1 aus echten Graph-Ständen (Fixture: bekannte Commit-Serie →
+      erwarteter Pfad + Referenzlinie).
+- [ ] Kein zweiter Messpfad: jeder Stand über Mapper + Engine-Regeln bewertet.
+- [ ] Kein Schreibpfad: Diff berührt weder trajectory.jsonl noch `recordAudit`.
+- [ ] Rechenzeit der History-Messung gemessen und im CR genannt; Cache je Commit-Hash.
 
-graphcode: Trajectory-Schema/`recordAudit` + Test · gve: Panel + Test (eigener CR dort).
+## Dateien (Schätzung, beim Start schneiden)
+
+gve: Panel + Fixture-Test (eigener CR dort) · graphcode: nur falls die Stand-Bewertung
+serverseitig bereitgestellt wird (History-Auswertung an der SSE-Bridge), sonst 0.
