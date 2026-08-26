@@ -1,6 +1,18 @@
 # CR-GC-429 — Nachzug auf contracts 9.1.0: Grammatik-Härtung, Abdeckungszahl, Verzeichnisse
 
-**Status:** offen — **wartet auf den Release von `@sigloch/contracts` 9.1.0.**
+**Status:** offen — Release-Zug vorbereitet; §1 und der io-Teil von §3 sind **erledigt** (2026-08-26).
+
+**Stand 2026-08-26:** §1 komplett (preflight mit kinds-Auflösung Graph ∪ Batch,
+nd-similarity/generate/help-content bereinigt; parseFormatE-resolveKinds entfiel —
+graphcode nutzt graph-api-cores FormatECodec, der nur Typ-Paare prüft, die
+where-Durchsetzung trägt R-18 im Gate) · §5 komplett (null-sichere Rangfolge in
+generate/steering/steering-snapshot/report, null rankt oben) · §3 io-Teil komplett
+(24 `ACTOR -io-> UC` migriert, Commit 485df1c: 13 Paare waren schon getragen, 7
+Ersatzkanten auf bestehende FLOWs, 3 Paar-Assoziationen ersatzlos entfallen
+[graphify→code-quality, vibe-coder→reduced-llm/-efficient-testing], UC-loop-closure
+= der eine dokumentierte UC-02-Fall) · Testbasis grün (952 Tests; distribution +
+Lock-Spiegel bis zum Publish geskippt, CR-GC-411). **Offen:** §2 (importCoverage
+durchreichen), §3-Rest (satisfy-kinds-Schuld, drei `negative`-REQs), §4 (Verzeichnisse).
 **Angelegt:** 2026-08-26 · **Herkunft:** die Konsumenten-Hälften der contracts-CRs CR-SM-266
 (Grammatik-Härtung), CR-SM-268 (Abdeckung + Ablage) und CR-SM-270 (Readiness), entschieden im
 sigloch-modules-Repo am 2026-08-25/26.
