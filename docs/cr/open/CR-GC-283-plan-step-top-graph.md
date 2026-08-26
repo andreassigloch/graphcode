@@ -22,6 +22,27 @@
   se-plan-Disziplin DoD der jeweiligen CRs, kein Graph-Defekt
 - ❌ Vergleichsmessung Opus-Plan vs. devstral-Plan: weiterhin offen (einziger
   Restpunkt dieses CRs)
+
+**Machbarkeits-Nachtrag 2026-08-26 (Messung NICHT gestartet):**
+- devstral-Arm **bereit**: LM Studio läuft (`:1234`),
+  `mistralai/devstral-small-2-2512` antwortet auf Test-Request.
+- Opus-Arm **blockiert**: kein Anthropic-API-Key auffindbar — weder
+  `ANTHROPIC_API_KEY`/`GRAPHCODE_LLM_API_KEY` im Env noch `.env`, Keychain
+  oder `~/.claude/settings.json` (apiKeyHelper). Der embedded Treiber
+  (`graphcode run`, Backend `anthropic`) authentifiziert per `x-api-key`
+  aus `GRAPHCODE_LLM_API_KEY` — ohne Key kein Opus-Lauf.
+- Start, sobald der Key bereitsteht (je Arm in frischer Kopie von
+  `rig/plan-step/`, produktiver rig-Graph bleibt Referenz):
+  ```bash
+  # Opus-Arm
+  GRAPHCODE_LLM_BACKEND=anthropic \
+  GRAPHCODE_LLM_BASE_URL=https://api.anthropic.com \
+  GRAPHCODE_LLM_MODEL=claude-opus-5 \
+  GRAPHCODE_LLM_API_KEY=<key> graphcode run "<plan-step-intent>"
+  # devstral-Arm
+  GRAPHCODE_LLM_BASE_URL=http://127.0.0.1:1234 \
+  GRAPHCODE_LLM_MODEL=mistralai/devstral-small-2-2512 graphcode run "<plan-step-intent>"
+  ```
 **Datum:** 2026-08-01
 **Kontext:** `docs/executor-abschlussbericht.md` — Abschluss des Executor-
 Programms (CR-GC-278…282). Dieser CR ist der erste Schritt des dort benannten
