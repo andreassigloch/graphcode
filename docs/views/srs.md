@@ -5200,7 +5200,7 @@ io ◀ `FUNC-evaluate-rules` · io ▶ `FUNC-graph-suggest` · schema ▶ `SCHEM
 
 Der zusammengesetzte Prompt-Zusatz einer Runde: Guide-Slice plus Element-Index. Wie der Runden-Scope ein informationeller Kontext ohne festes Wire-Format, kein Code-Vertrag.
 
-io ◀ `FUNC-build-round-injection` · io ▶ `FUNC-run-executor` · schema ▶ —
+io ◀ `FUNC-build-round-injection` · io ▶ `FUNC-run-executor` · schema ▶ `SCHEMA-round-injection`
 
 ### 4.44  `FLOW-round-prompt` — Runden-Prompt (naechster Schritt)
 
@@ -5212,7 +5212,7 @@ io ◀ `FUNC-generation-step` · `FUNC-next-step` · io ▶ `ACTOR-claude-code` 
 
 Der durch read gebundene Blast-Radius/Kontext, der informiert, was status als offen prueft. Kein festes Wire-Format - informationeller Rundenkontext, kein Code-Datenvertrag.
 
-io ◀ `FUNC-graph-impact` · io ▶ `FUNC-evaluate-rules` · schema ▶ —
+io ◀ `FUNC-graph-impact` · io ▶ `FUNC-evaluate-rules` · schema ▶ `SCHEMA-round-scope`
 
 ### 4.46  `FLOW-schema-fingerprint` — Schema-Fingerabdruck
 
@@ -5450,49 +5450,61 @@ Je Dimension score, violations, applicable, ready. Aus @sigloch/contracts, desha
 
 schema ◀ `FLOW-dimension-readiness`
 
-### 5.23  `SCHEMA-schema-fingerprint` — SchemaFingerprint
+### 5.23  `SCHEMA-round-injection` — Runden-Injektions-Block
+
+Vertrag der Runden-Injektion: ein Markdown-Textblock als string, Rueckgabe von buildRoundInjection in src/executor/executor-prompt.ts — Guide-Slice plus Element-Index. Bewusst ohne Zod-Symbol: informationeller Prompt-Kontext, kein Wire-Format; deshalb concept-only.
+
+schema ◀ `FLOW-round-injection`
+
+### 5.24  `SCHEMA-round-scope` — Round-Scope-Slice
+
+Vertrag des Runden-Scopes: der Format-E-Slice als string aus graph_impact bzw. graph_expand, der den Blast-Radius einer Runde begrenzt. Bewusst ohne Zod-Symbol — informationeller Rundenkontext, kein Code-Datenvertrag; concept-only.
+
+schema ◀ `FLOW-round-scope`
+
+### 5.25  `SCHEMA-schema-fingerprint` — SchemaFingerprint
 
 Die ersten 16 Hex-Zeichen eines SHA-256 ueber die generierte DDL. Die Laenge ist Teil des Vertrags: sie unterscheidet einen aelteren Schemastand von einer kaputten Datei.
 
 schema ◀ `FLOW-schema-fingerprint`
 
-### 5.24  `SCHEMA-session-registry` — SessionEntry
+### 5.26  `SCHEMA-session-registry` — SessionEntry
 
 pid, hostname, startedAt. Der Vertrag eines Sitzungseintrags, der eine Prozessgrenze quert.
 
 schema ◀ `FLOW-session-registry`
 
-### 5.25  `SCHEMA-steering-delta` — SteeringDelta
+### 5.27  `SCHEMA-steering-delta` — SteeringDelta
 
 blockingErrors vorher und nachher plus je Dimension before, after, delta.
 
 schema ◀ `FLOW-steering-delta`
 
-### 5.26  `SCHEMA-steering-snapshot` — SteeringSnapshot
+### 5.28  `SCHEMA-steering-snapshot` — SteeringSnapshot
 
 Gemappter OntologyGraph mit injizierten ND-Matrizen, Violations des vollen Katalogs, Zahl der blockierenden Fehler, Readiness-Report.
 
 schema ◀ `FLOW-steering-snapshot`
 
-### 5.27  `SCHEMA-target-profile` — TargetProfile
+### 5.29  `SCHEMA-target-profile` — TargetProfile
 
 weights (6 Dimensionen in [-1,1]) und intentAnchors (3-7 Strings). Der Vertrag der Zielprofil-Datei, die zwei Schreiber und einen Leser hat.
 
 schema ◀ `FLOW-target-profile`
 
-### 5.28  `SCHEMA-test-selection` — TestSelection
+### 5.30  `SCHEMA-test-selection` — TestSelection
 
 command, tests mit testRefs, coverage, unresolved. Der Vertrag der graph_tests-Antwort.
 
 schema ◀ `FLOW-test-selection`
 
-### 5.29  `SCHEMA-trajectory` — Trajectory/Outcome
+### 5.31  `SCHEMA-trajectory` — Trajectory/Outcome
 
 append-only Lern-Emission. @sigloch/learning-core.
 
 schema ◀ `FLOW-trajectory`
 
-### 5.30  `SCHEMA-update-event` — UpdateEvent
+### 5.32  `SCHEMA-update-event` — UpdateEvent
 
 SSE invalidate Event.
 

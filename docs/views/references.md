@@ -865,6 +865,7 @@
 | `FLOW-round-findings` | io | `FUNC-graph-suggest` |
 | `FLOW-round-findings` | relation | `SCHEMA-mutate-result` |
 | `FLOW-round-injection` | io | `FUNC-run-executor` |
+| `FLOW-round-injection` | relation | `SCHEMA-round-injection` |
 | `FLOW-round-prompt` | io | `ACTOR-claude-code` |
 | `FLOW-round-prompt` | io | `ACTOR-opencode` |
 | `FLOW-round-prompt` | io | `FUNC-build-round-injection` |
@@ -872,6 +873,7 @@
 | `FLOW-round-prompt` | io | `FUNC-run-executor` |
 | `FLOW-round-prompt` | relation | `SCHEMA-generation-step` |
 | `FLOW-round-scope` | io | `FUNC-evaluate-rules` |
+| `FLOW-round-scope` | relation | `SCHEMA-round-scope` |
 | `FLOW-schema-fingerprint` | io | `FUNC-open-store` |
 | `FLOW-schema-fingerprint` | relation | `SCHEMA-schema-fingerprint` |
 | `FLOW-session-registry` | io | `FUNC-gve-sessions` |

@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 30 SCHEMA · 62 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 32 SCHEMA · 62 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -32,6 +32,8 @@
 | `SCHEMA-phase-readiness` | src/steering/readiness.ts#PhaseGateReadiness | reviewed |
 | `SCHEMA-query-params` | Konzept (noch kein Zod-Export) | reviewed |
 | `SCHEMA-readiness-report` | packages/contracts/src/se/readiness.ts#ReadinessReport | reviewed |
+| `SCHEMA-round-injection` | Konzept (noch kein Zod-Export) | n/a |
+| `SCHEMA-round-scope` | Konzept (noch kein Zod-Export) | n/a |
 | `SCHEMA-schema-fingerprint` | src/schema-migration/schema-fingerprint-contract.ts#SchemaFingerprintSchema | n/a |
 | `SCHEMA-session-registry` | src/cli/gve-session-contract.ts#SessionEntrySchema | n/a |
 | `SCHEMA-steering-delta` | src/steering/steering-snapshot.ts#SteeringDelta | reviewed |

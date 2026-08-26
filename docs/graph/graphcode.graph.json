@@ -5319,6 +5319,20 @@
       }
     },
     {
+      "id": "SCHEMA-round-injection",
+      "type": "SCHEMA",
+      "name": "Runden-Injektions-Block",
+      "description": "Vertrag der Runden-Injektion: ein Markdown-Textblock als string, Rueckgabe von buildRoundInjection in src/executor/executor-prompt.ts — Guide-Slice plus Element-Index. Bewusst ohne Zod-Symbol: informationeller Prompt-Kontext, kein Wire-Format; deshalb concept-only.",
+      "concept": true
+    },
+    {
+      "id": "SCHEMA-round-scope",
+      "type": "SCHEMA",
+      "name": "Round-Scope-Slice",
+      "description": "Vertrag des Runden-Scopes: der Format-E-Slice als string aus graph_impact bzw. graph_expand, der den Blast-Radius einer Runde begrenzt. Bewusst ohne Zod-Symbol — informationeller Rundenkontext, kein Code-Datenvertrag; concept-only.",
+      "concept": true
+    },
+    {
       "id": "SCHEMA-schema-fingerprint",
       "type": "SCHEMA",
       "name": "SchemaFingerprint",
@@ -12460,6 +12474,11 @@
       "weight": "1"
     },
     {
+      "source": "FLOW-round-injection",
+      "target": "SCHEMA-round-injection",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-round-prompt",
       "target": "ACTOR-claude-code",
       "type": "io"
@@ -12495,6 +12514,11 @@
       "source": "FLOW-round-scope",
       "target": "FUNC-evaluate-rules",
       "type": "io"
+    },
+    {
+      "source": "FLOW-round-scope",
+      "target": "SCHEMA-round-scope",
+      "type": "relation"
     },
     {
       "source": "FLOW-schema-fingerprint",
@@ -17854,5 +17878,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 210
+  "graphVersion": 211
 }
