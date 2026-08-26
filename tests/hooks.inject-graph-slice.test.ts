@@ -67,7 +67,7 @@ describe('CR-GC-367: Job-Scheibe beim Task-Start', () => {
     // Minimal-Modell mit genau der Form, die der Spike gemessen hat:
     // CR -relation-> FUNC/REQ, FUNC -satisfy-> REQ, TEST -verify-> REQ.
     const commands: MutateCommand[] = [
-      { op: 'add-node', node: { uid: 'REQ-slice-push', type: 'REQ', name: 'Scheibe wird gepusht', description: 'Der Agent bekommt die Scheibe ohne sie zu holen.', attributes: {} } },
+      { op: 'add-node', node: { uid: 'REQ-slice-push', type: 'REQ', name: 'Scheibe wird gepusht', description: 'Der Agent bekommt die Scheibe ohne sie zu holen.', attributes: { kinds: ['functional'] } } },
       { op: 'add-node', node: { uid: 'FUNC-inject-slice', type: 'FUNC', name: 'injectSlice()', description: 'Schiebt die Job-Scheibe in den Kontext.', attributes: {} } },
       { op: 'add-node', node: { uid: 'TEST-slice-push', type: 'TEST', name: 'Scheibe-Push-Test', description: 'Verifiziert die Injektion.', attributes: {} } },
       { op: 'add-node', node: { uid: 'MS-1-slice', type: 'MS', name: 'MS-1', description: 'Meilenstein.', attributes: {} } },

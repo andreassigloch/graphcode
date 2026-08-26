@@ -503,7 +503,7 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
   // für den REQ/UC-Duplikat-Hinweis — kein zweiter Tool-Call.
   const loadGraphSnapshot = async (): Promise<{ known: PreflightKnown; index: IndexedElement[] }> => {
     const els = (await registry['graph_elements'].handler({ limit: 100_000 })) as {
-      nodes?: { uid: string; type: string; name: string; description?: string }[];
+      nodes?: { uid: string; type: string; name: string; description?: string; attributes?: Record<string, unknown> }[];
     };
     const ver = (await registry['graph_get_edges'].handler({ edgeType: 'verify' })) as {
       edges?: { targetId: string }[];
@@ -513,6 +513,8 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
       known: {
         types: new Map(nodes.map((n) => [n.uid, n.type])),
         verifiedReqs: new Set((ver.edges ?? []).map((e) => e.targetId)),
+        // satisfy-`where` (contracts 9.x): der Preflight braucht die deklarierten kinds.
+        kinds: new Map(nodes.map((n) => [n.uid, n.attributes?.kinds])),
       },
       index: nodes.map((n) => ({ uid: n.uid, type: n.type, name: n.name, description: n.description })),
     };

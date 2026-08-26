@@ -93,11 +93,11 @@ npx @sigloch/graphcode init
 
 ## How does graph technology support "structure before guessing"?
 
-**Layer 1 — the ontology.** 13 element types and 7 connection types, including process-relevant types
+**Layer 1 — the ontology.** 12 element types and 6 connection types, including process-relevant types
 that most code-graph tools skip: milestones (MS), changes (CR), and sessions (SESSION, the audit
 trail).
 
-**Layer 2 — the grammar.** How those elements may legally connect: 35 legal connection patterns define
+**Layer 2 — the grammar.** How those elements may legally connect: 30 legal connection patterns define
 a well-formed graph. An illegal connection never enters the graph — it isn't a warning to read later.
 
 **Layer 3 — readiness.** 73 engine rules feed 8 readiness dimensions, one deliberately *not* asking "is this

@@ -242,7 +242,7 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
     const scores = new Map(takeSteeringSnapshot(harness.getGraph(), harness.getMetricPolicy(), harness.getFocusThreshold()).report.scores.map((s) => [s.dimension as string, s]));
     return ReadinessDimension.options.map(
       (dimension) =>
-        scores.get(dimension) ?? { dimension, score: 0, violations: 0, applicable: 0, ready: false },
+        scores.get(dimension) ?? { dimension, score: null, violations: 0, applicable: 0, coreApplicable: 0, ready: false },
     );
   };
 

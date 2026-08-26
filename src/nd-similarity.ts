@@ -132,7 +132,7 @@ export function computeND02Matrix(og: OntologyGraph): { schemaIds: string[]; mat
   const schemas = og.elements.filter((e) => e.type === 'SCHEMA').sort(byId);
   const fields = schemas.map(schemaFields);
   const descr = schemas.map((s) => tokens(s.description));
-  const usage = schemas.map((s) => partners(og, s.id, ['relation', 'produces', 'io', 'compose']));
+  const usage = schemas.map((s) => partners(og, s.id, ['relation', 'io', 'compose']));
   const matrix = schemas.map((_, i) =>
     schemas.map((_, j) =>
       i === j

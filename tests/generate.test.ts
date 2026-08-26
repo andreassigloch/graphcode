@@ -93,7 +93,6 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
       ],
       [
         edge('SYS-shop', 'UC-bestellen', 'compose'),
-        edge('ACTOR-kunde', 'UC-bestellen', 'io'),
         edge('UC-bestellen', 'REQ-tbd', 'compose'),
         edge('TEST-req', 'REQ-tbd', 'verify'),
       ],
@@ -125,7 +124,6 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
       ],
       [
         edge('SYS-shop', 'UC-bestellen', 'compose'),
-        edge('ACTOR-kunde', 'UC-bestellen', 'io'),
         edge('UC-bestellen', 'REQ-bestellung', 'compose'),
         edge('UC-bestellen', 'FCHAIN-bestellung', 'compose'),
         edge('TEST-bestellung', 'REQ-bestellung', 'verify'),
@@ -169,7 +167,7 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
         }),
         node('ACTOR-kunde', 'ACTOR', 'Kunde'),
         node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt Ersatzteil und erhält Bestätigung.'),
-        node('REQ-bestellung', 'REQ', 'Bestellung wird bestätigt', measurable('die Bestellung')),
+        node('REQ-bestellung', 'REQ', 'Bestellung wird bestätigt', measurable('die Bestellung'), { kinds: ['functional'] }),
         node('REQ-post', 'REQ', 'Bestellung bestätigt', measurable('die Bestellbestätigung'), {
           kinds: ['postcondition'],
         }),
@@ -186,7 +184,6 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
       ],
       [
         edge('SYS-shop', 'UC-bestellen', 'compose'),
-        edge('ACTOR-kunde', 'UC-bestellen', 'io'),
         edge('UC-bestellen', 'REQ-bestellung', 'compose'),
         edge('UC-bestellen', 'REQ-post', 'compose'),
         edge('UC-bestellen', 'REQ-pre', 'compose'),
@@ -238,13 +235,22 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
         node('REQ-bestellung', 'REQ', 'Bestellung wird bestätigt'),
         node('TEST-bestellung', 'TEST', 'Bestellbestätigung prüfen'),
         node('FCHAIN-bestellung', 'FCHAIN', 'Bestellablauf'),
+        // contracts 9.x: UC-02 (error) prüft Erreichbarkeit über ACTOR io→FLOW io→FUNC.
+        // Damit der Test weiterhin „kein error, nur die R-15-Lücke" misst, trägt eine
+        // ZWEITE, volle Kette die Erreichbarkeit — die leere FCHAIN bleibt der Fund.
+        node('FCHAIN-voll', 'FCHAIN', 'Getragener Ablauf'),
+        node('FUNC-pruefen', 'FUNC', 'Bestellung prüfen', 'Prüft die eingehende Bestellung.'),
+        node('FLOW-in', 'FLOW', 'Bestellanfrage'),
       ],
       [
         edge('SYS-shop', 'UC-bestellen', 'compose'),
-        edge('ACTOR-kunde', 'UC-bestellen', 'io'),
         edge('UC-bestellen', 'REQ-bestellung', 'compose'),
         edge('UC-bestellen', 'FCHAIN-bestellung', 'compose'),
         edge('TEST-bestellung', 'REQ-bestellung', 'verify'),
+        edge('UC-bestellen', 'FCHAIN-voll', 'compose'),
+        edge('FCHAIN-voll', 'FUNC-pruefen', 'compose'),
+        edge('ACTOR-kunde', 'FLOW-in', 'io'),
+        edge('FLOW-in', 'FUNC-pruefen', 'io'),
       ],
     );
     const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0);
@@ -317,7 +323,6 @@ describe('generationStep — Fund-Fenster/Prompt-Vollständigkeit (CR-GC-290)', 
       ],
       [
         edge('SYS-shop', 'UC-bestellen', 'compose'),
-        edge('ACTOR-kunde', 'UC-bestellen', 'io'),
         edge('UC-bestellen', 'FCHAIN-leer', 'compose'),
       ],
     );
@@ -369,13 +374,20 @@ describe('generationStep — R-15 Stagnations-Fix (CR-GC-290-Nachtrag, Messlauf-
     ],
     [
       edge('SYS-shop', 'UC-bestellen', 'compose'),
-      edge('ACTOR-kunde', 'UC-bestellen', 'io'),
       edge('UC-bestellen', 'FCHAIN-leer', 'compose'),
     ],
   );
 
   it('uc-Template weist bei R-15 explizit auf FUNC compose→FCHAIN hin statt auf neue ACTOR/FCHAIN/UC', () => {
-    const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    // contracts 9.x: auf einer leeren Kette feuert FC-01 zwangsläufig mit (eine
+    // Actor-Grenze über den Eltern-UC gibt es ohne ACTOR io→UC nicht mehr) und
+    // rankt lexikographisch vor R-15 — per defer ins R-15-Fenster rotieren.
+    let step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    const keys: string[] = [];
+    while (step.focusKey && !/^uc:R-15:/.test(step.focusKey) && keys.length < 10) {
+      keys.push(step.focusKey);
+      step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS, keys);
+    }
     expect(step.phase).toBe('expand');
     expect(step.focusKey).toMatch(/^uc:R-15:/);
     expect(step.prompt).toContain('FUNC');
@@ -413,7 +425,13 @@ describe('generationStep — R-15 Stagnations-Fix (CR-GC-290-Nachtrag, Messlauf-
   });
 
   it('Funde-Zeile trägt den fix_hint der Violation (R-15: "Add FUNC elements via compose trace")', () => {
-    const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    // Wie oben: erst ins R-15-Fenster rotieren (FC-01 rankt seit contracts 9.x davor).
+    let step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    const keys: string[] = [];
+    while (step.focusKey && !/^uc:R-15:/.test(step.focusKey) && keys.length < 10) {
+      keys.push(step.focusKey);
+      step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS, keys);
+    }
     expect(step.prompt).toContain('Fix: Add FUNC elements via compose trace');
   });
 
@@ -618,7 +636,6 @@ describe('graph_generate — MCP-Binding (echter Harness)', () => {
       { op: 'add-node', node: node('ACTOR-kunde', 'ACTOR', 'Kunde') },
       { op: 'add-node', node: node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt Ersatzteil und erhält Bestätigung.') },
       { op: 'add-edge', edge: edge('SYS-shop', 'UC-bestellen', 'compose') },
-      { op: 'add-edge', edge: edge('ACTOR-kunde', 'UC-bestellen', 'io') },
     ]);
     expect(res.success).toBe(true);
 

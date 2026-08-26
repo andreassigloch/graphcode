@@ -38,7 +38,7 @@ function makeHarness(repoRoot: string): GraphCodeHarness {
 // A gate-valid member: REQ + verifying TEST (R-01) + satisfying MOD (RD-01) + SYS compose (R-17).
 const CLEAN_MEMBER: MutateCommand[] = [
   { op: 'add-node', node: { uid: 'SYS-auth', type: 'SYS', name: 'Auth service', description: 'demo member', attributes: {} } },
-  { op: 'add-node', node: { uid: 'REQ-reset', type: 'REQ', name: 'Password reset', description: 'reset capability', attributes: {} } },
+  { op: 'add-node', node: { uid: 'REQ-reset', type: 'REQ', name: 'Password reset', description: 'reset capability', attributes: { kinds: ['non-functional'] } } },
   { op: 'add-node', node: { uid: 'TEST-reset', type: 'TEST', name: 'Reset test', description: '', attributes: {} } },
   { op: 'add-node', node: { uid: 'MOD-reset', type: 'MOD', name: 'Reset handler', description: '', attributes: {} } },
   { op: 'add-edge', edge: { sourceId: 'SYS-auth', targetId: 'REQ-reset', edgeType: 'compose', attributes: {} } },
@@ -195,8 +195,14 @@ describe('TEST-mcp-readiness: graph_readiness scores family readiness over the b
         // interpretable (req 4: ms reads 0 % off 67 findings over 15 elements).
         expect(typeof d.applicable, `${d.dimension}.applicable`).toBe('number');
         expect(typeof d.violations, `${d.dimension}.violations`).toBe('number');
-        expect(d.score).toBeGreaterThanOrEqual(0);
-        expect(d.score).toBeLessThanOrEqual(1);
+        // contracts 9.x (CR-SM-270): score ist number | null — null heißt „nicht
+        // messbar" (leere Kernmenge), nie 0 %, und ready ist dann immer false.
+        if (d.score === null) {
+          expect(d.ready, `${d.dimension}.ready bei score null`).toBe(false);
+        } else {
+          expect(d.score).toBeGreaterThanOrEqual(0);
+          expect(d.score).toBeLessThanOrEqual(1);
+        }
         expect(typeof d.ready).toBe('boolean');
       }
     }

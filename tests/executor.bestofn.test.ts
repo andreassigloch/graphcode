@@ -95,7 +95,6 @@ const UC_EXPORT_BATCH = {
   commands: [
     { op: 'add-node', node: { uid: 'UC-export', type: 'UC', name: 'Export', description: 'User exportiert den Stand und erhält die Datei.', attributes: {} } },
     { op: 'add-edge', edge: { sourceId: 'SYS-app', targetId: 'UC-export', edgeType: 'compose', attributes: {} } },
-    { op: 'add-edge', edge: { sourceId: 'ACTOR-user', targetId: 'UC-export', edgeType: 'io', attributes: {} } },
   ],
 };
 
@@ -116,7 +115,7 @@ const FUNC_PAIR_BATCH = {
 };
 
 // --- CR-GC-289: A-vs-B — Volumen gegen Fokus-Reparatur (Fokus nach Seed = 'uc') ---
-// A: 6 neue UCs ohne REQ (18 Mutationen) — Steering: uc-Score SINKT (-0.17),
+// A: 6 neue UCs ohne REQ (12 Mutationen) — Steering: uc-Score SINKT (-0.12),
 //    blockingErrors steigen 1→7. B: REQ+TEST auf UC-login (4 Mutationen) —
 //    uc +0.18, req/ver werden anwendbar, blockingErrors 1→0. Beide tier=suggest.
 
@@ -124,7 +123,6 @@ const VOLUME_UC_BATCH = {
   commands: Array.from({ length: 6 }, (_, i) => i + 1).flatMap((i) => [
     { op: 'add-node', node: { uid: `UC-vol-${i}`, type: 'UC', name: `Volumen ${i}`, description: `User erledigt Aufgabe ${i} und erhält das Ergebnis ${i}.`, attributes: {} } },
     { op: 'add-edge', edge: { sourceId: 'SYS-app', targetId: `UC-vol-${i}`, edgeType: 'compose', attributes: {} } },
-    { op: 'add-edge', edge: { sourceId: 'ACTOR-user', targetId: `UC-vol-${i}`, edgeType: 'io', attributes: {} } },
   ]),
 };
 
@@ -142,7 +140,6 @@ const SEED_BATCH = {
     { op: 'add-node', node: { uid: 'SYS-app', type: 'SYS', name: 'Test App', description: 'Eine Test-App für Best-of-N.', attributes: {} } },
     { op: 'add-node', node: { uid: 'ACTOR-user', type: 'ACTOR', name: 'User', description: 'Nutzt die App.', attributes: {} } },
     { op: 'add-node', node: { uid: 'UC-login', type: 'UC', name: 'Login', description: 'User meldet sich an und erhält Zugriff.', attributes: {} } },
-    { op: 'add-edge', edge: { sourceId: 'ACTOR-user', targetId: 'UC-login', edgeType: 'io', attributes: {} } },
     { op: 'add-edge', edge: { sourceId: 'SYS-app', targetId: 'UC-login', edgeType: 'compose', attributes: {} } },
   ],
 };
@@ -432,13 +429,13 @@ describe('Best-of-N executor (CR-GC-288, echter Gate-/Store-Pfad)', () => {
     expect(entries.filter((e) => e.operation !== 'validate' && e.result === 'applied').length).toBe(1);
   });
 
-  it('CR-GC-289 Kern: Fokus-Reparatur (REQ+TEST, 4 Mutationen) schlägt UC-Volumen (18 Mutationen) — echte Verdicts', async () => {
+  it('CR-GC-289 Kern: Fokus-Reparatur (REQ+TEST, 4 Mutationen) schlägt UC-Volumen (12 Mutationen) — echte Verdicts', async () => {
     // Fokus der Runde nach dem Seed = 'uc' (UC-login ohne REQ/FCHAIN). A (Volumen):
-    // 6 UCs ohne REQ — uc-Score SINKT, blockingErrors 1→7. B (Fokus-Reparatur):
+    // 6 UCs ohne REQ — uc-Score SINKT. B (Fokus-Reparatur):
     // REQ+TEST auf UC-login — uc +0.18. Beide tier=suggest; unter CR-288-Ranking
     // (Δm=0 beidseitig → mutations) hätte A gewonnen — Volumen-Bias der v16-Monokultur.
     const { callModel } = scriptedModel([
-      toolCallResponse('c1', VOLUME_UC_BATCH), // suggest, Δm=0, mutations=18
+      toolCallResponse('c1', VOLUME_UC_BATCH), // suggest, Δm=0, mutations=12
       toolCallResponse('c2', FOCUS_REPAIR_BATCH), // suggest, Δm=0, mutations=4
     ]);
     const traces: string[] = [];
@@ -460,8 +457,10 @@ describe('Best-of-N executor (CR-GC-288, echter Gate-/Store-Pfad)', () => {
     // Netto-Verschlechterung sichtbar. Die FOKUS-Deltas sind unveraendert (-0.17 / +0.18) —
     // die uc-Dimension der Fixture wurde nicht angefasst.
     // (totals seit contracts 3.1.0 inkl. AF-01..05-Dimension — Fokus-Deltas unverändert)
-    expect(traces.some((l) => /candidate 1\/2: tier=suggest focus\(uc\)=-0\.17 total=-0\.17 Δm=\+0\.00 mutations=18/.test(l))).toBe(true);
-    expect(traces.some((l) => /candidate 2\/2: tier=suggest focus\(uc\)=\+0\.18 total=\+1\.81 Δm=\+0\.00 mutations=4/.test(l))).toBe(true);
+    // contracts 9.x: ACTOR io→UC entfällt — der Volumen-Kandidat trägt 12 statt 18
+    // Mutationen, sein Fokus-Delta ist -0.12; das Urteil (Fokus schlägt Volumen) bleibt.
+    expect(traces.some((l) => /candidate 1\/2: tier=suggest focus\(uc\)=-0\.12 total=-0\.12 Δm=\+0\.00 mutations=12/.test(l))).toBe(true);
+    expect(traces.some((l) => /candidate 2\/2: tier=suggest focus\(uc\)=\+0\.18 total=\+1\.71 Δm=\+0\.00 mutations=4/.test(l))).toBe(true);
     expect(traces.some((l) => l.includes('pick: candidate 2 (judge=gate)'))).toBe(true);
     expect(uids()).toContain('REQ-login'); // der Ziel-Delta-Gewinner ist persistiert …
     expect(uids()).toContain('TEST-login');

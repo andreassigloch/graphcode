@@ -76,15 +76,19 @@ const BINDING_EDGES =
 const UNNAMED_BATCH =
   '## Nodes\n### REQ\n' +
   '+ REQ-alpha|Das System muss den Namen eines Knotens sichtbar machen.\n' +
+  '@kinds ["functional"]\n' +
   '+ REQ-beta|Das System muss den Fallback melden.\n' +
+  '@kinds ["functional"]\n' +
   BINDING_EDGES;
 
 /** Dieselben zwei REQ MIT `__name` — inline und als Folgezeile. */
 const NAMED_BATCH =
   '## Nodes\n### REQ\n' +
   '+ REQ-alpha|Das System muss den Namen eines Knotens sichtbar machen. [__name:Sichtbarer Name]\n' +
+  '@kinds ["functional"]\n' +
   '+ REQ-beta|Das System muss den Fallback melden.\n' +
   '@__name Fallback melden, laut\n' +
+  '@kinds ["functional"]\n' +
   BINDING_EDGES;
 
 /** Kanten zwischen bestehenden Knoten (CR-GC-310) — kein Knoten, also kein Namensfall. */
@@ -163,7 +167,7 @@ describe('TEST-formate-name: der stille name=uid-Fallback wird laut (CR-GC-321)'
       commands: [
         {
           op: 'add-node',
-          node: { uid: 'REQ-gamma', type: 'REQ', name: 'REQ-gamma', description: 'Das System muss den Pfad trennen.' },
+          node: { uid: 'REQ-gamma', type: 'REQ', name: 'REQ-gamma', description: 'Das System muss den Pfad trennen.', attributes: { kinds: ['functional'] } },
         },
         { op: 'add-edge', edge: { sourceId: 'TEST-seed', targetId: 'REQ-gamma', edgeType: 'verify' } },
         { op: 'add-edge', edge: { sourceId: 'FUNC-seed', targetId: 'REQ-gamma', edgeType: 'satisfy' } },

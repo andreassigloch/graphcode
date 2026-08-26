@@ -117,7 +117,6 @@ const VALID_SEED_BATCH = {
         attributes: {},
       },
     },
-    { op: 'add-edge', edge: { sourceId: 'ACTOR-user', targetId: 'UC-login', edgeType: 'io', attributes: {} } },
     { op: 'add-edge', edge: { sourceId: 'SYS-app', targetId: 'UC-login', edgeType: 'compose', attributes: {} } },
   ],
 };
@@ -394,7 +393,6 @@ describe('executor (CR-GC-278)', () => {
           },
         },
         { op: 'add-edge', edge: { sourceId: 'SYS-app', targetId: 'UC-export', edgeType: 'compose', attributes: {} } },
-        { op: 'add-edge', edge: { sourceId: 'ACTOR-user', targetId: 'UC-export', edgeType: 'io', attributes: {} } },
       ],
     };
     const { callModel, calls } = scriptedModel([toolCallResponse('c1', followUp)]);
@@ -535,7 +533,8 @@ describe('executor (CR-GC-278)', () => {
     // Guide-Slice der Seed-Typen steht IM Prompt — inkl. der legalen Kanten.
     expect(instruction).toContain('Kanten-Grammatik');
     for (const t of ['- SYS:', '- ACTOR:', '- UC:']) expect(instruction).toContain(t);
-    expect(instruction).toContain('io→UC');
+    // contracts 9.x: die ACTOR-Anbindung läuft über FLOW (ACTOR io→FLOW), nicht mehr io→UC.
+    expect(instruction).toContain('io→FLOW');
     // Leerer Graph ⇒ kein Element-Index-Block.
     expect(instruction).not.toContain('Element-Index');
     // Die generate-Instruktion selbst bleibt ungekürzt (CR-282-Lektion).
@@ -622,7 +621,7 @@ describe('executor (CR-GC-278)', () => {
         },
       });
       bulk.push({ op: 'add-edge', edge: { sourceId: 'SYS-app', targetId: uid, edgeType: 'compose', attributes: {} } });
-      bulk.push({ op: 'add-edge', edge: { sourceId: 'ACTOR-user', targetId: uid, edgeType: 'io', attributes: {} } });
+      
     }
     // … plus wenige Fokus-relevante Elemente (REQ mit TEST im selben Batch).
     bulk.push({

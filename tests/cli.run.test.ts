@@ -50,7 +50,6 @@ const SEED_RESPONSE: ModelResponse = {
               attributes: {},
             },
           },
-          { op: 'add-edge', edge: { sourceId: 'ACTOR-user', targetId: 'UC-login', edgeType: 'io', attributes: {} } },
           { op: 'add-edge', edge: { sourceId: 'SYS-app', targetId: 'UC-login', edgeType: 'compose', attributes: {} } },
         ],
       },

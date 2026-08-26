@@ -30,7 +30,7 @@ that, every project grows its own dialect and nothing stays comparable.
 | Ontology + rules | shared contracts package — imported, never forked | New type/rule = family decision + version bump; no local dialect |
 | Local execution | OpenCode + bring-your-own-key, or the built-in executor below | Two ways to run a local model — see "Two ways to run the loop" |
 
-The current vocabulary: 13 element types, 7 connection types, 35 legal connection patterns,
+The current vocabulary: 12 element types, 6 connection types, 30 legal connection patterns,
 73 engine rules across 8 readiness dimensions, exposed as 25 MCP tools.
 
 ## Two ways to run the loop

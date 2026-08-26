@@ -68,7 +68,9 @@ export const TEMPLATE_FORMAT_E = [
   '### MOD',
   '+ MOD-template|Module that satisfies the template requirement [__name:Template module]',
   '### REQ',
+  // contracts 9.x: MOD -satisfy-> REQ verlangt strukturelle kinds am REQ (where-Prädikat).
   '+ REQ-template-root|First requirement of the new member graph [__name:Template root requirement]',
+  '@kinds ["non-functional"]',
   '### SYS',
   '+ SYS-template|Cold-start system of a new family member [__name:Template system]',
   '### TEST',

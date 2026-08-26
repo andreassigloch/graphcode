@@ -33,7 +33,8 @@ function makeHarness(repoRoot: string): GraphCodeHarness {
 /** A self-verified REQ batch (legal through any gate). */
 function reqSet(suffix: string): MutateCommand[] {
   return [
-    { op: 'add-node', node: { uid: `REQ-${suffix}`, type: 'REQ', name: `r-${suffix}`, description: '', attributes: {} } },
+    // contracts 9.x: kinds am REQ — FUNC -satisfy-> REQ (BASE) verlangt das where-Prädikat.
+    { op: 'add-node', node: { uid: `REQ-${suffix}`, type: 'REQ', name: `r-${suffix}`, description: '', attributes: { kinds: ['functional'] } } },
     { op: 'add-node', node: { uid: `TEST-${suffix}`, type: 'TEST', name: `t-${suffix}`, description: '', attributes: {} } },
     { op: 'add-edge', edge: { sourceId: `TEST-${suffix}`, targetId: `REQ-${suffix}`, edgeType: 'verify', attributes: {} } },
   ];

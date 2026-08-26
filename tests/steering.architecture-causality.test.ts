@@ -164,26 +164,35 @@ describe('T-C2 (CR-GC-340): an applied suggestion moves ℝ⁶ in the target dir
       expect(pick!.score).toBeGreaterThan(0);
 
       const before = fitOf(rig.harness, 'all');
+      // CR-GC-431: `score`/`delta` einer ANWENDBAREN Suggestion kommen aus dem
+      // Gate-Advisory und messen fest auf `advisoryLayer` ('arch') — Prognosen sind
+      // deshalb NUR auf dieser Ebene mit der Realisierung vergleichbar (das Ergebnis
+      // sagt es selbst via `layerMismatch`).
+      const beforeAdvisory = fitOf(rig.harness, 'arch');
       const applied = await rig.harness.mutate([
         { op: 'add-edge', edge: { sourceId: pick!.edit!.source, targetId: pick!.edit!.target, edgeType: pick!.edit!.type, attributes: {} } },
       ]);
       expect(applied.success).toBe(true);
       const after = fitOf(rig.harness, 'all');
+      const afterAdvisory = fitOf(rig.harness, 'arch');
 
       // (1) The steered component moved WITH the target's sign — the claim itself.
       const realised = after[STEERED_INDEX] - before[STEERED_INDEX];
       expect(realised).toBeGreaterThan(0);
 
       // (2) The move is the one the ranker predicted, not a lucky coincidence:
-      //     realised Δ == predicted Δm on the steered component.
-      expect(realised).toBeCloseTo(pick!.delta[STEERED_INDEX], 6);
+      //     realised Δ == predicted Δm on the steered component — on the layer the
+      //     prediction was measured on (advisoryLayer, CR-GC-431).
+      const realisedAdvisory = afterAdvisory[STEERED_INDEX] - beforeAdvisory[STEERED_INDEX];
+      expect(realisedAdvisory).toBeCloseTo(pick!.delta[STEERED_INDEX], 6);
 
       // (3) The collateral is DECLARED, not hidden. A greedy ranker may trade other
       //     components away; what must hold is that it said so up front — every
-      //     component that really regressed was predicted to regress.
+      //     component that really regressed was predicted to regress. Same layer as
+      //     the prediction (advisoryLayer).
       for (let i = 0; i < DIMS.length; i++) {
         if (i === STEERED_INDEX) continue;
-        const realDelta = after[i] - before[i];
+        const realDelta = afterAdvisory[i] - beforeAdvisory[i];
         if (realDelta < -EPS) {
           expect(pick!.delta[i], `component ${DIMS[i]} regressed unannounced`).toBeLessThan(EPS);
         }

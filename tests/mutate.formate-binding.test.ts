@@ -42,6 +42,8 @@ const SEED = {
       type: 'REQ',
       name: 'Bestehende Anforderung',
       description: 'Das System muss eine Bindung ueber Format-E annehmen koennen.',
+      // contracts 9.x: FUNC -satisfy-> REQ verlangt kinds am Ziel (where-Prädikat).
+      kinds: ['functional'],
     },
   ],
   traces: [],

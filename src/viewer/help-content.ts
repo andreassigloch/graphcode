@@ -615,7 +615,6 @@ export const HELP_VOCAB: Record<string, HelpVocabEntry> = {
   TEST: { plain: 'a check that proves a feature works', se: 'test case' },
   MOD: { plain: 'a module / code package', se: 'module (structural unit)' },
   SCHEMA: { plain: 'the shape of a piece of data', se: 'data schema' },
-  SESSION: { plain: 'one recorded work session', se: 'session (audit/provenance record)' },
   CR: { plain: 'one unit of planned work', se: 'change request' },
   MS: { plain: 'a delivery milestone', se: 'milestone' },
   // Trace types (links between things).
@@ -625,7 +624,6 @@ export const HELP_VOCAB: Record<string, HelpVocabEntry> = {
   io: { plain: '"data in / out" (function or actor ↔ a data flow)', se: 'input/output interface' },
   allocate: { plain: '"runs inside" (a function → a module)', se: 'allocation (function → structural unit)' },
   relation: { plain: 'a general link (e.g. a work item → a milestone)', se: 'generic association' },
-  produces: { plain: '"creates / emits" (a step → the data or record it makes)', se: 'produces (output association)' },
   'depends-on': { plain: '"must come after" (milestone → milestone)', se: 'dependency (a `relation` label)' },
 };
 

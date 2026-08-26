@@ -65,6 +65,7 @@ const MEMBER_FORMAT_E = [
   '+ MOD-acme|Module satisfying the cold-start requirement [__name:ACME module]',
   '### REQ',
   '+ REQ-acme-root|First requirement of the new ACME member graph [__name:ACME root requirement]',
+  '@kinds ["non-functional"]',
   '### SYS',
   '+ SYS-acme|Cold-start system of the new ACME family member [__name:ACME system]',
   '### TEST',
@@ -148,7 +149,7 @@ describe('TEST-mvp-e2e: MVP-1 loop (bootstrap → spec → impact → implement 
   // ── STEP 3 — SPEC NODES THROUGH THE GATE + GOVERNANCE (UC-code-quality) ──────
   it('3a. UC-code-quality: spec a feature (REQ + verifying TEST + satisfying MOD) is ACCEPTED by the gate', async () => {
     const spec: MutateCommand[] = [
-      { op: 'add-node', node: { uid: 'REQ-login', type: 'REQ', name: 'Login requirement', description: 'A user can log in', attributes: {} } },
+      { op: 'add-node', node: { uid: 'REQ-login', type: 'REQ', name: 'Login requirement', description: 'A user can log in', attributes: { kinds: ['non-functional'] } } },
       { op: 'add-node', node: { uid: 'TEST-login', type: 'TEST', name: 'Login test', description: 'verifies REQ-login', attributes: {} } },
       { op: 'add-node', node: { uid: 'MOD-auth', type: 'MOD', name: 'Auth module', description: 'satisfies REQ-login', attributes: {} } },
       { op: 'add-edge', edge: { sourceId: 'TEST-login', targetId: 'REQ-login', edgeType: 'verify', attributes: {} } },

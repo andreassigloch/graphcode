@@ -74,8 +74,13 @@ export const ARCH_FIXTURE: FixtureGraph = {
     { id: 'UC-ingest', type: 'UC', name: 'Operator ingests a document', description: 'Operator submits a document and receives a parsed result.' },
     { id: 'UC-review', type: 'UC', name: 'Auditor reviews a result', description: 'Auditor opens a parsed result and confirms or rejects it.' },
 
-    { id: 'REQ-parse-accuracy', type: 'REQ', name: 'Parse accuracy', description: 'The parser resolves at least 95 percent of the fields it claims to support.' },
-    { id: 'REQ-render-latency', type: 'REQ', name: 'Render latency', description: 'A parsed result renders in under 300 ms at reference size.' },
+    { id: 'REQ-parse-accuracy', type: 'REQ', name: 'Parse accuracy', description: 'The parser resolves at least 95 percent of the fields it claims to support.', kinds: ['functional'] },
+    { id: 'REQ-render-latency', type: 'REQ', name: 'Render latency', description: 'A parsed result renders in under 300 ms at reference size.', kinds: ['functional'] },
+
+    // contracts 9.x: UC-02 prüft ERREICHBARKEIT (ACTOR io→FLOW io→FUNC, FUNC in einer
+    // FCHAIN des UC) — die Ketten sind seither Teil des tragenden Pfads, nicht Beiwerk.
+    { id: 'FCHAIN-ingest', type: 'FCHAIN', name: 'Ingest chain', description: 'Document in, parsed result out.' },
+    { id: 'FCHAIN-review', type: 'FCHAIN', name: 'Review chain', description: 'Parsed result in, verdict out.' },
 
     {
       id: 'TEST-parse',
@@ -116,9 +121,15 @@ export const ARCH_FIXTURE: FixtureGraph = {
     { source: 'SYS-steering', target: 'UC-ingest', type: 'compose' },
     { source: 'SYS-steering', target: 'UC-review', type: 'compose' },
 
-    { source: 'ACTOR-operator', target: 'UC-ingest', type: 'io' },
-    // ACTOR-auditor has NO io trace to UC-review on purpose — that is the UC-02
-    // finding whose fix template T-C2 applies for real.
+    // contracts 9.x: der tragende Pfad ist ACTOR io→FLOW io→FUNC (FUNC in der FCHAIN
+    // des UC) — die frühere Direktkante ACTOR io→UC ist kein legales Pattern mehr.
+    { source: 'ACTOR-operator', target: 'FLOW-document', type: 'io' },
+    { source: 'UC-ingest', target: 'FCHAIN-ingest', type: 'compose' },
+    { source: 'FCHAIN-ingest', target: 'FUNC-parse', type: 'compose' },
+    { source: 'UC-review', target: 'FCHAIN-review', type: 'compose' },
+    { source: 'FCHAIN-review', target: 'FUNC-render', type: 'compose' },
+    // ACTOR-auditor is deliberately NOT wired to any FLOW of FCHAIN-review — that is
+    // the UC-02 finding (UC-review unreachable) whose fix template T-C2 applies for real.
 
     { source: 'UC-ingest', target: 'REQ-parse-accuracy', type: 'compose' },
     { source: 'UC-review', target: 'REQ-render-latency', type: 'compose' },
@@ -133,9 +144,9 @@ export const ARCH_FIXTURE: FixtureGraph = {
     { source: 'FUNC-render', target: 'MOD-presentation', type: 'allocate' },
     // FUNC-audit is deliberately unallocated — R-22 fires (finding without template).
 
-    { source: 'FUNC-parse', target: 'FLOW-document', type: 'io' },
+    { source: 'FLOW-document', target: 'FUNC-parse', type: 'io' },
     { source: 'FUNC-parse', target: 'FLOW-result', type: 'io' },
-    { source: 'FUNC-render', target: 'FLOW-result', type: 'io' },
+    { source: 'FLOW-result', target: 'FUNC-render', type: 'io' },
 
     { source: 'FLOW-result', target: 'SCHEMA-result', type: 'relation' },
     // FLOW-document has no SCHEMA — SC-02/SC-04 fire.
@@ -181,6 +192,7 @@ export const GATE_FIXTURE: FixtureGraph = {
       type: 'REQ',
       name: 'Audit trail completeness',
       description: 'Every accepted mutation appends exactly one record to the audit trail.',
+      kinds: ['functional'],
     },
   ],
   traces: [
@@ -296,7 +308,9 @@ export function scriptedActor(focus: ParsedFocus, seq: number): unknown[] | null
       for (const fn of elementIds) {
         const req = `REQ-${fn}-${seq}`;
         const test = `TEST-${fn}-${seq}`;
-        cmds.push(node(req, 'REQ', `Requirement behind ${fn}`, `${fn} shall produce its documented result for every accepted input.`));
+        // contracts 9.x: FUNC -satisfy-> REQ verlangt kinds am REQ (where-Prädikat) —
+        // ohne Deklaration lehnt R-18 die Kante ab.
+        cmds.push(node(req, 'REQ', `Requirement behind ${fn}`, `${fn} shall produce its documented result for every accepted input.`, { kinds: ['functional'] }));
         cmds.push(
           node(test, 'TEST', `Test for ${fn}`, `Drives ${fn} over the accepted input set and asserts the documented result.`, {
             testRefs: testRefFor(test, fn),
@@ -312,10 +326,17 @@ export function scriptedActor(focus: ParsedFocus, seq: number): unknown[] | null
       for (const fn of elementIds) cmds.push(edge(fn, 'allocate', 'MOD-parsing'));
       return cmds;
 
-    // An ACTOR with no io into a use case.
+    // An ACTOR with no io wiring (R-16: element = the ACTOR) — wire it to the fixed
+    // anchor FLOW (contracts 9.x: ACTOR io→UC is no longer a legal pattern).
     case 'R-16':
+      for (const id of elementIds) cmds.push(edge(id, 'io', 'FLOW-document'));
+      return cmds;
+
+    // A UC unreachable from any ACTOR (UC-02: element = the UC). Canonical repair per
+    // fix_hint: deliver the chain's FLOW to the actor (FLOW io→ACTOR) — fixed anchors,
+    // the actuator stays dumb.
     case 'UC-02':
-      for (const id of elementIds) cmds.push(edge(id, 'io', 'UC-ingest'));
+      cmds.push(edge('FLOW-result', 'io', 'ACTOR-auditor'));
       return cmds;
 
     // A FLOW with no data contract.

@@ -21,8 +21,8 @@
  * @author andreas@siglochconsulting
  */
 import { MutateCommandSchema, type MutateCommand } from '@sigloch/contracts/harness';
-import { TRACE_PATTERNS, isValidTrace } from '@sigloch/contracts/se';
-import type { ElementType, TraceType } from '@sigloch/contracts/se';
+import { TRACE_PATTERNS, isValidTrace, normalizeReqKinds } from '@sigloch/contracts/se';
+import type { ElementType, ReqKind, TraceType } from '@sigloch/contracts/se';
 
 /** Graph-Zustand, gegen den der Batch geprüft wird (aus den Registry-Tools). */
 export interface PreflightKnown {
@@ -30,6 +30,13 @@ export interface PreflightKnown {
   types: Map<string, string>;
   /** REQ-uids, die im Graphen bereits eine eingehende verify-Kante tragen. */
   verifiedReqs: Set<string>;
+  /**
+   * uid → deklarierte `kinds` (roh, wie am Knoten). Seit contracts 9.x tragen die
+   * satisfy-Patterns ein `where`-Prädikat auf `REQ.kinds`; `isValidTrace` ohne
+   * deklarierte Kinds lehnt diese Patterns ab („unentscheidbar" heißt nicht „erlaubt").
+   * Fehlt die Map (ältere Aufrufer), bleibt das Verhalten das ablehnende.
+   */
+  kinds?: Map<string, unknown>;
 }
 
 export interface PreflightViolation {
@@ -53,8 +60,20 @@ export interface PreflightOutcome {
 /** Nur diese Ops versteht der Preflight — alles andere reicht er unverändert durch. */
 const SIMPLE_OPS = new Set(['add-node', 'add-edge']);
 
-const legalPair = (source: string, target: string, edgeType: string): boolean =>
-  isValidTrace({ source: source as ElementType, target: target as ElementType, type: edgeType as TraceType });
+const legalPair = (
+  source: string,
+  target: string,
+  edgeType: string,
+  sourceKinds?: readonly string[],
+  targetKinds?: readonly string[],
+): boolean =>
+  isValidTrace({
+    source: source as ElementType,
+    target: target as ElementType,
+    type: edgeType as TraceType,
+    sourceKinds: sourceKinds as readonly ReqKind[] | undefined,
+    targetKinds: targetKinds as readonly ReqKind[] | undefined,
+  });
 
 /** Legale ausgehende Kanten eines Typs — für das R-18-Feedback (aus TRACE_PATTERNS, nie lokal). */
 function legalEdgesOf(type: string): string {
@@ -124,6 +143,15 @@ export function preflightBatch(raw: unknown, known: PreflightKnown): PreflightOu
   const typeOf = new Map(known.types);
   for (const c of parsed) if (c.op === 'add-node') typeOf.set(c.node.uid, c.node.type);
 
+  // uid → deklarierte kinds über Graph ∪ Batch — die satisfy-`where`-Patterns (contracts 9.x)
+  // sind nur mit den Kinds des REQ-Endes entscheidbar. Batch-Knoten sehen ihre EIGENEN Kinds.
+  const rawKinds = new Map(known.kinds ?? []);
+  for (const c of parsed) if (c.op === 'add-node') rawKinds.set(c.node.uid, c.node.attributes?.kinds);
+  const kindsOf = (uid: string): readonly string[] | undefined => {
+    const k = normalizeReqKinds(rawKinds.get(uid));
+    return k.length > 0 ? k : undefined;
+  };
+
   const fixes: string[] = [];
   const violations: PreflightViolation[] = [];
 
@@ -134,8 +162,8 @@ export function preflightBatch(raw: unknown, known: PreflightKnown): PreflightOu
     const sT = typeOf.get(sourceId);
     const tT = typeOf.get(targetId);
     if (!sT || !tT) return c; // unbekannte Referenz → R-08 unten übernimmt
-    if (legalPair(sT, tT, edgeType)) return c;
-    if (legalPair(tT, sT, edgeType)) {
+    if (legalPair(sT, tT, edgeType, kindsOf(sourceId), kindsOf(targetId))) return c;
+    if (legalPair(tT, sT, edgeType, kindsOf(targetId), kindsOf(sourceId))) {
       fixes.push(
         `R-18 auto-flip: ${sourceId} ${edgeType} ${targetId} → ${targetId} ${edgeType} ${sourceId} ` +
           `(legal ist ${tT} ${edgeType} ${sT})`,

@@ -38,7 +38,9 @@ function allocDeficientGraph(): Graph {
     node('Frontend.MD.002', 'MOD', 'Frontend'),
   ];
   const edges: GraphEdge[] = [
-    edge('Customer.AC.001', 'io', 'PlaceOrder.UC.001'),
+    // contracts 9.x: ACTOR io→UC ist kein legales Pattern mehr — der tragende Pfad
+    // läuft über den FLOW in die FCHAIN des UC (UC-02 prüft Erreichbarkeit).
+    edge('Customer.AC.001', 'io', 'OrderData.FL.001'),
     edge('PlaceOrder.UC.001', 'compose', 'OrderReq.RQ.001'),
     edge('PlaceOrder.UC.001', 'compose', 'OrderReq.RQ.002'),
     edge('PlaceOrder.UC.001', 'compose', 'OrderReq.RQ.003'),

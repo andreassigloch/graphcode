@@ -231,6 +231,34 @@ export function renderConOps(graph: Graph, name: string): string {
   const compose = adjacency(graph, 'compose');
   const relation = adjacency(graph, 'relation');
 
+  // contracts 9.x: die Direktkante `ACTOR io→UC` ist entfallen — die UC-Kopplung eines
+  // Actors ist die ERREICHBARKEIT über den tragenden Pfad `ACTOR io↔ FLOW io↔ FUNC`,
+  // FUNC in einer FCHAIN des UC, in BEIDE Richtungen (dieselbe Ableitung wie UC-02).
+  const funcToUcs = new Map<string, Set<string>>();
+  for (const uc of ucs) {
+    for (const chain of (compose.fwd.get(uc.uid) ?? []).filter((t) => idx.get(t)?.type === 'FCHAIN')) {
+      for (const fn of (compose.fwd.get(chain) ?? []).filter((t) => idx.get(t)?.type === 'FUNC')) {
+        if (!funcToUcs.has(fn)) funcToUcs.set(fn, new Set());
+        funcToUcs.get(fn)!.add(uc.uid);
+      }
+    }
+  }
+  const ucsOfActor = (actorUid: string): string[] => {
+    const reached = new Set<string>();
+    // Trigger-Richtung: ACTOR io→ FLOW io→ FUNC.
+    for (const flow of (io.fwd.get(actorUid) ?? []).filter((t) => idx.get(t)?.type === 'FLOW')) {
+      for (const fn of io.fwd.get(flow) ?? []) for (const uc of funcToUcs.get(fn) ?? []) reached.add(uc);
+    }
+    // Liefer-Richtung: FUNC io→ FLOW io→ ACTOR.
+    for (const flow of (io.rev.get(actorUid) ?? []).filter((t) => idx.get(t)?.type === 'FLOW')) {
+      for (const fn of io.rev.get(flow) ?? []) {
+        if (idx.get(fn)?.type !== 'FUNC') continue;
+        for (const uc of funcToUcs.get(fn) ?? []) reached.add(uc);
+      }
+    }
+    return [...reached].sort((x, y) => x.localeCompare(y));
+  };
+
   const lines: string[] = [
     generatedHeader(
       name,
@@ -265,9 +293,7 @@ export function renderConOps(graph: Graph, name: string): string {
     lines.push('— keine ACTOR im Graph —', '');
   } else {
     for (const a of actors) {
-      const triggered = (io.fwd.get(a.uid) ?? [])
-        .filter((t) => idx.get(t)?.type === 'UC')
-        .sort((x, y) => x.localeCompare(y));
+      const triggered = ucsOfActor(a.uid);
       const suffix = triggered.length > 0 ? ` — triggert ${refList(triggered)}` : ' — keine UC-Kopplung im Graph';
       lines.push(`- ${ref(a.uid)} — ${cell(a.name)}${suffix}`);
     }
@@ -280,8 +306,9 @@ export function renderConOps(graph: Graph, name: string): string {
     lines.push('— keine UC im Graph —', '');
   } else {
     for (const uc of ucs) {
-      const actorsOf = (io.rev.get(uc.uid) ?? [])
-        .filter((s) => idx.get(s)?.type === 'ACTOR')
+      const actorsOf = actors
+        .filter((a) => ucsOfActor(a.uid).includes(uc.uid))
+        .map((a) => a.uid)
         .sort((x, y) => x.localeCompare(y));
       lines.push(`### ${ref(uc.uid)} — ${cell(uc.name)}`, '');
       lines.push(cell(uc.description || uc.name), '');

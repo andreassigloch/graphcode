@@ -31,7 +31,7 @@ function makeHarness(repoRoot: string): GraphCodeHarness {
 // A gate-valid slice: REQ + verifying TEST (R-01) + satisfying MOD (RD-01) + SYS compose (R-17).
 const SPEC: MutateCommand[] = [
   { op: 'add-node', node: { uid: 'SYS-auth', type: 'SYS', name: 'Auth service', description: 'demo', attributes: {} } },
-  { op: 'add-node', node: { uid: 'REQ-reset', type: 'REQ', name: 'Password reset', description: 'reset', attributes: {} } },
+  { op: 'add-node', node: { uid: 'REQ-reset', type: 'REQ', name: 'Password reset', description: 'reset', attributes: { kinds: ['non-functional'] } } },
   { op: 'add-node', node: { uid: 'TEST-reset', type: 'TEST', name: 'Reset test', description: '', attributes: {} } },
   { op: 'add-node', node: { uid: 'MOD-reset', type: 'MOD', name: 'Reset handler', description: '', attributes: {} } },
   { op: 'add-edge', edge: { sourceId: 'SYS-auth', targetId: 'REQ-reset', edgeType: 'compose', attributes: {} } },

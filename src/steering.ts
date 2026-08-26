@@ -76,19 +76,21 @@ export function nextStep(graph: Graph, policy: MetricPolicy, focusThreshold: num
   // violations (lowest score, tie-broken by violation count). This is the
   // direct signal for "what to fix next"; the weight vector is the finer D1–D6
   // guidance surfaced alongside.
+  // Nicht messbar (score null, contracts 9.x) rankt OBEN — „existiert noch gar nicht" ist
+  // der dringendere Hinweis als „gemessen schwach"; naives a.score-b.score ergäbe NaN.
   const top = report.scores
     .filter((s) => s.applicable > 0 && s.violations > 0)
-    .sort((a, b) => a.score - b.score || b.violations - a.violations)[0];
+    .sort((a, b) => (a.score ?? -1) - (b.score ?? -1) || b.violations - a.violations)[0];
 
   let step: NextStepResult['nextStep'] = null;
   if (top) {
     const dimViolations = violations.filter((v) => RULE_TO_DIMENSION[v.rule_id] === top.dimension);
     step = {
       dimension: top.dimension,
-      deficit: Math.round((1 - top.score) * 1000) / 1000,
+      deficit: Math.round((1 - (top.score ?? 0)) * 1000) / 1000,
       clears: countByRule(dimViolations).map(({ rule_id, count }) => `${rule_id} x${count}`),
       action: DIMENSION_ACTION[top.dimension] ?? 'Address the highest-deficit dimension',
-      why: `${top.dimension} readiness is the lowest with actionable findings (score ${top.score}); clearing these advances the gate the most`,
+      why: `${top.dimension} readiness is the lowest with actionable findings (score ${top.score ?? 'not yet measurable'}); clearing these advances the gate the most`,
     };
   }
 

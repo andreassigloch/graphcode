@@ -54,8 +54,8 @@ const edge = (sourceId: string, edgeType: string, targetId: string): MutateComma
  */
 const SEED: MutateCommand[] = [
   node('SYS-t', 'SYS', 'Test system'),
-  node('REQ-ran', 'REQ', 'Requirement with a run'),
-  node('REQ-never', 'REQ', 'Requirement never run'),
+  node('REQ-ran', 'REQ', 'Requirement with a run', { kinds: ['non-functional'] }),
+  node('REQ-never', 'REQ', 'Requirement never run', { kinds: ['non-functional'] }),
   node('TEST-ran', 'TEST', 'Ran test', { testRefs: [{ file: 'tests/ran.test.ts', tool: 'vitest' }] }),
   node('TEST-never', 'TEST', 'Never run test', { testRefs: [{ file: 'tests/never.test.ts', tool: 'vitest' }] }),
   node('MOD-t', 'MOD', 'Test module'),

@@ -67,8 +67,9 @@ export function takeSteeringSnapshot(
 }
 
 export const SteeringDimensionDelta = z.object({
-  before: z.number(),
-  after: z.number(),
+  // null = nicht messbar (Kernmenge leer, contracts 9.x) — nie 0 %.
+  before: z.number().nullable(),
+  after: z.number().nullable(),
   delta: z.number(),
 });
 export type SteeringDimensionDelta = z.infer<typeof SteeringDimensionDelta>;
@@ -96,8 +97,13 @@ export function computeSteeringDelta(before: SteeringSnapshot, after: SteeringSn
   for (const a of after.report.scores) {
     const b = beforeByDim.get(a.dimension as string);
     if ((b?.applicable ?? 0) === 0 && a.applicable === 0) continue;
-    const bScore = b?.score ?? 0;
-    dimensions[a.dimension as string] = { before: bScore, after: a.score, delta: a.score - bScore };
+    // Delta über nicht messbare Seiten: null zählt als 0 — „wird messbar" ist Fortschritt,
+    // die before/after-Werte selbst bleiben ehrlich null.
+    dimensions[a.dimension as string] = {
+      before: b?.score ?? null,
+      after: a.score,
+      delta: (a.score ?? 0) - (b?.score ?? 0),
+    };
   }
   return {
     blockingErrors: { before: before.blockingErrors, after: after.blockingErrors },

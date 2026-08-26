@@ -48,12 +48,16 @@ describe('TEST-graph-authoring-guide (CR-GC-231): legal edges from the meta-mode
     // Outgoing: UC composes REQ and FCHAIN.
     const out = guide.outgoing.map((e) => `${e.edgeType}->${e.targetType}`);
     expect(out).toEqual(expect.arrayContaining(['compose->REQ', 'compose->FCHAIN']));
-    // Incoming: SYS compose, FUNC satisfy, ACTOR/FLOW io.
+    // Incoming: SYS/MS compose, CR relation.
     const inc = guide.incoming.map((e) => `${e.sourceType}-${e.edgeType}`);
     // CR-GC-366: 'FUNC-satisfy' ist hier weg — ein UC wird nicht mehr direkt von einer FUNC
     // erfuellt, sondern ueber `UC -compose-> FCHAIN -compose-> FUNC` erreicht.
-    expect(inc).toEqual(expect.arrayContaining(['SYS-compose', 'ACTOR-io', 'FLOW-io']));
+    // contracts 9.x (CR-SM-266 D1/D4): auch 'ACTOR-io'/'FLOW-io' sind entfallen — der
+    // tragende Pfad ist ACTOR io→FLOW io→FUNC in der FCHAIN des UC.
+    expect(inc).toEqual(expect.arrayContaining(['SYS-compose', 'MS-compose', 'CR-relation']));
     expect(inc).not.toContain('FUNC-satisfy');
+    expect(inc).not.toContain('ACTOR-io');
+    expect(inc).not.toContain('FLOW-io');
     // requiredAttrs is present (an array, from the node descriptor).
     expect(Array.isArray(guide.requiredAttrs)).toBe(true);
     // Carries the meta-model descriptions/cardinality (not a bare pair list).

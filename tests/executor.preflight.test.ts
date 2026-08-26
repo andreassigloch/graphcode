@@ -74,7 +74,8 @@ const SEED_BATCH = {
     addNode('SYS-app', 'SYS', 'Test App', 'Eine Test-App für den Batch-Preflight.'),
     addNode('ACTOR-user', 'ACTOR', 'User', 'Nutzt die App.'),
     addNode('UC-login', 'UC', 'Login', 'User meldet sich an und erhält Zugriff auf die App.'),
-    addEdge('ACTOR-user', 'UC-login', 'io'),
+    // contracts 9.x: ACTOR io→UC ist kein legales Pattern mehr — der Actor bleibt im
+    // Seed unverbunden (R-16 warning, non-gating); die Anbindung läuft über FLOW/FUNC.
     addEdge('SYS-app', 'UC-login', 'compose'),
   ],
 };
@@ -286,7 +287,6 @@ describe('executor preflight (CR-GC-284, real harness)', () => {
       commands: [
         addNode('UC-export', 'UC', 'Export', 'User exportiert den Stand und erhält die Datei.'),
         addEdge('SYS-app', 'UC-export', 'compose'),
-        addEdge('ACTOR-user', 'UC-export', 'io'),
       ],
     };
     const { callModel, calls } = scriptedModel([
@@ -313,7 +313,7 @@ describe('executor preflight (CR-GC-284, real harness)', () => {
     const g = harness.getGraph();
     expect(g.edges.some((e) => e.targetId === 'UC-logn')).toBe(false);
     expect(g.nodes.map((n) => n.uid)).toContain('UC-export');
-    expect(g.edges.length).toBe(before + 2);
+    expect(g.edges.length).toBe(before + 1);
   });
 
   // -------------------------------------------------------------------------
@@ -337,7 +337,6 @@ describe('executor preflight (CR-GC-284, real harness)', () => {
         addEdge('TEST-batch-atomicity', 'REQ-batch-atomicity-all-or-nothing', 'verify'),
         addNode('UC-export-graph', 'UC', 'User exports the current graph state', 'A user requests and downloads the governed graph in a specified format.'),
         addEdge('SYS-app', 'UC-export-graph', 'compose'),
-        addEdge('ACTOR-user', 'UC-export-graph', 'io'),
       ],
     })) as { success: boolean };
     expect(seeded.success).toBe(true);
@@ -357,7 +356,6 @@ describe('executor preflight (CR-GC-284, real harness)', () => {
         addEdge('TEST-batch-atomicity-2', 'REQ-batch-atomicity-measurable', 'verify'),
         addNode('UC-export-flow', 'UC', 'User exports current graph state', 'Logged-in user requests and downloads the governed graph in Format-E v2.'),
         addEdge('SYS-app', 'UC-export-flow', 'compose'),
-        addEdge('ACTOR-user', 'UC-export-flow', 'io'),
       ],
     };
     const { callModel, calls } = scriptedModel([toolCallResponse('c1', dupBatch)]);
@@ -393,7 +391,6 @@ describe('executor preflight (CR-GC-284, real harness)', () => {
       commands: [
         addNode('UC-audit-review', 'UC', 'Admin reviews audit trail', 'Admin filters mutation history entries by consumer and time range.'),
         addEdge('SYS-app', 'UC-audit-review', 'compose'),
-        addEdge('ACTOR-user', 'UC-audit-review', 'io'),
       ],
     };
     const { callModel } = scriptedModel([toolCallResponse('c1', distinct)]);

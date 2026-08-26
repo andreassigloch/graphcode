@@ -39,7 +39,8 @@ export const GenerationStep = z.object({
   /** Die konkrete generative Instruktion für den MCP-Host. */
   prompt: z.string(),
   /** Readiness-Stand je anwendbarer Dimension. */
-  readiness: z.array(z.object({ dimension: z.string(), score: z.number(), violations: z.number() })),
+  // score: null = „nicht messbar" (Kernmenge leer, contracts 9.x) — nie 0 %.
+  readiness: z.array(z.object({ dimension: z.string(), score: z.number().nullable(), violations: z.number() })),
   threshold: z.number(),
   /** Error-Violations (Gate-Blocker) — müssen vor dem Handoff auf 0. */
   blockingErrors: z.number(),
@@ -113,12 +114,12 @@ const RULE_CLAUSE: Record<string, (uids: string[]) => string> = {
 
 /** Generative Instruktion je Readiness-Dimension (die Schreib-Zwillinge der graph_next_step-Aktionen). */
 const GENERATION_TEMPLATE: Record<string, string> = {
-  uc: 'Schlage je Fund 2–3 Kandidaten vor: fehlende ACTORs (io→UC), FCHAIN-Szenarien (UC compose FCHAIN) oder fehlende UCs aus der Intention. UC-Stil: Actor–Verb–Objekt–Ergebnis, ≤25 Wörter (Skill se:author-uc).',
+  uc: 'Schlage je Fund 2–3 Kandidaten vor: fehlende ACTORs (Anbindung ACTOR io→FLOW io→FUNC in der FCHAIN des UC), FCHAIN-Szenarien (UC compose FCHAIN) oder fehlende UCs aus der Intention. UC-Stil: Actor–Verb–Objekt–Ergebnis, ≤25 Wörter (Skill se:author-uc).',
   req: 'Schlage je UC ohne Requirements 3–5 REQ-Kandidaten vor (UC compose REQ), präzise und prüfbar formuliert; emittiere jede neue REQ zusammen mit einem TEST (TEST verify REQ) im selben Batch — eine REQ ohne verify-TEST blockt das Gate (R-01). Löse Platzhalter/Ambiguität in bestehenden REQs auf.',
   arch: 'Zerlege je Fund die FCHAIN/FUNC-Ebene: 7±2 FUNCs pro Zerlegungsebene (RD-04), FLOWs zwischen FUNCs (io). Schlage je Fund 2 alternative FUNC/FCHAIN-Zerlegungen vor — jede neue FUNC zusammen mit satisfy→REQ und allocate→MOD im selben Batch (fehlt die REQ oder das MOD im Graphen, zuerst anlegen). Lass das Gate wählen.',
   alloc: 'Schlage MOD-Schnitte vor (intern stark, extern schwach gekoppelt) und allocate-Kanten FUNC→MOD; 2 Alternativen, Δm-Vergleich entscheidet.',
   ver: 'Schlage je unverifiziertem REQ einen TEST-Kandidaten vor (TEST verify REQ), mit konkretem Prüfschritt in der description.',
-  schema: 'Schlage SCHEMA-Definitionen für die FLOWs ohne Schema vor (FLOW relation SCHEMA bzw. produces), eine pro Datenform, wiederverwendet statt dupliziert.',
+  schema: 'Schlage SCHEMA-Definitionen für die FLOWs ohne Schema vor (FLOW relation SCHEMA), eine pro Datenform, wiederverwendet statt dupliziert.',
   cr: 'Lege CR-Knoten für die anstehenden Umbauten an (CR relation FUNC/MOD, status/commitRef nach Abschluss).',
   ms: 'Schlage 2–4 Milestones mit depends-on-Reihenfolge vor (MS relation MS) und ordne CRs zu (CR relation MS).',
 };
@@ -238,7 +239,8 @@ export function generationStep(
       `Kaltstart aus der Intention: "${effectiveIntent}" — ` +
       'Schlage EINEN Seed-Batch vor: 1 SYS-Wurzel (description = die Intention wörtlich), ' +
       '1–3 ACTORs (wer nutzt/betreibt das System) und 3–7 UCs (je Actor–Verb–Objekt–Ergebnis, ≤25 Wörter, ' +
-      'ACTOR io→UC, SYS compose UC). Keine FUNC/MOD-Ebene im Seed — Struktur folgt readiness-getrieben. ' +
+      'SYS compose UC; ACTORs bleiben im Seed unverbunden — die io-Anbindung läuft über ' +
+      'ACTOR io→FLOW io→FUNC und folgt mit der Struktur). Keine FUNC/MOD-Ebene im Seed — Struktur folgt readiness-getrieben. ' +
       steeringNote;
     return {
       phase: 'seed',
@@ -274,7 +276,9 @@ export function generationStep(
   // während PDR/SRR/... noch Regel-Funde offen hat, die die Dimension-Score-
   // Ratio über viele Elemente verdünnt (real passiert: arch-Readiness 0.86 bei
   // null FLOWs — R-10 blieb unter der Schwelle unsichtbar).
-  const belowThreshold = readiness.filter((r) => r.score < threshold);
+  // null = nicht messbar → „existiert noch gar nicht" blockiert den Handoff wie ein
+  // Unterschreiten der Schwelle (CR-GC-429 §5 — nie als 0 % oder als bestanden werten).
+  const belowThreshold = readiness.filter((r) => r.score === null || r.score < threshold);
   if (belowThreshold.length === 0 && blockingErrors === 0 && openGate === null) {
     // CR-GC-295: das Zielprofil kommt aus der Config (Mensch entscheidet in
     // Runde 1), nicht mehr als Erfindungs-Auftrag ans Modell.
@@ -310,9 +314,10 @@ export function generationStep(
   // sortierten Violations je Dimension (schwächste zuerst). Fenster, deren
   // focusKey in `defer` liegt, werden übersprungen — erst innerhalb der
   // Dimension, dann die nächstschwächere. Alles deferred ⇒ defer ignorieren.
+  // Nicht messbar (null) rankt OBEN: ein naiver Komparator ergäbe NaN und sortierte gar nicht.
   const dims = [...report.scores]
     .filter((s) => s.applicable > 0 && s.violations > 0)
-    .sort((a, b) => a.score - b.score || b.violations - a.violations);
+    .sort((a, b) => (a.score ?? -1) - (b.score ?? -1) || b.violations - a.violations);
   const violationsOf = (dimension: string): typeof violations =>
     violations
       .filter((v) => RULE_TO_DIMENSION[v.rule_id] === dimension)

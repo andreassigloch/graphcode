@@ -128,7 +128,7 @@ Five layers. Each one is computed, not estimated. Each is useful on its own.
 
 ### 1. The vocabulary — what may exist
 
-13 element types and 7 connection types. The elements cover the engineering side —
+12 element types and 6 connection types. The elements cover the engineering side —
 system, use case, actor, function, data flow, requirement, test, module, interface — and the process
 side: change requests, milestones, work sessions. Planning lives in the same graph as the design,
 not in a spreadsheet next to it.
@@ -138,7 +138,7 @@ is what makes everything below it comparable.
 
 ### 2. The grammar — how things may connect
 
-35 legal connection patterns. Which kind of element may be connected to which, and in what way.
+30 legal connection patterns. Which kind of element may be connected to which, and in what way.
 An illegal connection is not a warning in a report you might read — it never enters the graph.
 
 ### 3. Readiness — is it complete and well-formed?
