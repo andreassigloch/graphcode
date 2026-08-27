@@ -21,10 +21,10 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import { GraphCodeHarness } from '../src/harness/harness.js';
-import { bindToolsToHarness, type MCPToolRegistry } from '../src/tools/mcp-tools.js';
-import { parseVitestJson, verificationReport } from '../src/conformance/testreport.js';
-import { renderTestMatrix } from '../src/views/incose.js';
+import { GraphCodeHarness } from '../src/kernel/harness.js';
+import { bindToolsToHarness, type MCPToolRegistry } from '../src/surface/mcp-tools.js';
+import { parseVitestJson, verificationReport } from '../src/projections/verification-report.js';
+import { renderTestMatrix } from '../src/projections/incose.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
 
 function makeHarness(repoRoot: string): GraphCodeHarness {

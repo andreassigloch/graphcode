@@ -20,8 +20,8 @@
 import { describe, it, expect } from 'vitest';
 import type { Graph } from '@sigloch/graph-api-core';
 import type { RuleViolation } from '@sigloch/contracts/harness';
-import { computeReadiness, ABSENT_CREATION_PROVIDER } from '../src/steering/readiness.js';
-import { contextualHelp, MAX_EXAMPLE_ELEMENTS } from '../src/viewer/help.js';
+import { computeReadiness, ABSENT_CREATION_PROVIDER } from '../src/projections/readiness.js';
+import { contextualHelp, MAX_EXAMPLE_ELEMENTS } from '../src/surface/help.js';
 
 const EMPTY_GRAPH: Pick<Graph, 'nodes' | 'edges'> = { nodes: [], edges: [] };
 

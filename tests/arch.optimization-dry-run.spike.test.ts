@@ -38,11 +38,11 @@ import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { metrics, toArray, buildAdjacency, detectCommunities, modularityOf, modularityQ } from '@sigloch/se-engine';
 import { moduleMetrics } from '@sigloch/contracts/se';
 import type { MutateCommand } from '@sigloch/contracts/harness';
-import { GraphCodeHarness } from '../src/harness/harness.js';
-import { bindToolsToHarness, type MCPToolRegistry } from '../src/tools/mcp-tools.js';
-import { toOntologyGraph } from '../src/conformance/conformance.js';
+import { GraphCodeHarness } from '../src/kernel/harness.js';
+import { bindToolsToHarness, type MCPToolRegistry } from '../src/surface/mcp-tools.js';
+import { toOntologyGraph } from '../src/kernel/conformance.js';
 import { makeSteeringConfig, type FixtureGraph } from './fixtures/steering-graphs.js';
-import { batchFor, type GraphSuggestResult } from '../src/tools/suggest.js';
+import { batchFor, type GraphSuggestResult } from '../src/loop/suggest.js';
 
 const REPO_GRAPH = join(__dirname, '..', 'docs/graph/graphcode.graph.json');
 
@@ -84,7 +84,7 @@ const sha256 = (path: string) => createHash('sha256').update(readFileSync(path))
 
 // ---------------------------------------------------------------------------
 // Messwerk — dieselben Instrumente wie die beiden In-Memory-Skripte
-// (spike-arch-top-views/-handschnitt.mjs), damit die Zahlen vergleichbar sind.
+// (CR-GC-436 Lauf A/B), damit die Zahlen vergleichbar sind.
 // ---------------------------------------------------------------------------
 
 interface Snapshot {

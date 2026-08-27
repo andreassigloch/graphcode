@@ -22,12 +22,12 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import { GraphCodeHarness } from '../src/harness/harness.js';
-import { bindToolsToHarness } from '../src/tools/mcp-tools.js';
-import { registerAutoExport } from '../src/views/auto-export.js';
-import { writeFileAtomic } from '../src/tools/export.js';
+import { GraphCodeHarness } from '../src/kernel/harness.js';
+import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
+import { registerAutoExport } from '../src/projections/auto-export.js';
+import { writeFileAtomic } from '../src/projections/export.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
-import type { MCPTool } from '../src/tools/mcp-tools.js';
+import type { MCPTool } from '../src/surface/mcp-tools.js';
 
 const DEBOUNCE = 30;
 const SYSTEM_ID = 'autoexp';

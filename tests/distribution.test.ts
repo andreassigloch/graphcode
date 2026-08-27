@@ -193,7 +193,7 @@ describe('TEST-distribution: npx distribution', () => {
         .map((f) => f.replace(/^package\//, ''));
       expect(files).toContain('dist/cli.js');
       expect(files).toContain('dist/index.js');
-      expect(files).toContain('dist/harness/harness.js');
+      expect(files).toContain('dist/kernel/harness.js');
       expect(files.some((f) => f.startsWith('.claude/commands/se'))).toBe(true);
     } finally {
       rmSync(dir, { recursive: true, force: true });
@@ -210,7 +210,7 @@ describe('TEST-distribution: npx distribution', () => {
       JSON.parse(readFileSync(join(REPO_ROOT, 'package.json'), 'utf8')) as { version: string }
     ).version;
 
-    const built = join(REPO_ROOT, 'dist', 'tools', 'mcp-server.js');
+    const built = join(REPO_ROOT, 'dist', 'surface', 'mcp-server.js');
     expect(existsSync(built)).toBe(true);
 
     // No hardcoded semver may remain in the compiled module.

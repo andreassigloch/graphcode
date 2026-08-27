@@ -14,12 +14,12 @@
       "types": "./dist/index.d.ts"
     },
     "./harness": {
-      "import": "./dist/harness.js",
-      "types": "./dist/harness.d.ts"
+      "import": "./dist/kernel/harness.js",
+      "types": "./dist/kernel/harness.d.ts"
     },
     "./mcp": {
-      "import": "./dist/mcp-tools.js",
-      "types": "./dist/mcp-tools.d.ts"
+      "import": "./dist/surface/mcp-tools.js",
+      "types": "./dist/surface/mcp-tools.d.ts"
     }
   },
   "files": [

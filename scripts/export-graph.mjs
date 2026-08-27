@@ -12,7 +12,7 @@
 // from the committed SSOT JSON via the exact importGraph mapping, then render.
 // Full-attribute Kuzu persistence is a known follow-up.
 //
-// Logic lives in src/exporter.ts (built to dist/); this runner is thin.
+// Logic lives in src/projections/exporter.ts (built to dist/); this runner is thin.
 // Manual / CI sync use only. It REFUSES to clobber if anything is off.
 //
 // Usage: node scripts/export-graph.mjs

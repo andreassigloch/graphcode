@@ -26,9 +26,9 @@ import { execFileSync } from 'node:child_process';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import type { Graph } from '@sigloch/graph-api-core';
 import { KuzuAdapter } from './helpers/store.js';
-import { GraphCodeHarness } from '../src/harness/harness.js';
-import { bindToolsToHarness } from '../src/tools/mcp-tools.js';
-import { impactedTests, TestImpactResultSchema, TestSelectionSchema } from '../src/tools/test-selection.js';
+import { GraphCodeHarness } from '../src/kernel/harness.js';
+import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
+import { impactedTests, TestImpactResultSchema, TestSelectionSchema } from '../src/projections/test-selection.js';
 import {
   buildContext,
   coverage,
@@ -37,7 +37,7 @@ import {
   selectForChange,
   snapshotToGraph,
   type AuditContext,
-} from '../src/tools/test-selection-audit.js';
+} from '../src/projections/test-selection-audit.js';
 
 const REPO_ROOT = execFileSync('git', ['rev-parse', '--show-toplevel'], { encoding: 'utf8' }).trim();
 

@@ -25,7 +25,7 @@ import {
   persistIntentAnchors,
   loadTargetProfile,
   TARGET_PROFILE_REL,
-} from '../src/steering/target-profile.js';
+} from '../src/loop/target-profile.js';
 
 /** Every string the human ever reads must be free of the steering vocabulary. */
 const STEERING_JARGON = [/intentions?-?anker/i, /intent\s*anchor/i, /intentAnchors/];
@@ -34,7 +34,7 @@ describe('CR-GC-307: the anchor vocabulary never reaches a human-facing string',
   it('the generate prompts carry no steering vocabulary', async () => {
     // Source-level grep: a review comment would let the term creep back on the next
     // edit. This is the enforcement.
-    const src = readFileSync(new URL('../src/steering/generate.ts', import.meta.url), 'utf8');
+    const src = readFileSync(new URL('../src/loop/generate.ts', import.meta.url), 'utf8');
     // Kommentare ZUERST entfernen (CR-GC-358): der Literal-Match unten ist ein naiver
     // Quote-Scanner, und ein einzelnes Apostroph in deutscher Kommentar-Prosa ("don't",
     // "das Modell's") verschiebt seine Paarbildung um eins — danach ist jedes gemeldete
@@ -59,7 +59,7 @@ describe('CR-GC-307: the anchor vocabulary never reaches a human-facing string',
     // The contrast case: `intentCoverage` in graph_readiness is a machine read-out
     // consumed by tooling, NOT prose shown to a person. It must NOT be renamed —
     // otherwise this CR would break the CR-GC-295 contract it builds on.
-    const src = readFileSync(new URL('../src/tools/report.ts', import.meta.url), 'utf8');
+    const src = readFileSync(new URL('../src/projections/report.ts', import.meta.url), 'utf8');
     expect(src).toContain('intentCoverage');
   });
 });

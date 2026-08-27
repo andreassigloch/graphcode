@@ -15,13 +15,13 @@ import { join, dirname } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import type { OntologyDescriptor } from '@sigloch/graph-api-core';
-import { GraphCodeHarness } from '../src/harness/harness.js';
+import { GraphCodeHarness } from '../src/kernel/harness.js';
 import {
   schemaFingerprint,
   readStoredFingerprint,
   writeStoredFingerprint,
   SCHEMA_FINGERPRINT_BASENAME,
-} from '../src/schema-migration/schema-guard.js';
+} from '../src/kernel/schema-guard.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 
 const SSOT = join(__dirname, '..', 'docs', 'graph', 'graphcode.graph.json');

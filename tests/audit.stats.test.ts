@@ -18,10 +18,10 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR, AUDIT_FILE } from '@sigloch/graph-api-core';
-import { GraphCodeHarness } from '../src/harness/harness.js';
-import { bindToolsWithContext, type MCPToolRegistry } from '../src/tools/mcp-tools.js';
-import type { ToolContext } from '../src/tools/tool-context.js';
-import { aggregateAuditEntries, type AuditStats } from '../src/tools/audit.js';
+import { GraphCodeHarness } from '../src/kernel/harness.js';
+import { bindToolsWithContext, type MCPToolRegistry } from '../src/surface/mcp-tools.js';
+import type { ToolContext } from '../src/surface/tool-context.js';
+import { aggregateAuditEntries, type AuditStats } from '../src/surface/audit.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
 
 function makeHarness(repoRoot: string): GraphCodeHarness {

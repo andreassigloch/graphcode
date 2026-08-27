@@ -31,14 +31,14 @@ import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { metrics, toArray } from '@sigloch/se-engine';
-import { GraphCodeHarness } from '../src/harness/harness.js';
-import { bindToolsToHarness, type MCPToolRegistry } from '../src/tools/mcp-tools.js';
-import { toOntologyGraph } from '../src/conformance/conformance.js';
-import { takeSteeringSnapshot } from '../src/steering/steering-snapshot.js';
-import { CONFIG_FILENAME, DEFAULT_FOCUS_THRESHOLD, loadGraphcodeConfig } from '../src/harness/config.js';
+import { GraphCodeHarness } from '../src/kernel/harness.js';
+import { bindToolsToHarness, type MCPToolRegistry } from '../src/surface/mcp-tools.js';
+import { toOntologyGraph } from '../src/kernel/conformance.js';
+import { takeSteeringSnapshot } from '../src/projections/steering-snapshot.js';
+import { CONFIG_FILENAME, DEFAULT_FOCUS_THRESHOLD, loadGraphcodeConfig } from '../src/kernel/config.js';
 import { DEFAULT_METRIC_POLICY } from '@sigloch/contracts/se';
 import { ARCH_FIXTURE, makeSteeringConfig } from './fixtures/steering-graphs.js';
-import type { GraphSuggestResult } from '../src/tools/suggest.js';
+import type { GraphSuggestResult } from '../src/loop/suggest.js';
 
 /** Canonical ℝ⁶ order — the one `toArray` and `Suggestion.delta` both use. */
 const DIMS = ['modifiability', 'faultTolerance', 'flowEfficiency', 'coherence', 'viability', 'scalability'] as const;

@@ -30,11 +30,11 @@ import {
   getND02SimilarityMatrix,
   type OntologyGraph,
 } from '@sigloch/contracts/se';
-import { GraphCodeHarness } from '../src/harness/harness.js';
-import { bindToolsToHarness } from '../src/tools/mcp-tools.js';
-import { evaluateAll, readinessOf, type Finding } from '../src/conformance/evaluation.js';
-import { takeSteeringSnapshot } from '../src/steering/steering-snapshot.js';
-import { injectNDMatrices, clearNDMatrices, withNDMatrices } from '../src/steering/nd-similarity.js';
+import { GraphCodeHarness } from '../src/kernel/harness.js';
+import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
+import { evaluateAll, readinessOf, type Finding } from '../src/kernel/evaluation.js';
+import { takeSteeringSnapshot } from '../src/projections/steering-snapshot.js';
+import { injectNDMatrices, clearNDMatrices, withNDMatrices } from '../src/projections/nd-similarity.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 
 /** Zwei feld- UND beschreibungsgleiche SCHEMAs — der ND-02-Fall. */

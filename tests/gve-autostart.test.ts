@@ -16,8 +16,8 @@ import { mkdtempSync, mkdirSync, writeFileSync, rmSync, realpathSync } from 'nod
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import type { spawn, ChildProcess } from 'node:child_process';
-import { ensureViewer } from '../src/cli/gve.js';
-import { SPAWN_LOCK_TTL_MS } from '../src/cli/gve-sessions.js';
+import { ensureViewer } from '../src/surface/gve.js';
+import { SPAWN_LOCK_TTL_MS } from '../src/surface/gve-sessions.js';
 
 type SpawnCall = { bin: string; args: string[] };
 

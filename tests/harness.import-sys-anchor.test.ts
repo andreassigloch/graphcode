@@ -20,8 +20,8 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import { GraphCodeHarness } from '../src/harness/harness.js';
-import { takeSteeringSnapshot } from '../src/steering/steering-snapshot.js';
+import { GraphCodeHarness } from '../src/kernel/harness.js';
+import { takeSteeringSnapshot } from '../src/projections/steering-snapshot.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 
 const SYSTEM_ID = 'testsystem';

@@ -37,8 +37,8 @@ import {
   ALL_RULE_DEFS,
   RULE_TO_DIMENSION,
 } from '@sigloch/contracts/se';
-import { GraphCodeHarness } from '../src/harness/harness.js';
-import { bindToolsToHarness } from '../src/tools/mcp-tools.js';
+import { GraphCodeHarness } from '../src/kernel/harness.js';
+import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 
 const REPO_ROOT = join(__dirname, '..');

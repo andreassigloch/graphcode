@@ -12,8 +12,8 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import { GraphCodeHarness } from '../src/harness/harness.js';
-import { bindToolsToHarness, type MCPToolRegistry } from '../src/tools/mcp-tools.js';
+import { GraphCodeHarness } from '../src/kernel/harness.js';
+import { bindToolsToHarness, type MCPToolRegistry } from '../src/surface/mcp-tools.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 import {
   TargetProfileSchema,
@@ -22,8 +22,8 @@ import {
   conflictWarnings,
   extractIntentAnchors,
   intentCoverage,
-} from '../src/steering/target-profile.js';
-import type { GraphSuggestResult } from '../src/tools/suggest.js';
+} from '../src/loop/target-profile.js';
+import type { GraphSuggestResult } from '../src/loop/suggest.js';
 
 describe('TargetProfileSchema (CR-GC-295)', () => {
   it('akzeptiert ein gültiges Profil (Gewichte + Anker)', () => {

@@ -18,7 +18,7 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { Graph, GraphNode, GraphEdge } from '@sigloch/graph-api-core';
-import { renderRtm, renderTestMatrix } from '../src/views/incose.js';
+import { renderRtm, renderTestMatrix } from '../src/projections/incose.js';
 
 function node(uid: string, type: string, attributes: Record<string, unknown> = {}): GraphNode {
   return { uid, type, name: uid, description: `${uid} beschreibt etwas.`, attributes };

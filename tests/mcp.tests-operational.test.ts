@@ -22,8 +22,8 @@ import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { TestRefsSchema } from '@sigloch/contracts/se';
-import { GraphCodeHarness } from '../src/harness/harness.js';
-import { bindToolsToHarness } from '../src/tools/mcp-tools.js';
+import { GraphCodeHarness } from '../src/kernel/harness.js';
+import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 
 function makeConfig(repoRoot: string): HarnessConfig {

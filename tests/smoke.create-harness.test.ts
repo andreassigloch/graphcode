@@ -13,7 +13,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createHarness } from '../src/index.js';
 import { scoreReadiness, bindToolsToHarness } from '../src/index.js';
-import type { LiveUpdateEvent } from '../src/hooks/emit.js';
+import type { LiveUpdateEvent } from '../src/surface/emit.js';
 
 const REAL_GRAPH = join(__dirname, '..', 'docs/graph/graphcode.graph.json');
 

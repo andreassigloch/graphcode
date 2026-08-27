@@ -13,9 +13,9 @@ import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import type { Graph } from '@sigloch/graph-api-core';
-import { GraphCodeHarness } from '../src/harness/harness.js';
-import { bindToolsToHarness, type MCPToolRegistry } from '../src/tools/mcp-tools.js';
-import { generationStep, DIMENSION_FOCUS_TYPES } from '../src/steering/generate.js';
+import { GraphCodeHarness } from '../src/kernel/harness.js';
+import { bindToolsToHarness, type MCPToolRegistry } from '../src/surface/mcp-tools.js';
+import { generationStep, DIMENSION_FOCUS_TYPES } from '../src/loop/generate.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 
 /**

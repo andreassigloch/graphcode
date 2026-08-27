@@ -280,7 +280,7 @@ function transform(raw, { realloc = {}, flowMerge = {}, schemaMerge = {} }) {
   };
 }
 
-// Handschnitt (8er-Schnitt) — Auszug aus scripts/spike-arch-handschnitt.mjs
+// Handschnitt (8er-Schnitt) — Auszug aus dem CR-GC-436-Spike (Lauf B, zurueckgebaut)
 const HANDSCHNITT = {
   realloc: {
     'FUNC-emit-trajectory': 'MOD-store', 'FUNC-emit-update-event': 'MOD-store',
@@ -307,7 +307,7 @@ const HANDSCHNITT = {
   schemaMerge: {},
 };
 
-// Regelkreis (5 Module + 5 Verträge) — Auszug aus scripts/spike-arch-regelkreis.mjs
+// Regelkreis (5 Module + 5 Verträge) — Auszug aus dem CR-GC-436-Nachtrag
 const RK_MODULES = {
   kernel: ['FUNC-mutate', 'FUNC-evaluate-rules', 'FUNC-load-config', 'FUNC-preflight', 'FUNC-save-graph', 'FUNC-load-graph', 'FUNC-open-store', 'FUNC-close-store', 'FUNC-claim-store-lock', 'FUNC-create-harness', 'FUNC-import', 'FUNC-seed-from-json', 'FUNC-reseed', 'FUNC-apply-reseed', 'FUNC-merge-nodes', 'FUNC-migrate-schema', 'FUNC-schema-guard', 'FUNC-bootstrap', 'FUNC-graph-impact', 'FUNC-graph-expand', 'FUNC-list-elements', 'FUNC-resolve-tests-from-code', 'FUNC-deduce-tests', 'FUNC-block-gate', 'FUNC-block-speicherwerk'],
   projections: ['FUNC-take-steering-snapshot', 'FUNC-compute-readiness', 'FUNC-compute-phase-readiness', 'FUNC-score-completeness', 'FUNC-compute-steering-delta', 'FUNC-fit-advisory', 'FUNC-nd-similarity', 'FUNC-module-metrics', 'FUNC-arch-fitness', 'FUNC-check-code-conformance', 'FUNC-encode', 'FUNC-decode', 'FUNC-export-markdown', 'FUNC-graph-export-snapshot', 'FUNC-auto-export', 'FUNC-export-marker', 'FUNC-emit-trajectory', 'FUNC-emit-update-event', 'FUNC-block-messwerk', 'FUNC-block-gedaechtnis', 'FUNC-block-dokumentenwerk'],

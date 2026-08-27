@@ -17,8 +17,8 @@ import {
   ExecutorConfigSchema,
   type ModelResponse,
   type CallModel,
-} from '../src/executor/executor.js';
-import { preflightBatch, fuzzyCandidates, type PreflightKnown } from '../src/executor/preflight.js';
+} from '../src/loop/executor.js';
+import { preflightBatch, fuzzyCandidates, type PreflightKnown } from '../src/loop/preflight.js';
 
 const CONFIG = ExecutorConfigSchema.parse({
   baseUrl: 'http://scripted.invalid',

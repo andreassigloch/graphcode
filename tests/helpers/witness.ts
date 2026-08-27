@@ -20,9 +20,9 @@
 import { createHash } from 'node:crypto';
 import type { Graph } from '@sigloch/graph-api-core';
 import { metrics, toArray, METRIC_DIMENSIONS } from '@sigloch/se-engine';
-import { toOntologyGraph } from '../../src/conformance/conformance.js';
-import { exportGraphJson } from '../../src/views/exporter.js';
-import type { TargetWeights } from '../../src/steering/target-profile.js';
+import { toOntologyGraph } from '../../src/kernel/conformance.js';
+import { exportGraphJson } from '../../src/projections/exporter.js';
+import type { TargetWeights } from '../../src/loop/target-profile.js';
 
 export interface WitnessSample {
   /** ℝ⁶-Metrikvektor m(G), layer 'arch', kanonische Dimensionsreihenfolge. */

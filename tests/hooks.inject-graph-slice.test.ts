@@ -23,8 +23,8 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawn } from 'node:child_process';
 import type { MutateCommand } from '@sigloch/contracts/harness';
-import { HostBridge } from '../src/viewer/host.js';
-import { buildJobSlice } from '../src/tools/read.js';
+import { HostBridge } from '../src/surface/host.js';
+import { buildJobSlice } from '../src/surface/read.js';
 
 const REPO = join(dirname(fileURLToPath(import.meta.url)), '..');
 const HOOK = join(REPO, '.claude', 'hooks', 'inject-graph-slice.sh');
@@ -71,7 +71,7 @@ describe('CR-GC-367: Job-Scheibe beim Task-Start', () => {
       // CR-GC-373: Provenienz-Attribute wie im echten SSOT (created_at auf Knoten,
       // weight:1/created_at auf Kanten) — die Agenten-Sicht muss sie weglassen,
       // die Arbeitsanweisung (realRef) muss bleiben.
-      { op: 'add-node', node: { uid: 'FUNC-inject-slice', type: 'FUNC', name: 'injectSlice()', description: 'Schiebt die Job-Scheibe in den Kontext.', attributes: { created_at: '2026-08-19T10:00:00.000Z', realRef: { file: 'src/tools/read.ts', symbol: 'buildJobSlice' } } } },
+      { op: 'add-node', node: { uid: 'FUNC-inject-slice', type: 'FUNC', name: 'injectSlice()', description: 'Schiebt die Job-Scheibe in den Kontext.', attributes: { created_at: '2026-08-19T10:00:00.000Z', realRef: { file: 'src/surface/read.ts', symbol: 'buildJobSlice' } } } },
       { op: 'add-node', node: { uid: 'TEST-slice-push', type: 'TEST', name: 'Scheibe-Push-Test', description: 'Verifiziert die Injektion.', attributes: {} } },
       { op: 'add-node', node: { uid: 'MS-1-slice', type: 'MS', name: 'MS-1', description: 'Meilenstein.', attributes: {} } },
       { op: 'add-node', node: { uid: 'CR-GC-367', type: 'CR', name: 'Task-Start-Scheibe', description: 'Dieser CR.', attributes: {} } },
@@ -114,7 +114,7 @@ describe('CR-GC-367: Job-Scheibe beim Task-Start', () => {
     expect(body.formatE).not.toContain('weight:1');
     // Arbeitsanweisung bleibt: die realRef-Bindung, aus der der Agent arbeitet
     expect(body.formatE).toContain('realRef');
-    expect(body.formatE).toContain('src/tools/read.ts');
+    expect(body.formatE).toContain('src/surface/read.ts');
   });
 
   it('(b) unbekanntes uid-artiges Token: 404 und KEIN Fuzzy-Treffer', async () => {

@@ -201,7 +201,7 @@ for a systems engineer who doesn't know this encoding **and** a user with no SE 
 - **`se:help`** (no argument) — ranked, explained next steps from the live readiness + violations.
 - **`graph_help`** — the read-only MCP tool the skill is a thin surface over.
 
-The plain/SE wording is authored once (`src/viewer/help-content.ts`); titles, severity, and the
+The plain/SE wording is authored once (`src/surface/help-content.ts`); titles, severity, and the
 owning gate are derived from `V3_RULES` + readiness, so help never drifts from the live model.
 
 ## What it is / is not

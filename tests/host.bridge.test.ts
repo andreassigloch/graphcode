@@ -25,8 +25,8 @@ import {
 } from '@sigloch/contracts/se';
 import { LiveUpdateEventSchema } from '@sigloch/contracts/harness';
 import type { MutateCommand } from '@sigloch/contracts/harness';
-import { HostBridge } from '../src/viewer/host.js';
-import { HealthPayloadSchema } from '../src/viewer/health.js';
+import { HostBridge } from '../src/surface/host.js';
+import { HealthPayloadSchema } from '../src/surface/health.js';
 
 /** One parsed SSE frame: id + event name + JSON-decoded data. */
 interface SseFrame {

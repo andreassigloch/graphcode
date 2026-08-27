@@ -27,8 +27,8 @@ import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { ALL_RULE_DEFS, DIMENSION_READINESS_NAME } from '@sigloch/contracts/se';
-import { GraphCodeHarness } from '../src/harness/harness.js';
-import { bindToolsToHarness } from '../src/tools/mcp-tools.js';
+import { GraphCodeHarness } from '../src/kernel/harness.js';
+import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import {
   evaluateAll,
   ruleCatalogs,
@@ -36,7 +36,7 @@ import {
   LOCALLY_EVALUATED_RULE_IDS,
   SKIPPED_RULE_PREFIX,
   type EvaluationHarness,
-} from '../src/conformance/evaluation.js';
+} from '../src/kernel/evaluation.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 
 /**

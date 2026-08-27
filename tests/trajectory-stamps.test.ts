@@ -25,10 +25,10 @@ import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import type { AuditEntry } from '@sigloch/graph-api-core';
-import { GraphCodeHarness } from '../src/harness/harness.js';
-import { bindToolsWithContext, type MCPToolRegistry } from '../src/tools/mcp-tools.js';
-import type { ToolContext } from '../src/tools/tool-context.js';
-import type { TrajectoryStamps } from '../src/hooks/emit.js';
+import { GraphCodeHarness } from '../src/kernel/harness.js';
+import { bindToolsWithContext, type MCPToolRegistry } from '../src/surface/mcp-tools.js';
+import type { ToolContext } from '../src/surface/tool-context.js';
+import type { TrajectoryStamps } from '../src/projections/trajectory.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
 
 type StampedEntry = AuditEntry & TrajectoryStamps;

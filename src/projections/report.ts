@@ -1,0 +1,534 @@
+/**
+ * tools/report.ts — read-only REPORTING tools (MOD-mcp-tools, CR-GC-256).
+ *
+ * The derived views on the governed graph: rules (rules_evaluate /
+ * rules_get_violations / graph_next_step), audit (audit_trail / audit_stats),
+ * readiness (graph_readiness), selective tests (graph_tests) and the authoring /
+ * help surface (graph_help / graph_authoring_guide). All read-only — every number
+ * here is derived from `harness.evaluateRules()` or the audit log, never stored.
+ *
+ * Size guard (CR-GC-256 §6): with nine tools this is the group that will hit the
+ * 500-line limit first — the next reporting tool splits it, it does not grow.
+ *
+ * @author andreas@siglochconsulting
+ */
+
+import { z } from 'zod/v4';
+import type { GraphNode } from '@sigloch/graph-api-core';
+import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
+import type { RuleViolation } from '@sigloch/contracts/harness';
+import {
+  TestRefsSchema,
+  type TestRef,
+  TRACE_PATTERNS,
+  PHASE_READINESS_NAME,
+  DIMENSION_READINESS_NAME,
+  ReadinessDimension,
+  type ReadinessScoreType,
+  type ImportCoverage,
+} from '@sigloch/contracts/se';
+import { takeSteeringSnapshot } from './steering-snapshot.js';
+import {
+  summarizeReadiness,
+  computePhaseReadiness,
+  type ReadinessReport,
+  type PhaseGateReadiness,
+} from './readiness.js';
+import {
+  evaluateAll,
+  readinessOf,
+  ruleCatalogs,
+  stripViolationContext,
+  type Finding,
+  type RuleCatalogs,
+} from '../kernel/evaluation.js';
+import { groupViolations, type ViolationGroup } from '@sigloch/graphcode-client';
+import { loadTargetProfile, intentCoverage, type AnchorCoverage } from '../loop/target-profile.js';
+import { helpEntry, contextualHelp, type HelpEntry, type ContextualMeasure } from '../surface/help.js';
+import { formatEExampleFor } from '../surface/authoring-example.js';
+import { TestSelectionSchema } from './test-selection.js';
+import { nextStep } from '../loop/steering.js';
+import type { NextStepResult } from '../loop/steering.js';
+import type { MCPTool, MCPToolRegistry } from '../surface/mcp-tools.js';
+import type { ToolContext } from '../surface/tool-context.js';
+
+// -------------------------------------------------------------------------
+// Input schemas
+// -------------------------------------------------------------------------
+
+/**
+ * Detailtiefe der Lese-Flächen (CR-GC-398) — WÖRTLICH derselbe Parameter, den
+ * `graph_mutate` seit CR-GC-309 trägt. Anlass: sechsmal in einer Sitzung ist ein
+ * Tool-Result übergelaufen (750–850 KB bei 667 Knoten), weil `context` mit seinen
+ * candidate_targets den Löwenanteil der Bytes stellt und die Lese-Tools als
+ * einzige keine Projektion hatten.
+ */
+const detailField = z
+  .enum(['summary', 'full', 'grouped'])
+  .default('full')
+  .describe(
+    'full (Default) = das ungekürzte Finding inkl. `context` (candidate_targets/existing_traces). ' +
+      'summary lässt `context` weg — ruleId, severity, message, fixHint, elementId und source ' +
+      'bleiben, also alles zum Verstehen und Reparieren; `context` stellt den Löwenanteil der ' +
+      'Antwortbytes (gemessen: Ergebnisse über 750 KB bei 667 Knoten). ' +
+      'grouped (CR-GC-411) = die Mittel-Ebene: EINE Gruppe je ruleId mit {ruleId, severity, count, ' +
+      'message, fixHint, elementIds, elementIdsOmitted}, absteigend nach count. Erst gruppieren, ' +
+      'dann kappen — `count` zählt über die UNGEKAPPTEN Verstöße, `elementIdsOmitted` benennt die ' +
+      'Kappung (10 Element-IDs je Gruppe). Für die Diagnose "welche Regeln feuern, an welchen ' +
+      'Elementen" ohne Zeile-pro-Verstoß-Rauschen; `total` bei rules_get_violations bleibt die ' +
+      'Zahl der VERSTÖSSE, nicht der Gruppen. Wer die Element-IDs vollständig braucht, nimmt summary. ' +
+      'Gleiche Semantik wie graph_mutate.violations, aber SPIEGELVERKEHRTER Default: graph_mutate ' +
+      'kürzt per Default, die Diagnose-Tools liefern per Default voll — das ist die Zusage aus ' +
+      'CR-GC-309 ("wer candidate_targets braucht, fragt rules_get_violations"), verankert in ' +
+      'mcp.mutate-violations. Bei drohendem Überlauf hier explizit summary oder grouped anfordern.',
+  );
+
+/** Die drei Projektionen EINER Ergebnisliste (CR-GC-398 + CR-GC-411). */
+type Detail = 'summary' | 'full' | 'grouped';
+
+/** Default-Auflösung für Direktaufrufe des Handlers (Tests, In-Process) — dort
+ *  läuft kein Zod-Parse, der den Schema-Default einsetzen würde. */
+const detailOf = (d: Detail | undefined): Detail => d ?? 'full';
+
+const RulesEvaluateInputSchema = z.object({ detail: detailField });
+const GraphNextStepInputSchema = z.looseObject({});
+
+const RulesGetViolationsInputSchema = z.object({
+  severity: z.enum(['error', 'warning', 'info']).optional(),
+  detail: detailField,
+});
+
+const GraphReadinessInputSchema = z.object({
+  detail: z
+    .boolean()
+    .default(false)
+    .describe(
+      'false (default) = summary: scores + counts + violationsByRule only (stays within the MCP ' +
+        'result limit on a fully-red graph). true = full raw violations + each gate’s blocking/open lists.',
+    ),
+});
+
+const GraphHelpInputSchema = z.object({
+  token: z
+    .string()
+    .optional()
+    .describe(
+      'Optional dashboard token to explain: a ruleId (R-04), gate (CDR), panel id (recommendations), ' +
+        'artifact id (fmea), or vocabulary token (REQ). Omit for the contextual, ranked, explained ' +
+        'measures derived from the live readiness + violations (the explained Recommendations).',
+    ),
+});
+
+/** Authoring-guide input (CR-GC-231) — which ElementType to surface legal edges for. */
+const GraphAuthoringGuideInputSchema = z.object({
+  type: z.string().describe('The ElementType to author (e.g. UC, REQ, FUNC, TEST, MOD, ACTOR).'),
+});
+
+const GraphTestsInputSchema = z.object({
+  changeSet: z
+    .array(z.string())
+    .min(1)
+    .describe('Changed node uids (e.g. git-diff → graph). The roots of the blast-radius.'),
+  depth: z
+    .number()
+    .int()
+    .nonnegative()
+    .default(1)
+    .describe('Impact traversal depth per changed node (same semantics as graph_impact).'),
+});
+
+// -------------------------------------------------------------------------
+// Binding
+// -------------------------------------------------------------------------
+
+export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
+  const { harness, auditLog, graphVersion } = ctx;
+
+  /**
+   * Projektion der EINEN Ergebnisliste — nie eine zweite Erhebung (CR-GC-398).
+   * `grouped` (CR-GC-411) delegiert an die SSOT-Aggregation aus
+   * @sigloch/graphcode-client, dieselbe, die das gve-Dashboard rendert — kein
+   * zweiter Gruppierungspfad in der Familie.
+   */
+  const project = (findings: Finding[], detail: Detail): Finding[] | ViolationGroup[] => {
+    if (detail === 'full') return findings;
+    if (detail === 'grouped') return groupViolations(findings);
+    return stripViolationContext(findings);
+  };
+
+  const rules_evaluate: MCPTool<
+    z.infer<typeof RulesEvaluateInputSchema>,
+    { violations: Finding[] | ViolationGroup[]; skipped: string[]; importCoverage: ImportCoverage | null }
+  > = {
+    name: 'rules_evaluate',
+    description:
+      'Evaluate the governed graph: V3_RULES (in-memory) PLUS the ND-* near-duplicate rules ' +
+      '(CR-GC-442) PLUS the RC code-conformance rules ' +
+      '(realRef/testRefs resolved against the real source tree). Read-only; does not mutate. ' +
+      'Every finding carries `source` ("rules" | "conformance"); `skipped` names EVERYTHING left ' +
+      'out, on both levels — a source that could NOT be evaluated ("conformance", e.g. no readable ' +
+      'repoRoot) and every contracts rule nothing evaluated ("rule:BQ-01"). An ' +
+      'empty `skipped` is what makes the count interpretable (CR-GC-398/428), and it now means ' +
+      'nothing was left out at all. The `rule:*` entries are DERIVED (ALL_RULE_DEFS minus the ' +
+      'loaded catalog minus the locally evaluated ND rules), never a maintained list: they are ' +
+      'the BQ-* rules only the steering path evaluates, so a reader of ' +
+      '"0 errors" knows it means "0 under the evaluated catalog". ND-01/ND-02 ARE evaluated here ' +
+      'but stay OUT of the gate catalog (`catalogs.notInGate`): a near-duplicate is visible ' +
+      'everywhere and blocks no mutation (CR-GC-287 — ND stays advisory, never a gate blocker). ' +
+      'Identical population to ' +
+      'rules_get_violations and graph_readiness.violationsByRule (they differ only in filter and ' +
+      `aggregation) — but NOT to graph_readiness.${DIMENSION_READINESS_NAME}, which is scored from ` +
+      'the full contracts catalog including those rules (see graph_readiness.catalogs). ' +
+      '`importCoverage` (CR-GC-429 §2 / CR-SM-268) is the SIBLING of `skipped`, never merged into ' +
+      'it: skipped means "this source was not evaluated at all", importCoverage means "evaluated, ' +
+      'and part of the import graph still fell through" — {endpoints, assigned, unassigned[]}, where ' +
+      'unassigned NAMES every import-endpoint file that resolves to no MOD (neither via a bound ' +
+      'FUNC realRef nor a MOD.path prefix), i.e. the files RC-05 could not judge. null exactly when ' +
+      '`skipped` contains "conformance" — a value that is not measurable is never a silent zero.',
+    inputSchema: RulesEvaluateInputSchema,
+    async handler(input) {
+      const ev = evaluateAll(harness);
+      return {
+        violations: project(ev.findings, detailOf(input.detail)),
+        skipped: ev.skipped,
+        importCoverage: ev.importCoverage,
+      };
+    },
+  };
+
+  const rules_get_violations: MCPTool<
+    z.infer<typeof RulesGetViolationsInputSchema>,
+    { violations: Finding[] | ViolationGroup[]; total: number; skipped: string[] }
+  > = {
+    name: 'rules_get_violations',
+    description:
+      'Return current rule violations, optionally filtered by severity. Each violation carries ' +
+      'fixHint + context (candidate_targets, existing_traces) from the contracts rule (CR-GC-203 ' +
+      'item 1), so an agent can resolve R-01/RD-01 from the payload — no extra queries to find ' +
+      'a TEST/FUNC to link. `skipped` carries the same two-level omission list as rules_evaluate ' +
+      '(sources + `rule:*` IDs the loaded catalog does not evaluate); `total` counts the ' +
+      'violations of the EVALUATED rules, so it is only interpretable together with it.',
+    inputSchema: RulesGetViolationsInputSchema,
+    async handler(input) {
+      const ev = evaluateAll(harness);
+      const matched = input.severity
+        ? ev.findings.filter((v) => v.severity === input.severity)
+        : ev.findings;
+      // `total` ist die Zahl der VERSTÖSSE, nie der Gruppen — auch bei
+      // detail:'grouped' (CR-GC-411): die gefilterte Grundgesamtheit ist die
+      // Aussage, die Projektion ändert nur ihre Darstellung.
+      return { violations: project(matched, detailOf(input.detail)), total: matched.length, skipped: ev.skipped };
+    },
+  };
+
+  const graph_next_step: MCPTool<z.infer<typeof GraphNextStepInputSchema>, NextStepResult> = {
+    name: 'graph_next_step',
+    description:
+      'Read-only "next best step": condenses the full advisory rule set into ONE ' +
+      'causally-grounded action — the highest readiness-deficit dimension, the rules ' +
+      'firing in it (clears), a concrete action, plus error blockers and lower-priority ' +
+      'advisories. Deterministic (readiness → weight vector via @sigloch/se-engine), no ' +
+      'LLM/learning. Complements rules_get_violations (the flat gate list) by prioritising.',
+    inputSchema: GraphNextStepInputSchema,
+    async handler(_input) {
+      return nextStep(harness.getGraph(), harness.getMetricPolicy(), harness.getFocusThreshold());
+    },
+  };
+
+  // READINESS tool — exposes the family compliance score (CR-GC-107 / MOD-readiness)
+  // over the agent surface. se-review / se-status read it instead of the retired
+  // GET /api/graph/readiness. Delegates to scoreReadiness(harness) → evaluateRules()
+  // (L2 gate) so the score is driven by contracts V3_RULES (R-/RD-), never foreign BQ-*.
+
+  /**
+   * CR-GC-325: die 8 RULE_TO_DIMENSION-Themenscores.
+   *
+   * Keine zweite Rechnung: `computeReadiness` aus @sigloch/se-engine bleibt die
+   * einzige Implementierung, hier wird ihr Ergebnis aus DEMSELBEN Snapshot
+   * durchgereicht, den `nextStep` benutzt (CR-GC-324). Deshalb ist der Score, den
+   * ein Dashboard zeigt, exakt der, aus dem die Empfehlung entstand.
+   *
+   * VOLLSTÄNDIG: die Reihenfolge kommt aus `ReadinessDimension.options`, damit eine
+   * fehlende Dimension nicht als "alles gut" durchgeht. Fehlt eine im Report, wird
+   * sie mit `applicable: 0` ausgewiesen — konstruktiv nicht messbar, NICHT perfekt
+   * (Muster computeSteeringDelta).
+   */
+  const dimensionReadiness = (): ReadinessScoreType[] => {
+    const scores = new Map(takeSteeringSnapshot(harness.getGraph(), harness.getMetricPolicy(), harness.getFocusThreshold()).report.scores.map((s) => [s.dimension as string, s]));
+    return ReadinessDimension.options.map(
+      (dimension) =>
+        scores.get(dimension) ?? { dimension, score: null, violations: 0, applicable: 0, coreApplicable: 0, ready: false },
+    );
+  };
+
+  const graph_readiness: MCPTool<
+    z.infer<typeof GraphReadinessInputSchema>,
+    ReadinessReport & {
+      [PHASE_READINESS_NAME]: PhaseGateReadiness[];
+      /** CR-GC-325: die 8 RULE_TO_DIMENSION-Themenscores — die zweite Projektion
+       * DESSELBEN Regelstroms, aus DEMSELBEN Snapshot wie nextStep. */
+      [DIMENSION_READINESS_NAME]: ReadinessScoreType[];
+      graphVersion: number;
+      /** Intent-Coverage-Read-out (CR-GC-295): je bestätigtem Anker, ob/wo er in
+       * UC/REQ/FUNC adressiert ist. KPI, NIE ein Gate-Blocker — Abdeckung sagt
+       * "adressiert", nicht "gut gelöst". null ohne Config/intentAnchors. */
+      intentCoverage: AnchorCoverage[] | null;
+      /** CR-GC-398/428: was NICHT ausgewertet wurde — Quellen UND nicht geladene
+       * Regeln (`rule:*`). Leer = vollständig. Ohne dieses Feld ist
+       * violationsByRule nicht interpretierbar. */
+      skipped: string[];
+      /** CR-GC-428: aus welchem Regelkatalog welcher Zahlenblock stammt. Die
+       * Verstoßzahlen kommen aus dem geladenen Gate-Katalog, dimension_readiness
+       * aus dem vollen contracts-Katalog — bisher stand das nur im Beschreibungs-
+       * text, nie am Ergebnis. */
+      catalogs: RuleCatalogs;
+    }
+  > = {
+    name: 'graph_readiness',
+    description:
+      // CR-GC-332: der frühere Verweis nannte `FUNC-score-readiness` — einen Knoten, den
+      // das Modell nie enthielt. Jetzt steht hier die Stelle, die es wirklich gibt.
+      'Score family readiness of the live governed graph (FUNC-compute-readiness / CR-GC-107 + CR-GC-125). ' +
+      'Returns the ReadinessReport: compliance dimension (fraction of elements with no error-severity ' +
+      'violation); incoseScope (graphcode = lean); phaseGates SRR/PDR/CDR/TRR (INCOSE technical reviews, ' +
+      'a disjoint partition of the element-level V3_RULES, with structural derivation-chain completeness); ' +
+      `implGates SAR/FCA/SVR/FRR (milestone tiers MS-1..4, ready iff assigned CRs are done + scope ` +
+      `error-clean); ${PHASE_READINESS_NAME} (CR-GC-296) — the SAME SRR/PDR/CDR/TRR gates from the OTHER ` +
+      'axis: per-gate rule coverage (covered/total distinct rule IDs from RULE_TO_PHASE with zero open ' +
+      'violations, any severity, + the missing rule IDs) — orthogonal to phaseGates\' element-completeness; ' +
+      `${DIMENSION_READINESS_NAME} (CR-GC-325) — the 8 RULE_TO_DIMENSION topic scores ` +
+      '(req/uc/arch/alloc/ver/schema/cr/ms), the OTHER projection of the rule stream — scored from ' +
+      'the FULL contracts catalog (evaluateAllRules incl. BQ-*/ND-*), i.e. a WIDER population than ' +
+      'violationsByRule; `catalogs` (CR-GC-428) names per block which catalog it came from: each with ' +
+      'score, violations, applicable (the denominator — a score is not interpretable without it) and ' +
+      'ready (contracts threshold, not a graphcode policy). Steering values, NOT a gate: the gates stay ' +
+      'the pass/fail authority. Computed from the same steering snapshot graph_next_step uses, so the ' +
+      'number a dashboard shows is the one the recommendation came from; ' +
+      'violationsByRule (keyed by contracts rule-ID — R-/RD-/MS- plus ND-01/ND-02 since CR-GC-442, ' +
+      'never BQ-*: those rules are not evaluated on this path at all, which is why they are named ' +
+      'in `skipped` instead of silently reading as zero. ND is evaluated but still absent from the ' +
+      'GATE catalog, so it appears in `catalogs.notInGate` and never blocks a mutation); intentCoverage ' +
+      '(CR-GC-295: per content theme from .graphcode/target-profile.json, whether/where it is ' +
+      'addressed in UC/REQ/FUNC — a KPI, never a gate blocker; null without config. CR-GC-307: the themes are ' +
+      'derived and persisted in the BACKGROUND, never confirmed by the human — this read-out is machine-facing, ' +
+      'so relay its content in plain language, never as "intent anchors"); and computedAt. By DEFAULT ' +
+      'returns a summary (no raw violations, no per-gate blocking/open lists) so it stays within the MCP ' +
+      `result limit even on a fully-red graph; pass detail:true for the full lists (${PHASE_READINESS_NAME} ` +
+      'stays in both — it is already a small aggregate). Read-only; derived from harness.evaluateRules() ' +
+      '(L2 gate) + RC code-conformance (CR-GC-253: realRef/testRefs resolved against the real source tree) ' +
+      '+ the MS nodes + element status.',
+    inputSchema: GraphReadinessInputSchema,
+    async handler(input) {
+      // EINE Erhebung, drei Ableitungen (Report, Phase-Gates, skipped) — CR-GC-398.
+      const ev = evaluateAll(harness);
+      const report = readinessOf(ev, harness.getGraph());
+      const phaseReadiness = computePhaseReadiness(report.violations);
+      // Intent-Coverage (CR-GC-295): nur wenn die Config bestätigte Anker trägt;
+      // der Loader prüft dabei auch die Zielkonflikt-Paare (Warning, kein Block).
+      const anchors = loadTargetProfile(harness.getRepoRoot())?.profile.intentAnchors ?? [];
+      const coverage =
+        anchors.length > 0
+          ? intentCoverage(
+              anchors,
+              harness.getGraph().nodes.map((n) => ({ id: n.uid, type: n.type, name: n.name, description: n.description })),
+            )
+          : null;
+      return {
+        ...(input.detail ? report : summarizeReadiness(report)),
+        [PHASE_READINESS_NAME]: phaseReadiness,
+        [DIMENSION_READINESS_NAME]: dimensionReadiness(),
+        graphVersion: graphVersion(),
+        intentCoverage: coverage,
+        skipped: ev.skipped,
+        catalogs: ruleCatalogs(harness),
+      };
+    },
+  };
+
+  // TEST-DEDUCTION tool — selective test set (CR-GC-134 + CR-GC-204 / FUNC-deduce-tests
+  // + FUNC-resolve-tests-from-code). Resolves the impacted TEST nodes via the SINGLE
+  // harness.testImpact() traversal (one getSubgraph primitive, no parallel blast-radius):
+  // a CODE changeset (MOD/FUNC) is walked DIRECTIONALLY `node →satisfy/allocate→ REQ
+  // →verify→ TEST`, a REQ changeset degenerates to its verify-dependents. Each impacted
+  // TEST is resolved via its `testRefs` runnable bindings to concrete files; the emitted
+  // command runs ONLY those affected test files — never the full suite. TESTs without a
+  // testRefs (concept-only) surface under `unresolved`, never lost.
+  //
+  // git-diff → node: the changeSet is graph node uids, not paths. The agent maps a
+  // changed source file to its node by the repo's MOD/FUNC naming convention
+  // (`src/codec.ts` → `MOD-codec`, a function → its `FUNC-*`); `graph_elements({search})`
+  // looks the uid up when the convention is ambiguous. graph_tests stays path-agnostic so
+  // the same deduction works for any consumer regardless of its file layout.
+
+  const graph_tests: MCPTool<
+    z.infer<typeof GraphTestsInputSchema>,
+    {
+      command: string;
+      tests: Array<{ id: string; name: string; testRefs: TestRef[] }>;
+      coverage: { changeSet: string[]; impactedNodes: number; impactedTests: number; resolved: number; files: string[] };
+      unresolved: Array<{ id: string; name: string; reason: string }>;
+    }
+  > = {
+    name: 'graph_tests',
+    description:
+      'Deduce the minimal selective test set for a change (FUNC-deduce-tests / CR-GC-134 + ' +
+      'FUNC-resolve-tests-from-code / CR-GC-204). Maps a changeSet (changed node uids — a CODE ' +
+      'node MOD/FUNC or a REQ) → impacted TEST nodes via the SINGLE harness.testImpact() traversal: ' +
+      'a code node is walked DIRECTIONALLY `node →satisfy/allocate→ REQ →verify→ TEST` (not plain ' +
+      'incoming-impact, which never reaches a code node’s tests), a REQ degenerates to its verify- ' +
+      'dependents. Resolves each impacted TEST via its `testRefs` bindings [{file, case?, tool, level?}, …] ' +
+      'and emits the minimal `vitest run <only-affected-files>` command + coverage. TESTs without a ' +
+      'resolvable testRefs (concept-only) are reported under `unresolved` (never silently dropped).',
+    inputSchema: GraphTestsInputSchema,
+    async handler(input) {
+      // Directed code→REQ→TEST resolution via the SINGLE getSubgraph primitive
+      // (harness.testImpact — one traversal path, no second blast-radius).
+      const directed = await harness.testImpact(input.changeSet, input.depth);
+      const impacted = new Map<string, GraphNode>();
+      for (const node of directed.nodes) impacted.set(node.uid, node);
+
+      const impactedTests = [...impacted.values()].filter((n) => n.type === 'TEST');
+
+      const tests: Array<{ id: string; name: string; testRefs: TestRef[] }> = [];
+      const unresolved: Array<{ id: string; name: string; reason: string }> = [];
+      const files = new Set<string>();
+
+      for (const node of impactedTests) {
+        const raw = node.attributes?.testRefs;
+        if (raw === undefined || raw === null) {
+          const reason = node.attributes?.concept === true ? 'concept-only (no run artifact yet)' : 'no testRefs attribute';
+          unresolved.push({ id: node.uid, name: node.name, reason });
+          continue;
+        }
+        const parsed = TestRefsSchema.safeParse(raw);
+        if (!parsed.success) {
+          unresolved.push({ id: node.uid, name: node.name, reason: `invalid testRefs: ${parsed.error.message}` });
+          continue;
+        }
+        // CR-GC-338: ALLE Dateien der Abnahme in den selektiven Lauf — genau dafuer ist
+        // 1:n da (CR-SM-231). Nur die erste zu nehmen liesse den Visual-Lauf ungelaufen.
+        tests.push({ id: node.uid, name: node.name, testRefs: parsed.data });
+        for (const ref of parsed.data) files.add(ref.file);
+      }
+
+      // Minimal selective run: ONLY the affected test files, sorted+deduped.
+      const fileList = [...files].sort();
+      const command = fileList.length > 0 ? `vitest run ${fileList.join(' ')}` : 'vitest run --passWithNoTests';
+
+      // FLOW-test-selection: die Werkzeugantwort passiert ihren Vertrag am
+      // Werkzeugrand (SCHEMA-test-selection). Der Konsument ist ein Agent, der auf
+      // `command` blind ein Testkommando faehrt — eine formfremde Antwort muss hier
+      // scheitern, nicht dort.
+      return TestSelectionSchema.parse({
+        command,
+        tests,
+        coverage: {
+          changeSet: input.changeSet,
+          impactedNodes: impacted.size,
+          impactedTests: impactedTests.length,
+          resolved: tests.length,
+          files: fileList,
+        },
+        unresolved,
+      });
+    },
+  };
+
+  const graph_help: MCPTool<
+    z.infer<typeof GraphHelpInputSchema>,
+    HelpEntry | { measures: ContextualMeasure[] }
+  > = {
+    name: 'graph_help',
+    description:
+      'Explain any dashboard item for both audiences (CR-GC-229): a systems engineer who does not know ' +
+      'this encoding, and a user with no SE background. Read-only. With `token` → the HelpEntry for that ' +
+      'ruleId / gate / panel / artifact / vocabulary token, carrying all three layers (plain, SE-terms, ' +
+      'and the exact copy-prompt). Without an argument → the contextual, ranked, explained measures from ' +
+      'the live readiness + violations (the explained sibling of Recommendations), covering BOTH rule ' +
+      'violations and not-done-creation gate blockers (CR-GC-221). Authored Plain/SE layers come from ' +
+      'help-content.ts; titles/severity/owning-gate are derived from V3_RULES + readiness.',
+    inputSchema: GraphHelpInputSchema,
+    async handler(input) {
+      if (input.token !== undefined) {
+        const entry = helpEntry(input.token);
+        if (!entry) {
+          throw new Error(
+            `graph_help: unknown token '${input.token}'. Try a ruleId (e.g. R-04), a gate (SRR/PDR/CDR/TRR, ` +
+              `SAR/FCA/SVR/FRR), a panel (readiness/recommendations/artifacts/impact/health), an artifact ` +
+              `(e.g. fmea), or a vocabulary token (e.g. REQ). Omit the token for contextual help.`,
+          );
+        }
+        return entry;
+      }
+      // EINE Erhebung für Report UND Maßnahmenliste (CR-GC-398) — vorher liefen
+      // hier zwei Auswertungen nebeneinander, die auseinanderlaufen konnten.
+      const ev = evaluateAll(harness);
+      return { measures: contextualHelp(readinessOf(ev, harness.getGraph()), ev.findings) };
+    },
+  };
+
+  const graph_authoring_guide: MCPTool<
+    z.infer<typeof GraphAuthoringGuideInputSchema>,
+    {
+      type: string;
+      outgoing: Array<{ edgeType: string; targetType: string; cardinality?: string; description?: string }>;
+      incoming: Array<{ edgeType: string; sourceType: string; cardinality?: string; description?: string }>;
+      requiredAttrs: string[];
+      formatEExample: string;
+    }
+  > = {
+    name: 'graph_authoring_guide',
+    description:
+      'Surface the LEGAL incident edges for an ElementType (CR-GC-231) — the read-twin of graph_context for ' +
+      'the WRITE side of the spec. graph_context answers "what is a node\'s definition-of-done" (implement); ' +
+      'graph_authoring_guide answers "what structure is legal for this type" (author). Call it BEFORE writing ' +
+      'a node so you emit a correct add-node/add-edge via graph_mutate instead of guessing the ontology. ' +
+      'Returns outgoing [{edgeType,targetType,cardinality,description}], incoming [{edgeType,sourceType,…}], ' +
+      'and requiredAttrs — derived live from the imported @sigloch/contracts/se META_MODEL (TRACE_PATTERNS), ' +
+      'never a local fork. Read-only. Unknown type → a clear error. ' +
+      'formatEExample (CR-GC-321) is a ready-to-paste Format-E block for this type: `+ uid|text` has only ' +
+      'TWO positional fields (uid and DESCRIPTION) — the readable name travels as the `__name` attribute, ' +
+      'inline `[__name:…]` or as an `@__name …` line when it contains a comma or a bracket. Without ' +
+      '`__name` the uid silently becomes the name.',
+    inputSchema: GraphAuthoringGuideInputSchema,
+    async handler(input) {
+      const descriptor = SE_DESCRIPTOR.nodeTypes[input.type as keyof typeof SE_DESCRIPTOR.nodeTypes];
+      if (!descriptor) {
+        throw new Error(
+          `graph_authoring_guide: unknown element type '${input.type}'. Valid types: ` +
+            `${Object.keys(SE_DESCRIPTOR.nodeTypes).join(', ')}.`,
+        );
+      }
+      const patterns = TRACE_PATTERNS as ReadonlyArray<{
+        source: string;
+        target: string;
+        type: string;
+        cardinality?: string;
+        description?: string;
+      }>;
+      const outgoing = patterns
+        .filter((p) => p.source === input.type)
+        .map((p) => ({ edgeType: p.type, targetType: p.target, cardinality: p.cardinality, description: p.description }));
+      const incoming = patterns
+        .filter((p) => p.target === input.type)
+        .map((p) => ({ edgeType: p.type, sourceType: p.source, cardinality: p.cardinality, description: p.description }));
+      return {
+        type: input.type,
+        outgoing,
+        incoming,
+        requiredAttrs: [...(descriptor.requiredAttrs ?? [])],
+        formatEExample: formatEExampleFor(input.type),
+      };
+    },
+  };
+
+  return {
+    rules_evaluate,
+    rules_get_violations,
+    graph_next_step,
+    graph_readiness,
+    graph_tests,
+    graph_help,
+    graph_authoring_guide,
+  };
+}

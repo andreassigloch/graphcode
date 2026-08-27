@@ -32,10 +32,10 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import { GraphCodeHarness } from '../src/harness/harness.js';
-import { bindToolsToHarness, type MCPToolRegistry } from '../src/tools/mcp-tools.js';
+import { GraphCodeHarness } from '../src/kernel/harness.js';
+import { bindToolsToHarness, type MCPToolRegistry } from '../src/surface/mcp-tools.js';
 import { makeSteeringConfig, type FixtureGraph } from './fixtures/steering-graphs.js';
-import type { GraphSuggestResult } from '../src/tools/suggest.js';
+import type { GraphSuggestResult } from '../src/loop/suggest.js';
 
 /**
  * Zwei FLOWs zwischen denselben Funktionen, jeder mit EIGENEM Vertrag — der

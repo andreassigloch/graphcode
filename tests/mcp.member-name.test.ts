@@ -7,7 +7,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { basename, join } from 'node:path';
-import { deriveMemberName } from '../src/tools/mcp-server.js';
+import { deriveMemberName } from '../src/surface/mcp-server.js';
 
 describe('TEST-member-name: deriveMemberName(repoRoot)', () => {
   let dir: string;

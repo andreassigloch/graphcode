@@ -13,7 +13,7 @@
 // Usage: node scripts/test-selection-audit.mjs [--commits 60] [--json]
 // @author andreas@siglochconsulting
 import { execFileSync } from 'node:child_process';
-import { buildContext, coverage, recall, potential, renderAudit } from '../dist/tools/test-selection-audit.js';
+import { buildContext, coverage, recall, potential, renderAudit } from '../dist/projections/test-selection-audit.js';
 
 const repoRoot = execFileSync('git', ['rev-parse', '--show-toplevel'], { encoding: 'utf8' }).trim();
 const commitFlag = process.argv.indexOf('--commits');

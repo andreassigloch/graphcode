@@ -55,7 +55,7 @@ describe('TEST-shared-views-no-fork: graphcode imports the shared rule base, no 
 
   it('the rule engine + ontology are sourced from the family package, not redefined locally', () => {
     // harness.ts is the single rule-evaluation owner; it must pull the shared engine.
-    const harness = readFileSync(join(SRC, 'harness', 'harness.ts'), 'utf8');
+    const harness = readFileSync(join(SRC, 'kernel', 'harness.ts'), 'utf8');
     expect(harness).toMatch(/SE_DESCRIPTOR/);
     expect(harness).toMatch(/from\s+['"]@sigloch\/graph-api-core['"]/);
     // No local definition of the V3 rule set (a fork would declare its own).

@@ -24,7 +24,7 @@ import { RULE_TO_PHASE } from '@sigloch/contracts/se';
 import type { Graph } from '@sigloch/graph-api-core';
 import type { RuleViolation } from '@sigloch/contracts/harness';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
-import { GraphCodeHarness } from '../src/harness/harness.js';
+import { GraphCodeHarness } from '../src/kernel/harness.js';
 import {
   computeReadiness,
   scoreReadiness,
@@ -39,7 +39,7 @@ import {
   currentPhaseGate,
   PHASE_GATE_ORDER,
   type CreationCurrencyProvider,
-} from '../src/steering/readiness.js';
+} from '../src/projections/readiness.js';
 
 const REPO_ROOT = join(__dirname, '..');
 

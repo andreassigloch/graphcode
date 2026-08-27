@@ -34,9 +34,9 @@ import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { RULE_TO_PHASE } from '@sigloch/contracts/se';
-import { GraphCodeHarness } from '../src/harness/harness.js';
-import { generationStep, DIMENSION_FOCUS_TYPES } from '../src/steering/generate.js';
-import { computePhaseReadiness, currentPhaseGate, PHASE_GATE_ORDER } from '../src/steering/readiness.js';
+import { GraphCodeHarness } from '../src/kernel/harness.js';
+import { generationStep, DIMENSION_FOCUS_TYPES } from '../src/loop/generate.js';
+import { computePhaseReadiness, currentPhaseGate, PHASE_GATE_ORDER } from '../src/projections/readiness.js';
 import { ARCH_FIXTURE, makeSteeringConfig, parseFocusKey, scriptedActor } from './fixtures/steering-graphs.js';
 import type { MutateCommand } from '@sigloch/contracts/harness';
 

@@ -30,8 +30,8 @@ import {
   InstallResultSchema,
   CliCommandSchema,
   SkillSyncResultSchema,
-} from '../src/cli/scaffold.js';
-import { deriveHostPort, PACKAGE_SPEC } from '../src/cli/scaffold-templates.js';
+} from '../src/surface/scaffold.js';
+import { deriveHostPort, PACKAGE_SPEC } from '../src/surface/scaffold-templates.js';
 import { MARKDOWN_VIEWS, VIEW_FILENAMES } from '@sigloch/graphcode-client';
 import { KUZU_DIR } from '../src/index.js';
 

@@ -30,8 +30,8 @@ import {
   duplicateHits,
   renderDuplicateHints,
   HINT_SIMILARITY_THRESHOLD,
-} from '../src/steering/nd-similarity.js';
-import { generationStep } from '../src/steering/generate.js';
+} from '../src/projections/nd-similarity.js';
+import { generationStep } from '../src/loop/generate.js';
 
 const fixture = (name: string): OntologyGraph =>
   JSON.parse(

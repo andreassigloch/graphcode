@@ -8,7 +8,7 @@
  */
 import { describe, it, expect } from 'vitest';
 import type { Graph } from '@sigloch/graph-api-core';
-import { deriveImplPlan } from '../src/steering/se-plan.js';
+import { deriveImplPlan } from '../src/loop/se-plan.js';
 
 const node = (uid: string) => ({ uid, type: 'MS', name: uid, description: '', attributes: {} });
 const dep = (from: string, to: string) => ({

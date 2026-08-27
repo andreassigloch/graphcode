@@ -28,9 +28,9 @@ import { mkdtempSync, mkdirSync, rmSync, writeFileSync, existsSync, readFileSync
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { evaluateAllRules } from '@sigloch/contracts/se';
-import { executeRewind, RewindError } from '../src/cli/rewind.js';
+import { executeRewind, RewindError } from '../src/surface/rewind.js';
 import { createHarness } from '../src/index.js';
-import { setExportPending, isExportPending } from '../src/harness/export-marker.js';
+import { setExportPending, isExportPending } from '../src/kernel/export-marker.js';
 
 /**
  * The one contract this file pins (CR-GC-374): a repo named "@acme/fremd-anlage"

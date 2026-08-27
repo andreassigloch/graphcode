@@ -9,7 +9,7 @@ import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createHarness } from '../src/index.js';
-import { discoverTsFiles, executeImportCode } from '../src/cli/import-code-verb.js';
+import { discoverTsFiles, executeImportCode } from '../src/surface/import-code-verb.js';
 
 /** Gleiche Form wie graphifys eigener CR-GF-133/134-Fixture-Test. */
 const FILE_A = `

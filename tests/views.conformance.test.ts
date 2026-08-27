@@ -22,7 +22,7 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { TRACE_PATTERNS } from '@sigloch/contracts/se';
 import type { Graph } from '@sigloch/graph-api-core';
-import { exportMarkdown, MARKDOWN_VIEWS } from '../src/views/exporter.js';
+import { exportMarkdown, MARKDOWN_VIEWS } from '../src/projections/exporter.js';
 
 /**
  * Comments stripped. These greps assert what the CODE reads — the doc comments
@@ -34,8 +34,8 @@ function stripComments(src: string): string {
 }
 
 const VIEW_SOURCES = ['helpers', 'srs', 'incose', 'graphcode'].map((f) => {
-  const raw = readFileSync(new URL(`../src/views/${f}.ts`, import.meta.url), 'utf8');
-  return { file: `src/views/${f}.ts`, text: raw, code: stripComments(raw) };
+  const raw = readFileSync(new URL(`../src/projections/${f}.ts`, import.meta.url), 'utf8');
+  return { file: `src/projections/${f}.ts`, text: raw, code: stripComments(raw) };
 });
 
 /** Every (source, type, target) the meta-model declares, as a lookup. */
@@ -109,7 +109,7 @@ describe('CR-GC-308: the FMEA view reads the keys FM-01..03 write', () => {
   const RULE_KEYS = ['severity', 'occurrence', 'detection'];
   const INVENTED_KEYS = [/attributes\['S'\]/, /attributes\['O'\]/, /attributes\['D'\]/];
 
-  const fmeaSource = VIEW_SOURCES.find((s) => s.file === 'src/views/graphcode.ts')!.code;
+  const fmeaSource = VIEW_SOURCES.find((s) => s.file === 'src/projections/graphcode.ts')!.code;
 
   it('uses the FM-01 attribute names, not the invented single letters', () => {
     for (const key of RULE_KEYS) expect(fmeaSource).toContain(key);

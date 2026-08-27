@@ -3,33 +3,38 @@
 The runtime modules are **realized from the graph spec** (the committed snapshot under
 `docs/graph/`), not hand-stubbed.
 
-**One module, one directory (CR-GC-429 §4):** the file system agrees with the graph's
-`FUNC -allocate-> MOD [0..1]` grammar — each directory below is one `MOD-*`, and
-`MOD.path` in the graph points at it. Only the two package entry points stay at the root.
+**One module, one directory (CR-GC-429 §4, recut in CR-GC-447):** the file system agrees
+with the graph's `FUNC -allocate-> MOD [0..1]` grammar — each directory below is one
+`MOD-*`, and `MOD.path` in the graph points at it. Only the two package entry points stay
+at the root.
 
-| Directory | Module (graph) |
+| Directory | Module (graph) | Role |
+|---|---|---|
+| `index.ts`, `cli.ts` | entry points (`main`/`bin`) | bound via `realRef`, not by path |
+| `kernel/` | `MOD-kernel` | Store ∘ Gate ∘ Regeln ∘ OpLog — the one Kuzu owner; `apply(Command[]) → Verdict`, `query(TypedQuery) → Slice` |
+| `projections/` | `MOD-projections` | Messung · Readiness · Codec · Export · Views · Trajectory — pure Graph → X |
+| `loop/` | `MOD-loop` | Autopilot + Executor — a client like any other |
+| `surface/` | `MOD-surface` | MCP-stdio · CLI · Host-Socket · Viewer/SSE — adapters, no logic |
+
+`MOD-agent-surface` lives under `.claude/commands/` (the skill drivers, `path` set there);
+`MOD-dashboard` is the neighbour package `@sigloch/graph-view-edit` (`external: true`).
+
+**Where the 17 old directories went** (CR-GC-446 cut the model, CR-GC-447 the code):
+
+| old | new |
 |---|---|
-| `index.ts`, `cli.ts` | entry points (`main`/`bin`) — bound via `realRef`, not by path |
-| `harness/` | `MOD-harness` — Apply-Gate, store lifecycle, import/reseed, merge, config |
-| `cli/` | `MOD-cli` — scaffold/init/update, verbs (run/rewind/import-code), status, gve, session lifecycle |
-| `codec/` | `MOD-codec` — Format-E encode/decode |
-| `conformance/` | `MOD-conformance` — CodeFacts extraction, RC rules, the ONE evaluation surface, test-report ingest |
-| `completeness/` | `MOD-completeness` — the completeness dimension (browser-safe) |
-| `element-slice/` | `MOD-element-slice` — element listing/slicing |
-| `executor/` | `MOD-executor` — embedded run loop (prompt/parse/rank/preflight) |
-| `hooks/` | `MOD-hooks` — pre-commit / post-apply / event + trajectory emit |
-| `schema-migration/` | `MOD-schema-migration` — schema fingerprint + guard |
-| `steering/` | `MOD-steering` — snapshot, next-step, generate, fit-advisory, readiness, target profile |
-| `tools/` | `MOD-mcp-tools` — MCP server + registry, the tool groups, authoring/test-selection surfaces |
-| `viewer/` | `MOD-host-bridge` — SSE/WS host, host-shim, health, help, panels |
-| `views/` | `MOD-docs` — exporter + the deterministic view projections |
+| `harness/`, `conformance/conformance.ts` + `evaluation.ts`, `element-slice/`, `schema-migration/`, `hooks/hooks.ts` | `kernel/` |
+| `codec/`, `views/`, `completeness/`, `conformance/testreport.ts`, the measuring half of `steering/`, the report/export half of `tools/` | `projections/` |
+| `executor/`, the deciding half of `steering/` (`generate`, `steering`, `se-plan`, `target-profile`), `tools/suggest.ts` | `loop/` |
+| `cli/`, `viewer/`, the MCP-verb half of `tools/`, `hooks/emit.ts` | `surface/` |
 
-`MOD-skills` lives under `.claude/commands/` (already structured); `MOD-dashboard` is the
-neighbour package `@sigloch/graph-view-edit`; `MOD-metrics-engine` binds externally into
-sigloch-modules; `MOD-repo-root` owns no files.
+Two files were **split by responsibility**, not moved (CR-GC-447):
+`viewer/host.ts` → `kernel/own-kuzu.ts` (who owns the one store) + `surface/host.ts` (the
+read-only HTTP/SSE transport above it); `hooks/emit.ts` → `surface/emit.ts` (the live-update
+event) + `projections/trajectory.ts` (the learning feed as a projection of the OpLog).
 
 **Module size:** 500 lines per file (`CLAUDE.md`). Two documented exceptions, tracked in
-CR-GC-261: `steering/readiness.ts` and `harness/harness.ts` (moving the Apply-Gate is a
+CR-GC-261: `projections/readiness.ts` and `kernel/harness.ts` (moving the Apply-Gate is a
 governance change, not a formatting one).
 
 Interfaces are the `FLOW→SCHEMA` contracts (`@sigloch/contracts` Zod).

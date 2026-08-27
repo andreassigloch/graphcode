@@ -15,11 +15,11 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import { PHASE_GATE_RULES } from '../src/steering/readiness.js';
-import { GraphCodeHarness } from '../src/harness/harness.js';
-import { extractCodeFacts, extractImportEdges, conformanceViolations, toOntologyGraph } from '../src/conformance/conformance.js';
-import { scoreReadinessWithConformance } from '../src/conformance/evaluation.js';
-import { elementToNode } from '../src/views/exporter.js';
+import { PHASE_GATE_RULES } from '../src/projections/readiness.js';
+import { GraphCodeHarness } from '../src/kernel/harness.js';
+import { extractCodeFacts, extractImportEdges, conformanceViolations, toOntologyGraph } from '../src/kernel/conformance.js';
+import { scoreReadinessWithConformance } from '../src/kernel/evaluation.js';
+import { elementToNode } from '../src/projections/exporter.js';
 import { evaluateAllRules, DEFAULT_METRIC_POLICY } from '@sigloch/contracts/se';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 
@@ -120,7 +120,7 @@ describe('TEST-code-conformance: realRef/testRefs resolve as RC readiness rules 
     const broken: typeof g = {
       nodes: g.nodes.map((n) =>
         n.uid === 'FUNC-mutate'
-          ? { ...n, attributes: { ...n.attributes, realRef: { file: 'src/harness/harness.ts', symbol: 'definitelyNotASymbol', lang: 'ts' } } }
+          ? { ...n, attributes: { ...n.attributes, realRef: { file: 'src/kernel/harness.ts', symbol: 'definitelyNotASymbol', lang: 'ts' } } }
           : n,
       ),
       edges: g.edges,

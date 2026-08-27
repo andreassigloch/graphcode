@@ -1981,7 +1981,7 @@
       "description": "Setzt den Store aus einem Bestand neu auf, statt ihn zu ergaenzen. Legt vorher eine Sicherung an, weil ein Reseed kein Merge ist.",
       "status": "done",
       "realRef": {
-        "file": "src/harness/harness-import.ts",
+        "file": "src/kernel/harness-import.ts",
         "symbol": "applyReseed",
         "lang": "ts"
       }
@@ -2024,7 +2024,7 @@
       "description": "Haengt den Export an die Mutation: nach einer Aenderung folgt der Dateistand dem Store entprellt nach, damit das committete Artefakt nicht zurueckfaellt.",
       "status": "done",
       "realRef": {
-        "file": "src/views/auto-export.ts",
+        "file": "src/projections/auto-export.ts",
         "symbol": "registerAutoExport",
         "lang": "ts"
       }
@@ -2036,7 +2036,7 @@
       "description": "Bindet die Werkzeug-Registry an einen Harness, sodass jedes Werkzeug ueber dasselbe Gate schreibt wie ein Aufruf im Prozess.",
       "status": "done",
       "realRef": {
-        "file": "src/tools/mcp-tools.ts",
+        "file": "src/surface/mcp-tools.ts",
         "symbol": "bindToolsToHarness",
         "lang": "ts"
       }
@@ -2132,7 +2132,7 @@
       "description": "Kaltstart-Erstbefuellung: nimmt einen Format-E-Bestand und legt ihn ausschliesslich ueber das Apply-Gate an, nie per Direktschreiben. Liefert das Bootstrap-Ergebnis zurueck.",
       "status": "done",
       "realRef": {
-        "file": "src/cli/bootstrap.ts",
+        "file": "src/surface/bootstrap.ts",
         "symbol": "bootstrap",
         "lang": "ts"
       }
@@ -2146,7 +2146,7 @@
       "created_at": "2026-06-19T00:00:00.000Z",
       "codeRef": null,
       "realRef": {
-        "file": "src/viewer/host.ts",
+        "file": "src/surface/host.ts",
         "symbol": "broadcast",
         "lang": "ts"
       }
@@ -2158,7 +2158,7 @@
       "description": "Baut die Rundeninjektion aus Guide-Slice und Element-Index fuer die im Generierungsschritt gesetzten Fokus-Typen. Per Konfiguration abschaltbar, damit sich ihr Beitrag isoliert messen laesst.",
       "status": "done",
       "realRef": {
-        "file": "src/executor/executor-prompt.ts",
+        "file": "src/loop/executor-prompt.ts",
         "symbol": "buildRoundInjection",
         "lang": "ts"
       }
@@ -2171,7 +2171,7 @@
       "status": "done",
       "codeRef": null,
       "realRef": {
-        "file": "src/conformance/conformance.ts",
+        "file": "src/kernel/conformance.ts",
         "symbol": "conformanceViolations",
         "lang": "ts"
       }
@@ -2182,7 +2182,7 @@
       "name": "StoreLock",
       "description": "Beansprucht den Store atomar und weist einen zweiten Schreiber laut ab, statt ihn still zu ueberschreiben.",
       "realRef": {
-        "file": "src/harness/store-lock.ts",
+        "file": "src/kernel/store-lock.ts",
         "symbol": "StoreLock",
         "lang": "ts"
       }
@@ -2205,7 +2205,7 @@
       "name": "close()",
       "description": "Faehrt den Store herunter und gibt die Ownership wieder frei.",
       "realRef": {
-        "file": "src/harness/harness.ts",
+        "file": "src/kernel/harness.ts",
         "symbol": "close",
         "lang": "ts"
       }
@@ -2226,7 +2226,7 @@
       "description": "Sammelt den Betriebsstand eines Repos: laufender Host, installierte und angeheftete Version, und urteilt daraus ueber die Gesundheit.",
       "status": "done",
       "realRef": {
-        "file": "src/cli/status.ts",
+        "file": "src/surface/status.ts",
         "symbol": "collectStatus",
         "lang": "ts"
       }
@@ -2238,7 +2238,7 @@
       "description": "Projiziert denselben Regelstrom auf die Phasen-Gates SRR/PDR/CDR/TRR: je Gate abgedeckte gegen alle Regel-IDs plus die fehlenden. Die zweite Achse neben den Dimensionen, aus einer Quelle.",
       "status": "done",
       "realRef": {
-        "file": "src/steering/readiness.ts",
+        "file": "src/projections/readiness.ts",
         "symbol": "computePhaseReadiness",
         "lang": "ts"
       }
@@ -2263,7 +2263,7 @@
       "description": "Differenz zweier Snapshots: blockierende Fehler vorher und nachher plus Score-Delta je Dimension. Dimensionen ohne Grundgesamtheit auf beiden Seiten entfallen, weil ihr Score dort konstruktiv 0 ist und nicht perfekt.",
       "status": "done",
       "realRef": {
-        "file": "src/steering/steering-snapshot.ts",
+        "file": "src/projections/steering-snapshot.ts",
         "symbol": "computeSteeringDelta",
         "lang": "ts"
       }
@@ -2290,7 +2290,7 @@
       "updated_at": "2026-06-17T00:00:00.000Z",
       "codeRef": null,
       "realRef": {
-        "file": "src/codec/codec.ts",
+        "file": "src/projections/codec.ts",
         "symbol": "decode",
         "lang": "ts"
       }
@@ -2304,7 +2304,7 @@
       "created_at": "2026-06-19T00:00:00.000Z",
       "codeRef": null,
       "realRef": {
-        "file": "src/tools/report.ts",
+        "file": "src/projections/report.ts",
         "symbol": "graph_tests",
         "lang": "ts"
       }
@@ -2319,7 +2319,7 @@
       "updated_at": "2026-07-20T00:00:00.000Z",
       "codeRef": null,
       "realRef": {
-        "file": "src/hooks/emit.ts",
+        "file": "src/projections/trajectory.ts",
         "symbol": "materializeTrajectory",
         "lang": "ts"
       }
@@ -2334,7 +2334,7 @@
       "updated_at": "2026-06-17T00:00:00.000Z",
       "codeRef": null,
       "realRef": {
-        "file": "src/hooks/emit.ts",
+        "file": "src/surface/emit.ts",
         "symbol": "makeUpdateEventHook",
         "lang": "ts"
       }
@@ -2349,7 +2349,7 @@
       "updated_at": "2026-06-17T00:00:00.000Z",
       "codeRef": null,
       "realRef": {
-        "file": "src/codec/codec.ts",
+        "file": "src/projections/codec.ts",
         "symbol": "encode",
         "lang": "ts"
       }
@@ -2364,7 +2364,7 @@
       "updated_at": "2026-06-17T00:00:00.000Z",
       "codeRef": null,
       "realRef": {
-        "file": "src/harness/harness.ts",
+        "file": "src/kernel/harness.ts",
         "symbol": "evaluateRules",
         "lang": "ts"
       }
@@ -2380,7 +2380,7 @@
       "codeRef": null,
       "operatingMode": "export",
       "realRef": {
-        "file": "src/views/exporter.ts",
+        "file": "src/projections/exporter.ts",
         "symbol": "exportMarkdown",
         "lang": "ts"
       }
@@ -2392,7 +2392,7 @@
       "description": "Markiert nach einer Mutation, dass der Export dem Store hinterherhaengt, und raeumt die Marke wieder ab. Die Marke ist der einzige Hinweis darauf, dass Datei und Store auseinanderlaufen.",
       "status": "done",
       "realRef": {
-        "file": "src/harness/export-marker.ts",
+        "file": "src/kernel/export-marker.ts",
         "symbol": "setExportPending",
         "lang": "ts"
       }
@@ -2404,7 +2404,7 @@
       "description": "Prosa-Recovery: holt ein Kommando-Objekt aus einer Modellantwort, die statt eines Tool-Calls Text geliefert hat. Findet keine Kommandos, gibt sie null zurueck statt zu raten.",
       "status": "done",
       "realRef": {
-        "file": "src/executor/executor-parse.ts",
+        "file": "src/loop/executor-parse.ts",
         "symbol": "extractMutateFromText",
         "lang": "ts"
       }
@@ -2416,7 +2416,7 @@
       "description": "Bewertet einen Kandidaten im R^6-Metrikraum vor und nach der probierten Mutation und liefert die Richtung als Advisory. Die Metrik rankt, das Gate urteilt.",
       "status": "done",
       "realRef": {
-        "file": "src/steering/fit-advisory.ts",
+        "file": "src/projections/fit-advisory.ts",
         "symbol": "computeFitAdvisory",
         "lang": "ts"
       }
@@ -2428,7 +2428,7 @@
       "description": "Waehlt aus den Dimensionsscores die schwaechste Dimension unter der Fokus-Schwelle und stellt daraus den Runden-Prompt zusammen: Fokus-Typen, Fund-Fenster, Gate-Protokoll, Handoff-Bedingung.",
       "status": "done",
       "realRef": {
-        "file": "src/steering/generate.ts",
+        "file": "src/loop/generate.ts",
         "symbol": "generationStep",
         "lang": "ts"
       }
@@ -2451,7 +2451,7 @@
       "updated_at": "2026-06-17T00:00:00.000Z",
       "codeRef": null,
       "realRef": {
-        "file": "src/harness/harness.ts",
+        "file": "src/kernel/harness.ts",
         "symbol": "subgraph",
         "lang": "ts"
       }
@@ -2463,7 +2463,7 @@
       "description": "Materialisiert den kanonischen, deterministischen Graph-Snapshot docs/graph/<system>.graph.json plus die Markdown-Views und loescht den Drift-Marker EXPORT_PENDING. Der einzige Sync-Pfad Graph zu committeten Docs; verweigert das Clobbern (leerer Graph, fremder Drop). (CR-GC-113, CR-GC-217)",
       "status": "done",
       "realRef": {
-        "file": "src/tools/export.ts",
+        "file": "src/projections/export.ts",
         "symbol": "graph_export",
         "lang": "ts"
       }
@@ -2478,7 +2478,7 @@
       "updated_at": "2026-06-17T00:00:00.000Z",
       "codeRef": null,
       "realRef": {
-        "file": "src/harness/harness.ts",
+        "file": "src/kernel/harness.ts",
         "symbol": "impact",
         "lang": "ts"
       }
@@ -2490,7 +2490,7 @@
       "description": "Duennes Binding auf @sigloch/se-optimizer (targetFor/suggestEdits): rankt die feuernden Operator-Regeln nach dem Skalarprodukt aus Metrik-Delta und Zielrichtung im R^6-Metrikraum; liefert die Fund-Ebene, Template-Edits laufen als dryRun durchs Gate. Nie auto-apply. (CR-GC-273)",
       "status": "done",
       "realRef": {
-        "file": "src/tools/suggest.ts",
+        "file": "src/loop/suggest.ts",
         "symbol": "bindSuggestTools",
         "lang": "ts"
       }
@@ -2502,7 +2502,7 @@
       "description": "Fuehrt Buch, welche Sitzungen eines Repos noch leben, damit der Viewer dem Repo gehoert und nicht der einzelnen Sitzung. Eintraege toter Prozesse werden beim Lesen entfernt.",
       "status": "done",
       "realRef": {
-        "file": "src/cli/gve-sessions.ts",
+        "file": "src/surface/gve-sessions.ts",
         "symbol": "liveSessions",
         "lang": "ts"
       }
@@ -2514,7 +2514,7 @@
       "description": "Haengt eine Sitzung an das Dashboard des Repos: sorgt dafuer, dass genau ein Viewer laeuft, haelt ihn per Umfrage am Leben und beendet ihn erst, wenn die letzte Sitzung des Repos geht. Aufrufer ist der MCP-Server beim Hochfahren, in beiden Zweigen (Wahlgewinner wie Proxy).",
       "status": "done",
       "realRef": {
-        "file": "src/cli/gve.ts",
+        "file": "src/surface/gve.ts",
         "symbol": "attachGve",
         "lang": "ts"
       }
@@ -2530,7 +2530,7 @@
       "codeRef": null,
       "operatingMode": "lifecycle",
       "realRef": {
-        "file": "src/cli/scaffold.ts",
+        "file": "src/surface/scaffold.ts",
         "symbol": "scaffold",
         "lang": "ts"
       }
@@ -2544,7 +2544,7 @@
       "created_at": "2026-06-19T00:00:00.000Z",
       "codeRef": null,
       "realRef": {
-        "file": "src/viewer/host.ts",
+        "file": "src/surface/host.ts",
         "symbol": "health",
         "lang": "ts"
       }
@@ -2556,7 +2556,7 @@
       "description": "Oeffnet den Socket, ueber den ein zweiter Prozess Schreibaufrufe an den Besitzer des Stores weiterreicht, statt ein zweites Datenbank-Handle zu oeffnen.",
       "status": "done",
       "realRef": {
-        "file": "src/viewer/host-shim.ts",
+        "file": "src/surface/host-shim.ts",
         "symbol": "startHostSocket",
         "lang": "ts"
       }
@@ -2572,7 +2572,7 @@
       "codeRef": null,
       "operatingMode": "bootstrap",
       "realRef": {
-        "file": "src/harness/harness.ts",
+        "file": "src/kernel/harness.ts",
         "symbol": "importGraph",
         "lang": "ts"
       }
@@ -2593,7 +2593,7 @@
       "description": "Das Verb graphcode import-code: sammelt die TypeScript-Dateien und uebergibt sie dem externen Slicer. graphcode extrahiert dabei selbst nichts, es delegiert und nimmt das Ergebnis entgegen.",
       "status": "done",
       "realRef": {
-        "file": "src/cli/import-code-verb.ts",
+        "file": "src/surface/import-code-verb.ts",
         "symbol": "executeImportCode",
         "lang": "ts"
       }
@@ -2613,7 +2613,7 @@
       "name": "listElements(filter)",
       "description": "Liefert eine nach Typ und Suchbegriff gefilterte Element-Scheibe aus dem Store.",
       "realRef": {
-        "file": "src/element-slice/element-slice.ts",
+        "file": "src/kernel/element-slice.ts",
         "symbol": "listElements",
         "lang": "ts"
       }
@@ -2625,7 +2625,7 @@
       "description": "Liest die Repo-Konfiguration und liefert die Urteilsschwellen als Policy. Keine Schwelle steht als Literal im Regelcode; eine verschobene Policy kippt dasselbe Urteil auf unveraendertem Graphen.",
       "status": "done",
       "realRef": {
-        "file": "src/harness/config.ts",
+        "file": "src/kernel/config.ts",
         "symbol": "loadGraphcodeConfig",
         "lang": "ts"
       }
@@ -2636,7 +2636,7 @@
       "name": "loadGraph()",
       "description": "Laedt den persistierten Graphen in die Arbeitskopie des Gates.",
       "realRef": {
-        "file": "src/harness/harness.ts",
+        "file": "src/kernel/harness.ts",
         "symbol": "loadGraph",
         "lang": "ts"
       }
@@ -2651,7 +2651,7 @@
       "concept": null,
       "operatingMode": "merge",
       "realRef": {
-        "file": "src/harness/merge.ts",
+        "file": "src/kernel/merge.ts",
         "symbol": "replayBranchLog",
         "lang": "ts"
       }
@@ -2689,7 +2689,7 @@
       "updated_at": "2026-06-17T00:00:00.000Z",
       "codeRef": null,
       "realRef": {
-        "file": "src/harness/harness.ts",
+        "file": "src/kernel/harness.ts",
         "symbol": "mutate",
         "lang": "ts"
       }
@@ -2701,7 +2701,7 @@
       "description": "Rechnet die Near-Duplicate-Matrizen ueber FUNC und SCHEMA und haengt sie an den Graphen, bevor der volle Regelkatalog laeuft. Aufrufer ist die Steering-Momentaufnahme, nicht der Treiber.",
       "status": "done",
       "realRef": {
-        "file": "src/steering/nd-similarity.ts",
+        "file": "src/projections/nd-similarity.ts",
         "symbol": "injectNDMatrices",
         "lang": "ts"
       }
@@ -2713,7 +2713,7 @@
       "description": "Der Advisory-Rueckweg an den fragenden Agenten: aus demselben Snapshot die Fokus-Dimension, die blockierenden Fehler und die feuernden Regeln als naechster Schritt.",
       "status": "done",
       "realRef": {
-        "file": "src/steering/steering.ts",
+        "file": "src/loop/steering.ts",
         "symbol": "nextStep",
         "lang": "ts"
       }
@@ -2724,7 +2724,7 @@
       "name": "initialize()",
       "description": "Beansprucht die alleinige Store-Ownership, erkennt Meta-Modell-Drift und oeffnet den Kuzu-Store.",
       "realRef": {
-        "file": "src/harness/harness.ts",
+        "file": "src/kernel/harness.ts",
         "symbol": "initialize",
         "lang": "ts"
       }
@@ -2738,8 +2738,8 @@
       "created_at": "2026-06-19T00:00:00.000Z",
       "codeRef": null,
       "realRef": {
-        "file": "src/viewer/host.ts",
-        "symbol": "serveHost",
+        "file": "src/kernel/own-kuzu.ts",
+        "symbol": "ownKuzu",
         "lang": "ts"
       }
     },
@@ -2750,7 +2750,7 @@
       "description": "Prueft einen Kandidaten-Batch vor dem Gate und vervollstaendigt, was mechanisch entscheidbar ist. Was unklar bleibt, geht unveraendert ans Gate statt geraten zu werden.",
       "status": "done",
       "realRef": {
-        "file": "src/executor/preflight.ts",
+        "file": "src/loop/preflight.ts",
         "symbol": "preflightBatch",
         "lang": "ts"
       }
@@ -2762,7 +2762,7 @@
       "description": "Ordnet die Kandidaten einer Runde deterministisch: tier zuerst, dann das Delta der Fokus-Dimension, dann das Gesamt-Delta, dann die Architektur-Fitness als Tiebreaker. Kein Modell-Urteil, nur gemessene Groessen.",
       "status": "done",
       "realRef": {
-        "file": "src/executor/executor-rank.ts",
+        "file": "src/loop/executor-rank.ts",
         "symbol": "rankCandidates",
         "lang": "ts"
       }
@@ -2788,7 +2788,7 @@
       "description": "Re-synct den Live-Store aus einem Snapshot: DETACH-DELETE plus Re-Import hinter dem Single-Writer, kein zweites DB-Handle. Serialisiert gegen mutate (O3), loescht danach den Drift-Marker. (CR-GC-203, CR-GC-218)",
       "status": "done",
       "realRef": {
-        "file": "src/harness/harness.ts",
+        "file": "src/kernel/harness.ts",
         "symbol": "reseed",
         "lang": "ts"
       }
@@ -2801,7 +2801,7 @@
       "status": "done",
       "codeRef": null,
       "realRef": {
-        "file": "src/harness/harness.ts",
+        "file": "src/kernel/harness.ts",
         "symbol": "testImpact",
         "lang": "ts"
       }
@@ -2813,7 +2813,7 @@
       "description": "Stellt den Graph-Stand eines Commits her: liest den Snapshot per git show aus dem Objektspeicher und stellt ihn im gitignorierten Workspace bereit. Der Working-Tree bleibt unberuehrt, es gibt also genau eine Zustandsaenderung; un-exportierte Mutationen brechen ab, force verwirft sie. (CR-GC-311)",
       "status": "done",
       "realRef": {
-        "file": "src/cli/rewind.ts",
+        "file": "src/surface/rewind.ts",
         "symbol": "executeRewind",
         "lang": "ts"
       }
@@ -2825,7 +2825,7 @@
       "description": "Die Treiberschleife selbst: baut die Tool-Specs, ruft das Backend rundenweise, wendet Mutationen ueber die Registry an und zaehlt Runden, Turns, Anwendungen und Rejections. Backend-Wechsel zwischen lokalem und Frontier-Modell ist Konfiguration, keine zweite Codeverzweigung.",
       "status": "done",
       "realRef": {
-        "file": "src/executor/executor.ts",
+        "file": "src/loop/executor.ts",
         "symbol": "runExecutor",
         "lang": "ts"
       }
@@ -2837,7 +2837,7 @@
       "description": "Das Verb graphcode run: liest die Backend-Konfiguration aus der Umgebung und startet den eingebetteten Treiber. Der Wechsel zwischen lokalem und Frontier-Modell passiert hier als Konfiguration, nicht als zweiter Codepfad.",
       "status": "done",
       "realRef": {
-        "file": "src/cli/run-verb.ts",
+        "file": "src/surface/run-verb.ts",
         "symbol": "executeRun",
         "lang": "ts"
       }
@@ -2852,7 +2852,7 @@
       "updated_at": "2026-06-17T00:00:00.000Z",
       "codeRef": null,
       "realRef": {
-        "file": "src/harness/harness.ts",
+        "file": "src/kernel/harness.ts",
         "symbol": "persist",
         "lang": "ts"
       }
@@ -2864,7 +2864,7 @@
       "description": "Bildet den Fingerabdruck des Meta-Modell-Schemas und erkennt daran eine Drift zwischen Ontologie und angelegtem Store.",
       "status": "done",
       "realRef": {
-        "file": "src/schema-migration/schema-guard.ts",
+        "file": "src/kernel/schema-guard.ts",
         "symbol": "schemaFingerprint",
         "lang": "ts"
       }
@@ -2984,7 +2984,7 @@
       "name": "seedFromJson(relPath)",
       "description": "Erstbefuellung des Stores aus dem committeten Snapshot, ueber den Import-Port statt am Gate vorbei.",
       "realRef": {
-        "file": "src/harness/harness.ts",
+        "file": "src/kernel/harness.ts",
         "symbol": "seedFromJson",
         "lang": "ts"
       }
@@ -2998,7 +2998,7 @@
       "created_at": "2026-06-19T00:00:00.000Z",
       "codeRef": null,
       "realRef": {
-        "file": "src/viewer/host.ts",
+        "file": "src/surface/host.ts",
         "symbol": "serveHost",
         "lang": "ts"
       }
@@ -3012,7 +3012,7 @@
       "created_at": "2026-06-19T00:00:00.000Z",
       "codeRef": null,
       "realRef": {
-        "file": "src/tools/mcp-server.ts",
+        "file": "src/surface/mcp-server.ts",
         "symbol": "serveStdio",
         "lang": "ts"
       }
@@ -3023,7 +3023,7 @@
       "name": "SessionLifecycle",
       "description": "Raeumt am Sessionende alle Ressourcen in umgekehrter Reihenfolge ab, den Store-Lock zuletzt.",
       "realRef": {
-        "file": "src/cli/session-lifecycle.ts",
+        "file": "src/surface/session-lifecycle.ts",
         "symbol": "SessionLifecycle",
         "lang": "ts"
       }
@@ -3035,7 +3035,7 @@
       "description": "Der EINE Messpfad: mappt den Graphen ueber toOntologyGraph, injiziert die ND-Matrizen und wertet den vollen Regelkatalog aus; liefert Regelstrom, blockierende Fehler und den Readiness-Report in EINEM Objekt. Jede weitere Kenngroesse ist eine Projektion davon, keine zweite Messung.",
       "status": "done",
       "realRef": {
-        "file": "src/steering/steering-snapshot.ts",
+        "file": "src/projections/steering-snapshot.ts",
         "symbol": "takeSteeringSnapshot",
         "lang": "ts"
       }
@@ -3056,7 +3056,7 @@
       "description": "Laedt das Zielprofil und meldet Zielkonflikte. Das Profil ist Konfiguration neben dem Graphen, nicht Teil des Modells.",
       "status": "done",
       "realRef": {
-        "file": "src/steering/target-profile.ts",
+        "file": "src/loop/target-profile.ts",
         "symbol": "loadTargetProfile",
         "lang": "ts"
       }
@@ -3096,7 +3096,7 @@
       "description": "Stellt jedem Werkzeugaufruf seinen Kontext bereit: Aufrufer, Repo-Wurzel und die Weiterleitung an den Besitzerprozess.",
       "status": "done",
       "realRef": {
-        "file": "src/tools/tool-context.ts",
+        "file": "src/surface/tool-context.ts",
         "symbol": "createToolContext",
         "lang": "ts"
       }
@@ -3108,7 +3108,7 @@
       "description": "Ein Befehl, der alles aktuell macht (CR-GC-377): Ziel aus der Registry (oder --to), Repo-Install ziehen, den NEU installierten Build seine eigenen Artefakte schreiben lassen (Re-Exec), den Host beenden, der auf altem Code weiterlaeuft. Ersetzt das Verb update ersatzlos, dessen Name log: es refreshte nur Artefakte. --check ist die reine Registry-Abfrage ohne Aenderung und macht eine separate Suchfunktion ueberfluessig. Kein stilles Downgrade: liegt die Registry hinter dem Installierten, bricht der Befehl ab und verlangt --to.",
       "status": "done",
       "realRef": {
-        "file": "src/cli/upgrade.ts",
+        "file": "src/surface/upgrade.ts",
         "symbol": "executeUpgrade",
         "lang": "ts"
       },
@@ -3211,28 +3211,32 @@
       "type": "MOD",
       "name": "kernel — Store, Gate, Regeln, OpLog",
       "description": "Der einzige Kuzu-Owner. Zwei Tueren nach aussen: apply(Command[]) liefert ein Verdict, query(TypedQuery) liefert eine Scheibe. Ausserhalb dieses Moduls sieht niemand den Graphen; Lifecycle, Sperre, Regel-Lauf, Konformitaets-Fakten, Migration und das Operations-Log liegen hier. (CR-GC-446)",
-      "status": "done"
+      "status": "done",
+      "path": "src/kernel"
     },
     {
       "id": "MOD-loop",
       "type": "MOD",
       "name": "loop — Autopilot und Executor",
       "description": "Die Schleife, die den Graphen bewegt: Fokuswahl, Zielprofil, Vorschlaege, Runden-Prompt, Modellaufruf, Kandidaten-Ranking. Ein Client des Gates wie jeder andere — sie schreibt ausschliesslich durch apply(). (CR-GC-446)",
-      "status": "done"
+      "status": "done",
+      "path": "src/loop"
     },
     {
       "id": "MOD-projections",
       "type": "MOD",
       "name": "projections — Graph nach Artefakt",
       "description": "Reine Projektionen des Graphen: Messung, Readiness, Codec, Export, Markdown-Views, Trajektorie. Liest den Graphen ueber die kernel-Abfrage und schreibt nie in ihn zurueck. (CR-GC-446)",
-      "status": "done"
+      "status": "done",
+      "path": "src/projections"
     },
     {
       "id": "MOD-surface",
       "type": "MOD",
       "name": "surface — MCP, CLI, Host-Socket, Viewer",
       "description": "Adapter ohne eigene Logik: MCP-stdio-Registry, CLI-Verben und Distribution, Host-Socket zum Store-Besitzer, read-only SSE-Bruecke an den Live-Viewer. Uebersetzt Protokoll in kernel-Aufrufe, mehr nicht. (CR-GC-446)",
-      "status": "done"
+      "status": "done",
+      "path": "src/surface"
     },
     {
       "id": "MS-1-specification",
@@ -4800,7 +4804,7 @@
       "created_at": "2026-06-16T00:00:00.000Z",
       "zodDefinition": "z.object({ command: z.enum(['init','update','remove']), repoPath: z.string(), result: z.string().optional() })",
       "realRef": {
-        "file": "src/cli/scaffold.ts",
+        "file": "src/surface/scaffold.ts",
         "symbol": "CliCommandSchema",
         "lang": "ts"
       },
@@ -4826,7 +4830,7 @@
       "name": "ExportPending",
       "description": "Inhalt der Drift-Marke: Zeitpunkt der ersten un-exportierten Mutation und Zahl der angewandten Batches seit dem letzten Export.",
       "realRef": {
-        "file": "src/harness/export-pending-contract.ts",
+        "file": "src/kernel/export-pending-contract.ts",
         "symbol": "ExportPending",
         "lang": "ts"
       }
@@ -4838,7 +4842,7 @@
       "description": "layer, dimensions, before, after, delta, regressions.",
       "status": "reviewed",
       "realRef": {
-        "file": "src/steering/fit-advisory.ts",
+        "file": "src/projections/fit-advisory.ts",
         "symbol": "FitAdvisory",
         "lang": "ts"
       }
@@ -4860,7 +4864,7 @@
       "description": "Fokus-Schluessel und -Typen, Readiness-Auszug, Fund-Fenster, Gate-Protokoll, Handoff-Bedingung.",
       "status": "reviewed",
       "realRef": {
-        "file": "src/steering/generate.ts",
+        "file": "src/loop/generate.ts",
         "symbol": "GenerationStep",
         "lang": "ts"
       }
@@ -4871,7 +4875,7 @@
       "name": "HealthPayload",
       "description": "status, store, gate, nodeCount, versions, sseClients. Der Vertrag der GET /health-Antwort.",
       "realRef": {
-        "file": "src/viewer/health.ts",
+        "file": "src/surface/health.ts",
         "symbol": "HealthPayloadSchema",
         "lang": "ts"
       }
@@ -4882,7 +4886,7 @@
       "name": "TestImpactResult",
       "description": "nodes, edges, anchors, testIds. Der Vertrag von impactedTests am Modulrand.",
       "realRef": {
-        "file": "src/tools/test-selection.ts",
+        "file": "src/projections/test-selection.ts",
         "symbol": "TestImpactResultSchema",
         "lang": "ts"
       }
@@ -4893,7 +4897,7 @@
       "name": "LockOwner",
       "description": "Halter des Store-Locks: Host, PID, Version, Zeitstempel.",
       "realRef": {
-        "file": "src/harness/lock-owner-contract.ts",
+        "file": "src/kernel/lock-owner-contract.ts",
         "symbol": "LockOwner",
         "lang": "ts"
       }
@@ -4907,7 +4911,7 @@
       "created_at": "2026-06-16T00:00:00.000Z",
       "zodDefinition": "z.object({ view: z.string(), markdown: z.string(), generated: z.literal(true) })",
       "realRef": {
-        "file": "src/views/exporter.ts",
+        "file": "src/projections/exporter.ts",
         "symbol": "MarkdownViewSchema",
         "lang": "ts"
       },
@@ -4953,7 +4957,7 @@
       "name": "ModelAnswer",
       "description": "Die normalisierte Antwort des Modells: Text, angeforderte Werkzeugaufrufe, Stop-Grund und Verbrauchszahlen. Geprueft wird sie in der Draht-Form jedes Backends beim Empfang, nicht erst im Prosa-Parser.",
       "realRef": {
-        "file": "src/executor/model-answer-contract.ts",
+        "file": "src/loop/model-answer-contract.ts",
         "symbol": "ModelAnswer",
         "lang": "ts"
       }
@@ -5008,7 +5012,7 @@
       "description": "Je Gate: abgedeckte und alle Regel-IDs plus die fehlenden.",
       "status": "reviewed",
       "realRef": {
-        "file": "src/steering/readiness.ts",
+        "file": "src/projections/readiness.ts",
         "symbol": "PhaseGateReadiness",
         "lang": "ts"
       }
@@ -5056,7 +5060,7 @@
       "name": "SchemaFingerprint",
       "description": "Die ersten 16 Hex-Zeichen eines SHA-256 ueber die generierte DDL. Die Laenge ist Teil des Vertrags: sie unterscheidet einen aelteren Schemastand von einer kaputten Datei.",
       "realRef": {
-        "file": "src/schema-migration/schema-fingerprint-contract.ts",
+        "file": "src/kernel/schema-fingerprint-contract.ts",
         "symbol": "SchemaFingerprintSchema",
         "lang": "ts"
       }
@@ -5067,7 +5071,7 @@
       "name": "SessionEntry",
       "description": "pid, hostname, startedAt. Der Vertrag eines Sitzungseintrags, der eine Prozessgrenze quert.",
       "realRef": {
-        "file": "src/cli/gve-session-contract.ts",
+        "file": "src/surface/gve-session-contract.ts",
         "symbol": "SessionEntrySchema",
         "lang": "ts"
       }
@@ -5079,7 +5083,7 @@
       "description": "blockingErrors vorher und nachher plus je Dimension before, after, delta.",
       "status": "reviewed",
       "realRef": {
-        "file": "src/steering/steering-snapshot.ts",
+        "file": "src/projections/steering-snapshot.ts",
         "symbol": "SteeringDelta",
         "lang": "ts"
       }
@@ -5091,7 +5095,7 @@
       "description": "Gemappter OntologyGraph mit injizierten ND-Matrizen, Violations des vollen Katalogs, Zahl der blockierenden Fehler, Readiness-Report.",
       "status": "reviewed",
       "realRef": {
-        "file": "src/steering/steering-snapshot.ts",
+        "file": "src/projections/steering-snapshot.ts",
         "symbol": "SteeringSnapshot",
         "lang": "ts"
       }
@@ -5102,7 +5106,7 @@
       "name": "TargetProfile",
       "description": "weights (6 Dimensionen in [-1,1]) und intentAnchors (3-7 Strings). Der Vertrag der Zielprofil-Datei, die zwei Schreiber und einen Leser hat.",
       "realRef": {
-        "file": "src/steering/target-profile-contract.ts",
+        "file": "src/loop/target-profile-contract.ts",
         "symbol": "TargetProfileSchema",
         "lang": "ts"
       }
@@ -5113,7 +5117,7 @@
       "name": "TestSelection",
       "description": "command, tests mit testRefs, coverage, unresolved. Der Vertrag der graph_tests-Antwort.",
       "realRef": {
-        "file": "src/tools/test-selection.ts",
+        "file": "src/projections/test-selection.ts",
         "symbol": "TestSelectionSchema",
         "lang": "ts"
       }
@@ -17142,5 +17146,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 10
+  "graphVersion": 2
 }

@@ -20,16 +20,16 @@ import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import type { AuditEntry } from '@sigloch/graph-api-core';
-import { GraphCodeHarness } from '../src/harness/harness.js';
-import { bindToolsWithContext, type MCPToolRegistry } from '../src/tools/mcp-tools.js';
+import { GraphCodeHarness } from '../src/kernel/harness.js';
+import { bindToolsWithContext, type MCPToolRegistry } from '../src/surface/mcp-tools.js';
 import {
   PROMPT_RELAY_DIR,
   beginProxiedCall,
   endProxiedCall,
   resolveOwnerPid,
   type ToolContext,
-} from '../src/tools/tool-context.js';
-import { mergedSettingsContent, shippedHookFiles } from '../src/cli/scaffold-templates.js';
+} from '../src/surface/tool-context.js';
+import { mergedSettingsContent, shippedHookFiles } from '../src/surface/scaffold-templates.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
 
 const HOOK = join(process.cwd(), '.claude/hooks/record-prompt.sh');

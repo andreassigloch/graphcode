@@ -14,7 +14,7 @@
  */
 import { describe, it, expect } from 'vitest';
 import type { Graph } from '@sigloch/graph-api-core';
-import { GraphCodeCodec } from '../src/codec/codec.js';
+import { GraphCodeCodec } from '../src/projections/codec.js';
 
 const codec = new GraphCodeCodec();
 

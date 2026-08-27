@@ -4,7 +4,7 @@
 import { describe, it, expect } from 'vitest';
 import { DEFAULT_METRIC_POLICY } from '@sigloch/contracts/se';
 import type { Graph, GraphNode, GraphEdge } from '@sigloch/graph-api-core';
-import { nextStep } from '../src/steering/steering.js';
+import { nextStep } from '../src/loop/steering.js';
 
 function node(uid: string, type: string, name: string, description = '', attributes: Record<string, unknown> = {}): GraphNode {
   return { uid, type, name, description, attributes };

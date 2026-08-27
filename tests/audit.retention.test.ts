@@ -18,7 +18,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { FileOperationsLog } from '@sigloch/graph-api-core';
 import type { AuditEntry } from '@sigloch/graph-api-core';
-import { aggregateAuditEntries } from '../src/tools/audit.js';
+import { aggregateAuditEntries } from '../src/surface/audit.js';
 
 function entry(i: number, result: AuditEntry['result']): AuditEntry {
   return {

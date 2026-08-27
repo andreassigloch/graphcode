@@ -46,10 +46,10 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import { GraphCodeHarness } from '../src/harness/harness.js';
-import { exportMarkdown, type MarkdownView } from '../src/views/exporter.js';
-import { generationStep, DIMENSION_FOCUS_TYPES } from '../src/steering/generate.js';
-import { currentPhaseGate } from '../src/steering/readiness.js';
+import { GraphCodeHarness } from '../src/kernel/harness.js';
+import { exportMarkdown, type MarkdownView } from '../src/projections/exporter.js';
+import { generationStep, DIMENSION_FOCUS_TYPES } from '../src/loop/generate.js';
+import { currentPhaseGate } from '../src/projections/readiness.js';
 import { GATE_FIXTURE, GATE_FINDINGS, makeSteeringConfig, parseFocusKey, scriptedActor } from './fixtures/steering-graphs.js';
 import type { MutateCommand } from '@sigloch/contracts/harness';
 

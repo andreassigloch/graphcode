@@ -15,17 +15,17 @@ import { execFileSync } from 'node:child_process';
 import { mkdtempSync, rmSync, writeFileSync, readFileSync, mkdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { ExecutorConfigSchema, buildCallModel } from '../src/executor/executor.js';
-import { ModelAnswer } from '../src/executor/model-answer-contract.js';
-import { extractMutateFromText } from '../src/executor/executor-parse.js';
+import { ExecutorConfigSchema, buildCallModel } from '../src/loop/executor.js';
+import { ModelAnswer } from '../src/loop/model-answer-contract.js';
+import { extractMutateFromText } from '../src/loop/executor-parse.js';
 import {
   setExportPending,
   clearExportPending,
   isExportPending,
   readExportPending,
   EXPORT_PENDING_REL,
-} from '../src/harness/export-marker.js';
-import { ExportPending } from '../src/harness/export-pending-contract.js';
+} from '../src/kernel/export-marker.js';
+import { ExportPending } from '../src/kernel/export-pending-contract.js';
 
 // ---------------------------------------------------------------------------
 // FLOW-model-answer — der Eingang von FUNC-extract-mutate (CR-GC-422 §3)

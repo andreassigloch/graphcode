@@ -14,9 +14,9 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import { GraphCodeHarness } from '../src/harness/harness.js';
+import { GraphCodeHarness } from '../src/kernel/harness.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
-import { registerEmitters, type LiveUpdateEvent } from '../src/hooks/emit.js';
+import { registerEmitters, type LiveUpdateEvent } from '../src/surface/emit.js';
 
 function makeConfig(repoRoot: string): HarnessConfig {
   return {
