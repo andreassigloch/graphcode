@@ -1,15 +1,27 @@
 # CR-GC-402 — Dashboard rechnet eine zweite Wahrheit
 
-**Status:** teilweise umgesetzt (2026-08-24) — Loader-Hälfte erledigt, besser als Option A:
-`loadGraph()` nutzt jetzt die publizierte Inverse `fromOntologyGraph` (CR-SM-254) statt eines
-handgerollten Mirrors (graph-view-edit 0.7.1, Regression in `tests/vite-config-load-graph.test.mjs`).
-Verifiziert am graphcode-SSOT: beide Rechenwege liefern identische Regelmengen bis auf die
-**bekannten Rest-Deltas**: (1) RC-01..06 fehlen dashboard-seitig bewusst (CodeFacts nur am
-Checkout), (2) **MT-01** feuert dashboard-seitig 1×, hostseitig 0× — `DefaultRuleEngine.evaluate()`
-reicht keine MetricPolicy durch (`rule.evaluate(graph)` einargumentig), das Dashboard urteilt mit
-`DEFAULT_METRIC_POLICY` statt `graphcode.config.jsonc` (`instability: null`). Beides löst erst
-**Option C** (Dashboard fragt den Host) bzw. ein Policy-Parameter in graph-api-core.
-**Datum:** 2026-08-22
+**Status:** ERLEDIGT (2026-08-27) — **Option C** umgesetzt (Auftraggeber-Entscheidung).
+Das Dashboard fragt die Readiness beim graphcode-Host (`graph_readiness` über
+`.graphcode/host.sock`) und rechnet nichts selbst; nur ohne erreichbaren Host fällt es auf die
+eine vorhandene Auswertung zurück — und sagt das mit einem Banner an.
+
+Vorgeschichte, beide Hälften:
+
+1. **Loader-Hälfte (2026-08-24)**, besser als Option A: `loadGraph()` nutzt die publizierte
+   Inverse `fromOntologyGraph` (CR-SM-254) statt eines handgerollten Mirrors
+   (graph-view-edit 0.7.1, Regression in `tests/vite-config-load-graph.test.mjs`). Danach waren
+   beide Rechenwege regelmengengleich bis auf zwei Rest-Deltas.
+2. **Rest-Deltas, mit Option C geschlossen:**
+   - RC-01..06 fehlten dashboard-seitig (CodeFacts nur am Checkout) → kommen über den Host mit.
+   - MT-01 feuerte dashboard-seitig 1×, hostseitig 0×, weil `DefaultRuleEngine.evaluate()` keine
+     MetricPolicy durchreichte → `evaluate(graph, policy?)` in graph-api-code 5.4.0 (unreleased,
+     kein weiterer Bump); die Ersatzrechnung liest jetzt `graphcode.config.jsonc`.
+
+**Anhangsbefunde ausgelagert:** `docs/cr/open/CR-DRAFT-GC-439-fixhint-menschenlesbar.md` (fixHint
+als Agenten-Anweisung an Menschen) und `docs/cr/open/CR-DRAFT-GC-440-exporter-sprache.md`
+(deutsche Sätze in generierten Dokumenten) — bewusst nicht in diesem CR mitumgesetzt.
+
+**Datum:** 2026-08-22 (Befund) / 2026-08-27 (Abschluss)
 **Herkunft:** Vorbereitung der Kundenvorführung in `graphcodedemo` (City People Mover, 195 Elemente).
 Aufgefallen, weil das Dashboard auf der Leinwand dem Chat widersprochen hätte.
 
@@ -78,6 +90,11 @@ fällt es auf eine eigene Auswertung zurück — und sagt das dann auch an.
 Empfehlung: **A sofort als Stopfen, C als Zielbild.** B löst die Attributfrage, aber nicht
 die Frage, warum dieselbe Kennzahl zweimal berechnet wird.
 
+**Entscheidung des Auftraggebers (2026-08-27): Option C.** Die Loader-Hälfte (faktisch B für
+das Einlesen) war schon da; C beantwortet die verbliebene Frage — dieselbe Kennzahl wird nicht
+mehr zweimal gerechnet, sondern einmal am Host geholt. Die Ersatzrechnung bleibt genau für den
+Fall ohne Host bestehen und ist als solche gekennzeichnet.
+
 ## Abgrenzung
 
 - **Keine** neue Regel, keine Änderung an `V3_RULES` — die Regeln sind in Ordnung,
@@ -86,26 +103,37 @@ die Frage, warum dieselbe Kennzahl zweimal berechnet wird.
   getreu ab; der Report selbst ist falsch.
 - Nicht die Empfehlungsliste anfassen — dazu siehe den Anhang, das ist ein eigener CR.
 
-## Dateien (≤ 6, für Option A)
+## Dateien (umgesetzt, Option C)
 
 | Repo | Datei | Änderung |
 |---|---|---|
-| graph-view-edit | `vite.config.js` | `loadGraph()`: alle nicht reservierten flachen Keys nach `attributes`, keine Allowlist |
-| graph-view-edit | `tests/dashboard.test.mjs` | Regression: `graph.json` mit `concept`/`severity`/`occurrence`/`detection` → Attribute kommen an, FM-03 feuert, R-19 feuert nicht |
-| graph-view-edit | `package.json` | Version 0.6.1 |
-| graphcode | `package.json` / `package-lock.json` | Range auf 0.6.1 |
-| graphcode | `tests/gve-autostart.test.ts` | Assertion: Dashboard-Compliance == `graph_readiness`-Compliance auf demselben Graphen |
+| sigloch-modules | `packages/graph-api-core/src/rule-engine.ts` | `evaluate(graph, policy?)` — Policy am Aufruf, Default bleibt die gebundene |
+| sigloch-modules | `packages/graph-api-core/src/se-descriptor.ts` | Adapter reicht die Call-Policy an die contracts-Regel durch |
+| sigloch-modules | `packages/graph-api-core/tests/rule-engine-policy.test.ts` | red-first: Override wirkt, Default unverändert, Override gilt nur den einen Aufruf |
+| sigloch-modules | `packages/graph-api-core/CHANGELOG.md` | Eintrag in die bestehende 5.4.0-Sektion (kein weiterer Bump) |
+| graph-view-edit | `vite.config.js` | `fetchHostReadiness()` (graph_readiness über host.sock) als Primärweg; `readMetricPolicy()` für den Fallback; `readinessSource` im Payload |
+| graph-view-edit | `src/dashboard/Dashboard.jsx` + `dashboard.css` | Banner „lokal gerechnet, kein Host erreichbar" (`dashboard-source-banner`, Token-Styling) |
+| graph-view-edit | `tests/dashboard-host-parity.test.mjs` | **die Kernabsicherung** — Host-Antwort gegen Dashboard-Anzeige auf demselben Graphen |
+| graph-view-edit | `tests/dashboard-readiness-fallback.test.mjs` | Fallback: Banner + Grund, und MT-01 schweigt mit `instability: null` aus der Repo-Config |
+| graph-view-edit | `tests/dashboard.test.mjs` | Banner sichtbar bei `origin:'local'`, abwesend bei `'host'` |
+| graph-view-edit | `package.json` | `@sigloch/graph-api-core` auf `>=5.4 <6` — ohne den Policy-Parameter wäre der Fallback wieder still falsch |
 
-## Akzeptanzkriterien
+## Akzeptanzkriterien (Option C)
 
-- [ ] Auf `graphcodedemo` (195 Elemente, committeter Stand) meldet `GET /api/dashboard`
-      **97,9 % Compliance, 4 Elemente mit Fehlern, FM-03 ×4, TRR-Score 0,909** — die
-      Werte, die `graph_readiness` in derselben Sekunde liefert
-- [ ] R-19 fällt auf **0**: kein TEST mit `concept: true` gilt noch als runnable
-- [ ] Ein Test vergleicht beide Rechenwege auf demselben Graphen und schlägt fehl,
-      sobald die Compliance-Zahlen auseinanderlaufen (das ist die eigentliche Absicherung —
-      ohne ihn wandert der Befund beim nächsten Ontologie-Attribut zurück)
-- [ ] `npm run build` + volle Suite in beiden Repos grün
+- [x] `GET /api/dashboard` meldet die Zahlen, die `graph_readiness` in derselben Sekunde
+      liefert — Compliance, Elemente mit Fehlern, Gate-Scores und die Regelmenge inklusive
+      RC-01..06
+- [x] Ein Test vergleicht Host-Antwort und Dashboard-Anzeige auf demselben Graphen und
+      schlägt fehl, sobald die Compliance-Zahlen auseinanderlaufen (das ist die eigentliche
+      Absicherung — ohne ihn wandert der Befund beim nächsten Ontologie-Attribut zurück).
+      Red-first belegt: im Zustand vor der Änderung **57,2 % gegen 47,8 %**, TRR grün gegen
+      rot, 19 gegen 21 Regeln
+- [x] Ohne erreichbaren Host rechnet der Viewer weiter — mit der `graphcode.config.jsonc`
+      des Repos und einem sichtbaren Banner samt Grund. Eigener Test, ebenfalls red-first
+- [x] Kein dritter Pfad: der Fallback ist die EINE vorhandene Rechnung
+      (`fromOntologyGraph` + Engine), nicht eine Kopie daneben
+- [x] `npm run build` + volle Suite grün: graph-api-core 151/151, gve 738/738
+      (`npm test -- --no-ingest`, 729 vorher + 9 neue)
 
 ## Warum das nicht kosmetisch ist
 
@@ -117,6 +145,10 @@ und sie fällt zuerst dort auf, wo jemand hinschaut, der uns nicht kennt.
 ---
 
 ## Anhang — zwei weitere Befunde aus demselben Lauf (je eigener CR)
+
+> **Ausgelagert, hier NICHT umgesetzt:**
+> Befund 1 → `docs/cr/open/CR-DRAFT-GC-439-fixhint-menschenlesbar.md` ·
+> Befund 2 → `docs/cr/open/CR-DRAFT-GC-440-exporter-sprache.md`
 
 **1 · Das Dashboard druckt Agenten-Anweisungen an Menschen.**
 `recommendationsPanel()` reicht `fixHint` unverändert durch, das Panel zeigt sie:
