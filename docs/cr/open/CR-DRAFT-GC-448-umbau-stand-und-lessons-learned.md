@@ -184,7 +184,27 @@ Jeder Punkt ist ein eigener CR, keiner wird aus diesem Draft gebaut.
 10. Publish-Stau: contracts 10.0.0 → se-engine 1.4.0 → graph-api-core 5.4.0 + graphcode-client
     1.3.1 → graphcode. Erst danach lösen sich die 20 roten Tests (2 Publish-Pending + 18
     contracts-10-Fixture-Kollateral).
-11. Der laufende Host bootet contracts 9.x — neu starten (E1).
+11. Der laufende Host bootet contracts 9.x — neu starten (E1). **Auch der Fix aus §5.1 greift erst
+    nach dem Neustart.**
+
+**Aus dem Nachtrag §5 hinzugekommen**
+
+12. **Vier Folge-CRs, je im Umfang von CR-SM-274** (Zählbasis-Entscheidung + Bestandsmessung):
+    `AO-D01`, `AO-D03` (beide `FUNC -io-> FUNC`), `CL-01` (`ACTOR -io-> UC`), `BQ-04` (Setter wird
+    nirgends gerufen). Reihenfolge offen.
+13. **CR-SM-266-D1-Migration ist unvollständig:** 99 `ACTOR -io-> UC`-Kanten im Bestand, **539
+    R-18-Befunde**. Größer als alles andere in dieser Liste.
+14. **Die CR-SM-276-Klasse bleibt ungefangen** — legale Kanten falsch gezählt. Ein
+    „zweite-Zahl"-Werkzeug (unabhängige Gegenrechnung je Metrikregel) ist nicht entworfen; §5.4
+    argumentiert, warum es der wichtigste Kandidat ist.
+15. **Gegenrichtung ungeprüft:** 51 Kombinationen über 7 Regeln akzeptieren eine illegale Kante als
+    *Erfüllung*. Gemessen, weder gepinnt noch behoben.
+16. **`unfedMutations > 0`: Warnung oder Block?** Ein Block im pre-commit-Hook verhindert den
+    Commit nach jeder Temp-Store-Session — manchmal genau der Arbeitsmodus.
+17. **`bootstrap()`** hat null Aufrufer und umgeht das Audit — löschen oder auf den Tool-Layer.
+18. **Das A/B-Experiment aus §5.2 ansetzen** — die einzige Antwort auf „sparen wir gegenüber dem
+    freien Lauf". Nicht vor §5.1-Host-Neustart und nicht ohne die Vorbedingung, dass Arm G die
+    Präzisions-Queries wirklich fährt.
 
 ---
 
@@ -204,3 +224,113 @@ der Umbau trägt:
   Kandidatendefinition zu weit.
 - **Was sagt der Flugschreiber bei wenigen Ständen?** Die Karte lebt von History; bei drei Commits
   ist sie ehrlich leer. Sie sollte das sagen, statt eine Linie zu zeichnen.
+
+---
+
+## 5 — Nachtrag 2026-08-27: drei Sofortmaßnahmen, drei Befunde
+
+Der Auftraggeber hat nach der Bestandsaufnahme drei Punkte beauftragt. Alle drei sind erledigt;
+zwei davon haben mehr gefunden, als die Fragestellung erwartete.
+
+### 5.1 Das Trajektorien-Leck war ein Clobbering, kein Ausbleiben (CR-GC-449, `b7c8802`)
+
+**Root Cause:** `materializeTrajectory` nahm sein **Ausgabeverzeichnis vom `repoRoot`**, projizierte
+aber aus dem Log **beim Store** (`FileOperationsLog(harness.getStoreDir())`, CR-GC-232). Eine
+Harness mit Temp-Store und echtem `repoRoot` — das Arbeitsmuster **aller** Umbau-Agenten —
+überschrieb damit bei *jeder* Mutation die `trajectory.jsonl` des echten Repos vollständig aus
+ihrem eigenen, frischen Log. Die zwei gefundenen Zeilen waren nicht die letzten Überlebenden,
+sondern der komplette Inhalt des letzten Temp-Logs.
+
+**Der Widerspruch stand wörtlich im Code:** der Doc-Kommentar von `getStoreDir()` sagt „a
+temp-store harness must not touch the repo's live `.graphcode`". Unentdeckt blieb er, weil im
+Normalbetrieb beide Anker dasselbe Verzeichnis sind und **kein Test je einen Write über eine
+Harness mit fremdem Store gefahren hat**.
+
+**Fix:** Feed hängt an `getStoreDir()` (in Produktion ein No-Op, aber `feed === project(log)` gilt
+jetzt per Konstruktion); `graph_export` meldet `unfedMutations: N` — der Vergleich zweier Zähler,
+die beide schon existierten und nur nie gegeneinander gehalten wurden. Repo-Feed aus dem intakten
+`audit.jsonl` neu projiziert: **2 → 301 Zeilen**.
+
+**Was bleibt:** die Provenienz der drei Temp-Store-Sessions ist **endgültig verloren** — ihre Logs
+lagen in gelöschten Temp-Verzeichnissen. Ausgerechnet der größte Modellumbau des Projekts hat keine
+Spur hinterlassen.
+
+**Lektion (ergänzt E2):** Nicht „der Tool-Layer schreibt die Provenienz", sondern **Quelle und Ziel
+einer Projektion müssen denselben Anker haben.** Ein Werkzeug, das aus A liest und nach B schreibt,
+ist korrekt, solange A = B — und still zerstörerisch, sobald jemand sie trennt. Das war kein
+exotischer Fall: es war der Normalmodus jedes Agenten an diesem Tag.
+
+### 5.2 Die KPIs: nicht belegt — und die Mechanismen waren an diesem Tag aus
+
+Fenster `ef0d6bb..e0c900d` (CR-GC-444…447), Regelauswertung offline gegen die exportierten
+Snapshots je Commit, contracts 10.0.0.
+
+| KPI | Wert | Basis |
+|---|---|---|
+| Graph-vs-Grep | **0,029** | 5 `graph_*`-Aufrufe ÷ 174 Suchoperationen |
+| Tool-Nutzung | `graph_impact` **0** · `graph_expand` **0** · `rules_evaluate` 1 | Transkripte |
+| Token je Netto-LOC | **nicht berechenbar** (Netto-LOC = −283) | Ersatz: 2,2 Mio. neu erzeugte Token |
+| Planungskonformität | 1 Forward-Violation, unverändert | `deriveImplPlan()` auf 3 Snapshots |
+| Gate-Health | **nicht berechenbar** (0 Batches im Log) | Ursache = 5.1 |
+| Bindung | 88,2 % (112/127 Tests verankert) | `test-selection-audit.mjs` |
+
+**Die beiden Mechanismen, aus denen ein Vorteil gegenüber dem freien Lauf entstehen soll, waren
+abgeschaltet:** Präzisions-Queries **nullmal** aufgerufen (stattdessen 174 Suchen — genau das, was
+`CLAUDE.md` unter „Efficiency" verbietet), und das Gate sah 0 von 810 SSOT-Deltas.
+
+**Selbstreferenz-Warnung:** Violations 77 → 42, MOD 17 → 6, FLOW 62 → 39 sind gemessen, stammen
+aber **ausnahmslos aus graphcodes eigenem Regelkatalog**. Als Beleg gegen einen freien Lauf taugen
+sie nicht — es fehlt die Kontrollgruppe.
+
+**Nebenbefund im Messwerkzeug:** `scripts/retro-kpi.mjs` gibt „Gate health 0" (`applied ÷ max(1,
+rejected)` bei leerem Log) und „Readiness Δ 0" (gerundetes −0,0001) aus. Zwei Nullen, die wie
+Messungen aussehen — der A3-Verstoß im eigenen Werkzeug.
+
+**Das Experiment, das die Frage beantworten würde:** A/B über dieselbe Aufgabe, frischer Worktree je
+Arm. **Arm G** mit MCP-Tools/Skills/Gate, **Arm F** mit abgeschaltetem MCP-Server und ohne
+`se-*`-Skills. 3–5 bewusst *nicht* modellzentrierte Aufgaben (weiter Blast-Radius,
+Schnittstellenänderung, Refactor mit Testnachzug), Reihenfolge randomisiert. Primärmetrik: neu
+erzeugte Token bis zum ersten grünen `build && test`. Qualitätsmetrik, die **keinem Arm gehört**:
+Zeilen, die in den folgenden 3 Commits erneut angefasst werden (kein Regelkatalog, kein
+Readiness-Score — beides wäre Heimvorteil für Arm G). **Zwei Vorbedingungen:** 5.1 muss zu sein,
+und Arm G muss `graph_impact`/`graph_expand` tatsächlich fahren — tut er es nicht, ist die
+Hypothese leer und der Lauf zu verwerfen.
+
+### 5.3 Regel-Prüfungen: drei weitere Regeln mit demselben Fehler (CR-SM-278, `49f5d5d`)
+
+**Prüfung A** (`se-rule-pair-legality.test.ts`): statische Quelltext-Analyse wurde verworfen
+(Regeln filtern frei über `graph.traces`; ein Parser wäre ein zweiter Grammatik-Leser, Drift-Lock
+L2). Stattdessen die Konjunktion zweier Schritte: wer schweigt auf dem aus `TRACE_PATTERNS`
+**generierten** Referenzgraphen *und* allen 288 Basis-Graphen — und wer davon durch eine der 834
+verbotenen Kanten aufwacht. Gegen die rekonstruierte Vor-CR-SM-274-Fassung von CR-01 schlägt sie
+mit genau einem Eintrag an, ohne Beifang.
+
+**Was sie ausdrücklich NICHT fängt** (im Dateikopf ausbuchstabiert): die **CR-SM-276-Klasse** —
+legale Kanten *falsch gezählt*. Dafür braucht es weiter eine unabhängig erhobene Gegenzahl. Ebenso
+außerhalb: Schwellen-/Attributregeln, tote Zweige lebender Regeln, RC-*/CodeFacts.
+
+**Prüfung B** (`npm run report:silence`), angewandt auf 18 Graphen, 0 nicht ladbar:
+**21 von 72 Regeln sind stumm.**
+
+| | Regeln |
+|---|---|
+| **verdächtig (4)** | `AO-D01`, `AO-D03` — zählen `FUNC -io-> FUNC`, **derselbe Fehler wie CR-01/R-04** · `CL-01` — traversiert das mit CR-SM-266 D1 entfernte `ACTOR -io-> UC` · `BQ-04` — braucht `setBQ04SimilarityMatrix()`, **den Setter ruft im gesamten Familie-Baum niemand** |
+| ohne Aussage (2) | ND-01/ND-02 (host-injizierte Matrix) |
+| legitim (17) | je mit gezähltem fehlenden Zustand (0 ASIL, 0 physische MODs, 0 CR-Status …) |
+
+**Damit ist B1 aus §2 belegt statt vermutet:** die Fehlerklasse „Regel fragt ab, was die Grammatik
+nicht kennt" traf nicht zwei Regeln, sondern **mindestens vier** — und `BQ-04` zeigt eine zweite
+Variante derselben Krankheit (B2): eine Regel, deren Injektionspunkt nirgends aufgerufen wird.
+
+**Nebenbefund, unabhängig und größer als der Auftrag:** **99 `ACTOR -io-> UC`-Kanten liegen noch im
+Bestand** — die CR-SM-266-D1-Migration ist unvollständig und erzeugt **539 R-18-Befunde**.
+
+### 5.4 Was die drei zusammen sagen
+
+Sie treffen alle denselben Nerv: **das System hat mehr Werkzeuge, als es benutzt, und mehr Regeln,
+als es auswertet.** Der Feed schrieb sich selbst kaputt, die Präzisions-Queries wurden nullmal
+gerufen, vier Regeln fragen nach Unmöglichem, eine wartet auf einen Setter, den niemand ruft, und
+die reduzierten Tests lagen ungenutzt daneben. Keiner dieser Befunde ist ein Defekt im Sinne von
+„etwas ist kaputtgegangen" — alles war von Anfang an so, nur hat nie jemand die Zahl gegen eine
+zweite Zahl gehalten. **Das ist die eigentliche Lektion des Tages, und sie ist mechanisierbar:**
+jede Kennzahl braucht eine unabhängig erhobene Gegenzahl, sonst misst sie ihre eigene Existenz.
