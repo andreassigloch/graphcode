@@ -1715,56 +1715,10 @@
       "status": "reviewed"
     },
     {
-      "id": "FLOW-authoring-request",
-      "type": "FLOW",
-      "name": "Autoren-Auftrag",
-      "description": "Auftrag des Menschen an einen Autoren-Skill, mit Absicht und Zielausschnitt."
-    },
-    {
-      "id": "FLOW-bootstrap-result",
-      "type": "FLOW",
-      "name": "Bootstrap-Result",
-      "description": "Befüllter Graph + Violations-Report.",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "id": "FLOW-branch-graphs",
-      "type": "FLOW",
-      "name": "Branch-Graphs",
-      "description": "Zwei Branch-Versionen des Graph-Artefakts.",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "id": "FLOW-bulk-formatE",
-      "type": "FLOW",
-      "name": "Bulk-Format-E",
-      "description": "Slicer-Output großer Docs (graphify).",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "id": "FLOW-capture-draft",
-      "type": "FLOW",
-      "name": "Capture-Draft",
-      "description": "Dekodierter Kandidaten-Graph.",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
       "id": "FLOW-cli-command",
       "type": "FLOW",
       "name": "CLI-Command",
       "description": "mcp | host | run | import-code | rewind | init | update | remove | skills sync.",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "id": "FLOW-committed-graph",
-      "type": "FLOW",
-      "name": "Committed-Graph",
-      "description": "Persistierter Graph + Version-Counter.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z"
     },
@@ -1783,48 +1737,16 @@
       "status": "reviewed"
     },
     {
-      "id": "FLOW-draft-graph",
-      "type": "FLOW",
-      "name": "Draft-Graph",
-      "description": "In-memory applizierter Graph (draft) vor Regelprüfung.",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
       "id": "FLOW-element-slice",
       "type": "FLOW",
       "name": "Element-Scheibe",
       "description": "Gefilterte Knotenmenge aus dem Store (type/search) — eine Scheibe statt eines Volldumps."
     },
     {
-      "id": "FLOW-expand-request",
-      "type": "FLOW",
-      "name": "Expand-Request",
-      "description": "Cursor/handle + branch + depth+1.",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "id": "FLOW-expanded-subgraph",
-      "type": "FLOW",
-      "name": "Expanded-Subgraph",
-      "description": "On-demand vertiefter Subgraph.",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
       "id": "FLOW-export-pending",
       "type": "FLOW",
       "name": "Export-Rueckstand",
       "description": "Die Drift-Marke unter .graphcode: sagt, dass und wie weit der committete Snapshot dem lebenden Store nachlaeuft. Der pre-commit-Hook liest sie, ohne den Kuzu-Store zu oeffnen."
-    },
-    {
-      "id": "FLOW-export-request",
-      "type": "FLOW",
-      "name": "Export-Request",
-      "description": "View-Auswahl (spec/architecture/cr-list/references).",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
       "id": "FLOW-fit-advisory",
@@ -1837,15 +1759,7 @@
       "id": "FLOW-formatE-artifact",
       "type": "FLOW",
       "name": "Format-E-Artefakt",
-      "description": "Deterministisch serialisierter Graph (commit-fähig).",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "id": "FLOW-formatE-candidates",
-      "type": "FLOW",
-      "name": "Format-E-Kandidaten",
-      "description": "Agent-interpretierte NL → Format-E (agent-seitig).",
+      "description": "Ein vollstaendiges Format-E-Dokument am Modulrand: deterministisch serialisiert vom Encoder, vom Slicer geliefert oder vom Agenten geschrieben. Wer es verfasst hat, steht an der Produzenten-Kante, nicht im Vertrag.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z"
     },
@@ -1853,21 +1767,14 @@
       "id": "FLOW-gate-verdict",
       "type": "FLOW",
       "name": "Gate-Verdikt",
-      "description": "Das Urteil des Apply-Gates ueber die angewendete oder probierte Mutation: success, tier, Violations, Confidence. Es schliesst die Schleife, weil der naechste Snapshot darauf misst.",
-      "status": "reviewed"
-    },
-    {
-      "id": "FLOW-graph-snapshot",
-      "type": "FLOW",
-      "name": "Graph-Snapshot (SSOT-at-rest)",
-      "description": "Der kanonische, deterministische Snapshot docs/graph/<system>.graph.json — history-of-record. Der Export erzeugt ihn, rewind holt eine aeltere Fassung aus dem Git-Objektspeicher, reseed liest ihn.",
+      "description": "Das Urteil des Apply-Gates ueber eine angewendete oder probierte Mutation: success, tier, Violations, Confidence. Der Bootstrap-Ausgang und der offene Regelstrom sind dasselbe Urteil, kein zweiter Vertrag daneben. Es schliesst die Schleife, weil der naechste Snapshot darauf misst.",
       "status": "reviewed"
     },
     {
       "id": "FLOW-graph-state",
       "type": "FLOW",
       "name": "Graph-State",
-      "description": "Aktueller OntologyGraph (in-memory).",
+      "description": "Der Graph als EIN Wert, in jedem seiner Zustaende: in-memory geladen, als Entwurf appliziert, persistiert samt Version-Counter, aus Format-E rekonstruiert, migriert, aus zwei Branch-Fassungen gemergt, aus dem Snapshot auf Platte wiederhergestellt. Der Zustand ist kein zweiter Datenvertrag.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z"
     },
@@ -1881,7 +1788,7 @@
       "id": "FLOW-impact-subgraph",
       "type": "FLOW",
       "name": "Impact-Subgraph",
-      "description": "Exakter Blast-Radius als Format-E + Cursor.",
+      "description": "Die angefragte Graph-Scheibe als Format-E samt Cursor: exakter Blast-Radius und die on-demand vertiefte Fortsetzung.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z"
     },
@@ -1903,7 +1810,7 @@
       "id": "FLOW-live-event",
       "type": "FLOW",
       "name": "Live-Update-Event",
-      "description": "SSE invalidate (graph/rules/readiness/suggestions).",
+      "description": "Der versionierte Update-Event-Strom: SSE invalidate fuer graph, rules, readiness, suggestions, mit Late-Joiner-Cache und strikt read-only an die Live-Viewer.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z"
     },
@@ -1911,7 +1818,7 @@
       "id": "FLOW-markdown-docs",
       "type": "FLOW",
       "name": "Markdown-Docs",
-      "description": "Generierte Markdown-Views (GENERATED-Header).",
+      "description": "Generierte Markdown-Views mit GENERATED-Header, gleich ob der Exporter oder ein View-Skill sie gerendert hat.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z"
     },
@@ -1924,26 +1831,10 @@
       "concept": true
     },
     {
-      "id": "FLOW-merged-graph",
-      "type": "FLOW",
-      "name": "Merged-Graph",
-      "description": "Conflict-free gemergter Graph.",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
       "id": "FLOW-metric-policy",
       "type": "FLOW",
       "name": "Urteils-Policy",
       "description": "Die geltenden Urteilsschwellen: wie der Mensch sie in graphcode.config.jsonc schreibt und wie sie nach dem Auffuellen mit DEFAULT_METRIC_POLICY gelten. Dieselbe Form in zwei Fassungen, deshalb ein Vertrag. Keine Schwelle steht als Literal im Regelcode."
-    },
-    {
-      "id": "FLOW-migrated-graph",
-      "type": "FLOW",
-      "name": "Migrated-Graph",
-      "description": "Re-validierter/migrierter Graph + Report.",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
       "id": "FLOW-model-answer",
@@ -1962,15 +1853,7 @@
       "id": "FLOW-mutate-cmd",
       "type": "FLOW",
       "name": "Mutate-Command",
-      "description": "Edit-Op (add/update/delete) vom Agent/Mensch.",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "id": "FLOW-parsed-graph",
-      "type": "FLOW",
-      "name": "Parsed-Graph",
-      "description": "Aus Format-E rekonstruierter Graph (== Original).",
+      "description": "Jede Schreibabsicht am Gate als MutateCommand-Batch: Edit-Op von Agent oder Mensch, und der dryRun-verifizierte Kandidaten-Fix aus dem Vorschlagspfad.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z"
     },
@@ -1984,33 +1867,10 @@
     {
       "id": "FLOW-query-request",
       "type": "FLOW",
-      "name": "Query-Request",
-      "description": "elementId + depth.",
+      "name": "Query-Request (Lese- und View-Anfrage)",
+      "description": "Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Eine Anfrageform, nicht vier.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "id": "FLOW-recalled-state",
-      "type": "FLOW",
-      "name": "Wiederhergestellter Graph-Stand",
-      "description": "Der Live-Store nach dem Reseed: Modell und Code gehoeren wieder zu demselben Commit, der Drift-Marker ist geloescht.",
-      "status": "reviewed"
-    },
-    {
-      "id": "FLOW-rendered-view",
-      "type": "FLOW",
-      "name": "Rendered-View",
-      "description": "Generierte Markdown-View, z.B. architecture-graph.md.",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "id": "FLOW-round-findings",
-      "type": "FLOW",
-      "name": "Round Findings (open violations)",
-      "description": "Die von status offen gemeldeten Regelverletzungen, die propose als Rang-Eingabe nimmt (graph_suggest rankt genau die feuernden Operator-Regeln).",
-      "status": "reviewed",
-      "concept": true
     },
     {
       "id": "FLOW-round-injection",
@@ -2056,7 +1916,7 @@
       "id": "FLOW-skill-request",
       "type": "FLOW",
       "name": "Skill-Aufruf",
-      "description": "Aufruf eines Skills durch den Menschen, mit Zielgraph und Optionen."
+      "description": "Aufruf eines Skills durch den Menschen: Absicht, Zielausschnitt, Optionen. Autoren- und Berichts-Skills nehmen denselben Auftrag entgegen."
     },
     {
       "id": "FLOW-steering-delta",
@@ -2087,22 +1947,6 @@
       "description": "Der Anspruch auf den Kuzu-Store eines Repos: gehalten, uebernommen oder verweigert."
     },
     {
-      "id": "FLOW-suggest-result",
-      "type": "FLOW",
-      "name": "Suggest-Result",
-      "description": "Confidence-getaggte Vorschläge (suggest-Tier).",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "id": "FLOW-suggested-edit",
-      "type": "FLOW",
-      "name": "Suggested Edit (ranked candidate)",
-      "description": "Der von propose bestbewertete Kandidaten-Fix (Template-Edit, dryRun-verifiziert), der apply als MutateCommand-Eingabe erreicht - nur wenn der Konsument ihn uebernimmt, nie automatisch.",
-      "status": "reviewed",
-      "concept": true
-    },
-    {
       "id": "FLOW-target-profile",
       "type": "FLOW",
       "name": "Zielprofil",
@@ -2127,29 +1971,6 @@
       "type": "FLOW",
       "name": "Version-Bump",
       "description": "Neue ONTOLOGY/RULES_VERSION aus contracts/se.",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "id": "FLOW-view-request",
-      "type": "FLOW",
-      "name": "View-Request",
-      "description": "Welche View gerendert werden soll (arch/status/...).",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "id": "FLOW-viewer-stream",
-      "type": "FLOW",
-      "name": "Viewer-Stream",
-      "description": "Der versionierte SSE/WS-Strom an die Live-Viewer: Update-Events mit Late-Joiner-Cache, strikt read-only.",
-      "status": "reviewed"
-    },
-    {
-      "id": "FLOW-violations",
-      "type": "FLOW",
-      "name": "Violations",
-      "description": "Regel-Violations {ruleId,severity,elementId}.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z"
     },
@@ -7504,14 +7325,7 @@
   "traces": [
     {
       "source": "ACTOR-claude-code",
-      "target": "FLOW-expand-request",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "ACTOR-claude-code",
-      "target": "FLOW-formatE-candidates",
+      "target": "FLOW-formatE-artifact",
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
@@ -7532,21 +7346,7 @@
     },
     {
       "source": "ACTOR-developer",
-      "target": "FLOW-branch-graphs",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "ACTOR-developer",
       "target": "FLOW-cli-command",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "ACTOR-developer",
-      "target": "FLOW-export-request",
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
@@ -7570,6 +7370,13 @@
     },
     {
       "source": "ACTOR-developer",
+      "target": "FLOW-query-request",
+      "type": "io",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "ACTOR-developer",
       "target": "FLOW-steering-trigger",
       "type": "io"
     },
@@ -7581,20 +7388,13 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
-      "source": "ACTOR-developer",
-      "target": "FLOW-view-request",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
       "source": "ACTOR-facilitating-agent",
-      "target": "FLOW-authoring-request",
+      "target": "FLOW-skill-request",
       "type": "io"
     },
     {
       "source": "ACTOR-graphify",
-      "target": "FLOW-bulk-formatE",
+      "target": "FLOW-formatE-artifact",
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
@@ -7612,11 +7412,6 @@
     {
       "source": "ACTOR-opencode",
       "target": "FLOW-steering-trigger",
-      "type": "io"
-    },
-    {
-      "source": "ACTOR-systems-engineer",
-      "target": "FLOW-authoring-request",
       "type": "io"
     },
     {
@@ -11661,132 +11456,6 @@
       "type": "relation"
     },
     {
-      "source": "FLOW-authoring-request",
-      "target": "FUNC-author-req",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-authoring-request",
-      "target": "FUNC-author-uc",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-authoring-request",
-      "target": "FUNC-close-violations",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-authoring-request",
-      "target": "FUNC-import-code",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-authoring-request",
-      "target": "FUNC-import-doc",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-authoring-request",
-      "target": "FUNC-se-conops",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-authoring-request",
-      "target": "FUNC-se-fmea",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-authoring-request",
-      "target": "FUNC-se-generate",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-authoring-request",
-      "target": "FUNC-se-irr",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-authoring-request",
-      "target": "FUNC-se-optimize",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-authoring-request",
-      "target": "FUNC-se-plan",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-authoring-request",
-      "target": "FUNC-se-trade",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-authoring-request",
-      "target": "FUNC-target-profile",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-authoring-request",
-      "target": "SCHEMA-query-params",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-bootstrap-result",
-      "target": "ACTOR-developer",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FLOW-bootstrap-result",
-      "target": "SCHEMA-mutate-result",
-      "type": "relation",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FLOW-branch-graphs",
-      "target": "FUNC-merge-nodes",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FLOW-branch-graphs",
-      "target": "SCHEMA-ontology-graph",
-      "type": "relation",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FLOW-bulk-formatE",
-      "target": "FUNC-import",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FLOW-bulk-formatE",
-      "target": "SCHEMA-format-e",
-      "type": "relation",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FLOW-capture-draft",
-      "target": "FUNC-mutate",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FLOW-capture-draft",
-      "target": "SCHEMA-ontology-graph",
-      "type": "relation",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
       "source": "FLOW-cli-command",
       "target": "FUNC-bootstrap",
       "type": "io"
@@ -11860,47 +11529,6 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
-      "source": "FLOW-committed-graph",
-      "target": "FUNC-auto-export",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-committed-graph",
-      "target": "FUNC-emit-trajectory",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FLOW-committed-graph",
-      "target": "FUNC-emit-update-event",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FLOW-committed-graph",
-      "target": "FUNC-export-marker",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-committed-graph",
-      "target": "FUNC-graph-export-snapshot",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-committed-graph",
-      "target": "FUNC-load-graph",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-committed-graph",
-      "target": "SCHEMA-ontology-graph",
-      "type": "relation",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
       "source": "FLOW-completeness",
       "target": "FUNC-compute-phase-readiness",
       "type": "io"
@@ -11951,20 +11579,6 @@
       "type": "relation"
     },
     {
-      "source": "FLOW-draft-graph",
-      "target": "FUNC-evaluate-rules",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FLOW-draft-graph",
-      "target": "SCHEMA-ontology-graph",
-      "type": "relation",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
       "source": "FLOW-element-slice",
       "target": "ACTOR-claude-code",
       "type": "io"
@@ -11973,34 +11587,6 @@
       "source": "FLOW-element-slice",
       "target": "SCHEMA-ontology-graph",
       "type": "relation"
-    },
-    {
-      "source": "FLOW-expand-request",
-      "target": "FUNC-graph-expand",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FLOW-expand-request",
-      "target": "SCHEMA-query-params",
-      "type": "relation",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FLOW-expanded-subgraph",
-      "target": "ACTOR-claude-code",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FLOW-expanded-subgraph",
-      "target": "SCHEMA-format-e",
-      "type": "relation",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
       "source": "FLOW-export-pending",
@@ -12011,20 +11597,6 @@
       "source": "FLOW-export-pending",
       "target": "SCHEMA-export-pending",
       "type": "relation"
-    },
-    {
-      "source": "FLOW-export-request",
-      "target": "FUNC-export-markdown",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FLOW-export-request",
-      "target": "SCHEMA-query-params",
-      "type": "relation",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
       "source": "FLOW-fit-advisory",
@@ -12057,24 +11629,66 @@
     },
     {
       "source": "FLOW-formatE-artifact",
-      "target": "SCHEMA-format-e",
-      "type": "relation",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FLOW-formatE-candidates",
-      "target": "FUNC-decode",
+      "target": "FUNC-import",
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
-      "source": "FLOW-formatE-candidates",
+      "source": "FLOW-formatE-artifact",
       "target": "SCHEMA-format-e",
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-gate-verdict",
+      "target": "ACTOR-developer",
+      "type": "io",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-gate-verdict",
+      "target": "ACTOR-systems-engineer",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-gate-verdict",
+      "target": "FUNC-compute-phase-readiness",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-gate-verdict",
+      "target": "FUNC-graph-suggest",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-gate-verdict",
+      "target": "FUNC-health-endpoint",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-gate-verdict",
+      "target": "FUNC-save-graph",
+      "type": "io",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-gate-verdict",
+      "target": "FUNC-se-retro",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-gate-verdict",
+      "target": "FUNC-se-review",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-gate-verdict",
+      "target": "FUNC-se-status",
+      "type": "io"
     },
     {
       "source": "FLOW-gate-verdict",
@@ -12092,41 +11706,26 @@
       "type": "relation"
     },
     {
-      "source": "FLOW-graph-snapshot",
+      "source": "FLOW-graph-state",
       "target": "ACTOR-developer",
       "type": "io"
     },
     {
-      "source": "FLOW-graph-snapshot",
+      "source": "FLOW-graph-state",
       "target": "FUNC-apply-reseed",
       "type": "io",
       "weight": "1"
-    },
-    {
-      "source": "FLOW-graph-snapshot",
-      "target": "FUNC-open-store",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-graph-snapshot",
-      "target": "FUNC-reseed",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-graph-snapshot",
-      "target": "FUNC-seed-from-json",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-graph-snapshot",
-      "target": "SCHEMA-ontology-graph",
-      "type": "relation"
     },
     {
       "source": "FLOW-graph-state",
       "target": "FUNC-arch-fitness",
       "type": "io",
       "weight": "1"
+    },
+    {
+      "source": "FLOW-graph-state",
+      "target": "FUNC-auto-export",
+      "type": "io"
     },
     {
       "source": "FLOW-graph-state",
@@ -12141,6 +11740,20 @@
     },
     {
       "source": "FLOW-graph-state",
+      "target": "FUNC-emit-trajectory",
+      "type": "io",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-graph-state",
+      "target": "FUNC-emit-update-event",
+      "type": "io",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-graph-state",
       "target": "FUNC-encode",
       "type": "io",
       "weight": 1,
@@ -12148,9 +11761,26 @@
     },
     {
       "source": "FLOW-graph-state",
+      "target": "FUNC-evaluate-rules",
+      "type": "io",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-graph-state",
+      "target": "FUNC-export-marker",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-graph-state",
       "target": "FUNC-fit-advisory",
       "type": "io",
       "weight": "1"
+    },
+    {
+      "source": "FLOW-graph-state",
+      "target": "FUNC-graph-export-snapshot",
+      "type": "io"
     },
     {
       "source": "FLOW-graph-state",
@@ -12164,9 +11794,28 @@
     },
     {
       "source": "FLOW-graph-state",
+      "target": "FUNC-load-graph",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-graph-state",
+      "target": "FUNC-merge-nodes",
+      "type": "io",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-graph-state",
       "target": "FUNC-module-metrics",
       "type": "io",
       "weight": "1"
+    },
+    {
+      "source": "FLOW-graph-state",
+      "target": "FUNC-mutate",
+      "type": "io",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
       "source": "FLOW-graph-state",
@@ -12176,9 +11825,24 @@
     },
     {
       "source": "FLOW-graph-state",
+      "target": "FUNC-open-store",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-graph-state",
+      "target": "FUNC-reseed",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-graph-state",
       "target": "FUNC-score-completeness",
       "type": "io",
       "weight": "1"
+    },
+    {
+      "source": "FLOW-graph-state",
+      "target": "FUNC-seed-from-json",
+      "type": "io"
     },
     {
       "source": "FLOW-graph-state",
@@ -12304,20 +11968,6 @@
       "type": "relation"
     },
     {
-      "source": "FLOW-merged-graph",
-      "target": "ACTOR-developer",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FLOW-merged-graph",
-      "target": "SCHEMA-ontology-graph",
-      "type": "relation",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
       "source": "FLOW-metric-policy",
       "target": "FUNC-evaluate-rules",
       "type": "io"
@@ -12336,20 +11986,6 @@
       "source": "FLOW-metric-policy",
       "target": "SCHEMA-metric-policy",
       "type": "relation"
-    },
-    {
-      "source": "FLOW-migrated-graph",
-      "target": "ACTOR-developer",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FLOW-migrated-graph",
-      "target": "SCHEMA-ontology-graph",
-      "type": "relation",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
       "source": "FLOW-model-answer",
@@ -12400,20 +12036,6 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
-      "source": "FLOW-parsed-graph",
-      "target": "ACTOR-developer",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FLOW-parsed-graph",
-      "target": "SCHEMA-ontology-graph",
-      "type": "relation",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
       "source": "FLOW-phase-readiness",
       "target": "FUNC-generation-step",
       "type": "io"
@@ -12430,6 +12052,20 @@
     },
     {
       "source": "FLOW-query-request",
+      "target": "FUNC-export-markdown",
+      "type": "io",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-query-request",
+      "target": "FUNC-graph-expand",
+      "type": "io",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-query-request",
       "target": "FUNC-graph-impact",
       "type": "io",
       "weight": 1,
@@ -12442,7 +12078,44 @@
     },
     {
       "source": "FLOW-query-request",
+      "target": "FUNC-render-views",
+      "type": "io",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-query-request",
       "target": "FUNC-resolve-tests-from-code",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-query-request",
+      "target": "FUNC-view-changelog",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-query-request",
+      "target": "FUNC-view-conops",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-query-request",
+      "target": "FUNC-view-fmea",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-query-request",
+      "target": "FUNC-view-icd",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-query-request",
+      "target": "FUNC-view-intplan",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-query-request",
+      "target": "FUNC-view-rtm",
       "type": "io"
     },
     {
@@ -12451,40 +12124,6 @@
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FLOW-recalled-state",
-      "target": "ACTOR-developer",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-recalled-state",
-      "target": "SCHEMA-ontology-graph",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-rendered-view",
-      "target": "ACTOR-developer",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FLOW-rendered-view",
-      "target": "SCHEMA-markdown-view",
-      "type": "relation",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FLOW-round-findings",
-      "target": "FUNC-graph-suggest",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-round-findings",
-      "target": "SCHEMA-mutate-result",
-      "type": "relation"
     },
     {
       "source": "FLOW-round-injection",
@@ -12571,7 +12210,62 @@
     },
     {
       "source": "FLOW-skill-request",
+      "target": "FUNC-author-req",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-skill-request",
+      "target": "FUNC-author-uc",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-skill-request",
+      "target": "FUNC-close-violations",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-skill-request",
+      "target": "FUNC-import-code",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-skill-request",
+      "target": "FUNC-import-doc",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-skill-request",
+      "target": "FUNC-se-conops",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-skill-request",
+      "target": "FUNC-se-fmea",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-skill-request",
+      "target": "FUNC-se-generate",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-skill-request",
       "target": "FUNC-se-help",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-skill-request",
+      "target": "FUNC-se-irr",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-skill-request",
+      "target": "FUNC-se-optimize",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-skill-request",
+      "target": "FUNC-se-plan",
       "type": "io"
     },
     {
@@ -12587,6 +12281,16 @@
     {
       "source": "FLOW-skill-request",
       "target": "FUNC-se-status",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-skill-request",
+      "target": "FUNC-se-trade",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-skill-request",
+      "target": "FUNC-target-profile",
       "type": "io"
     },
     {
@@ -12665,30 +12369,6 @@
       "type": "relation"
     },
     {
-      "source": "FLOW-suggest-result",
-      "target": "ACTOR-developer",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FLOW-suggest-result",
-      "target": "SCHEMA-mutate-result",
-      "type": "relation",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FLOW-suggested-edit",
-      "target": "FUNC-mutate",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-suggested-edit",
-      "target": "SCHEMA-mutate-command",
-      "type": "relation"
-    },
-    {
       "source": "FLOW-target-profile",
       "target": "FUNC-generation-step",
       "type": "io"
@@ -12762,104 +12442,6 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
-      "source": "FLOW-view-request",
-      "target": "FUNC-render-views",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FLOW-view-request",
-      "target": "FUNC-view-changelog",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-view-request",
-      "target": "FUNC-view-conops",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-view-request",
-      "target": "FUNC-view-fmea",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-view-request",
-      "target": "FUNC-view-icd",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-view-request",
-      "target": "FUNC-view-intplan",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-view-request",
-      "target": "FUNC-view-rtm",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-view-request",
-      "target": "SCHEMA-query-params",
-      "type": "relation",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FLOW-viewer-stream",
-      "target": "ACTOR-dashboard",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-viewer-stream",
-      "target": "SCHEMA-update-event",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-violations",
-      "target": "ACTOR-systems-engineer",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-violations",
-      "target": "FUNC-compute-phase-readiness",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-violations",
-      "target": "FUNC-health-endpoint",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-violations",
-      "target": "FUNC-save-graph",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FLOW-violations",
-      "target": "FUNC-se-retro",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-violations",
-      "target": "FUNC-se-review",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-violations",
-      "target": "FUNC-se-status",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-violations",
-      "target": "SCHEMA-mutate-result",
-      "type": "relation",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
       "source": "FUNC-apply-reseed",
       "target": "MOD-harness",
       "type": "allocate",
@@ -12867,7 +12449,7 @@
     },
     {
       "source": "FUNC-apply-reseed",
-      "target": "FLOW-recalled-state",
+      "target": "FLOW-graph-state",
       "type": "io"
     },
     {
@@ -12928,7 +12510,7 @@
     },
     {
       "source": "FUNC-auto-export",
-      "target": "FLOW-export-request",
+      "target": "FLOW-query-request",
       "type": "io"
     },
     {
@@ -13500,7 +13082,7 @@
     },
     {
       "source": "FUNC-bootstrap",
-      "target": "FLOW-bootstrap-result",
+      "target": "FLOW-gate-verdict",
       "type": "io",
       "weight": "1"
     },
@@ -13519,7 +13101,7 @@
     },
     {
       "source": "FUNC-broadcast-diff",
-      "target": "FLOW-viewer-stream",
+      "target": "FLOW-live-event",
       "type": "io"
     },
     {
@@ -13553,7 +13135,7 @@
     },
     {
       "source": "FUNC-check-code-conformance",
-      "target": "FLOW-violations",
+      "target": "FLOW-gate-verdict",
       "type": "io",
       "weight": "1"
     },
@@ -13601,7 +13183,7 @@
     },
     {
       "source": "FUNC-close-store",
-      "target": "FLOW-committed-graph",
+      "target": "FLOW-graph-state",
       "type": "io"
     },
     {
@@ -13715,14 +13297,7 @@
     },
     {
       "source": "FUNC-decode",
-      "target": "FLOW-capture-draft",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-decode",
-      "target": "FLOW-parsed-graph",
+      "target": "FLOW-graph-state",
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
@@ -13851,12 +13426,7 @@
     },
     {
       "source": "FUNC-evaluate-rules",
-      "target": "FLOW-round-findings",
-      "type": "io"
-    },
-    {
-      "source": "FUNC-evaluate-rules",
-      "target": "FLOW-violations",
+      "target": "FLOW-gate-verdict",
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
@@ -14005,7 +13575,7 @@
     },
     {
       "source": "FUNC-graph-expand",
-      "target": "FLOW-expanded-subgraph",
+      "target": "FLOW-impact-subgraph",
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
@@ -14024,7 +13594,7 @@
     },
     {
       "source": "FUNC-graph-export-snapshot",
-      "target": "FLOW-graph-snapshot",
+      "target": "FLOW-graph-state",
       "type": "io"
     },
     {
@@ -14079,7 +13649,7 @@
     },
     {
       "source": "FUNC-graph-suggest",
-      "target": "FLOW-suggested-edit",
+      "target": "FLOW-mutate-cmd",
       "type": "io"
     },
     {
@@ -14225,7 +13795,7 @@
     },
     {
       "source": "FUNC-import",
-      "target": "FLOW-bootstrap-result",
+      "target": "FLOW-gate-verdict",
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
@@ -14258,7 +13828,7 @@
     },
     {
       "source": "FUNC-import-code",
-      "target": "FLOW-bulk-formatE",
+      "target": "FLOW-formatE-artifact",
       "type": "io"
     },
     {
@@ -14274,7 +13844,7 @@
     },
     {
       "source": "FUNC-import-code-verb",
-      "target": "FLOW-bootstrap-result",
+      "target": "FLOW-gate-verdict",
       "type": "io"
     },
     {
@@ -14295,7 +13865,7 @@
     },
     {
       "source": "FUNC-import-doc",
-      "target": "FLOW-bulk-formatE",
+      "target": "FLOW-formatE-artifact",
       "type": "io"
     },
     {
@@ -14357,7 +13927,7 @@
     },
     {
       "source": "FUNC-merge-nodes",
-      "target": "FLOW-merged-graph",
+      "target": "FLOW-graph-state",
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
@@ -14397,7 +13967,7 @@
     },
     {
       "source": "FUNC-migrate-schema",
-      "target": "FLOW-migrated-graph",
+      "target": "FLOW-graph-state",
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
@@ -14447,19 +14017,12 @@
     },
     {
       "source": "FUNC-mutate",
-      "target": "FLOW-draft-graph",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-mutate",
       "target": "FLOW-gate-verdict",
       "type": "io"
     },
     {
       "source": "FUNC-mutate",
-      "target": "FLOW-suggest-result",
+      "target": "FLOW-graph-state",
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
@@ -14568,7 +14131,7 @@
     },
     {
       "source": "FUNC-rank-candidates",
-      "target": "FLOW-suggested-edit",
+      "target": "FLOW-mutate-cmd",
       "type": "io"
     },
     {
@@ -14585,15 +14148,15 @@
     },
     {
       "source": "FUNC-render-views",
-      "target": "FLOW-export-request",
-      "type": "io"
-    },
-    {
-      "source": "FUNC-render-views",
-      "target": "FLOW-rendered-view",
+      "target": "FLOW-markdown-docs",
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-render-views",
+      "target": "FLOW-query-request",
+      "type": "io"
     },
     {
       "source": "FUNC-render-views",
@@ -14609,7 +14172,7 @@
     },
     {
       "source": "FUNC-reseed",
-      "target": "FLOW-recalled-state",
+      "target": "FLOW-graph-state",
       "type": "io"
     },
     {
@@ -14639,7 +14202,7 @@
     },
     {
       "source": "FUNC-rewind",
-      "target": "FLOW-graph-snapshot",
+      "target": "FLOW-graph-state",
       "type": "io"
     },
     {
@@ -14696,7 +14259,7 @@
     },
     {
       "source": "FUNC-save-graph",
-      "target": "FLOW-committed-graph",
+      "target": "FLOW-graph-state",
       "type": "io"
     },
     {
@@ -14912,7 +14475,7 @@
     },
     {
       "source": "FUNC-seed-from-json",
-      "target": "FLOW-recalled-state",
+      "target": "FLOW-graph-state",
       "type": "io"
     },
     {
@@ -14929,7 +14492,7 @@
     },
     {
       "source": "FUNC-serve-sse",
-      "target": "FLOW-viewer-stream",
+      "target": "FLOW-live-event",
       "type": "io"
     },
     {
@@ -14946,7 +14509,7 @@
     },
     {
       "source": "FUNC-serve-stdio",
-      "target": "FLOW-export-request",
+      "target": "FLOW-query-request",
       "type": "io"
     },
     {
@@ -14961,7 +14524,7 @@
     },
     {
       "source": "FUNC-session-shutdown",
-      "target": "FLOW-committed-graph",
+      "target": "FLOW-graph-state",
       "type": "io"
     },
     {
@@ -14976,17 +14539,17 @@
     },
     {
       "source": "FUNC-take-steering-snapshot",
+      "target": "FLOW-gate-verdict",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-take-steering-snapshot",
       "target": "FLOW-measurement-vector",
       "type": "io"
     },
     {
       "source": "FUNC-take-steering-snapshot",
       "target": "FLOW-steering-snapshot",
-      "type": "io"
-    },
-    {
-      "source": "FUNC-take-steering-snapshot",
-      "target": "FLOW-violations",
       "type": "io"
     },
     {
@@ -15111,7 +14674,7 @@
     },
     {
       "source": "FUNC-view-changelog",
-      "target": "FLOW-export-request",
+      "target": "FLOW-query-request",
       "type": "io"
     },
     {
@@ -15130,7 +14693,7 @@
     },
     {
       "source": "FUNC-view-conops",
-      "target": "FLOW-export-request",
+      "target": "FLOW-query-request",
       "type": "io"
     },
     {
@@ -15149,7 +14712,7 @@
     },
     {
       "source": "FUNC-view-fmea",
-      "target": "FLOW-export-request",
+      "target": "FLOW-query-request",
       "type": "io"
     },
     {
@@ -15168,7 +14731,7 @@
     },
     {
       "source": "FUNC-view-icd",
-      "target": "FLOW-export-request",
+      "target": "FLOW-query-request",
       "type": "io"
     },
     {
@@ -15187,7 +14750,7 @@
     },
     {
       "source": "FUNC-view-intplan",
-      "target": "FLOW-export-request",
+      "target": "FLOW-query-request",
       "type": "io"
     },
     {
@@ -15206,7 +14769,7 @@
     },
     {
       "source": "FUNC-view-rtm",
-      "target": "FLOW-export-request",
+      "target": "FLOW-query-request",
       "type": "io"
     },
     {
@@ -17917,5 +17480,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 212
+  "graphVersion": 24
 }

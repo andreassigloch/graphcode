@@ -44,14 +44,14 @@
 
 ## 3  User classes & involved personnel (9)
 
-- `ACTOR-claude-code` — Claude Code — Realisierungs-Agent — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-efficient-testing` · `UC-graph-time-travel` · `UC-live-graph-view` · `UC-reduced-llm`
+- `ACTOR-claude-code` — Claude Code — Realisierungs-Agent — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-efficient-testing` · `UC-graph-time-travel` · `UC-live-graph-view` · `UC-model-exchange` · `UC-reduced-llm` · `UC-repo-lifecycle`
 - `ACTOR-dashboard` — Browser-Dashboard — triggert `UC-deterministic-steering` · `UC-live-graph-view`
 - `ACTOR-developer` — Entwickler / Repo-Owner — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-efficient-testing` · `UC-graph-time-travel` · `UC-live-graph-view` · `UC-model-exchange` · `UC-reduced-llm` · `UC-repo-lifecycle`
-- `ACTOR-facilitating-agent` — Facilitating Agent — Architekt — triggert `UC-code-quality` · `UC-model-exchange`
-- `ACTOR-graphify` — graphify (Slicer) — triggert `UC-model-exchange`
+- `ACTOR-facilitating-agent` — Facilitating Agent — Architekt — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-model-exchange`
+- `ACTOR-graphify` — graphify (Slicer) — triggert `UC-code-quality` · `UC-model-exchange` · `UC-repo-lifecycle`
 - `ACTOR-learning-engine` — Learning-Engine — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-graph-time-travel` · `UC-live-graph-view` · `UC-reduced-llm`
 - `ACTOR-opencode` — OpenCode — headless Execution-Runtime — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-graph-time-travel` · `UC-live-graph-view` · `UC-reduced-llm`
-- `ACTOR-systems-engineer` — Systems Engineer — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-efficient-testing` · `UC-graph-time-travel` · `UC-live-graph-view` · `UC-model-exchange` · `UC-reduced-llm`
+- `ACTOR-systems-engineer` — Systems Engineer — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-efficient-testing` · `UC-graph-time-travel` · `UC-live-graph-view` · `UC-model-exchange` · `UC-reduced-llm` · `UC-repo-lifecycle`
 - `ACTOR-vibe-coder` — Vibe Coder — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-graph-time-travel` · `UC-model-exchange` · `UC-repo-lifecycle`
 
 ## 4  Operational scenarios (9 UC)
@@ -60,7 +60,7 @@
 
 Als Entwickler will ich, dass jede Aenderung, meine wie die eines Agenten, durch dasselbe Apply-Gate laeuft und gegen dieselben Regeln geprueft wird.
 
-Ausgeloest von: `ACTOR-claude-code` · `ACTOR-developer` · `ACTOR-facilitating-agent` · `ACTOR-learning-engine` · `ACTOR-opencode` · `ACTOR-systems-engineer` · `ACTOR-vibe-coder`
+Ausgeloest von: `ACTOR-claude-code` · `ACTOR-developer` · `ACTOR-facilitating-agent` · `ACTOR-graphify` · `ACTOR-learning-engine` · `ACTOR-opencode` · `ACTOR-systems-engineer` · `ACTOR-vibe-coder`
 
 - `FCHAIN-apply-gate` — Apply-Gate-Ablauf (Governed Mutation): `FUNC-claim-store-lock` → `FUNC-close-store` → `FUNC-create-harness` → `FUNC-emit-trajectory` → `FUNC-evaluate-rules` → `FUNC-fit-advisory` → `FUNC-host-socket` → `FUNC-load-graph` → `FUNC-mutate` → `FUNC-open-store` → `FUNC-own-kuzu-host` → `FUNC-save-graph` → `FUNC-session-shutdown` → `FUNC-tool-context`
 - `FCHAIN-capture` — Interaktive Erfassung (Text → suggest-Tier): `FUNC-decode` → `FUNC-mutate`
@@ -72,7 +72,7 @@ Ausgeloest von: `ACTOR-claude-code` · `ACTOR-developer` · `ACTOR-facilitating-
 
 Als Entwickler will ich, dass der naechste Schritt aus deterministisch gemessenen Kenngroessen folgt und nicht aus einer Modell-Meinung, sodass jede Runde nachvollziehbar auf ein mehrdimensionales Ziel zulaeuft.
 
-Ausgeloest von: `ACTOR-claude-code` · `ACTOR-dashboard` · `ACTOR-developer` · `ACTOR-learning-engine` · `ACTOR-opencode` · `ACTOR-systems-engineer` · `ACTOR-vibe-coder`
+Ausgeloest von: `ACTOR-claude-code` · `ACTOR-dashboard` · `ACTOR-developer` · `ACTOR-facilitating-agent` · `ACTOR-learning-engine` · `ACTOR-opencode` · `ACTOR-systems-engineer` · `ACTOR-vibe-coder`
 
 - `FCHAIN-skill-report` — Skill berichtet gemessenen Stand: `FUNC-check-code-conformance` → `FUNC-compute-phase-readiness` → `FUNC-compute-readiness` → `FUNC-evaluate-rules` → `FUNC-module-metrics` → `FUNC-score-completeness` → `FUNC-se-help` → `FUNC-se-retro` → `FUNC-se-review` → `FUNC-se-status` → `FUNC-test` → `FUNC-test-ui`
 - `FCHAIN-steering-loop` — Kenngroessen-Steuerungsschleife: `FUNC-arch-fitness` → `FUNC-build-round-injection` → `FUNC-compute-phase-readiness` → `FUNC-compute-readiness` → `FUNC-compute-steering-delta` → `FUNC-extract-mutate` → `FUNC-generation-step` → `FUNC-load-config` → `FUNC-mutate` → `FUNC-nd-similarity` → `FUNC-next-step` → `FUNC-preflight` → `FUNC-rank-candidates` → `FUNC-run-executor` → `FUNC-take-steering-snapshot` → `FUNC-target-profile-load`
@@ -113,7 +113,7 @@ Als Betreiber des Regelwerks will ich an den aufgezeichneten Gate-Entscheidungen
 
 Als Entwickler will ich Modellstand aus Fremdquellen einlesen und als prueffaehiges Dokument herausgeben, damit Graph, Code und Dokumentation eine Quelle haben.
 
-Ausgeloest von: `ACTOR-developer` · `ACTOR-facilitating-agent` · `ACTOR-graphify` · `ACTOR-systems-engineer` · `ACTOR-vibe-coder`
+Ausgeloest von: `ACTOR-claude-code` · `ACTOR-developer` · `ACTOR-facilitating-agent` · `ACTOR-graphify` · `ACTOR-systems-engineer` · `ACTOR-vibe-coder`
 
 - `FCHAIN-doc-export` — Doc-Export (stdio → exporter): `FUNC-export-markdown` → `FUNC-render-views` → `FUNC-serve-stdio` → `FUNC-view-changelog` → `FUNC-view-conops` → `FUNC-view-fmea` → `FUNC-view-icd` → `FUNC-view-intplan` → `FUNC-view-rtm`
 - `FCHAIN-model-import` — Bestehenden Bestand einlesen: `FUNC-import` → `FUNC-import-code` → `FUNC-import-code-verb` → `FUNC-import-doc`
@@ -132,7 +132,7 @@ Ausgeloest von: `ACTOR-claude-code` · `ACTOR-developer` · `ACTOR-learning-engi
 
 Der Entwickler richtet ein Repo ein, faehrt Laeufe darin und beendet die Sitzung; danach ist das Repo arbeitsfaehig und kein Prozess bleibt zurueck.
 
-Ausgeloest von: `ACTOR-developer` · `ACTOR-vibe-coder`
+Ausgeloest von: `ACTOR-claude-code` · `ACTOR-developer` · `ACTOR-graphify` · `ACTOR-systems-engineer` · `ACTOR-vibe-coder`
 
 - `FCHAIN-repo-lifecycle` — Repo-Lebenszyklus: `FUNC-bind-tools` → `FUNC-bootstrap` → `FUNC-claim-store-lock` → `FUNC-cli-dispatch` → `FUNC-collect-status` → `FUNC-gve-sessions` → `FUNC-gve-supervise` → `FUNC-harness-cli` → `FUNC-run-verb` → `FUNC-session-shutdown` → `FUNC-upgrade`
 - `FCHAIN-schema-migration` — Schema-Migration bei Version-Bump: `FUNC-migrate-schema` → `FUNC-schema-guard`
