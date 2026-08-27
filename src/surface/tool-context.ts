@@ -441,10 +441,19 @@ export function createToolContext(
     };
     await auditLog.record(entry);
     // Re-project the feed from the log as the single source (CR-252). The write
-    // above is the one truth; the feed is derived, so this can never diverge. The
-    // repoRoot is read HERE (on a real write), never at bind time — the tool
-    // template must stay unbound (host-shim proxy invariant, CR-GC-235).
-    await materializeTrajectory(auditLog, join(harness.getRepoRoot(), GRAPHCODE_DIR));
+    // above is the one truth; the feed is derived, so this can never diverge.
+    //
+    // BESIDE ITS LOG, not at the repo (CR-GC-449). The log is anchored per STORE
+    // (`getStoreDir()`, CR-GC-232); a feed anchored per REPO only coincided with it
+    // while store == `<repoRoot>/.graphcode` — the default. A harness on a temp store
+    // with the real repoRoot (`lockDir`) then FULL-REWROTE the repo's live feed out of
+    // its own fresh, foreign log: on 2026-08-27 that reduced 250 mutations of history
+    // to the last session's two lines. Same directory as the log ⇒ `feed ===
+    // project(log)` holds by construction and `getStoreDir()`'s contract ("a temp-store
+    // harness must not touch the repo's live .graphcode") is kept by the feed too.
+    // Read HERE (on a real write), never at bind time — the tool template must stay
+    // unbound (host-shim proxy invariant, CR-GC-235).
+    await materializeTrajectory(auditLog, harness.getStoreDir());
   }
 
   // Preview-Audit (CR-GC-276): dryRun-Verdicts sind die halbe F2-Evidenz — auch
@@ -473,7 +482,8 @@ export function createToolContext(
       ...provenance(currentRelay()),
     };
     await auditLog.record(entry);
-    await materializeTrajectory(auditLog, join(harness.getRepoRoot(), GRAPHCODE_DIR));
+    // Same anchor as the mutate path (CR-GC-449): the feed belongs to its log.
+    await materializeTrajectory(auditLog, harness.getStoreDir());
   }
 
   // OCC (CR-GC-233): stale-write rejection at the tool layer. The check and the

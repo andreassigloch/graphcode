@@ -17,12 +17,14 @@
  */
 
 import { writeFile, mkdir } from 'node:fs/promises';
+import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import type { AuditLog } from '@sigloch/graph-api-core';
 import { projectTrajectory } from '@sigloch/learning-core';
 // Der Feed-Dateiname steht einmal (scaffold-templates) — dieselbe Konstante, die
 // `graphcode remove` beim Aufräumen der Alt-Kopie liest (CR-GC-331).
-import { TRAJECTORY_FILE } from '../surface/scaffold-templates.js';
+import { TRAJECTORY_FILE, GRAPHCODE_DIR } from '../surface/scaffold-templates.js';
+import { readExportPending } from '../kernel/export-marker.js';
 
 // ---------------------------------------------------------------------------
 // Trajectory stamps (CR-GC-434) — the trigger of a mutation, on the record.
@@ -58,9 +60,12 @@ export type EditSource = 'suggestion-template' | 'authored';
  * explicit empty value ([] / 'authored') is a determined statement. Nothing here
  * is ever guessed.
  *
- * DOCUMENTED GAP (CR-GC-252 behaviour, unchanged): a raw in-process
- * `harness.mutate()` that bypasses the tool layer writes neither log nor feed —
- * and therefore no stamps either. The gate applies; the trajectory does not see it.
+ * GAP, NO LONGER MERELY DOCUMENTED (CR-GC-449): a raw in-process `harness.mutate()`
+ * bypassing the tool layer writes neither log nor feed — and therefore no stamps.
+ * Same for a session that mutates this repo through a store of its own. The gate
+ * applies; the trajectory does not see it. That stays true (the gate has no feed of
+ * its own and must not grow a second audit surface), but it is now COUNTED, not
+ * trusted: `countUnfedMutations` below, surfaced by `graph_export`.
  */
 export interface TrajectoryStamps {
   /** Pre-existing gate violations (error/warning) this mutation closed; [] = none. */
@@ -114,4 +119,47 @@ export async function materializeTrajectory(log: AuditLog, outDir: string): Prom
     .join('\n');
   await mkdir(outDir, { recursive: true });
   await writeFile(join(outDir, TRAJECTORY_FILE), body ? body + '\n' : '', 'utf8');
+}
+
+// ---------------------------------------------------------------------------
+// Der gemessene Rest-Verlust (CR-GC-449) — Lücke zählen statt Lücke behaupten.
+// ---------------------------------------------------------------------------
+
+/**
+ * Wie viele ANGEWENDETE Gate-Mutationen dieses Repos der Repo-Feed nicht kennt.
+ *
+ * Zwei Zähler, die dasselbe Ereignis sehen müssten, verglichen — kein dritter
+ * Schreibpfad, keine zweite Audit-Fläche:
+ *
+ *  - `EXPORT_PENDING.versionsBehind` (CR-GC-217/426) steht am **repoRoot** und wird
+ *    von `harness.mutate()` selbst hochgezählt: EINS pro angewendeter Mutation,
+ *    unabhängig davon, welcher Store, welcher Prozess, welcher Aufrufpfad. Das ist
+ *    die einzige Zahl im Repo, die eine Mutation auch dann zählt, wenn sie am
+ *    Tool-Layer vorbeiging (rohes `harness.mutate()`, Bootstrap, Fremd-Store).
+ *  - Der Repo-Feed ist die Projektion dessen, was der Tool-Layer aufgeschrieben hat.
+ *
+ * Die Differenz seit `since` ist exakt das, was das Gate anwandte und der Feed nie
+ * sah. `0`, wenn keine Marke liegt (nichts steht aus) oder sie vertragslos alt ist
+ * (dann ist ihr Rückstand unbekannt — geraten wird nicht, die CR-GC-354-Asymmetrie).
+ */
+export function countUnfedMutations(repoRoot: string): number {
+  const pending = readExportPending(repoRoot);
+  if (!pending) return 0;
+  const file = join(repoRoot, GRAPHCODE_DIR, TRAJECTORY_FILE);
+  if (!existsSync(file)) return pending.versionsBehind;
+  let fed = 0;
+  for (const line of readFileSync(file, 'utf8').split('\n')) {
+    if (!line) continue;
+    let rec: { ts?: unknown; operation?: unknown; applied?: unknown };
+    try {
+      rec = JSON.parse(line) as typeof rec;
+    } catch {
+      continue; // eine unlesbare Zeile ist kein Nachweis für eine gefeedete Mutation
+    }
+    // Nur angewendete Mutationen — `validate`-Previews bewegen die Marke nicht,
+    // Rejections auch nicht. ISO-Zeitstempel sind lexikografisch vergleichbar.
+    if (rec.operation !== 'mutate' || rec.applied !== true) continue;
+    if (typeof rec.ts === 'string' && rec.ts >= pending.since) fed += 1;
+  }
+  return Math.max(0, pending.versionsBehind - fed);
 }

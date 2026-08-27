@@ -15,6 +15,8 @@ import { mkdirSync, writeFileSync, existsSync, readFileSync, renameSync, unlinkS
 import { z } from 'zod/v4';
 import { exportGraphJson, exportMarkdown, renderTestStubs, renderSchemaStubs, MarkdownViewSchema, MARKDOWN_VIEWS, VIEW_FILENAMES } from './exporter.js';
 import { clearExportPending } from '../kernel/export-marker.js';
+import { countUnfedMutations } from './trajectory.js';
+import { TRAJECTORY_FILE } from '../surface/scaffold-templates.js';
 import { graphSnapshotRel } from '../kernel/harness-import.js';
 import type { MCPTool, MCPToolRegistry } from '../surface/mcp-tools.js';
 import type { ToolContext } from '../surface/tool-context.js';
@@ -153,6 +155,8 @@ export function bindExportTools(ctx: ToolContext): MCPToolRegistry {
       graphJson: { path: string; bytes: number; nodes: number; edges: number };
       views: Array<{ view: string; path: string; bytes: number }>;
       stubs: string[];
+      /** Nur wenn > 0 (CR-GC-449): angewendete Gate-Mutationen ohne Feed-Eintrag. */
+      unfedMutations?: number;
     }
   > = {
     name: 'graph_export',
@@ -168,7 +172,9 @@ export function bindExportTools(ctx: ToolContext): MCPToolRegistry {
       'Also MATERIALIZES the artifact behind an absent binding — a runnable ' +
       '`it.todo` stub for a bound TEST testRef (CR-GC-205 Item 4) and a `z.unknown()` Zod stub for a bound ' +
       'SCHEMA realRef (BOK-CR-026) — so no binding resolves to a phantom path; existing files are never ' +
-      'overwritten. Returns the written paths, byte sizes, and the scaffolded stub files.',
+      'overwritten. Returns the written paths, byte sizes, and the scaffolded stub files — plus ' +
+      'unfedMutations (CR-GC-449) when applied gate mutations of this repo have NO entry in the ' +
+      "repo's learning feed (a writer bypassed the tool layer or ran on its own store).",
     inputSchema: GraphExportInputSchema,
     async handler(input) {
       const graph = harness.getGraph();
@@ -267,6 +273,22 @@ export function bindExportTools(ctx: ToolContext): MCPToolRegistry {
         stubs.push(stub.file);
       }
 
+      // CR-GC-449: die Marke ist der einzige repoRoot-seitige Zähler ANGEWENDETER
+      // Gate-Mutationen — vor dem Löschen also die Frage stellen, die sie als
+      // einzige beantworten kann: wie viele davon hat der Repo-Feed nie gesehen?
+      // (Rohes `harness.mutate()`, Bootstrap, oder eine Session auf einem eigenen
+      // Store.) Gemessen, nicht dokumentiert; der Export ist die Stelle, an der es
+      // auffällt, weil hier ohnehin Modell und Repo zur Deckung kommen.
+      const unfedMutations = countUnfedMutations(repoRoot);
+      if (unfedMutations > 0) {
+        // stdout ist der MCP-Transport (CR-GC-239-Muster) — die Warnung geht auf stderr.
+        console.error(
+          `[graphcode] export: ${unfedMutations} applied gate mutation(s) have no entry in the repo's ` +
+            `learning feed (.graphcode/${TRAJECTORY_FILE}) — a writer bypassed the tool layer or ran on ` +
+            `its own store. The graph is correct; the trajectory is incomplete by that many records.`,
+        );
+      }
+
       // CR-GC-217: the committed snapshot now equals the live model — clear the
       // drift marker the gate left on the last mutate() so the pre-commit freshness
       // guard lets the commit through. Only reached after the writes above succeed
@@ -277,6 +299,7 @@ export function bindExportTools(ctx: ToolContext): MCPToolRegistry {
         graphJson: { path: jsonRel, bytes: Buffer.byteLength(jsonWithVersion), nodes: graph.nodes.length, edges: graph.edges.length },
         views: written,
         stubs,
+        ...(unfedMutations > 0 ? { unfedMutations } : {}),
       };
     },
   };

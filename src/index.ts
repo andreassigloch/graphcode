@@ -181,7 +181,10 @@ export const KUZU_DIR = '.graphcode/kuzu';
  * every mutation emits exactly one live-update event. A host passes `onUpdateEvent`
  * to wire its SSE broadcast; the harness core stays headless (no HTTP). The learning
  * feed (`<repoRoot>/.graphcode/trajectory.jsonl`) is materialized in the tool layer
- * as a projection of the operations log (CR-252), not by a harness hook.
+ * as a projection of the operations log (CR-252), not by a harness hook. It lands
+ * BESIDE that log, i.e. in the store dir (CR-GC-449) — for this factory the two are
+ * the same directory; for a harness on a foreign store they are not, and the repo's
+ * feed stays untouched.
  */
 export async function createHarness(
   config: z.input<typeof HarnessConfigSchema>,
