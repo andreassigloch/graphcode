@@ -1,6 +1,6 @@
-# CR-DRAFT-GC-433 — Triggerkonzept: die Optimierung im Nicht-Auto-Modus anstoßen und sehen
+# CR-GC-433 — Triggerkonzept: die Optimierung im Nicht-Auto-Modus anstoßen und sehen
 
-**Status:** DRAFT — Entscheidungen getroffen (2026-08-26, s. Entwurf), Start wartet auf CR-GC-431 · **Angelegt:** 2026-08-26
+**Status:** DONE (2026-08-27) · **Angelegt:** 2026-08-26 · **Voraussetzung CR-GC-431:** erledigt
 **Entwurf (final):** https://claude.ai/code/artifact/e555fc68-f3de-412c-96d1-4d807131f1fa
 **Herkunft:** Auftraggeber 2026-08-26, wörtlich: *„wenn wir nicht im Automodus unterwegs sind,
 weiß der Kunde ja gar nicht, was unsere Regel- und Architekturmaschine vorschlägt. Das
@@ -80,3 +80,61 @@ Je Trigger ein eigener CR:
 
 **Voraussetzung unverändert:** CR-GC-431 (Ranking nach ausgeliefertem Edit) vor Art 1 + 2 —
 der Entwurf zeigt selbst warum: „13 Befunde, 0 anwendbar".
+
+---
+
+## Abschluss 2026-08-27
+
+### Bestandsabgleich — was zwischen Entwurf und Umsetzung schon gebaut wurde
+
+Der Entwurf beschrieb drei Trigger-Arten als Neubau. Bis zum Start war davon das meiste
+der **Art 2** bereits fertig; nur die Lücke wurde ergänzt, keine zweite Karte danebengebaut.
+
+| aus dem Entwurf | Stand beim Start | Quelle |
+|---|---|---|
+| Karte 1 „Wirkt die Arbeit?" | **fertig** | CR-GC-410 |
+| Karte 2 „Was die Maschine dazu sagt" — Architektur-Befunde R-04/RD-04/MT-02/R-23 als Tabelle mit `applicable`-Spalte aus `graph_suggest`, plus Zielmarken je Metrik-Dimension gegen `.graphcode/target-profile.json` | **fertig** (deckt Art 2 „zeigend, permanent" weitgehend ab) | CR-GVE-262 |
+| Host-Datenweg fürs Dashboard (`callHost` über `.graphcode/host.sock`, `readinessSource`-Banner bei Fallback) | **fertig** — von diesem CR mitbenutzt, kein neuer Weg | CR-GC-402 |
+| Vorschläge erstmals anwendbar (retire/Umhängen als Verbund) | **fertig** — prägt hier die Anwendungsvorschrift | CR-GC-435 |
+| Art 1 — Skill `/se:optimize` | fehlte | **dieser CR** |
+| Art 3 — permanente Zeile „Der nächste Zug" (Architektur **und** Hygiene nebeneinander, ohne Handoff-Endzustand) | fehlte ganz: `graph_next_step` war im Dashboard nirgends | **dieser CR** |
+| Rest-Lücke aus Art 2: das **Δm des Zuges** und der **konkrete Edit** waren nirgends sichtbar (die Tabelle zeigt die Zahlen der Regel-Meldung, nicht die des Vorschlags) | offen | **dieser CR** (in der Zeile) |
+
+### Was dieser CR ergänzt hat
+
+**Art 1 — `graphcode`:** Skill `.claude/commands/se/optimize.md` (`/se:optimize`). Erhebt das
+Zielprofil nicht selbst, sondern verweist auf `se:target-profile` (keine zweite Erhebung derselben
+Config); ruft `graph_suggest`; zeigt je Vorschlag Regel/Element, Δm, `applicable` und den konkreten
+Zug und fragt einzeln „anwenden?"; wendet ausschließlich über `graph_mutate` an. Ein Vorschlag mit
+`retire` geht als **EIN** Batch `[delete-edge, add-edge]` durchs Gate — genau der Verbund, den der
+dryRun beurteilt hat (CR-GC-435). Im Graph modelliert als `FUNC-se-optimize` (allocate → MOD-skills,
+satisfy → REQ-skill-authors-through-gate), gegatet, kein Hand-Edit des SSOT.
+
+**Art 2 + 3 — `graph-view-edit`:** permanente Zeile „Der nächste Zug", ganz oben im Dashboard,
+zwei gleichrangige Spalten (Architektur links aus `graph_suggest` Top-1, Hygiene rechts aus
+`graph_next_step`). Datenweg = der von CR-GC-402, kein neuer. Drei Zustände je Kanal bleiben
+getrennt: **ausführbarer Zug** (Δm + Edit + ggf. `retire`/`codeImpact`) · **Fund ohne Zug**
+(`applicable:false` — die Zahl misst dann die Sonde, das steht dabei) · **kein Host**. Kein
+Auto-Apply, keine Schaltfläche: die Zeile nennt `se:optimize`/`graph_mutate` als den Weg.
+
+### Nicht getan (bewusst)
+
+- Keine zweite Architektur-Karte — die Karte aus CR-GVE-262 bleibt, wie sie ist.
+- Keine neue Metrik, keine 7. Dimension, kein Auto-Apply (Nicht-Anforderungen des Entwurfs).
+- Kein „Button `/se:optimize`" im Dashboard: der Viewer kann keinen Chat-Skill starten. Die Zeile
+  **benennt** den Skill; das ist der ehrliche Ersatz für eine Schaltfläche, die nichts auslöste.
+
+### Nebenbefund
+
+Die Zeile brachte einen dritten Host-Roundtrip pro `/api/dashboard`. Der lief in Tests, die schon
+bei 4,1 s gegen ein 5-s-Fenster standen, in den Timeout. Symptom-Fix (Timeout erhöhen) wurde nicht
+gemacht: `graph_readiness` und `graph_next_step` sind reine Lesezugriffe und gehen jetzt in EINER
+Welle (`Promise.all`), `graph_suggest` bleibt bewusst allein danach (es fährt je Kandidat einen
+dryRun). Netto ist das Dashboard nicht langsamer als vorher.
+
+### Offen
+
+- Die Hygiene-Handlungsanweisung kommt englisch aus `DIMENSION_ACTION` (graphcode
+  `src/steering/steering.ts`) und steht so im deutschsprachigen Dashboard. Der Viewer übersetzt sie
+  bewusst **nicht** (das wäre eine zweite Fassung derselben Aussage). Wenn das stören soll, gehört
+  die Übersetzung nach graphcode — eigener CR.

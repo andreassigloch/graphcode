@@ -3104,6 +3104,15 @@
       }
     },
     {
+      "id": "FUNC-se-optimize",
+      "type": "FUNC",
+      "name": "Skill se:optimize",
+      "description": "Prompt-realisierter Skill se:optimize: Architektur-Vorschlaege aus graph_suggest gegen das Zielprofil ziehen, mit Delta-m und Anwendbarkeit zeigen, den gewaehlten Zug durchs Apply-Gate anwenden. Kein Auto-Apply.",
+      "realRef": {
+        "file": ".claude/commands/se/optimize.md"
+      }
+    },
+    {
       "id": "FUNC-se-plan",
       "type": "FUNC",
       "name": "Skill se-plan",
@@ -11408,6 +11417,11 @@
     },
     {
       "source": "FCHAIN-skill-authoring",
+      "target": "FUNC-se-optimize",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-authoring",
       "target": "FUNC-se-plan",
       "type": "compose"
     },
@@ -11689,6 +11703,11 @@
     {
       "source": "FLOW-authoring-request",
       "target": "FUNC-se-irr",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-authoring-request",
+      "target": "FUNC-se-optimize",
       "type": "io"
     },
     {
@@ -13299,6 +13318,11 @@
       "type": "compose"
     },
     {
+      "source": "FUNC-block-q-improvement",
+      "target": "FUNC-se-optimize",
+      "type": "compose"
+    },
+    {
       "source": "FUNC-block-ruestzeug",
       "target": "MOD-repo-root",
       "type": "allocate"
@@ -14788,6 +14812,21 @@
     },
     {
       "source": "FUNC-se-irr",
+      "target": "REQ-skill-authors-through-gate",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-se-optimize",
+      "target": "MOD-skills",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-se-optimize",
+      "target": "FLOW-mutate-cmd",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-se-optimize",
       "target": "REQ-skill-authors-through-gate",
       "type": "satisfy"
     },
@@ -17878,5 +17917,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 211
+  "graphVersion": 212
 }

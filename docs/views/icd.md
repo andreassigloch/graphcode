@@ -49,7 +49,7 @@
 |---|---|---|
 | `FLOW-action` | `FUNC-goal-steerer` | `ACTOR-claude-code` |
 | `FLOW-arch-fitness` | `FUNC-arch-fitness` | `FUNC-rank-candidates` |
-| `FLOW-authoring-request` | `ACTOR-facilitating-agent` · `ACTOR-systems-engineer` | `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-import-code` · `FUNC-import-doc` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` |
+| `FLOW-authoring-request` | `ACTOR-facilitating-agent` · `ACTOR-systems-engineer` | `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-import-code` · `FUNC-import-doc` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` |
 | `FLOW-bootstrap-result` | `FUNC-bootstrap` · `FUNC-import` · `FUNC-import-code-verb` | `ACTOR-developer` |
 | `FLOW-branch-graphs` | `ACTOR-developer` | `FUNC-merge-nodes` |
 | `FLOW-bulk-formatE` | `ACTOR-graphify` · `FUNC-import-code` · `FUNC-import-doc` | `FUNC-import` |
@@ -82,7 +82,7 @@
 | `FLOW-migrated-graph` | `FUNC-migrate-schema` | `ACTOR-developer` |
 | `FLOW-model-answer` | `FUNC-run-executor` | `FUNC-extract-mutate` |
 | `FLOW-module-metrics` | `FUNC-module-metrics` | `ACTOR-dashboard` · `FUNC-evaluate-rules` |
-| `FLOW-mutate-cmd` | `ACTOR-claude-code` · `ACTOR-developer` · `ACTOR-opencode` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-extract-mutate` · `FUNC-host-socket` · `FUNC-preflight` · `FUNC-run-executor` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` | `FUNC-host-socket` · `FUNC-mutate` · `FUNC-preflight` |
+| `FLOW-mutate-cmd` | `ACTOR-claude-code` · `ACTOR-developer` · `ACTOR-opencode` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-extract-mutate` · `FUNC-host-socket` · `FUNC-preflight` · `FUNC-run-executor` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` | `FUNC-host-socket` · `FUNC-mutate` · `FUNC-preflight` |
 | `FLOW-parsed-graph` | `FUNC-decode` | `ACTOR-developer` |
 | `FLOW-phase-readiness` | `FUNC-compute-phase-readiness` | `FUNC-generation-step` |
 | `FLOW-query-request` | `ACTOR-claude-code` | `FUNC-deduce-tests` · `FUNC-graph-impact` · `FUNC-list-elements` · `FUNC-resolve-tests-from-code` |

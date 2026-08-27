@@ -66,7 +66,7 @@ Ausgeloest von: `ACTOR-claude-code` · `ACTOR-developer` · `ACTOR-facilitating-
 - `FCHAIN-capture` — Interaktive Erfassung (Text → suggest-Tier): `FUNC-decode` → `FUNC-mutate`
 - `FCHAIN-codec-roundtrip` — Format-E Round-Trip (encode∘decode): `FUNC-decode` → `FUNC-encode`
 - `FCHAIN-interface-escalation` — Interface-Änderungs-Eskalation: `FUNC-graph-impact` → `FUNC-mutate`
-- `FCHAIN-skill-authoring` — Skill legt Modellknoten an: `FUNC-author-req` → `FUNC-author-uc` → `FUNC-close-violations` → `FUNC-mutate` → `FUNC-se-conops` → `FUNC-se-fmea` → `FUNC-se-generate` → `FUNC-se-irr` → `FUNC-se-plan` → `FUNC-se-trade` → `FUNC-target-profile`
+- `FCHAIN-skill-authoring` — Skill legt Modellknoten an: `FUNC-author-req` → `FUNC-author-uc` → `FUNC-close-violations` → `FUNC-mutate` → `FUNC-se-conops` → `FUNC-se-fmea` → `FUNC-se-generate` → `FUNC-se-irr` → `FUNC-se-optimize` → `FUNC-se-plan` → `FUNC-se-trade` → `FUNC-target-profile`
 
 ### `UC-deterministic-steering` — Deterministisch auf ein mehrdimensionales Ziel steuern
 

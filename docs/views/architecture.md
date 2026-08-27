@@ -95,6 +95,7 @@
 | `FUNC-se-generate` | FUNC | Skill se:generate |
 | `FUNC-se-help` | FUNC | Skill se:help |
 | `FUNC-se-irr` | FUNC | Skill se-irr |
+| `FUNC-se-optimize` | FUNC | Skill se:optimize |
 | `FUNC-se-plan` | FUNC | Skill se-plan |
 | `FUNC-se-retro` | FUNC | Skill se-retro |
 | `FUNC-se-review` | FUNC | Skill se-review |
@@ -225,6 +226,7 @@
 | `FUNC-se-generate` | `MOD-skills` |
 | `FUNC-se-help` | `MOD-skills` |
 | `FUNC-se-irr` | `MOD-skills` |
+| `FUNC-se-optimize` | `MOD-skills` |
 | `FUNC-se-plan` | `MOD-skills` |
 | `FUNC-se-retro` | `MOD-skills` |
 | `FUNC-se-review` | `MOD-skills` |

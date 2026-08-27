@@ -204,6 +204,62 @@ describe('CR-GC-308: skills instruct only vocabulary the ontology declares', () 
     expect(text).toMatch(/cross-cutting/i);
   });
 
+  /**
+   * CR-GC-433 (Trigger-Art 1) — `se:optimize` ist der ZIEHENDE Kanal auf die
+   * Architekturmaschine. Vor diesem CR gab es keinen: `graph_suggest` existierte,
+   * aber niemand kam an ihm vorbei, ohne zu wissen, dass es das Werkzeug gibt.
+   *
+   * Die Zusicherungen hier sind genau die, deren Bruch den Skill still falsch
+   * macht — nicht seine Prosa:
+   *   1. er treibt `graph_suggest` (sonst empfiehlt er nichts),
+   *   2. er wendet NUR über `graph_mutate` an (Apply-Gate, kein Auto-Apply),
+   *   3. er wendet ein `retire`-Umhängen als EINEN Batch an (CR-GC-435 — genau
+   *      diesen Verbund hat der dryRun beurteilt; zwei Aufrufe messen etwas anderes),
+   *   4. er dupliziert das Zielprofil nicht, sondern verweist auf `se:target-profile`.
+   */
+  describe('CR-GC-433: se:optimize is the pull channel onto the architecture machine', () => {
+    const optimize = () => readFileSync(join(COMMANDS_DIR, 'se', 'optimize.md'), 'utf8');
+
+    it('ships as a command file with se:optimize frontmatter', () => {
+      expect(skillFiles()).toContain(join('se', 'optimize.md'));
+      expect(optimize()).toMatch(/^---\n(?:.*\n)*?name: se:optimize\n/);
+    });
+
+    it('drives graph_suggest and applies only through the graph_mutate gate', () => {
+      const text = optimize();
+      expect(text).toContain('graph_suggest');
+      expect(text).toContain('graph_mutate');
+      // Kein Auto-Apply — das ist die ausdrückliche Nicht-Anforderung des CR.
+      expect(text).toMatch(/kein Auto-Apply|nie auto-apply|never auto-appl/i);
+    });
+
+    it('shows Δm and applicable per suggestion — the two fields the human decides on', () => {
+      const text = optimize();
+      expect(text).toContain('applicable');
+      expect(text).toMatch(/Δm|delta/);
+    });
+
+    it('applies a retire suggestion as ONE graph_mutate batch (CR-GC-435)', () => {
+      const text = optimize();
+      expect(text).toContain('retire');
+      expect(text).toContain('delete-edge');
+      expect(text).toContain('add-edge');
+      // Der Verbund muss als EIN Aufruf benannt sein, nicht als zwei.
+      // …als EIN Aufruf/Batch benannt (Markdown-Auszeichnung und Backticks dazwischen erlaubt),
+      // nicht als zwei.
+      expect(text, 'the retire+add batch must be ONE mutate call').toMatch(/\bEIN\b[^.\n]{0,40}\b(Aufruf|Batch)\b/);
+    });
+
+    it('delegates the Zielprofil to se:target-profile instead of duplicating it', () => {
+      const text = optimize();
+      expect(text).toContain('se:target-profile');
+      // Der Skill darf die 6 Gewichte NICHT selbst erheben (keine parallelen Pfade):
+      // eine eigene Dimensionstabelle wäre die Kopie, die driftet.
+      const dims = ['modifiability', 'faultTolerance', 'flowEfficiency', 'coherence', 'viability', 'scalability'];
+      expect(dims.filter((d) => text.includes(d)).length, 'se:optimize must not re-elicit the ℝ⁶ weights').toBeLessThan(6);
+    });
+  });
+
   it('every edgeType a skill instructs is a declared TraceType', () => {
     const declared = new Set(TraceType.options as readonly string[]);
     const offenders: string[] = [];

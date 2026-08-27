@@ -676,6 +676,7 @@
 | `FCHAIN-skill-authoring` | compose | `FUNC-se-fmea` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-se-generate` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-se-irr` |
+| `FCHAIN-skill-authoring` | compose | `FUNC-se-optimize` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-se-plan` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-se-trade` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-target-profile` |
@@ -730,6 +731,7 @@
 | `FLOW-authoring-request` | io | `FUNC-se-fmea` |
 | `FLOW-authoring-request` | io | `FUNC-se-generate` |
 | `FLOW-authoring-request` | io | `FUNC-se-irr` |
+| `FLOW-authoring-request` | io | `FUNC-se-optimize` |
 | `FLOW-authoring-request` | io | `FUNC-se-plan` |
 | `FLOW-authoring-request` | io | `FUNC-se-trade` |
 | `FLOW-authoring-request` | io | `FUNC-target-profile` |
@@ -1025,6 +1027,7 @@
 | `FUNC-block-q-improvement` | allocate | `MOD-steering` |
 | `FUNC-block-q-improvement` | compose | `FUNC-close-violations` |
 | `FUNC-block-q-improvement` | compose | `FUNC-next-step` |
+| `FUNC-block-q-improvement` | compose | `FUNC-se-optimize` |
 | `FUNC-block-ruestzeug` | allocate | `MOD-repo-root` |
 | `FUNC-block-ruestzeug` | compose | `FUNC-bind-tools` |
 | `FUNC-block-ruestzeug` | compose | `FUNC-list-elements` |
@@ -1290,6 +1293,9 @@
 | `FUNC-se-irr` | allocate | `MOD-skills` |
 | `FUNC-se-irr` | io | `FLOW-mutate-cmd` |
 | `FUNC-se-irr` | satisfy | `REQ-skill-authors-through-gate` |
+| `FUNC-se-optimize` | allocate | `MOD-skills` |
+| `FUNC-se-optimize` | io | `FLOW-mutate-cmd` |
+| `FUNC-se-optimize` | satisfy | `REQ-skill-authors-through-gate` |
 | `FUNC-se-plan` | allocate | `MOD-skills` |
 | `FUNC-se-plan` | io | `FLOW-mutate-cmd` |
 | `FUNC-se-plan` | satisfy | `REQ-skill-authors-through-gate` |
