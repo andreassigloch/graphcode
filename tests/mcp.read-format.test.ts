@@ -87,3 +87,81 @@ describe('TEST-read-format-param (CR-GC-210): JSON default, Format-E opt-in', ()
     expect(fe.formatE).toContain('REQ-reset');
   });
 });
+
+/**
+ * CR-GC-363 — Freshness-Banner inline im Read-Ergebnis.
+ *
+ * Der vorhandene AF-Stamp (SYS.attributes.analysisFreshness.<id>.graphVersion,
+ * contracts AF-01..05) wird im Format-E-Kopf von graph_context UND graph_impact
+ * sichtbar, sobald er hinter dem Live-graphVersion liegt. Frischer (oder gar
+ * kein) Stamp → Ergebnis byte-unverändert. Das Banner ist eine `//`-Zeile und
+ * damit Format-E-parsebar (parse überspringt Kommentare — Round-Trip bleibt).
+ */
+describe('CR-GC-363: Freshness-Banner inline (graph_context + graph_impact)', () => {
+  let repoRoot: string;
+  let harness: GraphCodeHarness;
+
+  const STAMPED_SPEC: MutateCommand[] = [
+    { op: 'add-node', node: { uid: 'SYS-auth', type: 'SYS', name: 'Auth service', description: 'demo', attributes: { analysisFreshness: { conops: { graphVersion: 1 } } } } },
+    ...SPEC.slice(1),
+  ];
+
+  beforeEach(async () => {
+    repoRoot = mkdtempSync(join(tmpdir(), 'graphcode-fresh-'));
+    harness = makeHarness(repoRoot);
+    await harness.initialize();
+  });
+
+  afterEach(async () => {
+    await harness.close();
+    rmSync(repoRoot, { recursive: true, force: true });
+  });
+
+  it('frischer Stamp: byte-unverändert; veralteter Stamp: genau eine parsebare Kopfzeile', async () => {
+    const tools = bindToolsToHarness(harness);
+    // Tool-Layer-Write: zählt den graphVersion-Zähler auf 1 — der Stamp (v1) ist damit CURRENT.
+    const seeded = (await tools.graph_mutate.handler({ commands: STAMPED_SPEC })) as { success: boolean };
+    expect(seeded.success).toBe(true);
+
+    const freshCtx = (await tools.graph_context.handler({ id: 'REQ-reset', depth: 1 })) as { formatE: string };
+    const freshImp = (await tools.graph_impact.handler({ id: 'REQ-reset', depth: 1 })) as { formatE: string };
+    // Kein Rauschen im Normalfall: keine Banner-Zeile, Ergebnis beginnt mit dem Slice selbst.
+    expect(freshCtx.formatE.startsWith('## Nodes')).toBe(true);
+    expect(freshImp.formatE.startsWith('## Nodes')).toBe(true);
+    expect(freshCtx.formatE).not.toContain('STALE-ANALYSIS');
+
+    // Zweiter Tool-Write (liegt in KEINER der beiden Scheiben): graphVersion 2 > Stamp v1 → stale.
+    const bump = (await tools.graph_mutate.handler({
+      commands: [{ op: 'add-node', node: { uid: 'MOD-unrelated', type: 'MOD', name: 'Anderswo', description: 'unbeteiligt', attributes: {} } }],
+    })) as { success: boolean };
+    expect(bump.success).toBe(true);
+
+    const staleCtx = (await tools.graph_context.handler({ id: 'REQ-reset', depth: 1 })) as { formatE: string };
+    const staleImp = (await tools.graph_impact.handler({ id: 'REQ-reset', depth: 1 })) as { formatE: string };
+
+    // Genau EINE Kopfzeile, darunter byte-identisch das frische Ergebnis (kein zweiter Umbau).
+    const [ctxHead, ...ctxRest] = staleCtx.formatE.split('\n');
+    expect(ctxHead).toContain('STALE-ANALYSIS');
+    expect(ctxHead).toContain('conops');
+    expect(ctxHead.startsWith('//')).toBe(true);
+    expect(ctxRest.join('\n')).toBe(freshCtx.formatE);
+
+    const [impHead, ...impRest] = staleImp.formatE.split('\n');
+    expect(impHead).toContain('STALE-ANALYSIS');
+    expect(impHead.startsWith('//')).toBe(true);
+    expect(impRest.join('\n')).toBe(freshImp.formatE);
+
+    // Format-E-parsebar trotz Banner: derselbe Codec liest die Scheibe fehlerfrei zurück.
+    const decoded = new GraphCodeCodec().decode(staleCtx.formatE);
+    expect(decoded.nodes.map((n) => n.uid)).toContain('REQ-reset');
+  });
+
+  it('ohne jeden Stamp: kein Banner (absent ist nicht "hinter dem Repo-State")', async () => {
+    const tools = bindToolsToHarness(harness);
+    const seeded = (await tools.graph_mutate.handler({ commands: SPEC })) as { success: boolean };
+    expect(seeded.success).toBe(true);
+    const ctx = (await tools.graph_context.handler({ id: 'REQ-reset', depth: 1 })) as { formatE: string };
+    expect(ctx.formatE.startsWith('## Nodes')).toBe(true);
+    expect(ctx.formatE).not.toContain('STALE-ANALYSIS');
+  });
+});

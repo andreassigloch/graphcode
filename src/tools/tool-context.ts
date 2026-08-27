@@ -27,6 +27,10 @@ import { FormatECodec, SE_DESCRIPTOR, FileOperationsLog } from '@sigloch/graph-a
 import { RULES_VERSION } from '@sigloch/contracts/se';
 import type { MutateCommand, MutateResult, StaleDelta, StaleDeltaEntry } from '@sigloch/contracts/harness';
 import { GraphCodeCodec } from '../codec/codec.js';
+// CR-GC-363: die EINE bestehende Freshness-Klassifikation (liest die AF-01..05-Stamps
+// SYS.attributes.analysisFreshness.<id>.graphVersion gegen den Live-Zähler) — das
+// Banner rechnet Freshness NICHT neu, es konsumiert genau diese Funktion.
+import { computeAnalysisCurrency } from '@sigloch/graphcode-client';
 import {
   materializeTrajectory,
   type EditSource,
@@ -186,6 +190,13 @@ export interface ToolContext {
   readonly gcCodec: GraphCodeCodec;
   /** Read accessor for the applied-batch counter (never a settable field). */
   graphVersion(): number;
+  /**
+   * CR-GC-363: genau EINE Format-E-Kopfzeile (`//`-Kommentar, ohne '\n'), wenn ein
+   * VORHANDENER AF-Freshness-Stamp hinter dem Live-graphVersion liegt; sonst ''.
+   * `absent` (nie analysiert) ist kein "hinter dem Repo-State" und bleibt still —
+   * das Banner informiert über veraltete Analysen, es fordert keinen Neubau.
+   */
+  staleAnalysisBanner(): string;
   /**
    * The ONLY writer of the version + the audit log (no audit bypass, CR-GC-232).
    * `stamps` (CR-GC-434) carries what only the GATE PATH can determine — the
@@ -471,6 +482,23 @@ export function createToolContext(
   // serializes gate bodies; this serializes check+gate+record as one unit).
   // ---------------------------------------------------------------------------
 
+  /**
+   * CR-GC-363: Freshness-Banner für den Format-E-Kopf von graph_context/graph_impact.
+   * Keine zweite Freshness-Quelle: die Klassifikation ist `computeAnalysisCurrency`
+   * (@sigloch/graphcode-client) über die vorhandenen AF-Stamps — hier wird nur
+   * gefiltert ('stale' = Stamp vorhanden, aber hinter `_graphVersion`) und formatiert.
+   */
+  function staleAnalysisBanner(): string {
+    const stale = computeAnalysisCurrency(harness.getGraph(), _graphVersion)
+      .filter((a) => a.currency === 'stale')
+      .map((a) => a.id);
+    if (stale.length === 0) return '';
+    return (
+      `// !! STALE-ANALYSIS: ${stale.join(', ')} — Freshness-Stamp(s) hinter dem ` +
+      `Graph-Stand (graphVersion ${_graphVersion}); Details in readiness (AF-01..05)`
+    );
+  }
+
   let toolWriteChain: Promise<unknown> = Promise.resolve();
   function serializeToolWrite<T>(body: () => Promise<T>): Promise<T> {
     const result = toolWriteChain.then(body, body);
@@ -564,6 +592,7 @@ export function createToolContext(
     codec,
     gcCodec,
     graphVersion: () => _graphVersion,
+    staleAnalysisBanner,
     recordAudit,
     recordPreview,
     noteConsulted,

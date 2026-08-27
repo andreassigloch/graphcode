@@ -234,6 +234,18 @@ function buildContextSlice(
 export function bindReadTools(ctx: ToolContext): MCPToolRegistry {
   const { harness, codec, gcCodec, graphVersion } = ctx;
 
+  /**
+   * CR-GC-363: Freshness-Banner inline — eine `//`-Kopfzeile vor dem Format-E-
+   * Ergebnis, wenn ein vorhandener AF-Stamp hinter dem Live-Graph-Stand liegt.
+   * Frischer Stamp → byte-unverändert (kein Rauschen). Die Klassifikation kommt
+   * aus `ctx.staleAnalysisBanner()` (computeAnalysisCurrency über die AF-Stamps),
+   * hier wird nichts neu gerechnet. Format-E-parsebar: parse überspringt `//`.
+   */
+  const withFreshnessBanner = (formatE: string): string => {
+    const banner = ctx.staleAnalysisBanner();
+    return banner ? `${banner}\n${formatE}` : formatE;
+  };
+
   const graph_elements: MCPTool<
     z.infer<typeof GraphElementsInputSchema>,
     { nodes: GraphNode[]; total: number; graphVersion: number } | { formatE: string; total: number; graphVersion: number }
@@ -327,7 +339,7 @@ export function bindReadTools(ctx: ToolContext): MCPToolRegistry {
       const subgraph = await harness.impact(input.id, input.depth);
       // CR-GC-373: Agenten-Sicht — der Konsument dieser Scheibe ist der Agent,
       // nicht der Re-Import; Provenienz (Zeitstempel, weight:1) bleibt weg.
-      const formatE = codec.serialize(subgraph, { omitProvenance: true });
+      const formatE = withFreshnessBanner(codec.serialize(subgraph, { omitProvenance: true }));
       return {
         rootId: input.id,
         nodeCount: subgraph.nodes.length,
@@ -381,7 +393,8 @@ export function bindReadTools(ctx: ToolContext): MCPToolRegistry {
     inputSchema: GraphContextInputSchema,
     async handler(input) {
       const { slice, missingRefs } = buildContextSlice(harness.getGraph(), input.id, input.depth);
-      const formatE = codec.serialize(slice, { omitProvenance: true }); // CR-GC-373: Agenten-Sicht
+      // CR-GC-373: Agenten-Sicht; CR-GC-363: Freshness-Banner, wenn AF-Stamps veraltet sind.
+      const formatE = withFreshnessBanner(codec.serialize(slice, { omitProvenance: true }));
       return {
         rootId: input.id,
         nodeCount: slice.nodes.length,
