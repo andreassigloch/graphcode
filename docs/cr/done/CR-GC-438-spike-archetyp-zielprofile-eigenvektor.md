@@ -312,6 +312,11 @@ Messergebnis.
    ohne Guard) — macht `evaluateAllRules` auf kadjar-artigen Graphen unbenutzbar. Einzeiler,
    contracts.
 
+**Beide erledigt (2026-08-27, sigloch-modules):** CR-SM-274 repariert CR-01 auf den io-Pfad mit
+distinct-SCHEMA-Zählung (0 → 18 warnings + 198 info über den realen Bestand; die 79/38 oben
+enthalten zusätzlich die zwei synthetischen Spike-Zustände), CR-SM-275 setzt den BQ-06-Guard —
+beide eingefaltet in die unveröffentlichte contracts 10.0.0.
+
 **Modellpflege-Befunde am Bestand (Nebenprodukt der Messung):** `sirail` hat **keinen einzigen
 FLOW-Produzenten** (40 Konsum-Kanten, 0 Produktions-Kanten) und dazu einen seit 2026-08-18
 divergenten Store; `graphify` hat 3 FLOWs und **0 SCHEMA**; `sigloch-modules` modelliert Pakete
