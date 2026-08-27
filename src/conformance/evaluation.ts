@@ -16,14 +16,24 @@
  *
  * CR-GC-428: `skipped` nannte nur QUELLEN und war deshalb selbst wieder eine Zahl
  * ohne Grundgesamtheit. Innerhalb der Quelle `rules` lädt der Descriptor-Katalog
- * weniger Regeln als `ALL_RULE_DEFS` (gemessen 2026-08-26: 66 gegen 73) — die
- * Differenz BQ-01/02/04/06/07 plus ND-01/ND-02 wertet nur der Steering-Pfad aus
- * (CR-GC-287: ND bleibt
- * Steering, nie Gate-Blocker). Das ist eine Entscheidung, kein Versehen; falsch
- * war nur, dass `skipped: []` daneben Vollständigkeit behauptete. Ab jetzt steht
- * jede nicht ausgewertete Regel als `rule:<ID>` in DERSELBEN Liste, und sie wird
- * ABGELEITET (`ALL_RULE_DEFS` minus geladener Katalog) — eine gepflegte Tabelle
- * driftet, wie die aus CR-SM-235 (18 von 71 Regeln fehlten, kein Test zwang nach).
+ * weniger Regeln als `ALL_RULE_DEFS` (gemessen 2026-08-26: 66 gegen 73). Ab jetzt
+ * steht jede nicht ausgewertete Regel als `rule:<ID>` in DERSELBEN Liste, und sie
+ * wird ABGELEITET (`ALL_RULE_DEFS` minus ausgewerteter Katalog) — eine gepflegte
+ * Tabelle driftet, wie die aus CR-SM-235 (18 von 71 Regeln fehlten, kein Test
+ * zwang nach).
+ *
+ * CR-GC-442: von dieser Differenz sind ND-01/ND-02 hierher GEHOLT worden. Sie
+ * standen als „nur Steering" in `skipped`, und damit tauchte ein Beinahe-Duplikat
+ * in Verstoßliste, Report und Dashboard nie auf — eine blinde Stelle genau in der
+ * Schicht, in der Wildwuchs entsteht. Ausgewertet wird die contracts-Regel selbst
+ * (`evaluateNDRules`), kein lokaler Nachbau; graphcode liefert nur die
+ * Similarity-Matrix, die die Regel per Injektion erwartet.
+ *
+ * Was NICHT mitgewandert ist: die Gate-Wirkung. ND bleibt außerhalb von
+ * `SE_DESCRIPTOR.rules`, `mutate()` sieht die Regel also weiterhin nicht und kann
+ * nicht an einem Near-Duplicate blockieren (CR-GC-287, Delta-Semantik unberührt).
+ * `ruleCatalogs().notInGate` weist ND deshalb weiter aus — „nicht im Gate" und
+ * „nicht ausgewertet" sind ab hier zwei verschiedene Aussagen.
  *
  * NICHT hier: das Apply-Gate. `harness.mutate()` bewertet weiter rein graph-seitig
  * (`evaluateRules`), und das muss so bleiben — eine Mutation darf nicht pro Batch
@@ -34,9 +44,16 @@
 import { existsSync } from 'node:fs';
 import type { RuleViolation } from '@sigloch/contracts/harness';
 import type { Graph } from '@sigloch/graph-api-core';
-import { ALL_RULE_DEFS, PHASE_READINESS_NAME, DIMENSION_READINESS_NAME } from '@sigloch/contracts/se';
-import { conformanceEvaluation, type ConformanceHarness } from './conformance.js';
+import {
+  ALL_RULE_DEFS,
+  ND_RULES,
+  evaluateNDRules,
+  PHASE_READINESS_NAME,
+  DIMENSION_READINESS_NAME,
+} from '@sigloch/contracts/se';
+import { conformanceEvaluation, toOntologyGraph, type ConformanceHarness } from './conformance.js';
 import type { ImportCoverage } from '@sigloch/contracts/se';
+import { withNDMatrices } from '../steering/nd-similarity.js';
 import { computeReadiness, type ReadinessReport } from '../steering/readiness.js';
 
 type CGraph = Pick<Graph, 'nodes' | 'edges'>;
@@ -102,6 +119,40 @@ export function unevaluatedRuleIds(loadedRuleIds: Iterable<string>): string[] {
     .sort();
 }
 
+/**
+ * Die contracts-Regeln, die graphcode LOKAL auswertet, obwohl der Gate-Katalog sie
+ * nicht trägt (CR-GC-442) — heute genau ND-01/ND-02.
+ *
+ * Abgeleitet aus `ND_RULES`, nicht notiert: kommt in contracts eine ND-Regel dazu,
+ * wertet `nearDuplicateFindings` sie mit aus UND sie verschwindet von selbst aus
+ * `skipped`. Eine zweite Liste könnte hier auseinanderlaufen (CR-SM-235).
+ */
+export const LOCALLY_EVALUATED_RULE_IDS: readonly string[] = ND_RULES.map((rule) => rule.id);
+
+/**
+ * Die Near-Duplicate-Funde des Graphen (CR-GC-442).
+ *
+ * Kein Regel-Fork: Urteil, Schwelle (0.85) und Severity kommen aus
+ * `evaluateNDRules` (@sigloch/contracts/se). graphcode berechnet nur die
+ * Similarity-Matrix, die die Regel per Injektion erwartet — und gibt den
+ * globalen contracts-Modul-State danach wieder frei (`withNDMatrices`), weil
+ * AO-D01 im Gate-Katalog dieselbe Matrix mitliest.
+ */
+function nearDuplicateFindings(graph: CGraph): Finding[] {
+  const og = toOntologyGraph(graph);
+  return withNDMatrices(og, () =>
+    evaluateNDRules(og).map((v) => ({
+      ruleId: v.rule_id,
+      severity: v.severity,
+      elementId: v.element_id,
+      message: v.message,
+      fixHint: v.fix_hint,
+      context: v.context,
+      source: 'rules' as const,
+    })),
+  );
+}
+
 /** Ein Regelkatalog als Herkunftsangabe: wer, wie viele, für welche Zahlen. */
 export interface RuleCatalogProvenance {
   /** Der Katalog samt Paket — die Antwort auf „woher kommt diese Zahl?". */
@@ -126,7 +177,14 @@ export interface RuleCatalogs {
   gate: RuleCatalogProvenance;
   /** Steering-Pfad: `evaluateAllRules` über den vollen contracts-Katalog. */
   steering: RuleCatalogProvenance;
-  /** Die contracts-Regeln, die der Gate-Katalog nicht kennt — abgeleitet. */
+  /**
+   * Die contracts-Regeln, die der Gate-Katalog nicht kennt — abgeleitet.
+   *
+   * CR-GC-442: NICHT dasselbe wie `skipped`. ND-01/ND-02 stehen weiter hier (das
+   * Gate kann an ihnen nicht blockieren), werden aber inzwischen ausgewertet und
+   * fehlen deshalb in `skipped`. Die Schnittmenge beider Listen ist
+   * `LOCALLY_EVALUATED_RULE_IDS`.
+   */
   notInGate: string[];
 }
 
@@ -161,12 +219,17 @@ export function evaluateAll(harness: EvaluationHarness): Evaluation {
   const findings: Finding[] = harness
     .evaluateRules()
     .map((v) => ({ ...v, source: 'rules' as const }));
-  // Regel-Ebene: was der geladene Katalog gar nicht erst enthält (CR-GC-428).
-  // Steht VOR der Quellen-Ebene, weil es die Grundgesamtheit der Quelle `rules`
-  // beschreibt — und es ist abgeleitet, nicht gepflegt.
-  const skipped: string[] = unevaluatedRuleIds(harness.getLoadedRuleIds()).map(
-    (id) => `${SKIPPED_RULE_PREFIX}${id}`,
-  );
+  // CR-GC-442: die ND-Regeln, die der Gate-Katalog nicht trägt — hier ausgewertet,
+  // damit ein Beinahe-Duplikat in Verstoßliste/Report/Dashboard überhaupt sichtbar
+  // wird. Gate-frei: `mutate()` fährt weiter nur `evaluateRules()`.
+  findings.push(...nearDuplicateFindings(harness.getGraph()));
+  // Regel-Ebene: was der geladene Katalog gar nicht erst enthält (CR-GC-428) und
+  // was auch hier niemand nachholt. Steht VOR der Quellen-Ebene, weil es die
+  // Grundgesamtheit der Quelle `rules` beschreibt — abgeleitet, nicht gepflegt.
+  const evaluatedLocally = new Set(LOCALLY_EVALUATED_RULE_IDS);
+  const skipped: string[] = unevaluatedRuleIds(harness.getLoadedRuleIds())
+    .filter((id) => !evaluatedLocally.has(id))
+    .map((id) => `${SKIPPED_RULE_PREFIX}${id}`);
 
   const repoRoot = harness.getRepoRoot();
   let importCoverage: ImportCoverage | null = null;

@@ -162,16 +162,20 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
   > = {
     name: 'rules_evaluate',
     description:
-      'Evaluate the governed graph: V3_RULES (in-memory) PLUS the RC code-conformance rules ' +
+      'Evaluate the governed graph: V3_RULES (in-memory) PLUS the ND-* near-duplicate rules ' +
+      '(CR-GC-442) PLUS the RC code-conformance rules ' +
       '(realRef/testRefs resolved against the real source tree). Read-only; does not mutate. ' +
       'Every finding carries `source` ("rules" | "conformance"); `skipped` names EVERYTHING left ' +
       'out, on both levels — a source that could NOT be evaluated ("conformance", e.g. no readable ' +
-      'repoRoot) and every contracts rule the loaded catalog does not carry ("rule:ND-01"). An ' +
+      'repoRoot) and every contracts rule nothing evaluated ("rule:BQ-01"). An ' +
       'empty `skipped` is what makes the count interpretable (CR-GC-398/428), and it now means ' +
       'nothing was left out at all. The `rule:*` entries are DERIVED (ALL_RULE_DEFS minus the ' +
-      'loaded catalog), never a maintained list: they are the BQ-*/ND-* rules only the steering ' +
-      'path evaluates (CR-GC-287 — ND stays steering, never a gate blocker), so a reader of ' +
-      '"0 errors" knows it means "0 under the loaded catalog". Identical population to ' +
+      'loaded catalog minus the locally evaluated ND rules), never a maintained list: they are ' +
+      'the BQ-* rules only the steering path evaluates, so a reader of ' +
+      '"0 errors" knows it means "0 under the evaluated catalog". ND-01/ND-02 ARE evaluated here ' +
+      'but stay OUT of the gate catalog (`catalogs.notInGate`): a near-duplicate is visible ' +
+      'everywhere and blocks no mutation (CR-GC-287 — ND stays advisory, never a gate blocker). ' +
+      'Identical population to ' +
       'rules_get_violations and graph_readiness.violationsByRule (they differ only in filter and ' +
       `aggregation) — but NOT to graph_readiness.${DIMENSION_READINESS_NAME}, which is scored from ` +
       'the full contracts catalog including those rules (see graph_readiness.catalogs). ' +
@@ -300,9 +304,10 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
       'ready (contracts threshold, not a graphcode policy). Steering values, NOT a gate: the gates stay ' +
       'the pass/fail authority. Computed from the same steering snapshot graph_next_step uses, so the ' +
       'number a dashboard shows is the one the recommendation came from; ' +
-      'violationsByRule (keyed by contracts rule-ID — R-/RD-/MS-, never BQ-*: those rules are not in ' +
-      'the loaded gate catalog at all, which is why they are named in `skipped`/`catalogs.notInGate` ' +
-      'instead of silently reading as zero); intentCoverage ' +
+      'violationsByRule (keyed by contracts rule-ID — R-/RD-/MS- plus ND-01/ND-02 since CR-GC-442, ' +
+      'never BQ-*: those rules are not evaluated on this path at all, which is why they are named ' +
+      'in `skipped` instead of silently reading as zero. ND is evaluated but still absent from the ' +
+      'GATE catalog, so it appears in `catalogs.notInGate` and never blocks a mutation); intentCoverage ' +
       '(CR-GC-295: per content theme from .graphcode/target-profile.json, whether/where it is ' +
       'addressed in UC/REQ/FUNC — a KPI, never a gate blocker; null without config. CR-GC-307: the themes are ' +
       'derived and persisted in the BACKGROUND, never confirmed by the human — this read-out is machine-facing, ' +

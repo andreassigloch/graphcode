@@ -38,6 +38,10 @@ export const INCLUDED = [
   'tests/auto-export.test.ts',
   'tests/codec.roundtrip.test.ts',
   'tests/conformance.test.ts',
+  // CR-GC-442: hält fest, dass ND ausgewertet wird UND außerhalb von
+  // `SE_DESCRIPTOR.rules` bleibt — ein contracts-Bump, der ND ins Gate legt, muss
+  // hier auffallen und nicht erst an einer blockierten Mutation.
+  'tests/evaluation.near-duplicate.test.ts',
   'tests/evaluation.reconciliation.test.ts',
   // CR-GC-428: prüft die Differenz der beiden Regelkataloge gegen ALL_RULE_DEFS —
   // ein contracts-Bump, der eine Regel nur ins Steering legt, muss hier auffallen.

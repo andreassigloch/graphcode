@@ -33,18 +33,27 @@ import {
   evaluateAll,
   ruleCatalogs,
   unevaluatedRuleIds,
+  LOCALLY_EVALUATED_RULE_IDS,
   SKIPPED_RULE_PREFIX,
   type EvaluationHarness,
 } from '../src/conformance/evaluation.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 
 /**
- * Die AKZEPTIERTE Differenz der beiden Kataloge — die sieben Regeln, die nur der
- * Steering-Pfad auswertet (CR-GC-287). Kein Zahlen-Snapshot: wächst die Differenz,
- * ist eine Regel still aus der ausgewerteten Grundgesamtheit gefallen, und genau
- * das soll hier auffallen statt in einer Kennzahl zu verschwinden.
+ * Die AKZEPTIERTE Differenz der beiden Kataloge — die sieben Regeln, die das GATE
+ * nicht kennt (CR-GC-287). Kein Zahlen-Snapshot: wächst die Differenz, ist eine
+ * Regel still aus dem Gate-Katalog gefallen, und genau das soll hier auffallen
+ * statt in einer Kennzahl zu verschwinden.
  */
-const ACCEPTED_GAP = ['BQ-01', 'BQ-02', 'BQ-04', 'BQ-06', 'BQ-07', 'ND-01', 'ND-02'];
+const NOT_IN_GATE = ['BQ-01', 'BQ-02', 'BQ-04', 'BQ-06', 'BQ-07', 'ND-01', 'ND-02'];
+
+/**
+ * Was davon wirklich NICHT AUSGEWERTET wird (CR-GC-442). ND-01/ND-02 sind seit
+ * CR-GC-442 aus dieser Liste heraus: der Report-Pfad wertet sie lokal aus (der
+ * Gate-Katalog trägt sie weiterhin nicht — die beiden Aussagen sind ab hier
+ * getrennt). Übrig bleiben die BQ-Regeln, die nur der Steering-Pfad fährt.
+ */
+const SKIPPED_RULES = NOT_IN_GATE.filter((id) => !LOCALLY_EVALUATED_RULE_IDS.includes(id));
 
 function makeConfig(repoRoot: string): HarnessConfig {
   return {
@@ -94,10 +103,13 @@ describe('TEST-rule-catalog-gap: die ungeladenen Regeln werden benannt (CR-GC-42
   const ruleGapOf = (skipped: string[]): string[] =>
     skipped.filter((s) => s.startsWith(SKIPPED_RULE_PREFIX)).map((s) => s.slice(SKIPPED_RULE_PREFIX.length));
 
-  it('die Auswertung führt jede contracts-Regel auf, die der geladene Katalog nicht kennt', () => {
+  it('die Auswertung führt jede contracts-Regel auf, die niemand auswertet', () => {
     const ev = evaluateAll(harness);
 
-    expect(ruleGapOf(ev.skipped)).toEqual(unevaluatedRuleIds(harness.getLoadedRuleIds()));
+    // Nicht ausgewertet = nicht im Gate-Katalog UND nicht lokal nachgeholt (CR-GC-442).
+    expect(ruleGapOf(ev.skipped)).toEqual(
+      unevaluatedRuleIds(harness.getLoadedRuleIds()).filter((id) => !LOCALLY_EVALUATED_RULE_IDS.includes(id)),
+    );
     // Der Graph hat wirklich Verstöße — sonst wäre die Aussage am leeren Fall geprüft.
     expect(ev.findings.length).toBeGreaterThan(0);
     // Die QUELLEN-Ebene ist hier vollständig (repoRoot ist lesbar): was in `skipped`
@@ -117,15 +129,19 @@ describe('TEST-rule-catalog-gap: die ungeladenen Regeln werden benannt (CR-GC-42
   });
 
   it('Drift-Wächter: die Differenz der beiden Kataloge ist genau die akzeptierte', () => {
-    // Wächst diese Menge, ist eine Regel aus der ausgewerteten Grundgesamtheit
-    // gefallen — dann ist zu entscheiden, nicht zu übernehmen.
-    expect(unevaluatedRuleIds(harness.getLoadedRuleIds())).toEqual(ACCEPTED_GAP);
+    // Wächst diese Menge, ist eine Regel aus dem Gate-Katalog gefallen — dann ist
+    // zu entscheiden, nicht zu übernehmen.
+    expect(unevaluatedRuleIds(harness.getLoadedRuleIds())).toEqual(NOT_IN_GATE);
 
-    // Warum die Ausweisung nötig ist: zwei der sieben sind error-Severity. Wer
-    // `blocking.errors: 0` liest, liest ohne sie "keine Fehler" statt "keine Fehler
-    // unter den geladenen Regeln".
-    const errors = ALL_RULE_DEFS.filter((r) => ACCEPTED_GAP.includes(r.id) && r.severity === 'error');
+    // Warum ND lokal nachgeholt wird (CR-GC-442): genau die zwei error-Regeln der
+    // Lücke sind ND. Wer `blocking.errors: 0` las, las ohne sie "keine Fehler" statt
+    // "keine Fehler unter den geladenen Regeln" — und ein Beinahe-Duplikat war in
+    // Verstoßliste, Report und Dashboard unsichtbar.
+    const errors = ALL_RULE_DEFS.filter((r) => NOT_IN_GATE.includes(r.id) && r.severity === 'error');
     expect(errors.map((r) => r.id)).toEqual(['ND-01', 'ND-02']);
+    expect([...LOCALLY_EVALUATED_RULE_IDS]).toEqual(['ND-01', 'ND-02']);
+    // Was bleibt, ist warning/info — kein error verschwindet mehr still.
+    expect(ALL_RULE_DEFS.filter((r) => SKIPPED_RULES.includes(r.id) && r.severity === 'error')).toEqual([]);
   });
 
   it('die Liste ist ABGELEITET: fällt eine Regel aus dem geladenen Katalog, erscheint sie von selbst', () => {
@@ -135,7 +151,7 @@ describe('TEST-rule-catalog-gap: die ungeladenen Regeln werden benannt (CR-GC-42
 
     // Niemand pflegt eine Tabelle nach — genau das ist der Nachweis gegen CR-SM-235.
     expect(narrowed.skipped).toContain(`${SKIPPED_RULE_PREFIX}${victim}`);
-    expect(ruleGapOf(narrowed.skipped)).toEqual([...ACCEPTED_GAP, victim].sort());
+    expect(ruleGapOf(narrowed.skipped)).toEqual([...SKIPPED_RULES, victim].sort());
   });
 
   it('`skipped: []` heißt beweisbar „nichts ausgelassen" — auf BEIDEN Ebenen', () => {
@@ -160,7 +176,7 @@ describe('TEST-rule-catalog-gap: die ungeladenen Regeln werden benannt (CR-GC-42
 
     expect(evaluate.skipped).toEqual(flat.skipped);
     expect(readiness.skipped).toEqual(flat.skipped);
-    expect(ruleGapOf(flat.skipped)).toEqual(ACCEPTED_GAP);
+    expect(ruleGapOf(flat.skipped)).toEqual(SKIPPED_RULES);
   });
 
   it('graph_readiness trägt die Katalog-Herkunft je Zahlenblock am ERGEBNIS', async () => {
@@ -174,7 +190,7 @@ describe('TEST-rule-catalog-gap: die ungeladenen Regeln werden benannt (CR-GC-42
     // Beschreibungstext beantwortete.
     expect(gate.fields).toContain('violationsByRule');
     expect(steering.fields).toEqual([DIMENSION_READINESS_NAME]);
-    expect(notInGate).toEqual(ACCEPTED_GAP);
+    expect(notInGate).toEqual(NOT_IN_GATE);
     // Dieselbe Ableitung wie die Auswertung, kein zweiter Rechenweg.
     expect(notInGate).toEqual(ruleCatalogs(harness).notInGate);
   });
@@ -183,7 +199,10 @@ describe('TEST-rule-catalog-gap: die ungeladenen Regeln werden benannt (CR-GC-42
     const description = tools.rules_evaluate.description;
 
     expect(description).toMatch(new RegExp(`NOT to graph_readiness\\.${DIMENSION_READINESS_NAME}`));
-    // Und sie sagt, was `skipped` auf der Regel-Ebene enthält.
-    expect(description).toContain(`"${SKIPPED_RULE_PREFIX}ND-01"`);
+    // Und sie sagt, was `skipped` auf der Regel-Ebene enthält — seit CR-GC-442 eine
+    // BQ-Regel, nicht mehr ND: ND wird ausgewertet und darf nicht als "ausgelassen"
+    // beschrieben werden.
+    expect(description).toContain(`"${SKIPPED_RULE_PREFIX}BQ-01"`);
+    expect(description).not.toContain(`"${SKIPPED_RULE_PREFIX}ND-01"`);
   });
 });

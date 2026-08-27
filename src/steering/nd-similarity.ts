@@ -11,11 +11,26 @@
  *   ND-01 (FUNC):   0.35·descr_jaccard + 0.25·verb_match + 0.25·io_topology + 0.15·req_overlap
  *   ND-02 (SCHEMA): 0.50·field_jaccard + 0.30·descr_jaccard + 0.20·usage_overlap
  *
- * Injektionspunkt: `injectNDMatrices(og)` läuft NUR vor Full-Katalog-Evals
- * (generationStep / nextStep → evaluateAllRules + se-steering computeReadiness).
- * Das Gate (V3_RULES + MT via SE_DESCRIPTOR) enthält ND nicht — der
- * Modul-State ist für Gate-Läufe wirkungslos; ND bleibt Steering, nie
- * Gate-Blocker (Delta-Semantik unberührt).
+ * Injektionspunkt: `withNDMatrices(og, run)` klammert JEDEN Lauf, der ND sehen
+ * soll — den Steering-Pfad (generationStep / nextStep → evaluateAllRules +
+ * computeReadiness) und seit CR-GC-442 auch den Report-Pfad (`evaluateAll` →
+ * `rules_evaluate` / `graph_readiness` / Dashboard). Vorher injizierte nur der
+ * Steering-Pfad, und Near-Duplicates blieben in Verstoßliste, Report und
+ * Dashboard unsichtbar.
+ *
+ * ND bleibt trotzdem NIE Gate-Blocker: `SE_DESCRIPTOR.rules` (der Katalog, den
+ * `harness.evaluateRules()` und damit `mutate()` fährt) enthält ND-01/ND-02
+ * nicht — BQ/ND sind das CODING-Profil und absichtlich draußen. Die
+ * Delta-Semantik des Gates bleibt unberührt.
+ *
+ * ABER der Modul-State in contracts ist NICHT gate-neutral, und deshalb ist
+ * `withNDMatrices` eine Klammer und kein blankes `inject`: `AO-D01`
+ * (`ao-rules.ts`, im Gate-Katalog, severity info) liest die ND-02-Matrix über
+ * `getND02SimilarityMatrix()` und überspringt seine Overlap-Prüfung, wenn keine
+ * da ist ("no matrix → assume pass"). Eine liegengebliebene Matrix — womöglich
+ * aus einer ÄLTEREN Graph-Version — ändert also, was AO-D01 im nächsten
+ * Gate-/Report-Lauf meldet. Die Klammer setzt den Zustand im `finally` wieder
+ * auf null zurück, damit jeder Lauf denselben Ausgangszustand sieht.
  *
  * Zusätzlich die graphcode-LOKALE Executor-MESSUNG (keine Regel, kein Block):
  * `duplicateHits` vergleicht neue REQ/UC-add-nodes per Name/Beschreibung
@@ -147,12 +162,43 @@ export function computeND02Matrix(og: OntologyGraph): { schemaIds: string[]; mat
  * Beide Matrizen frisch berechnen und in die contracts-ND-Regeln injizieren —
  * unmittelbar VOR jedem Full-Katalog-Eval aufrufen (gleicher og!). <2 Kandidaten
  * ⇒ null (Regel bleibt still, nichts zu vergleichen).
+ *
+ * Für Produktionspfade `withNDMatrices` benutzen: das blanke `inject` lässt den
+ * Modul-State stehen, und der ist nicht gate-neutral (s. Modulkopf, AO-D01).
  */
 export function injectNDMatrices(og: OntologyGraph): void {
   const nd01 = computeND01Matrix(og);
   const nd02 = computeND02Matrix(og);
   setND01SimilarityMatrix(nd01.funcIds.length >= 2 ? nd01 : null);
   setND02SimilarityMatrix(nd02.schemaIds.length >= 2 ? nd02 : null);
+}
+
+/**
+ * Den contracts-Modul-State auf den Ausgangszustand zurücksetzen (CR-GC-442).
+ * "Keine Matrix" ist der definierte Zustand, in dem ND schweigt und AO-D01 seine
+ * Overlap-Prüfung überspringt — nicht ein zufälliger Rest eines fremden Laufs.
+ */
+export function clearNDMatrices(): void {
+  setND01SimilarityMatrix(null);
+  setND02SimilarityMatrix(null);
+}
+
+/**
+ * `run` mit frisch injizierten ND-Matrizen dieses `og` ausführen und den
+ * Modul-State danach IMMER zurücksetzen (CR-GC-442).
+ *
+ * Die Klammer, nicht das blanke `inject`, ist die eigentliche Zusicherung: der
+ * contracts-Zustand ist global, und AO-D01 (Gate-Katalog) liest ihn mit. Ohne
+ * `finally` hinge das Ergebnis eines Gate-/Report-Laufs davon ab, ob vorher in
+ * DIESEM Prozess ein Steering-Lauf stattgefunden hat — und mit welchem Graphen.
+ */
+export function withNDMatrices<T>(og: OntologyGraph, run: () => T): T {
+  injectNDMatrices(og);
+  try {
+    return run();
+  } finally {
+    clearNDMatrices();
+  }
 }
 
 // ---------------------------------------------------------------------------
