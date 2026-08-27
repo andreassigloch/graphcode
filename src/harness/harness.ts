@@ -30,7 +30,14 @@ import type {
   OntologyDescriptor,
   RuleViolation as CoreRuleViolation,
 } from '@sigloch/graph-api-core';
-import { DefaultRuleEngine, createSeDescriptor, updateEdge, mergeNodes } from '@sigloch/graph-api-core';
+import {
+  DefaultRuleEngine,
+  createSeDescriptor,
+  updateEdge,
+  mergeNodes,
+  impactSlice,
+  type ImpactSlice,
+} from '@sigloch/graph-api-core';
 import { type MetricPolicy } from '@sigloch/contracts/se';
 import {
   HarnessConfigSchema,
@@ -284,11 +291,20 @@ export class GraphCodeHarness {
 
   /**
    * Exact blast-radius (REQ-query-precision): the DEPENDENTS of `rootId` —
-   * incoming edges, computed in Kuzu as `(m)-[*1..depth]->(root)`. Changing the
-   * root impacts the nodes that point INTO it (TEST -verify-> REQ, MOD -realize-> REQ).
+   * incoming edges (TEST -verify-> REQ, MOD -realize-> REQ point INTO the root).
+   *
+   * Seit CR-GC-365 (Weg b) ist die Traversierung die GETEILTE Funktion
+   * `impactSlice` aus `@sigloch/graph-api-core` — dieselbe, die graph-view-edit
+   * auf dem geladenen Graphen aufruft. Ein Schreiber der Semantik, zwei Leser;
+   * knotengleich zur frueheren Kuzu-Query `(m)-[*1..depth]->(root)`
+   * (Konformanztest im Paket). Rollen seed|whitebox|blackbox gemaess
+   * SPIKE-GC-minimal-whitebox §8; die Blackbox-Front (depth+1) materialisiert
+   * den Schnitt. Facade wie `listElements`: Store + Scope sammelt der Aufrufer
+   * nicht selbst ein.
    */
-  async impact(rootId: string, depth: number): Promise<Graph> {
-    return this.storage.getSubgraph(rootId, depth, 'in');
+  async impact(rootId: string, depth: number): Promise<ImpactSlice> {
+    const graph = await this.storage.loadGraph(this.config.scope);
+    return impactSlice(graph, [rootId], depth);
   }
 
   /**

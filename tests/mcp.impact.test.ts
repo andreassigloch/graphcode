@@ -147,13 +147,16 @@ describe('TEST-impact-subgraph: graph_impact precision (R6/R12)', () => {
 });
 
 /**
- * Direction-precision fixture (CR-GC-126): blast-radius = DEPENDENTS = INCOMING edges,
- * computed in Kuzu via `(m)-[*1..d]->(root)`. Seeds a tiny graph on disk Kuzu:
- *   TEST-A -verify->  REQ-A    (dependent of REQ-A, incoming)
- *   MOD-A  -satisfy-> REQ-A    (dependent of REQ-A, incoming)
- *   REQ-A  -compose-> REQ-DEP (pure OUTGOING dependency of REQ-A — NOT impacted)
- *   TEST-B -verify->  REQ-B    (unrelated component)
- * Asserts graph_impact(REQ-A) returns EXACTLY {REQ-A, TEST-A, MOD-A}, excluding the
+ * Direction-precision fixture (CR-GC-126, seit CR-GC-365 über die GETEILTE Funktion
+ * `impactSlice` aus graph-api-core — knotengleich zur früheren Kuzu-Query
+ * `(m)-[*1..d]->(root)`). Seeds a tiny graph on disk Kuzu:
+ *   TEST-A   -verify->   REQ-A    (dependent of REQ-A, incoming)
+ *   MOD-A    -satisfy->  REQ-A    (dependent of REQ-A, incoming)
+ *   REQ-A    -compose->  REQ-DEP (pure OUTGOING dependency of REQ-A — NOT impacted)
+ *   TEST-B   -verify->   REQ-B    (unrelated component)
+ *   FUNC-FAR -allocate-> MOD-A    (2 hops from REQ-A — the depth-1 BLACKBOX ring, §8)
+ * Asserts graph_impact(REQ-A) opens EXACTLY {REQ-A(seed), TEST-A, MOD-A}(whitebox),
+ * materializes FUNC-FAR as blackbox frontier (identity only), and excludes the
  * outgoing dependency (REQ-DEP) and the unrelated component (REQ-B, TEST-B).
  */
 describe('TEST-impact-subgraph: graph_impact direction = dependents/incoming (CR-GC-126)', () => {
@@ -168,12 +171,14 @@ describe('TEST-impact-subgraph: graph_impact direction = dependents/incoming (CR
       { id: 'REQ-DEP', type: 'REQ', name: 'Req Dep', description: 'pure outgoing dependency of REQ-A' },
       { id: 'REQ-B', type: 'REQ', name: 'Req B', description: 'unrelated component' },
       { id: 'TEST-B', type: 'TEST', name: 'Test B', description: 'verifies REQ-B' },
+      { id: 'FUNC-FAR', type: 'FUNC', name: 'Func Far', description: 'ring secret — must stay closed' },
     ],
     traces: [
       { source: 'TEST-A', target: 'REQ-A', type: 'verify' }, // incoming dependent
       { source: 'MOD-A', target: 'REQ-A', type: 'satisfy' }, // incoming dependent
       { source: 'REQ-A', target: 'REQ-DEP', type: 'compose' }, // OUTGOING dependency (sub-requirement)
       { source: 'TEST-B', target: 'REQ-B', type: 'verify' }, // unrelated
+      { source: 'FUNC-FAR', target: 'MOD-A', type: 'allocate' }, // 2 hops → blackbox ring at depth 1
     ],
   };
 
@@ -198,15 +203,42 @@ describe('TEST-impact-subgraph: graph_impact direction = dependents/incoming (CR
     return new Set(all.filter((uid) => formatE.includes(uid)));
   }
 
-  it('graph_impact(REQ-A) returns EXACTLY the dependent set {REQ-A, TEST-A, MOD-A} (incoming)', async () => {
+  it('graph_impact(REQ-A) opens EXACTLY the dependent set {REQ-A, TEST-A, MOD-A} (incoming) — roles from the slice', async () => {
     const registry = bindToolsToHarness(harness);
-    const { rootId, nodeCount, formatE } = await registry['graph_impact'].handler({ id: 'REQ-A', depth: 1 });
+    const { rootId, nodeCount, roles, formatE } = await registry['graph_impact'].handler({ id: 'REQ-A', depth: 1 });
 
     expect(rootId).toBe('REQ-A');
-    const present = uidsFromFormatE(formatE);
-    // Exact set + direction: root + its incoming dependents only.
-    expect(present).toEqual(new Set(['REQ-A', 'TEST-A', 'MOD-A']));
-    expect(nodeCount).toBe(3);
+    // Exact set + direction: root + its incoming dependents only, plus the
+    // materialized blackbox frontier (§8) — roles come from the SHARED slice.
+    expect(roles).toEqual({
+      'REQ-A': 'seed',
+      'TEST-A': 'whitebox',
+      'MOD-A': 'whitebox',
+      'FUNC-FAR': 'blackbox',
+    });
+    expect(nodeCount).toBe(4);
+    // The open (Format-E) part still carries the dependents in full …
+    expect(uidsFromFormatE(formatE).has('TEST-A')).toBe(true);
+    expect(uidsFromFormatE(formatE).has('MOD-A')).toBe(true);
+  });
+
+  it('graph_impact materializes the depth+1 frontier as blackbox: identity + contract, NO description (§8)', async () => {
+    const registry = bindToolsToHarness(harness);
+    const { formatE } = await registry['graph_impact'].handler({ id: 'REQ-A', depth: 1 });
+
+    // Identity line present in the Blackbox section …
+    expect(formatE).toContain('## Blackbox');
+    expect(formatE).toContain('FUNC-FAR · FUNC · Func Far');
+    // … but the description stays closed — the cut is in the artifact.
+    expect(formatE).not.toContain('ring secret');
+  });
+
+  it('a deeper slice (same function) opens the former ring as whitebox', async () => {
+    const registry = bindToolsToHarness(harness);
+    const { roles, formatE } = await registry['graph_impact'].handler({ id: 'REQ-A', depth: 2 });
+
+    expect(roles['FUNC-FAR']).toBe('whitebox');
+    expect(formatE).toContain('ring secret'); // description now open
   });
 
   it('graph_impact(REQ-A) EXCLUDES the pure outgoing dependency (REQ-DEP)', async () => {

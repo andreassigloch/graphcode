@@ -326,25 +326,60 @@ export function bindReadTools(ctx: ToolContext): MCPToolRegistry {
 
   const graph_impact: MCPTool<
     z.infer<typeof GraphImpactInputSchema>,
-    { formatE: string; nodeCount: number; edgeCount: number; rootId: string; graphVersion: number }
+    {
+      formatE: string;
+      nodeCount: number;
+      edgeCount: number;
+      rootId: string;
+      roles: Record<string, 'seed' | 'whitebox' | 'blackbox'>;
+      graphVersion: number;
+    }
   > = {
     name: 'graph_impact',
     description:
-      'Compute the exact blast-radius (FUNC-graph-impact / R6 / R12) via Kuzu Cypher: ' +
-      'returns the root node + its DEPENDENTS (incoming edges — callers/traces/tests that ' +
-      'point INTO root) within `depth` hops as a Format-E slice. Never the full graph (anti-grep).',
+      'Compute the exact blast-radius (FUNC-graph-impact / R6 / R12): the root node + its ' +
+      'DEPENDENTS (incoming edges — callers/traces/tests that point INTO root) within `depth` ' +
+      'hops as a Format-E slice, plus the blackbox frontier at depth+1 (identity-only interface ' +
+      'lines — the materialized cut). Never the full graph (anti-grep).',
     inputSchema: GraphImpactInputSchema,
     async handler(input) {
-      // Blast-radius = dependents = INCOMING edges, computed in Kuzu (not TS-BFS).
-      const subgraph = await harness.impact(input.id, input.depth);
+      // CR-GC-365 (Weg b): DIE geteilte Traversierung `impactSlice` aus
+      // graph-api-core — dieselbe Funktion, die graph-view-edit rendert.
+      // Knotengleich zur frueheren Kuzu-Query (Konformanztest im Paket).
+      const slice = await harness.impact(input.id, input.depth);
+      const open = slice.nodes.filter((n) => n.role !== 'blackbox');
+      const openIds = new Set(open.map((n) => n.uid));
+      const openGraph: Graph = {
+        nodes: open.map(({ role: _r, distance: _d, ...node }) => node as GraphNode),
+        edges: slice.edges.filter((e) => openIds.has(e.sourceId) && openIds.has(e.targetId)),
+      };
       // CR-GC-373: Agenten-Sicht — der Konsument dieser Scheibe ist der Agent,
       // nicht der Re-Import; Provenienz (Zeitstempel, weight:1) bleibt weg.
-      const formatE = withFreshnessBanner(codec.serialize(subgraph, { omitProvenance: true }));
+      let formatE = codec.serialize(openGraph, { omitProvenance: true });
+      // Blackbox-Front (§8): Identitaet + Vertragskanten, KEINE Beschreibung —
+      // der Schnitt steht im Artefakt, nicht bloss in einer Renderer-Absicht.
+      const ring = slice.nodes.filter((n) => n.role === 'blackbox');
+      if (ring.length > 0) {
+        const line = (uid: string, type: string, name: string): string => {
+          const contract = [
+            ...new Set(
+              slice.edges
+                .filter((e) => e.sourceId === uid || e.targetId === uid)
+                .map((e) => (e.sourceId === uid ? `${e.edgeType}→${e.targetId}` : `${e.sourceId} ${e.edgeType}→`)),
+            ),
+          ];
+          return `${uid} · ${type} · ${name}${contract.length ? ' · ' + contract.join(' ') : ''}`;
+        };
+        formatE +=
+          '\n\n## Blackbox (Slice-Rand bei depth+1 — Schnittstelle, nicht geöffnet)\n' +
+          ring.map((n) => line(n.uid, n.type, n.name)).join('\n');
+      }
       return {
         rootId: input.id,
-        nodeCount: subgraph.nodes.length,
-        edgeCount: subgraph.edges.length,
-        formatE,
+        nodeCount: slice.nodes.length,
+        edgeCount: slice.edges.length,
+        roles: Object.fromEntries(slice.nodes.map((n) => [n.uid, n.role])),
+        formatE: withFreshnessBanner(formatE),
         graphVersion: graphVersion(),
       };
     },
