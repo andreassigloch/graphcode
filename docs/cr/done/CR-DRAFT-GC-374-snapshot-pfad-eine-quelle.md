@@ -1,6 +1,7 @@
 # CR-GC-374 — Snapshot-Pfad: eine Quelle statt zwei
 
-**Status:** draft — zurückgestuft 2026-08-21: nicht gebaut, das eigene Akzeptanzkriterium `grep -rn "graph/graphcode.graph.json" src/` liefert 6 Treffer (u. a. `src/rewind.ts:107`, `src/harness-import.ts:26`).
+**Status:** done 2026-08-27 — `graphSnapshotRel(systemId)` ist die eine Ableitung, `DEFAULT_GRAPH_JSON` ersatzlos entfernt, `rewind --snapshot` durchgereicht; beide Regressionen rot-zuerst nachgewiesen. Pfade unten aktualisiert auf den Modulschnitt aus CR-GC-429 §4 (harness/, cli/, tools/).
+*(Historie: draft — zurückgestuft 2026-08-21: nicht gebaut, das eigene Akzeptanzkriterium `grep` lieferte 6 Treffer.)*
 **Datum:** 2026-08-19
 **Herkunft:** Aufbau des Vorführ-Repos `prod/graphcodedemo` gegen die publizierte 0.13.2.
 
@@ -64,20 +65,25 @@ abweichendem Namen recallen will.
 
 | Repo | Datei | Änderung |
 |---|---|---|
-| graphcode | `src/harness-import.ts` | `DEFAULT_GRAPH_JSON` raus, `graphSnapshotRel(systemId)` rein; `applyReseed`-Default zieht nach |
-| graphcode | `src/harness.ts` | Schema-Guard + `reseed()`-Default leiten den Pfad aus `config.scope.systemId` ab |
-| graphcode | `src/rewind.ts` | Default aus `deriveMemberName(repoRoot)`; `src/cli.ts` reicht `--snapshot` durch |
-| graphcode | `src/tools/export.ts` | nutzt `graphSnapshotRel` statt eigenem `join` |
-| graphcode | `tests/rewind.test.ts` | Regression: Repo mit Fremdnamen recallt seinen eigenen Snapshot |
+| graphcode | `src/harness/harness-import.ts` | `DEFAULT_GRAPH_JSON` raus, `graphSnapshotRel(systemId)` rein; `seedFromJsonFile`-Default zieht nach |
+| graphcode | `src/harness/harness.ts` | Schema-Guard + `seedFromJson()`/`reseed()`-Default leiten den Pfad aus `config.scope.systemId` ab |
+| graphcode | `src/cli/rewind.ts` | Default aus `deriveMemberName(repoRoot)`; `src/cli.ts` reicht `--snapshot <pfad>` durch |
+| graphcode | `src/tools/export.ts` | nutzt `graphSnapshotRel` statt eigenem `join` (dazu Doku-Treffer in `src/tools/write.ts`, `src/README.md`) |
+| graphcode | `tests/rewind.test.ts` | Regression: Repo mit Fremdnamen (`@acme/fremd-anlage`) recallt seinen eigenen Snapshot; expliziter `snapshot`-Override |
 | graphcode | `tests/schema-guard.test.ts` | Regression: Auto-Reseed nach Fingerprint-Drift greift auch bei Fremdnamen |
 
 ## Akzeptanzkriterien
 
-- [ ] In einem Repo mit `package.json.name != "graphcode"` stellt `graphcode rewind <ref>` den
-      committeten Graph-Stand her (roter Test zuerst: er muss vorher am fehlenden Snapshot scheitern).
-- [ ] Der Schema-Drift-Guard reseedet in demselben Repo nach einer Fingerprint-Änderung
-      selbsttätig — ebenfalls rot-zuerst nachgewiesen.
-- [ ] `grep -rn "graph/graphcode.graph.json" src/` ist leer.
-- [ ] `npm run build` + `npm test` grün; dieses Repo verhält sich unverändert.
-- [ ] `prod/graphcodedemo` kommt nach dem Bump ohne `scripts/reset-demo.mjs` aus
-      (`npm run demo:reset` ruft dann `graphcode rewind HEAD --force`).
+- [x] In einem Repo mit `package.json.name != "graphcode"` stellt `graphcode rewind <ref>` den
+      committeten Graph-Stand her — rot-zuerst nachgewiesen 2026-08-27: vor dem Fix scheiterte
+      der Test mit `commit … carries no docs/graph/graphcode.graph.json` (exakt der Bug).
+- [x] Der Schema-Drift-Guard reseedet in demselben Repo nach einer Fingerprint-Änderung
+      selbsttätig — rot-zuerst: vor dem Fix blieb der Store leer (0 Knoten, kein Reseed).
+- [x] `grep -rn "graph/graphcode.graph.json" src/` ist leer.
+- [x] `npm run build` grün; `npm test`: beide CR-Suiten grün, die Suite-Reds sind die
+      vorbestehenden Link-Modus-Fehler (u. a. lockfile-sync/distribution) — per Baseline-Lauf
+      auf HEAD als vorbestehend verifiziert, keiner durch diesen CR. Dieses Repo
+      (`systemId = graphcode`) verhält sich byte-identisch.
+- [ ] **Publish-pending:** `prod/graphcodedemo` kommt erst nach dem nächsten npm-Publish ohne
+      `scripts/reset-demo.mjs` aus (`npm run demo:reset` ruft dann `graphcode rewind HEAD --force`) —
+      dort nichts anfassen, bis der Bump publiziert ist.

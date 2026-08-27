@@ -56,10 +56,12 @@ Usage:
                     FUNC/MOD/FLOW+SCHEMA through the gate. RESEED semantics —
                     replaces the whole graph (automatic backup under
                     .graphcode/backup/), never merges.
-  graphcode rewind <ref> [--force]  Recall the graph state committed at <ref>
-                    (CR-GC-311). Reads the snapshot from git object storage —
-                    the working tree is NOT touched. Aborts while un-exported
-                    model changes are pending; --force drops them.
+  graphcode rewind <ref> [--force] [--snapshot <pfad>]
+                    Recall the graph state committed at <ref> (CR-GC-311).
+                    Reads the snapshot from git object storage — the working
+                    tree is NOT touched. Aborts while un-exported model changes
+                    are pending; --force drops them. --snapshot overrides the
+                    derived default docs/graph/<member>.graph.json (CR-GC-374).
   graphcode init        Scaffold the harness into the current repo
   graphcode upgrade     Alles aktuell machen: neueste Version installieren,
                     Artefakte vom NEUEN Build schreiben lassen, alten Host beenden.
@@ -163,11 +165,20 @@ async function main(): Promise<void> {
         process.stderr.write(`graphcode rewind: missing <ref>\n\n${USAGE}`);
         process.exit(1);
       }
+      // --snapshot <pfad> (CR-GC-374): recall a snapshot committed under a deviating
+      // name. Not a fix — the derived default is right — but the escape hatch.
+      const snapIdx = process.argv.indexOf('--snapshot');
+      const snapshot = snapIdx >= 0 ? process.argv[snapIdx + 1] : undefined;
+      if (snapIdx >= 0 && (snapshot === undefined || snapshot.startsWith('-'))) {
+        process.stderr.write(`graphcode rewind: --snapshot requires a <pfad>\n\n${USAGE}`);
+        process.exit(1);
+      }
       try {
         const summary = await executeRewind({
           repoRoot: process.cwd(),
           ref,
           force: process.argv.includes('--force'),
+          snapshot,
           trace: (line) => process.stderr.write(line + '\n'),
         });
         process.stderr.write(`graphcode rewind: ${JSON.stringify(summary, null, 2)}\n`);

@@ -44,7 +44,7 @@ import { HookSystem } from '../hooks/hooks.js';
 import { impactedTests, TestImpactResultSchema } from '../tools/test-selection.js';
 import { CONFIG_FILENAME, DEFAULT_CONFIG, type LoadedConfig } from './config.js';
 import {
-  DEFAULT_GRAPH_JSON,
+  graphSnapshotRel,
   importOntologyGraph,
   seedFromJsonFile,
   applyReseed,
@@ -222,7 +222,11 @@ export class GraphCodeHarness {
       // `rm .graphcode/kuzu*` + reseed recovery. Only runs in production wiring (a known
       // store path); the marker lives beside the store file.
       const markerDir = this.storePath ? dirname(this.storePath) : null;
-      const graphJson = join(this.config.repoRoot, DEFAULT_GRAPH_JSON);
+      // CR-GC-374: the SSOT to reseed from is docs/graph/<systemId>.graph.json — the
+      // file graph_export actually writes. The former hardwired name meant the guard
+      // never fired in any repo not called "graphcode".
+      const snapshotRel = graphSnapshotRel(this.config.scope.systemId);
+      const graphJson = join(this.config.repoRoot, snapshotRel);
       const current = schemaFingerprint(this.descriptor);
       const stored = markerDir ? readStoredFingerprint(markerDir) : null;
       // Only reset when we have a stored fingerprint that differs AND a SSOT to reseed
@@ -239,7 +243,7 @@ export class GraphCodeHarness {
       await this.storage.initialize();
       await this.loadGraph();
 
-      if (staleSchema) await applyReseed(this.importTarget(), DEFAULT_GRAPH_JSON);
+      if (staleSchema) await applyReseed(this.importTarget(), snapshotRel);
       if (markerDir && stored !== current) writeStoredFingerprint(markerDir, current);
     } catch (err) {
       this.storeLock.release();
@@ -551,7 +555,7 @@ export class GraphCodeHarness {
 
   /** Load + import the materialized graph JSON from `<repoRoot>/docs/graph/`. */
   async seedFromJson(
-    relPath = DEFAULT_GRAPH_JSON,
+    relPath = graphSnapshotRel(this.config.scope.systemId),
     opts?: { rejectUnverifiedReqs?: boolean },
   ): Promise<{ nodes: number; edges: number; unverifiedReqs: string[] }> {
     return seedFromJsonFile(this.importTarget(), relPath, opts);
@@ -563,7 +567,7 @@ export class GraphCodeHarness {
    * so no writer ever sees the half-cleared store during the DETACH-DELETE + re-import.
    * The clear+re-import itself is harness-import.ts `applyReseed`.
    */
-  async reseed(relPath = DEFAULT_GRAPH_JSON): Promise<{ nodes: number; edges: number }> {
+  async reseed(relPath = graphSnapshotRel(this.config.scope.systemId)): Promise<{ nodes: number; edges: number }> {
     return this.serializeWrite(() => applyReseed(this.importTarget(), relPath));
   }
 

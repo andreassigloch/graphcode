@@ -15,6 +15,7 @@ import { mkdirSync, writeFileSync, existsSync, readFileSync, renameSync, unlinkS
 import { z } from 'zod/v4';
 import { exportGraphJson, exportMarkdown, renderTestStubs, renderSchemaStubs, MarkdownViewSchema, MARKDOWN_VIEWS, VIEW_FILENAMES } from '../views/exporter.js';
 import { clearExportPending } from '../harness/export-marker.js';
+import { graphSnapshotRel } from '../harness/harness-import.js';
 import type { MCPTool, MCPToolRegistry } from './mcp-tools.js';
 import type { ToolContext } from './tool-context.js';
 import type { AuditEntry } from '@sigloch/graph-api-core';
@@ -175,7 +176,9 @@ export function bindExportTools(ctx: ToolContext): MCPToolRegistry {
       const name = input.name ?? harness.getScope().systemId;
 
       const json = exportGraphJson(graph);
-      const jsonRel = join('docs', 'graph', `${name}.graph.json`);
+      // CR-GC-374: the ONE derivation, shared with every reader (reseed, rewind,
+      // schema-drift guard) — write and read can no longer drift apart.
+      const jsonRel = graphSnapshotRel(name);
       // Containment BEFORE the clobber guards: an escaping target must not even be
       // read/compared, let alone written (CR-GC-255).
       const jsonAbs = assertInRepo(repoRoot, jsonRel);

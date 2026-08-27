@@ -29,7 +29,7 @@ import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { createHarness } from '../index.js';
 import { deriveMemberName } from '../tools/mcp-server.js';
-import { DEFAULT_GRAPH_JSON } from '../harness/harness-import.js';
+import { graphSnapshotRel } from '../harness/harness-import.js';
 import { isExportPending, EXPORT_PENDING_REL } from '../harness/export-marker.js';
 
 export interface RewindSummary {
@@ -104,12 +104,17 @@ export async function executeRewind(opts: {
   ref: string;
   /** Reseed even though un-exported mutations exist. They are lost — that is the point of the flag. */
   force?: boolean;
-  /** Snapshot path inside the target commit (default docs/graph/graphcode.graph.json). */
+  /**
+   * Snapshot path inside the target commit. Default: docs/graph/<member>.graph.json,
+   * derived from the repo identity exactly as graph_export derives its write path
+   * (CR-GC-374) — one derivation, not two.
+   */
   snapshot?: string;
   trace?: (line: string) => void;
 }): Promise<RewindSummary> {
   const trace = opts.trace ?? (() => {});
-  const snapshot = opts.snapshot ?? DEFAULT_GRAPH_JSON;
+  const member = deriveMemberName(opts.repoRoot);
+  const snapshot = opts.snapshot ?? graphSnapshotRel(member);
   const force = opts.force ?? false;
 
   // Everything that can fail without side effects runs first, in cost order.
@@ -132,7 +137,6 @@ export async function executeRewind(opts: {
   mkdirSync(dirname(stageAbs), { recursive: true });
   writeFileSync(stageAbs, blob);
 
-  const member = deriveMemberName(opts.repoRoot);
   const harness = await createHarness({
     repoRoot: opts.repoRoot,
     scope: { workspaceId: member, systemId: member },

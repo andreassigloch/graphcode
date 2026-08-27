@@ -188,7 +188,7 @@ const GraphReseedInputSchema = z.object({
   path: z
     .string()
     .optional()
-    .describe('Committed graph JSON path relative to repoRoot (default docs/graph/graphcode.graph.json).'),
+    .describe('Committed graph JSON path relative to repoRoot (default docs/graph/<systemId>.graph.json).'),
 });
 
 // -------------------------------------------------------------------------

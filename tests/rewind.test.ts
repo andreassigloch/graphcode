@@ -14,6 +14,11 @@
  *
  * Real temp git repo, real disk Kuzu (never :memory:). No mocks.
  *
+ * CR-GC-374: the suite runs in a repo whose package.json name is NOT "graphcode" —
+ * exactly the case where the old hardwired DEFAULT_GRAPH_JSON pointed at a file the
+ * export never writes. The default snapshot path must derive from the member name
+ * (docs/graph/<member>.graph.json), the same derivation graph_export writes with.
+ *
  * @author andreas@siglochconsulting
  */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
@@ -26,7 +31,15 @@ import { evaluateAllRules } from '@sigloch/contracts/se';
 import { executeRewind, RewindError } from '../src/cli/rewind.js';
 import { createHarness } from '../src/index.js';
 import { setExportPending, isExportPending } from '../src/harness/export-marker.js';
-import { DEFAULT_GRAPH_JSON } from '../src/harness/harness-import.js';
+
+/**
+ * The one contract this file pins (CR-GC-374): a repo named "@acme/fremd-anlage"
+ * commits — and recalls — its snapshot under the MEMBER name, not "graphcode".
+ * Deliberately a literal, not an import of the helper: the test must fail if the
+ * derivation ever drifts from what graph_export writes.
+ */
+const MEMBER = 'fremd-anlage';
+const SNAPSHOT_REL = `docs/graph/${MEMBER}.graph.json`;
 
 function git(cwd: string, ...args: string[]): string {
   return execFileSync('git', args, { cwd, encoding: 'utf8' });
@@ -54,8 +67,8 @@ function snapshot(reqs: string[], version: number): string {
 }
 
 /** Commit `content` as the SSOT snapshot and return the resulting sha. */
-function commitSnapshot(repo: string, content: string, message: string): string {
-  const abs = join(repo, DEFAULT_GRAPH_JSON);
+function commitSnapshot(repo: string, content: string, message: string, rel = SNAPSHOT_REL): string {
+  const abs = join(repo, rel);
   mkdirSync(join(repo, 'docs', 'graph'), { recursive: true });
   writeFileSync(abs, content);
   git(repo, 'add', '-A');
@@ -67,7 +80,7 @@ function commitSnapshot(repo: string, content: string, message: string): string 
 async function liveUids(repoRoot: string): Promise<string[]> {
   const harness = await createHarness({
     repoRoot,
-    scope: { workspaceId: 'rewind-probe', systemId: 'rewind-probe' },
+    scope: { workspaceId: MEMBER, systemId: MEMBER },
   });
   await harness.initialize();
   try {
@@ -92,6 +105,8 @@ describe('TEST-rewind: recall the graph state of a commit (CR-GC-311)', () => {
     // `.graphcode/` must be ignored, exactly as in a scaffolded repo — the staging
     // file lands there and must never dirty the working tree.
     writeFileSync(join(repo, '.gitignore'), '.graphcode/\n');
+    // The foreign identity (CR-GC-374): deriveMemberName() → "fremd-anlage".
+    writeFileSync(join(repo, 'package.json'), JSON.stringify({ name: '@acme/fremd-anlage' }));
 
     first = commitSnapshot(repo, snapshot(['REQ-alpha'], 1), 'first');
     commitSnapshot(repo, snapshot(['REQ-alpha', 'REQ-beta'], 2), 'second');
@@ -99,10 +114,10 @@ describe('TEST-rewind: recall the graph state of a commit (CR-GC-311)', () => {
     // Bring the live store up on the LATEST state, so a recall has somewhere to move from.
     const harness = await createHarness({
       repoRoot: repo,
-      scope: { workspaceId: 'rewind-probe', systemId: 'rewind-probe' },
+      scope: { workspaceId: MEMBER, systemId: MEMBER },
     });
     await harness.initialize();
-    await harness.seedFromJson();
+    await harness.seedFromJson(SNAPSHOT_REL);
     await harness.close();
   });
 
@@ -120,6 +135,26 @@ describe('TEST-rewind: recall the graph state of a commit (CR-GC-311)', () => {
     const uids = await liveUids(repo);
     expect(uids).toContain('REQ-alpha');
     expect(uids).not.toContain('REQ-beta');
+  });
+
+  it('CR-GC-374: the default snapshot path derives from the member name, not "graphcode"', async () => {
+    // Red-first regression: with the hardwired DEFAULT_GRAPH_JSON this repo
+    // (package.json name "@acme/fremd-anlage") has no docs/graph/graphcode.graph.json,
+    // so the rewind died with "carries no …" — recall was dead in every foreign repo.
+    const summary = await executeRewind({ repoRoot: repo, ref: first });
+    expect(summary.snapshot).toBe(SNAPSHOT_REL);
+    expect(await liveUids(repo)).toContain('REQ-alpha');
+  });
+
+  it('CR-GC-374: an explicit snapshot path overrides the derived default', async () => {
+    // The --snapshot escape hatch: recall a snapshot committed under a deviating name.
+    const other = 'docs/graph/andere.graph.json';
+    commitSnapshot(repo, snapshot(['REQ-gamma'], 3), 'other name', other);
+
+    const summary = await executeRewind({ repoRoot: repo, ref: 'HEAD', snapshot: other });
+
+    expect(summary.snapshot).toBe(other);
+    expect(await liveUids(repo)).toContain('REQ-gamma');
   });
 
   it('is idempotent — rewinding to HEAD twice lands on the same state', async () => {
@@ -147,7 +182,7 @@ describe('TEST-rewind: recall the graph state of a commit (CR-GC-311)', () => {
     expect(git(repo, 'rev-parse', 'HEAD').trim()).toBe(head);
     // The committed snapshot still describes the LATER state — a recall changes the
     // store, not history.
-    expect(readFileSync(join(repo, DEFAULT_GRAPH_JSON), 'utf8')).toContain('REQ-beta');
+    expect(readFileSync(join(repo, SNAPSHOT_REL), 'utf8')).toContain('REQ-beta');
   });
 
   it('removes its staging file', async () => {
@@ -185,7 +220,7 @@ describe('TEST-rewind: recall the graph state of a commit (CR-GC-311)', () => {
 
   it('rejects a ref whose commit carries no snapshot, without touching the store', async () => {
     // A commit from before the SSOT existed.
-    git(repo, 'rm', '-q', DEFAULT_GRAPH_JSON);
+    git(repo, 'rm', '-q', SNAPSHOT_REL);
     git(repo, 'commit', '-q', '-m', 'drop snapshot');
     const bare = git(repo, 'rev-parse', 'HEAD').trim();
     const before = await liveUids(repo);

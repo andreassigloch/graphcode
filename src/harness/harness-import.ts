@@ -22,8 +22,17 @@ import type { Graph, GraphNode, GraphEdge, StorageAdapter } from '@sigloch/graph
 import { elementToNode } from '../views/exporter.js';
 import { clearExportPending } from './export-marker.js';
 
-/** Default location of the committed SSOT graph, relative to the repo root. */
-export const DEFAULT_GRAPH_JSON = 'docs/graph/graphcode.graph.json';
+/**
+ * THE one derivation of the committed snapshot path (CR-GC-374):
+ * `docs/graph/<systemId>.graph.json`, relative to the repo root — from the same
+ * systemId the export writes with. The former constant `DEFAULT_GRAPH_JSON`
+ * hardwired the name "graphcode" and pointed, in every other repo, at a file the
+ * export never writes; it is gone WITHOUT a fallback — a second definition is
+ * exactly the parallel path this helper removes.
+ */
+export function graphSnapshotRel(systemId: string): string {
+  return join('docs', 'graph', `${systemId}.graph.json`);
+}
 
 /** Shape of the materialized OntologyGraph in docs/graph/*.graph.json. */
 export interface OntologyJson {
@@ -131,7 +140,7 @@ export async function importOntologyGraph(
 /** Load + import the materialized graph JSON from `<repoRoot>/docs/graph/`. */
 export async function seedFromJsonFile(
   target: ImportTarget,
-  relPath = DEFAULT_GRAPH_JSON,
+  relPath = graphSnapshotRel(target.systemId),
   opts?: { rejectUnverifiedReqs?: boolean },
 ): Promise<ImportResult> {
   const abs = join(target.repoRoot, relPath);

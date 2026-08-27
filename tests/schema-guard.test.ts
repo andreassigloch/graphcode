@@ -26,10 +26,10 @@ import type { HarnessConfig } from '@sigloch/contracts/harness';
 
 const SSOT = join(__dirname, '..', 'docs', 'graph', 'graphcode.graph.json');
 
-function makeConfig(repoRoot: string): HarnessConfig {
+function makeConfig(repoRoot: string, systemId = 'graphcode'): HarnessConfig {
   return {
     repoRoot,
-    scope: { workspaceId: 'test-ws', systemId: 'graphcode' },
+    scope: { workspaceId: 'test-ws', systemId },
     consumerType: 'system',
     preCommitTimeout: 5000,
   };
@@ -114,9 +114,9 @@ describe('harness schema-drift guard (CR-GC-249 integration)', () => {
     rmSync(tmp, { recursive: true, force: true });
   });
 
-  function newHarness(): GraphCodeHarness {
+  function newHarness(systemId?: string): GraphCodeHarness {
     const storage = new KuzuAdapter({ ontology: SE_DESCRIPTOR, path: kuzuPath });
-    return new GraphCodeHarness(makeConfig(tmp), storage, undefined, {
+    return new GraphCodeHarness(makeConfig(tmp, systemId), storage, undefined, {
       lockDir: markerDir,
       storePath: kuzuPath,
     });
@@ -148,6 +148,31 @@ describe('harness schema-drift guard (CR-GC-249 integration)', () => {
       // Reseeded from the committed SSOT → the store is now the full graph.
       expect(h2.getGraph().nodes.length).toBeGreaterThan(0);
       // Marker rewritten to the current schema fingerprint.
+      expect(readStoredFingerprint(markerDir)).toBe(schemaFingerprint(SE_DESCRIPTOR));
+    } finally {
+      await h2.close();
+    }
+  });
+
+  it('CR-GC-374: the guard reseeds in a repo whose SSOT carries a FOREIGN name', async () => {
+    // Red-first regression: the guard used the hardwired DEFAULT_GRAPH_JSON, so in
+    // every repo not named "graphcode" `existsSync` was false, staleSchema stayed
+    // false, and the auto-recovery built for exactly this case never ran.
+    rmSync(join(tmp, 'docs', 'graph', 'graphcode.graph.json'));
+    copyFileSync(SSOT, join(tmp, 'docs', 'graph', 'fremd-anlage.graph.json'));
+
+    const h1 = newHarness('fremd-anlage');
+    await h1.initialize();
+    await h1.close();
+    // Simulate a meta-model bump since this store's schema was frozen (real
+    // fingerprint FORM, see CR-GC-421 above).
+    writeFileSync(join(markerDir, SCHEMA_FINGERPRINT_BASENAME), '0123456789abcdef\n');
+
+    const h2 = newHarness('fremd-anlage');
+    await h2.initialize();
+    try {
+      // Reseeded from docs/graph/<systemId>.graph.json — the file the export writes.
+      expect(h2.getGraph().nodes.length).toBeGreaterThan(0);
       expect(readStoredFingerprint(markerDir)).toBe(schemaFingerprint(SE_DESCRIPTOR));
     } finally {
       await h2.close();

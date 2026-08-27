@@ -1,7 +1,7 @@
 # src/ — realized in M2 (Coding & V&V)
 
-The runtime modules are **realized from the graph spec** (`docs/graph/graphcode.graph.json`),
-not hand-stubbed.
+The runtime modules are **realized from the graph spec** (the committed snapshot under
+`docs/graph/`), not hand-stubbed.
 
 **One module, one directory (CR-GC-429 §4):** the file system agrees with the graph's
 `FUNC -allocate-> MOD [0..1]` grammar — each directory below is one `MOD-*`, and
