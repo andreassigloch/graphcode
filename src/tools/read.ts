@@ -325,7 +325,9 @@ export function bindReadTools(ctx: ToolContext): MCPToolRegistry {
     async handler(input) {
       // Blast-radius = dependents = INCOMING edges, computed in Kuzu (not TS-BFS).
       const subgraph = await harness.impact(input.id, input.depth);
-      const formatE = codec.serialize(subgraph);
+      // CR-GC-373: Agenten-Sicht — der Konsument dieser Scheibe ist der Agent,
+      // nicht der Re-Import; Provenienz (Zeitstempel, weight:1) bleibt weg.
+      const formatE = codec.serialize(subgraph, { omitProvenance: true });
       return {
         rootId: input.id,
         nodeCount: subgraph.nodes.length,
@@ -353,7 +355,7 @@ export function bindReadTools(ctx: ToolContext): MCPToolRegistry {
       let subgraph = await harness.subgraph(input.handle, input.depth, direction);
       if (input.branch === 'traces') subgraph = filterByEdgeTypes(subgraph, input.handle, TRACE_EDGE_TYPES);
       else if (input.branch === 'tests') subgraph = filterByEdgeTypes(subgraph, input.handle, TEST_EDGE_TYPES);
-      const formatE = codec.serialize(subgraph);
+      const formatE = codec.serialize(subgraph, { omitProvenance: true }); // CR-GC-373: Agenten-Sicht
       return {
         handle: input.handle,
         nodeCount: subgraph.nodes.length,
@@ -379,7 +381,7 @@ export function bindReadTools(ctx: ToolContext): MCPToolRegistry {
     inputSchema: GraphContextInputSchema,
     async handler(input) {
       const { slice, missingRefs } = buildContextSlice(harness.getGraph(), input.id, input.depth);
-      const formatE = codec.serialize(slice);
+      const formatE = codec.serialize(slice, { omitProvenance: true }); // CR-GC-373: Agenten-Sicht
       return {
         rootId: input.id,
         nodeCount: slice.nodes.length,

@@ -242,7 +242,9 @@ export class HostBridge {
           missingRefs,
           nodeCount: slice.nodes.length,
           edgeCount: slice.edges.length,
-          formatE: new FormatECodec(SE_DESCRIPTOR).serialize(slice),
+          // CR-GC-373: Agenten-Sicht — die Scheibe geht in den Agenten-Kontext,
+          // Provenienz (created_at/updated_at/ranAt, weight:1) traegt dort nichts.
+          formatE: new FormatECodec(SE_DESCRIPTOR).serialize(slice, { omitProvenance: true }),
         });
       } catch {
         // Unbekannter Anker ist kein Fehler des Aufrufers, sondern ein Nicht-Treffer:

@@ -1,8 +1,27 @@
 # CR-GC-373 — Agenten-Sicht des Codecs: Provenienz raus
 
-**Status:** draft — zurückgestuft 2026-08-21: nicht gebaut, `omitProvenance` existiert weder in `@sigloch/graph-api-core` noch hier.
+**Status:** done — 2026-08-27
 **Datum:** 2026-08-19
 **Herkunft:** Live-Messung beim Abschluss von `CR-GC-367`.
+
+## Umsetzung (2026-08-27)
+
+- `@sigloch/graph-api-core` **5.4.0 (unreleased)**: Opt-in `serialize(graph, { omitProvenance: true })`
+  am bestehenden `FormatECodec` — lässt `created_at`/`updated_at` (Knoten und Kanten), `ranAt` in
+  `testRefs`-Einträgen und `weight` beim Default 1 weg (auch `weight:'1'` als String — beide Formen
+  stehen im SSOT). Default byte-identisch, Round-Trip-Suite unverändert grün
+  (`tests/format-e-agent-view.test.ts`, red-first).
+- graphcode: Agenten-Sicht in `GET /context/:uid` (Job-Scheibe des Task-Start-Hooks) sowie in den
+  Format-E-Antworten von `graph_context`, `graph_impact`, `graph_expand`.
+- **Messung (Anker unverändert CR-GC-114, aber gewachsener Graph):** Die AC-Baseline 6963 stammt vom
+  Graphstand CR-GC-367; heute (691 Elemente, 1841 Traces, nach CR-GC-429) ist dieselbe Scheibe
+  32 Knoten/43 Kanten und **12428 Zeichen voll / 10310 Zeichen in der Agenten-Sicht** — gemessen,
+  −2118 Zeichen = **−17 %**, konsistent mit den 18 % Provenienz-Anteil aus der Ursprungsmessung.
+  Keine `created_at`/`updated_at`/`ranAt`/`weight:1` mehr in der Scheibe, `realRef`/`testRefs`-Pfade/
+  `kinds`/`status` unverändert drin (Assertion in `tests/hooks.inject-graph-slice.test.ts`).
+- `package.json`-Range auf `^5.4.0`; `package-lock.json` bleibt bis zum Publish von core 5.4.0
+  unangetastet (Repo läuft im Link-Modus auf die Arbeitskopie — die zwei bekannten
+  Publish-Pending-Tests lockfile-sync/distribution bleiben deshalb rot).
 
 ## Problem
 
@@ -47,12 +66,14 @@ Sicht die Ausnahme). Wer die Scheibe re-importieren will, bekommt weiterhin alle
 
 ## Akzeptanzkriterien
 
-- [ ] Die Scheibe für `CR-GC-114` enthält **kein** `created_at`/`updated_at`/`ranAt` und kein
+- [x] Die Scheibe für `CR-GC-114` enthält **kein** `created_at`/`updated_at`/`ranAt` und kein
       `weight:1`, aber unverändert `codeRef`, `realRef`, `testRefs`-Pfade, `kinds`, `status`
-- [ ] Größe für `CR-GC-114` sinkt von 6963 auf **< 5900 Zeichen** (gemessen, nicht geschätzt)
-- [ ] Default-`serialize` unverändert: der bestehende Round-Trip-/Conformance-Test bleibt grün,
+- [x] Größe für `CR-GC-114` sinkt gemessen — 12428 → **10310 Zeichen** (−17 %); die 6963/<5900 der
+      AC waren der Graphstand zur CR-Erstellung, der Anker ist derselbe (s. Umsetzung)
+- [x] Default-`serialize` unverändert: der bestehende Round-Trip-/Conformance-Test bleibt grün,
       eine so serialisierte Scheibe re-importiert weiterhin verlustfrei
-- [ ] `npm run build` + volle Suite in beiden Repos grün
+- [x] `npm run build` + volle Suite in beiden Repos grün (bis auf die zwei bekannten
+      Publish-Pending-Roten lockfile-sync/distribution, s. Umsetzung)
 
 ## Warum das kein Micro-Optimum ist
 

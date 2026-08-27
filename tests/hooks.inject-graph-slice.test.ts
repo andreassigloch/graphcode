@@ -68,11 +68,14 @@ describe('CR-GC-367: Job-Scheibe beim Task-Start', () => {
     // CR -relation-> FUNC/REQ, FUNC -satisfy-> REQ, TEST -verify-> REQ.
     const commands: MutateCommand[] = [
       { op: 'add-node', node: { uid: 'REQ-slice-push', type: 'REQ', name: 'Scheibe wird gepusht', description: 'Der Agent bekommt die Scheibe ohne sie zu holen.', attributes: { kinds: ['functional'] } } },
-      { op: 'add-node', node: { uid: 'FUNC-inject-slice', type: 'FUNC', name: 'injectSlice()', description: 'Schiebt die Job-Scheibe in den Kontext.', attributes: {} } },
+      // CR-GC-373: Provenienz-Attribute wie im echten SSOT (created_at auf Knoten,
+      // weight:1/created_at auf Kanten) — die Agenten-Sicht muss sie weglassen,
+      // die Arbeitsanweisung (realRef) muss bleiben.
+      { op: 'add-node', node: { uid: 'FUNC-inject-slice', type: 'FUNC', name: 'injectSlice()', description: 'Schiebt die Job-Scheibe in den Kontext.', attributes: { created_at: '2026-08-19T10:00:00.000Z', realRef: { file: 'src/tools/read.ts', symbol: 'buildJobSlice' } } } },
       { op: 'add-node', node: { uid: 'TEST-slice-push', type: 'TEST', name: 'Scheibe-Push-Test', description: 'Verifiziert die Injektion.', attributes: {} } },
       { op: 'add-node', node: { uid: 'MS-1-slice', type: 'MS', name: 'MS-1', description: 'Meilenstein.', attributes: {} } },
       { op: 'add-node', node: { uid: 'CR-GC-367', type: 'CR', name: 'Task-Start-Scheibe', description: 'Dieser CR.', attributes: {} } },
-      { op: 'add-edge', edge: { sourceId: 'FUNC-inject-slice', targetId: 'REQ-slice-push', edgeType: 'satisfy', attributes: {} } },
+      { op: 'add-edge', edge: { sourceId: 'FUNC-inject-slice', targetId: 'REQ-slice-push', edgeType: 'satisfy', attributes: { weight: 1, created_at: '2026-08-19T10:00:00.000Z' } } },
       { op: 'add-edge', edge: { sourceId: 'TEST-slice-push', targetId: 'REQ-slice-push', edgeType: 'verify', attributes: {} } },
       { op: 'add-edge', edge: { sourceId: 'CR-GC-367', targetId: 'FUNC-inject-slice', edgeType: 'relation', attributes: {} } },
       { op: 'add-edge', edge: { sourceId: 'CR-GC-367', targetId: 'MS-1-slice', edgeType: 'relation', attributes: {} } },
@@ -99,6 +102,19 @@ describe('CR-GC-367: Job-Scheibe beim Task-Start', () => {
     // CR und MS sind draussen — 60% Graph-Text, 0% Beitrag zum Aenderungs-Set
     expect(body.formatE).not.toContain('MS-1-slice');
     expect(body.formatE).not.toContain('CR-GC-367');
+  });
+
+  it('(a2) Agenten-Sicht (CR-GC-373): keine Provenienz in der Scheibe, realRef bleibt', async () => {
+    const res = await fetch(`http://127.0.0.1:${port}/context/CR-GC-367`);
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as { formatE: string };
+    // Provenienz raus: Zeitstempel und der Default weight:1
+    expect(body.formatE).not.toContain('created_at');
+    expect(body.formatE).not.toContain('updated_at');
+    expect(body.formatE).not.toContain('weight:1');
+    // Arbeitsanweisung bleibt: die realRef-Bindung, aus der der Agent arbeitet
+    expect(body.formatE).toContain('realRef');
+    expect(body.formatE).toContain('src/tools/read.ts');
   });
 
   it('(b) unbekanntes uid-artiges Token: 404 und KEIN Fuzzy-Treffer', async () => {
