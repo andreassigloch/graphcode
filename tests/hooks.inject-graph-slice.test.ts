@@ -172,7 +172,7 @@ describe('CR-GC-367: Job-Scheibe beim Task-Start', () => {
     const groundTruth: Record<string, string[]> = {
       'CR-GC-114': [
         'FUNC-broadcast-diff', 'FUNC-health-endpoint', 'FUNC-own-kuzu-host', 'FUNC-serve-sse',
-        'MOD-host-bridge', 'REQ-mutation-emits-event', 'REQ-readonly-bridge',
+        'MOD-surface', 'REQ-mutation-emits-event', 'REQ-readonly-bridge',
         // CR-GC-429 §3: die host-bridge-FUNCs erfuellen jetzt das Verhaltens-Kind
         // REQ-store-owner-lifecycle; der nf-Constraint REQ-single-kuzu-owner haengt
         // nur noch ueber MOD-harness am Modell und liegt ausserhalb der Scheibe.

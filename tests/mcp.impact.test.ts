@@ -53,14 +53,14 @@ describe('TEST-impact-subgraph: graph_impact precision (R6/R12)', () => {
   it('(a) graph_impact returns a slice containing the root node', async () => {
     const registry = bindToolsToHarness(harness);
     const { rootId, nodeCount, formatE } = await registry['graph_impact'].handler({
-      id: 'MOD-harness',
+      id: 'MOD-kernel',
       depth: 1,
     });
 
-    expect(rootId).toBe('MOD-harness');
+    expect(rootId).toBe('MOD-kernel');
     expect(nodeCount).toBeGreaterThanOrEqual(1);
     // Format-E serializes the root node uid somewhere in the output
-    expect(formatE).toContain('MOD-harness');
+    expect(formatE).toContain('MOD-kernel');
   });
 
   it('(b) graph_impact slice is STRICTLY SMALLER than the full graph (no full dump)', async () => {
@@ -69,7 +69,7 @@ describe('TEST-impact-subgraph: graph_impact precision (R6/R12)', () => {
 
     const registry = bindToolsToHarness(harness);
     const { nodeCount, edgeCount } = await registry['graph_impact'].handler({
-      id: 'MOD-harness',
+      id: 'MOD-kernel',
       depth: 1,
     });
 
@@ -81,8 +81,8 @@ describe('TEST-impact-subgraph: graph_impact precision (R6/R12)', () => {
 
   it('(c) graph_impact depth=2 returns >= nodes than depth=1', async () => {
     const registry = bindToolsToHarness(harness);
-    const { nodeCount: nc1 } = await registry['graph_impact'].handler({ id: 'MOD-harness', depth: 1 });
-    const { nodeCount: nc2 } = await registry['graph_impact'].handler({ id: 'MOD-harness', depth: 2 });
+    const { nodeCount: nc1 } = await registry['graph_impact'].handler({ id: 'MOD-kernel', depth: 1 });
+    const { nodeCount: nc2 } = await registry['graph_impact'].handler({ id: 'MOD-kernel', depth: 2 });
 
     // Deeper traversal must not shrink the subgraph
     expect(nc2).toBeGreaterThanOrEqual(nc1);
@@ -90,7 +90,7 @@ describe('TEST-impact-subgraph: graph_impact precision (R6/R12)', () => {
 
   it('(d) Format-E slice is valid non-empty text', async () => {
     const registry = bindToolsToHarness(harness);
-    const { formatE } = await registry['graph_impact'].handler({ id: 'MOD-harness', depth: 1 });
+    const { formatE } = await registry['graph_impact'].handler({ id: 'MOD-kernel', depth: 1 });
 
     expect(typeof formatE).toBe('string');
     expect(formatE.length).toBeGreaterThan(0);
@@ -103,20 +103,20 @@ describe('TEST-impact-subgraph: graph_impact precision (R6/R12)', () => {
 
     // Depth 1 expansion
     const { nodeCount: nc1 } = await registry['graph_expand'].handler({
-      handle: 'MOD-harness',
+      handle: 'MOD-kernel',
       branch: 'all',
       depth: 1,
     });
 
     // Depth 2 expansion — must be >= depth 1
     const { nodeCount: nc2, formatE } = await registry['graph_expand'].handler({
-      handle: 'MOD-harness',
+      handle: 'MOD-kernel',
       branch: 'all',
       depth: 2,
     });
 
     expect(nc2).toBeGreaterThanOrEqual(nc1);
-    expect(formatE).toContain('MOD-harness');
+    expect(formatE).toContain('MOD-kernel');
   });
 
   it('graph_elements returns a filtered subset, not the full graph', async () => {

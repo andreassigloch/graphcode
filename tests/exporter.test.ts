@@ -88,7 +88,7 @@ describe('exportGraphJson / exportMarkdown (TEST-doc-export)', () => {
     };
     const byId = new Map(exported.elements.map((e) => [e.id as string, e]));
     // status — dropped on a raw Kuzu reload, present here.
-    expect(byId.get('MOD-docs')?.status).toBeDefined();
+    expect(byId.get('MOD-projections')?.status).toBeDefined();
     // kinds — REQ-only top-level attr.
     expect(byId.get('REQ-doc-export')?.kinds).toBeDefined();
     // method — TEST-only top-level attr.

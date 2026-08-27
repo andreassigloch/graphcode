@@ -60,7 +60,7 @@ describe('TEST-graph-tests-operational: graph_tests operational on the committed
     // CR-GC-200 changed MOD-codec + MOD-harness; the new tests span THREE files
     // (graph-integrity, codec.validation, harness.gate). Plain incoming-impact
     // selected 0 TESTs (wrong direction); the directed resolver must reach all three.
-    const res = await registry['graph_tests'].handler({ changeSet: ['MOD-codec', 'MOD-harness'], depth: 3 });
+    const res = await registry['graph_tests'].handler({ changeSet: ['MOD-projections', 'MOD-kernel'], depth: 3 });
 
     expect(res.coverage.impactedTests).toBeGreaterThan(0);
     expect(res.coverage.files).toContain('tests/graph-integrity.test.ts');
@@ -105,7 +105,7 @@ describe('TEST-graph-tests-operational: graph_tests operational on the committed
   it('(g) impacted concept-only TESTs surface under unresolved, never silently dropped', async () => {
     // MOD-codec satisfies REQ-interface-schema, verified only by the concept-only
     // TEST-interface-schema → it must appear as unresolved, not vanish.
-    const res = await registry['graph_tests'].handler({ changeSet: ['MOD-codec', 'MOD-harness'], depth: 3 });
+    const res = await registry['graph_tests'].handler({ changeSet: ['MOD-projections', 'MOD-kernel'], depth: 3 });
     const unresolvedIds = res.unresolved.map((u: { id: string }) => u.id);
     expect(unresolvedIds).toContain('TEST-interface-schema');
     // Every unresolved entry is a genuinely concept-only node in the committed graph.

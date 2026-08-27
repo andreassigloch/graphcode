@@ -118,134 +118,123 @@
 | `FUNC-view-icd` | FUNC | se-view-icd (ICD) |
 | `FUNC-view-intplan` | FUNC | se-view-intplan (Integrations-/Testplan) |
 | `FUNC-view-rtm` | FUNC | se-view-rtm (RTM) |
-| `MOD-cli` | MOD | cli — npx-Distribution & Lifecycle |
-| `MOD-codec` | MOD | codec.ts — GraphCodeCodec |
-| `MOD-completeness` | MOD | readiness-completeness — Gate-Vollstaendigkeit |
-| `MOD-conformance` | MOD | conformance.ts — Code-Konformitaet |
+| `MOD-agent-surface` | MOD | agent-surface — Skill-Treiber |
 | `MOD-dashboard` | MOD | dashboard — Live-Viewer-App |
-| `MOD-docs` | MOD | docs — Markdown-Re-Exporter |
-| `MOD-element-slice` | MOD | element-slice.ts — Element-Scheibe |
-| `MOD-executor` | MOD | executor — eingebetteter Treiber |
-| `MOD-harness` | MOD | harness.ts — GraphCodeHarness |
-| `MOD-hooks` | MOD | hooks.ts — HookSystem |
-| `MOD-host-bridge` | MOD | host-bridge — SSE/WS Bridge |
-| `MOD-mcp-tools` | MOD | mcp-tools.ts — MCP-Registry |
-| `MOD-metrics-engine` | MOD | metrics-engine — Kenngroessen-Rechenkern |
-| `MOD-repo-root` | MOD | graphcode Projektwurzel |
-| `MOD-schema-migration` | MOD | Schema-Migration |
-| `MOD-skills` | MOD | skills/prompts — agent-realisierte Funktionen |
-| `MOD-steering` | MOD | steering — Kenngroessen-Steuerungskern |
+| `MOD-kernel` | MOD | kernel — Store, Gate, Regeln, OpLog |
+| `MOD-loop` | MOD | loop — Autopilot und Executor |
+| `MOD-projections` | MOD | projections — Graph nach Artefakt |
+| `MOD-surface` | MOD | surface — MCP, CLI, Host-Socket, Viewer |
 | `SYS-graphcode` | SYS | GraphCode |
 
 ## Allokation (FUNC -allocate-> MOD)
 
 | function | module |
 |---|---|
-| `FUNC-apply-reseed` | `MOD-harness` |
-| `FUNC-arch-fitness` | `MOD-metrics-engine` |
-| `FUNC-author-req` | `MOD-skills` |
-| `FUNC-author-uc` | `MOD-skills` |
-| `FUNC-auto-export` | `MOD-docs` |
-| `FUNC-bind-tools` | `MOD-mcp-tools` |
-| `FUNC-block-anschluss` | `MOD-repo-root` |
-| `FUNC-block-antrieb` | `MOD-repo-root` |
-| `FUNC-block-arch-optimierung` | `MOD-steering` |
-| `FUNC-block-betrieb` | `MOD-repo-root` |
-| `FUNC-block-dokumentenwerk` | `MOD-docs` |
-| `FUNC-block-gate` | `MOD-repo-root` |
-| `FUNC-block-gedaechtnis` | `MOD-repo-root` |
-| `FUNC-block-live-dashboard` | `MOD-host-bridge` |
-| `FUNC-block-messwerk` | `MOD-repo-root` |
-| `FUNC-block-q-improvement` | `MOD-steering` |
-| `FUNC-block-ruestzeug` | `MOD-repo-root` |
-| `FUNC-block-schaufenster` | `MOD-repo-root` |
-| `FUNC-block-se-steuerung` | `MOD-steering` |
-| `FUNC-block-speicherwerk` | `MOD-repo-root` |
-| `FUNC-bootstrap` | `MOD-cli` |
-| `FUNC-broadcast-diff` | `MOD-host-bridge` |
-| `FUNC-build-round-injection` | `MOD-executor` |
-| `FUNC-check-code-conformance` | `MOD-conformance` |
-| `FUNC-claim-store-lock` | `MOD-harness` |
-| `FUNC-cli-dispatch` | `MOD-cli` |
-| `FUNC-close-store` | `MOD-harness` |
-| `FUNC-close-violations` | `MOD-skills` |
-| `FUNC-collect-status` | `MOD-cli` |
-| `FUNC-compute-phase-readiness` | `MOD-steering` |
-| `FUNC-compute-readiness` | `MOD-metrics-engine` |
-| `FUNC-compute-steering-delta` | `MOD-steering` |
-| `FUNC-create-harness` | `MOD-harness` |
-| `FUNC-decode` | `MOD-codec` |
-| `FUNC-deduce-tests` | `MOD-mcp-tools` |
-| `FUNC-emit-trajectory` | `MOD-hooks` |
-| `FUNC-emit-update-event` | `MOD-hooks` |
-| `FUNC-encode` | `MOD-codec` |
-| `FUNC-evaluate-rules` | `MOD-harness` |
-| `FUNC-export-markdown` | `MOD-docs` |
-| `FUNC-export-marker` | `MOD-harness` |
-| `FUNC-extract-mutate` | `MOD-executor` |
-| `FUNC-fit-advisory` | `MOD-steering` |
-| `FUNC-generation-step` | `MOD-steering` |
-| `FUNC-goal-steerer` | `MOD-steering` |
-| `FUNC-graph-expand` | `MOD-mcp-tools` |
-| `FUNC-graph-export-snapshot` | `MOD-mcp-tools` |
-| `FUNC-graph-impact` | `MOD-mcp-tools` |
-| `FUNC-graph-suggest` | `MOD-mcp-tools` |
-| `FUNC-gve-sessions` | `MOD-cli` |
-| `FUNC-gve-supervise` | `MOD-cli` |
-| `FUNC-harness-cli` | `MOD-cli` |
-| `FUNC-health-endpoint` | `MOD-host-bridge` |
-| `FUNC-host-socket` | `MOD-host-bridge` |
-| `FUNC-import` | `MOD-harness` |
-| `FUNC-import-code` | `MOD-skills` |
-| `FUNC-import-code-verb` | `MOD-cli` |
-| `FUNC-import-doc` | `MOD-skills` |
-| `FUNC-list-elements` | `MOD-element-slice` |
-| `FUNC-load-config` | `MOD-harness` |
-| `FUNC-load-graph` | `MOD-harness` |
-| `FUNC-merge-nodes` | `MOD-harness` |
-| `FUNC-migrate-schema` | `MOD-schema-migration` |
-| `FUNC-module-metrics` | `MOD-metrics-engine` |
-| `FUNC-mutate` | `MOD-harness` |
-| `FUNC-nd-similarity` | `MOD-steering` |
-| `FUNC-next-step` | `MOD-steering` |
-| `FUNC-open-store` | `MOD-harness` |
-| `FUNC-own-kuzu-host` | `MOD-host-bridge` |
-| `FUNC-preflight` | `MOD-executor` |
-| `FUNC-rank-candidates` | `MOD-executor` |
-| `FUNC-render-views` | `MOD-skills` |
-| `FUNC-reseed` | `MOD-harness` |
-| `FUNC-resolve-tests-from-code` | `MOD-mcp-tools` |
-| `FUNC-rewind` | `MOD-cli` |
-| `FUNC-run-executor` | `MOD-executor` |
-| `FUNC-run-verb` | `MOD-cli` |
-| `FUNC-save-graph` | `MOD-harness` |
-| `FUNC-schema-guard` | `MOD-schema-migration` |
-| `FUNC-score-completeness` | `MOD-completeness` |
-| `FUNC-se-conops` | `MOD-skills` |
-| `FUNC-se-fmea` | `MOD-skills` |
-| `FUNC-se-generate` | `MOD-skills` |
-| `FUNC-se-help` | `MOD-skills` |
-| `FUNC-se-irr` | `MOD-skills` |
-| `FUNC-se-optimize` | `MOD-skills` |
-| `FUNC-se-plan` | `MOD-skills` |
-| `FUNC-se-retro` | `MOD-skills` |
-| `FUNC-se-review` | `MOD-skills` |
-| `FUNC-se-status` | `MOD-skills` |
-| `FUNC-se-trade` | `MOD-skills` |
-| `FUNC-seed-from-json` | `MOD-harness` |
-| `FUNC-serve-sse` | `MOD-host-bridge` |
-| `FUNC-serve-stdio` | `MOD-mcp-tools` |
-| `FUNC-session-shutdown` | `MOD-cli` |
-| `FUNC-take-steering-snapshot` | `MOD-steering` |
-| `FUNC-target-profile` | `MOD-skills` |
-| `FUNC-target-profile-load` | `MOD-steering` |
-| `FUNC-test` | `MOD-skills` |
-| `FUNC-test-ui` | `MOD-skills` |
-| `FUNC-tool-context` | `MOD-mcp-tools` |
-| `FUNC-upgrade` | `MOD-cli` |
-| `FUNC-view-changelog` | `MOD-skills` |
-| `FUNC-view-conops` | `MOD-skills` |
-| `FUNC-view-fmea` | `MOD-skills` |
-| `FUNC-view-icd` | `MOD-skills` |
-| `FUNC-view-intplan` | `MOD-skills` |
-| `FUNC-view-rtm` | `MOD-skills` |
+| `FUNC-apply-reseed` | `MOD-kernel` |
+| `FUNC-arch-fitness` | `MOD-projections` |
+| `FUNC-author-req` | `MOD-agent-surface` |
+| `FUNC-author-uc` | `MOD-agent-surface` |
+| `FUNC-auto-export` | `MOD-projections` |
+| `FUNC-bind-tools` | `MOD-surface` |
+| `FUNC-block-anschluss` | `MOD-surface` |
+| `FUNC-block-antrieb` | `MOD-loop` |
+| `FUNC-block-arch-optimierung` | `MOD-loop` |
+| `FUNC-block-betrieb` | `MOD-surface` |
+| `FUNC-block-dokumentenwerk` | `MOD-projections` |
+| `FUNC-block-gate` | `MOD-kernel` |
+| `FUNC-block-gedaechtnis` | `MOD-projections` |
+| `FUNC-block-live-dashboard` | `MOD-surface` |
+| `FUNC-block-messwerk` | `MOD-projections` |
+| `FUNC-block-q-improvement` | `MOD-loop` |
+| `FUNC-block-ruestzeug` | `MOD-kernel` |
+| `FUNC-block-schaufenster` | `MOD-surface` |
+| `FUNC-block-se-steuerung` | `MOD-loop` |
+| `FUNC-block-speicherwerk` | `MOD-kernel` |
+| `FUNC-bootstrap` | `MOD-surface` |
+| `FUNC-broadcast-diff` | `MOD-surface` |
+| `FUNC-build-round-injection` | `MOD-loop` |
+| `FUNC-check-code-conformance` | `MOD-kernel` |
+| `FUNC-claim-store-lock` | `MOD-kernel` |
+| `FUNC-cli-dispatch` | `MOD-surface` |
+| `FUNC-close-store` | `MOD-kernel` |
+| `FUNC-close-violations` | `MOD-agent-surface` |
+| `FUNC-collect-status` | `MOD-surface` |
+| `FUNC-compute-phase-readiness` | `MOD-projections` |
+| `FUNC-compute-readiness` | `MOD-projections` |
+| `FUNC-compute-steering-delta` | `MOD-projections` |
+| `FUNC-create-harness` | `MOD-kernel` |
+| `FUNC-decode` | `MOD-projections` |
+| `FUNC-deduce-tests` | `MOD-projections` |
+| `FUNC-emit-trajectory` | `MOD-projections` |
+| `FUNC-emit-update-event` | `MOD-surface` |
+| `FUNC-encode` | `MOD-projections` |
+| `FUNC-evaluate-rules` | `MOD-kernel` |
+| `FUNC-export-markdown` | `MOD-projections` |
+| `FUNC-export-marker` | `MOD-kernel` |
+| `FUNC-extract-mutate` | `MOD-loop` |
+| `FUNC-fit-advisory` | `MOD-projections` |
+| `FUNC-generation-step` | `MOD-loop` |
+| `FUNC-goal-steerer` | `MOD-loop` |
+| `FUNC-graph-expand` | `MOD-kernel` |
+| `FUNC-graph-export-snapshot` | `MOD-projections` |
+| `FUNC-graph-impact` | `MOD-kernel` |
+| `FUNC-graph-suggest` | `MOD-loop` |
+| `FUNC-gve-sessions` | `MOD-surface` |
+| `FUNC-gve-supervise` | `MOD-surface` |
+| `FUNC-harness-cli` | `MOD-surface` |
+| `FUNC-health-endpoint` | `MOD-surface` |
+| `FUNC-host-socket` | `MOD-surface` |
+| `FUNC-import` | `MOD-kernel` |
+| `FUNC-import-code` | `MOD-agent-surface` |
+| `FUNC-import-code-verb` | `MOD-surface` |
+| `FUNC-import-doc` | `MOD-agent-surface` |
+| `FUNC-list-elements` | `MOD-kernel` |
+| `FUNC-load-config` | `MOD-kernel` |
+| `FUNC-load-graph` | `MOD-kernel` |
+| `FUNC-merge-nodes` | `MOD-kernel` |
+| `FUNC-migrate-schema` | `MOD-kernel` |
+| `FUNC-module-metrics` | `MOD-projections` |
+| `FUNC-mutate` | `MOD-kernel` |
+| `FUNC-nd-similarity` | `MOD-projections` |
+| `FUNC-next-step` | `MOD-loop` |
+| `FUNC-open-store` | `MOD-kernel` |
+| `FUNC-own-kuzu-host` | `MOD-kernel` |
+| `FUNC-preflight` | `MOD-loop` |
+| `FUNC-rank-candidates` | `MOD-loop` |
+| `FUNC-render-views` | `MOD-agent-surface` |
+| `FUNC-reseed` | `MOD-kernel` |
+| `FUNC-resolve-tests-from-code` | `MOD-kernel` |
+| `FUNC-rewind` | `MOD-surface` |
+| `FUNC-run-executor` | `MOD-loop` |
+| `FUNC-run-verb` | `MOD-surface` |
+| `FUNC-save-graph` | `MOD-kernel` |
+| `FUNC-schema-guard` | `MOD-kernel` |
+| `FUNC-score-completeness` | `MOD-projections` |
+| `FUNC-se-conops` | `MOD-agent-surface` |
+| `FUNC-se-fmea` | `MOD-agent-surface` |
+| `FUNC-se-generate` | `MOD-agent-surface` |
+| `FUNC-se-help` | `MOD-agent-surface` |
+| `FUNC-se-irr` | `MOD-agent-surface` |
+| `FUNC-se-optimize` | `MOD-agent-surface` |
+| `FUNC-se-plan` | `MOD-agent-surface` |
+| `FUNC-se-retro` | `MOD-agent-surface` |
+| `FUNC-se-review` | `MOD-agent-surface` |
+| `FUNC-se-status` | `MOD-agent-surface` |
+| `FUNC-se-trade` | `MOD-agent-surface` |
+| `FUNC-seed-from-json` | `MOD-kernel` |
+| `FUNC-serve-sse` | `MOD-surface` |
+| `FUNC-serve-stdio` | `MOD-surface` |
+| `FUNC-session-shutdown` | `MOD-surface` |
+| `FUNC-take-steering-snapshot` | `MOD-projections` |
+| `FUNC-target-profile` | `MOD-agent-surface` |
+| `FUNC-target-profile-load` | `MOD-loop` |
+| `FUNC-test` | `MOD-agent-surface` |
+| `FUNC-test-ui` | `MOD-agent-surface` |
+| `FUNC-tool-context` | `MOD-surface` |
+| `FUNC-upgrade` | `MOD-surface` |
+| `FUNC-view-changelog` | `MOD-agent-surface` |
+| `FUNC-view-conops` | `MOD-agent-surface` |
+| `FUNC-view-fmea` | `MOD-agent-surface` |
+| `FUNC-view-icd` | `MOD-agent-surface` |
+| `FUNC-view-intplan` | `MOD-agent-surface` |
+| `FUNC-view-rtm` | `MOD-agent-surface` |

@@ -78,7 +78,7 @@ describe('smoke: createHarness production path', () => {
     expect(Object.keys(r.violationsByRule).every((id) => !/^BQ-/i.test(id))).toBe(true);
 
     // MCP query-precision: graph_impact returns a bounded slice, not the full graph.
-    const impact = await tools.graph_impact.handler({ id: 'MOD-harness', depth: 1 });
+    const impact = await tools.graph_impact.handler({ id: 'MOD-kernel', depth: 1 });
     expect(impact).toBeDefined();
   });
 });

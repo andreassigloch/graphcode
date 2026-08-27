@@ -62,7 +62,7 @@ function chainMembers(chainUid: string): Element[] {
 function skillMembers(chainUid: string): Element[] {
   const g = graph();
   const inSkills = new Set(
-    g.traces.filter((t) => t.type === 'allocate' && t.target === 'MOD-skills').map((t) => t.source),
+    g.traces.filter((t) => t.type === 'allocate' && t.target === 'MOD-agent-surface').map((t) => t.source),
   );
   return chainMembers(chainUid).filter((e) => inSkills.has(e.id));
 }

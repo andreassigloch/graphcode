@@ -18,15 +18,10 @@
  *            als Verbund-Batch [delete-edge(retire), add-edge] durchs Gate an,
  *            bis nichts Positives mehr kommt. Das ist die Reichweite des
  *            heutigen Autopiloten — erst seit CR-GC-435 überhaupt > 0 Züge.
- *   Lauf B — HANDSCHNITT: der 8er-Zielschnitt aus dem ersten Nachtrag
- *            (scripts/spike-arch-handschnitt.mjs), aber als Gate-Batches:
- *            merge-nodes (Renames + FLOW-Konsolidierung), delete+add-allocate
- *            (Umhängungen, verschiedene Kanten-Schlüssel — der persist-
- *            Fallstrick greift nur bei DERSELBEN Kante), merge-nodes
- *            (geleerte Splitter-MODs in ihre Nachfolger). Obergrenze dessen,
- *            was Umhängen überhaupt bewegen kann — und der Nachweis, dass der
- *            Schnitt durchs Gate KOMMT (Delta-Semantik: nur NEU eingeführte
- *            error-Verstöße blocken).
+ *   Lauf B — HANDSCHNITT: ZURÜCKGEBAUT mit CR-GC-446 (Begründung am Platz des
+ *            Laufs weiter unten). Sein Subjekt — der 17-MOD-SSOT — existiert
+ *            nicht mehr; der Schnitt ist seit CR-GC-446 am echten Modell
+ *            vollzogen, auf FÜNF Module.
  *
  * Der Test URTEILT nicht über GO/No-Go — er misst und druckt den Messblock;
  * die Zahlen stehen im CR, die Entscheidung liegt beim Auftraggeber.
@@ -304,149 +299,24 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
   }, 900_000);
 
   // -------------------------------------------------------------------------
-  // Lauf B — der 8er-Handschnitt als Gate-Batches (Obergrenze des Umhängens).
+  // -------------------------------------------------------------------------
+  // Lauf B — der 8er-Handschnitt: ZURUECKGEBAUT mit CR-GC-446.
+  //
+  // Lauf B simulierte den 8er-Zielschnitt auf dem damaligen 17-MOD-SSOT. Sein
+  // Subjekt existiert nicht mehr: CR-GC-445 hat die FLOW-/SCHEMA-Haelfte am
+  // echten Modell gefahren (und sechs der sechs SCHEMA-Merges nach fachlicher
+  // Pruefung ABGELEHNT), CR-GC-446 hat den Modulschnitt am echten Modell
+  // vollzogen — auf FUENF Module, nicht acht. MOD-harness/-docs/-skills/-hooks/
+  // -conformance/-element-slice/-completeness/-host-bridge und die sieben
+  // FLOW-Quellen gibt es im SSOT nicht mehr; der Nachbau haette nur noch
+  // Namenskollisionen mit den heutigen Modulen (MOD-agent-surface) gemessen.
+  //
+  // Die Zahl, die Lauf B liefern sollte (Obergrenze des Umhaengens), liegt in
+  // CR-GC-436 Nachtrag 2 und ist durch CR-GC-446 am produktiven Modell abgeloest:
+  // Kohaesion 9,7 % -> 17,2 %, Modul-Paare 79 -> 10, 0-Kohaesions-Module 3 -> 0.
+  // Ein zweiter, simulierter Schnitt neben dem echten waere genau der parallele
+  // Pfad, den CLAUDE.md verbietet. Lauf A (Reichweite des Autopiloten) bleibt —
+  // er misst den Vorschlagspfad, nicht eine Partition.
   // -------------------------------------------------------------------------
 
-  /** Umhängungen (identisch zu scripts/spike-arch-handschnitt.mjs REALLOC). */
-  const REALLOC: Record<string, string> = {
-    'FUNC-emit-trajectory': 'MOD-store', 'FUNC-emit-update-event': 'MOD-store',
-    'FUNC-migrate-schema': 'MOD-store', 'FUNC-schema-guard': 'MOD-store',
-    'FUNC-score-completeness': 'MOD-metrics-engine', 'FUNC-check-code-conformance': 'MOD-gate',
-    'FUNC-list-elements': 'MOD-mcp-tools',
-    'FUNC-broadcast-diff': 'MOD-live', 'FUNC-health-endpoint': 'MOD-live',
-    'FUNC-own-kuzu-host': 'MOD-live', 'FUNC-serve-sse': 'MOD-live', 'FUNC-host-socket': 'MOD-live',
-    'FUNC-block-live-dashboard': 'MOD-live', 'FUNC-block-schaufenster': 'MOD-live',
-    'FUNC-block-speicherwerk': 'MOD-store', 'FUNC-block-gedaechtnis': 'MOD-codec',
-    'FUNC-block-gate': 'MOD-gate', 'FUNC-block-messwerk': 'MOD-steering',
-    'FUNC-block-anschluss': 'MOD-mcp-tools', 'FUNC-block-ruestzeug': 'MOD-mcp-tools',
-    'FUNC-block-betrieb': 'MOD-cli', 'FUNC-block-antrieb': 'MOD-executor',
-    'FUNC-mutate': 'MOD-gate', 'FUNC-evaluate-rules': 'MOD-gate', 'FUNC-load-config': 'MOD-gate',
-    'FUNC-fit-advisory': 'MOD-gate', 'FUNC-preflight': 'MOD-gate',
-    'FUNC-tool-context': 'MOD-mcp-tools', 'FUNC-graph-suggest': 'MOD-steering',
-  };
-  /** Renames als merge-nodes: Ziel neu anlegen, Quelle hineinmergen (Kanten wandern mit). */
-  const RENAME: Record<string, string> = {
-    'MOD-harness': 'MOD-store', 'MOD-docs': 'MOD-views', 'MOD-skills': 'MOD-agent-surface',
-  };
-  /** FLOW-Konsolidierungen, die dem Code folgen (SteeringSnapshot / MutateResult / Graph-als-Wert). */
-  const FLOW_MERGE: Record<string, string> = {
-    'FLOW-measurement-vector': 'FLOW-steering-snapshot', 'FLOW-arch-fitness': 'FLOW-steering-snapshot',
-    'FLOW-dimension-readiness': 'FLOW-steering-snapshot', 'FLOW-phase-readiness': 'FLOW-steering-snapshot',
-    'FLOW-fit-advisory': 'FLOW-gate-verdict', 'FLOW-steering-delta': 'FLOW-gate-verdict',
-    'FLOW-graph-snapshot': 'FLOW-graph-state',
-  };
-  /**
-   * SCHEMA-Konsolidierung — vom GATE ERZWUNGEN, nicht geplant: der erste Lauf
-   * dieses Tests schickte nur die FLOW-Merges, und das Gate blockte mit R-18
-   * („FLOW-steering-snapshot has 5 relation traces to SCHEMA — the meta-model
-   * allows at most 1"). Eine FLOW-Konsolidierung zieht die Konsolidierung der
-   * Datenverträge zwingend nach — die In-Memory-Simulation hatte das übersehen.
-   */
-  const SCHEMA_MERGE: Record<string, string> = {
-    'SCHEMA-measurement-vector': 'SCHEMA-steering-snapshot', 'SCHEMA-metric-vector': 'SCHEMA-steering-snapshot',
-    'SCHEMA-readiness-report': 'SCHEMA-steering-snapshot', 'SCHEMA-phase-readiness': 'SCHEMA-steering-snapshot',
-    'SCHEMA-fit-advisory': 'SCHEMA-mutate-result', 'SCHEMA-steering-delta': 'SCHEMA-mutate-result',
-  };
-  /** Geleerte Splitter-MODs → Nachfolger (satisfy/relation/compose wandern mit statt zu reißen). */
-  const DISSOLVE: Record<string, string> = {
-    'MOD-hooks': 'MOD-store', 'MOD-schema-migration': 'MOD-store', 'MOD-conformance': 'MOD-gate',
-    'MOD-element-slice': 'MOD-mcp-tools', 'MOD-completeness': 'MOD-metrics-engine',
-    'MOD-host-bridge': 'MOD-live',
-  };
-
-  it('Lauf B — Handschnitt (8er-Schnitt) als Gate-Batches, Endwerte aus dem Store', async () => {
-    const ssot = sha256(REPO_GRAPH);
-    const rig = await makeRig();
-    try {
-      const base = await findingKeys(rig.tools);
-      const start = measure(rig.harness);
-      console.log(`\n#### LAUF B (Handschnitt am Gate) — Baseline-Vorlast ${base.size} [${byRule(base)}]`);
-      printSnapshot('Lauf B — START (aus dem Store)', start);
-
-      const newMod = (uid: string, description: string): MutateCommand => ({
-        op: 'add-node',
-        node: { uid, type: 'MOD', name: uid.replace('MOD-', ''), description, attributes: {} },
-      });
-
-      // ZWEITER Gate-Befund des ersten Testlaufs: Umbenennen-per-merge RE-KEYT
-      // die Vorlast — die grammatik-illegalen `MOD -satisfy-> REQ`-Kanten (R-18-
-      // Vorlast auf MOD-harness/MOD-docs/MOD-hooks/…) tauchen am neuen MOD als
-      // NEUE Verstöße auf und blocken unter der Delta-Semantik. Der saubere
-      // Zielzustand lässt sie fallen (der ehrliche Fix — satisfy auf FUNC-Ebene —
-      // ist Modellpflege außerhalb dieses Spikes).
-      const modSatisfyDrops = (mods: string[]): MutateCommand[] => {
-        const isReq = new Set(rig.harness.getGraph().nodes.filter((n) => n.type === 'REQ').map((n) => n.uid));
-        return rig.harness
-          .getGraph()
-          .edges.filter((e) => mods.includes(e.sourceId) && e.edgeType === 'satisfy' && isReq.has(e.targetId))
-          .map((e) => ({ op: 'delete-edge' as const, edge: { sourceId: e.sourceId, targetId: e.targetId, edgeType: 'satisfy' } }));
-      };
-
-      // Batch 1 — Renames + FLOW-Konsolidierung + die vom Gate erzwungene
-      // SCHEMA-Konsolidierung, alles merge-nodes (Kanten wandern mit, dedupe
-      // gegen CR-GC-384). Das Gate urteilt EINMAL über den Endzustand des Batches.
-      const b1: MutateCommand[] = [
-        newMod('MOD-store', 'Store/Lifecycle (Spike-Zielmodul, vorher MOD-harness)'),
-        newMod('MOD-views', 'Deterministische Views (vorher MOD-docs)'),
-        newMod('MOD-agent-surface', 'Bedienschicht: Markdown-Skill-Treiber (vorher MOD-skills)'),
-        ...modSatisfyDrops(Object.keys(RENAME)),
-        ...Object.entries(RENAME).map(([s, t]) => ({ op: 'merge-nodes' as const, sourceUid: s, targetUid: t })),
-        ...Object.entries(FLOW_MERGE).map(([s, t]) => ({ op: 'merge-nodes' as const, sourceUid: s, targetUid: t })),
-        ...Object.entries(SCHEMA_MERGE).map(([s, t]) => ({ op: 'merge-nodes' as const, sourceUid: s, targetUid: t })),
-      ];
-      const r1 = await rig.harness.mutate(b1);
-      expect(r1.success, `Batch 1 (Renames+FLOW-Merge) blockte: ${r1.violations.map((v) => `${v.ruleId}: ${v.message}`).join(' | ')}`).toBe(true);
-
-      // Batch 2 — Umhängungen: je FUNC [delete-edge(ist), add-edge(soll)] — verschiedene
-      // Schlüssel, No-Ops werden übersprungen (delete+add DERSELBEN Kante wäre der
-      // bekannte persist-Fallstrick). Neue Ziel-MODs + compose an den Container.
-      const alloc = new Map(
-        rig.harness.getGraph().edges.filter((e) => e.edgeType === 'allocate').map((e) => [e.sourceId, e.targetId]),
-      );
-      const have = new Set(rig.harness.getGraph().nodes.map((n) => n.uid));
-      const b2: MutateCommand[] = [];
-      for (const t of new Set(Object.values(REALLOC)))
-        if (!have.has(t)) {
-          b2.push(newMod(t, 'Spike-Zielmodul (8er-Schnitt)'));
-          b2.push({ op: 'add-edge', edge: { sourceId: 'MOD-repo-root', targetId: t, edgeType: 'compose', attributes: {} } });
-        }
-      for (const [f, want] of Object.entries(REALLOC)) {
-        const is = alloc.get(f);
-        if (is === want) continue;
-        if (is) b2.push({ op: 'delete-edge', edge: { sourceId: f, targetId: is, edgeType: 'allocate' } });
-        b2.push({ op: 'add-edge', edge: { sourceId: f, targetId: want, edgeType: 'allocate', attributes: {} } });
-      }
-      const r2 = await rig.harness.mutate(b2);
-      expect(r2.success, `Batch 2 (Umhängungen) blockte: ${r2.violations.map((v) => `${v.ruleId}: ${v.message}`).join(' | ')}`).toBe(true);
-
-      // Batch 3 — geleerte Splitter-MODs in ihre Nachfolger mergen (kein delete-node:
-      // deren satisfy-Kanten zu REQs würden reißen und die Bilanz künstlich verschlechtern).
-      const b3: MutateCommand[] = [
-        ...modSatisfyDrops(Object.keys(DISSOLVE)),
-        ...Object.entries(DISSOLVE).map(([s, t]) => ({ op: 'merge-nodes' as const, sourceUid: s, targetUid: t })),
-      ];
-      const r3 = await rig.harness.mutate(b3);
-      expect(r3.success, `Batch 3 (Splitter auflösen) blockte: ${r3.violations.map((v) => `${v.ruleId}: ${v.message}`).join(' | ')}`).toBe(true);
-
-      // Endwerte AUS DEM STORE — und der Nachweis, dass der Store den Schnitt trägt.
-      await rig.harness.loadGraph();
-      const allocEnd = new Map(
-        rig.harness.getGraph().edges.filter((e) => e.edgeType === 'allocate').map((e) => [e.sourceId, e.targetId]),
-      );
-      for (const [f, want] of Object.entries(REALLOC)) expect(allocEnd.get(f), `Allokation ${f}`).toBe(want);
-      const uids = new Set(rig.harness.getGraph().nodes.map((n) => n.uid));
-      for (const gone of [...Object.keys(RENAME), ...Object.keys(FLOW_MERGE), ...Object.keys(SCHEMA_MERGE), ...Object.keys(DISSOLVE)])
-        expect(uids.has(gone), `${gone} sollte gemergt sein`).toBe(false);
-
-      const end = measure(rig.harness);
-      const after = await findingKeys(rig.tools);
-      printSnapshot('Lauf B — ENDE (loadGraph aus dem Store)', end);
-      console.log(`   Projektion auf Zielprofil: realisiert ${along(start.r6, end.r6).toFixed(4)}`);
-      printBalance(base, after);
-
-      expect(sha256(REPO_GRAPH)).toBe(ssot);
-    } finally {
-      await dropRig(rig);
-    }
-  }, 900_000);
 });
