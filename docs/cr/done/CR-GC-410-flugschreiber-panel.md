@@ -1,6 +1,9 @@
-# CR-DRAFT-GC-410 — Flugschreiber: „Wirkt die Arbeit?" — Zustands-Pfad im Dashboard
+# CR-GC-410 — Flugschreiber: „Wirkt die Arbeit?" — Zustands-Pfad im Dashboard
 
-**Status:** DRAFT — neu geschnitten 2026-08-26 (No-Go CR-GC-407 eingearbeitet) · **Angelegt:** 2026-08-25
+**Status:** DONE 2026-08-27 — umgesetzt als gve-Karte (graph-view-edit `beed9f6`,
+`feat: wirkt-die-arbeit karte (CR-GC-410)`); graphcode-seitig 0 Dateien (Auswertung
+läuft komplett in gves vite.config.js, kein Bridge-Anteil nötig) ·
+**Angelegt:** 2026-08-25 · neu geschnitten 2026-08-26 (No-Go CR-GC-407 eingearbeitet)
 **Herkunft:** Dashboard-Review 2026-08-25 („die Arbeit des Autopilot sichtbar machen —
 Kernfeature, ich kann es weder sehen noch beweisen")
 **Entwurf (final, Karte 1):** https://claude.ai/code/artifact/e555fc68-f3de-412c-96d1-4d807131f1fa
@@ -45,13 +48,30 @@ nicht dieser CR.
 
 ## Akzeptanzkriterien
 
-- [ ] gve rendert Karte 1 aus echten Graph-Ständen (Fixture: bekannte Commit-Serie →
-      erwarteter Pfad + Referenzlinie).
-- [ ] Kein zweiter Messpfad: jeder Stand über Mapper + Engine-Regeln bewertet.
-- [ ] Kein Schreibpfad: Diff berührt weder trajectory.jsonl noch `recordAudit`.
-- [ ] Rechenzeit der History-Messung gemessen und im CR genannt; Cache je Commit-Hash.
+- [x] gve rendert Karte 1 aus echten Graph-Ständen (Fixture: bekannte Commit-Serie →
+      erwarteter Pfad + Referenzlinie). — `tests/vite-config-flightrecorder.test.mjs`
+      (Wegwerf-Git-Repo, 3 committete Stände) + `tests/dashboard-flightrecorder.test.mjs`
+      (jsdom-Render: Pfadpunkte, Referenzlinie, Sekundärbefund); Pixel-Verifikation
+      per Screenshot gegen den graphcode-Graphen (78 Stände, Pfad + Endspurt sichtbar).
+- [x] Kein zweiter Messpfad: jeder Stand über `fromOntologyGraph` +
+      `DefaultRuleEngine(SE_DESCRIPTOR)` — dieselbe `createRuleEngine()`-Konstruktion,
+      die auch der Live-Stand (buildDashboard) nutzt; die Test-Erwartungen sind aus
+      derselben Referenz gerechnet, nicht hart codiert.
+- [x] Kein Schreibpfad: reine `git log`/`git show`-Lesung; trajectory.jsonl und
+      `recordAudit` unberührt (Diff: vite.config.js, Dashboard.jsx, dashboard.css,
+      2 Testdateien).
+- [x] Rechenzeit gemessen: **graphcode, 78 Stände, kalt ≈ 3,1 s (~40 ms/Stand);
+      warm (Cache je Commit-Hash) ≈ 70 ms** — nur `git log`, 78/78 aus dem Cache.
+      Wegen der kalten Sekunden eigener Endpoint `GET /api/flightrecorder` statt
+      Huckepack auf `/api/dashboard`; die Karte zeigt die Messwerte selbst an.
 
-## Dateien (Schätzung, beim Start schneiden)
+## Ergebnis (2026-08-27)
 
-gve: Panel + Fixture-Test (eigener CR dort) · graphcode: nur falls die Stand-Bewertung
-serverseitig bereitgestellt wird (History-Auswertung an der SSE-Bridge), sonst 0.
+Karte „Wirkt die Arbeit?" im gve-Dashboard: Pfad über 78 committete Stände
+(nach rechts = gebaut, nach unten = gebunden), gestrichelte Referenzlinie
+(Verstoß-Dichte des ersten Standes, graphcode: 1,12 Verstöße/Element),
+Endstand 691 Elemente / 30 offene Verstöße (1 error). Sekundärbefund ehrlich:
+**0 der letzten 24 Stände ohne error** — der Gate-Wirkungs-Nachweis aus dem
+CR-Beispiel („23 von 24") ist am echten Repo (noch) nicht erreicht. Nicht
+messbare Stände werden übersprungen und angesagt, nie als 0 gezeichnet
+(CR-GC-326-Regel). graphcode-Anteil: 0 Dateien.
