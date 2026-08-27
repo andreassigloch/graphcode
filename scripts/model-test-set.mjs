@@ -73,6 +73,9 @@ export const INCLUDED = [
   // ist (Umhängen via retire) — eine Modelländerung an den Allokationen ändert
   // genau diesen Befund.
   'tests/suggest.rehang.test.ts',
+  // CR-GC-444: zählt am Repo-Graphen die anwendbaren MERGE-Vorschläge. Werden FLOWs
+  // konsolidiert oder Verträge umgehängt, ändert sich genau diese Zahl.
+  'tests/suggest.merge.test.ts',
   'tests/views.auditor.test.ts',
   'tests/views.no-fork.test.ts',
   'tests/verify-model.completeness.test.ts',

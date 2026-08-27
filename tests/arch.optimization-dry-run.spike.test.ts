@@ -47,7 +47,7 @@ import { GraphCodeHarness } from '../src/harness/harness.js';
 import { bindToolsToHarness, type MCPToolRegistry } from '../src/tools/mcp-tools.js';
 import { toOntologyGraph } from '../src/conformance/conformance.js';
 import { makeSteeringConfig, type FixtureGraph } from './fixtures/steering-graphs.js';
-import type { GraphSuggestResult } from '../src/tools/suggest.js';
+import { batchFor, type GraphSuggestResult } from '../src/tools/suggest.js';
 
 const REPO_GRAPH = join(__dirname, '..', 'docs/graph/graphcode.graph.json');
 
@@ -257,13 +257,11 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
           break;
         }
         const e = best.edit!;
-        const cmds: MutateCommand[] = [
-          ...(e.retire
-            ? [{ op: 'delete-edge' as const, edge: { sourceId: e.retire.source, targetId: e.retire.target, edgeType: e.retire.type } }]
-            : []),
-          { op: 'add-edge' as const, edge: { sourceId: e.source, targetId: e.target, edgeType: e.type, attributes: {} } },
-        ];
-        const g = await rig.harness.mutate(cmds);
+        // CR-GC-444: DIESELBE Batch-Bildung wie graph_suggest (`batchFor`) — der
+        // Autopilot darf den Verbund nicht ein zweites Mal nachbauen, sonst wendet
+        // er etwas anderes an, als der dryRun beurteilt hat (hier gemessen: der
+        // Merge-Vorschlag wurde als add-edge FLOW→FLOW abgeschickt und starb an R-18).
+        const g = await rig.harness.mutate(batchFor(e));
         expect(
           g.success,
           `Gate wies Zug ${n} ab (${best.ruleId}): ${g.violations.map((v) => `${v.ruleId}: ${v.message}`).join(' | ')}`,
@@ -272,7 +270,10 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
         steps.push({
           n,
           ruleId: best.ruleId,
-          edit: `${e.source} -${e.type}-> ${e.target}${e.retire ? ` (retire ${e.retire.target})` : ''}`,
+          edit:
+            e.op === 'merge-nodes'
+              ? `${e.target} absorbiert ${e.source}${e.merges?.length ? ` (+ ${e.merges.map((m) => `${m.target}←${m.source}`).join(', ')})` : ''}`
+              : `${e.source} -${e.type}-> ${e.target}${e.retire ? ` (retire ${e.retire.target})` : ''}`,
           promised: best.score,
         });
       }

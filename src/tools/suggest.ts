@@ -24,8 +24,10 @@
  */
 import { z } from 'zod/v4';
 import type { MutateResult } from '@sigloch/contracts/harness';
-import { targetFor, suggestEdits, type Suggestion } from '@sigloch/se-engine';
+import type { MutateCommand } from '@sigloch/contracts/harness';
+import { targetFor, suggestEdits, type Suggestion, type SuggestedEdit } from '@sigloch/se-engine';
 import { toOntologyGraph } from '../conformance/conformance.js';
+import { withNDMatrices } from '../steering/nd-similarity.js';
 import { generationStep, type GenerationStep } from '../steering/generate.js';
 import {
   TargetWeightsSchema,
@@ -104,6 +106,43 @@ const ADVISORY_LAYER = 'arch' as const;
 /** Numerischer Schlupf: darunter ist ein Score „flach", keine Verbesserung. */
 const SCORE_EPS = 1e-12;
 
+/**
+ * Der Batch, den ein Template-Edit bedeutet — und der EINS-ZU-EINS so durch den
+ * dryRun geht, wie der Consumer ihn anwenden soll (CR-GC-431: die Zahl gehört
+ * dem ausgelieferten Zug).
+ *
+ * Zwei Verbund-Formen, beide aus se-engine hergeleitet, keine Grammatik hier:
+ *
+ *   - `retire` (CR-GC-435): `[delete-edge(retire), add-edge(edit)]` — Umhängen.
+ *   - `merges` (CR-GC-444): `[merge-nodes(primär), ...merges]` — Konsolidieren.
+ *     Ein FLOW-Merge OHNE den gekoppelten SCHEMA-Merge stirbt am Gate, weil
+ *     `FLOW -relation-> SCHEMA` 1..1 ist (R-18, drittes Bein).
+ *
+ * Der Fallstrick „delete+add DERSELBEN uid in einem Batch" (persist schreibt
+ * deletes LAST) wird nicht getroffen: beim Umhängen unterscheiden sich die
+ * Kanten-Schlüssel, und `merge-nodes` legt Knoten zusammen, statt einen
+ * gelöschten unter demselben Schlüssel neu anzulegen.
+ */
+export function batchFor(edit: SuggestedEdit): MutateCommand[] {
+  if (edit.op === 'merge-nodes') {
+    return [
+      { op: 'merge-nodes', sourceUid: edit.source, targetUid: edit.target },
+      ...(edit.merges ?? []).map((m): MutateCommand => ({ op: 'merge-nodes', sourceUid: m.source, targetUid: m.target })),
+    ];
+  }
+  return [
+    ...(edit.retire
+      ? [
+          {
+            op: 'delete-edge' as const,
+            edge: { sourceId: edit.retire.source, targetId: edit.retire.target, edgeType: edit.retire.type },
+          },
+        ]
+      : []),
+    { op: 'add-edge', edge: { sourceId: edit.source, targetId: edit.target, edgeType: edit.type, attributes: {} } },
+  ];
+}
+
 /** L2-normalisierte Zielrichtung t̂ — dieselbe Normierung wie in se-engine. */
 function unitTarget(target: number[]): number[] {
   const n = Math.sqrt(target.reduce((s, x) => s + x * x, 0));
@@ -155,7 +194,13 @@ export function bindSuggestTools(ctx: ToolContext): MCPToolRegistry {
       'Obergrenze weichen muss — anwenden als EIN graph_mutate-Batch [delete-edge(retire), ' +
       'add-edge(edit)], nie als zwei Aufrufe; genau diesen Verbund hat der dryRun beurteilt. ' +
       'Ein `codeImpact` benennt Datei+Zielmodul, wenn das Umhängen einer realisierten FUNC ' +
-      'Code-Arbeit nach sich zieht. Read-only; die Metrik rankt, das Gate urteilt.',
+      'Code-Arbeit nach sich zieht. ' +
+      'KONSOLIDIEREN (CR-GC-444): ein Edit mit `op:"merge-nodes"` legt zwei Knoten zusammen, die ' +
+      'denselben Datenvertrag tragen (`target` absorbiert `source`). Anwenden als EIN ' +
+      'graph_mutate-Batch [merge-nodes(source→target), ...merges] — die Liste `merges` sind die ' +
+      'GEKOPPELTEN Merges, ohne die das Gate den Zug über R-18 abweist (FLOW -relation-> SCHEMA ' +
+      'ist 1..1). Solche Suggestions tragen die Kennung OP-MERGE statt einer Regel-ID: ein Merge ' +
+      'repariert keine Regel, er bewegt die Metrik. Read-only; die Metrik rankt, das Gate urteilt.',
     inputSchema: GraphSuggestInputSchema,
     async handler(input) {
       // CR-GC-324: der EINE Mapper statt des flachen Export-Encodings.
@@ -167,7 +212,11 @@ export function bindSuggestTools(ctx: ToolContext): MCPToolRegistry {
       // CR-GC-431: ALLE Kandidaten holen, nicht die Top-k der Sonde. Das k-Fenster
       // wird erst NACH dem Umranken auf das Edit-Δm geschnitten — sonst fiele ein
       // gut bewerteter Edit heraus, weil die generische Sonde ihn niedrig rankte.
-      const suggestions = suggestEdits(og, target, { layer: input.layer });
+      // CR-GC-444: die ND-Klammer — der Konsolidierungs-Operator liest die
+      // ND-02-Matrix (Duplikat-Zweig seiner Kandidatensuche) und darf sie nicht
+      // aus einem fremden Lauf erben. `withNDMatrices` rechnet sie für GENAU
+      // diesen Graphen und setzt den contracts-Modul-State danach zurück.
+      const suggestions = withNDMatrices(og, () => suggestEdits(og, target, { layer: input.layer }));
 
       // dryRun-Preview der Template-Edits auf der Schreibkette (kein Interleaving
       // mit echten Writes); nach jedem Preview zurück auf die Disk-Basis, damit
@@ -179,23 +228,12 @@ export function bindSuggestTools(ctx: ToolContext): MCPToolRegistry {
             out.push(undefined);
             continue;
           }
-          // CR-GC-435: der dryRun urteilt über den VOLLSTÄNDIGEN Verbund — trägt
-          // der Template-Edit ein `retire` (Umhängen: die Kante, die laut
-          // Kardinalitäts-Obergrenze weichen muss), gehen delete+add als EIN
-          // Batch durchs Gate. Das Gate bewertet nur den Endzustand; der
-          // Zwischenzustand „zwei Allokationen" wird nie gemessen. Verschiedene
-          // Kanten-Schlüssel — der persist-Fallstrick (deletes last) greift nur
-          // bei delete+add DERSELBEN Kante. Welche Kante weicht, hat se-engine
-          // hergeleitet; hier wird kein Grammatikwissen nachgebaut.
-          const res = await harness.mutate(
-            [
-              ...(s.edit.retire
-                ? [{ op: 'delete-edge' as const, edge: { sourceId: s.edit.retire.source, targetId: s.edit.retire.target, edgeType: s.edit.retire.type } }]
-                : []),
-              { op: 'add-edge' as const, edge: { sourceId: s.edit.source, targetId: s.edit.target, edgeType: s.edit.type, attributes: {} } },
-            ],
-            { dryRun: true },
-          );
+          // Der dryRun urteilt über den VOLLSTÄNDIGEN Verbund (CR-GC-435/444).
+          // Das Gate bewertet nur den Endzustand des Batches; Zwischenzustände
+          // („zwei Allokationen", „zwei SCHEMAs an einem FLOW") werden nie
+          // gemessen. Welche Kante weicht bzw. welcher Merge mitlaufen muss, hat
+          // se-engine hergeleitet — hier wird kein Grammatikwissen nachgebaut.
+          const res = await harness.mutate(batchFor(s.edit), { dryRun: true });
           await harness.loadGraph();
           out.push({
             tier: res.tier,
@@ -232,8 +270,16 @@ export function bindSuggestTools(ctx: ToolContext): MCPToolRegistry {
       // Anwendbares mit positivem Δm zuerst — sonst stünde ein Fund, den niemand
       // ausführen kann, weiter über einem Zug, den das Gate durchlässt. Innerhalb
       // beider Gruppen: Score absteigend, Tiebreak ruleId (deterministisch).
+      // Tiebreak bis auf elementId: seit dem Konsolidierungs-Operator (CR-GC-444)
+      // kann DIESELBE Kennung mehrfach vorkommen, und die Reihenfolge ist Vertrag.
       const rankGroup = (s: RankedSuggestion) => (s.applicable && s.score > SCORE_EPS ? 0 : 1);
-      ranked.sort((a, b) => rankGroup(a) - rankGroup(b) || b.score - a.score || a.ruleId.localeCompare(b.ruleId));
+      ranked.sort(
+        (a, b) =>
+          rankGroup(a) - rankGroup(b) ||
+          b.score - a.score ||
+          a.ruleId.localeCompare(b.ruleId) ||
+          a.elementId.localeCompare(b.elementId),
+      );
 
       return {
         target,
