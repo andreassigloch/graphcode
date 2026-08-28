@@ -205,6 +205,52 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
     expect(md).not.toContain('stale guardrails');
   });
 
+  it('GRAPHCODE.md maps every structural question to a tool — the anti-grep table (CR-GC-450)', async () => {
+    await scaffold('init', { repoRoot: repo });
+    const md = readFileSync(join(repo, GUARDRAILS), 'utf8');
+    // The section exists under a name the agent can be pointed at.
+    expect(md).toMatch(/^## Ask the graph, don't grep for it$/m);
+    // The measured occasion, so the rule is not a preference: precision queries went
+    // unused while the same rebuild ran 174 searches over 810 moved elements.
+    expect(md).toMatch(/174/);
+    expect(md).toMatch(/810/);
+    // Every precision tool has its OWN table row — a list of names in prose is what
+    // the previous version had, and it did not get called.
+    const rows = md.split('\n').filter((l) => /^\| .+ \| .+ \|$/.test(l));
+    for (const tool of [
+      'graph_impact',
+      'graph_context',
+      'graph_expand',
+      'graph_elements',
+      'graph_tests',
+      'rules_get_violations',
+      'graph_readiness',
+      'graph_next_step',
+      'graph_suggest',
+      'graph_metrics',
+      'graph_help',
+    ]) {
+      expect(rows.some((r) => r.includes(tool)), `${tool} has a question row`).toBe(true);
+    }
+    // Code location comes from the binding attribute, not from grepping the name.
+    expect(rows.some((r) => r.includes('realRef')), 'realRef row').toBe(true);
+    // And the honest limit: grep is not forbidden, it is scoped.
+    expect(md).toMatch(/grep/i);
+    expect(md).toMatch(/free-text|which file contains/i);
+  });
+
+  it('GRAPHCODE.md makes graph_tests the inner loop and the full suite the close gate (CR-GC-450)', async () => {
+    await scaffold('init', { repoRoot: repo });
+    const md = readFileSync(join(repo, GUARDRAILS), 'utf8');
+    expect(md).toContain('graph_tests');
+    expect(md).toContain('vitest run');
+    // The full suite is named as the gate before closing, not as the inner loop.
+    expect(md).toMatch(/full suite/i);
+    // The unresolved list must be READ — a concept-only TEST is a gap, not noise.
+    expect(md).toContain('unresolved');
+    expect(md).toMatch(/concept-only/i);
+  });
+
   it('GRAPHCODE.md points at se:help / graph_help as the live help entry (CR-GC-230)', async () => {
     await scaffold('init', { repoRoot: repo });
     const md = readFileSync(join(repo, GUARDRAILS), 'utf8');
