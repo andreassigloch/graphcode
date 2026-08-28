@@ -21,7 +21,8 @@ the same rebuild moved 810 model elements. That is the failure mode this section
 | What breaks if I change X? | `graph_impact(uid)` — the exact blast radius, typed and complete |
 | What else hangs off this node? | `graph_expand(uid)` — one level deeper, on demand |
 | What is X, and what does it require? | `graph_context(uid)` — description, edges, refs in one slice |
-| Where is this realized in code? | `realRef` / `codeRef` from `graph_context` — never grep the name |
+| Where is this realized in code? | the `realRef` attribute — `graph_context` returns it and lists gaps under `missingRefs`; never grep the name |
+| Which elements of type X exist? | `graph_elements({type, search})` |
 | Which tests must I run for *this* change? | `graph_tests({changeSet})` — the minimal `vitest run <affected files>`, not the whole suite |
 | Which tests cover this node? | the node's `testRefs` from `graph_context` |
 | Which rules are violated, and where? | `rules_evaluate` · `rules_get_violations` |
