@@ -88,6 +88,43 @@ Coupling check after the cut: **CR-01** counts *distinct SCHEMA contracts per mo
 
 A MOD without a stack is half a decision. The only legal place is `MOD -satisfy-> REQ` with a **structural** kind (`non-functional` / `risk` / `mitigation`) — a MOD cannot satisfy a behavioural REQ. Source the wording from `bok/docs/governance/STACKS.md`; do not restate it per repo.
 
+## Author the story first, mark the model second
+
+**The pitch is a detector, not a generator.** It does not produce the architecture — the judgment of someone who knows the domain does. What it produces is the *visible gap* between what you claim and what you modelled, and no rule can see that gap. Every finding the second pass turned up on the first run of this skill was invisible to all 72 rules.
+
+### Structure — four parts, in this order
+
+1. **What it is worth.** The return, in the reader's terms. **Never frame it as a bet, a gamble or a wager** — an investor is not betting; they want a return and a clearly named added value. Open with what gets better, for whom, and against what it is measured.
+2. **How it runs.** The mechanism, compressed. Every noun is a node.
+3. **What it runs on.** The stack, as a short postscript. Boring is a feature — say so.
+4. **What proves it.** One benchmark per load-bearing claim: the number that would settle it, whether that number exists today, and what it would take to get it. A claim with no benchmark is one you cannot defend in the second meeting. Name it unproven rather than dropping it — and never invent a percentage to fill the hole.
+
+Part 4 is the one that gets skipped and the one that carries the credibility. Write it as a table: claim, benchmark, status.
+
+
+
+Write the pitch in plain language with **no type annotations at all** — the way you would tell it to someone who will never see the graph. Benefit before mechanism, one honest number (and if there is no validated number, say so and name the experiment that would produce it), the stack as a postscript.
+
+Only *then* make a **second pass** and mark each noun and verb with its element type. The order is not cosmetic. Annotating while you write bends the story toward the model you already have — you reach for a word because a node exists, not because the sentence needs it.
+
+The second pass is an **audit**, not a transcription. Three things fall out of it that nothing else finds:
+
+- **A word with no node** — the story promises something the model does not carry. The dangerous kind is a promise no REQ guards: nobody notices the day it silently stops being true.
+- **A node with no word** — either it is not load-bearing, or the story is incomplete. Decide which; do not leave it.
+- **A contradiction** — the story says one thing, the graph says another. Check *both* levels: a function can sit outside another function and still be allocated inside its module, and the module is the level that gets deployed and owned.
+
+If the story is shorter than the model, the model has duplicates. If it is longer, the model has gaps. Both are findings, and both are cheaper to fix in a sentence than in a graph.
+
+### The rhythm: one story, three to five corrections
+
+Expect **iterations, not exploration**. The story is written once, then corrected by the person who knows the domain — three to five rounds is normal and healthy. Each correction produces exactly **one** model batch: correct the sentence, dry-run, apply, measure. Do not batch corrections together; the fit advisory is only readable one move at a time.
+
+What wasted rounds on the first run, measured:
+
+- **Cutting modules before the story existed.** The story then changed the cut, and the first cut was thrown away.
+- **Counting connections without the ACTOR edges.** They were 7 of 16 lines, and the human alone held 6 of them. Count the actor edges *first* — in a system one person operates, they are the majority and they are the architecture.
+- **Offering a simplification that contradicts a sentence in the pitch.** Check every proposal against the pitch text before you put it forward; if it removes something the pitch promises, it is the wrong simplification even when the metric likes it.
+
 ## Check questions — run all seven before you call the level done
 
 1. **Does every UC tell its story with the top-level FUNCs alone?** If you have to name a sub-function, the level is too coarse.
