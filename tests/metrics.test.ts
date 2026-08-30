@@ -16,13 +16,15 @@
  * @author andreas@siglochconsulting
  */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { mkdtempSync, mkdirSync, rmSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness, type MCPToolRegistry } from '../src/surface/mcp-tools.js';
+import { computeFitAdvisory } from '../src/projections/fit-advisory.js';
+import { METRIC_DIMENSIONS, toArray } from '@sigloch/se-engine';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
 
 function makeHarness(repoRoot: string): GraphCodeHarness {
@@ -62,6 +64,16 @@ const SEED: MutateCommand[] = [
   node('FLOW-3', 'FLOW', 'Flow three'),
   node('FLOW-4', 'FLOW', 'Flow four'),
   node('FLOW-5', 'FLOW', 'Flow five'),
+  // R-18 (contracts 10): jeder FLOW braucht GENAU EINE relation auf ein SCHEMA.
+  // Ein geteiltes SCHEMA reicht — die Regel zaehlt je FLOW, nicht je SCHEMA. Die
+  // Kanten sind FLOW→SCHEMA und beruehren die Modulzahlen nicht: fan_in/fan_out
+  // eines MOD zaehlen seine eigenen Traces und die seiner allozierten FUNC.
+  node('SCHEMA-c', 'SCHEMA', 'Shared contract'),
+  edge('FLOW-1', 'relation', 'SCHEMA-c'),
+  edge('FLOW-2', 'relation', 'SCHEMA-c'),
+  edge('FLOW-3', 'relation', 'SCHEMA-c'),
+  edge('FLOW-4', 'relation', 'SCHEMA-c'),
+  edge('FLOW-5', 'relation', 'SCHEMA-c'),
   edge('FUNC-a', 'allocate', 'MOD-loud'),
   edge('FUNC-b', 'allocate', 'MOD-loud'),
   edge('FUNC-solo', 'allocate', 'MOD-quiet'),
@@ -147,5 +159,47 @@ describe('TEST-graph-metrics: Kennzahlen je MOD, auch ohne Verstoss (CR-GC-326)'
     const res = await tools.graph_metrics.handler({});
     expect(typeof res.graphVersion).toBe('number');
     expect(res.graphVersion).toBeGreaterThanOrEqual(0);
+  });
+
+  // CR-GC-451: der ℝ⁶-Ist-Vektor verlaesst den Host. Er wurde laengst gerechnet
+  // und entschied ueber jede graph_suggest-Empfehlung, kam aber an kein Tool —
+  // ein Dashboard konnte nur die Zielrichtung zeigen.
+  describe('fit — der Ist-Vektor auf der Architektur-Ebene (CR-GC-451)', () => {
+    it('liefert alle sechs Dimensionen, benannt und als Zahl', async () => {
+      const { fit } = await tools.graph_metrics.handler({});
+      expect(fit.layer).toBe('arch');
+      expect(Object.keys(fit.metrics).sort()).toEqual([...METRIC_DIMENSIONS].sort());
+      for (const d of METRIC_DIMENSIONS) expect(Number.isFinite(fit.metrics[d])).toBe(true);
+    });
+
+    it('ist DIESELBE Messung, gegen die graph_suggest sein Δm rechnet', async () => {
+      // Das ist der Kern des CR: nicht „ein Vektor mit passendem Schema", sondern
+      // GENAU der, auf dem das Ranking sitzt. Beweis ohne zweite Rechnung im Test:
+      // das Fit-Advisory einer Nullmutation (before === after) hat als `before`
+      // exakt den Vektor, den das Tool herausgibt.
+      const { fit } = await tools.graph_metrics.handler({});
+      const graph = harness.getGraph();
+      const advisory = computeFitAdvisory(graph, graph);
+      expect(advisory.before).toEqual(toArray(fit.metrics));
+      expect(advisory.delta.every((d) => d === 0)).toBe(true);
+    });
+
+    it('ohne Zielprofil: source `none` und leere Gewichte — kein erfundener Nullvektor', async () => {
+      const { fit } = await tools.graph_metrics.handler({});
+      expect(fit.target.source).toBe('none');
+      expect(fit.target.weights).toEqual({});
+    });
+
+    it('mit Zielprofil reisen Wert und Zielmarke in EINER Antwort (Regel aus CR-GC-329)', async () => {
+      writeFileSync(
+        join(repoRoot, '.graphcode', 'target-profile.json'),
+        JSON.stringify({ weights: { coherence: 1, scalability: -0.5 } }),
+      );
+      const { fit } = await tools.graph_metrics.handler({});
+      expect(fit.target.source).toBe('profile');
+      expect(fit.target.weights).toEqual({ coherence: 1, scalability: -0.5 });
+      // …und der Ist-Wert steht daneben, nicht in einer zweiten Antwort.
+      expect(Number.isFinite(fit.metrics.coherence)).toBe(true);
+    });
   });
 });

@@ -1,6 +1,6 @@
 # CR-GC-451 — Der Ist-Vektor verlässt den Host
 
-**Status:** open · **Angelegt:** 2026-08-30
+**Status:** **done** — 2026-08-30 · **Angelegt:** 2026-08-30
 **Herkunft:** Review graph-view-edit 30.08.26, Punkte 2 + 3 (Dashboard-Karten „Hält der Bauplan?"
 und „Was die Maschine dazu sagt")
 
@@ -39,7 +39,6 @@ fit: {
   layer: 'arch',
   metrics: { modifiability, faultTolerance, flowEfficiency, coherence, viability, scalability },
   target: { weights: {...}, source: 'profile' | 'none' },
-  graphVersion: number,
 }
 ```
 
@@ -107,3 +106,31 @@ Drei Regeln, die daraus folgen:
   Vergleich dieser drei, und getrennt aufgestellt beantwortet sie niemand.
 - **Der Befund gehört an die Zahl**, nicht in eine zweite Tabelle: R-04 ist die Regelform der
   Kohäsion, nicht ein davon unabhängiger Fund.
+
+---
+
+## Umsetzung (2026-08-30)
+
+**Die Identität ist strukturell, nicht nur getestet.** `fit-advisory.ts` hatte die Messung in einem
+privaten `measure()` eingeschlossen; sie ist jetzt `archMetrics(graph)` und wird von beiden Seiten
+benutzt — es gibt keine zwei Aufrufe von `metrics(…, {layer:'arch'})`, zwischen denen etwas
+driften könnte. Der Test beweist es ohne eigene Rechnung: das Advisory einer Nullmutation
+(`before === after`) trägt als `before` exakt den Vektor, den das Tool herausgibt. Ersetzt man
+`archMetrics` durch einen zweiten `metrics()`-Aufruf auf dem Default-Layer, wird er rot — geprüft.
+
+`fit.graphVersion` ist gestrichen: das Ergebnis trägt sie schon auf oberster Ebene, ein zweites
+Feld wäre eine zweite Quelle für dieselbe Zahl.
+
+### Nebenbefund: die Fixture war älter als die Regel
+
+`tests/metrics.test.ts` war **vor** diesem CR rot (5/5) — nicht wegen ihm. Unter contracts 10.0.0
+verlangt **R-18** für jeden FLOW genau eine `relation` auf ein SCHEMA, und die Fixture aus
+CR-GC-326 kennt die Regel nicht. Repariert mit einem geteilten `SCHEMA-c`; die Modulzahlen bleiben
+unberührt (FLOW→SCHEMA berührt weder `fan_in`/`fan_out` eines MOD noch seine Kohäsion), alle fünf
+Alt-Zusagen bleiben unverändert grün.
+
+**Das ist eine Klasse, keine Einzelstelle.** Vor diesem CR: 21 rote Tests in 11 Dateien, nach ihm
+16 in 10 — die Differenz sind genau die fünf reparierten, dazu vier neue grüne. Die übrigen 16
+stammen aus derselben contracts-10-Umstellung (R-18-Fixtures, Steering-Kausalität) sowie aus dem
+Link-Modus (`distribution`, `lockfile-sync`). Sie gehören in einen eigenen CR — hier wurde nur
+repariert, was diesen CR verifizierbar macht.

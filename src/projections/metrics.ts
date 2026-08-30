@@ -15,13 +15,24 @@
  * Read-only. Schwellenlos: die Kohäsion trägt bewusst keine Ampel (CR-SM-223);
  * wer sie ampeln will, tut das im Konsumenten.
  *
+ * CR-GC-451: dazu `fit` — der ℝ⁶-IST-Vektor auf der Architektur-Ebene. Er wurde
+ * längst gerechnet und entschied über jede `graph_suggest`-Empfehlung, kam aber
+ * an kein Tool; ein Dashboard konnte deshalb nur die Zielrichtung zeigen und
+ * musste daneben schreiben, dass es den Ist-Wert nicht gibt. Auch hier KEINE
+ * eigene Rechnung: `archMetrics` (fit-advisory.ts) ist dieselbe Funktion, aus
+ * der das Δm-Advisory seine Differenz bildet.
+ *
  * @author andreas@siglochconsulting
  */
 
 import { z } from 'zod/v4';
 import { moduleMetrics, type ModuleMetrics, type MetricPolicy } from '@sigloch/contracts/se';
+import type { MetricVector } from '@sigloch/se-engine';
 import type { PolicySource } from '../kernel/config.js';
 import { toOntologyGraph } from '../kernel/conformance.js';
+import { archMetrics } from './fit-advisory.js';
+import { loadTargetProfile } from '../loop/target-profile.js';
+import type { TargetWeights } from '../loop/target-profile-contract.js';
 import type { MCPTool, MCPToolRegistry } from '../surface/mcp-tools.js';
 import type { ToolContext } from '../surface/tool-context.js';
 
@@ -32,7 +43,13 @@ export function bindMetricsTools(ctx: ToolContext): MCPToolRegistry {
 
   const graph_metrics: MCPTool<
     z.infer<typeof GraphMetricsInputSchema>,
-    { modules: ModuleMetrics[]; policy: MetricPolicy; policySource: PolicySource; graphVersion: number }
+    {
+      modules: ModuleMetrics[];
+      policy: MetricPolicy;
+      policySource: PolicySource;
+      fit: { layer: 'arch'; metrics: MetricVector; target: { weights: TargetWeights; source: 'profile' | 'none' } };
+      graphVersion: number;
+    }
   > = {
     name: 'graph_metrics',
     description:
@@ -54,7 +71,13 @@ export function bindMetricsTools(ctx: ToolContext): MCPToolRegistry {
       'DEFAULT_METRIC_POLICY). Draw the traffic light from THIS answer; a consumer that keeps a ' +
       'target value of its own is a second source for the same number. `policy.instability: null` ' +
       'means measure, do not judge: MT-01 never fires, the instability value is still in every ' +
-      'module row. Read-only.',
+      'module row. CR-GC-451: `fit` carries the ℝ⁶ CURRENT-STATE vector on the architecture layer ' +
+      '(`metrics`, the same measurement graph_suggest ranks its Δm against) TOGETHER WITH the target ' +
+      'direction it is judged against (`target.weights` from .graphcode/target-profile.json, ' +
+      '`target.source: \'none\'` when no profile exists — never an invented zero vector). Same rule as ' +
+      'policy/policySource: value and target leave the host in ONE answer, a consumer that keeps a ' +
+      'target of its own is a second source for the same number. `layer: \'arch\'` is part of the ' +
+      'answer — this is NOT the global metrics(G); whoever compares must know against what. Read-only.',
     inputSchema: GraphMetricsInputSchema,
     async handler(_input) {
       // CR-GC-329: Wert UND Schwelle aus EINER Antwort. Ein Konsument, der „71 % /
@@ -62,10 +85,23 @@ export function bindMetricsTools(ctx: ToolContext): MCPToolRegistry {
       // `policySource` sagt, ob sie aus `graphcode.config.jsonc` stammt oder der
       // benannte contracts-Startwert ist — verschwiegen wird nichts.
       const { config, source } = harness.getGraphcodeConfig();
+      const graph = harness.getGraph();
+      // CR-GC-451: Wert UND Zielmarke aus EINER Antwort — dieselbe Regel wie
+      // policy/policySource oben. Kein Profil heißt `source: 'none'` mit leeren
+      // Gewichten; ein erfundener Nullvektor sähe aus wie „überall neutral
+      // entschieden" und ist etwas anderes als „nie entschieden".
+      const profile = loadTargetProfile(harness.getRepoRoot());
       return {
-        modules: moduleMetrics(toOntologyGraph(harness.getGraph())),
+        modules: moduleMetrics(toOntologyGraph(graph)),
         policy: config.metricPolicy,
         policySource: source,
+        fit: {
+          layer: 'arch',
+          metrics: archMetrics(graph),
+          target: profile
+            ? { weights: profile.profile.weights, source: 'profile' }
+            : { weights: {}, source: 'none' },
+        },
         graphVersion: graphVersion(),
       };
     },

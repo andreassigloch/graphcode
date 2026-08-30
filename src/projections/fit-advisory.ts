@@ -14,7 +14,7 @@
  */
 import { z } from 'zod/v4';
 import type { Graph } from '@sigloch/graph-api-core';
-import { metrics, toArray, METRIC_DIMENSIONS } from '@sigloch/se-engine';
+import { metrics, toArray, METRIC_DIMENSIONS, type MetricVector } from '@sigloch/se-engine';
 import { toOntologyGraph } from '../kernel/conformance.js';
 
 /**
@@ -36,10 +36,23 @@ export const FitAdvisory = z.object({
 });
 export type FitAdvisory = z.infer<typeof FitAdvisory>;
 
+/**
+ * Der ℝ⁶-Ist-Vektor auf der Architektur-Ebene — DIE eine Messung (CR-GC-451).
+ *
+ * Bis hierher war sie in `measure()` eingeschlossen und verließ den Prozess nur
+ * als Δm am MutateResult. `graph_metrics` gibt jetzt denselben Vektor als
+ * ABSOLUTWERT heraus; damit er nicht auseinanderlaufen kann, gibt es genau eine
+ * Funktion und nicht zwei Aufrufe von `metrics(..., {layer:'arch'})`.
+ *
+ * CR-GC-324: der EINE Mapper (conformance.toOntologyGraph) statt des flachen
+ * Export-Encodings — keine zweite Graph→OntologyGraph-Abbildung in src/.
+ */
+export function archMetrics(graph: Graph): MetricVector {
+  return metrics(toOntologyGraph(graph), { layer: 'arch' });
+}
+
 function measure(graph: Graph): number[] {
-  // CR-GC-324: der EINE Mapper (conformance.toOntologyGraph) statt des flachen
-  // Export-Encodings — keine zweite Graph→OntologyGraph-Abbildung in src/.
-  return toArray(metrics(toOntologyGraph(graph), { layer: 'arch' }));
+  return toArray(archMetrics(graph));
 }
 
 /** Δm(before → after) auf layer:'arch'. Pure Messung, deterministisch. */
