@@ -37,8 +37,21 @@ ist das UI** — kein neuer Viewer, die Typ-Zuordnung passiert im Chat.
       `buildSkeleton`/`pdfToText` = function).
 - [x] Decisions-Semantik Ende-zu-Ende in graphify getestet (CR-GF-139, `tests/ports.test.ts`:
       Typ-Override landet im finalGraph, exclude entfernt den Knoten).
-- [ ] **Offen (bewusst):** Stufe 2 gegen den echten Kuzu-Store — braucht laufendes LM Studio und
-      schreibt in den Store; erster Live-Lauf mit kleinem Dokument + explizitem Go.
+- [x] **Live-Lauf 2026-08-31** (Rig `rig/import-doc-live/`, Wallbox-Lastenheft, qwen3.8-27b):
+      `status: success`, 18 Kandidaten, 16 Knoten + verify/compose-Kanten im Kuzu-Store,
+      `graph_export` → `docs/graph/import-doc-live.graph.json`, 32 Warnings / 0 Errors.
+      Zwei dabei gefundene Skill-Fixes eingearbeitet: (a) `ensureSys` wie import-code — ein leerer
+      Store blockt sonst via R-18; erweitert um `type==='SYS'`-Erkennung, weil der Doc-Pfad selbst
+      ein SYS extrahieren kann (sonst Doppel-SYS). (b) R-01-Erkenntnis: REQs blocken kalt (error)
+      ohne verify-TEST im selben Batch — die REQ-with-test-Invariante gilt auch fuer den Import.
+
+## Folge-CRs (aus dem Live-Lauf, nicht angelegt)
+
+1. **graphify `verifies` in `StructureDecision`** — die verify-Verdrahtung (TEST→REQ) muss eine
+   Chat-Entscheidung sein; im Rig war sie hart codiert. Dazu `candidateId` ins Package-Barrel.
+2. **Decisions vor dem L1-Pair-Filter anwenden:** Typ-Override greift heute erst am Gate — eine
+   compose-Kante, deren Kind vom Matcher "falsch" getypt wurde, faellt schon im autoType
+   (beobachtet: `Anforderungen -compose-> Ladesteuerung` fehlt, `-> Sicherheit` ueberlebte).
 
 ## Abhängigkeit / Publish-Hinweis
 

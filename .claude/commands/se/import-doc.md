@@ -97,7 +97,13 @@ try {
   if (harness.getGraph().nodes.length === 0) { try { await harness.seedFromJson(); } catch { /* Erstlauf */ } }
   const registry = gc.bindToolsToHarness(harness);
   const transport = async (commands: unknown[]) => {
-    const res = await registry['graph_mutate'].handler({ commands, consumerId: 'import-doc' });
+    // Leerer Store: der Batch braucht den SYS-Anker (R-18) — wie import-code ensureSys, nie Overwrite.
+    // Anders als import-code kann der Doc-Pfad selbst ein SYS extrahieren (z.B. "Wallbox-Ladestation")
+    // — auch add-node mit type SYS zaehlt, sonst legt ensureSys ein zweites SYS an (Live-Lauf 2026-08-31).
+    const hasSys = harness.getGraph().nodes.some((n: any) => n.type === 'SYS') ||
+      (commands as any[]).some((c) => c.op === 'add-node' && (String(c.node?.uid ?? '').startsWith('SYS-') || c.node?.type === 'SYS'));
+    const ensureSys = hasSys ? [] : [{ op: 'add-node', node: { uid: `SYS-${member}`, type: 'SYS', name: member, description: '', attributes: { status: 'draft' } } }];
+    const res = await registry['graph_mutate'].handler({ commands: [...ensureSys, ...commands], consumerId: 'import-doc' });
     return { success: res.success, tier: res.tier, violations: (res.violations ?? []).map((v: any) => ({
       ruleId: v.ruleId, severity: v.severity, elementId: v.elementId ?? '', message: v.message,
       ...(v.fixHint !== undefined ? { fixHint: v.fixHint } : {}) })) };
