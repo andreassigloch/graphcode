@@ -74,7 +74,38 @@ describe('TEST-gve-autostart', () => {
     });
     expect(r.kind).toBe('serving');
     expect(calls).toHaveLength(0);
-    expect(probed).toEqual(['http://localhost:4317/api/dashboard']);
+    expect(probed).toEqual(['http://localhost:4317/api/config']);
+  });
+
+  // Der gemeldete Fehler (CR-GC-452): sieben Viewer fuer EIN Repo, und `status`
+  // meldete „laeuft nicht", waehrend `curl` das Dashboard sauber beantwortete.
+  // Ursache war nicht Unerreichbarkeit, sondern ein zu knappes Budget gegen einen
+  // Endpunkt, der erst rechnet: `api/dashboard` zog Readiness ueber den Host-Socket
+  // gegen den Store (in graphcode ~1,1 s), das Budget lag bei 750 ms. Ein Timeout
+  // wird als ABWESENHEIT gehandelt — also startete jede Session einen weiteren
+  // Viewer, Vite bumpte den Port, und die vorige blieb als Waise stehen.
+  // Der Server hier ist genau dieser: rechnend auf `api/dashboard`, sofort auf
+  // `api/config`. Gegen den alten Endpunkt ist der Test rot.
+  it('a viewer whose api/dashboard is SLOWER than the probe budget is still found (no orphan spawn)', async () => {
+    mkdirSync(join(repo, 'docs', 'views'), { recursive: true });
+    writeFileSync(join(repo, 'docs', 'views', 'dashboard.url'), 'http://localhost:4317/\n');
+    const slowOnDashboard = (async (url: URL | string, init?: { signal?: AbortSignal }) => {
+      const hit = String(url);
+      probed.push(hit);
+      if (hit.endsWith('/api/dashboard')) {
+        // Readiness-Rechnung: antwortet erst NACH dem Budget — der Abbruch kommt zuerst.
+        await new Promise((_r, reject) =>
+          init?.signal?.addEventListener('abort', () => reject(new Error('aborted'))),
+        );
+      }
+      return { ok: true, json: async () => ({ repoRoot: realpathSync(repo) }) };
+    }) as unknown as typeof fetch;
+
+    const r = await ensureViewer(repo, { env: {}, spawnImpl: fakeSpawn(calls), fetchImpl: slowOnDashboard });
+
+    expect(r.kind).toBe('serving');
+    expect(calls).toHaveLength(0); // <- die Waise, die frueher hier entstand
+    expect(probed).toEqual(['http://localhost:4317/api/config']);
   });
 
   it('a symlinked repo path still reads as THIS repo (physical comparison)', async () => {

@@ -7,8 +7,11 @@
  * Warum die Identitätsprobe (und nicht „Datei lesen, URL zeigen"): jede GVE-Instanz
  * startet auf demselben Default-Port (4317) und Vite bumpt bei Konflikt. Repo A kann
  * `:4317` in seine `dashboard.url` schreiben, sterben, und Repo Bs Viewer übernimmt den
- * Port — die Datei zeigt dann auf ein FREMDES Repo. `GET <url>api/dashboard` nennt den
- * bedienten `repoRoot`; nur der zählt. Verglichen wird physisch (realpath beidseitig),
+ * Port — die Datei zeigt dann auf ein FREMDES Repo. `GET <url>api/config` nennt den
+ * bedienten `repoRoot`; nur der zählt. Gefragt wird `api/config` und nicht
+ * `api/dashboard`, weil dessen Antwort erst Readiness rechnet (~1,1 s in diesem Repo)
+ * und damit regelmäßig über dem Probe-Budget lag — ein laufendes Dashboard las sich
+ * dann als „läuft nicht" (CR-GC-452). Verglichen wird physisch (realpath beidseitig),
  * sonst liest ein Symlink-Start (/var vs. /private/var auf macOS, ein Worktree über
  * einen Link) als fremdes Repo. Dieselbe Regel wie in `maybeStartGve` — eine Wahrheit
  * über „gehört dieser Viewer zu mir", zwei Aufrufer.
@@ -34,9 +37,12 @@ import { deriveMemberName } from './mcp-server.js';
 import { readPackageVersion } from './package-version.js';
 import { PACKAGE_NAME } from './scaffold-templates.js';
 import { readLockOwner } from '../kernel/store-lock.js';
+// Das Probe-Budget gehoert dem Viewer-Modul: Bericht und Starter muessen sich ueber
+// „laeuft ein Viewer" einig sein, sonst startet der eine, was der andere schon sieht.
+import { PROBE_TIMEOUT_MS } from './gve.js';
+// „Lebt diese PID" hat EINEN Besitzer (CR-GC-452) — die lokale Kopie ist geloescht.
+import { isAlive } from './gve-sessions.js';
 
-/** Wie lange auf die Identitätsantwort eines Viewers gewartet wird. */
-const PROBE_TIMEOUT_MS = 750;
 
 export interface HostStatus {
   /** `running` = Lock gehört einem lebenden Prozess; `stale` = Owner tot; `none` = kein Lock. */
@@ -110,16 +116,6 @@ function physicalPath(p: string): string {
   }
 }
 
-/** `kill(pid, 0)`: Signal zugestellt → lebt; EPERM → lebt, gehört nur jemand anderem. */
-function defaultPidAlive(pid: number): boolean {
-  try {
-    process.kill(pid, 0);
-    return true;
-  } catch (err) {
-    return (err as NodeJS.ErrnoException).code === 'EPERM';
-  }
-}
-
 /**
  * Host-Zustand aus `.graphcode/owner.lock` — derselben Datei, die `StoreLock` schreibt,
  * gelesen über DENSELBEN Vertrag (`readLockOwner`, CR-GC-420). Die frühere lokale
@@ -136,18 +132,18 @@ export function readHostStatus(repoRoot: string, deps: StatusDeps = {}): HostSta
   // einen fremden Rechner für tot zu erklären (dieselbe Vorsicht wie StoreLock).
   const here = (deps.hostnameImpl ?? hostname)();
   if (owner.hostname !== here) return { state: 'running', ...base };
-  const alive = (deps.pidAlive ?? defaultPidAlive)(owner.pid);
+  const alive = (deps.pidAlive ?? isAlive)(owner.pid);
   return { state: alive ? 'running' : 'stale', ...base };
 }
 
-/** Dashboard-Zustand: Adresse aus `docs/views/dashboard.url`, Wahrheit aus `api/dashboard`. */
+/** Dashboard-Zustand: Adresse aus `docs/views/dashboard.url`, Wahrheit aus `api/config`. */
 async function readDashboardStatus(repoRoot: string, deps: StatusDeps): Promise<DashboardStatus> {
   const urlFile = join(repoRoot, 'docs', 'views', 'dashboard.url');
   if (!existsSync(urlFile)) return { state: 'not-running' };
   const url = readFileSync(urlFile, 'utf8').trim();
   if (!url) return { state: 'not-running' };
   try {
-    const res = await (deps.fetchImpl ?? fetch)(new URL('api/dashboard', url), {
+    const res = await (deps.fetchImpl ?? fetch)(new URL('api/config', url), {
       signal: AbortSignal.timeout(PROBE_TIMEOUT_MS),
     });
     const served = res.ok ? ((await res.json()) as { repoRoot?: unknown }).repoRoot : undefined;

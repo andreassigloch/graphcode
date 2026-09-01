@@ -40,8 +40,12 @@ function spawnLockFile(repoRoot: string): string {
 /**
  * Lebt der Prozess? `kill(pid, 0)` schickt kein Signal, sondern fragt nur.
  * EPERM heisst „lebt, gehoert aber jemand anderem" — also lebt.
+ *
+ * Exportiert (CR-GC-452), weil drei Stellen dieselbe Frage stellen: die Sessions hier,
+ * der Starter (ist der vermerkte Viewer noch da?) und `graphcode status`. Drei Kopien
+ * derselben vier Zeilen waeren drei Gelegenheiten, „lebt" verschieden auszulegen.
  */
-function isAlive(pid: number): boolean {
+export function isAlive(pid: number): boolean {
   try {
     process.kill(pid, 0);
     return true;

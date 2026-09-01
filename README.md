@@ -18,7 +18,7 @@ npx @sigloch/graphcode mcp           # THE server — your agent host starts thi
                                      # normally never type it. Brings up all three: MCP-stdio, the
                                      # read-only HTTP/SSE bridge, and the GVE dashboard.
 npx @sigloch/graphcode status        # is my host up, and where is MY dashboard? Read-only: asks the
-                                     # viewer via api/dashboard WHICH REPO it serves instead of
+                                     # viewer via api/config WHICH REPO it serves instead of
                                      # guessing a port. Exit 1 if either is missing.
 npx @sigloch/graphcode host          # FALLBACK only — the bridge alone, for a repo with no agent
                                      # session running. Alongside a live `mcp` it hits the store lock.
@@ -83,7 +83,7 @@ graphcode status — auth-service  (/Users/you/dev/auth-service)
 ```
 
 `status` reads `docs/views/dashboard.url` (GVE writes its actual bound address there on startup,
-removes it on shutdown) and then asks that instance `api/dashboard` **which repo it serves**. The
+removes it on shutdown) and then asks that instance `api/config` **which repo it serves**. The
 address itself is stable per repo — GVE derives it from the repo path (43000–43999) — so your
 bookmark keeps working across restarts; the identity check stays as the safety net for the rare
 collision, where Vite bumps and a neighbour's viewer could end up on the address yours left behind.

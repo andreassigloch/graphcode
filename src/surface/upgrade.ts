@@ -32,6 +32,8 @@ import { hostname } from 'node:os';
 import { PACKAGE_NAME } from './scaffold-templates.js';
 import { readPackageVersion } from './package-version.js';
 import { readHostStatus, readRepoInstallVersion, compareVersions } from './status.js';
+// „Lebt diese PID" hat EINEN Besitzer (CR-GC-452) — die lokale Kopie ist geloescht.
+import { isAlive } from './gve-sessions.js';
 
 /**
  * Ab dieser Version kennt der installierte Build `upgrade --refresh-only`.
@@ -91,14 +93,6 @@ function defaultRun(cmd: string, args: string[], cwd: string): { status: number;
   return { status: r.status ?? 1, stdout: r.stdout ?? '', stderr: r.stderr ?? (r.error?.message ?? '') };
 }
 
-function defaultPidAlive(pid: number): boolean {
-  try {
-    process.kill(pid, 0);
-    return true;
-  } catch (err) {
-    return (err as NodeJS.ErrnoException).code === 'EPERM';
-  }
-}
 
 /** Der Artefakt-Refresh als eigener Einstieg — das, was der NEUE Build für uns tut. */
 function refreshArgs(target: string): string[] {
@@ -140,7 +134,7 @@ async function stopHost(repoRoot: string, deps: UpgradeDeps, steps: string[]): P
 export async function executeUpgrade(opts: UpgradeOptions, deps: UpgradeDeps = {}): Promise<UpgradeReport> {
   const { repoRoot } = opts;
   const run = deps.run ?? defaultRun;
-  const pidAlive = deps.pidAlive ?? defaultPidAlive;
+  const pidAlive = deps.pidAlive ?? isAlive;
   if (!existsSync(join(repoRoot, 'package.json'))) {
     throw new UpgradeError(`graphcode upgrade: ${repoRoot} hat keine package.json — zuerst \`graphcode init\``);
   }

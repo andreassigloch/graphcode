@@ -73,9 +73,32 @@ describe('TEST-status', () => {
     });
     expect(s.host).toMatchObject({ state: 'running', pid: 4242 });
     expect(s.dashboard).toEqual({ state: 'running', url: 'http://localhost:4318/' });
-    expect(probed).toEqual(['http://localhost:4318/api/dashboard']);
+    expect(probed).toEqual(['http://localhost:4318/api/config']);
     expect(statusIsHealthy(s)).toBe(true);
     expect(formatStatus(s)).toContain('http://localhost:4318/');
+  });
+
+  // Die zweite Haelfte des gemeldeten Fehlers (CR-GC-452): der Bericht sagte
+  // „Dashboard laeuft nicht", waehrend `curl` auf genau die Adresse aus
+  // dashboard.url sauber antwortete. Ein Timeout gegen den rechnenden Endpunkt
+  // ist von „tot" nicht unterscheidbar — der Bericht log also, ohne es zu merken.
+  it('ein Viewer, dessen api/dashboard laenger braucht als das Budget, gilt trotzdem als laufend', async () => {
+    writeUrl('http://localhost:4318/');
+    const slowOnDashboard = (async (url: URL | string, init?: { signal?: AbortSignal }) => {
+      const hit = String(url);
+      probed.push(hit);
+      if (hit.endsWith('/api/dashboard')) {
+        await new Promise((_r, reject) =>
+          init?.signal?.addEventListener('abort', () => reject(new Error('aborted'))),
+        );
+      }
+      return { ok: true, json: async () => ({ repoRoot: repo }) };
+    }) as unknown as typeof fetch;
+
+    const s = await collectStatus(repo, { fetchImpl: slowOnDashboard });
+
+    expect(s.dashboard).toEqual({ state: 'running', url: 'http://localhost:4318/' });
+    expect(probed).toEqual(['http://localhost:4318/api/config']);
   });
 
   it('meldet fremdes Repo statt einer falschen Adresse, wenn die Instanz ein anderes bedient', async () => {

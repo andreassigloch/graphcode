@@ -18,6 +18,7 @@ import { createRequire } from 'node:module';
 import { spawn, type ChildProcess } from 'node:child_process';
 import {
   forgetViewer,
+  isAlive,
   liveSessions,
   rememberViewer,
   rememberedViewerPid,
@@ -65,7 +66,21 @@ export interface StartGveDeps {
    * von Hand einen gestartet haben), ein vierter Startversuch nicht. Default: ja.
    */
   allowSpawn?: boolean;
+  /** Wie ein Viewer beendet wird; injizierbar, damit Tests keine echte PID abschiessen. */
+  killImpl?: (pid: number) => void;
 }
+
+/**
+ * Budget der Identitaetsprobe — EINE Quelle fuer beide Frager (`ensureViewer` hier,
+ * `graphcode status`). Zwei Kopien derselben Zahl waeren ein Parallelpfad: der Starter
+ * duerfte einen Viewer fuer abwesend halten, den der Bericht noch sieht (oder umgekehrt),
+ * und genau diese Uneinigkeit erzeugt die Waisen.
+ *
+ * 750 ms reichen, WEIL die Probe `api/config` fragt — eine Antwort ohne Graph-Rechnung
+ * (gemessen 0,5 ms). Gegen `api/dashboard` war dasselbe Budget zu knapp; die Antwort war
+ * damals aber nicht ein groesseres Budget, sondern der guenstigere Endpunkt.
+ */
+export const PROBE_TIMEOUT_MS = 750;
 
 /** GVE ist der DEFAULT einer graphcode-Session; abschaltbar per Env, nie unter einem Runner. */
 function gveDisabled(env: NodeJS.ProcessEnv): boolean {
@@ -78,11 +93,21 @@ function gveDisabled(env: NodeJS.ProcessEnv): boolean {
  * Warum Identität und nicht Erreichbarkeit: eine `dashboard.url` kann von einem
  * fremden Viewer beantwortet werden, der den Port geerbt hat — genau der gemeldete
  * Fehler „`graphcode mcp` in Repo A öffnet das Dashboard von B". `GET
- * <url>api/dashboard` nennt das Repo, das dort bedient wird; verglichen wird
+ * <url>api/config` nennt das Repo, das dort bedient wird; verglichen wird
  * PHYSISCH (realpath auf beiden Seiten), damit ein symlink-Pfad — /var vs
  * /private/var auf macOS, ein Worktree hinter einem Link — nicht als fremdes Repo
  * liest. Eine Antwort ohne `repoRoot` stammt von einem Viewer vor
- * graph-view-edit 0.2.0: nicht identifizierbar, also fremd.
+ * graph-view-edit 0.8.0: nicht identifizierbar, also fremd.
+ *
+ * Warum `api/config` und nicht `api/dashboard` (CR-GC-452): dieselbe Identität,
+ * aber ohne Rechnung. `api/dashboard` ermittelt zuerst Readiness über den
+ * Host-Socket gegen den Store — in graphcode selbst ~1,1 s gemessen, gegen ein
+ * Probe-Budget von 750 ms. Die Probe timeoutete also IMMER, `ensureViewer` las
+ * das als „kein Viewer da" und startete einen weiteren; Vite bumpte den Port,
+ * der neue schrieb seine Adresse, und die vorige Instanz blieb als Waise
+ * stehen — sieben Viewer für ein Repo. Ein Timeout ist hier nicht „langsam",
+ * sondern wird als Abwesenheit gehandelt; die Probe darf deshalb nichts
+ * anfragen, was mit dem Graphen wächst.
  */
 async function probeViewer(
   repoRoot: string,
@@ -92,8 +117,8 @@ async function probeViewer(
   if (!existsSync(urlFile)) return null;
   const url = readFileSync(urlFile, 'utf8').trim();
   try {
-    const res = await (deps.fetchImpl ?? fetch)(new URL('api/dashboard', url), {
-      signal: AbortSignal.timeout(750),
+    const res = await (deps.fetchImpl ?? fetch)(new URL('api/config', url), {
+      signal: AbortSignal.timeout(PROBE_TIMEOUT_MS),
     });
     const served = res.ok ? ((await res.json()) as { repoRoot?: unknown }).repoRoot : undefined;
     return { url, servedBy: typeof served === 'string' ? served : null };
@@ -114,6 +139,7 @@ async function probeViewer(
  */
 function spawnViewer(repoRoot: string, deps: StartGveDeps): ChildProcess | null {
   const env = deps.env ?? process.env;
+  retireOrphanViewer(repoRoot, deps);
   let bin: string;
   let args: string[];
   if (env.GRAPHCODE_GVE_BIN) {
@@ -145,6 +171,28 @@ function spawnViewer(repoRoot: string, deps: StartGveDeps): ChildProcess | null 
   });
   if (child.pid !== undefined) rememberViewer(repoRoot, child.pid);
   return child;
+}
+
+/**
+ * Beendet den zuvor vermerkten Viewer, bevor ein neuer vermerkt wird (CR-GC-452).
+ *
+ * `.graphcode/gve.pid` fasst EINEN Viewer — `rememberViewer` ueberschreibt. Wer hier
+ * lebend ueberschrieben wird, ist ab diesem Moment unerreichbar: keine Session kennt
+ * seine PID mehr, `stopViewerIfLastSession` beendet nur den vermerkten, also ueberlebt
+ * er jedes Sitzungsende. So standen sieben Viewer auf sieben Ports fuer EIN Repo.
+ *
+ * Dass hier ueberhaupt gespawnt wird, heisst: unter der vermerkten Adresse antwortet
+ * keiner. Ein trotzdem lebender Vermerk ist damit per Definition die Waise und nicht
+ * der amtierende Viewer — der haette geantwortet und `ensureViewer` waere gar nicht bis
+ * hierher gekommen. Beendet wird nur, was graphcode selbst gestartet hat; ein von Hand
+ * gestarteter `gve --repo .` steht nie in dieser Datei.
+ */
+function retireOrphanViewer(repoRoot: string, deps: StartGveDeps): void {
+  const pid = rememberedViewerPid(repoRoot);
+  if (pid === null || !isAlive(pid)) return;
+  process.stderr.write(`[graphcode] gve: retiring unreachable viewer pid ${pid} before starting a new one\n`);
+  (deps.killImpl ?? killProcessGroup)(pid);
+  forgetViewer(repoRoot);
 }
 
 /** Was ein Ensure-Durchlauf vorgefunden bzw. getan hat. */
@@ -202,8 +250,6 @@ export interface AttachDeps extends StartGveDeps {
   setIntervalImpl?: typeof setInterval;
   /** Wer sich als Session eintraegt — injizierbar, damit ein Test zwei Sessions spielen kann. */
   pid?: number;
-  /** Wie der Viewer beendet wird; injizierbar, damit Tests keine echte PID abschiessen. */
-  killImpl?: (pid: number) => void;
 }
 
 /**
