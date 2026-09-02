@@ -4,13 +4,15 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 32 SCHEMA · 38 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 34 SCHEMA · 40 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
 | Interface (SCHEMA) | Contract (realRef) | status |
 |---|---|---|
 | `SCHEMA-action` | Konzept (noch kein Zod-Export) | reviewed |
+| `SCHEMA-audit-record` | Konzept (noch kein Zod-Export) | reviewed |
+| `SCHEMA-audit-stats` | src/surface/audit.ts#AuditStats | reviewed |
 | `SCHEMA-cli-command` | src/surface/scaffold.ts#CliCommandSchema | reviewed |
 | `SCHEMA-completeness` | packages/graphcode-client/src/readiness-completeness.ts#GateCompleteness | reviewed |
 | `SCHEMA-export-pending` | src/kernel/export-pending-contract.ts#ExportPending | n/a |
@@ -49,6 +51,8 @@
 |---|---|---|
 | `FLOW-action` | `FUNC-goal-steerer` | `ACTOR-agent` |
 | `FLOW-arch-fitness` | `FUNC-arch-fitness` | `FUNC-rank-candidates` |
+| `FLOW-audit-record` | `FUNC-mutate` | `FUNC-audit-stats` · `FUNC-audit-trail` |
+| `FLOW-audit-report` | `FUNC-audit-stats` · `FUNC-audit-trail` | `ACTOR-owner` · `FUNC-se-retro` |
 | `FLOW-cli-command` | `ACTOR-owner` · `FUNC-cli-dispatch` | `FUNC-bootstrap` · `FUNC-claim-store-lock` · `FUNC-cli-dispatch` · `FUNC-collect-status` · `FUNC-create-harness` · `FUNC-gve-supervise` · `FUNC-harness-cli` · `FUNC-import-code-verb` · `FUNC-rewind` · `FUNC-run-executor` · `FUNC-run-verb` · `FUNC-upgrade` |
 | `FLOW-completeness` | `FUNC-score-completeness` | `FUNC-compute-phase-readiness` |
 | `FLOW-dimension-readiness` | `FUNC-compute-readiness` | `FUNC-generation-step` · `FUNC-next-step` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-test` · `FUNC-test-ui` |

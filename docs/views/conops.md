@@ -8,7 +8,7 @@
 
 ## 1  System overview
 
-`SYS-graphcode` — Headless Claude-Code-Sidecar-Governance-Harness: Store + Apply-Gate + Hooks + Learning-Emission, eine Instanz pro Repo. Carve-Out aus aimprove. (README, SPEC §0)
+`SYS-graphcode` — Ein geprueftes Modell des Systems neben dem Code, und EINE Pruefung vor jeder Aenderung — von Mensch wie Maschine. // Der Nutzen ist nicht, dass die Spezifikation formal stimmt; das ist die Voraussetzung. Eine Spezifikation kann technisch fehlerfrei sein und trotzdem falsch: eine Anforderung, die Formate erfindet, die ihr eigener Anwendungsfall ausschliesst; eine Fehlermeldung, die als Anwendungsfall im Modell steht; ein System fuer gemeinsames Bearbeiten ohne jede Nebenlaeufigkeit — jede Regel gruen, drei echte Fehler drin. Der Nutzen ist, dass das Werkzeug sagt, was als Naechstes das Beste ist, was man tun kann: inhaltlich wie strukturell, aus definierten Kenngroessen statt aus einer Modellmeinung, und ohne jede Statistik. // Drei Merkmale, und sie sind die Ebene-0-Bloecke. (1) GROUNDING: die Daten und die daraus erzeugten Antworten sind pruefbar — Ontologie und Grammatik lassen Unzulaessiges gar nicht erst herein, Kenngroessen machen den Zustand pruefbar, zwoelf Ingenieursdokumente fallen deterministisch aus demselben Graphen, gleicher Graph, gleiche Bytes; kein Modell im Pfad. (2) FUEHRUNG, adaptiv: der schwaechste von acht Reifegraden benennt den naechsten sinnvollen Schritt. Fuehrung heisst ausdruecklich NICHT Zwang — kein Score blockiert je etwas, blockieren kann allein eine Regel und nur bei unzulaessig, nie bei suboptimal; der Anwender kann jederzeit einen anderen Weg einschlagen, und die Schleife rechnet ab da mit seinem Weg weiter. (3) OPTIMIERUNG, strukturell UND inhaltlich: strukturell rankt die Architekturmaschine Kandidaten danach, wie weit sie den Graphen entlang des GEWAEHLTEN Ziels bewegen, wie eine Schachmaschine, die Zuege vorausrechnet; inhaltlich decken fuenf gefuehrte Urteilssitzungen ab, was keine Regel sehen kann — das Urteil bleibt beim Menschen, das Werkzeug prueft nur, dass es stattgefunden hat und zum aktuellen Umfang passt. // Ein vierter Block, BETRIEB, traegt Installation, Konfiguration und Sitzung: man verkauft ihn nicht, man braucht ihn. // Technisch: ein Store mit Apply-Gate, genau ein Besitzerprozess je Repo, MCP-stdio zum Agenten und eine Lesebruecke zum Viewer. AGENT-AGNOSTISCH und darin verriegelt: ein Coding-Agent ist ein Client, nicht Teil des Systems — die frueher hier stehende Bindung an einen benannten Agenten war eine Aussage gegen die eigene Zusage. (Story festgeschrieben CR-GC-462; Bloecke CR-GC-459)
 
 ## 2  Operational policies & constraints
 
@@ -44,10 +44,10 @@
 
 ## 3  User classes & involved personnel (4)
 
-- `ACTOR-agent` — Gegateter Agent (MCP-stdio-Client) — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-efficient-testing` · `UC-graph-time-travel` · `UC-live-graph-view` · `UC-model-exchange` · `UC-reduced-llm` · `UC-repo-lifecycle`
+- `ACTOR-agent` — Gegateter Agent (MCP-stdio-Client) — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-efficient-testing` · `UC-graph-time-travel` · `UC-live-graph-view` · `UC-loop-closure` · `UC-model-exchange` · `UC-reduced-llm` · `UC-repo-lifecycle`
 - `ACTOR-dashboard` — Browser-Dashboard — triggert `UC-deterministic-steering` · `UC-live-graph-view`
 - `ACTOR-learning-engine` — Learning-Engine — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-graph-time-travel` · `UC-live-graph-view` · `UC-reduced-llm`
-- `ACTOR-owner` — Repo-Owner (Mensch am Repo) — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-efficient-testing` · `UC-graph-time-travel` · `UC-live-graph-view` · `UC-model-exchange` · `UC-reduced-llm` · `UC-repo-lifecycle`
+- `ACTOR-owner` — Repo-Owner (Mensch am Repo) — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-efficient-testing` · `UC-graph-time-travel` · `UC-live-graph-view` · `UC-loop-closure` · `UC-model-exchange` · `UC-reduced-llm` · `UC-repo-lifecycle`
 
 ## 4  Operational scenarios (9 UC)
 
@@ -102,7 +102,9 @@ Ausgeloest von: `ACTOR-agent` · `ACTOR-dashboard` · `ACTOR-learning-engine` ·
 
 Als Betreiber des Regelwerks will ich an den aufgezeichneten Gate-Entscheidungen ablesen, welche Regel bei wem wie oft blockt, damit ich Schwellen und Prompt-Vorlagen an Messwerten justiere statt an Vermutungen.
 
-— kein Betriebsablauf beschrieben (keine FCHAIN) —
+Ausgeloest von: `ACTOR-agent` · `ACTOR-owner`
+
+- `FCHAIN-loop-closure` — Schleifenschluss (aufzeichnen → auswerten → justieren): `FUNC-audit-stats` → `FUNC-audit-trail` → `FUNC-mutate` → `FUNC-se-retro`
 
 ### `UC-model-exchange` — Modell ein- und ausgeben
 

@@ -12,6 +12,8 @@
 |---|---|---|
 | `FUNC-apply-reseed` | FUNC | applyReseed |
 | `FUNC-arch-fitness` | FUNC | metrics(graph, layer arch) |
+| `FUNC-audit-stats` | FUNC | aggregateAuditEntries(entries) |
+| `FUNC-audit-trail` | FUNC | projectAuditEntries(entries, opts) |
 | `FUNC-author-req` | FUNC | Skill se:author-req |
 | `FUNC-author-uc` | FUNC | Skill se:author-uc |
 | `FUNC-auto-export` | FUNC | registerAutoExport |
@@ -137,6 +139,8 @@
 |---|---|
 | `FUNC-apply-reseed` | `MOD-kernel` |
 | `FUNC-arch-fitness` | `MOD-projections` |
+| `FUNC-audit-stats` | `MOD-surface` |
+| `FUNC-audit-trail` | `MOD-surface` |
 | `FUNC-author-req` | `MOD-agent-surface` |
 | `FUNC-author-uc` | `MOD-agent-surface` |
 | `FUNC-auto-export` | `MOD-projections` |

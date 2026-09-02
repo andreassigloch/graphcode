@@ -124,7 +124,7 @@
 | `REQ-pre-merge-nodes` | `TEST-merge` | `FUNC-merge-nodes` | `MOD-kernel` |
 | `REQ-pre-modelfree-gate` | `TEST-reduced-llm` | `FCHAIN-modelfree-gate` | — |
 | `REQ-progressive-expansion` | `TEST-impact-subgraph` | `FUNC-graph-expand` | `MOD-kernel` |
-| `REQ-prompt-provenance` | `TEST-prompt-provenance` | `MOD-kernel` | — |
+| `REQ-prompt-provenance` | `TEST-prompt-provenance` | `FCHAIN-loop-closure` · `MOD-kernel` | — |
 | `REQ-prose-recovery` | `TEST-one-driver-local-and-frontier` | `FUNC-extract-mutate` | `MOD-loop` |
 | `REQ-published-counts-match-code` | `TEST-published-counts-match-code` | — | — |
 | `REQ-quality-metric` | `TEST-code-quality` · `TEST-fit-advisory` · `TEST-graph-metrics` · `TEST-retro-kpi` | `MOD-kernel` | — |
@@ -136,7 +136,7 @@
 | `REQ-repo-update` | `TEST-cli-scaffold` · `TEST-upgrade` | `FUNC-harness-cli` · `FUNC-upgrade` | `MOD-surface` |
 | `REQ-round-prompt-injection` | `TEST-one-driver-local-and-frontier` | `FUNC-build-round-injection` | `MOD-loop` |
 | `REQ-roundtrip-conformance` | `TEST-roundtrip` | `FCHAIN-codec-roundtrip` | — |
-| `REQ-rule-calibration` | `TEST-audit-rules-passed` · `TEST-rule-calibration` | `MOD-kernel` | — |
+| `REQ-rule-calibration` | `TEST-audit-rules-passed` · `TEST-rule-calibration` | `FCHAIN-loop-closure` · `MOD-kernel` | — |
 | `REQ-rule-enforcement` | `TEST-mutate-gate` · `TEST-nd-similarity` · `TEST-violation-context` | `FUNC-evaluate-rules` | `MOD-kernel` |
 | `REQ-session-leaves-nothing-behind` | `TEST-repo-lifecycle` | `FCHAIN-repo-lifecycle` · `FUNC-session-shutdown` | `MOD-surface` |
 | `REQ-single-measurement-path` | `TEST-graph-metrics` · `TEST-single-measurement-path` · `TEST-steering-snapshot` | `MOD-projections` | — |
@@ -156,7 +156,7 @@
 | `REQ-versioned-broadcast` | `TEST-live-view` | `FUNC-broadcast-diff` · `FUNC-emit-update-event` · `FUNC-serve-sse` | `MOD-surface` |
 | `REQ-viewer-owned-by-repo` | `TEST-gve-autostart` · `TEST-gve-supervision` | `FUNC-gve-sessions` · `FUNC-gve-supervise` | `MOD-surface` |
 
-### Integration (SWE.4) — 36 REQ
+### Integration (SWE.4) — 38 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -189,8 +189,10 @@
 | `REQ-pre-interface-escalation` | `TEST-interface-escalation` | `FCHAIN-interface-escalation` | — |
 | `REQ-pre-modelfree-gate` | `TEST-reduced-llm` | `FCHAIN-modelfree-gate` | — |
 | `REQ-precise-context` | `TEST-inject-graph-slice` · `TEST-mvp-e2e` · `TEST-token-efficiency` · `TEST-violation-context` | `FCHAIN-agent-query` | — |
+| `REQ-prompt-provenance` | `TEST-prompt-provenance` | `FCHAIN-loop-closure` · `MOD-kernel` | — |
 | `REQ-responsiveness` | `TEST-responsiveness` | `FCHAIN-apply-gate` | — |
 | `REQ-roundtrip-conformance` | `TEST-roundtrip` | `FCHAIN-codec-roundtrip` | — |
+| `REQ-rule-calibration` | `TEST-audit-rules-passed` · `TEST-rule-calibration` | `FCHAIN-loop-closure` · `MOD-kernel` | — |
 | `REQ-session-leaves-nothing-behind` | `TEST-repo-lifecycle` | `FCHAIN-repo-lifecycle` · `FUNC-session-shutdown` | `MOD-surface` |
 | `REQ-skill-authors-through-gate` | `TEST-skill-authors-through-gate` | `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` | `MOD-agent-surface` |
 | `REQ-skill-reads-only` | `TEST-skill-reports-measured-values` | `FCHAIN-skill-report` · `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` | `MOD-agent-surface` |
@@ -263,7 +265,7 @@
 | `REQ-pre-migrate-schema` | `TEST-schema-migration` | `FUNC-migrate-schema` | `MOD-kernel` |
 | `REQ-precommit-timeout` | `TEST-hooks` | `MOD-kernel` | — |
 | `REQ-progressive-expansion` | `TEST-impact-subgraph` | `FUNC-graph-expand` | `MOD-kernel` |
-| `REQ-prompt-provenance` | `TEST-prompt-provenance` | `MOD-kernel` | — |
+| `REQ-prompt-provenance` | `TEST-prompt-provenance` | `FCHAIN-loop-closure` · `MOD-kernel` | — |
 | `REQ-prose-recovery` | `TEST-one-driver-local-and-frontier` | `FUNC-extract-mutate` | `MOD-loop` |
 | `REQ-quality-metric` | `TEST-code-quality` · `TEST-fit-advisory` · `TEST-graph-metrics` · `TEST-retro-kpi` | `MOD-kernel` | — |
 | `REQ-query-precision` | `TEST-impact-subgraph` · `TEST-read-format-param` | `FUNC-graph-impact` · `FUNC-list-elements` | `MOD-kernel` |
@@ -276,7 +278,7 @@
 | `REQ-repo-uninstall` | `TEST-cli-scaffold` | `FUNC-harness-cli` | `MOD-surface` |
 | `REQ-repo-update` | `TEST-cli-scaffold` · `TEST-upgrade` | `FUNC-harness-cli` · `FUNC-upgrade` | `MOD-surface` |
 | `REQ-round-prompt-injection` | `TEST-one-driver-local-and-frontier` | `FUNC-build-round-injection` | `MOD-loop` |
-| `REQ-rule-calibration` | `TEST-audit-rules-passed` · `TEST-rule-calibration` | `MOD-kernel` | — |
+| `REQ-rule-calibration` | `TEST-audit-rules-passed` · `TEST-rule-calibration` | `FCHAIN-loop-closure` · `MOD-kernel` | — |
 | `REQ-rule-enforcement` | `TEST-mutate-gate` · `TEST-nd-similarity` · `TEST-violation-context` | `FUNC-evaluate-rules` | `MOD-kernel` |
 | `REQ-schema-version-migration` | `TEST-schema-migration` | `FUNC-migrate-schema` · `FUNC-schema-guard` | `MOD-kernel` |
 | `REQ-self-contained-dist` | `TEST-distribution` | `MOD-surface` | — |

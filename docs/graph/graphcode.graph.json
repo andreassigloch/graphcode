@@ -1594,6 +1594,13 @@
       "status": "reviewed"
     },
     {
+      "id": "FCHAIN-loop-closure",
+      "type": "FCHAIN",
+      "name": "Schleifenschluss (aufzeichnen → auswerten → justieren)",
+      "description": "Das Gate zeichnet jede Entscheidung mit Urheber und Prompt auf; die Projektion liefert die Saetze, die Aggregation die Haeufigkeiten je Regel, Modell und Konsument; der Betreiber des Regelwerks liest sie und justiert Schwellen und Prompt-Vorlagen an Messwerten statt an Vermutungen. Die Kette, die aus der Aufzeichnung eine Entscheidung macht. (CR-GC-462)",
+      "status": "reviewed"
+    },
+    {
       "id": "FCHAIN-merge-branches",
       "type": "FCHAIN",
       "name": "Zweig-Graphen konfliktfrei zusammenfuehren",
@@ -1670,6 +1677,20 @@
       "type": "FLOW",
       "name": "Architektur-Fitness (R^6)",
       "description": "Sechs Topologiewerte ueber den ganzen Teilgraphen. Das einzige Signal der Schleife, das nicht aus dem Regelstrom stammt, und deshalb der Tiebreaker im Ranking.",
+      "status": "reviewed"
+    },
+    {
+      "id": "FLOW-audit-record",
+      "type": "FLOW",
+      "name": "Aufgezeichnete Gate-Entscheidung",
+      "description": "Was das Gate bei jeder Entscheidung ins Operations-Log schreibt — abgeleitet, nie vom Konsumenten deklariert. Abwesenheit heisst nicht aufgezeichnet, nie leerer Prompt. (CR-GC-462)",
+      "status": "reviewed"
+    },
+    {
+      "id": "FLOW-audit-report",
+      "type": "FLOW",
+      "name": "Audit-Auswertung (welche Regel blockt wen wie oft)",
+      "description": "Die Auswertung der Aufzeichnung an den Betreiber des Regelwerks: Haeufigkeiten je Regel, Konsument und Modell ueber die Zeit. Die Eingangsgroesse jeder Schwellenentscheidung — ohne sie bleibt jede Schwelle eine Setzung. (CR-GC-462)",
       "status": "reviewed"
     },
     {
@@ -1946,6 +1967,30 @@
       "realRef": {
         "file": "packages/se-engine/src/metrics.ts",
         "symbol": "metrics",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-audit-stats",
+      "type": "FUNC",
+      "name": "aggregateAuditEntries(entries)",
+      "description": "Beantwortet im Aggregat, welche Regel wen wie oft blockt — je Regel, Konsument und Modell, mit dem Lesefenster als Teil der Antwort. Die Zahl, an der Schwellen justiert werden, statt sie zu setzen. (CR-GC-462)",
+      "status": "done",
+      "realRef": {
+        "file": "src/surface/audit.ts",
+        "symbol": "aggregateAuditEntries",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-audit-trail",
+      "type": "FUNC",
+      "name": "projectAuditEntries(entries, opts)",
+      "description": "Liefert je Satz, was passiert ist — als schlanke Projektion, nicht als Replay. Gemessen am echten Trail dieses Repos war ein Default-Aufruf 163 KB, davon 79 Prozent Mutate-Batches, die kein Agent liest. Die schweren Haelften bleiben abrufbar: Abfrage-Praezision, keine Ergebnis-Kompression. (CR-GC-462)",
+      "status": "done",
+      "realRef": {
+        "file": "src/surface/audit.ts",
+        "symbol": "projectAuditEntries",
         "lang": "ts"
       }
     },
@@ -4783,6 +4828,26 @@
       "concept": true
     },
     {
+      "id": "SCHEMA-audit-record",
+      "type": "SCHEMA",
+      "name": "Audit-Eintrag (aufgezeichnete Gate-Entscheidung)",
+      "description": "Der Rohsatz im Operations-Log: Zeitpunkt, Urheber (Session und Modell), ausloesender Prompt im Wortlaut, Kommandos, Verdikt und gefeuerte wie bestandene Regeln. Bewusst ohne Zod-Symbol und ohne eigenen Liefervertrag: WRITING is not DELIVERING (CR-GC-319) — der Satz auf Platte bleibt vollstaendig als Replay-Quelle und Lernkorpus, geliefert wird ausschliesslich die Projektion. Ein exportierter Typ dafuer waere die Einladung, ihn zu liefern; concept-only. (CR-GC-462)",
+      "status": "reviewed",
+      "concept": true
+    },
+    {
+      "id": "SCHEMA-audit-stats",
+      "type": "SCHEMA",
+      "name": "AuditStats",
+      "description": "Der Auswertungsvertrag der Aufzeichnung: je Regel, je Konsument und je Modell die Blockadehaeufigkeit und das Ergebnis, dazu das Lesefenster (window) mit Archiven und Checkpoint. Das Lesefenster ist Teil des Vertrags, weil eine Aggregation, die nur das aktive Log sieht, einen fast leeren Trail meldet, waehrend die Evidenz danebenliegt — eine falsche Messung in der Form eines Ergebnisses. (CR-GC-462)",
+      "status": "reviewed",
+      "realRef": {
+        "file": "src/surface/audit.ts",
+        "symbol": "AuditStats",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "SCHEMA-cli-command",
       "type": "SCHEMA",
       "name": "CliCommand",
@@ -5163,7 +5228,7 @@
       "id": "SYS-graphcode",
       "type": "SYS",
       "name": "GraphCode",
-      "description": "Headless Claude-Code-Sidecar-Governance-Harness: Store + Apply-Gate + Hooks + Learning-Emission, eine Instanz pro Repo. Carve-Out aus aimprove. (README, SPEC §0)",
+      "description": "Ein geprueftes Modell des Systems neben dem Code, und EINE Pruefung vor jeder Aenderung — von Mensch wie Maschine. || Der Nutzen ist nicht, dass die Spezifikation formal stimmt; das ist die Voraussetzung. Eine Spezifikation kann technisch fehlerfrei sein und trotzdem falsch: eine Anforderung, die Formate erfindet, die ihr eigener Anwendungsfall ausschliesst; eine Fehlermeldung, die als Anwendungsfall im Modell steht; ein System fuer gemeinsames Bearbeiten ohne jede Nebenlaeufigkeit — jede Regel gruen, drei echte Fehler drin. Der Nutzen ist, dass das Werkzeug sagt, was als Naechstes das Beste ist, was man tun kann: inhaltlich wie strukturell, aus definierten Kenngroessen statt aus einer Modellmeinung, und ohne jede Statistik. || Drei Merkmale, und sie sind die Ebene-0-Bloecke. (1) GROUNDING: die Daten und die daraus erzeugten Antworten sind pruefbar — Ontologie und Grammatik lassen Unzulaessiges gar nicht erst herein, Kenngroessen machen den Zustand pruefbar, zwoelf Ingenieursdokumente fallen deterministisch aus demselben Graphen, gleicher Graph, gleiche Bytes; kein Modell im Pfad. (2) FUEHRUNG, adaptiv: der schwaechste von acht Reifegraden benennt den naechsten sinnvollen Schritt. Fuehrung heisst ausdruecklich NICHT Zwang — kein Score blockiert je etwas, blockieren kann allein eine Regel und nur bei unzulaessig, nie bei suboptimal; der Anwender kann jederzeit einen anderen Weg einschlagen, und die Schleife rechnet ab da mit seinem Weg weiter. (3) OPTIMIERUNG, strukturell UND inhaltlich: strukturell rankt die Architekturmaschine Kandidaten danach, wie weit sie den Graphen entlang des GEWAEHLTEN Ziels bewegen, wie eine Schachmaschine, die Zuege vorausrechnet; inhaltlich decken fuenf gefuehrte Urteilssitzungen ab, was keine Regel sehen kann — das Urteil bleibt beim Menschen, das Werkzeug prueft nur, dass es stattgefunden hat und zum aktuellen Umfang passt. || Ein vierter Block, BETRIEB, traegt Installation, Konfiguration und Sitzung: man verkauft ihn nicht, man braucht ihn. || Technisch: ein Store mit Apply-Gate, genau ein Besitzerprozess je Repo, MCP-stdio zum Agenten und eine Lesebruecke zum Viewer. AGENT-AGNOSTISCH und darin verriegelt: ein Coding-Agent ist ein Client, nicht Teil des Systems — die frueher hier stehende Bindung an einen benannten Agenten war eine Aussage gegen die eigene Zusage. (Story festgeschrieben CR-GC-462; Bloecke CR-GC-459)",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z",
       "analysisFreshness": {
@@ -10812,6 +10877,36 @@
       "type": "satisfy"
     },
     {
+      "source": "FCHAIN-loop-closure",
+      "target": "FUNC-audit-stats",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-loop-closure",
+      "target": "FUNC-audit-trail",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-loop-closure",
+      "target": "FUNC-mutate",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-loop-closure",
+      "target": "FUNC-se-retro",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-loop-closure",
+      "target": "REQ-prompt-provenance",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-loop-closure",
+      "target": "REQ-rule-calibration",
+      "type": "satisfy"
+    },
+    {
       "source": "FCHAIN-merge-branches",
       "target": "FUNC-merge-nodes",
       "type": "compose"
@@ -11273,6 +11368,36 @@
     {
       "source": "FLOW-arch-fitness",
       "target": "SCHEMA-metric-vector",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-audit-record",
+      "target": "FUNC-audit-stats",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-audit-record",
+      "target": "FUNC-audit-trail",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-audit-record",
+      "target": "SCHEMA-audit-record",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-audit-report",
+      "target": "ACTOR-owner",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-audit-report",
+      "target": "FUNC-se-retro",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-audit-report",
+      "target": "SCHEMA-audit-stats",
       "type": "relation"
     },
     {
@@ -12270,6 +12395,26 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-audit-stats",
+      "target": "MOD-surface",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-audit-stats",
+      "target": "FLOW-audit-report",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-audit-trail",
+      "target": "MOD-surface",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-audit-trail",
+      "target": "FLOW-audit-report",
+      "type": "io"
+    },
+    {
       "source": "FUNC-author-req",
       "target": "MOD-agent-surface",
       "type": "allocate"
@@ -12323,6 +12468,11 @@
       "source": "FUNC-bind-tools",
       "target": "REQ-mcp-tool-registry",
       "type": "satisfy"
+    },
+    {
+      "source": "FUNC-block-abfrage",
+      "target": "FUNC-audit-trail",
+      "type": "compose"
     },
     {
       "source": "FUNC-block-abfrage",
@@ -12722,6 +12872,11 @@
     {
       "source": "FUNC-block-messwerk",
       "target": "FUNC-arch-fitness",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-messwerk",
+      "target": "FUNC-audit-stats",
       "type": "compose"
     },
     {
@@ -13835,6 +13990,11 @@
       "source": "FUNC-mutate",
       "target": "MOD-kernel",
       "type": "allocate"
+    },
+    {
+      "source": "FUNC-mutate",
+      "target": "FLOW-audit-record",
+      "type": "io"
     },
     {
       "source": "FUNC-mutate",
@@ -17012,6 +17172,11 @@
     },
     {
       "source": "UC-loop-closure",
+      "target": "FCHAIN-loop-closure",
+      "type": "compose"
+    },
+    {
+      "source": "UC-loop-closure",
       "target": "REQ-prompt-provenance",
       "type": "compose"
     },
@@ -17189,5 +17354,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 228
+  "graphVersion": 231
 }

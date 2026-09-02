@@ -627,6 +627,12 @@
 | `FCHAIN-live-update` | compose | `FUNC-serve-sse` |
 | `FCHAIN-live-update` | compose | `FUNC-serve-stdio` |
 | `FCHAIN-live-update` | satisfy | `REQ-mutation-emits-event` |
+| `FCHAIN-loop-closure` | compose | `FUNC-audit-stats` |
+| `FCHAIN-loop-closure` | compose | `FUNC-audit-trail` |
+| `FCHAIN-loop-closure` | compose | `FUNC-mutate` |
+| `FCHAIN-loop-closure` | compose | `FUNC-se-retro` |
+| `FCHAIN-loop-closure` | satisfy | `REQ-prompt-provenance` |
+| `FCHAIN-loop-closure` | satisfy | `REQ-rule-calibration` |
 | `FCHAIN-merge-branches` | compose | `FUNC-merge-nodes` |
 | `FCHAIN-merge-branches` | satisfy | `REQ-conflict-free-merge` |
 | `FCHAIN-model-import` | compose | `FUNC-import` |
@@ -714,6 +720,12 @@
 | `FLOW-action` | relation | `SCHEMA-action` |
 | `FLOW-arch-fitness` | io | `FUNC-rank-candidates` |
 | `FLOW-arch-fitness` | relation | `SCHEMA-metric-vector` |
+| `FLOW-audit-record` | io | `FUNC-audit-stats` |
+| `FLOW-audit-record` | io | `FUNC-audit-trail` |
+| `FLOW-audit-record` | relation | `SCHEMA-audit-record` |
+| `FLOW-audit-report` | io | `ACTOR-owner` |
+| `FLOW-audit-report` | io | `FUNC-se-retro` |
+| `FLOW-audit-report` | relation | `SCHEMA-audit-stats` |
 | `FLOW-cli-command` | io | `FUNC-bootstrap` |
 | `FLOW-cli-command` | io | `FUNC-claim-store-lock` |
 | `FLOW-cli-command` | io | `FUNC-cli-dispatch` |
@@ -897,6 +909,10 @@
 | `FUNC-arch-fitness` | allocate | `MOD-projections` |
 | `FUNC-arch-fitness` | io | `FLOW-arch-fitness` |
 | `FUNC-arch-fitness` | satisfy | `REQ-steering-from-metrics` |
+| `FUNC-audit-stats` | allocate | `MOD-surface` |
+| `FUNC-audit-stats` | io | `FLOW-audit-report` |
+| `FUNC-audit-trail` | allocate | `MOD-surface` |
+| `FUNC-audit-trail` | io | `FLOW-audit-report` |
 | `FUNC-author-req` | allocate | `MOD-agent-surface` |
 | `FUNC-author-req` | io | `FLOW-mutate-cmd` |
 | `FUNC-author-req` | satisfy | `REQ-skill-authors-through-gate` |
@@ -908,6 +924,7 @@
 | `FUNC-auto-export` | satisfy | `REQ-auto-persist-merge` |
 | `FUNC-bind-tools` | allocate | `MOD-surface` |
 | `FUNC-bind-tools` | satisfy | `REQ-mcp-tool-registry` |
+| `FUNC-block-abfrage` | compose | `FUNC-audit-trail` |
 | `FUNC-block-abfrage` | compose | `FUNC-deduce-tests` |
 | `FUNC-block-abfrage` | compose | `FUNC-graph-expand` |
 | `FUNC-block-abfrage` | compose | `FUNC-graph-impact` |
@@ -988,6 +1005,7 @@
 | `FUNC-block-live-dashboard` | compose | `FUNC-serve-sse` |
 | `FUNC-block-messwerk` | allocate | `MOD-projections` |
 | `FUNC-block-messwerk` | compose | `FUNC-arch-fitness` |
+| `FUNC-block-messwerk` | compose | `FUNC-audit-stats` |
 | `FUNC-block-messwerk` | compose | `FUNC-compute-phase-readiness` |
 | `FUNC-block-messwerk` | compose | `FUNC-compute-readiness` |
 | `FUNC-block-messwerk` | compose | `FUNC-compute-steering-delta` |
@@ -1190,6 +1208,7 @@
 | `FUNC-module-metrics` | io | `FLOW-module-metrics` |
 | `FUNC-module-metrics` | satisfy | `REQ-steering-from-metrics` |
 | `FUNC-mutate` | allocate | `MOD-kernel` |
+| `FUNC-mutate` | io | `FLOW-audit-record` |
 | `FUNC-mutate` | io | `FLOW-gate-verdict` |
 | `FUNC-mutate` | io | `FLOW-graph-state` |
 | `FUNC-mutate` | satisfy | `REQ-confidence-tier` |
@@ -1774,6 +1793,7 @@
 | `UC-live-graph-view` | compose | `REQ-readonly-bridge` |
 | `UC-live-graph-view` | compose | `REQ-real-health-check` |
 | `UC-live-graph-view` | compose | `REQ-versioned-broadcast` |
+| `UC-loop-closure` | compose | `FCHAIN-loop-closure` |
 | `UC-loop-closure` | compose | `REQ-prompt-provenance` |
 | `UC-loop-closure` | compose | `REQ-rule-calibration` |
 | `UC-model-exchange` | compose | `FCHAIN-doc-export` |
