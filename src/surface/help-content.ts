@@ -634,3 +634,81 @@ export const HELP_VOCAB: Record<string, HelpVocabEntry> = {
 export const HELP_ELEMENT_STATES =
   'A `FUNC` or `TEST` carries a state: **realized** (the default — meant to be built/written now) · ' +
   '`concept:true` (planned, not built/written yet — a stub) · `external:true` (provided by an outside library, not built here).';
+
+/**
+ * One authored metric item (CR-GC-458). The six ℝ⁶ dimensions decide every
+ * `graph_suggest` recommendation, sit in the target profile, ride along in every
+ * gate verdict's fit-advisory, and since CR-GC-451 leave the host as a current-state
+ * vector in `graph_metrics` — and until now the help catalogue did not know a single
+ * one of them. `graph_help({ token: 'coherence' })` answered `unknown token`, so any
+ * consumer wanting to explain them wrote its own text: the second source that is
+ * deliberately avoided for rule text.
+ *
+ * Three fields, not the {plain, se} pair above, because a measurement answers other
+ * questions than a rule. A rule says "this is broken → do that". A number needs
+ * WHAT IS COUNTED, WHAT IT IS FOR, and WHAT MOVES IT — answer only one and you have
+ * not helped. Own constant rather than three optional fields on `HelpContentEntry`:
+ * a rule entry carrying three empty metric fields would be a schema that does not
+ * hold for the majority of its entries.
+ */
+export interface MetricHelpEntry {
+  /** Everyday word for the dimension — what a reader recognizes, not the enum name. */
+  title: string;
+  /** What the number counts — the engine's formula, in words. */
+  measure: string;
+  /** What a high (or low) value is good for. */
+  purpose: string;
+  /** What actually moves it. */
+  lever: string;
+}
+
+/**
+ * The six `MetricVector` dimensions, keyed exactly as `METRIC_DIMENSIONS` names them.
+ * `measure` is derived from `metrics.ts` in `@sigloch/se-engine` — every one of these
+ * is `clamp05(5 × …)`, so the scale is 0–5 throughout, and the phrasing follows the
+ * formula that stands there rather than an intuition about the name.
+ */
+export const METRIC_HELP: Record<string, MetricHelpEntry> = {
+  modifiability: {
+    title: 'Änderbarkeit',
+    measure:
+      'Die Modularität des Graphen: wie sauber er in Gruppen zerfällt, die innen dicht und nach außen dünn verbunden sind.',
+    purpose:
+      'Eine Änderung soll in ihrer Gruppe bleiben. Hoch heißt: wenig Kollateralschaden, weil wenige Kanten die Gruppengrenze kreuzen.',
+    lever:
+      'Funktionen so auf Module verteilen, dass zusammen Aufgerufenes zusammenliegt — der Modulschnitt, nicht die Anzahl der Module.',
+  },
+  faultTolerance: {
+    title: 'Robustheit',
+    measure: 'Die Redundanzdichte: wie viele alternative Wege es zwischen zwei Stellen gibt.',
+    purpose: 'Fällt eine Stelle aus, soll ein anderer Weg bleiben. Niedrig heißt: es gibt Einzelpunkte, an denen alles hängt.',
+    lever: 'Zweitwege einziehen; einzige Verbindungen zu kritischen Knoten auflösen.',
+  },
+  flowEfficiency: {
+    title: 'Flusseffizienz',
+    measure:
+      'Der Kehrwert der mittleren Weglänge vom Eingang zum Ergebnis, multipliziert mit dem Anteil der überhaupt erreichbaren Knoten.',
+    purpose:
+      'Vom Eingang zum Ergebnis soll es kurz gehen, und nichts soll unerreichbar herumliegen. Der Wert fällt aus beiden Gründen — lange Ketten und tote Ecken zählen gleich.',
+    lever: 'Ketten kürzen, Zwischenstationen entfernen, unangebundene Knoten anbinden oder löschen.',
+  },
+  coherence: {
+    title: 'Zusammenhalt',
+    measure: 'Der Anteil der Kanten, die innerhalb einer Gruppe bleiben, statt sie zu verlassen.',
+    purpose: 'Die Modulgrenzen sollen dort liegen, wo der Graph ohnehin dicht ist — dann beschreibt die Struktur, was wirklich zusammengehört.',
+    lever: 'Den Modulschnitt nachziehen: kreuzende Aufrufe zusammenlegen, statt neue Module aufzumachen.',
+  },
+  viability: {
+    title: 'Tragfähigkeit',
+    measure: 'Die Masse der größten zusammenhängenden Komponente, geteilt durch die Gesamtmasse.',
+    purpose: 'Das Modell soll ein Ganzes sein, nicht mehrere Inseln. Niedrig heißt: ein Teil des Modells hängt an nichts.',
+    lever: 'Abgehängte Teilgraphen anbinden oder entfernen — beides hebt den Wert, und nur eines davon ist meistens richtig.',
+  },
+  scalability: {
+    title: 'Skalierbarkeit',
+    measure: 'Das Gegenstück zur höchsten Betweenness: wie stark der Verkehr über eine einzelne Engstelle läuft.',
+    purpose: 'Kein Nadelöhr, an dem alles vorbeimuss. Niedrig heißt: ein Knoten trägt den Großteil aller Pfade.',
+    lever:
+      'Den Drehscheiben-Knoten entlasten oder aufteilen. Wer eine Drehscheibe WILL (ein Kernel als bewusster Hub), setzt stattdessen den Zielwert niedriger — das ist kein Mangel, sondern eine Entscheidung.',
+  },
+};

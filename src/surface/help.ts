@@ -26,12 +26,12 @@ import {
   type ReadinessReport,
 } from '../projections/readiness.js';
 import { ARTIFACT_CATALOG } from './panels.js';
-import { HELP_CONTENT, HELP_VOCAB, HELP_PANEL_IDS } from './help-content.js';
+import { HELP_CONTENT, HELP_VOCAB, HELP_PANEL_IDS, METRIC_HELP } from './help-content.js';
 
 /** A fully-assembled help item — all three layers + the derived skeleton. */
 export interface HelpEntry {
   id: string;
-  kind: 'rule' | 'gate' | 'panel' | 'artifact' | 'token';
+  kind: 'rule' | 'gate' | 'panel' | 'artifact' | 'token' | 'metric';
   /** Plain-language title — derived (rule/gate/artifact name) or the token. */
   title: string;
   /** The raw on-screen token, if different from the title (e.g. `R-04`, `CDR`). */
@@ -46,6 +46,16 @@ export interface HelpEntry {
   severity?: string;
   /** Rules only — the gate that owns the rule, from readiness.ts (derived). */
   ownedByGate?: string;
+  /**
+   * Metrics only (CR-GC-458) — the three questions a NUMBER raises, which are not the
+   * ones a rule raises: what is counted, what it is for, what moves it. `plain`/`se`
+   * stay filled alongside them, so a consumer reading only those two keeps working.
+   */
+  measure?: string;
+  purpose?: string;
+  lever?: string;
+  /** Metrics only — the scale the value lives on, so nobody guesses at it. */
+  scale?: { min: number; max: number };
   source: 'derived' | 'authored';
 }
 
@@ -135,6 +145,28 @@ export function helpEntry(id: string): HelpEntry | undefined {
   // Panel or readiness number.
   if (content && (PANEL_IDS.has(id) || isReadinessNumber(id))) {
     return { id, kind: 'panel', title: id, plain: content.plain, se: content.se, prompt: content.prompt, source: 'authored' };
+  }
+
+  // Metric dimension (CR-GC-458) — the six ℝ⁶ names that steer graph_suggest and
+  // stand in every target profile. `plain` collapses purpose+lever into one sentence
+  // for consumers that read only the two classic layers; `se` names the formula.
+  // The one action that follows from understanding a dimension is setting its goal.
+  const metric = METRIC_HELP[id];
+  if (metric) {
+    return {
+      id,
+      kind: 'metric',
+      title: metric.title,
+      token: id,
+      plain: `${metric.purpose} ${metric.lever}`,
+      se: `${metric.measure} Skala 0–5 (metrics(), layer 'arch', @sigloch/se-engine).`,
+      prompt: 'se:target-profile',
+      measure: metric.measure,
+      purpose: metric.purpose,
+      lever: metric.lever,
+      scale: { min: 0, max: 5 },
+      source: 'authored',
+    };
   }
 
   // Vocabulary token (no copy-prompt).

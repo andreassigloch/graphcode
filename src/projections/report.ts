@@ -442,8 +442,14 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
     description:
       'Explain any dashboard item for both audiences (CR-GC-229): a systems engineer who does not know ' +
       'this encoding, and a user with no SE background. Read-only. With `token` → the HelpEntry for that ' +
-      'ruleId / gate / panel / artifact / vocabulary token, carrying all three layers (plain, SE-terms, ' +
-      'and the exact copy-prompt). Without an argument → the contextual, ranked, explained measures from ' +
+      'ruleId / gate / panel / artifact / metric dimension / vocabulary token, carrying all three layers ' +
+      '(plain, SE-terms, and the exact copy-prompt). CR-GC-458: the six ℝ⁶ dimensions that steer ' +
+      'graph_suggest and stand in .graphcode/target-profile.json (coherence, modifiability, faultTolerance, ' +
+      'flowEfficiency, viability, scalability) answer here too, as `kind: "metric"` — and they carry three ' +
+      'extra fields, because a NUMBER raises other questions than a rule: `measure` (what is counted), ' +
+      '`purpose` (what it is for), `lever` (what moves it), plus the `scale` it lives on. Explain a ' +
+      'dimension from THIS answer; a consumer writing its own wording is a second source for the same ' +
+      'concept. Without an argument → the contextual, ranked, explained measures from ' +
       'the live readiness + violations (the explained sibling of Recommendations), covering BOTH rule ' +
       'violations and not-done-creation gate blockers (CR-GC-221). Authored Plain/SE layers come from ' +
       'help-content.ts; titles/severity/owning-gate are derived from V3_RULES + readiness.',
@@ -455,7 +461,8 @@ export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
           throw new Error(
             `graph_help: unknown token '${input.token}'. Try a ruleId (e.g. R-04), a gate (SRR/PDR/CDR/TRR, ` +
               `SAR/FCA/SVR/FRR), a panel (readiness/recommendations/artifacts/impact/health), an artifact ` +
-              `(e.g. fmea), or a vocabulary token (e.g. REQ). Omit the token for contextual help.`,
+              `(e.g. fmea), a metric dimension (coherence/modifiability/faultTolerance/flowEfficiency/` +
+              `viability/scalability), or a vocabulary token (e.g. REQ). Omit the token for contextual help.`,
           );
         }
         return entry;
