@@ -1,6 +1,7 @@
 # CR-GC-462 — `UC-loop-closure`: der Code war da, das Modell kannte ihn nicht
 
-**Status:** open
+**Status:** done
+**Abgeschlossen:** 2026-09-02
 **Angelegt:** 2026-09-02
 
 ## Root Cause
