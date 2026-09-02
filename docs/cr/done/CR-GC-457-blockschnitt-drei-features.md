@@ -1,6 +1,7 @@
 # CR-GC-457 — Blockschnitt: drei Features statt zehn Blöcke
 
-**Status:** open
+**Status:** done
+**Abgeschlossen:** 2026-09-02
 **Angelegt:** 2026-09-02
 
 ## Root Cause
