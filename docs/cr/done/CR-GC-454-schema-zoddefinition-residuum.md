@@ -1,6 +1,7 @@
 # CR-GC-454 — SCHEMA: kopierte Zod-Körper raus, Bindung rein
 
-**Status:** open
+**Status:** done
+**Abgeschlossen:** 2026-09-02
 **Angelegt:** 2026-09-02
 
 ## Root Cause
@@ -76,9 +77,9 @@ liegt seit dem 5er-Modulschnitt unter [src/loop/executor-prompt.ts](src/loop/exe
 
 ## Acceptance
 
-- [ ] kein `zodDefinition` mit Inhalt mehr im SSOT (9 null-Grabsteine bleiben — Attribute sind
+- [x] kein `zodDefinition` mit Inhalt mehr im SSOT (9 null-Grabsteine bleiben — Attribute sind
       mergebar, nicht löschbar; das ist die Gate-Semantik, kein Rest)
-- [ ] die sechs Bindungen lösen gegen den echten Quellbaum auf (RC-03/RC-04 in `rules_evaluate`)
-- [ ] `graph_export` legt keine Stub-Datei an (`stubs: []`)
-- [ ] Suite ohne neue Rote gegenüber der HEAD-Baseline (4c91b69: 10 Dateien / 16 Tests rot,
+- [x] die sechs Bindungen lösen gegen den echten Quellbaum auf (RC-03/RC-04 in `rules_evaluate`)
+- [x] `graph_export` legt keine Stub-Datei an (`stubs: []`)
+- [x] Suite ohne neue Rote gegenüber der HEAD-Baseline (4c91b69: 10 Dateien / 16 Tests rot,
       darunter die bekannten Link-Modus-Roten `lockfile-sync` und `distribution`)

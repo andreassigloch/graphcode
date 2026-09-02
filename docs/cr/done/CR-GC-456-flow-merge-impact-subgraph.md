@@ -1,6 +1,7 @@
 # CR-GC-456 — FLOW: der eine Merge, den die Messung trägt
 
-**Status:** open
+**Status:** done
+**Abgeschlossen:** 2026-09-02
 **Angelegt:** 2026-09-02
 
 ## Root Cause — und die Korrektur an CR-GC-455's Begleitanalyse
@@ -48,6 +49,6 @@ Planung um; sie steht als offene Entscheidung, nicht als CR.
 
 ## Acceptance
 
-- [ ] 38 FLOW, `SCHEMA-format-e` von genau einem FLOW getragen (R-18: 1..1)
-- [ ] `rules_evaluate` blockingErrors unverändert (1)
-- [ ] Suite ohne neue Rote gegenüber der HEAD-Baseline (10 Dateien / 16 Tests)
+- [x] 38 FLOW, `SCHEMA-format-e` von genau einem FLOW getragen (R-18: 1..1)
+- [x] `rules_evaluate` blockingErrors unverändert (1)
+- [x] Suite ohne neue Rote gegenüber der HEAD-Baseline (10 Dateien / 16 Tests)

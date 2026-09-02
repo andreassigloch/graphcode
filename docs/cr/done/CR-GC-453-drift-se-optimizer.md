@@ -1,6 +1,7 @@
 # CR-GC-453 — Drift: se-optimizer existiert nicht mehr
 
-**Status:** open
+**Status:** done
+**Abgeschlossen:** 2026-09-02
 **Angelegt:** 2026-09-02
 
 ## Root Cause
@@ -47,8 +48,8 @@ und die Möglichkeit, die NFR jemals zu schließen.
 
 ## Acceptance
 
-- [ ] `se-optimizer` nur noch in CR-GC-273/274 (Historie) und in der NFR, die das tote Paket
+- [x] `se-optimizer` nur noch in CR-GC-273/274 (Historie) und in der NFR, die das tote Paket
       ausdrücklich als gegenstandslos benennt
-- [ ] NFR nennt eine Größe, gegen die sie prüfbar ist
-- [ ] `npm run build` grün
-- [ ] Suite ohne neue Rote gegenüber der HEAD-Baseline (4c91b69: 10 Dateien / 16 Tests rot)
+- [x] NFR nennt eine Größe, gegen die sie prüfbar ist
+- [x] `npm run build` grün
+- [x] Suite ohne neue Rote gegenüber der HEAD-Baseline (4c91b69: 10 Dateien / 16 Tests rot)
