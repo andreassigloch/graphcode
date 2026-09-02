@@ -196,3 +196,61 @@ describe('graph_suggest — Config-Default (echter Harness, disk-Kuzu)', () => {
     expect(explicit.target).not.toEqual(fromConfig.target);
   });
 });
+
+/**
+ * CR-GC-457 — der Zielwert steht auf DERSELBEN Skala wie der Ist-Wert.
+ *
+ * Das Gewicht (−1…1) steuert `graph_suggest`, der Zielwert (0…5) ist die Marke,
+ * gegen die ein Mensch den Ist-Wert liest. Vor diesem CR gab es nur das Gewicht,
+ * und ein Dashboard schrieb „heben (1.0)" neben einen Ist-Wert von 3.71 — auf der
+ * Werteskala gelesen das Gegenteil dessen, was gemeint war.
+ */
+describe('TargetValues im Profil (CR-GC-457)', () => {
+  let tmp: string;
+
+  beforeEach(() => {
+    tmp = mkdtempSync(join(tmpdir(), 'graphcode-target-values-'));
+    mkdirSync(join(tmp, '.graphcode'), { recursive: true });
+  });
+  afterEach(() => rmSync(tmp, { recursive: true, force: true }));
+
+  it('akzeptiert Zielwerte auf der 0–5-Skala neben den Gewichten', () => {
+    const parsed = TargetProfileSchema.parse({
+      weights: { coherence: 1, scalability: -0.2 },
+      values: { coherence: 4.5, scalability: 3.5 },
+    });
+    expect(parsed.values.coherence).toBe(4.5);
+    expect(parsed.values.scalability).toBe(3.5);
+    // Das Gewicht bleibt daneben stehen — zwei Felder, zwei Aufgaben.
+    expect(parsed.weights.coherence).toBe(1);
+  });
+
+  it('weist Werte ausserhalb der Metrik-Skala ab — 6 und -1 sind keine Messwerte', () => {
+    expect(() => TargetProfileSchema.parse({ values: { coherence: 6 } })).toThrow();
+    expect(() => TargetProfileSchema.parse({ values: { coherence: -1 } })).toThrow();
+    // Die Skalengrenzen selbst sind gültig (clamp05 liefert genau diese Randwerte).
+    expect(TargetProfileSchema.parse({ values: { coherence: 0 } }).values.coherence).toBe(0);
+    expect(TargetProfileSchema.parse({ values: { coherence: 5 } }).values.coherence).toBe(5);
+  });
+
+  it('ein bestehendes Profil ohne `values` laedt unveraendert — kein Repo muss nachziehen', () => {
+    const parsed = TargetProfileSchema.parse({ weights: { coherence: 1 } });
+    expect(parsed.values).toEqual({});
+    expect(parsed.weights.coherence).toBe(1);
+  });
+
+  it('ein unbekanntes Dimensionswort bleibt ein Fehler (strictObject, kein stiller Tippfehler)', () => {
+    expect(() => TargetProfileSchema.parse({ values: { coherenc: 4 } })).toThrow();
+  });
+
+  it('der Loader reicht die Zielwerte durch, samt Konflikt-Check auf den Gewichten', () => {
+    mkdirSync(join(tmp, '.graphcode'), { recursive: true });
+    writeFileSync(
+      join(tmp, TARGET_PROFILE_REL),
+      JSON.stringify({ weights: { coherence: 1 }, values: { coherence: 4.5 } }),
+    );
+    const loaded = loadTargetProfile(tmp);
+    expect(loaded?.profile.values).toEqual({ coherence: 4.5 });
+    expect(loaded?.conflicts).toEqual([]);
+  });
+});

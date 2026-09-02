@@ -203,3 +203,88 @@ describe('TEST-graph-metrics: Kennzahlen je MOD, auch ohne Verstoss (CR-GC-326)'
     });
   });
 });
+
+/**
+ * CR-GC-457 — Zielwert UND Gewicht verlassen den Host gemeinsam, und der
+ * Widerspruch zwischen beiden bleibt nicht stumm.
+ *
+ * Der gemessene Mangel (Review graph-view-edit 30.08., Punkt 3): das Dashboard
+ * hatte nur das Gewicht und schrieb „heben (1.0)" neben einen Ist-Wert von 3.71.
+ * Auf der Werteskala gelesen heisst das „senken" — das Gegenteil. Der Zielwert
+ * liegt jetzt auf DERSELBEN Skala wie `metrics`, damit ein Konsument den Abstand
+ * zeichnen kann, ohne eine Einheit umzudeuten.
+ */
+describe('graph_metrics — Zielwerte je Dimension (CR-GC-457)', () => {
+  let repoRoot: string;
+  let harness: GraphCodeHarness;
+  let tools: MCPToolRegistry;
+
+  beforeEach(async () => {
+    repoRoot = mkdtempSync(join(tmpdir(), 'graphcode-target-values-fit-'));
+    harness = makeHarness(repoRoot);
+    await harness.initialize();
+    // Derselbe Seed wie oben: ein leerer Graph misst auf allen sechs Dimensionen
+    // 0, und gegen eine 0 ist „Zielwert darunter" nicht formulierbar.
+    expect((await harness.mutate(SEED)).success).toBe(true);
+    tools = bindToolsToHarness(harness);
+  });
+  afterEach(async () => {
+    await harness.close();
+    rmSync(repoRoot, { recursive: true, force: true });
+  });
+
+  const writeProfile = (profile: unknown): void => {
+    mkdirSync(join(repoRoot, '.graphcode'), { recursive: true });
+    writeFileSync(join(repoRoot, '.graphcode', 'target-profile.json'), JSON.stringify(profile));
+  };
+
+  it('ohne Profil: leere Zielwerte und keine Widersprueche — nie eine erfundene 2.5-Mitte', async () => {
+    const { fit } = await tools.graph_metrics.handler({});
+    expect(fit.target.source).toBe('none');
+    expect(fit.target.values).toEqual({});
+    expect(fit.target.inconsistent).toEqual([]);
+  });
+
+  it('reicht die Zielwerte der Datei unveraendert durch, neben dem Gewicht', async () => {
+    writeProfile({ weights: { coherence: 1 }, values: { coherence: 4.5, viability: 5 } });
+    const { fit } = await tools.graph_metrics.handler({});
+    expect(fit.target.values).toEqual({ coherence: 4.5, viability: 5 });
+    expect(fit.target.weights).toEqual({ coherence: 1 });
+    // Wert und Marke in EINER Antwort — die Regel aus CR-GC-329/451.
+    expect(Number.isFinite(fit.metrics.coherence)).toBe(true);
+  });
+
+  it('meldet den Widerspruch: „heben", aber der Zielwert liegt UNTER dem Ist-Wert', async () => {
+    const ist = (await tools.graph_metrics.handler({})).fit.metrics.coherence;
+    // Praemisse des Tests laut machen: unter einem Ist-Wert von 0 gibt es kein
+    // gueltiges Ziel darunter, dann pruefte der Test nichts.
+    expect(ist).toBeGreaterThan(0);
+    writeProfile({ weights: { coherence: 1 }, values: { coherence: ist / 2 } });
+    const { fit } = await tools.graph_metrics.handler({});
+    expect(fit.target.inconsistent).toEqual(['coherence']);
+  });
+
+  it('stimmen Richtung und Zielwert ueberein, bleibt die Liste leer', async () => {
+    const ist = (await tools.graph_metrics.handler({})).fit.metrics.coherence;
+    expect(ist).toBeLessThan(5);
+    writeProfile({ weights: { coherence: 1 }, values: { coherence: (ist + 5) / 2 } });
+    const { fit } = await tools.graph_metrics.handler({});
+    expect(fit.target.inconsistent).toEqual([]);
+  });
+
+  it('ohne Gewicht gibt es keine Steuerabsicht, der der Zielwert widersprechen koennte', async () => {
+    const ist = (await tools.graph_metrics.handler({})).fit.metrics.coherence;
+    writeProfile({ weights: {}, values: { coherence: ist / 2 } });
+    const { fit } = await tools.graph_metrics.handler({});
+    expect(fit.target.values.coherence).toBeCloseTo(ist / 2);
+    expect(fit.target.inconsistent).toEqual([]);
+  });
+
+  it('ein Zielwert allein aendert die Empfehlung nicht — gerankt wird gegen die Gewichte', async () => {
+    writeProfile({ weights: { coherence: 1 } });
+    const withoutValues = (await tools.graph_metrics.handler({})).fit.target.weights;
+    writeProfile({ weights: { coherence: 1 }, values: { coherence: 4.5 } });
+    const withValues = (await tools.graph_metrics.handler({})).fit.target.weights;
+    expect(withValues).toEqual(withoutValues);
+  });
+});

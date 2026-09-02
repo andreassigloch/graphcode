@@ -32,11 +32,42 @@ import type { PolicySource } from '../kernel/config.js';
 import { toOntologyGraph } from '../kernel/conformance.js';
 import { archMetrics } from './fit-advisory.js';
 import { loadTargetProfile } from '../loop/target-profile.js';
-import type { TargetWeights } from '../loop/target-profile-contract.js';
+import type { TargetWeights, TargetValues } from '../loop/target-profile-contract.js';
 import type { MCPTool, MCPToolRegistry } from '../surface/mcp-tools.js';
 import type { ToolContext } from '../surface/tool-context.js';
 
 const GraphMetricsInputSchema = z.looseObject({});
+
+/** Die Dimensionen, in denen Gewicht und Zielwert in verschiedene Richtungen zeigen. */
+type Dimension = keyof TargetWeights;
+
+/**
+ * CR-GC-457: Gewicht und Zielwert sind zwei Felder mit zwei Aufgaben — und können
+ * sich widersprechen. `coherence` mit Gewicht `+1` („heben") und Sollwert `3.0` bei
+ * Ist `3.71` ist ein Profil, das in zwei Richtungen zeigt.
+ *
+ * Die Prüfung sitzt HIER und nicht im Loader: `loadTargetProfile` liest eine Datei
+ * und kennt den Graphen nicht — ohne Ist-Wert ist der Widerspruch nicht entscheidbar.
+ * Ergebnis ist eine Liste, kein Fehler: ein bewusster Zielkonflikt ist legitim
+ * (dieselbe Linie wie `conflictWarnings`), ein unsichtbarer ist es nicht.
+ */
+function inconsistentDimensions(
+  weights: TargetWeights,
+  values: TargetValues,
+  actual: MetricVector,
+): Dimension[] {
+  const out: Dimension[] = [];
+  for (const dim of Object.keys(values) as Dimension[]) {
+    const target = values[dim];
+    const w = weights[dim] ?? 0;
+    // Kein Gewicht = keine Steuerabsicht, also nichts, dem der Wert widersprechen
+    // könnte. Gleichstand (Ziel === Ist) ist erreicht, nicht widersprüchlich.
+    if (target === undefined || w === 0) continue;
+    const gap = target - actual[dim];
+    if (gap !== 0 && Math.sign(gap) !== Math.sign(w)) out.push(dim);
+  }
+  return out;
+}
 
 export function bindMetricsTools(ctx: ToolContext): MCPToolRegistry {
   const { harness, graphVersion } = ctx;
@@ -47,7 +78,16 @@ export function bindMetricsTools(ctx: ToolContext): MCPToolRegistry {
       modules: ModuleMetrics[];
       policy: MetricPolicy;
       policySource: PolicySource;
-      fit: { layer: 'arch'; metrics: MetricVector; target: { weights: TargetWeights; source: 'profile' | 'none' } };
+      fit: {
+        layer: 'arch';
+        metrics: MetricVector;
+        target: {
+          weights: TargetWeights;
+          values: TargetValues;
+          source: 'profile' | 'none';
+          inconsistent: Dimension[];
+        };
+      };
       graphVersion: number;
     }
   > = {
@@ -73,10 +113,18 @@ export function bindMetricsTools(ctx: ToolContext): MCPToolRegistry {
       'means measure, do not judge: MT-01 never fires, the instability value is still in every ' +
       'module row. CR-GC-451: `fit` carries the ℝ⁶ CURRENT-STATE vector on the architecture layer ' +
       '(`metrics`, the same measurement graph_suggest ranks its Δm against) TOGETHER WITH the target ' +
-      'direction it is judged against (`target.weights` from .graphcode/target-profile.json, ' +
-      '`target.source: \'none\'` when no profile exists — never an invented zero vector). Same rule as ' +
-      'policy/policySource: value and target leave the host in ONE answer, a consumer that keeps a ' +
-      'target of its own is a second source for the same number. `layer: \'arch\'` is part of the ' +
+      'it is judged against (from .graphcode/target-profile.json, `target.source: \'none\'` when no ' +
+      'profile exists — never an invented zero vector). Same rule as policy/policySource: value and ' +
+      'target leave the host in ONE answer, a consumer that keeps a target of its own is a second ' +
+      'source for the same number. CR-GC-457: the target has TWO fields, and they are not ' +
+      'interchangeable. `target.weights` (−1…1) is the STEERING DIRECTION — L2-normalized, only its ' +
+      'direction reaches graph_suggest\'s ranking (CR-GC-353); it is NOT a value on the metric scale, ' +
+      'and rendering it next to `metrics` invites reading "raise (1.0)" beside a current 3.71 as ' +
+      '"lower to 1.0". `target.values` (0…5) is the GOAL on the SAME scale as `metrics` — that is the ' +
+      'number to draw a gap against; a dimension missing there has no goal, never an invented 2.5 ' +
+      'midpoint. `target.inconsistent` lists dimensions where sign(weight) and sign(value − metrics) ' +
+      'disagree (raise, but the goal sits below where we are). It is a WARNING, never a block: a ' +
+      'deliberate trade-off is legitimate, an invisible one is not. `layer: \'arch\'` is part of the ' +
       'answer — this is NOT the global metrics(G); whoever compares must know against what. Read-only.',
     inputSchema: GraphMetricsInputSchema,
     async handler(_input) {
@@ -91,16 +139,26 @@ export function bindMetricsTools(ctx: ToolContext): MCPToolRegistry {
       // Gewichten; ein erfundener Nullvektor sähe aus wie „überall neutral
       // entschieden" und ist etwas anderes als „nie entschieden".
       const profile = loadTargetProfile(harness.getRepoRoot());
+      // CR-GC-457: der Zielwert steht auf DERSELBEN Skala wie `metrics` (0–5), das
+      // Gewicht daneben auf seiner eigenen (−1…1). Beide reisen mit, weil sie zwei
+      // Fragen beantworten — „wohin" und „wie dringend" —, und `inconsistent` sagt,
+      // wo die zwei Antworten einander widersprechen.
+      const metrics = archMetrics(graph);
+      const weights = profile?.profile.weights ?? {};
+      const values = profile?.profile.values ?? {};
       return {
         modules: moduleMetrics(toOntologyGraph(graph)),
         policy: config.metricPolicy,
         policySource: source,
         fit: {
           layer: 'arch',
-          metrics: archMetrics(graph),
-          target: profile
-            ? { weights: profile.profile.weights, source: 'profile' }
-            : { weights: {}, source: 'none' },
+          metrics,
+          target: {
+            weights,
+            values,
+            source: profile ? 'profile' : 'none',
+            inconsistent: inconsistentDimensions(weights, values, metrics),
+          },
         },
         graphVersion: graphVersion(),
       };
