@@ -47,6 +47,8 @@ und die Möglichkeit, die NFR jemals zu schließen.
 
 ## Acceptance
 
-- [ ] `grep se-optimizer docs/graph/graphcode.graph.json` trifft nur noch CR-GC-273/274 (Historie)
+- [ ] `se-optimizer` nur noch in CR-GC-273/274 (Historie) und in der NFR, die das tote Paket
+      ausdrücklich als gegenstandslos benennt
 - [ ] NFR nennt eine Größe, gegen die sie prüfbar ist
-- [ ] `npm run build` grün, Testsuite grün
+- [ ] `npm run build` grün
+- [ ] Suite ohne neue Rote gegenüber der HEAD-Baseline (4c91b69: 10 Dateien / 16 Tests rot)

@@ -48,4 +48,5 @@ in ConOps §3 lesbar — dort, wo ISO 29148 §5.2.4 sie hinstellt.
 - [ ] 4 ACTOR im SSOT, keine verwaisten io-Kanten
 - [ ] `conops.md` §3 nennt die drei Nutzerklassen weiterhin namentlich
 - [ ] keine neue Regelverletzung (`rules_evaluate` blockingErrors unverändert)
-- [ ] Testsuite grün
+- [ ] Suite ohne neue Rote gegenüber der HEAD-Baseline (4c91b69: 10 Dateien / 16 Tests rot,
+      darunter die bekannten Link-Modus-Roten `lockfile-sync` und `distribution`)

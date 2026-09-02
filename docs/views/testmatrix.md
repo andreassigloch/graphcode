@@ -219,8 +219,8 @@ Belegt: 104/137 REQ bestanden (76%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-graph-export-snapshot` → `FUNC-export-marker` | `FLOW-graph-state` | `FCHAIN-snapshot-freshness` | `TEST-auto-export` · `TEST-graph-time-travel` | integration | passed |
 | `FUNC-graph-export-snapshot` → `FUNC-mutate` | `FLOW-graph-state` | `FCHAIN-snapshot-freshness` | `TEST-auto-export` · `TEST-graph-time-travel` | integration | passed |
 | `FUNC-graph-impact` → `FUNC-evaluate-rules` | `FLOW-round-scope` | `FCHAIN-advisory-roundtrip` | `TEST-advisory-roundtrip-latency` | performance | passed |
-| `FUNC-graph-impact` → `FUNC-graph-expand` | `FLOW-impact-subgraph` | `FCHAIN-agent-query` | `TEST-impact-subgraph` · `TEST-inject-graph-slice` · `TEST-mvp-e2e` · `TEST-token-efficiency` · `TEST-violation-context` | acceptance, e2e, integration | passed |
-| `FUNC-graph-impact` → `FUNC-mutate` | `FLOW-impact-subgraph` | `FCHAIN-advisory-roundtrip` · `FCHAIN-interface-escalation` | `TEST-advisory-roundtrip-latency` · `TEST-interface-escalation` | integration, performance | passed |
+| `FUNC-graph-impact` → `FUNC-graph-expand` | `FLOW-formatE-artifact` | `FCHAIN-agent-query` | `TEST-impact-subgraph` · `TEST-inject-graph-slice` · `TEST-mvp-e2e` · `TEST-token-efficiency` · `TEST-violation-context` | acceptance, e2e, integration | passed |
+| `FUNC-graph-impact` → `FUNC-mutate` | `FLOW-formatE-artifact` | `FCHAIN-advisory-roundtrip` · `FCHAIN-interface-escalation` | `TEST-advisory-roundtrip-latency` · `TEST-interface-escalation` | integration, performance | passed |
 | `FUNC-graph-suggest` → `FUNC-mutate` | `FLOW-mutate-cmd` | `FCHAIN-advisory-roundtrip` | `TEST-advisory-roundtrip-latency` | performance | passed |
 | `FUNC-gve-supervise` → `FUNC-gve-sessions` | `FLOW-session-registry` | `FCHAIN-repo-lifecycle` | `TEST-repo-lifecycle` | integration | passed |
 | `FUNC-host-socket` → `FUNC-mutate` | `FLOW-mutate-cmd` | `FCHAIN-apply-gate` | `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, e2e, integration, performance | passed |

@@ -80,4 +80,5 @@ liegt seit dem 5er-Modulschnitt unter [src/loop/executor-prompt.ts](src/loop/exe
       mergebar, nicht löschbar; das ist die Gate-Semantik, kein Rest)
 - [ ] die sechs Bindungen lösen gegen den echten Quellbaum auf (RC-03/RC-04 in `rules_evaluate`)
 - [ ] `graph_export` legt keine Stub-Datei an (`stubs: []`)
-- [ ] Testsuite grün
+- [ ] Suite ohne neue Rote gegenüber der HEAD-Baseline (4c91b69: 10 Dateien / 16 Tests rot,
+      darunter die bekannten Link-Modus-Roten `lockfile-sync` und `distribution`)

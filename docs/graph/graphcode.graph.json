@@ -1716,8 +1716,8 @@
     {
       "id": "FLOW-formatE-artifact",
       "type": "FLOW",
-      "name": "Format-E-Artefakt",
-      "description": "Ein vollstaendiges Format-E-Dokument am Modulrand: deterministisch serialisiert vom Encoder, vom Slicer geliefert oder vom Agenten geschrieben. Wer es verfasst hat, steht an der Produzenten-Kante, nicht im Vertrag.",
+      "name": "Format-E-Artefakt (Snapshot, Diff, Impact-Slice)",
+      "description": "Der Format-E-Kanal: kompakte Snapshot-/Diff-/Slice-Artefakte zwischen Codec, Import, Export und den Lese-Werkzeugen. Traegt auch den Impact-Subgraphen — graph_impact und graph_expand liefern seit CR-GC-210 ausschliesslich Format-E-Slices, ein eigener FLOW dafuer war derselbe Kanal unter zweitem Namen. (zusammengelegt CR-GC-456)",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z"
     },
@@ -1741,14 +1741,6 @@
       "type": "FLOW",
       "name": "Health-Report",
       "description": "Der gemessene Funktionszustand des Hosts: Store erreichbar, Gate arbeitsfaehig, Knotenzahl, die geltenden Ontologie-/Regel-/Meta-Modell-Versionen und die Zahl der angehaengten Viewer."
-    },
-    {
-      "id": "FLOW-impact-subgraph",
-      "type": "FLOW",
-      "name": "Impact-Subgraph",
-      "description": "Die angefragte Graph-Scheibe als Format-E samt Cursor: exakter Blast-Radius und die on-demand vertiefte Fortsetzung.",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
       "id": "FLOW-impacted-tests",
@@ -11407,6 +11399,13 @@
     },
     {
       "source": "FLOW-formatE-artifact",
+      "target": "ACTOR-agent",
+      "type": "io",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-formatE-artifact",
       "target": "FUNC-bootstrap",
       "type": "io",
       "weight": "1"
@@ -11420,10 +11419,25 @@
     },
     {
       "source": "FLOW-formatE-artifact",
+      "target": "FUNC-encode",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-formatE-artifact",
+      "target": "FUNC-graph-expand",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-formatE-artifact",
       "target": "FUNC-import",
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-formatE-artifact",
+      "target": "FUNC-mutate",
+      "type": "io"
     },
     {
       "source": "FLOW-formatE-artifact",
@@ -11646,35 +11660,6 @@
       "source": "FLOW-health-report",
       "target": "SCHEMA-health-report",
       "type": "relation"
-    },
-    {
-      "source": "FLOW-impact-subgraph",
-      "target": "ACTOR-agent",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FLOW-impact-subgraph",
-      "target": "FUNC-encode",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-impact-subgraph",
-      "target": "FUNC-graph-expand",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-impact-subgraph",
-      "target": "FUNC-mutate",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-impact-subgraph",
-      "target": "SCHEMA-format-e",
-      "type": "relation",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
       "source": "FLOW-impacted-tests",
@@ -13323,7 +13308,7 @@
     },
     {
       "source": "FUNC-graph-expand",
-      "target": "FLOW-impact-subgraph",
+      "target": "FLOW-formatE-artifact",
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
@@ -13357,7 +13342,7 @@
     },
     {
       "source": "FUNC-graph-impact",
-      "target": "FLOW-impact-subgraph",
+      "target": "FLOW-formatE-artifact",
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
@@ -17102,5 +17087,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 220
+  "graphVersion": 221
 }
