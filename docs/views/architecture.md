@@ -16,20 +16,25 @@
 | `FUNC-author-uc` | FUNC | Skill se:author-uc |
 | `FUNC-auto-export` | FUNC | registerAutoExport |
 | `FUNC-bind-tools` | FUNC | bindToolsToHarness |
-| `FUNC-block-anschluss` | FUNC | Agenten-Anschluss |
+| `FUNC-block-abfrage` | FUNC | Abfrage |
+| `FUNC-block-anleitung` | FUNC | Anleitung |
 | `FUNC-block-antrieb` | FUNC | Antrieb |
 | `FUNC-block-arch-optimierung` | FUNC | Architektur-Optimierung |
+| `FUNC-block-autorieren` | FUNC | Autorieren |
+| `FUNC-block-bedienung` | FUNC | Bedienung & Sitzung |
 | `FUNC-block-betrieb` | FUNC | Betrieb |
 | `FUNC-block-dokumentenwerk` | FUNC | Dokumentenwerk |
 | `FUNC-block-gate` | FUNC | Qualitäts-Gate |
 | `FUNC-block-gedaechtnis` | FUNC | Gedächtnis |
+| `FUNC-block-grounding` | FUNC | Grounding |
 | `FUNC-block-live-dashboard` | FUNC | Live-Kanal |
 | `FUNC-block-messwerk` | FUNC | Messwerk |
-| `FUNC-block-q-improvement` | FUNC | Q-Improvement |
+| `FUNC-block-optimierung` | FUNC | Optimierung |
+| `FUNC-block-q-improvement` | FUNC | Fokus & Ziel |
 | `FUNC-block-ruestzeug` | FUNC | Werkzeug & Konfiguration |
-| `FUNC-block-schaufenster` | FUNC | Viewer |
-| `FUNC-block-se-steuerung` | FUNC | SE-Prozess-Steuerung |
+| `FUNC-block-schaufenster` | FUNC | Nachweis |
 | `FUNC-block-speicherwerk` | FUNC | Speicherwerk |
+| `FUNC-block-urteilsarbeit` | FUNC | Urteilsarbeit |
 | `FUNC-bootstrap` | FUNC | bootstrap |
 | `FUNC-broadcast-diff` | FUNC | broadcastDiff(version) |
 | `FUNC-build-round-injection` | FUNC | buildRoundInjection |
@@ -54,7 +59,7 @@
 | `FUNC-extract-mutate` | FUNC | extractMutateFromText |
 | `FUNC-fit-advisory` | FUNC | computeFitAdvisory(before, after) |
 | `FUNC-generation-step` | FUNC | generationStep(graph, policy, intent) |
-| `FUNC-goal-steerer` | FUNC | Autopilot |
+| `FUNC-goal-steerer` | FUNC | Führung |
 | `FUNC-graph-expand` | FUNC | graph_expand(handle, branch, depth+1) |
 | `FUNC-graph-export-snapshot` | FUNC | graph_export(views?) |
 | `FUNC-graph-impact` | FUNC | graph_impact(id, depth?) |
@@ -136,20 +141,25 @@
 | `FUNC-author-uc` | `MOD-agent-surface` |
 | `FUNC-auto-export` | `MOD-projections` |
 | `FUNC-bind-tools` | `MOD-surface` |
-| `FUNC-block-anschluss` | `MOD-surface` |
+| `FUNC-block-abfrage` | ⚠ nicht alloziert (R-22) |
+| `FUNC-block-anleitung` | `MOD-agent-surface` |
 | `FUNC-block-antrieb` | `MOD-loop` |
 | `FUNC-block-arch-optimierung` | `MOD-loop` |
+| `FUNC-block-autorieren` | `MOD-agent-surface` |
+| `FUNC-block-bedienung` | `MOD-surface` |
 | `FUNC-block-betrieb` | `MOD-surface` |
 | `FUNC-block-dokumentenwerk` | `MOD-projections` |
 | `FUNC-block-gate` | `MOD-kernel` |
 | `FUNC-block-gedaechtnis` | `MOD-projections` |
+| `FUNC-block-grounding` | ⚠ nicht alloziert (R-22) |
 | `FUNC-block-live-dashboard` | `MOD-surface` |
 | `FUNC-block-messwerk` | `MOD-projections` |
+| `FUNC-block-optimierung` | ⚠ nicht alloziert (R-22) |
 | `FUNC-block-q-improvement` | `MOD-loop` |
 | `FUNC-block-ruestzeug` | `MOD-kernel` |
 | `FUNC-block-schaufenster` | `MOD-surface` |
-| `FUNC-block-se-steuerung` | `MOD-loop` |
 | `FUNC-block-speicherwerk` | `MOD-kernel` |
+| `FUNC-block-urteilsarbeit` | `MOD-agent-surface` |
 | `FUNC-bootstrap` | `MOD-surface` |
 | `FUNC-broadcast-diff` | `MOD-surface` |
 | `FUNC-build-round-injection` | `MOD-loop` |
