@@ -81,3 +81,14 @@ wirkt und niemand die Fussnote liest.
 Kein graphcode-lokaler Fix möglich: `metrics` kommt aus `@sigloch/se-engine`, die Änderung ist
 Familie-Sache (Version-Bump, Drift-Lock L2). Dieser Draft ist die Vorlage für dieses Review,
 kein Implementierungs-CR.
+
+---
+
+## Zur Familie getragen
+
+Beide Befunde liegen als **`CR-SM-279` — „Die Messebene sieht die Absicht nicht"** im
+sigloch-modules-Repo (`docs/cr/open/`), mit der gemeinsamen Klammer, dem Vorschlag
+(`architectural: true` auf FLOW/FUNC, L1 + L2) und den vier Punkten, die vor einer Entscheidung zu
+klären sind. Die Datei ist dort **abgelegt, aber nicht committet**: das Repo trug zum Zeitpunkt der
+Ablage fremde uncommittete Arbeit (`.mcp.json`, `GRAPHCODE.md`, `package.json`), und ein Commit
+hätte sie mitgenommen.

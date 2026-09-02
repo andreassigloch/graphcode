@@ -80,3 +80,14 @@ und weil ein markierter Fluss auch für die Fitness-Frage aus CR-DRAFT-GC-460 n�
 einen anderen Grund als die Kopplungszahlen gibt. Die Größenwarnungen (R-04, RD-04) sind davon
 unberührt und wären mit einer *Ebene innerhalb* des Moduls zu beantworten, nicht mit einem anderen
 Schnitt — was wiederum an CR-DRAFT-GC-460 hängt.
+
+---
+
+## Zur Familie getragen
+
+Beide Befunde liegen als **`CR-SM-279` — „Die Messebene sieht die Absicht nicht"** im
+sigloch-modules-Repo (`docs/cr/open/`), mit der gemeinsamen Klammer, dem Vorschlag
+(`architectural: true` auf FLOW/FUNC, L1 + L2) und den vier Punkten, die vor einer Entscheidung zu
+klären sind. Die Datei ist dort **abgelegt, aber nicht committet**: das Repo trug zum Zeitpunkt der
+Ablage fremde uncommittete Arbeit (`.mcp.json`, `GRAPHCODE.md`, `package.json`), und ein Commit
+hätte sie mitgenommen.
