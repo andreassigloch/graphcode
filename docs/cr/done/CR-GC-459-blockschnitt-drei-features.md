@@ -1,4 +1,4 @@
-# CR-GC-457 — Blockschnitt: drei Features statt zehn Blöcke
+# CR-GC-459 — Blockschnitt: drei Features statt zehn Blöcke
 
 **Status:** done
 **Abgeschlossen:** 2026-09-02
@@ -92,7 +92,7 @@ a **projection**, not an edge […] read it, do not assert it"*, mit dem Präzed
 nicht heilbar; sie sind der ehrliche Preis der Ebene.
 
 Warum das ein Befund über die Messebene ist und nicht über diesen Umbau:
-`CR-DRAFT-GC-458`.
+`CR-DRAFT-GC-460`.
 
 ## Acceptance
 

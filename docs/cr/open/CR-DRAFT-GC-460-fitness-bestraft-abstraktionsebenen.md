@@ -1,8 +1,8 @@
-# CR-DRAFT-GC-458 — Die Fitness-Metrik bestraft genau den Zug, den die eigene Doktrin vorschreibt
+# CR-DRAFT-GC-460 — Die Fitness-Metrik bestraft genau den Zug, den die eigene Doktrin vorschreibt
 
 **Status:** draft — braucht Familie-Review (`@sigloch/se-engine`, Drift-Lock L2)
 **Angelegt:** 2026-09-02
-**Ausgelöst durch:** CR-GC-457 (Blockschnitt auf drei Features)
+**Ausgelöst durch:** CR-GC-459 (Blockschnitt auf drei Features)
 
 ## Der Widerspruch
 
@@ -13,7 +13,7 @@ Zwei Sätze aus demselben Werkzeug, beide normativ, die einander widersprechen:
 > „Max 5 modules per level. When five modules each hold 14–26 FUNCs, every size threshold breaks —
 > the fix is a level *inside* the modules, never a sixth module."
 
-> `metrics(G, {layer:'arch'})`, gemessen an CR-GC-457:
+> `metrics(G, {layer:'arch'})`, gemessen an CR-GC-459:
 > Eine eingezogene Ebene kostet **coherence −0,092 · flowEfficiency −0,108**, gewichtet gegen das
 > Zielprofil dieses Repos **−0,129**.
 
@@ -33,7 +33,7 @@ Metrik sieht.** Der Effekt ist systematisch und skaliert mit der Zahl der Ebenen
 
 ## Warum der naheliegende Ausweg versperrt ist
 
-Man könnte den Strukturblöcken die Grenzflüsse ihres Teilbaums geben. Gemessen (CR-GC-457,
+Man könnte den Strukturblöcken die Grenzflüsse ihres Teilbaums geben. Gemessen (CR-GC-459,
 77 Kanten über 32 Grenzflüsse): **flowEfficiency 0,821 → 0,000**, coherence −0,141, gewichtet
 **−0,429**. Fünfmal schlimmer als das Problem.
 

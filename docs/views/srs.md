@@ -2972,13 +2972,13 @@ Verification ◀ `TEST-schema-migration` (integration) · satisfy ◀ `FUNC-migr
 
 #### 3.10.1  `FUNC-block-betrieb` — Betrieb
 
-Ebene-0-Block, bewusst NICHT im Pitch: Bedienung und Lebensdauer einer Installation — CLI-Verben, Sitzungsverwaltung, Host-Socket, MCP-Transport, Gesundheitsabfrage und das Ruestzeug (Repo-Konfiguration, Schema-Stand, Werkzeug-Registry). Man verkauft ihn nicht, man braucht ihn. Der begruendete sechste Slot der se:top-level-Regel: Betrieb kommt zuletzt und braucht einen eigenen Platz. (CR-GC-457)
+Ebene-0-Block, bewusst NICHT im Pitch: Bedienung und Lebensdauer einer Installation — CLI-Verben, Sitzungsverwaltung, Host-Socket, MCP-Transport, Gesundheitsabfrage und das Ruestzeug (Repo-Konfiguration, Schema-Stand, Werkzeug-Registry). Man verkauft ihn nicht, man braucht ihn. Der begruendete sechste Slot der se:top-level-Regel: Betrieb kommt zuletzt und braucht einen eigenen Platz. (CR-GC-459)
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-surface`
 
 ##### 3.10.1.1  `FUNC-block-bedienung` — Bedienung & Sitzung
 
-Ebene-1-Block im Betrieb: die Verben, mit denen ein Mensch das Repo einrichtet, Laeufe faehrt und die Sitzung sauber beendet — CLI-Dispatch und Lebenszyklus-Verben, Host-Socket zum Store-Besitzer, MCP-Transport, Viewer-Aufsicht, Gesundheitsabfrage. (CR-GC-457)
+Ebene-1-Block im Betrieb: die Verben, mit denen ein Mensch das Repo einrichtet, Laeufe faehrt und die Sitzung sauber beendet — CLI-Dispatch und Lebenszyklus-Verben, Host-Socket zum Store-Besitzer, MCP-Transport, Viewer-Aufsicht, Gesundheitsabfrage. (CR-GC-459)
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-surface`
 
@@ -3360,13 +3360,13 @@ Verification ◀ `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integra
 
 #### 3.10.2  `FUNC-block-grounding` — Grounding
 
-Ebene-0-Block, Feature 1 von drei: die Daten UND die daraus erzeugten Antworten sind pruefbar. Abfrage, Regel und Datenbank in einem Block — das Gate laesst Unzulaessiges nie herein, die Kennzahlen machen den Zustand pruefbar, die deterministisch gerenderten Dokumente machen die Antworten pruefbar, und das Gedaechtnis haelt beides zu jedem Commit reproduzierbar. Kein statistischer Anteil, kein Modell im Pfad. Traegt bewusst KEINE Modulzuordnung: der Block spannt kernel, projections und surface — dass das Meta-Modell hier nur eine Zuordnung erlaubt, ist der ehrliche Hinweis, dass der Modulschnitt (Schichtschnitt) quer zum Story-Schnitt steht. Realisiert durch seine Kinder. (CR-GC-457)
+Ebene-0-Block, Feature 1 von drei: die Daten UND die daraus erzeugten Antworten sind pruefbar. Abfrage, Regel und Datenbank in einem Block — das Gate laesst Unzulaessiges nie herein, die Kennzahlen machen den Zustand pruefbar, die deterministisch gerenderten Dokumente machen die Antworten pruefbar, und das Gedaechtnis haelt beides zu jedem Commit reproduzierbar. Kein statistischer Anteil, kein Modell im Pfad. Traegt bewusst KEINE Modulzuordnung: der Block spannt kernel, projections und surface — dass das Meta-Modell hier nur eine Zuordnung erlaubt, ist der ehrliche Hinweis, dass der Modulschnitt (Schichtschnitt) quer zum Story-Schnitt steht. Realisiert durch seine Kinder. (CR-GC-459)
 
 io ◀ — · io ▶ — · allocate ▶ —
 
 ##### 3.10.2.1  `FUNC-block-abfrage` — Abfrage
 
-Ebene-1-Block im Grounding: die exakte Frage statt der Volltextsuche. Blast-Radius, progressive Vertiefung, betroffene Tests und die Elementscheibe — jede Antwort ist eine Datenbankabfrage gegen die Ontologie, nicht ein Suchtreffer. Ohne Modulzuordnung wie der Elternblock: die fuenf Funktionen liegen in surface, projections und kernel. (CR-GC-457)
+Ebene-1-Block im Grounding: die exakte Frage statt der Volltextsuche. Blast-Radius, progressive Vertiefung, betroffene Tests und die Elementscheibe — jede Antwort ist eine Datenbankabfrage gegen die Ontologie, nicht ein Suchtreffer. Ohne Modulzuordnung wie der Elternblock: die fuenf Funktionen liegen in surface, projections und kernel. (CR-GC-459)
 
 io ◀ — · io ▶ — · allocate ▶ —
 
@@ -3964,7 +3964,7 @@ Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FUNC-take-st
 
 ##### 3.10.2.5  `FUNC-block-schaufenster` — Nachweis
 
-Ebene-1-Block im Grounding: die zwoelf Ingenieursdokumente und der Live-Kanal. Beide sind deterministische Projektionen desselben Graphen — gleicher Graph, gleiche Bytes, keine handgepflegte Kopie, die hinterherhinkt. Ein Loch im Nachweis ist ein Loch im Modell, und dieselbe Regel, die das Loch ins Dokument schreibt, blockt auch am Gate. (umbenannt von Viewer, CR-GC-457)
+Ebene-1-Block im Grounding: die zwoelf Ingenieursdokumente und der Live-Kanal. Beide sind deterministische Projektionen desselben Graphen — gleicher Graph, gleiche Bytes, keine handgepflegte Kopie, die hinterherhinkt. Ein Loch im Nachweis ist ein Loch im Modell, und dieselbe Regel, die das Loch ins Dokument schreibt, blockt auch am Gate. (umbenannt von Viewer, CR-GC-459)
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-surface`
 
@@ -4406,7 +4406,7 @@ Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (inte
 
 #### 3.10.3  `FUNC-block-optimierung` — Optimierung
 
-Ebene-0-Block, Feature 3 von drei: Optimierungsvorschlaege, strukturell UND inhaltlich. Strukturell rankt die Architekturmaschine die feuernden Operator-Regeln danach, wie weit ein Edit den Graphen entlang des GEWAEHLTEN Ziels bewegt — wie eine Schachmaschine, die Zuege vorausrechnet, und ohne jede Statistik. Inhaltlich decken die fuenf Urteilssitzungen ab, was keine Regel sehen kann. Nichts davon wendet je selbst an: ein Vorschlag bleibt ein Vorschlag, blockieren kann allein eine Regel. Realisiert durch seine Kinder. (CR-GC-457)
+Ebene-0-Block, Feature 3 von drei: Optimierungsvorschlaege, strukturell UND inhaltlich. Strukturell rankt die Architekturmaschine die feuernden Operator-Regeln danach, wie weit ein Edit den Graphen entlang des GEWAEHLTEN Ziels bewegt — wie eine Schachmaschine, die Zuege vorausrechnet, und ohne jede Statistik. Inhaltlich decken die fuenf Urteilssitzungen ab, was keine Regel sehen kann. Nichts davon wendet je selbst an: ein Vorschlag bleibt ein Vorschlag, blockieren kann allein eine Regel. Realisiert durch seine Kinder. (CR-GC-459)
 
 io ◀ — · io ▶ — · allocate ▶ —
 
@@ -4464,7 +4464,7 @@ Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ 
 
 ##### 3.10.3.2  `FUNC-block-urteilsarbeit` — Urteilsarbeit
 
-Ebene-1-Block in der Optimierung: die inhaltliche Haelfte — fuenf gefuehrte Urteilssitzungen (Betriebskonzept, Annahmen-Review, FMEA, Trade Study, Implementierungsplan) fuer Fehler, die technisch fehlerfreie Modelle trotzdem haben: eine Anforderung, die Formate erfindet, die ihr eigener Anwendungsfall ausschliesst; eine Fehlermeldung als Anwendungsfall; ein System fuer gemeinsames Bearbeiten ohne Nebenlaeufigkeit. Das Werkzeug automatisiert das Urteil BEWUSST NICHT — es prueft nur, dass die Sitzung stattgefunden hat und zum aktuellen Umfang passt (AF-01..05, Warnung, kein Blocker). Das Urteil bleibt beim Menschen. (CR-GC-457)
+Ebene-1-Block in der Optimierung: die inhaltliche Haelfte — fuenf gefuehrte Urteilssitzungen (Betriebskonzept, Annahmen-Review, FMEA, Trade Study, Implementierungsplan) fuer Fehler, die technisch fehlerfreie Modelle trotzdem haben: eine Anforderung, die Formate erfindet, die ihr eigener Anwendungsfall ausschliesst; eine Fehlermeldung als Anwendungsfall; ein System fuer gemeinsames Bearbeiten ohne Nebenlaeufigkeit. Das Werkzeug automatisiert das Urteil BEWUSST NICHT — es prueft nur, dass die Sitzung stattgefunden hat und zum aktuellen Umfang passt (AF-01..05, Warnung, kein Blocker). Das Urteil bleibt beim Menschen. (CR-GC-459)
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-agent-surface`
 
@@ -4560,7 +4560,7 @@ Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ 
 
 #### 3.10.4  `FUNC-goal-steerer` — Führung
 
-Ebene-0-Block, Feature 2 von drei: adaptive Fuehrung zur guten Spezifikation. Der schwaechste der acht Reifegrade benennt den naechsten sinnvollen Schritt — aus gemessenen Kenngroessen, nicht aus einer Modellmeinung und nicht aus Statistik. Fuehrung heisst hier ausdruecklich NICHT Zwang: kein Score blockiert je etwas, blockieren kann allein eine Regel und nur bei unzulaessig, nie bei suboptimal. Der Anwender kann jederzeit abbiegen, und die Schleife rechnet ab da mit seinem Weg weiter. Realisiert durch seine Kinder. (umbenannt von Autopilot, CR-GC-457)
+Ebene-0-Block, Feature 2 von drei: adaptive Fuehrung zur guten Spezifikation. Der schwaechste der acht Reifegrade benennt den naechsten sinnvollen Schritt — aus gemessenen Kenngroessen, nicht aus einer Modellmeinung und nicht aus Statistik. Fuehrung heisst hier ausdruecklich NICHT Zwang: kein Score blockiert je etwas, blockieren kann allein eine Regel und nur bei unzulaessig, nie bei suboptimal. Der Anwender kann jederzeit abbiegen, und die Schleife rechnet ab da mit seinem Weg weiter. Realisiert durch seine Kinder. (umbenannt von Autopilot, CR-GC-459)
 
 io ◀ `FLOW-measurement-vector` · io ▶ `FLOW-action` · allocate ▶ `MOD-loop`
 
@@ -4576,7 +4576,7 @@ Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (in
 
 ##### 3.10.4.1  `FUNC-block-anleitung` — Anleitung
 
-Ebene-1-Block in der Fuehrung: erklaert den Stand und die naechsten Schritte in der Sprache des Lesers — Status, Reife-Review, Rueckschau auf die Kenngroessen, Erklaerung jedes Regel- und Dashboard-Begriffs, und die Testentwurfs-Methode. (CR-GC-457)
+Ebene-1-Block in der Fuehrung: erklaert den Stand und die naechsten Schritte in der Sprache des Lesers — Status, Reife-Review, Rueckschau auf die Kenngroessen, Erklaerung jedes Regel- und Dashboard-Begriffs, und die Testentwurfs-Methode. (CR-GC-459)
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-agent-surface`
 
@@ -4770,7 +4770,7 @@ Verification ◀ `TEST-cli-run` (integration) · `TEST-executor-bestofn` (integr
 
 ##### 3.10.4.3  `FUNC-block-autorieren` — Autorieren
 
-Ebene-1-Block in der Fuehrung: gefuehrtes Anlegen und Einlesen von Modellinhalt — Anwendungsfall und Anforderung mit ihrer Testzusage, Kaltstart aus Prosa, Import von bestehendem Code und Dokumenten. Gefuehrt, weil jeder dieser Wege den Anwender durch die Reihenfolge traegt, die eine pruefbare Spezifikation braucht. (CR-GC-457)
+Ebene-1-Block in der Fuehrung: gefuehrtes Anlegen und Einlesen von Modellinhalt — Anwendungsfall und Anforderung mit ihrer Testzusage, Kaltstart aus Prosa, Import von bestehendem Code und Dokumenten. Gefuehrt, weil jeder dieser Wege den Anwender durch die Reihenfolge traegt, die eine pruefbare Spezifikation braucht. (CR-GC-459)
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-agent-surface`
 
@@ -4884,7 +4884,7 @@ Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ 
 
 ##### 3.10.4.4  `FUNC-block-q-improvement` — Fokus & Ziel
 
-Ebene-1-Block in der Fuehrung: waehlt die Fokus-Dimension aus dem schwaechsten Reifegrad, haelt das vom Menschen gewaehlte Zielprofil, baut den Rundenschritt und rankt die Kandidaten. Der Ort, an dem aus Messwerten ein naechster Schritt wird. (umbenannt von Q-Improvement, CR-GC-457)
+Ebene-1-Block in der Fuehrung: waehlt die Fokus-Dimension aus dem schwaechsten Reifegrad, haelt das vom Menschen gewaehlte Zielprofil, baut den Rundenschritt und rankt die Kandidaten. Der Ort, an dem aus Messwerten ein naechster Schritt wird. (umbenannt von Q-Improvement, CR-GC-459)
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-loop`
 
