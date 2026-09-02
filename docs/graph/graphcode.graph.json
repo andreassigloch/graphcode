@@ -1,12 +1,11 @@
 {
   "elements": [
     {
-      "id": "ACTOR-claude-code",
+      "id": "ACTOR-agent",
       "type": "ACTOR",
-      "name": "Claude Code — Realisierungs-Agent",
-      "description": "Realisierungs-Agent unter graphcode-Kontrolle (OpenCode-executed); MCP-stdio-Client; nutzt den Graphen statt grep (Ziel a). Delegierte HOW-Ebene. (SPEC §5 Kanal 1)",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "name": "Gegateter Agent (MCP-stdio-Client)",
+      "description": "Ein Coding-Agent unter graphcode-Kontrolle: MCP-stdio-Client, nutzt den Graphen statt grep, jede Aenderung laeuft durch dasselbe Apply-Gate, der Autor wird nur protokolliert. Bewusst NICHT namentlich modelliert — agent-agnostisch ist eine verriegelte Zusage (CLAUDE.md), kein Ziel. Heute belegt durch Claude Code (interaktiv), OpenCode (headless BYOK-Runtime, treibt Spec/Impl autonom) und die Architektur-Rolle, die Interface-Aenderungen eskaliert: Impact-Analyse, Gate-Entscheidung, Dependents koordinieren. Diese Rollen unterscheiden sich in der Autoritaet, nicht in der Schnittstelle. (CR-GC-455)",
+      "status": "reviewed"
     },
     {
       "id": "ACTOR-dashboard",
@@ -17,60 +16,19 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
-      "id": "ACTOR-developer",
-      "type": "ACTOR",
-      "name": "Entwickler / Repo-Owner",
-      "description": "Kunde/Nutzer: will exzellente Code-Qualität bei effizientem Testen und minimalem Token-/LLM-Aufwand.",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "id": "ACTOR-facilitating-agent",
-      "type": "ACTOR",
-      "name": "Facilitating Agent — Architekt",
-      "description": "Gegateter Agent mit Architektur-Autorität: bearbeitet Interface-Änderungs-Eskalationen — Impact-Analyse, Gate-Entscheidung, Dependents koordinieren.",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "id": "ACTOR-graphify",
-      "type": "ACTOR",
-      "name": "graphify (Slicer)",
-      "description": "Externes Slicer-System; produziert Format-E aus großen Code/Docs zum Import. graphcode extrahiert NICHT selbst (REQ-no-extraction).",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
       "id": "ACTOR-learning-engine",
       "type": "ACTOR",
       "name": "Learning-Engine",
-      "description": "Consumer der post-apply/nightly Trajectory-/Outcome-Emissionen. (SPEC §2.3)",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "id": "ACTOR-opencode",
-      "type": "ACTOR",
-      "name": "OpenCode — headless Execution-Runtime",
-      "description": "OpenCode-Sidecar (BYOK): headless Agent-Runtime, agent-agnostischer MCP-stdio-Client; treibt Spec/Impl autonom. graphcode ist OpenCode-executed (verriegelt). Claude Code = der interaktive Zwillings-Client.",
+      "description": "Bidirektionales Nachbarsystem, geplant: liest die post-apply/nightly Trajectory-/Outcome-Emissionen und schreibt daraus eine Empfehlung zurueck — die Urteils-Policy (Schwellen je Urteil). Deshalb NICHT mit dem Viewer zusammenzulegen: der Viewer liest nur, die Learning-Engine schliesst eine Schleife. (SPEC 2.3, Abgrenzung CR-GC-455)",
       "status": "draft",
-      "created_at": "2026-06-17T00:00:00.000Z"
-    },
-    {
-      "id": "ACTOR-systems-engineer",
-      "type": "ACTOR",
-      "name": "Systems Engineer",
-      "description": "Kunde: arbeitet auf Architektur-/Nutzen-Ebene (UC/REQ/FUNC/FCHAIN), delegiert Realisierung an gegatete Agenten. Die WAS-Ebene.",
-      "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
-      "id": "ACTOR-vibe-coder",
+      "id": "ACTOR-owner",
       "type": "ACTOR",
-      "name": "Vibe Coder",
-      "description": "Kunde: denkt in Architektur + Kundennutzen, delegiert Code-Realisierung an graphcode-kontrollierte Agenten. Die WAS-Ebene.",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "name": "Repo-Owner (Mensch am Repo)",
+      "description": "Der Mensch, dem das Repo gehoert: setzt das Ziel, entscheidet, delegiert die Realisierung an gegatete Agenten. Er will exzellente Codequalitaet bei effizientem Testen und minimalem Token-/LLM-Aufwand. Drei Nutzerklassen, EINE Schnittstelle (ISO 29148 5.2.4 — die Klasse steht hier, nicht in der Topologie): (a) Entwickler/Repo-Owner — betreibt das Repo, faehrt CLI und Gate; (b) Systems Engineer — arbeitet auf der WAS-Ebene (UC/REQ/FUNC/FCHAIN) und delegiert die HOW-Ebene; (c) Vibe Coder — denkt in Architektur und Kundennutzen, schreibt selbst keinen Code. Alle drei reden ueber CLI-Verben, Skill-Aufrufe und dasselbe Apply-Gate; eine eigene Topologie-Rolle hatte keine von ihnen. (CR-GC-455)",
+      "status": "reviewed"
     },
     {
       "id": "CR-GC-100",
@@ -1990,7 +1948,7 @@
       "id": "FUNC-arch-fitness",
       "type": "FUNC",
       "name": "metrics(graph, layer arch)",
-      "description": "Misst die Architektur-Topologie als Vektor in R^6 — das einzige Signal der Schleife, das nicht aus dem Regelstrom stammt, und deshalb im Ranking der Tiebreaker. Fremdpaket @sigloch/se-optimizer, deshalb external.",
+      "description": "Misst die Architektur-Topologie als Vektor in R^6 — das einzige Signal der Schleife, das nicht aus dem Regelstrom stammt, und deshalb im Ranking der Tiebreaker. Fremdpaket @sigloch/se-engine, deshalb external. (Herkunft korrigiert CR-GC-453)",
       "status": "done",
       "external": true,
       "realRef": {
@@ -2487,7 +2445,7 @@
       "id": "FUNC-graph-suggest",
       "type": "FUNC",
       "name": "graph_suggest(weights)",
-      "description": "Duennes Binding auf @sigloch/se-optimizer (targetFor/suggestEdits): rankt die feuernden Operator-Regeln nach dem Skalarprodukt aus Metrik-Delta und Zielrichtung im R^6-Metrikraum; liefert die Fund-Ebene, Template-Edits laufen als dryRun durchs Gate. Nie auto-apply. (CR-GC-273)",
+      "description": "Duennes Binding auf @sigloch/se-engine (targetFor/suggestEdits): rankt die feuernden Operator-Regeln nach dem Skalarprodukt aus Metrik-Delta und Zielrichtung im R^6-Metrikraum; liefert die Fund-Ebene, Template-Edits laufen als dryRun durchs Gate. Nie auto-apply. (CR-GC-273, Herkunft korrigiert CR-GC-453)",
       "status": "done",
       "realRef": {
         "file": "src/loop/suggest.ts",
@@ -3316,8 +3274,8 @@
     {
       "id": "REQ-advisory-roundtrip-latency",
       "type": "REQ",
-      "name": "Advisory-Roundtrip < 200ms (ohne LLM)",
-      "description": "Bindende NFR: die volle Runde read->status->propose->apply (FCHAIN-advisory-roundtrip) antwortet < 0,2s bei aktueller Graphgroesse, ohne LLM-Anteil -- deterministische Rechenkosten getrennt von Modell-Inferenzzeit. Ergaenzt REQ-responsiveness (die nur Draft-Apply + betroffenen Subgraph deckt): hier zaehlt die GANZE Runde inkl. status (evaluateRules, ganzer Graph) und propose (graph_suggest Best-of-N-Ranking), beides nicht subgraph-beschraenkt. SPIKE-GC-advisory-roundtrip-latency.md mass 363ms (Ziel verfehlt); CR-SM-228 (se-optimizer) behebt zwei redundante Vollgraph-Operationen im Probe-Loop, verifiziert 123ms -- unter dem Ziel, aber noch nicht in diesem Repo live (Publish von se-optimizer 0.3.2 blockiert durch einen unabhaengigen CR-SM-227-Gap). Skaliert nicht linear (5x Graph -> noch ueber dem Ziel trotz Fix) -- bewusste Grenze, kein Vorwand.",
+      "name": "Advisory-Roundtrip < 200ms bei 400 Knoten (ohne LLM)",
+      "description": "Bindende NFR: die volle Runde read->status->propose->apply (FCHAIN-advisory-roundtrip) antwortet < 0,2s ohne LLM-Anteil -- deterministische Rechenkosten getrennt von Modell-Inferenzzeit. Ergaenzt REQ-responsiveness (die nur Draft-Apply + betroffenen Subgraph deckt): hier zaehlt die GANZE Runde inkl. status (evaluateRules, ganzer Graph) und propose (graph_suggest Best-of-N-Ranking), beides nicht subgraph-beschraenkt. Das Ziel traegt seit CR-GC-453 eine GROESSE, weil es ohne sie nicht pruefbar ist: 200ms bei 400 Knoten. Gemessen 2026-09-02 (tests/perf.advisory-roundtrip.spike.test.ts): 243,8ms bei 500 Knoten, 332,8ms bei 658 Knoten (live SSOT), 1937,7ms bei 2000. Die Kosten wachsen ueberlinear -- 0,49 auf 0,97 ms/Knoten bei 4x Groesse, Faktor 2. Verfehlt wird das Ziel also durch WACHSTUM des Graphen (382 -> 658 Knoten), nicht durch einen ausstehenden Fix: der frueher hier notierte Blocker (Publish @sigloch/se-optimizer 0.3.2 / CR-SM-228) ist gegenstandslos, das Paket existiert nicht mehr und der Code laeuft auf @sigloch/se-engine. Konsequenz statt Ausrede: entweder die Modellkonsolidierung (CR-GC-455..458) bringt die Knotenzahl zurueck, oder propose/apply brauchen einen Subgraph-Schnitt.",
       "status": "open",
       "created_at": "2026-08-05T00:00:00.000Z",
       "kinds": [
@@ -4799,10 +4757,10 @@
       "id": "SCHEMA-cli-command",
       "type": "SCHEMA",
       "name": "CliCommand",
-      "description": "npx-CLI Kommando + Ergebnis.",
+      "description": "Vertrag der Lebenszyklus-Verben (init/update/remove) samt Ergebnis. Bindung statt Kopie — der Zod-Koerper steht im Code, nicht im Graphen. (CR-GC-454)",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "zodDefinition": "z.object({ command: z.enum(['init','update','remove']), repoPath: z.string(), result: z.string().optional() })",
+      "zodDefinition": null,
       "realRef": {
         "file": "src/surface/scaffold.ts",
         "symbol": "CliCommandSchema",
@@ -4851,11 +4809,16 @@
       "id": "SCHEMA-format-e",
       "type": "SCHEMA",
       "name": "Format-E",
-      "description": "Kompaktes Snapshot-/Diff-Format. @sigloch/contracts/se.",
+      "description": "Kompaktes Snapshot-/Diff-Format. Der geparste Vertrag ist ein Diff aus Operationen plus Fehlerliste — NICHT ein Knoten-/Kanten-Paar. @sigloch/contracts/se. (Kopie entfernt CR-GC-454)",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "zodDefinition": "z.object({ nodes: z.array(z.string()), edges: z.array(z.string()), operations: z.array(z.enum(['+','-','~','M'])).optional(), baseSnapshot: z.string().optional() })",
-      "external": true
+      "zodDefinition": null,
+      "external": true,
+      "realRef": {
+        "file": "packages/contracts/src/se/format-e-parser.ts",
+        "symbol": "FormatEDiff",
+        "lang": "ts"
+      }
     },
     {
       "id": "SCHEMA-generation-step",
@@ -4906,10 +4869,10 @@
       "id": "SCHEMA-markdown-view",
       "type": "SCHEMA",
       "name": "MarkdownView",
-      "description": "Generierte human-readable View mit GENERATED-Header.",
+      "description": "Vertrag der deterministisch gerenderten Markdown-Sichten (GENERATED-Header). Bindung statt Kopie. (CR-GC-454)",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "zodDefinition": "z.object({ view: z.string(), markdown: z.string(), generated: z.literal(true) })",
+      "zodDefinition": null,
       "realRef": {
         "file": "src/projections/exporter.ts",
         "symbol": "MarkdownViewSchema",
@@ -4942,7 +4905,7 @@
       "id": "SCHEMA-metric-vector",
       "type": "SCHEMA",
       "name": "MetricVector",
-      "description": "Sechs Topologiedimensionen: modifiability, faultTolerance, flowEfficiency, coherence, viability, scalability. Aus @sigloch/se-optimizer, deshalb external.",
+      "description": "Sechs Topologiedimensionen: modifiability, faultTolerance, flowEfficiency, coherence, viability, scalability. Aus @sigloch/se-engine, deshalb external. (Herkunft korrigiert CR-GC-453)",
       "status": "reviewed",
       "external": true,
       "realRef": {
@@ -4979,21 +4942,31 @@
       "id": "SCHEMA-mutate-command",
       "type": "SCHEMA",
       "name": "MutateCommand",
-      "description": "Edit-Operation durch das Gate. @sigloch/contracts harness (D1).",
+      "description": "Edit-Operation durch das Gate: eine discriminatedUnion ueber op mit sieben Operationen (add-node, update-node, delete-node, add-edge, delete-edge, update-edge, merge-nodes). Knoten reisen als node-Objekt, Kanten als edge-Objekt — NICHT als flache Felder. @sigloch/contracts harness (D1). (Kopie entfernt CR-GC-454)",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "zodDefinition": "z.object({ op: z.enum(['add','update','delete']), target: z.enum(['node','edge']), element: z.unknown(), consumerType: z.string() })",
-      "external": true
+      "zodDefinition": null,
+      "external": true,
+      "realRef": {
+        "file": "packages/contracts/src/harness/index.ts",
+        "symbol": "MutateCommandSchema",
+        "lang": "ts"
+      }
     },
     {
       "id": "SCHEMA-mutate-result",
       "type": "SCHEMA",
       "name": "MutateResult",
-      "description": "Apply-Ergebnis + Violations + Confidence/Tier. @sigloch/contracts harness (D1).",
+      "description": "Apply-Ergebnis: success, appliedCommands, mutations, violations, confidence, tier (auto-apply|suggest|block) sowie trajectoryId, graphVersion und die OCC-Felder stale/staleDelta. @sigloch/contracts harness (D1). (Kopie entfernt CR-GC-454)",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "zodDefinition": "z.object({ success: z.boolean(), applied: z.number(), violations: z.array(z.object({ ruleId: z.string(), severity: z.enum(['error','warning','info']), elementId: z.string(), msg: z.string() })), confidence: z.number().optional(), tier: z.enum(['auto','suggest','block']).optional() })",
-      "external": true
+      "zodDefinition": null,
+      "external": true,
+      "realRef": {
+        "file": "packages/contracts/src/harness/index.ts",
+        "symbol": "MutateResultSchema",
+        "lang": "ts"
+      }
     },
     {
       "id": "SCHEMA-ontology-graph",
@@ -5002,8 +4975,13 @@
       "description": "Elements (13 ElementTypes) + Traces (7 TraceTypes). @sigloch/contracts/se.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "zodDefinition": "z.object({ elements: z.array(z.object({ id: z.string(), type: ElementType, name: z.string(), description: z.string() })), traces: z.array(z.object({ source: z.string(), target: z.string(), type: TraceType })) })",
-      "external": true
+      "zodDefinition": null,
+      "external": true,
+      "realRef": {
+        "file": "packages/contracts/src/se/ontology.ts",
+        "symbol": "OntologyGraph",
+        "lang": "ts"
+      }
     },
     {
       "id": "SCHEMA-phase-readiness",
@@ -5021,10 +4999,10 @@
       "id": "SCHEMA-query-params",
       "type": "SCHEMA",
       "name": "QueryParams",
-      "description": "Query-/Request-Parameter.",
+      "description": "Der gemeinsame Nenner der Leseanfragen: elementId, depth, branch, cursor, view. Bewusst ohne Zod-Symbol — im Code traegt JEDES MCP-Tool sein eigenes Input-Schema, ein zusammengefasstes QueryParams gibt es nicht und soll es nicht geben (ein Sammel-Schema waere ein paralleler Pfad zu den Tool-Signaturen). Der Knoten steht fuer den Kanal, nicht fuer einen Code-Datenvertrag; concept-only. (Begruendung nachgetragen CR-GC-454)",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "zodDefinition": "z.object({ elementId: z.string().optional(), depth: z.number().optional(), branch: z.string().optional(), cursor: z.string().optional(), view: z.string().optional() })",
+      "zodDefinition": null,
       "concept": true
     },
     {
@@ -5044,7 +5022,7 @@
       "id": "SCHEMA-round-injection",
       "type": "SCHEMA",
       "name": "Runden-Injektions-Block",
-      "description": "Vertrag der Runden-Injektion: ein Markdown-Textblock als string, Rueckgabe von buildRoundInjection in src/executor/executor-prompt.ts — Guide-Slice plus Element-Index. Bewusst ohne Zod-Symbol: informationeller Prompt-Kontext, kein Wire-Format; deshalb concept-only.",
+      "description": "Vertrag der Runden-Injektion: ein Markdown-Textblock als string, Rueckgabe von buildRoundInjection in src/loop/executor-prompt.ts — Guide-Slice plus Element-Index. Bewusst ohne Zod-Symbol: informationeller Prompt-Kontext, kein Wire-Format; deshalb concept-only. (Pfad korrigiert CR-GC-454)",
       "concept": true
     },
     {
@@ -5126,21 +5104,31 @@
       "id": "SCHEMA-trajectory",
       "type": "SCHEMA",
       "name": "Trajectory/Outcome",
-      "description": "append-only Lern-Emission. @sigloch/learning-core.",
+      "description": "append-only Lern-Emission: ts, consumerId, consumerType, operation, opCounts, applied, outcome und die Violation-Zaehler. @sigloch/learning-core. (Kopie entfernt CR-GC-454)",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "zodDefinition": "z.object({ step: z.string(), action: z.string(), outcome: z.string(), ts: z.string() })",
-      "external": true
+      "zodDefinition": null,
+      "external": true,
+      "realRef": {
+        "file": "packages/learning-core/src/interfaces/trajectory.ts",
+        "symbol": "TrajectorySchema",
+        "lang": "ts"
+      }
     },
     {
       "id": "SCHEMA-update-event",
       "type": "SCHEMA",
       "name": "UpdateEvent",
-      "description": "SSE invalidate Event.",
+      "description": "SSE invalidate Event: type, domains (graph|rules|readiness|suggestions), ts und optional version. Einmal in contracts definiert, damit emittierender Harness und Viewer denselben Vertrag lesen. (Kopie entfernt CR-GC-454)",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "zodDefinition": "z.object({ type: z.literal('invalidate'), domains: z.array(z.enum(['graph','rules','readiness','suggestions'])), version: z.number() })",
-      "external": true
+      "zodDefinition": null,
+      "external": true,
+      "realRef": {
+        "file": "packages/contracts/src/harness/index.ts",
+        "symbol": "LiveUpdateEventSchema",
+        "lang": "ts"
+      }
     },
     {
       "id": "SYS-graphcode",
@@ -5165,14 +5153,14 @@
       "id": "TEST-advisory-roundtrip-latency",
       "type": "TEST",
       "name": "Advisory-Roundtrip-Latency-Test",
-      "description": "read+status+propose+apply Median < 200ms bei aktueller Graphgroesse (382 Knoten), gemessen in-process gegen echten Disk-Kuzu, kein Mock. Aktuell (2026-08-05) noch generous Sanity-Decken statt harter 200ms-Assertion -- verschaerfen, sobald se-optimizer 0.3.2 publiziert und hier gebumpt ist (CR-SM-228 macht den Fix real, aber dieses Repo zieht ihn noch nicht). (REQ-advisory-roundtrip-latency)",
+      "description": "read+status+propose+apply Median, gemessen in-process gegen echten Disk-Kuzu, kein Mock. Faehrt drei Groessen (500 kalibriert / live SSOT / 2000 fest), damit die Zahl eine Groesse hat und die Maschine sich rauskuerzt. Assertion ist heute die SKALIERUNG (ms/Knoten-Faktor < 3, absolut < 10 ms/Knoten), nicht die 200ms -- die absolute Schranke ist erst scharf zu ziehen, wenn REQ-advisory-roundtrip-latency eine Bezugsgroesse hat, gegen die sie im CI reproduzierbar ist. Stand 2026-09-02: 332,8ms bei 658 Knoten, Ziel bei 400 Knoten verfehlt durch Graphwachstum. (REQ-advisory-roundtrip-latency, CR-GC-453)",
       "status": "open",
       "created_at": "2026-08-05T00:00:00.000Z",
       "method": "test",
       "concept": true,
       "level": "performance",
       "tool": "benchmark",
-      "constraint": "<200ms full round at current graph size, no LLM -- pending se-optimizer publish (CR-SM-228)",
+      "constraint": "Skalierung < 3x ms/Knoten bei 4x Groesse und < 10 ms/Knoten absolut; 200ms-Ziel bei 400 Knoten heute verfehlt (332,8ms @ 658)",
       "testRefs": [
         {
           "file": "tests/perf.advisory-roundtrip.spike.test.ts",
@@ -7216,80 +7204,35 @@
   ],
   "traces": [
     {
-      "source": "ACTOR-claude-code",
+      "source": "ACTOR-agent",
       "target": "FLOW-formatE-artifact",
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
-      "source": "ACTOR-claude-code",
+      "source": "ACTOR-agent",
       "target": "FLOW-mutate-cmd",
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
-      "source": "ACTOR-claude-code",
+      "source": "ACTOR-agent",
       "target": "FLOW-query-request",
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
-      "source": "ACTOR-developer",
-      "target": "FLOW-cli-command",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "ACTOR-developer",
-      "target": "FLOW-graph-state",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "ACTOR-developer",
-      "target": "FLOW-metric-policy",
-      "type": "io"
-    },
-    {
-      "source": "ACTOR-developer",
-      "target": "FLOW-mutate-cmd",
-      "type": "io"
-    },
-    {
-      "source": "ACTOR-developer",
-      "target": "FLOW-query-request",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "ACTOR-developer",
-      "target": "FLOW-steering-trigger",
-      "type": "io"
-    },
-    {
-      "source": "ACTOR-developer",
-      "target": "FLOW-version-bump",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "ACTOR-facilitating-agent",
+      "source": "ACTOR-agent",
       "target": "FLOW-skill-request",
       "type": "io"
     },
     {
-      "source": "ACTOR-graphify",
-      "target": "FLOW-formatE-artifact",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "source": "ACTOR-agent",
+      "target": "FLOW-steering-trigger",
+      "type": "io"
     },
     {
       "source": "ACTOR-learning-engine",
@@ -7297,24 +7240,52 @@
       "type": "io"
     },
     {
-      "source": "ACTOR-opencode",
+      "source": "ACTOR-owner",
+      "target": "FLOW-cli-command",
+      "type": "io",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "ACTOR-owner",
+      "target": "FLOW-graph-state",
+      "type": "io",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "ACTOR-owner",
+      "target": "FLOW-metric-policy",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-owner",
       "target": "FLOW-mutate-cmd",
       "type": "io"
     },
     {
-      "source": "ACTOR-opencode",
-      "target": "FLOW-steering-trigger",
-      "type": "io"
+      "source": "ACTOR-owner",
+      "target": "FLOW-query-request",
+      "type": "io",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
-      "source": "ACTOR-systems-engineer",
+      "source": "ACTOR-owner",
       "target": "FLOW-skill-request",
       "type": "io"
     },
     {
-      "source": "ACTOR-vibe-coder",
-      "target": "FLOW-cli-command",
+      "source": "ACTOR-owner",
+      "target": "FLOW-steering-trigger",
       "type": "io"
+    },
+    {
+      "source": "ACTOR-owner",
+      "target": "FLOW-version-bump",
+      "type": "io",
+      "weight": 1,
+      "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
       "source": "CR-GC-100",
@@ -11257,7 +11228,7 @@
     },
     {
       "source": "FLOW-action",
-      "target": "ACTOR-claude-code",
+      "target": "ACTOR-agent",
       "type": "io"
     },
     {
@@ -11400,7 +11371,7 @@
     },
     {
       "source": "FLOW-element-slice",
-      "target": "ACTOR-claude-code",
+      "target": "ACTOR-agent",
       "type": "io"
     },
     {
@@ -11410,7 +11381,7 @@
     },
     {
       "source": "FLOW-export-pending",
-      "target": "ACTOR-developer",
+      "target": "ACTOR-owner",
       "type": "io"
     },
     {
@@ -11463,15 +11434,10 @@
     },
     {
       "source": "FLOW-gate-verdict",
-      "target": "ACTOR-developer",
+      "target": "ACTOR-owner",
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FLOW-gate-verdict",
-      "target": "ACTOR-systems-engineer",
-      "type": "io"
     },
     {
       "source": "FLOW-gate-verdict",
@@ -11527,7 +11493,7 @@
     },
     {
       "source": "FLOW-graph-state",
-      "target": "ACTOR-developer",
+      "target": "ACTOR-owner",
       "type": "io"
     },
     {
@@ -11683,7 +11649,7 @@
     },
     {
       "source": "FLOW-impact-subgraph",
-      "target": "ACTOR-claude-code",
+      "target": "ACTOR-agent",
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
@@ -11722,7 +11688,7 @@
     },
     {
       "source": "FLOW-install-result",
-      "target": "ACTOR-developer",
+      "target": "ACTOR-owner",
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
@@ -11765,7 +11731,7 @@
     },
     {
       "source": "FLOW-markdown-docs",
-      "target": "ACTOR-developer",
+      "target": "ACTOR-owner",
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
@@ -11958,12 +11924,7 @@
     },
     {
       "source": "FLOW-round-prompt",
-      "target": "ACTOR-claude-code",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-round-prompt",
-      "target": "ACTOR-opencode",
+      "target": "ACTOR-agent",
       "type": "io"
     },
     {
@@ -12020,7 +11981,7 @@
     },
     {
       "source": "FLOW-skill-report",
-      "target": "ACTOR-systems-engineer",
+      "target": "ACTOR-owner",
       "type": "io"
     },
     {
@@ -12210,17 +12171,12 @@
     },
     {
       "source": "FLOW-test-selection",
-      "target": "ACTOR-claude-code",
+      "target": "ACTOR-agent",
       "type": "io"
     },
     {
       "source": "FLOW-test-selection",
-      "target": "ACTOR-developer",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-test-selection",
-      "target": "ACTOR-systems-engineer",
+      "target": "ACTOR-owner",
       "type": "io"
     },
     {
@@ -17146,5 +17102,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 212
+  "graphVersion": 220
 }

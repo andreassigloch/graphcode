@@ -38,11 +38,11 @@ Verification ◀ `TEST-code-quality` (acceptance) · `TEST-mutate-schema-guard` 
 
 ## 2  Akteure
 
-### 2.1  `ACTOR-claude-code` — Claude Code — Realisierungs-Agent
+### 2.1  `ACTOR-agent` — Gegateter Agent (MCP-stdio-Client)
 
-Realisierungs-Agent unter graphcode-Kontrolle (OpenCode-executed); MCP-stdio-Client; nutzt den Graphen statt grep (Ziel a). Delegierte HOW-Ebene. (SPEC §5 Kanal 1)
+Ein Coding-Agent unter graphcode-Kontrolle: MCP-stdio-Client, nutzt den Graphen statt grep, jede Aenderung laeuft durch dasselbe Apply-Gate, der Autor wird nur protokolliert. Bewusst NICHT namentlich modelliert — agent-agnostisch ist eine verriegelte Zusage (CLAUDE.md), kein Ziel. Heute belegt durch Claude Code (interaktiv), OpenCode (headless BYOK-Runtime, treibt Spec/Impl autonom) und die Architektur-Rolle, die Interface-Aenderungen eskaliert: Impact-Analyse, Gate-Entscheidung, Dependents koordinieren. Diese Rollen unterscheiden sich in der Autoritaet, nicht in der Schnittstelle. (CR-GC-455)
 
-io ▶ `FLOW-formatE-artifact` · `FLOW-mutate-cmd` · `FLOW-query-request` · io ◀ `FLOW-action` · `FLOW-element-slice` · `FLOW-impact-subgraph` · `FLOW-round-prompt` · `FLOW-test-selection`
+io ▶ `FLOW-formatE-artifact` · `FLOW-mutate-cmd` · `FLOW-query-request` · `FLOW-skill-request` · `FLOW-steering-trigger` · io ◀ `FLOW-action` · `FLOW-element-slice` · `FLOW-impact-subgraph` · `FLOW-round-prompt` · `FLOW-test-selection`
 
 ### 2.2  `ACTOR-dashboard` — Browser-Dashboard
 
@@ -50,47 +50,17 @@ SSE/WS read-only Viewer; Live-Q-Status-Visualisierung (Ziel b). (SPEC §5 Kanal 
 
 io ▶ — · io ◀ `FLOW-health-report` · `FLOW-live-event` · `FLOW-module-metrics`
 
-### 2.3  `ACTOR-developer` — Entwickler / Repo-Owner
+### 2.3  `ACTOR-learning-engine` — Learning-Engine
 
-Kunde/Nutzer: will exzellente Code-Qualität bei effizientem Testen und minimalem Token-/LLM-Aufwand.
-
-io ▶ `FLOW-cli-command` · `FLOW-graph-state` · `FLOW-metric-policy` · `FLOW-mutate-cmd` · `FLOW-query-request` · `FLOW-steering-trigger` · `FLOW-version-bump` · io ◀ `FLOW-export-pending` · `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-install-result` · `FLOW-markdown-docs` · `FLOW-test-selection`
-
-### 2.4  `ACTOR-facilitating-agent` — Facilitating Agent — Architekt
-
-Gegateter Agent mit Architektur-Autorität: bearbeitet Interface-Änderungs-Eskalationen — Impact-Analyse, Gate-Entscheidung, Dependents koordinieren.
-
-io ▶ `FLOW-skill-request` · io ◀ —
-
-### 2.5  `ACTOR-graphify` — graphify (Slicer)
-
-Externes Slicer-System; produziert Format-E aus großen Code/Docs zum Import. graphcode extrahiert NICHT selbst (REQ-no-extraction).
-
-io ▶ `FLOW-formatE-artifact` · io ◀ —
-
-### 2.6  `ACTOR-learning-engine` — Learning-Engine
-
-Consumer der post-apply/nightly Trajectory-/Outcome-Emissionen. (SPEC §2.3)
+Bidirektionales Nachbarsystem, geplant: liest die post-apply/nightly Trajectory-/Outcome-Emissionen und schreibt daraus eine Empfehlung zurueck — die Urteils-Policy (Schwellen je Urteil). Deshalb NICHT mit dem Viewer zusammenzulegen: der Viewer liest nur, die Learning-Engine schliesst eine Schleife. (SPEC 2.3, Abgrenzung CR-GC-455)
 
 io ▶ `FLOW-metric-policy` · io ◀ `FLOW-trajectory`
 
-### 2.7  `ACTOR-opencode` — OpenCode — headless Execution-Runtime
+### 2.4  `ACTOR-owner` — Repo-Owner (Mensch am Repo)
 
-OpenCode-Sidecar (BYOK): headless Agent-Runtime, agent-agnostischer MCP-stdio-Client; treibt Spec/Impl autonom. graphcode ist OpenCode-executed (verriegelt). Claude Code = der interaktive Zwillings-Client.
+Der Mensch, dem das Repo gehoert: setzt das Ziel, entscheidet, delegiert die Realisierung an gegatete Agenten. Er will exzellente Codequalitaet bei effizientem Testen und minimalem Token-/LLM-Aufwand. Drei Nutzerklassen, EINE Schnittstelle (ISO 29148 5.2.4 — die Klasse steht hier, nicht in der Topologie): (a) Entwickler/Repo-Owner — betreibt das Repo, faehrt CLI und Gate; (b) Systems Engineer — arbeitet auf der WAS-Ebene (UC/REQ/FUNC/FCHAIN) und delegiert die HOW-Ebene; (c) Vibe Coder — denkt in Architektur und Kundennutzen, schreibt selbst keinen Code. Alle drei reden ueber CLI-Verben, Skill-Aufrufe und dasselbe Apply-Gate; eine eigene Topologie-Rolle hatte keine von ihnen. (CR-GC-455)
 
-io ▶ `FLOW-mutate-cmd` · `FLOW-steering-trigger` · io ◀ `FLOW-round-prompt`
-
-### 2.8  `ACTOR-systems-engineer` — Systems Engineer
-
-Kunde: arbeitet auf Architektur-/Nutzen-Ebene (UC/REQ/FUNC/FCHAIN), delegiert Realisierung an gegatete Agenten. Die WAS-Ebene.
-
-io ▶ `FLOW-skill-request` · io ◀ `FLOW-gate-verdict` · `FLOW-skill-report` · `FLOW-test-selection`
-
-### 2.9  `ACTOR-vibe-coder` — Vibe Coder
-
-Kunde: denkt in Architektur + Kundennutzen, delegiert Code-Realisierung an graphcode-kontrollierte Agenten. Die WAS-Ebene.
-
-io ▶ `FLOW-cli-command` · io ◀ —
+io ▶ `FLOW-cli-command` · `FLOW-graph-state` · `FLOW-metric-policy` · `FLOW-mutate-cmd` · `FLOW-query-request` · `FLOW-skill-request` · `FLOW-steering-trigger` · `FLOW-version-bump` · io ◀ `FLOW-export-pending` · `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-install-result` · `FLOW-markdown-docs` · `FLOW-skill-report` · `FLOW-test-selection`
 
 ## 3  Use Cases & Verhalten
 
@@ -1346,7 +1316,7 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (
 
 > auch in: `FUNC-block-messwerk`
 
-Misst die Architektur-Topologie als Vektor in R^6 — das einzige Signal der Schleife, das nicht aus dem Regelstrom stammt, und deshalb im Ranking der Tiebreaker. Fremdpaket @sigloch/se-optimizer, deshalb external.
+Misst die Architektur-Topologie als Vektor in R^6 — das einzige Signal der Schleife, das nicht aus dem Regelstrom stammt, und deshalb im Ranking der Tiebreaker. Fremdpaket @sigloch/se-engine, deshalb external. (Herkunft korrigiert CR-GC-453)
 
 io ◀ `FLOW-graph-state` · io ▶ `FLOW-arch-fitness` · allocate ▶ `MOD-projections`
 
@@ -2380,9 +2350,9 @@ Als Entwickler will ich anspruchsvolle Aenderungen mit einem kleinen oder lokale
 
 Ein Runden-Durchlauf eines Chat-Turns: (1) read (graph_impact/graph_expand) liest den gebundenen Blast-Radius; (2) status (evaluateRules) prueft offene Regelverletzungen; (3) propose (graph_suggest) rankt Kandidaten-Fixes im R^6-Metrikraum, nie auto-apply; (4) apply (mutate) ist das eine Apply-Gate. Treiber (built-in executor) und Host (Claude Code/OpenCode) durchlaufen dieselbe Kette, nur die Taktung unterscheidet sich. (Articles 05/07 - Design in progress: measure/Architecture-Fitness-Delta ist noch nicht gebaut, deshalb hier nicht Teil der Kette.)
 
-##### `REQ-advisory-roundtrip-latency` — Advisory-Roundtrip < 200ms (ohne LLM)
+##### `REQ-advisory-roundtrip-latency` — Advisory-Roundtrip < 200ms bei 400 Knoten (ohne LLM)
 
-Bindende NFR: die volle Runde read->status->propose->apply (FCHAIN-advisory-roundtrip) antwortet < 0,2s bei aktueller Graphgroesse, ohne LLM-Anteil -- deterministische Rechenkosten getrennt von Modell-Inferenzzeit. Ergaenzt REQ-responsiveness (die nur Draft-Apply + betroffenen Subgraph deckt): hier zaehlt die GANZE Runde inkl. status (evaluateRules, ganzer Graph) und propose (graph_suggest Best-of-N-Ranking), beides nicht subgraph-beschraenkt. SPIKE-GC-advisory-roundtrip-latency.md mass 363ms (Ziel verfehlt); CR-SM-228 (se-optimizer) behebt zwei redundante Vollgraph-Operationen im Probe-Loop, verifiziert 123ms -- unter dem Ziel, aber noch nicht in diesem Repo live (Publish von se-optimizer 0.3.2 blockiert durch einen unabhaengigen CR-SM-227-Gap). Skaliert nicht linear (5x Graph -> noch ueber dem Ziel trotz Fix) -- bewusste Grenze, kein Vorwand.
+Bindende NFR: die volle Runde read->status->propose->apply (FCHAIN-advisory-roundtrip) antwortet < 0,2s ohne LLM-Anteil -- deterministische Rechenkosten getrennt von Modell-Inferenzzeit. Ergaenzt REQ-responsiveness (die nur Draft-Apply + betroffenen Subgraph deckt): hier zaehlt die GANZE Runde inkl. status (evaluateRules, ganzer Graph) und propose (graph_suggest Best-of-N-Ranking), beides nicht subgraph-beschraenkt. Das Ziel traegt seit CR-GC-453 eine GROESSE, weil es ohne sie nicht pruefbar ist: 200ms bei 400 Knoten. Gemessen 2026-09-02 (tests/perf.advisory-roundtrip.spike.test.ts): 243,8ms bei 500 Knoten, 332,8ms bei 658 Knoten (live SSOT), 1937,7ms bei 2000. Die Kosten wachsen ueberlinear -- 0,49 auf 0,97 ms/Knoten bei 4x Groesse, Faktor 2. Verfehlt wird das Ziel also durch WACHSTUM des Graphen (382 -> 658 Knoten), nicht durch einen ausstehenden Fix: der frueher hier notierte Blocker (Publish @sigloch/se-optimizer 0.3.2 / CR-SM-228) ist gegenstandslos, das Paket existiert nicht mehr und der Code laeuft auf @sigloch/se-engine. Konsequenz statt Ausrede: entweder die Modellkonsolidierung (CR-GC-455..458) bringt die Knotenzahl zurueck, oder propose/apply brauchen einen Subgraph-Schnitt.
 
 priority: should · status: open · kinds: non-functional
 
@@ -2460,7 +2430,7 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (
 
 > auch in: `FUNC-block-arch-optimierung`
 
-Duennes Binding auf @sigloch/se-optimizer (targetFor/suggestEdits): rankt die feuernden Operator-Regeln nach dem Skalarprodukt aus Metrik-Delta und Zielrichtung im R^6-Metrikraum; liefert die Fund-Ebene, Template-Edits laufen als dryRun durchs Gate. Nie auto-apply. (CR-GC-273)
+Duennes Binding auf @sigloch/se-engine (targetFor/suggestEdits): rankt die feuernden Operator-Regeln nach dem Skalarprodukt aus Metrik-Delta und Zielrichtung im R^6-Metrikraum; liefert die Fund-Ebene, Template-Edits laufen als dryRun durchs Gate. Nie auto-apply. (CR-GC-273, Herkunft korrigiert CR-GC-453)
 
 io ◀ `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-target-profile` · io ▶ `FLOW-mutate-cmd` · allocate ▶ `MOD-loop`
 
@@ -3904,7 +3874,7 @@ io ◀ — · io ▶ — · allocate ▶ `MOD-projections`
 
 > auch in: `FCHAIN-steering-loop`
 
-Misst die Architektur-Topologie als Vektor in R^6 — das einzige Signal der Schleife, das nicht aus dem Regelstrom stammt, und deshalb im Ranking der Tiebreaker. Fremdpaket @sigloch/se-optimizer, deshalb external.
+Misst die Architektur-Topologie als Vektor in R^6 — das einzige Signal der Schleife, das nicht aus dem Regelstrom stammt, und deshalb im Ranking der Tiebreaker. Fremdpaket @sigloch/se-engine, deshalb external. (Herkunft korrigiert CR-GC-453)
 
 io ◀ `FLOW-graph-state` · io ▶ `FLOW-arch-fitness` · allocate ▶ `MOD-projections`
 
@@ -4690,7 +4660,7 @@ io ◀ — · io ▶ — · allocate ▶ `MOD-loop`
 
 > auch in: `FCHAIN-advisory-roundtrip`
 
-Duennes Binding auf @sigloch/se-optimizer (targetFor/suggestEdits): rankt die feuernden Operator-Regeln nach dem Skalarprodukt aus Metrik-Delta und Zielrichtung im R^6-Metrikraum; liefert die Fund-Ebene, Template-Edits laufen als dryRun durchs Gate. Nie auto-apply. (CR-GC-273)
+Duennes Binding auf @sigloch/se-engine (targetFor/suggestEdits): rankt die feuernden Operator-Regeln nach dem Skalarprodukt aus Metrik-Delta und Zielrichtung im R^6-Metrikraum; liefert die Fund-Ebene, Template-Edits laufen als dryRun durchs Gate. Nie auto-apply. (CR-GC-273, Herkunft korrigiert CR-GC-453)
 
 io ◀ `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-target-profile` · io ▶ `FLOW-mutate-cmd` · allocate ▶ `MOD-loop`
 
@@ -4984,7 +4954,7 @@ Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ 
 
 Der gemeinsame Ausgang der vier Entscheidungen: blocken, Fokus setzen, Kandidat waehlen, uebergeben. Vier Auspraegungen einer Form.
 
-io ◀ `FUNC-goal-steerer` · io ▶ `ACTOR-claude-code` · schema ▶ `SCHEMA-action`
+io ◀ `FUNC-goal-steerer` · io ▶ `ACTOR-agent` · schema ▶ `SCHEMA-action`
 
 ### 4.2  `FLOW-arch-fitness` — Architektur-Fitness (R^6)
 
@@ -4996,7 +4966,7 @@ io ◀ `FUNC-arch-fitness` · io ▶ `FUNC-rank-candidates` · schema ▶ `SCHEM
 
 mcp / host / run / import-code / rewind / init / update / remove / skills sync.
 
-io ◀ `ACTOR-developer` · `ACTOR-vibe-coder` · `FUNC-cli-dispatch` · io ▶ `FUNC-bootstrap` · `FUNC-claim-store-lock` · `FUNC-cli-dispatch` · `FUNC-collect-status` · `FUNC-create-harness` · `FUNC-gve-supervise` · `FUNC-harness-cli` · `FUNC-import-code-verb` · `FUNC-rewind` · `FUNC-run-executor` · `FUNC-run-verb` · `FUNC-upgrade` · schema ▶ `SCHEMA-cli-command`
+io ◀ `ACTOR-owner` · `FUNC-cli-dispatch` · io ▶ `FUNC-bootstrap` · `FUNC-claim-store-lock` · `FUNC-cli-dispatch` · `FUNC-collect-status` · `FUNC-create-harness` · `FUNC-gve-supervise` · `FUNC-harness-cli` · `FUNC-import-code-verb` · `FUNC-rewind` · `FUNC-run-executor` · `FUNC-run-verb` · `FUNC-upgrade` · schema ▶ `SCHEMA-cli-command`
 
 ### 4.4  `FLOW-completeness` — Completeness je Gate
 
@@ -5014,13 +4984,13 @@ io ◀ `FUNC-compute-readiness` · io ▶ `FUNC-generation-step` · `FUNC-next-s
 
 Gefilterte Knotenmenge aus dem Store (type/search) — eine Scheibe statt eines Volldumps.
 
-io ◀ `FUNC-list-elements` · io ▶ `ACTOR-claude-code` · schema ▶ `SCHEMA-ontology-graph`
+io ◀ `FUNC-list-elements` · io ▶ `ACTOR-agent` · schema ▶ `SCHEMA-ontology-graph`
 
 ### 4.7  `FLOW-export-pending` — Export-Rueckstand
 
 Die Drift-Marke unter .graphcode: sagt, dass und wie weit der committete Snapshot dem lebenden Store nachlaeuft. Der pre-commit-Hook liest sie, ohne den Kuzu-Store zu oeffnen.
 
-io ◀ `FUNC-export-marker` · io ▶ `ACTOR-developer` · schema ▶ `SCHEMA-export-pending`
+io ◀ `FUNC-export-marker` · io ▶ `ACTOR-owner` · schema ▶ `SCHEMA-export-pending`
 
 ### 4.8  `FLOW-fit-advisory` — Fit-Advisory (Richtung im Metrikraum)
 
@@ -5032,19 +5002,19 @@ io ◀ `FUNC-fit-advisory` · io ▶ `FUNC-mutate` · `FUNC-rank-candidates` · 
 
 Ein vollstaendiges Format-E-Dokument am Modulrand: deterministisch serialisiert vom Encoder, vom Slicer geliefert oder vom Agenten geschrieben. Wer es verfasst hat, steht an der Produzenten-Kante, nicht im Vertrag.
 
-io ◀ `ACTOR-claude-code` · `ACTOR-graphify` · `FUNC-encode` · `FUNC-import-code` · `FUNC-import-doc` · io ▶ `FUNC-bootstrap` · `FUNC-decode` · `FUNC-import` · schema ▶ `SCHEMA-format-e`
+io ◀ `ACTOR-agent` · `FUNC-encode` · `FUNC-import-code` · `FUNC-import-doc` · io ▶ `FUNC-bootstrap` · `FUNC-decode` · `FUNC-import` · schema ▶ `SCHEMA-format-e`
 
 ### 4.10  `FLOW-gate-verdict` — Gate-Verdikt
 
 Das Urteil des Apply-Gates ueber eine angewendete oder probierte Mutation: success, tier, Violations, Confidence. Der Bootstrap-Ausgang und der offene Regelstrom sind dasselbe Urteil, kein zweiter Vertrag daneben. Es schliesst die Schleife, weil der naechste Snapshot darauf misst.
 
-io ◀ `FUNC-bootstrap` · `FUNC-check-code-conformance` · `FUNC-evaluate-rules` · `FUNC-import` · `FUNC-import-code-verb` · `FUNC-mutate` · `FUNC-take-steering-snapshot` · io ▶ `ACTOR-developer` · `ACTOR-systems-engineer` · `FUNC-compute-phase-readiness` · `FUNC-graph-suggest` · `FUNC-health-endpoint` · `FUNC-save-graph` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-take-steering-snapshot` · `FUNC-tool-context` · schema ▶ `SCHEMA-mutate-result`
+io ◀ `FUNC-bootstrap` · `FUNC-check-code-conformance` · `FUNC-evaluate-rules` · `FUNC-import` · `FUNC-import-code-verb` · `FUNC-mutate` · `FUNC-take-steering-snapshot` · io ▶ `ACTOR-owner` · `FUNC-compute-phase-readiness` · `FUNC-graph-suggest` · `FUNC-health-endpoint` · `FUNC-save-graph` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-take-steering-snapshot` · `FUNC-tool-context` · schema ▶ `SCHEMA-mutate-result`
 
 ### 4.11  `FLOW-graph-state` — Graph-State
 
 Der Graph als EIN Wert, in jedem seiner Zustaende: in-memory geladen, als Entwurf appliziert, persistiert samt Version-Counter, aus Format-E rekonstruiert, migriert, aus zwei Branch-Fassungen gemergt, aus dem Snapshot auf Platte wiederhergestellt. Der Zustand ist kein zweiter Datenvertrag.
 
-io ◀ `ACTOR-developer` · `FUNC-apply-reseed` · `FUNC-close-store` · `FUNC-decode` · `FUNC-graph-export-snapshot` · `FUNC-load-graph` · `FUNC-merge-nodes` · `FUNC-migrate-schema` · `FUNC-mutate` · `FUNC-nd-similarity` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-reseed` · `FUNC-rewind` · `FUNC-save-graph` · `FUNC-seed-from-json` · `FUNC-session-shutdown` · io ▶ `ACTOR-developer` · `FUNC-apply-reseed` · `FUNC-arch-fitness` · `FUNC-auto-export` · `FUNC-check-code-conformance` · `FUNC-close-store` · `FUNC-emit-trajectory` · `FUNC-emit-update-event` · `FUNC-encode` · `FUNC-evaluate-rules` · `FUNC-export-marker` · `FUNC-fit-advisory` · `FUNC-graph-export-snapshot` · `FUNC-graph-suggest` · `FUNC-list-elements` · `FUNC-load-graph` · `FUNC-merge-nodes` · `FUNC-module-metrics` · `FUNC-mutate` · `FUNC-nd-similarity` · `FUNC-open-store` · `FUNC-reseed` · `FUNC-score-completeness` · `FUNC-seed-from-json` · schema ▶ `SCHEMA-ontology-graph`
+io ◀ `ACTOR-owner` · `FUNC-apply-reseed` · `FUNC-close-store` · `FUNC-decode` · `FUNC-graph-export-snapshot` · `FUNC-load-graph` · `FUNC-merge-nodes` · `FUNC-migrate-schema` · `FUNC-mutate` · `FUNC-nd-similarity` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-reseed` · `FUNC-rewind` · `FUNC-save-graph` · `FUNC-seed-from-json` · `FUNC-session-shutdown` · io ▶ `ACTOR-owner` · `FUNC-apply-reseed` · `FUNC-arch-fitness` · `FUNC-auto-export` · `FUNC-check-code-conformance` · `FUNC-close-store` · `FUNC-emit-trajectory` · `FUNC-emit-update-event` · `FUNC-encode` · `FUNC-evaluate-rules` · `FUNC-export-marker` · `FUNC-fit-advisory` · `FUNC-graph-export-snapshot` · `FUNC-graph-suggest` · `FUNC-list-elements` · `FUNC-load-graph` · `FUNC-merge-nodes` · `FUNC-module-metrics` · `FUNC-mutate` · `FUNC-nd-similarity` · `FUNC-open-store` · `FUNC-reseed` · `FUNC-score-completeness` · `FUNC-seed-from-json` · schema ▶ `SCHEMA-ontology-graph`
 
 ### 4.12  `FLOW-health-report` — Health-Report
 
@@ -5056,7 +5026,7 @@ io ◀ `FUNC-health-endpoint` · io ▶ `ACTOR-dashboard` · schema ▶ `SCHEMA-
 
 Die angefragte Graph-Scheibe als Format-E samt Cursor: exakter Blast-Radius und die on-demand vertiefte Fortsetzung.
 
-io ◀ `FUNC-graph-expand` · `FUNC-graph-impact` · io ▶ `ACTOR-claude-code` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-mutate` · schema ▶ `SCHEMA-format-e`
+io ◀ `FUNC-graph-expand` · `FUNC-graph-impact` · io ▶ `ACTOR-agent` · `FUNC-encode` · `FUNC-graph-expand` · `FUNC-mutate` · schema ▶ `SCHEMA-format-e`
 
 ### 4.14  `FLOW-impacted-tests` — Betroffene Tests
 
@@ -5068,7 +5038,7 @@ io ◀ `FUNC-resolve-tests-from-code` · io ▶ `FUNC-deduce-tests` · schema �
 
 Ergebnis der CLI-Lifecycle-Verben an den Entwickler: Scaffold-, Update-, Remove-, Status- und Upgrade-Ausgang.
 
-io ◀ `FUNC-collect-status` · `FUNC-harness-cli` · `FUNC-upgrade` · io ▶ `ACTOR-developer` · schema ▶ `SCHEMA-cli-command`
+io ◀ `FUNC-collect-status` · `FUNC-harness-cli` · `FUNC-upgrade` · io ▶ `ACTOR-owner` · schema ▶ `SCHEMA-cli-command`
 
 ### 4.16  `FLOW-live-event` — Live-Update-Event
 
@@ -5080,7 +5050,7 @@ io ◀ `FUNC-broadcast-diff` · `FUNC-emit-update-event` · `FUNC-serve-sse` · 
 
 Generierte Markdown-Views mit GENERATED-Header, gleich ob der Exporter oder ein View-Skill sie gerendert hat.
 
-io ◀ `FUNC-export-markdown` · `FUNC-render-views` · io ▶ `ACTOR-developer` · schema ▶ `SCHEMA-markdown-view`
+io ◀ `FUNC-export-markdown` · `FUNC-render-views` · io ▶ `ACTOR-owner` · schema ▶ `SCHEMA-markdown-view`
 
 ### 4.18  `FLOW-measurement-vector` — Messvektor
 
@@ -5092,7 +5062,7 @@ io ◀ `FUNC-take-steering-snapshot` · io ▶ `FUNC-goal-steerer` · schema ▶
 
 Die geltenden Urteilsschwellen: wie der Mensch sie in graphcode.config.jsonc schreibt und wie sie nach dem Auffuellen mit DEFAULT_METRIC_POLICY gelten. Dieselbe Form in zwei Fassungen, deshalb ein Vertrag. Keine Schwelle steht als Literal im Regelcode.
 
-io ◀ `ACTOR-developer` · `ACTOR-learning-engine` · `FUNC-load-config` · io ▶ `FUNC-evaluate-rules` · `FUNC-load-config` · `FUNC-take-steering-snapshot` · schema ▶ `SCHEMA-metric-policy`
+io ◀ `ACTOR-learning-engine` · `ACTOR-owner` · `FUNC-load-config` · io ▶ `FUNC-evaluate-rules` · `FUNC-load-config` · `FUNC-take-steering-snapshot` · schema ▶ `SCHEMA-metric-policy`
 
 ### 4.20  `FLOW-model-answer` — Modellantwort
 
@@ -5110,7 +5080,7 @@ io ◀ `FUNC-module-metrics` · io ▶ `ACTOR-dashboard` · `FUNC-evaluate-rules
 
 Jede Schreibabsicht am Gate als MutateCommand-Batch: Edit-Op von Agent oder Mensch, und der dryRun-verifizierte Kandidaten-Fix aus dem Vorschlagspfad.
 
-io ◀ `ACTOR-claude-code` · `ACTOR-developer` · `ACTOR-opencode` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-extract-mutate` · `FUNC-graph-suggest` · `FUNC-host-socket` · `FUNC-preflight` · `FUNC-rank-candidates` · `FUNC-run-executor` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` · io ▶ `FUNC-host-socket` · `FUNC-mutate` · `FUNC-preflight` · schema ▶ `SCHEMA-mutate-command`
+io ◀ `ACTOR-agent` · `ACTOR-owner` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-extract-mutate` · `FUNC-graph-suggest` · `FUNC-host-socket` · `FUNC-preflight` · `FUNC-rank-candidates` · `FUNC-run-executor` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` · io ▶ `FUNC-host-socket` · `FUNC-mutate` · `FUNC-preflight` · schema ▶ `SCHEMA-mutate-command`
 
 ### 4.23  `FLOW-phase-readiness` — Phasen-Readiness (SRR/PDR/CDR/TRR)
 
@@ -5122,7 +5092,7 @@ io ◀ `FUNC-compute-phase-readiness` · io ▶ `FUNC-generation-step` · schema
 
 Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Eine Anfrageform, nicht vier.
 
-io ◀ `ACTOR-claude-code` · `ACTOR-developer` · `FUNC-auto-export` · `FUNC-render-views` · `FUNC-serve-stdio` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · io ▶ `FUNC-deduce-tests` · `FUNC-export-markdown` · `FUNC-graph-expand` · `FUNC-graph-impact` · `FUNC-list-elements` · `FUNC-render-views` · `FUNC-resolve-tests-from-code` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · schema ▶ `SCHEMA-query-params`
+io ◀ `ACTOR-agent` · `ACTOR-owner` · `FUNC-auto-export` · `FUNC-render-views` · `FUNC-serve-stdio` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · io ▶ `FUNC-deduce-tests` · `FUNC-export-markdown` · `FUNC-graph-expand` · `FUNC-graph-impact` · `FUNC-list-elements` · `FUNC-render-views` · `FUNC-resolve-tests-from-code` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · schema ▶ `SCHEMA-query-params`
 
 ### 4.25  `FLOW-round-injection` — Runden-Injektion
 
@@ -5134,7 +5104,7 @@ io ◀ `FUNC-build-round-injection` · io ▶ `FUNC-run-executor` · schema ▶ 
 
 Der aus dem Messzustand abgeleitete naechste Schritt: Fokus-Dimension, Fokus-Typen, Fund-Fenster, Gate-Protokoll, Handoff-Bedingung.
 
-io ◀ `FUNC-generation-step` · `FUNC-next-step` · io ▶ `ACTOR-claude-code` · `ACTOR-opencode` · `FUNC-build-round-injection` · `FUNC-rank-candidates` · `FUNC-run-executor` · schema ▶ `SCHEMA-generation-step`
+io ◀ `FUNC-generation-step` · `FUNC-next-step` · io ▶ `ACTOR-agent` · `FUNC-build-round-injection` · `FUNC-rank-candidates` · `FUNC-run-executor` · schema ▶ `SCHEMA-generation-step`
 
 ### 4.27  `FLOW-round-scope` — Round Scope (bounded slice)
 
@@ -5158,13 +5128,13 @@ io ◀ `FUNC-gve-sessions` · `FUNC-gve-supervise` · io ▶ `FUNC-gve-sessions`
 
 Der gemessene Stand als Text zurueck an den Menschen.
 
-io ◀ `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-test` · `FUNC-test-ui` · io ▶ `ACTOR-systems-engineer` · schema ▶ `SCHEMA-markdown-view`
+io ◀ `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-test` · `FUNC-test-ui` · io ▶ `ACTOR-owner` · schema ▶ `SCHEMA-markdown-view`
 
 ### 4.31  `FLOW-skill-request` — Skill-Aufruf
 
 Aufruf eines Skills durch den Menschen: Absicht, Zielausschnitt, Optionen. Autoren- und Berichts-Skills nehmen denselben Auftrag entgegen.
 
-io ◀ `ACTOR-facilitating-agent` · `ACTOR-systems-engineer` · io ▶ `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-import-code` · `FUNC-import-doc` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-help` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-se-trade` · `FUNC-target-profile` · `FUNC-test` · `FUNC-test-ui` · schema ▶ `SCHEMA-query-params`
+io ◀ `ACTOR-agent` · `ACTOR-owner` · io ▶ `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-import-code` · `FUNC-import-doc` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-help` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-se-trade` · `FUNC-target-profile` · `FUNC-test` · `FUNC-test-ui` · schema ▶ `SCHEMA-query-params`
 
 ### 4.32  `FLOW-steering-delta` — Steering-Delta (vor/nach Kandidat)
 
@@ -5182,7 +5152,7 @@ io ◀ `FUNC-take-steering-snapshot` · io ▶ `FUNC-compute-readiness` · `FUNC
 
 Der Wunsch, eine Steuerungsrunde zu fahren, mit ihren Parametern: Intent, zurueckgestellte Fokus-Schluessel, Auswahlmodus. Mensch und lokaler Executor loesen dieselbe Kette aus, nur die Taktung unterscheidet sich.
 
-io ◀ `ACTOR-developer` · `ACTOR-opencode` · `FUNC-run-verb` · io ▶ `FUNC-take-steering-snapshot` · schema ▶ `SCHEMA-query-params`
+io ◀ `ACTOR-agent` · `ACTOR-owner` · `FUNC-run-verb` · io ▶ `FUNC-take-steering-snapshot` · schema ▶ `SCHEMA-query-params`
 
 ### 4.35  `FLOW-store-ownership` — Store-Besitzanspruch
 
@@ -5200,7 +5170,7 @@ io ◀ `FUNC-target-profile` · `FUNC-target-profile-load` · io ▶ `FUNC-gener
 
 Das minimale selektive Laufkommando mit den aufgeloesten TESTs, den Coverage-Zahlen und dem, was unaufloesbar blieb.
 
-io ◀ `FUNC-deduce-tests` · io ▶ `ACTOR-claude-code` · `ACTOR-developer` · `ACTOR-systems-engineer` · schema ▶ `SCHEMA-test-selection`
+io ◀ `FUNC-deduce-tests` · io ▶ `ACTOR-agent` · `ACTOR-owner` · schema ▶ `SCHEMA-test-selection`
 
 ### 4.38  `FLOW-trajectory` — Trajectory/Outcome
 
@@ -5212,7 +5182,7 @@ io ◀ `FUNC-emit-trajectory` · `FUNC-tool-context` · io ▶ `ACTOR-learning-e
 
 Neue ONTOLOGY/RULES_VERSION aus contracts/se.
 
-io ◀ `ACTOR-developer` · io ▶ `FUNC-migrate-schema` · `FUNC-schema-guard` · schema ▶ `SCHEMA-query-params`
+io ◀ `ACTOR-owner` · io ▶ `FUNC-migrate-schema` · `FUNC-schema-guard` · schema ▶ `SCHEMA-query-params`
 
 ## 5  Schemata
 
@@ -5224,7 +5194,7 @@ schema ◀ `FLOW-action`
 
 ### 5.2  `SCHEMA-cli-command` — CliCommand
 
-npx-CLI Kommando + Ergebnis.
+Vertrag der Lebenszyklus-Verben (init/update/remove) samt Ergebnis. Bindung statt Kopie — der Zod-Koerper steht im Code, nicht im Graphen. (CR-GC-454)
 
 schema ◀ `FLOW-cli-command` · `FLOW-install-result`
 
@@ -5248,7 +5218,7 @@ schema ◀ `FLOW-fit-advisory`
 
 ### 5.6  `SCHEMA-format-e` — Format-E
 
-Kompaktes Snapshot-/Diff-Format. @sigloch/contracts/se.
+Kompaktes Snapshot-/Diff-Format. Der geparste Vertrag ist ein Diff aus Operationen plus Fehlerliste — NICHT ein Knoten-/Kanten-Paar. @sigloch/contracts/se. (Kopie entfernt CR-GC-454)
 
 schema ◀ `FLOW-formatE-artifact` · `FLOW-impact-subgraph`
 
@@ -5278,7 +5248,7 @@ schema ◀ `FLOW-store-ownership`
 
 ### 5.11  `SCHEMA-markdown-view` — MarkdownView
 
-Generierte human-readable View mit GENERATED-Header.
+Vertrag der deterministisch gerenderten Markdown-Sichten (GENERATED-Header). Bindung statt Kopie. (CR-GC-454)
 
 schema ◀ `FLOW-markdown-docs` · `FLOW-skill-report`
 
@@ -5296,7 +5266,7 @@ schema ◀ `FLOW-metric-policy`
 
 ### 5.14  `SCHEMA-metric-vector` — MetricVector
 
-Sechs Topologiedimensionen: modifiability, faultTolerance, flowEfficiency, coherence, viability, scalability. Aus @sigloch/se-optimizer, deshalb external.
+Sechs Topologiedimensionen: modifiability, faultTolerance, flowEfficiency, coherence, viability, scalability. Aus @sigloch/se-engine, deshalb external. (Herkunft korrigiert CR-GC-453)
 
 schema ◀ `FLOW-arch-fitness`
 
@@ -5314,13 +5284,13 @@ schema ◀ `FLOW-module-metrics`
 
 ### 5.17  `SCHEMA-mutate-command` — MutateCommand
 
-Edit-Operation durch das Gate. @sigloch/contracts harness (D1).
+Edit-Operation durch das Gate: eine discriminatedUnion ueber op mit sieben Operationen (add-node, update-node, delete-node, add-edge, delete-edge, update-edge, merge-nodes). Knoten reisen als node-Objekt, Kanten als edge-Objekt — NICHT als flache Felder. @sigloch/contracts harness (D1). (Kopie entfernt CR-GC-454)
 
 schema ◀ `FLOW-mutate-cmd`
 
 ### 5.18  `SCHEMA-mutate-result` — MutateResult
 
-Apply-Ergebnis + Violations + Confidence/Tier. @sigloch/contracts harness (D1).
+Apply-Ergebnis: success, appliedCommands, mutations, violations, confidence, tier (auto-apply/suggest/block) sowie trajectoryId, graphVersion und die OCC-Felder stale/staleDelta. @sigloch/contracts harness (D1). (Kopie entfernt CR-GC-454)
 
 schema ◀ `FLOW-gate-verdict`
 
@@ -5338,7 +5308,7 @@ schema ◀ `FLOW-phase-readiness`
 
 ### 5.21  `SCHEMA-query-params` — QueryParams
 
-Query-/Request-Parameter.
+Der gemeinsame Nenner der Leseanfragen: elementId, depth, branch, cursor, view. Bewusst ohne Zod-Symbol — im Code traegt JEDES MCP-Tool sein eigenes Input-Schema, ein zusammengefasstes QueryParams gibt es nicht und soll es nicht geben (ein Sammel-Schema waere ein paralleler Pfad zu den Tool-Signaturen). Der Knoten steht fuer den Kanal, nicht fuer einen Code-Datenvertrag; concept-only. (Begruendung nachgetragen CR-GC-454)
 
 schema ◀ `FLOW-query-request` · `FLOW-skill-request` · `FLOW-steering-trigger` · `FLOW-version-bump`
 
@@ -5350,7 +5320,7 @@ schema ◀ `FLOW-dimension-readiness`
 
 ### 5.23  `SCHEMA-round-injection` — Runden-Injektions-Block
 
-Vertrag der Runden-Injektion: ein Markdown-Textblock als string, Rueckgabe von buildRoundInjection in src/executor/executor-prompt.ts — Guide-Slice plus Element-Index. Bewusst ohne Zod-Symbol: informationeller Prompt-Kontext, kein Wire-Format; deshalb concept-only.
+Vertrag der Runden-Injektion: ein Markdown-Textblock als string, Rueckgabe von buildRoundInjection in src/loop/executor-prompt.ts — Guide-Slice plus Element-Index. Bewusst ohne Zod-Symbol: informationeller Prompt-Kontext, kein Wire-Format; deshalb concept-only. (Pfad korrigiert CR-GC-454)
 
 schema ◀ `FLOW-round-injection`
 
@@ -5398,13 +5368,13 @@ schema ◀ `FLOW-test-selection`
 
 ### 5.31  `SCHEMA-trajectory` — Trajectory/Outcome
 
-append-only Lern-Emission. @sigloch/learning-core.
+append-only Lern-Emission: ts, consumerId, consumerType, operation, opCounts, applied, outcome und die Violation-Zaehler. @sigloch/learning-core. (Kopie entfernt CR-GC-454)
 
 schema ◀ `FLOW-trajectory`
 
 ### 5.32  `SCHEMA-update-event` — UpdateEvent
 
-SSE invalidate Event.
+SSE invalidate Event: type, domains (graph/rules/readiness/suggestions), ts und optional version. Einmal in contracts definiert, damit emittierender Harness und Viewer denselben Vertrag lesen. (Kopie entfernt CR-GC-454)
 
 schema ◀ `FLOW-live-event`
 
@@ -5828,7 +5798,7 @@ Verification ◀ `TEST-cache` (integration) · satisfy ◀ `MOD-surface` · allo
 
 ### 8.1  `TEST-advisory-roundtrip-latency` — Advisory-Roundtrip-Latency-Test
 
-read+status+propose+apply Median < 200ms bei aktueller Graphgroesse (382 Knoten), gemessen in-process gegen echten Disk-Kuzu, kein Mock. Aktuell (2026-08-05) noch generous Sanity-Decken statt harter 200ms-Assertion -- verschaerfen, sobald se-optimizer 0.3.2 publiziert und hier gebumpt ist (CR-SM-228 macht den Fix real, aber dieses Repo zieht ihn noch nicht). (REQ-advisory-roundtrip-latency)
+read+status+propose+apply Median, gemessen in-process gegen echten Disk-Kuzu, kein Mock. Faehrt drei Groessen (500 kalibriert / live SSOT / 2000 fest), damit die Zahl eine Groesse hat und die Maschine sich rauskuerzt. Assertion ist heute die SKALIERUNG (ms/Knoten-Faktor < 3, absolut < 10 ms/Knoten), nicht die 200ms -- die absolute Schranke ist erst scharf zu ziehen, wenn REQ-advisory-roundtrip-latency eine Bezugsgroesse hat, gegen die sie im CI reproduzierbar ist. Stand 2026-09-02: 332,8ms bei 658 Knoten, Ziel bei 400 Knoten verfehlt durch Graphwachstum. (REQ-advisory-roundtrip-latency, CR-GC-453)
 
 verify ▶ `REQ-advisory-roundtrip-latency` · testRefs: `tests/perf.advisory-roundtrip.spike.test.ts`
 

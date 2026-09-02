@@ -591,6 +591,18 @@ describe('CR-GC-304: ConOps renders the 29148 OpsCon sections from existing node
     expect(out).toMatch(/ACTOR-betreiber[\s\S]*?UC-verwalten/);
   });
 
+  it('§3 characterises each user class, it does not merely name it (CR-GC-455)', () => {
+    const out = md();
+    // ISO 29148 §5.2.4 wants the class described. The old render printed name + UC list
+    // only, so everything distinguishing one class from another lived in the node and
+    // reached no reader. That became load-bearing when three human personas were merged
+    // into one ACTOR: their difference is now IN the description or nowhere.
+    expect(out).toContain('Bestellt Ersatzteile.');
+    expect(out).toContain('Betreibt den Shop.');
+    // and it must stay attached to its own actor, not float somewhere in the document
+    expect(out).toMatch(/ACTOR-kunde[\s\S]{0,400}?Bestellt Ersatzteile\./);
+  });
+
   it('§4 renders operational scenarios: UC → FCHAIN → its function sequence', () => {
     const out = md();
     expect(out).toContain('UC-bestellen');

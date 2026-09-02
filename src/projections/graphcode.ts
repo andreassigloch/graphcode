@@ -292,10 +292,14 @@ export function renderConOps(graph: Graph, name: string): string {
   if (actors.length === 0) {
     lines.push('— keine ACTOR im Graph —', '');
   } else {
+    // CR-GC-455: die Beschreibung MIT rendern. ISO 29148 §5.2.4 will die Nutzerklasse
+    // charakterisiert sehen, nicht nur benannt — und seit die drei Menschen-Personas in
+    // ACTOR-owner zusammenliegen, ist ihre Unterscheidung genau dort und nirgends sonst.
     for (const a of actors) {
       const triggered = ucsOfActor(a.uid);
       const suffix = triggered.length > 0 ? ` — triggert ${refList(triggered)}` : ' — keine UC-Kopplung im Graph';
-      lines.push(`- ${ref(a.uid)} — ${cell(a.name)}${suffix}`);
+      lines.push(`- **${cell(a.name)}** (${ref(a.uid)})${suffix}`);
+      if (a.description) lines.push(`  - ${cell(a.description)}`);
     }
     lines.push('');
   }
