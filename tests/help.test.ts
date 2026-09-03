@@ -9,7 +9,7 @@ import type { RuleViolation } from '@sigloch/contracts/harness';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { RULE_TO_PHASE } from '@sigloch/contracts/se';
 import { computeReadiness, ABSENT_CREATION_PROVIDER } from '../src/kernel/measure/readiness.js';
-import { helpEntry, helpForRules, contextualHelp } from '../src/surface/help.js';
+import { helpEntry, helpForRules, contextualHelp } from '../src/projections/help.js';
 
 describe('TEST-help-projection (CR-GC-228): help.ts projects HELP_CONTENT + the live sources', () => {
   it('helpEntry returns all three layers for a panel / gate / rule / artifact', () => {

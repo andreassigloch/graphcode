@@ -25,7 +25,7 @@ import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { GraphCodeCodec } from '../src/projections/codec.js';
-import { formatEExampleFor } from '../src/surface/authoring-example.js';
+import { formatEExampleFor } from '../src/projections/authoring-example.js';
 import { bindToolsToHarness, type MCPToolRegistry } from '../src/surface/mcp-tools.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 

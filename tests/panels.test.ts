@@ -29,7 +29,7 @@ import {
   impactPanel,
   healthPanel,
   panelsForEvent,
-} from '../src/surface/panels.js';
+} from '../src/projections/panels.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 import type { LiveUpdateEvent } from '../src/surface/emit.js';
 

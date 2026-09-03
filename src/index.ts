@@ -104,7 +104,7 @@ export {
   impactPanel,
   healthPanel,
   panelsForEvent,
-} from './surface/panels.js';
+} from './projections/panels.js';
 export type {
   ReadinessPanel,
   GatePanel,
@@ -119,7 +119,7 @@ export type {
   Freshness,
   ImpactPanel,
   HealthPanel,
-} from './surface/panels.js';
+} from './projections/panels.js';
 
 export type {
   HarnessConfig,
@@ -141,10 +141,10 @@ export type { AuditEntry, OperationsLog } from '@sigloch/graph-api-core';
 
 // In-context help (CR-GC-227 content + CR-GC-228 data layer) — the read-only layer
 // every help surface (graph_help tool, se:help skill, renderer) projects from.
-export { helpEntry, helpForRules, contextualHelp } from './surface/help.js';
-export type { HelpEntry, ContextualMeasure } from './surface/help.js';
-export { HELP_CONTENT, HELP_VOCAB, HELP_PANEL_IDS, HELP_ELEMENT_STATES } from './surface/help-content.js';
-export type { HelpContentEntry, HelpVocabEntry } from './surface/help-content.js';
+export { helpEntry, helpForRules, contextualHelp } from './projections/help.js';
+export type { HelpEntry, ContextualMeasure } from './projections/help.js';
+export { HELP_CONTENT, HELP_VOCAB, HELP_PANEL_IDS, HELP_ELEMENT_STATES } from './projections/help-content.js';
+export type { HelpContentEntry, HelpVocabEntry } from './projections/help-content.js';
 
 // Repo-Betriebs-Config (CR-GC-329) — hält die Urteilsschwellen der Architektur-Metriken
 // an EINER Stelle und gibt sie mit den Kennzahlen heraus (graph_metrics.policy).

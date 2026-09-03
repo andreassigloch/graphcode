@@ -44,8 +44,8 @@ import {
 } from '../kernel/evaluation.js';
 import { groupViolations, type ViolationGroup } from '@sigloch/graphcode-client';
 import { loadTargetProfile, intentCoverage, type AnchorCoverage } from '../loop/target-profile.js';
-import { helpEntry, contextualHelp, type HelpEntry, type ContextualMeasure } from '../surface/help.js';
-import { formatEExampleFor } from '../surface/authoring-example.js';
+import { helpEntry, contextualHelp, type HelpEntry, type ContextualMeasure } from './help.js';
+import { formatEExampleFor } from './authoring-example.js';
 import { TestSelectionSchema } from '../kernel/measure/test-selection.js';
 import { nextStep } from '../loop/steering.js';
 import type { NextStepResult } from '../loop/steering.js';

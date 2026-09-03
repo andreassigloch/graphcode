@@ -47,8 +47,6 @@ const DEBT: string[] = [
   'projections/export.ts → surface/tool-context [type]',
   'projections/metrics.ts → surface/mcp-tools [type]',
   'projections/metrics.ts → surface/tool-context [type]',
-  'projections/report.ts → surface/authoring-example',
-  'projections/report.ts → surface/help',
   'projections/report.ts → surface/mcp-tools [type]',
   'projections/report.ts → surface/tool-context [type]',
   'projections/testreport.ts → surface/mcp-tools [type]',
