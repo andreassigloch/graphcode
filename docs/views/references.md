@@ -13,7 +13,7 @@
 | `ACTOR-agent` | io | `FLOW-query-request` |
 | `ACTOR-agent` | io | `FLOW-skill-request` |
 | `ACTOR-agent` | io | `FLOW-steering-trigger` |
-| `ACTOR-learning-engine` | io | `FLOW-metric-policy` |
+| `ACTOR-learning-engine` | io | `FLOW-learning-advice` |
 | `ACTOR-owner` | io | `FLOW-cli-command` |
 | `ACTOR-owner` | io | `FLOW-graph-state` |
 | `ACTOR-owner` | io | `FLOW-metric-policy` |
@@ -806,6 +806,11 @@
 | `FLOW-impacted-tests` | relation | `SCHEMA-impacted-tests` |
 | `FLOW-install-result` | io | `ACTOR-owner` |
 | `FLOW-install-result` | relation | `SCHEMA-cli-command` |
+| `FLOW-learning-advice` | io | `FUNC-graph-suggest` |
+| `FLOW-learning-advice` | io | `FUNC-next-step` |
+| `FLOW-learning-advice` | relation | `SCHEMA-learning-advice` |
+| `FLOW-learning-query` | io | `ACTOR-learning-engine` |
+| `FLOW-learning-query` | relation | `SCHEMA-learning-query` |
 | `FLOW-live-event` | io | `ACTOR-dashboard` |
 | `FLOW-live-event` | io | `FUNC-broadcast-diff` |
 | `FLOW-live-event` | io | `FUNC-serve-sse` |
@@ -1146,6 +1151,7 @@
 | `FUNC-graph-impact` | satisfy | `REQ-query-precision` |
 | `FUNC-graph-impact` | satisfy | `REQ-subgraph-slicing` |
 | `FUNC-graph-suggest` | allocate | `MOD-loop` |
+| `FUNC-graph-suggest` | io | `FLOW-learning-query` |
 | `FUNC-graph-suggest` | io | `FLOW-mutate-cmd` |
 | `FUNC-graph-suggest` | satisfy | `REQ-applied-suggestion-moves-target` |
 | `FUNC-graph-suggest` | satisfy | `REQ-target-shifts-ranking` |
@@ -1218,6 +1224,7 @@
 | `FUNC-nd-similarity` | io | `FLOW-graph-state` |
 | `FUNC-nd-similarity` | satisfy | `REQ-near-duplicate-detection` |
 | `FUNC-next-step` | allocate | `MOD-loop` |
+| `FUNC-next-step` | io | `FLOW-learning-query` |
 | `FUNC-next-step` | io | `FLOW-round-prompt` |
 | `FUNC-next-step` | satisfy | `REQ-steering-from-metrics` |
 | `FUNC-open-store` | allocate | `MOD-kernel` |

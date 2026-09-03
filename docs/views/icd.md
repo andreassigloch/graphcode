@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 34 SCHEMA · 40 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 36 SCHEMA · 42 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -21,6 +21,8 @@
 | `SCHEMA-generation-step` | src/loop/generate.ts#GenerationStep | reviewed |
 | `SCHEMA-health-report` | src/surface/health.ts#HealthPayloadSchema | n/a |
 | `SCHEMA-impacted-tests` | src/projections/test-selection.ts#TestImpactResultSchema | n/a |
+| `SCHEMA-learning-advice` | extern definiert (kein realRef) | draft |
+| `SCHEMA-learning-query` | extern definiert (kein realRef) | draft |
 | `SCHEMA-lock-owner` | src/kernel/lock-owner-contract.ts#LockOwner | n/a |
 | `SCHEMA-markdown-view` | src/projections/exporter.ts#MarkdownViewSchema | reviewed |
 | `SCHEMA-measurement-vector` | Konzept (noch kein Zod-Export) | reviewed |
@@ -65,10 +67,12 @@
 | `FLOW-health-report` | `FUNC-health-endpoint` | `ACTOR-dashboard` |
 | `FLOW-impacted-tests` | `FUNC-resolve-tests-from-code` | `FUNC-deduce-tests` |
 | `FLOW-install-result` | `FUNC-collect-status` · `FUNC-harness-cli` · `FUNC-upgrade` | `ACTOR-owner` |
+| `FLOW-learning-advice` | `ACTOR-learning-engine` | `FUNC-graph-suggest` · `FUNC-next-step` |
+| `FLOW-learning-query` | `FUNC-graph-suggest` · `FUNC-next-step` | `ACTOR-learning-engine` |
 | `FLOW-live-event` | `FUNC-broadcast-diff` · `FUNC-emit-update-event` · `FUNC-serve-sse` | `ACTOR-dashboard` · `FUNC-broadcast-diff` · `FUNC-serve-sse` · `FUNC-serve-stdio` |
 | `FLOW-markdown-docs` | `FUNC-export-markdown` · `FUNC-render-views` | `ACTOR-owner` |
 | `FLOW-measurement-vector` | `FUNC-take-steering-snapshot` | `FUNC-goal-steerer` |
-| `FLOW-metric-policy` | `ACTOR-learning-engine` · `ACTOR-owner` · `FUNC-load-config` | `FUNC-evaluate-rules` · `FUNC-load-config` · `FUNC-take-steering-snapshot` |
+| `FLOW-metric-policy` | `ACTOR-owner` · `FUNC-load-config` | `FUNC-evaluate-rules` · `FUNC-load-config` · `FUNC-take-steering-snapshot` |
 | `FLOW-model-answer` | `FUNC-run-executor` | `FUNC-extract-mutate` |
 | `FLOW-module-metrics` | `FUNC-module-metrics` | `ACTOR-dashboard` · `FUNC-evaluate-rules` |
 | `FLOW-mutate-cmd` | `ACTOR-agent` · `ACTOR-owner` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-extract-mutate` · `FUNC-graph-suggest` · `FUNC-host-socket` · `FUNC-preflight` · `FUNC-rank-candidates` · `FUNC-run-executor` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` | `FUNC-host-socket` · `FUNC-mutate` · `FUNC-preflight` |

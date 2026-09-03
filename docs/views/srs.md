@@ -52,9 +52,9 @@ io ▶ — · io ◀ `FLOW-health-report` · `FLOW-live-event` · `FLOW-module-m
 
 ### 2.3  `ACTOR-learning-engine` — Learning-Engine
 
-Bidirektionales Nachbarsystem, geplant: liest die post-apply/nightly Trajectory-/Outcome-Emissionen und schreibt daraus eine Empfehlung zurueck — die Urteils-Policy (Schwellen je Urteil). Deshalb NICHT mit dem Viewer zusammenzulegen: der Viewer liest nur, die Learning-Engine schliesst eine Schleife. (SPEC 2.3, Abgrenzung CR-GC-455)
+Bidirektionales Nachbarsystem, geplant: liest die post-apply/nightly Trajectory-/Outcome-Emissionen als Lerneingang, beantwortet eine Lern-Frage von graph_suggest und nextStep und liefert je Kandidat ein Urteil zurueck. Sie schreibt KEINE Konfiguration: die Urteilsschwellen bleiben der Vertrag des Menschen. Deshalb NICHT mit dem Viewer zusammenzulegen: der Viewer liest nur, die Learning-Engine schliesst eine Schleife. (SPEC 2.3, Abgrenzung CR-GC-455, Andockpunkt CR-GC-465)
 
-io ▶ `FLOW-metric-policy` · io ◀ `FLOW-trajectory`
+io ▶ `FLOW-learning-advice` · io ◀ `FLOW-learning-query` · `FLOW-trajectory`
 
 ### 2.4  `ACTOR-owner` — Repo-Owner (Mensch am Repo)
 
@@ -1404,7 +1404,7 @@ Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (in
 
 Der Advisory-Rueckweg an den fragenden Agenten: aus demselben Snapshot die Fokus-Dimension, die blockierenden Fehler und die feuernden Regeln als naechster Schritt.
 
-io ◀ `FLOW-dimension-readiness` · `FLOW-steering-snapshot` · io ▶ `FLOW-round-prompt` · allocate ▶ `MOD-loop`
+io ◀ `FLOW-dimension-readiness` · `FLOW-learning-advice` · `FLOW-steering-snapshot` · io ▶ `FLOW-learning-query` · `FLOW-round-prompt` · allocate ▶ `MOD-loop`
 
 ###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
 
@@ -2520,7 +2520,7 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (
 
 Duennes Binding auf @sigloch/se-engine (targetFor/suggestEdits): rankt die feuernden Operator-Regeln nach dem Skalarprodukt aus Metrik-Delta und Zielrichtung im R^6-Metrikraum; liefert die Fund-Ebene, Template-Edits laufen als dryRun durchs Gate. Nie auto-apply. (CR-GC-273, Herkunft korrigiert CR-GC-453)
 
-io ◀ `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-target-profile` · io ▶ `FLOW-mutate-cmd` · allocate ▶ `MOD-loop`
+io ◀ `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-learning-advice` · `FLOW-target-profile` · io ▶ `FLOW-learning-query` · `FLOW-mutate-cmd` · allocate ▶ `MOD-loop`
 
 ###### `REQ-applied-suggestion-moves-target` — Eine angewandte Suggestion bewegt den Zielvektor in Zielrichtung
 
@@ -4526,7 +4526,7 @@ io ◀ — · io ▶ — · allocate ▶ `MOD-loop`
 
 Duennes Binding auf @sigloch/se-engine (targetFor/suggestEdits): rankt die feuernden Operator-Regeln nach dem Skalarprodukt aus Metrik-Delta und Zielrichtung im R^6-Metrikraum; liefert die Fund-Ebene, Template-Edits laufen als dryRun durchs Gate. Nie auto-apply. (CR-GC-273, Herkunft korrigiert CR-GC-453)
 
-io ◀ `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-target-profile` · io ▶ `FLOW-mutate-cmd` · allocate ▶ `MOD-loop`
+io ◀ `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-learning-advice` · `FLOW-target-profile` · io ▶ `FLOW-learning-query` · `FLOW-mutate-cmd` · allocate ▶ `MOD-loop`
 
 ###### `REQ-applied-suggestion-moves-target` — Eine angewandte Suggestion bewegt den Zielvektor in Zielrichtung
 
@@ -5034,7 +5034,7 @@ Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (in
 
 Der Advisory-Rueckweg an den fragenden Agenten: aus demselben Snapshot die Fokus-Dimension, die blockierenden Fehler und die feuernden Regeln als naechster Schritt.
 
-io ◀ `FLOW-dimension-readiness` · `FLOW-steering-snapshot` · io ▶ `FLOW-round-prompt` · allocate ▶ `MOD-loop`
+io ◀ `FLOW-dimension-readiness` · `FLOW-learning-advice` · `FLOW-steering-snapshot` · io ▶ `FLOW-learning-query` · `FLOW-round-prompt` · allocate ▶ `MOD-loop`
 
 ###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
 
@@ -5180,145 +5180,157 @@ Ergebnis der CLI-Lifecycle-Verben an den Entwickler: Scaffold-, Update-, Remove-
 
 io ◀ `FUNC-collect-status` · `FUNC-harness-cli` · `FUNC-upgrade` · io ▶ `ACTOR-owner` · schema ▶ `SCHEMA-cli-command`
 
-### 4.17  `FLOW-live-event` — Live-Update-Event
+### 4.17  `FLOW-learning-advice` — Lern-Empfehlung
+
+Die Antwort des Nachbarsystems: je Kandidat ein Urteil. Advisory wie graph_suggest selbst, nie Auto-Apply. Geplant, nicht realisiert (CR-GC-465).
+
+io ◀ `ACTOR-learning-engine` · io ▶ `FUNC-graph-suggest` · `FUNC-next-step` · schema ▶ `SCHEMA-learning-advice`
+
+### 4.18  `FLOW-learning-query` — Lern-Frage
+
+Die Frage an das Nachbarsystem: die Lage (Metrikvektor und Zielrichtung im R^6) plus die Kandidaten, die der Fragende bereits gebildet hat. graphcode behaelt die Kandidatenbildung. Geplant, nicht realisiert (CR-GC-465).
+
+io ◀ `FUNC-graph-suggest` · `FUNC-next-step` · io ▶ `ACTOR-learning-engine` · schema ▶ `SCHEMA-learning-query`
+
+### 4.19  `FLOW-live-event` — Live-Update-Event
 
 Der versionierte Update-Event-Strom: SSE invalidate fuer graph, rules, readiness, suggestions, mit Late-Joiner-Cache und strikt read-only an die Live-Viewer.
 
 io ◀ `FUNC-broadcast-diff` · `FUNC-emit-update-event` · `FUNC-serve-sse` · io ▶ `ACTOR-dashboard` · `FUNC-broadcast-diff` · `FUNC-serve-sse` · `FUNC-serve-stdio` · schema ▶ `SCHEMA-update-event`
 
-### 4.18  `FLOW-markdown-docs` — Markdown-Docs
+### 4.20  `FLOW-markdown-docs` — Markdown-Docs
 
 Generierte Markdown-Views mit GENERATED-Header, gleich ob der Exporter oder ein View-Skill sie gerendert hat.
 
 io ◀ `FUNC-export-markdown` · `FUNC-render-views` · io ▶ `ACTOR-owner` · schema ▶ `SCHEMA-markdown-view`
 
-### 4.19  `FLOW-measurement-vector` — Messvektor
+### 4.21  `FLOW-measurement-vector` — Messvektor
 
 Der gemeinsame Eingang der vier Entscheidungen: der gemessene Zustand als Vektor, unabhaengig davon, welche Projektion ihn fuellt. Erst mit diesem Vertrag ist die Gleichheit der vier Signaturen geprueft statt behauptet.
 
 io ◀ `FUNC-take-steering-snapshot` · io ▶ `FUNC-goal-steerer` · schema ▶ `SCHEMA-measurement-vector`
 
-### 4.20  `FLOW-metric-policy` — Urteils-Policy
+### 4.22  `FLOW-metric-policy` — Urteils-Policy
 
 Die geltenden Urteilsschwellen: wie der Mensch sie in graphcode.config.jsonc schreibt und wie sie nach dem Auffuellen mit DEFAULT_METRIC_POLICY gelten. Dieselbe Form in zwei Fassungen, deshalb ein Vertrag. Keine Schwelle steht als Literal im Regelcode.
 
-io ◀ `ACTOR-learning-engine` · `ACTOR-owner` · `FUNC-load-config` · io ▶ `FUNC-evaluate-rules` · `FUNC-load-config` · `FUNC-take-steering-snapshot` · schema ▶ `SCHEMA-metric-policy`
+io ◀ `ACTOR-owner` · `FUNC-load-config` · io ▶ `FUNC-evaluate-rules` · `FUNC-load-config` · `FUNC-take-steering-snapshot` · schema ▶ `SCHEMA-metric-policy`
 
-### 4.21  `FLOW-model-answer` — Modellantwort
+### 4.23  `FLOW-model-answer` — Modellantwort
 
 Die Roh-Antwort des Modells auf einen Runden-Prompt. Traegt Text, Werkzeugaufrufe und den Stop-Grund; fehlt der Werkzeugaufruf, ist der Text die einzige Spur, aus der die Prosa-Recovery ein Kommando holt.
 
 io ◀ `FUNC-run-executor` · io ▶ `FUNC-extract-mutate` · schema ▶ `SCHEMA-model-answer`
 
-### 4.22  `FLOW-module-metrics` — Modulkennzahlen je MOD
+### 4.24  `FLOW-module-metrics` — Modulkennzahlen je MOD
 
 Instabilitaet, LCOM4, Kohaesion je Modul plus die geltende Urteils-Policy und ihre Herkunft. Wert und Schwelle verlassen den Host zusammen, damit die Anzeige keinen eigenen Zielwert braucht (CR-GC-329).
 
 io ◀ `FUNC-module-metrics` · io ▶ `ACTOR-dashboard` · `FUNC-evaluate-rules` · schema ▶ `SCHEMA-module-metrics`
 
-### 4.23  `FLOW-mutate-cmd` — Mutate-Command
+### 4.25  `FLOW-mutate-cmd` — Mutate-Command
 
 Jede Schreibabsicht am Gate als MutateCommand-Batch: Edit-Op von Agent oder Mensch, und der dryRun-verifizierte Kandidaten-Fix aus dem Vorschlagspfad.
 
 io ◀ `ACTOR-agent` · `ACTOR-owner` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-extract-mutate` · `FUNC-graph-suggest` · `FUNC-host-socket` · `FUNC-preflight` · `FUNC-rank-candidates` · `FUNC-run-executor` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` · io ▶ `FUNC-host-socket` · `FUNC-mutate` · `FUNC-preflight` · schema ▶ `SCHEMA-mutate-command`
 
-### 4.24  `FLOW-phase-readiness` — Phasen-Readiness (SRR/PDR/CDR/TRR)
+### 4.26  `FLOW-phase-readiness` — Phasen-Readiness (SRR/PDR/CDR/TRR)
 
 Dieselbe Regelauswertung auf die Phasen-Gates projiziert: je Gate abgedeckte gegen alle Regel-IDs plus die fehlenden. Die zweite Achse, nicht die zweite Messung.
 
 io ◀ `FUNC-compute-phase-readiness` · io ▶ `FUNC-generation-step` · schema ▶ `SCHEMA-phase-readiness`
 
-### 4.25  `FLOW-query-request` — Query-Request (Lese- und View-Anfrage)
+### 4.27  `FLOW-query-request` — Query-Request (Lese- und View-Anfrage)
 
 Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Eine Anfrageform, nicht vier.
 
 io ◀ `ACTOR-agent` · `ACTOR-owner` · `FUNC-auto-export` · `FUNC-render-views` · `FUNC-serve-stdio` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · io ▶ `FUNC-deduce-tests` · `FUNC-export-markdown` · `FUNC-graph-expand` · `FUNC-graph-impact` · `FUNC-list-elements` · `FUNC-render-views` · `FUNC-resolve-tests-from-code` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · schema ▶ `SCHEMA-query-params`
 
-### 4.26  `FLOW-round-injection` — Runden-Injektion
+### 4.28  `FLOW-round-injection` — Runden-Injektion
 
 Der zusammengesetzte Prompt-Zusatz einer Runde: Guide-Slice plus Element-Index. Wie der Runden-Scope ein informationeller Kontext ohne festes Wire-Format, kein Code-Vertrag.
 
 io ◀ `FUNC-build-round-injection` · io ▶ `FUNC-run-executor` · schema ▶ `SCHEMA-round-injection`
 
-### 4.27  `FLOW-round-prompt` — Runden-Prompt (naechster Schritt)
+### 4.29  `FLOW-round-prompt` — Runden-Prompt (naechster Schritt)
 
 Der aus dem Messzustand abgeleitete naechste Schritt: Fokus-Dimension, Fokus-Typen, Fund-Fenster, Gate-Protokoll, Handoff-Bedingung.
 
 io ◀ `FUNC-generation-step` · `FUNC-next-step` · io ▶ `ACTOR-agent` · `FUNC-build-round-injection` · `FUNC-rank-candidates` · `FUNC-run-executor` · schema ▶ `SCHEMA-generation-step`
 
-### 4.28  `FLOW-round-scope` — Round Scope (bounded slice)
+### 4.30  `FLOW-round-scope` — Round Scope (bounded slice)
 
 Der durch read gebundene Blast-Radius/Kontext, der informiert, was status als offen prueft. Kein festes Wire-Format - informationeller Rundenkontext, kein Code-Datenvertrag.
 
 io ◀ `FUNC-graph-impact` · io ▶ `FUNC-evaluate-rules` · schema ▶ `SCHEMA-round-scope`
 
-### 4.29  `FLOW-schema-fingerprint` — Schema-Fingerabdruck
+### 4.31  `FLOW-schema-fingerprint` — Schema-Fingerabdruck
 
 Der Fingerabdruck der generierten DDL als Marker neben dem Store: 16 Hex-Zeichen. Beim Anlegen gestempelt, beim naechsten Start gelesen - er entscheidet, ob der Store weggeworfen und neu befuellt wird.
 
 io ◀ `FUNC-schema-guard` · io ▶ `FUNC-open-store` · schema ▶ `SCHEMA-schema-fingerprint`
 
-### 4.30  `FLOW-session-registry` — Sitzungsregister
+### 4.32  `FLOW-session-registry` — Sitzungsregister
 
 Die Sitzungseintraege eines Repos unter .graphcode/sessions: je lebender Sitzung PID, Rechner und Startzeit. Geschrieben von der Sitzung selbst, gelesen und von toten Eintraegen befreit beim Zaehlen.
 
 io ◀ `FUNC-gve-sessions` · `FUNC-gve-supervise` · io ▶ `FUNC-gve-sessions` · schema ▶ `SCHEMA-session-registry`
 
-### 4.31  `FLOW-skill-report` — Skill-Bericht
+### 4.33  `FLOW-skill-report` — Skill-Bericht
 
 Der gemessene Stand als Text zurueck an den Menschen.
 
 io ◀ `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-test` · `FUNC-test-ui` · io ▶ `ACTOR-owner` · schema ▶ `SCHEMA-markdown-view`
 
-### 4.32  `FLOW-skill-request` — Skill-Aufruf
+### 4.34  `FLOW-skill-request` — Skill-Aufruf
 
 Aufruf eines Skills durch den Menschen: Absicht, Zielausschnitt, Optionen. Autoren- und Berichts-Skills nehmen denselben Auftrag entgegen.
 
 io ◀ `ACTOR-agent` · `ACTOR-owner` · io ▶ `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-import-code` · `FUNC-import-doc` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-help` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-se-trade` · `FUNC-target-profile` · `FUNC-test` · `FUNC-test-ui` · schema ▶ `SCHEMA-query-params`
 
-### 4.33  `FLOW-steering-delta` — Steering-Delta (vor/nach Kandidat)
+### 4.35  `FLOW-steering-delta` — Steering-Delta (vor/nach Kandidat)
 
 Blockierende Fehler vorher und nachher plus Score-Delta je Dimension. Das erste Sachkriterium der Kandidaten-Rangfolge.
 
 io ◀ `FUNC-compute-steering-delta` · io ▶ `FUNC-rank-candidates` · schema ▶ `SCHEMA-steering-delta`
 
-### 4.34  `FLOW-steering-snapshot` — Steering-Snapshot
+### 4.36  `FLOW-steering-snapshot` — Steering-Snapshot
 
 Das Ergebnis der EINEN Messung: gemappter Graph, voller Regelstrom, blockierende Fehler, Readiness-Report. Alles Weitere ist Projektion davon.
 
 io ◀ `FUNC-take-steering-snapshot` · io ▶ `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-next-step` · schema ▶ `SCHEMA-steering-snapshot`
 
-### 4.35  `FLOW-steering-trigger` — Runden-Ausloeser
+### 4.37  `FLOW-steering-trigger` — Runden-Ausloeser
 
 Der Wunsch, eine Steuerungsrunde zu fahren, mit ihren Parametern: Intent, zurueckgestellte Fokus-Schluessel, Auswahlmodus. Mensch und lokaler Executor loesen dieselbe Kette aus, nur die Taktung unterscheidet sich.
 
 io ◀ `ACTOR-agent` · `ACTOR-owner` · `FUNC-run-verb` · io ▶ `FUNC-take-steering-snapshot` · schema ▶ `SCHEMA-query-params`
 
-### 4.36  `FLOW-store-ownership` — Store-Besitzanspruch
+### 4.38  `FLOW-store-ownership` — Store-Besitzanspruch
 
 Der Anspruch auf den Kuzu-Store eines Repos: gehalten, uebernommen oder verweigert.
 
 io ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · io ▶ `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` · schema ▶ `SCHEMA-lock-owner`
 
-### 4.37  `FLOW-target-profile` — Zielprofil
+### 4.39  `FLOW-target-profile` — Zielprofil
 
 Das Zielprofil eines Repos in .graphcode/target-profile.json: R6-Zielgewichte und die 3-7 Intentions-Anker. Vom Skill geschrieben, beim Laden geprueft, von Runden-Prompt und Suggestion-Ranking gelesen.
 
 io ◀ `FUNC-target-profile` · `FUNC-target-profile-load` · io ▶ `FUNC-generation-step` · `FUNC-graph-suggest` · `FUNC-target-profile-load` · schema ▶ `SCHEMA-target-profile`
 
-### 4.38  `FLOW-test-selection` — Selektive Testauswahl
+### 4.40  `FLOW-test-selection` — Selektive Testauswahl
 
 Das minimale selektive Laufkommando mit den aufgeloesten TESTs, den Coverage-Zahlen und dem, was unaufloesbar blieb.
 
 io ◀ `FUNC-deduce-tests` · io ▶ `ACTOR-agent` · `ACTOR-owner` · schema ▶ `SCHEMA-test-selection`
 
-### 4.39  `FLOW-trajectory` — Trajectory/Outcome
+### 4.41  `FLOW-trajectory` — Trajectory/Outcome
 
 append-only Lern-Emission.
 
 io ◀ `FUNC-emit-trajectory` · `FUNC-tool-context` · io ▶ `ACTOR-learning-engine` · schema ▶ `SCHEMA-trajectory`
 
-### 4.40  `FLOW-version-bump` — Version-Bump
+### 4.42  `FLOW-version-bump` — Version-Bump
 
 Neue ONTOLOGY/RULES_VERSION aus contracts/se.
 
@@ -5392,139 +5404,151 @@ nodes, edges, anchors, testIds. Der Vertrag von impactedTests am Modulrand.
 
 schema ◀ `FLOW-impacted-tests`
 
-### 5.12  `SCHEMA-lock-owner` — LockOwner
+### 5.12  `SCHEMA-learning-advice` — Lern-Empfehlung
+
+Vertrag der Antwort: je Kandidat uid, score, confidence und Evidenz-Pointer auf Log-Eintraege. Wie der score in die Rangfolge eingeht, entscheidet der Konsument und steht nicht im Vertrag. Offen bis zur Implementierung: ob die Antwort auch inhaltliche Vorschlaege traegt (CR-GC-465).
+
+schema ◀ `FLOW-learning-advice`
+
+### 5.13  `SCHEMA-learning-query` — Lern-Frage
+
+Vertrag der Frage: Metrikvektor, Zielrichtung und die Kandidatenliste mit uid je Zug. Gehoert dem Nachbarsystem (@sigloch/learning-core), deshalb external. Vor der Implementierung erneut zu entscheiden (CR-GC-465).
+
+schema ◀ `FLOW-learning-query`
+
+### 5.14  `SCHEMA-lock-owner` — LockOwner
 
 Halter des Store-Locks: Host, PID, Version, Zeitstempel.
 
 schema ◀ `FLOW-store-ownership`
 
-### 5.13  `SCHEMA-markdown-view` — MarkdownView
+### 5.15  `SCHEMA-markdown-view` — MarkdownView
 
 Vertrag der deterministisch gerenderten Markdown-Sichten (GENERATED-Header). Bindung statt Kopie. (CR-GC-454)
 
 schema ◀ `FLOW-markdown-docs` · `FLOW-skill-report`
 
-### 5.14  `SCHEMA-measurement-vector` — Messvektor (Vertrag der vier Entscheidungen)
+### 5.16  `SCHEMA-measurement-vector` — Messvektor (Vertrag der vier Entscheidungen)
 
 Der gemeinsame Eingang: Regelstrom plus Projektionen, so weit die jeweilige Entscheidung sie braucht. Bewusst spec-only, weil er heute in vier Signaturen verstreut ist; sein Zweck ist, diese Verstreuung sichtbar zu halten.
 
 schema ◀ `FLOW-measurement-vector`
 
-### 5.15  `SCHEMA-metric-policy` — MetricPolicy
+### 5.17  `SCHEMA-metric-policy` — MetricPolicy
 
 Die Schwellen je Urteil: instability, lcom4, crossingFlows, riskRpn, moduleSize. Aus @sigloch/contracts, deshalb external.
 
 schema ◀ `FLOW-metric-policy`
 
-### 5.16  `SCHEMA-metric-vector` — MetricVector
+### 5.18  `SCHEMA-metric-vector` — MetricVector
 
 Sechs Topologiedimensionen: modifiability, faultTolerance, flowEfficiency, coherence, viability, scalability. Aus @sigloch/se-engine, deshalb external. (Herkunft korrigiert CR-GC-453)
 
 schema ◀ `FLOW-arch-fitness`
 
-### 5.17  `SCHEMA-model-answer` — ModelAnswer
+### 5.19  `SCHEMA-model-answer` — ModelAnswer
 
 Die normalisierte Antwort des Modells: Text, angeforderte Werkzeugaufrufe, Stop-Grund und Verbrauchszahlen. Geprueft wird sie in der Draht-Form jedes Backends beim Empfang, nicht erst im Prosa-Parser.
 
 schema ◀ `FLOW-model-answer`
 
-### 5.18  `SCHEMA-module-metrics` — ModuleMetrics
+### 5.20  `SCHEMA-module-metrics` — ModuleMetrics
 
 Je MOD allocatedFuncs, fanIn, fanOut, instability, lcom4, cohesion; null heisst nicht messbar, nie null Prozent. Aus @sigloch/contracts, deshalb external.
 
 schema ◀ `FLOW-module-metrics`
 
-### 5.19  `SCHEMA-mutate-command` — MutateCommand
+### 5.21  `SCHEMA-mutate-command` — MutateCommand
 
 Edit-Operation durch das Gate: eine discriminatedUnion ueber op mit sieben Operationen (add-node, update-node, delete-node, add-edge, delete-edge, update-edge, merge-nodes). Knoten reisen als node-Objekt, Kanten als edge-Objekt — NICHT als flache Felder. @sigloch/contracts harness (D1). (Kopie entfernt CR-GC-454)
 
 schema ◀ `FLOW-mutate-cmd`
 
-### 5.20  `SCHEMA-mutate-result` — MutateResult
+### 5.22  `SCHEMA-mutate-result` — MutateResult
 
 Apply-Ergebnis: success, appliedCommands, mutations, violations, confidence, tier (auto-apply/suggest/block) sowie trajectoryId, graphVersion und die OCC-Felder stale/staleDelta. @sigloch/contracts harness (D1). (Kopie entfernt CR-GC-454)
 
 schema ◀ `FLOW-gate-verdict`
 
-### 5.21  `SCHEMA-ontology-graph` — OntologyGraph
+### 5.23  `SCHEMA-ontology-graph` — OntologyGraph
 
 Elements (13 ElementTypes) + Traces (7 TraceTypes). @sigloch/contracts/se.
 
 schema ◀ `FLOW-element-slice` · `FLOW-graph-state`
 
-### 5.22  `SCHEMA-phase-readiness` — PhaseGateReadiness
+### 5.24  `SCHEMA-phase-readiness` — PhaseGateReadiness
 
 Je Gate: abgedeckte und alle Regel-IDs plus die fehlenden.
 
 schema ◀ `FLOW-phase-readiness`
 
-### 5.23  `SCHEMA-query-params` — QueryParams
+### 5.25  `SCHEMA-query-params` — QueryParams
 
 Der gemeinsame Nenner der Leseanfragen: elementId, depth, branch, cursor, view. Bewusst ohne Zod-Symbol — im Code traegt JEDES MCP-Tool sein eigenes Input-Schema, ein zusammengefasstes QueryParams gibt es nicht und soll es nicht geben (ein Sammel-Schema waere ein paralleler Pfad zu den Tool-Signaturen). Der Knoten steht fuer den Kanal, nicht fuer einen Code-Datenvertrag; concept-only. (Begruendung nachgetragen CR-GC-454)
 
 schema ◀ `FLOW-query-request` · `FLOW-skill-request` · `FLOW-steering-trigger` · `FLOW-version-bump`
 
-### 5.24  `SCHEMA-readiness-report` — ReadinessReportType
+### 5.26  `SCHEMA-readiness-report` — ReadinessReportType
 
 Je Dimension score, violations, applicable, ready. Aus @sigloch/contracts, deshalb external.
 
 schema ◀ `FLOW-dimension-readiness`
 
-### 5.25  `SCHEMA-round-injection` — Runden-Injektions-Block
+### 5.27  `SCHEMA-round-injection` — Runden-Injektions-Block
 
 Vertrag der Runden-Injektion: ein Markdown-Textblock als string, Rueckgabe von buildRoundInjection in src/loop/executor-prompt.ts — Guide-Slice plus Element-Index. Bewusst ohne Zod-Symbol: informationeller Prompt-Kontext, kein Wire-Format; deshalb concept-only. (Pfad korrigiert CR-GC-454)
 
 schema ◀ `FLOW-round-injection`
 
-### 5.26  `SCHEMA-round-scope` — Round-Scope-Slice
+### 5.28  `SCHEMA-round-scope` — Round-Scope-Slice
 
 Vertrag des Runden-Scopes: der Format-E-Slice als string aus graph_impact bzw. graph_expand, der den Blast-Radius einer Runde begrenzt. Bewusst ohne Zod-Symbol — informationeller Rundenkontext, kein Code-Datenvertrag; concept-only.
 
 schema ◀ `FLOW-round-scope`
 
-### 5.27  `SCHEMA-schema-fingerprint` — SchemaFingerprint
+### 5.29  `SCHEMA-schema-fingerprint` — SchemaFingerprint
 
 Die ersten 16 Hex-Zeichen eines SHA-256 ueber die generierte DDL. Die Laenge ist Teil des Vertrags: sie unterscheidet einen aelteren Schemastand von einer kaputten Datei.
 
 schema ◀ `FLOW-schema-fingerprint`
 
-### 5.28  `SCHEMA-session-registry` — SessionEntry
+### 5.30  `SCHEMA-session-registry` — SessionEntry
 
 pid, hostname, startedAt. Der Vertrag eines Sitzungseintrags, der eine Prozessgrenze quert.
 
 schema ◀ `FLOW-session-registry`
 
-### 5.29  `SCHEMA-steering-delta` — SteeringDelta
+### 5.31  `SCHEMA-steering-delta` — SteeringDelta
 
 blockingErrors vorher und nachher plus je Dimension before, after, delta.
 
 schema ◀ `FLOW-steering-delta`
 
-### 5.30  `SCHEMA-steering-snapshot` — SteeringSnapshot
+### 5.32  `SCHEMA-steering-snapshot` — SteeringSnapshot
 
 Gemappter OntologyGraph mit injizierten ND-Matrizen, Violations des vollen Katalogs, Zahl der blockierenden Fehler, Readiness-Report.
 
 schema ◀ `FLOW-steering-snapshot`
 
-### 5.31  `SCHEMA-target-profile` — TargetProfile
+### 5.33  `SCHEMA-target-profile` — TargetProfile
 
 weights (6 Dimensionen in [-1,1]) und intentAnchors (3-7 Strings). Der Vertrag der Zielprofil-Datei, die zwei Schreiber und einen Leser hat.
 
 schema ◀ `FLOW-target-profile`
 
-### 5.32  `SCHEMA-test-selection` — TestSelection
+### 5.34  `SCHEMA-test-selection` — TestSelection
 
 command, tests mit testRefs, coverage, unresolved. Der Vertrag der graph_tests-Antwort.
 
 schema ◀ `FLOW-test-selection`
 
-### 5.33  `SCHEMA-trajectory` — Trajectory/Outcome
+### 5.35  `SCHEMA-trajectory` — Trajectory/Outcome
 
 append-only Lern-Emission: ts, consumerId, consumerType, operation, opCounts, applied, outcome und die Violation-Zaehler. @sigloch/learning-core. (Kopie entfernt CR-GC-454)
 
 schema ◀ `FLOW-trajectory`
 
-### 5.34  `SCHEMA-update-event` — UpdateEvent
+### 5.36  `SCHEMA-update-event` — UpdateEvent
 
 SSE invalidate Event: type, domains (graph/rules/readiness/suggestions), ts und optional version. Einmal in contracts definiert, damit emittierender Harness und Viewer denselben Vertrag lesen. (Kopie entfernt CR-GC-454)
 

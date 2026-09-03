@@ -19,7 +19,7 @@
       "id": "ACTOR-learning-engine",
       "type": "ACTOR",
       "name": "Learning-Engine",
-      "description": "Bidirektionales Nachbarsystem, geplant: liest die post-apply/nightly Trajectory-/Outcome-Emissionen und schreibt daraus eine Empfehlung zurueck — die Urteils-Policy (Schwellen je Urteil). Deshalb NICHT mit dem Viewer zusammenzulegen: der Viewer liest nur, die Learning-Engine schliesst eine Schleife. (SPEC 2.3, Abgrenzung CR-GC-455)",
+      "description": "Bidirektionales Nachbarsystem, geplant: liest die post-apply/nightly Trajectory-/Outcome-Emissionen als Lerneingang, beantwortet eine Lern-Frage von graph_suggest und nextStep und liefert je Kandidat ein Urteil zurueck. Sie schreibt KEINE Konfiguration: die Urteilsschwellen bleiben der Vertrag des Menschen. Deshalb NICHT mit dem Viewer zusammenzulegen: der Viewer liest nur, die Learning-Engine schliesst eine Schleife. (SPEC 2.3, Abgrenzung CR-GC-455, Andockpunkt CR-GC-465)",
       "status": "draft",
       "created_at": "2026-06-16T00:00:00.000Z"
     },
@@ -1776,6 +1776,22 @@
       "description": "Ergebnis der CLI-Lifecycle-Verben an den Entwickler: Scaffold-, Update-, Remove-, Status- und Upgrade-Ausgang.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "id": "FLOW-learning-advice",
+      "type": "FLOW",
+      "name": "Lern-Empfehlung",
+      "description": "Die Antwort des Nachbarsystems: je Kandidat ein Urteil. Advisory wie graph_suggest selbst, nie Auto-Apply. Geplant, nicht realisiert (CR-GC-465).",
+      "status": "draft",
+      "external": true
+    },
+    {
+      "id": "FLOW-learning-query",
+      "type": "FLOW",
+      "name": "Lern-Frage",
+      "description": "Die Frage an das Nachbarsystem: die Lage (Metrikvektor und Zielrichtung im R^6) plus die Kandidaten, die der Fragende bereits gebildet hat. graphcode behaelt die Kandidatenbildung. Geplant, nicht realisiert (CR-GC-465).",
+      "status": "draft",
+      "external": true
     },
     {
       "id": "FLOW-live-event",
@@ -4949,6 +4965,24 @@
       }
     },
     {
+      "id": "SCHEMA-learning-advice",
+      "type": "SCHEMA",
+      "name": "Lern-Empfehlung",
+      "description": "Vertrag der Antwort: je Kandidat uid, score, confidence und Evidenz-Pointer auf Log-Eintraege. Wie der score in die Rangfolge eingeht, entscheidet der Konsument und steht nicht im Vertrag. Offen bis zur Implementierung: ob die Antwort auch inhaltliche Vorschlaege traegt (CR-GC-465).",
+      "status": "draft",
+      "external": true,
+      "zodDefinition": null
+    },
+    {
+      "id": "SCHEMA-learning-query",
+      "type": "SCHEMA",
+      "name": "Lern-Frage",
+      "description": "Vertrag der Frage: Metrikvektor, Zielrichtung und die Kandidatenliste mit uid je Zug. Gehoert dem Nachbarsystem (@sigloch/learning-core), deshalb external. Vor der Implementierung erneut zu entscheiden (CR-GC-465).",
+      "status": "draft",
+      "external": true,
+      "zodDefinition": null
+    },
+    {
       "id": "SCHEMA-lock-owner",
       "type": "SCHEMA",
       "name": "LockOwner",
@@ -7330,7 +7364,7 @@
     },
     {
       "source": "ACTOR-learning-engine",
-      "target": "FLOW-metric-policy",
+      "target": "FLOW-learning-advice",
       "type": "io"
     },
     {
@@ -11848,6 +11882,31 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "FLOW-learning-advice",
+      "target": "FUNC-graph-suggest",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-learning-advice",
+      "target": "FUNC-next-step",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-learning-advice",
+      "target": "SCHEMA-learning-advice",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-learning-query",
+      "target": "ACTOR-learning-engine",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-learning-query",
+      "target": "SCHEMA-learning-query",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-live-event",
       "target": "ACTOR-dashboard",
       "type": "io",
@@ -13637,6 +13696,11 @@
     },
     {
       "source": "FUNC-graph-suggest",
+      "target": "FLOW-learning-query",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-graph-suggest",
       "target": "FLOW-mutate-cmd",
       "type": "io"
     },
@@ -14044,6 +14108,11 @@
       "source": "FUNC-next-step",
       "target": "MOD-loop",
       "type": "allocate"
+    },
+    {
+      "source": "FUNC-next-step",
+      "target": "FLOW-learning-query",
+      "type": "io"
     },
     {
       "source": "FUNC-next-step",
@@ -17354,5 +17423,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 231
+  "graphVersion": 232
 }
