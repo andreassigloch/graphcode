@@ -39,13 +39,10 @@ const RANK: Record<string, number> = { kernel: 0, loop: 1, projections: 2, surfa
 const DEBT: string[] = [
   'kernel/evaluation.ts → projections/readiness',
   'kernel/harness-import.ts → projections/exporter',
-  'kernel/harness.ts → projections/fit-advisory',
   'kernel/own-kuzu.ts → index',
   'kernel/store-lock.ts → surface/package-version',
   'loop/executor-prompt.ts → surface/mcp-tools [type]',
-  'loop/executor-rank.ts → projections/fit-advisory',
   'loop/executor-rank.ts → projections/steering-snapshot',
-  'loop/executor.ts → projections/fit-advisory [type]',
   'loop/executor.ts → projections/steering-snapshot [type]',
   'loop/executor.ts → surface/mcp-tools [type]',
   'loop/generate.ts → projections/readiness',

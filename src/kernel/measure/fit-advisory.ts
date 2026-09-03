@@ -15,7 +15,7 @@
 import { z } from 'zod/v4';
 import type { Graph } from '@sigloch/graph-api-core';
 import { metrics, toArray, METRIC_DIMENSIONS, type MetricVector } from '@sigloch/se-engine';
-import { toOntologyGraph } from '../kernel/conformance.js';
+import { toOntologyGraph } from '../conformance.js';
 
 /**
  * Datenvertrag des Advisory (SCHEMA-fit-advisory) — Zod, nicht `interface`:

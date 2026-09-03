@@ -27,7 +27,7 @@ import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR, type Graph } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
-import { computeFitAdvisory } from '../src/projections/fit-advisory.js';
+import { computeFitAdvisory } from '../src/kernel/measure/fit-advisory.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
 import { witnessSample, classifySequence, type WitnessSample } from './helpers/witness.js';
 

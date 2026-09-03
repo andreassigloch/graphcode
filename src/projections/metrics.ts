@@ -30,7 +30,7 @@ import { moduleMetrics, type ModuleMetrics, type MetricPolicy } from '@sigloch/c
 import type { MetricVector } from '@sigloch/se-engine';
 import type { PolicySource } from '../kernel/config.js';
 import { toOntologyGraph } from '../kernel/conformance.js';
-import { archMetrics } from './fit-advisory.js';
+import { archMetrics } from '../kernel/measure/fit-advisory.js';
 import { loadTargetProfile } from '../loop/target-profile.js';
 import type { TargetWeights, TargetValues } from '../loop/target-profile-contract.js';
 import type { MCPTool, MCPToolRegistry } from '../surface/mcp-tools.js';

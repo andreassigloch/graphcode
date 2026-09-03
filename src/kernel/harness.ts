@@ -61,7 +61,7 @@ import {
 import { StoreLock } from './store-lock.js';
 import { listElements, type ElementFilter } from './element-slice.js';
 import { setExportPending } from './export-marker.js';
-import { computeFitAdvisory, type FitAdvisory } from '../projections/fit-advisory.js';
+import { computeFitAdvisory, type FitAdvisory } from './measure/fit-advisory.js';
 import {
   schemaFingerprint,
   readStoredFingerprint,

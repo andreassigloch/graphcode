@@ -186,7 +186,7 @@
 | `FUNC-export-markdown` | `MOD-projections` |
 | `FUNC-export-marker` | `MOD-kernel` |
 | `FUNC-extract-mutate` | `MOD-loop` |
-| `FUNC-fit-advisory` | `MOD-projections` |
+| `FUNC-fit-advisory` | `MOD-kernel` |
 | `FUNC-generation-step` | `MOD-loop` |
 | `FUNC-goal-steerer` | `MOD-loop` |
 | `FUNC-graph-expand` | `MOD-kernel` |

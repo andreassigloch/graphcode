@@ -8,7 +8,7 @@
  * @author andreas@siglochconsulting
  */
 import type { MutateResult } from '@sigloch/contracts/harness';
-import { FitAdvisory } from '../projections/fit-advisory.js';
+import { FitAdvisory } from '../kernel/measure/fit-advisory.js';
 import { SteeringDelta } from '../projections/steering-snapshot.js';
 
 /** Anker des Kandidaten-Samplings — gemessene Jaccard-Spreizung 0.45/0.18/0.14

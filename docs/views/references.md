@@ -1125,7 +1125,7 @@
 | `FUNC-extract-mutate` | allocate | `MOD-loop` |
 | `FUNC-extract-mutate` | io | `FLOW-mutate-cmd` |
 | `FUNC-extract-mutate` | satisfy | `REQ-prose-recovery` |
-| `FUNC-fit-advisory` | allocate | `MOD-projections` |
+| `FUNC-fit-advisory` | allocate | `MOD-kernel` |
 | `FUNC-fit-advisory` | io | `FLOW-fit-advisory` |
 | `FUNC-fit-advisory` | satisfy | `REQ-steering-from-metrics` |
 | `FUNC-generation-step` | allocate | `MOD-loop` |

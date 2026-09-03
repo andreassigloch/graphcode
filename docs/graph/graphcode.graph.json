@@ -2464,7 +2464,7 @@
       "description": "Bewertet einen Kandidaten im R^6-Metrikraum vor und nach der probierten Mutation und liefert die Richtung als Advisory. Die Metrik rankt, das Gate urteilt.",
       "status": "done",
       "realRef": {
-        "file": "src/projections/fit-advisory.ts",
+        "file": "src/kernel/measure/fit-advisory.ts",
         "symbol": "computeFitAdvisory",
         "lang": "ts"
       }
@@ -4910,7 +4910,7 @@
       "description": "layer, dimensions, before, after, delta, regressions.",
       "status": "reviewed",
       "realRef": {
-        "file": "src/projections/fit-advisory.ts",
+        "file": "src/kernel/measure/fit-advisory.ts",
         "symbol": "FitAdvisory",
         "lang": "ts"
       }
@@ -13554,7 +13554,7 @@
     },
     {
       "source": "FUNC-fit-advisory",
-      "target": "MOD-projections",
+      "target": "MOD-kernel",
       "type": "allocate"
     },
     {
@@ -17423,5 +17423,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 234
+  "graphVersion": 235
 }

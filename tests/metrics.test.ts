@@ -23,7 +23,7 @@ import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness, type MCPToolRegistry } from '../src/surface/mcp-tools.js';
-import { computeFitAdvisory } from '../src/projections/fit-advisory.js';
+import { computeFitAdvisory } from '../src/kernel/measure/fit-advisory.js';
 import { METRIC_DIMENSIONS, toArray } from '@sigloch/se-engine';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
 
