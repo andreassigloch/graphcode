@@ -4959,7 +4959,7 @@
       "name": "TestImpactResult",
       "description": "nodes, edges, anchors, testIds. Der Vertrag von impactedTests am Modulrand.",
       "realRef": {
-        "file": "src/projections/test-selection.ts",
+        "file": "src/kernel/measure/test-selection.ts",
         "symbol": "TestImpactResultSchema",
         "lang": "ts"
       }
@@ -5223,7 +5223,7 @@
       "name": "TestSelection",
       "description": "command, tests mit testRefs, coverage, unresolved. Der Vertrag der graph_tests-Antwort.",
       "realRef": {
-        "file": "src/projections/test-selection.ts",
+        "file": "src/kernel/measure/test-selection.ts",
         "symbol": "TestSelectionSchema",
         "lang": "ts"
       }
@@ -17423,5 +17423,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 233
+  "graphVersion": 234
 }

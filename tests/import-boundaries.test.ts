@@ -40,7 +40,6 @@ const DEBT: string[] = [
   'kernel/evaluation.ts → projections/readiness',
   'kernel/harness-import.ts → projections/exporter',
   'kernel/harness.ts → projections/fit-advisory',
-  'kernel/harness.ts → projections/test-selection',
   'kernel/own-kuzu.ts → index',
   'kernel/store-lock.ts → surface/package-version',
   'loop/executor-prompt.ts → surface/mcp-tools [type]',

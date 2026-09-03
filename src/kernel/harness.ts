@@ -48,7 +48,7 @@ import {
   type RuleViolation,
 } from '@sigloch/contracts/harness';
 import { HookSystem } from './hooks.js';
-import { impactedTests, TestImpactResultSchema } from '../projections/test-selection.js';
+import { impactedTests, TestImpactResultSchema } from './measure/test-selection.js';
 import { CONFIG_FILENAME, DEFAULT_CONFIG, type LoadedConfig } from './config.js';
 import {
   graphSnapshotRel,

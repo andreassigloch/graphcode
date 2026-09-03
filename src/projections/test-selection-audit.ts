@@ -24,7 +24,7 @@ import { readFileSync, readdirSync, existsSync, statSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { join, dirname, normalize, relative } from 'node:path';
 import type { Graph, GraphNode } from '@sigloch/graph-api-core';
-import { impactedTests } from './test-selection.js';
+import { impactedTests } from '../kernel/measure/test-selection.js';
 
 /** Änderungen hieran wirken auf JEDEN Test — sie können nie selektiv laufen. */
 const FULL_RUN_TRIGGERS = [/^package(-lock)?\.json$/, /^tsconfig/, /^vitest\.config\./];

@@ -28,7 +28,7 @@ import type { Graph } from '@sigloch/graph-api-core';
 import { KuzuAdapter } from './helpers/store.js';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
-import { impactedTests, TestImpactResultSchema, TestSelectionSchema } from '../src/projections/test-selection.js';
+import { impactedTests, TestImpactResultSchema, TestSelectionSchema } from '../src/kernel/measure/test-selection.js';
 import {
   buildContext,
   coverage,

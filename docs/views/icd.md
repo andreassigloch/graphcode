@@ -20,7 +20,7 @@
 | `SCHEMA-format-e` | packages/contracts/src/se/format-e-parser.ts#FormatEDiff | reviewed |
 | `SCHEMA-generation-step` | src/loop/generate.ts#GenerationStep | reviewed |
 | `SCHEMA-health-report` | src/surface/health.ts#HealthPayloadSchema | n/a |
-| `SCHEMA-impacted-tests` | src/projections/test-selection.ts#TestImpactResultSchema | n/a |
+| `SCHEMA-impacted-tests` | src/kernel/measure/test-selection.ts#TestImpactResultSchema | n/a |
 | `SCHEMA-learning-advice` | extern definiert (kein realRef) | draft |
 | `SCHEMA-learning-query` | extern definiert (kein realRef) | draft |
 | `SCHEMA-lock-owner` | src/kernel/lock-owner-contract.ts#LockOwner | n/a |
@@ -43,7 +43,7 @@
 | `SCHEMA-steering-delta` | src/projections/steering-snapshot.ts#SteeringDelta | reviewed |
 | `SCHEMA-steering-snapshot` | src/projections/steering-snapshot.ts#SteeringSnapshot | reviewed |
 | `SCHEMA-target-profile` | src/loop/target-profile-contract.ts#TargetProfileSchema | n/a |
-| `SCHEMA-test-selection` | src/projections/test-selection.ts#TestSelectionSchema | n/a |
+| `SCHEMA-test-selection` | src/kernel/measure/test-selection.ts#TestSelectionSchema | n/a |
 | `SCHEMA-trajectory` | packages/learning-core/src/interfaces/trajectory.ts#TrajectorySchema | reviewed |
 | `SCHEMA-update-event` | packages/contracts/src/harness/index.ts#LiveUpdateEventSchema | reviewed |
 
