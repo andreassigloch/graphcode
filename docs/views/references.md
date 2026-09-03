@@ -1079,14 +1079,14 @@
 | `FUNC-collect-status` | allocate | `MOD-surface` |
 | `FUNC-collect-status` | io | `FLOW-install-result` |
 | `FUNC-collect-status` | satisfy | `REQ-real-health-check` |
-| `FUNC-compute-phase-readiness` | allocate | `MOD-kernel` |
+| `FUNC-compute-phase-readiness` | allocate | `MOD-kernel-measure` |
 | `FUNC-compute-phase-readiness` | io | `FLOW-phase-readiness` |
 | `FUNC-compute-phase-readiness` | satisfy | `REQ-steering-from-metrics` |
 | `FUNC-compute-readiness` | allocate | `MOD-projections` |
 | `FUNC-compute-readiness` | io | `FLOW-dimension-readiness` |
 | `FUNC-compute-readiness` | satisfy | `REQ-readiness-model` |
 | `FUNC-compute-readiness` | satisfy | `REQ-steering-from-metrics` |
-| `FUNC-compute-steering-delta` | allocate | `MOD-kernel` |
+| `FUNC-compute-steering-delta` | allocate | `MOD-kernel-measure` |
 | `FUNC-compute-steering-delta` | io | `FLOW-steering-delta` |
 | `FUNC-compute-steering-delta` | satisfy | `REQ-steering-from-metrics` |
 | `FUNC-create-harness` | allocate | `MOD-kernel` |
@@ -1125,7 +1125,7 @@
 | `FUNC-extract-mutate` | allocate | `MOD-loop` |
 | `FUNC-extract-mutate` | io | `FLOW-mutate-cmd` |
 | `FUNC-extract-mutate` | satisfy | `REQ-prose-recovery` |
-| `FUNC-fit-advisory` | allocate | `MOD-kernel` |
+| `FUNC-fit-advisory` | allocate | `MOD-kernel-measure` |
 | `FUNC-fit-advisory` | io | `FLOW-fit-advisory` |
 | `FUNC-fit-advisory` | satisfy | `REQ-steering-from-metrics` |
 | `FUNC-generation-step` | allocate | `MOD-loop` |
@@ -1220,7 +1220,7 @@
 | `FUNC-mutate` | satisfy | `REQ-confidence-tier` |
 | `FUNC-mutate` | satisfy | `REQ-graph-snapshot-per-commit` |
 | `FUNC-mutate` | satisfy | `REQ-single-write-door` |
-| `FUNC-nd-similarity` | allocate | `MOD-kernel` |
+| `FUNC-nd-similarity` | allocate | `MOD-kernel-measure` |
 | `FUNC-nd-similarity` | io | `FLOW-graph-state` |
 | `FUNC-nd-similarity` | satisfy | `REQ-near-duplicate-detection` |
 | `FUNC-next-step` | allocate | `MOD-loop` |
@@ -1314,7 +1314,7 @@
 | `FUNC-session-shutdown` | allocate | `MOD-surface` |
 | `FUNC-session-shutdown` | io | `FLOW-graph-state` |
 | `FUNC-session-shutdown` | satisfy | `REQ-session-leaves-nothing-behind` |
-| `FUNC-take-steering-snapshot` | allocate | `MOD-kernel` |
+| `FUNC-take-steering-snapshot` | allocate | `MOD-kernel-measure` |
 | `FUNC-take-steering-snapshot` | io | `FLOW-gate-verdict` |
 | `FUNC-take-steering-snapshot` | io | `FLOW-measurement-vector` |
 | `FUNC-take-steering-snapshot` | io | `FLOW-steering-snapshot` |
@@ -1363,6 +1363,7 @@
 | `MOD-dashboard` | satisfy | `REQ-dashboard-readonly` |
 | `MOD-dashboard` | satisfy | `REQ-readiness-transparent` |
 | `MOD-dashboard` | satisfy | `REQ-shared-views-no-fork` |
+| `MOD-kernel` | compose | `MOD-kernel-measure` |
 | `MOD-kernel` | satisfy | `REQ-batch-seed-performance` |
 | `MOD-kernel` | satisfy | `REQ-disk-persistence` |
 | `MOD-kernel` | satisfy | `REQ-gate-only-writes` |

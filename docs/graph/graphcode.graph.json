@@ -3263,6 +3263,12 @@
       "path": "src/kernel"
     },
     {
+      "id": "MOD-kernel-measure",
+      "type": "MOD",
+      "name": "measure — Messung: Readiness, Fit-Advisory, Testauswahl, Ähnlichkeit, Steuerungs-Snapshot",
+      "description": "Die Ebene im Kern, mit der das Gate urteilt: reine Funktionen Graph → Zahl (Readiness je Dimension und Phase, ℝ⁶-Fit-Advisory vorher/nachher, betroffene Tests je Change, ND-Ähnlichkeit, Steuerungs-Snapshot und -Delta). Kein I/O, kein Store-Zugriff, kein Transport — projections zeigt diese Zahlen an, besitzt sie nicht. Liegt unter src/kernel/measure/ (CR-GC-467 Entscheidung 1, Moves CR-GC-468–472); Sub-MOD statt sechstem Modul, weil die Antwort auf 'zu gross' eine Ebene ist (se:top-level)."
+    },
+    {
       "id": "MOD-loop",
       "type": "MOD",
       "name": "loop — Autopilot und Executor",
@@ -13287,7 +13293,7 @@
     },
     {
       "source": "FUNC-compute-phase-readiness",
-      "target": "MOD-kernel",
+      "target": "MOD-kernel-measure",
       "type": "allocate"
     },
     {
@@ -13322,7 +13328,7 @@
     },
     {
       "source": "FUNC-compute-steering-delta",
-      "target": "MOD-kernel",
+      "target": "MOD-kernel-measure",
       "type": "allocate"
     },
     {
@@ -13554,7 +13560,7 @@
     },
     {
       "source": "FUNC-fit-advisory",
-      "target": "MOD-kernel",
+      "target": "MOD-kernel-measure",
       "type": "allocate"
     },
     {
@@ -14091,7 +14097,7 @@
     },
     {
       "source": "FUNC-nd-similarity",
-      "target": "MOD-kernel",
+      "target": "MOD-kernel-measure",
       "type": "allocate"
     },
     {
@@ -14568,7 +14574,7 @@
     },
     {
       "source": "FUNC-take-steering-snapshot",
-      "target": "MOD-kernel",
+      "target": "MOD-kernel-measure",
       "type": "allocate"
     },
     {
@@ -14823,6 +14829,11 @@
       "source": "MOD-dashboard",
       "target": "REQ-shared-views-no-fork",
       "type": "satisfy"
+    },
+    {
+      "source": "MOD-kernel",
+      "target": "MOD-kernel-measure",
+      "type": "compose"
     },
     {
       "source": "MOD-kernel",
@@ -17423,5 +17434,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 237
+  "graphVersion": 238
 }

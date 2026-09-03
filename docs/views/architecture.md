@@ -128,6 +128,7 @@
 | `MOD-agent-surface` | MOD | agent-surface — Skill-Treiber |
 | `MOD-dashboard` | MOD | dashboard — Live-Viewer-App |
 | `MOD-kernel` | MOD | kernel — Store, Gate, Regeln, OpLog |
+| `MOD-kernel-measure` | MOD | measure — Messung: Readiness, Fit-Advisory, Testauswahl, Ähnlichkeit, Steuerungs-Snapshot |
 | `MOD-loop` | MOD | loop — Autopilot und Executor |
 | `MOD-projections` | MOD | projections — Graph nach Artefakt |
 | `MOD-surface` | MOD | surface — MCP, CLI, Host-Socket, Viewer |
@@ -173,9 +174,9 @@
 | `FUNC-close-store` | `MOD-kernel` |
 | `FUNC-close-violations` | `MOD-agent-surface` |
 | `FUNC-collect-status` | `MOD-surface` |
-| `FUNC-compute-phase-readiness` | `MOD-kernel` |
+| `FUNC-compute-phase-readiness` | `MOD-kernel-measure` |
 | `FUNC-compute-readiness` | `MOD-projections` |
-| `FUNC-compute-steering-delta` | `MOD-kernel` |
+| `FUNC-compute-steering-delta` | `MOD-kernel-measure` |
 | `FUNC-create-harness` | `MOD-kernel` |
 | `FUNC-decode` | `MOD-projections` |
 | `FUNC-deduce-tests` | `MOD-projections` |
@@ -186,7 +187,7 @@
 | `FUNC-export-markdown` | `MOD-projections` |
 | `FUNC-export-marker` | `MOD-kernel` |
 | `FUNC-extract-mutate` | `MOD-loop` |
-| `FUNC-fit-advisory` | `MOD-kernel` |
+| `FUNC-fit-advisory` | `MOD-kernel-measure` |
 | `FUNC-generation-step` | `MOD-loop` |
 | `FUNC-goal-steerer` | `MOD-loop` |
 | `FUNC-graph-expand` | `MOD-kernel` |
@@ -209,7 +210,7 @@
 | `FUNC-migrate-schema` | `MOD-kernel` |
 | `FUNC-module-metrics` | `MOD-projections` |
 | `FUNC-mutate` | `MOD-kernel` |
-| `FUNC-nd-similarity` | `MOD-kernel` |
+| `FUNC-nd-similarity` | `MOD-kernel-measure` |
 | `FUNC-next-step` | `MOD-loop` |
 | `FUNC-open-store` | `MOD-kernel` |
 | `FUNC-own-kuzu-host` | `MOD-kernel` |
@@ -239,7 +240,7 @@
 | `FUNC-serve-sse` | `MOD-surface` |
 | `FUNC-serve-stdio` | `MOD-surface` |
 | `FUNC-session-shutdown` | `MOD-surface` |
-| `FUNC-take-steering-snapshot` | `MOD-kernel` |
+| `FUNC-take-steering-snapshot` | `MOD-kernel-measure` |
 | `FUNC-target-profile` | `MOD-agent-surface` |
 | `FUNC-target-profile-load` | `MOD-loop` |
 | `FUNC-test` | `MOD-agent-surface` |

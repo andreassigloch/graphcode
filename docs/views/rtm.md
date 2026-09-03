@@ -62,7 +62,7 @@
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
 | `REQ-advisory-roundtrip-latency` | `TEST-advisory-roundtrip-latency` | `FCHAIN-advisory-roundtrip` | — |
-| `REQ-applied-suggestion-moves-target` | `TEST-applied-suggestion-moves-target` | `FUNC-graph-suggest` · `FUNC-take-steering-snapshot` | `MOD-kernel` · `MOD-loop` |
+| `REQ-applied-suggestion-moves-target` | `TEST-applied-suggestion-moves-target` | `FUNC-graph-suggest` · `FUNC-take-steering-snapshot` | `MOD-kernel-measure` · `MOD-loop` |
 | `REQ-artifact-freshness` | `TEST-dashboard-readonly` | `MOD-dashboard` | — |
 | `REQ-audit-trail` | `TEST-audit-retention` · `TEST-audit-rules-passed` · `TEST-audit-trail-projection` · `TEST-mcp-stdio-server` · `TEST-operations-log` · `TEST-testreport` | `FUNC-graph-impact` | `MOD-kernel` |
 | `REQ-auto-persist-merge` | `TEST-merge` · `TEST-occ` | `FUNC-auto-export` · `FUNC-load-graph` · `FUNC-merge-nodes` · `FUNC-save-graph` | `MOD-kernel` · `MOD-projections` |
@@ -93,7 +93,7 @@
 | `REQ-model-exchange-pre` | `TEST-import-code-verb` | `FUNC-import-code-verb` | `MOD-surface` |
 | `REQ-monotone-convergence` | `TEST-monotone-convergence` | `MOD-loop` | — |
 | `REQ-mutation-emits-event` | `TEST-create-harness-smoke` · `TEST-live-view` | `FCHAIN-live-update` | — |
-| `REQ-near-duplicate-detection` | `TEST-nd-similarity` | `FUNC-nd-similarity` | `MOD-kernel` |
+| `REQ-near-duplicate-detection` | `TEST-nd-similarity` | `FUNC-nd-similarity` | `MOD-kernel-measure` |
 | `REQ-no-extraction` | `TEST-capture` · `TEST-import-code-verb` | `FCHAIN-model-import` · `FUNC-import-code` · `FUNC-import-code-verb` · `FUNC-import-doc` | `MOD-agent-surface` · `MOD-surface` |
 | `REQ-npx-distribution` | `TEST-distribution` | `FUNC-cli-dispatch` · `FUNC-harness-cli` | `MOD-surface` |
 | `REQ-one-driver-local-and-frontier` | `TEST-cli-run` · `TEST-executor-bestofn` · `TEST-one-driver-local-and-frontier` | `FUNC-run-executor` · `FUNC-run-verb` | `MOD-loop` · `MOD-surface` |
@@ -144,8 +144,8 @@
 | `REQ-skill-authors-through-gate` | `TEST-skill-authors-through-gate` | `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` | `MOD-agent-surface` |
 | `REQ-skill-reads-only` | `TEST-skill-reports-measured-values` | `FCHAIN-skill-report` · `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` | `MOD-agent-surface` |
 | `REQ-small-model-viable` | `TEST-executor-preflight` · `TEST-mvp-e2e` · `TEST-reduced-llm` | `FCHAIN-modelfree-gate` | — |
-| `REQ-steering-from-metrics` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` · `TEST-steering-loop` | `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` | `MOD-kernel` · `MOD-loop` · `MOD-projections` |
-| `REQ-steering-post` | `TEST-steering-loop` | `FUNC-take-steering-snapshot` | `MOD-kernel` |
+| `REQ-steering-from-metrics` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` · `TEST-steering-loop` | `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` | `MOD-kernel-measure` · `MOD-loop` · `MOD-projections` |
+| `REQ-steering-post` | `TEST-steering-loop` | `FUNC-take-steering-snapshot` | `MOD-kernel-measure` |
 | `REQ-steering-pre` | `TEST-steering-loop` | `FUNC-open-store` | `MOD-kernel` |
 | `REQ-structure-driven` | `TEST-code-quality` · `TEST-mutate-schema-guard` · `TEST-se-plan-ordering` | `SYS-graphcode` | — |
 | `REQ-subgraph-slicing` | `TEST-impact-subgraph` · `TEST-inject-graph-slice` | `FUNC-graph-impact` | `MOD-kernel` |
@@ -197,14 +197,14 @@
 | `REQ-skill-authors-through-gate` | `TEST-skill-authors-through-gate` | `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` | `MOD-agent-surface` |
 | `REQ-skill-reads-only` | `TEST-skill-reports-measured-values` | `FCHAIN-skill-report` · `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` | `MOD-agent-surface` |
 | `REQ-small-model-viable` | `TEST-executor-preflight` · `TEST-mvp-e2e` · `TEST-reduced-llm` | `FCHAIN-modelfree-gate` | — |
-| `REQ-steering-from-metrics` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` · `TEST-steering-loop` | `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` | `MOD-kernel` · `MOD-loop` · `MOD-projections` |
+| `REQ-steering-from-metrics` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` · `TEST-steering-loop` | `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` | `MOD-kernel-measure` · `MOD-loop` · `MOD-projections` |
 
 ### Komponente (SWE.2/3) — 103 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
 | `REQ-agent-agnostic` | `TEST-agent-agnostic` | `MOD-surface` | — |
-| `REQ-applied-suggestion-moves-target` | `TEST-applied-suggestion-moves-target` | `FUNC-graph-suggest` · `FUNC-take-steering-snapshot` | `MOD-kernel` · `MOD-loop` |
+| `REQ-applied-suggestion-moves-target` | `TEST-applied-suggestion-moves-target` | `FUNC-graph-suggest` · `FUNC-take-steering-snapshot` | `MOD-kernel-measure` · `MOD-loop` |
 | `REQ-artifact-freshness` | `TEST-dashboard-readonly` | `MOD-dashboard` | — |
 | `REQ-audit-trail` | `TEST-audit-retention` · `TEST-audit-rules-passed` · `TEST-audit-trail-projection` · `TEST-mcp-stdio-server` · `TEST-operations-log` · `TEST-testreport` | `FUNC-graph-impact` | `MOD-kernel` |
 | `REQ-auto-persist-merge` | `TEST-merge` · `TEST-occ` | `FUNC-auto-export` · `FUNC-load-graph` · `FUNC-merge-nodes` · `FUNC-save-graph` | `MOD-kernel` · `MOD-projections` |
@@ -244,7 +244,7 @@
 | `REQ-mcp-tool-registry` | `TEST-help-tool` · `TEST-mcp-readiness` · `TEST-mcp-stdio-server` | `FUNC-bind-tools` · `FUNC-serve-stdio` · `FUNC-tool-context` | `MOD-surface` |
 | `REQ-model-exchange-pre` | `TEST-import-code-verb` | `FUNC-import-code-verb` | `MOD-surface` |
 | `REQ-monotone-convergence` | `TEST-monotone-convergence` | `MOD-loop` | — |
-| `REQ-near-duplicate-detection` | `TEST-nd-similarity` | `FUNC-nd-similarity` | `MOD-kernel` |
+| `REQ-near-duplicate-detection` | `TEST-nd-similarity` | `FUNC-nd-similarity` | `MOD-kernel-measure` |
 | `REQ-no-extraction` | `TEST-capture` · `TEST-import-code-verb` | `FCHAIN-model-import` · `FUNC-import-code` · `FUNC-import-code-verb` · `FUNC-import-doc` | `MOD-agent-surface` · `MOD-surface` |
 | `REQ-npx-distribution` | `TEST-distribution` | `FUNC-cli-dispatch` · `FUNC-harness-cli` | `MOD-surface` |
 | `REQ-one-driver-local-and-frontier` | `TEST-cli-run` · `TEST-executor-bestofn` · `TEST-one-driver-local-and-frontier` | `FUNC-run-executor` · `FUNC-run-verb` | `MOD-loop` · `MOD-surface` |
@@ -291,8 +291,8 @@
 | `REQ-single-write-door` | `TEST-host-shim` · `TEST-mutate-input-formate` · `TEST-occ` · `TEST-single-write-door` | `FUNC-mutate` | `MOD-kernel` |
 | `REQ-skill-authors-through-gate` | `TEST-skill-authors-through-gate` | `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` | `MOD-agent-surface` |
 | `REQ-skill-reads-only` | `TEST-skill-reports-measured-values` | `FCHAIN-skill-report` · `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` | `MOD-agent-surface` |
-| `REQ-steering-from-metrics` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` · `TEST-steering-loop` | `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` | `MOD-kernel` · `MOD-loop` · `MOD-projections` |
-| `REQ-steering-post` | `TEST-steering-loop` | `FUNC-take-steering-snapshot` | `MOD-kernel` |
+| `REQ-steering-from-metrics` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` · `TEST-steering-loop` | `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` | `MOD-kernel-measure` · `MOD-loop` · `MOD-projections` |
+| `REQ-steering-post` | `TEST-steering-loop` | `FUNC-take-steering-snapshot` | `MOD-kernel-measure` |
 | `REQ-steering-pre` | `TEST-steering-loop` | `FUNC-open-store` | `MOD-kernel` |
 | `REQ-store-owner-lifecycle` | `TEST-host-shim` · `TEST-session-lifecycle` · `TEST-store-lock` | `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` | `MOD-kernel` · `MOD-surface` |
 | `REQ-store-recovery` | `TEST-reseed` · `TEST-schema-migration` · `TEST-store-recovery` | `MOD-kernel` | — |

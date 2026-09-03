@@ -248,7 +248,7 @@ Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satis
 
 Bewertet einen Kandidaten im R^6-Metrikraum vor und nach der probierten Mutation und liefert die Richtung als Advisory. Die Metrik rankt, das Gate urteilt.
 
-io ◀ `FLOW-graph-state` · io ▶ `FLOW-fit-advisory` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-graph-state` · io ▶ `FLOW-fit-advisory` · allocate ▶ `MOD-kernel-measure`
 
 ###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
 
@@ -258,7 +258,7 @@ Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefer
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel` · `MOD-loop` · `MOD-projections`
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop` · `MOD-projections`
 
 ##### 3.1.1.8  `FUNC-mutate` — mutate(commands)
 
@@ -922,7 +922,7 @@ Verification ◀ `TEST-code-conformance` (integration) · satisfy ◀ `FUNC-chec
 
 Projiziert denselben Regelstrom auf die Phasen-Gates SRR/PDR/CDR/TRR: je Gate abgedeckte gegen alle Regel-IDs plus die fehlenden. Die zweite Achse neben den Dimensionen, aus einer Quelle.
 
-io ◀ `FLOW-completeness` · `FLOW-gate-verdict` · io ▶ `FLOW-phase-readiness` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-completeness` · `FLOW-gate-verdict` · io ▶ `FLOW-phase-readiness` · allocate ▶ `MOD-kernel-measure`
 
 ###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
 
@@ -932,7 +932,7 @@ Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefer
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel` · `MOD-loop` · `MOD-projections`
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop` · `MOD-projections`
 
 ##### 3.2.1.3  `FUNC-se-retro` — Skill se-retro
 
@@ -1012,7 +1012,7 @@ Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefer
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel` · `MOD-loop` · `MOD-projections`
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop` · `MOD-projections`
 
 ##### 3.2.1.7  `FUNC-test` — se-test (red-first test design)
 
@@ -1066,7 +1066,7 @@ Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefer
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel` · `MOD-loop` · `MOD-projections`
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop` · `MOD-projections`
 
 ##### 3.2.1.10  `FUNC-evaluate-rules` — evaluateRules()
 
@@ -1138,7 +1138,7 @@ Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefer
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel` · `MOD-loop` · `MOD-projections`
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop` · `MOD-projections`
 
 ##### 3.2.2.1  `FUNC-load-config` — loadGraphcodeConfig
 
@@ -1162,7 +1162,7 @@ Verification ◀ `TEST-target-profile` (integration) · `TEST-thresholds-from-co
 
 Der EINE Messpfad: mappt den Graphen ueber toOntologyGraph, injiziert die ND-Matrizen und wertet den vollen Regelkatalog aus; liefert Regelstrom, blockierende Fehler und den Readiness-Report in EINEM Objekt. Jede weitere Kenngroesse ist eine Projektion davon, keine zweite Messung.
 
-io ◀ `FLOW-gate-verdict` · `FLOW-metric-policy` · `FLOW-steering-trigger` · io ▶ `FLOW-gate-verdict` · `FLOW-measurement-vector` · `FLOW-steering-snapshot` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-gate-verdict` · `FLOW-metric-policy` · `FLOW-steering-trigger` · io ▶ `FLOW-gate-verdict` · `FLOW-measurement-vector` · `FLOW-steering-snapshot` · allocate ▶ `MOD-kernel-measure`
 
 ###### `REQ-applied-suggestion-moves-target` — Eine angewandte Suggestion bewegt den Zielvektor in Zielrichtung
 
@@ -1172,7 +1172,7 @@ Wird die bestbewertete anwendbare Suggestion real durchs Gate angewandt, bewegt 
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-applied-suggestion-moves-target` (integration) · satisfy ◀ `FUNC-graph-suggest` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel` · `MOD-loop`
+Verification ◀ `TEST-applied-suggestion-moves-target` (integration) · satisfy ◀ `FUNC-graph-suggest` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop`
 
 ###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
 
@@ -1182,7 +1182,7 @@ Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefer
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel` · `MOD-loop` · `MOD-projections`
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop` · `MOD-projections`
 
 ###### `REQ-steering-post` — Nachbedingung Steuerungsrunde
 
@@ -1190,7 +1190,7 @@ Nach einer Steuerungsrunde liegt die Empfehlung deterministisch aus genau einem 
 
 priority: must · status: reviewed · kinds: postcondition
 
-Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel`
+Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure`
 
 ##### 3.2.2.3  `FUNC-compute-phase-readiness` — computePhaseReadiness(violations)
 
@@ -1198,7 +1198,7 @@ Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FUNC-take-st
 
 Projiziert denselben Regelstrom auf die Phasen-Gates SRR/PDR/CDR/TRR: je Gate abgedeckte gegen alle Regel-IDs plus die fehlenden. Die zweite Achse neben den Dimensionen, aus einer Quelle.
 
-io ◀ `FLOW-completeness` · `FLOW-gate-verdict` · io ▶ `FLOW-phase-readiness` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-completeness` · `FLOW-gate-verdict` · io ▶ `FLOW-phase-readiness` · allocate ▶ `MOD-kernel-measure`
 
 ###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
 
@@ -1208,7 +1208,7 @@ Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefer
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel` · `MOD-loop` · `MOD-projections`
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop` · `MOD-projections`
 
 ##### 3.2.2.4  `FUNC-generation-step` — generationStep(graph, policy, intent)
 
@@ -1226,7 +1226,7 @@ Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefer
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel` · `MOD-loop` · `MOD-projections`
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop` · `MOD-projections`
 
 ##### 3.2.2.5  `FUNC-build-round-injection` — buildRoundInjection
 
@@ -1328,7 +1328,7 @@ Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefer
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel` · `MOD-loop` · `MOD-projections`
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop` · `MOD-projections`
 
 ##### 3.2.2.10  `FUNC-rank-candidates` — rankCandidates(probes, focus)
 
@@ -1346,7 +1346,7 @@ Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefer
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel` · `MOD-loop` · `MOD-projections`
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop` · `MOD-projections`
 
 ##### 3.2.2.11  `FUNC-preflight` — preflightBatch
 
@@ -1362,7 +1362,7 @@ io ◀ `FLOW-mutate-cmd` · io ▶ `FLOW-mutate-cmd` · allocate ▶ `MOD-loop`
 
 Rechnet die Near-Duplicate-Matrizen ueber FUNC und SCHEMA und haengt sie an den Graphen, bevor der volle Regelkatalog laeuft. Aufrufer ist die Steering-Momentaufnahme, nicht der Treiber.
 
-io ◀ `FLOW-graph-state` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-graph-state` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-kernel-measure`
 
 ###### `REQ-near-duplicate-detection` — Near-Duplicates werden vor der vollen Katalog-Auswertung erkannt
 
@@ -1370,7 +1370,7 @@ Vor jeder vollen Regelkatalog-Auswertung haengen Aehnlichkeitsmatrizen ueber FUN
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-nd-similarity` (unit) · satisfy ◀ `FUNC-nd-similarity` · allocate ▶ `MOD-kernel`
+Verification ◀ `TEST-nd-similarity` (unit) · satisfy ◀ `FUNC-nd-similarity` · allocate ▶ `MOD-kernel-measure`
 
 ##### 3.2.2.13  `FUNC-compute-readiness` — computeReadiness(graph)
 
@@ -1396,7 +1396,7 @@ Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefer
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel` · `MOD-loop` · `MOD-projections`
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop` · `MOD-projections`
 
 ##### 3.2.2.14  `FUNC-next-step` — nextStep(graph, policy)
 
@@ -1414,7 +1414,7 @@ Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefer
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel` · `MOD-loop` · `MOD-projections`
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop` · `MOD-projections`
 
 ##### 3.2.2.15  `FUNC-compute-steering-delta` — computeSteeringDelta(before, after)
 
@@ -1422,7 +1422,7 @@ Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (in
 
 Differenz zweier Snapshots: blockierende Fehler vorher und nachher plus Score-Delta je Dimension. Dimensionen ohne Grundgesamtheit auf beiden Seiten entfallen, weil ihr Score dort konstruktiv 0 ist und nicht perfekt.
 
-io ◀ `FLOW-steering-snapshot` · io ▶ `FLOW-steering-delta` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-steering-snapshot` · io ▶ `FLOW-steering-delta` · allocate ▶ `MOD-kernel-measure`
 
 ###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
 
@@ -1432,7 +1432,7 @@ Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefer
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel` · `MOD-loop` · `MOD-projections`
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop` · `MOD-projections`
 
 ##### 3.2.2.16  `FUNC-target-profile-load` — loadTargetProfile
 
@@ -2530,7 +2530,7 @@ Wird die bestbewertete anwendbare Suggestion real durchs Gate angewandt, bewegt 
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-applied-suggestion-moves-target` (integration) · satisfy ◀ `FUNC-graph-suggest` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel` · `MOD-loop`
+Verification ◀ `TEST-applied-suggestion-moves-target` (integration) · satisfy ◀ `FUNC-graph-suggest` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop`
 
 ###### `REQ-target-shifts-ranking` — Die Zielrichtung verschiebt das Suggestion-Ranking
 
@@ -3898,7 +3898,7 @@ Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefer
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel` · `MOD-loop` · `MOD-projections`
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop` · `MOD-projections`
 
 ###### 3.10.2.4.2  `FUNC-audit-stats` — aggregateAuditEntries(entries)
 
@@ -3914,7 +3914,7 @@ io ◀ `FLOW-audit-record` · io ▶ `FLOW-audit-report` · allocate ▶ `MOD-su
 
 Projiziert denselben Regelstrom auf die Phasen-Gates SRR/PDR/CDR/TRR: je Gate abgedeckte gegen alle Regel-IDs plus die fehlenden. Die zweite Achse neben den Dimensionen, aus einer Quelle.
 
-io ◀ `FLOW-completeness` · `FLOW-gate-verdict` · io ▶ `FLOW-phase-readiness` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-completeness` · `FLOW-gate-verdict` · io ▶ `FLOW-phase-readiness` · allocate ▶ `MOD-kernel-measure`
 
 ###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
 
@@ -3924,7 +3924,7 @@ Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefer
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel` · `MOD-loop` · `MOD-projections`
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop` · `MOD-projections`
 
 ###### 3.10.2.4.4  `FUNC-compute-readiness` — computeReadiness(graph)
 
@@ -3950,7 +3950,7 @@ Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefer
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel` · `MOD-loop` · `MOD-projections`
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop` · `MOD-projections`
 
 ###### 3.10.2.4.5  `FUNC-compute-steering-delta` — computeSteeringDelta(before, after)
 
@@ -3958,7 +3958,7 @@ Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (in
 
 Differenz zweier Snapshots: blockierende Fehler vorher und nachher plus Score-Delta je Dimension. Dimensionen ohne Grundgesamtheit auf beiden Seiten entfallen, weil ihr Score dort konstruktiv 0 ist und nicht perfekt.
 
-io ◀ `FLOW-steering-snapshot` · io ▶ `FLOW-steering-delta` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-steering-snapshot` · io ▶ `FLOW-steering-delta` · allocate ▶ `MOD-kernel-measure`
 
 ###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
 
@@ -3968,7 +3968,7 @@ Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefer
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel` · `MOD-loop` · `MOD-projections`
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop` · `MOD-projections`
 
 ###### 3.10.2.4.6  `FUNC-fit-advisory` — computeFitAdvisory(before, after)
 
@@ -3976,7 +3976,7 @@ Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (in
 
 Bewertet einen Kandidaten im R^6-Metrikraum vor und nach der probierten Mutation und liefert die Richtung als Advisory. Die Metrik rankt, das Gate urteilt.
 
-io ◀ `FLOW-graph-state` · io ▶ `FLOW-fit-advisory` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-graph-state` · io ▶ `FLOW-fit-advisory` · allocate ▶ `MOD-kernel-measure`
 
 ###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
 
@@ -3986,7 +3986,7 @@ Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefer
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel` · `MOD-loop` · `MOD-projections`
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop` · `MOD-projections`
 
 ###### 3.10.2.4.7  `FUNC-module-metrics` — moduleMetrics(graph)
 
@@ -4004,7 +4004,7 @@ Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefer
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel` · `MOD-loop` · `MOD-projections`
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop` · `MOD-projections`
 
 ###### 3.10.2.4.8  `FUNC-score-completeness` — scoreCompleteness(gateId, graph)
 
@@ -4036,7 +4036,7 @@ Verification ◀ `TEST-readiness-completeness` (acceptance) · satisfy ◀ `FUNC
 
 Der EINE Messpfad: mappt den Graphen ueber toOntologyGraph, injiziert die ND-Matrizen und wertet den vollen Regelkatalog aus; liefert Regelstrom, blockierende Fehler und den Readiness-Report in EINEM Objekt. Jede weitere Kenngroesse ist eine Projektion davon, keine zweite Messung.
 
-io ◀ `FLOW-gate-verdict` · `FLOW-metric-policy` · `FLOW-steering-trigger` · io ▶ `FLOW-gate-verdict` · `FLOW-measurement-vector` · `FLOW-steering-snapshot` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-gate-verdict` · `FLOW-metric-policy` · `FLOW-steering-trigger` · io ▶ `FLOW-gate-verdict` · `FLOW-measurement-vector` · `FLOW-steering-snapshot` · allocate ▶ `MOD-kernel-measure`
 
 ###### `REQ-applied-suggestion-moves-target` — Eine angewandte Suggestion bewegt den Zielvektor in Zielrichtung
 
@@ -4046,7 +4046,7 @@ Wird die bestbewertete anwendbare Suggestion real durchs Gate angewandt, bewegt 
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-applied-suggestion-moves-target` (integration) · satisfy ◀ `FUNC-graph-suggest` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel` · `MOD-loop`
+Verification ◀ `TEST-applied-suggestion-moves-target` (integration) · satisfy ◀ `FUNC-graph-suggest` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop`
 
 ###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
 
@@ -4056,7 +4056,7 @@ Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefer
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel` · `MOD-loop` · `MOD-projections`
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop` · `MOD-projections`
 
 ###### `REQ-steering-post` — Nachbedingung Steuerungsrunde
 
@@ -4064,7 +4064,7 @@ Nach einer Steuerungsrunde liegt die Empfehlung deterministisch aus genau einem 
 
 priority: must · status: reviewed · kinds: postcondition
 
-Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel`
+Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure`
 
 ##### 3.10.2.5  `FUNC-block-schaufenster` — Nachweis
 
@@ -4536,7 +4536,7 @@ Wird die bestbewertete anwendbare Suggestion real durchs Gate angewandt, bewegt 
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-applied-suggestion-moves-target` (integration) · satisfy ◀ `FUNC-graph-suggest` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel` · `MOD-loop`
+Verification ◀ `TEST-applied-suggestion-moves-target` (integration) · satisfy ◀ `FUNC-graph-suggest` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop`
 
 ###### `REQ-target-shifts-ranking` — Die Zielrichtung verschiebt das Suggestion-Ranking
 
@@ -4676,7 +4676,7 @@ Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefer
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel` · `MOD-loop` · `MOD-projections`
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop` · `MOD-projections`
 
 ##### 3.10.4.1  `FUNC-block-anleitung` — Anleitung
 
@@ -4836,7 +4836,7 @@ Verification ◀ `TEST-one-driver-local-and-frontier` (integration) · satisfy �
 
 Rechnet die Near-Duplicate-Matrizen ueber FUNC und SCHEMA und haengt sie an den Graphen, bevor der volle Regelkatalog laeuft. Aufrufer ist die Steering-Momentaufnahme, nicht der Treiber.
 
-io ◀ `FLOW-graph-state` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-graph-state` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-kernel-measure`
 
 ###### `REQ-near-duplicate-detection` — Near-Duplicates werden vor der vollen Katalog-Auswertung erkannt
 
@@ -4844,7 +4844,7 @@ Vor jeder vollen Regelkatalog-Auswertung haengen Aehnlichkeitsmatrizen ueber FUN
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-nd-similarity` (unit) · satisfy ◀ `FUNC-nd-similarity` · allocate ▶ `MOD-kernel`
+Verification ◀ `TEST-nd-similarity` (unit) · satisfy ◀ `FUNC-nd-similarity` · allocate ▶ `MOD-kernel-measure`
 
 ###### 3.10.4.2.4  `FUNC-preflight` — preflightBatch
 
@@ -5026,7 +5026,7 @@ Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefer
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel` · `MOD-loop` · `MOD-projections`
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop` · `MOD-projections`
 
 ###### 3.10.4.4.3  `FUNC-next-step` — nextStep(graph, policy)
 
@@ -5044,7 +5044,7 @@ Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefer
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel` · `MOD-loop` · `MOD-projections`
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop` · `MOD-projections`
 
 ###### 3.10.4.4.4  `FUNC-rank-candidates` — rankCandidates(probes, focus)
 
@@ -5062,7 +5062,7 @@ Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefer
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel` · `MOD-loop` · `MOD-projections`
+Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop` · `MOD-projections`
 
 ###### 3.10.4.4.5  `FUNC-target-profile-load` — loadTargetProfile
 
@@ -5572,7 +5572,13 @@ allocate ◀ — · satisfy ▶ `REQ-artifact-freshness` · `REQ-dashboard-ontol
 
 Der einzige Kuzu-Owner. Zwei Tueren nach aussen: apply(Command[]) liefert ein Verdict, query(TypedQuery) liefert eine Scheibe. Ausserhalb dieses Moduls sieht niemand den Graphen; Lifecycle, Sperre, Regel-Lauf, Konformitaets-Fakten, Migration und das Operations-Log liegen hier. (CR-GC-446)
 
-allocate ◀ `FUNC-apply-reseed` · `FUNC-block-gate` · `FUNC-block-ruestzeug` · `FUNC-block-speicherwerk` · `FUNC-check-code-conformance` · `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-compute-phase-readiness` · `FUNC-compute-steering-delta` · `FUNC-create-harness` · `FUNC-evaluate-rules` · `FUNC-export-marker` · `FUNC-fit-advisory` · `FUNC-graph-expand` · `FUNC-graph-impact` · `FUNC-import` · `FUNC-list-elements` · `FUNC-load-config` · `FUNC-load-graph` · `FUNC-merge-nodes` · `FUNC-migrate-schema` · `FUNC-mutate` · `FUNC-nd-similarity` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-reseed` · `FUNC-resolve-tests-from-code` · `FUNC-save-graph` · `FUNC-schema-guard` · `FUNC-seed-from-json` · `FUNC-take-steering-snapshot` · satisfy ▶ `REQ-batch-seed-performance` · `REQ-disk-persistence` · `REQ-gate-only-writes` · `REQ-harness-schema-in-contracts` · `REQ-hook-extension-points` · `REQ-hook-order-deterministic` · `REQ-import-se-ontology` · `REQ-precommit-timeout` · `REQ-prompt-provenance` · `REQ-quality-metric` · `REQ-rule-calibration` · `REQ-single-kuzu-owner` · `REQ-single-store` · `REQ-store-recovery` · `REQ-structural-rule-shared`
+allocate ◀ `FUNC-apply-reseed` · `FUNC-block-gate` · `FUNC-block-ruestzeug` · `FUNC-block-speicherwerk` · `FUNC-check-code-conformance` · `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-evaluate-rules` · `FUNC-export-marker` · `FUNC-graph-expand` · `FUNC-graph-impact` · `FUNC-import` · `FUNC-list-elements` · `FUNC-load-config` · `FUNC-load-graph` · `FUNC-merge-nodes` · `FUNC-migrate-schema` · `FUNC-mutate` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-reseed` · `FUNC-resolve-tests-from-code` · `FUNC-save-graph` · `FUNC-schema-guard` · `FUNC-seed-from-json` · satisfy ▶ `REQ-batch-seed-performance` · `REQ-disk-persistence` · `REQ-gate-only-writes` · `REQ-harness-schema-in-contracts` · `REQ-hook-extension-points` · `REQ-hook-order-deterministic` · `REQ-import-se-ontology` · `REQ-precommit-timeout` · `REQ-prompt-provenance` · `REQ-quality-metric` · `REQ-rule-calibration` · `REQ-single-kuzu-owner` · `REQ-single-store` · `REQ-store-recovery` · `REQ-structural-rule-shared`
+
+#### 6.3.1  `MOD-kernel-measure` — measure — Messung: Readiness, Fit-Advisory, Testauswahl, Ähnlichkeit, Steuerungs-Snapshot
+
+Die Ebene im Kern, mit der das Gate urteilt: reine Funktionen Graph → Zahl (Readiness je Dimension und Phase, ℝ⁶-Fit-Advisory vorher/nachher, betroffene Tests je Change, ND-Ähnlichkeit, Steuerungs-Snapshot und -Delta). Kein I/O, kein Store-Zugriff, kein Transport — projections zeigt diese Zahlen an, besitzt sie nicht. Liegt unter src/kernel/measure/ (CR-GC-467 Entscheidung 1, Moves CR-GC-468–472); Sub-MOD statt sechstem Modul, weil die Antwort auf 'zu gross' eine Ebene ist (se:top-level).
+
+allocate ◀ `FUNC-compute-phase-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-nd-similarity` · `FUNC-take-steering-snapshot`
 
 ### 6.4  `MOD-loop` — loop — Autopilot und Executor
 
