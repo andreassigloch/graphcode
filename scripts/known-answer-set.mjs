@@ -3,6 +3,8 @@
 // Git-History, bei denen der bessere Zustand durch Urteil/Doktrin/Lock feststeht. Je Paar der
 // ℝ⁶-Vektor (layer 'arch') vorher/nachher, Δ je Dimension, Δ·w gegen das Zielprofil — und ob der
 // Vektor den bekannt-besseren Zustand höher rankt. Dazu drei Graphen absolut (bok, gve, graphcode).
+// Negativkontrolle (CR-SM-281 P5): moneyflow hat keine Wozu-Ebene (CR-SM-271) und darf einen
+// governten Graphen nicht überholen. Tut es aber: w·m 5,33 > graphcode 5,24 (2026-09-03).
 // Aufruf aus dem graphcode-Repo: node scripts/known-answer-set.mjs
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
@@ -31,11 +33,11 @@ for (const [label, a, b, why] of PAIRS) {
   console.log(`|   ↳ _${why}_ |${METRIC_DIMENSIONS.map(() => ' |').join('')} | |`);
 }
 console.log('\n## Absolut — drei Graphen, sortiert nach gewichtetem Wert\n');
-const ABS = [['bok (7 Blöcke, 9 Linien)', '/Users/andreas/Developer/dev/bok/docs/graph/bok.graph.json'], ['graph-view-edit (7 Blöcke, 10 Linien)', '/Users/andreas/Developer/dev/graph-view-edit/docs/graph/graph-view-edit.graph.json'], ['graphcode (9 Blöcke, 25 Linien)', 'docs/graph/graphcode.graph.json']];
+const ABS = [['bok (7 Blöcke, 9 Linien)', '/Users/andreas/Developer/dev/bok/docs/graph/bok.graph.json'], ['graph-view-edit (7 Blöcke, 10 Linien)', '/Users/andreas/Developer/dev/graph-view-edit/docs/graph/graph-view-edit.graph.json'], ['graphcode (9 Blöcke, 25 Linien)', 'docs/graph/graphcode.graph.json'], ['sirail (24 FUNC in 18 MOD, 6 UC)', '/Users/andreas/Developer/dev/sirail/docs/graph/sirail.graph.json'], ['moneyflow — NEGATIVKONTROLLE (306 Wurzel-FUNC, 0 UC, 155 MOD: Code-Import ohne Wozu-Ebene)', '/Users/andreas/Developer/dev/moneyflow/docs/graph/moneyflow.graph.json']];
 console.log('| Graph | ' + METRIC_DIMENSIONS.join(' | ') + ' | w·m |');
 console.log('|---|' + METRIC_DIMENSIONS.map(() => '---:').join('|') + '|---:|');
 for (const [label, p] of ABS) { const v = vec(file(p)); console.log(`| ${label} | ${v.map((x) => x.toFixed(3)).join(' | ')} | ${dot(v).toFixed(3)} |`); }
-console.log('\n## Streuung je Dimension über alle 11 Zustände (eine Dimension, die nicht streut, kann nicht steuern)\n');
+console.log('\n## Streuung je Dimension über alle 13 Zustände (eine Dimension, die nicht streut, kann nicht steuern)\n');
 const states = [...PAIRS.flatMap(([, a, b]) => [at(a), at(b)]), ...ABS.map(([, p]) => file(p))].map(vec);
 console.log('| Dimension | min | max | Spanne |'); console.log('|---|---:|---:|---:|');
 METRIC_DIMENSIONS.forEach((d, i) => { const xs = states.map((v) => v[i]); const mn = Math.min(...xs), mx = Math.max(...xs); console.log(`| ${d} | ${mn.toFixed(3)} | ${mx.toFixed(3)} | ${(mx - mn).toFixed(3)}${mx - mn < 0.05 ? ' ⚠ tot' : ''} |`); });
