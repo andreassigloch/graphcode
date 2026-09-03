@@ -33,7 +33,7 @@
 | `SCHEMA-mutate-command` | packages/contracts/src/harness/index.ts#MutateCommandSchema | reviewed |
 | `SCHEMA-mutate-result` | packages/contracts/src/harness/index.ts#MutateResultSchema | reviewed |
 | `SCHEMA-ontology-graph` | packages/contracts/src/se/ontology.ts#OntologyGraph | reviewed |
-| `SCHEMA-phase-readiness` | src/projections/readiness.ts#PhaseGateReadiness | reviewed |
+| `SCHEMA-phase-readiness` | src/kernel/measure/readiness.ts#PhaseGateReadiness | reviewed |
 | `SCHEMA-query-params` | Konzept (noch kein Zod-Export) | reviewed |
 | `SCHEMA-readiness-report` | packages/contracts/src/se/readiness.ts#ReadinessReport | reviewed |
 | `SCHEMA-round-injection` | Konzept (noch kein Zod-Export) | n/a |

@@ -49,7 +49,7 @@ import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { exportMarkdown, type MarkdownView } from '../src/projections/exporter.js';
 import { generationStep, DIMENSION_FOCUS_TYPES } from '../src/loop/generate.js';
-import { currentPhaseGate } from '../src/projections/readiness.js';
+import { currentPhaseGate } from '../src/kernel/measure/readiness.js';
 import { GATE_FIXTURE, GATE_FINDINGS, makeSteeringConfig, parseFocusKey, scriptedActor } from './fixtures/steering-graphs.js';
 import type { MutateCommand } from '@sigloch/contracts/harness';
 

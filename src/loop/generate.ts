@@ -21,7 +21,7 @@ import type { Graph } from '@sigloch/graph-api-core';
 import { RULE_TO_DIMENSION } from '@sigloch/contracts/se';
 import type { MetricPolicy } from '@sigloch/contracts/se';
 import { takeSteeringSnapshot } from '../projections/steering-snapshot.js';
-import { computePhaseReadiness, currentPhaseGate, PhaseGateReadiness } from '../projections/readiness.js';
+import { computePhaseReadiness, currentPhaseGate, PhaseGateReadiness } from '../kernel/measure/readiness.js';
 import { isIntentTooThin, intentCoverage, type LoadedTargetProfile } from './target-profile.js';
 
 /**

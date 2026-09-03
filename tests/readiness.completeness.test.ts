@@ -25,7 +25,7 @@ import { describe, it, expect } from 'vitest';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import type { Graph } from '@sigloch/graph-api-core';
 import type { RuleViolation } from '@sigloch/contracts/harness';
-import { computeReadiness, summarizeReadiness } from '../src/projections/readiness.js';
+import { computeReadiness, summarizeReadiness } from '../src/kernel/measure/readiness.js';
 import { scoreCompleteness, COMPLETENESS_SLICES } from '../src/projections/readiness-completeness.js';
 
 type G = Pick<Graph, 'nodes' | 'edges'>;

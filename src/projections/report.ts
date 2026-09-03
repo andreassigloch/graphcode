@@ -33,7 +33,7 @@ import {
   computePhaseReadiness,
   type ReadinessReport,
   type PhaseGateReadiness,
-} from './readiness.js';
+} from '../kernel/measure/readiness.js';
 import {
   evaluateAll,
   readinessOf,

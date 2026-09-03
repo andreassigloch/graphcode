@@ -15,7 +15,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import { PHASE_GATE_RULES } from '../src/projections/readiness.js';
+import { PHASE_GATE_RULES } from '../src/kernel/measure/readiness.js';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { extractCodeFacts, extractImportEdges, conformanceViolations, toOntologyGraph } from '../src/kernel/conformance.js';
 import { scoreReadinessWithConformance } from '../src/kernel/evaluation.js';

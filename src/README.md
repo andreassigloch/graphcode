@@ -34,7 +34,13 @@ read-only HTTP/SSE transport above it); `hooks/emit.ts` → `surface/emit.ts` (t
 event) + `projections/trajectory.ts` (the learning feed as a projection of the OpLog).
 
 **Module size:** 500 lines per file (`CLAUDE.md`). Two documented exceptions, tracked in
-CR-GC-261: `projections/readiness.ts` and `kernel/harness.ts` (moving the Apply-Gate is a
+CR-GC-261: `kernel/measure/readiness.ts` and `kernel/harness.ts` (moving the Apply-Gate is a
 governance change, not a formatting one).
+
+**Measurement lives in `kernel/measure/`** (CR-GC-467, Entscheidung 1; moves CR-GC-468–471):
+readiness, fit-advisory, test-selection, nd-similarity — graph → number, used by the gate to
+judge. `projections/` renders them, it does not own them. The layer order
+`kernel ← loop ← projections ← surface ← index/cli` is enforced by
+`tests/import-boundaries.test.ts`.
 
 Interfaces are the `FLOW→SCHEMA` contracts (`@sigloch/contracts` Zod).

@@ -24,7 +24,7 @@ import {
   IMPL_GATE_RULES,
   creationBlockingMsg,
   type ReadinessReport,
-} from '../projections/readiness.js';
+} from '../kernel/measure/readiness.js';
 import { ARTIFACT_CATALOG } from './panels.js';
 import { HELP_CONTENT, HELP_VOCAB, HELP_PANEL_IDS, METRIC_HELP } from './help-content.js';
 

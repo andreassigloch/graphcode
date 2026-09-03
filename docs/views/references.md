@@ -1079,7 +1079,7 @@
 | `FUNC-collect-status` | allocate | `MOD-surface` |
 | `FUNC-collect-status` | io | `FLOW-install-result` |
 | `FUNC-collect-status` | satisfy | `REQ-real-health-check` |
-| `FUNC-compute-phase-readiness` | allocate | `MOD-projections` |
+| `FUNC-compute-phase-readiness` | allocate | `MOD-kernel` |
 | `FUNC-compute-phase-readiness` | io | `FLOW-phase-readiness` |
 | `FUNC-compute-phase-readiness` | satisfy | `REQ-steering-from-metrics` |
 | `FUNC-compute-readiness` | allocate | `MOD-projections` |

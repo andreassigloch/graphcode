@@ -61,8 +61,8 @@ export { bootstrap, TEMPLATE_FORMAT_E, BootstrapResultSchema } from './surface/b
 export type { BootstrapResult, BootstrapMode } from './surface/bootstrap.js';
 
 // Readiness scorer (CR-GC-107) — family compliance from contracts V3_RULES (L2), no foreign BQ rules.
-export { scoreReadiness, computeReadiness, getFamilyRuleIds } from './projections/readiness.js';
-export type { ReadinessReport, ReadinessDimension } from './projections/readiness.js';
+export { scoreReadiness, computeReadiness, getFamilyRuleIds } from './kernel/measure/readiness.js';
+export type { ReadinessReport, ReadinessDimension } from './kernel/measure/readiness.js';
 
 // CLI scaffold lifecycle (CR-GC-112) — self-contained `init|update|remove` installer (MOD-cli).
 export { scaffold, CliCommandSchema, InstallResultSchema } from './surface/scaffold.js';

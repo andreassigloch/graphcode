@@ -2286,7 +2286,7 @@
       "description": "Projiziert denselben Regelstrom auf die Phasen-Gates SRR/PDR/CDR/TRR: je Gate abgedeckte gegen alle Regel-IDs plus die fehlenden. Die zweite Achse neben den Dimensionen, aus einer Quelle.",
       "status": "done",
       "realRef": {
-        "file": "src/projections/readiness.ts",
+        "file": "src/kernel/measure/readiness.ts",
         "symbol": "computePhaseReadiness",
         "lang": "ts"
       }
@@ -5118,7 +5118,7 @@
       "description": "Je Gate: abgedeckte und alle Regel-IDs plus die fehlenden.",
       "status": "reviewed",
       "realRef": {
-        "file": "src/projections/readiness.ts",
+        "file": "src/kernel/measure/readiness.ts",
         "symbol": "PhaseGateReadiness",
         "lang": "ts"
       }
@@ -13287,7 +13287,7 @@
     },
     {
       "source": "FUNC-compute-phase-readiness",
-      "target": "MOD-projections",
+      "target": "MOD-kernel",
       "type": "allocate"
     },
     {
@@ -17423,5 +17423,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 235
+  "graphVersion": 236
 }

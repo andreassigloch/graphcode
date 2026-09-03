@@ -37,7 +37,6 @@ const RANK: Record<string, number> = { kernel: 0, loop: 1, projections: 2, surfa
 
 /** Bekannte Altlast (Stand 2026-09-03). Nur streichen, nie ergänzen. */
 const DEBT: string[] = [
-  'kernel/evaluation.ts → projections/readiness',
   'kernel/harness-import.ts → projections/exporter',
   'kernel/own-kuzu.ts → index',
   'kernel/store-lock.ts → surface/package-version',
@@ -45,7 +44,6 @@ const DEBT: string[] = [
   'loop/executor-rank.ts → projections/steering-snapshot',
   'loop/executor.ts → projections/steering-snapshot [type]',
   'loop/executor.ts → surface/mcp-tools [type]',
-  'loop/generate.ts → projections/readiness',
   'loop/generate.ts → projections/steering-snapshot',
   'loop/steering.ts → projections/steering-snapshot',
   'loop/suggest.ts → surface/mcp-tools [type]',

@@ -39,7 +39,7 @@ import {
   currentPhaseGate,
   PHASE_GATE_ORDER,
   type CreationCurrencyProvider,
-} from '../src/projections/readiness.js';
+} from '../src/kernel/measure/readiness.js';
 
 const REPO_ROOT = join(__dirname, '..');
 

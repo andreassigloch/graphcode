@@ -18,7 +18,7 @@ import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
-import { scoreReadiness } from '../src/projections/readiness.js';
+import { scoreReadiness } from '../src/kernel/measure/readiness.js';
 import {
   readinessPanel,
   recommendationsPanel,

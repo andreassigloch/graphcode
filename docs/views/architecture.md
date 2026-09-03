@@ -173,7 +173,7 @@
 | `FUNC-close-store` | `MOD-kernel` |
 | `FUNC-close-violations` | `MOD-agent-surface` |
 | `FUNC-collect-status` | `MOD-surface` |
-| `FUNC-compute-phase-readiness` | `MOD-projections` |
+| `FUNC-compute-phase-readiness` | `MOD-kernel` |
 | `FUNC-compute-readiness` | `MOD-projections` |
 | `FUNC-compute-steering-delta` | `MOD-projections` |
 | `FUNC-create-harness` | `MOD-kernel` |

@@ -5,7 +5,7 @@
  */
 import { describe, it, expect } from 'vitest';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import { PHASE_GATE_RULES, IMPL_GATE_MILESTONES } from '../src/projections/readiness.js';
+import { PHASE_GATE_RULES, IMPL_GATE_MILESTONES } from '../src/kernel/measure/readiness.js';
 import { ARTIFACT_CATALOG } from '../src/surface/panels.js';
 import { HELP_CONTENT, HELP_VOCAB, HELP_PANEL_IDS, HELP_ELEMENT_STATES, METRIC_HELP } from '../src/surface/help-content.js';
 import { helpEntry } from '../src/surface/help.js';
