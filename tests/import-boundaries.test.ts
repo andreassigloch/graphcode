@@ -56,12 +56,10 @@ const DEBT: string[] = [
   'projections/testreport.ts → surface/mcp-tools [type]',
   'projections/testreport.ts → surface/tool-context [type]',
   'projections/trajectory.ts → surface/scaffold-templates',
-  'surface/host.ts → index [type]',
   'surface/import-code-verb.ts → index',
   'surface/mcp-server.ts → index',
   'surface/rewind.ts → index',
   'surface/run-verb.ts → index',
-  'surface/scaffold.ts → index',
 ];
 
 function walk(dir: string, out: string[] = []): string[] {

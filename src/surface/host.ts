@@ -52,7 +52,7 @@ import {
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 import { FormatECodec, SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { buildJobSlice } from './read.js';
-import type { GraphCodeHarness } from '../index.js';
+import type { GraphCodeHarness } from '../kernel/harness.js';
 import { ownKuzu } from '../kernel/own-kuzu.js';
 import { deriveMemberName } from './mcp-server.js';
 import type { LiveUpdateEvent } from './emit.js';

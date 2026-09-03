@@ -177,7 +177,7 @@
 | `FUNC-compute-phase-readiness` | `MOD-kernel-measure` |
 | `FUNC-compute-readiness` | `MOD-projections` |
 | `FUNC-compute-steering-delta` | `MOD-kernel-measure` |
-| `FUNC-create-harness` | `MOD-kernel` |
+| `FUNC-create-harness` | `MOD-surface` |
 | `FUNC-decode` | `MOD-projections` |
 | `FUNC-deduce-tests` | `MOD-projections` |
 | `FUNC-emit-trajectory` | `MOD-projections` |

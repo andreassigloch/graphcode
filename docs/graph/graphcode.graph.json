@@ -2323,7 +2323,7 @@
       "description": "Die Fabrik der oeffentlichen Programmierschnittstelle: baut den Harness mit Store, Regeln und Hooks und gibt genau einen Besitzer des Stores zurueck.",
       "status": "done",
       "realRef": {
-        "file": "src/index.ts",
+        "file": "src/surface/create-harness.ts",
         "symbol": "createHarness",
         "lang": "ts"
       }
@@ -13343,7 +13343,7 @@
     },
     {
       "source": "FUNC-create-harness",
-      "target": "MOD-kernel",
+      "target": "MOD-surface",
       "type": "allocate"
     },
     {
@@ -17434,5 +17434,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 238
+  "graphVersion": 239
 }

@@ -1089,7 +1089,7 @@
 | `FUNC-compute-steering-delta` | allocate | `MOD-kernel-measure` |
 | `FUNC-compute-steering-delta` | io | `FLOW-steering-delta` |
 | `FUNC-compute-steering-delta` | satisfy | `REQ-steering-from-metrics` |
-| `FUNC-create-harness` | allocate | `MOD-kernel` |
+| `FUNC-create-harness` | allocate | `MOD-surface` |
 | `FUNC-create-harness` | io | `FLOW-store-ownership` |
 | `FUNC-create-harness` | satisfy | `REQ-store-owner-lifecycle` |
 | `FUNC-decode` | allocate | `MOD-projections` |
