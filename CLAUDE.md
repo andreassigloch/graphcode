@@ -43,7 +43,17 @@ compressing a large result.
 - **One transport = MCP-stdio** for the agent (+ a read-only SSE bridge for a live viewer). No
   Express/REST in the core.
 - **One Apply-Gate = `mutate()`** — every edit (human *or* AI) goes through the same gate; the author
-  is only logged. No hand-edit of the graph SSOT.
+  is only logged. No hand-edit of the graph SSOT. `reseed` / `rewind` / `seedFromJson` are
+  **operations**, not edits — they replace the state, kernel-internal; neither a second write path
+  nor a gate bypass (CR-GC-467).
+- **Dependency direction is a DAG** — `kernel ← loop ← projections ← surface ← index/cli`. The
+  kernel (store · measurement · gate) knows no client; measurement (readiness, fit-advisory,
+  test-selection, similarity) sits *below* the gate because the gate judges with it. Enforced by
+  `tests/import-boundaries.test.ts` as a ratchet: the known debt is listed there and may only
+  shrink (CR-GC-467; derivation and measurement in CR-DRAFT-GC-466).
+- **Two trees** — `MOD` is the dependency tree, `FUNC` the value tree (Grounding · Führung ·
+  Optimierung · Betrieb). They do **not** mirror each other; cutting modules "along the story
+  blocks" is not a cleanup (CR-DRAFT-GC-461, CR-GC-467).
 - **SE ontology + `V3_RULES` come from `@sigloch/contracts/se`** — imported, never forked. A new
   ElementType/TraceType/TRACE_PATTERN/rule requires a contracts version bump, not a local rule parser.
 
@@ -61,6 +71,9 @@ These invariants are **enforced** — no prose-trust, no re-documenting as a rul
 - **Binding completeness** — a runnable TEST carries `testRef` (**R-19**), a realized FUNC carries
   `codeRef` (**R-20**); both surface as warnings in `rules_evaluate` / `readiness`. Export
   materializes missing testRef stubs (`it.todo`, no phantom path).
+- **Dependency direction** — `tests/import-boundaries.test.ts`: an import pointing up the layer
+  order fails the suite unless it is listed as known debt, and listed debt that no longer exists
+  fails it too.
 - **No binary / NUL corruption in source** — PreToolUse hook `.claude/hooks/deny-binary-source.sh`.
 - **Read-before-edit** — harness built-in (Edit requires a prior Read).
 
