@@ -15,7 +15,6 @@
 | `ACTOR-agent` | io | `FLOW-steering-trigger` |
 | `ACTOR-learning-engine` | io | `FLOW-learning-advice` |
 | `ACTOR-owner` | io | `FLOW-cli-command` |
-| `ACTOR-owner` | io | `FLOW-graph-state` |
 | `ACTOR-owner` | io | `FLOW-metric-policy` |
 | `ACTOR-owner` | io | `FLOW-mutate-cmd` |
 | `ACTOR-owner` | io | `FLOW-query-request` |
@@ -1093,7 +1092,6 @@
 | `FUNC-create-harness` | io | `FLOW-store-ownership` |
 | `FUNC-create-harness` | satisfy | `REQ-store-owner-lifecycle` |
 | `FUNC-decode` | allocate | `MOD-projections` |
-| `FUNC-decode` | io | `FLOW-graph-state` |
 | `FUNC-decode` | satisfy | `REQ-codec-validation` |
 | `FUNC-deduce-tests` | allocate | `MOD-projections` |
 | `FUNC-deduce-tests` | io | `FLOW-test-selection` |
@@ -1142,7 +1140,6 @@
 | `FUNC-graph-expand` | io | `FLOW-formatE-artifact` |
 | `FUNC-graph-expand` | satisfy | `REQ-progressive-expansion` |
 | `FUNC-graph-export-snapshot` | allocate | `MOD-projections` |
-| `FUNC-graph-export-snapshot` | io | `FLOW-graph-state` |
 | `FUNC-graph-export-snapshot` | satisfy | `REQ-graph-snapshot-per-commit` |
 | `FUNC-graph-impact` | allocate | `MOD-kernel` |
 | `FUNC-graph-impact` | io | `FLOW-formatE-artifact` |
@@ -1206,7 +1203,6 @@
 | `FUNC-merge-nodes` | satisfy | `REQ-post-merge-nodes` |
 | `FUNC-merge-nodes` | satisfy | `REQ-pre-merge-nodes` |
 | `FUNC-migrate-schema` | allocate | `MOD-kernel` |
-| `FUNC-migrate-schema` | io | `FLOW-graph-state` |
 | `FUNC-migrate-schema` | satisfy | `REQ-post-migrate-schema` |
 | `FUNC-migrate-schema` | satisfy | `REQ-pre-migrate-schema` |
 | `FUNC-migrate-schema` | satisfy | `REQ-schema-version-migration` |
@@ -1221,7 +1217,6 @@
 | `FUNC-mutate` | satisfy | `REQ-graph-snapshot-per-commit` |
 | `FUNC-mutate` | satisfy | `REQ-single-write-door` |
 | `FUNC-nd-similarity` | allocate | `MOD-kernel-measure` |
-| `FUNC-nd-similarity` | io | `FLOW-graph-state` |
 | `FUNC-nd-similarity` | satisfy | `REQ-near-duplicate-detection` |
 | `FUNC-next-step` | allocate | `MOD-loop` |
 | `FUNC-next-step` | io | `FLOW-learning-query` |
@@ -1232,7 +1227,6 @@
 | `FUNC-open-store` | satisfy | `REQ-steering-pre` |
 | `FUNC-open-store` | satisfy | `REQ-store-owner-lifecycle` |
 | `FUNC-own-kuzu-host` | allocate | `MOD-kernel` |
-| `FUNC-own-kuzu-host` | io | `FLOW-graph-state` |
 | `FUNC-own-kuzu-host` | satisfy | `REQ-store-owner-lifecycle` |
 | `FUNC-preflight` | allocate | `MOD-loop` |
 | `FUNC-preflight` | io | `FLOW-mutate-cmd` |
@@ -1250,7 +1244,6 @@
 | `FUNC-resolve-tests-from-code` | io | `FLOW-impacted-tests` |
 | `FUNC-resolve-tests-from-code` | satisfy | `REQ-graph-tests-operational` |
 | `FUNC-rewind` | allocate | `MOD-surface` |
-| `FUNC-rewind` | io | `FLOW-graph-state` |
 | `FUNC-rewind` | satisfy | `REQ-graph-state-recall` |
 | `FUNC-run-executor` | allocate | `MOD-loop` |
 | `FUNC-run-executor` | io | `FLOW-model-answer` |
@@ -1312,7 +1305,6 @@
 | `FUNC-serve-stdio` | io | `FLOW-query-request` |
 | `FUNC-serve-stdio` | satisfy | `REQ-mcp-tool-registry` |
 | `FUNC-session-shutdown` | allocate | `MOD-surface` |
-| `FUNC-session-shutdown` | io | `FLOW-graph-state` |
 | `FUNC-session-shutdown` | satisfy | `REQ-session-leaves-nothing-behind` |
 | `FUNC-take-steering-snapshot` | allocate | `MOD-kernel-measure` |
 | `FUNC-take-steering-snapshot` | io | `FLOW-gate-verdict` |

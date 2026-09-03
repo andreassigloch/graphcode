@@ -60,7 +60,7 @@ io ▶ `FLOW-learning-advice` · io ◀ `FLOW-learning-query` · `FLOW-trajector
 
 Der Mensch, dem das Repo gehoert: setzt das Ziel, entscheidet, delegiert die Realisierung an gegatete Agenten. Er will exzellente Codequalitaet bei effizientem Testen und minimalem Token-/LLM-Aufwand. Drei Nutzerklassen, EINE Schnittstelle (ISO 29148 5.2.4 — die Klasse steht hier, nicht in der Topologie): (a) Entwickler/Repo-Owner — betreibt das Repo, faehrt CLI und Gate; (b) Systems Engineer — arbeitet auf der WAS-Ebene (UC/REQ/FUNC/FCHAIN) und delegiert die HOW-Ebene; (c) Vibe Coder — denkt in Architektur und Kundennutzen, schreibt selbst keinen Code. Alle drei reden ueber CLI-Verben, Skill-Aufrufe und dasselbe Apply-Gate; eine eigene Topologie-Rolle hatte keine von ihnen. (CR-GC-455)
 
-io ▶ `FLOW-cli-command` · `FLOW-graph-state` · `FLOW-metric-policy` · `FLOW-mutate-cmd` · `FLOW-query-request` · `FLOW-skill-request` · `FLOW-steering-trigger` · `FLOW-version-bump` · io ◀ `FLOW-audit-report` · `FLOW-export-pending` · `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-install-result` · `FLOW-markdown-docs` · `FLOW-skill-report` · `FLOW-test-selection`
+io ▶ `FLOW-cli-command` · `FLOW-metric-policy` · `FLOW-mutate-cmd` · `FLOW-query-request` · `FLOW-skill-request` · `FLOW-steering-trigger` · `FLOW-version-bump` · io ◀ `FLOW-audit-report` · `FLOW-export-pending` · `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-install-result` · `FLOW-markdown-docs` · `FLOW-skill-report` · `FLOW-test-selection`
 
 ## 3  Use Cases & Verhalten
 
@@ -336,7 +336,7 @@ Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satis
 
 Der Host-Prozess ist der einzige Kuzu-Owner pro Repo; die Bridge haelt kein zweites DB-Handle. (CR-GC-114)
 
-io ◀ `FLOW-store-ownership` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-store-ownership` · io ▶ — · allocate ▶ `MOD-kernel`
 
 ###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
 
@@ -354,7 +354,7 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (int
 
 Raeumt am Sessionende alle Ressourcen in umgekehrter Reihenfolge ab, den Store-Lock zuletzt.
 
-io ◀ `FLOW-store-ownership` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-store-ownership` · io ▶ — · allocate ▶ `MOD-surface`
 
 ###### `REQ-session-leaves-nothing-behind` — Sitzungsende hinterlaesst nichts
 
@@ -436,7 +436,7 @@ Verification ◀ `TEST-capture` (integration) · satisfy ◀ `FCHAIN-capture` ·
 
 Format-E → OntologyGraph, Validierung gegen SE_DESCRIPTOR. (CR-GC-103)
 
-io ◀ `FLOW-formatE-artifact` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-projections`
+io ◀ `FLOW-formatE-artifact` · io ▶ — · allocate ▶ `MOD-projections`
 
 ###### `REQ-codec-validation` — Codec-Validierung gegen SE_DESCRIPTOR
 
@@ -508,23 +508,7 @@ priority: should · status: open · kinds: non-functional
 
 Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FCHAIN-codec-roundtrip` · allocate ▶ —
 
-##### 3.1.3.1  `FUNC-decode` — decode(json)
-
-> auch in: `FCHAIN-capture` · `FUNC-block-gedaechtnis`
-
-Format-E → OntologyGraph, Validierung gegen SE_DESCRIPTOR. (CR-GC-103)
-
-io ◀ `FLOW-formatE-artifact` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-projections`
-
-###### `REQ-codec-validation` — Codec-Validierung gegen SE_DESCRIPTOR
-
-CR-GC-103: encode/decode validiert gegen SE_DESCRIPTOR; ungültige Typen → Validierungsfehler, kein silent pass.
-
-priority: must · status: open · kinds: functional
-
-Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-projections`
-
-##### 3.1.3.2  `FUNC-encode` — encode(graph)
+##### 3.1.3.1  `FUNC-encode` — encode(graph)
 
 > auch in: `FUNC-block-gedaechtnis`
 
@@ -539,6 +523,22 @@ CR-GC-103 R5: Diff-Dialekt +/-/~/M mit <operations><base_snapshot>ID@version + 1
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-edge-only-batch` (integration) · `TEST-formate-name` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-encode` · allocate ▶ `MOD-projections`
+
+##### 3.1.3.2  `FUNC-decode` — decode(json)
+
+> auch in: `FCHAIN-capture` · `FUNC-block-gedaechtnis`
+
+Format-E → OntologyGraph, Validierung gegen SE_DESCRIPTOR. (CR-GC-103)
+
+io ◀ `FLOW-formatE-artifact` · io ▶ — · allocate ▶ `MOD-projections`
+
+###### `REQ-codec-validation` — Codec-Validierung gegen SE_DESCRIPTOR
+
+CR-GC-103: encode/decode validiert gegen SE_DESCRIPTOR; ungültige Typen → Validierungsfehler, kein silent pass.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-projections`
 
 #### 3.1.4  `FCHAIN-interface-escalation` — Interface-Änderungs-Eskalation
 
@@ -1362,7 +1362,7 @@ io ◀ `FLOW-mutate-cmd` · io ▶ `FLOW-mutate-cmd` · allocate ▶ `MOD-loop`
 
 Rechnet die Near-Duplicate-Matrizen ueber FUNC und SCHEMA und haengt sie an den Graphen, bevor der volle Regelkatalog laeuft. Aufrufer ist die Steering-Momentaufnahme, nicht der Treiber.
 
-io ◀ `FLOW-graph-state` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-kernel-measure`
+io ◀ `FLOW-graph-state` · io ▶ — · allocate ▶ `MOD-kernel-measure`
 
 ###### `REQ-near-duplicate-detection` — Near-Duplicates werden vor der vollen Katalog-Auswertung erkannt
 
@@ -1632,7 +1632,7 @@ Verification ◀ `TEST-graph-time-travel` (integration) · `TEST-reseed` (integr
 
 Stellt den Graph-Stand eines Commits her: liest den Snapshot per git show aus dem Objektspeicher und stellt ihn im gitignorierten Workspace bereit. Der Working-Tree bleibt unberuehrt, es gibt also genau eine Zustandsaenderung; un-exportierte Mutationen brechen ab, force verwirft sie. (CR-GC-311)
 
-io ◀ `FLOW-cli-command` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-cli-command` · io ▶ — · allocate ▶ `MOD-surface`
 
 ###### `REQ-graph-state-recall` — Frueheren Graph-Stand reproduzieren
 
@@ -1788,7 +1788,7 @@ Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (i
 
 Materialisiert den kanonischen, deterministischen Graph-Snapshot docs/graph/<system>.graph.json plus die Markdown-Views und loescht den Drift-Marker EXPORT_PENDING. Der einzige Sync-Pfad Graph zu committeten Docs; verweigert das Clobbern (leerer Graph, fremder Drop). (CR-GC-113, CR-GC-217)
 
-io ◀ `FLOW-graph-state` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-projections`
+io ◀ `FLOW-graph-state` · io ▶ — · allocate ▶ `MOD-projections`
 
 ###### `REQ-graph-snapshot-per-commit` — Kanonischer Graph-Snapshot pro Commit
 
@@ -2838,7 +2838,7 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (int
 
 Raeumt am Sessionende alle Ressourcen in umgekehrter Reihenfolge ab, den Store-Lock zuletzt.
 
-io ◀ `FLOW-store-ownership` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-store-ownership` · io ▶ — · allocate ▶ `MOD-surface`
 
 ###### `REQ-session-leaves-nothing-behind` — Sitzungsende hinterlaesst nichts
 
@@ -3010,7 +3010,7 @@ Version-Bump erkennen und den Stand nachziehen: Fingerabdruck der generierten DD
 
 Re-Validierung + Migration des Graphen bei ONTOLOGY/RULES_VERSION-Bump; Version am Artefakt mitgeführt.
 
-io ◀ `FLOW-version-bump` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-version-bump` · io ▶ — · allocate ▶ `MOD-kernel`
 
 ###### `REQ-post-migrate-schema` — Postcondition: migrateSchema(from, to)
 
@@ -3306,7 +3306,7 @@ Verification ◀ `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integra
 
 Raeumt am Sessionende alle Ressourcen in umgekehrter Reihenfolge ab, den Store-Lock zuletzt.
 
-io ◀ `FLOW-store-ownership` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-store-ownership` · io ▶ — · allocate ▶ `MOD-surface`
 
 ###### `REQ-session-leaves-nothing-behind` — Sitzungsende hinterlaesst nichts
 
@@ -3382,7 +3382,7 @@ Verification ◀ `TEST-target-profile` (integration) · `TEST-thresholds-from-co
 
 Re-Validierung + Migration des Graphen bei ONTOLOGY/RULES_VERSION-Bump; Version am Artefakt mitgeführt.
 
-io ◀ `FLOW-version-bump` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-version-bump` · io ▶ — · allocate ▶ `MOD-kernel`
 
 ###### `REQ-post-migrate-schema` — Postcondition: migrateSchema(from, to)
 
@@ -3668,7 +3668,7 @@ io ◀ — · io ▶ — · allocate ▶ `MOD-projections`
 
 Format-E → OntologyGraph, Validierung gegen SE_DESCRIPTOR. (CR-GC-103)
 
-io ◀ `FLOW-formatE-artifact` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-projections`
+io ◀ `FLOW-formatE-artifact` · io ▶ — · allocate ▶ `MOD-projections`
 
 ###### `REQ-codec-validation` — Codec-Validierung gegen SE_DESCRIPTOR
 
@@ -3732,7 +3732,7 @@ Verification ◀ `TEST-edge-only-batch` (integration) · `TEST-formate-name` (in
 
 Materialisiert den kanonischen, deterministischen Graph-Snapshot docs/graph/<system>.graph.json plus die Markdown-Views und loescht den Drift-Marker EXPORT_PENDING. Der einzige Sync-Pfad Graph zu committeten Docs; verweigert das Clobbern (leerer Graph, fremder Drop). (CR-GC-113, CR-GC-217)
 
-io ◀ `FLOW-graph-state` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-projections`
+io ◀ `FLOW-graph-state` · io ▶ — · allocate ▶ `MOD-projections`
 
 ###### `REQ-graph-snapshot-per-commit` — Kanonischer Graph-Snapshot pro Commit
 
@@ -3828,7 +3828,7 @@ Verification ◀ `TEST-merge` (integration) · satisfy ◀ `FUNC-merge-nodes` ·
 
 Der Host-Prozess ist der einzige Kuzu-Owner pro Repo; die Bridge haelt kein zweites DB-Handle. (CR-GC-114)
 
-io ◀ `FLOW-store-ownership` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-store-ownership` · io ▶ — · allocate ▶ `MOD-kernel`
 
 ###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
 
@@ -3864,7 +3864,7 @@ Verification ◀ `TEST-graph-time-travel` (integration) · `TEST-reseed` (integr
 
 Stellt den Graph-Stand eines Commits her: liest den Snapshot per git show aus dem Objektspeicher und stellt ihn im gitignorierten Workspace bereit. Der Working-Tree bleibt unberuehrt, es gibt also genau eine Zustandsaenderung; un-exportierte Mutationen brechen ab, force verwirft sie. (CR-GC-311)
 
-io ◀ `FLOW-cli-command` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-cli-command` · io ▶ — · allocate ▶ `MOD-surface`
 
 ###### `REQ-graph-state-recall` — Frueheren Graph-Stand reproduzieren
 
@@ -4836,7 +4836,7 @@ Verification ◀ `TEST-one-driver-local-and-frontier` (integration) · satisfy �
 
 Rechnet die Near-Duplicate-Matrizen ueber FUNC und SCHEMA und haengt sie an den Graphen, bevor der volle Regelkatalog laeuft. Aufrufer ist die Steering-Momentaufnahme, nicht der Treiber.
 
-io ◀ `FLOW-graph-state` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-kernel-measure`
+io ◀ `FLOW-graph-state` · io ▶ — · allocate ▶ `MOD-kernel-measure`
 
 ###### `REQ-near-duplicate-detection` — Near-Duplicates werden vor der vollen Katalog-Auswertung erkannt
 
@@ -5160,7 +5160,7 @@ io ◀ `FUNC-bootstrap` · `FUNC-check-code-conformance` · `FUNC-evaluate-rules
 
 Der Graph als EIN Wert, in jedem seiner Zustaende: in-memory geladen, als Entwurf appliziert, persistiert samt Version-Counter, aus Format-E rekonstruiert, migriert, aus zwei Branch-Fassungen gemergt, aus dem Snapshot auf Platte wiederhergestellt. Der Zustand ist kein zweiter Datenvertrag.
 
-io ◀ `ACTOR-owner` · `FUNC-apply-reseed` · `FUNC-close-store` · `FUNC-decode` · `FUNC-graph-export-snapshot` · `FUNC-load-graph` · `FUNC-merge-nodes` · `FUNC-migrate-schema` · `FUNC-mutate` · `FUNC-nd-similarity` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-reseed` · `FUNC-rewind` · `FUNC-save-graph` · `FUNC-seed-from-json` · `FUNC-session-shutdown` · io ▶ `ACTOR-owner` · `FUNC-apply-reseed` · `FUNC-arch-fitness` · `FUNC-auto-export` · `FUNC-check-code-conformance` · `FUNC-close-store` · `FUNC-emit-trajectory` · `FUNC-emit-update-event` · `FUNC-encode` · `FUNC-evaluate-rules` · `FUNC-export-marker` · `FUNC-fit-advisory` · `FUNC-graph-export-snapshot` · `FUNC-graph-suggest` · `FUNC-list-elements` · `FUNC-load-graph` · `FUNC-merge-nodes` · `FUNC-module-metrics` · `FUNC-mutate` · `FUNC-nd-similarity` · `FUNC-open-store` · `FUNC-reseed` · `FUNC-score-completeness` · `FUNC-seed-from-json` · schema ▶ `SCHEMA-ontology-graph`
+io ◀ `FUNC-apply-reseed` · `FUNC-close-store` · `FUNC-load-graph` · `FUNC-merge-nodes` · `FUNC-mutate` · `FUNC-open-store` · `FUNC-reseed` · `FUNC-save-graph` · `FUNC-seed-from-json` · io ▶ `ACTOR-owner` · `FUNC-apply-reseed` · `FUNC-arch-fitness` · `FUNC-auto-export` · `FUNC-check-code-conformance` · `FUNC-close-store` · `FUNC-emit-trajectory` · `FUNC-emit-update-event` · `FUNC-encode` · `FUNC-evaluate-rules` · `FUNC-export-marker` · `FUNC-fit-advisory` · `FUNC-graph-export-snapshot` · `FUNC-graph-suggest` · `FUNC-list-elements` · `FUNC-load-graph` · `FUNC-merge-nodes` · `FUNC-module-metrics` · `FUNC-mutate` · `FUNC-nd-similarity` · `FUNC-open-store` · `FUNC-reseed` · `FUNC-score-completeness` · `FUNC-seed-from-json` · schema ▶ `SCHEMA-ontology-graph`
 
 ### 4.14  `FLOW-health-report` — Health-Report
 

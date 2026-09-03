@@ -7382,13 +7382,6 @@
     },
     {
       "source": "ACTOR-owner",
-      "target": "FLOW-graph-state",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "ACTOR-owner",
       "target": "FLOW-metric-policy",
       "type": "io"
     },
@@ -13363,13 +13356,6 @@
     },
     {
       "source": "FUNC-decode",
-      "target": "FLOW-graph-state",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-decode",
       "target": "REQ-codec-validation",
       "type": "satisfy",
       "weight": 1,
@@ -13646,11 +13632,6 @@
       "source": "FUNC-graph-export-snapshot",
       "target": "MOD-projections",
       "type": "allocate"
-    },
-    {
-      "source": "FUNC-graph-export-snapshot",
-      "target": "FLOW-graph-state",
-      "type": "io"
     },
     {
       "source": "FUNC-graph-export-snapshot",
@@ -14015,13 +13996,6 @@
     },
     {
       "source": "FUNC-migrate-schema",
-      "target": "FLOW-graph-state",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-migrate-schema",
       "target": "REQ-post-migrate-schema",
       "type": "satisfy",
       "weight": 1,
@@ -14102,11 +14076,6 @@
     },
     {
       "source": "FUNC-nd-similarity",
-      "target": "FLOW-graph-state",
-      "type": "io"
-    },
-    {
-      "source": "FUNC-nd-similarity",
       "target": "REQ-near-duplicate-detection",
       "type": "satisfy"
     },
@@ -14154,11 +14123,6 @@
       "source": "FUNC-own-kuzu-host",
       "target": "MOD-kernel",
       "type": "allocate"
-    },
-    {
-      "source": "FUNC-own-kuzu-host",
-      "target": "FLOW-graph-state",
-      "type": "io"
     },
     {
       "source": "FUNC-own-kuzu-host",
@@ -14248,11 +14212,6 @@
       "source": "FUNC-rewind",
       "target": "MOD-surface",
       "type": "allocate"
-    },
-    {
-      "source": "FUNC-rewind",
-      "target": "FLOW-graph-state",
-      "type": "io"
     },
     {
       "source": "FUNC-rewind",
@@ -14561,11 +14520,6 @@
       "source": "FUNC-session-shutdown",
       "target": "MOD-surface",
       "type": "allocate"
-    },
-    {
-      "source": "FUNC-session-shutdown",
-      "target": "FLOW-graph-state",
-      "type": "io"
     },
     {
       "source": "FUNC-session-shutdown",
@@ -17434,5 +17388,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 239
+  "graphVersion": 240
 }
