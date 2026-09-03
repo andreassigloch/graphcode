@@ -8,8 +8,9 @@
  * alloziert; diese Datei ist der Code-Nachzug dazu.
  *
  * Zwei Modi, EIN Besitzer (CR-GC-237):
- *   - OWN    — kein fremder Harness gereicht: `createHarness` öffnet den Store
- *              unter `<repoRoot>/.graphcode/kuzu`, der Aufrufer schließt ihn.
+ *   - OWN    — kein fremder Harness gereicht: die hereingereichte Fabrik `open`
+ *              (die Composition Root der Oberfläche, `surface/create-harness`) öffnet
+ *              den Store unter `<repoRoot>/.graphcode/kuzu`, der Aufrufer schließt ihn.
  *   - ATTACH — ein bereits gewählter Host (z. B. der MCP-stdio-Gewinner) reicht
  *              SEINEN Harness herein: kein zweites DB-Handle, keine Sperre
  *              angefasst, `owns: false` — wer nicht öffnet, schließt auch nicht.
@@ -19,13 +20,25 @@
  * die der Aufrufer stellt. Kein `node:http`, kein SSE — sonst wäre der Split nur
  * eine Umbenennung.
  *
+ * CR-GC-476: auch das ÖFFNEN kommt von oben. Bis dahin importierte diese Datei
+ * `createHarness` aus dem Paket-Barrel — der Kern griff nach der Composition Root.
+ * Die Entscheidung (OWN/ATTACH) bleibt hier; womit geöffnet wird, sagt der Aufrufer.
+ *
  * @author andreas@siglochconsulting
  */
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 import type { LiveUpdateEvent } from '@sigloch/contracts/harness';
-import { createHarness, type GraphCodeHarness } from '../index.js';
+import type { GraphCodeHarness } from './harness.js';
+
+/** Die Fabrik, mit der im OWN-Modus geöffnet wird — in Produktion `createHarness`. */
+export type OpenHarness = (
+  config: { repoRoot: string; scope: HarnessConfig['scope'] },
+  opts: { onUpdateEvent?: (event: LiveUpdateEvent) => void },
+) => Promise<GraphCodeHarness>;
 
 export interface OwnKuzuOptions {
+  /** Womit im OWN-Modus geöffnet wird (Composition Root der Oberfläche). */
+  open: OpenHarness;
   /** Repo, dessen `.graphcode/kuzu` geöffnet wird (nur im OWN-Modus benutzt). */
   repoRoot: string;
   /** Scope des zu öffnenden Harness (nur im OWN-Modus benutzt). */
@@ -54,7 +67,7 @@ export async function ownKuzu(opts: OwnKuzuOptions): Promise<OwnedKuzu> {
     // Sperre noch Event-Senke an — die stand zu SEINER createHarness-Zeit fest.
     return { harness: opts.harness, owns: false };
   }
-  const harness = await createHarness(
+  const harness = await opts.open(
     { repoRoot: opts.repoRoot, scope: opts.scope },
     opts.onUpdateEvent ? { onUpdateEvent: opts.onUpdateEvent } : {},
   );

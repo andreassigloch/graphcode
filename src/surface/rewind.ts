@@ -27,7 +27,7 @@
 import { execFileSync } from 'node:child_process';
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
-import { createHarness } from '../index.js';
+import { createHarness } from './create-harness.js';
 import { deriveMemberName } from './mcp-server.js';
 import { graphSnapshotRel } from '../kernel/harness-import.js';
 import { isExportPending, EXPORT_PENDING_REL } from '../kernel/export-marker.js';

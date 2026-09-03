@@ -38,7 +38,6 @@ const RANK: Record<string, number> = { kernel: 0, loop: 1, projections: 2, surfa
 /** Bekannte Altlast (Stand 2026-09-03). Nur streichen, nie ergänzen. */
 const DEBT: string[] = [
   'kernel/harness-import.ts → projections/exporter',
-  'kernel/own-kuzu.ts → index',
   'loop/executor-prompt.ts → surface/mcp-tools [type]',
   'loop/executor.ts → surface/mcp-tools [type]',
   'loop/suggest.ts → surface/mcp-tools [type]',
@@ -56,10 +55,6 @@ const DEBT: string[] = [
   'projections/testreport.ts → surface/mcp-tools [type]',
   'projections/testreport.ts → surface/tool-context [type]',
   'projections/trajectory.ts → surface/scaffold-templates',
-  'surface/import-code-verb.ts → index',
-  'surface/mcp-server.ts → index',
-  'surface/rewind.ts → index',
-  'surface/run-verb.ts → index',
 ];
 
 function walk(dir: string, out: string[] = []): string[] {

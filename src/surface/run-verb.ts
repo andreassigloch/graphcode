@@ -9,7 +9,7 @@
  *
  * @author andreas@siglochconsulting
  */
-import { createHarness } from '../index.js';
+import { createHarness } from './create-harness.js';
 import { bindToolsWithContext } from './mcp-tools.js';
 import { deriveMemberName } from './mcp-server.js';
 import {

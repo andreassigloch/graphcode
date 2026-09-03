@@ -54,6 +54,7 @@ import { FormatECodec, SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { buildJobSlice } from './read.js';
 import type { GraphCodeHarness } from '../kernel/harness.js';
 import { ownKuzu } from '../kernel/own-kuzu.js';
+import { createHarness } from './create-harness.js';
 import { deriveMemberName } from './mcp-server.js';
 import type { LiveUpdateEvent } from './emit.js';
 import { HealthPayloadSchema, type HealthPayload } from './health.js';
@@ -113,6 +114,7 @@ export class HostBridge {
     // und ihre SSE-Senke.
     const member = deriveMemberName(this.opts.repoRoot);
     const owned = await ownKuzu({
+      open: createHarness,
       repoRoot: this.opts.repoRoot,
       scope: this.opts.scope ?? { workspaceId: member, systemId: member },
       ...(this.opts.harness ? { harness: this.opts.harness } : {}),

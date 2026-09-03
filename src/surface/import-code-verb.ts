@@ -26,7 +26,7 @@ import {
   type MutateTransportResult,
 } from '@sigloch/graphify';
 import type { MutateResult } from '@sigloch/contracts/harness';
-import { createHarness } from '../index.js';
+import { createHarness } from './create-harness.js';
 import { bindToolsToHarness } from './mcp-tools.js';
 import { deriveMemberName } from './mcp-server.js';
 import { exportGraphJson } from '../projections/exporter.js';

@@ -21,7 +21,8 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import type { ZodObject, ZodRawShape } from 'zod/v4';
 import type { AuditLog, Graph } from '@sigloch/graph-api-core';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
-import { createHarness, type GraphCodeHarness } from '../index.js';
+import { createHarness } from './create-harness.js';
+import type { GraphCodeHarness } from '../kernel/harness.js';
 import { bindToolsToHarness, type MCPTool, type MCPToolRegistry } from './mcp-tools.js';
 import { registerAutoExport, type AutoExportHandle } from '../projections/auto-export.js';
 import { StoreOwnershipError } from '../kernel/store-lock.js';
