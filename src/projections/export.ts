@@ -16,7 +16,7 @@ import { z } from 'zod/v4';
 import { exportGraphJson, exportMarkdown, renderTestStubs, renderSchemaStubs, MarkdownViewSchema, MARKDOWN_VIEWS, VIEW_FILENAMES } from './exporter.js';
 import { clearExportPending } from '../kernel/export-marker.js';
 import { countUnfedMutations } from './trajectory.js';
-import { TRAJECTORY_FILE } from '../surface/scaffold-templates.js';
+import { TRAJECTORY_FILE } from '../kernel/workspace.js';
 import { graphSnapshotRel } from '../kernel/harness-import.js';
 import type { MCPTool, MCPToolRegistry } from '../surface/mcp-tools.js';
 import type { ToolContext } from '../surface/tool-context.js';

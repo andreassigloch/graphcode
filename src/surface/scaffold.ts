@@ -44,11 +44,10 @@ import {
   rmSync,
 } from 'node:fs';
 import { z } from 'zod/v4';
-import { KUZU_DIR } from '../kernel/workspace.js';
+import { KUZU_DIR, GRAPHCODE_DIR, TRAJECTORY_FILE } from '../kernel/workspace.js';
 import {
   PACKAGE_NAME,
   PACKAGE_RANGE,
-  GRAPHCODE_DIR,
   MCP_CONFIG,
   OPENCODE_CONFIG,
   GUARDRAILS_FILE,
@@ -56,7 +55,6 @@ import {
   COMMANDS_DIR,
   LEGACY_SKILLS_DIR,
   LEGACY_WORKSPACE_DIR,
-  TRAJECTORY_FILE,
   HOOKS_DIR,
   SETTINGS_FILE,
   packagedSkillsDir,

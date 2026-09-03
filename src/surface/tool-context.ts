@@ -39,7 +39,7 @@ import {
 } from '../projections/trajectory.js';
 // The per-repo workspace dir is named ONCE (scaffold-templates); the feed lands in
 // graphcode's own workspace, not the predecessor's `.aimprove/` (CR-GC-330).
-import { GRAPHCODE_DIR } from './scaffold-templates.js';
+import { GRAPHCODE_DIR } from '../kernel/workspace.js';
 
 /**
  * Truncation policy for `AuditEntry.intent` (CR-GC-354). The CONTRACT says the prompt is

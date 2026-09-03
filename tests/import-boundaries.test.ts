@@ -44,7 +44,6 @@ const DEBT: string[] = [
   'loop/suggest.ts → surface/tool-context [type]',
   'projections/auto-export.ts → surface/mcp-tools [type]',
   'projections/export.ts → surface/mcp-tools [type]',
-  'projections/export.ts → surface/scaffold-templates',
   'projections/export.ts → surface/tool-context [type]',
   'projections/metrics.ts → surface/mcp-tools [type]',
   'projections/metrics.ts → surface/tool-context [type]',
@@ -54,7 +53,6 @@ const DEBT: string[] = [
   'projections/report.ts → surface/tool-context [type]',
   'projections/testreport.ts → surface/mcp-tools [type]',
   'projections/testreport.ts → surface/tool-context [type]',
-  'projections/trajectory.ts → surface/scaffold-templates',
 ];
 
 function walk(dir: string, out: string[] = []): string[] {

@@ -53,8 +53,6 @@ export const PACKAGE_SPEC = `${PACKAGE_NAME}@${readPackageVersion()}`;
  */
 export const PACKAGE_RANGE = `^${readPackageVersion()}`;
 
-/** Per-repo workspace dir (`.graphcode/`); the Kuzu store lives at `.graphcode/kuzu`. */
-export const GRAPHCODE_DIR = '.graphcode';
 export const MCP_CONFIG = '.mcp.json';
 /** OpenCode's host config in the target repo — same server, OpenCode's schema (CR-GC-263). */
 export const OPENCODE_CONFIG = 'opencode.json';
@@ -86,8 +84,6 @@ export const LEGACY_SKILLS_DIR = join('.claude', 'skills');
  * Datei ab (CR-GC-331) — der Rest eines `.aimprove/` kann aimprove selbst gehören.
  */
 export const LEGACY_WORKSPACE_DIR = '.aimprove';
-/** Der Learning-Feed, heute unter GRAPHCODE_DIR (CR-GC-330). */
-export const TRAJECTORY_FILE = 'trajectory.jsonl';
 /** Where the PreToolUse deny-hooks land (and ship from in this package) — CR-GC-214. */
 export const HOOKS_DIR = join('.claude', 'hooks');
 /** The settings file that registers the shipped hooks in the target repo. */
