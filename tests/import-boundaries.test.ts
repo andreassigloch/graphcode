@@ -35,22 +35,8 @@ const SRC = fileURLToPath(new URL('../src', import.meta.url));
 /** Schichten von unten nach oben. `(root)` = src/index.ts, src/cli.ts. */
 const RANK: Record<string, number> = { kernel: 0, loop: 1, projections: 2, surface: 3, '(root)': 4 };
 
-/** Bekannte Altlast (Stand 2026-09-03). Nur streichen, nie ergänzen. */
-const DEBT: string[] = [
-  'loop/executor-prompt.ts → surface/mcp-tools [type]',
-  'loop/executor.ts → surface/mcp-tools [type]',
-  'loop/suggest.ts → surface/mcp-tools [type]',
-  'loop/suggest.ts → surface/tool-context [type]',
-  'projections/auto-export.ts → surface/mcp-tools [type]',
-  'projections/export.ts → surface/mcp-tools [type]',
-  'projections/export.ts → surface/tool-context [type]',
-  'projections/metrics.ts → surface/mcp-tools [type]',
-  'projections/metrics.ts → surface/tool-context [type]',
-  'projections/report.ts → surface/mcp-tools [type]',
-  'projections/report.ts → surface/tool-context [type]',
-  'projections/testreport.ts → surface/mcp-tools [type]',
-  'projections/testreport.ts → surface/tool-context [type]',
-];
+/** Bekannte Altlast — seit CR-GC-480 leer (40 → 0 am 2026-09-03). Nur streichen, nie ergänzen. */
+const DEBT: string[] = [];
 
 function walk(dir: string, out: string[] = []): string[] {
   for (const entry of readdirSync(dir)) {

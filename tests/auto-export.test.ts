@@ -27,7 +27,7 @@ import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import { registerAutoExport } from '../src/projections/auto-export.js';
 import { writeFileAtomic } from '../src/projections/export.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
-import type { MCPTool } from '../src/surface/mcp-tools.js';
+import type { MCPTool } from '../src/kernel/tool-contract.js';
 
 const DEBOUNCE = 30;
 const SYSTEM_ID = 'autoexp';

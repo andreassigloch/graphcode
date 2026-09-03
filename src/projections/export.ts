@@ -18,8 +18,7 @@ import { clearExportPending } from '../kernel/export-marker.js';
 import { countUnfedMutations } from './trajectory.js';
 import { TRAJECTORY_FILE } from '../kernel/workspace.js';
 import { graphSnapshotRel } from '../kernel/harness-import.js';
-import type { MCPTool, MCPToolRegistry } from '../surface/mcp-tools.js';
-import type { ToolContext } from '../surface/tool-context.js';
+import type { MCPTool, MCPToolRegistry, ToolPort } from '../kernel/tool-contract.js';
 import type { AuditEntry } from '@sigloch/graph-api-core';
 import type { MutateCommand } from '@sigloch/contracts/harness';
 
@@ -136,7 +135,7 @@ const GraphExportInputSchema = z.object({
 // Binding
 // -------------------------------------------------------------------------
 
-export function bindExportTools(ctx: ToolContext): MCPToolRegistry {
+export function bindExportTools(ctx: ToolPort): MCPToolRegistry {
   const { harness, auditLog } = ctx;
   // "Since process start" (CR-GC-296): the version this registry booted at, BEFORE
   // any of ITS OWN writes — bindExportTools runs once, immediately after

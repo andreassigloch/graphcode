@@ -21,7 +21,8 @@ import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import type { AuditEntry } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
-import { bindToolsWithContext, type MCPToolRegistry } from '../src/surface/mcp-tools.js';
+import { bindToolsWithContext } from '../src/surface/mcp-tools.js';
+import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
 import {
   PROMPT_RELAY_DIR,
   beginProxiedCall,

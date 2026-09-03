@@ -32,7 +32,8 @@ import {
   type ShimResponse,
 } from '@sigloch/graphcode-client';
 import type { GraphCodeHarness } from '../kernel/harness.js';
-import { bindToolsToHarness, type MCPToolRegistry } from './mcp-tools.js';
+import { bindToolsToHarness } from './mcp-tools.js';
+import type { MCPToolRegistry } from '../kernel/tool-contract.js';
 
 // The CLIENT half (socket name, wire types, `callHost`) lives in
 // @sigloch/graphcode-client (CR-GC-264) so a consumer that only forwards tool

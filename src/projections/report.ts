@@ -49,8 +49,7 @@ import { formatEExampleFor } from './authoring-example.js';
 import { TestSelectionSchema } from '../kernel/measure/test-selection.js';
 import { nextStep } from '../loop/steering.js';
 import type { NextStepResult } from '../loop/steering.js';
-import type { MCPTool, MCPToolRegistry } from '../surface/mcp-tools.js';
-import type { ToolContext } from '../surface/tool-context.js';
+import type { MCPTool, MCPToolRegistry, ToolPort } from '../kernel/tool-contract.js';
 
 // -------------------------------------------------------------------------
 // Input schemas
@@ -141,7 +140,7 @@ const GraphTestsInputSchema = z.object({
 // Binding
 // -------------------------------------------------------------------------
 
-export function bindReportTools(ctx: ToolContext): MCPToolRegistry {
+export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
   const { harness, auditLog, graphVersion } = ctx;
 
   /**

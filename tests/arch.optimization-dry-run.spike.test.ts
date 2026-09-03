@@ -39,7 +39,8 @@ import { metrics, toArray, buildAdjacency, detectCommunities, modularityOf, modu
 import { moduleMetrics } from '@sigloch/contracts/se';
 import type { MutateCommand } from '@sigloch/contracts/harness';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
-import { bindToolsToHarness, type MCPToolRegistry } from '../src/surface/mcp-tools.js';
+import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
+import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
 import { toOntologyGraph } from '../src/kernel/conformance.js';
 import { makeSteeringConfig, type FixtureGraph } from './fixtures/steering-graphs.js';
 import { batchFor, type GraphSuggestResult } from '../src/loop/suggest.js';

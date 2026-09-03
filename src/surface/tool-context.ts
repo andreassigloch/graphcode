@@ -20,6 +20,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import type { GraphCodeHarness } from '../kernel/harness.js';
+import type { ToolPort } from '../kernel/tool-contract.js';
 import type { AuditLog, AuditEntry, OperationsLog } from '@sigloch/graph-api-core';
 import { FormatECodec, SE_DESCRIPTOR, FileOperationsLog } from '@sigloch/graph-api-core';
 // CR-GC-314 REQ-A02: the rule-set version comes from the LOADED package, never from
@@ -181,7 +182,7 @@ export interface TemplateEdit {
 export type StampedAuditEntry = AuditEntry & TrajectoryStamps;
 
 /** Everything a tool group needs; the state behind it exists once per bound registry. */
-export interface ToolContext {
+export interface ToolContext extends ToolPort {
   readonly harness: GraphCodeHarness;
   readonly auditLog: AuditLog;
   /** Format-E serializer for the slice tools. */

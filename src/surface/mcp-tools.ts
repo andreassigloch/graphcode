@@ -27,8 +27,8 @@
  * @author andreas@siglochconsulting
  */
 
-import type { ZodType } from 'zod/v4';
 import type { AuditLog } from '@sigloch/graph-api-core';
+import type { MCPTool, MCPToolRegistry } from '../kernel/tool-contract.js';
 import type { GraphCodeHarness } from '../kernel/harness.js';
 import { createToolContext, type ToolContext } from './tool-context.js';
 import { bindReadTools } from './read.js';
@@ -43,16 +43,6 @@ import { bindTestReportTools } from '../projections/testreport.js';
 // ---------------------------------------------------------------------------
 // Public types
 // ---------------------------------------------------------------------------
-
-export interface MCPTool<TInput = unknown, TOutput = unknown> {
-  name: string;
-  description: string;
-  inputSchema: ZodType<TInput>;
-  handler: (input: TInput) => Promise<TOutput>;
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type MCPToolRegistry = Record<string, MCPTool<any, any>>;
 
 // ---------------------------------------------------------------------------
 // Consultation tracking (CR-GC-434)

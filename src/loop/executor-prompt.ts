@@ -9,7 +9,7 @@
  * @author andreas@siglochconsulting
  */
 import { ElementType } from '@sigloch/contracts/se';
-import type { MCPToolRegistry } from '../surface/mcp-tools.js';
+import type { MCPToolRegistry } from '../kernel/tool-contract.js';
 import type { GenerationStep } from './generate.js';
 
 // ---------------------------------------------------------------------------

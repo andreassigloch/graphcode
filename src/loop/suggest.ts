@@ -36,8 +36,7 @@ import {
   isIntentTooThin,
   persistIntentAnchors,
 } from './target-profile.js';
-import type { MCPTool, MCPToolRegistry } from '../surface/mcp-tools.js';
-import type { ToolContext } from '../surface/tool-context.js';
+import type { MCPTool, MCPToolRegistry, ToolPort } from '../kernel/tool-contract.js';
 
 // -------------------------------------------------------------------------
 // Input schema
@@ -174,7 +173,7 @@ export interface GraphSuggestResult {
 // Binding
 // -------------------------------------------------------------------------
 
-export function bindSuggestTools(ctx: ToolContext): MCPToolRegistry {
+export function bindSuggestTools(ctx: ToolPort): MCPToolRegistry {
   const { harness, serializeToolWrite } = ctx;
 
   const graph_suggest: MCPTool<z.infer<typeof GraphSuggestInputSchema>, GraphSuggestResult> = {

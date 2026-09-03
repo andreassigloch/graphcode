@@ -22,7 +22,7 @@ import { join, relative, resolve } from 'node:path';
 import { z } from 'zod/v4';
 import type { MutateResult } from '@sigloch/contracts/harness';
 import type { FitAdvisory } from '../kernel/measure/fit-advisory.js';
-import type { MCPToolRegistry } from '../surface/mcp-tools.js';
+import type { MCPToolRegistry } from '../kernel/tool-contract.js';
 import { GenerationStep } from './generate.js';
 import { preflightBatch, type PreflightKnown } from './preflight.js';
 import {

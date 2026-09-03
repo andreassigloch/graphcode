@@ -15,7 +15,7 @@ import type { MutateCommand, MutateResult, RuleViolation, StaleDelta } from '@si
 import { GraphVersionSchema } from '@sigloch/contracts/harness';
 import { TestRefsSchema } from '@sigloch/contracts/se';
 import { readBranchLog, replayBranchLog, type MergeReport } from '../kernel/merge.js';
-import type { MCPTool, MCPToolRegistry } from './mcp-tools.js';
+import type { MCPTool, MCPToolRegistry } from '../kernel/tool-contract.js';
 import { computeSteeringDelta, takeSteeringSnapshot, type SteeringDelta } from '../kernel/measure/steering-snapshot.js';
 import { stripViolationContext } from '../kernel/evaluation.js';
 import type { RespondsToViolation } from '../projections/trajectory.js';

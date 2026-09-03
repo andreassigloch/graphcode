@@ -11,7 +11,7 @@
 
 import { z } from 'zod/v4';
 import type { Graph, GraphNode, GraphEdge } from '@sigloch/graph-api-core';
-import type { MCPTool, MCPToolRegistry } from './mcp-tools.js';
+import type { MCPTool, MCPToolRegistry } from '../kernel/tool-contract.js';
 import type { ToolContext } from './tool-context.js';
 
 // -------------------------------------------------------------------------

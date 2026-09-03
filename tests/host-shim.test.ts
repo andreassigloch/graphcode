@@ -15,7 +15,8 @@ import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
-import { bindToolsToHarness, type MCPToolRegistry } from '../src/surface/mcp-tools.js';
+import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
+import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
 import { startHostSocket, buildProxyRegistry, HostGoneError, HOST_SOCK_BASENAME, type HostSocket } from '../src/surface/host-shim.js';
 import type { HarnessConfig, MutateCommand, MutateResult } from '@sigloch/contracts/harness';
 

@@ -23,7 +23,8 @@ import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 import { KuzuAdapter } from './helpers/store.js';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
-import { bindToolsToHarness, type MCPToolRegistry } from '../src/surface/mcp-tools.js';
+import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
+import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
 import { GenerationStep } from '../src/loop/generate.js';
 import { runExecutor, ExecutorConfigSchema, type CallModel } from '../src/loop/executor.js';
 import {

@@ -29,8 +29,7 @@ import {
   type RunnerFileResult,
   type VerificationReport,
 } from './verification-report.js';
-import type { MCPTool, MCPToolRegistry } from '../surface/mcp-tools.js';
-import type { ToolContext } from '../surface/tool-context.js';
+import type { MCPTool, MCPToolRegistry, ToolPort } from '../kernel/tool-contract.js';
 
 const GraphTestIngestInputSchema = z
   .object({
@@ -60,7 +59,7 @@ const GraphTestIngestInputSchema = z
 
 const GraphTestReportInputSchema = z.looseObject({});
 
-export function bindTestReportTools(ctx: ToolContext): MCPToolRegistry {
+export function bindTestReportTools(ctx: ToolPort): MCPToolRegistry {
   const { harness, graphVersion, recordAudit, serializeToolWrite } = ctx;
 
   const graph_test_ingest: MCPTool<

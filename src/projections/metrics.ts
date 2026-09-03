@@ -33,8 +33,7 @@ import { toOntologyGraph } from '../kernel/conformance.js';
 import { archMetrics } from '../kernel/measure/fit-advisory.js';
 import { loadTargetProfile } from '../loop/target-profile.js';
 import type { TargetWeights, TargetValues } from '../loop/target-profile-contract.js';
-import type { MCPTool, MCPToolRegistry } from '../surface/mcp-tools.js';
-import type { ToolContext } from '../surface/tool-context.js';
+import type { MCPTool, MCPToolRegistry, ToolPort } from '../kernel/tool-contract.js';
 
 const GraphMetricsInputSchema = z.looseObject({});
 
@@ -69,7 +68,7 @@ function inconsistentDimensions(
   return out;
 }
 
-export function bindMetricsTools(ctx: ToolContext): MCPToolRegistry {
+export function bindMetricsTools(ctx: ToolPort): MCPToolRegistry {
   const { harness, graphVersion } = ctx;
 
   const graph_metrics: MCPTool<

@@ -15,7 +15,7 @@ export type { HookType, HookResult, HookData, HookHandler, HookOptions, HookSyst
 
 // MCP-stdio tool surface (CR-GC-101) — graph instead of grep, gate-symmetric writes.
 export { bindToolsToHarness } from './surface/mcp-tools.js';
-export type { MCPTool, MCPToolRegistry } from './surface/mcp-tools.js';
+export type { MCPTool, MCPToolRegistry } from './kernel/tool-contract.js';
 
 // MCP-stdio server (CR-GC-111) — bind the registry to @modelcontextprotocol/sdk
 // over stdio (REQ-single-transport); `graphcode mcp` (src/cli.ts) is the entry.
