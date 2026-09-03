@@ -165,3 +165,29 @@ den Zug nicht. Gehört in den Konzept-CR.
 1. **M1 als Pflege-CR** am produktiven Graphen (8 `delete-edge`, durchs Gate) — ohne Claim.
 2. **M2 an CR-SM-279:** Ableitung statt Attribut, Menge = io-Nachbarn des Gate-FUNC (6 Flüsse).
 3. **M3 + Zusatzbefund als Konzept-CR** an die Familie: Messebene des ℝ⁶-Vektors bei `compose`.
+
+---
+
+# Nachtrag 2 (2026-09-03, nach Abgleich mit sigloch-modules `78d57b2` und `3ce77a5`)
+
+Die Familie hatte am selben Tag entschieden, was zwei meiner drei Vorlagen berührt:
+
+- **Befund 1 aus CR-SM-279 ist widerlegt** (`78d57b2`): Strukturblöcke sind für die Metrik nicht
+  unsichtbar (109 `compose`-Kanten im arch-Teilgraphen), eine Probe-Ebene kostet ±0,01, und der
+  Einbruch bei CR-GC-457/459 kommt daher, dass drei Blöcke Kinder aus mehreren vorbestehenden
+  Clustern fassen. **Damit ist die Prämisse von CR-DRAFT-GC-460 weg — der Draft ist zurückgezogen.**
+  Meine M3-Messung bleibt als Fakt über die Metrik richtig (im arch-Teilgraphen sind die drei
+  Strukturwurzeln die einzigen Quellen von `sourceSinkPaths`; jede Entfernung von Struktur lässt
+  `flowEfficiency` auf 0,12 fallen — deckt sich mit „Messung zu Frage 1" in CR-SM-279), aber die
+  Folgerung „CR-460 als Konzept-CR" ist überholt. Die offene Frage ist eine andere und steht jetzt in
+  **CR-SM-281**: misst `coherence` am FUNC-Baum das Falsche, wenn Wert- und Abhängigkeitsbaum
+  verschieden sein *sollen*?
+- **CR-SM-279 ist abgelehnt** (`3ce77a5`, Gate 3): kein Attribut, kein neues Prädikat — die Absicht
+  wird modelliert, `MOD -satisfy-> REQ-gate-only-writes` an den Modulen des Gate-Pfads. Mein M2 wird
+  damit zur **Modellierungshilfe**, nicht zur Grammatikfrage: die sechs io-Nachbarn von `FUNC-mutate`
+  (Mutate-Command, Gate-Verdikt, Graph-State, Fit-Advisory, Format-E-Artefakt, Audit-Eintrag) sagen,
+  *welche* Module die `satisfy`-Kante tragen müssen — ableitbar, nie behauptet. Eigener Pflege-CR.
+- **M1 ist unberührt** und als CR-GC-481 gefahren.
+
+Die Entscheidungsvorlage oben gilt entsprechend korrigiert: 1 erledigt (481), 2 wird Modellierung
+(Pflege-CR, kein Familienthema), 3 ist von CR-SM-281 abgelöst.

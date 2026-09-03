@@ -1,6 +1,6 @@
-# CR-DRAFT-GC-460 — Die Fitness-Metrik bestraft genau den Zug, den die eigene Doktrin vorschreibt
+# CR-GC-460 — ~~Die Fitness-Metrik bestraft genau den Zug, den die eigene Doktrin vorschreibt~~ — ZURÜCKGEZOGEN
 
-**Status:** draft — braucht Familie-Review (`@sigloch/se-engine`, Drift-Lock L2)
+**Status:** ZURÜCKGEZOGEN (2026-09-03). Die Prämisse ist in sigloch-modules nachgemessen widerlegt (`78d57b2`, CR-SM-279 Befund 1): Strukturblöcke sind für die Metrik nicht unsichtbar, eine Ebene für sich kostet ±0,01; der Einbruch bei CR-GC-457/459 kommt vom cluster-zerschneidenden Blockschnitt. Die verbleibende Frage — misst `coherence` am FUNC- statt am MOD-Baum — steht in **CR-SM-281**. Optionen A/B/C unten sind damit gegenstandslos; A ist zusätzlich gemessen schädlich (CR-GC-466 M3: `flowEfficiency` 0,83 → 0,12).
 **Angelegt:** 2026-09-02
 **Ausgelöst durch:** CR-GC-459 (Blockschnitt auf drei Features)
 
