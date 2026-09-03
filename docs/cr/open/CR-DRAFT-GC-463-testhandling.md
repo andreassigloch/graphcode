@@ -1,8 +1,13 @@
-# CR-DRAFT-GC-357 — Testhandling: was ist ein TEST-Knoten?
+# CR-DRAFT-GC-463 — Testhandling: was ist ein TEST-Knoten?
 
 **Status:** DRAFT (geparkt — Entscheidung erst nach weiteren echten Import-Beispielen)
 **Angelegt:** 2026-08-16 · **Herkunft:** SPIKE-GC-abstraction-levels §7 (moneyflow-Import) +
 Betreiber-Einspruch gegen die in CR-GF-141 zunächst vorgeschlagene Testdatei-Policy.
+**Umnummeriert 2026-09-03:** hieß bis dahin `CR-DRAFT-GC-357` und teilte diese Nummer mit dem
+abgeschlossenen [CR-GC-357](../done/CR-GC-357-relay-eindeutig-zuordnen.md) (Relay-Zuordnung) —
+zwei Themen, eine Nummer. Der Inhalt ist unverändert; nur die nackte Form `CR-GC-357` im Code
+und in den Hooks meint weiterhin den abgeschlossenen CR.
+
 **Zweck dieses Drafts:** die Erkenntnisse festhalten, Optionen offen halten, Beispiele sammeln.
 
 ---

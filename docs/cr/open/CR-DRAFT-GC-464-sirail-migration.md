@@ -1,9 +1,13 @@
-# CR-DRAFT-GC-358 — sirail-Migration: was ein Alt-Repo beim Nachziehen kostet
+# CR-DRAFT-GC-464 — sirail-Migration: was ein Alt-Repo beim Nachziehen kostet
 
 **Status:** DRAFT (Findings-Sammlung — die Migration selbst ist ausgeführt, die Schlüsse sind offen)
 **Angelegt:** 2026-08-18 · **Herkunft:** Auftrag „sirail auf den aktuellen Stand bringen + mit
 Zusatzebenen umbauen, Findings zum Prozess mitschreiben".
-**Testcase-Rolle:** dritter Import-Beleg für [CR-DRAFT-GC-357](CR-DRAFT-GC-357-testhandling.md)
+**Umnummeriert 2026-09-03:** hieß bis dahin `CR-DRAFT-GC-358` und teilte diese Nummer mit dem
+abgeschlossenen [CR-GC-358](../done/CR-GC-358-reasoning-effort-denkbudget.md) (Denkbudget).
+Inhalt unverändert.
+
+**Testcase-Rolle:** dritter Import-Beleg für [CR-DRAFT-GC-463](CR-DRAFT-GC-463-testhandling.md)
 (Testhandling) und zweiter Beleg für SPIKE-GC-abstraction-levels (Ebenen).
 
 ---
@@ -121,7 +125,7 @@ Fehlen erst auffällt, wenn jemand 80 MB Binärdaten committet hat.
 
 ### F6 · Testhandling — dritter Beleg, und er widerspricht moneyflow
 
-Für [CR-DRAFT-GC-357](CR-DRAFT-GC-357-testhandling.md): sirails 43 TEST-Knoten sind
+Für [CR-DRAFT-GC-463](CR-DRAFT-GC-463-testhandling.md): sirails 43 TEST-Knoten sind
 **handmodellierte Abnahmen** (`BlockStateTest.TC.001` — „Verify block state transitions"), nicht
 Datei- oder Fall-Knoten wie im moneyflow-Codeimport. Sie tragen **keine** `testRefs` (R-19, 43×).
 
@@ -132,7 +136,7 @@ Damit liegen **zwei unvereinbare TEST-Begriffe** nebeneinander:
 | Handmodelliert (sirail) | eine Abnahme, fachlich benannt | 43 |
 | Codeimport (moneyflow) | Datei **und** Testfall | 25 + 400 |
 
-Das stützt Option **b** aus CR-DRAFT-GC-357 (TEST = Abnahme, Dateien hängen als `testRefs`
+Das stützt Option **b** aus CR-DRAFT-GC-463 (TEST = Abnahme, Dateien hängen als `testRefs`
 daran) — der Import müsste dann Dateien **an** Abnahmen binden statt Abnahmen zu erfinden. Auf
 einem Repo ohne vorhandene Abnahmen hat er allerdings nichts zum Binden. **Genau das ist die
 offene Frage**, und sie ist jetzt an zwei echten Beispielen belegt statt an einem.

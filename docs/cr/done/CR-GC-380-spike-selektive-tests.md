@@ -34,7 +34,7 @@ Spike §6: Recall ≥ 60 % nach Modellfix, sonst trägt die Graph-Auswahl nicht.
 |---|---|
 | `docs/spikes/SPIKE-GC-selective-tests.md` | **neu** — Frage, Leitsatz, Methode, M1–M10, Befund, Falsifikationskriterium |
 | `docs/KPI.md` | KPI 6 gespalten: knotenseitig (R-19/R-20) **und** realitätsseitig (modellierte ÷ vorhandene Dateien) |
-| `docs/cr/open/CR-DRAFT-GC-357-testhandling.md` | §2b Konsumentenbefund — Option b folgt aus dem Leitsatz, E2 bricht in der Handarbeit, E3 bleibt offen |
+| `docs/cr/open/CR-DRAFT-GC-463-testhandling.md` | §2b Konsumentenbefund — Option b folgt aus dem Leitsatz, E2 bricht in der Handarbeit, E3 bleibt offen |
 | diese CR-Datei | |
 
 ## Warum die KPI gespalten wird
@@ -49,7 +49,7 @@ das Repo ab". Für eine selektive Testauswahl zählt die zweite.
 - [x] Jede Zahl im Spike ist aus dem committeten Snapshot bzw. dem echten Regel-Evaluator reproduzierbar
 - [x] Vergleichsmaßstab (Direkt-Import statt transitiver Hülle) ist begründet und als untere Schranke benannt
 - [x] Falsifikationskriterium für die spätere Verdrahtung ist festgelegt
-- [x] CR-DRAFT-GC-357 bleibt DRAFT, bekommt aber die gemessene Konsumentenantwort
+- [x] CR-DRAFT-GC-463 bleibt DRAFT, bekommt aber die gemessene Konsumentenantwort
 - [x] Keine Codeänderung, keine Verdrahtung in diesem CR
 
 @author andreas@siglochconsulting

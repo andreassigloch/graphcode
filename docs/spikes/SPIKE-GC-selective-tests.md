@@ -236,7 +236,7 @@ Orakel = **Graph ∪ Direkt-Import-Netz**; eine geänderte Datei ohne Knoten ode
 
 | CR | Inhalt |
 |---|---|
-| CR-GC-380 | dieser Spike + KPI-Präzisierung + Rückmeldung an CR-DRAFT-GC-357 |
+| CR-GC-380 | dieser Spike + KPI-Präzisierung + Rückmeldung an CR-DRAFT-GC-463 |
 | CR-GC-381 | Messinstrument (`scripts/test-selection-audit.mjs`), Traversal als reine Funktion |
 | CR-GC-382 | Modellbereinigung: `codeRef`-Grabsteine, `case` raus, R-29 auf 0, `path` je MOD |
 | CR-GC-383 | 58 fehlende Testobjekte verankern |
