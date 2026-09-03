@@ -1,6 +1,6 @@
-# CR-DRAFT-GC-466 — Spike: Der Repository-Stil, gemessen statt behauptet
+# CR-GC-466 — Spike: Der Repository-Stil, gemessen statt behauptet
 
-**Status:** draft — Spike, Timebox 1 Session, ändert den produktiven Graphen nicht
+**Status:** ABGESCHLOSSEN (Spike, 2026-09-03) — Ergebnis-Nachtrag unten; der produktive Graph ist unverändert (SHA im Test asserted)
 **Angelegt:** 2026-09-03 · **Herkunft:** Bottom-up-Entwurf gegen die Doktrin (Session 2026-09-03,
 graph-view-edit), Fortsetzung von CR-DRAFT-GC-460/461 und CR-SM-279
 **Vorgänger im Muster:** CR-GC-436 (Trockenübung, Kill-Kriterien, temp-Store gate-hart)
@@ -100,3 +100,68 @@ derselbe Vektor, plus der CR-459-Zug (Ebene einziehen) als Testfall — er muss 
 Der **Stil wird benannt**, bevor die nächste Metrik-Diskussion beginnt — ein Satz in `CLAUDE.md`
 unter „Locked constraints": *Repository-Stil — ein Zustand, ein Gate, der Kern kennt keine
 Klienten.* Ob daraus ein ableitbares `architectural` folgt, sagt M2.
+
+---
+
+# Ergebnis-Nachtrag (2026-09-03)
+
+Rig: `tests/repository-style.spike.test.ts` (Temp-Kuzu, Korrektur durch den `graph_mutate`-Tool-
+Handler, SSOT-SHA vorher = nachher asserted). M2/M3 ohne Kuzu: `scripts/spike-repository-style.mjs`.
+
+## M1 — Graph-State auf einen Produzentenblock
+
+8 der 17 Produzenten sind Leser oder Aufrufer (`decode`, `graph-export-snapshot`, `nd-similarity`,
+`rewind`, `session-shutdown`, `own-kuzu-host`, `migrate-schema` ohne Code, `ACTOR-owner`); ihre
+Produzenten-Kanten fallen, Konsumenten-Kanten bleiben. 17 → **9** Produzenten, alle in
+`kernel/harness.ts`, `merge.ts`, `harness-import.ts` — das Modell sagt jetzt, was der Code tut.
+
+| | modif | faultT | flowEff | coher | viab | scal | CR-01 Warnungen | Verträge über Grenzen |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| vorher | 2,875 | 5,000 | 0,826 | 3,713 | 4,975 | 4,021 | 13 | 58 |
+| nachher | 2,898 | 5,000 | 0,811 | 3,760 | 4,975 | 4,200 | **9** | **52** |
+| Δ | +0,023 | 0 | −0,015 | +0,047 | 0 | **+0,178** | −4 | −6 |
+
+**Δ·w = +0,006** — Kill-Kriterium (|Δ·w| < 0,05) **greift**: unter dem Zielprofil ist die Korrektur
+Modellhygiene. Aber: vier CR-01-Warnungen weniger (13 → 9), sechs Grenz-Verträge weniger, und die
+`graph_suggest`-Top-5 ändern sich (zwei von fünf Zeilen). Ehrliche Lesart: das Zielprofil sieht den
+Effekt nicht (es gewichtet `scalability` mit −0,2, wo die Korrektur +0,178 bringt) — die Regeln und
+die Rangliste sehen ihn. **Entscheidung: die Korrektur als Pflege-CR am produktiven Graphen fahren,
+ohne Architektur-Claim** — sie ist wahr, nicht wirksam.
+
+## M2 — `architectural` ableiten statt setzen
+
+Menge A (io-Nachbarn von `FUNC-mutate`) = { Mutate-Command, Gate-Verdikt, Graph-State,
+**Fit-Advisory, Format-E-Artefakt, Aufgezeichnete Gate-Entscheidung** }. Die drei aus CR-461 sind
+enthalten; A ist eine **Obermenge** (6). Kill-Kriterium („A ≠ die 3") greift wörtlich. Inhaltlich sind
+die drei zusätzlichen ebenfalls Gate-Pfad: was das Gate liest (Format-E-Artefakt) und was es ausgibt
+(Fit-Advisory, Audit-Eintrag). **An die Familie (CR-SM-279 Punkt 4):** die Ableitung „Flüsse am
+verriegelten Gate-FUNC" liefert eine begründbare, nicht behauptbare Menge — größer als die Hand-Liste.
+Ob 3 oder 6, ist eine Entscheidung; dass sie ableitbar ist, ist gemessen.
+
+## M3 — CR-460 korrigiert
+
+| Variante | flowEff | coher |
+|---|---:|---:|
+| heute (flach, alle Ebenen) | 0,826 | 3,713 |
+| CR-460 A wörtlich (Knoten + Kanten raus) | **0,119** | 3,638 |
+| M3a Strukturknoten raus, `compose`-Pfade durchgezogen | **0,119** | 3,887 |
+| M3b1 nur Blattebene, ohne `compose` | 0,433 | 3,667 |
+
+Keine Variante hält `flowEfficiency`. Mechanik (deckt sich mit CR-SM-279 „Messung zu Frage 1"): im
+`arch`-Teilgraphen sind die drei Strukturwurzeln die **einzigen Quellen** (Eingangsgrad 0);
+`sourceSinkPaths` misst von dort. Nimmt man Struktur heraus — wie auch immer — verschwinden die
+Quellen, und die Zahl kollabiert. **Kill-Kriterium greift: CR-460 ist kein Metrik-, sondern ein
+Konzept-CR** — was misst `flowEfficiency`, wenn `compose`-Kanten im arch-Layer liegen? Geht so an die
+Familie; Option A aus CR-460 ist damit vom Tisch.
+
+## Zusätzlicher Befund
+
+`steering.architecture-causality.test.ts` (T-C2 ×2, T-C4) ist rot auf jedem Stand seit `c826ff2`:
+`graph_suggest` liefert auf der Fixture 0 auf `arch`. Dieselbe Klasse wie M3 — die Rangliste sieht
+den Zug nicht. Gehört in den Konzept-CR.
+
+## Entscheidungsvorlage
+
+1. **M1 als Pflege-CR** am produktiven Graphen (8 `delete-edge`, durchs Gate) — ohne Claim.
+2. **M2 an CR-SM-279:** Ableitung statt Attribut, Menge = io-Nachbarn des Gate-FUNC (6 Flüsse).
+3. **M3 + Zusatzbefund als Konzept-CR** an die Familie: Messebene des ℝ⁶-Vektors bei `compose`.
