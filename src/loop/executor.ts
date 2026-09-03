@@ -30,7 +30,7 @@ import {
   renderDuplicateHints,
   type DuplicateHit,
   type IndexedElement,
-} from '../projections/nd-similarity.js';
+} from '../kernel/measure/nd-similarity.js';
 import type { SteeringDelta } from '../projections/steering-snapshot.js';
 // Der Antwortvertrag des Backends (CR-GC-426, SCHEMA-model-answer): geprüft am
 // Empfang, in der Draht-Form JEDES Backends — nicht erst im Prosa-Parser.

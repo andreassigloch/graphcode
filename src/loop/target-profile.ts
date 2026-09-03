@@ -19,7 +19,7 @@
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
-import { tokens } from '../projections/nd-similarity.js';
+import { tokens } from '../kernel/measure/nd-similarity.js';
 import {
   TargetWeightsSchema,
   TargetProfileSchema,

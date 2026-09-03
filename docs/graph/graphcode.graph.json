@@ -2749,7 +2749,7 @@
       "description": "Rechnet die Near-Duplicate-Matrizen ueber FUNC und SCHEMA und haengt sie an den Graphen, bevor der volle Regelkatalog laeuft. Aufrufer ist die Steering-Momentaufnahme, nicht der Treiber.",
       "status": "done",
       "realRef": {
-        "file": "src/projections/nd-similarity.ts",
+        "file": "src/kernel/measure/nd-similarity.ts",
         "symbol": "injectNDMatrices",
         "lang": "ts"
       }
@@ -14091,7 +14091,7 @@
     },
     {
       "source": "FUNC-nd-similarity",
-      "target": "MOD-projections",
+      "target": "MOD-kernel",
       "type": "allocate"
     },
     {
@@ -17423,5 +17423,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 232
+  "graphVersion": 233
 }

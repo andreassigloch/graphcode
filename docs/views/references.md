@@ -1220,7 +1220,7 @@
 | `FUNC-mutate` | satisfy | `REQ-confidence-tier` |
 | `FUNC-mutate` | satisfy | `REQ-graph-snapshot-per-commit` |
 | `FUNC-mutate` | satisfy | `REQ-single-write-door` |
-| `FUNC-nd-similarity` | allocate | `MOD-projections` |
+| `FUNC-nd-similarity` | allocate | `MOD-kernel` |
 | `FUNC-nd-similarity` | io | `FLOW-graph-state` |
 | `FUNC-nd-similarity` | satisfy | `REQ-near-duplicate-detection` |
 | `FUNC-next-step` | allocate | `MOD-loop` |

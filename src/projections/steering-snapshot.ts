@@ -19,7 +19,7 @@ import type { OntologyGraph, MetricPolicy } from '@sigloch/contracts/se';
 import { evaluateAllRules } from '@sigloch/contracts/se';
 import { computeReadiness } from '@sigloch/se-engine';
 import { toOntologyGraph } from '../kernel/conformance.js';
-import { withNDMatrices } from './nd-similarity.js';
+import { withNDMatrices } from '../kernel/measure/nd-similarity.js';
 
 export interface SteeringSnapshot {
   /** Der gemappte Ontology-Graph MIT injizierten ND-Matrizen. */

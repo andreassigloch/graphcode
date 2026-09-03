@@ -30,7 +30,7 @@ import {
   duplicateHits,
   renderDuplicateHints,
   HINT_SIMILARITY_THRESHOLD,
-} from '../src/projections/nd-similarity.js';
+} from '../src/kernel/measure/nd-similarity.js';
 import { generationStep } from '../src/loop/generate.js';
 
 const fixture = (name: string): OntologyGraph =>

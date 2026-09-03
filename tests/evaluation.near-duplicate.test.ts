@@ -34,7 +34,7 @@ import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import { evaluateAll, readinessOf, type Finding } from '../src/kernel/evaluation.js';
 import { takeSteeringSnapshot } from '../src/projections/steering-snapshot.js';
-import { injectNDMatrices, clearNDMatrices, withNDMatrices } from '../src/projections/nd-similarity.js';
+import { injectNDMatrices, clearNDMatrices, withNDMatrices } from '../src/kernel/measure/nd-similarity.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 
 /** Zwei feld- UND beschreibungsgleiche SCHEMAs — der ND-02-Fall. */

@@ -53,7 +53,7 @@ import {
 } from '@sigloch/contracts/se';
 import { conformanceEvaluation, toOntologyGraph, type ConformanceHarness } from './conformance.js';
 import type { ImportCoverage } from '@sigloch/contracts/se';
-import { withNDMatrices } from '../projections/nd-similarity.js';
+import { withNDMatrices } from './measure/nd-similarity.js';
 import { computeReadiness, type ReadinessReport } from '../projections/readiness.js';
 
 type CGraph = Pick<Graph, 'nodes' | 'edges'>;

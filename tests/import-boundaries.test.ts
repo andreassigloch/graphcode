@@ -37,7 +37,6 @@ const RANK: Record<string, number> = { kernel: 0, loop: 1, projections: 2, surfa
 
 /** Bekannte Altlast (Stand 2026-09-03). Nur streichen, nie ergänzen. */
 const DEBT: string[] = [
-  'kernel/evaluation.ts → projections/nd-similarity',
   'kernel/evaluation.ts → projections/readiness',
   'kernel/harness-import.ts → projections/exporter',
   'kernel/harness.ts → projections/fit-advisory',
@@ -48,16 +47,13 @@ const DEBT: string[] = [
   'loop/executor-rank.ts → projections/fit-advisory',
   'loop/executor-rank.ts → projections/steering-snapshot',
   'loop/executor.ts → projections/fit-advisory [type]',
-  'loop/executor.ts → projections/nd-similarity',
   'loop/executor.ts → projections/steering-snapshot [type]',
   'loop/executor.ts → surface/mcp-tools [type]',
   'loop/generate.ts → projections/readiness',
   'loop/generate.ts → projections/steering-snapshot',
   'loop/steering.ts → projections/steering-snapshot',
-  'loop/suggest.ts → projections/nd-similarity',
   'loop/suggest.ts → surface/mcp-tools [type]',
   'loop/suggest.ts → surface/tool-context [type]',
-  'loop/target-profile.ts → projections/nd-similarity',
   'projections/auto-export.ts → surface/mcp-tools [type]',
   'projections/export.ts → surface/mcp-tools [type]',
   'projections/export.ts → surface/scaffold-templates',

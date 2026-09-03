@@ -209,7 +209,7 @@
 | `FUNC-migrate-schema` | `MOD-kernel` |
 | `FUNC-module-metrics` | `MOD-projections` |
 | `FUNC-mutate` | `MOD-kernel` |
-| `FUNC-nd-similarity` | `MOD-projections` |
+| `FUNC-nd-similarity` | `MOD-kernel` |
 | `FUNC-next-step` | `MOD-loop` |
 | `FUNC-open-store` | `MOD-kernel` |
 | `FUNC-own-kuzu-host` | `MOD-kernel` |

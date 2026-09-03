@@ -27,7 +27,7 @@ import type { MutateResult } from '@sigloch/contracts/harness';
 import type { MutateCommand } from '@sigloch/contracts/harness';
 import { targetFor, suggestEdits, type Suggestion, type SuggestedEdit } from '@sigloch/se-engine';
 import { toOntologyGraph } from '../kernel/conformance.js';
-import { withNDMatrices } from '../projections/nd-similarity.js';
+import { withNDMatrices } from '../kernel/measure/nd-similarity.js';
 import { generationStep, type GenerationStep } from './generate.js';
 import {
   TargetWeightsSchema,
