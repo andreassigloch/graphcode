@@ -19,7 +19,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { Graph, GraphNode, GraphEdge } from '@sigloch/graph-api-core';
 import { GraphCodeCodec } from '../src/projections/codec.js';
-import { elementToNode } from '../src/projections/exporter.js';
+import { elementToNode } from '../src/kernel/element-node.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 

@@ -37,7 +37,6 @@ export {
   exportGraphJson,
   isCanonicalSnapshot,
   exportMarkdown,
-  elementToNode,
   MarkdownViewSchema,
   MARKDOWN_VIEWS,
   VIEW_FILENAMES,
@@ -159,6 +158,7 @@ export {
 } from './kernel/config.js';
 export type { GraphcodeConfig, LoadedConfig, PolicySource } from './kernel/config.js';
 
+export { elementToNode } from './kernel/element-node.js';
 // CR-GC-475: Composition Root und Store-Pfad liegen in ihrer Schicht; das Barrel re-exportiert.
 export { KUZU_DIR } from './kernel/workspace.js';
 export { createHarness } from './surface/create-harness.js';

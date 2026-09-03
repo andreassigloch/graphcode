@@ -19,7 +19,7 @@ import { PHASE_GATE_RULES } from '../src/kernel/measure/readiness.js';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { extractCodeFacts, extractImportEdges, conformanceViolations, toOntologyGraph } from '../src/kernel/conformance.js';
 import { scoreReadinessWithConformance } from '../src/kernel/evaluation.js';
-import { elementToNode } from '../src/projections/exporter.js';
+import { elementToNode } from '../src/kernel/element-node.js';
 import { evaluateAllRules, DEFAULT_METRIC_POLICY } from '@sigloch/contracts/se';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 

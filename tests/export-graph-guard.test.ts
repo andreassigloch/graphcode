@@ -18,7 +18,8 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { isCanonicalSnapshot, exportGraphJson, elementToNode } from '../src/projections/exporter.js';
+import { isCanonicalSnapshot, exportGraphJson } from '../src/projections/exporter.js';
+import { elementToNode } from '../src/kernel/element-node.js';
 import type { Graph } from '@sigloch/graph-api-core';
 
 /** elements/traces → Graph via the SHARED import mapping — same as the script. */

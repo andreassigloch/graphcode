@@ -19,7 +19,7 @@
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import type { Graph, GraphNode, GraphEdge, StorageAdapter } from '@sigloch/graph-api-core';
-import { elementToNode } from '../projections/exporter.js';
+import { elementToNode } from './element-node.js';
 import { clearExportPending } from './export-marker.js';
 
 /**
