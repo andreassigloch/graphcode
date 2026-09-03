@@ -1,6 +1,6 @@
 # CR-GC-471 — Messung in den Kern (C1c): `readiness`
 
-**Status:** open · **Angelegt:** 2026-09-03 · **Herkunft:** CR-GC-467 Entscheidung 1; vierter
+**Status:** done · **Angelegt:** 2026-09-03 · **Abgeschlossen:** 2026-09-03 (Commit `20a6e28`) · **Herkunft:** CR-GC-467 Entscheidung 1; vierter
 Tilgungsschritt nach CR-GC-468/469/470
 
 ## Root Cause
@@ -22,10 +22,13 @@ der der Kern urteilt; `report` und `help` zeigen sie an. Die Datei importiert ni
 
 ## Akzeptanzkriterien
 
-- [ ] Kein Verweis auf `projections/readiness` mehr in `src/`, `tests/`, `scripts/`.
-- [ ] Build grün; die elf readiness-/help-/steering-Tests + Ratchet grün; volle Suite im
-      Pre-Commit grün.
-- [ ] Gate: dryRun ohne Blocker, apply, Export — Diff = zwei `realRef.file` + eine `allocate`.
+- [x] Kein Verweis auf `projections/readiness` mehr in `src/`, `tests/`, `scripts/` (`src/README.md`: Prosa nachgezogen, Messungs-Absatz ergänzt).
+- [x] Build grün; zehn der elf Tests + Ratchet grün. **Vorbestand, nicht dieser CR:**
+      `readiness.completeness.test.ts` › *a FLOW without a SCHEMA holds CDR red* fällt identisch auf
+      HEAD (Worktree-Gegenprobe) — der Test fingiert eine `SC-04`-Verletzung, die seit contracts
+      10.0.0 nicht mehr existiert (CR-SM-271 Teil 2). Eigener CR: Test auf R-18 umstellen.
+      `conformance.test.ts` war nur im Parallel-Lauf rot, isoliert 16/16 grün.
+- [x] Gate: dryRun ohne Blocker, apply (graphVersion 235 → 236), Export — Diff = zwei `realRef.file` + eine `allocate`; Fit-Advisory Δ nur `scalability +0,017`.
 
 ## Dateien
 
