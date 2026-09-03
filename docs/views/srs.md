@@ -1162,7 +1162,7 @@ Verification ◀ `TEST-target-profile` (integration) · `TEST-thresholds-from-co
 
 Der EINE Messpfad: mappt den Graphen ueber toOntologyGraph, injiziert die ND-Matrizen und wertet den vollen Regelkatalog aus; liefert Regelstrom, blockierende Fehler und den Readiness-Report in EINEM Objekt. Jede weitere Kenngroesse ist eine Projektion davon, keine zweite Messung.
 
-io ◀ `FLOW-gate-verdict` · `FLOW-metric-policy` · `FLOW-steering-trigger` · io ▶ `FLOW-gate-verdict` · `FLOW-measurement-vector` · `FLOW-steering-snapshot` · allocate ▶ `MOD-projections`
+io ◀ `FLOW-gate-verdict` · `FLOW-metric-policy` · `FLOW-steering-trigger` · io ▶ `FLOW-gate-verdict` · `FLOW-measurement-vector` · `FLOW-steering-snapshot` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-applied-suggestion-moves-target` — Eine angewandte Suggestion bewegt den Zielvektor in Zielrichtung
 
@@ -1172,7 +1172,7 @@ Wird die bestbewertete anwendbare Suggestion real durchs Gate angewandt, bewegt 
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-applied-suggestion-moves-target` (integration) · satisfy ◀ `FUNC-graph-suggest` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-loop` · `MOD-projections`
+Verification ◀ `TEST-applied-suggestion-moves-target` (integration) · satisfy ◀ `FUNC-graph-suggest` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel` · `MOD-loop`
 
 ###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
 
@@ -1190,7 +1190,7 @@ Nach einer Steuerungsrunde liegt die Empfehlung deterministisch aus genau einem 
 
 priority: must · status: reviewed · kinds: postcondition
 
-Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FUNC-take-steering-snapshot` · allocate ▶ `MOD-projections`
+Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel`
 
 ##### 3.2.2.3  `FUNC-compute-phase-readiness` — computePhaseReadiness(violations)
 
@@ -1422,7 +1422,7 @@ Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (in
 
 Differenz zweier Snapshots: blockierende Fehler vorher und nachher plus Score-Delta je Dimension. Dimensionen ohne Grundgesamtheit auf beiden Seiten entfallen, weil ihr Score dort konstruktiv 0 ist und nicht perfekt.
 
-io ◀ `FLOW-steering-snapshot` · io ▶ `FLOW-steering-delta` · allocate ▶ `MOD-projections`
+io ◀ `FLOW-steering-snapshot` · io ▶ `FLOW-steering-delta` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
 
@@ -2530,7 +2530,7 @@ Wird die bestbewertete anwendbare Suggestion real durchs Gate angewandt, bewegt 
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-applied-suggestion-moves-target` (integration) · satisfy ◀ `FUNC-graph-suggest` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-loop` · `MOD-projections`
+Verification ◀ `TEST-applied-suggestion-moves-target` (integration) · satisfy ◀ `FUNC-graph-suggest` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel` · `MOD-loop`
 
 ###### `REQ-target-shifts-ranking` — Die Zielrichtung verschiebt das Suggestion-Ranking
 
@@ -3958,7 +3958,7 @@ Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (in
 
 Differenz zweier Snapshots: blockierende Fehler vorher und nachher plus Score-Delta je Dimension. Dimensionen ohne Grundgesamtheit auf beiden Seiten entfallen, weil ihr Score dort konstruktiv 0 ist und nicht perfekt.
 
-io ◀ `FLOW-steering-snapshot` · io ▶ `FLOW-steering-delta` · allocate ▶ `MOD-projections`
+io ◀ `FLOW-steering-snapshot` · io ▶ `FLOW-steering-delta` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
 
@@ -4036,7 +4036,7 @@ Verification ◀ `TEST-readiness-completeness` (acceptance) · satisfy ◀ `FUNC
 
 Der EINE Messpfad: mappt den Graphen ueber toOntologyGraph, injiziert die ND-Matrizen und wertet den vollen Regelkatalog aus; liefert Regelstrom, blockierende Fehler und den Readiness-Report in EINEM Objekt. Jede weitere Kenngroesse ist eine Projektion davon, keine zweite Messung.
 
-io ◀ `FLOW-gate-verdict` · `FLOW-metric-policy` · `FLOW-steering-trigger` · io ▶ `FLOW-gate-verdict` · `FLOW-measurement-vector` · `FLOW-steering-snapshot` · allocate ▶ `MOD-projections`
+io ◀ `FLOW-gate-verdict` · `FLOW-metric-policy` · `FLOW-steering-trigger` · io ▶ `FLOW-gate-verdict` · `FLOW-measurement-vector` · `FLOW-steering-snapshot` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-applied-suggestion-moves-target` — Eine angewandte Suggestion bewegt den Zielvektor in Zielrichtung
 
@@ -4046,7 +4046,7 @@ Wird die bestbewertete anwendbare Suggestion real durchs Gate angewandt, bewegt 
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-applied-suggestion-moves-target` (integration) · satisfy ◀ `FUNC-graph-suggest` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-loop` · `MOD-projections`
+Verification ◀ `TEST-applied-suggestion-moves-target` (integration) · satisfy ◀ `FUNC-graph-suggest` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel` · `MOD-loop`
 
 ###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
 
@@ -4064,7 +4064,7 @@ Nach einer Steuerungsrunde liegt die Empfehlung deterministisch aus genau einem 
 
 priority: must · status: reviewed · kinds: postcondition
 
-Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FUNC-take-steering-snapshot` · allocate ▶ `MOD-projections`
+Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel`
 
 ##### 3.10.2.5  `FUNC-block-schaufenster` — Nachweis
 
@@ -4536,7 +4536,7 @@ Wird die bestbewertete anwendbare Suggestion real durchs Gate angewandt, bewegt 
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-applied-suggestion-moves-target` (integration) · satisfy ◀ `FUNC-graph-suggest` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-loop` · `MOD-projections`
+Verification ◀ `TEST-applied-suggestion-moves-target` (integration) · satisfy ◀ `FUNC-graph-suggest` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel` · `MOD-loop`
 
 ###### `REQ-target-shifts-ranking` — Die Zielrichtung verschiebt das Suggestion-Ranking
 
@@ -5572,7 +5572,7 @@ allocate ◀ — · satisfy ▶ `REQ-artifact-freshness` · `REQ-dashboard-ontol
 
 Der einzige Kuzu-Owner. Zwei Tueren nach aussen: apply(Command[]) liefert ein Verdict, query(TypedQuery) liefert eine Scheibe. Ausserhalb dieses Moduls sieht niemand den Graphen; Lifecycle, Sperre, Regel-Lauf, Konformitaets-Fakten, Migration und das Operations-Log liegen hier. (CR-GC-446)
 
-allocate ◀ `FUNC-apply-reseed` · `FUNC-block-gate` · `FUNC-block-ruestzeug` · `FUNC-block-speicherwerk` · `FUNC-check-code-conformance` · `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-compute-phase-readiness` · `FUNC-create-harness` · `FUNC-evaluate-rules` · `FUNC-export-marker` · `FUNC-fit-advisory` · `FUNC-graph-expand` · `FUNC-graph-impact` · `FUNC-import` · `FUNC-list-elements` · `FUNC-load-config` · `FUNC-load-graph` · `FUNC-merge-nodes` · `FUNC-migrate-schema` · `FUNC-mutate` · `FUNC-nd-similarity` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-reseed` · `FUNC-resolve-tests-from-code` · `FUNC-save-graph` · `FUNC-schema-guard` · `FUNC-seed-from-json` · satisfy ▶ `REQ-batch-seed-performance` · `REQ-disk-persistence` · `REQ-gate-only-writes` · `REQ-harness-schema-in-contracts` · `REQ-hook-extension-points` · `REQ-hook-order-deterministic` · `REQ-import-se-ontology` · `REQ-precommit-timeout` · `REQ-prompt-provenance` · `REQ-quality-metric` · `REQ-rule-calibration` · `REQ-single-kuzu-owner` · `REQ-single-store` · `REQ-store-recovery` · `REQ-structural-rule-shared`
+allocate ◀ `FUNC-apply-reseed` · `FUNC-block-gate` · `FUNC-block-ruestzeug` · `FUNC-block-speicherwerk` · `FUNC-check-code-conformance` · `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-compute-phase-readiness` · `FUNC-compute-steering-delta` · `FUNC-create-harness` · `FUNC-evaluate-rules` · `FUNC-export-marker` · `FUNC-fit-advisory` · `FUNC-graph-expand` · `FUNC-graph-impact` · `FUNC-import` · `FUNC-list-elements` · `FUNC-load-config` · `FUNC-load-graph` · `FUNC-merge-nodes` · `FUNC-migrate-schema` · `FUNC-mutate` · `FUNC-nd-similarity` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-reseed` · `FUNC-resolve-tests-from-code` · `FUNC-save-graph` · `FUNC-schema-guard` · `FUNC-seed-from-json` · `FUNC-take-steering-snapshot` · satisfy ▶ `REQ-batch-seed-performance` · `REQ-disk-persistence` · `REQ-gate-only-writes` · `REQ-harness-schema-in-contracts` · `REQ-hook-extension-points` · `REQ-hook-order-deterministic` · `REQ-import-se-ontology` · `REQ-precommit-timeout` · `REQ-prompt-provenance` · `REQ-quality-metric` · `REQ-rule-calibration` · `REQ-single-kuzu-owner` · `REQ-single-store` · `REQ-store-recovery` · `REQ-structural-rule-shared`
 
 ### 6.4  `MOD-loop` — loop — Autopilot und Executor
 
@@ -5584,7 +5584,7 @@ allocate ◀ `FUNC-block-antrieb` · `FUNC-block-arch-optimierung` · `FUNC-bloc
 
 Reine Projektionen des Graphen: Messung, Readiness, Codec, Export, Markdown-Views, Trajektorie. Liest den Graphen ueber die kernel-Abfrage und schreibt nie in ihn zurueck. (CR-GC-446)
 
-allocate ◀ `FUNC-arch-fitness` · `FUNC-auto-export` · `FUNC-block-dokumentenwerk` · `FUNC-block-gedaechtnis` · `FUNC-block-messwerk` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-decode` · `FUNC-deduce-tests` · `FUNC-emit-trajectory` · `FUNC-encode` · `FUNC-export-markdown` · `FUNC-graph-export-snapshot` · `FUNC-module-metrics` · `FUNC-score-completeness` · `FUNC-take-steering-snapshot` · satisfy ▶ `REQ-completeness-single-value` · `REQ-deterministic-serialization` · `REQ-docs-taxonomy` · `REQ-export-no-clobber` · `REQ-formatE-parity` · `REQ-graph-integrity` · `REQ-interface-schema` · `REQ-single-measurement-path` · `REQ-testref-materialized`
+allocate ◀ `FUNC-arch-fitness` · `FUNC-auto-export` · `FUNC-block-dokumentenwerk` · `FUNC-block-gedaechtnis` · `FUNC-block-messwerk` · `FUNC-compute-readiness` · `FUNC-decode` · `FUNC-deduce-tests` · `FUNC-emit-trajectory` · `FUNC-encode` · `FUNC-export-markdown` · `FUNC-graph-export-snapshot` · `FUNC-module-metrics` · `FUNC-score-completeness` · satisfy ▶ `REQ-completeness-single-value` · `REQ-deterministic-serialization` · `REQ-docs-taxonomy` · `REQ-export-no-clobber` · `REQ-formatE-parity` · `REQ-graph-integrity` · `REQ-interface-schema` · `REQ-single-measurement-path` · `REQ-testref-materialized`
 
 ### 6.6  `MOD-surface` — surface — MCP, CLI, Host-Socket, Viewer
 

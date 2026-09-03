@@ -2311,7 +2311,7 @@
       "description": "Differenz zweier Snapshots: blockierende Fehler vorher und nachher plus Score-Delta je Dimension. Dimensionen ohne Grundgesamtheit auf beiden Seiten entfallen, weil ihr Score dort konstruktiv 0 ist und nicht perfekt.",
       "status": "done",
       "realRef": {
-        "file": "src/projections/steering-snapshot.ts",
+        "file": "src/kernel/measure/steering-snapshot.ts",
         "symbol": "computeSteeringDelta",
         "lang": "ts"
       }
@@ -3083,7 +3083,7 @@
       "description": "Der EINE Messpfad: mappt den Graphen ueber toOntologyGraph, injiziert die ND-Matrizen und wertet den vollen Regelkatalog aus; liefert Regelstrom, blockierende Fehler und den Readiness-Report in EINEM Objekt. Jede weitere Kenngroesse ist eine Projektion davon, keine zweite Messung.",
       "status": "done",
       "realRef": {
-        "file": "src/projections/steering-snapshot.ts",
+        "file": "src/kernel/measure/steering-snapshot.ts",
         "symbol": "takeSteeringSnapshot",
         "lang": "ts"
       }
@@ -5189,7 +5189,7 @@
       "description": "blockingErrors vorher und nachher plus je Dimension before, after, delta.",
       "status": "reviewed",
       "realRef": {
-        "file": "src/projections/steering-snapshot.ts",
+        "file": "src/kernel/measure/steering-snapshot.ts",
         "symbol": "SteeringDelta",
         "lang": "ts"
       }
@@ -5201,7 +5201,7 @@
       "description": "Gemappter OntologyGraph mit injizierten ND-Matrizen, Violations des vollen Katalogs, Zahl der blockierenden Fehler, Readiness-Report.",
       "status": "reviewed",
       "realRef": {
-        "file": "src/projections/steering-snapshot.ts",
+        "file": "src/kernel/measure/steering-snapshot.ts",
         "symbol": "SteeringSnapshot",
         "lang": "ts"
       }
@@ -13322,7 +13322,7 @@
     },
     {
       "source": "FUNC-compute-steering-delta",
-      "target": "MOD-projections",
+      "target": "MOD-kernel",
       "type": "allocate"
     },
     {
@@ -14568,7 +14568,7 @@
     },
     {
       "source": "FUNC-take-steering-snapshot",
-      "target": "MOD-projections",
+      "target": "MOD-kernel",
       "type": "allocate"
     },
     {
@@ -17423,5 +17423,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 236
+  "graphVersion": 237
 }

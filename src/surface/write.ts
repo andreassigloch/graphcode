@@ -16,7 +16,7 @@ import { GraphVersionSchema } from '@sigloch/contracts/harness';
 import { TestRefsSchema } from '@sigloch/contracts/se';
 import { readBranchLog, replayBranchLog, type MergeReport } from '../kernel/merge.js';
 import type { MCPTool, MCPToolRegistry } from './mcp-tools.js';
-import { computeSteeringDelta, takeSteeringSnapshot, type SteeringDelta } from '../projections/steering-snapshot.js';
+import { computeSteeringDelta, takeSteeringSnapshot, type SteeringDelta } from '../kernel/measure/steering-snapshot.js';
 import { stripViolationContext } from '../kernel/evaluation.js';
 import type { RespondsToViolation } from '../projections/trajectory.js';
 import type { ToolContext } from './tool-context.js';

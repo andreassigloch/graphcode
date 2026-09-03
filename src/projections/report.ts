@@ -27,7 +27,7 @@ import {
   type ReadinessScoreType,
   type ImportCoverage,
 } from '@sigloch/contracts/se';
-import { takeSteeringSnapshot } from './steering-snapshot.js';
+import { takeSteeringSnapshot } from '../kernel/measure/steering-snapshot.js';
 import {
   summarizeReadiness,
   computePhaseReadiness,

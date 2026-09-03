@@ -34,7 +34,7 @@ import { metrics, toArray } from '@sigloch/se-engine';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness, type MCPToolRegistry } from '../src/surface/mcp-tools.js';
 import { toOntologyGraph } from '../src/kernel/conformance.js';
-import { takeSteeringSnapshot } from '../src/projections/steering-snapshot.js';
+import { takeSteeringSnapshot } from '../src/kernel/measure/steering-snapshot.js';
 import { CONFIG_FILENAME, DEFAULT_FOCUS_THRESHOLD, loadGraphcodeConfig } from '../src/kernel/config.js';
 import { DEFAULT_METRIC_POLICY } from '@sigloch/contracts/se';
 import { ARCH_FIXTURE, makeSteeringConfig } from './fixtures/steering-graphs.js';

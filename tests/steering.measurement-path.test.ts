@@ -30,9 +30,9 @@ import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness, type MCPToolRegistry } from '../src/surface/mcp-tools.js';
 import { nextStep } from '../src/loop/steering.js';
 import { generationStep } from '../src/loop/generate.js';
-import { takeSteeringSnapshot } from '../src/projections/steering-snapshot.js';
+import { takeSteeringSnapshot } from '../src/kernel/measure/steering-snapshot.js';
 import { ARCH_FIXTURE, makeSteeringConfig } from './fixtures/steering-graphs.js';
-import type { SteeringDelta } from '../src/projections/steering-snapshot.js';
+import type { SteeringDelta } from '../src/kernel/measure/steering-snapshot.js';
 
 /** The attribute-borne bindings whose judgement flips on a flattened encoding. */
 const ATTRIBUTE_BORNE_RULES = ['R-19', 'R-20', 'R-26', 'VR-01', 'AF-01', 'AF-02', 'AF-03', 'AF-04', 'AF-05'];

@@ -12,7 +12,7 @@
 import type { Graph } from '@sigloch/graph-api-core';
 import type { RuleViolation, MetricPolicy } from '@sigloch/contracts/se';
 import { RULE_TO_DIMENSION } from '@sigloch/contracts/se';
-import { takeSteeringSnapshot } from '../projections/steering-snapshot.js';
+import { takeSteeringSnapshot } from '../kernel/measure/steering-snapshot.js';
 
 /** Generic next action per readiness dimension. */
 const DIMENSION_ACTION: Record<string, string> = {

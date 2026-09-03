@@ -20,7 +20,7 @@
 import { describe, it, expect } from 'vitest';
 import { DEFAULT_METRIC_POLICY } from '@sigloch/contracts/se';
 import type { Graph, GraphNode, GraphEdge } from '@sigloch/graph-api-core';
-import { takeSteeringSnapshot } from '../src/projections/steering-snapshot.js';
+import { takeSteeringSnapshot } from '../src/kernel/measure/steering-snapshot.js';
 import { exportGraphJson } from '../src/projections/exporter.js';
 
 function node(

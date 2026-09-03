@@ -40,8 +40,8 @@
 | `SCHEMA-round-scope` | Konzept (noch kein Zod-Export) | n/a |
 | `SCHEMA-schema-fingerprint` | src/kernel/schema-fingerprint-contract.ts#SchemaFingerprintSchema | n/a |
 | `SCHEMA-session-registry` | src/surface/gve-session-contract.ts#SessionEntrySchema | n/a |
-| `SCHEMA-steering-delta` | src/projections/steering-snapshot.ts#SteeringDelta | reviewed |
-| `SCHEMA-steering-snapshot` | src/projections/steering-snapshot.ts#SteeringSnapshot | reviewed |
+| `SCHEMA-steering-delta` | src/kernel/measure/steering-snapshot.ts#SteeringDelta | reviewed |
+| `SCHEMA-steering-snapshot` | src/kernel/measure/steering-snapshot.ts#SteeringSnapshot | reviewed |
 | `SCHEMA-target-profile` | src/loop/target-profile-contract.ts#TargetProfileSchema | n/a |
 | `SCHEMA-test-selection` | src/kernel/measure/test-selection.ts#TestSelectionSchema | n/a |
 | `SCHEMA-trajectory` | packages/learning-core/src/interfaces/trajectory.ts#TrajectorySchema | reviewed |

@@ -1086,7 +1086,7 @@
 | `FUNC-compute-readiness` | io | `FLOW-dimension-readiness` |
 | `FUNC-compute-readiness` | satisfy | `REQ-readiness-model` |
 | `FUNC-compute-readiness` | satisfy | `REQ-steering-from-metrics` |
-| `FUNC-compute-steering-delta` | allocate | `MOD-projections` |
+| `FUNC-compute-steering-delta` | allocate | `MOD-kernel` |
 | `FUNC-compute-steering-delta` | io | `FLOW-steering-delta` |
 | `FUNC-compute-steering-delta` | satisfy | `REQ-steering-from-metrics` |
 | `FUNC-create-harness` | allocate | `MOD-kernel` |
@@ -1314,7 +1314,7 @@
 | `FUNC-session-shutdown` | allocate | `MOD-surface` |
 | `FUNC-session-shutdown` | io | `FLOW-graph-state` |
 | `FUNC-session-shutdown` | satisfy | `REQ-session-leaves-nothing-behind` |
-| `FUNC-take-steering-snapshot` | allocate | `MOD-projections` |
+| `FUNC-take-steering-snapshot` | allocate | `MOD-kernel` |
 | `FUNC-take-steering-snapshot` | io | `FLOW-gate-verdict` |
 | `FUNC-take-steering-snapshot` | io | `FLOW-measurement-vector` |
 | `FUNC-take-steering-snapshot` | io | `FLOW-steering-snapshot` |

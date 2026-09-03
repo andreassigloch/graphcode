@@ -175,7 +175,7 @@
 | `FUNC-collect-status` | `MOD-surface` |
 | `FUNC-compute-phase-readiness` | `MOD-kernel` |
 | `FUNC-compute-readiness` | `MOD-projections` |
-| `FUNC-compute-steering-delta` | `MOD-projections` |
+| `FUNC-compute-steering-delta` | `MOD-kernel` |
 | `FUNC-create-harness` | `MOD-kernel` |
 | `FUNC-decode` | `MOD-projections` |
 | `FUNC-deduce-tests` | `MOD-projections` |
@@ -239,7 +239,7 @@
 | `FUNC-serve-sse` | `MOD-surface` |
 | `FUNC-serve-stdio` | `MOD-surface` |
 | `FUNC-session-shutdown` | `MOD-surface` |
-| `FUNC-take-steering-snapshot` | `MOD-projections` |
+| `FUNC-take-steering-snapshot` | `MOD-kernel` |
 | `FUNC-target-profile` | `MOD-agent-surface` |
 | `FUNC-target-profile-load` | `MOD-loop` |
 | `FUNC-test` | `MOD-agent-surface` |
