@@ -30,7 +30,7 @@ import { attachGve } from './gve.js';
 import { startHostSocket, buildProxyRegistry, HOST_SOCK_BASENAME, type HostSocket } from './host-shim.js';
 import { HostBridge } from './host.js';
 import type { LiveUpdateEvent } from './emit.js';
-import { readPackageVersion } from './package-version.js';
+import { readPackageVersion } from '../kernel/package-version.js';
 
 // Der Handshake nennt dieselbe Zahl wie Lock-Stempel und `status` — ein Leser für alle (CR-GC-376).
 export { readPackageVersion };

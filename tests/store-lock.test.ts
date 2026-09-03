@@ -13,7 +13,7 @@ import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { StoreLock, StoreOwnershipError } from '../src/kernel/store-lock.js';
-import { readPackageVersion } from '../src/surface/package-version.js';
+import { readPackageVersion } from '../src/kernel/package-version.js';
 import { readHostStatus } from '../src/surface/status.js';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';

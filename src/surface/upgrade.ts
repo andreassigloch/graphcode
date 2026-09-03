@@ -30,7 +30,7 @@ import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { hostname } from 'node:os';
 import { PACKAGE_NAME } from './scaffold-templates.js';
-import { readPackageVersion } from './package-version.js';
+import { readPackageVersion } from '../kernel/package-version.js';
 import { readHostStatus, readRepoInstallVersion, compareVersions } from './status.js';
 // „Lebt diese PID" hat EINEN Besitzer (CR-GC-452) — die lokale Kopie ist geloescht.
 import { isAlive } from './gve-sessions.js';

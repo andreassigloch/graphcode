@@ -23,8 +23,8 @@ import { fileURLToPath } from 'node:url';
 
 /**
  * Die Paketwurzel des LAUFENDEN Codes: das nächste Verzeichnis oberhalb dieser
- * Datei, das eine `package.json` trägt — hält im Dev-Baum (`src/surface/…`) wie im
- * veröffentlichten Paket (`dist/surface/…`), unabhängig von der Verzeichnistiefe.
+ * Datei, das eine `package.json` trägt — hält im Dev-Baum (`src/kernel/…`) wie im
+ * veröffentlichten Paket (`dist/kernel/…`), unabhängig von der Verzeichnistiefe.
  */
 export function packageRootDir(): string {
   let dir = dirname(fileURLToPath(import.meta.url));

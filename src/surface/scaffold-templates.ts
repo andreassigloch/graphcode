@@ -16,7 +16,7 @@
  */
 import { join } from 'node:path';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
-import { readPackageVersion, packageRootDir } from './package-version.js';
+import { readPackageVersion, packageRootDir } from '../kernel/package-version.js';
 import { MARKDOWN_VIEWS, VIEW_FILENAMES, type MarkdownView } from '@sigloch/graphcode-client';
 
 /** The distribution package a member repo depends on. */

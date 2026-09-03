@@ -22,7 +22,7 @@ import { openSync, writeSync, closeSync, readFileSync, rmSync, mkdirSync, statSy
 import { dirname } from 'node:path';
 import { hostname } from 'node:os';
 import { LockOwner } from './lock-owner-contract.js';
-import { readPackageVersion } from '../surface/package-version.js';
+import { readPackageVersion } from './package-version.js';
 
 /** Grace period after which an UNPARSEABLE lockfile is treated as stale (a mid-write window is sub-second). */
 const STALE_CORRUPT_MS = 5000;

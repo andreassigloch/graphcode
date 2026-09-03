@@ -34,7 +34,7 @@ import { existsSync, readFileSync, realpathSync } from 'node:fs';
 import { join } from 'node:path';
 import { hostname } from 'node:os';
 import { deriveMemberName } from './mcp-server.js';
-import { readPackageVersion } from './package-version.js';
+import { readPackageVersion } from '../kernel/package-version.js';
 import { PACKAGE_NAME } from './scaffold-templates.js';
 import { readLockOwner } from '../kernel/store-lock.js';
 // Das Probe-Budget gehoert dem Viewer-Modul: Bericht und Starter muessen sich ueber
