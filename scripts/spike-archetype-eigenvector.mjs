@@ -41,7 +41,10 @@ const CANDIDATES = [
   // Ausdrücklich mitgeführt, damit der Ausschluss BENANNT wird statt zu verschwinden:
   {
     id: 'kadjar', path: `${DEV}/graph-view-edit/docs/graph/kadjar.graph.json`, pattern: '—',
-    note: 'vorbestehender BQ-06-Crash (req.description undefined → .trim() TypeError in evaluateAllRules)',
+    // CR-SM-285: der Vorbehalt ist erledigt. `descriptionOf` las `el.description ?? ''` und starb
+    // an jedem Nicht-String; jetzt zaehlt nur ein echter String. kadjar laeuft mit 1509 Befunden
+    // durch. Der Hinweis bleibt als Historie stehen, damit die Zeile nicht ohne Grund verschwindet.
+    note: 'BQ-06-Crash behoben mit CR-SM-285 (descriptionOf robust gegen Nicht-Strings) — laeuft durch',
   },
   { id: 'bok', path: `${DEV}/bok/docs/graph/bok.graph.json`, pattern: '—' },
   { id: 'graphify', path: `${DEV}/graphify/docs/graph/graphify.graph.json`, pattern: 'Pipeline' },
@@ -549,7 +552,20 @@ const sum = (sel) => rows.reduce((a, r) => a + sel(r.cr01), 0);
 console.log(`\nSumme über alle ${rows.length} Zeilen: implementiert ${sum((c) => c.implemented.warnings)} warnings / ` +
   `${sum((c) => c.implemented.pairs)} Befunde gesamt · als io-Pfad gemeint: roh ${sum((c) => c.rawPaths.warnings)} · ` +
   `distinct ${sum((c) => c.distinctContracts.warnings)}`);
-console.log(`crossingFlows:null kippt ${sum((c) => c.implemented.pairs - c.implemented.withNull)} Befunde — ` +
-  `die ausgelieferte Regel sucht direkte io-Kanten FUNC→FUNC, die die Grammatik gar nicht kennt (io geht FUNC→FLOW→FUNC).`);
+// CR-SM-285: die alte Schlusszeile behauptete, die ausgelieferte CR-01 suche direkte
+// `FUNC -io-> FUNC`-Kanten. Das galt bis CR-SM-274/276 und ist seither falsch — die Tabelle
+// darueber zeigt es selbst: `implementiert` und `distinct-Vertrag` sind spaltengleich. Ein
+// Instrument, dessen Prosa der eigenen Messung widerspricht, liefert die Zahl und die falsche
+// Deutung gleich mit; das ist die Fehlerklasse, die CR-SM-285 als Ganzes adressiert. Die Aussage
+// wird jetzt AUS DEN ZAHLEN abgeleitet statt behauptet.
+const implW = sum((c) => c.implemented.warnings);
+const rawW = sum((c) => c.rawPaths.warnings);
+const distW = sum((c) => c.distinctContracts.warnings);
+console.log(`crossingFlows:null kippt ${sum((c) => c.implemented.pairs - c.implemented.withNull)} Befunde.`);
+console.log(
+  implW === distW
+    ? `Die ausgelieferte CR-01 zaehlt VERSCHIEDENE Vertraege auf dem io-Pfad FUNC→FLOW→FUNC ` +
+      `(implementiert ${implW} = distinct ${distW}, roh waere ${rawW}) — seit CR-SM-274/276 deckungsgleich mit dem Regelkopf.`
+    : `ACHTUNG: implementiert ${implW} weicht von distinct ${distW} ab — die Regel misst etwas anderes als ihr Kopf sagt.`);
 
 if (JSON_OUT) console.log('\nJSON\n' + JSON.stringify({ rows, excluded, regPrimary: { r2: regPrimary.r2, adj: regPrimary.adj, loo: regPrimary.loo, perm: regPrimary.perm }, regAll: { r2: regAll.r2, adj: regAll.adj, loo: regAll.loo, perm: regAll.perm } }, null, 2));
