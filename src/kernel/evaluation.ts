@@ -53,7 +53,6 @@ import {
 } from '@sigloch/contracts/se';
 import { conformanceEvaluation, toOntologyGraph, type ConformanceHarness } from './conformance.js';
 import type { ImportCoverage } from '@sigloch/contracts/se';
-import { withNDMatrices } from './measure/nd-similarity.js';
 import { computeReadiness, type ReadinessReport } from './measure/readiness.js';
 
 type CGraph = Pick<Graph, 'nodes' | 'edges'>;
@@ -140,17 +139,17 @@ export const LOCALLY_EVALUATED_RULE_IDS: readonly string[] = ND_RULES.map((rule)
  */
 function nearDuplicateFindings(graph: CGraph): Finding[] {
   const og = toOntologyGraph(graph);
-  return withNDMatrices(og, () =>
-    evaluateNDRules(og).map((v) => ({
-      ruleId: v.rule_id,
-      severity: v.severity,
-      elementId: v.element_id,
-      message: v.message,
-      fixHint: v.fix_hint,
-      context: v.context,
-      source: 'rules' as const,
-    })),
-  );
+  // CR-SM-286: keine ND-Klammer mehr — die Regeln rechnen ihre Aehnlichkeit selbst
+  // (contracts `similarity.ts`), es gibt keinen Modulzustand, den ein Lauf erben koennte.
+  return evaluateNDRules(og).map((v) => ({
+    ruleId: v.rule_id,
+    severity: v.severity,
+    elementId: v.element_id,
+    message: v.message,
+    fixHint: v.fix_hint,
+    context: v.context,
+    source: 'rules' as const,
+  }));
 }
 
 /** Ein Regelkatalog als Herkunftsangabe: wer, wie viele, für welche Zahlen. */

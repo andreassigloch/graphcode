@@ -19,7 +19,6 @@ import type { OntologyGraph, MetricPolicy } from '@sigloch/contracts/se';
 import { evaluateAllRules } from '@sigloch/contracts/se';
 import { computeReadiness } from '@sigloch/se-engine';
 import { toOntologyGraph } from '../conformance.js';
-import { withNDMatrices } from './nd-similarity.js';
 
 export interface SteeringSnapshot {
   /** Der gemappte Ontology-Graph MIT injizierten ND-Matrizen. */
@@ -59,15 +58,14 @@ export function takeSteeringSnapshot(
   // CR-GC-442: als KLAMMER, nicht als blankes inject. Der contracts-Modul-State ist
   // global und wird von AO-D01 (Gate-Katalog) mitgelesen; eine liegengebliebene
   // Matrix aus diesem Lauf würde den nächsten Gate-/Report-Lauf verändern.
-  return withNDMatrices(og, () => {
-    const violations = evaluateAllRules(og, policy);
-    return {
-      og,
-      violations,
-      blockingErrors: violations.filter((v) => v.severity === 'error').length,
-      report: computeReadiness(og, policy, focusThreshold),
-    };
-  });
+  // CR-SM-286: die Klammer ist entfallen — kein contracts-Modulzustand mehr.
+  const violations = evaluateAllRules(og, policy);
+  return {
+    og,
+    violations,
+    blockingErrors: violations.filter((v) => v.severity === 'error').length,
+    report: computeReadiness(og, policy, focusThreshold),
+  };
 }
 
 export const SteeringDimensionDelta = z.object({

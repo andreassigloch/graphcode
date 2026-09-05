@@ -27,7 +27,6 @@ import type { MutateResult } from '@sigloch/contracts/harness';
 import type { MutateCommand } from '@sigloch/contracts/harness';
 import { targetFor, suggestEdits, type Suggestion, type SuggestedEdit } from '@sigloch/se-engine';
 import { toOntologyGraph } from '../kernel/conformance.js';
-import { withNDMatrices } from '../kernel/measure/nd-similarity.js';
 import { generationStep, type GenerationStep } from './generate.js';
 import {
   TargetWeightsSchema,
@@ -211,11 +210,10 @@ export function bindSuggestTools(ctx: ToolPort): MCPToolRegistry {
       // CR-GC-431: ALLE Kandidaten holen, nicht die Top-k der Sonde. Das k-Fenster
       // wird erst NACH dem Umranken auf das Edit-Δm geschnitten — sonst fiele ein
       // gut bewerteter Edit heraus, weil die generische Sonde ihn niedrig rankte.
-      // CR-GC-444: die ND-Klammer — der Konsolidierungs-Operator liest die
-      // ND-02-Matrix (Duplikat-Zweig seiner Kandidatensuche) und darf sie nicht
-      // aus einem fremden Lauf erben. `withNDMatrices` rechnet sie für GENAU
-      // diesen Graphen und setzt den contracts-Modul-State danach zurück.
-      const suggestions = withNDMatrices(og, () => suggestEdits(og, target, { layer: input.layer }));
+      // CR-GC-444 / CR-SM-286: die ND-Klammer ist entfallen. Der Konsolidierungs-Operator las
+      // die ND-02-Matrix aus dem contracts-Modulzustand und durfte sie nicht aus einem fremden
+      // Lauf erben; jetzt rechnet `contractSimilarity(og, …)` sie fuer GENAU diesen Graphen.
+      const suggestions = suggestEdits(og, target, { layer: input.layer });
 
       // dryRun-Preview der Template-Edits auf der Schreibkette (kein Interleaving
       // mit echten Writes); nach jedem Preview zurück auf die Disk-Basis, damit
