@@ -1350,6 +1350,7 @@
 | `FUNC-view-rtm` | allocate | `MOD-agent-surface` |
 | `FUNC-view-rtm` | io | `FLOW-query-request` |
 | `FUNC-view-rtm` | satisfy | `REQ-doc-export` |
+| `MOD-agent-surface` | satisfy | `REQ-gate-only-writes` |
 | `MOD-dashboard` | satisfy | `REQ-artifact-freshness` |
 | `MOD-dashboard` | satisfy | `REQ-dashboard-ontology-sync` |
 | `MOD-dashboard` | satisfy | `REQ-dashboard-readonly` |
@@ -1371,6 +1372,7 @@
 | `MOD-kernel` | satisfy | `REQ-single-store` |
 | `MOD-kernel` | satisfy | `REQ-store-recovery` |
 | `MOD-kernel` | satisfy | `REQ-structural-rule-shared` |
+| `MOD-loop` | satisfy | `REQ-gate-only-writes` |
 | `MOD-loop` | satisfy | `REQ-monotone-convergence` |
 | `MOD-loop` | satisfy | `REQ-phase-gate-not-skippable` |
 | `MOD-projections` | satisfy | `REQ-completeness-single-value` |
@@ -1385,6 +1387,7 @@
 | `MOD-surface` | satisfy | `REQ-agent-agnostic` |
 | `MOD-surface` | satisfy | `REQ-buildable-standalone` |
 | `MOD-surface` | satisfy | `REQ-cache-layering` |
+| `MOD-surface` | satisfy | `REQ-gate-only-writes` |
 | `MOD-surface` | satisfy | `REQ-graph-context-replaces-reading` |
 | `MOD-surface` | satisfy | `REQ-install-idempotent` |
 | `MOD-surface` | satisfy | `REQ-live-event-in-contracts` |

@@ -14760,6 +14760,11 @@
       "created_at": "2026-06-19T00:00:00.000Z"
     },
     {
+      "source": "MOD-agent-surface",
+      "target": "REQ-gate-only-writes",
+      "type": "satisfy"
+    },
+    {
       "source": "MOD-dashboard",
       "target": "REQ-artifact-freshness",
       "type": "satisfy"
@@ -14866,6 +14871,11 @@
     },
     {
       "source": "MOD-loop",
+      "target": "REQ-gate-only-writes",
+      "type": "satisfy"
+    },
+    {
+      "source": "MOD-loop",
       "target": "REQ-monotone-convergence",
       "type": "satisfy"
     },
@@ -14932,6 +14942,11 @@
     {
       "source": "MOD-surface",
       "target": "REQ-cache-layering",
+      "type": "satisfy"
+    },
+    {
+      "source": "MOD-surface",
+      "target": "REQ-gate-only-writes",
       "type": "satisfy"
     },
     {
@@ -17388,5 +17403,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 240
+  "graphVersion": 241
 }

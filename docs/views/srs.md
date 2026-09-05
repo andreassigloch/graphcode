@@ -5560,7 +5560,7 @@ schema ◀ `FLOW-live-event`
 
 Die Bedienschicht des Menschen: die Skill-/Prompt-Definitionen unter .claude/commands, agent-ausgefuehrt statt code-realisiert. Null modulinterne Fluesse ist hier Kategorie, kein Defekt. (CR-GC-446)
 
-allocate ◀ `FUNC-author-req` · `FUNC-author-uc` · `FUNC-block-anleitung` · `FUNC-block-autorieren` · `FUNC-block-urteilsarbeit` · `FUNC-close-violations` · `FUNC-import-code` · `FUNC-import-doc` · `FUNC-render-views` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-help` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-se-trade` · `FUNC-target-profile` · `FUNC-test` · `FUNC-test-ui` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm`
+allocate ◀ `FUNC-author-req` · `FUNC-author-uc` · `FUNC-block-anleitung` · `FUNC-block-autorieren` · `FUNC-block-urteilsarbeit` · `FUNC-close-violations` · `FUNC-import-code` · `FUNC-import-doc` · `FUNC-render-views` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-help` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-se-trade` · `FUNC-target-profile` · `FUNC-test` · `FUNC-test-ui` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · satisfy ▶ `REQ-gate-only-writes`
 
 ### 6.2  `MOD-dashboard` — dashboard — Live-Viewer-App
 
@@ -5584,7 +5584,7 @@ allocate ◀ `FUNC-compute-phase-readiness` · `FUNC-compute-steering-delta` · 
 
 Die Schleife, die den Graphen bewegt: Fokuswahl, Zielprofil, Vorschlaege, Runden-Prompt, Modellaufruf, Kandidaten-Ranking. Ein Client des Gates wie jeder andere — sie schreibt ausschliesslich durch apply(). (CR-GC-446)
 
-allocate ◀ `FUNC-block-antrieb` · `FUNC-block-arch-optimierung` · `FUNC-block-q-improvement` · `FUNC-build-round-injection` · `FUNC-extract-mutate` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-graph-suggest` · `FUNC-next-step` · `FUNC-preflight` · `FUNC-rank-candidates` · `FUNC-run-executor` · `FUNC-target-profile-load` · satisfy ▶ `REQ-monotone-convergence` · `REQ-phase-gate-not-skippable`
+allocate ◀ `FUNC-block-antrieb` · `FUNC-block-arch-optimierung` · `FUNC-block-q-improvement` · `FUNC-build-round-injection` · `FUNC-extract-mutate` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-graph-suggest` · `FUNC-next-step` · `FUNC-preflight` · `FUNC-rank-candidates` · `FUNC-run-executor` · `FUNC-target-profile-load` · satisfy ▶ `REQ-gate-only-writes` · `REQ-monotone-convergence` · `REQ-phase-gate-not-skippable`
 
 ### 6.5  `MOD-projections` — projections — Graph nach Artefakt
 
@@ -5596,7 +5596,7 @@ allocate ◀ `FUNC-arch-fitness` · `FUNC-auto-export` · `FUNC-block-dokumenten
 
 Adapter ohne eigene Logik: MCP-stdio-Registry, CLI-Verben und Distribution, Host-Socket zum Store-Besitzer, read-only SSE-Bruecke an den Live-Viewer. Uebersetzt Protokoll in kernel-Aufrufe, mehr nicht. (CR-GC-446)
 
-allocate ◀ `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-bind-tools` · `FUNC-block-bedienung` · `FUNC-block-betrieb` · `FUNC-block-live-dashboard` · `FUNC-block-schaufenster` · `FUNC-bootstrap` · `FUNC-broadcast-diff` · `FUNC-cli-dispatch` · `FUNC-collect-status` · `FUNC-create-harness` · `FUNC-emit-update-event` · `FUNC-gve-sessions` · `FUNC-gve-supervise` · `FUNC-harness-cli` · `FUNC-health-endpoint` · `FUNC-host-socket` · `FUNC-import-code-verb` · `FUNC-rewind` · `FUNC-run-verb` · `FUNC-serve-sse` · `FUNC-serve-stdio` · `FUNC-session-shutdown` · `FUNC-tool-context` · `FUNC-upgrade` · satisfy ▶ `REQ-agent-agnostic` · `REQ-buildable-standalone` · `REQ-cache-layering` · `REQ-graph-context-replaces-reading` · `REQ-install-idempotent` · `REQ-live-event-in-contracts` · `REQ-readonly-bridge` · `REQ-self-contained-dist` · `REQ-single-transport` · `REQ-versioned-cache`
+allocate ◀ `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-bind-tools` · `FUNC-block-bedienung` · `FUNC-block-betrieb` · `FUNC-block-live-dashboard` · `FUNC-block-schaufenster` · `FUNC-bootstrap` · `FUNC-broadcast-diff` · `FUNC-cli-dispatch` · `FUNC-collect-status` · `FUNC-create-harness` · `FUNC-emit-update-event` · `FUNC-gve-sessions` · `FUNC-gve-supervise` · `FUNC-harness-cli` · `FUNC-health-endpoint` · `FUNC-host-socket` · `FUNC-import-code-verb` · `FUNC-rewind` · `FUNC-run-verb` · `FUNC-serve-sse` · `FUNC-serve-stdio` · `FUNC-session-shutdown` · `FUNC-tool-context` · `FUNC-upgrade` · satisfy ▶ `REQ-agent-agnostic` · `REQ-buildable-standalone` · `REQ-cache-layering` · `REQ-gate-only-writes` · `REQ-graph-context-replaces-reading` · `REQ-install-idempotent` · `REQ-live-event-in-contracts` · `REQ-readonly-bridge` · `REQ-self-contained-dist` · `REQ-single-transport` · `REQ-versioned-cache`
 
 ## 7  Cross-cutting Requirements
 
@@ -5718,7 +5718,7 @@ Agent kann den SSOT nicht hand-editieren; jeder Write durch graph_mutate (mutate
 
 priority: should · status: open · kinds: non-functional
 
-Verification ◀ `TEST-graph-realize` (integration) · `TEST-no-direct-graph-write` · `TEST-path-containment` (integration) · satisfy ◀ `MOD-kernel` · allocate ▶ —
+Verification ◀ `TEST-graph-realize` (integration) · `TEST-no-direct-graph-write` · `TEST-path-containment` (integration) · satisfy ◀ `MOD-agent-surface` · `MOD-kernel` · `MOD-loop` · `MOD-surface` · allocate ▶ —
 
 ### `REQ-graph-context-replaces-reading` — Praeziser Graph-Kontext ersetzt das Dokumentenlesen
 

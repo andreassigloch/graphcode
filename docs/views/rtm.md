@@ -79,7 +79,7 @@
 | `REQ-deterministic-serialization` | `TEST-export-graph-guard` · `TEST-roundtrip` | `MOD-projections` | — |
 | `REQ-formatE-diff-dialect` | `TEST-edge-only-batch` · `TEST-formate-name` · `TEST-roundtrip` | `FUNC-encode` | `MOD-projections` |
 | `REQ-formatE-parity` | `TEST-formate-binding` · `TEST-mutate-input-formate` · `TEST-read-format-param` · `TEST-roundtrip` | `MOD-projections` | — |
-| `REQ-gate-only-writes` | `TEST-graph-realize` · `TEST-no-direct-graph-write` · `TEST-path-containment` | `MOD-kernel` | — |
+| `REQ-gate-only-writes` | `TEST-graph-realize` · `TEST-no-direct-graph-write` · `TEST-path-containment` | `MOD-agent-surface` · `MOD-kernel` · `MOD-loop` · `MOD-surface` | — |
 | `REQ-graph-context-replaces-reading` | `TEST-graph-context-replaces-reading` | `MOD-surface` | — |
 | `REQ-graph-snapshot-per-commit` | `TEST-auto-export` · `TEST-graph-time-travel` | `FCHAIN-snapshot-freshness` · `FUNC-export-marker` · `FUNC-graph-export-snapshot` · `FUNC-mutate` | `MOD-kernel` · `MOD-projections` |
 | `REQ-graph-state-recall` | `TEST-graph-time-travel` · `TEST-reseed` · `TEST-rewind` | `FCHAIN-recall` · `FUNC-apply-reseed` · `FUNC-reseed` · `FUNC-rewind` | `MOD-kernel` · `MOD-surface` |
@@ -227,7 +227,7 @@
 | `REQ-export-no-clobber` | `TEST-export-graph-guard` · `TEST-mcp-export-guard` | `MOD-projections` | — |
 | `REQ-formatE-diff-dialect` | `TEST-edge-only-batch` · `TEST-formate-name` · `TEST-roundtrip` | `FUNC-encode` | `MOD-projections` |
 | `REQ-formatE-parity` | `TEST-formate-binding` · `TEST-mutate-input-formate` · `TEST-read-format-param` · `TEST-roundtrip` | `MOD-projections` | — |
-| `REQ-gate-only-writes` | `TEST-graph-realize` · `TEST-no-direct-graph-write` · `TEST-path-containment` | `MOD-kernel` | — |
+| `REQ-gate-only-writes` | `TEST-graph-realize` · `TEST-no-direct-graph-write` · `TEST-path-containment` | `MOD-agent-surface` · `MOD-kernel` · `MOD-loop` · `MOD-surface` | — |
 | `REQ-graph-code-conformance` | `TEST-code-conformance` | `FUNC-check-code-conformance` | `MOD-kernel` |
 | `REQ-graph-context-replaces-reading` | `TEST-graph-context-replaces-reading` | `MOD-surface` | — |
 | `REQ-graph-integrity` | `TEST-codec-validation` · `TEST-graph-integrity` · `TEST-import-sys-anchor` · `TEST-merge-no-duplicate-edge` | `MOD-projections` | — |
