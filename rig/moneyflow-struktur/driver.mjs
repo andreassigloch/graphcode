@@ -32,6 +32,38 @@ const SOURCE = '/Users/andreas/Developer/dev/moneyflow/docs/graph/moneyflow.grap
 const PROPOSE = process.argv.includes('--propose');
 const STRUCTURE = process.argv.includes('--structure');
 const APPLY = process.argv.includes('--apply');
+const WOZU = process.argv.includes('--wozu');
+
+/**
+ * Die Wozu-Ebene, WIEDERHERGESTELLT aus docs/project/architecture-graph.md (Stand 2026-03-18).
+ * Sie ist nicht erfunden: der Code-Reseed (`se:import-code`) hat sie ueberschrieben, weil er nur
+ * FUNC/MOD/FLOW/SCHEMA erzeugt und den ganzen Graphen ersetzt. Die Doku ist die Quelle.
+ *
+ * UC.004 fehlt in der Doku — die Luecke wird uebernommen, nicht stillschweigend gefuellt.
+ */
+const ACTORS = [
+  ['nutzer', 'Nutzer', 'Buerger, Berater, Journalist — die Produkt-UCs, tier-gesteuert (AC.001).'],
+  ['externe-llm', 'Externe LLM', 'Claude, ChatGPT ueber den MCP-Zugang (AC.002).'],
+  ['supporter', 'Supporter', 'Community-Beitragende, Content Moderation (AC.003).'],
+  ['kurator', 'Kurator', 'Datenqualitaet und Review (AC.004).'],
+  ['admin', 'Admin', 'Operator: User Management, Billing, Deployment, Monitoring, Backup (AC.005).'],
+  ['crawler', 'Crawler', 'Automatisierte Quellenabfrage (AC.006).'],
+  ['scheduler', 'Scheduler', 'Zeitgesteuerte Laeufe (AC.007).'],
+];
+const USE_CASES = [
+  ['wohin-fliesst-der-euro', 'Wohin fliesst der Euro?', 'Ein Nutzer verfolgt einen Geldfluss durch den Graphen und sieht, wo er endet (UC.001).', 'kreislauf', ['traversal', 'template']],
+  ['was-waere-wenn', 'Was waere wenn?', 'Ein Nutzer aendert einen Parameter und vergleicht den Zustand vorher/nachher (UC.002).', 'simulieren', ['snapshot_diff', 'simulation']],
+  ['frag-den-graphen', 'Frag den Graphen', 'Ein Nutzer oder eine externe LLM stellt eine Frage in natuerlicher Sprache (UC.003).', 'simulieren', ['nl_to_cypher', 'mcp']],
+  ['kohorten-vergleichen', 'Kohorten vergleichen', 'Ein Nutzer stellt zwei Bevoelkerungsgruppen nebeneinander (UC.005).', 'simulieren', ['cohort', 'compare']],
+  ['private-layer', 'Private Layer', 'Ein Nutzer legt eigene Zahlen ueber den oeffentlichen Graphen, ohne dass sie den Browser verlassen (UC.006).', 'kreislauf', ['private_overlay']],
+  ['graph-plausibilisieren', 'Graph plausibilisieren', 'Kurator und Crawler pruefen Bilanz und Konfidenz der eingehenden Daten (UC.007).', 'beschaffen', ['conservation', 'confidence']],
+  ['user-management', 'User Management', 'Ein Admin verwaltet Konten, Rollen und Tiers (UC.008).', 'betreiben', ['auth']],
+  ['billing', 'Billing', 'Ein Admin rechnet Tiers ab (UC.009).', 'betreiben', ['billing']],
+  ['graph-deployment', 'Graph Deployment', 'Ein Admin bringt einen geprueften Graphstand nach produktiv (UC.010).', 'betreiben', ['deploy']],
+  ['monitoring-health', 'Monitoring und Health', 'Ein Admin sieht Zustand und Alarme des Betriebs (UC.011).', 'betreiben', ['monitoring']],
+  ['content-moderation', 'Content Moderation', 'Supporter und Kurator pruefen Beitraege der Community (UC.012).', 'betreiben', ['content', 'cr_lifecycle']],
+  ['backup-restore', 'Backup und Restore', 'Ein Admin sichert den Graphen und spielt ihn zurueck (UC.013).', 'betreiben', ['backup']],
+];
 
 /**
  * Der Schnitt, vom Auftraggeber bestaetigt (2026-09-05). Er ist KEINE Erfindung: er faellt aus
@@ -41,13 +73,35 @@ const APPLY = process.argv.includes('--apply');
  * zeigen, mit betreiben als Querschnitt.
  */
 const BLOCKS = [
-  ['beschaffen', 'Zahlen beschaffen', 'Quellen crawlen, importieren und in die Ontologie uebersetzen.', ['crawlers', 'import', 'transformers']],
-  ['kreislauf', 'Kreislauf halten', 'Der Geldkreislauf als Graph: traversieren, Bilanz pruefen, Konfidenz, privates Overlay.', ['core', 'schemas']],
-  ['simulieren', 'Fragen und simulieren', 'Was-waere-wenn, Kohortenvergleich, NL-Query, MCP-Zugang.', ['simulation', 'llm', 'mcp']],
-  ['zeigen', 'Sichtbar machen', 'Sankey, Ring-View, Tabellen und der HTTP-Rand.', ['frontend', 'api']],
-  ['betreiben', 'Betreiben', 'Auth, Monitoring, Billing, Moderation.', ['auth', 'ops', 'billing', 'content']],
+  { key: 'beschaffen', name: 'Zahlen beschaffen', desc: 'Quellen crawlen, importieren und in die Ontologie uebersetzen.', prefixes: ['crawlers', 'import', 'transformers'] },
+  { key: 'kreislauf', name: 'Kreislauf halten', desc: 'Der Geldkreislauf als Graph: traversieren, Bilanz pruefen, Konfidenz, privates Overlay.', prefixes: ['core', 'schemas'] },
+  { key: 'simulieren', name: 'Fragen und simulieren', desc: 'Was-waere-wenn, Kohortenvergleich, NL-Query, MCP-Zugang.', prefixes: ['simulation', 'llm', 'mcp'] },
+  {
+    key: 'zeigen', name: 'Sichtbar machen', desc: 'Der Weg vom Graphen zum Bild und nach draussen.', prefixes: [],
+    // CR-Runde 2: der Block trug 100 sub-FUNCs und 23 Randvertraege — RD-04 UND BW-02 zugleich.
+    // Der Schnitt ist funktional (was der Nutzer sieht / was nach draussen spricht), nicht der
+    // Dateibaum: `pages` (25) und `routes` (22) sind selbst ueber der Schwelle, eine dritte Ebene
+    // waere ein Abbild von src/ und keine Architektur.
+    children: [
+      { key: 'darstellung', name: 'Darstellen', desc: 'Sankey, Ring-View, Tabellen — was der Nutzer sieht.', prefixes: ['frontend'] },
+      { key: 'httprand', name: 'HTTP-Rand', desc: 'Routen und Server — was nach draussen spricht.', prefixes: ['api'] },
+    ],
+  },
+  { key: 'betreiben', name: 'Betreiben', desc: 'Auth, Monitoring, Billing, Moderation.', prefixes: ['auth', 'ops', 'billing', 'content'] },
 ];
-const blockOfPrefix = new Map(BLOCKS.flatMap(([key, , , pre]) => pre.map((p) => [p, key])));
+
+/** Flache Sicht auf den Baum: jeder Block mit seinem Elternteil (oder null). */
+function flatBlocks(list, parent = null, out = []) {
+  for (const b of list) {
+    out.push({ ...b, parent });
+    if (b.children) flatBlocks(b.children, b.key, out);
+  }
+  return out;
+}
+const ALL_BLOCKS = flatBlocks(BLOCKS);
+// Ein Praefix zeigt immer auf den TIEFSTEN Block, der ihn fuehrt — `zeigen` selbst traegt keine
+// Praefixe mehr, seine beiden Kinder tun es.
+const blockOfPrefix = new Map(ALL_BLOCKS.flatMap((b) => b.prefixes.map((p) => [p, b.key])));
 
 const config = (repoRoot) => ({
   repoRoot,
@@ -149,9 +203,15 @@ try {
     console.log(`FUNCs ohne Block: ${unmappedFuncs.length}${unmappedFuncs.length && unmappedFuncs.length < 8 ? ' -> ' + unmappedFuncs.map((f) => f.id).join(', ') : ''}\n`);
 
     const commands = [];
-    for (const [key, name, desc] of BLOCKS) {
-      commands.push({ op: 'add-node', node: { uid: `MOD-mf-${key}`, type: 'MOD', name, description: desc } });
-      commands.push({ op: 'add-node', node: { uid: `FUNC-mf-${key}`, type: 'FUNC', name, description: desc } });
+    for (const b of ALL_BLOCKS) {
+      commands.push({ op: 'add-node', node: { uid: `MOD-mf-${b.key}`, type: 'MOD', name: b.name, description: b.desc } });
+      commands.push({ op: 'add-node', node: { uid: `FUNC-mf-${b.key}`, type: 'FUNC', name: b.name, description: b.desc } });
+      // Genau EIN compose-Elternteil je Kind (R-18, viertes Bein): der Unterblock haengt am
+      // Oberblock, die Module haengen am Unterblock — nie an beiden.
+      if (b.parent) {
+        commands.push({ op: 'add-edge', edge: { sourceId: `MOD-mf-${b.parent}`, targetId: `MOD-mf-${b.key}`, edgeType: 'compose' } });
+        commands.push({ op: 'add-edge', edge: { sourceId: `FUNC-mf-${b.parent}`, targetId: `FUNC-mf-${b.key}`, edgeType: 'compose' } });
+      }
     }
     for (const m of mods) {
       const b = blockOfPrefix.get(prefixOf(m.id));
@@ -161,7 +221,7 @@ try {
       const b = blockOfPrefix.get(prefixOf(modOfFunc.get(f.id) ?? ''));
       if (b) commands.push({ op: 'add-edge', edge: { sourceId: `FUNC-mf-${b}`, targetId: f.id, edgeType: 'compose' } });
     }
-    console.log(`Batch: ${commands.length} Kommandos (10 Knoten, ${commands.length - 10} compose-Kanten)\n`);
+    console.log(`Batch: ${commands.length} Kommandos (${ALL_BLOCKS.length * 2} Knoten, ${commands.length - ALL_BLOCKS.length * 2} compose-Kanten)\n`);
 
     const res = await rig.tools.graph_mutate.handler({ dryRun: !APPLY, baseVersion: version, commands, violations: 'summary' });
     console.log(`tier: ${res.tier} · success: ${res.success} · neue Violations: ${res.violations?.length ?? 0}`);
@@ -170,6 +230,15 @@ try {
     console.log('neu je Regel: ' + JSON.stringify(byRule));
     for (const v of (res.violations ?? []).filter((x) => x.ruleId === 'RD-04' || x.severity === 'error').slice(0, 8))
       console.log('  - ' + v.ruleId + ' ' + v.severity + ': ' + v.message);
+
+    // Der Zug ist ein Paar mit BEKANNTEM Vorzeichen (Auftraggeber bestaetigt, Regeln bestaetigen):
+    // 306 Wurzeln -> 9, `zeigen` als Doppelblock entlarvt. Rankt der Zielvektor ihn richtig?
+    const DIMS = ['modifiability', 'faultTolerance', 'flowEfficiency', 'coherence', 'viability', 'scalability'];
+    const d = res.fitAdvisory?.delta ?? [];
+    console.log('\nfitAdvisory (Delta je Dimension, layer arch):');
+    DIMS.forEach((n, i) => console.log(`  ${n.padEnd(15)} ${(d[i] >= 0 ? '+' : '') + (d[i] ?? 0).toFixed(4)}`));
+    console.log('  Summe            ' + (d.reduce((a, x) => a + x, 0) >= 0 ? '+' : '') + d.reduce((a, x) => a + x, 0).toFixed(4));
+    if (res.fitAdvisory?.regressions?.length) console.log('  regressions: ' + JSON.stringify(res.fitAdvisory.regressions));
 
     const after = await rig.tools.rules_get_violations.handler({ detail: 'grouped' });
     const g2 = (after.violations ?? after.groups ?? []);
@@ -194,6 +263,46 @@ try {
     } else {
       console.log('(dryRun — nichts persistiert; die obigen Violations sind die NEUEN, der Wegfall des');
       console.log(' Wurzel-Befunds erscheint dort per Delta-Semantik nicht. Mit --apply messen.)');
+    }
+  }
+
+  if (WOZU) {
+    console.log('\n## Wozu-Ebene wiederherstellen' + (APPLY ? ' (APPLY)' : ' (dryRun)') + '\n');
+    const g4 = rig.harness.graph;
+    const funcIds = (g4.nodes ?? []).filter((n) => n.type === 'FUNC').map((n) => n.uid);
+    const cmds = [];
+    for (const [key, name, desc] of ACTORS)
+      cmds.push({ op: 'add-node', node: { uid: `ACTOR-mf-${key}`, type: 'ACTOR', name, description: desc } });
+
+    const coverage = [];
+    for (const [key, name, desc, , keys] of USE_CASES) {
+      cmds.push({ op: 'add-node', node: { uid: `UC-mf-${key}`, type: 'UC', name, description: desc } });
+      cmds.push({ op: 'add-edge', edge: { sourceId: 'SYS-moneyflow', targetId: `UC-mf-${key}`, edgeType: 'compose' } });
+      cmds.push({ op: 'add-node', node: { uid: `FCHAIN-mf-${key}`, type: 'FCHAIN', name: `Kette: ${name}`, description: `Wirkkette zu ${name}.` } });
+      cmds.push({ op: 'add-edge', edge: { sourceId: `UC-mf-${key}`, targetId: `FCHAIN-mf-${key}`, edgeType: 'compose' } });
+      // Mitglieder: die BLATT-FUNCs des Code-Imports, deren Pfad eines der Stichworte traegt.
+      const members = funcIds.filter((id) => keys.some((k) => id.includes(k)));
+      for (const m of members) cmds.push({ op: 'add-edge', edge: { sourceId: `FCHAIN-mf-${key}`, targetId: m, edgeType: 'compose' } });
+      coverage.push([key, members.length]);
+    }
+    console.log('Kettenbelegung (Doku-Konzept -> Code-Blaetter):');
+    for (const [k, n] of coverage) console.log(`  ${n === 0 ? '!! ' : '   '}${k}: ${n}`);
+    const leer = coverage.filter(([, n]) => n === 0);
+    console.log(`\nKetten ohne einen einzigen Code-Treffer: ${leer.length}${leer.length ? ' -> ' + leer.map(([k]) => k).join(', ') : ''}`);
+    console.log(`Batch: ${cmds.length} Kommandos\n`);
+
+    const v2 = (await rig.tools.graph_readiness.handler({ detail: false })).graphVersion;
+    const res2 = await rig.tools.graph_mutate.handler({ dryRun: !APPLY, baseVersion: v2, commands: cmds, violations: 'summary' });
+    console.log(`tier: ${res2.tier} · success: ${res2.success} · neue Violations: ${res2.violations?.length ?? 0}`);
+    const br = {};
+    for (const v of res2.violations ?? []) br[v.ruleId] = (br[v.ruleId] ?? 0) + 1;
+    console.log('neu je Regel: ' + JSON.stringify(br));
+    for (const v of (res2.violations ?? []).filter((x) => x.severity === 'error').slice(0, 6))
+      console.log('  ERROR ' + v.ruleId + ': ' + v.message);
+    if (APPLY) {
+      const rep = await rig.tools.graph_readiness.handler({ detail: false });
+      console.log('\nReadiness nach der Wozu-Ebene:');
+      for (const d of rep.dimension_readiness) console.log(`  ${d.dimension.padEnd(7)} ${String(d.score ?? '—').slice(0, 5).padStart(5)}  (${d.violations}/${d.applicable})`);
     }
   }
 

@@ -109,9 +109,62 @@ messbar:
     FUNC-mf-betreiben   16
     FUNC-mf-simulieren   7
 
+## Lauf 2 — `zeigen` geteilt, und BW-02 bestätigt die Naht
+
+`FUNC-mf-zeigen` trug 100 Kinder **und** 23 Randverträge. Nach dem funktionalen Schnitt in
+*Darstellen* / *HTTP-Rand*:
+
+    FUNC-mf-zeigen       23 Verträge am Rand
+    FUNC-mf-httprand     23     ← identisch
+    FUNC-mf-darstellung   —     ← taucht gar nicht auf
+
+**Die gesamte Vertragsfläche sitzt im HTTP-Rand, keine einzige in der Darstellung.** Der Schnitt
+traf die Naht — eine Bestätigung, die aus der Breite allein nicht kommt.
+
+RD-04 steht danach bei 12 statt 10: dieselbe Breitenschuld auf zwei Container mehr verteilt, keine
+Verschlechterung. Weiter aufzuteilen hieße `src/` nachbauen (`pages` 25, `routes` 22) — dort ist
+Schluss.
+
+## Lauf 3 — die Wozu-Ebene ist zurück
+
+7 ACTOR, 12 UC, 12 FCHAIN aus `docs/project/architecture-graph.md`. **11 von 12 Ketten finden
+Code-Blätter:**
+
+    frag-den-graphen 18 · user-management 26 · was-waere-wenn 13 · wohin-fliesst-der-euro 11
+    kohorten-vergleichen 10 · monitoring-health 9 · content-moderation 9 · billing 8
+    graph-plausibilisieren 7 · private-layer 4 · backup-restore 3
+    !! graph-deployment 0
+
+`graph-deployment` findet nichts — echter Befund: UC.010 ist dokumentiert, im importierten `src/`
+steht dafür nichts. UC.004 fehlt in der Doku selbst; die Lücke wurde übernommen, nicht gefüllt.
+
+157 neue Warnungen, und es sind die richtigen: UC-01 12× (kein REQ), FC-01/FC-04, R-16 7×
+(ACTOR ohne io), IO-01 40×. **Die Wozu-Ebene steht, verdrahtet ist sie nicht.**
+
+## Was der Vektor zu einem BESTÄTIGTEN Zug sagt
+
+Der Strukturierungs-Zug ist ein Paar mit bekanntem Vorzeichen — vom Auftraggeber bestätigt, von den
+Regeln bestätigt. Das `fitAdvisory`:
+
+    modifiability   −0,52   ← Regression
+    faultTolerance  +2,11
+    flowEfficiency  +0,24
+    coherence       −0,07   ← Regression, Gewicht 1,0
+    viability       +1,92
+    scalability     −0,58   ← Regression
+    Summe           +3,11        gewichtet +0,91
+
+Drei von sechs nennen die Umstrukturierung eine **Regression**, darunter die höchstgewichtete.
+`modifiability` — Newman-Modularität, das Maß, das Struktur belohnen müsste — **sinkt**, wenn 306
+flache Wurzeln eine Struktur bekommen. Die positive Summe kommt zu **+4,03 von 6** aus
+`faultTolerance` + `viability`, den beiden, die mit der Kantenzahl steigen: der Zug hat 460
+compose-Kanten hinzugefügt.
+
+Das ist CR-SM-281 §2.2 in freier Wildbahn, an einem echten Zug statt an einem Degenerat-Konstrukt.
+
 ## Offen
 
-- **Zweite Ebene je Block.** „Sichtbar machen" trägt 100 FUNCs und 23 Randverträge — der Block ist
-  in Wahrheit zwei (Darstellung / HTTP-Rand). Das war beim Schnitt schon benannt.
-- **UC/ACTOR/FCHAIN zurückholen** aus `docs/project/architecture-graph.md`, sobald die Blöcke stehen.
-- **`mod_cli_ts`** einordnen.
+- **`graph-deployment`** klären: außerhalb `src/` oder unerfüllt?
+- **`mod_cli_ts`** (4 FUNCs) einordnen.
+- **Die 15 RQ-Constraints** aus der Doku als REQ — heute ist `req`-Readiness 0.
+- **ACTOR-Flüsse** (R-16 7×) und Kettenanschluss (IO-01 40×).
