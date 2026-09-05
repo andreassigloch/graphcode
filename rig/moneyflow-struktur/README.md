@@ -56,9 +56,62 @@ Eine Probe-FUNC ohne Anschluss wird vom Gate mit `tier: suggest` und sechs neuen
 quittiert — darunter `RD-04 … 307 root FUNC children`, also die Verschlechterung, die der Zug
 verursacht. **Das ist keine Strukturierung, sondern der Nachweis, dass der Schreibpfad steht.**
 
+## Der Schnitt (bestätigt 2026-09-05)
+
+moneyflow **hatte** ein vollständiges SE-Modell — 1 SYS, 7 ACTOR, 13 UC, 8 FCHAINs, dokumentiert in
+`docs/project/architecture-graph.md` (Stand 2026-03-18). **Der Code-Reseed hat es überschrieben:**
+`se:import-code` erzeugt FUNC/MOD/FLOW/SCHEMA und ersetzt den ganzen Graphen. Deshalb steht in
+`docs/views/conops.md` „0 ACTOR, 0 UC" neben einer Doku mit 13 UCs. CR-SM-271s „eine fehlende Ebene
+im Ganzen" ist keine Lücke, sondern ein Verlust.
+
+Der Schnitt fällt aus README, den 13 dokumentierten UCs und den Modul-Präfixen —
+Reihenfolge = Wirkkette:
+
+| Block | Module |
+|---|--:|
+| Zahlen beschaffen (crawlers · import · transformers) | 34 |
+| Kreislauf halten (core · schemas) | 20 |
+| Fragen und simulieren (simulation · llm · mcp) | 15 |
+| Sichtbar machen (frontend · api) | 70 |
+| Betreiben (auth · ops · billing · content) | 15 |
+
+`mod_cli_ts` mit 4 FUNCs bleibt unzugeordnet und wird gemeldet, nicht stillschweigend verteilt.
+
+## Lauf 1 — der Strukturierungs-Zug, gemessen
+
+    node rig/moneyflow-struktur/driver.mjs --structure --apply
+
+466 Kommandos (10 Knoten, 456 compose-Kanten), **ein Batch, `tier: suggest`, `success: true`**.
+
+| | vorher | nachher |
+|---|--:|--:|
+| FUNC-Wurzeln | 306 | **9** |
+| MOD-Wurzeln | 155 | **6** |
+| RD-04 | 1 (an SYS) | **10** (an den Blöcken) |
+| BW-02 | 0 | **3** |
+
+**Der Befund ist nicht verschwunden — er ist eine Ebene tiefer gewandert, dorthin wo er
+beantwortbar ist.** Genau die Eigenschaft, die CR-SM-281 §2.6 für das rekursive Verfahren
+vorhergesagt hat: der Degenerat hat nirgends hin, wo er sich verstecken könnte.
+
+Die zehn neuen RD-04 sind jetzt lokale, benennbare Fragen:
+
+    FUNC-mf-zeigen       100 sub-FUNC     MOD-mf-zeigen      70 sub-MOD
+    FUNC-mf-beschaffen    76 sub-FUNC     MOD-mf-beschaffen  34 sub-MOD
+    FUNC-mf-betreiben     57 sub-FUNC     MOD-mf-kreislauf   20 sub-MOD
+    FUNC-mf-kreislauf     37 sub-FUNC     MOD-mf-betreiben   15 sub-MOD
+    FUNC-mf-simulieren    32 sub-FUNC     MOD-mf-simulieren  15 sub-MOD
+
+Und **BW-02 feuert erstmals auf moneyflow** — die Blöcke sind jetzt Whiteboxes, ihr Rand ist
+messbar:
+
+    FUNC-mf-zeigen      23 Verträge am Whitebox-Rand
+    FUNC-mf-betreiben   16
+    FUNC-mf-simulieren   7
+
 ## Offen
 
-Die eigentliche Strukturierung (306 Wurzeln → Ebenen) braucht Urteil darüber, *was moneyflow
-tut* — das ist Domänenwissen, keine Regelableitung. Die 155 MODs aus dem Code-Import gruppieren
-die FUNCs bereits; sie als FUNC-Ebene zu spiegeln verschöbe die Breite nur von 306 auf 155 und
-verfehlt `se:top-level` („max 5 je Ebene") genauso.
+- **Zweite Ebene je Block.** „Sichtbar machen" trägt 100 FUNCs und 23 Randverträge — der Block ist
+  in Wahrheit zwei (Darstellung / HTTP-Rand). Das war beim Schnitt schon benannt.
+- **UC/ACTOR/FCHAIN zurückholen** aus `docs/project/architecture-graph.md`, sobald die Blöcke stehen.
+- **`mod_cli_ts`** einordnen.

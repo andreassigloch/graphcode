@@ -30,6 +30,24 @@ import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 
 const SOURCE = '/Users/andreas/Developer/dev/moneyflow/docs/graph/moneyflow.graph.json';
 const PROPOSE = process.argv.includes('--propose');
+const STRUCTURE = process.argv.includes('--structure');
+const APPLY = process.argv.includes('--apply');
+
+/**
+ * Der Schnitt, vom Auftraggeber bestaetigt (2026-09-05). Er ist KEINE Erfindung: er faellt aus
+ * README ("Geldfluesse und Kreislaeufe darstellen und simulieren"), den 13 dokumentierten UCs in
+ * docs/project/architecture-graph.md (Stand 2026-03-18, beim Code-Reseed verloren gegangen) und
+ * den Modul-Praefixen des Imports. Reihenfolge = Wirkkette: beschaffen -> halten -> fragen ->
+ * zeigen, mit betreiben als Querschnitt.
+ */
+const BLOCKS = [
+  ['beschaffen', 'Zahlen beschaffen', 'Quellen crawlen, importieren und in die Ontologie uebersetzen.', ['crawlers', 'import', 'transformers']],
+  ['kreislauf', 'Kreislauf halten', 'Der Geldkreislauf als Graph: traversieren, Bilanz pruefen, Konfidenz, privates Overlay.', ['core', 'schemas']],
+  ['simulieren', 'Fragen und simulieren', 'Was-waere-wenn, Kohortenvergleich, NL-Query, MCP-Zugang.', ['simulation', 'llm', 'mcp']],
+  ['zeigen', 'Sichtbar machen', 'Sankey, Ring-View, Tabellen und der HTTP-Rand.', ['frontend', 'api']],
+  ['betreiben', 'Betreiben', 'Auth, Monitoring, Billing, Moderation.', ['auth', 'ops', 'billing', 'content']],
+];
+const blockOfPrefix = new Map(BLOCKS.flatMap(([key, , , pre]) => pre.map((p) => [p, key])));
 
 const config = (repoRoot) => ({
   repoRoot,
@@ -114,6 +132,71 @@ try {
     for (const v of (res.violations ?? []).slice(0, 6)) console.log('  - ' + v.ruleId + ' ' + v.severity + ': ' + v.message);
     console.log('fitAdvisory: ' + JSON.stringify(res.fitAdvisory?.delta ?? null));
   }
+  if (STRUCTURE) {
+    console.log('\n## Strukturierungs-Zug' + (APPLY ? ' (APPLY)' : ' (dryRun)') + '\n');
+    const byId = new Map(live.elements.map((e) => [e.id, e]));
+    const modOfFunc = new Map();
+    for (const tr of live.traces)
+      if (tr.type === 'allocate' && byId.get(tr.source)?.type === 'FUNC' && byId.get(tr.target)?.type === 'MOD')
+        modOfFunc.set(tr.source, tr.target);
+    const prefixOf = (modId) => modId.replace(/^mod_/, '').split('_')[0];
+    const mods = live.elements.filter((e) => e.type === 'MOD');
+    const funcs = live.elements.filter((e) => e.type === 'FUNC');
+
+    const unmappedMods = mods.filter((m) => !blockOfPrefix.has(prefixOf(m.id)));
+    const unmappedFuncs = funcs.filter((f) => !modOfFunc.has(f.id) || !blockOfPrefix.has(prefixOf(modOfFunc.get(f.id))));
+    console.log(`Module ohne Block: ${unmappedMods.length}${unmappedMods.length ? ' -> ' + unmappedMods.map((m) => m.id).join(', ') : ''}`);
+    console.log(`FUNCs ohne Block: ${unmappedFuncs.length}${unmappedFuncs.length && unmappedFuncs.length < 8 ? ' -> ' + unmappedFuncs.map((f) => f.id).join(', ') : ''}\n`);
+
+    const commands = [];
+    for (const [key, name, desc] of BLOCKS) {
+      commands.push({ op: 'add-node', node: { uid: `MOD-mf-${key}`, type: 'MOD', name, description: desc } });
+      commands.push({ op: 'add-node', node: { uid: `FUNC-mf-${key}`, type: 'FUNC', name, description: desc } });
+    }
+    for (const m of mods) {
+      const b = blockOfPrefix.get(prefixOf(m.id));
+      if (b) commands.push({ op: 'add-edge', edge: { sourceId: `MOD-mf-${b}`, targetId: m.id, edgeType: 'compose' } });
+    }
+    for (const f of funcs) {
+      const b = blockOfPrefix.get(prefixOf(modOfFunc.get(f.id) ?? ''));
+      if (b) commands.push({ op: 'add-edge', edge: { sourceId: `FUNC-mf-${b}`, targetId: f.id, edgeType: 'compose' } });
+    }
+    console.log(`Batch: ${commands.length} Kommandos (10 Knoten, ${commands.length - 10} compose-Kanten)\n`);
+
+    const res = await rig.tools.graph_mutate.handler({ dryRun: !APPLY, baseVersion: version, commands, violations: 'summary' });
+    console.log(`tier: ${res.tier} · success: ${res.success} · neue Violations: ${res.violations?.length ?? 0}`);
+    const byRule = {};
+    for (const v of res.violations ?? []) byRule[v.ruleId] = (byRule[v.ruleId] ?? 0) + 1;
+    console.log('neu je Regel: ' + JSON.stringify(byRule));
+    for (const v of (res.violations ?? []).filter((x) => x.ruleId === 'RD-04' || x.severity === 'error').slice(0, 8))
+      console.log('  - ' + v.ruleId + ' ' + v.severity + ': ' + v.message);
+
+    const after = await rig.tools.rules_get_violations.handler({ detail: 'grouped' });
+    const g2 = (after.violations ?? after.groups ?? []);
+    const rd = g2.find((x) => x.ruleId === 'RD-04');
+    const bw = g2.find((x) => x.ruleId === 'BW-02');
+    console.log(`\nNACHHER  RD-04: ${rd ? rd.count + ' — ' + rd.message : 'kein Befund'}`);
+    console.log(`NACHHER  BW-02: ${bw ? bw.count + ' Befunde' : '0 Befunde'}`);
+    if (APPLY) {
+      const full = await rig.tools.rules_get_violations.handler({ detail: 'summary' });
+      for (const v of (full.violations ?? []).filter((x) => x.ruleId === 'BW-02')) console.log('    ' + v.message);
+      const rd04all = (full.violations ?? []).filter((x) => x.ruleId === 'RD-04');
+      console.log('  RD-04 im Detail:');
+      for (const v of rd04all) console.log('    ' + v.message);
+    }
+    if (APPLY) {
+      const g3 = rig.harness.graph;
+      const live2 = {
+        elements: (g3.nodes ?? []).map((n) => ({ id: n.uid, type: n.type })),
+        traces: (g3.edges ?? []).map((e) => ({ source: e.sourceId, target: e.targetId, type: e.edgeType })),
+      };
+      console.log('NACHHER  Struktur: ' + JSON.stringify(blackboxReport(live2)));
+    } else {
+      console.log('(dryRun — nichts persistiert; die obigen Violations sind die NEUEN, der Wegfall des');
+      console.log(' Wurzel-Befunds erscheint dort per Delta-Semantik nicht. Mit --apply messen.)');
+    }
+  }
+
 } finally {
   await rig.harness.close();
   rmSync(rig.tmp, { recursive: true, force: true });
