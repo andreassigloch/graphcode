@@ -21,7 +21,7 @@
  *
  * @author andreas@siglochconsulting
  */
-import { readFileSync, rmSync, mkdtempSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, rmSync, mkdtempSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { GraphCodeHarness, bindToolsToHarness } from '../../dist/index.js';
@@ -33,6 +33,25 @@ const PROPOSE = process.argv.includes('--propose');
 const STRUCTURE = process.argv.includes('--structure');
 const APPLY = process.argv.includes('--apply');
 const WOZU = process.argv.includes('--wozu');
+/**
+ * CR-SM-287 Go/No-Go: die Zustaende des Rigs als Datei ablegen, damit ein Ranker sie vergleichen
+ * kann, OHNE dass die Messung wieder an `docs/graph/*.graph.json` vorbei am Gate laeuft. Was hier
+ * herausfaellt, ist der Graph, wie das Gate ihn fuehrt — nicht die committete Datei.
+ *
+ *   node rig/moneyflow-struktur/driver.mjs --structure --apply --dump <verzeichnis>
+ */
+const DUMP = (() => { const i = process.argv.indexOf('--dump'); return i >= 0 ? process.argv[i + 1] : null; })();
+const liveOf = (g) => ({
+  elements: (g.nodes ?? []).map((n) => ({ ...n, id: n.uid })),
+  traces: (g.edges ?? []).map((e) => ({ source: e.sourceId, target: e.targetId, type: e.edgeType })),
+});
+function dump(stage, g) {
+  if (!DUMP) return;
+  mkdirSync(DUMP, { recursive: true });
+  const live = liveOf(g);
+  writeFileSync(join(DUMP, `${stage}.json`), JSON.stringify(live));
+  console.log(`  [dump] ${stage}: ${live.elements.length} Elemente, ${live.traces.length} Kanten -> ${join(DUMP, stage + '.json')}`);
+}
 
 /**
  * Die Wozu-Ebene, WIEDERHERGESTELLT aus docs/project/architecture-graph.md (Stand 2026-03-18).
@@ -147,6 +166,8 @@ try {
   const live = { elements: graph.elements ?? graph.nodes?.map((n) => ({ id: n.uid, type: n.type })) ?? [],
                  traces: graph.traces ?? graph.edges?.map((e) => ({ source: e.sourceId, target: e.targetId, type: e.edgeType })) ?? [] };
 
+  dump('00-baseline', rig.harness.graph);
+
   console.log('# rig/moneyflow-struktur — Baseline durch das echte Gate\n');
   console.log(`Store: ${rig.tmp} (temporaer) · Quelle: ${SOURCE} (nur gelesen) · graphVersion ${version}\n`);
 
@@ -260,6 +281,7 @@ try {
         traces: (g3.edges ?? []).map((e) => ({ source: e.sourceId, target: e.targetId, type: e.edgeType })),
       };
       console.log('NACHHER  Struktur: ' + JSON.stringify(blackboxReport(live2)));
+      dump('01-struktur', g3);
     } else {
       console.log('(dryRun — nichts persistiert; die obigen Violations sind die NEUEN, der Wegfall des');
       console.log(' Wurzel-Befunds erscheint dort per Delta-Semantik nicht. Mit --apply messen.)');
@@ -300,6 +322,7 @@ try {
     for (const v of (res2.violations ?? []).filter((x) => x.severity === 'error').slice(0, 6))
       console.log('  ERROR ' + v.ruleId + ': ' + v.message);
     if (APPLY) {
+      dump('02-wozu', rig.harness.graph);
       const rep = await rig.tools.graph_readiness.handler({ detail: false });
       console.log('\nReadiness nach der Wozu-Ebene:');
       for (const d of rep.dimension_readiness) console.log(`  ${d.dimension.padEnd(7)} ${String(d.score ?? '—').slice(0, 5).padStart(5)}  (${d.violations}/${d.applicable})`);
