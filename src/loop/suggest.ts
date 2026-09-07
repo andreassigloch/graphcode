@@ -25,7 +25,7 @@
 import { z } from 'zod/v4';
 import type { MutateResult } from '@sigloch/contracts/harness';
 import type { MutateCommand } from '@sigloch/contracts/harness';
-import { targetFor, suggestEdits, type Suggestion, type SuggestedEdit } from '@sigloch/se-engine';
+import { suggestEdits, type Suggestion, type SuggestedEdit } from '@sigloch/se-engine';
 import { toOntologyGraph } from '../kernel/conformance.js';
 import { generationStep, type GenerationStep } from './generate.js';
 import {
@@ -42,17 +42,10 @@ import type { MCPTool, MCPToolRegistry, ToolPort } from '../kernel/tool-contract
 // -------------------------------------------------------------------------
 
 const GraphSuggestInputSchema = z.object({
-  // Gewichts-Form = target-profile.ts (CR-GC-295) — EIN Schema für Input und Config.
-  target: TargetWeightsSchema.optional().describe(
-    'Zielrichtung im Metrikraum: Gewicht je Dimension in [-1,1] (>0 heben, <0 senken; ' +
-      'fehlend = 0). Nur die RICHTUNG wirkt, nicht der Betrag — der Vektor wird vor dem ' +
-      'Ranking L2-normalisiert, also rankt {"scalability": 1} exakt wie ' +
-      '{"scalability": 0.2}; entscheidend ist das VERHÄLTNIS der Dimensionen zueinander ' +
-      '(CR-GC-353, belegt durch T-C4). Das Feld `target` der Antwort echot den ROHEN ' +
-      'Input zurück, nicht den normalisierten Vektor. Beispiel {"scalability": 1} = ' +
-      '"raise scalability". Ohne Angabe wird .graphcode/target-profile.json als Default ' +
-      'gelesen (CR-GC-295); fehlt auch die, bleibt das Ziel leer (richtungslos).',
-  ),
+  // CR-GC-483: das Feld `target` ist ERSATZLOS entfallen. Es setzte die Gewichte des ℝ⁶,
+  // nach dem hier gerankt wurde — dreimal widerlegt (CR-SM-281/-287), ersetzt durch den
+  // Chebyshev-Score ueber die Verstossmasse (CR-SM-292). Es gibt nichts mehr zu gewichten:
+  // normiert wird gegen die Regelschwellen, und die stehen an den Regeln.
   k: z.number().int().positive().max(20).default(5).describe('Top-k Suggestions (Default 5).'),
   layer: z
     .enum(['all', 'arch'])
@@ -80,6 +73,12 @@ export interface SuggestVerdict {
    * anwendbaren Suggestion — eine Messung, nicht zwei.
    */
   fitDelta: number[];
+  /**
+   * CR-GC-483: der Chebyshev-Score des Zuges am Gate — `improvement > 0` heisst, er hat die
+   * SCHLIMMSTE Stelle des Modells entschaerft. Das ist die Zahl, nach der gerankt wird;
+   * `fitDelta` steht daneben und wird nur noch berichtet.
+   */
+  steer?: { before: number; after: number; improvement: number; worstAt: { ruleId: string; elementId: string } | null; removesElements: boolean };
 }
 
 /**
@@ -141,15 +140,7 @@ export function batchFor(edit: SuggestedEdit): MutateCommand[] {
   ];
 }
 
-/** L2-normalisierte Zielrichtung t̂ — dieselbe Normierung wie in se-engine. */
-function unitTarget(target: number[]): number[] {
-  const n = Math.sqrt(target.reduce((s, x) => s + x * x, 0));
-  return n < 1e-12 ? target : target.map((x) => x / n);
-}
-
 export interface GraphSuggestResult {
-  /** Aufgelöster Zielvektor (ℝ⁶, kanonische Dimensionsordnung). */
-  target: number[];
   /** Messebene des RANKINGS (= Eingabe `layer`). */
   layer: 'all' | 'arch';
   /**
@@ -205,15 +196,13 @@ export function bindSuggestTools(ctx: ToolPort): MCPToolRegistry {
       const og = toOntologyGraph(harness.getGraph());
       // Default aus der Config NUR wenn target im Input fehlt (CR-GC-295);
       // fehlt auch die Datei, bleibt das Ziel leer — Verhalten wie vor dem CR.
-      const weights = input.target ?? loadTargetProfile(harness.getRepoRoot())?.profile.weights ?? {};
-      const target = targetFor(weights);
       // CR-GC-431: ALLE Kandidaten holen, nicht die Top-k der Sonde. Das k-Fenster
       // wird erst NACH dem Umranken auf das Edit-Δm geschnitten — sonst fiele ein
       // gut bewerteter Edit heraus, weil die generische Sonde ihn niedrig rankte.
       // CR-GC-444 / CR-SM-286: die ND-Klammer ist entfallen. Der Konsolidierungs-Operator las
       // die ND-02-Matrix aus dem contracts-Modulzustand und durfte sie nicht aus einem fremden
       // Lauf erben; jetzt rechnet `contractSimilarity(og, …)` sie fuer GENAU diesen Graphen.
-      const suggestions = suggestEdits(og, target, { layer: input.layer });
+      const suggestions = suggestEdits(og, { layer: input.layer });
 
       // dryRun-Preview der Template-Edits auf der Schreibkette (kein Interleaving
       // mit echten Writes); nach jedem Preview zurück auf die Disk-Basis, damit
@@ -237,6 +226,7 @@ export function bindSuggestTools(ctx: ToolPort): MCPToolRegistry {
             success: res.success,
             violations: res.violations.map((v) => ({ ruleId: v.ruleId, severity: v.severity, message: v.message })),
             fitDelta: (res as { fitAdvisory?: { delta?: number[] } }).fitAdvisory?.delta ?? [],
+            steer: (res as { steerAdvisory?: SuggestVerdict['steer'] }).steerAdvisory,
           });
         }
         return out;
@@ -247,19 +237,19 @@ export function bindSuggestTools(ctx: ToolPort): MCPToolRegistry {
       // DIESES Edits (Quelle: das Gate-Advisory oben, kein zweiter Messpfad).
       // Vorher rankte hier das Δm einer generischen Operator-Sonde, während im
       // selben Objekt ein anderer Edit lag — bis hin zum umgekehrten Vorzeichen.
-      const t = unitTarget(target);
       const ranked: RankedSuggestion[] = suggestions.map((s, i) => {
         const verdict = verdicts[i];
-        // Anwendbar = Edit vorhanden UND vom Gate durchgelassen UND ein
-        // vollständiges Advisory-Δm da. Ein geblockter Edit hat kein fitAdvisory
-        // (harness.applyMutation liefert es nur bei success) — dann bleibt die
-        // Sonde stehen, aber als nicht anwendbar markiert.
-        const editDelta = verdict?.success && verdict.fitDelta.length === target.length ? verdict.fitDelta : null;
-        if (!editDelta) return { ...s, applicable: false, ...(verdict ? { verdict } : {}) };
+        // Anwendbar = Edit vorhanden UND vom Gate durchgelassen UND ein Steuer-Advisory da.
+        // Ein geblockter Edit hat keines (harness.applyMutation liefert es nur bei success) —
+        // dann bleibt die Sonde stehen, aber als nicht anwendbar markiert.
+        if (!verdict?.success || !verdict.steer) {
+          return { ...s, applicable: false, ...(verdict ? { verdict } : {}) };
+        }
         return {
           ...s,
-          delta: editDelta,
-          score: editDelta.reduce((sum, x, d) => sum + x * t[d], 0),
+          // Δm bleibt die ABLESUNG des ausgelieferten Edits, nicht mehr der Sonde.
+          delta: verdict.fitDelta.length > 0 ? verdict.fitDelta : s.delta,
+          score: verdict.steer.improvement,
           applicable: true,
           verdict,
         };
@@ -270,16 +260,20 @@ export function bindSuggestTools(ctx: ToolPort): MCPToolRegistry {
       // Tiebreak bis auf elementId: seit dem Konsolidierungs-Operator (CR-GC-444)
       // kann DIESELBE Kennung mehrfach vorkommen, und die Reihenfolge ist Vertrag.
       const rankGroup = (s: RankedSuggestion) => (s.applicable && s.score > SCORE_EPS ? 0 : 1);
+      // CR-GC-483 / CR-SM-291 §7.2: die Zerstoerungs-Sperre. Ein Zug, der Elemente ENTFERNT,
+      // rankt nie ueber einem, der keine entfernt — der ℝ⁵ misst Form und nie Substanz, also
+      // senkt Loeschen ihn zuverlaessig. Sie steht im Vergleich, nicht im Score.
+      const entfernt = (s: RankedSuggestion) => (s.verdict?.steer?.removesElements ? 1 : 0);
       ranked.sort(
         (a, b) =>
           rankGroup(a) - rankGroup(b) ||
+          entfernt(a) - entfernt(b) ||
           b.score - a.score ||
           a.ruleId.localeCompare(b.ruleId) ||
           a.elementId.localeCompare(b.elementId),
       );
 
       return {
-        target,
         layer: input.layer,
         advisoryLayer: ADVISORY_LAYER,
         ...(input.layer !== ADVISORY_LAYER

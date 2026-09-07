@@ -61,7 +61,7 @@ import {
 import { StoreLock } from './store-lock.js';
 import { listElements, type ElementFilter } from './element-slice.js';
 import { setExportPending } from './export-marker.js';
-import { computeFitAdvisory, type FitAdvisory } from './measure/fit-advisory.js';
+import { computeFitAdvisory, computeSteerAdvisory, type FitAdvisory, type SteerAdvisory } from './measure/fit-advisory.js';
 import {
   schemaFingerprint,
   readStoredFingerprint,
@@ -523,7 +523,7 @@ export class GraphCodeHarness {
     // Fit-Gate Härtegrad 1 (CR-GC-274): Δm-Advisory auf layer:'arch' pro
     // erfolgreicher Mutation — eine MESSUNG, kein Gate: tier/success bleiben
     // allein regelbestimmt ("Metrik rankt, Gate urteilt").
-    const result: MutateResult & { fitAdvisory: FitAdvisory } = {
+    const result: MutateResult & { fitAdvisory: FitAdvisory; steerAdvisory: SteerAdvisory } = {
       success: true,
       appliedCommands: commands.length,
       mutations: delta.upsertNodes.length + delta.deleteNodes.length + delta.upsertEdges.length + delta.deleteEdges.length,
@@ -531,6 +531,9 @@ export class GraphCodeHarness {
       confidence: 1,
       tier,
       fitAdvisory: computeFitAdvisory(snapshot, this.graph),
+      // CR-GC-483: das Steuersignal. `fitAdvisory` bleibt daneben stehen und wird berichtet —
+      // es rankt nur nichts mehr (CR-SM-292).
+      steerAdvisory: computeSteerAdvisory(snapshot, this.graph),
     };
 
     // CR-GC-239 invariant: an applied batch that changed NOTHING is suspicious.

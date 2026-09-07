@@ -28,6 +28,8 @@ import {
   rankCandidates,
   effectiveFocusDelta,
   deltaSum,
+  steerImprovement,
+  removesElements,
   focusDelta,
   totalDelta,
   temperatureSpread,
@@ -153,6 +155,17 @@ describe('Best-of-N ranking (pur, deterministisch)', () => {
    * (CR-GC-413): das Ranking prüft den Vertrag SCHEMA-fit-advisory jetzt per
    * safeParse, eine abgekürzte `{delta}`-Attrappe ist keine Messung mehr.
    */
+  /**
+   * CR-GC-483: das Steuer-Advisory, wie `harness.mutate()` es emittiert. `improvement > 0`
+   * heisst, der Zug hat die SCHLIMMSTE Stelle des Modells entschaerft.
+   */
+  const steer = (improvement: number, removes = false) => ({
+    rules: ['RD-04', 'BW-02', 'CR-01', 'MT-01', 'MT-02'],
+    before: 1, after: 1 - improvement, improvement,
+    worstAt: { ruleId: 'RD-04', elementId: 'MOD-x' },
+    removesElements: removes,
+  });
+
   const fit = (delta: number[]) => ({
     layer: 'arch' as const,
     dimensions: delta.map((_, i) => `d${i}`),
@@ -188,12 +201,43 @@ describe('Best-of-N ranking (pur, deterministisch)', () => {
     expect(rankCandidates([repair, cleanEqual], 'uc')[0]).toBe(cleanEqual);
   });
 
-  it('Gleichstand im tier, kein steeringDelta → Δm (layer:arch) entscheidet — der Tiebreaker', () => {
-    const a = cand(0, { success: true, tier: 'suggest', fitAdvisory: fit([-0.2, 0.1]), mutations: 99 });
-    const b = cand(1, { success: true, tier: 'suggest', fitAdvisory: fit([0.1, 0.05]), mutations: 1 });
-    expect(deltaSum(a.verdict)).toBeCloseTo(-0.1);
-    expect(deltaSum(b.verdict)).toBeCloseTo(0.15);
+  /**
+   * CR-GC-483 — der Metrik-Tiebreaker ist gewechselt. Bis hierher stand hier Δm (ℝ⁶); der ist an
+   * drei Klassen von Gegenbeispielen gefallen (CR-SM-281/-287) und rankt nichts mehr. An seiner
+   * Stelle steht der Chebyshev-Score (CR-SM-292): um wie viel der Zug die SCHLIMMSTE Stelle des
+   * Modells entschaerft, normiert gegen die Regelschwellen.
+   */
+  it('Gleichstand im tier, kein steeringDelta → die Chebyshev-Verbesserung entscheidet', () => {
+    const a = cand(0, { success: true, tier: 'suggest', steerAdvisory: steer(0.05), mutations: 99 });
+    const b = cand(1, { success: true, tier: 'suggest', steerAdvisory: steer(0.40), mutations: 1 });
+    expect(steerImprovement(a.verdict)).toBeCloseTo(0.05);
+    expect(steerImprovement(b.verdict)).toBeCloseTo(0.40);
     expect(rankCandidates([a, b])[0]).toBe(b);
+  });
+
+  it('Δm rankt NICHT mehr: besseres Δm verliert gegen bessere Chebyshev-Verbesserung', () => {
+    // Genau die Konstellation, die frueher andersherum ausging.
+    const alt = cand(0, { success: true, tier: 'suggest', fitAdvisory: fit([2.0, 1.0]), steerAdvisory: steer(0.01), mutations: 1 });
+    const neu = cand(1, { success: true, tier: 'suggest', fitAdvisory: fit([-0.5, -0.5]), steerAdvisory: steer(0.90), mutations: 1 });
+    expect(deltaSum(alt.verdict)).toBeGreaterThan(deltaSum(neu.verdict));
+    expect(rankCandidates([alt, neu])[0]).toBe(neu);
+  });
+
+  it('Zerstoerungs-Sperre: ein loeschender Zug rankt nie ueber einem, der nichts wegnimmt', () => {
+    // CR-SM-291 §7.2 Grenze 1, gemessen: der ℝ⁵ misst Form und nie Substanz, also senkt
+    // Loeschen ihn zuverlaessig. Die Sperre steht VOR dem Score, sonst gewaenne hier `loescht`.
+    const loescht = cand(0, { success: true, tier: 'suggest', steerAdvisory: steer(0.90, true), mutations: 1 });
+    const baut = cand(1, { success: true, tier: 'suggest', steerAdvisory: steer(0.05, false), mutations: 1 });
+    expect(removesElements(loescht.verdict)).toBe(true);
+    expect(steerImprovement(loescht.verdict)).toBeGreaterThan(steerImprovement(baut.verdict));
+    expect(rankCandidates([loescht, baut])[0]).toBe(baut);
+  });
+
+  it('fehlendes Steuer-Advisory rankt wie „keine Verbesserung", nie besser', () => {
+    const ohne = cand(0, { success: true, tier: 'suggest', mutations: 1 });
+    const mit = cand(1, { success: true, tier: 'suggest', steerAdvisory: steer(0.10), mutations: 1 });
+    expect(steerImprovement(ohne.verdict)).toBe(0);
+    expect(rankCandidates([ohne, mit])[0]).toBe(mit);
   });
 
   const steering = (blockBefore: number, blockAfter: number, dims: Record<string, number>) => ({
@@ -416,8 +460,9 @@ describe('Best-of-N executor (CR-GC-288, echter Gate-/Store-Pfad)', () => {
     expect(uids()).not.toContain('GHOST-x');
 
     // Trace-Zeilen (CR-GC-289): ALLE Ranking-Stufen sichtbar — tier, Fokus-Delta,
-    // Gesamt-Delta, Δm, mutations — plus der Pick.
-    const CAND = String.raw`tier=(\S+) focus\(uc\)=([+-]\d+\.\d{2}) total=([+-]\d+\.\d{2}) Δm=([+-]\d+\.\d{2}) mutations=(\d+)`;
+    // Gesamt-Delta, Chebyshev-Verbesserung (CR-GC-483), Δm, mutations — plus der Pick.
+    // `steer` steht VOR `Δm`, weil es rankt und Δm nur noch berichtet wird.
+    const CAND = String.raw`tier=(\S+) focus\(uc\)=([+-]\d+\.\d{2}) total=([+-]\d+\.\d{2}) steer=([+-]\d+\.\d{2}) Δm=([+-]\d+\.\d{2}) mutations=(\d+)`;
     expect(traces.some((l) => new RegExp(String.raw`candidate 1/3: tier=block .*mutations=0`).test(l))).toBe(true);
     expect(traces.some((l) => new RegExp(String.raw`candidate 2/3: ${CAND}`).test(l))).toBe(true);
     expect(traces.some((l) => /candidate 3\/3: tier=auto-apply/.test(l))).toBe(true);
@@ -459,8 +504,8 @@ describe('Best-of-N executor (CR-GC-288, echter Gate-/Store-Pfad)', () => {
     // (totals seit contracts 3.1.0 inkl. AF-01..05-Dimension — Fokus-Deltas unverändert)
     // contracts 9.x: ACTOR io→UC entfällt — der Volumen-Kandidat trägt 12 statt 18
     // Mutationen, sein Fokus-Delta ist -0.12; das Urteil (Fokus schlägt Volumen) bleibt.
-    expect(traces.some((l) => /candidate 1\/2: tier=suggest focus\(uc\)=-0\.12 total=-0\.12 Δm=\+0\.00 mutations=12/.test(l))).toBe(true);
-    expect(traces.some((l) => /candidate 2\/2: tier=suggest focus\(uc\)=\+0\.18 total=\+1\.71 Δm=\+0\.00 mutations=4/.test(l))).toBe(true);
+    expect(traces.some((l) => /candidate 1\/2: tier=suggest focus\(uc\)=-0\.12 total=-0\.12 steer=[+-]\d\.\d\d Δm=\+0\.00 mutations=12/.test(l))).toBe(true);
+    expect(traces.some((l) => /candidate 2\/2: tier=suggest focus\(uc\)=\+0\.18 total=\+1\.71 steer=[+-]\d\.\d\d Δm=\+0\.00 mutations=4/.test(l))).toBe(true);
     expect(traces.some((l) => l.includes('pick: candidate 2 (judge=gate)'))).toBe(true);
     expect(uids()).toContain('REQ-login'); // der Ziel-Delta-Gewinner ist persistiert …
     expect(uids()).toContain('TEST-login');

@@ -56,6 +56,7 @@ import {
 } from './executor-prompt.js';
 import {
   deltaSum,
+  steerImprovement,
   focusDelta,
   rankCandidates,
   effectiveFocusDelta,
@@ -827,7 +828,7 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
       `  candidate ${c.index + 1}/${n}: tier=${tier} focus(${focusDimension ?? '-'})=${fmtDelta(
         focusDelta(v, focusDimension),
       )}${dupes > 0 ? ` dupes=${dupes} eff=${fmtDelta(eff)}` : ''}` +
-        ` total=${fmtDelta(totalDelta(v))} Δm=${fmtDelta(deltaSum(v))} mutations=${v.mutations ?? 0}`,
+        ` total=${fmtDelta(totalDelta(v))} steer=${fmtDelta(steerImprovement(v))} Δm=${fmtDelta(deltaSum(v))} mutations=${v.mutations ?? 0}`,
     );
   };
 
@@ -845,7 +846,7 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
           .join(',') || '-';
       return (
         `${i + 1}. tier=${v.tier ?? '?'} focus(${focusDimension ?? '-'})=${fmtDelta(focusDelta(v, focusDimension))} ` +
-        `total=${fmtDelta(totalDelta(v))} Δm=${fmtDelta(deltaSum(v))} mutations=${v.mutations ?? 0} violations=${viols}`
+        `total=${fmtDelta(totalDelta(v))} steer=${fmtDelta(steerImprovement(v))} Δm=${fmtDelta(deltaSum(v))} mutations=${v.mutations ?? 0} violations=${viols}`
       );
     });
     const prompt =
