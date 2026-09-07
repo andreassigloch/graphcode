@@ -57,14 +57,24 @@ import { join } from 'node:path';
 import { evaluateAllRules, DEFAULT_METRIC_POLICY, toEvaluableGraph, ALL_RULE_DEFS } from '@sigloch/contracts/se';
 import { metrics, METRIC_DIMENSIONS } from '@sigloch/se-engine';
 
-/** Die Stufen, in der Reihenfolge aus CR-SM-287 §5.1. Sie steht VOR dem Lauf fest. */
-const STUFEN = [
+/**
+ * Die Stufen. Default ist die Reihenfolge aus CR-SM-287 §5.1 — sie stand VOR dem Lauf fest.
+ *
+ * `--order BW-02,RD-04,…` faehrt eine andere. Das ist KEINE Rettung des Kriteriums: CR-SM-287 §6
+ * verbietet ausdruecklich, ein Kriterium durch nachtraegliches Umsortieren zu erkaufen. Der
+ * Schalter existiert, damit eine ALTERNATIVE Hypothese explizit, benannt und wiederholbar
+ * gemessen werden kann — sie braucht ihren eigenen, vorab festgelegten Pruefsatz, bevor sie
+ * irgendetwas belegt.
+ */
+const DEFAULT_STUFEN = [
   ['RD-04', 'Breite      (Simon)'],
   ['BW-02', 'Randbreite  (Parnas)'],
   ['CR-01', 'Kopplung    (Baldwin/Clark)'],
   ['MT-01', 'Instabilitaet (Martin)'],
   ['MT-02', 'Kohaesion   (LCOM4)'],
 ];
+const ORDER = (() => { const i = process.argv.indexOf('--order'); return i >= 0 ? process.argv[i + 1].split(',') : null; })();
+const STUFEN = ORDER ? ORDER.map((r) => DEFAULT_STUFEN.find((x) => x[0] === r) ?? [r, r]) : DEFAULT_STUFEN;
 const DOMAIN = Object.fromEntries(ALL_RULE_DEFS.map((d) => [d.id, d.domain]));
 
 const RIG = (() => { const i = process.argv.indexOf('--rig'); return i >= 0 ? process.argv[i + 1] : null; })();
@@ -118,7 +128,7 @@ const r6 = (g) => { const m = metrics(g, { layer: 'arch' }); return METRIC_DIMEN
 const r6dot = (v) => v.reduce((a, x, i) => a + x * (W[METRIC_DIMENSIONS[i]] ?? 0), 0);
 
 console.log('# CR-SM-287 Go/No-Go — lexikographisch ueber den ℝ⁵ aus dem Regelstrom\n');
-console.log(`Stufenreihenfolge (steht VOR dem Lauf fest): ${STUFEN.map(([r]) => r).join(' > ')}\n`);
+console.log(`Stufenreihenfolge: ${STUFEN.map(([r]) => r).join(' > ')}` + (ORDER ? '  **POST-HOC per --order, nicht vorab festgelegt**' : '  (§5.1, vor dem Lauf festgelegt)') + '\n');
 
 // ---------------------------------------------------------------------------
 // 1. Paare — der rechte Zustand ist der bekannt bessere
@@ -219,3 +229,76 @@ for (const k of ABLESUNGEN) {
   console.log(`| ${k} | ${pa.filter(Boolean).length}/${pa.length} | ${abOk ? '✓' : '✗'} | ${de.filter(Boolean).length}/${de.length} | ${paOk && abOk && deOk ? '**GO**' : 'NO-GO'} |`);
 }
 console.log('\n_Die Stufenreihenfolge wurde nach dem Lauf NICHT umsortiert (CR-SM-287 §6). Faellt ein Kriterium, ist das das Ergebnis._');
+
+// ---------------------------------------------------------------------------
+// 5. KANDIDATEN an EINEM Basisgraphen — die Frage, die der Ranker wirklich beantwortet
+//
+// CR-SM-287 §10.4 (c) sagt: vergleiche ZUEGE, nicht Graphen. Die Paare P1-P6 sind
+// Vorher/Nachher EINES angewendeten Zuges — eine ABSOLUTE Frage. `graph_suggest` und
+// `rankCandidates` stellen eine andere: mehrere Vorschlaege am SELBEN Basisgraphen, welcher
+// zuerst? Diese Sektion baut genau das.
+//
+// Basis: moneyflow flach (306 Wurzel-FUNC), aus dem Rig. Vier Kandidaten, alle "ziehen eine
+// Ebene ein" — der Unterschied ist ausschliesslich, WO der Schnitt faellt:
+//
+//   A story-schnitt   der bestaetigte Zug (Rig-Dump `01-struktur`). Auftraggeber-bestaetigt,
+//                     und BW-02 hat die Naht belegt: alle 23 Randvertraege im HTTP-Rand, 0
+//                     in der Darstellung.
+//   B ein-block       ALLES unter einen Block. Zieht formal eine Ebene ein und verbirgt nichts.
+//   C block-je-FUNC   jede Wurzel-FUNC bekommt ihren eigenen Block. Dito, andere Richtung.
+//   D zufalls-7       SIEBEN Blöcke wie A, aber nach id-Hash statt nach Bedeutung. Der
+//                     schaerfste Fall: gleiche FORM, falsche NAHT. Nur ein Mass, das den Rand
+//                     misst, kann A von D unterscheiden — die Breite allein kann es nicht.
+//
+// Bekannte Antwort: **A vor B, C und D.** B und C sind die Degenerate aus CR-SM-281 §2.2, auf
+// der Kandidatenebene nachgebaut; D ist neu und der eigentliche Test.
+// ---------------------------------------------------------------------------
+if (RIG && existsSync(join(RIG, '00-baseline.json'))) {
+  const basis = atFile(join(RIG, '00-baseline.json'));
+  const typeOf = new Map(basis.elements.map((e) => [e.id, e.type]));
+  const composed = new Set(basis.traces.filter((t) => t.type === 'compose' && typeOf.get(t.source) === 'FUNC' && typeOf.get(t.target) === 'FUNC').map((t) => t.target));
+  const composedM = new Set(basis.traces.filter((t) => t.type === 'compose' && typeOf.get(t.target) === 'MOD').map((t) => t.target));
+  const rootF = basis.elements.filter((e) => e.type === 'FUNC' && !composed.has(e.id)).map((e) => e.id);
+  const rootM = basis.elements.filter((e) => e.type === 'MOD' && !composedM.has(e.id)).map((e) => e.id);
+
+  /** Eine Ebene einziehen: `zuordnung(id) -> Blockschluessel`. Sonst identisch zum Rig-Zug. */
+  function ebeneEinziehen(zuordF, zuordM) {
+    const g = { elements: basis.elements.map((e) => ({ ...e })), traces: basis.traces.map((t) => ({ ...t })) };
+    const blocks = new Set([...rootF.map(zuordF), ...rootM.map(zuordM)]);
+    for (const b of blocks) {
+      g.elements.push({ id: `FUNC-blk-${b}`, type: 'FUNC', name: `Block ${b}`, description: `Kandidaten-Block ${b}.` });
+      g.elements.push({ id: `MOD-blk-${b}`, type: 'MOD', name: `Block ${b}`, description: `Kandidaten-Block ${b}.` });
+    }
+    for (const id of rootF) g.traces.push({ source: `FUNC-blk-${zuordF(id)}`, target: id, type: 'compose' });
+    for (const id of rootM) g.traces.push({ source: `MOD-blk-${zuordM(id)}`, target: id, type: 'compose' });
+    return g;
+  }
+  // Determiniert und ohne Bedeutung — genau das ist der Punkt von D.
+  const hash7 = (s) => { let h = 0; for (const c of s) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h % 7; };
+
+  const KANDIDATEN = [
+    ['A story-schnitt (bestaetigt)', atFile(join(RIG, '01-struktur.json'))],
+    ['B ein-block', ebeneEinziehen(() => 'all', () => 'all')],
+    ['C block-je-FUNC', ebeneEinziehen((id) => id, (id) => id)],
+    ['D zufalls-7 (gleiche Form, falsche Naht)', ebeneEinziehen(hash7, hash7)],
+  ];
+  const pBasis = profil(basis);
+
+  console.log('\n## 5. Kandidaten an EINEM Basisgraphen (moneyflow flach, aus dem Rig)\n');
+  console.log('Bekannte Antwort: **A zuerst.** B/C sind Degenerate, D hat A\'s Form mit falscher Naht.\n');
+  console.log('| Kandidat | Δ ' + STUFEN.map(([r]) => r).join(' | Δ ') + ' (Sigma) | Δ RD-04 max | Δ BW-02 max |');
+  console.log('|---|' + STUFEN.map(() => '---:').join('|') + '|---:|---:|');
+  const profile = KANDIDATEN.map(([nm, g]) => [nm, profil(g)]);
+  const d = (p, k, i) => p[k][i] - pBasis[k][i];
+  for (const [nm, p] of profile)
+    console.log(`| ${nm} | ${STUFEN.map((_, i) => (d(p, 'masse', i) >= 0 ? '+' : '') + fmt(d(p, 'masse', i))).join(' | ')} | ${(d(p, 'masse-max', 0) >= 0 ? '+' : '') + fmt(d(p, 'masse-max', 0))} | ${(d(p, 'masse-max', 1) >= 0 ? '+' : '') + fmt(d(p, 'masse-max', 1))} |`);
+
+  console.log('\n### Rangfolge je Ablesung — steht A vorn?\n');
+  console.log('| Ablesung | Rangfolge der Kandidaten | A zuerst? |');
+  console.log('|---|---|---|');
+  for (const k of ABLESUNGEN) {
+    // Ein Kandidat ist besser, wenn sein DELTA lexikographisch kleiner ist (mehr gesenkt).
+    const sorted = profile.slice().sort((x, y) => lex(STUFEN.map((_, i) => d(x[1], k, i)), STUFEN.map((_, i) => d(y[1], k, i)))).map(([nm]) => nm.split(' ')[0]);
+    console.log(`| ${k} | ${sorted.join(' > ')} | ${sorted[0] === 'A' ? '✓ ja' : '✗ nein'} |`);
+  }
+}
