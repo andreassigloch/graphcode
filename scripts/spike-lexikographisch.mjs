@@ -339,3 +339,189 @@ if (RIG && existsSync(join(RIG, '00-baseline.json'))) {
     console.log(`| ${k} | ${sorted.join(' > ')} | ${sorted[0] === 'A' ? '✓ ja' : '✗ nein'} |`);
   }
 }
+
+// ---------------------------------------------------------------------------
+// 6. CR-SM-291 — der UNABHAENGIGE Kandidatensatz, vorab registriert
+//
+// Die Antworten stehen in `docs/cr/open/CR-SM-291-pruefsatz-vor-formel.md` und sind dort VOR
+// diesem Code committet (Commit 207e716). Sie werden hier NICHT hergeleitet, nur geprueft.
+// ---------------------------------------------------------------------------
+const clone2 = (g) => ({ elements: g.elements.map((e) => ({ ...e })), traces: g.traces.map((t) => ({ ...t })) });
+
+/** Eine Ebene unter `parent` einziehen: die Kinder auf `k` Untercontainer verteilen. */
+function ebeneUnter(g0, parentId, kindTyp, zuordnung) {
+  const g = clone2(g0);
+  const typeOf = new Map(g.elements.map((e) => [e.id, e.type]));
+  const kanten = g.traces.filter((t) => t.type === 'compose' && t.source === parentId && typeOf.get(t.target) === kindTyp);
+  const gruppen = new Map();
+  for (const t of kanten) {
+    const key = zuordnung(t.target);
+    if (!gruppen.has(key)) gruppen.set(key, []);
+    gruppen.get(key).push(t.target);
+  }
+  g.traces = g.traces.filter((t) => !kanten.includes(t));
+  for (const [key, kinder] of gruppen) {
+    const id = `${kindTyp}-lvl-${parentId}-${key}`;
+    g.elements.push({ id, type: kindTyp, name: `Zwischenebene ${key}`, description: `Kandidaten-Zwischenebene ${key} unter ${parentId}.` });
+    g.traces.push({ source: parentId, target: id, type: 'compose' });
+    for (const k of kinder) g.traces.push({ source: id, target: k, type: 'compose' });
+  }
+  return g;
+}
+/**
+ * Eine sub-MOD-Ebene unter `modId` einziehen: die allozierten FUNC auf `k` Untermodule
+ * umhaengen. RD-04 zaehlt an einem MOD die ALLOZIERTEN FUNC (`FUNC -allocate-> MOD`), nicht
+ * compose-Kinder — im ersten Lauf von CR-SM-291 war genau das falsch und Satz F ein Null-Test.
+ */
+function subModEbene(g0, modId, zuordnung) {
+  const g = clone2(g0);
+  const typeOf = new Map(g.elements.map((e) => [e.id, e.type]));
+  const kanten = g.traces.filter((t) => t.type === 'allocate' && t.target === modId && typeOf.get(t.source) === 'FUNC');
+  const gruppen = new Map();
+  for (const t of kanten) {
+    const key = zuordnung(t.source);
+    if (!gruppen.has(key)) gruppen.set(key, []);
+    gruppen.get(key).push(t.source);
+  }
+  g.traces = g.traces.filter((t) => !kanten.includes(t));
+  for (const [key, funcs] of gruppen) {
+    const id = `MOD-lvl-${modId}-${key}`;
+    g.elements.push({ id, type: 'MOD', name: `Untermodul ${key}`, description: `Kandidaten-Untermodul ${key} in ${modId}.` });
+    g.traces.push({ source: modId, target: id, type: 'compose' });
+    for (const f of funcs) g.traces.push({ source: f, target: id, type: 'allocate' });
+  }
+  return g;
+}
+
+/** Allozierte FUNC eines MOD loeschen, bis nur `behalte` uebrig sind — mitsamt allen Kanten. */
+function allozierteLoeschen(g0, modId, behalte) {
+  const g = clone2(g0);
+  const typeOf = new Map(g.elements.map((e) => [e.id, e.type]));
+  const funcs = g.traces.filter((t) => t.type === 'allocate' && t.target === modId && typeOf.get(t.source) === 'FUNC').map((t) => t.source);
+  const weg = new Set(funcs.slice(behalte));
+  g.elements = g.elements.filter((e) => !weg.has(e.id));
+  g.traces = g.traces.filter((t) => !weg.has(t.source) && !weg.has(t.target));
+  return g;
+}
+
+/** Kinder von `parent` loeschen, bis nur `behalte` uebrig sind — mitsamt allen ihren Kanten. */
+function kinderLoeschen(g0, parentId, kindTyp, behalte) {
+  const g = clone2(g0);
+  const typeOf = new Map(g.elements.map((e) => [e.id, e.type]));
+  const kinder = g.traces.filter((t) => t.type === 'compose' && t.source === parentId && typeOf.get(t.target) === kindTyp).map((t) => t.target);
+  const weg = new Set(kinder.slice(behalte));
+  g.elements = g.elements.filter((e) => !weg.has(e.id));
+  g.traces = g.traces.filter((t) => !weg.has(t.source) && !weg.has(t.target));
+  return g;
+}
+/** Einen unbeteiligten Knoten anhaengen — der Nichtstun-Kandidat. */
+function anhaengen(g0, elternId, typ, id) {
+  const g = clone2(g0);
+  g.elements.push({ id, type: typ, name: id, description: 'Kandidaten-Platzhalter.' });
+  if (elternId) g.traces.push({ source: elternId, target: id, type: 'compose' });
+  return g;
+}
+const drittel = (ids) => { const m = new Map(); ids.forEach((id, i) => m.set(id, i % 3)); return (id) => m.get(id); };
+const hash3 = (s) => { let h = 0; for (const c of s) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h % 3; };
+
+/** Ein Satz: Basisgraph, Kandidaten, und die VORAB festgelegten Muss-Ordnungen. */
+function satzLaufen(name, basis, kandidaten, mussVor) {
+  const pB = profil(basis);
+  const eintraege = kandidaten.map(([k, g]) => [k, profil(g)]);
+  console.log(`\n### ${name}\n`);
+  console.log('| Kandidat | Δ ' + STUFEN.map(([r]) => r).join(' | Δ ') + ' | Chebyshev |');
+  console.log('|---|' + STUFEN.map(() => '---:').join('|') + '|---:|');
+  for (const [k, p] of eintraege)
+    console.log(`| ${k} | ${STUFEN.map((_, i) => { const d = p.masse[i] - pB.masse[i]; return (d >= 0 ? '+' : '') + fmt(d); }).join(' | ')} | ${fmt(p.cheby[0])} (Basis ${fmt(pB.cheby[0])}) |`);
+  console.log('\n| Ablesung | Rangfolge | ' + mussVor.map(([a, b]) => `${a} vor ${b}?`).join(' | ') + ' | Satz |');
+  console.log('|---|---|' + mussVor.map(() => '---').join('|') + '|---|');
+  const urteile = {};
+  for (const kk of ABLESUNGEN) {
+    // CR-SM-291: ein Satz, in dem ALLE Kandidaten dasselbe Profil haben, prueft nichts — die
+    // Rangfolge faellt dann auf den Namens-Tiebreak zurueck und liest sich als bestanden.
+    // Genau diese Fake-Coverage hat Satz F im ersten Lauf produziert (falsche Kind-Relation).
+    const alleGleich = eintraege.every(([, p]) => lex(p[kk], eintraege[0][1][kk]) === 0);
+    if (alleGleich) { urteile[kk] = null; console.log(`| ${kk} | – alle Kandidaten identisch | ${mussVor.map(() => '– blind').join(' | ')} | **blind** |`); continue; }
+    // Kandidaten teilen dieselbe Basis, also ist die Ordnung nach ZUSTAND dieselbe wie nach
+    // Delta. `cheby` ist ein Ein-Element-Profil und wird von `lex` genauso verglichen.
+    const sorted = eintraege.slice().sort((x, y) => lex(x[1][kk], y[1][kk]) || (x[0] < y[0] ? -1 : 1)).map(([k]) => k);
+    const rang = Object.fromEntries(sorted.map((k, i) => [k, i]));
+    const treffer = mussVor.map(([a, b]) => rang[a] < rang[b]);
+    urteile[kk] = treffer.every(Boolean);
+    console.log(`| ${kk} | ${sorted.join(' > ')} | ${treffer.map((t) => (t ? '✓' : '✗')).join(' | ')} | ${urteile[kk] ? '**bestanden**' : 'gefallen'} |`);
+  }
+  return urteile;
+}
+
+console.log('\n## 6. CR-SM-291 — unabhaengiger Kandidatensatz (Antworten vorab in CR-SM-291, Commit 207e716)\n');
+const gcode = atFile('docs/graph/graphcode.graph.json');
+const sysOf = (g) => g.elements.find((e) => e.type === 'SYS')?.id ?? null;
+const kinderVon = (g, parent, typ) => {
+  const t = new Map(g.elements.map((e) => [e.id, e.type]));
+  return g.traces.filter((x) => x.type === 'compose' && x.source === parent && t.get(x.target) === typ).map((x) => x.target);
+};
+/** Was RD-04 an einem MOD als Kinder zaehlt: die allozierten FUNC. */
+const allozierteVon = (g, modId) => {
+  const t = new Map(g.elements.map((e) => [e.id, e.type]));
+  return g.traces.filter((x) => x.type === 'allocate' && x.target === modId && t.get(x.source) === 'FUNC').map((x) => x.source);
+};
+
+// --- Satz F: graphcode ------------------------------------------------------
+const asKids = allozierteVon(gcode, 'MOD-agent-surface');
+const prKids = allozierteVon(gcode, 'MOD-projections');
+const urteilF = satzLaufen(
+  `Satz F — graphcode (MOD-agent-surface ${asKids.length} Kinder, MOD-projections ${prKids.length})`,
+  gcode,
+  [
+    ['F1 Ebene am groessten Problem', subModEbene(gcode, 'MOD-agent-surface', drittel(asKids))],
+    ['F2 Ebene am kleineren Problem', subModEbene(gcode, 'MOD-projections', drittel(prKids))],
+    ['F3 ZERSTOEREN (18 Kinder loeschen)', allozierteLoeschen(gcode, 'MOD-agent-surface', 11)],
+    ['F4 nichts tun (leerer MOD)', anhaengen(gcode, sysOf(gcode), 'MOD', 'MOD-kandidat-leer')],
+  ],
+  [['F1 Ebene am groessten Problem', 'F2 Ebene am kleineren Problem'], ['F1 Ebene am groessten Problem', 'F4 nichts tun (leerer MOD)']],
+);
+
+// --- Satz G: moneyflow, zweiter Schnitt ------------------------------------
+let urteilG = null;
+if (RIG && existsSync(join(RIG, '01-struktur.json'))) {
+  const strukt = atFile(join(RIG, '01-struktur.json'));
+  const besch = kinderVon(strukt, 'FUNC-mf-beschaffen', 'FUNC');
+  // Bedeutungsvolle Zuordnung: das Modul-Praefix der FUNC (crawlers / import / transformers).
+  const typ = new Map(strukt.elements.map((e) => [e.id, e.type]));
+  const modOf = new Map();
+  for (const t of strukt.traces)
+    if (t.type === 'allocate' && typ.get(t.source) === 'FUNC' && typ.get(t.target) === 'MOD') modOf.set(t.source, t.target);
+  const praefix = (id) => (modOf.get(id) ?? '').replace(/^mod_/, '').split('_')[0] || 'rest';
+  const hr = kinderVon(strukt, 'MOD-mf-httprand', 'MOD');
+  urteilG = satzLaufen(
+    `Satz G — moneyflow strukturiert (FUNC-mf-beschaffen ${besch.length} Kinder, MOD-mf-httprand ${hr.length})`,
+    strukt,
+    [
+      ['G1 nach Bedeutung (Modul-Praefix)', ebeneUnter(strukt, 'FUNC-mf-beschaffen', 'FUNC', praefix)],
+      ['G2 nach Hash (gleiche Form)', ebeneUnter(strukt, 'FUNC-mf-beschaffen', 'FUNC', hash3)],
+      ['G3 am kleineren Problem', ebeneUnter(strukt, 'MOD-mf-httprand', 'MOD', drittel(hr))],
+    ],
+    [['G1 nach Bedeutung (Modul-Praefix)', 'G2 nach Hash (gleiche Form)'], ['G1 nach Bedeutung (Modul-Praefix)', 'G3 am kleineren Problem']],
+  );
+}
+
+// --- Satz H: bok, Gradient innerhalb des Budgets ----------------------------
+const bokG = atFile('/Users/andreas/Developer/dev/bok/docs/graph/bok.graph.json');
+const bokBlock = bokG.elements.find((e) => e.type === 'FUNC' && kinderVon(bokG, e.id, 'FUNC').length > 0)?.id ?? null;
+const urteilH = satzLaufen(
+  `Satz H — bok (alle fuenf Stufen bei 0; Zielblock ${bokBlock})`,
+  bokG,
+  [
+    ['H1 unter einen Block', anhaengen(bokG, bokBlock, 'FUNC', 'FUNC-kandidat-neu')],
+    ['H2 als neue Wurzel', anhaengen(bokG, null, 'FUNC', 'FUNC-kandidat-neu')],
+  ],
+  [['H1 unter einen Block', 'H2 als neue Wurzel']],
+);
+
+console.log('\n### CR-SM-291 Go/No-Go — F1 vor F2/F4 UND G1 vor G2/G3; H wird nur berichtet\n');
+console.log('| Ablesung | Satz F | Satz G | Satz H (nur Bericht) | Urteil |');
+console.log('|---|---|---|---|---|');
+for (const kk of ABLESUNGEN) {
+  const f = urteilF[kk], g = urteilG ? urteilG[kk] : null, h = urteilH[kk];
+  console.log(`| ${kk} | ${f ? '✓' : '✗'} | ${g === null ? '– (kein Rig)' : g ? '✓' : '✗'} | ${h ? '✓' : '– blind/✗'} | ${f && g ? '**GO**' : 'NO-GO'} |`);
+}
