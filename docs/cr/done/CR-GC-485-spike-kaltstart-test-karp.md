@@ -1,7 +1,9 @@
 # CR-GC-485 (Spike) — Kaltstart `test_karp`: die Suite auf einem Projekt ohne Code
 
-**Status:** offen — **eigene Sitzung, Automodus.** Dieses Dokument ist der vollständige Kontext;
-es setzt keine Konversation voraus.
+**Status:** ABGESCHLOSSEN 2026-09-07. Ergebnis: `test_karp/docs/project/spike-kaltstart-befunde.md`.
+Endstand des Modells: graphVersion 11, 143 Elemente, 0 Errors, SRR/PDR/CDR/TRR bestanden,
+13 CRs in 4 Meilensteinen — „ready to code" erreicht. Dieses Dokument war der Auftrag; die
+Befunde stehen im Bericht, nicht hier.
 **Angelegt:** 2026-09-07 · **Art:** Spike (Erkenntnis, kein Produktivcode)
 **Ort des Laufs:** `/Users/andreas/Developer/dev/test_karp` (eigenes Repo)
 **Prüfling:** die graphcode-Suite — **nicht** das Wiki-System
@@ -50,6 +52,25 @@ Schreibzugriff prüfen** — ohne das misst der Lauf ein altes Paket:
     cd ~/Developer/dev/graphcode && npm run build
     grep -c steerAdvisory dist/kernel/harness.js      # muss ≥ 1 sein
 
+**Der Code-Check allein genügt nicht — er prüft den Code, nicht den Graphen.** Der MCP-Server
+bindet den Graphen an sein *Arbeitsverzeichnis*, und das steht seit Sessionstart fest
+(`GRAPHCODE_DIR` ist eine Konstante, keine Env-Variable). Eine Sitzung aus `sigloch-modules`
+oder `graphcode` heraus fährt denselben Code — der Symlink-Check oben ist dann **grün** —,
+schreibt aber in den Graphen *jenes* Repos. Deshalb als erster Zug, vor allem anderen:
+
+    graph_metrics   → muss `"modules": []` liefern (test_karp hat noch keinen Graphen)
+
+Kommen dort `MOD-contracts` / `MOD-se-optimizer` zurück, hängt die **MCP-Bindung** am falschen
+Repo. Das ist kein Abbruchgrund: `createHarness({repoRoot})` nimmt die Wurzel als Parameter, nur
+die CLI setzt sie auf `process.cwd()`. Der Treiber `.graphcode/gcdrv.mjs` baut damit dieselbe
+Registry über demselben Gate, nur ohne den stdio-Transport:
+
+    node .graphcode/gcdrv.mjs <repoRoot> <tool> '<json>'
+
+Was er gegenüber `serveStdio` **nicht** mitbringt, ist der Auto-Export (dort an `bootHost`
+gehängt, nicht aus dem Barrel exportiert). Persistenz auf Disk ist also **explizit** zu fahren:
+nach jeder Mutationsrunde `graph_export`. Ohne das steht der Stand nur im Kuzu-Store.
+
 ## 4. Wo gestoppt wird
 
 **„Ready to code".** Konkret: das Modell trägt einen Implementierungsplan — Meilensteine und CRs
@@ -68,12 +89,14 @@ beantwortet, eine nicht:
 |---|---|
 | Eigenes Repo oder hier? | **entschieden** — `test_karp` ist ein eigenes Repo |
 | Agent-Runtime | **entschieden** — `.claude/` liegt dort, also Claude Code, also `CLAUDE.md` als Schema-Datei des Zielsystems |
-| **Muster oder Instanz?** | **OFFEN — die eine Frage an den Auftraggeber.** Das Muster gibt eine saubere Spec, aber keine Daten zum Validieren. Eine Instanz gibt beides. Empfehlung der Vorlage: Instanz. |
-| Welche Domäne (falls Instanz)? | hängt an der vorigen |
+| **Muster oder Instanz?** | **entschieden 2026-09-07 — Muster.** Der Auftraggeber hat gegen die Empfehlung der Vorlage entschieden: der Lauf modelliert das abstrakte Karpathy-Muster. |
+| Welche Domäne? | **entfällt** — keine Instanz |
 
 **Fürs Modellieren bis „ready to code" reicht das Muster** — der Schnitt, die UCs, die NFRs und
-der Plan hängen nicht an der Domäne. Die Domäne entscheidet erst, was *validieren* heißt. Also:
-**mit dem Muster anfangen, die Frage einmal stellen, nicht darauf warten.**
+der Plan hängen nicht an der Domäne. Die Domäne entscheidet erst, was *validieren* heißt. Damit
+ist §5 geschlossen: **es gibt keine offene Frage mehr, der Lauf kann durchlaufen.** Preis der
+Entscheidung: „validieren" im Sinne der Done-Definition bleibt in diesem Spike leer — der Stopp
+liegt ohnehin vor der ersten Zeile Code (§4), der Verlust ist also keiner.
 
 ## 6. Drei Fallen, die dieser Lauf mit Sicherheit trifft
 
