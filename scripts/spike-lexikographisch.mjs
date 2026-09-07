@@ -77,6 +77,31 @@ const ORDER = (() => { const i = process.argv.indexOf('--order'); return i >= 0 
 const STUFEN = ORDER ? ORDER.map((r) => DEFAULT_STUFEN.find((x) => x[0] === r) ?? [r, r]) : DEFAULT_STUFEN;
 const DOMAIN = Object.fromEntries(ALL_RULE_DEFS.map((d) => [d.id, d.domain]));
 
+/**
+ * CHEBYSHEV / MAXIMIN — der Gegenentwurf zu Summe UND Lexikographie.
+ *
+ * Beide bisher gemessenen Verfahren haben denselben Defekt, nur an verschiedenen Enden:
+ *   - Die gewichtete Summe ist KOMPENSATORISCH: eine gute Dimension kauft eine schlechte frei
+ *     (CR-SM-281 — `faultTolerance` +2,11 kaufte drei Regressionen frei).
+ *   - Die Lexikographie ist NICHT kompensatorisch, aber diktatorisch: die erste Stufe, die sich
+ *     unterscheidet, entscheidet allein — die uebrigen stimmen nie ab (CR-SM-287 §11: RD-04
+ *     entschied, BW-02 kam nie zu Wort, und der Zufallsschnitt gewann).
+ *
+ * Chebyshev sitzt dazwischen: **man ist so gut wie die eigene SCHLECHTESTE Dimension.** Kein
+ * Freikauf (die schlechteste zaehlt immer), aber auch kein Diktat (jede Dimension KANN die
+ * schlechteste sein). Formal Wierzbickis achievement scalarizing function:
+ *
+ *     score = max_i ( ueberschuss_i / budget_i )  +  eps * mittel_i ( ueberschuss_i / budget_i )
+ *
+ * Die Normierung `/ budget` macht Kinderzahlen, Vertraege und Instabilitaets-Brueche
+ * vergleichbar — moeglich erst seit CR-SM-288, das beide Zahlen an den Befund legt.
+ *
+ * Der eps-Term ist nicht Kosmetik: ohne ihn sind zwei Kandidaten mit gleichem Maximum
+ * ununterscheidbar (schwach-pareto-optimal), und die Rangfolge haengt an der Sortier-Stabilitaet.
+ * eps klein genug, dass er ein echtes Maximum nie ueberstimmt.
+ */
+const EPS_AUG = 1e-3;
+
 const RIG = (() => { const i = process.argv.indexOf('--rig'); return i >= 0 ? process.argv[i + 1] : null; })();
 
 const lift = (raw) => toEvaluableGraph({ elements: raw.elements, traces: raw.traces });
@@ -89,8 +114,9 @@ const atFile = (p) => lift(JSON.parse(readFileSync(p, 'utf8')));
  */
 function profil(g) {
   const v = evaluateAllRules(g, DEFAULT_METRIC_POLICY);
+  const normAlle = [];
   const count = Object.fromEntries(g.elements.reduce((m, e) => m.set(e.type, (m.get(e.type) ?? 0) + 1), new Map()));
-  const out = { masse: [], 'masse/n': [], 'masse-max': [], 'masse/fund': [], zahl: [], 'zahl/n': [] };
+  const out = { masse: [], 'masse/n': [], 'masse-max': [], 'masse/fund': [], zahl: [], 'zahl/n': [], cheby: [] };
   for (const [rule] of STUFEN) {
     const vs = v.filter((x) => x.rule_id === rule);
     const einzeln = vs.map((x) => Math.max(0, (x.context?.value ?? 0) - (x.context?.threshold ?? 0)));
@@ -103,8 +129,19 @@ function profil(g) {
     const n = (DOMAIN[rule] ?? []).reduce((s, t) => s + (count[t] ?? 0), 0) || 1;
     out.masse.push(masse); out['masse/n'].push(masse / n); out['masse-max'].push(maxMasse);
     out['masse/fund'].push(einzeln.length ? masse / einzeln.length : 0);
+    // Normierter Ueberschuss je Blackbox: `(wert - budget) / budget`, dimensionslos.
+    const budget = vs.find((x) => x.context?.threshold !== undefined)?.context.threshold;
+    const norm = budget && budget > 0
+      ? vs.map((x) => Math.max(0, ((x.context?.value ?? 0) - budget) / budget))
+      : [0];
+    normAlle.push(...norm);
     out.zahl.push(zahl); out['zahl/n'].push(zahl / n);
   }
+  // Chebyshev ist EIN Skalar fuer den ganzen Zustand, keine Stufenliste — er wird hier in die
+  // Stufenform gebracht, damit `lex` ihn wie die anderen vergleichen kann (Laenge 1).
+  const maxN = normAlle.length ? Math.max(...normAlle) : 0;
+  const mittel = normAlle.length ? normAlle.reduce((a, x) => a + x, 0) / normAlle.length : 0;
+  out.cheby = [maxN + EPS_AUG * mittel];
   return out;
 }
 
@@ -119,7 +156,7 @@ function entscheider(a, b) {
   for (let i = 0; i < a.length; i++) if (Math.abs(a[i] - b[i]) > EPS) return STUFEN[i][0];
   return '—';
 }
-const ABLESUNGEN = ['masse', 'masse/n', 'masse-max', 'masse/fund', 'zahl', 'zahl/n'];
+const ABLESUNGEN = ['masse', 'masse/n', 'masse-max', 'masse/fund', 'zahl', 'zahl/n', 'cheby'];
 const fmt = (x) => (Number.isInteger(x) ? String(x) : x.toFixed(3));
 
 // --- Der ℝ⁶ zum Vergleich (die widerlegte Steuerung), damit die Tabelle selbsttragend ist ---
