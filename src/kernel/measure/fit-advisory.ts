@@ -84,7 +84,7 @@ export function computeFitAdvisory(before: Graph, after: Graph): FitAdvisory {
 // („wie schlimm ist die schlimmste Stelle"), nicht über die Differenz — er lässt sich aus den
 // neuen Befunden allein nicht bilden.
 // ---------------------------------------------------------------------------
-import { evaluateAllRules, DEFAULT_METRIC_POLICY } from '@sigloch/contracts/se';
+import { evaluateAllRules, type MetricPolicy } from '@sigloch/contracts/se';
 import { steerScore, STEER_RULES } from '@sigloch/se-engine';
 
 export const SteerAdvisory = z.object({
@@ -106,11 +106,11 @@ export const SteerAdvisory = z.object({
 export type SteerAdvisory = z.infer<typeof SteerAdvisory>;
 
 /** Der Chebyshev-Score vor und nach dem Zug. Pure Messung, deterministisch. */
-export function computeSteerAdvisory(before: Graph, after: Graph): SteerAdvisory {
+export function computeSteerAdvisory(before: Graph, after: Graph, policy: MetricPolicy): SteerAdvisory {
   const b = toOntologyGraph(before);
   const a = toOntologyGraph(after);
-  const sb = steerScore(evaluateAllRules(b, DEFAULT_METRIC_POLICY));
-  const sa = steerScore(evaluateAllRules(a, DEFAULT_METRIC_POLICY));
+  const sb = steerScore(evaluateAllRules(b, policy));
+  const sa = steerScore(evaluateAllRules(a, policy));
   return {
     rules: STEER_RULES,
     before: sb.score,

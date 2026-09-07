@@ -533,7 +533,7 @@ export class GraphCodeHarness {
       fitAdvisory: computeFitAdvisory(snapshot, this.graph),
       // CR-GC-483: das Steuersignal. `fitAdvisory` bleibt daneben stehen und wird berichtet —
       // es rankt nur nichts mehr (CR-SM-292).
-      steerAdvisory: computeSteerAdvisory(snapshot, this.graph),
+      steerAdvisory: computeSteerAdvisory(snapshot, this.graph, this.metricPolicy),
     };
 
     // CR-GC-239 invariant: an applied batch that changed NOTHING is suspicious.
