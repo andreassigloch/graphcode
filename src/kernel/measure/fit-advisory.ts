@@ -69,3 +69,54 @@ export function computeFitAdvisory(before: Graph, after: Graph): FitAdvisory {
     regressions: METRIC_DIMENSIONS.filter((_, i) => delta[i] < 0),
   };
 }
+
+// ---------------------------------------------------------------------------
+// CR-GC-483 — der STEUER-Score neben dem Advisory.
+//
+// Der ℝ⁶ oben bleibt, was er ist: eine Messung, die berichtet wird. Was er NICHT mehr ist, ist
+// ein Ranking-Kriterium — CR-SM-281/-287 haben ihn an drei Klassen von Gegenbeispielen
+// widerlegt, und CR-SM-292 hat den Chebyshev-Score über die Verstoßmasse an seine Stelle
+// gesetzt. Er wird HIER berechnet, im selben Durchlauf und aus demselben Vorher/Nachher-Paar,
+// damit es keinen zweiten Weg zum Steuersignal gibt.
+//
+// Warum am Gate und nicht im Executor: der Executor sieht vom dryRun nur die NEUEN Violations
+// (Delta-Semantik), nie den Gesamtzustand. Der Score ist aber eine Aussage über den Zustand
+// („wie schlimm ist die schlimmste Stelle"), nicht über die Differenz — er lässt sich aus den
+// neuen Befunden allein nicht bilden.
+// ---------------------------------------------------------------------------
+import { evaluateAllRules, DEFAULT_METRIC_POLICY } from '@sigloch/contracts/se';
+import { steerScore, STEER_RULES } from '@sigloch/se-engine';
+
+export const SteerAdvisory = z.object({
+  /** Die Regeln, aus denen der Score kommt — mitgeliefert, damit ein Leser nicht raten muss. */
+  rules: z.array(z.string()).readonly(),
+  /** Der schlimmste normierte Überschuss vorher / nachher. Kleiner ist besser. */
+  before: z.number(),
+  after: z.number(),
+  /** `before − after`: **positiv = der Zug hat die schlimmste Stelle entschärft.** */
+  improvement: z.number(),
+  /** Wo die schlimmste Stelle NACH dem Zug sitzt — das WO, nicht nur das WIEVIEL. */
+  worstAt: z.object({ ruleId: z.string(), elementId: z.string() }).nullable(),
+  /**
+   * Entfernt der Zug Elemente? Trägt die Zerstörungs-Sperre (CR-SM-291 §7.2 Grenze 1):
+   * der ℝ⁵ misst Form und nie Substanz, also senkt Löschen ihn zuverlässig.
+   */
+  removesElements: z.boolean(),
+});
+export type SteerAdvisory = z.infer<typeof SteerAdvisory>;
+
+/** Der Chebyshev-Score vor und nach dem Zug. Pure Messung, deterministisch. */
+export function computeSteerAdvisory(before: Graph, after: Graph): SteerAdvisory {
+  const b = toOntologyGraph(before);
+  const a = toOntologyGraph(after);
+  const sb = steerScore(evaluateAllRules(b, DEFAULT_METRIC_POLICY));
+  const sa = steerScore(evaluateAllRules(a, DEFAULT_METRIC_POLICY));
+  return {
+    rules: STEER_RULES,
+    before: sb.score,
+    after: sa.score,
+    improvement: sb.score - sa.score,
+    worstAt: sa.worstAt,
+    removesElements: a.elements.length < b.elements.length,
+  };
+}

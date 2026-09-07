@@ -8,7 +8,7 @@
  * @author andreas@siglochconsulting
  */
 import type { MutateResult } from '@sigloch/contracts/harness';
-import { FitAdvisory } from '../kernel/measure/fit-advisory.js';
+import { FitAdvisory, SteerAdvisory } from '../kernel/measure/fit-advisory.js';
 import { SteeringDelta } from '../kernel/measure/steering-snapshot.js';
 
 /** Anker des Kandidaten-Samplings — gemessene Jaccard-Spreizung 0.45/0.18/0.14
@@ -82,9 +82,39 @@ export function steeringDeltaOf(verdict: CandidateProbe['verdict']): SteeringDel
   return parsed.success ? parsed.data : null;
 }
 
-/** Σ der fitAdvisory-Deltas (layer:arch) — das Δm-Kriterium des Rankings. */
+/**
+ * Σ der fitAdvisory-Deltas (layer:arch) — **nur noch Bericht** (CR-GC-483).
+ *
+ * Bis hierher war das der letzte Metrik-Schluessel des Rankings. Der ℝ⁶ ist an drei Klassen von
+ * Gegenbeispielen gefallen (CR-SM-281/-287): er rankte einen Code-Import mit 306 flachen Wurzeln
+ * ueber jedes strukturierte Modell und nannte die eine bestaetigte Umstrukturierung eine
+ * Regression. `steerImprovement` steht an seiner Stelle.
+ */
 export function deltaSum(verdict: CandidateProbe['verdict']): number {
   return (fitAdvisoryOf(verdict)?.delta ?? []).reduce((s, x) => s + x, 0);
+}
+
+/**
+ * CR-GC-483 — der Chebyshev-Score des Zuges: **um wie viel er die SCHLIMMSTE Stelle des Modells
+ * entschaerft**, normiert gegen die Regelschwellen (CR-SM-292 `steer.ts`).
+ *
+ * `0`, wenn das Advisory fehlt oder den Vertrag nicht erfuellt — „keine Messung" rankt wie
+ * „keine Verbesserung" und nie besser, dieselbe Konvention wie bei `fitAdvisoryOf`.
+ */
+export function steerImprovement(verdict: CandidateProbe['verdict']): number {
+  const parsed = SteerAdvisory.safeParse((verdict as { steerAdvisory?: unknown } | null)?.steerAdvisory);
+  return parsed.success ? parsed.data.improvement : 0;
+}
+
+/**
+ * Entfernt der Zug Elemente? Traegt die Zerstoerungs-Sperre (CR-SM-291 §7.2 Grenze 1): gemessen
+ * rankt „18 Kinder loeschen" unter jeder Massen-Ablesung vor jeder echten Reparatur, weil der ℝ⁵
+ * Form misst und nie Substanz. Fehlt das Advisory, gilt „entfernt nichts" — ein unbekannter Zug
+ * wird nicht praeventiv bestraft, er hat ohnehin `improvement` 0.
+ */
+export function removesElements(verdict: CandidateProbe['verdict']): boolean {
+  const parsed = SteerAdvisory.safeParse((verdict as { steerAdvisory?: unknown } | null)?.steerAdvisory);
+  return parsed.success ? parsed.data.removesElements : false;
 }
 
 /** Score-Delta der Fokus-Dimension aus dem steeringDelta des dryRun-Verdicts (CR-GC-289). */
@@ -147,7 +177,8 @@ function blockingRise(verdict: CandidateProbe['verdict']): number {
  * um Redundanz bereinigter Score-Delta der FOKUS-Dimension (GenerationStep.focusKey,
  * CR-GC-361) →
  * Gesamt-Readiness-Delta (blockingErrors-Anstieg strikt schlechter, davor) →
- * Δm-fitAdvisory auf layer:arch →
+ * ZERSTOERUNGS-SPERRE (ein Zug, der Elemente entfernt, nie ueber einem, der keine entfernt) →
+ * Chebyshev-Verbesserung (CR-GC-483; ersetzt das Δm-fitAdvisory, das nur noch berichtet wird) →
  * Element-Ausbeute (mutations) → Kandidaten-Index (Determinismus-Anker).
  * block/Preflight-Block/fehlendes Verdict ranken als tier 0.
  */
@@ -169,7 +200,9 @@ export function rankCandidates<T extends CandidateProbe>(
       blockingRise(a.verdict) - blockingRise(b.verdict) ||
       totalDelta(b.verdict) - totalDelta(a.verdict) ||
       tierOf(b) - tierOf(a) ||
-      deltaSum(b.verdict) - deltaSum(a.verdict) ||
+      // CR-GC-483: erst die Sperre, dann der Score. Der ℝ⁶ (deltaSum) rankt nicht mehr.
+      (removesElements(a.verdict) ? 1 : 0) - (removesElements(b.verdict) ? 1 : 0) ||
+      steerImprovement(b.verdict) - steerImprovement(a.verdict) ||
       (b.verdict?.mutations ?? 0) - (a.verdict?.mutations ?? 0) ||
       a.index - b.index,
   );
