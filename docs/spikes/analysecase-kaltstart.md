@@ -11,8 +11,9 @@ Der Case besteht aus drei Teilen: **womit man prüft** (Werkzeug-Disziplin), **w
 
 ## Teil 1 — Werkzeug-Disziplin: was im Lauf schiefging
 
-Fünf Fehlgriffe, alle belegt, alle vermeidbar. Sie stehen hier nicht als Beichte, sondern weil
-jeder von ihnen eine **Regel** trägt.
+Sieben Fehlgriffe, alle belegt, alle vermeidbar. Sie stehen hier nicht als Beichte, sondern weil
+jeder von ihnen eine **Regel** trägt. F1–F5 sind falsche Werkzeugwahl, F6 falsche Ausführung bei
+richtiger Wahl, F7 eine Schlussfolgerung aus einer Auskunft, die es nicht gab.
 
 ### F1 — Quelltext greppen statt den Katalog importieren
 
@@ -71,6 +72,38 @@ ergab **22–24 %**: `fanIn` zählt anders als eine rohe Kantenzählung.
 > **Regel:** Eine Zahl über das System kommt vom System. Handrechnung ist eine Hypothese, kein
 > Befund — Rig aufsetzen kostet zwei Minuten.
 
+### F6 — 72 Einzelprozesse statt einer Schleife
+
+Für die Regelklassifikation habe ich `graph_help` **72-mal als eigenen Treiberaufruf** gestartet.
+Jeder Aufruf öffnet und schließt einen Kuzu-Store von ~105 MB. Die Werkzeugwahl war richtig, die
+Ausführung war es nicht: `createHarness` einmal öffnen, `bindToolsToHarness` einmal binden,
+72-mal `registry.graph_help.handler({token})` — ein Store-Öffnen statt 72.
+
+> **Regel:** Ein Treiber, der über eine Liste läuft, öffnet den Harness EINMAL. Der Einzelaufruf
+> ist für den Einzelfall.
+
+### F7 — Klassifiziert, was die Auskunft nicht hergab
+
+Drei Regeln habe ich nach ihrem **Namen** eingeordnet, weil `graph_help` keinen Eintrag hat:
+BW-02 (als Modul-Blackbox statt FUNC-Whitebox), BQ-04 (als Einzelknoten statt paarweise über alle
+REQ), R-12 (als Zweierring statt DFS jeder Länge — dort ist der Eintrag da, aber überholt).
+Alle drei standen falsch in einem committeten Dokument.
+
+> **Regel:** Ist die Auskunftsschicht stumm oder verdächtig, ist der Quelltext die Quelle — und
+> die Lücke ein CR, kein Achselzucken. Nie aus einem Regelnamen auf ihre Semantik schließen.
+
+### Zwei geprüfte Nicht-Fehlgriffe
+
+Zur Ehrlichkeit der Bilanz gehört, was sich bei der Nachprüfung als richtig herausstellte:
+
+- **CR-Nummern über `ls docs/cr/done/`.** Naheliegender Vorwurf: das hätte `graph_elements
+  {type:"CR"}` beantworten können. Gemessen: sigloch-modules führt **3 CR-Knoten bei 99
+  CR-Dateien**, graphcode 311 Dateien. Der Graph ist für CR-Nummern **keine** Quelle; die Ablage
+  ist es. (Dass CR-R01/CR-R04/MS-03 über CR-Knoten wachen, die es für 96 von 99 Vorgängen nicht
+  gibt, ist ein eigener Gedanke — hier nur festgehalten.)
+- **`ps`/`lsof`/`find`/`sed` auf Quelltext.** Prozess-, Datei- und Implementierungsfragen; dafür
+  gibt es kein Graph-Werkzeug, und es soll auch keines geben.
+
 ### Was richtig lief, zur Abgrenzung
 
 - `graph_authoring_guide` vor **jedem** neuen Elementtyp — hat legale Kanten und Kardinalitäten
@@ -121,7 +154,9 @@ hier, weil sie beim nächsten Mal **vorher** gestellt gehören.
 | N6 | MOD-Whitebox-Lücke getroffen? | `graph_metrics`, Kohäsion int/ext |
 | N7 | Was hat gefehlt | Liste der Werkzeugmomente |
 | **N8** | **Welcher Prüfgegenstand hat getragen?** | Regeln nach Klasse A–G, Feuerquote je Klasse |
-| **N9** | **Welche Regel steuert, ohne sich zu erklären?** | `graph_help` je Regel des `steerAdvisory` |
+| **N9** | **Welche Regel steuert, ohne sich zu erklären?** | `graph_help` je Regel des `steerAdvisory` — BW-02 hatte keinen Eintrag |
+| **N12** | **Deckt sich die Hilfeschicht mit dem Katalog?** | `ALL_RULE_DEFS` gegen `graph_help` je Regel |
+| **N13** | **Öffnet sich ein Harness über jedem Familienrepo?** | `createHarness` je Repo — Config-Drift bricht hart ab |
 | **N10** | **Hat der Plan die Architekturmetrik verschoben?** | Rig ohne MS/CR gegen Rig mit |
 | **N11** | **Stimmt Artefakt gleich Store?** | `graphVersion` in beiden vergleichen |
 
@@ -168,3 +203,4 @@ den Wert. Aus einem Fehler wurde ein dokumentierter Default — und ein deutlich
 5. Am Ende: `audit_stats` für N2/N4, `graph_metrics` für N6, Rig-Gegenprobe für N10,
    `graphVersion` beidseitig für N11.
 6. Jede Zahl, die in einen Bericht geht, ist gemessen — nicht überschlagen.
+7. Keine Aussage über eine Regel aus ihrem Namen. Fehlt die Erklärung, ist das der Befund.
