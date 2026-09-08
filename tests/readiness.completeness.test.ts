@@ -122,14 +122,26 @@ describe('CR-GC-250 PDR — FCHAIN actor-bounded', () => {
 
 describe('CR-GC-250 CDR — FLOW→SCHEMA', () => {
   it('a FLOW without a SCHEMA holds CDR red; adding the SCHEMA relation clears it', () => {
+    // CR-GC-488: der Zwilling dieses Beins ist nicht mehr SC-04. Mit CR-SM-271 ist die
+    // Untergrenze `FLOW -relation-> SCHEMA [1..1]` GRAMMATIK geworden und meldet als
+    // R-18-Bein — SC-04 gibt es nicht mehr, und ein Befund unter einer gestrichenen ID
+    // fiel hier still nach `advisory` durch: das Gate las gruen, ohne dass etwas rot war.
+    // Damit wandert der Fall zugleich von `warning` auf `error`; die Deckungszahl unten
+    // ist deshalb die eigentliche Zusage, nicht das `passed` (das jetzt auch die Severity
+    // traegt). Der Zwilling steht in COMPLETENESS_SLICES.CDR und wird hier mitgeprueft.
+    expect(COMPLETENESS_SLICES.CDR.map((l) => l.ruleId)).toEqual(['R-18']);
     const noSchema: G = { nodes: [node('FLOW-f', 'FLOW')], edges: [] };
-    // SC-04 (FLOW→SCHEMA) fires — FLOW-f has no SCHEMA relation.
-    expect(gate(noSchema, 'CDR', [violation('SC-04', 'FLOW-f')]).passed).toBe(false);
+    const cdr = gate(noSchema, 'CDR', [violation('R-18', 'FLOW-f', 'error')]);
+    expect(cdr.completeness).toMatchObject({ covered: 0, total: 1 });
+    expect(cdr.blocking.some((b) => b.includes('completeness') && b.includes('FLOW→SCHEMA'))).toBe(true);
+    expect(cdr.passed).toBe(false);
     const withSchema: G = {
       nodes: [node('FLOW-f', 'FLOW'), node('SCHEMA-s', 'SCHEMA')],
       edges: [edge('FLOW-f', 'SCHEMA-s', 'relation')],
     };
-    expect(gate(withSchema, 'CDR').passed).toBe(true);
+    const green = gate(withSchema, 'CDR');
+    expect(green.completeness).toMatchObject({ covered: 1, total: 1 });
+    expect(green.passed).toBe(true);
   });
 });
 
