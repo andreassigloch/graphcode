@@ -1,6 +1,6 @@
 # CR-GC-487 — Die Hilfeschicht driftet von der Grammatik weg
 
-**Status:** offen · **Angelegt:** 2026-09-07 · **Art:** Fix + Absicherung
+**Status:** erledigt 2026-09-08 · **Angelegt:** 2026-09-07 · **Art:** Fix + Absicherung
 **Fundstelle:** CR-GC-485, beim Klassifizieren aller 72 Regeln nach Prüfgegenstand
 **Betroffen:** `src/projections/help-content.ts`, `src/projections/help.ts`
 
@@ -76,3 +76,54 @@ Historie.**
 
 Ob das den Aufwand trägt oder ob eine Sichtprüfung bei jedem Grammatik-CR reicht, gehört ins
 Review — der Punkt hier ist, dass (b) ohne eine solche Kopplung strukturell unentdeckt bleibt.
+
+---
+
+## Umsetzung (2026-09-08)
+
+**Gemessen, bevor geschrieben.** `HELP_CONTENT` trug 73 Einträge:
+
+| Art | Zahl |
+|---|---|
+| Katalogregeln | 55 |
+| Conformance-Regeln | 5 |
+| **tote Regel-IDs** | **11** — R-03, R-14, R-27, FC-01, SC-04, CR-R04, AO-D01, AO-D03, RT-01, PH-01, CA-01 |
+| keine Regel (legitim) | 2 — `assumption-review`, `depends-on` |
+
+Dazu **9 Regeln ohne jeden Eintrag**: BW-02, BQ-01, BQ-02, BQ-04, BQ-06, BQ-07, ND-01, ND-02
+und **RC-06** — letztere erst durch die Erweiterung der Prüfung sichtbar geworden.
+
+### Warum es durchfiel
+
+**Die Deckungsprüfung lief über `SE_DESCRIPTOR.rules`, den GATE-Katalog.** BW-02, BQ-*, ND-*
+und RC-* stehen dort nicht. `AO-D03` trug seit **CR-SM-283** einen Hilfetext zu einer Regel,
+die es nicht mehr gibt — drei Wochen.
+
+**BW-02 ist der bitterste Fall:** eine der vier messenden Regeln, die den Chebyshev-Score bilden
+(CR-SM-287/292). Eine Regel, die **steuert** und sich nicht erklärt.
+
+### Drei Einträge waren zusätzlich inhaltlich falsch geworden
+
+| Regel | stand da | gilt |
+|---|---|---|
+| RD-04 | „more than 11 parts", `FUNC allocate MOD` als Bein | 9 (CR-SM-296); das Allokations-Bein ist an R-04 abgegeben |
+| MT-01 | „over the module's traces (direct MOD↔MOD plus …)" | querende **Verträge**, Richtung nach Martin, Default `null` (CR-SM-293) |
+| MT-02 | „shared `io`/`satisfy` targets" | `satisfy` ist raus (CR-SM-297) |
+
+Alle drei beschrieben eine Rechnung, die es nicht mehr gibt — schlimmer als ein fehlender Text,
+weil ein Leser sie für richtig hält.
+
+### Die Prüfung läuft jetzt in beide Richtungen
+
+`tests/help-content.test.ts` liest den **vollen** Katalog (`ALL_RULE_DEFS` +
+`CODE_CONFORMANCE_RULES`) statt nur des Gate-Katalogs, prüft nebenbei, dass der Gate-Katalog
+wirklich eine Teilmenge davon ist, und verlangt zusätzlich, dass **kein Eintrag ohne Regel**
+übrig bleibt. Die wenigen Schlüssel ohne Live-Registry — die drei Zahlen des Compliance-Kastens
+— sind einmal benannt, statt die Prüfung dafür aufzuweichen.
+
+**Damit ist die Hilfeschicht deckungsgleich mit dem Katalog: 70 Einträge, 0 fehlend, 0 tot.**
+Und `check:grammar` in sigloch-modules hätte diesen Fall ab CR-SM-299 ohnehin gemeldet — sein
+Konsumenten-Sweep nennt für jede gestrichene Regel-ID die Fundstellen, `help-content.ts` an
+erster Stelle.
+
+**Status:** erledigt.
