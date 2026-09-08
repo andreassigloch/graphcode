@@ -59,8 +59,13 @@ describe('graph_suggest (CR-GC-273): Fund + Richtung + Δm, Template-Edit mit dr
   });
 
   it('liefert Fund-Ebene für feuernde Operator-Regeln, score-absteigend je Gruppe', async () => {
-    const res = (await tools.graph_suggest.handler({ target: { coherence: 1 } })) as GraphSuggestResult;
-    expect(res.target.length).toBe(6);
+    const res = (await tools.graph_suggest.handler({})) as GraphSuggestResult;
+    // CR-GC-483/CR-SM-292: hier stand `expect(res.target.length).toBe(6)` — der ℝ⁶-Zielvektor
+    // in der Antwort. Weder Eingabefeld noch Ausgabefeld gibt es noch; gerankt wird nach dem
+    // Chebyshev-Score ueber die Verstossmasse, und der braucht keine Gewichte. Was die Antwort
+    // stattdessen sagen MUSS, ist die Messebene — ohne sie sind zwei Zahlen nicht vergleichbar.
+    expect(res).not.toHaveProperty('target');
+    expect(res.advisoryLayer).toBe('arch');
     expect(res.suggestions.length).toBeGreaterThan(0);
     // CR-GC-431: zwei Gruppen — anwendbar mit positivem Δm zuerst, dann der Rest;
     // INNERHALB jeder Gruppe score-absteigend. Eine globale Monotonie gäbe es nur,
@@ -79,7 +84,7 @@ describe('graph_suggest (CR-GC-273): Fund + Richtung + Δm, Template-Edit mit dr
   });
 
   it('CR-R01-Template-Edit kommt mit dryRun-Gate-Verdict; Fund-only ohne verdict', async () => {
-    const res = (await tools.graph_suggest.handler({ target: { coherence: 1 }, k: 20, layer: 'all' })) as GraphSuggestResult;
+    const res = (await tools.graph_suggest.handler({ k: 20, layer: 'all' })) as GraphSuggestResult;
 
     const crSuggestion = res.suggestions.find((s) => s.ruleId === 'CR-R01');
     expect(crSuggestion?.edit).toMatchObject({ source: 'CR-1', target: 'FUNC-parse', type: 'relation' });
@@ -96,7 +101,7 @@ describe('graph_suggest (CR-GC-273): Fund + Richtung + Δm, Template-Edit mit dr
   it('ist read-only: Graph nach dem Aufruf unverändert (dryRun restauriert)', async () => {
     const before = harness.getGraph();
     const edgesBefore = before.edges.length;
-    await tools.graph_suggest.handler({ target: { scalability: 1 }, k: 20 });
+    await tools.graph_suggest.handler({ k: 20 });
     const after = harness.getGraph();
     expect(after.edges.length).toBe(edgesBefore);
     expect(after.nodes.length).toBe(before.nodes.length);
@@ -105,7 +110,7 @@ describe('graph_suggest (CR-GC-273): Fund + Richtung + Δm, Template-Edit mit dr
   // CR-GC-352 §3.2 — die zweite Falle: wer auf 'all' rankt und das Gate-Advisory
   // liest, vergleicht zwei Ebenen. Bisher sagte das nur ein Kommentar im Test.
   it('benennt beide Messebenen und meldet den Widerspruch, wenn sie auseinanderlaufen', async () => {
-    const all = (await tools.graph_suggest.handler({ target: { coherence: 1 }, k: 20, layer: 'all' })) as GraphSuggestResult;
+    const all = (await tools.graph_suggest.handler({ k: 20, layer: 'all' })) as GraphSuggestResult;
     expect(all.layer).toBe('all');
     expect(all.advisoryLayer).toBe('arch');
     expect(all.layerMismatch).toContain("layer:'all'");
@@ -113,13 +118,13 @@ describe('graph_suggest (CR-GC-273): Fund + Richtung + Δm, Template-Edit mit dr
 
     // Gleiche Ebene → nichts zu melden. Ohne diese Hälfte wäre der Hinweis
     // Dauerrauschen statt eines Signals.
-    const arch = (await tools.graph_suggest.handler({ target: { coherence: 1 }, k: 20, layer: 'arch' })) as GraphSuggestResult;
+    const arch = (await tools.graph_suggest.handler({ k: 20, layer: 'arch' })) as GraphSuggestResult;
     expect(arch.advisoryLayer).toBe('arch');
     expect(arch.layerMismatch).toBeUndefined();
   });
 
   it('das Verdict trägt das Δm des Gate-Advisorys — und genau das wird publiziert (CR-GC-431)', async () => {
-    const res = (await tools.graph_suggest.handler({ target: { coherence: 1 }, k: 20, layer: 'all' })) as GraphSuggestResult;
+    const res = (await tools.graph_suggest.handler({ k: 20, layer: 'all' })) as GraphSuggestResult;
     const withEdit = res.suggestions.find((s) => s.verdict);
     expect(withEdit, 'kein Template-Edit in der Fixture — der Test hätte kein Subjekt').toBeDefined();
     // Sechs Komponenten, dieselbe kanonische Ordnung wie `target` und `delta`.
@@ -142,7 +147,7 @@ describe('graph_suggest (CR-GC-273): Fund + Richtung + Δm, Template-Edit mit dr
   // CR-GC-431 — Fund-only muss ohne Rückschluss aus dem fehlenden `edit` erkennbar
   // sein, und darf nicht über einem anwendbaren Zug ranken.
   it('markiert jede Suggestion als anwendbar oder nicht — Fund-only rankt nie oben', async () => {
-    const res = (await tools.graph_suggest.handler({ target: { coherence: 1 }, k: 20, layer: 'arch' })) as GraphSuggestResult;
+    const res = (await tools.graph_suggest.handler({ k: 20, layer: 'arch' })) as GraphSuggestResult;
     for (const s of res.suggestions) expect(typeof s.applicable, `${s.ruleId} ohne applicable-Flag`).toBe('boolean');
     // R-01 (REQ ohne verifizierenden TEST) hat kein Fix-Template — Fund-Ebene.
     const r01 = res.suggestions.find((s) => s.ruleId === 'R-01');
@@ -154,8 +159,8 @@ describe('graph_suggest (CR-GC-273): Fund + Richtung + Δm, Template-Edit mit dr
   });
 
   it('ist deterministisch', async () => {
-    const a = await tools.graph_suggest.handler({ target: { viability: 1 } });
-    const b = await tools.graph_suggest.handler({ target: { viability: 1 } });
+    const a = await tools.graph_suggest.handler({});
+    const b = await tools.graph_suggest.handler({});
     expect(a).toEqual(b);
   });
 });

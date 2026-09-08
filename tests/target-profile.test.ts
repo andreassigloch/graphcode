@@ -136,7 +136,7 @@ describe('Intentions-Anker — Extraktion + Coverage (KPI, nie Veto)', () => {
   });
 });
 
-describe('graph_suggest — Config-Default (echter Harness, disk-Kuzu)', () => {
+describe('CR-GC-483: das Zielprofil rankt nicht mehr — aber es hat weiter Leser', () => {
   let tmp: string;
   let harness: GraphCodeHarness;
   let tools: MCPToolRegistry;
@@ -169,32 +169,42 @@ describe('graph_suggest — Config-Default (echter Harness, disk-Kuzu)', () => {
     rmSync(tmp, { recursive: true, force: true });
   });
 
-  it('ohne target UND ohne Config → leeres Ziel (Regression: Verhalten wie vor CR-295)', async () => {
-    const input = tools.graph_suggest.inputSchema.parse({});
-    const res = (await tools.graph_suggest.handler(input)) as GraphSuggestResult;
-    expect(res.target).toEqual([0, 0, 0, 0, 0, 0]);
-  });
-
-  it('ohne target MIT Config → Gewichte aus .graphcode/target-profile.json', async () => {
+  /*
+   * Hier standen drei Faelle ueber die Gewichtung von `graph_suggest`: leeres Ziel ohne
+   * Config, Gewichte aus der Config, expliziter Vorrang des Inputs. Alle drei beschrieben
+   * einen Mechanismus, den CR-GC-483 ERSATZLOS entfernt hat — das ℝ⁶-Ranking ist durch den
+   * Chebyshev-Score ueber die Verstossmasse ersetzt (CR-SM-292), und es gibt nichts mehr zu
+   * gewichten: normiert wird gegen die Regelschwellen, und die stehen an den Regeln.
+   *
+   * An ihre Stelle tritt die Frage, die jetzt zaehlt: erreicht das Profil noch die Stelle,
+   * die es liest — und NICHT mehr die, die es nicht mehr liest.
+   */
+  it('graph_suggest nimmt kein `target` mehr entgegen und liefert keins zurueck', async () => {
     mkdirSync(join(tmp, '.graphcode'), { recursive: true });
     writeFileSync(join(tmp, TARGET_PROFILE_REL), JSON.stringify({ weights: { scalability: 1 } }));
-    const input = tools.graph_suggest.inputSchema.parse({});
-    const fromConfig = (await tools.graph_suggest.handler(input)) as GraphSuggestResult;
-    const explicit = (await tools.graph_suggest.handler(
-      tools.graph_suggest.inputSchema.parse({ target: { scalability: 1 } }),
-    )) as GraphSuggestResult;
-    expect(fromConfig.target).toEqual(explicit.target);
-    expect(fromConfig.target.some((w) => w !== 0)).toBe(true);
+
+    // Ein Aufrufer, der noch `target` schickt, bekommt kein Verhalten dafuer — das Feld
+    // faellt beim Parsen weg, statt still zu gewichten.
+    const parsed = tools.graph_suggest.inputSchema.parse({ target: { scalability: 1 } });
+    expect(parsed).not.toHaveProperty('target');
+
+    const res = (await tools.graph_suggest.handler(parsed)) as GraphSuggestResult;
+    expect(res).not.toHaveProperty('target');
+    // Und die Antwort sagt weiter, auf welcher Ebene sie misst — die Angabe, die den
+    // Vergleich zweier Zahlen erst erlaubt.
+    expect(res.advisoryLayer).toBe('arch');
   });
 
-  it('explizites target hat Vorrang vor der Config', async () => {
+  it('dasselbe Profil erreicht weiterhin graph_metrics — Wert UND Zielmarke aus EINER Antwort', async () => {
     mkdirSync(join(tmp, '.graphcode'), { recursive: true });
     writeFileSync(join(tmp, TARGET_PROFILE_REL), JSON.stringify({ weights: { scalability: 1 } }));
-    const fromConfig = (await tools.graph_suggest.handler(tools.graph_suggest.inputSchema.parse({}))) as GraphSuggestResult;
-    const explicit = (await tools.graph_suggest.handler(
-      tools.graph_suggest.inputSchema.parse({ target: { coherence: 1 } }),
-    )) as GraphSuggestResult;
-    expect(explicit.target).not.toEqual(fromConfig.target);
+
+    const res = (await tools.graph_metrics.handler({})) as {
+      fit: { target: { source: string; weights: Record<string, number> } };
+    };
+    // CR-GC-451/457: Ist-Wert und Zielmarke verlassen den Host in EINER Antwort, unter `fit`.
+    expect(res.fit.target.source).toBe('profile');
+    expect(res.fit.target.weights.scalability).toBe(1);
   });
 });
 

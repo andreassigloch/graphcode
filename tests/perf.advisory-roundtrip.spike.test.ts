@@ -7,8 +7,9 @@
  * REQ is scoped to "Draft-Apply + betroffener Subgraph" only (apply step,
  * bounded slice). This spike measures the FULL round an agent actually pays
  * per turn -- including status (evaluateRules, whole graph) and propose
- * (graph_suggest's suggestEdits, which re-evaluates ALL rules + the 6D
- * metric vector once per firing Operator-class rule) -- neither of which is
+ * (graph_suggest's suggestEdits, which re-evaluates ALL rules once per
+ * firing Operator-class rule -- since CR-SM-292 for the Chebyshev score, before
+ * that for the 6D metric vector) -- neither of which is
  * bounded to "the affected subgraph".
  *
  * Two data points, with DIFFERENT jobs (CR-GC-400):
@@ -29,7 +30,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import { targetFor, suggestEdits } from '@sigloch/se-engine';
+import { suggestEdits } from '@sigloch/se-engine';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { exportGraphJson } from '../src/projections/exporter.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
@@ -136,13 +137,15 @@ async function measureRound(harness: GraphCodeHarness, impactRootId: string) {
   harness.evaluateRules();
   const statusMs = performance.now() - t1;
 
-  // ③ propose -- graph_suggest's actual internals (targetFor + suggestEdits),
-  // same call graph_suggest's handler makes, minus the per-edit dryRun-gate
-  // loop (that's ④ apply's cost, measured separately below).
+  // ③ propose -- graph_suggest's actual internals (`suggestEdits`), the same call its
+  // handler makes, minus the per-edit dryRun-gate loop (that's ④ apply's cost, below).
+  //
+  // CR-SM-292 / CR-GC-488: `targetFor` ist mit dem ℝ⁶-Ranking ersatzlos entfallen. Das
+  // Ranking ist seither der Chebyshev-Score ueber die messenden Regeln — es braucht keinen
+  // Zielvektor mehr, also auch keinen hier. Die gemessene Arbeit bleibt dieselbe Runde.
   const t2 = performance.now();
   const og = JSON.parse(exportGraphJson(harness.getGraph())) as OntologyGraph;
-  const target = targetFor({ scalability: 1 });
-  const suggestions = suggestEdits(og, target, { k: 5, layer: 'arch' });
+  const suggestions = suggestEdits(og, { k: 5, layer: 'arch' });
   const proposeMs = performance.now() - t2;
 
   // ④ apply -- one dryRun mutate (gate-checks a trivial no-op-shaped edit,

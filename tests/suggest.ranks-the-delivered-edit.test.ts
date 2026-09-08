@@ -11,13 +11,28 @@
  *
  * TWO ASSERTIONS, both on the CR-GC-430 fixture (real disk Kuzu, real gate):
  *
- *   1. the CONTRACT — for every applicable suggestion, `score` is exactly
- *      `verdict.fitDelta · t̂`, and nothing non-applicable outranks an
- *      applicable suggestion with a positive Δm.
+ *   1. the CONTRACT — for every applicable suggestion, `score` is exactly the gate's own
+ *      number for THAT edit, and nothing non-applicable outranks an applicable suggestion
+ *      that helps.
  *   2. the CONSEQUENCE — the CR-GC-430 greedy driver, run once believing the
- *      published `score` and once believing `verdict.fitDelta`, gets to the SAME
+ *      published `score` and once believing the ℝ⁶ projection, ends in the SAME
  *      place. That is the number the fix exists for; without it the contract
  *      above could hold on paper and the loop still stall.
+ *
+ * CR-SM-292 / CR-GC-488 — **was „dieselbe Zahl" heisst, hat sich geaendert.** Das Ranking ist
+ * seither der CHEBYSHEV-Score ueber die messenden Regeln, nicht mehr `Δm · t̂`; `score` einer
+ * anwendbaren Suggestion ist `verdict.steer.improvement`, und `fitDelta` reist nur noch mit.
+ *
+ * Damit faellt die alte Messgroesse dieses Tests: er zaehlte SCHRITTE und verlangte Gleichstand.
+ * Gemessen an der CR-GC-430-Fixture ist das jetzt irrefuehrend — der ℝ⁶-Fahrer macht bei
+ * SCALABLE fuenf Schritte statt zwei und raeumt drei Verstoesse mehr weg, landet aber auf
+ * **exakt demselben Chebyshev-Score (0.1111)**. Die drei Extraschritte verbessern das Ziel,
+ * gegen das optimiert wird, um null; sie bewegen Verstoesse, die nicht der schlimmste
+ * Ueberschuss sind. Genau das war die Begruendung von CR-SM-292.
+ *
+ * Der Test misst deshalb jetzt den ZUSTAND statt der Schrittzahl: wo der Fahrer landet, nicht
+ * wie lange er faehrt. Das ist die schaerfere Frage — eine gleiche Schrittzahl kann zwei
+ * verschiedene Orte bedeuten, ein gleicher Score nicht.
  *
  * Independent of the repo SSOT on purpose: the fixture is written against the
  * loaded `@sigloch/contracts/se`, so the CR-GC-429 grammar drift cannot make
@@ -31,6 +46,9 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
+import { steerScore } from '@sigloch/se-engine';
+import { evaluateAllRules, type OntologyGraph } from '@sigloch/contracts/se';
+import { exportGraphJson } from '../src/projections/exporter.js';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
@@ -86,7 +104,10 @@ const edgeKey = (e: { source: string; type: string; target: string }) => `${e.so
  * best edit-carrying suggestion through the REAL gate until nothing helps any
  * more. `ranking` selects the number it believes — nothing else differs.
  */
-async function greedyRun(weights: Weights, ranking: Ranking): Promise<{ edits: string[]; stop: string }> {
+async function greedyRun(
+  weights: Weights,
+  ranking: Ranking,
+): Promise<{ edits: string[]; stop: string; finalWorst: number; finalViolations: number }> {
   const rig = await makeRig();
   try {
     const t = unit(weights);
@@ -138,7 +159,16 @@ async function greedyRun(weights: Weights, ranking: Ranking): Promise<{ edits: s
         break;
       }
     }
-    return { edits, stop };
+    // CR-GC-488: WO der Fahrer landet, nicht nur wie viele Schritte er macht. Seit CR-SM-292
+    // ist `score` der Chebyshev-Ueberschuss statt Δm·t̂, und mehr Schritte sind seither kein
+    // Beleg fuer mehr Fortschritt — genau das war die Begruendung jenes CR.
+    // Der Chebyshev-Score des ENDZUSTANDS — die Groesse, gegen die seit CR-SM-292 optimiert
+    // wird. `MT_IRRELEVANT_POLICY` ist se-engine-intern; hier genuegt die Policy des Harness,
+    // beide legen MT-01 stumm (DEFAULT_METRIC_POLICY.instability === null seit CR-SM-293).
+    const finalOg = JSON.parse(exportGraphJson(rig.harness.getGraph())) as OntologyGraph;
+    const finalWorst = steerScore(evaluateAllRules(finalOg, rig.harness.getMetricPolicy())).score;
+    const finalViolations = rig.harness.evaluateRules().length;
+    return { edits, stop, finalWorst, finalViolations };
   } finally {
     await dropRig(rig);
   }
@@ -166,8 +196,12 @@ describe('CR-GC-431: graph_suggest ranks the edit it delivers, not a generic pro
         // AC 1: the published number is the Δm of THIS edit — same path as the
         // gate advisory, not a second measurement.
         expect(s.delta).toEqual(s.verdict!.fitDelta);
-        const own = s.verdict!.fitDelta.reduce((a, x, i) => a + x * t[i], 0);
-        expect(Math.abs(s.score - own), `${s.ruleId}: published score ${s.score} != own Δm ${own}`).toBeLessThan(1e-12);
+        // CR-SM-292: das ist der Chebyshev-Fortschritt DIESES Edits, gemessen vom Gate.
+        // Kein zweiter Messpfad — `score` wird aus `verdict.steer` uebernommen, nicht neu
+        // gerechnet, und `t̂` geht in die Rangfolge gar nicht mehr ein.
+        expect(s.verdict!.steer, `${s.ruleId} is applicable but carries no steer advisory`).toBeDefined();
+        expect(s.score, `${s.ruleId}: published score is not the gate's own steer improvement`)
+          .toBe(s.verdict!.steer!.improvement);
       }
 
       // AC 2: nothing that cannot be applied stands above something that can and helps.
@@ -184,7 +218,7 @@ describe('CR-GC-431: graph_suggest ranks the edit it delivers, not a generic pro
     }
   }, 300_000);
 
-  it('a driver believing the published score gets exactly as far as one believing the gate advisory', async () => {
+  it('ein Fahrer, der dem veroeffentlichten Score glaubt, landet nicht schlechter als der ℝ⁶-Fahrer', async () => {
     const pubCoh = await greedyRun(COHESIVE, 'published');
     const advCoh = await greedyRun(COHESIVE, 'advisory');
     const pubSca = await greedyRun(SCALABLE, 'published');
@@ -194,24 +228,27 @@ describe('CR-GC-431: graph_suggest ranks the edit it delivers, not a generic pro
       [
         '',
         'CR-GC-431 — steps reached per believed number (CR-GC-430 driver, arch layer)',
-        `  COHESIVE  published ${pubCoh.edits.length} (${pubCoh.stop})  ·  advisory ${advCoh.edits.length} (${advCoh.stop})`,
-        `  SCALABLE  published ${pubSca.edits.length} (${pubSca.stop})  ·  advisory ${advSca.edits.length} (${advSca.stop})`,
+        `  COHESIVE  published ${pubCoh.edits.length} Schritte, chebyshev=${pubCoh.finalWorst.toFixed(4)}, Verstoesse=${pubCoh.finalViolations}  ·  advisory ${advCoh.edits.length} Schritte, chebyshev=${advCoh.finalWorst.toFixed(4)}, Verstoesse=${advCoh.finalViolations}`,
+        `  SCALABLE  published ${pubSca.edits.length} Schritte, chebyshev=${pubSca.finalWorst.toFixed(4)}, Verstoesse=${pubSca.finalViolations}  ·  advisory ${advSca.edits.length} Schritte, chebyshev=${advSca.finalWorst.toFixed(4)}, Verstoesse=${advSca.finalViolations}`,
         '',
       ].join('\n'),
     );
 
-    // A degenerate 0 == 0 would satisfy the equality below without the loop ever
-    // moving — pin the reach first (CR-GC-430 measured 5 / 5 on the advisory).
-    expect(advCoh.edits.length, 'the advisory chain itself has no reach — fixture or engine regression').toBeGreaterThan(2);
-    expect(advSca.edits.length, 'the advisory chain itself has no reach — fixture or engine regression').toBeGreaterThan(2);
+    // Kein degenerierter Nulllauf: beide Fahrer muessen sich ueberhaupt bewegen, sonst ist
+    // jede Aussage unten leer. Die Fixture ist genau dafuer gebaut (CR-GC-430).
+    for (const [label, run] of [['COHESIVE pub', pubCoh], ['COHESIVE adv', advCoh],
+                                ['SCALABLE pub', pubSca], ['SCALABLE adv', advSca]] as const) {
+      expect(run.edits.length, `${label}: der Fahrer bewegt sich gar nicht — Fixture oder Engine`).toBeGreaterThan(0);
+    }
 
-    // THE regression: believing the tool's own published number must not cost
-    // the driver anything. Before CR-GC-431 this was 1 against 5 and 0 against 5.
-    expect(pubCoh.edits.length, 'COHESIVE: the published score leads a driver to fewer steps than the gate advisory').toBe(advCoh.edits.length);
-    expect(pubSca.edits.length, 'SCALABLE: the published score leads a driver to fewer steps than the gate advisory').toBe(advSca.edits.length);
-    // Same reach could still be a different, accidental path — the two numbers
-    // are the same measurement now, so the trajectories have to coincide.
-    expect(pubCoh.edits).toEqual(advCoh.edits);
-    expect(pubSca.edits).toEqual(advSca.edits);
+    // DIE Regression, jetzt am ZUSTAND statt an der Schrittzahl: wer dem veroeffentlichten
+    // Score glaubt, darf nicht auf einem SCHLECHTEREN Chebyshev-Score enden als wer dem
+    // ℝ⁶-Advisory glaubt. Vor CR-GC-431 war das 1 gegen 5 Schritte auf einem sichtbar
+    // schlechteren Stand; heute sind es 2 gegen 5 Schritte auf demselben Score — der
+    // Unterschied ist Weg, nicht Ziel.
+    expect(pubCoh.finalWorst, 'COHESIVE: der veroeffentlichte Score fuehrt auf einen schlechteren Stand als das ℝ⁶-Advisory')
+      .toBeLessThanOrEqual(advCoh.finalWorst + 1e-12);
+    expect(pubSca.finalWorst, 'SCALABLE: der veroeffentlichte Score fuehrt auf einen schlechteren Stand als das ℝ⁶-Advisory')
+      .toBeLessThanOrEqual(advSca.finalWorst + 1e-12);
   }, 600_000);
 });
