@@ -82,7 +82,7 @@
 | `FUNC-migrate-schema` | FUNC | migrateSchema(from, to) |
 | `FUNC-module-metrics` | FUNC | moduleMetrics(graph) |
 | `FUNC-mutate` | FUNC | mutate(commands) |
-| `FUNC-nd-similarity` | FUNC | injectNDMatrices |
+| `FUNC-nd-similarity` | FUNC | duplicateHits |
 | `FUNC-next-step` | FUNC | nextStep(graph, policy) |
 | `FUNC-open-store` | FUNC | initialize() |
 | `FUNC-own-kuzu-host` | FUNC | ownKuzu() |

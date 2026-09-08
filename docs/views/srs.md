@@ -1356,11 +1356,11 @@ Prueft einen Kandidaten-Batch vor dem Gate und vervollstaendigt, was mechanisch 
 
 io ◀ `FLOW-mutate-cmd` · io ▶ `FLOW-mutate-cmd` · allocate ▶ `MOD-loop`
 
-##### 3.2.2.12  `FUNC-nd-similarity` — injectNDMatrices
+##### 3.2.2.12  `FUNC-nd-similarity` — duplicateHits
 
 > auch in: `FUNC-block-antrieb`
 
-Rechnet die Near-Duplicate-Matrizen ueber FUNC und SCHEMA und haengt sie an den Graphen, bevor der volle Regelkatalog laeuft. Aufrufer ist die Steering-Momentaufnahme, nicht der Treiber.
+Findet zu einem Entwurf die schon vorhandenen Elemente mit aehnlichem Namen und Text und rendert sie als Hinweis. Aufrufer ist der Executor vor dem Schreiben, nicht der Regellauf.
 
 io ◀ `FLOW-graph-state` · io ▶ — · allocate ▶ `MOD-kernel-measure`
 
@@ -4830,11 +4830,11 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-one-driver-local-and-frontier` (integration) · satisfy ◀ `FUNC-extract-mutate` · allocate ▶ `MOD-loop`
 
-###### 3.10.4.2.3  `FUNC-nd-similarity` — injectNDMatrices
+###### 3.10.4.2.3  `FUNC-nd-similarity` — duplicateHits
 
 > auch in: `FCHAIN-steering-loop`
 
-Rechnet die Near-Duplicate-Matrizen ueber FUNC und SCHEMA und haengt sie an den Graphen, bevor der volle Regelkatalog laeuft. Aufrufer ist die Steering-Momentaufnahme, nicht der Treiber.
+Findet zu einem Entwurf die schon vorhandenen Elemente mit aehnlichem Namen und Text und rendert sie als Hinweis. Aufrufer ist der Executor vor dem Schreiben, nicht der Regellauf.
 
 io ◀ `FLOW-graph-state` · io ▶ — · allocate ▶ `MOD-kernel-measure`
 
@@ -5978,7 +5978,7 @@ verify ▶ `REQ-agent-agnostic` · testRefs: `tests/mcp.agent-agnostic.test.ts`
 
 A/B ueber das Vorzeichen des Ziels mit echter Mutation und Messung vorher/nachher auf derselben Messebene.
 
-verify ▶ `REQ-applied-suggestion-moves-target` · testRefs: `tests/steering.architecture-causality.test.ts`
+verify ▶ `REQ-applied-suggestion-moves-target` · testRefs: `tests/steering.steer-causality.test.ts`
 
 ### 8.4  `TEST-artifact-coupling` — Artefakt-Zweig des Steuerungsbeweises
 
