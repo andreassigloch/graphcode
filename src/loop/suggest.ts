@@ -15,12 +15,21 @@
  * die In-Memory-Kopie via loadGraph() restauriert — das Tool ist read-only.
  *
  * CR-GC-431 — die publizierte Zahl gehört dem ausgelieferten Edit: se-engines
- * `score` ist das Δm einer generischen Operator-SONDE (`applyRule`), der Edit
- * kommt aber aus einem zweiten Pfad (`fix-templates`). Beide Zahlen im selben
- * Objekt wichen bis zum umgekehrten Vorzeichen voneinander ab, und die falsche
- * stand im Ranking-Feld. Hier wird deshalb umgerankt: wo ein Edit anwendbar
- * ist, sind `score`/`delta` das Δm DIESES Edits — genommen aus dem Gate-
- * Advisory, das ohnehin für den dryRun anfällt (kein zweiter Messpfad).
+ * `score` maß eine generische Operator-SONDE (`applyRule`), der Edit kam aber
+ * aus einem zweiten Pfad (`fix-templates`). Beide Zahlen im selben Objekt wichen
+ * bis zum umgekehrten Vorzeichen voneinander ab, und die falsche stand im
+ * Ranking-Feld. Hier wird deshalb umgerankt: wo ein Edit anwendbar ist, gehört
+ * `score` DIESEM Edit — genommen aus dem Gate-Advisory, das ohnehin für den
+ * dryRun anfällt (kein zweiter Messpfad).
+ *
+ * CR-SM-292 — **die Zahl selbst ist eine andere geworden.** Gerankt wird nicht mehr
+ * `Δm · t̂` im 6-Metrik-Raum, sondern der CHEBYSHEV-Score über die messenden Regeln:
+ * `score` einer anwendbaren Suggestion ist `verdict.steer.improvement`, also um wie viel
+ * der schlimmste normierte Überschuss sinkt. `fitDelta` reist weiter mit und wird
+ * berichtet, entscheidet aber nichts mehr. Gemessen an der CR-GC-430-Fixture: der alte
+ * ℝ⁶-Fahrer macht fünf Schritte statt zwei und räumt drei Verstöße mehr weg, landet aber
+ * auf demselben Chebyshev-Score — die Extraschritte bewegen, was nicht der schlimmste
+ * Überschuss ist. Genau dafür wurde umgestellt.
  */
 import { z } from 'zod/v4';
 import type { MutateResult } from '@sigloch/contracts/harness';
@@ -170,9 +179,11 @@ export function bindSuggestTools(ctx: ToolPort): MCPToolRegistry {
     name: 'graph_suggest',
     description:
       'Greedy-1-Schritt-Optimierungsvorschläge: ranke die feuernden Operator-Regeln danach, wie weit ' +
-      'ein Edit den Graphen entlang der Zielrichtung im 6-Metrik-Raum bewegt (score = Δm·t̂). ' +
-      'WAS score MISST (CR-GC-431): bei `applicable:true` das Δm GENAU DES beigelegten Template-Edits ' +
-      '— dieselbe Zahl wie verdict.fitDelta (Gate-Advisory), nur auf die Zielrichtung projiziert. Bei ' +
+      'ein Edit den SCHLIMMSTEN normierten Regel-Überschuss senkt (Chebyshev, CR-SM-292 — NICHT mehr ' +
+      'Δm·t̂ im 6-Metrik-Raum; der ℝ⁶-Vektor reist als `delta`/`verdict.fitDelta` mit und wird nur noch ' +
+      'berichtet). WAS score MISST (CR-GC-431 + CR-SM-292): bei `applicable:true` `verdict.steer.improvement` ' +
+      'GENAU DES beigelegten Template-Edits — dieselbe Zahl, die das Gate-Advisory für diesen Edit ' +
+      'gerechnet hat, kein zweiter Messpfad. Bei ' +
       '`applicable:false` gibt es nichts anzuwenden (Fund ohne Template-Edit oder ein vom Gate ' +
       'abgelehnter Edit); dann misst score die generische Operator-Sonde, also die Hebelwirkung des ' +
       'FUNDES, keinen ausführbaren Zug. Anwendbares mit positivem Δm rankt immer über Nicht-Anwendbarem. ' +
@@ -194,8 +205,11 @@ export function bindSuggestTools(ctx: ToolPort): MCPToolRegistry {
     async handler(input) {
       // CR-GC-324: der EINE Mapper statt des flachen Export-Encodings.
       const og = toOntologyGraph(harness.getGraph());
-      // Default aus der Config NUR wenn target im Input fehlt (CR-GC-295);
-      // fehlt auch die Datei, bleibt das Ziel leer — Verhalten wie vor dem CR.
+      // CR-GC-483: hier stand, dass die Config-Gewichte einspringen, wenn `target` im Input
+      // fehlt. Beides gibt es nicht mehr — weder das Eingabefeld noch eine Gewichtung, die
+      // etwas zu tun haette. `.graphcode/target-profile.json` hat weiterhin Leser
+      // (`graph_metrics` meldet Wert UND Zielmarke, `graph_generate` liest die Intent-Anker),
+      // nur ranken tut es nichts mehr.
       // CR-GC-431: ALLE Kandidaten holen, nicht die Top-k der Sonde. Das k-Fenster
       // wird erst NACH dem Umranken auf das Edit-Δm geschnitten — sonst fiele ein
       // gut bewerteter Edit heraus, weil die generische Sonde ihn niedrig rankte.

@@ -94,7 +94,13 @@ export function bindMetricsTools(ctx: ToolPort): MCPToolRegistry {
     description:
       'Architecture metrics per MOD (CR-GC-326) — one row for EVERY module, whether or not a rule ' +
       'fires on it: {moduleId, moduleName, allocatedFuncs, fanIn, fanOut, instability, lcom4, ' +
-      'cohesion:{internal,external,ratio}}. This is the drill-down under the `alloc`/`arch` scores of ' +
+      'cohesion:{internal,external,ratio}, uphillDependencies}. CR-SM-301: `uphillDependencies` is ' +
+      'Martin\'s Stable Dependencies Principle as a MEASUREMENT, never a rule — the number of ' +
+      'contracts this module draws from a LESS stable supplier. No threshold exists and none is ' +
+      'implied: over 19 family graphs the median stability gap of such a dependency is 0.10, one ' +
+      'contract\'s worth, so a rule would have judged noise (CR-SM-298, rejected at gate 7). Read it ' +
+      'next to `instability`; `null` means the module has no coupling at all, not zero uphill. ' +
+      'This is the drill-down under the `alloc`/`arch` scores of ' +
       'graph_readiness: the dimension score says "alloc is 87 %", this says WHICH module. ' +
       'MT-01 only reports modules above 70 % instability and MT-02 only those with >= 4 components, ' +
       'and both only inside a prose message — so below the threshold there was no value, there was ' +
