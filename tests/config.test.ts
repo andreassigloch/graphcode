@@ -68,29 +68,35 @@ const edge = (sourceId: string, edgeType: string, targetId: string): MutateComma
 const SEED: MutateCommand[] = [
   node('SYS-c', 'SYS', 'Config system'),
   node('MOD-loud', 'MOD', 'Loud module'),
+  node('MOD-supplier', 'MOD', 'Supplier module'),
   node('FUNC-a', 'FUNC', 'Function A'),
   node('FUNC-b', 'FUNC', 'Function B'),
-  node('FLOW-1', 'FLOW', 'Flow one'),
-  node('FLOW-2', 'FLOW', 'Flow two'),
-  node('FLOW-3', 'FLOW', 'Flow three'),
-  node('FLOW-4', 'FLOW', 'Flow four'),
-  node('FLOW-5', 'FLOW', 'Flow five'),
-  // CR-SM-271 Teil 2: `FLOW -relation-> SCHEMA` ist seit META_MODEL 5.0.0 eine
-  // DURCHGESETZTE 1..1-Untergrenze — ein FLOW ohne Vertrag ist untypisiert und faellt
-  // R-18 (error) zur Last, das Gate blockt den Batch. Ein Vertrag genuegt der Fixture.
-  node('SCHEMA-payload', 'SCHEMA', 'Payload contract'),
-  edge('FLOW-1', 'relation', 'SCHEMA-payload'),
-  edge('FLOW-2', 'relation', 'SCHEMA-payload'),
-  edge('FLOW-3', 'relation', 'SCHEMA-payload'),
-  edge('FLOW-4', 'relation', 'SCHEMA-payload'),
-  edge('FLOW-5', 'relation', 'SCHEMA-payload'),
+  node('FUNC-s', 'FUNC', 'Supplying function'),
   edge('FUNC-a', 'allocate', 'MOD-loud'),
   edge('FUNC-b', 'allocate', 'MOD-loud'),
-  edge('FUNC-a', 'io', 'FLOW-1'),
-  edge('FUNC-a', 'io', 'FLOW-2'),
-  edge('FUNC-a', 'io', 'FLOW-3'),
-  edge('FUNC-b', 'io', 'FLOW-4'),
-  edge('FUNC-b', 'io', 'FLOW-5'),
+  edge('FUNC-s', 'allocate', 'MOD-supplier'),
+  // CR-SM-293: fan_in/fan_out sind querende VERTRAEGE, und die Richtung folgt Martin — wer
+  // von draussen BEZIEHT, haengt ab (fan_out), wer nach draussen LIEFERT, wird gebraucht
+  // (fan_in). Frueher genuegten fuenf FLOWs ohne Gegenseite plus die zwei allocate-Kanten;
+  // heute quert davon kein einziger Vertrag einen Rand. MOD-loud bezieht deshalb fuenf
+  // Vertraege von MOD-supplier und liefert zwei zurueck: I = 5/7 = 71 %, wie zuvor.
+  //
+  // Je Fluss ein EIGENES SCHEMA: ein geteilter Vertrag waere EINER, nicht fuenf (CR-SM-274
+  // zaehlt Vertraege, nicht Querungen).
+  ...([1, 2, 3, 4, 5] as const).flatMap((i) => [
+    node(`FLOW-in${i}`, 'FLOW', `Inbound flow ${i}`),
+    node(`SCHEMA-in${i}`, 'SCHEMA', `Inbound contract ${i}`),
+    edge('FUNC-s', 'io', `FLOW-in${i}`),
+    edge(`FLOW-in${i}`, 'io', i <= 3 ? 'FUNC-a' : 'FUNC-b'),
+    edge(`FLOW-in${i}`, 'relation', `SCHEMA-in${i}`),
+  ]),
+  ...([1, 2] as const).flatMap((i) => [
+    node(`FLOW-out${i}`, 'FLOW', `Outbound flow ${i}`),
+    node(`SCHEMA-out${i}`, 'SCHEMA', `Outbound contract ${i}`),
+    edge(i === 1 ? 'FUNC-a' : 'FUNC-b', 'io', `FLOW-out${i}`),
+    edge(`FLOW-out${i}`, 'io', 'FUNC-s'),
+    edge(`FLOW-out${i}`, 'relation', `SCHEMA-out${i}`),
+  ]),
 ];
 
 describe('CR-GC-329: Config laden — fehlend, gueltig, kaputt', () => {
@@ -168,7 +174,14 @@ describe('CR-GC-329: Config laden — fehlend, gueltig, kaputt', () => {
 });
 
 describe('CR-GC-329: die Config wirkt — Gate, Kennzahl und Herkunft in EINER Antwort', () => {
-  it('ohne Config: MT-01 feuert, policySource sagt "default"', async () => {
+  /**
+   * CR-SM-293: der contracts-Startwert URTEILT bei MT-01 nicht mehr (`instability: null`) —
+   * die Verteilung ist zweigipflig, aus ihr laesst sich keine Schwelle ablesen. Hier stand
+   * „ohne Config: MT-01 feuert"; das war die Aussage ueber den Default, und der Default ist
+   * ein anderer. Die Aussage des Tests bleibt dieselbe: OHNE Datei gilt der benannte
+   * contracts-Startwert, und `policySource` sagt es.
+   */
+  it('ohne Config: es gilt der contracts-Startwert, policySource sagt "default"', async () => {
     const harness = await harnessOn(repo());
     expect((await harness.mutate(SEED)).success).toBe(true);
     const tools = bindToolsToHarness(harness);
@@ -176,7 +189,10 @@ describe('CR-GC-329: die Config wirkt — Gate, Kennzahl und Herkunft in EINER A
     const res = await tools.graph_metrics.handler({});
     expect(res.policySource).toBe('default');
     expect(res.policy).toEqual(DEFAULT_METRIC_POLICY);
-    expect(harness.evaluateRules().some((v) => v.ruleId === 'MT-01' && v.elementId === 'MOD-loud')).toBe(true);
+    // Der Startwert legt MT-01 still — und die KENNZAHL steht trotzdem in der Modulzeile.
+    expect(res.policy.instability).toBeNull();
+    expect(harness.evaluateRules().some((v) => v.ruleId === 'MT-01')).toBe(false);
+    expect(res.modules.find((m) => m.moduleId === 'MOD-loud')!.instability).toBeCloseTo(5 / 7, 10);
   });
 
   it('"instability": null → MT-01 schweigt im GATE, die Zahl bleibt in der Modulzeile', async () => {

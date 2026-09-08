@@ -20,6 +20,18 @@
  * Top-5 von `graph_suggest`. Bewegt sich nichts, ist die Korrektur Modellhygiene —
  * sie wird trotzdem gemacht (das Modell lügt über den Schreiber), aber ohne
  * Architektur-Claim.
+ *
+ * CR-GC-488 — **die Korrektur ist inzwischen im produktiven Modell gelandet.** Der Test
+ * nagelte „17 Produzenten, 8 falsch" fest, also einen HISTORISCHEN Zustand; heute sind es
+ * 9, alle legitim. Ein Test, der eine bewegliche Momentaufnahme des lebenden Modells
+ * einfriert, wird bei jeder Modelländerung rot, ohne dass etwas kaputt wäre — dieselbe
+ * Falle, die CR-GC-400 für den Perf-Spike ausdrücklich vermeidet („live SSOT: REPORTS ONLY").
+ *
+ * Er prüft deshalb jetzt die INVARIANTE statt der Zahl: **kein Produzent von
+ * `FLOW-graph-state`, der nicht wirklich schreibt.** Gibt es doch welche, korrigiert der Test
+ * sie im Temp-Store durch dasselbe Gate wie zuvor und belegt damit, dass die Korrektur
+ * anwendbar bleibt. Die historischen Zahlen stehen im abgeschlossenen CR-GC-466, wo sie
+ * hingehören.
  */
 import { describe, it, expect } from 'vitest';
 import { createHash } from 'node:crypto';
@@ -108,26 +120,31 @@ describe('CR-DRAFT-GC-466 M1 — Graph-State auf einen Produzentenblock (Trocken
       };
       const type = new Map(graph.nodes.map((n) => [n.uid, n.type]));
       const wrong = before.producers.filter((uid) => !(type.get(uid) === 'FUNC' && WRITER_FILES.test(realRef(uid))));
-      // Der Befund aus CR-DRAFT-GC-466: 17 Produzenten, 9 legitim, 8 falsch.
-      expect(before.producers).toHaveLength(17);
-      expect(wrong).toHaveLength(8);
-      const commands: MutateCommand[] = wrong.map((uid) => ({
-        op: 'delete-edge',
-        edge: { sourceId: uid, targetId: 'FLOW-graph-state', edgeType: 'io' },
-      }));
-      const result = (await rig.tools.graph_mutate.handler({ commands })) as { success: boolean; appliedCommands: number };
-      expect(result.success).toBe(true);
-      expect(result.appliedCommands).toBe(8);
-      await rig.harness.loadGraph();
+      // CR-GC-466 mass hier 17 Produzenten, 9 legitim, 8 falsch. Die Korrektur ist gelandet;
+      // was bleibt, ist die Invariante. Sind doch wieder falsche da, wird korrigiert — durch
+      // DASSELBE Gate wie in Produktion, damit der Weg belegt bleibt und nicht nur die Zahl.
+      console.log(`\n### M1 — FLOW-graph-state: ${before.producers.length} Produzenten, davon ${wrong.length} ohne Schreibpfad`);
+      expect(before.producers.length, 'kein Produzent mehr — die Fixture hat ihren Gegenstand verloren').toBeGreaterThan(0);
+      if (wrong.length > 0) {
+        const commands: MutateCommand[] = wrong.map((uid) => ({
+          op: 'delete-edge',
+          edge: { sourceId: uid, targetId: 'FLOW-graph-state', edgeType: 'io' },
+        }));
+        const result = (await rig.tools.graph_mutate.handler({ commands })) as { success: boolean; appliedCommands: number };
+        expect(result.success).toBe(true);
+        expect(result.appliedCommands).toBe(wrong.length);
+        await rig.harness.loadGraph();
+      }
       const after = await measure(rig);
-      expect(after.producers).toHaveLength(9);
-      for (const uid of after.producers) expect(WRITER_FILES.test(realRef(uid))).toBe(true);
+      // DIE Aussage: was als Schreiber im Modell steht, schreibt auch im Code.
+      expect(after.producers).toHaveLength(before.producers.length - wrong.length);
+      for (const uid of after.producers) expect(WRITER_FILES.test(realRef(uid)), `${uid} steht als Schreiber im Modell, hat aber keinen Schreibpfad`).toBe(true);
 
       const fmt = (v: number[]) => v.map((x) => x.toFixed(3)).join('  ');
       const delta = after.r6.map((x, i) => x - before.r6[i]);
       const weights = (JSON.parse(readFileSync(PROFILE, 'utf8')) as { weights: Record<string, number> }).weights;
       const weighted = delta.reduce((a, d, i) => a + d * (weights[METRIC_DIMENSIONS[i]] ?? 0), 0);
-      console.log(`\n### M1 — Graph-State: 17 → ${after.producers.length} Produzenten (8 Kanten durchs Gate gelöscht)\n`);
+      console.log(`\n### M1 — Graph-State: ${before.producers.length} → ${after.producers.length} Produzenten (${wrong.length} Kanten durchs Gate gelöscht)\n`);
       console.log(`| | ${METRIC_DIMENSIONS.join(' | ')} | CR-01-Paare ≥3 | Verträge über Grenzen |`);
       console.log(`|---|${METRIC_DIMENSIONS.map(() => '---:').join('|')}|---:|---:|`);
       console.log(`| vorher | ${fmt(before.r6).split('  ').join(' | ')} | ${before.cr01Pairs} | ${before.cr01Contracts} |`);

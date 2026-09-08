@@ -26,9 +26,11 @@ import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
 import { computeFitAdvisory } from '../src/kernel/measure/fit-advisory.js';
 import { METRIC_DIMENSIONS, toArray } from '@sigloch/se-engine';
+import { DEFAULT_METRIC_POLICY, type MetricPolicy } from '@sigloch/contracts/se';
+import { CONFIG_FILENAME, DEFAULT_CONFIG } from '../src/kernel/config.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
 
-function makeHarness(repoRoot: string): GraphCodeHarness {
+function makeHarness(repoRoot: string, metricPolicy?: MetricPolicy): GraphCodeHarness {
   mkdirSync(join(repoRoot, '.graphcode'), { recursive: true });
   const storage = new KuzuAdapter({ ontology: SE_DESCRIPTOR, path: join(repoRoot, '.graphcode/kuzu') });
   const config: HarnessConfig = {
@@ -37,7 +39,17 @@ function makeHarness(repoRoot: string): GraphCodeHarness {
     consumerType: 'agent',
     preCommitTimeout: 5000,
   };
-  return new GraphCodeHarness(config, storage);
+  // CR-SM-293: MT-01 urteilt per Default nicht mehr. Wer eine Meldung braucht, gibt die
+  // Schwelle hier ausdruecklich mit — dieselbe Stelle, an der `createHarness` sie aus
+  // `graphcode.config.jsonc` einsetzt.
+  return new GraphCodeHarness(
+    config,
+    storage,
+    undefined, // hooks — der dritte Parameter, nicht die Optionen
+    metricPolicy
+      ? { graphcodeConfig: { config: { ...DEFAULT_CONFIG, metricPolicy }, source: 'config', path: join(repoRoot, CONFIG_FILENAME) } }
+      : undefined,
+  );
 }
 
 const node = (uid: string, type: string, name: string): MutateCommand => ({
@@ -56,34 +68,38 @@ const edge = (sourceId: string, edgeType: string, targetId: string): MutateComma
 const SEED: MutateCommand[] = [
   node('SYS-m', 'SYS', 'Metrics system'),
   node('MOD-loud', 'MOD', 'Loud module'),
-  node('MOD-quiet', 'MOD', 'Quiet module'),
+  node('MOD-supplier', 'MOD', 'Supplier module'),
   node('FUNC-a', 'FUNC', 'Function A'),
   node('FUNC-b', 'FUNC', 'Function B'),
+  node('FUNC-s', 'FUNC', 'Supplying function'),
+  node('MOD-quiet', 'MOD', 'Quiet module'),
   node('FUNC-solo', 'FUNC', 'Solo function'),
-  node('FLOW-1', 'FLOW', 'Flow one'),
-  node('FLOW-2', 'FLOW', 'Flow two'),
-  node('FLOW-3', 'FLOW', 'Flow three'),
-  node('FLOW-4', 'FLOW', 'Flow four'),
-  node('FLOW-5', 'FLOW', 'Flow five'),
-  // R-18 (contracts 10): jeder FLOW braucht GENAU EINE relation auf ein SCHEMA.
-  // Ein geteiltes SCHEMA reicht — die Regel zaehlt je FLOW, nicht je SCHEMA. Die
-  // Kanten sind FLOW→SCHEMA und beruehren die Modulzahlen nicht: fan_in/fan_out
-  // eines MOD zaehlen seine eigenen Traces und die seiner allozierten FUNC.
-  node('SCHEMA-c', 'SCHEMA', 'Shared contract'),
-  edge('FLOW-1', 'relation', 'SCHEMA-c'),
-  edge('FLOW-2', 'relation', 'SCHEMA-c'),
-  edge('FLOW-3', 'relation', 'SCHEMA-c'),
-  edge('FLOW-4', 'relation', 'SCHEMA-c'),
-  edge('FLOW-5', 'relation', 'SCHEMA-c'),
+  edge('FUNC-solo', 'allocate', 'MOD-quiet'),
   edge('FUNC-a', 'allocate', 'MOD-loud'),
   edge('FUNC-b', 'allocate', 'MOD-loud'),
-  edge('FUNC-solo', 'allocate', 'MOD-quiet'),
-  // fan_out 5 gegen fan_in 2 (die allocate-Kanten) → I = 5/7 = 71 %, ueber 70 %.
-  edge('FUNC-a', 'io', 'FLOW-1'),
-  edge('FUNC-a', 'io', 'FLOW-2'),
-  edge('FUNC-a', 'io', 'FLOW-3'),
-  edge('FUNC-b', 'io', 'FLOW-4'),
-  edge('FUNC-b', 'io', 'FLOW-5'),
+  edge('FUNC-s', 'allocate', 'MOD-supplier'),
+  // CR-SM-293: fan_in/fan_out sind querende VERTRAEGE, und die Richtung folgt Martin — wer
+  // von draussen BEZIEHT, haengt ab (fan_out), wer nach draussen LIEFERT, wird gebraucht
+  // (fan_in). Frueher genuegten fuenf FLOWs ohne Gegenseite plus die zwei allocate-Kanten;
+  // heute quert davon kein einziger Vertrag einen Rand. MOD-loud bezieht deshalb fuenf
+  // Vertraege von MOD-supplier und liefert zwei zurueck: I = 5/7 = 71 %, wie zuvor.
+  //
+  // Je Fluss ein EIGENES SCHEMA: ein geteilter Vertrag waere EINER, nicht fuenf (CR-SM-274
+  // zaehlt Vertraege, nicht Querungen).
+  ...([1, 2, 3, 4, 5] as const).flatMap((i) => [
+    node(`FLOW-in${i}`, 'FLOW', `Inbound flow ${i}`),
+    node(`SCHEMA-in${i}`, 'SCHEMA', `Inbound contract ${i}`),
+    edge('FUNC-s', 'io', `FLOW-in${i}`),
+    edge(`FLOW-in${i}`, 'io', i <= 3 ? 'FUNC-a' : 'FUNC-b'),
+    edge(`FLOW-in${i}`, 'relation', `SCHEMA-in${i}`),
+  ]),
+  ...([1, 2] as const).flatMap((i) => [
+    node(`FLOW-out${i}`, 'FLOW', `Outbound flow ${i}`),
+    node(`SCHEMA-out${i}`, 'SCHEMA', `Outbound contract ${i}`),
+    edge(i === 1 ? 'FUNC-a' : 'FUNC-b', 'io', `FLOW-out${i}`),
+    edge(`FLOW-out${i}`, 'io', 'FUNC-s'),
+    edge(`FLOW-out${i}`, 'relation', `SCHEMA-out${i}`),
+  ]),
 ];
 
 describe('TEST-graph-metrics: Kennzahlen je MOD, auch ohne Verstoss (CR-GC-326)', () => {
@@ -107,7 +123,7 @@ describe('TEST-graph-metrics: Kennzahlen je MOD, auch ohne Verstoss (CR-GC-326)'
   it('liefert eine Zeile je MOD — auch fuer das Modul, ueber das keine Regel etwas meldet', async () => {
     const { modules } = await tools.graph_metrics.handler({});
 
-    expect(modules.map((m) => m.moduleId).sort()).toEqual(['MOD-loud', 'MOD-quiet']);
+    expect(modules.map((m) => m.moduleId).sort()).toEqual(['MOD-loud', 'MOD-quiet', 'MOD-supplier']);
 
     const mtFindings = harness.evaluateRules().filter((v) => v.ruleId === 'MT-01' || v.ruleId === 'MT-02');
     expect(mtFindings.some((v) => v.elementId === 'MOD-quiet'), 'Fixture-Annahme: MOD-quiet ist verstossfrei').toBe(false);
@@ -119,7 +135,21 @@ describe('TEST-graph-metrics: Kennzahlen je MOD, auch ohne Verstoss (CR-GC-326)'
     expect(typeof quiet.fanOut).toBe('number');
   });
 
+  /**
+   * CR-SM-293: MT-01 urteilt per Default nicht mehr (`instability: null`). Die Aussage dieses
+   * Tests ist aber die KOPPLUNG von Kennzahl und Meldung, nicht der Default — also bekommt der
+   * Harness hier ausdruecklich eine Schwelle. Mit dem Startwert waere der Test gruen, ohne je
+   * eine Meldung gesehen zu haben.
+   */
   it('ist EINE Rechnung mit zwei Ausgaben: instability deckt sich mit der MT-01-Meldung', async () => {
+    // Die Schwelle geht direkt in den Harness — `new GraphCodeHarness(...)` liest die
+    // jsonc-Datei NICHT (das tut `createHarness`), eine geschriebene Config waere hier
+    // wirkungslos gewesen.
+    await harness.close();
+    harness = makeHarness(repoRoot, { ...DEFAULT_METRIC_POLICY, instability: 0.7 });
+    await harness.initialize();
+    tools = bindToolsToHarness(harness);
+
     const { modules } = await tools.graph_metrics.handler({});
     const loud = modules.find((m) => m.moduleId === 'MOD-loud')!;
 
