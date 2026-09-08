@@ -139,12 +139,19 @@ describe('CR-GC-407 Spike: Konvergenz-Zeuge (w·m(G) + Zustands-Archiv)', () => 
   // Sequenz 2 — konstruierter Zyklus A→B→C→A (nicht-transitiv)
   // -------------------------------------------------------------------------
 
-  // 6 FUNCs, zwei compose-Bäume (a→b, a→c | d→e, d→f) + Brücke c→d; die drei
-  // Zustände unterscheiden sich in EINER Zusatzkante:
-  //   A: a→d   B: a→e   C: b→c
-  // Gemessen (Probe auf demselben Messpfad): A→B hebt scalability, B→C hebt
-  // modifiability+coherence, C→A hebt flowEfficiency — jeder Paar-Delta-Schritt
-  // sieht wie Fortschritt aus, die Summe ist 0.
+  // 6 FUNCs, EIN compose-Baum (a→b, a→c, c→d, d→e) + die rotierende ELTERNKANTE
+  // von FUNC-f; die drei Zustände unterscheiden sich nur in ihr:
+  //   A: d→f   B: c→f   C: b→f   (f wandert die Kette hinauf und zurück)
+  // Gemessen (Probe auf demselben Messpfad): A→B hebt flowEfficiency, B→C hebt
+  // scalability, C→A hebt modifiability+flowEfficiency+coherence — jeder
+  // Paar-Delta-Schritt sieht wie Fortschritt aus, die Summe ist 0.
+  //
+  // CR-GC-488: die frühere Fixture rotierte eine ZUSATZkante (A: a→d, B: a→e,
+  // C: b→c) und gab dem Zielknoten damit je einen ZWEITEN compose-Elternteil.
+  // Seit CR-SM-283 ist das R-18 (`error`, "die compose-Bäume müssen Bäume
+  // bleiben`) — das Gate wies alle drei Schritte zurück, und zwar zu Recht. Die
+  // Rotation VERSCHIEBT die Kante jetzt, statt eine zweite anzulegen; jeder
+  // Zustand ist ein legaler Baum (nachgemessen: 0 error-Befunde je Zustand).
   const CYCLE_FIXTURE = {
     elements: ['a', 'b', 'c', 'd', 'e', 'f'].map((n) => ({
       id: `FUNC-${n}`,
@@ -155,11 +162,10 @@ describe('CR-GC-407 Spike: Konvergenz-Zeuge (w·m(G) + Zustands-Archiv)', () => 
     traces: [
       { source: 'FUNC-a', target: 'FUNC-b', type: 'compose' },
       { source: 'FUNC-a', target: 'FUNC-c', type: 'compose' },
-      { source: 'FUNC-d', target: 'FUNC-e', type: 'compose' },
-      { source: 'FUNC-d', target: 'FUNC-f', type: 'compose' },
       { source: 'FUNC-c', target: 'FUNC-d', type: 'compose' },
-      // Zustand A: die rotierende Zusatzkante
-      { source: 'FUNC-a', target: 'FUNC-d', type: 'compose' },
+      { source: 'FUNC-d', target: 'FUNC-e', type: 'compose' },
+      // Zustand A: die rotierende Elternkante von FUNC-f
+      { source: 'FUNC-d', target: 'FUNC-f', type: 'compose' },
     ],
   };
 
@@ -175,9 +181,9 @@ describe('CR-GC-407 Spike: Konvergenz-Zeuge (w·m(G) + Zustands-Archiv)', () => 
     await boot(CYCLE_FIXTURE);
     const states: Graph[] = [freeze(harness)]; // A
     const steps: Array<[[string, string], [string, string]]> = [
-      [['FUNC-a', 'FUNC-d'], ['FUNC-a', 'FUNC-e']], // A→B
-      [['FUNC-a', 'FUNC-e'], ['FUNC-b', 'FUNC-c']], // B→C
-      [['FUNC-b', 'FUNC-c'], ['FUNC-a', 'FUNC-d']], // C→A
+      [['FUNC-d', 'FUNC-f'], ['FUNC-c', 'FUNC-f']], // A→B
+      [['FUNC-c', 'FUNC-f'], ['FUNC-b', 'FUNC-f']], // B→C
+      [['FUNC-b', 'FUNC-f'], ['FUNC-d', 'FUNC-f']], // C→A
     ];
     for (const [del, add] of steps) {
       const res = await harness.mutate(swap(del, add));
