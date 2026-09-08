@@ -18,6 +18,25 @@
  *            als Verbund-Batch [delete-edge(retire), add-edge] durchs Gate an,
  *            bis nichts Positives mehr kommt. Das ist die Reichweite des
  *            heutigen Autopiloten — erst seit CR-GC-435 überhaupt > 0 Züge.
+ *
+ *            CR-GC-488: sie ist WIEDER 0, und das ist ein Befund, kein Defekt.
+ *            Seit CR-SM-292 rankt der veröffentlichte Score nach CHEBYSHEV, also
+ *            nach dem MAXIMUM der vier normierten Überschüsse. Auf diesem Graphen
+ *            ist dieses Maximum `BW-02 @ FUNC-block-grounding` mit 19 querenden
+ *            SCHEMA-Verträgen gegen eine Schwelle von 4 (normiert 3.75). Eine
+ *            zusätzliche Kante kann Randbreite nur ERHÖHEN; senken kann sie nur
+ *            ein Merge zweier Verträge, die BEIDE diesen Rand queren, oder ein
+ *            Umhängen. Die vier anwendbaren Merges liegen an anderen FLOWs.
+ *
+ *            Der Test misst deshalb ab hier nicht mehr „mindestens ein Zug",
+ *            sondern WARUM keiner kommt: 19 Verträge über einen Rand löst man
+ *            durch Zerlegen dieses Blocks, nicht durch einen Zug, den ein
+ *            Optimierer findet. Die Zahl steht dem Menschen längst zur Verfügung
+ *            (`graph_metrics`, und in graph-view-edit sichtbar) — der erste Zug
+ *            ist hier von Hand, und das ist die richtige Arbeitsteilung. Ein
+ *            Score, der stattdessen Plateau-Züge belohnte, wäre die Summen-Logik
+ *            zurück, die CR-SM-292 gerade entfernt hat: Kompensation verdeckt das
+ *            Maximum, und der Autopilot arbeitete an allem ausser am Engpass.
  *   Lauf B — HANDSCHNITT: ZURÜCKGEBAUT mit CR-GC-446 (Begründung am Platz des
  *            Laufs weiter unten). Sein Subjekt — der 17-MOD-SSOT — existiert
  *            nicht mehr; der Schnitt ist seit CR-GC-446 am echten Modell
@@ -240,9 +259,16 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
       const applied = new Set<string>();
       const steps: { n: number; ruleId: string; edit: string; promised: number }[] = [];
       let leftover = 0;
+      /**
+       * CR-GC-488: der DOMINIERENDE Term des Chebyshev-Scores — `worstAt` aus dem
+       * Gate-Advisory. Ohne ihn ist eine Reichweite von 0 nicht lesbar: "kein Zug"
+       * und "kein Zug FÜR DIESEN Engpass" sind verschiedene Aussagen.
+       */
+      let dominant: { ruleId: string; elementId: string } | null = null;
       for (let n = 1; n <= MAX_STEPS; n++) {
         const res = (await rig.tools.graph_suggest.handler({ target: PROFILE, k: 20, layer: 'arch' })) as GraphSuggestResult;
         const applicable = res.suggestions.filter((s) => s.applicable && s.edit);
+        dominant = applicable.find((s) => s.verdict?.steer?.worstAt)?.verdict!.steer!.worstAt ?? dominant;
         const best = applicable.find(
           (s) => s.score > EPS && !applied.has(`${s.edit!.source}->${s.edit!.target}`),
         );
@@ -289,9 +315,29 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
       );
       printBalance(base, after);
 
-      // CR-GC-435 ist Voraussetzung: mindestens EIN Zug muss möglich gewesen sein —
-      // vorher endete der Spike hier per Kill-Kriterium 1.
-      expect(steps.length).toBeGreaterThan(0);
+      console.log(
+        `   Dominierender Term (Chebyshev-Maximum): ${dominant ? `${dominant.ruleId} @ ${dominant.elementId}` : 'keiner'}`,
+      );
+
+      // CR-GC-435 war die Voraussetzung dafür, dass hier ÜBERHAUPT ein Zug möglich ist,
+      // und der Spike hat das damals belegt. CR-GC-488 misst nach — die Reichweite ist
+      // wieder 0, aber aus einem anderen Grund als vor CR-GC-435, und der Unterschied ist
+      // der ganze Punkt. Deshalb steht hier nicht mehr eine Schrittzahl, sondern die
+      // Begründung; die Begründung ist es, die rot werden muss, wenn sie sich ändert.
+      //
+      // (1) Der Aktionsraum ist NICHT leer. Wäre er es, wäre nicht der Score das Thema.
+      expect(leftover, 'kein einziger anwendbarer Zug — dann ist der Aktionsraum leer, nicht der Score wählerisch').toBeGreaterThan(0);
+      // (2) Der Engpass ist benannt und deterministisch: 19 querende SCHEMA-Verträge über
+      //     EINEN Blackbox-Rand, Schwelle 4. Eine zusätzliche Kante kann Randbreite nur
+      //     erhöhen — kein Operator des heutigen Satzes senkt sie an DIESER Stelle.
+      expect(dominant, 'kein Verdict trug worstAt — ohne den dominierenden Term ist die Null nicht lesbar').not.toBeNull();
+      expect(`${dominant!.ruleId} @ ${dominant!.elementId}`).toBe('BW-02 @ FUNC-block-grounding');
+      // (3) Und deshalb kommt kein Zug. Wird das eines Tages falsch — weil ein Operator
+      //     dazukam oder der Engpass abgetragen wurde —, MUSS dieser Test rot werden: der
+      //     Befund oben ist dann veraltet und gehört neu geschrieben, nicht stillschweigend
+      //     überholt. Der erste Zug an diesem Engpass ist heute ein menschlicher: die Zahl
+      //     steht in `graph_metrics` und in graph-view-edit sichtbar am Element.
+      expect(steps.length, 'ein Zug ist möglich geworden — der Befund oben ist veraltet, bitte neu messen').toBe(0);
       // Trockenübung: der produktive SSOT ist nachweislich unverändert.
       expect(sha256(REPO_GRAPH)).toBe(ssot);
     } finally {
