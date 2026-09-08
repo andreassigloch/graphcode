@@ -182,6 +182,11 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
         node('MOD-bestellung', 'MOD', 'Bestellmodul'),
         node('FLOW-in', 'FLOW', 'Bestellanfrage'),
         node('FLOW-out', 'FLOW', 'Bestellbestätigung'),
+        // CR-GC-488: seit CR-SM-271 ist `FLOW -relation-> SCHEMA [1..1]` GRAMMATIK und
+        // meldet als R-18 (error) statt als SC-04 (warning) — ohne Vertrag traegt dieses
+        // Fixture zwei Sperrfehler und misst nicht mehr, was es messen will.
+        node('SCHEMA-in', 'SCHEMA', 'Bestellanfrage-Vertrag'),
+        node('SCHEMA-out', 'SCHEMA', 'Bestellbestaetigung-Vertrag'),
       ],
       [
         edge('SYS-shop', 'UC-bestellen', 'compose'),
@@ -201,6 +206,8 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
         edge('FLOW-in', 'FUNC-pruefen', 'io'),
         edge('FUNC-pruefen', 'FLOW-out', 'io'),
         edge('FLOW-out', 'ACTOR-kunde', 'io'),
+        edge('FLOW-in', 'SCHEMA-in', 'relation'),
+        edge('FLOW-out', 'SCHEMA-out', 'relation'),
       ],
     );
     const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0);
@@ -242,6 +249,8 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
         node('FCHAIN-voll', 'FCHAIN', 'Getragener Ablauf'),
         node('FUNC-pruefen', 'FUNC', 'Bestellung prüfen', 'Prüft die eingehende Bestellung.'),
         node('FLOW-in', 'FLOW', 'Bestellanfrage'),
+        // CR-GC-488: FLOW ohne SCHEMA ist seit CR-SM-271 R-18/error, nicht SC-04/warning.
+        node('SCHEMA-in', 'SCHEMA', 'Bestellanfrage-Vertrag'),
       ],
       [
         edge('SYS-shop', 'UC-bestellen', 'compose'),
@@ -252,6 +261,7 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
         edge('FCHAIN-voll', 'FUNC-pruefen', 'compose'),
         edge('ACTOR-kunde', 'FLOW-in', 'io'),
         edge('FLOW-in', 'FUNC-pruefen', 'io'),
+        edge('FLOW-in', 'SCHEMA-in', 'relation'),
       ],
     );
     const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0);
