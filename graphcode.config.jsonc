@@ -36,11 +36,25 @@
     // aber skalenabhaengig.
     "riskRpn": 100,
 
+    // RD-04 (Zerlegungsbreite je Blackbox): FUNC compose FUNC, SYS/MOD compose MOD und
+    // der FUNC-Wurzelwald am SYS. Seit CR-SM-296 ist die Zahl an die Doktrin 7+-2
+    // (`se:top-level`) gebunden: 9 ist ihre Obergrenze. Bis CR-SM-282 stand sie als
+    // `DECOMPOSITION_BREADTH_MAX = 11` inline im Regelcode. null = messen, nicht urteilen.
+    "decompositionBreadth": { "warning": 9 },
+
+    // BW-02 (Randbreite je Blackbox): verschiedene SCHEMA-Vertraege, die den Rand des
+    // compose-Teilbaums queren. Schwelle aus der Verteilung ABGELESEN, nicht gesetzt
+    // (CR-SM-283): bok und graph-view-edit enden bei 3, dieses Repo geht bis 19.
+    // Bewusst ohne `info`-Stufe — readiness zaehlt info ungefiltert in den Nenner.
+    "boundaryWidth": { "warning": 5 },
+
     // R-04: Modulgroesse GEGEN Kreuzungen — drei Urteile, drei Werte (CR-SM-236).
-    // large: > 12 FUNCs gilt als gross (mit Kreuzungen warning, ohne info).
-    // coupled: unter 9 FUNCs sieht die Regel gar nicht hin.
+    // Seit CR-SM-296 ist R-04 ALLEIN fuer die Modulgroesse zustaendig (RD-04 hat ihr
+    // Allokations-Bein abgegeben), und dieselbe Doktrin 7+-2 gilt: large = 9 (Obergrenze),
+    // coupled = 7 (Untergrenze, ab der die Regel hinsieht). Vorher 12/8 — zwei Zahlen
+    // fuer dieselbe Frage, unverbunden mit der Zerlegungsbreite darueber.
     // crossings: ab 3 Kreuzungen warnt auch ein nur `coupled`-grosses Modul.
-    "moduleSize": { "large": 12, "coupled": 8, "crossings": 2 },
+    "moduleSize": { "large": 9, "coupled": 7, "crossings": 2 },
 
     // CR-SM-229: die lizenzierte AIAG-VDA-Tabelle gehoert NICHT in diese Datei —
     // sie ist eingecheckt. null heisst hier nicht "aus", sondern "markierter

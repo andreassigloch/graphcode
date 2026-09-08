@@ -14,9 +14,10 @@
  * @author andreas@siglochconsulting
  */
 import { describe, it, expect, afterEach } from 'vitest';
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { DEFAULT_METRIC_POLICY } from '@sigloch/contracts/se';
 import type { MutateCommand } from '@sigloch/contracts/harness';
 import {
@@ -24,6 +25,7 @@ import {
   stripJsonComments,
   ConfigError,
   CONFIG_FILENAME,
+  GraphcodeConfigSchema,
   DEFAULT_CONFIG,
   DEFAULT_FOCUS_THRESHOLD,
 } from '../src/kernel/config.js';
@@ -73,6 +75,15 @@ const SEED: MutateCommand[] = [
   node('FLOW-3', 'FLOW', 'Flow three'),
   node('FLOW-4', 'FLOW', 'Flow four'),
   node('FLOW-5', 'FLOW', 'Flow five'),
+  // CR-SM-271 Teil 2: `FLOW -relation-> SCHEMA` ist seit META_MODEL 5.0.0 eine
+  // DURCHGESETZTE 1..1-Untergrenze — ein FLOW ohne Vertrag ist untypisiert und faellt
+  // R-18 (error) zur Last, das Gate blockt den Batch. Ein Vertrag genuegt der Fixture.
+  node('SCHEMA-payload', 'SCHEMA', 'Payload contract'),
+  edge('FLOW-1', 'relation', 'SCHEMA-payload'),
+  edge('FLOW-2', 'relation', 'SCHEMA-payload'),
+  edge('FLOW-3', 'relation', 'SCHEMA-payload'),
+  edge('FLOW-4', 'relation', 'SCHEMA-payload'),
+  edge('FLOW-5', 'relation', 'SCHEMA-payload'),
   edge('FUNC-a', 'allocate', 'MOD-loud'),
   edge('FUNC-b', 'allocate', 'MOD-loud'),
   edge('FUNC-a', 'io', 'FLOW-1'),
@@ -102,6 +113,9 @@ describe('CR-GC-329: Config laden — fehlend, gueltig, kaputt', () => {
         /* Stufen frei waehlbar */
         "lcom4": { "info": 3, "warning": 5 },
         "crossingFlows": { "warning": 3 },
+        // CR-SM-282 / CR-SM-283: seither Pflichtfelder der MetricPolicy (nullable, nicht optional).
+        "decompositionBreadth": { "warning": 9 },
+        "boundaryWidth": { "warning": 5 },
         "riskRpn": 100,
         "apTable": null,
         "moduleSize": { "large": 12, "coupled": 8, "crossings": 2 },
@@ -115,14 +129,16 @@ describe('CR-GC-329: Config laden — fehlend, gueltig, kaputt', () => {
       instability: null, lcom4: { info: 3, warning: 5 },
       // CR-SM-236/229: die Policy ist vollstaendig anzugeben — ein fehlendes Feld ist
       // ein Schemafehler, kein stiller Startwert.
-      crossingFlows: { warning: 3 }, riskRpn: 100, apTable: null,
+      crossingFlows: { warning: 3 },
+      decompositionBreadth: { warning: 9 }, boundaryWidth: { warning: 5 },
+      riskRpn: 100, apTable: null,
       moduleSize: { large: 12, coupled: 8, crossings: 2 },
     });
     expect(loaded.config.focusThreshold).toBe(0.75);
   });
 
   it('schemawidrige Datei → Abbruch mit Pfad UND Feld, kein stiller Default', () => {
-    const root = repo('{ "metricPolicy": { "instability": 1.5, "lcom4": null, "crossingFlows": { "warning": 3 }, "riskRpn": 100, "apTable": null, "moduleSize": { "large": 12, "coupled": 8, "crossings": 2 } }, "focusThreshold": 0.8 }');
+    const root = repo('{ "metricPolicy": { "instability": 1.5, "lcom4": null, "crossingFlows": { "warning": 3 }, "decompositionBreadth": { "warning": 9 }, "boundaryWidth": { "warning": 5 }, "riskRpn": 100, "apTable": null, "moduleSize": { "large": 12, "coupled": 8, "crossings": 2 } }, "focusThreshold": 0.8 }');
 
     let err: unknown;
     try { loadGraphcodeConfig(root); } catch (e) { err = e; }
@@ -133,7 +149,7 @@ describe('CR-GC-329: Config laden — fehlend, gueltig, kaputt', () => {
   });
 
   it('fehlendes Pflichtfeld → Abbruch, nicht Ergaenzung aus dem Default', () => {
-    const root = repo('{ "metricPolicy": { "instability": 0.7, "lcom4": null, "crossingFlows": { "warning": 3 }, "riskRpn": 100, "apTable": null, "moduleSize": { "large": 12, "coupled": 8, "crossings": 2 } } }');
+    const root = repo('{ "metricPolicy": { "instability": 0.7, "lcom4": null, "crossingFlows": { "warning": 3 }, "decompositionBreadth": { "warning": 9 }, "boundaryWidth": { "warning": 5 }, "riskRpn": 100, "apTable": null, "moduleSize": { "large": 12, "coupled": 8, "crossings": 2 } } }');
 
     expect(() => loadGraphcodeConfig(root)).toThrow(ConfigError);
     expect(() => loadGraphcodeConfig(root)).toThrow(/focusThreshold/);
@@ -164,7 +180,7 @@ describe('CR-GC-329: die Config wirkt — Gate, Kennzahl und Herkunft in EINER A
   });
 
   it('"instability": null → MT-01 schweigt im GATE, die Zahl bleibt in der Modulzeile', async () => {
-    const root = repo('{ "metricPolicy": { "instability": null, "lcom4": { "info": 4, "warning": 6 }, "crossingFlows": { "warning": 3 }, "riskRpn": 100, "apTable": null, "moduleSize": { "large": 12, "coupled": 8, "crossings": 2 } }, "focusThreshold": 0.8 }');
+    const root = repo('{ "metricPolicy": { "instability": null, "lcom4": { "info": 4, "warning": 6 }, "crossingFlows": { "warning": 3 }, "decompositionBreadth": { "warning": 9 }, "boundaryWidth": { "warning": 5 }, "riskRpn": 100, "apTable": null, "moduleSize": { "large": 12, "coupled": 8, "crossings": 2 } }, "focusThreshold": 0.8 }');
     const harness = await harnessOn(root);
     expect((await harness.mutate(SEED)).success).toBe(true);
     const tools = bindToolsToHarness(harness);
@@ -182,7 +198,7 @@ describe('CR-GC-329: die Config wirkt — Gate, Kennzahl und Herkunft in EINER A
   });
 
   it('Wert und Schwelle kommen aus DERSELBEN Antwort — ein Konsument braucht keinen eigenen Zielwert', async () => {
-    const root = repo('{ "metricPolicy": { "instability": 0.5, "lcom4": null, "crossingFlows": { "warning": 3 }, "riskRpn": 100, "apTable": null, "moduleSize": { "large": 12, "coupled": 8, "crossings": 2 } }, "focusThreshold": 0.8 }');
+    const root = repo('{ "metricPolicy": { "instability": 0.5, "lcom4": null, "crossingFlows": { "warning": 3 }, "decompositionBreadth": { "warning": 9 }, "boundaryWidth": { "warning": 5 }, "riskRpn": 100, "apTable": null, "moduleSize": { "large": 12, "coupled": 8, "crossings": 2 } }, "focusThreshold": 0.8 }');
     const harness = await harnessOn(root);
     expect((await harness.mutate(SEED)).success).toBe(true);
     const tools = bindToolsToHarness(harness);
@@ -197,8 +213,27 @@ describe('CR-GC-329: die Config wirkt — Gate, Kennzahl und Herkunft in EINER A
     expect(mt01?.message).toContain('>50%');
   });
 
+  /**
+   * CR-GC-486: die EINGECHECKTE Config dieses Repos gegen das AKTUELLE Schema.
+   *
+   * Der Bruch ist rueckwaerts still: contracts nimmt ein Pflichtfeld in `MetricPolicy` auf
+   * (CR-SM-282 `decompositionBreadth`, CR-SM-283 `boundaryWidth` — beide nullable, aber nicht
+   * optional), veroeffentlicht, und der Consumer merkt es erst, wenn jemand einen Harness auf
+   * dem NEUEN Build oeffnet. Solange alle laufenden Hosts aus der Registry stammen, meldet
+   * nichts — das Repo, das die Werkzeuge baut, konnte sein eigenes Modell mit seinen eigenen
+   * frisch gebauten Werkzeugen nicht mehr oeffnen. Nicht der Bruch war der Fehler, das
+   * Schweigen dazwischen.
+   */
+  it('die eingecheckte graphcode.config.jsonc validiert gegen das aktuelle Schema', () => {
+    const repoRoot = fileURLToPath(new URL('..', import.meta.url));
+    const raw = readFileSync(join(repoRoot, CONFIG_FILENAME), 'utf8');
+    const parsed = GraphcodeConfigSchema.safeParse(JSON.parse(stripJsonComments(raw)));
+    expect(parsed.error?.issues.map((i) => i.path.join('.')) ?? []).toEqual([]);
+    expect(parsed.success).toBe(true);
+  });
+
   it('kaputte Config bricht den Harness-Start ab, statt still auf Defaults zu fallen', async () => {
-    const root = repo('{ "metricPolicy": { "instability": 2, "lcom4": null, "crossingFlows": { "warning": 3 }, "riskRpn": 100, "apTable": null, "moduleSize": { "large": 12, "coupled": 8, "crossings": 2 } }, "focusThreshold": 0.8 }');
+    const root = repo('{ "metricPolicy": { "instability": 2, "lcom4": null, "crossingFlows": { "warning": 3 }, "decompositionBreadth": { "warning": 9 }, "boundaryWidth": { "warning": 5 }, "riskRpn": 100, "apTable": null, "moduleSize": { "large": 12, "coupled": 8, "crossings": 2 } }, "focusThreshold": 0.8 }');
     await expect(createHarness({ repoRoot: root, scope: { workspaceId: 'cfg-ws', systemId: 'cfg' } }))
       .rejects.toThrow(ConfigError);
   });
