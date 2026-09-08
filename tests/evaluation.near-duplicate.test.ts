@@ -10,9 +10,17 @@
  * (`rule:ND-02`), aber niemand holte es nach.
  *
  * Zwei Aussagen, die zusammen gehören:
- *   1. ND-Funde erscheinen in `rules_evaluate` (rot vor dieser CR: kein Fund).
- *   2. Das Gate blockiert daran NIE — `SE_DESCRIPTOR.rules` trägt ND nicht, und der
- *      globale contracts-Modul-State bleibt nach jedem Lauf zurückgesetzt.
+ *   1. ND-Funde erscheinen in `rules_evaluate` (rot vor CR-GC-442: kein Fund).
+ *   2. Das Gate blockiert daran NIE — `SE_DESCRIPTOR.rules` trägt ND nicht.
+ *
+ * CR-SM-286 / CR-GC-488: **die Injektionsnaht ist ersatzlos entfallen.** ND-01/ND-02 rechnen
+ * ihre Ähnlichkeit selbst (`similarity.ts`, je Graph gecacht); `injectNDMatrices`,
+ * `clearNDMatrices`, `withNDMatrices` und `getND02SimilarityMatrix` gibt es nicht mehr. Der
+ * zweite Block dieses Tests hat damit seinen Gegenstand verloren — er bewachte einen globalen
+ * Modulzustand und die `finally`-Klammer darum. **Was er zusicherte, gilt weiter und stärker:**
+ * das Gate-Urteil hängt nicht davon ab, ob vorher ein Report- oder Steering-Lauf stattgefunden
+ * hat. Vorher hielt eine Klammer das zusammen, jetzt gibt es nichts mehr zu klammern — und
+ * genau diese Invarianz steht unten noch, als Verhalten statt als Mechanik.
  *
  * Realer Disk-Kuzu-Store, echte Harness, echter Regellauf — kein Mock.
  *
@@ -24,17 +32,11 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import {
-  DEFAULT_METRIC_POLICY,
-  evaluateAORules,
-  getND02SimilarityMatrix,
-  type OntologyGraph,
-} from '@sigloch/contracts/se';
+
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import { evaluateAll, readinessOf, type Finding } from '../src/kernel/evaluation.js';
 import { takeSteeringSnapshot } from '../src/kernel/measure/steering-snapshot.js';
-import { injectNDMatrices, clearNDMatrices, withNDMatrices } from '../src/kernel/measure/nd-similarity.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 
 /** Zwei feld- UND beschreibungsgleiche SCHEMAs — der ND-02-Fall. */
@@ -144,7 +146,7 @@ describe('TEST-nd-im-report: ND-Funde erscheinen im Report-Pfad (CR-GC-442)', ()
   });
 });
 
-describe('Modul-State: die ND-Matrix leckt nicht zwischen den Pfaden (CR-GC-442)', () => {
+describe('Ohne Naht: das Gate-Urteil ist von Report- und Steering-Läufen unabhängig (CR-GC-488)', () => {
   let tmp: string;
   let harness: GraphCodeHarness;
 
@@ -168,68 +170,22 @@ describe('Modul-State: die ND-Matrix leckt nicht zwischen den Pfaden (CR-GC-442)
     if (tmp) rmSync(tmp, { recursive: true, force: true });
   });
 
-  it('nach jedem Report- und Steering-Lauf steht der contracts-Modul-State wieder auf null', () => {
-    clearNDMatrices();
-
-    const ev = evaluateAll(harness);
-    expect(ndOf(ev.findings, 'ND-02')).toHaveLength(1); // der Lauf hat wirklich injiziert
-    expect(getND02SimilarityMatrix()).toBeNull();
-
-    takeSteeringSnapshot(harness.getGraph(), harness.getMetricPolicy(), harness.getFocusThreshold());
-    expect(getND02SimilarityMatrix()).toBeNull();
-  });
-
-  it('die Klammer gibt den Zustand auch frei, wenn der Lauf wirft', () => {
-    const og: OntologyGraph = { elements: [], traces: [] } as unknown as OntologyGraph;
-    expect(() =>
-      withNDMatrices(og, () => {
-        throw new Error('boom');
-      }),
-    ).toThrow('boom');
-    expect(getND02SimilarityMatrix()).toBeNull();
-  });
-
-  it('zwei Gate-Läufe um einen Report-/Steering-Lauf herum liefern identische Verstöße', () => {
+  /**
+   * Die eigentliche Zusage — vorher von `withNDMatrices` samt `finally` getragen, jetzt
+   * strukturell: es gibt keinen prozessweiten Zustand mehr, den ein Lauf hinterlassen könnte.
+   * Der Test bleibt trotzdem stehen: er prüft das VERHALTEN, nicht den Mechanismus, und würde
+   * jede künftige Wiedereinführung eines solchen Zustands sofort melden.
+   */
+  it('zwei Gate-Läufe um einen Report- und Steering-Lauf herum liefern identische Verstöße', () => {
     const before = harness.evaluateRules();
     evaluateAll(harness);
     takeSteeringSnapshot(harness.getGraph(), harness.getMetricPolicy(), harness.getFocusThreshold());
     expect(harness.evaluateRules()).toEqual(before);
   });
 
-  it('WARUM die Klammer nötig ist: AO-D01 (Gate-Katalog) liest dieselbe ND-02-Matrix mit', () => {
-    // Ein Relay: FUNC-relay erfüllt kein REQ und schickt io an zwei FUNCs, deren
-    // SCHEMAs sich NICHT überlappen. Ohne Matrix überspringt AO-D01 die
-    // Overlap-Prüfung ("no matrix → assume pass") und meldet; mit Matrix nicht.
-    const og = {
-      elements: [
-        { id: 'FUNC-relay', type: 'FUNC', name: 'Relay', description: 'Leitet weiter.' },
-        { id: 'FUNC-b', type: 'FUNC', name: 'B', description: 'Schreibt Audit-Zeilen.' },
-        { id: 'FUNC-c', type: 'FUNC', name: 'C', description: 'Rendert Kacheln.' },
-        { id: 'FLOW-b', type: 'FLOW', name: 'audit', description: 'Audit-Zeilen.' },
-        { id: 'FLOW-c', type: 'FLOW', name: 'tiles', description: 'Kachel-Daten.' },
-        { id: 'SCHEMA-b', type: 'SCHEMA', name: 'AuditEntry', description: 'Eine Audit-Zeile.', attributes: { fields: ['timestamp', 'author'] } },
-        { id: 'SCHEMA-c', type: 'SCHEMA', name: 'Tile', description: 'Eine Kachel.', attributes: { fields: ['x', 'y', 'label'] } },
-      ],
-      traces: [
-        { source: 'FUNC-relay', target: 'FUNC-b', type: 'io' },
-        { source: 'FUNC-relay', target: 'FUNC-c', type: 'io' },
-        { source: 'FUNC-b', target: 'FLOW-b', type: 'io' },
-        { source: 'FUNC-c', target: 'FLOW-c', type: 'io' },
-        { source: 'FLOW-b', target: 'SCHEMA-b', type: 'relation' },
-        { source: 'FLOW-c', target: 'SCHEMA-c', type: 'relation' },
-      ],
-    } as unknown as OntologyGraph;
-
-    clearNDMatrices();
-    const withoutMatrix = evaluateAORules(og, DEFAULT_METRIC_POLICY).filter((v) => v.rule_id === 'AO-D01');
-    injectNDMatrices(og);
-    const withMatrix = evaluateAORules(og, DEFAULT_METRIC_POLICY).filter((v) => v.rule_id === 'AO-D01');
-    clearNDMatrices();
-
-    // Der Beweis, dass der Modul-State NICHT gate-neutral ist: dieselbe Regel,
-    // derselbe Graph, zwei Ergebnisse — allein abhängig davon, ob vorher irgendwo
-    // im Prozess injiziert wurde.
-    expect(withoutMatrix).toHaveLength(1);
-    expect(withMatrix).toHaveLength(0);
+  it('der Report-Lauf sieht das Duplikat — ohne dass ihn jemand vorbereiten muss', () => {
+    // Vorher war das der Beleg dafür, dass der Lauf "wirklich injiziert" hat. Die Vorbereitung
+    // gibt es nicht mehr; die Aussage ist jetzt, dass es sie auch nicht braucht.
+    expect(ndOf(evaluateAll(harness).findings, 'ND-02')).toHaveLength(1);
   });
 });

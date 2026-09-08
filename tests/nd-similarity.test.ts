@@ -7,26 +7,25 @@
  * Greenfield-Läufen (haiku45 / devstral-v14) dienen als Fixtures für den
  * REQ/UC-Hinweis-Pfad (duplicateHits + renderDuplicateHints, contracts-frei, keine Regel).
  */
-import { describe, it, expect, afterEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { DEFAULT_METRIC_POLICY } from '@sigloch/contracts/se';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import {
   evaluateAllRules,
-  setND01SimilarityMatrix,
-  setND02SimilarityMatrix,
+  // CR-SM-286: die Aehnlichkeit kommt aus contracts, gecacht je Graph — es gibt keine
+  // Setter und keinen Modulzustand mehr, den ein Test aufraeumen muesste.
+  funcSimilarity,
+  schemaSimilarity,
+  tokens,
+  jaccard,
   RULE_TO_DIMENSION,
   type OntologyGraph,
 } from '@sigloch/contracts/se';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import type { Graph } from '@sigloch/graph-api-core';
 import {
-  tokens,
-  jaccard,
   nameDescrSimilarity,
-  computeND01Matrix,
-  computeND02Matrix,
-  injectNDMatrices,
   duplicateHits,
   renderDuplicateHints,
   HINT_SIMILARITY_THRESHOLD,
@@ -37,12 +36,6 @@ const fixture = (name: string): OntologyGraph =>
   JSON.parse(
     readFileSync(fileURLToPath(new URL(`../rig/greenfield-systemtest/results/${name}.graph.json`, import.meta.url)), 'utf8'),
   ) as OntologyGraph;
-
-// Modul-State der contracts-Regeln nach jedem Test zurücksetzen.
-afterEach(() => {
-  setND01SimilarityMatrix(null);
-  setND02SimilarityMatrix(null);
-});
 
 const el = (id: string, type: string, name: string, description: string, attributes?: Record<string, unknown>) =>
   ({ id, type, name, description, ...(attributes ? { attributes } : {}) }) as OntologyGraph['elements'][number];
@@ -84,9 +77,10 @@ describe('ND-01 — FUNC-Near-Duplicates (konstruierte Duplikate)', () => {
     ],
   } as OntologyGraph;
 
-  it('Matrix: Duplikat-Paar ≥0.85, verschiedenes Paar deutlich darunter', () => {
-    const { funcIds, matrix } = computeND01Matrix(og);
-    expect(funcIds).toEqual(['FUNC-generate-report', 'FUNC-generate-report-2', 'FUNC-parse-input']);
+  it('Ähnlichkeit: Duplikat-Paar ≥0.85, verschiedenes Paar deutlich darunter', () => {
+    // CR-SM-286: die Matrix kommt aus contracts (`similarity.ts`), nicht mehr von hier.
+    const { ids, matrix } = funcSimilarity(og);
+    expect(ids).toEqual(['FUNC-generate-report', 'FUNC-generate-report-2', 'FUNC-parse-input']);
     expect(matrix[0][1]).toBeGreaterThanOrEqual(0.85);
     expect(matrix[0][2]).toBeLessThan(0.5);
     // symmetrisch, Diagonale 1
@@ -94,8 +88,7 @@ describe('ND-01 — FUNC-Near-Duplicates (konstruierte Duplikate)', () => {
     expect(matrix[0][0]).toBe(1);
   });
 
-  it('injectNDMatrices ⇒ evaluateAllRules meldet ND-01 GENAU für das Duplikat-Paar', () => {
-    injectNDMatrices(og);
+  it('evaluateAllRules meldet ND-01 GENAU für das Duplikat-Paar', () => {
     const nd = evaluateAllRules(og, DEFAULT_METRIC_POLICY).filter((v) => v.rule_id === 'ND-01');
     expect(nd).toHaveLength(1);
     expect(nd[0].element_id).toBe('FUNC-generate-report-2');
@@ -103,8 +96,16 @@ describe('ND-01 — FUNC-Near-Duplicates (konstruierte Duplikate)', () => {
     expect(nd[0].severity).toBe('error');
   });
 
-  it('ohne Injektion liefert ND-01 nichts (der Alt-Zustand — leere Hülle)', () => {
-    expect(evaluateAllRules(og, DEFAULT_METRIC_POLICY).filter((v) => v.rule_id === 'ND-01')).toHaveLength(0);
+  /**
+   * CR-SM-286 / CR-GC-488 — die Umkehrung des Alt-Zustands.
+   *
+   * Hier stand: „ohne Injektion liefert ND-01 nichts (der Alt-Zustand — leere Hülle)". Genau
+   * das war der Defekt: eine `error`-Regel fiel ohne vorbereitete Matrix nach GRÜN, und das
+   * war von „keine Duplikate" nicht zu unterscheiden. Es gibt keine Vorbereitung mehr, also
+   * ist der einzig richtige Test der gegenteilige.
+   */
+  it('ohne jede Vorbereitung meldet ND-01 — kein Fail-open mehr', () => {
+    expect(evaluateAllRules(og, DEFAULT_METRIC_POLICY).filter((v) => v.rule_id === 'ND-01')).toHaveLength(1);
   });
 });
 
@@ -122,10 +123,9 @@ describe('ND-02 — SCHEMA-Near-Duplicates (konstruierte Duplikate)', () => {
     ],
   } as OntologyGraph;
 
-  it('injectNDMatrices ⇒ evaluateAllRules meldet ND-02 für das Feld-identische Paar', () => {
-    const { schemaIds, matrix } = computeND02Matrix(og);
+  it('evaluateAllRules meldet ND-02 für das Feld-identische Paar', () => {
+    const { ids: schemaIds, matrix } = schemaSimilarity(og);
     expect(schemaIds[0]).toBe('SCHEMA-audit-entry');
-    injectNDMatrices(og);
     const nd = evaluateAllRules(og, DEFAULT_METRIC_POLICY).filter((v) => v.rule_id === 'ND-02');
     expect(nd).toHaveLength(1);
     expect(nd[0].message).toContain('SCHEMA-report-req');

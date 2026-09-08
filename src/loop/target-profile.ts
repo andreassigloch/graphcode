@@ -19,7 +19,10 @@
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
-import { tokens } from '../kernel/measure/nd-similarity.js';
+// CR-GC-488: `tokens` kommt aus contracts, nicht aus dem lokalen ND-Modul — dort stand
+// bis hierher eine zweite, zeichengleiche Kopie (die Naht aus CR-SM-286 fiel, die
+// Bausteine blieben liegen).
+import { tokens } from '@sigloch/contracts/se';
 import {
   TargetWeightsSchema,
   TargetProfileSchema,
