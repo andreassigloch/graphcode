@@ -8,7 +8,7 @@
 
 ## 1. Root Cause
 
-**`npm test` ist rot: 44 von 1034 Tests, 23 von 130 Dateien** — und keiner der Fehlschläge ist ein
+**`npm test` ist rot: 43 von 1034 Tests, 22 von 130 Dateien** — und keiner der Fehlschläge ist ein
 neuer Defekt. Alle rufen Symbole, Zahlen oder Antwortformen an, die `@sigloch/contracts` bzw.
 `@sigloch/se-engine` in den letzten vier Releases **entfernt** haben. Die Familienregel „keine
 parallelen Pfade" verlangt, dass eine Entfernung im SSOT bei allen Nutzern nachgezogen wird; hier
@@ -18,6 +18,35 @@ Sichtbar wurde es erst jetzt, weil dieses Repo `@sigloch/contracts` per **Symlin
 Arbeitskopie zieht: die laufenden Hosts stammen aus der Registry und tragen alte Stände, während
 Build und Suite gegen den frischen SSOT laufen. Dieselbe Konstellation wie in CR-GC-486 — und
 dieselbe Ursache dafür, dass niemand es gemerkt hat.
+
+## 1a. Warum es vier Releases lang still blieb — der Symlink schlägt den Bereich
+
+Das ist nicht Nachlässigkeit, sondern eine fehlende Prüfung. `package.json` dieses Repos verlangt
+
+    "@sigloch/contracts":      ">=9.1 <10"
+    "@sigloch/graph-api-core": "^5.4.0"
+    "@sigloch/se-engine":      "^1.4.0"
+
+und `node_modules/@sigloch/*` sind **Symlinks in die Arbeitskopie**. Damit gilt der Bereich für
+nichts: gebaut und getestet wird gegen contracts **10.0.0** — eine Version, die die eigene
+Deklaration ausdrücklich **ausschließt**. Ein Major-Bump im SSOT löst hier keinen Installations-
+fehler aus, weil gar nicht installiert wird.
+
+Die Gegenprobe steht seit heute im Testlauf: `distribution` packt ein Tarball und installiert es in
+ein fremdes Repo — genau dort greift der Bereich wieder, und es bricht:
+
+    npm error notarget No matching version found for @sigloch/graph-api-core@^5.4.0
+
+| Paket | verlangt | in der Registry | lokal |
+|---|---|---|---|
+| `@sigloch/graph-api-core` | `^5.4.0` | **5.3.0** | 5.4.0 |
+| `@sigloch/contracts` | `>=9.1 <10` | 9.1.0 | **10.0.0** |
+| `@sigloch/se-engine` | `^1.4.0` | **1.3.0** | 1.4.0 |
+
+**Zwei Wahrheiten über denselben Stand, und die billigere gewinnt.** Der Symlink ist der billigere
+Weg und umgeht die Prüfung, die am teureren hängt — dieselbe Klasse wie CR-GC-366, nur zwischen
+Paketen statt zwischen Kanten. `distribution` ist der einzige Test, der die andere Wahrheit sieht;
+er ist rot, und das ist die richtige Farbe.
 
 ## 2. Impact
 
