@@ -1,6 +1,6 @@
 # CR-GC-488 — Die Consumer-Seite von vier SSOT-Releases ist nie nachgezogen worden
 
-**Status:** offen · **Angelegt:** 2026-09-08 · **Art:** Migration (keine Grammatik-Änderung)
+**Status:** abgeschlossen · **Angelegt:** 2026-09-08 · **Abgeschlossen:** 2026-09-08 · **Art:** Migration (keine Grammatik-Änderung)
 **Fundstelle:** Compliance-Nachmessung nach CR-SM-294..297, sigloch-modules
 **Grundlage:** vollständiger Lauf von `npm test` in diesem Repo, 2026-09-08
 
@@ -120,3 +120,79 @@ jede Stufe die nächste messbar macht:
 ohne dass es jemandem aufgefallen ist. Ein Familien-Release, das einen Consumer bricht, muss den
 Consumer beim Namen nennen — `bok/docs/governance/USAGE-MATRIX.md` weiß, wer welchen Export zieht.
 Das gehört an den Release-Zug, nicht in diesen CR.
+
+
+---
+
+## 6. Ergebnis
+
+**43 rote Tests → 2.** Die beiden verbliebenen sind `lockfile-sync` und `distribution`; sie zeigen
+korrekt an, dass `@sigloch/contracts@10.0.0`, `graph-api-core@^5.4.0` und `se-engine@^1.4.0` nicht
+in der Registry stehen. Sie werden mit dem Release-Zug grün, nicht vorher, und wurden bewusst nicht
+angefasst — sie sind der einzige Test, der die zweite Wahrheit aus §1a überhaupt sieht.
+
+Alle vier Teilvorgänge aus §5 sind abgearbeitet. Was dabei über die reine Migration hinaus
+herauskam, in der Reihenfolge des Gewichts:
+
+### 6.1 Ein verlorener Operator — CR-SM-302
+
+Der Divergenz-Spike (CR-GC-430) war rot, weil die COHESIVE-Kette von **5 auf 2 Schritte**
+geschrumpft war. Ursache war keine Rechnung: CR-SM-271 hat SC-04 gestrichen (FLOW ohne SCHEMA ist
+seither das R-18-Untergrenzen-Bein) und dabei **ihr Fix-Template mitgenommen**, mit dem Vermerk
+„R-18 trägt bewusst kein Template". Der Satz gilt für drei der vier R-18-Beine; das vierte ist am
+`candidate_targets`-Kontext eindeutig und als einziges additiv heilbar. Damit fehlte
+`graph_suggest` der ganze vertragsbauende Arm seines Aktionsraums — genau der, den der Spike-Bericht
+COHESIVE zuschreibt.
+
+Nach CR-SM-302 stehen **5 Schritte / +0.1677** wieder Ziffer für Ziffer auf dem Spike-Protokoll.
+Zweiter Fund dort: das Template allein reichte nicht, weil `CLASS_MAP` je `rule_id` filtert;
+`suggest.ts` nimmt eine Nicht-Operator-Regel jetzt auf, wenn ihr Template einen Edit liefert.
+
+### 6.2 Ein fünftes Repo — CR-GF-147
+
+`graphify` lud überhaupt nicht mehr (`AsilLevel.optional()` auf `undefined`) und riss
+`tests/import-code-verb.test.ts` als ganze Suite mit. Beim Beheben kam ein grösserer Defekt heraus:
+`validateTypedGraph` rief `isValidTrace` **ohne `kinds`** und lehnte damit *jede* `satisfy`-Kante
+auf ein REQ ab — mit der sachlich falschen Begründung „not a TRACE_PATTERNS pair". Behoben, 232
+Tests grün.
+
+### 6.3 Eine reihenfolgenabhängige Regel — CR-SM-304
+
+Die Befund-Bilanz des Trockenübungs-Spikes meldete bei **null angewandten Zügen** „einen
+geschlossen, einen neu". Der Graph war unverändert — nur einmal frisch aus dem Kuzu-Store gelesen.
+CR-R03 verankerte ihren Befund in Trace-Reihenfolge und verschwieg dabei je ein Ziel in graphcode
+und graph-view-edit. Behoben; die Bilanz ist jetzt `geschlossen 0 / neu 0`.
+
+### 6.4 Der Autopilot hat null Züge — und das ist richtig so
+
+`arch.optimization-dry-run.spike` misst **0 Züge bei 4 anwendbaren Vorschlägen**. Das dominierende
+Glied des Chebyshev-Scores ist `BW-02 @ FUNC-block-grounding`: **19 querende SCHEMA-Verträge über
+einen Blackbox-Rand**, Schwelle 4. Eine zusätzliche Kante kann Randbreite nur erhöhen.
+
+Der Test misst deshalb nicht mehr „mindestens ein Zug", sondern **warum keiner kommt** — der
+Aktionsraum ist nicht leer, der Engpass ist benannt, und wird eines Tages ein Zug möglich, geht der
+Test rot, damit der Befund neu geschrieben wird. Ein Score, der stattdessen Plateau-Züge belohnte,
+wäre die Summen-Logik zurück, die CR-SM-292 entfernt hat.
+
+Die Arbeitsteilung ist damit ausgesprochen statt unterstellt: die Zahl steht dem Menschen in
+`graph_metrics` und sichtbar in graph-view-edit zur Verfügung — **der erste Zug an diesem Engpass
+ist ein manueller**, und er bringt mehr als zwanzig automatische. Der mögliche Nachfolge-Operator
+liegt als Entwurf in `sigloch-modules/docs/cr/open/CR-SM-303`, ausdrücklich ungebaut: ihm fehlt
+Gate 7, die Zahl.
+
+### 6.5 Zwei Bindungen, durchs Gate
+
+`FUNC-nd-similarity` → `duplicateHits` (die Funktion `injectNDMatrices` ist mit CR-SM-286
+entfallen), und `TEST-applied-suggestion-moves-target` auf die umbenannte Testdatei, mit echtem
+Lauf-Nachweis. Beides `tier: auto-apply`, 0 Verstösse, graphVersion 242.
+
+### 6.6 Wiederkehrendes Muster in den Fixtures
+
+Ein Grund, vier Stellen: seit CR-SM-271 ist `FLOW -relation-> SCHEMA [1..1]` Grammatik und meldet
+als **R-18/error** statt als SC-04/warning. Fixtures, die einen FLOW ohne Vertrag als bewusst
+offenen Warning-Fund trugen, trugen plötzlich einen Sperrfehler — in `generate`, `executor.bestofn`,
+`readiness.completeness` und der Zyklus-Fixture des Konvergenz-Spikes.
+
+**Und die Lehre aus §5 bleibt:** dieses Repo hat vier SSOT-Releases lang eine rote Suite getragen.
+Der Konsumenten-Sweep aus CR-SM-299 führt `graphify` in seiner Liste und hätte `AsilLevel` gemeldet
+— er ist die richtige Antwort, er war nur noch nicht da, als es passierte.
