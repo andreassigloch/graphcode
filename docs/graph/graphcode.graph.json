@@ -2745,12 +2745,12 @@
     {
       "id": "FUNC-nd-similarity",
       "type": "FUNC",
-      "name": "injectNDMatrices",
-      "description": "Rechnet die Near-Duplicate-Matrizen ueber FUNC und SCHEMA und haengt sie an den Graphen, bevor der volle Regelkatalog laeuft. Aufrufer ist die Steering-Momentaufnahme, nicht der Treiber.",
+      "name": "duplicateHits",
+      "description": "Findet zu einem Entwurf die schon vorhandenen Elemente mit aehnlichem Namen und Text und rendert sie als Hinweis. Aufrufer ist der Executor vor dem Schreiben, nicht der Regellauf.",
       "status": "done",
       "realRef": {
         "file": "src/kernel/measure/nd-similarity.ts",
-        "symbol": "injectNDMatrices",
+        "symbol": "duplicateHits",
         "lang": "ts"
       }
     },
@@ -5330,11 +5330,11 @@
       "description": "A/B ueber das Vorzeichen des Ziels mit echter Mutation und Messung vorher/nachher auf derselben Messebene.",
       "testRefs": [
         {
-          "file": "tests/steering.architecture-causality.test.ts",
+          "file": "tests/steering.steer-causality.test.ts",
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-08-21T07:52:28.796Z"
+          "ranAt": "2026-09-08T14:59:21.000Z"
         }
       ]
     },
@@ -17403,5 +17403,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 241
+  "graphVersion": 242
 }
