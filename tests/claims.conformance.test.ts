@@ -160,7 +160,11 @@ describe('T-D1 (CR-GC-340): every published count matches the living source', ()
       'element types=12',
       'connection types=6',
       'legal connection patterns=30',
-      'engine rules=73', // CR-SM-247: R-28 (Ebenen-Praesenz) entfaellt — seit CR-GC-366 doppelt
+      // CR-SM-294..297: 72 -> 63. Neun Regeln ohne Gegenstand oder mit doppelter Aussage sind
+      // gestrichen (R-03/R-14/R-27, AO-D01, CA-01, FC-01, PH-01, RT-01, CR-R04). Die Liste stand
+      // hier auf 73 und war damit schon VOR diesem Schnitt eine Zahl daneben — der Kanarienvogel
+      // hat gesungen, nur hat ihn niemand gehoert. Prior: CR-SM-247 (R-28 entfaellt).
+      'engine rules=63',
       'readiness dimensions=8',
       'MCP tools=25',
     ]);

@@ -1,6 +1,6 @@
 # CR-GC-486 — `graphcode.config.jsonc` validiert nicht gegen das eigene Schema
 
-**Status:** offen · **Angelegt:** 2026-09-07 · **Art:** Fix (Migration, keine Grammatik-Änderung)
+**Status:** erledigt 2026-09-08 · **Angelegt:** 2026-09-07 · **Art:** Fix (Migration, keine Grammatik-Änderung)
 **Fundstelle:** CR-GC-485, beim Versuch, den Kaltstart-Treiber gegen dieses Repo zu fahren
 
 ---
@@ -57,3 +57,42 @@ Die Migration ist rückwärts still: contracts fügt ein Pflichtfeld hinzu und v
 Consumer merkt es erst, wenn er einen Harness auf dem neuen Build öffnet. Solange alle laufenden
 Hosts aus der Registry stammen, meldet nichts. **Der Bruch ist nicht der Fehler — das Schweigen
 dazwischen ist es.**
+
+---
+
+## 5. Umsetzung (2026-09-08)
+
+**1. Config ergänzt — und dabei eine zweite, stillere Drift gefunden.** Neben den beiden
+fehlenden Pflichtfeldern stand in `moduleSize` noch `{ large: 12, coupled: 8, crossings: 2 }` —
+die Werte von **vor** CR-SM-296. Weil eine vorhandene Config den Default vollständig ersetzt,
+hätte dieses Repo als einziges Familienmitglied weiter nach der alten Modulgröße geurteilt,
+ohne dass irgendetwas rot geworden wäre. Das ist die gefährlichere Hälfte des Befunds: das
+fehlende Pflichtfeld schreit, der veraltete Wert schweigt. Jetzt:
+
+| Feld | vorher | jetzt | Herkunft |
+|---|---|---|---|
+| `decompositionBreadth` | *fehlt* | `{ warning: 9 }` | CR-SM-296, Obergrenze von 7±2 |
+| `boundaryWidth` | *fehlt* | `{ warning: 5 }` | CR-SM-283, aus der Verteilung abgelesen |
+| `moduleSize` | `12 / 8 / 2` | `9 / 7 / 2` | CR-SM-296, dieselbe Doktrin |
+
+**2. Familienweiter Abgleich: `graphcode` ist der einzige Träger.** `find` über
+`~/Developer/dev` und `~/Developer/prod` findet genau eine `graphcode.config.jsonc`. Punkt 2
+des Fixes hat damit keinen Rest — alle anderen Mitglieder fahren `DEFAULT_METRIC_POLICY` und
+wandern mit jedem contracts-Release automatisch mit.
+
+**3. Regressionstest** in `tests/config.test.ts`: die **eingecheckte** Config wird gegen das
+**aktuelle** `GraphcodeConfigSchema` geparst, und der Test benennt bei Fehlschlag die Pfade der
+verletzten Felder. Der Bruch ist rückwärts still — ohne diesen Test verschiebt ihn niemand vor
+den nächsten Kaltstart.
+
+**Dabei aufgefallen — die Fixtures des Tests trugen denselben Defekt.** Vier der elf Fälle waren
+bereits rot, aus zwei unabhängigen Gründen, beide älter als dieser CR:
+- die Fixture-Configs listeten die zwei Pflichtfelder ebenfalls nicht (derselbe Fehler, andere
+  Datei),
+- der `SEED`-Graph trug fünf FLOWs **ohne** SCHEMA, und `FLOW -relation-> SCHEMA` ist seit
+  CR-SM-271 Teil 2 eine durchgesetzte `1..1`-Untergrenze — das Gate blockte den Batch, bevor
+  irgendeine Config-Aussage geprüft werden konnte.
+
+Beides mitgezogen; 11 von 11 grün, `MT-01` feuert an `MOD-loud` unverändert bei I = 5/7.
+
+**Status:** erledigt.

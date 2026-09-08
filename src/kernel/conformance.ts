@@ -324,7 +324,9 @@ export function toOntologyGraph(graph: CGraph): OntologyGraph {
       // Typed OntologyElement columns, lifted out of the bag (see doc comment).
       // Left `undefined` when absent — the schema marks all three optional.
       kinds: n.attributes?.kinds as OElement['kinds'],
-      asil: n.attributes?.asil as OElement['asil'],
+      // CR-SM-294: `asil` ist als typisierte Spalte ENTFALLEN — sein einziger Leser war R-03,
+      // und ueber 19 Familiengraphen trug kein einziges MOD das Feld. Ein Graph, der es noch
+      // traegt, behaelt es im freien `attributes`-Sack unten; es ist nur kein Ontologiefeld mehr.
       method: n.attributes?.method as OElement['method'],
       attributes: n.attributes,
     })),
