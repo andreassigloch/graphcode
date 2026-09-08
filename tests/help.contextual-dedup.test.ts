@@ -119,16 +119,21 @@ describe('TEST-help-contextual-dedup (CR-GC-316): one measure per rule', () => {
 
   it('stays small on a realistic 336-violation / 19-rule graph', () => {
     // The measured shape of this repo's own SSOT under the full rule catalog.
+    //
+    // CR-GC-488: `R-03` und `R-14` standen hier und sind mit CR-SM-294/295 gestrichen —
+    // `measuresFor` fand für sie keinen Hilfeeintrag mehr und lieferte 7 statt 9 Maße.
+    // Ersetzt durch zwei lebende Regeln derselben Klasse; die Zahlen sind unverändert, denn
+    // die Aussage ist die GRÖSSE der Nutzlast bei n Regeln, nicht welche Regeln es sind.
     const shape: Array<[string, RuleViolation['severity'], number]> = [
       ['R-01', 'error', 96],
       ['R-02', 'warning', 62],
-      ['R-03', 'warning', 58],
+      ['R-19', 'warning', 58],
       ['R-04', 'info', 54],
       ['R-05', 'error', 22],
       ['R-08', 'warning', 15],
       ['R-10', 'info', 12],
       ['R-12', 'warning', 9],
-      ['R-14', 'warning', 8],
+      ['R-23', 'warning', 8],
     ];
     const violations = shape.flatMap(([id, sev, n]) => repeated(id, sev, n));
     expect(violations).toHaveLength(336);
