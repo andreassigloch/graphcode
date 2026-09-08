@@ -410,6 +410,31 @@ describe('CR-GC-430: two opposed target profiles over n greedy steps', () => {
     // KILL CRITERION "too short": a chain of 1–2 steps has no reach, however
     // cleanly the controller computes. Asserted on the advisory runs (the claim)
     // and on the maximum reach of the surface itself.
+    //
+    // CR-GC-488 / CR-SM-302 — dieser Block hat einen Regress gefangen und wird deshalb
+    // schärfer hinterlassen, als er war.
+    //
+    // Gefunden: die COHESIVE-Kette war von 5 auf 2 Schritte geschrumpft, und SCALABLEs
+    // Trajektorie diente COHESIVEs Ziel besser (+0.0853) als COHESIVEs eigene (+0.0245).
+    // Ursache war keine Rechnung, sondern ein verlorener OPERATOR: CR-SM-271 hat SC-04
+    // gestrichen (FLOW ohne SCHEMA ist seither das R-18-Untergrenzen-Bein, `error`), und mit
+    // der Regel fiel ihr Fix-Template. Damit war der vertragsbauende Arm des Aktionsraums
+    // weg — genau der, den der Spike-Bericht COHESIVE zuschreibt ("COHESIVE baut die
+    // Datenverträge"). CR-SM-302 hat ihn zurückgeholt: das Template hängt jetzt am
+    // Untergrenzen-Bein, erkennbar an `candidate_targets`, und liefert für die drei anderen
+    // R-18-Beine weiter nichts. Die Zahlen unten stehen wieder exakt auf dem Spike-Protokoll
+    // (COHESIVE 5 Schritte / +0.1677, SCALABLE 5 / +0.3226, EXHAUST 9).
+    //
+    // Neu und bleibend: die Schrittzahl allein hätte den Regress NICHT von einem legitimen
+    // Greedy-Optimum unterschieden. Deshalb steht daneben, WARUM die Kette endet — es liegen
+    // Kanten da, sie schaden nur. Eine leere Restmenge wäre etwas anderes als ein zufriedenes
+    // Profil, und nur die zweite Lesart ist erlaubt.
+    expect(cohAdv.stop, 'COHESIVE stopped for lack of suggestions, not at its optimum').toContain('greedy optimum');
+    expect(cohAdv.leftover.length, 'COHESIVE has no leftover edit at all — the surface IS empty').toBeGreaterThan(0);
+    expect(
+      cohAdv.leftover.every((l) => !Number.isFinite(l.advisory) || l.advisory <= EPS),
+      'a leftover edit still HELPED COHESIVE — then the run stopped early, not at an optimum',
+    ).toBe(true);
     expect(cohAdv.steps.length, 'COHESIVE chain too short to be steering').toBeGreaterThan(2);
     expect(scaAdv.steps.length, 'SCALABLE chain too short to be steering').toBeGreaterThan(2);
     expect(exhaust.steps.length, 'the suggestion surface itself is exhausted after 2 steps').toBeGreaterThan(2);
