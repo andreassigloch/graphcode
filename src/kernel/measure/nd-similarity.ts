@@ -22,29 +22,15 @@
  * (`effectiveFocusDelta`). Vorher endete die Messung als Textzeile, und das Ranking belohnte
  * Scheinfortschritt.
  *
+ * CR-GC-488: `tokens` und `jaccard` standen hier NOCH EINMAL, zeichengleich zu
+ * `similarity.ts` in contracts. Das ist der parallele Pfad, den CR-SM-286 eigentlich
+ * beseitigt hat — die Naht fiel, die Bausteine blieben liegen. Sie kommen jetzt aus
+ * contracts; eine zweite Tokenisierung waere eine zweite Aehnlichkeit, und der Hinweis
+ * hier und die Regel dort haetten still auseinanderlaufen koennen.
+ *
  * @author andreas@siglochconsulting
- */import type { OntologyGraph } from '@sigloch/contracts/se';
-
-// ---------------------------------------------------------------------------
-// Text-Grundbausteine (deterministisch, sprachneutral)
-/** Wort-Token ≥3 Zeichen, lowercase, Unicode-Buchstaben/Ziffern. */
-export function tokens(s: string | undefined): Set<string> {
-  return new Set(
-    (s ?? '')
-      .toLowerCase()
-      .split(/[^\p{L}\p{N}]+/u)
-      .filter((w) => w.length >= 3),
-  );
-}
-
-/** Jaccard-Ähnlichkeit; ∅/∅ = 1 (identisch leer). */
-export function jaccard(a: Set<string>, b: Set<string>): number {
-  if (a.size === 0 && b.size === 0) return 1;
-  let inter = 0;
-  for (const x of a) if (b.has(x)) inter += 1;
-  const union = a.size + b.size - inter;
-  return union === 0 ? 1 : inter / union;
-}
+ */
+import { tokens, jaccard } from '@sigloch/contracts/se';
 
 /** Name/Beschreibungs-Ähnlichkeit für den REQ/UC-Hinweis: 0.5·name + 0.5·descr. */
 export function nameDescrSimilarity(
@@ -53,16 +39,6 @@ export function nameDescrSimilarity(
 ): number {
   return 0.5 * jaccard(tokens(a.name), tokens(b.name)) + 0.5 * jaccard(tokens(a.description), tokens(b.description));
 }
-
-/**
- * `run` mit frisch injizierten ND-Matrizen dieses `og` ausführen und den
- * Modul-State danach IMMER zurücksetzen (CR-GC-442).
- *
- * Die Klammer, nicht das blanke `inject`, ist die eigentliche Zusicherung: der
- * contracts-Zustand ist global, und AO-D01 (Gate-Katalog) liest ihn mit. Ohne
- * `finally` hinge das Ergebnis eines Gate-/Report-Laufs davon ab, ob vorher in
- * DIESEM Prozess ein Steering-Lauf stattgefunden hat — und mit welchem Graphen.
- */
 
 // ---------------------------------------------------------------------------
 // REQ/UC-Duplikat-HINWEIS für den Executor-Preflight (kein Block, keine Regel)
