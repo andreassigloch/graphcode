@@ -10,19 +10,54 @@ import { ARTIFACT_CATALOG } from '../src/projections/panels.js';
 import { HELP_CONTENT, HELP_VOCAB, HELP_PANEL_IDS, HELP_ELEMENT_STATES, METRIC_HELP } from '../src/projections/help-content.js';
 import { helpEntry } from '../src/projections/help.js';
 import { METRIC_DIMENSIONS } from '@sigloch/se-engine';
+import { ALL_RULE_DEFS, CODE_CONFORMANCE_RULES } from '@sigloch/contracts/se';
 
 const nonEmpty = (s: unknown) => typeof s === 'string' && s.trim().length > 0;
 
 describe('TEST-help-content-coverage (CR-GC-227): authored Plain/SE covers the live dashboard', () => {
-  it('every live V3_RULES rule id has a non-empty {plain, se} entry (derived, no hand-count)', () => {
-    const ruleIds = (SE_DESCRIPTOR.rules as Array<{ id: string }>).map((r) => r.id);
+  /**
+   * CR-GC-487: der VOLLE Katalog, nicht nur `SE_DESCRIPTOR.rules`.
+   *
+   * Die Deckung lief bis hierher ueber den GATE-Katalog. BW-02, BQ-01/02/04/06/07, ND-01/02
+   * und RC-06 stehen dort nicht — acht davon hatten deshalb ueberhaupt keinen Hilfeeintrag,
+   * ohne dass etwas rot wurde. BW-02 ist der bitterste Fall: eine der vier messenden Regeln
+   * des Chebyshev-Scores, also eine Regel, die STEUERT und sich nicht erklaert.
+   */
+  it('every rule in the FULL catalogue has a non-empty {plain, se} entry (derived, no hand-count)', () => {
+    const ruleIds = [...ALL_RULE_DEFS.map((r) => r.id), ...CODE_CONFORMANCE_RULES.map((r) => r.id)];
     expect(ruleIds.length).toBeGreaterThan(0);
+    // Der Gate-Katalog ist eine TEILMENGE davon — bleibt er es nicht, prueft die Zeile darunter
+    // etwas anderes als gedacht.
+    for (const r of SE_DESCRIPTOR.rules as Array<{ id: string }>) expect(ruleIds).toContain(r.id);
     for (const id of ruleIds) {
       const e = HELP_CONTENT[id];
       expect(e, `HELP_CONTENT missing rule ${id}`).toBeDefined();
       expect(nonEmpty(e?.plain), `${id}.plain`).toBe(true);
       expect(nonEmpty(e?.se), `${id}.se`).toBe(true);
     }
+  });
+
+  /**
+   * CR-GC-487 — die GEGENRICHTUNG. Elf Eintraege gehoerten zu Regeln, die es nicht mehr gibt
+   * (R-03, R-14, R-27, FC-01, SC-04, CR-R04, AO-D01, AO-D03, RT-01, PH-01, CA-01); `AO-D03`
+   * stand dort seit CR-SM-283, also drei Wochen. Ein toter Eintrag urteilt nie falsch, er
+   * liest sich nur wie eine Regel, die es gibt.
+   */
+  it('kein Eintrag zu einer Regel, die es nicht mehr gibt', () => {
+    const known = new Set([
+      ...ALL_RULE_DEFS.map((r) => r.id),
+      ...CODE_CONFORMANCE_RULES.map((r) => r.id),
+      ...Object.keys(PHASE_GATE_RULES),
+      ...Object.keys(IMPL_GATE_MILESTONES),
+      ...HELP_PANEL_IDS,
+      ...ARTIFACT_CATALOG.map((a) => a.id),
+      ...Object.keys(HELP_VOCAB),
+      // Die drei Zahlen des Compliance-Kastens haben keine Live-Registry, aus der sie
+      // ableitbar waeren — sie stehen nur hier und im Dashboard. Deshalb einmal benannt,
+      // statt die Pruefung dafuer aufzuweichen.
+      'compliance', 'totalElements', 'elementsWithErrors',
+    ]);
+    expect(Object.keys(HELP_CONTENT).filter((id) => !known.has(id))).toEqual([]);
   });
 
   it('every phase + implementation gate id is covered (from readiness.ts, not hand-listed)', () => {

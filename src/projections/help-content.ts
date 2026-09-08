@@ -61,11 +61,6 @@ export const HELP_CONTENT: Record<string, HelpContentEntry> = {
       "A function isn't linked to any feature it's meant to build, so it may be dead code → link it to the feature it serves, or delete it.",
     se: '`FUNC` with no `satisfy` trace to a `REQ` (design→requirement traceability).',
   },
-  'R-03': {
-    plain:
-      'Safety-critical and ordinary features share one module — a fault could leak across → split them into separate modules.',
-    se: '`MOD` mixes ASIL-D and ASIL-QM allocations (ASIL = automotive safety integrity level; ISO 26262 freedom-from-interference).',
-  },
   'R-04': {
     plain: 'A module does too much or is too tangled → open it and split it.',
     se: '`MOD` with >12 `FUNC`, or 8–12 `FUNC` with >2 flows crossing the module boundary (cohesion/coupling).',
@@ -88,11 +83,6 @@ export const HELP_CONTENT: Record<string, HelpContentEntry> = {
     plain:
       'Two items depend on each other in a loop, so neither can stand alone → remove or redirect one of the two links.',
     se: 'Direct cycle: A→B and B→A via the same trace type, checked on `compose` / `allocate` / `relation` only. Data (`io`) is exempt — a function that reads and writes the same `FLOW` is normal reuse, not a dependency cycle.',
-  },
-  'R-14': {
-    plain:
-      'A thing a user wants to do is empty — nothing says how it actually happens → add the steps or the feature under it.',
-    se: '`UC` with no `compose` to an `FCHAIN` or `REQ`.',
   },
   'R-15': {
     plain: 'A sequence of steps for a use case is empty → add the functions that make it up.',
@@ -151,11 +141,6 @@ export const HELP_CONTENT: Record<string, HelpContentEntry> = {
       "A data format in the model isn't linked to the schema code that defines it → link it to the schema (or mark it concept/outside).",
     se: 'Realized `SCHEMA` with no valid `realRef` `{file, symbol}` (graph↔Zod binding); else `concept:true` / `external:true` (CR-211/228).',
   },
-  'R-27': {
-    plain:
-      "A physical part isn't linked to the CAD/geometry that realizes it → link it to the CAD file (or mark it concept/outside).",
-    se: "Physical `MOD` (`kind:'physical'`) with no valid `realRef` (CAD/geometry artefact; `symbol` optional); else `concept:true` / `external:true` (CR-228). Logical MODs are realized via their FUNCs' code (R-20), not here.",
-  },
   'R-30': {
     plain:
       'This function sits in no chain of effects, so nobody can say which use case it serves — and the checks that would prove its wiring never look at it → add it to the chain of the use case it belongs to.',
@@ -213,11 +198,6 @@ export const HELP_CONTENT: Record<string, HelpContentEntry> = {
   // ---------------------------------------------------------------------------
   // Function-chain quality (FC-*)
   // ---------------------------------------------------------------------------
-  'FC-01': {
-    plain:
-      'A sequence of steps has no connection to anyone outside the system → say who triggers it or who receives its result.',
-    se: '`FCHAIN` with no `ACTOR` connection at all — neither via its own FUNC/FLOW nor via its parent `UC`.',
-  },
   'FC-02': {
     plain:
       'A scenario that is not broken into sub-scenarios has no described sequence of steps → add one, even if the steps are done by hand.',
@@ -241,10 +221,6 @@ export const HELP_CONTENT: Record<string, HelpContentEntry> = {
     plain: 'A data format is defined but nothing uses it → connect it to the data it describes, or drop it.',
     se: '`SCHEMA` not referenced by any `FLOW` via a `relation` trace.',
   },
-  'SC-04': {
-    plain: "A piece of data travels between parts but its shape isn't defined → say what it contains.",
-    se: '`FLOW` with no `SCHEMA` bound via a `relation` trace. The interface is named but not specified.',
-  },
 
   // ---------------------------------------------------------------------------
   // Change-request quality (CR-R*, MS-*)
@@ -262,10 +238,6 @@ export const HELP_CONTENT: Record<string, HelpContentEntry> = {
     plain: 'Several open changes touch the same thing, so they will collide → sequence them or merge them.',
     se: 'One element tracked by more than one `CR` with `status` open/in-progress.',
   },
-  'CR-R04': {
-    plain: 'A change has no implementation scope — nothing says which functions it affects → link the functions it changes.',
-    se: '`CR` with no `relation` trace to a `FUNC`.',
-  },
   'MS-03': {
     plain: 'A change is not assigned to any milestone, so it has no place in the plan → assign it.',
     se: '`CR` with no `relation` trace to an `MS`.',
@@ -275,34 +247,10 @@ export const HELP_CONTENT: Record<string, HelpContentEntry> = {
   // ---------------------------------------------------------------------------
   // Architecture / allocation (AO-*, CR-01, RT-01, PH-01, CA-01, IO-01)
   // ---------------------------------------------------------------------------
-  'AO-D01': {
-    plain:
-      'A function only passes data through without doing anything with it → connect the consumers straight to the producer and drop the middleman.',
-    se: 'Relay `FUNC`: satisfies no `REQ` and only forwards `io`. A pass-through carries no requirement content.',
-  },
-  'AO-D03': {
-    plain:
-      'The same data reaches a part over two different routes, so it is unclear which one counts → unify the paths or put one mediator in front.',
-    se: 'One `FUNC` with `io` to two targets sharing `SCHEMA` targets — duplicate data paths to the same shape.',
-  },
   'CR-01': {
     plain:
       'Two parts exchange an unusually large amount of data, which usually means the boundary is in the wrong place → reconsider the cut.',
     se: 'High crossing `io` FLOW count between two `MOD`s — a coupling metric, advisory.',
-  },
-  'RT-01': {
-    plain:
-      'A function is attached straight to a piece of hardware instead of to software inside it → put it in a logical module within that hardware.',
-    se: '`FUNC -allocate-> MOD` where the target is `kind:"physical"`. Allocation must target a logical sub-module.',
-  },
-  'PH-01': {
-    plain: 'A piece of hardware contains no described software parts → add the logical modules inside it.',
-    se: 'Physical `MOD` with no `compose`d logical sub-`MOD`.',
-  },
-  'CA-01': {
-    plain:
-      'A function needs abilities the hardware it sits on does not have → move it, or record the missing ability.',
-    se: '`FUNC` whose required capabilities are not a subset of its physical `MOD`\'s provided capabilities.',
   },
   'IO-01': {
     plain:
@@ -404,20 +352,76 @@ export const HELP_CONTENT: Record<string, HelpContentEntry> = {
       'You split a feature into pieces, but all the pieces are handled by the same one thing — the split may be pointless → consider merging them.',
     se: 'Parent `REQ` whose children all share one satisfier.',
   },
+  // --- CR-GC-487: die acht Regeln, die bis hierher KEINEN Eintrag hatten -------------
+  //
+  // Sie fielen durch, weil die Deckungspruefung nur `SE_DESCRIPTOR.rules` (den GATE-Katalog)
+  // durchlief; BW-02, BQ-* und ND-* stehen im Steuerungs-, nicht im Gate-Katalog. BW-02 ist
+  // dabei der bitterste Fall: eine der vier messenden Regeln, die den Chebyshev-Score bilden —
+  // eine Regel, die steuert und sich nicht erklaert. Die Pruefung laeuft jetzt ueber den
+  // vollen Katalog UND in die Gegenrichtung (tests/help-content.test.ts).
+  'RC-06': {
+    plain:
+      'This element points at code in a package your project does not actually install → either add the package, or point at the one that owns the symbol now.',
+    se: 'An `external: true` `realRef` names a package that is in neither `dependencies` nor `devDependencies` of the consumer. Absent dependency data is SILENCE, not a violation — the extractor never looked, and treating that as "declares nothing" would report every external binding at once (CR-SM-262).',
+  },
+  'BW-02': {
+    plain:
+      'This block hands out many different kinds of data at its edge → whoever uses it has to understand all of them, so either bundle them or split the block.',
+    se: 'Whitebox boundary width: distinct `SCHEMA` contracts on `FUNC` `io` `FLOW` `io` `FUNC` paths with one endpoint inside the `compose` subtree and one outside, judged against `metricPolicy.boundaryWidth.warning`. Parnas, information hiding — what a boundary HIDES is what makes it worth having. Rolled up over the subtree because a decomposed `FUNC` carries no `io` edges of its own (CR-SM-283).',
+  },
+  'BQ-01': {
+    plain:
+      'This requirement uses a vague word ("appropriate", "fast", "user-friendly") → two readers will build two different things. Replace it with the number or the condition you mean.',
+    se: 'INCOSE quality: unambiguous. A weasel word in the `REQ` description — the rule names the word it found.',
+    prompt: 'se:author-req',
+  },
+  'BQ-02': {
+    plain:
+      'This requirement has nothing you could measure → nobody can tell whether it is met. Add the number, the limit or the observable condition.',
+    se: 'INCOSE quality: verifiable. No measurable criterion in the `REQ` — the counterpart to R-01, which asks whether a test EXISTS; this one asks whether one COULD exist.',
+    prompt: 'se:author-req',
+  },
+  'BQ-04': {
+    plain:
+      'This requirement says almost the same as another one → decide which is the real one and merge or differentiate them.',
+    se: 'INCOSE quality: necessary. Near-duplicate `REQ` pair by description similarity. NOTE: this rule is currently inert — it was written for pre-computed EMBEDDING similarity, which a pure contracts package cannot produce; a token-based substitute measured 0 findings across the family and 4950 on a templated fixture, both gate-7 outliers (CR-SM-286). Treated as an open grammar item, not a live check.',
+  },
+  'BQ-06': {
+    plain:
+      'This requirement is not written in the agreed form ("The system shall …") → rewrite it that way, so every requirement reads the same.',
+    se: 'INCOSE quality: conforming. The `REQ` description does not follow the "System shall…" pattern.',
+    prompt: 'se:author-req',
+  },
+  'BQ-07': {
+    plain:
+      'This requirement is missing a piece — who acts, on what, or under which condition → complete the sentence.',
+    se: 'INCOSE quality: complete. The `REQ` lacks one of the required parts; the rule lists which.',
+    prompt: 'se:author-req',
+  },
+  'ND-01': {
+    plain:
+      'Two functions look like the same function written twice → merge them, or make clear what each one does differently.',
+    se: 'Near-duplicate `FUNC` above 0.85 similarity (name, description and legal trace partners). Since CR-SM-286 the similarity is computed IN the rule, cached per graph — before that it had to be injected, and without injection the rule returned green, indistinguishable from "no duplicates".',
+  },
+  'ND-02': {
+    plain:
+      'Two data contracts describe the same thing twice → merge them, or say what distinguishes them.',
+    se: 'Near-duplicate `SCHEMA` above 0.85 similarity (name, description, fields and legal trace partners). Partners are filtered through `isValidTrace`: a rule must not reach its verdict via an edge R-18 rejects (CR-SM-286).',
+  },
   'RD-04': {
     plain:
-      'One thing has more than 11 parts directly under it → group them, so each level stays readable.',
-    se: 'Decomposition breadth > 11 children on one level (`FUNC` `compose` `FUNC`, `FUNC` `allocate` `MOD`, `SYS`/`MOD` `compose` `MOD`) — introduce an intermediate level.',
+      'One thing has more than 9 parts directly under it → group them, so each level stays readable.',
+    se: 'Decomposition breadth above `metricPolicy.decompositionBreadth.warning` children on one level — `FUNC` `compose` `FUNC`, `SYS`/`MOD` `compose` `MOD`, and the root `FUNC` forest anchored at `SYS` (CR-SM-282). Default 9, the upper end of 7±2 (CR-SM-296). The `FUNC` `allocate` `MOD` leg moved to R-04 in that CR: counting allocated FUNCs is module SIZE, and one question deserves one rule.',
   },
   'MT-01': {
     plain:
-      'This module depends on many others but few depend on it → it will keep changing whenever they do.',
-    se: 'Instability I = fan_out / (fan_in + fan_out) over the module\'s traces (direct MOD↔MOD plus the traces of its allocated `FUNC`s), judged against `metricPolicy.instability` from `graphcode.config.jsonc` — `graph_metrics` returns the value AND the threshold in force; `null` there means measure, do not judge (CR-GC-329).',
+      'This module draws more from others than others draw from it → it will keep changing whenever they do. Measured, not judged: no threshold is set by default.',
+    se: 'Instability I = fan_out / (fan_in + fan_out), counted in DISTINCT CONTRACTS crossing the module boundary — the same `moduleCrossings` definition CR-01, R-04 and BW-02 use (CR-SM-274/276). CR-SM-293 fixed both halves: it used to count every trace touching the module, of which only 34 % was coupling (`allocate` is module SIZE, `satisfy` is specification); and the direction was inverted — the CONSUMER depends, so supplying outward is fan_in (Martin\'s Ca) and drawing inward is fan_out (Ce). `metricPolicy.instability` defaults to `null`: the distribution is bimodal, so no threshold can be read from it. The number stays in every `graph_metrics` module row, next to `uphillDependencies` (CR-SM-301).',
   },
   'MT-02': {
     plain:
       'The parts inside this module never talk to each other → it is really several modules in one.',
-    se: 'LCOM4: the allocated `FUNC`s fall into that many disconnected groups (shared `io`/`satisfy` targets and shared `FLOW`s count as connected); `info` from `metricPolicy.lcom4.info`, `warning` from `.warning` in `graphcode.config.jsonc` (CR-GC-329).',
+    se: 'LCOM4: the allocated `FUNC`s fall into that many disconnected groups. Connected means shared DATA: a common outgoing `io` target, or touching the same `FLOW` in either direction. CR-SM-297 dropped `satisfy` from that union — two FUNCs meeting the same requirement can be fully decoupled at runtime, and if they share one, the REQUIREMENT is what needs decomposing. `info` from `metricPolicy.lcom4.info`, `warning` from `.warning` (CR-GC-329).',
   },
   'MS-01': {
     plain: 'A milestone has no work assigned to it → assign the work items that belong to it.',
