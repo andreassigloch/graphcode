@@ -333,10 +333,18 @@ export function scriptedActor(focus: ParsedFocus, seq: number): unknown[] | null
       return cmds;
 
     // A UC unreachable from any ACTOR (UC-02: element = the UC). Canonical repair per
-    // fix_hint: deliver the chain's FLOW to the actor (FLOW io→ACTOR) — fixed anchors,
-    // the actuator stays dumb.
+    // fix_hint: wire the actor to a FLOW that feeds a FUNC OF THAT UC'S CHAIN — fixed
+    // anchors, the actuator stays dumb.
+    //
+    // CR-GC-488: die Kante lief vorher andersherum (`FLOW-result io→ ACTOR-auditor`) und
+    // raeumte den Befund nicht mehr weg. Seit CR-SM-266 D1/D4 prueft UC-02 ERREICHBARKEIT
+    // ueber `ACTOR -io-> FLOW -io-> FUNC` mit der FUNC in einer FCHAIN DIESES UC; die
+    // Liefer-Richtung zaehlt zwar auch, bindet aber den PRODUZENTEN des FLOW an — und der
+    // ist FUNC-parse aus FCHAIN-ingest, nicht FUNC-render aus FCHAIN-review. Der Batch ging
+    // durch, aenderte den Graphen und liess den Befund stehen: die Schleife lief zweimal auf
+    // dieselbe Regel und der Sperrfehler-Zaehler stand still.
     case 'UC-02':
-      cmds.push(edge('FLOW-result', 'io', 'ACTOR-auditor'));
+      cmds.push(edge('ACTOR-auditor', 'io', 'FLOW-result'));
       return cmds;
 
     // A FLOW with no data contract.

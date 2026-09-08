@@ -111,8 +111,16 @@ const FUNC_PAIR_BATCH = {
     { op: 'add-node', node: { uid: 'FUNC-auth', type: 'FUNC', name: 'Authentifizieren', description: 'Prüft Credentials.', attributes: {} } },
     { op: 'add-node', node: { uid: 'FUNC-session', type: 'FUNC', name: 'Session anlegen', description: 'Erzeugt die Session.', attributes: {} } },
     { op: 'add-node', node: { uid: 'FLOW-cred', type: 'FLOW', name: 'Credentials', description: 'Credential-Fluss.', attributes: {} } },
+    // CR-GC-488: der Vertrag gehoert in DENSELBEN Batch. Seit CR-SM-271 ist
+    // `FLOW -relation-> SCHEMA [1..1]` Grammatik und ein FLOW ohne SCHEMA meldet als
+    // R-18/error — das Gate stufte diesen Kandidaten damit auf `tier=block`, er fiel aus
+    // der Viabilitaet, und der Judge wurde nie gerufen (2 Modell-Calls statt 3). Dasselbe
+    // Muster wie bei UC-01 im scriptedActor: ein Batch, der seinen eigenen Folgefehler
+    // gleich mitraeumt, sonst blockt das Gate die ganze Charge.
+    { op: 'add-node', node: { uid: 'SCHEMA-cred', type: 'SCHEMA', name: 'CredentialSet', description: 'Form der uebergebenen Credentials.', attributes: {} } },
     { op: 'add-edge', edge: { sourceId: 'FUNC-auth', targetId: 'FLOW-cred', edgeType: 'io', attributes: {} } },
     { op: 'add-edge', edge: { sourceId: 'FLOW-cred', targetId: 'FUNC-session', edgeType: 'io', attributes: {} } },
+    { op: 'add-edge', edge: { sourceId: 'FLOW-cred', targetId: 'SCHEMA-cred', edgeType: 'relation', attributes: {} } },
   ],
 };
 
@@ -504,8 +512,12 @@ describe('Best-of-N executor (CR-GC-288, echter Gate-/Store-Pfad)', () => {
     // (totals seit contracts 3.1.0 inkl. AF-01..05-Dimension — Fokus-Deltas unverändert)
     // contracts 9.x: ACTOR io→UC entfällt — der Volumen-Kandidat trägt 12 statt 18
     // Mutationen, sein Fokus-Delta ist -0.12; das Urteil (Fokus schlägt Volumen) bleibt.
-    expect(traces.some((l) => /candidate 1\/2: tier=suggest focus\(uc\)=-0\.12 total=-0\.12 steer=[+-]\d\.\d\d Δm=\+0\.00 mutations=12/.test(l))).toBe(true);
-    expect(traces.some((l) => /candidate 2\/2: tier=suggest focus\(uc\)=\+0\.18 total=\+1\.71 steer=[+-]\d\.\d\d Δm=\+0\.00 mutations=4/.test(l))).toBe(true);
+    // CR-GC-488: die Zahlen sind mit dem Katalog gewandert (-0.12 → -0.13, +0.18/+1.71 →
+    // +0.10/+1.63). CR-SM-294/295 haben neun Regeln gestrichen und CR-SM-271 hat ein Bein
+    // ergänzt — beides ändert Zähler UND Nenner der uc-Dimension. Was NICHT wandert, ist
+    // das Urteil: Kandidat 1 bleibt negativ, Kandidat 2 positiv, der Pick ist Nr. 2.
+    expect(traces.some((l) => /candidate 1\/2: tier=suggest focus\(uc\)=-0\.13 total=-0\.13 steer=[+-]\d\.\d\d Δm=\+0\.00 mutations=12/.test(l))).toBe(true);
+    expect(traces.some((l) => /candidate 2\/2: tier=suggest focus\(uc\)=\+0\.10 total=\+1\.63 steer=[+-]\d\.\d\d Δm=\+0\.00 mutations=4/.test(l))).toBe(true);
     expect(traces.some((l) => l.includes('pick: candidate 2 (judge=gate)'))).toBe(true);
     expect(uids()).toContain('REQ-login'); // der Ziel-Delta-Gewinner ist persistiert …
     expect(uids()).toContain('TEST-login');
