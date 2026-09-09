@@ -35,7 +35,7 @@ import {
   TraceType,
   TRACE_PATTERNS,
   ALL_RULE_DEFS,
-  RULE_TO_DIMENSION,
+  RULE_TO_DIMENSION, READINESS_SCORED_PROFILES,
 } from '@sigloch/contracts/se';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
@@ -100,7 +100,18 @@ describe('T-D1 (CR-GC-340): every published count matches the living source', ()
     { phrase: 'element types', actual: () => Object.keys(ELEMENT_DESCRIPTIONS).length },
     { phrase: 'connection types', actual: () => TraceType.options.length },
     { phrase: 'legal connection patterns', actual: () => TRACE_PATTERNS.length },
-    { phrase: 'engine rules', actual: () => ALL_RULE_DEFS.length },
+    /*
+     * CR-SM-305: NICHT `ALL_RULE_DEFS.length`. Der Katalog traegt seit contracts 10.1 auch die
+     * sechs Kongruenz-Regeln (RC-01..06), und die fuettern KEINE readiness-Dimension — sie
+     * brauchen `CodeFacts` und werden von `evaluateAllRules` gar nicht ausgefuehrt. Der Satz
+     * im Artikel lautet „<n> engine rules feed 8 readiness dimensions"; die Zahl, die ihn wahr
+     * macht, ist die der SCORENDEN Regeln, nicht die Katalogzahl.
+     *
+     * Der Unterschied ist genau der Grund, aus dem dieser Test existiert: waere hier stumpf
+     * `ALL_RULE_DEFS.length` stehengeblieben, haette die Prosa auf 69 gehoben werden muessen —
+     * und damit eine Aussage behauptet, die falsch ist.
+     */
+    { phrase: 'engine rules', actual: () => ALL_RULE_DEFS.filter((r) => (READINESS_SCORED_PROFILES as readonly string[]).includes(r.profile)).length },
     { phrase: 'readiness dimensions', actual: () => new Set(Object.values(RULE_TO_DIMENSION)).size },
     { phrase: 'MCP tools', actual: () => toolCount },
   ];

@@ -40,20 +40,42 @@ import {
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 
 /**
- * Die AKZEPTIERTE Differenz der beiden Kataloge — die sieben Regeln, die das GATE
- * nicht kennt (CR-GC-287). Kein Zahlen-Snapshot: wächst die Differenz, ist eine
- * Regel still aus dem Gate-Katalog gefallen, und genau das soll hier auffallen
- * statt in einer Kennzahl zu verschwinden.
+ * Die AKZEPTIERTE Differenz der beiden Kataloge — die Regeln, die das GATE nicht
+ * kennt (CR-GC-287). Kein Zahlen-Snapshot: wächst die Differenz, ist eine Regel
+ * still aus dem Gate-Katalog gefallen, und genau das soll hier auffallen statt in
+ * einer Kennzahl zu verschwinden.
+ *
+ * CR-SM-305 hat sie um sechs erweitert, und der Zuwachs ist der ERWÜNSCHTE Ausfall
+ * dieses Wächters: die Kongruenz-Regeln RC-01…RC-06 stehen seit contracts 10.1 im
+ * Katalog und werden dort NICHT ausgeführt — ihre Signatur ist `(graph, CodeFacts)`,
+ * und `evaluateAllRules` hat keine CodeFacts. Vorher standen sie überhaupt nicht im
+ * Katalog: ein Modell-Zug, der die Bindung an den Code bricht, ging lautlos durch.
+ * Jetzt steht die Nicht-Auswertung als Aussage da, statt zu fehlen.
  */
-const NOT_IN_GATE = ['BQ-01', 'BQ-02', 'BQ-04', 'BQ-06', 'BQ-07', 'ND-01', 'ND-02'];
+const NOT_IN_GATE = [
+  'BQ-01', 'BQ-02', 'BQ-04', 'BQ-06', 'BQ-07', 'ND-01', 'ND-02',
+  'RC-01', 'RC-02', 'RC-03', 'RC-04', 'RC-05', 'RC-06',
+];
 
 /**
  * Was davon wirklich NICHT AUSGEWERTET wird (CR-GC-442). ND-01/ND-02 sind seit
  * CR-GC-442 aus dieser Liste heraus: der Report-Pfad wertet sie lokal aus (der
  * Gate-Katalog trägt sie weiterhin nicht — die beiden Aussagen sind ab hier
- * getrennt). Übrig bleiben die BQ-Regeln, die nur der Steering-Pfad fährt.
+ * getrennt). Übrig bleiben die BQ-Regeln, die nur der Steering-Pfad fährt, und die
+ * RC-Regeln, die einen Repo-Checkout brauchen.
  */
 const SKIPPED_RULES = NOT_IN_GATE.filter((id) => !LOCALLY_EVALUATED_RULE_IDS.includes(id));
+
+/**
+ * Die Kongruenz-Regeln, deren Nicht-Auswertung STRUKTURELL ist und nicht ein Ausfall.
+ *
+ * Sie sind der zweite Grund, aus dem eine `error`-Regel in der Lücke stehen darf — der
+ * erste ist ND (lokal nachgeholt). Der Unterschied, auf den es ankommt: eine ND-Regel
+ * KÖNNTE das Gate fahren und tut es woanders; eine RC-Regel kann es hier gar nicht, weil
+ * die Eingabe fehlt. Beides ist erlaubt, **stillschweigend** ist keins von beidem — und
+ * genau das prüft der Test unten.
+ */
+const CONFORMANCE_RULES = ALL_RULE_DEFS.filter((r) => r.profile === 'conformance').map((r) => r.id);
 
 function makeConfig(repoRoot: string): HarnessConfig {
   return {
@@ -138,10 +160,16 @@ describe('TEST-rule-catalog-gap: die ungeladenen Regeln werden benannt (CR-GC-42
     // "keine Fehler unter den geladenen Regeln" — und ein Beinahe-Duplikat war in
     // Verstoßliste, Report und Dashboard unsichtbar.
     const errors = ALL_RULE_DEFS.filter((r) => NOT_IN_GATE.includes(r.id) && r.severity === 'error');
-    expect(errors.map((r) => r.id)).toEqual(['ND-01', 'ND-02']);
+    expect(errors.map((r) => r.id)).toEqual(['ND-01', 'ND-02', 'RC-01', 'RC-02', 'RC-03']);
     expect([...LOCALLY_EVALUATED_RULE_IDS]).toEqual(['ND-01', 'ND-02']);
-    // Was bleibt, ist warning/info — kein error verschwindet mehr still.
-    expect(ALL_RULE_DEFS.filter((r) => SKIPPED_RULES.includes(r.id) && r.severity === 'error')).toEqual([]);
+    // CR-SM-305: kein error verschwindet still — jeder in der Lücke hat GENAU EINEN der zwei
+    // erlaubten Gründe. ND wird lokal nachgeholt; RC kann hier strukturell nicht laufen und
+    // sagt es (die Regel steht im Katalog und in `unevaluatedRuleIds`). Ein error OHNE einen
+    // dieser beiden Gründe wäre der Zustand, gegen den dieser Test gebaut ist.
+    const ohneGrund = errors
+      .map((r) => r.id)
+      .filter((id) => !LOCALLY_EVALUATED_RULE_IDS.includes(id) && !CONFORMANCE_RULES.includes(id));
+    expect(ohneGrund).toEqual([]);
   });
 
   it('die Liste ist ABGELEITET: fällt eine Regel aus dem geladenen Katalog, erscheint sie von selbst', () => {
