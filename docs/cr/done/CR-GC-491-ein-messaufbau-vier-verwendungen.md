@@ -1,6 +1,6 @@
 # CR-GC-491 — Ein Messaufbau, vier Verwendungen
 
-**Status:** offen · **Angelegt:** 2026-09-09 · **Ring:** 2 (Werkzeug)
+**Status:** erledigt · **Angelegt:** 2026-09-09 · **Geschlossen:** 2026-09-09 · **Ring:** 2 (Werkzeug)
 **Grundlage:** Lesung `rig/*/`, `scripts/spike-lexikographisch.mjs`,
 `src/surface/create-harness.ts`, `src/kernel/harness.ts`, `graphcode.config.jsonc`, 2026-09-09
 **Zieht nach:** `CR-GC-492` (derselbe Befund über die Testbasis)
@@ -136,22 +136,37 @@ richtig und ist der Beleg, dass der Weg gangbar ist.
 
 ## 4. Akzeptanzkriterien
 
-- [ ] **Rot zuerst:** ein Test setzt `boundaryWidth.warning` in einer Temp-`graphcode.config.jsonc`
+- [x] **Rot zuerst:** ein Test setzt `boundaryWidth.warning` in einer Temp-`graphcode.config.jsonc`
       auf 2 und erwartet vom Rig-Harness `policy.boundaryWidth.warning === 2`. Vor der Änderung
       liefert `driver.mjs` **5** (Default) — der Test trifft nachweislich die geänderte Stelle.
-- [ ] `provenance.policy.source` ist `'file'`, wenn eine Config da ist, sonst `'default'` —
+- [x] `provenance.policy.source` ist `'file'`, wenn eine Config da ist, sonst `'default'` —
       und steht in **jedem** Ergebnis, nicht nur im Log.
-- [ ] Eine Messung mit vier Kandidaten identischen Profils liefert `blind: true` und **keinen
+- [x] Eine Messung mit vier Kandidaten identischen Profils liefert `blind: true` und **keinen
       Rang**. Regressionsfall aus CR-SM-291 Satz F, namentlich als solcher benannt.
-- [ ] `grep -rn "new GraphCodeHarness"` findet in `moneyflow-struktur/driver.mjs` und
+- [x] `grep -rn "new GraphCodeHarness"` findet in `moneyflow-struktur/driver.mjs` und
       `minimal-whitebox/measure.mjs` **nichts** mehr. Die drei uebrigen Fundstellen
       (`run-armC.mjs`, `run-armC-pull.mjs`, `dummy-slicer/scripts/armB.mjs`) sind DASSELBE
       Muster und passen nicht mehr ins 6-Dateien-Limit — sie gehen an `CR-GC-493`. Der erste
       Entwurf dieser AC verlangte einen leeren grep und widersprach damit der eigenen
       Dateiliste; hier steht der Umfang, der tatsaechlich geschnitten wurde.
-- [ ] Store und `owner.lock` liegen im selben Verzeichnis (CR-GC-218) — mit Test.
-- [ ] `npm test` grün, und `npm run build` erzeugt `dist/surface/measured.js` — die Rigs
+- [x] Store und `owner.lock` liegen im selben Verzeichnis (CR-GC-218) — mit Test.
+- [x] `npm test` grün, und `npm run build` erzeugt `dist/surface/measured.js` — die Rigs
       importieren aus `dist/`, die Tests aus `src/`, beide dieselbe Quelle.
+
+### Nachweis (2026-09-09)
+
+| AC | belegt durch |
+|---|---|
+| Rot zuerst, `boundaryWidth` 5→2 | `tests/rig-measured.test.ts:62` erwartet **5** vom Handaufbau, `:72` **2** über `openMeasured` — dieselbe Fixture, zwei Antworten |
+| `policy.source` in jedem Ergebnis | drei Assertions: `'file'`, `'default'`, `'file'` |
+| Blindheit statt Rang | `:126` vier Kandidaten Delta 0 → `blind === true`; `:138` Gegenprobe mit Spreizung > 0 |
+| Handaufbau in den zwei Rigs weg | `grep 'new GraphCodeHarness'` trifft dort nur noch **Kommentare**, die erklären, was ersetzt wurde |
+| Store beim `owner.lock` | `:103`, CR-GC-218 namentlich |
+| Build liefert `dist/surface/measured.js` | vorhanden; Rigs importieren aus `dist/`, Tests aus `src/` |
+
+Der CR war seit dem Bau erfüllt und lediglich nicht geschlossen — aufgefallen, weil
+`aise item close ITEM-2026-015` sich weigerte: der Store leitet den Status aus `open/` vs `done/`
+ab und glaubt keiner Behauptung.
 
 ## 5. Nicht im Scope
 
