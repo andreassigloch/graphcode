@@ -1,6 +1,6 @@
 # CR-GC-493 — Die restlichen Handaufbauten und der Spike-Stempel
 
-**Status:** offen · **Angelegt:** 2026-09-09 · **Ring:** 2 (Werkzeug)
+**Status:** erledigt 2026-09-09 · **Angelegt:** 2026-09-09 · **Ring:** 2 (Werkzeug)
 **Hängt an:** `CR-GC-491` (liefert `openMeasured` — hier wird es nur angewandt)
 **Grundlage:** `grep -rn "new GraphCodeHarness" rig/ scripts/` nach CR-GC-491, 2026-09-09
 
