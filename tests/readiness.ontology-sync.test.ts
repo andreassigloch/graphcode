@@ -19,9 +19,8 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { KuzuAdapter } from './helpers/store.js';
-import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import { GraphCodeHarness } from '../src/kernel/harness.js';
+import type { GraphCodeHarness } from '../src/kernel/harness.js';
+import { openMeasured, type Measured } from '../src/surface/measured.js';
 import { scoreReadiness, getFamilyRuleIds } from '../src/kernel/measure/readiness.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 
@@ -37,26 +36,31 @@ function makeConfig(repoRoot: string): HarnessConfig {
 }
 
 describe('TEST-dashboard-ontology-sync: readiness is family-measured, not BQ-measured', () => {
-  let tmp: string;
+  let measured: Measured;
   let harness: GraphCodeHarness;
 
   beforeEach(async () => {
-    tmp = mkdtempSync(join(tmpdir(), 'graphcode-readiness-'));
-    const storage = new KuzuAdapter({
-      ontology: SE_DESCRIPTOR,
-      path: join(tmp, 'kuzu'),
+    // CR-GC-492: Wurzel ECHT (Config + realRef-Aufloesung), Store im Wegwerf-Verzeichnis
+    // (CR-GC-218). Der Handaufbau davor fiel still auf DEFAULT_CONFIG statt auf
+    // graphcode.config.jsonc — heute zahlengleich, invertierend sobald ein Budget wandert.
+    measured = await openMeasured({
+      graph: join(REPO_ROOT, 'docs', 'graph', 'graphcode.graph.json'),
+      repoRoot: REPO_ROOT,
+      systemId: 'graphcode',
+      workspaceId: 'test-ws',
     });
-    // repoRoot = real repo so seedFromJson finds docs/graph/graphcode.graph.json;
-    // lockDir = temp store dir, not repoRoot/.graphcode (a live dev server owns that, CR-GC-218).
-    harness = new GraphCodeHarness(makeConfig(REPO_ROOT), storage, undefined, { lockDir: tmp });
-    await harness.initialize();
-    // Seed the full SSOT graph.
-    await harness.seedFromJson();
+    harness = measured.harness;
   });
 
   afterEach(async () => {
     await harness.close();
-    rmSync(tmp, { recursive: true, force: true });
+    await measured.close();
+  });
+
+  it('CR-GC-492: geurteilt wird mit der Config des Repos, nicht mit Startwerten', () => {
+    // Die Schwellen der Readiness-Dimensionen stammen aus graphcode.config.jsonc,
+    // nicht aus DEFAULT_CONFIG — sonst misst dieser Test an der Produktion vorbei.
+    expect(measured.provenance.policy.source).toBe('file');
   });
 
   it('(1) every violation ruleId is a family contracts rule-ID (R-xx / RD-xx)', () => {

@@ -19,9 +19,8 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { mkdtempSync, rmSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { KuzuAdapter } from './helpers/store.js';
-import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import { GraphCodeHarness } from '../src/kernel/harness.js';
+import type { GraphCodeHarness } from '../src/kernel/harness.js';
+import { openMeasured, type Measured } from '../src/surface/measured.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import { evaluateAll } from '../src/kernel/evaluation.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
@@ -42,29 +41,33 @@ const sum = (byRule: Record<string, number>): number =>
   Object.values(byRule).reduce((a, b) => a + b, 0);
 
 describe('TEST-evaluation-reconciliation: eine Auswertungsfläche (CR-GC-398)', () => {
-  let tmp: string;
+  let measured: Measured;
   let harness: GraphCodeHarness;
   let tools: ReturnType<typeof bindToolsToHarness>;
 
   beforeAll(async () => {
-    tmp = mkdtempSync(join(tmpdir(), 'graphcode-reconcile-'));
-    const storage = new KuzuAdapter({ ontology: SE_DESCRIPTOR, path: join(tmp, 'kuzu') });
-    // repoRoot = das echte Repo (nur dann ist die Konformanz-Quelle wirklich
-    // befragbar), Store + Lock aber im tmp-Verzeichnis — sonst kollidiert der Test
-    // mit dem laufenden Owner des Repo-Stores (O2, CR-GC-218).
-    harness = new GraphCodeHarness(makeConfig(REPO_ROOT), storage, undefined, {
-      lockDir: join(tmp, '.graphcode'),
+    // CR-GC-492: Wurzel ECHT (Config + realRef-Aufloesung), Store im Wegwerf-Verzeichnis
+    // (CR-GC-218). Der Handaufbau davor fiel still auf DEFAULT_CONFIG statt auf
+    // graphcode.config.jsonc — heute zahlengleich, invertierend sobald ein Budget wandert.
+    measured = await openMeasured({
+      graph: join(REPO_ROOT, 'docs', 'graph', 'graphcode.graph.json'),
+      repoRoot: REPO_ROOT,
+      systemId: 'graphcode',
+      workspaceId: 'test-ws',
     });
-    await harness.initialize();
-    await harness.importGraph(
-      JSON.parse(readFileSync(join(REPO_ROOT, 'docs/graph/graphcode.graph.json'), 'utf8')),
-    );
+    harness = measured.harness;
     tools = bindToolsToHarness(harness);
   }, 120_000);
 
   afterAll(async () => {
     await harness?.close();
-    if (tmp) rmSync(tmp, { recursive: true, force: true });
+    await measured.close();
+  });
+
+  it('CR-GC-492: geurteilt wird mit der Config des Repos, nicht mit Startwerten', () => {
+    // Die Wurzel ist das echte Repo, der Store ein Wegwerf-Verzeichnis. Faellt die
+    // Config-Aufloesung aus, urteilt der Test still gegen DEFAULT_CONFIG.
+    expect(measured.provenance.policy.source).toBe('file');
   });
 
   it('die Konformanz-Quelle ist hier wirklich aktiv — sonst prüft der Test nichts', async () => {
@@ -115,7 +118,7 @@ describe('TEST-evaluation-reconciliation: eine Auswertungsfläche (CR-GC-398)', 
     const degraded = evaluateAll({
       evaluateRules: () => harness.evaluateRules(),
       getGraph: () => harness.getGraph(),
-      getRepoRoot: () => join(tmp, 'does-not-exist'),
+      getRepoRoot: () => join(measured.storeRoot, 'does-not-exist'),
       getLoadedRuleIds: () => harness.getLoadedRuleIds(),
     });
 
@@ -194,7 +197,7 @@ describe('TEST-evaluation-reconciliation: eine Auswertungsfläche (CR-GC-398)', 
     const degraded = evaluateAll({
       evaluateRules: () => harness.evaluateRules(),
       getGraph: () => harness.getGraph(),
-      getRepoRoot: () => join(tmp, 'does-not-exist'),
+      getRepoRoot: () => join(measured.storeRoot, 'does-not-exist'),
       getLoadedRuleIds: () => harness.getLoadedRuleIds(),
     });
     // CR-GC-489: die Quelle sagt sich regelfein an, nicht als Sammelbegriff.

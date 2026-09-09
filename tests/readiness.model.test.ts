@@ -24,7 +24,8 @@ import { RULE_TO_PHASE } from '@sigloch/contracts/se';
 import type { Graph } from '@sigloch/graph-api-core';
 import type { RuleViolation } from '@sigloch/contracts/harness';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
-import { GraphCodeHarness } from '../src/kernel/harness.js';
+import type { GraphCodeHarness } from '../src/kernel/harness.js';
+import { openMeasured, type Measured } from '../src/surface/measured.js';
 import {
   computeReadiness,
   scoreReadiness,
@@ -301,27 +302,29 @@ describe('TEST-readiness-creations (CR-GC-221): creations gate phase + impl read
 // --- (C) integration: real SSOT, stays family-measured, well-formed ----------
 
 describe('TEST-readiness-model (C-int): scores the live SSOT, never BQ', () => {
-  let tmp: string;
+  let measured: Measured;
   let harness: GraphCodeHarness;
 
   beforeEach(async () => {
-    tmp = mkdtempSync(join(tmpdir(), 'graphcode-readiness-model-'));
-    const storage = new KuzuAdapter({ ontology: SE_DESCRIPTOR, path: join(tmp, 'kuzu') });
-    const config: HarnessConfig = {
+    // CR-GC-492: Wurzel ECHT (Config + realRef-Aufloesung), Store im Wegwerf-Verzeichnis
+    // (CR-GC-218 — der Live-Store gehoert einem laufenden Dev-Server). Der Handaufbau davor
+    // fiel still auf DEFAULT_CONFIG statt auf graphcode.config.jsonc; heute zahlengleich,
+    // invertierend sobald ein Budget wandert (CR-SM-303).
+    measured = await openMeasured({
+      graph: join(REPO_ROOT, 'docs', 'graph', 'graphcode.graph.json'),
       repoRoot: REPO_ROOT,
-      scope: { workspaceId: 'test-ws', systemId: 'graphcode' },
-      consumerType: 'system',
-      preCommitTimeout: 5000,
-    };
-    // lockDir = the temp store's dir — NOT repoRoot/.graphcode, which a live dev server owns (CR-GC-218).
-    harness = new GraphCodeHarness(config, storage, undefined, { lockDir: tmp });
-    await harness.initialize();
-    await harness.seedFromJson();
+      systemId: 'graphcode',
+      workspaceId: 'test-ws',
+    });
+    harness = measured.harness;
   });
 
   afterEach(async () => {
-    await harness.close();
-    rmSync(tmp, { recursive: true, force: true });
+    await measured.close();
+  });
+
+  it('CR-GC-492: geurteilt wird mit der Config des Repos, nicht mit Startwerten', () => {
+    expect(measured.provenance.policy.source).toBe('file');
   });
 
   it('report is lean-scoped with 4 phase + 4 impl well-formed gates', () => {

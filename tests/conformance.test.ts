@@ -13,10 +13,9 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { mkdtempSync, mkdirSync, writeFileSync, rmSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { KuzuAdapter } from './helpers/store.js';
-import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { PHASE_GATE_RULES } from '../src/kernel/measure/readiness.js';
-import { GraphCodeHarness } from '../src/kernel/harness.js';
+import type { GraphCodeHarness } from '../src/kernel/harness.js';
+import { openMeasured, type Measured } from '../src/surface/measured.js';
 import { extractCodeFacts, extractImportEdges, conformanceViolations, toOntologyGraph } from '../src/kernel/conformance.js';
 import { evaluateAll, readinessOf } from '../src/kernel/evaluation.js';
 import { elementToNode } from '../src/kernel/element-node.js';
@@ -30,21 +29,32 @@ function makeConfig(repoRoot: string): HarnessConfig {
 }
 
 describe('TEST-code-conformance: realRef/testRefs resolve as RC readiness rules (CR-GC-253)', () => {
-  let tmp: string;
+  let measured: Measured;
   let harness: GraphCodeHarness;
+  /** Kratzverzeichnis fuer Datei-Fixtures — nichts mit dem Store zu tun (CR-GC-492). */
+  let scratch: string;
 
   beforeAll(async () => {
-    tmp = mkdtempSync(join(tmpdir(), 'graphcode-conformance-'));
-    const storage = new KuzuAdapter({ ontology: SE_DESCRIPTOR, path: join(tmp, 'kuzu') });
-    // lockDir = temp store dir, not repoRoot/.graphcode (a live dev server owns that, CR-GC-218).
-    harness = new GraphCodeHarness(makeConfig(REPO_ROOT), storage, undefined, { lockDir: tmp });
-    await harness.initialize();
-    await harness.seedFromJson();
+    // CR-GC-492: Wurzel ECHT (Config + realRef-Aufloesung), Store im Wegwerf-Verzeichnis
+    // (CR-GC-218 — der Live-Store gehoert einem laufenden Dev-Server). Der Handaufbau davor
+    // fiel dabei still auf DEFAULT_CONFIG statt auf graphcode.config.jsonc.
+    measured = await openMeasured({
+      graph: join(REPO_ROOT, 'docs', 'graph', 'graphcode.graph.json'),
+      repoRoot: REPO_ROOT,
+      systemId: 'graphcode',
+      workspaceId: 'test-ws',
+    });
+    harness = measured.harness;
+    scratch = mkdtempSync(join(tmpdir(), 'graphcode-conformance-scratch-'));
   });
 
   afterAll(async () => {
-    await harness.close();
-    rmSync(tmp, { recursive: true, force: true });
+    await measured.close();
+    rmSync(scratch, { recursive: true, force: true });
+  });
+
+  it('CR-GC-492: geurteilt wird mit der Config des Repos, nicht mit Startwerten', () => {
+    expect(measured.provenance.policy.source).toBe('file');
   });
 
   it('extracts facts for every referenced file and the SSOT graph is RC-clean', () => {
@@ -77,7 +87,7 @@ describe('TEST-code-conformance: realRef/testRefs resolve as RC readiness rules 
   it('kein Repo = nicht nachgesehen: `undefined`, nicht die leere Liste', () => {
     // Die Unterscheidung ist die ganze Sicherung gegen einen Massenbefund: "gar nicht
     // nachgesehen" darf nicht als "deklariert nichts" gelesen werden.
-    expect(extractCodeFacts(harness.getGraph(), join(tmp, 'kein-repo')).declaredDependencies)
+    expect(extractCodeFacts(harness.getGraph(), join(scratch, 'kein-repo')).declaredDependencies)
       .toBeUndefined();
   });
 
@@ -168,7 +178,7 @@ describe('TEST-code-conformance: realRef/testRefs resolve as RC readiness rules 
   });
 
   it('resolves .mjs and .jsx realRefs and vitest case names (gve reality)', () => {
-    const dir = join(tmp, 'jsrepo');
+    const dir = join(scratch, 'jsrepo');
     mkdirSync(join(dir, 'src'), { recursive: true });
     writeFileSync(join(dir, 'src', 'widget.jsx'), 'export function Widget() { return <div/>; }\n');
     writeFileSync(join(dir, 'src', 'util.mjs'), 'export const computeThing = () => 42;\n');

@@ -108,6 +108,10 @@ export const INCLUDED = [
  * Entscheidung bleibt und nicht zu einer stillen Lücke wird.
  */
 export const EXCLUDED = {
+  'tests/no-default-policy-when-judging.test.ts':
+    'Waechter (CR-GC-492). Baut keinen Harness und liest keinen Graphen — er SCANNT die\n' +
+    'Testdateien nach der Kombination "Handaufbau + echte Repo-Wurzel + urteilende Flaeche".\n' +
+    'Eine Modellaenderung kann ihn nicht rot machen; eine neue Testdatei sehr wohl.',
   'tests/rig-measured.test.ts':
     'Messaufbau-Test (CR-GC-491). Beruehrt die Regel-/Ontologie-Konstanten nur als ' +
     'STEMPELFELD: assertiert wird ihre FORM (`/^\\d+\\.\\d+\\.\\d+$/`), nie ein Wert. ' +
