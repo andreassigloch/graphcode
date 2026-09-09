@@ -17,7 +17,7 @@ import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { DEFAULT_METRIC_POLICY } from '@sigloch/contracts/se';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
-import { openMeasured, discriminate } from '../src/surface/measured.js';
+import { openMeasured, discriminate, stampLine } from '../src/surface/measured.js';
 
 /** Ein Zwei-Knoten-Graph — es geht um die Policy, nicht um den Inhalt. */
 const FIXTURE = {
@@ -140,5 +140,36 @@ describe('CR-GC-491: Blindheitsausgang statt Rang', () => {
     expect(d.blind).toBe(false);
     expect(d.spread).toBe(2);
     expect(d.ranked?.map((c) => (c as { id: string }).id)).toEqual(['B', 'A']);
+  });
+});
+
+/**
+ * CR-GC-493: Greenfield — ein Messaufbau OHNE Graphen.
+ *
+ * Die beiden armC-Rigs autorieren aus dem Leeren; sie bauten von Hand, weil `openMeasured` einen
+ * Graphen verlangte. Der Stempel muss die Abwesenheit dann SAGEN, nicht einen Hash erfinden.
+ */
+describe('CR-GC-493: der leere Start ist ein Fall, kein Sonderfall', () => {
+  it('ohne graph entsteht ein leeres, benutzbares Wegwerf-Repo', async () => {
+    const m = await openMeasured({ systemId: 'greenfield' });
+    try {
+      expect(m.provenance.graph).toBeNull();
+      expect(Object.keys(m.tools)).toContain('graph_mutate');
+      // WIRKLICH leer: die Systemwurzel entsteht beim Seed, nicht beim `initialize` — ohne
+      // Graphen gibt es keinen Seed. Genau das brauchen die Autorier-Rigs (Greenfield).
+      expect(m.graph().nodes).toEqual([]);
+    } finally {
+      await m.close();
+    }
+  });
+
+  it('der Stempel sagt die Abwesenheit, statt einen Hash zu erfinden', async () => {
+    const m = await openMeasured({ systemId: 'greenfield' });
+    try {
+      expect(stampLine(m.provenance)).toContain('graph —');
+      expect(stampLine(m.provenance)).toContain('rules ');
+    } finally {
+      await m.close();
+    }
   });
 });
