@@ -115,6 +115,15 @@ Eine Ursache: **die messende Größe hatte keine Streuung, und nichts hat es ges
 | 4 | `rig/moneyflow-struktur/driver.mjs` | auf `openMeasured`, Config reist mit |
 | 5 | `rig/minimal-whitebox/measure.mjs` | dito |
 | 6 | `rig/README.md` (neu) | Index der Rigs, Klassenwahl, Regel „ein Bootstrap" |
+| 7 | `scripts/model-test-set.mjs` | Registrierung von (3) — s. u. |
+
+**Zur siebten Datei, über dem harten Limit:** `verify-model.completeness.test.ts` (CR-GC-399)
+verlangt, dass jede Testdatei, die Regel- oder Ontologie-Konstanten liest, in der Modell-Spur
+steht **oder** mit Grund ausgeschlossen ist. Datei (3) tut das (die Versionen gehen in den
+Stempel), also fordert ein **bestehender Wächter** die Registrierung — sie ist eine mechanische
+Folge von (3), kein zweiter Vorgang. Eintrag unter `EXCLUDED` mit Begründung: assertiert wird
+die **Form** der Versionen, nie ein Wert, und der Graph ist eine synthetische
+Zwei-Knoten-Fixture — eine Modelländerung kann den Test nicht rot machen.
 
 **Warum `src/` und nicht `rig/`:** die Rigs importieren aus `dist/`, die Testbasis aus `src/`.
 Ein Helfer unter `rig/`, der auf `dist/` zeigt, hätte die Tests gegen einen **veralteten Build**
