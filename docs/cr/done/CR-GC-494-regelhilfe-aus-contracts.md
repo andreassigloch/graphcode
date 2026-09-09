@@ -1,4 +1,9 @@
-# CR-GC-491 — Die Regelhilfe kommt aus contracts
+# CR-GC-494 — Die Regelhilfe kommt aus contracts
+
+> **Umnummeriert 2026-09-09.** Angelegt und committet als **CR-GC-491** (`f63f108`); parallel
+> vergab eine zweite Session dieselbe Nummer an „ein Messaufbau statt vier". Eine Nummer, ein
+> Vorgang — dieser hier ist gewichen, weil er bereits geschlossen war und der andere noch offen
+> ist und über drei Commits läuft.
 
 **Status:** erledigt · **Angelegt:** 2026-09-09 · **Abgeschlossen:** 2026-09-09 · **Art:** Umzug (kein neuer Pfad)
 **Gegenstück:** `CR-SM-300` (sigloch-modules) — dieser CR ist dessen Consumer-Hälfte

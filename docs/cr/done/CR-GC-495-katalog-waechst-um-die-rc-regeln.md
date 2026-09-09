@@ -1,8 +1,11 @@
-# CR-GC-492 — Der Katalog wächst um die Kongruenz-Regeln
+# CR-GC-495 — Der Katalog wächst um die Kongruenz-Regeln
+
+> **Umnummeriert 2026-09-09.** Committet als **CR-GC-492** (`33409df`); dieselbe Nummer trägt
+> „Descriptor-Sweep-Testbasis" aus einer parallelen Session. Siehe [[CR-GC-494]].
 
 **Status:** erledigt · **Angelegt:** 2026-09-09 · **Abgeschlossen:** 2026-09-09 · **Art:** Consumer-Nachzug
 **Auslöser:** `CR-SM-305` (contracts 10.1) — `ALL_RULE_DEFS` 63 → 69
-**Verwandt:** `CR-GC-428` (abgeleitete Auslassungsliste), `CR-GC-340` (Zahlen-Kanarie)
+**Verwandt:** `CR-GC-428` (abgeleitete Auslassungsliste), `CR-GC-340` (Zahlen-Kanarie), `CR-GC-494`
 
 ---
 
