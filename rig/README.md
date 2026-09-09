@@ -6,7 +6,8 @@ dasselbe bedeuten.
 
 ## Die eine Regel
 
-**Ein Bootstrap: `openMeasured` aus `dist/index.js`.** Nie `new GraphCodeHarness(cfg, storage)`.
+**Ein Bootstrap: `openMeasured` aus `dist/index.js`.** Nie `new GraphCodeHarness(cfg, storage)` —
+seit CR-GC-496 ohne Ausnahme, `grep` findet keinen mehr.
 
 Der Konstruktor fällt bei fehlendem `opts.graphcodeConfig` **still** auf `DEFAULT_CONFIG` zurück
 und bekommt den unparametrisierten `SE_DESCRIPTOR` statt `createSeDescriptor(policy)` — ein Rig,
@@ -22,9 +23,21 @@ console.log(stampLine(m.provenance));
 try { /* m.harness, m.tools, m.graph(), m.policy */ } finally { await m.close(); }
 ```
 
-`openMeasured` legt ein Wegwerf-Repo an, **kopiert die `graphcode.config.jsonc` neben dem
-Graphen mit**, öffnet über `createHarness` und löscht beim `close()`. Das Quell-Repo wird nur
-gelesen.
+`openMeasured` legt ein Wegwerf-Verzeichnis für den Store an, öffnet über `createHarness` und
+löscht es beim `close()`. Das Quell-Repo wird **nur gelesen**.
+
+Drei Formen, je nach Frage:
+
+| Aufruf | Wurzel (Config + `realRef`-Auflösung) | Store |
+|---|---|---|
+| `openMeasured({ graph })` | Wegwerf-Repo, Config reist mit dem Graphen | Wegwerf |
+| `openMeasured({ graph, repoRoot })` | **das echte Repo** (CR-GC-496) | Wegwerf |
+| `openMeasured({ systemId })` | Wegwerf-Repo, leerer Start (Greenfield, CR-GC-493) | Wegwerf |
+
+Die mittlere Form ist die, für die es sich lohnte: wer `realRef`/`missingRefs` gegen den echten
+Quellbaum auflösen will, aber den Live-Store des Repos nicht anfassen darf
+(`REQ-single-kuzu-owner`), fiel bis dahin aus `createHarness` heraus — und verlor still die
+Config-Ladung und den policy-gebauten Descriptor.
 
 ## Zwei Klassen — und die Wahl ist Teil der Messung
 
@@ -67,7 +80,7 @@ alphabetischen Tiebreak. **Eine Messung ohne Streuung hat kein Ergebnis, sondern
 | [`moneyflow-struktur/`](moneyflow-struktur/README.md) | gate | Wie sieht moneyflow durch das echte Gate aus? | `openMeasured` |
 | [`minimal-whitebox/`](minimal-whitebox/README.md) | gate | Wie groß ist die Whitebox gegen den Blast-Radius? | `openMeasured` |
 | [`greenfield-systemtest/`](greenfield-systemtest/README.md) | gate | Kommt ein lokales Modell an ein Frontier-Modell heran? | `createHarness` (Subprozess, Kuzu-Binding) |
-| [`dummy-slicer/`](dummy-slicer/README.md) | — | Consumer-Repo als Fixture, kein eigener Messaufbau | — |
+| [`dummy-slicer/`](dummy-slicer/README.md) | gate | Serviert `graph_context` die Definition of Done? | `openMeasured` (echte Wurzel, CR-GC-496) |
 | [`plan-step/`](plan-step/) | — | dito | — |
 | [`graphs/`](graphs/README.md) | korpus | eingefrorene Beispielgraphen | — |
 
@@ -75,8 +88,19 @@ alphabetischen Tiebreak. **Eine Messung ohne Streuung hat kein Ergebnis, sondern
 Binding sonst zweimal im selben Prozess lädt. Es benutzt `createHarness` direkt und ist damit
 korrekt — der Beleg, dass der Weg gangbar ist, noch bevor es `openMeasured` gab.
 
+## Was ein Rig sonst still tut: nichts
+
+`armB.mjs` importierte `dist/harness.js` und `dist/mcp-tools.js` — beides gibt es nach dem
+dist-Umbau nicht mehr. Das Rig war **nicht lauffähig**, und niemand hat es gemerkt: ein Rig ohne
+Lauf meldet sich nicht, es schweigt. `minimal-whitebox/measure.mjs` trug dieselben Importe und
+wurde bei CR-GC-491 mit umgestellt.
+
+Ein Rig, das nicht läuft, ist schlimmer als keins — es steht im Verzeichnis und suggeriert eine
+Messung. **Wer ein Rig anfasst, führt es aus.**
+
 ## Offen
 
-`scripts/spike-lexikographisch.mjs` ist Korpus-Klasse, liest aber die **lebenden**
-`docs/graph/*.graph.json` von fünf Repos. Damit ist die Evidenz für CR-SM-292 (Chebyshev statt
-ℝ⁶) nicht reproduzierbar. Stempel und Einfrieren: `CR-GC-493`.
+`scripts/spike-lexikographisch.mjs` liest die **lebenden** `docs/graph/*.graph.json` von vier
+Repos. Seit `CR-GC-493` sagt der Stempel je Eingabegraph sha256 und `graphVersion`, die Drift ist
+also sichtbar — das **Einfrieren** nach `graphs/` ist eine Datenentscheidung je Graph und steht
+noch aus.

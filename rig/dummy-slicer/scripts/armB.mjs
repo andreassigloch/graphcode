@@ -1,26 +1,31 @@
 // Arm B — enforcement mechanism (deterministic, no LLM).
 // (1) graph_context FN-slice serves the definition-of-done from the rig graph.
 // (2) the CR-GC-214 hook DENIES Read of the stale INPUT-ONLY SPEC.md and ALLOWS Read of src/.
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { writeFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
-import { KuzuAdapter } from '@sigloch/graph-api-core/kuzu';
-import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import { GraphCodeHarness } from '../../../dist/harness.js';
-import { bindToolsToHarness } from '../../../dist/mcp-tools.js';
+import { openMeasured, stampLine } from '../../../dist/index.js';
 
 const RIG = join(dirname(fileURLToPath(import.meta.url)), '..');
-const tmp = mkdtempSync(join(tmpdir(), 'rig-armB-'));
-const storage = new KuzuAdapter({ ontology: SE_DESCRIPTOR, path: join(tmp, 'kuzu') });
-const harness = new GraphCodeHarness(
-  { repoRoot: RIG, scope: { workspaceId: 'rig', systemId: 'dummy-slicer' }, consumerType: 'system', preCommitTimeout: 5000 },
-  storage,
-);
-await harness.initialize();
-await harness.seedFromJson('model/dummy-slicer.graph.json');
-const reg = bindToolsToHarness(harness);
+
+// CR-GC-496: die WURZEL bleibt das Rig — von dort kommen `graphcode.config.jsonc` und die
+// `realRef`-Aufloesung, an der `missingRefs` haengt. Der STORE liegt im Wegwerf-Verzeichnis
+// (REQ-single-kuzu-owner). Bis hierher ging das nur am `createHarness` vorbei, mit dem stillen
+// Verlust der Config-Ladung und des policy-gebauten Descriptors (CR-GC-491 §1).
+//
+// Nebenbefund: die alten Importe zeigten auf `dist/harness.js` und `dist/mcp-tools.js` — beide
+// gibt es nach dem dist-Umbau nicht mehr. Dieses Rig war NICHT LAUFFAEHIG, und niemand hat es
+// gemerkt: ein Rig ohne Lauf meldet sich nicht, es schweigt.
+const measured = await openMeasured({
+  graph: join(RIG, 'model', 'dummy-slicer.graph.json'),
+  repoRoot: RIG,
+  systemId: 'dummy-slicer',
+  workspaceId: 'rig',
+});
+console.log(`[stempel] ${stampLine(measured.provenance)}`);
+const harness = measured.harness;
+const reg = measured.tools;
 
 const ctx = await reg['graph_context'].handler({ id: 'FN-slice', depth: 1 });
 console.log('=== Arm B — graph_context FN-slice (the definition-of-done served to the agent) ===');
@@ -45,6 +50,5 @@ console.log(`Read src/slice.ts (live source)               -> exit ${srcStatus} 
 const pass = ctx.nodeCount >= 7 && ctx.missingRefs.includes('FN-slice') && specStatus === 2 && srcStatus === 0;
 console.log(`\nARM B VERDICT: ${pass ? 'PASS' : 'FAIL'} — bundle serves DoD, stale SPEC blocked, source allowed.`);
 
-await harness.close();
-rmSync(tmp, { recursive: true, force: true });
+await measured.close();
 process.exit(pass ? 0 : 1);
