@@ -165,13 +165,16 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
       '(CR-GC-442) PLUS the RC code-conformance rules ' +
       '(realRef/testRefs resolved against the real source tree). Read-only; does not mutate. ' +
       'Every finding carries `source` ("rules" | "conformance"); `skipped` names EVERYTHING left ' +
-      'out, on both levels — a source that could NOT be evaluated ("conformance", e.g. no readable ' +
-      'repoRoot) and every contracts rule nothing evaluated ("rule:BQ-01"). An ' +
+      'out, ONE level and one form — every contracts rule nothing evaluated, as "rule:BQ-01". ' +
+      'CR-GC-489 retired the coarse source token "conformance": the six RC rules now appear by ' +
+      'NAME when the conformance run did not happen (no readable repoRoot, or extraction threw), ' +
+      'and disappear from `skipped` when it did — so RC-01/RC-02/RC-03, which are severity ' +
+      'ERROR, can no longer hide behind one word. An ' +
       'empty `skipped` is what makes the count interpretable (CR-GC-398/428), and it now means ' +
       'nothing was left out at all. The `rule:*` entries are DERIVED (ALL_RULE_DEFS minus the ' +
       'loaded catalog minus the locally evaluated ND rules), never a maintained list: they are ' +
-      'the BQ-* rules only the steering path evaluates, so a reader of ' +
-      '"0 errors" knows it means "0 under the evaluated catalog". ND-01/ND-02 ARE evaluated here ' +
+      'the BQ-* rules only the steering path evaluates, plus the RC rules when unmeasurable, so a ' +
+      'reader of "0 errors" knows it means "0 under the evaluated catalog". ND-01/ND-02 ARE evaluated here ' +
       'but stay OUT of the gate catalog (`catalogs.notInGate`): a near-duplicate is visible ' +
       'everywhere and blocks no mutation (CR-GC-287 — ND stays advisory, never a gate blocker). ' +
       'Identical population to ' +
@@ -183,7 +186,7 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
       'and part of the import graph still fell through" — {endpoints, assigned, unassigned[]}, where ' +
       'unassigned NAMES every import-endpoint file that resolves to no MOD (neither via a bound ' +
       'FUNC realRef nor a MOD.path prefix), i.e. the files RC-05 could not judge. null exactly when ' +
-      '`skipped` contains "conformance" — a value that is not measurable is never a silent zero.',
+      '`skipped` still names the RC rules — a value that is not measurable is never a silent zero.',
     inputSchema: RulesEvaluateInputSchema,
     async handler(input) {
       const ev = evaluateAll(harness);
@@ -272,8 +275,13 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
        * UC/REQ/FUNC adressiert ist. KPI, NIE ein Gate-Blocker — Abdeckung sagt
        * "adressiert", nicht "gut gelöst". null ohne Config/intentAnchors. */
       intentCoverage: AnchorCoverage[] | null;
-      /** CR-GC-398/428: was NICHT ausgewertet wurde — Quellen UND nicht geladene
-       * Regeln (`rule:*`). Leer = vollständig. Ohne dieses Feld ist
+      /** CR-GC-489: die Reichweite neben dem Urteil — wie viel des Import-Graphen die
+       * RC-Auflösung überhaupt ansehen konnte. `null`, wenn die Konformanz gar nicht lief
+       * (dann nennt `skipped` die RC-Regeln). Ohne sie sieht 0 % Bindung aus wie 0 Verstöße. */
+      importCoverage: ImportCoverage | null;
+      /** CR-GC-398/428: was NICHT ausgewertet wurde — jede nicht ausgewertete Regel als
+       * `rule:<id>`, seit CR-GC-489 einschließlich der RC-Regeln beim Namen statt hinter
+       * einem Quellen-Token. Leer = vollständig. Ohne dieses Feld ist
        * violationsByRule nicht interpretierbar. */
       skipped: string[];
       /** CR-GC-428: aus welchem Regelkatalog welcher Zahlenblock stammt. Die
@@ -339,6 +347,11 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
         graphVersion: graphVersion(),
         intentCoverage: coverage,
         skipped: ev.skipped,
+        // CR-GC-489: die REICHWEITE gehoert neben das Urteil. `rules_evaluate` fuehrte sie
+        // schon als Geschwister von `skipped`; hier fehlte sie — und genau hier liest jemand
+        // „wie fertig bin ich?". Ohne sie sieht 0 % Bindung aus wie 0 Verstoesse (gemessen:
+        // FUNC-realRef 100/92/81 % in drei Repos, 0 % in moneyflow).
+        importCoverage: ev.importCoverage,
         catalogs: ruleCatalogs(harness),
       };
     },

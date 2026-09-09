@@ -46,6 +46,7 @@ import type { RuleViolation } from '@sigloch/contracts/harness';
 import type { Graph } from '@sigloch/graph-api-core';
 import {
   ALL_RULE_DEFS,
+  getRuleDefsForProfile,
   ND_RULES,
   evaluateNDRules,
   PHASE_READINESS_NAME,
@@ -222,38 +223,60 @@ export function evaluateAll(harness: EvaluationHarness): Evaluation {
   // damit ein Beinahe-Duplikat in Verstoßliste/Report/Dashboard überhaupt sichtbar
   // wird. Gate-frei: `mutate()` fährt weiter nur `evaluateRules()`.
   findings.push(...nearDuplicateFindings(harness.getGraph()));
-  // Regel-Ebene: was der geladene Katalog gar nicht erst enthält (CR-GC-428) und
-  // was auch hier niemand nachholt. Steht VOR der Quellen-Ebene, weil es die
-  // Grundgesamtheit der Quelle `rules` beschreibt — abgeleitet, nicht gepflegt.
-  const evaluatedLocally = new Set(LOCALLY_EVALUATED_RULE_IDS);
-  const skipped: string[] = unevaluatedRuleIds(harness.getLoadedRuleIds())
-    .filter((id) => !evaluatedLocally.has(id))
-    .map((id) => `${SKIPPED_RULE_PREFIX}${id}`);
-
+  // Die Konformanz laeuft VOR der Auslassungs-Rechnung, weil ihr Gelingen mitentscheidet,
+  // welche Regeln als ausgelassen gelten (CR-GC-489).
   const repoRoot = harness.getRepoRoot();
   let importCoverage: ImportCoverage | null = null;
-  if (!repoRoot || !existsSync(repoRoot)) {
-    skipped.push('conformance');
-  } else {
+  let conformanceRan = false;
+  if (repoRoot && existsSync(repoRoot)) {
     try {
       const conf = conformanceEvaluation(harness);
       for (const v of conf.violations) findings.push({ ...v, source: 'conformance' });
       importCoverage = conf.importCoverage;
+      conformanceRan = true;
     } catch {
-      skipped.push('conformance');
+      // Extraktion gescheitert — `conformanceRan` bleibt false, die RC-Regeln stehen unten
+      // namentlich in `skipped`. Nie ein stilles Null.
     }
   }
+
+  // Regel-Ebene: was der geladene Katalog gar nicht erst enthält (CR-GC-428) und
+  // was auch hier niemand nachholt — abgeleitet, nicht gepflegt.
+  //
+  // CR-GC-489: die RC-Regeln stehen seit CR-SM-305 im Katalog und werden vom GATE nie geladen
+  // (Profil `conformance`), erschienen hier also IMMER als ausgelassen — auch dann, wenn
+  // `conformanceEvaluation` sie gerade gefahren hatte. Gemessen am graphcode-Selbstmodell:
+  // 3 RC-04-Befunde in `findings` UND `rule:RC-04` in `skipped`, in DERSELBEN Antwort.
+  // Dieselbe Antwort sagte beides, und die zwei Lagen — „ausgewertet, 0 Verstoesse" gegen
+  // „nie ausgefuehrt" — waren an der Oberflaeche nicht unterscheidbar.
+  //
+  // Dasselbe Muster wie `LOCALLY_EVALUATED_RULE_IDS` fuer ND, nur BEDINGT: RC zaehlt als
+  // ausgewertet genau dann, wenn die Erhebung lief. Das frueher zusaetzlich gesetzte
+  // Quellen-Token `'conformance'` entfaellt — es sagte dieselbe Sache ein zweites Mal und
+  // groeber, naemlich ohne die drei `error`-Regeln RC-01/02/03 zu benennen.
+  const conformanceRuleIds = getRuleDefsForProfile('conformance').map((r) => r.id);
+  const evaluatedLocally = new Set<string>(LOCALLY_EVALUATED_RULE_IDS);
+  if (conformanceRan) for (const id of conformanceRuleIds) evaluatedLocally.add(id);
+  const gap = new Set(
+    unevaluatedRuleIds(harness.getLoadedRuleIds()).filter((id) => !evaluatedLocally.has(id)),
+  );
+  // Und die Gegenrichtung, die `unevaluatedRuleIds` nicht leisten KANN: lief die Konformanz
+  // nicht, sind ihre Regeln ausgelassen — auch dann, wenn der geladene Katalog sie fuehrt.
+  // Ohne diesen Zweig verschwaende ein vollstaendig geladener Katalog das Ausfall-Signal
+  // vollstaendig, und `skipped: []` hiesse „nichts ausgelassen", wo die Quelle fehlte.
+  // Genau das hat der Regelkatalog-Test gefangen; es ist dieselbe Fail-open-Klasse, gegen die
+  // dieser CR angetreten ist.
+  if (!conformanceRan) for (const id of conformanceRuleIds) gap.add(id);
+  const skipped: string[] = [...gap].sort().map((id) => `${SKIPPED_RULE_PREFIX}${id}`);
+
   return { findings, skipped, importCoverage };
 }
 
-/**
- * Produkt-seitige Readiness: Graph-Regeln + RC-Konformanz in EINEM Report.
- * Jeder Readiness-Konsument (graph_readiness, graph_help, Dashboard) geht hier
- * durch — `scoreReadiness` bleibt das reine/browser-taugliche Primitiv.
- */
-export function scoreReadinessWithConformance(harness: EvaluationHarness): ReadinessReport {
-  return readinessOf(evaluateAll(harness), harness.getGraph());
-}
+// CR-GC-489: `scoreReadinessWithConformance` ist hier GELOESCHT. Sie hatte genau einen
+// Aufrufer (einen Test), waehrend ihr Docstring behauptete, jeder Readiness-Konsument gehe
+// durch sie hindurch — fuenf Aufrufstellen schrieben ihren Rumpf inline. Ein zweiter Pfad plus
+// eine Zusage, die er nicht hielt. Der Ausdruck ist `readinessOf(evaluateAll(h), h.getGraph())`,
+// und er steht dort, wo er gebraucht wird.
 
 /** Readiness aus einer bereits erhobenen Auswertung — kein zweiter Lauf. */
 export function readinessOf(evaluation: Evaluation, graph: CGraph): ReadinessReport {

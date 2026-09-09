@@ -14,6 +14,7 @@
  *
  * @author andreas@siglochconsulting
  */
+import { getRuleDefsForProfile } from '@sigloch/contracts/se';
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { mkdtempSync, rmSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -118,9 +119,15 @@ describe('TEST-evaluation-reconciliation: eine Auswertungsfläche (CR-GC-398)', 
       getLoadedRuleIds: () => harness.getLoadedRuleIds(),
     });
 
-    // Die Quelle steht in DERSELBEN Liste wie die nicht geladenen Regeln
-    // (CR-GC-428) — dazugekommen ist genau sie, sonst nichts.
-    expect(degraded.skipped).toEqual([...full.skipped, 'conformance']);
+    // Die ausgefallene Quelle steht in DERSELBEN Liste wie die nicht geladenen Regeln
+    // (CR-GC-428) — dazugekommen ist genau sie, sonst nichts. Seit CR-GC-489 nennt sie sich
+    // beim NAMEN: statt des groben Tokens `'conformance'` erscheinen die sechs RC-Regeln
+    // einzeln, damit RC-01/02/03 (severity `error`) sich nicht hinter einem Wort verstecken.
+    // Konkatenation traegt hier nicht mehr — die Eintraege sortieren sich alphabetisch ein.
+    const dazu = degraded.skipped.filter((x) => !full.skipped.includes(x));
+    const weg = full.skipped.filter((x) => !degraded.skipped.includes(x));
+    expect(dazu).toEqual(getRuleDefsForProfile('conformance').map((r) => `rule:${r.id}`));
+    expect(weg).toEqual([]);
     expect(degraded.findings.every((f) => f.source === 'rules')).toBe(true);
     expect(degraded.findings.length).toBeLessThan(full.findings.length);
   });
@@ -190,7 +197,8 @@ describe('TEST-evaluation-reconciliation: eine Auswertungsfläche (CR-GC-398)', 
       getRepoRoot: () => join(tmp, 'does-not-exist'),
       getLoadedRuleIds: () => harness.getLoadedRuleIds(),
     });
-    expect(degraded.skipped).toContain('conformance');
+    // CR-GC-489: die Quelle sagt sich regelfein an, nicht als Sammelbegriff.
+    expect(degraded.skipped).toContain('rule:RC-01');
     expect(degraded.importCoverage).toBeNull();
   });
 
