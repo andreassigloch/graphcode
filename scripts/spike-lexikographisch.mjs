@@ -53,8 +53,9 @@
  */
 import { execFileSync } from 'node:child_process';
 import { readFileSync, existsSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { join } from 'node:path';
-import { evaluateAllRules, DEFAULT_METRIC_POLICY, toEvaluableGraph, ALL_RULE_DEFS } from '@sigloch/contracts/se';
+import { evaluateAllRules, DEFAULT_METRIC_POLICY, toEvaluableGraph, ALL_RULE_DEFS, RULES_VERSION } from '@sigloch/contracts/se';
 import { metrics, METRIC_DIMENSIONS } from '@sigloch/se-engine';
 
 /**
@@ -106,7 +107,59 @@ const RIG = (() => { const i = process.argv.indexOf('--rig'); return i >= 0 ? pr
 
 const lift = (raw) => toEvaluableGraph({ elements: raw.elements, traces: raw.traces });
 const atRef = (ref) => lift(JSON.parse(execFileSync('git', ['show', `${ref}:docs/graph/graphcode.graph.json`], { encoding: 'utf8', maxBuffer: 64 << 20 })));
-const atFile = (p) => lift(JSON.parse(readFileSync(p, 'utf8')));
+
+/**
+ * CR-GC-493 — Herkunftsstempel je Eingabegraph.
+ *
+ * Dieser Spike ist KORPUS-Klasse (reine Rangfrage, kein Harness), liest aber die LEBENDEN
+ * `docs/graph/*.graph.json` von vier Repos. Ein Benchmark, dessen Eingabe weiterlaeuft, misst
+ * nichts — das schreibt `rig/graphs/README.md` selbst. Damit war die Evidenz fuer CR-SM-292
+ * (Chebyshev statt R6) nicht reproduzierbar: zwei Laeufe auf verschiedenen Staenden lieferten
+ * zwei Zahlen ohne Erklaerung.
+ *
+ * Der Stempel macht die Drift SICHTBAR. Das Einfrieren der Graphen nach `rig/graphs/` bleibt
+ * ausdruecklich draussen — das ist eine Datenentscheidung je Graph, kein Nachzug.
+ */
+const STEMPEL = [];
+const atFile = (p) => {
+  const raw = readFileSync(p, 'utf8');
+  const parsed = JSON.parse(raw);
+  if (!STEMPEL.some((e) => e.pfad === p)) {
+    STEMPEL.push({
+      pfad: p,
+      sha: createHash('sha256').update(raw).digest('hex').slice(0, 12),
+      version: parsed.graphVersion ?? '—',
+      umfang: `${parsed.elements?.length ?? 0}/${parsed.traces?.length ?? 0}`,
+    });
+  }
+  return lift(parsed);
+};
+
+/** Ohne Stempel keine Zahl — die Kopfzeile jedes Laufs. */
+function stempelBlock() {
+  let sha = '0000000', dirty = false;
+  try {
+    sha = execFileSync('git', ['rev-parse', '--short', 'HEAD'], { encoding: 'utf8' }).trim();
+    dirty = execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8' }).trim().length > 0;
+  } catch { /* kein git — ein leerer Stempel ist ehrlicher als ein erfundener */ }
+  const zeilen = [
+    '',
+    '---',
+    '',
+    '## Herkunft — ohne Stempel keine Zahl (CR-GC-493)',
+    '',
+    `Regeln \`${RULES_VERSION}\` · Code \`${sha}${dirty ? '+dirty' : ''}\` · Policy \`DEFAULT_METRIC_POLICY\` (Korpus-Klasse, kein Host)`,
+    '',
+    '| Eingabegraph | sha256 (12) | graphVersion | Elemente/Kanten |',
+    '|---|---|--:|--:|',
+    ...STEMPEL.map((e) => `| \`${e.pfad}\` | \`${e.sha}\` | ${e.version} | ${e.umfang} |`),
+    '',
+    '> Die Eingaben sind **lebende** Exporte, keine eingefrorenen Snapshots. Zwei Laeufe mit',
+    '> verschiedenen sha256 sind nicht vergleichbar — das ist hier sichtbar statt stillschweigend.',
+    '',
+  ];
+  return zeilen.join('\n');
+}
 
 /**
  * Das Profil eines Graphen: je Stufe die vier Ablesungen. Die Zahlen kommen AUS DEM REGELSTROM —
@@ -525,3 +578,7 @@ for (const kk of ABLESUNGEN) {
   const f = urteilF[kk], g = urteilG ? urteilG[kk] : null, h = urteilH[kk];
   console.log(`| ${kk} | ${f ? '✓' : '✗'} | ${g === null ? '– (kein Rig)' : g ? '✓' : '✗'} | ${h ? '✓' : '– blind/✗'} | ${f && g ? '**GO**' : 'NO-GO'} |`);
 }
+
+// CR-GC-493: die Herkunft ganz am Ende, wenn jede Eingabe einmal gelesen wurde. Ein Bericht,
+// dessen Eingaben nicht benannt sind, laesst sich nicht ein zweites Mal fuehren.
+console.log(stempelBlock());

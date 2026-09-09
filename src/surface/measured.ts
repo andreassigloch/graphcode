@@ -41,7 +41,8 @@ export interface PolicyProvenance {
 }
 
 export interface Provenance {
-  readonly graph: { readonly path: string; readonly sha256: string; readonly elements: number; readonly traces: number };
+  /** `null` beim Greenfield-Start (CR-GC-493) — die Abwesenheit wird gesagt, nicht erfunden. */
+  readonly graph: { readonly path: string; readonly sha256: string; readonly elements: number; readonly traces: number } | null;
   readonly policy: PolicyProvenance & { readonly value: MetricPolicy };
   readonly versions: { readonly rules: string; readonly ontology: string; readonly metaModel: string };
   readonly code: { readonly sha: string; readonly dirty: boolean };
@@ -61,8 +62,13 @@ export interface Measured {
 }
 
 export interface OpenMeasuredOptions {
-  /** Absoluter Pfad auf den `*.graph.json`, der gemessen werden soll. Wird KOPIERT, nie geöffnet. */
-  readonly graph: string;
+  /**
+   * Absoluter Pfad auf den `*.graph.json`, der gemessen werden soll. Wird KOPIERT, nie geöffnet.
+   *
+   * CR-GC-493: **optional**. Ohne ihn startet ein leeres Wegwerf-Repo — der Greenfield-Fall der
+   * Autorier-Rigs, die bis dahin von Hand bauten, weil dieser Parameter Pflicht war.
+   */
+  readonly graph?: string;
   readonly systemId: string;
   readonly workspaceId?: string;
   /**
@@ -108,16 +114,26 @@ function repoOfGraph(graphPath: string): string {
  * Herkunftsstempel. Der Aufrufer schließt mit `close()`; das Wegwerf-Repo wird dabei gelöscht.
  */
 export async function openMeasured(opts: OpenMeasuredOptions): Promise<Measured> {
-  const raw = readFileSync(opts.graph);
-  const parsed = JSON.parse(raw.toString('utf8')) as { elements?: unknown[]; traces?: unknown[] };
-
   const repoRoot = mkdtempSync(join(tmpdir(), 'measured-'));
   mkdirSync(join(repoRoot, 'docs', 'graph'), { recursive: true });
   const REL = join('docs', 'graph', 'graph.json');
-  copyFileSync(opts.graph, join(repoRoot, REL));
 
-  // Regel 1: die Config reist mit dem Graphen.
-  const sourceRepo = opts.configFrom ?? repoOfGraph(opts.graph);
+  let graphStamp: Provenance['graph'] = null;
+  if (opts.graph !== undefined) {
+    const raw = readFileSync(opts.graph);
+    const parsed = JSON.parse(raw.toString('utf8')) as { elements?: unknown[]; traces?: unknown[] };
+    copyFileSync(opts.graph, join(repoRoot, REL));
+    graphStamp = {
+      path: opts.graph,
+      sha256: sha256(raw),
+      elements: parsed.elements?.length ?? 0,
+      traces: parsed.traces?.length ?? 0,
+    };
+  }
+
+  // Regel 1: die Config reist mit dem Graphen. Ohne Graphen gibt es nichts, womit sie reisen
+  // könnte — dann zählt nur `configFrom`, und sonst gilt sichtbar der Startwert.
+  const sourceRepo = opts.configFrom ?? (opts.graph !== undefined ? repoOfGraph(opts.graph) : repoRoot);
   const sourceConfig = join(sourceRepo, CONFIG_FILENAME);
   let policySource: PolicyProvenance;
   if (opts.config) {
@@ -141,15 +157,10 @@ export async function openMeasured(opts: OpenMeasuredOptions): Promise<Measured>
     preCommitTimeout: 5000,
   });
   await harness.initialize();
-  await harness.seedFromJson(REL);
+  if (opts.graph !== undefined) await harness.seedFromJson(REL);
 
   const provenance: Provenance = {
-    graph: {
-      path: opts.graph,
-      sha256: sha256(raw),
-      elements: parsed.elements?.length ?? 0,
-      traces: parsed.traces?.length ?? 0,
-    },
+    graph: graphStamp,
     policy: { ...policySource, value: harness.getMetricPolicy() },
     versions: { rules: RULES_VERSION, ontology: ONTOLOGY_VERSION, metaModel: META_MODEL_VERSION },
     code: codeStamp(),
@@ -175,7 +186,8 @@ export async function openMeasured(opts: OpenMeasuredOptions): Promise<Measured>
 export function stampLine(p: Provenance): string {
   const cfg = p.policy.source === 'file' ? p.policy.from : p.policy.source;
   return [
-    `graph ${p.graph.sha256.slice(0, 12)} (${p.graph.elements}/${p.graph.traces})`,
+    // CR-GC-493: kein Graph heisst „—", nie ein erfundener Hash.
+    p.graph === null ? 'graph —' : `graph ${p.graph.sha256.slice(0, 12)} (${p.graph.elements}/${p.graph.traces})`,
     `policy ${cfg}`,
     `rules ${p.versions.rules}`,
     `code ${p.code.sha}${p.code.dirty ? '+dirty' : ''}`,

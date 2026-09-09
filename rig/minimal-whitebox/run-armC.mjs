@@ -11,14 +11,10 @@
 //   v20-noinject  24 Rd., N=3, injection=false -> 40 El / 51 Tr
 //   v19-recount   16+7 Rd., N=3, injection=true -> 31 El (unterbrochen)
 //   v15           24 Rd., N=1, injection=true  -> 22 El
-import { mkdtempSync, rmSync, writeFileSync, mkdirSync, appendFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { writeFileSync, mkdirSync, appendFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { KuzuAdapter } from '@sigloch/graph-api-core/kuzu';
-import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import { GraphCodeHarness } from '../../dist/harness.js';
-import { bindToolsToHarness } from '../../dist/mcp-tools.js';
+import { openMeasured, stampLine } from '../../dist/index.js';
 import { runExecutor, ExecutorConfigSchema } from '../../dist/executor.js';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -35,15 +31,15 @@ const INTENT =
   'gemeinsam einen governten Systemgraphen über das Apply-Gate, sehen Live-Updates und ' +
   'exportieren den Stand.';
 
-const repoRoot = mkdtempSync(join(tmpdir(), 'armC-'));
-mkdirSync(join(repoRoot, 'docs', 'graph'), { recursive: true });
-const storage = new KuzuAdapter({ ontology: SE_DESCRIPTOR, path: join(repoRoot, '.graphcode', 'kuzu') });
-const harness = new GraphCodeHarness(
-  { repoRoot, scope: { workspaceId: 'armC', systemId: 'armC' }, consumerType: 'system', preCommitTimeout: 5000 },
-  storage,
-);
-await harness.initialize();
-const registry = bindToolsToHarness(harness);
+// CR-GC-491/493: der Aufbau kommt aus `openMeasured` — also aus `createHarness`, mit der
+// Config des Repos und dem policy-gebauten Descriptor. Der Handaufbau hier fiel still auf
+// `DEFAULT_CONFIG` und uebergab dem Store den unparametrisierten `SE_DESCRIPTOR`; folgenlos,
+// solange die Budgets auf Default stehen, invertierend sobald eines wandert.
+// Greenfield: KEIN `graph` — dieses Rig autoriert aus dem Leeren.
+const measured = await openMeasured({ systemId: 'armC', workspaceId: 'armC' });
+console.log(`[stempel] ${stampLine(measured.provenance)}`);
+const harness = measured.harness;
+const registry = measured.tools;
 
 // --- die EINE Manipulation ------------------------------------------------
 let injectionCalls = 0;
@@ -124,5 +120,4 @@ writeFileSync(join(OUT, `${TAG}.result.json`), JSON.stringify(result, null, 2));
 writeFileSync(join(OUT, `${TAG}.graph.json`), JSON.stringify(
   { elements: graph.nodes, traces: graph.edges }, null, 2));
 console.log(JSON.stringify({ elements: result.elements, traces: result.traces, byType, wall, injectionCalls, modelUnfilteredCalls }, null, 2));
-await harness.close();
-rmSync(repoRoot, { recursive: true, force: true });
+await measured.close();

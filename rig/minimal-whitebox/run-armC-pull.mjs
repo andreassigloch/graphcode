@@ -30,14 +30,10 @@
 // `modelUnfilteredCalls` aus run-armC.mjs ist NICHT trennscharf (er zählt die
 // Preflight-Snapshots und im Modus `full` den Injektions-Aufruf mit) — hier
 // stehen beide Größen nebeneinander.
-import { mkdtempSync, rmSync, writeFileSync, mkdirSync, appendFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { writeFileSync, mkdirSync, appendFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { KuzuAdapter } from '@sigloch/graph-api-core/kuzu';
-import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import { GraphCodeHarness } from '../../dist/harness.js';
-import { bindToolsToHarness } from '../../dist/mcp-tools.js';
+import { openMeasured, stampLine } from '../../dist/index.js';
 import { runExecutor, ExecutorConfigSchema, buildToolSpecs } from '../../dist/executor.js';
 import { AUTHORING_TOOLS } from '../../dist/executor-prompt.js';
 
@@ -57,15 +53,15 @@ const INTENT =
   'gemeinsam einen governten Systemgraphen über das Apply-Gate, sehen Live-Updates und ' +
   'exportieren den Stand.';
 
-const repoRoot = mkdtempSync(join(tmpdir(), 'armC-pull-'));
-mkdirSync(join(repoRoot, 'docs', 'graph'), { recursive: true });
-const storage = new KuzuAdapter({ ontology: SE_DESCRIPTOR, path: join(repoRoot, '.graphcode', 'kuzu') });
-const harness = new GraphCodeHarness(
-  { repoRoot, scope: { workspaceId: 'armC', systemId: 'armC' }, consumerType: 'system', preCommitTimeout: 5000 },
-  storage,
-);
-await harness.initialize();
-const registry = bindToolsToHarness(harness);
+// CR-GC-491/493: der Aufbau kommt aus `openMeasured` — also aus `createHarness`, mit der
+// Config des Repos und dem policy-gebauten Descriptor. Der Handaufbau hier fiel still auf
+// `DEFAULT_CONFIG` und uebergab dem Store den unparametrisierten `SE_DESCRIPTOR`; folgenlos,
+// solange die Budgets auf Default stehen, invertierend sobald eines wandert.
+// Greenfield: KEIN `graph` — dieses Rig autoriert aus dem Leeren.
+const measured = await openMeasured({ systemId: 'armC', workspaceId: 'armC' });
+console.log(`[stempel] ${stampLine(measured.provenance)}`);
+const harness = measured.harness;
+const registry = measured.tools;
 
 // --- die EINE Manipulation ------------------------------------------------
 const missing = PRECISION_TOOLS.filter((t) => !registry[t]);
@@ -268,5 +264,4 @@ console.log(JSON.stringify({
   elements: result.elements, traces: result.traces, byType, wall,
   modelToolCalls: modelCalls, unfilteredElementsCalls: unfilteredElements.total,
 }, null, 2));
-await harness.close();
-rmSync(repoRoot, { recursive: true, force: true });
+await measured.close();

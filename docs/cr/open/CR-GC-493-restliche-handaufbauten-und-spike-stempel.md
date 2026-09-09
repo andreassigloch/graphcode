@@ -36,35 +36,51 @@ reproduzierbar.**
 
 ## 3. Fix
 
-1. Die drei Skripte auf `openMeasured` — eine mechanische Ersetzung, dasselbe Muster dreimal.
-2. `spike-lexikographisch.mjs` gibt **je Eingabegraph** Pfad, sha256, `graphVersion` und Umfang
-   aus, plus `RULES_VERSION` und Code-SHA für den Lauf (`stampLine` aus `CR-GC-491`).
-3. **Der Spike bleibt Korpus-Klasse** — er baut keinen Harness. Der Stempel macht die Drift
-   *sichtbar*; das Einfrieren der Graphen nach `rig/graphs/` ist eine Datenentscheidung je Graph
-   und bleibt ausdrücklich draußen (s. §5).
+**Beim Lesen zeigte sich, dass `openMeasured` zwei Fälle nicht kennt** — und beide sind der
+Grund, warum diese drei Skripte von Hand bauten:
 
-### Dateien (4)
+| Fall | wer braucht ihn | heute |
+|---|---|---|
+| **Start ohne Graph** (Greenfield-Autorierung) | `run-armC.mjs`, `run-armC-pull.mjs` | `graph` ist Pflichtparameter |
+| **Fremde Repo-Wurzel bei Wegwerf-Store** | `armB.mjs` (`repoRoot: RIG`, Store in `/tmp`) | `createHarness` leitet den Store-Ort AUS `repoRoot` ab |
+
+Der erste ist klein und gehört hierher. Der zweite verlangt eine Änderung an `createHarness`
+selbst — der Store-Ort müsste vom `repoRoot` trennbar werden — und ist damit ein Eingriff in die
+Composition Root, nicht ein Rig-Nachzug. **`armB.mjs` geht deshalb an `CR-GC-496`.**
+
+1. **`openMeasured({ graph })` wird optional.** Ohne Graph startet ein leeres Wegwerf-Repo;
+   der Stempel sagt dann `graph —` statt eines Hashes, nie einen erfundenen.
+2. Die beiden `run-armC*.mjs` gehen darauf — eine Ersetzung, zweimal dasselbe Muster.
+3. `spike-lexikographisch.mjs` gibt **je Eingabegraph** Pfad, sha256, `graphVersion` und Umfang
+   aus, plus `RULES_VERSION` und Code-SHA für den Lauf. **Er bleibt Korpus-Klasse** — kein
+   Harness; der Stempel macht die Drift *sichtbar*, das Einfrieren bleibt draußen (§5).
+
+### Dateien (5)
 
 | # | Datei |
 |---|---|
-| 1 | `rig/minimal-whitebox/run-armC.mjs` |
-| 2 | `rig/minimal-whitebox/run-armC-pull.mjs` |
-| 3 | `rig/dummy-slicer/scripts/armB.mjs` |
-| 4 | `scripts/spike-lexikographisch.mjs` |
+| 1 | `src/surface/measured.ts` — `graph` optional |
+| 2 | `tests/rig-measured.test.ts` — der leere Start als eigener Fall |
+| 3 | `rig/minimal-whitebox/run-armC.mjs` |
+| 4 | `rig/minimal-whitebox/run-armC-pull.mjs` |
+| 5 | `scripts/spike-lexikographisch.mjs` |
 
 ## 4. Akzeptanzkriterien
 
-- [ ] `grep -rn "new GraphCodeHarness" rig/ scripts/` findet **nichts** mehr (ausser der
-      Regel-Zeile in `rig/README.md`, die den Verzicht benennt).
-- [ ] Jedes der drei Skripte gibt vor der ersten Zahl seinen Stempel aus.
+- [ ] `grep -rn "new GraphCodeHarness" rig/ scripts/` findet nur noch `armB.mjs` — benannt und
+      an `CR-GC-496` übergeben, nicht vergessen.
+- [ ] **Rot zuerst:** ein Test ruft `openMeasured` ohne `graph` und erwartet einen leeren,
+      benutzbaren Harness plus einen Stempel, der die Abwesenheit des Graphen sagt.
+- [ ] Jedes der beiden armC-Skripte gibt vor der ersten Zahl seinen Stempel aus.
 - [ ] **Kein Zahlenversatz:** Ausgabe vor und nach der Umstellung ist zeichengleich, bis auf
       Stempel- und Pfadzeilen — derselbe Nachweis wie in `CR-GC-491` für `driver.mjs`.
 - [ ] `spike-lexikographisch.mjs` nennt je Eingabegraph sha256 und `graphVersion`; zwei Läufe
       auf demselben Stand sind zeichengleich.
-- [ ] `armB.mjs`: Store und `owner.lock` liegen im selben Verzeichnis (CR-GC-218).
+
 
 ## 5. Nicht im Scope
 
 - Die Korpusgraphen des Spikes **einfrieren**. Der Stempel macht die Drift sichtbar; welcher
   Stand eingefroren wird, ist je Graph zu entscheiden und braucht einen eigenen Vorgang.
 - Die Testbasis — 103 Stellen, `CR-GC-492`.
+- `armB.mjs` und die Trennung von Store-Ort und Repo-Wurzel in `createHarness`: **`CR-GC-496`**.
