@@ -6,14 +6,11 @@
 //   Ring = B \ W       als Schnittstellenzeile (uid · type · name · io/relation-Vertrag)
 //   heute = buildRoundInjection (der echte Executor-Kontext, unverändert importiert)
 // Nichts wird nachgebaut; alle Zahlen stammen aus dem gebundenen Tool-Registry.
-import { mkdtempSync, rmSync, writeFileSync, mkdirSync, copyFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { writeFileSync, mkdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { KuzuAdapter } from '@sigloch/graph-api-core/kuzu';
 import { SE_DESCRIPTOR, FormatECodec } from '@sigloch/graph-api-core';
-import { GraphCodeHarness } from '../../dist/harness.js';
-import { bindToolsToHarness } from '../../dist/mcp-tools.js';
+import { openMeasured, stampLine } from '../../dist/index.js';
 import { buildRoundInjection } from '../../dist/executor-prompt.js';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -24,25 +21,24 @@ const codec = new FormatECodec(SE_DESCRIPTOR);
 const tok = (s) => Math.round(s.length / 4);
 
 /**
- * Ein Wegwerf-Repo pro Fixture: Store UND Owner-Lock liegen im Temp-Verzeichnis,
- * der Live-Store des Repos wird nie angefasst (REQ-single-kuzu-owner).
+ * Ein Wegwerf-Repo pro Fixture — CR-GC-491: durch `openMeasured`, nicht mehr von Hand.
+ *
+ * Der Handaufbau hier rief `new GraphCodeHarness(cfg, storage)` und bekam damit still
+ * `DEFAULT_CONFIG` statt der Config des Quell-Repos, plus einen unparametrisierten
+ * `SE_DESCRIPTOR` statt `createSeDescriptor(policy)`. Solange die Budgets auf Default standen,
+ * war das folgenlos; sobald eines wandert, misst der Spike am Gate vorbei.
+ *
+ * `openMeasured` haelt die Isolation unveraendert (Store UND Owner-Lock im Temp-Verzeichnis,
+ * REQ-single-kuzu-owner) und traegt zusaetzlich die Herkunft.
  */
 async function openFixture(absGraphJson, systemId) {
-  const tmp = mkdtempSync(join(tmpdir(), 'wb-'));
-  mkdirSync(join(tmp, 'docs', 'graph'), { recursive: true });
-  copyFileSync(absGraphJson, join(tmp, 'docs', 'graph', 'graph.json'));
-  const storage = new KuzuAdapter({ ontology: SE_DESCRIPTOR, path: join(tmp, '.graphcode', 'kuzu') });
-  const harness = new GraphCodeHarness(
-    { repoRoot: tmp, scope: { workspaceId: 'spike', systemId }, consumerType: 'system', preCommitTimeout: 5000 },
-    storage,
-  );
-  await harness.initialize();
-  const seeded = await harness.seedFromJson('docs/graph/graph.json');
-  const reg = bindToolsToHarness(harness);
+  const m = await openMeasured({ graph: absGraphJson, systemId, workspaceId: 'spike' });
+  console.log(`  [stempel] ${stampLine(m.provenance)}`);
   return {
-    harness, reg, seeded,
-    graph: () => harness.getGraph(),
-    close: async () => { await harness.close(); rmSync(tmp, { recursive: true, force: true }); },
+    harness: m.harness, reg: m.tools,
+    provenance: m.provenance,
+    graph: m.graph,
+    close: m.close,
   };
 }
 

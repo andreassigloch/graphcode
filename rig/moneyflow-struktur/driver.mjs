@@ -5,8 +5,9 @@
  * Warum ein Rig und keine weitere Skript-Analyse (Auftraggeber, 2026-09-05): jede Messung
  * dieser Session lief bisher an `docs/graph/*.graph.json` vorbei am Gate. Das ist unsicher
  * (keine Validierung, kein Rollback, kein Audit) und misst eine Datei statt eines Systems.
- * Hier laeuft derselbe Pfad wie in Produktion: Disk-Kuzu, `GraphCodeHarness`,
- * `bindToolsToHarness` — `graph_mutate` ist dasselbe `harness.mutate()`, das der MCP-Server ruft.
+ * Hier laeuft derselbe Pfad wie in Produktion — seit CR-GC-491 nachweislich: der Aufbau kommt
+ * aus `openMeasured`, also aus `createHarness`, also mit der Config des Quell-Repos und dem
+ * policy-gebauten Descriptor. `graph_mutate` ist dasselbe `harness.mutate()` des MCP-Servers.
  *
  * ISOLATION: der Store liegt in einem temporaeren Verzeichnis. Das echte moneyflow-Repo wird
  * NUR GELESEN und nie angefasst.
@@ -21,12 +22,9 @@
  *
  * @author andreas@siglochconsulting
  */
-import { readFileSync, writeFileSync, mkdirSync, rmSync, mkdtempSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
-import { tmpdir } from 'node:os';
-import { GraphCodeHarness, bindToolsToHarness } from '../../dist/index.js';
-import { KuzuAdapter } from '@sigloch/graph-api-core/kuzu';
-import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
+import { openMeasured, stampLine } from '../../dist/index.js';
 
 const SOURCE = '/Users/andreas/Developer/dev/moneyflow/docs/graph/moneyflow.graph.json';
 const PROPOSE = process.argv.includes('--propose');
@@ -122,22 +120,21 @@ const ALL_BLOCKS = flatBlocks(BLOCKS);
 // Praefixe mehr, seine beiden Kinder tun es.
 const blockOfPrefix = new Map(ALL_BLOCKS.flatMap((b) => b.prefixes.map((p) => [p, b.key])));
 
-const config = (repoRoot) => ({
-  repoRoot,
-  scope: { workspaceId: 'moneyflow-rig', systemId: 'moneyflow' },
-  consumerType: 'system',
-  preCommitTimeout: 5000,
-});
-
-async function openRig() {
-  const fixture = JSON.parse(readFileSync(SOURCE, 'utf8'));
-  const tmp = mkdtempSync(join(tmpdir(), 'rig-moneyflow-'));
-  const storage = new KuzuAdapter({ ontology: SE_DESCRIPTOR, path: join(tmp, 'kuzu') });
-  const harness = new GraphCodeHarness(config(tmp), storage);
-  await harness.initialize();
-  await harness.importGraph(fixture);
-  return { tmp, harness, tools: bindToolsToHarness(harness) };
-}
+/**
+ * CR-GC-491: der Aufbau kommt aus `openMeasured`, nicht mehr von Hand.
+ *
+ * Der Handaufbau hier war in DREI Punkten nicht der Produktionspfad, und keiner davon meldete
+ * sich: (1) `new GraphCodeHarness(cfg, storage)` faellt still auf `DEFAULT_CONFIG` zurueck —
+ * das Rig sah nie moneyflows Urteilsschwellen, sondern immer die Startwerte; (2) der Store
+ * bekam den unparametrisierten `SE_DESCRIPTOR` statt `createSeDescriptor(policy)`; (3) der
+ * Store lag unter `<tmp>/kuzu`, der `owner.lock` aber unter `<tmp>/.graphcode` — das Schloss
+ * bewachte den Store nicht (gegen CR-GC-218).
+ *
+ * Die Isolation bleibt: Wegwerf-Verzeichnis, das echte moneyflow-Repo wird NUR GELESEN.
+ * Neu ist, dass moneyflows `graphcode.config.jsonc` mitreist (heute keine da — der Stempel
+ * sagt dann `default`, statt es zu verschweigen).
+ */
+const openRig = () => openMeasured({ graph: SOURCE, systemId: 'moneyflow', workspaceId: 'moneyflow-rig' });
 
 /** Die zwei Blackbox-Zahlen aus CR-SM-282/-283, gelesen aus dem LEBENDEN Store. */
 function blackboxReport(graph) {
@@ -169,7 +166,9 @@ try {
   dump('00-baseline', rig.harness.graph);
 
   console.log('# rig/moneyflow-struktur — Baseline durch das echte Gate\n');
-  console.log(`Store: ${rig.tmp} (temporaer) · Quelle: ${SOURCE} (nur gelesen) · graphVersion ${version}\n`);
+  console.log(`Store: ${rig.repoRoot} (temporaer) · Quelle: ${SOURCE} (nur gelesen) · graphVersion ${version}`);
+  // Ohne Stempel keine Zahl (CR-GC-491): Graph-Hash, Policy-Herkunft, Regelversion, Code-Stand.
+  console.log(`Stempel: ${stampLine(rig.provenance)}\n`);
 
   const b = blackboxReport(live);
   console.log('## Struktur');
@@ -330,6 +329,5 @@ try {
   }
 
 } finally {
-  await rig.harness.close();
-  rmSync(rig.tmp, { recursive: true, force: true });
+  await rig.close();
 }

@@ -162,3 +162,8 @@ export { elementToNode } from './kernel/element-node.js';
 // CR-GC-475: Composition Root und Store-Pfad liegen in ihrer Schicht; das Barrel re-exportiert.
 export { KUZU_DIR } from './kernel/workspace.js';
 export { createHarness } from './surface/create-harness.js';
+// CR-GC-491: DER Messaufbau — ein Bootstrap fuer Rig, Spike, Alternativenvergleich und Test.
+// Er komponiert ueber `createHarness`, damit die Repo-Config und der policy-gebaute Descriptor
+// mitreisen; `new GraphCodeHarness(...)` faellt still auf DEFAULT_CONFIG zurueck.
+export { openMeasured, discriminate, stampLine } from './surface/measured.js';
+export type { Measured, Provenance, PolicyProvenance, Discrimination, OpenMeasuredOptions } from './surface/measured.js';
