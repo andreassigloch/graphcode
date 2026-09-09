@@ -9,11 +9,18 @@
  * no jargon, ends with the one plain action) and `se` (Layer 1, maps our token →
  * standard SE concept via the Vocabulary) — plus the Vocabulary legend itself.
  *
- * Anti-drift: this is an ANNOTATION over existing `ruleId`/gateId/panelId/artifactId/
- * vocab-token keys — NOT a new Rule/ElementType/TraceType/TRACE_PATTERN. The locked
- * "`V3_RULES` imported, never forked" constraint is untouched and NO `@sigloch/contracts`
- * version bump is required (CR-GC-227). Promotion of these pairs into contracts,
- * co-located with `V3_RULES`, is a later family-review decision — not this CR.
+ * CR-SM-300: the RULE-keyed pairs no longer live here. They are `RULE_HELP` in
+ * `@sigloch/contracts/se`, co-located with the catalogue they explain, and spread into
+ * `HELP_CONTENT` below — ONE source, no fork. CR-GC-227 kept them here on purpose (speed:
+ * no bump, no family review) and recorded the promotion as a later decision; it has now
+ * been taken, because the split drifted in both directions unnoticed — 11 entries for
+ * deleted rule ids, 8 catalogue rules with no entry, across four releases. Behind a
+ * symlink no version range applies (CR-GC-488 §1a), so nothing forced the two together.
+ *
+ * What stays here is what hangs on GRAPHCODE's surface rather than on the rule catalogue:
+ * phase gates, panels, the three readiness numbers, the artifacts, the vocabulary and
+ * `METRIC_HELP`. All of it is still an ANNOTATION over existing ids — never a new
+ * Rule/ElementType/TraceType/TRACE_PATTERN.
  *
  * `tests/help-content.test.ts` pins coverage against the LIVE registries (rule ids from
  * `SE_DESCRIPTOR`, gate ids from `readiness.ts`, artifact ids from `ARTIFACT_CATALOG`,
@@ -21,6 +28,8 @@
  *
  * @author andreas@siglochconsulting
  */
+
+import { RULE_HELP } from '@sigloch/contracts/se';
 
 /** One authored help item: the two plain-language layers (+ a copy-prompt where one applies). */
 export interface HelpContentEntry {
@@ -49,388 +58,17 @@ export const HELP_PANEL_IDS = ['readiness', 'recommendations', 'artifacts', 'imp
  * (CR-GC-228) merges them from the live sources.
  */
 export const HELP_CONTENT: Record<string, HelpContentEntry> = {
-  // --- Rules (keyed on ruleId; titles/severity come from V3_RULES) -------------------
-  'R-01': {
-    plain:
-      "A feature you've promised has no test proving it's met, so you can't show it works → add or author a test for it.",
-    se: '`REQ` with no incoming `verify` trace (test→requirement coverage, INCOSE V&V).',
-    prompt: 'se:close-violations',
-  },
-  'R-02': {
-    plain:
-      "A function isn't linked to any feature it's meant to build, so it may be dead code → link it to the feature it serves, or delete it.",
-    se: '`FUNC` with no `satisfy` trace to a `REQ` (design→requirement traceability).',
-  },
-  'R-04': {
-    plain: 'A module does too much or is too tangled → open it and split it.',
-    se: '`MOD` with >12 `FUNC`, or 8–12 `FUNC` with >2 flows crossing the module boundary (cohesion/coupling).',
-    prompt: 'se-view:arch',
-  },
-  'R-05': {
-    plain: "A test doesn't check any feature you promised → link it to the feature it tests, or remove it.",
-    se: '`TEST` with no `verify` trace (test→requirement coverage) to a `REQ`.',
-  },
-  'R-08': {
-    plain: 'A link points at something that no longer exists → repair or remove the broken link.',
-    se: 'Trace whose source or target element is missing (dangling reference).',
-  },
-  'R-10': {
-    plain:
-      'A piece of data goes nowhere — nothing produces or consumes it → connect it to a function or a person/outside system.',
-    se: '`FLOW` with no `io` trace to a `FUNC` or `ACTOR`.',
-  },
-  'R-12': {
-    plain:
-      'Two items depend on each other in a loop, so neither can stand alone → remove or redirect one of the two links.',
-    se: 'Direct cycle: A→B and B→A via the same trace type, checked on `compose` / `allocate` / `relation` only. Data (`io`) is exempt — a function that reads and writes the same `FLOW` is normal reuse, not a dependency cycle.',
-  },
-  'R-15': {
-    plain: 'A sequence of steps for a use case is empty → add the functions that make it up.',
-    se: '`FCHAIN` with no `compose` to any `FUNC`.',
-  },
-  'R-16': {
-    plain: "A person or outside system isn't connected to anything → connect it to the data it sends or receives.",
-    se: '`ACTOR` with no `io` trace to a `FLOW`.',
-  },
-  'R-17': {
-    plain: 'The top level of your project is empty — nothing is inside it → add the main use cases, features, or modules.',
-    se: '`SYS` with no `compose` to `UC` / `REQ` / `MOD`.',
-  },
-  'R-18': {
-    plain:
-      "You connected two items in a combination that isn't allowed → use an allowed link, or fix what's at each end.",
-    se: "Trace whose (source-type, target-type) pair isn't an allowed combination in the metamodel of legal links.",
-  },
-  'R-19': {
-    plain:
-      "A test that's meant to run doesn't point to a test file → add the link to the test file, or, if it isn't written yet, mark it not-yet-written.",
-    se: 'Realized `TEST` with no valid `testRefs` `[{file, case?, tool}, …]` (at least one entry); else set `concept:true` (a stub).',
-  },
-  'R-20': {
-    plain:
-      "A function is supposed to be built but doesn't point to its code → add the link to its code; or mark it not-built-yet / from-an-outside-library.",
-    se: 'Realized `FUNC` with no valid `realRef` `{file, symbol}` (graph↔code binding); else `concept:true` / `external:true`.',
-  },
-  'R-21': {
-    plain:
-      "You grouped functions into a chain that passes data along, but nothing tests that hand-off → add an integration test that checks the chain works.",
-    se: 'FUNC↔FUNC connection (`FUNC` ─io→ `FLOW` ─io→ `FUNC`) whose endpoints DO share an `FCHAIN`, but no shared chain carries a verified integration test (`TEST` ─verify→ `REQ` ←satisfy─ `FCHAIN`). Pairs sharing no `FCHAIN` are silent: co-adjacency at a reused `FLOW` is not an asserted interface.',
-  },
-  'R-22': {
-    plain:
-      "A function isn't assigned to any building block, so it has no home in the structure → put it on a module.",
-    se: '`FUNC` with no `allocate` trace to a `MOD` (deployment assignment); every function lives on exactly one module.',
-  },
-  'R-23': {
-    plain:
-      "A building block is empty — no function is assigned to it → put a function on it, or remove the empty block.",
-    se: '`MOD` with no incoming `FUNC` ─allocate→ trace; the module-side complement of R-22 (empty-container signal like R-14/R-16/R-17).',
-  },
-  'RC-01': {
-    plain:
-      "A function points to code that isn't there anymore (file moved or name changed) → repoint it to the current code.",
-    se: 'FUNC `realRef` that does not resolve: file missing on disk or symbol not declared in it (CR-GC-253 conformance over CodeFacts).',
-  },
-  'RC-02': {
-    plain:
-      "A test points to a test file or test name that isn't there anymore → repoint it to the current test.",
-    se: 'A `testRefs` entry that does not resolve: file missing or `case` not declared as an it/test/describe (CR-GC-253). The message names the concrete path — with n entries the node id alone is not actionable.',
-  },
-  'R-26': {
-    plain:
-      "A data format in the model isn't linked to the schema code that defines it → link it to the schema (or mark it concept/outside).",
-    se: 'Realized `SCHEMA` with no valid `realRef` `{file, symbol}` (graph↔Zod binding); else `concept:true` / `external:true` (CR-211/228).',
-  },
-  'R-30': {
-    plain:
-      'This function sits in no chain of effects, so nobody can say which use case it serves — and the checks that would prove its wiring never look at it → add it to the chain of the use case it belongs to.',
-    se: "FUNC belongs to a function chain (CR-GC-366): a `FUNC` needs an incoming `FCHAIN -compose-> FUNC`, directly or inherited from a parent `FUNC` it decomposes from. R-15 demanded the opposite direction — that a chain has functions — and nothing demanded that a function has a chain. That gap is load-bearing: IO-01 (FLOW paths between chain members) and R-21 (integration test per chain) both scope themselves to a chain, so a function outside every chain falls through both nets silently. Severity `warning`, not error: on a real model this fires on the majority of functions, and an error would block every further mutation through the delta gate.",
-  },
-
-  'R-31': {
-    plain:
-      'This function has no input or no output, so it is a dead block in the picture — only an actor is allowed to be an end point → connect it to a flow on the missing side.',
-    se: "FUNC is wired (CR-GC-366): a `FUNC` needs at least one incoming `FLOW -io-> FUNC` and one outgoing `FUNC -io-> FLOW`. Only an `ACTOR` may terminate a chain. R-10 asks the same question from the FLOW side ('does this flow have a producer and a consumer?') and therefore never sees a function with no io edge at all — it does not appear in the FLOW loop. IO-01 presupposes chain membership and misses it too. One finding per FUNC naming the missing side(s), not one per side: otherwise the counter exceeds its own denominator contribution, the mis-measurement documented in CR-SM-242.",
-  },
-
-  'R-29': {
-    plain:
-      'Two acceptances claim the same test file, so a red run cannot be traced to one of them and the gate counts that evidence twice → give the file to the one acceptance it really proves, or split it.',
-    se: "Test file exclusivity (CR-SM-231): every file in `attributes.testRefs` belongs to at most one `TEST`. An acceptance may name n files (1:n) — a file may not name n acceptances. Severity `error`, deliberately sharper than R-19/R-20: a doubly claimed file makes gate numbers wrong, which is a mis-measurement, not a completeness signal. Purely structural — the file need not exist to be claimed twice.",
-  },
-
-  // ---------------------------------------------------------------------------
-  // Use-case quality (UC-*) — CR-GC-312 wired these into the descriptor; they had
-  // been shipped in contracts and evaluated by nobody.
-  // ---------------------------------------------------------------------------
-  'UC-01': {
-    plain:
-      'A scenario says what someone wants to do but never says what the system must provide → write down the requirements it needs.',
-    se: '`UC` with no `compose` trace to any `REQ`. The use case carries no requirement content.',
-    prompt: 'se:author-req',
-  },
-  'UC-02': {
-    plain: 'A scenario has nobody who triggers it → name who or what starts it.',
-    se: '`UC` with no `ACTOR` connected by an `io` trace (directly or via a `FLOW` of its chain).',
-    prompt: 'se:author-uc',
-  },
-  'UC-03': {
-    plain:
-      'A scenario says what should be possible but not how it runs → describe the steps as a chain of functions.',
-    se: '`UC` with no `compose` trace to an `FCHAIN`. No behavioural scenario is declared.',
-    prompt: 'se:author-uc',
-  },
-  'UC-04': {
-    plain:
-      'A scenario has no real description, or still carries a placeholder like TBD → write what the user actually wants to achieve.',
-    se: '`UC` description shorter than 10 characters or containing TBD/TODO/FIXME/placeholder/XXX. Description IS the goal (CR-150).',
-    prompt: 'se:author-uc',
-  },
-  'UC-05': {
-    plain: 'A scenario does not say what must be true once it has finished → add that as a requirement.',
-    se: '`UC` with no `compose`d `REQ` carrying `kinds:["postcondition"]`.',
-  },
-  'UC-06': {
-    plain: 'A scenario does not say what must be true before it can start → add that as a requirement.',
-    se: '`UC` with no `compose`d `REQ` carrying `kinds:["precondition"]`.',
-  },
-
-  // ---------------------------------------------------------------------------
-  // Function-chain quality (FC-*)
-  // ---------------------------------------------------------------------------
-  'FC-02': {
-    plain:
-      'A scenario that is not broken into sub-scenarios has no described sequence of steps → add one, even if the steps are done by hand.',
-    se: 'Leaf `UC` (no `UC -compose-> UC`) with no `FCHAIN`. A chain may consist of EXISTING FUNCs an actor strings together — it costs a node plus compose edges, not code.',
-    prompt: 'se:author-uc',
-  },
-  'FC-03': {
-    plain: 'A step inside a sequence contains further steps, so the sequence has hidden depth → lift them to the same level.',
-    se: '`FUNC` inside an `FCHAIN` that itself `compose`s other `FUNC`s. Chains are flat by construction.',
-  },
-  'FC-04': {
-    plain:
-      'A sequence either has nobody starting it or nothing coming back out → wire both ends to whoever uses it.',
-    se: '`FCHAIN` lacking an entry (`ACTOR -io-> FLOW -io-> FUNC∈chain`) or an exit (`FUNC∈chain -io-> FLOW -io-> ACTOR`). Stricter than FC-01: both directions, at FUNC/FLOW level, no UC-level bypass.',
-  },
-
-  // ---------------------------------------------------------------------------
-  // Schema quality (SC-*)
-  // ---------------------------------------------------------------------------
-  'SC-02': {
-    plain: 'A data format is defined but nothing uses it → connect it to the data it describes, or drop it.',
-    se: '`SCHEMA` not referenced by any `FLOW` via a `relation` trace.',
-  },
-
-  // ---------------------------------------------------------------------------
-  // Change-request quality (CR-R*, MS-*)
-  // ---------------------------------------------------------------------------
-  'CR-R01': {
-    plain: 'A change is recorded but says nothing about what it changes → link it to what it touches.',
-    se: '`CR` with no `relation` traces. It tracks nothing, so it is not traceable evidence.',
-  },
-  'CR-R02': {
-    plain:
-      'A change is marked finished but there is no commit proving it → record the commit, or set it back to open.',
-    se: '`CR` with `status:done` and no `commitRef` attribute. This is the graph-vs-reality check for change history: "done" without evidence.',
-  },
-  'CR-R03': {
-    plain: 'Several open changes touch the same thing, so they will collide → sequence them or merge them.',
-    se: 'One element tracked by more than one `CR` with `status` open/in-progress.',
-  },
-  'MS-03': {
-    plain: 'A change is not assigned to any milestone, so it has no place in the plan → assign it.',
-    se: '`CR` with no `relation` trace to an `MS`.',
-    prompt: 'se-plan',
-  },
-
-  // ---------------------------------------------------------------------------
-  // Architecture / allocation (AO-*, CR-01, RT-01, PH-01, CA-01, IO-01)
-  // ---------------------------------------------------------------------------
-  'CR-01': {
-    plain:
-      'Two parts exchange an unusually large amount of data, which usually means the boundary is in the wrong place → reconsider the cut.',
-    se: 'High crossing `io` FLOW count between two `MOD`s — a coupling metric, advisory.',
-  },
-  'IO-01': {
-    plain:
-      'Two steps in the same sequence have no described data passing between them → add the data one hands to the other.',
-    se: 'A `FUNC` pair inside one `FCHAIN` with no `io` path (`FUNC -io-> FLOW -io-> FUNC`) connecting them.',
-  },
-
-  // ---------------------------------------------------------------------------
-  // FMEA / budgets (FM-*, NFR-01)
-  // ---------------------------------------------------------------------------
-  'FM-01': {
-    plain:
-      'A requirement is marked as a risk but carries no risk ratings → rate how bad, how likely and how detectable it is (1-10 each).',
-    se: 'Risk `REQ` missing `severity` / `occurrence` / `detection` attributes (AIAG-VDA).',
-    prompt: 'se-fmea',
-  },
-  'FM-02': {
-    plain: 'A known risk has nothing planned against it → write the countermeasure as its own requirement.',
-    se: 'Risk `REQ` with no `compose`d mitigation `REQ` (`kinds:["mitigation"]`).',
-    prompt: 'se-fmea',
-  },
-  'FM-03': {
-    plain:
-      'A high risk has no test that actually passed → add a test proving the countermeasure works.',
-    se: 'Risk `REQ` with RPN > 100 and no `TEST` carrying `testResult:"passed"` verifying it.',
-    prompt: 'se-fmea',
-  },
-  'NFR-01': {
-    plain: 'Something measured exceeds the limit that was set for it → fix it or change the limit deliberately.',
-    se: 'Measured value above its declared budget on a `MOD` (physical) or `FUNC`/`FCHAIN` (behavioural).',
-  },
-
-  // ---------------------------------------------------------------------------
-  // View / analysis freshness (VR-01, CL-01, AF-*)
-  // ---------------------------------------------------------------------------
-  'VR-01': {
-    plain: 'A test exists but no result was ever recorded, so nobody knows if it passed → record the outcome.',
-    se: '`TEST` with no `testResult` attribute — assumed pending, never assumed green.',
-  },
-  'CL-01': {
-    plain:
-      'Someone only ever uses the system in one way, which usually means their other situations are missing → describe the scenarios you left out.',
-    se: '`ACTOR` whose `UC`s cover fewer than 2 distinct `operatingMode`s — a ConOps completeness signal.',
-    prompt: 'se-conops',
-  },
-  'AF-01': {
-    plain: 'The operations concept was never stamped as written, so nobody can tell if it is current → run the ConOps step.',
-    se: 'No `analysisFreshness.conops` stamp under `SYS.attributes` (CR-SM-227 presence rule; staleness is a consumer concern).',
-    prompt: 'se-conops',
-  },
-  'AF-02': {
-    plain: 'No trade study is on record, so the choices made were never written down → record the decision.',
-    se: 'No `analysisFreshness.trade` stamp under `SYS.attributes`.',
-    prompt: 'se-trade',
-  },
-  'AF-03': {
-    plain: 'The assumptions behind this system were never reviewed → run the assumption review.',
-    se: 'No `analysisFreshness.assumption-review` stamp under `SYS.attributes`.',
-    prompt: 'se-irr',
-  },
-  'AF-04': {
-    plain: 'No failure analysis is on record → run the FMEA.',
-    se: 'No `analysisFreshness.fmea` stamp under `SYS.attributes`.',
-    prompt: 'se-fmea',
-  },
-  'AF-05': {
-    plain: 'No implementation plan is on record → derive the build order.',
-    se: 'No `analysisFreshness.implplan` stamp under `SYS.attributes`.',
-    prompt: 'se-plan',
-  },
-
-  'RC-03': {
-    plain:
-      "A data format points to schema code that isn't there anymore (file moved or export renamed) → repoint it to the current schema.",
-    se: 'SCHEMA `realRef` that does not resolve: file missing on disk or symbol not a declared export in it (CR-211/228 conformance over CodeFacts).',
-  },
-  'RC-04': {
-    plain:
-      "A data format is defined but the function on that interface never actually checks incoming data against it → validate with it there.",
-    se: 'Bound `SCHEMA` whose symbol is not imported+parsed (`.parse`/`.safeParse`) in any realized `FUNC` io-connected to it (CR-211); warn — the parse may sit in a framework layer.',
-  },
-  'RC-05': {
-    plain:
-      "Code in one building block imports code in another, but the model never says those two are connected → draw the connection in the model, or drop the import.",
-    se: 'File import crossing a `MOD` boundary with no documenting graph structure (no io/FLOW between the modules) — undocumented cross-module dependency (CR-212); warn indicator, not a blocker.',
-  },
-  'RD-01': {
-    plain: 'A smallest-piece feature has nothing built to fulfil it → add what implements it.',
-    se: 'Leaf `REQ` (no `compose`→`REQ` children) with no `satisfy` from a `FUNC`/`FCHAIN`/`MOD`/`SYS`.',
-    prompt: 'se:close-violations',
-  },
-  'RD-02': {
-    plain:
-      "You split a feature into smaller features but you're also building the big one directly → build only the small pieces, not both.",
-    se: 'Parent `REQ` (has `compose`→`REQ` children) carrying a direct `FUNC` `satisfy`; the satisfy belongs on the children.',
-  },
-  'RD-03': {
-    plain:
-      'You split a feature into pieces, but all the pieces are handled by the same one thing — the split may be pointless → consider merging them.',
-    se: 'Parent `REQ` whose children all share one satisfier.',
-  },
-  // --- CR-GC-487: die acht Regeln, die bis hierher KEINEN Eintrag hatten -------------
+  // --- Rules -------------------------------------------------------------------------
   //
-  // Sie fielen durch, weil die Deckungspruefung nur `SE_DESCRIPTOR.rules` (den GATE-Katalog)
-  // durchlief; BW-02, BQ-* und ND-* stehen im Steuerungs-, nicht im Gate-Katalog. BW-02 ist
-  // dabei der bitterste Fall: eine der vier messenden Regeln, die den Chebyshev-Score bilden —
-  // eine Regel, die steuert und sich nicht erklaert. Die Pruefung laeuft jetzt ueber den
-  // vollen Katalog UND in die Gegenrichtung (tests/help-content.test.ts).
-  'RC-06': {
-    plain:
-      'This element points at code in a package your project does not actually install → either add the package, or point at the one that owns the symbol now.',
-    se: 'An `external: true` `realRef` names a package that is in neither `dependencies` nor `devDependencies` of the consumer. Absent dependency data is SILENCE, not a violation — the extractor never looked, and treating that as "declares nothing" would report every external binding at once (CR-SM-262).',
-  },
-  'BW-02': {
-    plain:
-      'This block hands out many different kinds of data at its edge → whoever uses it has to understand all of them, so either bundle them or split the block.',
-    se: 'Whitebox boundary width: distinct `SCHEMA` contracts on `FUNC` `io` `FLOW` `io` `FUNC` paths with one endpoint inside the `compose` subtree and one outside, judged against `metricPolicy.boundaryWidth.warning`. Parnas, information hiding — what a boundary HIDES is what makes it worth having. Rolled up over the subtree because a decomposed `FUNC` carries no `io` edges of its own (CR-SM-283).',
-  },
-  'BQ-01': {
-    plain:
-      'This requirement uses a vague word ("appropriate", "fast", "user-friendly") → two readers will build two different things. Replace it with the number or the condition you mean.',
-    se: 'INCOSE quality: unambiguous. A weasel word in the `REQ` description — the rule names the word it found.',
-    prompt: 'se:author-req',
-  },
-  'BQ-02': {
-    plain:
-      'This requirement has nothing you could measure → nobody can tell whether it is met. Add the number, the limit or the observable condition.',
-    se: 'INCOSE quality: verifiable. No measurable criterion in the `REQ` — the counterpart to R-01, which asks whether a test EXISTS; this one asks whether one COULD exist.',
-    prompt: 'se:author-req',
-  },
-  'BQ-04': {
-    plain:
-      'This requirement says almost the same as another one → decide which is the real one and merge or differentiate them.',
-    se: 'INCOSE quality: necessary. Near-duplicate `REQ` pair by description similarity. NOTE: this rule is currently inert — it was written for pre-computed EMBEDDING similarity, which a pure contracts package cannot produce; a token-based substitute measured 0 findings across the family and 4950 on a templated fixture, both gate-7 outliers (CR-SM-286). Treated as an open grammar item, not a live check.',
-  },
-  'BQ-06': {
-    plain:
-      'This requirement is not written in the agreed form ("The system shall …") → rewrite it that way, so every requirement reads the same.',
-    se: 'INCOSE quality: conforming. The `REQ` description does not follow the "System shall…" pattern.',
-    prompt: 'se:author-req',
-  },
-  'BQ-07': {
-    plain:
-      'This requirement is missing a piece — who acts, on what, or under which condition → complete the sentence.',
-    se: 'INCOSE quality: complete. The `REQ` lacks one of the required parts; the rule lists which.',
-    prompt: 'se:author-req',
-  },
-  'ND-01': {
-    plain:
-      'Two functions look like the same function written twice → merge them, or make clear what each one does differently.',
-    se: 'Near-duplicate `FUNC` above 0.85 similarity (name, description and legal trace partners). Since CR-SM-286 the similarity is computed IN the rule, cached per graph — before that it had to be injected, and without injection the rule returned green, indistinguishable from "no duplicates".',
-  },
-  'ND-02': {
-    plain:
-      'Two data contracts describe the same thing twice → merge them, or say what distinguishes them.',
-    se: 'Near-duplicate `SCHEMA` above 0.85 similarity (name, description, fields and legal trace partners). Partners are filtered through `isValidTrace`: a rule must not reach its verdict via an edge R-18 rejects (CR-SM-286).',
-  },
-  'RD-04': {
-    plain:
-      'One thing has more than 9 parts directly under it → group them, so each level stays readable.',
-    se: 'Decomposition breadth above `metricPolicy.decompositionBreadth.warning` children on one level — `FUNC` `compose` `FUNC`, `SYS`/`MOD` `compose` `MOD`, and the root `FUNC` forest anchored at `SYS` (CR-SM-282). Default 9, the upper end of 7±2 (CR-SM-296). The `FUNC` `allocate` `MOD` leg moved to R-04 in that CR: counting allocated FUNCs is module SIZE, and one question deserves one rule.',
-  },
-  'MT-01': {
-    plain:
-      'This module draws more from others than others draw from it → it will keep changing whenever they do. Measured, not judged: no threshold is set by default.',
-    se: 'Instability I = fan_out / (fan_in + fan_out), counted in DISTINCT CONTRACTS crossing the module boundary — the same `moduleCrossings` definition CR-01, R-04 and BW-02 use (CR-SM-274/276). CR-SM-293 fixed both halves: it used to count every trace touching the module, of which only 34 % was coupling (`allocate` is module SIZE, `satisfy` is specification); and the direction was inverted — the CONSUMER depends, so supplying outward is fan_in (Martin\'s Ca) and drawing inward is fan_out (Ce). `metricPolicy.instability` defaults to `null`: the distribution is bimodal, so no threshold can be read from it. The number stays in every `graph_metrics` module row, next to `uphillDependencies` (CR-SM-301).',
-  },
-  'MT-02': {
-    plain:
-      'The parts inside this module never talk to each other → it is really several modules in one.',
-    se: 'LCOM4: the allocated `FUNC`s fall into that many disconnected groups. Connected means shared DATA: a common outgoing `io` target, or touching the same `FLOW` in either direction. CR-SM-297 dropped `satisfy` from that union — two FUNCs meeting the same requirement can be fully decoupled at runtime, and if they share one, the REQUIREMENT is what needs decomposing. `info` from `metricPolicy.lcom4.info`, `warning` from `.warning` (CR-GC-329).',
-  },
-  'MS-01': {
-    plain: 'A milestone has no work assigned to it → assign the work items that belong to it.',
-    se: '`MS` with no `CR` `relation`.',
-  },
-  'MS-02': {
-    plain: "A milestone waits on another milestone that doesn't exist → fix or remove the dependency.",
-    se: '`MS` `depends-on` relation targeting a missing `MS`.',
-  },
+  // CR-SM-300: die 69 regel-keyed Paare (63 Katalog- + 6 Conformance-Regeln) liegen seit
+  // `@sigloch/contracts` 10.1 NEBEN dem Katalog, den sie erklaeren. Sie standen hier, weil
+  // CR-GC-227 aus Tempo so entschieden hat — und driftete in beide Richtungen unbemerkt:
+  // 11 Eintraege zu geloeschten Regel-IDs, 8 Katalogregeln ganz ohne Eintrag, ueber vier
+  // Releases. Der Test unten war die ganze Zeit rot und hat es niemandem gesagt.
+  //
+  // Hier bleibt, was an GRAPHCODES Oberflaeche haengt und nicht am Regelkatalog: Phasen-Gates,
+  // Panels, die drei Readiness-Zahlen, die Artefakte und `METRIC_HELP`.
+  ...RULE_HELP,
 
   // --- Phase gates (keyed on gate id; owned rules come from readiness.ts) ------------
   SRR: {
