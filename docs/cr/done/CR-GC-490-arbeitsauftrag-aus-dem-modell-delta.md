@@ -1,6 +1,6 @@
 # CR-GC-490 — Der Modell-Zug erzeugt einen Arbeitsauftrag
 
-**Status:** offen · **Angelegt:** 2026-09-09 · **Ring:** 1 (Kongruenz-Gate)
+**Status:** erledigt 2026-09-09 · **Angelegt:** 2026-09-09 · **Ring:** 1 (Kongruenz-Gate)
 **Item:** [ITEM-2026-011](../../../../bok/items/ITEM-2026-011.json)
 **Hängt an:** `CR-GC-489` (das Urteil muss zuerst einen Pfad haben)
 **Grundlage:** `optimierungsring.md` §9.1/§9.2 (2); `contracts/src/se/conformance-rules.ts`
