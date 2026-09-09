@@ -109,12 +109,18 @@ Eine Ursache: **die messende Größe hatte keine Streuung, und nichts hat es ges
 
 | # | Datei | Was |
 |---|---|---|
-| 1 | `rig/measured.mjs` (neu) | `openMeasured`, Stempel, Blindheitsausgang |
-| 2 | `rig/README.md` (neu) | Index der Rigs, Klassenwahl, Regel „ein Bootstrap" |
-| 3 | `rig/moneyflow-struktur/driver.mjs` | auf `openMeasured`, Config mitkopieren |
-| 4 | `rig/minimal-whitebox/measure.mjs` | dito |
-| 5 | `scripts/spike-lexikographisch.mjs` | Korpus-Klasse + Stempel je Eingabegraph |
-| 6 | `tests/rig-measured.test.ts` (neu) | s. AC |
+| 1 | `src/surface/measured.ts` (neu) | `openMeasured`, Herkunftsstempel, `discriminate` |
+| 2 | `src/index.ts` | Export |
+| 3 | `tests/rig-measured.test.ts` (neu) | rot zuerst, s. AC |
+| 4 | `rig/moneyflow-struktur/driver.mjs` | auf `openMeasured`, Config reist mit |
+| 5 | `rig/minimal-whitebox/measure.mjs` | dito |
+| 6 | `rig/README.md` (neu) | Index der Rigs, Klassenwahl, Regel „ein Bootstrap" |
+
+**Warum `src/` und nicht `rig/`:** die Rigs importieren aus `dist/`, die Testbasis aus `src/`.
+Ein Helfer unter `rig/`, der auf `dist/` zeigt, hätte die Tests gegen einen **veralteten Build**
+messen lassen — genau die Fehlmessungsklasse, die dieser CR schließt. Und `CR-GC-492` braucht
+ihn ohnehin aus `src/`. Damit ist es Produktfläche, nicht Rig-Beiwerk: „einen Harness über einen
+fremden Graphen in isoliertem Store öffnen, mit Herkunft" ist eine Fähigkeit, keine Testkrücke.
 
 `rig/greenfield-systemtest/run.mjs` wird **nicht** angefasst — es benutzt `createHarness` bereits
 richtig und ist der Beleg, dass der Weg gangbar ist.
@@ -128,14 +134,22 @@ richtig und ist der Beleg, dass der Weg gangbar ist.
       und steht in **jedem** Ergebnis, nicht nur im Log.
 - [ ] Eine Messung mit vier Kandidaten identischen Profils liefert `blind: true` und **keinen
       Rang**. Regressionsfall aus CR-SM-291 Satz F, namentlich als solcher benannt.
-- [ ] `grep -rn "new GraphCodeHarness" rig/ scripts/` findet **nichts**.
+- [ ] `grep -rn "new GraphCodeHarness"` findet in `moneyflow-struktur/driver.mjs` und
+      `minimal-whitebox/measure.mjs` **nichts** mehr. Die drei uebrigen Fundstellen
+      (`run-armC.mjs`, `run-armC-pull.mjs`, `dummy-slicer/scripts/armB.mjs`) sind DASSELBE
+      Muster und passen nicht mehr ins 6-Dateien-Limit — sie gehen an `CR-GC-493`. Der erste
+      Entwurf dieser AC verlangte einen leeren grep und widersprach damit der eigenen
+      Dateiliste; hier steht der Umfang, der tatsaechlich geschnitten wurde.
 - [ ] Store und `owner.lock` liegen im selben Verzeichnis (CR-GC-218) — mit Test.
-- [ ] `spike-lexikographisch.mjs` gibt je Eingabegraph sha256 + `graphVersion` aus; zwei Läufe
-      auf demselben Stand sind zeichengleich.
+- [ ] `npm test` grün, und `npm run build` erzeugt `dist/surface/measured.js` — die Rigs
+      importieren aus `dist/`, die Tests aus `src/`, beide dieselbe Quelle.
 
 ## 5. Nicht im Scope
 
 - **Die Testbasis** — 103 Stellen, reiner Fan-out: **`CR-GC-492`**.
+- **Der Stempel im `spike-lexikographisch.mjs`** — als siebte Datei über dem harten Limit, und
+  sachlich trennbar (Korpus-Klasse, kein Harness): **`CR-GC-493`**. Bis dahin bleibt die Evidenz
+  für CR-SM-292 unstempelt; das ist benannt, nicht vergessen.
 - Die Korpusgraphen für den Spike wirklich **einfrieren** (Kopie nach `rig/graphs/`). Dieser CR
   macht die Drift nur *sichtbar* (Stempel); das Einfrieren ist eine Datenentscheidung je Graph
   und braucht einen eigenen Vorgang.

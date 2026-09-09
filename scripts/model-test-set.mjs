@@ -100,6 +100,12 @@ export const INCLUDED = [
  * Entscheidung bleibt und nicht zu einer stillen Lücke wird.
  */
 export const EXCLUDED = {
+  'tests/rig-measured.test.ts':
+    'Messaufbau-Test (CR-GC-491). Beruehrt die Regel-/Ontologie-Konstanten nur als ' +
+    'STEMPELFELD: assertiert wird ihre FORM (`/^\\d+\\.\\d+\\.\\d+$/`), nie ein Wert. ' +
+    'Der Graph ist eine synthetische Zwei-Knoten-Fixture, nicht die committete SSOT — ' +
+    'eine Modellaenderung kann ihn nicht rot machen. Was er prueft, ist die Verdrahtung ' +
+    '(Config-Herkunft, Store/Lock, Blindheitsausgang), und die haengt an keinem Modellinhalt.',
   'tests/arch.optimization-dry-run.spike.test.ts':
     'Arch-Optimierungs-Spike (CR-GC-436, abgeschlossen No-Go). Liest die SSOT nur als ' +
     'Startzustand in einen eigenen Temp-Store und assertiert Spike-Messwerte (Kohaesion, ' +
