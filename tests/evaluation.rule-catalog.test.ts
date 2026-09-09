@@ -61,10 +61,17 @@ const NOT_IN_GATE = [
  * Was davon wirklich NICHT AUSGEWERTET wird (CR-GC-442). ND-01/ND-02 sind seit
  * CR-GC-442 aus dieser Liste heraus: der Report-Pfad wertet sie lokal aus (der
  * Gate-Katalog trägt sie weiterhin nicht — die beiden Aussagen sind ab hier
- * getrennt). Übrig bleiben die BQ-Regeln, die nur der Steering-Pfad fährt, und die
- * RC-Regeln, die einen Repo-Checkout brauchen.
+ * getrennt).
+ *
+ * CR-GC-489: die RC-Regeln ebenso, aber BEDINGT — dieser Port hat eine lesbare
+ * Repo-Wurzel, also läuft die Konformanz und wertet sie aus. Vorher standen sie hier
+ * unbedingt drin, und damit behauptete DIESELBE Antwort „RC-04 nicht ausgewertet"
+ * neben drei RC-04-Befunden. Übrig bleiben die BQ-Regeln, die nur der Steering-Pfad
+ * fährt. Was passiert, wenn die Wurzel FEHLT, prüft der Test weiter unten.
  */
-const SKIPPED_RULES = NOT_IN_GATE.filter((id) => !LOCALLY_EVALUATED_RULE_IDS.includes(id));
+const SKIPPED_RULES = NOT_IN_GATE.filter(
+  (id) => !LOCALLY_EVALUATED_RULE_IDS.includes(id) && !id.startsWith('RC-'),
+);
 
 /**
  * Die Kongruenz-Regeln, deren Nicht-Auswertung STRUKTURELL ist und nicht ein Ausfall.
@@ -128,9 +135,12 @@ describe('TEST-rule-catalog-gap: die ungeladenen Regeln werden benannt (CR-GC-42
   it('die Auswertung führt jede contracts-Regel auf, die niemand auswertet', () => {
     const ev = evaluateAll(harness);
 
-    // Nicht ausgewertet = nicht im Gate-Katalog UND nicht lokal nachgeholt (CR-GC-442).
+    // Nicht ausgewertet = nicht im Gate-Katalog UND nicht lokal nachgeholt (CR-GC-442)
+    // UND nicht von der Konformanz gefahren (CR-GC-489 — hier lief sie, die Wurzel ist lesbar).
     expect(ruleGapOf(ev.skipped)).toEqual(
-      unevaluatedRuleIds(harness.getLoadedRuleIds()).filter((id) => !LOCALLY_EVALUATED_RULE_IDS.includes(id)),
+      unevaluatedRuleIds(harness.getLoadedRuleIds()).filter(
+        (id) => !LOCALLY_EVALUATED_RULE_IDS.includes(id) && !CONFORMANCE_RULES.includes(id),
+      ),
     );
     // Der Graph hat wirklich Verstöße — sonst wäre die Aussage am leeren Fall geprüft.
     expect(ev.findings.length).toBeGreaterThan(0);
@@ -194,7 +204,9 @@ describe('TEST-rule-catalog-gap: die ungeladenen Regeln werden benannt (CR-GC-42
       getRepoRoot: () => join(tmp, 'gibt-es-nicht'),
       getLoadedRuleIds: everyRule,
     });
-    expect(degraded.skipped).toEqual(['conformance']);
+    // CR-GC-489: die ausgefallene Konformanz nennt ihre Regeln beim NAMEN statt sich hinter
+    // dem groben Token `'conformance'` zu verstecken — RC-01/02/03 sind `error`.
+    expect(degraded.skipped).toEqual(CONFORMANCE_RULES.map((id) => `${SKIPPED_RULE_PREFIX}${id}`));
   });
 
   it('alle drei Lese-Flächen weisen dieselbe Auslassung aus', async () => {

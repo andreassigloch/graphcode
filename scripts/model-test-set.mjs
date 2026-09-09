@@ -33,6 +33,10 @@ export function isModelRelevant(source) {
 
 /** Die Menge, die `verify:model` fährt. */
 export const INCLUDED = [
+  // CR-GC-489: seedet die echte docs/graph/graphcode.graph.json und prueft an ihr, dass eine
+  // RC-Regel nie zugleich ausgewertet UND ausgelassen ist — eine Modellaenderung kann ihn
+  // sehr wohl rot machen, also gehoert er in die Spur.
+  'tests/readiness-conformance-skip.test.ts',
   'tests/audit.rules-passed.test.ts',
   'tests/auto-export.shutdown-flush.test.ts',
   'tests/auto-export.test.ts',

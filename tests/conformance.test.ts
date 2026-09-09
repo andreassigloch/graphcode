@@ -18,7 +18,7 @@ import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { PHASE_GATE_RULES } from '../src/kernel/measure/readiness.js';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { extractCodeFacts, extractImportEdges, conformanceViolations, toOntologyGraph } from '../src/kernel/conformance.js';
-import { scoreReadinessWithConformance } from '../src/kernel/evaluation.js';
+import { evaluateAll, readinessOf } from '../src/kernel/evaluation.js';
 import { elementToNode } from '../src/kernel/element-node.js';
 import { evaluateAllRules, DEFAULT_METRIC_POLICY } from '@sigloch/contracts/se';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
@@ -141,14 +141,18 @@ describe('TEST-code-conformance: realRef/testRefs resolve as RC readiness rules 
       ),
       edges: g.edges,
     };
-    const report = scoreReadinessWithConformance({
+    // CR-GC-489: derselbe Ausdruck, den die Produktion schreibt (`report.ts`, graph_readiness).
+    // Vorher stand hier `scoreReadinessWithConformance` — ein Wrapper, dessen einziger Aufrufer
+    // dieser Test war, waehrend fuenf Produktionsstellen seinen Rumpf inline schrieben.
+    const port = {
       evaluateRules: () => harness.evaluateRules(),
       getGraph: () => broken,
       getRepoRoot: () => REPO_ROOT,
       // CR-GC-428: die Auswertung weist auch aus, welche Regeln der geladene
       // Katalog NICHT führt — dafür braucht sie ihn.
       getLoadedRuleIds: () => harness.getLoadedRuleIds(),
-    });
+    };
+    const report = readinessOf(evaluateAll(port), broken);
     expect(report.violationsByRule['RC-01']).toBe(1);
     // WHICH gate owns RC-01 is the readiness model's business, not this test's — since
     // CR-GC-312 it is derived (RC-01 inherits the gate of R-20, the presence rule it
