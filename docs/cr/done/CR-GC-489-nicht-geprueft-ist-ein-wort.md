@@ -1,6 +1,6 @@
 # CR-GC-489 — „Nicht geprüft" ist ein einziges Wort
 
-**Status:** offen · **Angelegt:** 2026-09-09 · **Ring:** 1 (Kongruenz-Gate)
+**Status:** erledigt 2026-09-09 · **Angelegt:** 2026-09-09 · **Ring:** 1 (Kongruenz-Gate)
 **Item:** [ITEM-2026-010](../../../../bok/items/ITEM-2026-010.json)
 **Grundlage:** Lesung `src/kernel/evaluation.ts`, `src/projections/report.ts`, 2026-09-09
 **Baut auf:** `CR-SM-305` (RC im Katalog, geschlossen), `CR-GC-495` (Drift-Wächter prüft den Grund)
