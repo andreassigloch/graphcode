@@ -10,7 +10,7 @@
  * Erster Fall ist der ZEUGE (der alte Weg, dokumentiert falsch), die uebrigen pruefen den neuen.
  */
 import { describe, it, expect } from 'vitest';
-import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, writeFileSync, rmSync, statSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
@@ -168,6 +168,52 @@ describe('CR-GC-493: der leere Start ist ein Fall, kein Sonderfall', () => {
     try {
       expect(stampLine(m.provenance)).toContain('graph —');
       expect(stampLine(m.provenance)).toContain('rules ');
+    } finally {
+      await m.close();
+    }
+  });
+});
+
+/**
+ * CR-GC-496: fremde Repo-Wurzel bei Wegwerf-Store.
+ *
+ * `createHarness` leitete den Store-Ort AUS `repoRoot` ab. Damit hingen drei Dinge aneinander,
+ * die getrennt gehoeren: Urteilsquelle (`graphcode.config.jsonc`), Aufloesungsbasis (`realRef`,
+ * `missingRefs`, RC-*) und Store-Ort. Wer die ersten beiden am echten Repo brauchte und den
+ * dritten im Temp, fiel aus `createHarness` heraus — und verlor still die Config-Ladung und den
+ * policy-gebauten Descriptor. Genau das tun `armB.mjs` und `tests/conformance.test.ts`.
+ */
+describe('CR-GC-496: die Wurzel ist echt, der Store ist Wegwerf', () => {
+  const REPO = join(__dirname, '..');
+
+  it('Urteilsquelle und Aufloesungsbasis bleiben am echten Repo, der Store nicht', async () => {
+    const before = statSync(join(REPO, '.graphcode', 'kuzu')).mtimeMs;
+    const m = await openMeasured({
+      graph: join(REPO, 'docs', 'graph', 'graphcode.graph.json'),
+      repoRoot: REPO,
+      systemId: 'graphcode',
+    });
+    try {
+      // Die Wurzel ist echt: von hier kommen Config und realRef-Aufloesung.
+      expect(m.harness.getRepoRoot()).toBe(REPO);
+      expect(m.provenance.policy.source).toBe('file');
+      expect(m.policy.boundaryWidth?.warning).toBe(5); // aus graphcode.config.jsonc
+      // Der Store ist es nicht — und der owner.lock liegt bei ihm (CR-GC-218).
+      expect(m.harness.getStoreDir().startsWith(REPO)).toBe(false);
+      expect(m.harness.getStoreDir()).toBe(join(m.storeRoot, '.graphcode'));
+      expect(m.graph().nodes.length).toBeGreaterThan(100);
+    } finally {
+      await m.close();
+    }
+    // Der LIVE-Store des echten Repos wurde nicht angefasst (REQ-single-kuzu-owner).
+    expect(statSync(join(REPO, '.graphcode', 'kuzu')).mtimeMs).toBe(before);
+  });
+
+  it('ohne repoRoot bleibt alles im Wegwerf-Repo — das ist der Vorgabefall', async () => {
+    const m = await openMeasured({ systemId: 'greenfield' });
+    try {
+      expect(m.harness.getRepoRoot()).toBe(m.storeRoot);
+      expect(m.repoRoot).toBe(m.storeRoot);
     } finally {
       await m.close();
     }

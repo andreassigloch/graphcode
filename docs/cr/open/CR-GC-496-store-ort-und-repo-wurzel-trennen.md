@@ -66,15 +66,33 @@ Ausnahmeliste — oder er verschiebt still die Auflösungsbasis von Testdateien 
 Mechanismus, `storeRoot` ist die Fassade davor — der Sweep in `CR-GC-492` braucht die Fassade,
 die Adapter-Injektions-Tests weiter den Mechanismus.
 
-### Dateien (5)
+### Dateien (6)
 
 | # | Datei | Was |
 |---|---|---|
 | 1 | `src/surface/create-harness.ts` | `opts.storeRoot` |
-| 2 | `src/surface/measured.ts` | `repoRoot` durchreichen |
+| 2 | `src/surface/measured.ts` | `repoRoot` durchreichen, `importGraph` statt Kopie |
 | 3 | `tests/rig-measured.test.ts` | s. AC |
 | 4 | `rig/dummy-slicer/scripts/armB.mjs` | auf `openMeasured` |
-| 5 | `rig/README.md` | die Regel „ein Bootstrap" gilt dann ohne Ausnahme |
+| 5 | `rig/dummy-slicer/model/dummy-slicer.graph.json` | eine illegale Kante — s. §3.1 |
+| 6 | `rig/README.md` | die Regel „ein Bootstrap" gilt ohne Ausnahme |
+
+### 3.1 Zwei Funde, die erst der Lauf zeigte
+
+**(a) `armB.mjs` war nicht lauffähig.** Die Importe zeigten auf `dist/harness.js` und
+`dist/mcp-tools.js` — beides gibt es nach dem dist-Umbau nicht mehr. Das Rig brach beim ersten
+Import ab. `minimal-whitebox/measure.mjs` trug dieselben toten Importe und wurde bei `CR-GC-491`
+mit umgestellt, ohne dass es auffiel. **Zwei von sechs Rigs konnten nicht starten, und keins hat
+es gemeldet:** ein Rig ohne Lauf schweigt, es meldet keinen Fehler.
+
+**(b) Das Fixture verletzte das Meta-Modell.** Nach dem Reparieren der Importe brach der Seed am
+Gate: `FN-slice -satisfy-> UC-structure-doc`. `satisfy` kennt nur `FUNC|FCHAIN|MOD|SYS -> REQ`;
+die Kante zum UC gibt es nicht mehr. Migriert zur legalen Ausdrucksform derselben Aussage —
+`UC-structure-doc -compose-> REQ` für die drei REQs, die `FN-slice` ohnehin `satisfy`-t. Danach
+**`ARM B VERDICT: PASS`**, zum ersten Mal seit dem dist-Umbau.
+
+Beides gehört sachlich nicht zu „Store-Ort trennen". Es steht hier, weil die AC unten sonst
+nicht erfüllbar wäre: **ohne Lauf kein Nachweis.**
 
 ## 4. Akzeptanzkriterien
 
@@ -84,8 +102,10 @@ die Adapter-Injektions-Tests weiter den Mechanismus.
 - [ ] Store und `owner.lock` liegen im **selben** Verzeichnis (CR-GC-218) — mit Test.
 - [ ] Der Live-Store des echten Repos wird nachweislich nicht angefasst: `.graphcode/kuzu` dort
       ist nach dem Lauf unverändert (mtime).
-- [ ] `armB.mjs` liefert **zeichengleiche** Ausgabe wie vorher, `missingRefs` eingeschlossen —
-      der Nachweis, dass die Auflösungsbasis wirklich `RIG` geblieben ist.
+- [ ] `armB.mjs` **läuft** und meldet `PASS`. Ein Zeichenvergleich mit „vorher" ist nicht
+      möglich — es war nicht lauffähig (§3.1a); der Nachweis für die Auflösungsbasis ist
+      stattdessen `missingRefs: ["FN-slice"]`, das nur gegen den **echten** Rig-Quellbaum so
+      ausfällt.
 - [ ] `grep -rn "new GraphCodeHarness" rig/ scripts/` findet **nichts** mehr.
 
 ## 5. Nicht im Scope

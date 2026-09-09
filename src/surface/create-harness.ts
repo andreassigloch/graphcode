@@ -41,10 +41,25 @@ export async function createHarness(
     onUpdateEvent?: (event: import('./emit.js').LiveUpdateEvent) => void;
     /** Store-Lock entzogen (CR-GC-372) — der Aufrufer beendet seine Session. */
     onLockLost?: () => void;
+    /**
+     * Wo der Store liegt — Vorgabe `config.repoRoot` (CR-GC-496).
+     *
+     * `repoRoot` trug bis hierher DREI Bedeutungen in einer: die Urteilsquelle
+     * (`graphcode.config.jsonc`), die Auflösungsbasis (`realRef`/`testRefs` gegen den echten
+     * Quellbaum) und den Ort des Stores. Die ersten beiden zeigen auf ein echtes Repo; der
+     * dritte muss in ein Wegwerf-Verzeichnis zeigen können, wenn der Live-Store des Repos einem
+     * anderen Prozess gehört (`REQ-single-kuzu-owner`, CR-GC-218).
+     *
+     * Wer das brauchte, fiel aus dieser Fabrik heraus in den Konstruktor — und verlor damit
+     * still die Config-Ladung und den policy-gebauten Descriptor (CR-GC-491 §1). Store,
+     * `owner.lock` und Audit-Log ziehen gemeinsam hierher: der Lock bewacht weiterhin den
+     * Store, den er meint.
+     */
+    storeRoot?: string;
   },
 ): Promise<GraphCodeHarness> {
   const cfg = HarnessConfigSchema.parse(config);
-  const kuzuPath = join(cfg.repoRoot, KUZU_DIR);
+  const kuzuPath = join(opts?.storeRoot ?? cfg.repoRoot, KUZU_DIR);
   // CR-GC-329: die Betriebs-Config des Repos — sie hält die Urteilsschwellen der
   // Architektur-Metriken. Fehlt die Datei, gilt der benannte contracts-Startwert
   // (`source: 'default'`); ist sie da und schemawidrig, bricht der Start hier ab,

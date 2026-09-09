@@ -109,17 +109,75 @@
     }
   ],
   "traces": [
-    { "source": "SYS-dummy-slicer", "target": "UC-structure-doc", "type": "compose" },
-    { "source": "FN-slice", "target": "REQ-recall-first", "type": "satisfy" },
-    { "source": "FN-slice", "target": "REQ-determinism", "type": "satisfy" },
-    { "source": "FN-slice", "target": "REQ-provenance", "type": "satisfy" },
-    { "source": "FN-slice", "target": "UC-structure-doc", "type": "satisfy" },
-    { "source": "TEST-recall", "target": "REQ-recall-first", "type": "verify" },
-    { "source": "TEST-determinism", "target": "REQ-determinism", "type": "verify" },
-    { "source": "TEST-provenance", "target": "REQ-provenance", "type": "verify" },
-    { "source": "FLOW-docset", "target": "FN-slice", "type": "io" },
-    { "source": "FLOW-docset", "target": "SCHEMA-slicer-output", "type": "relation" },
-    { "source": "FN-slice", "target": "MOD-slicer", "type": "allocate" },
-    { "source": "MS-slicer-core", "target": "FN-slice", "type": "compose" }
+    {
+      "source": "SYS-dummy-slicer",
+      "target": "UC-structure-doc",
+      "type": "compose"
+    },
+    {
+      "source": "FN-slice",
+      "target": "REQ-recall-first",
+      "type": "satisfy"
+    },
+    {
+      "source": "FN-slice",
+      "target": "REQ-determinism",
+      "type": "satisfy"
+    },
+    {
+      "source": "FN-slice",
+      "target": "REQ-provenance",
+      "type": "satisfy"
+    },
+    {
+      "source": "TEST-recall",
+      "target": "REQ-recall-first",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-determinism",
+      "target": "REQ-determinism",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-provenance",
+      "target": "REQ-provenance",
+      "type": "verify"
+    },
+    {
+      "source": "FLOW-docset",
+      "target": "FN-slice",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-docset",
+      "target": "SCHEMA-slicer-output",
+      "type": "relation"
+    },
+    {
+      "source": "FN-slice",
+      "target": "MOD-slicer",
+      "type": "allocate"
+    },
+    {
+      "source": "MS-slicer-core",
+      "target": "FN-slice",
+      "type": "compose"
+    },
+    {
+      "source": "UC-structure-doc",
+      "target": "REQ-recall-first",
+      "type": "compose"
+    },
+    {
+      "source": "UC-structure-doc",
+      "target": "REQ-determinism",
+      "type": "compose"
+    },
+    {
+      "source": "UC-structure-doc",
+      "target": "REQ-provenance",
+      "type": "compose"
+    }
   ]
 }
