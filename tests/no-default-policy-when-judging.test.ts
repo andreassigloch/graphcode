@@ -29,6 +29,29 @@ const TESTS = join(__dirname);
 const REAL_ROOT_EXPR = String.raw`join\(__dirname, *'\.\.'\)|process\.cwd\(\)`;
 
 /**
+ * Ersetzt die Argumentliste der genannten Aufrufe durch Leerzeichen — Klammern werden gezaehlt,
+ * nicht geraten, damit ein verschachtelter `join(...)` den Block nicht vorzeitig schliesst.
+ * Positionen bleiben erhalten, damit spaetere Regex-Treffer noch dieselbe Stelle meinen.
+ */
+function maskiere(text: string, namen: string[]): string {
+  let out = text;
+  for (const name of namen) {
+    let von = out.indexOf(`${name}(`);
+    while (von !== -1) {
+      let i = von + name.length;
+      let tiefe = 0;
+      for (; i < out.length; i++) {
+        if (out[i] === '(') tiefe++;
+        else if (out[i] === ')' && --tiefe === 0) { i++; break; }
+      }
+      out = out.slice(0, von) + ' '.repeat(i - von) + out.slice(i);
+      von = out.indexOf(`${name}(`, i);
+    }
+  }
+  return out;
+}
+
+/**
  * Zeigt die `repoRoot` der Harness-Config auf das echte Repo?
  *
  * Zwei Wege, beide in `tests/` real vorhanden:
@@ -41,6 +64,11 @@ const REAL_ROOT_EXPR = String.raw`join\(__dirname, *'\.\.'\)|process\.cwd\(\)`;
  * drei Dateien falsch angeschuldigt (CR-GC-492 §6).
  */
 function zeigtAufEchtesRepo(text: string): boolean {
+  // Die Composition Root und `openMeasured` NEHMEN eine echte Wurzel entgegen — das ist ihr
+  // Zweck, nicht der Defekt. Ihre Argumente werden ausgeblendet, sonst meldet der Waechter
+  // genau die Korrektur, die er verlangt (aufgefallen in CR-GC-497).
+  text = maskiere(text, ['openMeasured', 'createHarness']);
+
   // Konstanten, die an eine echte Wurzel gebunden sind — eine Ebene Aliasing, mehr nicht.
   const alias = [...text.matchAll(new RegExp(String.raw`const (\w+) = (?:${REAL_ROOT_EXPR})`, 'g'))]
     .map((m) => m[1]);
@@ -79,11 +107,7 @@ const ERLAUBT: Record<string, string> = {
  * damit „bewusste Ausnahme" und „noch offen" nicht dasselbe Feld teilen: sonst ist in vier
  * Wochen nicht mehr unterscheidbar, was entschieden und was liegengeblieben ist.
  */
-const OFFEN: Record<string, string> = {
-  // Zeile 98: `repoRoot: join(__dirname, '..')` mit Readiness-Urteil — entstanden in CR-GC-489,
-  // also in dem CR, der diese Klasse beheben sollte. Der einzige echte Rest.
-  'readiness-conformance-skip.test.ts': 'CR-GC-497',
-};
+const OFFEN: Record<string, string> = {};
 
 describe('CR-GC-492: kein Urteil ueber ein echtes Repo mit Startwerten', () => {
   it('kein Test baut von Hand und urteilt zugleich ueber die echte Repo-Wurzel', () => {
@@ -116,6 +140,9 @@ describe('CR-GC-492: kein Urteil ueber ein echtes Repo mit Startwerten', () => {
       ),
     ).toBe(true);
 
+    // `openMeasured({ repoRoot })` IST die Korrektur, kein Befund.
+    expect(zeigtAufEchtesRepo("await openMeasured({ repoRoot: join(__dirname, '..'), systemId: 'x' });")).toBe(false);
+
     // Dateizugriff auf das echte Repo ist KEIN Urteil auf echter Wurzel.
     expect(zeigtAufEchtesRepo("const R = join(__dirname, '..');\nreadFileSync(join(R, 'docs/graph/x.json'));")).toBe(false);
     expect(
@@ -124,10 +151,10 @@ describe('CR-GC-492: kein Urteil ueber ein echtes Repo mit Startwerten', () => {
       ),
     ).toBe(false);
 
-    // Und er trifft den einen echten Rest wirklich — sonst waere OFFEN eine leere Behauptung.
-    const rest = Object.keys(OFFEN);
-    expect(rest.length).toBeGreaterThan(0);
-    for (const name of rest) {
+    // Und was in OFFEN steht, wird auch wirklich noch getroffen — sonst waere die Restliste
+    // eine Behauptung. Leer ist der ZIELZUSTAND (seit CR-GC-497 erreicht), kein Fehler: den
+    // Nachweis, dass der Melder ueberhaupt meldet, tragen die fuenf Faelle darueber.
+    for (const name of Object.keys(OFFEN)) {
       expect(zeigtAufEchtesRepo(readFileSync(join(TESTS, name), 'utf8')), name).toBe(true);
     }
   });

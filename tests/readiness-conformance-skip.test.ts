@@ -18,6 +18,7 @@ import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { getRuleDefsForProfile } from '@sigloch/contracts/se';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
+import { openMeasured, type Measured } from '../src/surface/measured.js';
 import { evaluateAll, SKIPPED_RULE_PREFIX } from '../src/kernel/evaluation.js';
 
 const RC_IDS = getRuleDefsForProfile('conformance').map((r) => r.id);
@@ -88,25 +89,31 @@ describe('CR-GC-489: das Ausfall-Signal der Konformanz ist regelfein', () => {
  * „nie ausgefuehrt" an der Oberflaeche identisch aus.
  */
 describe('CR-GC-489: ausgewertet heisst nicht ausgelassen', () => {
-  let tmp: string;
+  let measured: Measured;
   let harness: GraphCodeHarness;
 
   beforeAll(async () => {
-    tmp = mkdtempSync(join(tmpdir(), 'skip-covered-'));
-    const storage = new KuzuAdapter({ ontology: SE_DESCRIPTOR, path: join(tmp, 'kuzu') });
-    harness = new GraphCodeHarness(
-      { repoRoot: join(__dirname, '..'), scope: { workspaceId: 'w', systemId: 'graphcode' }, consumerType: 'system', preCommitTimeout: 5000 },
-      storage,
-      undefined,
-      { lockDir: tmp },
-    );
-    await harness.initialize();
-    await harness.seedFromJson('docs/graph/graphcode.graph.json');
-  });
+    // CR-GC-497: die Wurzel ist das ECHTE Repo (CodeFacts, `graphcode.config.jsonc`), der
+    // Store ein Wegwerf-Verzeichnis. Der Handaufbau hier bekam still `DEFAULT_CONFIG` —
+    // heute zeichengleich, ab CR-SM-303 nicht mehr. Der Block oben bleibt Handaufbau:
+    // dort IST die fehlende Wurzel der Gegenstand.
+    measured = await openMeasured({
+      repoRoot: join(__dirname, '..'),
+      graph: join(__dirname, '..', 'docs/graph/graphcode.graph.json'),
+      systemId: 'graphcode',
+      workspaceId: 'w',
+    });
+    harness = measured.harness as GraphCodeHarness;
+  }, 120_000);
 
   afterAll(async () => {
-    await harness.close();
-    rmSync(tmp, { recursive: true, force: true });
+    await measured.close();
+  });
+
+  it('CR-GC-497: geurteilt wird mit der Config des Repos, nicht mit Startwerten', () => {
+    // Ohne diesen Nachweis prueft der Block gegen Startwerte statt gegen die Schwellen,
+    // mit denen die Produktion urteilt — gruen, und ueber etwas anderes.
+    expect(measured.provenance.policy.source).toBe('file');
   });
 
   it('mit Repo-Wurzel wird die Konformanz erhoben', () => {
