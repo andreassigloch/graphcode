@@ -54,7 +54,8 @@
 import { execFileSync } from 'node:child_process';
 import { readFileSync, existsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
-import { join } from 'node:path';
+import { join, dirname, basename } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { evaluateAllRules, DEFAULT_METRIC_POLICY, toEvaluableGraph, ALL_RULE_DEFS, RULES_VERSION } from '@sigloch/contracts/se';
 import { metrics, METRIC_DIMENSIONS } from '@sigloch/se-engine';
 
@@ -117,17 +118,47 @@ const atRef = (ref) => lift(JSON.parse(execFileSync('git', ['show', `${ref}:docs
  * (Chebyshev statt R6) nicht reproduzierbar: zwei Laeufe auf verschiedenen Staenden lieferten
  * zwei Zahlen ohne Erklaerung.
  *
- * Der Stempel macht die Drift SICHTBAR. Das Einfrieren der Graphen nach `rig/graphs/` bleibt
- * ausdruecklich draussen — das ist eine Datenentscheidung je Graph, kein Nachzug.
+ * CR-GC-498 — die Graphen sind EINGEFROREN (`rig/graphs/`, Heute-Stand 2026-09-09).
+ *
+ * Der Stempel machte die Drift sichtbar; er verhinderte sie nicht. Jetzt liest der Spike aus
+ * `rig/graphs/` und prueft die Pruefsumme gegen KORPUS: weicht eine Datei ab, BRICHT er ab.
+ * Ohne diesen Abbruch waere ein eingefrorener Korpus nur einer, der langsamer driftet — eine
+ * Handaenderung ergaebe wieder still eine andere Zahl. Die Erwartung steht hier statt in einem
+ * zweiten Manifest-File: neben dem Code, der sie liest.
  */
+const KORPUS_DIR = join(dirname(fileURLToPath(import.meta.url)), '..', 'rig', 'graphs');
+
+/** Datei -> erwartete `sha256/12`. Quell-Commits und Umfang: `rig/graphs/README.md`. */
+const KORPUS = {
+  'bok.graph.json': '03fdd3eae9ad',
+  'graph-view-edit.graph.json': 'a97af935f5b3',
+  'graphcode.graph.json': 'bc639cbc90c4',
+  'moneyflow.graph.json': 'e1d8a6cf3944',
+};
+
+/** Ein Korpusgraph, mit Pruefung. `name` ist der Dateiname in `rig/graphs/`. */
+const korpus = (name) => atFile(join(KORPUS_DIR, name));
+
 const STEMPEL = [];
 const atFile = (p) => {
   const raw = readFileSync(p, 'utf8');
   const parsed = JSON.parse(raw);
-  if (!STEMPEL.some((e) => e.pfad === p)) {
+  const sha = createHash('sha256').update(raw).digest('hex').slice(0, 12);
+  const erwartet = KORPUS[basename(p)];
+  if (erwartet !== undefined && sha !== erwartet && dirname(p) === KORPUS_DIR) {
+    throw new Error(
+      `Korpus veraendert: ${basename(p)} hat sha ${sha}, erwartet ${erwartet}.\n` +
+      `Ein Benchmark auf veraenderter Eingabe misst nichts. Entweder die Datei wiederherstellen ` +
+      `(Quell-Commit in rig/graphs/README.md) oder KORPUS bewusst neu verankern — dann gehoert ` +
+      `die neue Zahl in den CR, der sie verankert.`,
+    );
+  }
+  // repo-relativ: der Stempel soll in jedem Checkout dieselbe Zeile ergeben
+  const pfad = dirname(p) === KORPUS_DIR ? `rig/graphs/${basename(p)}` : p;
+  if (!STEMPEL.some((e) => e.pfad === pfad)) {
     STEMPEL.push({
-      pfad: p,
-      sha: createHash('sha256').update(raw).digest('hex').slice(0, 12),
+      pfad,
+      sha,
       version: parsed.graphVersion ?? '—',
       umfang: `${parsed.elements?.length ?? 0}/${parsed.traces?.length ?? 0}`,
     });
@@ -154,8 +185,9 @@ function stempelBlock() {
     '|---|---|--:|--:|',
     ...STEMPEL.map((e) => `| \`${e.pfad}\` | \`${e.sha}\` | ${e.version} | ${e.umfang} |`),
     '',
-    '> Die Eingaben sind **lebende** Exporte, keine eingefrorenen Snapshots. Zwei Laeufe mit',
-    '> verschiedenen sha256 sind nicht vergleichbar — das ist hier sichtbar statt stillschweigend.',
+    '> Die Korpusgraphen sind **eingefroren** (`rig/graphs/`, CR-GC-498). Weicht eine Pruefsumme',
+    '> von der Erwartung ab, bricht der Lauf ab — ein Benchmark auf veraenderter Eingabe misst',
+    '> nichts. Der Quell-Commit je Graph steht in `rig/graphs/README.md`.',
     '',
   ];
   return zeilen.join('\n');
@@ -256,15 +288,15 @@ if (!RIG) console.log('\n> **P5/P6 FEHLT** — ohne `--rig <dir>` nicht gemessen
 // 2. Absolut
 // ---------------------------------------------------------------------------
 const ABS = [
-  ['bok', '/Users/andreas/Developer/dev/bok/docs/graph/bok.graph.json'],
-  ['graph-view-edit', '/Users/andreas/Developer/dev/graph-view-edit/docs/graph/graph-view-edit.graph.json'],
-  ['graphcode', 'docs/graph/graphcode.graph.json'],
-  ['moneyflow', '/Users/andreas/Developer/dev/moneyflow/docs/graph/moneyflow.graph.json'],
+  ['bok', 'bok.graph.json'],
+  ['graph-view-edit', 'graph-view-edit.graph.json'],
+  ['graphcode', 'graphcode.graph.json'],
+  ['moneyflow', 'moneyflow.graph.json'],
 ];
 const URTEIL = ABS.map(([n]) => n);   // die Reihenfolge nach Urteil, bester zuerst
 
 console.log('\n## 2. Absolut — Urteil: bok > graph-view-edit > graphcode > moneyflow\n');
-const absProfile = ABS.map(([n, p]) => [n, profil(atFile(p)), r6dot(r6(atFile(p)))]);
+const absProfile = ABS.map(([n, f]) => [n, profil(korpus(f)), r6dot(r6(korpus(f)))]);
 console.log('| Graph | ' + STUFEN.map(([r]) => r).join(' | ') + ' (Sigma / max) | ℝ⁶ w·m |');
 console.log('|---|' + STUFEN.map(() => '---:').join('|') + '|---:|');
 for (const [n, p, w] of absProfile) console.log(`| ${n} | ${p.masse.map((x, i) => `${fmt(x)} / ${fmt(p['masse-max'][i])}`).join(' | ')} | ${w.toFixed(3)} |`);
@@ -284,8 +316,7 @@ console.log(`| _ℝ⁶ w·m (zum Vergleich)_ | ${r6sorted.join(' > ')} | ${JSON.
 // ---------------------------------------------------------------------------
 // 3. Die vier Degenerate aus bok — jedes MUSS unter bok landen
 // ---------------------------------------------------------------------------
-const bokRaw = JSON.parse(readFileSync('/Users/andreas/Developer/dev/bok/docs/graph/bok.graph.json', 'utf8'));
-const bok = lift(bokRaw);
+const bok = korpus('bok.graph.json');
 const clone = (g) => ({ elements: g.elements.map((e) => ({ ...e })), traces: g.traces.map((x) => ({ ...x })) });
 const tm = (g) => new Map(g.elements.map((e) => [e.id, e.type]));
 const nest = (bt) => (x) => (x.type === 'compose' && ((bt.get(x.source) === 'FUNC' && bt.get(x.target) === 'FUNC') || (bt.get(x.source) === 'MOD' && bt.get(x.target) === 'MOD'))) || x.type === 'allocate';
@@ -507,7 +538,7 @@ function satzLaufen(name, basis, kandidaten, mussVor) {
 }
 
 console.log('\n## 6. CR-SM-291 — unabhaengiger Kandidatensatz (Antworten vorab in CR-SM-291, Commit 207e716)\n');
-const gcode = atFile('docs/graph/graphcode.graph.json');
+const gcode = korpus('graphcode.graph.json');
 const sysOf = (g) => g.elements.find((e) => e.type === 'SYS')?.id ?? null;
 const kinderVon = (g, parent, typ) => {
   const t = new Map(g.elements.map((e) => [e.id, e.type]));
@@ -559,7 +590,7 @@ if (RIG && existsSync(join(RIG, '01-struktur.json'))) {
 }
 
 // --- Satz H: bok, Gradient innerhalb des Budgets ----------------------------
-const bokG = atFile('/Users/andreas/Developer/dev/bok/docs/graph/bok.graph.json');
+const bokG = korpus('bok.graph.json');
 const bokBlock = bokG.elements.find((e) => e.type === 'FUNC' && kinderVon(bokG, e.id, 'FUNC').length > 0)?.id ?? null;
 const urteilH = satzLaufen(
   `Satz H — bok (alle fuenf Stufen bei 0; Zielblock ${bokBlock})`,

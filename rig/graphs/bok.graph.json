@@ -1,0 +1,1677 @@
+{
+  "elements": [
+    {
+      "id": "ACTOR-aise-apps",
+      "type": "ACTOR",
+      "name": "AiSE-App-Familie",
+      "description": "Die ueberwachten Repos/Apps (graphcode, sigloch-modules, gve, sirail, ...)."
+    },
+    {
+      "id": "ACTOR-netz-quellen",
+      "type": "ACTOR",
+      "name": "Netz-Quellen",
+      "description": "arXiv, HN, GitHub Trending — externe Research-Feeds."
+    },
+    {
+      "id": "ACTOR-operator",
+      "type": "ACTOR",
+      "name": "Operator",
+      "description": "Solo-Betreiber (CEO): entscheidet, priorisiert, gibt frei."
+    },
+    {
+      "id": "FCHAIN-familien-scan",
+      "type": "FCHAIN",
+      "name": "Familien-Scan",
+      "description": "Doctor/Logs -> Befund -> Item."
+    },
+    {
+      "id": "FCHAIN-idee-zu-mvp",
+      "type": "FCHAIN",
+      "name": "Idee-zu-MVP-Strecke",
+      "description": "Item -> Spike/Spec -> CR-Schnitt -> Lane -> Review."
+    },
+    {
+      "id": "FCHAIN-learn-loop",
+      "type": "FCHAIN",
+      "name": "Learn-Loop",
+      "description": "Trajektorie/Verdict -> Delta -> Keeper-Entscheid."
+    },
+    {
+      "id": "FCHAIN-radar-lauf",
+      "type": "FCHAIN",
+      "name": "Radar-Lauf",
+      "description": "Woechentlicher Feed-Scan bis zum abgelegten Item."
+    },
+    {
+      "id": "FLOW-abfrage",
+      "type": "FLOW",
+      "name": "Abfrage",
+      "description": "Die Abfrage, die der Radar zyklisch an die Netz-Quellen stellt."
+    },
+    {
+      "id": "FLOW-app-telemetrie",
+      "type": "FLOW",
+      "name": "App-Telemetrie",
+      "description": "Doctor-Befunde, Readiness und Logs der App-Familie."
+    },
+    {
+      "id": "FLOW-auftrag",
+      "type": "FLOW",
+      "name": "Auftrag",
+      "description": "Ein freigegebenes Item, das die Liste an die Fabrik gibt."
+    },
+    {
+      "id": "FLOW-bok-standard",
+      "type": "FLOW",
+      "name": "Standardmodul",
+      "description": "Ein aufgenommener Baustein aus dem Baukasten, der CR-Schnitt und Ausfuehrung steuert."
+    },
+    {
+      "id": "FLOW-cr-set",
+      "type": "FLOW",
+      "name": "CR-Set",
+      "description": "Geschnittene CRs mit Ziel-Repo, Dateiliste und depends-on-Reihenfolge."
+    },
+    {
+      "id": "FLOW-delta-kandidat",
+      "type": "FLOW",
+      "name": "Delta-Kandidat",
+      "description": "Delta-Item aus dem Puffer, das der Keeper entscheidet."
+    },
+    {
+      "id": "FLOW-eintrag",
+      "type": "FLOW",
+      "name": "Eintrag",
+      "description": "Alles, was in die Liste geht — Fund, Abnahme-Ergebnis, Familienbefund, Delta, Kurator-Entscheid. Die Herkunft ist ein Feld, kein eigener Kanal."
+    },
+    {
+      "id": "FLOW-entscheidung",
+      "type": "FLOW",
+      "name": "Entscheidung",
+      "description": "Was der Mensch in der Liste entschieden hat — seine einzige Eingabe ins System."
+    },
+    {
+      "id": "FLOW-entscheidungsliste",
+      "type": "FLOW",
+      "name": "Entscheidungsliste",
+      "description": "Der einzige Postausgang an den Operator: alles, was seine Entscheidung braucht, in einer Liste."
+    },
+    {
+      "id": "FLOW-feed-roh",
+      "type": "FLOW",
+      "name": "Roh-Feed",
+      "description": "Ungefilterte Eintraege der Netz-Quellen auf dem Weg in den Radar."
+    },
+    {
+      "id": "FLOW-fund",
+      "type": "FLOW",
+      "name": "Fund",
+      "description": "Ein Fund auf dem Weg zur Impact-Beurteilung: entweder vom Radar gegen den Suchauftrag gescort oder vom Operator selbst eingebracht. In beiden Faellen noch unbeurteilt gegen den Bestand."
+    },
+    {
+      "id": "FLOW-initial-spec",
+      "type": "FLOW",
+      "name": "Initial-Spec",
+      "description": "UC plus Top-Level-FUNCs mit Verification aus dem Spike."
+    },
+    {
+      "id": "FLOW-lane-ergebnis",
+      "type": "FLOW",
+      "name": "Lane-Ergebnis",
+      "description": "Ergebnis eines CR-Laufs in der Worktree-Lane inklusive Gate-Verdict."
+    },
+    {
+      "id": "FLOW-suchauftrag",
+      "type": "FLOW",
+      "name": "Suchauftrag",
+      "description": "Wonach der Radar sucht und was als relevant zaehlt — vom Betreiber gesetzt."
+    },
+    {
+      "id": "FLOW-trajektorie",
+      "type": "FLOW",
+      "name": "Trajektorie",
+      "description": "Trajektorien und Gate-Verdicts der Familie als Lernquelle."
+    },
+    {
+      "id": "FUNC-abnahme",
+      "type": "FUNC",
+      "name": "Lane-Abnahme",
+      "description": "Prueft das Ergebnis eines CR-Laufs auf einen ausfuehrbaren Nachweis; ohne Nachweis entsteht ein Befund-Item.",
+      "concept": true
+    },
+    {
+      "id": "FUNC-dispatch-do",
+      "type": "FUNC",
+      "name": "Dispatch & Do",
+      "description": "Fuehrt CRs in Worktree-Lanes aus; alle Graph-Writes durch das Apply-Gate (BOK-CR-031).",
+      "concept": true,
+      "realRef": {
+        "file": "scripts/aise/lib/dispatch.mjs",
+        "symbol": "dispatchGo",
+        "lang": "js"
+      }
+    },
+    {
+      "id": "FUNC-disposition",
+      "type": "FUNC",
+      "name": "Disposition",
+      "description": "Nimmt Ideen, Befunde und Deltas als Items auf, entscheidet Neubau, Optimierung oder Standard und priorisiert die Freigabe.",
+      "concept": true,
+      "realRef": {
+        "file": "scripts/aise/lib/items.mjs",
+        "symbol": "createItem",
+        "lang": "js"
+      }
+    },
+    {
+      "id": "FUNC-fabrik",
+      "type": "FUNC",
+      "name": "Fabrik",
+      "description": "Blackbox der Wertschoepfung: aus einem freigegebenen Item wird ueber Spike, Spec, CR-Schnitt und Lane-Ausfuehrung ein Lauf-Ergebnis.",
+      "concept": true
+    },
+    {
+      "id": "FUNC-familien-supervision",
+      "type": "FUNC",
+      "name": "Familien-Supervision",
+      "description": "Beobachtet die App-Familie und beurteilt jeden Fund gegen den Bestand: welche Apps und Bausteine er beruehrt und was er wert ist.",
+      "concept": true,
+      "realRef": {
+        "file": "scripts/aise/lib/doctor.mjs",
+        "symbol": "runDoctor",
+        "lang": "js"
+      }
+    },
+    {
+      "id": "FUNC-feasibility-spike",
+      "type": "FUNC",
+      "name": "Feasibility & Spike",
+      "description": "Prueft Items gegen Bestehendes, faehrt Spikes, erzeugt Initial-Spec (UC + Top-Level-FUNCs) mit Verification.",
+      "concept": true
+    },
+    {
+      "id": "FUNC-keeper-bok",
+      "type": "FUNC",
+      "name": "Baukasten-Kurator",
+      "description": "Entscheidet die Aufnahme in den Baukasten: zwei reale Konsumenten und ein ausfuehrbarer Check, sonst nicht.",
+      "concept": true
+    },
+    {
+      "id": "FUNC-learn-distill",
+      "type": "FUNC",
+      "name": "Destillation",
+      "description": "Destilliert aus Trajektorien und Gate-Verdicts, was die Fabrik beim naechsten Mal anders macht — Bausteine wie Verfahrensregeln.",
+      "concept": true
+    },
+    {
+      "id": "FUNC-leitstand",
+      "type": "FUNC",
+      "name": "Leitstand",
+      "description": "Blackbox der Entscheidung: nimmt jeden Eintrag auf, entscheidet Neubau, Optimierung oder Aufnahme in den Baukasten, und beauftragt.",
+      "concept": true
+    },
+    {
+      "id": "FUNC-plan-schnitt",
+      "type": "FUNC",
+      "name": "Plan & CR-Schnitt",
+      "description": "Schneidet Items in CR-Sets (max. 6 Dateien) und routet sie auf Ziel-Repos.",
+      "concept": true,
+      "realRef": {
+        "file": "scripts/aise/lib/dispatch.mjs",
+        "symbol": "dispatchPrepare",
+        "lang": "js"
+      }
+    },
+    {
+      "id": "FUNC-research-radar",
+      "type": "FUNC",
+      "name": "Research-Radar",
+      "description": "Laeuft durchgehend, beobachtet neue Technologien und Verfahren im Netz und bewertet sie gegen den Suchauftrag.",
+      "concept": true
+    },
+    {
+      "id": "FUNC-supervision",
+      "type": "FUNC",
+      "name": "Supervision",
+      "description": "Blackbox der Beurteilung: kennt den Bestand — die App-Familie und die Fabrik selbst — und beurteilt daran, was von aussen wie von innen ankommt.",
+      "concept": true
+    },
+    {
+      "id": "MOD-fabrik",
+      "type": "MOD",
+      "name": "Fabrik",
+      "description": "Die Wertschoepfung: Spike und Spec, CR-Schnitt, Lane-Ausfuehrung, Abnahme."
+    },
+    {
+      "id": "MOD-leitstand",
+      "type": "MOD",
+      "name": "Leitstand",
+      "description": "Der Hub: nimmt jeden Zufluss als Item auf, triagiert nach Neubau, Optimierung oder Standard und priorisiert die Freigabe."
+    },
+    {
+      "id": "MOD-radar",
+      "type": "MOD",
+      "name": "Radar",
+      "description": "Zufluss von aussen: fragt die Netz-Quellen ab und scort Befunde gegen die Roadmap."
+    },
+    {
+      "id": "MOD-supervision",
+      "type": "MOD",
+      "name": "Supervision",
+      "description": "Projektuebergreifende Beobachtung der App-Familie."
+    },
+    {
+      "id": "REQ-agent-ohne-publish",
+      "type": "REQ",
+      "name": "Agent ohne Veroeffentlichungsrecht",
+      "description": "Ein headless gestarteter Agent handelt unter der Identitaet des Betreibers, erreicht aber die Registry nicht: der irreversible Veroeffentlichungsschritt bleibt dem Menschen vorbehalten und ist gegen laufende Lanes gesperrt.",
+      "kinds": [
+        "non-functional"
+      ]
+    },
+    {
+      "id": "REQ-anti-bloat",
+      "type": "REQ",
+      "name": "Anti-Bloat-Regel",
+      "description": "Ein BoK-Standard existiert nur mit mindestens zwei realen Konsumenten und einem ausfuehrbaren Check.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-befunde-persistent",
+      "type": "REQ",
+      "name": "Persistente Befunde",
+      "description": "Supervision-Befunde werden als Items persistiert und verfallen nicht mit der Terminal-Session.",
+      "kinds": [
+        "postcondition"
+      ]
+    },
+    {
+      "id": "REQ-config-trennung",
+      "type": "REQ",
+      "name": "Konfiguration getrennt von Maschinenzustand",
+      "description": "Geteilte Konfiguration steht versioniert im Repo (Familien-Datei mit Repos, CR-Praefixen, Port-Basis); maschinen-lokaler Zustand steht ausserhalb des Repos und wird nie eingecheckt. Eine Konfiguration, die auf einen anderen Rechner wandert und dort einen Prozess behauptet, ist ein Fehler.",
+      "kinds": [
+        "non-functional"
+      ]
+    },
+    {
+      "id": "REQ-cr-schnitt",
+      "type": "REQ",
+      "name": "CR-Schnitt-Regel",
+      "description": "Jedes dispatchte Item ist in CRs von maximal 6 Dateien geschnitten, mit io-Integrationstest je CR; die Reihenfolge folgt dem depends-on-DAG.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-delta-als-item",
+      "type": "REQ",
+      "name": "Deltas nur ueber Keeper",
+      "description": "Nach einem Learn-Lauf liegt jedes Delta als Item im Scratch-Puffer und erreicht Standards nur ueber den Keeper-Entscheid, nie direkt.",
+      "kinds": [
+        "postcondition"
+      ]
+    },
+    {
+      "id": "REQ-delta-evidenz",
+      "type": "REQ",
+      "name": "Evidenzpflicht fuer Deltas",
+      "description": "Ein Playbook-Delta wird nur aus mindestens einer realen Trajektorie oder einem Gate-Verdict destilliert; jedes Delta referenziert seine Quelle.",
+      "kinds": [
+        "precondition"
+      ]
+    },
+    {
+      "id": "REQ-e2e-idee-mvp",
+      "type": "REQ",
+      "name": "Durchstich Idee-zu-MVP",
+      "description": "Ein freigegebener Auftrag laeuft ohne manuellen Zwischenschritt von Spike und Spec ueber den CR-Schnitt und die Lane bis zur Abnahme; das Ergebnis der Abnahme kehrt als Eintrag in den Leitstand zurueck.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-e2e-learn",
+      "type": "REQ",
+      "name": "Durchstich Learn-Loop",
+      "description": "Ein Learn-Lauf fuehrt von der Trajektorie ueber die Destillation bis zum Delta-Kandidaten beim Kurator; ohne Kurator-Entscheid aendert sich kein Baustein.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-e2e-radar",
+      "type": "REQ",
+      "name": "Durchstich Radar-Lauf",
+      "description": "Ein Radar-Lauf fuehrt ohne manuellen Zwischenschritt von der Abfrage der Netz-Quellen ueber die Beurteilung gegen den Bestand bis zum Eintrag in der Entscheidungsliste.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-e2e-scan",
+      "type": "REQ",
+      "name": "Durchstich Familien-Scan",
+      "description": "Ein Familien-Scan fuehrt ohne manuellen Zwischenschritt von der Telemetrie der Apps ueber die Beurteilung bis zum persistierten Eintrag im Leitstand.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-ein-irreversibler-schritt",
+      "type": "REQ",
+      "name": "Ein irreversibler Schritt",
+      "description": "Genau ein Schritt der Auslieferung ist unumkehrbar. Alles davor — Bauen, Testen, Versionieren, Tarball-Pruefung — ist beliebig wiederholbar und kostet bei Abbruch nichts.",
+      "kinds": [
+        "non-functional"
+      ]
+    },
+    {
+      "id": "REQ-ein-kanal",
+      "type": "REQ",
+      "name": "Ein Zufluss, ein Postausgang",
+      "description": "Jeder Eintrag erreicht die Disposition ueber genau einen Zufluss, und alles, was der Operator entscheiden muss, erreicht ihn ueber genau einen Postausgang. Ein zweiter Kanal zum Menschen oder an der Disposition vorbei ist ein Fehler.",
+      "kinds": [
+        "non-functional"
+      ]
+    },
+    {
+      "id": "REQ-fund-beurteilung",
+      "type": "REQ",
+      "name": "Beurteilung vor Aufnahme",
+      "description": "Ein Fund wird erst zum Eintrag, nachdem die Supervision ihn gegen den Bestand beurteilt hat: welche Apps und Bausteine er beruehrt und welchen Nutzen er dort hat. Das gilt fuer den Radar-Fund wie fuer den vom Operator selbst eingebrachten Fund — das Radar-Scoring darf der Mensch ueberspringen, die Beurteilung nicht. Ein unbeurteilter Fund erreicht die Disposition nicht.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-gate-only",
+      "type": "REQ",
+      "name": "Gate-only Writes",
+      "description": "Alle Graph-Schreibzugriffe laufen durch genau ein Apply-Gate.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-kein-stiller-abbruch",
+      "type": "REQ",
+      "name": "Kein stiller Abbruch",
+      "description": "Kein Lauf endet stillschweigend. Ein abgebrochener Lauf, eine verwaiste Lease und eine nicht erreichbare Quelle werden zu einem Eintrag im Leitstand, statt uebersprungen zu werden.",
+      "kinds": [
+        "non-functional"
+      ]
+    },
+    {
+      "id": "REQ-keine-secrets",
+      "type": "REQ",
+      "name": "Keine Zugangsdaten im Repo",
+      "description": "Im Repo liegen keine Zugangsdaten. Ein headless gestarteter Lane-Agent erhaelt nur die ausdruecklich benannten Umgebungsvariablen, nicht die vollstaendige Umgebung des Betreibers.",
+      "kinds": [
+        "non-functional"
+      ]
+    },
+    {
+      "id": "REQ-mvp-nachweis",
+      "type": "REQ",
+      "name": "MVP-Nachweis statt App-Pflicht",
+      "description": "Jedes Item endet in einem MVP mit ausfuehrbarem Nachweis; eine App ist nicht zwingend.",
+      "kinds": [
+        "postcondition"
+      ]
+    },
+    {
+      "id": "REQ-radar-items",
+      "type": "REQ",
+      "name": "Radar-Ergebniszustand",
+      "description": "Nach einem Radar-Lauf liegt jeder Befund ueber der Score-Schwelle als Item mit Quelle, Score und Status new im Scratch-Puffer; unterschwellige Befunde sind verworfen und protokolliert.",
+      "kinds": [
+        "postcondition"
+      ]
+    },
+    {
+      "id": "REQ-radar-kadenz",
+      "type": "REQ",
+      "name": "Radar-Kadenz",
+      "description": "Der Radar laeuft mindestens einmal je Kalenderwoche. Liegt der letzte Lauf laenger als sieben Tage zurueck, erzeugt das System daraus selbst einen Eintrag im Leitstand, statt still auszusetzen.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-radar-vorauss",
+      "type": "REQ",
+      "name": "Radar-Startbedingungen",
+      "description": "Ein Radar-Lauf startet nur mit konfigurierter Quellenliste und lesbarer SSOT-Roadmap; fehlt eines, bricht der Lauf mit klarer Meldung ab, ohne Items zu erzeugen.",
+      "kinds": [
+        "precondition"
+      ]
+    },
+    {
+      "id": "REQ-scan-vorauss",
+      "type": "REQ",
+      "name": "Scan-Startbedingungen",
+      "description": "Ein Familien-Scan setzt erreichbare Repos und einen lauffaehigen Doctor voraus; nicht erreichbare Quellen meldet der Scan explizit statt sie still zu ueberspringen.",
+      "kinds": [
+        "precondition"
+      ]
+    },
+    {
+      "id": "REQ-scoring-roadmap",
+      "type": "REQ",
+      "name": "Roadmap-Scoring",
+      "description": "Jeder Netz-Befund wird gegen die SSOT-Roadmap gescort, bevor er ein Item wird.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-spec-vor-umsetzung",
+      "type": "REQ",
+      "name": "Spec vor Umsetzung",
+      "description": "Ein Item geht nur in Umsetzung, wenn eine Initial-Spec (UC + Top-Level-FUNCs) mit Verification existiert; ohne Spec wird der Dispatch abgelehnt.",
+      "kinds": [
+        "precondition"
+      ]
+    },
+    {
+      "id": "REQ-stack-klasse-c",
+      "type": "REQ",
+      "name": "Stack Klasse C",
+      "description": "Jedes Modul ist ein Node-ESM-Werkzeug unter scripts/aise/ ohne Anwendungs-Stack; die Testsuite ist node scripts/aise/test.mjs (Klasse C, docs/governance/STACKS.md).",
+      "kinds": [
+        "non-functional"
+      ]
+    },
+    {
+      "id": "REQ-zustand-im-repo",
+      "type": "REQ",
+      "name": "Entscheidungstragender Zustand im Repo",
+      "description": "Jeder Zustand, der eine Entscheidung traegt — Items, Graph, CRs — liegt versioniert im Repo und ist damit gesichert und historisiert. Maschinen-lokaler Zustand ist jederzeit rekonstruierbar und wird bewusst nicht gesichert.",
+      "kinds": [
+        "non-functional"
+      ]
+    },
+    {
+      "id": "SCHEMA-app-signal",
+      "type": "SCHEMA",
+      "name": "App-Signal",
+      "description": "Doctor-Befund, Readiness-Wert oder Log-Auffaelligkeit je Repo.",
+      "concept": true
+    },
+    {
+      "id": "SCHEMA-cr-set",
+      "type": "SCHEMA",
+      "name": "CR-Set",
+      "description": "CR-Liste mit Dateien (max. 6), Ziel-Repo, io-Test und depends-on-Kanten.",
+      "concept": true
+    },
+    {
+      "id": "SCHEMA-feed-eintrag",
+      "type": "SCHEMA",
+      "name": "Feed-Eintrag",
+      "description": "Ein Fund aus dem Netz — neue Technologie oder Verfahren: Quelle, Titel, URL, Datum, Rohtext.",
+      "concept": true
+    },
+    {
+      "id": "SCHEMA-item",
+      "type": "SCHEMA",
+      "name": "Item",
+      "description": "uid, Herkunft (Radar, Operator, Abnahme, Supervision, Destillation, Kurator), Art (neu, Optimierung, Baustein), Score, Status, Nachweis-Referenz, Routing-Ziel.",
+      "concept": true
+    },
+    {
+      "id": "SCHEMA-lane-ergebnis",
+      "type": "SCHEMA",
+      "name": "Lane-Ergebnis",
+      "description": "Lane, CR, Testergebnis, Gate-Verdict, geaenderte Dateien.",
+      "concept": true
+    },
+    {
+      "id": "SCHEMA-spec",
+      "type": "SCHEMA",
+      "name": "Initial-Spec",
+      "description": "UC, Top-Level-FUNCs und Verification eines Items.",
+      "concept": true
+    },
+    {
+      "id": "SCHEMA-standard",
+      "type": "SCHEMA",
+      "name": "Standardmodul",
+      "description": "Ein Baustein im Baukasten: Modul-ID, Art (Baustein oder Verfahrensregel), die zwei realen Konsumenten und der ausfuehrbare Check.",
+      "concept": true
+    },
+    {
+      "id": "SCHEMA-suchauftrag",
+      "type": "SCHEMA",
+      "name": "Suchauftrag",
+      "description": "Quellen, Suchbegriffe, Zeitfenster und die Score-Schwelle, gegen die ein Befund als relevant gilt.",
+      "concept": true
+    },
+    {
+      "id": "SCHEMA-trajektorie",
+      "type": "SCHEMA",
+      "name": "Trajektorie",
+      "description": "Trajektorien-Eintrag oder Gate-Verdict mit Referenz auf Lauf und Graph-Version.",
+      "concept": true
+    },
+    {
+      "id": "SYS-ideenfabrik",
+      "type": "SYS",
+      "name": "Ideen-Umsetzungsfabrik",
+      "description": "Meta-System, das Ideen von Research bis MVP-Nachweis ueber die AiSE-Familie fuehrt; bok ist der Koordinationsknoten.",
+      "analysisFreshness": {
+        "pitch": {
+          "graphVersion": 21
+        },
+        "conops": {
+          "graphVersion": 23
+        }
+      }
+    },
+    {
+      "id": "TEST-agent-ohne-publish",
+      "type": "TEST",
+      "name": "Publish-Sperr-Check",
+      "description": "Veroeffentlichungs-Lease bei laufender Lane anfordern: der Versuch wird mit klarer Meldung abgelehnt, die Registry wird nicht beruehrt. Tool: Skript in scripts/aise/test.mjs.",
+      "concept": true
+    },
+    {
+      "id": "TEST-anti-bloat",
+      "type": "TEST",
+      "name": "Keeper-Audit",
+      "description": "Audit ueber BoK-Standards: jeder nennt zwei Konsumenten und einen Check; Verstoss erzeugt Supersede-Item.",
+      "concept": true
+    },
+    {
+      "id": "TEST-befunde-persistent",
+      "type": "TEST",
+      "name": "Scan-Persistenz-Check",
+      "description": "Scan zweimal ausfuehren, Terminal schliessen: Befunde liegen idempotent als Items auf Disk.",
+      "concept": true
+    },
+    {
+      "id": "TEST-config-trennung",
+      "type": "TEST",
+      "name": "Konfigurations-Trennungs-Check",
+      "description": "Familien-Datei und maschinen-lokale Zustandsdatei gegeneinander pruefen: kein Feld der Zustandsdatei taucht im Repo auf, und die Lease-Datei liegt nachweislich ausserhalb des Arbeitsbaums. Tool: Skript in scripts/aise/test.mjs.",
+      "concept": true
+    },
+    {
+      "id": "TEST-cr-schnitt",
+      "type": "TEST",
+      "name": "CR-Ledger-Audit",
+      "description": "Audit ueber dispatchte Items im CR-Ledger: kein CR ueber 6 Dateien, jeder CR nennt einen io-Test, Reihenfolge topologisch konsistent zum depends-on-DAG. Tool: Skript ueber Ledger-JSON.",
+      "concept": true
+    },
+    {
+      "id": "TEST-delta-als-item",
+      "type": "TEST",
+      "name": "Keeper-Pfad-Check",
+      "description": "Learn-Lauf auf Fixture: Deltas liegen als Items im Scratch-Puffer; Diff des BoK zeigt keine Standard-Aenderung ohne Keeper-Entscheid. Tool: Skript ueber Items + git diff.",
+      "concept": true
+    },
+    {
+      "id": "TEST-delta-evidenz",
+      "type": "TEST",
+      "name": "Delta-Evidenz-Check",
+      "description": "Stichprobe erzeugter Deltas: jedes nennt eine Trajektorien- oder Verdict-Referenz; ein Delta ohne Referenz wird vom Curator abgelehnt. Tool: vitest gegen den Learn-Destillierer.",
+      "concept": true
+    },
+    {
+      "id": "TEST-e2e-idee-mvp",
+      "type": "TEST",
+      "name": "Idee-zu-MVP-Durchstich-Test",
+      "description": "Durchstich auf einem Fixture-Item: Spec vorhanden, CR-Set geschnitten, Lane laeuft, Abnahme erzeugt einen Eintrag mit Nachweis-Referenz. Tool: Integrationstest in scripts/aise/test.mjs.",
+      "concept": true
+    },
+    {
+      "id": "TEST-e2e-learn",
+      "type": "TEST",
+      "name": "Learn-Durchstich-Test",
+      "description": "Durchstich auf einer Fixture-Trajektorie: die Destillation erzeugt einen Delta-Kandidaten, der Kurator lehnt ihn ohne zwei Konsumenten ab, der Baukasten bleibt unveraendert. Tool: Integrationstest in scripts/aise/test.mjs.",
+      "concept": true
+    },
+    {
+      "id": "TEST-e2e-radar",
+      "type": "TEST",
+      "name": "Radar-Durchstich-Test",
+      "description": "Durchstich auf fixiertem Feed: ein Lauf erzeugt aus einem Fixture-Fund einen beurteilten Eintrag, der in der Entscheidungsliste erscheint. Jeder Uebergang der Kette wird dabei betreten. Tool: Integrationstest in scripts/aise/test.mjs.",
+      "concept": true
+    },
+    {
+      "id": "TEST-e2e-scan",
+      "type": "TEST",
+      "name": "Scan-Durchstich-Test",
+      "description": "Durchstich auf Fixture-Repos: ein Scan erzeugt aus einem Doctor-Befund einen persistierten Eintrag; zweiter Lauf bleibt idempotent. Tool: Integrationstest in scripts/aise/test.mjs.",
+      "concept": true
+    },
+    {
+      "id": "TEST-ein-irreversibler-schritt",
+      "type": "TEST",
+      "name": "Wiederholbarkeits-Check",
+      "description": "Vorbereitungslauf zweimal abbrechen und wiederholen: Arbeitsbaum und Registry sind danach unveraendert; erst der Veroeffentlichungsschritt aendert die Registry. Tool: Skript in scripts/aise/test.mjs.",
+      "concept": true
+    },
+    {
+      "id": "TEST-ein-kanal",
+      "type": "TEST",
+      "name": "Kanal-Audit",
+      "description": "Audit ueber den Graphen und die Werkzeuge: genau ein FLOW erreicht den Operator, und jede Funktion, die einen Eintrag erzeugt, schreibt auf denselben Eintrags-FLOW. Ein zweiter Kanal laesst die Pruefung rot werden. Tool: Skript in scripts/aise/test.mjs.",
+      "concept": true
+    },
+    {
+      "id": "TEST-fund-beurteilung",
+      "type": "TEST",
+      "name": "Beurteilungs-Check",
+      "description": "Je ein fixierter Fund pro Produzent (Radar, Operator) durch die Supervision: der erzeugte Eintrag nennt beruehrte Apps, beruehrte Bausteine und eine Nutzenaussage; ein Fund, der die Supervision umgeht, erzeugt keinen Eintrag. Tool: Skript in scripts/aise/test.mjs.",
+      "concept": true
+    },
+    {
+      "id": "TEST-gate-only",
+      "type": "TEST",
+      "name": "Gate-Audit-Abgleich",
+      "description": "Jede Graph-Mutation hat einen Audit-Log-Eintrag; direkte Store-Writes schlagen fehl (deny-graph-write).",
+      "concept": true
+    },
+    {
+      "id": "TEST-kein-stiller-abbruch",
+      "type": "TEST",
+      "name": "Abbruch-Sichtbarkeits-Check",
+      "description": "Lane mit totem Prozess, unerreichbares Repo und abgebrochener Lauf durchspielen: jeder Fall erzeugt genau einen Eintrag mit Grund; kein Fall endet mit Schweigen und Exit 0. Tool: Skript in scripts/aise/test.mjs.",
+      "concept": true
+    },
+    {
+      "id": "TEST-keine-secrets",
+      "type": "TEST",
+      "name": "Secrets-Audit",
+      "description": "Audit ueber den Arbeitsbaum auf Zugangsdaten-Muster, plus Pruefung der an einen Lane-Agenten uebergebenen Umgebung: sie enthaelt genau die benannten Variablen und keine geerbten. Tool: Skript in scripts/aise/test.mjs.",
+      "concept": true
+    },
+    {
+      "id": "TEST-mvp-nachweis",
+      "type": "TEST",
+      "name": "Nachweis-Stichprobe",
+      "description": "Stichprobe geschlossener Items: jedes hat einen ausfuehrbaren Nachweis (Test/Smoke), der gruen laeuft.",
+      "concept": true
+    },
+    {
+      "id": "TEST-radar-items",
+      "type": "TEST",
+      "name": "Radar-Ergebnis-Check",
+      "description": "Radar auf fixiertem Feed-Fixture: erzeugte Items tragen Quelle, Score, Status new; Befunde unter Schwelle erzeugen kein Item, stehen aber im Protokoll. Tool: vitest.",
+      "concept": true
+    },
+    {
+      "id": "TEST-radar-kadenz",
+      "type": "TEST",
+      "name": "Kadenz-Check",
+      "description": "Uhr auf acht Tage nach dem letzten Lauf stellen: der Kadenz-Waechter erzeugt genau einen Eintrag mit Herkunft Radar und Grund ausgebliebener Lauf; innerhalb von sieben Tagen erzeugt er keinen. Tool: Skript in scripts/aise/test.mjs.",
+      "concept": true
+    },
+    {
+      "id": "TEST-radar-vorauss",
+      "type": "TEST",
+      "name": "Radar-Abbruch-Check",
+      "description": "Radar-Lauf ohne Roadmap-Datei starten: Abbruch mit klarer Meldung, kein Item entsteht. Tool: vitest gegen den Radar-Runner.",
+      "concept": true
+    },
+    {
+      "id": "TEST-scan-vorauss",
+      "type": "TEST",
+      "name": "Scan-Quellen-Check",
+      "description": "Scan mit einem entfernten Repo-Pfad: Ergebnis nennt die fehlende Quelle als Befund, Lauf bricht nicht kommentarlos ab. Tool: vitest gegen aise scan.",
+      "concept": true
+    },
+    {
+      "id": "TEST-scoring-roadmap",
+      "type": "TEST",
+      "name": "Radar-Scoring-Check",
+      "description": "Radar-Lauf auf fixiertem Feed-Fixture: jedes erzeugte Item traegt Roadmap-Score und Begruendung.",
+      "concept": true
+    },
+    {
+      "id": "TEST-spec-vor-umsetzung",
+      "type": "TEST",
+      "name": "Dispatch-Gate-Check",
+      "description": "Dispatch-Versuch eines Items ohne Initial-Spec wird abgelehnt; mit Spec wird eine Lane vergeben. Tool: vitest gegen aise dispatch prepare.",
+      "concept": true
+    },
+    {
+      "id": "TEST-stack-klasse-c",
+      "type": "TEST",
+      "name": "Klasse-C-Werkzeugtest",
+      "description": "node scripts/aise/test.mjs laeuft gruen; jedes Modul-Werkzeug liegt unter scripts/aise/ und braucht keinen Anwendungs-Stack.",
+      "testRefs": [
+        {
+          "file": "scripts/aise/test.mjs",
+          "tool": "node",
+          "result": "passed",
+          "ranAt": "2026-08-28T10:05:00.000Z",
+          "evidence": "150 Pruefungen gruen, exit 0"
+        }
+      ]
+    },
+    {
+      "id": "TEST-zustand-im-repo",
+      "type": "TEST",
+      "name": "Rekonstruktions-Check",
+      "description": "Arbeitskopie frisch klonen: Items, Graph und CRs sind vollstaendig da; die maschinen-lokalen Dateien fehlen und werden beim ersten Lauf neu erzeugt, ohne einen Prozess zu behaupten. Tool: Skript in scripts/aise/test.mjs.",
+      "concept": true
+    },
+    {
+      "id": "UC-familie-ueberwachen",
+      "type": "UC",
+      "name": "App-Familie ueberwachen",
+      "description": "Operator erkennt Waste, Lessons und Schwachstellen der App-Familie als persistierte Items."
+    },
+    {
+      "id": "UC-idee-zu-mvp",
+      "type": "UC",
+      "name": "Idee zu MVP fuehren",
+      "description": "Operator verwandelt ein Item ueber Spike, Spec und gegatete Umsetzung in ein MVP mit ausfuehrbarem Nachweis."
+    },
+    {
+      "id": "UC-research-intake",
+      "type": "UC",
+      "name": "Research-Befunde aufnehmen",
+      "description": "Operator erhaelt woechentlich gegen die Roadmap gescorte Netz-Befunde als Items im Scratch-Puffer."
+    },
+    {
+      "id": "UC-standards-lernen",
+      "type": "UC",
+      "name": "Baukasten pflegen",
+      "description": "Die Fabrik destilliert aus ihren Laeufen Bausteine und Verfahrensregeln; der Operator entscheidet, was in den Baukasten kommt."
+    }
+  ],
+  "traces": [
+    {
+      "source": "ACTOR-aise-apps",
+      "target": "FLOW-app-telemetrie",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-aise-apps",
+      "target": "FLOW-trajektorie",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-netz-quellen",
+      "target": "FLOW-feed-roh",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-operator",
+      "target": "FLOW-entscheidung",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-operator",
+      "target": "FLOW-fund",
+      "type": "io"
+    },
+    {
+      "source": "FCHAIN-familien-scan",
+      "target": "FUNC-disposition",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-familien-scan",
+      "target": "FUNC-familien-supervision",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-familien-scan",
+      "target": "REQ-e2e-scan",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-idee-zu-mvp",
+      "target": "FUNC-abnahme",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-idee-zu-mvp",
+      "target": "FUNC-dispatch-do",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-idee-zu-mvp",
+      "target": "FUNC-disposition",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-idee-zu-mvp",
+      "target": "FUNC-feasibility-spike",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-idee-zu-mvp",
+      "target": "FUNC-plan-schnitt",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-idee-zu-mvp",
+      "target": "REQ-e2e-idee-mvp",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-learn-loop",
+      "target": "FUNC-disposition",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-learn-loop",
+      "target": "FUNC-keeper-bok",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-learn-loop",
+      "target": "FUNC-learn-distill",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-learn-loop",
+      "target": "REQ-e2e-learn",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-radar-lauf",
+      "target": "FUNC-disposition",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-radar-lauf",
+      "target": "FUNC-familien-supervision",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-radar-lauf",
+      "target": "FUNC-research-radar",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-radar-lauf",
+      "target": "REQ-e2e-radar",
+      "type": "satisfy"
+    },
+    {
+      "source": "FLOW-abfrage",
+      "target": "ACTOR-netz-quellen",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-abfrage",
+      "target": "SCHEMA-suchauftrag",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-app-telemetrie",
+      "target": "FUNC-familien-supervision",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-app-telemetrie",
+      "target": "SCHEMA-app-signal",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-auftrag",
+      "target": "FUNC-feasibility-spike",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-auftrag",
+      "target": "SCHEMA-item",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-bok-standard",
+      "target": "FUNC-dispatch-do",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-bok-standard",
+      "target": "FUNC-plan-schnitt",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-bok-standard",
+      "target": "SCHEMA-standard",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-cr-set",
+      "target": "FUNC-dispatch-do",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-cr-set",
+      "target": "SCHEMA-cr-set",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-delta-kandidat",
+      "target": "FUNC-keeper-bok",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-delta-kandidat",
+      "target": "SCHEMA-item",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-eintrag",
+      "target": "FUNC-disposition",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-eintrag",
+      "target": "SCHEMA-item",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-entscheidung",
+      "target": "FUNC-disposition",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-entscheidung",
+      "target": "SCHEMA-item",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-entscheidungsliste",
+      "target": "ACTOR-operator",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-entscheidungsliste",
+      "target": "SCHEMA-item",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-feed-roh",
+      "target": "FUNC-research-radar",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-feed-roh",
+      "target": "SCHEMA-feed-eintrag",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-fund",
+      "target": "FUNC-familien-supervision",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-fund",
+      "target": "SCHEMA-item",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-initial-spec",
+      "target": "FUNC-plan-schnitt",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-initial-spec",
+      "target": "SCHEMA-spec",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-lane-ergebnis",
+      "target": "FUNC-abnahme",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-lane-ergebnis",
+      "target": "SCHEMA-lane-ergebnis",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-suchauftrag",
+      "target": "FUNC-research-radar",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-suchauftrag",
+      "target": "SCHEMA-suchauftrag",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-trajektorie",
+      "target": "FUNC-learn-distill",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-trajektorie",
+      "target": "SCHEMA-trajektorie",
+      "type": "relation"
+    },
+    {
+      "source": "FUNC-abnahme",
+      "target": "MOD-fabrik",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-abnahme",
+      "target": "FLOW-eintrag",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-abnahme",
+      "target": "REQ-mvp-nachweis",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-dispatch-do",
+      "target": "MOD-fabrik",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-dispatch-do",
+      "target": "FLOW-lane-ergebnis",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-dispatch-do",
+      "target": "FLOW-trajektorie",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-dispatch-do",
+      "target": "REQ-gate-only",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-disposition",
+      "target": "MOD-leitstand",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-disposition",
+      "target": "FLOW-auftrag",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-disposition",
+      "target": "FLOW-delta-kandidat",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-disposition",
+      "target": "FLOW-entscheidungsliste",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-disposition",
+      "target": "FLOW-suchauftrag",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-disposition",
+      "target": "REQ-befunde-persistent",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-fabrik",
+      "target": "MOD-fabrik",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-fabrik",
+      "target": "FUNC-abnahme",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-fabrik",
+      "target": "FUNC-dispatch-do",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-fabrik",
+      "target": "FUNC-feasibility-spike",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-fabrik",
+      "target": "FUNC-plan-schnitt",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-familien-supervision",
+      "target": "MOD-supervision",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-familien-supervision",
+      "target": "FLOW-eintrag",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-familien-supervision",
+      "target": "REQ-fund-beurteilung",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-familien-supervision",
+      "target": "REQ-scan-vorauss",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-feasibility-spike",
+      "target": "MOD-fabrik",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-feasibility-spike",
+      "target": "FLOW-initial-spec",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-feasibility-spike",
+      "target": "REQ-spec-vor-umsetzung",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-keeper-bok",
+      "target": "MOD-leitstand",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-keeper-bok",
+      "target": "FLOW-bok-standard",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-keeper-bok",
+      "target": "FLOW-eintrag",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-keeper-bok",
+      "target": "REQ-anti-bloat",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-learn-distill",
+      "target": "MOD-supervision",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-learn-distill",
+      "target": "FLOW-eintrag",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-learn-distill",
+      "target": "REQ-delta-als-item",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-learn-distill",
+      "target": "REQ-delta-evidenz",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-leitstand",
+      "target": "MOD-leitstand",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-leitstand",
+      "target": "FUNC-disposition",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-leitstand",
+      "target": "FUNC-keeper-bok",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-plan-schnitt",
+      "target": "MOD-fabrik",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-plan-schnitt",
+      "target": "FLOW-cr-set",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-plan-schnitt",
+      "target": "REQ-cr-schnitt",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-research-radar",
+      "target": "MOD-radar",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-research-radar",
+      "target": "FLOW-abfrage",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-research-radar",
+      "target": "FLOW-fund",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-research-radar",
+      "target": "REQ-radar-items",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-research-radar",
+      "target": "REQ-radar-kadenz",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-research-radar",
+      "target": "REQ-radar-vorauss",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-research-radar",
+      "target": "REQ-scoring-roadmap",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-supervision",
+      "target": "MOD-supervision",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-supervision",
+      "target": "FUNC-familien-supervision",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-supervision",
+      "target": "FUNC-learn-distill",
+      "type": "compose"
+    },
+    {
+      "source": "MOD-fabrik",
+      "target": "REQ-agent-ohne-publish",
+      "type": "satisfy"
+    },
+    {
+      "source": "MOD-fabrik",
+      "target": "REQ-keine-secrets",
+      "type": "satisfy"
+    },
+    {
+      "source": "MOD-fabrik",
+      "target": "REQ-stack-klasse-c",
+      "type": "satisfy"
+    },
+    {
+      "source": "MOD-leitstand",
+      "target": "REQ-stack-klasse-c",
+      "type": "satisfy"
+    },
+    {
+      "source": "MOD-radar",
+      "target": "REQ-stack-klasse-c",
+      "type": "satisfy"
+    },
+    {
+      "source": "MOD-supervision",
+      "target": "REQ-stack-klasse-c",
+      "type": "satisfy"
+    },
+    {
+      "source": "SYS-ideenfabrik",
+      "target": "MOD-fabrik",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-ideenfabrik",
+      "target": "MOD-leitstand",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-ideenfabrik",
+      "target": "MOD-radar",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-ideenfabrik",
+      "target": "MOD-supervision",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-ideenfabrik",
+      "target": "REQ-agent-ohne-publish",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-ideenfabrik",
+      "target": "REQ-config-trennung",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-ideenfabrik",
+      "target": "REQ-ein-irreversibler-schritt",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-ideenfabrik",
+      "target": "REQ-ein-kanal",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-ideenfabrik",
+      "target": "REQ-kein-stiller-abbruch",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-ideenfabrik",
+      "target": "REQ-keine-secrets",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-ideenfabrik",
+      "target": "REQ-stack-klasse-c",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-ideenfabrik",
+      "target": "REQ-zustand-im-repo",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-ideenfabrik",
+      "target": "UC-familie-ueberwachen",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-ideenfabrik",
+      "target": "UC-idee-zu-mvp",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-ideenfabrik",
+      "target": "UC-research-intake",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-ideenfabrik",
+      "target": "UC-standards-lernen",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-ideenfabrik",
+      "target": "REQ-config-trennung",
+      "type": "satisfy"
+    },
+    {
+      "source": "SYS-ideenfabrik",
+      "target": "REQ-ein-irreversibler-schritt",
+      "type": "satisfy"
+    },
+    {
+      "source": "SYS-ideenfabrik",
+      "target": "REQ-ein-kanal",
+      "type": "satisfy"
+    },
+    {
+      "source": "SYS-ideenfabrik",
+      "target": "REQ-kein-stiller-abbruch",
+      "type": "satisfy"
+    },
+    {
+      "source": "SYS-ideenfabrik",
+      "target": "REQ-zustand-im-repo",
+      "type": "satisfy"
+    },
+    {
+      "source": "TEST-agent-ohne-publish",
+      "target": "REQ-agent-ohne-publish",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-anti-bloat",
+      "target": "REQ-anti-bloat",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-befunde-persistent",
+      "target": "REQ-befunde-persistent",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-config-trennung",
+      "target": "REQ-config-trennung",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-cr-schnitt",
+      "target": "REQ-cr-schnitt",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-delta-als-item",
+      "target": "REQ-delta-als-item",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-delta-evidenz",
+      "target": "REQ-delta-evidenz",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-e2e-idee-mvp",
+      "target": "REQ-e2e-idee-mvp",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-e2e-learn",
+      "target": "REQ-e2e-learn",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-e2e-radar",
+      "target": "REQ-e2e-radar",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-e2e-scan",
+      "target": "REQ-e2e-scan",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-ein-irreversibler-schritt",
+      "target": "REQ-ein-irreversibler-schritt",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-ein-kanal",
+      "target": "REQ-ein-kanal",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-fund-beurteilung",
+      "target": "REQ-fund-beurteilung",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-gate-only",
+      "target": "REQ-gate-only",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-kein-stiller-abbruch",
+      "target": "REQ-kein-stiller-abbruch",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-keine-secrets",
+      "target": "REQ-keine-secrets",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-mvp-nachweis",
+      "target": "REQ-mvp-nachweis",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-radar-items",
+      "target": "REQ-radar-items",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-radar-kadenz",
+      "target": "REQ-radar-kadenz",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-radar-vorauss",
+      "target": "REQ-radar-vorauss",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-scan-vorauss",
+      "target": "REQ-scan-vorauss",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-scoring-roadmap",
+      "target": "REQ-scoring-roadmap",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-spec-vor-umsetzung",
+      "target": "REQ-spec-vor-umsetzung",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-stack-klasse-c",
+      "target": "REQ-stack-klasse-c",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-zustand-im-repo",
+      "target": "REQ-zustand-im-repo",
+      "type": "verify"
+    },
+    {
+      "source": "UC-familie-ueberwachen",
+      "target": "FCHAIN-familien-scan",
+      "type": "compose"
+    },
+    {
+      "source": "UC-familie-ueberwachen",
+      "target": "REQ-befunde-persistent",
+      "type": "compose"
+    },
+    {
+      "source": "UC-familie-ueberwachen",
+      "target": "REQ-e2e-scan",
+      "type": "compose"
+    },
+    {
+      "source": "UC-familie-ueberwachen",
+      "target": "REQ-scan-vorauss",
+      "type": "compose"
+    },
+    {
+      "source": "UC-idee-zu-mvp",
+      "target": "FCHAIN-idee-zu-mvp",
+      "type": "compose"
+    },
+    {
+      "source": "UC-idee-zu-mvp",
+      "target": "REQ-cr-schnitt",
+      "type": "compose"
+    },
+    {
+      "source": "UC-idee-zu-mvp",
+      "target": "REQ-e2e-idee-mvp",
+      "type": "compose"
+    },
+    {
+      "source": "UC-idee-zu-mvp",
+      "target": "REQ-gate-only",
+      "type": "compose"
+    },
+    {
+      "source": "UC-idee-zu-mvp",
+      "target": "REQ-mvp-nachweis",
+      "type": "compose"
+    },
+    {
+      "source": "UC-idee-zu-mvp",
+      "target": "REQ-spec-vor-umsetzung",
+      "type": "compose"
+    },
+    {
+      "source": "UC-research-intake",
+      "target": "FCHAIN-radar-lauf",
+      "type": "compose"
+    },
+    {
+      "source": "UC-research-intake",
+      "target": "REQ-e2e-radar",
+      "type": "compose"
+    },
+    {
+      "source": "UC-research-intake",
+      "target": "REQ-fund-beurteilung",
+      "type": "compose"
+    },
+    {
+      "source": "UC-research-intake",
+      "target": "REQ-radar-items",
+      "type": "compose"
+    },
+    {
+      "source": "UC-research-intake",
+      "target": "REQ-radar-kadenz",
+      "type": "compose"
+    },
+    {
+      "source": "UC-research-intake",
+      "target": "REQ-radar-vorauss",
+      "type": "compose"
+    },
+    {
+      "source": "UC-research-intake",
+      "target": "REQ-scoring-roadmap",
+      "type": "compose"
+    },
+    {
+      "source": "UC-standards-lernen",
+      "target": "FCHAIN-learn-loop",
+      "type": "compose"
+    },
+    {
+      "source": "UC-standards-lernen",
+      "target": "REQ-anti-bloat",
+      "type": "compose"
+    },
+    {
+      "source": "UC-standards-lernen",
+      "target": "REQ-delta-als-item",
+      "type": "compose"
+    },
+    {
+      "source": "UC-standards-lernen",
+      "target": "REQ-delta-evidenz",
+      "type": "compose"
+    },
+    {
+      "source": "UC-standards-lernen",
+      "target": "REQ-e2e-learn",
+      "type": "compose"
+    }
+  ],
+  "graphVersion": 25
+}
