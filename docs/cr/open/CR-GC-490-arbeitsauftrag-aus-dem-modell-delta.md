@@ -44,15 +44,24 @@ eine Liste, kein Refactoring.**
 
 ## 3. Fix
 
-Eine reine Funktion über `(vorher, nachher, CodeFacts)`:
+Eine reine Funktion über `(vorher, nachher)` — **ohne `CodeFacts`**:
 
 ```
-congruenceWorkOrder(before, after, facts) → {
-  moves:  [{ file, fromMod, toMod, reason: 'FUNC-… allocate gewandert' }],
-  drifts: [{ from, to, fromMod, toMod, rule: 'RC-05' }],
-  blind:  [{ funcId, reason: 'kein realRef — nicht ableitbar' }],
+congruenceWorkOrder(before, after) → {
+  moves: [{ file, funcId, fromMod, toMod }],
+  blind: [{ funcId, reason: 'kein realRef — die Datei ist nicht ableitbar' }],
 }
 ```
+
+**`drifts` ist gestrichen, und das ist die wichtigste Entscheidung dieses CRs.** Der erste
+Entwurf wollte „Import steht quer" hier mitrechnen — das ist **RC-05**, und es gibt sie schon
+aus `conformanceEvaluation`. Sie hier nachzubauen wäre eine zweite Definition derselben Frage,
+mit einem zweiten `buildModResolver` (der dafür aus contracts hätte exportiert werden müssen —
+ein Release quer durch die Familie für eine Rechnung, die es gibt).
+
+Damit sagt der Auftrag genau das, was **RC-05 nicht sagen kann**: *welche Datei wegen des
+Modell-Zugs wandern muss*, **bevor** irgendein Import quersteht. Die beiden ergänzen sich —
+Auftrag vorher, Verdict nachher — statt sich zu überlappen.
 
 `blind` ist Pflicht, nicht Kür: eine FUNC ohne `realRef` erzeugt **keinen** Auftrag und muss
 deshalb als *nicht ableitbar* im Ergebnis stehen. Eine leere `moves`-Liste bei 30 blinden FUNCs
@@ -68,22 +77,27 @@ hinterlässt eine Liste.
 |---|---|---|
 | 1 | `src/kernel/measure/work-order.ts` (neu) | die Ableitung, rein |
 | 2 | `src/kernel/harness.ts` | `workOrder` im Mutations-Ergebnis |
-| 3 | `src/kernel/conformance.ts` | `buildModResolver` exportfähig machen (kein zweiter Resolver) |
-| 4 | `src/projections/report.ts` | Auftrag im Bericht |
-| 5 | `tests/work-order.test.ts` (neu) | s. AC |
-| 6 | `docs/cr/…` / Skill-Nachzug bei Bedarf | — |
+| 3 | `tests/work-order.test.ts` (neu) | s. AC |
+| 4 | `scripts/model-test-set.mjs` | Registrierung von (3), von CR-GC-399 erzwungen |
+
+**Vier statt sechs.** Weggefallen: der contracts-Export von `buildModResolver` (siehe oben — RC-05
+rechnet das bereits) und der Bericht in `report.ts` — der Auftrag steht am **Mutations**-Ergebnis
+neben `fitAdvisory`/`steerAdvisory`, dort wo der Zug stattfindet. Eine Berichtsfläche für einen
+Zug, der schon vorbei ist, wäre eine zweite Wahrheit. `WorkOrder` bleibt aus dem Paket-Barrel
+draußen, wie `FitAdvisory` und `SteerAdvisory` auch — die Typen reisen am Ergebnis mit.
 
 ## 4. Akzeptanzkriterien
 
 - [ ] **Rot zuerst:** Fixture mit `FUNC-a -realRef-> src/a.ts`, `allocate` auf `MOD-x`; der Zug
       verlegt sie auf `MOD-y`. Erwartet: genau ein `move` für `src/a.ts`. Vorher rot, weil die
       Funktion nicht existiert — der Test ruft sie namentlich.
-- [ ] Import `src/a.ts → src/b.ts` mit `b` bei `MOD-z` und ohne Modellkante `y↔z` erzeugt genau
-      einen `drift` mit `rule: 'RC-05'`.
 - [ ] Eine FUNC **ohne** `realRef` erscheint in `blind`, nicht in `moves` und nicht im Schweigen.
-- [ ] `buildModResolver` wird **wiederverwendet** — `grep` zeigt genau eine Definition der
-      Datei→MOD-Auflösung im Repo.
-- [ ] Der Auftrag ist ein Advisory: ein Zug mit 12 offenen `moves` wird **nicht** blockiert.
+- [ ] Die Randfälle stehen als eigene Fälle: neue Zuordnung (`fromMod: null`), entfallene
+      Zuordnung (`toMod: null`), unveränderte Zuordnung trotz anderer Änderung (kein Auftrag).
+- [ ] Zwei Läufe sind zeichengleich — die Liste ist nach `funcId` sortiert.
+- [ ] **Verdrahtungs-Nachweis:** ein echter `harness.mutate()`-Zug durch `openMeasured`
+      (CR-GC-491) hinterlässt genau eine Zeile. Eine Ableitung ohne Pfad ist keine.
+- [ ] Der Auftrag ist ein Advisory: der Zug wird **nicht** blockiert.
 
 ## 5. Nicht im Scope
 

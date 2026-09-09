@@ -33,6 +33,10 @@ export function isModelRelevant(source) {
 
 /** Die Menge, die `verify:model` fährt. */
 export const INCLUDED = [
+  // CR-GC-490: haengt an der LEGALITAET von `FUNC -allocate-> MOD` und an `realRef` — faehrt
+  // dafuer einen echten Gate-Zug. Eine Meta-Modell-Aenderung an diesem Pattern macht ihn rot,
+  // also gehoert er in die Spur.
+  'tests/work-order.test.ts',
   // CR-GC-489: seedet die echte docs/graph/graphcode.graph.json und prueft an ihr, dass eine
   // RC-Regel nie zugleich ausgewertet UND ausgelassen ist — eine Modellaenderung kann ihn
   // sehr wohl rot machen, also gehoert er in die Spur.
