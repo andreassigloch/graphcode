@@ -1,6 +1,6 @@
 # CR-GC-496 — Der Store-Ort ist nicht die Repo-Wurzel
 
-**Status:** offen · **Angelegt:** 2026-09-09 · **Ring:** 2 (Werkzeug)
+**Status:** erledigt 2026-09-09 · **Angelegt:** 2026-09-09 · **Ring:** 2 (Werkzeug)
 **Hängt an:** `CR-GC-491` (`openMeasured`), `CR-GC-493` (Greenfield-Fall)
 **Grundlage:** Lesung `src/surface/create-harness.ts`, `rig/dummy-slicer/scripts/armB.mjs`,
 `tests/conformance.test.ts`, 2026-09-09
