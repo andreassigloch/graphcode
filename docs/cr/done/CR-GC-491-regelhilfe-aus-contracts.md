@@ -1,6 +1,6 @@
 # CR-GC-491 — Die Regelhilfe kommt aus contracts
 
-**Status:** offen · **Angelegt:** 2026-09-09 · **Art:** Umzug (kein neuer Pfad)
+**Status:** erledigt · **Angelegt:** 2026-09-09 · **Abgeschlossen:** 2026-09-09 · **Art:** Umzug (kein neuer Pfad)
 **Gegenstück:** `CR-SM-300` (sigloch-modules) — dieser CR ist dessen Consumer-Hälfte
 **Voraussetzung:** `@sigloch/contracts` ≥ 10.1 (`RULE_HELP`)
 
@@ -55,4 +55,5 @@ an `RULES_VERSION` gehängt.
       kann weder das Lock aufloesen noch ein Tarball in ein fremdes Repo installieren. Das ist
       die Zug-Reihenfolge (Peers zuerst), kein Defekt — beide werden gruen, sobald contracts
       10.1.0 publiziert ist, und bleiben bis dahin der Beweis, dass der Floor ehrlich ist.
-- [ ] Nach dem Release-Zug: `npm install` (Lock nachziehen), beide Tests gruen.
+- [x] Nach dem Release-Zug (`contracts@10.1.0` publiziert): Lock nachgezogen, beide Tests grün.
+      Volle Suite **1047 / 1047**.
