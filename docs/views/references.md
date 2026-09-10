@@ -18,7 +18,6 @@
 | `ACTOR-owner` | io | `FLOW-config-file` |
 | `ACTOR-owner` | io | `FLOW-mutate-cmd` |
 | `ACTOR-owner` | io | `FLOW-query-request` |
-| `ACTOR-owner` | io | `FLOW-skill-request` |
 | `ACTOR-owner` | io | `FLOW-steering-trigger` |
 | `ACTOR-owner` | io | `FLOW-version-bump` |
 | `CR-GC-100` | relation | `FUNC-evaluate-rules` |
@@ -805,6 +804,13 @@
 | `FLOW-graph-state` | io | `FUNC-score-completeness` |
 | `FLOW-graph-state` | io | `FUNC-seed-from-json` |
 | `FLOW-graph-state` | relation | `SCHEMA-ontology-graph` |
+| `FLOW-harness-handle` | io | `FUNC-bind-tools` |
+| `FLOW-harness-handle` | io | `FUNC-import-code-verb` |
+| `FLOW-harness-handle` | io | `FUNC-rewind` |
+| `FLOW-harness-handle` | io | `FUNC-run-verb` |
+| `FLOW-harness-handle` | io | `FUNC-serve-stdio` |
+| `FLOW-harness-handle` | io | `FUNC-tool-context` |
+| `FLOW-harness-handle` | relation | `SCHEMA-harness-handle` |
 | `FLOW-health-report` | io | `ACTOR-dashboard` |
 | `FLOW-health-report` | relation | `SCHEMA-health-report` |
 | `FLOW-impacted-tests` | io | `FUNC-deduce-tests` |
@@ -837,6 +843,8 @@
 | `FLOW-mutate-cmd` | io | `FUNC-mutate` |
 | `FLOW-mutate-cmd` | io | `FUNC-preflight` |
 | `FLOW-mutate-cmd` | relation | `SCHEMA-mutate-command` |
+| `FLOW-next-step-advice` | io | `ACTOR-agent` |
+| `FLOW-next-step-advice` | relation | `SCHEMA-generation-step` |
 | `FLOW-phase-readiness` | io | `FUNC-generation-step` |
 | `FLOW-phase-readiness` | relation | `SCHEMA-phase-readiness` |
 | `FLOW-query-request` | io | `FUNC-deduce-tests` |
@@ -853,9 +861,10 @@
 | `FLOW-query-request` | io | `FUNC-view-intplan` |
 | `FLOW-query-request` | io | `FUNC-view-rtm` |
 | `FLOW-query-request` | relation | `SCHEMA-query-params` |
+| `FLOW-rendered-views` | io | `ACTOR-owner` |
+| `FLOW-rendered-views` | relation | `SCHEMA-markdown-view` |
 | `FLOW-round-injection` | io | `FUNC-run-executor` |
 | `FLOW-round-injection` | relation | `SCHEMA-round-injection` |
-| `FLOW-round-prompt` | io | `ACTOR-agent` |
 | `FLOW-round-prompt` | io | `FUNC-build-round-injection` |
 | `FLOW-round-prompt` | io | `FUNC-rank-candidates` |
 | `FLOW-round-prompt` | io | `FUNC-run-executor` |
@@ -911,6 +920,10 @@
 | `FLOW-test-selection` | io | `ACTOR-agent` |
 | `FLOW-test-selection` | io | `ACTOR-owner` |
 | `FLOW-test-selection` | relation | `SCHEMA-test-selection` |
+| `FLOW-tool-context` | io | `FUNC-bind-tools` |
+| `FLOW-tool-context` | relation | `SCHEMA-tool-context` |
+| `FLOW-tool-registry` | io | `FUNC-serve-stdio` |
+| `FLOW-tool-registry` | relation | `SCHEMA-tool-registry` |
 | `FLOW-trajectory` | io | `ACTOR-learning-engine` |
 | `FLOW-trajectory` | relation | `SCHEMA-trajectory` |
 | `FLOW-version-bump` | io | `FUNC-migrate-schema` |
@@ -936,6 +949,7 @@
 | `FUNC-auto-export` | io | `FLOW-query-request` |
 | `FUNC-auto-export` | satisfy | `REQ-auto-persist-merge` |
 | `FUNC-bind-tools` | allocate | `MOD-surface` |
+| `FUNC-bind-tools` | io | `FLOW-tool-registry` |
 | `FUNC-bind-tools` | satisfy | `REQ-mcp-tool-registry` |
 | `FUNC-block-abfrage` | compose | `FUNC-audit-trail` |
 | `FUNC-block-abfrage` | compose | `FUNC-deduce-tests` |
@@ -1098,6 +1112,7 @@
 | `FUNC-compute-steering-delta` | io | `FLOW-steering-delta` |
 | `FUNC-compute-steering-delta` | satisfy | `REQ-steering-from-metrics` |
 | `FUNC-create-harness` | allocate | `MOD-surface` |
+| `FUNC-create-harness` | io | `FLOW-harness-handle` |
 | `FUNC-create-harness` | satisfy | `REQ-store-owner-lifecycle` |
 | `FUNC-decode` | allocate | `MOD-projections` |
 | `FUNC-decode` | satisfy | `REQ-codec-validation` |
@@ -1227,8 +1242,7 @@
 | `FUNC-nd-similarity` | allocate | `MOD-kernel-measure` |
 | `FUNC-nd-similarity` | satisfy | `REQ-near-duplicate-detection` |
 | `FUNC-next-step` | allocate | `MOD-loop` |
-| `FUNC-next-step` | io | `FLOW-learning-query` |
-| `FUNC-next-step` | io | `FLOW-round-prompt` |
+| `FUNC-next-step` | io | `FLOW-next-step-advice` |
 | `FUNC-next-step` | satisfy | `REQ-steering-from-metrics` |
 | `FUNC-open-store` | allocate | `MOD-kernel` |
 | `FUNC-open-store` | io | `FLOW-graph-state` |
@@ -1242,8 +1256,8 @@
 | `FUNC-rank-candidates` | io | `FLOW-mutate-cmd` |
 | `FUNC-rank-candidates` | satisfy | `REQ-steering-from-metrics` |
 | `FUNC-render-views` | allocate | `MOD-agent-surface` |
-| `FUNC-render-views` | io | `FLOW-markdown-docs` |
 | `FUNC-render-views` | io | `FLOW-query-request` |
+| `FUNC-render-views` | io | `FLOW-rendered-views` |
 | `FUNC-render-views` | satisfy | `REQ-doc-export` |
 | `FUNC-reseed` | allocate | `MOD-kernel` |
 | `FUNC-reseed` | io | `FLOW-graph-state` |
@@ -1335,6 +1349,7 @@
 | `FUNC-test-ui` | io | `FLOW-skill-report` |
 | `FUNC-test-ui` | satisfy | `REQ-code-governed-quality` |
 | `FUNC-tool-context` | allocate | `MOD-surface` |
+| `FUNC-tool-context` | io | `FLOW-tool-context` |
 | `FUNC-tool-context` | satisfy | `REQ-mcp-tool-registry` |
 | `FUNC-upgrade` | allocate | `MOD-surface` |
 | `FUNC-upgrade` | io | `FLOW-install-result` |

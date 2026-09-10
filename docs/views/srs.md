@@ -42,7 +42,7 @@ Verification ◀ `TEST-code-quality` (acceptance) · `TEST-mutate-schema-guard` 
 
 Ein Coding-Agent unter graphcode-Kontrolle: MCP-stdio-Client, nutzt den Graphen statt grep, jede Aenderung laeuft durch dasselbe Apply-Gate, der Autor wird nur protokolliert. Bewusst NICHT namentlich modelliert — agent-agnostisch ist eine verriegelte Zusage (CLAUDE.md), kein Ziel. Heute belegt durch Claude Code (interaktiv), OpenCode (headless BYOK-Runtime, treibt Spec/Impl autonom) und die Architektur-Rolle, die Interface-Aenderungen eskaliert: Impact-Analyse, Gate-Entscheidung, Dependents koordinieren. Diese Rollen unterscheiden sich in der Autoritaet, nicht in der Schnittstelle. (CR-GC-455)
 
-io ▶ `FLOW-formatE-artifact` · `FLOW-mutate-cmd` · `FLOW-query-request` · `FLOW-skill-request` · `FLOW-steering-trigger` · io ◀ `FLOW-action` · `FLOW-element-slice` · `FLOW-formatE-artifact` · `FLOW-round-prompt` · `FLOW-test-selection`
+io ▶ `FLOW-formatE-artifact` · `FLOW-mutate-cmd` · `FLOW-query-request` · `FLOW-skill-request` · `FLOW-steering-trigger` · io ◀ `FLOW-action` · `FLOW-element-slice` · `FLOW-formatE-artifact` · `FLOW-next-step-advice` · `FLOW-test-selection`
 
 ### 2.2  `ACTOR-dashboard` — Browser-Dashboard
 
@@ -60,7 +60,7 @@ io ▶ `FLOW-learning-advice` · io ◀ `FLOW-learning-query` · `FLOW-trajector
 
 Der Mensch, dem das Repo gehoert: setzt das Ziel, entscheidet, delegiert die Realisierung an gegatete Agenten. Er will exzellente Codequalitaet bei effizientem Testen und minimalem Token-/LLM-Aufwand. Drei Nutzerklassen, EINE Schnittstelle (ISO 29148 5.2.4 — die Klasse steht hier, nicht in der Topologie): (a) Entwickler/Repo-Owner — betreibt das Repo, faehrt CLI und Gate; (b) Systems Engineer — arbeitet auf der WAS-Ebene (UC/REQ/FUNC/FCHAIN) und delegiert die HOW-Ebene; (c) Vibe Coder — denkt in Architektur und Kundennutzen, schreibt selbst keinen Code. Alle drei reden ueber CLI-Verben, Skill-Aufrufe und dasselbe Apply-Gate; eine eigene Topologie-Rolle hatte keine von ihnen. (CR-GC-455)
 
-io ▶ `FLOW-cli-invocation` · `FLOW-config-file` · `FLOW-mutate-cmd` · `FLOW-query-request` · `FLOW-skill-request` · `FLOW-steering-trigger` · `FLOW-version-bump` · io ◀ `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-export-pending` · `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-install-result` · `FLOW-markdown-docs` · `FLOW-skill-report` · `FLOW-test-selection`
+io ▶ `FLOW-cli-invocation` · `FLOW-config-file` · `FLOW-mutate-cmd` · `FLOW-query-request` · `FLOW-steering-trigger` · `FLOW-version-bump` · io ◀ `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-export-pending` · `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-install-result` · `FLOW-markdown-docs` · `FLOW-rendered-views` · `FLOW-skill-report` · `FLOW-test-selection`
 
 ## 3  Use Cases & Verhalten
 
@@ -138,7 +138,7 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (int
 
 Die Fabrik der oeffentlichen Programmierschnittstelle: baut den Harness mit Store, Regeln und Hooks und gibt genau einen Besitzer des Stores zurueck.
 
-io ◀ `FLOW-cli-command` · `FLOW-store-ownership` · io ▶ — · allocate ▶ `MOD-surface`
+io ◀ `FLOW-cli-command` · `FLOW-store-ownership` · io ▶ `FLOW-harness-handle` · allocate ▶ `MOD-surface`
 
 ###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
 
@@ -150,7 +150,25 @@ priority: must · status: approved · kinds: functional
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
-##### 3.1.1.3  `FUNC-open-store` — initialize()
+##### 3.1.1.3  `FUNC-tool-context` — createToolContext
+
+> auch in: `FUNC-block-ruestzeug`
+
+Stellt jedem Werkzeugaufruf seinen Kontext bereit: Aufrufer, Repo-Wurzel und die Weiterleitung an den Besitzerprozess.
+
+io ◀ `FLOW-gate-verdict` · `FLOW-harness-handle` · io ▶ `FLOW-tool-context` · allocate ▶ `MOD-surface`
+
+###### `REQ-mcp-tool-registry` — MCP-Tool-Registry an Harness gebunden
+
+> auch unter: `FUNC-bind-tools` · `FUNC-serve-stdio`
+
+CR-GC-101: Registry graph_elements/get_node/get_edges (read), graph_mutate (write durchs Gate), rules_evaluate/get_violations, audit_trail/stats — via bindToolsToHarness.
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integration) · `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-bind-tools` · `FUNC-serve-stdio` · `FUNC-tool-context` · allocate ▶ `MOD-surface`
+
+##### 3.1.1.4  `FUNC-open-store` — initialize()
 
 > auch in: `FUNC-block-speicherwerk`
 
@@ -176,7 +194,7 @@ priority: must · status: approved · kinds: functional
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
-##### 3.1.1.4  `FUNC-close-store` — close()
+##### 3.1.1.5  `FUNC-close-store` — close()
 
 > auch in: `FUNC-block-speicherwerk`
 
@@ -194,7 +212,7 @@ priority: must · status: approved · kinds: functional
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-close-store` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-open-store` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
-##### 3.1.1.5  `FUNC-emit-trajectory` — materializeTrajectory()
+##### 3.1.1.6  `FUNC-emit-trajectory` — materializeTrajectory()
 
 > auch in: `FUNC-block-gedaechtnis`
 
@@ -226,7 +244,7 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-create-harness-smoke` (integration) · `TEST-learning-emit` (integration) · satisfy ◀ `FUNC-emit-trajectory` · allocate ▶ `MOD-projections`
 
-##### 3.1.1.6  `FUNC-evaluate-rules` — evaluateRules()
+##### 3.1.1.7  `FUNC-evaluate-rules` — evaluateRules()
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-live-update` · `FCHAIN-modelfree-gate` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FUNC-block-gate`
 
@@ -242,7 +260,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-mutate-gate` (integration) · `TEST-nd-similarity` (unit) · `TEST-violation-context` (integration) · satisfy ◀ `FUNC-evaluate-rules` · allocate ▶ `MOD-kernel`
 
-##### 3.1.1.7  `FUNC-save-graph` — saveGraph(graph)
+##### 3.1.1.8  `FUNC-save-graph` — saveGraph(graph)
 
 > auch in: `FCHAIN-live-update` · `FCHAIN-snapshot-freshness` · `FUNC-block-gate`
 
@@ -260,7 +278,7 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-load-graph` · `FUNC-merge-nodes` · `FUNC-save-graph` · allocate ▶ `MOD-kernel` · `MOD-projections`
 
-##### 3.1.1.8  `FUNC-fit-advisory` — computeFitAdvisory(before, after)
+##### 3.1.1.9  `FUNC-fit-advisory` — computeFitAdvisory(before, after)
 
 > auch in: `FUNC-block-messwerk`
 
@@ -278,7 +296,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop` · `MOD-projections`
 
-##### 3.1.1.9  `FUNC-mutate` — mutate(commands)
+##### 3.1.1.10  `FUNC-mutate` — mutate(commands)
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-capture` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-modelfree-gate` · `FCHAIN-skill-authoring` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FUNC-block-gate`
 
@@ -311,24 +329,6 @@ Eine legale Mutation persistiert samt Attributen, eine Mutation ohne ihre Pflich
 priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (integration) · `TEST-occ` (integration) · `TEST-single-write-door` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
-
-##### 3.1.1.10  `FUNC-tool-context` — createToolContext
-
-> auch in: `FUNC-block-ruestzeug`
-
-Stellt jedem Werkzeugaufruf seinen Kontext bereit: Aufrufer, Repo-Wurzel und die Weiterleitung an den Besitzerprozess.
-
-io ◀ `FLOW-gate-verdict` · io ▶ — · allocate ▶ `MOD-surface`
-
-###### `REQ-mcp-tool-registry` — MCP-Tool-Registry an Harness gebunden
-
-> auch unter: `FUNC-bind-tools` · `FUNC-serve-stdio`
-
-CR-GC-101: Registry graph_elements/get_node/get_edges (read), graph_mutate (write durchs Gate), rules_evaluate/get_violations, audit_trail/stats — via bindToolsToHarness.
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integration) · `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-bind-tools` · `FUNC-serve-stdio` · `FUNC-tool-context` · allocate ▶ `MOD-surface`
 
 ##### 3.1.1.11  `FUNC-load-graph` — loadGraph()
 
@@ -1404,7 +1404,7 @@ Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (in
 
 Der Advisory-Rueckweg an den fragenden Agenten: aus demselben Snapshot die Fokus-Dimension, die blockierenden Fehler und die feuernden Regeln als naechster Schritt.
 
-io ◀ `FLOW-dimension-readiness` · `FLOW-learning-advice` · `FLOW-steering-snapshot` · io ▶ `FLOW-learning-query` · `FLOW-round-prompt` · allocate ▶ `MOD-loop`
+io ◀ `FLOW-dimension-readiness` · `FLOW-learning-advice` · `FLOW-steering-snapshot` · io ▶ `FLOW-next-step-advice` · allocate ▶ `MOD-loop`
 
 ###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
 
@@ -1632,7 +1632,7 @@ Verification ◀ `TEST-graph-time-travel` (integration) · `TEST-reseed` (integr
 
 Stellt den Graph-Stand eines Commits her: liest den Snapshot per git show aus dem Objektspeicher und stellt ihn im gitignorierten Workspace bereit. Der Working-Tree bleibt unberuehrt, es gibt also genau eine Zustandsaenderung; un-exportierte Mutationen brechen ab, force verwirft sie. (CR-GC-311)
 
-io ◀ `FLOW-cli-command` · io ▶ — · allocate ▶ `MOD-surface`
+io ◀ `FLOW-cli-command` · `FLOW-harness-handle` · io ▶ — · allocate ▶ `MOD-surface`
 
 ###### `REQ-graph-state-recall` — Frueheren Graph-Stand reproduzieren
 
@@ -1892,7 +1892,7 @@ Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FUNC-broadcast-d
 
 Bindet die MCP-Tool-Registry headless an einen stdio-Transport; jeder Agent (Claude Code oder OpenCode, BYOK) ist ein gleichwertiger Client. Beweist agent-agnostisch + headless. (CR-GC-124)
 
-io ◀ `FLOW-live-event` · io ▶ `FLOW-query-request` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-harness-handle` · `FLOW-live-event` · `FLOW-tool-registry` · io ▶ `FLOW-query-request` · allocate ▶ `MOD-surface`
 
 ###### `REQ-mcp-tool-registry` — MCP-Tool-Registry an Harness gebunden
 
@@ -2140,7 +2140,7 @@ Verification ◀ `TEST-auto-export` (integration) · `TEST-doc-export` (conforma
 
 Bindet die MCP-Tool-Registry headless an einen stdio-Transport; jeder Agent (Claude Code oder OpenCode, BYOK) ist ein gleichwertiger Client. Beweist agent-agnostisch + headless. (CR-GC-124)
 
-io ◀ `FLOW-live-event` · io ▶ `FLOW-query-request` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-harness-handle` · `FLOW-live-event` · `FLOW-tool-registry` · io ▶ `FLOW-query-request` · allocate ▶ `MOD-surface`
 
 ###### `REQ-mcp-tool-registry` — MCP-Tool-Registry an Harness gebunden
 
@@ -2192,7 +2192,7 @@ Verification ◀ `TEST-doc-export` (conformance) · satisfy ◀ `FUNC-export-mar
 
 PROMPT-realisierter Graph-nach-Markdown-Renderer via se-view-Commands. Steht fuer die View-Skills OHNE eigenen FUNC-Knoten (arch, implplan, nfr, testconcept, testmatrix, trade, srs, cr-list, references); realRef zeigt auf arch.md als deren Vertreter. Interim-Realisierung von REQ-doc-export, bis FUNC-export-markdown (code, MOD-docs) sie ersetzt.
 
-io ◀ `FLOW-query-request` · io ▶ `FLOW-markdown-docs` · `FLOW-query-request` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-query-request` · io ▶ `FLOW-query-request` · `FLOW-rendered-views` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-doc-export` — Graph → Markdown Re-Export
 
@@ -2392,7 +2392,7 @@ Verification ◀ `TEST-bootstrap` (integration) · satisfy ◀ `FUNC-import` · 
 
 Das Verb graphcode import-code: sammelt die TypeScript-Dateien und uebergibt sie dem externen Slicer. graphcode extrahiert dabei selbst nichts, es delegiert und nimmt das Ergebnis entgegen.
 
-io ◀ `FLOW-cli-command` · io ▶ `FLOW-gate-verdict` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-cli-command` · `FLOW-harness-handle` · io ▶ `FLOW-gate-verdict` · allocate ▶ `MOD-surface`
 
 ###### `REQ-model-exchange-pre` — Vorbedingung Modellaustausch
 
@@ -2766,7 +2766,7 @@ Verification ◀ `TEST-repo-lifecycle` (integration) · satisfy ◀ `FCHAIN-repo
 
 Bindet die Werkzeug-Registry an einen Harness, sodass jedes Werkzeug ueber dasselbe Gate schreibt wie ein Aufruf im Prozess.
 
-io ◀ — · io ▶ — · allocate ▶ `MOD-surface`
+io ◀ `FLOW-harness-handle` · `FLOW-tool-context` · io ▶ `FLOW-tool-registry` · allocate ▶ `MOD-surface`
 
 ###### `REQ-mcp-tool-registry` — MCP-Tool-Registry an Harness gebunden
 
@@ -2970,7 +2970,7 @@ Verification ◀ `TEST-cli-scaffold` (integration) · `TEST-upgrade` (integratio
 
 Das Verb graphcode run: liest die Backend-Konfiguration aus der Umgebung und startet den eingebetteten Treiber. Der Wechsel zwischen lokalem und Frontier-Modell passiert hier als Konfiguration, nicht als zweiter Codepfad.
 
-io ◀ `FLOW-cli-command` · io ▶ `FLOW-steering-trigger` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-cli-command` · `FLOW-harness-handle` · io ▶ `FLOW-steering-trigger` · allocate ▶ `MOD-surface`
 
 ###### `REQ-one-driver-local-and-frontier` — Ein Treiber fuer lokale und Frontier-Modelle
 
@@ -3244,7 +3244,7 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (int
 
 Das Verb graphcode import-code: sammelt die TypeScript-Dateien und uebergibt sie dem externen Slicer. graphcode extrahiert dabei selbst nichts, es delegiert und nimmt das Ergebnis entgegen.
 
-io ◀ `FLOW-cli-command` · io ▶ `FLOW-gate-verdict` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-cli-command` · `FLOW-harness-handle` · io ▶ `FLOW-gate-verdict` · allocate ▶ `MOD-surface`
 
 ###### `REQ-model-exchange-pre` — Vorbedingung Modellaustausch
 
@@ -3270,7 +3270,7 @@ Verification ◀ `TEST-capture` (integration) · `TEST-import-code-verb` (integr
 
 Das Verb graphcode run: liest die Backend-Konfiguration aus der Umgebung und startet den eingebetteten Treiber. Der Wechsel zwischen lokalem und Frontier-Modell passiert hier als Konfiguration, nicht als zweiter Codepfad.
 
-io ◀ `FLOW-cli-command` · io ▶ `FLOW-steering-trigger` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-cli-command` · `FLOW-harness-handle` · io ▶ `FLOW-steering-trigger` · allocate ▶ `MOD-surface`
 
 ###### `REQ-one-driver-local-and-frontier` — Ein Treiber fuer lokale und Frontier-Modelle
 
@@ -3288,7 +3288,7 @@ Verification ◀ `TEST-cli-run` (integration) · `TEST-executor-bestofn` (integr
 
 Bindet die MCP-Tool-Registry headless an einen stdio-Transport; jeder Agent (Claude Code oder OpenCode, BYOK) ist ein gleichwertiger Client. Beweist agent-agnostisch + headless. (CR-GC-124)
 
-io ◀ `FLOW-live-event` · io ▶ `FLOW-query-request` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-harness-handle` · `FLOW-live-event` · `FLOW-tool-registry` · io ▶ `FLOW-query-request` · allocate ▶ `MOD-surface`
 
 ###### `REQ-mcp-tool-registry` — MCP-Tool-Registry an Harness gebunden
 
@@ -3348,7 +3348,7 @@ io ◀ — · io ▶ — · allocate ▶ `MOD-kernel`
 
 Bindet die Werkzeug-Registry an einen Harness, sodass jedes Werkzeug ueber dasselbe Gate schreibt wie ein Aufruf im Prozess.
 
-io ◀ — · io ▶ — · allocate ▶ `MOD-surface`
+io ◀ `FLOW-harness-handle` · `FLOW-tool-context` · io ▶ `FLOW-tool-registry` · allocate ▶ `MOD-surface`
 
 ###### `REQ-mcp-tool-registry` — MCP-Tool-Registry an Harness gebunden
 
@@ -3434,7 +3434,7 @@ Verification ◀ `TEST-schema-migration` (integration) · satisfy ◀ `FUNC-migr
 
 Stellt jedem Werkzeugaufruf seinen Kontext bereit: Aufrufer, Repo-Wurzel und die Weiterleitung an den Besitzerprozess.
 
-io ◀ `FLOW-gate-verdict` · io ▶ — · allocate ▶ `MOD-surface`
+io ◀ `FLOW-gate-verdict` · `FLOW-harness-handle` · io ▶ `FLOW-tool-context` · allocate ▶ `MOD-surface`
 
 ###### `REQ-mcp-tool-registry` — MCP-Tool-Registry an Harness gebunden
 
@@ -3864,7 +3864,7 @@ Verification ◀ `TEST-graph-time-travel` (integration) · `TEST-reseed` (integr
 
 Stellt den Graph-Stand eines Commits her: liest den Snapshot per git show aus dem Objektspeicher und stellt ihn im gitignorierten Workspace bereit. Der Working-Tree bleibt unberuehrt, es gibt also genau eine Zustandsaenderung; un-exportierte Mutationen brechen ab, force verwirft sie. (CR-GC-311)
 
-io ◀ `FLOW-cli-command` · io ▶ — · allocate ▶ `MOD-surface`
+io ◀ `FLOW-cli-command` · `FLOW-harness-handle` · io ▶ — · allocate ▶ `MOD-surface`
 
 ###### `REQ-graph-state-recall` — Frueheren Graph-Stand reproduzieren
 
@@ -4118,7 +4118,7 @@ Verification ◀ `TEST-doc-export` (conformance) · satisfy ◀ `FUNC-export-mar
 
 PROMPT-realisierter Graph-nach-Markdown-Renderer via se-view-Commands. Steht fuer die View-Skills OHNE eigenen FUNC-Knoten (arch, implplan, nfr, testconcept, testmatrix, trade, srs, cr-list, references); realRef zeigt auf arch.md als deren Vertreter. Interim-Realisierung von REQ-doc-export, bis FUNC-export-markdown (code, MOD-docs) sie ersetzt.
 
-io ◀ `FLOW-query-request` · io ▶ `FLOW-markdown-docs` · `FLOW-query-request` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-query-request` · io ▶ `FLOW-query-request` · `FLOW-rendered-views` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-doc-export` — Graph → Markdown Re-Export
 
@@ -4416,7 +4416,7 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (int
 
 Die Fabrik der oeffentlichen Programmierschnittstelle: baut den Harness mit Store, Regeln und Hooks und gibt genau einen Besitzer des Stores zurueck.
 
-io ◀ `FLOW-cli-command` · `FLOW-store-ownership` · io ▶ — · allocate ▶ `MOD-surface`
+io ◀ `FLOW-cli-command` · `FLOW-store-ownership` · io ▶ `FLOW-harness-handle` · allocate ▶ `MOD-surface`
 
 ###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
 
@@ -5034,7 +5034,7 @@ Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (in
 
 Der Advisory-Rueckweg an den fragenden Agenten: aus demselben Snapshot die Fokus-Dimension, die blockierenden Fehler und die feuernden Regeln als naechster Schritt.
 
-io ◀ `FLOW-dimension-readiness` · `FLOW-learning-advice` · `FLOW-steering-snapshot` · io ▶ `FLOW-learning-query` · `FLOW-round-prompt` · allocate ▶ `MOD-loop`
+io ◀ `FLOW-dimension-readiness` · `FLOW-learning-advice` · `FLOW-steering-snapshot` · io ▶ `FLOW-next-step-advice` · allocate ▶ `MOD-loop`
 
 ###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
 
@@ -5180,187 +5180,217 @@ Der Graph als EIN Wert, in jedem seiner Zustaende: in-memory geladen, als Entwur
 
 io ◀ `FUNC-apply-reseed` · `FUNC-close-store` · `FUNC-load-graph` · `FUNC-merge-nodes` · `FUNC-mutate` · `FUNC-open-store` · `FUNC-reseed` · `FUNC-save-graph` · `FUNC-seed-from-json` · io ▶ `ACTOR-owner` · `FUNC-apply-reseed` · `FUNC-arch-fitness` · `FUNC-auto-export` · `FUNC-check-code-conformance` · `FUNC-close-store` · `FUNC-emit-trajectory` · `FUNC-emit-update-event` · `FUNC-encode` · `FUNC-evaluate-rules` · `FUNC-export-marker` · `FUNC-fit-advisory` · `FUNC-graph-export-snapshot` · `FUNC-graph-suggest` · `FUNC-list-elements` · `FUNC-load-graph` · `FUNC-merge-nodes` · `FUNC-module-metrics` · `FUNC-mutate` · `FUNC-nd-similarity` · `FUNC-open-store` · `FUNC-reseed` · `FUNC-score-completeness` · `FUNC-seed-from-json` · schema ▶ `SCHEMA-ontology-graph`
 
-### 4.17  `FLOW-health-report` — Health-Report
+### 4.17  `FLOW-harness-handle` — Harness-Griff
+
+Der fertig verdrahtete Harness, den die Fabrik liefert: Store geoeffnet, Lock beansprucht, Regelwerk geladen. Alles, was auf dem Graphen arbeitet, holt ihn hier ab.
+
+io ◀ `FUNC-create-harness` · io ▶ `FUNC-bind-tools` · `FUNC-import-code-verb` · `FUNC-rewind` · `FUNC-run-verb` · `FUNC-serve-stdio` · `FUNC-tool-context` · schema ▶ `SCHEMA-harness-handle`
+
+### 4.18  `FLOW-health-report` — Health-Report
 
 Der gemessene Funktionszustand des Hosts: Store erreichbar, Gate arbeitsfaehig, Knotenzahl, die geltenden Ontologie-/Regel-/Meta-Modell-Versionen und die Zahl der angehaengten Viewer.
 
 io ◀ `FUNC-health-endpoint` · io ▶ `ACTOR-dashboard` · schema ▶ `SCHEMA-health-report`
 
-### 4.18  `FLOW-impacted-tests` — Betroffene Tests
+### 4.19  `FLOW-impacted-tests` — Betroffene Tests
 
 Der gerichtete Auswahl-Teilgraph einer Aenderung: erreichte Knoten und Kanten plus die getrennt gefuehrten Anker- und TEST-uids. Uebergabe von der Aufloesung an das Werkzeug.
 
 io ◀ `FUNC-resolve-tests-from-code` · io ▶ `FUNC-deduce-tests` · schema ▶ `SCHEMA-impacted-tests`
 
-### 4.19  `FLOW-install-result` — Lifecycle-Result
+### 4.20  `FLOW-install-result` — Lifecycle-Result
 
 Ergebnis der CLI-Lifecycle-Verben an den Entwickler: Scaffold-, Update-, Remove-, Status- und Upgrade-Ausgang.
 
 io ◀ `FUNC-collect-status` · `FUNC-harness-cli` · `FUNC-upgrade` · io ▶ `ACTOR-owner` · schema ▶ `SCHEMA-cli-command`
 
-### 4.20  `FLOW-learning-advice` — Lern-Empfehlung
+### 4.21  `FLOW-learning-advice` — Lern-Empfehlung
 
 Die Antwort des Nachbarsystems: je Kandidat ein Urteil. Advisory wie graph_suggest selbst, nie Auto-Apply. Geplant, nicht realisiert (CR-GC-465).
 
 io ◀ `ACTOR-learning-engine` · io ▶ `FUNC-graph-suggest` · `FUNC-next-step` · schema ▶ `SCHEMA-learning-advice`
 
-### 4.21  `FLOW-learning-query` — Lern-Frage
+### 4.22  `FLOW-learning-query` — Lern-Frage
 
 Die Frage an das Nachbarsystem: die Lage (Metrikvektor und Zielrichtung im R^6) plus die Kandidaten, die der Fragende bereits gebildet hat. graphcode behaelt die Kandidatenbildung. Geplant, nicht realisiert (CR-GC-465).
 
-io ◀ `FUNC-graph-suggest` · `FUNC-next-step` · io ▶ `ACTOR-learning-engine` · schema ▶ `SCHEMA-learning-query`
+io ◀ `FUNC-graph-suggest` · io ▶ `ACTOR-learning-engine` · schema ▶ `SCHEMA-learning-query`
 
-### 4.22  `FLOW-live-event` — Live-Update-Event
+### 4.23  `FLOW-live-event` — Live-Update-Event
 
 Der versionierte Update-Event-Strom: SSE invalidate fuer graph, rules, readiness, suggestions, mit Late-Joiner-Cache und strikt read-only an die Live-Viewer.
 
 io ◀ `FUNC-broadcast-diff` · `FUNC-emit-update-event` · `FUNC-serve-sse` · io ▶ `ACTOR-dashboard` · `FUNC-broadcast-diff` · `FUNC-serve-sse` · `FUNC-serve-stdio` · schema ▶ `SCHEMA-update-event`
 
-### 4.23  `FLOW-markdown-docs` — Markdown-Docs
+### 4.24  `FLOW-markdown-docs` — Exportierte Sichten
 
-Generierte Markdown-Views mit GENERATED-Header, gleich ob der Exporter oder ein View-Skill sie gerendert hat.
+Die deterministisch nach docs/views exportierten Markdown-Sichten mit GENERATED-Header, erzeugt vom Exporter beim Re-Export des SSOT.
 
-io ◀ `FUNC-export-markdown` · `FUNC-render-views` · io ▶ `ACTOR-owner` · schema ▶ `SCHEMA-markdown-view`
+io ◀ `FUNC-export-markdown` · io ▶ `ACTOR-owner` · schema ▶ `SCHEMA-markdown-view`
 
-### 4.24  `FLOW-measurement-vector` — Messvektor
+### 4.25  `FLOW-measurement-vector` — Messvektor
 
 Der gemeinsame Eingang der vier Entscheidungen: der gemessene Zustand als Vektor, unabhaengig davon, welche Projektion ihn fuellt. Erst mit diesem Vertrag ist die Gleichheit der vier Signaturen geprueft statt behauptet.
 
 io ◀ `FUNC-take-steering-snapshot` · io ▶ `FUNC-goal-steerer` · schema ▶ `SCHEMA-measurement-vector`
 
-### 4.25  `FLOW-metric-policy` — Urteils-Policy
+### 4.26  `FLOW-metric-policy` — Urteils-Policy
 
 Die geltenden Urteilsschwellen, wie sie nach dem Auffuellen mit DEFAULT_METRIC_POLICY gelten: vollstaendig, jede Schwelle gesetzt. Erzeugt von load-config aus der Rohform. Keine Schwelle steht als Literal im Regelcode.
 
 io ◀ `FUNC-load-config` · io ▶ `FUNC-evaluate-rules` · `FUNC-take-steering-snapshot` · schema ▶ `SCHEMA-metric-policy`
 
-### 4.26  `FLOW-model-answer` — Modellantwort
+### 4.27  `FLOW-model-answer` — Modellantwort
 
 Die Roh-Antwort des Modells auf einen Runden-Prompt. Traegt Text, Werkzeugaufrufe und den Stop-Grund; fehlt der Werkzeugaufruf, ist der Text die einzige Spur, aus der die Prosa-Recovery ein Kommando holt.
 
 io ◀ `FUNC-run-executor` · io ▶ `FUNC-extract-mutate` · schema ▶ `SCHEMA-model-answer`
 
-### 4.27  `FLOW-module-metrics` — Modulkennzahlen je MOD
+### 4.28  `FLOW-module-metrics` — Modulkennzahlen je MOD
 
 Instabilitaet, LCOM4, Kohaesion je Modul plus die geltende Urteils-Policy und ihre Herkunft. Wert und Schwelle verlassen den Host zusammen, damit die Anzeige keinen eigenen Zielwert braucht (CR-GC-329).
 
 io ◀ `FUNC-module-metrics` · io ▶ `ACTOR-dashboard` · `FUNC-evaluate-rules` · schema ▶ `SCHEMA-module-metrics`
 
-### 4.28  `FLOW-mutate-cmd` — Mutate-Command
+### 4.29  `FLOW-mutate-cmd` — Mutate-Command
 
 Jede Schreibabsicht am Gate als MutateCommand-Batch: Edit-Op von Agent oder Mensch, und der dryRun-verifizierte Kandidaten-Fix aus dem Vorschlagspfad.
 
 io ◀ `ACTOR-agent` · `ACTOR-owner` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-extract-mutate` · `FUNC-graph-suggest` · `FUNC-host-socket` · `FUNC-preflight` · `FUNC-rank-candidates` · `FUNC-run-executor` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-target-profile` · io ▶ `FUNC-host-socket` · `FUNC-mutate` · `FUNC-preflight` · schema ▶ `SCHEMA-mutate-command`
 
-### 4.29  `FLOW-phase-readiness` — Phasen-Readiness (SRR/PDR/CDR/TRR)
+### 4.30  `FLOW-next-step-advice` — Naechster Schritt (Advisory)
+
+Der Rueckweg an den fragenden Agenten: aus dem Messzustand die Fokus-Dimension und das Fund-Fenster. Gleicher Vertrag wie die Executor-Runde, anderer Empfaenger.
+
+io ◀ `FUNC-next-step` · io ▶ `ACTOR-agent` · schema ▶ `SCHEMA-generation-step`
+
+### 4.31  `FLOW-phase-readiness` — Phasen-Readiness (SRR/PDR/CDR/TRR)
 
 Dieselbe Regelauswertung auf die Phasen-Gates projiziert: je Gate abgedeckte gegen alle Regel-IDs plus die fehlenden. Die zweite Achse, nicht die zweite Messung.
 
 io ◀ `FUNC-compute-phase-readiness` · io ▶ `FUNC-generation-step` · schema ▶ `SCHEMA-phase-readiness`
 
-### 4.30  `FLOW-query-request` — Query-Request (Lese- und View-Anfrage)
+### 4.32  `FLOW-query-request` — Query-Request (Lese- und View-Anfrage)
 
 Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Eine Anfrageform, nicht vier.
 
 io ◀ `ACTOR-agent` · `ACTOR-owner` · `FUNC-auto-export` · `FUNC-render-views` · `FUNC-serve-stdio` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · io ▶ `FUNC-deduce-tests` · `FUNC-export-markdown` · `FUNC-graph-expand` · `FUNC-graph-impact` · `FUNC-list-elements` · `FUNC-render-views` · `FUNC-resolve-tests-from-code` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · schema ▶ `SCHEMA-query-params`
 
-### 4.31  `FLOW-round-injection` — Runden-Injektion
+### 4.33  `FLOW-rendered-views` — Gerenderte Sicht (Skill)
+
+Die Markdown-Sicht, die ein se-view-Skill auf Zuruf rendert. Gleicher Vertrag wie der deterministische Export, anderer Erzeuger und anderer Anlass.
+
+io ◀ `FUNC-render-views` · io ▶ `ACTOR-owner` · schema ▶ `SCHEMA-markdown-view`
+
+### 4.34  `FLOW-round-injection` — Runden-Injektion
 
 Der zusammengesetzte Prompt-Zusatz einer Runde: Guide-Slice plus Element-Index. Wie der Runden-Scope ein informationeller Kontext ohne festes Wire-Format, kein Code-Vertrag.
 
 io ◀ `FUNC-build-round-injection` · io ▶ `FUNC-run-executor` · schema ▶ `SCHEMA-round-injection`
 
-### 4.32  `FLOW-round-prompt` — Runden-Prompt (naechster Schritt)
+### 4.35  `FLOW-round-prompt` — Runden-Vorgabe
 
-Der aus dem Messzustand abgeleitete naechste Schritt: Fokus-Dimension, Fokus-Typen, Fund-Fenster, Gate-Protokoll, Handoff-Bedingung.
+Die vom Runden-Waehler abgeleitete naechste Runde fuer den Executor: Fokus-Dimension, Fokus-Typen, Fund-Fenster, Gate-Protokoll, Handoff-Bedingung.
 
-io ◀ `FUNC-generation-step` · `FUNC-next-step` · io ▶ `ACTOR-agent` · `FUNC-build-round-injection` · `FUNC-rank-candidates` · `FUNC-run-executor` · schema ▶ `SCHEMA-generation-step`
+io ◀ `FUNC-generation-step` · io ▶ `FUNC-build-round-injection` · `FUNC-rank-candidates` · `FUNC-run-executor` · schema ▶ `SCHEMA-generation-step`
 
-### 4.33  `FLOW-round-scope` — Round Scope (bounded slice)
+### 4.36  `FLOW-round-scope` — Round Scope (bounded slice)
 
 Der durch read gebundene Blast-Radius/Kontext, der informiert, was status als offen prueft. Kein festes Wire-Format - informationeller Rundenkontext, kein Code-Datenvertrag.
 
 io ◀ `FUNC-graph-impact` · io ▶ `FUNC-evaluate-rules` · schema ▶ `SCHEMA-round-scope`
 
-### 4.34  `FLOW-schema-fingerprint` — Schema-Fingerabdruck
+### 4.37  `FLOW-schema-fingerprint` — Schema-Fingerabdruck
 
 Der Fingerabdruck der generierten DDL als Marker neben dem Store: 16 Hex-Zeichen. Beim Anlegen gestempelt, beim naechsten Start gelesen - er entscheidet, ob der Store weggeworfen und neu befuellt wird.
 
 io ◀ `FUNC-schema-guard` · io ▶ `FUNC-open-store` · schema ▶ `SCHEMA-schema-fingerprint`
 
-### 4.35  `FLOW-session-entry` — Sitzungseintrag
+### 4.38  `FLOW-session-entry` — Sitzungseintrag
 
 Der Eintrag, den eine Sitzung beim Anhaengen unter .graphcode/sessions fuer sich selbst schreibt: PID, Rechner, Startzeit.
 
 io ◀ `FUNC-gve-supervise` · io ▶ `FUNC-gve-sessions` · schema ▶ `SCHEMA-session-registry`
 
-### 4.36  `FLOW-session-registry` — Sitzungsregister
+### 4.39  `FLOW-session-registry` — Sitzungsregister
 
 Die noch lebenden Sitzungen eines Repos: aus den Eintraegen unter .graphcode/sessions gefiltert, tote PIDs entfernt. Darauf entscheidet das Anhaengen, ob noch ein Viewer gebraucht wird.
 
 io ◀ `FUNC-gve-sessions` · io ▶ `FUNC-gve-supervise` · schema ▶ `SCHEMA-session-registry`
 
-### 4.37  `FLOW-skill-report` — Skill-Bericht
+### 4.40  `FLOW-skill-report` — Skill-Bericht
 
 Der gemessene Stand als Text zurueck an den Menschen.
 
 io ◀ `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-test` · `FUNC-test-ui` · io ▶ `ACTOR-owner` · schema ▶ `SCHEMA-markdown-view`
 
-### 4.38  `FLOW-skill-request` — Skill-Aufruf
+### 4.41  `FLOW-skill-request` — Skill-Aufruf
 
 Aufruf eines Skills durch den Menschen: Absicht, Zielausschnitt, Optionen. Autoren- und Berichts-Skills nehmen denselben Auftrag entgegen.
 
-io ◀ `ACTOR-agent` · `ACTOR-owner` · io ▶ `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-import-code` · `FUNC-import-doc` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-help` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-se-trade` · `FUNC-target-profile` · `FUNC-test` · `FUNC-test-ui` · schema ▶ `SCHEMA-query-params`
+io ◀ `ACTOR-agent` · io ▶ `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-import-code` · `FUNC-import-doc` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-help` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-se-trade` · `FUNC-target-profile` · `FUNC-test` · `FUNC-test-ui` · schema ▶ `SCHEMA-query-params`
 
-### 4.39  `FLOW-steering-delta` — Steering-Delta (vor/nach Kandidat)
+### 4.42  `FLOW-steering-delta` — Steering-Delta (vor/nach Kandidat)
 
 Blockierende Fehler vorher und nachher plus Score-Delta je Dimension. Das erste Sachkriterium der Kandidaten-Rangfolge.
 
 io ◀ `FUNC-compute-steering-delta` · io ▶ `FUNC-rank-candidates` · schema ▶ `SCHEMA-steering-delta`
 
-### 4.40  `FLOW-steering-snapshot` — Steering-Snapshot
+### 4.43  `FLOW-steering-snapshot` — Steering-Snapshot
 
 Das Ergebnis der EINEN Messung: gemappter Graph, voller Regelstrom, blockierende Fehler, Readiness-Report. Alles Weitere ist Projektion davon.
 
 io ◀ `FUNC-take-steering-snapshot` · io ▶ `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-next-step` · schema ▶ `SCHEMA-steering-snapshot`
 
-### 4.41  `FLOW-steering-trigger` — Runden-Ausloeser
+### 4.44  `FLOW-steering-trigger` — Runden-Ausloeser
 
 Der Wunsch, eine Steuerungsrunde zu fahren, mit ihren Parametern: Intent, zurueckgestellte Fokus-Schluessel, Auswahlmodus. Mensch und lokaler Executor loesen dieselbe Kette aus, nur die Taktung unterscheidet sich.
 
 io ◀ `ACTOR-agent` · `ACTOR-owner` · `FUNC-run-verb` · io ▶ `FUNC-take-steering-snapshot` · schema ▶ `SCHEMA-query-params`
 
-### 4.42  `FLOW-store-ownership` — Store-Besitzanspruch
+### 4.45  `FLOW-store-ownership` — Store-Besitzanspruch
 
 Der Anspruch auf den Kuzu-Store eines Repos: gehalten, uebernommen oder verweigert.
 
 io ◀ `FUNC-claim-store-lock` · io ▶ `FUNC-create-harness` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` · schema ▶ `SCHEMA-lock-owner`
 
-### 4.43  `FLOW-target-profile` — Zielprofil
+### 4.46  `FLOW-target-profile` — Zielprofil
 
 Das geladene und gepruefte Zielprofil: R6-Zielgewichte und die 3-7 Intentions-Anker, Zielkonflikte gemeldet. Erzeugt von target-profile-load aus der Rohform.
 
 io ◀ `FUNC-target-profile-load` · io ▶ `FUNC-generation-step` · `FUNC-graph-suggest` · schema ▶ `SCHEMA-target-profile`
 
-### 4.44  `FLOW-target-profile-file` — Zielprofil (Rohform)
+### 4.47  `FLOW-target-profile-file` — Zielprofil (Rohform)
 
 Das Zielprofil, wie der Skill se:target-profile es nach .graphcode/target-profile.json schreibt: ungeprueft, Zielkonflikte noch nicht gemeldet.
 
 io ◀ `FUNC-target-profile` · io ▶ `FUNC-target-profile-load` · schema ▶ `SCHEMA-target-profile`
 
-### 4.45  `FLOW-test-selection` — Selektive Testauswahl
+### 4.48  `FLOW-test-selection` — Selektive Testauswahl
 
 Das minimale selektive Laufkommando mit den aufgeloesten TESTs, den Coverage-Zahlen und dem, was unaufloesbar blieb.
 
 io ◀ `FUNC-deduce-tests` · io ▶ `ACTOR-agent` · `ACTOR-owner` · schema ▶ `SCHEMA-test-selection`
 
-### 4.46  `FLOW-trajectory` — Trajectory/Outcome
+### 4.49  `FLOW-tool-context` — Werkzeug-Kontext
+
+Der je Prozess einmal gepraegte Kontext, den jeder Werkzeugaufruf liest: Graphversion, Sitzungskennung, Aufrufer, Repo-Wurzel.
+
+io ◀ `FUNC-tool-context` · io ▶ `FUNC-bind-tools` · schema ▶ `SCHEMA-tool-context`
+
+### 4.50  `FLOW-tool-registry` — Werkzeug-Register
+
+Das gebundene Werkzeugregister, das der Server ueber stdio anbietet: je Werkzeug Name, Eingabeschema und Handler.
+
+io ◀ `FUNC-bind-tools` · io ▶ `FUNC-serve-stdio` · schema ▶ `SCHEMA-tool-registry`
+
+### 4.51  `FLOW-trajectory` — Trajectory/Outcome
 
 append-only Lern-Emission.
 
 io ◀ `FUNC-emit-trajectory` · io ▶ `ACTOR-learning-engine` · schema ▶ `SCHEMA-trajectory`
 
-### 4.47  `FLOW-version-bump` — Version-Bump
+### 4.52  `FLOW-version-bump` — Version-Bump
 
 Neue ONTOLOGY/RULES_VERSION aus contracts/se.
 
@@ -5420,165 +5450,183 @@ schema ◀ `FLOW-formatE-artifact`
 
 Fokus-Schluessel und -Typen, Readiness-Auszug, Fund-Fenster, Gate-Protokoll, Handoff-Bedingung.
 
-schema ◀ `FLOW-round-prompt`
+schema ◀ `FLOW-next-step-advice` · `FLOW-round-prompt`
 
-### 5.10  `SCHEMA-health-report` — HealthPayload
+### 5.10  `SCHEMA-harness-handle` — Harness-Griff
+
+Der Zugang zum Substrat: Store, Regelwerk und Apply-Gate hinter einer Schnittstelle. Spec-only — ein Objekt mit Verhalten, kein Zod-Datenvertrag.
+
+schema ◀ `FLOW-harness-handle`
+
+### 5.11  `SCHEMA-health-report` — HealthPayload
 
 status, store, gate, nodeCount, versions, sseClients. Der Vertrag der GET /health-Antwort.
 
 schema ◀ `FLOW-health-report`
 
-### 5.11  `SCHEMA-impacted-tests` — TestImpactResult
+### 5.12  `SCHEMA-impacted-tests` — TestImpactResult
 
 nodes, edges, anchors, testIds. Der Vertrag von impactedTests am Modulrand.
 
 schema ◀ `FLOW-impacted-tests`
 
-### 5.12  `SCHEMA-learning-advice` — Lern-Empfehlung
+### 5.13  `SCHEMA-learning-advice` — Lern-Empfehlung
 
 Vertrag der Antwort: je Kandidat uid, score, confidence und Evidenz-Pointer auf Log-Eintraege. Wie der score in die Rangfolge eingeht, entscheidet der Konsument und steht nicht im Vertrag. Offen bis zur Implementierung: ob die Antwort auch inhaltliche Vorschlaege traegt (CR-GC-465).
 
 schema ◀ `FLOW-learning-advice`
 
-### 5.13  `SCHEMA-learning-query` — Lern-Frage
+### 5.14  `SCHEMA-learning-query` — Lern-Frage
 
 Vertrag der Frage: Metrikvektor, Zielrichtung und die Kandidatenliste mit uid je Zug. Gehoert dem Nachbarsystem (@sigloch/learning-core), deshalb external. Vor der Implementierung erneut zu entscheiden (CR-GC-465).
 
 schema ◀ `FLOW-learning-query`
 
-### 5.14  `SCHEMA-lock-owner` — LockOwner
+### 5.15  `SCHEMA-lock-owner` — LockOwner
 
 Halter des Store-Locks: Host, PID, Version, Zeitstempel.
 
 schema ◀ `FLOW-store-ownership`
 
-### 5.15  `SCHEMA-markdown-view` — MarkdownView
+### 5.16  `SCHEMA-markdown-view` — MarkdownView
 
 Vertrag der deterministisch gerenderten Markdown-Sichten (GENERATED-Header). Bindung statt Kopie. (CR-GC-454)
 
-schema ◀ `FLOW-markdown-docs` · `FLOW-skill-report`
+schema ◀ `FLOW-markdown-docs` · `FLOW-rendered-views` · `FLOW-skill-report`
 
-### 5.16  `SCHEMA-measurement-vector` — Messvektor (Vertrag der vier Entscheidungen)
+### 5.17  `SCHEMA-measurement-vector` — Messvektor (Vertrag der vier Entscheidungen)
 
 Der gemeinsame Eingang: Regelstrom plus Projektionen, so weit die jeweilige Entscheidung sie braucht. Bewusst spec-only, weil er heute in vier Signaturen verstreut ist; sein Zweck ist, diese Verstreuung sichtbar zu halten.
 
 schema ◀ `FLOW-measurement-vector`
 
-### 5.17  `SCHEMA-metric-policy` — MetricPolicy
+### 5.18  `SCHEMA-metric-policy` — MetricPolicy
 
 Die Schwellen je Urteil: instability, lcom4, crossingFlows, riskRpn, moduleSize. Aus @sigloch/contracts, deshalb external.
 
 schema ◀ `FLOW-config-file` · `FLOW-metric-policy`
 
-### 5.18  `SCHEMA-metric-vector` — MetricVector
+### 5.19  `SCHEMA-metric-vector` — MetricVector
 
 Sechs Topologiedimensionen: modifiability, faultTolerance, flowEfficiency, coherence, viability, scalability. Aus @sigloch/se-engine, deshalb external. (Herkunft korrigiert CR-GC-453)
 
 schema ◀ `FLOW-arch-fitness`
 
-### 5.19  `SCHEMA-model-answer` — ModelAnswer
+### 5.20  `SCHEMA-model-answer` — ModelAnswer
 
 Die normalisierte Antwort des Modells: Text, angeforderte Werkzeugaufrufe, Stop-Grund und Verbrauchszahlen. Geprueft wird sie in der Draht-Form jedes Backends beim Empfang, nicht erst im Prosa-Parser.
 
 schema ◀ `FLOW-model-answer`
 
-### 5.20  `SCHEMA-module-metrics` — ModuleMetrics
+### 5.21  `SCHEMA-module-metrics` — ModuleMetrics
 
 Je MOD allocatedFuncs, fanIn, fanOut, instability, lcom4, cohesion; null heisst nicht messbar, nie null Prozent. Aus @sigloch/contracts, deshalb external.
 
 schema ◀ `FLOW-module-metrics`
 
-### 5.21  `SCHEMA-mutate-command` — MutateCommand
+### 5.22  `SCHEMA-mutate-command` — MutateCommand
 
 Edit-Operation durch das Gate: eine discriminatedUnion ueber op mit sieben Operationen (add-node, update-node, delete-node, add-edge, delete-edge, update-edge, merge-nodes). Knoten reisen als node-Objekt, Kanten als edge-Objekt — NICHT als flache Felder. @sigloch/contracts harness (D1). (Kopie entfernt CR-GC-454)
 
 schema ◀ `FLOW-mutate-cmd`
 
-### 5.22  `SCHEMA-mutate-result` — MutateResult
+### 5.23  `SCHEMA-mutate-result` — MutateResult
 
 Apply-Ergebnis: success, appliedCommands, mutations, violations, confidence, tier (auto-apply/suggest/block) sowie trajectoryId, graphVersion und die OCC-Felder stale/staleDelta. @sigloch/contracts harness (D1). (Kopie entfernt CR-GC-454)
 
 schema ◀ `FLOW-gate-verdict`
 
-### 5.23  `SCHEMA-ontology-graph` — OntologyGraph
+### 5.24  `SCHEMA-ontology-graph` — OntologyGraph
 
 Elements (13 ElementTypes) + Traces (7 TraceTypes). @sigloch/contracts/se.
 
 schema ◀ `FLOW-element-slice` · `FLOW-graph-state`
 
-### 5.24  `SCHEMA-phase-readiness` — PhaseGateReadiness
+### 5.25  `SCHEMA-phase-readiness` — PhaseGateReadiness
 
 Je Gate: abgedeckte und alle Regel-IDs plus die fehlenden.
 
 schema ◀ `FLOW-phase-readiness`
 
-### 5.25  `SCHEMA-query-params` — QueryParams
+### 5.26  `SCHEMA-query-params` — QueryParams
 
 Der gemeinsame Nenner der Leseanfragen: elementId, depth, branch, cursor, view. Bewusst ohne Zod-Symbol — im Code traegt JEDES MCP-Tool sein eigenes Input-Schema, ein zusammengefasstes QueryParams gibt es nicht und soll es nicht geben (ein Sammel-Schema waere ein paralleler Pfad zu den Tool-Signaturen). Der Knoten steht fuer den Kanal, nicht fuer einen Code-Datenvertrag; concept-only. (Begruendung nachgetragen CR-GC-454)
 
 schema ◀ `FLOW-query-request` · `FLOW-skill-request` · `FLOW-steering-trigger` · `FLOW-version-bump`
 
-### 5.26  `SCHEMA-readiness-report` — ReadinessReportType
+### 5.27  `SCHEMA-readiness-report` — ReadinessReportType
 
 Je Dimension score, violations, applicable, ready. Aus @sigloch/contracts, deshalb external.
 
 schema ◀ `FLOW-dimension-readiness`
 
-### 5.27  `SCHEMA-round-injection` — Runden-Injektions-Block
+### 5.28  `SCHEMA-round-injection` — Runden-Injektions-Block
 
 Vertrag der Runden-Injektion: ein Markdown-Textblock als string, Rueckgabe von buildRoundInjection in src/loop/executor-prompt.ts — Guide-Slice plus Element-Index. Bewusst ohne Zod-Symbol: informationeller Prompt-Kontext, kein Wire-Format; deshalb concept-only. (Pfad korrigiert CR-GC-454)
 
 schema ◀ `FLOW-round-injection`
 
-### 5.28  `SCHEMA-round-scope` — Round-Scope-Slice
+### 5.29  `SCHEMA-round-scope` — Round-Scope-Slice
 
 Vertrag des Runden-Scopes: der Format-E-Slice als string aus graph_impact bzw. graph_expand, der den Blast-Radius einer Runde begrenzt. Bewusst ohne Zod-Symbol — informationeller Rundenkontext, kein Code-Datenvertrag; concept-only.
 
 schema ◀ `FLOW-round-scope`
 
-### 5.29  `SCHEMA-schema-fingerprint` — SchemaFingerprint
+### 5.30  `SCHEMA-schema-fingerprint` — SchemaFingerprint
 
 Die ersten 16 Hex-Zeichen eines SHA-256 ueber die generierte DDL. Die Laenge ist Teil des Vertrags: sie unterscheidet einen aelteren Schemastand von einer kaputten Datei.
 
 schema ◀ `FLOW-schema-fingerprint`
 
-### 5.30  `SCHEMA-session-registry` — SessionEntry
+### 5.31  `SCHEMA-session-registry` — SessionEntry
 
 pid, hostname, startedAt. Der Vertrag eines Sitzungseintrags, der eine Prozessgrenze quert.
 
 schema ◀ `FLOW-session-entry` · `FLOW-session-registry`
 
-### 5.31  `SCHEMA-steering-delta` — SteeringDelta
+### 5.32  `SCHEMA-steering-delta` — SteeringDelta
 
 blockingErrors vorher und nachher plus je Dimension before, after, delta.
 
 schema ◀ `FLOW-steering-delta`
 
-### 5.32  `SCHEMA-steering-snapshot` — SteeringSnapshot
+### 5.33  `SCHEMA-steering-snapshot` — SteeringSnapshot
 
 Gemappter OntologyGraph mit injizierten ND-Matrizen, Violations des vollen Katalogs, Zahl der blockierenden Fehler, Readiness-Report.
 
 schema ◀ `FLOW-steering-snapshot`
 
-### 5.33  `SCHEMA-target-profile` — TargetProfile
+### 5.34  `SCHEMA-target-profile` — TargetProfile
 
 weights (6 Dimensionen in [-1,1]) und intentAnchors (3-7 Strings). Der Vertrag der Zielprofil-Datei, die zwei Schreiber und einen Leser hat.
 
 schema ◀ `FLOW-target-profile` · `FLOW-target-profile-file`
 
-### 5.34  `SCHEMA-test-selection` — TestSelection
+### 5.35  `SCHEMA-test-selection` — TestSelection
 
 command, tests mit testRefs, coverage, unresolved. Der Vertrag der graph_tests-Antwort.
 
 schema ◀ `FLOW-test-selection`
 
-### 5.35  `SCHEMA-trajectory` — Trajectory/Outcome
+### 5.36  `SCHEMA-tool-context` — Werkzeug-Kontext
+
+Was jeder Werkzeugaufruf mitbekommt: Codec, Graphversion, Sitzungskennung, Aufrufer und Repo-Wurzel. Spec-only — ein Objekt mit Verhalten, kein Zod-Datenvertrag.
+
+schema ◀ `FLOW-tool-context`
+
+### 5.37  `SCHEMA-tool-registry` — Werkzeug-Register
+
+Die gebundenen MCP-Werkzeuge mit Namen und Eingabeschema. Spec-only — ein Objekt mit Verhalten, kein Zod-Datenvertrag.
+
+schema ◀ `FLOW-tool-registry`
+
+### 5.38  `SCHEMA-trajectory` — Trajectory/Outcome
 
 append-only Lern-Emission: ts, consumerId, consumerType, operation, opCounts, applied, outcome und die Violation-Zaehler. @sigloch/learning-core. (Kopie entfernt CR-GC-454)
 
 schema ◀ `FLOW-trajectory`
 
-### 5.36  `SCHEMA-update-event` — UpdateEvent
+### 5.39  `SCHEMA-update-event` — UpdateEvent
 
 SSE invalidate Event: type, domains (graph/rules/readiness/suggestions), ts und optional version. Einmal in contracts definiert, damit emittierender Harness und Viewer denselben Vertrag lesen. (Kopie entfernt CR-GC-454)
 
