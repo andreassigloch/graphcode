@@ -14,8 +14,8 @@
 | `ACTOR-agent` | io | `FLOW-skill-request` |
 | `ACTOR-agent` | io | `FLOW-steering-trigger` |
 | `ACTOR-learning-engine` | io | `FLOW-learning-advice` |
-| `ACTOR-owner` | io | `FLOW-cli-command` |
-| `ACTOR-owner` | io | `FLOW-metric-policy` |
+| `ACTOR-owner` | io | `FLOW-cli-invocation` |
+| `ACTOR-owner` | io | `FLOW-config-file` |
 | `ACTOR-owner` | io | `FLOW-mutate-cmd` |
 | `ACTOR-owner` | io | `FLOW-query-request` |
 | `ACTOR-owner` | io | `FLOW-skill-request` |
@@ -719,6 +719,9 @@
 | `FLOW-action` | relation | `SCHEMA-action` |
 | `FLOW-arch-fitness` | io | `FUNC-rank-candidates` |
 | `FLOW-arch-fitness` | relation | `SCHEMA-metric-vector` |
+| `FLOW-audit-entries` | io | `ACTOR-owner` |
+| `FLOW-audit-entries` | io | `FUNC-se-retro` |
+| `FLOW-audit-entries` | relation | `SCHEMA-audit-record` |
 | `FLOW-audit-record` | io | `FUNC-audit-stats` |
 | `FLOW-audit-record` | io | `FUNC-audit-trail` |
 | `FLOW-audit-record` | relation | `SCHEMA-audit-record` |
@@ -727,7 +730,6 @@
 | `FLOW-audit-report` | relation | `SCHEMA-audit-stats` |
 | `FLOW-cli-command` | io | `FUNC-bootstrap` |
 | `FLOW-cli-command` | io | `FUNC-claim-store-lock` |
-| `FLOW-cli-command` | io | `FUNC-cli-dispatch` |
 | `FLOW-cli-command` | io | `FUNC-collect-status` |
 | `FLOW-cli-command` | io | `FUNC-create-harness` |
 | `FLOW-cli-command` | io | `FUNC-gve-supervise` |
@@ -738,8 +740,12 @@
 | `FLOW-cli-command` | io | `FUNC-run-verb` |
 | `FLOW-cli-command` | io | `FUNC-upgrade` |
 | `FLOW-cli-command` | relation | `SCHEMA-cli-command` |
+| `FLOW-cli-invocation` | io | `FUNC-cli-dispatch` |
+| `FLOW-cli-invocation` | relation | `SCHEMA-cli-command` |
 | `FLOW-completeness` | io | `FUNC-compute-phase-readiness` |
 | `FLOW-completeness` | relation | `SCHEMA-completeness` |
+| `FLOW-config-file` | io | `FUNC-load-config` |
+| `FLOW-config-file` | relation | `SCHEMA-metric-policy` |
 | `FLOW-dimension-readiness` | io | `FUNC-generation-step` |
 | `FLOW-dimension-readiness` | io | `FUNC-next-step` |
 | `FLOW-dimension-readiness` | io | `FUNC-se-retro` |
@@ -820,7 +826,6 @@
 | `FLOW-measurement-vector` | io | `FUNC-goal-steerer` |
 | `FLOW-measurement-vector` | relation | `SCHEMA-measurement-vector` |
 | `FLOW-metric-policy` | io | `FUNC-evaluate-rules` |
-| `FLOW-metric-policy` | io | `FUNC-load-config` |
 | `FLOW-metric-policy` | io | `FUNC-take-steering-snapshot` |
 | `FLOW-metric-policy` | relation | `SCHEMA-metric-policy` |
 | `FLOW-model-answer` | io | `FUNC-extract-mutate` |
@@ -859,7 +864,9 @@
 | `FLOW-round-scope` | relation | `SCHEMA-round-scope` |
 | `FLOW-schema-fingerprint` | io | `FUNC-open-store` |
 | `FLOW-schema-fingerprint` | relation | `SCHEMA-schema-fingerprint` |
-| `FLOW-session-registry` | io | `FUNC-gve-sessions` |
+| `FLOW-session-entry` | io | `FUNC-gve-sessions` |
+| `FLOW-session-entry` | relation | `SCHEMA-session-registry` |
+| `FLOW-session-registry` | io | `FUNC-gve-supervise` |
 | `FLOW-session-registry` | relation | `SCHEMA-session-registry` |
 | `FLOW-skill-report` | io | `ACTOR-owner` |
 | `FLOW-skill-report` | relation | `SCHEMA-markdown-view` |
@@ -891,14 +898,16 @@
 | `FLOW-steering-snapshot` | relation | `SCHEMA-steering-snapshot` |
 | `FLOW-steering-trigger` | io | `FUNC-take-steering-snapshot` |
 | `FLOW-steering-trigger` | relation | `SCHEMA-query-params` |
+| `FLOW-store-ownership` | io | `FUNC-create-harness` |
 | `FLOW-store-ownership` | io | `FUNC-open-store` |
 | `FLOW-store-ownership` | io | `FUNC-own-kuzu-host` |
 | `FLOW-store-ownership` | io | `FUNC-session-shutdown` |
 | `FLOW-store-ownership` | relation | `SCHEMA-lock-owner` |
 | `FLOW-target-profile` | io | `FUNC-generation-step` |
 | `FLOW-target-profile` | io | `FUNC-graph-suggest` |
-| `FLOW-target-profile` | io | `FUNC-target-profile-load` |
 | `FLOW-target-profile` | relation | `SCHEMA-target-profile` |
+| `FLOW-target-profile-file` | io | `FUNC-target-profile-load` |
+| `FLOW-target-profile-file` | relation | `SCHEMA-target-profile` |
 | `FLOW-test-selection` | io | `ACTOR-agent` |
 | `FLOW-test-selection` | io | `ACTOR-owner` |
 | `FLOW-test-selection` | relation | `SCHEMA-test-selection` |
@@ -916,7 +925,7 @@
 | `FUNC-audit-stats` | allocate | `MOD-surface` |
 | `FUNC-audit-stats` | io | `FLOW-audit-report` |
 | `FUNC-audit-trail` | allocate | `MOD-surface` |
-| `FUNC-audit-trail` | io | `FLOW-audit-report` |
+| `FUNC-audit-trail` | io | `FLOW-audit-entries` |
 | `FUNC-author-req` | allocate | `MOD-agent-surface` |
 | `FUNC-author-req` | io | `FLOW-mutate-cmd` |
 | `FUNC-author-req` | satisfy | `REQ-skill-authors-through-gate` |
@@ -1089,7 +1098,6 @@
 | `FUNC-compute-steering-delta` | io | `FLOW-steering-delta` |
 | `FUNC-compute-steering-delta` | satisfy | `REQ-steering-from-metrics` |
 | `FUNC-create-harness` | allocate | `MOD-surface` |
-| `FUNC-create-harness` | io | `FLOW-store-ownership` |
 | `FUNC-create-harness` | satisfy | `REQ-store-owner-lifecycle` |
 | `FUNC-decode` | allocate | `MOD-projections` |
 | `FUNC-decode` | satisfy | `REQ-codec-validation` |
@@ -1156,7 +1164,7 @@
 | `FUNC-gve-sessions` | io | `FLOW-session-registry` |
 | `FUNC-gve-sessions` | satisfy | `REQ-viewer-owned-by-repo` |
 | `FUNC-gve-supervise` | allocate | `MOD-surface` |
-| `FUNC-gve-supervise` | io | `FLOW-session-registry` |
+| `FUNC-gve-supervise` | io | `FLOW-session-entry` |
 | `FUNC-gve-supervise` | satisfy | `REQ-viewer-owned-by-repo` |
 | `FUNC-harness-cli` | allocate | `MOD-surface` |
 | `FUNC-harness-cli` | io | `FLOW-install-result` |
@@ -1315,7 +1323,7 @@
 | `FUNC-take-steering-snapshot` | satisfy | `REQ-steering-post` |
 | `FUNC-target-profile` | allocate | `MOD-agent-surface` |
 | `FUNC-target-profile` | io | `FLOW-mutate-cmd` |
-| `FUNC-target-profile` | io | `FLOW-target-profile` |
+| `FUNC-target-profile` | io | `FLOW-target-profile-file` |
 | `FUNC-target-profile` | satisfy | `REQ-skill-authors-through-gate` |
 | `FUNC-target-profile-load` | allocate | `MOD-loop` |
 | `FUNC-target-profile-load` | io | `FLOW-target-profile` |
@@ -1327,7 +1335,6 @@
 | `FUNC-test-ui` | io | `FLOW-skill-report` |
 | `FUNC-test-ui` | satisfy | `REQ-code-governed-quality` |
 | `FUNC-tool-context` | allocate | `MOD-surface` |
-| `FUNC-tool-context` | io | `FLOW-trajectory` |
 | `FUNC-tool-context` | satisfy | `REQ-mcp-tool-registry` |
 | `FUNC-upgrade` | allocate | `MOD-surface` |
 | `FUNC-upgrade` | io | `FLOW-install-result` |
