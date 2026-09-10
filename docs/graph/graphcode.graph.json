@@ -1680,6 +1680,12 @@
       "status": "reviewed"
     },
     {
+      "id": "FLOW-audit-entries",
+      "type": "FLOW",
+      "name": "Audit-Einzelsaetze",
+      "description": "Die Aufzeichnung Satz fuer Satz: was passiert ist, als schlanke Projektion, nicht als Replay. Traegt denselben Vertrag wie der geschriebene Satz."
+    },
+    {
       "id": "FLOW-audit-record",
       "type": "FLOW",
       "name": "Aufgezeichnete Gate-Entscheidung",
@@ -1689,17 +1695,23 @@
     {
       "id": "FLOW-audit-report",
       "type": "FLOW",
-      "name": "Audit-Auswertung (welche Regel blockt wen wie oft)",
-      "description": "Die Auswertung der Aufzeichnung an den Betreiber des Regelwerks: Haeufigkeiten je Regel, Konsument und Modell ueber die Zeit. Die Eingangsgroesse jeder Schwellenentscheidung — ohne sie bleibt jede Schwelle eine Setzung. (CR-GC-462)",
+      "name": "Audit-Auswertung",
+      "description": "Die Auswertung der Aufzeichnung im Aggregat: Haeufigkeiten je Regel, Konsument und Modell ueber die Zeit.",
       "status": "reviewed"
     },
     {
       "id": "FLOW-cli-command",
       "type": "FLOW",
-      "name": "CLI-Command",
-      "description": "mcp | host | run | import-code | rewind | init | update | remove | skills sync.",
+      "name": "CLI-Kommando",
+      "description": "Das aufgeloeste Kommando, das der Einsprung an den zustaendigen Handler weitergibt: mcp | host | run | import-code | rewind | init | update | remove | skills sync.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "id": "FLOW-cli-invocation",
+      "type": "FLOW",
+      "name": "CLI-Aufruf (Rohform)",
+      "description": "Was der Mensch in die Schale tippt: Verb und Optionen als Argumentliste, noch nicht aufgeloest."
     },
     {
       "id": "FLOW-completeness",
@@ -1707,6 +1719,12 @@
       "name": "Completeness je Gate",
       "description": "covered gegen total ueber die Element-Population eines Gates plus die fehlenden je Bein. Die einzige Projektion, die Abwesenheit messen kann; Regeln je Element feuern bei null Elementen null mal.",
       "status": "reviewed"
+    },
+    {
+      "id": "FLOW-config-file",
+      "type": "FLOW",
+      "name": "Repo-Konfiguration (Rohform)",
+      "description": "Die Urteilsschwellen, wie der Mensch sie in graphcode.config.jsonc schreibt: vor dem Auffuellen mit DEFAULT_METRIC_POLICY, Felder duerfen fehlen. Gleicher Vertrag wie die geltende Policy, anderer Zustand."
     },
     {
       "id": "FLOW-dimension-readiness",
@@ -1821,7 +1839,7 @@
       "id": "FLOW-metric-policy",
       "type": "FLOW",
       "name": "Urteils-Policy",
-      "description": "Die geltenden Urteilsschwellen: wie der Mensch sie in graphcode.config.jsonc schreibt und wie sie nach dem Auffuellen mit DEFAULT_METRIC_POLICY gelten. Dieselbe Form in zwei Fassungen, deshalb ein Vertrag. Keine Schwelle steht als Literal im Regelcode."
+      "description": "Die geltenden Urteilsschwellen, wie sie nach dem Auffuellen mit DEFAULT_METRIC_POLICY gelten: vollstaendig, jede Schwelle gesetzt. Erzeugt von load-config aus der Rohform. Keine Schwelle steht als Literal im Regelcode."
     },
     {
       "id": "FLOW-model-answer",
@@ -1888,10 +1906,16 @@
       "description": "Der Fingerabdruck der generierten DDL als Marker neben dem Store: 16 Hex-Zeichen. Beim Anlegen gestempelt, beim naechsten Start gelesen - er entscheidet, ob der Store weggeworfen und neu befuellt wird."
     },
     {
+      "id": "FLOW-session-entry",
+      "type": "FLOW",
+      "name": "Sitzungseintrag",
+      "description": "Der Eintrag, den eine Sitzung beim Anhaengen unter .graphcode/sessions fuer sich selbst schreibt: PID, Rechner, Startzeit."
+    },
+    {
       "id": "FLOW-session-registry",
       "type": "FLOW",
       "name": "Sitzungsregister",
-      "description": "Die Sitzungseintraege eines Repos unter .graphcode/sessions: je lebender Sitzung PID, Rechner und Startzeit. Geschrieben von der Sitzung selbst, gelesen und von toten Eintraegen befreit beim Zaehlen."
+      "description": "Die noch lebenden Sitzungen eines Repos: aus den Eintraegen unter .graphcode/sessions gefiltert, tote PIDs entfernt. Darauf entscheidet das Anhaengen, ob noch ein Viewer gebraucht wird."
     },
     {
       "id": "FLOW-skill-report",
@@ -1937,7 +1961,13 @@
       "id": "FLOW-target-profile",
       "type": "FLOW",
       "name": "Zielprofil",
-      "description": "Das Zielprofil eines Repos in .graphcode/target-profile.json: R6-Zielgewichte und die 3-7 Intentions-Anker. Vom Skill geschrieben, beim Laden geprueft, von Runden-Prompt und Suggestion-Ranking gelesen."
+      "description": "Das geladene und gepruefte Zielprofil: R6-Zielgewichte und die 3-7 Intentions-Anker, Zielkonflikte gemeldet. Erzeugt von target-profile-load aus der Rohform."
+    },
+    {
+      "id": "FLOW-target-profile-file",
+      "type": "FLOW",
+      "name": "Zielprofil (Rohform)",
+      "description": "Das Zielprofil, wie der Skill se:target-profile es nach .graphcode/target-profile.json schreibt: ungeprueft, Zielkonflikte noch nicht gemeldet."
     },
     {
       "id": "FLOW-test-selection",
@@ -7375,14 +7405,12 @@
     },
     {
       "source": "ACTOR-owner",
-      "target": "FLOW-cli-command",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "target": "FLOW-cli-invocation",
+      "type": "io"
     },
     {
       "source": "ACTOR-owner",
-      "target": "FLOW-metric-policy",
+      "target": "FLOW-config-file",
       "type": "io"
     },
     {
@@ -11404,6 +11432,21 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-audit-entries",
+      "target": "ACTOR-owner",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-audit-entries",
+      "target": "FUNC-se-retro",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-audit-entries",
+      "target": "SCHEMA-audit-record",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-audit-record",
       "target": "FUNC-audit-stats",
       "type": "io"
@@ -11442,12 +11485,6 @@
       "source": "FLOW-cli-command",
       "target": "FUNC-claim-store-lock",
       "type": "io"
-    },
-    {
-      "source": "FLOW-cli-command",
-      "target": "FUNC-cli-dispatch",
-      "type": "io",
-      "weight": "1"
     },
     {
       "source": "FLOW-cli-command",
@@ -11507,6 +11544,16 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "FLOW-cli-invocation",
+      "target": "FUNC-cli-dispatch",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-cli-invocation",
+      "target": "SCHEMA-cli-command",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-completeness",
       "target": "FUNC-compute-phase-readiness",
       "type": "io"
@@ -11514,6 +11561,16 @@
     {
       "source": "FLOW-completeness",
       "target": "SCHEMA-completeness",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-config-file",
+      "target": "FUNC-load-config",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-config-file",
+      "target": "SCHEMA-metric-policy",
       "type": "relation"
     },
     {
@@ -11965,11 +12022,6 @@
     },
     {
       "source": "FLOW-metric-policy",
-      "target": "FUNC-load-config",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-metric-policy",
       "target": "FUNC-take-steering-snapshot",
       "type": "io"
     },
@@ -12175,8 +12227,18 @@
       "type": "relation"
     },
     {
-      "source": "FLOW-session-registry",
+      "source": "FLOW-session-entry",
       "target": "FUNC-gve-sessions",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-session-entry",
+      "target": "SCHEMA-session-registry",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-session-registry",
+      "target": "FUNC-gve-supervise",
       "type": "io"
     },
     {
@@ -12336,6 +12398,11 @@
     },
     {
       "source": "FLOW-store-ownership",
+      "target": "FUNC-create-harness",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-store-ownership",
       "target": "FUNC-open-store",
       "type": "io"
     },
@@ -12366,11 +12433,16 @@
     },
     {
       "source": "FLOW-target-profile",
+      "target": "SCHEMA-target-profile",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-target-profile-file",
       "target": "FUNC-target-profile-load",
       "type": "io"
     },
     {
-      "source": "FLOW-target-profile",
+      "source": "FLOW-target-profile-file",
       "target": "SCHEMA-target-profile",
       "type": "relation"
     },
@@ -12469,7 +12541,7 @@
     },
     {
       "source": "FUNC-audit-trail",
-      "target": "FLOW-audit-report",
+      "target": "FLOW-audit-entries",
       "type": "io"
     },
     {
@@ -13341,11 +13413,6 @@
     },
     {
       "source": "FUNC-create-harness",
-      "target": "FLOW-store-ownership",
-      "type": "io"
-    },
-    {
-      "source": "FUNC-create-harness",
       "target": "REQ-store-owner-lifecycle",
       "type": "satisfy"
     },
@@ -13725,7 +13792,7 @@
     },
     {
       "source": "FUNC-gve-supervise",
-      "target": "FLOW-session-registry",
+      "target": "FLOW-session-entry",
       "type": "io"
     },
     {
@@ -14574,7 +14641,7 @@
     },
     {
       "source": "FUNC-target-profile",
-      "target": "FLOW-target-profile",
+      "target": "FLOW-target-profile-file",
       "type": "io"
     },
     {
@@ -14631,11 +14698,6 @@
       "source": "FUNC-tool-context",
       "target": "MOD-surface",
       "type": "allocate"
-    },
-    {
-      "source": "FUNC-tool-context",
-      "target": "FLOW-trajectory",
-      "type": "io"
     },
     {
       "source": "FUNC-tool-context",
@@ -17403,5 +17465,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 242
+  "graphVersion": 243
 }
