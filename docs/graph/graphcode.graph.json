@@ -12722,6 +12722,11 @@
     },
     {
       "source": "FUNC-block-abfrage",
+      "target": "FUNC-audit-stats",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-abfrage",
       "target": "FUNC-audit-trail",
       "type": "compose"
     },
@@ -13123,11 +13128,6 @@
     {
       "source": "FUNC-block-messwerk",
       "target": "FUNC-arch-fitness",
-      "type": "compose"
-    },
-    {
-      "source": "FUNC-block-messwerk",
-      "target": "FUNC-audit-stats",
       "type": "compose"
     },
     {
@@ -17589,5 +17589,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 245
+  "graphVersion": 246
 }

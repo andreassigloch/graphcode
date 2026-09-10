@@ -951,6 +951,7 @@
 | `FUNC-bind-tools` | allocate | `MOD-surface` |
 | `FUNC-bind-tools` | io | `FLOW-tool-registry` |
 | `FUNC-bind-tools` | satisfy | `REQ-mcp-tool-registry` |
+| `FUNC-block-abfrage` | compose | `FUNC-audit-stats` |
 | `FUNC-block-abfrage` | compose | `FUNC-audit-trail` |
 | `FUNC-block-abfrage` | compose | `FUNC-deduce-tests` |
 | `FUNC-block-abfrage` | compose | `FUNC-graph-expand` |
@@ -1032,7 +1033,6 @@
 | `FUNC-block-live-dashboard` | compose | `FUNC-serve-sse` |
 | `FUNC-block-messwerk` | allocate | `MOD-projections` |
 | `FUNC-block-messwerk` | compose | `FUNC-arch-fitness` |
-| `FUNC-block-messwerk` | compose | `FUNC-audit-stats` |
 | `FUNC-block-messwerk` | compose | `FUNC-compute-phase-readiness` |
 | `FUNC-block-messwerk` | compose | `FUNC-compute-readiness` |
 | `FUNC-block-messwerk` | compose | `FUNC-compute-steering-delta` |

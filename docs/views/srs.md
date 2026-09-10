@@ -2084,7 +2084,7 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (
 
 ##### 3.6.1.2  `FUNC-audit-stats` — aggregateAuditEntries(entries)
 
-> auch in: `FUNC-block-messwerk`
+> auch in: `FUNC-block-abfrage`
 
 Beantwortet im Aggregat, welche Regel wen wie oft blockt — je Regel, Konsument und Modell, mit dem Lesefenster als Teil der Antwort. Die Zahl, an der Schwellen justiert werden, statt sie zu setzen. (CR-GC-462)
 
@@ -3458,7 +3458,15 @@ Ebene-1-Block im Grounding: die exakte Frage statt der Volltextsuche. Blast-Radi
 
 io ◀ — · io ▶ — · allocate ▶ —
 
-###### 3.10.2.1.1  `FUNC-audit-trail` — projectAuditEntries(entries, opts)
+###### 3.10.2.1.1  `FUNC-audit-stats` — aggregateAuditEntries(entries)
+
+> auch in: `FCHAIN-loop-closure`
+
+Beantwortet im Aggregat, welche Regel wen wie oft blockt — je Regel, Konsument und Modell, mit dem Lesefenster als Teil der Antwort. Die Zahl, an der Schwellen justiert werden, statt sie zu setzen. (CR-GC-462)
+
+io ◀ `FLOW-audit-record` · io ▶ `FLOW-audit-report` · allocate ▶ `MOD-surface`
+
+###### 3.10.2.1.2  `FUNC-audit-trail` — projectAuditEntries(entries, opts)
 
 > auch in: `FCHAIN-loop-closure`
 
@@ -3466,7 +3474,7 @@ Liefert je Satz, was passiert ist — als schlanke Projektion, nicht als Replay.
 
 io ◀ `FLOW-audit-record` · io ▶ `FLOW-audit-entries` · allocate ▶ `MOD-surface`
 
-###### 3.10.2.1.2  `FUNC-deduce-tests` — graph_tests(changeSet)
+###### 3.10.2.1.3  `FUNC-deduce-tests` — graph_tests(changeSet)
 
 > auch in: `FCHAIN-impact-testing`
 
@@ -3482,7 +3490,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-formate-binding` (integration) · `TEST-test-runnable-binding` (unit) · `TEST-testreport` (unit) · satisfy ◀ `FUNC-deduce-tests` · allocate ▶ `MOD-projections`
 
-###### 3.10.2.1.3  `FUNC-graph-expand` — graph_expand(handle, branch, depth+1)
+###### 3.10.2.1.4  `FUNC-graph-expand` — graph_expand(handle, branch, depth+1)
 
 > auch in: `FCHAIN-agent-query`
 
@@ -3498,7 +3506,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-impact-subgraph` (integration) · satisfy ◀ `FUNC-graph-expand` · allocate ▶ `MOD-kernel`
 
-###### 3.10.2.1.4  `FUNC-graph-impact` — graph_impact(id, depth?)
+###### 3.10.2.1.5  `FUNC-graph-impact` — graph_impact(id, depth?)
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-impact-testing` · `FCHAIN-interface-escalation`
 
@@ -3532,7 +3540,7 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-inject-graph-slice` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-kernel`
 
-###### 3.10.2.1.5  `FUNC-list-elements` — listElements(filter)
+###### 3.10.2.1.6  `FUNC-list-elements` — listElements(filter)
 
 > auch in: `FCHAIN-agent-query`
 
@@ -3550,7 +3558,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param` (integration) · satisfy ◀ `FUNC-graph-impact` · `FUNC-list-elements` · allocate ▶ `MOD-kernel`
 
-###### 3.10.2.1.6  `FUNC-resolve-tests-from-code` — Gerichtete code→REQ→TEST-Auflösung
+###### 3.10.2.1.7  `FUNC-resolve-tests-from-code` — Gerichtete code→REQ→TEST-Auflösung
 
 > auch in: `FCHAIN-impact-testing`
 
@@ -3900,15 +3908,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop` · `MOD-projections`
 
-###### 3.10.2.4.2  `FUNC-audit-stats` — aggregateAuditEntries(entries)
-
-> auch in: `FCHAIN-loop-closure`
-
-Beantwortet im Aggregat, welche Regel wen wie oft blockt — je Regel, Konsument und Modell, mit dem Lesefenster als Teil der Antwort. Die Zahl, an der Schwellen justiert werden, statt sie zu setzen. (CR-GC-462)
-
-io ◀ `FLOW-audit-record` · io ▶ `FLOW-audit-report` · allocate ▶ `MOD-surface`
-
-###### 3.10.2.4.3  `FUNC-compute-phase-readiness` — computePhaseReadiness(violations)
+###### 3.10.2.4.2  `FUNC-compute-phase-readiness` — computePhaseReadiness(violations)
 
 > auch in: `FCHAIN-skill-report` · `FCHAIN-steering-loop`
 
@@ -3926,7 +3926,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop` · `MOD-projections`
 
-###### 3.10.2.4.4  `FUNC-compute-readiness` — computeReadiness(graph)
+###### 3.10.2.4.3  `FUNC-compute-readiness` — computeReadiness(graph)
 
 > auch in: `FCHAIN-skill-report` · `FCHAIN-steering-loop`
 
@@ -3952,7 +3952,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop` · `MOD-projections`
 
-###### 3.10.2.4.5  `FUNC-compute-steering-delta` — computeSteeringDelta(before, after)
+###### 3.10.2.4.4  `FUNC-compute-steering-delta` — computeSteeringDelta(before, after)
 
 > auch in: `FCHAIN-steering-loop`
 
@@ -3970,7 +3970,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop` · `MOD-projections`
 
-###### 3.10.2.4.6  `FUNC-fit-advisory` — computeFitAdvisory(before, after)
+###### 3.10.2.4.5  `FUNC-fit-advisory` — computeFitAdvisory(before, after)
 
 > auch in: `FCHAIN-apply-gate`
 
@@ -3988,7 +3988,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop` · `MOD-projections`
 
-###### 3.10.2.4.7  `FUNC-module-metrics` — moduleMetrics(graph)
+###### 3.10.2.4.6  `FUNC-module-metrics` — moduleMetrics(graph)
 
 > auch in: `FCHAIN-skill-report`
 
@@ -4006,7 +4006,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop` · `MOD-projections`
 
-###### 3.10.2.4.8  `FUNC-score-completeness` — scoreCompleteness(gateId, graph)
+###### 3.10.2.4.7  `FUNC-score-completeness` — scoreCompleteness(gateId, graph)
 
 > auch in: `FCHAIN-skill-report`
 
@@ -4030,7 +4030,7 @@ priority: must · status: reviewed · kinds: functional
 
 Verification ◀ `TEST-readiness-completeness` (acceptance) · satisfy ◀ `FUNC-score-completeness` · allocate ▶ `MOD-projections`
 
-###### 3.10.2.4.9  `FUNC-take-steering-snapshot` — takeSteeringSnapshot(graph, policy)
+###### 3.10.2.4.8  `FUNC-take-steering-snapshot` — takeSteeringSnapshot(graph, policy)
 
 > auch in: `FCHAIN-steering-loop`
 
