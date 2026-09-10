@@ -1776,6 +1776,12 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "id": "FLOW-harness-handle",
+      "type": "FLOW",
+      "name": "Harness-Griff",
+      "description": "Der fertig verdrahtete Harness, den die Fabrik liefert: Store geoeffnet, Lock beansprucht, Regelwerk geladen. Alles, was auf dem Graphen arbeitet, holt ihn hier ab."
+    },
+    {
       "id": "FLOW-health-report",
       "type": "FLOW",
       "name": "Health-Report",
@@ -1822,8 +1828,8 @@
     {
       "id": "FLOW-markdown-docs",
       "type": "FLOW",
-      "name": "Markdown-Docs",
-      "description": "Generierte Markdown-Views mit GENERATED-Header, gleich ob der Exporter oder ein View-Skill sie gerendert hat.",
+      "name": "Exportierte Sichten",
+      "description": "Die deterministisch nach docs/views exportierten Markdown-Sichten mit GENERATED-Header, erzeugt vom Exporter beim Re-Export des SSOT.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z"
     },
@@ -1863,6 +1869,12 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "id": "FLOW-next-step-advice",
+      "type": "FLOW",
+      "name": "Naechster Schritt (Advisory)",
+      "description": "Der Rueckweg an den fragenden Agenten: aus dem Messzustand die Fokus-Dimension und das Fund-Fenster. Gleicher Vertrag wie die Executor-Runde, anderer Empfaenger."
+    },
+    {
       "id": "FLOW-phase-readiness",
       "type": "FLOW",
       "name": "Phasen-Readiness (SRR/PDR/CDR/TRR)",
@@ -1878,6 +1890,12 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "id": "FLOW-rendered-views",
+      "type": "FLOW",
+      "name": "Gerenderte Sicht (Skill)",
+      "description": "Die Markdown-Sicht, die ein se-view-Skill auf Zuruf rendert. Gleicher Vertrag wie der deterministische Export, anderer Erzeuger und anderer Anlass."
+    },
+    {
       "id": "FLOW-round-injection",
       "type": "FLOW",
       "name": "Runden-Injektion",
@@ -1887,8 +1905,8 @@
     {
       "id": "FLOW-round-prompt",
       "type": "FLOW",
-      "name": "Runden-Prompt (naechster Schritt)",
-      "description": "Der aus dem Messzustand abgeleitete naechste Schritt: Fokus-Dimension, Fokus-Typen, Fund-Fenster, Gate-Protokoll, Handoff-Bedingung.",
+      "name": "Runden-Vorgabe",
+      "description": "Die vom Runden-Waehler abgeleitete naechste Runde fuer den Executor: Fokus-Dimension, Fokus-Typen, Fund-Fenster, Gate-Protokoll, Handoff-Bedingung.",
       "status": "reviewed"
     },
     {
@@ -1974,6 +1992,18 @@
       "type": "FLOW",
       "name": "Selektive Testauswahl",
       "description": "Das minimale selektive Laufkommando mit den aufgeloesten TESTs, den Coverage-Zahlen und dem, was unaufloesbar blieb."
+    },
+    {
+      "id": "FLOW-tool-context",
+      "type": "FLOW",
+      "name": "Werkzeug-Kontext",
+      "description": "Der je Prozess einmal gepraegte Kontext, den jeder Werkzeugaufruf liest: Graphversion, Sitzungskennung, Aufrufer, Repo-Wurzel."
+    },
+    {
+      "id": "FLOW-tool-registry",
+      "type": "FLOW",
+      "name": "Werkzeug-Register",
+      "description": "Das gebundene Werkzeugregister, das der Server ueber stdio anbietet: je Werkzeug Name, Eingabeschema und Handler."
     },
     {
       "id": "FLOW-trajectory",
@@ -4979,6 +5009,13 @@
       }
     },
     {
+      "id": "SCHEMA-harness-handle",
+      "type": "SCHEMA",
+      "name": "Harness-Griff",
+      "description": "Der Zugang zum Substrat: Store, Regelwerk und Apply-Gate hinter einer Schnittstelle. Spec-only — ein Objekt mit Verhalten, kein Zod-Datenvertrag.",
+      "concept": true
+    },
+    {
       "id": "SCHEMA-health-report",
       "type": "SCHEMA",
       "name": "HealthPayload",
@@ -5263,6 +5300,20 @@
         "symbol": "TestSelectionSchema",
         "lang": "ts"
       }
+    },
+    {
+      "id": "SCHEMA-tool-context",
+      "type": "SCHEMA",
+      "name": "Werkzeug-Kontext",
+      "description": "Was jeder Werkzeugaufruf mitbekommt: Codec, Graphversion, Sitzungskennung, Aufrufer und Repo-Wurzel. Spec-only — ein Objekt mit Verhalten, kein Zod-Datenvertrag.",
+      "concept": true
+    },
+    {
+      "id": "SCHEMA-tool-registry",
+      "type": "SCHEMA",
+      "name": "Werkzeug-Register",
+      "description": "Die gebundenen MCP-Werkzeuge mit Namen und Eingabeschema. Spec-only — ein Objekt mit Verhalten, kein Zod-Datenvertrag.",
+      "concept": true
     },
     {
       "id": "SCHEMA-trajectory",
@@ -7424,11 +7475,6 @@
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "ACTOR-owner",
-      "target": "FLOW-skill-request",
-      "type": "io"
     },
     {
       "source": "ACTOR-owner",
@@ -11904,6 +11950,41 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "FLOW-harness-handle",
+      "target": "FUNC-bind-tools",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-harness-handle",
+      "target": "FUNC-import-code-verb",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-harness-handle",
+      "target": "FUNC-rewind",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-harness-handle",
+      "target": "FUNC-run-verb",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-harness-handle",
+      "target": "FUNC-serve-stdio",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-harness-handle",
+      "target": "FUNC-tool-context",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-harness-handle",
+      "target": "SCHEMA-harness-handle",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-health-report",
       "target": "ACTOR-dashboard",
       "type": "io"
@@ -12079,6 +12160,16 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "FLOW-next-step-advice",
+      "target": "ACTOR-agent",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-next-step-advice",
+      "target": "SCHEMA-generation-step",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-phase-readiness",
       "target": "FUNC-generation-step",
       "type": "io"
@@ -12169,6 +12260,16 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "FLOW-rendered-views",
+      "target": "ACTOR-owner",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-rendered-views",
+      "target": "SCHEMA-markdown-view",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-round-injection",
       "target": "FUNC-run-executor",
       "type": "io",
@@ -12178,11 +12279,6 @@
       "source": "FLOW-round-injection",
       "target": "SCHEMA-round-injection",
       "type": "relation"
-    },
-    {
-      "source": "FLOW-round-prompt",
-      "target": "ACTOR-agent",
-      "type": "io"
     },
     {
       "source": "FLOW-round-prompt",
@@ -12462,6 +12558,26 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-tool-context",
+      "target": "FUNC-bind-tools",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-tool-context",
+      "target": "SCHEMA-tool-context",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-tool-registry",
+      "target": "FUNC-serve-stdio",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-tool-registry",
+      "target": "SCHEMA-tool-registry",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-trajectory",
       "target": "ACTOR-learning-engine",
       "type": "io",
@@ -12593,6 +12709,11 @@
       "source": "FUNC-bind-tools",
       "target": "MOD-surface",
       "type": "allocate"
+    },
+    {
+      "source": "FUNC-bind-tools",
+      "target": "FLOW-tool-registry",
+      "type": "io"
     },
     {
       "source": "FUNC-bind-tools",
@@ -13413,6 +13534,11 @@
     },
     {
       "source": "FUNC-create-harness",
+      "target": "FLOW-harness-handle",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-create-harness",
       "target": "REQ-store-owner-lifecycle",
       "type": "satisfy"
     },
@@ -14153,12 +14279,7 @@
     },
     {
       "source": "FUNC-next-step",
-      "target": "FLOW-learning-query",
-      "type": "io"
-    },
-    {
-      "source": "FUNC-next-step",
-      "target": "FLOW-round-prompt",
+      "target": "FLOW-next-step-advice",
       "type": "io"
     },
     {
@@ -14228,14 +14349,12 @@
     },
     {
       "source": "FUNC-render-views",
-      "target": "FLOW-markdown-docs",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "target": "FLOW-query-request",
+      "type": "io"
     },
     {
       "source": "FUNC-render-views",
-      "target": "FLOW-query-request",
+      "target": "FLOW-rendered-views",
       "type": "io"
     },
     {
@@ -14698,6 +14817,11 @@
       "source": "FUNC-tool-context",
       "target": "MOD-surface",
       "type": "allocate"
+    },
+    {
+      "source": "FUNC-tool-context",
+      "target": "FLOW-tool-context",
+      "type": "io"
     },
     {
       "source": "FUNC-tool-context",
@@ -17465,5 +17589,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 243
+  "graphVersion": 245
 }
