@@ -66,6 +66,7 @@
 | `FUNC-graph-expand` | FUNC | graph_expand(handle, branch, depth+1) |
 | `FUNC-graph-export-snapshot` | FUNC | graph_export(views?) |
 | `FUNC-graph-impact` | FUNC | graph_impact(id, depth?) |
+| `FUNC-graph-realize` | FUNC | graph_realize |
 | `FUNC-graph-store` | FUNC | GraphStore |
 | `FUNC-graph-suggest` | FUNC | graph_suggest(weights) |
 | `FUNC-gve-sessions` | FUNC | liveSessions |
@@ -107,6 +108,7 @@
 | `FUNC-se-retro` | FUNC | Skill se-retro |
 | `FUNC-se-review` | FUNC | Skill se-review |
 | `FUNC-se-status` | FUNC | Skill se-status |
+| `FUNC-se-top-level` | FUNC | Skill se:top-level |
 | `FUNC-se-trade` | FUNC | Skill se-trade |
 | `FUNC-seed-from-json` | FUNC | seedFromJson(relPath) |
 | `FUNC-serve-sse` | FUNC | serveSSE() |
@@ -116,6 +118,7 @@
 | `FUNC-target-profile` | FUNC | Skill se:target-profile |
 | `FUNC-target-profile-load` | FUNC | loadTargetProfile |
 | `FUNC-test` | FUNC | se-test (red-first test design) |
+| `FUNC-test-ingest` | FUNC | graph_test_ingest |
 | `FUNC-test-ui` | FUNC | se-test-ui (UI test design) |
 | `FUNC-tool-context` | FUNC | createToolContext |
 | `FUNC-upgrade` | FUNC | executeUpgrade(opts) |
@@ -194,6 +197,7 @@
 | `FUNC-graph-expand` | `MOD-kernel` |
 | `FUNC-graph-export-snapshot` | `MOD-projections` |
 | `FUNC-graph-impact` | `MOD-kernel` |
+| `FUNC-graph-realize` | `MOD-surface` |
 | `FUNC-graph-store` | `MOD-kernel` |
 | `FUNC-graph-suggest` | `MOD-loop` |
 | `FUNC-gve-sessions` | `MOD-surface` |
@@ -235,6 +239,7 @@
 | `FUNC-se-retro` | `MOD-agent-surface` |
 | `FUNC-se-review` | `MOD-agent-surface` |
 | `FUNC-se-status` | `MOD-agent-surface` |
+| `FUNC-se-top-level` | `MOD-agent-surface` |
 | `FUNC-se-trade` | `MOD-agent-surface` |
 | `FUNC-seed-from-json` | `MOD-kernel` |
 | `FUNC-serve-sse` | `MOD-surface` |
@@ -244,6 +249,7 @@
 | `FUNC-target-profile` | `MOD-agent-surface` |
 | `FUNC-target-profile-load` | `MOD-loop` |
 | `FUNC-test` | `MOD-agent-surface` |
+| `FUNC-test-ingest` | `MOD-projections` |
 | `FUNC-test-ui` | `MOD-agent-surface` |
 | `FUNC-tool-context` | `MOD-surface` |
 | `FUNC-upgrade` | `MOD-surface` |

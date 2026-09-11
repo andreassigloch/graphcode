@@ -15,7 +15,7 @@ import { writeFileSync, mkdirSync, appendFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { openMeasured, stampLine } from '../../dist/index.js';
-import { runExecutor, ExecutorConfigSchema } from '../../dist/executor.js';
+import { runExecutor, ExecutorConfigSchema } from '../../dist/loop/executor.js';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const OUT = join(HERE, 'results');

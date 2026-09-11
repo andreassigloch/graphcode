@@ -65,7 +65,7 @@ Ausgeloest von: `ACTOR-agent` · `ACTOR-learning-engine` · `ACTOR-owner`
 - `FCHAIN-capture` — Interaktive Erfassung (Text → suggest-Tier): `FUNC-decode` → `FUNC-mutate`
 - `FCHAIN-codec-roundtrip` — Format-E Round-Trip (encode∘decode): `FUNC-decode` → `FUNC-encode`
 - `FCHAIN-interface-escalation` — Interface-Änderungs-Eskalation: `FUNC-graph-impact` → `FUNC-mutate` → `FUNC-read-tools`
-- `FCHAIN-skill-authoring` — Skill legt Modellknoten an: `FUNC-author-req` → `FUNC-author-uc` → `FUNC-close-violations` → `FUNC-mutate` → `FUNC-se-conops` → `FUNC-se-fmea` → `FUNC-se-generate` → `FUNC-se-irr` → `FUNC-se-optimize` → `FUNC-se-plan` → `FUNC-se-trade` → `FUNC-target-profile`
+- `FCHAIN-skill-authoring` — Skill legt Modellknoten an: `FUNC-author-req` → `FUNC-author-uc` → `FUNC-close-violations` → `FUNC-graph-realize` → `FUNC-mutate` → `FUNC-se-conops` → `FUNC-se-fmea` → `FUNC-se-generate` → `FUNC-se-irr` → `FUNC-se-optimize` → `FUNC-se-plan` → `FUNC-se-top-level` → `FUNC-se-trade` → `FUNC-target-profile`
 
 ### `UC-deterministic-steering` — Deterministisch auf ein mehrdimensionales Ziel steuern
 
@@ -82,7 +82,7 @@ Als Entwickler will ich nur die richtigen Tests laufen lassen: der Impact-/Abhä
 
 Ausgeloest von: `ACTOR-agent` · `ACTOR-owner`
 
-- `FCHAIN-impact-testing` — Impact-basierte Testauswahl: `FUNC-deduce-tests` → `FUNC-graph-impact` → `FUNC-resolve-tests-from-code`
+- `FCHAIN-impact-testing` — Impact-basierte Testauswahl: `FUNC-deduce-tests` → `FUNC-graph-impact` → `FUNC-resolve-tests-from-code` → `FUNC-test-ingest`
 
 ### `UC-graph-time-travel` — Graph-Stand pro Commit wiederherstellbar
 

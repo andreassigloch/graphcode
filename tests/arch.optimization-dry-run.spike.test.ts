@@ -37,6 +37,12 @@
  *            Score, der stattdessen Plateau-Züge belohnte, wäre die Summen-Logik
  *            zurück, die CR-SM-292 gerade entfernt hat: Kompensation verdeckt das
  *            Maximum, und der Autopilot arbeitete an allem ausser am Engpass.
+ *
+ *            CR-GC-509: seit graphVersion 258 kommt EIN Zug, ein Plateau-Merge
+ *            (FLOW-mutate-cmd absorbiert FLOW-candidate-batch, versprochen 2.5e-5).
+ *            Der Score ist `worst + EPS_AUGMENT · mean`; der Merge senkt nur den
+ *            Mittelwert, nicht das Maximum (Befund-Bilanz 0/0, auf dem Zielprofil
+ *            realisiert −0.03). Die Aussage bleibt: kein Zug am Engpass.
  *   Lauf B — HANDSCHNITT: ZURÜCKGEBAUT mit CR-GC-446 (Begründung am Platz des
  *            Laufs weiter unten). Sein Subjekt — der 17-MOD-SSOT — existiert
  *            nicht mehr; der Schnitt ist seit CR-GC-446 am echten Modell
@@ -54,7 +60,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import { metrics, toArray, buildAdjacency, detectCommunities, modularityOf, modularityQ } from '@sigloch/se-engine';
+import { metrics, toArray, buildAdjacency, detectCommunities, modularityOf, modularityQ, EPS_AUGMENT } from '@sigloch/se-engine';
 import { moduleMetrics } from '@sigloch/contracts/se';
 import type { MutateCommand } from '@sigloch/contracts/harness';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
@@ -332,12 +338,23 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
       //     erhöhen — kein Operator des heutigen Satzes senkt sie an DIESER Stelle.
       expect(dominant, 'kein Verdict trug worstAt — ohne den dominierenden Term ist die Null nicht lesbar').not.toBeNull();
       expect(`${dominant!.ruleId} @ ${dominant!.elementId}`).toBe('BW-02 @ FUNC-block-grounding');
-      // (3) Und deshalb kommt kein Zug. Wird das eines Tages falsch — weil ein Operator
-      //     dazukam oder der Engpass abgetragen wurde —, MUSS dieser Test rot werden: der
-      //     Befund oben ist dann veraltet und gehört neu geschrieben, nicht stillschweigend
-      //     überholt. Der erste Zug an diesem Engpass ist heute ein menschlicher: die Zahl
-      //     steht in `graph_metrics` und in graph-view-edit sichtbar am Element.
-      expect(steps.length, 'ein Zug ist möglich geworden — der Befund oben ist veraltet, bitte neu messen').toBe(0);
+      // (3) Und deshalb senkt kein Zug das Maximum. Der Score ist `worst + EPS_AUGMENT · mean`
+      //     (se-engine steer). Ein echter Schritt am Maximum ist mindestens 1/Schwelle (≥ 0.11
+      //     bei RD-04, 0.25 bei BW-02); was darunter bleibt, bewegt nur den Ausgleichsterm.
+      //     Wird das eines Tages falsch — weil ein Operator dazukam oder der Engpass abgetragen
+      //     wurde —, MUSS dieser Test rot werden: der Befund oben ist dann veraltet und gehört
+      //     neu geschrieben, nicht stillschweigend überholt. Der erste Zug an diesem Engpass ist
+      //     heute ein menschlicher: die Zahl steht in `graph_metrics` und in graph-view-edit.
+      expect(
+        steps.filter((s) => s.promised >= EPS_AUGMENT).map((s) => s.edit),
+        'ein Zug senkt das Maximum — der Befund oben ist veraltet, bitte neu messen',
+      ).toEqual([]);
+      // (4) Die gemessene Plateau-Kette ist gepinnt (CR-GC-509, graphVersion 258): kommt ein
+      //     Zug dazu oder fällt einer weg, wird der Test rot und der Befund gehört neu gemessen.
+      expect(
+        steps.map((s) => s.edit),
+        'die Plateau-Kette hat sich geändert — der Befund oben ist veraltet, bitte neu messen',
+      ).toEqual(['FLOW-mutate-cmd absorbiert FLOW-candidate-batch']);
       // Trockenübung: der produktive SSOT ist nachweislich unverändert.
       expect(sha256(REPO_GRAPH)).toBe(ssot);
     } finally {

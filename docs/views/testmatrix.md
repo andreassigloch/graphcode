@@ -137,7 +137,7 @@
 | `REQ-structure-driven` | ✓ | ⚠ 2/3 passed | `TEST-code-quality` · `TEST-mutate-schema-guard` · `TEST-se-plan-ordering` |
 | `REQ-subgraph-slicing` | ✓ | ✓ passed | `TEST-impact-subgraph` · `TEST-inject-graph-slice` |
 | `REQ-target-shifts-ranking` | ✓ | ✓ passed | `TEST-executor-bestofn` · `TEST-target-profile` · `TEST-target-shifts-ranking` |
-| `REQ-test-runnable-binding` | ✓ | ✓ passed | `TEST-formate-binding` · `TEST-test-runnable-binding` · `TEST-testreport` |
+| `REQ-test-runnable-binding` | ✓ | ✓ passed | `TEST-formate-binding` · `TEST-graph-realize` · `TEST-test-runnable-binding` · `TEST-testreport` |
 | `REQ-testref-materialized` | ✓ | ✓ passed | `TEST-realref-materialize` · `TEST-testref-materialize` |
 | `REQ-thresholds-from-config` | ✓ | ✓ passed | `TEST-target-profile` · `TEST-thresholds-from-config` |
 | `REQ-token-efficiency` | ✓ | ⚠ 3/4 passed | `TEST-audit-trail-projection` · `TEST-help-contextual-dedup` · `TEST-mutate-violations` · `TEST-token-efficiency` |
@@ -191,12 +191,14 @@ Belegt: 104/137 REQ bestanden (76%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-extract-mutate` → `FUNC-run-executor` | `FLOW-recovered-batch` | `FCHAIN-steering-loop` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` · `TEST-steering-loop` | integration | passed |
 | `FUNC-fit-advisory` → `FUNC-mutate` | `FLOW-fit-advisory` | `FCHAIN-apply-gate` | `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, e2e, integration, performance | passed |
 | `FUNC-gate-client` → `FUNC-mutate` | `FLOW-mutate-cmd` | `FCHAIN-steering-loop` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` · `TEST-steering-loop` | integration | passed |
+| `FUNC-gate-client` → `FUNC-rank-candidates` | `FLOW-gate-outcome` | `FCHAIN-steering-loop` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` · `TEST-steering-loop` | integration | passed |
+| `FUNC-gate-client` → `FUNC-run-executor` | `FLOW-gate-outcome` | `FCHAIN-steering-loop` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` · `TEST-steering-loop` | integration | passed |
 | `FUNC-generation-step` → `FUNC-build-round-injection` | `FLOW-round-prompt` | `FCHAIN-steering-loop` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` · `TEST-steering-loop` | integration | passed |
 | `FUNC-generation-step` → `FUNC-rank-candidates` | `FLOW-round-prompt` | `FCHAIN-steering-loop` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` · `TEST-steering-loop` | integration | passed |
 | `FUNC-generation-step` → `FUNC-run-executor` | `FLOW-round-prompt` | `FCHAIN-steering-loop` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` · `TEST-steering-loop` | integration | passed |
 | `FUNC-graph-expand` → `FUNC-read-tools` | `FLOW-expand-subgraph` | `FCHAIN-agent-query` | `TEST-impact-subgraph` · `TEST-inject-graph-slice` · `TEST-mvp-e2e` · `TEST-token-efficiency` · `TEST-violation-context` | acceptance, e2e, integration | passed |
-| `FUNC-graph-impact` → `FUNC-evaluate-rules` | `FLOW-round-scope` | `FCHAIN-advisory-roundtrip` | `TEST-advisory-roundtrip-latency` | performance | passed |
 | `FUNC-graph-impact` → `FUNC-read-tools` | `FLOW-impact-slice` | `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-interface-escalation` | `TEST-advisory-roundtrip-latency` · `TEST-impact-subgraph` · `TEST-inject-graph-slice` · `TEST-interface-escalation` · `TEST-mvp-e2e` · `TEST-token-efficiency` · `TEST-violation-context` | acceptance, e2e, integration, performance | passed |
+| `FUNC-graph-realize` → `FUNC-mutate` | `FLOW-mutate-cmd` | `FCHAIN-skill-authoring` | `TEST-skill-authors-through-gate` | conformance | passed |
 | `FUNC-graph-store` → `FUNC-auto-export` | `FLOW-graph-state` | `FCHAIN-snapshot-freshness` | `TEST-auto-export` · `TEST-graph-time-travel` | integration | passed |
 | `FUNC-graph-store` → `FUNC-emit-trajectory` | `FLOW-graph-state` | `FCHAIN-apply-gate` | `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, e2e, integration, performance | passed |
 | `FUNC-graph-store` → `FUNC-emit-update-event` | `FLOW-graph-state` | `FCHAIN-live-update` | `TEST-create-harness-smoke` · `TEST-live-view` | integration | passed |
@@ -219,10 +221,10 @@ Belegt: 104/137 REQ bestanden (76%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-mutate` → `FUNC-audit-stats` | `FLOW-audit-record` | `FCHAIN-loop-closure` | `TEST-audit-rules-passed` · `TEST-prompt-provenance` · `TEST-rule-calibration` | integration, unit | passed |
 | `FUNC-mutate` → `FUNC-audit-trail` | `FLOW-audit-record` | `FCHAIN-loop-closure` | `TEST-audit-rules-passed` · `TEST-prompt-provenance` · `TEST-rule-calibration` | integration, unit | passed |
 | `FUNC-mutate` → `FUNC-gate-client` | `FLOW-gate-verdict` | `FCHAIN-steering-loop` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` · `TEST-steering-loop` | integration | passed |
+| `FUNC-mutate` → `FUNC-graph-realize` | `FLOW-gate-verdict` | `FCHAIN-skill-authoring` | `TEST-skill-authors-through-gate` | conformance | passed |
 | `FUNC-mutate` → `FUNC-graph-store` | `FLOW-graph-delta` | `FCHAIN-apply-gate` · `FCHAIN-live-update` · `FCHAIN-snapshot-freshness` | `TEST-auto-export` · `TEST-code-quality` · `TEST-create-harness-smoke` · `TEST-graph-time-travel` · `TEST-live-view` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, e2e, integration, performance | passed |
 | `FUNC-mutate` → `FUNC-graph-suggest` | `FLOW-gate-verdict` | `FCHAIN-advisory-roundtrip` | `TEST-advisory-roundtrip-latency` | performance | passed |
 | `FUNC-mutate` → `FUNC-import-code-verb` | `FLOW-gate-verdict` | `FCHAIN-model-import` | `TEST-capture` · `TEST-doc-export` · `TEST-import-code-verb` | conformance, integration | passed |
-| `FUNC-mutate` → `FUNC-rank-candidates` | `FLOW-gate-verdict` | `FCHAIN-steering-loop` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` · `TEST-steering-loop` | integration | passed |
 | `FUNC-mutate` → `FUNC-se-retro` | `FLOW-gate-verdict` | `FCHAIN-loop-closure` | `TEST-audit-rules-passed` · `TEST-prompt-provenance` · `TEST-rule-calibration` | integration, unit | passed |
 | `FUNC-mutate` → `FUNC-tool-context` | `FLOW-gate-verdict` | `FCHAIN-apply-gate` | `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, e2e, integration, performance | passed |
 | `FUNC-preflight` → `FUNC-gate-client` | `FLOW-preflight-outcome` | `FCHAIN-steering-loop` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` · `TEST-steering-loop` | integration | passed |
@@ -246,6 +248,7 @@ Belegt: 104/137 REQ bestanden (76%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-se-irr` → `FUNC-mutate` | `FLOW-mutate-cmd` | `FCHAIN-skill-authoring` | `TEST-skill-authors-through-gate` | conformance | passed |
 | `FUNC-se-optimize` → `FUNC-mutate` | `FLOW-mutate-cmd` | `FCHAIN-skill-authoring` | `TEST-skill-authors-through-gate` | conformance | passed |
 | `FUNC-se-plan` → `FUNC-mutate` | `FLOW-mutate-cmd` | `FCHAIN-skill-authoring` | `TEST-skill-authors-through-gate` | conformance | passed |
+| `FUNC-se-top-level` → `FUNC-mutate` | `FLOW-mutate-cmd` | `FCHAIN-skill-authoring` | `TEST-skill-authors-through-gate` | conformance | passed |
 | `FUNC-se-trade` → `FUNC-mutate` | `FLOW-mutate-cmd` | `FCHAIN-skill-authoring` | `TEST-skill-authors-through-gate` | conformance | passed |
 | `FUNC-seed-from-json` → `FUNC-import` | `FLOW-ontology-json` | `FCHAIN-recall` | `TEST-graph-time-travel` · `TEST-reseed` · `TEST-rewind` | integration | passed |
 | `FUNC-take-steering-snapshot` → `FUNC-compute-steering-delta` | `FLOW-steering-snapshot` | `FCHAIN-steering-loop` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` · `TEST-steering-loop` | integration | passed |
@@ -295,4 +298,4 @@ Belegt: 104/137 REQ bestanden (76%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-view-rtm` → `FUNC-view-icd` | `FLOW-query-request` | `FCHAIN-doc-export` | `TEST-auto-export` · `TEST-doc-export` · `TEST-mcp-export` · `TEST-member-name` · `TEST-skills-mcp` · `TEST-views-auditor` · `TEST-views-conformance` | conformance, integration, unit | passed |
 | `FUNC-view-rtm` → `FUNC-view-intplan` | `FLOW-query-request` | `FCHAIN-doc-export` | `TEST-auto-export` · `TEST-doc-export` · `TEST-mcp-export` · `TEST-member-name` · `TEST-skills-mcp` · `TEST-views-auditor` · `TEST-views-conformance` | conformance, integration, unit | passed |
 
-> 141/141 deklarierte FUNC↔FUNC-Verbindungen sind über die Kette TEST→REQ←FCHAIN→FUNC abgedeckt · 0 offen. Nur Paare mit gemeinsamer FCHAIN — Ko-Adjazenz an einer geteilten FLOW ist keine deklarierte Schnittstelle (CR-GC-315). Leeres level/Ergebnis = am TEST nicht gepflegt.
+> 144/144 deklarierte FUNC↔FUNC-Verbindungen sind über die Kette TEST→REQ←FCHAIN→FUNC abgedeckt · 0 offen. Nur Paare mit gemeinsamer FCHAIN — Ko-Adjazenz an einer geteilten FLOW ist keine deklarierte Schnittstelle (CR-GC-315). Leeres level/Ergebnis = am TEST nicht gepflegt.

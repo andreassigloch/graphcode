@@ -11,7 +11,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SE_DESCRIPTOR, FormatECodec } from '@sigloch/graph-api-core';
 import { openMeasured, stampLine } from '../../dist/index.js';
-import { buildRoundInjection } from '../../dist/executor-prompt.js';
+import { buildRoundInjection } from '../../dist/loop/executor-prompt.js';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const OUT = join(HERE, 'results');

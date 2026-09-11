@@ -6,7 +6,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { writeFileSync } from 'node:fs';
 import { openFixture, sliceOf, tok, OUT } from './measure.mjs';
-import { buildRoundInjection } from '../../dist/executor-prompt.js';
+import { buildRoundInjection } from '../../dist/loop/executor-prompt.js';
 
 const REPO = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 
