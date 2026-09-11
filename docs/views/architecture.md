@@ -21,20 +21,19 @@
 | `FUNC-block-abfrage` | FUNC | Abfrage |
 | `FUNC-block-anleitung` | FUNC | Anleitung |
 | `FUNC-block-antrieb` | FUNC | Antrieb |
-| `FUNC-block-arch-optimierung` | FUNC | Architektur-Optimierung |
 | `FUNC-block-autorieren` | FUNC | Autorieren |
-| `FUNC-block-bedienung` | FUNC | Bedienung & Sitzung |
+| `FUNC-block-bedienung` | FUNC | Bedienung |
 | `FUNC-block-betrieb` | FUNC | Betrieb |
 | `FUNC-block-dokumentenwerk` | FUNC | Dokumentenwerk |
 | `FUNC-block-gate` | FUNC | Qualitäts-Gate |
 | `FUNC-block-gedaechtnis` | FUNC | Gedächtnis |
 | `FUNC-block-grounding` | FUNC | Grounding |
+| `FUNC-block-host-sitzung` | FUNC | Host & Sitzung |
 | `FUNC-block-live-dashboard` | FUNC | Live-Kanal |
 | `FUNC-block-messwerk` | FUNC | Messwerk |
 | `FUNC-block-optimierung` | FUNC | Optimierung |
 | `FUNC-block-q-improvement` | FUNC | Fokus & Ziel |
 | `FUNC-block-ruestzeug` | FUNC | Werkzeug & Konfiguration |
-| `FUNC-block-schaufenster` | FUNC | Nachweis |
 | `FUNC-block-speicherwerk` | FUNC | Speicherwerk |
 | `FUNC-block-urteilsarbeit` | FUNC | Urteilsarbeit |
 | `FUNC-bootstrap` | FUNC | bootstrap |
@@ -152,7 +151,6 @@
 | `FUNC-block-abfrage` | ⚠ nicht alloziert (R-22) |
 | `FUNC-block-anleitung` | `MOD-agent-surface` |
 | `FUNC-block-antrieb` | `MOD-loop` |
-| `FUNC-block-arch-optimierung` | `MOD-loop` |
 | `FUNC-block-autorieren` | `MOD-agent-surface` |
 | `FUNC-block-bedienung` | `MOD-surface` |
 | `FUNC-block-betrieb` | `MOD-surface` |
@@ -160,12 +158,12 @@
 | `FUNC-block-gate` | `MOD-kernel` |
 | `FUNC-block-gedaechtnis` | `MOD-projections` |
 | `FUNC-block-grounding` | ⚠ nicht alloziert (R-22) |
+| `FUNC-block-host-sitzung` | `MOD-surface` |
 | `FUNC-block-live-dashboard` | `MOD-surface` |
 | `FUNC-block-messwerk` | `MOD-projections` |
 | `FUNC-block-optimierung` | ⚠ nicht alloziert (R-22) |
 | `FUNC-block-q-improvement` | `MOD-loop` |
 | `FUNC-block-ruestzeug` | `MOD-kernel` |
-| `FUNC-block-schaufenster` | `MOD-surface` |
 | `FUNC-block-speicherwerk` | `MOD-kernel` |
 | `FUNC-block-urteilsarbeit` | `MOD-agent-surface` |
 | `FUNC-bootstrap` | `MOD-surface` |

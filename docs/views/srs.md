@@ -324,7 +324,7 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (int
 
 ##### 3.1.1.10  `FUNC-session-shutdown` — SessionLifecycle
 
-> auch in: `FCHAIN-repo-lifecycle` · `FUNC-block-bedienung`
+> auch in: `FCHAIN-repo-lifecycle` · `FUNC-block-host-sitzung`
 
 Raeumt am Sessionende alle Ressourcen in umgekehrter Reihenfolge ab, den Store-Lock zuletzt.
 
@@ -342,7 +342,7 @@ Verification ◀ `TEST-repo-lifecycle` (integration) · satisfy ◀ `FCHAIN-repo
 
 ##### 3.1.1.11  `FUNC-host-socket` — startHostSocket
 
-> auch in: `FUNC-block-bedienung`
+> auch in: `FUNC-block-host-sitzung`
 
 Oeffnet den Socket, ueber den ein zweiter Prozess Schreibaufrufe an den Besitzer des Stores weiterreicht, statt ein zweites Datenbank-Handle zu oeffnen.
 
@@ -814,7 +814,7 @@ Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ 
 
 ##### 3.1.5.10  `FUNC-se-optimize` — Skill se:optimize
 
-> auch in: `FUNC-block-arch-optimierung`
+> auch in: `FUNC-block-optimierung`
 
 Prompt-realisierter Skill se:optimize: Architektur-Vorschlaege aus graph_suggest gegen das Zielprofil ziehen, mit Delta-m und Anwendbarkeit zeigen, den gewaehlten Zug durchs Apply-Gate anwenden. Kein Auto-Apply.
 
@@ -2088,7 +2088,7 @@ Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FUNC-broadcast-d
 
 ##### 3.5.1.4  `FUNC-serve-stdio` — serveStdio()
 
-> auch in: `FCHAIN-doc-export` · `FUNC-block-bedienung`
+> auch in: `FCHAIN-doc-export` · `FUNC-block-host-sitzung`
 
 Bindet die MCP-Tool-Registry headless an einen stdio-Transport; jeder Agent (Claude Code oder OpenCode, BYOK) ist ein gleichwertiger Client. Beweist agent-agnostisch + headless. (CR-GC-124)
 
@@ -2122,7 +2122,7 @@ Verification ◀ `TEST-mutate-gate` (integration) · `TEST-nd-similarity` (unit)
 
 ##### 3.5.1.6  `FUNC-health-endpoint` — healthEndpoint()
 
-> auch in: `FUNC-block-bedienung`
+> auch in: `FUNC-block-host-sitzung`
 
 Echter Funktions-Health: Store erreichbar, Gate funktional, Ontology/Rules/Contracts-Versionen, LLM/BYOK-Readiness. Quelle des Dashboard-FUNC-render-health. (CR-GC-114)
 
@@ -2372,7 +2372,7 @@ Verification ◀ `TEST-doc-export` (conformance) · satisfy ◀ `FUNC-export-mar
 
 ##### 3.7.1.3  `FUNC-serve-stdio` — serveStdio()
 
-> auch in: `FCHAIN-live-update` · `FUNC-block-bedienung`
+> auch in: `FCHAIN-live-update` · `FUNC-block-host-sitzung`
 
 Bindet die MCP-Tool-Registry headless an einen stdio-Transport; jeder Agent (Claude Code oder OpenCode, BYOK) ist ein gleichwertiger Client. Beweist agent-agnostisch + headless. (CR-GC-124)
 
@@ -2682,7 +2682,7 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (
 
 ##### 3.8.1.3  `FUNC-graph-suggest` — graph_suggest(weights)
 
-> auch in: `FUNC-block-arch-optimierung`
+> auch in: `FUNC-block-optimierung`
 
 Duennes Binding auf @sigloch/se-engine (targetFor/suggestEdits): rankt die feuernden Operator-Regeln nach dem Skalarprodukt aus Metrik-Delta und Zielrichtung im R^6-Metrikraum; liefert die Fund-Ebene, Template-Edits laufen als dryRun durchs Gate. Nie auto-apply. (CR-GC-273, Herkunft korrigiert CR-GC-453)
 
@@ -3076,7 +3076,7 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (int
 
 ##### 3.9.1.5  `FUNC-session-shutdown` — SessionLifecycle
 
-> auch in: `FCHAIN-apply-gate` · `FUNC-block-bedienung`
+> auch in: `FCHAIN-apply-gate` · `FUNC-block-host-sitzung`
 
 Raeumt am Sessionende alle Ressourcen in umgekehrter Reihenfolge ab, den Store-Lock zuletzt.
 
@@ -3112,7 +3112,7 @@ Verification ◀ `TEST-readonly-bridge` (integration) · satisfy ◀ `FUNC-colle
 
 ##### 3.9.1.7  `FUNC-gve-supervise` — attachGve
 
-> auch in: `FUNC-block-bedienung`
+> auch in: `FUNC-block-host-sitzung`
 
 Haengt eine Sitzung an das Dashboard des Repos: sorgt dafuer, dass genau ein Viewer laeuft, haelt ihn per Umfrage am Leben und beendet ihn erst, wenn die letzte Sitzung des Repos geht. Aufrufer ist der MCP-Server beim Hochfahren, in beiden Zweigen (Wahlgewinner wie Proxy).
 
@@ -3130,7 +3130,7 @@ Verification ◀ `TEST-gve-autostart` (unit) · `TEST-gve-supervision` (integrat
 
 ##### 3.9.1.8  `FUNC-gve-sessions` — liveSessions
 
-> auch in: `FUNC-block-bedienung`
+> auch in: `FUNC-block-host-sitzung`
 
 Fuehrt Buch, welche Sitzungen eines Repos noch leben, damit der Viewer dem Repo gehoert und nicht der einzelnen Sitzung. Eintraege toter Prozesse werden beim Lesen entfernt.
 
@@ -3306,9 +3306,9 @@ Ebene-0-Block, bewusst NICHT im Pitch: Bedienung und Lebensdauer einer Installat
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-surface`
 
-##### 3.10.1.1  `FUNC-block-bedienung` — Bedienung & Sitzung
+##### 3.10.1.1  `FUNC-block-bedienung` — Bedienung
 
-Ebene-1-Block im Betrieb: die Verben, mit denen ein Mensch das Repo einrichtet, Laeufe faehrt und die Sitzung sauber beendet — CLI-Dispatch und Lebenszyklus-Verben, Host-Socket zum Store-Besitzer, MCP-Transport, Viewer-Aufsicht, Gesundheitsabfrage. (CR-GC-459)
+Ebene-1-Block im Betrieb: die Verben, mit denen ein Mensch das Repo einrichtet, aktualisiert und Laeufe faehrt — CLI-Dispatch, Lebenszyklus-Verben, Status, Upgrade, import-code und run. Ein Verb laeuft einmal und endet; der laufende Host der Sitzung steht daneben in Host & Sitzung. (CR-GC-459, Z3-Spike ITEM-2026-053)
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-surface`
 
@@ -3348,43 +3348,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-readonly-bridge` (integration) · satisfy ◀ `FUNC-collect-status` · `FUNC-health-endpoint` · allocate ▶ `MOD-surface`
 
-###### 3.10.1.1.3  `FUNC-gve-sessions` — liveSessions
-
-> auch in: `FCHAIN-repo-lifecycle`
-
-Fuehrt Buch, welche Sitzungen eines Repos noch leben, damit der Viewer dem Repo gehoert und nicht der einzelnen Sitzung. Eintraege toter Prozesse werden beim Lesen entfernt.
-
-io ◀ `FLOW-session-entry` · io ▶ `FLOW-session-registry` · allocate ▶ `MOD-surface`
-
-###### `REQ-viewer-owned-by-repo` — Viewer gehoert dem Repo
-
-> auch unter: `FUNC-gve-supervise`
-
-Der Live-Viewer gehoert dem Repo, nicht der einzelnen Sitzung: jede Sitzung traegt sich ein, genau ein Viewer laeuft (Startreservierung mit Ablauffrist), eine Umfrage bemerkt seinen Tod, und erst die letzte Sitzung beendet ihn — nur wenn graphcode ihn selbst gestartet hat. (CR-GC-404)
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-gve-autostart` (unit) · `TEST-gve-supervision` (integration) · satisfy ◀ `FUNC-gve-sessions` · `FUNC-gve-supervise` · allocate ▶ `MOD-surface`
-
-###### 3.10.1.1.4  `FUNC-gve-supervise` — attachGve
-
-> auch in: `FCHAIN-repo-lifecycle`
-
-Haengt eine Sitzung an das Dashboard des Repos: sorgt dafuer, dass genau ein Viewer laeuft, haelt ihn per Umfrage am Leben und beendet ihn erst, wenn die letzte Sitzung des Repos geht. Aufrufer ist der MCP-Server beim Hochfahren, in beiden Zweigen (Wahlgewinner wie Proxy).
-
-io ◀ `FLOW-cli-command` · `FLOW-session-registry` · io ▶ `FLOW-session-entry` · allocate ▶ `MOD-surface`
-
-###### `REQ-viewer-owned-by-repo` — Viewer gehoert dem Repo
-
-> auch unter: `FUNC-gve-sessions`
-
-Der Live-Viewer gehoert dem Repo, nicht der einzelnen Sitzung: jede Sitzung traegt sich ein, genau ein Viewer laeuft (Startreservierung mit Ablauffrist), eine Umfrage bemerkt seinen Tod, und erst die letzte Sitzung beendet ihn — nur wenn graphcode ihn selbst gestartet hat. (CR-GC-404)
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-gve-autostart` (unit) · `TEST-gve-supervision` (integration) · satisfy ◀ `FUNC-gve-sessions` · `FUNC-gve-supervise` · allocate ▶ `MOD-surface`
-
-###### 3.10.1.1.5  `FUNC-harness-cli` — graphcode init/update/remove
+###### 3.10.1.1.3  `FUNC-harness-cli` — graphcode init/update/remove
 
 > auch in: `FCHAIN-repo-lifecycle`
 
@@ -3444,43 +3408,7 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-cli-scaffold` (integration) · `TEST-upgrade` (integration) · satisfy ◀ `FUNC-harness-cli` · `FUNC-upgrade` · allocate ▶ `MOD-surface`
 
-###### 3.10.1.1.6  `FUNC-health-endpoint` — healthEndpoint()
-
-> auch in: `FCHAIN-live-update`
-
-Echter Funktions-Health: Store erreichbar, Gate funktional, Ontology/Rules/Contracts-Versionen, LLM/BYOK-Readiness. Quelle des Dashboard-FUNC-render-health. (CR-GC-114)
-
-io ◀ `FLOW-rule-findings` · io ▶ `FLOW-health-report` · allocate ▶ `MOD-surface`
-
-###### `REQ-real-health-check` — Health = echter Funktionscheck
-
-> auch unter: `FUNC-collect-status`
-
-Der Health-Endpoint prueft Store-Erreichbarkeit, Gate-Funktion, Ontology/Rules/Contracts-Versionen und LLM/BYOK-Readiness, nicht nur Prozess-Liveness. aimprove-spezifische Felder (Sessions/Patterns) sind kein Health-Signal und werden entfernt.
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-readonly-bridge` (integration) · satisfy ◀ `FUNC-collect-status` · `FUNC-health-endpoint` · allocate ▶ `MOD-surface`
-
-###### 3.10.1.1.7  `FUNC-host-socket` — startHostSocket
-
-> auch in: `FCHAIN-apply-gate`
-
-Oeffnet den Socket, ueber den ein zweiter Prozess Schreibaufrufe an den Besitzer des Stores weiterreicht, statt ein zweites Datenbank-Handle zu oeffnen.
-
-io ◀ `FLOW-mutate-cmd-agent` · `FLOW-mutate-cmd-owner` · io ▶ — · allocate ▶ `MOD-surface`
-
-###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
-
-> auch unter: `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-own-kuzu-host`
-
-Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
-
-priority: must · status: approved · kinds: functional
-
-Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
-
-###### 3.10.1.1.8  `FUNC-import-code-verb` — executeImportCode
+###### 3.10.1.1.4  `FUNC-import-code-verb` — executeImportCode
 
 > auch in: `FCHAIN-model-import`
 
@@ -3506,7 +3434,7 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-capture` (integration) · `TEST-import-code-verb` (integration) · satisfy ◀ `FCHAIN-model-import` · `FUNC-import-code` · `FUNC-import-code-verb` · `FUNC-import-doc` · allocate ▶ `MOD-agent-surface` · `MOD-surface`
 
-###### 3.10.1.1.9  `FUNC-run-verb` — executeRun
+###### 3.10.1.1.5  `FUNC-run-verb` — executeRun
 
 > auch in: `FCHAIN-repo-lifecycle`
 
@@ -3524,43 +3452,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-cli-run` (integration) · `TEST-executor-bestofn` (integration) · `TEST-one-driver-local-and-frontier` (integration) · satisfy ◀ `FUNC-call-model` · `FUNC-run-executor` · `FUNC-run-verb` · allocate ▶ `MOD-loop` · `MOD-surface`
 
-###### 3.10.1.1.10  `FUNC-serve-stdio` — serveStdio()
-
-> auch in: `FCHAIN-doc-export` · `FCHAIN-live-update`
-
-Bindet die MCP-Tool-Registry headless an einen stdio-Transport; jeder Agent (Claude Code oder OpenCode, BYOK) ist ein gleichwertiger Client. Beweist agent-agnostisch + headless. (CR-GC-124)
-
-io ◀ `FLOW-harness-handle` · `FLOW-live-event` · `FLOW-tool-registry` · io ▶ — · allocate ▶ `MOD-surface`
-
-###### `REQ-mcp-tool-registry` — MCP-Tool-Registry an Harness gebunden
-
-> auch unter: `FUNC-bind-tools` · `FUNC-tool-context`
-
-CR-GC-101: Registry graph_elements/get_node/get_edges (read), graph_mutate (write durchs Gate), rules_evaluate/get_violations, audit_trail/stats — via bindToolsToHarness.
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integration) · `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-bind-tools` · `FUNC-serve-stdio` · `FUNC-tool-context` · allocate ▶ `MOD-surface`
-
-###### 3.10.1.1.11  `FUNC-session-shutdown` — SessionLifecycle
-
-> auch in: `FCHAIN-apply-gate` · `FCHAIN-repo-lifecycle`
-
-Raeumt am Sessionende alle Ressourcen in umgekehrter Reihenfolge ab, den Store-Lock zuletzt.
-
-io ◀ `FLOW-store-ownership` · io ▶ — · allocate ▶ `MOD-surface`
-
-###### `REQ-session-leaves-nothing-behind` — Sitzungsende hinterlaesst nichts
-
-> auch unter: `FCHAIN-repo-lifecycle`
-
-Nach dem Ende einer Sitzung muss der Store-Lock freigegeben und der Sitzungseintrag entfernt sein; abgeraeumt wird genau einmal und in umgekehrter Aufbaureihenfolge, der Store-Lock zuletzt.
-
-priority: must · status: n/a · kinds: functional
-
-Verification ◀ `TEST-repo-lifecycle` (integration) · satisfy ◀ `FCHAIN-repo-lifecycle` · `FUNC-session-shutdown` · allocate ▶ `MOD-surface`
-
-###### 3.10.1.1.12  `FUNC-upgrade` — executeUpgrade(opts)
+###### 3.10.1.1.6  `FUNC-upgrade` — executeUpgrade(opts)
 
 > auch in: `FCHAIN-repo-lifecycle`
 
@@ -3578,13 +3470,127 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-cli-scaffold` (integration) · `TEST-upgrade` (integration) · satisfy ◀ `FUNC-harness-cli` · `FUNC-upgrade` · allocate ▶ `MOD-surface`
 
-##### 3.10.1.2  `FUNC-block-ruestzeug` — Werkzeug & Konfiguration
+##### 3.10.1.2  `FUNC-block-host-sitzung` — Host & Sitzung
+
+Ebene-1-Block im Betrieb: der laufende Host einer Sitzung — MCP-Transport, Host-Socket zum Store-Besitzer, Viewer-Aufsicht, Gesundheitsabfrage und der geordnete Abbau am Sessionende. Getrennt von den Verben, weil er lebt, solange die Sitzung lebt, waehrend ein Verb einmal laeuft und endet. (Z3-Spike ITEM-2026-053)
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-surface`
+
+###### 3.10.1.2.1  `FUNC-gve-sessions` — liveSessions
+
+> auch in: `FCHAIN-repo-lifecycle`
+
+Fuehrt Buch, welche Sitzungen eines Repos noch leben, damit der Viewer dem Repo gehoert und nicht der einzelnen Sitzung. Eintraege toter Prozesse werden beim Lesen entfernt.
+
+io ◀ `FLOW-session-entry` · io ▶ `FLOW-session-registry` · allocate ▶ `MOD-surface`
+
+###### `REQ-viewer-owned-by-repo` — Viewer gehoert dem Repo
+
+> auch unter: `FUNC-gve-supervise`
+
+Der Live-Viewer gehoert dem Repo, nicht der einzelnen Sitzung: jede Sitzung traegt sich ein, genau ein Viewer laeuft (Startreservierung mit Ablauffrist), eine Umfrage bemerkt seinen Tod, und erst die letzte Sitzung beendet ihn — nur wenn graphcode ihn selbst gestartet hat. (CR-GC-404)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-gve-autostart` (unit) · `TEST-gve-supervision` (integration) · satisfy ◀ `FUNC-gve-sessions` · `FUNC-gve-supervise` · allocate ▶ `MOD-surface`
+
+###### 3.10.1.2.2  `FUNC-gve-supervise` — attachGve
+
+> auch in: `FCHAIN-repo-lifecycle`
+
+Haengt eine Sitzung an das Dashboard des Repos: sorgt dafuer, dass genau ein Viewer laeuft, haelt ihn per Umfrage am Leben und beendet ihn erst, wenn die letzte Sitzung des Repos geht. Aufrufer ist der MCP-Server beim Hochfahren, in beiden Zweigen (Wahlgewinner wie Proxy).
+
+io ◀ `FLOW-cli-command` · `FLOW-session-registry` · io ▶ `FLOW-session-entry` · allocate ▶ `MOD-surface`
+
+###### `REQ-viewer-owned-by-repo` — Viewer gehoert dem Repo
+
+> auch unter: `FUNC-gve-sessions`
+
+Der Live-Viewer gehoert dem Repo, nicht der einzelnen Sitzung: jede Sitzung traegt sich ein, genau ein Viewer laeuft (Startreservierung mit Ablauffrist), eine Umfrage bemerkt seinen Tod, und erst die letzte Sitzung beendet ihn — nur wenn graphcode ihn selbst gestartet hat. (CR-GC-404)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-gve-autostart` (unit) · `TEST-gve-supervision` (integration) · satisfy ◀ `FUNC-gve-sessions` · `FUNC-gve-supervise` · allocate ▶ `MOD-surface`
+
+###### 3.10.1.2.3  `FUNC-health-endpoint` — healthEndpoint()
+
+> auch in: `FCHAIN-live-update`
+
+Echter Funktions-Health: Store erreichbar, Gate funktional, Ontology/Rules/Contracts-Versionen, LLM/BYOK-Readiness. Quelle des Dashboard-FUNC-render-health. (CR-GC-114)
+
+io ◀ `FLOW-rule-findings` · io ▶ `FLOW-health-report` · allocate ▶ `MOD-surface`
+
+###### `REQ-real-health-check` — Health = echter Funktionscheck
+
+> auch unter: `FUNC-collect-status`
+
+Der Health-Endpoint prueft Store-Erreichbarkeit, Gate-Funktion, Ontology/Rules/Contracts-Versionen und LLM/BYOK-Readiness, nicht nur Prozess-Liveness. aimprove-spezifische Felder (Sessions/Patterns) sind kein Health-Signal und werden entfernt.
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-readonly-bridge` (integration) · satisfy ◀ `FUNC-collect-status` · `FUNC-health-endpoint` · allocate ▶ `MOD-surface`
+
+###### 3.10.1.2.4  `FUNC-host-socket` — startHostSocket
+
+> auch in: `FCHAIN-apply-gate`
+
+Oeffnet den Socket, ueber den ein zweiter Prozess Schreibaufrufe an den Besitzer des Stores weiterreicht, statt ein zweites Datenbank-Handle zu oeffnen.
+
+io ◀ `FLOW-mutate-cmd-agent` · `FLOW-mutate-cmd-owner` · io ▶ — · allocate ▶ `MOD-surface`
+
+###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
+
+> auch unter: `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-own-kuzu-host`
+
+Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
+
+priority: must · status: approved · kinds: functional
+
+Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
+
+###### 3.10.1.2.5  `FUNC-serve-stdio` — serveStdio()
+
+> auch in: `FCHAIN-doc-export` · `FCHAIN-live-update`
+
+Bindet die MCP-Tool-Registry headless an einen stdio-Transport; jeder Agent (Claude Code oder OpenCode, BYOK) ist ein gleichwertiger Client. Beweist agent-agnostisch + headless. (CR-GC-124)
+
+io ◀ `FLOW-harness-handle` · `FLOW-live-event` · `FLOW-tool-registry` · io ▶ — · allocate ▶ `MOD-surface`
+
+###### `REQ-mcp-tool-registry` — MCP-Tool-Registry an Harness gebunden
+
+> auch unter: `FUNC-bind-tools` · `FUNC-tool-context`
+
+CR-GC-101: Registry graph_elements/get_node/get_edges (read), graph_mutate (write durchs Gate), rules_evaluate/get_violations, audit_trail/stats — via bindToolsToHarness.
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integration) · `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-bind-tools` · `FUNC-serve-stdio` · `FUNC-tool-context` · allocate ▶ `MOD-surface`
+
+###### 3.10.1.2.6  `FUNC-session-shutdown` — SessionLifecycle
+
+> auch in: `FCHAIN-apply-gate` · `FCHAIN-repo-lifecycle`
+
+Raeumt am Sessionende alle Ressourcen in umgekehrter Reihenfolge ab, den Store-Lock zuletzt.
+
+io ◀ `FLOW-store-ownership` · io ▶ — · allocate ▶ `MOD-surface`
+
+###### `REQ-session-leaves-nothing-behind` — Sitzungsende hinterlaesst nichts
+
+> auch unter: `FCHAIN-repo-lifecycle`
+
+Nach dem Ende einer Sitzung muss der Store-Lock freigegeben und der Sitzungseintrag entfernt sein; abgeraeumt wird genau einmal und in umgekehrter Aufbaureihenfolge, der Store-Lock zuletzt.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-repo-lifecycle` (integration) · satisfy ◀ `FCHAIN-repo-lifecycle` · `FUNC-session-shutdown` · allocate ▶ `MOD-surface`
+
+##### 3.10.1.3  `FUNC-block-ruestzeug` — Werkzeug & Konfiguration
 
 Was den Lauf einrichtet, bevor er losgeht: Repo-Konfiguration, Zielprofil, Schema-Stand, Werkzeug-Registry und -Kontext.
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-kernel`
 
-###### 3.10.1.2.1  `FUNC-bind-tools` — bindToolsToHarness
+###### 3.10.1.3.1  `FUNC-bind-tools` — bindToolsToHarness
 
 > auch in: `FCHAIN-repo-lifecycle`
 
@@ -3602,7 +3608,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integration) · `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-bind-tools` · `FUNC-serve-stdio` · `FUNC-tool-context` · allocate ▶ `MOD-surface`
 
-###### 3.10.1.2.2  `FUNC-load-config` — loadGraphcodeConfig
+###### 3.10.1.3.2  `FUNC-load-config` — loadGraphcodeConfig
 
 > auch in: `FCHAIN-steering-loop`
 
@@ -3618,7 +3624,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-target-profile` (integration) · `TEST-thresholds-from-config` (unit) · satisfy ◀ `FUNC-load-config` · allocate ▶ `MOD-kernel`
 
-###### 3.10.1.2.3  `FUNC-migrate-schema` — migrateSchema(from, to)
+###### 3.10.1.3.3  `FUNC-migrate-schema` — migrateSchema(from, to)
 
 > auch in: `FCHAIN-schema-migration`
 
@@ -3652,7 +3658,7 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-schema-migration` (integration) · satisfy ◀ `FUNC-migrate-schema` · `FUNC-schema-guard` · allocate ▶ `MOD-kernel`
 
-###### 3.10.1.2.4  `FUNC-schema-guard` — schemaFingerprint
+###### 3.10.1.3.4  `FUNC-schema-guard` — schemaFingerprint
 
 > auch in: `FCHAIN-schema-migration`
 
@@ -3670,7 +3676,7 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-schema-migration` (integration) · satisfy ◀ `FUNC-migrate-schema` · `FUNC-schema-guard` · allocate ▶ `MOD-kernel`
 
-###### 3.10.1.2.5  `FUNC-tool-context` — createToolContext
+###### 3.10.1.3.5  `FUNC-tool-context` — createToolContext
 
 > auch in: `FCHAIN-apply-gate`
 
@@ -3866,13 +3872,179 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-formate-binding` (integration) · `TEST-graph-realize` (integration) · `TEST-test-runnable-binding` (unit) · `TEST-testreport` (unit) · satisfy ◀ `FUNC-deduce-tests` · `FUNC-graph-realize` · `FUNC-test-ingest` · allocate ▶ `MOD-projections` · `MOD-surface`
 
-##### 3.10.2.2  `FUNC-block-gate` — Qualitäts-Gate
+##### 3.10.2.2  `FUNC-block-dokumentenwerk` — Dokumentenwerk
+
+Ebene-1-Block im Schaufenster: deterministische Dokument-Renders — Markdown-Export und die se-view-Sichten.
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-projections`
+
+###### 3.10.2.2.1  `FUNC-export-markdown` — exportMarkdown(graph, view)
+
+> auch in: `FCHAIN-doc-export`
+
+Rendert Graph (View: spec/architecture/cr-list/references) deterministisch nach Markdown mit GENERATED-Header.
+
+io ◀ `FLOW-query-request-agent` · `FLOW-query-request-auto-export` · `FLOW-query-request-owner` · `FLOW-query-request-render-views` · `FLOW-query-request-view-changelog` · `FLOW-query-request-view-conops` · `FLOW-query-request-view-icd` · `FLOW-query-request-view-intplan` · `FLOW-query-request-view-rtm` · io ▶ `FLOW-markdown-docs` · allocate ▶ `MOD-projections`
+
+###### `REQ-doc-export` — Graph → Markdown Re-Export
+
+> auch unter: `FCHAIN-doc-export` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm`
+
+human-readable Docs (SPEC/Architektur/CR-Liste/References) werden DETERMINISTISCH aus dem Graph generiert (GENERATED-Header), nie hand-editiert. Schließt die graph-is-ssot-Drift-Lücke. (REQ-graph-is-ssot)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-auto-export` (integration) · `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · `TEST-views-auditor` (unit) · `TEST-views-conformance` (unit) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · allocate ▶ `MOD-agent-surface` · `MOD-projections`
+
+###### `REQ-post-export-markdown` — Postcondition: exportMarkdown(graph, view)
+
+Deterministische Markdown-Views mit GENERATED-Header; nie hand-editiert.
+
+priority: must · status: done · kinds: postcondition
+
+Verification ◀ `TEST-doc-export` (conformance) · satisfy ◀ `FUNC-export-markdown` · allocate ▶ `MOD-projections`
+
+###### `REQ-pre-export-markdown` — Precondition: exportMarkdown(graph, view)
+
+Aktueller Graph (SSOT) geladen; View gewählt.
+
+priority: must · status: done · kinds: precondition
+
+Verification ◀ `TEST-doc-export` (conformance) · satisfy ◀ `FUNC-export-markdown` · allocate ▶ `MOD-projections`
+
+###### 3.10.2.2.2  `FUNC-render-views` — render graph→markdown views
+
+> auch in: `FCHAIN-doc-export`
+
+PROMPT-realisierter Graph-nach-Markdown-Renderer via se-view-Commands. Steht fuer die View-Skills OHNE eigenen FUNC-Knoten (arch, implplan, nfr, testconcept, testmatrix, trade, srs, cr-list, references); realRef zeigt auf arch.md als deren Vertreter. Interim-Realisierung von REQ-doc-export, bis FUNC-export-markdown (code, MOD-docs) sie ersetzt.
+
+io ◀ `FLOW-query-request-owner` · io ▶ `FLOW-query-request-render-views` · `FLOW-rendered-views` · allocate ▶ `MOD-agent-surface`
+
+###### `REQ-doc-export` — Graph → Markdown Re-Export
+
+> auch unter: `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm`
+
+human-readable Docs (SPEC/Architektur/CR-Liste/References) werden DETERMINISTISCH aus dem Graph generiert (GENERATED-Header), nie hand-editiert. Schließt die graph-is-ssot-Drift-Lücke. (REQ-graph-is-ssot)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-auto-export` (integration) · `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · `TEST-views-auditor` (unit) · `TEST-views-conformance` (unit) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · allocate ▶ `MOD-agent-surface` · `MOD-projections`
+
+###### 3.10.2.2.3  `FUNC-view-changelog` — se-view-changelog (Change Log)
+
+> auch in: `FCHAIN-doc-export`
+
+Prompt-realisierte View: Change Log aus CR-Knoten mit Rationale und Status. (CR-GC-116)
+
+io ◀ `FLOW-query-request-owner` · io ▶ `FLOW-query-request-view-changelog` · allocate ▶ `MOD-agent-surface`
+
+###### `REQ-doc-export` — Graph → Markdown Re-Export
+
+> auch unter: `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm`
+
+human-readable Docs (SPEC/Architektur/CR-Liste/References) werden DETERMINISTISCH aus dem Graph generiert (GENERATED-Header), nie hand-editiert. Schließt die graph-is-ssot-Drift-Lücke. (REQ-graph-is-ssot)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-auto-export` (integration) · `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · `TEST-views-auditor` (unit) · `TEST-views-conformance` (unit) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · allocate ▶ `MOD-agent-surface` · `MOD-projections`
+
+###### 3.10.2.2.4  `FUNC-view-conops` — se-view-conops (ConOps)
+
+> auch in: `FCHAIN-doc-export`
+
+Prompt-realisierte View: Concept of Operations aus UC plus ACTOR (operatingMode). (CR-GC-116)
+
+io ◀ `FLOW-query-request-owner` · io ▶ `FLOW-query-request-view-conops` · allocate ▶ `MOD-agent-surface`
+
+###### `REQ-doc-export` — Graph → Markdown Re-Export
+
+> auch unter: `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm`
+
+human-readable Docs (SPEC/Architektur/CR-Liste/References) werden DETERMINISTISCH aus dem Graph generiert (GENERATED-Header), nie hand-editiert. Schließt die graph-is-ssot-Drift-Lücke. (REQ-graph-is-ssot)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-auto-export` (integration) · `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · `TEST-views-auditor` (unit) · `TEST-views-conformance` (unit) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · allocate ▶ `MOD-agent-surface` · `MOD-projections`
+
+###### 3.10.2.2.5  `FUNC-view-fmea` — View se-view:fmea
+
+> auch in: `FCHAIN-doc-export`
+
+Prompt-realisierte View: FMEA-Render aus risk-getaggten REQs mit S/O/D, Action Priority, Mitigation-Coverage und Verify-Luecken. Ersetzt die tote uid FUNC-view-irr; das Label IRR ist die separate Assumption-Review (se-irr).
+
+io ◀ `FLOW-query-request-owner` · io ▶ `FLOW-query-request-view-fmea` · allocate ▶ `MOD-agent-surface`
+
+###### `REQ-doc-export` — Graph → Markdown Re-Export
+
+> auch unter: `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm`
+
+human-readable Docs (SPEC/Architektur/CR-Liste/References) werden DETERMINISTISCH aus dem Graph generiert (GENERATED-Header), nie hand-editiert. Schließt die graph-is-ssot-Drift-Lücke. (REQ-graph-is-ssot)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-auto-export` (integration) · `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · `TEST-views-auditor` (unit) · `TEST-views-conformance` (unit) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · allocate ▶ `MOD-agent-surface` · `MOD-projections`
+
+###### 3.10.2.2.6  `FUNC-view-icd` — se-view-icd (ICD)
+
+> auch in: `FCHAIN-doc-export`
+
+Prompt-realisierte View: Interface Control Document aus FLOW zu SCHEMA. (CR-GC-116)
+
+io ◀ `FLOW-query-request-owner` · io ▶ `FLOW-query-request-view-icd` · allocate ▶ `MOD-agent-surface`
+
+###### `REQ-doc-export` — Graph → Markdown Re-Export
+
+> auch unter: `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-intplan` · `FUNC-view-rtm`
+
+human-readable Docs (SPEC/Architektur/CR-Liste/References) werden DETERMINISTISCH aus dem Graph generiert (GENERATED-Header), nie hand-editiert. Schließt die graph-is-ssot-Drift-Lücke. (REQ-graph-is-ssot)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-auto-export` (integration) · `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · `TEST-views-auditor` (unit) · `TEST-views-conformance` (unit) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · allocate ▶ `MOD-agent-surface` · `MOD-projections`
+
+###### 3.10.2.2.7  `FUNC-view-intplan` — se-view-intplan (Integrations-/Testplan)
+
+> auch in: `FCHAIN-doc-export`
+
+Prompt-realisierte View: Integrations-/Testplan aus MS plus verify-Status. (CR-GC-116)
+
+io ◀ `FLOW-query-request-owner` · io ▶ `FLOW-query-request-view-intplan` · allocate ▶ `MOD-agent-surface`
+
+###### `REQ-doc-export` — Graph → Markdown Re-Export
+
+> auch unter: `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-rtm`
+
+human-readable Docs (SPEC/Architektur/CR-Liste/References) werden DETERMINISTISCH aus dem Graph generiert (GENERATED-Header), nie hand-editiert. Schließt die graph-is-ssot-Drift-Lücke. (REQ-graph-is-ssot)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-auto-export` (integration) · `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · `TEST-views-auditor` (unit) · `TEST-views-conformance` (unit) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · allocate ▶ `MOD-agent-surface` · `MOD-projections`
+
+###### 3.10.2.2.8  `FUNC-view-rtm` — se-view-rtm (RTM)
+
+> auch in: `FCHAIN-doc-export`
+
+Prompt-realisierte View: Requirements Traceability Matrix aus satisfy/verify-Traces je REQ. (CR-GC-116)
+
+io ◀ `FLOW-query-request-owner` · io ▶ `FLOW-query-request-view-rtm` · allocate ▶ `MOD-agent-surface`
+
+###### `REQ-doc-export` — Graph → Markdown Re-Export
+
+> auch unter: `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan`
+
+human-readable Docs (SPEC/Architektur/CR-Liste/References) werden DETERMINISTISCH aus dem Graph generiert (GENERATED-Header), nie hand-editiert. Schließt die graph-is-ssot-Drift-Lücke. (REQ-graph-is-ssot)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-auto-export` (integration) · `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · `TEST-views-auditor` (unit) · `TEST-views-conformance` (unit) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · allocate ▶ `MOD-agent-surface` · `MOD-projections`
+
+##### 3.10.2.3  `FUNC-block-gate` — Qualitäts-Gate
 
 Ebene-0-Block Sales-Sicht: jede Aenderung — von Mensch oder KI — geht durch dieselbe Pruefung; illegal wird nie gespeichert. Realisiert durch seine Kinder.
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-kernel`
 
-###### 3.10.2.2.1  `FUNC-check-code-conformance` — conformanceViolations(harness)
+###### 3.10.2.3.1  `FUNC-check-code-conformance` — conformanceViolations(harness)
 
 > auch in: `FCHAIN-skill-report`
 
@@ -3888,7 +4060,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-code-conformance` (integration) · satisfy ◀ `FUNC-check-code-conformance` · allocate ▶ `MOD-kernel`
 
-###### 3.10.2.2.2  `FUNC-evaluate-rules` — evaluateRules()
+###### 3.10.2.3.2  `FUNC-evaluate-rules` — evaluateRules()
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-live-update` · `FCHAIN-modelfree-gate` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness`
 
@@ -3904,7 +4076,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-mutate-gate` (integration) · `TEST-nd-similarity` (unit) · `TEST-violation-context` (integration) · satisfy ◀ `FUNC-evaluate-rules` · allocate ▶ `MOD-kernel`
 
-###### 3.10.2.2.3  `FUNC-mutate` — mutate(commands)
+###### 3.10.2.3.3  `FUNC-mutate` — mutate(commands)
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-skill-authoring` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop`
 
@@ -3938,13 +4110,13 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (integration) · `TEST-occ` (integration) · `TEST-single-write-door` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
 
-##### 3.10.2.3  `FUNC-block-gedaechtnis` — Gedächtnis
+##### 3.10.2.4  `FUNC-block-gedaechtnis` — Gedächtnis
 
 Ebene-0-Block Sales-Sicht: das Modell als Text-Artefakt — versioniert, wiederherstellbar, zusammenfuehrbar. Realisiert durch seine Kinder.
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-projections`
 
-###### 3.10.2.3.1  `FUNC-decode` — decode(json)
+###### 3.10.2.4.1  `FUNC-decode` — decode(json)
 
 > auch in: `FCHAIN-capture` · `FCHAIN-codec-roundtrip`
 
@@ -3960,7 +4132,7 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-projections`
 
-###### 3.10.2.3.2  `FUNC-emit-trajectory` — materializeTrajectory()
+###### 3.10.2.4.2  `FUNC-emit-trajectory` — materializeTrajectory()
 
 > auch in: `FCHAIN-apply-gate`
 
@@ -3992,7 +4164,7 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-create-harness-smoke` (integration) · `TEST-learning-emit` (integration) · satisfy ◀ `FUNC-emit-trajectory` · allocate ▶ `MOD-projections`
 
-###### 3.10.2.3.3  `FUNC-encode` — encode(graph)
+###### 3.10.2.4.3  `FUNC-encode` — encode(graph)
 
 > auch in: `FCHAIN-codec-roundtrip`
 
@@ -4008,7 +4180,7 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-edge-only-batch` (integration) · `TEST-formate-name` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-encode` · allocate ▶ `MOD-projections`
 
-###### 3.10.2.3.4  `FUNC-graph-export-snapshot` — graph_export(views?)
+###### 3.10.2.4.4  `FUNC-graph-export-snapshot` — graph_export(views?)
 
 > auch in: `FCHAIN-snapshot-freshness`
 
@@ -4026,7 +4198,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-export-marker` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-kernel` · `MOD-projections`
 
-###### 3.10.2.3.5  `FUNC-import` — importGraph(formatE, mode)
+###### 3.10.2.4.5  `FUNC-import` — importGraph(formatE, mode)
 
 > auch in: `FCHAIN-recall`
 
@@ -4060,7 +4232,7 @@ priority: must · status: done · kinds: precondition
 
 Verification ◀ `TEST-bootstrap` (integration) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-kernel`
 
-###### 3.10.2.3.6  `FUNC-merge-nodes` — replayBranchLog(log, sinceVersion)
+###### 3.10.2.4.6  `FUNC-merge-nodes` — replayBranchLog(log, sinceVersion)
 
 > auch in: `FCHAIN-merge-branches`
 
@@ -4104,7 +4276,7 @@ priority: must · status: open · kinds: precondition
 
 Verification ◀ `TEST-merge` (integration) · satisfy ◀ `FUNC-merge-nodes` · allocate ▶ `MOD-kernel`
 
-###### 3.10.2.3.7  `FUNC-own-kuzu-host` — ownKuzu()
+###### 3.10.2.4.7  `FUNC-own-kuzu-host` — ownKuzu()
 
 > auch in: `FCHAIN-apply-gate`
 
@@ -4122,7 +4294,7 @@ priority: must · status: approved · kinds: functional
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
-###### 3.10.2.3.8  `FUNC-reseed` — reseed(relPath)
+###### 3.10.2.4.8  `FUNC-reseed` — reseed(relPath)
 
 > auch in: `FCHAIN-recall`
 
@@ -4140,7 +4312,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-graph-time-travel` (integration) · `TEST-reseed` (integration) · `TEST-rewind` (integration) · satisfy ◀ `FCHAIN-recall` · `FUNC-apply-reseed` · `FUNC-reseed` · `FUNC-rewind` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
-###### 3.10.2.3.9  `FUNC-rewind` — graphcode rewind <ref>
+###### 3.10.2.4.9  `FUNC-rewind` — graphcode rewind <ref>
 
 > auch in: `FCHAIN-recall`
 
@@ -4158,13 +4330,89 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-graph-time-travel` (integration) · `TEST-reseed` (integration) · `TEST-rewind` (integration) · satisfy ◀ `FCHAIN-recall` · `FUNC-apply-reseed` · `FUNC-reseed` · `FUNC-rewind` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
-##### 3.10.2.4  `FUNC-block-messwerk` — Messwerk
+##### 3.10.2.5  `FUNC-block-live-dashboard` — Live-Kanal
+
+Ebene-1-Block im Viewer: der Live-Transport — Update-Events, Diff-Broadcast, SSE-Verteilung an die Panels.
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-surface`
+
+###### 3.10.2.5.1  `FUNC-broadcast-diff` — broadcastDiff(version)
+
+> auch in: `FCHAIN-live-update`
+
+Versionierter Diff-Broadcast mit Late-Joiner-Cache an die Viewer; jede Mutation erhoeht die Version. (CR-GC-114)
+
+io ◀ `FLOW-live-event` · io ▶ `FLOW-sse-frame` · allocate ▶ `MOD-surface`
+
+###### `REQ-versioned-broadcast` — Versioned Diff-Broadcast
+
+> auch unter: `FUNC-emit-update-event` · `FUNC-serve-sse`
+
+Versioned Diff-Broadcast an Dashboard (read-only, Late-Joiner-Cache). (R9)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FUNC-broadcast-diff` · `FUNC-emit-update-event` · `FUNC-serve-sse` · allocate ▶ `MOD-surface`
+
+###### 3.10.2.5.2  `FUNC-emit-update-event` — emitUpdateEvent(domains)
+
+> auch in: `FCHAIN-live-update`
+
+Live-Update-Event (SSE invalidate) bei jeder Mutation; Basis des read-only Dashboards. (R9)
+
+io ◀ `FLOW-graph-state` · io ▶ `FLOW-live-event` · allocate ▶ `MOD-surface`
+
+###### `REQ-post-emit-update-event` — Postcondition: FUNC-emit-update-event
+
+Genau ein Live-Update-Event mit korrekten domains; ausschließlich read-only.
+
+priority: must · status: open · kinds: postcondition
+
+Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FUNC-emit-update-event` · allocate ▶ `MOD-surface`
+
+###### `REQ-pre-emit-update-event` — Precondition: FUNC-emit-update-event
+
+Mutation committed; SSE/WS-Bridge verbunden.
+
+priority: must · status: open · kinds: precondition
+
+Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FUNC-emit-update-event` · allocate ▶ `MOD-surface`
+
+###### `REQ-versioned-broadcast` — Versioned Diff-Broadcast
+
+> auch unter: `FUNC-broadcast-diff` · `FUNC-serve-sse`
+
+Versioned Diff-Broadcast an Dashboard (read-only, Late-Joiner-Cache). (R9)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FUNC-broadcast-diff` · `FUNC-emit-update-event` · `FUNC-serve-sse` · allocate ▶ `MOD-surface`
+
+###### 3.10.2.5.3  `FUNC-serve-sse` — serveSSE()
+
+> auch in: `FCHAIN-live-update`
+
+Host-Prozess exponiert die SSE/WS-Route und leitet harness.onUpdateEvent read-only an die Live-Viewer weiter. Kein Express-REST im Core. (CR-GC-114)
+
+io ◀ `FLOW-live-event` · io ▶ — · allocate ▶ `MOD-surface`
+
+###### `REQ-versioned-broadcast` — Versioned Diff-Broadcast
+
+> auch unter: `FUNC-broadcast-diff` · `FUNC-emit-update-event`
+
+Versioned Diff-Broadcast an Dashboard (read-only, Late-Joiner-Cache). (R9)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FUNC-broadcast-diff` · `FUNC-emit-update-event` · `FUNC-serve-sse` · allocate ▶ `MOD-surface`
+
+##### 3.10.2.6  `FUNC-block-messwerk` — Messwerk
 
 Ebene-0-Block Sales-Sicht: Kennzahlen aus dem Modell selbst — Reifegrad, Phasen-Gates, Architektur-Fitness — live, ohne KI. Realisiert durch seine Kinder.
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-projections`
 
-###### 3.10.2.4.1  `FUNC-arch-fitness` — metrics(graph, layer arch)
+###### 3.10.2.6.1  `FUNC-arch-fitness` — metrics(graph, layer arch)
 
 > auch in: `FCHAIN-steering-loop`
 
@@ -4182,7 +4430,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop` · `MOD-projections`
 
-###### 3.10.2.4.2  `FUNC-compute-phase-readiness` — computePhaseReadiness(violations)
+###### 3.10.2.6.2  `FUNC-compute-phase-readiness` — computePhaseReadiness(violations)
 
 > auch in: `FCHAIN-skill-report` · `FCHAIN-steering-loop`
 
@@ -4200,7 +4448,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop` · `MOD-projections`
 
-###### 3.10.2.4.3  `FUNC-compute-readiness` — computeReadiness(graph)
+###### 3.10.2.6.3  `FUNC-compute-readiness` — computeReadiness(graph)
 
 > auch in: `FCHAIN-skill-report` · `FCHAIN-steering-loop`
 
@@ -4226,7 +4474,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop` · `MOD-projections`
 
-###### 3.10.2.4.4  `FUNC-compute-steering-delta` — computeSteeringDelta(before, after)
+###### 3.10.2.6.4  `FUNC-compute-steering-delta` — computeSteeringDelta(before, after)
 
 > auch in: `FCHAIN-steering-loop`
 
@@ -4244,7 +4492,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop` · `MOD-projections`
 
-###### 3.10.2.4.5  `FUNC-fit-advisory` — computeFitAdvisory(before, after)
+###### 3.10.2.6.5  `FUNC-fit-advisory` — computeFitAdvisory(before, after)
 
 > auch in: `FCHAIN-apply-gate`
 
@@ -4262,7 +4510,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop` · `MOD-projections`
 
-###### 3.10.2.4.6  `FUNC-module-metrics` — moduleMetrics(graph)
+###### 3.10.2.6.6  `FUNC-module-metrics` — moduleMetrics(graph)
 
 > auch in: `FCHAIN-skill-report`
 
@@ -4280,7 +4528,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · `TEST-steering-loop` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-next-step` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop` · `MOD-projections`
 
-###### 3.10.2.4.7  `FUNC-score-completeness` — scoreCompleteness(gateId, graph)
+###### 3.10.2.6.7  `FUNC-score-completeness` — scoreCompleteness(gateId, graph)
 
 > auch in: `FCHAIN-skill-report`
 
@@ -4304,7 +4552,7 @@ priority: must · status: reviewed · kinds: functional
 
 Verification ◀ `TEST-readiness-completeness` (acceptance) · satisfy ◀ `FUNC-score-completeness` · allocate ▶ `MOD-projections`
 
-###### 3.10.2.4.8  `FUNC-take-steering-snapshot` — takeSteeringSnapshot(graph, policy)
+###### 3.10.2.6.8  `FUNC-take-steering-snapshot` — takeSteeringSnapshot(graph, policy)
 
 > auch in: `FCHAIN-steering-loop`
 
@@ -4340,261 +4588,13 @@ priority: must · status: reviewed · kinds: postcondition
 
 Verification ◀ `TEST-steering-loop` (integration) · satisfy ◀ `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure`
 
-##### 3.10.2.5  `FUNC-block-schaufenster` — Nachweis
-
-Ebene-1-Block im Grounding: die zwoelf Ingenieursdokumente und der Live-Kanal. Beide sind deterministische Projektionen desselben Graphen — gleicher Graph, gleiche Bytes, keine handgepflegte Kopie, die hinterherhinkt. Ein Loch im Nachweis ist ein Loch im Modell, und dieselbe Regel, die das Loch ins Dokument schreibt, blockt auch am Gate. (umbenannt von Viewer, CR-GC-459)
-
-io ◀ — · io ▶ — · allocate ▶ `MOD-surface`
-
-###### 3.10.2.5.1  `FUNC-block-dokumentenwerk` — Dokumentenwerk
-
-Ebene-1-Block im Schaufenster: deterministische Dokument-Renders — Markdown-Export und die se-view-Sichten.
-
-io ◀ — · io ▶ — · allocate ▶ `MOD-projections`
-
-###### 3.10.2.5.1.1  `FUNC-export-markdown` — exportMarkdown(graph, view)
-
-> auch in: `FCHAIN-doc-export`
-
-Rendert Graph (View: spec/architecture/cr-list/references) deterministisch nach Markdown mit GENERATED-Header.
-
-io ◀ `FLOW-query-request-agent` · `FLOW-query-request-auto-export` · `FLOW-query-request-owner` · `FLOW-query-request-render-views` · `FLOW-query-request-view-changelog` · `FLOW-query-request-view-conops` · `FLOW-query-request-view-icd` · `FLOW-query-request-view-intplan` · `FLOW-query-request-view-rtm` · io ▶ `FLOW-markdown-docs` · allocate ▶ `MOD-projections`
-
-###### `REQ-doc-export` — Graph → Markdown Re-Export
-
-> auch unter: `FCHAIN-doc-export` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm`
-
-human-readable Docs (SPEC/Architektur/CR-Liste/References) werden DETERMINISTISCH aus dem Graph generiert (GENERATED-Header), nie hand-editiert. Schließt die graph-is-ssot-Drift-Lücke. (REQ-graph-is-ssot)
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-auto-export` (integration) · `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · `TEST-views-auditor` (unit) · `TEST-views-conformance` (unit) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · allocate ▶ `MOD-agent-surface` · `MOD-projections`
-
-###### `REQ-post-export-markdown` — Postcondition: exportMarkdown(graph, view)
-
-Deterministische Markdown-Views mit GENERATED-Header; nie hand-editiert.
-
-priority: must · status: done · kinds: postcondition
-
-Verification ◀ `TEST-doc-export` (conformance) · satisfy ◀ `FUNC-export-markdown` · allocate ▶ `MOD-projections`
-
-###### `REQ-pre-export-markdown` — Precondition: exportMarkdown(graph, view)
-
-Aktueller Graph (SSOT) geladen; View gewählt.
-
-priority: must · status: done · kinds: precondition
-
-Verification ◀ `TEST-doc-export` (conformance) · satisfy ◀ `FUNC-export-markdown` · allocate ▶ `MOD-projections`
-
-###### 3.10.2.5.1.2  `FUNC-render-views` — render graph→markdown views
-
-> auch in: `FCHAIN-doc-export`
-
-PROMPT-realisierter Graph-nach-Markdown-Renderer via se-view-Commands. Steht fuer die View-Skills OHNE eigenen FUNC-Knoten (arch, implplan, nfr, testconcept, testmatrix, trade, srs, cr-list, references); realRef zeigt auf arch.md als deren Vertreter. Interim-Realisierung von REQ-doc-export, bis FUNC-export-markdown (code, MOD-docs) sie ersetzt.
-
-io ◀ `FLOW-query-request-owner` · io ▶ `FLOW-query-request-render-views` · `FLOW-rendered-views` · allocate ▶ `MOD-agent-surface`
-
-###### `REQ-doc-export` — Graph → Markdown Re-Export
-
-> auch unter: `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm`
-
-human-readable Docs (SPEC/Architektur/CR-Liste/References) werden DETERMINISTISCH aus dem Graph generiert (GENERATED-Header), nie hand-editiert. Schließt die graph-is-ssot-Drift-Lücke. (REQ-graph-is-ssot)
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-auto-export` (integration) · `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · `TEST-views-auditor` (unit) · `TEST-views-conformance` (unit) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · allocate ▶ `MOD-agent-surface` · `MOD-projections`
-
-###### 3.10.2.5.1.3  `FUNC-view-changelog` — se-view-changelog (Change Log)
-
-> auch in: `FCHAIN-doc-export`
-
-Prompt-realisierte View: Change Log aus CR-Knoten mit Rationale und Status. (CR-GC-116)
-
-io ◀ `FLOW-query-request-owner` · io ▶ `FLOW-query-request-view-changelog` · allocate ▶ `MOD-agent-surface`
-
-###### `REQ-doc-export` — Graph → Markdown Re-Export
-
-> auch unter: `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm`
-
-human-readable Docs (SPEC/Architektur/CR-Liste/References) werden DETERMINISTISCH aus dem Graph generiert (GENERATED-Header), nie hand-editiert. Schließt die graph-is-ssot-Drift-Lücke. (REQ-graph-is-ssot)
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-auto-export` (integration) · `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · `TEST-views-auditor` (unit) · `TEST-views-conformance` (unit) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · allocate ▶ `MOD-agent-surface` · `MOD-projections`
-
-###### 3.10.2.5.1.4  `FUNC-view-conops` — se-view-conops (ConOps)
-
-> auch in: `FCHAIN-doc-export`
-
-Prompt-realisierte View: Concept of Operations aus UC plus ACTOR (operatingMode). (CR-GC-116)
-
-io ◀ `FLOW-query-request-owner` · io ▶ `FLOW-query-request-view-conops` · allocate ▶ `MOD-agent-surface`
-
-###### `REQ-doc-export` — Graph → Markdown Re-Export
-
-> auch unter: `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm`
-
-human-readable Docs (SPEC/Architektur/CR-Liste/References) werden DETERMINISTISCH aus dem Graph generiert (GENERATED-Header), nie hand-editiert. Schließt die graph-is-ssot-Drift-Lücke. (REQ-graph-is-ssot)
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-auto-export` (integration) · `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · `TEST-views-auditor` (unit) · `TEST-views-conformance` (unit) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · allocate ▶ `MOD-agent-surface` · `MOD-projections`
-
-###### 3.10.2.5.1.5  `FUNC-view-fmea` — View se-view:fmea
-
-> auch in: `FCHAIN-doc-export`
-
-Prompt-realisierte View: FMEA-Render aus risk-getaggten REQs mit S/O/D, Action Priority, Mitigation-Coverage und Verify-Luecken. Ersetzt die tote uid FUNC-view-irr; das Label IRR ist die separate Assumption-Review (se-irr).
-
-io ◀ `FLOW-query-request-owner` · io ▶ `FLOW-query-request-view-fmea` · allocate ▶ `MOD-agent-surface`
-
-###### `REQ-doc-export` — Graph → Markdown Re-Export
-
-> auch unter: `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm`
-
-human-readable Docs (SPEC/Architektur/CR-Liste/References) werden DETERMINISTISCH aus dem Graph generiert (GENERATED-Header), nie hand-editiert. Schließt die graph-is-ssot-Drift-Lücke. (REQ-graph-is-ssot)
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-auto-export` (integration) · `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · `TEST-views-auditor` (unit) · `TEST-views-conformance` (unit) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · allocate ▶ `MOD-agent-surface` · `MOD-projections`
-
-###### 3.10.2.5.1.6  `FUNC-view-icd` — se-view-icd (ICD)
-
-> auch in: `FCHAIN-doc-export`
-
-Prompt-realisierte View: Interface Control Document aus FLOW zu SCHEMA. (CR-GC-116)
-
-io ◀ `FLOW-query-request-owner` · io ▶ `FLOW-query-request-view-icd` · allocate ▶ `MOD-agent-surface`
-
-###### `REQ-doc-export` — Graph → Markdown Re-Export
-
-> auch unter: `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-intplan` · `FUNC-view-rtm`
-
-human-readable Docs (SPEC/Architektur/CR-Liste/References) werden DETERMINISTISCH aus dem Graph generiert (GENERATED-Header), nie hand-editiert. Schließt die graph-is-ssot-Drift-Lücke. (REQ-graph-is-ssot)
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-auto-export` (integration) · `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · `TEST-views-auditor` (unit) · `TEST-views-conformance` (unit) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · allocate ▶ `MOD-agent-surface` · `MOD-projections`
-
-###### 3.10.2.5.1.7  `FUNC-view-intplan` — se-view-intplan (Integrations-/Testplan)
-
-> auch in: `FCHAIN-doc-export`
-
-Prompt-realisierte View: Integrations-/Testplan aus MS plus verify-Status. (CR-GC-116)
-
-io ◀ `FLOW-query-request-owner` · io ▶ `FLOW-query-request-view-intplan` · allocate ▶ `MOD-agent-surface`
-
-###### `REQ-doc-export` — Graph → Markdown Re-Export
-
-> auch unter: `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-rtm`
-
-human-readable Docs (SPEC/Architektur/CR-Liste/References) werden DETERMINISTISCH aus dem Graph generiert (GENERATED-Header), nie hand-editiert. Schließt die graph-is-ssot-Drift-Lücke. (REQ-graph-is-ssot)
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-auto-export` (integration) · `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · `TEST-views-auditor` (unit) · `TEST-views-conformance` (unit) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · allocate ▶ `MOD-agent-surface` · `MOD-projections`
-
-###### 3.10.2.5.1.8  `FUNC-view-rtm` — se-view-rtm (RTM)
-
-> auch in: `FCHAIN-doc-export`
-
-Prompt-realisierte View: Requirements Traceability Matrix aus satisfy/verify-Traces je REQ. (CR-GC-116)
-
-io ◀ `FLOW-query-request-owner` · io ▶ `FLOW-query-request-view-rtm` · allocate ▶ `MOD-agent-surface`
-
-###### `REQ-doc-export` — Graph → Markdown Re-Export
-
-> auch unter: `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan`
-
-human-readable Docs (SPEC/Architektur/CR-Liste/References) werden DETERMINISTISCH aus dem Graph generiert (GENERATED-Header), nie hand-editiert. Schließt die graph-is-ssot-Drift-Lücke. (REQ-graph-is-ssot)
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-auto-export` (integration) · `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · `TEST-views-auditor` (unit) · `TEST-views-conformance` (unit) · satisfy ◀ `FCHAIN-doc-export` · `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · allocate ▶ `MOD-agent-surface` · `MOD-projections`
-
-###### 3.10.2.5.2  `FUNC-block-live-dashboard` — Live-Kanal
-
-Ebene-1-Block im Viewer: der Live-Transport — Update-Events, Diff-Broadcast, SSE-Verteilung an die Panels.
-
-io ◀ — · io ▶ — · allocate ▶ `MOD-surface`
-
-###### 3.10.2.5.2.1  `FUNC-broadcast-diff` — broadcastDiff(version)
-
-> auch in: `FCHAIN-live-update`
-
-Versionierter Diff-Broadcast mit Late-Joiner-Cache an die Viewer; jede Mutation erhoeht die Version. (CR-GC-114)
-
-io ◀ `FLOW-live-event` · io ▶ `FLOW-sse-frame` · allocate ▶ `MOD-surface`
-
-###### `REQ-versioned-broadcast` — Versioned Diff-Broadcast
-
-> auch unter: `FUNC-emit-update-event` · `FUNC-serve-sse`
-
-Versioned Diff-Broadcast an Dashboard (read-only, Late-Joiner-Cache). (R9)
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FUNC-broadcast-diff` · `FUNC-emit-update-event` · `FUNC-serve-sse` · allocate ▶ `MOD-surface`
-
-###### 3.10.2.5.2.2  `FUNC-emit-update-event` — emitUpdateEvent(domains)
-
-> auch in: `FCHAIN-live-update`
-
-Live-Update-Event (SSE invalidate) bei jeder Mutation; Basis des read-only Dashboards. (R9)
-
-io ◀ `FLOW-graph-state` · io ▶ `FLOW-live-event` · allocate ▶ `MOD-surface`
-
-###### `REQ-post-emit-update-event` — Postcondition: FUNC-emit-update-event
-
-Genau ein Live-Update-Event mit korrekten domains; ausschließlich read-only.
-
-priority: must · status: open · kinds: postcondition
-
-Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FUNC-emit-update-event` · allocate ▶ `MOD-surface`
-
-###### `REQ-pre-emit-update-event` — Precondition: FUNC-emit-update-event
-
-Mutation committed; SSE/WS-Bridge verbunden.
-
-priority: must · status: open · kinds: precondition
-
-Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FUNC-emit-update-event` · allocate ▶ `MOD-surface`
-
-###### `REQ-versioned-broadcast` — Versioned Diff-Broadcast
-
-> auch unter: `FUNC-broadcast-diff` · `FUNC-serve-sse`
-
-Versioned Diff-Broadcast an Dashboard (read-only, Late-Joiner-Cache). (R9)
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FUNC-broadcast-diff` · `FUNC-emit-update-event` · `FUNC-serve-sse` · allocate ▶ `MOD-surface`
-
-###### 3.10.2.5.2.3  `FUNC-serve-sse` — serveSSE()
-
-> auch in: `FCHAIN-live-update`
-
-Host-Prozess exponiert die SSE/WS-Route und leitet harness.onUpdateEvent read-only an die Live-Viewer weiter. Kein Express-REST im Core. (CR-GC-114)
-
-io ◀ `FLOW-live-event` · io ▶ — · allocate ▶ `MOD-surface`
-
-###### `REQ-versioned-broadcast` — Versioned Diff-Broadcast
-
-> auch unter: `FUNC-broadcast-diff` · `FUNC-emit-update-event`
-
-Versioned Diff-Broadcast an Dashboard (read-only, Late-Joiner-Cache). (R9)
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FUNC-broadcast-diff` · `FUNC-emit-update-event` · `FUNC-serve-sse` · allocate ▶ `MOD-surface`
-
-##### 3.10.2.6  `FUNC-block-speicherwerk` — Speicherwerk
+##### 3.10.2.7  `FUNC-block-speicherwerk` — Speicherwerk
 
 Der Lebenszyklus des Stores: Ownership beanspruchen und freigeben, laden, erstbefuellen, neu aufsetzen und den Export anstossen.
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-kernel`
 
-###### 3.10.2.6.1  `FUNC-apply-reseed` — applyReseed
+###### 3.10.2.7.1  `FUNC-apply-reseed` — applyReseed
 
 > auch in: `FCHAIN-recall`
 
@@ -4612,7 +4612,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-graph-time-travel` (integration) · `TEST-reseed` (integration) · `TEST-rewind` (integration) · satisfy ◀ `FCHAIN-recall` · `FUNC-apply-reseed` · `FUNC-reseed` · `FUNC-rewind` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
-###### 3.10.2.6.2  `FUNC-auto-export` — registerAutoExport
+###### 3.10.2.7.2  `FUNC-auto-export` — registerAutoExport
 
 > auch in: `FCHAIN-snapshot-freshness`
 
@@ -4630,7 +4630,7 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` · allocate ▶ `MOD-kernel` · `MOD-projections`
 
-###### 3.10.2.6.3  `FUNC-bootstrap` — bootstrap
+###### 3.10.2.7.3  `FUNC-bootstrap` — bootstrap
 
 > auch in: `FCHAIN-repo-lifecycle`
 
@@ -4648,7 +4648,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-bootstrap` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
-###### 3.10.2.6.4  `FUNC-claim-store-lock` — StoreLock
+###### 3.10.2.7.4  `FUNC-claim-store-lock` — StoreLock
 
 > auch in: `FCHAIN-apply-gate` · `FCHAIN-repo-lifecycle`
 
@@ -4666,7 +4666,7 @@ priority: must · status: approved · kinds: functional
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
-###### 3.10.2.6.5  `FUNC-create-harness` — createHarness
+###### 3.10.2.7.5  `FUNC-create-harness` — createHarness
 
 > auch in: `FCHAIN-apply-gate`
 
@@ -4684,7 +4684,7 @@ priority: must · status: approved · kinds: functional
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
-###### 3.10.2.6.6  `FUNC-export-marker` — setExportPending
+###### 3.10.2.7.6  `FUNC-export-marker` — setExportPending
 
 > auch in: `FCHAIN-snapshot-freshness`
 
@@ -4702,7 +4702,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-export-marker` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-kernel` · `MOD-projections`
 
-###### 3.10.2.6.7  `FUNC-graph-store` — GraphStore
+###### 3.10.2.7.7  `FUNC-graph-store` — GraphStore
 
 > auch in: `FCHAIN-apply-gate` · `FCHAIN-live-update` · `FCHAIN-recall` · `FCHAIN-snapshot-freshness`
 
@@ -4738,7 +4738,7 @@ priority: must · status: approved · kinds: functional
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
-###### 3.10.2.6.8  `FUNC-seed-from-json` — seedFromJson(relPath)
+###### 3.10.2.7.8  `FUNC-seed-from-json` — seedFromJson(relPath)
 
 > auch in: `FCHAIN-recall`
 
@@ -4762,13 +4762,103 @@ Ebene-0-Block, Feature 3 von drei: Optimierungsvorschlaege, strukturell UND inha
 
 io ◀ — · io ▶ — · allocate ▶ —
 
-##### 3.10.3.1  `FUNC-block-arch-optimierung` — Architektur-Optimierung
+##### 3.10.3.1  `FUNC-block-urteilsarbeit` — Urteilsarbeit
 
-Ebene-1-Block im Autopilot: Architektur-Optimierung — Operator-Vorschlaege entlang der R6-Fitness.
+Ebene-1-Block in der Optimierung: die inhaltliche Haelfte — fuenf gefuehrte Urteilssitzungen (Betriebskonzept, Annahmen-Review, FMEA, Trade Study, Implementierungsplan) fuer Fehler, die technisch fehlerfreie Modelle trotzdem haben: eine Anforderung, die Formate erfindet, die ihr eigener Anwendungsfall ausschliesst; eine Fehlermeldung als Anwendungsfall; ein System fuer gemeinsames Bearbeiten ohne Nebenlaeufigkeit. Das Werkzeug automatisiert das Urteil BEWUSST NICHT — es prueft nur, dass die Sitzung stattgefunden hat und zum aktuellen Umfang passt (AF-01..05, Warnung, kein Blocker). Das Urteil bleibt beim Menschen. (CR-GC-459)
 
-io ◀ — · io ▶ — · allocate ▶ `MOD-loop`
+io ◀ — · io ▶ — · allocate ▶ `MOD-agent-surface`
 
-###### 3.10.3.1.1  `FUNC-graph-suggest` — graph_suggest(weights)
+###### 3.10.3.1.1  `FUNC-se-conops` — Skill se-conops
+
+> auch in: `FCHAIN-skill-authoring`
+
+Prompt-realisierter Skill se-conops: Concept of Operations — Betriebsaspekte vor den Use Cases, als system-scoped REQ durchs Gate.
+
+io ◀ `FLOW-skill-request` · io ▶ `FLOW-mutate-cmd-se-conops` · allocate ▶ `MOD-agent-surface`
+
+###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
+
+> auch unter: `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-target-profile`
+
+Ein Autoren-Skill erzeugt Knoten und Kanten ausschliesslich ueber graph_mutate oder graph_realize und weist an keiner Stelle einen direkten Schreibzugriff auf die Graph-SSOT an.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+
+###### 3.10.3.1.2  `FUNC-se-fmea` — Skill se-fmea
+
+> auch in: `FCHAIN-skill-authoring`
+
+Prompt-realisierter Skill se-fmea: AIAG-VDA-FMEA auf System/Subsystem, Befunde in Graph und Spec.
+
+io ◀ `FLOW-skill-request` · io ▶ `FLOW-mutate-cmd-se-fmea` · allocate ▶ `MOD-agent-surface`
+
+###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
+
+> auch unter: `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-target-profile`
+
+Ein Autoren-Skill erzeugt Knoten und Kanten ausschliesslich ueber graph_mutate oder graph_realize und weist an keiner Stelle einen direkten Schreibzugriff auf die Graph-SSOT an.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+
+###### 3.10.3.1.3  `FUNC-se-irr` — Skill se-irr
+
+> auch in: `FCHAIN-skill-authoring`
+
+Prompt-realisierter Skill se-irr: Assumption Review — unbewiesene Annahmen pinnen, tragende zu CRs promoten.
+
+io ◀ `FLOW-skill-request` · io ▶ `FLOW-mutate-cmd-se-irr` · allocate ▶ `MOD-agent-surface`
+
+###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
+
+> auch unter: `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-target-profile`
+
+Ein Autoren-Skill erzeugt Knoten und Kanten ausschliesslich ueber graph_mutate oder graph_realize und weist an keiner Stelle einen direkten Schreibzugriff auf die Graph-SSOT an.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+
+###### 3.10.3.1.4  `FUNC-se-plan` — Skill se-plan
+
+> auch in: `FCHAIN-skill-authoring`
+
+Prompt-realisierter Skill se-plan: Implementierungsplan aus dem depends-on-DAG, CR-Schnitt aus graph_context-Slices.
+
+io ◀ `FLOW-skill-request` · io ▶ `FLOW-mutate-cmd-se-plan` · allocate ▶ `MOD-agent-surface`
+
+###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
+
+> auch unter: `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-target-profile`
+
+Ein Autoren-Skill erzeugt Knoten und Kanten ausschliesslich ueber graph_mutate oder graph_realize und weist an keiner Stelle einen direkten Schreibzugriff auf die Graph-SSOT an.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+
+###### 3.10.3.1.5  `FUNC-se-trade` — Skill se-trade
+
+> auch in: `FCHAIN-skill-authoring`
+
+Prompt-realisierter Skill se-trade: Trade Study — Optionen bewerten, Entscheidung mit decides-Kanten im Graph.
+
+io ◀ `FLOW-skill-request` · io ▶ `FLOW-mutate-cmd-se-trade` · allocate ▶ `MOD-agent-surface`
+
+###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
+
+> auch unter: `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-target-profile`
+
+Ein Autoren-Skill erzeugt Knoten und Kanten ausschliesslich ueber graph_mutate oder graph_realize und weist an keiner Stelle einen direkten Schreibzugriff auf die Graph-SSOT an.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+
+##### 3.10.3.2  `FUNC-graph-suggest` — graph_suggest(weights)
 
 > auch in: `FCHAIN-advisory-roundtrip`
 
@@ -4796,7 +4886,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-executor-bestofn` (integration) · `TEST-target-profile` (integration) · `TEST-target-shifts-ranking` (unit) · satisfy ◀ `FUNC-graph-suggest` · `FUNC-target-profile-load` · allocate ▶ `MOD-loop`
 
-###### 3.10.3.1.2  `FUNC-se-optimize` — Skill se:optimize
+##### 3.10.3.3  `FUNC-se-optimize` — Skill se:optimize
 
 > auch in: `FCHAIN-skill-authoring`
 
@@ -4807,102 +4897,6 @@ io ◀ `FLOW-skill-request` · io ▶ `FLOW-mutate-cmd-se-optimize` · allocate 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
 > auch unter: `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-target-profile`
-
-Ein Autoren-Skill erzeugt Knoten und Kanten ausschliesslich ueber graph_mutate oder graph_realize und weist an keiner Stelle einen direkten Schreibzugriff auf die Graph-SSOT an.
-
-priority: must · status: n/a · kinds: functional
-
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
-
-##### 3.10.3.2  `FUNC-block-urteilsarbeit` — Urteilsarbeit
-
-Ebene-1-Block in der Optimierung: die inhaltliche Haelfte — fuenf gefuehrte Urteilssitzungen (Betriebskonzept, Annahmen-Review, FMEA, Trade Study, Implementierungsplan) fuer Fehler, die technisch fehlerfreie Modelle trotzdem haben: eine Anforderung, die Formate erfindet, die ihr eigener Anwendungsfall ausschliesst; eine Fehlermeldung als Anwendungsfall; ein System fuer gemeinsames Bearbeiten ohne Nebenlaeufigkeit. Das Werkzeug automatisiert das Urteil BEWUSST NICHT — es prueft nur, dass die Sitzung stattgefunden hat und zum aktuellen Umfang passt (AF-01..05, Warnung, kein Blocker). Das Urteil bleibt beim Menschen. (CR-GC-459)
-
-io ◀ — · io ▶ — · allocate ▶ `MOD-agent-surface`
-
-###### 3.10.3.2.1  `FUNC-se-conops` — Skill se-conops
-
-> auch in: `FCHAIN-skill-authoring`
-
-Prompt-realisierter Skill se-conops: Concept of Operations — Betriebsaspekte vor den Use Cases, als system-scoped REQ durchs Gate.
-
-io ◀ `FLOW-skill-request` · io ▶ `FLOW-mutate-cmd-se-conops` · allocate ▶ `MOD-agent-surface`
-
-###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
-
-> auch unter: `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-target-profile`
-
-Ein Autoren-Skill erzeugt Knoten und Kanten ausschliesslich ueber graph_mutate oder graph_realize und weist an keiner Stelle einen direkten Schreibzugriff auf die Graph-SSOT an.
-
-priority: must · status: n/a · kinds: functional
-
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
-
-###### 3.10.3.2.2  `FUNC-se-fmea` — Skill se-fmea
-
-> auch in: `FCHAIN-skill-authoring`
-
-Prompt-realisierter Skill se-fmea: AIAG-VDA-FMEA auf System/Subsystem, Befunde in Graph und Spec.
-
-io ◀ `FLOW-skill-request` · io ▶ `FLOW-mutate-cmd-se-fmea` · allocate ▶ `MOD-agent-surface`
-
-###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
-
-> auch unter: `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-target-profile`
-
-Ein Autoren-Skill erzeugt Knoten und Kanten ausschliesslich ueber graph_mutate oder graph_realize und weist an keiner Stelle einen direkten Schreibzugriff auf die Graph-SSOT an.
-
-priority: must · status: n/a · kinds: functional
-
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
-
-###### 3.10.3.2.3  `FUNC-se-irr` — Skill se-irr
-
-> auch in: `FCHAIN-skill-authoring`
-
-Prompt-realisierter Skill se-irr: Assumption Review — unbewiesene Annahmen pinnen, tragende zu CRs promoten.
-
-io ◀ `FLOW-skill-request` · io ▶ `FLOW-mutate-cmd-se-irr` · allocate ▶ `MOD-agent-surface`
-
-###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
-
-> auch unter: `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-target-profile`
-
-Ein Autoren-Skill erzeugt Knoten und Kanten ausschliesslich ueber graph_mutate oder graph_realize und weist an keiner Stelle einen direkten Schreibzugriff auf die Graph-SSOT an.
-
-priority: must · status: n/a · kinds: functional
-
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
-
-###### 3.10.3.2.4  `FUNC-se-plan` — Skill se-plan
-
-> auch in: `FCHAIN-skill-authoring`
-
-Prompt-realisierter Skill se-plan: Implementierungsplan aus dem depends-on-DAG, CR-Schnitt aus graph_context-Slices.
-
-io ◀ `FLOW-skill-request` · io ▶ `FLOW-mutate-cmd-se-plan` · allocate ▶ `MOD-agent-surface`
-
-###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
-
-> auch unter: `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-target-profile`
-
-Ein Autoren-Skill erzeugt Knoten und Kanten ausschliesslich ueber graph_mutate oder graph_realize und weist an keiner Stelle einen direkten Schreibzugriff auf die Graph-SSOT an.
-
-priority: must · status: n/a · kinds: functional
-
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
-
-###### 3.10.3.2.5  `FUNC-se-trade` — Skill se-trade
-
-> auch in: `FCHAIN-skill-authoring`
-
-Prompt-realisierter Skill se-trade: Trade Study — Optionen bewerten, Entscheidung mit decides-Kanten im Graph.
-
-io ◀ `FLOW-skill-request` · io ▶ `FLOW-mutate-cmd-se-trade` · allocate ▶ `MOD-agent-surface`
-
-###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
-
-> auch unter: `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-target-profile`
 
 Ein Autoren-Skill erzeugt Knoten und Kanten ausschliesslich ueber graph_mutate oder graph_realize und weist an keiner Stelle einen direkten Schreibzugriff auf die Graph-SSOT an.
 
@@ -6326,7 +6320,7 @@ allocate ◀ `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-comp
 
 Die Schleife, die den Graphen bewegt: Fokuswahl, Zielprofil, Vorschlaege, Runden-Prompt, Modellaufruf, Kandidaten-Ranking. Ein Client des Gates wie jeder andere — sie schreibt ausschliesslich durch apply(). (CR-GC-446)
 
-allocate ◀ `FUNC-block-antrieb` · `FUNC-block-arch-optimierung` · `FUNC-block-q-improvement` · `FUNC-build-round-injection` · `FUNC-call-model` · `FUNC-extract-mutate` · `FUNC-gate-client` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-graph-suggest` · `FUNC-next-step` · `FUNC-preflight` · `FUNC-rank-candidates` · `FUNC-run-executor` · `FUNC-target-profile-load` · satisfy ▶ `REQ-gate-only-writes` · `REQ-monotone-convergence` · `REQ-phase-gate-not-skippable`
+allocate ◀ `FUNC-block-antrieb` · `FUNC-block-q-improvement` · `FUNC-build-round-injection` · `FUNC-call-model` · `FUNC-extract-mutate` · `FUNC-gate-client` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-graph-suggest` · `FUNC-next-step` · `FUNC-preflight` · `FUNC-rank-candidates` · `FUNC-run-executor` · `FUNC-target-profile-load` · satisfy ▶ `REQ-gate-only-writes` · `REQ-monotone-convergence` · `REQ-phase-gate-not-skippable`
 
 ### 6.5  `MOD-projections` — projections — Graph nach Artefakt
 
@@ -6338,7 +6332,7 @@ allocate ◀ `FUNC-auto-export` · `FUNC-block-dokumentenwerk` · `FUNC-block-ge
 
 Adapter ohne eigene Logik: MCP-stdio-Registry, CLI-Verben und Distribution, Host-Socket zum Store-Besitzer, read-only SSE-Bruecke an den Live-Viewer. Uebersetzt Protokoll in kernel-Aufrufe, mehr nicht. (CR-GC-446)
 
-allocate ◀ `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-bind-tools` · `FUNC-block-bedienung` · `FUNC-block-betrieb` · `FUNC-block-live-dashboard` · `FUNC-block-schaufenster` · `FUNC-bootstrap` · `FUNC-broadcast-diff` · `FUNC-cli-dispatch` · `FUNC-collect-status` · `FUNC-create-harness` · `FUNC-emit-update-event` · `FUNC-graph-realize` · `FUNC-gve-sessions` · `FUNC-gve-supervise` · `FUNC-harness-cli` · `FUNC-health-endpoint` · `FUNC-host-socket` · `FUNC-import-code-verb` · `FUNC-read-tools` · `FUNC-rewind` · `FUNC-run-verb` · `FUNC-serve-sse` · `FUNC-serve-stdio` · `FUNC-session-shutdown` · `FUNC-tool-context` · `FUNC-upgrade` · satisfy ▶ `REQ-agent-agnostic` · `REQ-buildable-standalone` · `REQ-cache-layering` · `REQ-gate-only-writes` · `REQ-graph-context-replaces-reading` · `REQ-install-idempotent` · `REQ-live-event-in-contracts` · `REQ-readonly-bridge` · `REQ-self-contained-dist` · `REQ-single-transport` · `REQ-versioned-cache`
+allocate ◀ `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-bind-tools` · `FUNC-block-bedienung` · `FUNC-block-betrieb` · `FUNC-block-host-sitzung` · `FUNC-block-live-dashboard` · `FUNC-bootstrap` · `FUNC-broadcast-diff` · `FUNC-cli-dispatch` · `FUNC-collect-status` · `FUNC-create-harness` · `FUNC-emit-update-event` · `FUNC-graph-realize` · `FUNC-gve-sessions` · `FUNC-gve-supervise` · `FUNC-harness-cli` · `FUNC-health-endpoint` · `FUNC-host-socket` · `FUNC-import-code-verb` · `FUNC-read-tools` · `FUNC-rewind` · `FUNC-run-verb` · `FUNC-serve-sse` · `FUNC-serve-stdio` · `FUNC-session-shutdown` · `FUNC-tool-context` · `FUNC-upgrade` · satisfy ▶ `REQ-agent-agnostic` · `REQ-buildable-standalone` · `REQ-cache-layering` · `REQ-gate-only-writes` · `REQ-graph-context-replaces-reading` · `REQ-install-idempotent` · `REQ-live-event-in-contracts` · `REQ-readonly-bridge` · `REQ-self-contained-dist` · `REQ-single-transport` · `REQ-versioned-cache`
 
 ## 7  Cross-cutting Requirements
 
