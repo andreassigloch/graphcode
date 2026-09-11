@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 46 SCHEMA · 65 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 46 SCHEMA · 102 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -78,7 +78,8 @@
 | `FLOW-expand-subgraph` | `FUNC-graph-expand` | `FUNC-read-tools` |
 | `FLOW-export-pending` | `FUNC-export-marker` | `ACTOR-owner` |
 | `FLOW-fit-advisory` | `FUNC-fit-advisory` | `FUNC-mutate` · `FUNC-rank-candidates` |
-| `FLOW-formatE-artifact` | `ACTOR-agent` · `FUNC-encode` · `FUNC-import-code` · `FUNC-import-doc` · `FUNC-read-tools` | `ACTOR-agent` · `FUNC-bootstrap` · `FUNC-decode` · `FUNC-encode` · `FUNC-mutate` |
+| `FLOW-formatE-artifact-agent` | `ACTOR-agent` | `FUNC-decode` |
+| `FLOW-formatE-artifact-read-tools` | `FUNC-read-tools` | `ACTOR-agent` |
 | `FLOW-gate-outcome` | `FUNC-gate-client` | `FUNC-rank-candidates` · `FUNC-run-executor` |
 | `FLOW-gate-verdict` | `FUNC-mutate` | `ACTOR-owner` · `FUNC-bootstrap` · `FUNC-gate-client` · `FUNC-graph-realize` · `FUNC-graph-suggest` · `FUNC-import-code-verb` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-test-ingest` · `FUNC-tool-context` |
 | `FLOW-graph-delta` | `FUNC-mutate` | `FUNC-graph-store` |
@@ -88,7 +89,9 @@
 | `FLOW-impact-slice` | `FUNC-graph-impact` | `FUNC-read-tools` |
 | `FLOW-impacted-tests` | `FUNC-resolve-tests-from-code` | `FUNC-deduce-tests` |
 | `FLOW-imported-graph` | `FUNC-import` | `FUNC-graph-store` |
-| `FLOW-install-result` | `FUNC-collect-status` · `FUNC-harness-cli` · `FUNC-upgrade` | `ACTOR-owner` |
+| `FLOW-install-result-collect-status` | `FUNC-collect-status` | `ACTOR-owner` |
+| `FLOW-install-result-harness-cli` | `FUNC-harness-cli` | `ACTOR-owner` |
+| `FLOW-install-result-upgrade` | `FUNC-upgrade` | `ACTOR-owner` |
 | `FLOW-learning-advice` | `ACTOR-learning-engine` | `FUNC-graph-suggest` · `FUNC-next-step` |
 | `FLOW-learning-query` | `FUNC-graph-suggest` | `ACTOR-learning-engine` |
 | `FLOW-live-event` | `FUNC-emit-update-event` | `FUNC-broadcast-diff` · `FUNC-serve-sse` · `FUNC-serve-stdio` |
@@ -98,12 +101,41 @@
 | `FLOW-model-answer` | `FUNC-call-model` | `FUNC-extract-mutate` · `FUNC-run-executor` |
 | `FLOW-model-request` | `FUNC-run-executor` | `FUNC-call-model` |
 | `FLOW-module-metrics` | `FUNC-module-metrics` | `ACTOR-dashboard` · `FUNC-evaluate-rules` |
-| `FLOW-mutate-cmd` | `ACTOR-agent` · `ACTOR-owner` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-bootstrap` · `FUNC-close-violations` · `FUNC-gate-client` · `FUNC-graph-realize` · `FUNC-graph-suggest` · `FUNC-import-code-verb` · `FUNC-import-doc` · `FUNC-merge-nodes` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-test-ingest` | `FUNC-host-socket` · `FUNC-mutate` |
+| `FLOW-mutate-cmd-agent` | `ACTOR-agent` | `FUNC-host-socket` · `FUNC-mutate` |
+| `FLOW-mutate-cmd-author-req` | `FUNC-author-req` | `FUNC-mutate` |
+| `FLOW-mutate-cmd-author-uc` | `FUNC-author-uc` | `FUNC-mutate` |
+| `FLOW-mutate-cmd-bootstrap` | `FUNC-bootstrap` | `FUNC-mutate` |
+| `FLOW-mutate-cmd-close-violations` | `FUNC-close-violations` | `FUNC-mutate` |
+| `FLOW-mutate-cmd-gate-client` | `FUNC-gate-client` | `FUNC-mutate` |
+| `FLOW-mutate-cmd-graph-realize` | `FUNC-graph-realize` | `FUNC-mutate` |
+| `FLOW-mutate-cmd-graph-suggest` | `FUNC-graph-suggest` | `FUNC-mutate` |
+| `FLOW-mutate-cmd-import-code-verb` | `FUNC-import-code-verb` | `FUNC-mutate` |
+| `FLOW-mutate-cmd-import-doc` | `FUNC-import-doc` | `FUNC-mutate` |
+| `FLOW-mutate-cmd-merge-nodes` | `FUNC-merge-nodes` | `FUNC-mutate` |
+| `FLOW-mutate-cmd-owner` | `ACTOR-owner` | `FUNC-host-socket` |
+| `FLOW-mutate-cmd-se-conops` | `FUNC-se-conops` | `FUNC-mutate` |
+| `FLOW-mutate-cmd-se-fmea` | `FUNC-se-fmea` | `FUNC-mutate` |
+| `FLOW-mutate-cmd-se-generate` | `FUNC-se-generate` | `FUNC-mutate` |
+| `FLOW-mutate-cmd-se-irr` | `FUNC-se-irr` | `FUNC-mutate` |
+| `FLOW-mutate-cmd-se-optimize` | `FUNC-se-optimize` | `FUNC-mutate` |
+| `FLOW-mutate-cmd-se-plan` | `FUNC-se-plan` | `FUNC-mutate` |
+| `FLOW-mutate-cmd-se-top-level` | `FUNC-se-top-level` | `FUNC-mutate` |
+| `FLOW-mutate-cmd-se-trade` | `FUNC-se-trade` | `FUNC-mutate` |
+| `FLOW-mutate-cmd-test-ingest` | `FUNC-test-ingest` | `FUNC-mutate` |
 | `FLOW-next-step-advice` | `FUNC-next-step` | `ACTOR-agent` |
 | `FLOW-ontology-json` | `FUNC-seed-from-json` | `FUNC-import` |
 | `FLOW-phase-readiness` | `FUNC-compute-phase-readiness` | `FUNC-take-steering-snapshot` |
 | `FLOW-preflight-outcome` | `FUNC-preflight` | `FUNC-gate-client` |
-| `FLOW-query-request` | `ACTOR-agent` · `ACTOR-owner` · `FUNC-auto-export` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` | `FUNC-deduce-tests` · `FUNC-export-markdown` · `FUNC-graph-expand` · `FUNC-graph-impact` · `FUNC-list-elements` · `FUNC-read-tools` · `FUNC-render-views` · `FUNC-resolve-tests-from-code` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` |
+| `FLOW-query-request-agent` | `ACTOR-agent` | `FUNC-deduce-tests` · `FUNC-export-markdown` · `FUNC-graph-expand` · `FUNC-graph-impact` · `FUNC-list-elements` · `FUNC-read-tools` · `FUNC-resolve-tests-from-code` |
+| `FLOW-query-request-auto-export` | `FUNC-auto-export` | `FUNC-export-markdown` |
+| `FLOW-query-request-owner` | `ACTOR-owner` | `FUNC-export-markdown` · `FUNC-graph-expand` · `FUNC-list-elements` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` |
+| `FLOW-query-request-render-views` | `FUNC-render-views` | `FUNC-export-markdown` |
+| `FLOW-query-request-view-changelog` | `FUNC-view-changelog` | `FUNC-export-markdown` |
+| `FLOW-query-request-view-conops` | `FUNC-view-conops` | `FUNC-export-markdown` |
+| `FLOW-query-request-view-fmea` | `FUNC-view-fmea` | `FUNC-list-elements` · `FUNC-read-tools` |
+| `FLOW-query-request-view-icd` | `FUNC-view-icd` | `FUNC-export-markdown` |
+| `FLOW-query-request-view-intplan` | `FUNC-view-intplan` | `FUNC-export-markdown` |
+| `FLOW-query-request-view-rtm` | `FUNC-view-rtm` | `FUNC-export-markdown` |
 | `FLOW-recovered-batch` | `FUNC-extract-mutate` | `FUNC-run-executor` |
 | `FLOW-rendered-views` | `FUNC-render-views` | `ACTOR-owner` |
 | `FLOW-round-injection` | `FUNC-build-round-injection` | `FUNC-run-executor` |
@@ -112,12 +144,17 @@
 | `FLOW-schema-fingerprint` | `FUNC-schema-guard` | `FUNC-graph-store` |
 | `FLOW-session-entry` | `FUNC-gve-supervise` | `FUNC-gve-sessions` |
 | `FLOW-session-registry` | `FUNC-gve-sessions` | `FUNC-gve-supervise` |
-| `FLOW-skill-report` | `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-test` · `FUNC-test-ui` | `ACTOR-owner` |
+| `FLOW-skill-report-se-help` | `FUNC-se-help` | `ACTOR-owner` |
+| `FLOW-skill-report-se-retro` | `FUNC-se-retro` | `ACTOR-owner` |
+| `FLOW-skill-report-se-review` | `FUNC-se-review` | `ACTOR-owner` |
+| `FLOW-skill-report-se-status` | `FUNC-se-status` | `ACTOR-owner` |
+| `FLOW-skill-report-test` | `FUNC-test` | `ACTOR-owner` |
+| `FLOW-skill-report-test-ui` | `FUNC-test-ui` | `ACTOR-owner` |
 | `FLOW-skill-request` | `ACTOR-agent` | `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-import-code` · `FUNC-import-doc` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-help` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-target-profile` · `FUNC-test` · `FUNC-test-ui` |
 | `FLOW-sse-frame` | `FUNC-broadcast-diff` | `ACTOR-dashboard` |
 | `FLOW-steering-delta` | `FUNC-compute-steering-delta` | `FUNC-bind-tools` · `FUNC-rank-candidates` |
 | `FLOW-steering-snapshot` | `FUNC-take-steering-snapshot` | `FUNC-compute-steering-delta` · `FUNC-generation-step` · `FUNC-next-step` |
-| `FLOW-steering-trigger` | `ACTOR-agent` · `ACTOR-owner` · `FUNC-run-verb` | `FUNC-take-steering-snapshot` |
+| `FLOW-steering-trigger-agent` | `ACTOR-agent` | `FUNC-take-steering-snapshot` |
 | `FLOW-store-ownership` | `FUNC-claim-store-lock` | `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` |
 | `FLOW-target-profile` | `FUNC-target-profile-load` | `FUNC-generation-step` · `FUNC-graph-suggest` |
 | `FLOW-target-profile-file` | `FUNC-target-profile` | `FUNC-target-profile-load` |
