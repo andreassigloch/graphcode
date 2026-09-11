@@ -61,7 +61,7 @@ Als Entwickler will ich, dass jede Aenderung, meine wie die eines Agenten, durch
 
 Ausgeloest von: `ACTOR-agent` · `ACTOR-learning-engine` · `ACTOR-owner`
 
-- `FCHAIN-apply-gate` — Apply-Gate-Ablauf (Governed Mutation): `FUNC-claim-store-lock` → `FUNC-close-store` → `FUNC-create-harness` → `FUNC-emit-trajectory` → `FUNC-evaluate-rules` → `FUNC-fit-advisory` → `FUNC-host-socket` → `FUNC-load-graph` → `FUNC-mutate` → `FUNC-open-store` → `FUNC-own-kuzu-host` → `FUNC-save-graph` → `FUNC-session-shutdown` → `FUNC-tool-context`
+- `FCHAIN-apply-gate` — Apply-Gate-Ablauf (Governed Mutation): `FUNC-claim-store-lock` → `FUNC-create-harness` → `FUNC-emit-trajectory` → `FUNC-evaluate-rules` → `FUNC-fit-advisory` → `FUNC-graph-store` → `FUNC-host-socket` → `FUNC-mutate` → `FUNC-own-kuzu-host` → `FUNC-session-shutdown` → `FUNC-tool-context`
 - `FCHAIN-capture` — Interaktive Erfassung (Text → suggest-Tier): `FUNC-decode` → `FUNC-mutate`
 - `FCHAIN-codec-roundtrip` — Format-E Round-Trip (encode∘decode): `FUNC-decode` → `FUNC-encode`
 - `FCHAIN-interface-escalation` — Interface-Änderungs-Eskalation: `FUNC-graph-impact` → `FUNC-mutate`
@@ -91,8 +91,8 @@ Als Entwickler will ich den Modellstand eines beliebigen Commits wiederherstelle
 Ausgeloest von: `ACTOR-agent` · `ACTOR-owner`
 
 - `FCHAIN-merge-branches` — Zweig-Graphen konfliktfrei zusammenfuehren: `FUNC-merge-nodes`
-- `FCHAIN-recall` — Recall (Wiederherstellen): `FUNC-apply-reseed` → `FUNC-import` → `FUNC-reseed` → `FUNC-rewind` → `FUNC-seed-from-json`
-- `FCHAIN-snapshot-freshness` — Snapshot-Freshness (Aufzeichnen): `FUNC-auto-export` → `FUNC-evaluate-rules` → `FUNC-export-marker` → `FUNC-graph-export-snapshot` → `FUNC-mutate` → `FUNC-save-graph`
+- `FCHAIN-recall` — Recall (Wiederherstellen): `FUNC-apply-reseed` → `FUNC-graph-store` → `FUNC-import` → `FUNC-reseed` → `FUNC-rewind` → `FUNC-seed-from-json`
+- `FCHAIN-snapshot-freshness` — Snapshot-Freshness (Aufzeichnen): `FUNC-auto-export` → `FUNC-evaluate-rules` → `FUNC-export-marker` → `FUNC-graph-export-snapshot` → `FUNC-graph-store` → `FUNC-mutate`
 
 ### `UC-live-graph-view` — Modellstand live mitlesen
 
@@ -100,7 +100,7 @@ Als Entwickler will ich den aktuellen Modellstand live mitlesen, ohne die Ansich
 
 Ausgeloest von: `ACTOR-agent` · `ACTOR-dashboard` · `ACTOR-owner`
 
-- `FCHAIN-live-update` — Live-Update-Kette (persist → emit → subscribe): `FUNC-broadcast-diff` → `FUNC-emit-update-event` → `FUNC-evaluate-rules` → `FUNC-health-endpoint` → `FUNC-mutate` → `FUNC-save-graph` → `FUNC-serve-sse` → `FUNC-serve-stdio`
+- `FCHAIN-live-update` — Live-Update-Kette (persist → emit → subscribe): `FUNC-broadcast-diff` → `FUNC-emit-update-event` → `FUNC-evaluate-rules` → `FUNC-graph-store` → `FUNC-health-endpoint` → `FUNC-mutate` → `FUNC-serve-sse` → `FUNC-serve-stdio`
 
 ### `UC-loop-closure` — Schwellen und Prompts am Trail kalibrieren
 
@@ -150,7 +150,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 
 | CR | status | Änderung | Betroffene Elemente |
 |---|---|---|---|
-| `CR-GC-100` | done | Harness Core | `FUNC-evaluate-rules` · `FUNC-import` · `FUNC-mutate` · `FUNC-save-graph` · `MOD-kernel` · `REQ-buildable-standalone` · `REQ-confidence-tier` · `REQ-disk-persistence` · `REQ-harness-schema-in-contracts` · `REQ-import-se-ontology` · `REQ-one-gate-per-repo` · `REQ-rule-enforcement` · `REQ-single-kuzu-owner` |
+| `CR-GC-100` | done | Harness Core | `FUNC-evaluate-rules` · `FUNC-graph-store` · `FUNC-import` · `FUNC-mutate` · `MOD-kernel` · `REQ-buildable-standalone` · `REQ-confidence-tier` · `REQ-disk-persistence` · `REQ-harness-schema-in-contracts` · `REQ-import-se-ontology` · `REQ-one-gate-per-repo` · `REQ-rule-enforcement` · `REQ-single-kuzu-owner` |
 | `CR-GC-101` | done | MCP-Tools | `FUNC-graph-expand` · `FUNC-graph-impact` · `MOD-surface` · `REQ-audit-trail` · `REQ-cache-layering` · `REQ-mcp-gate-symmetry` · `REQ-mcp-tool-registry` · `REQ-progressive-expansion` · `REQ-query-precision` · `REQ-single-transport` · `REQ-subgraph-slicing` |
 | `CR-GC-102` | done | Hook-System | `FUNC-emit-trajectory` · `FUNC-emit-update-event` · `MOD-surface` · `REQ-auto-persist-merge` · `REQ-hook-extension-points` · `REQ-hook-order-deterministic` · `REQ-precommit-timeout` · `REQ-trajectory-emit` · `REQ-versioned-cache` |
 | `CR-GC-103` | done | Format-E Codec | `FUNC-decode` · `FUNC-encode` · `MOD-projections` · `REQ-codec-validation` · `REQ-deterministic-serialization` · `REQ-formatE-diff-dialect` · `REQ-formatE-parity` · `REQ-roundtrip-conformance` |

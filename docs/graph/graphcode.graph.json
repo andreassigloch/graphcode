@@ -1774,6 +1774,12 @@
       "status": "reviewed"
     },
     {
+      "id": "FLOW-graph-delta",
+      "type": "FLOW",
+      "name": "Angenommenes Delta",
+      "description": "Der Kandidat, den das Gate angenommen hat, samt Persistenz-Delta. Nur mutate liefert ihn, nur der GraphStore uebernimmt ihn: erst auf Platte, dann als Arbeitskopie. (CR-GC-503)"
+    },
+    {
       "id": "FLOW-graph-state",
       "type": "FLOW",
       "name": "Graph-State",
@@ -1798,6 +1804,12 @@
       "type": "FLOW",
       "name": "Betroffene Tests",
       "description": "Der gerichtete Auswahl-Teilgraph einer Aenderung: erreichte Knoten und Kanten plus die getrennt gefuehrten Anker- und TEST-uids. Uebergabe von der Aufloesung an das Werkzeug."
+    },
+    {
+      "id": "FLOW-imported-graph",
+      "type": "FLOW",
+      "name": "Importierter Graph",
+      "description": "Ein vollstaendiger Graph aus dem Bulk-Import, der die Arbeitskopie ersetzt — am Gate vorbei, deshalb mit ausgewiesenen unverifizierten REQs. (CR-GC-503)"
     },
     {
       "id": "FLOW-install-result",
@@ -1879,6 +1891,12 @@
       "type": "FLOW",
       "name": "Naechster Schritt (Advisory)",
       "description": "Der Rueckweg an den fragenden Agenten: aus dem Messzustand die Fokus-Dimension und das Fund-Fenster. Gleicher Vertrag wie die Executor-Runde, anderer Empfaenger."
+    },
+    {
+      "id": "FLOW-ontology-json",
+      "type": "FLOW",
+      "name": "Graph-Datei (Snapshot)",
+      "description": "Der Inhalt der committeten Graph-Datei, gelesen fuer Seed und Reseed und an den Import uebergeben. (CR-GC-503)"
     },
     {
       "id": "FLOW-phase-readiness",
@@ -2326,17 +2344,6 @@
       }
     },
     {
-      "id": "FUNC-close-store",
-      "type": "FUNC",
-      "name": "close()",
-      "description": "Faehrt den Store herunter und gibt die Ownership wieder frei.",
-      "realRef": {
-        "file": "src/kernel/harness.ts",
-        "symbol": "close",
-        "lang": "ts"
-      }
-    },
-    {
       "id": "FUNC-close-violations",
       "type": "FUNC",
       "name": "Skill se:close-violations",
@@ -2610,6 +2617,17 @@
       }
     },
     {
+      "id": "FUNC-graph-store",
+      "type": "FUNC",
+      "name": "GraphStore",
+      "description": "Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)",
+      "realRef": {
+        "file": "src/kernel/graph-store.ts",
+        "symbol": "GraphStore",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "FUNC-graph-suggest",
       "type": "FUNC",
       "name": "graph_suggest(weights)",
@@ -2757,17 +2775,6 @@
       }
     },
     {
-      "id": "FUNC-load-graph",
-      "type": "FUNC",
-      "name": "loadGraph()",
-      "description": "Laedt den persistierten Graphen in die Arbeitskopie des Gates.",
-      "realRef": {
-        "file": "src/kernel/harness.ts",
-        "symbol": "loadGraph",
-        "lang": "ts"
-      }
-    },
-    {
       "id": "FUNC-merge-nodes",
       "type": "FUNC",
       "name": "replayBranchLog(log, sinceVersion)",
@@ -2841,17 +2848,6 @@
       "realRef": {
         "file": "src/loop/steering.ts",
         "symbol": "nextStep",
-        "lang": "ts"
-      }
-    },
-    {
-      "id": "FUNC-open-store",
-      "type": "FUNC",
-      "name": "initialize()",
-      "description": "Beansprucht die alleinige Store-Ownership, erkennt Meta-Modell-Drift und oeffnet den Kuzu-Store.",
-      "realRef": {
-        "file": "src/kernel/harness.ts",
-        "symbol": "initialize",
         "lang": "ts"
       }
     },
@@ -2965,21 +2961,6 @@
       "realRef": {
         "file": "src/surface/run-verb.ts",
         "symbol": "executeRun",
-        "lang": "ts"
-      }
-    },
-    {
-      "id": "FUNC-save-graph",
-      "type": "FUNC",
-      "name": "saveGraph(graph)",
-      "description": "Persistiert in-memory Graph nach Disk-Kuzu, falls keine error-Violations. (SPEC §3.4, §4)",
-      "status": "done",
-      "created_at": "2026-06-16T00:00:00.000Z",
-      "updated_at": "2026-06-17T00:00:00.000Z",
-      "codeRef": null,
-      "realRef": {
-        "file": "src/kernel/harness.ts",
-        "symbol": "persist",
         "lang": "ts"
       }
     },
@@ -5027,6 +5008,17 @@
       }
     },
     {
+      "id": "SCHEMA-graph-delta",
+      "type": "SCHEMA",
+      "name": "GraphDelta",
+      "description": "Was ein vom Gate angenommener Batch im Store aendert: upsert/delete je Knoten und Kante. Schreibreihenfolge Knoten, Kanten, Loeschungen zuletzt. (CR-GC-503)",
+      "realRef": {
+        "file": "src/kernel/graph-store.ts",
+        "symbol": "GraphDelta",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "SCHEMA-harness-handle",
       "type": "SCHEMA",
       "name": "Harness-Griff",
@@ -5199,6 +5191,17 @@
       "realRef": {
         "file": "packages/contracts/src/se/ontology.ts",
         "symbol": "OntologyGraph",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "SCHEMA-ontology-json",
+      "type": "SCHEMA",
+      "name": "OntologyJson",
+      "description": "Die materialisierte Graph-Datei docs/graph/<systemId>.graph.json: elements und traces. Eingang von Seed und Reseed. (CR-GC-503)",
+      "realRef": {
+        "file": "src/kernel/harness-import.ts",
+        "symbol": "OntologyJson",
         "lang": "ts"
       }
     },
@@ -7527,6 +7530,13 @@
     },
     {
       "source": "CR-GC-100",
+      "target": "FUNC-graph-store",
+      "type": "relation",
+      "weight": 1,
+      "created_at": "2026-06-17T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-100",
       "target": "FUNC-import",
       "type": "relation",
       "weight": 1,
@@ -7535,13 +7545,6 @@
     {
       "source": "CR-GC-100",
       "target": "FUNC-mutate",
-      "type": "relation",
-      "weight": 1,
-      "created_at": "2026-06-17T00:00:00.000Z"
-    },
-    {
-      "source": "CR-GC-100",
-      "target": "FUNC-save-graph",
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-17T00:00:00.000Z"
@@ -10667,11 +10670,6 @@
     },
     {
       "source": "FCHAIN-apply-gate",
-      "target": "FUNC-close-store",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-apply-gate",
       "target": "FUNC-create-harness",
       "type": "compose",
       "weight": "1"
@@ -10698,12 +10696,12 @@
     },
     {
       "source": "FCHAIN-apply-gate",
-      "target": "FUNC-host-socket",
+      "target": "FUNC-graph-store",
       "type": "compose"
     },
     {
       "source": "FCHAIN-apply-gate",
-      "target": "FUNC-load-graph",
+      "target": "FUNC-host-socket",
       "type": "compose"
     },
     {
@@ -10715,21 +10713,9 @@
     },
     {
       "source": "FCHAIN-apply-gate",
-      "target": "FUNC-open-store",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-apply-gate",
       "target": "FUNC-own-kuzu-host",
       "type": "compose",
       "weight": "1"
-    },
-    {
-      "source": "FCHAIN-apply-gate",
-      "target": "FUNC-save-graph",
-      "type": "compose",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
       "source": "FCHAIN-apply-gate",
@@ -10984,17 +10970,17 @@
     },
     {
       "source": "FCHAIN-live-update",
+      "target": "FUNC-graph-store",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-live-update",
       "target": "FUNC-health-endpoint",
       "type": "compose"
     },
     {
       "source": "FCHAIN-live-update",
       "target": "FUNC-mutate",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-live-update",
-      "target": "FUNC-save-graph",
       "type": "compose"
     },
     {
@@ -11130,6 +11116,11 @@
       "target": "FUNC-apply-reseed",
       "type": "compose",
       "weight": "1"
+    },
+    {
+      "source": "FCHAIN-recall",
+      "target": "FUNC-graph-store",
+      "type": "compose"
     },
     {
       "source": "FCHAIN-recall",
@@ -11385,12 +11376,12 @@
     },
     {
       "source": "FCHAIN-snapshot-freshness",
-      "target": "FUNC-mutate",
+      "target": "FUNC-graph-store",
       "type": "compose"
     },
     {
       "source": "FCHAIN-snapshot-freshness",
-      "target": "FUNC-save-graph",
+      "target": "FUNC-mutate",
       "type": "compose"
     },
     {
@@ -11767,13 +11758,6 @@
     },
     {
       "source": "FLOW-formatE-artifact",
-      "target": "FUNC-import",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FLOW-formatE-artifact",
       "target": "FUNC-mutate",
       "type": "io"
     },
@@ -11813,13 +11797,6 @@
     },
     {
       "source": "FLOW-gate-verdict",
-      "target": "FUNC-save-graph",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FLOW-gate-verdict",
       "target": "FUNC-se-retro",
       "type": "io"
     },
@@ -11841,6 +11818,16 @@
     {
       "source": "FLOW-gate-verdict",
       "target": "SCHEMA-mutate-result",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-graph-delta",
+      "target": "FUNC-graph-store",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-graph-delta",
+      "target": "SCHEMA-graph-delta",
       "type": "relation"
     },
     {
@@ -11870,11 +11857,6 @@
       "target": "FUNC-check-code-conformance",
       "type": "io",
       "weight": "1"
-    },
-    {
-      "source": "FLOW-graph-state",
-      "target": "FUNC-close-store",
-      "type": "io"
     },
     {
       "source": "FLOW-graph-state",
@@ -11937,11 +11919,6 @@
     },
     {
       "source": "FLOW-graph-state",
-      "target": "FUNC-load-graph",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-graph-state",
       "target": "FUNC-merge-nodes",
       "type": "io",
       "weight": 1,
@@ -11965,11 +11942,6 @@
       "target": "FUNC-nd-similarity",
       "type": "io",
       "weight": "1"
-    },
-    {
-      "source": "FLOW-graph-state",
-      "target": "FUNC-open-store",
-      "type": "io"
     },
     {
       "source": "FLOW-graph-state",
@@ -12052,6 +12024,16 @@
     {
       "source": "FLOW-impacted-tests",
       "target": "SCHEMA-impacted-tests",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-imported-graph",
+      "target": "FUNC-graph-store",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-imported-graph",
+      "target": "SCHEMA-ontology-graph",
       "type": "relation"
     },
     {
@@ -12210,6 +12192,16 @@
     {
       "source": "FLOW-next-step-advice",
       "target": "SCHEMA-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-ontology-json",
+      "target": "FUNC-import",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-ontology-json",
+      "target": "SCHEMA-ontology-json",
       "type": "relation"
     },
     {
@@ -12372,7 +12364,7 @@
     },
     {
       "source": "FLOW-schema-fingerprint",
-      "target": "FUNC-open-store",
+      "target": "FUNC-graph-store",
       "type": "io"
     },
     {
@@ -12572,7 +12564,7 @@
     },
     {
       "source": "FLOW-store-ownership",
-      "target": "FUNC-open-store",
+      "target": "FUNC-graph-store",
       "type": "io"
     },
     {
@@ -12687,11 +12679,6 @@
       "source": "FUNC-apply-reseed",
       "target": "MOD-kernel",
       "type": "allocate"
-    },
-    {
-      "source": "FUNC-apply-reseed",
-      "target": "FLOW-graph-state",
-      "type": "io"
     },
     {
       "source": "FUNC-apply-reseed",
@@ -13089,11 +13076,6 @@
       "type": "compose"
     },
     {
-      "source": "FUNC-block-gate",
-      "target": "FUNC-save-graph",
-      "type": "compose"
-    },
-    {
       "source": "FUNC-block-gedaechtnis",
       "target": "MOD-projections",
       "type": "allocate"
@@ -13350,11 +13332,6 @@
     },
     {
       "source": "FUNC-block-speicherwerk",
-      "target": "FUNC-close-store",
-      "type": "compose"
-    },
-    {
-      "source": "FUNC-block-speicherwerk",
       "target": "FUNC-create-harness",
       "type": "compose"
     },
@@ -13365,12 +13342,7 @@
     },
     {
       "source": "FUNC-block-speicherwerk",
-      "target": "FUNC-load-graph",
-      "type": "compose"
-    },
-    {
-      "source": "FUNC-block-speicherwerk",
-      "target": "FUNC-open-store",
+      "target": "FUNC-graph-store",
       "type": "compose"
     },
     {
@@ -13502,21 +13474,6 @@
       "target": "REQ-npx-distribution",
       "type": "satisfy",
       "weight": "1"
-    },
-    {
-      "source": "FUNC-close-store",
-      "target": "MOD-kernel",
-      "type": "allocate"
-    },
-    {
-      "source": "FUNC-close-store",
-      "target": "FLOW-graph-state",
-      "type": "io"
-    },
-    {
-      "source": "FUNC-close-store",
-      "target": "REQ-store-owner-lifecycle",
-      "type": "satisfy"
     },
     {
       "source": "FUNC-close-violations",
@@ -13939,6 +13896,31 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "FUNC-graph-store",
+      "target": "MOD-kernel",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-graph-store",
+      "target": "FLOW-graph-state",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-graph-store",
+      "target": "REQ-auto-persist-merge",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-graph-store",
+      "target": "REQ-steering-pre",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-graph-store",
+      "target": "REQ-store-owner-lifecycle",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-graph-suggest",
       "target": "MOD-loop",
       "type": "allocate"
@@ -14088,7 +14070,7 @@
     },
     {
       "source": "FUNC-import",
-      "target": "FLOW-graph-state",
+      "target": "FLOW-imported-graph",
       "type": "io"
     },
     {
@@ -14195,31 +14177,14 @@
       "weight": "1"
     },
     {
-      "source": "FUNC-load-graph",
+      "source": "FUNC-merge-nodes",
       "target": "MOD-kernel",
       "type": "allocate"
     },
     {
-      "source": "FUNC-load-graph",
-      "target": "FLOW-graph-state",
+      "source": "FUNC-merge-nodes",
+      "target": "FLOW-mutate-cmd",
       "type": "io"
-    },
-    {
-      "source": "FUNC-load-graph",
-      "target": "REQ-auto-persist-merge",
-      "type": "satisfy"
-    },
-    {
-      "source": "FUNC-merge-nodes",
-      "target": "MOD-kernel",
-      "type": "allocate"
-    },
-    {
-      "source": "FUNC-merge-nodes",
-      "target": "FLOW-graph-state",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
       "source": "FUNC-merge-nodes",
@@ -14307,10 +14272,8 @@
     },
     {
       "source": "FUNC-mutate",
-      "target": "FLOW-graph-state",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "target": "FLOW-graph-delta",
+      "type": "io"
     },
     {
       "source": "FUNC-mutate",
@@ -14352,26 +14315,6 @@
     {
       "source": "FUNC-next-step",
       "target": "REQ-steering-from-metrics",
-      "type": "satisfy"
-    },
-    {
-      "source": "FUNC-open-store",
-      "target": "MOD-kernel",
-      "type": "allocate"
-    },
-    {
-      "source": "FUNC-open-store",
-      "target": "FLOW-graph-state",
-      "type": "io"
-    },
-    {
-      "source": "FUNC-open-store",
-      "target": "REQ-steering-pre",
-      "type": "satisfy"
-    },
-    {
-      "source": "FUNC-open-store",
-      "target": "REQ-store-owner-lifecycle",
       "type": "satisfy"
     },
     {
@@ -14435,11 +14378,6 @@
       "source": "FUNC-reseed",
       "target": "MOD-kernel",
       "type": "allocate"
-    },
-    {
-      "source": "FUNC-reseed",
-      "target": "FLOW-graph-state",
-      "type": "io"
     },
     {
       "source": "FUNC-reseed",
@@ -14508,21 +14446,6 @@
       "target": "REQ-one-driver-local-and-frontier",
       "type": "satisfy",
       "weight": "1"
-    },
-    {
-      "source": "FUNC-save-graph",
-      "target": "MOD-kernel",
-      "type": "allocate"
-    },
-    {
-      "source": "FUNC-save-graph",
-      "target": "FLOW-graph-state",
-      "type": "io"
-    },
-    {
-      "source": "FUNC-save-graph",
-      "target": "REQ-auto-persist-merge",
-      "type": "satisfy"
     },
     {
       "source": "FUNC-schema-guard",
@@ -14731,7 +14654,7 @@
     },
     {
       "source": "FUNC-seed-from-json",
-      "target": "FLOW-graph-state",
+      "target": "FLOW-ontology-json",
       "type": "io"
     },
     {
@@ -17646,5 +17569,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 250
+  "graphVersion": 252
 }

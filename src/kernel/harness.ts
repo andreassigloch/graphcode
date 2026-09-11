@@ -8,7 +8,8 @@
  *     any `error`-severity violation BLOCKS the apply — nothing is persisted (L2).
  *   - REQ-confidence-tier    : MutateResult carries confidence + a 3-tier gate
  *     decision (auto-apply | suggest | block).
- *   - REQ-single-kuzu-owner  : exactly one StorageAdapter owns `.graphcode/kuzu`.
+ *   - REQ-single-kuzu-owner  : exactly one StorageAdapter owns `.graphcode/kuzu`, and
+ *     only GraphStore writes it and the working copy (CR-GC-503).
  *   - REQ-disk-persistence   : real harness uses a disk path, never `:memory:`.
  *   - REQ-import-se-ontology : ontology + rules come from @sigloch/contracts/se
  *     via graph-api-core SE_DESCRIPTOR — never forked, never a local parser.
@@ -20,8 +21,7 @@
  *
  * @author andreas@siglochconsulting
  */
-import { existsSync } from 'node:fs';
-import { join, dirname } from 'node:path';
+import { join } from 'node:path';
 import type {
   StorageAdapter,
   Graph,
@@ -33,8 +33,6 @@ import type {
 import {
   DefaultRuleEngine,
   createSeDescriptor,
-  updateEdge,
-  mergeNodes,
   impactSlice,
   type ImpactSlice,
 } from '@sigloch/graph-api-core';
@@ -55,7 +53,6 @@ import {
   importOntologyGraph,
   seedFromJsonFile,
   applyReseed,
-  type ImportTarget,
   type OntologyJson,
 } from './harness-import.js';
 import { StoreLock } from './store-lock.js';
@@ -63,12 +60,8 @@ import { listElements, type ElementFilter } from './element-slice.js';
 import { setExportPending } from './export-marker.js';
 import { computeFitAdvisory, computeSteerAdvisory, type FitAdvisory, type SteerAdvisory } from './measure/fit-advisory.js';
 import { congruenceWorkOrder, type WorkOrder } from './measure/work-order.js';
-import {
-  schemaFingerprint,
-  readStoredFingerprint,
-  writeStoredFingerprint,
-  resetKuzuStore,
-} from './schema-guard.js';
+import { GraphStore } from './graph-store.js';
+import { applyCommands, cloneGraph } from './apply-commands.js';
 
 
 export class GraphCodeHarness {
@@ -82,19 +75,10 @@ export class GraphCodeHarness {
   private readonly metricPolicy: MetricPolicy;
   /** The SE descriptor built with `metricPolicy` — the ONE this harness uses. */
   private readonly descriptor: OntologyDescriptor;
-  /** In-memory working copy; the disk store is the SSOT it mirrors. */
-  private graph: Graph = { nodes: [], edges: [] };
-  /** Store-ownership lock (CR-GC-218 O2): one writer per `.graphcode` store. */
-  private readonly storeLock: StoreLock;
+  /** The one owner of working copy + disk store (CR-GC-503); the harness only reads it. */
+  private readonly store: GraphStore;
   /** Directory of the store this harness owns (lock + audit log live here). */
   private readonly storeDir: string;
-  /**
-   * Actual Kuzu store file path the injected adapter opens (CR-GC-249). Present
-   * only in production wiring (createHarness); when set, initialize() runs the
-   * schema-drift guard. Absent for tests that inject an adapter on an arbitrary
-   * temp path — the guard stays off so it never touches the wrong file.
-   */
-  private readonly storePath: string | null;
   /** Serializes writes so a reseed never interleaves with a mutate (CR-GC-218 O3). */
   private writeChain: Promise<unknown> = Promise.resolve();
 
@@ -147,8 +131,14 @@ export class GraphCodeHarness {
     this.engine = new DefaultRuleEngine(this.descriptor.version);
     this.engine.register(this.descriptor.rules ?? []);
     this.storeDir = opts?.lockDir ?? join(this.config.repoRoot, '.graphcode');
-    this.storePath = opts?.storePath ?? null;
-    this.storeLock = new StoreLock(join(this.storeDir, 'owner.lock'), { onLockLost: opts?.onLockLost });
+    this.store = new GraphStore({
+      storage,
+      lock: new StoreLock(join(this.storeDir, 'owner.lock'), { onLockLost: opts?.onLockLost }),
+      scope: this.config.scope,
+      repoRoot: this.config.repoRoot,
+      storePath: opts?.storePath ?? null,
+      descriptor: this.descriptor,
+    });
   }
 
   /**
@@ -217,57 +207,18 @@ export class GraphCodeHarness {
 
   /** Initialize the store, then load the persisted graph into memory. */
   async initialize(): Promise<void> {
-    // O2: claim single ownership of this store BEFORE opening it — a second writer
-    // on the same `.graphcode` is refused loudly (StoreOwnershipError), not silently
-    // clobbered. Run a second agent in its own git worktree for its own store.
-    this.storeLock.acquire();
-    try {
-      // CR-GC-249: auto-reseed on meta-model schema drift. A persistent store freezes
-      // its rel-table FROM/TO pairs at creation; when the meta-model gains a pair (e.g.
-      // FUNC→FUNC compose) the frozen schema rejects the new edge. If the store's DDL
-      // fingerprint no longer matches the current descriptor, delete the store (so init
-      // regenerates the DDL) and reseed from the committed SSOT — automating the manual
-      // `rm .graphcode/kuzu*` + reseed recovery. Only runs in production wiring (a known
-      // store path); the marker lives beside the store file.
-      const markerDir = this.storePath ? dirname(this.storePath) : null;
-      // CR-GC-374: the SSOT to reseed from is docs/graph/<systemId>.graph.json — the
-      // file graph_export actually writes. The former hardwired name meant the guard
-      // never fired in any repo not called "graphcode".
-      const snapshotRel = graphSnapshotRel(this.config.scope.systemId);
-      const graphJson = join(this.config.repoRoot, snapshotRel);
-      const current = schemaFingerprint(this.descriptor);
-      const stored = markerDir ? readStoredFingerprint(markerDir) : null;
-      // Only reset when we have a stored fingerprint that differs AND a SSOT to reseed
-      // from. A store with no marker (pre-249 or fresh) is adopted at the current
-      // fingerprint without a wipe.
-      const staleSchema =
-        markerDir !== null &&
-        stored !== null &&
-        stored !== current &&
-        existsSync(this.storePath!) &&
-        existsSync(graphJson);
-      if (staleSchema) resetKuzuStore(this.storePath!);
-
-      await this.storage.initialize();
-      await this.loadGraph();
-
-      if (staleSchema) await applyReseed(this.importTarget(), snapshotRel);
-      if (markerDir && stored !== current) writeStoredFingerprint(markerDir, current);
-    } catch (err) {
-      this.storeLock.release();
-      throw err;
-    }
+    // O2 lock, CR-GC-249 schema guard and the initial load belong to the owner (CR-GC-503).
+    await this.store.open();
   }
 
   /** Load the persisted graph (disk Kuzu) into the in-memory working copy. */
   async loadGraph(): Promise<Graph> {
-    this.graph = await this.storage.loadGraph(this.config.scope);
-    return this.graph;
+    return this.store.load();
   }
 
   /** Read-only view of the current in-memory graph (gate working copy only). */
   getGraph(): Graph {
-    return this.graph;
+    return this.store.current();
   }
 
   /**
@@ -370,7 +321,7 @@ export class GraphCodeHarness {
   /**
    * FCHAIN-apply-gate — the single Apply-Gate (L1). Steps:
    *   1. pre-commit hooks  → block aborts before any mutation.
-   *   2. apply commands to the in-memory Graph.
+   *   2. apply commands to a candidate copy of the working graph.
    *   3. evaluateRules()   → violations.
    *   4. persist iff no error-severity violation; otherwise BLOCK (L2).
    *   5. post-apply hooks.
@@ -454,18 +405,20 @@ export class GraphCodeHarness {
       return result;
     }
 
-    // Step 2 — apply in-memory. Snapshot for rollback + a pre-mutation rule
+    // Step 2 — apply to a CANDIDATE copy (CR-GC-503) + a pre-mutation rule
     // baseline so the gate blocks only on violations THIS mutation introduces.
     // Pre-existing debt (e.g. 61 REQs still awaiting verification, R-01 error)
     // must not freeze the SSOT graph — otherwise no edit could ever land and
     // REQ-graph-is-ssot ("model changes via mutate") is impossible. Pre-existing
     // violations stay visible via evaluateRules()/readiness; they just don't gate.
-    const snapshot = cloneGraph(this.graph);
-    const baselineKeys = new Set(this.runRules().map(violationKey));
-    const delta = this.applyCommands(commands);
+    // The store's working copy stays untouched until the gate accepts — a block has
+    // nothing to roll back.
+    const snapshot = this.store.current();
+    const baselineKeys = new Set(this.runRules(snapshot).map(violationKey));
+    const { graph: candidate, delta } = applyCommands(cloneGraph(snapshot), commands);
 
     // Step 3 — evaluate, then keep only the violations this mutation introduced.
-    const newViolations = this.runRules().filter((v) => !baselineKeys.has(violationKey(v)));
+    const newViolations = this.runRules(candidate).filter((v) => !baselineKeys.has(violationKey(v)));
     // CR-GC-312: `gating: false` marks a rule as visible-but-not-gate-relevant. The
     // descriptor now carries all twelve contracts rule families instead of two; ten of
     // them were shipped and evaluated by nobody. Switching them on with gate power in
@@ -485,11 +438,10 @@ export class GraphCodeHarness {
     // (partial persist, in-memory != store). Guard it here, delta-semantics, so an
     // unknown type is rejected ATOMICALLY before persist.
     const baselineTypeErrors = new Set(this.unknownTypeErrors(snapshot));
-    const newTypeErrors = this.unknownTypeErrors(this.graph).filter((e) => !baselineTypeErrors.has(e));
+    const newTypeErrors = this.unknownTypeErrors(candidate).filter((e) => !baselineTypeErrors.has(e));
 
     if (hasNewError || newTypeErrors.length > 0) {
-      // Step 4 (BLOCK) — roll back the in-memory graph, persist nothing.
-      this.graph = snapshot;
+      // Step 4 (BLOCK) — the candidate is dropped; working copy and store never saw it.
       const violations: RuleViolation[] = [
         ...newViolations,
         ...newTypeErrors.map((message) => ({ ruleId: 'STRUCT', severity: 'error' as const, message })),
@@ -510,9 +462,8 @@ export class GraphCodeHarness {
     // stops at the verdict: no persist, no drift marker — but the in-memory
     // working copy KEEPS the applied state for cumulative replay preview
     // (the caller restores it via loadGraph()).
+    await this.store.commit(candidate, dryRun ? null : delta);
     if (!dryRun) {
-      await this.persist(delta);
-
       // CR-GC-217: the live model now leads the committed snapshot. Leave the
       // single-writer-safe drift marker so the pre-commit hook blocks a commit until
       // graph_export re-materializes docs/graph/*.graph.json (each commit a graph
@@ -531,14 +482,14 @@ export class GraphCodeHarness {
       violations: newViolations,
       confidence: 1,
       tier,
-      fitAdvisory: computeFitAdvisory(snapshot, this.graph),
+      fitAdvisory: computeFitAdvisory(snapshot, candidate),
       // CR-GC-483: das Steuersignal. `fitAdvisory` bleibt daneben stehen und wird berichtet —
       // es rankt nur nichts mehr (CR-SM-292).
-      steerAdvisory: computeSteerAdvisory(snapshot, this.graph, this.metricPolicy),
+      steerAdvisory: computeSteerAdvisory(snapshot, candidate, this.metricPolicy),
       // CR-GC-490: die vierte Kante Modell → Code. Wandert eine `allocate`-Kante, sagt das
       // Ergebnis jetzt, WELCHE Datei mitwandern muss — eine Liste, kein Refactoring, und wie
       // die beiden Advisories daneben ein Advisory: `tier` bleibt regelbestimmt.
-      workOrder: congruenceWorkOrder(snapshot, this.graph),
+      workOrder: congruenceWorkOrder(snapshot, candidate),
     };
 
     // CR-GC-239 invariant: an applied batch that changed NOTHING is suspicious.
@@ -561,7 +512,7 @@ export class GraphCodeHarness {
    * Maps graph-api-core RuleViolation → contracts harness RuleViolation.
    */
   evaluateRules(): RuleViolation[] {
-    return this.runRules();
+    return this.runRules(this.store.current());
   }
 
   /**
@@ -574,7 +525,7 @@ export class GraphCodeHarness {
     ontology: OntologyJson,
     opts?: { rejectUnverifiedReqs?: boolean },
   ): Promise<{ nodes: number; edges: number; unverifiedReqs: string[] }> {
-    return importOntologyGraph(this.importTarget(), ontology, opts);
+    return importOntologyGraph(this.store.importTarget(), ontology, opts);
   }
 
   /** Load + import the materialized graph JSON from `<repoRoot>/docs/graph/`. */
@@ -582,7 +533,7 @@ export class GraphCodeHarness {
     relPath = graphSnapshotRel(this.config.scope.systemId),
     opts?: { rejectUnverifiedReqs?: boolean },
   ): Promise<{ nodes: number; edges: number; unverifiedReqs: string[] }> {
-    return seedFromJsonFile(this.importTarget(), relPath, opts);
+    return seedFromJsonFile(this.store.importTarget(), relPath, opts);
   }
 
   /**
@@ -592,33 +543,12 @@ export class GraphCodeHarness {
    * The clear+re-import itself is harness-import.ts `applyReseed`.
    */
   async reseed(relPath = graphSnapshotRel(this.config.scope.systemId)): Promise<{ nodes: number; edges: number }> {
-    return this.serializeWrite(() => applyReseed(this.importTarget(), relPath));
-  }
-
-  /**
-   * The narrow port the import path gets — store handle, repo root, and read/write
-   * access to the in-memory working copy. Deliberately NOT the harness itself: the
-   * gate stays out of reach from that module by construction (CR-GC-260).
-   */
-  private importTarget(): ImportTarget {
-    return {
-      storage: this.storage,
-      repoRoot: this.config.repoRoot,
-      systemId: this.config.scope.systemId,
-      getGraph: () => this.graph,
-      setGraph: (graph: Graph) => {
-        this.graph = graph;
-      },
-    };
+    return this.serializeWrite(() => applyReseed(this.store.importTarget(), relPath));
   }
 
   /** Release the store handle + the ownership lock (single-writer cleanup). */
   async close(): Promise<void> {
-    try {
-      await this.storage.shutdown();
-    } finally {
-      this.storeLock.release();
-    }
+    return this.store.close();
   }
 
   // -- internals ------------------------------------------------------------
@@ -644,8 +574,8 @@ export class GraphCodeHarness {
     return errors;
   }
 
-  private runRules(): GatedViolation[] {
-    return this.engine.evaluate(this.graph).map((v: CoreRuleViolation) => ({
+  private runRules(graph: Graph): GatedViolation[] {
+    return this.engine.evaluate(graph).map((v: CoreRuleViolation) => ({
       ruleId: v.ruleId,
       severity: v.severity,
       message: v.message,
@@ -659,120 +589,6 @@ export class GraphCodeHarness {
       gating: v.gating,
     }));
   }
-
-  /** Apply commands to `this.graph` in place; return the persistence delta. */
-  private applyCommands(commands: MutateCommand[]): GraphDelta {
-    const delta: GraphDelta = { upsertNodes: [], deleteNodes: [], upsertEdges: [], deleteEdges: [] };
-    for (const cmd of commands) {
-      switch (cmd.op) {
-        case 'add-node':
-        case 'update-node': {
-          const existingIdx = this.graph.nodes.findIndex((n) => n.uid === cmd.node.uid);
-          const base = existingIdx >= 0 ? this.graph.nodes[existingIdx] : undefined;
-          const node: GraphNode = {
-            uid: cmd.node.uid,
-            type: cmd.node.type ?? base?.type ?? 'REQ',
-            name: cmd.node.name ?? base?.name ?? cmd.node.uid,
-            description: cmd.node.description ?? base?.description ?? '',
-            attributes: { ...(base?.attributes ?? {}), ...(cmd.node.attributes ?? {}) },
-          };
-          if (existingIdx >= 0) this.graph.nodes[existingIdx] = node;
-          else this.graph.nodes.push(node);
-          delta.upsertNodes.push(node);
-          break;
-        }
-        case 'delete-node': {
-          this.graph.nodes = this.graph.nodes.filter((n) => n.uid !== cmd.uid);
-          // Drop edges incident to the removed node.
-          const orphaned = this.graph.edges.filter((e) => e.sourceId === cmd.uid || e.targetId === cmd.uid);
-          this.graph.edges = this.graph.edges.filter((e) => e.sourceId !== cmd.uid && e.targetId !== cmd.uid);
-          delta.deleteNodes.push(cmd.uid);
-          for (const e of orphaned) {
-            delta.deleteEdges.push({ sourceId: e.sourceId, targetId: e.targetId, edgeType: e.edgeType });
-          }
-          break;
-        }
-        case 'add-edge': {
-          const edge: GraphEdge = {
-            sourceId: cmd.edge.sourceId,
-            targetId: cmd.edge.targetId,
-            edgeType: cmd.edge.edgeType,
-            attributes: cmd.edge.attributes ?? {},
-          };
-          const exists = this.graph.edges.some(
-            (e) => e.sourceId === edge.sourceId && e.targetId === edge.targetId && e.edgeType === edge.edgeType,
-          );
-          if (!exists) this.graph.edges.push(edge);
-          delta.upsertEdges.push(edge);
-          break;
-        }
-        case 'delete-edge': {
-          const key = cmd.edge;
-          this.graph.edges = this.graph.edges.filter(
-            (e) => !(e.sourceId === key.sourceId && e.targetId === key.targetId && e.edgeType === key.edgeType),
-          );
-          delta.deleteEdges.push(key);
-          break;
-        }
-        // CR-GC-238: type-change / flip / attribute-patch as ONE semantic op —
-        // the audit entry stays `update-edge`, distinguishable from delete+add.
-        // Rewiring semantics live once in graph-api-core (CR-198); the harness
-        // only turns the result into a persistence delta.
-        case 'update-edge': {
-          const key = cmd.edge;
-          let result: ReturnType<typeof updateEdge>;
-          try {
-            result = updateEdge(this.graph, key, cmd.set);
-          } catch {
-            break; // unknown edge → no-op (mutations: 0), same as delete-edge
-          }
-          this.graph = result.graph;
-          // Attribute-only patch keeps the edge identity — a delete of the old key
-          // would remove the just-upserted edge from the store (persist runs upserts
-          // before deletes), so only push the delete when the identity changed.
-          const { removed, added } = result;
-          const identityChanged =
-            added.sourceId !== removed.sourceId || added.targetId !== removed.targetId || added.edgeType !== removed.edgeType;
-          if (identityChanged) delta.deleteEdges.push({ sourceId: removed.sourceId, targetId: removed.targetId, edgeType: removed.edgeType });
-          delta.upsertEdges.push(added);
-          break;
-        }
-        // CR-GC-238: target absorbs source — incident edges rewired, source deleted.
-        // An illegal result (R-18 pair, R-08 missing target) blocks via delta rules.
-        case 'merge-nodes': {
-          const { sourceUid, targetUid } = cmd;
-          let result: ReturnType<typeof mergeNodes>;
-          try {
-            result = mergeNodes(this.graph, sourceUid, targetUid);
-          } catch {
-            break; // same uid or unknown source → no-op
-          }
-          // graph-api-core's mergeNodes dedupes a rewired edge only against what it has
-          // ALREADY collected, so ordering decides: if the source's edge precedes the
-          // target's identical one, the pre-existing edge is appended unchecked and the
-          // graph carries the same (source, type, target) twice. Kuzu keys on that triple
-          // and silently keeps one — the in-memory graph then claims an edge the store
-          // does not have (CR-GC-384; upstream fix belongs in graph-api-core).
-          this.graph = { nodes: result.graph.nodes, edges: dedupeEdges(result.graph.edges) };
-          for (const e of result.removedEdges) {
-            delta.deleteEdges.push({ sourceId: e.sourceId, targetId: e.targetId, edgeType: e.edgeType });
-          }
-          delta.upsertEdges.push(...dedupeEdges(result.addedEdges));
-          delta.deleteNodes.push(result.removedNode);
-          break;
-        }
-      }
-    }
-    return delta;
-  }
-
-  /** Persist a delta to the store. Order: nodes before edges (FK), deletes last. */
-  private async persist(delta: GraphDelta): Promise<void> {
-    if (delta.upsertNodes.length) await this.storage.saveNodes(delta.upsertNodes);
-    if (delta.upsertEdges.length) await this.storage.saveEdges(delta.upsertEdges);
-    if (delta.deleteEdges.length) await this.storage.deleteEdges(delta.deleteEdges);
-    if (delta.deleteNodes.length) await this.storage.deleteNodes(delta.deleteNodes);
-  }
 }
 
 /**
@@ -785,32 +601,7 @@ export class GraphCodeHarness {
  */
 type GatedViolation = RuleViolation & { gating?: boolean };
 
-interface GraphDelta {
-  upsertNodes: GraphNode[];
-  deleteNodes: string[];
-  upsertEdges: GraphEdge[];
-  deleteEdges: Array<{ sourceId: string; targetId: string; edgeType: string }>;
-}
-
 /** Stable identity of a violation, for diffing pre/post-mutation rule results. */
 function violationKey(v: RuleViolation): string {
   return `${v.ruleId}::${v.elementId ?? ''}::${v.message}`;
-}
-
-function cloneGraph(g: Graph): Graph {
-  return {
-    nodes: g.nodes.map((n) => ({ ...n, attributes: { ...n.attributes } })),
-    edges: g.edges.map((e) => ({ ...e, attributes: { ...e.attributes } })),
-  };
-}
-
-/** Edges by their store identity (source|type|target) — first occurrence wins. */
-function dedupeEdges(edges: GraphEdge[]): GraphEdge[] {
-  const seen = new Set<string>();
-  return edges.filter((e) => {
-    const key = `${e.sourceId}|${e.edgeType}|${e.targetId}`;
-    if (seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
 }
