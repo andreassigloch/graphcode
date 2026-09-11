@@ -16,7 +16,7 @@
  * MESSPFAD = DER PRODUKTPFAD. Kein zweiter: die Ontologie-JSON wird über denselben
  * `elementToNode`-Mapper wie `scripts/export-graph.mjs` in einen Graph gehoben und mit
  * demselben `createSeDescriptor(metricPolicy)` + `DefaultRuleEngine` ausgewertet, den
- * `GraphCodeHarness.runRules()` fährt. Die MetricPolicy kommt aus der echten Repo-Config.
+ * `Gate.evaluate()` (src/kernel/gate.ts) fährt. Die MetricPolicy kommt aus der echten Repo-Config.
  *
  * NICHT ausgewertet: die RC-Konformanzregeln (`evaluation.ts` Quelle `conformance`) —
  * die brauchen den Quellbaum des jeweiligen Commits. Das wird als übersprungene Quelle
