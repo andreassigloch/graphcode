@@ -67,11 +67,10 @@ import {
   mcpConfigContent,
   opencodeConfigContent,
   hostConfigWithoutGraphcode,
-  guardrailsContent,
-  steeringContent,
   type SettingsShape,
   type HookEntry,
 } from './scaffold-templates.js';
+import { guardrailsContent, steeringContent } from './scaffold-docs.js';
 
 
 /** `CliCommand` (SCHEMA-cli-command) — the npx-CLI verbs this installer dispatches. */
