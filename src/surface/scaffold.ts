@@ -78,7 +78,7 @@ export const CliCommandSchema = z.enum(['init', 'update', 'remove']);
 export type CliCommand = z.infer<typeof CliCommandSchema>;
 
 /**
- * `InstallResult` (FLOW-install-result) — what the scaffold created / updated /
+ * `InstallResult` (FLOW-install-result-harness-cli) — what the scaffold created / updated /
  * removed / preserved, plus the resolved repo root. Repo-relative paths so the
  * result is stable/loggable across machines.
  */

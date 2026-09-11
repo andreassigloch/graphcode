@@ -44,7 +44,7 @@
 
 ## 3  User classes & involved personnel (4)
 
-- **Gegateter Agent (MCP-stdio-Client)** (`ACTOR-agent`) — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-efficient-testing` · `UC-graph-time-travel` · `UC-live-graph-view` · `UC-loop-closure` · `UC-model-exchange` · `UC-reduced-llm` · `UC-repo-lifecycle`
+- **Gegateter Agent (MCP-stdio-Client)** (`ACTOR-agent`) — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-efficient-testing` · `UC-graph-time-travel` · `UC-live-graph-view` · `UC-loop-closure` · `UC-model-exchange` · `UC-reduced-llm`
   - Ein Coding-Agent unter graphcode-Kontrolle: MCP-stdio-Client, nutzt den Graphen statt grep, jede Aenderung laeuft durch dasselbe Apply-Gate, der Autor wird nur protokolliert. Bewusst NICHT namentlich modelliert — agent-agnostisch ist eine verriegelte Zusage (CLAUDE.md), kein Ziel. Heute belegt durch Claude Code (interaktiv), OpenCode (headless BYOK-Runtime, treibt Spec/Impl autonom) und die Architektur-Rolle, die Interface-Aenderungen eskaliert: Impact-Analyse, Gate-Entscheidung, Dependents koordinieren. Diese Rollen unterscheiden sich in der Autoritaet, nicht in der Schnittstelle. (CR-GC-455)
 - **Browser-Dashboard** (`ACTOR-dashboard`) — triggert `UC-deterministic-steering` · `UC-live-graph-view`
   - SSE/WS read-only Viewer; Live-Q-Status-Visualisierung (Ziel b). (SPEC §5 Kanal 2)
@@ -133,7 +133,7 @@ Ausgeloest von: `ACTOR-agent` · `ACTOR-learning-engine` · `ACTOR-owner`
 
 Der Entwickler richtet ein Repo ein, faehrt Laeufe darin und beendet die Sitzung; danach ist das Repo arbeitsfaehig und kein Prozess bleibt zurueck.
 
-Ausgeloest von: `ACTOR-agent` · `ACTOR-owner`
+Ausgeloest von: `ACTOR-owner`
 
 - `FCHAIN-repo-lifecycle` — Repo-Lebenszyklus: `FUNC-bind-tools` → `FUNC-bootstrap` → `FUNC-claim-store-lock` → `FUNC-cli-dispatch` → `FUNC-collect-status` → `FUNC-gve-sessions` → `FUNC-gve-supervise` → `FUNC-harness-cli` → `FUNC-run-verb` → `FUNC-session-shutdown` → `FUNC-upgrade`
 - `FCHAIN-schema-migration` — Schema-Migration bei Version-Bump: `FUNC-migrate-schema` → `FUNC-schema-guard`

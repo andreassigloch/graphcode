@@ -1780,12 +1780,18 @@
       "status": "reviewed"
     },
     {
-      "id": "FLOW-formatE-artifact",
+      "id": "FLOW-formatE-artifact-agent",
       "type": "FLOW",
-      "name": "Format-E-Artefakt (Snapshot, Diff, Impact-Slice)",
-      "description": "Der Format-E-Kanal: kompakte Snapshot-/Diff-/Slice-Artefakte zwischen Codec, Import, Export und den Lese-Werkzeugen. Traegt auch die Scheiben von graph_impact und graph_expand (seit CR-GC-210 ausschliesslich Format-E); serialisiert werden sie im Lese-Werkzeug, der Kern liefert nur Graph bzw. Scheibe (CR-GC-505). (zusammengelegt CR-GC-456)",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "name": "Format-E-Artefakt (Agent)",
+      "description": "Kompaktes Format-E-Artefakt: Snapshot, Diff oder Impact-Slice. Verbindung ACTOR-agent → FUNC-decode; aufgetrennt aus FLOW-formatE-artifact (CR-GC-510).",
+      "status": "reviewed"
+    },
+    {
+      "id": "FLOW-formatE-artifact-read-tools",
+      "type": "FLOW",
+      "name": "Format-E-Artefakt (read-tools)",
+      "description": "Kompaktes Format-E-Artefakt: Snapshot, Diff oder Impact-Slice. Verbindung FUNC-read-tools → ACTOR-agent; aufgetrennt aus FLOW-formatE-artifact (CR-GC-510).",
+      "status": "reviewed"
     },
     {
       "id": "FLOW-gate-outcome",
@@ -1847,12 +1853,25 @@
       "description": "Ein vollstaendiger Graph aus dem Bulk-Import, der die Arbeitskopie ersetzt — am Gate vorbei, deshalb mit ausgewiesenen unverifizierten REQs. (CR-GC-503)"
     },
     {
-      "id": "FLOW-install-result",
+      "id": "FLOW-install-result-collect-status",
       "type": "FLOW",
-      "name": "Lifecycle-Result",
-      "description": "Ergebnis der CLI-Lifecycle-Verben an den Entwickler: Scaffold-, Update-, Remove-, Status- und Upgrade-Ausgang.",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "name": "Lifecycle-Result (collect-status)",
+      "description": "Ergebnis eines CLI-Lifecycle-Verbs an den Entwickler: Scaffold-, Update-, Remove-, Status- oder Upgrade-Ausgang. Verbindung FUNC-collect-status → ACTOR-owner; aufgetrennt aus FLOW-install-result (CR-GC-510).",
+      "status": "reviewed"
+    },
+    {
+      "id": "FLOW-install-result-harness-cli",
+      "type": "FLOW",
+      "name": "Lifecycle-Result (harness-cli)",
+      "description": "Ergebnis eines CLI-Lifecycle-Verbs an den Entwickler: Scaffold-, Update-, Remove-, Status- oder Upgrade-Ausgang. Verbindung FUNC-harness-cli → ACTOR-owner; aufgetrennt aus FLOW-install-result (CR-GC-510).",
+      "status": "reviewed"
+    },
+    {
+      "id": "FLOW-install-result-upgrade",
+      "type": "FLOW",
+      "name": "Lifecycle-Result (upgrade)",
+      "description": "Ergebnis eines CLI-Lifecycle-Verbs an den Entwickler: Scaffold-, Update-, Remove-, Status- oder Upgrade-Ausgang. Verbindung FUNC-upgrade → ACTOR-owner; aufgetrennt aus FLOW-install-result (CR-GC-510).",
+      "status": "reviewed"
     },
     {
       "id": "FLOW-learning-advice",
@@ -1921,12 +1940,151 @@
       "status": "reviewed"
     },
     {
-      "id": "FLOW-mutate-cmd",
+      "id": "FLOW-mutate-cmd-agent",
       "type": "FLOW",
-      "name": "Mutate-Command",
-      "description": "Jede Schreibabsicht am Gate als MutateCommand-Batch: Edit-Op von Agent oder Mensch, der dryRun-verifizierte Kandidaten-Fix aus dem Vorschlagspfad und die Batches, die graph_realize und graph_test_ingest aus ihrer flachen Eingabe selbst bauen. Im eingebetteten Executor sendet allein der Gate-Zugang; Parser, Preflight und Rangfolge liefern ihm Rueckgabewerte zu. (CR-GC-506, CR-GC-509)",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "name": "Mutate-Command (Agent)",
+      "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung ACTOR-agent → FUNC-mutate, FUNC-host-socket; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
+      "status": "reviewed"
+    },
+    {
+      "id": "FLOW-mutate-cmd-author-req",
+      "type": "FLOW",
+      "name": "Mutate-Command (author-req)",
+      "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-author-req → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
+      "status": "reviewed"
+    },
+    {
+      "id": "FLOW-mutate-cmd-author-uc",
+      "type": "FLOW",
+      "name": "Mutate-Command (author-uc)",
+      "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-author-uc → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
+      "status": "reviewed"
+    },
+    {
+      "id": "FLOW-mutate-cmd-bootstrap",
+      "type": "FLOW",
+      "name": "Mutate-Command (bootstrap)",
+      "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-bootstrap → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
+      "status": "reviewed"
+    },
+    {
+      "id": "FLOW-mutate-cmd-close-violations",
+      "type": "FLOW",
+      "name": "Mutate-Command (close-violations)",
+      "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-close-violations → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
+      "status": "reviewed"
+    },
+    {
+      "id": "FLOW-mutate-cmd-gate-client",
+      "type": "FLOW",
+      "name": "Mutate-Command (gate-client)",
+      "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-gate-client → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
+      "status": "reviewed"
+    },
+    {
+      "id": "FLOW-mutate-cmd-graph-realize",
+      "type": "FLOW",
+      "name": "Mutate-Command (graph-realize)",
+      "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-graph-realize → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
+      "status": "reviewed"
+    },
+    {
+      "id": "FLOW-mutate-cmd-graph-suggest",
+      "type": "FLOW",
+      "name": "Mutate-Command (graph-suggest)",
+      "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-graph-suggest → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
+      "status": "reviewed"
+    },
+    {
+      "id": "FLOW-mutate-cmd-import-code-verb",
+      "type": "FLOW",
+      "name": "Mutate-Command (import-code-verb)",
+      "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-import-code-verb → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
+      "status": "reviewed"
+    },
+    {
+      "id": "FLOW-mutate-cmd-import-doc",
+      "type": "FLOW",
+      "name": "Mutate-Command (import-doc)",
+      "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-import-doc → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
+      "status": "reviewed"
+    },
+    {
+      "id": "FLOW-mutate-cmd-merge-nodes",
+      "type": "FLOW",
+      "name": "Mutate-Command (merge-nodes)",
+      "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-merge-nodes → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
+      "status": "reviewed"
+    },
+    {
+      "id": "FLOW-mutate-cmd-owner",
+      "type": "FLOW",
+      "name": "Mutate-Command (Owner)",
+      "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung ACTOR-owner → FUNC-host-socket; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
+      "status": "reviewed"
+    },
+    {
+      "id": "FLOW-mutate-cmd-se-conops",
+      "type": "FLOW",
+      "name": "Mutate-Command (se-conops)",
+      "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-se-conops → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
+      "status": "reviewed"
+    },
+    {
+      "id": "FLOW-mutate-cmd-se-fmea",
+      "type": "FLOW",
+      "name": "Mutate-Command (se-fmea)",
+      "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-se-fmea → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
+      "status": "reviewed"
+    },
+    {
+      "id": "FLOW-mutate-cmd-se-generate",
+      "type": "FLOW",
+      "name": "Mutate-Command (se-generate)",
+      "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-se-generate → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
+      "status": "reviewed"
+    },
+    {
+      "id": "FLOW-mutate-cmd-se-irr",
+      "type": "FLOW",
+      "name": "Mutate-Command (se-irr)",
+      "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-se-irr → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
+      "status": "reviewed"
+    },
+    {
+      "id": "FLOW-mutate-cmd-se-optimize",
+      "type": "FLOW",
+      "name": "Mutate-Command (se-optimize)",
+      "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-se-optimize → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
+      "status": "reviewed"
+    },
+    {
+      "id": "FLOW-mutate-cmd-se-plan",
+      "type": "FLOW",
+      "name": "Mutate-Command (se-plan)",
+      "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-se-plan → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
+      "status": "reviewed"
+    },
+    {
+      "id": "FLOW-mutate-cmd-se-top-level",
+      "type": "FLOW",
+      "name": "Mutate-Command (se-top-level)",
+      "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-se-top-level → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
+      "status": "reviewed"
+    },
+    {
+      "id": "FLOW-mutate-cmd-se-trade",
+      "type": "FLOW",
+      "name": "Mutate-Command (se-trade)",
+      "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-se-trade → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
+      "status": "reviewed"
+    },
+    {
+      "id": "FLOW-mutate-cmd-test-ingest",
+      "type": "FLOW",
+      "name": "Mutate-Command (test-ingest)",
+      "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-test-ingest → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
+      "status": "reviewed"
     },
     {
       "id": "FLOW-next-step-advice",
@@ -1955,12 +2113,74 @@
       "status": "reviewed"
     },
     {
-      "id": "FLOW-query-request",
+      "id": "FLOW-query-request-agent",
       "type": "FLOW",
-      "name": "Query-Request (Lese- und View-Anfrage)",
-      "description": "Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Eine Anfrageform, nicht vier.",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "name": "Query-Request (Agent)",
+      "description": "Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung ACTOR-agent → FUNC-read-tools, FUNC-list-elements, FUNC-graph-impact, FUNC-graph-expand, FUNC-deduce-tests, FUNC-resolve-tests-from-code, FUNC-export-markdown; aufgetrennt aus FLOW-query-request (CR-GC-510).",
+      "status": "reviewed"
+    },
+    {
+      "id": "FLOW-query-request-auto-export",
+      "type": "FLOW",
+      "name": "Query-Request (auto-export)",
+      "description": "Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung FUNC-auto-export → FUNC-export-markdown; aufgetrennt aus FLOW-query-request (CR-GC-510).",
+      "status": "reviewed"
+    },
+    {
+      "id": "FLOW-query-request-owner",
+      "type": "FLOW",
+      "name": "Query-Request (Owner)",
+      "description": "Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung ACTOR-owner → FUNC-view-changelog, FUNC-view-conops, FUNC-view-fmea, FUNC-view-icd, FUNC-view-intplan, FUNC-view-rtm, FUNC-render-views, FUNC-export-markdown, FUNC-list-elements, FUNC-graph-expand; aufgetrennt aus FLOW-query-request (CR-GC-510).",
+      "status": "reviewed"
+    },
+    {
+      "id": "FLOW-query-request-render-views",
+      "type": "FLOW",
+      "name": "Query-Request (render-views)",
+      "description": "Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung FUNC-render-views → FUNC-export-markdown; aufgetrennt aus FLOW-query-request (CR-GC-510).",
+      "status": "reviewed"
+    },
+    {
+      "id": "FLOW-query-request-view-changelog",
+      "type": "FLOW",
+      "name": "Query-Request (view-changelog)",
+      "description": "Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung FUNC-view-changelog → FUNC-export-markdown; aufgetrennt aus FLOW-query-request (CR-GC-510).",
+      "status": "reviewed"
+    },
+    {
+      "id": "FLOW-query-request-view-conops",
+      "type": "FLOW",
+      "name": "Query-Request (view-conops)",
+      "description": "Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung FUNC-view-conops → FUNC-export-markdown; aufgetrennt aus FLOW-query-request (CR-GC-510).",
+      "status": "reviewed"
+    },
+    {
+      "id": "FLOW-query-request-view-fmea",
+      "type": "FLOW",
+      "name": "Query-Request (view-fmea)",
+      "description": "Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung FUNC-view-fmea → FUNC-read-tools, FUNC-list-elements; aufgetrennt aus FLOW-query-request (CR-GC-510).",
+      "status": "reviewed"
+    },
+    {
+      "id": "FLOW-query-request-view-icd",
+      "type": "FLOW",
+      "name": "Query-Request (view-icd)",
+      "description": "Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung FUNC-view-icd → FUNC-export-markdown; aufgetrennt aus FLOW-query-request (CR-GC-510).",
+      "status": "reviewed"
+    },
+    {
+      "id": "FLOW-query-request-view-intplan",
+      "type": "FLOW",
+      "name": "Query-Request (view-intplan)",
+      "description": "Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung FUNC-view-intplan → FUNC-export-markdown; aufgetrennt aus FLOW-query-request (CR-GC-510).",
+      "status": "reviewed"
+    },
+    {
+      "id": "FLOW-query-request-view-rtm",
+      "type": "FLOW",
+      "name": "Query-Request (view-rtm)",
+      "description": "Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung FUNC-view-rtm → FUNC-export-markdown; aufgetrennt aus FLOW-query-request (CR-GC-510).",
+      "status": "reviewed"
     },
     {
       "id": "FLOW-recovered-batch",
@@ -2014,10 +2234,40 @@
       "description": "Die noch lebenden Sitzungen eines Repos: aus den Eintraegen unter .graphcode/sessions gefiltert, tote PIDs entfernt. Darauf entscheidet das Anhaengen, ob noch ein Viewer gebraucht wird."
     },
     {
-      "id": "FLOW-skill-report",
+      "id": "FLOW-skill-report-se-help",
       "type": "FLOW",
-      "name": "Skill-Bericht",
-      "description": "Der gemessene Stand als Text zurueck an den Menschen."
+      "name": "Skill-Bericht (se-help)",
+      "description": "Der gemessene Stand als Text zurueck an den Menschen. Verbindung FUNC-se-help → ACTOR-owner; aufgetrennt aus FLOW-skill-report (CR-GC-510)."
+    },
+    {
+      "id": "FLOW-skill-report-se-retro",
+      "type": "FLOW",
+      "name": "Skill-Bericht (se-retro)",
+      "description": "Der gemessene Stand als Text zurueck an den Menschen. Verbindung FUNC-se-retro → ACTOR-owner; aufgetrennt aus FLOW-skill-report (CR-GC-510)."
+    },
+    {
+      "id": "FLOW-skill-report-se-review",
+      "type": "FLOW",
+      "name": "Skill-Bericht (se-review)",
+      "description": "Der gemessene Stand als Text zurueck an den Menschen. Verbindung FUNC-se-review → ACTOR-owner; aufgetrennt aus FLOW-skill-report (CR-GC-510)."
+    },
+    {
+      "id": "FLOW-skill-report-se-status",
+      "type": "FLOW",
+      "name": "Skill-Bericht (se-status)",
+      "description": "Der gemessene Stand als Text zurueck an den Menschen. Verbindung FUNC-se-status → ACTOR-owner; aufgetrennt aus FLOW-skill-report (CR-GC-510)."
+    },
+    {
+      "id": "FLOW-skill-report-test",
+      "type": "FLOW",
+      "name": "Skill-Bericht (test)",
+      "description": "Der gemessene Stand als Text zurueck an den Menschen. Verbindung FUNC-test → ACTOR-owner; aufgetrennt aus FLOW-skill-report (CR-GC-510)."
+    },
+    {
+      "id": "FLOW-skill-report-test-ui",
+      "type": "FLOW",
+      "name": "Skill-Bericht (test-ui)",
+      "description": "Der gemessene Stand als Text zurueck an den Menschen. Verbindung FUNC-test-ui → ACTOR-owner; aufgetrennt aus FLOW-skill-report (CR-GC-510)."
     },
     {
       "id": "FLOW-skill-request",
@@ -2046,10 +2296,10 @@
       "status": "reviewed"
     },
     {
-      "id": "FLOW-steering-trigger",
+      "id": "FLOW-steering-trigger-agent",
       "type": "FLOW",
-      "name": "Runden-Ausloeser",
-      "description": "Der Wunsch, eine Steuerungsrunde zu fahren, mit ihren Parametern: Intent, zurueckgestellte Fokus-Schluessel, Auswahlmodus. Mensch und lokaler Executor loesen dieselbe Kette aus, nur die Taktung unterscheidet sich.",
+      "name": "Runden-Ausloeser (Agent)",
+      "description": "Der Wunsch, eine Steuerungsrunde zu fahren, mit ihren Parametern: Intent, zurueckgestellte Fokus-Schluessel, Auswahlmodus. Verbindung ACTOR-agent → FUNC-take-steering-snapshot; aufgetrennt aus FLOW-steering-trigger (CR-GC-510).",
       "status": "reviewed",
       "concept": true
     },
@@ -7604,24 +7854,18 @@
   "traces": [
     {
       "source": "ACTOR-agent",
-      "target": "FLOW-formatE-artifact",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "target": "FLOW-formatE-artifact-agent",
+      "type": "io"
     },
     {
       "source": "ACTOR-agent",
-      "target": "FLOW-mutate-cmd",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "target": "FLOW-mutate-cmd-agent",
+      "type": "io"
     },
     {
       "source": "ACTOR-agent",
-      "target": "FLOW-query-request",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "target": "FLOW-query-request-agent",
+      "type": "io"
     },
     {
       "source": "ACTOR-agent",
@@ -7630,7 +7874,7 @@
     },
     {
       "source": "ACTOR-agent",
-      "target": "FLOW-steering-trigger",
+      "target": "FLOW-steering-trigger-agent",
       "type": "io"
     },
     {
@@ -7650,19 +7894,12 @@
     },
     {
       "source": "ACTOR-owner",
-      "target": "FLOW-mutate-cmd",
+      "target": "FLOW-mutate-cmd-owner",
       "type": "io"
     },
     {
       "source": "ACTOR-owner",
-      "target": "FLOW-query-request",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "ACTOR-owner",
-      "target": "FLOW-steering-trigger",
+      "target": "FLOW-query-request-owner",
       "type": "io"
     },
     {
@@ -11958,41 +12195,24 @@
       "type": "relation"
     },
     {
-      "source": "FLOW-formatE-artifact",
-      "target": "ACTOR-agent",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FLOW-formatE-artifact",
-      "target": "FUNC-bootstrap",
-      "type": "io",
-      "weight": "1"
-    },
-    {
-      "source": "FLOW-formatE-artifact",
+      "source": "FLOW-formatE-artifact-agent",
       "target": "FUNC-decode",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FLOW-formatE-artifact",
-      "target": "FUNC-encode",
       "type": "io"
     },
     {
-      "source": "FLOW-formatE-artifact",
-      "target": "FUNC-mutate",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-formatE-artifact",
+      "source": "FLOW-formatE-artifact-agent",
       "target": "SCHEMA-format-e",
-      "type": "relation",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-formatE-artifact-read-tools",
+      "target": "ACTOR-agent",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-formatE-artifact-read-tools",
+      "target": "SCHEMA-format-e",
+      "type": "relation"
     },
     {
       "source": "FLOW-gate-outcome",
@@ -12302,18 +12522,34 @@
       "type": "relation"
     },
     {
-      "source": "FLOW-install-result",
+      "source": "FLOW-install-result-collect-status",
       "target": "ACTOR-owner",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "type": "io"
     },
     {
-      "source": "FLOW-install-result",
+      "source": "FLOW-install-result-collect-status",
       "target": "SCHEMA-cli-command",
-      "type": "relation",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-install-result-harness-cli",
+      "target": "ACTOR-owner",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-install-result-harness-cli",
+      "target": "SCHEMA-cli-command",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-install-result-upgrade",
+      "target": "ACTOR-owner",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-install-result-upgrade",
+      "target": "SCHEMA-cli-command",
+      "type": "relation"
     },
     {
       "source": "FLOW-learning-advice",
@@ -12443,21 +12679,219 @@
       "type": "relation"
     },
     {
-      "source": "FLOW-mutate-cmd",
+      "source": "FLOW-mutate-cmd-agent",
       "target": "FUNC-host-socket",
       "type": "io"
     },
     {
-      "source": "FLOW-mutate-cmd",
+      "source": "FLOW-mutate-cmd-agent",
       "target": "FUNC-mutate",
       "type": "io"
     },
     {
-      "source": "FLOW-mutate-cmd",
+      "source": "FLOW-mutate-cmd-agent",
       "target": "SCHEMA-mutate-command",
-      "type": "relation",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-mutate-cmd-author-req",
+      "target": "FUNC-mutate",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-mutate-cmd-author-req",
+      "target": "SCHEMA-mutate-command",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-mutate-cmd-author-uc",
+      "target": "FUNC-mutate",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-mutate-cmd-author-uc",
+      "target": "SCHEMA-mutate-command",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-mutate-cmd-bootstrap",
+      "target": "FUNC-mutate",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-mutate-cmd-bootstrap",
+      "target": "SCHEMA-mutate-command",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-mutate-cmd-close-violations",
+      "target": "FUNC-mutate",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-mutate-cmd-close-violations",
+      "target": "SCHEMA-mutate-command",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-mutate-cmd-gate-client",
+      "target": "FUNC-mutate",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-mutate-cmd-gate-client",
+      "target": "SCHEMA-mutate-command",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-mutate-cmd-graph-realize",
+      "target": "FUNC-mutate",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-mutate-cmd-graph-realize",
+      "target": "SCHEMA-mutate-command",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-mutate-cmd-graph-suggest",
+      "target": "FUNC-mutate",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-mutate-cmd-graph-suggest",
+      "target": "SCHEMA-mutate-command",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-mutate-cmd-import-code-verb",
+      "target": "FUNC-mutate",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-mutate-cmd-import-code-verb",
+      "target": "SCHEMA-mutate-command",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-mutate-cmd-import-doc",
+      "target": "FUNC-mutate",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-mutate-cmd-import-doc",
+      "target": "SCHEMA-mutate-command",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-mutate-cmd-merge-nodes",
+      "target": "FUNC-mutate",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-mutate-cmd-merge-nodes",
+      "target": "SCHEMA-mutate-command",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-mutate-cmd-owner",
+      "target": "FUNC-host-socket",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-mutate-cmd-owner",
+      "target": "SCHEMA-mutate-command",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-mutate-cmd-se-conops",
+      "target": "FUNC-mutate",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-mutate-cmd-se-conops",
+      "target": "SCHEMA-mutate-command",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-mutate-cmd-se-fmea",
+      "target": "FUNC-mutate",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-mutate-cmd-se-fmea",
+      "target": "SCHEMA-mutate-command",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-mutate-cmd-se-generate",
+      "target": "FUNC-mutate",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-mutate-cmd-se-generate",
+      "target": "SCHEMA-mutate-command",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-mutate-cmd-se-irr",
+      "target": "FUNC-mutate",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-mutate-cmd-se-irr",
+      "target": "SCHEMA-mutate-command",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-mutate-cmd-se-optimize",
+      "target": "FUNC-mutate",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-mutate-cmd-se-optimize",
+      "target": "SCHEMA-mutate-command",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-mutate-cmd-se-plan",
+      "target": "FUNC-mutate",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-mutate-cmd-se-plan",
+      "target": "SCHEMA-mutate-command",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-mutate-cmd-se-top-level",
+      "target": "FUNC-mutate",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-mutate-cmd-se-top-level",
+      "target": "SCHEMA-mutate-command",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-mutate-cmd-se-trade",
+      "target": "FUNC-mutate",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-mutate-cmd-se-trade",
+      "target": "SCHEMA-mutate-command",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-mutate-cmd-test-ingest",
+      "target": "FUNC-mutate",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-mutate-cmd-test-ingest",
+      "target": "SCHEMA-mutate-command",
+      "type": "relation"
     },
     {
       "source": "FLOW-next-step-advice",
@@ -12500,89 +12934,184 @@
       "type": "relation"
     },
     {
-      "source": "FLOW-query-request",
+      "source": "FLOW-query-request-agent",
       "target": "FUNC-deduce-tests",
       "type": "io"
     },
     {
-      "source": "FLOW-query-request",
+      "source": "FLOW-query-request-agent",
       "target": "FUNC-export-markdown",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "type": "io"
     },
     {
-      "source": "FLOW-query-request",
+      "source": "FLOW-query-request-agent",
       "target": "FUNC-graph-expand",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "type": "io"
     },
     {
-      "source": "FLOW-query-request",
+      "source": "FLOW-query-request-agent",
       "target": "FUNC-graph-impact",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "type": "io"
     },
     {
-      "source": "FLOW-query-request",
+      "source": "FLOW-query-request-agent",
       "target": "FUNC-list-elements",
       "type": "io"
     },
     {
-      "source": "FLOW-query-request",
+      "source": "FLOW-query-request-agent",
       "target": "FUNC-read-tools",
       "type": "io"
     },
     {
-      "source": "FLOW-query-request",
-      "target": "FUNC-render-views",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FLOW-query-request",
+      "source": "FLOW-query-request-agent",
       "target": "FUNC-resolve-tests-from-code",
       "type": "io"
     },
     {
-      "source": "FLOW-query-request",
+      "source": "FLOW-query-request-agent",
+      "target": "SCHEMA-query-params",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-query-request-auto-export",
+      "target": "FUNC-export-markdown",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-query-request-auto-export",
+      "target": "SCHEMA-query-params",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-query-request-owner",
+      "target": "FUNC-export-markdown",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-query-request-owner",
+      "target": "FUNC-graph-expand",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-query-request-owner",
+      "target": "FUNC-list-elements",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-query-request-owner",
+      "target": "FUNC-render-views",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-query-request-owner",
       "target": "FUNC-view-changelog",
       "type": "io"
     },
     {
-      "source": "FLOW-query-request",
+      "source": "FLOW-query-request-owner",
       "target": "FUNC-view-conops",
       "type": "io"
     },
     {
-      "source": "FLOW-query-request",
+      "source": "FLOW-query-request-owner",
       "target": "FUNC-view-fmea",
       "type": "io"
     },
     {
-      "source": "FLOW-query-request",
+      "source": "FLOW-query-request-owner",
       "target": "FUNC-view-icd",
       "type": "io"
     },
     {
-      "source": "FLOW-query-request",
+      "source": "FLOW-query-request-owner",
       "target": "FUNC-view-intplan",
       "type": "io"
     },
     {
-      "source": "FLOW-query-request",
+      "source": "FLOW-query-request-owner",
       "target": "FUNC-view-rtm",
       "type": "io"
     },
     {
-      "source": "FLOW-query-request",
+      "source": "FLOW-query-request-owner",
       "target": "SCHEMA-query-params",
-      "type": "relation",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-query-request-render-views",
+      "target": "FUNC-export-markdown",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-query-request-render-views",
+      "target": "SCHEMA-query-params",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-query-request-view-changelog",
+      "target": "FUNC-export-markdown",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-query-request-view-changelog",
+      "target": "SCHEMA-query-params",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-query-request-view-conops",
+      "target": "FUNC-export-markdown",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-query-request-view-conops",
+      "target": "SCHEMA-query-params",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-query-request-view-fmea",
+      "target": "FUNC-list-elements",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-query-request-view-fmea",
+      "target": "FUNC-read-tools",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-query-request-view-fmea",
+      "target": "SCHEMA-query-params",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-query-request-view-icd",
+      "target": "FUNC-export-markdown",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-query-request-view-icd",
+      "target": "SCHEMA-query-params",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-query-request-view-intplan",
+      "target": "FUNC-export-markdown",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-query-request-view-intplan",
+      "target": "SCHEMA-query-params",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-query-request-view-rtm",
+      "target": "FUNC-export-markdown",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-query-request-view-rtm",
+      "target": "SCHEMA-query-params",
+      "type": "relation"
     },
     {
       "source": "FLOW-recovered-batch",
@@ -12683,12 +13212,62 @@
       "type": "relation"
     },
     {
-      "source": "FLOW-skill-report",
+      "source": "FLOW-skill-report-se-help",
       "target": "ACTOR-owner",
       "type": "io"
     },
     {
-      "source": "FLOW-skill-report",
+      "source": "FLOW-skill-report-se-help",
+      "target": "SCHEMA-markdown-view",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-skill-report-se-retro",
+      "target": "ACTOR-owner",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-skill-report-se-retro",
+      "target": "SCHEMA-markdown-view",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-skill-report-se-review",
+      "target": "ACTOR-owner",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-skill-report-se-review",
+      "target": "SCHEMA-markdown-view",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-skill-report-se-status",
+      "target": "ACTOR-owner",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-skill-report-se-status",
+      "target": "SCHEMA-markdown-view",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-skill-report-test",
+      "target": "ACTOR-owner",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-skill-report-test",
+      "target": "SCHEMA-markdown-view",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-skill-report-test-ui",
+      "target": "ACTOR-owner",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-skill-report-test-ui",
       "target": "SCHEMA-markdown-view",
       "type": "relation"
     },
@@ -12843,12 +13422,12 @@
       "type": "relation"
     },
     {
-      "source": "FLOW-steering-trigger",
+      "source": "FLOW-steering-trigger-agent",
       "target": "FUNC-take-steering-snapshot",
       "type": "io"
     },
     {
-      "source": "FLOW-steering-trigger",
+      "source": "FLOW-steering-trigger-agent",
       "target": "SCHEMA-query-params",
       "type": "relation"
     },
@@ -13022,7 +13601,7 @@
     },
     {
       "source": "FUNC-author-req",
-      "target": "FLOW-mutate-cmd",
+      "target": "FLOW-mutate-cmd-author-req",
       "type": "io"
     },
     {
@@ -13037,7 +13616,7 @@
     },
     {
       "source": "FUNC-author-uc",
-      "target": "FLOW-mutate-cmd",
+      "target": "FLOW-mutate-cmd-author-uc",
       "type": "io"
     },
     {
@@ -13052,7 +13631,7 @@
     },
     {
       "source": "FUNC-auto-export",
-      "target": "FLOW-query-request",
+      "target": "FLOW-query-request-auto-export",
       "type": "io"
     },
     {
@@ -13712,7 +14291,7 @@
     },
     {
       "source": "FUNC-bootstrap",
-      "target": "FLOW-mutate-cmd",
+      "target": "FLOW-mutate-cmd-bootstrap",
       "type": "io"
     },
     {
@@ -13822,7 +14401,7 @@
     },
     {
       "source": "FUNC-close-violations",
-      "target": "FLOW-mutate-cmd",
+      "target": "FLOW-mutate-cmd-close-violations",
       "type": "io"
     },
     {
@@ -13837,7 +14416,7 @@
     },
     {
       "source": "FUNC-collect-status",
-      "target": "FLOW-install-result",
+      "target": "FLOW-install-result-collect-status",
       "type": "io"
     },
     {
@@ -14010,13 +14589,6 @@
     },
     {
       "source": "FUNC-encode",
-      "target": "FLOW-formatE-artifact",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-encode",
       "target": "REQ-formatE-diff-dialect",
       "type": "satisfy",
       "weight": 1,
@@ -14129,7 +14701,7 @@
     },
     {
       "source": "FUNC-gate-client",
-      "target": "FLOW-mutate-cmd",
+      "target": "FLOW-mutate-cmd-gate-client",
       "type": "io"
     },
     {
@@ -14252,7 +14824,7 @@
     },
     {
       "source": "FUNC-graph-realize",
-      "target": "FLOW-mutate-cmd",
+      "target": "FLOW-mutate-cmd-graph-realize",
       "type": "io"
     },
     {
@@ -14297,7 +14869,7 @@
     },
     {
       "source": "FUNC-graph-suggest",
-      "target": "FLOW-mutate-cmd",
+      "target": "FLOW-mutate-cmd-graph-suggest",
       "type": "io"
     },
     {
@@ -14349,10 +14921,8 @@
     },
     {
       "source": "FUNC-harness-cli",
-      "target": "FLOW-install-result",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "target": "FLOW-install-result-harness-cli",
+      "type": "io"
     },
     {
       "source": "FUNC-harness-cli",
@@ -14461,11 +15031,6 @@
     },
     {
       "source": "FUNC-import-code",
-      "target": "FLOW-formatE-artifact",
-      "type": "io"
-    },
-    {
-      "source": "FUNC-import-code",
       "target": "REQ-no-extraction",
       "type": "satisfy"
     },
@@ -14476,7 +15041,7 @@
     },
     {
       "source": "FUNC-import-code-verb",
-      "target": "FLOW-mutate-cmd",
+      "target": "FLOW-mutate-cmd-import-code-verb",
       "type": "io"
     },
     {
@@ -14497,12 +15062,7 @@
     },
     {
       "source": "FUNC-import-doc",
-      "target": "FLOW-formatE-artifact",
-      "type": "io"
-    },
-    {
-      "source": "FUNC-import-doc",
-      "target": "FLOW-mutate-cmd",
+      "target": "FLOW-mutate-cmd-import-doc",
       "type": "io"
     },
     {
@@ -14548,7 +15108,7 @@
     },
     {
       "source": "FUNC-merge-nodes",
-      "target": "FLOW-mutate-cmd",
+      "target": "FLOW-mutate-cmd-merge-nodes",
       "type": "io"
     },
     {
@@ -14724,7 +15284,7 @@
     },
     {
       "source": "FUNC-read-tools",
-      "target": "FLOW-formatE-artifact",
+      "target": "FLOW-formatE-artifact-read-tools",
       "type": "io"
     },
     {
@@ -14744,7 +15304,7 @@
     },
     {
       "source": "FUNC-render-views",
-      "target": "FLOW-query-request",
+      "target": "FLOW-query-request-render-views",
       "type": "io"
     },
     {
@@ -14822,11 +15382,6 @@
     },
     {
       "source": "FUNC-run-verb",
-      "target": "FLOW-steering-trigger",
-      "type": "io"
-    },
-    {
-      "source": "FUNC-run-verb",
       "target": "REQ-one-driver-local-and-frontier",
       "type": "satisfy",
       "weight": "1"
@@ -14873,7 +15428,7 @@
     },
     {
       "source": "FUNC-se-conops",
-      "target": "FLOW-mutate-cmd",
+      "target": "FLOW-mutate-cmd-se-conops",
       "type": "io"
     },
     {
@@ -14888,7 +15443,7 @@
     },
     {
       "source": "FUNC-se-fmea",
-      "target": "FLOW-mutate-cmd",
+      "target": "FLOW-mutate-cmd-se-fmea",
       "type": "io"
     },
     {
@@ -14903,7 +15458,7 @@
     },
     {
       "source": "FUNC-se-generate",
-      "target": "FLOW-mutate-cmd",
+      "target": "FLOW-mutate-cmd-se-generate",
       "type": "io"
     },
     {
@@ -14918,7 +15473,7 @@
     },
     {
       "source": "FUNC-se-help",
-      "target": "FLOW-skill-report",
+      "target": "FLOW-skill-report-se-help",
       "type": "io"
     },
     {
@@ -14933,7 +15488,7 @@
     },
     {
       "source": "FUNC-se-irr",
-      "target": "FLOW-mutate-cmd",
+      "target": "FLOW-mutate-cmd-se-irr",
       "type": "io"
     },
     {
@@ -14948,7 +15503,7 @@
     },
     {
       "source": "FUNC-se-optimize",
-      "target": "FLOW-mutate-cmd",
+      "target": "FLOW-mutate-cmd-se-optimize",
       "type": "io"
     },
     {
@@ -14963,7 +15518,7 @@
     },
     {
       "source": "FUNC-se-plan",
-      "target": "FLOW-mutate-cmd",
+      "target": "FLOW-mutate-cmd-se-plan",
       "type": "io"
     },
     {
@@ -14978,7 +15533,7 @@
     },
     {
       "source": "FUNC-se-retro",
-      "target": "FLOW-skill-report",
+      "target": "FLOW-skill-report-se-retro",
       "type": "io"
     },
     {
@@ -14993,7 +15548,7 @@
     },
     {
       "source": "FUNC-se-review",
-      "target": "FLOW-skill-report",
+      "target": "FLOW-skill-report-se-review",
       "type": "io"
     },
     {
@@ -15008,7 +15563,7 @@
     },
     {
       "source": "FUNC-se-status",
-      "target": "FLOW-skill-report",
+      "target": "FLOW-skill-report-se-status",
       "type": "io"
     },
     {
@@ -15023,7 +15578,7 @@
     },
     {
       "source": "FUNC-se-top-level",
-      "target": "FLOW-mutate-cmd",
+      "target": "FLOW-mutate-cmd-se-top-level",
       "type": "io"
     },
     {
@@ -15038,7 +15593,7 @@
     },
     {
       "source": "FUNC-se-trade",
-      "target": "FLOW-mutate-cmd",
+      "target": "FLOW-mutate-cmd-se-trade",
       "type": "io"
     },
     {
@@ -15159,7 +15714,7 @@
     },
     {
       "source": "FUNC-test",
-      "target": "FLOW-skill-report",
+      "target": "FLOW-skill-report-test",
       "type": "io"
     },
     {
@@ -15174,7 +15729,7 @@
     },
     {
       "source": "FUNC-test-ingest",
-      "target": "FLOW-mutate-cmd",
+      "target": "FLOW-mutate-cmd-test-ingest",
       "type": "io"
     },
     {
@@ -15189,7 +15744,7 @@
     },
     {
       "source": "FUNC-test-ui",
-      "target": "FLOW-skill-report",
+      "target": "FLOW-skill-report-test-ui",
       "type": "io"
     },
     {
@@ -15219,7 +15774,7 @@
     },
     {
       "source": "FUNC-upgrade",
-      "target": "FLOW-install-result",
+      "target": "FLOW-install-result-upgrade",
       "type": "io"
     },
     {
@@ -15234,7 +15789,7 @@
     },
     {
       "source": "FUNC-view-changelog",
-      "target": "FLOW-query-request",
+      "target": "FLOW-query-request-view-changelog",
       "type": "io"
     },
     {
@@ -15251,7 +15806,7 @@
     },
     {
       "source": "FUNC-view-conops",
-      "target": "FLOW-query-request",
+      "target": "FLOW-query-request-view-conops",
       "type": "io"
     },
     {
@@ -15268,7 +15823,7 @@
     },
     {
       "source": "FUNC-view-fmea",
-      "target": "FLOW-query-request",
+      "target": "FLOW-query-request-view-fmea",
       "type": "io"
     },
     {
@@ -15285,7 +15840,7 @@
     },
     {
       "source": "FUNC-view-icd",
-      "target": "FLOW-query-request",
+      "target": "FLOW-query-request-view-icd",
       "type": "io"
     },
     {
@@ -15302,7 +15857,7 @@
     },
     {
       "source": "FUNC-view-intplan",
-      "target": "FLOW-query-request",
+      "target": "FLOW-query-request-view-intplan",
       "type": "io"
     },
     {
@@ -15319,7 +15874,7 @@
     },
     {
       "source": "FUNC-view-rtm",
-      "target": "FLOW-query-request",
+      "target": "FLOW-query-request-view-rtm",
       "type": "io"
     },
     {
@@ -17978,5 +18533,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 258
+  "graphVersion": 261
 }

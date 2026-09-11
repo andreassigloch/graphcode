@@ -38,11 +38,15 @@
  *            zurück, die CR-SM-292 gerade entfernt hat: Kompensation verdeckt das
  *            Maximum, und der Autopilot arbeitete an allem ausser am Engpass.
  *
- *            CR-GC-509: seit graphVersion 258 kommt EIN Zug, ein Plateau-Merge
- *            (FLOW-mutate-cmd absorbiert FLOW-candidate-batch, versprochen 2.5e-5).
- *            Der Score ist `worst + EPS_AUGMENT · mean`; der Merge senkt nur den
- *            Mittelwert, nicht das Maximum (Befund-Bilanz 0/0, auf dem Zielprofil
- *            realisiert −0.03). Die Aussage bleibt: kein Zug am Engpass.
+ *            CR-GC-510: seit graphVersion 261 (Bus-FLOWs je Verbindung aufgetrennt)
+ *            kommt EIN Zug, ein Plateau-Merge (FLOW-formatE-artifact-agent absorbiert
+ *            FLOW-formatE-artifact-read-tools, versprochen < 1e-4). Er legt zwei eben
+ *            getrennte Verbindungen mit gemeinsamem SCHEMA wieder zusammen; der Zug aus
+ *            CR-GC-509 (FLOW-mutate-cmd absorbiert FLOW-candidate-batch, am Stand 258
+ *            gegengemessen) hat mit FLOW-mutate-cmd sein Subjekt verloren. Der Score ist
+ *            `worst + EPS_AUGMENT · mean`; der Merge senkt nur den Mittelwert, nicht das
+ *            Maximum (Befund-Bilanz 0/0, auf dem Zielprofil realisiert −0.004). Die
+ *            Aussage bleibt: kein Zug am Engpass.
  *   Lauf B — HANDSCHNITT: ZURÜCKGEBAUT mit CR-GC-446 (Begründung am Platz des
  *            Laufs weiter unten). Sein Subjekt — der 17-MOD-SSOT — existiert
  *            nicht mehr; der Schnitt ist seit CR-GC-446 am echten Modell
@@ -349,12 +353,12 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
         steps.filter((s) => s.promised >= EPS_AUGMENT).map((s) => s.edit),
         'ein Zug senkt das Maximum — der Befund oben ist veraltet, bitte neu messen',
       ).toEqual([]);
-      // (4) Die gemessene Plateau-Kette ist gepinnt (CR-GC-509, graphVersion 258): kommt ein
+      // (4) Die gemessene Plateau-Kette ist gepinnt (CR-GC-510, graphVersion 261): kommt ein
       //     Zug dazu oder fällt einer weg, wird der Test rot und der Befund gehört neu gemessen.
       expect(
         steps.map((s) => s.edit),
         'die Plateau-Kette hat sich geändert — der Befund oben ist veraltet, bitte neu messen',
-      ).toEqual(['FLOW-mutate-cmd absorbiert FLOW-candidate-batch']);
+      ).toEqual(['FLOW-formatE-artifact-agent absorbiert FLOW-formatE-artifact-read-tools']);
       // Trockenübung: der produktive SSOT ist nachweislich unverändert.
       expect(sha256(REPO_GRAPH)).toBe(ssot);
     } finally {
