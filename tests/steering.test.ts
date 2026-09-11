@@ -24,7 +24,10 @@ function allocDeficientGraph(): Graph {
     node('OrderChain.FC.001', 'FCHAIN', 'Order Chain'),
     node('Validate.FN.001', 'FUNC', 'Validate Order'),
     node('Persist.FN.002', 'FUNC', 'Persist Order'),
+    // contracts 20 (IO-02): ein FLOW hat genau EINEN Produzenten. Der Kunde und Validate
+    // senden je ihren eigenen FLOW; der Vertrag bleibt das eine SCHEMA (n FLOW -> 1 SCHEMA).
     node('OrderData.FL.001', 'FLOW', 'Order Data'),
+    node('OrderInput.FL.002', 'FLOW', 'Order Input'),
     // Der FLOW traegt einen Datenvertrag, damit dieser Graph WIRKLICH nur bei alloc
     // defizitaer ist. Vor contracts 4.2.0 war das unsichtbar: SC-04 deklarierte
     // `domain: ['SCHEMA']`, bei null SCHEMA war der schema-Nenner 0 und die Dimension
@@ -40,7 +43,9 @@ function allocDeficientGraph(): Graph {
   const edges: GraphEdge[] = [
     // contracts 9.x: ACTOR io→UC ist kein legales Pattern mehr — der tragende Pfad
     // läuft über den FLOW in die FCHAIN des UC (UC-02 prüft Erreichbarkeit).
-    edge('Customer.AC.001', 'io', 'OrderData.FL.001'),
+    edge('Customer.AC.001', 'io', 'OrderInput.FL.002'),
+    edge('OrderInput.FL.002', 'io', 'Validate.FN.001'),
+    edge('OrderInput.FL.002', 'relation', 'OrderSchema.SC.001'),
     edge('PlaceOrder.UC.001', 'compose', 'OrderReq.RQ.001'),
     edge('PlaceOrder.UC.001', 'compose', 'OrderReq.RQ.002'),
     edge('PlaceOrder.UC.001', 'compose', 'OrderReq.RQ.003'),
