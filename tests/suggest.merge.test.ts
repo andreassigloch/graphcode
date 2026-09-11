@@ -21,8 +21,13 @@
  *      weichenden Knoten sind weg, die io-Kanten sind umgehängt. Damit ist
  *      belegt, dass der Merge-Batch NICHT in den bekannten persist-Fallstrick
  *      läuft (delete+add derselben uid in EINEM Batch — deletes laufen zuletzt).
- *   3. DER REPO-GRAPH — `graph_suggest` liefert auf docs/graph/
- *      graphcode.graph.json Merge-Vorschläge mit `applicable: true`.
+ *   3. DER REPO-GRAPH — jeder Merge-Vorschlag, den `graph_suggest` auf
+ *      docs/graph/graphcode.graph.json liefert, ist `applicable`: Operator und
+ *      Gate urteilen gleich. CR-SM-309: vorher lieferte der Operator 11 Merges,
+ *      die alle zwei Produzenten in einen FLOW legten und seit IO-02 am Gate
+ *      blockt abgewiesen wurden. Seitdem schlägt OP-MERGE nur echte Duplikate vor
+ *      (gleicher Vertrag, gleiche Verbindung); die Anwendbarkeit selbst belegt
+ *      die Duplikat-Fixture (Nachweis 4), weil der Repo-Graph keins trägt.
  *
  * @author andreas@siglochconsulting
  */
@@ -146,8 +151,41 @@ describe('CR-GC-444: der gekoppelte Merge geht atomar durchs Gate', () => {
   }, 120_000);
 });
 
-describe('CR-GC-444: am Repo-Graphen ist ein Merge-Vorschlag anwendbar', () => {
-  it('graph_suggest liefert Merge-Vorschläge mit applicable:true und dem vollständigen Verbund im dryRun', async () => {
+/** CR-SM-309: ein echtes Duplikat — derselbe Vertrag auf derselben Verbindung, zweimal modelliert. */
+const DUPLICATE_FIXTURE: FixtureGraph = {
+  elements: [
+    { id: 'FUNC-produce', type: 'FUNC', name: 'produce()', description: 'Erzeugt das Ergebnis.' },
+    { id: 'FUNC-consume', type: 'FUNC', name: 'consume()', description: 'Liest das Ergebnis.' },
+    { id: 'FLOW-a', type: 'FLOW', name: 'result', description: 'Das Ergebnis.' },
+    { id: 'FLOW-b', type: 'FLOW', name: 'result (doppelt)', description: 'Dasselbe Ergebnis, ein zweites Mal modelliert.' },
+    { id: 'SCHEMA-a', type: 'SCHEMA', name: 'Result', description: 'Vertrag des Ergebnisses.' },
+  ],
+  traces: [
+    { source: 'FUNC-produce', target: 'FLOW-a', type: 'io' },
+    { source: 'FLOW-a', target: 'FUNC-consume', type: 'io' },
+    { source: 'FUNC-produce', target: 'FLOW-b', type: 'io' },
+    { source: 'FLOW-b', target: 'FUNC-consume', type: 'io' },
+    { source: 'FLOW-a', target: 'SCHEMA-a', type: 'relation' },
+    { source: 'FLOW-b', target: 'SCHEMA-a', type: 'relation' },
+  ],
+};
+
+describe('CR-SM-309: ein echtes Duplikat ist über graph_suggest anwendbar', () => {
+  it('graph_suggest liefert für zwei FLOWs gleicher Verbindung und gleichen Vertrags genau einen Merge mit applicable:true', async () => {
+    const rig = await makeRig(DUPLICATE_FIXTURE);
+    try {
+      const res = (await rig.tools.graph_suggest.handler({ target: { coherence: 1 }, k: 20, layer: 'arch' })) as GraphSuggestResult;
+      const merges = res.suggestions.filter((s) => s.edit?.op === 'merge-nodes');
+      expect(merges.map((s) => `${s.edit?.source}→${s.edit?.target}`)).toEqual(['FLOW-b→FLOW-a']);
+      expect(merges[0].applicable, JSON.stringify(merges[0].verdict)).toBe(true);
+    } finally {
+      await dropRig(rig);
+    }
+  }, 120_000);
+});
+
+describe('CR-GC-444 / CR-SM-309: am Repo-Graphen schlägt der Operator nichts vor, was das Gate abweist', () => {
+  it('jeder gelieferte Merge-Vorschlag ist applicable und trägt den vollständigen Verbund', async () => {
     const repoGraph = JSON.parse(
       readFileSync(join(__dirname, '..', 'docs/graph/graphcode.graph.json'), 'utf8'),
     ) as FixtureGraph;
@@ -163,11 +201,13 @@ describe('CR-GC-444: am Repo-Graphen ist ein Merge-Vorschlag anwendbar', () => {
           merges.map((s) => `${s.edit?.source}→${s.edit?.target}${s.applicable ? '' : '(refused)'}`).join(', '),
       );
 
+      // CR-SM-309: Operator und Gate urteilen gleich. Vor der Einschränkung auf Duplikate
+      // wies das Gate 11 von 11 Vorschlägen an IO-02 ab.
       expect(
-        applicable.length,
-        'kein anwendbarer Merge-Vorschlag am Repo-Graphen — genau das Werkzeug, das CR-GC-444 liefert ' +
-          `(gelieferte Merges: ${merges.map((s) => `${s.edit?.source}→${s.edit?.target}`).join(', ') || 'keine'})`,
-      ).toBeGreaterThan(0);
+        merges.filter((s) => !s.applicable).map((s) => `${s.edit?.source}→${s.edit?.target}`),
+        'OP-MERGE schlägt Züge vor, die das Gate abweist',
+      ).toEqual([]);
+      expect(applicable.length).toBe(merges.length);
 
       for (const s of merges) {
         expect(s.ruleId).toBe('OP-MERGE');

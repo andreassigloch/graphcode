@@ -47,6 +47,9 @@
  *            `worst + EPS_AUGMENT · mean`; der Merge senkt nur den Mittelwert, nicht das
  *            Maximum (Befund-Bilanz 0/0, auf dem Zielprofil realisiert −0.004). Die
  *            Aussage bleibt: kein Zug am Engpass.
+ *            CR-SM-309: seit IO-02 am Gate blockt und OP-MERGE nur echte Duplikate
+ *            vorschlägt, ist der Aktionsraum am Repo-Graphen LEER — die Merges der
+ *            Plateau-Kette legten je zwei Produzenten in einen FLOW.
  *   Lauf B — HANDSCHNITT: ZURÜCKGEBAUT mit CR-GC-446 (Begründung am Platz des
  *            Laufs weiter unten). Sein Subjekt — der 17-MOD-SSOT — existiert
  *            nicht mehr; der Schnitt ist seit CR-GC-446 am echten Modell
@@ -64,7 +67,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import { metrics, toArray, buildAdjacency, detectCommunities, modularityOf, modularityQ, EPS_AUGMENT } from '@sigloch/se-engine';
+import { metrics, toArray, buildAdjacency, detectCommunities, modularityOf, modularityQ } from '@sigloch/se-engine';
 import { moduleMetrics } from '@sigloch/contracts/se';
 import type { MutateCommand } from '@sigloch/contracts/harness';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
@@ -278,7 +281,9 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
       for (let n = 1; n <= MAX_STEPS; n++) {
         const res = (await rig.tools.graph_suggest.handler({ target: PROFILE, k: 20, layer: 'arch' })) as GraphSuggestResult;
         const applicable = res.suggestions.filter((s) => s.applicable && s.edit);
-        dominant = applicable.find((s) => s.verdict?.steer?.worstAt)?.verdict!.steer!.worstAt ?? dominant;
+        // CR-SM-309: aus ALLEN beurteilten Vorschlaegen, nicht nur den anwendbaren — sonst ist der
+        // Engpass bei leerem Aktionsraum unlesbar, und genau dann braucht man ihn.
+        dominant = res.suggestions.find((s) => s.verdict?.steer?.worstAt)?.verdict!.steer!.worstAt ?? dominant;
         const best = applicable.find(
           (s) => s.score > EPS && !applied.has(`${s.edit!.source}->${s.edit!.target}`),
         );
@@ -329,36 +334,21 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
         `   Dominierender Term (Chebyshev-Maximum): ${dominant ? `${dominant.ruleId} @ ${dominant.elementId}` : 'keiner'}`,
       );
 
-      // CR-GC-435 war die Voraussetzung dafür, dass hier ÜBERHAUPT ein Zug möglich ist,
-      // und der Spike hat das damals belegt. CR-GC-488 misst nach — die Reichweite ist
-      // wieder 0, aber aus einem anderen Grund als vor CR-GC-435, und der Unterschied ist
-      // der ganze Punkt. Deshalb steht hier nicht mehr eine Schrittzahl, sondern die
-      // Begründung; die Begründung ist es, die rot werden muss, wenn sie sich ändert.
+      // CR-GC-435 war die Voraussetzung dafür, dass hier ÜBERHAUPT ein Zug möglich ist; CR-GC-488
+      // mass die Reichweite 0 aus dem Grund "kein Zug senkt das Maximum", CR-GC-509/510 eine
+      // Plateau-Kette aus je einem FLOW-Merge.
       //
-      // (1) Der Aktionsraum ist NICHT leer. Wäre er es, wäre nicht der Score das Thema.
-      expect(leftover, 'kein einziger anwendbarer Zug — dann ist der Aktionsraum leer, nicht der Score wählerisch').toBeGreaterThan(0);
-      // (2) Der Engpass ist benannt und deterministisch: 19 querende SCHEMA-Verträge über
-      //     EINEN Blackbox-Rand, Schwelle 4. Eine zusätzliche Kante kann Randbreite nur
-      //     erhöhen — kein Operator des heutigen Satzes senkt sie an DIESER Stelle.
-      expect(dominant, 'kein Verdict trug worstAt — ohne den dominierenden Term ist die Null nicht lesbar').not.toBeNull();
-      expect(`${dominant!.ruleId} @ ${dominant!.elementId}`).toBe('BW-02 @ FUNC-block-grounding');
-      // (3) Und deshalb senkt kein Zug das Maximum. Der Score ist `worst + EPS_AUGMENT · mean`
-      //     (se-engine steer). Ein echter Schritt am Maximum ist mindestens 1/Schwelle (≥ 0.11
-      //     bei RD-04, 0.25 bei BW-02); was darunter bleibt, bewegt nur den Ausgleichsterm.
-      //     Wird das eines Tages falsch — weil ein Operator dazukam oder der Engpass abgetragen
-      //     wurde —, MUSS dieser Test rot werden: der Befund oben ist dann veraltet und gehört
-      //     neu geschrieben, nicht stillschweigend überholt. Der erste Zug an diesem Engpass ist
-      //     heute ein menschlicher: die Zahl steht in `graph_metrics` und in graph-view-edit.
-      expect(
-        steps.filter((s) => s.promised >= EPS_AUGMENT).map((s) => s.edit),
-        'ein Zug senkt das Maximum — der Befund oben ist veraltet, bitte neu messen',
-      ).toEqual([]);
-      // (4) Die gemessene Plateau-Kette ist gepinnt (CR-GC-510, graphVersion 261): kommt ein
-      //     Zug dazu oder fällt einer weg, wird der Test rot und der Befund gehört neu gemessen.
-      expect(
-        steps.map((s) => s.edit),
-        'die Plateau-Kette hat sich geändert — der Befund oben ist veraltet, bitte neu messen',
-      ).toEqual(['FLOW-formatE-artifact-agent absorbiert FLOW-formatE-artifact-read-tools']);
+      // CR-SM-309 (graphVersion 261): der Aktionsraum ist jetzt LEER, und das ist der Befund. Die
+      // einzigen anwendbaren Züge waren FLOW-Merges; jeder davon legte zwei Produzenten in einen
+      // FLOW. Seit IO-02 am Gate blockt, schlägt OP-MERGE nur noch echte Duplikate vor, und der
+      // Repo-Graph trägt keins. Die übrigen Vorschläge (IO-01, FC-04, R-02, R-22, …) tragen keinen
+      // Edit, also auch kein Verdict und kein worstAt — der Engpass steht in `graph_metrics`.
+      //
+      // Wird das falsch — ein Operator kommt dazu, oder das Modell trägt wieder ein Duplikat —,
+      // MUSS dieser Test rot werden: der Befund oben ist dann veraltet und gehört neu gemessen.
+      expect(steps.map((s) => s.edit), 'ein Zug ist möglich geworden — der Befund oben ist veraltet, bitte neu messen').toEqual([]);
+      expect(leftover, 'anwendbare, aber nicht zielführende Züge liegen wieder auf dem Tisch — bitte neu messen').toBe(0);
+      expect(dominant, 'ein Verdict trägt wieder worstAt — also gibt es beurteilte Edits, bitte neu messen').toBeNull();
       // Trockenübung: der produktive SSOT ist nachweislich unverändert.
       expect(sha256(REPO_GRAPH)).toBe(ssot);
     } finally {
