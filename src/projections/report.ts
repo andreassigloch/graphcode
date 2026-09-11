@@ -16,7 +16,6 @@
 import { z } from 'zod/v4';
 import type { GraphNode } from '@sigloch/graph-api-core';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import type { RuleViolation } from '@sigloch/contracts/harness';
 import {
   TestRefsSchema,
   type TestRef,
@@ -141,7 +140,7 @@ const GraphTestsInputSchema = z.object({
 // -------------------------------------------------------------------------
 
 export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
-  const { harness, auditLog, graphVersion } = ctx;
+  const { harness, graphVersion } = ctx;
 
   /**
    * Projektion der EINEN Ergebnisliste — nie eine zweite Erhebung (CR-GC-398).
