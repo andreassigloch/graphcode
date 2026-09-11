@@ -45,13 +45,13 @@ export interface SteeringSnapshot {
  * Kein Default hier: ein zweiter Wert an dieser Stelle hiesse, dass der Steuerungsraum
  * gegen eine andere Schwelle misst als die, die der Host anzeigt.
  *
- * CR-GC-336: `focusThreshold` aus demselben Grund und aus derselben Quelle
- * (`harness.getFocusThreshold()`). contracts 4.0.0 verlangt sie bei `computeReadiness`.
+ * CR-GC-514: keine Fokus-Schwelle mehr. Sie wurde nur an `computeReadiness` durchgereicht, das
+ * daraus `ready` bildete; seit CR-SM-310 misst die Readiness ohne Urteil. Die Schwelle wendet
+ * allein die Fuehrung an (`generationStep`).
  */
 export function takeSteeringSnapshot(
   graph: Graph,
   policy: MetricPolicy,
-  focusThreshold: number,
 ): SteeringSnapshot {
   // CR-GC-303: DERSELBE Mapper wie der Harness-/Readiness-Pfad. Vorher lief hier
   // `JSON.parse(exportGraphJson(graph))` — das Export-Encoding flacht `attributes`
@@ -71,7 +71,7 @@ export function takeSteeringSnapshot(
     og,
     violations,
     blockingErrors: violations.filter((v) => v.severity === 'error').length,
-    report: computeReadiness(og, policy, focusThreshold),
+    report: computeReadiness(og, policy),
     phaseReadiness: computePhaseReadiness(violations.map((v) => ({ ruleId: v.rule_id }))),
   };
 }

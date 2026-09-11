@@ -232,7 +232,7 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
       'LLM/learning. Complements rules_get_violations (the flat gate list) by prioritising.',
     inputSchema: GraphNextStepInputSchema,
     async handler(_input) {
-      return nextStep(harness.getGraph(), harness.getMetricPolicy(), harness.getFocusThreshold());
+      return nextStep(harness.getGraph(), harness.getMetricPolicy());
     },
   };
 
@@ -255,10 +255,10 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
    * (Muster computeSteeringDelta).
    */
   const dimensionReadiness = (): ReadinessScoreType[] => {
-    const scores = new Map(takeSteeringSnapshot(harness.getGraph(), harness.getMetricPolicy(), harness.getFocusThreshold()).report.scores.map((s) => [s.dimension as string, s]));
+    const scores = new Map(takeSteeringSnapshot(harness.getGraph(), harness.getMetricPolicy()).report.scores.map((s) => [s.dimension as string, s]));
     return ReadinessDimension.options.map(
       (dimension) =>
-        scores.get(dimension) ?? { dimension, score: null, violations: 0, applicable: 0, coreApplicable: 0, ready: false },
+        scores.get(dimension) ?? { dimension, score: null, violations: 0, applicable: 0, coreApplicable: 0 },
     );
   };
 
@@ -307,7 +307,9 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
       'the FULL contracts catalog (evaluateAllRules incl. BQ-*/ND-*), i.e. a WIDER population than ' +
       'violationsByRule; `catalogs` (CR-GC-428) names per block which catalog it came from: each with ' +
       'score, violations, applicable (the denominator — a score is not interpretable without it) and ' +
-      'ready (contracts threshold, not a graphcode policy). Steering values, NOT a gate: the gates stay ' +
+      'coreApplicable (0 means the score is null: not measurable). A measurement WITHOUT a verdict — ' +
+      'there is no ready flag; the focus threshold is applied only where the focus is chosen, in ' +
+      'graph_generate (CR-GC-514). Steering values, NOT a gate: the gates stay ' +
       'the pass/fail authority. Computed from the same steering snapshot graph_next_step uses, so the ' +
       'number a dashboard shows is the one the recommendation came from; ' +
       'violationsByRule (keyed by contracts rule-ID — R-/RD-/MS- plus ND-01/ND-02 since CR-GC-442, ' +

@@ -57,14 +57,14 @@ function countByRule(violations: RuleViolation[]): { rule_id: string; count: num
  * Compute the "next best step" for the current graph.
  * Deterministic: readiness → top-deficit dimension → firing rules.
  */
-export function nextStep(graph: Graph, policy: MetricPolicy, focusThreshold: number): NextStepResult {
+export function nextStep(graph: Graph, policy: MetricPolicy): NextStepResult {
   // CR-GC-324: EINE Graph→OntologyGraph-Abbildung. Vorher stand hier eine lokale
   // Kopie über `JSON.parse(exportGraphJson(graph))` — das flache Export-Encoding
   // (CR-216/219) versteckt `attributes.*`, wodurch R-19/R-20/R-26/VR-01/AF-01..05
   // in DIESEM Pfad scheinfeuerten und damit die Dimensions-Priorisierung
   // verschoben. Der Snapshot (CR-GC-303/289) ist der eine Messpfad; er trägt die
   // ND-Injektion (CR-GC-287) bereits.
-  const { violations, report } = takeSteeringSnapshot(graph, policy, focusThreshold);
+  const { violations, report } = takeSteeringSnapshot(graph, policy);
 
   const errors = violations.filter((v) => v.severity === 'error');
   const blocking = {

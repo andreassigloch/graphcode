@@ -44,6 +44,7 @@ import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
 import { toOntologyGraph } from '../src/kernel/conformance.js';
 import { takeSteeringSnapshot } from '../src/kernel/measure/steering-snapshot.js';
+import { generationStep } from '../src/loop/generate.js';
 import { CONFIG_FILENAME, DEFAULT_FOCUS_THRESHOLD, loadGraphcodeConfig } from '../src/kernel/config.js';
 import { DEFAULT_METRIC_POLICY, evaluateAllRules } from '@sigloch/contracts/se';
 import { ARCH_FIXTURE, makeSteeringConfig } from './fixtures/steering-graphs.js';
@@ -123,7 +124,7 @@ describe('T-C3 (CR-GC-340): the judging threshold is a knob in the config, not a
     const strict = await makeRig(configWith({ instability: 0.1 }));
     try {
       const mt01 = (rig: Rig) =>
-        takeSteeringSnapshot(rig.harness.getGraph(), rig.harness.getMetricPolicy(), rig.harness.getFocusThreshold())
+        takeSteeringSnapshot(rig.harness.getGraph(), rig.harness.getMetricPolicy())
           .violations.filter((v) => v.rule_id === 'MT-01');
 
       expect(mt01(lenient)).toEqual([]);
@@ -142,24 +143,30 @@ describe('T-C3 (CR-GC-340): the judging threshold is a knob in the config, not a
     }
   });
 
-  it('moving focusThreshold moves the focus verdict without touching the violations', async () => {
+  it('moving focusThreshold leaves the measurement untouched and reaches only the focus judgment', async () => {
     const low = await makeRig(configWith({}, 0.05));
     const high = await makeRig(configWith({}, 0.99));
     try {
-      const snap = (rig: Rig) =>
-        takeSteeringSnapshot(rig.harness.getGraph(), rig.harness.getMetricPolicy(), rig.harness.getFocusThreshold());
+      const snap = (rig: Rig) => takeSteeringSnapshot(rig.harness.getGraph(), rig.harness.getMetricPolicy());
       const a = snap(low);
       const b = snap(high);
 
-      // Same findings — the threshold judges, it does not detect.
+      // Same findings AND same scores — the threshold judges, it does not measure (CR-GC-514:
+      // the snapshot no longer takes it; before CR-SM-310 it turned it into a `ready` flag).
       const ids = (s: typeof a) => s.violations.map((v) => `${v.rule_id}/${v.element_id}`).sort();
       expect(ids(a)).toEqual(ids(b));
       expect(a.blockingErrors).toBe(b.blockingErrors);
+      expect(a.report.scores).toEqual(b.report.scores);
 
-      // But the ready-verdict differs: at 0.05 dimensions count as ready that are
-      // not ready at 0.99. The knob is what decides "is this dimension too weak".
-      const readyCount = (s: typeof a) => s.report.scores.filter((x) => x.applicable > 0 && x.ready).length;
-      expect(readyCount(a)).toBeGreaterThan(readyCount(b));
+      // The config value arrives where the focus is judged — and only there. That the verdict
+      // flips with it (handoff at threshold 0) is proven on a real fixture in generate.test.ts.
+      const step = (rig: Rig) =>
+        generationStep(rig.harness.getGraph(), rig.harness.getMetricPolicy(), 'steering causality', rig.harness.getFocusThreshold(), []);
+      const sLow = step(low);
+      const sHigh = step(high);
+      expect(sLow.threshold).toBe(0.05);
+      expect(sHigh.threshold).toBe(0.99);
+      expect(sLow.readiness).toEqual(sHigh.readiness);
     } finally {
       await dropRig(low);
       await dropRig(high);

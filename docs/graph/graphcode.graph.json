@@ -5203,7 +5203,7 @@
       "id": "REQ-thresholds-from-config",
       "type": "REQ",
       "name": "Urteilsschwellen kommen aus der Config, nicht aus dem Regelcode",
-      "description": "Keine Urteilsschwelle steht als Literal im Regelcode: eine verschobene MetricPolicy kippt dasselbe Modul-Urteil auf unveraendertem Graphen, eine verschobene Fokus-Schwelle verschiebt das ready-Urteil ohne die Funde zu aendern.",
+      "description": "Keine Urteilsschwelle steht als Literal im Regelcode: eine verschobene MetricPolicy kippt dasselbe Modul-Urteil auf unveraendertem Graphen, eine verschobene Fokus-Schwelle verschiebt das Fokus-Urteil der Fuehrung (graph_generate), ohne die Messung zu aendern.",
       "kinds": [
         "functional"
       ]
@@ -5633,7 +5633,7 @@
       "id": "SCHEMA-readiness-report",
       "type": "SCHEMA",
       "name": "ReadinessReportType",
-      "description": "Je Dimension score, violations, applicable, ready. Aus @sigloch/contracts, deshalb external.",
+      "description": "Je Dimension score, violations, applicable, coreApplicable — eine reine Messung ohne Urteil (kein ready seit CR-SM-310). Aus @sigloch/contracts, deshalb external.",
       "status": "reviewed",
       "external": true,
       "realRef": {
@@ -18517,5 +18517,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 262
+  "graphVersion": 263
 }

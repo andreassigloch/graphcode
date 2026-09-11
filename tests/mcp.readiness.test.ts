@@ -196,14 +196,15 @@ describe('TEST-mcp-readiness: graph_readiness scores family readiness over the b
         expect(typeof d.applicable, `${d.dimension}.applicable`).toBe('number');
         expect(typeof d.violations, `${d.dimension}.violations`).toBe('number');
         // contracts 9.x (CR-SM-270): score ist number | null — null heißt „nicht
-        // messbar" (leere Kernmenge), nie 0 %, und ready ist dann immer false.
+        // messbar" (leere Kernmenge), nie 0 %.
         if (d.score === null) {
-          expect(d.ready, `${d.dimension}.ready bei score null`).toBe(false);
+          expect(d.coreApplicable, `${d.dimension}: null nur bei leerer Kernmenge`).toBe(0);
         } else {
           expect(d.score).toBeGreaterThanOrEqual(0);
           expect(d.score).toBeLessThanOrEqual(1);
         }
-        expect(typeof d.ready).toBe('boolean');
+        // CR-GC-514: reine Messung — das Ergebnis traegt kein Urteil `ready`.
+        expect(Object.keys(d)).not.toContain('ready');
       }
     }
   });
