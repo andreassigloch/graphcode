@@ -58,7 +58,7 @@ describe('T-0 (CR-GC-340): every steering surface measures the same graph', () =
   });
 
   const snapshot = () =>
-    takeSteeringSnapshot(harness.getGraph(), harness.getMetricPolicy(), harness.getFocusThreshold());
+    takeSteeringSnapshot(harness.getGraph(), harness.getMetricPolicy());
 
   it('the fixture actually exercises the attribute-borne rules (otherwise this file proves nothing)', () => {
     const snap = snapshot();
@@ -85,7 +85,7 @@ describe('T-0 (CR-GC-340): every steering surface measures the same graph', () =
 
   it('nextStep and generationStep report the same blocking errors and the same dimension scores', async () => {
     const snap = snapshot();
-    const step = nextStep(harness.getGraph(), harness.getMetricPolicy(), harness.getFocusThreshold());
+    const step = nextStep(harness.getGraph(), harness.getMetricPolicy());
     const gen = generationStep(harness.getGraph(), harness.getMetricPolicy(), 'steering fixture', harness.getFocusThreshold());
 
     expect(step.blocking.errors).toBe(snap.blockingErrors);
@@ -132,7 +132,7 @@ describe('T-0 (CR-GC-340): every steering surface measures the same graph', () =
     const nodes = before.nodes.length;
     const edges = before.edges.length;
 
-    nextStep(harness.getGraph(), harness.getMetricPolicy(), harness.getFocusThreshold());
+    nextStep(harness.getGraph(), harness.getMetricPolicy());
     generationStep(harness.getGraph(), harness.getMetricPolicy(), 'steering fixture', harness.getFocusThreshold());
     await tools.graph_readiness.handler({});
 

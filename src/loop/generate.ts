@@ -174,7 +174,7 @@ export function generationStep(
   const gateProtocol = GATE_PROTOCOL[selection];
   // Steering-Snapshot (CR-GC-289): og + ND-Injektion + Full-Katalog-Eval +
   // computeReadiness + Phasen-Gates — geteilt mit dem steeringDelta des dryRun-Verdicts.
-  const { og, violations, blockingErrors, report, phaseReadiness } = takeSteeringSnapshot(graph, policy, threshold);
+  const { og, violations, blockingErrors, report, phaseReadiness } = takeSteeringSnapshot(graph, policy);
   const sys = og.elements.find((e) => e.type === 'SYS');
   const effectiveIntent = intent?.trim() || sys?.description?.trim() || '';
   const readiness = report.scores

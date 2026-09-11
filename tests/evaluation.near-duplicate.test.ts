@@ -179,7 +179,7 @@ describe('Ohne Naht: das Gate-Urteil ist von Report- und Steering-Läufen unabh�
   it('zwei Gate-Läufe um einen Report- und Steering-Lauf herum liefern identische Verstöße', () => {
     const before = harness.evaluateRules();
     evaluateAll(harness);
-    takeSteeringSnapshot(harness.getGraph(), harness.getMetricPolicy(), harness.getFocusThreshold());
+    takeSteeringSnapshot(harness.getGraph(), harness.getMetricPolicy());
     expect(harness.evaluateRules()).toEqual(before);
   });
 

@@ -344,7 +344,7 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
         // bewegt die graphVersion, der Nachher-Zustand ist dort per
         // graph_readiness lesbar; die Doppel-Evaluierung pro echtem Write wäre
         // reine Kostenstelle ohne Konsument (Entscheidung dokumentiert im CR).
-        const steeringBefore = input.dryRun ? takeSteeringSnapshot(harness.getGraph(), harness.getMetricPolicy(), harness.getFocusThreshold()) : null;
+        const steeringBefore = input.dryRun ? takeSteeringSnapshot(harness.getGraph(), harness.getMetricPolicy()) : null;
         // respondsTo-Baseline (CR-GC-434) — NUR auf dem Apply-Pfad: der Preview
         // trägt keine Stempel. Eine evaluateRules-Messung vor dem Gate; die
         // Nachher-Seite fällt nur bei success an (bei Rejection ist der Zustand
@@ -359,7 +359,7 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
           // GENAU JETZT messen (bei block hat das Gate schon zurückgerollt ⇒
           // Delta 0), dann die Working Copy restaurieren. Pure Messung, kein
           // Einfluss auf tier/success (Muster fitAdvisory/CR-274).
-          const steeringDelta = computeSteeringDelta(steeringBefore!, takeSteeringSnapshot(harness.getGraph(), harness.getMetricPolicy(), harness.getFocusThreshold()));
+          const steeringDelta = computeSteeringDelta(steeringBefore!, takeSteeringSnapshot(harness.getGraph(), harness.getMetricPolicy()));
           await harness.loadGraph();
           const preview = { ...result, steeringDelta };
           // Vorschlag→Verdict auditieren (F2) — der Preview trägt das steeringDelta.

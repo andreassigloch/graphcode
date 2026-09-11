@@ -1470,7 +1470,7 @@ io ◀ `FLOW-config-file` · io ▶ `FLOW-metric-policy` · allocate ▶ `MOD-ke
 
 ###### `REQ-thresholds-from-config` — Urteilsschwellen kommen aus der Config, nicht aus dem Regelcode
 
-Keine Urteilsschwelle steht als Literal im Regelcode: eine verschobene MetricPolicy kippt dasselbe Modul-Urteil auf unveraendertem Graphen, eine verschobene Fokus-Schwelle verschiebt das ready-Urteil ohne die Funde zu aendern.
+Keine Urteilsschwelle steht als Literal im Regelcode: eine verschobene MetricPolicy kippt dasselbe Modul-Urteil auf unveraendertem Graphen, eine verschobene Fokus-Schwelle verschiebt das Fokus-Urteil der Fuehrung (graph_generate), ohne die Messung zu aendern.
 
 priority: must · status: n/a · kinds: functional
 
@@ -3618,7 +3618,7 @@ io ◀ `FLOW-config-file` · io ▶ `FLOW-metric-policy` · allocate ▶ `MOD-ke
 
 ###### `REQ-thresholds-from-config` — Urteilsschwellen kommen aus der Config, nicht aus dem Regelcode
 
-Keine Urteilsschwelle steht als Literal im Regelcode: eine verschobene MetricPolicy kippt dasselbe Modul-Urteil auf unveraendertem Graphen, eine verschobene Fokus-Schwelle verschiebt das ready-Urteil ohne die Funde zu aendern.
+Keine Urteilsschwelle steht als Literal im Regelcode: eine verschobene MetricPolicy kippt dasselbe Modul-Urteil auf unveraendertem Graphen, eine verschobene Fokus-Schwelle verschiebt das Fokus-Urteil der Fuehrung (graph_generate), ohne die Messung zu aendern.
 
 priority: must · status: n/a · kinds: functional
 
@@ -6214,7 +6214,7 @@ schema ◀ `FLOW-query-request-agent` · `FLOW-query-request-auto-export` · `FL
 
 ### 5.34  `SCHEMA-readiness-report` — ReadinessReportType
 
-Je Dimension score, violations, applicable, ready. Aus @sigloch/contracts, deshalb external.
+Je Dimension score, violations, applicable, coreApplicable — eine reine Messung ohne Urteil (kein ready seit CR-SM-310). Aus @sigloch/contracts, deshalb external.
 
 schema ◀ `FLOW-dimension-readiness`
 
