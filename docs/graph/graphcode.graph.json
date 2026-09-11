@@ -1700,6 +1700,20 @@
       "status": "reviewed"
     },
     {
+      "id": "FLOW-candidate-batch",
+      "type": "FLOW",
+      "name": "Kandidaten-Batch",
+      "description": "Der Batch, den die Treiberschleife dem Gate-Zugang uebergibt: der Tool-Call-Input des Modells oder der geborgene Prosa-Batch, im Best-of-N ohne dryRun-Flag. Der Preflight liest ihn, bevor etwas ans Gate geht. (CR-GC-506)",
+      "status": "reviewed"
+    },
+    {
+      "id": "FLOW-candidate-ranking",
+      "type": "FLOW",
+      "name": "Kandidaten-Rangfolge",
+      "description": "Rueckgabewert von rankCandidates an die Best-of-N-Runde (executor-bestofn.ts, runBestOfNStep): die Kandidaten mit ihren dryRun-Verdicts in Rangfolge; der erste tragfaehige ist der Algo-Pick. (CR-GC-506)",
+      "status": "reviewed"
+    },
+    {
       "id": "FLOW-cli-command",
       "type": "FLOW",
       "name": "CLI-Kommando",
@@ -1896,7 +1910,7 @@
       "id": "FLOW-mutate-cmd",
       "type": "FLOW",
       "name": "Mutate-Command",
-      "description": "Jede Schreibabsicht am Gate als MutateCommand-Batch: Edit-Op von Agent oder Mensch, und der dryRun-verifizierte Kandidaten-Fix aus dem Vorschlagspfad.",
+      "description": "Jede Schreibabsicht am Gate als MutateCommand-Batch: Edit-Op von Agent oder Mensch, und der dryRun-verifizierte Kandidaten-Fix aus dem Vorschlagspfad. Im eingebetteten Executor sendet allein der Gate-Zugang; Parser, Preflight und Rangfolge liefern ihm Rueckgabewerte zu. (CR-GC-506)",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z"
     },
@@ -1920,12 +1934,26 @@
       "status": "reviewed"
     },
     {
+      "id": "FLOW-preflight-outcome",
+      "type": "FLOW",
+      "name": "Preflight-Ergebnis",
+      "description": "Rueckgabewert von preflightBatch an den Gate-Zugang (executor-gate.ts, runPreflight): pass, fixed mit repariertem Batch oder blocked mit lokalen Befunden. (CR-GC-506)",
+      "status": "reviewed"
+    },
+    {
       "id": "FLOW-query-request",
       "type": "FLOW",
       "name": "Query-Request (Lese- und View-Anfrage)",
       "description": "Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Eine Anfrageform, nicht vier.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "id": "FLOW-recovered-batch",
+      "type": "FLOW",
+      "name": "Aus Prosa geborgener Batch",
+      "description": "Rueckgabewert von extractMutateFromText an die Treiberschleife (executor.ts und executor-bestofn.ts): das Kommando-Objekt aus einer Modellantwort ohne Tool-Call, sonst null. Noch ungeprueft. (CR-GC-506)",
+      "status": "reviewed"
     },
     {
       "id": "FLOW-rendered-views",
@@ -2569,6 +2597,18 @@
       }
     },
     {
+      "id": "FUNC-gate-client",
+      "type": "FUNC",
+      "name": "bindGateClient(registry, stats, trace)",
+      "description": "Gate-Zugang des eingebetteten Executors: parst den Kandidaten-Batch wie der MCP-Layer, laesst den Preflight pruefen und korrigieren, legt den gesendeten Batch fest (Preflight-Ergebnis, bei der Probe mit dryRun) und ruft graph_mutate ueber die Registry (executor-gate.ts, callGate). Einzige Stelle, an der der Executor einen selbst festgelegten Batch sendet; Ein-Kandidaten-Pfad und Best-of-N teilen sie. Formt aus einer Rejection das Feedback fuer den Repair-Loop. (CR-GC-506)",
+      "status": "done",
+      "realRef": {
+        "file": "src/loop/executor-gate.ts",
+        "symbol": "bindGateClient",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "FUNC-generation-step",
       "type": "FUNC",
       "name": "generationStep(graph, policy, intent)",
@@ -2970,7 +3010,7 @@
       "id": "FUNC-run-executor",
       "type": "FUNC",
       "name": "runExecutor",
-      "description": "Die Treiberschleife selbst: baut die Tool-Specs, ruft das Backend rundenweise, wendet Mutationen ueber die Registry an und zaehlt Runden, Turns, Anwendungen und Rejections. Backend-Wechsel zwischen lokalem und Frontier-Modell ist Konfiguration, keine zweite Codeverzweigung.",
+      "description": "Die Treiberschleife selbst: baut die Tool-Specs, ruft das Backend rundenweise, uebergibt jeden Kandidaten-Batch dem Gate-Zugang und zaehlt Runden, Turns, Anwendungen und Rejections. Die Best-of-N-Runde (executor-bestofn.ts) liest die Rangfolge und waehlt den Gewinner. Einen vom Modell selbst angeforderten dryRun reicht die Werkzeug-Ausfuehrung unveraendert an die Registry weiter. Backend-Wechsel zwischen lokalem und Frontier-Modell ist Konfiguration, keine zweite Codeverzweigung. (CR-GC-506)",
       "status": "done",
       "realRef": {
         "file": "src/loop/executor.ts",
@@ -4955,6 +4995,13 @@
       }
     },
     {
+      "id": "SCHEMA-candidate-probe",
+      "type": "SCHEMA",
+      "name": "Kandidat mit Verdict",
+      "description": "index, verdict (Ausschnitt des MutateResult mit fitAdvisory und steeringDelta), duplicates: CandidateProbe in src/loop/executor-rank.ts. Spec-only, ein TypeScript-Interface, kein Zod-Datenvertrag. (CR-GC-506)",
+      "concept": true
+    },
+    {
       "id": "SCHEMA-cli-command",
       "type": "SCHEMA",
       "name": "CliCommand",
@@ -5255,6 +5302,13 @@
         "symbol": "PhaseGateReadiness",
         "lang": "ts"
       }
+    },
+    {
+      "id": "SCHEMA-preflight-outcome",
+      "type": "SCHEMA",
+      "name": "Preflight-Ergebnis",
+      "description": "action (pass, fixed, blocked), input, fixes, violations: PreflightOutcome in src/loop/preflight.ts. Spec-only, ein TypeScript-Interface eines In-Process-Rueckgabewerts, kein Zod-Datenvertrag. (CR-GC-506)",
+      "concept": true
     },
     {
       "id": "SCHEMA-query-params",
@@ -11480,6 +11534,11 @@
     },
     {
       "source": "FCHAIN-steering-loop",
+      "target": "FUNC-gate-client",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
       "target": "FUNC-generation-step",
       "type": "compose"
     },
@@ -11600,6 +11659,31 @@
     {
       "source": "FLOW-audit-report",
       "target": "SCHEMA-audit-stats",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-candidate-batch",
+      "target": "FUNC-gate-client",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-candidate-batch",
+      "target": "FUNC-preflight",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-candidate-batch",
+      "target": "SCHEMA-mutate-command",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-candidate-ranking",
+      "target": "FUNC-run-executor",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-candidate-ranking",
+      "target": "SCHEMA-candidate-probe",
       "type": "relation"
     },
     {
@@ -11837,6 +11921,11 @@
     {
       "source": "FLOW-gate-verdict",
       "target": "FUNC-bootstrap",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-gate-verdict",
+      "target": "FUNC-gate-client",
       "type": "io"
     },
     {
@@ -12232,11 +12321,6 @@
     },
     {
       "source": "FLOW-mutate-cmd",
-      "target": "FUNC-preflight",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-mutate-cmd",
       "target": "SCHEMA-mutate-command",
       "type": "relation",
       "weight": 1,
@@ -12270,6 +12354,16 @@
     {
       "source": "FLOW-phase-readiness",
       "target": "SCHEMA-phase-readiness",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-preflight-outcome",
+      "target": "FUNC-gate-client",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-preflight-outcome",
+      "target": "SCHEMA-preflight-outcome",
       "type": "relation"
     },
     {
@@ -12356,6 +12450,16 @@
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-recovered-batch",
+      "target": "FUNC-run-executor",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-recovered-batch",
+      "target": "SCHEMA-mutate-command",
+      "type": "relation"
     },
     {
       "source": "FLOW-rendered-views",
@@ -12931,6 +13035,11 @@
     {
       "source": "FUNC-block-antrieb",
       "target": "FUNC-extract-mutate",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-antrieb",
+      "target": "FUNC-gate-client",
       "type": "compose"
     },
     {
@@ -13822,9 +13931,8 @@
     },
     {
       "source": "FUNC-extract-mutate",
-      "target": "FLOW-mutate-cmd",
-      "type": "io",
-      "weight": "1"
+      "target": "FLOW-recovered-batch",
+      "type": "io"
     },
     {
       "source": "FUNC-extract-mutate",
@@ -13844,6 +13952,21 @@
     {
       "source": "FUNC-fit-advisory",
       "target": "REQ-steering-from-metrics",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-gate-client",
+      "target": "MOD-loop",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-gate-client",
+      "target": "FLOW-mutate-cmd",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-gate-client",
+      "target": "REQ-prose-recovery",
       "type": "satisfy"
     },
     {
@@ -14119,11 +14242,6 @@
     },
     {
       "source": "FUNC-host-socket",
-      "target": "FLOW-mutate-cmd",
-      "type": "io"
-    },
-    {
-      "source": "FUNC-host-socket",
       "target": "REQ-store-owner-lifecycle",
       "type": "satisfy"
     },
@@ -14202,6 +14320,11 @@
     {
       "source": "FUNC-import-doc",
       "target": "FLOW-formatE-artifact",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-import-doc",
+      "target": "FLOW-mutate-cmd",
       "type": "io"
     },
     {
@@ -14398,7 +14521,7 @@
     },
     {
       "source": "FUNC-preflight",
-      "target": "FLOW-mutate-cmd",
+      "target": "FLOW-preflight-outcome",
       "type": "io"
     },
     {
@@ -14408,7 +14531,7 @@
     },
     {
       "source": "FUNC-rank-candidates",
-      "target": "FLOW-mutate-cmd",
+      "target": "FLOW-candidate-ranking",
       "type": "io"
     },
     {
@@ -14500,14 +14623,13 @@
     },
     {
       "source": "FUNC-run-executor",
-      "target": "FLOW-model-answer",
+      "target": "FLOW-candidate-batch",
       "type": "io"
     },
     {
       "source": "FUNC-run-executor",
-      "target": "FLOW-mutate-cmd",
-      "type": "io",
-      "weight": "1"
+      "target": "FLOW-model-answer",
+      "type": "io"
     },
     {
       "source": "FUNC-run-executor",
@@ -14811,11 +14933,6 @@
       "source": "FUNC-target-profile",
       "target": "MOD-agent-surface",
       "type": "allocate"
-    },
-    {
-      "source": "FUNC-target-profile",
-      "target": "FLOW-mutate-cmd",
-      "type": "io"
     },
     {
       "source": "FUNC-target-profile",
@@ -17648,5 +17765,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 254
+  "graphVersion": 256
 }

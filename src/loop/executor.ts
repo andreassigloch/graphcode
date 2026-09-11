@@ -15,23 +15,16 @@
  * bis das Gate `success:true` sagt oder das Step-Budget endet, und jede
  * Rejection geht als kompaktes Feedback (violations + fixHint) zurück.
  *
+ * Schnitt entlang der Kette Modellantwort → Parser → Preflight → Gate → Rangfolge
+ * (CR-GC-506): Werkzeug-Ausführung in executor-tools.ts, der Gate-Zugang in
+ * executor-gate.ts, die Best-of-N-Runde in executor-bestofn.ts. Hier bleiben
+ * Konfiguration, Tool-Angebot, Backends und die Treiberschleife.
+ *
  * @author andreas@siglochconsulting
  */
-import { readdirSync, readFileSync, statSync } from 'node:fs';
-import { join, relative, resolve } from 'node:path';
 import { z } from 'zod/v4';
-import type { MutateResult } from '@sigloch/contracts/harness';
-import type { FitAdvisory } from '../kernel/measure/fit-advisory.js';
 import type { MCPToolRegistry } from '../kernel/tool-contract.js';
 import { GenerationStep } from './generate.js';
-import { preflightBatch, type PreflightKnown } from './preflight.js';
-import {
-  duplicateHits,
-  renderDuplicateHints,
-  type DuplicateHit,
-  type IndexedElement,
-} from '../kernel/measure/nd-similarity.js';
-import type { SteeringDelta } from '../kernel/measure/steering-snapshot.js';
 // Der Antwortvertrag des Backends (CR-GC-426, SCHEMA-model-answer): geprüft am
 // Empfang, in der Draht-Form JEDES Backends — nicht erst im Prosa-Parser.
 import {
@@ -54,17 +47,10 @@ import {
   buildRoundInjection,
   jsonCapped,
 } from './executor-prompt.js';
-import {
-  deltaSum,
-  steerImprovement,
-  focusDelta,
-  rankCandidates,
-  effectiveFocusDelta,
-  temperatureSpread,
-  totalDelta,
-  type CandidateProbe,
-} from './executor-rank.js';
 import { extractMutateFromText, extractToolCallFromText } from './executor-parse.js';
+import { READ_TOOLS, execReadOrGraphTool, pushToolResults } from './executor-tools.js';
+import { bindGateClient, formatGateFeedback, ruleIdsOf, type MutateOutcome } from './executor-gate.js';
+import { runBestOfNStep } from './executor-bestofn.js';
 
 // ---------------------------------------------------------------------------
 // Config (lokal per CR-GC-278 — Promotion nach @sigloch/contracts erst mit der
@@ -169,86 +155,6 @@ export interface ExecutorStats {
   tokensOut: number;
   tokensReasoning: number;
 }
-
-// ---------------------------------------------------------------------------
-// Read-Tools — auf den Workspace gescoped (Containment-Guard, kein ..-Ausbruch).
-// ---------------------------------------------------------------------------
-
-function contained(workspaceDir: string, p: string): string {
-  const abs = resolve(workspaceDir, p);
-  if (abs !== workspaceDir && !abs.startsWith(workspaceDir + '/')) {
-    throw new Error(`path escapes workspace: ${p}`);
-  }
-  return abs;
-}
-
-interface ReadTool {
-  desc: string;
-  params: Record<string, unknown>;
-  run: (workspaceDir: string, input: Record<string, unknown>) => string;
-}
-
-const READ_TOOLS: Record<string, ReadTool> = {
-  list_dir: {
-    desc: 'List entries under a workspace-relative directory (e.g. "material").',
-    params: { type: 'object', properties: { path: { type: 'string' } }, required: ['path'] },
-    run: (dir, input) => {
-      const p = contained(dir, String(input.path ?? '.'));
-      return readdirSync(p)
-        .map((n) => {
-          try {
-            return statSync(join(p, n)).isDirectory() ? n + '/' : n;
-          } catch {
-            return n;
-          }
-        })
-        .join('\n');
-    },
-  },
-  read_file: {
-    desc: 'Read a workspace-relative file (capped at 8000 chars).',
-    params: { type: 'object', properties: { path: { type: 'string' } }, required: ['path'] },
-    run: (dir, input) => readFileSync(contained(dir, String(input.path)), 'utf8').slice(0, 8000),
-  },
-  grep: {
-    desc: 'Case-insensitive substring search across ./material; up to 40 "relpath:line" hits.',
-    params: { type: 'object', properties: { pattern: { type: 'string' } }, required: ['pattern'] },
-    run: (dir, input) => {
-      const hits: string[] = [];
-      const root = join(dir, 'material');
-      const needle = String(input.pattern ?? '').toLowerCase();
-      const walk = (d: string): void => {
-        for (const n of readdirSync(d)) {
-          const p = join(d, n);
-          let st;
-          try {
-            st = statSync(p);
-          } catch {
-            continue;
-          }
-          if (st.isDirectory()) {
-            if (n !== 'node_modules' && n !== '.git') walk(p);
-          } else if (/\.(ts|js|md|json|tsx)$/.test(n) && st.size < 200_000) {
-            readFileSync(p, 'utf8')
-              .split('\n')
-              .forEach((ln, i) => {
-                if (hits.length < 40 && ln.toLowerCase().includes(needle)) {
-                  hits.push(`${relative(dir, p)}:${i + 1}`);
-                }
-              });
-          }
-          if (hits.length >= 40) return;
-        }
-      };
-      try {
-        walk(root);
-      } catch {
-        // ./material darf fehlen — dann gibt es schlicht keine Treffer.
-      }
-      return hits.join('\n') || '(no hits)';
-    },
-  },
-};
 
 // ---------------------------------------------------------------------------
 // Tool-Schemas: Registry (Zod) → JSON Schema, LM-Studio-tauglich normalisiert.
@@ -413,51 +319,6 @@ export function buildCallModel(config: ExecutorConfig): CallModel {
 }
 
 // ---------------------------------------------------------------------------
-// Gate-Feedback — der Kern des Repair-Loops.
-// ---------------------------------------------------------------------------
-
-type MutateOutcome = Partial<MutateResult> & {
-  success: boolean;
-  /** true = der Preflight hat den Batch lokal geblockt — es gab KEINEN Gate-Call (CR-GC-284). */
-  preflightBlocked?: boolean;
-  /** REQ/UC-Duplikat-Hinweise (CR-GC-287) — reines Feedback, NIE ein Blocker. */
-  hints?: string[];
-  /** Δm-Messung des Gates (CR-GC-274) — Tiebreaker im Best-of-N-Ranking (CR-GC-288). */
-  fitAdvisory?: FitAdvisory;
-  /** Readiness-Delta des dryRun-Verdicts (CR-GC-289) — das primäre Ranking-Kriterium nach tier. */
-  steeringDelta?: SteeringDelta;
-};
-
-/** Kompakte Regel-ID-Liste einer Rejection für die run.log-Trace (CR-GC-286). */
-function ruleIdsOf(result: MutateOutcome | null): string {
-  return [...new Set((result?.violations ?? []).map((v) => v.ruleId))].join(',');
-}
-
-function formatGateFeedback(result: MutateOutcome): string {
-  const violations = (result.violations ?? [])
-    .slice(0, 8)
-    .map(
-      (v) =>
-        `- ${v.ruleId} [${v.severity}] ${v.message}${v.fixHint ? ' — Fix: ' + v.fixHint : ''}`,
-    )
-    .join('\n');
-  const head = result.preflightBlocked
-    ? `Der Batch wurde VOR dem Gate lokal geprüft und NICHT eingereicht (Preflight)` +
-      ` — NICHTS wurde persistiert.\n`
-    : `Das Gate hat den Batch NICHT übernommen (success:false` +
-      `${result.tier ? ', tier=' + result.tier : ''}) — NICHTS wurde persistiert.\n`;
-  // CR-GC-287: Duplikat-Hinweise (kein Blocker) fahren im Feedback mit.
-  const hints = (result.hints ?? []).map((h) => `- ${h}`).join('\n');
-  return (
-    head +
-    (violations || '- (keine Einzel-Violations — prüfe die Command-Form)') +
-    (hints ? '\n' + hints : '') +
-    `\nKorrigiere die beanstandeten Commands und reiche den VOLLSTÄNDIGEN korrigierten Batch ` +
-    `erneut als graph_mutate ein.`
-  ).slice(0, 2500);
-}
-
-// ---------------------------------------------------------------------------
 // Der Loop.
 // ---------------------------------------------------------------------------
 
@@ -498,481 +359,11 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
     tokensReasoning: 0,
   };
 
-  // Graph-Zustand für den Preflight — in-process über die Registry-Tools,
-  // deterministisch, pro Mutate frisch (der Graph ändert sich zwischen Runden).
-  // CR-GC-287: derselbe Snapshot trägt den Element-Index (uid/type/name/descr)
-  // für den REQ/UC-Duplikat-Hinweis — kein zweiter Tool-Call.
-  const loadGraphSnapshot = async (): Promise<{ known: PreflightKnown; index: IndexedElement[] }> => {
-    const els = (await registry['graph_elements'].handler({ limit: 100_000 })) as {
-      nodes?: { uid: string; type: string; name: string; description?: string; attributes?: Record<string, unknown> }[];
-    };
-    const ver = (await registry['graph_get_edges'].handler({ edgeType: 'verify' })) as {
-      edges?: { targetId: string }[];
-    };
-    const nodes = els.nodes ?? [];
-    return {
-      known: {
-        types: new Map(nodes.map((n) => [n.uid, n.type])),
-        verifiedReqs: new Set((ver.edges ?? []).map((e) => e.targetId)),
-        // satisfy-`where` (contracts 9.x): der Preflight braucht die deklarierten kinds.
-        kinds: new Map(nodes.map((n) => [n.uid, n.attributes?.kinds])),
-      },
-      index: nodes.map((n) => ({ uid: n.uid, type: n.type, name: n.name, description: n.description })),
-    };
-  };
-
-  // Input-Parität (CR-GC-286): denselben Zod-Parse wie der MCP-Layer VOR dem
-  // Handler-Call. Bei Parse-Fehler geht der Roh-Input an den Handler, dessen
-  // identischer Schema-Check das AUDITIERTE INPUT-SCHEMA-Block-Verdict liefert
-  // (Zod-Meldung als Violation → formatGateFeedback) — statt eines unauditierten
-  // Handler-Throws als generisches 'executor-call'. Der Preflight (CR-GC-284)
-  // läuft nur auf schema-validem Input — Batch-Hygiene VOR dem Gate, kein
-  // zweites Gate-Urteil; bei jedem Preflight-Fehler geht der Batch unverändert durch.
-  const runPreflight = async (
-    input: unknown,
-  ): Promise<{
-    effective: unknown;
-    blocked: MutateOutcome | null;
-    hints: string[];
-    duplicates: DuplicateHit[];
-  }> => {
-    const parsed = registry['graph_mutate'].inputSchema.safeParse(input);
-    if (!parsed.success) return { effective: input, blocked: null, hints: [], duplicates: [] };
-    let effective: unknown = parsed.data;
-    let hints: string[] = [];
-    let duplicates: DuplicateHit[] = [];
-    try {
-      const snap = await loadGraphSnapshot();
-      const pf = preflightBatch(parsed.data, snap.known);
-      if (pf.action === 'blocked') {
-        stats.preflightBlocked += 1;
-        for (const v of pf.violations) trace(`    preflight blocked: ${v.ruleId} ${v.message}`);
-        return {
-          effective: parsed.data,
-          blocked: { success: false, preflightBlocked: true, violations: pf.violations },
-          hints: [],
-          duplicates: [],
-        };
-      }
-      if (pf.action === 'fixed') {
-        stats.preflightFixed += pf.fixes.length;
-        for (const line of pf.fixes) trace(`    preflight: ${line}`);
-        effective = pf.input;
-      }
-      // CR-GC-287: REQ/UC-Duplikat-HINWEIS (kein Block!) — neue add-nodes gegen
-      // den Element-Index; der Batch geht trotzdem ans Gate, das Gate entscheidet.
-      // CR-GC-361: EINE Messung, zwei Konsumenten — die Zeilen gehen als Feedback
-      // ans Modell, die Treffer als bereinigter Fokus-Delta ins Best-of-N-Ranking.
-      duplicates = duplicateHits(effective, snap.index);
-      hints = renderDuplicateHints(duplicates);
-      for (const h of hints) trace(`    preflight hint: ${h}`);
-    } catch (err) {
-      trace(`    preflight error (pass-through): ${err instanceof Error ? err.message : String(err)}`);
-    }
-    return { effective, blocked: null, hints, duplicates };
-  };
-
-  const callGate = async (input: unknown, hints: string[] = []): Promise<MutateOutcome> => {
-    try {
-      const result = (await registry['graph_mutate'].handler(input)) as MutateOutcome;
-      const out: MutateOutcome = { ...result, success: result.success === true };
-      return hints.length > 0 ? { ...out, hints } : out;
-    } catch (err) {
-      return {
-        success: false,
-        violations: [
-          {
-            ruleId: 'executor-call',
-            severity: 'error',
-            message: err instanceof Error ? err.message : String(err),
-          },
-        ],
-      };
-    }
-  };
-
-  const runMutate = async (input: unknown): Promise<MutateOutcome> => {
-    const pre = await runPreflight(input);
-    if (pre.blocked) return pre.blocked;
-    const outcome = await callGate(pre.effective, pre.hints);
-    // CR-GC-286-Beobachtbarkeit: bei INPUT-SCHEMA die Top-Level-Form loggen —
-    // das Audit speichert bei Schema-Fehlern den Roh-Input nicht (commands:[]),
-    // ohne diese Zeile ist "supply exactly one of commands or formatE" nicht
-    // diagnostizierbar (beide gesetzt? keins?).
-    if (!outcome.success && (outcome.violations ?? []).some((v) => v.ruleId === 'INPUT-SCHEMA')) {
-      const keys =
-        typeof input === 'object' && input !== null ? Object.keys(input).join(',') : typeof input;
-      trace(`    input-schema keys: [${keys}]`);
-    }
-    return outcome;
-  };
-
-  const execReadOrGraphTool = async (name: string, input: unknown): Promise<string> => {
-    const rt = READ_TOOLS[name];
-    if (rt) {
-      try {
-        return rt.run(workspaceDir, (input ?? {}) as Record<string, unknown>);
-      } catch (err) {
-        return 'ERROR: ' + (err instanceof Error ? err.message : String(err));
-      }
-    }
-    if (name.startsWith('graphcode_')) {
-      const tool = registry[name.slice('graphcode_'.length)];
-      if (!tool) return 'ERROR: unknown tool ' + name;
-      try {
-        return jsonCapped(await tool.handler(input ?? {}));
-      } catch (err) {
-        return 'ERROR: ' + (err instanceof Error ? err.message : String(err));
-      }
-    }
-    return 'ERROR: unknown tool ' + name;
-  };
-
-  // Backend-korrektes Anhängen der Tool-Results (+ optionales Gate-Feedback):
-  // anthropic verlangt tool_result-Blöcke in der NÄCHSTEN User-Message — das
-  // Feedback wandert dort als zusätzlicher Text-Block in dieselbe Message.
-  const pushToolResults = (
-    messages: unknown[],
-    calls: ModelToolCall[],
-    results: string[],
-    feedback?: string,
-  ): void => {
-    if (config.backend === 'anthropic') {
-      const content: unknown[] = calls.map((c, i) => ({
-        type: 'tool_result',
-        tool_use_id: c.id,
-        content: results[i],
-      }));
-      if (feedback) content.push({ type: 'text', text: feedback });
-      messages.push({ role: 'user', content });
-      return;
-    }
-    // openai/LM Studio: KEINE separate User-Message nach Tool-Results — Mistrals
-    // Jinja-Template verlangt strikte Rollen-Alternierung und bricht sonst das
-    // Rendering ("conversation roles must alternate", v3-Lauf-Befund). Das
-    // Feedback wandert in den Content des letzten Tool-Results.
-    calls.forEach((c, i) => {
-      const content =
-        feedback && i === calls.length - 1 ? results[i] + '\n\n' + feedback : results[i];
-      messages.push({ role: 'tool', tool_call_id: c.id, content });
-    });
-  };
-
-  // -------------------------------------------------------------------------
-  // Best-of-N (CR-GC-288): N unabhängige Kandidaten sammeln, jeden als Gate-
-  // dryRun proben, deterministisch (oder per Modell-Judge) wählen, NUR den
-  // Gewinner anwenden. Aktiv ab candidates>1 — N=1 fährt den unveränderten
-  // Ein-Kandidaten-Pfad (Regression-Kriterium: byte-identisches Verhalten).
-  // -------------------------------------------------------------------------
-
-  const fmtDelta = (d: number): string => `${d >= 0 ? '+' : ''}${d.toFixed(2)}`;
-
-  /** dryRun-Flag defensiv entfernen — im driver-Modus probt der TREIBER, nicht das Modell. */
-  const stripDryRun = (input: unknown): unknown => {
-    if (typeof input === 'object' && input !== null && 'dryRun' in (input as Record<string, unknown>)) {
-      const { dryRun: _drop, ...rest } = input as Record<string, unknown>;
-      return rest;
-    }
-    return input;
-  };
-
-  interface RoundCandidate extends CandidateProbe {
-    temperature?: number;
-    /** Getrennte Message-History — die Kandidaten sind unabhängig (gleiche Runden-Prompt-Basis). */
-    messages: unknown[];
-    /** Der eingesammelte Batch (dryRun gestrippt); null = kein Batch geliefert. */
-    batch: unknown;
-    /** Preflight-Effektiv-Input (Auto-Fixes angewandt) — das, was Probe UND Apply nutzen. */
-    effective: unknown;
-    verdict: MutateOutcome | null;
-    /** REQ/UC-Beinahe-Duplikate dieses Batches (CR-GC-361) — bereinigt den Fokus-Delta. */
-    duplicates: DuplicateHit[];
-  }
-
-  /**
-   * Turn-Loop eines Kandidaten bis zum ERSTEN Mutate-Batch — Read-Tools,
-   * Idle-Nudge und Prosa-/[ARGS]-Recovery wie im Ein-Kandidaten-Pfad, aber der
-   * Batch geht NICHT ans Gate: einsammeln, der Treiber probt und wählt.
-   */
-  const collectCandidateBatch = async (
-    messages: unknown[],
-    label: string,
-    temperature?: number,
-  ): Promise<unknown> => {
-    let nudged = false;
-    let readTurns = 0;
-    for (let turn = 0; turn < config.maxStepTurns; turn++) {
-      stats.modelTurns += 1;
-      let resp: ModelResponse;
-      try {
-        resp = await callModel(
-          SYSTEM,
-          messages,
-          tools,
-          temperature !== undefined ? { temperature } : undefined,
-        );
-      } catch (err) {
-        trace(`  ${label}: call failed (${(err as Error).message.slice(0, 80)}) — skip`);
-        return null;
-      }
-      stats.tokensIn += resp.usage.in;
-      stats.tokensOut += resp.usage.out;
-      stats.tokensReasoning += resp.usage.reasoning;
-      trace(
-        `  ${label}.${turn + 1}: ` +
-          (resp.toolCalls.map((c) => c.name.replace('graphcode_', '')).join(',') ||
-            // CR-GC-426: OHNE den Stop-Grund sieht eine am Token-Budget abgeschnittene
-            // Antwort genauso aus wie eine geschwaetzige — beide "(no calls)". Der
-            // Salvage-Pfad unten existiert nur fuer die erste; die Spur muss sie trennen.
-            `(no calls, stop=${resp.stopReason ?? 'unbekannt'})`),
-      );
-
-      if (resp.toolCalls.length === 0) {
-        let recovered: unknown = extractMutateFromText(resp.text);
-        if (!recovered) {
-          const textCall = extractToolCallFromText(resp.text);
-          const canonical = textCall?.name.replace(/^graphcode_/, '');
-          if (textCall && canonical === 'graph_mutate') {
-            recovered = textCall.input ?? {};
-          } else if (textCall && canonical && (READ_TOOLS[textCall.name] || registry[canonical])) {
-            const toolName = READ_TOOLS[textCall.name] ? textCall.name : 'graphcode_' + canonical;
-            const result = await execReadOrGraphTool(toolName, textCall.input);
-            trace(`    recovered text tool-call ${canonical}`);
-            messages.push({ role: 'assistant', content: resp.text });
-            messages.push({
-              role: 'user',
-              content:
-                `Ergebnis von ${canonical}:\n${result.slice(0, 4000)}\n` +
-                'Fahre fort: emittiere jetzt den geforderten graph_mutate-Batch.',
-            });
-            continue;
-          }
-        }
-        if (recovered) {
-          // Assistant-Text in die History — ein späteres Repair-Feedback (User-
-          // Message) braucht die Rollen-Alternierung (Mistral-Jinja, s. pushToolResults).
-          messages.push({ role: 'assistant', content: resp.text });
-          return stripDryRun(recovered);
-        }
-        trace(`    idle: ${resp.text.slice(0, 160).replace(/\n/g, ' ')}`);
-        if (nudged) return null;
-        nudged = true;
-        messages.push({ role: 'assistant', content: resp.text || '(leer)' });
-        messages.push({ role: 'user', content: IDLE_NUDGE });
-        continue;
-      }
-
-      messages.push(resp.assistantMsg);
-      const results: string[] = [];
-      let captured: unknown = null;
-      for (const call of resp.toolCalls) {
-        if (call.name === 'graphcode_graph_mutate' && captured === null) {
-          captured = stripDryRun(call.input);
-          results.push(
-            JSON.stringify({
-              collected: true,
-              note: 'Kandidat eingesammelt — der Treiber probt am Gate und wählt (CR-GC-288).',
-            }),
-          );
-        } else {
-          results.push(await execReadOrGraphTool(call.name, call.input));
-        }
-      }
-      if (captured === null) readTurns += 1;
-      const feedback = captured === null && readTurns >= 2 ? IDLE_NUDGE : undefined;
-      pushToolResults(messages, resp.toolCalls, results, feedback);
-      if (captured !== null) return captured;
-    }
-    return null;
-  };
-
-  /**
-   * Gate-dryRun-Probe eines Kandidaten: Preflight pro Kandidat VOR der Probe
-   * (CR-GC-284), dann das volle Verdict (tier/violations/fitAdvisory) ohne
-   * Persistenz. dryRun-Proben zählen in stats.dryRunProbes und werden als
-   * validate auditiert — NIE als Step-Abschluss gewertet: nur der Gewinner
-   * wird danach OHNE dryRun angewandt.
-   */
-  const probeCandidate = async (c: RoundCandidate): Promise<void> => {
-    if (c.batch === null) return;
-    const pre = await runPreflight(c.batch);
-    c.duplicates = pre.duplicates;
-    if (pre.blocked) {
-      c.effective = null;
-      c.verdict = pre.blocked;
-      return;
-    }
-    c.effective = pre.effective;
-    stats.dryRunProbes += 1;
-    const probeInput =
-      typeof pre.effective === 'object' && pre.effective !== null
-        ? { ...(pre.effective as Record<string, unknown>), dryRun: true }
-        : pre.effective;
-    c.verdict = await callGate(probeInput);
-  };
-
-  /** Ranking-Stufen als Trace (CR-GC-289) — der Pick wird nachvollziehbar. */
-  const traceCandidate = (c: RoundCandidate, n: number, focusDimension: string | null): void => {
-    if (!c.verdict) {
-      trace(`  candidate ${c.index + 1}/${n}: no batch`);
-      return;
-    }
-    const v = c.verdict;
-    const tier = v.preflightBlocked ? 'preflight-block' : (v.tier ?? (v.success ? 'suggest' : 'block'));
-    // CR-GC-361: bei Duplikaten BEIDE Zahlen — der rohe Fokus-Delta und der
-    // bereinigte, nach dem wirklich gerankt wird. Sonst ist ein Pick, der am
-    // bereinigten Wert kippt, aus der Trace nicht nachvollziehbar.
-    const dupes = c.duplicates.length;
-    const eff = effectiveFocusDelta(c, focusDimension);
-    trace(
-      `  candidate ${c.index + 1}/${n}: tier=${tier} focus(${focusDimension ?? '-'})=${fmtDelta(
-        focusDelta(v, focusDimension),
-      )}${dupes > 0 ? ` dupes=${dupes} eff=${fmtDelta(eff)}` : ''}` +
-        ` total=${fmtDelta(totalDelta(v))} steer=${fmtDelta(steerImprovement(v))} Δm=${fmtDelta(deltaSum(v))} mutations=${v.mutations ?? 0}`,
-    );
-  };
-
-  /** judge:'model' — die LLM wählt aus den gerenderten Verdicts; unparsebare Antwort ⇒ null (Algo-Pick). */
-  const modelJudgePick = async (
-    viable: RoundCandidate[],
-    focusDimension: string | null,
-  ): Promise<RoundCandidate | null> => {
-    const lines = viable.map((c, i) => {
-      const v = c.verdict!;
-      const viols =
-        (v.violations ?? [])
-          .slice(0, 3)
-          .map((x) => `${x.ruleId}[${x.severity}]`)
-          .join(',') || '-';
-      return (
-        `${i + 1}. tier=${v.tier ?? '?'} focus(${focusDimension ?? '-'})=${fmtDelta(focusDelta(v, focusDimension))} ` +
-        `total=${fmtDelta(totalDelta(v))} steer=${fmtDelta(steerImprovement(v))} Δm=${fmtDelta(deltaSum(v))} mutations=${v.mutations ?? 0} violations=${viols}`
-      );
-    });
-    const prompt =
-      'Wähle den besten Kandidaten-Batch anhand der Gate-Verdicts (dryRun-Proben):\n' +
-      lines.join('\n') +
-      `\nAntworte NUR mit der Nummer (1-${viable.length}).`;
-    try {
-      const resp = await callModel(SYSTEM, [{ role: 'user', content: prompt }], tools);
-      stats.modelTurns += 1;
-      stats.tokensIn += resp.usage.in;
-      stats.tokensOut += resp.usage.out;
-      stats.tokensReasoning += resp.usage.reasoning;
-      const m = /\d+/.exec(resp.text);
-      if (!m) return null;
-      const idx = Number(m[0]) - 1;
-      return idx >= 0 && idx < viable.length ? viable[idx] : null;
-    } catch {
-      return null;
-    }
-  };
-
-  /**
-   * Eine Best-of-N-Runde: N Kandidaten sammeln + proben, wählen, Gewinner
-   * anwenden. Sind ALLE Kandidaten block, geht das beste Feedback zurück ans
-   * Modell (Repair-Loop wie im Ein-Kandidaten-Pfad) — der reparierte Kandidat
-   * wird erneut geprobt und neu gerankt.
-   */
-  const runBestOfNStep = async (baseContent: string, focusDimension: string | null): Promise<void> => {
-    const n = config.candidates;
-    const temps: (number | undefined)[] =
-      config.backend === 'openai' ? temperatureSpread(n) : new Array<undefined>(n).fill(undefined);
-    const candidates: RoundCandidate[] = [];
-    for (let k = 0; k < n; k++) {
-      const c: RoundCandidate = {
-        index: k,
-        temperature: temps[k],
-        messages: [{ role: 'user', content: baseContent }],
-        batch: null,
-        effective: null,
-        verdict: null,
-        duplicates: [],
-      };
-      c.batch = await collectCandidateBatch(c.messages, `cand ${k + 1}/${n}`, c.temperature);
-      if (c.batch !== null) stats.candidatesSampled += 1;
-      await probeCandidate(c);
-      traceCandidate(c, n, focusDimension);
-      candidates.push(c);
-    }
-
-    let repairs = 0;
-    let repairedInStep = false;
-    for (;;) {
-      const withVerdict = candidates.filter((c) => c.verdict !== null);
-      if (withVerdict.length === 0) return; // kein Kandidat lieferte einen Batch — nächste Runde
-      const ranked = rankCandidates(withVerdict, focusDimension);
-      const viable = ranked.filter((c) => c.verdict!.success === true);
-
-      if (viable.length === 0) {
-        // ALLE block (Gate-dryRun oder Preflight): bestes Feedback zurück ans
-        // Modell — Repair im Rahmen des Step-Budgets, sonst nächste generate-Runde.
-        if (repairs >= config.maxStepTurns) return;
-        repairs += 1;
-        repairedInStep = true;
-        const best = ranked[0];
-        trace(
-          `    all candidates block [${ruleIdsOf(best.verdict)}] — feeding best feedback back (repair ${repairs}/${config.maxStepTurns})`,
-        );
-        best.messages.push({ role: 'user', content: formatGateFeedback(best.verdict!) });
-        best.batch = await collectCandidateBatch(best.messages, `repair cand ${best.index + 1}`, best.temperature);
-        best.effective = null;
-        best.verdict = null;
-        if (best.batch === null) return;
-        stats.candidatesSampled += 1;
-        await probeCandidate(best);
-        traceCandidate(best, n, focusDimension);
-        continue;
-      }
-
-      // Auswahl: Algo-Pick = deterministisches Ranking; judge:'model' lässt die
-      // LLM wählen, aber BEIDE Picks werden geloggt (messbarer Vergleich).
-      const algoPick = viable[0];
-      let winner = algoPick;
-      if (config.judge === 'model' && viable.length > 1) {
-        const modelPick = await modelJudgePick(viable, focusDimension);
-        stats.modelPicks += 1;
-        if (modelPick !== null && modelPick.index !== algoPick.index) {
-          stats.judgeDisagreements += 1;
-          winner = modelPick;
-        } else {
-          stats.algoPicks += 1;
-        }
-        trace(
-          `    pick: algo=${algoPick.index + 1} model=${(modelPick ?? algoPick).index + 1} applied=${winner.index + 1} (judge=model)`,
-        );
-      } else {
-        stats.algoPicks += 1;
-        trace(`    pick: candidate ${winner.index + 1} (judge=gate)`);
-      }
-
-      // Nur der Gewinner OHNE dryRun — auf dem Preflight-Effektiv-Input, der
-      // Preflight lief bereits pro Kandidat (kein Doppel-Zählen der Fixes).
-      const outcome = await callGate(winner.effective);
-      if (outcome.success) {
-        stats.mutatesApplied += 1;
-        if (repairedInStep) stats.repairedAfterRejection += 1;
-        trace(`    winner applied (${outcome.mutations ?? '?'} mutations)`);
-        return;
-      }
-      // Realer Apply abgelehnt (Verdict-Drift zwischen Probe und Apply — selten):
-      // wie eine Gate-Rejection behandeln, Feedback an den Gewinner, Repair.
-      stats.mutatesRejected += 1;
-      trace(`    winner apply REJECTED [${ruleIdsOf(outcome)}] — feeding violations back`);
-      if (repairs >= config.maxStepTurns) return;
-      repairs += 1;
-      repairedInStep = true;
-      winner.messages.push({ role: 'user', content: formatGateFeedback(outcome) });
-      winner.batch = await collectCandidateBatch(winner.messages, `repair cand ${winner.index + 1}`, winner.temperature);
-      winner.effective = null;
-      winner.verdict = null;
-      if (winner.batch === null) return;
-      stats.candidatesSampled += 1;
-      await probeCandidate(winner);
-      traceCandidate(winner, n, focusDimension);
-    }
-  };
-
+  // Der Gate-Zugang (executor-gate.ts): Parse → Preflight → graph_mutate → Feedback.
+  // Ein-Kandidaten-Pfad und Best-of-N-Runde teilen ihn — es gibt EINE Sendestelle.
+  const gate = bindGateClient(registry, stats, trace);
+  // Best-of-N (CR-GC-288, executor-bestofn.ts): derselbe Lauf-Zustand wie unten.
+  const bestOfNContext = { registry, workspaceDir, config, callModel, tools, stats, trace, gate };
   // Intent bei JEDEM generate-Call mitgeben (nicht nur beim ersten, wie im Rig):
   // scheitert der Seed-Step (Timeout, Idle), liefe die Folgerunde sonst ohne
   // Intent UND ohne SYS in die "Erfrage die Systemintention"-Sackgasse — und
@@ -1042,7 +433,7 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
       // Fokus-Dimension aus dem GenerationStep (CR-GC-289): focusKey hat die
       // Form `dimension:ids` — das Ranking bevorzugt Reparatur GENAU dort.
       // Der Turn-Loop darunter bleibt der unveränderte N=1-Pfad.
-      await runBestOfNStep(baseContent, gen.focusKey ? gen.focusKey.split(':')[0] : null);
+      await runBestOfNStep(bestOfNContext, baseContent, gen.focusKey ? gen.focusKey.split(':')[0] : null);
       continue;
     }
     const messages: unknown[] = [{ role: 'user', content: baseContent }];
@@ -1085,7 +476,7 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
             // Sonstiger Tool-Call als Text: ausführen, Ergebnis in die History —
             // der Turn trägt, statt an die Nudge zu fallen (CR-GC-280).
             const toolName = READ_TOOLS[textCall.name] ? textCall.name : 'graphcode_' + canonical;
-            const result = await execReadOrGraphTool(toolName, textCall.input);
+            const result = await execReadOrGraphTool(registry, workspaceDir, toolName, textCall.input);
             trace(`    recovered text tool-call ${canonical}`);
             messages.push({ role: 'assistant', content: resp.text });
             messages.push({
@@ -1105,7 +496,7 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
           messages.push({ role: 'user', content: IDLE_NUDGE });
           continue;
         }
-        const outcome = await runMutate(recovered);
+        const outcome = await gate.runMutate(recovered);
         if (outcome.success) {
           stats.mutatesApplied += 1;
           if (rejectedInStep) stats.repairedAfterRejection += 1;
@@ -1140,10 +531,10 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
             (call.input as Record<string, unknown>).dryRun === true;
           if (isDryRun) {
             stats.dryRunProbes += 1;
-            results.push(await execReadOrGraphTool(call.name, call.input));
+            results.push(await execReadOrGraphTool(registry, workspaceDir, call.name, call.input));
             continue;
           }
-          const outcome = await runMutate(call.input);
+          const outcome = await gate.runMutate(call.input);
           results.push(jsonCapped(outcome));
           if (outcome.success) {
             stats.mutatesApplied += 1;
@@ -1155,7 +546,7 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
             lastRejection = outcome;
           }
         } else {
-          results.push(await execReadOrGraphTool(call.name, call.input));
+          results.push(await execReadOrGraphTool(registry, workspaceDir, call.name, call.input));
         }
       }
       const attemptedMutate = appliedThisTurn || rejectedThisTurn;
@@ -1169,7 +560,7 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
           : !attemptedMutate && readTurns >= 2
             ? IDLE_NUDGE
             : undefined;
-      pushToolResults(messages, resp.toolCalls, results, feedback);
+      pushToolResults(config.backend, messages, resp.toolCalls, results, feedback);
       if (appliedThisTurn) {
         if (rejectedInStep || rejectedThisTurn) stats.repairedAfterRejection += 1;
         break; // Step autoriert → nächste generate-Runde
