@@ -38,7 +38,6 @@ import { suggestEdits, type Suggestion, type SuggestedEdit } from '@sigloch/se-e
 import { toOntologyGraph } from '../kernel/conformance.js';
 import { generationStep, type GenerationStep } from './generate.js';
 import {
-  TargetWeightsSchema,
   loadTargetProfile,
   extractIntentAnchors,
   isIntentTooThin,

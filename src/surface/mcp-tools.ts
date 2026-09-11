@@ -28,7 +28,7 @@
  */
 
 import type { AuditLog } from '@sigloch/graph-api-core';
-import type { MCPTool, MCPToolRegistry } from '../kernel/tool-contract.js';
+import type { MCPToolRegistry } from '../kernel/tool-contract.js';
 import type { GraphCodeHarness } from '../kernel/harness.js';
 import { createToolContext, type ToolContext } from './tool-context.js';
 import { bindReadTools } from './read.js';
