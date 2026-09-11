@@ -9,8 +9,8 @@
  * bypasses R-01, so every REQ without a verify-traced TEST is SURFACED (and, for
  * untrusted input, rejected). CR-GC-203 item 6.
  *
- * What did NOT move, deliberately: the Apply-Gate (`applyMutation`) and the write mutex
- * (O3) stay in harness.ts; the store lock (O2) and every store write sit in graph-store.ts,
+ * What did NOT move here, deliberately: the Apply-Gate sits in gate.ts (CR-GC-504), the write
+ * mutex (O3) in harness.ts; the store lock (O2) and every store write sit in graph-store.ts,
  * which hands this module a narrow port (CR-GC-503). The gate is governance, not formatting —
  * `reseed()` still calls into this module from INSIDE the O3 mutex, so a reseed can never
  * interleave with a mutate.

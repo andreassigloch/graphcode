@@ -254,7 +254,7 @@ export function bindSuggestTools(ctx: ToolPort): MCPToolRegistry {
       const ranked: RankedSuggestion[] = suggestions.map((s, i) => {
         const verdict = verdicts[i];
         // Anwendbar = Edit vorhanden UND vom Gate durchgelassen UND ein Steuer-Advisory da.
-        // Ein geblockter Edit hat keines (harness.applyMutation liefert es nur bei success) —
+        // Ein geblockter Edit hat keines (Gate.apply liefert es nur bei success) —
         // dann bleibt die Sonde stehen, aber als nicht anwendbar markiert.
         if (!verdict?.success || !verdict.steer) {
           return { ...s, applicable: false, ...(verdict ? { verdict } : {}) };
