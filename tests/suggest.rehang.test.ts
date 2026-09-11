@@ -18,9 +18,14 @@
  *   2. DIE GRENZE — delete+add DERSELBEN Kante in einem Batch führt zu
  *      Store ≠ Memory (persist schreibt upserts vor deletes). Die bekannte
  *      Einschränkung (import-code-verb) ist damit erzwungen, nicht behauptet.
- *   3. DER REPO-GRAPH — `graph_suggest` liefert auf docs/graph/
- *      graphcode.graph.json mindestens einen Vorschlag mit `applicable:true`
- *      auf layer:'arch' (Messung 2026-08-26 vor dem Fix: null).
+ *   3. DER REPO-GRAPH — `graph_suggest` auf docs/graph/graphcode.graph.json,
+ *      layer:'arch': jeder anwendbare Umhänge-Edit wurde als VERBUND beurteilt,
+ *      und kein Merge-Vorschlag scheitert am Gate. Die Anwendbarkeit des
+ *      Umhängens selbst belegt Nachweis 1 an der Fixture. CR-SM-309: am
+ *      Repo-Graphen (v261) ist seitdem KEIN Architektur-Zug anwendbar — die
+ *      einzigen anwendbaren waren FLOW-Merges, die IO-02 verletzten
+ *      (Messung 2026-08-26 vor CR-GC-435: null, danach ≥ 1, jetzt wieder null
+ *      aus dem neuen Grund). Die Zahl wird berichtet, nicht gefordert.
  *
  * @author andreas@siglochconsulting
  */
@@ -124,8 +129,8 @@ describe('CR-GC-435: Umhängen geht atomar durchs Gate', () => {
   }, 120_000);
 });
 
-describe('CR-GC-435: am Repo-Graphen ist wieder ein Architektur-Vorschlag anwendbar', () => {
-  it("graph_suggest liefert auf layer:'arch' mindestens eine Suggestion mit applicable:true", async () => {
+describe('CR-GC-435: am Repo-Graphen urteilt der dryRun über den Verbund', () => {
+  it("graph_suggest auf layer:'arch': kein Merge scheitert am Gate, jeder anwendbare retire-Edit ist ein Verbund", async () => {
     const repoGraph = JSON.parse(
       readFileSync(join(__dirname, '..', 'docs/graph/graphcode.graph.json'), 'utf8'),
     ) as FixtureGraph;
@@ -134,11 +139,16 @@ describe('CR-GC-435: am Repo-Graphen ist wieder ein Architektur-Vorschlag anwend
       const res = (await rig.tools.graph_suggest.handler({ target: { coherence: 1 }, k: 20, layer: 'arch' })) as GraphSuggestResult;
 
       const applicable = res.suggestions.filter((s) => s.applicable);
+      // eslint-disable-next-line no-console
+      console.log(
+        `[CR-GC-435] am Repo-Graphen: ${res.suggestions.length} Vorschläge, ${applicable.length} applicable — ` +
+          res.suggestions.map((s) => `${s.ruleId}${s.edit ? '+edit' : ''}${s.verdict?.success === false ? '(refused)' : ''}`).join(', '),
+      );
+      // CR-SM-309: der Operator schlägt keinen Merge mehr vor, den das Gate abweist.
       expect(
-        applicable.length,
-        'kein anwendbarer Vorschlag auf dem Repo-Graphen — exakt der Befund, den CR-GC-435 behebt ' +
-          `(Suggestions: ${res.suggestions.map((s) => `${s.ruleId}${s.edit ? '+edit' : ''}${s.verdict?.success === false ? '(refused)' : ''}`).join(', ')})`,
-      ).toBeGreaterThan(0);
+        res.suggestions.filter((s) => s.ruleId === 'OP-MERGE' && !s.applicable).map((s) => `${s.edit?.source}→${s.edit?.target}`),
+        'OP-MERGE schlägt Züge vor, die das Gate abweist',
+      ).toEqual([]);
 
       // Wo ein Edit ein retire trägt, hat der dryRun den VERBUND beurteilt — ein
       // `applicable:true` an so einem Edit ist ohne den Batch-dryRun unmöglich,
