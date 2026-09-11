@@ -3,7 +3,8 @@
  *
  * EIN Messpfad für "wo steht der Graph im Readiness-Raum": voller Regelkatalog
  * (`evaluateAllRules` inkl. UC-01/ND — dafür die ND-Matrix-Injektion, CR-GC-287)
- * plus `computeReadiness` — exakt der Raum, in dem `graph_generate` den Fokus
+ * plus `computeReadiness` und die Phasen-Gates aus demselben Regelstrom — exakt der
+ * Raum, in dem `graph_generate` den Fokus
  * wählt. Genutzt von `generationStep` (Fokus-Wahl) und vom dryRun-Zweig in
  * `graph_mutate` (steeringDelta im Preview-Verdict). Keine Duplikation: die
  * frühere Inline-Sequenz in generate.ts ist hierher extrahiert.
@@ -19,6 +20,7 @@ import type { OntologyGraph, MetricPolicy } from '@sigloch/contracts/se';
 import { evaluateAllRules } from '@sigloch/contracts/se';
 import { computeReadiness } from '@sigloch/se-engine';
 import { toOntologyGraph } from '../conformance.js';
+import { computePhaseReadiness, type PhaseGateReadiness } from './readiness.js';
 
 export interface SteeringSnapshot {
   /** Der gemappte Ontology-Graph MIT injizierten ND-Matrizen. */
@@ -28,6 +30,11 @@ export interface SteeringSnapshot {
   /** Error-Funde — die Gate-Blocker-Zählung des Steering-Raums. */
   blockingErrors: number;
   report: ReturnType<typeof computeReadiness>;
+  /**
+   * Die Phasen-Gates aus DEMSELBEN Regelstrom (CR-GC-296). Gerechnet hier, im Messwerk,
+   * nicht beim Leser: generationStep projizierte sie bis CR-GC-502 selbst aus `violations`.
+   */
+  phaseReadiness: PhaseGateReadiness[];
 }
 
 /**
@@ -65,6 +72,7 @@ export function takeSteeringSnapshot(
     violations,
     blockingErrors: violations.filter((v) => v.severity === 'error').length,
     report: computeReadiness(og, policy, focusThreshold),
+    phaseReadiness: computePhaseReadiness(violations.map((v) => ({ ruleId: v.rule_id }))),
   };
 }
 

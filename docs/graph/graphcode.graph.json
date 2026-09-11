@@ -1727,6 +1727,12 @@
       "description": "Die Urteilsschwellen, wie der Mensch sie in graphcode.config.jsonc schreibt: vor dem Auffuellen mit DEFAULT_METRIC_POLICY, Felder duerfen fehlen. Gleicher Vertrag wie die geltende Policy, anderer Zustand."
     },
     {
+      "id": "FLOW-conformance-findings",
+      "type": "FLOW",
+      "name": "Konformanzbefunde",
+      "description": "Die RC-Befunde aus dem Abgleich Modell gegen Code (conformanceEvaluation). Sie gehen in die volle Auswertung und damit in die Readiness, nicht ins Gate. (CR-GC-501)"
+    },
+    {
       "id": "FLOW-dimension-readiness",
       "type": "FLOW",
       "name": "Dimensions-Readiness (8 Scores)",
@@ -1764,7 +1770,7 @@
       "id": "FLOW-gate-verdict",
       "type": "FLOW",
       "name": "Gate-Verdikt",
-      "description": "Das Urteil des Apply-Gates ueber eine angewendete oder probierte Mutation: success, tier, Violations, Confidence. Der Bootstrap-Ausgang und der offene Regelstrom sind dasselbe Urteil, kein zweiter Vertrag daneben. Es schliesst die Schleife, weil der naechste Snapshot darauf misst.",
+      "description": "Das Urteil des Apply-Gates ueber eine angewendete oder probierte Mutation: success, tier, Violations, Confidence; beim Probelauf dazu fitAdvisory, steeringDelta und steerAdvisory. Erzeugt nur mutate. bootstrap und import-code-verb reichen es weiter, die Kandidaten-Rangfolge liest daraus. Der offene Regelstrom ist ein eigener Fluss (FLOW-rule-findings). (CR-GC-501)",
       "status": "reviewed"
     },
     {
@@ -1918,6 +1924,12 @@
       "concept": true
     },
     {
+      "id": "FLOW-rule-findings",
+      "type": "FLOW",
+      "name": "Regelbefunde",
+      "description": "Die Befunde des Gate-Katalogs ueber den aktuellen Graphen (harness.evaluateRules). Das Gate urteilt damit, der Health-Endpunkt prueft damit, dass das Gate verdrahtet ist. Kein Urteil ueber eine Mutation, das traegt FLOW-gate-verdict. (CR-GC-501)"
+    },
+    {
       "id": "FLOW-schema-fingerprint",
       "type": "FLOW",
       "name": "Schema-Fingerabdruck",
@@ -1946,6 +1958,12 @@
       "type": "FLOW",
       "name": "Skill-Aufruf",
       "description": "Aufruf eines Skills durch den Menschen: Absicht, Zielausschnitt, Optionen. Autoren- und Berichts-Skills nehmen denselben Auftrag entgegen."
+    },
+    {
+      "id": "FLOW-sse-frame",
+      "type": "FLOW",
+      "name": "SSE-Frame (versioniert)",
+      "description": "Das Live-Update-Event auf der Leitung zum Viewer: broadcast vergibt die fortlaufende id, damit ein Viewer per Last-Event-ID wieder aufsetzen kann. Inhalt wie FLOW-live-event, plus Version. (CR-GC-501)"
     },
     {
       "id": "FLOW-steering-delta",
@@ -5232,6 +5250,18 @@
       "name": "Round-Scope-Slice",
       "description": "Vertrag des Runden-Scopes: der Format-E-Slice als string aus graph_impact bzw. graph_expand, der den Blast-Radius einer Runde begrenzt. Bewusst ohne Zod-Symbol — informationeller Rundenkontext, kein Code-Datenvertrag; concept-only.",
       "concept": true
+    },
+    {
+      "id": "SCHEMA-rule-violation",
+      "type": "SCHEMA",
+      "name": "RuleViolation",
+      "description": "Ein Regelbefund: rule_id, severity, element_id, message, fix_hint, context. Derselbe Vertrag fuer den Gate-Katalog und die Konformanzregeln. @sigloch/contracts harness. (CR-GC-501)",
+      "external": true,
+      "realRef": {
+        "file": "packages/contracts/src/harness/index.ts",
+        "symbol": "RuleViolationSchema",
+        "lang": "ts"
+      }
     },
     {
       "id": "SCHEMA-schema-fingerprint",
@@ -11025,11 +11055,6 @@
     },
     {
       "source": "FCHAIN-model-import",
-      "target": "FUNC-import",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-model-import",
       "target": "FUNC-import-code",
       "type": "compose"
     },
@@ -11041,6 +11066,11 @@
     {
       "source": "FCHAIN-model-import",
       "target": "FUNC-import-doc",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-model-import",
+      "target": "FUNC-mutate",
       "type": "compose"
     },
     {
@@ -11100,6 +11130,11 @@
       "target": "FUNC-apply-reseed",
       "type": "compose",
       "weight": "1"
+    },
+    {
+      "source": "FCHAIN-recall",
+      "target": "FUNC-import",
+      "type": "compose"
     },
     {
       "source": "FCHAIN-recall",
@@ -11469,7 +11504,7 @@
     },
     {
       "source": "FLOW-arch-fitness",
-      "target": "FUNC-rank-candidates",
+      "target": "FUNC-fit-advisory",
       "type": "io"
     },
     {
@@ -11620,14 +11655,14 @@
       "type": "relation"
     },
     {
-      "source": "FLOW-dimension-readiness",
-      "target": "FUNC-generation-step",
+      "source": "FLOW-conformance-findings",
+      "target": "FUNC-compute-readiness",
       "type": "io"
     },
     {
-      "source": "FLOW-dimension-readiness",
-      "target": "FUNC-next-step",
-      "type": "io"
+      "source": "FLOW-conformance-findings",
+      "target": "SCHEMA-rule-violation",
+      "type": "relation"
     },
     {
       "source": "FLOW-dimension-readiness",
@@ -11642,6 +11677,11 @@
     {
       "source": "FLOW-dimension-readiness",
       "target": "FUNC-se-status",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-dimension-readiness",
+      "target": "FUNC-take-steering-snapshot",
       "type": "io"
     },
     {
@@ -11753,7 +11793,7 @@
     },
     {
       "source": "FLOW-gate-verdict",
-      "target": "FUNC-compute-phase-readiness",
+      "target": "FUNC-bootstrap",
       "type": "io"
     },
     {
@@ -11763,7 +11803,12 @@
     },
     {
       "source": "FLOW-gate-verdict",
-      "target": "FUNC-health-endpoint",
+      "target": "FUNC-import-code-verb",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-gate-verdict",
+      "target": "FUNC-rank-candidates",
       "type": "io"
     },
     {
@@ -11786,11 +11831,6 @@
     {
       "source": "FLOW-gate-verdict",
       "target": "FUNC-se-status",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-gate-verdict",
-      "target": "FUNC-take-steering-snapshot",
       "type": "io"
     },
     {
@@ -11834,6 +11874,11 @@
     {
       "source": "FLOW-graph-state",
       "target": "FUNC-close-store",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-graph-state",
+      "target": "FUNC-compute-readiness",
       "type": "io"
     },
     {
@@ -11944,6 +11989,11 @@
     },
     {
       "source": "FLOW-graph-state",
+      "target": "FUNC-take-steering-snapshot",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-graph-state",
       "target": "SCHEMA-ontology-graph",
       "type": "relation",
       "weight": 1,
@@ -12042,13 +12092,6 @@
       "source": "FLOW-learning-query",
       "target": "SCHEMA-learning-query",
       "type": "relation"
-    },
-    {
-      "source": "FLOW-live-event",
-      "target": "ACTOR-dashboard",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
       "source": "FLOW-live-event",
@@ -12171,7 +12214,7 @@
     },
     {
       "source": "FLOW-phase-readiness",
-      "target": "FUNC-generation-step",
+      "target": "FUNC-take-steering-snapshot",
       "type": "io"
     },
     {
@@ -12310,6 +12353,21 @@
     {
       "source": "FLOW-round-scope",
       "target": "SCHEMA-round-scope",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-rule-findings",
+      "target": "FUNC-health-endpoint",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-rule-findings",
+      "target": "FUNC-mutate",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-rule-findings",
+      "target": "SCHEMA-rule-violation",
       "type": "relation"
     },
     {
@@ -12453,6 +12511,21 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-sse-frame",
+      "target": "ACTOR-dashboard",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-sse-frame",
+      "target": "SCHEMA-update-event",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-steering-delta",
+      "target": "FUNC-bind-tools",
+      "type": "io"
+    },
+    {
       "source": "FLOW-steering-delta",
       "target": "FUNC-rank-candidates",
       "type": "io"
@@ -12464,12 +12537,12 @@
     },
     {
       "source": "FLOW-steering-snapshot",
-      "target": "FUNC-compute-readiness",
+      "target": "FUNC-compute-steering-delta",
       "type": "io"
     },
     {
       "source": "FLOW-steering-snapshot",
-      "target": "FUNC-compute-steering-delta",
+      "target": "FUNC-generation-step",
       "type": "io"
     },
     {
@@ -12627,7 +12700,7 @@
     },
     {
       "source": "FUNC-arch-fitness",
-      "target": "MOD-projections",
+      "target": "MOD-kernel-measure",
       "type": "allocate"
     },
     {
@@ -13342,9 +13415,8 @@
     },
     {
       "source": "FUNC-bootstrap",
-      "target": "FLOW-gate-verdict",
-      "type": "io",
-      "weight": "1"
+      "target": "FLOW-mutate-cmd",
+      "type": "io"
     },
     {
       "source": "FUNC-bootstrap",
@@ -13359,7 +13431,7 @@
     },
     {
       "source": "FUNC-broadcast-diff",
-      "target": "FLOW-live-event",
+      "target": "FLOW-sse-frame",
       "type": "io"
     },
     {
@@ -13392,9 +13464,8 @@
     },
     {
       "source": "FUNC-check-code-conformance",
-      "target": "FLOW-gate-verdict",
-      "type": "io",
-      "weight": "1"
+      "target": "FLOW-conformance-findings",
+      "type": "io"
     },
     {
       "source": "FUNC-check-code-conformance",
@@ -13494,7 +13565,7 @@
     },
     {
       "source": "FUNC-compute-readiness",
-      "target": "MOD-projections",
+      "target": "MOD-kernel-measure",
       "type": "allocate"
     },
     {
@@ -13661,10 +13732,8 @@
     },
     {
       "source": "FUNC-evaluate-rules",
-      "target": "FLOW-gate-verdict",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "target": "FLOW-rule-findings",
+      "type": "io"
     },
     {
       "source": "FUNC-evaluate-rules",
@@ -14019,10 +14088,8 @@
     },
     {
       "source": "FUNC-import",
-      "target": "FLOW-gate-verdict",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "target": "FLOW-graph-state",
+      "type": "io"
     },
     {
       "source": "FUNC-import",
@@ -14067,7 +14134,7 @@
     },
     {
       "source": "FUNC-import-code-verb",
-      "target": "FLOW-gate-verdict",
+      "target": "FLOW-mutate-cmd",
       "type": "io"
     },
     {
@@ -14679,11 +14746,6 @@
     },
     {
       "source": "FUNC-serve-sse",
-      "target": "FLOW-live-event",
-      "type": "io"
-    },
-    {
-      "source": "FUNC-serve-sse",
       "target": "REQ-versioned-broadcast",
       "type": "satisfy"
     },
@@ -14716,11 +14778,6 @@
       "source": "FUNC-take-steering-snapshot",
       "target": "MOD-kernel-measure",
       "type": "allocate"
-    },
-    {
-      "source": "FUNC-take-steering-snapshot",
-      "target": "FLOW-gate-verdict",
-      "type": "io"
     },
     {
       "source": "FUNC-take-steering-snapshot",
@@ -17589,5 +17646,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 246
+  "graphVersion": 250
 }

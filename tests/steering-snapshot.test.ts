@@ -22,6 +22,7 @@ import { DEFAULT_METRIC_POLICY } from '@sigloch/contracts/se';
 import type { Graph, GraphNode, GraphEdge } from '@sigloch/graph-api-core';
 import { takeSteeringSnapshot } from '../src/kernel/measure/steering-snapshot.js';
 import { exportGraphJson } from '../src/projections/exporter.js';
+import { computePhaseReadiness } from '../src/kernel/measure/readiness.js';
 
 function node(
   uid: string,
@@ -155,5 +156,21 @@ describe('takeSteeringSnapshot — attributes reach the rules (CR-GC-303)', () =
     const snapshotBefore = JSON.stringify(graph);
     takeSteeringSnapshot(graph, DEFAULT_METRIC_POLICY);
     expect(JSON.stringify(graph)).toBe(snapshotBefore);
+  });
+});
+
+/**
+ * CR-GC-502: die Phasen-Gates rechnet das Messwerk, nicht der Leser. Vorher projizierte
+ * generationStep sie selbst aus `violations`; der Snapshot trug das Feld nicht.
+ */
+describe('CR-GC-502: phaseReadiness kommt aus dem Snapshot', () => {
+  it('traegt die Phasen-Gates aus DEMSELBEN Regelstrom wie violations', () => {
+    const graph = fullyBoundGraph();
+    graph.nodes.find((n) => n.uid === 'TEST-bestellung')!.attributes = { testResult: 'passed' };
+    const snap = takeSteeringSnapshot(graph, DEFAULT_METRIC_POLICY, 0.8);
+    expect(snap.phaseReadiness.length).toBeGreaterThan(0);
+    expect(snap.phaseReadiness).toEqual(computePhaseReadiness(snap.violations.map((v) => ({ ruleId: v.rule_id }))));
+    // Der Graph hat einen offenen R-19-Befund — mindestens ein Gate muss ihn als fehlend fuehren.
+    expect(snap.phaseReadiness.some((g) => g.missing.includes('R-19'))).toBe(true);
   });
 });
