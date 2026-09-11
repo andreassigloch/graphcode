@@ -17,8 +17,9 @@
  *
  * Schnitt entlang der Kette Modellantwort → Parser → Preflight → Gate → Rangfolge
  * (CR-GC-506): Werkzeug-Ausführung in executor-tools.ts, der Gate-Zugang in
- * executor-gate.ts, die Best-of-N-Runde in executor-bestofn.ts. Hier bleiben
- * Konfiguration, Tool-Angebot, Backends und die Treiberschleife.
+ * executor-gate.ts, die Best-of-N-Runde in executor-bestofn.ts; der Modell-Draht
+ * (Tool-Angebot, Backends) in executor-backend.ts (CR-GC-507). Hier bleiben
+ * Konfiguration, der Antwortvertrag des Treibers und die Treiberschleife.
  *
  * @author andreas@siglochconsulting
  */
@@ -27,30 +28,16 @@ import type { MCPToolRegistry } from '../kernel/tool-contract.js';
 import { GenerationStep } from './generate.js';
 // Der Antwortvertrag des Backends (CR-GC-426, SCHEMA-model-answer): geprüft am
 // Empfang, in der Draht-Form JEDES Backends — nicht erst im Prosa-Parser.
-import {
-  ModelAnswer,
-  ModelToolCall,
-  BackendFailure,
-  AnthropicWireAnswer,
-  OpenAiWireAnswer,
-  describeWireIssues,
-} from './model-answer-contract.js';
+import type { ModelAnswer, ModelToolCall } from './model-answer-contract.js';
 // Die drei zustandsfreien Executor-Achsen (CR-GC-320) — Prompt/Injektion,
 // Best-of-N-Ranking, Prosa-Recovery. Kein Re-Export von hier: wer sie braucht,
 // importiert das jeweilige Modul direkt (keine parallelen Pfade).
-import {
-  AUTHORING_TOOLS,
-  EMIT_SUFFIX,
-  IDLE_NUDGE,
-  SYSTEM,
-  WITHHELD_TOOLS,
-  buildRoundInjection,
-  jsonCapped,
-} from './executor-prompt.js';
+import { EMIT_SUFFIX, IDLE_NUDGE, SYSTEM, buildRoundInjection, jsonCapped } from './executor-prompt.js';
 import { extractMutateFromText, extractToolCallFromText } from './executor-parse.js';
 import { READ_TOOLS, execReadOrGraphTool, pushToolResults } from './executor-tools.js';
 import { bindGateClient, formatGateFeedback, ruleIdsOf, type MutateOutcome } from './executor-gate.js';
 import { runBestOfNStep } from './executor-bestofn.js';
+import { buildCallModel, buildToolSpecs, toBackendTools } from './executor-backend.js';
 
 // ---------------------------------------------------------------------------
 // Config (lokal per CR-GC-278 — Promotion nach @sigloch/contracts erst mit der
@@ -154,168 +141,6 @@ export interface ExecutorStats {
   tokensIn: number;
   tokensOut: number;
   tokensReasoning: number;
-}
-
-// ---------------------------------------------------------------------------
-// Tool-Schemas: Registry (Zod) → JSON Schema, LM-Studio-tauglich normalisiert.
-// ---------------------------------------------------------------------------
-
-interface ToolSpec {
-  name: string;
-  description: string;
-  schema: Record<string, unknown>;
-}
-
-function toJsonSchema(schema: z.ZodType): Record<string, unknown> {
-  let out: Record<string, unknown>;
-  try {
-    out = z.toJSONSchema(schema, { io: 'input', unrepresentable: 'any' }) as Record<string, unknown>;
-  } catch {
-    out = {};
-  }
-  delete out.$schema;
-  // LM Studios strikter OpenAI-Validator verlangt type=object + properties.
-  if (out.type !== 'object') out = { type: 'object', properties: {} };
-  if (!out.properties || typeof out.properties !== 'object') out.properties = {};
-  return out;
-}
-
-/** Alle Modell-Tools (graphcode_* + Read-Tools) als backend-neutrale Specs. */
-export function buildToolSpecs(
-  registry: MCPToolRegistry,
-  toolset: ExecutorConfig['toolset'] = 'full',
-): ToolSpec[] {
-  const gc = Object.keys(registry)
-    .filter((n) => !WITHHELD_TOOLS.has(n) && (toolset === 'full' || AUTHORING_TOOLS.has(n)))
-    .map((n) => ({
-      name: 'graphcode_' + n,
-      description: (registry[n].description || '').slice(0, 400),
-      schema: toJsonSchema(registry[n].inputSchema as z.ZodType),
-    }));
-  const rd = Object.entries(READ_TOOLS).map(([n, t]) => ({
-    name: n,
-    description: t.desc,
-    schema: t.params,
-  }));
-  return [...gc, ...rd];
-}
-
-function toBackendTools(specs: ToolSpec[], backend: ExecutorConfig['backend']): unknown[] {
-  return backend === 'anthropic'
-    ? specs.map((t) => ({ name: t.name, description: t.description, input_schema: t.schema }))
-    : specs.map((t) => ({
-        type: 'function',
-        function: { name: t.name, description: t.description, parameters: t.schema },
-      }));
-}
-
-// ---------------------------------------------------------------------------
-// Backends — beide liefern die normalisierte ModelResponse.
-// ---------------------------------------------------------------------------
-
-const safeParse = (s: string): unknown => {
-  try {
-    return JSON.parse(s);
-  } catch {
-    return {};
-  }
-};
-
-export function buildCallModel(config: ExecutorConfig): CallModel {
-  if (config.backend === 'anthropic') {
-    return async (system, messages, tools) => {
-      const r = await fetch(`${config.baseUrl}/v1/messages`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'anthropic-version': '2023-06-01',
-          ...(config.apiKey ? { 'x-api-key': config.apiKey } : {}),
-        },
-        // KEINE temperature: die Claude-5-API lehnt den Parameter ab
-        // ("deprecated", invalid_request_error) — die Temperatur-Disziplin ist
-        // ein Lokal-Hebel (devstral), Frontier braucht sie nicht.
-        body: JSON.stringify({
-          model: config.model,
-          max_tokens: config.maxTokens,
-          system,
-          tools,
-          messages,
-        }),
-        signal: AbortSignal.timeout(config.callTimeoutMs),
-      });
-      const raw: unknown = await r.json();
-      if (BackendFailure.safeParse(raw).success) {
-        throw new Error('backend: ' + JSON.stringify(raw).slice(0, 300));
-      }
-      const wire = AnthropicWireAnswer.safeParse(raw);
-      if (!wire.success) {
-        throw new Error(
-          'backend answer breaks SCHEMA-model-answer (anthropic wire): ' +
-            describeWireIssues(wire.error),
-        );
-      }
-      const content = wire.data.content;
-      return ModelAnswer.parse({
-        text: content.filter((b) => b.type === 'text').map((b) => b.text ?? '').join(''),
-        toolCalls: content
-          .filter((b) => b.type === 'tool_use')
-          .map((b) => ({ id: b.id ?? '', name: b.name ?? '', input: b.input })),
-        stopReason: wire.data.stop_reason ?? null,
-        assistantMsg: { role: 'assistant', content },
-        usage: {
-          in: wire.data.usage?.input_tokens ?? 0,
-          out: wire.data.usage?.output_tokens ?? 0,
-          reasoning: 0,
-        },
-      });
-    };
-  }
-  return async (system, messages, tools, opts) => {
-    const r = await fetch(`${config.baseUrl}/v1/chat/completions`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(config.apiKey ? { Authorization: 'Bearer ' + config.apiKey } : {}),
-      },
-      body: JSON.stringify({
-        model: config.model,
-        max_tokens: config.maxTokens,
-        // Best-of-N (CR-GC-288): der Kandidaten-Spread überschreibt die Basis-Temperatur.
-        temperature: opts?.temperature ?? config.temperature,
-        ...(config.reasoningEffort ? { reasoning_effort: config.reasoningEffort } : {}),
-        messages: [{ role: 'system', content: system }, ...messages],
-        tools,
-      }),
-      signal: AbortSignal.timeout(config.callTimeoutMs),
-    });
-    const raw: unknown = await r.json();
-    if (BackendFailure.safeParse(raw).success) {
-      throw new Error('backend: ' + JSON.stringify(raw).slice(0, 300));
-    }
-    const wire = OpenAiWireAnswer.safeParse(raw);
-    if (!wire.success) {
-      throw new Error(
-        'backend answer breaks SCHEMA-model-answer (openai wire): ' + describeWireIssues(wire.error),
-      );
-    }
-    const choice = wire.data.choices[0];
-    const msg = choice?.message ?? {};
-    return ModelAnswer.parse({
-      text: msg.content ?? '',
-      toolCalls: (msg.tool_calls ?? []).map((c) => ({
-        id: c.id,
-        name: c.function.name,
-        input: safeParse(c.function.arguments),
-      })),
-      stopReason: choice?.finish_reason ?? null,
-      assistantMsg: msg,
-      usage: {
-        in: wire.data.usage?.prompt_tokens ?? 0,
-        out: wire.data.usage?.completion_tokens ?? 0,
-        reasoning: wire.data.usage?.completion_tokens_details?.reasoning_tokens ?? 0,
-      },
-    });
-  };
 }
 
 // ---------------------------------------------------------------------------

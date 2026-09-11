@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 45 SCHEMA · 64 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 46 SCHEMA · 65 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -33,6 +33,7 @@
 | `SCHEMA-metric-policy` | packages/contracts/src/se/policy.ts#MetricPolicy | n/a |
 | `SCHEMA-metric-vector` | packages/se-engine/src/metrics.ts#MetricVector | reviewed |
 | `SCHEMA-model-answer` | src/loop/model-answer-contract.ts#ModelAnswer | n/a |
+| `SCHEMA-model-request` | Konzept (noch kein Zod-Export) | n/a |
 | `SCHEMA-module-metrics` | packages/contracts/src/se/metric-rules.ts#ModuleMetrics | reviewed |
 | `SCHEMA-mutate-command` | packages/contracts/src/harness/index.ts#MutateCommandSchema | reviewed |
 | `SCHEMA-mutate-result` | packages/contracts/src/harness/index.ts#MutateResultSchema | reviewed |
@@ -93,7 +94,8 @@
 | `FLOW-markdown-docs` | `FUNC-export-markdown` | `ACTOR-owner` |
 | `FLOW-measurement-vector` | `FUNC-take-steering-snapshot` | `FUNC-goal-steerer` |
 | `FLOW-metric-policy` | `FUNC-load-config` | `FUNC-evaluate-rules` · `FUNC-take-steering-snapshot` |
-| `FLOW-model-answer` | `FUNC-run-executor` | `FUNC-extract-mutate` |
+| `FLOW-model-answer` | `FUNC-call-model` | `FUNC-extract-mutate` · `FUNC-run-executor` |
+| `FLOW-model-request` | `FUNC-run-executor` | `FUNC-call-model` |
 | `FLOW-module-metrics` | `FUNC-module-metrics` | `ACTOR-dashboard` · `FUNC-evaluate-rules` |
 | `FLOW-mutate-cmd` | `ACTOR-agent` · `ACTOR-owner` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-bootstrap` · `FUNC-close-violations` · `FUNC-gate-client` · `FUNC-graph-suggest` · `FUNC-import-code-verb` · `FUNC-import-doc` · `FUNC-merge-nodes` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-trade` | `FUNC-host-socket` · `FUNC-mutate` |
 | `FLOW-next-step-advice` | `FUNC-next-step` | `ACTOR-agent` |

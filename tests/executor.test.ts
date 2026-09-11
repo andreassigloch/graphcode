@@ -16,11 +16,11 @@ import { join } from 'node:path';
 import { createHarness, bindToolsToHarness } from '../src/index.js';
 import {
   runExecutor,
-  buildToolSpecs,
   ExecutorConfigSchema,
   type ModelResponse,
   type CallModel,
 } from '../src/loop/executor.js';
+import { buildToolSpecs } from '../src/loop/executor-backend.js';
 import {
   buildRoundInjection,
   INDEX_CHAR_BUDGET,

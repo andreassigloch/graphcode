@@ -1900,6 +1900,13 @@
       "description": "Die Roh-Antwort des Modells auf einen Runden-Prompt. Traegt Text, Werkzeugaufrufe und den Stop-Grund; fehlt der Werkzeugaufruf, ist der Text die einzige Spur, aus der die Prosa-Recovery ein Kommando holt."
     },
     {
+      "id": "FLOW-model-request",
+      "type": "FLOW",
+      "name": "Modell-Anfrage",
+      "description": "Was die Treiberschleife je Turn an den Modell-Draht uebergibt: System-Prompt, Message-History, Tool-Angebot und beim Best-of-N die Kandidaten-Temperatur (Signatur CallModel in executor.ts). (CR-GC-507)",
+      "status": "reviewed"
+    },
+    {
       "id": "FLOW-module-metrics",
       "type": "FLOW",
       "name": "Modulkennzahlen je MOD",
@@ -2346,6 +2353,18 @@
       "realRef": {
         "file": "src/loop/executor-prompt.ts",
         "symbol": "buildRoundInjection",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-call-model",
+      "type": "FUNC",
+      "name": "buildCallModel(config)",
+      "description": "Der Modell-Draht: schickt die Anfrage einer Runde an das konfigurierte Backend (OpenAI-kompatibel oder Anthropic), prueft die Antwort in der Draht-Form am Empfang und liefert die normalisierte ModelAnswer (executor-backend.ts, ModelAnswer.parse). Hier entsteht FLOW-model-answer; der Backend-Wechsel ist Konfiguration, keine zweite Codeverzweigung. (CR-GC-507)",
+      "status": "done",
+      "realRef": {
+        "file": "src/loop/executor-backend.ts",
+        "symbol": "buildCallModel",
         "lang": "ts"
       }
     },
@@ -3010,7 +3029,7 @@
       "id": "FUNC-run-executor",
       "type": "FUNC",
       "name": "runExecutor",
-      "description": "Die Treiberschleife selbst: baut die Tool-Specs, ruft das Backend rundenweise, uebergibt jeden Kandidaten-Batch dem Gate-Zugang und zaehlt Runden, Turns, Anwendungen und Rejections. Die Best-of-N-Runde (executor-bestofn.ts) liest die Rangfolge und waehlt den Gewinner. Einen vom Modell selbst angeforderten dryRun reicht die Werkzeug-Ausfuehrung unveraendert an die Registry weiter. Backend-Wechsel zwischen lokalem und Frontier-Modell ist Konfiguration, keine zweite Codeverzweigung. (CR-GC-506)",
+      "description": "Die Treiberschleife selbst: stellt je Turn die Anfrage an den Modell-Draht, liest die Antwort, uebergibt jeden Kandidaten-Batch dem Gate-Zugang und zaehlt Runden, Turns, Anwendungen und Rejections. Die Best-of-N-Runde (executor-bestofn.ts) liest die Rangfolge und waehlt den Gewinner. Einen vom Modell selbst angeforderten dryRun reicht die Werkzeug-Ausfuehrung unveraendert an die Registry weiter. (CR-GC-506, CR-GC-507)",
       "status": "done",
       "realRef": {
         "file": "src/loop/executor.ts",
@@ -5221,6 +5240,13 @@
         "symbol": "ModelAnswer",
         "lang": "ts"
       }
+    },
+    {
+      "id": "SCHEMA-model-request",
+      "type": "SCHEMA",
+      "name": "Modell-Anfrage",
+      "description": "system, messages, tools, opts.temperature: die Parameter von CallModel in src/loop/executor.ts. Spec-only, eine Funktionssignatur ohne Zod-Datenvertrag; die Draht-Form je Backend baut buildCallModel. (CR-GC-507)",
+      "concept": true
     },
     {
       "id": "SCHEMA-module-metrics",
@@ -11511,6 +11537,11 @@
     },
     {
       "source": "FCHAIN-steering-loop",
+      "target": "FUNC-call-model",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
       "target": "FUNC-compute-phase-readiness",
       "type": "compose",
       "weight": "1"
@@ -12290,7 +12321,22 @@
     },
     {
       "source": "FLOW-model-answer",
+      "target": "FUNC-run-executor",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-model-answer",
       "target": "SCHEMA-model-answer",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-model-request",
+      "target": "FUNC-call-model",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-model-request",
+      "target": "SCHEMA-model-request",
       "type": "relation"
     },
     {
@@ -13034,6 +13080,11 @@
     },
     {
       "source": "FUNC-block-antrieb",
+      "target": "FUNC-call-model",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-antrieb",
       "target": "FUNC-extract-mutate",
       "type": "compose"
     },
@@ -13604,6 +13655,21 @@
     {
       "source": "FUNC-build-round-injection",
       "target": "REQ-round-prompt-injection",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-call-model",
+      "target": "MOD-loop",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-call-model",
+      "target": "FLOW-model-answer",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-call-model",
+      "target": "REQ-one-driver-local-and-frontier",
       "type": "satisfy"
     },
     {
@@ -14628,7 +14694,7 @@
     },
     {
       "source": "FUNC-run-executor",
-      "target": "FLOW-model-answer",
+      "target": "FLOW-model-request",
       "type": "io"
     },
     {
@@ -17765,5 +17831,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 256
+  "graphVersion": 257
 }
