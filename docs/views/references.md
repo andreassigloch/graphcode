@@ -701,6 +701,7 @@
 | `FCHAIN-snapshot-freshness` | satisfy | `REQ-graph-snapshot-per-commit` |
 | `FCHAIN-steering-loop` | compose | `FUNC-arch-fitness` |
 | `FCHAIN-steering-loop` | compose | `FUNC-build-round-injection` |
+| `FCHAIN-steering-loop` | compose | `FUNC-call-model` |
 | `FCHAIN-steering-loop` | compose | `FUNC-compute-phase-readiness` |
 | `FCHAIN-steering-loop` | compose | `FUNC-compute-readiness` |
 | `FCHAIN-steering-loop` | compose | `FUNC-compute-steering-delta` |
@@ -846,7 +847,10 @@
 | `FLOW-metric-policy` | io | `FUNC-take-steering-snapshot` |
 | `FLOW-metric-policy` | relation | `SCHEMA-metric-policy` |
 | `FLOW-model-answer` | io | `FUNC-extract-mutate` |
+| `FLOW-model-answer` | io | `FUNC-run-executor` |
 | `FLOW-model-answer` | relation | `SCHEMA-model-answer` |
+| `FLOW-model-request` | io | `FUNC-call-model` |
+| `FLOW-model-request` | relation | `SCHEMA-model-request` |
 | `FLOW-module-metrics` | io | `ACTOR-dashboard` |
 | `FLOW-module-metrics` | io | `FUNC-evaluate-rules` |
 | `FLOW-module-metrics` | relation | `SCHEMA-module-metrics` |
@@ -990,6 +994,7 @@
 | `FUNC-block-anleitung` | compose | `FUNC-test-ui` |
 | `FUNC-block-antrieb` | allocate | `MOD-loop` |
 | `FUNC-block-antrieb` | compose | `FUNC-build-round-injection` |
+| `FUNC-block-antrieb` | compose | `FUNC-call-model` |
 | `FUNC-block-antrieb` | compose | `FUNC-extract-mutate` |
 | `FUNC-block-antrieb` | compose | `FUNC-gate-client` |
 | `FUNC-block-antrieb` | compose | `FUNC-nd-similarity` |
@@ -1104,6 +1109,9 @@
 | `FUNC-build-round-injection` | allocate | `MOD-loop` |
 | `FUNC-build-round-injection` | io | `FLOW-round-injection` |
 | `FUNC-build-round-injection` | satisfy | `REQ-round-prompt-injection` |
+| `FUNC-call-model` | allocate | `MOD-loop` |
+| `FUNC-call-model` | io | `FLOW-model-answer` |
+| `FUNC-call-model` | satisfy | `REQ-one-driver-local-and-frontier` |
 | `FUNC-check-code-conformance` | allocate | `MOD-kernel` |
 | `FUNC-check-code-conformance` | io | `FLOW-conformance-findings` |
 | `FUNC-check-code-conformance` | satisfy | `REQ-graph-code-conformance` |
@@ -1291,7 +1299,7 @@
 | `FUNC-rewind` | satisfy | `REQ-graph-state-recall` |
 | `FUNC-run-executor` | allocate | `MOD-loop` |
 | `FUNC-run-executor` | io | `FLOW-candidate-batch` |
-| `FUNC-run-executor` | io | `FLOW-model-answer` |
+| `FUNC-run-executor` | io | `FLOW-model-request` |
 | `FUNC-run-executor` | satisfy | `REQ-one-driver-local-and-frontier` |
 | `FUNC-run-verb` | allocate | `MOD-surface` |
 | `FUNC-run-verb` | io | `FLOW-steering-trigger` |

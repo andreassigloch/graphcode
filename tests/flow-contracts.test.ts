@@ -15,7 +15,8 @@ import { execFileSync } from 'node:child_process';
 import { mkdtempSync, rmSync, writeFileSync, readFileSync, mkdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { ExecutorConfigSchema, buildCallModel } from '../src/loop/executor.js';
+import { ExecutorConfigSchema } from '../src/loop/executor.js';
+import { buildCallModel } from '../src/loop/executor-backend.js';
 import { ModelAnswer } from '../src/loop/model-answer-contract.js';
 import { extractMutateFromText } from '../src/loop/executor-parse.js';
 import {

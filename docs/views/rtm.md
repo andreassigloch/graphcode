@@ -96,7 +96,7 @@
 | `REQ-near-duplicate-detection` | `TEST-nd-similarity` | `FUNC-nd-similarity` | `MOD-kernel-measure` |
 | `REQ-no-extraction` | `TEST-capture` · `TEST-import-code-verb` | `FCHAIN-model-import` · `FUNC-import-code` · `FUNC-import-code-verb` · `FUNC-import-doc` | `MOD-agent-surface` · `MOD-surface` |
 | `REQ-npx-distribution` | `TEST-distribution` | `FUNC-cli-dispatch` · `FUNC-harness-cli` | `MOD-surface` |
-| `REQ-one-driver-local-and-frontier` | `TEST-cli-run` · `TEST-executor-bestofn` · `TEST-one-driver-local-and-frontier` | `FUNC-run-executor` · `FUNC-run-verb` | `MOD-loop` · `MOD-surface` |
+| `REQ-one-driver-local-and-frontier` | `TEST-cli-run` · `TEST-executor-bestofn` · `TEST-one-driver-local-and-frontier` | `FUNC-call-model` · `FUNC-run-executor` · `FUNC-run-verb` | `MOD-loop` · `MOD-surface` |
 | `REQ-one-gate-per-repo` | `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-store-lock` | — | — |
 | `REQ-phase-gate-not-skippable` | `TEST-phase-gate-not-skippable` | `MOD-loop` | — |
 | `REQ-post-agent-query` | `TEST-impact-subgraph` | `FCHAIN-agent-query` | — |
@@ -247,7 +247,7 @@
 | `REQ-near-duplicate-detection` | `TEST-nd-similarity` | `FUNC-nd-similarity` | `MOD-kernel-measure` |
 | `REQ-no-extraction` | `TEST-capture` · `TEST-import-code-verb` | `FCHAIN-model-import` · `FUNC-import-code` · `FUNC-import-code-verb` · `FUNC-import-doc` | `MOD-agent-surface` · `MOD-surface` |
 | `REQ-npx-distribution` | `TEST-distribution` | `FUNC-cli-dispatch` · `FUNC-harness-cli` | `MOD-surface` |
-| `REQ-one-driver-local-and-frontier` | `TEST-cli-run` · `TEST-executor-bestofn` · `TEST-one-driver-local-and-frontier` | `FUNC-run-executor` · `FUNC-run-verb` | `MOD-loop` · `MOD-surface` |
+| `REQ-one-driver-local-and-frontier` | `TEST-cli-run` · `TEST-executor-bestofn` · `TEST-one-driver-local-and-frontier` | `FUNC-call-model` · `FUNC-run-executor` · `FUNC-run-verb` | `MOD-loop` · `MOD-surface` |
 | `REQ-phase-gate-not-skippable` | `TEST-phase-gate-not-skippable` | `MOD-loop` | — |
 | `REQ-post-emit-trajectory` | `TEST-learning-emit` | `FUNC-emit-trajectory` | `MOD-projections` |
 | `REQ-post-emit-update-event` | `TEST-live-view` | `FUNC-emit-update-event` | `MOD-surface` |
