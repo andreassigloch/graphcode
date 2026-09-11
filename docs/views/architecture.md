@@ -139,7 +139,7 @@
 | function | module |
 |---|---|
 | `FUNC-apply-reseed` | `MOD-kernel` |
-| `FUNC-arch-fitness` | `MOD-projections` |
+| `FUNC-arch-fitness` | `MOD-kernel-measure` |
 | `FUNC-audit-stats` | `MOD-surface` |
 | `FUNC-audit-trail` | `MOD-surface` |
 | `FUNC-author-req` | `MOD-agent-surface` |
@@ -175,7 +175,7 @@
 | `FUNC-close-violations` | `MOD-agent-surface` |
 | `FUNC-collect-status` | `MOD-surface` |
 | `FUNC-compute-phase-readiness` | `MOD-kernel-measure` |
-| `FUNC-compute-readiness` | `MOD-projections` |
+| `FUNC-compute-readiness` | `MOD-kernel-measure` |
 | `FUNC-compute-steering-delta` | `MOD-kernel-measure` |
 | `FUNC-create-harness` | `MOD-surface` |
 | `FUNC-decode` | `MOD-projections` |

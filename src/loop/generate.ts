@@ -21,7 +21,7 @@ import type { Graph } from '@sigloch/graph-api-core';
 import { RULE_TO_DIMENSION } from '@sigloch/contracts/se';
 import type { MetricPolicy } from '@sigloch/contracts/se';
 import { takeSteeringSnapshot } from '../kernel/measure/steering-snapshot.js';
-import { computePhaseReadiness, currentPhaseGate, PhaseGateReadiness } from '../kernel/measure/readiness.js';
+import { currentPhaseGate, PhaseGateReadiness } from '../kernel/measure/readiness.js';
 import { isIntentTooThin, intentCoverage, type LoadedTargetProfile } from './target-profile.js';
 
 /**
@@ -173,16 +173,16 @@ export function generationStep(
 ): GenerationStep {
   const gateProtocol = GATE_PROTOCOL[selection];
   // Steering-Snapshot (CR-GC-289): og + ND-Injektion + Full-Katalog-Eval +
-  // computeReadiness — geteilt mit dem steeringDelta des dryRun-Verdicts.
-  const { og, violations, blockingErrors, report } = takeSteeringSnapshot(graph, policy, threshold);
+  // computeReadiness + Phasen-Gates — geteilt mit dem steeringDelta des dryRun-Verdicts.
+  const { og, violations, blockingErrors, report, phaseReadiness } = takeSteeringSnapshot(graph, policy, threshold);
   const sys = og.elements.find((e) => e.type === 'SYS');
   const effectiveIntent = intent?.trim() || sys?.description?.trim() || '';
   const readiness = report.scores
     .filter((s) => s.applicable > 0)
     .map((s) => ({ dimension: s.dimension as string, score: s.score, violations: s.violations }));
   // CR-GC-296: RULE_TO_PHASE-Achse aus demselben Regelstrom — die zweite,
-  // strengere Handoff-Bedingung neben Schwelle + blockingErrors (s.u.).
-  const phaseReadiness = computePhaseReadiness(violations.map((v) => ({ ruleId: v.rule_id })));
+  // strengere Handoff-Bedingung neben Schwelle + blockingErrors (s.u.). Seit CR-GC-502
+  // rechnet sie der Snapshot, generationStep liest sie nur.
   const openGate = currentPhaseGate(phaseReadiness);
 
   // --- Phase seed: noch kein System im Graphen -----------------------------

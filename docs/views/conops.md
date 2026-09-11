@@ -91,7 +91,7 @@ Als Entwickler will ich den Modellstand eines beliebigen Commits wiederherstelle
 Ausgeloest von: `ACTOR-agent` · `ACTOR-owner`
 
 - `FCHAIN-merge-branches` — Zweig-Graphen konfliktfrei zusammenfuehren: `FUNC-merge-nodes`
-- `FCHAIN-recall` — Recall (Wiederherstellen): `FUNC-apply-reseed` → `FUNC-reseed` → `FUNC-rewind` → `FUNC-seed-from-json`
+- `FCHAIN-recall` — Recall (Wiederherstellen): `FUNC-apply-reseed` → `FUNC-import` → `FUNC-reseed` → `FUNC-rewind` → `FUNC-seed-from-json`
 - `FCHAIN-snapshot-freshness` — Snapshot-Freshness (Aufzeichnen): `FUNC-auto-export` → `FUNC-evaluate-rules` → `FUNC-export-marker` → `FUNC-graph-export-snapshot` → `FUNC-mutate` → `FUNC-save-graph`
 
 ### `UC-live-graph-view` — Modellstand live mitlesen
@@ -117,7 +117,7 @@ Als Entwickler will ich Modellstand aus Fremdquellen einlesen und als prueffaehi
 Ausgeloest von: `ACTOR-agent` · `ACTOR-owner`
 
 - `FCHAIN-doc-export` — Doc-Export (stdio → exporter): `FUNC-export-markdown` → `FUNC-render-views` → `FUNC-serve-stdio` → `FUNC-view-changelog` → `FUNC-view-conops` → `FUNC-view-fmea` → `FUNC-view-icd` → `FUNC-view-intplan` → `FUNC-view-rtm`
-- `FCHAIN-model-import` — Bestehenden Bestand einlesen: `FUNC-import` → `FUNC-import-code` → `FUNC-import-code-verb` → `FUNC-import-doc`
+- `FCHAIN-model-import` — Bestehenden Bestand einlesen: `FUNC-import-code` → `FUNC-import-code-verb` → `FUNC-import-doc` → `FUNC-mutate`
 
 ### `UC-reduced-llm` — Mit kleinem oder lokalem Modell arbeiten
 
