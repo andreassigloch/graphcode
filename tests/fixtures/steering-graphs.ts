@@ -326,10 +326,15 @@ export function scriptedActor(focus: ParsedFocus, seq: number): unknown[] | null
       for (const fn of elementIds) cmds.push(edge(fn, 'allocate', 'MOD-parsing'));
       return cmds;
 
-    // An ACTOR with no io wiring (R-16: element = the ACTOR) — wire it to the fixed
-    // anchor FLOW (contracts 9.x: ACTOR io→UC is no longer a legal pattern).
+    // An ACTOR with no io wiring (R-16: element = the ACTOR) — wire it as a READER of the
+    // fixed anchor FLOW (contracts 9.x: ACTOR io→UC is no longer a legal pattern).
+    //
+    // contracts 20 (IO-02, CR-GC-511): a FLOW has exactly ONE producer. The batch used to
+    // make the actor a second SENDER of FLOW-document (ACTOR-operator already sends it),
+    // which the gate let through while readiness gained an IO-02 error. Reading adds no
+    // producer: several consumers are the normal shape of a shared contract.
     case 'R-16':
-      for (const id of elementIds) cmds.push(edge(id, 'io', 'FLOW-document'));
+      for (const id of elementIds) cmds.push(edge('FLOW-result', 'io', id));
       return cmds;
 
     // A UC unreachable from any ACTOR (UC-02: element = the UC). Canonical repair per
@@ -343,9 +348,19 @@ export function scriptedActor(focus: ParsedFocus, seq: number): unknown[] | null
     // ist FUNC-parse aus FCHAIN-ingest, nicht FUNC-render aus FCHAIN-review. Der Batch ging
     // durch, aenderte den Graphen und liess den Befund stehen: die Schleife lief zweimal auf
     // dieselbe Regel und der Sperrfehler-Zaehler stand still.
-    case 'UC-02':
-      cmds.push(edge('ACTOR-auditor', 'io', 'FLOW-result'));
+    //
+    // contracts 20 (IO-02, CR-GC-511): FLOW-result already has its producer (FUNC-parse), so
+    // the actor may not become a second sender of it. The canonical fix is IO-02's own
+    // fix_hint — the new source gets its OWN FLOW, the contract stays on the shared SCHEMA
+    // (n FLOW -> 1 SCHEMA is legal).
+    case 'UC-02': {
+      const flow = `FLOW-review-request-${seq}`;
+      cmds.push(node(flow, 'FLOW', 'review request', 'The result the auditor hands back into the review chain.'));
+      cmds.push(edge('ACTOR-auditor', 'io', flow));
+      cmds.push(edge(flow, 'io', 'FUNC-render'));
+      cmds.push(edge(flow, 'relation', 'SCHEMA-result'));
       return cmds;
+    }
 
     // A FLOW with no data contract.
     case 'SC-02':
