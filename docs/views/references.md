@@ -559,10 +559,12 @@
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-suggest` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-mutate` |
+| `FCHAIN-advisory-roundtrip` | compose | `FUNC-read-tools` |
 | `FCHAIN-advisory-roundtrip` | satisfy | `REQ-advisory-roundtrip-latency` |
 | `FCHAIN-agent-query` | compose | `FUNC-graph-expand` |
 | `FCHAIN-agent-query` | compose | `FUNC-graph-impact` |
 | `FCHAIN-agent-query` | compose | `FUNC-list-elements` |
+| `FCHAIN-agent-query` | compose | `FUNC-read-tools` |
 | `FCHAIN-agent-query` | satisfy | `REQ-post-agent-query` |
 | `FCHAIN-agent-query` | satisfy | `REQ-pre-agent-query` |
 | `FCHAIN-agent-query` | satisfy | `REQ-precise-context` |
@@ -610,6 +612,7 @@
 | `FCHAIN-impact-testing` | satisfy | `REQ-pre-impact-testing` |
 | `FCHAIN-interface-escalation` | compose | `FUNC-graph-impact` |
 | `FCHAIN-interface-escalation` | compose | `FUNC-mutate` |
+| `FCHAIN-interface-escalation` | compose | `FUNC-read-tools` |
 | `FCHAIN-interface-escalation` | satisfy | `REQ-interface-change-escalation` |
 | `FCHAIN-interface-escalation` | satisfy | `REQ-post-interface-escalation` |
 | `FCHAIN-interface-escalation` | satisfy | `REQ-pre-interface-escalation` |
@@ -755,6 +758,8 @@
 | `FLOW-dimension-readiness` | relation | `SCHEMA-readiness-report` |
 | `FLOW-element-slice` | io | `ACTOR-agent` |
 | `FLOW-element-slice` | relation | `SCHEMA-ontology-graph` |
+| `FLOW-expand-subgraph` | io | `FUNC-read-tools` |
+| `FLOW-expand-subgraph` | relation | `SCHEMA-ontology-graph` |
 | `FLOW-export-pending` | io | `ACTOR-owner` |
 | `FLOW-export-pending` | relation | `SCHEMA-export-pending` |
 | `FLOW-fit-advisory` | io | `FUNC-mutate` |
@@ -764,7 +769,6 @@
 | `FLOW-formatE-artifact` | io | `FUNC-bootstrap` |
 | `FLOW-formatE-artifact` | io | `FUNC-decode` |
 | `FLOW-formatE-artifact` | io | `FUNC-encode` |
-| `FLOW-formatE-artifact` | io | `FUNC-graph-expand` |
 | `FLOW-formatE-artifact` | io | `FUNC-mutate` |
 | `FLOW-formatE-artifact` | relation | `SCHEMA-format-e` |
 | `FLOW-gate-verdict` | io | `ACTOR-owner` |
@@ -780,7 +784,6 @@
 | `FLOW-graph-delta` | io | `FUNC-graph-store` |
 | `FLOW-graph-delta` | relation | `SCHEMA-graph-delta` |
 | `FLOW-graph-state` | io | `ACTOR-owner` |
-| `FLOW-graph-state` | io | `FUNC-apply-reseed` |
 | `FLOW-graph-state` | io | `FUNC-arch-fitness` |
 | `FLOW-graph-state` | io | `FUNC-auto-export` |
 | `FLOW-graph-state` | io | `FUNC-check-code-conformance` |
@@ -798,7 +801,6 @@
 | `FLOW-graph-state` | io | `FUNC-module-metrics` |
 | `FLOW-graph-state` | io | `FUNC-mutate` |
 | `FLOW-graph-state` | io | `FUNC-nd-similarity` |
-| `FLOW-graph-state` | io | `FUNC-reseed` |
 | `FLOW-graph-state` | io | `FUNC-score-completeness` |
 | `FLOW-graph-state` | io | `FUNC-seed-from-json` |
 | `FLOW-graph-state` | io | `FUNC-take-steering-snapshot` |
@@ -812,6 +814,8 @@
 | `FLOW-harness-handle` | relation | `SCHEMA-harness-handle` |
 | `FLOW-health-report` | io | `ACTOR-dashboard` |
 | `FLOW-health-report` | relation | `SCHEMA-health-report` |
+| `FLOW-impact-slice` | io | `FUNC-read-tools` |
+| `FLOW-impact-slice` | relation | `SCHEMA-impact-slice` |
 | `FLOW-impacted-tests` | io | `FUNC-deduce-tests` |
 | `FLOW-impacted-tests` | relation | `SCHEMA-impacted-tests` |
 | `FLOW-imported-graph` | io | `FUNC-graph-store` |
@@ -854,6 +858,7 @@
 | `FLOW-query-request` | io | `FUNC-graph-expand` |
 | `FLOW-query-request` | io | `FUNC-graph-impact` |
 | `FLOW-query-request` | io | `FUNC-list-elements` |
+| `FLOW-query-request` | io | `FUNC-read-tools` |
 | `FLOW-query-request` | io | `FUNC-render-views` |
 | `FLOW-query-request` | io | `FUNC-resolve-tests-from-code` |
 | `FLOW-query-request` | io | `FUNC-view-changelog` |
@@ -964,6 +969,7 @@
 | `FUNC-block-abfrage` | compose | `FUNC-graph-expand` |
 | `FUNC-block-abfrage` | compose | `FUNC-graph-impact` |
 | `FUNC-block-abfrage` | compose | `FUNC-list-elements` |
+| `FUNC-block-abfrage` | compose | `FUNC-read-tools` |
 | `FUNC-block-abfrage` | compose | `FUNC-resolve-tests-from-code` |
 | `FUNC-block-anleitung` | allocate | `MOD-agent-surface` |
 | `FUNC-block-anleitung` | compose | `FUNC-se-help` |
@@ -1161,12 +1167,12 @@
 | `FUNC-goal-steerer` | io | `FLOW-action` |
 | `FUNC-goal-steerer` | satisfy | `REQ-steering-from-metrics` |
 | `FUNC-graph-expand` | allocate | `MOD-kernel` |
-| `FUNC-graph-expand` | io | `FLOW-formatE-artifact` |
+| `FUNC-graph-expand` | io | `FLOW-expand-subgraph` |
 | `FUNC-graph-expand` | satisfy | `REQ-progressive-expansion` |
 | `FUNC-graph-export-snapshot` | allocate | `MOD-projections` |
 | `FUNC-graph-export-snapshot` | satisfy | `REQ-graph-snapshot-per-commit` |
 | `FUNC-graph-impact` | allocate | `MOD-kernel` |
-| `FUNC-graph-impact` | io | `FLOW-formatE-artifact` |
+| `FUNC-graph-impact` | io | `FLOW-impact-slice` |
 | `FUNC-graph-impact` | io | `FLOW-round-scope` |
 | `FUNC-graph-impact` | satisfy | `REQ-audit-trail` |
 | `FUNC-graph-impact` | satisfy | `REQ-query-precision` |
@@ -1254,6 +1260,10 @@
 | `FUNC-rank-candidates` | allocate | `MOD-loop` |
 | `FUNC-rank-candidates` | io | `FLOW-mutate-cmd` |
 | `FUNC-rank-candidates` | satisfy | `REQ-steering-from-metrics` |
+| `FUNC-read-tools` | allocate | `MOD-surface` |
+| `FUNC-read-tools` | io | `FLOW-formatE-artifact` |
+| `FUNC-read-tools` | satisfy | `REQ-progressive-expansion` |
+| `FUNC-read-tools` | satisfy | `REQ-query-precision` |
 | `FUNC-render-views` | allocate | `MOD-agent-surface` |
 | `FUNC-render-views` | io | `FLOW-query-request` |
 | `FUNC-render-views` | io | `FLOW-rendered-views` |
@@ -1318,7 +1328,6 @@
 | `FUNC-serve-sse` | allocate | `MOD-surface` |
 | `FUNC-serve-sse` | satisfy | `REQ-versioned-broadcast` |
 | `FUNC-serve-stdio` | allocate | `MOD-surface` |
-| `FUNC-serve-stdio` | io | `FLOW-query-request` |
 | `FUNC-serve-stdio` | satisfy | `REQ-mcp-tool-registry` |
 | `FUNC-session-shutdown` | allocate | `MOD-surface` |
 | `FUNC-session-shutdown` | satisfy | `REQ-session-leaves-nothing-behind` |

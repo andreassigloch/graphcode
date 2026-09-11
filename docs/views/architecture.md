@@ -86,6 +86,7 @@
 | `FUNC-own-kuzu-host` | FUNC | ownKuzu() |
 | `FUNC-preflight` | FUNC | preflightBatch |
 | `FUNC-rank-candidates` | FUNC | rankCandidates(probes, focus) |
+| `FUNC-read-tools` | FUNC | bindReadTools(ctx) |
 | `FUNC-render-views` | FUNC | render graph→markdown views |
 | `FUNC-reseed` | FUNC | reseed(relPath) |
 | `FUNC-resolve-tests-from-code` | FUNC | Gerichtete code→REQ→TEST-Auflösung |
@@ -211,6 +212,7 @@
 | `FUNC-own-kuzu-host` | `MOD-kernel` |
 | `FUNC-preflight` | `MOD-loop` |
 | `FUNC-rank-candidates` | `MOD-loop` |
+| `FUNC-read-tools` | `MOD-surface` |
 | `FUNC-render-views` | `MOD-agent-surface` |
 | `FUNC-reseed` | `MOD-kernel` |
 | `FUNC-resolve-tests-from-code` | `MOD-kernel` |

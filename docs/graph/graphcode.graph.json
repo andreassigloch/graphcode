@@ -1746,6 +1746,13 @@
       "description": "Gefilterte Knotenmenge aus dem Store (type/search) — eine Scheibe statt eines Volldumps."
     },
     {
+      "id": "FLOW-expand-subgraph",
+      "type": "FLOW",
+      "name": "Vertiefter Teilgraph",
+      "description": "Rueckgabewert von harness.subgraph an das Lese-Werkzeug graph_expand (read.ts:402): ein Graph aus dem Store, den das Werkzeug nach Zweig filtert. (CR-GC-505)",
+      "status": "reviewed"
+    },
+    {
       "id": "FLOW-export-pending",
       "type": "FLOW",
       "name": "Export-Rueckstand",
@@ -1762,7 +1769,7 @@
       "id": "FLOW-formatE-artifact",
       "type": "FLOW",
       "name": "Format-E-Artefakt (Snapshot, Diff, Impact-Slice)",
-      "description": "Der Format-E-Kanal: kompakte Snapshot-/Diff-/Slice-Artefakte zwischen Codec, Import, Export und den Lese-Werkzeugen. Traegt auch den Impact-Subgraphen — graph_impact und graph_expand liefern seit CR-GC-210 ausschliesslich Format-E-Slices, ein eigener FLOW dafuer war derselbe Kanal unter zweitem Namen. (zusammengelegt CR-GC-456)",
+      "description": "Der Format-E-Kanal: kompakte Snapshot-/Diff-/Slice-Artefakte zwischen Codec, Import, Export und den Lese-Werkzeugen. Traegt auch die Scheiben von graph_impact und graph_expand (seit CR-GC-210 ausschliesslich Format-E); serialisiert werden sie im Lese-Werkzeug, der Kern liefert nur Graph bzw. Scheibe (CR-GC-505). (zusammengelegt CR-GC-456)",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z"
     },
@@ -1798,6 +1805,13 @@
       "type": "FLOW",
       "name": "Health-Report",
       "description": "Der gemessene Funktionszustand des Hosts: Store erreichbar, Gate arbeitsfaehig, Knotenzahl, die geltenden Ontologie-/Regel-/Meta-Modell-Versionen und die Zahl der angehaengten Viewer."
+    },
+    {
+      "id": "FLOW-impact-slice",
+      "type": "FLOW",
+      "name": "Impact-Scheibe",
+      "description": "Rueckgabewert von harness.impact an das Lese-Werkzeug graph_impact (read.ts:349): die Scheibe mit Rollen, noch kein Text. (CR-GC-505)",
+      "status": "reviewed"
     },
     {
       "id": "FLOW-impacted-tests",
@@ -2605,7 +2619,7 @@
       "id": "FUNC-graph-impact",
       "type": "FUNC",
       "name": "graph_impact(id, depth?)",
-      "description": "Exakter Blast-Radius (Caller/Traces/Tests) als Format-E. (CR-GC-101, R6/R12)",
+      "description": "Exakter Blast-Radius (Caller/Traces/Tests) als Impact-Scheibe mit Rollen; zu Format-E serialisiert sie das Lese-Werkzeug (FUNC-read-tools). (CR-GC-101, R6/R12; Ausgang korrigiert CR-GC-505)",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "updated_at": "2026-06-17T00:00:00.000Z",
@@ -2886,6 +2900,18 @@
       "realRef": {
         "file": "src/loop/executor-rank.ts",
         "symbol": "rankCandidates",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-read-tools",
+      "type": "FUNC",
+      "name": "bindReadTools(ctx)",
+      "description": "Die Lese-Werkzeuge der MCP-Oberflaeche: nehmen die Anfrage des Agenten, rufen die Abfrage im Kern und formen die Antwort. graph_impact und graph_expand serialisieren die Scheibe hier zu Format-E (FormatECodec.serialize, read.ts:358 und 405); graph_impact haengt die Blackbox-Front und das Freshness-Banner an. Der Kern liefert nur Graph bzw. Scheibe. (CR-GC-505)",
+      "status": "done",
+      "realRef": {
+        "file": "src/surface/read.ts",
+        "symbol": "bindReadTools",
         "lang": "ts"
       }
     },
@@ -5033,6 +5059,19 @@
       "realRef": {
         "file": "src/surface/health.ts",
         "symbol": "HealthPayloadSchema",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "SCHEMA-impact-slice",
+      "type": "SCHEMA",
+      "name": "ImpactSlice",
+      "description": "Die Impact-Scheibe: Saatknoten, Tiefe, Knoten mit Rolle seed/whitebox/blackbox und Abstand, induzierte Kanten. @sigloch/graph-api-core. Die Rolle traegt Inhalt: an ihr trennt das Lese-Werkzeug den offenen Teil von der Blackbox-Front. (CR-GC-505)",
+      "status": "reviewed",
+      "external": true,
+      "realRef": {
+        "file": "packages/graph-api-core/src/impact-slice.ts",
+        "symbol": "ImpactSlice",
         "lang": "ts"
       }
     },
@@ -10620,6 +10659,11 @@
     },
     {
       "source": "FCHAIN-advisory-roundtrip",
+      "target": "FUNC-read-tools",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-advisory-roundtrip",
       "target": "REQ-advisory-roundtrip-latency",
       "type": "satisfy"
     },
@@ -10640,6 +10684,11 @@
     {
       "source": "FCHAIN-agent-query",
       "target": "FUNC-list-elements",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-agent-query",
+      "target": "FUNC-read-tools",
       "type": "compose"
     },
     {
@@ -10931,6 +10980,11 @@
       "type": "compose",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FCHAIN-interface-escalation",
+      "target": "FUNC-read-tools",
+      "type": "compose"
     },
     {
       "source": "FCHAIN-interface-escalation",
@@ -11701,6 +11755,16 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-expand-subgraph",
+      "target": "FUNC-read-tools",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-expand-subgraph",
+      "target": "SCHEMA-ontology-graph",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-export-pending",
       "target": "ACTOR-owner",
       "type": "io"
@@ -11749,11 +11813,6 @@
     {
       "source": "FLOW-formatE-artifact",
       "target": "FUNC-encode",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-formatE-artifact",
-      "target": "FUNC-graph-expand",
       "type": "io"
     },
     {
@@ -11834,12 +11893,6 @@
       "source": "FLOW-graph-state",
       "target": "ACTOR-owner",
       "type": "io"
-    },
-    {
-      "source": "FLOW-graph-state",
-      "target": "FUNC-apply-reseed",
-      "type": "io",
-      "weight": "1"
     },
     {
       "source": "FLOW-graph-state",
@@ -11945,11 +11998,6 @@
     },
     {
       "source": "FLOW-graph-state",
-      "target": "FUNC-reseed",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-graph-state",
       "target": "FUNC-score-completeness",
       "type": "io",
       "weight": "1"
@@ -12014,6 +12062,16 @@
     {
       "source": "FLOW-health-report",
       "target": "SCHEMA-health-report",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-impact-slice",
+      "target": "FUNC-read-tools",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-impact-slice",
+      "target": "SCHEMA-impact-slice",
       "type": "relation"
     },
     {
@@ -12243,6 +12301,11 @@
     {
       "source": "FLOW-query-request",
       "target": "FUNC-list-elements",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-query-request",
+      "target": "FUNC-read-tools",
       "type": "io"
     },
     {
@@ -12808,6 +12871,11 @@
     {
       "source": "FUNC-block-abfrage",
       "target": "FUNC-list-elements",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-abfrage",
+      "target": "FUNC-read-tools",
       "type": "compose"
     },
     {
@@ -13835,10 +13903,8 @@
     },
     {
       "source": "FUNC-graph-expand",
-      "target": "FLOW-formatE-artifact",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "target": "FLOW-expand-subgraph",
+      "type": "io"
     },
     {
       "source": "FUNC-graph-expand",
@@ -13864,10 +13930,8 @@
     },
     {
       "source": "FUNC-graph-impact",
-      "target": "FLOW-formatE-artifact",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "target": "FLOW-impact-slice",
+      "type": "io"
     },
     {
       "source": "FUNC-graph-impact",
@@ -14353,6 +14417,26 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-read-tools",
+      "target": "MOD-surface",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-read-tools",
+      "target": "FLOW-formatE-artifact",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-read-tools",
+      "target": "REQ-progressive-expansion",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-read-tools",
+      "target": "REQ-query-precision",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-render-views",
       "target": "MOD-agent-surface",
       "type": "allocate"
@@ -14676,11 +14760,6 @@
       "source": "FUNC-serve-stdio",
       "target": "MOD-surface",
       "type": "allocate"
-    },
-    {
-      "source": "FUNC-serve-stdio",
-      "target": "FLOW-query-request",
-      "type": "io"
     },
     {
       "source": "FUNC-serve-stdio",
@@ -17569,5 +17648,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 253
+  "graphVersion": 254
 }
