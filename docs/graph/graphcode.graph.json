@@ -2467,12 +2467,6 @@
       "description": "Die Treiberschleife zum Modell: Runde bauen, Antwort bergen, Kandidaten vorpruefen, Aehnlichkeiten einspeisen."
     },
     {
-      "id": "FUNC-block-arch-optimierung",
-      "type": "FUNC",
-      "name": "Architektur-Optimierung",
-      "description": "Ebene-1-Block im Autopilot: Architektur-Optimierung — Operator-Vorschlaege entlang der R6-Fitness."
-    },
-    {
       "id": "FUNC-block-autorieren",
       "type": "FUNC",
       "name": "Autorieren",
@@ -2482,8 +2476,8 @@
     {
       "id": "FUNC-block-bedienung",
       "type": "FUNC",
-      "name": "Bedienung & Sitzung",
-      "description": "Ebene-1-Block im Betrieb: die Verben, mit denen ein Mensch das Repo einrichtet, Laeufe faehrt und die Sitzung sauber beendet — CLI-Dispatch und Lebenszyklus-Verben, Host-Socket zum Store-Besitzer, MCP-Transport, Viewer-Aufsicht, Gesundheitsabfrage. (CR-GC-459)",
+      "name": "Bedienung",
+      "description": "Ebene-1-Block im Betrieb: die Verben, mit denen ein Mensch das Repo einrichtet, aktualisiert und Laeufe faehrt — CLI-Dispatch, Lebenszyklus-Verben, Status, Upgrade, import-code und run. Ein Verb laeuft einmal und endet; der laufende Host der Sitzung steht daneben in Host & Sitzung. (CR-GC-459, Z3-Spike ITEM-2026-053)",
       "status": "reviewed"
     },
     {
@@ -2518,6 +2512,12 @@
       "status": "reviewed"
     },
     {
+      "id": "FUNC-block-host-sitzung",
+      "type": "FUNC",
+      "name": "Host & Sitzung",
+      "description": "Ebene-1-Block im Betrieb: der laufende Host einer Sitzung — MCP-Transport, Host-Socket zum Store-Besitzer, Viewer-Aufsicht, Gesundheitsabfrage und der geordnete Abbau am Sessionende. Getrennt von den Verben, weil er lebt, solange die Sitzung lebt, waehrend ein Verb einmal laeuft und endet. (Z3-Spike ITEM-2026-053)"
+    },
+    {
       "id": "FUNC-block-live-dashboard",
       "type": "FUNC",
       "name": "Live-Kanal",
@@ -2547,12 +2547,6 @@
       "type": "FUNC",
       "name": "Werkzeug & Konfiguration",
       "description": "Was den Lauf einrichtet, bevor er losgeht: Repo-Konfiguration, Zielprofil, Schema-Stand, Werkzeug-Registry und -Kontext."
-    },
-    {
-      "id": "FUNC-block-schaufenster",
-      "type": "FUNC",
-      "name": "Nachweis",
-      "description": "Ebene-1-Block im Grounding: die zwoelf Ingenieursdokumente und der Live-Kanal. Beide sind deterministische Projektionen desselben Graphen — gleicher Graph, gleiche Bytes, keine handgepflegte Kopie, die hinterherhinkt. Ein Loch im Nachweis ist ein Loch im Modell, und dieselbe Regel, die das Loch ins Dokument schreibt, blockt auch am Gate. (umbenannt von Viewer, CR-GC-459)"
     },
     {
       "id": "FUNC-block-speicherwerk",
@@ -13775,21 +13769,6 @@
       "type": "compose"
     },
     {
-      "source": "FUNC-block-arch-optimierung",
-      "target": "MOD-loop",
-      "type": "allocate"
-    },
-    {
-      "source": "FUNC-block-arch-optimierung",
-      "target": "FUNC-graph-suggest",
-      "type": "compose"
-    },
-    {
-      "source": "FUNC-block-arch-optimierung",
-      "target": "FUNC-se-optimize",
-      "type": "compose"
-    },
-    {
       "source": "FUNC-block-autorieren",
       "target": "MOD-agent-surface",
       "type": "allocate"
@@ -13851,27 +13830,7 @@
     },
     {
       "source": "FUNC-block-bedienung",
-      "target": "FUNC-gve-sessions",
-      "type": "compose"
-    },
-    {
-      "source": "FUNC-block-bedienung",
-      "target": "FUNC-gve-supervise",
-      "type": "compose"
-    },
-    {
-      "source": "FUNC-block-bedienung",
       "target": "FUNC-harness-cli",
-      "type": "compose"
-    },
-    {
-      "source": "FUNC-block-bedienung",
-      "target": "FUNC-health-endpoint",
-      "type": "compose"
-    },
-    {
-      "source": "FUNC-block-bedienung",
-      "target": "FUNC-host-socket",
       "type": "compose"
     },
     {
@@ -13882,16 +13841,6 @@
     {
       "source": "FUNC-block-bedienung",
       "target": "FUNC-run-verb",
-      "type": "compose"
-    },
-    {
-      "source": "FUNC-block-bedienung",
-      "target": "FUNC-serve-stdio",
-      "type": "compose"
-    },
-    {
-      "source": "FUNC-block-bedienung",
-      "target": "FUNC-session-shutdown",
       "type": "compose"
     },
     {
@@ -13907,6 +13856,11 @@
     {
       "source": "FUNC-block-betrieb",
       "target": "FUNC-block-bedienung",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-betrieb",
+      "target": "FUNC-block-host-sitzung",
       "type": "compose"
     },
     {
@@ -14036,6 +13990,11 @@
     },
     {
       "source": "FUNC-block-grounding",
+      "target": "FUNC-block-dokumentenwerk",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-grounding",
       "target": "FUNC-block-gate",
       "type": "compose"
     },
@@ -14046,17 +14005,52 @@
     },
     {
       "source": "FUNC-block-grounding",
+      "target": "FUNC-block-live-dashboard",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-grounding",
       "target": "FUNC-block-messwerk",
       "type": "compose"
     },
     {
       "source": "FUNC-block-grounding",
-      "target": "FUNC-block-schaufenster",
+      "target": "FUNC-block-speicherwerk",
       "type": "compose"
     },
     {
-      "source": "FUNC-block-grounding",
-      "target": "FUNC-block-speicherwerk",
+      "source": "FUNC-block-host-sitzung",
+      "target": "MOD-surface",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-block-host-sitzung",
+      "target": "FUNC-gve-sessions",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-host-sitzung",
+      "target": "FUNC-gve-supervise",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-host-sitzung",
+      "target": "FUNC-health-endpoint",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-host-sitzung",
+      "target": "FUNC-host-socket",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-host-sitzung",
+      "target": "FUNC-serve-stdio",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-host-sitzung",
+      "target": "FUNC-session-shutdown",
       "type": "compose"
     },
     {
@@ -14126,12 +14120,17 @@
     },
     {
       "source": "FUNC-block-optimierung",
-      "target": "FUNC-block-arch-optimierung",
+      "target": "FUNC-block-urteilsarbeit",
       "type": "compose"
     },
     {
       "source": "FUNC-block-optimierung",
-      "target": "FUNC-block-urteilsarbeit",
+      "target": "FUNC-graph-suggest",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-optimierung",
+      "target": "FUNC-se-optimize",
       "type": "compose"
     },
     {
@@ -14192,21 +14191,6 @@
     {
       "source": "FUNC-block-ruestzeug",
       "target": "FUNC-tool-context",
-      "type": "compose"
-    },
-    {
-      "source": "FUNC-block-schaufenster",
-      "target": "MOD-surface",
-      "type": "allocate"
-    },
-    {
-      "source": "FUNC-block-schaufenster",
-      "target": "FUNC-block-dokumentenwerk",
-      "type": "compose"
-    },
-    {
-      "source": "FUNC-block-schaufenster",
-      "target": "FUNC-block-live-dashboard",
       "type": "compose"
     },
     {
@@ -18533,5 +18517,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 261
+  "graphVersion": 262
 }
