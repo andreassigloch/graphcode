@@ -43,7 +43,6 @@
 | `FUNC-check-code-conformance` | FUNC | conformanceViolations(harness) |
 | `FUNC-claim-store-lock` | FUNC | StoreLock |
 | `FUNC-cli-dispatch` | FUNC | graphcode CLI-Dispatch |
-| `FUNC-close-store` | FUNC | close() |
 | `FUNC-close-violations` | FUNC | Skill se:close-violations |
 | `FUNC-collect-status` | FUNC | collectStatus |
 | `FUNC-compute-phase-readiness` | FUNC | computePhaseReadiness(violations) |
@@ -65,6 +64,7 @@
 | `FUNC-graph-expand` | FUNC | graph_expand(handle, branch, depth+1) |
 | `FUNC-graph-export-snapshot` | FUNC | graph_export(views?) |
 | `FUNC-graph-impact` | FUNC | graph_impact(id, depth?) |
+| `FUNC-graph-store` | FUNC | GraphStore |
 | `FUNC-graph-suggest` | FUNC | graph_suggest(weights) |
 | `FUNC-gve-sessions` | FUNC | liveSessions |
 | `FUNC-gve-supervise` | FUNC | attachGve |
@@ -77,14 +77,12 @@
 | `FUNC-import-doc` | FUNC | Skill se:import-doc |
 | `FUNC-list-elements` | FUNC | listElements(filter) |
 | `FUNC-load-config` | FUNC | loadGraphcodeConfig |
-| `FUNC-load-graph` | FUNC | loadGraph() |
 | `FUNC-merge-nodes` | FUNC | replayBranchLog(log, sinceVersion) |
 | `FUNC-migrate-schema` | FUNC | migrateSchema(from, to) |
 | `FUNC-module-metrics` | FUNC | moduleMetrics(graph) |
 | `FUNC-mutate` | FUNC | mutate(commands) |
 | `FUNC-nd-similarity` | FUNC | duplicateHits |
 | `FUNC-next-step` | FUNC | nextStep(graph, policy) |
-| `FUNC-open-store` | FUNC | initialize() |
 | `FUNC-own-kuzu-host` | FUNC | ownKuzu() |
 | `FUNC-preflight` | FUNC | preflightBatch |
 | `FUNC-rank-candidates` | FUNC | rankCandidates(probes, focus) |
@@ -94,7 +92,6 @@
 | `FUNC-rewind` | FUNC | graphcode rewind <ref> |
 | `FUNC-run-executor` | FUNC | runExecutor |
 | `FUNC-run-verb` | FUNC | executeRun |
-| `FUNC-save-graph` | FUNC | saveGraph(graph) |
 | `FUNC-schema-guard` | FUNC | schemaFingerprint |
 | `FUNC-score-completeness` | FUNC | scoreCompleteness(gateId, graph) |
 | `FUNC-se-conops` | FUNC | Skill se-conops |
@@ -171,7 +168,6 @@
 | `FUNC-check-code-conformance` | `MOD-kernel` |
 | `FUNC-claim-store-lock` | `MOD-kernel` |
 | `FUNC-cli-dispatch` | `MOD-surface` |
-| `FUNC-close-store` | `MOD-kernel` |
 | `FUNC-close-violations` | `MOD-agent-surface` |
 | `FUNC-collect-status` | `MOD-surface` |
 | `FUNC-compute-phase-readiness` | `MOD-kernel-measure` |
@@ -193,6 +189,7 @@
 | `FUNC-graph-expand` | `MOD-kernel` |
 | `FUNC-graph-export-snapshot` | `MOD-projections` |
 | `FUNC-graph-impact` | `MOD-kernel` |
+| `FUNC-graph-store` | `MOD-kernel` |
 | `FUNC-graph-suggest` | `MOD-loop` |
 | `FUNC-gve-sessions` | `MOD-surface` |
 | `FUNC-gve-supervise` | `MOD-surface` |
@@ -205,14 +202,12 @@
 | `FUNC-import-doc` | `MOD-agent-surface` |
 | `FUNC-list-elements` | `MOD-kernel` |
 | `FUNC-load-config` | `MOD-kernel` |
-| `FUNC-load-graph` | `MOD-kernel` |
 | `FUNC-merge-nodes` | `MOD-kernel` |
 | `FUNC-migrate-schema` | `MOD-kernel` |
 | `FUNC-module-metrics` | `MOD-projections` |
 | `FUNC-mutate` | `MOD-kernel` |
 | `FUNC-nd-similarity` | `MOD-kernel-measure` |
 | `FUNC-next-step` | `MOD-loop` |
-| `FUNC-open-store` | `MOD-kernel` |
 | `FUNC-own-kuzu-host` | `MOD-kernel` |
 | `FUNC-preflight` | `MOD-loop` |
 | `FUNC-rank-candidates` | `MOD-loop` |
@@ -222,7 +217,6 @@
 | `FUNC-rewind` | `MOD-surface` |
 | `FUNC-run-executor` | `MOD-loop` |
 | `FUNC-run-verb` | `MOD-surface` |
-| `FUNC-save-graph` | `MOD-kernel` |
 | `FUNC-schema-guard` | `MOD-kernel` |
 | `FUNC-score-completeness` | `MOD-projections` |
 | `FUNC-se-conops` | `MOD-agent-surface` |

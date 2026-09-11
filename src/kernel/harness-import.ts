@@ -9,8 +9,9 @@
  * bypasses R-01, so every REQ without a verify-traced TEST is SURFACED (and, for
  * untrusted input, rejected). CR-GC-203 item 6.
  *
- * What did NOT move, deliberately: the Apply-Gate (`applyMutation`), the store lock (O2)
- * and the write mutex (O3) stay in harness.ts. The gate is governance, not formatting —
+ * What did NOT move, deliberately: the Apply-Gate (`applyMutation`) and the write mutex
+ * (O3) stay in harness.ts; the store lock (O2) and every store write sit in graph-store.ts,
+ * which hands this module a narrow port (CR-GC-503). The gate is governance, not formatting —
  * `reseed()` still calls into this module from INSIDE the O3 mutex, so a reseed can never
  * interleave with a mutate.
  *
@@ -18,7 +19,7 @@
  */
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import type { Graph, GraphNode, GraphEdge, StorageAdapter } from '@sigloch/graph-api-core';
+import type { Graph, GraphNode, GraphEdge } from '@sigloch/graph-api-core';
 import { elementToNode } from './element-node.js';
 import { clearExportPending } from './export-marker.js';
 
@@ -52,12 +53,13 @@ export interface ImportResult {
  * keeps the gate out of reach from here by construction.
  */
 export interface ImportTarget {
-  readonly storage: StorageAdapter;
   readonly repoRoot: string;
   /** The scope's systemId — names the SYS anchor this path ensures (CR-GC-302). */
   readonly systemId: string;
-  getGraph(): Graph;
-  setGraph(graph: Graph): void;
+  /** Write nodes + edges to the store, then make them the working copy. */
+  replace(graph: Graph): Promise<void>;
+  /** Empty store and working copy (reseed). */
+  clear(): Promise<void>;
 }
 
 /**
@@ -131,9 +133,7 @@ export async function importOntologyGraph(
     );
   }
 
-  await target.storage.saveNodes(nodes);
-  await target.storage.saveEdges(edges);
-  target.setGraph({ nodes, edges });
+  await target.replace({ nodes, edges });
   return { nodes: nodes.length, edges: edges.length, unverifiedReqs };
 }
 
@@ -160,9 +160,7 @@ export async function applyReseed(
   target: ImportTarget,
   relPath: string,
 ): Promise<{ nodes: number; edges: number }> {
-  const uids = target.getGraph().nodes.map((n) => n.uid);
-  if (uids.length) await target.storage.deleteNodes(uids);
-  target.setGraph({ nodes: [], edges: [] });
+  await target.clear();
   const result = await seedFromJsonFile(target, relPath);
   // CR-GC-217: the store now equals the committed snapshot again — clear the
   // drift marker so a post-checkout recall (`git checkout <sha>` + reseed) leaves
