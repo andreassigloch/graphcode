@@ -607,6 +607,7 @@
 | `FCHAIN-impact-testing` | compose | `FUNC-deduce-tests` |
 | `FCHAIN-impact-testing` | compose | `FUNC-graph-impact` |
 | `FCHAIN-impact-testing` | compose | `FUNC-resolve-tests-from-code` |
+| `FCHAIN-impact-testing` | compose | `FUNC-test-ingest` |
 | `FCHAIN-impact-testing` | satisfy | `REQ-impact-based-testing` |
 | `FCHAIN-impact-testing` | satisfy | `REQ-post-impact-testing` |
 | `FCHAIN-impact-testing` | satisfy | `REQ-pre-impact-testing` |
@@ -669,6 +670,7 @@
 | `FCHAIN-skill-authoring` | compose | `FUNC-author-req` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-author-uc` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-close-violations` |
+| `FCHAIN-skill-authoring` | compose | `FUNC-graph-realize` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-mutate` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-se-conops` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-se-fmea` |
@@ -676,6 +678,7 @@
 | `FCHAIN-skill-authoring` | compose | `FUNC-se-irr` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-se-optimize` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-se-plan` |
+| `FCHAIN-skill-authoring` | compose | `FUNC-se-top-level` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-se-trade` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-target-profile` |
 | `FCHAIN-skill-authoring` | satisfy | `REQ-skill-authors-through-gate` |
@@ -764,6 +767,7 @@
 | `FLOW-dimension-readiness` | io | `FUNC-test-ui` |
 | `FLOW-dimension-readiness` | relation | `SCHEMA-readiness-report` |
 | `FLOW-element-slice` | io | `ACTOR-agent` |
+| `FLOW-element-slice` | io | `FUNC-gate-client` |
 | `FLOW-element-slice` | relation | `SCHEMA-ontology-graph` |
 | `FLOW-expand-subgraph` | io | `FUNC-read-tools` |
 | `FLOW-expand-subgraph` | relation | `SCHEMA-ontology-graph` |
@@ -778,15 +782,19 @@
 | `FLOW-formatE-artifact` | io | `FUNC-encode` |
 | `FLOW-formatE-artifact` | io | `FUNC-mutate` |
 | `FLOW-formatE-artifact` | relation | `SCHEMA-format-e` |
+| `FLOW-gate-outcome` | io | `FUNC-rank-candidates` |
+| `FLOW-gate-outcome` | io | `FUNC-run-executor` |
+| `FLOW-gate-outcome` | relation | `SCHEMA-gate-outcome` |
 | `FLOW-gate-verdict` | io | `ACTOR-owner` |
 | `FLOW-gate-verdict` | io | `FUNC-bootstrap` |
 | `FLOW-gate-verdict` | io | `FUNC-gate-client` |
+| `FLOW-gate-verdict` | io | `FUNC-graph-realize` |
 | `FLOW-gate-verdict` | io | `FUNC-graph-suggest` |
 | `FLOW-gate-verdict` | io | `FUNC-import-code-verb` |
-| `FLOW-gate-verdict` | io | `FUNC-rank-candidates` |
 | `FLOW-gate-verdict` | io | `FUNC-se-retro` |
 | `FLOW-gate-verdict` | io | `FUNC-se-review` |
 | `FLOW-gate-verdict` | io | `FUNC-se-status` |
+| `FLOW-gate-verdict` | io | `FUNC-test-ingest` |
 | `FLOW-gate-verdict` | io | `FUNC-tool-context` |
 | `FLOW-gate-verdict` | relation | `SCHEMA-mutate-result` |
 | `FLOW-graph-delta` | io | `FUNC-graph-store` |
@@ -802,7 +810,9 @@
 | `FLOW-graph-state` | io | `FUNC-evaluate-rules` |
 | `FLOW-graph-state` | io | `FUNC-export-marker` |
 | `FLOW-graph-state` | io | `FUNC-fit-advisory` |
+| `FLOW-graph-state` | io | `FUNC-gate-client` |
 | `FLOW-graph-state` | io | `FUNC-graph-export-snapshot` |
+| `FLOW-graph-state` | io | `FUNC-graph-realize` |
 | `FLOW-graph-state` | io | `FUNC-graph-suggest` |
 | `FLOW-graph-state` | io | `FUNC-list-elements` |
 | `FLOW-graph-state` | io | `FUNC-merge-nodes` |
@@ -812,6 +822,7 @@
 | `FLOW-graph-state` | io | `FUNC-score-completeness` |
 | `FLOW-graph-state` | io | `FUNC-seed-from-json` |
 | `FLOW-graph-state` | io | `FUNC-take-steering-snapshot` |
+| `FLOW-graph-state` | io | `FUNC-test-ingest` |
 | `FLOW-graph-state` | relation | `SCHEMA-ontology-graph` |
 | `FLOW-harness-handle` | io | `FUNC-bind-tools` |
 | `FLOW-harness-handle` | io | `FUNC-import-code-verb` |
@@ -890,8 +901,6 @@
 | `FLOW-round-prompt` | io | `FUNC-rank-candidates` |
 | `FLOW-round-prompt` | io | `FUNC-run-executor` |
 | `FLOW-round-prompt` | relation | `SCHEMA-generation-step` |
-| `FLOW-round-scope` | io | `FUNC-evaluate-rules` |
-| `FLOW-round-scope` | relation | `SCHEMA-round-scope` |
 | `FLOW-rule-findings` | io | `FUNC-health-endpoint` |
 | `FLOW-rule-findings` | io | `FUNC-mutate` |
 | `FLOW-rule-findings` | relation | `SCHEMA-rule-violation` |
@@ -918,6 +927,7 @@
 | `FLOW-skill-request` | io | `FUNC-se-retro` |
 | `FLOW-skill-request` | io | `FUNC-se-review` |
 | `FLOW-skill-request` | io | `FUNC-se-status` |
+| `FLOW-skill-request` | io | `FUNC-se-top-level` |
 | `FLOW-skill-request` | io | `FUNC-se-trade` |
 | `FLOW-skill-request` | io | `FUNC-target-profile` |
 | `FLOW-skill-request` | io | `FUNC-test` |
@@ -985,6 +995,7 @@
 | `FUNC-block-abfrage` | compose | `FUNC-list-elements` |
 | `FUNC-block-abfrage` | compose | `FUNC-read-tools` |
 | `FUNC-block-abfrage` | compose | `FUNC-resolve-tests-from-code` |
+| `FUNC-block-abfrage` | compose | `FUNC-test-ingest` |
 | `FUNC-block-anleitung` | allocate | `MOD-agent-surface` |
 | `FUNC-block-anleitung` | compose | `FUNC-se-help` |
 | `FUNC-block-anleitung` | compose | `FUNC-se-retro` |
@@ -1006,9 +1017,11 @@
 | `FUNC-block-autorieren` | allocate | `MOD-agent-surface` |
 | `FUNC-block-autorieren` | compose | `FUNC-author-req` |
 | `FUNC-block-autorieren` | compose | `FUNC-author-uc` |
+| `FUNC-block-autorieren` | compose | `FUNC-graph-realize` |
 | `FUNC-block-autorieren` | compose | `FUNC-import-code` |
 | `FUNC-block-autorieren` | compose | `FUNC-import-doc` |
 | `FUNC-block-autorieren` | compose | `FUNC-se-generate` |
+| `FUNC-block-autorieren` | compose | `FUNC-se-top-level` |
 | `FUNC-block-autorieren` | compose | `FUNC-target-profile` |
 | `FUNC-block-bedienung` | allocate | `MOD-surface` |
 | `FUNC-block-bedienung` | compose | `FUNC-cli-dispatch` |
@@ -1176,6 +1189,7 @@
 | `FUNC-fit-advisory` | io | `FLOW-fit-advisory` |
 | `FUNC-fit-advisory` | satisfy | `REQ-steering-from-metrics` |
 | `FUNC-gate-client` | allocate | `MOD-loop` |
+| `FUNC-gate-client` | io | `FLOW-gate-outcome` |
 | `FUNC-gate-client` | io | `FLOW-mutate-cmd` |
 | `FUNC-gate-client` | satisfy | `REQ-prose-recovery` |
 | `FUNC-generation-step` | allocate | `MOD-loop` |
@@ -1195,10 +1209,12 @@
 | `FUNC-graph-export-snapshot` | satisfy | `REQ-graph-snapshot-per-commit` |
 | `FUNC-graph-impact` | allocate | `MOD-kernel` |
 | `FUNC-graph-impact` | io | `FLOW-impact-slice` |
-| `FUNC-graph-impact` | io | `FLOW-round-scope` |
 | `FUNC-graph-impact` | satisfy | `REQ-audit-trail` |
 | `FUNC-graph-impact` | satisfy | `REQ-query-precision` |
 | `FUNC-graph-impact` | satisfy | `REQ-subgraph-slicing` |
+| `FUNC-graph-realize` | allocate | `MOD-surface` |
+| `FUNC-graph-realize` | io | `FLOW-mutate-cmd` |
+| `FUNC-graph-realize` | satisfy | `REQ-test-runnable-binding` |
 | `FUNC-graph-store` | allocate | `MOD-kernel` |
 | `FUNC-graph-store` | io | `FLOW-graph-state` |
 | `FUNC-graph-store` | satisfy | `REQ-auto-persist-merge` |
@@ -1341,6 +1357,9 @@
 | `FUNC-se-status` | allocate | `MOD-agent-surface` |
 | `FUNC-se-status` | io | `FLOW-skill-report` |
 | `FUNC-se-status` | satisfy | `REQ-skill-reads-only` |
+| `FUNC-se-top-level` | allocate | `MOD-agent-surface` |
+| `FUNC-se-top-level` | io | `FLOW-mutate-cmd` |
+| `FUNC-se-top-level` | satisfy | `REQ-skill-authors-through-gate` |
 | `FUNC-se-trade` | allocate | `MOD-agent-surface` |
 | `FUNC-se-trade` | io | `FLOW-mutate-cmd` |
 | `FUNC-se-trade` | satisfy | `REQ-skill-authors-through-gate` |
@@ -1368,6 +1387,9 @@
 | `FUNC-test` | allocate | `MOD-agent-surface` |
 | `FUNC-test` | io | `FLOW-skill-report` |
 | `FUNC-test` | satisfy | `REQ-code-governed-quality` |
+| `FUNC-test-ingest` | allocate | `MOD-projections` |
+| `FUNC-test-ingest` | io | `FLOW-mutate-cmd` |
+| `FUNC-test-ingest` | satisfy | `REQ-test-runnable-binding` |
 | `FUNC-test-ui` | allocate | `MOD-agent-surface` |
 | `FUNC-test-ui` | io | `FLOW-skill-report` |
 | `FUNC-test-ui` | satisfy | `REQ-code-governed-quality` |
@@ -1593,6 +1615,7 @@
 | `TEST-graph-metrics` | verify | `REQ-single-measurement-path` |
 | `TEST-graph-realize` | verify | `REQ-frame-binding` |
 | `TEST-graph-realize` | verify | `REQ-gate-only-writes` |
+| `TEST-graph-realize` | verify | `REQ-test-runnable-binding` |
 | `TEST-graph-tests-operational` | verify | `REQ-graph-tests-operational` |
 | `TEST-graph-time-travel` | verify | `REQ-graph-snapshot-per-commit` |
 | `TEST-graph-time-travel` | verify | `REQ-graph-state-recall` |

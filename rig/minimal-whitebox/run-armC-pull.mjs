@@ -8,7 +8,7 @@
 // werden.
 //
 // Die EINE Manipulation:
-//   AUTHORING_TOOLS (src/executor-prompt.ts) wird zur Laufzeit um die Trias
+//   AUTHORING_TOOLS (src/loop/executor-prompt.ts) wird zur Laufzeit um die Trias
 //   erweitert. `src/` bleibt unverändert; das Set ist ein exportiertes Objekt,
 //   der Rig mutiert seine Kopie im eigenen Prozess.
 //
@@ -18,7 +18,7 @@
 // wäre dem Modell dann zusätzlich angeboten. Das wäre ein zweiter Unterschied
 // zum `off`-Arm. Über AUTHORING_TOOLS ist die Delta-Menge exakt +3.
 //
-// Executor-intern gerufene Registry-Tools (grep `registry[` in src/executor.ts):
+// Executor-intern gerufene Registry-Tools (grep `registry[` in src/loop/executor*.ts):
 //   graph_generate (jede Runde) · graph_elements({limit:100000}) +
 //   graph_get_edges({edgeType:'verify'}) (loadGraphSnapshot, je runMutate) ·
 //   graph_mutate (Gate-Call) · graph_authoring_guide (nur buildRoundInjection,
@@ -34,8 +34,9 @@ import { writeFileSync, mkdirSync, appendFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { openMeasured, stampLine } from '../../dist/index.js';
-import { runExecutor, ExecutorConfigSchema, buildToolSpecs } from '../../dist/executor.js';
-import { AUTHORING_TOOLS } from '../../dist/executor-prompt.js';
+import { runExecutor, ExecutorConfigSchema } from '../../dist/loop/executor.js';
+import { buildToolSpecs } from '../../dist/loop/executor-backend.js';
+import { AUTHORING_TOOLS } from '../../dist/loop/executor-prompt.js';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const OUT = join(HERE, 'results');

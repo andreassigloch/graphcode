@@ -1788,10 +1788,17 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "id": "FLOW-gate-outcome",
+      "type": "FLOW",
+      "name": "Gate-Ausgang des Executors",
+      "description": "Rueckgabewert des Gate-Zugangs (MutateOutcome, executor-gate.ts:27): das Gate-Verdict mit erzwungenem success, bei lokalem Preflight-Block das Block-Verdict ohne Gate-Call, dazu die Duplikat-Hinweise. runExecutor zaehlt daraus und formt das Rejection-Feedback (executor.ts:324 und 362); die Best-of-N-Runde legt ihn je Kandidat als Verdict ab (executor-bestofn.ts:179 und 188), und dieses Verdict liest die Rangfolge. (CR-GC-509)",
+      "status": "reviewed"
+    },
+    {
       "id": "FLOW-gate-verdict",
       "type": "FLOW",
       "name": "Gate-Verdikt",
-      "description": "Das Urteil des Apply-Gates ueber eine angewendete oder probierte Mutation: success, tier, Violations, Confidence; beim Probelauf dazu fitAdvisory, steeringDelta und steerAdvisory. Erzeugt nur mutate. bootstrap und import-code-verb reichen es weiter, die Kandidaten-Rangfolge liest daraus. Der offene Regelstrom ist ein eigener Fluss (FLOW-rule-findings). (CR-GC-501)",
+      "description": "Das Urteil des Apply-Gates ueber eine angewendete oder probierte Mutation: success, tier, Violations, Confidence; beim Probelauf dazu fitAdvisory, steeringDelta und steerAdvisory. Erzeugt nur mutate. bootstrap, import-code-verb, graph_realize und graph_test_ingest lesen es und reichen es weiter; der Gate-Zugang des Executors formt daraus seinen Gate-Ausgang (FLOW-gate-outcome), und erst den liest die Kandidaten-Rangfolge. Der offene Regelstrom ist ein eigener Fluss (FLOW-rule-findings). (CR-GC-501, CR-GC-509)",
       "status": "reviewed"
     },
     {
@@ -1917,7 +1924,7 @@
       "id": "FLOW-mutate-cmd",
       "type": "FLOW",
       "name": "Mutate-Command",
-      "description": "Jede Schreibabsicht am Gate als MutateCommand-Batch: Edit-Op von Agent oder Mensch, und der dryRun-verifizierte Kandidaten-Fix aus dem Vorschlagspfad. Im eingebetteten Executor sendet allein der Gate-Zugang; Parser, Preflight und Rangfolge liefern ihm Rueckgabewerte zu. (CR-GC-506)",
+      "description": "Jede Schreibabsicht am Gate als MutateCommand-Batch: Edit-Op von Agent oder Mensch, der dryRun-verifizierte Kandidaten-Fix aus dem Vorschlagspfad und die Batches, die graph_realize und graph_test_ingest aus ihrer flachen Eingabe selbst bauen. Im eingebetteten Executor sendet allein der Gate-Zugang; Parser, Preflight und Rangfolge liefern ihm Rueckgabewerte zu. (CR-GC-506, CR-GC-509)",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z"
     },
@@ -1972,7 +1979,7 @@
       "id": "FLOW-round-injection",
       "type": "FLOW",
       "name": "Runden-Injektion",
-      "description": "Der zusammengesetzte Prompt-Zusatz einer Runde: Guide-Slice plus Element-Index. Wie der Runden-Scope ein informationeller Kontext ohne festes Wire-Format, kein Code-Vertrag.",
+      "description": "Der zusammengesetzte Prompt-Zusatz einer Runde: Guide-Slice plus Element-Index. Ein informationeller Kontext ohne festes Wire-Format, kein Code-Vertrag.",
       "status": "done"
     },
     {
@@ -1981,14 +1988,6 @@
       "name": "Runden-Vorgabe",
       "description": "Die vom Runden-Waehler abgeleitete naechste Runde fuer den Executor: Fokus-Dimension, Fokus-Typen, Fund-Fenster, Gate-Protokoll, Handoff-Bedingung.",
       "status": "reviewed"
-    },
-    {
-      "id": "FLOW-round-scope",
-      "type": "FLOW",
-      "name": "Round Scope (bounded slice)",
-      "description": "Der durch read gebundene Blast-Radius/Kontext, der informiert, was status als offen prueft. Kein festes Wire-Format - informationeller Rundenkontext, kein Code-Datenvertrag.",
-      "status": "reviewed",
-      "concept": true
     },
     {
       "id": "FLOW-rule-findings",
@@ -2619,7 +2618,7 @@
       "id": "FUNC-gate-client",
       "type": "FUNC",
       "name": "bindGateClient(registry, stats, trace)",
-      "description": "Gate-Zugang des eingebetteten Executors: parst den Kandidaten-Batch wie der MCP-Layer, laesst den Preflight pruefen und korrigieren, legt den gesendeten Batch fest (Preflight-Ergebnis, bei der Probe mit dryRun) und ruft graph_mutate ueber die Registry (executor-gate.ts, callGate). Einzige Stelle, an der der Executor einen selbst festgelegten Batch sendet; Ein-Kandidaten-Pfad und Best-of-N teilen sie. Formt aus einer Rejection das Feedback fuer den Repair-Loop. (CR-GC-506)",
+      "description": "Gate-Zugang des eingebetteten Executors: liest vor dem Preflight die Elemente und die verify-Kanten ueber graph_elements und graph_get_edges (loadGraphSnapshot), parst den Kandidaten-Batch wie der MCP-Layer, laesst den Preflight pruefen und korrigieren, legt den gesendeten Batch fest (Preflight-Ergebnis, bei der Probe mit dryRun) und ruft graph_mutate ueber die Registry (executor-gate.ts, callGate). Einzige Stelle, an der der Executor einen selbst festgelegten Batch sendet; Ein-Kandidaten-Pfad und Best-of-N teilen sie. Das Ergebnis geht als Gate-Ausgang (FLOW-gate-outcome) an Treiberschleife und Rangfolge; formatGateFeedback macht daraus das Feedback fuer den Repair-Loop. (CR-GC-506, CR-GC-509)",
       "status": "done",
       "realRef": {
         "file": "src/loop/executor-gate.ts",
@@ -2686,6 +2685,18 @@
       "realRef": {
         "file": "src/kernel/harness.ts",
         "symbol": "impact",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-graph-realize",
+      "type": "FUNC",
+      "name": "graph_realize",
+      "description": "Das Werkzeug graph_realize: bindet eine FUNC oder ein SCHEMA an sein Code-Symbol (realRef) und ergaenzt optional den testRefs-Eintrag einer Abnahme, in einem flachen Aufruf. Liest dafuer die bestehenden Knoten aus dem Store (write.ts:418), baut daraus die update-node-Kommandos (write.ts:419-470) und schickt sie durch das Apply-Gate (write.ts:493); das Verdict geht mit missingRefs vorher und nachher an den Aufrufer zurueck. (CR-GC-509)",
+      "status": "done",
+      "realRef": {
+        "file": "src/surface/write.ts",
+        "symbol": "graph_realize",
         "lang": "ts"
       }
     },
@@ -3162,6 +3173,15 @@
       }
     },
     {
+      "id": "FUNC-se-top-level",
+      "type": "FUNC",
+      "name": "Skill se:top-level",
+      "description": "Prompt-realisierter Skill se:top-level: die oberste Ebene schneiden, also SYS-Blackbox, Anwendungsfaelle und Architekturziele, dann FUNC, FCHAIN mit Vertraegen und MOD mit hoechstens fuenf Bloecken je Ebene. Jeder Batch geht zuerst mit dryRun durch graph_mutate. (CR-GC-509)",
+      "realRef": {
+        "file": ".claude/commands/se/top-level.md"
+      }
+    },
+    {
       "id": "FUNC-se-trade",
       "type": "FUNC",
       "name": "Skill se-trade",
@@ -3265,6 +3285,18 @@
       "codeRef": null,
       "realRef": {
         "file": ".claude/commands/se-test.md"
+      }
+    },
+    {
+      "id": "FUNC-test-ingest",
+      "type": "FUNC",
+      "name": "graph_test_ingest",
+      "description": "Das Werkzeug graph_test_ingest, der Rueckweg von graph_tests: ordnet die Ergebnisse eines Testlaufs ueber testRef.file den TEST-Knoten zu (planIngest auf dem Store-Graphen, testreport.ts:93), baut je Knoten ein update-node mit result und ranAt (testreport.ts:122-141) und schickt den Batch durch das Apply-Gate (testreport.ts:142). Den Lauf selbst startet der Aufrufer. (CR-GC-509)",
+      "status": "done",
+      "realRef": {
+        "file": "src/projections/testreport.ts",
+        "symbol": "graph_test_ingest",
+        "lang": "ts"
       }
     },
     {
@@ -5088,6 +5120,13 @@
       }
     },
     {
+      "id": "SCHEMA-gate-outcome",
+      "type": "SCHEMA",
+      "name": "MutateOutcome",
+      "description": "Partial MutateResult plus success, preflightBlocked, hints, fitAdvisory und steeringDelta: MutateOutcome in src/loop/executor-gate.ts. Spec-only, ein TypeScript-Typ eines In-Process-Rueckgabewerts, kein Zod-Datenvertrag. (CR-GC-509)",
+      "concept": true
+    },
+    {
       "id": "SCHEMA-generation-step",
       "type": "SCHEMA",
       "name": "GenerationStep",
@@ -5364,13 +5403,6 @@
       "type": "SCHEMA",
       "name": "Runden-Injektions-Block",
       "description": "Vertrag der Runden-Injektion: ein Markdown-Textblock als string, Rueckgabe von buildRoundInjection in src/loop/executor-prompt.ts — Guide-Slice plus Element-Index. Bewusst ohne Zod-Symbol: informationeller Prompt-Kontext, kein Wire-Format; deshalb concept-only. (Pfad korrigiert CR-GC-454)",
-      "concept": true
-    },
-    {
-      "id": "SCHEMA-round-scope",
-      "type": "SCHEMA",
-      "name": "Round-Scope-Slice",
-      "description": "Vertrag des Runden-Scopes: der Format-E-Slice als string aus graph_impact bzw. graph_expand, der den Blast-Radius einer Runde begrenzt. Bewusst ohne Zod-Symbol — informationeller Rundenkontext, kein Code-Datenvertrag; concept-only.",
       "concept": true
     },
     {
@@ -11028,6 +11060,11 @@
     },
     {
       "source": "FCHAIN-impact-testing",
+      "target": "FUNC-test-ingest",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-impact-testing",
       "target": "REQ-impact-based-testing",
       "type": "satisfy",
       "weight": 1,
@@ -11369,6 +11406,11 @@
     },
     {
       "source": "FCHAIN-skill-authoring",
+      "target": "FUNC-graph-realize",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-authoring",
       "target": "FUNC-mutate",
       "type": "compose"
     },
@@ -11400,6 +11442,11 @@
     {
       "source": "FCHAIN-skill-authoring",
       "target": "FUNC-se-plan",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-authoring",
+      "target": "FUNC-se-top-level",
       "type": "compose"
     },
     {
@@ -11866,6 +11913,11 @@
     },
     {
       "source": "FLOW-element-slice",
+      "target": "FUNC-gate-client",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-element-slice",
       "target": "SCHEMA-ontology-graph",
       "type": "relation"
     },
@@ -11943,6 +11995,21 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "FLOW-gate-outcome",
+      "target": "FUNC-rank-candidates",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-gate-outcome",
+      "target": "FUNC-run-executor",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-gate-outcome",
+      "target": "SCHEMA-gate-outcome",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-gate-verdict",
       "target": "ACTOR-owner",
       "type": "io",
@@ -11961,17 +12028,17 @@
     },
     {
       "source": "FLOW-gate-verdict",
+      "target": "FUNC-graph-realize",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-gate-verdict",
       "target": "FUNC-graph-suggest",
       "type": "io"
     },
     {
       "source": "FLOW-gate-verdict",
       "target": "FUNC-import-code-verb",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-gate-verdict",
-      "target": "FUNC-rank-candidates",
       "type": "io"
     },
     {
@@ -11987,6 +12054,11 @@
     {
       "source": "FLOW-gate-verdict",
       "target": "FUNC-se-status",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-gate-verdict",
+      "target": "FUNC-test-ingest",
       "type": "io"
     },
     {
@@ -12077,7 +12149,17 @@
     },
     {
       "source": "FLOW-graph-state",
+      "target": "FUNC-gate-client",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-graph-state",
       "target": "FUNC-graph-export-snapshot",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-graph-state",
+      "target": "FUNC-graph-realize",
       "type": "io"
     },
     {
@@ -12130,6 +12212,11 @@
     {
       "source": "FLOW-graph-state",
       "target": "FUNC-take-steering-snapshot",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-graph-state",
+      "target": "FUNC-test-ingest",
       "type": "io"
     },
     {
@@ -12551,16 +12638,6 @@
       "type": "relation"
     },
     {
-      "source": "FLOW-round-scope",
-      "target": "FUNC-evaluate-rules",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-round-scope",
-      "target": "SCHEMA-round-scope",
-      "type": "relation"
-    },
-    {
       "source": "FLOW-rule-findings",
       "target": "FUNC-health-endpoint",
       "type": "io"
@@ -12688,6 +12765,11 @@
     {
       "source": "FLOW-skill-request",
       "target": "FUNC-se-status",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-skill-request",
+      "target": "FUNC-se-top-level",
       "type": "io"
     },
     {
@@ -13034,6 +13116,11 @@
       "type": "compose"
     },
     {
+      "source": "FUNC-block-abfrage",
+      "target": "FUNC-test-ingest",
+      "type": "compose"
+    },
+    {
       "source": "FUNC-block-anleitung",
       "target": "MOD-agent-surface",
       "type": "allocate"
@@ -13140,6 +13227,11 @@
     },
     {
       "source": "FUNC-block-autorieren",
+      "target": "FUNC-graph-realize",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-autorieren",
       "target": "FUNC-import-code",
       "type": "compose"
     },
@@ -13151,6 +13243,11 @@
     {
       "source": "FUNC-block-autorieren",
       "target": "FUNC-se-generate",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-autorieren",
+      "target": "FUNC-se-top-level",
       "type": "compose"
     },
     {
@@ -14027,6 +14124,11 @@
     },
     {
       "source": "FUNC-gate-client",
+      "target": "FLOW-gate-outcome",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-gate-client",
       "target": "FLOW-mutate-cmd",
       "type": "io"
     },
@@ -14124,11 +14226,6 @@
     },
     {
       "source": "FUNC-graph-impact",
-      "target": "FLOW-round-scope",
-      "type": "io"
-    },
-    {
-      "source": "FUNC-graph-impact",
       "target": "REQ-audit-trail",
       "type": "satisfy",
       "weight": 1,
@@ -14147,6 +14244,21 @@
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-graph-realize",
+      "target": "MOD-surface",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-graph-realize",
+      "target": "FLOW-mutate-cmd",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-graph-realize",
+      "target": "REQ-test-runnable-binding",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-graph-store",
@@ -14905,6 +15017,21 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-se-top-level",
+      "target": "MOD-agent-surface",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-se-top-level",
+      "target": "FLOW-mutate-cmd",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-se-top-level",
+      "target": "REQ-skill-authors-through-gate",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-se-trade",
       "target": "MOD-agent-surface",
       "type": "allocate"
@@ -15038,6 +15165,21 @@
     {
       "source": "FUNC-test",
       "target": "REQ-code-governed-quality",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-test-ingest",
+      "target": "MOD-projections",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-test-ingest",
+      "target": "FLOW-mutate-cmd",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-test-ingest",
+      "target": "REQ-test-runnable-binding",
       "type": "satisfy"
     },
     {
@@ -16300,6 +16442,11 @@
     {
       "source": "TEST-graph-realize",
       "target": "REQ-gate-only-writes",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-graph-realize",
+      "target": "REQ-test-runnable-binding",
       "type": "verify"
     },
     {
@@ -17831,5 +17978,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 257
+  "graphVersion": 258
 }
