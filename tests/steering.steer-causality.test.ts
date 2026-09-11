@@ -220,9 +220,9 @@ describe('T-S2 (CR-GC-484): ein angewandter Zug bewegt den Score am Gate — der
    * aus CLAUDE.md: ein Test, der seinen Gegenstand nicht erreicht, ist von einem bestandenen
    * nicht zu unterscheiden. Erst im engen Arm beisst er.
    */
-  const POLICY = { ...DEFAULT_METRIC_POLICY, decompositionBreadth: { warning: ENGES_BUDGET } };
+  const POLICY = { ...DEFAULT_METRIC_POLICY, decompositionBreadth: { min: 1, warning: ENGES_BUDGET } };
   let rig: Rig;
-  beforeEach(async () => { rig = await makeRig(configWith({ decompositionBreadth: { warning: ENGES_BUDGET } })); });
+  beforeEach(async () => { rig = await makeRig(configWith({ decompositionBreadth: { min: 1, warning: ENGES_BUDGET } })); });
   afterEach(async () => { await dropRig(rig); });
 
   it('die vom Gate GEMELDETE Verbesserung ist die ECHTE — unabhaengig nachgerechnet', async () => {
@@ -283,20 +283,20 @@ describe('T-S3 (CR-GC-484): das BUDGET ist die Stellgroesse — sie ersetzt die 
   let eng: Rig;
   beforeEach(async () => {
     weit = await makeRig(configWith());                                                   // Default 11
-    eng = await makeRig(configWith({ decompositionBreadth: { warning: ENGES_BUDGET } })); // 2
+    eng = await makeRig(configWith({ decompositionBreadth: { min: 1, warning: ENGES_BUDGET } })); // 2
   });
   afterEach(async () => { await dropRig(weit); await dropRig(eng); });
 
   it('derselbe Graph, zwei Budgets — der Score bewegt sich, und nur das Budget hat sich geaendert', () => {
     const w = steerOf(weit.harness, { ...DEFAULT_METRIC_POLICY });
-    const e = steerOf(eng.harness, { ...DEFAULT_METRIC_POLICY, decompositionBreadth: { warning: ENGES_BUDGET } });
+    const e = steerOf(eng.harness, { ...DEFAULT_METRIC_POLICY, decompositionBreadth: { min: 1, warning: ENGES_BUDGET } });
     expect(w.score).toBe(0);          // innerhalb aller Budgets
     expect(e.score).toBeGreaterThan(0);
   });
 
   it('das enge Budget BENENNT die Stelle, das weite kennt sie nicht', () => {
     const w = steerOf(weit.harness, { ...DEFAULT_METRIC_POLICY });
-    const e = steerOf(eng.harness, { ...DEFAULT_METRIC_POLICY, decompositionBreadth: { warning: ENGES_BUDGET } });
+    const e = steerOf(eng.harness, { ...DEFAULT_METRIC_POLICY, decompositionBreadth: { min: 1, warning: ENGES_BUDGET } });
     expect(w.worstAt).toBeNull();
     expect(e.worstAt).toEqual({ ruleId: 'RD-04', elementId: 'SYS-steering' });
     // Der Ueberschuss ist die Normierung selbst: (3 − 2)/2 bei zwei Kindern ueber Budget 2.
@@ -304,8 +304,8 @@ describe('T-S3 (CR-GC-484): das BUDGET ist die Stellgroesse — sie ersetzt die 
   });
 
   it('placebo-Gegenprobe: dasselbe Budget zweimal ergibt denselben Score', () => {
-    const a = steerOf(eng.harness, { ...DEFAULT_METRIC_POLICY, decompositionBreadth: { warning: ENGES_BUDGET } });
-    const b = steerOf(eng.harness, { ...DEFAULT_METRIC_POLICY, decompositionBreadth: { warning: ENGES_BUDGET } });
+    const a = steerOf(eng.harness, { ...DEFAULT_METRIC_POLICY, decompositionBreadth: { min: 1, warning: ENGES_BUDGET } });
+    const b = steerOf(eng.harness, { ...DEFAULT_METRIC_POLICY, decompositionBreadth: { min: 1, warning: ENGES_BUDGET } });
     expect(a).toEqual(b);
   });
 });

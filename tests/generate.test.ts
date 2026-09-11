@@ -179,14 +179,23 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
         }),
         node('FCHAIN-bestellung', 'FCHAIN', 'Bestellablauf'),
         node('FUNC-pruefen', 'FUNC', 'Bestellung prüfen', 'Prüft die eingehende Bestellung.'),
+        // CR-GC-515: seit CR-SM-311 ist ein Modul mit EINER Funktion eine entartete Ebene (RD-05,
+        // PDR). Das Fixture soll PDR aus Modellinhalt erreichen — also traegt es jetzt, was ein
+        // echtes Bestellmodul traegt: drei Schritte statt einem.
+        node('FUNC-berechnen', 'FUNC', 'Preis berechnen', 'Berechnet den Preis der geprüften Bestellung.'),
+        node('FUNC-bestaetigen', 'FUNC', 'Bestellung bestätigen', 'Bestätigt die berechnete Bestellung.'),
         node('MOD-bestellung', 'MOD', 'Bestellmodul'),
         node('FLOW-in', 'FLOW', 'Bestellanfrage'),
+        node('FLOW-geprueft', 'FLOW', 'Geprüfte Bestellung'),
+        node('FLOW-berechnet', 'FLOW', 'Berechnete Bestellung'),
         node('FLOW-out', 'FLOW', 'Bestellbestätigung'),
         // CR-GC-488: seit CR-SM-271 ist `FLOW -relation-> SCHEMA [1..1]` GRAMMATIK und
         // meldet als R-18 (error) statt als SC-04 (warning) — ohne Vertrag traegt dieses
         // Fixture zwei Sperrfehler und misst nicht mehr, was es messen will.
         node('SCHEMA-in', 'SCHEMA', 'Bestellanfrage-Vertrag'),
         node('SCHEMA-out', 'SCHEMA', 'Bestellbestaetigung-Vertrag'),
+        node('SCHEMA-geprueft', 'SCHEMA', 'Gepruefte-Bestellung-Vertrag'),
+        node('SCHEMA-berechnet', 'SCHEMA', 'Berechnete-Bestellung-Vertrag'),
       ],
       [
         edge('SYS-shop', 'UC-bestellen', 'compose'),
@@ -198,16 +207,28 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
         edge('TEST-bestellung', 'REQ-post', 'verify'),
         edge('TEST-bestellung', 'REQ-pre', 'verify'),
         edge('FCHAIN-bestellung', 'FUNC-pruefen', 'compose'),
+        edge('FCHAIN-bestellung', 'FUNC-berechnen', 'compose'),
+        edge('FCHAIN-bestellung', 'FUNC-bestaetigen', 'compose'),
         edge('FCHAIN-bestellung', 'REQ-post', 'satisfy'),
         edge('FCHAIN-bestellung', 'REQ-pre', 'satisfy'),
         edge('FUNC-pruefen', 'REQ-bestellung', 'satisfy'),
         edge('FUNC-pruefen', 'MOD-bestellung', 'allocate'),
+        edge('FUNC-berechnen', 'REQ-bestellung', 'satisfy'),
+        edge('FUNC-berechnen', 'MOD-bestellung', 'allocate'),
+        edge('FUNC-bestaetigen', 'REQ-bestellung', 'satisfy'),
+        edge('FUNC-bestaetigen', 'MOD-bestellung', 'allocate'),
         edge('ACTOR-kunde', 'FLOW-in', 'io'),
         edge('FLOW-in', 'FUNC-pruefen', 'io'),
-        edge('FUNC-pruefen', 'FLOW-out', 'io'),
+        edge('FUNC-pruefen', 'FLOW-geprueft', 'io'),
+        edge('FLOW-geprueft', 'FUNC-berechnen', 'io'),
+        edge('FUNC-berechnen', 'FLOW-berechnet', 'io'),
+        edge('FLOW-berechnet', 'FUNC-bestaetigen', 'io'),
+        edge('FUNC-bestaetigen', 'FLOW-out', 'io'),
         edge('FLOW-out', 'ACTOR-kunde', 'io'),
         edge('FLOW-in', 'SCHEMA-in', 'relation'),
         edge('FLOW-out', 'SCHEMA-out', 'relation'),
+        edge('FLOW-geprueft', 'SCHEMA-geprueft', 'relation'),
+        edge('FLOW-berechnet', 'SCHEMA-berechnet', 'relation'),
       ],
     );
     const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0);

@@ -40,7 +40,7 @@
     // der FUNC-Wurzelwald am SYS. Seit CR-SM-296 ist die Zahl an die Doktrin 7+-2
     // (`se:top-level`) gebunden: 9 ist ihre Obergrenze. Bis CR-SM-282 stand sie als
     // `DECOMPOSITION_BREADTH_MAX = 11` inline im Regelcode. null = messen, nicht urteilen.
-    "decompositionBreadth": { "warning": 9 },
+    "decompositionBreadth": { "min": 3, "warning": 9 },
 
     // BW-02 (Randbreite je Blackbox): verschiedene SCHEMA-Vertraege, die den Rand des
     // compose-Teilbaums queren. Schwelle aus der Verteilung ABGELESEN, nicht gesetzt

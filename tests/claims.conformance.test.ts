@@ -176,7 +176,8 @@ describe('T-D1 (CR-GC-340): every published count matches the living source', ()
       // hier auf 73 und war damit schon VOR diesem Schnitt eine Zahl daneben — der Kanarienvogel
       // hat gesungen, nur hat ihn niemand gehoert. Prior: CR-SM-247 (R-28 entfaellt).
       // CR-SM-307 (contracts 20): IO-02 kommt dazu, eine scorende Regel (PDR/arch) — 63 -> 64.
-      'engine rules=64',
+      // CR-SM-311 (contracts 21): RD-05 kommt dazu, die Untergrenze der Breite (PDR/arch) — 64 -> 65.
+      'engine rules=65',
       'readiness dimensions=8',
       'MCP tools=25',
     ]);
