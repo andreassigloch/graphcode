@@ -559,6 +559,7 @@
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-suggest` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-mutate` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-read-tools` |
+| `FCHAIN-advisory-roundtrip` | compose | `FUNC-target-profile-load` |
 | `FCHAIN-advisory-roundtrip` | satisfy | `REQ-advisory-roundtrip-latency` |
 | `FCHAIN-agent-query` | compose | `FUNC-graph-expand` |
 | `FCHAIN-agent-query` | compose | `FUNC-graph-impact` |
@@ -567,6 +568,7 @@
 | `FCHAIN-agent-query` | satisfy | `REQ-post-agent-query` |
 | `FCHAIN-agent-query` | satisfy | `REQ-pre-agent-query` |
 | `FCHAIN-agent-query` | satisfy | `REQ-precise-context` |
+| `FCHAIN-apply-gate` | compose | `FUNC-arch-fitness` |
 | `FCHAIN-apply-gate` | compose | `FUNC-claim-store-lock` |
 | `FCHAIN-apply-gate` | compose | `FUNC-create-harness` |
 | `FCHAIN-apply-gate` | compose | `FUNC-emit-trajectory` |
@@ -594,6 +596,8 @@
 | `FCHAIN-codec-roundtrip` | satisfy | `REQ-pre-codec-roundtrip` |
 | `FCHAIN-codec-roundtrip` | satisfy | `REQ-roundtrip-conformance` |
 | `FCHAIN-doc-export` | compose | `FUNC-export-markdown` |
+| `FCHAIN-doc-export` | compose | `FUNC-list-elements` |
+| `FCHAIN-doc-export` | compose | `FUNC-read-tools` |
 | `FCHAIN-doc-export` | compose | `FUNC-render-views` |
 | `FCHAIN-doc-export` | compose | `FUNC-serve-stdio` |
 | `FCHAIN-doc-export` | compose | `FUNC-view-changelog` |
@@ -708,8 +712,10 @@
 | `FCHAIN-steering-loop` | compose | `FUNC-compute-readiness` |
 | `FCHAIN-steering-loop` | compose | `FUNC-compute-steering-delta` |
 | `FCHAIN-steering-loop` | compose | `FUNC-extract-mutate` |
+| `FCHAIN-steering-loop` | compose | `FUNC-fit-advisory` |
 | `FCHAIN-steering-loop` | compose | `FUNC-gate-client` |
 | `FCHAIN-steering-loop` | compose | `FUNC-generation-step` |
+| `FCHAIN-steering-loop` | compose | `FUNC-list-elements` |
 | `FCHAIN-steering-loop` | compose | `FUNC-load-config` |
 | `FCHAIN-steering-loop` | compose | `FUNC-mutate` |
 | `FCHAIN-steering-loop` | compose | `FUNC-nd-similarity` |
@@ -717,7 +723,9 @@
 | `FCHAIN-steering-loop` | compose | `FUNC-preflight` |
 | `FCHAIN-steering-loop` | compose | `FUNC-rank-candidates` |
 | `FCHAIN-steering-loop` | compose | `FUNC-run-executor` |
+| `FCHAIN-steering-loop` | compose | `FUNC-run-verb` |
 | `FCHAIN-steering-loop` | compose | `FUNC-take-steering-snapshot` |
+| `FCHAIN-steering-loop` | compose | `FUNC-target-profile` |
 | `FCHAIN-steering-loop` | compose | `FUNC-target-profile-load` |
 | `FCHAIN-steering-loop` | satisfy | `REQ-steering-from-metrics` |
 | `FLOW-action` | io | `ACTOR-agent` |
@@ -746,7 +754,6 @@
 | `FLOW-cli-command` | io | `FUNC-harness-cli` |
 | `FLOW-cli-command` | io | `FUNC-import-code-verb` |
 | `FLOW-cli-command` | io | `FUNC-rewind` |
-| `FLOW-cli-command` | io | `FUNC-run-executor` |
 | `FLOW-cli-command` | io | `FUNC-run-verb` |
 | `FLOW-cli-command` | io | `FUNC-upgrade` |
 | `FLOW-cli-command` | relation | `SCHEMA-cli-command` |
@@ -789,8 +796,6 @@
 | `FLOW-gate-verdict` | io | `FUNC-graph-suggest` |
 | `FLOW-gate-verdict` | io | `FUNC-import-code-verb` |
 | `FLOW-gate-verdict` | io | `FUNC-se-retro` |
-| `FLOW-gate-verdict` | io | `FUNC-se-review` |
-| `FLOW-gate-verdict` | io | `FUNC-se-status` |
 | `FLOW-gate-verdict` | io | `FUNC-test-ingest` |
 | `FLOW-gate-verdict` | io | `FUNC-tool-context` |
 | `FLOW-gate-verdict` | relation | `SCHEMA-mutate-result` |
@@ -807,7 +812,6 @@
 | `FLOW-graph-state` | io | `FUNC-evaluate-rules` |
 | `FLOW-graph-state` | io | `FUNC-export-marker` |
 | `FLOW-graph-state` | io | `FUNC-fit-advisory` |
-| `FLOW-graph-state` | io | `FUNC-gate-client` |
 | `FLOW-graph-state` | io | `FUNC-graph-export-snapshot` |
 | `FLOW-graph-state` | io | `FUNC-graph-realize` |
 | `FLOW-graph-state` | io | `FUNC-graph-suggest` |
@@ -853,7 +857,8 @@
 | `FLOW-live-event` | relation | `SCHEMA-update-event` |
 | `FLOW-markdown-docs` | io | `ACTOR-owner` |
 | `FLOW-markdown-docs` | relation | `SCHEMA-markdown-view` |
-| `FLOW-measurement-vector` | io | `FUNC-goal-steerer` |
+| `FLOW-measurement-vector` | io | `FUNC-generation-step` |
+| `FLOW-measurement-vector` | io | `FUNC-next-step` |
 | `FLOW-measurement-vector` | relation | `SCHEMA-measurement-vector` |
 | `FLOW-metric-policy` | io | `FUNC-evaluate-rules` |
 | `FLOW-metric-policy` | io | `FUNC-take-steering-snapshot` |
@@ -966,6 +971,8 @@
 | `FLOW-rule-findings` | io | `FUNC-health-endpoint` |
 | `FLOW-rule-findings` | io | `FUNC-mutate` |
 | `FLOW-rule-findings` | relation | `SCHEMA-rule-violation` |
+| `FLOW-run-request` | io | `FUNC-run-executor` |
+| `FLOW-run-request` | relation | `SCHEMA-query-params` |
 | `FLOW-schema-fingerprint` | io | `FUNC-graph-store` |
 | `FLOW-schema-fingerprint` | relation | `SCHEMA-schema-fingerprint` |
 | `FLOW-session-entry` | io | `FUNC-gve-sessions` |
@@ -1385,6 +1392,7 @@
 | `FUNC-run-executor` | io | `FLOW-model-request` |
 | `FUNC-run-executor` | satisfy | `REQ-one-driver-local-and-frontier` |
 | `FUNC-run-verb` | allocate | `MOD-surface` |
+| `FUNC-run-verb` | io | `FLOW-run-request` |
 | `FUNC-run-verb` | satisfy | `REQ-one-driver-local-and-frontier` |
 | `FUNC-schema-guard` | allocate | `MOD-kernel` |
 | `FUNC-schema-guard` | io | `FLOW-schema-fingerprint` |

@@ -2216,6 +2216,12 @@
       "description": "Die Befunde des Gate-Katalogs ueber den aktuellen Graphen (harness.evaluateRules). Das Gate urteilt damit, der Health-Endpunkt prueft damit, dass das Gate verdrahtet ist. Kein Urteil ueber eine Mutation, das traegt FLOW-gate-verdict. (CR-GC-501)"
     },
     {
+      "id": "FLOW-run-request",
+      "type": "FLOW",
+      "name": "Lauf-Auftrag",
+      "description": "Der Auftrag des run-Verbs an die Treiberschleife: Intention, Backend-Konfiguration und Ablaufspur (run-verb.ts uebergibt sie an runExecutor). (CR-GC-517)"
+    },
+    {
       "id": "FLOW-schema-fingerprint",
       "type": "FLOW",
       "name": "Schema-Fingerabdruck",
@@ -11007,6 +11013,11 @@
     },
     {
       "source": "FCHAIN-advisory-roundtrip",
+      "target": "FUNC-target-profile-load",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-advisory-roundtrip",
       "target": "REQ-advisory-roundtrip-latency",
       "type": "satisfy"
     },
@@ -11054,6 +11065,11 @@
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FCHAIN-apply-gate",
+      "target": "FUNC-arch-fitness",
+      "type": "compose"
     },
     {
       "source": "FCHAIN-apply-gate",
@@ -11225,6 +11241,16 @@
     {
       "source": "FCHAIN-doc-export",
       "target": "FUNC-export-markdown",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-doc-export",
+      "target": "FUNC-list-elements",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-doc-export",
+      "target": "FUNC-read-tools",
       "type": "compose"
     },
     {
@@ -11843,12 +11869,22 @@
     },
     {
       "source": "FCHAIN-steering-loop",
+      "target": "FUNC-fit-advisory",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
       "target": "FUNC-gate-client",
       "type": "compose"
     },
     {
       "source": "FCHAIN-steering-loop",
       "target": "FUNC-generation-step",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
+      "target": "FUNC-list-elements",
       "type": "compose"
     },
     {
@@ -11891,7 +11927,17 @@
     },
     {
       "source": "FCHAIN-steering-loop",
+      "target": "FUNC-run-verb",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
       "target": "FUNC-take-steering-snapshot",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
+      "target": "FUNC-target-profile",
       "type": "compose"
     },
     {
@@ -12037,12 +12083,6 @@
       "source": "FLOW-cli-command",
       "target": "FUNC-rewind",
       "type": "io"
-    },
-    {
-      "source": "FLOW-cli-command",
-      "target": "FUNC-run-executor",
-      "type": "io",
-      "weight": "1"
     },
     {
       "source": "FLOW-cli-command",
@@ -12262,16 +12302,6 @@
     },
     {
       "source": "FLOW-gate-verdict",
-      "target": "FUNC-se-review",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-gate-verdict",
-      "target": "FUNC-se-status",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-gate-verdict",
       "target": "FUNC-test-ingest",
       "type": "io"
     },
@@ -12360,11 +12390,6 @@
       "target": "FUNC-fit-advisory",
       "type": "io",
       "weight": "1"
-    },
-    {
-      "source": "FLOW-graph-state",
-      "target": "FUNC-gate-client",
-      "type": "io"
     },
     {
       "source": "FLOW-graph-state",
@@ -12608,7 +12633,12 @@
     },
     {
       "source": "FLOW-measurement-vector",
-      "target": "FUNC-goal-steerer",
+      "target": "FUNC-generation-step",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-measurement-vector",
+      "target": "FUNC-next-step",
       "type": "io"
     },
     {
@@ -13173,6 +13203,16 @@
     {
       "source": "FLOW-rule-findings",
       "target": "SCHEMA-rule-violation",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-run-request",
+      "target": "FUNC-run-executor",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-run-request",
+      "target": "SCHEMA-query-params",
       "type": "relation"
     },
     {
@@ -15363,6 +15403,11 @@
       "source": "FUNC-run-verb",
       "target": "MOD-surface",
       "type": "allocate"
+    },
+    {
+      "source": "FUNC-run-verb",
+      "target": "FLOW-run-request",
+      "type": "io"
     },
     {
       "source": "FUNC-run-verb",
@@ -18517,5 +18562,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 263
+  "graphVersion": 264
 }

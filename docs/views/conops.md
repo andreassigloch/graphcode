@@ -61,7 +61,7 @@ Als Entwickler will ich, dass jede Aenderung, meine wie die eines Agenten, durch
 
 Ausgeloest von: `ACTOR-agent` · `ACTOR-learning-engine` · `ACTOR-owner`
 
-- `FCHAIN-apply-gate` — Apply-Gate-Ablauf (Governed Mutation): `FUNC-claim-store-lock` → `FUNC-create-harness` → `FUNC-emit-trajectory` → `FUNC-evaluate-rules` → `FUNC-fit-advisory` → `FUNC-graph-store` → `FUNC-host-socket` → `FUNC-mutate` → `FUNC-own-kuzu-host` → `FUNC-session-shutdown` → `FUNC-tool-context`
+- `FCHAIN-apply-gate` — Apply-Gate-Ablauf (Governed Mutation): `FUNC-arch-fitness` → `FUNC-claim-store-lock` → `FUNC-create-harness` → `FUNC-emit-trajectory` → `FUNC-evaluate-rules` → `FUNC-fit-advisory` → `FUNC-graph-store` → `FUNC-host-socket` → `FUNC-mutate` → `FUNC-own-kuzu-host` → `FUNC-session-shutdown` → `FUNC-tool-context`
 - `FCHAIN-capture` — Interaktive Erfassung (Text → suggest-Tier): `FUNC-decode` → `FUNC-mutate`
 - `FCHAIN-codec-roundtrip` — Format-E Round-Trip (encode∘decode): `FUNC-decode` → `FUNC-encode`
 - `FCHAIN-interface-escalation` — Interface-Änderungs-Eskalation: `FUNC-graph-impact` → `FUNC-mutate` → `FUNC-read-tools`
@@ -74,7 +74,7 @@ Als Entwickler will ich, dass der naechste Schritt aus deterministisch gemessene
 Ausgeloest von: `ACTOR-agent` · `ACTOR-dashboard` · `ACTOR-learning-engine` · `ACTOR-owner`
 
 - `FCHAIN-skill-report` — Skill berichtet gemessenen Stand: `FUNC-check-code-conformance` → `FUNC-compute-phase-readiness` → `FUNC-compute-readiness` → `FUNC-evaluate-rules` → `FUNC-module-metrics` → `FUNC-score-completeness` → `FUNC-se-help` → `FUNC-se-retro` → `FUNC-se-review` → `FUNC-se-status` → `FUNC-test` → `FUNC-test-ui`
-- `FCHAIN-steering-loop` — Kenngroessen-Steuerungsschleife: `FUNC-arch-fitness` → `FUNC-build-round-injection` → `FUNC-call-model` → `FUNC-compute-phase-readiness` → `FUNC-compute-readiness` → `FUNC-compute-steering-delta` → `FUNC-extract-mutate` → `FUNC-gate-client` → `FUNC-generation-step` → `FUNC-load-config` → `FUNC-mutate` → `FUNC-nd-similarity` → `FUNC-next-step` → `FUNC-preflight` → `FUNC-rank-candidates` → `FUNC-run-executor` → `FUNC-take-steering-snapshot` → `FUNC-target-profile-load`
+- `FCHAIN-steering-loop` — Kenngroessen-Steuerungsschleife: `FUNC-arch-fitness` → `FUNC-build-round-injection` → `FUNC-call-model` → `FUNC-compute-phase-readiness` → `FUNC-compute-readiness` → `FUNC-compute-steering-delta` → `FUNC-extract-mutate` → `FUNC-fit-advisory` → `FUNC-gate-client` → `FUNC-generation-step` → `FUNC-list-elements` → `FUNC-load-config` → `FUNC-mutate` → `FUNC-nd-similarity` → `FUNC-next-step` → `FUNC-preflight` → `FUNC-rank-candidates` → `FUNC-run-executor` → `FUNC-run-verb` → `FUNC-take-steering-snapshot` → `FUNC-target-profile` → `FUNC-target-profile-load`
 
 ### `UC-efficient-testing` — Effizientes, impact-basiertes Testen
 
@@ -116,7 +116,7 @@ Als Entwickler will ich Modellstand aus Fremdquellen einlesen und als prueffaehi
 
 Ausgeloest von: `ACTOR-agent` · `ACTOR-owner`
 
-- `FCHAIN-doc-export` — Doc-Export (stdio → exporter): `FUNC-export-markdown` → `FUNC-render-views` → `FUNC-serve-stdio` → `FUNC-view-changelog` → `FUNC-view-conops` → `FUNC-view-fmea` → `FUNC-view-icd` → `FUNC-view-intplan` → `FUNC-view-rtm`
+- `FCHAIN-doc-export` — Doc-Export (stdio → exporter): `FUNC-export-markdown` → `FUNC-list-elements` → `FUNC-read-tools` → `FUNC-render-views` → `FUNC-serve-stdio` → `FUNC-view-changelog` → `FUNC-view-conops` → `FUNC-view-fmea` → `FUNC-view-icd` → `FUNC-view-intplan` → `FUNC-view-rtm`
 - `FCHAIN-model-import` — Bestehenden Bestand einlesen: `FUNC-import-code` → `FUNC-import-code-verb` → `FUNC-import-doc` → `FUNC-mutate`
 
 ### `UC-reduced-llm` — Mit kleinem oder lokalem Modell arbeiten
@@ -125,7 +125,7 @@ Als Entwickler will ich anspruchsvolle Aenderungen mit einem kleinen oder lokale
 
 Ausgeloest von: `ACTOR-agent` · `ACTOR-learning-engine` · `ACTOR-owner`
 
-- `FCHAIN-advisory-roundtrip` — Advisory Roundtrip (Read -> Status -> Propose -> Apply): `FUNC-evaluate-rules` → `FUNC-graph-impact` → `FUNC-graph-suggest` → `FUNC-mutate` → `FUNC-read-tools`
+- `FCHAIN-advisory-roundtrip` — Advisory Roundtrip (Read -> Status -> Propose -> Apply): `FUNC-evaluate-rules` → `FUNC-graph-impact` → `FUNC-graph-suggest` → `FUNC-mutate` → `FUNC-read-tools` → `FUNC-target-profile-load`
 - `FCHAIN-agent-query` — Agent-Graph-Query (Impact + progressive Expansion): `FUNC-graph-expand` → `FUNC-graph-impact` → `FUNC-list-elements` → `FUNC-read-tools`
 - `FCHAIN-modelfree-gate` — Modellfreier Gate-Betrieb: `FUNC-evaluate-rules` → `FUNC-mutate`
 
