@@ -48,6 +48,15 @@
     // Bewusst ohne `info`-Stufe — readiness zaehlt info ungefiltert in den Nenner.
     "boundaryWidth": { "warning": 5 },
 
+    // CR-SM-314: ab wie vielen Wirkketten eine FUNC als INFRASTRUKTUR gilt. Die Zahl selbst
+    // (Ketten und Use Cases je FUNC) urteilt nie — sie steht in jeder FUNC-Zeile von
+    // graph_metrics. Diese Schwelle sagt nur, wo eine Regel sie als Ausnahme lesen darf;
+    // erster Abnehmer ist R-21 (CR-SM-313). ABGELESEN an der WIRKUNG, nicht an der
+    // Verteilungsform: auf den 31 Uebergaben dieses Repos ohne gemeinsame Kette stellen die
+    // Schwellen 3 und 4 identisch 19 frei, 5 und 6 identisch 6 — ein Plateau 3..4, und 3 ist
+    // seine Untergrenze. null = messen, nicht urteilen.
+    "criticality": { "infrastructure": 3 },
+
     // CR-SM-312: `moduleSize` gibt es nicht mehr. R-04 misst seither die Randbreite des
     // MODULS — dieselbe Frage wie BW-02 auf dem anderen Baum, also dieselbe Schwelle
     // `boundaryWidth` oben. Die Breite der Modul-Ebene (Untermodule plus eigene Funktionen)

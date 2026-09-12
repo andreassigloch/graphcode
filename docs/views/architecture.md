@@ -59,6 +59,7 @@
 | `FUNC-export-marker` | FUNC | setExportPending |
 | `FUNC-extract-mutate` | FUNC | extractMutateFromText |
 | `FUNC-fit-advisory` | FUNC | computeFitAdvisory(before, after) |
+| `FUNC-function-criticality` | FUNC | functionCriticality(graph) |
 | `FUNC-gate-client` | FUNC | bindGateClient(registry, stats, trace) |
 | `FUNC-generation-step` | FUNC | generationStep(graph, policy, intent) |
 | `FUNC-goal-steerer` | FUNC | Führung |
@@ -189,6 +190,7 @@
 | `FUNC-export-marker` | `MOD-kernel` |
 | `FUNC-extract-mutate` | `MOD-loop` |
 | `FUNC-fit-advisory` | `MOD-kernel-measure` |
+| `FUNC-function-criticality` | `MOD-projections` |
 | `FUNC-gate-client` | `MOD-loop` |
 | `FUNC-generation-step` | `MOD-loop` |
 | `FUNC-goal-steerer` | `MOD-loop` |

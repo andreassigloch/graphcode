@@ -26,7 +26,13 @@
  */
 
 import { z } from 'zod/v4';
-import { moduleMetrics, type ModuleMetrics, type MetricPolicy } from '@sigloch/contracts/se';
+import {
+  moduleMetrics,
+  functionCriticality,
+  type ModuleMetrics,
+  type FunctionCriticality,
+  type MetricPolicy,
+} from '@sigloch/contracts/se';
 import type { MetricVector } from '@sigloch/se-engine';
 import type { PolicySource } from '../kernel/config.js';
 import { toOntologyGraph } from '../kernel/conformance.js';
@@ -75,6 +81,14 @@ export function bindMetricsTools(ctx: ToolPort): MCPToolRegistry {
     z.infer<typeof GraphMetricsInputSchema>,
     {
       modules: ModuleMetrics[];
+      /**
+       * CR-GC-518: Kritikalitaet je FUNC — Wirkketten und Use Cases darueber (CR-SM-314).
+       *
+       * EIGENER Vertrag neben "modules", nicht dieselbe Liste breiter: es ist eine andere
+       * Grundgesamtheit auf einem anderen Baum. MOD ist der Abhaengigkeitsbaum, FUNC der
+       * Wertbaum, und sie spiegeln einander ausdruecklich nicht.
+       */
+      functions: FunctionCriticality[];
       policy: MetricPolicy;
       policySource: PolicySource;
       fit: {
@@ -153,6 +167,7 @@ export function bindMetricsTools(ctx: ToolPort): MCPToolRegistry {
       const values = profile?.profile.values ?? {};
       return {
         modules: moduleMetrics(toOntologyGraph(graph)),
+        functions: functionCriticality(toOntologyGraph(graph)),
         policy: config.metricPolicy,
         policySource: source,
         fit: {

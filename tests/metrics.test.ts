@@ -186,6 +186,31 @@ describe('TEST-graph-metrics: Kennzahlen je MOD, auch ohne Verstoss (CR-GC-326)'
     }
   });
 
+  /**
+   * CR-GC-518 — die Kritikalitaet je FUNC reist in DERSELBEN Antwort (CR-SM-314).
+   *
+   * Eigener Schluessel, nicht dieselbe Liste breiter: MOD ist der Abhaengigkeitsbaum, FUNC der
+   * Wertbaum, und sie spiegeln einander ausdruecklich nicht. Der Test belegt die BINDUNG an
+   * contracts' Definition — Ketten heissen hier, was R-30 darunter versteht (direkte
+   * FCHAIN-Kante, kein Rollup ueber compose-Vorfahren) — statt sie nachzurechnen.
+   */
+  it('liefert eine Zeile je FUNC mit Ketten- und Use-Case-Zahl, kritischste zuerst', async () => {
+    const { functions } = await tools.graph_metrics.handler({});
+
+    // Eine Zeile je FUNC der Fixture — auch fuer FUNC-solo, ueber das keine Regel etwas meldet
+    // und das in keiner Kette liegt. Genau dort ist "0" eine AUSSAGE und kein fehlender Wert.
+    expect(functions.map((f) => f.funcId).sort()).toEqual(['FUNC-a', 'FUNC-b', 'FUNC-s', 'FUNC-solo']);
+    expect(functions.find((f) => f.funcId === 'FUNC-solo')).toMatchObject({ chains: 0, useCases: 0 });
+
+    // Die Rangfolge IST das Signal — absteigend, nie nach Zufall der Einlesereihenfolge.
+    const ketten = functions.map((f) => f.chains);
+    expect([...ketten].sort((a, b) => b - a)).toEqual(ketten);
+
+    // Jede Zeile misst, keine urteilt: vier Felder, kein Infrastruktur-Flag. Die Schwelle
+    // steht in der Policy und wird hier NICHT angewandt.
+    expect(Object.keys(functions[0]).sort()).toEqual(['chains', 'funcId', 'funcName', 'useCases']);
+  });
+
   it('traegt die graphVersion des gelesenen Standes', async () => {
     const res = await tools.graph_metrics.handler({});
     expect(typeof res.graphVersion).toBe('number');
