@@ -48,13 +48,10 @@
     // Bewusst ohne `info`-Stufe — readiness zaehlt info ungefiltert in den Nenner.
     "boundaryWidth": { "warning": 5 },
 
-    // R-04: Modulgroesse GEGEN Kreuzungen — drei Urteile, drei Werte (CR-SM-236).
-    // Seit CR-SM-296 ist R-04 ALLEIN fuer die Modulgroesse zustaendig (RD-04 hat ihr
-    // Allokations-Bein abgegeben), und dieselbe Doktrin 7+-2 gilt: large = 9 (Obergrenze),
-    // coupled = 7 (Untergrenze, ab der die Regel hinsieht). Vorher 12/8 — zwei Zahlen
-    // fuer dieselbe Frage, unverbunden mit der Zerlegungsbreite darueber.
-    // crossings: ab 3 Kreuzungen warnt auch ein nur `coupled`-grosses Modul.
-    "moduleSize": { "large": 9, "coupled": 7, "crossings": 2 },
+    // CR-SM-312: `moduleSize` gibt es nicht mehr. R-04 misst seither die Randbreite des
+    // MODULS — dieselbe Frage wie BW-02 auf dem anderen Baum, also dieselbe Schwelle
+    // `boundaryWidth` oben. Die Breite der Modul-Ebene (Untermodule plus eigene Funktionen)
+    // ist seit CR-SM-311 RD-04s Frage; `decompositionBreadth` traegt sie.
 
     // CR-SM-229: die lizenzierte AIAG-VDA-Tabelle gehoert NICHT in diese Datei —
     // sie ist eingecheckt. null heisst hier nicht "aus", sondern "markierter
