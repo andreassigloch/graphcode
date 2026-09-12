@@ -689,6 +689,7 @@
 | `FCHAIN-skill-report` | compose | `FUNC-compute-phase-readiness` |
 | `FCHAIN-skill-report` | compose | `FUNC-compute-readiness` |
 | `FCHAIN-skill-report` | compose | `FUNC-evaluate-rules` |
+| `FCHAIN-skill-report` | compose | `FUNC-function-criticality` |
 | `FCHAIN-skill-report` | compose | `FUNC-module-metrics` |
 | `FCHAIN-skill-report` | compose | `FUNC-score-completeness` |
 | `FCHAIN-skill-report` | compose | `FUNC-se-help` |
@@ -786,6 +787,8 @@
 | `FLOW-formatE-artifact-agent` | relation | `SCHEMA-format-e` |
 | `FLOW-formatE-artifact-read-tools` | io | `ACTOR-agent` |
 | `FLOW-formatE-artifact-read-tools` | relation | `SCHEMA-format-e` |
+| `FLOW-function-criticality` | io | `ACTOR-dashboard` |
+| `FLOW-function-criticality` | relation | `SCHEMA-function-criticality` |
 | `FLOW-gate-outcome` | io | `FUNC-rank-candidates` |
 | `FLOW-gate-outcome` | io | `FUNC-run-executor` |
 | `FLOW-gate-outcome` | relation | `SCHEMA-gate-outcome` |
@@ -812,6 +815,7 @@
 | `FLOW-graph-state` | io | `FUNC-evaluate-rules` |
 | `FLOW-graph-state` | io | `FUNC-export-marker` |
 | `FLOW-graph-state` | io | `FUNC-fit-advisory` |
+| `FLOW-graph-state` | io | `FUNC-function-criticality` |
 | `FLOW-graph-state` | io | `FUNC-graph-export-snapshot` |
 | `FLOW-graph-state` | io | `FUNC-graph-realize` |
 | `FLOW-graph-state` | io | `FUNC-graph-suggest` |
@@ -1157,6 +1161,7 @@
 | `FUNC-block-messwerk` | compose | `FUNC-compute-readiness` |
 | `FUNC-block-messwerk` | compose | `FUNC-compute-steering-delta` |
 | `FUNC-block-messwerk` | compose | `FUNC-fit-advisory` |
+| `FUNC-block-messwerk` | compose | `FUNC-function-criticality` |
 | `FUNC-block-messwerk` | compose | `FUNC-module-metrics` |
 | `FUNC-block-messwerk` | compose | `FUNC-score-completeness` |
 | `FUNC-block-messwerk` | compose | `FUNC-take-steering-snapshot` |
@@ -1264,6 +1269,9 @@
 | `FUNC-fit-advisory` | allocate | `MOD-kernel-measure` |
 | `FUNC-fit-advisory` | io | `FLOW-fit-advisory` |
 | `FUNC-fit-advisory` | satisfy | `REQ-steering-from-metrics` |
+| `FUNC-function-criticality` | allocate | `MOD-projections` |
+| `FUNC-function-criticality` | io | `FLOW-function-criticality` |
+| `FUNC-function-criticality` | satisfy | `REQ-steering-from-metrics` |
 | `FUNC-gate-client` | allocate | `MOD-loop` |
 | `FUNC-gate-client` | io | `FLOW-gate-outcome` |
 | `FUNC-gate-client` | io | `FLOW-mutate-cmd-gate-client` |

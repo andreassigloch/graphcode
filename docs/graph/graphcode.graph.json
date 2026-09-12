@@ -1794,6 +1794,12 @@
       "status": "reviewed"
     },
     {
+      "id": "FLOW-function-criticality",
+      "type": "FLOW",
+      "name": "Kritikalitaet je FUNC",
+      "description": "Ketten und Use Cases je Funktion, in derselben graph_metrics-Antwort wie die Modulkennzahlen. EIGENER Fluss statt eines breiteren SCHEMA-module-metrics: MOD ist der Abhaengigkeitsbaum, FUNC der Wertbaum, sie spiegeln einander ausdruecklich nicht. BENANNTE OFFENE DIFFERENZ: das Dashboard bekommt die Zahl in der Antwort, rendert sie aber noch nicht."
+    },
+    {
       "id": "FLOW-gate-outcome",
       "type": "FLOW",
       "name": "Gate-Ausgang des Executors",
@@ -2861,6 +2867,19 @@
       "realRef": {
         "file": "src/kernel/measure/fit-advisory.ts",
         "symbol": "computeFitAdvisory",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-function-criticality",
+      "type": "FUNC",
+      "name": "functionCriticality(graph)",
+      "description": "Projiziert den Graphen auf die Kritikalitaet je FUNC: die Zahl der Wirkketten und der Use Cases darueber. Die Kettendefinition ist von R-30 GELIEHEN - direkte FCHAIN -compose-> FUNC, kein Rollup ueber compose-Vorfahren; der Rollup wurde ueber 17 Familiengraphen gemessen und verworfen, er haette drei FUNCs bewegt und einen zweiten Kettenbegriff etabliert. Urteilt nie: kein Infrastruktur-Flag an der Zeile, die Schwelle steht in der Policy. Fremdpaket @sigloch/contracts, deshalb external.",
+      "external": true,
+      "status": "done",
+      "realRef": {
+        "file": "packages/contracts/src/se/function-criticality.ts",
+        "symbol": "functionCriticality",
         "lang": "ts"
       }
     },
@@ -5366,6 +5385,19 @@
       "realRef": {
         "file": "packages/contracts/src/se/format-e-parser.ts",
         "symbol": "FormatEDiff",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "SCHEMA-function-criticality",
+      "type": "SCHEMA",
+      "name": "FunctionCriticality",
+      "description": "Je FUNC funcId, funcName, chains, useCases. Vier Felder, kein Infrastruktur-Flag - ein Flag waere ein Urteil in der Messung. chains 0 ist eine AUSSAGE, kein fehlender Wert: bei einem Blatt R-30s Befund, bei einem zerlegten Block der von FC-03 erzwungene Normalzustand. Aus @sigloch/contracts, deshalb external.",
+      "external": true,
+      "status": "reviewed",
+      "realRef": {
+        "file": "packages/contracts/src/se/function-criticality.ts",
+        "symbol": "FunctionCriticality",
         "lang": "ts"
       }
     },
@@ -11745,6 +11777,11 @@
     },
     {
       "source": "FCHAIN-skill-report",
+      "target": "FUNC-function-criticality",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-report",
       "target": "FUNC-module-metrics",
       "type": "compose",
       "weight": "1"
@@ -12249,6 +12286,16 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-function-criticality",
+      "target": "ACTOR-dashboard",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-function-criticality",
+      "target": "SCHEMA-function-criticality",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-gate-outcome",
       "target": "FUNC-rank-candidates",
       "type": "io"
@@ -12390,6 +12437,11 @@
       "target": "FUNC-fit-advisory",
       "type": "io",
       "weight": "1"
+    },
+    {
+      "source": "FLOW-graph-state",
+      "target": "FUNC-function-criticality",
+      "type": "io"
     },
     {
       "source": "FLOW-graph-state",
@@ -14145,6 +14197,11 @@
     },
     {
       "source": "FUNC-block-messwerk",
+      "target": "FUNC-function-criticality",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-messwerk",
       "target": "FUNC-module-metrics",
       "type": "compose"
     },
@@ -14710,6 +14767,21 @@
     },
     {
       "source": "FUNC-fit-advisory",
+      "target": "REQ-steering-from-metrics",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-function-criticality",
+      "target": "MOD-projections",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-function-criticality",
+      "target": "FLOW-function-criticality",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-function-criticality",
       "target": "REQ-steering-from-metrics",
       "type": "satisfy"
     },
@@ -18562,5 +18634,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 264
+  "graphVersion": 265
 }
