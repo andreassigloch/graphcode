@@ -35,6 +35,14 @@
  * `ruleCatalogs().notInGate` weist ND deshalb weiter aus — „nicht im Gate" und
  * „nicht ausgewertet" sind ab hier zwei verschiedene Aussagen.
  *
+ * CR-GC-519: die zwei Lagen „nicht ausgewertet" (`skipped`) und „nicht im Gate"
+ * (`notInGate`, CR-GC-442) reisen ab hier BEIDE am Ergebnis — jede Fläche, die
+ * `skipped` gibt, gibt auch `notInGate`. Vorher führte nur `graph_readiness`
+ * beide (`catalogs.notInGate`), und an `rules_get_violations` war „RC-02 nie
+ * gefahren" von „RC-02 gefahren, blockiert nur nicht" nicht zu unterscheiden.
+ * Und die Ableitung ist ein Vertrag: feuert eine Regel, die laut Katalog nicht
+ * ausgewertet wurde, ist das kein Ergebnis, sondern ein Fehler, der sie nennt.
+ *
  * NICHT hier: das Apply-Gate. `harness.mutate()` bewertet weiter rein graph-seitig
  * (`evaluateRules`), und das muss so bleiben — eine Mutation darf nicht pro Batch
  * den Quellbaum parsen. Das Gate ist keine Auswertungs-Fläche, es ist der Schreibweg.
@@ -93,6 +101,14 @@ export interface Evaluation {
    * weder an, welche Fläche gefragt wurde, noch mit welchem Katalog.
    */
   skipped: string[];
+  /**
+   * Die contracts-Regeln, die das GATE nicht kennt (CR-GC-442/519) — die ZWEITE
+   * Lage neben `skipped`, abgeleitet aus `unevaluatedRuleIds`. Eine Regel kann hier
+   * stehen und trotzdem ausgewertet sein (ND lokal, RC bei gelaufener Konformanz):
+   * sie feuert dann in `findings`, blockiert aber keine Mutation. `skipped` ist
+   * stets eine Teilmenge hiervon — nie umgekehrt.
+   */
+  notInGate: string[];
   /**
    * Abdeckung des Import-Graphen (CR-GC-429 §2 / CR-SM-268 Teil 2) — das
    * GESCHWISTER von `skipped`, nie damit zusammengelegt: `skipped` heißt „diese
@@ -178,12 +194,12 @@ export interface RuleCatalogs {
   /** Steering-Pfad: `evaluateAllRules` über den vollen contracts-Katalog. */
   steering: RuleCatalogProvenance;
   /**
-   * Die contracts-Regeln, die der Gate-Katalog nicht kennt — abgeleitet.
+   * Die contracts-Regeln, die der Gate-Katalog nicht kennt — abgeleitet, dieselbe
+   * Menge wie `Evaluation.notInGate` (CR-GC-519), aus derselben Funktion.
    *
    * CR-GC-442: NICHT dasselbe wie `skipped`. ND-01/ND-02 stehen weiter hier (das
    * Gate kann an ihnen nicht blockieren), werden aber inzwischen ausgewertet und
-   * fehlen deshalb in `skipped`. Die Schnittmenge beider Listen ist
-   * `LOCALLY_EVALUATED_RULE_IDS`.
+   * fehlen deshalb in `skipped`.
    */
   notInGate: string[];
 }
@@ -257,9 +273,10 @@ export function evaluateAll(harness: EvaluationHarness): Evaluation {
   const conformanceRuleIds = getRuleDefsForProfile('conformance').map((r) => r.id);
   const evaluatedLocally = new Set<string>(LOCALLY_EVALUATED_RULE_IDS);
   if (conformanceRan) for (const id of conformanceRuleIds) evaluatedLocally.add(id);
-  const gap = new Set(
-    unevaluatedRuleIds(harness.getLoadedRuleIds()).filter((id) => !evaluatedLocally.has(id)),
-  );
+  // CR-GC-519: „nicht im Gate" ist die zweite Lage und reist mit — `skipped` ist ihre
+  // Teilmenge (minus alles, was lokal oder von der Konformanz nachgeholt wurde).
+  const notInGate = unevaluatedRuleIds(harness.getLoadedRuleIds());
+  const gap = new Set(notInGate.filter((id) => !evaluatedLocally.has(id)));
   // Und die Gegenrichtung, die `unevaluatedRuleIds` nicht leisten KANN: lief die Konformanz
   // nicht, sind ihre Regeln ausgelassen — auch dann, wenn der geladene Katalog sie fuehrt.
   // Ohne diesen Zweig verschwaende ein vollstaendig geladener Katalog das Ausfall-Signal
@@ -267,9 +284,19 @@ export function evaluateAll(harness: EvaluationHarness): Evaluation {
   // Genau das hat der Regelkatalog-Test gefangen; es ist dieselbe Fail-open-Klasse, gegen die
   // dieser CR angetreten ist.
   if (!conformanceRan) for (const id of conformanceRuleIds) gap.add(id);
+  // CR-GC-519: der Vertrag der Ableitung. Feuert eine Regel, die laut Katalog niemand
+  // ausgewertet hat, widersprechen sich `getLoadedRuleIds` und `evaluateRules` — das ist
+  // ein Harness-Fehler und wird benannt, nie als Antwort mit beidem ausgeliefert.
+  const contradicted = [...new Set(findings.map((f) => f.ruleId).filter((id) => gap.has(id)))].sort();
+  if (contradicted.length > 0) {
+    throw new Error(
+      `evaluateAll: ${contradicted.join(', ')} gefeuert, aber laut Katalog nicht ausgewertet — ` +
+        'getLoadedRuleIds() und evaluateRules() der Harness widersprechen sich (CR-GC-519)',
+    );
+  }
   const skipped: string[] = [...gap].sort().map((id) => `${SKIPPED_RULE_PREFIX}${id}`);
 
-  return { findings, skipped, importCoverage };
+  return { findings, skipped, notInGate, importCoverage };
 }
 
 // CR-GC-489: `scoreReadinessWithConformance` ist hier GELOESCHT. Sie hatte genau einen

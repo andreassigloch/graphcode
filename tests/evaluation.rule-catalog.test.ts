@@ -217,6 +217,13 @@ describe('TEST-rule-catalog-gap: die ungeladenen Regeln werden benannt (CR-GC-42
     expect(evaluate.skipped).toEqual(flat.skipped);
     expect(readiness.skipped).toEqual(flat.skipped);
     expect(ruleGapOf(flat.skipped)).toEqual(SKIPPED_RULES);
+    // CR-GC-519: und dieselbe zweite Lage. „Nicht im Gate" stand bisher nur an
+    // graph_readiness (`catalogs.notInGate`); die rules_*-Flaechen gaben `skipped` allein.
+    expect(evaluate.notInGate).toEqual(NOT_IN_GATE);
+    expect(flat.notInGate).toEqual(NOT_IN_GATE);
+    expect(readiness.catalogs.notInGate).toEqual(NOT_IN_GATE);
+    // Ausgelassen ist eine Teilmenge von nicht-im-Gate — nie umgekehrt.
+    for (const id of ruleGapOf(flat.skipped)) expect(NOT_IN_GATE).toContain(id);
   });
 
   it('graph_readiness trägt die Katalog-Herkunft je Zahlenblock am ERGEBNIS', async () => {
@@ -244,5 +251,10 @@ describe('TEST-rule-catalog-gap: die ungeladenen Regeln werden benannt (CR-GC-42
     // beschrieben werden.
     expect(description).toContain(`"${SKIPPED_RULE_PREFIX}BQ-01"`);
     expect(description).not.toContain(`"${SKIPPED_RULE_PREFIX}ND-01"`);
+    // CR-GC-519: rules_get_violations behauptet keine „two-level" Quellen-Liste mehr
+    // (das Quellen-Token ist seit CR-GC-489 weg) und benennt beide Lagen.
+    const flat = tools.rules_get_violations.description;
+    expect(flat).not.toContain('two-level');
+    expect(flat).toContain('notInGate');
   });
 });
