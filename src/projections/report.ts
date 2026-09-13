@@ -156,7 +156,12 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
 
   const rules_evaluate: MCPTool<
     z.infer<typeof RulesEvaluateInputSchema>,
-    { violations: Finding[] | ViolationGroup[]; skipped: string[]; importCoverage: ImportCoverage | null }
+    {
+      violations: Finding[] | ViolationGroup[];
+      skipped: string[];
+      notInGate: string[];
+      importCoverage: ImportCoverage | null;
+    }
   > = {
     name: 'rules_evaluate',
     description:
@@ -185,13 +190,18 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
       'and part of the import graph still fell through" — {endpoints, assigned, unassigned[]}, where ' +
       'unassigned NAMES every import-endpoint file that resolves to no MOD (neither via a bound ' +
       'FUNC realRef nor a MOD.path prefix), i.e. the files RC-05 could not judge. null exactly when ' +
-      '`skipped` still names the RC rules — a value that is not measurable is never a silent zero.',
+      '`skipped` still names the RC rules — a value that is not measurable is never a silent zero. ' +
+      '`notInGate` (CR-GC-519) is the SECOND layer next to `skipped`: the contracts rules the gate ' +
+      'catalog does not carry, so they can fire here (ND-*, RC-* when measurable) but never block a ' +
+      'mutation; `skipped` (not evaluated) is always a subset of it. A rule that fires is never in ' +
+      '`skipped` — the same set as graph_readiness.catalogs.notInGate.',
     inputSchema: RulesEvaluateInputSchema,
     async handler(input) {
       const ev = evaluateAll(harness);
       return {
         violations: project(ev.findings, detailOf(input.detail)),
         skipped: ev.skipped,
+        notInGate: ev.notInGate,
         importCoverage: ev.importCoverage,
       };
     },
@@ -199,16 +209,19 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
 
   const rules_get_violations: MCPTool<
     z.infer<typeof RulesGetViolationsInputSchema>,
-    { violations: Finding[] | ViolationGroup[]; total: number; skipped: string[] }
+    { violations: Finding[] | ViolationGroup[]; total: number; skipped: string[]; notInGate: string[] }
   > = {
     name: 'rules_get_violations',
     description:
       'Return current rule violations, optionally filtered by severity. Each violation carries ' +
       'fixHint + context (candidate_targets, existing_traces) from the contracts rule (CR-GC-203 ' +
       'item 1), so an agent can resolve R-01/RD-01 from the payload — no extra queries to find ' +
-      'a TEST/FUNC to link. `skipped` carries the same two-level omission list as rules_evaluate ' +
-      '(sources + `rule:*` IDs the loaded catalog does not evaluate); `total` counts the ' +
-      'violations of the EVALUATED rules, so it is only interpretable together with it.',
+      'a TEST/FUNC to link. `skipped` and `notInGate` are the same two layers as on rules_evaluate ' +
+      '(CR-GC-519): `skipped` = `rule:*` IDs NOT evaluated in this response (BQ-*, plus RC-* when ' +
+      'the source tree was not measurable); `notInGate` = rules the gate catalog does not carry, ' +
+      'which may still fire here (ND-*, RC-*) but never block a mutation. A rule that fires is never ' +
+      'in `skipped`. `total` counts the violations of the EVALUATED rules, so it is only ' +
+      'interpretable together with `skipped`.',
     inputSchema: RulesGetViolationsInputSchema,
     async handler(input) {
       const ev = evaluateAll(harness);
@@ -218,7 +231,12 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
       // `total` ist die Zahl der VERSTÖSSE, nie der Gruppen — auch bei
       // detail:'grouped' (CR-GC-411): die gefilterte Grundgesamtheit ist die
       // Aussage, die Projektion ändert nur ihre Darstellung.
-      return { violations: project(matched, detailOf(input.detail)), total: matched.length, skipped: ev.skipped };
+      return {
+        violations: project(matched, detailOf(input.detail)),
+        total: matched.length,
+        skipped: ev.skipped,
+        notInGate: ev.notInGate,
+      };
     },
   };
 
