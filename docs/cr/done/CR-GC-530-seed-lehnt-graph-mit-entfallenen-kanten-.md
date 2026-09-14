@@ -1,6 +1,6 @@
 # CR-GC-530: Seed prüft Kanten mit der R-18-Routine und bietet Reparatur an
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-14, 6a34bb2)
 **Typ:** aus Item ITEM-2026-142 (finding)
 **Erstellt:** 2026-09-14
 **Item:** bok/items/ITEM-2026-142.json (Lane: code)
