@@ -1,6 +1,6 @@
 # CR-GC-532: Zurückgehaltene Kanten stehen in graph_readiness und in der Export-Verweigerung
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-14, 4237b98)
 **Typ:** aus Item ITEM-2026-145 (finding)
 **Erstellt:** 2026-09-14
 **Item:** bok/items/ITEM-2026-145.json (Lane: code)
