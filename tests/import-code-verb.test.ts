@@ -35,12 +35,20 @@ function writeFixture(repoRoot: string): void {
   writeFileSync(join(repoRoot, 'src', 'types.d.ts'), 'export declare function nope(): void;');
 }
 
-async function readGraph(repoRoot: string): Promise<{ uids: string[]; types: string[]; edges: number }> {
+type EdgeKey = { sourceId: string; targetId: string; edgeType: string };
+async function readGraph(
+  repoRoot: string,
+): Promise<{ uids: string[]; types: string[]; edges: number; edgeList: EdgeKey[] }> {
   const harness = await createHarness({ repoRoot, scope: { workspaceId: 'check', systemId: 'check' } });
   await harness.initialize();
   try {
     const g = harness.getGraph();
-    return { uids: g.nodes.map((n) => n.uid), types: g.nodes.map((n) => n.type), edges: g.edges.length };
+    return {
+      uids: g.nodes.map((n) => n.uid),
+      types: g.nodes.map((n) => n.type),
+      edges: g.edges.length,
+      edgeList: g.edges.map((e) => ({ sourceId: e.sourceId, targetId: e.targetId, edgeType: e.edgeType })),
+    };
   } finally {
     await harness.close();
   }
@@ -75,7 +83,8 @@ describe('executeImportCode (CR-GC-298)', () => {
       expect(summary.violations.length).toBeGreaterThan(0);
       expect(summary.files).toBe(2);
       expect(summary.extracted.FUNC).toBe(2);
-      expect(summary.extracted.MOD).toBe(2);
+      // CR-GF-149: 2 Datei-MODs + 1 Verzeichnis-MOD (`src`).
+      expect(summary.extracted.MOD).toBe(3);
       expect(summary.extracted.FLOW).toBe(1);
       expect(summary.extracted.SCHEMA).toBe(1);
       // Erstlauf auf leerem Graph: kein Backup.
@@ -86,10 +95,14 @@ describe('executeImportCode (CR-GC-298)', () => {
       // Lock freigegeben + Persistenz auf Disk: ein zweiter Harness liest den Import.
       const g = await readGraph(repoRoot);
       expect(g.types.filter((t) => t === 'FUNC')).toHaveLength(2);
-      expect(g.types.filter((t) => t === 'MOD')).toHaveLength(2);
+      expect(g.types.filter((t) => t === 'MOD')).toHaveLength(3);
       expect(g.types.filter((t) => t === 'FLOW')).toHaveLength(1);
       expect(g.types.filter((t) => t === 'SCHEMA')).toHaveLength(1);
       expect(g.edges).toBeGreaterThan(0);
+      // CR-GF-149 ⇒ CR-GC-527: die Verzeichnis-Hierarchie kommt als `MOD -compose-> MOD` durchs
+      // Gate (R-18-legal, kein Error oben) — `src` compose-t beide Datei-MODs.
+      const composeFromSrc = g.edgeList.filter((e) => e.edgeType === 'compose' && e.sourceId === 'mod_src');
+      expect(composeFromSrc.map((e) => e.targetId).sort()).toEqual(['mod_src_filea_ts', 'mod_src_fileb_ts']);
     } finally {
       rmSync(repoRoot, { recursive: true, force: true });
     }
@@ -112,9 +125,9 @@ describe('executeImportCode (CR-GC-298)', () => {
       expect(existsSync(join(repoRoot, summary.backupPath as string))).toBe(true);
 
       const g = await readGraph(repoRoot);
-      // Reseed: exakt 1 FUNC + 1 MOD, kein FLOW/SCHEMA mehr, keine Leichen/Duplikate.
+      // Reseed: exakt 1 FUNC + 2 MOD (src + fileA), kein FLOW/SCHEMA mehr, keine Leichen/Duplikate.
       expect(g.types.filter((t) => t === 'FUNC')).toHaveLength(1);
-      expect(g.types.filter((t) => t === 'MOD')).toHaveLength(1);
+      expect(g.types.filter((t) => t === 'MOD')).toHaveLength(2);
       expect(g.types.filter((t) => t === 'FLOW')).toHaveLength(0);
       expect(g.types.filter((t) => t === 'SCHEMA')).toHaveLength(0);
       expect(new Set(g.uids).size).toBe(g.uids.length);
@@ -181,6 +194,74 @@ describe('executeImportCode (CR-GC-298)', () => {
       } finally {
         await after.close();
       }
+    } finally {
+      rmSync(repoRoot, { recursive: true, force: true });
+    }
+  }, 60_000);
+
+  // CR-GC-527 (ITEM-2026-074, Leitlinie S1/S2): der Reseed raeumt nur die Code-Herkunft
+  // (FUNC/MOD/FLOW/SCHEMA/TEST) ab. Der handgeschriebene Warum-Baum — UC/REQ/ACTOR samt
+  // Kanten, auch die Bindung REQ<-satisfy-FUNC an einen importierten FUNC — ueberlebt.
+  it('der Reseed loescht handgeschriebene UC/REQ/ACTOR und ihre Kanten NICHT', async () => {
+    const repoRoot = mkdtempSync(join(tmpdir(), 'graphcode-import-why-'));
+    try {
+      writeFixture(repoRoot);
+      await executeImportCode({ repoRoot });
+
+      const harness = await createHarness({ repoRoot, scope: { workspaceId: 'check', systemId: 'check' } });
+      await harness.initialize();
+      const sysUid = harness.getGraph().nodes.find((n) => n.type === 'SYS')!.uid;
+      const funcA = harness.getGraph().nodes.find((n) => n.type === 'FUNC' && n.name === 'funcA')!.uid;
+      const setup = await harness.mutate([
+        { op: 'add-node', node: { uid: 'ACTOR-nutzer', type: 'ACTOR', name: 'Nutzer', description: '', attributes: { status: 'draft' } } },
+        { op: 'add-node', node: { uid: 'UC-rechnen', type: 'UC', name: 'Rechnen', description: 'Warum es das System gibt.', attributes: { status: 'draft' } } },
+        { op: 'add-node', node: { uid: 'REQ-ergebnis', type: 'REQ', name: 'Ergebnis als Text', description: '', attributes: { status: 'draft', kinds: ['functional'] } } },
+        // REQ-with-TEST-Invariante (R-01 ist ein Error): der handgeschriebene Konzept-TEST gehoert zum Warum-Baum.
+        { op: 'add-node', node: { uid: 'TEST-ergebnis', type: 'TEST', name: 'Ergebnis-Test', description: '', attributes: { status: 'draft' } } },
+        { op: 'add-edge', edge: { sourceId: sysUid, targetId: 'UC-rechnen', edgeType: 'compose', attributes: {} } },
+        { op: 'add-edge', edge: { sourceId: 'UC-rechnen', targetId: 'REQ-ergebnis', edgeType: 'compose', attributes: {} } },
+        { op: 'add-edge', edge: { sourceId: funcA, targetId: 'REQ-ergebnis', edgeType: 'satisfy', attributes: {} } },
+        { op: 'add-edge', edge: { sourceId: 'TEST-ergebnis', targetId: 'REQ-ergebnis', edgeType: 'verify', attributes: {} } },
+        // UC-02 (Error): ein UC ist ueber ACTOR -io-> FLOW -io-> FUNC in seiner FCHAIN erreichbar. FLOW und
+        // FCHAIN sind hier HANDGESCHRIEBEN und zeigen auf den importierten funcA — eine Typmenge
+        // (FLOW gehoert dem Import) haette sie geloescht und den Reseed an UC-02 geblockt.
+        { op: 'add-node', node: { uid: 'FCHAIN-rechnen', type: 'FCHAIN', name: 'Rechnen-Kette', description: '', attributes: { status: 'draft' } } },
+        { op: 'add-node', node: { uid: 'FLOW-eingabe', type: 'FLOW', name: 'Eingabe', description: '', attributes: { status: 'draft' } } },
+        { op: 'add-node', node: { uid: 'SCHEMA-eingabe', type: 'SCHEMA', name: 'Eingabe-Schema', description: '', attributes: { status: 'draft' } } },
+        { op: 'add-edge', edge: { sourceId: 'FLOW-eingabe', targetId: 'SCHEMA-eingabe', edgeType: 'relation', attributes: {} } },
+        { op: 'add-edge', edge: { sourceId: 'UC-rechnen', targetId: 'FCHAIN-rechnen', edgeType: 'compose', attributes: {} } },
+        { op: 'add-edge', edge: { sourceId: 'FCHAIN-rechnen', targetId: funcA, edgeType: 'compose', attributes: {} } },
+        { op: 'add-edge', edge: { sourceId: 'ACTOR-nutzer', targetId: 'FLOW-eingabe', edgeType: 'io', attributes: {} } },
+        { op: 'add-edge', edge: { sourceId: 'FLOW-eingabe', targetId: funcA, edgeType: 'io', attributes: {} } },
+      ]);
+      await harness.close();
+      expect(setup.violations.filter((v) => v.severity === 'error')).toEqual([]);
+      expect(setup.success).toBe(true);
+
+      // Reseed auf unveraendertem Code: die Extraktion liefert UC/REQ/ACTOR nie mit.
+      const summary = await executeImportCode({ repoRoot });
+      expect(summary.status).toBe('success');
+
+      const g = await readGraph(repoRoot);
+      expect(g.uids).toContain('ACTOR-nutzer');
+      expect(g.uids).toContain('UC-rechnen');
+      expect(g.uids).toContain('REQ-ergebnis');
+      expect(g.uids).toContain('TEST-ergebnis');
+      expect(g.edgeList).toContainEqual({ sourceId: 'TEST-ergebnis', targetId: 'REQ-ergebnis', edgeType: 'verify' });
+      // Der handgeschriebene Wie-Anteil (FLOW/FCHAIN) ueberlebt ebenso — nur die Herkunft zaehlt, nicht der Typ.
+      expect(g.uids).toContain('FLOW-eingabe');
+      expect(g.uids).toContain('FCHAIN-rechnen');
+      expect(g.uids).toContain('SCHEMA-eingabe');
+      expect(g.edgeList).toContainEqual({ sourceId: 'FLOW-eingabe', targetId: funcA, edgeType: 'io' });
+      expect(g.edgeList).toContainEqual({ sourceId: 'FCHAIN-rechnen', targetId: funcA, edgeType: 'compose' });
+      expect(g.edgeList).toContainEqual({ sourceId: sysUid, targetId: 'UC-rechnen', edgeType: 'compose' });
+      expect(g.edgeList).toContainEqual({ sourceId: 'UC-rechnen', targetId: 'REQ-ergebnis', edgeType: 'compose' });
+      expect(g.edgeList).toContainEqual({ sourceId: funcA, targetId: 'REQ-ergebnis', edgeType: 'satisfy' });
+      // Und die Code-Herkunft bleibt exakt die Extraktion: keine Duplikate, gleiche Zahlen.
+      expect(g.types.filter((t) => t === 'FUNC')).toHaveLength(2);
+      expect(g.types.filter((t) => t === 'MOD')).toHaveLength(3);
+      expect(g.types.filter((t) => t === 'FLOW')).toHaveLength(2); // 1 importiert + 1 handgeschrieben
+      expect(new Set(g.uids).size).toBe(g.uids.length);
     } finally {
       rmSync(repoRoot, { recursive: true, force: true });
     }
