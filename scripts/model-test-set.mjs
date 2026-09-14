@@ -37,6 +37,9 @@ export const INCLUDED = [
   // dafuer einen echten Gate-Zug. Eine Meta-Modell-Aenderung an diesem Pattern macht ihn rot,
   // also gehoert er in die Spur.
   'tests/work-order.test.ts',
+  // CR-GC-530: haengt an der LEGALITAET von `ACTOR -io-> UC` (seit CR-SM-266 D1 kein Pattern) —
+  // bekommt diese Kante ein Pattern zurueck oder faellt `compose` weg, wird er rot.
+  'tests/harness.import-rejected-traces.test.ts',
   // CR-GC-489: seedet die echte docs/graph/graphcode.graph.json und prueft an ihr, dass eine
   // RC-Regel nie zugleich ausgewertet UND ausgelassen ist — eine Modellaenderung kann ihn
   // sehr wohl rot machen, also gehoert er in die Spur.

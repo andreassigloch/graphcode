@@ -51,6 +51,7 @@ import {
   importOntologyGraph,
   seedFromJsonFile,
   applyReseed,
+  type ImportResult,
   type OntologyJson,
 } from './harness-import.js';
 import { StoreLock } from './store-lock.js';
@@ -364,7 +365,7 @@ export class GraphCodeHarness {
   async importGraph(
     ontology: OntologyJson,
     opts?: { rejectUnverifiedReqs?: boolean },
-  ): Promise<{ nodes: number; edges: number; unverifiedReqs: string[] }> {
+  ): Promise<ImportResult> {
     return importOntologyGraph(this.store.importTarget(), ontology, opts);
   }
 
@@ -372,7 +373,7 @@ export class GraphCodeHarness {
   async seedFromJson(
     relPath = graphSnapshotRel(this.config.scope.systemId),
     opts?: { rejectUnverifiedReqs?: boolean },
-  ): Promise<{ nodes: number; edges: number; unverifiedReqs: string[] }> {
+  ): Promise<ImportResult> {
     return seedFromJsonFile(this.store.importTarget(), relPath, opts);
   }
 
