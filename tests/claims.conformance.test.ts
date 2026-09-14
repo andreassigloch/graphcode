@@ -170,14 +170,16 @@ describe('T-D1 (CR-GC-340): every published count matches the living source', ()
     expect(claims().map((c) => `${c.phrase}=${c.actual()}`)).toEqual([
       'element types=12',
       'connection types=6',
-      'legal connection patterns=30',
+      // CR-SM-317 (contracts 5.1, CR-GC-522): Muster `TEST -verify-> SCHEMA` kommt dazu — 30 -> 31.
+      'legal connection patterns=31',
       // CR-SM-294..297: 72 -> 63. Neun Regeln ohne Gegenstand oder mit doppelter Aussage sind
       // gestrichen (R-03/R-14/R-27, AO-D01, CA-01, FC-01, PH-01, RT-01, CR-R04). Die Liste stand
       // hier auf 73 und war damit schon VOR diesem Schnitt eine Zahl daneben — der Kanarienvogel
       // hat gesungen, nur hat ihn niemand gehoert. Prior: CR-SM-247 (R-28 entfaellt).
       // CR-SM-307 (contracts 20): IO-02 kommt dazu, eine scorende Regel (PDR/arch) — 63 -> 64.
       // CR-SM-311 (contracts 21): RD-05 kommt dazu, die Untergrenze der Breite (PDR/arch) — 64 -> 65.
-      'engine rules=65',
+      // CR-SM-319 (contracts 26, CR-GC-522): R-32 kommt dazu, Vertragstest je SCHEMA (TRR/ver) — 65 -> 66.
+      'engine rules=66',
       'readiness dimensions=8',
       'MCP tools=25',
     ]);
