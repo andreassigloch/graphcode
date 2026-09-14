@@ -35,7 +35,7 @@ import { join } from 'node:path';
 import { hostname } from 'node:os';
 import { deriveMemberName } from './mcp-server.js';
 import { readPackageVersion } from '../kernel/package-version.js';
-import { PACKAGE_NAME } from './scaffold-templates.js';
+import { PACKAGE_NAME, HOST_ENTRY } from './scaffold-templates.js';
 import { readLockOwner } from '../kernel/store-lock.js';
 // Das Probe-Budget gehoert dem Viewer-Modul: Bericht und Starter muessen sich ueber
 // „laeuft ein Viewer" einig sein, sonst startet der eine, was der andere schon sieht.
@@ -73,8 +73,8 @@ export interface VersionStatus {
   host?: string;
   /** Der Build, den eine Agent-Session in diesem Repo bootet (`node_modules`). */
   repo?: string;
-  /** Die Version, die `.mcp.json` festnagelt — `'—'`, wenn die Startzeile keine nennt. */
-  pin?: string;
+  /** Wie `.mcp.json` den Host startet: `repo` = node_modules (CR-GC-528), `npx` = Auflösung (Drift). Fehlt bei fremder oder keiner Startzeile. */
+  start?: 'repo' | 'npx';
   /**
    * `ok` = alle vorhandenen Zahlen gleich; `drift` = mindestens eine ist älter;
    * `host-unknown` = ein Host läuft, sein Lock nennt aber keine Version (Build vor
@@ -164,8 +164,8 @@ async function readDashboardStatus(repoRoot: string, deps: StatusDeps): Promise<
 /**
  * Die Version, die eine Agent-Session in diesem Repo tatsächlich bootet.
  *
- * `.mcp.json` startet `npx -y @sigloch/graphcode mcp`, und npx nimmt den LOKALEN
- * Bin zuerst — ein Repo mit altem `node_modules` bootet also den alten Build,
+ * `.mcp.json` startet `node node_modules/@sigloch/graphcode/dist/cli.js mcp`
+ * (CR-GC-528) — ein Repo mit altem `node_modules` bootet also den alten Build,
  * während dasselbe Verb im Terminal (globales Paket) den neuen fährt. Genau diese
  * Zahl fehlt sonst im Bericht.
  */
@@ -181,29 +181,31 @@ export function readRepoInstallVersion(repoRoot: string): string | undefined {
 }
 
 /**
- * Die Version, die `.mcp.json` für den Start festnagelt (CR-GC-378).
+ * Wie `.mcp.json` den Host startet (CR-GC-529) — ersetzt den Pin-Leser aus CR-GC-378.
  *
- * `managed` ist falsch, wenn der Eintrag nicht die von `init`/`upgrade` geschriebene
- * npx-Startzeile ist — graphcodes eigenes Repo startet z.B. `node dist/cli.js`, und über
- * eine fremde Startzeile hat dieser Bericht kein Urteil zu fällen.
+ * `repo` = die von `init`/`upgrade` geschriebene Zeile `node HOST_ENTRY mcp` (CR-GC-528):
+ * sie bootet, was `node_modules` hält; die Version ist `readRepoInstallVersion`.
+ * `npx` = eine graphcode-npx-Zeile, mit oder ohne Version: was sie bootet, entscheidet
+ * die Auflösung, und ein `npm link` erreicht sie nicht — Drift.
+ * `foreign` = eine eigene Startzeile (graphcodes Repo: `node dist/cli.js mcp`), über die
+ * dieser Bericht nicht urteilt. `undefined` = kein graphcode-Eintrag.
  */
-export function readPinnedVersion(repoRoot: string): { managed: boolean; version?: string } {
+export function readHostStart(repoRoot: string): 'repo' | 'npx' | 'foreign' | undefined {
   const cfgPath = join(repoRoot, '.mcp.json');
-  if (!existsSync(cfgPath)) return { managed: false };
+  if (!existsSync(cfgPath)) return undefined;
   try {
     const cfg = JSON.parse(readFileSync(cfgPath, 'utf8')) as {
       mcpServers?: Record<string, { command?: unknown; args?: unknown }>;
     };
     const entry = cfg.mcpServers?.graphcode;
-    if (!entry || entry.command !== 'npx' || !Array.isArray(entry.args)) return { managed: false };
-    const args = entry.args as unknown[];
-    if (!args.some((a) => typeof a === 'string' && (a === PACKAGE_NAME || a.startsWith(`${PACKAGE_NAME}@`)))) {
-      return { managed: false };
-    }
-    const spec = args.find((a): a is string => typeof a === 'string' && a.startsWith(`${PACKAGE_NAME}@`));
-    return { managed: true, version: spec?.slice(PACKAGE_NAME.length + 1) };
+    if (!entry) return undefined;
+    const args = Array.isArray(entry.args) ? (entry.args as unknown[]) : [];
+    if (entry.command === 'node' && args[0] === HOST_ENTRY) return 'repo';
+    const namesGraphcode = args.some((a) => typeof a === 'string' && (a === PACKAGE_NAME || a.startsWith(`${PACKAGE_NAME}@`)));
+    if (entry.command === 'npx' && namesGraphcode) return 'npx';
+    return 'foreign';
   } catch {
-    return { managed: false };
+    return undefined;
   }
 }
 
@@ -232,29 +234,33 @@ function judgeVersions(repoRoot: string, host: HostStatus, deps: StatusDeps): Ve
   const cli = deps.cliVersion ?? readPackageVersion();
   const repo = readRepoInstallVersion(repoRoot);
   const hostVersion = host.state === 'running' ? host.version : undefined;
-  const pin = readPinnedVersion(repoRoot);
+  const start = readHostStart(repoRoot);
   const base: VersionStatus = {
     cli,
     host: hostVersion,
     repo,
-    pin: pin.managed ? (pin.version ?? '—') : undefined,
+    start: start === 'foreign' ? undefined : start,
     state: 'ok',
   };
 
-  // Eine npx-Startzeile ohne Pin ist kein Zustand, den man vergleichen kann: was sie
-  // startet, entscheidet die Auflösung, nicht das Repo. Das ist der Defekt selbst.
-  if (pin.managed && !pin.version) {
+  // Eine npx-Startzeile bootet, was die Auflösung ergibt — keine Zahl im Repo sagt, welcher
+  // Build das ist, und ein Link erreicht ihn nicht (CR-GC-528). `upgrade` schreibt die Zeile neu.
+  if (start === 'npx') {
     return { ...base, state: 'drift', action: 'graphcode upgrade' };
   }
+  // Die Repo-Startzeile ohne Install bootet nichts: der Host bricht beim Start ab.
+  if (start === 'repo' && !repo) {
+    return { ...base, state: 'drift', action: 'npm install' };
+  }
 
-  const known = [cli, hostVersion, repo, pin.version].filter((v): v is string => typeof v === 'string');
+  const known = [cli, hostVersion, repo].filter((v): v is string => typeof v === 'string');
   const target = known.reduce((max, v) => (compareVersions(v, max) > 0 ? v : max), known[0]);
   const behind = (v: string | undefined): boolean => typeof v === 'string' && compareVersions(v, target) < 0;
 
   // Eine Aktion für jeden Fall: `graphcode upgrade` zieht den Repo-Install, schreibt die
   // Artefakte aus dem neuen Build und beendet den alten Host. Der Mensch soll nicht
   // wissen muessen, WELCHE der drei Zahlen hinterherhinkt — nur, dass sie es tun.
-  if (behind(repo) || behind(hostVersion) || behind(pin.version)) {
+  if (behind(repo) || behind(hostVersion)) {
     return { ...base, state: 'drift', action: 'graphcode upgrade' };
   }
   // Nur das getippte CLI ist alt: das liegt ausserhalb des Repos, deshalb `--global`.
@@ -314,7 +320,7 @@ export function formatStatus(s: RepoStatus): string {
     `CLI ${s.version.cli}`,
     s.version.host ? `Host ${s.version.host}` : null,
     s.version.repo ? `Repo ${s.version.repo}` : null,
-    s.version.pin ? `Pin ${s.version.pin}` : null,
+    s.version.start === 'npx' ? 'Start npx' : null,
   ].filter((p): p is string => p !== null);
   const ver =
     s.version.state === 'ok'
