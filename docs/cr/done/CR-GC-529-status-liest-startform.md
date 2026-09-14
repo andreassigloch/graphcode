@@ -4,6 +4,7 @@
 **Typ:** aus Item ITEM-2026-139 (finding)
 **Erstellt:** 2026-09-14
 **Item:** bok/items/ITEM-2026-139.json (Lane: code)
+**Commit:** 70f45d8
 **Schwester-CRs:** CR-GC-528 (Startzeile = Repo-Install), BOK-CR-056 (doctor H10)
 
 ---
