@@ -14,7 +14,7 @@ import { readFileSync } from 'node:fs';
 import { MARKDOWN_VIEWS, VIEW_FILENAMES, type MarkdownView } from '@sigloch/graphcode-client';
 import {
   GUARDRAILS_FILE,
-  PACKAGE_SPEC,
+  HOST_ENTRY,
   STEERING_FILE,
   packagedSkillsDir,
   parseSkillFrontmatter,
@@ -124,8 +124,9 @@ export function guardrailsContent(): string {
     '  store election and becomes the host (`.graphcode/host.sock`); later sessions proxy to',
     '  it transparently — same tools, one gate, one write channel per store/worktree.',
     '- `.mcp.json` (Claude schema) + `opencode.json` (OpenCode schema) — both tell the',
-    `  agent host to launch the server via \`npx -y ${PACKAGE_SPEC} mcp\`. Merged, never`,
-    '  overwritten: foreign MCP servers and your `provider`/`model` block survive.',
+    `  agent host to launch the repo-installed server via \`node ${HOST_ENTRY} mcp\` — run`,
+    '  `npm install` first. Merged, never overwritten: foreign MCP servers and your',
+    '  `provider`/`model` block survive. A `npm link` of graphcode reaches the host directly.',
     '- `.claude/commands/se*.md` — the SE skills (fmea/review/status + the views), MCP-driven.',
     '  Claude Code surface; on other hosts drive the MCP tools directly.',
     `- \`${STEERING_FILE}\` — the HUMAN's companion to this file: the four decisions only`,
