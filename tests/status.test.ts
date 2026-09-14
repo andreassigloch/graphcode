@@ -12,6 +12,7 @@ import { mkdtempSync, mkdirSync, writeFileSync, rmSync, symlinkSync, realpathSyn
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { collectStatus, formatStatus, statusIsHealthy } from '../src/surface/status.js';
+import { HOST_ENTRY } from '../src/surface/scaffold-templates.js';
 
 describe('TEST-status', () => {
   let repo: string;
@@ -42,9 +43,8 @@ describe('TEST-status', () => {
     writeFileSync(join(dir, 'package.json'), JSON.stringify({ name: '@sigloch/graphcode', version }));
   }
 
-  /** Die Startzeile, die `init`/`upgrade` schreiben — optional mit fester Version. */
-  function writeMcpConfig(spec: string | null, command = 'npx'): void {
-    const args = command === 'npx' ? ['-y', spec ?? '@sigloch/graphcode', 'mcp'] : ['dist/cli.js', 'mcp'];
+  /** Eine graphcode-Startzeile in `.mcp.json` — `init`/`upgrade` schreiben `node HOST_ENTRY mcp` (CR-GC-528). */
+  function writeMcpConfig(command: string, args: string[]): void {
     writeFileSync(join(repo, '.mcp.json'), JSON.stringify({ mcpServers: { graphcode: { command, args } } }));
   }
 
@@ -247,35 +247,34 @@ describe('TEST-status', () => {
     expect(s.version.action).toBe('graphcode upgrade');
   });
 
-  it('nennt die festgenagelte Version aus .mcp.json (CR-GC-378)', async () => {
-    writeMcpConfig('@sigloch/graphcode@0.17.0');
+  it('erkennt die Repo-Startzeile und urteilt nur über Install, Host und CLI (CR-GC-529)', async () => {
+    writeMcpConfig('node', [HOST_ENTRY, 'mcp']);
     writeRepoInstall('0.17.0');
     const s = await collectStatus(repo, { fetchImpl: unreachable, cliVersion: '0.17.0' });
-    expect(s.version).toMatchObject({ pin: '0.17.0', state: 'ok' });
-    expect(formatStatus(s)).toContain('Pin 0.17.0');
+    expect(s.version).toMatchObject({ start: 'repo', repo: '0.17.0', state: 'ok' });
+    expect(formatStatus(s)).not.toContain('Pin');
   });
 
-  it('behandelt eine npx-Startzeile OHNE Pin als Drift — was sie startet, ist nicht lesbar', async () => {
-    writeMcpConfig(null);
+  it('behandelt JEDE npx-Startzeile als Drift, gepinnt wie ungepinnt — sie bootet nicht node_modules', async () => {
     writeRepoInstall('0.17.0');
-    const s = await collectStatus(repo, { fetchImpl: unreachable, cliVersion: '0.17.0' });
-    expect(s.version.pin).toBe('—');
-    expect(s.version.state).toBe('drift');
-    expect(s.version.action).toBe('graphcode upgrade');
+    for (const spec of ['@sigloch/graphcode@0.17.0', '@sigloch/graphcode@latest', '@sigloch/graphcode']) {
+      writeMcpConfig('npx', ['-y', spec, 'mcp']);
+      const s = await collectStatus(repo, { fetchImpl: unreachable, cliVersion: '0.17.0' });
+      expect(s.version).toMatchObject({ start: 'npx', state: 'drift', action: 'graphcode upgrade' });
+      expect(formatStatus(s)).toContain('Start npx');
+    }
   });
 
-  it('meldet einen Pin, der hinter dem Install liegt — die Session bootet den alten Build', async () => {
-    writeMcpConfig('@sigloch/graphcode@0.13.2');
-    writeRepoInstall('0.17.0');
+  it('meldet eine Repo-Startzeile ohne Install als Drift — der Host bricht beim Start ab', async () => {
+    writeMcpConfig('node', [HOST_ENTRY, 'mcp']);
     const s = await collectStatus(repo, { fetchImpl: unreachable, cliVersion: '0.17.0' });
-    expect(s.version.state).toBe('drift');
-    expect(formatStatus(s)).toContain('Pin 0.13.2');
+    expect(s.version).toMatchObject({ start: 'repo', state: 'drift', action: 'npm install' });
   });
 
-  it('fällt über eine fremde Startzeile kein Pin-Urteil (graphcodes eigenes Repo startet node dist/cli.js)', async () => {
-    writeMcpConfig(null, 'node');
+  it('fällt über eine fremde Startzeile kein Urteil (graphcodes eigenes Repo startet node dist/cli.js)', async () => {
+    writeMcpConfig('node', ['dist/cli.js', 'mcp']);
     const s = await collectStatus(repo, { fetchImpl: unreachable, cliVersion: '0.17.0' });
-    expect(s.version.pin).toBeUndefined();
+    expect(s.version.start).toBeUndefined();
     expect(s.version.state).toBe('ok');
   });
 
