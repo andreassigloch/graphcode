@@ -1,6 +1,6 @@
 # CR-GC-531: Codec prüft keine Kantenpaare mehr — eine Routine (R-18)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-14, 4b8144d)
 **Typ:** aus Item ITEM-2026-144 (finding)
 **Erstellt:** 2026-09-14
 **Item:** bok/items/ITEM-2026-144.json (Lane: code)
