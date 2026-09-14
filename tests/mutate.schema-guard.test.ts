@@ -103,8 +103,8 @@ describe('TEST-mutate-schema-guard (CR-GC-239)', () => {
     expect(result.mutations).toBe(3);
   });
 
-  // CR-GC-524 (ITEM-2026-103): the export flattens attributes, so the nearest
-  // write shape after reading docs/graph/*.graph.json is {uid, realRef:{...}} —
+  // CR-GC-524 (ITEM-2026-103): the exported snapshot flattens attributes, so the
+  // nearest write shape after reading it is {uid, realRef:{...}} —
   // Zod strips the unknown key, the batch "applies" with 0 change and a
   // graphVersion bump. Unknown node fields must block as SCHEMA-01, not vanish.
   it('update-node with an unknown node field (flattened realRef) BLOCKS as SCHEMA-01', async () => {
