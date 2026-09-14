@@ -20,7 +20,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import type { GraphCodeHarness } from '../kernel/harness.js';
-import type { ToolPort } from '../kernel/tool-contract.js';
+import { ToolContext } from './tool-context-contract.js';
 import type { AuditLog, AuditEntry, OperationsLog } from '@sigloch/graph-api-core';
 import { FormatECodec, SE_DESCRIPTOR, FileOperationsLog } from '@sigloch/graph-api-core';
 // CR-GC-314 REQ-A02: the rule-set version comes from the LOADED package, never from
@@ -181,76 +181,8 @@ export interface TemplateEdit {
 /** An audit entry plus the CR-GC-434 trigger stamps (JSONL passes them through verbatim). */
 export type StampedAuditEntry = AuditEntry & TrajectoryStamps;
 
-/** Everything a tool group needs; the state behind it exists once per bound registry. */
-export interface ToolContext extends ToolPort {
-  readonly harness: GraphCodeHarness;
-  readonly auditLog: AuditLog;
-  /** Format-E serializer for the slice tools. */
-  readonly codec: FormatECodec;
-  /** Format-E v2 wrapper for the opt-in read-tool slices (CR-GC-210, CR-GC-269). */
-  readonly gcCodec: GraphCodeCodec;
-  /** Read accessor for the applied-batch counter (never a settable field). */
-  graphVersion(): number;
-  /**
-   * CR-GC-363: genau EINE Format-E-Kopfzeile (`//`-Kommentar, ohne '\n'), wenn ein
-   * VORHANDENER AF-Freshness-Stamp hinter dem Live-graphVersion liegt; sonst ''.
-   * `absent` (nie analysiert) ist kein "hinter dem Repo-State" und bleibt still —
-   * das Banner informiert über veraltete Analysen, es fordert keinen Neubau.
-   */
-  staleAnalysisBanner(): string;
-  /**
-   * The ONLY writer of the version + the audit log (no audit bypass, CR-GC-232).
-   * `stamps` (CR-GC-434) carries what only the GATE PATH can determine — the
-   * violations the batch closed (respondsTo) and whether it was a delivered
-   * template edit (editSource); `trigger` and `consultedTools` are derived HERE,
-   * out of band, from the same provenance the record already carries.
-   */
-  recordAudit(
-    consumerId: string,
-    result: MutateResult,
-    commands?: MutateCommand[],
-    stamps?: Pick<TrajectoryStamps, 'respondsTo' | 'editSource'>,
-  ): Promise<void>;
-  /**
-   * Note a READ tool that completed (CR-GC-434) — names only, no payload, no second
-   * audit surface. Drained onto the next recorded mutation as `consultedTools`.
-   * Shares the CR-GC-354 single-session assumption: one context, one writing session.
-   */
-  noteConsulted(toolName: string): void;
-  /**
-   * Note the template edits graph_suggest DELIVERED (CR-GC-434) — the identity set
-   * `classifyEditSource` matches against. Session-local by construction: a template
-   * delivered by another process cannot be recognized and stamps 'authored'
-   * (a documented false negative, never a guess in the other direction).
-   */
-  noteTemplateEdits(edits: TemplateEdit[]): void;
-  /** 'suggestion-template' iff the whole batch is delivered template edits; else 'authored'. */
-  classifyEditSource(commands: MutateCommand[]): EditSource;
-  /**
-   * Audit a dryRun preview as `operation:'validate'` (CR-GC-276, F2-Evidenz):
-   * Vorschlag + Verdict landen im Log, die Version bewegt sich NICHT (nichts
-   * wurde angewendet) und der Merge-Replay überspringt validate-Einträge.
-   */
-  recordPreview(consumerId: string, result: MutateResult, commands: MutateCommand[]): Promise<void>;
-  /**
-   * Set the provenance stamped onto every SUBSEQUENT record (CR-GC-354). Out-of-band on
-   * purpose — see `AuditOrigin`. Replaces wholesale, so a caller that stops knowing the
-   * prompt clears it by passing `{}` instead of leaving a stale one behind.
-   */
-  setOrigin(origin: AuditOrigin): void;
-  /** The session id stamped on this context's records — one per host process. */
-  sessionId(): string;
-  /** The client process this one belongs to (CR-GC-357), or null when the ancestry is unknown. */
-  ownerPid(): string | null;
-  /** Run a write body on the single tool-write chain (check+gate+record atomic). */
-  serializeToolWrite<T>(body: () => Promise<T>): Promise<T>;
-  /** Stale-base rejection with staleDelta, or null when the base is fresh (CR-GC-233). */
-  occReject(
-    consumerId: string,
-    baseVersion: number | undefined,
-    commands: MutateCommand[] | undefined,
-  ): Promise<(MutateResult & { graphVersion: number }) | null>;
-}
+/** Der Typ des Kontexts lebt an seinem Vertrag (tool-context-contract.ts, CR-GC-523). */
+export type { ToolContext };
 
 /**
  * Create the single tool-layer context for one harness.
@@ -597,7 +529,9 @@ export function createToolContext(
     return { ...result, graphVersion: _graphVersion };
   }
 
-  return {
+  // SCHEMA-tool-context (CR-GC-523): das Objekt, das jede Tool-Gruppe bekommt, ist
+  // das geparste — Form und Datenanteile geprueft, die Traeger dieselben Instanzen.
+  return ToolContext.parse({
     harness,
     auditLog,
     codec,
@@ -614,5 +548,5 @@ export function createToolContext(
     ownerPid: () => _ownerPid,
     serializeToolWrite,
     occReject,
-  };
+  });
 }
