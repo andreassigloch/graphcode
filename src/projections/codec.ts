@@ -19,9 +19,10 @@
  *      delegates parsing to FormatECodec.parse() — the authoritative parser.
  *
  *   3. STRICT VALIDATION (REQ-codec-validation):
- *      validate() checks every node.type against SE_DESCRIPTOR.nodeTypes and
- *      every edge against SE_DESCRIPTOR.edgeTypes[...].validPairs.
- *      Invalid types → error entries, never a silent pass.
+ *      validate() checks every node.type against SE_DESCRIPTOR.nodeTypes, every
+ *      edge.edgeType against SE_DESCRIPTOR.edgeTypes, duplicate uids and resolvable
+ *      endpoints. Invalid types → error entries, never a silent pass. Pair legality
+ *      is R-18's alone (CR-GC-531).
  *
  * UID contract (Format-E v2, CR-GC-269):
  *   Uids travel verbatim in both directions. The type is declared once per
@@ -386,12 +387,12 @@ export class GraphCodeCodec {
   // -------------------------------------------------------------------------
 
   /**
-   * Validate every node type against SE_DESCRIPTOR.nodeTypes and every edge
-   * against SE_DESCRIPTOR.edgeTypes[...].validPairs.
+   * Validate every node type against SE_DESCRIPTOR.nodeTypes and every edge type
+   * against SE_DESCRIPTOR.edgeTypes; endpoints must resolve. Pair legality is not
+   * judged here — R-18 does that where data enters the store (CR-GC-531).
    *
    * `resolveType` (CR-GC-310) types edge endpoints this graph does not carry, so an
-   * edge-only batch is still checked for pair-legality against the caller's store —
-   * the check is relaxed in its INPUT, never in its verdict.
+   * edge-only batch still resolves its endpoints against the caller's store.
    *
    * Invalid → error entries; never a silent pass.
    */
@@ -436,20 +437,9 @@ export class GraphCodeCodec {
       }
       if (!tgtType) {
         errors.push(`Edge references unknown target node "${edge.targetId}"`);
-        continue;
       }
-      // Open pairs ([*,*]) mean any combination is valid
-      const hasOpenPair = edgeDesc.validPairs.some(([s, t]) => s === '*' && t === '*');
-      if (!hasOpenPair) {
-        const pairKey = `${srcType}:${tgtType}`;
-        const validPairSet = new Set(edgeDesc.validPairs.map(([s, t]) => `${s}:${t}`));
-        if (!validPairSet.has(pairKey)) {
-          errors.push(
-            `Invalid edge pair ${srcType} -${edge.edgeType}-> ${tgtType} ` +
-              `for edge "${edge.sourceId}" → "${edge.targetId}"`,
-          );
-        }
-      }
+      // CR-GC-531: no pair-legality check here. That is R-18 (contracts `traceRejection`),
+      // applied where data enters the store — the gate and the seed (CR-GC-530).
     }
 
     return { valid: errors.length === 0, errors };

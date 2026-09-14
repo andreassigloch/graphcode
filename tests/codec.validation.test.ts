@@ -65,22 +65,23 @@ describe('TEST-codec-validation: validate()', () => {
     expect(result.errors[0]).toContain('FOO');
   });
 
-  it('(b) invalid edge pair → valid:false with error', () => {
-    // REQ -compose-> SYS is not a valid pair for "compose"
+  it('(b) pattern-illegal edge pair → valid:true, encode does not throw (CR-GC-531: legality is R-18 only)', () => {
+    // REQ -compose-> SYS matches no TRACE_PATTERN. Judging that is R-18's job (gate + seed use the
+    // same contracts routine); the codec only serializes what the store holds.
     const g: Graph = {
       nodes: [validReqNode, validSysNode],
       edges: [
         {
           sourceId: 'REQ-001',
           targetId: 'SYS-test',
-          edgeType: 'compose', // compose only valid between SYS/MOD/UC pairs
+          edgeType: 'compose',
           attributes: {},
         },
       ],
     };
     const result = codec.validate(g);
-    expect(result.valid).toBe(false);
-    expect(result.errors.some((e) => e.includes('compose'))).toBe(true);
+    expect(result).toEqual({ valid: true, errors: [] });
+    expect(codec.encode(g)).toContain('REQ-001 -compose-> SYS-test');
   });
 
   it('(c) valid graph → valid:true, no errors', () => {
