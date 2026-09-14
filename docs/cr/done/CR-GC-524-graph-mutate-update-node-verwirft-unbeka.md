@@ -53,6 +53,11 @@ add-node dito; No-op-update → mutations 1, graphVersion 1→2). Nach dem Fix:
 (33 Dateien: mutate.*, harness.gate, mcp.mutate-*, gate.single-door, schema-guard, alle
 Dateien mit `graphVersion`): 275/275 gruen, 62 s. `npm run build` gruen.
 
+Volllauf danach: 1 rot — `tests/verify-model.completeness.test.ts`, weil der neue
+Testkommentar den SSOT-Pfad woertlich nannte und die Datei damit als modellrelevant
+klassifiziert wurde, obwohl sie weder SSOT noch Regelkonstanten liest. Kommentar umformuliert
+(Folge-Commit), keine Ausnahme in `model-test-set.mjs`.
+
 ## 6. Modell
 
 Keine neuen Symbole, keine neue Testdatei: `FUNC-mutate` (gate.ts#apply),
