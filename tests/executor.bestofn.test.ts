@@ -623,6 +623,52 @@ describe('Best-of-N executor (CR-GC-288, echter Gate-/Store-Pfad)', () => {
     expect(calls[1].opts?.temperature).toBeUndefined();
   });
 
+  // CR-GC-526 (ITEM-2026-041): ein zweiter graph_mutate im SELBEN Modell-Turn fiel in den
+  // Read-Tool-Zweig und ging direkt an registry['graph_mutate'] — ohne Preflight, ohne
+  // Probe, ohne Ranking, ohne dryRun: persistiert, bevor irgendjemand gewaehlt hat.
+  it('CR-GC-526: ein zweiter graph_mutate im selben Turn wird NICHT angewandt — ein Batch je Kandidat', async () => {
+    const uc = (id: string) => ({
+      commands: [
+        { op: 'add-node', node: { uid: `UC-${id}`, type: 'UC', name: `Fall ${id}`, description: `User erledigt ${id} und erhält das Ergebnis.`, attributes: {} } },
+        { op: 'add-edge', edge: { sourceId: 'SYS-app', targetId: `UC-${id}`, edgeType: 'compose', attributes: {} } },
+      ],
+    });
+    const twoMutates: ModelResponse = {
+      text: '',
+      toolCalls: [
+        { id: 'a', name: 'graphcode_graph_mutate', input: uc('a') },
+        { id: 'b', name: 'graphcode_graph_mutate', input: uc('b') },
+      ],
+      stopReason: 'tool_use',
+      assistantMsg: {
+        role: 'assistant',
+        content: null,
+        tool_calls: ['a', 'b'].map((id) => ({
+          id,
+          type: 'function',
+          function: { name: 'graphcode_graph_mutate', arguments: JSON.stringify(uc(id)) },
+        })),
+      },
+      usage,
+    };
+    const { callModel } = scriptedModel([twoMutates, toolCallResponse('c', uc('c'))]);
+    const traces: string[] = [];
+    const before = auditEntries().length;
+
+    const stats = await runExecutor({ registry, workspaceDir: repoRoot, config: config({ candidates: 2 }), callModel, trace: (l) => traces.push(l) });
+
+    expect(stats.candidatesSampled).toBe(2);
+    expect(stats.dryRunProbes).toBe(2);
+    expect(stats.mutatesApplied).toBe(1);
+    // Genau EIN Gewinner im Store; Seed b hat nie eine Probe gesehen und darf nicht drin sein.
+    expect(uids()).not.toContain('UC-b');
+    expect(uids().filter((u) => ['UC-a', 'UC-c'].includes(u)).length).toBe(1);
+    expect(traces.some((l) => /dupes=1/.test(l))).toBe(false); // die Probe sah keine vorab persistierten Knoten
+    expect(traces.some((l) => /weiterer graph_mutate/.test(l))).toBe(true);
+    const entries = auditEntries().slice(before);
+    expect(entries.filter((e) => e.operation !== 'validate' && e.result === 'applied').length).toBe(1);
+  });
+
   it('Regression: candidates=1 (Default) fährt den heutigen Pfad — host-Protokoll, keine Best-of-N-Stats', async () => {
     const { callModel, calls } = scriptedModel([toolCallResponse('c1', UC_EXPORT_BATCH)]);
     const stats = await runExecutor({

@@ -143,7 +143,11 @@ async function collectCandidateBatch(
     const results: string[] = [];
     let captured: unknown = null;
     for (const call of resp.toolCalls) {
-      if (call.name === 'graphcode_graph_mutate' && captured === null) {
+      if (call.name !== 'graphcode_graph_mutate') {
+        results.push(await execReadOrGraphTool(registry, workspaceDir, call.name, call.input));
+        continue;
+      }
+      if (captured === null) {
         captured = stripDryRun(call.input);
         results.push(
           JSON.stringify({
@@ -151,9 +155,18 @@ async function collectCandidateBatch(
             note: 'Kandidat eingesammelt — der Treiber probt am Gate und wählt (CR-GC-288).',
           }),
         );
-      } else {
-        results.push(await execReadOrGraphTool(registry, workspaceDir, call.name, call.input));
+        continue;
       }
+      // CR-GC-526: ein zweiter Batch im selben Turn ging bis hierher in den Read-Tool-Zweig
+      // und damit ungeprobt, ungerankt und ohne dryRun ans Gate. Ein Kandidat ist EIN Batch;
+      // der Rest wird beantwortet, nie ausgefuehrt.
+      trace(`  ${label}: weiterer graph_mutate im selben Turn verworfen — ein Batch je Kandidat (CR-GC-526)`);
+      results.push(
+        JSON.stringify({
+          collected: false,
+          note: 'Nicht angewandt: ein Kandidat ist EIN graph_mutate-Batch (CR-GC-526). Fasse weitere Kommandos in den ersten Batch.',
+        }),
+      );
     }
     if (captured === null) readTurns += 1;
     const feedback = captured === null && readTurns >= 2 ? IDLE_NUDGE : undefined;
