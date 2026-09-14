@@ -14,6 +14,7 @@
  */
 import type { Graph, OntologyDescriptor, RuleViolation as CoreRuleViolation, DefaultRuleEngine } from '@sigloch/graph-api-core';
 import type { MetricPolicy } from '@sigloch/contracts/se';
+import { z } from 'zod';
 import { MutateCommandSchema, type MutateCommand, type MutateResult, type RuleViolation } from '@sigloch/contracts/harness';
 import type { HookSystem } from './hooks.js';
 import type { GraphStore } from './graph-store.js';
@@ -50,11 +51,19 @@ export class Gate {
     const parsedCommands: MutateCommand[] = [];
     commands.forEach((cmd, i) => {
       const parsed = MutateCommandSchema.safeParse(cmd);
-      if (parsed.success) {
+      // CR-GC-524: Zod STRIPS unknown keys. `{op:'update-node', node:{uid, realRef}}` — the
+      // shape one writes after reading the flattened export — parsed clean, applied nothing,
+      // and reported success + graphVersion bump. A field the schema does not know is a
+      // shape error, not a silent drop.
+      const extra = parsed.success ? unknownKeys(cmd) : [];
+      if (parsed.success && extra.length === 0) {
         parsedCommands.push(parsed.data);
         return;
       }
-      const detail = parsed.error.issues.map((iss) => `${iss.path.join('.') || '(root)'}: ${iss.message}`).join('; ');
+      const detail = parsed.success
+        ? `unknown field(s) ${extra.join(', ')} — node fields other than uid/type/name/description belong under node.attributes ` +
+          '(the export flattens attributes onto the node; the gate does not)'
+        : parsed.error.issues.map((iss) => `${iss.path.join('.') || '(root)'}: ${iss.message}`).join('; ');
       schemaViolations.push({
         ruleId: 'SCHEMA-01',
         severity: 'error',
@@ -157,7 +166,9 @@ export class Gate {
     // working copy KEEPS the applied state for cumulative replay preview
     // (the caller restores it via loadGraph()).
     await this.deps.store.commit(candidate, dryRun ? null : delta);
-    if (!dryRun) {
+    const mutations = delta.upsertNodes.length + delta.deleteNodes.length + delta.upsertEdges.length + delta.deleteEdges.length;
+    // CR-GC-524: a batch that changed nothing leaves no drift — no marker, no re-export owed.
+    if (!dryRun && mutations > 0) {
       // CR-GC-217: the live model now leads the committed snapshot. Leave the
       // single-writer-safe drift marker so the pre-commit hook blocks a commit until
       // graph_export re-materializes docs/graph/*.graph.json (each commit a graph
@@ -172,7 +183,7 @@ export class Gate {
     const result: MutateResult & { fitAdvisory: FitAdvisory; steerAdvisory: SteerAdvisory; workOrder: WorkOrder } = {
       success: true,
       appliedCommands: commands.length,
-      mutations: delta.upsertNodes.length + delta.deleteNodes.length + delta.upsertEdges.length + delta.deleteEdges.length,
+      mutations,
       violations: newViolations,
       confidence: 1,
       tier,
@@ -249,6 +260,29 @@ export class Gate {
  * is untouched.
  */
 type GatedViolation = RuleViolation & { gating?: boolean };
+
+/**
+ * Keys in `value` that the matching MutateCommandSchema option does not declare — walked
+ * into nested objects (`node`, `edge`, `set`), never into records (`attributes` is free-form).
+ * Empty when `value` is not a command shape at all (that case fails safeParse anyway).
+ */
+function unknownKeys(value: unknown): string[] {
+  const op = (value as { op?: unknown } | null)?.op;
+  const option = MutateCommandSchema.options.find((o) => o.shape.op.safeParse(op).success);
+  return option ? extraKeys(option.shape, value, '') : [];
+}
+
+function extraKeys(shape: z.ZodRawShape, value: unknown, path: string): string[] {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) return [];
+  const out: string[] = [];
+  for (const [k, v] of Object.entries(value)) {
+    const at = path ? `${path}.${k}` : k;
+    const field = shape[k];
+    if (!field) out.push(at);
+    else if (field instanceof z.ZodObject) out.push(...extraKeys(field.shape, v, at));
+  }
+  return out;
+}
 
 /** Stable identity of a violation, for diffing pre/post-mutation rule results. */
 function violationKey(v: RuleViolation): string {

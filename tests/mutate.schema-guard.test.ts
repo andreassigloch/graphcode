@@ -102,4 +102,50 @@ describe('TEST-mutate-schema-guard (CR-GC-239)', () => {
     expect(result.success).toBe(true);
     expect(result.mutations).toBe(3);
   });
+
+  // CR-GC-524 (ITEM-2026-103): the export flattens attributes, so the nearest
+  // write shape after reading docs/graph/*.graph.json is {uid, realRef:{...}} —
+  // Zod strips the unknown key, the batch "applies" with 0 change and a
+  // graphVersion bump. Unknown node fields must block as SCHEMA-01, not vanish.
+  it('update-node with an unknown node field (flattened realRef) BLOCKS as SCHEMA-01', async () => {
+    await harness.mutate(VALID);
+    const before = harness.getGraph().nodes.find((n) => n.uid === 'REQ-ok');
+    const flat = { op: 'update-node', node: { uid: 'REQ-ok', realRef: { file: 'src/x.ts', symbol: 'x' } } };
+    const result = await harness.mutate([flat as unknown as MutateCommand]);
+    expect(result.success).toBe(false);
+    expect(result.tier).toBe('block');
+    expect(result.mutations).toBe(0);
+    const v = result.violations.find((x) => x.ruleId === 'SCHEMA-01');
+    expect(v?.message).toContain('realRef');
+    expect(v?.message).toContain('attributes');
+    expect(harness.getGraph().nodes.find((n) => n.uid === 'REQ-ok')).toEqual(before);
+  });
+
+  it('add-node with an unknown node field BLOCKS as SCHEMA-01 (same guard, both ops)', async () => {
+    const flat = { op: 'add-node', node: { uid: 'FUNC-x', type: 'FUNC', name: 'x', realRef: { file: 'a', symbol: 'b' } } };
+    const result = await harness.mutate([flat as unknown as MutateCommand]);
+    expect(result.success).toBe(false);
+    expect(result.violations.some((x) => x.ruleId === 'SCHEMA-01' && x.message.includes('realRef'))).toBe(true);
+  });
+
+  it('update-node that changes nothing: 0 mutations, graphVersion stays, no export-pending', async () => {
+    const ok = await tools.graph_mutate.handler({ commands: VALID, consumerId: 'guard-test' });
+    expect((ok as { graphVersion: number }).graphVersion).toBe(1);
+    const noop: MutateCommand = { op: 'update-node', node: { uid: 'REQ-ok', name: 'ok', attributes: {} } };
+    const res = (await tools.graph_mutate.handler({ commands: [noop], consumerId: 'guard-test' })) as {
+      success: boolean;
+      mutations: number;
+      graphVersion: number;
+    };
+    expect(res.success).toBe(true);
+    expect(res.mutations).toBe(0);
+    expect(res.graphVersion).toBe(1); // nothing happened → no progress reported
+    // a real change still moves it
+    const real = (await tools.graph_mutate.handler({
+      commands: [{ op: 'update-node', node: { uid: 'REQ-ok', attributes: { realRef: { file: 'src/x.ts', symbol: 'x' } } } }],
+      consumerId: 'guard-test',
+    })) as { mutations: number; graphVersion: number };
+    expect(real.mutations).toBe(1);
+    expect(real.graphVersion).toBe(2);
+  });
 });

@@ -311,7 +311,7 @@ export function createToolContext(
 
   // Record a gated write in the audit log — WITH its command batch, so the log is
   // replayable (CR-GC-234). Every write tool must call this (no audit bypass).
-  // OCC invariant (CR-GC-233): graphVersion counts APPLIED batches only — a rejected
+  // OCC invariant (CR-GC-233): graphVersion counts APPLIED batches with >0 mutations only — a rejected
   // write changes no state, so it must not move the version (or a bystander's
   // rejected attempt would spuriously stale every other writer's baseVersion).
   /**
@@ -344,7 +344,9 @@ export function createToolContext(
     commands?: MutateCommand[],
     stamps?: Pick<TrajectoryStamps, 'respondsTo' | 'editSource'>,
   ): Promise<void> {
-    if (result.success) _graphVersion += 1;
+    // CR-GC-524: an accepted batch with 0 mutations changed no state — the version
+    // (= "what a reader must re-read") stays where it is.
+    if (result.success && result.mutations > 0) _graphVersion += 1;
     const relayed = currentRelay();
     // CR-GC-434: drain the consultation window - the reads since the LAST recorded
     // mutation belong to THIS one. Always an array on a mutate record: [] is the
