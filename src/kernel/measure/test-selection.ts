@@ -11,6 +11,14 @@
  *   - `verify`  (in)  : a spec ← the TEST that verifies it          → an impacted test
  * A REQ changeset degenerates to `verify`-dependents only.
  *
+ * The contract path (CR-GC-521, meta-model 5.1 `TEST -verify-> SCHEMA`): a changed FUNC
+ * also breaks the contracts it parses or produces, and those have their own TESTs:
+ *   - `io` (both)     : a FUNC ↔ the FLOWs it produces or consumes  → a contract anchor
+ *   - `relation` (out): a FLOW → its SCHEMA                          → the contract
+ *   - `verify`  (in)  : the SCHEMA ← the contract TEST               → an impacted test
+ * The walk stops at the FLOW: it never crosses `FLOW -io-> FUNC` into the OTHER end of
+ * the transfer, otherwise every selection would be the transitive closure of the graph.
+ *
  * Why pure and why here: two consumers need the SAME semantics — the MCP tool
  * `graph_tests` (over the live Kuzu store) and the measurement instrument
  * `scripts/test-selection-audit.mjs` (over the committed snapshot, no second DB
@@ -80,12 +88,13 @@ export type TestSelection = z.infer<typeof TestSelectionSchema>;
  * code/spec changeset → impacted TESTs over the realization traces.
  *
  * `graph` is the whole loaded graph (the caller decides where it comes from: the
- * Kuzu store or a committed snapshot). `depth` is a floor of 4 hops — code→FUNC→
- * REQ→TEST needs up to three directed turns, so a smaller caller default must not
- * cut the chain short; callers may ask for more.
+ * Kuzu store or a committed snapshot). `depth` is a floor of 4 hops — both
+ * MOD→FUNC→REQ→TEST and MOD→FUNC→FLOW→SCHEMA→TEST need up to four directed turns,
+ * so a smaller caller default must not cut the chain short; callers may ask for more.
  */
 export function impactedTests(graph: Graph, changeSet: string[], depth = 4): TestImpactResult {
   const nodeById = new Map<string, GraphNode>(graph.nodes.map((n) => [n.uid, n]));
+  const isType = (id: string, type: string): boolean => nodeById.get(id)?.type === type;
   const outgoing = new Map<string, GraphEdge[]>();
   const incoming = new Map<string, GraphEdge[]>();
   const index = (map: Map<string, GraphEdge[]>, key: string, edge: GraphEdge): void => {
@@ -112,8 +121,10 @@ export function impactedTests(graph: Graph, changeSet: string[], depth = 4): Tes
       visited.add(cur);
       // The 1-hop neighbourhood of `cur`, classified by trace semantics — the same
       // filtering `graph_expand` does when it prunes by edge type.
+      const curType = nodeById.get(cur)?.type;
       for (const e of [...(outgoing.get(cur) ?? []), ...(incoming.get(cur) ?? [])]) {
         edgeMap.set(`${e.sourceId}|${e.edgeType}|${e.targetId}`, e);
+        const other = e.sourceId === cur ? e.targetId : e.sourceId;
         if (e.edgeType === 'verify' && e.targetId === cur) {
           testIds.add(e.sourceId); // TEST → cur (cur is a verified anchor)
         } else if (e.edgeType === 'satisfy' && e.sourceId === cur && !anchors.has(e.targetId)) {
@@ -122,6 +133,12 @@ export function impactedTests(graph: Graph, changeSet: string[], depth = 4): Tes
         } else if (e.edgeType === 'allocate' && e.targetId === cur && !anchors.has(e.sourceId)) {
           anchors.add(e.sourceId); // MOD ← FUNC
           next.push(e.sourceId);
+        } else if (e.edgeType === 'io' && curType === 'FUNC' && isType(other, 'FLOW') && !anchors.has(other)) {
+          anchors.add(other); // FUNC ↔ FLOW (produced or consumed) — only FROM a FUNC, never from a FLOW onward
+          next.push(other);
+        } else if (e.edgeType === 'relation' && curType === 'FLOW' && e.sourceId === cur && isType(e.targetId, 'SCHEMA') && !anchors.has(e.targetId)) {
+          anchors.add(e.targetId); // FLOW → SCHEMA (the contract)
+          next.push(e.targetId);
         }
       }
     }

@@ -113,6 +113,81 @@ describe('impactedTests: die Kantensemantik der Auswahl', () => {
   });
 });
 
+/**
+ * Der Vertragspfad (CR-GC-521, Muster `TEST -verify-> SCHEMA`, contracts 5.1):
+ *   FUNC-A -io-> FLOW-A -relation-> SCHEMA-A <-verify- TEST-CONTRACT-A
+ *   FLOW-A -io-> FUNC-B -io-> FLOW-B -relation-> SCHEMA-B <-verify- TEST-CONTRACT-B
+ * FUNC-A produziert FLOW-A; FUNC-B konsumiert ihn und produziert FLOW-B. Eine Änderung an
+ * FUNC-A darf den Vertragstest von SCHEMA-A wählen — und NICHT über FLOW-A -io-> FUNC-B in
+ * den Vertrag von FUNC-B weiterlaufen (sonst wäre jede Auswahl transitiv der ganze Graph).
+ */
+const contractFixture = {
+  elements: [
+    { id: 'FUNC-A', type: 'FUNC', name: 'Func A', description: 'produziert FLOW-A' },
+    { id: 'FUNC-B', type: 'FUNC', name: 'Func B', description: 'konsumiert FLOW-A, produziert FLOW-B' },
+    { id: 'FLOW-A', type: 'FLOW', name: 'Flow A', description: 'Übergabe A → B' },
+    { id: 'FLOW-B', type: 'FLOW', name: 'Flow B', description: 'Ausgang von B' },
+    { id: 'SCHEMA-A', type: 'SCHEMA', name: 'Schema A', description: 'Vertrag von FLOW-A' },
+    { id: 'SCHEMA-B', type: 'SCHEMA', name: 'Schema B', description: 'Vertrag von FLOW-B' },
+    {
+      id: 'TEST-CONTRACT-A',
+      type: 'TEST',
+      name: 'Contract Test A',
+      description: 'parst SCHEMA-A in allen Varianten',
+      testRefs: [{ file: 'tests/schema-a.test.ts', tool: 'vitest', level: 'unit' }],
+    },
+    {
+      id: 'TEST-CONTRACT-B',
+      type: 'TEST',
+      name: 'Contract Test B',
+      description: 'parst SCHEMA-B in allen Varianten',
+      testRefs: [{ file: 'tests/schema-b.test.ts', tool: 'vitest', level: 'unit' }],
+    },
+  ],
+  traces: [
+    { source: 'FUNC-A', target: 'FLOW-A', type: 'io' },
+    { source: 'FLOW-A', target: 'FUNC-B', type: 'io' },
+    { source: 'FUNC-B', target: 'FLOW-B', type: 'io' },
+    { source: 'FLOW-A', target: 'SCHEMA-A', type: 'relation' },
+    { source: 'FLOW-B', target: 'SCHEMA-B', type: 'relation' },
+    { source: 'TEST-CONTRACT-A', target: 'SCHEMA-A', type: 'verify' },
+    { source: 'TEST-CONTRACT-B', target: 'SCHEMA-B', type: 'verify' },
+  ],
+};
+
+describe('impactedTests: der Vertragspfad FUNC → FLOW → SCHEMA → TEST (CR-GC-521)', () => {
+  it('wählt für die geänderte Produzenten-FUNC den Vertragstest ihres FLOW-SCHEMAs', () => {
+    const result = impactedTests(snapshotToGraph(contractFixture), ['FUNC-A']);
+
+    expect(result.testIds).toEqual(['TEST-CONTRACT-A']);
+    expect(result.anchors).toContain('FLOW-A'); // FUNC → FLOW (io, ausgehend)
+    expect(result.anchors).toContain('SCHEMA-A'); // FLOW → SCHEMA (relation, ausgehend)
+  });
+
+  it('läuft NICHT über den FLOW in die Konsumenten-FUNC und deren Vertrag', () => {
+    const result = impactedTests(snapshotToGraph(contractFixture), ['FUNC-A']);
+
+    expect(result.testIds).not.toContain('TEST-CONTRACT-B');
+    expect(result.anchors).not.toContain('FUNC-B');
+    expect(result.nodes.map((n) => n.uid)).not.toContain('SCHEMA-B');
+  });
+
+  it('wählt für die Konsumenten-FUNC beide Verträge: den Eingang und den Ausgang', () => {
+    const result = impactedTests(snapshotToGraph(contractFixture), ['FUNC-B']);
+
+    expect([...result.testIds].sort()).toEqual(['TEST-CONTRACT-A', 'TEST-CONTRACT-B']);
+    expect(result.anchors).not.toContain('FUNC-A'); // FLOW-A → FUNC-A wäre der Rückweg
+  });
+
+  it('ist deterministisch: gleiche Eingabe, gleiche Reihenfolge', () => {
+    const a = impactedTests(snapshotToGraph(contractFixture), ['FUNC-B']);
+    const b = impactedTests(snapshotToGraph(contractFixture), ['FUNC-B']);
+
+    expect(a.testIds).toEqual(b.testIds);
+    expect(a.anchors).toEqual(b.anchors);
+  });
+});
+
 describe('Parität: Store-Pfad und Snapshot-Pfad sehen dasselbe', () => {
   let tmp: string;
   let harness: GraphCodeHarness;
