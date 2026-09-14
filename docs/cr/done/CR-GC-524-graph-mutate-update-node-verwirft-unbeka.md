@@ -4,6 +4,7 @@
 **Typ:** aus Item ITEM-2026-103 (bug)
 **Erstellt:** 2026-09-14
 **Item:** bok/items/ITEM-2026-103.json (Lane: code)
+**Commit:** ab144b5
 
 ---
 
