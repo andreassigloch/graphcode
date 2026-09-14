@@ -443,7 +443,7 @@ export function renderIntPlan(graph: Graph, name: string): string {
   const idx = nodeIndex(graph);
   for (const ms of ordered) {
     const crs = (relation.rev.get(ms.uid) ?? [])
-      .filter((c) => c.startsWith('CR-'))
+      .filter((c) => idx.get(c)?.type === 'CR') // CR-GC-525: by type, never by uid prefix (BOK-CR-*)
       .sort((a, b) => a.localeCompare(b));
     const open = crs.filter((c) => status(idx.get(c) ?? ({} as GraphNode)) === 'open');
     const blocking = open.length > 0 ? refList(open) : '—';

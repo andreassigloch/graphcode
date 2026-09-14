@@ -441,7 +441,7 @@ export function renderImplPlan(graph: Graph, name: string): string {
   lines.push(`depends-on:  ${milestones.map((m) => m.uid).join('  ◀  ')}`, '');
   for (const ms of milestones) {
     const crs = (relation.rev.get(ms.uid) ?? [])
-      .filter((c) => c.startsWith('CR-'))
+      .filter((c) => idx.get(c)?.type === 'CR') // CR-GC-525: by type, never by uid prefix (BOK-CR-*)
       .sort((a, b) => a.localeCompare(b));
     lines.push(`## ${ref(ms.uid)} — ${cell(ms.name)} · status: ${status(ms) || 'n/a'}`, '');
     if (crs.length === 0) {
