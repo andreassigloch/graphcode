@@ -16,6 +16,7 @@ import { KuzuAdapter } from '@sigloch/graph-api-core/kuzu';
 import { createSeDescriptor } from '@sigloch/graph-api-core';
 import { HarnessConfigSchema } from '@sigloch/contracts/harness';
 import { GraphCodeHarness } from '../kernel/harness.js';
+import { HarnessHandle } from '../kernel/harness-handle-contract.js';
 import { loadGraphcodeConfig } from '../kernel/config.js';
 import { HookSystem } from '../kernel/hooks.js';
 import { KUZU_DIR } from '../kernel/workspace.js';
@@ -80,10 +81,14 @@ export async function createHarness(
   });
   // O2 lock guards the store this factory just wired: <repoRoot>/.graphcode (CR-GC-218).
   // storePath enables the CR-GC-249 schema-drift guard (auto-reseed on meta-model change).
-  return new GraphCodeHarness(cfg, storage, hooks, {
-    lockDir: dirname(kuzuPath),
-    storePath: kuzuPath,
-    graphcodeConfig,
-    onLockLost: opts?.onLockLost,
-  });
+  // SCHEMA-harness-handle (CR-GC-523): der Griff, den jeder Konsument abholt, ist an
+  // seiner Uebergabe geprueft — parse liefert dieselbe Instanz, nie eine Kopie.
+  return HarnessHandle.parse(
+    new GraphCodeHarness(cfg, storage, hooks, {
+      lockDir: dirname(kuzuPath),
+      storePath: kuzuPath,
+      graphcodeConfig,
+      onLockLost: opts?.onLockLost,
+    }),
+  );
 }
