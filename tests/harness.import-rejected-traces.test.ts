@@ -91,6 +91,30 @@ describe('TEST-import-rejected-traces: Seed mit musterfremder Kante (CR-GC-530)'
     expect(written.traces.some((t) => t.source === 'SYS-legacy' && t.type === 'compose')).toBe(true);
   });
 
+  it('graph_readiness nennt die zurückgehaltene Kante — auch nach einem Neustart ohne Seed (CR-GC-532)', async () => {
+    await harness.seedFromJson();
+    const expected = [{ source: 'ACTOR-op', target: 'UC-use', type: 'io', reason: 'no-pattern' }];
+    expect((await bindToolsToHarness(harness).graph_readiness.handler({})).heldBackTraces).toEqual(expected);
+
+    // Neustart: der Store ist nicht leer, also kein Seed — die Liste ist abgeleitet, nicht gemerkt.
+    await harness.close();
+    harness = makeHarness(repoRoot);
+    await harness.initialize();
+    expect(harness.getGraph().edges.some((e) => e.sourceId === 'ACTOR-op')).toBe(false);
+    expect((await bindToolsToHarness(harness).graph_readiness.handler({})).heldBackTraces).toEqual(expected);
+  });
+
+  it('die Export-Verweigerung nennt die Kante und den Reparaturweg; nach Reparatur und Export ist die Liste leer (CR-GC-532)', async () => {
+    await harness.seedFromJson();
+    const tools = bindToolsToHarness(harness);
+
+    await expect(tools.graph_export.handler({ force: false })).rejects.toThrow(/ACTOR-op -io-> UC-use.*delete-edge/s);
+
+    await tools.graph_mutate.handler({ commands: [{ op: 'delete-edge', edge: LEGACY_EDGE }] });
+    await tools.graph_export.handler({ force: false });
+    expect((await tools.graph_readiness.handler({})).heldBackTraces).toEqual([]);
+  });
+
   it('das Gate blockt dieselbe Kante als neue Kante weiterhin (R-18)', async () => {
     await harness.seedFromJson();
 

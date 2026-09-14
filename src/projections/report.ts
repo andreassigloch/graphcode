@@ -49,6 +49,7 @@ import { TestSelectionSchema } from '../kernel/measure/test-selection.js';
 import { nextStep } from '../loop/steering.js';
 import type { NextStepResult } from '../loop/steering.js';
 import type { MCPTool, MCPToolRegistry, ToolPort } from '../kernel/tool-contract.js';
+import { heldBackTraces, type RejectedTrace } from '../kernel/harness-import.js';
 
 // -------------------------------------------------------------------------
 // Input schemas
@@ -306,6 +307,10 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
        * aus dem vollen contracts-Katalog — bisher stand das nur im Beschreibungs-
        * text, nie am Ergebnis. */
       catalogs: RuleCatalogs;
+      /** CR-GC-532: committed traces no pattern admits, held back from the store (CR-GC-530).
+       * R-18 cannot report them — they are not in the graph. Derived, so it survives a restart;
+       * empties with the export that finishes the repair (delete-edge, then graph_export). */
+      heldBackTraces: RejectedTrace[];
     }
   > = {
     name: 'graph_readiness',
@@ -372,6 +377,7 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
         // FUNC-realRef 100/92/81 % in drei Repos, 0 % in moneyflow).
         importCoverage: ev.importCoverage,
         catalogs: ruleCatalogs(harness),
+        heldBackTraces: heldBackTraces(harness.getRepoRoot(), harness.getScope().systemId, harness.getGraph()),
       };
     },
   };

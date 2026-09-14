@@ -17,7 +17,7 @@ import { exportGraphJson, exportMarkdown, renderTestStubs, renderSchemaStubs, Ma
 import { clearExportPending } from '../kernel/export-marker.js';
 import { countUnfedMutations } from './trajectory.js';
 import { TRAJECTORY_FILE } from '../kernel/workspace.js';
-import { graphSnapshotRel } from '../kernel/harness-import.js';
+import { graphSnapshotRel, heldBackTraces } from '../kernel/harness-import.js';
 import type { MCPTool, MCPToolRegistry, ToolPort } from '../kernel/tool-contract.js';
 import type { AuditEntry } from '@sigloch/graph-api-core';
 import type { MutateCommand } from '@sigloch/contracts/harness';
@@ -221,12 +221,24 @@ export function bindExportTools(ctx: ToolPort): MCPToolRegistry {
           );
           const provenance = ownDeletionProvenance(ownEntries);
           if (!isOwnMutateDeletion(droppedNodes, droppedEdges, provenance)) {
+            // CR-GC-532: name the traces too, and — when the seed held some back because no
+            // pattern admits them (CR-GC-530) — the repair, instead of only "stale process".
+            const traceList = droppedEdges.slice(0, 10).map((k) => {
+              const [s, t, g] = k.split('>');
+              return `${s} -${t}-> ${g}`;
+            });
+            const heldBack = heldBackTraces(repoRoot, name, graph);
             throw new Error(
               `graph_export refused: would delete ${droppedNodes.length} element(s) + ${droppedEdges.length} trace(s) ` +
                 `present in committed ${jsonRel} but missing from the live graph — likely a stale process or a ` +
                 `parallel sync. Re-seed the live graph from the committed SSOT first, or pass force:true for an ` +
                 `intentional deletion. Dropped elements: ${droppedNodes.slice(0, 10).join(', ')}` +
-                `${droppedNodes.length > 10 ? ` …(+${droppedNodes.length - 10})` : ''}.`,
+                `${droppedNodes.length > 10 ? ` …(+${droppedNodes.length - 10})` : ''}. ` +
+                `Dropped traces: ${traceList.join(', ')}${droppedEdges.length > 10 ? ` …(+${droppedEdges.length - 10})` : ''}.` +
+                (heldBack.length > 0
+                  ? ` ${heldBack.length} of them match no trace pattern and were held back at seed — repair: ` +
+                    `delete-edge through graph_mutate (model a replacement if needed), then graph_export.`
+                  : ''),
             );
           }
         }
