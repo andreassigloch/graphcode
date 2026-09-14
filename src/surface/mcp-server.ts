@@ -91,6 +91,16 @@ async function bootHost(
             `TEST (R-01): ${seeded.unverifiedReqs.join(', ')}. Author a concept-level TEST + verify trace.\n`,
         );
       }
+      // CR-GC-530: traces no TRACE_PATTERN admits any more were held back from the store.
+      // Name them and the repair — graph_export refuses until each one is accepted.
+      if (seeded.rejectedTraces.length > 0) {
+        const list = seeded.rejectedTraces.map((t) => `${t.source} -${t.type}-> ${t.target}`).join(', ');
+        process.stderr.write(
+          `[graphcode] WARNING: ${seeded.rejectedTraces.length} committed trace(s) match no trace pattern and ` +
+            `were NOT loaded: ${list}. Repair: delete-edge through graph_mutate (model a replacement if ` +
+            `needed), then graph_export — the export refuses until then.\n`,
+        );
+      }
     } catch {
       // No committed graph in this repo yet — serve the empty store.
     }

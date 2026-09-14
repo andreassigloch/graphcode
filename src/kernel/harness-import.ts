@@ -20,6 +20,8 @@
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import type { Graph, GraphNode, GraphEdge } from '@sigloch/graph-api-core';
+import { traceRejection } from '@sigloch/contracts/se';
+import type { ElementType, ReqKind, TraceType } from '@sigloch/contracts/se';
 import { elementToNode } from './element-node.js';
 import { clearExportPending } from './export-marker.js';
 
@@ -41,10 +43,19 @@ export interface OntologyJson {
   traces: Array<{ source: string; target: string; type: string; [k: string]: unknown }>;
 }
 
+/** A committed trace the store cannot hold: no TRACE_PATTERN admits its type pair (CR-GC-530). */
+export interface RejectedTrace {
+  source: string;
+  target: string;
+  type: string;
+  reason: 'no-pattern';
+}
+
 export interface ImportResult {
   nodes: number;
   edges: number;
   unverifiedReqs: string[];
+  rejectedTraces: RejectedTrace[];
 }
 
 /**
@@ -111,9 +122,35 @@ export async function importOntologyGraph(
     ontology.elements.map((e) => elementToNode(e as Record<string, unknown>)),
     target.systemId,
   );
-  const edges: GraphEdge[] = ontology.traces.map((t) => {
+  const traces: GraphEdge[] = ontology.traces.map((t) => {
     const { source, target, type, ...rest } = t;
     return { sourceId: source, targetId: target, edgeType: type, attributes: rest };
+  });
+
+  // CR-GC-530: a grammar change can remove a pattern the committed graph still uses
+  // (CR-SM-266 D1: ACTOR -io-> UC). The store's rel tables are built from the same
+  // patterns, so such a trace aborted the whole seed — and with it the gate that should
+  // repair it. Judge every trace with R-18's own routine and inputs (`traceRejection`);
+  // hold back only `no-pattern`, the one verdict the store cannot hold. A kinds verdict
+  // loads and stays visible as R-18. Held-back traces are NAMED, never silently dropped:
+  // `graph_export` refuses until a gated delete-edge accepts the repair.
+  const nodeByUid = new Map(nodes.map((n) => [n.uid, n]));
+  const rejectedTraces: RejectedTrace[] = [];
+  const edges = traces.filter((e) => {
+    const src = nodeByUid.get(e.sourceId);
+    const tgt = nodeByUid.get(e.targetId);
+    if (!src || !tgt) return true; // dangling endpoint → R-08, not this check
+    const why = traceRejection({
+      source: src.type as ElementType,
+      target: tgt.type as ElementType,
+      type: e.edgeType as TraceType,
+      label: e.attributes.label as string | undefined,
+      sourceKinds: src.attributes.kinds as readonly ReqKind[] | undefined,
+      targetKinds: tgt.attributes.kinds as readonly ReqKind[] | undefined,
+    });
+    if (why?.reason !== 'no-pattern') return true;
+    rejectedTraces.push({ source: e.sourceId, target: e.targetId, type: e.edgeType, reason: 'no-pattern' });
+    return false;
   });
 
   // REQ-with-test invariant (CR-GC-203 item 6): bulk import bypasses the gate's
@@ -134,7 +171,7 @@ export async function importOntologyGraph(
   }
 
   await target.replace({ nodes, edges });
-  return { nodes: nodes.length, edges: edges.length, unverifiedReqs };
+  return { nodes: nodes.length, edges: edges.length, unverifiedReqs, rejectedTraces };
 }
 
 /** Load + import the materialized graph JSON from `<repoRoot>/docs/graph/`. */
