@@ -33,6 +33,19 @@ function dedupeEdges(edges: GraphEdge[]): GraphEdge[] {
   });
 }
 
+/** Structural equality with key order ignored (attributes are free-form records). */
+function sameNode(a: GraphNode, b: GraphNode): boolean {
+  return canonical(a) === canonical(b);
+}
+
+function canonical(v: unknown): string {
+  return JSON.stringify(v, (_k, val: unknown) =>
+    val && typeof val === 'object' && !Array.isArray(val)
+      ? Object.fromEntries(Object.keys(val as Record<string, unknown>).sort().map((k) => [k, (val as Record<string, unknown>)[k]]))
+      : val,
+  );
+}
+
 /** Apply commands to `candidate`; return the resulting graph and the persistence delta. */
 export function applyCommands(candidate: Graph, commands: MutateCommand[]): { graph: Graph; delta: GraphDelta } {
   let graph = candidate;
@@ -50,6 +63,9 @@ export function applyCommands(candidate: Graph, commands: MutateCommand[]): { gr
           description: cmd.node.description ?? base?.description ?? '',
           attributes: { ...(base?.attributes ?? {}), ...(cmd.node.attributes ?? {}) },
         };
+        // CR-GC-524: an upsert that leaves the node as it was is not a mutation —
+        // it must not reach the delta, or the gate reports progress where none is.
+        if (base && sameNode(base, node)) break;
         if (existingIdx >= 0) graph.nodes[existingIdx] = node;
         else graph.nodes.push(node);
         delta.upsertNodes.push(node);
