@@ -22,17 +22,19 @@ import { readPackageVersion, packageRootDir } from '../kernel/package-version.js
 export const PACKAGE_NAME = '@sigloch/graphcode';
 
 /**
- * Die Startzeile der Host-Configs — mit **fester Version** (CR-GC-378).
+ * Die Startzeile der Host-Configs: der Repo-Install, keine npx-Auflösung (CR-GC-528).
  *
- * Ohne Pin stand in `.mcp.json` nur `npx -y @sigloch/graphcode mcp`, und was daraus
- * wirklich startete, war ein Auflösungsergebnis: npx nimmt den lokalen Bin zuerst, ein
- * Repo mit altem `node_modules` bootete also den alten Build — während dasselbe Verb im
- * Terminal den neuen fuhr. Zwei Wahrheiten pro Repo, keine davon lesbar. Mit dem Pin
- * steht die laufende Version als Zahl in einer eingecheckten Datei; geschrieben wird sie
- * vom Build, der das Upgrade ausführt (CR-GC-377 lässt genau diesen die Artefakte
- * schreiben), und `graphcode status` vergleicht sie gegen den Install.
+ * Vorher `npx -y @sigloch/graphcode@<version> mcp` (CR-GC-378). npx nimmt eine lokale
+ * Installation nur, wenn sie den Spec exakt erfüllt; sonst startet es einen Build aus dem
+ * npm-Cache. Damit gab es zwei Versionswahrheiten je Repo — Pin und node_modules — und der
+ * Lokal-Modus (`npm link`) erreichte den Host nur, solange beide zufällig gleich waren.
+ *
+ * Jetzt startet der Host genau das, was `node_modules` hält: die Version steht im
+ * eingecheckten Lockfile, `graphcode upgrade` zieht sie nach, ein Link zeigt auf die
+ * Arbeitskopie. Fehlt der Install, bricht der Start laut ab — kein stiller Registry-Zug.
+ * Relativ zum Repo-Root, wie graphcodes eigene Startzeile `node dist/cli.js mcp`.
  */
-export const PACKAGE_SPEC = `${PACKAGE_NAME}@${readPackageVersion()}`;
+export const HOST_ENTRY = `node_modules/${PACKAGE_NAME}/dist/cli.js`;
 
 /**
  * Die eigene Version — EIN Leser für das ganze Paket (CR-GC-376/378).
@@ -290,7 +292,7 @@ function keptEnv(servers: Record<string, unknown>, key: 'env' | 'environment'): 
 }
 
 /**
- * The `.mcp.json` a foreign repo needs: launch the server via npx (CR-121).
+ * The `.mcp.json` a foreign repo needs: launch the repo-installed server (CR-121, CR-GC-528).
  * `env.GRAPHCODE_HOST_PORT` opts the elected host into the read-only live-view
  * bridge (CR-GC-237). A port the user already set survives `update`.
  *
@@ -307,8 +309,8 @@ export function mcpConfigContent(repoRoot: string, existingRaw: string | null): 
     mcpServers: {
       ...servers,
       graphcode: {
-        command: 'npx',
-        args: ['-y', PACKAGE_SPEC, 'mcp'],
+        command: 'node',
+        args: [HOST_ENTRY, 'mcp'],
         env: { ...keptEnv(servers, 'env'), GRAPHCODE_HOST_PORT: String(port) },
       },
     },
@@ -336,7 +338,7 @@ export function opencodeConfigContent(repoRoot: string, existingRaw: string | nu
       ...mcp,
       graphcode: {
         type: 'local',
-        command: ['npx', '-y', PACKAGE_SPEC, 'mcp'],
+        command: ['node', HOST_ENTRY, 'mcp'],
         enabled: true,
         environment: { ...keptEnv(mcp, 'environment'), GRAPHCODE_HOST_PORT: String(port) },
       },

@@ -48,10 +48,9 @@ import {
   GraphCodeHarness,
 } from '../src/index.js';
 import type { MutateCommand } from '@sigloch/contracts/harness';
-import { deriveHostPort, PACKAGE_SPEC } from '../src/surface/scaffold-templates.js';
+import { deriveHostPort, HOST_ENTRY } from '../src/surface/scaffold-templates.js';
 
 // Startzeile mit fester Version (CR-GC-378) — gegen die Konstante, nicht gegen ein Literal.
-const PKG = PACKAGE_SPEC;
 
 /**
  * Cold-start member graph for the new repo — the small valid pattern the gate
@@ -95,17 +94,17 @@ describe('TEST-mvp-e2e: MVP-1 loop (bootstrap → spec → impact → implement 
   });
 
   // ── STEP 1 — NEW MEMBER REPO (headline: create a new repo) ──────────────────
-  it('1. scaffolds a NEW member repo: .mcp.json (npx form) + .graphcode/ + GRAPHCODE.md', async () => {
+  it('1. scaffolds a NEW member repo: .mcp.json (repo-install form) + .graphcode/ + GRAPHCODE.md', async () => {
     const res = await scaffold('init', { repoRoot: tmp });
     expect(res.action).toBe('init');
 
-    // .mcp.json launches the stdio server via npx AT A PINNED VERSION — the exact form a foreign repo needs.
+    // .mcp.json launches the stdio server from the repo install (CR-GC-528) — the exact form a foreign repo needs.
     const mcp = JSON.parse(readFileSync(join(tmp, '.mcp.json'), 'utf8'));
     expect(mcp).toEqual({
       mcpServers: {
         graphcode: {
-          command: 'npx',
-          args: ['-y', PKG, 'mcp'],
+          command: 'node',
+          args: [HOST_ENTRY, 'mcp'],
           env: { GRAPHCODE_HOST_PORT: String(deriveHostPort(tmp)) },
         },
       },

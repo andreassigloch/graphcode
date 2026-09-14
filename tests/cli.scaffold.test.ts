@@ -31,7 +31,7 @@ import {
   CliCommandSchema,
   SkillSyncResultSchema,
 } from '../src/surface/scaffold.js';
-import { deriveHostPort, PACKAGE_SPEC } from '../src/surface/scaffold-templates.js';
+import { deriveHostPort, HOST_ENTRY } from '../src/surface/scaffold-templates.js';
 import { MARKDOWN_VIEWS, VIEW_FILENAMES } from '@sigloch/graphcode-client';
 import { KUZU_DIR } from '../src/index.js';
 
@@ -44,7 +44,6 @@ const STEERING = 'GRAPHCODE-STEERING.md';
 const PKG = '@sigloch/graphcode';
 // Die Startzeile trägt seit CR-GC-378 eine feste Version. Kein Literal im Test —
 // verglichen wird gegen dieselbe Konstante, die der Scaffold schreibt.
-const SPEC = PACKAGE_SPEC;
 /** This package's published version — the single source both sides of the range read (CR-GC-265). */
 const OWN_VERSION = JSON.parse(
   readFileSync(join(__dirname, '..', 'package.json'), 'utf8'),
@@ -98,14 +97,15 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
     // .graphcode/ store dir created.
     expect(existsSync(join(repo, '.graphcode'))).toBe(true);
 
-    // .mcp.json launches the server via npx — the exact form a foreign repo needs.
+    // .mcp.json launches the REPO-INSTALLED server (CR-GC-528) — no npx resolution, so a
+    // `npm link` reaches the host and the version is the one node_modules holds.
     // env.GRAPHCODE_HOST_PORT opts the elected host into the live-view bridge (CR-GC-237).
     const mcp = JSON.parse(readFileSync(join(repo, MCP), 'utf8'));
     expect(mcp).toEqual({
       mcpServers: {
         graphcode: {
-          command: 'npx',
-          args: ['-y', SPEC, 'mcp'],
+          command: 'node',
+          args: [HOST_ENTRY, 'mcp'],
           env: { GRAPHCODE_HOST_PORT: String(deriveHostPort(repo)) },
         },
       },
@@ -379,12 +379,12 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
     expect(readFileSync(marker, 'utf8')).toBe('LIVE-STORE-DATA');
     expect(res.preserved).toEqual(expect.arrayContaining([KUZU_DIR + '/']));
 
-    // Our entry refreshed to the canonical npx form (derived port); the repo's own
+    // Our entry refreshed to the canonical repo-install form (derived port); the repo's own
     // server is untouched — update owns `mcpServers.graphcode`, nothing else (CR-GC-263).
     const mcp = JSON.parse(readFileSync(join(repo, MCP), 'utf8'));
     expect(mcp.mcpServers.graphcode).toEqual({
-      command: 'npx',
-      args: ['-y', SPEC, 'mcp'],
+      command: 'node',
+      args: [HOST_ENTRY, 'mcp'],
       env: { GRAPHCODE_HOST_PORT: String(deriveHostPort(repo)) },
     });
     expect(mcp.mcpServers.context7).toEqual({ command: 'npx', args: ['-y', 'some-other-mcp'] });
@@ -560,7 +560,7 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
       mcp: {
         graphcode: {
           type: 'local',
-          command: ['npx', '-y', SPEC, 'mcp'],
+          command: ['node', HOST_ENTRY, 'mcp'],
           enabled: true,
           environment: { GRAPHCODE_HOST_PORT: String(deriveHostPort(repo)) },
         },
@@ -586,7 +586,7 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
     expect(oc.model).toBe(userCfg.model);
     expect(oc.permission).toEqual(userCfg.permission);
     expect(oc.mcp.other).toEqual(userCfg.mcp.other); // foreign server kept
-    expect(oc.mcp.graphcode.command).toEqual(['npx', '-y', SPEC, 'mcp']);
+    expect(oc.mcp.graphcode.command).toEqual(['node', HOST_ENTRY, 'mcp']);
   });
 
   it('init keeps a FOREIGN mcp server in .mcp.json (CR-GC-263 regression)', async () => {
@@ -601,7 +601,7 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
 
     const mcp = JSON.parse(readFileSync(join(repo, MCP), 'utf8'));
     expect(mcp.mcpServers.context7).toEqual(foreign);
-    expect(mcp.mcpServers.graphcode.args).toEqual(['-y', SPEC, 'mcp']);
+    expect(mcp.mcpServers.graphcode.args).toEqual([HOST_ENTRY, 'mcp']);
   });
 
   it('update is byte-stable for both host configs (REQ-install-idempotent)', async () => {
