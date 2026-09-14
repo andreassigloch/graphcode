@@ -18,6 +18,7 @@
  * @author andreas@siglochconsulting
  */
 import { readFile } from 'node:fs/promises';
+import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { Graph, GraphNode, GraphEdge } from '@sigloch/graph-api-core';
 import { traceRejection } from '@sigloch/contracts/se';
@@ -122,33 +123,21 @@ export async function importOntologyGraph(
     ontology.elements.map((e) => elementToNode(e as Record<string, unknown>)),
     target.systemId,
   );
-  const traces: GraphEdge[] = ontology.traces.map((t) => {
-    const { source, target, type, ...rest } = t;
-    return { sourceId: source, targetId: target, edgeType: type, attributes: rest };
-  });
+  const traces: GraphEdge[] = ontology.traces.map(traceToEdge);
 
   // CR-GC-530: a grammar change can remove a pattern the committed graph still uses
   // (CR-SM-266 D1: ACTOR -io-> UC). The store's rel tables are built from the same
   // patterns, so such a trace aborted the whole seed — and with it the gate that should
-  // repair it. Judge every trace with R-18's own routine and inputs (`traceRejection`);
-  // hold back only `no-pattern`, the one verdict the store cannot hold. A kinds verdict
-  // loads and stays visible as R-18. Held-back traces are NAMED, never silently dropped:
-  // `graph_export` refuses until a gated delete-edge accepts the repair.
+  // repair it. Hold back the traces `noPatternFor` rejects; a kinds verdict loads and
+  // stays visible as R-18. Held-back traces are NAMED, never silently dropped: the host
+  // warns, graph_readiness lists them (CR-GC-532), and graph_export refuses until a gated
+  // delete-edge accepts the repair.
   const nodeByUid = new Map(nodes.map((n) => [n.uid, n]));
   const rejectedTraces: RejectedTrace[] = [];
   const edges = traces.filter((e) => {
     const src = nodeByUid.get(e.sourceId);
     const tgt = nodeByUid.get(e.targetId);
-    if (!src || !tgt) return true; // dangling endpoint → R-08, not this check
-    const why = traceRejection({
-      source: src.type as ElementType,
-      target: tgt.type as ElementType,
-      type: e.edgeType as TraceType,
-      label: e.attributes.label as string | undefined,
-      sourceKinds: src.attributes.kinds as readonly ReqKind[] | undefined,
-      targetKinds: tgt.attributes.kinds as readonly ReqKind[] | undefined,
-    });
-    if (why?.reason !== 'no-pattern') return true;
+    if (!src || !tgt || !noPatternFor(src, tgt, e)) return true; // dangling endpoint → R-08, not this check
     rejectedTraces.push({ source: e.sourceId, target: e.targetId, type: e.edgeType, reason: 'no-pattern' });
     return false;
   });
@@ -172,6 +161,56 @@ export async function importOntologyGraph(
 
   await target.replace({ nodes, edges });
   return { nodes: nodes.length, edges: edges.length, unverifiedReqs, rejectedTraces };
+}
+
+/** The one trace → edge mapping of the import path (seed and heldBackTraces read the same file). */
+function traceToEdge(t: OntologyJson['traces'][number]): GraphEdge {
+  const { source, target, type, ...rest } = t;
+  return { sourceId: source, targetId: target, edgeType: type, attributes: rest };
+}
+
+/**
+ * R-18's own routine (`traceRejection`) with R-18's inputs, narrowed to `no-pattern` — the one
+ * verdict the store cannot hold (CR-GC-530). The seed and heldBackTraces both judge through here.
+ */
+function noPatternFor(src: GraphNode, tgt: GraphNode, e: GraphEdge): boolean {
+  return (
+    traceRejection({
+      source: src.type as ElementType,
+      target: tgt.type as ElementType,
+      type: e.edgeType as TraceType,
+      label: e.attributes.label as string | undefined,
+      sourceKinds: src.attributes.kinds as readonly ReqKind[] | undefined,
+      targetKinds: tgt.attributes.kinds as readonly ReqKind[] | undefined,
+    })?.reason === 'no-pattern'
+  );
+}
+
+/**
+ * CR-GC-532: the committed traces the live graph lacks because no pattern admits them.
+ * DERIVED on every call, never remembered — a restart runs no seed (the store is not empty),
+ * so a remembered list would be gone while the traces are still missing. It empties with
+ * the graph_export that finishes the repair. Empty when there is no committed file.
+ */
+export function heldBackTraces(repoRoot: string, systemId: string, live: Graph): RejectedTrace[] {
+  const abs = join(repoRoot, graphSnapshotRel(systemId));
+  if (!existsSync(abs)) return [];
+  const committed = JSON.parse(readFileSync(abs, 'utf8')) as OntologyJson;
+  const nodeByUid = new Map(
+    committed.elements.map((el) => {
+      const n = elementToNode(el as Record<string, unknown>);
+      return [n.uid, n] as const;
+    }),
+  );
+  const liveKeys = new Set(live.edges.map((e) => `${e.sourceId}>${e.edgeType}>${e.targetId}`));
+  return committed.traces.map(traceToEdge).flatMap((e) => {
+    if (liveKeys.has(`${e.sourceId}>${e.edgeType}>${e.targetId}`)) return [];
+    const src = nodeByUid.get(e.sourceId);
+    const tgt = nodeByUid.get(e.targetId);
+    return src && tgt && noPatternFor(src, tgt, e)
+      ? [{ source: e.sourceId, target: e.targetId, type: e.edgeType, reason: 'no-pattern' as const }]
+      : [];
+  });
 }
 
 /** Load + import the materialized graph JSON from `<repoRoot>/docs/graph/`. */
