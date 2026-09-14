@@ -96,6 +96,29 @@ describe('CR-GC-308: no exporter walks an undeclared node pair', () => {
     }
   });
 
+  // CR-GC-525 (ITEM-2026-116): implplan/intplan picked the MS's relation-neighbours by
+  // uid prefix 'CR-' instead of by node type. A CR ledger with its own namespace
+  // (bok: BOK-CR-040…) rendered '— no CR —' although four CRs hung on the MS.
+  it('a CR is a CR by TYPE, not by uid prefix — BOK-CR-* resolves, CR-* of another type does not', () => {
+    const g: Graph = {
+      nodes: [
+        { uid: 'MS-1', type: 'MS', name: 'Erster', description: 'MS.', attributes: {} },
+        { uid: 'BOK-CR-040', type: 'CR', name: 'Fremder Namensraum', description: 'CR.', attributes: { status: 'open' } },
+        { uid: 'CR-nicht', type: 'REQ', name: 'Praefix ohne Typ', description: 'REQ.', attributes: {} },
+      ],
+      edges: [
+        { sourceId: 'BOK-CR-040', targetId: 'MS-1', edgeType: 'relation', attributes: {} },
+        { sourceId: 'CR-nicht', targetId: 'MS-1', edgeType: 'relation', attributes: {} },
+      ],
+    };
+    for (const view of ['implplan', 'intplan'] as const) {
+      const md = exportMarkdown(g, view, 'x');
+      expect(md, view).toContain('BOK-CR-040');
+      expect(md, view).not.toContain('— no CR —');
+      expect(md, view).not.toContain('CR-nicht');
+    }
+  });
+
   it('REQ relation REQ is undeclared — the FMEA mitigation column read it anyway', () => {
     // This is why the mitigation column was structurally unfillable: R-18 flags the
     // edge the exporter was looking for, so a compliant graph can never contain one.
