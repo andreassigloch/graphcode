@@ -4,6 +4,7 @@
 **Typ:** aus Item ITEM-2026-139 (finding)
 **Erstellt:** 2026-09-14
 **Item:** bok/items/ITEM-2026-139.json (Lane: code)
+**Commit:** 33f155f
 **Schwester-CRs:** CR-GC-529 (status liest die Startform), BOK-CR-056 (doctor H10)
 
 ---
