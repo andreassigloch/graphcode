@@ -89,8 +89,8 @@ describe('graph_mutate: formatE + dryRun + Preview-Audit (CR-GC-276)', () => {
     expect(g.edges.length).toBe(1);
   });
 
-  it('ungültiger Format-E-Block (illegales Kantenpaar) → Block-Verdict mit Codec-Meldung, kein Crash', async () => {
-    const bad = [
+  it('illegales Kantenpaar im Format-E-Block → Gate blockt mit R-18 (CR-SM-324: der Parser urteilt nicht)', async () => {
+    const illegal = [
       '## Nodes',
       '### REQ',
       '+ REQ-a|a. [__name:a]',
@@ -100,6 +100,25 @@ describe('graph_mutate: formatE + dryRun + Preview-Audit (CR-GC-276)', () => {
       '## Edges',
       '+ REQ-a -compose-> TEST-b',
     ].join('\n');
+    const res = (await tools.graph_mutate.handler({ formatE: illegal })) as {
+      success: boolean;
+      tier: string;
+      violations: { ruleId: string; message: string }[];
+    };
+    expect(res.success).toBe(false);
+    expect(res.tier).toBe('block');
+    expect(res.violations.some((v) => v.ruleId === 'R-18' && v.message.includes('REQ-a -compose-> TEST-b'))).toBe(true);
+  });
+
+  it('ungültiger Format-E-Block (unauflösbarer Endpunkt) → Block-Verdict mit Codec-Meldung, kein Crash', async () => {
+    const bad = [
+      '## Nodes',
+      '### REQ',
+      '+ REQ-a|a. [__name:a]',
+      '',
+      '## Edges',
+      '+ REQ-a -compose-> TEST-missing',
+    ].join('\n');
     const res = (await tools.graph_mutate.handler({ formatE: bad })) as {
       success: boolean;
       tier: string;
@@ -108,7 +127,7 @@ describe('graph_mutate: formatE + dryRun + Preview-Audit (CR-GC-276)', () => {
     expect(res.success).toBe(false);
     expect(res.tier).toBe('block');
     expect(res.violations[0].ruleId).toBe('STRUCT');
-    expect(res.violations[0].message).toContain('REQ');
+    expect(res.violations[0].message).toContain('TEST-missing');
 
     // CR-GC-286: der Decode-Fehler ist KEIN unauditierter early return mehr —
     // audit.jsonl trägt den rejected-Eintrag mit STRUCT (F2-Kette lückenlos).
