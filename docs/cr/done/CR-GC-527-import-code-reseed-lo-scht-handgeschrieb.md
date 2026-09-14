@@ -4,6 +4,7 @@
 **Typ:** aus Item ITEM-2026-074 (bug)
 **Erstellt:** 2026-09-14
 **Item:** bok/items/ITEM-2026-074.json (Lane: code)
+**Commit:** 516538b
 **Schwester-CR:** graphify CR-GF-149 (MOD-in-MOD aus der Verzeichnisstruktur)
 
 ---
