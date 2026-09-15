@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 162 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 162 CR · 157 done · 4 open.
+Total: 162 CR · 157 done · 3 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -175,7 +175,7 @@ Total: 162 CR · 157 done · 4 open.
 | `CR-GC-258` | done | Audit-Remainder: Dependency-Fixes + Dead-Code |
 | `CR-GC-259` | done | Creation-Enforcement sichtbar machen (kein stilles OFF) |
 | `CR-GC-260` | done | Uebergrosse Module aufteilen — BACKLOG |
-| `CR-GC-261` | open | Restliche 500-Zeilen-Ueberschreiter: readiness-Config + harness-Query-Pfad |
+| `CR-GC-261` | dropped | Restliche 500-Zeilen-Ueberschreiter: readiness-Config + harness-Query-Pfad |
 | `CR-GC-262` | done | Registry-Deps statt esbuild-Inlining |
 | `CR-GC-263` | done | OpenCode als First-Class-Client: opencode.json scaffolden |
 | `CR-GC-264` | done | Public-Repo-Doc-Hygiene: Belege rein, Entstehungsgeschichte raus |

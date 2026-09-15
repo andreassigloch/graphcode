@@ -1,6 +1,6 @@
 # CR-GC-261: harness.ts — Query-Pfad heraus, Gate-Ausnahme festschreiben
 
-**Status:** open · **neu geschnitten 2026-08-08** · **Max Files:** 6
+**Status:** ⛔ Geschlossen als Altlast (2026-09-15) — nicht umgesetzt, nicht weiterverfolgt; im Modell `dropped` · **neu geschnitten 2026-08-08** · **Max Files:** 6
 **Herkunft:** Folge-CR aus CR-GC-260 (Modul-Schnitte). Zweimal nachgemessen und zweimal
 verkleinert — was hier steht, ist der gemessene Rest, nicht die Fortschreibung.
 
