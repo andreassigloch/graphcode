@@ -761,13 +761,6 @@
       "commitRef": "242f1f6"
     },
     {
-      "id": "CR-GC-251",
-      "type": "CR",
-      "name": "V3-Regel R-21: satisfy-Quelle passt zur REQ-Art",
-      "description": "Vorschlag aus graph-view-edit CR-GVE-177 (Ontologie-Check 2026-07-12): TRACE_PATTERNS erlaubt MOD/SYS-satisfy nur mit CR-154-Rationale (Budget-/System-NFR), keine Regel erzwingt das — in graph-view-edit hingen 19 funktionale REQs an MODs. R-21 (warning): satisfy-Kante MOD/SYS→REQ verlangt kinds non-functional|operational; funktionales REQ braucht FUNC- (oder FCHAIN-)Satisfier. candidates = FUNCs mit allocate auf das MOD (R-02-Mechanik), fix_hint auf CR-154. Umsetzung in @sigloch/contracts/src/se/rules.ts, RULES_VERSION 2.4.0->2.5.0, Fixture-Tests; danach beide Graphen R-21-clean. Entscheid offen: FCHAIN-Satisfier fuer funktionale REQs zulaessig (Vorschlag: ja).",
-      "status": "open"
-    },
-    {
       "id": "CR-GC-252",
       "type": "CR",
       "name": "Learning-Feed = Projektion aus dem Operations-Log",
@@ -784,15 +777,6 @@
       "status": "done",
       "created_at": "2026-07-13T00:00:00.000Z",
       "commitRef": "a52a894"
-    },
-    {
-      "id": "CR-GC-254",
-      "type": "CR",
-      "name": "Konformanz-Parser auf ast-grep umstellen (Multi-Language) — BACKLOG",
-      "description": "BACKLOG (2026-07-13): der CodeFacts-Extraktor in src/conformance.ts nutzt ts.createSourceFile und parst damit nur JS/TS(X). Ein governetes Python-/Go-/Rust-Repo bekaeme fuer jeden codeRef eine falsche RC-01-Violation oder muesste den Check abschalten. Die RC-Regeln selbst sind sprachneutral (pure ueber CodeFacts) — nur der Extraktor ist es nicht, also ist der Umbau ein Extraktor-Tausch, keine Regel-Aenderung. Trigger: erst ziehen, wenn das erste Nicht-JS/TS-Repo governed wird; vorher deckt der TypeScript-Parser alle realen Repos ab und der Umbau waere ein Rewrite ohne Nutzen. Max 4 Dateien. Nachtrag 2026-07-26: dieser Knoten fehlte im Graph-SSOT (nur lokale CR-Datei), ergaenzt mit CR-GC-258. (CR-GC-254)",
-      "status": "open",
-      "created_at": "2026-07-13T00:00:00.000Z",
-      "maxFiles": 4
     },
     {
       "id": "CR-GC-255",
@@ -1211,14 +1195,6 @@
       "created_at": "2026-08-04T00:00:00.000Z",
       "closed_at": "2026-08-04T00:00:00.000Z",
       "commitRef": "18de974"
-    },
-    {
-      "id": "CR-GC-297",
-      "type": "CR",
-      "name": "Injection-Default backend-abhaengig",
-      "description": "OPEN (2026-08-04). Folge aus CR-GC-293: zweifach belegte Messlage — die Guide- und Index-Injektion aus CR-GC-285 nuetzt Frontier (Opus 60 Elemente in 12 Runden) und kostet Local Ausbeute und Breite (v15 22 gegen v9 38; v20 ohne Injektion 40 Elemente inklusive MOD und FLOW gegen v19 31). Der Mess-Schalter injection existiert seit CR-GC-293 mit Default true. Ziel: Default backend-abhaengig nach dem maxTokens-Muster in parseExecutorEnv — explizite Env gewinnt, sonst anthropic true und openai false, mit Messbeleg im Kommentar. (docs/cr/open/CR-GC-297)",
-      "status": "open",
-      "created_at": "2026-08-04T00:00:00.000Z"
     },
     {
       "id": "CR-GC-298",
@@ -9795,22 +9771,6 @@
       "type": "relation"
     },
     {
-      "source": "CR-GC-251",
-      "target": "FUNC-evaluate-rules",
-      "type": "relation"
-    },
-    {
-      "source": "CR-GC-251",
-      "target": "MS-8-hardening",
-      "type": "relation",
-      "weight": "1"
-    },
-    {
-      "source": "CR-GC-251",
-      "target": "REQ-rule-enforcement",
-      "type": "relation"
-    },
-    {
       "source": "CR-GC-252",
       "target": "FUNC-emit-trajectory",
       "type": "relation"
@@ -9828,17 +9788,6 @@
     },
     {
       "source": "CR-GC-253",
-      "target": "MS-8-hardening",
-      "type": "relation",
-      "weight": "1"
-    },
-    {
-      "source": "CR-GC-254",
-      "target": "FUNC-check-code-conformance",
-      "type": "relation"
-    },
-    {
-      "source": "CR-GC-254",
       "target": "MS-8-hardening",
       "type": "relation",
       "weight": "1"
@@ -10524,22 +10473,6 @@
       "source": "CR-GC-296",
       "target": "REQ-readiness-model",
       "type": "relation"
-    },
-    {
-      "source": "CR-GC-297",
-      "target": "FUNC-graph-suggest",
-      "type": "relation"
-    },
-    {
-      "source": "CR-GC-297",
-      "target": "MOD-surface",
-      "type": "relation"
-    },
-    {
-      "source": "CR-GC-297",
-      "target": "MS-9-generation",
-      "type": "relation",
-      "weight": "1"
     },
     {
       "source": "CR-GC-298",
@@ -18849,5 +18782,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 267
+  "graphVersion": 268
 }

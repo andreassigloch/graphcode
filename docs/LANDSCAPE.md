@@ -89,7 +89,7 @@ Tours, die beim nächsten Commit veralten. Höchste Kosten, kürzeste Halbwertsz
 | # | Was | Quelle | Draft-CR |
 |---|---|---|---|
 | L1 | **PreToolUse-Graph-Slice-Injektion** auf dem Discovery-Pfad (Read/Grep/Glob) — macht den Graph zum Default statt zur Wahl des Agents | GitNexus PreToolUse | `CR-DRAFT-GC-361` |
-| L2 | **Token-budgetierter Subgraph**: `graph_context(budget: n)` liefert die größte kohärente Scheibe unter n Token statt fixer Tiefe — bedient `graphcode run` / Local-LLM | graphify-mcp | `CR-DRAFT-GC-362` |
+| L2 | **Token-budgetierter Subgraph**: `graph_context(budget: n)` liefert die größte kohärente Scheibe unter n Token statt fixer Tiefe — bedient `graphcode run` / Local-LLM | graphify-mcp | `ITEM-2026-164` |
 | L3 | **Freshness-Banner inline im Read-Ergebnis** (AF-01..05 in `graph_context`/`graph_impact`, nicht nur in `readiness`) | CodeGraph ⚠️ / GitNexus PostToolUse | `CR-DRAFT-GC-363` |
 | L4 | **Confidence-Tags mit Klartext-Begründung** (`EXTRACTED`/`INFERRED`/`AMBIGUOUS`) — = R1, offen. Der Begründungsstring ist das, was einen Slicer-Vorschlag gate-prüfbar macht | Graphify | (R1 — Graph-REQ, Bootstrap-Prosa gelöscht) |
 | L5 | **Benchmark-Hygiene**: ein geteiltes Modell, Spend-Ledger, Zweit-Judge-Validierung, **Coverage als Primärachse** statt Kosten | Graphify-Harness | offen |
@@ -109,7 +109,7 @@ Weder graphengine noch graphcode haben die GitNexus-Form heute:
   Guide/Index-Injektion in den **eigenen Executor-Prompt**, nicht in einen fremden Harness pro Call.
 - **Messvorbehalt:** CR-GC-293 hat gemessen, dass Injektion Frontier nützt und **Local Ausbeute +
   Breite kostet** (v15 22 vs. v9 38 Elemente). L1 muss gemessen ausgeliefert werden, nicht
-  default-an — siehe `CR-DRAFT-GC-297`.
+  default-an — siehe `ITEM-2026-159`.
 
 ## Quellen
 
