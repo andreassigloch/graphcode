@@ -879,7 +879,7 @@
       "type": "CR",
       "name": "Restliche 500-Zeilen-Ueberschreiter: readiness-Config + harness-Query-Pfad",
       "description": "Folge-CR aus CR-GC-260: zwei der vier Module blieben nach dem Verschieben ueber der 500-Zeilen-Grenze, weil der jeweils naechste Schnitt mehr kostet als ein Verschiebe-CR tragen darf. readiness.ts (505) — die Phase-/Impl-Gate-Tabellen und die Report-Typen sind der naechste Schnitt, aber PHASE_GATE_RULES, IMPL_GATE_MILESTONES, IMPL_GATE_RULES, ABSENT_CREATION_PROVIDER, ReadinessReport und summarizeReadiness werden von src/viewer/help.ts, src/viewer/panels.ts UND vier Testdateien importiert; das ergibt 9 Dateien gegen das harte 6-Dateien-Limit, also eigener CR mit eigenem Budget. harness.ts (712) — der Import-/Seed-Pfad ist heraus (harness-import.ts), naeher an 500 kommt nur, wer applyMutation verschiebt: das ist das Apply-Gate (L1) und damit eine Governance-Aenderung, kein Formatierungsschritt. Kandidat ist stattdessen der reine Query-Pfad (impact/subgraph/testImpact/listElements, rund 125 Zeilen read-only Cypher, kein Gate-Bezug) nach harness-queries.ts; danach bleibt harness.ts bei rund 590 und die 500 sind ohne Gate-Umbau nicht erreichbar — das ist dann eine bewusste, dokumentierte Ausnahme, kein offener Rest. Reihenfolge: readiness zuerst (risikolos), harness-queries danach. Akzeptanz wie CR-GC-260: reines Verschieben, keine Signatur- oder Ausgabe-Aenderung, bestehende Tests bleiben gruen. (CR-GC-261)",
-      "status": "open",
+      "status": "dropped",
       "created_at": "2026-07-26T00:00:00.000Z",
       "maxFiles": 6,
       "rationale": "Rest aus CR-GC-260: zwei Module ueber 500, deren naechster Schnitt das 6-Dateien-Limit oder das Apply-Gate beruehrt"
@@ -18782,5 +18782,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 268
+  "graphVersion": 269
 }

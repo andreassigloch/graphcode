@@ -231,7 +231,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-258` | done | Audit-Remainder: Dependency-Fixes + Dead-Code | `FUNC-export-markdown` · `REQ-self-contained-dist` |
 | `CR-GC-259` | done | Creation-Enforcement sichtbar machen (kein stilles OFF) | `FUNC-score-completeness` |
 | `CR-GC-260` | done | Uebergrosse Module aufteilen — BACKLOG | `FUNC-export-markdown` |
-| `CR-GC-261` | open | Restliche 500-Zeilen-Ueberschreiter: readiness-Config + harness-Query-Pfad | `FUNC-score-completeness` |
+| `CR-GC-261` | dropped | Restliche 500-Zeilen-Ueberschreiter: readiness-Config + harness-Query-Pfad | `FUNC-score-completeness` |
 | `CR-GC-262` | done | Registry-Deps statt esbuild-Inlining | `FUNC-harness-cli` |
 | `CR-GC-263` | done | OpenCode als First-Class-Client: opencode.json scaffolden | `FUNC-harness-cli` |
 | `CR-GC-264` | done | Public-Repo-Doc-Hygiene: Belege rein, Entstehungsgeschichte raus | `MOD-projections` |
