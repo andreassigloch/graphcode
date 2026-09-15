@@ -1,6 +1,6 @@
 # CR-GC-533: Artikel und Canary auf 67 Engine-Regeln (MT-04)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-15, 485c39e)
 **Typ:** aus Item ITEM-2026-153 (finding)
 **Erstellt:** 2026-09-15
 **Item:** bok/items/ITEM-2026-153.json (Lane: code)
