@@ -18,8 +18,8 @@ deterministic way to check LLM output — for anyone who can't live with a 95%-c
 
 ## What is the approach?
 
-A graph represents your software architecture against a predefined ontology — a pure, deterministic
-ground truth. The agent checks its own implementation against hard rules, pulls only the context it
+A graph represents your system against a predefined ontology — a pure, deterministic ground truth.
+Anything can be modelled — software, mechanical, electrical; what gets implemented is code. The agent checks its own implementation against hard rules, pulls only the context it
 needs, gets a defined integration order, and more — all by database query, not statistical search.
 Packaged as an add-on to Claude Code or OpenCode.
 
@@ -47,6 +47,10 @@ prompt.
   tool-call JSON, so 63 of the 81 "rejections" never reached the gate at all. Re-run with the ceiling
   raised, Opus reached 60 elements / 93 traces in 12 rounds for ~$1.60 — more output than the original
   48-round arm, in a quarter of the rounds. Cross-model rankings from that trial are withdrawn.
+
+Read this as what it is: **model-level evidence** — graph authoring, measured in elements and traces.
+The proof that counts is in the code: visibly better architecture and efficiency than a free-running
+Claude Code. That end-to-end greenfield system test is still open.
 
 What survives is the load-bearing part: **one driver, one method, every model.** A $0 local model
 reached full scope through the same loop that carried a frontier model, and a deterministic gate plus
@@ -108,6 +112,11 @@ pushed back onto the right path: the weakest score names the next sensible step.
 That's also what lets a weaker, locally-run model act as well as — or better than — its larger
 siblings: it's told what to do next, not left to guess.
 
+**Three stages across these layers.** *Prevent*: a rule blocks — the write never reaches the database
+and has to be retried with a correction. *Steer*: deterministic metrics and warnings pull you back
+toward an implementation-ready specification. *Recommend*: next-step suggestions, which may also be
+statistical. The first two are deterministic by design; only the third may learn.
+
 **Layer 4 — module diagnostics.** A second, per-module set of checks: how exposed to change a module
 is (Robert C. Martin's instability metric), whether it does one thing (LCOM4 cohesion), how often it
 crosses paths with other modules. Warnings, not a single project-wide score.
@@ -149,7 +158,7 @@ Feel free to write a serializer for it — should be possible.
 ## What's next?
 
 The self-improvement and prediction engine: first to improve our own rules and target vectors, second
-to predict the next action. Comprehensive logging of user input, rule firings, and calculated
+to predict the next action — on the *recommend* stage only; blocking and steering stay deterministic. Comprehensive logging of user input, rule firings, and calculated
 optimization results gives a full audit trail today — and is the training input for self-learning
 tomorrow.
 
