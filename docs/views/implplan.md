@@ -174,7 +174,7 @@ depends-on:  MS-1-specification  ◀  MS-2-coding-vv  ◀  MS-3-mvp-readiness  �
 | `CR-GC-280` | done | Executor-Konvergenz-Hebel (Folge zu CR-GC-278/279) |
 | `CR-GC-281` | done | Fund-Rotation/Defer in graph_generate |
 | `CR-GC-282` | done | Empfaenger-abhaengiges Instruktions-Rendering — negativ validiert und zurueckgebaut |
-| `CR-GC-283` | open | Planungs-Step auf dem Top-Graphen |
+| `CR-GC-283` | done | Planungs-Step auf dem Top-Graphen |
 | `CR-GC-284` | done | Batch-Preflight + Autovervollstaendigung im Executor |
 | `CR-GC-285` | done | Runden-Prompt-Injektion: Guide-Slice + Element-Index |
 | `CR-GC-286` | done | Audit-Vollstaendigkeit + Rejection-Beobachtbarkeit |
@@ -185,7 +185,7 @@ depends-on:  MS-1-specification  ◀  MS-2-coding-vv  ◀  MS-3-mvp-readiness  �
 | `CR-GC-291` | done | Elementtyp-Liste im SYSTEM-Prompt (gegen STRUCT-Halluzination) |
 | `CR-GC-292` | done | Preflight-Erweiterung Zirkulaere Composition — geschlossen ohne Bau |
 | `CR-GC-293` | done | Injektion isoliert messen (kein Code, nur ein Lauf) |
-| `CR-GC-294` | open | Skill-Spektrum fuer Treiber-Faehigkeit (Bestandsaufnahme, kein Bau) |
+| `CR-GC-294` | done | Skill-Spektrum fuer Treiber-Faehigkeit (Bestandsaufnahme, kein Bau) |
 | `CR-GC-295` | done | Zielprofil (R6) als Runde-1-Frage, Config und Konflikt-Check |
 | `CR-GC-296` | done | phase_readiness konsumieren + Sprachregelung |
 | `CR-GC-298` | done | se:import-code-Skill + graphcode-import-code-Verb (graphify-Extraktor angeschlossen) |
@@ -196,7 +196,7 @@ depends-on:  MS-1-specification  ◀  MS-2-coding-vv  ◀  MS-3-mvp-readiness  �
 |---|---|---|
 | `CR-GC-299` | done | exporter.ts flacht attributes ab — abgeloest von CR-GC-303 |
 | `CR-GC-300` | done | graphVersion-Stempel im graph_export-Output |
-| `CR-GC-301` | open | A-SPICE-Nachschaerfungen: R-21-Level-Check, Auditor-Sicht, SUP.9/SUP.10 |
+| `CR-GC-301` | done | A-SPICE-Nachschaerfungen: R-21-Level-Check, Auditor-Sicht, SUP.9/SUP.10 |
 | `CR-GC-302` | done | Auto-SYS-Node bei jedem Import |
 | `CR-GC-303` | done | Attribut-Abflachung macht Steering-Pfad regelblind |
 | `CR-GC-304` | done | ConOps-View nach ISO 29148 neu schneiden |
