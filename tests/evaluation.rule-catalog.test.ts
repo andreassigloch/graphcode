@@ -54,7 +54,7 @@ import type { HarnessConfig } from '@sigloch/contracts/harness';
  */
 const NOT_IN_GATE = [
   'BQ-01', 'BQ-02', 'BQ-04', 'BQ-06', 'BQ-07', 'ND-01', 'ND-02',
-  'RC-01', 'RC-02', 'RC-03', 'RC-04', 'RC-05', 'RC-06',
+  'RC-01', 'RC-02', 'RC-03', 'RC-04', 'RC-05', 'RC-06', 'RC-07',
 ];
 
 /**
