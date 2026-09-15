@@ -125,6 +125,15 @@ describe('TEST-code-conformance: realRef/testRefs resolve as RC readiness rules 
     expect(rc06.map((v) => `${v.elementId}: ${v.message}`)).toEqual([]);
   });
 
+  it('liefert crFiles aus docs/cr — der Eingang fuer RC-07 (CR-SM-329)', () => {
+    const facts = extractCodeFacts(harness.getGraph(), REPO_ROOT);
+    // Ein geschlossener CR dieses Repos, am Verzeichnis abgelesen — nicht aus dem Knoten.
+    expect(facts.crFiles?.['CR-GC-533']).toBe('done');
+    expect(Object.keys(facts.crFiles ?? {}).every((id) => /-\d+$/.test(id))).toBe(true);
+    // Ohne docs/cr: nicht nachgesehen, nicht "keine CRs".
+    expect(extractCodeFacts(harness.getGraph(), join(scratch, 'kein-repo')).crFiles).toBeUndefined();
+  });
+
   it('catches a realRef pointing at a symbol that is not declared → RC-01 (not vacuous)', () => {
     const g = harness.getGraph();
     const broken: typeof g = {

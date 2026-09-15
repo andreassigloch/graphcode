@@ -152,7 +152,29 @@ export function extractCodeFacts(graph: CGraph, repoRoot: string): CodeFacts {
     files,
     importEdges: extractImportEdges(repoRoot),
     declaredDependencies: extractDeclaredDependencies(repoRoot),
+    crFiles: extractCrFiles(repoRoot),
   };
+}
+
+// ---------------------------------------------------------------------------
+// CR-SM-329: CR id → the directory its file lives in, the input of RC-07. The id is the
+// file-name prefix up to the first number (`CR-GC-533-…md` → `CR-GC-533`, `BOK-CR-057-…`,
+// `CR-DRAFT-GC-466-…`); files without one (LEDGER.md) are not CRs. `undefined` = no
+// `docs/cr/` at all — never looked, which RC-07 reads as silence, not as "no CRs".
+// ---------------------------------------------------------------------------
+const CR_FILE_ID = /^(.+?-\d+)(?:-.*)?\.md$/;
+
+export function extractCrFiles(repoRoot: string): Record<string, 'open' | 'done'> | undefined {
+  const dirs = (['open', 'done'] as const).filter((d) => existsSync(join(repoRoot, 'docs', 'cr', d)));
+  if (dirs.length === 0) return undefined;
+  const crFiles: Record<string, 'open' | 'done'> = {};
+  for (const dir of dirs) {
+    for (const name of readdirSync(join(repoRoot, 'docs', 'cr', dir)).sort()) {
+      const id = CR_FILE_ID.exec(name)?.[1];
+      if (id) crFiles[id] = dir;
+    }
+  }
+  return crFiles;
 }
 
 // ---------------------------------------------------------------------------
