@@ -4,6 +4,9 @@ Read `README.md` first for what graphcode is and how to run it. This file is the
 **constraints and invariants** for anyone (human or agent) working in this repo. General working
 rules live in the user's global instructions; only what is specific to this repo is here.
 
+**CR-Modus: graph** — CR text in `docs/cr/`, a lean CR node (id, title, scope edges) in the graph;
+status derives from `open/`/`done/` (global rule "CR-Verwaltung in Graph-Repos").
+
 ## What graphcode is / is not
 
 - **IS:** a governed **graph substrate** (Bridge + Store + MCP surface). Agent-agnostic, headless,

@@ -651,6 +651,7 @@
 | `FCHAIN-modelfree-gate` | satisfy | `REQ-small-model-viable` |
 | `FCHAIN-recall` | compose | `FUNC-apply-reseed` |
 | `FCHAIN-recall` | compose | `FUNC-graph-store` |
+| `FCHAIN-recall` | compose | `FUNC-held-back-traces` |
 | `FCHAIN-recall` | compose | `FUNC-import` |
 | `FCHAIN-recall` | compose | `FUNC-reseed` |
 | `FCHAIN-recall` | compose | `FUNC-rewind` |
@@ -704,6 +705,7 @@
 | `FCHAIN-snapshot-freshness` | compose | `FUNC-export-marker` |
 | `FCHAIN-snapshot-freshness` | compose | `FUNC-graph-export-snapshot` |
 | `FCHAIN-snapshot-freshness` | compose | `FUNC-graph-store` |
+| `FCHAIN-snapshot-freshness` | compose | `FUNC-held-back-traces` |
 | `FCHAIN-snapshot-freshness` | compose | `FUNC-mutate` |
 | `FCHAIN-snapshot-freshness` | satisfy | `REQ-graph-snapshot-per-commit` |
 | `FCHAIN-steering-loop` | compose | `FUNC-arch-fitness` |
@@ -716,6 +718,8 @@
 | `FCHAIN-steering-loop` | compose | `FUNC-fit-advisory` |
 | `FCHAIN-steering-loop` | compose | `FUNC-gate-client` |
 | `FCHAIN-steering-loop` | compose | `FUNC-generation-step` |
+| `FCHAIN-steering-loop` | compose | `FUNC-graph-readiness` |
+| `FCHAIN-steering-loop` | compose | `FUNC-held-back-traces` |
 | `FCHAIN-steering-loop` | compose | `FUNC-list-elements` |
 | `FCHAIN-steering-loop` | compose | `FUNC-load-config` |
 | `FCHAIN-steering-loop` | compose | `FUNC-mutate` |
@@ -766,6 +770,7 @@
 | `FLOW-config-file` | relation | `SCHEMA-metric-policy` |
 | `FLOW-conformance-findings` | io | `FUNC-compute-readiness` |
 | `FLOW-conformance-findings` | relation | `SCHEMA-rule-violation` |
+| `FLOW-dimension-readiness` | io | `FUNC-graph-readiness` |
 | `FLOW-dimension-readiness` | io | `FUNC-se-retro` |
 | `FLOW-dimension-readiness` | io | `FUNC-se-review` |
 | `FLOW-dimension-readiness` | io | `FUNC-se-status` |
@@ -838,6 +843,9 @@
 | `FLOW-harness-handle` | relation | `SCHEMA-harness-handle` |
 | `FLOW-health-report` | io | `ACTOR-dashboard` |
 | `FLOW-health-report` | relation | `SCHEMA-health-report` |
+| `FLOW-held-back-traces` | io | `FUNC-graph-export-snapshot` |
+| `FLOW-held-back-traces` | io | `FUNC-graph-readiness` |
+| `FLOW-held-back-traces` | relation | `SCHEMA-rejected-trace` |
 | `FLOW-impact-slice` | io | `FUNC-read-tools` |
 | `FLOW-impact-slice` | relation | `SCHEMA-impact-slice` |
 | `FLOW-impacted-tests` | io | `FUNC-deduce-tests` |
@@ -920,6 +928,7 @@
 | `FLOW-mutate-cmd-test-ingest` | relation | `SCHEMA-mutate-command` |
 | `FLOW-next-step-advice` | io | `ACTOR-agent` |
 | `FLOW-next-step-advice` | relation | `SCHEMA-generation-step` |
+| `FLOW-ontology-json` | io | `FUNC-held-back-traces` |
 | `FLOW-ontology-json` | io | `FUNC-import` |
 | `FLOW-ontology-json` | relation | `SCHEMA-ontology-json` |
 | `FLOW-phase-readiness` | io | `FUNC-take-steering-snapshot` |
@@ -930,6 +939,7 @@
 | `FLOW-query-request-agent` | io | `FUNC-export-markdown` |
 | `FLOW-query-request-agent` | io | `FUNC-graph-expand` |
 | `FLOW-query-request-agent` | io | `FUNC-graph-impact` |
+| `FLOW-query-request-agent` | io | `FUNC-graph-readiness` |
 | `FLOW-query-request-agent` | io | `FUNC-list-elements` |
 | `FLOW-query-request-agent` | io | `FUNC-read-tools` |
 | `FLOW-query-request-agent` | io | `FUNC-resolve-tests-from-code` |
@@ -962,6 +972,8 @@
 | `FLOW-query-request-view-intplan` | relation | `SCHEMA-query-params` |
 | `FLOW-query-request-view-rtm` | io | `FUNC-export-markdown` |
 | `FLOW-query-request-view-rtm` | relation | `SCHEMA-query-params` |
+| `FLOW-readiness-report` | io | `ACTOR-agent` |
+| `FLOW-readiness-report` | relation | `SCHEMA-readiness-report` |
 | `FLOW-recovered-batch` | io | `FUNC-run-executor` |
 | `FLOW-recovered-batch` | relation | `SCHEMA-mutate-command` |
 | `FLOW-rendered-views` | io | `ACTOR-owner` |
@@ -1075,6 +1087,7 @@
 | `FUNC-block-abfrage` | compose | `FUNC-deduce-tests` |
 | `FUNC-block-abfrage` | compose | `FUNC-graph-expand` |
 | `FUNC-block-abfrage` | compose | `FUNC-graph-impact` |
+| `FUNC-block-abfrage` | compose | `FUNC-graph-readiness` |
 | `FUNC-block-abfrage` | compose | `FUNC-list-elements` |
 | `FUNC-block-abfrage` | compose | `FUNC-read-tools` |
 | `FUNC-block-abfrage` | compose | `FUNC-resolve-tests-from-code` |
@@ -1188,6 +1201,7 @@
 | `FUNC-block-speicherwerk` | compose | `FUNC-create-harness` |
 | `FUNC-block-speicherwerk` | compose | `FUNC-export-marker` |
 | `FUNC-block-speicherwerk` | compose | `FUNC-graph-store` |
+| `FUNC-block-speicherwerk` | compose | `FUNC-held-back-traces` |
 | `FUNC-block-speicherwerk` | compose | `FUNC-seed-from-json` |
 | `FUNC-block-urteilsarbeit` | allocate | `MOD-agent-surface` |
 | `FUNC-block-urteilsarbeit` | compose | `FUNC-se-conops` |
@@ -1291,11 +1305,15 @@
 | `FUNC-graph-expand` | satisfy | `REQ-progressive-expansion` |
 | `FUNC-graph-export-snapshot` | allocate | `MOD-projections` |
 | `FUNC-graph-export-snapshot` | satisfy | `REQ-graph-snapshot-per-commit` |
+| `FUNC-graph-export-snapshot` | satisfy | `REQ-held-back-traces-named` |
 | `FUNC-graph-impact` | allocate | `MOD-kernel` |
 | `FUNC-graph-impact` | io | `FLOW-impact-slice` |
 | `FUNC-graph-impact` | satisfy | `REQ-audit-trail` |
 | `FUNC-graph-impact` | satisfy | `REQ-query-precision` |
 | `FUNC-graph-impact` | satisfy | `REQ-subgraph-slicing` |
+| `FUNC-graph-readiness` | allocate | `MOD-projections` |
+| `FUNC-graph-readiness` | io | `FLOW-readiness-report` |
+| `FUNC-graph-readiness` | satisfy | `REQ-held-back-traces-named` |
 | `FUNC-graph-realize` | allocate | `MOD-surface` |
 | `FUNC-graph-realize` | io | `FLOW-mutate-cmd-graph-realize` |
 | `FUNC-graph-realize` | satisfy | `REQ-test-runnable-binding` |
@@ -1326,6 +1344,9 @@
 | `FUNC-health-endpoint` | allocate | `MOD-surface` |
 | `FUNC-health-endpoint` | io | `FLOW-health-report` |
 | `FUNC-health-endpoint` | satisfy | `REQ-real-health-check` |
+| `FUNC-held-back-traces` | allocate | `MOD-kernel` |
+| `FUNC-held-back-traces` | io | `FLOW-held-back-traces` |
+| `FUNC-held-back-traces` | satisfy | `REQ-held-back-traces-named` |
 | `FUNC-host-socket` | allocate | `MOD-surface` |
 | `FUNC-host-socket` | satisfy | `REQ-store-owner-lifecycle` |
 | `FUNC-import` | allocate | `MOD-kernel` |
@@ -1448,6 +1469,7 @@
 | `FUNC-seed-from-json` | allocate | `MOD-kernel` |
 | `FUNC-seed-from-json` | io | `FLOW-ontology-json` |
 | `FUNC-seed-from-json` | satisfy | `REQ-bootstrap-through-gate` |
+| `FUNC-seed-from-json` | satisfy | `REQ-held-back-traces-named` |
 | `FUNC-serve-sse` | allocate | `MOD-surface` |
 | `FUNC-serve-sse` | satisfy | `REQ-versioned-broadcast` |
 | `FUNC-serve-stdio` | allocate | `MOD-surface` |
@@ -1564,6 +1586,7 @@
 | `REQ-graph-is-ssot` | compose | `REQ-docs-taxonomy` |
 | `REQ-graph-is-ssot` | compose | `REQ-export-no-clobber` |
 | `REQ-graph-is-ssot` | compose | `REQ-graph-integrity` |
+| `REQ-graph-is-ssot` | compose | `REQ-held-back-traces-named` |
 | `REQ-one-gate-per-repo` | compose | `REQ-gate-only-writes` |
 | `REQ-single-kuzu-owner` | compose | `REQ-store-owner-lifecycle` |
 | `REQ-token-efficiency` | compose | `REQ-benchmark-harness` |
@@ -1658,6 +1681,7 @@
 | `TEST-code-quality` | verify | `REQ-frame-binding` |
 | `TEST-code-quality` | verify | `REQ-quality-metric` |
 | `TEST-code-quality` | verify | `REQ-structure-driven` |
+| `TEST-codec-validation` | verify | `REQ-codec-validation` |
 | `TEST-codec-validation` | verify | `REQ-graph-integrity` |
 | `TEST-create-harness-smoke` | verify | `REQ-mutation-emits-event` |
 | `TEST-create-harness-smoke` | verify | `REQ-trajectory-emit` |
@@ -1727,6 +1751,8 @@
 | `TEST-import-code-verb` | verify | `REQ-no-extraction` |
 | `TEST-import-code-verb` | verify | `REQ-post-import` |
 | `TEST-import-invariant` | verify | `REQ-bootstrap-through-gate` |
+| `TEST-import-rejected-traces` | verify | `REQ-held-back-traces-named` |
+| `TEST-import-rejected-traces` | verify | `SCHEMA-rejected-trace` |
 | `TEST-import-sys-anchor` | verify | `REQ-graph-integrity` |
 | `TEST-inject-graph-slice` | verify | `REQ-precise-context` |
 | `TEST-inject-graph-slice` | verify | `REQ-subgraph-slicing` |
@@ -1746,6 +1772,7 @@
 | `TEST-mcp-export` | verify | `REQ-doc-export` |
 | `TEST-mcp-export-guard` | verify | `REQ-export-no-clobber` |
 | `TEST-mcp-readiness` | verify | `REQ-mcp-tool-registry` |
+| `TEST-mcp-readiness` | verify | `REQ-readiness-transparent` |
 | `TEST-mcp-stdio-server` | verify | `REQ-audit-trail` |
 | `TEST-mcp-stdio-server` | verify | `REQ-mcp-gate-symmetry` |
 | `TEST-mcp-stdio-server` | verify | `REQ-mcp-tool-registry` |
