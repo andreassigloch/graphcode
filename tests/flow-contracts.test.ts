@@ -11,10 +11,10 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { createServer, type Server } from 'node:http';
 import { AddressInfo } from 'node:net';
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawnSync } from 'node:child_process';
 import { mkdtempSync, rmSync, writeFileSync, readFileSync, mkdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, dirname } from 'node:path';
 import { ExecutorConfigSchema } from '../src/loop/executor.js';
 import { buildCallModel } from '../src/loop/executor-backend.js';
 import { ModelAnswer } from '../src/loop/model-answer-contract.js';
@@ -271,5 +271,57 @@ describe('SCHEMA-export-pending: die Drift-Marke sagt, WIE WEIT der Snapshot zur
     } finally {
       rmSync(repo, { recursive: true, force: true });
     }
+  });
+});
+
+/**
+ * CR-GC-535 — ein Snapshot im Diff faehrt die Modell-Spur, statt sie nur anzusagen.
+ * Der ECHTE Hook laeuft in einem echten Wegwerf-Repo; `VERIFY_MODEL_CMD` ersetzt nur
+ * den 45-s-Lauf durch `true`/`false`, die Spurwahl und das Blocken sind echt.
+ */
+describe('CR-GC-535: pre-commit faehrt verify:model, sobald ein Snapshot gestaged ist', () => {
+  const HOOK = join(__dirname, '..', 'scripts', 'githooks', 'pre-commit');
+  function repoWith(staged: Record<string, string>): string {
+    const dir = mkdtempSync(join(tmpdir(), 'gc-hook-'));
+    execFileSync('git', ['init', '-q', dir]);
+    for (const [rel, body] of Object.entries(staged)) {
+      mkdirSync(join(dir, dirname(rel)), { recursive: true });
+      writeFileSync(join(dir, rel), body);
+    }
+    execFileSync('git', ['-C', dir, 'add', '-A']);
+    return dir;
+  }
+  function runHook(dir: string, verifyCmd: string): { status: number; stderr: string } {
+    const r = spawnSync('bash', [HOOK], { cwd: dir, encoding: 'utf8', env: { ...process.env, VERIFY_MODEL_CMD: verifyCmd } });
+    return { status: r.status ?? -1, stderr: r.stderr };
+  }
+  const SNAP = { 'docs/graph/x.graph.json': '{"elements":[],"traces":[]}' };
+
+  it('Snapshot gestaged + verify:model rot -> BLOCKED, exit 1', () => {
+    const dir = repoWith(SNAP);
+    try {
+      const r = runHook(dir, 'false');
+      expect(r.status).toBe(1);
+      expect(r.stderr).toContain('BLOCKED (CR-GC-535)');
+    } finally { rmSync(dir, { recursive: true, force: true }); }
+  });
+
+  it('Snapshot gestaged + verify:model gruen -> Commit geht durch', () => {
+    const dir = repoWith(SNAP);
+    try {
+      const r = runHook(dir, 'true');
+      expect(r.status).toBe(0);
+      expect(r.stderr).toContain('Snapshot im Diff');
+    } finally { rmSync(dir, { recursive: true, force: true }); }
+  });
+
+  it('nur docs/cr im Diff -> Ansage, verify:model laeuft NICHT (auch wenn es rot waere)', () => {
+    const dir = repoWith({ 'docs/cr/open/CR-x.md': '# x' });
+    try {
+      const r = runHook(dir, 'false');
+      expect(r.status).toBe(0);
+      expect(r.stderr).not.toContain('Snapshot im Diff');
+      expect(r.stderr).toContain('Spur: MODELL');
+    } finally { rmSync(dir, { recursive: true, force: true }); }
   });
 });

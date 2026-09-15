@@ -1511,6 +1511,12 @@
       "commitRef": "4a77834"
     },
     {
+      "id": "CR-GC-535",
+      "type": "CR",
+      "name": "Pre-Commit faehrt verify:model bei Snapshot im Diff",
+      "description": "docs/cr/done/CR-GC-535-*.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -11083,6 +11089,11 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-535",
+      "target": "REQ-graph-snapshot-per-commit",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -18863,5 +18874,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 274
+  "graphVersion": 275
 }

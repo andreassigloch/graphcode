@@ -93,6 +93,20 @@ if [ -n "$reason" ]; then
   echo "[pre-commit]   CI faehrt sie ohnehin; lokal fangen nur diese die Clean-Machine-Fehler." >&2
 else
   echo "[pre-commit] Spur: MODELL — nur docs/ im Diff." >&2
-  echo "[pre-commit]   -> npm run verify:model   (31 Dateien, ~45 s)" >&2
+  # CR-GC-535: ein SNAPSHOT im Diff wird nicht nur angesagt, sondern gefahren. Die
+  # Modell-Spur ist deterministisch und lokal (~45 s) — die Clean-Machine-Klasse aus
+  # CR-GC-399 trifft sie nicht. Anlass: 73a7b31 committete einen Snapshot, der seinen
+  # eigenen Codec nicht ueberlebte (43-zeilige description -> 35 Phantom-Knoten); CI war
+  # zeitgleich an npm ci rot, niemand sah es bis zum Release-Zug. Reine Doku-/CR-Commits
+  # bleiben bei der Ansage. VERIFY_MODEL_CMD ist der Testhaken, kein Konfigurationsknopf.
+  if printf '%s\n' "$staged" | grep -q '^docs/graph/.*\.graph\.json$'; then
+    echo "[pre-commit]   Snapshot im Diff -> ${VERIFY_MODEL_CMD:-npm run verify:model} laeuft jetzt (CR-GC-535, ~45 s)." >&2
+    if ! ${VERIFY_MODEL_CMD:-npm run verify:model} >&2; then
+      echo "BLOCKED (CR-GC-535): verify:model rot — der Snapshot passt nicht zu Codec/Regeln. Erst gruen, dann committen." >&2
+      exit 1
+    fi
+  else
+    echo "[pre-commit]   -> npm run verify:model   (31 Dateien, ~45 s)" >&2
+  fi
 fi
 exit 0
