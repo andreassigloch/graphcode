@@ -302,6 +302,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-343` | done | Nachdokumentation ausgelieferter Funktion | `FUNC-export-markdown` · `REQ-published-counts-match-code` |
 | `CR-GC-404` | done | Dashboard gehoert dem Repo, nicht dem ersten Fenster | `FUNC-gve-sessions` · `FUNC-gve-supervise` · `MOD-surface` |
 | `CR-GC-534` | done | crFiles fuer RC-07 liefern | `FUNC-check-code-conformance` |
+| `CR-GC-535` | n/a | Pre-Commit faehrt verify:model bei Snapshot im Diff | `REQ-graph-snapshot-per-commit` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen
