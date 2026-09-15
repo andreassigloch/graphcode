@@ -1840,6 +1840,12 @@
       "description": "Der gemessene Funktionszustand des Hosts: Store erreichbar, Gate arbeitsfaehig, Knotenzahl, die geltenden Ontologie-/Regel-/Meta-Modell-Versionen und die Zahl der angehaengten Viewer."
     },
     {
+      "id": "FLOW-held-back-traces",
+      "type": "FLOW",
+      "name": "Zurueckgehaltene Kanten",
+      "description": "Die Liste der committeten Kanten, die im Live-Graphen fehlen, weil kein Muster sie zulaesst. Geht in den Readiness-Report und in die Export-Verweigerung."
+    },
+    {
       "id": "FLOW-impact-slice",
       "type": "FLOW",
       "name": "Impact-Scheibe",
@@ -2187,6 +2193,12 @@
       "name": "Query-Request (view-rtm)",
       "description": "Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung FUNC-view-rtm → FUNC-export-markdown; aufgetrennt aus FLOW-query-request (CR-GC-510).",
       "status": "reviewed"
+    },
+    {
+      "id": "FLOW-readiness-report",
+      "type": "FLOW",
+      "name": "Readiness-Report (Agent)",
+      "description": "Der Bericht von graph_readiness an den Agenten: Scores mit Nenner, Verstoesse je Regel, Kongruenzlage und zurueckgehaltene Kanten."
     },
     {
       "id": "FLOW-recovered-batch",
@@ -2934,7 +2946,7 @@
       "id": "FUNC-graph-export-snapshot",
       "type": "FUNC",
       "name": "graph_export(views?)",
-      "description": "Materialisiert den kanonischen, deterministischen Graph-Snapshot docs/graph/<system>.graph.json plus die Markdown-Views und loescht den Drift-Marker EXPORT_PENDING. Der einzige Sync-Pfad Graph zu committeten Docs; verweigert das Clobbern (leerer Graph, fremder Drop). (CR-GC-113, CR-GC-217)",
+      "description": "Materialisiert den kanonischen, deterministischen Graph-Snapshot docs/graph/<system>.graph.json plus die Markdown-Views und loescht den Drift-Marker EXPORT_PENDING. Der einzige Sync-Pfad Graph zu committeten Docs; verweigert das Clobbern (leerer Graph, fremder Drop) und nennt dabei fehlende Elemente und Kanten, bei am Seed zurueckgehaltenen Kanten auch den Reparaturweg delete-edge. (CR-GC-113, CR-GC-217, CR-GC-532)",
       "status": "done",
       "realRef": {
         "file": "src/projections/export.ts",
@@ -2954,6 +2966,17 @@
       "realRef": {
         "file": "src/kernel/harness.ts",
         "symbol": "impact",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-graph-readiness",
+      "type": "FUNC",
+      "name": "graph_readiness(detail?)",
+      "description": "MCP-Oberflaeche der Messung: liefert Dimensions- und Phasen-Readiness, Verstoesse je Regel, Kongruenz (importCoverage, skipped) und am Seed zurueckgehaltene Kanten in einem Bericht. Rechnet nicht selbst — projiziert, was das Messwerk liefert. (CR-GC-129, CR-GC-402, CR-GC-532)",
+      "realRef": {
+        "file": "src/projections/report.ts",
+        "symbol": "graph_readiness",
         "lang": "ts"
       }
     },
@@ -3047,6 +3070,17 @@
       }
     },
     {
+      "id": "FUNC-held-back-traces",
+      "type": "FUNC",
+      "name": "heldBackTraces(repoRoot, systemId, live)",
+      "description": "Leitet bei jedem Aufruf ab, welche Kanten der committeten Graph-Datei im Live-Graphen fehlen, weil kein Muster sie zulaesst — dieselbe Pruefung wie der Seed. Wird nicht gemerkt, ueberlebt so jeden Neustart und leert sich mit dem Export, der die Reparatur abschliesst. (CR-GC-532)",
+      "realRef": {
+        "file": "src/kernel/harness-import.ts",
+        "symbol": "heldBackTraces",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "FUNC-host-socket",
       "type": "FUNC",
       "name": "startHostSocket",
@@ -3061,8 +3095,8 @@
     {
       "id": "FUNC-import",
       "type": "FUNC",
-      "name": "importGraph(formatE, mode)",
-      "description": "Format-E-Bulk-Import (replace/merge) ausschließlich durchs Gate; Cold-Start aus graphify/Slicer-Output.",
+      "name": "importGraph(ontology, opts)",
+      "description": "Laedt einen materialisierten OntologyGraph (elements/traces) per Import-Port in den Store (replace) — direkte Ladung eines governten Bestands, kein Gate. Meldet REQ ohne verifizierenden TEST (auf Wunsch Abbruch) und haelt Kanten ohne Muster zurueck (rejectedTraces). Ungeprueftes Format-E laeuft ueber bootstrap durchs Gate. (CR-GC-260, CR-GC-530)",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "updated_at": "2026-06-17T00:00:00.000Z",
@@ -3463,7 +3497,7 @@
       "id": "FUNC-seed-from-json",
       "type": "FUNC",
       "name": "seedFromJson(relPath)",
-      "description": "Erstbefuellung des Stores aus dem committeten Snapshot, ueber den Import-Port statt am Gate vorbei.",
+      "description": "Erstbefuellung des Stores aus dem committeten Snapshot ueber den Import-Port — eine Operation, kein Edit, deshalb ohne Gate. Prueft jede Kante mit derselben Routine wie R-18 und haelt Kanten ohne Muster zurueck, statt den Boot abbrechen zu lassen; das Ergebnis nennt sie (rejectedTraces), der Host warnt beim Boot. (CR-GC-467, CR-GC-530)",
       "realRef": {
         "file": "src/kernel/harness.ts",
         "symbol": "seedFromJson",
@@ -3900,8 +3934,8 @@
     {
       "id": "REQ-bootstrap-through-gate",
       "type": "REQ",
-      "name": "Erstbefüllung nur durchs Gate",
-      "description": "FUNC-import: Erstbefüllung ausschließlich über das mutate()-Gate; Quelle = Format-E; kein Direct-Write.",
+      "name": "Ungeprueften Bestand nur durchs Gate",
+      "description": "Ein Bestand, der noch nie gegen die Grammatik geprueft wurde (Format-E aus graphify, Slicer oder Dokument), gelangt ausschliesslich ueber mutate() in den Store (bootstrap). Das Laden eines schon governten, committeten Snapshots (seedFromJson, importGraph, reseed, rewind) ist eine Operation, kein Edit: es ersetzt den Zustand ohne Gate, prueft aber jede Kante mit derselben Routine wie R-18, haelt musterfremde zurueck und meldet REQ ohne TEST — nie still. (CR-GC-122, CR-GC-467, CR-GC-530)",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
@@ -4152,7 +4186,7 @@
       "id": "REQ-graph-integrity",
       "type": "REQ",
       "name": "Graph-Integritaet: ein Validator",
-      "description": "Ein Validierungs-Pfad an EINEM Punkt (Gate): GraphCodeCodec.validate() erkennt zusaetzlich doppelte UIDs (nodeTypeMap dedupt heute still) + referenzielle Integritaet + valide Edge-Paare; kein inline validPairs-Klon ausserhalb des Codecs (keine parallelen Pfade). Das Apply-Gate ruft validate() VOR persist() auf (gleicher contracts-SSOT, Delta-Semantik), sodass kein strukturell-ungueltiges Edge den Store erreicht und Kuzu-DDL + Export-Check zu Backstops werden. (CR-GC-200)",
+      "description": "Strukturelle Integritaet an einem Punkt: GraphCodeCodec.validate() erkennt unbekannte Typen, doppelte UIDs und haengende Endpunkte. Kantenlegalitaet hat genau eine Routine — contracts traceRejection (R-18) —, angewandt wo Daten in den Store gelangen: Gate und Seed; kein validPairs-Klon daneben (keine parallelen Pfade). Kuzu-DDL und Export-Check bleiben Backstops. (CR-GC-200, CR-GC-530, CR-GC-531)",
       "status": "done",
       "created_at": "2026-06-18T00:00:00.000Z",
       "kinds": [
@@ -4219,6 +4253,15 @@
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
         "non-functional"
+      ]
+    },
+    {
+      "id": "REQ-held-back-traces-named",
+      "type": "REQ",
+      "name": "Zurueckgehaltene Kanten werden benannt",
+      "description": "Eine committete Kante, die kein Muster mehr zulaesst, bricht den Seed nicht ab und verschwindet nie still: sie steht in graph_readiness, nach jedem Neustart erneut, und graph_export verweigert, bis ein delete-edge durchs Gate die Reparatur annimmt.",
+      "kinds": [
+        "functional"
       ]
     },
     {
@@ -4548,8 +4591,8 @@
     {
       "id": "REQ-post-import",
       "type": "REQ",
-      "name": "Postcondition: importGraph(formatE, mode)",
-      "description": "Graph durchs Gate befüllt; kein Direct-Write; Violations berichtet.",
+      "name": "Postcondition: importGraph(ontology, opts)",
+      "description": "Der Store traegt den Bestand; jede REQ ohne verifizierenden TEST ist gemeldet (oder der Import verweigert), jede Kante ohne Muster zurueckgehalten und benannt — nichts verschwindet still.",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
@@ -4705,8 +4748,8 @@
     {
       "id": "REQ-pre-import",
       "type": "REQ",
-      "name": "Precondition: importGraph(formatE, mode)",
-      "description": "Leerer/zu befüllender Repo-Graph; Format-E-Quelle (graphify/Import) liegt vor.",
+      "name": "Precondition: importGraph(ontology, opts)",
+      "description": "Ein materialisierter OntologyGraph (elements/traces) liegt vor — typischerweise der committete Snapshot docs/graph/<system>.graph.json.",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
@@ -5681,6 +5724,17 @@
       }
     },
     {
+      "id": "SCHEMA-rejected-trace",
+      "type": "SCHEMA",
+      "name": "RejectedTrace",
+      "description": "Eine am Seed zurueckgehaltene Kante: source, target, type und der Grund no-pattern. Traeger zwischen Seed-Pruefung, Readiness-Report und Export-Verweigerung. (CR-GC-530)",
+      "realRef": {
+        "file": "src/kernel/harness-import.ts",
+        "symbol": "RejectedTrace",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "SCHEMA-round-injection",
       "type": "SCHEMA",
       "name": "Runden-Injektions-Block",
@@ -6103,7 +6157,7 @@
       "id": "TEST-codec-validation",
       "type": "TEST",
       "name": "Codec-Validation-Test",
-      "description": "validate() flaggt strukturelle Defekte (Node/Edge-Typen, TRACE_PATTERNS-Paare, referenzielle Integritaet, doppelte UIDs) auf der Gate-Pruefung; ein zweiter Run-Artefakt fuer REQ-graph-integrity neben dem Integritaets-Test. (CR-GC-200/204)",
+      "description": "validate() flaggt strukturelle Defekte, die der Store nicht halten kann: unbekannte Node-/Edge-Typen, haengende Endpunkte, doppelte UIDs; encode wirft darauf, decode lehnt implicit-add ab. Eine musterfremde Kante ist fuer den Codec gueltig — Paarlegalitaet urteilt allein R-18 (traceRejection) an Gate und Seed. (CR-GC-200/204, CR-GC-531)",
       "status": "done",
       "method": "test",
       "testRefs": [
@@ -6390,7 +6444,7 @@
       "id": "TEST-graph-integrity",
       "type": "TEST",
       "name": "Graph-Integritaets-Test",
-      "description": "validate() flaggt doppelte UIDs + alles bisher Abgedeckte (Typen, Edge-Pairs, referenzielle Integritaet); Integritaets-Test delegiert an validate(). (CR-GC-200)",
+      "description": "Der committete Graph besteht den kanonischen Validator (Typen, referenzielle Integritaet, doppelte UIDs), ist kanonisch serialisiert und traegt keinen verschachtelten attributes-Schluessel. Paarlegalitaet prueft R-18, nicht dieser Validator. (CR-GC-200, CR-GC-531)",
       "status": "done",
       "created_at": "2026-06-18T00:00:00.000Z",
       "testRefs": [
@@ -6656,6 +6710,19 @@
           "level": "integration",
           "result": "passed",
           "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-import-rejected-traces",
+      "type": "TEST",
+      "name": "Seed mit musterfremder Kante",
+      "description": "Abnahme der Datei tests/harness.import-rejected-traces.test.ts: der Seed laedt einen Graphen mit ACTOR -io-> UC, haelt die Kante zurueck und nennt sie; graph_readiness fuehrt sie auch nach Neustart; graph_export verweigert mit Kante und Reparaturweg, bis delete-edge durchs Werkzeug sie annimmt; das Gate blockt dieselbe Kante als neue (R-18).",
+      "testRefs": [
+        {
+          "file": "tests/harness.import-rejected-traces.test.ts",
+          "tool": "vitest",
+          "level": "integration"
         }
       ]
     },
@@ -11584,6 +11651,11 @@
     },
     {
       "source": "FCHAIN-recall",
+      "target": "FUNC-held-back-traces",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-recall",
       "target": "FUNC-import",
       "type": "compose"
     },
@@ -11856,6 +11928,11 @@
     },
     {
       "source": "FCHAIN-snapshot-freshness",
+      "target": "FUNC-held-back-traces",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-snapshot-freshness",
       "target": "FUNC-mutate",
       "type": "compose"
     },
@@ -11917,6 +11994,16 @@
     {
       "source": "FCHAIN-steering-loop",
       "target": "FUNC-generation-step",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
+      "target": "FUNC-graph-readiness",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
+      "target": "FUNC-held-back-traces",
       "type": "compose"
     },
     {
@@ -12178,6 +12265,11 @@
       "source": "FLOW-conformance-findings",
       "target": "SCHEMA-rule-violation",
       "type": "relation"
+    },
+    {
+      "source": "FLOW-dimension-readiness",
+      "target": "FUNC-graph-readiness",
+      "type": "io"
     },
     {
       "source": "FLOW-dimension-readiness",
@@ -12560,6 +12652,21 @@
     {
       "source": "FLOW-health-report",
       "target": "SCHEMA-health-report",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-held-back-traces",
+      "target": "FUNC-graph-export-snapshot",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-held-back-traces",
+      "target": "FUNC-graph-readiness",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-held-back-traces",
+      "target": "SCHEMA-rejected-trace",
       "type": "relation"
     },
     {
@@ -12981,6 +13088,11 @@
     },
     {
       "source": "FLOW-ontology-json",
+      "target": "FUNC-held-back-traces",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-ontology-json",
       "target": "FUNC-import",
       "type": "io"
     },
@@ -13027,6 +13139,11 @@
     {
       "source": "FLOW-query-request-agent",
       "target": "FUNC-graph-impact",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-query-request-agent",
+      "target": "FUNC-graph-readiness",
       "type": "io"
     },
     {
@@ -13187,6 +13304,16 @@
     {
       "source": "FLOW-query-request-view-rtm",
       "target": "SCHEMA-query-params",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-readiness-report",
+      "target": "ACTOR-agent",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-readiness-report",
+      "target": "SCHEMA-readiness-report",
       "type": "relation"
     },
     {
@@ -13767,6 +13894,11 @@
     },
     {
       "source": "FUNC-block-abfrage",
+      "target": "FUNC-graph-readiness",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-abfrage",
       "target": "FUNC-list-elements",
       "type": "compose"
     },
@@ -14332,6 +14464,11 @@
     },
     {
       "source": "FUNC-block-speicherwerk",
+      "target": "FUNC-held-back-traces",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-speicherwerk",
       "target": "FUNC-seed-from-json",
       "type": "compose"
     },
@@ -14883,6 +15020,11 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-graph-export-snapshot",
+      "target": "REQ-held-back-traces-named",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-graph-impact",
       "target": "MOD-kernel",
       "type": "allocate"
@@ -14912,6 +15054,21 @@
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-graph-readiness",
+      "target": "MOD-projections",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-graph-readiness",
+      "target": "FLOW-readiness-report",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-graph-readiness",
+      "target": "REQ-held-back-traces-named",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-graph-realize",
@@ -15078,6 +15235,21 @@
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-held-back-traces",
+      "target": "MOD-kernel",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-held-back-traces",
+      "target": "FLOW-held-back-traces",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-held-back-traces",
+      "target": "REQ-held-back-traces-named",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-host-socket",
@@ -15718,6 +15890,11 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-seed-from-json",
+      "target": "REQ-held-back-traces-named",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-serve-sse",
       "target": "MOD-surface",
       "type": "allocate"
@@ -16346,6 +16523,11 @@
       "created_at": "2026-06-18T00:00:00.000Z"
     },
     {
+      "source": "REQ-graph-is-ssot",
+      "target": "REQ-held-back-traces-named",
+      "type": "compose"
+    },
+    {
       "source": "REQ-one-gate-per-repo",
       "target": "REQ-gate-only-writes",
       "type": "compose",
@@ -16883,6 +17065,11 @@
     },
     {
       "source": "TEST-codec-validation",
+      "target": "REQ-codec-validation",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-codec-validation",
       "target": "REQ-graph-integrity",
       "type": "verify"
     },
@@ -17254,6 +17441,16 @@
       "type": "verify"
     },
     {
+      "source": "TEST-import-rejected-traces",
+      "target": "REQ-held-back-traces-named",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-import-rejected-traces",
+      "target": "SCHEMA-rejected-trace",
+      "type": "verify"
+    },
+    {
       "source": "TEST-import-sys-anchor",
       "target": "REQ-graph-integrity",
       "type": "verify"
@@ -17365,6 +17562,11 @@
       "type": "verify",
       "weight": 1,
       "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-mcp-readiness",
+      "target": "REQ-readiness-transparent",
+      "type": "verify"
     },
     {
       "source": "TEST-mcp-stdio-server",
@@ -18634,5 +18836,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 265
+  "graphVersion": 266
 }

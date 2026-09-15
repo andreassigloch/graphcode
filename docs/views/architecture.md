@@ -66,6 +66,7 @@
 | `FUNC-graph-expand` | FUNC | graph_expand(handle, branch, depth+1) |
 | `FUNC-graph-export-snapshot` | FUNC | graph_export(views?) |
 | `FUNC-graph-impact` | FUNC | graph_impact(id, depth?) |
+| `FUNC-graph-readiness` | FUNC | graph_readiness(detail?) |
 | `FUNC-graph-realize` | FUNC | graph_realize |
 | `FUNC-graph-store` | FUNC | GraphStore |
 | `FUNC-graph-suggest` | FUNC | graph_suggest(weights) |
@@ -73,8 +74,9 @@
 | `FUNC-gve-supervise` | FUNC | attachGve |
 | `FUNC-harness-cli` | FUNC | graphcode init/update/remove |
 | `FUNC-health-endpoint` | FUNC | healthEndpoint() |
+| `FUNC-held-back-traces` | FUNC | heldBackTraces(repoRoot, systemId, live) |
 | `FUNC-host-socket` | FUNC | startHostSocket |
-| `FUNC-import` | FUNC | importGraph(formatE, mode) |
+| `FUNC-import` | FUNC | importGraph(ontology, opts) |
 | `FUNC-import-code` | FUNC | Skill se:import-code |
 | `FUNC-import-code-verb` | FUNC | executeImportCode |
 | `FUNC-import-doc` | FUNC | Skill se:import-doc |
@@ -197,6 +199,7 @@
 | `FUNC-graph-expand` | `MOD-kernel` |
 | `FUNC-graph-export-snapshot` | `MOD-projections` |
 | `FUNC-graph-impact` | `MOD-kernel` |
+| `FUNC-graph-readiness` | `MOD-projections` |
 | `FUNC-graph-realize` | `MOD-surface` |
 | `FUNC-graph-store` | `MOD-kernel` |
 | `FUNC-graph-suggest` | `MOD-loop` |
@@ -204,6 +207,7 @@
 | `FUNC-gve-supervise` | `MOD-surface` |
 | `FUNC-harness-cli` | `MOD-surface` |
 | `FUNC-health-endpoint` | `MOD-surface` |
+| `FUNC-held-back-traces` | `MOD-kernel` |
 | `FUNC-host-socket` | `MOD-surface` |
 | `FUNC-import` | `MOD-kernel` |
 | `FUNC-import-code` | `MOD-agent-surface` |

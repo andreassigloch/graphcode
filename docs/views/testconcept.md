@@ -4,7 +4,7 @@
 
 # graphcode — Test Concept
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 124 TEST — Pyramide nach Modell-Level (System/UC/Function). Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 125 TEST — Pyramide nach Modell-Level (System/UC/Function). Deterministisch generiert.
 
 ```
               ╱╲
@@ -13,8 +13,8 @@
            ╱──────╲
           ╱  UC /   ╲       Use-case level · 9 UC
          ╱integration╲      ⚠ 9 / 9 UC exercised by a scenario test
-        ╱────────────╲      ✗ 106/138 FUNC↔FUNC connections tested  ← GAP
-       ╱  Function /   ╲     Function level · 118 FUNC
+        ╱────────────╲      ✗ 110/142 FUNC↔FUNC connections tested  ← GAP
+       ╱  Function /   ╲     Function level · 120 FUNC
       ╱      unit       ╲
      ╱───────────────────╲
 ```
@@ -22,12 +22,12 @@
 | Level | Element | Test kind | Tests | Coverage | Verdict |
 |---|---|---|---|---|---|
 | System | SYS (1) | E2E | 49 | 49 / 1 | ✓ |
-| Use-case | UC (9) | acceptance / integration | 96 | 9 / 9 scenario | ✓ |
-| Integration | FUNC↔FUNC (138 conn) | integration (chain) | 96 | 106 / 138 connections | ✗ 32 uncovered |
-| Function | FUNC (118) | unit | 73 | 118 / 118 | ✓ |
+| Use-case | UC (9) | acceptance / integration | 98 | 9 / 9 scenario | ✓ |
+| Integration | FUNC↔FUNC (142 conn) | integration (chain) | 98 | 110 / 142 connections | ✗ 32 uncovered |
+| Function | FUNC (120) | unit | 75 | 120 / 120 | ✓ |
 | (support) | — | conformance | 4 | codec round-trip | ✓ |
 
 > GENERATED — TEST level derived from the graph position of the REQ it verifies (SYS/UC/FUNC/FCHAIN),
 > not a testRef.level attribute; System, UC & Integration rows are DERIVED from coverage, so a missing
 > E2E run surfaces as ✗ (currently 49 E2E test(s)) and an untested FUNC↔FUNC connection (R-21)
-> surfaces as ✗ (106/138 covered) instead of being silently absent.
+> surfaces as ✗ (110/142 covered) instead of being silently absent.
