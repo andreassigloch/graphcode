@@ -1590,6 +1590,7 @@
 | `SYS-graphcode` | compose | `MOD-loop` |
 | `SYS-graphcode` | compose | `MOD-projections` |
 | `SYS-graphcode` | compose | `MOD-surface` |
+| `SYS-graphcode` | compose | `REQ-abstraction` |
 | `SYS-graphcode` | compose | `REQ-agent-agnostic` |
 | `SYS-graphcode` | compose | `REQ-batch-seed-performance` |
 | `SYS-graphcode` | compose | `REQ-buildable-standalone` |
@@ -1617,6 +1618,7 @@
 | `SYS-graphcode` | compose | `REQ-precommit-timeout` |
 | `SYS-graphcode` | compose | `REQ-readiness-model` |
 | `SYS-graphcode` | compose | `REQ-readonly-bridge` |
+| `SYS-graphcode` | compose | `REQ-recommend-next-step` |
 | `SYS-graphcode` | compose | `REQ-repo-install` |
 | `SYS-graphcode` | compose | `REQ-repo-uninstall` |
 | `SYS-graphcode` | compose | `REQ-repo-update` |
@@ -1627,6 +1629,7 @@
 | `SYS-graphcode` | compose | `REQ-single-store` |
 | `SYS-graphcode` | compose | `REQ-single-transport` |
 | `SYS-graphcode` | compose | `REQ-store-recovery` |
+| `SYS-graphcode` | compose | `REQ-target-state` |
 | `SYS-graphcode` | compose | `REQ-token-efficiency` |
 | `SYS-graphcode` | compose | `REQ-versioned-cache` |
 | `SYS-graphcode` | compose | `UC-code-quality` |
@@ -1639,6 +1642,7 @@
 | `SYS-graphcode` | satisfy | `REQ-frame-binding` |
 | `SYS-graphcode` | satisfy | `REQ-graceful-degradation` |
 | `SYS-graphcode` | satisfy | `REQ-structure-driven` |
+| `TEST-abstraction` | verify | `REQ-abstraction` |
 | `TEST-advisory-roundtrip-latency` | verify | `REQ-advisory-roundtrip-latency` |
 | `TEST-agent-agnostic` | verify | `REQ-agent-agnostic` |
 | `TEST-applied-suggestion-moves-target` | verify | `REQ-applied-suggestion-moves-target` |
@@ -1824,6 +1828,7 @@
 | `TEST-readonly-bridge` | verify | `REQ-readonly-bridge` |
 | `TEST-readonly-bridge` | verify | `REQ-real-health-check` |
 | `TEST-realref-materialize` | verify | `REQ-testref-materialized` |
+| `TEST-recommend-next-step` | verify | `REQ-recommend-next-step` |
 | `TEST-reduced-llm` | verify | `REQ-graceful-degradation` |
 | `TEST-reduced-llm` | verify | `REQ-post-modelfree-gate` |
 | `TEST-reduced-llm` | verify | `REQ-pre-modelfree-gate` |
@@ -1869,6 +1874,7 @@
 | `TEST-target-profile` | verify | `REQ-target-shifts-ranking` |
 | `TEST-target-profile` | verify | `REQ-thresholds-from-config` |
 | `TEST-target-shifts-ranking` | verify | `REQ-target-shifts-ranking` |
+| `TEST-target-state` | verify | `REQ-target-state` |
 | `TEST-test-runnable-binding` | verify | `REQ-test-runnable-binding` |
 | `TEST-testref-materialize` | verify | `REQ-testref-materialized` |
 | `TEST-testreport` | verify | `REQ-audit-trail` |
