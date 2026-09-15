@@ -3834,6 +3834,15 @@
       "status": "draft"
     },
     {
+      "id": "REQ-abstraction",
+      "type": "REQ",
+      "name": "Abstraktion: Blackboxen vom SYS bis zur Funktion",
+      "description": "Das Modell bildet ein System nicht 1:1 ab, sondern haelt Blackboxen mit definierten Schnittstellen vom SYS-Knoten bis zur implementierten Funktion durch; jede Ebene bleibt verstaendlich (wenige Bloecke, Schwellen in den Regeln). Leitlinie Satz 1 und 3.",
+      "kinds": [
+        "non-functional"
+      ]
+    },
+    {
       "id": "REQ-advisory-roundtrip-latency",
       "type": "REQ",
       "name": "Advisory-Roundtrip < 200ms bei 400 Knoten (ohne LLM)",
@@ -4120,8 +4129,8 @@
     {
       "id": "REQ-frame-binding",
       "type": "REQ",
-      "name": "Frame ist bindend für Realisierung",
-      "description": "Beschluss 2026-06-16: Die in diesem Graph definierte Struktur + Interfaces (6 MOD, 4 Customer-UC, FUNC/FCHAIN/FLOW/REQ + SE-Ontologie/TRACE_PATTERNS) sind BINDEND für die Realisierung. Ergänzungen NUR, wenn sie in die vordefinierten Boxen passen (neue FUNC/FLOW/REQ/TEST an bestehendem MOD/UC durchs Gate). Strukturelle Änderungen — neues sigloch-modules-Shared, neuer ElementType/TraceType, neue Customer-UC/MOD — brauchen Familie-Review.",
+      "name": "Struktur ist bindend fuer die Realisierung",
+      "description": "Die in diesem Graph definierte Struktur und ihre Schnittstellen (FUNC/FCHAIN/FLOW/REQ auf SE-Ontologie und TRACE_PATTERNS) sind bindend fuer die Realisierung. Ergaenzungen passen in die bestehenden Boxen und laufen durchs Gate; ein neuer Element- oder Kantentyp, ein neues geteiltes Paket, ein neuer Top-Level-UC oder -MOD braucht Familien-Review. (Beschluss 2026-06-16, Zahlen entfernt 2026-09-15)",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
@@ -4468,8 +4477,8 @@
     {
       "id": "REQ-phase-gate-not-skippable",
       "type": "REQ",
-      "name": "Ein Phasen-Gate ist nicht ueberspringbar",
-      "description": "Auch bei erreichter Readiness-Schwelle und null blockierenden Verstoessen bleibt der Handoff aus, solange das aktuelle Phasen-Gate nicht regel-vollstaendig ist.",
+      "name": "Phasen-Gate nennt, was fehlt, und haelt den Zug nicht an",
+      "description": "Das aktuelle Phasen-Gate benennt, was bis zur Regel-Vollstaendigkeit fehlt. Die Reihenfolge blockt nie: Ebenen und Phasen darf der Nutzer ueberspringen, Architektur und Optimizer stehen ab dem ersten Zug offen (Leitlinie Satz 5). Blocken kann allein eine Regel an der Schreiboperation. Modell dem Code voraus: heute haelt der Handoff noch an (ITEM-2026-140).",
       "kinds": [
         "non-functional"
       ]
@@ -4930,6 +4939,15 @@
       ]
     },
     {
+      "id": "REQ-recommend-next-step",
+      "type": "REQ",
+      "name": "Empfehlen: naechster Schritt, auch statistisch",
+      "description": "Neben Unterbinden und Steuern darf das System Vorschlaege fuer den naechsten Schritt machen, die auch statistisch entstehen (Vorhersage). Eine Empfehlung blockt nie und ersetzt keine Kenngroesse; Unterbinden und Steuern bleiben deterministisch. Leitlinie Satz 5.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-repo-install",
       "type": "REQ",
       "name": "Ein-Kommando-Installation",
@@ -5229,6 +5247,15 @@
       "type": "REQ",
       "name": "Die Zielrichtung verschiebt das Suggestion-Ranking",
       "description": "Ein Vorzeichenwechsel im Zielvektor negiert den Score jedes gemeinsamen Kandidaten und stellt eine andere Suggestion an die Spitze; die Magnitude des Ziels aendert weder Reihenfolge noch Score.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-target-state",
+      "type": "REQ",
+      "name": "Zielbild: Blackboxing, strukturierbare Fremdsysteme, Vertragsoptimum",
+      "description": "Am Ziel ist graphcode, wenn FUNC- und MOD-View ein vernuenftiges Blackboxing zeigen, sich aus den Regeln ein Konstrukt wie moneyflow oder sirail strukturieren laesst und die resultierenden Datenstroeme ein Optimum an Vertraegen haben. Leitlinie Satz 10.",
       "kinds": [
         "functional"
       ]
@@ -5870,6 +5897,13 @@
           "graphVersion": 0
         }
       }
+    },
+    {
+      "id": "TEST-abstraction",
+      "type": "TEST",
+      "name": "Abnahme Abstraktion",
+      "description": "Konzept: FUNC- und MOD-View zeigen je Ebene Blackboxen mit Schnittstellen, keine Ebene reisst die Breitenregeln, eine Funktion ist ohne das Innenleben ihrer Nachbarn verstehbar. Nachweis am Selbstmodell und an einem zweiten Repo.",
+      "concept": true
     },
     {
       "id": "TEST-advisory-roundtrip-latency",
@@ -7320,6 +7354,13 @@
       ]
     },
     {
+      "id": "TEST-recommend-next-step",
+      "type": "TEST",
+      "name": "Abnahme Empfehlen",
+      "description": "Konzept: eine Empfehlung erscheint als solche gekennzeichnet und getrennt von Gate-Verdikt und Steuerung; ein ignorierter Vorschlag aendert weder Verdikt noch Kenngroessen.",
+      "concept": true
+    },
+    {
       "id": "TEST-reduced-llm",
       "type": "TEST",
       "name": "Modellfrei-Gate-Test",
@@ -7712,6 +7753,13 @@
           "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
+    },
+    {
+      "id": "TEST-target-state",
+      "type": "TEST",
+      "name": "Abnahme Zielbild",
+      "description": "Konzept: moneyflow und sirail werden allein ueber Regeln und Steuerung strukturiert; der Autor nimmt FUNC- und MOD-View ab; die Vertraege je Modulrand sind ohne Aussageverlust nicht weiter reduzierbar.",
+      "concept": true
     },
     {
       "id": "TEST-test-runnable-binding",
@@ -16530,6 +16578,11 @@
     },
     {
       "source": "SYS-graphcode",
+      "target": "REQ-abstraction",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphcode",
       "target": "REQ-agent-agnostic",
       "type": "compose",
       "weight": 1,
@@ -16689,6 +16742,11 @@
     },
     {
       "source": "SYS-graphcode",
+      "target": "REQ-recommend-next-step",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphcode",
       "target": "REQ-repo-install",
       "type": "compose"
     },
@@ -16744,6 +16802,11 @@
       "type": "compose",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "SYS-graphcode",
+      "target": "REQ-target-state",
+      "type": "compose"
     },
     {
       "source": "SYS-graphcode",
@@ -16814,6 +16877,11 @@
       "source": "SYS-graphcode",
       "target": "REQ-structure-driven",
       "type": "satisfy"
+    },
+    {
+      "source": "TEST-abstraction",
+      "target": "REQ-abstraction",
+      "type": "verify"
     },
     {
       "source": "TEST-advisory-roundtrip-latency",
@@ -17834,6 +17902,11 @@
       "type": "verify"
     },
     {
+      "source": "TEST-recommend-next-step",
+      "target": "REQ-recommend-next-step",
+      "type": "verify"
+    },
+    {
       "source": "TEST-reduced-llm",
       "target": "REQ-graceful-degradation",
       "type": "verify"
@@ -18068,6 +18141,11 @@
     {
       "source": "TEST-target-shifts-ranking",
       "target": "REQ-target-shifts-ranking",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-target-state",
+      "target": "REQ-target-state",
       "type": "verify"
     },
     {
@@ -18785,5 +18863,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 272
+  "graphVersion": 273
 }
