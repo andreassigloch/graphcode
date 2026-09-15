@@ -1,3 +1,9 @@
+> **ARCHIVED 2026-09-15 — implemented, not a live design doc.** O1–O3 + the MS-7 ladder (CR-GC-232..235)
+> all shipped; verified against source (`src/kernel/store-lock.ts`, `src/surface/host-shim.ts`,
+> `src/kernel/merge.ts`) and tests (`tests/store-lock.test.ts`, `tests/host-shim.test.ts`,
+> `tests/mcp.merge.test.ts`, 26/26 green). File paths below predate the 5-module split
+> (`src/kernel|projections|loop|surface`) and are historical, not current locations.
+
 # Concurrency & recall — safe, simple operation (CR-GC-218 · MS-7 ladder CR-GC-232..235)
 
 **The model, in one line:** the store is to `docs/graph/*.graph.json` what the working tree
