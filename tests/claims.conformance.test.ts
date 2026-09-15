@@ -179,7 +179,8 @@ describe('T-D1 (CR-GC-340): every published count matches the living source', ()
       // CR-SM-307 (contracts 20): IO-02 kommt dazu, eine scorende Regel (PDR/arch) — 63 -> 64.
       // CR-SM-311 (contracts 21): RD-05 kommt dazu, die Untergrenze der Breite (PDR/arch) — 64 -> 65.
       // CR-SM-319 (contracts 26, CR-GC-522): R-32 kommt dazu, Vertragstest je SCHEMA (TRR/ver) — 65 -> 66.
-      'engine rules=66',
+      // CR-SM-327 (contracts Regelkatalog 28.0.0, CR-GC-533): MT-04 kommt dazu, LCOM4 an der FUNC-Whitebox (PDR) — 66 -> 67.
+      'engine rules=67',
       'readiness dimensions=8',
       'MCP tools=25',
     ]);
