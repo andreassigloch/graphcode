@@ -554,6 +554,7 @@
 | `CR-GC-404` | relation | `FUNC-gve-supervise` |
 | `CR-GC-404` | relation | `MOD-surface` |
 | `CR-GC-404` | relation | `MS-8-hardening` |
+| `CR-GC-534` | relation | `FUNC-check-code-conformance` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-suggest` |
