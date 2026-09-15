@@ -1,6 +1,6 @@
 # CR-GC-294 — Skill-Spektrum für Treiber-Fähigkeit (Bestandsaufnahme, kein Bau)
 
-**Status:** open — Bestandsaufnahme, bewusst nicht scharf geschaltet
+**Status:** closed 2026-09-15 — Bestandsaufnahme erledigt; Priorisierung + Bucket-4-Spike als ITEM-2026-175 neu eingespeist
 **Datum:** 2026-08-04
 **Kontext:** CR-GC-283-Folgechat. Der eingebettete Executor (Treiber) deckt heute ausschließlich die
 8 generativen Readiness-Dimensionen ab (`GENERATION_TEMPLATE` in `src/generate.ts`). Der restliche

@@ -253,7 +253,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-280` | done | Executor-Konvergenz-Hebel (Folge zu CR-GC-278/279) | `FUNC-graph-suggest` · `UC-reduced-llm` |
 | `CR-GC-281` | done | Fund-Rotation/Defer in graph_generate | `FUNC-graph-suggest` · `UC-reduced-llm` |
 | `CR-GC-282` | done | Empfaenger-abhaengiges Instruktions-Rendering — negativ validiert und zurueckgebaut | `FUNC-graph-suggest` · `UC-reduced-llm` |
-| `CR-GC-283` | open | Planungs-Step auf dem Top-Graphen | `FUNC-graph-suggest` · `MOD-surface` |
+| `CR-GC-283` | done | Planungs-Step auf dem Top-Graphen | `FUNC-graph-suggest` · `MOD-surface` |
 | `CR-GC-284` | done | Batch-Preflight + Autovervollstaendigung im Executor | `FUNC-graph-suggest` · `FUNC-mutate` |
 | `CR-GC-285` | done | Runden-Prompt-Injektion: Guide-Slice + Element-Index | `FUNC-graph-suggest` · `REQ-token-efficiency` |
 | `CR-GC-286` | done | Audit-Vollstaendigkeit + Rejection-Beobachtbarkeit | `FUNC-mutate` · `REQ-audit-trail` |
@@ -264,13 +264,13 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-291` | done | Elementtyp-Liste im SYSTEM-Prompt (gegen STRUCT-Halluzination) | `FUNC-graph-suggest` · `UC-reduced-llm` |
 | `CR-GC-292` | done | Preflight-Erweiterung Zirkulaere Composition — geschlossen ohne Bau | `FUNC-mutate` |
 | `CR-GC-293` | done | Injektion isoliert messen (kein Code, nur ein Lauf) | `FUNC-graph-suggest` · `REQ-token-efficiency` |
-| `CR-GC-294` | open | Skill-Spektrum fuer Treiber-Faehigkeit (Bestandsaufnahme, kein Bau) | `FUNC-graph-suggest` · `MOD-agent-surface` |
+| `CR-GC-294` | done | Skill-Spektrum fuer Treiber-Faehigkeit (Bestandsaufnahme, kein Bau) | `FUNC-graph-suggest` · `MOD-agent-surface` |
 | `CR-GC-295` | done | Zielprofil (R6) als Runde-1-Frage, Config und Konflikt-Check | `FUNC-graph-suggest` · `FUNC-score-completeness` |
 | `CR-GC-296` | done | phase_readiness konsumieren + Sprachregelung | `FUNC-graph-suggest` · `FUNC-score-completeness` · `REQ-readiness-model` |
 | `CR-GC-298` | done | se:import-code-Skill + graphcode-import-code-Verb (graphify-Extraktor angeschlossen) | `FUNC-harness-cli` · `FUNC-import` · `MOD-surface` |
 | `CR-GC-299` | done | exporter.ts flacht attributes ab — abgeloest von CR-GC-303 | `FUNC-export-markdown` · `MOD-projections` |
 | `CR-GC-300` | done | graphVersion-Stempel im graph_export-Output | `FUNC-export-markdown` · `FUNC-graph-export-snapshot` |
-| `CR-GC-301` | open | A-SPICE-Nachschaerfungen: R-21-Level-Check, Auditor-Sicht, SUP.9/SUP.10 | `FUNC-view-rtm` · `MOD-projections` |
+| `CR-GC-301` | done | A-SPICE-Nachschaerfungen: R-21-Level-Check, Auditor-Sicht, SUP.9/SUP.10 | `FUNC-view-rtm` · `MOD-projections` |
 | `CR-GC-302` | done | Auto-SYS-Node bei jedem Import | `FUNC-import` |
 | `CR-GC-303` | done | Attribut-Abflachung macht Steering-Pfad regelblind | `FUNC-evaluate-rules` · `FUNC-graph-suggest` |
 | `CR-GC-304` | done | ConOps-View nach ISO 29148 neu schneiden | `FUNC-render-views` · `MOD-agent-surface` · `MOD-projections` |

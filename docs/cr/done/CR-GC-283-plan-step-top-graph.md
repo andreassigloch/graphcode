@@ -1,6 +1,6 @@
 # CR-GC-283 — Planungs-Step auf dem Top-Graphen (Folgechat-Input)
 
-**Status:** open — Schritte 1+2 weitgehend erledigt, Rest offen (Prüf-Nachtrag
+**Status:** closed 2026-09-15 — Schritte 1+2 erledigt; Vergleichsmessung (einziger Rest) als ITEM-2026-174 neu eingespeist (blockiert am API-Key). Historischer Stand: (Prüf-Nachtrag
 2026-08-04, verifiziert gegen `rig/plan-step/`):
 - ✅ Arbeits-Repo `rig/plan-step/` steht (graphcode init komplett: Hooks,
   Commands, Kuzu-Store, Graph committed) — der Scratchpad-Hinweis unten ist

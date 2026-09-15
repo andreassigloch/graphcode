@@ -1,6 +1,6 @@
 # CR-GC-301 — A-SPICE-Nachschärfungen: R-21-Level-Check, Auditor-Sicht, SUP.9/SUP.10
 
-**Status:** draft — Paket B abgespalten und erledigt, **A und C weiterhin nicht beauftragt**
+**Status:** closed 2026-09-15 — B als CR-GC-317 erledigt; A als ITEM-2026-176 (sigloch-modules) neu eingespeist; C gegenstandslos (ITEM-2026-154/CR-SM-329: CR-Status nur aus dem Verzeichnis). Historisch: A und C nicht beauftragt
 (Familie-Review ausstehend)
 **Datum:** 2026-08-05 · **Zuletzt:** 2026-08-08
 

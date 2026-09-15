@@ -1074,9 +1074,10 @@
       "id": "CR-GC-283",
       "type": "CR",
       "name": "Planungs-Step auf dem Top-Graphen",
-      "description": "OPEN (Stand 2026-08-04, verifiziert gegen rig/plan-step/). Erledigt: Arbeits-Repo rig/plan-step/ steht mit vollstaendigem graphcode init; Duplikat-REQs gemerged (26 auf 21, 0 Namens-Duplikate); se-plan gelaufen (4 MS und 11 CR im Graphen); 5 UC-01-Errors durchs Gate aufgeloest (alle Beinahe-Duplikate, 5 merge-nodes, 0 Errors); Build-Reihenfolge ableitbar gemacht — CR nach CR ist im Meta-Modell NICHT legal, stattdessen 9 FLOWs mit 21 io-Kanten, der DAG folgt aus den FLOWs; alle 16 Views exportiert; Testpyramide um einen E2E-Durchstich ergaenzt. Rest offen. (docs/cr/open/CR-GC-283)",
-      "status": "open",
-      "created_at": "2026-08-01T00:00:00.000Z"
+      "description": "DONE, geschlossen 2026-09-15 als ueberholt. Erledigt: Arbeits-Repo rig/plan-step/ mit vollstaendigem graphcode init; Duplikat-REQs gemerged (26 auf 21); se-plan gelaufen (4 MS und 11 CR im Graphen); 5 UC-01-Errors durchs Gate aufgeloest; Build-Reihenfolge ueber 9 FLOWs mit 21 io-Kanten ableitbar; alle 16 Views exportiert; Testpyramide um einen E2E-Durchstich ergaenzt. Einziger Rest war die Vergleichsmessung Opus gegen lokales Modell auf demselben Plan-Step — blockiert am fehlenden Anthropic-API-Key; als ITEM-2026-174 neu eingespeist. (docs/cr/done/CR-GC-283)",
+      "status": "done",
+      "created_at": "2026-08-01T00:00:00.000Z",
+      "commitRef": "17f4ec6"
     },
     {
       "id": "CR-GC-284",
@@ -1172,9 +1173,10 @@
       "id": "CR-GC-294",
       "type": "CR",
       "name": "Skill-Spektrum fuer Treiber-Faehigkeit (Bestandsaufnahme, kein Bau)",
-      "description": "OPEN (2026-08-04), bewusst nicht scharf geschaltet. Frage aus dem Folgechat: muss jeder Skill als Local-Breakdown-Variante gebaut werden, oder kann ein lokales Modell gar keine Skills fahren? Antwort ist weder alle noch keine. Der eingebettete Executor deckt heute nur die 8 generativen Readiness-Dimensionen ab (GENERATION_TEMPLATE); der restliche Skill-Katalog laeuft ausschliesslich im Host-Modus. Die Skills liegen auf einem Aufwands- und Unsicherheits-Spektrum, abhaengig davon, ob ein klares Regel-Violation-Signal existiert, das eine Runden-Instruktion tragen kann. Vier Buckets: bereits abgedeckt, praktisch kostenlos, echte Arbeit, nicht lokal fahrbar. (docs/cr/open/CR-GC-294)",
-      "status": "open",
-      "created_at": "2026-08-04T00:00:00.000Z"
+      "description": "DONE, geschlossen 2026-09-15. Bestandsaufnahme ohne Code: welche Skills ein lokales Modell ueber den eingebetteten Treiber fahren koennte. Vier Buckets — bereits abgedeckt (author-uc, author-req, generate), praktisch kostenlos (se-view, se-status, se-review, se:help, se-retro: deterministische Renderer), algorithmischer Kern vorhanden (se-plan, se:close-violations), echtes Domaenen-Urteil (se-fmea, se-irr, se-trade: nur nach Spike). Priorisierung und der Bucket-4-Spike mit vier realen Testfaellen sind als ITEM-2026-175 neu eingespeist. (docs/cr/done/CR-GC-294)",
+      "status": "done",
+      "created_at": "2026-08-04T00:00:00.000Z",
+      "commitRef": "685b248"
     },
     {
       "id": "CR-GC-295",
@@ -1229,9 +1231,10 @@
       "id": "CR-GC-301",
       "type": "CR",
       "name": "A-SPICE-Nachschaerfungen: R-21-Level-Check, Auditor-Sicht, SUP.9/SUP.10",
-      "description": "DRAFT (2026-08-05, zuletzt 2026-08-08). Aus der A-SPICE-Coverage-Evaluation: die Engineering-Prozesse SYS.2 bis SYS.5 und SWE.1 bis SWE.6 plus SUP.1, SUP.8 und MAN.3 sind durch Ontologie, Regeln und Views abgedeckt, die Evidenz liegt teils transitiv im Graphen. Vier Nachschaerfungen blieben. Paket B ist als CR-GC-317 erledigt (RTM nach compose-Anker gruppiert, VCRM zeigt die rolled-up Integrationsabdeckung je FUNC-Verbindung) — es war das einzige Paket ohne offene Entscheidung, weil es Evidenz rendert, die schon im Graphen lag. Pakete A und C sind weiterhin nicht beauftragt und brauchen einen Familie-Review. (docs/cr/open/CR-GC-301)",
-      "status": "open",
-      "created_at": "2026-08-05T00:00:00.000Z"
+      "description": "DONE, geschlossen 2026-09-15. Aus der A-SPICE-Coverage-Evaluation vom 2026-08-05: Engineering-Prozesse SYS.2 bis SYS.5 und SWE.1 bis SWE.6 plus SUP.1, SUP.8 und MAN.3 sind durch Ontologie, Regeln und Views abgedeckt. Paket B (RTM nach compose-Anker, VCRM mit rolled-up Integrationsabdeckung) ist als CR-GC-317 erledigt. Paket A (R-21 prueft testRef.level nicht; failed TEST ohne CR-Obligation, SUP.9) ist eine contracts-Aenderung und als ITEM-2026-176 an sigloch-modules eingespeist. Paket C (SUP.10-Freigabe-Evidenz) ist gegenstandslos: der CR-Status kommt nur noch aus dem Verzeichnis (ITEM-2026-154, CR-SM-329). (docs/cr/done/CR-GC-301)",
+      "status": "done",
+      "created_at": "2026-08-05T00:00:00.000Z",
+      "commitRef": "20c6c35"
     },
     {
       "id": "CR-GC-302",
@@ -18782,5 +18785,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 269
+  "graphVersion": 271
 }
