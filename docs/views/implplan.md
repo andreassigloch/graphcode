@@ -138,10 +138,8 @@ depends-on:  MS-1-specification  ◀  MS-2-coding-vv  ◀  MS-3-mvp-readiness  �
 | `CR-GC-248` | dropped | DROPPED: generisches Kuzu Element/Trace-Schema |
 | `CR-GC-249` | done | Auto-reseed bei Meta-Modell-Schema-Drift |
 | `CR-GC-250` | done | Readiness completeness pointer (cardinality-driven) |
-| `CR-GC-251` | open | V3-Regel R-21: satisfy-Quelle passt zur REQ-Art |
 | `CR-GC-252` | done | Learning-Feed = Projektion aus dem Operations-Log |
 | `CR-GC-253` | done | Graph-Code-Konformanz als Readiness-Regel (RC-01/RC-02) |
-| `CR-GC-254` | open | Konformanz-Parser auf ast-grep umstellen (Multi-Language) — BACKLOG |
 | `CR-GC-255` | done | Path-Containment für graph-getriebene Writes + Bridge-Bind auf Loopback |
 | `CR-GC-256` | done | mcp-tools.ts aufteilen (ToolContext + Tool-Gruppen) |
 | `CR-GC-257` | done | R-21: Integrationstest pro FUNC↔FUNC-Verbindung |
@@ -190,7 +188,6 @@ depends-on:  MS-1-specification  ◀  MS-2-coding-vv  ◀  MS-3-mvp-readiness  �
 | `CR-GC-294` | open | Skill-Spektrum fuer Treiber-Faehigkeit (Bestandsaufnahme, kein Bau) |
 | `CR-GC-295` | done | Zielprofil (R6) als Runde-1-Frage, Config und Konflikt-Check |
 | `CR-GC-296` | done | phase_readiness konsumieren + Sprachregelung |
-| `CR-GC-297` | open | Injection-Default backend-abhaengig |
 | `CR-GC-298` | done | se:import-code-Skill + graphcode-import-code-Verb (graphify-Extraktor angeschlossen) |
 
 ## `MS-10-steering-views` — M10: A-SPICE & Steuerungssichten · status: draft

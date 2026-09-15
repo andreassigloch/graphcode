@@ -310,15 +310,10 @@
 | `CR-GC-250` | relation | `REQ-completeness-single-value` |
 | `CR-GC-250` | relation | `REQ-interface-schema` |
 | `CR-GC-250` | relation | `REQ-readiness-completeness` |
-| `CR-GC-251` | relation | `FUNC-evaluate-rules` |
-| `CR-GC-251` | relation | `MS-8-hardening` |
-| `CR-GC-251` | relation | `REQ-rule-enforcement` |
 | `CR-GC-252` | relation | `FUNC-emit-trajectory` |
 | `CR-GC-252` | relation | `MS-8-hardening` |
 | `CR-GC-253` | relation | `FUNC-check-code-conformance` |
 | `CR-GC-253` | relation | `MS-8-hardening` |
-| `CR-GC-254` | relation | `FUNC-check-code-conformance` |
-| `CR-GC-254` | relation | `MS-8-hardening` |
 | `CR-GC-255` | relation | `FUNC-serve-sse` |
 | `CR-GC-255` | relation | `MS-8-hardening` |
 | `CR-GC-255` | relation | `REQ-gate-only-writes` |
@@ -446,9 +441,6 @@
 | `CR-GC-296` | relation | `FUNC-score-completeness` |
 | `CR-GC-296` | relation | `MS-9-generation` |
 | `CR-GC-296` | relation | `REQ-readiness-model` |
-| `CR-GC-297` | relation | `FUNC-graph-suggest` |
-| `CR-GC-297` | relation | `MOD-surface` |
-| `CR-GC-297` | relation | `MS-9-generation` |
 | `CR-GC-298` | relation | `FUNC-harness-cli` |
 | `CR-GC-298` | relation | `FUNC-import` |
 | `CR-GC-298` | relation | `MOD-surface` |

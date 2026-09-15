@@ -56,7 +56,7 @@ compressing a large result.
   shrink (CR-GC-467; derivation and measurement in CR-DRAFT-GC-466).
 - **Two trees** — `MOD` is the dependency tree, `FUNC` the value tree (Grounding · Führung ·
   Optimierung · Betrieb). They do **not** mirror each other; cutting modules "along the story
-  blocks" is not a cleanup (CR-DRAFT-GC-461, CR-GC-467).
+  blocks" is not a cleanup (ITEM-2026-171, CR-GC-467).
 - **SE ontology + `V3_RULES` come from `@sigloch/contracts/se`** — imported, never forked. A new
   ElementType/TraceType/TRACE_PATTERN/rule requires a contracts version bump, not a local rule parser.
 

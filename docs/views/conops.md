@@ -223,10 +223,8 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-248` | dropped | DROPPED: generisches Kuzu Element/Trace-Schema | `MOD-kernel` |
 | `CR-GC-249` | done | Auto-reseed bei Meta-Modell-Schema-Drift | `MOD-kernel` |
 | `CR-GC-250` | done | Readiness completeness pointer (cardinality-driven) | `FUNC-score-completeness` · `REQ-completeness-actor-bounded` · `REQ-completeness-single-value` · `REQ-interface-schema` · `REQ-readiness-completeness` |
-| `CR-GC-251` | open | V3-Regel R-21: satisfy-Quelle passt zur REQ-Art | `FUNC-evaluate-rules` · `REQ-rule-enforcement` |
 | `CR-GC-252` | done | Learning-Feed = Projektion aus dem Operations-Log | `FUNC-emit-trajectory` |
 | `CR-GC-253` | done | Graph-Code-Konformanz als Readiness-Regel (RC-01/RC-02) | `FUNC-check-code-conformance` |
-| `CR-GC-254` | open | Konformanz-Parser auf ast-grep umstellen (Multi-Language) — BACKLOG | `FUNC-check-code-conformance` |
 | `CR-GC-255` | done | Path-Containment für graph-getriebene Writes + Bridge-Bind auf Loopback | `FUNC-serve-sse` · `REQ-gate-only-writes` · `REQ-graph-is-ssot` · `REQ-readonly-bridge` |
 | `CR-GC-256` | done | mcp-tools.ts aufteilen (ToolContext + Tool-Gruppen) | `FUNC-serve-stdio` · `REQ-mcp-tool-registry` |
 | `CR-GC-257` | done | R-21: Integrationstest pro FUNC↔FUNC-Verbindung | `FUNC-evaluate-rules` · `FUNC-export-markdown` · `REQ-rule-enforcement` |
@@ -269,7 +267,6 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-294` | open | Skill-Spektrum fuer Treiber-Faehigkeit (Bestandsaufnahme, kein Bau) | `FUNC-graph-suggest` · `MOD-agent-surface` |
 | `CR-GC-295` | done | Zielprofil (R6) als Runde-1-Frage, Config und Konflikt-Check | `FUNC-graph-suggest` · `FUNC-score-completeness` |
 | `CR-GC-296` | done | phase_readiness konsumieren + Sprachregelung | `FUNC-graph-suggest` · `FUNC-score-completeness` · `REQ-readiness-model` |
-| `CR-GC-297` | open | Injection-Default backend-abhaengig | `FUNC-graph-suggest` · `MOD-surface` |
 | `CR-GC-298` | done | se:import-code-Skill + graphcode-import-code-Verb (graphify-Extraktor angeschlossen) | `FUNC-harness-cli` · `FUNC-import` · `MOD-surface` |
 | `CR-GC-299` | done | exporter.ts flacht attributes ab — abgeloest von CR-GC-303 | `FUNC-export-markdown` · `MOD-projections` |
 | `CR-GC-300` | done | graphVersion-Stempel im graph_export-Output | `FUNC-export-markdown` · `FUNC-graph-export-snapshot` |

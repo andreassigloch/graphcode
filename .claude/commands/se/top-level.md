@@ -44,7 +44,7 @@ The trees give every node one place to roll up to; the lattice is what gets roll
 
 **The shape when it is justified:** the parent's chain is the shared trunk, and each child's chain extends it by at least one distinguishing function. A child that adds no function of its own is not a use case.
 
-**Disjointness holds at every level.** The chains are a lattice, so *overlap* is expected — a shared FUNC is the meet point. What is forbidden is *identity*: two sibling UCs whose chains have the same members describe the same behaviour twice. Compare the member sets yourself — **no rule does it for you.** AO-D03 (`DuplicatePathDetection`) is the nearest guard and it is dead: it looks for `FUNC -io-> FUNC`, a pair the grammar does not allow, so it has never fired on any family graph (CR-DRAFT-GC-448 §5.3).
+**Disjointness holds at every level.** The chains are a lattice, so *overlap* is expected — a shared FUNC is the meet point. What is forbidden is *identity*: two sibling UCs whose chains have the same members describe the same behaviour twice. Compare the member sets yourself — **no rule does it for you.** AO-D03 (`DuplicatePathDetection`) is the nearest guard and it is dead: it looks for `FUNC -io-> FUNC`, a pair the grammar does not allow, so it has never fired on any family graph (ITEM-2026-170 §5.3).
 
 ## Order
 
@@ -65,7 +65,7 @@ The top triad is anchored at the SYS node, but only two legs are edges: `SYS -co
 3. **FLOW + SCHEMA** — the contracts, and **consolidate them**. `ACTOR -io-> FLOW -io-> FUNC`, `FUNC -io-> FLOW -io-> FUNC`; every FLOW carries exactly one SCHEMA (`FLOW -relation-> SCHEMA`, cardinality 1). One shared contract across many flows is a feature, not duplication.
 4. **MOD + stack** — only now, and **max 5 per level**.
 
-Step 4 after step 3 is empirical, not stylistic: CR-GC-436 tried allocation over unconsolidated edges and was a No-Go — optimizing a cut over unconsolidated contracts optimizes the wrong thing (CR-DRAFT-GC-448 §1).
+Step 4 after step 3 is empirical, not stylistic: CR-GC-436 tried allocation over unconsolidated edges and was a No-Go — optimizing a cut over unconsolidated contracts optimizes the wrong thing (ITEM-2026-170 §1).
 
 **4 · Recurse — pick the carrier.** Decomposing a *function* stays inside this system: same UCs, same chains, refined membership. Splitting off a *subsystem* opens a new boundary: its own UCs, its own chains, its own modules — run phases 0–3 again for it. Either way, stop when a FUNC carries a `realRef`.
 
@@ -80,7 +80,7 @@ Decomposing a function is one move, and getting it wrong is detectable:
 
 ## Size: the answer to "too big" is a level, not more modules
 
-Max 5 modules per level. When five modules each hold 14–26 FUNCs, every size threshold breaks (R-04, RD-04, MT-02) — the fix is a level *inside* the modules, never a sixth module (CR-DRAFT-GC-448 §3.4).
+Max 5 modules per level. When five modules each hold 14–26 FUNCs, every size threshold breaks (R-04, RD-04, MT-02) — the fix is a level *inside* the modules, never a sixth module (ITEM-2026-170 §3.4).
 
 Coupling check after the cut: **CR-01** counts *distinct SCHEMA contracts per module pair* (threshold `crossingFlows.warning`, default 3) — not raw io edges. Two flows sharing one contract count once. Read the module rows from `graph_metrics`; it also returns the policy it judged against.
 
@@ -132,7 +132,7 @@ What wasted rounds on the first run, measured:
 3. **Does any block have two lives?** Not "is it in several chains" — the chains are a lattice, and a shared FUNC is the meet point, not a smell. The signals are: it satisfies REQs from **two different UCs**, it is fed by **two different actors**, and it runs on **two different cadences**. All three together mean two functions. Split it.
 4. **Is every name active?** A block named for what it *holds* hides what it *decides*.
 5. **Which stack implements this MOD**, and does it exist as a `satisfy`-bound REQ?
-6. **Does the code already exist?** Check the repo before modelling greenfield. A `concept: true` FUNC over existing code is a claim the code will break (CR-DRAFT-GC-448 D2).
+6. **Does the code already exist?** Check the repo before modelling greenfield. A `concept: true` FUNC over existing code is a claim the code will break (ITEM-2026-170 D2).
 7. **More than five top-level FUNCs? Something is off.** Five is the working budget, not a hard cap — but every slot above it needs a stated reason, because **operations is still coming**: user management, configuration, credentials, deployment, logging. Those land as their own top-level block at the very end, and a decomposition that already spent seven slots on features has nowhere to put them. Count the compose-forest roots, not the chain members, and budget before you spend the last slot.
 
 ## Boundaries
