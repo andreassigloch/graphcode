@@ -1524,6 +1524,14 @@
       "closed_at": "2026-08-22T00:00:00.000Z"
     },
     {
+      "id": "CR-GC-534",
+      "type": "CR",
+      "name": "crFiles fuer RC-07 liefern",
+      "description": "",
+      "status": "done",
+      "commitRef": "4a77834"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -11086,6 +11094,11 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-534",
+      "target": "FUNC-check-code-conformance",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -18836,5 +18849,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 266
+  "graphVersion": 267
 }

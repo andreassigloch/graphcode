@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 164 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 165 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 164 CR · 156 done · 7 open.
+Total: 165 CR · 157 done · 7 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -224,4 +224,6 @@ Total: 164 CR · 156 done · 7 open.
 
 ## (unassigned)
 
-— none —
+| CR | status | name |
+|---|---|---|
+| `CR-GC-534` | done | crFiles fuer RC-07 liefern |
