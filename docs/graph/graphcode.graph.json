@@ -1547,6 +1547,12 @@
       "description": "docs/cr/open/CR-GC-546-grenzvertraege-modul-1-tool-contract-ts-.md"
     },
     {
+      "id": "CR-GC-547",
+      "type": "CR",
+      "name": "Zod plus Test fuer die Grenzvertraege: MCPTool/MCPToolRegistry als Laufzeitvertrag, parse im einen Bauplatz der Registry, Vertrags-TEST gegen die echte Registry - R-32 und RC-04 erfuellen statt abschwaechen",
+      "description": "docs/cr/open/CR-GC-547-zod-plus-test-fuer-die-grenzvertraege-mc.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -2391,12 +2397,6 @@
       "type": "FLOW",
       "name": "Werkzeug-Kontext",
       "description": "Der je Prozess einmal gepraegte Kontext, den jeder Werkzeugaufruf liest: Graphversion, Sitzungskennung, Aufrufer, Repo-Wurzel."
-    },
-    {
-      "id": "FLOW-tool-port",
-      "type": "FLOW",
-      "name": "Werkzeug-Port",
-      "description": "Traegt ToolPort ueber die Modulgrenze."
     },
     {
       "id": "FLOW-tool-registry",
@@ -5642,7 +5642,7 @@
       "description": "Was ein Werkzeug IST: Name, Beschreibung, Eingabe-Schema, Handler. Liegt seit CR-GC-480 im Kern, damit keine Schicht das Interface ihrer Oberflaeche kennen muss.",
       "realRef": {
         "file": "src/kernel/tool-contract.ts",
-        "symbol": "MCPTool",
+        "symbol": "MCPToolSchema",
         "lang": "ts"
       }
     },
@@ -5653,7 +5653,7 @@
       "description": "Die Abbildung Name -> Werkzeug, mit der eine Schicht ihre Werkzeuge uebergibt. Der Vertrag zwischen Tool-Fabrik und Host-Bindung.",
       "realRef": {
         "file": "src/kernel/tool-contract.ts",
-        "symbol": "MCPToolRegistry",
+        "symbol": "MCPToolRegistrySchema",
         "lang": "ts"
       }
     },
@@ -5921,17 +5921,11 @@
       "id": "SCHEMA-tool-context",
       "type": "SCHEMA",
       "name": "Werkzeug-Kontext",
-      "description": "Was jeder Werkzeugaufruf mitbekommt: Codec, Graphversion, Sitzungskennung, Aufrufer und Repo-Wurzel. Spec-only — ein Objekt mit Verhalten, kein Zod-Datenvertrag.",
-      "concept": true
-    },
-    {
-      "id": "SCHEMA-tool-port",
-      "type": "SCHEMA",
-      "name": "Werkzeug-Port",
-      "description": "Die fuenf Member, die eine Tool-Fabrik tatsaechlich destrukturiert — die Interface-Segregation zum vollen Host-Kontext. Der Kern deklariert, die Oberflaeche erfuellt (ToolContext extends ToolPort).",
+      "description": "Was jeder Werkzeugaufruf mitbekommt: Griff, Audit-Log, Codecs, Graphversion, Sitzung, Aufrufer. Zod-Vertrag, geparst in createToolContext; ToolPort ist die segregierte Sicht darauf, erzwungen beim Kompilieren (_portCheck).",
+      "concept": false,
       "realRef": {
-        "file": "src/kernel/tool-contract.ts",
-        "symbol": "ToolPort",
+        "file": "src/surface/tool-context-contract.ts",
+        "symbol": "ToolContext",
         "lang": "ts"
       }
     },
@@ -7931,6 +7925,21 @@
       "level": "acceptance",
       "tool": "benchmark + token counter",
       "constraint": "graphcode vs classic; <50% tokens"
+    },
+    {
+      "id": "TEST-tool-contract",
+      "type": "TEST",
+      "name": "Werkzeug-Vertrags-Test",
+      "description": "Parst die ECHTE Registry aus acht Fabriken an einem echten Harness gegen MCPToolRegistrySchema und den Kontext gegen ToolPortSchema; dazu drei Gegenproben (fehlender handler, inputSchema ohne safeParse, Port ohne serializeToolWrite).",
+      "testRefs": [
+        {
+          "file": "tests/tool-contract.test.ts",
+          "tool": "vitest",
+          "level": "unit",
+          "result": "passed",
+          "ranAt": "2026-09-16T16:40:15.158Z"
+        }
+      ]
     },
     {
       "id": "TEST-uc-authoring-style",
@@ -11186,6 +11195,11 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-547",
+      "target": "MOD-kernel",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -12892,7 +12906,7 @@
     },
     {
       "source": "FLOW-mcp-tool",
-      "target": "FUNC-serve-stdio",
+      "target": "FUNC-bind-tools",
       "type": "io"
     },
     {
@@ -13840,16 +13854,6 @@
       "type": "relation"
     },
     {
-      "source": "FLOW-tool-port",
-      "target": "FUNC-read-tools",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-tool-port",
-      "target": "SCHEMA-tool-port",
-      "type": "relation"
-    },
-    {
       "source": "FLOW-tool-registry",
       "target": "FUNC-serve-stdio",
       "type": "io"
@@ -13986,11 +13990,6 @@
       "source": "FUNC-bind-tools",
       "target": "MOD-surface",
       "type": "allocate"
-    },
-    {
-      "source": "FUNC-bind-tools",
-      "target": "FLOW-mcp-tool",
-      "type": "io"
     },
     {
       "source": "FUNC-bind-tools",
@@ -15262,6 +15261,11 @@
     },
     {
       "source": "FUNC-graph-suggest",
+      "target": "FLOW-mcp-tool",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-graph-suggest",
       "target": "FLOW-mutate-cmd-graph-suggest",
       "type": "io"
     },
@@ -16178,11 +16182,6 @@
     {
       "source": "FUNC-tool-context",
       "target": "FLOW-tool-context",
-      "type": "io"
-    },
-    {
-      "source": "FUNC-tool-context",
-      "target": "FLOW-tool-port",
       "type": "io"
     },
     {
@@ -18343,6 +18342,21 @@
       "type": "verify"
     },
     {
+      "source": "TEST-tool-contract",
+      "target": "SCHEMA-mcp-tool",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-tool-contract",
+      "target": "SCHEMA-mcp-tool-registry",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-tool-contract",
+      "target": "SCHEMA-tool-context",
+      "type": "verify"
+    },
+    {
       "source": "TEST-uc-authoring-style",
       "target": "REQ-interactive-capture-suggest",
       "type": "verify"
@@ -19011,5 +19025,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 287
+  "graphVersion": 292
 }

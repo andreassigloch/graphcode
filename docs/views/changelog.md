@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 168 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 169 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 168 CR · 160 done · 0 open.
+Total: 169 CR · 160 done · 0 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -230,3 +230,4 @@ Total: 168 CR · 160 done · 0 open.
 | `CR-GC-542` | n/a | SPIKE: findet ND die bekannten Duplikate? Known-Answer-Test gegen drei belegte Paare des Zuges 2026-09-16, bevor ND-01/02 aus notInGate ins Gate wandern |
 | `CR-GC-545` | n/a | Grenzmengen-Messung: welche FUNC MUESSEN ins Modell — die, deren Symbol eine MOD-Grenze kreuzt. Untergrenze, keine Gleichheit; jetzt auf einer Datei->MOD-Aufloesung von 98,9% statt 59% |
 | `CR-GC-546` | n/a | Grenzvertraege Modul 1 (tool-contract.ts) modellieren und den Kennzahlen-Verlauf mitschreiben - Recorder scripts/kennzahlen.mjs, Reihe in docs/records/kennzahlen.md |
+| `CR-GC-547` | n/a | Zod plus Test fuer die Grenzvertraege: MCPTool/MCPToolRegistry als Laufzeitvertrag, parse im einen Bauplatz der Registry, Vertrags-TEST gegen die echte Registry - R-32 und RC-04 erfuellen statt abschwaechen |

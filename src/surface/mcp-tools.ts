@@ -28,7 +28,7 @@
  */
 
 import type { AuditLog } from '@sigloch/graph-api-core';
-import type { MCPToolRegistry } from '../kernel/tool-contract.js';
+import { MCPToolRegistrySchema, type MCPToolRegistry } from '../kernel/tool-contract.js';
 import type { GraphCodeHarness } from '../kernel/harness.js';
 import { createToolContext, type ToolContext } from './tool-context.js';
 import { bindReadTools } from './read.js';
@@ -130,7 +130,13 @@ export function bindToolsWithContext(
     ctx,
     // CR-GC-434: one wrapping point for consultedTools/template-edit capture —
     // the groups stay unchanged, the registry surface (names/schemas) is identical.
-    registry: withConsultationTracking(
+    // CR-GC-547: der Vertrag wird HIER geprueft, nicht von einem Aufrufer, der es koennte.
+    // Acht Fabriken legen ihre Werkzeuge in EIN Register; bis hierher hielt es nur der
+    // Compiler, und der sieht nichts, was durch `Record<string, MCPTool<any, any>>` kommt.
+    // Ein Werkzeug ohne `handler` oder mit einem `inputSchema`, das keins ist, fiele sonst
+    // erst beim Aufruf auf — im Agenten. `parse`, nicht `safeParse`: ein kaputtes Register
+    // ist kein Zustand, in dem der Host weiterlaufen soll.
+    registry: MCPToolRegistrySchema.parse(withConsultationTracking(
       {
         ...bindReadTools(ctx),
         ...bindWriteTools(ctx),
@@ -142,10 +148,12 @@ export function bindToolsWithContext(
         ...bindTestReportTools(ctx),
       },
       ctx,
-    ),
+    )) as MCPToolRegistry,
   };
 }
 
 export function bindToolsToHarness(harness: GraphCodeHarness, auditLog?: AuditLog): MCPToolRegistry {
   return bindToolsWithContext(harness, auditLog).registry;
 }
+
+
