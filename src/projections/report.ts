@@ -25,8 +25,12 @@ import {
   ReadinessDimension,
   type ReadinessScoreType,
   type ImportCoverage,
+  type SteerSpaceType,
 } from '@sigloch/contracts/se';
-import { takeSteeringSnapshot } from '../kernel/measure/steering-snapshot.js';
+import { takeSteeringSnapshot, type SteeringSnapshot } from '../kernel/measure/steering-snapshot.js';
+// CR-GC-537: die EINE Normierung des Steuerungsraums. Erst seit CR-SM-340 aus dem Paket
+// erreichbar — davor gab es sie nur paketintern, und ein Host haette sie nachbauen muessen.
+import { steerScore, steerTerms } from '@sigloch/se-engine';
 import {
   summarizeReadiness,
   computePhaseReadiness,
@@ -273,13 +277,42 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
    * sie mit `applicable: 0` ausgewiesen — konstruktiv nicht messbar, NICHT perfekt
    * (Muster computeSteeringDelta).
    */
-  const dimensionReadiness = (): ReadinessScoreType[] => {
-    const scores = new Map(takeSteeringSnapshot(harness.getGraph(), harness.getMetricPolicy()).report.scores.map((s) => [s.dimension as string, s]));
+  const dimensionReadiness = (snap: SteeringSnapshot): ReadinessScoreType[] => {
+    const scores = new Map(snap.report.scores.map((s) => [s.dimension as string, s]));
     return ReadinessDimension.options.map(
       (dimension) =>
         scores.get(dimension) ?? { dimension, score: null, violations: 0, applicable: 0, coreApplicable: 0 },
     );
   };
+
+  /**
+   * CR-GC-537 (ITEM-2026-059) — der STEUERUNGSRAUM im Bericht, Stufe 2: das Füllen.
+   *
+   * Readiness misst ABDECKUNG ("wie viele Stellen sind erledigt"), der Steuer-Score
+   * AUSPRÄGUNG ("wie schlimm ist die schlimmste offene"). Beide lesen denselben Regelstrom,
+   * beide gehören in denselben Bericht — sonst rechnet der nächste Leser die zweite Hälfte
+   * selbst nach. Genau das drohte: das GVE-Dashboard (ITEM-2026-018 Punkt 1) hätte
+   * `steerScore` nachbauen müssen, weil die Zahlen bisher nur als
+   * `verdict.steer.improvement` je Suggestion sichtbar waren.
+   *
+   * KEINE ZWEITE RECHNUNG, und das ist hier wörtlich zu nehmen: die Terme kommen aus
+   * `steerTerms` in se-engine (CR-SM-337/340) — derselben Funktion, aus der `steerScore`
+   * seinerseits rechnet. Es gibt genau eine Normierung `(value − threshold)/threshold` und
+   * genau eine Regel-Liste (STEER_RULES), beide in se-engine. Und der Regelstrom ist
+   * DERSELBE Snapshot, aus dem `dimension_readiness` und `nextStep` kommen (CR-GC-324) —
+   * also auch derselbe wie in `computeSteerAdvisory` am dryRun-Verdict (`evaluateAllRules`,
+   * voller Katalog, nicht der Gate-Delta-Katalog).
+   *
+   * `measured` ist eine ZAHL, kein Flag: sie sagt, wie viele Blackboxes in die Rechnung
+   * eingegangen sind. `score: 0` bei `measured: 0` heisst "nichts gemessen",
+   * `score: 0` bei `measured: 42` heisst "jede Blackbox im Budget" — ohne das Feld sähen
+   * beide gleich aus. (Der CR-Text sagte "measured:false"; der ratifizierte Vertrag
+   * CR-SM-337 hat daraus die Anzahl gemacht, die dieselbe Frage genauer beantwortet.)
+   */
+  const steerSpace = (snap: SteeringSnapshot): SteerSpaceType => ({
+    ...steerScore(snap.violations),
+    terms: steerTerms(snap.violations),
+  });
 
   const graph_readiness: MCPTool<
     z.infer<typeof GraphReadinessInputSchema>,
@@ -288,6 +321,11 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
       /** CR-GC-325: die 8 RULE_TO_DIMENSION-Themenscores — die zweite Projektion
        * DESSELBEN Regelstroms, aus DEMSELBEN Snapshot wie nextStep. */
       [DIMENSION_READINESS_NAME]: ReadinessScoreType[];
+      /** CR-GC-537: der STEUERUNGSRAUM — `worst`/`worstAt`/`mean`/`score`/`measured` plus
+       * einen Term je gemessener Blackbox (`value`, `threshold`, normierter `overshoot`).
+       * Die DRITTE Projektion desselben Regelstroms: readiness misst Abdeckung, dieser
+       * Block Ausprägung. Aus se-engines `steerTerms`/`steerScore`, nie hier gerechnet. */
+      steer: SteerSpaceType;
       graphVersion: number;
       /** Intent-Coverage-Read-out (CR-GC-295): je bestätigtem Anker, ob/wo er in
        * UC/REQ/FUNC adressiert ist. KPI, NIE ein Gate-Blocker — Abdeckung sagt
@@ -328,7 +366,15 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
       `${DIMENSION_READINESS_NAME} (CR-GC-325) — the 8 RULE_TO_DIMENSION topic scores ` +
       '(req/uc/arch/alloc/ver/schema/cr/ms), the OTHER projection of the rule stream — scored from ' +
       'the FULL contracts catalog (evaluateAllRules incl. BQ-*/ND-*), i.e. a WIDER population than ' +
-      'violationsByRule; `catalogs` (CR-GC-428) names per block which catalog it came from: each with ' +
+      'violationsByRule; `steer` (CR-GC-537) — the STEERING SPACE from that same snapshot: worst / ' +
+      'worstAt / mean / score / measured plus one `terms` entry per measured blackbox (ruleId, ' +
+      'elementId, value, threshold, normalized overshoot) out of se-engine steerTerms/steerScore. ' +
+      'Readiness measures COVERAGE (how many places are done), steer measures SEVERITY (how bad is ' +
+      'the worst open one) — SMALLER IS BETTER, 0 means every blackbox is inside its budget. Read ' +
+      '`score` only together with `measured`: it is a COUNT, so score 0 at measured 0 means nothing ' +
+      'was measured, not that everything is fine. Do NOT recompute it — the normalization ' +
+      '(value − threshold)/threshold and the closed rule list STEER_RULES live in se-engine, and a ' +
+      'second computation is a second truth; `catalogs` (CR-GC-428) names per block which catalog it came from: each with ' +
       'score, violations, applicable (the denominator — a score is not interpretable without it) and ' +
       'coreApplicable (0 means the score is null: not measurable). A measurement WITHOUT a verdict — ' +
       'there is no ready flag; the focus threshold is applied only where the focus is chosen, in ' +
@@ -352,6 +398,11 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
     async handler(input) {
       // EINE Erhebung, drei Ableitungen (Report, Phase-Gates, skipped) — CR-GC-398.
       const ev = evaluateAll(harness);
+      // CR-GC-537: EIN Snapshot für die beiden Projektionen des Steering-Katalogs
+      // (dimension_readiness und steer). Vorher nahm `dimensionReadiness` ihn selbst —
+      // ein zweiter Aufruf hier hiesse, denselben vollen Regellauf zweimal zu fahren
+      // und beide Blöcke aus verschiedenen Erhebungen zu speisen.
+      const snapshot = takeSteeringSnapshot(harness.getGraph(), harness.getMetricPolicy());
       const report = readinessOf(ev, harness.getGraph());
       const phaseReadiness = computePhaseReadiness(report.violations);
       // Intent-Coverage (CR-GC-295): nur wenn die Config bestätigte Anker trägt;
@@ -367,7 +418,8 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
       return {
         ...(input.detail ? report : summarizeReadiness(report)),
         [PHASE_READINESS_NAME]: phaseReadiness,
-        [DIMENSION_READINESS_NAME]: dimensionReadiness(),
+        [DIMENSION_READINESS_NAME]: dimensionReadiness(snapshot),
+        steer: steerSpace(snapshot),
         graphVersion: graphVersion(),
         intentCoverage: coverage,
         skipped: ev.skipped,

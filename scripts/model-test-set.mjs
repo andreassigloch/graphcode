@@ -75,6 +75,10 @@ export const INCLUDED = [
   'tests/mvp-e2e.test.ts',
   'tests/nd-similarity.test.ts',
   'tests/readiness.model.test.ts',
+  // CR-GC-537: misst den Steuerungsraum an der echten SSOT. Die Terme haengen an den
+  // Container-/Randbreiten des Modells (RD-04/BW-02/R-04/CR-01/MT-02) — eine Modelländerung
+  // verschiebt `worst` und `measured` unmittelbar, also gehoert er in die Spur.
+  'tests/readiness.steer.test.ts',
   'tests/readiness.ontology-sync.test.ts',
   'tests/rewind.test.ts',
   'tests/se-author-uc.test.ts',
