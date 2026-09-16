@@ -1,6 +1,6 @@
 # CR-GC-546: Grenzvertraege Modul 1 (tool-contract.ts) modellieren und den Kennzahlen-Verlauf mitschreiben - Recorder scripts/kennzahlen.mjs, Reihe in docs/records/kennzahlen.md
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-16)
 **Typ:** aus Item ITEM-2026-222 (idea)
 **Erstellt:** 2026-09-16
 **Item:** bok/items/ITEM-2026-222.json (Lane: code)
