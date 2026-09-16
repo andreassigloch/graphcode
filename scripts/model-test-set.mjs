@@ -111,6 +111,12 @@ export const INCLUDED = [
  * Entscheidung bleibt und nicht zu einer stillen Lücke wird.
  */
 export const EXCLUDED = {
+  'tests/flow-contracts.test.ts':
+    'Fluss-Vertraege (CR-GC-426/535). Der Treffer ist ein FIXTURE-DATEINAME: der Hook-Teil\n' +
+    'legt `docs/graph/x.graph.json` mit LEEREM Inhalt in einem Wegwerf-Repo an und prueft,\n' +
+    'ob `pre-commit` den Pfad als Snapshot erkennt. Geprueft wird die Pfaderkennung, nie\n' +
+    'Modellinhalt — die committete SSOT liest er nicht. Eine Modellaenderung kann ihn nicht\n' +
+    'rot machen.',
   'tests/no-default-policy-when-judging.test.ts':
     'Waechter (CR-GC-492). Baut keinen Harness und liest keinen Graphen — er SCANNT die\n' +
     'Testdateien nach der Kombination "Handaufbau + echte Repo-Wurzel + urteilende Flaeche".\n' +
