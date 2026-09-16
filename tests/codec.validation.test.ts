@@ -110,6 +110,19 @@ describe('TEST-codec-validation: encode() rejects invalid graphs', () => {
     expect(() => codec.encode(g)).toThrow(/validation failed/);
     expect(() => codec.encode(g)).toThrow(/BOGUS/);
   });
+
+  // CR-GC-536 / ITEM-2026-183 — der Phantom-Knoten, diesmal an DIESER Oberfläche.
+  // Die Härtung sitzt seit CR-SM-332 im einen Codec; dieser Fall belegt, dass die
+  // Delegation sie hierher durchreicht und graphcode nicht weiter still kaputten
+  // Text erzeugt. Vor CR-GC-536 schrieb der eigene encode den Umbruch roh hinaus.
+  it('(d2) encode() wirft bei einer Beschreibung mit Zeilenumbruch — kein Phantom-Knoten mehr', () => {
+    const g: Graph = {
+      nodes: [{ uid: 'SYS-multi', type: 'SYS', name: 'Multi', description: 'erste Zeile\nzweite Zeile', attributes: {} }],
+      edges: [],
+    };
+    expect(() => codec.encode(g)).toThrow(/Zeilenumbruch/);
+    expect(() => codec.encode(g)).toThrow(/SYS-multi/);
+  });
 });
 
 describe('TEST-codec-validation: decode() rejects implicit-add', () => {
@@ -128,6 +141,20 @@ describe('TEST-codec-validation: decode() rejects implicit-add', () => {
 
     expect(() => codec.decode(text)).toThrow(/Cannot resolve type of target "MOD-missing"/);
     expect(() => codec.decode(text)).toThrow(/MOD-missing/);
+  });
+
+  // CR-GC-536 / ITEM-2026-183 — die Leseseite desselben Defekts: die übergelaufene
+  // Zeile wurde bis CR-SM-332 als EIGENER Knoten gedeutet (uid = der Resttext, Typ =
+  // die offene `### <TYPE>`-Sektion), und das inline-Attribut haftete am Phantom statt
+  // am gemeinten Knoten. Jetzt ist es ein Fehler, und decode wirft ihn weiter.
+  it('(e2) decode() wirft bei einer übergelaufenen Zeile statt einen zweiten Knoten zu bauen', () => {
+    const text = `## Nodes
+### SYS
++ SYS-x|erste Zeile
+zweite Zeile die ueberlaeuft [__name:X]`;
+
+    expect(() => codec.decode(text)).toThrow(/without an operator prefix/);
+    expect(() => codec.decode(text)).toThrow(/zweite Zeile die ueberlaeuft/);
   });
 
   it('(f) decode() throws when FormatECodec.parse() returns errors', () => {

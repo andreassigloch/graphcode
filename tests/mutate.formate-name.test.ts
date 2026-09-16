@@ -230,3 +230,65 @@ describe('formatEExampleFor: der Musterblock selbst (CR-GC-321)', () => {
     expect(example).toContain('+ MOD-example|');
   });
 });
+
+/**
+ * CR-GC-536 / ITEM-2026-183 — die Gegenprobe AM LEBENDEN GATE, nicht am Codec allein.
+ *
+ * Der Befund, der diesen CR ausgeloest hat: eine Beschreibung mit Zeilenumbruch wurde
+ * nicht nur abgeschnitten — die uebergelaufene Zeile wurde ein EIGENER Knoten (uid = der
+ * Resttext, Typ = die offene `### <TYPE>`-Sektion), und `success` war TRUE. Einzige
+ * Meldung war R-17 "empty system", eine Warnung, die nie blockt. Das inline-Attribut
+ * `[__name:...]` haftete dabei am Phantom, nicht am gemeinten Knoten — deshalb steht
+ * dieser Fall hier, bei der Namens-Gruppe: die Warnung zeigte auf das falsche Opfer.
+ *
+ * Der Schutz beim REQ war ein Zufall der Regellage (R-01 blockte), kein Schutz. Jetzt
+ * blockt der Parser selbst, also auch beim SYS.
+ */
+describe('CR-GC-536: der Zeilenumbruch erzeugt keinen Phantom-Knoten mehr (ITEM-2026-183)', () => {
+  let tmp: string;
+  let harness: GraphCodeHarness;
+  let tools: MCPToolRegistry;
+
+  /** Exakt die Form der Reproduktion: der Umbruch traegt das inline-Attribut mit sich. */
+  const PHANTOM_BATCH =
+    '## Nodes\n### SYS\n' +
+    '+ SYS-phantom|Ein System mit einer Beschreibung, die\n' +
+    'umbricht [__name:Gemeinter Name]\n';
+
+  beforeEach(async () => {
+    tmp = mkdtempSync(join(tmpdir(), 'graphcode-formate-phantom-'));
+    const storage = new KuzuAdapter({ ontology: SE_DESCRIPTOR, path: join(tmp, 'kuzu') });
+    harness = new GraphCodeHarness(makeConfig(tmp), storage);
+    await harness.initialize();
+    await harness.importGraph(SEED);
+    tools = bindToolsToHarness(harness);
+  });
+
+  afterEach(async () => {
+    await harness.close();
+    rmSync(tmp, { recursive: true, force: true });
+  });
+
+  it('dryRun: success ist FALSE und der Fehler nennt den fehlenden Operator', async () => {
+    const res = (await tools.graph_mutate.handler({
+      formatE: PHANTOM_BATCH,
+      dryRun: true,
+      consumerId: 't',
+    })) as MutateOut & { error?: string };
+
+    expect(res.success, JSON.stringify(res)).toBe(false);
+    expect(JSON.stringify(res)).toMatch(/without an operator prefix|Zeilenumbruch/);
+    // Und nicht etwa zwei Mutationen, wie vor der Haertung.
+    expect(res.mutations ?? 0).toBe(0);
+  });
+
+  it('apply: weder der gemeinte noch der Phantom-Knoten landen im Speicher', async () => {
+    await tools.graph_mutate.handler({ formatE: PHANTOM_BATCH, consumerId: 't' });
+
+    const uids = harness.getGraph().nodes.map((n) => n.uid);
+    expect(uids).not.toContain('SYS-phantom');
+    // Der Phantom trug den Resttext als uid — genau der Knoten, der still entstand.
+    expect(uids.some((u) => u.includes('umbricht'))).toBe(false);
+    expect(uids.sort()).toEqual(['FUNC-seed', 'REQ-seed', 'SYS-x', 'TEST-seed']);
+  });
+});
