@@ -92,3 +92,98 @@ spaeter ins Gate, ist das ein eigener CR in sigloch-modules mit Version-Bump.
 
 DATEIEN: ein Spike-Skript (`scripts/spike-nd-*.mjs`) oder ein `tests/*.spike.test.ts` nach dem
 Muster der vorhandenen Spikes, plus die Ergebnistabelle hier im CR. Kein Produktionscode.
+
+---
+
+# ERGEBNIS (2026-09-16, `scripts/spike-nd-known-answer.mjs`)
+
+**Empfehlung: NO-GO fuer die Scharfschaltung.** Nicht weil ND zu viel meldet, sondern weil es
+in sechs von sieben Familiengraphen GAR NICHTS meldet — und die vier belegten Faelle
+prinzipiell nicht sehen kann. Der Hebel liegt woanders (siehe „Was statt dessen").
+
+## Korrektur am eigenen CR-Text
+
+Die Praemisse oben war falsch. `0,5·Name + 0,5·Beschreibung`, Schwelle 0,55, ist der
+REQ/UC-**Hinweis** in graphcodes `nd-similarity.ts` — nicht die Regel. ND-01 rechnet in
+contracts `similarity.ts`:
+
+    ND-01 = 0,35·descr + 0,25·Verb + 0,25·io-Topologie + 0,15·REQ-Ueberlappung
+    ND-02 = 0,50·Felder + 0,30·descr + 0,20·Verwendung
+
+Damit faellt Kandidat F3a („Nachbarschaft") als Vorschlag weg: er steckt mit 40 % schon drin.
+
+## Die eine Tabelle
+
+| Fall | zwei Knoten da? | ND-01 (synth.) | Code am realRef | gefunden von … |
+|---|---|---:|---:|---|
+| F1 ueber Paketgrenze, gleiches Repo | **nein** | 46,4 % | 41,4 % | **niemandem** |
+| F2 ueber REPO-Grenze, 51 Tage (CR-GC-103) | **nein** | 42,9 % | 10,4 % | **niemandem** |
+| F3 innerhalb EINES Pakets, zwei Dateien | **nein** | 40,0 % | 26,8 % | **niemandem** |
+| F4 Kontrolle, zeichengleich | **nein** | 65,0 % | 86,7 % | Code |
+
+`synth.` = die Knoten gibt es nicht; die Zahl ist ein Wenn-dann aus echtem Symbolnamen und
+echtem Dateikopf. Wo „zwei Knoten da?" nein sagt, ist die Schwelle gegenstandslos: ND kann
+den Fall auch bei 0,0 nicht melden.
+
+**F1 — nein, das Mass findet sie nicht.** Aber der Grund ist nicht die Schwelle und nicht die
+Formel: **4 von 4 Faellen haben nicht einmal zwei Knoten im selben Graphen.** Die Gegenprobe
+ist der Beleg — zwei zeichengleiche `jaccard` kommen synthetisch auf 65 %, weil die Regel
+Beschreibung und Topologie wiegt, nicht den Code. Nur die Code-Aehnlichkeit am `realRef`
+(86,7 %) haette sie erkannt.
+
+**F2 — die Reichweite ist die Wand.** ND-01/ND-02 laufen je Graph. sigloch-modules modelliert
+graph-api-core als EINEN MOD-Knoten mit null FUNC, also fehlt bei F1/F2 die Gegenseite
+komplett. Ein familienweiter Lauf waere konstruierbar, brachte aber nichts, solange die
+Gegenseite nicht modelliert ist.
+
+**F3 — Bodensatz und Bindung.**
+- `jaccard(∅,∅) = 1`: zwei FUNC ohne io- und ohne satisfy-Kante bekommen 0,40 geschenkt, ohne
+  ein einziges gemeinsames Wort. Mit gleichem ersten Wort stehen sie bei 0,65. Gemessen tragen
+  20 von 120 FUNC in graphcode keine io-Kante, in moneyflow 106 von 306. Das ist ein
+  Fehlalarm-Generator an genau den Knoten, die am wenigsten aussagen.
+- Bindung (gleicher `realRef.symbol` in verschiedenen Dateien): 169 gebundene Knoten,
+  136 Symbolnamen, **0 Kollisionen**. Als Duplikat-Fuehler ueber den Bestand: nutzlos.
+- Code am `realRef` ist der einzige Kandidat, der die Kontrolle besteht (86,7 %) — und der
+  einzige, der den Graphen verlaesst.
+
+**F4 — Fehlalarme.** Bei Schwelle 0,85 ueber sieben Graphen: **16 Befunde, alle in moneyflow**
+(306 FUNC, Code-Import ohne Wozu-Ebene). In den sechs governten Graphen: 0 Befunde, auch bei
+0,70. Von den 16 sind 14 echte Mehrfach-Implementierungen (`handleSubmit` 6×,
+`makeMockGraphService` 3×) und 2 Fehlalarme (`calcConfidence`, `groundingCheck` — Testfunktion
+gegen gleichnamige Produktionsfunktion; genau die von SourcererCC belegte Klasse).
+
+Die Scharfschaltung wuerde also in sechs Repos nichts aendern und in einem 16 `error` erzeugen,
+von denen 14 richtig sind. Das ist kein schlechtes Verhaeltnis — aber es betrifft ausgerechnet
+den Graphen, der keine Wozu-Ebene hat, und keinen der drei Faelle, wegen derer der Spike lief.
+
+**F5 — der legitime Decorator.** Unbeantwortet gelassen, weil gegenstandslos: eine Regel, die
+den Fall nicht sehen kann, braucht keinen Ausgang fuer ihn. Faellt wieder an, sobald ein Mass
+existiert, das F2 findet.
+
+## Was statt dessen — die Deckung
+
+| Repo | exportierte Funktionen | exakt gebunden | Deckung | obere Schranke | Bindungsquote |
+|---|---:|---:|---:|---:|---:|
+| graphcode | 217 | 47 | **21,7 %** | 40,6 % | 82,5 % |
+| sigloch-modules | 126 | 7 | **5,6 %** | 7,9 % | 72,7 % |
+| bok | 114 | 7 | **6,1 %** | 10,5 % | 46,7 % |
+| graph-view-edit | 99 | 6 | **6,1 %** | 8,1 % | 92,3 % |
+
+Die letzten beiden Spalten messen Gegenrichtungen. Die **Bindungsquote** (CLAUDE.md) sagt:
+wie gut haengt das Modellierte am Code. Die **Deckung** sagt: wie viel Code kennt das Modell
+ueberhaupt nicht. graph-view-edit hat 92,3 % Bindung bei 6,1 % Deckung — beides gleichzeitig
+wahr, und nur die zweite Zahl erklaert, warum kein Duplikat auffiel.
+
+Alle sieben RC-Regeln pruefen **Modell → Code** („loest der realRef auf?"). **Keine prueft
+Code → Modell** („hat diese Funktion einen Knoten?"). `importCoverage` ist der Praezedenzfall
+fuer die ehrliche Messung — aber auf Datei-Ebene und nur fuer RC-05.
+
+Damit ist die Frage beantwortet, die hinter dem Spike stand: das Modell findet die Duplikate
+nicht, weil es sie nicht kennt. Nicht wegen der Formel, nicht wegen der Schwelle.
+
+## Folge
+
+- ND-01/ND-02 bleiben in `notInGate`. Keine Aenderung an contracts. Kein Folge-CR dort.
+- Die Deckungs-Luecke geht als Item in den Store (Code → Modell als Messung, nicht als Gate).
+- `scripts/spike-nd-known-answer.mjs` bleibt liegen: er ist wiederholbar und misst die
+  Deckung mit. Wird die Deckung besser, sagt derselbe Lauf, ob ND dann etwas findet.
