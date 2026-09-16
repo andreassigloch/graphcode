@@ -1,6 +1,6 @@
 # CR-GC-545: Grenzmengen-Messung: welche FUNC MUESSEN ins Modell — die, deren Symbol eine MOD-Grenze kreuzt. Untergrenze, keine Gleichheit; jetzt auf einer Datei->MOD-Aufloesung von 98,9% statt 59%
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-16)
 **Typ:** aus Item ITEM-2026-219 (idea)
 **Erstellt:** 2026-09-16
 **Item:** bok/items/ITEM-2026-219.json (Lane: code)
