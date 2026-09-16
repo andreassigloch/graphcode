@@ -1529,6 +1529,12 @@
       "description": "docs/cr/open/CR-GC-541-testauswahl-aus-dem-modell-statt-voller-.md"
     },
     {
+      "id": "CR-GC-542",
+      "type": "CR",
+      "name": "SPIKE: findet ND die bekannten Duplikate? Known-Answer-Test gegen drei belegte Paare des Zuges 2026-09-16, bevor ND-01/02 aus notInGate ins Gate wandern",
+      "description": "docs/cr/open/CR-GC-542-spike-findet-nd-die-bekannten-duplikate-.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -18886,5 +18892,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 280
+  "graphVersion": 281
 }
