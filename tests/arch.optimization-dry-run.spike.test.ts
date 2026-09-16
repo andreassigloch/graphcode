@@ -273,6 +273,12 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
       const steps: { n: number; ruleId: string; edit: string; promised: number }[] = [];
       let leftover = 0;
       /**
+       * CR-GC-543: die uebrig gebliebenen Vorschlaege als LISTE, nicht nur als Zahl.
+       * Als CR-GC-540 den Test rot machte, sagte er "1" und nicht welcher — die
+       * Zuordnung kostete einen Bisect ueber drei Snapshots.
+       */
+      let rest: GraphSuggestResult['suggestions'] = [];
+      /**
        * CR-GC-488: der DOMINIERENDE Term des Chebyshev-Scores — `worstAt` aus dem
        * Gate-Advisory. Ohne ihn ist eine Reichweite von 0 nicht lesbar: "kein Zug"
        * und "kein Zug FÜR DIESEN Engpass" sind verschiedene Aussagen.
@@ -290,7 +296,15 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
         if (!best) {
           // Erschöpfung: nichts Anwendbares hilft dem Ziel mehr. Was noch auf dem
           // Tisch liegt (anwendbar, aber Δm·t̂ ≤ 0), ist Teil der Reichweiten-Aussage.
-          leftover = applicable.filter((s) => s.score <= EPS).length;
+          rest = applicable.filter((s) => s.score <= EPS);
+          leftover = rest.length;
+          // CR-GC-543: die Übriggebliebenen BENENNEN, nicht nur zählen. Als der Test bei
+          // CR-GC-540 rot wurde, sagte er „1" und nicht welcher — die Zuordnung kostete
+          // einen Bisect über drei Snapshots. Eine Zahl ohne Namen ist kein Befund.
+          for (const s of rest) {
+            console.log(`   übrig: [${s.ruleId}] ${s.elementId} · score ${s.score.toFixed(4)} · ` +
+              `${s.edit ? `${s.edit.op ?? 'add-edge'} ${s.edit.source}->${s.edit.target}` : 'ohne Edit'}`);
+          }
           break;
         }
         const e = best.edit!;
@@ -336,19 +350,37 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
 
       // CR-GC-435 war die Voraussetzung dafür, dass hier ÜBERHAUPT ein Zug möglich ist; CR-GC-488
       // mass die Reichweite 0 aus dem Grund "kein Zug senkt das Maximum", CR-GC-509/510 eine
-      // Plateau-Kette aus je einem FLOW-Merge.
+      // Plateau-Kette aus je einem FLOW-Merge. CR-SM-309 (graphVersion 261) mass den
+      // ARCHITEKTUR-Aktionsraum als leer: die einzigen anwendbaren Züge waren FLOW-Merges, und
+      // seit IO-02 am Gate blockt, schlägt OP-MERGE nur noch echte Duplikate vor.
       //
-      // CR-SM-309 (graphVersion 261): der Aktionsraum ist jetzt LEER, und das ist der Befund. Die
-      // einzigen anwendbaren Züge waren FLOW-Merges; jeder davon legte zwei Produzenten in einen
-      // FLOW. Seit IO-02 am Gate blockt, schlägt OP-MERGE nur noch echte Duplikate vor, und der
-      // Repo-Graph trägt keins. Die übrigen Vorschläge (IO-01, FC-04, R-02, R-22, …) tragen keinen
-      // Edit, also auch kein Verdict und kein worstAt — der Engpass steht in `graph_metrics`.
+      // CR-GC-543 (graphVersion 281) — NEU GEMESSEN, nachdem CR-GC-540 den Test rot machte:
       //
-      // Wird das falsch — ein Operator kommt dazu, oder das Modell trägt wieder ein Duplikat —,
-      // MUSS dieser Test rot werden: der Befund oben ist dann veraltet und gehört neu gemessen.
+      //  1. Der Architektur-Aktionsraum ist WEITER leer. Was dazukam, ist keine Architektur-
+      //     bewegung, sondern CR-HYGIENE: `CR-R01` an CR-GC-540 („nennt keinen Scope"), als
+      //     Template-Edit `add-trace CR-GC-540 -> FUNC-encode`, score exakt 0,0000. Das ist die
+      //     bekannte Folge davon, dass `aise dispatch prepare` schlanke CR-Knoten ohne
+      //     Scope-Kante anlegt (ITEM-2026-202) — der Umfang ist zur Prepare-Zeit nicht bekannt.
+      //     Deshalb prüft der Test jetzt die HERKUNFT des Übriggebliebenen, nicht seine Anzahl:
+      //     ein CR-Knoten ohne Scope entsteht mehrmals pro Tag, eine Architekturbewegung nicht.
+      //     Eine Reißleine, die täglich reißt, wird abgeschaltet.
+      //  2. `dominant` ist nicht mehr null, und das ist ein FORTSCHRITT, kein Befund: CR-SM-309
+      //     notierte, die übrigen Vorschläge trügen kein Verdict und damit kein `worstAt`, der
+      //     Engpass stehe nur in `graph_metrics`. Jetzt trägt einer eins, und der Engpass ist
+      //     hier direkt lesbar — dieselbe Stelle, die CR-GC-537 im Steuerungsraum mit 3,5 misst.
+      //
+      // Wird das falsch — eine ARCHITEKTUR-Bewegung wird möglich, oder der Engpass wandert weg
+      // von R-04 @ MOD-kernel —, MUSS dieser Test rot werden: der Befund ist dann veraltet.
+      const CR_HYGIENE = new Set(['CR-R01', 'MS-03', 'CR-01', 'RD-01', 'RD-04']);
       expect(steps.map((s) => s.edit), 'ein Zug ist möglich geworden — der Befund oben ist veraltet, bitte neu messen').toEqual([]);
-      expect(leftover, 'anwendbare, aber nicht zielführende Züge liegen wieder auf dem Tisch — bitte neu messen').toBe(0);
-      expect(dominant, 'ein Verdict trägt wieder worstAt — also gibt es beurteilte Edits, bitte neu messen').toBeNull();
+      expect(
+        rest.filter((s) => !CR_HYGIENE.has(s.ruleId)).map((s) => `${s.ruleId} @ ${s.elementId}`),
+        'ein anwendbarer Zug AUSSERHALB der CR-Hygiene liegt auf dem Tisch — das wäre eine Architekturbewegung, bitte neu messen',
+      ).toEqual([]);
+      expect(dominant, 'der Engpass ist nicht mehr R-04 @ MOD-kernel — bitte neu messen').toEqual({
+        ruleId: 'R-04',
+        elementId: 'MOD-kernel',
+      });
       // Trockenübung: der produktive SSOT ist nachweislich unverändert.
       expect(sha256(REPO_GRAPH)).toBe(ssot);
     } finally {
