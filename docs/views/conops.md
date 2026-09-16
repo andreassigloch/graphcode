@@ -304,6 +304,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-534` | done | crFiles fuer RC-07 liefern | `FUNC-check-code-conformance` |
 | `CR-GC-535` | n/a | Pre-Commit faehrt verify:model bei Snapshot im Diff | `REQ-graph-snapshot-per-commit` |
 | `CR-GC-546` | n/a | Grenzvertraege Modul 1 (tool-contract.ts) modellieren und den Kennzahlen-Verlauf mitschreiben - Recorder scripts/kennzahlen.mjs, Reihe in docs/records/kennzahlen.md | `MOD-kernel` |
+| `CR-GC-547` | n/a | Zod plus Test fuer die Grenzvertraege: MCPTool/MCPToolRegistry als Laufzeitvertrag, parse im einen Bauplatz der Registry, Vertrags-TEST gegen die echte Registry - R-32 und RC-04 erfuellen statt abschwaechen | `MOD-kernel` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

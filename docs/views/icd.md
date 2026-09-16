@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 51 SCHEMA · 109 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 50 SCHEMA · 108 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -31,8 +31,8 @@
 | `SCHEMA-learning-query` | extern definiert (kein realRef) | draft |
 | `SCHEMA-lock-owner` | src/kernel/lock-owner-contract.ts#LockOwner | n/a |
 | `SCHEMA-markdown-view` | src/projections/exporter.ts#MarkdownViewSchema | reviewed |
-| `SCHEMA-mcp-tool` | src/kernel/tool-contract.ts#MCPTool | n/a |
-| `SCHEMA-mcp-tool-registry` | src/kernel/tool-contract.ts#MCPToolRegistry | n/a |
+| `SCHEMA-mcp-tool` | src/kernel/tool-contract.ts#MCPToolSchema | n/a |
+| `SCHEMA-mcp-tool-registry` | src/kernel/tool-contract.ts#MCPToolRegistrySchema | n/a |
 | `SCHEMA-measurement-vector` | Konzept (noch kein Zod-Export) | reviewed |
 | `SCHEMA-metric-policy` | packages/contracts/src/se/policy.ts#MetricPolicy | n/a |
 | `SCHEMA-metric-vector` | packages/se-engine/src/metrics.ts#MetricVector | reviewed |
@@ -56,8 +56,7 @@
 | `SCHEMA-steering-snapshot` | src/kernel/measure/steering-snapshot.ts#SteeringSnapshot | reviewed |
 | `SCHEMA-target-profile` | src/loop/target-profile-contract.ts#TargetProfileSchema | n/a |
 | `SCHEMA-test-selection` | src/kernel/measure/test-selection.ts#TestSelectionSchema | n/a |
-| `SCHEMA-tool-context` | Konzept (noch kein Zod-Export) | n/a |
-| `SCHEMA-tool-port` | src/kernel/tool-contract.ts#ToolPort | n/a |
+| `SCHEMA-tool-context` | src/surface/tool-context-contract.ts#ToolContext | n/a |
 | `SCHEMA-tool-registry` | Konzept (noch kein Zod-Export) | n/a |
 | `SCHEMA-trajectory` | packages/learning-core/src/interfaces/trajectory.ts#TrajectorySchema | reviewed |
 | `SCHEMA-update-event` | packages/contracts/src/harness/index.ts#LiveUpdateEventSchema | reviewed |
@@ -103,7 +102,7 @@
 | `FLOW-learning-query` | `FUNC-graph-suggest` | `ACTOR-learning-engine` |
 | `FLOW-live-event` | `FUNC-emit-update-event` | `FUNC-broadcast-diff` · `FUNC-serve-sse` · `FUNC-serve-stdio` |
 | `FLOW-markdown-docs` | `FUNC-export-markdown` | `ACTOR-owner` |
-| `FLOW-mcp-tool` | `FUNC-bind-tools` | `FUNC-serve-stdio` |
+| `FLOW-mcp-tool` | `FUNC-graph-suggest` | `FUNC-bind-tools` |
 | `FLOW-mcp-tool-registry` | `FUNC-bind-tools` | `FUNC-serve-stdio` |
 | `FLOW-measurement-vector` | `FUNC-take-steering-snapshot` | `FUNC-generation-step` · `FUNC-next-step` |
 | `FLOW-metric-policy` | `FUNC-load-config` | `FUNC-evaluate-rules` · `FUNC-take-steering-snapshot` |
@@ -171,7 +170,6 @@
 | `FLOW-target-profile-file` | `FUNC-target-profile` | `FUNC-target-profile-load` |
 | `FLOW-test-selection` | `FUNC-deduce-tests` | `ACTOR-agent` · `ACTOR-owner` |
 | `FLOW-tool-context` | `FUNC-tool-context` | `FUNC-bind-tools` |
-| `FLOW-tool-port` | `FUNC-tool-context` | `FUNC-read-tools` |
 | `FLOW-tool-registry` | `FUNC-bind-tools` | `FUNC-serve-stdio` |
 | `FLOW-trajectory` | `FUNC-emit-trajectory` | `ACTOR-learning-engine` |
 | `FLOW-version-bump` | `ACTOR-owner` | `FUNC-migrate-schema` · `FUNC-schema-guard` |

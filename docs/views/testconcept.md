@@ -4,7 +4,7 @@
 
 # graphcode — Test Concept
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 128 TEST — Pyramide nach Modell-Level (System/UC/Function). Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 129 TEST — Pyramide nach Modell-Level (System/UC/Function). Deterministisch generiert.
 
 ```
               ╱╲

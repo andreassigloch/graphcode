@@ -84,7 +84,12 @@ for (const f of dateien) {
       s = s.replace(/^type\s+/, '').split(/\s+as\s+/)[0].trim();
       if (!s) continue;
       if (von === nach) { innen++; continue; }
-      const key = `${ziel}#${s}`;
+      // CR-GC-547: `X` und `XSchema` aus DERSELBEN Datei sind EIN Vertrag mit zwei Gesichtern —
+      // die Zod-Laufzeitform und ihre TS-Sicht. Ungefaltet zaehlt die Grenzmenge beide und
+      // bestraft damit genau den Zod-first-Schritt, den R-32/RC-04 verlangen. Kanonisch ist
+      // die Schema-Form, sofern es sie in derselben Datei gibt.
+      const kanon = s.endsWith('Schema') ? s.slice(0, -'Schema'.length) : s;
+      const key = `${ziel}#${kanon}`;
       if (!grenze.has(key)) grenze.set(key, { typ: istTyp || /^[A-Z]/.test(s) ? 'SCHEMA' : 'FUNC', holer: new Set() });
       grenze.get(key).holer.add(von);
     }
@@ -94,9 +99,10 @@ for (const f of dateien) {
 // ---------------------------------------------------------------------------
 // Gegen das Modell halten
 // ---------------------------------------------------------------------------
+const falte = (sym) => (sym.endsWith('Schema') ? sym.slice(0, -'Schema'.length) : sym);
 const gebunden = (typ) =>
   new Set(graph.elements.filter((e) => e.type === typ && e.realRef?.file && e.realRef?.symbol)
-    .map((e) => `${e.realRef.file}#${e.realRef.symbol}`));
+    .map((e) => `${e.realRef.file}#${falte(e.realRef.symbol)}`));
 const funcGebunden = gebunden('FUNC');
 const schemaGebunden = gebunden('SCHEMA');
 

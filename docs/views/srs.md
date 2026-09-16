@@ -156,7 +156,7 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (int
 
 Stellt jedem Werkzeugaufruf seinen Kontext bereit: Aufrufer, Repo-Wurzel und die Weiterleitung an den Besitzerprozess.
 
-io ◀ `FLOW-gate-verdict` · `FLOW-harness-handle` · io ▶ `FLOW-tool-context` · `FLOW-tool-port` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-gate-verdict` · `FLOW-harness-handle` · io ▶ `FLOW-tool-context` · allocate ▶ `MOD-surface`
 
 ###### `REQ-mcp-tool-registry` — MCP-Tool-Registry an Harness gebunden
 
@@ -582,7 +582,7 @@ Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-inject-graph-slic
 
 Die Lese-Werkzeuge der MCP-Oberflaeche: nehmen die Anfrage des Agenten, rufen die Abfrage im Kern und formen die Antwort. graph_impact und graph_expand serialisieren die Scheibe hier zu Format-E (FormatECodec.serialize, read.ts:358 und 405); graph_impact haengt die Blackbox-Front und das Freshness-Banner an. Der Kern liefert nur Graph bzw. Scheibe. (CR-GC-505)
 
-io ◀ `FLOW-expand-subgraph` · `FLOW-impact-slice` · `FLOW-query-request-agent` · `FLOW-query-request-view-fmea` · `FLOW-tool-port` · io ▶ `FLOW-formatE-artifact-read-tools` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-expand-subgraph` · `FLOW-impact-slice` · `FLOW-query-request-agent` · `FLOW-query-request-view-fmea` · io ▶ `FLOW-formatE-artifact-read-tools` · allocate ▶ `MOD-surface`
 
 ###### `REQ-progressive-expansion` — Progressive Query-Expansion
 
@@ -2292,7 +2292,7 @@ Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FUNC-broadcast-d
 
 Bindet die MCP-Tool-Registry headless an einen stdio-Transport; jeder Agent (Claude Code oder OpenCode, BYOK) ist ein gleichwertiger Client. Beweist agent-agnostisch + headless. (CR-GC-124)
 
-io ◀ `FLOW-harness-handle` · `FLOW-live-event` · `FLOW-mcp-tool` · `FLOW-mcp-tool-registry` · `FLOW-tool-registry` · io ▶ — · allocate ▶ `MOD-surface`
+io ◀ `FLOW-harness-handle` · `FLOW-live-event` · `FLOW-mcp-tool-registry` · `FLOW-tool-registry` · io ▶ — · allocate ▶ `MOD-surface`
 
 ###### `REQ-mcp-tool-registry` — MCP-Tool-Registry an Harness gebunden
 
@@ -2576,7 +2576,7 @@ Verification ◀ `TEST-doc-export` (conformance) · satisfy ◀ `FUNC-export-mar
 
 Bindet die MCP-Tool-Registry headless an einen stdio-Transport; jeder Agent (Claude Code oder OpenCode, BYOK) ist ein gleichwertiger Client. Beweist agent-agnostisch + headless. (CR-GC-124)
 
-io ◀ `FLOW-harness-handle` · `FLOW-live-event` · `FLOW-mcp-tool` · `FLOW-mcp-tool-registry` · `FLOW-tool-registry` · io ▶ — · allocate ▶ `MOD-surface`
+io ◀ `FLOW-harness-handle` · `FLOW-live-event` · `FLOW-mcp-tool-registry` · `FLOW-tool-registry` · io ▶ — · allocate ▶ `MOD-surface`
 
 ###### `REQ-mcp-tool-registry` — MCP-Tool-Registry an Harness gebunden
 
@@ -2666,7 +2666,7 @@ Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param
 
 Die Lese-Werkzeuge der MCP-Oberflaeche: nehmen die Anfrage des Agenten, rufen die Abfrage im Kern und formen die Antwort. graph_impact und graph_expand serialisieren die Scheibe hier zu Format-E (FormatECodec.serialize, read.ts:358 und 405); graph_impact haengt die Blackbox-Front und das Freshness-Banner an. Der Kern liefert nur Graph bzw. Scheibe. (CR-GC-505)
 
-io ◀ `FLOW-expand-subgraph` · `FLOW-impact-slice` · `FLOW-query-request-agent` · `FLOW-query-request-view-fmea` · `FLOW-tool-port` · io ▶ `FLOW-formatE-artifact-read-tools` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-expand-subgraph` · `FLOW-impact-slice` · `FLOW-query-request-agent` · `FLOW-query-request-view-fmea` · io ▶ `FLOW-formatE-artifact-read-tools` · allocate ▶ `MOD-surface`
 
 ###### `REQ-progressive-expansion` — Progressive Query-Expansion
 
@@ -2932,7 +2932,7 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (
 
 Duennes Binding auf @sigloch/se-engine (targetFor/suggestEdits): rankt die feuernden Operator-Regeln nach dem Skalarprodukt aus Metrik-Delta und Zielrichtung im R^6-Metrikraum; liefert die Fund-Ebene, Template-Edits laufen als dryRun durchs Gate. Nie auto-apply. (CR-GC-273, Herkunft korrigiert CR-GC-453)
 
-io ◀ `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-learning-advice` · `FLOW-target-profile` · io ▶ `FLOW-learning-query` · `FLOW-mutate-cmd-graph-suggest` · allocate ▶ `MOD-loop`
+io ◀ `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-learning-advice` · `FLOW-target-profile` · io ▶ `FLOW-learning-query` · `FLOW-mcp-tool` · `FLOW-mutate-cmd-graph-suggest` · allocate ▶ `MOD-loop`
 
 ###### `REQ-applied-suggestion-moves-target` — Eine angewandte Suggestion bewegt den Zielvektor in Zielrichtung
 
@@ -2994,7 +2994,7 @@ Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-inject-graph-slic
 
 Die Lese-Werkzeuge der MCP-Oberflaeche: nehmen die Anfrage des Agenten, rufen die Abfrage im Kern und formen die Antwort. graph_impact und graph_expand serialisieren die Scheibe hier zu Format-E (FormatECodec.serialize, read.ts:358 und 405); graph_impact haengt die Blackbox-Front und das Freshness-Banner an. Der Kern liefert nur Graph bzw. Scheibe. (CR-GC-505)
 
-io ◀ `FLOW-expand-subgraph` · `FLOW-impact-slice` · `FLOW-query-request-agent` · `FLOW-query-request-view-fmea` · `FLOW-tool-port` · io ▶ `FLOW-formatE-artifact-read-tools` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-expand-subgraph` · `FLOW-impact-slice` · `FLOW-query-request-agent` · `FLOW-query-request-view-fmea` · io ▶ `FLOW-formatE-artifact-read-tools` · allocate ▶ `MOD-surface`
 
 ###### `REQ-progressive-expansion` — Progressive Query-Expansion
 
@@ -3086,7 +3086,7 @@ Verification ◀ `TEST-impact-subgraph` (integration) · satisfy ◀ `FUNC-graph
 
 Die Lese-Werkzeuge der MCP-Oberflaeche: nehmen die Anfrage des Agenten, rufen die Abfrage im Kern und formen die Antwort. graph_impact und graph_expand serialisieren die Scheibe hier zu Format-E (FormatECodec.serialize, read.ts:358 und 405); graph_impact haengt die Blackbox-Front und das Freshness-Banner an. Der Kern liefert nur Graph bzw. Scheibe. (CR-GC-505)
 
-io ◀ `FLOW-expand-subgraph` · `FLOW-impact-slice` · `FLOW-query-request-agent` · `FLOW-query-request-view-fmea` · `FLOW-tool-port` · io ▶ `FLOW-formatE-artifact-read-tools` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-expand-subgraph` · `FLOW-impact-slice` · `FLOW-query-request-agent` · `FLOW-query-request-view-fmea` · io ▶ `FLOW-formatE-artifact-read-tools` · allocate ▶ `MOD-surface`
 
 ###### `REQ-progressive-expansion` — Progressive Query-Expansion
 
@@ -3272,7 +3272,7 @@ Verification ◀ `TEST-repo-lifecycle` (integration) · satisfy ◀ `FCHAIN-repo
 
 Bindet die Werkzeug-Registry an einen Harness, sodass jedes Werkzeug ueber dasselbe Gate schreibt wie ein Aufruf im Prozess.
 
-io ◀ `FLOW-harness-handle` · `FLOW-steering-delta` · `FLOW-tool-context` · io ▶ `FLOW-mcp-tool` · `FLOW-mcp-tool-registry` · `FLOW-tool-registry` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-harness-handle` · `FLOW-mcp-tool` · `FLOW-steering-delta` · `FLOW-tool-context` · io ▶ `FLOW-mcp-tool-registry` · `FLOW-tool-registry` · allocate ▶ `MOD-surface`
 
 ###### `REQ-mcp-tool-registry` — MCP-Tool-Registry an Harness gebunden
 
@@ -3818,7 +3818,7 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (int
 
 Bindet die MCP-Tool-Registry headless an einen stdio-Transport; jeder Agent (Claude Code oder OpenCode, BYOK) ist ein gleichwertiger Client. Beweist agent-agnostisch + headless. (CR-GC-124)
 
-io ◀ `FLOW-harness-handle` · `FLOW-live-event` · `FLOW-mcp-tool` · `FLOW-mcp-tool-registry` · `FLOW-tool-registry` · io ▶ — · allocate ▶ `MOD-surface`
+io ◀ `FLOW-harness-handle` · `FLOW-live-event` · `FLOW-mcp-tool-registry` · `FLOW-tool-registry` · io ▶ — · allocate ▶ `MOD-surface`
 
 ###### `REQ-mcp-tool-registry` — MCP-Tool-Registry an Harness gebunden
 
@@ -3860,7 +3860,7 @@ io ◀ — · io ▶ — · allocate ▶ `MOD-kernel`
 
 Bindet die Werkzeug-Registry an einen Harness, sodass jedes Werkzeug ueber dasselbe Gate schreibt wie ein Aufruf im Prozess.
 
-io ◀ `FLOW-harness-handle` · `FLOW-steering-delta` · `FLOW-tool-context` · io ▶ `FLOW-mcp-tool` · `FLOW-mcp-tool-registry` · `FLOW-tool-registry` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-harness-handle` · `FLOW-mcp-tool` · `FLOW-steering-delta` · `FLOW-tool-context` · io ▶ `FLOW-mcp-tool-registry` · `FLOW-tool-registry` · allocate ▶ `MOD-surface`
 
 ###### `REQ-mcp-tool-registry` — MCP-Tool-Registry an Harness gebunden
 
@@ -3946,7 +3946,7 @@ Verification ◀ `TEST-schema-migration` (integration) · satisfy ◀ `FUNC-migr
 
 Stellt jedem Werkzeugaufruf seinen Kontext bereit: Aufrufer, Repo-Wurzel und die Weiterleitung an den Besitzerprozess.
 
-io ◀ `FLOW-gate-verdict` · `FLOW-harness-handle` · io ▶ `FLOW-tool-context` · `FLOW-tool-port` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-gate-verdict` · `FLOW-harness-handle` · io ▶ `FLOW-tool-context` · allocate ▶ `MOD-surface`
 
 ###### `REQ-mcp-tool-registry` — MCP-Tool-Registry an Harness gebunden
 
@@ -4098,7 +4098,7 @@ Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param
 
 Die Lese-Werkzeuge der MCP-Oberflaeche: nehmen die Anfrage des Agenten, rufen die Abfrage im Kern und formen die Antwort. graph_impact und graph_expand serialisieren die Scheibe hier zu Format-E (FormatECodec.serialize, read.ts:358 und 405); graph_impact haengt die Blackbox-Front und das Freshness-Banner an. Der Kern liefert nur Graph bzw. Scheibe. (CR-GC-505)
 
-io ◀ `FLOW-expand-subgraph` · `FLOW-impact-slice` · `FLOW-query-request-agent` · `FLOW-query-request-view-fmea` · `FLOW-tool-port` · io ▶ `FLOW-formatE-artifact-read-tools` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-expand-subgraph` · `FLOW-impact-slice` · `FLOW-query-request-agent` · `FLOW-query-request-view-fmea` · io ▶ `FLOW-formatE-artifact-read-tools` · allocate ▶ `MOD-surface`
 
 ###### `REQ-progressive-expansion` — Progressive Query-Expansion
 
@@ -5202,7 +5202,7 @@ Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ 
 
 Duennes Binding auf @sigloch/se-engine (targetFor/suggestEdits): rankt die feuernden Operator-Regeln nach dem Skalarprodukt aus Metrik-Delta und Zielrichtung im R^6-Metrikraum; liefert die Fund-Ebene, Template-Edits laufen als dryRun durchs Gate. Nie auto-apply. (CR-GC-273, Herkunft korrigiert CR-GC-453)
 
-io ◀ `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-learning-advice` · `FLOW-target-profile` · io ▶ `FLOW-learning-query` · `FLOW-mutate-cmd-graph-suggest` · allocate ▶ `MOD-loop`
+io ◀ `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-learning-advice` · `FLOW-target-profile` · io ▶ `FLOW-learning-query` · `FLOW-mcp-tool` · `FLOW-mutate-cmd-graph-suggest` · allocate ▶ `MOD-loop`
 
 ###### `REQ-applied-suggestion-moves-target` — Eine angewandte Suggestion bewegt den Zielvektor in Zielrichtung
 
@@ -5964,7 +5964,7 @@ io ◀ `FUNC-export-markdown` · io ▶ `ACTOR-owner` · schema ▶ `SCHEMA-mark
 
 Traegt MCPTool ueber die Modulgrenze.
 
-io ◀ `FUNC-bind-tools` · io ▶ `FUNC-serve-stdio` · schema ▶ `SCHEMA-mcp-tool`
+io ◀ `FUNC-graph-suggest` · io ▶ `FUNC-bind-tools` · schema ▶ `SCHEMA-mcp-tool`
 
 ### 4.39  `FLOW-mcp-tool-registry` — Werkzeug-Register
 
@@ -6368,25 +6368,19 @@ Der je Prozess einmal gepraegte Kontext, den jeder Werkzeugaufruf liest: Graphve
 
 io ◀ `FUNC-tool-context` · io ▶ `FUNC-bind-tools` · schema ▶ `SCHEMA-tool-context`
 
-### 4.106  `FLOW-tool-port` — Werkzeug-Port
-
-Traegt ToolPort ueber die Modulgrenze.
-
-io ◀ `FUNC-tool-context` · io ▶ `FUNC-read-tools` · schema ▶ `SCHEMA-tool-port`
-
-### 4.107  `FLOW-tool-registry` — Werkzeug-Register
+### 4.106  `FLOW-tool-registry` — Werkzeug-Register
 
 Das gebundene Werkzeugregister, das der Server ueber stdio anbietet: je Werkzeug Name, Eingabeschema und Handler.
 
 io ◀ `FUNC-bind-tools` · io ▶ `FUNC-serve-stdio` · schema ▶ `SCHEMA-tool-registry`
 
-### 4.108  `FLOW-trajectory` — Trajectory/Outcome
+### 4.107  `FLOW-trajectory` — Trajectory/Outcome
 
 append-only Lern-Emission.
 
 io ◀ `FUNC-emit-trajectory` · io ▶ `ACTOR-learning-engine` · schema ▶ `SCHEMA-trajectory`
 
-### 4.109  `FLOW-version-bump` — Version-Bump
+### 4.108  `FLOW-version-bump` — Version-Bump
 
 Neue ONTOLOGY/RULES_VERSION aus contracts/se.
 
@@ -6672,29 +6666,23 @@ schema ◀ `FLOW-test-selection`
 
 ### 5.47  `SCHEMA-tool-context` — Werkzeug-Kontext
 
-Was jeder Werkzeugaufruf mitbekommt: Codec, Graphversion, Sitzungskennung, Aufrufer und Repo-Wurzel. Spec-only — ein Objekt mit Verhalten, kein Zod-Datenvertrag.
+Was jeder Werkzeugaufruf mitbekommt: Griff, Audit-Log, Codecs, Graphversion, Sitzung, Aufrufer. Zod-Vertrag, geparst in createToolContext; ToolPort ist die segregierte Sicht darauf, erzwungen beim Kompilieren (_portCheck).
 
 schema ◀ `FLOW-tool-context`
 
-### 5.48  `SCHEMA-tool-port` — Werkzeug-Port
-
-Die fuenf Member, die eine Tool-Fabrik tatsaechlich destrukturiert — die Interface-Segregation zum vollen Host-Kontext. Der Kern deklariert, die Oberflaeche erfuellt (ToolContext extends ToolPort).
-
-schema ◀ `FLOW-tool-port`
-
-### 5.49  `SCHEMA-tool-registry` — Werkzeug-Register
+### 5.48  `SCHEMA-tool-registry` — Werkzeug-Register
 
 Die gebundenen MCP-Werkzeuge mit Namen und Eingabeschema. Spec-only — ein Objekt mit Verhalten, kein Zod-Datenvertrag.
 
 schema ◀ `FLOW-tool-registry`
 
-### 5.50  `SCHEMA-trajectory` — Trajectory/Outcome
+### 5.49  `SCHEMA-trajectory` — Trajectory/Outcome
 
 append-only Lern-Emission: ts, consumerId, consumerType, operation, opCounts, applied, outcome und die Violation-Zaehler. @sigloch/learning-core. (Kopie entfernt CR-GC-454)
 
 schema ◀ `FLOW-trajectory`
 
-### 5.51  `SCHEMA-update-event` — UpdateEvent
+### 5.50  `SCHEMA-update-event` — UpdateEvent
 
 SSE invalidate Event: type, domains (graph/rules/readiness/suggestions), ts und optional version. Einmal in contracts definiert, damit emittierender Harness und Viewer denselben Vertrag lesen. (Kopie entfernt CR-GC-454)
 
@@ -7870,31 +7858,37 @@ graph_impact-Kontext ist messbar kleiner als ein Volltext-/grep-Dump desselben S
 
 verify ▶ `REQ-benchmark-harness` · `REQ-precise-context` · `REQ-token-efficiency`
 
-### 8.124  `TEST-uc-authoring-style` — Stilregel fuer Use Cases als Linter
+### 8.124  `TEST-tool-contract` — Werkzeug-Vertrags-Test
+
+Parst die ECHTE Registry aus acht Fabriken an einem echten Harness gegen MCPToolRegistrySchema und den Kontext gegen ToolPortSchema; dazu drei Gegenproben (fehlender handler, inputSchema ohne safeParse, Port ohne serializeToolWrite).
+
+verify ▶ `SCHEMA-mcp-tool` · `SCHEMA-mcp-tool-registry` · `SCHEMA-tool-context` · testRefs: `tests/tool-contract.test.ts`
+
+### 8.125  `TEST-uc-authoring-style` — Stilregel fuer Use Cases als Linter
 
 Abnahme der Datei tests/se-author-uc.test.ts: die Stilregel ist ausfuehrbar statt Prosa. Hoechstens 25 Woerter, hoechstens zwei Fachbegriffe, jeder davon an einem Knoten geerdet, geprueft auch gegen den committeten Graphen.
 
 verify ▶ `REQ-interactive-capture-suggest` · testRefs: `tests/se-author-uc.test.ts`
 
-### 8.125  `TEST-upgrade` — Abnahme des upgrade-Verbs
+### 8.126  `TEST-upgrade` — Abnahme des upgrade-Verbs
 
 Abnahme der Datei tests/upgrade.test.ts: die Reihenfolge macht den Befehl aus. Erst installieren, dann die Artefakte vom NEU installierten Build schreiben lassen, dann den alten Host beenden. Bleibt ein Schritt aus, steht das im Bericht statt als stiller Erfolg. npm und Signale sind injiziert, kein Netz.
 
 verify ▶ `REQ-install-idempotent` · `REQ-repo-update` · testRefs: `tests/upgrade.test.ts`
 
-### 8.126  `TEST-views-auditor` — Sichten fuer den Auditor
+### 8.127  `TEST-views-auditor` — Sichten fuer den Auditor
 
 Abnahme der Datei tests/views.auditor.test.ts: die Nachweismatrix zeigt, auf welcher Ebene eine Anforderung sitzt, und die Verifikationsmatrix, welcher Test eine Schnittstelle zwischen zwei Funktionen abdeckt. Beides stand im Graphen und war ohne Lauf nicht lesbar.
 
 verify ▶ `REQ-doc-export` · `REQ-readiness-model` · testRefs: `tests/views.auditor.test.ts`
 
-### 8.127  `TEST-views-conformance` — Eine Sicht liest nur Deklariertes
+### 8.128  `TEST-views-conformance` — Eine Sicht liest nur Deklariertes
 
 Abnahme der Datei tests/views.conformance.test.ts: eine Sicht darf nur lesen, was Ontologie und Regeln deklarieren. Die Fehlerklasse dagegen ist die volle Konformitaet auf einer leeren Sicht, also ein gruener Bericht ueber nichts.
 
 verify ▶ `REQ-doc-export` · `REQ-shared-views-no-fork` · testRefs: `tests/views.conformance.test.ts`
 
-### 8.128  `TEST-violation-context` — Reparatur-Kontext am Verstoss
+### 8.129  `TEST-violation-context` — Reparatur-Kontext am Verstoss
 
 Abnahme der Datei tests/mcp.violation-context.test.ts: die Regel-Werkzeuge reichen den Reparatur-Kontext der Contracts durch, statt ihn flachzuklopfen. Wer einen Verstoss aufloest, bekommt Hinweis und Kandidaten aus derselben Antwort, ohne eine zweite Abfrage.
 
