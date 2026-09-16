@@ -30,6 +30,9 @@ import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { hostname } from 'node:os';
 import { PACKAGE_NAME } from './scaffold-templates.js';
+// CR-GC-538: die Bestandsquelle. Dieselbe Funktion, die `graphcode skills sync` fährt —
+// im Trockenlauf, damit `--check` nichts schreibt.
+import { syncSkills, type SkillSyncResult } from './scaffold.js';
 import { readPackageVersion } from '../kernel/package-version.js';
 import { readHostStatus, readRepoInstallVersion, compareVersions } from './status.js';
 // „Lebt diese PID" hat EINEN Besitzer (CR-GC-452) — die lokale Kopie ist geloescht.
@@ -73,6 +76,11 @@ export interface UpgradeDeps {
   hostnameImpl?: () => string;
   cliVersion?: string;
   sleep?: (ms: number) => Promise<void>;
+  /**
+   * CR-GC-538: der Bestands-Trockenlauf; injizierbar, damit ein Test den Fehlbestand
+   * stellen kann, ohne die ausgelieferten Skills des laufenden Pakets zu verändern.
+   */
+  syncSkillsImpl?: (repoRoot: string, options: { dry?: boolean }) => SkillSyncResult;
 }
 
 export interface UpgradeReport {
@@ -81,11 +89,76 @@ export interface UpgradeReport {
   repoBefore?: string;
   repoAfter?: string;
   hostBefore?: string;
-  /** Hinkte vor dem Lauf irgendetwas hinter dem Ziel her? */
+  /**
+   * Hinkte vor dem Lauf irgendetwas her? Seit CR-GC-538 aus DREI unabhängig erhobenen
+   * Quellen: die drei Versionsnummern, der Artefakt-Bestand (`missingSkills`) und der
+   * Stand der Familienpakete (`staleDeps`). Vorher war es nur die erste — und eine
+   * Kennzahl ohne Gegenzahl misst ihre eigene Existenz.
+   */
   drift: boolean;
+  /**
+   * CR-GC-538: ausgelieferte Skills, die im Repo FEHLEN (Trockenlauf von `syncSkills`).
+   * Der Fall, der den CR ausgelöst hat: bok meldete "aktuell" bei gleicher Version,
+   * während `se/optimize.md` von 31 Skills fehlte. Strukturell unsichtbar für eine
+   * Versionsprüfung, weil bok `@sigloch/graphcode` als SYMLINK auf den Arbeitsbaum
+   * fährt — ein dort ergänzter Skill bekommt nie einen Versions-Bump.
+   */
+  missingSkills: string[];
+  /**
+   * CR-GC-538 (graphcode-Hälfte von ITEM-2026-107): Familienpakete, die hinter dem
+   * zurückliegen, was ihr eigener Range schon zulässt. Ohne sie meldet jedes Repo
+   * "aktuell", während ein Zug, der nur contracts oder den Viewer bewegt hat, nicht
+   * angekommen ist. Aus `npm outdated` — npms eigene Antwort, keine zweite Rechnung.
+   */
+  staleDeps: Array<{ name: string; current: string; wanted: string }>;
+  /**
+   * Konnte der Bestand überhaupt erhoben werden? `false` heisst NICHT "alles gut",
+   * sondern "nicht geprüft" — ein Urteil ohne Reichweite ist schlimmer als keins,
+   * also steht die Blindheit im Bericht statt unter einem grünen Haken.
+   */
+  depsChecked: boolean;
   /** Was getan (oder bewusst nicht getan) wurde, in Reihenfolge. */
   steps: string[];
   hostStopped: boolean;
+}
+
+/**
+ * CR-GC-538: der Stand der @sigloch-Familienpakete, aus `npm outdated --json`.
+ *
+ * `current` ist, was liegt; `wanted` ist, was der deklarierte Range schon hergäbe.
+ * Beides npms eigene Antwort — hier wird kein Range selbst aufgelöst. Nur die Familie,
+ * nie fremde Abhängigkeiten: für die ist dieser Befehl nicht zuständig.
+ *
+ * `npm outdated` endet mit Status 1, SOBALD etwas veraltet ist — das ist kein Fehler,
+ * sondern sein Ergebnis. Unterschieden wird an der Ausgabe: parsebares JSON = geprüft,
+ * alles andere = nicht prüfbar (und das wird gesagt, nicht verschwiegen).
+ */
+function familyDrift(
+  repoRoot: string,
+  run: NonNullable<UpgradeDeps['run']>,
+): { checked: boolean; stale: Array<{ name: string; current: string; wanted: string }> } {
+  const r = run('npm', ['outdated', '--json', '--long=false'], repoRoot);
+  const raw = r.stdout.trim();
+  if (!raw) {
+    // Leere Ausgabe bei Status 0 heisst bei `npm outdated`: nichts veraltet.
+    return r.status === 0 ? { checked: true, stale: [] } : { checked: false, stale: [] };
+  }
+  let parsed: Record<string, { current?: string; wanted?: string }>;
+  try {
+    parsed = JSON.parse(raw) as Record<string, { current?: string; wanted?: string }>;
+  } catch {
+    return { checked: false, stale: [] };
+  }
+  const stale: Array<{ name: string; current: string; wanted: string }> = [];
+  for (const [name, e] of Object.entries(parsed)) {
+    if (!name.startsWith('@sigloch/')) continue;
+    // Ohne `current` ist das Paket gar nicht installiert — das ist ein anderer Befund
+    // (fehlende Abhängigkeit) und gehört nicht in diese Zahl.
+    if (!e.current || !e.wanted) continue;
+    if (compareVersions(e.current, e.wanted) < 0) stale.push({ name, current: e.current, wanted: e.wanted });
+  }
+  stale.sort((a, b) => a.name.localeCompare(b.name));
+  return { checked: true, stale };
 }
 
 function defaultRun(cmd: string, args: string[], cwd: string): { status: number; stdout: string; stderr: string } {
@@ -157,13 +230,24 @@ export async function executeUpgrade(opts: UpgradeOptions, deps: UpgradeDeps = {
   }
 
   const behind = (v: string | undefined): boolean => typeof v === 'string' && compareVersions(v, target) < 0;
+  const versionDrift =
+    behind(repoBefore) || behind(hostBefore) || behind(cli) || (host.state === 'running' && !hostBefore);
+
+  // CR-GC-538: die zweite und dritte Quelle. BEIDE beschreiben den Zustand VOR dem Lauf,
+  // werden also auch im Ernstfall erhoben — `drift` ist eine Aussage über das Vorher.
+  const missingSkills = (deps.syncSkillsImpl ?? syncSkills)(repoRoot, { dry: true }).added;
+  const family = familyDrift(repoRoot, run);
+
   const report: UpgradeReport = {
     target,
     cli,
     repoBefore,
     repoAfter: repoBefore,
     hostBefore,
-    drift: behind(repoBefore) || behind(hostBefore) || behind(cli) || (host.state === 'running' && !hostBefore),
+    drift: versionDrift || missingSkills.length > 0 || family.stale.length > 0,
+    missingSkills,
+    staleDeps: family.stale,
+    depsChecked: family.checked,
     steps: [],
     hostStopped: false,
   };
@@ -240,6 +324,16 @@ export function formatUpgrade(r: UpgradeReport, check: boolean): string {
     `  CLI          ${r.cli}`,
     `  Repo-Install ${r.repoAfter ?? '—'}${r.repoBefore !== r.repoAfter ? ` (vorher ${r.repoBefore ?? '—'})` : ''}`,
     `  Host         ${r.hostBefore ?? (r.hostStopped ? 'beendet' : 'läuft nicht')}`,
+    // CR-GC-538: der BESTAND neben den Versionsnummern. Er steht auch dann da, wenn er
+    // leer ist — sonst sieht "nicht geprüft" aus wie "nichts gefunden".
+    `  Artefakte    ${r.missingSkills.length === 0 ? 'vollständig' : `${r.missingSkills.length} fehlen: ${r.missingSkills.join(', ')}`}`,
+    `  Familie      ${
+      !r.depsChecked
+        ? 'NICHT GEPRÜFT — npm outdated nicht auswertbar'
+        : r.staleDeps.length === 0
+          ? 'im Range aktuell'
+          : r.staleDeps.map((d) => `${d.name} ${d.current}→${d.wanted}`).join(', ')
+    }`,
   ].join('\n');
   const verdict = check ? (r.drift ? '\n  → veraltet: `graphcode upgrade`' : '\n  → aktuell') : '';
   return `${head}\n${state}\n${r.steps.map((s) => `  · ${s}`).join('\n')}${verdict}\n`;

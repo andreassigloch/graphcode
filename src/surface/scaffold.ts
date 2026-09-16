@@ -271,29 +271,40 @@ function removeLegacySkills(repoRoot: string, res: InstallResult): void {
  * Reuses `shippedSkillFiles()` + `parseSkillFrontmatter()` — no parallel copy path. A shipped
  * version LOWER than the target is never written back (the package is the source of truth, but
  * we don't downgrade a member who is somehow ahead — report `unchanged`).
+ *
+ * CR-GC-538: `options.dry` klassifiziert, ohne zu schreiben — dieselbe Einteilung, nur ohne
+ * Wirkung. Das ist der BESTAND, den `upgrade --check` gegen die Versionsgleichheit hält:
+ * `added.length > 0` heisst "ein Artefakt fehlt", und das kann eine reine Versionsprüfung
+ * prinzipiell nicht sehen, wenn das Paket ein Symlink auf einen Arbeitsbaum ist. Kein
+ * zweiter Pfad: eine Funktion, ein Schalter — sonst liefe der Trockenlauf gegen eine andere
+ * Einteilung als der Ernstfall und der Bericht wäre wertlos.
  */
-export function syncSkills(repoRoot: string): SkillSyncResult {
+export function syncSkills(repoRoot: string, options: { dry?: boolean } = {}): SkillSyncResult {
+  const dry = options.dry === true;
   const res: SkillSyncResult = { repoRoot, added: [], updated: [], unchanged: [] };
   const srcDir = packagedSkillsDir();
   const files = shippedSkillFiles();
   if (files.length === 0) return res; // skills not packaged — nothing to sync.
   // Alt-Layout-Migration läuft auch über sync (nicht nur init/update) — sonst
   // koexistieren Command- und Legacy-Kopie bis zum nächsten `graphcode update`.
-  removeLegacySkills(repoRoot, { action: 'update', repoRoot, created: [], updated: [], removed: [], preserved: [] });
+  // CR-GC-538: im Trockenlauf NICHT — `--check` darf keine Datei anfassen, auch keine alte.
+  if (!dry) {
+    removeLegacySkills(repoRoot, { action: 'update', repoRoot, created: [], updated: [], removed: [], preserved: [] });
+  }
   for (const f of files) {
     const rel = join(COMMANDS_DIR, f);
     const content = readFileSync(join(srcDir, f), 'utf8');
     const destAbs = join(repoRoot, COMMANDS_DIR, f);
-    mkdirSync(dirname(destAbs), { recursive: true });
+    if (!dry) mkdirSync(dirname(destAbs), { recursive: true });
     if (!existsSync(destAbs)) {
-      writeFileSync(destAbs, content, 'utf8');
+      if (!dry) writeFileSync(destAbs, content, 'utf8');
       res.added.push(rel);
       continue;
     }
     const shippedVersion = parseSkillFrontmatter(content).version;
     const targetVersion = parseSkillFrontmatter(readFileSync(destAbs, 'utf8')).version;
     if (shippedVersion > targetVersion) {
-      writeFileSync(destAbs, content, 'utf8');
+      if (!dry) writeFileSync(destAbs, content, 'utf8');
       res.updated.push(rel);
     } else {
       res.unchanged.push(rel);
