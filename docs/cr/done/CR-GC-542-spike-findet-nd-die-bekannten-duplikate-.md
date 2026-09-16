@@ -1,6 +1,6 @@
 # CR-GC-542: SPIKE: findet ND die bekannten Duplikate? Known-Answer-Test gegen drei belegte Paare des Zuges 2026-09-16, bevor ND-01/02 aus notInGate ins Gate wandern
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-16)
 **Typ:** aus Item ITEM-2026-211 (idea)
 **Erstellt:** 2026-09-16
 **Item:** bok/items/ITEM-2026-211.json (Lane: code)
