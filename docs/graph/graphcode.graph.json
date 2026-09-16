@@ -1541,6 +1541,12 @@
       "description": "docs/cr/open/CR-GC-545-grenzmengen-messung-welche-func-muessen-.md"
     },
     {
+      "id": "CR-GC-546",
+      "type": "CR",
+      "name": "Grenzvertraege Modul 1 (tool-contract.ts) modellieren und den Kennzahlen-Verlauf mitschreiben - Recorder scripts/kennzahlen.mjs, Reihe in docs/records/kennzahlen.md",
+      "description": "docs/cr/open/CR-GC-546-grenzvertraege-modul-1-tool-contract-ts-.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -1933,6 +1939,18 @@
       "description": "Die deterministisch nach docs/views exportierten Markdown-Sichten mit GENERATED-Header, erzeugt vom Exporter beim Re-Export des SSOT.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "id": "FLOW-mcp-tool",
+      "type": "FLOW",
+      "name": "Werkzeug",
+      "description": "Traegt MCPTool ueber die Modulgrenze."
+    },
+    {
+      "id": "FLOW-mcp-tool-registry",
+      "type": "FLOW",
+      "name": "Werkzeug-Register",
+      "description": "Traegt MCPToolRegistry ueber die Modulgrenze."
     },
     {
       "id": "FLOW-measurement-vector",
@@ -2373,6 +2391,12 @@
       "type": "FLOW",
       "name": "Werkzeug-Kontext",
       "description": "Der je Prozess einmal gepraegte Kontext, den jeder Werkzeugaufruf liest: Graphversion, Sitzungskennung, Aufrufer, Repo-Wurzel."
+    },
+    {
+      "id": "FLOW-tool-port",
+      "type": "FLOW",
+      "name": "Werkzeug-Port",
+      "description": "Traegt ToolPort ueber die Modulgrenze."
     },
     {
       "id": "FLOW-tool-registry",
@@ -5612,6 +5636,28 @@
       "contract": "Framework-validiert: z.array(MarkdownViewSchema) im graph_export-Tool-Input (MCP-Registry parst vor dem Handler); Deklaration src/exporter.ts MarkdownViewSchema (realRef)"
     },
     {
+      "id": "SCHEMA-mcp-tool",
+      "type": "SCHEMA",
+      "name": "Werkzeug",
+      "description": "Was ein Werkzeug IST: Name, Beschreibung, Eingabe-Schema, Handler. Liegt seit CR-GC-480 im Kern, damit keine Schicht das Interface ihrer Oberflaeche kennen muss.",
+      "realRef": {
+        "file": "src/kernel/tool-contract.ts",
+        "symbol": "MCPTool",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "SCHEMA-mcp-tool-registry",
+      "type": "SCHEMA",
+      "name": "Werkzeug-Register",
+      "description": "Die Abbildung Name -> Werkzeug, mit der eine Schicht ihre Werkzeuge uebergibt. Der Vertrag zwischen Tool-Fabrik und Host-Bindung.",
+      "realRef": {
+        "file": "src/kernel/tool-contract.ts",
+        "symbol": "MCPToolRegistry",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "SCHEMA-measurement-vector",
       "type": "SCHEMA",
       "name": "Messvektor (Vertrag der vier Entscheidungen)",
@@ -5877,6 +5923,17 @@
       "name": "Werkzeug-Kontext",
       "description": "Was jeder Werkzeugaufruf mitbekommt: Codec, Graphversion, Sitzungskennung, Aufrufer und Repo-Wurzel. Spec-only — ein Objekt mit Verhalten, kein Zod-Datenvertrag.",
       "concept": true
+    },
+    {
+      "id": "SCHEMA-tool-port",
+      "type": "SCHEMA",
+      "name": "Werkzeug-Port",
+      "description": "Die fuenf Member, die eine Tool-Fabrik tatsaechlich destrukturiert — die Interface-Segregation zum vollen Host-Kontext. Der Kern deklariert, die Oberflaeche erfuellt (ToolContext extends ToolPort).",
+      "realRef": {
+        "file": "src/kernel/tool-contract.ts",
+        "symbol": "ToolPort",
+        "lang": "ts"
+      }
     },
     {
       "id": "SCHEMA-tool-registry",
@@ -11124,6 +11181,11 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-546",
+      "target": "MOD-kernel",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -12829,6 +12891,26 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "FLOW-mcp-tool",
+      "target": "FUNC-serve-stdio",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-mcp-tool",
+      "target": "SCHEMA-mcp-tool",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-mcp-tool-registry",
+      "target": "FUNC-serve-stdio",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-mcp-tool-registry",
+      "target": "SCHEMA-mcp-tool-registry",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-measurement-vector",
       "target": "FUNC-generation-step",
       "type": "io"
@@ -13758,6 +13840,16 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-tool-port",
+      "target": "FUNC-read-tools",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-tool-port",
+      "target": "SCHEMA-tool-port",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-tool-registry",
       "target": "FUNC-serve-stdio",
       "type": "io"
@@ -13894,6 +13986,16 @@
       "source": "FUNC-bind-tools",
       "target": "MOD-surface",
       "type": "allocate"
+    },
+    {
+      "source": "FUNC-bind-tools",
+      "target": "FLOW-mcp-tool",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-bind-tools",
+      "target": "FLOW-mcp-tool-registry",
+      "type": "io"
     },
     {
       "source": "FUNC-bind-tools",
@@ -16076,6 +16178,11 @@
     {
       "source": "FUNC-tool-context",
       "target": "FLOW-tool-context",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-tool-context",
+      "target": "FLOW-tool-port",
       "type": "io"
     },
     {
@@ -18904,5 +19011,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 284
+  "graphVersion": 287
 }

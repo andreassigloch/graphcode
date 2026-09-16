@@ -16,7 +16,11 @@
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join, dirname, normalize } from 'node:path';
 
-const REPO = process.argv[2] ?? '/Users/andreas/Developer/dev/graphcode';
+/**
+ * Die Messung als Funktion — CR-GC-546 braucht dieselben Zahlen fuer den Kennzahlen-Verlauf,
+ * und eine zweite Rechnung waere ein zweites Ergebnis. Ein Rechenweg, zwei Aufrufer.
+ */
+export function messeGrenzmenge(REPO = '/Users/andreas/Developer/dev/graphcode') {
 const MEMBER = REPO.split('/').pop();
 const graph = JSON.parse(readFileSync(join(REPO, `docs/graph/${MEMBER}.graph.json`), 'utf8'));
 
@@ -106,7 +110,11 @@ const zeile = (typ, menge, modell) => {
   return { typ, pflicht: menge.length, da: da.length, fehlt, extra: [...modell].filter((k) => !grenze.has(k)) };
 };
 const r = [zeile('FUNC', pflicht.FUNC, funcGebunden), zeile('SCHEMA', pflicht.SCHEMA, schemaGebunden)];
+  return { MEMBER, graph, direkt, pfade, dateien, innen, grenze, blind, r, fmt };
+}
 
+/** Der Bericht — nur beim direkten Aufruf. */
+function bericht({ MEMBER, graph, direkt, pfade, dateien, innen, grenze, blind, r, fmt }) {
 console.log(`# Grenzmenge — ${MEMBER} (graphVersion ${graph.graphVersion})\n`);
 console.log(`Datei→MOD: ${direkt.size} Dateien direkt gebunden, ${pfade.length} MOD mit \`path\`.`);
 console.log(`${dateien.length} Quelldateien unter \`src/\`, ${innen} modul-INTERNE Import-Bindungen ` +
@@ -133,3 +141,6 @@ if (blind.size > 0) {
   console.log('Dateien ohne MOD an einem Ende des Imports — bis dorthin reicht die Aussage nicht:\n');
   for (const b of [...blind].sort()) console.log(`- \`${b}\``);
 }
+}
+
+if (import.meta.url === `file://${process.argv[1]}`) bericht(messeGrenzmenge(process.argv[2] ?? undefined));
