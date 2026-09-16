@@ -166,24 +166,66 @@ export async function buildRoundInjection(
     }
   }
 
-  if (registry['graph_elements']) {
+  const elementsTool = registry['graph_elements'];
+  if (elementsTool) {
     try {
-      const res = (await registry['graph_elements'].handler({})) as {
-        nodes?: { uid: string; type: string; name: string }[];
-      };
-      const nodes = [...(res.nodes ?? [])].sort((a, b) => a.uid.localeCompare(b.uid));
+      // CR-GC-539: durch DIESELBE Schema-Schicht, die der MCP-Server davorschaltet
+      // (mcp-server.ts). Der rohe `handler({})` lief daran vorbei — `input.limit` war
+      // `undefined`, also gab `nodes.slice(0, undefined)` den GANZEN Graphen heraus (757
+      // Knoten am graphcode-Modell), und gebremst hat das nur der Zeichen-Deckel.
+      //
+      // GEMESSEN ist der Schaden aber ein anderer, als "zu viel" vermuten laesst: der Deckel
+      // kappte ohnehin bei ~100 Zeilen — nur eben bei den ERSTEN 100 uid-sortierten des
+      // ganzen Graphen. Bei Fokus UC/FCHAIN war davon KEIN EINZIGER ein UC oder FCHAIN
+      // (100 von 100 Fremdtypen). Der Agent bekam eine Liste, in der genau das fehlte,
+      // woran er arbeitete — das Gegenteil der need-to-know-Whitebox (Leitlinie Satz 6).
+      const parse = (arg: Record<string, unknown>): unknown => elementsTool.inputSchema.parse(arg);
+      /** Der DEKLARIERTE Default, nicht eine zweite Zahl an dieser Stelle. */
+      const limit = (parse({}) as { limit: number }).limit;
+
+      // Mit Fokus-Typen je Typ abfragen — `type` ist der deklarierte Parameter des Tools.
+      // Nachtraeglich zu filtern waere sinnlos: die ersten `limit` uid-sortierten Knoten des
+      // GANZEN Graphen enthalten von einem Fokus-Typ womoeglich keinen einzigen. So wirkt der
+      // Fokus ab Runde 1 statt erst bei Zeichenueberlauf.
+      const abfragen = focusTypes.length > 0 ? focusTypes.map((type) => ({ type })) : [{}];
+      const jeTyp: { uid: string; type: string; name: string }[][] = [];
+      // `total` ist die Zahl VOR dem Zuschnitt — sonst untertreibt der Rest-Hinweis, sobald
+      // ein Typ mehr als `limit` Knoten hat (der Aufruf selbst liefert dann ja nur `limit`).
+      let gesamt = 0;
+      for (const arg of abfragen) {
+        const res = (await elementsTool.handler(parse(arg))) as {
+          nodes?: { uid: string; type: string; name: string }[];
+          total?: number;
+        };
+        const liste = [...(res.nodes ?? [])].sort((a, b) => a.uid.localeCompare(b.uid));
+        gesamt += res.total ?? liste.length;
+        jeTyp.push(liste);
+      }
+
+      // Reihum, damit die Gesamtkappe keinen Fokus-Typ aushungert: bei zwei Typen mit je
+      // 100 Knoten bekaeme sonst der alphabetisch fruehere alles und der andere nichts.
+      const nodes: { uid: string; type: string; name: string }[] = [];
+      for (let i = 0; nodes.length < limit; i++) {
+        const runde = jeTyp.filter((liste) => i < liste.length);
+        if (runde.length === 0) break;
+        for (const liste of runde) {
+          if (nodes.length >= limit) break;
+          nodes.push(liste[i]);
+        }
+      }
+      nodes.sort((a, b) => a.uid.localeCompare(b.uid));
+
       if (nodes.length > 0) {
         const toLine = (n: { uid: string; type: string; name: string }): string =>
           `${n.uid} · ${n.type} · ${n.name}`;
-        let selected = nodes;
-        let note = '';
-        if (nodes.map(toLine).join('\n').length > INDEX_CHAR_BUDGET && focusTypes.length > 0) {
-          const keep = new Set(focusTypes);
-          selected = nodes.filter((n) => keep.has(n.type));
-          note =
-            `(auf die Fokus-Typen ${focusTypes.join('/')} gefiltert — ` +
-            `${nodes.length - selected.length} weitere Elemente via graph_elements)`;
-        }
+        const selected = nodes;
+        let note =
+          focusTypes.length > 0
+            ? `(auf die Fokus-Typen ${focusTypes.join('/')} beschraenkt` +
+              (gesamt > nodes.length ? ` — ${gesamt - nodes.length} weitere davon via graph_elements)` : ')')
+            : gesamt > nodes.length
+              ? `(${gesamt - nodes.length} weitere Elemente via graph_elements)`
+              : '';
         let lines = selected.map(toLine);
         // Harte Kappe: deterministisch von vorn (uid-sortiert), Rest als Zähler.
         let total = 0;
