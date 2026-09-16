@@ -1517,6 +1517,12 @@
       "description": "docs/cr/done/CR-GC-535-*.md"
     },
     {
+      "id": "CR-GC-540",
+      "type": "CR",
+      "name": "Modellzug nach der Format-E-Konsolidierung: SCHEMA-format-e und FUNC-encode neu binden (Lane graph, nach der Integration)",
+      "description": "docs/cr/open/CR-GC-540-modellzug-nach-der-format-e-konsolidieru.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -2738,7 +2744,7 @@
       "id": "FUNC-decode",
       "type": "FUNC",
       "name": "decode(json)",
-      "description": "Format-E → OntologyGraph, Validierung gegen SE_DESCRIPTOR. (CR-GC-103)",
+      "description": "Format-E → Graph. Das Parsen delegiert an FormatECodec.parse (der eine Parser); graphcode-eigen bleibt die Rekonstruktion aus dem Operations-Diff samt onUnnamed (CR-GC-321) und der Implicit-Add-Ablehnung (CR-GC-310). (CR-GC-103, CR-GC-536)",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "updated_at": "2026-06-17T00:00:00.000Z",
@@ -2797,7 +2803,7 @@
       "id": "FUNC-encode",
       "type": "FUNC",
       "name": "encode(graph)",
-      "description": "Deterministische Format-E-Serialisierung (stabile Sortierung), Diff-Dialekt. (CR-GC-103, R3/R5)",
+      "description": "Serialisiert einen Graph als Format-E. Seit CR-GC-536 eine DELEGATION an FormatECodec.serialize(g, {roundTrip:true}) in @sigloch/graph-api-core — graphcode erzeugt selbst keinen Format-E-Text mehr. Determinismus, Rundlauf und Pruefung liegen im einen Codec (REQ-formatE-parity: single codec, no fork).",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "updated_at": "2026-06-17T00:00:00.000Z",
@@ -5446,7 +5452,7 @@
       "zodDefinition": null,
       "external": true,
       "realRef": {
-        "file": "packages/contracts/src/se/format-e-parser.ts",
+        "file": "packages/graph-api-core/src/types.ts",
         "symbol": "FormatEDiff",
         "lang": "ts"
       }
@@ -18874,5 +18880,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 275
+  "graphVersion": 279
 }

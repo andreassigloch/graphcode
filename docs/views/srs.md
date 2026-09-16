@@ -408,7 +408,7 @@ Verification ◀ `TEST-capture` (integration) · satisfy ◀ `FCHAIN-capture` ·
 
 > auch in: `FCHAIN-codec-roundtrip` · `FUNC-block-gedaechtnis`
 
-Format-E → OntologyGraph, Validierung gegen SE_DESCRIPTOR. (CR-GC-103)
+Format-E → Graph. Das Parsen delegiert an FormatECodec.parse (der eine Parser); graphcode-eigen bleibt die Rekonstruktion aus dem Operations-Diff samt onUnnamed (CR-GC-321) und der Implicit-Add-Ablehnung (CR-GC-310). (CR-GC-103, CR-GC-536)
 
 io ◀ `FLOW-formatE-artifact-agent` · io ▶ — · allocate ▶ `MOD-projections`
 
@@ -486,7 +486,7 @@ Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FCHAIN-codec-rou
 
 > auch in: `FCHAIN-capture` · `FUNC-block-gedaechtnis`
 
-Format-E → OntologyGraph, Validierung gegen SE_DESCRIPTOR. (CR-GC-103)
+Format-E → Graph. Das Parsen delegiert an FormatECodec.parse (der eine Parser); graphcode-eigen bleibt die Rekonstruktion aus dem Operations-Diff samt onUnnamed (CR-GC-321) und der Implicit-Add-Ablehnung (CR-GC-310). (CR-GC-103, CR-GC-536)
 
 io ◀ `FLOW-formatE-artifact-agent` · io ▶ — · allocate ▶ `MOD-projections`
 
@@ -502,7 +502,7 @@ Verification ◀ `TEST-codec-validation` (integration) · `TEST-roundtrip` (conf
 
 > auch in: `FUNC-block-gedaechtnis`
 
-Deterministische Format-E-Serialisierung (stabile Sortierung), Diff-Dialekt. (CR-GC-103, R3/R5)
+Serialisiert einen Graph als Format-E. Seit CR-GC-536 eine DELEGATION an FormatECodec.serialize(g, {roundTrip:true}) in @sigloch/graph-api-core — graphcode erzeugt selbst keinen Format-E-Text mehr. Determinismus, Rundlauf und Pruefung liegen im einen Codec (REQ-formatE-parity: single codec, no fork).
 
 io ◀ `FLOW-graph-state` · io ▶ — · allocate ▶ `MOD-projections`
 
@@ -4402,7 +4402,7 @@ io ◀ — · io ▶ — · allocate ▶ `MOD-projections`
 
 > auch in: `FCHAIN-capture` · `FCHAIN-codec-roundtrip`
 
-Format-E → OntologyGraph, Validierung gegen SE_DESCRIPTOR. (CR-GC-103)
+Format-E → Graph. Das Parsen delegiert an FormatECodec.parse (der eine Parser); graphcode-eigen bleibt die Rekonstruktion aus dem Operations-Diff samt onUnnamed (CR-GC-321) und der Implicit-Add-Ablehnung (CR-GC-310). (CR-GC-103, CR-GC-536)
 
 io ◀ `FLOW-formatE-artifact-agent` · io ▶ — · allocate ▶ `MOD-projections`
 
@@ -4450,7 +4450,7 @@ Verification ◀ `TEST-create-harness-smoke` (integration) · `TEST-learning-emi
 
 > auch in: `FCHAIN-codec-roundtrip`
 
-Deterministische Format-E-Serialisierung (stabile Sortierung), Diff-Dialekt. (CR-GC-103, R3/R5)
+Serialisiert einen Graph als Format-E. Seit CR-GC-536 eine DELEGATION an FormatECodec.serialize(g, {roundTrip:true}) in @sigloch/graph-api-core — graphcode erzeugt selbst keinen Format-E-Text mehr. Determinismus, Rundlauf und Pruefung liegen im einen Codec (REQ-formatE-parity: single codec, no fork).
 
 io ◀ `FLOW-graph-state` · io ▶ — · allocate ▶ `MOD-projections`
 
