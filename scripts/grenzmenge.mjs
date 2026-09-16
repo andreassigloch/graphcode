@@ -20,9 +20,16 @@ import { join, dirname, normalize } from 'node:path';
  * Die Messung als Funktion — CR-GC-546 braucht dieselben Zahlen fuer den Kennzahlen-Verlauf,
  * und eine zweite Rechnung waere ein zweites Ergebnis. Ein Rechenweg, zwei Aufrufer.
  */
-export function messeGrenzmenge(REPO = '/Users/andreas/Developer/dev/graphcode') {
-const MEMBER = REPO.split('/').pop();
-const graph = JSON.parse(readFileSync(join(REPO, `docs/graph/${MEMBER}.graph.json`), 'utf8'));
+export function messeGrenzmenge(REPO = process.cwd()) {
+const MEMBER = REPO.replace(/\/+$/, '').split('/').pop();
+// Greenfield: noch kein Snapshot, noch kein src/. Das ist ein ZUSTAND, kein Fehler — die
+// Null-Zeile eines neuen Projekts muss gezogen werden koennen, sonst hat „start -> ende"
+// keinen Start (CR-GC-548). `leer` sagt es der Zeile, statt eine Null zu erfinden.
+const snapshotPfad = join(REPO, `docs/graph/${MEMBER}.graph.json`);
+const graph = existsSync(snapshotPfad)
+  ? JSON.parse(readFileSync(snapshotPfad, 'utf8'))
+  : { graphVersion: 0, elements: [], traces: [] };
+const quellDir = join(REPO, 'src');
 
 // ---------------------------------------------------------------------------
 // Datei -> MOD, beide Wege wie `buildModResolver` in contracts (CR-SM-268)
@@ -51,11 +58,14 @@ const walk = (d, out = []) => {
   for (const e of readdirSync(d, { withFileTypes: true })) {
     const p = join(d, e.name);
     if (e.isDirectory()) walk(p, out);
-    else if (/\.ts$/.test(e.name) && !/\.d\.ts$/.test(e.name)) out.push(p.slice(REPO.length + 1));
+    // CR-GC-548: nicht nur .ts — graph-view-edit ist JSX, und ein Projekt, das der Laeufer
+    // nicht liest, meldet 0 Grenzsymbole statt „nicht gemessen". Das ist derselbe Fehler,
+    // den `skipped`/`importCoverage` in der Familie ueberall sonst vermeiden.
+    else if (/\.(ts|tsx|js|jsx|mjs)$/.test(e.name) && !/\.d\.ts$/.test(e.name)) out.push(p.slice(REPO.length + 1));
   }
   return out;
 };
-const dateien = walk(join(REPO, 'src'));
+const dateien = existsSync(quellDir) ? walk(quellDir) : [];
 
 const IMPORT = /import\s+(type\s+)?\{([^}]*)\}\s+from\s+'([^']+)'/g;
 /** Grenzsymbol -> { typ, holer: Set<MOD> } */
@@ -69,12 +79,15 @@ for (const f of dateien) {
   for (const m of text.matchAll(IMPORT)) {
     const quelle = m[3];
     if (!quelle.startsWith('.')) continue; // Paket-Importe: RC-06s Gebiet, nicht MOD-Grenze
-    let ziel = normalize(join(dirname(f), quelle)).replace(/\.js$/, '.ts');
-    if (!existsSync(join(REPO, ziel))) {
-      const idx = ziel.replace(/\.ts$/, '') + '/index.ts';
-      if (existsSync(join(REPO, idx))) ziel = idx;
-      else continue;
-    }
+    // Importspezifizierer tragen die LAUFZEIT-Endung (.js) oder gar keine; die Quelle kann
+    // .ts/.tsx/.js/.jsx/.mjs heissen oder ein Verzeichnis mit index.* sein.
+    const roh = normalize(join(dirname(f), quelle));
+    const kandidaten = [roh, ...['.ts', '.tsx', '.js', '.jsx', '.mjs'].flatMap((ext) => [
+      roh.replace(/\.js$/, ext), roh + ext, join(roh, 'index' + ext),
+    ])];
+    const treffer = kandidaten.find((k) => existsSync(join(REPO, k)) && !k.endsWith('/'));
+    if (!treffer) continue;
+    const ziel = treffer;
     const nach = modOf(ziel);
     if (!von || !nach) { blind.add(!nach ? ziel : f); continue; }
     for (let s of m[2].split(',')) {
@@ -116,15 +129,25 @@ const zeile = (typ, menge, modell) => {
   return { typ, pflicht: menge.length, da: da.length, fehlt, extra: [...modell].filter((k) => !grenze.has(k)) };
 };
 const r = [zeile('FUNC', pflicht.FUNC, funcGebunden), zeile('SCHEMA', pflicht.SCHEMA, schemaGebunden)];
-  return { MEMBER, graph, direkt, pfade, dateien, innen, grenze, blind, r, fmt };
+  // REICHWEITE der Aussage, nicht nur ihr Ergebnis (CR-GC-548). Ohne `MOD.path` loesen kaum
+  // Dateien zu einem MOD auf, fast nichts gilt als grenzueberschreitend — und die Deckung
+  // meldet ein schmeichelhaftes 100 % auf einem winzigen Nenner. graph-view-edit: 2 von 2.
+  // Dieselbe Lehre wie `importCoverage` (CR-SM-268): eine Zahl ohne ihre Reichweite luegt.
+  const mitMod = dateien.filter((f) => modOf(f) !== undefined).length;
+  return { MEMBER, graph, direkt, pfade, dateien, innen, grenze, blind, r, fmt,
+    aufloesung: dateien.length === 0 ? 0 : mitMod / dateien.length,
+    mitMod,
+    leer: !existsSync(snapshotPfad) || dateien.length === 0 };
 }
 
 /** Der Bericht — nur beim direkten Aufruf. */
-function bericht({ MEMBER, graph, direkt, pfade, dateien, innen, grenze, blind, r, fmt }) {
+function bericht({ MEMBER, graph, direkt, pfade, dateien, innen, grenze, blind, r, fmt, aufloesung, mitMod }) {
 console.log(`# Grenzmenge — ${MEMBER} (graphVersion ${graph.graphVersion})\n`);
 console.log(`Datei→MOD: ${direkt.size} Dateien direkt gebunden, ${pfade.length} MOD mit \`path\`.`);
 console.log(`${dateien.length} Quelldateien unter \`src/\`, ${innen} modul-INTERNE Import-Bindungen ` +
   `(die gehen niemanden an) und ${grenze.size} grenzüberschreitende Symbole.\n`);
+console.log(`**Reichweite: ${mitMod} von ${dateien.length} Dateien (${(100 * aufloesung).toFixed(1)} %) lösen zu einem MOD auf.**` +
+  (aufloesung < 0.8 ? ' ⚠ Darunter ist die Deckung unten eine Aussage über einen kleinen Nenner, kein Gütesiegel.' : '') + '\n');
 
 console.log('| | Pflichtmenge | im Modell | Deckung | fehlt | modelliert, kreuzt nicht |');
 console.log('|---|---:|---:|---:|---:|---:|');

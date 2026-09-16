@@ -1553,6 +1553,12 @@
       "description": "docs/cr/open/CR-GC-547-zod-plus-test-fuer-die-grenzvertraege-mc.md"
     },
     {
+      "id": "CR-GC-548",
+      "type": "CR",
+      "name": "Kennzahlen-Recorder fuer die Null-Zeile eines fremden Projekts: Repo als Argument, Greenfield-fest (kein Snapshot, kein src), JS/JSX statt nur TS, und er meldet seine eigene Reichweite",
+      "description": "docs/cr/open/CR-GC-548-kennzahlen-recorder-fuer-die-null-zeile-.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -19025,5 +19031,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 292
+  "graphVersion": 293
 }
