@@ -74,3 +74,29 @@ RC-06s Gebiet („external realRef names a declared dependency"), nicht das von 
   das waere kein Rueckschritt, sondern Drift, die vorher unsichtbar war. Neue Befunde werden
   hier GEZAEHLT und benannt, nicht stillschweigend hingenommen.
 - Snapshot exportiert und committet (der pre-commit-Hook erzwingt es).
+
+---
+
+# ERGEBNIS (2026-09-16, graphVersion 281 → 282)
+
+Sechs `update-node`-Befehle durch das Apply-Gate: `appliedCommands 6`, `violations []`,
+`tier auto-apply`, `steerAdvisory.improvement 0` — ein Metadaten-Zug bewegt die Metrik nicht,
+und das ist richtig so.
+
+| | vorher | nachher |
+|---|---:|---:|
+| MOD-Knoten mit `path` | 0 von 7 | **6 von 7** (MOD-dashboard bewusst ohne) |
+| `src/`-Dateien mit MOD (eigene Rechnung, 93 Dateien) | 55 = 59,1 % | **92 = 98,9 %** |
+| `importCoverage` am lebenden Gate (91 Import-Endpunkte) | — | **assigned 90, unassigned `["src/index.ts"]`** |
+
+Das Gate nennt den Rest beim Namen, statt ihn zu zählen — genau die eine Datei, die dieser CR
+vorab als bekannte Ausnahme benannt hat.
+
+**Keine neuen Befunde.** RC-05 (Modul-Drift) meldet 0, RC-01/02/03 melden 0. Es bleiben
+RC-04 ×20 und RC-07 ×4, beide `warning` und beide von diesem Zug unberührt (RC-07 zählt die
+CR-Knoten, die `dispatch prepare` mangels laufendem Host nicht anlegen konnte — CR-GC-541
+bis 544).
+
+Die Aussage von RC-05 hat damit ihre Reichweite geändert, ohne dass sich ihr Ergebnis änderte:
+vorher „0 Befunde über 55 zugeordnete Dateien", jetzt „0 Befunde über 90 von 91 Endpunkten".
+Dasselbe Wort, zwei verschiedene Gewichte — das war der Zweck des Zuges.
