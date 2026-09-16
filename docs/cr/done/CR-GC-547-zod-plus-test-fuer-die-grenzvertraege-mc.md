@@ -1,6 +1,6 @@
 # CR-GC-547: Zod plus Test fuer die Grenzvertraege: MCPTool/MCPToolRegistry als Laufzeitvertrag, parse im einen Bauplatz der Registry, Vertrags-TEST gegen die echte Registry - R-32 und RC-04 erfuellen statt abschwaechen
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-16)
 **Typ:** aus Item ITEM-2026-224 (idea)
 **Erstellt:** 2026-09-16
 **Item:** bok/items/ITEM-2026-224.json (Lane: code)
