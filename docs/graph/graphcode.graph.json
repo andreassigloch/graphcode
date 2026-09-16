@@ -1535,6 +1535,12 @@
       "description": "docs/cr/open/CR-GC-542-spike-findet-nd-die-bekannten-duplikate-.md"
     },
     {
+      "id": "CR-GC-545",
+      "type": "CR",
+      "name": "Grenzmengen-Messung: welche FUNC MUESSEN ins Modell — die, deren Symbol eine MOD-Grenze kreuzt. Untergrenze, keine Gleichheit; jetzt auf einer Datei->MOD-Aufloesung von 98,9% statt 59%",
+      "description": "docs/cr/open/CR-GC-545-grenzmengen-messung-welche-func-muessen-.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -18893,5 +18899,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 282
+  "graphVersion": 283
 }
