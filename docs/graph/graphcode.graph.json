@@ -3400,7 +3400,12 @@
       "status": "done",
       "concept": false,
       "codeRef": null,
-      "external": true
+      "external": true,
+      "realRef": {
+        "file": "packages/graphcode-client/src/readiness-completeness.ts",
+        "symbol": "scoreCompleteness",
+        "lang": "ts"
+      }
     },
     {
       "id": "FUNC-se-conops",
@@ -18899,5 +18904,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 283
+  "graphVersion": 284
 }
