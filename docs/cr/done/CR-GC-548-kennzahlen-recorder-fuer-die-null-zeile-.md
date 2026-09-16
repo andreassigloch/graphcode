@@ -1,6 +1,6 @@
 # CR-GC-548: Kennzahlen-Recorder fuer die Null-Zeile eines fremden Projekts: Repo als Argument, Greenfield-fest (kein Snapshot, kein src), JS/JSX statt nur TS, und er meldet seine eigene Reichweite
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-16)
 **Typ:** aus Item ITEM-2026-226 (idea)
 **Erstellt:** 2026-09-16
 **Item:** bok/items/ITEM-2026-226.json (Lane: code)
