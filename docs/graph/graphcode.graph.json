@@ -1523,6 +1523,12 @@
       "description": "docs/cr/open/CR-GC-540-modellzug-nach-der-format-e-konsolidieru.md"
     },
     {
+      "id": "CR-GC-541",
+      "type": "CR",
+      "name": "Testauswahl aus dem Modell statt voller Suite: graph_tests liefert fuer jedes Changeset genau die betroffenen Dateien (4 von 4 CRs bitgenau nachgemessen) — die Iteration faehrt trotzdem 141 Dateien",
+      "description": "docs/cr/open/CR-GC-541-testauswahl-aus-dem-modell-statt-voller-.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -18880,5 +18886,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 279
+  "graphVersion": 280
 }
