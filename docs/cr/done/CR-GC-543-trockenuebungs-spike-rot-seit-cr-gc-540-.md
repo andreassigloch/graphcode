@@ -1,6 +1,6 @@
 # CR-GC-543: Trockenuebungs-Spike rot seit CR-GC-540: 1 anwendbarer, nicht zielfuehrender Zug und R-04@MOD-kernel als dominanter Term - Befund neu messen
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-16)
 **Typ:** aus Item ITEM-2026-214 (finding)
 **Erstellt:** 2026-09-16
 **Item:** bok/items/ITEM-2026-214.json (Lane: code)
