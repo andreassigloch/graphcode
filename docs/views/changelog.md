@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 163 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 164 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 163 CR · 160 done · 0 open.
+Total: 164 CR · 160 done · 0 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -225,3 +225,4 @@ Total: 163 CR · 160 done · 0 open.
 |---|---|---|
 | `CR-GC-534` | done | crFiles fuer RC-07 liefern |
 | `CR-GC-535` | n/a | Pre-Commit faehrt verify:model bei Snapshot im Diff |
+| `CR-GC-540` | n/a | Modellzug nach der Format-E-Konsolidierung: SCHEMA-format-e und FUNC-encode neu binden (Lane graph, nach der Integration) |
