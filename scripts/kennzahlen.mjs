@@ -16,21 +16,27 @@ import { callHost, HOST_SOCK_BASENAME } from '@sigloch/graphcode-client';
 import { metrics, METRIC_DIMENSIONS } from '@sigloch/se-engine';
 import { messeGrenzmenge } from './grenzmenge.mjs';
 
-const REPO = process.cwd();
+// Repo als erstes Argument, damit die Null-Zeile eines FREMDEN Projekts von hier aus gezogen
+// werden kann — der Recorder liegt in graphcode, gemessen wird anderswo (CR-GC-548).
+const args = process.argv.slice(2).filter((a) => !a.startsWith('--'));
+const REPO = args.length > 1 ? args[0].replace(/\/+$/, '') : process.cwd();
 const SOCK = `${REPO}/.graphcode/${HOST_SOCK_BASENAME}`;
 // Auf dem Kennzahlen-Regal, nicht in docs/records/: das ist git-ignored (gate-review records
 // bleiben lokal), und ein Verlauf ohne History waere keiner. MESSGROESSEN.md traegt die
 // DEFINITIONEN, KPI.md den Nachprojekt-Standard, hier steht die REIHE — eine Definition,
 // eine Rechenstelle, ein Ort.
 const ZIEL = `${REPO}/docs/kennzahlen.md`;
-const anlass = process.argv[2];
+const anlass = args.length > 1 ? args[1] : args[0];
 const dry = process.argv.includes('--dry');
-if (!anlass) { console.error('Aufruf: node scripts/kennzahlen.mjs "<Anlass>" [--dry]'); process.exit(2); }
-if (!existsSync(SOCK)) { console.error(`Kein Host: ${SOCK} fehlt. Ohne ihn gäbe es nur halbe Zahlen.`); process.exit(1); }
+if (!anlass) { console.error('Aufruf: node scripts/kennzahlen.mjs [<repo>] "<Anlass>" [--dry]'); process.exit(2); }
+if (!existsSync(SOCK)) {
+  console.error(`Kein Host in ${REPO}: ${SOCK} fehlt.\nOhne ihn gäbe es nur halbe Zahlen — Host starten (graphcode mcp) und erneut.`);
+  process.exit(1);
+}
 
 const rd = await callHost(SOCK, 'graph_readiness', { detail: true });
 const g = messeGrenzmenge(REPO);
-const snapshot = JSON.parse(readFileSync(`${REPO}/docs/graph/${g.MEMBER}.graph.json`, 'utf8'));
+const snapshot = g.graph;
 const m = metrics({ elements: snapshot.elements, traces: snapshot.traces }, { layer: 'arch' });
 
 const schwere = { error: 0, warning: 0, info: 0 };
@@ -40,18 +46,19 @@ const [func, schema] = g.r;
 const z = {
   datum: new Date().toISOString().slice(0, 10),
   v: snapshot.graphVersion,
-  anlass,
+  anlass: g.leer ? `${anlass} · NULL-ZEILE (noch kein Modell/Quellcode)` : anlass,
   knoten: snapshot.elements.length,
   r6: METRIC_DIMENSIONS.map((d) => m[d].toFixed(3)).join(' / '),
   steer: rd.steer?.score?.toFixed(3) ?? '—',
   worstAt: rd.steer?.worstAt ? `${rd.steer.worstAt.ruleId}@${rd.steer.worstAt.elementId}` : '—',
   error: schwere.error,
   warning: schwere.warning,
+  reichweite: g.dateien.length === 0 ? '—' : `${(100 * g.aufloesung).toFixed(0)} %`,
   func: `${func.da}/${func.pflicht}`,
   schema: `${schema.da}/${schema.pflicht}`,
 };
 
-const zeile = `| ${z.datum} | ${z.v} | ${z.anlass} | ${z.knoten} | ${z.r6} | ${z.steer} | ${z.worstAt} | ${z.error} | ${z.warning} | ${z.func} | ${z.schema} |`;
+const zeile = `| ${z.datum} | ${z.v} | ${z.anlass} | ${z.knoten} | ${z.r6} | ${z.steer} | ${z.worstAt} | ${z.error} | ${z.warning} | ${z.reichweite} | ${z.func} | ${z.schema} |`;
 
 const KOPF = `# Kennzahlen-Verlauf
 
@@ -62,10 +69,10 @@ so viel wert wie seine Vergleichbarkeit: Steuerung und Befunde kommen vom laufen
 
 **ℝ⁶ (arch)** = ${METRIC_DIMENSIONS.join(' / ')}.
 **Steuerung** = Chebyshev-Score über die Regelüberschüsse; \`worstAt\` ist der dominierende Term.
-**Grenzmenge** = modellierte von pflichtigen Schnittstellen (Symbole, die eine MOD-Grenze kreuzen).
+**Reichweite** = Quelldateien, die zu einem MOD auflösen. Unter 80 % ist die Grenzdeckung daneben\neine Aussage über einen kleinen Nenner.\n**Grenzmenge** = modellierte von pflichtigen Schnittstellen (Symbole, die eine MOD-Grenze kreuzen).
 
-| Datum | v | Anlass | Knoten | ℝ⁶ (arch) | Steuerung | dominant | error | warning | FUNC-Grenze | SCHEMA-Grenze |
-|---|---:|---|---:|---|---:|---|---:|---:|---:|---:|
+| Datum | v | Anlass | Knoten | ℝ⁶ (arch) | Steuerung | dominant | error | warning | Reichweite | FUNC-Grenze | SCHEMA-Grenze |
+|---|---:|---|---:|---|---:|---|---:|---:|---:|---:|---:|
 `;
 
 if (dry) { console.log(zeile); process.exit(0); }
