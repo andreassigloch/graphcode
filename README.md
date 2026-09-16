@@ -250,7 +250,7 @@ sibling checkout. To work against a local checkout of those packages instead, ru
 
 GraphCode owns the **implementation** plus its own graph model. The graph SSOT for graphcode's
 own model is [`docs/graph/graphcode.graph.json`](docs/graph/graphcode.graph.json); the founding
-charter and constraints are in [`docs/adr/ADR-001`](docs/adr/ADR-001-graphcode-goal-and-constraints.md).
+charter and constraints are in [`docs/archive/ADR-001`](docs/archive/ADR-001-graphcode-goal-and-constraints.md).
 [`docs/articles/`](docs/articles/) is the plain-language introduction; the numbers it cites come
 from [`docs/spikes/`](docs/spikes/) (raw benchmark runs, reproducible via [`rig/dummy-slicer/`](rig/dummy-slicer/)).
 GraphCode is part of a larger internal toolchain; some design-history documents reference private
