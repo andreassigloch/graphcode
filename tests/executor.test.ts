@@ -570,10 +570,16 @@ describe('executor (CR-GC-278)', () => {
     const instruction = JSON.stringify(calls[0].messages[0]);
     expect(instruction).toContain('Kanten-Grammatik');
     expect(instruction).toContain('Element-Index');
-    // Der aktuelle Graph-Zustand steht Zeile für Zeile im Prompt.
-    for (const line of ['SYS-app · SYS · Test App', 'ACTOR-user · ACTOR · User', 'UC-login · UC · Login']) {
+    // Der Graph-Zustand DER FOKUS-TYPEN steht Zeile für Zeile im Prompt.
+    for (const line of ['ACTOR-user · ACTOR · User', 'UC-login · UC · Login']) {
       expect(instruction).toContain(line);
     }
+    // CR-GC-539: SYS ist hier KEIN Fokus-Typ, also steht sein Knoten nicht mehr im Index.
+    // Vorher lief der Aufruf roh am `inputSchema` vorbei und lieferte den ganzen Graphen —
+    // auf dem echten Modell 757 Knoten je Runde, das Gegenteil einer need-to-know-Whitebox.
+    // Der Typ selbst bleibt sichtbar: die Kanten-Grammatik darüber nennt „SYS compose→".
+    expect(instruction).not.toContain('SYS-app · SYS · Test App');
+    expect(instruction).toContain('beschraenkt');
   });
 
   it('injection:false (CR-GC-293 Mess-Schalter) suppresses the guide/index injection block entirely', async () => {
@@ -638,8 +644,8 @@ describe('executor (CR-GC-278)', () => {
     expect(res.success).toBe(true);
 
     const injection = await buildRoundInjection(registry, { focusTypes: ['TEST', 'REQ'] });
-    // Gefiltert auf die Fokus-Typen, mit Hinweis auf den Rest …
-    expect(injection).toContain('gefiltert');
+    // CR-GC-539: auf die Fokus-Typen beschränkt — ab Runde 1, nicht erst bei Zeichenüberlauf.
+    expect(injection).toContain('beschraenkt');
     expect(injection).toContain('REQ-kern · REQ · Kernanforderung');
     expect(injection).toContain('TEST-kern · TEST · Kerntest');
     expect(injection).not.toContain('UC-bulk-007');
@@ -647,6 +653,42 @@ describe('executor (CR-GC-278)', () => {
     expect(injection.length).toBeLessThan(INDEX_CHAR_BUDGET + 2000);
     // Deterministisch: gleicher Graph + gleiche Fokus-Typen ⇒ gleiche Injektion.
     expect(await buildRoundInjection(registry, { focusTypes: ['TEST', 'REQ'] })).toBe(injection);
+
+    // -----------------------------------------------------------------------
+    // CR-GC-539 — DIE ZAHL. Derselbe 300+-Knoten-Graph, jetzt gemessen statt beschrieben.
+    //
+    // Der Befund: `registry['graph_elements'].handler({})` lief ROH, also am
+    // `inputSchema.parse` vorbei, das der MCP-Server sonst davorschaltet. Damit war
+    // `input.limit` undefined, `nodes.slice(0, undefined)` gab den GANZEN Graphen heraus,
+    // und gebremst hat das nur der 8000-Zeichen-Deckel. Auf dem graphcode-Modell: 757
+    // Knoten JE RUNDE in den Prompt — das Gegenteil der need-to-know-Whitebox.
+    // -----------------------------------------------------------------------
+    const zeilenDesIndex = (text: string): string[] => {
+      const block = text.split('Element-Index des Graphen')[1] ?? '';
+      // Nur echte Index-Zeilen `uid · TYPE · name`; die Kopfzeile traegt selbst ein
+      // „(uid · type · name; …)" und zaehlte sonst mit.
+      return block.split('\n').filter((l) => /^\S+ · [A-Z]+ · /.test(l));
+    };
+    const deklariertesLimit = (registry['graph_elements'].inputSchema.parse({}) as { limit: number }).limit;
+
+    // (1) OHNE Fokus: hoechstens der deklarierte Default — nicht alle 300+.
+    const ohneFokus = await buildRoundInjection(registry, { focusTypes: [] });
+    const ohneZeilen = zeilenDesIndex(ohneFokus);
+    expect(ohneZeilen.length).toBeGreaterThan(0);
+    expect(ohneZeilen.length, 'der Zod-Default limit wird umgangen').toBeLessThanOrEqual(deklariertesLimit);
+
+    // (2) MIT Fokus: der Filter wirkt ab Runde 1, nicht erst am Zeichendeckel — und der
+    //     Index bleibt ebenfalls unter dem deklarierten Default.
+    const mitZeilen = zeilenDesIndex(injection);
+    expect(mitZeilen.length).toBeLessThanOrEqual(deklariertesLimit);
+    for (const zeile of mitZeilen) {
+      expect(zeile, `Fremdtyp im Fokus-Index: ${zeile}`).toMatch(/ · (TEST|REQ) · /);
+    }
+
+    // (3) Kein Typ hungert aus: beide Fokus-Typen sind vertreten, obwohl REQ und TEST
+    //     alphabetisch weit auseinanderliegen.
+    expect(mitZeilen.some((z) => z.includes(' · REQ · '))).toBe(true);
+    expect(mitZeilen.some((z) => z.includes(' · TEST · '))).toBe(true);
   }, 60_000);
 
   it('extractToolCallFromText parses name[ARGS]{json} and rejects garbage', () => {
