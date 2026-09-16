@@ -1,6 +1,6 @@
 # CR-GC-544: MOD.path an den sechs Modulen mit eigenem Verzeichnis setzen: Datei->MOD-Aufloesung 59,1% -> 98,9%, MOD-dashboard bleibt bewusst ohne (Nachbarsystem)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-16)
 **Typ:** aus Item ITEM-2026-217 (idea)
 **Erstellt:** 2026-09-16
 **Item:** bok/items/ITEM-2026-217.json (Lane: graph)
