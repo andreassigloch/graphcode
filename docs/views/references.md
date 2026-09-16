@@ -548,6 +548,7 @@
 | `CR-GC-404` | relation | `MS-8-hardening` |
 | `CR-GC-534` | relation | `FUNC-check-code-conformance` |
 | `CR-GC-535` | relation | `REQ-graph-snapshot-per-commit` |
+| `CR-GC-546` | relation | `MOD-kernel` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-suggest` |
@@ -863,6 +864,10 @@
 | `FLOW-live-event` | relation | `SCHEMA-update-event` |
 | `FLOW-markdown-docs` | io | `ACTOR-owner` |
 | `FLOW-markdown-docs` | relation | `SCHEMA-markdown-view` |
+| `FLOW-mcp-tool` | io | `FUNC-serve-stdio` |
+| `FLOW-mcp-tool` | relation | `SCHEMA-mcp-tool` |
+| `FLOW-mcp-tool-registry` | io | `FUNC-serve-stdio` |
+| `FLOW-mcp-tool-registry` | relation | `SCHEMA-mcp-tool-registry` |
 | `FLOW-measurement-vector` | io | `FUNC-generation-step` |
 | `FLOW-measurement-vector` | io | `FUNC-next-step` |
 | `FLOW-measurement-vector` | relation | `SCHEMA-measurement-vector` |
@@ -1048,6 +1053,8 @@
 | `FLOW-test-selection` | relation | `SCHEMA-test-selection` |
 | `FLOW-tool-context` | io | `FUNC-bind-tools` |
 | `FLOW-tool-context` | relation | `SCHEMA-tool-context` |
+| `FLOW-tool-port` | io | `FUNC-read-tools` |
+| `FLOW-tool-port` | relation | `SCHEMA-tool-port` |
 | `FLOW-tool-registry` | io | `FUNC-serve-stdio` |
 | `FLOW-tool-registry` | relation | `SCHEMA-tool-registry` |
 | `FLOW-trajectory` | io | `ACTOR-learning-engine` |
@@ -1074,6 +1081,8 @@
 | `FUNC-auto-export` | io | `FLOW-query-request-auto-export` |
 | `FUNC-auto-export` | satisfy | `REQ-auto-persist-merge` |
 | `FUNC-bind-tools` | allocate | `MOD-surface` |
+| `FUNC-bind-tools` | io | `FLOW-mcp-tool` |
+| `FUNC-bind-tools` | io | `FLOW-mcp-tool-registry` |
 | `FUNC-bind-tools` | io | `FLOW-tool-registry` |
 | `FUNC-bind-tools` | satisfy | `REQ-mcp-tool-registry` |
 | `FUNC-block-abfrage` | compose | `FUNC-audit-stats` |
@@ -1493,6 +1502,7 @@
 | `FUNC-test-ui` | satisfy | `REQ-code-governed-quality` |
 | `FUNC-tool-context` | allocate | `MOD-surface` |
 | `FUNC-tool-context` | io | `FLOW-tool-context` |
+| `FUNC-tool-context` | io | `FLOW-tool-port` |
 | `FUNC-tool-context` | satisfy | `REQ-mcp-tool-registry` |
 | `FUNC-upgrade` | allocate | `MOD-surface` |
 | `FUNC-upgrade` | io | `FLOW-install-result-upgrade` |

@@ -303,6 +303,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-404` | done | Dashboard gehoert dem Repo, nicht dem ersten Fenster | `FUNC-gve-sessions` · `FUNC-gve-supervise` · `MOD-surface` |
 | `CR-GC-534` | done | crFiles fuer RC-07 liefern | `FUNC-check-code-conformance` |
 | `CR-GC-535` | n/a | Pre-Commit faehrt verify:model bei Snapshot im Diff | `REQ-graph-snapshot-per-commit` |
+| `CR-GC-546` | n/a | Grenzvertraege Modul 1 (tool-contract.ts) modellieren und den Kennzahlen-Verlauf mitschreiben - Recorder scripts/kennzahlen.mjs, Reihe in docs/records/kennzahlen.md | `MOD-kernel` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen
