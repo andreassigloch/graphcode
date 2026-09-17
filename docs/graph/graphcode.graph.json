@@ -1528,7 +1528,7 @@
       "name": "Testauswahl aus dem Modell statt voller Suite: graph_tests liefert fuer jedes Changeset genau die betroffenen Dateien (4 von 4 CRs bitgenau nachgemessen) — die Iteration faehrt trotzdem 141 Dateien",
       "description": "docs/cr/done/CR-GC-541-testauswahl-aus-dem-modell-statt-voller-.md",
       "status": "done",
-      "commitRef": "b3d08ff"
+      "commitRef": "768384b"
     },
     {
       "id": "CR-GC-542",
@@ -19135,5 +19135,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 297
+  "graphVersion": 298
 }
