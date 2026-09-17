@@ -28,13 +28,16 @@ import type { Graph } from '@sigloch/graph-api-core';
 import { KuzuAdapter } from './helpers/store.js';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
-import { impactedTests, TestImpactResultSchema, TestSelectionSchema } from '../src/kernel/measure/test-selection.js';
+import { impactedTests, TestImpactResultSchema, TestSelectionSchema, CodeLanePlanSchema } from '../src/kernel/measure/test-selection.js';
 import {
   buildContext,
   coverage,
   recall,
   potential,
   selectForChange,
+  planCodeLane,
+  fileToNodes,
+  modPaths,
   snapshotToGraph,
   type AuditContext,
 } from '../src/projections/test-selection-audit.js';
@@ -198,6 +201,8 @@ describe('Parität: Store-Pfad und Snapshot-Pfad sehen dasselbe', () => {
     harness = new GraphCodeHarness(
       { repoRoot: tmp, scope: { workspaceId: 'test-ws', systemId: 'graphcode' }, consumerType: 'system', preCommitTimeout: 5000 },
       storage,
+      undefined,
+      { lockDir: tmp }, // nie der Repo-Store: diese Datei faehrt in der Modell-Spur parallel (CR-GC-541)
     );
     await harness.initialize();
     await harness.importGraph(fixture);
@@ -346,5 +351,130 @@ describe('Audit über das echte Repo', () => {
     }
     // Die Decke darf nie schlechter sein als der Lauf mit Fallback.
     expect(pot.ceiling).toBeLessThanOrEqual(pot.selected);
+  });
+});
+
+/**
+ * Die dritte Spur (CR-GC-541) — `npm run verify:code`.
+ *
+ * Gemessener Anlass: `graph_tests` nannte am Zug 2026-09-16 fuer alle vier Changesets
+ * bitgenau die Dateien, die im jeweiligen CR von Hand als Testmenge standen; gefahren
+ * wurde trotzdem achtmal die volle Suite. Was hier steht, ist der Handschnitt aus
+ * CR-GC-536 — er ist der Massstab, gegen den die Ableitung gemessen wird.
+ *
+ * Und die Honigfalle: eine abgeleitete Menge ist nur so gut wie ihre Bindung. Drei
+ * Faelle sichern, dass „nicht geprueft" nie wie „in Ordnung" aussieht.
+ */
+describe('CODE-Spur: die Auswahl, ihre Reichweite und ihr Fallback (CR-GC-541)', () => {
+  let ctx: AuditContext;
+
+  beforeAll(() => {
+    ctx = buildContext(REPO_ROOT);
+  });
+
+  it('src/projections/codec.ts waehlt aus dem Graphen genau den Handschnitt aus CR-GC-536', () => {
+    const result = selectForChange(['src/projections/codec.ts'], ctx);
+
+    expect(result.graphOnly).toEqual([
+      'tests/codec.roundtrip.test.ts',
+      'tests/codec.validation.test.ts',
+      'tests/mutate.edge-only-batch.test.ts',
+      'tests/mutate.formate-name.test.ts',
+    ]);
+    expect(result.complete).toBe(true);
+    expect(result.files.length).toBeLessThan(ctx.allTests.length);
+  });
+
+  it('nennt die Bindungsquote des ChangeSets, nicht nur das Urteil', () => {
+    const result = selectForChange(['src/projections/codec.ts', 'src/__gibt-es-nicht__.ts'], ctx);
+
+    expect(result.binding).toEqual({ sources: 2, bound: 1 });
+    expect(result.complete).toBe(false); // eine ungebundene Datei genuegt fuer den Volllauf
+  });
+
+  it('nennt betroffene TESTs ohne testRefs, statt sie stillschweigend fallenzulassen', () => {
+    // Ein TEST-Knoten ohne Laufadresse ist betroffen, kann aber nicht gefahren werden.
+    // Faellt er still heraus, ist die Spur gruen, WEIL sie weniger gesehen hat.
+    const graph = snapshotToGraph({
+      elements: [
+        { id: 'MOD-x', type: 'MOD', name: 'Mod x', description: 'gebunden an die Datei', path: 'src/x' },
+        { id: 'FUNC-x', type: 'FUNC', name: 'Func x', description: 'erfuellt REQ-x' },
+        { id: 'REQ-x', type: 'REQ', name: 'Req x', description: 'die Anforderung' },
+        { id: 'TEST-REAL', type: 'TEST', name: 'Test real', description: 'laeuft', testRefs: [{ file: 'tests/alpha.test.ts', tool: 'vitest', level: 'unit' }] },
+        { id: 'TEST-KONZEPT', type: 'TEST', name: 'Test konzeptionell', description: 'keine Laufadresse' },
+      ],
+      traces: [
+        { source: 'FUNC-x', target: 'MOD-x', type: 'allocate' },
+        { source: 'FUNC-x', target: 'REQ-x', type: 'satisfy' },
+        { source: 'TEST-REAL', target: 'REQ-x', type: 'verify' },
+        { source: 'TEST-KONZEPT', target: 'REQ-x', type: 'verify' },
+      ],
+    });
+    const local: AuditContext = {
+      ...ctx,
+      graph,
+      byFile: fileToNodes(graph),
+      mods: modPaths(graph),
+      importsByTest: new Map(),
+      allTests: ['tests/alpha.test.ts', 'tests/beta.test.ts'],
+    };
+    const result = selectForChange(['src/x/thing.ts'], local);
+
+    expect(result.unresolvedTests).toEqual(['TEST-KONZEPT']);
+    expect(result.files).toEqual(['tests/alpha.test.ts']);
+    expect(planCodeLane(['src/x/thing.ts'], local).lines.join('\n')).toContain('TEST-KONZEPT');
+  });
+
+  it('eine Auswahl, die LEER bliebe, faellt auf die volle Spur — nie auf passWithNoTests', () => {
+    // Gebunden, aber ohne einen einzigen verifizierenden TEST: auflösbar und trotzdem
+    // nichts zu fahren. `vitest run` ohne Dateien waere die ganze Suite, mit
+    // --passWithNoTests ein gruener Lauf ohne Test. Beides ist keine Auswahl.
+    const graph = snapshotToGraph({
+      elements: [{ id: 'MOD-y', type: 'MOD', name: 'Mod y', description: 'ohne Abnahme', path: 'src/y' }],
+      traces: [],
+    });
+    const local: AuditContext = {
+      ...ctx,
+      graph,
+      byFile: fileToNodes(graph),
+      mods: modPaths(graph),
+      importsByTest: new Map(),
+      allTests: ['tests/alpha.test.ts', 'tests/beta.test.ts'],
+    };
+    const result = selectForChange(['src/y/thing.ts'], local);
+
+    expect(result.complete).toBe(false);
+    expect(result.files).toEqual(['tests/alpha.test.ts', 'tests/beta.test.ts']);
+  });
+
+  it('der Plan sagt die Spur, den Befehl und die Reichweite an — und nie einen Befehl ohne Dateien', () => {
+    const code = planCodeLane(['src/projections/codec.ts'], ctx);
+    expect(code.lane).toBe('CODE');
+    expect(code.command).toMatch(/^npx vitest run tests\//);
+    expect(code.command).toContain('tests/codec.roundtrip.test.ts');
+    expect(code.lines.join('\n')).toMatch(/Bindung: 1\/1 Quelldatei/);
+
+    const voll = planCodeLane(['src/__gibt-es-nicht__.ts'], ctx);
+    expect(voll.lane).toBe('VOLL');
+    expect(voll.files.length).toBe(ctx.allTests.length);
+    expect(voll.lines.join('\n')).toContain('src/__gibt-es-nicht__.ts');
+
+    // Reine Modell-/Doku-Aenderung: keine Quelldatei, also kein Befehl. Ein `vitest run`
+    // ohne Dateiargumente waere hier die volle Suite — das Gegenteil einer Auswahl.
+    const keine = planCodeLane(['docs/graph/graphcode.graph.json'], ctx);
+    expect(keine.lane).toBe('KEINE');
+    expect(keine.command).toBeNull();
+    expect(keine.lines.join('\n')).toContain('verify:model');
+  });
+
+  it('FLOW-code-lane-plan: der Plan erfuellt SCHEMA-code-lane-plan an seiner Modulgrenze', () => {
+    // Der Runner und der pre-commit-Hook lesen diesen Plan aus `dist/` — ohne Typpruefung.
+    // Eine formfremde Antwort faellt dort erst als leerer oder falscher Lauf auf.
+    expect(CodeLanePlanSchema.safeParse(planCodeLane(['src/projections/codec.ts'], ctx)).success).toBe(true);
+
+    // Eine Spur OHNE die Reichweitenangabe passiert den Vertrag NICHT: `binding` und
+    // `unresolvedTests` sind Teil der Antwort, nicht Beiwerk der Ausgabe.
+    const ohneReichweite = { lane: 'CODE', files: ['tests/alpha.test.ts'], command: 'npx vitest run tests/alpha.test.ts', reason: 'selective', lines: [] };
+    expect(CodeLanePlanSchema.safeParse(ohneReichweite).success).toBe(false);
   });
 });

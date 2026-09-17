@@ -24,7 +24,7 @@ import { readFileSync, readdirSync, existsSync, statSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { join, dirname, normalize, relative } from 'node:path';
 import type { Graph, GraphNode } from '@sigloch/graph-api-core';
-import { impactedTests } from '../kernel/measure/test-selection.js';
+import { impactedTests, CodeLanePlanSchema, type CodeLanePlan } from '../kernel/measure/test-selection.js';
 
 /** Änderungen hieran wirken auf JEDEN Test — sie können nie selektiv laufen. */
 const FULL_RUN_TRIGGERS = [/^package(-lock)?\.json$/, /^tsconfig/, /^vitest\.config\./];
@@ -151,31 +151,49 @@ export interface Selection {
   complete: boolean;
   reason: string;
   unresolvedFiles: string[];
+  /**
+   * TEST-Knoten in der Auswahl OHNE auflösbares `testRefs` (CR-GC-541). Sie sind
+   * betroffen, haben aber keine Laufadresse — sie fallen aus der Menge heraus und
+   * werden deshalb GENANNT. Ein Lauf, der weniger gesehen hat, darf nicht wie ein
+   * geprüfter aussehen.
+   */
+  unresolvedTests: string[];
+  /**
+   * Die Bindungsquote dieses ChangeSets: Quelldateien mit Knoten im Modell ÷
+   * betrachtete Quelldateien. Sie ist die REICHWEITE der Auswahl, keine Nebenzahl.
+   */
+  binding: { sources: number; bound: number };
 }
 
 /**
  * Die Auswahl für einen ChangeSet von DATEIEN — inklusive der Fallback-Regel.
  *
  * `complete: false` heißt: mindestens eine geänderte Datei ist nicht auflösbar (kein
- * Knoten, oder ein Trigger wie `package.json`). Dann ist der Volllauf die einzige
- * ehrliche Antwort — eine leere Auswahl darf NIE zu `--passWithNoTests` werden, das
- * wäre ein grüner Lauf ohne einen einzigen Test.
+ * Knoten, ein Trigger wie `package.json`, oder — seit CR-GC-541 — eine Auswahl, die bei
+ * geänderten Quelldateien LEER bliebe). Dann ist der Volllauf die einzige ehrliche
+ * Antwort — eine leere Auswahl darf NIE zu `--passWithNoTests` werden, das wäre ein
+ * grüner Lauf ohne einen einzigen Test.
+ *
+ * Mitgeliefert wird seit CR-GC-541, was die Auswahl NICHT sieht: `unresolvedTests` (ein
+ * betroffener TEST ohne `testRefs` hat keine Laufadresse) und `binding` (wie viel vom
+ * ChangeSet überhaupt im Modell hängt). Beides ist die Reichweite der Aussage, nicht Beiwerk.
  */
 export function selectForChange(changedFiles: string[], ctx: AuditContext, opts: { assumeModelComplete?: boolean } = {}): Selection {
   const { graph, byFile, mods, importsByTest, allTests } = ctx;
   const selected = new Set(changedFiles.filter((f) => allTests.includes(f)));
   const graphOnly = new Set<string>();
   const unresolvedFiles: string[] = [];
+  const unresolvedTests = new Set<string>();
+  const sources = changedFiles.filter((f) => isSourceFile(f) && !allTests.includes(f));
 
   for (const file of changedFiles) {
-    if (FULL_RUN_TRIGGERS.some((re) => re.test(file))) {
-      return { files: [...allTests].sort(), graphOnly: [], complete: false, reason: `full run: ${file}`, unresolvedFiles: [file] };
-    }
     if (allTests.includes(file) || !isSourceFile(file)) continue; // Doku/CR/Snapshot tragen keinen Test
     const nodes = nodesForFile(file, byFile, mods);
     if (nodes.length === 0) unresolvedFiles.push(file);
     else {
-      for (const testFile of testFilesOf(graph, impactedTests(graph, nodes).testIds).files) {
+      const resolved = testFilesOf(graph, impactedTests(graph, nodes).testIds);
+      for (const uid of resolved.unresolved) unresolvedTests.add(uid);
+      for (const testFile of resolved.files) {
         graphOnly.add(testFile);
         selected.add(testFile);
       }
@@ -186,14 +204,96 @@ export function selectForChange(changedFiles: string[], ctx: AuditContext, opts:
   // `assumeModelComplete` beantwortet die Deckenfrage des Spikes: was WÄRE die Auswahl,
   // wenn jede geänderte Datei einen Knoten hätte? Dann trägt das Import-Netz die Datei
   // und der Fallback entfällt. Nur fürs Messen — nie für einen echten Lauf.
-  const complete = unresolvedFiles.length === 0 || opts.assumeModelComplete === true;
+  const trigger = changedFiles.find((f) => FULL_RUN_TRIGGERS.some((re) => re.test(f)));
+  // Eine LEERE Auswahl bei geänderten Quelldateien ist der zweite Weg ins falsche Grün
+  // (CR-GC-541): auflösbar, aber ohne eine einzige Testdatei — `vitest run` ohne Argumente
+  // wäre dann die ganze Suite, `--passWithNoTests` ein Lauf ohne Test. Beides ist keine
+  // Auswahl, also ist der Volllauf hier die einzige ehrliche Antwort.
+  const emptyDespiteSources = sources.length > 0 && selected.size === 0;
+  const bound = sources.length - unresolvedFiles.filter((f) => sources.includes(f)).length;
+  const complete =
+    trigger === undefined &&
+    !emptyDespiteSources &&
+    (unresolvedFiles.length === 0 || opts.assumeModelComplete === true);
+  const reason = trigger
+    ? `full run: ${trigger}`
+    : unresolvedFiles.length > 0 && !complete
+      ? `full run: ${unresolvedFiles.length} unbound file(s)`
+      : emptyDespiteSources
+        ? `full run: Auswahl leer bei ${sources.length} Quelldatei(en)`
+        : complete
+          ? 'selective'
+          : `full run: ${unresolvedFiles.length} unbound file(s)`;
   return {
     files: complete ? [...selected].sort() : [...allTests].sort(),
     graphOnly: [...graphOnly].sort(),
     complete,
-    reason: complete ? 'selective' : `full run: ${unresolvedFiles.length} unbound file(s)`,
-    unresolvedFiles,
+    reason,
+    unresolvedFiles: trigger ? [...new Set([trigger, ...unresolvedFiles])] : unresolvedFiles,
+    unresolvedTests: [...unresolvedTests].sort(),
+    binding: { sources: sources.length, bound },
   };
+}
+
+/**
+ * Die dritte Spur (CR-GC-541): der Plan für `npm run verify:code` — welche Spur, welche
+ * Dateien, welcher Befehl, und was die Auswahl NICHT gesehen hat.
+ *
+ * Liegt hier und nicht im Runner, weil der Runner dünn bleibt (wie bei `verify:model` /
+ * `test-selection-audit`) und dieser Plan aus `src/` heraus unit-getestet wird — eine
+ * Ausgabe, die nur im Skript entsteht, prüft niemand.
+ */
+export function planCodeLane(changedFiles: string[], ctx: AuditContext): CodeLanePlan {
+  const selection = selectForChange(changedFiles, ctx);
+  const byUid = new Map(ctx.graph.nodes.map((n) => [n.uid, n]));
+  const sources = changedFiles.filter((f) => isSourceFile(f) && !ctx.allTests.includes(f));
+  const lane: CodeLanePlan['lane'] =
+    selection.files.length === 0 ? 'KEINE' : selection.complete ? 'CODE' : 'VOLL';
+  const pct = (a: number, b: number): string => (b === 0 ? '—' : `${Math.round((100 * a) / b)} %`);
+
+  const lines = [
+    `[verify:code] ChangeSet: ${changedFiles.length} Datei(en), davon ${sources.length} Quelldatei(en).`,
+    `[verify:code] Bindung: ${selection.binding.bound}/${selection.binding.sources} Quelldatei(en) im Modell ` +
+      `(${pct(selection.binding.bound, selection.binding.sources)}) — so weit reicht diese Auswahl.`,
+  ];
+  if (lane === 'CODE') {
+    const viaImport = selection.files.filter((f) => !selection.graphOnly.includes(f)).length;
+    lines.push(
+      `[verify:code] Spur: CODE — ${selection.files.length} von ${ctx.allTests.length} Testdateien; ` +
+        `${selection.graphOnly.length} aus dem Graphen, ${viaImport} über den direkten Import.`,
+    );
+  } else if (lane === 'VOLL') {
+    lines.push(`[verify:code] Spur: VOLL — ${selection.reason}.`);
+    for (const file of selection.unresolvedFiles) {
+      const trigger = FULL_RUN_TRIGGERS.some((re) => re.test(file));
+      lines.push(`[verify:code]   ${trigger ? 'Volllauf-Ausloeser' : 'ohne Bindung'}: ${file}`);
+    }
+    lines.push(`[verify:code]   Ein Gate, das ohne Bindung gruen meldet, ist schlimmer als keins.`);
+  } else {
+    lines.push('[verify:code] Spur: KEINE — keine Quelldatei im ChangeSet.');
+    lines.push('[verify:code]   Für Modell-/Doku-Änderungen ist `npm run verify:model` die Spur.');
+  }
+  for (const uid of selection.unresolvedTests) {
+    lines.push(
+      `[verify:code]   unaufgeloest: ${uid} "${byUid.get(uid)?.name ?? uid}" — kein testRefs, keine Laufadresse; ` +
+        `diese Abnahme faehrt die Spur NICHT.`,
+    );
+  }
+  lines.push('[verify:code] Die volle Suite bleibt der Riegel vor Publish und in CI.');
+
+  // Der Befehl der VOLLEN Spur ist die volle Suite — nicht ihre 142 Dateinamen. Eine
+  // ausgeschriebene Liste, die ohnehin alles ist, verbirgt die Ansage im Rauschen.
+  const command =
+    lane === 'KEINE' ? null : lane === 'VOLL' ? 'npx vitest run' : `npx vitest run ${selection.files.join(' ')}`;
+  return CodeLanePlanSchema.parse({
+    lane,
+    files: selection.files,
+    command,
+    reason: selection.reason,
+    binding: selection.binding,
+    unresolvedTests: selection.unresolvedTests,
+    lines,
+  });
 }
 
 export interface Coverage {
