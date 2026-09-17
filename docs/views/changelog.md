@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 170 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 170 CR · 160 done · 0 open.
+Total: 170 CR · 161 done · 0 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -226,7 +226,7 @@ Total: 170 CR · 160 done · 0 open.
 | `CR-GC-534` | done | crFiles fuer RC-07 liefern |
 | `CR-GC-535` | n/a | Pre-Commit faehrt verify:model bei Snapshot im Diff |
 | `CR-GC-540` | n/a | Modellzug nach der Format-E-Konsolidierung: SCHEMA-format-e und FUNC-encode neu binden (Lane graph, nach der Integration) |
-| `CR-GC-541` | n/a | Testauswahl aus dem Modell statt voller Suite: graph_tests liefert fuer jedes Changeset genau die betroffenen Dateien (4 von 4 CRs bitgenau nachgemessen) — die Iteration faehrt trotzdem 141 Dateien |
+| `CR-GC-541` | done | Testauswahl aus dem Modell statt voller Suite: graph_tests liefert fuer jedes Changeset genau die betroffenen Dateien (4 von 4 CRs bitgenau nachgemessen) — die Iteration faehrt trotzdem 141 Dateien |
 | `CR-GC-542` | n/a | SPIKE: findet ND die bekannten Duplikate? Known-Answer-Test gegen drei belegte Paare des Zuges 2026-09-16, bevor ND-01/02 aus notInGate ins Gate wandern |
 | `CR-GC-545` | n/a | Grenzmengen-Messung: welche FUNC MUESSEN ins Modell — die, deren Symbol eine MOD-Grenze kreuzt. Untergrenze, keine Gleichheit; jetzt auf einer Datei->MOD-Aufloesung von 98,9% statt 59% |
 | `CR-GC-546` | n/a | Grenzvertraege Modul 1 (tool-contract.ts) modellieren und den Kennzahlen-Verlauf mitschreiben - Recorder scripts/kennzahlen.mjs, Reihe in docs/records/kennzahlen.md |

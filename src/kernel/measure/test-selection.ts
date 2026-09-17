@@ -85,6 +85,34 @@ export const TestSelectionSchema = z.object({
 export type TestSelection = z.infer<typeof TestSelectionSchema>;
 
 /**
+ * SCHEMA-code-lane-plan — the contract of the LOCAL code lane's plan (FLOW-code-lane-plan,
+ * CR-GC-541): which lane was chosen for a changeset, which files it runs, the command, and
+ * how far the answer reaches (binding ratio, impacted TESTs without a run address).
+ *
+ * Declared here beside the other two selection contracts, and for the same reason: this
+ * module is the single source of the selection semantics. It crosses a real boundary —
+ * `scripts/verify-code.mjs` and the pre-commit hook read the plan out of `dist/` without
+ * any type check, so a shape-foreign answer would only surface as a wrong or empty run.
+ */
+export const CodeLanePlanSchema = z.object({
+  /** CODE = derived set · VOLL = fallback · KEINE = no source file in the changeset. */
+  lane: z.enum(['CODE', 'VOLL', 'KEINE']),
+  files: z.array(z.string()),
+  /** `null` exactly when there is nothing to run — never a command without files. */
+  command: z.string().nullable(),
+  reason: z.string(),
+  /** The reach of the selection: changed source files with a node ÷ changed source files. */
+  binding: z.object({ sources: z.number().int().nonnegative(), bound: z.number().int().nonnegative() }),
+  /** Impacted TESTs without a run address — named, never silently dropped. */
+  unresolvedTests: z.array(z.string()),
+  /** The report, line by line — binding ratio and unresolved TESTs included. */
+  lines: z.array(z.string()),
+});
+
+/** The plan `planCodeLane()` hands to the runner, derived from its schema. */
+export type CodeLanePlan = z.infer<typeof CodeLanePlanSchema>;
+
+/**
  * code/spec changeset → impacted TESTs over the realization traces.
  *
  * `graph` is the whole loaded graph (the caller decides where it comes from: the

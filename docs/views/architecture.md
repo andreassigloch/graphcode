@@ -89,6 +89,7 @@
 | `FUNC-nd-similarity` | FUNC | duplicateHits |
 | `FUNC-next-step` | FUNC | nextStep(graph, policy) |
 | `FUNC-own-kuzu-host` | FUNC | ownKuzu() |
+| `FUNC-plan-code-lane` | FUNC | Code-Spur planen |
 | `FUNC-preflight` | FUNC | preflightBatch |
 | `FUNC-rank-candidates` | FUNC | rankCandidates(probes, focus) |
 | `FUNC-read-tools` | FUNC | bindReadTools(ctx) |
@@ -222,6 +223,7 @@
 | `FUNC-nd-similarity` | `MOD-kernel-measure` |
 | `FUNC-next-step` | `MOD-loop` |
 | `FUNC-own-kuzu-host` | `MOD-kernel` |
+| `FUNC-plan-code-lane` | `MOD-projections` |
 | `FUNC-preflight` | `MOD-loop` |
 | `FUNC-rank-candidates` | `MOD-loop` |
 | `FUNC-read-tools` | `MOD-surface` |

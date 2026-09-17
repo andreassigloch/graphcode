@@ -99,6 +99,19 @@ These invariants are **enforced** — no prose-trust, no re-documenting as a rul
   the minimal `vitest run` command. The full suite is the **gate before closing a CR**, not the
   inner loop — that is where the graph pays for itself, and it went unused through the 2026-08-27
   restructure (every agent ran the full suite, repeatedly).
+- **Three lanes, one rule: the lane must fit the diff** (CR-GC-399/535/541). The `pre-commit` hook
+  names the lane for the staged diff; it runs only the model lane, CI runs the full suite.
+
+  | Lane | Verb | When | Scope |
+  |---|---|---|---|
+  | MODELL | `npm run verify:model` | only `docs/` in the diff | the fixed set in `scripts/model-test-set.mjs` (~46 files, ~45 s), kept complete by `tests/verify-model.completeness.test.ts` |
+  | CODE | `npm run verify:code` | source files changed | derived per changeset from the committed snapshot via `impactedTests()` — the same function `graph_tests` uses |
+  | VOLL | `npm test` | before closing a CR, before publish, in CI | all 142 files (~280 s) — the only lane that catches the clean-machine class |
+
+- **A derived set is only as good as its binding.** `verify:code` prints the binding ratio of the
+  changeset and every impacted TEST without `testRefs`, and falls back to the FULL lane whenever a
+  changed source file has no node, a build/dependency trigger is in the diff, or the selection would
+  be empty. A lane that reports green because it saw less is worse than no lane.
 - **Read the `unresolved` list.** A concept-only TEST has no run artifact; a selected run that
   skips it is not coverage, and `graph_tests` reports it rather than dropping it silently.
 - **Real tests, no mocks.** Persistence on disk, never `:memory:`.

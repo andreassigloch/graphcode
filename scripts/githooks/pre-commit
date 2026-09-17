@@ -88,9 +88,24 @@ while IFS= read -r f; do
 done <<< "$staged"
 
 if [ -n "$reason" ]; then
-  echo "[pre-commit] Spur: VOLL — $reason liegt ausserhalb von docs/." >&2
-  echo "[pre-commit]   -> npm test          (113 Dateien, ~6.5 min)" >&2
-  echo "[pre-commit]   CI faehrt sie ohnehin; lokal fangen nur diese die Clean-Machine-Fehler." >&2
+  # CR-GC-541 — dritte Spur CODE. $reason liegt ausserhalb von docs/, also leitet
+  # `verify:code` aus dem gestagten Diff die Testmenge ab (code -> REQ -> TEST, dieselbe
+  # Funktion, die graph_tests benutzt) und SAGT SIE AN. Gefahren wird sie hier so wenig
+  # wie die volle Suite: die Begruendung aus CR-GC-399 gilt unveraendert — der Hook macht
+  # die Wahl sichtbar, CI setzt sie durch. Ohne Build (dist/) gibt es keine Ableitung,
+  # dann bleibt es bei der vollen Spur; eine verschwiegene Ableitung waere schlimmer als
+  # keine.
+  echo "[pre-commit] $reason liegt ausserhalb von docs/ — Testmenge aus dem Modell:" >&2
+  if [ -f dist/projections/test-selection-audit.js ]; then
+    if ! node scripts/verify-code.mjs --plan --staged >&2; then
+      echo "[pre-commit]   Ableitung fehlgeschlagen -> Spur: VOLL, npm test" >&2
+    fi
+  else
+    echo "[pre-commit]   dist/ fehlt (npm run build) -> keine Ableitung. Spur: VOLL." >&2
+    echo "[pre-commit]   -> npm test" >&2
+  fi
+  echo "[pre-commit]   Die volle Suite bleibt der Riegel: CI faehrt sie ohnehin, und nur" >&2
+  echo "[pre-commit]   sie faengt die Clean-Machine-Fehler (Lock-Drift, unpubliziertes Peer)." >&2
 else
   echo "[pre-commit] Spur: MODELL — nur docs/ im Diff." >&2
   # CR-GC-535: ein SNAPSHOT im Diff wird nicht nur angesagt, sondern gefahren. Die

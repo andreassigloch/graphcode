@@ -106,6 +106,11 @@ export const INCLUDED = [
   // eintraegt, muss hier auffallen. Vorher pinnte er „17 Produzenten, 8 falsch" und wurde bei
   // jeder Modellaenderung rot, ohne dass etwas kaputt war.
   'tests/repository-style.spike.test.ts',
+  // CR-GC-541: pinnt die abgeleitete Testmenge einer CODE-Aenderung bitgenau gegen den
+  // Handschnitt aus CR-GC-536. Wandert im Modell eine satisfy-/verify-Kante um codec
+  // herum, aendert sich genau diese Menge — eine Modellaenderung kann ihn rot machen,
+  // also gehoert er in die Spur.
+  'tests/test-selection.audit.test.ts',
   'tests/skill-authoring-gate.test.ts',
   'tests/skill-report-measured.test.ts',
 ];

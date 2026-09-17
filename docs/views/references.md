@@ -548,6 +548,8 @@
 | `CR-GC-404` | relation | `MS-8-hardening` |
 | `CR-GC-534` | relation | `FUNC-check-code-conformance` |
 | `CR-GC-535` | relation | `REQ-graph-snapshot-per-commit` |
+| `CR-GC-541` | relation | `FUNC-plan-code-lane` |
+| `CR-GC-541` | relation | `REQ-selective-code-lane` |
 | `CR-GC-546` | relation | `MOD-kernel` |
 | `CR-GC-547` | relation | `MOD-kernel` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
@@ -605,6 +607,7 @@
 | `FCHAIN-doc-export` | satisfy | `REQ-doc-export` |
 | `FCHAIN-impact-testing` | compose | `FUNC-deduce-tests` |
 | `FCHAIN-impact-testing` | compose | `FUNC-graph-impact` |
+| `FCHAIN-impact-testing` | compose | `FUNC-plan-code-lane` |
 | `FCHAIN-impact-testing` | compose | `FUNC-resolve-tests-from-code` |
 | `FCHAIN-impact-testing` | compose | `FUNC-test-ingest` |
 | `FCHAIN-impact-testing` | satisfy | `REQ-impact-based-testing` |
@@ -759,7 +762,10 @@
 | `FLOW-cli-command` | io | `FUNC-upgrade` |
 | `FLOW-cli-command` | relation | `SCHEMA-cli-command` |
 | `FLOW-cli-invocation` | io | `FUNC-cli-dispatch` |
+| `FLOW-cli-invocation` | io | `FUNC-plan-code-lane` |
 | `FLOW-cli-invocation` | relation | `SCHEMA-cli-command` |
+| `FLOW-code-lane-plan` | io | `ACTOR-owner` |
+| `FLOW-code-lane-plan` | relation | `SCHEMA-code-lane-plan` |
 | `FLOW-completeness` | io | `FUNC-compute-phase-readiness` |
 | `FLOW-completeness` | relation | `SCHEMA-completeness` |
 | `FLOW-config-file` | io | `FUNC-load-config` |
@@ -845,6 +851,7 @@
 | `FLOW-impact-slice` | io | `FUNC-read-tools` |
 | `FLOW-impact-slice` | relation | `SCHEMA-impact-slice` |
 | `FLOW-impacted-tests` | io | `FUNC-deduce-tests` |
+| `FLOW-impacted-tests` | io | `FUNC-plan-code-lane` |
 | `FLOW-impacted-tests` | relation | `SCHEMA-impacted-tests` |
 | `FLOW-imported-graph` | io | `FUNC-graph-store` |
 | `FLOW-imported-graph` | relation | `SCHEMA-ontology-graph` |
@@ -1398,6 +1405,9 @@
 | `FUNC-next-step` | satisfy | `REQ-steering-from-metrics` |
 | `FUNC-own-kuzu-host` | allocate | `MOD-kernel` |
 | `FUNC-own-kuzu-host` | satisfy | `REQ-store-owner-lifecycle` |
+| `FUNC-plan-code-lane` | allocate | `MOD-projections` |
+| `FUNC-plan-code-lane` | io | `FLOW-code-lane-plan` |
+| `FUNC-plan-code-lane` | satisfy | `REQ-selective-code-lane` |
 | `FUNC-preflight` | allocate | `MOD-loop` |
 | `FUNC-preflight` | io | `FLOW-preflight-outcome` |
 | `FUNC-rank-candidates` | allocate | `MOD-loop` |
@@ -1863,6 +1873,8 @@
 | `TEST-se-plan-ordering` | verify | `REQ-structure-driven` |
 | `TEST-selective-test-audit` | verify | `REQ-graph-tests-operational` |
 | `TEST-selective-test-audit` | verify | `REQ-impact-based-testing` |
+| `TEST-selective-test-audit` | verify | `REQ-selective-code-lane` |
+| `TEST-selective-test-audit` | verify | `SCHEMA-code-lane-plan` |
 | `TEST-session-lifecycle` | verify | `REQ-single-kuzu-owner` |
 | `TEST-session-lifecycle` | verify | `REQ-store-owner-lifecycle` |
 | `TEST-shared-views-no-fork` | verify | `REQ-shared-views-no-fork` |
@@ -1960,6 +1972,7 @@
 | `UC-efficient-testing` | compose | `REQ-impact-based-testing` |
 | `UC-efficient-testing` | compose | `REQ-post-impact-testing` |
 | `UC-efficient-testing` | compose | `REQ-pre-impact-testing` |
+| `UC-efficient-testing` | compose | `REQ-selective-code-lane` |
 | `UC-efficient-testing` | compose | `REQ-test-runnable-binding` |
 | `UC-graph-time-travel` | compose | `FCHAIN-merge-branches` |
 | `UC-graph-time-travel` | compose | `FCHAIN-recall` |

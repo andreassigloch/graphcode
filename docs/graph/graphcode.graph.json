@@ -1526,7 +1526,9 @@
       "id": "CR-GC-541",
       "type": "CR",
       "name": "Testauswahl aus dem Modell statt voller Suite: graph_tests liefert fuer jedes Changeset genau die betroffenen Dateien (4 von 4 CRs bitgenau nachgemessen) — die Iteration faehrt trotzdem 141 Dateien",
-      "description": "docs/cr/open/CR-GC-541-testauswahl-aus-dem-modell-statt-voller-.md"
+      "description": "docs/cr/done/CR-GC-541-testauswahl-aus-dem-modell-statt-voller-.md",
+      "status": "done",
+      "commitRef": "b3d08ff"
     },
     {
       "id": "CR-GC-542",
@@ -1761,6 +1763,12 @@
       "type": "FLOW",
       "name": "CLI-Aufruf (Rohform)",
       "description": "Was der Mensch in die Schale tippt: Verb und Optionen als Argumentliste, noch nicht aufgeloest."
+    },
+    {
+      "id": "FLOW-code-lane-plan",
+      "type": "FLOW",
+      "name": "Plan der Code-Spur",
+      "description": "Der Plan der lokalen Code-Spur: gewaehlte Spur, Dateien, Laufkommando, Grund, Bindungsquote und unaufgeloeste TESTs. Geht an den Menschen an der Schale und an den pre-commit-Hook."
     },
     {
       "id": "FLOW-completeness",
@@ -3296,6 +3304,17 @@
       "realRef": {
         "file": "src/kernel/own-kuzu.ts",
         "symbol": "ownKuzu",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-plan-code-lane",
+      "type": "FUNC",
+      "name": "Code-Spur planen",
+      "description": "Plant die Testspur einer Code-Aenderung gegen den committeten Snapshot: aufgeloeste Dateien aus impactedTests, Entscheidung zwischen CODE, VOLL und KEINE, das Laufkommando und der Bericht mit Bindungsquote und unaufgeloesten TESTs. Getragen vom Runner scripts/verify-code.mjs und vom pre-commit-Hook. (CR-GC-541)",
+      "realRef": {
+        "file": "src/projections/test-selection-audit.ts",
+        "symbol": "planCodeLane",
         "lang": "ts"
       }
     },
@@ -5113,6 +5132,15 @@
       ]
     },
     {
+      "id": "REQ-selective-code-lane",
+      "type": "REQ",
+      "name": "Abgeleitete Code-Testspur mit ehrlicher Reichweite",
+      "description": "Die lokale Testspur einer Code-Aenderung wird aus dem Modell abgeleitet statt als volle Suite gefahren. Sie faellt auf die volle Suite zurueck, sobald eine geaenderte Quelldatei keinen Knoten hat, ein Volllauf-Ausloeser im Diff liegt oder die Auswahl leer bliebe, und sie nennt in jeder Ausgabe die Bindungsquote des Changesets sowie jeden betroffenen TEST ohne Laufadresse.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-self-contained-dist",
       "type": "REQ",
       "name": "Self-contained Distribution",
@@ -5459,6 +5487,17 @@
       },
       "external": true,
       "contract": "Boundary-validiert im CLI-Dispatch (src/cli.ts main, unbekanntes Verb -> Usage); Deklaration src/scaffold.ts CliCommandSchema (realRef)"
+    },
+    {
+      "id": "SCHEMA-code-lane-plan",
+      "type": "SCHEMA",
+      "name": "CodeLanePlan",
+      "description": "lane, files, command, reason, binding, unresolvedTests, lines. Der Vertrag des Spur-Plans an der Modulgrenze zum Runner.",
+      "realRef": {
+        "file": "src/kernel/measure/test-selection.ts",
+        "symbol": "CodeLanePlanSchema",
+        "lang": "ts"
+      }
     },
     {
       "id": "SCHEMA-completeness",
@@ -11196,6 +11235,16 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-541",
+      "target": "FUNC-plan-code-lane",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-541",
+      "target": "REQ-selective-code-lane",
+      "type": "relation"
+    },
+    {
       "source": "CR-GC-546",
       "target": "MOD-kernel",
       "type": "relation"
@@ -11528,6 +11577,11 @@
       "type": "compose",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FCHAIN-impact-testing",
+      "target": "FUNC-plan-code-lane",
+      "type": "compose"
     },
     {
       "source": "FCHAIN-impact-testing",
@@ -12353,7 +12407,22 @@
     },
     {
       "source": "FLOW-cli-invocation",
+      "target": "FUNC-plan-code-lane",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-cli-invocation",
       "target": "SCHEMA-cli-command",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-code-lane-plan",
+      "target": "ACTOR-owner",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-code-lane-plan",
+      "target": "SCHEMA-code-lane-plan",
       "type": "relation"
     },
     {
@@ -12802,6 +12871,11 @@
     {
       "source": "FLOW-impacted-tests",
       "target": "FUNC-deduce-tests",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-impacted-tests",
+      "target": "FUNC-plan-code-lane",
       "type": "io"
     },
     {
@@ -15671,6 +15745,21 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-plan-code-lane",
+      "target": "MOD-projections",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-plan-code-lane",
+      "target": "FLOW-code-lane-plan",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-plan-code-lane",
+      "target": "REQ-selective-code-lane",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-preflight",
       "target": "MOD-loop",
       "type": "allocate"
@@ -18193,6 +18282,16 @@
       "type": "verify"
     },
     {
+      "source": "TEST-selective-test-audit",
+      "target": "REQ-selective-code-lane",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-selective-test-audit",
+      "target": "SCHEMA-code-lane-plan",
+      "type": "verify"
+    },
+    {
       "source": "TEST-session-lifecycle",
       "target": "REQ-single-kuzu-owner",
       "type": "verify"
@@ -18711,6 +18810,11 @@
     },
     {
       "source": "UC-efficient-testing",
+      "target": "REQ-selective-code-lane",
+      "type": "compose"
+    },
+    {
+      "source": "UC-efficient-testing",
       "target": "REQ-test-runnable-binding",
       "type": "compose",
       "weight": 1,
@@ -19031,5 +19135,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 293
+  "graphVersion": 297
 }

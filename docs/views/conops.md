@@ -83,7 +83,7 @@ Als Entwickler will ich nur die richtigen Tests laufen lassen: der Impact-/Abhä
 
 Ausgeloest von: `ACTOR-agent` · `ACTOR-owner`
 
-- `FCHAIN-impact-testing` — Impact-basierte Testauswahl: `FUNC-deduce-tests` → `FUNC-graph-impact` → `FUNC-resolve-tests-from-code` → `FUNC-test-ingest`
+- `FCHAIN-impact-testing` — Impact-basierte Testauswahl: `FUNC-deduce-tests` → `FUNC-graph-impact` → `FUNC-plan-code-lane` → `FUNC-resolve-tests-from-code` → `FUNC-test-ingest`
 
 ### `UC-graph-time-travel` — Graph-Stand pro Commit wiederherstellbar
 
@@ -303,6 +303,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-404` | done | Dashboard gehoert dem Repo, nicht dem ersten Fenster | `FUNC-gve-sessions` · `FUNC-gve-supervise` · `MOD-surface` |
 | `CR-GC-534` | done | crFiles fuer RC-07 liefern | `FUNC-check-code-conformance` |
 | `CR-GC-535` | n/a | Pre-Commit faehrt verify:model bei Snapshot im Diff | `REQ-graph-snapshot-per-commit` |
+| `CR-GC-541` | done | Testauswahl aus dem Modell statt voller Suite: graph_tests liefert fuer jedes Changeset genau die betroffenen Dateien (4 von 4 CRs bitgenau nachgemessen) — die Iteration faehrt trotzdem 141 Dateien | `FUNC-plan-code-lane` · `REQ-selective-code-lane` |
 | `CR-GC-546` | n/a | Grenzvertraege Modul 1 (tool-contract.ts) modellieren und den Kennzahlen-Verlauf mitschreiben - Recorder scripts/kennzahlen.mjs, Reihe in docs/records/kennzahlen.md | `MOD-kernel` |
 | `CR-GC-547` | n/a | Zod plus Test fuer die Grenzvertraege: MCPTool/MCPToolRegistry als Laufzeitvertrag, parse im einen Bauplatz der Registry, Vertrags-TEST gegen die echte Registry - R-32 und RC-04 erfuellen statt abschwaechen | `MOD-kernel` |
 
