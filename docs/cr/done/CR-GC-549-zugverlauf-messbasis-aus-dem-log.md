@@ -1,6 +1,6 @@
 # CR-GC-549: Zugverlauf — die Messbasis aus dem Log rekonstruieren
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-18)
 **Erstellt:** 2026-09-18
 **Item:** ITEM-2026-226 (Kennzahlen-Recorder), erweitert um den gemessenen Befund aus dem ersten Fremdlauf
 
