@@ -552,6 +552,7 @@
 | `CR-GC-541` | relation | `REQ-selective-code-lane` |
 | `CR-GC-546` | relation | `MOD-kernel` |
 | `CR-GC-547` | relation | `MOD-kernel` |
+| `CR-GC-549` | relation | `REQ-audit-trail` |
 | `CR-GC-550` | relation | `FUNC-se-plan` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |

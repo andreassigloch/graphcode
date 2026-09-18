@@ -1561,6 +1561,14 @@
       "description": "docs/cr/open/CR-GC-548-kennzahlen-recorder-fuer-die-null-zeile-.md"
     },
     {
+      "id": "CR-GC-549",
+      "type": "CR",
+      "name": "Zugverlauf aus dem Audit-Log rekonstruieren",
+      "description": "docs/cr/done/CR-GC-549-zugverlauf-messbasis-aus-dem-log.md",
+      "status": "done",
+      "commitRef": "2a9c6504447261880b7a9dd9301aabce6e217a18"
+    },
+    {
       "id": "CR-GC-550",
       "type": "CR",
       "name": "se-plan leitet ueber REQ ab, nicht ueber FUNC-Blaetter",
@@ -11262,6 +11270,11 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-549",
+      "target": "REQ-audit-trail",
+      "type": "relation"
+    },
+    {
       "source": "CR-GC-550",
       "target": "FUNC-se-plan",
       "type": "relation"
@@ -19147,5 +19160,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 299
+  "graphVersion": 300
 }
