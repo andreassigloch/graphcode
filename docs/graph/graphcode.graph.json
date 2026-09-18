@@ -1561,6 +1561,13 @@
       "description": "docs/cr/open/CR-GC-548-kennzahlen-recorder-fuer-die-null-zeile-.md"
     },
     {
+      "id": "CR-GC-550",
+      "type": "CR",
+      "name": "se-plan leitet ueber REQ ab, nicht ueber FUNC-Blaetter",
+      "description": "docs/cr/open/CR-GC-550-se-plan-leitet-bauauftraege-aus-func-bla.md",
+      "status": "open"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -11255,6 +11262,11 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-550",
+      "target": "FUNC-se-plan",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -19135,5 +19147,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 298
+  "graphVersion": 299
 }

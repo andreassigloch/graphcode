@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 170 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 171 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 170 CR · 161 done · 0 open.
+Total: 171 CR · 161 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -232,3 +232,4 @@ Total: 170 CR · 161 done · 0 open.
 | `CR-GC-546` | n/a | Grenzvertraege Modul 1 (tool-contract.ts) modellieren und den Kennzahlen-Verlauf mitschreiben - Recorder scripts/kennzahlen.mjs, Reihe in docs/records/kennzahlen.md |
 | `CR-GC-547` | n/a | Zod plus Test fuer die Grenzvertraege: MCPTool/MCPToolRegistry als Laufzeitvertrag, parse im einen Bauplatz der Registry, Vertrags-TEST gegen die echte Registry - R-32 und RC-04 erfuellen statt abschwaechen |
 | `CR-GC-548` | n/a | Kennzahlen-Recorder fuer die Null-Zeile eines fremden Projekts: Repo als Argument, Greenfield-fest (kein Snapshot, kein src), JS/JSX statt nur TS, und er meldet seine eigene Reichweite |
+| `CR-GC-550` | open | se-plan leitet ueber REQ ab, nicht ueber FUNC-Blaetter |
