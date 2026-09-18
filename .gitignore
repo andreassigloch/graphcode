@@ -36,3 +36,9 @@ docs/views/cr-list.md
 # CLAUDE.md ships the app-relevant subset. Claude Code auto-loads both locally.
 CLAUDE.local.md
 docs/views/dashboard.url
+
+# Zugverlauf (CR-GC-549): die .md ist der DAUERHAFTE Teil und wird getrackt — das Audit-Log,
+# aus dem sie kommt, liegt unter `.graphcode/` und ist ignoriert, also waere sie sonst
+# nirgends. Das .json ist die Maschinenfassung derselben Rechnung (580 KB je Lauf, jede
+# Zeile eine Version) und wird bei jedem Lauf neu erzeugt: Arbeitszustand, kein Repo-Inhalt.
+docs/zugverlauf.json
