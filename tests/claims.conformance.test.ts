@@ -170,8 +170,11 @@ describe('T-D1 (CR-GC-340): every published count matches the living source', ()
     expect(claims().map((c) => `${c.phrase}=${c.actual()}`)).toEqual([
       'element types=12',
       'connection types=6',
-      // CR-SM-317 (contracts 5.1, CR-GC-522): Muster `TEST -verify-> SCHEMA` kommt dazu — 30 -> 31.
-      'legal connection patterns=31',
+      // CR-SM-341 (contracts 10.7.0): Muster `CR -relation-> SCHEMA` kommt dazu — 31 -> 32.
+      // Der Kanarienvogel hat gesungen und diesmal hat ihn der Konsumenten-Sweep gehoert:
+      // drei Artikel nannten noch 31, alle drei nachgezogen (CR-SM-347 par. 5a).
+      // Prior: CR-SM-317 (contracts 5.1, CR-GC-522): `TEST -verify-> SCHEMA`, 30 -> 31.
+      'legal connection patterns=32',
       // CR-SM-294..297: 72 -> 63. Neun Regeln ohne Gegenstand oder mit doppelter Aussage sind
       // gestrichen (R-03/R-14/R-27, AO-D01, CA-01, FC-01, PH-01, RT-01, CR-R04). Die Liste stand
       // hier auf 73 und war damit schon VOR diesem Schnitt eine Zahl daneben — der Kanarienvogel
