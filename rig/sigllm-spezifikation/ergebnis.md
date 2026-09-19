@@ -229,3 +229,77 @@ bestätigt, diesmal von der anderen Seite. → ITEM-2026-360.
 
 n = 1 je Arm, ein Modell, eine Domäne. Der Unterschied bei der Bindung ist groß genug, um bei
 n = 1 sichtbar zu sein; die Unterschiede bei compliance und Steuerwert sind es nicht.
+
+---
+
+# Lauf 3 — `graphcode run` statt `claude -p`
+
+Der erste Lauf, der die Steuerungsmaschinerie überhaupt anfasst (CR-GC-555). `runs/gcrun-0`,
+12 Runden, 51 Turns, 13 Minuten, $0.
+
+**Der Arm ist ein anderer und die Qualitätszahlen sind deshalb nicht vergleichbar.**
+`graphcode run` spricht rohes HTTP und kann Claude Codes OAuth nicht benutzen, also läuft er
+auf `qwen3-coder-30b` lokal statt auf Opus. Was dieser Lauf beantwortet, ist: *greift die
+Maschinerie* — nicht: *ist sie besser*.
+
+## Was nur dieser Arm zeigt
+
+| | |
+|---|---|
+| Mutationen angewandt | 6 |
+| **nach Gate-Ablehnung repariert** | **2** |
+| Preflight-Vervollständigungen | 14 |
+| Preflight-Blocks | 15 |
+| Dry-Run-Proben | 3 |
+
+Der Gate-Rückkanal funktioniert: das Gate lehnt ab, die Verstöße gehen zurück ans Modell, der
+nächste Versuch geht durch. Der Preflight ergänzt selbständig, was eine Regel verlangt — bei
+R-01 etwa den TEST-Stub samt `verify`-Kante. **Beides gibt es auf den `claude -p`-Armen nicht.**
+
+## Der harte Beleg für den Unterschied
+
+Aus den Audit-Logs, dieselbe Frage an beide Läufe — was wurde vor einer Mutation konsultiert?
+
+| | Lauf 2 `claude -p` | Lauf 3 `graphcode run` |
+|---|---|---|
+| Mutationen **ohne jedes** vorherige Werkzeug | **16 von 19** | 4 von 10 |
+| `graph_generate` davor | **0×** | 6× |
+| `graph_authoring_guide` / `graph_elements` / `graph_get_edges` davor | je ≤ 1× | je 6× |
+| Kommandos je Batch (Mittel) | 40 | 26 |
+
+`graph_generate` ist der Rundenprompt-Treiber des Executors. Im `claude -p`-Lauf erscheint er
+null Mal — dort ist er dem Modell vorenthalten und niemand ruft ihn.
+
+## Der schärfste Befund der ganzen Reihe
+
+`graph_suggest` läuft **auch hier null Mal**, und keine Mutation trägt
+`editSource: 'suggestion-template'`. Der Grund ist jetzt aber benannt statt rätselhaft: im
+Executor-Loop liegt `graph_suggest` hinter dem **Handoff**, und der verlangt alle acht
+Readiness-Dimensionen über Schwelle, null Fehler-Verstöße und vollständige Phasen-Gates.
+
+Erreicht wurden: Lauf 1 → 3/8, Lauf 2 → 2/8, Lauf 3 → 1/8.
+
+**Die Vorlagen, an denen diese Sitzung gearbeitet hat, sitzen hinter einer Schwelle, die kein
+Lauf je erreicht hat.** Nicht umgangen — planmäßig noch nicht an der Reihe. Das erklärt
+rückwirkend, warum 11 Vorlagen und 4 neue Regelabdeckungen in keinem Lauf messbar wurden, und
+es ist eine andere Aussage als „der Agent fragt nicht".
+
+## Ein Messfehler, gefunden beim Zusammenstellen
+
+Das Rig hat die Eingabetoken des `claude -p`-Arms **um Faktor 800 unterschätzt**. `tokens_in`
+las nur `usage.input_tokens` — den ungecachten Rest. Tatsächlich:
+
+| | gemeldet | tatsächlich | davon Cache-Lesung |
+|---|---:|---:|---:|
+| Lauf 1 | 8.816 | **7.209.148** | 6.874.467 |
+| Lauf 2 | 8.822 | **7.056.849** | 6.744.342 |
+| Lauf 3 | 359.521 | 359.521 | — |
+
+Damit dreht sich die Aussage um: der Frontier-Arm liest nicht ein Fünfundzwanzigstel des
+lokalen, sondern das **Zwanzigfache**. Erfassung korrigiert (ITEM-2026-365); die beiden alten
+Zeilen in `results-sigllm*.json` tragen noch den zu kleinen Wert.
+
+## Vorbehalte
+
+n = 1, ein Modell je Arm, eine Domäne. Die Loop-Kennzahlen sind Zählungen und belastbar; jeder
+Qualitätsvergleich zwischen Lauf 3 und Lauf 1/2 ist es nicht, weil Arm und Modell mitwandern.
