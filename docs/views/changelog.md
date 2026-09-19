@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 172 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 173 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 172 CR · 162 done · 1 open.
+Total: 173 CR · 162 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -234,3 +234,4 @@ Total: 172 CR · 162 done · 1 open.
 | `CR-GC-548` | n/a | Kennzahlen-Recorder fuer die Null-Zeile eines fremden Projekts: Repo als Argument, Greenfield-fest (kein Snapshot, kein src), JS/JSX statt nur TS, und er meldet seine eigene Reichweite |
 | `CR-GC-549` | done | Zugverlauf aus dem Audit-Log rekonstruieren |
 | `CR-GC-550` | open | se-plan leitet ueber REQ ab, nicht ueber FUNC-Blaetter |
+| `CR-GC-551` | n/a | kinds als Zeichenkette ueber den commands-Pfad: 49 von 49 REQ eines Auto-Laufs tragen "non-functional" statt ["non-functional"] - die in CR-SM-320 par. 4 als offen benannte Haelfte ist die, die in der Praxis feuert |
