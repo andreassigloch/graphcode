@@ -58,6 +58,36 @@ for (const a of arms) {
     + `| ${range(g.map((r)=>r.tokens?.cost_usd!=null?+r.tokens.cost_usd.toFixed(2):null))} | ${col((r) => r.tokens?.wall_s)} |`);
 }
 
+// CR-GC-552 — die Bewertung hat zwei Haelften, und beide gehoeren in den Bericht.
+console.log('\n## Spezifikation — Dimensionen, Steuerung, und was NICHT gefragt wurde\n');
+console.log('| run | req | uc | arch | alloc | ver | schema | cr | ms | Steuerwert @ Anker |');
+console.log('|---|---|---|---|---|---|---|---|---|---|');
+for (const r of rows.filter((x) => !x.error && x.spec)) {
+  const d = r.spec.dimensions ?? {};
+  const c = (k) => (d[k] == null ? '—' : d[k]);
+  const st = r.spec.steer ? `${r.spec.steer.worst} @ ${r.spec.steer.anchor ?? '—'}` : '—';
+  console.log(`| ${r.arm} #${r.run} | ${c('req')} | ${c('uc')} | ${c('arch')} | ${c('alloc')} `
+    + `| ${c('ver')} | ${c('schema')} | ${c('cr')} | ${c('ms')} | ${st} |`);
+}
+for (const r of rows.filter((x) => !x.error && x.spec)) {
+  const ne = r.spec.notEvaluated ?? [];
+  if (ne.length) console.log(`\n  ${r.arm} #${r.run} — NICHT ausgewertet (0 Befunde heisst hier "nicht gefragt"): ${ne.join(', ')}`);
+  const ao = r.spec.advisoryOnly ?? [];
+  if (ao.length) console.log(`  ${r.arm} #${r.run} — ausgewertet, aber ohne Gate-Wirkung: ${ao.join(', ')}`);
+}
+
+console.log('\n## Code — dreiwertig, mit Reichweite (nie ein blosses gruen)\n');
+console.log('| run | Urteil | Reichweite | Bindung (Blatt-FUNC) | Begruendung |');
+console.log('|---|---|---|---|---|');
+for (const r of rows.filter((x) => !x.error && x.code)) {
+  const c = r.code;
+  console.log(`| ${r.arm} #${r.run} | **${c.verdict}** | ${c.reach.assigned}/${c.reach.endpoints} (${c.reach.pct} %) `
+    + `| ${c.binding.bound}/${c.binding.leafFuncs} (${c.binding.pct ?? 0} %) | ${c.why} |`);
+}
+console.log('\n`kongruent` = RC lief, hatte Reichweite, fand nichts · `gedriftet` = RC-Befunde');
+console.log('· `nicht pruefbar` = RC lief nicht oder hatte keine Reichweite. Ein Gate, das ohne');
+console.log('Bindung "gruen" meldet, ist schlimmer als keins — deshalb steht die Reichweite immer dabei.');
+
 console.log('\n## Module reuse — AUDIT BY HAND (not a score)\n');
 console.log('Did the authored architecture leverage the real sigloch-modules? Exact-name matching');
 console.log('is too brittle (paraphrases → false 0); judge overlap by eye.\n');

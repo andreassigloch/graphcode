@@ -18,7 +18,63 @@
       "elementsWithErrors": 0,
       "gatesPassed": "3/8"
     },
-    "gate_rejections": 0,
+    "spec": {
+      "compliance": 1,
+      "elementsWithErrors": 0,
+      "dimensions": {
+        "req": 0.804,
+        "uc": 1,
+        "arch": 0.946,
+        "alloc": 0.957,
+        "ver": 1,
+        "schema": 1,
+        "cr": 0.941,
+        "ms": 1
+      },
+      "steer": {
+        "worst": 0.5,
+        "anchor": "R-04@MOD-agent-loop"
+      },
+      "notEvaluated": [
+        "rule:BQ-01",
+        "rule:BQ-02",
+        "rule:BQ-04",
+        "rule:BQ-06",
+        "rule:BQ-07"
+      ],
+      "advisoryOnly": [
+        "BQ-01",
+        "BQ-02",
+        "BQ-04",
+        "BQ-06",
+        "BQ-07",
+        "ND-01",
+        "ND-02",
+        "RC-01",
+        "RC-02",
+        "RC-03",
+        "RC-04",
+        "RC-05",
+        "RC-06",
+        "RC-07"
+      ]
+    },
+    "code": {
+      "verdict": "nicht pruefbar",
+      "why": "keine Bindung und keine aufloesbare Quelldatei — es gibt nichts zu pruefen",
+      "reach": {
+        "endpoints": 0,
+        "assigned": 0,
+        "pct": 0
+      },
+      "binding": {
+        "leafFuncs": 29,
+        "bound": 0,
+        "pct": 0
+      },
+      "rcViolations": {}
+    },
+    "gate_rejections": 2,
     "tokens": {
       "wall_s": 1074.2,
       "cost_usd": 8.24738475,
