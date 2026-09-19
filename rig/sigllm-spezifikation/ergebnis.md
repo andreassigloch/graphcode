@@ -1,4 +1,4 @@
-# Ergebnis — Lauf 1, 2026-09-19
+# Ergebnis — Lauf 1 und Lauf 2, 2026-09-19
 
 Ein Lauf, Arm `opus5` über `claude -p`, n = 1. Rohdaten in
 `../greenfield-systemtest/results-sigllm.json` und `../greenfield-systemtest/runs/opus5-0/`.
@@ -170,3 +170,62 @@ umformuliert und fällt deshalb durch.
 Eine Deckungsnote auf Textähnlichkeit würde also Transkription belohnen und Spezifikationsarbeit
 bestrafen. Sie ist im Rig deshalb als **Liste** eingebaut, sortiert nach der schwächsten
 Überdeckung, nicht als Zahl — dieselbe Linie wie beim Modul-Audit.
+
+---
+
+# Lauf 2 — der prosaische Auftrag
+
+Derselbe Inhalt ohne Kennungen, ohne Zerlegungstabelle, ohne Akteursliste. Die Struktur ist
+damit Teil der Aufgabe. `runs/opus5-3`, 27 Minuten, $8.96, kein Abbruch.
+
+## Die Zahlen nebeneinander
+
+| Kennzahl | Lauf 1 strukturiert | Lauf 2 prosaisch |
+|---|---|---|
+| Elemente / Traces | 238 / 524 | 248 / 497 |
+| UC / FUNC / MOD / REQ / TEST | 3 / 29 / 10 / 49 / 35 | 6 / 41 / 8 / 44 / 60 |
+| compliance | 1,000 | 0,863 |
+| Elemente mit Fehlern | 0 | 34 |
+| Gates | 3/8 | 2/8 |
+| Gate-Ablehnungen | 2 | 2 |
+| Steuerwert @ Anker (kleiner ist besser) | 0,50 @ R-04@MOD-agent-loop | 0,75 @ R-04@MOD-jobs |
+| Code-Urteil | nicht prüfbar | **gedriftet** |
+| Bindung Blatt-FUNC | 0/29 (0 %) | 33/33 (100 %) |
+| Wall / Kosten | 18 min / $8.25 | 27 min / $8.96 |
+
+## Der Befund, der die Sitzung wert war
+
+**Die 100 % Bindung sind erfunden.** Alle 33 `realRef` des Prosa-Laufs zeigen auf Dateien, die
+es nicht gibt — `src/gateway/accept-request.ts`, `src/guard/anomaly.ts`, `src/jobs/load-
+declaration.ts` und dreißig weitere. Nachgezählt im Arbeitsverzeichnis: **0 von 33 vorhanden.**
+Es ist ein reiner Spezifikationslauf, es gibt überhaupt keinen Quellcode.
+
+Lauf 1 hat gar keine `realRef` gesetzt und steht deshalb auf `nicht prüfbar` — das ist die
+**ehrliche** Lage. Lauf 2 steht auf `gedriftet`, weil RC-01 alle 33 erwischt.
+
+Genau dafür ist das dreiwertige Urteil da. Zweiwertig gelesen wäre Lauf 2 der bessere Lauf:
+100 % Bindung statt 0 %. Dreiwertig gelesen ist er der schlechtere, und die Bindungsquote ist
+kein Gütesiegel, sondern die **Reichweite einer Aussage**, die hier ins Leere greift.
+
+## Was der Prosa-Auftrag sonst bewirkt hat
+
+**Mehr Zerlegung, weniger Ordnung.** Doppelt so viele Use Cases (6 statt 3), 40 % mehr
+Funktionen, aber zwei Module weniger und 34 fehlerhafte Elemente statt null. Ohne die
+vorgegebene Zerlegung strukturiert der Arm mehr — und schlechter.
+
+**Die Steuerung wurde schlechter, nicht besser**: 0,50 → 0,75, beide Male am selben Regeltyp
+`R-04` an einem MOD. Der Anker ist über beide Läufe derselbe Regel-/Typ-Ort, nur das Modul
+wechselt. Der Befund aus §20 hält also auch unter verändertem Input.
+
+## Was die Prüfliste hier NICHT sagt
+
+42/42 in Lauf 1 gegen 1/42 in Lauf 2 ist **kein Deckungsunterschied**. Die Prüfliste zieht ihren
+Wortlaut aus der strukturierten Projektdefinition — Lauf 1 hat genau diesen Text gelesen, Lauf 2
+eine Paraphrase. Die Zahl misst den Input des Arms, nicht sein Ergebnis, und ist zwischen den
+beiden Läufen nicht vergleichbar. Der Abschreib-Befund aus §146 ist damit zum zweiten Mal
+bestätigt, diesmal von der anderen Seite. → ITEM-2026-360.
+
+## Vorbehalte
+
+n = 1 je Arm, ein Modell, eine Domäne. Der Unterschied bei der Bindung ist groß genug, um bei
+n = 1 sichtbar zu sein; die Unterschiede bei compliance und Steuerwert sind es nicht.
