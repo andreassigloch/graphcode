@@ -307,15 +307,35 @@ export function buildCallModel(config: ExecutorConfig): CallModel {
     }
     const choice = wire.data.choices[0];
     const msg = choice?.message ?? {};
+    const rufe = msg.tool_calls ?? [];
     return ModelAnswer.parse({
       text: msg.content ?? '',
-      toolCalls: (msg.tool_calls ?? []).map((c) => ({
+      toolCalls: rufe.map((c) => ({
         id: c.id,
         name: c.function.name,
         input: safeParse(c.function.arguments),
       })),
       stopReason: choice?.finish_reason ?? null,
-      assistantMsg: msg,
+      // GEBAUT, nicht durchgereicht (CR-GC-554): `OpenAiWireAnswer` deklariert an
+      // `message` nur `content` und `tool_calls`, Zod entfernt alles Uebrige — also
+      // `role` und `tool_calls[].type`. Die Schleife haengt diese Nachricht an die
+      // Historie und schickt sie zurueck; ohne Rolle bricht ollamas Chat-Template mit
+      // `Unexpected message role.`, und ein nachlaessiges Template rendert sie still
+      // falsch. Der sigllm- und der anthropic-Zweig bauen ihre Nachricht ebenso selbst:
+      // drei Zweige, eine Bauform. Das Wire-Schema bleibt Leser, nicht Echo-Puffer.
+      assistantMsg: {
+        role: 'assistant',
+        content: msg.content ?? '',
+        ...(rufe.length
+          ? {
+              tool_calls: rufe.map((c) => ({
+                id: c.id,
+                type: 'function',
+                function: { name: c.function.name, arguments: c.function.arguments },
+              })),
+            }
+          : {}),
+      },
       usage: {
         in: wire.data.usage?.prompt_tokens ?? 0,
         out: wire.data.usage?.completion_tokens ?? 0,

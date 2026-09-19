@@ -1594,6 +1594,12 @@
       "description": "docs/cr/open/CR-GC-553-die-bewertungsmaschiene-des-rigs-metrics.md"
     },
     {
+      "id": "CR-GC-554",
+      "type": "CR",
+      "name": "openai-Backend verliert role und tool_calls[].type: OpenAiWireAnswer deklariert sie nicht, Zod entfernt sie, und die beschnittene Assistenten-Nachricht geht in die naechste Runde zurueck — jeder zweite Turn scheitert am Chat-Template",
+      "description": "docs/cr/open/CR-GC-554-openai-backend-verliert-role-und-tool-ca.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -19188,5 +19194,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 304
+  "graphVersion": 305
 }
