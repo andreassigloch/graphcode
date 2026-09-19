@@ -42,7 +42,7 @@ Jeder Lauf hinterlässt `../greenfield-systemtest/runs/opus5-<i>/` mit `graph.js
 ## Was der Vergleich zeigt — und was nicht
 
 **Zeigt er:** Form (Readiness über acht Dimensionen), Menge und Typmischung, Legalität
-(Gate-Ablehnungen aus dem Audit-Log), Kosten und Wall-Zeit. Seit CR-GC-552 zusätzlich die
+(Gate-Ablehnungen aus dem Audit-Log), Kosten und Wall-Zeit. Seit CR-GC-553 zusätzlich die
 **volle Bewertung beider Hälften**: je Dimension der Readiness-Score, der Steuerwert mit seinem
 Anker, die Liste der Regeln die **nicht ausgewertet** wurden (dort heißt „0 Befunde" nicht
 „sauber", sondern „nicht gefragt"), und für den Code ein **dreiwertiges** Urteil —

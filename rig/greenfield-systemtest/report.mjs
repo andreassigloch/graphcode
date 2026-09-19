@@ -58,7 +58,7 @@ for (const a of arms) {
     + `| ${range(g.map((r)=>r.tokens?.cost_usd!=null?+r.tokens.cost_usd.toFixed(2):null))} | ${col((r) => r.tokens?.wall_s)} |`);
 }
 
-// CR-GC-552 — die Bewertung hat zwei Haelften, und beide gehoeren in den Bericht.
+// CR-GC-553 — die Bewertung hat zwei Haelften, und beide gehoeren in den Bericht.
 console.log('\n## Spezifikation — Dimensionen, Steuerung, und was NICHT gefragt wurde\n');
 console.log('| run | req | uc | arch | alloc | ver | schema | cr | ms | Steuerwert @ Anker |');
 console.log('|---|---|---|---|---|---|---|---|---|---|');
@@ -97,7 +97,7 @@ for (const r of rows.filter((x) => !x.error && x.moduleAudit)) {
 const gold = rows.find((r) => r.moduleAudit)?.moduleAudit?.MOD?.golden ?? [];
 if (gold.length) console.log(`- **golden MODs**: ${gold.join(', ')}`);
 
-// CR-GC-552 — wurde jede Anforderung des Auftrags umgesetzt oder verworfen?
+// CR-GC-553 — wurde jede Anforderung des Auftrags umgesetzt oder verworfen?
 const mitDeckung = rows.filter((x) => !x.error && x.briefCoverage);
 if (mitDeckung.length) {
   console.log('\n## Auftrags-Anforderungen — PRUEFLISTE, keine Note\n');

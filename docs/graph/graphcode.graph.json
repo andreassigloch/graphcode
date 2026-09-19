@@ -1588,6 +1588,12 @@
       "description": "docs/cr/open/CR-GC-552-graphcode-run-gegen-sigllm-statt-direkt-.md"
     },
     {
+      "id": "CR-GC-553",
+      "type": "CR",
+      "name": "Die Bewertungsmaschiene des Rigs (metrics/report/Pruefliste/Prosa-Auftrag, 11 Dateien) wurde unter der fremden Nummer CR-GC-552 committet — die Nummer existierte zur Commit-Zeit noch nicht und wurde spaeter fuer das sigllm-Backend gemintet",
+      "description": "docs/cr/open/CR-GC-553-die-bewertungsmaschiene-des-rigs-metrics.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -19182,5 +19188,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 303
+  "graphVersion": 304
 }
