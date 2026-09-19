@@ -101,10 +101,13 @@ if (gold.length) console.log(`- **golden MODs**: ${gold.join(', ')}`);
 const mitDeckung = rows.filter((x) => !x.error && x.briefCoverage);
 if (mitDeckung.length) {
   console.log('\n## Auftrags-Anforderungen — PRUEFLISTE, keine Note\n');
-  console.log('Wortlaut-Ueberdeckung misst **Abschreiben, nicht Deckung**. Gemessen 2026-09-19:');
-  console.log('der Auto-Arm erreicht 42/42 (elf Anforderungen exakt 1,00), der handgefuehrte Lauf');
-  console.log('15/42 — weil er umformuliert hat, nicht weil er Luecken haette. Ein Score daraus');
-  console.log('wuerde Transkription belohnen. Die Liste unten ist zum LESEN, schwaechste zuerst.\n');
+  console.log('Wortlaut-Ueberdeckung misst **Abschreiben, nicht Deckung** — und zwar messbar:');
+  console.log('die Pruefliste ist aus der STRUKTURIERTEN Projektdefinition gezogen (`quelle` in');
+  console.log('anforderungen-auftrag.json). Lauf 1 las genau diesen Wortlaut und erreicht 42/42,');
+  console.log('Lauf 2 las die Prosa-Fassung und erreicht 1/42 — bei mehr Elementen und mehr Use');
+  console.log('Cases. Die Zahl misst also den INPUT des Arms, nicht sein Ergebnis, und ist zwischen');
+  console.log('den beiden Laeufen NICHT vergleichbar. Die Liste unten ist zum LESEN, schwaechste');
+  console.log('zuerst; ein Score daraus waere eine Praemie auf Transkription (ITEM-2026-360).\n');
   console.log('Deterministisch waere die Frage nur mit HERKUNFT am REQ. Die Ontologie hat kein');
   console.log('solches Feld, und ihr status-Enum (draft/reviewed/open/done) kennt kein');
   console.log('"verworfen" — beide Haelften der Frage sind heute nicht ausdrueckbar (ITEM-2026-306).\n');

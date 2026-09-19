@@ -1,6 +1,6 @@
 # CR-GC-553: die Bewertungsmaschiene des Rigs trägt eine fremde CR-Nummer
 
-**Status:** 🟠 Open
+**Status:** 🟢 Done (2026-09-19)
 **Typ:** aus Item ITEM-2026-359 (finding)
 **Erstellt:** 2026-09-19
 **Item:** bok/items/ITEM-2026-359.json (Lane: code)
@@ -67,4 +67,7 @@ Bewertungsmaschiene für graphcode-Projekte vollständig und verfügbar ist, fü
 
 - [x] `grep -rn 'CR-GC-552' rig/` nennt nur noch Stellen, die wirklich das Backend meinen (erwartet: keine).
 - [x] CR-GC-552 unverändert — sein Umfang bleibt die vier Executor-Dateien.
-- [ ] Lauf 2 (prosaischer Auftrag) läuft mit der so etikettierten Maschinerie durch.
+- [x] Lauf 2 (prosaischer Auftrag) lief mit der so etikettierten Maschinerie durch: 248 Elemente,
+      27 min, 0 Abbrueche. Die Maschinerie hat dabei zwei eigene Maengel offengelegt — die
+      hartkodierte 42/42-Prosa im Bericht (hier korrigiert) und die Unvergleichbarkeit der
+      Pruefliste (ITEM-2026-360).
