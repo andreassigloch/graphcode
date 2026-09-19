@@ -1,0 +1,1 @@
+Spezifiziere das System SIG Local bis zur Implementierungsreife. Die Projektdefinition liegt im Workspace unter ./material/docs/project/sig-local-projektdefinition.md — sie ist der einzige Input.

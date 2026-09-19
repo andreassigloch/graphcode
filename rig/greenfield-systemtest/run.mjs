@@ -36,6 +36,20 @@ const CFG = {
   // pre-digested brief — discovery is the challenge. node_modules excluded via prompt.
   material: process.env.MATERIAL ?? '/Users/andreas/Developer/dev/sigloch-modules',
   lmstudio: process.env.LMSTUDIO ?? 'http://192.168.78.89:1234',
+  // Korpus-Parameter (CR-GC-551). Defaults = der graphcode-Webapp-Korpus, mit dem dieses
+  // Rig gebaut wurde — gesetzt liefern sie einen ZWEITEN Korpus durch DENSELBEN Treiber
+  // (rig/sigllm-spezifikation). Kein zweiter Pfad: eine Frage je Rig, ein Runner.
+  promptFile: process.env.PROMPT_FILE ?? join(HERE, 'prompt.txt'),
+  seed: {
+    uid: process.env.SEED_UID ?? 'SYS-webapp',
+    name: process.env.SEED_NAME ?? 'GraphCode Multiuser Web App',
+    description: process.env.SEED_DESC
+      ?? 'Multiuser-faehige Web-App aus dem graphcode harness (System aus dem Prompt).',
+  },
+  materialHint: process.env.MATERIAL_HINT
+    ?? 'Das sigloch-module-Quellrepo liegt im Workspace unter ./material — entdecke die'
+     + ' Fähigkeiten selbst aus dem Quellcode, es gibt keinen fertigen Überblick.'
+     + ' Nur der Graph zählt, kein Code.',
   arms: [
     { label: 'qwen-35b', executor: 'opencode', model: process.env.LOCAL_MODEL ?? 'qwen3.6-35b-a3b-mlx' },
     { label: 'opus5', executor: 'claude', model: process.env.FRONTIER_MODEL ?? 'claude-opus-5' },
@@ -52,13 +66,12 @@ const CFG = {
 };
 
 function buildPrompt() {
-  return readFileSync(join(HERE, 'prompt.txt'), 'utf8').trim()
-    + `\n\nSYS-webapp existiert bereits im Graphen (das System aus dem Prompt). Baue die`
+  return readFileSync(CFG.promptFile, 'utf8').trim()
+    + `\n\n${CFG.seed.uid} existiert bereits im Graphen (das System aus dem Prompt). Baue die`
     + ` Architektur darauf auf: rufe graph_next_step für den nächsten sinnvollen Schritt,`
     + ` autoriere über graph_mutate, und frage graph_authoring_guide nach den legalen Kanten`
     + ` je Typ, bevor du einen Knoten anlegst.`
-    + `\nDas sigloch-module-Quellrepo liegt im Workspace unter ./material — entdecke die`
-    + ` Fähigkeiten selbst aus dem Quellcode, es gibt keinen fertigen Überblick. Nur der Graph zählt, kein Code.`;
+    + `\n${CFG.materialHint}`;
 }
 
 // graphcode enforces single-writer via .graphcode/owner.lock. Our orchestrator opens
@@ -188,23 +201,24 @@ const SEED_SCRIPT = `
 const dir = process.argv[1];
 const label = dir.split('/').pop();
 const { createHarness } = await import(${JSON.stringify(join(GC_ROOT, 'dist', 'index.js'))});
-const { bindToolsToHarness } = await import(${JSON.stringify(join(GC_ROOT, 'dist', 'mcp-tools.js'))});
+const { bindToolsToHarness } = await import(${JSON.stringify(join(GC_ROOT, 'dist', 'index.js'))});
 const h = await createHarness({ repoRoot: dir, scope: { workspaceId: label, systemId: label } });
 await h.initialize();
 const reg = bindToolsToHarness(h);
 await reg['graph_mutate'].handler({ commands: [{ op: 'add-node', node: {
-  uid: 'SYS-webapp', type: 'SYS', name: 'GraphCode Multiuser Web App',
-  description: 'Multiuser-faehige Web-App aus dem graphcode harness (System aus dem Prompt).', attributes: {},
+  uid: process.argv[2], type: 'SYS', name: process.argv[3],
+  description: process.argv[4], attributes: {},
 } }] });
 await h.close();
 `;
 function seedSystem(dir) {
-  execFileSync('node', ['--input-type=module', '-e', SEED_SCRIPT, dir], { stdio: 'pipe' });
+  execFileSync('node', ['--input-type=module', '-e', SEED_SCRIPT,
+    dir, CFG.seed.uid, CFG.seed.name, CFG.seed.description], { stdio: 'pipe' });
 }
 
 async function captureArtifacts(dir) {
   const { createHarness } = await import(join(GC_ROOT, 'dist', 'index.js'));
-  const { bindToolsToHarness } = await import(join(GC_ROOT, 'dist', 'mcp-tools.js'));
+  const { bindToolsToHarness } = await import(join(GC_ROOT, 'dist', 'index.js'));
   const label = dir.split('/').pop();
   const h = await createHarness({ repoRoot: dir, scope: { workspaceId: label, systemId: label } });
   await h.initialize();
