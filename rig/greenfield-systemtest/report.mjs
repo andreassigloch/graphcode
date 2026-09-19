@@ -10,8 +10,13 @@ import { fileURLToPath } from 'node:url';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const rows = [];
-// all result files: results.json (qwen) + results-opus*.json (opus, possibly parallel ranges)
-const files = readdirSync(HERE).filter((f) => /^results(-.*)?\.json$/.test(f));
+// RESULTS_FILE waehlt EINEN Korpus (CR-GC-551). Ohne die Variable werden wie bisher alle
+// results*.json zusammengezogen — das war richtig, solange es EINEN Korpus gab (Arme liefen
+// parallel in getrennte Dateien). Seit rig/sigllm-spezifikation ist es falsch: der Report
+// mischte sonst Laeufe verschiedener Fragen mit verschiedenen Goldens in eine Tabelle.
+const files = process.env.RESULTS_FILE
+  ? [process.env.RESULTS_FILE]
+  : readdirSync(HERE).filter((f) => /^results(-.*)?\.json$/.test(f));
 for (const f of files) {
   try { rows.push(...JSON.parse(readFileSync(join(HERE, f), 'utf8'))); } catch { /* skip */ }
 }

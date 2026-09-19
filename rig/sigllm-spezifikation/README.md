@@ -53,6 +53,11 @@ ist fair —, aber „top-down aus dem Nichts" prüft dieses Rig nicht.
 
 ## Stand
 
+**Lauf 1 durch, 2026-09-19** — Ergebnis und Bewertung in [`ergebnis.md`](ergebnis.md).
+Kurz: 238 Elemente in 17,9 min für 8,25 $, 0 Fehler-Verstöße und 0 Gate-Ablehnungen — aber
+**keine einzige der fünf Analysen**, und damit ist die Null strukturell garantiert statt
+verdient. Der Rest dieses Abschnitts beschreibt den Stand davor:
+
 Aufgebaut und verdrahtet, **noch nicht ausgeführt**. Der generische Runner ist bis heute nie
 end-to-end gelaufen (siehe Nachbar-README): die erste Ausführung bestätigt die Form der
 `claude -p`-Usage-JSON und der `graph_export`/`graph_readiness`-Rückgaben. Beides ist defensiv
