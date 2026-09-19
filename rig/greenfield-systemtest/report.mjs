@@ -97,6 +97,25 @@ for (const r of rows.filter((x) => !x.error && x.moduleAudit)) {
 const gold = rows.find((r) => r.moduleAudit)?.moduleAudit?.MOD?.golden ?? [];
 if (gold.length) console.log(`- **golden MODs**: ${gold.join(', ')}`);
 
+// CR-GC-555 — die Loop-Kennzahlen gibt es NUR auf dem gcrun-Arm. Sie sind der Grund
+// fuer diesen Arm: sie zeigen, ob die Steuerungsmaschinerie ueberhaupt gegriffen hat.
+const mitLoop = rows.filter((x) => !x.error && x.tokens?.loop);
+if (mitLoop.length) {
+  console.log('\n## Executor-Loop — nur `graphcode run` (die anderen Arme haben keinen)\n');
+  console.log('| run | Runden | Turns | angewandt | abgelehnt | repariert | preflight fix | preflight block | dry-run | fertig |');
+  console.log('|---|---:|---:|---:|---:|---:|---:|---:|---:|---|');
+  for (const r of mitLoop) {
+    const l = r.tokens.loop;
+    console.log(`| ${r.arm} #${r.run} | ${l.genRounds} | ${l.modelTurns} | ${l.mutatesApplied} | `
+      + `${l.mutatesRejected} | ${l.repairedAfterRejection} | ${l.preflightFixed} | `
+      + `${l.preflightBlocked} | ${l.dryRunProbes} | ${l.done ? 'ja' : 'nein'} |`);
+  }
+  console.log('\n`repariert` = das Gate hat abgelehnt, die Verstoesse gingen zurueck ans Modell, und');
+  console.log('der naechste Versuch ging durch. `preflight fix` = der Loop hat selbst ergaenzt, was');
+  console.log('eine Regel verlangt. Beides gibt es auf den `claude -p`-Armen nicht — dort setzt der');
+  console.log('Agent Mutationen ohne Rueckkanal ab (gemessen: 16 von 19 ohne vorheriges Werkzeug).\n');
+}
+
 // CR-GC-553 — wurde jede Anforderung des Auftrags umgesetzt oder verworfen?
 const mitDeckung = rows.filter((x) => !x.error && x.briefCoverage);
 if (mitDeckung.length) {

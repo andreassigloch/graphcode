@@ -17,7 +17,8 @@ nicht und kann dort nicht stehen. Dafür braucht es einen zweiten Lauf, und der 
 | **Saat** | ein SYS-Knoten, Wortlaut aus der Definition selbst. Das eine Rahmenstück, das der Mensch setzt — sonst gibt `graph_next_step` auf dem leeren Graphen keine Richtung. Symmetrisch zum Nachbar-Rig. |
 | **Golden** | `golden/sigllm-v98.graph.json` — der handgeführte Stand am **Ende der Spezifikationsphase**: 255 Elemente, 506 Traces, v98. Ab v99 legt CR-SL-034 die 22 CR-Knoten an, dort beginnt die Bauphase. Das Golden wird nur zum **Werten** geladen, nie als Material. |
 | **Treiber** | `../greenfield-systemtest/run.mjs`, unverändert. Dieses Rig ist ein zweiter **Korpus**, kein zweiter Runner. |
-| **Arm** | `opus5` über `claude -p`. Ausdrücklich **kein lokales Modell**: der Vergleichsmaßstab ist der handgeführte Lauf, und der lief auf Opus im Claude-Code-Harness. |
+| **Arm 1/2** | `opus5` über `claude -p`. Ausdrücklich **kein lokales Modell**: der Vergleichsmaßstab ist der handgeführte Lauf, und der lief auf Opus im Claude-Code-Harness. |
+| **Arm 3** | `gcrun` über **`graphcode run`** (CR-GC-555) — der einzige Arm, der den Executor-Loop fährt. Aufruf: `lauf-gcrun.env`. **Nicht mit 1/2 vergleichbar:** der Loop spricht rohes HTTP und kann Claude Codes OAuth nicht benutzen, also läuft er auf `qwen3-coder-30b` lokal. Er beantwortet, ob die Steuerungsmaschinerie greift — nicht, ob sie besser ist. |
 
 ## Lauf
 
@@ -31,7 +32,19 @@ RESULTS_FILE=results-sigllm.json node rig/greenfield-systemtest/report.mjs
 set -a && source rig/sigllm-spezifikation/lauf-prosa.env && set +a
 node rig/greenfield-systemtest/run.mjs
 RESULTS_FILE=results-sigllm-prosa.json node rig/greenfield-systemtest/report.mjs
+
+# Lauf 3 — derselbe Auftrag, aber durch `graphcode run` statt `claude -p`
+set -a && source rig/sigllm-spezifikation/lauf-gcrun.env && set +a
+node rig/greenfield-systemtest/run.mjs
+RESULTS_FILE=results-sigllm-gcrun.json node rig/greenfield-systemtest/report.mjs
 ```
+
+**Warum der dritte Arm.** Arm 1 und 2 sprechen den MCP-Server direkt — das ist ein Agent mit
+denselben Werkzeugen, aber nicht der Executor-Loop. Gemessen an Lauf 2: 16 von 19 Mutationen
+gingen **ohne ein einziges vorheriges Werkzeug** ins Gate, `graph_suggest` wurde null Mal
+gerufen. Rundenprompt aus `graph_generate`, kuratiertes Toolset, Gate-Rückkanal mit
+Reparatur, Preflight-Autovervollständigung und der Handoff auf `graph_suggest` liegen
+alle in `graphcode run` — und blieben damit bis CR-GC-555 ungetestet.
 
 `RESULTS_FILE` beim Report ist **nicht optional**: ohne die Variable zieht er alle
 `results*.json` zusammen und mischt beide Läufe mit dem Nachbar-Korpus in eine Tabelle.

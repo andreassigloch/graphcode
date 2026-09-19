@@ -1600,6 +1600,12 @@
       "description": "docs/cr/open/CR-GC-554-openai-backend-verliert-role-und-tool-ca.md"
     },
     {
+      "id": "CR-GC-555",
+      "type": "CR",
+      "name": "Das Rig misst nicht das Produkt: es treibt claude -p gegen den MCP-Server, waehrend graphcode run einen Executor-Loop mit Rundenprompt, vorenthaltenen Tools, kuratiertem Toolset und Phasen-Gate fuehrt — die gesamte Steuerungsmaschinerie bleibt ungetestet",
+      "description": "docs/cr/open/CR-GC-555-das-rig-misst-nicht-das-produkt-es-treib.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -19194,5 +19200,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 305
+  "graphVersion": 306
 }
