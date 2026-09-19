@@ -64,6 +64,17 @@ const CFG = {
     // Overflow, @40k lauffähig) — qwen3.8 lädt mit 119k Kontext.
     { label: 'qwen38-claude', executor: 'claude', local: true,
       model: process.env.LOCAL_CLAUDE_MODEL ?? 'qwen3.8-27b-mlx@4bit' },
+    // DRITTER EXECUTOR (CR-GC-555): `graphcode run` statt eines fremden Agenten am
+    // MCP-Server. Nur dieser Arm faehrt die Steuerungsmaschinerie — Rundenprompt aus
+    // graph_generate, kuratiertes Toolset, Gate-Rueckkanal mit Reparatur, Preflight.
+    // Die beiden Arme darueber messen einen Agenten, der zufaellig dieselben Werkzeuge hat.
+    { label: 'gcrun', executor: 'gcrun',
+      model: process.env.GCRUN_MODEL ?? 'qwen3-coder-30b-lms:latest',
+      backend: process.env.GCRUN_BACKEND ?? 'openai',
+      baseUrl: process.env.GCRUN_BASE_URL ?? 'http://127.0.0.1:11434',
+      apiKey: process.env.GCRUN_API_KEY ?? 'ollama',
+      maxTokens: process.env.GCRUN_MAX_TOKENS ?? '4096',
+      maxRounds: process.env.GCRUN_MAX_ROUNDS ?? '8' },
   ],
 };
 
@@ -73,6 +84,21 @@ function buildPrompt() {
     + ` Architektur darauf auf: rufe graph_next_step für den nächsten sinnvollen Schritt,`
     + ` autoriere über graph_mutate, und frage graph_authoring_guide nach den legalen Kanten`
     + ` je Typ, bevor du einen Knoten anlegst.`
+    + `\n${CFG.materialHint}`;
+}
+
+/**
+ * Der Auftragstext fuer `graphcode run` (CR-GC-555).
+ *
+ * BEWUSST NICHT `buildPrompt()`: der schreibt `graph_next_step` und `graph_authoring_guide`
+ * vor. Im Executor-Loop ist `graph_next_step` dem Modell VORENTHALTEN (WITHHELD_TOOLS) — der
+ * Loop baut seine Rundenprompts selbst aus `graph_generate`. Ein Intent, der Werkzeuge
+ * vorschreibt, die das Modell nicht sieht, waere eine eingebaute Fehlleitung. Hier steht
+ * deshalb nur das ZIEL und wo das Material liegt; das Wie gehoert dem Loop.
+ */
+function buildIntent() {
+  return readFileSync(CFG.promptFile, 'utf8').trim()
+    + `\n\n${CFG.seed.uid} existiert bereits im Graphen. Baue die Architektur darauf auf.`
     + `\n${CFG.materialHint}`;
 }
 
@@ -199,6 +225,63 @@ function authorViaOpencode(dir, arm) {
 // holds an OS-level lock on the store file that h.close() does NOT release while the
 // parent process lives — the executor's MCP child would then fail to open the store.
 // A subprocess releases every handle on exit, handing the executor a clean store.
+/**
+ * `graphcode run` als Executor (CR-GC-555) — der EINZIGE Arm, der den Loop faehrt.
+ *
+ * Der Loop waehlt die Store-Election selbst, genau wie `graphcode mcp`; deshalb gilt
+ * dasselbe releaseStore davor wie bei den anderen Armen. Die Zahlen kommen aus dem
+ * `graphcode run:`-Statistikblock am Ende von stderr — gemessen, nicht geschaetzt. Kosten
+ * sind 0: lokale Modelle kosten Rechenzeit, kein Geld, und eine erfundene Zahl waere
+ * schlimmer als keine.
+ */
+function authorViaGraphcodeRun(dir, arm) {
+  const env = {
+    ...process.env,
+    GRAPHCODE_LLM_BACKEND: arm.backend,
+    GRAPHCODE_LLM_BASE_URL: arm.baseUrl,
+    GRAPHCODE_LLM_MODEL: arm.model,
+    GRAPHCODE_LLM_API_KEY: arm.apiKey,
+    GRAPHCODE_LLM_MAX_TOKENS: String(arm.maxTokens),
+    GRAPHCODE_LLM_MAX_ROUNDS: String(arm.maxRounds),
+    GRAPHCODE_LLM_TIMEOUT_MS: String(CFG.timeoutMs),
+  };
+  const t0 = Date.now();
+  const r = spawnSync('node', [join(GC_ROOT, 'dist', 'cli.js'), 'run', buildIntent()], {
+    cwd: dir, env, encoding: 'utf8', maxBuffer: 128 * 1024 * 1024, timeout: CFG.timeoutMs,
+  });
+  const wall_s = +((Date.now() - t0) / 1000).toFixed(1);
+  // stdout bleibt fuer MCP-Transporte reserviert — der Loop meldet ALLES auf stderr.
+  const log = (r.stderr ?? '') + (r.stdout ?? '');
+  writeFileSync(join(dir, 'run-raw.log'), log);
+  if (r.status !== 0) {
+    throw new Error(`graphcode run exit=${r.status} signal=${r.signal}; ${log.slice(-600)}`);
+  }
+  let stats = {};
+  const m = log.lastIndexOf('graphcode run: {');
+  if (m >= 0) {
+    try { stats = JSON.parse(log.slice(log.indexOf('{', m))); } catch { /* raw gesichert */ }
+  }
+  return {
+    wall_s,
+    cost_usd: 0,
+    tokens_in: stats.tokensIn ?? null,
+    tokens_out: stats.tokensOut ?? null,
+    tokens_reasoning: stats.tokensReasoning ?? null,
+    // Die Loop-Kennzahlen, die es NUR auf diesem Arm gibt — der eigentliche Grund fuer ihn.
+    loop: {
+      genRounds: stats.genRounds ?? null,
+      modelTurns: stats.modelTurns ?? null,
+      mutatesApplied: stats.mutatesApplied ?? null,
+      mutatesRejected: stats.mutatesRejected ?? null,
+      repairedAfterRejection: stats.repairedAfterRejection ?? null,
+      preflightFixed: stats.preflightFixed ?? null,
+      preflightBlocked: stats.preflightBlocked ?? null,
+      dryRunProbes: stats.dryRunProbes ?? null,
+      done: stats.done ?? null,
+    },
+  };
+}
+
 const SEED_SCRIPT = `
 const dir = process.argv[1];
 const label = dir.split('/').pop();
@@ -251,7 +334,10 @@ async function main() {
         initWorkspace(dir);
         seedSystem(dir);       // seed SYS (subprocess) so next_step gives direction
         releaseStore(dir);     // free any lock so the executor's MCP can own the store
-        const usage = arm.executor === 'opencode' ? authorViaOpencode(dir, arm) : authorViaClaude(dir, arm);
+        const usage =
+          arm.executor === 'opencode' ? authorViaOpencode(dir, arm)
+          : arm.executor === 'gcrun' ? authorViaGraphcodeRun(dir, arm)
+          : authorViaClaude(dir, arm);
         releaseStore(dir);     // executor's MCP may leave a lock (esp. on timeout kill)
         writeFileSync(join(dir, 'usage.json'), JSON.stringify(usage, null, 2));
         await captureArtifacts(dir);
