@@ -27,8 +27,12 @@ export function legality(auditPath) {
     total++;
     try {
       const ev = JSON.parse(line);
+      // `tier` steht nicht an jedem Datensatz — gemessen 2026-09-19 trug KEINER der 13
+      // Saetze des sigllm-Laufs ein `tier`, wohl aber `result: 'rejected'`. Nur auf `tier`
+      // zu schauen meldete 0 Ablehnungen, wo 2 standen.
       const tier = ev.tier ?? ev.result?.tier;
-      if (tier === 'block' || ev.blocked === true) blocked++;
+      const verworfen = typeof ev.result === 'string' && ev.result !== 'applied';
+      if (tier === 'block' || ev.blocked === true || verworfen) blocked++;
     } catch { /* skip malformed line */ }
   }
   return { blocked, mutations: total };
