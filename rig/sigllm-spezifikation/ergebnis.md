@@ -140,3 +140,33 @@ antwortet auch dann nicht, wenn sie gefragt wird.
 machen jede Kennzahl, die zwischen Zügen misst, blind. Das trifft ℝ⁶, den Steuerwert und
 **alle drei bestätigten Vorschläge aus Review §18** gleichermaßen.
 → [ITEM-2026-348](../../../bok/items/ITEM-2026-348.json)
+
+---
+
+## Nachtrag: die Anforderungen des Auftrags
+
+Zum Abschluss gehört die Frage, ob **jede** Anforderung der initialen Beschreibung umgesetzt
+oder ausdrücklich verworfen wurde. Die Prüfliste steht in
+[`golden/anforderungen-auftrag.json`](golden/anforderungen-auftrag.json): die 42 Anforderungen
+aus §3 der Projektdefinition, verbatim, aus dem Initialisierungs-Commit.
+
+**Beide Hälften der Frage sind im Modell heute nicht ausdrückbar.** Es gibt kein Feld für die
+Herkunft eines REQ, und das `status`-Enum kennt `draft | reviewed | open | done` — kein
+„geprüft und bewusst nicht übernommen". Eine verworfene Anforderung verschwindet spurlos und ist
+von einer vergessenen nicht zu unterscheiden. → ITEM-2026-306
+
+**Die Ersatzmessung warnt vor sich selbst.** Wortlaut-Überdeckung liefert:
+
+| | gedeckt (≥ 0,3) | davon exakt 1,00 |
+|---|---:|---:|
+| Arm (Auto) | **42 / 42** | 11 |
+| Golden (Hand, v98) | **15 / 42** | 0 |
+
+Das ist kein Vollständigkeitsunterschied, sondern der Abschreib-Befund noch einmal: der Arm hat
+den Wortlaut übernommen und **sogar die Nummerierung in die Kennungen gezogen** —
+`REQ-019-ttft-budget`, `REQ-029-queue-serialization`, `REQ-004-durable-ledger`. Der Mensch hat
+umformuliert und fällt deshalb durch.
+
+Eine Deckungsnote auf Textähnlichkeit würde also Transkription belohnen und Spezifikationsarbeit
+bestrafen. Sie ist im Rig deshalb als **Liste** eingebaut, sortiert nach der schwächsten
+Überdeckung, nicht als Zahl — dieselbe Linie wie beim Modul-Audit.
