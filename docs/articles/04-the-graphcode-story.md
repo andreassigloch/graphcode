@@ -138,7 +138,7 @@ is what makes everything below it comparable.
 
 ### 2. The grammar — how things may connect
 
-31 legal connection patterns. Which kind of element may be connected to which, and in what way.
+32 legal connection patterns. Which kind of element may be connected to which, and in what way.
 An illegal connection is not a warning in a report you might read — it never enters the graph.
 
 ### 3. Readiness — is it complete and well-formed?

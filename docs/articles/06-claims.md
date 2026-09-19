@@ -101,7 +101,7 @@ npx @sigloch/graphcode init
 that most code-graph tools skip: milestones (MS), changes (CR), and sessions (SESSION, the audit
 trail).
 
-**Layer 2 — the grammar.** How those elements may legally connect: 31 legal connection patterns define
+**Layer 2 — the grammar.** How those elements may legally connect: 32 legal connection patterns define
 a well-formed graph. An illegal connection never enters the graph — it isn't a warning to read later.
 
 **Layer 3 — readiness.** 67 engine rules feed 8 readiness dimensions, one deliberately *not* asking "is this

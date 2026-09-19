@@ -369,13 +369,29 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
       //     Engpass stehe nur in `graph_metrics`. Jetzt trägt einer eins, und der Engpass ist
       //     hier direkt lesbar — dieselbe Stelle, die CR-GC-537 im Steuerungsraum mit 3,5 misst.
       //
+      // CR-SM-347 (2026-09-19) — NEU GEMESSEN, nachdem das Release 10.7.0/1.7.0 den Test rot
+      // machte. Dazugekommen ist EIN Vorschlag:
+      //
+      //     übrig: [R-02] FUNC-audit-stats · score 0.0000 · add-trace FUNC-audit-stats->REQ-prose-recovery
+      //
+      // Das ist KEINE Topologiebewegung: `steps` bleibt leer, `dominant` steht unverändert auf
+      // R-04 @ MOD-kernel, der Score ist exakt 0,0000 — der Zug senkt das Chebyshev-Maximum
+      // nicht. Es ist eine ANFORDERUNGSBINDUNG: eine FUNC ohne `satisfy` bekommt ihr REQ.
+      // Möglich wurde sie, weil R-02 in jenem Release erstmals eine Vorlage bekam (CR-SM-342)
+      // und ihren Kandidatenkreis am Meta-Modell filtert (CR-SM-346) — vorher bot die Regel
+      // alle REQ an, und die Vorlage gab korrekt `null` zurück.
+      //
+      // Die Menge heißt deshalb nicht mehr „CR-Hygiene": sie führt die bekannten Klassen, die
+      // KEINE Topologie bewegen. R-02 gehört dazu, weil es Bindung herstellt, nicht Struktur
+      // verschiebt. Die Reißleine bleibt scharf — jede ANDERE Regel lässt den Test reißen.
+      //
       // Wird das falsch — eine ARCHITEKTUR-Bewegung wird möglich, oder der Engpass wandert weg
       // von R-04 @ MOD-kernel —, MUSS dieser Test rot werden: der Befund ist dann veraltet.
-      const CR_HYGIENE = new Set(['CR-R01', 'MS-03', 'CR-01', 'RD-01', 'RD-04']);
+      const OHNE_TOPOLOGIEWIRKUNG = new Set(['CR-R01', 'MS-03', 'CR-01', 'RD-01', 'RD-04', 'R-02']);
       expect(steps.map((s) => s.edit), 'ein Zug ist möglich geworden — der Befund oben ist veraltet, bitte neu messen').toEqual([]);
       expect(
-        rest.filter((s) => !CR_HYGIENE.has(s.ruleId)).map((s) => `${s.ruleId} @ ${s.elementId}`),
-        'ein anwendbarer Zug AUSSERHALB der CR-Hygiene liegt auf dem Tisch — das wäre eine Architekturbewegung, bitte neu messen',
+        rest.filter((s) => !OHNE_TOPOLOGIEWIRKUNG.has(s.ruleId)).map((s) => `${s.ruleId} @ ${s.elementId}`),
+        'ein anwendbarer Zug AUSSERHALB der bekannten bindungs-/hygienischen Klassen liegt auf dem Tisch — das waere eine Architekturbewegung, bitte neu messen',
       ).toEqual([]);
       expect(dominant, 'der Engpass ist nicht mehr R-04 @ MOD-kernel — bitte neu messen').toEqual({
         ruleId: 'R-04',
