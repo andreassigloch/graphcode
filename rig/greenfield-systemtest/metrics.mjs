@@ -63,7 +63,7 @@ export function moduleAudit(runGraph, golden) {
   };
 }
 
-/** Die ganze Bewertung, nicht nur ihre Spitze (CR-GC-552).
+/** Die ganze Bewertung, nicht nur ihre Spitze (CR-GC-553).
  *
  * `graph_readiness` liefert acht Felder, die das Rig bis hierher wegwarf: die
  * Dimensions-Readiness, den Steuerwert samt Anker, `skipped` (was gar nicht ausgewertet
@@ -141,7 +141,7 @@ export function codeVerdict(r, graph) {
   };
 }
 
-/** Deckung gegen die Anforderungen des AUFTRAGS — eine PRUEFLISTE, keine Note (CR-GC-552).
+/** Deckung gegen die Anforderungen des AUFTRAGS — eine PRUEFLISTE, keine Note (CR-GC-553).
  *
  * Gefragt ist: wurde jede Anforderung der initialen Beschreibung umgesetzt oder ausdruecklich
  * verworfen? Deterministisch beantwortbar waere das nur mit HERKUNFT am REQ — die Ontologie hat
@@ -201,7 +201,7 @@ export function runMetrics({ graphPath, readinessPath, auditPath, goldenPath, ch
   const golden = loadGraph(goldenPath);
   const el = run.elements;
   const byType = (t) => el.filter((e) => e.type === t).length;
-  // CR-GC-552: die volle Bewertung, Spezifikation UND Code. `readiness` bleibt als
+  // CR-GC-553: die volle Bewertung, Spezifikation UND Code. `readiness` bleibt als
   // Kopfzeile, `spec`/`code` tragen, was bis hierher weggeworfen wurde.
   const raw = existsSync(readinessPath) ? JSON.parse(readFileSync(readinessPath, 'utf8')) : null;
   return {

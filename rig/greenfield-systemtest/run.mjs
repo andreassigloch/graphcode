@@ -32,7 +32,7 @@ const CFG = {
   timeoutMs: Number(process.env.RUN_TIMEOUT_S ?? 1200) * 1000, // per-run cap; stuck run fails clean
   golden: process.env.GOLDEN
     ?? '/Users/andreas/Developer/dev/sigloch-modules/docs/graph/sigloch-modules.graph.json',
-  /** Prueflliste der Auftrags-Anforderungen (CR-GC-552). Optional: ohne sie entfaellt der Abgleich. */
+  /** Prueflliste der Auftrags-Anforderungen (CR-GC-553). Optional: ohne sie entfaellt der Abgleich. */
   checklist: process.env.CHECKLIST ?? null,
   // The module repo the model may READ to DISCOVER capabilities itself. Not a
   // pre-digested brief — discovery is the challenge. node_modules excluded via prompt.
