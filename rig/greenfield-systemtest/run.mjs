@@ -36,7 +36,7 @@ const CFG = {
   // pre-digested brief — discovery is the challenge. node_modules excluded via prompt.
   material: process.env.MATERIAL ?? '/Users/andreas/Developer/dev/sigloch-modules',
   lmstudio: process.env.LMSTUDIO ?? 'http://192.168.78.89:1234',
-  // Korpus-Parameter (CR-GC-551). Defaults = der graphcode-Webapp-Korpus, mit dem dieses
+  // Korpus-Parameter. Defaults = der graphcode-Webapp-Korpus, mit dem dieses
   // Rig gebaut wurde — gesetzt liefern sie einen ZWEITEN Korpus durch DENSELBEN Treiber
   // (rig/sigllm-spezifikation). Kein zweiter Pfad: eine Frage je Rig, ein Runner.
   promptFile: process.env.PROMPT_FILE ?? join(HERE, 'prompt.txt'),

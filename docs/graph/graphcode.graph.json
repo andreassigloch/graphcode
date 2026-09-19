@@ -1576,6 +1576,12 @@
       "status": "open"
     },
     {
+      "id": "CR-GC-551",
+      "type": "CR",
+      "name": "kinds als Zeichenkette ueber den commands-Pfad: 49 von 49 REQ eines Auto-Laufs tragen \"non-functional\" statt [\"non-functional\"] - die in CR-SM-320 par. 4 als offen benannte Haelfte ist die, die in der Praxis feuert",
+      "description": "docs/cr/open/CR-GC-551-kinds-als-zeichenkette-ueber-den-command.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -19160,5 +19166,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 300
+  "graphVersion": 301
 }

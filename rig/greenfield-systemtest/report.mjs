@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const rows = [];
-// RESULTS_FILE waehlt EINEN Korpus (CR-GC-551). Ohne die Variable werden wie bisher alle
+// RESULTS_FILE waehlt EINEN Korpus. Ohne die Variable werden wie bisher alle
 // results*.json zusammengezogen — das war richtig, solange es EINEN Korpus gab (Arme liefen
 // parallel in getrennte Dateien). Seit rig/sigllm-spezifikation ist es falsch: der Report
 // mischte sonst Laeufe verschiedener Fragen mit verschiedenen Goldens in eine Tabelle.
