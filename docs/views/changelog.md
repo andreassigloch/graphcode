@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 173 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 174 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 173 CR · 162 done · 1 open.
+Total: 174 CR · 162 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -235,3 +235,4 @@ Total: 173 CR · 162 done · 1 open.
 | `CR-GC-549` | done | Zugverlauf aus dem Audit-Log rekonstruieren |
 | `CR-GC-550` | open | se-plan leitet ueber REQ ab, nicht ueber FUNC-Blaetter |
 | `CR-GC-551` | n/a | kinds als Zeichenkette ueber den commands-Pfad: 49 von 49 REQ eines Auto-Laufs tragen "non-functional" statt ["non-functional"] - die in CR-SM-320 par. 4 als offen benannte Haelfte ist die, die in der Praxis feuert |
+| `CR-GC-552` | n/a | graphcode run gegen sigllm statt direkt gegen die Runtime — drittes Backend sigllm im Executor |

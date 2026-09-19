@@ -25,20 +25,28 @@ import {
  * Pflicht-Variablen sind ein Fehler mit vollständiger Usage-Nennung.
  */
 export function parseExecutorEnv(env: NodeJS.ProcessEnv): ExecutorConfig {
-  const missing = ['GRAPHCODE_LLM_BASE_URL', 'GRAPHCODE_LLM_MODEL'].filter((k) => !env[k]?.trim());
+  const backend = env.GRAPHCODE_LLM_BACKEND?.trim() || 'openai';
+  // Bei sigllm ist das Token keine Option: das Gateway IST die Zugangskontrolle, und ein
+  // Lauf ohne Token stirbt sonst erst am ersten Call mit HTTP 401 (CR-GC-552).
+  const pflicht = ['GRAPHCODE_LLM_BASE_URL', 'GRAPHCODE_LLM_MODEL'];
+  if (backend === 'sigllm') pflicht.push('GRAPHCODE_LLM_TOKEN');
+  const missing = pflicht.filter((k) => !env[k]?.trim());
   if (missing.length > 0) {
     throw new Error(
       `graphcode run: fehlende Env-Variablen: ${missing.join(', ')}. ` +
-        'Pflicht: GRAPHCODE_LLM_BASE_URL, GRAPHCODE_LLM_MODEL; ' +
-        'optional: GRAPHCODE_LLM_BACKEND=openai|anthropic (default openai), GRAPHCODE_LLM_API_KEY, ' +
-        'GRAPHCODE_LLM_MAX_ROUNDS.',
+        'Pflicht: GRAPHCODE_LLM_BASE_URL, GRAPHCODE_LLM_MODEL' +
+        (backend === 'sigllm' ? ', GRAPHCODE_LLM_TOKEN' : '') +
+        '; optional: GRAPHCODE_LLM_BACKEND=openai|anthropic|sigllm (default openai), ' +
+        'GRAPHCODE_LLM_API_KEY, GRAPHCODE_LLM_MAX_ROUNDS. ' +
+        'Bei sigllm traegt GRAPHCODE_LLM_MODEL den PROFILNAMEN (fast|reasoning), nicht den Modellnamen — ' +
+        'die Bindung Profil→Modell gehoert der Plattform.',
     );
   }
   return ExecutorConfigSchema.parse({
     backend: env.GRAPHCODE_LLM_BACKEND || undefined,
     baseUrl: env.GRAPHCODE_LLM_BASE_URL,
     model: env.GRAPHCODE_LLM_MODEL,
-    apiKey: env.GRAPHCODE_LLM_API_KEY || undefined,
+    apiKey: env.GRAPHCODE_LLM_TOKEN || env.GRAPHCODE_LLM_API_KEY || undefined,
     ...(env.GRAPHCODE_LLM_MAX_ROUNDS ? { maxRounds: Number(env.GRAPHCODE_LLM_MAX_ROUNDS) } : {}),
     ...(env.GRAPHCODE_LLM_TIMEOUT_MS ? { callTimeoutMs: Number(env.GRAPHCODE_LLM_TIMEOUT_MS) } : {}),
     ...(env.GRAPHCODE_LLM_TOOLSET ? { toolset: env.GRAPHCODE_LLM_TOOLSET } : {}),

@@ -308,6 +308,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-547` | n/a | Zod plus Test fuer die Grenzvertraege: MCPTool/MCPToolRegistry als Laufzeitvertrag, parse im einen Bauplatz der Registry, Vertrags-TEST gegen die echte Registry - R-32 und RC-04 erfuellen statt abschwaechen | `MOD-kernel` |
 | `CR-GC-549` | done | Zugverlauf aus dem Audit-Log rekonstruieren | `REQ-audit-trail` |
 | `CR-GC-550` | open | se-plan leitet ueber REQ ab, nicht ueber FUNC-Blaetter | `FUNC-se-plan` |
+| `CR-GC-552` | n/a | graphcode run gegen sigllm statt direkt gegen die Runtime — drittes Backend sigllm im Executor | `FUNC-call-model` · `FUNC-run-verb` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen
