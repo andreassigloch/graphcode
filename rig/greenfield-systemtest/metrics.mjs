@@ -63,6 +63,84 @@ export function moduleAudit(runGraph, golden) {
   };
 }
 
+/** Die ganze Bewertung, nicht nur ihre Spitze (CR-GC-552).
+ *
+ * `graph_readiness` liefert acht Felder, die das Rig bis hierher wegwarf: die
+ * Dimensions-Readiness, den Steuerwert samt Anker, `skipped` (was gar nicht ausgewertet
+ * wurde), `catalogs.notInGate` (was ausgewertet wurde, aber nicht blockt) und
+ * `importCoverage` — die REICHWEITE. Ohne sie ist eine Konformanzaussage keine Aussage:
+ * dieselbe Regel meldete an sigllm 0 Befunde bei 19 % Reichweite und 8 bei 81 %.
+ */
+export function specVerdict(r) {
+  const dims = {};
+  for (const d of r.dimension_readiness ?? []) dims[d.dimension] = d.score;
+  return {
+    compliance: r.compliance?.score ?? null,
+    elementsWithErrors: r.compliance?.elementsWithErrors ?? null,
+    dimensions: dims,
+    steer: r.steer
+      ? { worst: r.steer.worst ?? null, anchor: r.steer.worstAt ? `${r.steer.worstAt.ruleId}@${r.steer.worstAt.elementId}` : null }
+      : null,
+    /** Regeln, die NICHT liefen — `0 Befunde` heisst hier „nicht gefragt", nicht „sauber". */
+    notEvaluated: r.skipped ?? [],
+    /** Regeln, die liefen, aber nicht blocken. */
+    advisoryOnly: r.catalogs?.notInGate ?? [],
+  };
+}
+
+/** Bindungsquote: Blatt-FUNC mit `realRef`. Die Reichweite JEDER Aussage ueber den Code.
+ *  Attribute stehen im Export flach ODER unter `attributes` (CR-GC-219) — beides lesen. */
+export function binding(graph) {
+  const at = (e, k) => e[k] ?? e.attributes?.[k];
+  const kinder = new Map();
+  for (const t of graph.traces ?? []) {
+    if (t.type !== 'compose') continue;
+    if (!kinder.has(t.source)) kinder.set(t.source, []);
+    kinder.get(t.source).push(t.target);
+  }
+  const typeOf = new Map(graph.elements.map((e) => [e.id, e.type]));
+  const funcs = graph.elements.filter((e) => e.type === 'FUNC');
+  const leaves = funcs.filter((f) => !(kinder.get(f.id) ?? []).some((c) => typeOf.get(c) === 'FUNC'));
+  const bound = leaves.filter((f) => at(f, 'realRef') != null);
+  return {
+    leafFuncs: leaves.length,
+    bound: bound.length,
+    pct: leaves.length ? Math.round((100 * bound.length) / leaves.length) : null,
+  };
+}
+
+/** Code-Konformanz DREIWERTIG (globale CLAUDE.md, „Kongruenz"): kongruent / gedriftet /
+ *  nicht pruefbar — und die Reichweite steht IMMER dabei, auch beim Urteil „kongruent".
+ *  Ein Gate, das ohne Bindung „gruen" meldet, ist schlimmer als keins. */
+export function codeVerdict(r, graph) {
+  const rc = Object.entries(r.violationsByRule ?? {}).filter(([id]) => id.startsWith('RC-'));
+  const nieGelaufen = (r.skipped ?? []).filter((s) => s.startsWith('rule:RC-'));
+  const cov = r.importCoverage ?? { endpoints: 0, assigned: 0 };
+  const reach = cov.endpoints ? Math.round((100 * cov.assigned) / cov.endpoints) : 0;
+  const bind = binding(graph);
+
+  let verdict;
+  if (nieGelaufen.length) verdict = 'nicht pruefbar';
+  else if (!cov.endpoints && !bind.bound) verdict = 'nicht pruefbar';
+  else if (rc.length) verdict = 'gedriftet';
+  else verdict = 'kongruent';
+
+  return {
+    verdict,
+    /** Warum dieses Urteil — nie nur das Wort. */
+    why: nieGelaufen.length
+      ? `RC-Regeln nicht ausgewertet: ${nieGelaufen.join(', ')}`
+      : !cov.endpoints && !bind.bound
+        ? 'keine Bindung und keine aufloesbare Quelldatei — es gibt nichts zu pruefen'
+        : rc.length
+          ? `RC-Befunde: ${rc.map(([id, n]) => `${id} x${n}`).join(', ')}`
+          : `keine RC-Befunde bei ${reach} % Reichweite`,
+    reach: { endpoints: cov.endpoints, assigned: cov.assigned, pct: reach },
+    binding: bind,
+    rcViolations: Object.fromEntries(rc),
+  };
+}
+
 /** Assemble one run's metric row. Primary metrics are rule-based (compliance, structure,
  *  gate-rejections, cost); module reuse is a human-audit list, not a score (see README). */
 export function runMetrics({ graphPath, readinessPath, auditPath, goldenPath, usage }) {
@@ -70,11 +148,16 @@ export function runMetrics({ graphPath, readinessPath, auditPath, goldenPath, us
   const golden = loadGraph(goldenPath);
   const el = run.elements;
   const byType = (t) => el.filter((e) => e.type === t).length;
+  // CR-GC-552: die volle Bewertung, Spezifikation UND Code. `readiness` bleibt als
+  // Kopfzeile, `spec`/`code` tragen, was bis hierher weggeworfen wurde.
+  const raw = existsSync(readinessPath) ? JSON.parse(readFileSync(readinessPath, 'utf8')) : null;
   return {
     elements: el.length,
     traces: (run.traces ?? []).length,
     structure: { UC: byType('UC'), FUNC: byType('FUNC'), MOD: byType('MOD'), REQ: byType('REQ'), TEST: byType('TEST') },
     readiness: readiness(readinessPath),
+    spec: raw ? specVerdict(raw) : null,
+    code: raw ? codeVerdict(raw, run) : null,
     gate_rejections: legality(auditPath).blocked,
     tokens: usage ?? null,
     moduleAudit: moduleAudit(run, golden), // human-audited, not scored

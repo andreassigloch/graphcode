@@ -12,7 +12,8 @@ nicht und kann dort nicht stehen. Dafür braucht es einen zweiten Lauf, und der 
 
 | | |
 |---|---|
-| **Input** | `material/docs/project/sig-local-projektdefinition.md` — 245 Zeilen, exakt die Fassung aus sigllms Initialisierungs-Commit `d413707` (2026-09-17 08:40Z), also **vor** dem ersten Graph-Zug (09:06Z). Nicht die heutige, 26 Zeilen längere. |
+| **Input, Lauf 1** | `material/docs/project/sig-local-projektdefinition.md` — 245 Zeilen, exakt die Fassung aus sigllms Initialisierungs-Commit `d413707` (2026-09-17 08:40Z), also **vor** dem ersten Graph-Zug (09:06Z). |
+| **Input, Lauf 2** | `material-prosa/auftrag.md` — derselbe Inhalt **ohne Kennungen, Zerlegungstabelle und Akteursliste**. Lauf 1 hat die Struktur des Briefs abgeschrieben (§ergebnis.md); mit dem Prosa-Auftrag ist sie Teil der Aufgabe. Aufruf: `lauf-prosa.env`. |
 | **Saat** | ein SYS-Knoten, Wortlaut aus der Definition selbst. Das eine Rahmenstück, das der Mensch setzt — sonst gibt `graph_next_step` auf dem leeren Graphen keine Richtung. Symmetrisch zum Nachbar-Rig. |
 | **Golden** | `golden/sigllm-v98.graph.json` — der handgeführte Stand am **Ende der Spezifikationsphase**: 255 Elemente, 506 Traces, v98. Ab v99 legt CR-SL-034 die 22 CR-Knoten an, dort beginnt die Bauphase. Das Golden wird nur zum **Werten** geladen, nie als Material. |
 | **Treiber** | `../greenfield-systemtest/run.mjs`, unverändert. Dieses Rig ist ein zweiter **Korpus**, kein zweiter Runner. |
@@ -21,10 +22,19 @@ nicht und kann dort nicht stehen. Dafür braucht es einen zweiten Lauf, und der 
 ## Lauf
 
 ```bash
+# Lauf 1 — strukturierte Projektdefinition
 set -a && source rig/sigllm-spezifikation/lauf.env && set +a
-node rig/greenfield-systemtest/run.mjs      # → results-sigllm.json
-node rig/greenfield-systemtest/report.mjs
+node rig/greenfield-systemtest/run.mjs
+RESULTS_FILE=results-sigllm.json node rig/greenfield-systemtest/report.mjs
+
+# Lauf 2 — prosaischer Auftrag, Struktur ist Teil der Aufgabe
+set -a && source rig/sigllm-spezifikation/lauf-prosa.env && set +a
+node rig/greenfield-systemtest/run.mjs
+RESULTS_FILE=results-sigllm-prosa.json node rig/greenfield-systemtest/report.mjs
 ```
+
+`RESULTS_FILE` beim Report ist **nicht optional**: ohne die Variable zieht er alle
+`results*.json` zusammen und mischt beide Läufe mit dem Nachbar-Korpus in eine Tabelle.
 
 Jeder Lauf hinterlässt `../greenfield-systemtest/runs/opus5-<i>/` mit `graph.json`,
 `readiness.json`, `audit.jsonl`, `usage.json` und dem rohen `claude-raw.json`.
@@ -32,7 +42,11 @@ Jeder Lauf hinterlässt `../greenfield-systemtest/runs/opus5-<i>/` mit `graph.js
 ## Was der Vergleich zeigt — und was nicht
 
 **Zeigt er:** Form (Readiness über acht Dimensionen), Menge und Typmischung, Legalität
-(Gate-Ablehnungen aus dem Audit-Log), Kosten und Wall-Zeit. Dazu die Hand-Audit-Liste
+(Gate-Ablehnungen aus dem Audit-Log), Kosten und Wall-Zeit. Seit CR-GC-552 zusätzlich die
+**volle Bewertung beider Hälften**: je Dimension der Readiness-Score, der Steuerwert mit seinem
+Anker, die Liste der Regeln die **nicht ausgewertet** wurden (dort heißt „0 Befunde" nicht
+„sauber", sondern „nicht gefragt"), und für den Code ein **dreiwertiges** Urteil —
+`kongruent` / `gedriftet` / `nicht prüfbar` — immer mit Reichweite und Bindungsquote daneben. Dazu die Hand-Audit-Liste
 `moduleAudit`: welche Module, Use Cases und Akteure der Arm gefunden hat, neben denen des
 Goldens. Bewusst **kein** Score auf Namensgleichheit — Paraphrasen erzeugen falsche Nullen.
 
