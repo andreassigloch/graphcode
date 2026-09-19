@@ -1,258 +1,258 @@
 {
- "quelle": "material/docs/project/sig-local-projektdefinition.md par. 3 (Initialisierungs-Commit d413707, vor dem ersten Graph-Zug)",
- "hinweis": "Die Pruefliste des Auftrags. Gilt fuer BEIDE Laeufe — der Prosa-Auftrag traegt denselben Inhalt ohne Kennungen.",
- "anforderungen": [
-  {
-   "id": "REQ-001",
-   "typ": "nicht-funktional",
-   "abschnitt": "Systemweit",
-   "text": "Vollständig lokal; keine Daten verlassen den Rechner."
-  },
-  {
-   "id": "REQ-002",
-   "typ": "nicht-funktional",
-   "abschnitt": "Systemweit",
-   "text": "Runtime nur auf localhost; Zugriff ausschließlich über das Gateway mit Token-Authentifizierung."
-  },
-  {
-   "id": "REQ-003",
-   "typ": "nicht-funktional",
-   "abschnitt": "Systemweit",
-   "text": "Portabel zwischen MacBook und Mac Mini ohne Codeänderung; Umzug = Kopieren von Konfiguration, Katalog und Ledger."
-  },
-  {
-   "id": "REQ-004",
-   "typ": "nicht-funktional",
-   "abschnitt": "Systemweit",
-   "text": "Robust gegen Sleep, Ausschalten und Stromausfall; kein Datenverlust im Ledger."
-  },
-  {
-   "id": "REQ-005",
-   "typ": "nicht-funktional",
-   "abschnitt": "Systemweit",
-   "text": "Modell-Speicherbedarf passt mit Reserve in 64 GB Unified Memory."
-  },
-  {
-   "id": "REQ-006",
-   "typ": "nicht-funktional",
-   "abschnitt": "Systemweit",
-   "text": "Jeder Output ist auf Task, Prompt-Version und Modell rückführbar."
-  },
-  {
-   "id": "REQ-007",
-   "typ": "nicht-funktional",
-   "abschnitt": "Systemweit",
-   "text": "Betrieb nach Neustart ohne interaktiven Login."
-  },
-  {
-   "id": "REQ-008",
-   "typ": "nicht-funktional",
-   "abschnitt": "Systemweit",
-   "text": "Always-on: Runtime und benötigte Modelle sind ohne manuellen Eingriff verfügbar; kein Lauf scheitert an einem nicht geladenen Modell."
-  },
-  {
-   "id": "REQ-009",
-   "typ": "nicht-funktional",
-   "abschnitt": "Systemweit",
-   "text": "Gleiche Modell- und Profilkonfiguration auf Mac Mini und MacBook."
-  },
-  {
-   "id": "REQ-010",
-   "typ": "funktional",
-   "abschnitt": "UC-01 LLM-Compute bereitstellen",
-   "text": "OpenAI- und Anthropic-kompatible API über das Gateway, Profilwahl pro Request."
-  },
-  {
-   "id": "REQ-011",
-   "typ": "funktional",
-   "abschnitt": "UC-01 LLM-Compute bereitstellen",
-   "text": "Gateway ist im internen Netz unter dem festen Namen SIG Local erreichbar; Clients konfigurieren nur diesen Namen."
-  },
-  {
-   "id": "REQ-012",
-   "typ": "funktional",
-   "abschnitt": "UC-01 LLM-Compute bereitstellen",
-   "text": "Token pro Nutzer bzw. Gerät, einzeln widerrufbar."
-  },
-  {
-   "id": "REQ-013",
-   "typ": "funktional",
-   "abschnitt": "UC-01 LLM-Compute bereitstellen",
-   "text": "Tagesprofil-Modelle bleiben tagsüber geladen."
-  },
-  {
-   "id": "REQ-014",
-   "typ": "funktional",
-   "abschnitt": "UC-01 LLM-Compute bereitstellen",
-   "text": "Nutzungsmetriken pro Token: Requests, Tokens, Wartezeit in der Queue."
-  },
-  {
-   "id": "REQ-015",
-   "typ": "funktional",
-   "abschnitt": "UC-01 LLM-Compute bereitstellen",
-   "text": "Priorisierung: tagsüber UC-01 vor UC-02, im Nachtfenster UC-02 vor UC-01; Zeitfenster konfigurierbar."
-  },
-  {
-   "id": "REQ-016",
-   "typ": "funktional",
-   "abschnitt": "UC-01 LLM-Compute bereitstellen",
-   "text": "Profil `reasoning` oder `fast`; Thinking wird pro Request explizit gesetzt."
-  },
-  {
-   "id": "REQ-017",
-   "typ": "funktional",
-   "abschnitt": "UC-01 LLM-Compute bereitstellen",
-   "text": "Bei `fast` muss der Reasoning-Output leer sein, sonst gilt der Lauf als fehlgeschlagen."
-  },
-  {
-   "id": "REQ-018",
-   "typ": "funktional",
-   "abschnitt": "UC-01 LLM-Compute bereitstellen",
-   "text": "Sampling-Parameter und Kontextlänge pro Profil konfigurierbar."
-  },
-  {
-   "id": "REQ-019",
-   "typ": "nicht-funktional",
-   "abschnitt": "UC-01 LLM-Compute bereitstellen",
-   "text": "Time-to-First-Token tagsüber innerhalb eines Zielwerts (offen), auch während UC-02 läuft."
-  },
-  {
-   "id": "REQ-020",
-   "typ": "nicht-funktional",
-   "abschnitt": "UC-01 LLM-Compute bereitstellen",
-   "text": "Im LAN ist nur der Gateway-Port offen, Verbindung per TLS."
-  },
-  {
-   "id": "REQ-021",
-   "typ": "funktional",
-   "abschnitt": "UC-02 Agentenloop im Hintergrund betreiben",
-   "text": "Tasks werden deklarativ definiert; kein Task-spezifischer Code im Runner."
-  },
-  {
-   "id": "REQ-022",
-   "typ": "funktional",
-   "abschnitt": "UC-02 Agentenloop im Hintergrund betreiben",
-   "text": "Jeder Task hat einen Zeitplan; Standard ist das Nachtfenster."
-  },
-  {
-   "id": "REQ-023",
-   "typ": "funktional",
-   "abschnitt": "UC-02 Agentenloop im Hintergrund betreiben",
-   "text": "Der Runner wird bei Nachtfenster, Systemstart und Aufwachen ausgelöst."
-  },
-  {
-   "id": "REQ-024",
-   "typ": "funktional",
-   "abschnitt": "UC-02 Agentenloop im Hintergrund betreiben",
-   "text": "Der Runner berechnet fehlende Slots seit dem letzten Erfolg und plant sie ein."
-  },
-  {
-   "id": "REQ-025",
-   "typ": "funktional",
-   "abschnitt": "UC-02 Agentenloop im Hintergrund betreiben",
-   "text": "Catch-up-Policy pro Task: `none`, `latest` oder `all`."
-  },
-  {
-   "id": "REQ-026",
-   "typ": "funktional",
-   "abschnitt": "UC-02 Agentenloop im Hintergrund betreiben",
-   "text": "Maximales Slot-Alter pro Task; ältere Slots werden als verfallen protokolliert."
-  },
-  {
-   "id": "REQ-027",
-   "typ": "funktional",
-   "abschnitt": "UC-02 Agentenloop im Hintergrund betreiben",
-   "text": "Idempotenz über Task-ID + Slot-Datum; kein Slot läuft doppelt."
-  },
-  {
-   "id": "REQ-028",
-   "typ": "funktional",
-   "abschnitt": "UC-02 Agentenloop im Hintergrund betreiben",
-   "text": "Nur eine Runner-Instanz gleichzeitig (Lock)."
-  },
-  {
-   "id": "REQ-029",
-   "typ": "funktional",
-   "abschnitt": "UC-02 Agentenloop im Hintergrund betreiben",
-   "text": "Queue mit Concurrency 1; Gruppierung nach Modell."
-  },
-  {
-   "id": "REQ-030",
-   "typ": "funktional",
-   "abschnitt": "UC-02 Agentenloop im Hintergrund betreiben",
-   "text": "Preflight vor jedem Lauf: Runtime erreichbar, Modell ladbar; sonst Runtime starten und Modell laden, erst dann Fehler melden."
-  },
-  {
-   "id": "REQ-031",
-   "typ": "funktional",
-   "abschnitt": "UC-02 Agentenloop im Hintergrund betreiben",
-   "text": "Output wird gegen ein Schema validiert; bei Fehler Retry, danach Dead-Letter."
-  },
-  {
-   "id": "REQ-032",
-   "typ": "funktional",
-   "abschnitt": "UC-02 Agentenloop im Hintergrund betreiben",
-   "text": "Token-Budget und Timeout pro Task."
-  },
-  {
-   "id": "REQ-033",
-   "typ": "funktional",
-   "abschnitt": "UC-02 Agentenloop im Hintergrund betreiben",
-   "text": "Run-Log pro Lauf: Task, Slot, Modell, Prompt-Version, Dauer, Tokens, Status."
-  },
-  {
-   "id": "REQ-034",
-   "typ": "funktional",
-   "abschnitt": "UC-02 Agentenloop im Hintergrund betreiben",
-   "text": "Benachrichtigung bei Fehlern, Dead-Letter und markierten Ergebnissen."
-  },
-  {
-   "id": "REQ-035",
-   "typ": "funktional",
-   "abschnitt": "UC-02 Agentenloop im Hintergrund betreiben",
-   "text": "Catch-up-Läufe starten sofort oder im nächsten Nachtfenster (konfigurierbar)."
-  },
-  {
-   "id": "REQ-036",
-   "typ": "funktional",
-   "abschnitt": "UC-02 Agentenloop im Hintergrund betreiben",
-   "text": "Während laufender Jobs wird System-Sleep verhindert."
-  },
-  {
-   "id": "REQ-037",
-   "typ": "funktional",
-   "abschnitt": "UC-02 Agentenloop im Hintergrund betreiben",
-   "text": "UC-02 gibt an Schrittgrenzen nach: laufende Inferenz wird nicht abgebrochen, der nächste Schritt wartet bei interaktiver Last."
-  },
-  {
-   "id": "REQ-038",
-   "typ": "funktional",
-   "abschnitt": "UC-02 Agentenloop im Hintergrund betreiben",
-   "text": "Agentenloop mehrstufig mit Tool-Aufrufen, Schrittlimit und Stoppbedingung; Zwischenzustand im Ledger, fortsetzbar."
-  },
-  {
-   "id": "REQ-039",
-   "typ": "funktional",
-   "abschnitt": "UC-02 Agentenloop im Hintergrund betreiben",
-   "text": "Tasks können deterministische Vorstufen (Datenabruf, Checks) vor dem LLM-Schritt ausführen."
-  },
-  {
-   "id": "REQ-040",
-   "typ": "funktional",
-   "abschnitt": "UC-02 Agentenloop im Hintergrund betreiben",
-   "text": "Secrets liegen im macOS-Schlüsselbund, nie in Task-Definitionen oder Logs."
-  },
-  {
-   "id": "REQ-041",
-   "typ": "funktional",
-   "abschnitt": "UC-02 Agentenloop im Hintergrund betreiben",
-   "text": "Laufbedingungen pro Task (z. B. Netzbetrieb); beim Eintreten werden fällige Tasks sofort gestartet."
-  },
-  {
-   "id": "REQ-042",
-   "typ": "funktional",
-   "abschnitt": "UC-03 Lokal arbeiten unterwegs",
-   "text": "Endpoint-Fallback auf dem MacBook: SIG Local, wenn erreichbar, sonst die lokale Instanz – ohne manuelles Umkonfigurieren."
-  }
- ]
+  "quelle": "material/docs/project/sig-local-projektdefinition.md par. 3 (Initialisierungs-Commit d413707, vor dem ersten Graph-Zug)",
+  "hinweis": "Die Pruefliste des Auftrags. WORTLAUT aus der strukturierten Projektdefinition — damit misst die Ueberdeckung Abschreiben, nicht Deckung, und ist zwischen Lauf 1 (las diesen Wortlaut, 42/42) und Lauf 2 (las die Prosa-Fassung, 1/42) NICHT vergleichbar. Gemessen 2026-09-19, ITEM-2026-360. Die Liste bleibt als Leseliste gueltig, der Zahlenvergleich nicht.",
+  "anforderungen": [
+    {
+      "id": "REQ-001",
+      "typ": "nicht-funktional",
+      "abschnitt": "Systemweit",
+      "text": "Vollständig lokal; keine Daten verlassen den Rechner."
+    },
+    {
+      "id": "REQ-002",
+      "typ": "nicht-funktional",
+      "abschnitt": "Systemweit",
+      "text": "Runtime nur auf localhost; Zugriff ausschließlich über das Gateway mit Token-Authentifizierung."
+    },
+    {
+      "id": "REQ-003",
+      "typ": "nicht-funktional",
+      "abschnitt": "Systemweit",
+      "text": "Portabel zwischen MacBook und Mac Mini ohne Codeänderung; Umzug = Kopieren von Konfiguration, Katalog und Ledger."
+    },
+    {
+      "id": "REQ-004",
+      "typ": "nicht-funktional",
+      "abschnitt": "Systemweit",
+      "text": "Robust gegen Sleep, Ausschalten und Stromausfall; kein Datenverlust im Ledger."
+    },
+    {
+      "id": "REQ-005",
+      "typ": "nicht-funktional",
+      "abschnitt": "Systemweit",
+      "text": "Modell-Speicherbedarf passt mit Reserve in 64 GB Unified Memory."
+    },
+    {
+      "id": "REQ-006",
+      "typ": "nicht-funktional",
+      "abschnitt": "Systemweit",
+      "text": "Jeder Output ist auf Task, Prompt-Version und Modell rückführbar."
+    },
+    {
+      "id": "REQ-007",
+      "typ": "nicht-funktional",
+      "abschnitt": "Systemweit",
+      "text": "Betrieb nach Neustart ohne interaktiven Login."
+    },
+    {
+      "id": "REQ-008",
+      "typ": "nicht-funktional",
+      "abschnitt": "Systemweit",
+      "text": "Always-on: Runtime und benötigte Modelle sind ohne manuellen Eingriff verfügbar; kein Lauf scheitert an einem nicht geladenen Modell."
+    },
+    {
+      "id": "REQ-009",
+      "typ": "nicht-funktional",
+      "abschnitt": "Systemweit",
+      "text": "Gleiche Modell- und Profilkonfiguration auf Mac Mini und MacBook."
+    },
+    {
+      "id": "REQ-010",
+      "typ": "funktional",
+      "abschnitt": "UC-01 LLM-Compute bereitstellen",
+      "text": "OpenAI- und Anthropic-kompatible API über das Gateway, Profilwahl pro Request."
+    },
+    {
+      "id": "REQ-011",
+      "typ": "funktional",
+      "abschnitt": "UC-01 LLM-Compute bereitstellen",
+      "text": "Gateway ist im internen Netz unter dem festen Namen SIG Local erreichbar; Clients konfigurieren nur diesen Namen."
+    },
+    {
+      "id": "REQ-012",
+      "typ": "funktional",
+      "abschnitt": "UC-01 LLM-Compute bereitstellen",
+      "text": "Token pro Nutzer bzw. Gerät, einzeln widerrufbar."
+    },
+    {
+      "id": "REQ-013",
+      "typ": "funktional",
+      "abschnitt": "UC-01 LLM-Compute bereitstellen",
+      "text": "Tagesprofil-Modelle bleiben tagsüber geladen."
+    },
+    {
+      "id": "REQ-014",
+      "typ": "funktional",
+      "abschnitt": "UC-01 LLM-Compute bereitstellen",
+      "text": "Nutzungsmetriken pro Token: Requests, Tokens, Wartezeit in der Queue."
+    },
+    {
+      "id": "REQ-015",
+      "typ": "funktional",
+      "abschnitt": "UC-01 LLM-Compute bereitstellen",
+      "text": "Priorisierung: tagsüber UC-01 vor UC-02, im Nachtfenster UC-02 vor UC-01; Zeitfenster konfigurierbar."
+    },
+    {
+      "id": "REQ-016",
+      "typ": "funktional",
+      "abschnitt": "UC-01 LLM-Compute bereitstellen",
+      "text": "Profil `reasoning` oder `fast`; Thinking wird pro Request explizit gesetzt."
+    },
+    {
+      "id": "REQ-017",
+      "typ": "funktional",
+      "abschnitt": "UC-01 LLM-Compute bereitstellen",
+      "text": "Bei `fast` muss der Reasoning-Output leer sein, sonst gilt der Lauf als fehlgeschlagen."
+    },
+    {
+      "id": "REQ-018",
+      "typ": "funktional",
+      "abschnitt": "UC-01 LLM-Compute bereitstellen",
+      "text": "Sampling-Parameter und Kontextlänge pro Profil konfigurierbar."
+    },
+    {
+      "id": "REQ-019",
+      "typ": "nicht-funktional",
+      "abschnitt": "UC-01 LLM-Compute bereitstellen",
+      "text": "Time-to-First-Token tagsüber innerhalb eines Zielwerts (offen), auch während UC-02 läuft."
+    },
+    {
+      "id": "REQ-020",
+      "typ": "nicht-funktional",
+      "abschnitt": "UC-01 LLM-Compute bereitstellen",
+      "text": "Im LAN ist nur der Gateway-Port offen, Verbindung per TLS."
+    },
+    {
+      "id": "REQ-021",
+      "typ": "funktional",
+      "abschnitt": "UC-02 Agentenloop im Hintergrund betreiben",
+      "text": "Tasks werden deklarativ definiert; kein Task-spezifischer Code im Runner."
+    },
+    {
+      "id": "REQ-022",
+      "typ": "funktional",
+      "abschnitt": "UC-02 Agentenloop im Hintergrund betreiben",
+      "text": "Jeder Task hat einen Zeitplan; Standard ist das Nachtfenster."
+    },
+    {
+      "id": "REQ-023",
+      "typ": "funktional",
+      "abschnitt": "UC-02 Agentenloop im Hintergrund betreiben",
+      "text": "Der Runner wird bei Nachtfenster, Systemstart und Aufwachen ausgelöst."
+    },
+    {
+      "id": "REQ-024",
+      "typ": "funktional",
+      "abschnitt": "UC-02 Agentenloop im Hintergrund betreiben",
+      "text": "Der Runner berechnet fehlende Slots seit dem letzten Erfolg und plant sie ein."
+    },
+    {
+      "id": "REQ-025",
+      "typ": "funktional",
+      "abschnitt": "UC-02 Agentenloop im Hintergrund betreiben",
+      "text": "Catch-up-Policy pro Task: `none`, `latest` oder `all`."
+    },
+    {
+      "id": "REQ-026",
+      "typ": "funktional",
+      "abschnitt": "UC-02 Agentenloop im Hintergrund betreiben",
+      "text": "Maximales Slot-Alter pro Task; ältere Slots werden als verfallen protokolliert."
+    },
+    {
+      "id": "REQ-027",
+      "typ": "funktional",
+      "abschnitt": "UC-02 Agentenloop im Hintergrund betreiben",
+      "text": "Idempotenz über Task-ID + Slot-Datum; kein Slot läuft doppelt."
+    },
+    {
+      "id": "REQ-028",
+      "typ": "funktional",
+      "abschnitt": "UC-02 Agentenloop im Hintergrund betreiben",
+      "text": "Nur eine Runner-Instanz gleichzeitig (Lock)."
+    },
+    {
+      "id": "REQ-029",
+      "typ": "funktional",
+      "abschnitt": "UC-02 Agentenloop im Hintergrund betreiben",
+      "text": "Queue mit Concurrency 1; Gruppierung nach Modell."
+    },
+    {
+      "id": "REQ-030",
+      "typ": "funktional",
+      "abschnitt": "UC-02 Agentenloop im Hintergrund betreiben",
+      "text": "Preflight vor jedem Lauf: Runtime erreichbar, Modell ladbar; sonst Runtime starten und Modell laden, erst dann Fehler melden."
+    },
+    {
+      "id": "REQ-031",
+      "typ": "funktional",
+      "abschnitt": "UC-02 Agentenloop im Hintergrund betreiben",
+      "text": "Output wird gegen ein Schema validiert; bei Fehler Retry, danach Dead-Letter."
+    },
+    {
+      "id": "REQ-032",
+      "typ": "funktional",
+      "abschnitt": "UC-02 Agentenloop im Hintergrund betreiben",
+      "text": "Token-Budget und Timeout pro Task."
+    },
+    {
+      "id": "REQ-033",
+      "typ": "funktional",
+      "abschnitt": "UC-02 Agentenloop im Hintergrund betreiben",
+      "text": "Run-Log pro Lauf: Task, Slot, Modell, Prompt-Version, Dauer, Tokens, Status."
+    },
+    {
+      "id": "REQ-034",
+      "typ": "funktional",
+      "abschnitt": "UC-02 Agentenloop im Hintergrund betreiben",
+      "text": "Benachrichtigung bei Fehlern, Dead-Letter und markierten Ergebnissen."
+    },
+    {
+      "id": "REQ-035",
+      "typ": "funktional",
+      "abschnitt": "UC-02 Agentenloop im Hintergrund betreiben",
+      "text": "Catch-up-Läufe starten sofort oder im nächsten Nachtfenster (konfigurierbar)."
+    },
+    {
+      "id": "REQ-036",
+      "typ": "funktional",
+      "abschnitt": "UC-02 Agentenloop im Hintergrund betreiben",
+      "text": "Während laufender Jobs wird System-Sleep verhindert."
+    },
+    {
+      "id": "REQ-037",
+      "typ": "funktional",
+      "abschnitt": "UC-02 Agentenloop im Hintergrund betreiben",
+      "text": "UC-02 gibt an Schrittgrenzen nach: laufende Inferenz wird nicht abgebrochen, der nächste Schritt wartet bei interaktiver Last."
+    },
+    {
+      "id": "REQ-038",
+      "typ": "funktional",
+      "abschnitt": "UC-02 Agentenloop im Hintergrund betreiben",
+      "text": "Agentenloop mehrstufig mit Tool-Aufrufen, Schrittlimit und Stoppbedingung; Zwischenzustand im Ledger, fortsetzbar."
+    },
+    {
+      "id": "REQ-039",
+      "typ": "funktional",
+      "abschnitt": "UC-02 Agentenloop im Hintergrund betreiben",
+      "text": "Tasks können deterministische Vorstufen (Datenabruf, Checks) vor dem LLM-Schritt ausführen."
+    },
+    {
+      "id": "REQ-040",
+      "typ": "funktional",
+      "abschnitt": "UC-02 Agentenloop im Hintergrund betreiben",
+      "text": "Secrets liegen im macOS-Schlüsselbund, nie in Task-Definitionen oder Logs."
+    },
+    {
+      "id": "REQ-041",
+      "typ": "funktional",
+      "abschnitt": "UC-02 Agentenloop im Hintergrund betreiben",
+      "text": "Laufbedingungen pro Task (z. B. Netzbetrieb); beim Eintreten werden fällige Tasks sofort gestartet."
+    },
+    {
+      "id": "REQ-042",
+      "typ": "funktional",
+      "abschnitt": "UC-03 Lokal arbeiten unterwegs",
+      "text": "Endpoint-Fallback auf dem MacBook: SIG Local, wenn erreichbar, sonst die lokale Instanz – ohne manuelles Umkonfigurieren."
+    }
+  ]
 }
