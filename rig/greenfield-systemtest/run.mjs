@@ -161,11 +161,23 @@ function authorViaClaude(dir, arm) {
   let usage = { wall_s };
   try {
     const j = JSON.parse(out);
+    const u = j.usage ?? {};
+    // ITEM-2026-365: `input_tokens` zaehlt NUR den ungecachten Rest. Gemessen an Lauf 2:
+    // 8.822 gemeldet gegen 7.056.849 tatsaechlich — Faktor 800. Ohne cache_read und
+    // cache_creation sieht der Frontier-Arm sparsamer aus als der lokale, obwohl er das
+    // Zwanzigfache liest. Die Aufschluesselung bleibt daneben stehen, weil gecachte und
+    // frische Eingabe verschieden viel kosten.
+    const cacheRead = u.cache_read_input_tokens ?? 0;
+    const cacheNeu = u.cache_creation_input_tokens ?? 0;
     usage = {
       wall_s, cost_usd: j.total_cost_usd ?? 0,
-      tokens_in: j.usage?.input_tokens ?? null,
-      tokens_out: j.usage?.output_tokens ?? null,
-      tokens_reasoning: j.usage?.output_tokens_details?.reasoning_tokens ?? null,
+      tokens_in: (u.input_tokens ?? 0) + cacheRead + cacheNeu,
+      tokens_in_uncached: u.input_tokens ?? null,
+      tokens_in_cache_read: cacheRead,
+      tokens_in_cache_creation: cacheNeu,
+      tokens_out: u.output_tokens ?? null,
+      tokens_reasoning: u.output_tokens_details?.reasoning_tokens ?? null,
+      turns: j.num_turns ?? null,
     };
   } catch { /* raw saved */ }
   return usage;
