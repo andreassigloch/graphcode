@@ -45,10 +45,18 @@ import { buildCallModel, buildToolSpecs, toBackendTools } from './executor-backe
 // ---------------------------------------------------------------------------
 
 export const ExecutorConfigSchema = z.object({
-  backend: z.enum(['openai', 'anthropic']).default('openai'),
-  /** Basis-URL des Modell-Endpoints, z.B. http://192.168.78.89:1234 (LM Studio). */
+  /** 'sigllm' (CR-GC-552) ist kein weiterer OpenAI-Klon: die Plattform bindet Modell,
+   * Kontextlänge und Ausgabebudget an ein PROFIL und weist alles ab, was ein Client
+   * daran vorbei setzen will. Was hier deshalb nicht reist: temperature, max_tokens,
+   * reasoning_effort. */
+  backend: z.enum(['openai', 'anthropic', 'sigllm']).default('openai'),
+  /** Basis-URL des Modell-Endpoints, z.B. http://192.168.78.89:1234 (LM Studio)
+   * oder https://127.0.0.1:8080 (sigllm-Gateway). */
   baseUrl: z.string().min(1),
+  /** Das Modell — bei backend 'sigllm' der PROFILNAME ('fast' | 'reasoning'), weil dort
+   * die Bindung Profil→Modell der Plattform gehört und nicht dem Aufrufer. */
   model: z.string().min(1),
+  /** Bei 'sigllm' Pflicht: das erteilte Zugangstoken (SCHEMA-interactive-user-request). */
   apiKey: z.string().optional(),
   /** Max. graph_generate-Runden, bevor der Lauf abgebrochen wird. */
   maxRounds: z.number().int().positive().default(40),

@@ -1332,7 +1332,7 @@ io ◀ `FLOW-candidate-batch` · io ▶ `FLOW-preflight-outcome` · allocate ▶
 
 > auch in: `FUNC-block-antrieb`
 
-Der Modell-Draht: schickt die Anfrage einer Runde an das konfigurierte Backend (OpenAI-kompatibel oder Anthropic), prueft die Antwort in der Draht-Form am Empfang und liefert die normalisierte ModelAnswer (executor-backend.ts, ModelAnswer.parse). Hier entsteht FLOW-model-answer; der Backend-Wechsel ist Konfiguration, keine zweite Codeverzweigung. (CR-GC-507)
+Der Modell-Draht: schickt die Anfrage einer Runde an das konfigurierte Backend und liefert die normalisierte ModelAnswer (executor-backend.ts, ModelAnswer.parse). Drei Backends: OpenAI-kompatibel, Anthropic und sigllm. Die ersten beiden waehlen ihr Modell selbst; sigllm nennt ein PROFIL und laesst Modell, Kontextlaenge und Ausgabebudget von der Plattform binden, weshalb dort weder model noch temperature noch max_tokens reisen. Jedes Backend prueft die Antwort in seiner Draht-Form am Empfang. Hier entsteht FLOW-model-answer; der Backend-Wechsel ist Konfiguration, keine zweite Codeverzweigung im Aufrufer. (CR-GC-507, CR-GC-552)
 
 io ◀ `FLOW-model-request` · io ▶ `FLOW-model-answer` · allocate ▶ `MOD-loop`
 
@@ -5412,7 +5412,7 @@ Verification ◀ `TEST-one-driver-local-and-frontier` (integration) · satisfy �
 
 > auch in: `FCHAIN-steering-loop`
 
-Der Modell-Draht: schickt die Anfrage einer Runde an das konfigurierte Backend (OpenAI-kompatibel oder Anthropic), prueft die Antwort in der Draht-Form am Empfang und liefert die normalisierte ModelAnswer (executor-backend.ts, ModelAnswer.parse). Hier entsteht FLOW-model-answer; der Backend-Wechsel ist Konfiguration, keine zweite Codeverzweigung. (CR-GC-507)
+Der Modell-Draht: schickt die Anfrage einer Runde an das konfigurierte Backend und liefert die normalisierte ModelAnswer (executor-backend.ts, ModelAnswer.parse). Drei Backends: OpenAI-kompatibel, Anthropic und sigllm. Die ersten beiden waehlen ihr Modell selbst; sigllm nennt ein PROFIL und laesst Modell, Kontextlaenge und Ausgabebudget von der Plattform binden, weshalb dort weder model noch temperature noch max_tokens reisen. Jedes Backend prueft die Antwort in seiner Draht-Form am Empfang. Hier entsteht FLOW-model-answer; der Backend-Wechsel ist Konfiguration, keine zweite Codeverzweigung im Aufrufer. (CR-GC-507, CR-GC-552)
 
 io ◀ `FLOW-model-request` · io ▶ `FLOW-model-answer` · allocate ▶ `MOD-loop`
 

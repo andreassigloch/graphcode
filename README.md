@@ -23,10 +23,16 @@ npx @sigloch/graphcode status        # is my host up, and where is MY dashboard?
 npx @sigloch/graphcode host          # FALLBACK only — the bridge alone, for a repo with no agent
                                      # session running. Alongside a live `mcp` it hits the store lock.
 npx @sigloch/graphcode run "<intent>" # author the graph via the embedded executor — a local LLM
-                                     # (LM Studio) or Anthropic BYOK drives graph_generate/mutate
-                                     # directly, no coding-agent harness. Env: GRAPHCODE_LLM_BASE_URL
-                                     # + GRAPHCODE_LLM_MODEL (required), GRAPHCODE_LLM_BACKEND=
-                                     # openai|anthropic (default openai), GRAPHCODE_LLM_API_KEY
+                                     # or Anthropic BYOK drives graph_generate/mutate directly, no
+                                     # coding-agent harness. Env: GRAPHCODE_LLM_BASE_URL +
+                                     # GRAPHCODE_LLM_MODEL (required), GRAPHCODE_LLM_BACKEND=
+                                     # openai|anthropic|sigllm (default openai), GRAPHCODE_LLM_API_KEY.
+                                     # backend=sigllm posts to a SIG Local gateway (/v1/inference):
+                                     # GRAPHCODE_LLM_TOKEN is required, GRAPHCODE_LLM_MODEL carries the
+                                     # PROFILE name (fast|reasoning) — the platform binds the model,
+                                     # context length and output budget, so neither model nor
+                                     # temperature nor max_tokens travel. Trust its CA via
+                                     # NODE_EXTRA_CA_CERTS.
 npx @sigloch/graphcode rewind <ref>  # recall the graph state committed at <ref> — reads the snapshot
                                      # from git object storage, so the working tree is NOT touched.
                                      # Aborts while un-exported model edits are pending (--force drops them)

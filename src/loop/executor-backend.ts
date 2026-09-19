@@ -88,7 +88,147 @@ const safeParse = (s: string): unknown => {
   }
 };
 
+/**
+ * ULID für `requestId` — der sigllm-Vertrag verlangt genau 26 Zeichen Crockford-Base32,
+ * Zeitanteil zuerst. Keine Abhängigkeit dafür: die Anforderung ist die Form, nicht die
+ * Monotonie-Garantie einer Bibliothek (jeder Call ist eine eigene Anfrage).
+ */
+const CROCKFORD = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
+function ulid(now = Date.now()): string {
+  let zeit = '';
+  for (let i = 9; i >= 0; i--) {
+    zeit = CROCKFORD[now % 32] + zeit;
+    now = Math.floor(now / 32);
+  }
+  let zufall = '';
+  for (let i = 0; i < 16; i++) {
+    zufall += CROCKFORD[Math.floor(Math.random() * 32)];
+  }
+  return zeit + zufall;
+}
+
+/** Die Nachrichtenform der Schleife (OpenAI-nah), so weit sie hier gelesen wird. */
+interface LoopMessage {
+  role?: string;
+  content?: unknown;
+  tool_call_id?: string;
+  tool_calls?: { id: string; function: { name: string; arguments: string } }[];
+}
+
+/**
+ * Schleifenform → `Message[]` des sigllm-Vertrags.
+ *
+ * Zwei Dinge, die der Vertrag anders will als OpenAI: die Tool-Felder heißen camelCase, und
+ * `content` ist ein String, kein `null`. Ein Assistent, der nur Werkzeuge aufruft, liefert
+ * bei OpenAI `content: null` — daraus wird hier der leere String, sonst scheitert die
+ * nächste Runde am Vertrag statt am Inhalt.
+ */
+function toSigllmMessages(system: string, messages: unknown[]): unknown[] {
+  const abbilden = (m: LoopMessage): unknown => ({
+    role: m.role,
+    content: typeof m.content === 'string' ? m.content : m.content == null ? '' : JSON.stringify(m.content),
+    ...(m.tool_calls?.length
+      ? {
+          toolCalls: m.tool_calls.map((c) => ({
+            id: c.id,
+            name: c.function.name,
+            arguments: c.function.arguments,
+          })),
+        }
+      : {}),
+    ...(m.tool_call_id ? { toolCallId: m.tool_call_id } : {}),
+  });
+  return [{ role: 'system', content: system }, ...messages.map((m) => abbilden(m as LoopMessage))];
+}
+
+/** Was `/v1/inference` zurückgibt — nur die Felder, die der Executor liest (SCHEMA-inference-response). */
+const SigllmAnswer = z.object({
+  content: z.string(),
+  reasoning: z.string().nullable(),
+  toolCalls: z.array(z.object({ id: z.string(), name: z.string(), arguments: z.string() })),
+  finishReason: z.string(),
+  usage: z.object({ promptTokens: z.number(), completionTokens: z.number() }),
+});
+
 export function buildCallModel(config: ExecutorConfig): CallModel {
+  if (config.backend === 'sigllm') {
+    if (!config.apiKey) {
+      throw new Error(
+        'graphcode run: backend sigllm braucht GRAPHCODE_LLM_TOKEN — das Gateway ist die Zugangskontrolle, ' +
+          'ein Lauf ohne Token endet an HTTP 401 statt hier.',
+      );
+    }
+    if (config.candidates > 1) {
+      throw new Error(
+        `graphcode run: backend sigllm und GRAPHCODE_LLM_CANDIDATES=${config.candidates} passen nicht zusammen. ` +
+          'Best-of-N sampelt über einen Temperatur-Spread; der sigllm-Vertrag nimmt keine temperature an ' +
+          '(sie gehört zum Profil). N Kandidaten wären N identische Calls.',
+      );
+    }
+    return async (system, messages, tools) => {
+      const r = await fetch(`${config.baseUrl}/v1/inference`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        // Der Vertrag ist .strict(): model, max_tokens, temperature und reasoning_effort
+        // würden die Anfrage abweisen, nicht bloß ignoriert. Sie kommen aus dem Profil.
+        body: JSON.stringify({
+          requestId: ulid(),
+          token: config.apiKey,
+          profile: config.model,
+          messages: toSigllmMessages(system, messages),
+          ...(tools.length ? { tools } : {}),
+          stream: false,
+        }),
+        signal: AbortSignal.timeout(config.callTimeoutMs),
+      });
+      const raw: unknown = await r.json();
+      if (!r.ok) {
+        // Das Gateway antwortet mit { reason, … } — den Grund durchreichen, nicht den Status.
+        const grund =
+          typeof raw === 'object' && raw !== null && 'reason' in raw
+            ? String((raw as { reason: unknown }).reason)
+            : JSON.stringify(raw).slice(0, 300);
+        throw new Error(`sigllm ${r.status}: ${grund}`);
+      }
+      const wire = SigllmAnswer.safeParse(raw);
+      if (!wire.success) {
+        throw new Error(
+          'backend answer breaks SCHEMA-inference-response: ' + JSON.stringify(wire.error.issues).slice(0, 300),
+        );
+      }
+      const antwort = wire.data;
+      return ModelAnswer.parse({
+        text: antwort.content,
+        toolCalls: antwort.toolCalls.map((c) => ({
+          id: c.id,
+          name: c.name,
+          input: safeParse(c.arguments),
+        })),
+        stopReason: antwort.finishReason,
+        // Die Schleife hängt diese Nachricht unverändert an und schickt sie in der nächsten
+        // Runde zurück. Sie muss deshalb die OpenAI-Form tragen — toSigllmMessages übersetzt
+        // sie beim Absenden, und es bleibt bei EINER Form in der Schleife.
+        assistantMsg: {
+          role: 'assistant',
+          content: antwort.content,
+          ...(antwort.toolCalls.length
+            ? {
+                tool_calls: antwort.toolCalls.map((c) => ({
+                  id: c.id,
+                  type: 'function',
+                  function: { name: c.name, arguments: c.arguments },
+                })),
+              }
+            : {}),
+        },
+        usage: {
+          in: antwort.usage.promptTokens,
+          out: antwort.usage.completionTokens,
+          reasoning: 0,
+        },
+      });
+    };
+  }
   if (config.backend === 'anthropic') {
     return async (system, messages, tools) => {
       const r = await fetch(`${config.baseUrl}/v1/messages`, {

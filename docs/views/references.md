@@ -554,6 +554,8 @@
 | `CR-GC-547` | relation | `MOD-kernel` |
 | `CR-GC-549` | relation | `REQ-audit-trail` |
 | `CR-GC-550` | relation | `FUNC-se-plan` |
+| `CR-GC-552` | relation | `FUNC-call-model` |
+| `CR-GC-552` | relation | `FUNC-run-verb` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-suggest` |
