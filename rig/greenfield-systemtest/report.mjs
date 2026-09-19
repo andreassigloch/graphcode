@@ -97,6 +97,30 @@ for (const r of rows.filter((x) => !x.error && x.moduleAudit)) {
 const gold = rows.find((r) => r.moduleAudit)?.moduleAudit?.MOD?.golden ?? [];
 if (gold.length) console.log(`- **golden MODs**: ${gold.join(', ')}`);
 
+// CR-GC-552 — wurde jede Anforderung des Auftrags umgesetzt oder verworfen?
+const mitDeckung = rows.filter((x) => !x.error && x.briefCoverage);
+if (mitDeckung.length) {
+  console.log('\n## Auftrags-Anforderungen — PRUEFLISTE, keine Note\n');
+  console.log('Wortlaut-Ueberdeckung misst **Abschreiben, nicht Deckung**. Gemessen 2026-09-19:');
+  console.log('der Auto-Arm erreicht 42/42 (elf Anforderungen exakt 1,00), der handgefuehrte Lauf');
+  console.log('15/42 — weil er umformuliert hat, nicht weil er Luecken haette. Ein Score daraus');
+  console.log('wuerde Transkription belohnen. Die Liste unten ist zum LESEN, schwaechste zuerst.\n');
+  console.log('Deterministisch waere die Frage nur mit HERKUNFT am REQ. Die Ontologie hat kein');
+  console.log('solches Feld, und ihr status-Enum (draft/reviewed/open/done) kennt kein');
+  console.log('"verworfen" — beide Haelften der Frage sind heute nicht ausdrueckbar (ITEM-2026-306).\n');
+  for (const r of mitDeckung) {
+    const b = r.briefCoverage;
+    console.log(`### ${r.arm} #${r.run} — ${b.gesamt} Anforderungen, ${b.schwach} davon schwach gedeckt (< 0,3)`);
+    console.log(`explizit verworfen: ${b.explizitVerworfen.length} (Konstrukt existiert nicht — die Null ist erzwungen)\n`);
+    console.log('| Anforderung | Überdeckung | bester Treffer | Text |');
+    console.log('|---|---:|---|---|');
+    for (const z of b.zeilen.slice(0, 10)) {
+      console.log(`| ${z.id} | ${z.ueberdeckung} | ${z.match ?? '—'} | ${z.text.slice(0, 70)} |`);
+    }
+    console.log(`\n(die zehn schwaechsten von ${b.gesamt}; die vollstaendige Liste steht in results*.json)\n`);
+  }
+}
+
 console.log('\n## Limits (quote these with the numbers)\n');
 console.log([
   '- One machine, one prompt, one domain — every number is conditional on that.',

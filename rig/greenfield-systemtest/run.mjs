@@ -32,6 +32,8 @@ const CFG = {
   timeoutMs: Number(process.env.RUN_TIMEOUT_S ?? 1200) * 1000, // per-run cap; stuck run fails clean
   golden: process.env.GOLDEN
     ?? '/Users/andreas/Developer/dev/sigloch-modules/docs/graph/sigloch-modules.graph.json',
+  /** Prueflliste der Auftrags-Anforderungen (CR-GC-552). Optional: ohne sie entfaellt der Abgleich. */
+  checklist: process.env.CHECKLIST ?? null,
   // The module repo the model may READ to DISCOVER capabilities itself. Not a
   // pre-digested brief — discovery is the challenge. node_modules excluded via prompt.
   material: process.env.MATERIAL ?? '/Users/andreas/Developer/dev/sigloch-modules',
@@ -255,7 +257,8 @@ async function main() {
         await captureArtifacts(dir);
         const m = runMetrics({
           graphPath: join(dir, 'graph.json'), readinessPath: join(dir, 'readiness.json'),
-          auditPath: join(dir, 'audit.jsonl'), goldenPath: CFG.golden, usage,
+          auditPath: join(dir, 'audit.jsonl'), goldenPath: CFG.golden,
+          checklistPath: CFG.checklist, usage,
         });
         results.push({ arm: arm.label, model: arm.model, executor: arm.executor, run: i, ...m });
         process.stderr.write(

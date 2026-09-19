@@ -141,9 +141,62 @@ export function codeVerdict(r, graph) {
   };
 }
 
+/** Deckung gegen die Anforderungen des AUFTRAGS — eine PRUEFLISTE, keine Note (CR-GC-552).
+ *
+ * Gefragt ist: wurde jede Anforderung der initialen Beschreibung umgesetzt oder ausdruecklich
+ * verworfen? Deterministisch beantwortbar waere das nur mit HERKUNFT am REQ — die Ontologie hat
+ * heute kein solches Feld, und ihr `status`-Enum (draft/reviewed/open/done) kennt kein
+ * „verworfen". Beide Haelften der Frage sind im Graphen also nicht ausdrueckbar
+ * (ITEM-2026-306).
+ *
+ * Was hier ersatzweise gerechnet wird, ist Wortlaut-Ueberdeckung — und die misst NICHT Deckung,
+ * sondern ABSCHREIBEN. Gemessen 2026-09-19: der Auto-Arm erreicht 42/42 (elf Anforderungen
+ * exakt 1,00), der handgefuehrte Lauf 15/42 — nicht weil er luecken haette, sondern weil er
+ * umformuliert hat. Ein Score daraus wuerde Transkription belohnen und Spezifikationsarbeit
+ * bestrafen. Deshalb: sortierte Liste, schwaechste zuerst, fuer ein menschliches Urteil —
+ * dieselbe Linie wie `moduleAudit`.
+ */
+const STOPP = new Set(('der die das den dem des ein eine einer eines einem und oder nicht kein keine ist sind wird werden '
+  + 'wurde pro per im in an auf fuer für mit ohne bei zum zur als aus von vor nach ueber über unter bis je jeder jede '
+  + 'jedes soll sollen muss muessen müssen darf duerfen dürfen kann koennen können nur auch noch dann sonst sowie bzw '
+  + 'etwa system systems').split(/\s+/));
+const wortmenge = (s) => [...new Set(String(s ?? '').toLowerCase()
+  .replace(/[^a-zäöüß0-9\s-]/g, ' ').split(/[\s-]+/).filter((w) => w.length > 3 && !STOPP.has(w)))];
+
+export function briefCoverage(runGraph, checklistPath) {
+  if (!checklistPath || !existsSync(checklistPath)) return null;
+  const liste = JSON.parse(readFileSync(checklistPath, 'utf8')).anforderungen ?? [];
+  const reqs = runGraph.elements.filter((e) => e.type === 'REQ')
+    .map((e) => ({ id: e.id, w: wortmenge(`${e.name} ${e.description}`) }));
+  const zeilen = liste.map((a) => {
+    const aw = wortmenge(a.text);
+    let best = { id: null, s: 0 };
+    for (const r of reqs) {
+      const B = new Set(r.w);
+      const s = aw.length ? aw.filter((w) => B.has(w)).length / aw.length : 0;
+      if (s > best.s) best = { id: r.id, s };
+    }
+    return { id: a.id, typ: a.typ, text: a.text, match: best.id, ueberdeckung: +best.s.toFixed(2) };
+  }).sort((x, y) => x.ueberdeckung - y.ueberdeckung);
+
+  // „Verworfen" ist heute nicht ausdrueckbar — wir suchen trotzdem, damit die Null belegt ist
+  // und nicht behauptet: weder ein status-Wert noch ein Attribut kann es tragen.
+  const verworfen = runGraph.elements.filter((e) => e.type === 'REQ'
+    && (e.attributes?.rejected != null || e.rejected != null || /^verworfen\b/i.test(e.description ?? ''))).map((e) => e.id);
+
+  return {
+    hinweis: 'Wortlaut-Ueberdeckung misst Abschreiben, nicht Deckung — Liste lesen, nicht Zahl zitieren.',
+    gesamt: liste.length,
+    schwach: zeilen.filter((z) => z.ueberdeckung < 0.3).length,
+    explizitVerworfen: verworfen,
+    verwerfenAusdrueckbar: false,
+    zeilen,
+  };
+}
+
 /** Assemble one run's metric row. Primary metrics are rule-based (compliance, structure,
  *  gate-rejections, cost); module reuse is a human-audit list, not a score (see README). */
-export function runMetrics({ graphPath, readinessPath, auditPath, goldenPath, usage }) {
+export function runMetrics({ graphPath, readinessPath, auditPath, goldenPath, checklistPath, usage }) {
   const run = loadGraph(graphPath);
   const golden = loadGraph(goldenPath);
   const el = run.elements;
@@ -161,21 +214,22 @@ export function runMetrics({ graphPath, readinessPath, auditPath, goldenPath, us
     gate_rejections: legality(auditPath).blocked,
     tokens: usage ?? null,
     moduleAudit: moduleAudit(run, golden), // human-audited, not scored
+    briefCoverage: briefCoverage(run, checklistPath), // ebenfalls Audit, keine Note
   };
 }
 
 // CLI: node metrics.mjs <runDir> <goldenPath>  — prints one metric row as JSON.
 if (import.meta.url === `file://${process.argv[1]}`) {
-  const [runDir, goldenPath] = process.argv.slice(2);
+  const [runDir, goldenPath, checklistPath] = process.argv.slice(2);
   if (!runDir || !goldenPath) {
-    console.error('usage: node metrics.mjs <runDir> <goldenGraphPath>');
+    console.error('usage: node metrics.mjs <runDir> <goldenGraphPath> [checklistPath]');
     process.exit(1);
   }
   const row = runMetrics({
     graphPath: `${runDir}/graph.json`,
     readinessPath: `${runDir}/readiness.json`,
     auditPath: `${runDir}/audit.jsonl`,
-    goldenPath,
+    goldenPath, checklistPath,
     usage: existsSync(`${runDir}/usage.json`) ? JSON.parse(readFileSync(`${runDir}/usage.json`, 'utf8')) : null,
   });
   console.log(JSON.stringify(row, null, 2));
