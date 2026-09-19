@@ -1,0 +1,71 @@
+[
+  {
+    "arm": "opus5",
+    "model": "claude-opus-5",
+    "executor": "claude",
+    "run": 0,
+    "elements": 238,
+    "traces": 524,
+    "structure": {
+      "UC": 3,
+      "FUNC": 29,
+      "MOD": 10,
+      "REQ": 49,
+      "TEST": 35
+    },
+    "readiness": {
+      "compliance": 1,
+      "elementsWithErrors": 0,
+      "gatesPassed": "3/8"
+    },
+    "gate_rejections": 0,
+    "tokens": {
+      "wall_s": 1074.2,
+      "cost_usd": 8.24738475,
+      "tokens_in": 8816,
+      "tokens_out": 109147,
+      "tokens_reasoning": null
+    },
+    "moduleAudit": {
+      "MOD": {
+        "authored": [
+          "Agentenloop",
+          "Konfiguration",
+          "Auslieferung und Benachrichtigung",
+          "Gateway-Transport",
+          "Gateway-Politik",
+          "Ledger",
+          "macOS-Plattform",
+          "Runtime-Adapter",
+          "Scheduler-Kern",
+          "Task-Katalog"
+        ],
+        "golden": [
+          "Agent-Anwendungen",
+          "Agentenverwaltung",
+          "Gateway",
+          "Ledger",
+          "LLM-Runtime",
+          "Plattformbetrieb",
+          "Scheduler"
+        ]
+      },
+      "FUNC": {
+        "authored": 29,
+        "golden": 24
+      },
+      "UC": {
+        "authored": [
+          "LLM-Compute bereitstellen",
+          "Agentenloop im Hintergrund betreiben",
+          "Lokal arbeiten unterwegs"
+        ],
+        "golden": [
+          "Plattform verwalten",
+          "Lokale Aufgabe ausführen",
+          "Inferenz anfragen"
+        ]
+      }
+    }
+  }
+]
