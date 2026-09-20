@@ -1648,6 +1648,12 @@
       "description": "docs/cr/open/CR-GC-562-src-loop-steering-ts-loeschen-toter-steu.md"
     },
     {
+      "id": "CR-GC-565",
+      "type": "CR",
+      "name": "Rig-Prompt gibt die Ontologie vor — misst nicht den Laien-Einstieg",
+      "description": "docs/cr/open/CR-GC-565-rig-prompt-gibt-die-ontologie-vor-misst-.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -19172,5 +19178,6 @@
       "target": "REQ-viewer-owned-by-repo",
       "type": "compose"
     }
-  ]
+  ],
+  "graphVersion": 317
 }
