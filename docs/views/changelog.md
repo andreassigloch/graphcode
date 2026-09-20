@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 185 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 186 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 185 CR · 162 done · 1 open.
+Total: 186 CR · 162 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -247,3 +247,4 @@ Total: 185 CR · 162 done · 1 open.
 | `CR-GC-561` | n/a | graph_next_step aus der MCP-Registry nehmen |
 | `CR-GC-562` | n/a | src/loop/steering.ts loeschen — toter Steuerungspfad |
 | `CR-GC-565` | n/a | Rig-Prompt gibt die Ontologie vor — misst nicht den Laien-Einstieg |
+| `CR-GC-566` | n/a | focusTypes deckt nicht, was die Rundenanweisung verlangt — Lesen ist erzwungen |

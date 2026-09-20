@@ -48,7 +48,7 @@ import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { exportMarkdown, type MarkdownView } from '../src/projections/exporter.js';
-import { generationStep, DIMENSION_FOCUS_TYPES } from '../src/loop/generate.js';
+import { generationStep, DIMENSION_FOCUS_TYPES, RULE_CLAUSE } from '../src/loop/generate.js';
 import { currentPhaseGate } from '../src/kernel/measure/readiness.js';
 import { GATE_FIXTURE, GATE_FINDINGS, makeSteeringConfig, parseFocusKey, scriptedActor } from './fixtures/steering-graphs.js';
 import type { MutateCommand } from '@sigloch/contracts/harness';
@@ -194,9 +194,12 @@ describe('T-B4 (CR-GC-353): a phase-gate finding and a document gap are the same
     const check = (label: string): void => {
       const s = step();
       expect(s.focusKey, `${label}: no focus although findings are open`).toBeTruthy();
-      // focusTypes is not free text — it is what the focus DIMENSION declares.
-      expect(s.focusTypes, `${label}: focusTypes drifted from the dimension map`).toEqual(
-        DIMENSION_FOCUS_TYPES[parseFocusKey(s.focusKey!).dimension],
+      // focusTypes is not free text — it is what the rule clause declares, or failing
+      // that the focus DIMENSION (CR-GC-566: the clause wins, same precedence as the
+      // imperative in CR-GC-564).
+      const regel = s.focusKey!.split(':')[1];
+      expect(s.focusTypes, `${label}: focusTypes drifted from its declared source`).toEqual(
+        RULE_CLAUSE[regel]?.types ?? DIMENSION_FOCUS_TYPES[parseFocusKey(s.focusKey!).dimension],
       );
       // And the gate pointer is the first incomplete gate of the SAME measurement.
       expect(currentPhaseGate(s.phaseReadiness)).toBe('SRR');
