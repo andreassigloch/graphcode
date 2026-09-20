@@ -2,7 +2,7 @@
  * tools/report.ts — read-only REPORTING tools (MOD-mcp-tools, CR-GC-256).
  *
  * The derived views on the governed graph: rules (rules_evaluate /
- * rules_get_violations / graph_next_step), audit (audit_trail / audit_stats),
+ * rules_get_violations), audit (audit_trail / audit_stats),
  * readiness (graph_readiness), selective tests (graph_tests) and the authoring /
  * help surface (graph_help / graph_authoring_guide). All read-only — every number
  * here is derived from `harness.evaluateRules()` or the audit log, never stored.
@@ -50,8 +50,6 @@ import { loadTargetProfile, intentCoverage, type AnchorCoverage } from '../loop/
 import { helpEntry, contextualHelp, type HelpEntry, type ContextualMeasure } from './help.js';
 import { formatEExampleFor } from './authoring-example.js';
 import { TestSelectionSchema } from '../kernel/measure/test-selection.js';
-import { nextStep } from '../loop/steering.js';
-import type { NextStepResult } from '../loop/steering.js';
 import type { MCPTool, MCPToolRegistry, ToolPort } from '../kernel/tool-contract.js';
 import { heldBackTraces, type RejectedTrace } from '../kernel/harness-import.js';
 
@@ -94,7 +92,6 @@ type Detail = 'summary' | 'full' | 'grouped';
 const detailOf = (d: Detail | undefined): Detail => d ?? 'full';
 
 const RulesEvaluateInputSchema = z.object({ detail: detailField });
-const GraphNextStepInputSchema = z.looseObject({});
 
 const RulesGetViolationsInputSchema = z.object({
   severity: z.enum(['error', 'warning', 'info']).optional(),
@@ -245,20 +242,6 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
     },
   };
 
-  const graph_next_step: MCPTool<z.infer<typeof GraphNextStepInputSchema>, NextStepResult> = {
-    name: 'graph_next_step',
-    description:
-      'Read-only "next best step": condenses the full advisory rule set into ONE ' +
-      'causally-grounded action — the highest readiness-deficit dimension, the rules ' +
-      'firing in it (clears), a concrete action, plus error blockers and lower-priority ' +
-      'advisories. Deterministic (readiness → weight vector via @sigloch/se-engine), no ' +
-      'LLM/learning. Complements rules_get_violations (the flat gate list) by prioritising.',
-    inputSchema: GraphNextStepInputSchema,
-    async handler(_input) {
-      return nextStep(harness.getGraph(), harness.getMetricPolicy());
-    },
-  };
-
   // READINESS tool — exposes the family compliance score (CR-GC-107 / MOD-readiness)
   // over the agent surface. se-review / se-status read it instead of the retired
   // GET /api/graph/readiness. Delegates to scoreReadiness(harness) → evaluateRules()
@@ -269,7 +252,7 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
    *
    * Keine zweite Rechnung: `computeReadiness` aus @sigloch/se-engine bleibt die
    * einzige Implementierung, hier wird ihr Ergebnis aus DEMSELBEN Snapshot
-   * durchgereicht, den `nextStep` benutzt (CR-GC-324). Deshalb ist der Score, den
+   * durchgereicht, den `graph_generate` benutzt (CR-GC-324). Deshalb ist der Score, den
    * ein Dashboard zeigt, exakt der, aus dem die Empfehlung entstand.
    *
    * VOLLSTÄNDIG: die Reihenfolge kommt aus `ReadinessDimension.options`, damit eine
@@ -299,7 +282,7 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
    * `steerTerms` in se-engine (CR-SM-337/340) — derselben Funktion, aus der `steerScore`
    * seinerseits rechnet. Es gibt genau eine Normierung `(value − threshold)/threshold` und
    * genau eine Regel-Liste (STEER_RULES), beide in se-engine. Und der Regelstrom ist
-   * DERSELBE Snapshot, aus dem `dimension_readiness` und `nextStep` kommen (CR-GC-324) —
+   * DERSELBE Snapshot, aus dem `dimension_readiness` und `graph_generate` kommen (CR-GC-324) —
    * also auch derselbe wie in `computeSteerAdvisory` am dryRun-Verdict (`evaluateAllRules`,
    * voller Katalog, nicht der Gate-Delta-Katalog).
    *
@@ -319,7 +302,7 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
     ReadinessReport & {
       [PHASE_READINESS_NAME]: PhaseGateReadiness[];
       /** CR-GC-325: die 8 RULE_TO_DIMENSION-Themenscores — die zweite Projektion
-       * DESSELBEN Regelstroms, aus DEMSELBEN Snapshot wie nextStep. */
+       * DESSELBEN Regelstroms, aus DEMSELBEN Snapshot wie graph_generate. */
       [DIMENSION_READINESS_NAME]: ReadinessScoreType[];
       /** CR-GC-537: der STEUERUNGSRAUM — `worst`/`worstAt`/`mean`/`score`/`measured` plus
        * einen Term je gemessener Blackbox (`value`, `threshold`, normierter `overshoot`).
@@ -379,7 +362,7 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
       'coreApplicable (0 means the score is null: not measurable). A measurement WITHOUT a verdict — ' +
       'there is no ready flag; the focus threshold is applied only where the focus is chosen, in ' +
       'graph_generate (CR-GC-514). Steering values, NOT a gate: the gates stay ' +
-      'the pass/fail authority. Computed from the same steering snapshot graph_next_step uses, so the ' +
+      'the pass/fail authority. Computed from the same steering snapshot graph_generate uses, so the ' +
       'number a dashboard shows is the one the recommendation came from; ' +
       'violationsByRule (keyed by contracts rule-ID — R-/RD-/MS- plus ND-01/ND-02 since CR-GC-442, ' +
       'never BQ-*: those rules are not evaluated on this path at all, which is why they are named ' +
@@ -621,7 +604,6 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
   return {
     rules_evaluate,
     rules_get_violations,
-    graph_next_step,
     graph_readiness,
     graph_tests,
     graph_help,

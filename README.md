@@ -128,7 +128,7 @@ falling back to the repo directory name.
 
 ### MCP tools
 
-All 25 MCP tools, grouped by role — this table is complete, and a test asserts the count against the
+All 24 MCP tools, grouped by role — this table is complete, and a test asserts the count against the
 live registry so it cannot silently fall behind the code.
 
 | Role | Tool | What it does |
@@ -146,7 +146,6 @@ live registry so it cannot silently fall behind the code.
 | **measure** | `rules_evaluate`, `rules_get_violations` | run the SE rules read-only |
 | | `graph_readiness` | the readiness report: dimensions, phase gates, blocking errors |
 | | `graph_metrics` | per-module architecture metrics **plus the thresholds they were judged against** |
-| | `graph_next_step` | the single highest-leverage next action, derived from readiness |
 | **generate** | `graph_generate` | the cold-start driver: seed → expand → handoff, as a state machine |
 | | `graph_suggest` | rank candidate fixes by how far they move the graph toward your target |
 | | `graph_authoring_guide` | the legal edges for a given element type, before you write |

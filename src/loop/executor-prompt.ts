@@ -63,7 +63,7 @@ export const IDLE_NUDGE =
   'graphcode_graph_mutate-Tool-Call im commands-Format — keine Prosa, keine weitere Analyse.';
 
 /** Diese Tools ruft der EXECUTOR deterministisch — dem Modell werden sie vorenthalten. */
-export const WITHHELD_TOOLS = new Set(['graph_generate', 'graph_next_step', 'graph_suggest']);
+export const WITHHELD_TOOLS = new Set(['graph_generate', 'graph_suggest']);
 
 /** Das kuratierte Minimal-Set für den generativen Loop (toolset 'authoring'). */
 export const AUTHORING_TOOLS = new Set([

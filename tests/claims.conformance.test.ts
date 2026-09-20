@@ -185,7 +185,9 @@ describe('T-D1 (CR-GC-340): every published count matches the living source', ()
       // CR-SM-327 (contracts Regelkatalog 28.0.0, CR-GC-533): MT-04 kommt dazu, LCOM4 an der FUNC-Whitebox (PDR) — 66 -> 67.
       'engine rules=67',
       'readiness dimensions=8',
-      'MCP tools=25',
+      // CR-GC-561: 25 -> 24. `graph_next_step` ist weg — zweites Steuerungswerkzeug auf
+      // derselben Messung, ohne Konsument. Der Kanarienvogel hat die drei Textstellen gefunden.
+      'MCP tools=24',
     ]);
   });
 });
