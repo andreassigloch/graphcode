@@ -225,7 +225,7 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
       'graph_tests',
       'rules_get_violations',
       'graph_readiness',
-      'graph_next_step',
+      'graph_generate',
       'graph_suggest',
       'graph_metrics',
       'graph_help',

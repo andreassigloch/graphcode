@@ -65,7 +65,7 @@ export function guardrailsContent(): string {
     '| Which tests must this change run? | `graph_tests({changeSet})` — the minimal `vitest run <affected files>` for exactly this change, plus what it could not resolve (see the next section). |',
     '| What is broken, and how do I fix it? | `rules_get_violations` — every finding carries a `fixHint` and its candidate targets, so the repair needs no follow-up query. `rules_evaluate` adds the full picture including what was *not* evaluated. |',
     '| Where does the project stand? | `graph_readiness` — compliance, the SRR/PDR/CDR/TRR gates, and the per-topic scores. |',
-    '| What should I do next? | `graph_next_step` — one prioritised action derived from the largest readiness deficit, not a flat list to triage. |',
+    '| What should I do next? | `graph_generate` — one concrete authoring instruction derived from the largest readiness deficit, not a flat list to triage. |',
     '| Which restructuring actually pays off? | `graph_suggest` — candidate edits ranked by how far each moves the model along the target direction. It proposes; `graph_mutate` applies. |',
     '| Which module is the coupling problem? | `graph_metrics` — fan-in/out, instability, LCOM4 and cohesion for every MOD, together with the thresholds they were judged against. |',
     '| What does this rule / gate / term mean? | `graph_help` (or the `se:help` skill) — plain-language and SE explanation of any on-screen token, with the exact fix. |',

@@ -5,7 +5,7 @@
  * und wurde null Mal gerufen. Der SYSTEM-Prompt verbietet Analyse-Turns ausdruecklich
  * („dann STOPP", „Handeln vor Analysieren") — das Regime haelt kleine Modelle beim Bauen
  * und ist richtig; falsch war der Kanal. Also ruft der Host, und das Ergebnis wird
- * injiziert, wie bei graph_generate und graph_next_step.
+ * injiziert, wie bei graph_generate.
  *
  * Dasselbe fuer die Skills: der Rundenprompt nannte „(Skill se:author-uc)", einen Zeiger,
  * den im Executor-Loop niemand einloesen kann. Jetzt steht der Inhalt da statt der Adresse.

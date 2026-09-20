@@ -3369,18 +3369,6 @@
       }
     },
     {
-      "id": "FUNC-next-step",
-      "type": "FUNC",
-      "name": "nextStep(graph, policy)",
-      "description": "Der Advisory-Rueckweg an den fragenden Agenten: aus demselben Snapshot die Fokus-Dimension, die blockierenden Fehler und die feuernden Regeln als naechster Schritt.",
-      "status": "done",
-      "realRef": {
-        "file": "src/loop/steering.ts",
-        "symbol": "nextStep",
-        "lang": "ts"
-      }
-    },
-    {
       "id": "FUNC-own-kuzu-host",
       "type": "FUNC",
       "name": "ownKuzu()",
@@ -7887,23 +7875,6 @@
       ]
     },
     {
-      "id": "TEST-steering-loop",
-      "type": "TEST",
-      "name": "Steuerungsschleifen-Test",
-      "description": "Die Schleife als Ganzes: nextStep leitet Fokus und Blocker aus demselben Snapshot ab, generationStep waehlt dieselbe Dimension, rankCandidates ordnet nach dem Fokus-Delta; Determinismus gegen wiederholte Laeufe.",
-      "status": "done",
-      "method": "test",
-      "testRefs": [
-        {
-          "file": "tests/steering.test.ts",
-          "tool": "vitest",
-          "level": "integration",
-          "result": "passed",
-          "ranAt": "2026-08-21T07:52:28.796Z"
-        }
-      ]
-    },
-    {
       "id": "TEST-steering-snapshot",
       "type": "TEST",
       "name": "Steuerung sieht die flachen Attribute",
@@ -12310,11 +12281,6 @@
     },
     {
       "source": "FCHAIN-steering-loop",
-      "target": "FUNC-next-step",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-steering-loop",
       "target": "FUNC-preflight",
       "type": "compose",
       "weight": "1"
@@ -13037,11 +13003,6 @@
     },
     {
       "source": "FLOW-learning-advice",
-      "target": "FUNC-next-step",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-learning-advice",
       "target": "SCHEMA-learning-advice",
       "type": "relation"
     },
@@ -13114,11 +13075,6 @@
     {
       "source": "FLOW-measurement-vector",
       "target": "FUNC-generation-step",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-measurement-vector",
-      "target": "FUNC-next-step",
       "type": "io"
     },
     {
@@ -13947,11 +13903,6 @@
     },
     {
       "source": "FLOW-steering-snapshot",
-      "target": "FUNC-next-step",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-steering-snapshot",
       "target": "SCHEMA-steering-snapshot",
       "type": "relation"
     },
@@ -14705,11 +14656,6 @@
     },
     {
       "source": "FUNC-block-q-improvement",
-      "target": "FUNC-next-step",
-      "type": "compose"
-    },
-    {
-      "source": "FUNC-block-q-improvement",
       "target": "FUNC-rank-candidates",
       "type": "compose"
     },
@@ -15275,6 +15221,11 @@
     },
     {
       "source": "FUNC-generation-step",
+      "target": "FLOW-next-step-advice",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-generation-step",
       "target": "FLOW-round-prompt",
       "type": "io"
     },
@@ -15824,21 +15775,6 @@
     {
       "source": "FUNC-nd-similarity",
       "target": "REQ-near-duplicate-detection",
-      "type": "satisfy"
-    },
-    {
-      "source": "FUNC-next-step",
-      "target": "MOD-loop",
-      "type": "allocate"
-    },
-    {
-      "source": "FUNC-next-step",
-      "target": "FLOW-next-step-advice",
-      "type": "io"
-    },
-    {
-      "source": "FUNC-next-step",
-      "target": "REQ-steering-from-metrics",
       "type": "satisfy"
     },
     {
@@ -18421,6 +18357,16 @@
       "type": "verify"
     },
     {
+      "source": "TEST-single-measurement-path",
+      "target": "REQ-steering-post",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-single-measurement-path",
+      "target": "REQ-steering-pre",
+      "type": "verify"
+    },
+    {
       "source": "TEST-single-write-door",
       "target": "REQ-single-write-door",
       "type": "verify"
@@ -18445,21 +18391,6 @@
     {
       "source": "TEST-status-verb",
       "target": "REQ-single-kuzu-owner",
-      "type": "verify"
-    },
-    {
-      "source": "TEST-steering-loop",
-      "target": "REQ-steering-from-metrics",
-      "type": "verify"
-    },
-    {
-      "source": "TEST-steering-loop",
-      "target": "REQ-steering-post",
-      "type": "verify"
-    },
-    {
-      "source": "TEST-steering-loop",
-      "target": "REQ-steering-pre",
       "type": "verify"
     },
     {
@@ -19241,6 +19172,5 @@
       "target": "REQ-viewer-owned-by-repo",
       "type": "compose"
     }
-  ],
-  "graphVersion": 313
+  ]
 }

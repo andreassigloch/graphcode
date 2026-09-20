@@ -1,7 +1,7 @@
 /**
  * T-0 (CR-GC-340) — ONE measurement path.
  *
- * `nextStep()`, `generationStep()` and the `steeringDelta` branch of the dryRun
+ * `generationStep()` and the `steeringDelta` branch of the dryRun
  * verdict must return the SAME violation set, the SAME per-dimension readiness
  * scores and the SAME blocking-error count for the SAME graph. If they drift,
  * claims a), b) and c) are all void no matter how green their own tests are:
@@ -29,7 +29,6 @@ import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
-import { nextStep } from '../src/loop/steering.js';
 import { generationStep } from '../src/loop/generate.js';
 import { takeSteeringSnapshot } from '../src/kernel/measure/steering-snapshot.js';
 import { ARCH_FIXTURE, makeSteeringConfig } from './fixtures/steering-graphs.js';
@@ -83,12 +82,14 @@ describe('T-0 (CR-GC-340): every steering surface measures the same graph', () =
     expect(unbound).toEqual(['R-19', 'R-20']);
   });
 
-  it('nextStep and generationStep report the same blocking errors and the same dimension scores', async () => {
+  // CR-GC-562: der Vergleich `nextStep` gegen `generationStep` ist weggefallen, weil es
+  // `nextStep` nicht mehr gibt — zwei Rangwahlen auf einer Messung, eine davon ohne Leser.
+  // Die Zusicherung, um die es hier geht, bleibt: generationStep misst ueber den GETEILTEN
+  // Snapshot und nicht ueber eine eigene Graph-Abbildung (die Lektion aus CR-GC-324).
+  it('generationStep reports the blocking errors and dimension scores of the shared snapshot', async () => {
     const snap = snapshot();
-    const step = nextStep(harness.getGraph(), harness.getMetricPolicy());
     const gen = generationStep(harness.getGraph(), harness.getMetricPolicy(), 'steering fixture', harness.getFocusThreshold());
 
-    expect(step.blocking.errors).toBe(snap.blockingErrors);
     expect(gen.blockingErrors).toBe(snap.blockingErrors);
 
     // Same dimensions, same scores — generationStep exposes the applicable ones.
@@ -99,8 +100,10 @@ describe('T-0 (CR-GC-340): every steering surface measures the same graph', () =
     expect([...fromGen.keys()].sort()).toEqual([...fromSnapshot.keys()].sort());
     for (const [dim, score] of fromGen) expect(score).toBe(fromSnapshot.get(dim));
 
-    // The focus dimension nextStep names must be one the snapshot actually scores.
-    if (step.nextStep) expect(fromSnapshot.has(step.nextStep.dimension)).toBe(true);
+    // Die Fokus-Dimension muss eine sein, die der Snapshot wirklich scort.
+    if (gen.focusDimension && !gen.focusDimension.startsWith('seed:')) {
+      expect(fromSnapshot.has(gen.focusDimension)).toBe(true);
+    }
   });
 
   it('the dryRun steeringDelta measures from the same before-state as the other two', async () => {
@@ -132,7 +135,6 @@ describe('T-0 (CR-GC-340): every steering surface measures the same graph', () =
     const nodes = before.nodes.length;
     const edges = before.edges.length;
 
-    nextStep(harness.getGraph(), harness.getMetricPolicy());
     generationStep(harness.getGraph(), harness.getMetricPolicy(), 'steering fixture', harness.getFocusThreshold());
     await tools.graph_readiness.handler({});
 
@@ -150,5 +152,17 @@ describe('T-0 (CR-GC-340): every steering surface measures the same graph', () =
         scores: s.report.scores.map((x) => `${x.dimension}=${x.score}/${x.applicable}`).sort(),
       });
     expect(key(a)).toBe(key(b));
+  });
+
+  // CR-GC-562: REQ-steering-post woertlich — „derselbe Graph liefert dieselbe EMPFEHLUNG".
+  // Der Test darueber prueft den Snapshot; das ist die Messung, nicht die Empfehlung.
+  // Die Zusicherung stand in `tests/steering.test.ts` an `nextStep` und waere mit der
+  // Datei ersatzlos gefallen — sie gehoert hierher, an den verbliebenen Treiber.
+  it('is deterministic: the same graph yields the same recommendation, prompt included', () => {
+    const a = generationStep(harness.getGraph(), harness.getMetricPolicy(), 'steering fixture', harness.getFocusThreshold());
+    const b = generationStep(harness.getGraph(), harness.getMetricPolicy(), 'steering fixture', harness.getFocusThreshold());
+    expect(b).toEqual(a);
+    expect(b.prompt).toBe(a.prompt);
+    expect(b.focusKey).toBe(a.focusKey);
   });
 });

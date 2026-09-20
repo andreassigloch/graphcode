@@ -727,7 +727,6 @@
 | `FCHAIN-steering-loop` | compose | `FUNC-load-config` |
 | `FCHAIN-steering-loop` | compose | `FUNC-mutate` |
 | `FCHAIN-steering-loop` | compose | `FUNC-nd-similarity` |
-| `FCHAIN-steering-loop` | compose | `FUNC-next-step` |
 | `FCHAIN-steering-loop` | compose | `FUNC-preflight` |
 | `FCHAIN-steering-loop` | compose | `FUNC-rank-candidates` |
 | `FCHAIN-steering-loop` | compose | `FUNC-run-executor` |
@@ -866,7 +865,6 @@
 | `FLOW-install-result-upgrade` | io | `ACTOR-owner` |
 | `FLOW-install-result-upgrade` | relation | `SCHEMA-cli-command` |
 | `FLOW-learning-advice` | io | `FUNC-graph-suggest` |
-| `FLOW-learning-advice` | io | `FUNC-next-step` |
 | `FLOW-learning-advice` | relation | `SCHEMA-learning-advice` |
 | `FLOW-learning-query` | io | `ACTOR-learning-engine` |
 | `FLOW-learning-query` | relation | `SCHEMA-learning-query` |
@@ -881,7 +879,6 @@
 | `FLOW-mcp-tool-registry` | io | `FUNC-serve-stdio` |
 | `FLOW-mcp-tool-registry` | relation | `SCHEMA-mcp-tool-registry` |
 | `FLOW-measurement-vector` | io | `FUNC-generation-step` |
-| `FLOW-measurement-vector` | io | `FUNC-next-step` |
 | `FLOW-measurement-vector` | relation | `SCHEMA-measurement-vector` |
 | `FLOW-metric-policy` | io | `FUNC-evaluate-rules` |
 | `FLOW-metric-policy` | io | `FUNC-take-steering-snapshot` |
@@ -1046,7 +1043,6 @@
 | `FLOW-steering-delta` | relation | `SCHEMA-steering-delta` |
 | `FLOW-steering-snapshot` | io | `FUNC-compute-steering-delta` |
 | `FLOW-steering-snapshot` | io | `FUNC-generation-step` |
-| `FLOW-steering-snapshot` | io | `FUNC-next-step` |
 | `FLOW-steering-snapshot` | relation | `SCHEMA-steering-snapshot` |
 | `FLOW-steering-trigger-agent` | io | `FUNC-take-steering-snapshot` |
 | `FLOW-steering-trigger-agent` | relation | `SCHEMA-query-params` |
@@ -1196,7 +1192,6 @@
 | `FUNC-block-q-improvement` | allocate | `MOD-loop` |
 | `FUNC-block-q-improvement` | compose | `FUNC-close-violations` |
 | `FUNC-block-q-improvement` | compose | `FUNC-generation-step` |
-| `FUNC-block-q-improvement` | compose | `FUNC-next-step` |
 | `FUNC-block-q-improvement` | compose | `FUNC-rank-candidates` |
 | `FUNC-block-q-improvement` | compose | `FUNC-target-profile-load` |
 | `FUNC-block-ruestzeug` | allocate | `MOD-kernel` |
@@ -1303,6 +1298,7 @@
 | `FUNC-gate-client` | io | `FLOW-mutate-cmd-gate-client` |
 | `FUNC-gate-client` | satisfy | `REQ-prose-recovery` |
 | `FUNC-generation-step` | allocate | `MOD-loop` |
+| `FUNC-generation-step` | io | `FLOW-next-step-advice` |
 | `FUNC-generation-step` | io | `FLOW-round-prompt` |
 | `FUNC-generation-step` | satisfy | `REQ-steering-from-metrics` |
 | `FUNC-goal-steerer` | allocate | `MOD-loop` |
@@ -1404,9 +1400,6 @@
 | `FUNC-mutate` | satisfy | `REQ-single-write-door` |
 | `FUNC-nd-similarity` | allocate | `MOD-kernel-measure` |
 | `FUNC-nd-similarity` | satisfy | `REQ-near-duplicate-detection` |
-| `FUNC-next-step` | allocate | `MOD-loop` |
-| `FUNC-next-step` | io | `FLOW-next-step-advice` |
-| `FUNC-next-step` | satisfy | `REQ-steering-from-metrics` |
 | `FUNC-own-kuzu-host` | allocate | `MOD-kernel` |
 | `FUNC-own-kuzu-host` | satisfy | `REQ-store-owner-lifecycle` |
 | `FUNC-plan-code-lane` | allocate | `MOD-projections` |
@@ -1883,14 +1876,13 @@
 | `TEST-session-lifecycle` | verify | `REQ-store-owner-lifecycle` |
 | `TEST-shared-views-no-fork` | verify | `REQ-shared-views-no-fork` |
 | `TEST-single-measurement-path` | verify | `REQ-single-measurement-path` |
+| `TEST-single-measurement-path` | verify | `REQ-steering-post` |
+| `TEST-single-measurement-path` | verify | `REQ-steering-pre` |
 | `TEST-single-write-door` | verify | `REQ-single-write-door` |
 | `TEST-skill-authors-through-gate` | verify | `REQ-skill-authors-through-gate` |
 | `TEST-skill-reports-measured-values` | verify | `REQ-skill-reads-only` |
 | `TEST-skills-mcp` | verify | `REQ-doc-export` |
 | `TEST-status-verb` | verify | `REQ-single-kuzu-owner` |
-| `TEST-steering-loop` | verify | `REQ-steering-from-metrics` |
-| `TEST-steering-loop` | verify | `REQ-steering-post` |
-| `TEST-steering-loop` | verify | `REQ-steering-pre` |
 | `TEST-steering-snapshot` | verify | `REQ-single-measurement-path` |
 | `TEST-store-lock` | verify | `REQ-one-gate-per-repo` |
 | `TEST-store-lock` | verify | `REQ-single-kuzu-owner` |
