@@ -4,26 +4,26 @@
     "model": "qwen3-coder-30b-lms:latest",
     "executor": "gcrun",
     "run": 0,
-    "elements": 22,
-    "traces": 16,
+    "elements": 15,
+    "traces": 14,
     "structure": {
-      "UC": 9,
+      "UC": 7,
       "FUNC": 0,
       "MOD": 0,
       "REQ": 0,
       "TEST": 0
     },
     "readiness": {
-      "compliance": 0.5909090909090909,
-      "elementsWithErrors": 9,
+      "compliance": 0.5333333333333333,
+      "elementsWithErrors": 7,
       "gatesPassed": "2/8"
     },
     "spec": {
-      "compliance": 0.5909090909090909,
-      "elementsWithErrors": 9,
+      "compliance": 0.5333333333333333,
+      "elementsWithErrors": 7,
       "dimensions": {
         "req": 0,
-        "uc": 0.364,
+        "uc": 0.422,
         "arch": null,
         "alloc": 0,
         "ver": null,
@@ -74,22 +74,22 @@
       },
       "rcViolations": {}
     },
-    "gate_rejections": 1,
+    "gate_rejections": 2,
     "tokens": {
-      "wall_s": 270.8,
+      "wall_s": 183.9,
       "cost_usd": 0,
-      "tokens_in": 270704,
-      "tokens_out": 14012,
+      "tokens_in": 273630,
+      "tokens_out": 11187,
       "tokens_reasoning": 0,
       "loop": {
         "genRounds": 12,
         "modelTurns": 42,
-        "mutatesApplied": 21,
-        "mutatesRejected": 1,
-        "repairedAfterRejection": 1,
+        "mutatesApplied": 17,
+        "mutatesRejected": 2,
+        "repairedAfterRejection": 4,
         "preflightFixed": 0,
-        "preflightBlocked": 0,
-        "dryRunProbes": 7,
+        "preflightBlocked": 2,
+        "dryRunProbes": 6,
         "done": false
       }
     },
@@ -112,15 +112,13 @@
       },
       "UC": {
         "authored": [
-          "Availability Check",
+          "Data Integrity",
+          "Health Check",
           "Interactive Session",
-          "Logging Traceability",
-          "Offline Operation",
-          "Resource Isolation",
-          "Result Validation",
-          "Scheduled Tasks",
-          "Task Monitoring",
-          "Workday Journal"
+          "Nightly Journal",
+          "Offline Mode",
+          "Resilient Execution",
+          "Traceability"
         ],
         "golden": [
           "Plattform verwalten",
