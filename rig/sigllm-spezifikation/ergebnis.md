@@ -439,3 +439,60 @@ Streuung.
 `graph_suggest` wird seit CR-GC-556 vom Host gerufen und als Inhalt injiziert — im Audit
 trägt **keine einzige Mutation** `editSource: 'suggestion-template'`. Dass die Vorschläge
 ankommen, ist geprüft; dass das Modell einen aufgreift, nicht.
+
+---
+
+# Basislinie mit drei Läufen — und was sie rückwirkend klärt
+
+Erste Messung mit `RUNS=3` statt eines Einzelwerts. Zustand: nach CR-GC-563/564, sonst
+unverändert.
+
+| Lauf | Elemente | Compliance | Gates | Ablehnungen | Wanduhr |
+|---|---:|---:|---:|---:|---:|
+| 1 | 41 | 0,878 | 1/8 | 3 | 660 s |
+| 2 | 50 | 0,900 | 1/8 | 7 | 550 s |
+| 3 | 38 | 0,974 | 1/8 | 8 | 571 s |
+| **Mittel** | **43** | **0,917** | 1/8 | 6 | 594 s |
+
+Das Band ist **38–50 Elemente**. Damit lässt sich die ganze Reihe endlich einordnen:
+
+- **Lauf 3 (49, vor dieser Sitzung)** liegt im Band, am oberen Rand.
+- **Lauf 6 (44)** liegt im Band, mittig.
+- **Läufe 4 (22) und 5 (15)** liegen **weit darunter** — das war kein Rauschen. Der
+  Rückschritt durch die Stufen-Umstellung war real, und CR-GC-563/564 haben ihn behoben.
+
+**Die ehrliche Bilanz der Sitzung am Ergebnis gemessen: Parität.** Der Ausgangswert liegt
+im Band der Endmessung. Was die Steuerungsarbeit gebracht hat, ist an dieser Zahl nicht
+sichtbar — sie hat einen selbst verursachten Einbruch repariert und dabei zwei echte
+Defekte freigelegt (alphabetische Fundreihenfolge, Template gegen fix_hint), die vorher
+unentdeckt waren.
+
+## Die Lesewut ist stabil, nicht sporadisch
+
+Über alle drei Läufe, Werkzeugaufrufe nach Art:
+
+| Lauf | Lese-Aufrufe | Mutationen | Leseanteil |
+|---|---:|---:|---:|
+| 1 | 208 | 28 | **88 %** |
+| 2 | 153 | 33 | 82 % |
+| 3 | 162 | 30 | 84 % |
+
+`graph_elements` dominiert durchgehend, 8–23 Aufrufe je Runde — obwohl der Element-Index
+seit CR-GC-285 in jedem Rundenprompt steht.
+
+## Korrektur: `toolset=authoring` ist NICHT der Hebel
+
+Ich hatte den Werkzeugkatalog als Ursache vermutet (ITEM-2026-369/388). Das ist falsch, und
+zwar nachlesbar: `AUTHORING_TOOLS` enthält `graph_elements` und `graph_authoring_guide` —
+**genau die beiden Werkzeuge, die die Flut ausmachen**. Der kuratierte Satz würde Eingabe-
+token sparen und am Verhalten nichts ändern.
+
+Der eigentliche Befund ist ein anderer und derselbe wie zweimal zuvor in dieser Sitzung:
+**der Host injiziert Guide-Slice und Element-Index jede Runde — und bietet dieselben zwei
+Fakten zusätzlich als Werkzeug an.** Dieselbe Tatsache auf zwei Wegen, und das Modell
+nimmt den teuren. Bei `graph_suggest` (CR-GC-556) und `graph_next_step` (CR-GC-560..562)
+war die Antwort jeweils: den zweiten Weg schließen. → ITEM-2026-390
+
+Offen bleibt dabei eine echte Frage, die vor dem Zug beantwortet gehört: der injizierte
+Index ist auf die **Fokus-Typen** gefiltert. Braucht das Modell legitim Typen außerhalb des
+Fokus, nimmt man ihm mit dem Werkzeug etwas weg, das der Prompt nicht ersetzt.
