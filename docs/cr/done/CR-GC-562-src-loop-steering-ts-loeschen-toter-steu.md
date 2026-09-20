@@ -1,6 +1,6 @@
 # CR-GC-562: `src/loop/steering.ts` löschen
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-20)
 **Typ:** aus Item ITEM-2026-382 (idea)
 **Erstellt:** 2026-09-20
 **Item:** bok/items/ITEM-2026-382.json (Lane: graph)
