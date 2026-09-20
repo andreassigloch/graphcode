@@ -378,3 +378,64 @@ arbeitet, unangetastet gelassen. Der Kanal war nicht der Engpass. **Ein Fund-Fen
 alphabetisch wählt, macht jede Anleitung darin wirkungslos** — sie kommt zur falschen Zeit.
 
 ITEM-2026-386 ist der nächste Zug, und es ist der kleinste der drei.
+
+---
+
+# Läufe 5 und 6 — die Fundreihenfolge und ihr Imperativ
+
+Gleicher Arm, gleiches Modell, gleiche 12 Runden wie Lauf 3 und 4. Je eine Änderung.
+
+| | Lauf 3 | Lauf 4 | Lauf 5 | Lauf 6 |
+|---|---:|---:|---:|---:|
+| | *vor dieser Sitzung* | *+ Injektion, Stufen* | *+ CR-563* | *+ CR-564* |
+| Elemente | 49 | 22 | 15 | **44** |
+| Compliance | 0,92 | 0,59 | 0,53 | **0,95** |
+| REQ | — | 0 | 0 | **15** |
+| FUNC | — | 0 | 0 | **5** |
+| Phasen-Gates | 1/8 | 2/8 | 2/8 | 1/8 |
+| Gate-Ablehnungen | 3 | 1 | 2 | 10 |
+| Preflight-Vervollständigungen | 14 | 0 | 0 | **40** |
+| Wanduhr | 763 s | 271 s | 184 s | 1200 s |
+
+## Lauf 5 — der Fokus stimmte, die Anweisung nicht
+
+CR-GC-563 hat getan, was es sollte: das Log zeigt `defer: uc:UC-01`, also wurde der
+**Fehler** bearbeitet statt der alphabetisch erste Fund. Das Ergebnis war trotzdem
+schlechter — null REQ, zwei R-08-Blocks.
+
+Der Grund brauchte keinen weiteren Lauf, nur den gerenderten Prompt: der Fund sagte
+dreimal *„Add at least one REQ via compose trace"*, der Imperativ darunter nannte
+*„fehlende ACTORs, FCHAIN-Szenarien oder fehlende UCs"*. Das Wort REQ kam im Befehlssatz
+nicht vor. Das Modell folgte dem Befehlssatz. → CR-GC-564
+
+## Lauf 6 — zum ersten Mal Struktur
+
+Die Regel-Klausel ist jetzt die Anweisung. Runde 3 zeigt sie wörtlich befolgt: zehn REQ,
+jede mit ihrem TEST im selben Batch — und der Preflight drehte acht `verify`-Kanten
+zurecht, die das Modell falsch herum gezogen hatte (`REQ verify TEST` statt
+`TEST verify REQ`).
+
+**REQ 0 → 15, FUNC 0 → 5.** In den Läufen 4 und 5 gab es von beidem nichts.
+
+## Die ehrliche Einordnung
+
+**Gegen den Ausgangspunkt ist das Parität, kein Fortschritt.** Lauf 3 stand bei 49
+Elementen und 0,92; Lauf 6 steht bei 44 und 0,95 — bei 4,4-facher Laufzeit und dreimal so
+vielen Gate-Ablehnungen. Was die beiden Korrekturen geleistet haben, ist den Rückschritt
+zu beheben, den die Stufen-Umstellung gekostet hat, nicht darüber hinauszukommen.
+
+**Und jeder dieser Läufe ist n=1 auf einem lokalen Modell.** Die UC-Zahl allein schwankte
+über vier Läufe zwischen 2 und 9 — bei gleichem Prompt. Der Unterschied 22 → 15 liegt
+plausibel im Rauschen; der Sprung auf 44 mit REQ und FUNC ist größer als das, und er ist
+durch den Mechanismus gedeckt (die Klausel verlangt genau REQ+TEST, das Log zeigt genau
+das). Aber als Zahl bleibt er ein Einzelwert.
+
+**Was daraus folgt, ist keine weitere Optimierung, sondern `RUNS=3`.** Solange eine
+Änderung gegen einen einzelnen Lauf gemessen wird, optimieren wir zur Hälfte gegen
+Streuung.
+
+## Was weiterhin unbelegt ist
+
+`graph_suggest` wird seit CR-GC-556 vom Host gerufen und als Inhalt injiziert — im Audit
+trägt **keine einzige Mutation** `editSource: 'suggestion-template'`. Dass die Vorschläge
+ankommen, ist geprüft; dass das Modell einen aufgreift, nicht.
