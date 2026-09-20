@@ -1,6 +1,6 @@
 # CR-GC-564: Die Regel-Klausel ist die Anweisung, nicht ein Zusatz zu einer falschen
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-20)
 **Typ:** aus Item ITEM-2026-389 (bug)
 **Erstellt:** 2026-09-20
 **Item:** bok/items/ITEM-2026-389.json (Lane: graph)
