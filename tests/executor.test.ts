@@ -303,11 +303,11 @@ describe('executor (CR-GC-278)', () => {
     expect(harness.getGraph().nodes.map((n) => n.uid)).toContain('SYS-app');
   });
 
-  it('buildToolSpecs: valid object schemas for every tool, generate/next_step withheld', () => {
+  it('buildToolSpecs: valid object schemas for every tool, generate/suggest withheld', () => {
     const specs = buildToolSpecs(registry);
     const names = specs.map((s) => s.name);
     expect(names).not.toContain('graphcode_graph_generate');
-    expect(names).not.toContain('graphcode_graph_next_step');
+    expect(names).not.toContain('graphcode_graph_suggest');
     expect(names).toContain('graphcode_graph_mutate');
     expect(names).toContain('read_file');
     for (const spec of specs) {

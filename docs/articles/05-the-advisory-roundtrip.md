@@ -113,7 +113,7 @@ fill them very differently.
 | Piece | Driver (built-in executor) | Host (Claude Code / OpenCode) |
 |---|---|---|
 | System prompt | graphcode's own, fixed, ~320 tokens, identical every round | the assistant's own system prompt — a different artifact, not graphcode's, not measurable from here |
-| Tool definitions | not applicable — the driver calls the gate directly | graphcode's 25 MCP tools, ~4,100 tokens of names + descriptions, loaded once per session |
+| Tool definitions | not applicable — the driver calls the gate directly | graphcode's 24 MCP tools, ~4,100 tokens of names + descriptions, loaded once per session |
 | Graph context + open rules | pre-merged into one block by the driver, ~530–1,580 tokens, growing with graph size | fetched by the assistant itself, as separate tool calls — size depends what it asks for (a comparable bundle measured elsewhere: ~670 tokens) |
 | Target/KPI feedback | not shown to the model at all — used internally for ranking only | shown, if the assistant calls the optimizer itself |
 | Turn instruction | project intent (re-read from the graph, quoted fresh) plus the one concrete ask for this round, always both together, ~370 tokens typical | the user's chat message, free length |

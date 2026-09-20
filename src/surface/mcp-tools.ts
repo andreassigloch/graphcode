@@ -13,7 +13,7 @@
  * COMPOSITION ROOT (CR-GC-256). The tools themselves live in one module per group:
  *   - `tools/read.ts`   — graph_elements / get_node / get_edges / impact / expand / context
  *   - `tools/write.ts`  — graph_mutate / realize / merge / reseed (all gated)
- *   - `tools/report.ts` — rules / audit / readiness / tests / help / authoring / next_step
+ *   - `tools/report.ts` — rules / audit / readiness / tests / help / authoring
  *   - `tools/export.ts` — graph_export (+ the assertInRepo containment guard, CR-GC-255)
  *   - `tools/suggest.ts`— graph_suggest (se-optimizer binding, dryRun-Verdict, CR-GC-273)
  * Each is bound against ONE `ToolContext` (`tool-context.ts`), which owns the shared state

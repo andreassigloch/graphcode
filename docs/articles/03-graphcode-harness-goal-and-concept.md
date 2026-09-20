@@ -31,7 +31,7 @@ that, every project grows its own dialect and nothing stays comparable.
 | Local execution | OpenCode + bring-your-own-key, or the built-in executor below | Two ways to run a local model — see "Two ways to run the loop" |
 
 The current vocabulary: 12 element types, 6 connection types, 32 legal connection patterns,
-67 engine rules across 8 readiness dimensions, exposed as 25 MCP tools.
+67 engine rules across 8 readiness dimensions, exposed as 24 MCP tools.
 
 ## Two ways to run the loop
 
@@ -66,8 +66,9 @@ Their write-side twin is **`graph_authoring_guide(type)`**: before creating a no
 which connections are legal for that type, instead of guessing the shape and being rejected by the
 gate. That matters most for small models, which guess the mutation shape badly.
 
-And **`graph_next_step()`** condenses the whole advisory rule set into one prioritized action, derived
-from the weakest readiness dimension. Deterministic — no model involved in deciding what to do next.
+And **`graph_generate()`** condenses the whole advisory rule set into one concrete generation
+instruction, derived from the weakest readiness dimension. Deterministic — no model involved in
+deciding what to do next.
 
 ## Closing the loop back to the code
 

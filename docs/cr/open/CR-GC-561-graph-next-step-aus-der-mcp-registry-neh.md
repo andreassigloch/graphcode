@@ -32,7 +32,19 @@ deterministisch"; ein Name darin, den es nicht mehr gibt, ist eine Behauptung oh
 - `tests/mcp.agent-agnostic.test.ts` — erwartete Werkzeugliste
 - `tests/executor.test.ts` — die Withheld-Zusicherung
 
-Fünf Dateien. `src/loop/steering.ts` bleibt in diesem Schritt liegen: danach ist es toter
+Dazu, vom Kanarienvogel erzwungen (`claims.conformance`, T-D1):
+
+- `README.md`, `docs/articles/03-…md`, `docs/articles/05-…md` — die veröffentlichte
+  Werkzeugzahl 25 → 24, und die zwei Stellen, die das Werkzeug beim Namen nannten
+- `tests/claims.conformance.test.ts` — der Kanarienvogel-Wert
+
+**Neun Dateien statt sechs — eine benannte Abweichung.** Die vier Zusatzdateien sind
+Ein-Zahl-Korrekturen, die derselbe Test erzwingt, der sie gefunden hat; sie lassen sich
+nicht vorziehen (dann stünde die falsche Zahl über dem noch vorhandenen Werkzeug) und
+nicht nachziehen (dann wäre die Suite dazwischen rot). Der Blast Radius, den die
+6er-Grenze schützt, ist unverändert ein Symbol.
+
+`src/loop/steering.ts` bleibt in diesem Schritt liegen: danach ist es toter
 Code, aber es bricht nichts — das Löschen ist CR-GC-562.
 
 ## 4 Abnahme
@@ -40,4 +52,5 @@ Code, aber es bricht nichts — das Löschen ist CR-GC-562.
 1. `graph_next_step` ist über MCP nicht mehr aufrufbar.
 2. Die Werkzeugliste, die ein Agent sieht, kennt den Namen nicht mehr.
 3. `WITHHELD_TOOLS` nennt nur noch Werkzeuge, die es gibt.
-4. Suite grün.
+4. Die veröffentlichte Werkzeugzahl stimmt wieder mit der lebenden Quelle überein.
+5. Suite grün.
