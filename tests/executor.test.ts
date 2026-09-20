@@ -574,14 +574,17 @@ describe('executor (CR-GC-278)', () => {
     expect(instruction).toContain('Kanten-Grammatik');
     expect(instruction).toContain('Element-Index');
     // Der Graph-Zustand DER FOKUS-TYPEN steht Zeile für Zeile im Prompt.
-    for (const line of ['ACTOR-user · ACTOR · User', 'UC-login · UC · Login']) {
-      expect(instruction).toContain(line);
-    }
-    // CR-GC-539: SYS ist hier KEIN Fokus-Typ, also steht sein Knoten nicht mehr im Index.
-    // Vorher lief der Aufruf roh am `inputSchema` vorbei und lieferte den ganzen Graphen —
-    // auf dem echten Modell 757 Knoten je Runde, das Gegenteil einer need-to-know-Whitebox.
-    // Der Typ selbst bleibt sichtbar: die Kanten-Grammatik darüber nennt „SYS compose→".
+    expect(instruction).toContain('UC-login · UC · Login');
+    // CR-GC-539: was NICHT Fokus-Typ ist, steht nicht im Index. Vorher lief der Aufruf roh
+    // am `inputSchema` vorbei und lieferte den ganzen Graphen — auf dem echten Modell 757
+    // Knoten je Runde, das Gegenteil einer need-to-know-Whitebox. Der Typ selbst bleibt
+    // sichtbar: die Kanten-Grammatik darüber nennt „SYS compose→".
     expect(instruction).not.toContain('SYS-app · SYS · Test App');
+    // CR-GC-566: der Fokus kommt hier aus der UC-01-KLAUSEL (UC/REQ/TEST), nicht aus der
+    // uc-Dimension — die Anweisung verlangt REQ und TEST, also liefert die Injektion deren
+    // Grammatik und nicht die von ACTOR, über den in dieser Runde nichts zu entscheiden ist.
+    expect(instruction).toContain('Fokus-Typen UC/REQ/TEST');
+    expect(instruction).not.toContain('ACTOR-user · ACTOR · User');
     expect(instruction).toContain('beschraenkt');
   });
 

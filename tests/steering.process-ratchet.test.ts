@@ -35,7 +35,7 @@ import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { RULE_TO_PHASE } from '@sigloch/contracts/se';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
-import { generationStep, DIMENSION_FOCUS_TYPES } from '../src/loop/generate.js';
+import { generationStep, DIMENSION_FOCUS_TYPES, RULE_CLAUSE } from '../src/loop/generate.js';
 import { computePhaseReadiness, currentPhaseGate, PHASE_GATE_ORDER } from '../src/kernel/measure/readiness.js';
 import { ARCH_FIXTURE, makeSteeringConfig, parseFocusKey, scriptedActor } from './fixtures/steering-graphs.js';
 import type { MutateCommand } from '@sigloch/contracts/harness';
@@ -238,8 +238,12 @@ describe('T-B3 / T-B5 (CR-GC-341): the ratchet, and the control that makes it re
 
   it('T-B5 — the focus types are the ones the focus dimension declares, not free text', async () => {
     const s = step();
-    const dimension = parseFocusKey(s.focusKey!).dimension;
-    expect(s.focusTypes).toEqual(DIMENSION_FOCUS_TYPES[dimension]);
+    const { dimension } = parseFocusKey(s.focusKey!);
+    // CR-GC-566: a rule clause declares its own types and wins over the dimension —
+    // otherwise the injected grammar covers types the instruction never asks for, and
+    // misses the ones it does. Falls back to the dimension when there is no clause.
+    const regel = s.focusKey!.split(':')[1];
+    expect(s.focusTypes).toEqual(RULE_CLAUSE[regel]?.types ?? DIMENSION_FOCUS_TYPES[dimension]);
   });
 
   it('T-B5 — deferring EVERYTHING does not dead-end the driver', async () => {

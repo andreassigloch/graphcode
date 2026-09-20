@@ -1654,6 +1654,12 @@
       "description": "docs/cr/open/CR-GC-565-rig-prompt-gibt-die-ontologie-vor-misst-.md"
     },
     {
+      "id": "CR-GC-566",
+      "type": "CR",
+      "name": "focusTypes deckt nicht, was die Rundenanweisung verlangt — Lesen ist erzwungen",
+      "description": "docs/cr/open/CR-GC-566-focustypes-deckt-nicht-was-die-rundenanw.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -19179,5 +19185,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 317
+  "graphVersion": 318
 }

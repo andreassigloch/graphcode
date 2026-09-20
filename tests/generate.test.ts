@@ -16,7 +16,8 @@ import type { Graph } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
-import { generationStep, DIMENSION_FOCUS_TYPES, SEED_STAGES } from '../src/loop/generate.js';
+import { generationStep, DIMENSION_FOCUS_TYPES, SEED_STAGES, GENERATION_TEMPLATE, RULE_CLAUSE } from '../src/loop/generate.js';
+import { ElementType } from '@sigloch/contracts/se';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 
 /**
@@ -491,7 +492,16 @@ describe('generationStep — R-15 Stagnations-Fix (CR-GC-290-Nachtrag, Messlauf-
 
   it('DIMENSION_FOCUS_TYPES.uc trägt FUNC — Runden-Injektion liefert die FUNC-Kantengrammatik im uc-Fokus mit', () => {
     expect(DIMENSION_FOCUS_TYPES.uc).toContain('FUNC');
-    const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    // CR-GC-566: im R-15-Fenster bestimmt die KLAUSEL die Typen, nicht die Dimension —
+    // und sie nennt genau die zwei, um die es geht. Dorthin rotieren statt das erste
+    // beliebige uc-Fenster zu nehmen (das ist seit CR-GC-563 UC-01 und redet über REQ).
+    const keys: string[] = [];
+    let step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    while (step.focusKey && !/^uc:R-15:/.test(step.focusKey) && keys.length < 10) {
+      keys.push(step.focusKey);
+      step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS, keys);
+    }
+    expect(step.focusKey).toMatch(/^uc:R-15:/);
     expect(step.focusTypes).toContain('FUNC');
   });
 });
@@ -523,8 +533,9 @@ describe('DIMENSION_FOCUS_TYPES / GenerationStep.focusTypes (CR-GC-285)', () => 
     );
     const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
     expect(step.phase).toBe('expand');
-    const dim = (step.focusKey as string).split(':')[0];
-    expect(step.focusTypes).toEqual(DIMENSION_FOCUS_TYPES[dim]);
+    const [dim, regel] = (step.focusKey as string).split(':');
+    // CR-GC-566: die Klausel hat Vorrang, wenn es eine gibt — sonst die Dimension.
+    expect(step.focusTypes).toEqual(RULE_CLAUSE[regel]?.types ?? DIMENSION_FOCUS_TYPES[dim]);
   });
 
   // 'handoff trägt keine Fokus-Typen' (die literale focusTypes:[] im handoff-Return)
@@ -907,4 +918,74 @@ describe('CR-GC-564: die Regel-Klausel IST die Anweisung', () => {
     expect(step.prompt).toContain('FCHAIN-Szenarien (UC compose FCHAIN)');
   });
 
+});
+
+describe('CR-GC-566: der Fokus deckt, was die Anweisung verlangt', () => {
+  const ohneReq = g(
+    [
+      node('SYS-sig', 'SYS', 'SIG Local', 'Lokale LLM-Kapazitaet im internen Netz.'),
+      node('ACTOR-nutzer', 'ACTOR', 'Nutzer'),
+      node('UC-interactive', 'UC', 'Interactive Session', 'Nutzer fragt das lokale Modell und erhaelt eine Antwort.'),
+      node('UC-scheduled', 'UC', 'Scheduled Tasks', 'Planer startet nachts eine Aufgabe und legt das Ergebnis ab.'),
+      node('UC-offline', 'UC', 'Offline Operation', 'Nutzer arbeitet unterwegs ohne Netz weiter.'),
+    ],
+    [
+      edge('SYS-sig', 'UC-interactive', 'compose'),
+      edge('SYS-sig', 'UC-scheduled', 'compose'),
+      edge('SYS-sig', 'UC-offline', 'compose'),
+    ],
+  );
+
+  it('UC-01 trägt REQ und TEST im Fokus — die Klausel verlangt beide', () => {
+    const step = generationStep(ohneReq, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    expect((step.focusKey as string).split(':')[1]).toBe('UC-01');
+    expect(step.focusTypes).toContain('REQ');
+    expect(step.focusTypes).toContain('TEST');
+  });
+
+  it('UC-02 trägt FLOW im Fokus — ohne FLOW ist der legale Pfad nicht beschreibbar', () => {
+    const erst = generationStep(ohneReq, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    const step = generationStep(ohneReq, DEFAULT_METRIC_POLICY, undefined, FOCUS, [erst.focusKey as string]);
+    expect((step.focusKey as string).split(':')[1]).toBe('UC-02');
+    expect(step.focusTypes).toContain('FLOW');
+  });
+
+  it('eine Regel ohne Klausel bekommt die Typen ihrer Dimension', () => {
+    const keys: string[] = [];
+    let step = generationStep(ohneReq, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    for (let i = 0; i < 4 && ['UC-01', 'UC-02'].includes((step.focusKey as string).split(':')[1]); i++) {
+      keys.push(step.focusKey as string);
+      step = generationStep(ohneReq, DEFAULT_METRIC_POLICY, undefined, FOCUS, keys);
+    }
+    expect((step.focusKey as string).split(':')[1]).toBe('FC-02');
+    expect(step.focusTypes).toEqual(DIMENSION_FOCUS_TYPES.uc);
+  });
+
+  /**
+   * Die eigentliche Zusicherung: nicht die drei Einzelfälle oben, sondern dass die Lücke
+   * bei einem NEUEN Eintrag nicht wieder entsteht. Gemessen war sie fünfmal offen
+   * (uc→FLOW, req→TEST, arch→MOD, UC-01→REQ+TEST, UC-02→FLOW), und jede dieser Lücken
+   * zwingt das Modell zu einem Lese-Turn, den die Injektion sparen sollte.
+   */
+  it('KEIN Elementtyp, den eine Anweisung nennt, fehlt in ihren Fokus-Typen', () => {
+    const typen = new Set(ElementType.options as readonly string[]);
+    const genannt = (text: string): string[] =>
+      [...new Set(text.match(/\b[A-Z]{2,7}\b/g) ?? [])].filter((w) => typen.has(w));
+    const luecken: string[] = [];
+
+    for (const [dimension, text] of Object.entries(GENERATION_TEMPLATE)) {
+      const fokus = new Set(DIMENSION_FOCUS_TYPES[dimension] ?? []);
+      for (const t of genannt(text)) {
+        if (!fokus.has(t)) luecken.push(`Template ${dimension} nennt ${t}, Fokus hat es nicht`);
+      }
+    }
+    for (const [regel, klausel] of Object.entries(RULE_CLAUSE)) {
+      const fokus = new Set(klausel.types);
+      // Nur der Anweisungstext, nicht die uids der konkreten Funde.
+      for (const t of genannt(klausel.text([]))) {
+        if (!fokus.has(t)) luecken.push(`Klausel ${regel} nennt ${t}, Fokus hat es nicht`);
+      }
+    }
+    expect(luecken).toEqual([]);
+  });
 });

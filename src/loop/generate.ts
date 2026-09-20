@@ -113,29 +113,40 @@ const GATE_PROTOCOL: Record<GenerationSelection, string> = {
  * trägt also genau eine Regel: die Klausel wird exakt und mit den konkreten
  * uids gerendert oder gar nicht.
  */
-const RULE_CLAUSE: Record<string, (uids: string[]) => string> = {
-  'R-15': (uids) =>
-    `Diese Funde sind BESTEHENDE, leere FCHAINs (${uids.join(', ')}): häng an jede davon 3±2 FUNC-Elemente` +
-    ' (FCHAIN compose→FUNC), die den Ablauf in Schritte zerlegen.',
+export const RULE_CLAUSE: Record<string, { types: string[]; text: (uids: string[]) => string }> = {
+  'R-15': {
+    types: ['FCHAIN', 'FUNC'],
+    text: (uids) =>
+      `Diese Funde sind BESTEHENDE, leere FCHAINs (${uids.join(', ')}): häng an jede davon 3±2 FUNC-Elemente` +
+      ' (FCHAIN compose→FUNC), die den Ablauf in Schritte zerlegen.',
+  },
   // CR-GC-564: Wortlaut aus dem req-Template — dort beschreibt er dieselbe Arbeit korrekt.
   // UC-01 liegt in der uc-Dimension, deren Template ACTOR/FCHAIN/UC verlangt und REQ nicht
   // einmal erwähnt. Gemessen in Rig-Lauf 5: das Modell folgte dem Template, null REQ.
-  'UC-01': (uids) =>
-    `Diese UCs haben keine Anforderungen (${uids.join(', ')}): schlage je UC 3–5 REQ-Kandidaten vor` +
-    ' (UC compose→REQ), präzise und prüfbar formuliert. Emittiere jede neue REQ zusammen mit einem' +
-    ' TEST (TEST verify→REQ) im selben Batch — eine REQ ohne verify-TEST blockt das Gate (R-01).',
+  'UC-01': {
+    // CR-GC-566: REQ und TEST gehören in den Fokus, sonst liefert die Injektion die
+    // Grammatik nicht, die dieser Text verlangt — und das Modell MUSS danach fragen.
+    types: ['UC', 'REQ', 'TEST'],
+    text: (uids) =>
+      `Diese UCs haben keine Anforderungen (${uids.join(', ')}): schlage je UC 3–5 REQ-Kandidaten vor` +
+      ' (UC compose→REQ), präzise und prüfbar formuliert. Emittiere jede neue REQ zusammen mit einem' +
+      ' TEST (TEST verify→REQ) im selben Batch — eine REQ ohne verify-TEST blockt das Gate (R-01).',
+  },
   // CR-GC-564: der legale Pfad AUSGESCHRIEBEN. ACTOR direkt an UC oder FCHAIN ist die
   // Fehlerart, die Lauf 3 zwei Runden an R-18-Ablehnungen gekostet hat.
-  'UC-02': (uids) =>
-    `Diese UCs sind von keinem ACTOR erreichbar (${uids.join(', ')}): der EINZIGE legale Weg ist` +
-    ' ACTOR io→FLOW io→FUNC, wobei die FUNC Mitglied einer FCHAIN des UC ist. Lege die fehlenden' +
-    ' FLOWs und FUNCs im selben Batch an. ACTOR direkt an UC oder an FCHAIN wird von R-18' +
-    ' abgewiesen, in beiden Richtungen.',
+  'UC-02': {
+    types: ['ACTOR', 'UC', 'FCHAIN', 'FUNC', 'FLOW'],
+    text: (uids) =>
+      `Diese UCs sind von keinem ACTOR erreichbar (${uids.join(', ')}): der EINZIGE legale Weg ist` +
+      ' ACTOR io→FLOW io→FUNC, wobei die FUNC Mitglied einer FCHAIN des UC ist. Lege die fehlenden' +
+      ' FLOWs und FUNCs im selben Batch an. ACTOR direkt an UC oder an FCHAIN wird von R-18' +
+      ' abgewiesen, in beiden Richtungen.',
+  },
 };
 
 /** Generative Instruktion je Readiness-Dimension — die einzige Handlungsanweisung des
  * Systems, seit die generischen Lese-Zwillinge in `steering.ts` mit CR-GC-562 gefallen sind. */
-const GENERATION_TEMPLATE: Record<string, string> = {
+export const GENERATION_TEMPLATE: Record<string, string> = {
   uc: 'Schlage je Fund 2–3 Kandidaten vor: fehlende ACTORs (Anbindung ACTOR io→FLOW io→FUNC in der FCHAIN des UC), FCHAIN-Szenarien (UC compose FCHAIN) oder fehlende UCs aus der Intention. UC-Stil: Actor–Verb–Objekt–Ergebnis, ≤25 Wörter — die volle Anleitung steht als Block im Rundeninhalt.',
   req: 'Schlage je UC ohne Requirements 3–5 REQ-Kandidaten vor (UC compose REQ), präzise und prüfbar formuliert; emittiere jede neue REQ zusammen mit einem TEST (TEST verify REQ) im selben Batch — eine REQ ohne verify-TEST blockt das Gate (R-01). Löse Platzhalter/Ambiguität in bestehenden REQs auf.',
   arch: 'Zerlege je Fund die FCHAIN/FUNC-Ebene: 7±2 FUNCs pro Zerlegungsebene (RD-04), FLOWs zwischen FUNCs (io). Schlage je Fund 2 alternative FUNC/FCHAIN-Zerlegungen vor — jede neue FUNC zusammen mit satisfy→REQ und allocate→MOD im selben Batch (fehlt die REQ oder das MOD im Graphen, zuerst anlegen). Lass das Gate wählen.',
@@ -156,9 +167,12 @@ const GENERATION_TEMPLATE: Record<string, string> = {
  * Keys = die Dimensionen von GENERATION_TEMPLATE.
  */
 export const DIMENSION_FOCUS_TYPES: Record<string, string[]> = {
-  uc: ['ACTOR', 'UC', 'FCHAIN', 'FUNC'],
-  req: ['UC', 'REQ'],
-  arch: ['FCHAIN', 'FUNC', 'FLOW', 'REQ'],
+  // CR-GC-566: FLOW ist dabei, weil das Template die Anbindung ACTOR io→FLOW io→FUNC verlangt.
+  uc: ['ACTOR', 'UC', 'FCHAIN', 'FUNC', 'FLOW'],
+  // CR-GC-566: TEST, weil das Template die REQ nur MIT ihrem verify-TEST zulaesst (R-01).
+  req: ['UC', 'REQ', 'TEST'],
+  // CR-GC-566: MOD, weil das Template allocate→MOD im selben Batch verlangt.
+  arch: ['FCHAIN', 'FUNC', 'FLOW', 'REQ', 'MOD'],
   alloc: ['FUNC', 'MOD'],
   ver: ['TEST', 'REQ'],
   schema: ['FLOW', 'SCHEMA'],
@@ -477,10 +491,8 @@ export function generationStep(
   // Regel-Klausel nur für die Regel, die dieses Fenster stellt (windowsOf gruppiert
   // je rule_id) — und mit den konkreten uids, statt als globales Verbot.
   const windowRule = focusViolations[0]?.rule_id;
-  const ruleClause =
-    windowRule && RULE_CLAUSE[windowRule]
-      ? RULE_CLAUSE[windowRule](focusViolations.map((v) => v.element_id))
-      : '';
+  const klausel = windowRule ? RULE_CLAUSE[windowRule] : undefined;
+  const ruleClause = klausel ? klausel.text(focusViolations.map((v) => v.element_id)) : '';
   // EIN Imperativ je Runde (CR-GC-564). Vorher wurde die Klausel an das Dimensions-Template
   // ANGEHÄNGT — und R-15s Klausel endete mit „KEINE neue FCHAIN anlegen", also mit dem
   // Widerruf dessen, was drei Zeilen vorher stand. Das Template ist nach DIMENSION
@@ -512,7 +524,14 @@ export function generationStep(
     blockingErrors,
     phaseReadiness,
     focusKey,
-    focusTypes: focus ? [...(DIMENSION_FOCUS_TYPES[focus.dimension] ?? [])] : [],
+    // CR-GC-566: dieselbe Praezedenz wie beim Imperativ (CR-GC-564) — stellt eine Regel die
+    // Anweisung, bestimmt sie auch die Typen. Sonst stuende im Rundeninhalt die Grammatik
+    // einer Dimension, waehrend der Text nach anderen Typen verlangt.
+    focusTypes: klausel
+      ? [...klausel.types]
+      : focus
+        ? [...(DIMENSION_FOCUS_TYPES[focus.dimension] ?? [])]
+        : [],
     focusDimension: focus ? (focus.dimension as string) : null,
   };
 }
