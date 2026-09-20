@@ -149,16 +149,31 @@ const SUGGEST_MAX_ROWS = 8;
 const SUGGEST_K = 20;
 
 /**
- * Welcher Skill zu welchem Fokus-Typ gehoert (CR-GC-557).
+ * Welche Autorier-Anleitung zu welcher Fokus-Dimension gehoert (CR-GC-558, loest die
+ * typ-gekeyte Fassung aus CR-GC-557 ab).
  *
- * Nur Typen, fuer die es eine eigene AUTORIER-Anleitung gibt. `se-view:*` bleibt draussen:
- * das sind Darstellungen, keine Bauanleitungen, und `se/top-level.md` (14.871 Zeichen) waere
- * allein groesser als der halbe Werkzeugkatalog.
+ * Vorher entschied `focusTypes[0]` — also die Reihenfolge eines Arrays, das fuer den
+ * Guide-Slice autoriert ist und nicht fuer diese Wahl. Die Runde kennt ihre Dimension;
+ * daran haengt die Anleitung.
+ *
+ * `se-view:*` bleibt draussen: Darstellungen, keine Bauanleitungen. `ver`/`schema`/`cr`/`ms`
+ * fehlen, weil es fuer sie keinen Autorier-Skill GIBT — ein Eintrag waere eine Luege ueber
+ * vorhandene Anleitung.
  */
-const SKILL_FOR_TYPE: Record<string, { name: string; file: string } | undefined> = {
-  UC: { name: 'se:author-uc', file: 'author-uc.md' },
-  REQ: { name: 'se:author-req', file: 'author-req.md' },
+const SKILL_FOR_DIMENSION: Record<string, { name: string; file: string } | undefined> = {
+  // Kaltstart-Stufen (CR-GC-559) — je Stufe die Anleitung ihrer EINEN Entscheidung.
+  'seed:sys': { name: 'se:top-level', file: 'top-level.md' },
+  'seed:uc': { name: 'se:author-uc', file: 'author-uc.md' },
+  'seed:actor': { name: 'se:author-actor', file: 'author-actor.md' },
+  uc: { name: 'se:author-uc', file: 'author-uc.md' },
+  req: { name: 'se:author-req', file: 'author-req.md' },
+  arch: { name: 'se:top-level', file: 'top-level.md' },
+  alloc: { name: 'se:top-level', file: 'top-level.md' },
 };
+
+/** Markerpaar, mit dem ein Skill selbst bestimmt, welcher Teil von ihm modelltauglich ist. */
+const INJECT_START = '<!-- inject:start -->';
+const INJECT_END = '<!-- inject:end -->';
 
 /** Zeichen-Deckel je Skill — ein durchgerutschter Riesen-Skill soll die Runde nicht fluten. */
 const SKILL_CHAR_BUDGET = 4000;
@@ -176,7 +191,13 @@ function readSkillBody(skill: { name: string; file: string }): string | null {
     try {
       const roh = readFileSync(join(basis, '.claude', 'commands', 'se', skill.file), 'utf8');
       const ohneKopf = roh.startsWith('---') ? roh.slice(roh.indexOf('\n---', 3) + 4) : roh;
-      const rumpf = ohneKopf.trim();
+      // Ausschnitt statt Byte-Schnitt (CR-GC-558): setzt der Skill die Marker, bestimmt ER,
+      // was das Modell sieht — eine Quelle, kein zweites Kurzdokument daneben.
+      const von = ohneKopf.indexOf(INJECT_START);
+      const bis = ohneKopf.indexOf(INJECT_END);
+      const gewaehlt =
+        von >= 0 && bis > von ? ohneKopf.slice(von + INJECT_START.length, bis) : ohneKopf;
+      const rumpf = gewaehlt.trim();
       if (!rumpf) return null;
       return rumpf.length > SKILL_CHAR_BUDGET
         ? rumpf.slice(0, SKILL_CHAR_BUDGET) + '\n… (gekuerzt)'
@@ -197,7 +218,7 @@ function readSkillBody(skill: { name: string; file: string }): string | null {
  */
 export async function buildRoundInjection(
   registry: MCPToolRegistry,
-  step: Pick<GenerationStep, 'focusTypes'>,
+  step: Pick<GenerationStep, 'focusTypes' | 'focusDimension'>,
 ): Promise<string> {
   const blocks: string[] = [];
   const focusTypes = step.focusTypes ?? [];
@@ -377,11 +398,11 @@ export async function buildRoundInjection(
   // HOECHSTENS EINER je Runde: author-uc.md sind ~750 Token. Einer ist bezahlbar,
   // vier waeren der naechste Werkzeugkatalog.
   // -------------------------------------------------------------------------
-  const skill = focusTypes.map((ty) => SKILL_FOR_TYPE[ty]).find(Boolean);
+  const skill = step.focusDimension ? SKILL_FOR_DIMENSION[step.focusDimension] : undefined;
   if (skill) {
     const rumpf = readSkillBody(skill);
     if (rumpf) {
-      blocks.push(`Anleitung fuer den Fokus-Typ (Skill ${skill.name}):\n${rumpf}`);
+      blocks.push(`Anleitung fuer diese Runde (Skill ${skill.name}):\n${rumpf}`);
     }
   }
 

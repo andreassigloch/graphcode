@@ -16,7 +16,7 @@ import type { Graph } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
-import { generationStep, DIMENSION_FOCUS_TYPES } from '../src/loop/generate.js';
+import { generationStep, DIMENSION_FOCUS_TYPES, SEED_STAGES } from '../src/loop/generate.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 
 /**
@@ -53,20 +53,25 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
     expect(step.prompt).toContain('graph_generate');
   });
 
-  it('leerer Graph mit Intention → Seed-Batch-Instruktion (SYS/ACTOR/UC, Gate-Protokoll)', () => {
+  it('leerer Graph mit Intention → Stufe 1 fordert GENAU die SYS-Wurzel (CR-GC-559)', () => {
     const step = generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT, FOCUS);
     expect(step.phase).toBe('seed');
+    expect(step.focusDimension).toBe('seed:sys');
     expect(step.prompt).toContain(INTENT);
-    for (const part of ['SYS', 'ACTOR', 'UC', 'dryRun', 'fitAdvisory', 'graph_authoring_guide']) {
+    for (const part of ['SYS', 'dryRun', 'fitAdvisory', 'graph_authoring_guide']) {
       expect(step.prompt).toContain(part);
     }
-    // Keine Architektur im Seed — Struktur folgt readiness-getrieben.
-    expect(step.prompt).toContain('Keine FUNC/MOD-Ebene im Seed');
+    // Eine Entscheidung je Stufe: ACTORs und UCs sind eigene Schritte.
+    expect(step.prompt).toContain('Noch keine ACTORs, keine UCs');
   });
 
   it('SYS mit Defiziten → expand fokussiert die schwächste Dimension mit konkreten Funden', () => {
     const graph = g(
-      [node('SYS-shop', 'SYS', 'shop', INTENT), node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt Teil.')],
+      [
+        node('SYS-shop', 'SYS', 'shop', INTENT),
+        node('ACTOR-kunde', 'ACTOR', 'Kunde'),
+        node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt Teil.'),
+      ],
       [edge('SYS-shop', 'UC-bestellen', 'compose')],
     );
     const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
@@ -299,6 +304,7 @@ describe('generationStep — Fund-Rotation/defer (CR-GC-281)', () => {
   // also garantiert mehr als ein Fokus-Kandidat.
   const graph = g(
     [
+      node('ACTOR-kunde', 'ACTOR', 'Kunde'),
       node('SYS-shop', 'SYS', 'shop', INTENT),
       node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt Teil.'),
       node('UC-suchen', 'UC', 'suchen', 'Kunde sucht Teil.'),
@@ -378,7 +384,11 @@ describe('generationStep — Fund-Fenster/Prompt-Vollständigkeit (CR-GC-290)', 
 
   it('Prompt trägt kein "(Score X, N Funde)" mehr — die "Funde: ..."-Liste bleibt', () => {
     const graph = g(
-      [node('SYS-shop', 'SYS', 'shop', INTENT), node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt Teil.')],
+      [
+        node('SYS-shop', 'SYS', 'shop', INTENT),
+        node('ACTOR-kunde', 'ACTOR', 'Kunde'),
+        node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt Teil.'),
+      ],
       [edge('SYS-shop', 'UC-bestellen', 'compose')],
     );
     const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
@@ -475,25 +485,28 @@ describe('generationStep — R-15 Stagnations-Fix (CR-GC-290-Nachtrag, Messlauf-
 });
 
 describe('DIMENSION_FOCUS_TYPES / GenerationStep.focusTypes (CR-GC-285)', () => {
-  it('das Mapping deckt seed + alle 8 Readiness-Dimensionen mit nichtleeren Typlisten ab', () => {
+  it('das Mapping trägt genau die 8 Readiness-Dimensionen — der Seed ist keine (CR-GC-559)', () => {
     expect(Object.keys(DIMENSION_FOCUS_TYPES).sort()).toEqual(
-      ['alloc', 'arch', 'cr', 'ms', 'req', 'schema', 'seed', 'uc', 'ver'],
+      ['alloc', 'arch', 'cr', 'ms', 'req', 'schema', 'uc', 'ver'],
     );
     for (const types of Object.values(DIMENSION_FOCUS_TYPES)) {
       expect(types.length).toBeGreaterThan(0);
     }
-    expect(DIMENSION_FOCUS_TYPES.seed).toEqual(['SYS', 'ACTOR', 'UC']);
     expect(DIMENSION_FOCUS_TYPES.ver).toEqual(['TEST', 'REQ']);
   });
 
-  it('seed trägt die Seed-Typen; seed ohne Intention trägt keine', () => {
-    expect(generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT, FOCUS).focusTypes).toEqual(DIMENSION_FOCUS_TYPES.seed);
+  it('Stufe 1 trägt nur SYS; seed ohne Intention trägt keine Typen', () => {
+    expect(generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT, FOCUS).focusTypes).toEqual([...SEED_STAGES.sys]);
     expect(generationStep(EMPTY, DEFAULT_METRIC_POLICY, undefined, FOCUS).focusTypes).toEqual([]);
   });
 
   it('expand trägt die Typen der Fokus-Dimension (konsistent zum focusKey)', () => {
     const graph = g(
-      [node('SYS-shop', 'SYS', 'shop', INTENT), node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt Teil.')],
+      [
+        node('SYS-shop', 'SYS', 'shop', INTENT),
+        node('ACTOR-kunde', 'ACTOR', 'Kunde'),
+        node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt Teil.'),
+      ],
       [edge('SYS-shop', 'UC-bestellen', 'compose')],
     );
     const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
@@ -562,7 +575,11 @@ describe('Zielprofil + Intentions-Anker im Prompt (CR-GC-295)', () => {
 
   it('expand trägt die Unadressierte-Anker-Zeile — nur für Anker ohne UC/REQ/FUNC-Match', () => {
     const graph = g(
-      [node('SYS-shop', 'SYS', 'shop', INTENT), node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt Teil.')],
+      [
+        node('SYS-shop', 'SYS', 'shop', INTENT),
+        node('ACTOR-kunde', 'ACTOR', 'Kunde'),
+        node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt Teil.'),
+      ],
       [edge('SYS-shop', 'UC-bestellen', 'compose')],
     );
     const profile = withProfile({}, ['bestellen', 'zauberdrache', 'teil']);
@@ -580,7 +597,11 @@ describe('Zielprofil + Intentions-Anker im Prompt (CR-GC-295)', () => {
 
   it('ohne Profil: expand-Prompt unverändert ohne Anker-Zeile (N=1-Determinismus, Regression)', () => {
     const graph = g(
-      [node('SYS-shop', 'SYS', 'shop', INTENT), node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt Teil.')],
+      [
+        node('SYS-shop', 'SYS', 'shop', INTENT),
+        node('ACTOR-kunde', 'ACTOR', 'Kunde'),
+        node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt Teil.'),
+      ],
       [edge('SYS-shop', 'UC-bestellen', 'compose')],
     );
     const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
@@ -591,7 +612,11 @@ describe('Zielprofil + Intentions-Anker im Prompt (CR-GC-295)', () => {
 
 describe('GATE_PROTOCOL-Selektion (CR-GC-288)', () => {
   const expandGraph = g(
-    [node('SYS-shop', 'SYS', 'shop', INTENT), node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt Teil.')],
+    [
+      node('SYS-shop', 'SYS', 'shop', INTENT),
+      node('ACTOR-kunde', 'ACTOR', 'Kunde'),
+      node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt Teil.'),
+    ],
     [edge('SYS-shop', 'UC-bestellen', 'compose')],
   );
 
@@ -684,5 +709,72 @@ describe('graph_generate — MCP-Binding (echter Harness)', () => {
     const driver = (await tools.graph_generate.handler(parsed)) as { prompt: string };
     expect(driver.prompt).not.toContain('dryRun');
     expect(driver.prompt).toContain('Treiber');
+  });
+});
+
+describe('CR-GC-559: der Kaltstart in drei gegateten Stufen', () => {
+  const sysOnly = g([node('SYS-shop', 'SYS', 'shop', INTENT)], []);
+  const sysUc = g(
+    [node('SYS-shop', 'SYS', 'shop', INTENT), node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt Teil.')],
+    [edge('SYS-shop', 'UC-bestellen', 'compose')],
+  );
+
+  it('SYS allein → Stufe 2 destilliert die UCs', () => {
+    const step = generationStep(sysOnly, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    expect(step.phase).toBe('seed');
+    expect(step.focusDimension).toBe('seed:uc');
+    expect(step.focusTypes).toEqual([...SEED_STAGES.uc]);
+    expect(step.prompt).toContain('3–7 UCs');
+  });
+
+  it('SYS + UC → Stufe 3 schneidet das Minimum distinkter ACTORs', () => {
+    const step = generationStep(sysUc, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    expect(step.phase).toBe('seed');
+    expect(step.focusDimension).toBe('seed:actor');
+    expect(step.focusTypes).toEqual([...SEED_STAGES.actor]);
+    expect(step.prompt).toContain('MINIMUM');
+    // Der gemessene Fehler war die erfundene Kante — die Stufe verbietet sie ausdrücklich.
+    expect(step.prompt).toContain('BLOSSE Knoten ohne Kanten');
+    expect(step.prompt).toContain('ACTOR io→FLOW io→FUNC');
+  });
+
+  it('SYS + UC + ACTOR → raus aus dem Seed, der Regler übernimmt', () => {
+    const graph = g(
+      [
+        node('SYS-shop', 'SYS', 'shop', INTENT),
+        node('ACTOR-kunde', 'ACTOR', 'Kunde'),
+        node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt Teil.'),
+      ],
+      [edge('SYS-shop', 'UC-bestellen', 'compose')],
+    );
+    expect(generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS).phase).toBe('expand');
+  });
+
+  it('begonnene Struktur ohne ACTOR fällt NICHT in den Kaltstart zurück', () => {
+    // Ein importierter Graph hat FUNCs und oft keine ACTORs. Dort messen UC-02/R-16/FC-04
+    // auf dem expand-Pfad — eine Seed-Stufe wäre ein Rückschritt in den Kaltstart.
+    const importiert = g(
+      [
+        node('SYS-shop', 'SYS', 'shop', INTENT),
+        node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt Teil.'),
+        node('FUNC-pruefen', 'FUNC', 'pruefen', 'Prüft die Bestellung.'),
+      ],
+      [edge('SYS-shop', 'UC-bestellen', 'compose')],
+    );
+    expect(generationStep(importiert, DEFAULT_METRIC_POLICY, undefined, FOCUS).phase).toBe('expand');
+  });
+
+  it('die Intentions-Rückfrage bleibt vorgeschaltet — ohne Intention keine Stufe', () => {
+    const step = generationStep(EMPTY, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    expect(step.phase).toBe('seed');
+    expect(step.focusDimension).toBeNull();
+  });
+
+  it('jede Stufe ist deterministisch', () => {
+    for (const graph of [EMPTY, sysOnly, sysUc]) {
+      expect(generationStep(graph, DEFAULT_METRIC_POLICY, INTENT, FOCUS)).toEqual(
+        generationStep(graph, DEFAULT_METRIC_POLICY, INTENT, FOCUS),
+      );
+    }
   });
 });

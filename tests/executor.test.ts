@@ -530,11 +530,14 @@ describe('executor (CR-GC-278)', () => {
       callModel,
     });
     const instruction = JSON.stringify(calls[0].messages[0]);
-    // Guide-Slice der Seed-Typen steht IM Prompt — inkl. der legalen Kanten.
+    // Guide-Slice der Stufe steht IM Prompt — inkl. der legalen Kanten.
     expect(instruction).toContain('Kanten-Grammatik');
-    for (const t of ['- SYS:', '- ACTOR:', '- UC:']) expect(instruction).toContain(t);
-    // contracts 9.x: die ACTOR-Anbindung läuft über FLOW (ACTOR io→FLOW), nicht mehr io→UC.
-    expect(instruction).toContain('io→FLOW');
+    // CR-GC-559: Stufe 1 ist die SYS-Wurzel allein. ACTOR und UC sind eigene Stufen und
+    // bringen ihre Grammatik dann mit — vorher standen alle drei in einer Runde, und
+    // genau diese Vermischung hat das Modell zu ACTOR-Kanten verleitet, die es noch
+    // nicht legal ziehen kann (vier R-18-Ablehnungen im Rig-Lauf).
+    expect(instruction).toContain('- SYS:');
+    for (const t of ['- ACTOR:', '- UC:']) expect(instruction).not.toContain(t);
     // Leerer Graph ⇒ kein Element-Index-Block.
     expect(instruction).not.toContain('Element-Index');
     // Die generate-Instruktion selbst bleibt ungekürzt (CR-282-Lektion).
@@ -643,7 +646,17 @@ describe('executor (CR-GC-278)', () => {
     const res = (await registry['graph_mutate'].handler({ commands: bulk })) as { success: boolean };
     expect(res.success).toBe(true);
 
-    const injection = await buildRoundInjection(registry, { focusTypes: ['TEST', 'REQ'] });
+    // CR-GC-559: die ACTOR-Grammatik kommt jetzt in der Stufe `seed:actor` — contracts 9.x
+    // fuehrt die Anbindung ueber FLOW (ACTOR io→FLOW), nicht mehr io→UC. Vorher hing diese
+    // Zusicherung an der Seed-Runde, die es so nicht mehr gibt.
+    const actorStufe = await buildRoundInjection(registry, {
+      focusTypes: ['ACTOR', 'UC'],
+      focusDimension: 'seed:actor',
+    });
+    expect(actorStufe).toContain('- ACTOR:');
+    expect(actorStufe).toContain('io→FLOW');
+
+    const injection = await buildRoundInjection(registry, { focusTypes: ['TEST', 'REQ'], focusDimension: 'ver' });
     // CR-GC-539: auf die Fokus-Typen beschränkt — ab Runde 1, nicht erst bei Zeichenüberlauf.
     expect(injection).toContain('beschraenkt');
     expect(injection).toContain('REQ-kern · REQ · Kernanforderung');
@@ -652,7 +665,7 @@ describe('executor (CR-GC-278)', () => {
     // … und der Index-Block bleibt unter dem Budget (+ Header/Guide-Overhead).
     expect(injection.length).toBeLessThan(INDEX_CHAR_BUDGET + 2000);
     // Deterministisch: gleicher Graph + gleiche Fokus-Typen ⇒ gleiche Injektion.
-    expect(await buildRoundInjection(registry, { focusTypes: ['TEST', 'REQ'] })).toBe(injection);
+    expect(await buildRoundInjection(registry, { focusTypes: ['TEST', 'REQ'], focusDimension: 'ver' })).toBe(injection);
 
     // -----------------------------------------------------------------------
     // CR-GC-539 — DIE ZAHL. Derselbe 300+-Knoten-Graph, jetzt gemessen statt beschrieben.
@@ -672,7 +685,7 @@ describe('executor (CR-GC-278)', () => {
     const deklariertesLimit = (registry['graph_elements'].inputSchema.parse({}) as { limit: number }).limit;
 
     // (1) OHNE Fokus: hoechstens der deklarierte Default — nicht alle 300+.
-    const ohneFokus = await buildRoundInjection(registry, { focusTypes: [] });
+    const ohneFokus = await buildRoundInjection(registry, { focusTypes: [], focusDimension: null });
     const ohneZeilen = zeilenDesIndex(ohneFokus);
     expect(ohneZeilen.length).toBeGreaterThan(0);
     expect(ohneZeilen.length, 'der Zod-Default limit wird umgangen').toBeLessThanOrEqual(deklariertesLimit);

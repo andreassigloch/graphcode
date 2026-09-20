@@ -44,7 +44,7 @@ bleibt das Emissions-Regime unangetastet und es gibt keinen Analyse-Turn.
 
 Damit ist auch der Optimizer an: `delta` ist der ℝ⁶-Zug je Vorschlag und wird mitgeliefert.
 Ein Zielprofil (Gewichte) ist davon unabhängig und bleibt offen — es ist eine menschliche
-Vorgabe, kein Werkzeugschalter (`se:target-profile`, ITEM-2026-374).
+Vorgabe, kein Werkzeugschalter (`se:target-profile`, ITEM-2026-377).
 
 **Anreicherung, keine zweite Liste.** Der Rundenprompt nennt die Fokus-Funde bereits samt
 `fixHint` — eine zweite Aufzählung derselben Funde wäre die zweite Wahrheit und würde den

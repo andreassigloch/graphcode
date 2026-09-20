@@ -1618,6 +1618,18 @@
       "description": "docs/cr/open/CR-GC-557-rundenprompt-verweist-auf-skill-se-autho.md"
     },
     {
+      "id": "CR-GC-558",
+      "type": "CR",
+      "name": "Skill-Injektion deckt nur 2 von 9 Fokus-Typen",
+      "description": "docs/cr/open/CR-GC-558-skill-injektion-deckt-nur-2-von-9-fokus-.md"
+    },
+    {
+      "id": "CR-GC-559",
+      "type": "CR",
+      "name": "Seed-Phase in gegatete Stufen zerlegen",
+      "description": "docs/cr/open/CR-GC-559-seed-phase-in-gegatete-stufen-zerlegen.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -19212,5 +19224,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 308
+  "graphVersion": 310
 }

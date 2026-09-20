@@ -57,6 +57,12 @@ export const GenerationStep = z.object({
    * Executor injiziert dafür Guide-Slice + Element-Index in den Runden-Prompt,
    * ohne den Prompt-String parsen zu müssen. */
   focusTypes: z.array(z.string()),
+  /** Fokus-Dimension des Schritts (CR-GC-558): Schluessel in `DIMENSION_FOCUS_TYPES`
+   * (`seed` | `uc` | `req` | `arch` | ...), null bei handoff. Steckt zwar auch im
+   * `focusKey`-Praefix, aber der ist ein zusammengesetzter Identifikator — wer die
+   * Dimension braucht, soll sie lesen, nicht aus einem Key herausschneiden. Der
+   * Executor waehlt daran die Autorier-Anleitung. */
+  focusDimension: z.string().nullable(),
 });
 export type GenerationStep = z.infer<typeof GenerationStep>;
 
@@ -133,7 +139,6 @@ const GENERATION_TEMPLATE: Record<string, string> = {
  * Keys = seed + die Dimensionen von GENERATION_TEMPLATE.
  */
 export const DIMENSION_FOCUS_TYPES: Record<string, string[]> = {
-  seed: ['SYS', 'ACTOR', 'UC'],
   uc: ['ACTOR', 'UC', 'FCHAIN', 'FUNC'],
   req: ['UC', 'REQ'],
   arch: ['FCHAIN', 'FUNC', 'FLOW', 'REQ'],
@@ -143,6 +148,25 @@ export const DIMENSION_FOCUS_TYPES: Record<string, string[]> = {
   cr: ['CR', 'FUNC', 'MOD'],
   ms: ['MS', 'CR'],
 };
+
+/**
+ * Die Stufen des Kaltstarts (CR-GC-559).
+ *
+ * Vorher war der Seed EIN Batch aus SYS + ACTORs + UCs — die einzige Runde ohne
+ * Regelung, weil ein leerer Graph nichts zu messen gibt. Gemessen im Rig-Lauf: das
+ * Modell haengte ACTOR direkt an FCHAIN, viermal, alle vom Gate wegen R-18 abgewiesen.
+ * Die Systemgrenze ist die Stelle, an der der Kaltstart scheitert, und drei
+ * Entscheidungen in einem Batch lassen sich nicht einzeln anleiten.
+ *
+ * Kein Zaehler und kein Zustand: die Stufe folgt aus dem Graphen (kein SYS / kein UC /
+ * kein ACTOR), `generationStep` bleibt rein. `seed` steht bewusst NICHT mehr in
+ * DIMENSION_FOCUS_TYPES — dort gehoeren Readiness-Dimensionen hin, und der Seed ist keine.
+ */
+export const SEED_STAGES = {
+  sys: ['SYS'],
+  uc: ['SYS', 'UC'],
+  actor: ['ACTOR', 'UC'],
+} as const;
 
 /**
  * Der nächste Generierungsschritt für (Graph, Intention). Deterministisch —
@@ -209,6 +233,7 @@ export function generationStep(
         phaseReadiness,
         focusKey: null,
         focusTypes: [],
+        focusDimension: null,
       };
     }
     // Steuerung im Hintergrund (CR-GC-307): erst HIER existiert eine Intention.
@@ -235,24 +260,65 @@ export function generationStep(
       // CR-GC-295) — ein Datei-Write hier wäre ein verstecktes Seiteneffekt-Loch.
       return '';
     })();
-    const seedBase =
-      `Kaltstart aus der Intention: "${effectiveIntent}" — ` +
-      'Schlage EINEN Seed-Batch vor: 1 SYS-Wurzel (description = die Intention wörtlich), ' +
-      '1–3 ACTORs (wer nutzt/betreibt das System) und 3–7 UCs (je Actor–Verb–Objekt–Ergebnis, ≤25 Wörter, ' +
-      'SYS compose UC; ACTORs bleiben im Seed unverbunden — die io-Anbindung läuft über ' +
-      'ACTOR io→FLOW io→FUNC und folgt mit der Struktur). Keine FUNC/MOD-Ebene im Seed — Struktur folgt readiness-getrieben. ' +
-      steeringNote;
+    // Stufe 1 (CR-GC-559): nur die Wurzel. Was das System IST, ist eine eigene
+    // Entscheidung — sie mit Use Cases und Actors in einen Batch zu legen, hiess
+    // drei Kriterien in einer Anleitung.
     return {
       phase: 'seed',
       done: false,
-      prompt: seedBase + gateProtocol,
+      prompt:
+        `Kaltstart aus der Intention: "${effectiveIntent}" — ` +
+        'Lege GENAU EIN Element an: die SYS-Wurzel, description = die Intention wörtlich. ' +
+        'Noch keine ACTORs, keine UCs, keine Struktur — die folgen als eigene Schritte. ' +
+        steeringNote +
+        gateProtocol,
       readiness,
       threshold,
       blockingErrors,
       phaseReadiness,
       focusKey: null,
-      focusTypes: [...DIMENSION_FOCUS_TYPES.seed],
+      focusTypes: [...SEED_STAGES.sys],
+      focusDimension: 'seed:sys',
     };
+  }
+
+  // --- Seed-Stufen 2 und 3 (CR-GC-559) -------------------------------------
+  // Greifen NUR, solange keine Struktur existiert: ein importierter oder reifer
+  // Graph ohne ACTOR darf nicht in den Kaltstart zurückfallen — dort melden
+  // UC-02/R-16/FC-04 dasselbe auf dem expand-Pfad, und der Regler misst.
+  const strukturBegonnen = og.elements.some((e) => e.type === 'FUNC' || e.type === 'MOD');
+  if (!strukturBegonnen) {
+    const seedRumpf = (prompt: string, stufe: keyof typeof SEED_STAGES): GenerationStep => ({
+      phase: 'seed',
+      done: false,
+      prompt: prompt + gateProtocol,
+      readiness,
+      threshold,
+      blockingErrors,
+      phaseReadiness,
+      focusKey: null,
+      focusTypes: [...SEED_STAGES[stufe]],
+      focusDimension: `seed:${stufe}`,
+    });
+    if (!og.elements.some((e) => e.type === 'UC')) {
+      return seedRumpf(
+        `Intention: "${effectiveIntent}". Die SYS-Wurzel steht. Destilliere daraus 3–7 UCs ` +
+          '(je Actor–Verb–Objekt–Ergebnis, ≤25 Wörter) und hänge jeden mit SYS compose UC an die Wurzel. ' +
+          'Nur UCs — ACTORs und Struktur folgen als eigene Schritte. ',
+        'uc',
+      );
+    }
+    if (!og.elements.some((e) => e.type === 'ACTOR')) {
+      return seedRumpf(
+        `Intention: "${effectiveIntent}". SYS und die Use Cases stehen. Bestimme jetzt das MINIMUM ` +
+          'distinkter ACTORs, das die Systemgrenze eindeutig macht: je UC einen Auslöser und einen ' +
+          'Empfänger des Ergebnisses, dann zusammenfassen, was gleich über die Grenze geht. ' +
+          'Emittiere die ACTORs als BLOSSE Knoten ohne Kanten — die einzige legale Anbindung ist ' +
+          'ACTOR io→FLOW io→FUNC, und FLOWs/FUNCs gibt es noch nicht. R-16 (Actor ohne io) ist danach ' +
+          'der richtige Zustand und schliesst sich mit der Struktur von selbst. ',
+        'actor',
+      );
+    }
   }
 
   // Intent-Coverage-Zeile (CR-GC-295): unadressierte Anker steuern JEDE Runde,
@@ -306,6 +372,7 @@ export function generationStep(
       phaseReadiness,
       focusKey: null,
       focusTypes: [],
+      focusDimension: null,
     };
   }
 
@@ -406,5 +473,6 @@ export function generationStep(
     phaseReadiness,
     focusKey,
     focusTypes: focus ? [...(DIMENSION_FOCUS_TYPES[focus.dimension] ?? [])] : [],
+    focusDimension: focus ? (focus.dimension as string) : null,
   };
 }

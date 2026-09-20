@@ -46,6 +46,9 @@ The trees give every node one place to roll up to; the lattice is what gets roll
 
 **Disjointness holds at every level.** The chains are a lattice, so *overlap* is expected — a shared FUNC is the meet point. What is forbidden is *identity*: two sibling UCs whose chains have the same members describe the same behaviour twice. Compare the member sets yourself — **no rule does it for you.** AO-D03 (`DuplicatePathDetection`) is the nearest guard and it is dead: it looks for `FUNC -io-> FUNC`, a pair the grammar does not allow, so it has never fired on any family graph (ITEM-2026-170 §5.3).
 
+_(Der Bereich zwischen den `inject`-Markern wird vom Executor-Loop in die Runden `seed:sys`, `arch` und `alloc` injiziert (CR-GC-558/559) — ein Modell im Loop kann diesen Skill nicht aufrufen. Alles ausserhalb bleibt Anleitung fuer den Menschen.)_
+
+<!-- inject:start -->
 ## Order
 
 **0 · SYS as a blackbox.** The system node, its ACTORs, and what crosses the boundary. Name the crossings here; do not discover them in phase 3. A SYS with no `compose` raises R-17.
@@ -83,6 +86,8 @@ Decomposing a function is one move, and getting it wrong is detectable:
 Max 5 modules per level. When five modules each hold 14–26 FUNCs, every size threshold breaks (R-04, RD-04, MT-02) — the fix is a level *inside* the modules, never a sixth module (ITEM-2026-170 §3.4).
 
 Coupling check after the cut: **CR-01** counts *distinct SCHEMA contracts per module pair* (threshold `crossingFlows.warning`, default 3) — not raw io edges. Two flows sharing one contract count once. Read the module rows from `graph_metrics`; it also returns the policy it judged against.
+
+<!-- inject:end -->
 
 ## The stack belongs in the model
 
