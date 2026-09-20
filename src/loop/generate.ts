@@ -131,12 +131,13 @@ const GENERATION_TEMPLATE: Record<string, string> = {
 };
 
 /**
- * Fokus-Elementtypen je Readiness-Dimension (CR-GC-285) — plus `seed` für die
- * Kaltstart-Phase. Grundlage der Runden-Prompt-Injektion: der Executor holt
+ * Fokus-Elementtypen je Readiness-Dimension (CR-GC-285). Der Kaltstart steht seit
+ * CR-GC-559 in `SEED_STAGES` — hier stehen nur Readiness-Dimensionen.
+ * Grundlage der Runden-Prompt-Injektion: der Executor holt
  * die `graph_authoring_guide`-Slices dieser Typen und filtert den
  * Element-Index darauf, statt das Modell sie pro Runde erfragen zu lassen
  * (Turn-Analyse: 41–59 % reine Lese-Turns, guide 72–107× pro Lauf).
- * Keys = seed + die Dimensionen von GENERATION_TEMPLATE.
+ * Keys = die Dimensionen von GENERATION_TEMPLATE.
  */
 export const DIMENSION_FOCUS_TYPES: Record<string, string[]> = {
   uc: ['ACTOR', 'UC', 'FCHAIN', 'FUNC'],
