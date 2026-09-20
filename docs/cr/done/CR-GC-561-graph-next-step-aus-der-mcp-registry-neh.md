@@ -1,6 +1,6 @@
 # CR-GC-561: `graph_next_step` von der Werkzeug-Oberfläche nehmen
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-20)
 **Typ:** aus Item ITEM-2026-381 (idea)
 **Erstellt:** 2026-09-20
 **Item:** bok/items/ITEM-2026-381.json (Lane: graph)
