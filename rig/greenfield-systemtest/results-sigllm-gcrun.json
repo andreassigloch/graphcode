@@ -4,30 +4,30 @@
     "model": "qwen3-coder-30b-lms:latest",
     "executor": "gcrun",
     "run": 0,
-    "elements": 41,
-    "traces": 43,
+    "elements": 86,
+    "traces": 83,
     "structure": {
-      "UC": 5,
-      "FUNC": 6,
-      "MOD": 3,
-      "REQ": 7,
-      "TEST": 7
+      "UC": 8,
+      "FUNC": 10,
+      "MOD": 0,
+      "REQ": 29,
+      "TEST": 29
     },
     "readiness": {
-      "compliance": 0.8780487804878049,
-      "elementsWithErrors": 5,
+      "compliance": 0.9069767441860465,
+      "elementsWithErrors": 8,
       "gatesPassed": "1/8"
     },
     "spec": {
-      "compliance": 0.8780487804878049,
-      "elementsWithErrors": 5,
+      "compliance": 0.9069767441860465,
+      "elementsWithErrors": 8,
       "dimensions": {
-        "req": 0.643,
-        "uc": 0.574,
-        "arch": 0.915,
-        "alloc": 0.833,
-        "ver": 0.87,
-        "schema": 0.667,
+        "req": 0.652,
+        "uc": 0.565,
+        "arch": 0.893,
+        "alloc": null,
+        "ver": 0.847,
+        "schema": 0,
         "cr": null,
         "ms": 0
       },
@@ -68,38 +68,34 @@
         "pct": 0
       },
       "binding": {
-        "leafFuncs": 3,
+        "leafFuncs": 8,
         "bound": 0,
         "pct": 0
       },
       "rcViolations": {}
     },
-    "gate_rejections": 3,
+    "gate_rejections": 10,
     "tokens": {
-      "wall_s": 660.2,
+      "wall_s": 1042.7,
       "cost_usd": 0,
-      "tokens_in": 434302,
-      "tokens_out": 29555,
+      "tokens_in": 470445,
+      "tokens_out": 52299,
       "tokens_reasoning": 0,
       "loop": {
         "genRounds": 12,
-        "modelTurns": 52,
-        "mutatesApplied": 7,
+        "modelTurns": 53,
+        "mutatesApplied": 13,
         "mutatesRejected": 3,
-        "repairedAfterRejection": 2,
-        "preflightFixed": 8,
-        "preflightBlocked": 13,
-        "dryRunProbes": 5,
+        "repairedAfterRejection": 4,
+        "preflightFixed": 28,
+        "preflightBlocked": 11,
+        "dryRunProbes": 8,
         "done": false
       }
     },
     "moduleAudit": {
       "MOD": {
-        "authored": [
-          "Daily Log Module",
-          "Health Check Module",
-          "Interactive Session Module"
-        ],
+        "authored": [],
         "golden": [
           "Agent-Anwendungen",
           "Agentenverwaltung",
@@ -111,16 +107,19 @@
         ]
       },
       "FUNC": {
-        "authored": 6,
+        "authored": 10,
         "golden": 24
       },
       "UC": {
         "authored": [
-          "Daily Log",
-          "Health Check",
+          "Data Integrity",
           "Interactive Session",
-          "Offline Operation",
-          "Scheduled Tasks"
+          "Interactive Use",
+          "Nightly Autonomous Execution",
+          "Offline Sync",
+          "Result Validation",
+          "Scheduled Task",
+          "Task Recovery"
         ],
         "golden": [
           "Plattform verwalten",
@@ -158,23 +157,9 @@
           "ueberdeckung": 0
         },
         {
-          "id": "REQ-004",
-          "typ": "nicht-funktional",
-          "text": "Robust gegen Sleep, Ausschalten und Stromausfall; kein Datenverlust im Ledger.",
-          "match": null,
-          "ueberdeckung": 0
-        },
-        {
           "id": "REQ-005",
           "typ": "nicht-funktional",
           "text": "Modell-Speicherbedarf passt mit Reserve in 64 GB Unified Memory.",
-          "match": null,
-          "ueberdeckung": 0
-        },
-        {
-          "id": "REQ-006",
-          "typ": "nicht-funktional",
-          "text": "Jeder Output ist auf Task, Prompt-Version und Modell rückführbar.",
           "match": null,
           "ueberdeckung": 0
         },
@@ -256,23 +241,9 @@
           "ueberdeckung": 0
         },
         {
-          "id": "REQ-019",
-          "typ": "nicht-funktional",
-          "text": "Time-to-First-Token tagsüber innerhalb eines Zielwerts (offen), auch während UC-02 läuft.",
-          "match": null,
-          "ueberdeckung": 0
-        },
-        {
           "id": "REQ-020",
           "typ": "nicht-funktional",
           "text": "Im LAN ist nur der Gateway-Port offen, Verbindung per TLS.",
-          "match": null,
-          "ueberdeckung": 0
-        },
-        {
-          "id": "REQ-022",
-          "typ": "funktional",
-          "text": "Jeder Task hat einen Zeitplan; Standard ist das Nachtfenster.",
           "match": null,
           "ueberdeckung": 0
         },
@@ -287,27 +258,6 @@
           "id": "REQ-024",
           "typ": "funktional",
           "text": "Der Runner berechnet fehlende Slots seit dem letzten Erfolg und plant sie ein.",
-          "match": null,
-          "ueberdeckung": 0
-        },
-        {
-          "id": "REQ-025",
-          "typ": "funktional",
-          "text": "Catch-up-Policy pro Task: `none`, `latest` oder `all`.",
-          "match": null,
-          "ueberdeckung": 0
-        },
-        {
-          "id": "REQ-026",
-          "typ": "funktional",
-          "text": "Maximales Slot-Alter pro Task; ältere Slots werden als verfallen protokolliert.",
-          "match": null,
-          "ueberdeckung": 0
-        },
-        {
-          "id": "REQ-027",
-          "typ": "funktional",
-          "text": "Idempotenz über Task-ID + Slot-Datum; kein Slot läuft doppelt.",
           "match": null,
           "ueberdeckung": 0
         },
@@ -329,20 +279,6 @@
           "id": "REQ-030",
           "typ": "funktional",
           "text": "Preflight vor jedem Lauf: Runtime erreichbar, Modell ladbar; sonst Runtime starten und Modell laden, erst dann Fehler melden.",
-          "match": null,
-          "ueberdeckung": 0
-        },
-        {
-          "id": "REQ-031",
-          "typ": "funktional",
-          "text": "Output wird gegen ein Schema validiert; bei Fehler Retry, danach Dead-Letter.",
-          "match": null,
-          "ueberdeckung": 0
-        },
-        {
-          "id": "REQ-032",
-          "typ": "funktional",
-          "text": "Token-Budget und Timeout pro Task.",
           "match": null,
           "ueberdeckung": 0
         },
@@ -375,60 +311,123 @@
           "ueberdeckung": 0
         },
         {
-          "id": "REQ-040",
-          "typ": "funktional",
-          "text": "Secrets liegen im macOS-Schlüsselbund, nie in Task-Definitionen oder Logs.",
-          "match": null,
-          "ueberdeckung": 0
-        },
-        {
           "id": "REQ-011",
           "typ": "funktional",
           "text": "Gateway ist im internen Netz unter dem festen Namen SIG Local erreichbar; Clients konfigurieren nur diesen Namen.",
-          "match": "REQ-offline-operation-local",
+          "match": "REQ-interactive-session",
           "ueberdeckung": 0.1
         },
         {
           "id": "REQ-042",
           "typ": "funktional",
           "text": "Endpoint-Fallback auf dem MacBook: SIG Local, wenn erreichbar, sonst die lokale Instanz – ohne manuelles Umkonfigurieren.",
-          "match": "REQ-offline-operation-local",
+          "match": "REQ-interactive-session",
           "ueberdeckung": 0.1
+        },
+        {
+          "id": "REQ-019",
+          "typ": "nicht-funktional",
+          "text": "Time-to-First-Token tagsüber innerhalb eines Zielwerts (offen), auch während UC-02 läuft.",
+          "match": "REQ-interactive-session",
+          "ueberdeckung": 0.11
+        },
+        {
+          "id": "REQ-031",
+          "typ": "funktional",
+          "text": "Output wird gegen ein Schema validiert; bei Fehler Retry, danach Dead-Letter.",
+          "match": "REQ-result-validation-retry-mechanism",
+          "ueberdeckung": 0.11
         },
         {
           "id": "REQ-033",
           "typ": "funktional",
           "text": "Run-Log pro Lauf: Task, Slot, Modell, Prompt-Version, Dauer, Tokens, Status.",
-          "match": "REQ-health-check-report",
+          "match": "REQ-logging-and-monitoring",
           "ueberdeckung": 0.11
         },
         {
-          "id": "REQ-041",
+          "id": "REQ-026",
           "typ": "funktional",
-          "text": "Laufbedingungen pro Task (z. B. Netzbetrieb); beim Eintreten werden fällige Tasks sofort gestartet.",
-          "match": "REQ-scheduled-tasks-execution",
-          "ueberdeckung": 0.11
+          "text": "Maximales Slot-Alter pro Task; ältere Slots werden als verfallen protokolliert.",
+          "match": "REQ-logging-and-monitoring",
+          "ueberdeckung": 0.13
         },
         {
-          "id": "REQ-021",
-          "typ": "funktional",
-          "text": "Tasks werden deklarativ definiert; kein Task-spezifischer Code im Runner.",
-          "match": "REQ-daily-log-generation",
+          "id": "REQ-004",
+          "typ": "nicht-funktional",
+          "text": "Robust gegen Sleep, Ausschalten und Stromausfall; kein Datenverlust im Ledger.",
+          "match": "REQ-offline-capability",
           "ueberdeckung": 0.14
         },
         {
           "id": "REQ-039",
           "typ": "funktional",
           "text": "Tasks können deterministische Vorstufen (Datenabruf, Checks) vor dem LLM-Schritt ausführen.",
-          "match": "REQ-health-check-execution",
+          "match": "REQ-scheduled-task-execution",
           "ueberdeckung": 0.14
+        },
+        {
+          "id": "REQ-040",
+          "typ": "funktional",
+          "text": "Secrets liegen im macOS-Schlüsselbund, nie in Task-Definitionen oder Logs.",
+          "match": "REQ-logging-and-monitoring",
+          "ueberdeckung": 0.14
+        },
+        {
+          "id": "REQ-006",
+          "typ": "nicht-funktional",
+          "text": "Jeder Output ist auf Task, Prompt-Version und Modell rückführbar.",
+          "match": "REQ-logging-and-monitoring",
+          "ueberdeckung": 0.17
+        },
+        {
+          "id": "REQ-027",
+          "typ": "funktional",
+          "text": "Idempotenz über Task-ID + Slot-Datum; kein Slot läuft doppelt.",
+          "match": "REQ-logging-and-monitoring",
+          "ueberdeckung": 0.17
+        },
+        {
+          "id": "REQ-022",
+          "typ": "funktional",
+          "text": "Jeder Task hat einen Zeitplan; Standard ist das Nachtfenster.",
+          "match": "REQ-logging-and-monitoring",
+          "ueberdeckung": 0.2
+        },
+        {
+          "id": "REQ-025",
+          "typ": "funktional",
+          "text": "Catch-up-Policy pro Task: `none`, `latest` oder `all`.",
+          "match": "REQ-logging-and-monitoring",
+          "ueberdeckung": 0.2
         },
         {
           "id": "REQ-036",
           "typ": "funktional",
           "text": "Während laufender Jobs wird System-Sleep verhindert.",
-          "match": "REQ-scheduled-tasks-execution",
+          "match": "REQ-offline-capability",
           "ueberdeckung": 0.2
+        },
+        {
+          "id": "REQ-041",
+          "typ": "funktional",
+          "text": "Laufbedingungen pro Task (z. B. Netzbetrieb); beim Eintreten werden fällige Tasks sofort gestartet.",
+          "match": "REQ-scheduled-task-execution",
+          "ueberdeckung": 0.22
+        },
+        {
+          "id": "REQ-032",
+          "typ": "funktional",
+          "text": "Token-Budget und Timeout pro Task.",
+          "match": "REQ-logging-and-monitoring",
+          "ueberdeckung": 0.25
+        },
+        {
+          "id": "REQ-021",
+          "typ": "funktional",
+          "text": "Tasks werden deklarativ definiert; kein Task-spezifischer Code im Runner.",
+          "match": "REQ-scheduled-task-execution",
+          "ueberdeckung": 0.29
         }
       ]
     }
@@ -438,29 +437,29 @@
     "model": "qwen3-coder-30b-lms:latest",
     "executor": "gcrun",
     "run": 1,
-    "elements": 50,
-    "traces": 42,
+    "elements": 77,
+    "traces": 78,
     "structure": {
-      "UC": 5,
+      "UC": 8,
       "FUNC": 2,
-      "MOD": 0,
-      "REQ": 13,
-      "TEST": 19
+      "MOD": 2,
+      "REQ": 25,
+      "TEST": 27
     },
     "readiness": {
-      "compliance": 0.9,
-      "elementsWithErrors": 5,
+      "compliance": 0.974025974025974,
+      "elementsWithErrors": 2,
       "gatesPassed": "1/8"
     },
     "spec": {
-      "compliance": 0.9,
-      "elementsWithErrors": 5,
+      "compliance": 0.974025974025974,
+      "elementsWithErrors": 2,
       "dimensions": {
         "req": 0.6,
-        "uc": 0.58,
-        "arch": 0.947,
-        "alloc": null,
-        "ver": 0.771,
+        "uc": 0.653,
+        "arch": 0.964,
+        "alloc": 1,
+        "ver": 0.838,
         "schema": 0.667,
         "cr": null,
         "ms": 0
@@ -510,26 +509,29 @@
     },
     "gate_rejections": 7,
     "tokens": {
-      "wall_s": 550,
+      "wall_s": 523.6,
       "cost_usd": 0,
-      "tokens_in": 417992,
-      "tokens_out": 26102,
+      "tokens_in": 365674,
+      "tokens_out": 24794,
       "tokens_reasoning": 0,
       "loop": {
         "genRounds": 12,
-        "modelTurns": 54,
-        "mutatesApplied": 12,
+        "modelTurns": 49,
+        "mutatesApplied": 14,
         "mutatesRejected": 7,
-        "repairedAfterRejection": 3,
-        "preflightFixed": 17,
-        "preflightBlocked": 9,
-        "dryRunProbes": 5,
+        "repairedAfterRejection": 4,
+        "preflightFixed": 12,
+        "preflightBlocked": 8,
+        "dryRunProbes": 0,
         "done": false
       }
     },
     "moduleAudit": {
       "MOD": {
-        "authored": [],
+        "authored": [
+          "Logging Module",
+          "Scheduler Module"
+        ],
         "golden": [
           "Agent-Anwendungen",
           "Agentenverwaltung",
@@ -546,11 +548,14 @@
       },
       "UC": {
         "authored": [
+          "Availability Check",
           "Daily Log",
-          "Health Check",
           "Interactive Session",
-          "Offline Operation",
-          "Scheduled Task"
+          "Offline Sync",
+          "Result Validation",
+          "Scheduled Task",
+          "Task Logging",
+          "Task Monitoring"
         ],
         "golden": [
           "Plattform verwalten",
@@ -562,7 +567,7 @@
     "briefCoverage": {
       "hinweis": "Wortlaut-Ueberdeckung misst Abschreiben, nicht Deckung — Liste lesen, nicht Zahl zitieren.",
       "gesamt": 42,
-      "schwach": 42,
+      "schwach": 38,
       "explizitVerworfen": [],
       "verwerfenAusdrueckbar": false,
       "zeilen": [
@@ -591,20 +596,6 @@
           "id": "REQ-004",
           "typ": "nicht-funktional",
           "text": "Robust gegen Sleep, Ausschalten und Stromausfall; kein Datenverlust im Ledger.",
-          "match": null,
-          "ueberdeckung": 0
-        },
-        {
-          "id": "REQ-005",
-          "typ": "nicht-funktional",
-          "text": "Modell-Speicherbedarf passt mit Reserve in 64 GB Unified Memory.",
-          "match": null,
-          "ueberdeckung": 0
-        },
-        {
-          "id": "REQ-007",
-          "typ": "nicht-funktional",
-          "text": "Betrieb nach Neustart ohne interaktiven Login.",
           "match": null,
           "ueberdeckung": 0
         },
@@ -658,30 +649,9 @@
           "ueberdeckung": 0
         },
         {
-          "id": "REQ-016",
-          "typ": "funktional",
-          "text": "Profil `reasoning` oder `fast`; Thinking wird pro Request explizit gesetzt.",
-          "match": null,
-          "ueberdeckung": 0
-        },
-        {
-          "id": "REQ-017",
-          "typ": "funktional",
-          "text": "Bei `fast` muss der Reasoning-Output leer sein, sonst gilt der Lauf als fehlgeschlagen.",
-          "match": null,
-          "ueberdeckung": 0
-        },
-        {
           "id": "REQ-018",
           "typ": "funktional",
           "text": "Sampling-Parameter und Kontextlänge pro Profil konfigurierbar.",
-          "match": null,
-          "ueberdeckung": 0
-        },
-        {
-          "id": "REQ-019",
-          "typ": "nicht-funktional",
-          "text": "Time-to-First-Token tagsüber innerhalb eines Zielwerts (offen), auch während UC-02 läuft.",
           "match": null,
           "ueberdeckung": 0
         },
@@ -728,13 +698,6 @@
           "ueberdeckung": 0
         },
         {
-          "id": "REQ-031",
-          "typ": "funktional",
-          "text": "Output wird gegen ein Schema validiert; bei Fehler Retry, danach Dead-Letter.",
-          "match": null,
-          "ueberdeckung": 0
-        },
-        {
           "id": "REQ-034",
           "typ": "funktional",
           "text": "Benachrichtigung bei Fehlern, Dead-Letter und markierten Ergebnissen.",
@@ -773,92 +736,134 @@
           "id": "REQ-011",
           "typ": "funktional",
           "text": "Gateway ist im internen Netz unter dem festen Namen SIG Local erreichbar; Clients konfigurieren nur diesen Namen.",
-          "match": "REQ-offline-operation-switch",
+          "match": "REQ-interactive-session",
           "ueberdeckung": 0.1
         },
         {
           "id": "REQ-042",
           "typ": "funktional",
           "text": "Endpoint-Fallback auf dem MacBook: SIG Local, wenn erreichbar, sonst die lokale Instanz – ohne manuelles Umkonfigurieren.",
-          "match": "REQ-offline-operation-switch",
+          "match": "REQ-interactive-session",
           "ueberdeckung": 0.1
         },
         {
-          "id": "REQ-033",
+          "id": "REQ-019",
+          "typ": "nicht-funktional",
+          "text": "Time-to-First-Token tagsüber innerhalb eines Zielwerts (offen), auch während UC-02 läuft.",
+          "match": "REQ-interactive-session",
+          "ueberdeckung": 0.11
+        },
+        {
+          "id": "REQ-031",
           "typ": "funktional",
-          "text": "Run-Log pro Lauf: Task, Slot, Modell, Prompt-Version, Dauer, Tokens, Status.",
-          "match": "REQ-scheduled-task-execute",
+          "text": "Output wird gegen ein Schema validiert; bei Fehler Retry, danach Dead-Letter.",
+          "match": "REQ-result-retry",
           "ueberdeckung": 0.11
         },
         {
           "id": "REQ-026",
           "typ": "funktional",
           "text": "Maximales Slot-Alter pro Task; ältere Slots werden als verfallen protokolliert.",
-          "match": "REQ-scheduled-task-execute",
+          "match": "REQ-interactive-session-monitoring",
           "ueberdeckung": 0.13
         },
         {
           "id": "REQ-039",
           "typ": "funktional",
           "text": "Tasks können deterministische Vorstufen (Datenabruf, Checks) vor dem LLM-Schritt ausführen.",
-          "match": "REQ-scheduled-task-execute",
+          "match": "REQ-availability-check",
           "ueberdeckung": 0.14
         },
         {
-          "id": "REQ-040",
-          "typ": "funktional",
-          "text": "Secrets liegen im macOS-Schlüsselbund, nie in Task-Definitionen oder Logs.",
-          "match": "REQ-scheduled-task-execute",
-          "ueberdeckung": 0.14
-        },
-        {
-          "id": "REQ-006",
+          "id": "REQ-005",
           "typ": "nicht-funktional",
-          "text": "Jeder Output ist auf Task, Prompt-Version und Modell rückführbar.",
-          "match": "REQ-scheduled-task-execute",
+          "text": "Modell-Speicherbedarf passt mit Reserve in 64 GB Unified Memory.",
+          "match": "REQ-model-memory",
           "ueberdeckung": 0.17
         },
         {
           "id": "REQ-027",
           "typ": "funktional",
           "text": "Idempotenz über Task-ID + Slot-Datum; kein Slot läuft doppelt.",
-          "match": "REQ-scheduled-task-execute",
+          "match": "REQ-interactive-session-monitoring",
           "ueberdeckung": 0.17
         },
         {
           "id": "REQ-022",
           "typ": "funktional",
           "text": "Jeder Task hat einen Zeitplan; Standard ist das Nachtfenster.",
-          "match": "REQ-scheduled-task-execute",
-          "ueberdeckung": 0.2
-        },
-        {
-          "id": "REQ-025",
-          "typ": "funktional",
-          "text": "Catch-up-Policy pro Task: `none`, `latest` oder `all`.",
-          "match": "REQ-scheduled-task-execute",
+          "match": "REQ-interactive-session-monitoring",
           "ueberdeckung": 0.2
         },
         {
           "id": "REQ-041",
           "typ": "funktional",
           "text": "Laufbedingungen pro Task (z. B. Netzbetrieb); beim Eintreten werden fällige Tasks sofort gestartet.",
-          "match": "REQ-scheduled-task-execute",
+          "match": "REQ-scheduled-task-declaration",
           "ueberdeckung": 0.22
+        },
+        {
+          "id": "REQ-007",
+          "typ": "nicht-funktional",
+          "text": "Betrieb nach Neustart ohne interaktiven Login.",
+          "match": "REQ-system-autostart",
+          "ueberdeckung": 0.25
+        },
+        {
+          "id": "REQ-017",
+          "typ": "funktional",
+          "text": "Bei `fast` muss der Reasoning-Output leer sein, sonst gilt der Lauf als fehlgeschlagen.",
+          "match": "REQ-model-memory",
+          "ueberdeckung": 0.25
         },
         {
           "id": "REQ-032",
           "typ": "funktional",
           "text": "Token-Budget und Timeout pro Task.",
-          "match": "REQ-scheduled-task-execute",
+          "match": "REQ-interactive-session-monitoring",
           "ueberdeckung": 0.25
+        },
+        {
+          "id": "REQ-016",
+          "typ": "funktional",
+          "text": "Profil `reasoning` oder `fast`; Thinking wird pro Request explizit gesetzt.",
+          "match": "REQ-model-memory",
+          "ueberdeckung": 0.29
+        },
+        {
+          "id": "REQ-040",
+          "typ": "funktional",
+          "text": "Secrets liegen im macOS-Schlüsselbund, nie in Task-Definitionen oder Logs.",
+          "match": "REQ-system-security",
+          "ueberdeckung": 0.29
+        },
+        {
+          "id": "REQ-033",
+          "typ": "funktional",
+          "text": "Run-Log pro Lauf: Task, Slot, Modell, Prompt-Version, Dauer, Tokens, Status.",
+          "match": "REQ-task-logging",
+          "ueberdeckung": 0.33
+        },
+        {
+          "id": "REQ-025",
+          "typ": "funktional",
+          "text": "Catch-up-Policy pro Task: `none`, `latest` oder `all`.",
+          "match": "REQ-scheduled-task-resilience",
+          "ueberdeckung": 0.4
         },
         {
           "id": "REQ-021",
           "typ": "funktional",
           "text": "Tasks werden deklarativ definiert; kein Task-spezifischer Code im Runner.",
-          "match": "REQ-scheduled-task-execute",
-          "ueberdeckung": 0.29
+          "match": "REQ-scheduled-task-declaration",
+          "ueberdeckung": 0.43
+        },
+        {
+          "id": "REQ-006",
+          "typ": "nicht-funktional",
+          "text": "Jeder Output ist auf Task, Prompt-Version und Modell rückführbar.",
+          "match": "REQ-task-logging",
+          "ueberdeckung": 0.5
         }
       ]
     }
@@ -868,29 +873,29 @@
     "model": "qwen3-coder-30b-lms:latest",
     "executor": "gcrun",
     "run": 2,
-    "elements": 38,
-    "traces": 38,
+    "elements": 96,
+    "traces": 130,
     "structure": {
-      "UC": 5,
-      "FUNC": 2,
-      "MOD": 2,
-      "REQ": 9,
-      "TEST": 9
+      "UC": 11,
+      "FUNC": 9,
+      "MOD": 3,
+      "REQ": 26,
+      "TEST": 26
     },
     "readiness": {
-      "compliance": 0.9736842105263158,
-      "elementsWithErrors": 1,
+      "compliance": 0.8958333333333334,
+      "elementsWithErrors": 10,
       "gatesPassed": "1/8"
     },
     "spec": {
-      "compliance": 0.9736842105263158,
-      "elementsWithErrors": 1,
+      "compliance": 0.8958333333333334,
+      "elementsWithErrors": 10,
       "dimensions": {
-        "req": 0.6,
-        "uc": 0.7,
-        "arch": 0.94,
-        "alloc": 1,
-        "ver": 0.852,
+        "req": 0.804,
+        "uc": 0.557,
+        "arch": 0.915,
+        "alloc": 0.667,
+        "ver": 0.844,
         "schema": 0.667,
         "cr": null,
         "ms": 0
@@ -932,36 +937,37 @@
         "pct": 0
       },
       "binding": {
-        "leafFuncs": 2,
+        "leafFuncs": 9,
         "bound": 0,
         "pct": 0
       },
       "rcViolations": {}
     },
-    "gate_rejections": 8,
+    "gate_rejections": 2,
     "tokens": {
-      "wall_s": 570.9,
+      "wall_s": 775.6,
       "cost_usd": 0,
-      "tokens_in": 377302,
-      "tokens_out": 18776,
+      "tokens_in": 354336,
+      "tokens_out": 28781,
       "tokens_reasoning": 0,
       "loop": {
         "genRounds": 12,
-        "modelTurns": 51,
-        "mutatesApplied": 11,
-        "mutatesRejected": 8,
+        "modelTurns": 47,
+        "mutatesApplied": 13,
+        "mutatesRejected": 2,
         "repairedAfterRejection": 4,
-        "preflightFixed": 10,
-        "preflightBlocked": 6,
-        "dryRunProbes": 5,
+        "preflightFixed": 26,
+        "preflightBlocked": 9,
+        "dryRunProbes": 0,
         "done": false
       }
     },
     "moduleAudit": {
       "MOD": {
         "authored": [
-          "Offline Module",
-          "Scheduled Module"
+          "Task Execution Module",
+          "Task Scheduling Module",
+          "Task Validation Module"
         ],
         "golden": [
           "Agent-Anwendungen",
@@ -974,16 +980,22 @@
         ]
       },
       "FUNC": {
-        "authored": 2,
+        "authored": 9,
         "golden": 24
       },
       "UC": {
         "authored": [
-          "Daily Log",
-          "Health Check",
+          "Interactive LLM API",
           "Interactive Session",
-          "Offline Operation",
-          "Scheduled Task"
+          "Interactive Use",
+          "Nightly Execution",
+          "Offline Sync",
+          "Schedule Tasks Automatically",
+          "Scheduled Task Execution",
+          "SIG Local Interactive",
+          "SIG Local Nightly",
+          "Task Logging",
+          "Task Result Validation"
         ],
         "golden": [
           "Plattform verwalten",
@@ -995,7 +1007,7 @@
     "briefCoverage": {
       "hinweis": "Wortlaut-Ueberdeckung misst Abschreiben, nicht Deckung — Liste lesen, nicht Zahl zitieren.",
       "gesamt": 42,
-      "schwach": 42,
+      "schwach": 40,
       "explizitVerworfen": [],
       "verwerfenAusdrueckbar": false,
       "zeilen": [
@@ -1091,20 +1103,6 @@
           "ueberdeckung": 0
         },
         {
-          "id": "REQ-016",
-          "typ": "funktional",
-          "text": "Profil `reasoning` oder `fast`; Thinking wird pro Request explizit gesetzt.",
-          "match": null,
-          "ueberdeckung": 0
-        },
-        {
-          "id": "REQ-017",
-          "typ": "funktional",
-          "text": "Bei `fast` muss der Reasoning-Output leer sein, sonst gilt der Lauf als fehlgeschlagen.",
-          "match": null,
-          "ueberdeckung": 0
-        },
-        {
           "id": "REQ-018",
           "typ": "funktional",
           "text": "Sampling-Parameter und Kontextlänge pro Profil konfigurierbar.",
@@ -1192,106 +1190,120 @@
           "id": "REQ-011",
           "typ": "funktional",
           "text": "Gateway ist im internen Netz unter dem festen Namen SIG Local erreichbar; Clients konfigurieren nur diesen Namen.",
-          "match": "REQ-interactive-session",
+          "match": "REQ-api-compatibility",
           "ueberdeckung": 0.1
         },
         {
           "id": "REQ-042",
           "typ": "funktional",
           "text": "Endpoint-Fallback auf dem MacBook: SIG Local, wenn erreichbar, sonst die lokale Instanz – ohne manuelles Umkonfigurieren.",
-          "match": "REQ-interactive-session",
+          "match": "REQ-ensure-local-only-operation",
           "ueberdeckung": 0.1
         },
         {
           "id": "REQ-019",
           "typ": "nicht-funktional",
           "text": "Time-to-First-Token tagsüber innerhalb eines Zielwerts (offen), auch während UC-02 läuft.",
-          "match": "REQ-interactive-session",
+          "match": "REQ-interactive-llm-api",
           "ueberdeckung": 0.11
         },
         {
           "id": "REQ-031",
           "typ": "funktional",
           "text": "Output wird gegen ein Schema validiert; bei Fehler Retry, danach Dead-Letter.",
-          "match": "REQ-health-check-retry",
-          "ueberdeckung": 0.11
-        },
-        {
-          "id": "REQ-033",
-          "typ": "funktional",
-          "text": "Run-Log pro Lauf: Task, Slot, Modell, Prompt-Version, Dauer, Tokens, Status.",
-          "match": "REQ-scheduled-task",
+          "match": "REQ-task-reliability",
           "ueberdeckung": 0.11
         },
         {
           "id": "REQ-026",
           "typ": "funktional",
           "text": "Maximales Slot-Alter pro Task; ältere Slots werden als verfallen protokolliert.",
-          "match": "REQ-scheduled-task",
+          "match": "REQ-enable-task-portability",
           "ueberdeckung": 0.13
         },
         {
           "id": "REQ-039",
           "typ": "funktional",
           "text": "Tasks können deterministische Vorstufen (Datenabruf, Checks) vor dem LLM-Schritt ausführen.",
-          "match": "REQ-health-check",
+          "match": "REQ-enable-task-portability",
           "ueberdeckung": 0.14
-        },
-        {
-          "id": "REQ-040",
-          "typ": "funktional",
-          "text": "Secrets liegen im macOS-Schlüsselbund, nie in Task-Definitionen oder Logs.",
-          "match": "REQ-daily-log-storage",
-          "ueberdeckung": 0.14
-        },
-        {
-          "id": "REQ-006",
-          "typ": "nicht-funktional",
-          "text": "Jeder Output ist auf Task, Prompt-Version und Modell rückführbar.",
-          "match": "REQ-scheduled-task",
-          "ueberdeckung": 0.17
         },
         {
           "id": "REQ-027",
           "typ": "funktional",
           "text": "Idempotenz über Task-ID + Slot-Datum; kein Slot läuft doppelt.",
-          "match": "REQ-scheduled-task",
+          "match": "REQ-enable-task-portability",
           "ueberdeckung": 0.17
         },
         {
           "id": "REQ-022",
           "typ": "funktional",
           "text": "Jeder Task hat einen Zeitplan; Standard ist das Nachtfenster.",
-          "match": "REQ-scheduled-task",
+          "match": "REQ-enable-task-portability",
           "ueberdeckung": 0.2
         },
         {
           "id": "REQ-025",
           "typ": "funktional",
           "text": "Catch-up-Policy pro Task: `none`, `latest` oder `all`.",
-          "match": "REQ-scheduled-task",
+          "match": "REQ-enable-task-portability",
           "ueberdeckung": 0.2
+        },
+        {
+          "id": "REQ-033",
+          "typ": "funktional",
+          "text": "Run-Log pro Lauf: Task, Slot, Modell, Prompt-Version, Dauer, Tokens, Status.",
+          "match": "REQ-traceability",
+          "ueberdeckung": 0.22
         },
         {
           "id": "REQ-041",
           "typ": "funktional",
           "text": "Laufbedingungen pro Task (z. B. Netzbetrieb); beim Eintreten werden fällige Tasks sofort gestartet.",
-          "match": "REQ-scheduled-task",
+          "match": "REQ-enable-task-portability",
           "ueberdeckung": 0.22
+        },
+        {
+          "id": "REQ-017",
+          "typ": "funktional",
+          "text": "Bei `fast` muss der Reasoning-Output leer sein, sonst gilt der Lauf als fehlgeschlagen.",
+          "match": "REQ-storage-management",
+          "ueberdeckung": 0.25
         },
         {
           "id": "REQ-032",
           "typ": "funktional",
           "text": "Token-Budget und Timeout pro Task.",
-          "match": "REQ-scheduled-task",
+          "match": "REQ-enable-task-portability",
           "ueberdeckung": 0.25
+        },
+        {
+          "id": "REQ-016",
+          "typ": "funktional",
+          "text": "Profil `reasoning` oder `fast`; Thinking wird pro Request explizit gesetzt.",
+          "match": "REQ-storage-management",
+          "ueberdeckung": 0.29
+        },
+        {
+          "id": "REQ-040",
+          "typ": "funktional",
+          "text": "Secrets liegen im macOS-Schlüsselbund, nie in Task-Definitionen oder Logs.",
+          "match": "REQ-log-task-execution",
+          "ueberdeckung": 0.29
+        },
+        {
+          "id": "REQ-006",
+          "typ": "nicht-funktional",
+          "text": "Jeder Output ist auf Task, Prompt-Version und Modell rückführbar.",
+          "match": "REQ-traceability",
+          "ueberdeckung": 0.33
         },
         {
           "id": "REQ-021",
           "typ": "funktional",
           "text": "Tasks werden deklarativ definiert; kein Task-spezifischer Code im Runner.",
-          "match": "REQ-scheduled-task",
-          "ueberdeckung": 0.29
+          "match": "REQ-enable-task-portability",
+          "ueberdeckung": 0.43
         }
       ]
     }
