@@ -1630,6 +1630,24 @@
       "description": "docs/cr/open/CR-GC-559-seed-phase-in-gegatete-stufen-zerlegen.md"
     },
     {
+      "id": "CR-GC-560",
+      "type": "CR",
+      "name": "graph_next_step: Konsumenten vom parallelen Steuerungspfad loesen",
+      "description": "docs/cr/open/CR-GC-560-graph-next-step-konsumenten-vom-parallel.md"
+    },
+    {
+      "id": "CR-GC-561",
+      "type": "CR",
+      "name": "graph_next_step aus der MCP-Registry nehmen",
+      "description": "docs/cr/open/CR-GC-561-graph-next-step-aus-der-mcp-registry-neh.md"
+    },
+    {
+      "id": "CR-GC-562",
+      "type": "CR",
+      "name": "src/loop/steering.ts loeschen — toter Steuerungspfad",
+      "description": "docs/cr/open/CR-GC-562-src-loop-steering-ts-loeschen-toter-steu.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -19224,5 +19242,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 310
+  "graphVersion": 313
 }

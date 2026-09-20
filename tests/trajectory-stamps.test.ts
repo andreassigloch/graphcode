@@ -140,15 +140,15 @@ describe('TEST-trajectory-stamps (CR-GC-434): jede Mutation trägt ihren Auslös
     expect((await lastEntry()).trigger).toBe('human-order');
   });
 
-  // AC 3 — consultedTools erfasst graph_next_step/graph_suggest; ein Lauf ohne Abruf
+  // AC 3 — consultedTools erfasst die Read-Tools (graph_readiness/graph_suggest); ein Lauf ohne Abruf
   // ist als solcher erkennbar ([]).
   it('consultedTools: erfasst die Read-Tools vor der Mutation, [] ohne Abruf', async () => {
-    await tools['graph_next_step'].handler({});
+    await tools['graph_readiness'].handler({});
     await tools['graph_suggest'].handler({ target: { coherence: 1 } });
     await mutate(validSet('e'));
 
     const consulted = (await lastEntry()).consultedTools ?? [];
-    expect(consulted).toContain('graph_next_step');
+    expect(consulted).toContain('graph_readiness');
     expect(consulted).toContain('graph_suggest');
 
     // Nächste Mutation ohne jeden Abruf: die Liste ist geleert, [] ist die Aussage.
@@ -198,7 +198,7 @@ describe('TEST-trajectory-stamps (CR-GC-434): jede Mutation trägt ihren Auslös
   // leeren noch die Prompt-Frische verbrauchen.
   it('dryRun-Preview trägt keine Stempel und verbraucht weder Konsultation noch Prompt-Frische', async () => {
     ctx.setOrigin({ intent: 'preview dann apply' });
-    await tools['graph_next_step'].handler({});
+    await tools['graph_readiness'].handler({});
     await tools['graph_mutate'].handler({ commands: validSet('h'), dryRun: true, consumerId: 'stamps-test' });
 
     const preview = await lastEntry();
@@ -209,6 +209,6 @@ describe('TEST-trajectory-stamps (CR-GC-434): jede Mutation trägt ihren Auslös
     await mutate(validSet('h'));
     const applied = await lastEntry();
     expect(applied.trigger).toBe('human-order');
-    expect(applied.consultedTools).toContain('graph_next_step');
+    expect(applied.consultedTools).toContain('graph_readiness');
   });
 });

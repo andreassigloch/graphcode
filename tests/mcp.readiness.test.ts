@@ -209,19 +209,27 @@ describe('TEST-mcp-readiness: graph_readiness scores family readiness over the b
     }
   });
 
-  it('is ONE computation, not two: next_step\'s deficit is 1 − the score of that dimension', async () => {
+  // CR-GC-560: dieselbe Invariante, jetzt gegen `graph_generate`. Sie hing vorher an
+  // `graph_next_step` — dem zweiten Steuerungswerkzeug auf derselben Messung, das
+  // CR-GC-561/562 entfernen. Die Frage bleibt dieselbe: EINE Rechnung, nicht zwei.
+  it('is ONE computation, not two: graph_generate reads the same snapshot as graph_readiness', async () => {
     const tools = bindToolsToHarness(harness);
     expect((await harness.mutate(CLEAN_MEMBER)).success).toBe(true);
     expect((await harness.mutate(ORPHAN_FUNC)).success).toBe(true);
 
     const readiness = await tools.graph_readiness.handler({});
-    const step = await tools.graph_next_step.handler({});
+    const step = await tools.graph_generate.handler({});
 
-    expect(step.nextStep, 'fixture has findings, so a step is expected').not.toBeNull();
-    const score = readiness.dimension_readiness.find((d) => d.dimension === step.nextStep!.dimension);
-    expect(score, `dimension ${step.nextStep!.dimension} missing from dimension_readiness`).toBeDefined();
-    // nextStep rounds the deficit to 3 decimals — same number, same snapshot.
-    expect(step.nextStep!.deficit).toBeCloseTo(1 - score!.score, 3);
-    expect(score!.violations).toBeGreaterThan(0);
+    expect(step.readiness.length, 'fixture has findings, so dimensions are measurable').toBeGreaterThan(0);
+    for (const d of step.readiness) {
+      const score = readiness.dimension_readiness.find((r) => r.dimension === d.dimension);
+      expect(score, `dimension ${d.dimension} missing from dimension_readiness`).toBeDefined();
+      expect(d.score).toBe(score!.score);
+      expect(d.violations).toBe(score!.violations);
+    }
+    // Und die Fokus-Dimension ist eine, die der Snapshot wirklich scort.
+    if (step.focusDimension && !step.focusDimension.startsWith('seed:')) {
+      expect(step.readiness.some((d) => d.dimension === step.focusDimension)).toBe(true);
+    }
   });
 });
