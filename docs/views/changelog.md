@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 179 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 181 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 179 CR · 162 done · 1 open.
+Total: 181 CR · 162 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -241,3 +241,5 @@ Total: 179 CR · 162 done · 1 open.
 | `CR-GC-555` | n/a | Das Rig misst nicht das Produkt: es treibt claude -p gegen den MCP-Server, waehrend graphcode run einen Executor-Loop mit Rundenprompt, vorenthaltenen Tools, kuratiertem Toolset und Phasen-Gate fuehrt — die gesamte Steuerungsmaschinerie bleibt ungetestet |
 | `CR-GC-556` | n/a | graph_suggest ab Element 1 in den Rundenprompt injizieren statt es dem Modell als Werkzeug anzubieten: das Emissions-Regime verbietet Analyse-Turns, der Host ruft es deterministisch wie graph_generate |
 | `CR-GC-557` | n/a | Rundenprompt verweist auf '(Skill se:author-uc)', den der Executor nicht aufrufen kann: Skills sind .claude/commands-Slash-Kommandos und existieren im Loop nicht |
+| `CR-GC-558` | n/a | Skill-Injektion deckt nur 2 von 9 Fokus-Typen |
+| `CR-GC-559` | n/a | Seed-Phase in gegatete Stufen zerlegen |
