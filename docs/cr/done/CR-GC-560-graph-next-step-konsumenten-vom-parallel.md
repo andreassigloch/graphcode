@@ -1,6 +1,6 @@
 # CR-GC-560: Die Konsumenten vom zweiten Steuerungspfad lösen
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-20)
 **Typ:** aus Item ITEM-2026-380 (idea)
 **Erstellt:** 2026-09-20
 **Item:** bok/items/ITEM-2026-380.json (Lane: graph)
