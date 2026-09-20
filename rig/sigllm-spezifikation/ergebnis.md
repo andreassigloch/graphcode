@@ -550,3 +550,51 @@ Phänomen aus ITEM-2026-388 ist davon unabhängig, und ITEM-2026-392 bleibt sein
 Vorbedingung: fünf Rundenanweisungen verlangen Elementtypen, die der injizierte Index gar
 nicht abdeckt (`uc`→FLOW, `req`→TEST, `arch`→MOD, UC-01→REQ+TEST, UC-02→FLOW). So lange
 das gilt, ist ein Teil des Lesens erzwungen und kein Hebel.
+
+---
+
+# Nach CR-GC-566 — was die Fokus-Deckung gebracht hat, und was nicht
+
+Dritte Dreier-Messung, gleiche Konfiguration, nur `focusTypes` deckt jetzt, was die
+Anweisung verlangt.
+
+| | Basislinie (neutral) | nach CR-GC-566 |
+|---|---:|---:|
+| Elemente | 86 / 77 / 96 — Mittel **86** | 82 / 122 / 68 — Mittel **91** |
+| Compliance | 0,926 | 0,926 |
+| **Gate-Ablehnungen** | 10 / 7 / 2 | **1 / 1 / 1** |
+| Leseanteil | 81 / 84 / 88 % | **91 / 87 / 94 %** |
+
+**Was es gebracht hat: die Gate-Reibung ist weg.** Ein Fund je Lauf statt bis zu zehn. Die
+Grammatik, die die Anweisung braucht, steht jetzt im Prompt — und das Modell zieht keine
+illegalen Kanten mehr. Das ist der klare Ertrag.
+
+**Was es nicht gebracht hat: weniger Lesen.** Die Menge ist unverändert (Bänder 77–96 gegen
+68–122 überlappen breit), und der Leseanteil ist *gestiegen*.
+
+## Meine Erklärung für ITEM-2026-388 war falsch
+
+Ich hatte angenommen, die Lesewut komme daher, dass die Anweisung Typen verlangt, deren
+Grammatik die Injektion nicht liefert. Die Lücke gab es, sie ist behoben, und sie war
+**nicht** die Ursache. Die Aufschlüsselung sagt, warum:
+
+| | Lauf 1 | Lauf 2 | Lauf 3 |
+|---|---:|---:|---:|
+| `graph_elements` (existiert das schon?) | 164 | 81 | 247 |
+| `graph_authoring_guide` (was ist legal?) | 47 | 52 | 30 |
+
+Die Flut ist **nicht die Grammatikfrage**, sondern die **Existenzfrage** — drei- bis
+achtmal so viele Aufrufe. Und die hat einen handfesten Grund: der injizierte Element-Index
+ist auf die Fokus-Typen gefiltert (CR-GC-539, gegen 757 Knoten je Runde). Alles außerhalb
+ist für das Modell unsichtbar, und ohne Sicht kann es keine Dublette vermeiden.
+
+## Damit ist ITEM-2026-390 entschieden — negativ
+
+`graph_elements` vorenthalten, weil „der Host injiziert es ja ohnehin", wäre falsch: der
+Host injiziert **einen Ausschnitt**. Solange der Index gefiltert ist, ist die Existenzfrage
+für alles außerhalb des Fokus unbeantwortbar, und das Werkzeug ist der einzige Weg dahin.
+
+Dahinter steht eine echte Spannung, kein Bug: **need-to-know gegen Dublettenfreiheit.**
+Ein vollständiger Index kostet Kontext (gemessen 757 Knoten), ein gefilterter kostet
+Lese-Turns. Was fehlt, ist eine dritte Form — etwa nur die **uids** aller Typen statt
+`uid · type · name` der Fokus-Typen. Das ist ein Entwurf, kein Schalter. → ITEM-2026-393
