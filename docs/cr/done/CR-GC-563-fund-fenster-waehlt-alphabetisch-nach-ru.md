@@ -1,6 +1,6 @@
 # CR-GC-563: Fehler vor Warnungen — die Fundreihenfolge ist kein Alphabet
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-20)
 **Typ:** aus Item ITEM-2026-386 (bug)
 **Erstellt:** 2026-09-20
 **Item:** bok/items/ITEM-2026-386.json (Lane: graph)
