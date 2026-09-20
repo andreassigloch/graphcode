@@ -1,6 +1,6 @@
 # CR-GC-566: Der Fokus deckt, was die Anweisung verlangt
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-20)
 **Typ:** aus Item ITEM-2026-392 (bug)
 **Erstellt:** 2026-09-20
 **Item:** bok/items/ITEM-2026-392.json (Lane: graph)
