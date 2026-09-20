@@ -778,3 +778,68 @@ describe('CR-GC-559: der Kaltstart in drei gegateten Stufen', () => {
     }
   });
 });
+
+describe('CR-GC-563: Fehler vor Warnungen — die Fundreihenfolge ist kein Alphabet', () => {
+  // Der gemessene Fall aus Rig-Lauf 4: UCs ohne FCHAIN (FC-02, warning) und dieselben UCs
+  // von keinem ACTOR erreichbar (UC-02, error). Alphabetisch gewinnt FC-02 — zwoelf Runden
+  // lang, und kein FUNC entstand. Der Fund, der zuerst drankommt, bestimmt die Struktur.
+  const lauf4 = g(
+    [
+      node('SYS-sig', 'SYS', 'SIG Local', 'Lokale LLM-Kapazitaet im internen Netz.'),
+      node('ACTOR-nutzer', 'ACTOR', 'Nutzer'),
+      node('UC-interactive', 'UC', 'Interactive Session', 'Nutzer fragt das lokale Modell und erhaelt eine Antwort.'),
+      node('UC-scheduled', 'UC', 'Scheduled Tasks', 'Planer startet nachts eine Aufgabe und legt das Ergebnis ab.'),
+      node('UC-offline', 'UC', 'Offline Operation', 'Nutzer arbeitet unterwegs ohne Netz weiter.'),
+    ],
+    [
+      edge('SYS-sig', 'UC-interactive', 'compose'),
+      edge('SYS-sig', 'UC-scheduled', 'compose'),
+      edge('SYS-sig', 'UC-offline', 'compose'),
+    ],
+  );
+
+  /** Die Regel des aktuellen Fund-Fensters. */
+  const regelVon = (key: string | null): string => String(key).split(':')[1];
+
+  it('das erste Fenster traegt eine error-Regel, obwohl FC-02 alphabetisch vorne stuende', () => {
+    const step = generationStep(lauf4, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    expect(step.phase).toBe('expand');
+    // error: UC-01, UC-02 · warning: FC-02, R-15, R-16, UC-03 · info: UC-05, UC-06.
+    // Alphabetisch gewaenne FC-02 — genau das ist in Rig-Lauf 4 passiert.
+    expect(['UC-01', 'UC-02'], `erstes Fenster war ${regelVon(step.focusKey)}`).toContain(
+      regelVon(step.focusKey),
+    );
+  });
+
+  it('erst wenn KEIN error-Fenster mehr offen ist, kommt die erste Warnung', () => {
+    const gesehen: string[] = [];
+    const keys: string[] = [];
+    let step = generationStep(lauf4, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    for (let i = 0; i < 6 && step.focusKey && !keys.includes(step.focusKey); i++) {
+      gesehen.push(regelVon(step.focusKey));
+      keys.push(step.focusKey);
+      step = generationStep(lauf4, DEFAULT_METRIC_POLICY, undefined, FOCUS, keys);
+    }
+    const ersteWarnung = gesehen.findIndex((r) => !['UC-01', 'UC-02'].includes(r));
+    expect(ersteWarnung, `Reihenfolge war ${gesehen.join(' → ')}`).toBeGreaterThan(0);
+    // Vor der ersten Warnung stehen ausschliesslich Fehler.
+    expect(gesehen.slice(0, ersteWarnung).every((r) => ['UC-01', 'UC-02'].includes(r))).toBe(true);
+    // Und innerhalb einer Severity bleibt es alphabetisch (Determinismus, CR-GC-290).
+    expect(gesehen[ersteWarnung]).toBe('FC-02');
+  });
+
+  it('zweimal derselbe Graph ⇒ derselbe focusKey', () => {
+    const a = generationStep(lauf4, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    const b = generationStep(lauf4, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    expect(b.focusKey).toBe(a.focusKey);
+  });
+
+  it('ein Fenster traegt weiterhin genau EINE Regel', () => {
+    const step = generationStep(lauf4, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    const regel = regelVon(step.focusKey);
+    // Die Fund-Liste im Prompt nennt nur Funde dieser einen Regel.
+    const andere = ['FC-02', 'UC-01', 'UC-02', 'UC-03', 'UC-05', 'UC-06', 'R-15', 'R-16'].filter((r) => r !== regel);
+    const genannt = andere.filter((r) => step.prompt.includes(`(${r}:`));
+    expect(genannt, `regelfremde Funde im Fenster: ${genannt.join(', ')}`).toEqual([]);
+  });
+});

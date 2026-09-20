@@ -388,10 +388,26 @@ export function generationStep(
   const dims = [...report.scores]
     .filter((s) => s.applicable > 0 && s.violations > 0)
     .sort((a, b) => (a.score ?? -1) - (b.score ?? -1) || b.violations - a.violations);
+  // Rang der Severity (CR-GC-563): error vor warning vor allem anderen. Unbekanntes
+  // rankt hinten statt NaN zu erzeugen.
+  const severityRang = (v: (typeof violations)[number]): number =>
+    v.severity === 'error' ? 0 : v.severity === 'warning' ? 1 : 2;
+  // CR-GC-563: Severity ZUERST. Vorher stand hier nur `rule_id.localeCompare` — eine
+  // lexikografische Ordnung, die CR-GC-290 fuer den DETERMINISMUS eingefuehrt hat und die
+  // seither als PRIORITAET gelesen wurde. Gemessen in Rig-Lauf 4: FC-02 (warning) kam vor
+  // UC-02 (error), weil F vor U steht; zwoelf Runden in derselben Dimension, kein einziges
+  // FUNC im ganzen Lauf. Das System glaubt die Prioritaet ohnehin an anderer Stelle —
+  // `blockingErrors` muss fuer den Handoff auf 0, Warnungen duerfen stehenbleiben.
+  // Determinismus bleibt: die Ordnung ist weiterhin total und haengt nur vom Graphen ab.
   const violationsOf = (dimension: string): typeof violations =>
     violations
       .filter((v) => RULE_TO_DIMENSION[v.rule_id] === dimension)
-      .sort((a, b) => a.rule_id.localeCompare(b.rule_id) || a.element_id.localeCompare(b.element_id));
+      .sort(
+        (a, b) =>
+          severityRang(a) - severityRang(b) ||
+          a.rule_id.localeCompare(b.rule_id) ||
+          a.element_id.localeCompare(b.element_id),
+      );
   // Fund-Fenster (CR-GC-290): 3er-Fenster je rule_id-Gruppe, nie regelübergreifend
   // gemischt — sonst verschränken sich z.B. FCHAIN-Erzeugung (R-15) und
   // UC-Population (UC-01) über Runden hinweg statt sich sauber abzuschließen.
