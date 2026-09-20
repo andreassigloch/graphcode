@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 177 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 179 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 177 CR · 162 done · 1 open.
+Total: 179 CR · 162 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -239,3 +239,5 @@ Total: 177 CR · 162 done · 1 open.
 | `CR-GC-553` | n/a | Die Bewertungsmaschiene des Rigs (metrics/report/Pruefliste/Prosa-Auftrag, 11 Dateien) wurde unter der fremden Nummer CR-GC-552 committet — die Nummer existierte zur Commit-Zeit noch nicht und wurde spaeter fuer das sigllm-Backend gemintet |
 | `CR-GC-554` | n/a | openai-Backend verliert role und tool_calls[].type: OpenAiWireAnswer deklariert sie nicht, Zod entfernt sie, und die beschnittene Assistenten-Nachricht geht in die naechste Runde zurueck — jeder zweite Turn scheitert am Chat-Template |
 | `CR-GC-555` | n/a | Das Rig misst nicht das Produkt: es treibt claude -p gegen den MCP-Server, waehrend graphcode run einen Executor-Loop mit Rundenprompt, vorenthaltenen Tools, kuratiertem Toolset und Phasen-Gate fuehrt — die gesamte Steuerungsmaschinerie bleibt ungetestet |
+| `CR-GC-556` | n/a | graph_suggest ab Element 1 in den Rundenprompt injizieren statt es dem Modell als Werkzeug anzubieten: das Emissions-Regime verbietet Analyse-Turns, der Host ruft es deterministisch wie graph_generate |
+| `CR-GC-557` | n/a | Rundenprompt verweist auf '(Skill se:author-uc)', den der Executor nicht aufrufen kann: Skills sind .claude/commands-Slash-Kommandos und existieren im Loop nicht |

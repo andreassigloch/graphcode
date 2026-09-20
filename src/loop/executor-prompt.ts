@@ -10,6 +10,9 @@
  */
 import { ElementType } from '@sigloch/contracts/se';
 import type { MCPToolRegistry } from '../kernel/tool-contract.js';
+import { readFileSync } from 'node:fs';
+import { join, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import type { GenerationStep } from './generate.js';
 
 // ---------------------------------------------------------------------------
@@ -60,7 +63,7 @@ export const IDLE_NUDGE =
   'graphcode_graph_mutate-Tool-Call im commands-Format — keine Prosa, keine weitere Analyse.';
 
 /** Diese Tools ruft der EXECUTOR deterministisch — dem Modell werden sie vorenthalten. */
-export const WITHHELD_TOOLS = new Set(['graph_generate', 'graph_next_step']);
+export const WITHHELD_TOOLS = new Set(['graph_generate', 'graph_next_step', 'graph_suggest']);
 
 /** Das kuratierte Minimal-Set für den generativen Loop (toolset 'authoring'). */
 export const AUTHORING_TOOLS = new Set([
@@ -126,6 +129,63 @@ interface GuideSlice {
   outgoing: { edgeType: string; targetType: string; cardinality?: string }[];
   incoming: { edgeType: string; sourceType: string; cardinality?: string }[];
   requiredAttrs: string[];
+}
+
+/** Die Paketwurzel — Rueckfall, wenn das Arbeitsverzeichnis keine Skills scaffolded hat. */
+const SKILL_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+
+/** Eine Zeile aus `graph_suggest`, so weit die Injektion sie liest (CR-GC-556). */
+interface SuggestRow {
+  ruleId?: string;
+  elementId?: string;
+  delta?: unknown[];
+  edit?: { source: string; target: string; type: string };
+}
+
+/** Hoechstens so viele Vorschlagszeilen je Runde — der Block bleibt eine Beigabe. */
+const SUGGEST_MAX_ROWS = 8;
+
+/** Schema-Obergrenze von `graph_suggest.k` — siehe Begruendung an der Aufrufstelle. */
+const SUGGEST_K = 20;
+
+/**
+ * Welcher Skill zu welchem Fokus-Typ gehoert (CR-GC-557).
+ *
+ * Nur Typen, fuer die es eine eigene AUTORIER-Anleitung gibt. `se-view:*` bleibt draussen:
+ * das sind Darstellungen, keine Bauanleitungen, und `se/top-level.md` (14.871 Zeichen) waere
+ * allein groesser als der halbe Werkzeugkatalog.
+ */
+const SKILL_FOR_TYPE: Record<string, { name: string; file: string } | undefined> = {
+  UC: { name: 'se:author-uc', file: 'author-uc.md' },
+  REQ: { name: 'se:author-req', file: 'author-req.md' },
+};
+
+/** Zeichen-Deckel je Skill — ein durchgerutschter Riesen-Skill soll die Runde nicht fluten. */
+const SKILL_CHAR_BUDGET = 4000;
+
+/**
+ * Den Rumpf eines Skills lesen, ohne sein Frontmatter.
+ *
+ * `name`/`description` im Frontmatter sind Harness-Metadaten fuer die Slash-Kommando-Liste,
+ * keine Anleitung — sie wuerden dem Modell nur eine Adresse zeigen, die es nicht aufrufen kann.
+ * Fehlt die Datei (fremdes Repo, andere Installation), gibt es keinen Block: die Injektion
+ * darf den Lauf nie brechen.
+ */
+function readSkillBody(skill: { name: string; file: string }): string | null {
+  for (const basis of [process.cwd(), SKILL_ROOT]) {
+    try {
+      const roh = readFileSync(join(basis, '.claude', 'commands', 'se', skill.file), 'utf8');
+      const ohneKopf = roh.startsWith('---') ? roh.slice(roh.indexOf('\n---', 3) + 4) : roh;
+      const rumpf = ohneKopf.trim();
+      if (!rumpf) return null;
+      return rumpf.length > SKILL_CHAR_BUDGET
+        ? rumpf.slice(0, SKILL_CHAR_BUDGET) + '\n… (gekuerzt)'
+        : rumpf;
+    } catch {
+      // naechste Basis probieren
+    }
+  }
+  return null;
 }
 
 /**
@@ -254,5 +314,76 @@ export async function buildRoundInjection(
       // Index optional — Injektion darf den Lauf nie brechen
     }
   }
+  // -------------------------------------------------------------------------
+  // (c) Die Vorlagen-Empfehlungen (CR-GC-556). ANREICHERUNG, keine zweite Liste:
+  // der Rundenprompt nennt die Fokus-Funde samt fixHint bereits. Hier kommt nur
+  // dazu, was dort FEHLT — die konkrete Kante, die die Vorlage vorschlaegt, und
+  // das `delta` (der ℝ⁶-Zug, also der Optimizer). Ein Vorschlag ohne Kante traegt
+  // nichts Neues und bleibt draussen.
+  //
+  // WARUM injiziert statt als Werkzeug: `graph_suggest` STAND dem Modell offen
+  // (toolset 'full') und wurde in drei Laeufen null Mal gerufen. Der SYSTEM-Prompt
+  // verbietet Analyse-Turns ausdruecklich („dann STOPP", „Handeln vor Analysieren").
+  // Das Regime hat recht — es haelt kleine Modelle beim Bauen. Falsch war der Kanal.
+  // -------------------------------------------------------------------------
+  const suggestTool = registry['graph_suggest'];
+  if (suggestTool) {
+    try {
+      // `k` bis an die Schema-Obergrenze, NICHT der Default. Der Default 5 ist ein
+      // Top-k fuer einen menschlichen Leser; dieser Block filtert anschliessend auf die
+      // ausfuehrbaren herunter und braucht dafuer das weite Netz. GEMESSEN am
+      // gcrun-Graphen: k=5 liefert 0 Vorschlaege mit Kante, k=20 liefert den einen, den
+      // es gibt. Ein Block, der genau das Anwendbare wegschneidet, waere schlimmer als keiner.
+      const res = (await suggestTool.handler(
+        suggestTool.inputSchema.parse({ k: SUGGEST_K }) as never,
+      )) as { suggestions?: SuggestRow[] };
+      const fokus = new Set(focusTypes);
+      const zeilen: string[] = [];
+      for (const s of res.suggestions ?? []) {
+        if (!s.edit) continue; // ohne Kante nichts Neues gegenueber dem fixHint
+        // Auf die Runde zuschneiden — aber ueber ALLE DREI beteiligten Knoten, nicht nur
+        // ueber den Fund. GEMESSEN am gcrun-Graphen: der einzige ausfuehrbare Vorschlag
+        // ist `RD-01 @ REQ-data-security` mit der Kante FCHAIN -satisfy-> REQ. Ein Filter
+        // allein auf den Fund haette ihn bei Fokus ACTOR/UC/FCHAIN/FUNC weggeworfen — also
+        // genau das eine, was die Runde haette anwenden koennen.
+        const typVon = (id: unknown): string => String(id ?? '').split('-')[0];
+        const beteiligt = [s.elementId, s.edit.source, s.edit.target].map(typVon);
+        if (fokus.size > 0 && !beteiligt.some((ty) => fokus.has(ty))) continue;
+        const kante = `${s.edit.source} -${s.edit.type}-> ${s.edit.target}`;
+        const d = Array.isArray(s.delta)
+          ? ` · delta [${s.delta.map((x) => (typeof x === 'number' ? x.toFixed(3) : '?')).join(' ')}]`
+          : '';
+        zeilen.push(`- ${s.ruleId} @ ${s.elementId}: ${kante}${d}`);
+        if (zeilen.length >= SUGGEST_MAX_ROWS) break;
+      }
+      if (zeilen.length > 0) {
+        blocks.push(
+          'Ausfuehrbare Vorschlaege (aus den Regel-Vorlagen gerechnet, Kante bereits geprueft; '
+            + '`delta` ist der ℝ⁶-Zug — negativ heisst Verbesserung). Uebernimm sie, wenn sie zur '
+            + 'Instruktion passen, sonst begruende im Batch, warum nicht:\n' + zeilen.join('\n'),
+        );
+      }
+    } catch {
+      // Vorschlaege optional — die Injektion darf den Lauf nie brechen
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // (d) Der Skill-Rumpf zum Fokus-Typ (CR-GC-557). Der Rundenprompt nannte bisher
+  // „(Skill se:author-uc)" — einen Zeiger, den im Loop niemand einloesen kann:
+  // Skills sind Slash-Kommandos des Claude-Code-Harness, `graphcode run` liest das
+  // Verzeichnis nicht. Also liefern wir den Inhalt statt der Adresse.
+  //
+  // HOECHSTENS EINER je Runde: author-uc.md sind ~750 Token. Einer ist bezahlbar,
+  // vier waeren der naechste Werkzeugkatalog.
+  // -------------------------------------------------------------------------
+  const skill = focusTypes.map((ty) => SKILL_FOR_TYPE[ty]).find(Boolean);
+  if (skill) {
+    const rumpf = readSkillBody(skill);
+    if (rumpf) {
+      blocks.push(`Anleitung fuer den Fokus-Typ (Skill ${skill.name}):\n${rumpf}`);
+    }
+  }
+
   return blocks.join('\n\n');
 }
