@@ -434,15 +434,20 @@ describe('generationStep — R-15 Stagnations-Fix (CR-GC-290-Nachtrag, Messlauf-
     expect(step.focusKey).toMatch(/^uc:R-15:/);
     expect(step.prompt).toContain('FUNC');
     expect(step.prompt).toContain('compose→FUNC');
-    expect(step.prompt).toContain('KEINE neue FCHAIN');
+    // CR-GC-564: die Klausel IST die Anweisung. Vorher wurde sie an das Dimensions-Template
+    // angehaengt und musste es mit „KEINE neue FCHAIN" widerrufen — zwei Imperative, der
+    // zweite nahm den ersten zurueck. Jetzt steht das Template gar nicht mehr daneben.
+    expect(step.prompt).not.toContain('FCHAIN-Szenarien (UC compose FCHAIN)');
+    expect(step.prompt).not.toContain('KEINE neue FCHAIN');
     // Die Klausel benennt die konkreten Funde, statt global zu verbieten (CR-GC-358).
     expect(step.prompt).toContain('FCHAIN-leer');
   });
 
-  it('die R-15-Klausel erscheint NUR im R-15-Fenster — nie über einem uc-Fenster anderer Regel (CR-GC-358)', () => {
+  it('je Fenster genau EIN Imperativ: Klausel oder Template, nie beide (CR-GC-358/564)', () => {
     // Der Widerspruch, den qwen3.8 auseinandernahm: das uc-Template trug den Satz
     // "KEINE neue FCHAIN/UC anlegen" unbedingt — also auch neben Funden, deren Fix
     // GENAU das Anlegen einer FCHAIN ist ("FCHAIN-Szenarien (UC compose FCHAIN)").
+    // CR-GC-564 loest das an der Wurzel: wo eine Klausel existiert, entfaellt das Template.
     let step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
     const keys: string[] = [];
     let checkedNonR15 = 0;
@@ -450,11 +455,18 @@ describe('generationStep — R-15 Stagnations-Fix (CR-GC-290-Nachtrag, Messlauf-
     while (step.focusKey && !keys.includes(step.focusKey) && keys.length < 20) {
       if (step.focusKey.startsWith('uc:')) {
         const [, ruleId] = step.focusKey.split(':');
+        const template = 'FCHAIN-Szenarien (UC compose FCHAIN)';
         if (ruleId === 'R-15') {
-          expect(step.prompt).toContain('KEINE neue FCHAIN');
+          expect(step.prompt).toContain('3±2 FUNC-Elemente');
+          expect(step.prompt, 'Klausel UND Template im selben Prompt').not.toContain(template);
           checkedR15++;
+        } else if (ruleId === 'UC-01' || ruleId === 'UC-02') {
+          expect(step.prompt, 'Klausel UND Template im selben Prompt').not.toContain(template);
+          checkedNonR15++;
         } else {
-          expect(step.prompt).not.toContain('KEINE neue FCHAIN');
+          // Regel ohne eigene Klausel ⇒ das Dimensions-Template ist der Imperativ.
+          expect(step.prompt).toContain(template);
+          expect(step.prompt).not.toContain('3±2 FUNC-Elemente');
           checkedNonR15++;
         }
       }
@@ -842,4 +854,57 @@ describe('CR-GC-563: Fehler vor Warnungen — die Fundreihenfolge ist kein Alpha
     const genannt = andere.filter((r) => step.prompt.includes(`(${r}:`));
     expect(genannt, `regelfremde Funde im Fenster: ${genannt.join(', ')}`).toEqual([]);
   });
+});
+
+describe('CR-GC-564: die Regel-Klausel IST die Anweisung', () => {
+  // Der gemessene Fall aus Rig-Lauf 5: UC-01 (error) ist der Fokus, der Fund sagt dreimal
+  // „add REQ" — und der Imperativ darunter nannte ACTOR, FCHAIN und UC. Das Wort REQ kam
+  // darin nicht vor. Das Modell folgte dem Imperativ: null REQ, zwei R-08-Blocks.
+  const ohneReq = g(
+    [
+      node('SYS-sig', 'SYS', 'SIG Local', 'Lokale LLM-Kapazitaet im internen Netz.'),
+      node('ACTOR-nutzer', 'ACTOR', 'Nutzer'),
+      node('UC-interactive', 'UC', 'Interactive Session', 'Nutzer fragt das lokale Modell und erhaelt eine Antwort.'),
+      node('UC-scheduled', 'UC', 'Scheduled Tasks', 'Planer startet nachts eine Aufgabe und legt das Ergebnis ab.'),
+      node('UC-offline', 'UC', 'Offline Operation', 'Nutzer arbeitet unterwegs ohne Netz weiter.'),
+    ],
+    [
+      edge('SYS-sig', 'UC-interactive', 'compose'),
+      edge('SYS-sig', 'UC-scheduled', 'compose'),
+      edge('SYS-sig', 'UC-offline', 'compose'),
+    ],
+  );
+
+  it('UC-01 verlangt REQ — und NICHT die ACTOR/FCHAIN/UC-Aufzählung der Dimension', () => {
+    const step = generationStep(ohneReq, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    expect((step.focusKey as string).split(':')[1]).toBe('UC-01');
+    expect(step.prompt).toContain('REQ-Kandidaten');
+    expect(step.prompt).toContain('UC compose→REQ');
+    // Der Satz, den das Modell in Lauf 5 befolgt hat, darf nicht mehr im Prompt stehen.
+    expect(step.prompt, 'das Dimensions-Template steht neben der Klausel').not.toContain(
+      'FCHAIN-Szenarien (UC compose FCHAIN) oder fehlende UCs aus der Intention',
+    );
+  });
+
+  it('UC-02 schreibt den legalen Pfad aus — R-18 hat ihn zwei Runden gekostet', () => {
+    // UC-01 zurückstellen, dann ist UC-02 das nächste Fehler-Fenster.
+    const erst = generationStep(ohneReq, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    const step = generationStep(ohneReq, DEFAULT_METRIC_POLICY, undefined, FOCUS, [erst.focusKey as string]);
+    expect((step.focusKey as string).split(':')[1]).toBe('UC-02');
+    expect(step.prompt).toContain('ACTOR io→FLOW io→FUNC');
+    expect(step.prompt).toContain('R-18');
+  });
+
+  it('eine Regel OHNE Klausel bekommt weiterhin das Dimensions-Template', () => {
+    // UC-01 und UC-02 zurückstellen ⇒ FC-02, das keine eigene Klausel hat.
+    const keys: string[] = [];
+    let step = generationStep(ohneReq, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    for (let i = 0; i < 4 && ['UC-01', 'UC-02'].includes((step.focusKey as string).split(':')[1]); i++) {
+      keys.push(step.focusKey as string);
+      step = generationStep(ohneReq, DEFAULT_METRIC_POLICY, undefined, FOCUS, keys);
+    }
+    expect((step.focusKey as string).split(':')[1]).toBe('FC-02');
+    expect(step.prompt).toContain('FCHAIN-Szenarien (UC compose FCHAIN)');
+  });
+
 });

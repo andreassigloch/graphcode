@@ -115,8 +115,22 @@ const GATE_PROTOCOL: Record<GenerationSelection, string> = {
  */
 const RULE_CLAUSE: Record<string, (uids: string[]) => string> = {
   'R-15': (uids) =>
-    ` Diese Funde sind BESTEHENDE, leere FCHAINs (${uids.join(', ')}): häng an jede davon 3±2 FUNC-Elemente` +
-    ' (FCHAIN compose→FUNC), die den Ablauf in Schritte zerlegen. Für diese Funde KEINE neue FCHAIN und keinen neuen UC anlegen.',
+    `Diese Funde sind BESTEHENDE, leere FCHAINs (${uids.join(', ')}): häng an jede davon 3±2 FUNC-Elemente` +
+    ' (FCHAIN compose→FUNC), die den Ablauf in Schritte zerlegen.',
+  // CR-GC-564: Wortlaut aus dem req-Template — dort beschreibt er dieselbe Arbeit korrekt.
+  // UC-01 liegt in der uc-Dimension, deren Template ACTOR/FCHAIN/UC verlangt und REQ nicht
+  // einmal erwähnt. Gemessen in Rig-Lauf 5: das Modell folgte dem Template, null REQ.
+  'UC-01': (uids) =>
+    `Diese UCs haben keine Anforderungen (${uids.join(', ')}): schlage je UC 3–5 REQ-Kandidaten vor` +
+    ' (UC compose→REQ), präzise und prüfbar formuliert. Emittiere jede neue REQ zusammen mit einem' +
+    ' TEST (TEST verify→REQ) im selben Batch — eine REQ ohne verify-TEST blockt das Gate (R-01).',
+  // CR-GC-564: der legale Pfad AUSGESCHRIEBEN. ACTOR direkt an UC oder FCHAIN ist die
+  // Fehlerart, die Lauf 3 zwei Runden an R-18-Ablehnungen gekostet hat.
+  'UC-02': (uids) =>
+    `Diese UCs sind von keinem ACTOR erreichbar (${uids.join(', ')}): der EINZIGE legale Weg ist` +
+    ' ACTOR io→FLOW io→FUNC, wobei die FUNC Mitglied einer FCHAIN des UC ist. Lege die fehlenden' +
+    ' FLOWs und FUNCs im selben Batch an. ACTOR direkt an UC oder an FCHAIN wird von R-18' +
+    ' abgewiesen, in beiden Richtungen.',
 };
 
 /** Generative Instruktion je Readiness-Dimension — die einzige Handlungsanweisung des
@@ -467,9 +481,16 @@ export function generationStep(
     windowRule && RULE_CLAUSE[windowRule]
       ? RULE_CLAUSE[windowRule](focusViolations.map((v) => v.element_id))
       : '';
-  const template = focus
-    ? (GENERATION_TEMPLATE[focus.dimension] ?? 'Behebe die Funde der Dimension.') + ruleClause
-    : '';
+  // EIN Imperativ je Runde (CR-GC-564). Vorher wurde die Klausel an das Dimensions-Template
+  // ANGEHÄNGT — und R-15s Klausel endete mit „KEINE neue FCHAIN anlegen", also mit dem
+  // Widerruf dessen, was drei Zeilen vorher stand. Das Template ist nach DIMENSION
+  // geschlüsselt, das Fenster seit CR-GC-290 nach REGEL; wo beide dieselbe Arbeit
+  // verschieden beschreiben, gewinnt die regelgenaue Fassung.
+  const template = ruleClause
+    ? ruleClause
+    : focus
+      ? (GENERATION_TEMPLATE[focus.dimension] ?? 'Behebe die Funde der Dimension.')
+      : '';
   const deferNote = deferExhausted
     ? 'Hinweis: ALLE Fund-Sets waren zurückgestellt (defer) — Zurückstellung wird ignoriert. '
     : '';
