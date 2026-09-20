@@ -1,6 +1,6 @@
 # CR-GC-565: Der Rig-Prompt gibt die Ontologie vor
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-20)
 **Typ:** aus Item ITEM-2026-391 (bug)
 **Erstellt:** 2026-09-20
 **Item:** bok/items/ITEM-2026-391.json (Lane: graph)
