@@ -1606,6 +1606,18 @@
       "description": "docs/cr/open/CR-GC-555-das-rig-misst-nicht-das-produkt-es-treib.md"
     },
     {
+      "id": "CR-GC-556",
+      "type": "CR",
+      "name": "graph_suggest ab Element 1 in den Rundenprompt injizieren statt es dem Modell als Werkzeug anzubieten: das Emissions-Regime verbietet Analyse-Turns, der Host ruft es deterministisch wie graph_generate",
+      "description": "docs/cr/open/CR-GC-556-graph-suggest-ab-element-1-in-den-runden.md"
+    },
+    {
+      "id": "CR-GC-557",
+      "type": "CR",
+      "name": "Rundenprompt verweist auf '(Skill se:author-uc)', den der Executor nicht aufrufen kann: Skills sind .claude/commands-Slash-Kommandos und existieren im Loop nicht",
+      "description": "docs/cr/open/CR-GC-557-rundenprompt-verweist-auf-skill-se-autho.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -19200,5 +19212,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 306
+  "graphVersion": 308
 }
