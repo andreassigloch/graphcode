@@ -2,9 +2,10 @@
  * generate.ts — der Kaltstart-Generierungstreiber (CR-GC-275,
  * aimpro-Fahrplan-Schritt 6, Regime 1: LLM schlägt vor, Gate scort/wählt).
  *
- * Bisher existierte nur Guidance (graph_next_step: generische Aktion pro
- * Deficit-Dimension; graph_authoring_guide: legale Struktur; Skills). Das hier
- * ist der fehlende GENERATIVE Treiber: aus Prosa-Intention + Graph-Zustand die
+ * Bisher existierte nur Guidance (graph_authoring_guide: legale Struktur; Skills)
+ * und daneben `graph_next_step`, eine generische Aktion pro Deficit-Dimension —
+ * ein zweites Steuerungswerkzeug auf derselben Messung, seit CR-GC-560..562 weg.
+ * Das hier ist der GENERATIVE Treiber und seither der einzige: aus Prosa-Intention + Graph-Zustand die
  * KONKRETE nächste Generierungs-Instruktion — welche Elemente, für welche
  * Eltern, wie viele Kandidaten, und das Gate-Protokoll (dryRun-Vergleich per
  * Verdict + fitAdvisory, bester Batch echt). Readiness-getrieben bis zur
@@ -118,7 +119,8 @@ const RULE_CLAUSE: Record<string, (uids: string[]) => string> = {
     ' (FCHAIN compose→FUNC), die den Ablauf in Schritte zerlegen. Für diese Funde KEINE neue FCHAIN und keinen neuen UC anlegen.',
 };
 
-/** Generative Instruktion je Readiness-Dimension (die Schreib-Zwillinge der graph_next_step-Aktionen). */
+/** Generative Instruktion je Readiness-Dimension — die einzige Handlungsanweisung des
+ * Systems, seit die generischen Lese-Zwillinge in `steering.ts` mit CR-GC-562 gefallen sind. */
 const GENERATION_TEMPLATE: Record<string, string> = {
   uc: 'Schlage je Fund 2–3 Kandidaten vor: fehlende ACTORs (Anbindung ACTOR io→FLOW io→FUNC in der FCHAIN des UC), FCHAIN-Szenarien (UC compose FCHAIN) oder fehlende UCs aus der Intention. UC-Stil: Actor–Verb–Objekt–Ergebnis, ≤25 Wörter — die volle Anleitung steht als Block im Rundeninhalt.',
   req: 'Schlage je UC ohne Requirements 3–5 REQ-Kandidaten vor (UC compose REQ), präzise und prüfbar formuliert; emittiere jede neue REQ zusammen mit einem TEST (TEST verify REQ) im selben Batch — eine REQ ohne verify-TEST blockt das Gate (R-01). Löse Platzhalter/Ambiguität in bestehenden REQs auf.',
