@@ -1,6 +1,6 @@
 # CR-GC-558: Die Anleitung folgt der Fokus-Dimension, nicht dem ersten Typ
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-20)
 **Typ:** aus Item ITEM-2026-374 (idea)
 **Erstellt:** 2026-09-20
 **Item:** bok/items/ITEM-2026-374.json (Lane: graph)
