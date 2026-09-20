@@ -496,3 +496,57 @@ war die Antwort jeweils: den zweiten Weg schließen. → ITEM-2026-390
 Offen bleibt dabei eine echte Frage, die vor dem Zug beantwortet gehört: der injizierte
 Index ist auf die **Fokus-Typen** gefiltert. Braucht das Modell legitim Typen außerhalb des
 Fokus, nimmt man ihm mit dem Werkzeug etwas weg, das der Prompt nicht ersetzt.
+
+---
+
+# Basislinie nach dem neutralen Prompt — der Prompt war der Engpass
+
+Dieselben drei Läufe, dieselbe Konfiguration, **nur der Auftragstext neutralisiert**
+(CR-GC-565). Die Bänder überlappen nicht.
+
+| | alt (Ontologie im Prompt) | neu (neutral) |
+|---|---:|---:|
+| Elemente | 41 / 50 / 38 — **Band 38–50** | 86 / 77 / 96 — **Band 77–96** |
+| Mittel | 43 | **86** |
+| Compliance (Mittel) | 0,917 | 0,926 |
+| Leseanteil | 88 / 82 / 84 % | 81 / 84 / 88 % |
+
+**Ein neutralerer Prompt verdoppelt die Ausbeute.** Zwei getrennte Dreier-Messungen, keine
+Überlappung — das ist keine Streuung.
+
+## Warum, und warum das zum Rest der Sitzung passt
+
+Der alte Prompt trug eine **zweite Tagesordnung**: „Systemgrenze, Akteure, Use Cases,
+Funktionen, Verträge und Module sind aus dem Auftrag herzuleiten." Das Modell hatte damit
+zwei Imperative — den des Auftraggebers und den der Runde aus `graph_generate` — und
+bediente beide halb. Der neue Prompt nennt nur das Ziel; die Runde ist der einzige Befehl.
+
+Das ist derselbe Befund wie zweimal zuvor in dieser Sitzung, jetzt zum dritten Mal:
+
+| Wo | zwei Wege zur selben Sache | Zug |
+|---|---|---|
+| Werkzeuge | `graph_next_step` neben `graph_generate` | CR-GC-560..562 |
+| Rundenprompt | Dimensions-Template neben der Regel-Klausel | CR-GC-564 |
+| Auftragstext | Nutzer-Agenda neben der Rundenanweisung | CR-GC-565 |
+
+**Die Steuerung wird nicht besser, indem man ihr mehr sagt, sondern indem genau eine Stelle
+spricht.**
+
+## Was die Zahl NICHT sagt
+
+Ein großer Teil des Zuwachses sind REQ+TEST-Paare, und die TESTs sind überwiegend vom
+Preflight erzeugte Stubs (28 / 12 / 26 Vervollständigungen bei 29 / 27 / 26 TESTs).
+Modell-autoriert bleiben etwa 58 / 65 / 70 Elemente.
+
+Und die **Kantenvielfalt schwankt stark**: Lauf 1 trägt nur `compose` und `verify` — ein
+Kompositionsbaum ohne Verhalten. Erst Lauf 3 hat `io`, `satisfy` (23) und `allocate`
+zusammen, also zum ersten Mal in der ganzen Reihe einen wirklich verdrahteten Graphen.
+Die Streuung liegt nicht in der Menge, sondern in der Tiefe.
+
+## Unverändert
+
+Der **Leseanteil bleibt bei 81–88 %** — der Prompt hat daran nichts geändert. Das
+Phänomen aus ITEM-2026-388 ist davon unabhängig, und ITEM-2026-392 bleibt seine
+Vorbedingung: fünf Rundenanweisungen verlangen Elementtypen, die der injizierte Index gar
+nicht abdeckt (`uc`→FLOW, `req`→TEST, `arch`→MOD, UC-01→REQ+TEST, UC-02→FLOW). So lange
+das gilt, ist ein Teil des Lesens erzwungen und kein Hebel.
