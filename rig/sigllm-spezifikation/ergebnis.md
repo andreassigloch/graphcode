@@ -598,3 +598,65 @@ Dahinter steht eine echte Spannung, kein Bug: **need-to-know gegen Dublettenfrei
 Ein vollständiger Index kostet Kontext (gemessen 757 Knoten), ein gefilterter kostet
 Lese-Turns. Was fehlt, ist eine dritte Form — etwa nur die **uids** aller Typen statt
 `uid · type · name` der Fokus-Typen. Das ist ein Entwurf, kein Schalter. → ITEM-2026-393
+
+---
+
+# Der Bezugspunkt, neu gemessen — Opus über den dokumentierten Einstieg
+
+Nach zwölf Läufen auf dem Executor/qwen-Arm zurück zum Pfad, den ein Kunde benutzt:
+`claude -p`, Opus 5, Einstieg wörtlich aus `GRAPHCODE-STEERING.md`
+(`Read GRAPHCODE.md, then se:generate: "…"`), neutraler Prompt (CR-GC-565). Ein Lauf,
+`runs/opus5-4`, 21 Minuten, $9,27.
+
+| | Opus, Lauf 2 (alter Prompt) | **Opus, jetzt** | Golden |
+|---|---:|---:|---:|
+| Elemente / Traces | 248 / 497 | **202 / 336** | 238 / 524 |
+| UC / FUNC / MOD / REQ / TEST | 6 / 41 / 8 / 44 / 60 | 8 / 21 / 5 / 44 / 44 | 3 / 29 / 10 / 49 / 35 |
+| Compliance | — | **1,00** | |
+| Phasen-Gates | 2/8 | **4/8** | |
+| Gate-Ablehnungen | — | 2 | |
+| Turns | — | 56 | |
+
+**Kein Rückschritt auf dem Produktpfad.** Compliance 1,0 und 4 von 8 Gates sind die besten
+Werte der ganzen Reihe (vorher 3/8 → 2/8 → 1/8). Der Graph ist vollständig verdrahtet —
+79 `io`, 45 `satisfy`, 21 `allocate`, 39 `relation` auf 27 SCHEMA. Das hat kein
+Executor-Lauf je erreicht. Die fünf produktweiten Änderungen (Fundreihenfolge, Klausel vor
+Template, `next_step` weg, gestufter Seed, Fokus-Deckung) haben den manuellen Pfad nicht
+beschädigt; ob sie ihn *verbessert* haben, sagt n=1 nicht.
+
+Weniger Elemente als Lauf 2 (202 gegen 248) — aber die 248 entstanden mit dem Prompt, der
+die Ontologie mitlieferte, und trugen 60 TESTs zu 44 REQ. Die neuen 44 TESTs stehen 1:1 zu
+den REQs. Weniger ist hier nicht schlechter.
+
+**Kein Lese-Problem.** Vor den 22 Mutationen wurden konsultiert: `graph_generate` 9×,
+`graph_authoring_guide` 5×, `graph_get_node` 1×, `rules_evaluate` 1×. 56 Turns für
+22 Mutationen und 28 Dry-Runs — praktisch jeder Turn ein Schreib- oder Prüfzug. Die Lesewut
+war ein Executor/qwen-Phänomen, kein Produktproblem. ITEM-2026-388/393 sind damit
+zweitrangig, solange der Executor nicht der gewählte Weg ist.
+
+## Die Ausgangsfrage — und die Antwort ist immer noch nein
+
+`editSource: 'suggestion-template'`: **0 von 22 Mutationen.** `graph_suggest`: **0 Aufrufe.**
+Auch auf dem Arm, der zählt, mit dem Skill, der es vorschreibt.
+
+Der Grund ist derselbe wie beim Executor, nur jetzt unbestreitbar: der Skill schickt
+`graph_suggest` erst beim **Handoff**, und der verlangt alle Dimensionen über Schwelle.
+`ms` steht bei 0 (keine Meilensteine), `cr` ohne Wert (keine Bauordnung) — Handoff nie
+erreicht. Und dann der Satz, mit dem Claude selbst schließt:
+
+> *„Steering-Verschlechterung 0.25 bei `BW-02`/`FUNC-auftragsbetrieb` … Das ist der
+> schlechteste offene Punkt und **ein Fall für `graph_suggest`, nicht für Handarbeit**."*
+
+Das Modell **kennt** das Werkzeug, **benennt** den Fund, den es lösen würde, **empfiehlt**
+es dem Menschen — und ruft es nicht, weil der Skill es ihm für diese Phase nicht erlaubt.
+Die Vorlagen sitzen hinter einer Schwelle, die in vierzehn Läufen keiner erreicht hat.
+
+**Das ist kein Modellproblem und kein Executor-Problem. Es ist die Phasenlogik von
+`se:generate`.** Solange `graph_suggest` handoff-exklusiv ist, wird keine Vorlage je eine
+Entscheidung ändern — egal welches Modell, egal welcher Arm.
+
+## Was das für die Sitzung heißt
+
+Der Executor-Umweg hat fünf echte Produktdefekte gefunden und behoben, ohne den
+Produktpfad zu beschädigen. Die Frage, mit der alles begann, beantwortet er nicht — sie
+liegt in `se:generate`, Schritt 5, und dort seit dem ersten Lauf.
