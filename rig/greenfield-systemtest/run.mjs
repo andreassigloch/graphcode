@@ -78,23 +78,30 @@ const CFG = {
   ],
 };
 
+/**
+ * Der Auftragstext fuer den `claude -p`-Arm (CR-GC-565).
+ *
+ * Das ist woertlich der Einstieg, den `GRAPHCODE-STEERING.md` dem Menschen vorgibt — das
+ * Dokument, das das Scaffold in jeden Workspace legt. Vorher stand hier eine selbst
+ * erfundene Werkzeugfolge (graph_generate, graph_mutate, graph_authoring_guide in dieser
+ * Reihenfolge). Zwei Schaeden: das Rig mass einen Prompt, den kein Kunde je schreibt, und
+ * der gcrun-Arm bekam diese Hilfe nicht — ein eingebauter Unterschied in jedem
+ * Arm-Vergleich. Die Methode gehoert dem Produkt: GRAPHCODE.md und der Skill.
+ */
 function buildPrompt() {
-  return readFileSync(CFG.promptFile, 'utf8').trim()
-    + `\n\n${CFG.seed.uid} existiert bereits im Graphen (das System aus dem Prompt). Baue die`
-    + ` Architektur darauf auf: rufe graph_generate für die nächste konkrete`
-    + ` Generierungs-Instruktion, autoriere über graph_mutate, und frage graph_authoring_guide`
-    + ` nach den legalen Kanten je Typ, bevor du einen Knoten anlegst.`
+  return `Read GRAPHCODE.md, then \`se:generate\`: "${readFileSync(CFG.promptFile, 'utf8').trim()}"`
+    + `\n\n${CFG.seed.uid} existiert bereits im Graphen (das System aus dem Auftrag).`
     + `\n${CFG.materialHint}`;
 }
 
 /**
  * Der Auftragstext fuer `graphcode run` (CR-GC-555).
  *
- * BEWUSST NICHT `buildPrompt()`: der schreibt `graph_generate` und `graph_authoring_guide`
- * vor. Im Executor-Loop ist `graph_generate` dem Modell VORENTHALTEN (WITHHELD_TOOLS) — der
- * Loop ruft es selbst und baut daraus den Rundenprompt. Ein Intent, der Werkzeuge
- * vorschreibt, die das Modell nicht sieht, waere eine eingebaute Fehlleitung. Hier steht
- * deshalb nur das ZIEL und wo das Material liegt; das Wie gehoert dem Loop.
+ * BEWUSST NICHT `buildPrompt()`: der nennt `GRAPHCODE.md` und den Skill `se:generate`, also
+ * den Einstieg des Claude-Code-Harness. `graphcode run` liest weder das eine noch das andere
+ * — der Loop baut seine Rundenprompts selbst aus `graph_generate` (dem Modell vorenthalten)
+ * und traegt die Methode im SYSTEM-Prompt. Hier steht deshalb nur das ZIEL und wo das
+ * Material liegt; das Wie gehoert dem Loop.
  */
 function buildIntent() {
   return readFileSync(CFG.promptFile, 'utf8').trim()
