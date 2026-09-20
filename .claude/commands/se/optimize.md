@@ -98,4 +98,4 @@ auch wenn er eine Regel klären würde.
 
 Wenn nichts Anwendbares mit positivem Δm mehr übrig ist, sag das offen („die Maschine hat gerade
 keinen Zug, der in deine Richtung trägt") statt eine Restempfehlung nachzuschieben. Was an
-Hygiene ansteht, sagt `graph_next_step` — ein anderer Kanal, kein Ersatz für diesen.
+Hygiene ansteht, sagt `rules_get_violations` — ein anderer Kanal, kein Ersatz für diesen.

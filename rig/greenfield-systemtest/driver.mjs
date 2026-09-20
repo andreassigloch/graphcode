@@ -3,7 +3,7 @@
 // Replaces the full opencode/Claude-Code coding harness with a thin loop: the 22
 // graphcode tools (schemas normalized by US, so LM Studio's strict OpenAI validator
 // accepts them) + 3 scoped read tools + a ~1-page system prompt. graphcode itself
-// supplies the method (graph_next_step = what to do, graph_authoring_guide = legal
+// supplies the method (graph_generate = what to do, graph_authoring_guide = legal
 // shape, the gate = correctness). Same driver → both backends: the model is the only
 // variable, which is what makes "local ≈ frontier" a clean claim.
 //
@@ -155,9 +155,9 @@ function extractMutateFromText(text) {
 // per-step prompt (which carries the edge grammar). The model's only job is to
 // emit the batch via graph_mutate — every "what next" decision is graphcode's,
 // not the model's. That maximally de-skills the model (ideal for a coder).
-// graph_generate/graph_next_step are withheld from the model's tool list.
+// graph_generate is withheld from the model's tool list — the driver calls it.
 export async function runDriver({ dir, backend, baseUrl, model, apiKey, reg, intent, maxIter = 40 }) {
-  const withheld = new Set(['graph_generate', 'graph_next_step']);
+  const withheld = new Set(['graph_generate']);
   const tools = buildTools(reg, backend).filter((t) => {
     const n = (backend === 'anthropic' ? t.name : t.function.name).replace('graphcode_', '');
     return !withheld.has(n);

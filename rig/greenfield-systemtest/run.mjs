@@ -81,18 +81,18 @@ const CFG = {
 function buildPrompt() {
   return readFileSync(CFG.promptFile, 'utf8').trim()
     + `\n\n${CFG.seed.uid} existiert bereits im Graphen (das System aus dem Prompt). Baue die`
-    + ` Architektur darauf auf: rufe graph_next_step für den nächsten sinnvollen Schritt,`
-    + ` autoriere über graph_mutate, und frage graph_authoring_guide nach den legalen Kanten`
-    + ` je Typ, bevor du einen Knoten anlegst.`
+    + ` Architektur darauf auf: rufe graph_generate für die nächste konkrete`
+    + ` Generierungs-Instruktion, autoriere über graph_mutate, und frage graph_authoring_guide`
+    + ` nach den legalen Kanten je Typ, bevor du einen Knoten anlegst.`
     + `\n${CFG.materialHint}`;
 }
 
 /**
  * Der Auftragstext fuer `graphcode run` (CR-GC-555).
  *
- * BEWUSST NICHT `buildPrompt()`: der schreibt `graph_next_step` und `graph_authoring_guide`
- * vor. Im Executor-Loop ist `graph_next_step` dem Modell VORENTHALTEN (WITHHELD_TOOLS) — der
- * Loop baut seine Rundenprompts selbst aus `graph_generate`. Ein Intent, der Werkzeuge
+ * BEWUSST NICHT `buildPrompt()`: der schreibt `graph_generate` und `graph_authoring_guide`
+ * vor. Im Executor-Loop ist `graph_generate` dem Modell VORENTHALTEN (WITHHELD_TOOLS) — der
+ * Loop ruft es selbst und baut daraus den Rundenprompt. Ein Intent, der Werkzeuge
  * vorschreibt, die das Modell nicht sieht, waere eine eingebaute Fehlleitung. Hier steht
  * deshalb nur das ZIEL und wo das Material liegt; das Wie gehoert dem Loop.
  */
