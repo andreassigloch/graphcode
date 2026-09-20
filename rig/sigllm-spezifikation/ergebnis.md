@@ -303,3 +303,78 @@ Zeilen in `results-sigllm*.json` tragen noch den zu kleinen Wert.
 
 n = 1, ein Modell je Arm, eine Domäne. Die Loop-Kennzahlen sind Zählungen und belastbar; jeder
 Qualitätsvergleich zwischen Lauf 3 und Lauf 1/2 ist es nicht, weil Arm und Modell mitwandern.
+
+---
+
+# Lauf 4 — dieselbe Maschinerie, nach vier CRs Steuerung
+
+Erster Lauf, der mit Lauf 3 **apples to apples** vergleichbar ist: gleicher Arm, gleiches
+Modell (`qwen3-coder-30b` lokal), gleiche 12 Runden, gleicher Auftrag. Dazwischen liegen
+CR-GC-556 bis 562 — `graph_suggest` und Optimizer-`delta` ab Element 1 im Rundeninhalt, der
+Skill-Rumpf je Runde, die Anleitung je Fokus-Dimension, der Kaltstart in drei Stufen, und
+`graph_next_step` entfernt.
+
+## Das Ergebnis ist schlechter
+
+| | Lauf 3 | Lauf 4 |
+|---|---:|---:|
+| Elemente | 49 | **22** |
+| Compliance | 0,92 | **0,59** |
+| Phasen-Gates | 1/8 | 2/8 |
+| Mutationen angewandt | 6 | 21 |
+| Gate-Ablehnungen | 3 | 1 |
+| Preflight-Blocks | 15 | 0 |
+| Wanduhr | 763 s | 271 s |
+
+Die ehrliche Vergleichszahl ist **22 gegen 49 Elemente** — mit der Einschränkung, dass 14 der
+49 aus Lauf 3 vom Preflight erzeugte TEST-Stubs waren; modell-autoriert steht es etwa 22 zu 35.
+Auch so: weniger.
+
+Der Endgraph trägt 1 SYS, 9 UC, 8 ACTOR, 4 FCHAIN und **16 Kanten, allesamt `compose`**.
+Kein FUNC, kein FLOW, keine einzige `io`-Kante. Ein Namensbaum ohne Verhalten.
+
+## Warum — drei Ursachen, der Größe nach
+
+**1. Der Fokus kommt nie aus `uc` heraus.** Im Endzustand hat genau EINE Dimension Funde:
+`uc` mit 56, alle anderen mit 0. Die Fokuswahl filtert auf `violations > 0` — es gibt also
+dauerhaft nur einen Kandidaten. Und *innerhalb* der Dimension sortiert `windowsOf` die Funde
+**alphabetisch nach `rule_id`**. Damit lautet die Reihenfolge FC-02 → R-15 → R-16 → UC-01 →
+UC-02 → …, und das heißt:
+
+- **FC-02 (Warnung)** wird vor **UC-02 (Fehler)** abgearbeitet, weil F vor U kommt.
+- **R-15** — „häng FUNC-Elemente an die leere Kette" — ist das zweite Fenster und kam nur dran,
+  nachdem FC-02 zweimal zurückgestellt wurde. Das Wort **FUNC steht kein einziges Mal im
+  Lauflog.**
+
+Das ist keine Modellschwäche, das ist die Fundreihenfolge. → ITEM-2026-386
+
+**2. Die Actor-Stufe hat 8 Actors erzeugt.** `se:author-actor` nennt 2–5 als Regelfall und
+„mehr als 7 heißt, du modellierst Nutzer statt die Grenze". Das Log zeigt, warum: Runde 3
+endete mit `stop=length` bei 4096 Ausgabetoken, und der Recovery-Pfad hat aus der
+abgeschnittenen Antwort 8 Mutationen gerettet. Über den Skill sagt das nichts — die Antwort
+war abgeschnitten, nicht ignorant.
+
+Die Folge ist trotzdem meine: acht unverdrahtete Actors sind acht R-16-Funde, und die landen
+in genau der `uc`-Dimension, die ohnehin feststeckt. Die Stufe füttert den Stau, den sie
+auflösen sollte. → ITEM-2026-387
+
+**3. Die Lesewut ist zurück.** Runde 8: 40 Aufrufe `graph_elements`, null Mutationen. Runden
+5, 7 und 9 ähnlich. Genau das Verhalten, das die Runden-Injektion seit CR-GC-285 abstellen
+soll — der Element-Index liegt im Prompt, das Modell fragt trotzdem. Sieben von zwölf Runden
+meldeten Stagnation. → ITEM-2026-388
+
+## Was messbar besser wurde
+
+Gate-Ablehnungen 3 → 1, Preflight-Blocks 15 → 0, **kein einziger R-18-Verstoß**. Die
+Fehlerart, an der Lauf 3 zweimal hängenblieb — ACTOR direkt an FCHAIN — ist verschwunden.
+Der gestufte Kaltstart hat also getan, wofür er gebaut wurde.
+
+Es hat nur nichts eingebracht, weil die Schleife eine Ebene weiter stehenbleibt.
+
+## Die Lehre
+
+Vier CRs haben den Kanal zum Modell verbessert und die Reihenfolge, in der die Steuerung
+arbeitet, unangetastet gelassen. Der Kanal war nicht der Engpass. **Ein Fund-Fenster, das
+alphabetisch wählt, macht jede Anleitung darin wirkungslos** — sie kommt zur falschen Zeit.
+
+ITEM-2026-386 ist der nächste Zug, und es ist der kleinste der drei.
