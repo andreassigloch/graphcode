@@ -1,6 +1,6 @@
 # CR-GC-559: Der Kaltstart in drei gegatete Stufen
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-20)
 **Typ:** aus Item ITEM-2026-376 (idea)
 **Erstellt:** 2026-09-20
 **Item:** bok/items/ITEM-2026-376.json (Lane: graph)
