@@ -102,8 +102,16 @@ zusaetzlicher waere ein Knoten ohne eigenen Konsumenten.
 - **Kein benannter Agent.** `ACTOR-agent` traegt die Zusage „bewusst NICHT namentlich modelliert
   — agent-agnostisch ist eine verriegelte Zusage (CLAUDE.md)". Der Zug teilt nach *Rolle an der
   Grenze*, nie nach Produktnamen. `ACTOR-llm` erbt dieselbe Zusage.
-- **Kein Rig im Produktgraphen.** Das Rig misst, es ist kein Teil des Produkts. Knoten dafuer
-  haetten keinen Konsumenten — genau der Bloat, den die KEEPER-Regel verbietet.
+- **Kein benannter Rig-LAUF.** Einzelne Arme, Modelle und Laufnummern sind Konfiguration.
+
+**Korrektur (2026-09-21, nach Einwand):** das Rig gehoert SEHR WOHL in den Graphen. Es ist
+kein Nebenwerkzeug, sondern der **Systemtest** — es fuettert den Audit-Log, und seine
+verbose-Auswertung ist die Voraussetzung fuer Optimierungsschleifen wie diese. Ein Systemtest
+ohne Knoten ist genau die Bindungsluecke, die RC-* aufdecken soll. Die urspruengliche Fassung
+dieses Abschnitts ("das Rig misst, es ist kein Teil des Produkts") war falsch: gemessen wird
+mit ihm ueber das Produkt, und was das Produkt ueber sich selbst lernt, ist Produkt.
+Eigener Zug (ITEM-2026-416), weil er TEST-/FCHAIN-Knoten braucht und diesen CR sonst
+unpruefbar macht.
 - **Die Stellschrauben-WERTE.** `candidates=2` ist Konfiguration, kein Knoten.
 
 ## 5 Was dieser CR NICHT loest
