@@ -102,7 +102,7 @@
 | `REQ-progressive-expansion` | ✓ | ✓ passed | `TEST-impact-subgraph` |
 | `REQ-prompt-provenance` | ✓ | ✓ passed | `TEST-prompt-provenance` |
 | `REQ-prose-recovery` | ✓ | ✓ passed | `TEST-one-driver-local-and-frontier` |
-| `REQ-published-counts-match-code` | ✓ | ✓ passed | `TEST-published-counts-match-code` |
+| `REQ-published-counts-match-code` | ✓ | ✓ passed | `TEST-published-counts-match-code` · `TEST-skill-rule-ids` |
 | `REQ-quality-metric` | ✓ | ⚠ 3/4 passed | `TEST-code-quality` · `TEST-fit-advisory` · `TEST-graph-metrics` · `TEST-retro-kpi` |
 | `REQ-query-precision` | ✓ | ✓ passed | `TEST-impact-subgraph` · `TEST-read-format-param` |
 | `REQ-readiness-completeness` | ✓ | ✓ passed | `TEST-readiness-completeness` |

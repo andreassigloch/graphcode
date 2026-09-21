@@ -130,7 +130,7 @@
 | `REQ-progressive-expansion` | `TEST-impact-subgraph` | `FUNC-graph-expand` · `FUNC-read-tools` | `MOD-kernel` · `MOD-surface` |
 | `REQ-prompt-provenance` | `TEST-prompt-provenance` | `FCHAIN-loop-closure` · `MOD-kernel` | — |
 | `REQ-prose-recovery` | `TEST-one-driver-local-and-frontier` | `FUNC-extract-mutate` · `FUNC-gate-client` | `MOD-loop` |
-| `REQ-published-counts-match-code` | `TEST-published-counts-match-code` | — | — |
+| `REQ-published-counts-match-code` | `TEST-published-counts-match-code` · `TEST-skill-rule-ids` | — | — |
 | `REQ-quality-metric` | `TEST-code-quality` · `TEST-fit-advisory` · `TEST-graph-metrics` · `TEST-retro-kpi` | `MOD-kernel` | — |
 | `REQ-query-precision` | `TEST-impact-subgraph` · `TEST-read-format-param` | `FUNC-authoring-guide` · `FUNC-graph-impact` · `FUNC-list-elements` · `FUNC-read-tools` | `MOD-kernel` · `MOD-projections` · `MOD-surface` |
 | `REQ-readiness-completeness` | `TEST-readiness-completeness` | `FUNC-score-completeness` | `MOD-projections` |

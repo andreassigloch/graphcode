@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 199 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 199 CR · 164 done · 1 open.
+Total: 199 CR · 165 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -252,7 +252,7 @@ Total: 199 CR · 164 done · 1 open.
 | `CR-GC-568` | n/a | Executor: SYSTEM-Prompt verbietet den dryRun-Vergleich, den das Gate-Protokoll verlangt |
 | `CR-GC-569` | done | Betriebsmodi sind nicht modelliert: ein ACTOR-agent fuer beide Treiber, UC-reduced-llm vermischt Modell und Treiber, kein SCHEMA fuer die Lauf-Konfiguration |
 | `CR-GC-570` | n/a | Gate-Antwort ist 70% des Werkzeug-Payloads: 487 Violations in 23 Antworten, 51% Wiederholung, 0 davon gating |
-| `CR-GC-571` | n/a | Smeagol-Check: jede in einem Skill genannte Regel-ID muss im Regelkatalog existieren (18 genannt, 1 erfunden) |
+| `CR-GC-571` | done | Smeagol-Check: jede in einem Skill genannte Regel-ID muss im Regelkatalog existieren (18 genannt, 1 erfunden) |
 | `CR-GC-572` | n/a | Executor-Arm auf backend=anthropic — der auto-Modus unterscheidet sich dann vom manuellen NUR im Treiber |
 | `CR-GC-573` | done | Fuenf Prompt-Autoritaeten in EINEM FUNC-generation-step: SEED_STAGES, DIMENSION_FOCUS_TYPES, GENERATION_TEMPLATE, RULE_CLAUSE, GATE_PROTOCOL sind unmodelliert |
 | `CR-GC-574` | n/a | Das Rig ist der Systemtest und fehlt im Modell: kein TEST-/FCHAIN-Knoten fuer Lauf, Metrik, Pruefliste und Turn-Analyse |

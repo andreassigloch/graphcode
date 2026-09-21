@@ -7250,13 +7250,13 @@ priority: should · status: open · kinds: non-functional
 
 Verification ◀ `TEST-hooks` (integration) · satisfy ◀ `MOD-kernel` · allocate ▶ —
 
-### `REQ-published-counts-match-code` — Publizierte Zahlen stimmen mit der lebenden Quelle
+### `REQ-published-counts-match-code` — Publizierte Angaben stimmen mit der lebenden Quelle
 
-Jede in den publizierten Dokumenten genannte Anzahl von Elementtypen, Verbindungstypen, legalen Verbindungsmustern, Regeln, Readiness-Dimensionen und MCP-Tools wird gegen Ontologie und Tool-Registry geprueft; eine Abweichung nennt Datei, Zeile, erwarteten und gefundenen Wert.
+Jede in den publizierten Dokumenten und Skills genannte ANZAHL von Elementtypen, Verbindungstypen, legalen Verbindungsmustern, Regeln, Readiness-Dimensionen und MCP-Tools sowie jede genannte REGEL-ID wird gegen Ontologie, Regelkatalog und Tool-Registry geprueft; eine Abweichung nennt Datei, Zeile, erwarteten und gefundenen Wert. Die Regel-IDs gehoeren dazu, weil eine erfundene Regel dieselbe Klasse ist wie eine falsche Zahl: eine Behauptung ueber die lebende Quelle, die niemand nachhaelt — drei von zwanzig waren es, als zum ersten Mal jemand nachsah. (Regel-IDs ergaenzt CR-GC-571)
 
 priority: should · status: n/a · kinds: non-functional
 
-Verification ◀ `TEST-published-counts-match-code` (unit) · satisfy ◀ — · allocate ▶ —
+Verification ◀ `TEST-published-counts-match-code` (unit) · `TEST-skill-rule-ids` (unit) · satisfy ◀ — · allocate ▶ —
 
 ### `REQ-quality-metric` — Messbare Code-/Tool-Qualität
 
@@ -8048,121 +8048,127 @@ Fuer jede FUNC der Kette FCHAIN-skill-report: die per realRef gebundene Command-
 
 verify ▶ `REQ-skill-reads-only` · testRefs: `tests/skill-report-measured.test.ts`
 
-### 8.111  `TEST-skills-mcp` — Skills-MCP-Conformance-Test
+### 8.111  `TEST-skill-rule-ids` — Abnahme: keine erfundenen Regel-IDs in Skills und Prompts
+
+Prueft, dass jede Regel-ID, die ein Skill oder der Rundenprompt nennt, im Katalog ALL_RULE_DEFS steht — Skill-Dateien, RULE_CLAUSE-Schluessel, gerenderte Klauseltexte, Dimensions-Vorlagen, System-Prompt und Nachfass-Text. Praefixe und IDs kommen aus dem Katalog, nicht aus einer gepflegten Liste. Gefunden hat der erste Lauf drei erfundene Nennungen gestrichener Regeln. Prueft die EXISTENZ, nicht die Wahrheit der Aussage ueber die Regel. (CR-GC-571)
+
+verify ▶ `REQ-published-counts-match-code` · testRefs: `tests/skill-rule-ids.test.ts`
+
+### 8.112  `TEST-skills-mcp` — Skills-MCP-Conformance-Test
 
 Alle mitgelieferten .claude/commands/se*-Dateien sind MCP-getrieben: 0 Treffer fuer die abgeschaltete localhost:3001-API (/api/graph, /api/dashboard, GRAPH_API) und jedes Skill referenziert >=1 Tool aus der Live-Registry. "done = verifiziert" fuer die prompt-realisierten FUNCs von MOD-skills (se-view/* → REQ-doc-export). (CR-GC-132)
 
 verify ▶ `REQ-doc-export` · testRefs: `tests/skills.mcp-conformance.test.ts`
 
-### 8.112  `TEST-status-verb` — Abnahme des status-Verbs
+### 8.113  `TEST-status-verb` — Abnahme des status-Verbs
 
 Abnahme der Datei tests/status.test.ts: eine antwortende URL zaehlt nur, wenn die Instanz dieses Repo bedient. Alle Effekte sind injiziert, damit der Befund nicht davon abhaengt, was zufaellig lokal laeuft.
 
 verify ▶ `REQ-single-kuzu-owner` · testRefs: `tests/status.test.ts`
 
-### 8.113  `TEST-steering-snapshot` — Steuerung sieht die flachen Attribute
+### 8.114  `TEST-steering-snapshot` — Steuerung sieht die flachen Attribute
 
 Abnahme der Datei tests/steering-snapshot.test.ts: der Steuerungs- und Generierungspfad baut seine Sicht nicht mehr ueber den Umweg der Serialisierung, die die Attribute abflacht. Genau dieser Umweg machte Bindungen fuer die Regeln unsichtbar.
 
 verify ▶ `REQ-single-measurement-path` · testRefs: `tests/steering-snapshot.test.ts`
 
-### 8.114  `TEST-store-lock` — Store-Besitz und Schreib-Serialisierung
+### 8.115  `TEST-store-lock` — Store-Besitz und Schreib-Serialisierung
 
 Abnahme der Datei tests/store-lock.test.ts: ein zweiter Schreiber auf demselben Store wird laut abgewiesen statt still ueberschrieben, ein verwaister Lock wird zurueckgeholt, und ein lebender bleibt unangetastet. Dazu die Serialisierung, damit sich Reseed und Mutation nie verschraenken.
 
 verify ▶ `REQ-one-gate-per-repo` · `REQ-single-kuzu-owner` · `REQ-store-owner-lifecycle` · testRefs: `tests/store-lock.test.ts`
 
-### 8.115  `TEST-store-recovery` — Store-Recovery-Test
+### 8.116  `TEST-store-recovery` — Store-Recovery-Test
 
 Kuzu Lock-Konflikt / abgestuerzter Owner / korrupter Store: Lock-Erkennung + sicherer Re-Open; kein zweites DB-Handle. (ConOps Recovery)
 
 verify ▶ `REQ-store-recovery`
 
-### 8.116  `TEST-systemtest-evaluations` — Abnahme der Rig-Auswertungen
+### 8.117  `TEST-systemtest-evaluations` — Abnahme der Rig-Auswertungen
 
 Prueft die Auswertungen des Systemtests gegen echte Artefakte auf Platte: die Zusammenfassung je message.id (sonst zaehlt der Strom das Doppelte), den Abgleich Strom gegen Ergebniszeile, die Zuschreibung der Cache-Schreibung, die Dry-Run-Quote, die Ablehnungszaehlung ohne tier, die Bindungsquote ueber Blatt-FUNCs und das dreiwertige Code-Urteil samt Reichweite. Ohne sie ist der Messaufbau ungemessen — zwei seiner Zaehlfehler fielen bisher erst am lebenden Lauf auf. (CR-GC-574)
 
 verify ▶ `REQ-greenfield-systemtest-dod` · testRefs: `tests/systemtest-rig.test.ts`
 
-### 8.117  `TEST-target-profile` — Zielprofil als Steuer-Konfiguration
+### 8.118  `TEST-target-profile` — Zielprofil als Steuer-Konfiguration
 
 Abnahme der Datei tests/target-profile.test.ts: Schema, Laden und Konfliktpruefung des Zielprofils, dazu der Konfigurations-Default des Vorschlags-Werkzeugs gegen einen echten Disk-Kuzu. Die Konfliktpruefung ist ein Pfad, kein zweiter neben der Steuerung.
 
 verify ▶ `REQ-target-shifts-ranking` · `REQ-thresholds-from-config` · testRefs: `tests/target-profile.test.ts`
 
-### 8.118  `TEST-target-shifts-ranking` — Ranking gegen zwei gegenlaeufige Zielvektoren
+### 8.119  `TEST-target-shifts-ranking` — Ranking gegen zwei gegenlaeufige Zielvektoren
 
 Zwei Laeufe auf identischem Graphen, verschieden nur im Vorzeichen des Ziels; assertiert Score-Negation, Spitzenwechsel und Magnituden-Invarianz.
 
 verify ▶ `REQ-target-shifts-ranking` · testRefs: `tests/mcp.suggest.test.ts`
 
-### 8.119  `TEST-target-state` — Abnahme Zielbild
+### 8.120  `TEST-target-state` — Abnahme Zielbild
 
 Konzept: moneyflow und sirail werden allein ueber Regeln und Steuerung strukturiert; der Autor nimmt FUNC- und MOD-View ab; die Vertraege je Modulrand sind ohne Aussageverlust nicht weiter reduzierbar.
 
 verify ▶ `REQ-target-state`
 
-### 8.120  `TEST-test-runnable-binding` — TestRef-Aufloesungs-Test
+### 8.121  `TEST-test-runnable-binding` — TestRef-Aufloesungs-Test
 
 Abnahme der Datei tests/mcp.tests-deduction.test.ts: ein impacted TEST-Knoten wird ueber testRefs eindeutig auf eine lauffaehige Datei aufgeloest, graph_tests erzeugt daraus ein selektives Run-Kommando ueber genau diese Dateien, und ein TEST ohne testRefs erscheint unter unresolved statt zu verschwinden. Synthetische Disk-Kuzu-Fixture.
 
 verify ▶ `REQ-test-runnable-binding` · testRefs: `tests/mcp.tests-deduction.test.ts`
 
-### 8.121  `TEST-testref-materialize` — Export stub-materialization test
+### 8.122  `TEST-testref-materialize` — Export stub-materialization test
 
 graph_export scaffoldt einen lauffaehigen it.todo-Stub fuer eine fehlende testRef-Datei, ueberschreibt nie eine existierende, ueberspringt concept-only; danach loest graph_tests auf die materialisierte Datei auf. (CR-GC-205 Item 4)
 
 verify ▶ `REQ-testref-materialized` · testRefs: `tests/export.testref-materialize.test.ts`
 
-### 8.122  `TEST-testreport` — Rueckweg des Testergebnisses
+### 8.123  `TEST-testreport` — Rueckweg des Testergebnisses
 
 Abnahme der Datei tests/testreport.test.ts: das Ergebnis eines Laufs kommt in den Graphen und der Pruefreport wieder heraus. Vorher meldete die Ergebnis-Regel jeden TEST-Knoten als ergebnislos, waehrend die Suite vollstaendig gruen lief.
 
 verify ▶ `REQ-audit-trail` · `REQ-test-runnable-binding` · testRefs: `tests/testreport.test.ts`
 
-### 8.123  `TEST-thresholds-from-config` — Schwelle als Knopf, nicht als Literal
+### 8.124  `TEST-thresholds-from-config` — Schwelle als Knopf, nicht als Literal
 
 Zwei Repos, identischer Graph, verschieden nur in graphcode.config.jsonc; assertiert das gekippte Urteil bei identischer Messung.
 
 verify ▶ `REQ-thresholds-from-config` · testRefs: `tests/config.test.ts`
 
-### 8.124  `TEST-token-efficiency` — Token-Budget-Test
+### 8.125  `TEST-token-efficiency` — Token-Budget-Test
 
 graph_impact-Kontext ist messbar kleiner als ein Volltext-/grep-Dump desselben Scopes (Token-Count-Assertion).
 
 verify ▶ `REQ-benchmark-harness` · `REQ-precise-context` · `REQ-token-efficiency`
 
-### 8.125  `TEST-tool-contract` — Werkzeug-Vertrags-Test
+### 8.126  `TEST-tool-contract` — Werkzeug-Vertrags-Test
 
 Parst die ECHTE Registry aus acht Fabriken an einem echten Harness gegen MCPToolRegistrySchema und den Kontext gegen ToolPortSchema; dazu drei Gegenproben (fehlender handler, inputSchema ohne safeParse, Port ohne serializeToolWrite).
 
 verify ▶ `SCHEMA-mcp-tool` · `SCHEMA-mcp-tool-registry` · `SCHEMA-tool-context` · testRefs: `tests/tool-contract.test.ts`
 
-### 8.126  `TEST-uc-authoring-style` — Stilregel fuer Use Cases als Linter
+### 8.127  `TEST-uc-authoring-style` — Stilregel fuer Use Cases als Linter
 
 Abnahme der Datei tests/se-author-uc.test.ts: die Stilregel ist ausfuehrbar statt Prosa. Hoechstens 25 Woerter, hoechstens zwei Fachbegriffe, jeder davon an einem Knoten geerdet, geprueft auch gegen den committeten Graphen.
 
 verify ▶ `REQ-interactive-capture-suggest` · testRefs: `tests/se-author-uc.test.ts`
 
-### 8.127  `TEST-upgrade` — Abnahme des upgrade-Verbs
+### 8.128  `TEST-upgrade` — Abnahme des upgrade-Verbs
 
 Abnahme der Datei tests/upgrade.test.ts: die Reihenfolge macht den Befehl aus. Erst installieren, dann die Artefakte vom NEU installierten Build schreiben lassen, dann den alten Host beenden. Bleibt ein Schritt aus, steht das im Bericht statt als stiller Erfolg. npm und Signale sind injiziert, kein Netz.
 
 verify ▶ `REQ-install-idempotent` · `REQ-repo-update` · testRefs: `tests/upgrade.test.ts`
 
-### 8.128  `TEST-views-auditor` — Sichten fuer den Auditor
+### 8.129  `TEST-views-auditor` — Sichten fuer den Auditor
 
 Abnahme der Datei tests/views.auditor.test.ts: die Nachweismatrix zeigt, auf welcher Ebene eine Anforderung sitzt, und die Verifikationsmatrix, welcher Test eine Schnittstelle zwischen zwei Funktionen abdeckt. Beides stand im Graphen und war ohne Lauf nicht lesbar.
 
 verify ▶ `REQ-doc-export` · `REQ-readiness-model` · testRefs: `tests/views.auditor.test.ts`
 
-### 8.129  `TEST-views-conformance` — Eine Sicht liest nur Deklariertes
+### 8.130  `TEST-views-conformance` — Eine Sicht liest nur Deklariertes
 
 Abnahme der Datei tests/views.conformance.test.ts: eine Sicht darf nur lesen, was Ontologie und Regeln deklarieren. Die Fehlerklasse dagegen ist die volle Konformitaet auf einer leeren Sicht, also ein gruener Bericht ueber nichts.
 
 verify ▶ `REQ-doc-export` · `REQ-shared-views-no-fork` · testRefs: `tests/views.conformance.test.ts`
 
-### 8.130  `TEST-violation-context` — Reparatur-Kontext am Verstoss
+### 8.131  `TEST-violation-context` — Reparatur-Kontext am Verstoss
 
 Abnahme der Datei tests/mcp.violation-context.test.ts: die Regel-Werkzeuge reichen den Reparatur-Kontext der Contracts durch, statt ihn flachzuklopfen. Wer einen Verstoss aufloest, bekommt Hinweis und Kandidaten aus derselben Antwort, ohne eine zweite Abfrage.
 

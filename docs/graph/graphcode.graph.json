@@ -1695,7 +1695,8 @@
       "id": "CR-GC-571",
       "type": "CR",
       "name": "Smeagol-Check: jede in einem Skill genannte Regel-ID muss im Regelkatalog existieren (18 genannt, 1 erfunden)",
-      "description": "docs/cr/open/CR-GC-571-smeagol-check-jede-in-einem-skill-genann.md"
+      "description": "docs/cr/open/CR-GC-571-smeagol-check-jede-in-einem-skill-genann.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-572",
@@ -5274,8 +5275,8 @@
     {
       "id": "REQ-published-counts-match-code",
       "type": "REQ",
-      "name": "Publizierte Zahlen stimmen mit der lebenden Quelle",
-      "description": "Jede in den publizierten Dokumenten genannte Anzahl von Elementtypen, Verbindungstypen, legalen Verbindungsmustern, Regeln, Readiness-Dimensionen und MCP-Tools wird gegen Ontologie und Tool-Registry geprueft; eine Abweichung nennt Datei, Zeile, erwarteten und gefundenen Wert.",
+      "name": "Publizierte Angaben stimmen mit der lebenden Quelle",
+      "description": "Jede in den publizierten Dokumenten und Skills genannte ANZAHL von Elementtypen, Verbindungstypen, legalen Verbindungsmustern, Regeln, Readiness-Dimensionen und MCP-Tools sowie jede genannte REGEL-ID wird gegen Ontologie, Regelkatalog und Tool-Registry geprueft; eine Abweichung nennt Datei, Zeile, erwarteten und gefundenen Wert. Die Regel-IDs gehoeren dazu, weil eine erfundene Regel dieselbe Klasse ist wie eine falsche Zahl: eine Behauptung ueber die lebende Quelle, die niemand nachhaelt — drei von zwanzig waren es, als zum ersten Mal jemand nachsah. (Regel-IDs ergaenzt CR-GC-571)",
       "kinds": [
         "non-functional"
       ]
@@ -8171,6 +8172,23 @@
           "level": "conformance",
           "result": "passed",
           "ranAt": "2026-08-22T04:18:35.000Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-skill-rule-ids",
+      "type": "TEST",
+      "name": "Abnahme: keine erfundenen Regel-IDs in Skills und Prompts",
+      "description": "Prueft, dass jede Regel-ID, die ein Skill oder der Rundenprompt nennt, im Katalog ALL_RULE_DEFS steht — Skill-Dateien, RULE_CLAUSE-Schluessel, gerenderte Klauseltexte, Dimensions-Vorlagen, System-Prompt und Nachfass-Text. Praefixe und IDs kommen aus dem Katalog, nicht aus einer gepflegten Liste. Gefunden hat der erste Lauf drei erfundene Nennungen gestrichener Regeln. Prueft die EXISTENZ, nicht die Wahrheit der Aussage ueber die Regel. (CR-GC-571)",
+      "status": "done",
+      "method": "test",
+      "level": "unit",
+      "testRefs": [
+        {
+          "file": "tests/skill-rule-ids.test.ts",
+          "tool": "vitest",
+          "level": "unit",
+          "result": "passed"
         }
       ]
     },
@@ -11737,6 +11755,31 @@
     {
       "source": "CR-GC-569",
       "target": "UC-reduced-llm",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-571",
+      "target": "FUNC-author-uc",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-571",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-571",
+      "target": "FUNC-se-fmea",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-571",
+      "target": "FUNC-view-fmea",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-571",
+      "target": "REQ-published-counts-match-code",
       "type": "relation"
     },
     {
@@ -19134,6 +19177,11 @@
       "type": "verify"
     },
     {
+      "source": "TEST-skill-rule-ids",
+      "target": "REQ-published-counts-match-code",
+      "type": "verify"
+    },
+    {
       "source": "TEST-skills-mcp",
       "target": "REQ-doc-export",
       "type": "verify",
@@ -19935,5 +19983,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 341
+  "graphVersion": 343
 }

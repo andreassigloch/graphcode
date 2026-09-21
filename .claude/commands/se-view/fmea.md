@@ -9,8 +9,8 @@ Render the **FMEA** from the live governed graph — graphcode has no view endpo
 1. `graph_elements` `{ "type": "REQ" }` — every requirement. Keep the risk-bearing ones: `kinds` contains `"risk"`, `"mitigation"`, or `"negative"`, OR `attributes.severity`/`occurrence`/`detection` is set.
 2. `graph_get_edges` `{ "edgeType": "satisfy" }` — the responsible FUNC for each risk/mitigation REQ (FUNC→REQ): which function owns the hazard.
 3. `graph_get_edges` `{ "edgeType": "verify" }` — TEST→REQ links: is each risk REQ verified (R-01)? An unverified risk REQ is an open hazard.
-4. `rules_get_violations` `{ "severity": "error" }` — R-01 (risk REQ without verify) and R-03 (ASIL isolation) are the canonical risk-blocker signals.
-5. `graph_readiness` → `compliance.score` for the overall risk-clean fraction, and `violationsByRule` for the R-01/R-03 counts.
+4. `rules_get_violations` `{ "severity": "error" }` — R-01 (risk REQ without verify) and FM-03 (high-risk REQ without verification) are the canonical risk-blocker signals.
+5. `graph_readiness` → `compliance.score` for the overall risk-clean fraction, and `violationsByRule` for the R-01/FM-03 counts.
 
 Present a structured summary:
 
@@ -22,7 +22,7 @@ For each `risk` REQ, name its mitigating `mitigation` REQ(s) (linked via the sam
 
 ## 3. Abdeckung & Readiness
 - Risk REQs verified (have a `verify` edge) vs. unverified (R-01 gaps from step 4).
-- Overall risk-clean readiness: `compliance.score` as a percentage, plus the R-01 / R-03 counts from `violationsByRule`.
+- Overall risk-clean readiness: `compliance.score` as a percentage, plus the R-01 / FM-03 counts from `violationsByRule`.
 
 ## 4. Risikomatrix
 A Mermaid `graph LR` linking each High/Medium-AP risk REQ to its responsible FUNC and its mitigation REQ. Keep node labels free of `(`, `)`, and `|` — those blank the whole diagram; use the uid or a plain-text name.
