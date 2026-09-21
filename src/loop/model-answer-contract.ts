@@ -71,8 +71,12 @@ export const BackendFailure = z
 
 /** Draht-Form der Anthropic-Messages-API. */
 export const AnthropicWireAnswer = z.object({
+  // `looseObject`, nicht `object` (CR-GC-572): die Bloecke gehen als `assistantMsg`
+  // woertlich zurueck an den Anbieter. `z.object` strich `thinking`/`signature` weg, und
+  // die API lehnte jeden zweiten Turn ab — dieselbe Klasse wie CR-GC-554 im openai-Zweig.
+  // Validiert wird, was wir LESEN; der Rest gehoert dem Anbieter und bleibt unberuehrt.
   content: z.array(
-    z.object({
+    z.looseObject({
       type: z.string(),
       id: z.string().optional(),
       name: z.string().optional(),
