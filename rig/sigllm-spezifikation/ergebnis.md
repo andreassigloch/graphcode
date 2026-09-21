@@ -660,3 +660,57 @@ Entscheidung ändern — egal welches Modell, egal welcher Arm.
 Der Executor-Umweg hat fünf echte Produktdefekte gefunden und behoben, ohne den
 Produktpfad zu beschädigen. Die Frage, mit der alles begann, beantwortet er nicht — sie
 liegt in `se:generate`, Schritt 5, und dort seit dem ersten Lauf.
+
+---
+
+# Rewind — Opus' eigenen Vorschlag bestätigt
+
+Dieselbe Sitzung per `--resume` fortgesetzt, mit der Antwort, die ein Auftraggeber gibt:
+*„Ja, mach weiter wie vorgeschlagen, alle drei Schritte. Zu Punkt 4: unterwegs pausiert
+der Nachtbetrieb."* 28 Turns, 6:49 Minuten, $8,32.
+
+## Was passiert ist
+
+| Schritt | Ergebnis |
+|---|---|
+| Punkt 4 nachziehen | zwei REQ+TEST, an `FUNC-termine-wecken` gehängt — `auto-apply`, null Verstöße |
+| **`se:optimize`** | **`graph_suggest` gerufen — ein Kandidat, `applicable: false`. Nichts angewandt.** |
+| `se-trade` | `CR-001` Laufzeitumgebung: llama.cpp gewählt, mlx-lm Herausforderer, Ollama verworfen — mit vier Quellen |
+| `se-plan` | 4 Meilensteine, 19 CRs, `relation` 39 → 87; eine echte Vorwärtsabhängigkeit gefunden und benannt |
+
+Graph danach: 229 Elemente, Compliance weiter 1,0. Fünf Mutationen, alle `authored`,
+`suggestion-template` weiterhin **0**.
+
+## Die Antwort auf „was tut graph_suggest vor dem Handoff?"
+
+**Nichts.** Auf dem Opus-Graphen liefert es — vorab gemessen, read-only — genau einen Vorschlag
+ohne Kante mit Delta `[0 0 0 0 0 0]`, und in der Sitzung denselben als `applicable: false`.
+Opus' Begründung, warum der schlechteste Fund (`BW-02`, Steering 0,50) nicht mechanisch lösbar
+ist, ist richtig: *„eine Zwischenebene ändert die Verträge an der Außengrenze nicht, weil
+dieselben Blätter innen bleiben."* Das ist eine Inhaltsentscheidung, keine Kante.
+
+Damit ist die Sorge „schädlich vor dem Handoff" gegenstandslos — und die Hoffnung „hilfreich
+vor dem Handoff" ebenso. Die elf Vorlagen decken Operator-Regeln; auf einem Graphen mit
+Compliance 1,0 feuert keine davon, und die STEER-Regeln (RD-04, BW-02, R-04, CR-01, MT-02)
+haben **keine** Vorlage. Der Handoff-Riegel hat nie etwas zurückgehalten, weil es nichts
+zurückzuhalten gab. ITEM-2026-394 bleibt richtig, ändert aber nichts am Ergebnis: die
+Vorlagen greifen nicht, weil sie für die Funde, die am Ende übrig sind, nicht existieren.
+
+## Prompt-Effizienz, in einer Zahl
+
+| | Sitzung 1 | Rewind |
+|---|---:|---:|
+| Turns | 56 | 28 |
+| Eingabetoken gesamt | 7,69 M | 7,66 M |
+| davon Cache-Lesung | 95,1 % | 91,8 % |
+| davon ungecacht | 8.846 (0,1 %) | 2.105 (0,03 %) |
+| **je Turn** | **137 k** | **274 k** |
+| Kosten | $9,27 | $8,32 |
+
+Der Rewind hat halb so viele Turns und kostet fast dasselbe: **jeder Turn liest die ganze
+Sitzung neu.** Der feste Anteil — `GRAPHCODE.md` 14,9 k Zeichen, `se:generate` 2,2 k,
+Werkzeugkatalog ~25 k — ist gegen das mitwachsende Transkript klein. Was den Kontext füllt,
+sind Werkzeugantworten: Dry-Run-Verdicts, Readiness-Arrays, Guide-Slices. Wie viel davon je
+Turn, sagt `--output-format json` nicht — dafür braucht der Arm `stream-json` (ITEM-2026-395).
+Bis dahin ist die ehrliche Aussage: **$17,59 und 15,4 M Eingabetoken für 229 Elemente**, davon
+99,9 % Wiederlesen.
