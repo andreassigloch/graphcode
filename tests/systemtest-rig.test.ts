@@ -300,3 +300,98 @@ describe('Der Arbeitsbereich ist ein eigenes Repo (CR-GC-580)', () => {
     }
   });
 });
+
+describe('Steuerungsauswertung im Bericht (CR-GC-585)', () => {
+  // Ein Lauf in Kurzform, als echter stream-json auf Platte. Jede Zahl unten ist von Hand
+  // aus dieser Folge abzaehlbar.
+  const use = (id: string, name: string, input: unknown) =>
+    ({ type: 'assistant', message: { id: `m-${id}`, content: [{ type: 'tool_use', id, name, input }] } });
+  const res = (id: string, content: unknown) =>
+    ({ type: 'user', message: { content: [{ type: 'tool_result', tool_use_id: id, content: typeof content === 'string' ? content : JSON.stringify(content) }] } });
+  const GC = 'mcp__graphcode__';
+  const strom = [
+    use('t1', 'Skill', { skill: 'se:generate' }), res('t1', 'ok'),
+    use('t2', 'Read', { file_path: '/ws/GRAPHCODE.md' }), res('t2', 'x'.repeat(100)),
+    use('t3', 'Read', { file_path: '/ws/material/auftrag.md' }), res('t3', 'x'.repeat(50)),
+    use('t4', `${GC}graph_generate`, {}),
+    res('t4', { phase: 'expand', done: false, focusKey: 'uc:UC-01:UC-a', focusTypes: ['UC', 'REQ'], threshold: 0.8, blockingErrors: 2,
+      readiness: [{ dimension: 'uc', score: 0.5 }, { dimension: 'ms', score: null }], phaseReadiness: [{ gate: 'SRR', missing: ['UC-01'] }, { gate: 'PDR', missing: [] }] }),
+    use('t5', `${GC}graph_authoring_guide`, { type: 'REQ' }), res('t5', 'g'.repeat(40)),
+    use('t6', 'Bash', { command: 'grep -rn kinds node_modules/@sigloch/contracts/dist' }), res('t6', 'q'.repeat(30)),
+    use('t7', `${GC}graph_mutate`, { formatE: '## Nodes\n### REQ\n+ REQ-x|a\n### UC\n+ UC-a|b\n' }),
+    res('t7', { success: true, tier: 'suggest', steerAdvisory: { improvement: 0 }, fitAdvisory: { delta: [0], regressions: [] } }),
+    // Dasselbe Ereignis ein zweites Mal im Strom (je Content-Block, CR-GC-567): zaehlt EINMAL.
+    use('t7', `${GC}graph_mutate`, { formatE: '## Nodes\n### REQ\n+ REQ-x|a\n### UC\n+ UC-a|b\n' }),
+    { type: 'assistant', message: { id: 'm-txt', content: [{ type: 'text', text: 'Der Steuerwert steigt, weiter.' }] } },
+    use('t8', `${GC}graph_mutate`, { dryRun: true, formatE: '## Nodes\n### REQ\n+ REQ-y|c\n' }), res('t8', { success: false, tier: 'block' }),
+    use('t9', `${GC}graph_elements`, {}), res('t9', 'e'.repeat(20)),
+    { type: 'result', total_cost_usd: 1, num_turns: 9, duration_ms: 20000,
+      usage: { output_tokens: 500, cache_creation_input_tokens: 1000, cache_read_input_tokens: 20000 } },
+  ];
+  let dir: string;
+  let pfad: string;
+  beforeAll(() => {
+    dir = mkdtempSync(join(tmpdir(), 'gc-steuerung-'));
+    pfad = join(dir, 'claude-stream.jsonl');
+    writeFileSync(pfad, strom.map((z) => JSON.stringify(z)).join('\n') + '\n');
+  });
+  afterAll(() => rmSync(dir, { recursive: true, force: true }));
+
+  it('Kanaele: geliefert, erwaehnt, befolgt — der doppelte Strom-Eintrag zaehlt einmal', async () => {
+    // @ts-expect-error — s.o.
+    const m = await import('../rig/greenfield-systemtest/steuerung.mjs');
+    const k = m.kanalWirkung(m.leseStrom(pfad));
+    expect(k.generate).toEqual({ aufrufe: 1, beurteilt: 1, befolgt: 1, wiederholt: 0 });
+    expect(k.gateBlock).toBe(1);
+    expect(k.proben).toBe(1);
+    expect(k.guide).toBe(1);
+    expect(k.skills).toEqual(['se:generate']);
+    expect(k.steerAdvisory).toEqual({ geliefert: 1, erwaehnt: 1 });
+    expect(k.fitAdvisory.geliefert).toBe(1);
+    expect(k.workOrder).toEqual({ geliefert: 0, erwaehnt: 0 });
+  });
+
+  it('Zeitlinie: UC ohne vorherigen Guide ist ungefuehrt, die Probe folgt ohne frischen Fokus', async () => {
+    // @ts-expect-error — s.o.
+    const m = await import('../rig/greenfield-systemtest/steuerung.mjs');
+    const z = m.zeitlinie(m.leseStrom(pfad));
+    expect(z.typBatches).toBe(2);
+    expect(z.ungeführt).toBe(1);
+    expect(z.mutationenOhneFrischenFokus).toEqual({ n: 1, von: 1 });
+    expect(z.ersterSkill).toBe(0);
+  });
+
+  it('Navigation: Auftrag und Doku zaehlen nicht gegen den Graphen, Werkzeug-Quelltext schon', async () => {
+    // @ts-expect-error — s.o.
+    const m = await import('../rig/greenfield-systemtest/steuerung.mjs');
+    const n = m.navigation(m.leseStrom(pfad));
+    expect(n.datei).toEqual({ auftrag: 1, doku: 1, sichten: 0, werkzeugQuelle: 1, sonst: 0 });
+    expect(n.zeichen.werkzeugQuelle).toBe(30);
+    expect(n.graph).toBe(2); // guide + elements
+    expect(n.graphAnteil).toBe(0.67);
+  });
+
+  it('Effizienz je Element und Endstand der Freigabe', async () => {
+    // @ts-expect-error — s.o.
+    const m = await import('../rig/greenfield-systemtest/steuerung.mjs');
+    const s = m.leseStrom(pfad);
+    expect(m.effizienz(s.schluss, 10)).toEqual({
+      centJeElement: 10, ausgabeJeElement: 50, cacheSchreibungJeElement: 100,
+      cacheLesungJeElement: 2000, turnsJeElement: 0.9, sekundenJeElement: 2,
+    });
+    expect(m.endstand(s)).toEqual({
+      done: false, phase: 'expand', blockierend: 2, unterSchwelle: ['uc=0.5', 'ms=null'],
+      gateOffen: ['SRR: UC-01'], letzterFokus: 'uc:UC-01:UC-a',
+    });
+  });
+
+  it('der Bericht traegt alle fuenf Abschnitte', async () => {
+    // @ts-expect-error — s.o.
+    const m = await import('../rig/greenfield-systemtest/steuerung.mjs');
+    const md = m.steuerungsBericht([{ label: 'opus5 #0', strom: pfad, elemente: 10 }]);
+    for (const h of ['### Kanaele', '### Zeitlinie', '### Navigation', '### Effizienz je Element', '### Endstand der Freigabe']) {
+      expect(md).toContain(h);
+    }
+    expect(md).toContain('| opus5 #0 |');
+  });
+});

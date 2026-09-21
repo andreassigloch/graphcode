@@ -1791,6 +1791,12 @@
       "description": "docs/cr/open/CR-GC-584-workorder-bei-bindungsquote-0-ist-reines.md"
     },
     {
+      "id": "CR-GC-585",
+      "type": "CR",
+      "name": "Systemtest-Bericht deckt die Steuerung nicht ab: Kanal-Wirkung, Zeitlinie, Navigation Graph vs Datei (grep/glob), Effizienz je Element und Endstand der Freigabe wurden in Runde 7/8 mit Wegwerf-Skripten erhoben — gehoert in report.mjs",
+      "description": "docs/cr/open/CR-GC-585-systemtest-bericht-deckt-die-steuerung-n.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -20065,5 +20071,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 353
+  "graphVersion": 354
 }
