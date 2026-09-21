@@ -42,3 +42,7 @@ docs/views/dashboard.url
 # nirgends. Das .json ist die Maschinenfassung derselben Rechnung (580 KB je Lauf, jede
 # Zeile eine Version) und wird bei jedem Lauf neu erzeugt: Arbeitszustand, kein Repo-Inhalt.
 docs/zugverlauf.json
+
+# Lokale Geheimnisse (ANTHROPIC_API_KEY fuer den Rig-Arm gcrun-frontier) — nie committen.
+.env
+.env.local

@@ -17,6 +17,8 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { mkdtempSync, rmSync, writeFileSync, mkdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 // @ts-expect-error — Rig-Auswertung in .mjs, bewusst ohne Typdeklaration (Messwerkzeug, kein Produkt-API)
 import { leseTurns, pruefeGegenResultzeile, cacheVerursacher, dryRunWirkung } from '../rig/greenfield-systemtest/turn-analyse.mjs';
 // @ts-expect-error — s.o.
@@ -227,5 +229,46 @@ describe('Betriebsmodi der Arme: jeder Arm nennt seine Achsen (CR-GC-572)', () =
     expect(achsenUnterschied('opus5', 'gcrun')).toEqual(['treiber', 'modell']);
     expect(achsenUnterschied('qwen-35b', 'qwen38-claude')).toEqual(['agent']);
     expect(ARM_ACHSEN['gcrun-frontier'].agent).toBeNull();
+  });
+});
+
+describe('Der Anthropic-Key kommt aus graphcode/.env — und nur zu dem Arm, der ihn liest', () => {
+  it('readSecrets liest die Datei, ohne process.env anzufassen', async () => {
+    // @ts-expect-error — s.o.
+    const { readSecrets } = await import('../rig/greenfield-systemtest/run.mjs');
+    const dir = mkdtempSync(join(tmpdir(), 'gc-secrets-'));
+    try {
+      const file = join(dir, '.env');
+      writeFileSync(file, '# Kommentar\nRIG_TEST_SECRET=wert-aus-datei\n');
+      expect(readSecrets(file)).toEqual({ RIG_TEST_SECRET: 'wert-aus-datei' });
+      expect(process.env.RIG_TEST_SECRET).toBeUndefined();
+      expect(readSecrets(join(dir, 'fehlt.env'))).toEqual({});
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('claude -p erbt keinen ANTHROPIC_API_KEY — sonst liefe opus5 still auf API-Abrechnung', async () => {
+    // @ts-expect-error — s.o.
+    const { claudeEnv } = await import('../rig/greenfield-systemtest/run.mjs');
+    const shell = { PATH: '/bin', ANTHROPIC_API_KEY: 'sk-test', ANTHROPIC_BASE_URL: 'http://x' };
+    const frontier = claudeEnv({ local: false }, shell);
+    expect(frontier.ANTHROPIC_API_KEY).toBeUndefined();
+    expect(frontier.ANTHROPIC_BASE_URL).toBeUndefined();
+    expect(frontier.PATH).toBe('/bin');
+    const lokal = claudeEnv({ local: true }, shell);
+    expect(lokal.ANTHROPIC_API_KEY).toBeUndefined();
+    expect(lokal.ANTHROPIC_AUTH_TOKEN).toBe('lmstudio-local');
+    // Die Shell selbst bleibt unberuehrt.
+    expect(shell.ANTHROPIC_API_KEY).toBe('sk-test');
+  });
+
+  it('.env ist gitignored, .env.example nicht', () => {
+    const root = fileURLToPath(new URL('..', import.meta.url));
+    const ignored = (f: string) =>
+      spawnSync('git', ['check-ignore', '-q', f], { cwd: root }).status === 0;
+    expect(ignored('.env')).toBe(true);
+    expect(ignored('.env.local')).toBe(true);
+    expect(ignored('.env.example')).toBe(false);
   });
 });
