@@ -1678,6 +1678,42 @@
       "description": "docs/cr/open/CR-GC-569-betriebsmodi-sind-nicht-modelliert-ein-a.md"
     },
     {
+      "id": "CR-GC-570",
+      "type": "CR",
+      "name": "Gate-Antwort ist 70% des Werkzeug-Payloads: 487 Violations in 23 Antworten, 51% Wiederholung, 0 davon gating",
+      "description": "docs/cr/open/CR-GC-570-gate-antwort-ist-70-des-werkzeug-payload.md"
+    },
+    {
+      "id": "CR-GC-571",
+      "type": "CR",
+      "name": "Smeagol-Check: jede in einem Skill genannte Regel-ID muss im Regelkatalog existieren (18 genannt, 1 erfunden)",
+      "description": "docs/cr/open/CR-GC-571-smeagol-check-jede-in-einem-skill-genann.md"
+    },
+    {
+      "id": "CR-GC-572",
+      "type": "CR",
+      "name": "Executor-Arm auf backend=anthropic — der auto-Modus unterscheidet sich dann vom manuellen NUR im Treiber",
+      "description": "docs/cr/open/CR-GC-572-executor-arm-auf-backend-anthropic-der-a.md"
+    },
+    {
+      "id": "CR-GC-573",
+      "type": "CR",
+      "name": "Fuenf Prompt-Autoritaeten in EINEM FUNC-generation-step: SEED_STAGES, DIMENSION_FOCUS_TYPES, GENERATION_TEMPLATE, RULE_CLAUSE, GATE_PROTOCOL sind unmodelliert",
+      "description": "docs/cr/open/CR-GC-573-fuenf-prompt-autoritaeten-in-einem-func-.md"
+    },
+    {
+      "id": "CR-GC-574",
+      "type": "CR",
+      "name": "Das Rig ist der Systemtest und fehlt im Modell: kein TEST-/FCHAIN-Knoten fuer Lauf, Metrik, Pruefliste und Turn-Analyse",
+      "description": "docs/cr/open/CR-GC-574-das-rig-ist-der-systemtest-und-fehlt-im-.md"
+    },
+    {
+      "id": "CR-GC-575",
+      "type": "CR",
+      "name": "Eine erklaerte Rangfolge der Steuerungskanaele statt verstreuter if/else — heute muss jeder Konflikt gemessen werden",
+      "description": "docs/cr/open/CR-GC-575-eine-erklaerte-rangfolge-der-steuerungsk.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -19203,5 +19239,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 321
+  "graphVersion": 327
 }
