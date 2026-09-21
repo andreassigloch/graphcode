@@ -1,6 +1,6 @@
 # CR-GC-582: graph_generate erreicht im Greenfield nie done=true: Endspiel haengt an AF-01/03 (Frischestempel), BQ-02, FM-01, CR-R03 — der Agent beendet nach eigenem Urteil, im Webapp-Korpus Schleife bis Timeout (runde7, 4/4 Laeufe)
 
-**Status:** ✅ Umgesetzt und am Bestaetigungslauf gemessen
+**Status:** ✅ Done (2026-09-21)
 **Typ:** aus Item ITEM-2026-430 (finding)
 **Erstellt:** 2026-09-21
 **Item:** bok/items/ITEM-2026-430.json (Lane: graph)
