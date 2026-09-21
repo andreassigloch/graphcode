@@ -1,6 +1,6 @@
 # CR-GC-580: Rig-Workspace ist kein eigenes Git-Repo: claude -p (skip-permissions) committet per git add -A ins graphcode-Repo (runde7 opus5-6, selbst zurueckgesetzt) — initWorkspace braucht git init
 
-**Status:** 🟠 Umgesetzt, Bestaetigungslauf offen
+**Status:** ✅ Umgesetzt und am Bestaetigungslauf gemessen
 **Typ:** aus Item ITEM-2026-428 (bug)
 **Erstellt:** 2026-09-21
 **Item:** bok/items/ITEM-2026-428.json (Lane: graph)
@@ -30,4 +30,13 @@ Abnahme `tests/systemtest-rig.test.ts`: ein umgebendes Repo, darin ein Arbeitsbe
 | # | Kriterium | Ergebnis |
 |---|---|---|
 | 1 | Test stellt den Unfall nach und ist gruen | erfuellt |
-| 2 | Bestaetigungslauf: kein Commit im graphcode-Repo waehrend des Laufs | offen |
+| 2 | Bestaetigungslauf: kein Commit im graphcode-Repo waehrend des Laufs | erfuellt |
+
+## 4 Bestaetigung
+
+Bestaetigungslauf `opus5-9` (2026-09-21, sigllm-Prosa, Claude Code, 1 Lauf): 265 Elemente, Konformitaet 1,0, 10,85 $, 22 min.
+
+Der Agent committete zweimal — beide Commits liegen im Arbeitsbereich (`2e11807`, `70567bc`),
+der graphcode-HEAD blieb `17f2cf3` vor und nach dem Lauf.
+
+**Kongruenz:** RC-* nicht aus dieser Session geprueft — benannte Ausnahme wie bei CR-GC-570.
