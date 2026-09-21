@@ -10,7 +10,8 @@
  * antwortete mit `Jinja Exception: Unexpected message role.`, Turn .2 jeder Runde
  * scheiterte, 0 Mutationen ueber 3 Runden.
  *
- * Der sigllm- und der anthropic-Zweig bauen ihre Nachricht selbst und waren nie betroffen.
+ * Der sigllm-Zweig baut seine Nachricht selbst. Der anthropic-Zweig galt als nie betroffen —
+ * er war es doch, an den Thinking-Bloecken (CR-GC-572, executor.anthropic-roundtrip.test.ts).
  * Diese Abnahme haelt die dritte Bauform auf derselben Linie.
  *
  * @author andreas@siglochconsulting
