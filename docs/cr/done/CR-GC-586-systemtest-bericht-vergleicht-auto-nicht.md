@@ -1,6 +1,6 @@
 # CR-GC-586: Systemtest-Bericht vergleicht Auto nicht mit Hand: Trajektorie nach Review-18 (Steuerwert/Anker-Bewegung, Anker-Standzeiten, Modularitaet, Quoten je Zug aus dem Audit) und Profil gegen das Golden liefen nur als Scratch-Skripte — der handgefuehrte Lauf ist der Bezugspunkt
 
-**Status:** ✅ Umgesetzt
+**Status:** ✅ Done (2026-09-21)
 **Typ:** aus Item ITEM-2026-435 (finding)
 **Erstellt:** 2026-09-21
 **Item:** bok/items/ITEM-2026-435.json (Lane: graph)
