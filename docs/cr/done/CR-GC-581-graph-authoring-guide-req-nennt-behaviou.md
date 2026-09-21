@@ -1,6 +1,6 @@
 # CR-GC-581: graph_authoring_guide REQ nennt 'behavioural/structural kinds' ohne Werte und Syntax, UC-05/06 verlangen kinds:[postcondition] — opus5 durchsucht dafuer den Quellcode (runde7: 6/12/31 Suchen, bis 59k Zeichen)
 
-**Status:** ✅ Umgesetzt und am Bestaetigungslauf gemessen
+**Status:** ✅ Done (2026-09-21)
 **Typ:** aus Item ITEM-2026-429 (finding)
 **Erstellt:** 2026-09-21
 **Item:** bok/items/ITEM-2026-429.json (Lane: graph)
