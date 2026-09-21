@@ -7,6 +7,7 @@
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { leseTurns, cacheVerursacher, dryRunWirkung } from './turn-analyse.mjs';
 import { steuerungsBericht } from './steuerung.mjs';
+import { vergleichBericht } from './trajektorie.mjs';
 import { ARM_ACHSEN, achsenUnterschied } from './run.mjs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -230,6 +231,19 @@ if (mitDeckung.length) {
     .map((r) => ({ label: `${r.arm} #${r.run}`, strom: join(HERE, 'runs', `${r.arm}-${r.run}`, 'claude-stream.jsonl'), elemente: r.elements }))
     .filter((l) => existsSync(l.strom));
   if (laeufe.length) console.log('\n' + steuerungsBericht(laeufe) + '\n');
+}
+
+// CR-GC-586 — Auto gegen Hand. GOLDEN ist ein Berichtsparameter wie RESULTS_FILE (die Korpus-env
+// setzt ihn); der Hand-Trail liegt als referenz-trail.jsonl daneben. Jeder Arm mit Audit zaehlt.
+{
+  const laeufe = rows
+    .filter((r) => !r.error)
+    .map((r) => {
+      const dir = join(HERE, 'runs', `${r.arm}-${r.run}`);
+      return { label: `${r.arm} #${r.run}`, audit: join(dir, 'audit.jsonl'), graph: join(dir, 'graph.json') };
+    })
+    .filter((l) => existsSync(l.audit));
+  if (laeufe.length) console.log('\n' + vergleichBericht(laeufe, process.env.GOLDEN) + '\n');
 }
 
 console.log('\n## Limits (quote these with the numbers)\n');
