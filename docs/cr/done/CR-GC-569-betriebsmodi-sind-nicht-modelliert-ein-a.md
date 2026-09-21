@@ -1,6 +1,6 @@
 # CR-GC-569: Die Betriebsmodi modellieren — wer treibt, und wer liefert die Antwort
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-21)
 **Typ:** aus Item ITEM-2026-414 (finding)
 **Erstellt:** 2026-09-21
 **Item:** bok/items/ITEM-2026-414.json (Lane: graph)
