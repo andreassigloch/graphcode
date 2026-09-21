@@ -1,6 +1,6 @@
 # CR-GC-567: Tokenverbrauch je Turn, und welches Werkzeug ihn verursacht
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-21)
 **Typ:** aus Item ITEM-2026-395 (idea)
 **Erstellt:** 2026-09-21
 **Item:** bok/items/ITEM-2026-395.json (Lane: graph)
@@ -116,3 +116,56 @@ Gegen die vorhandenen Laeufe (ohne Strom, deshalb nur die Audit-Haelfte):
 
 Die Cache-Spalten bleiben leer, bis ein Lauf mit `stream-json` vorliegt — Kriterium 1 und 2
 sind erst danach abnehmbar.
+
+## 4c Erster Lauf mit Strom (`runs/opus5-5`) — und ein Fehler in der Auswertung
+
+Kriterium 2 hat sofort zugeschlagen: die Stromsumme war **das Doppelte** der `result`-Zeile
+(746.749 statt 368.297 Cache-Schreibung). Ursache: eine Assistant-Nachricht erscheint einmal je
+Content-Block im Strom, jedes Mal mit derselben `usage` — 126 Ereignisse, 57 distinkte
+`message.id`. `leseTurns()` fasst jetzt je `message.id` zusammen und nimmt feldweise das
+Maximum; Eingabe, Cache-Lesung und Cache-Schreibung treffen die `result`-Zeile danach **exakt**.
+
+Genau dafuer war das Kriterium da. Ohne es haette jede Zahl unten doppelt dagestanden.
+
+`output_tokens` bleibt ausgenommen: der Strom meldet ihn zum Zeitpunkt des Ereignisses, also
+unfertig (615 gegen 114.568). Er ist je Turn nicht messbar und wird nirgends summiert.
+
+### Wohin das Kontextfenster geht
+
+| Posten | Tokens | Volumen | Kostenanteil (Schreibung ≈ 12,5× Lesung) |
+|---|---:|---:|---:|
+| Cache-Schreibung | 368.297 | 4,0 % | **34 %** |
+| Cache-Lesung | 8.822.112 | 96 % | 65 % |
+| Eingabe ungecacht | 8.843 | 0,1 % | 1 % |
+
+Vier Prozent des Volumens tragen ein Drittel der Eingabekosten. Die Trefferquote zu optimieren
+lohnt nicht — sie liegt schon bei 96 %; es lohnt, **weniger Cache zu entwerten**.
+
+### Wer entwertet ihn
+
+| vorausgegangenes Werkzeug | Cache-Schreibung | Anteil |
+|---|---:|---:|
+| `graph_mutate` | 175.374 | **48 %** |
+| `ToolSearch` | 60.093 | 16 % |
+| `Bash` | 42.125 | 11 % |
+| `graph_generate` | 22.701 | 6 % |
+| `graph_authoring_guide` | 14.664 | 4 % |
+
+Die Haelfte geht auf die **Antwort** von `graph_mutate` — Verstoesse, `fixHints`, `workOrder`.
+Jede Mutation haengt sie an den Kontext, und der neue Praefix muss geschrieben werden. Das ist
+der eine Hebel, den diese Messung benennt: nicht was wir dem Modell sagen, sondern was das Gate
+ihm zurueckgibt. Ein Folge-Item traegt das (Umfang der Gate-Antwort), es gehoert nicht in diese CR.
+
+`ToolSearch` mit 60k in EINEM Turn ist der zweite: das nachtraegliche Laden von
+Werkzeug-Schemata kostet einmalig so viel wie zehn Mutationen.
+
+### Dry-Run (Kriterium 4)
+
+12 Previews, 12 Anwendungen, 5 geprobt-und-verworfen → **Quote 0,42**. Damit ist die 0,43 aus
+`opus5-4` kein Einzelwert mehr, sondern in einem zweiten Lauf reproduziert.
+
+### Kein Vergleichswert fuer die Ausbeute
+
+`opus5-5` liefert 150 Elemente bei 1/8 Gates, `opus5-4` 202 bei 4/8. Beide Laeufe sind n = 1,
+und CR-GC-568 beruehrt diesen Arm nicht (`claude -p` ist der MCP-Host, nicht der Executor). Die
+Differenz ist Streuung, kein Effekt — sie wird berichtet, nicht gedeutet.
