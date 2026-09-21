@@ -22,7 +22,7 @@ import type { Graph } from '@sigloch/graph-api-core';
 import { RULE_TO_DIMENSION } from '@sigloch/contracts/se';
 import type { MetricPolicy } from '@sigloch/contracts/se';
 import { takeSteeringSnapshot } from '../kernel/measure/steering-snapshot.js';
-import { currentPhaseGate, PhaseGateReadiness } from '../kernel/measure/readiness.js';
+import { handoffGate, PhaseGateReadiness } from '../kernel/measure/readiness.js';
 import { isIntentTooThin, intentCoverage, type LoadedTargetProfile } from './target-profile.js';
 import { winner } from './channel-rank.js';
 
@@ -107,8 +107,16 @@ const PROTOCOL_NEXT = 'Danach graph_generate erneut aufrufen für den nächsten 
 const GATE_PROTOCOL: Record<GenerationSelection, string> = {
   host:
     PROTOCOL_GUIDE +
+    // CR-GC-583: dieselbe Rangfolge wie `rankCandidates` im Executor. Hier stand bis dahin
+    // "vergleiche tier und fitAdvisory (Δm, regressions)" — der ℝ⁶, den CR-GC-483 fuer den
+    // Executor als Ranking abgesetzt hat, weil er echte Umstrukturierungen Regression nennt.
+    // Gemessen in Runde 7: opus5 verwarf per Δm die RD-04-Zwischenebene und liess 28 Bloecke
+    // auf einer Ebene stehen (Leitlinie Satz 3: Guete ist Verstaendlichkeit, wenige Bloecke je Ebene).
     '(2) Hast du MEHRERE Alternativen, reiche sie zuerst mit dryRun:true ein und vergleiche die ' +
-    'Verdicts — tier (auto-apply > suggest > block) und fitAdvisory (Δm auf layer:arch, regressions). ' +
+    'Verdicts in dieser Rangfolge: block verwerfen; dann steeringDelta der Fokus-Dimension; dann ' +
+    'steerAdvisory.improvement (entschaerft der Zug die schlimmste Stelle, z.B. RD-04 zu viele Bloecke ' +
+    'je Ebene?); dann tier (auto-apply > suggest). fitAdvisory ist nur Bericht und entscheidet nicht — ' +
+    'es nennt echte Umstrukturierungen (eine eingezogene Ebene) Regression. ' +
     'Hast du nur EINEN Batch, reiche ihn direkt OHNE dryRun ein: eine Ablehnung persistiert nichts, ' +
     'die Probe wuerde dir dieselbe Antwort nur ein zweites Mal liefern. ' +
     '(3) Nur den besten Batch OHNE dryRun anwenden; block-Verdicts verwerfen oder revidieren, nie erzwingen. ' +
@@ -117,7 +125,7 @@ const GATE_PROTOCOL: Record<GenerationSelection, string> = {
   driver:
     PROTOCOL_GUIDE +
     '(2) Emittiere EINEN vollständigen Batch — keine eigenen Gate-Proben: der Treiber führt ihn ' +
-    'selbst ans Gate (tier, Δm-fitAdvisory, Element-Ausbeute) und wendet nur an, was dort besteht. ' +
+    'selbst ans Gate (Fokus-Delta, Steuerwert, tier, Element-Ausbeute) und wendet nur an, was dort besteht. ' +
     '(3) ' +
     PROTOCOL_NEXT,
 };
@@ -175,7 +183,7 @@ export const GENERATION_TEMPLATE: Record<string, string> = {
   uc: 'Schlage je Fund 2–3 Kandidaten vor: fehlende ACTORs (Anbindung ACTOR io→FLOW io→FUNC in der FCHAIN des UC), FCHAIN-Szenarien (UC compose FCHAIN) oder fehlende UCs aus der Intention. UC-Stil: Actor–Verb–Objekt–Ergebnis, ≤25 Wörter — die volle Anleitung steht als Block im Rundeninhalt.',
   req: 'Schlage je UC ohne Requirements 3–5 REQ-Kandidaten vor (UC compose REQ), präzise und prüfbar formuliert; emittiere jede neue REQ zusammen mit einem TEST (TEST verify REQ) im selben Batch — eine REQ ohne verify-TEST blockt das Gate (R-01). Löse Platzhalter/Ambiguität in bestehenden REQs auf.',
   arch: 'Zerlege je Fund die FCHAIN/FUNC-Ebene: 7±2 FUNCs pro Zerlegungsebene (RD-04), FLOWs zwischen FUNCs (io). Schlage je Fund 2 alternative FUNC/FCHAIN-Zerlegungen vor — jede neue FUNC zusammen mit satisfy→REQ und allocate→MOD im selben Batch (fehlt die REQ oder das MOD im Graphen, zuerst anlegen). Lass das Gate wählen.',
-  alloc: 'Schlage MOD-Schnitte vor (intern stark, extern schwach gekoppelt) und allocate-Kanten FUNC→MOD; 2 Alternativen, Δm-Vergleich entscheidet.',
+  alloc: 'Schlage MOD-Schnitte vor (intern stark, extern schwach gekoppelt) und allocate-Kanten FUNC→MOD; 2 Alternativen, der Steuerwert entscheidet.',
   ver: 'Schlage je unverifiziertem REQ einen TEST-Kandidaten vor (TEST verify REQ), mit konkretem Prüfschritt in der description.',
   schema: 'Schlage SCHEMA-Definitionen für die FLOWs ohne Schema vor (FLOW relation SCHEMA), eine pro Datenform, wiederverwendet statt dupliziert.',
   cr: 'Lege CR-Knoten für die anstehenden Umbauten an (CR relation FUNC/MOD, status/commitRef nach Abschluss).',
@@ -263,7 +271,8 @@ export function generationStep(
   // CR-GC-296: RULE_TO_PHASE-Achse aus demselben Regelstrom — die zweite,
   // strengere Handoff-Bedingung neben Schwelle + blockingErrors (s.u.). Seit CR-GC-502
   // rechnet sie der Snapshot, generationStep liest sie nur.
-  const openGate = currentPhaseGate(phaseReadiness);
+  // CR-GC-582: ohne die Steuerregeln — die gehoeren der Phase NACH der Freigabe.
+  const openGate = handoffGate(phaseReadiness);
 
   // --- Phase seed: noch kein System im Graphen -----------------------------
   if (!sys) {
