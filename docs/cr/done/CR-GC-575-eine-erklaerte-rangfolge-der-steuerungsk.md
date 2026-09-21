@@ -1,6 +1,6 @@
 # CR-GC-575: Erst Bloat streichen, dann eine erklaerte Rangfolge der Kanaele
 
-**Status:** ✅ Abgeschlossen 2026-09-21 — Rangfolge steht, Ausbeute gemessen, Streichen bewusst ersetzt
+**Status:** ✅ Done (2026-09-21)
 **Typ:** aus Item ITEM-2026-417 (idea)
 **Erstellt:** 2026-09-21
 **Item:** bok/items/ITEM-2026-417.json (Lane: graph)
