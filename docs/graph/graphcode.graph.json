@@ -1672,6 +1672,12 @@
       "description": "docs/cr/open/CR-GC-568-executor-system-prompt-verbietet-den-dry.md"
     },
     {
+      "id": "CR-GC-569",
+      "type": "CR",
+      "name": "Betriebsmodi sind nicht modelliert: ein ACTOR-agent fuer beide Treiber, UC-reduced-llm vermischt Modell und Treiber, kein SCHEMA fuer die Lauf-Konfiguration",
+      "description": "docs/cr/open/CR-GC-569-betriebsmodi-sind-nicht-modelliert-ein-a.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -19197,5 +19203,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 320
+  "graphVersion": 321
 }
