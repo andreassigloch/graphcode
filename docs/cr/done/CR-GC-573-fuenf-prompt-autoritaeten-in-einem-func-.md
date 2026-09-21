@@ -1,6 +1,6 @@
 # CR-GC-573: Die Steuerungskanaele sichtbar machen — fuenf Schreiber in einem Knoten
 
-**Status:** 🟠 In Umsetzung
+**Status:** ✅ Done (2026-09-21)
 **Typ:** aus Item ITEM-2026-415 (finding)
 **Erstellt:** 2026-09-21
 **Item:** bok/items/ITEM-2026-415.json (Lane: graph)
