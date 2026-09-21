@@ -73,3 +73,45 @@ Pick the best-fit graph **together** (human), author its implementation plan
 through the gate, then run the coding round — executors `qwen-35b` and `devstral`
 (the non-reasoning coder is the probe: can precise structure de-skill the coder
 into producing a green build?). Not scripted here yet.
+
+## Betriebsmodi der Arme (CR-GC-572)
+
+Ein Arm unterscheidet sich vom naechsten in bis zu drei Achsen. `ARM_ACHSEN` in
+`run.mjs` traegt sie, `report.mjs` zeigt sie und rechnet paarweise aus, in wie vielen
+Achsen sich zwei Arme unterscheiden:
+
+| Arm | wer treibt | Modell | Agent-Harness |
+|---|---|---|---|
+| `qwen-35b` | Agent | lokal | opencode |
+| `qwen38-claude` | Agent | lokal | claude-code |
+| `opus5` | Agent | frontier | claude-code |
+| `gcrun` | Executor | lokal | entfaellt |
+| `gcrun-frontier` | Executor | frontier | entfaellt |
+
+`agent: null` heisst **entfaellt**, nicht unbekannt: treibt der Executor, gibt es keinen
+fremden Agenten, und seine Abwesenheit IST die Treiber-Differenz — keine zweite Variable
+daneben. Unter den agent-getriebenen Armen ist der Agent sehr wohl eine Achse
+(`qwen-35b` gegen `qwen38-claude`).
+
+Warum das zaehlt: `opus5` gegen `gcrun` unterscheidet sich in **zwei** Achsen zugleich
+(Treiber und Modell). Jede Aussage dieser Paarung ueber "die Steuerung" ist damit
+konfundiert. `gcrun-frontier` schliesst die Luecke — gegen `opus5` unterscheidet er sich
+in **genau einer**: wer die Schleife treibt.
+
+### Den Frontier-Executor fahren
+
+```bash
+export ANTHROPIC_API_KEY=…            # nur Umgebung, nie eine Repo-Datei
+ARMS=gcrun-frontier,opus5 RUNS=3 node run.mjs
+node report.mjs
+```
+
+**Kosten:** ~9 $/Lauf (Erfahrungswert `opus5`). Deshalb faehrt der Arm **nur auf
+namentliche Nennung** in `ARMS` — ein blosses `node run.mjs` laesst ihn aus. Fehlt der
+Key, bricht der Lauf ab, bevor irgendetwas startet. `GCRUN_FRONTIER_MAX_ROUNDS` (Default
+8) und `maxStepTurns` begrenzen zusaetzlich; ein Ausreisser kostet kein Vielfaches.
+
+Der Key ist die **Leitung, nicht der Unterschied**: `claude -p` ist ein Agent (eigener
+System-Prompt, Kontext-Management, Kompaktierung, Skills), `graphcode run` ist unsere
+Schleife (Rundenprompt aus `graph_generate`, kuratiertes Toolset, vorenthaltene Werkzeuge,
+Preflight, Gate-Reparatur). Gleiches Modell, gleiche MCP-Werkzeuge, andere Schleife.

@@ -6900,7 +6900,7 @@ schema ◀ `FLOW-systemtest-artifacts`
 
 ### 5.49  `SCHEMA-systemtest-order` — Systemtest-Auftrag
 
-Was ein Durchlauf braucht, bevor er faehrt: Arme, Laufzahl und Startindex, Auftragstext, Seed-System, Materialverzeichnis, Golden-Graph, Pruefliste, Zeitdeckel, Ergebnisdatei. Reist als Umgebung, nicht als Datei — deshalb concept-only: ein Zod-Symbol gibt es nicht und soll es nicht geben, solange der Aufbau ein Messwerkzeug ist. (CR-GC-574)
+Was ein Durchlauf braucht, bevor er faehrt: Arme, Laufzahl und Startindex, Auftragstext, Seed-System, Materialverzeichnis, Golden-Graph, Pruefliste, Zeitdeckel, Ergebnisdatei. Je Arm zusaetzlich die drei Betriebsmodus-Achsen — wer treibt, welches Modell, welcher Agent-Harness —, damit ein Bericht benennen kann, worin sich zwei Arme unterscheiden; ein Arm, der den Modell-Endpunkt bezahlt, faehrt nur auf namentliche Nennung. Reist als Umgebung, nicht als Datei — deshalb concept-only: ein Zod-Symbol gibt es nicht und soll es nicht geben, solange der Aufbau ein Messwerkzeug ist. (CR-GC-574, Achsen CR-GC-572)
 
 schema ◀ `FLOW-systemtest-order`
 

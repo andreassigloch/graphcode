@@ -572,6 +572,10 @@
 | `CR-GC-571` | relation | `FUNC-se-fmea` |
 | `CR-GC-571` | relation | `FUNC-view-fmea` |
 | `CR-GC-571` | relation | `REQ-published-counts-match-code` |
+| `CR-GC-572` | relation | `FUNC-call-model` |
+| `CR-GC-572` | relation | `FUNC-systemtest-report` |
+| `CR-GC-572` | relation | `FUNC-systemtest-run` |
+| `CR-GC-572` | relation | `REQ-one-driver-local-and-frontier` |
 | `CR-GC-573` | relation | `FUNC-authoring-guide` |
 | `CR-GC-573` | relation | `FUNC-build-round-injection` |
 | `CR-GC-573` | relation | `FUNC-generation-step` |

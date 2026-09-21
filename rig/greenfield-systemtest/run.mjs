@@ -23,7 +23,7 @@ const GC_ROOT = join(HERE, '..', '..');
 const MCP_ARGS = [join(GC_ROOT, 'dist', 'cli.js'), 'mcp']; // local dist, not npx-published
 
 // --- CONFIG (edit before running; no silent fallbacks) --------------------------
-const CFG = {
+export const CFG = {
   claudeBin: process.env.CLAUDE_BIN ?? 'claude',
   opencodeBin: process.env.OPENCODE_BIN ?? 'opencode',
   runs: Number(process.env.RUNS ?? 3),
@@ -78,8 +78,71 @@ const CFG = {
       // Best-of-N: >1 schaltet den dryRun-Kanal ein (CR-GC-568). Default 1 = der
       // Ein-Kandidaten-Pfad, der nicht probt — drei Laeufe lang gemessene Null.
       candidates: process.env.GCRUN_CANDIDATES ?? '1' },
+    // VIERTER ARM (CR-GC-572): derselbe Treiber wie `gcrun`, aber am Frontier-Modell.
+    //
+    // Die Belegung der Betriebsmodi hatte ein leeres Feld: Mensch-treibt gab es lokal
+    // UND frontier, Executor-treibt nur lokal. `opus5` gegen `gcrun` variierte deshalb
+    // DREI Achsen zugleich (Treiber, Agent, Modell) — jede Aussage dieser Messreihe
+    // ueber "die Steuerung" war dreifach konfundiert, und das war der Grund fuer zwoelf
+    // Laeufe im Kreis. Gegen `opus5` unterscheidet sich dieser Arm in genau EINER Achse:
+    // wer die Schleife treibt.
+    //
+    // Der Key ist die Leitung, nicht der Unterschied: `claude -p` ist ein AGENT (eigener
+    // System-Prompt, Kontext-Management, Kompaktierung, Skills), der Executor ist UNSERE
+    // Schleife (Rundenprompt aus graph_generate, kuratiertes Toolset, vorenthaltene
+    // Werkzeuge, Preflight, Gate-Reparatur). Gleiches Modell, gleiche MCP-Werkzeuge,
+    // andere Schleife.
+    //
+    // KOSTEN-RIEGEL: ~9 $/Lauf (Erfahrungswert `opus5`). Deshalb `optIn` — der Arm
+    // faehrt NUR, wenn ARMS ihn namentlich nennt. Ein versehentliches `node run.mjs`
+    // ohne ARMS darf keine Rechnung erzeugen. `maxRounds`/`maxStepTurns` begrenzen
+    // zusaetzlich; ein Ausreisser kostet kein Vielfaches.
+    { label: 'gcrun-frontier', executor: 'gcrun', optIn: true,
+      model: process.env.GCRUN_FRONTIER_MODEL ?? 'claude-opus-5',
+      backend: 'anthropic',
+      baseUrl: process.env.GCRUN_FRONTIER_BASE_URL ?? 'https://api.anthropic.com',
+      // Nur aus der Umgebung, nie aus einer Repo-Datei.
+      apiKey: process.env.ANTHROPIC_API_KEY ?? '',
+      maxTokens: process.env.GCRUN_FRONTIER_MAX_TOKENS ?? '4096',
+      maxRounds: process.env.GCRUN_FRONTIER_MAX_ROUNDS ?? '8',
+      candidates: process.env.GCRUN_FRONTIER_CANDIDATES ?? '1' },
   ],
 };
+
+/**
+ * Die vier Achsen, an denen sich ein Arm unterscheidet (CR-GC-572).
+ *
+ * Steht hier und nicht im Bericht, weil der Bericht sie nur ANZEIGT: wer einen Arm
+ * hinzufuegt, traegt seine Achsen hier ein, und der Vergleich bleibt lesbar. Ohne diese
+ * Tabelle nennt kein Bericht die Achse, in der sich zwei Arme unterscheiden — und genau
+ * das fehlte, als zwoelf Laeufe lang an einem dreifach konfundierten Proxy optimiert wurde.
+ */
+export const ARM_ACHSEN = {
+  'qwen-35b':      { treiber: 'Agent',    modell: 'lokal',    agent: 'opencode' },
+  'opus5':         { treiber: 'Agent',    modell: 'frontier', agent: 'claude-code' },
+  'qwen38-claude': { treiber: 'Agent',    modell: 'lokal',    agent: 'claude-code' },
+  'gcrun':         { treiber: 'Executor', modell: 'lokal',    agent: null },
+  'gcrun-frontier':{ treiber: 'Executor', modell: 'frontier', agent: null },
+};
+
+/**
+ * `agent: null` heisst ENTFAELLT, nicht "unbekannt" — und die Unterscheidung traegt.
+ *
+ * Treibt der Executor, gibt es keinen fremden Agenten; seine Abwesenheit IST die
+ * Treiber-Differenz und keine zweite Variable daneben. Wer sie als eigene Achse mitzaehlt,
+ * bekommt fuer `opus5` gegen `gcrun-frontier` zwei Unterschiede statt einem und haette
+ * damit genau den Vergleich zerredet, fuer den dieser Arm gebaut wurde. Unter den
+ * agent-getriebenen Armen ist der Agent sehr wohl eine Achse: `qwen-35b` (opencode) gegen
+ * `qwen38-claude` (claude-code).
+ */
+export function achsenUnterschied(a, b) {
+  const x = ARM_ACHSEN[a];
+  const y = ARM_ACHSEN[b];
+  if (!x || !y) return null;
+  return ['treiber', 'modell', 'agent'].filter(
+    (k) => x[k] != null && y[k] != null && x[k] !== y[k],
+  );
+}
 
 /**
  * Der Auftragstext fuer den `claude -p`-Arm (CR-GC-565).
@@ -360,7 +423,15 @@ async function main() {
   const outDir = join(HERE, 'runs');
   mkdirSync(outDir, { recursive: true });
   const only = process.env.ARMS ? new Set(process.env.ARMS.split(',')) : null;
-  const arms = only ? CFG.arms.filter((a) => only.has(a.label)) : CFG.arms;
+  // optIn-Arme kosten Geld (CR-GC-572) und fahren nur auf namentliche Nennung.
+  const arms = only ? CFG.arms.filter((a) => only.has(a.label)) : CFG.arms.filter((a) => !a.optIn);
+  for (const arm of arms) {
+    if (arm.optIn && !arm.apiKey) {
+      throw new Error(
+        `Arm ${arm.label} braucht ANTHROPIC_API_KEY in der Umgebung — nie in einer Repo-Datei.`,
+      );
+    }
+  }
   const results = [];
   for (const arm of arms) {
     for (let i = CFG.startRun; i < CFG.startRun + CFG.runs; i++) {
@@ -401,4 +472,8 @@ async function main() {
   process.stderr.write(`\nDone. ${results.length} rows → ${CFG.resultsFile}. Run: node report.mjs\n`);
 }
 
-main().catch((e) => { process.stderr.write(`fatal: ${e.stack}\n`); process.exit(1); });
+// Nur als Programm fahren, nie beim Import (CR-GC-572): `report.mjs` liest ARM_ACHSEN
+// aus dieser Datei — ein Import darf keinen Benchmark starten.
+if (process.argv[1] && import.meta.url.endsWith(process.argv[1].split('/').pop())) {
+  main().catch((e) => { process.stderr.write(`fatal: ${e.stack}\n`); process.exit(1); });
+}
