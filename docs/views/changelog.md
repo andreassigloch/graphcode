@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 188 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 189 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 188 CR · 162 done · 1 open.
+Total: 189 CR · 162 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -250,3 +250,4 @@ Total: 188 CR · 162 done · 1 open.
 | `CR-GC-566` | n/a | focusTypes deckt nicht, was die Rundenanweisung verlangt — Lesen ist erzwungen |
 | `CR-GC-567` | n/a | Rig: claude-Arm mit stream-json fahren — Tokenverbrauch je Turn statt nur Summe |
 | `CR-GC-568` | n/a | Executor: SYSTEM-Prompt verbietet den dryRun-Vergleich, den das Gate-Protokoll verlangt |
+| `CR-GC-569` | n/a | Betriebsmodi sind nicht modelliert: ein ACTOR-agent fuer beide Treiber, UC-reduced-llm vermischt Modell und Treiber, kein SCHEMA fuer die Lauf-Konfiguration |
