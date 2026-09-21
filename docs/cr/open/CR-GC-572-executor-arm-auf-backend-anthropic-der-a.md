@@ -1,6 +1,6 @@
 # CR-GC-572: Executor-Arm auf backend=anthropic — ein Vergleich mit genau einer Unterschieds-Achse
 
-**Status:** 🟠 Arm steht, der Lauf fehlt
+**Status:** ✅ Abgeschlossen 2026-09-21 — Lauf gefahren, zwei Leitungsfehler behoben
 **Typ:** aus Item ITEM-2026-412 (idea)
 **Erstellt:** 2026-09-21
 **Item:** bok/items/ITEM-2026-412.json (Lane: graph)
@@ -103,3 +103,46 @@ node rig/greenfield-systemtest/report.mjs
 
 Mit demselben Lauf faellt auch das offene Kriterium 1 von CR-GC-570 (weniger
 `cache_creation` bei gleicher Elementzahl).
+
+---
+
+## 7 Der Lauf (Runde 7, 2026-09-21, sigllm-Prosa-Korpus, je 3 Laeufe)
+
+### 7.1 Zwei Fehler, die erst der Lauf zeigte
+
+Der erste Lauf lieferte 9–29 Elemente und null Reparaturen. Kein Modellbefund, sondern die Leitung:
+
+1. **Thinking-Bloecke beim Echo beschnitten.** `AnthropicWireAnswer` war ein `z.object`, Zod strich
+   `thinking`/`signature`, die API lehnte jeden Turn .2 ab (`messages.1.content.0.thinking.thinking:
+   Field required`, 11 von 12 Schritten). Fix `8576d56`: `z.looseObject`, Abnahme
+   `tests/executor.anthropic-roundtrip.test.ts` (vorher rot). Sichtbar wurde es erst, nachdem der
+   Trace die Meldung nicht mehr bei 80 Zeichen abschnitt (`2219a49`).
+2. **4096 Ausgabe-Tokens fuer ein denkendes Modell.** Denken zaehlt gegen `max_tokens`: 38 von 45
+   Mutate-Turns gekappt, alle 38 als `INPUT-SCHEMA` abgelehnt. Fix `ed0e078`: 32000, per Test gehalten.
+   Dass die Schleife einen gekappten Aufruf als Schemafehler statt als Ueberlauf meldet, ist
+   ITEM-2026-427.
+
+Der Key liegt seit `b2de4aa` in `graphcode/.env` (gitignored); `claude -p` erbt ihn nie.
+
+### 7.2 Ergebnis — eine Achse Unterschied
+
+| Arm | treibt | Elemente | Dimensionen req/uc/arch/alloc/ver | Wall | Kosten |
+|---|---|---|---|---|---|
+| `opus5` | Agent (Claude Code) | 278 / 321 / 280 | 0,81–0,99 / 0,96–1 / ≥0,98 / 0,84–1 / 0,94–1 | 27–38 min | 12,54–19,35 $ |
+| `gcrun-frontier` | Executor | 179 / 175 / 191 | 0,66–0,68 / 0,75–0,81 / 0,89–0,94 / 0,76–0,93 / 0,84–0,85 | 13–14 min | nicht erhoben |
+
+Gleiches Modell, gleiche Werkzeuge: **der Agent baut gut 1,5-mal so viel (Median 280 gegen 179) bei hoeherer Form.**
+Der Executor war nach 12 Runden nie fertig (`done=false` in allen drei) — er endet am Rundendeckel,
+nicht an der Aufgabe. Das ist eine zweite, bewusst gesetzte Differenz (der Agent hat nur das
+Zeitlimit), ebenso das Ausgabebudget, das Claude Code setzt (nicht geprueft).
+
+### 7.3 Kriterien
+
+| # | Kriterium | Ergebnis |
+|---|---|---|
+| 1 | Lauf `gcrun-frontier` neben `opus5`, gleiches Korpus | erfuellt — §7.2. Prompt je Treiber verschieden, wie in `run.mjs` begruendet |
+| 2 | Bericht benennt die EINE Achse | erfuellt — §6.2 |
+| 3 | Steuerungsaussage „produktweit" erst danach | erfuellt, und sie faellt anders aus als erwartet: am selben Modell ist die eigene Schleife **schwaecher** als der fremde Agent. Die Steuerungsmaschinerie hilft dem kleinen Modell (CR-GC-568), am grossen kostet sie Ausbeute |
+
+**Kongruenz:** nicht geprueft aus dieser Session (Rig- und Executor-Code; der Graph-Zug liegt bei
+der graphcode-Session) — benannte Ausnahme.
