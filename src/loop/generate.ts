@@ -24,6 +24,7 @@ import type { MetricPolicy } from '@sigloch/contracts/se';
 import { takeSteeringSnapshot } from '../kernel/measure/steering-snapshot.js';
 import { currentPhaseGate, PhaseGateReadiness } from '../kernel/measure/readiness.js';
 import { isIntentTooThin, intentCoverage, type LoadedTargetProfile } from './target-profile.js';
+import { winner } from './channel-rank.js';
 
 /**
  * Datenvertrag der Generierungs-Instruktion (SCHEMA-generation-step) — Zod, nicht
@@ -497,17 +498,34 @@ export function generationStep(
   // je rule_id) — und mit den konkreten uids, statt als globales Verbot.
   const windowRule = focusViolations[0]?.rule_id;
   const klausel = windowRule ? RULE_CLAUSE[windowRule] : undefined;
-  const ruleClause = klausel ? klausel.text(focusViolations.map((v) => v.element_id)) : '';
   // EIN Imperativ je Runde (CR-GC-564). Vorher wurde die Klausel an das Dimensions-Template
   // ANGEHÄNGT — und R-15s Klausel endete mit „KEINE neue FCHAIN anlegen", also mit dem
   // Widerruf dessen, was drei Zeilen vorher stand. Das Template ist nach DIMENSION
   // geschlüsselt, das Fenster seit CR-GC-290 nach REGEL; wo beide dieselbe Arbeit
   // verschieden beschreiben, gewinnt die regelgenaue Fassung.
-  const template = ruleClause
-    ? ruleClause
-    : focus
-      ? (GENERATION_TEMPLATE[focus.dimension] ?? 'Behebe die Funde der Dimension.')
-      : '';
+  //
+  // CR-GC-575: diese Vorrangfrage wird nicht mehr HIER entschieden, sondern in
+  // `channel-rank.ts` — einmal, erklärt, und für Text UND Fokus-Typen in DEMSELBEN
+  // Aufruf. Vorher standen dafür zwei Ternäre 40 Zeilen auseinander (CR-GC-564 für
+  // den Text, CR-GC-566 für die Typen), deren Gleichlauf nur ein Kommentar zusagte.
+  const imperativ = winner<{ text: string; types: string[] }>([
+    {
+      channel: 'rule-clause',
+      value: klausel
+        ? { text: klausel.text(focusViolations.map((v) => v.element_id)), types: [...klausel.types] }
+        : null,
+    },
+    {
+      channel: 'proposal',
+      value: focus
+        ? {
+            text: GENERATION_TEMPLATE[focus.dimension] ?? 'Behebe die Funde der Dimension.',
+            types: [...(DIMENSION_FOCUS_TYPES[focus.dimension] ?? [])],
+          }
+        : null,
+    },
+  ]);
+  const template = imperativ?.value.text ?? '';
   const deferNote = deferExhausted
     ? 'Hinweis: ALLE Fund-Sets waren zurückgestellt (defer) — Zurückstellung wird ignoriert. '
     : '';
@@ -531,12 +549,9 @@ export function generationStep(
     focusKey,
     // CR-GC-566: dieselbe Praezedenz wie beim Imperativ (CR-GC-564) — stellt eine Regel die
     // Anweisung, bestimmt sie auch die Typen. Sonst stuende im Rundeninhalt die Grammatik
-    // einer Dimension, waehrend der Text nach anderen Typen verlangt.
-    focusTypes: klausel
-      ? [...klausel.types]
-      : focus
-        ? [...(DIMENSION_FOCUS_TYPES[focus.dimension] ?? [])]
-        : [],
+    // einer Dimension, waehrend der Text nach anderen Typen verlangt. Seit CR-GC-575 ist das
+    // keine zweite Bedingung mehr, sondern derselbe Gewinner.
+    focusTypes: imperativ?.value.types ?? [],
     focusDimension: focus ? (focus.dimension as string) : null,
   };
 }

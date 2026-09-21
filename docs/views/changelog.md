@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 195 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 199 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 195 CR · 163 done · 1 open.
+Total: 199 CR · 163 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -257,3 +257,7 @@ Total: 195 CR · 163 done · 1 open.
 | `CR-GC-573` | n/a | Fuenf Prompt-Autoritaeten in EINEM FUNC-generation-step: SEED_STAGES, DIMENSION_FOCUS_TYPES, GENERATION_TEMPLATE, RULE_CLAUSE, GATE_PROTOCOL sind unmodelliert |
 | `CR-GC-574` | n/a | Das Rig ist der Systemtest und fehlt im Modell: kein TEST-/FCHAIN-Knoten fuer Lauf, Metrik, Pruefliste und Turn-Analyse |
 | `CR-GC-575` | n/a | Eine erklaerte Rangfolge der Steuerungskanaele statt verstreuter if/else — heute muss jeder Konflikt gemessen werden |
+| `CR-GC-576` | n/a | Advisory-Rauschen in der Gate-Antwort: steerAdvisory 21/21 null, workOrder 18/21 leer, fitAdvisory 12/21 Null-Delta — 16 Prozent der Antwort |
+| `CR-GC-577` | n/a | dryRun-apply-Verdopplung: MCP-Clients bekommen dieselben Befunde zweimal — 5 Paare in opus5-5 (48/30/34/49/1). Protokollfrage, ob der Probelauf seinen Preis wert ist |
+| `CR-GC-578` | n/a | audit.trail-projection: Test misst gegen den LEBENDEN .graphcode/audit.jsonl des Repos — Schwellwert 11 Prozent reisst bei 20,8 von 165,2 KB, ohne Codeaenderung. Flaky per Konstruktion |
+| `CR-GC-579` | n/a | mcp-server.ts serialisiert JEDE Werkzeugantwort mit Einrueckung 2 — 18,3 Prozent des gesamten Werkzeug-Payloads, graph_readiness 38 Prozent. Ein Argument |

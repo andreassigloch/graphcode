@@ -14,6 +14,7 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { GenerationStep } from './generate.js';
+import { byRank, type Channel } from './channel-rank.js';
 
 // ---------------------------------------------------------------------------
 // System-Prompt — bewusst ~1 Seite; die Methode kommt aus graph_generate.
@@ -220,7 +221,11 @@ export async function buildRoundInjection(
   registry: MCPToolRegistry,
   step: Pick<GenerationStep, 'focusTypes' | 'focusDimension'>,
 ): Promise<string> {
-  const blocks: string[] = [];
+  // CR-GC-575: die Bloecke tragen ihren Kanal und werden am Ende nach Rang sortiert —
+  // die Reihenfolge des Rundenprompts folgt der Verbindlichkeit, nicht der Reihenfolge,
+  // in der die Bloecke historisch angebaut wurden. Bis hierher stand die Anleitung
+  // (Rang 5) UNTER den Vorschlaegen (Rang 6), weil CR-GC-556 vor CR-GC-557 kam.
+  const blocks: { channel: Channel; text: string }[] = [];
   const focusTypes = step.focusTypes ?? [];
 
   if (focusTypes.length > 0 && registry['graph_authoring_guide']) {
@@ -240,10 +245,12 @@ export async function buildRoundInjection(
       }
     }
     if (lines.length > 0) {
-      blocks.push(
-        'Kanten-Grammatik der Fokus-Typen (bereits eingebettet — graph_authoring_guide dafür NICHT ' +
+      blocks.push({
+        channel: 'grammar',
+        text:
+          'Kanten-Grammatik der Fokus-Typen (bereits eingebettet — graph_authoring_guide dafür NICHT ' +
           'erneut aufrufen; Gate-Protokoll Schritt 1 ist damit erledigt):\n' + lines.join('\n'),
-      );
+      });
     }
   }
 
@@ -324,12 +331,14 @@ export async function buildRoundInjection(
             .join(' ');
           lines = lines.slice(0, cut);
         }
-        blocks.push(
-          'Element-Index des Graphen (uid · type · name; bereits eingebettet — graph_elements NICHT ' +
+        blocks.push({
+          channel: 'inventory',
+          text:
+            'Element-Index des Graphen (uid · type · name; bereits eingebettet — graph_elements NICHT ' +
             'erneut aufrufen; existierende uids für Kanten referenzieren, keine Duplikate anlegen):\n' +
             lines.join('\n') +
             (note ? '\n' + note : ''),
-        );
+        });
       }
     } catch {
       // Index optional — Injektion darf den Lauf nie brechen
@@ -378,11 +387,13 @@ export async function buildRoundInjection(
         if (zeilen.length >= SUGGEST_MAX_ROWS) break;
       }
       if (zeilen.length > 0) {
-        blocks.push(
-          'Ausfuehrbare Vorschlaege (aus den Regel-Vorlagen gerechnet, Kante bereits geprueft; '
+        blocks.push({
+          channel: 'proposal',
+          text:
+            'Ausfuehrbare Vorschlaege (aus den Regel-Vorlagen gerechnet, Kante bereits geprueft; '
             + '`delta` ist der ℝ⁶-Zug — negativ heisst Verbesserung). Uebernimm sie, wenn sie zur '
             + 'Instruktion passen, sonst begruende im Batch, warum nicht:\n' + zeilen.join('\n'),
-        );
+        });
       }
     } catch {
       // Vorschlaege optional — die Injektion darf den Lauf nie brechen
@@ -402,9 +413,9 @@ export async function buildRoundInjection(
   if (skill) {
     const rumpf = readSkillBody(skill);
     if (rumpf) {
-      blocks.push(`Anleitung fuer diese Runde (Skill ${skill.name}):\n${rumpf}`);
+      blocks.push({ channel: 'guidance', text: `Anleitung fuer diese Runde (Skill ${skill.name}):\n${rumpf}` });
     }
   }
 
-  return blocks.join('\n\n');
+  return byRank(blocks).map((b) => b.text).join('\n\n');
 }

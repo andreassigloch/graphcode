@@ -1722,6 +1722,30 @@
       "description": "docs/cr/open/CR-GC-575-eine-erklaerte-rangfolge-der-steuerungsk.md"
     },
     {
+      "id": "CR-GC-576",
+      "type": "CR",
+      "name": "Advisory-Rauschen in der Gate-Antwort: steerAdvisory 21/21 null, workOrder 18/21 leer, fitAdvisory 12/21 Null-Delta — 16 Prozent der Antwort",
+      "description": "docs/cr/open/CR-GC-576-advisory-rauschen-in-der-gate-antwort-st.md"
+    },
+    {
+      "id": "CR-GC-577",
+      "type": "CR",
+      "name": "dryRun-apply-Verdopplung: MCP-Clients bekommen dieselben Befunde zweimal — 5 Paare in opus5-5 (48/30/34/49/1). Protokollfrage, ob der Probelauf seinen Preis wert ist",
+      "description": "docs/cr/open/CR-GC-577-dryrun-apply-verdopplung-mcp-clients-bek.md"
+    },
+    {
+      "id": "CR-GC-578",
+      "type": "CR",
+      "name": "audit.trail-projection: Test misst gegen den LEBENDEN .graphcode/audit.jsonl des Repos — Schwellwert 11 Prozent reisst bei 20,8 von 165,2 KB, ohne Codeaenderung. Flaky per Konstruktion",
+      "description": "docs/cr/open/CR-GC-578-audit-trail-projection-test-misst-gegen-.md"
+    },
+    {
+      "id": "CR-GC-579",
+      "type": "CR",
+      "name": "mcp-server.ts serialisiert JEDE Werkzeugantwort mit Einrueckung 2 — 18,3 Prozent des gesamten Werkzeug-Payloads, graph_readiness 38 Prozent. Ein Argument",
+      "description": "docs/cr/open/CR-GC-579-mcp-server-ts-serialisiert-jede-werkzeug.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -11631,6 +11655,16 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-575",
+      "target": "FUNC-build-round-injection",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-575",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -19646,5 +19680,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 332
+  "graphVersion": 337
 }

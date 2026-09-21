@@ -314,6 +314,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-552` | n/a | graphcode run gegen sigllm statt direkt gegen die Runtime — drittes Backend sigllm im Executor | `FUNC-call-model` · `FUNC-run-verb` |
 | `CR-GC-569` | done | Betriebsmodi sind nicht modelliert: ein ACTOR-agent fuer beide Treiber, UC-reduced-llm vermischt Modell und Treiber, kein SCHEMA fuer die Lauf-Konfiguration | `FUNC-call-model` · `FUNC-run-executor` · `UC-reduced-llm` |
 | `CR-GC-574` | n/a | Das Rig ist der Systemtest und fehlt im Modell: kein TEST-/FCHAIN-Knoten fuer Lauf, Metrik, Pruefliste und Turn-Analyse | `FUNC-systemtest-turn-analyse` · `MOD-systemtest` · `REQ-greenfield-systemtest-dod` · `UC-loop-closure` |
+| `CR-GC-575` | n/a | Eine erklaerte Rangfolge der Steuerungskanaele statt verstreuter if/else — heute muss jeder Konflikt gemessen werden | `FUNC-build-round-injection` · `FUNC-generation-step` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen
