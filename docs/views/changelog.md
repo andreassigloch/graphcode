@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 205 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 206 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 205 CR · 170 done · 1 open.
+Total: 206 CR · 170 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -267,3 +267,4 @@ Total: 205 CR · 170 done · 1 open.
 | `CR-GC-583` | n/a | steerAdvisory und fitAdvisory widersprechen sich ohne Rang: RD-04-Fix (Zwischenebene) verschlechtert modifiability/coherence — opus5-6 zieht die Ebene ein, opus5-7 verwirft sie per Delta-m (runde7) |
 | `CR-GC-584` | n/a | workOrder bei Bindungsquote 0 % ist reines Rauschen: in allen Greenfield-Laeufen 100 % nur 'blind' (jede FUNC ohne realRef), 4-21 Bloecke je Lauf — CR-576 laesst ihn durch, weil blind nicht leer ist |
 | `CR-GC-585` | n/a | Systemtest-Bericht deckt die Steuerung nicht ab: Kanal-Wirkung, Zeitlinie, Navigation Graph vs Datei (grep/glob), Effizienz je Element und Endstand der Freigabe wurden in Runde 7/8 mit Wegwerf-Skripten erhoben — gehoert in report.mjs |
+| `CR-GC-586` | n/a | Systemtest-Bericht vergleicht Auto nicht mit Hand: Trajektorie nach Review-18 (Steuerwert/Anker-Bewegung, Anker-Standzeiten, Modularitaet, Quoten je Zug aus dem Audit) und Profil gegen das Golden liefen nur als Scratch-Skripte — der handgefuehrte Lauf ist der Bezugspunkt |

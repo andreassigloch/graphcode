@@ -46,6 +46,11 @@ redundancy — all decidable, all computed.
   Kanaele (geliefert/erwaehnt/befolgt), Zeitlinie (vor oder nach der Entscheidung), Navigation
   Graph gegen Datei (grep/glob/Read nach Ziel: Auftrag, Doku, Sichten, Werkzeug-Quelltext),
   Effizienz je Element, Endstand der Freigabe. Jede Optimierungsrunde liest zuerst diese Tabellen.
+- **Auto gegen Hand** (`trajektorie.mjs`, CR-GC-586) — der Audit-Trail jedes Arms und der
+  handgefuehrte `referenz-trail.jsonl` neben dem Golden werden Zug fuer Zug nachgespielt
+  (Rechenweg Review §18): wie oft bewegen sich ℝ⁶, Steuerwert, Anker, Modularitaet, Engpass und
+  Quoten, wie lange steht ein Anker; dazu das Endprofil gegen das Golden. Braucht `GOLDEN`
+  (Korpus-env sourcen): `set -a && source rig/sigllm-spezifikation/lauf-prosa.env && set +a`.
 
 ## Run
 

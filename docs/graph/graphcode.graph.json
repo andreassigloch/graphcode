@@ -1797,6 +1797,12 @@
       "description": "docs/cr/open/CR-GC-585-systemtest-bericht-deckt-die-steuerung-n.md"
     },
     {
+      "id": "CR-GC-586",
+      "type": "CR",
+      "name": "Systemtest-Bericht vergleicht Auto nicht mit Hand: Trajektorie nach Review-18 (Steuerwert/Anker-Bewegung, Anker-Standzeiten, Modularitaet, Quoten je Zug aus dem Audit) und Profil gegen das Golden liefen nur als Scratch-Skripte — der handgefuehrte Lauf ist der Bezugspunkt",
+      "description": "docs/cr/open/CR-GC-586-systemtest-bericht-vergleicht-auto-nicht.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -20071,5 +20077,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 354
+  "graphVersion": 355
 }
