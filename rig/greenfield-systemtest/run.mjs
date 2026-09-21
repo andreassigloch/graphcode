@@ -157,17 +157,30 @@ function authorViaClaude(dir, arm) {
     CFG.claudeBin,
     // acceptEdits does NOT grant MCP tool calls → graphcode tools get denied; skip all
     // permissions (throwaway sandbox), symmetric with opencode's --dangerously-skip-permissions.
-    ['-p', buildPrompt(), '--output-format', 'json', '--model', arm.model, '--dangerously-skip-permissions'],
+    // CR-GC-567: `stream-json` statt `json`. `json` liefert EINE Usage-Zeile je Lauf —
+    // damit ist nicht zu trennen, welche Werkzeugantwort den Cache entwertet. Gemessen:
+    // der Rewind schrieb bei halber Turn-Zahl 70 % mehr cache_creation als die Erstsitzung,
+    // und cache_creation ist der teure Posten (~15x cache_read). `--verbose` ist in
+    // `-p`-Laeufen Pflicht fuer stream-json. Die Schlusszeile bleibt dasselbe result-Objekt.
+    ['-p', buildPrompt(), '--output-format', 'stream-json', '--verbose',
+     '--model', arm.model, '--dangerously-skip-permissions'],
     { cwd: dir, env: baseEnv, encoding: 'utf8', maxBuffer: 128 * 1024 * 1024, timeout: CFG.timeoutMs },
   );
   const wall_s = +((Date.now() - t0) / 1000).toFixed(1);
   const out = r.stdout ?? '';
-  writeFileSync(join(dir, 'claude-raw.json'), out);
+  // Der ganze Strom bleibt liegen — `turn-analyse.mjs` liest ihn je Turn (CR-GC-567).
+  writeFileSync(join(dir, 'claude-stream.jsonl'), out);
+  // Die Schlusszeile ist dasselbe Objekt, das `--output-format json` geliefert haette.
+  // Sie bleibt unter dem alten Namen liegen, damit bestehende Auswertungen weiterlesen.
+  const schluss = out.split('\n').map((z) => z.trim()).filter(Boolean).reverse()
+    .map((z) => { try { return JSON.parse(z); } catch { return null; } })
+    .find((e) => e && e.type === 'result');
+  writeFileSync(join(dir, 'claude-raw.json'), JSON.stringify(schluss ?? {}, null, 2));
   if (r.stderr) writeFileSync(join(dir, 'claude-stderr.log'), r.stderr);
   if (r.status !== 0) throw new Error(`claude exit=${r.status} signal=${r.signal}; stderr: ${(r.stderr ?? '').slice(-600)}`);
   let usage = { wall_s };
   try {
-    const j = JSON.parse(out);
+    const j = schluss ?? {};
     const u = j.usage ?? {};
     // ITEM-2026-365: `input_tokens` zaehlt NUR den ungecachten Rest. Gemessen an Lauf 2:
     // 8.822 gemeldet gegen 7.056.849 tatsaechlich — Faktor 800. Ohne cache_read und

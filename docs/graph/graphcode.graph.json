@@ -1660,6 +1660,12 @@
       "description": "docs/cr/open/CR-GC-566-focustypes-deckt-nicht-was-die-rundenanw.md"
     },
     {
+      "id": "CR-GC-567",
+      "type": "CR",
+      "name": "Rig: claude-Arm mit stream-json fahren — Tokenverbrauch je Turn statt nur Summe",
+      "description": "docs/cr/open/CR-GC-567-rig-claude-arm-mit-stream-json-fahren-to.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -19185,5 +19191,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 318
+  "graphVersion": 319
 }
