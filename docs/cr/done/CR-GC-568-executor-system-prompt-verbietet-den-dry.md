@@ -1,6 +1,6 @@
 # CR-GC-568: Executor: SYSTEM-Prompt verbietet den dryRun-Vergleich, den das Gate-Protokoll verlangt
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-21)
 **Typ:** aus Item ITEM-2026-399 (bug)
 **Erstellt:** 2026-09-21
 **Item:** bok/items/ITEM-2026-399.json (Lane: graph)
@@ -86,3 +86,35 @@ greift.
 4. Neuer gcrun-Lauf (RUNS=3, `candidates = 2`): `dryRunProbes > 0` in allen drei Laeufen —
    der Kanal ist nachweislich an. Die Elementzahl ist **nicht** Akzeptanzkriterium; sie wird
    gegen das Band 68–122 berichtet.
+
+## 6 Abnahme — der Kanal ist an, und die Quote misst nicht, was ich behauptet habe
+
+Drei Laeufe mit `candidates = 2` (`runs/gcrun-3..5`):
+
+| Lauf | Elemente | Proben | angewandt | verworfen | Quote | Gate-Ablehnungen | Wanduhr |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| gcrun-3 | 94 | 22 | 10 | 13 | 0,59 | 0 | 2766 s |
+| gcrun-4 | 59 | 23 | 9 | 15 | 0,65 | 0 | 3307 s |
+| gcrun-5 | 45 | 30 | 7 | 24 | 0,80 | 0 | 2464 s |
+| *Kontrolle (candidates = 1)* | *68–122* | *0* | *16–18* | *0* | *0* | *2–10* | *~775 s* |
+
+**Kriterium 4 ist erfuellt:** `dryRunProbes > 0` in allen drei Laeufen. Der Kanal war vorher
+abgeschaltet und ist jetzt an. `mutatesRejected` faellt auf 0 — was frueher das Gate ablehnte,
+faengt jetzt die Probe ab, bevor etwas persistiert wird.
+
+**Und genau hier kippt die Kennzahl.** Ich habe die Quote als „die Metrik traegt die Auswahl"
+gelesen. Bei Opus (0,42) stimmt das: 12 Proben, 12 Anwendungen — geprobt wird, um zwischen
+Brauchbarem zu waehlen. Bei gcrun (0,80) heisst dieselbe Zahl das Gegenteil: 30 Proben, 7
+Anwendungen — beide Kandidaten waren meist unbrauchbar, und die Probe betreibt Schadensbegrenzung
+statt Auswahl. **Eine hohe Quote ist kein Guetezeichen.**
+
+Die Quote allein ist damit unbrauchbar und braucht die Ausbeute daneben:
+Proben-zu-Anwendung 12:12 (Opus) gegen 30:7 (gcrun). Ein Folge-Item traegt das.
+
+**Der Preis ist hoch und die Ausbeute faellt:** 45–94 Elemente gegen das Kontrollband 68–122,
+bei 3,2- bis 4,3-facher Wanduhr. Fuer diesen Arm ist `candidates = 2` **kein Gewinn** — die
+Stellschraube bleibt in `lauf-gcrun.env` dokumentiert, aber der Wert geht auf 1 zurueck, bis
+ein Arm existiert, dessen Kandidaten ueberhaupt Auswahl-wuerdig sind (ITEM-2026-412).
+
+Die Produktaenderung (kein `dryRun`-Auftrag in einem Turn, der ihn nicht ausfuehren darf) bleibt
+davon unberuehrt und richtig.
