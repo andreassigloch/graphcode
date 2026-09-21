@@ -44,7 +44,8 @@ describe('CR-GC-490: aus dem Modell-Delta wird eine Datei-Liste', () => {
   });
 
   it('eine FUNC OHNE realRef steht in blind — nicht in moves und nicht im Schweigen', () => {
-    const nodes = [FUNC('FUNC-b'), MOD('MOD-x'), MOD('MOD-y')];
+    // Neben einer GEBUNDENEN FUNC: erst dort ist Schweigen eine Luege (CR-GC-584).
+    const nodes = [FUNC('FUNC-b'), FUNC('FUNC-gebunden', 'src/g.ts'), MOD('MOD-x'), MOD('MOD-y')];
     const wo = congruenceWorkOrder(
       g(nodes, [alloc('FUNC-b', 'MOD-x')]),
       g(nodes, [alloc('FUNC-b', 'MOD-y')]),
@@ -119,5 +120,30 @@ describe('CR-GC-490: der Auftrag erreicht das Mutations-Ergebnis', () => {
       await m.close();
       rmSync(dir, { recursive: true, force: true });
     }
+  });
+});
+
+describe('CR-GC-584: ohne jede Bindung gibt es keinen Auftrag, und das ist keine Luecke', () => {
+  it('Greenfield: kein FUNC gebunden → weder moves noch blind (Runde 7: 100 % blind, nie eine Datei)', () => {
+    const nodes = [FUNC('FUNC-a'), FUNC('FUNC-b'), MOD('MOD-x'), MOD('MOD-y')];
+    const wo = congruenceWorkOrder(
+      g(nodes, [alloc('FUNC-a', 'MOD-x')]),
+      g(nodes, [alloc('FUNC-a', 'MOD-y'), alloc('FUNC-b', 'MOD-x')]),
+    );
+    expect(wo).toEqual({ moves: [], blind: [] });
+  });
+
+  it('eine einzige Bindung genuegt, und jede ungebundene FUNC steht wieder in blind', () => {
+    const nodes = [FUNC('FUNC-a'), FUNC('FUNC-b', 'src/b.ts'), MOD('MOD-x')];
+    const wo = congruenceWorkOrder(g(nodes, []), g(nodes, [alloc('FUNC-a', 'MOD-x'), alloc('FUNC-b', 'MOD-x')]));
+    expect(wo.blind.map((b) => b.funcId)).toEqual(['FUNC-a']);
+    expect(wo.moves.map((m) => m.file)).toEqual(['src/b.ts']);
+  });
+
+  it('faellt die letzte Bindung mit dem Zug weg, bleibt der Vor-Stand massgeblich', () => {
+    const vorher = [FUNC('FUNC-a', 'src/a.ts'), MOD('MOD-x'), MOD('MOD-y')];
+    const nachher = [FUNC('FUNC-a'), MOD('MOD-x'), MOD('MOD-y')];
+    const wo = congruenceWorkOrder(g(vorher, [alloc('FUNC-a', 'MOD-x')]), g(nachher, [alloc('FUNC-a', 'MOD-y')]));
+    expect(wo.moves).toEqual([{ file: 'src/a.ts', funcId: 'FUNC-a', fromMod: 'MOD-x', toMod: 'MOD-y' }]);
   });
 });
