@@ -89,7 +89,7 @@ async function collectCandidateBatch(
         temperature !== undefined ? { temperature } : undefined,
       );
     } catch (err) {
-      trace(`  ${label}: call failed (${(err as Error).message.slice(0, 80)}) — skip`);
+      trace(`  ${label}: call failed (${(err as Error).message}) — skip`);
       return null;
     }
     stats.tokensIn += resp.usage.in;
