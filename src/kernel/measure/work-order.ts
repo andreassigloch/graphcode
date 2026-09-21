@@ -80,6 +80,11 @@ function allocationOf(graph: CGraph): Map<string, string> {
   return out;
 }
 
+/** Traegt irgendeine FUNC eine gueltige Bindung? */
+function hasAnyBinding(graph: CGraph): boolean {
+  return graph.nodes.some((n) => n.type === 'FUNC' && RealRefSchema.safeParse(n.attributes?.realRef).success);
+}
+
 /** Die gebundene Datei einer FUNC — `undefined`, wenn sie keine trägt oder der Ref kaputt ist. */
 function boundFile(graph: CGraph, funcId: string): string | undefined {
   const node = graph.nodes.find((n) => n.uid === funcId);
@@ -94,6 +99,12 @@ function boundFile(graph: CGraph, funcId: string): string | undefined {
  * einen CR aufhält, entscheidet der CR, nicht das Werkzeug.
  */
 export function congruenceWorkOrder(before: CGraph, after: CGraph): WorkOrder {
+  // CR-GC-584: ein Modell OHNE eine einzige gebundene FUNC hat keine Luecken, es hat keinen
+  // Code. `blind` benennt die Luecken eines gebundenen Modells — die Fail-open-Luege, gegen die
+  // es steht, ist eine leere `moves`-Liste NEBEN Code. Im Greenfield stand dort je Zug jede
+  // FUNC als "blind" (Runde 7: 4–21 Bloecke je Lauf, 100 % blind, nie eine Datei). Dass nichts
+  // gebunden ist, sagt `graph_readiness` einmal — Code-Urteil "nicht pruefbar", Bindung 0 %.
+  if (!hasAnyBinding(after) && !hasAnyBinding(before)) return { moves: [], blind: [] };
   const was = allocationOf(before);
   const is = allocationOf(after);
 
