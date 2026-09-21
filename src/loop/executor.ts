@@ -289,7 +289,9 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
         resp = await callModel(SYSTEM, messages, tools);
       } catch (err) {
         // Hängender/transienter Modell-Call: Step aufgeben, nächste generate-Runde.
-        trace(`  ${round + 1}.${turn + 1}: call failed (${(err as Error).message.slice(0, 80)}) — skip`);
+        // Ungekuerzt: der Backend-Fehler ist schon beim Werfen auf 300 Zeichen begrenzt. Ein
+        // zweiter Schnitt bei 80 liess vom Anthropic-Fehler nur "mess" stehen (CR-GC-572).
+        trace(`  ${round + 1}.${turn + 1}: call failed (${(err as Error).message}) — skip`);
         break;
       }
       stats.tokensIn += resp.usage.in;
@@ -297,7 +299,10 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
       stats.tokensReasoning += resp.usage.reasoning;
       trace(
         `  ${round + 1}.${turn + 1}: ` +
-          (resp.toolCalls.map((c) => c.name.replace('graphcode_', '')).join(',') ||
+          (resp.toolCalls.map((c) => c.name.replace('graphcode_', '')).join(',') +
+            // Auch MIT Werkzeugaufruf: am Budget abgeschnitten traegt der Aufruf eine
+            // leere Eingabe, und die Spur zeigte nur "graph_mutate" (CR-GC-572).
+            (resp.toolCalls.length && resp.stopReason === 'max_tokens' ? ' (stop=max_tokens)' : '') ||
             // CR-GC-426: OHNE den Stop-Grund sieht eine am Token-Budget abgeschnittene
             // Antwort genauso aus wie eine geschwaetzige — beide "(no calls)". Der
             // Salvage-Pfad unten existiert nur fuer die erste; die Spur muss sie trennen.
