@@ -1,6 +1,6 @@
 # CR-GC-580: Rig-Workspace ist kein eigenes Git-Repo: claude -p (skip-permissions) committet per git add -A ins graphcode-Repo (runde7 opus5-6, selbst zurueckgesetzt) — initWorkspace braucht git init
 
-**Status:** ✅ Umgesetzt und am Bestaetigungslauf gemessen
+**Status:** ✅ Done (2026-09-21)
 **Typ:** aus Item ITEM-2026-428 (bug)
 **Erstellt:** 2026-09-21
 **Item:** bok/items/ITEM-2026-428.json (Lane: graph)
