@@ -1948,55 +1948,64 @@
       "id": "FLOW-channel-dimension-template",
       "type": "FLOW",
       "name": "Kanal: Dimensions-Vorlage",
-      "description": "Rang 6 — der Vorschlagstext je Readiness-Dimension, wenn keine Regel-Klausel das Fenster stellt. Verliert seit CR-GC-564 jeden Konflikt gegen die Klausel; demoviert, nicht gestrichen (CR-GC-575)."
+      "description": "Rang 6 — der Vorschlagstext je Readiness-Dimension, wenn keine Regel-Klausel das Fenster stellt. Verliert seit CR-GC-564 jeden Konflikt gegen die Klausel; demoviert, nicht gestrichen (CR-GC-575).",
+      "channelRank": "proposal"
     },
     {
       "id": "FLOW-channel-gate-protocol",
       "type": "FLOW",
       "name": "Kanal: Gate-Protokoll",
-      "description": "Die Verfahrensanweisung der Runde: Grammatik holen, Alternativen proben oder EINEN Batch emittieren, den naechsten Schritt anfordern. Zwei Fassungen, je nachdem ob der Host oder der Treiber die Auswahl faehrt."
+      "description": "Die Verfahrensanweisung der Runde: Grammatik holen, Alternativen proben oder EINEN Batch emittieren, den naechsten Schritt anfordern. Zwei Fassungen, je nachdem ob der Host oder der Treiber die Auswahl faehrt. Rang: Anleitung — sie sagt, wie man vorgeht, nicht was in dieser Runde zu tun ist.",
+      "channelRank": "guidance"
     },
     {
       "id": "FLOW-channel-grammar",
       "type": "FLOW",
       "name": "Kanal: Kanten-Grammatik",
-      "description": "Rang 3 — was legal ist. Der Guide-Ausschnitt der Fokus-Typen dieser Runde, eingebettet statt erfragt."
+      "description": "Rang 3 — was legal ist. Der Guide-Ausschnitt der Fokus-Typen dieser Runde, eingebettet statt erfragt.",
+      "channelRank": "grammar"
     },
     {
       "id": "FLOW-channel-guidance",
       "type": "FLOW",
       "name": "Kanal: Anleitung",
-      "description": "Rang 5 — wie man es gut macht. Der Rumpf des Autorier-Skills zur Fokus-Dimension, hoechstens einer je Runde. Der Skill bestimmt ueber seine Marker selbst, welcher Teil von ihm modelltauglich ist."
+      "description": "Rang 5 — wie man es gut macht. Der Rumpf des Autorier-Skills zur Fokus-Dimension, hoechstens einer je Runde. Der Skill bestimmt ueber seine Marker selbst, welcher Teil von ihm modelltauglich ist.",
+      "channelRank": "guidance"
     },
     {
       "id": "FLOW-channel-idle-nudge",
       "type": "FLOW",
       "name": "Kanal: Handlungs-Nachfassen",
-      "description": "Das eine Nachfassen pro Schritt, wenn ein Turn ohne Werkzeugaufruf endet. Coder-Modelle dithern gern in Prosa; ein Schritt wird dadurch nicht still aufgegeben."
+      "description": "Das eine Nachfassen pro Schritt, wenn ein Turn ohne Werkzeugaufruf endet. Coder-Modelle dithern gern in Prosa; ein Schritt wird dadurch nicht still aufgegeben.",
+      "channelRank": "guidance"
     },
     {
       "id": "FLOW-channel-inventory",
       "type": "FLOW",
       "name": "Kanal: Element-Index",
-      "description": "Rang 4 — was es schon gibt. Der auf die Fokus-Typen beschraenkte Bestand als uid-type-name-Zeilen, damit die Runde keine Duplikate anlegt. Produzent ist die Lese-Oberflaeche, nicht der Kern: die Injektion ruft graph_elements DURCH dessen Schema-Schicht, seit ein roher Handler-Aufruf ohne limit den ganzen Graphen herausgab (CR-GC-539)."
+      "description": "Rang 4 — was es schon gibt. Der auf die Fokus-Typen beschraenkte Bestand als uid-type-name-Zeilen, damit die Runde keine Duplikate anlegt. Produzent ist die Lese-Oberflaeche, nicht der Kern: die Injektion ruft graph_elements DURCH dessen Schema-Schicht, seit ein roher Handler-Aufruf ohne limit den ganzen Graphen herausgab (CR-GC-539).",
+      "channelRank": "inventory"
     },
     {
       "id": "FLOW-channel-proposal-suggest",
       "type": "FLOW",
       "name": "Kanal: ausfuehrbarer Vorschlag",
-      "description": "Rang 6 — ein Kandidat, nie ein Auftrag. Die Zeilen aus graph_suggest, die eine konkrete Kante und ihr Metrik-Delta tragen; ein Vorschlag ohne Kante traegt nichts ueber den fixHint hinaus und bleibt draussen."
+      "description": "Rang 6 — ein Kandidat, nie ein Auftrag. Die Zeilen aus graph_suggest, die eine konkrete Kante und ihr Metrik-Delta tragen; ein Vorschlag ohne Kante traegt nichts ueber den fixHint hinaus und bleibt draussen.",
+      "channelRank": "proposal"
     },
     {
       "id": "FLOW-channel-rule-clause",
       "type": "FLOW",
       "name": "Kanal: Regel-Klausel",
-      "description": "Rang 2 — der EINE Imperativ der Runde. Der vom Menschen gepflegte Zusatztext zu genau der Regel, die das Fund-Fenster stellt, gerendert mit den konkreten uids."
+      "description": "Rang 2 — der EINE Imperativ der Runde. Der vom Menschen gepflegte Zusatztext zu genau der Regel, die das Fund-Fenster stellt, gerendert mit den konkreten uids.",
+      "channelRank": "rule-clause"
     },
     {
       "id": "FLOW-channel-system-prompt",
       "type": "FLOW",
       "name": "Kanal: System-Prompt",
-      "description": "Die Konstante ueber allen Runden: legale Elementtypen, die exakte Aufrufform, das Emissions-Regime. Macht bewusst KEINE Aussage darueber, was die Runden-Instruktion enthaelt — sie kann es nicht wissen."
+      "description": "Die Konstante ueber allen Runden: legale Elementtypen, die exakte Aufrufform, das Emissions-Regime. Macht bewusst KEINE Aussage darueber, was die Runden-Instruktion enthaelt — sie kann es nicht wissen.",
+      "channelRank": "guidance"
     },
     {
       "id": "FLOW-cli-command",
@@ -6267,7 +6276,7 @@
       "id": "SCHEMA-steering-channel",
       "type": "SCHEMA",
       "name": "Kanalbeitrag zum Rundenprompt",
-      "description": "Der Beitrag EINES Steuerungskanals zu einer Runde: der Kanal — und damit sein Rang aus der Ordnung in src/loop/channel-rank.ts — und sein Textblock. Ein Vertrag fuer alle Kanaele, weil sie sich genau darin gleichen und nur im Rang unterscheiden; ein Vertrag je Kanal waere neun Knoten fuer eine Unterscheidung, die kein Leser braucht. Bewusst ohne Zod-Symbol: informationeller Prompt-Kontext, kein Wire-Format. (CR-GC-573)",
+      "description": "Der Beitrag EINES Steuerungskanals zu einer Runde: der Kanal — und damit sein Rang aus der Ordnung in src/loop/channel-rank.ts, am FLOW als Attribut channelRank gespiegelt — und sein Textblock. Ein Vertrag fuer alle Kanaele, weil sie sich genau darin gleichen und nur im Rang unterscheiden; ein Vertrag je Kanal waere neun Knoten fuer eine Unterscheidung, die kein Leser braucht, und neun statt einem Vertrag an jeder Modulgrenze. Der Rang steht deshalb am Knoten: ohne ihn sind zwei Kanaele mit gleichem Produzenten und Konsumenten im Graphen ununterscheidbar, und der Optimizer schlaegt sie zum Merge vor. Bewusst ohne Zod-Symbol: informationeller Prompt-Kontext, kein Wire-Format. (CR-GC-573)",
       "concept": true,
       "status": "reviewed"
     },
@@ -20003,5 +20012,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 344
+  "graphVersion": 345
 }

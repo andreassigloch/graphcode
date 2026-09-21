@@ -388,14 +388,65 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
       // Wird das falsch — eine ARCHITEKTUR-Bewegung wird möglich, oder der Engpass wandert weg
       // von R-04 @ MOD-kernel —, MUSS dieser Test rot werden: der Befund ist dann veraltet.
       const OHNE_TOPOLOGIEWIRKUNG = new Set(['CR-R01', 'MS-03', 'CR-01', 'RD-01', 'RD-04', 'R-02']);
+      // CR-GC-573 (graphVersion 345) — NEU GEMESSEN, nachdem die Steuerungskanäle Knoten
+      // wurden. Dazugekommen ist EIN Vorschlag, und diesmal einer MIT Topologiewirkung:
+      //
+      //     OP-MERGE @ FLOW-channel-gate-protocol · score 0.0000 · removesElements
+      //     "FLOW-channel-gate-protocol und FLOW-channel-dimension-template tragen denselben
+      //      Vertrag SCHEMA-steering-channel"
+      //
+      // Der Optimierer hat STRUKTURELL recht und SEMANTISCH unrecht, und beides ist wichtig:
+      //
+      //  - Strukturell: `mergeCandidates` gruppiert nach Vertrag UND Endpunkt-Signatur. Beide
+      //    FLOWs laufen von `ACTOR-owner` nach `FUNC-generation-step` und tragen
+      //    `SCHEMA-steering-channel`. Im Graphen sind sie damit dasselbe — das ist die
+      //    Definition eines Duplikats, und die Regel ist richtig.
+      //  - Semantisch: sie unterscheiden sich im RANG (Anleitung gegen Vorschlag,
+      //    `src/loop/channel-rank.ts`). Der Rang steht als Attribut `channelRank` am Knoten,
+      //    aber Attribute gehen in die Kandidatenwahl nicht ein — sie ist eine reine
+      //    Topologie-Frage. Ein Merge würde genau die Doppelung wiederherstellen, die
+      //    CR-GC-573 aufgelöst hat.
+      //
+      // Deshalb NICHT angewandt, und das ist gemessen begründet, nicht Geschmack:
+      // `verdict.steer.improvement` ist exakt 0,0000 — der Zug senkt das Chebyshev-Maximum
+      // nicht. `steps` bleibt leer, der Architektur-Aktionsraum also weiter leer im Sinne
+      // des Befundes oben. Der Zug entfernt nur einen Knoten.
+      //
+      // Der eigentliche Befund ist ein META-MODELL-Loch: der Rang eines Kanals ist keine
+      // Kante und damit für die Kandidatenwahl unsichtbar (ITEM-2026-422). Bis das
+      // entschieden ist, steht dieser EINE Kandidat hier namentlich — jeder ANDERE
+      // OP-MERGE lässt den Test reißen.
+      const GEMESSEN_ABGELEHNT = new Set(['OP-MERGE @ FLOW-channel-gate-protocol']);
       expect(steps.map((s) => s.edit), 'ein Zug ist möglich geworden — der Befund oben ist veraltet, bitte neu messen').toEqual([]);
       expect(
-        rest.filter((s) => !OHNE_TOPOLOGIEWIRKUNG.has(s.ruleId)).map((s) => `${s.ruleId} @ ${s.elementId}`),
+        rest
+          .filter((s) => !OHNE_TOPOLOGIEWIRKUNG.has(s.ruleId))
+          .map((s) => `${s.ruleId} @ ${s.elementId}`)
+          .filter((k) => !GEMESSEN_ABGELEHNT.has(k)),
         'ein anwendbarer Zug AUSSERHALB der bekannten bindungs-/hygienischen Klassen liegt auf dem Tisch — das waere eine Architekturbewegung, bitte neu messen',
       ).toEqual([]);
-      expect(dominant, 'der Engpass ist nicht mehr R-04 @ MOD-kernel — bitte neu messen').toEqual({
-        ruleId: 'R-04',
-        elementId: 'MOD-kernel',
+      // Die Ausnahme oben gilt NUR, solange der Zug nichts verspricht. Sobald er das
+      // Maximum senkt, ist er eine Architekturbewegung und gehört gemessen, nicht geduldet.
+      for (const s of rest.filter((x) => GEMESSEN_ABGELEHNT.has(`${x.ruleId} @ ${x.elementId}`))) {
+        expect(
+          s.verdict?.steer?.improvement ?? 0,
+          `${s.ruleId} @ ${s.elementId} verspricht jetzt etwas — die Duldung oben ist veraltet`,
+        ).toBe(0);
+      }
+      // CR-GC-573 (graphVersion 345): der Engpass ist GEWANDERT, und zwar durch diesen Zug.
+      // Die Steuerungskanäle brachten EINEN neuen Vertrag (`SCHEMA-steering-channel`) über
+      // die Whitebox-Grenze von „Grounding" — dessen Kind `FUNC-block-abfrage` enthält
+      // `FUNC-read-tools` und `FUNC-authoring-guide`, die ihn tragen. Gemessen:
+      //
+      //     vorher: R-04 @ MOD-kernel   18 Verträge, Schwelle 4 → Überschuss 3,50
+      //     jetzt:  BW-02 @ FUNC-block-grounding  19 Verträge, Schwelle 4 → Überschuss 3,75
+      //
+      // MOD-kernel steht unverändert bei 3,50 — es wurde nicht besser, es wurde überholt.
+      // Das ist kein Defekt, sondern die Sichtbarkeit des Befundes aus CR-GC-573: der
+      // Rundenprompt HAT viele Schreiber. Vorher war das wahr und unsichtbar.
+      expect(dominant, 'der Engpass ist nicht mehr BW-02 @ FUNC-block-grounding — bitte neu messen').toEqual({
+        ruleId: 'BW-02',
+        elementId: 'FUNC-block-grounding',
       });
       // Trockenübung: der produktive SSOT ist nachweislich unverändert.
       expect(sha256(REPO_GRAPH)).toBe(ssot);

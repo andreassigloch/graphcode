@@ -107,7 +107,26 @@ Zwei Zuege im selben Batch haben den Ausschlag halbiert und sind selbst richtig:
 `FUNC-graph-suggest` gehoert in `FCHAIN-steering-loop` — seit CR-GC-556 wird es je Runde
 gerufen, nicht nur im Advisory-Roundtrip.
 
-### 4.4 Was offen bleibt
+### 4.4 Nachtrag: der Optimizer sieht neun Duplikate
+
+Die Trockenuebung am echten Gate (`tests/arch.optimization-dry-run.spike.test.ts`) wurde
+durch diesen Zug rot, zweimal, und beide Male zu Recht:
+
+1. **Ein OP-MERGE-Kandidat** liegt jetzt auf dem Tisch: `FLOW-channel-gate-protocol` und
+   `FLOW-channel-dimension-template` tragen denselben Vertrag und laufen zwischen
+   denselben Endpunkten. Der Optimizer hat **strukturell recht** — im Graphen sind sie
+   dasselbe — und **semantisch unrecht**: sie unterscheiden sich im Rang. Der Rang steht
+   seit diesem Zug als Attribut `channelRank` am Knoten, geht aber in die Kandidatenwahl
+   nicht ein; `mergeCandidates` ist eine reine Topologie-Frage. Nicht angewandt, und das
+   gemessen begruendet: `steer.improvement` ist exakt 0,0000. Der eigentliche Befund ist
+   ein Meta-Modell-Loch und liegt als **ITEM-2026-422** im Store.
+2. **Der Engpass ist gewandert**, von `R-04 @ MOD-kernel` (18 Vertraege, Ueberschuss 3,50)
+   zu `BW-02 @ FUNC-block-grounding` (19, 3,75). MOD-kernel wurde nicht besser, es wurde
+   ueberholt: der neue Vertrag kreuzt die Whitebox-Grenze von "Grounding".
+
+Beide Messungen stehen im Test, nicht nur hier.
+
+### 4.5 Was offen bleibt
 
 Die Reihenfolge aus CR-GC-575 („erst streichen, dann modellieren") ist **nicht** eingehalten
 worden, weil das Streichen dort auf die Ausbeute-Messung wartet (Entscheidung 2026-09-21).
