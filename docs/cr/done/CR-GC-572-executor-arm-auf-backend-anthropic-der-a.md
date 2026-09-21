@@ -1,6 +1,6 @@
 # CR-GC-572: Executor-Arm auf backend=anthropic — ein Vergleich mit genau einer Unterschieds-Achse
 
-**Status:** ✅ Abgeschlossen 2026-09-21 — Lauf gefahren, zwei Leitungsfehler behoben
+**Status:** ✅ Done (2026-09-21)
 **Typ:** aus Item ITEM-2026-412 (idea)
 **Erstellt:** 2026-09-21
 **Item:** bok/items/ITEM-2026-412.json (Lane: graph)
