@@ -1,6 +1,6 @@
 # CR-GC-585: Systemtest-Bericht deckt die Steuerung nicht ab: Kanal-Wirkung, Zeitlinie, Navigation Graph vs Datei (grep/glob), Effizienz je Element und Endstand der Freigabe wurden in Runde 7/8 mit Wegwerf-Skripten erhoben — gehoert in report.mjs
 
-**Status:** ✅ Umgesetzt
+**Status:** ✅ Done (2026-09-21)
 **Typ:** aus Item ITEM-2026-434 (finding)
 **Erstellt:** 2026-09-21
 **Item:** bok/items/ITEM-2026-434.json (Lane: graph)
