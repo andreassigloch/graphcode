@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 186 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 187 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 186 CR · 162 done · 1 open.
+Total: 187 CR · 162 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -248,3 +248,4 @@ Total: 186 CR · 162 done · 1 open.
 | `CR-GC-562` | n/a | src/loop/steering.ts loeschen — toter Steuerungspfad |
 | `CR-GC-565` | n/a | Rig-Prompt gibt die Ontologie vor — misst nicht den Laien-Einstieg |
 | `CR-GC-566` | n/a | focusTypes deckt nicht, was die Rundenanweisung verlangt — Lesen ist erzwungen |
+| `CR-GC-567` | n/a | Rig: claude-Arm mit stream-json fahren — Tokenverbrauch je Turn statt nur Summe |
