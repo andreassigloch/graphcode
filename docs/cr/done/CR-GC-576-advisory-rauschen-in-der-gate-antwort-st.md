@@ -1,6 +1,6 @@
 # CR-GC-576: Die Advisories der Gate-Antwort melden ueberwiegend, dass nichts passiert ist
 
-**Status:** 🟠 In Umsetzung
+**Status:** ✅ Done (2026-09-21)
 **Typ:** aus Item ITEM-2026-418 (finding)
 **Erstellt:** 2026-09-21
 **Item:** bok/items/ITEM-2026-418.json (Lane: graph)
