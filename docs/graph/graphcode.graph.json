@@ -1682,7 +1682,8 @@
       "id": "CR-GC-569",
       "type": "CR",
       "name": "Betriebsmodi sind nicht modelliert: ein ACTOR-agent fuer beide Treiber, UC-reduced-llm vermischt Modell und Treiber, kein SCHEMA fuer die Lauf-Konfiguration",
-      "description": "docs/cr/open/CR-GC-569-betriebsmodi-sind-nicht-modelliert-ein-a.md"
+      "description": "docs/cr/open/CR-GC-569-betriebsmodi-sind-nicht-modelliert-ein-a.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-570",
@@ -19321,5 +19322,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 329
+  "graphVersion": 330
 }

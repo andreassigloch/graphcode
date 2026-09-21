@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 195 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 195 CR · 162 done · 1 open.
+Total: 195 CR · 163 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -250,7 +250,7 @@ Total: 195 CR · 162 done · 1 open.
 | `CR-GC-566` | n/a | focusTypes deckt nicht, was die Rundenanweisung verlangt — Lesen ist erzwungen |
 | `CR-GC-567` | n/a | Rig: claude-Arm mit stream-json fahren — Tokenverbrauch je Turn statt nur Summe |
 | `CR-GC-568` | n/a | Executor: SYSTEM-Prompt verbietet den dryRun-Vergleich, den das Gate-Protokoll verlangt |
-| `CR-GC-569` | n/a | Betriebsmodi sind nicht modelliert: ein ACTOR-agent fuer beide Treiber, UC-reduced-llm vermischt Modell und Treiber, kein SCHEMA fuer die Lauf-Konfiguration |
+| `CR-GC-569` | done | Betriebsmodi sind nicht modelliert: ein ACTOR-agent fuer beide Treiber, UC-reduced-llm vermischt Modell und Treiber, kein SCHEMA fuer die Lauf-Konfiguration |
 | `CR-GC-570` | n/a | Gate-Antwort ist 70% des Werkzeug-Payloads: 487 Violations in 23 Antworten, 51% Wiederholung, 0 davon gating |
 | `CR-GC-571` | n/a | Smeagol-Check: jede in einem Skill genannte Regel-ID muss im Regelkatalog existieren (18 genannt, 1 erfunden) |
 | `CR-GC-572` | n/a | Executor-Arm auf backend=anthropic — der auto-Modus unterscheidet sich dann vom manuellen NUR im Treiber |
