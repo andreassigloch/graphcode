@@ -17,7 +17,7 @@ import { TestRefsSchema } from '@sigloch/contracts/se';
 import { readBranchLog, replayBranchLog, type MergeReport } from '../kernel/merge.js';
 import type { MCPTool, MCPToolRegistry } from '../kernel/tool-contract.js';
 import { computeSteeringDelta, takeSteeringSnapshot, type SteeringDelta } from '../kernel/measure/steering-snapshot.js';
-import { stripViolationContext } from '../kernel/evaluation.js';
+import { stripViolationContext, groupViolationsByRule, type GroupedViolation } from '../kernel/evaluation.js';
 import type { RespondsToViolation } from '../projections/trajectory.js';
 import type { ToolContext } from './tool-context.js';
 
@@ -103,10 +103,17 @@ const GraphMutateInputSchema = z
       .default('summary')
       .describe(
         'Detailtiefe der zurückgegebenen Violations (CR-GC-309). summary (Default) trägt ruleId, ' +
-          'severity, message, fixHint und elementId — alles, was zum Reparieren des Batches nötig ist; ' +
-          'es entfällt `context` (und damit candidate_targets), das den Löwenanteil der Bytes ausmacht. ' +
-          'full liefert das ungekürzte Ergebnis. Wer candidate_targets braucht, fragt gezielt ' +
-          'rules_get_violations / rules_evaluate — die bleiben auf voller Tiefe.',
+          'severity, message, fixHint und die betroffenen Elemente — alles, was zum Reparieren des ' +
+          'Batches nötig ist; es entfällt `context` (und damit candidate_targets), das den Löwenanteil ' +
+          'der Bytes ausmacht. ' +
+          'FORM (CR-GC-570): summary liefert EINEN Eintrag je (Regel, Meldungsmuster) mit ' +
+          '`elements: [uid, …]` statt einen je Element, und `{el}` steht in message/fixHint an der ' +
+          'Stelle der uid — je Element einmal einzusetzen. Das ist eine Faktorisierung, keine Kürzung: ' +
+          'kein Befund fällt weg, auch kein blockierender, und die Originalmeldung ist wieder ' +
+          'herstellbar. Gemessen −64 % Antwortbytes, weil sich der Befundkörper sonst je Element ' +
+          'wortgleich wiederholt. ' +
+          'full liefert das ungekürzte Ergebnis mit einem Eintrag je Element. Wer candidate_targets ' +
+          'braucht, fragt gezielt rules_get_violations / rules_evaluate — die bleiben auf voller Tiefe.',
       ),
   })
   .refine((i) => (i.commands === undefined) !== (i.formatE === undefined), {
@@ -127,10 +134,20 @@ const GraphMutateInputSchema = z
  * `formatGateFeedback` — ihn wegzukürzen machte aus einer reparierbaren Violation
  * eine undurchsichtige.
  */
-function summarizeViolations<T extends { violations: MutateResult['violations'] }>(result: T): T {
+function summarizeViolations<T extends { violations: MutateResult['violations'] }>(
+  result: T,
+): Omit<T, 'violations'> & { violations: GroupedViolation[] } {
   // CR-GC-398: EINE Implementierung der Projektion, geteilt mit rules_evaluate /
   // rules_get_violations — sonst entsteht sie dreimal leicht verschieden.
-  return { ...result, violations: stripViolationContext(result.violations) };
+  // CR-GC-570: danach je Regel und Meldungsmuster falten statt je Element —
+  // gemessen −64 % auf demselben Befundinhalt, weil in allen 487 Befunden des
+  // Referenzlaufs die elementId IM Meldungstext stand und der Rest sich wortgleich
+  // wiederholte. Eine Faktorisierung, keine Kürzung: kein Befund faellt weg, auch
+  // kein blockierender.
+  return {
+    ...result,
+    violations: groupViolationsByRule(stripViolationContext(result.violations)),
+  };
 }
 
 /** Flat realize affordance (CR-GC-216) — the write-twin of graph_context, no nested union. */

@@ -104,7 +104,12 @@ describe('TEST-mcp-symmetry: MCP graph_mutate == harness.mutate()', () => {
     expect(mcpR01).toBeDefined();
     expect(directR01).toBeDefined();
     expect(mcpR01.severity).toBe(directR01?.severity);
-    expect(mcpR01.elementId).toBe(directR01?.elementId);
+    // Symmetrie heisst gleiches URTEIL, nicht gleiche Serialisierung. Die MCP-Flaeche
+    // projiziert seit CR-GC-309 (kein `context`) und CR-GC-570 (ein Eintrag je Regel
+    // und Meldungsmuster, uid in `elements`) — beides absichtlich und nur auf der
+    // Leitung. Verglichen wird deshalb das betroffene Element, nicht das Feld, in dem
+    // es steht.
+    expect(mcpR01.elements).toEqual([directR01?.elementId]);
   });
 
   it('audit_trail records MCP mutations', async () => {

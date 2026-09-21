@@ -321,3 +321,70 @@ export function readinessOf(evaluation: Evaluation, graph: CGraph): ReadinessRep
 export function stripViolationContext<V extends { context?: unknown }>(violations: readonly V[]): V[] {
   return violations.map(({ context: _context, ...rest }) => rest as V);
 }
+
+/** Der Platzhalter, der in `message`/`fixHint` an der Stelle der elementId steht. */
+export const ELEMENT_PLACEHOLDER = '{el}';
+
+/** Ein Befund je (Regel, Meldungsmuster) statt je Element — die Elemente als Liste. */
+export interface GroupedViolation {
+  ruleId: string;
+  severity: RuleViolation['severity'];
+  /** Meldung mit `{el}` an der Stelle der elementId — je Eintrag in `elements` einmal einzusetzen. */
+  message: string;
+  fixHint?: string;
+  /** Die betroffenen Elemente, in Fundreihenfolge. Leer, wenn der Befund kein Element nennt. */
+  elements: string[];
+}
+
+/**
+ * Befunde nach Regel und Meldungsmuster falten (CR-GC-570).
+ *
+ * Gemessen an `runs/opus5-5`: 23 Gate-Antworten trugen 487 Befunde in 143.523 Zeichen, und
+ * in **allen 487** stand die elementId im Meldungstext. Der Befundkörper — Meldung und
+ * fixHint, zusammen Ø 151 Zeichen — wiederholte sich damit je Element wortgleich bis auf die
+ * eine uid: `R-19` 73-mal, `RD-01` 73-mal. Ersetzt man die uid durch `{el}` und sammelt die
+ * Elemente, fallen dieselben Antworten auf 51.057 Zeichen (−64 %).
+ *
+ * **Verlustfrei, nicht gekürzt.** Das ist eine Faktorisierung, kein Weglassen: aus Muster plus
+ * Elementliste ist jede Originalmeldung wieder herstellbar. Deshalb kann die Projektion auch
+ * blockierende Befunde falten — sie verliert keinen.
+ *
+ * Nicht gefaltet wird, was sich wirklich unterscheidet: tragen zwei Befunde derselben Regel
+ * verschiedene Muster (gemessen `R-18`: 19 Muster auf 32 Funde), bleiben es zwei Einträge.
+ * Der Schlüssel ist das vollständige Muster, keine Heuristik.
+ *
+ * Reihenfolge = Fundreihenfolge — dieselbe Eingabe ergibt dieselbe Ausgabe, sonst wären
+ * Ranking, Test und Replay nicht mehr vergleichbar.
+ */
+export function groupViolationsByRule(violations: readonly RuleViolation[]): GroupedViolation[] {
+  const groups = new Map<string, GroupedViolation>();
+  for (const v of violations) {
+    // Nur die uid als GANZES Token ersetzen, nie als Teilstück eines längeren
+    // Bezeichners: sonst wird `REQ-ab` bei elementId `REQ-a` zu `{el}b`. Das wäre
+    // zwar noch rückwärts auflösbar, aber zwei Meldungen könnten auf dasselbe
+    // Muster maskieren und dann falsch zusammenfallen — und lesbar ist es auch nicht.
+    const uidToken = v.elementId
+      ? new RegExp(`(?<![A-Za-z0-9_-])${v.elementId.replace(/[.*+?^${}()|[\]\\-]/g, '\\$&')}(?![A-Za-z0-9_-])`, 'g')
+      : null;
+    // Ohne elementId gibt es nichts zu ersetzen — solche Befunde falten nur bei
+    // wortgleicher Meldung, was der Schlüssel unten ohnehin erzwingt.
+    const mask = (text: string | undefined): string | undefined =>
+      text === undefined || !uidToken ? text : text.replace(uidToken, ELEMENT_PLACEHOLDER);
+    const message = mask(v.message) ?? '';
+    const fixHint = mask(v.fixHint);
+    const key = JSON.stringify([v.ruleId, v.severity, message, fixHint ?? null]);
+    const hit = groups.get(key);
+    if (hit) {
+      if (v.elementId) hit.elements.push(v.elementId);
+      continue;
+    }
+    groups.set(key, {
+      ruleId: v.ruleId,
+      severity: v.severity,
+      message,
+      ...(fixHint === undefined ? {} : { fixHint }),
+      elements: v.elementId ? [v.elementId] : [],
+    });
+  }
+  return [...groups.values()];
+}
