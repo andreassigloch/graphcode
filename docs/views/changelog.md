@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 204 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 205 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 204 CR · 170 done · 1 open.
+Total: 205 CR · 170 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -266,3 +266,4 @@ Total: 204 CR · 170 done · 1 open.
 | `CR-GC-582` | n/a | graph_generate erreicht im Greenfield nie done=true: Endspiel haengt an AF-01/03 (Frischestempel), BQ-02, FM-01, CR-R03 — der Agent beendet nach eigenem Urteil, im Webapp-Korpus Schleife bis Timeout (runde7, 4/4 Laeufe) |
 | `CR-GC-583` | n/a | steerAdvisory und fitAdvisory widersprechen sich ohne Rang: RD-04-Fix (Zwischenebene) verschlechtert modifiability/coherence — opus5-6 zieht die Ebene ein, opus5-7 verwirft sie per Delta-m (runde7) |
 | `CR-GC-584` | n/a | workOrder bei Bindungsquote 0 % ist reines Rauschen: in allen Greenfield-Laeufen 100 % nur 'blind' (jede FUNC ohne realRef), 4-21 Bloecke je Lauf — CR-576 laesst ihn durch, weil blind nicht leer ist |
+| `CR-GC-585` | n/a | Systemtest-Bericht deckt die Steuerung nicht ab: Kanal-Wirkung, Zeitlinie, Navigation Graph vs Datei (grep/glob), Effizienz je Element und Endstand der Freigabe wurden in Runde 7/8 mit Wegwerf-Skripten erhoben — gehoert in report.mjs |

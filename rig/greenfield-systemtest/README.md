@@ -42,6 +42,10 @@ redundancy — all decidable, all computed.
 - **redundancy** — new elements duplicating an existing golden capability.
 - **legality** — blocked/illegal mutations from the run's `audit.jsonl`.
 - **tokens** — in / out / reasoning, **cost**, **wall** (from `claude -p --output-format json`).
+- **Steuerung** (`steuerung.mjs`, CR-GC-585, nur Claude-Code-Arm) — fuenf Tabellen im Bericht:
+  Kanaele (geliefert/erwaehnt/befolgt), Zeitlinie (vor oder nach der Entscheidung), Navigation
+  Graph gegen Datei (grep/glob/Read nach Ziel: Auftrag, Doku, Sichten, Werkzeug-Quelltext),
+  Effizienz je Element, Endstand der Freigabe. Jede Optimierungsrunde liest zuerst diese Tabellen.
 
 ## Run
 

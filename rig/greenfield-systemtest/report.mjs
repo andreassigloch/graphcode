@@ -6,6 +6,7 @@
 // Reads results.json + results-opus.json (arms may run separately). @author andreas@siglochconsulting
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { leseTurns, cacheVerursacher, dryRunWirkung } from './turn-analyse.mjs';
+import { steuerungsBericht } from './steuerung.mjs';
 import { ARM_ACHSEN, achsenUnterschied } from './run.mjs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -219,6 +220,16 @@ if (mitDeckung.length) {
     console.log('Previews hatte den Kanal gar nicht an (Executor: `candidates = 1`, CR-GC-568).');
     console.log('\nJe Lauf im Detail: `node rig/greenfield-systemtest/turn-analyse.mjs runs/<arm>-<n>`\n');
   }
+}
+
+// CR-GC-585 — Kanaele, Zeitlinie, Navigation, Effizienz, Endstand. Nur wo ein Strom da ist
+// (Claude-Code-Arm): der Executor-Arm schreibt keinen, und das ist hier Absicht, kein Loch.
+{
+  const laeufe = rows
+    .filter((r) => !r.error)
+    .map((r) => ({ label: `${r.arm} #${r.run}`, strom: join(HERE, 'runs', `${r.arm}-${r.run}`, 'claude-stream.jsonl'), elemente: r.elements }))
+    .filter((l) => existsSync(l.strom));
+  if (laeufe.length) console.log('\n' + steuerungsBericht(laeufe) + '\n');
 }
 
 console.log('\n## Limits (quote these with the numbers)\n');

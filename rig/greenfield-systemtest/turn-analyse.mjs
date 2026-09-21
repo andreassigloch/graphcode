@@ -16,7 +16,7 @@
 import { readFileSync, existsSync } from 'node:fs';
 
 /** Eine Zeile des stream-json-Protokolls, tolerant gegen Teilzeilen. */
-function* zeilen(pfad) {
+export function* zeilen(pfad) {
   for (const z of readFileSync(pfad, 'utf8').split('\n')) {
     const t = z.trim();
     if (!t) continue;
