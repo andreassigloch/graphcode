@@ -221,6 +221,8 @@ describe('Betriebsmodi der Arme: jeder Arm nennt seine Achsen (CR-GC-572)', () =
     expect(frontier.executor).toBe('gcrun');
     // Kosten-Riegel: der Arm faehrt nur auf namentliche Nennung, nie bei `node run.mjs`.
     expect(frontier.optIn).toBe(true);
+    // Denken zaehlt gegen max_tokens: mit 4096 wurden 38 von 45 Mutate-Turns gekappt.
+    expect(Number(frontier.maxTokens)).toBeGreaterThanOrEqual(32000);
 
     expect(achsenUnterschied('opus5', 'gcrun-frontier')).toEqual(['treiber']);
     // Gegenkontrollen, sonst waere die Aussage oben nur deshalb wahr, weil die Tabelle
