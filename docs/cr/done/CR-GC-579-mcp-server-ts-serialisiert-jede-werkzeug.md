@@ -1,6 +1,6 @@
 # CR-GC-579: Jede Werkzeugantwort reist mit Einrueckung — 18 % des Kontexts fuer Leerzeichen
 
-**Status:** 🟠 In Umsetzung
+**Status:** ✅ Done (2026-09-21)
 **Typ:** aus Item ITEM-2026-421 (finding)
 **Erstellt:** 2026-09-21
 **Item:** bok/items/ITEM-2026-421.json (Lane: graph)
