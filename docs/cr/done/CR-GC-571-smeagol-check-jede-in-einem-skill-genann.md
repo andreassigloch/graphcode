@@ -1,6 +1,6 @@
 # CR-GC-571: Smeagol-Check: Ratschlaege gegen den Regelkatalog pruefen — drei Stufen
 
-**Status:** 🟠 In Umsetzung
+**Status:** ✅ Done (2026-09-21)
 **Typ:** aus Item ITEM-2026-410 (idea)
 **Erstellt:** 2026-09-21
 **Item:** bok/items/ITEM-2026-410.json (Lane: graph)
