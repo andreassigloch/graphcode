@@ -220,6 +220,20 @@ function initWorkspace(dir) {
     '--exclude', '.git', '--exclude', 'docs/graph', '--exclude', '.graphcode',
     `${CFG.material}/`, join(dir, 'material') + '/'],
     { stdio: 'pipe' });
+  isolateGit(dir);
+}
+
+/**
+ * Der Arbeitsbereich wird ein eigenes Git-Repo (CR-GC-580).
+ *
+ * Er liegt unter `graphcode/rig/.../runs/`. Ohne eigenes `.git` loest jedes `git` des Agenten
+ * zum graphcode-Repo auf: in Runde 7 committete `claude -p` (Berechtigungen uebersprungen)
+ * per `git add -A` fremde Dateien ins Produkt-Repo und setzte selbst zurueck. Beim Kunden ist
+ * der Arbeitsbereich immer ein Repo — das Rig bildet das jetzt ab. Bewusst NACH `graphcode init`:
+ * so installiert init keine Hooks, und die Laufbedingungen bleiben mit Runde 1–7 vergleichbar.
+ */
+export function isolateGit(dir) {
+  execFileSync('git', ['init', '-q'], { cwd: dir, stdio: 'pipe' });
 }
 
 /**
