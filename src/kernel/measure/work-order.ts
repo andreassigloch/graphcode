@@ -52,6 +52,22 @@ export interface WorkOrder {
   readonly blind: readonly BlindFunc[];
 }
 
+/**
+ * Sagt dieser Auftrag ueberhaupt etwas? (CR-GC-576)
+ *
+ * Keine Datei zu bewegen UND keine blinde FUNC: dann ist der Auftrag leer, und „kein Feld"
+ * sagt dasselbe wie „Feld mit zwei leeren Listen". Der billigste der drei leeren Bloecke —
+ * er kostete nur 57 Zeichen —, aber die Definition gehoert trotzdem neben den Erzeuger und
+ * nicht in die Antwortschicht.
+ *
+ * `blind` bleibt dabei ausdruecklich Teil der Bedingung: eine leere `moves`-Liste NEBEN
+ * blinden FUNCs ist keine Stille, sondern die Fail-open-Luege, gegen die dieses Feld
+ * ueberhaupt eingefuehrt wurde.
+ */
+export function workOrderIsSilent(w: WorkOrder): boolean {
+  return w.moves.length === 0 && w.blind.length === 0;
+}
+
 /** FUNC-uid → MOD-uid über die direkte `allocate`-Kante (`0..1` je FUNC). */
 function allocationOf(graph: CGraph): Map<string, string> {
   const typeOf = new Map(graph.nodes.map((n) => [n.uid, n.type]));

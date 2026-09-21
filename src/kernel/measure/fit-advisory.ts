@@ -37,6 +37,23 @@ export const FitAdvisory = z.object({
 export type FitAdvisory = z.infer<typeof FitAdvisory>;
 
 /**
+ * Sagt dieses Fit-Advisory ueberhaupt etwas? (CR-GC-576)
+ *
+ * „Nichts gesagt" heisst hier belegbar nichts: Null-Delta ueber ALLE Dimensionen und keine
+ * Regression. `before`/`after` sind dann zwei identische Vektoren, und ihr Wert ist der
+ * Ist-Zustand, der ohnehin in `graph_metrics` steht — die Antwort traegt ihn nur mit.
+ *
+ * Warum das zaehlt: mit Einrueckung kostete ein solcher Block 515 Zeichen dafuer, dass sich
+ * nichts geruehrt hat, weil drei Arrays zu sechs Dimensionen je Zahl eine Zeile bekamen.
+ * Gemessen an `runs/opus5-5`: 12 von 21 Bloecken waren so.
+ *
+ * Die Definition steht HIER, neben dem Erzeuger, und nirgends sonst — sonst driftet sie.
+ */
+export function fitAdvisoryIsSilent(a: FitAdvisory): boolean {
+  return a.regressions.length === 0 && a.delta.every((d) => d === 0);
+}
+
+/**
  * Der ℝ⁶-Ist-Vektor auf der Architektur-Ebene — DIE eine Messung (CR-GC-451).
  *
  * Bis hierher war sie in `measure()` eingeschlossen und verließ den Prozess nur
@@ -104,6 +121,22 @@ export const SteerAdvisory = z.object({
   removesElements: z.boolean(),
 });
 export type SteerAdvisory = z.infer<typeof SteerAdvisory>;
+
+/**
+ * Sagt dieses Steer-Advisory ueberhaupt etwas? (CR-GC-576)
+ *
+ * Die Bedingung ist bewusst ENG: `before`, `after` und `improvement` alle exakt null, und
+ * der Zug entfernt nichts. Gemessen an `runs/opus5-5` war das 21-mal von 21 — durchgehend,
+ * bei 4.788 Zeichen.
+ *
+ * Die weitere Fassung („improvement === 0 genuegt") wurde erwogen und VERWORFEN: bei einem
+ * Graphen mit Ueberschuss traegt der Block dann immer noch den absoluten Pegel und `worstAt`,
+ * also WO die schlimmste Stelle sitzt. Das ist eine Aussage, auch wenn der Zug sie nicht
+ * bewegt hat. Weggelassen wird nur, was nachweislich nichts sagt.
+ */
+export function steerAdvisoryIsSilent(a: SteerAdvisory): boolean {
+  return a.before === 0 && a.after === 0 && a.improvement === 0 && !a.removesElements;
+}
 
 /** Der Chebyshev-Score vor und nach dem Zug. Pure Messung, deterministisch. */
 export function computeSteerAdvisory(before: Graph, after: Graph, policy: MetricPolicy): SteerAdvisory {
