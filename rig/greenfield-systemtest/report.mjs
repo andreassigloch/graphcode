@@ -4,7 +4,8 @@
 // exact-name matching proved too brittle, see README).
 //
 // Reads results.json + results-opus.json (arms may run separately). @author andreas@siglochconsulting
-import { readFileSync, readdirSync } from 'node:fs';
+import { readFileSync, readdirSync, existsSync } from 'node:fs';
+import { leseTurns, cacheVerursacher, dryRunWirkung } from './turn-analyse.mjs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -140,6 +141,49 @@ if (mitDeckung.length) {
       console.log(`| ${z.id} | ${z.ueberdeckung} | ${z.match ?? '—'} | ${z.text.slice(0, 70)} |`);
     }
     console.log(`\n(die zehn schwaechsten von ${b.gesamt}; die vollstaendige Liste steht in results*.json)\n`);
+  }
+}
+
+// CR-GC-567 — wohin geht das Kontextfenster, und traegt der Dry-Run die Auswahl?
+// Zwei Fragen, die die Ergebniszeile eines Laufs nicht beantworten kann: sie kennt nur
+// eine Summe. Die Auswertung liest den Turn-Strom (nur `claude -p` mit stream-json) und
+// das Audit (jeder Arm).
+{
+  const zeilen = [];
+  for (const r of rows) {
+    if (r.error) continue;
+    const dir = join(HERE, 'runs', `${r.arm}-${r.run}`);
+    const strom = join(dir, 'claude-stream.jsonl');
+    const dr = dryRunWirkung(join(dir, '.graphcode', 'audit.jsonl'));
+    let cache = null;
+    if (existsSync(strom)) {
+      try {
+        const turns = leseTurns(strom);
+        const top = cacheVerursacher(turns).slice(0, 3);
+        const ges = turns.reduce((a, t) => a + t.verbrauch.cacheCreate, 0);
+        cache = { turns: turns.length, ges, top };
+      } catch { /* Strom unlesbar — Zeile bleibt ohne Cache-Spalte */ }
+    }
+    if (dr || cache) zeilen.push({ r, dr, cache });
+  }
+  if (zeilen.length) {
+    console.log('\n## Kontextkosten und Dry-Run-Wirkung (CR-GC-567)\n');
+    console.log('| Lauf | Turns | Cache-Schreibung | teuerster Verursacher | Previews | verworfen | Quote |');
+    console.log('|---|---:|---:|---|---:|---:|---:|');
+    for (const { r, dr, cache } of zeilen) {
+      const top = cache?.top?.[0];
+      console.log(
+        `| ${r.arm} #${r.run} | ${cache?.turns ?? '—'} | ${cache ? cache.ges.toLocaleString('de-DE') : '—'} `
+        + `| ${top ? `${top.werkzeug} (${top.tokens.toLocaleString('de-DE')})` : '—'} `
+        + `| ${dr?.previews ?? '—'} | ${dr?.verworfen ?? '—'} | ${dr?.quote ?? '—'} |`);
+    }
+    console.log('\nCache-Schreibung kostet rund das Fuenfzehnfache einer Cache-Lesung — sie, nicht die');
+    console.log('Trefferquote, ist der Posten. Die Zuschreibung ist eine Naeherung: trafen mehrere');
+    console.log('Werkzeugergebnisse vor demselben Turn ein, wird gleich verteilt.');
+    console.log('\nQuote = geprobt-und-verworfen je Preview. **0 heisst: der Dry-Run traegt die Auswahl');
+    console.log('nicht** — jede Probe wurde angewandt, die Metrik bestaetigt nur. Ein Arm ohne');
+    console.log('Previews hatte den Kanal gar nicht an (Executor: `candidates = 1`, CR-GC-568).');
+    console.log('\nJe Lauf im Detail: `node rig/greenfield-systemtest/turn-analyse.mjs runs/<arm>-<n>`\n');
   }
 }
 

@@ -663,6 +663,17 @@ describe('GATE_PROTOCOL-Selektion (CR-GC-288)', () => {
     expect(step.prompt.split('Gate-Protokoll')[0]).toBe(host.prompt.split('Gate-Protokoll')[0]);
   });
 
+  it("'driver' verspricht keinen Kandidaten-Vergleich — die Klausel gilt bei einem wie bei N Kandidaten (CR-GC-568)", () => {
+    const step = generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT, 0.8, [], 'driver');
+    const klausel = step.prompt.split('Gate-Protokoll')[1];
+    // Der Executor setzt 'driver' auch bei candidates=1; dann gibt es NICHTS zu
+    // waehlen. Eine Klausel, die "jeden Kandidaten" oder "den Gewinner" nennt,
+    // waere dort schlicht falsch — das Modell emittiert genau einen Batch.
+    for (const wort of ['Kandidaten', 'Gewinner']) expect(klausel).not.toContain(wort);
+    expect(klausel).toContain('EINEN vollständigen Batch');
+    expect(klausel).toContain('keine eigenen Gate-Proben');
+  });
+
   it("'driver' (expand): gleiche Funde/Fokus, nur das Protokoll wechselt", () => {
     const host = generationStep(expandGraph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
     const driver = generationStep(expandGraph, DEFAULT_METRIC_POLICY, undefined, 0.8, [], 'driver');

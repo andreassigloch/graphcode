@@ -97,3 +97,22 @@ ohne ihn. → ITEM-2026-399
 Ob sich aus dem Befund ein Zug ableiten lässt, ist offen. Denkbar wäre, große
 Werkzeugantworten zu kürzen oder stabil zu halten, damit der Cache-Präfix länger trägt —
 aber welche, entscheidet die Messung, nicht dieses CR.
+
+## 4b Der Bericht nennt es jetzt (Kriterien 3/4)
+
+`report.mjs` importiert die Auswertung und haengt eine Tabelle an: je Lauf Turns,
+Cache-Schreibung, teuerster Verursacher, Previews, verworfen, Quote. Damit sind 3 und 4
+nicht mehr ein Skript, das man von Hand aufruft, sondern Teil des Berichts.
+
+Gegen die vorhandenen Laeufe (ohne Strom, deshalb nur die Audit-Haelfte):
+
+| Lauf | Previews | verworfen | Quote |
+|---|---:|---:|---:|
+| opus5 #4 | 14 | 6 | **0,43** |
+| opus5 #0 | 3 | 1 | 0,33 |
+| opus5 #1 | 1 | 0 | 0 |
+| opus5 #2/#3 | 0 | 0 | 0 |
+| gcrun #0/#1/#2 | 0 | 0 | 0 |
+
+Die Cache-Spalten bleiben leer, bis ein Lauf mit `stream-json` vorliegt — Kriterium 1 und 2
+sind erst danach abnehmbar.

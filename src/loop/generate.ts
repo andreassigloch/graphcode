@@ -67,11 +67,16 @@ export const GenerationStep = z.object({
 });
 export type GenerationStep = z.infer<typeof GenerationStep>;
 
-/** Wer die Kandidaten-Auswahl macht (CR-GC-288): 'host' = der MCP-Client vergleicht
- * selbst per dryRun (Protokoll-Prosa im Prompt); 'driver' = der Best-of-N-Treiber
- * probt und wählt deterministisch im Code — der dryRun-Vergleichs-Auftrag
- * verschwindet aus dem Prompt (keine parallelen Pfade: der Prompt verlangt nicht,
- * was der Code schon tut). */
+/** Wer die Verdicts liest (CR-GC-288): 'host' = der MCP-Client probt selbst per
+ * dryRun und vergleicht (Protokoll-Prosa im Prompt); 'driver' = der Treiber führt
+ * den Batch am Gate — der dryRun-Vergleichs-Auftrag verschwindet aus dem Prompt
+ * (keine parallelen Pfade: der Prompt verlangt nicht, was der Code schon tut).
+ *
+ * Eine Aussage über den KANAL, nicht über die Kandidatenzahl (CR-GC-568): die
+ * 'driver'-Klausel gilt wortgleich bei einem wie bei N Kandidaten — ob der Treiber
+ * zwischen mehreren wählt, ist seine Sache und geht das Modell nichts an. Der
+ * Executor setzt deshalb immer 'driver'; der Default 'host' gehört dem MCP-Client,
+ * der als einziger analysieren darf. */
 export type GenerationSelection = 'host' | 'driver';
 
 /** Gate-Protokoll — identisch in jeder Phase; Kandidatenwahl ist Gate-Sache, nie
@@ -91,8 +96,8 @@ const GATE_PROTOCOL: Record<GenerationSelection, string> = {
     PROTOCOL_NEXT,
   driver:
     PROTOCOL_GUIDE +
-    '(2) Emittiere EINEN vollständigen Batch — keine eigenen Gate-Proben: der Treiber probt jeden ' +
-    'Kandidaten selbst am Gate (tier, Δm-fitAdvisory, Element-Ausbeute) und wendet nur den Gewinner an. ' +
+    '(2) Emittiere EINEN vollständigen Batch — keine eigenen Gate-Proben: der Treiber führt ihn ' +
+    'selbst ans Gate (tier, Δm-fitAdvisory, Element-Ausbeute) und wendet nur an, was dort besteht. ' +
     '(3) ' +
     PROTOCOL_NEXT,
 };
