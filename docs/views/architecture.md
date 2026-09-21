@@ -116,6 +116,10 @@
 | `FUNC-serve-sse` | FUNC | serveSSE() |
 | `FUNC-serve-stdio` | FUNC | serveStdio() |
 | `FUNC-session-shutdown` | FUNC | SessionLifecycle |
+| `FUNC-systemtest-metrics` | FUNC | Lauf bewerten |
+| `FUNC-systemtest-report` | FUNC | Laeufe nebeneinander stellen |
+| `FUNC-systemtest-run` | FUNC | Systemtest-Durchlauf fahren |
+| `FUNC-systemtest-turn-analyse` | FUNC | Turn-Analyse |
 | `FUNC-take-steering-snapshot` | FUNC | takeSteeringSnapshot(graph, policy) |
 | `FUNC-target-profile` | FUNC | Skill se:target-profile |
 | `FUNC-target-profile-load` | FUNC | loadTargetProfile |
@@ -137,6 +141,7 @@
 | `MOD-loop` | MOD | loop — Autopilot und Executor |
 | `MOD-projections` | MOD | projections — Graph nach Artefakt |
 | `MOD-surface` | MOD | surface — MCP, CLI, Host-Socket, Viewer |
+| `MOD-systemtest` | MOD | Systemtest-Rig |
 | `SYS-graphcode` | SYS | GraphCode |
 
 ## Allokation (FUNC -allocate-> MOD)
@@ -249,6 +254,10 @@
 | `FUNC-serve-sse` | `MOD-surface` |
 | `FUNC-serve-stdio` | `MOD-surface` |
 | `FUNC-session-shutdown` | `MOD-surface` |
+| `FUNC-systemtest-metrics` | `MOD-systemtest` |
+| `FUNC-systemtest-report` | `MOD-systemtest` |
+| `FUNC-systemtest-run` | `MOD-systemtest` |
+| `FUNC-systemtest-turn-analyse` | `MOD-systemtest` |
 | `FUNC-take-steering-snapshot` | `MOD-kernel-measure` |
 | `FUNC-target-profile` | `MOD-agent-surface` |
 | `FUNC-target-profile-load` | `MOD-loop` |

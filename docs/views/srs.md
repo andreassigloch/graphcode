@@ -66,7 +66,7 @@ io ▶ `FLOW-model-answer` · io ◀ `FLOW-model-wire-request`
 
 Der Mensch, dem das Repo gehoert: setzt das Ziel, entscheidet, delegiert die Realisierung an gegatete Agenten. Er will exzellente Codequalitaet bei effizientem Testen und minimalem Token-/LLM-Aufwand. Drei Nutzerklassen, EINE Schnittstelle (ISO 29148 5.2.4 — die Klasse steht hier, nicht in der Topologie): (a) Entwickler/Repo-Owner — betreibt das Repo, faehrt CLI und Gate; (b) Systems Engineer — arbeitet auf der WAS-Ebene (UC/REQ/FUNC/FCHAIN) und delegiert die HOW-Ebene; (c) Vibe Coder — denkt in Architektur und Kundennutzen, schreibt selbst keinen Code. Alle drei reden ueber CLI-Verben, Skill-Aufrufe und dasselbe Apply-Gate; eine eigene Topologie-Rolle hatte keine von ihnen. (CR-GC-455)
 
-io ▶ `FLOW-cli-invocation` · `FLOW-config-file` · `FLOW-mutate-cmd-owner` · `FLOW-query-request-owner` · `FLOW-version-bump` · io ◀ `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-code-lane-plan` · `FLOW-export-pending` · `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-install-result-collect-status` · `FLOW-install-result-harness-cli` · `FLOW-install-result-upgrade` · `FLOW-markdown-docs` · `FLOW-rendered-views` · `FLOW-skill-report-se-help` · `FLOW-skill-report-se-retro` · `FLOW-skill-report-se-review` · `FLOW-skill-report-se-status` · `FLOW-skill-report-test` · `FLOW-skill-report-test-ui` · `FLOW-test-selection`
+io ▶ `FLOW-cli-invocation` · `FLOW-config-file` · `FLOW-mutate-cmd-owner` · `FLOW-query-request-owner` · `FLOW-systemtest-order` · `FLOW-version-bump` · io ◀ `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-code-lane-plan` · `FLOW-export-pending` · `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-install-result-collect-status` · `FLOW-install-result-harness-cli` · `FLOW-install-result-upgrade` · `FLOW-markdown-docs` · `FLOW-rendered-views` · `FLOW-skill-report-se-help` · `FLOW-skill-report-se-retro` · `FLOW-skill-report-se-review` · `FLOW-skill-report-se-status` · `FLOW-skill-report-test` · `FLOW-skill-report-test-ui` · `FLOW-systemtest-verdict` · `FLOW-test-selection`
 
 ## 3  Use Cases & Verhalten
 
@@ -2501,6 +2501,84 @@ Verification ◀ `TEST-skill-reports-measured-values` (conformance) · satisfy �
 Liefert je Satz, was passiert ist — als schlanke Projektion, nicht als Replay. Gemessen am echten Trail dieses Repos war ein Default-Aufruf 163 KB, davon 79 Prozent Mutate-Batches, die kein Agent liest. Die schweren Haelften bleiben abrufbar: Abfrage-Praezision, keine Ergebnis-Kompression. (CR-GC-462)
 
 io ◀ `FLOW-audit-record` · io ▶ `FLOW-audit-entries` · allocate ▶ `MOD-surface`
+
+#### 3.6.2  `FCHAIN-systemtest-run` — Systemtest: Lauf, Artefakte, Auswertung, Befund
+
+Die Kette, mit der das Produkt ueber sich selbst misst: der Mensch stellt den Auftrag, ein Durchlauf je Arm hinterlaesst Artefakte, Bewertung und Turn-Analyse lesen sie unabhaengig voneinander, der Bericht stellt beides nebeneinander. Einzelne Arme, Modelle und Laufnummern sind Konfiguration und bekommen bewusst keinen Knoten. (CR-GC-574)
+
+##### `REQ-greenfield-systemtest-dod` — Definition-of-Done: Greenfield-Systemtest
+
+> auch unter: `FUNC-systemtest-metrics` · `FUNC-systemtest-report` · `FUNC-systemtest-run` · `FUNC-systemtest-turn-analyse`
+
+Der End-to-End-Nachweis für reduced-llm + token-efficiency + code-quality: leeres Repo, ein Prompt (Web-App aus graphcode, Multiuser, Module maximal genutzt). Authoring qwen3.6-35b-a3b (local) vs. Opus 5 (frontier), je 3×, ein Host (Claude Code). Scoring regelbasiert: readiness, reuse-coverage vs. Modul-Graph-Golden, illegal/blocked, redundanz, tokens_in/out/reasoning, cost, wall_s. Best-fit → Impl-Plan durchs Gate → Coding (qwen-35b · devstral).
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-greenfield-systemtest` (acceptance) · `TEST-systemtest-evaluations` (integration) · satisfy ◀ `FCHAIN-systemtest-run` · `FUNC-systemtest-metrics` · `FUNC-systemtest-report` · `FUNC-systemtest-run` · `FUNC-systemtest-turn-analyse` · allocate ▶ `MOD-systemtest`
+
+##### 3.6.2.1  `FUNC-systemtest-run` — Systemtest-Durchlauf fahren
+
+Je Arm und Lauf: frischer Workspace, Material hineinkopiert, SYS-Seed in einem eigenen Prozess, Store-Schloss freigegeben, Executor gestartet, Artefakte eingesammelt. Die Arme sind Konfiguration — Modellnamen und Laufnummern bekommen bewusst keinen Knoten. (CR-GC-574)
+
+io ◀ `FLOW-systemtest-order` · io ▶ `FLOW-systemtest-artifacts` · allocate ▶ `MOD-systemtest`
+
+###### `REQ-greenfield-systemtest-dod` — Definition-of-Done: Greenfield-Systemtest
+
+> auch unter: `FCHAIN-systemtest-run` · `FUNC-systemtest-metrics` · `FUNC-systemtest-report` · `FUNC-systemtest-turn-analyse`
+
+Der End-to-End-Nachweis für reduced-llm + token-efficiency + code-quality: leeres Repo, ein Prompt (Web-App aus graphcode, Multiuser, Module maximal genutzt). Authoring qwen3.6-35b-a3b (local) vs. Opus 5 (frontier), je 3×, ein Host (Claude Code). Scoring regelbasiert: readiness, reuse-coverage vs. Modul-Graph-Golden, illegal/blocked, redundanz, tokens_in/out/reasoning, cost, wall_s. Best-fit → Impl-Plan durchs Gate → Coding (qwen-35b · devstral).
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-greenfield-systemtest` (acceptance) · `TEST-systemtest-evaluations` (integration) · satisfy ◀ `FCHAIN-systemtest-run` · `FUNC-systemtest-metrics` · `FUNC-systemtest-report` · `FUNC-systemtest-run` · `FUNC-systemtest-turn-analyse` · allocate ▶ `MOD-systemtest`
+
+##### 3.6.2.2  `FUNC-systemtest-metrics` — Lauf bewerten
+
+Reine Arithmetik ueber die Artefakte eines Laufs: Struktur, Readiness, Spezifikations- und Code-Urteil samt Reichweite, Ablehnungen aus dem Audit, Modul-Audit gegen das Golden und die Wortlaut-Pruefliste des Auftrags. Kein KI-Richter, kein Live-Store — jede Zahl ist aus den abgelegten Dateien reproduzierbar. (CR-GC-553, CR-GC-574)
+
+io ◀ `FLOW-systemtest-artifacts` · io ▶ `FLOW-systemtest-row` · allocate ▶ `MOD-systemtest`
+
+###### `REQ-greenfield-systemtest-dod` — Definition-of-Done: Greenfield-Systemtest
+
+> auch unter: `FCHAIN-systemtest-run` · `FUNC-systemtest-report` · `FUNC-systemtest-run` · `FUNC-systemtest-turn-analyse`
+
+Der End-to-End-Nachweis für reduced-llm + token-efficiency + code-quality: leeres Repo, ein Prompt (Web-App aus graphcode, Multiuser, Module maximal genutzt). Authoring qwen3.6-35b-a3b (local) vs. Opus 5 (frontier), je 3×, ein Host (Claude Code). Scoring regelbasiert: readiness, reuse-coverage vs. Modul-Graph-Golden, illegal/blocked, redundanz, tokens_in/out/reasoning, cost, wall_s. Best-fit → Impl-Plan durchs Gate → Coding (qwen-35b · devstral).
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-greenfield-systemtest` (acceptance) · `TEST-systemtest-evaluations` (integration) · satisfy ◀ `FCHAIN-systemtest-run` · `FUNC-systemtest-metrics` · `FUNC-systemtest-report` · `FUNC-systemtest-run` · `FUNC-systemtest-turn-analyse` · allocate ▶ `MOD-systemtest`
+
+##### 3.6.2.3  `FUNC-systemtest-report` — Laeufe nebeneinander stellen
+
+Stellt jeden Rohlauf einzeln dar statt eines Mittels, nennt je Arm Spannweiten statt Streuungsmasse, haengt die Turn-Auswertung an und benennt die Grenzen der Aussage. Ein Korpus je Bericht — zwei Fragen mit verschiedenen Goldens in einer Tabelle waeren keine Messung. (CR-GC-553, CR-GC-574)
+
+io ◀ `FLOW-systemtest-row` · `FLOW-systemtest-turn-profile` · io ▶ `FLOW-systemtest-verdict` · allocate ▶ `MOD-systemtest`
+
+###### `REQ-greenfield-systemtest-dod` — Definition-of-Done: Greenfield-Systemtest
+
+> auch unter: `FCHAIN-systemtest-run` · `FUNC-systemtest-metrics` · `FUNC-systemtest-run` · `FUNC-systemtest-turn-analyse`
+
+Der End-to-End-Nachweis für reduced-llm + token-efficiency + code-quality: leeres Repo, ein Prompt (Web-App aus graphcode, Multiuser, Module maximal genutzt). Authoring qwen3.6-35b-a3b (local) vs. Opus 5 (frontier), je 3×, ein Host (Claude Code). Scoring regelbasiert: readiness, reuse-coverage vs. Modul-Graph-Golden, illegal/blocked, redundanz, tokens_in/out/reasoning, cost, wall_s. Best-fit → Impl-Plan durchs Gate → Coding (qwen-35b · devstral).
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-greenfield-systemtest` (acceptance) · `TEST-systemtest-evaluations` (integration) · satisfy ◀ `FCHAIN-systemtest-run` · `FUNC-systemtest-metrics` · `FUNC-systemtest-report` · `FUNC-systemtest-run` · `FUNC-systemtest-turn-analyse` · allocate ▶ `MOD-systemtest`
+
+##### 3.6.2.4  `FUNC-systemtest-turn-analyse` — Turn-Analyse
+
+Schneidet den stream-json-Strom eines Laufs je Turn auf: Verbrauch, welches Werkzeugergebnis dem teuersten Cache-Zuwachs voranging, und die Dry-Run-Wirkung aus dem Audit. Fasst je message.id zusammen, weil eine Assistant-Nachricht je Content-Block im Strom steht; ohne das zaehlte sie das Doppelte. Voraussetzung jeder Optimierungsschleife am Kontextverbrauch. (CR-GC-567, CR-GC-574)
+
+io ◀ `FLOW-systemtest-artifacts` · io ▶ `FLOW-systemtest-turn-profile` · allocate ▶ `MOD-systemtest`
+
+###### `REQ-greenfield-systemtest-dod` — Definition-of-Done: Greenfield-Systemtest
+
+> auch unter: `FCHAIN-systemtest-run` · `FUNC-systemtest-metrics` · `FUNC-systemtest-report` · `FUNC-systemtest-run`
+
+Der End-to-End-Nachweis für reduced-llm + token-efficiency + code-quality: leeres Repo, ein Prompt (Web-App aus graphcode, Multiuser, Module maximal genutzt). Authoring qwen3.6-35b-a3b (local) vs. Opus 5 (frontier), je 3×, ein Host (Claude Code). Scoring regelbasiert: readiness, reuse-coverage vs. Modul-Graph-Golden, illegal/blocked, redundanz, tokens_in/out/reasoning, cost, wall_s. Best-fit → Impl-Plan durchs Gate → Coding (qwen-35b · devstral).
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-greenfield-systemtest` (acceptance) · `TEST-systemtest-evaluations` (integration) · satisfy ◀ `FCHAIN-systemtest-run` · `FUNC-systemtest-metrics` · `FUNC-systemtest-report` · `FUNC-systemtest-run` · `FUNC-systemtest-turn-analyse` · allocate ▶ `MOD-systemtest`
 
 ### 3.7  `UC-model-exchange` — Modell ein- und ausgeben
 
@@ -6340,43 +6418,73 @@ Der Anspruch auf den Kuzu-Store eines Repos: gehalten, uebernommen oder verweige
 
 io ◀ `FUNC-claim-store-lock` · io ▶ `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` · schema ▶ `SCHEMA-lock-owner`
 
-### 4.104  `FLOW-target-profile` — Zielprofil
+### 4.104  `FLOW-systemtest-artifacts` — Lauf-Artefakte
+
+Was ein einzelner Lauf hinterlaesst und die Auswertung wieder aufnimmt — der Uebergabepunkt zwischen Fahren und Bewerten.
+
+io ◀ `FUNC-systemtest-run` · io ▶ `FUNC-systemtest-metrics` · `FUNC-systemtest-turn-analyse` · schema ▶ `SCHEMA-systemtest-artifacts`
+
+### 4.105  `FLOW-systemtest-order` — Systemtest-Auftrag
+
+Der Anstoss des Menschen an den Messaufbau: welche Arme, wie viele Laeufe, gegen welches Golden und welche Pruefliste.
+
+io ◀ `ACTOR-owner` · io ▶ `FUNC-systemtest-run` · schema ▶ `SCHEMA-systemtest-order`
+
+### 4.106  `FLOW-systemtest-row` — Bewertungszeile
+
+Das Ergebnis der Bewertung eines Laufs, wie es in results-*.json abgelegt und vom Bericht wieder gelesen wird.
+
+io ◀ `FUNC-systemtest-metrics` · io ▶ `FUNC-systemtest-report` · schema ▶ `SCHEMA-systemtest-row`
+
+### 4.107  `FLOW-systemtest-turn-profile` — Turn-Profil
+
+Die aufgeschnittene Verbrauchsspur eines Laufs, die der Bericht neben die Bewertungszeilen stellt.
+
+io ◀ `FUNC-systemtest-turn-analyse` · io ▶ `FUNC-systemtest-report` · schema ▶ `SCHEMA-systemtest-turn-profile`
+
+### 4.108  `FLOW-systemtest-verdict` — Systemtest-Bericht
+
+Der Bericht an den Menschen: jeder Rohlauf, Spannweiten je Arm, Turn-Auswertung, Modul-Audit und die ausdruecklich benannten Grenzen der Aussage.
+
+io ◀ `FUNC-systemtest-report` · io ▶ `ACTOR-owner` · schema ▶ `SCHEMA-systemtest-verdict`
+
+### 4.109  `FLOW-target-profile` — Zielprofil
 
 Das geladene und gepruefte Zielprofil: R6-Zielgewichte und die 3-7 Intentions-Anker, Zielkonflikte gemeldet. Erzeugt von target-profile-load aus der Rohform.
 
 io ◀ `FUNC-target-profile-load` · io ▶ `FUNC-generation-step` · `FUNC-graph-suggest` · schema ▶ `SCHEMA-target-profile`
 
-### 4.105  `FLOW-target-profile-file` — Zielprofil (Rohform)
+### 4.110  `FLOW-target-profile-file` — Zielprofil (Rohform)
 
 Das Zielprofil, wie der Skill se:target-profile es nach .graphcode/target-profile.json schreibt: ungeprueft, Zielkonflikte noch nicht gemeldet.
 
 io ◀ `FUNC-target-profile` · io ▶ `FUNC-target-profile-load` · schema ▶ `SCHEMA-target-profile`
 
-### 4.106  `FLOW-test-selection` — Selektive Testauswahl
+### 4.111  `FLOW-test-selection` — Selektive Testauswahl
 
 Das minimale selektive Laufkommando mit den aufgeloesten TESTs, den Coverage-Zahlen und dem, was unaufloesbar blieb.
 
 io ◀ `FUNC-deduce-tests` · io ▶ `ACTOR-agent` · `ACTOR-owner` · schema ▶ `SCHEMA-test-selection`
 
-### 4.107  `FLOW-tool-context` — Werkzeug-Kontext
+### 4.112  `FLOW-tool-context` — Werkzeug-Kontext
 
 Der je Prozess einmal gepraegte Kontext, den jeder Werkzeugaufruf liest: Graphversion, Sitzungskennung, Aufrufer, Repo-Wurzel.
 
 io ◀ `FUNC-tool-context` · io ▶ `FUNC-bind-tools` · schema ▶ `SCHEMA-tool-context`
 
-### 4.108  `FLOW-tool-registry` — Werkzeug-Register
+### 4.113  `FLOW-tool-registry` — Werkzeug-Register
 
 Das gebundene Werkzeugregister, das der Server ueber stdio anbietet: je Werkzeug Name, Eingabeschema und Handler.
 
 io ◀ `FUNC-bind-tools` · io ▶ `FUNC-serve-stdio` · schema ▶ `SCHEMA-tool-registry`
 
-### 4.109  `FLOW-trajectory` — Trajectory/Outcome
+### 4.114  `FLOW-trajectory` — Trajectory/Outcome
 
 append-only Lern-Emission.
 
 io ◀ `FUNC-emit-trajectory` · io ▶ `ACTOR-learning-engine` · schema ▶ `SCHEMA-trajectory`
 
-### 4.110  `FLOW-version-bump` — Version-Bump
+### 4.115  `FLOW-version-bump` — Version-Bump
 
 Neue ONTOLOGY/RULES_VERSION aus contracts/se.
 
@@ -6660,37 +6768,67 @@ Gemappter OntologyGraph mit injizierten ND-Matrizen, Violations des vollen Katal
 
 schema ◀ `FLOW-steering-snapshot`
 
-### 5.47  `SCHEMA-target-profile` — TargetProfile
+### 5.47  `SCHEMA-systemtest-artifacts` — Lauf-Artefakte
+
+Was ein Lauf auf Platte hinterlaesst und die Auswertung wieder aufnimmt: graph.json, readiness.json, audit.jsonl (der Gate-Log des Laufs), claude-stream.jsonl beziehungsweise run-raw.log (der Turn-Strom) und usage.json. Concept-only: Dateien, kein Wire-Format. (CR-GC-574)
+
+schema ◀ `FLOW-systemtest-artifacts`
+
+### 5.48  `SCHEMA-systemtest-order` — Systemtest-Auftrag
+
+Was ein Durchlauf braucht, bevor er faehrt: Arme, Laufzahl und Startindex, Auftragstext, Seed-System, Materialverzeichnis, Golden-Graph, Pruefliste, Zeitdeckel, Ergebnisdatei. Reist als Umgebung, nicht als Datei — deshalb concept-only: ein Zod-Symbol gibt es nicht und soll es nicht geben, solange der Aufbau ein Messwerkzeug ist. (CR-GC-574)
+
+schema ◀ `FLOW-systemtest-order`
+
+### 5.49  `SCHEMA-systemtest-row` — Bewertungszeile eines Laufs
+
+Eine Zeile je Lauf in results-*.json: Arm, Modell, Executor, Laufnummer, Elementzahl, Struktur je Typ, Readiness, Spezifikations- und Code-Urteil samt Reichweite, Gate-Ablehnungen, Verbrauch und die beiden Audit-Listen. Concept-only. (CR-GC-574)
+
+schema ◀ `FLOW-systemtest-row`
+
+### 5.50  `SCHEMA-systemtest-turn-profile` — Turn-Profil eines Laufs
+
+Je Turn Verbrauch und vorausgegangene Werkzeugergebnisse, dazu der Abgleich gegen die Ergebniszeile, die Zuschreibung der Cache-Schreibung je Werkzeug und die Dry-Run-Quote. Concept-only. (CR-GC-574)
+
+schema ◀ `FLOW-systemtest-turn-profile`
+
+### 5.51  `SCHEMA-systemtest-verdict` — Systemtest-Bericht
+
+Der Bericht als Text: je Rohlauf eine Zeile, je Arm Spannweiten, die Turn-Auswertung, das Modul-Audit und ein ausdruecklicher Grenzen-Block. Concept-only — er wird gelesen, nicht geparst; ein Vertrag mit Zod-Symbol waere hier eine Behauptung. (CR-GC-574)
+
+schema ◀ `FLOW-systemtest-verdict`
+
+### 5.52  `SCHEMA-target-profile` — TargetProfile
 
 weights (6 Dimensionen in [-1,1]) und intentAnchors (3-7 Strings). Der Vertrag der Zielprofil-Datei, die zwei Schreiber und einen Leser hat.
 
 schema ◀ `FLOW-target-profile` · `FLOW-target-profile-file`
 
-### 5.48  `SCHEMA-test-selection` — TestSelection
+### 5.53  `SCHEMA-test-selection` — TestSelection
 
 command, tests mit testRefs, coverage, unresolved. Der Vertrag der graph_tests-Antwort.
 
 schema ◀ `FLOW-test-selection`
 
-### 5.49  `SCHEMA-tool-context` — Werkzeug-Kontext
+### 5.54  `SCHEMA-tool-context` — Werkzeug-Kontext
 
 Was jeder Werkzeugaufruf mitbekommt: Griff, Audit-Log, Codecs, Graphversion, Sitzung, Aufrufer. Zod-Vertrag, geparst in createToolContext; ToolPort ist die segregierte Sicht darauf, erzwungen beim Kompilieren (_portCheck).
 
 schema ◀ `FLOW-tool-context`
 
-### 5.50  `SCHEMA-tool-registry` — Werkzeug-Register
+### 5.55  `SCHEMA-tool-registry` — Werkzeug-Register
 
 Die gebundenen MCP-Werkzeuge mit Namen und Eingabeschema. Spec-only — ein Objekt mit Verhalten, kein Zod-Datenvertrag.
 
 schema ◀ `FLOW-tool-registry`
 
-### 5.51  `SCHEMA-trajectory` — Trajectory/Outcome
+### 5.56  `SCHEMA-trajectory` — Trajectory/Outcome
 
 append-only Lern-Emission: ts, consumerId, consumerType, operation, opCounts, applied, outcome und die Violation-Zaehler. @sigloch/learning-core. (Kopie entfernt CR-GC-454)
 
 schema ◀ `FLOW-trajectory`
 
-### 5.52  `SCHEMA-update-event` — UpdateEvent
+### 5.57  `SCHEMA-update-event` — UpdateEvent
 
 SSE invalidate Event: type, domains (graph/rules/readiness/suggestions), ts und optional version. Einmal in contracts definiert, damit emittierender Harness und Viewer denselben Vertrag lesen. (Kopie entfernt CR-GC-454)
 
@@ -6739,6 +6877,12 @@ allocate ◀ `FUNC-auto-export` · `FUNC-block-dokumentenwerk` · `FUNC-block-ge
 Adapter ohne eigene Logik: MCP-stdio-Registry, CLI-Verben und Distribution, Host-Socket zum Store-Besitzer, read-only SSE-Bruecke an den Live-Viewer. Uebersetzt Protokoll in kernel-Aufrufe, mehr nicht. (CR-GC-446)
 
 allocate ◀ `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-bind-tools` · `FUNC-block-bedienung` · `FUNC-block-betrieb` · `FUNC-block-host-sitzung` · `FUNC-block-live-dashboard` · `FUNC-bootstrap` · `FUNC-broadcast-diff` · `FUNC-cli-dispatch` · `FUNC-collect-status` · `FUNC-create-harness` · `FUNC-emit-update-event` · `FUNC-graph-realize` · `FUNC-gve-sessions` · `FUNC-gve-supervise` · `FUNC-harness-cli` · `FUNC-health-endpoint` · `FUNC-host-socket` · `FUNC-import-code-verb` · `FUNC-read-tools` · `FUNC-rewind` · `FUNC-run-verb` · `FUNC-serve-sse` · `FUNC-serve-stdio` · `FUNC-session-shutdown` · `FUNC-tool-context` · `FUNC-upgrade` · satisfy ▶ `REQ-agent-agnostic` · `REQ-buildable-standalone` · `REQ-cache-layering` · `REQ-gate-only-writes` · `REQ-graph-context-replaces-reading` · `REQ-install-idempotent` · `REQ-live-event-in-contracts` · `REQ-readonly-bridge` · `REQ-self-contained-dist` · `REQ-single-transport` · `REQ-versioned-cache`
+
+### 6.7  `MOD-systemtest` — Systemtest-Rig
+
+Der Messaufbau, mit dem das Produkt ueber sich selbst lernt: ein Greenfield-Durchlauf je Arm, seine Artefakte, ihre Auswertung. Liegt ausserhalb des Abhaengigkeits-DAG von src, weil er gegen dist faehrt wie jeder Kunde — Verbraucher des Produkts, nicht eine seiner Schichten. (CR-GC-574)
+
+allocate ◀ `FUNC-systemtest-metrics` · `FUNC-systemtest-report` · `FUNC-systemtest-run` · `FUNC-systemtest-turn-analyse`
 
 ## 7  Cross-cutting Requirements
 
@@ -6893,14 +7037,6 @@ Der materialisierte Graph + die Live-Harness sind SSOT. docs/*.md sind historisc
 priority: should · status: done · kinds: non-functional
 
 Verification ◀ `TEST-deny-stale-read` (integration) · `TEST-graph-is-ssot` (integration) · `TEST-path-containment` (integration) · satisfy ◀ — · allocate ▶ —
-
-### `REQ-greenfield-systemtest-dod` — Definition-of-Done: Greenfield-Systemtest
-
-Der End-to-End-Nachweis für reduced-llm + token-efficiency + code-quality: leeres Repo, ein Prompt (Web-App aus graphcode, Multiuser, Module maximal genutzt). Authoring qwen3.6-35b-a3b (local) vs. Opus 5 (frontier), je 3×, ein Host (Claude Code). Scoring regelbasiert: readiness, reuse-coverage vs. Modul-Graph-Golden, illegal/blocked, redundanz, tokens_in/out/reasoning, cost, wall_s. Best-fit → Impl-Plan durchs Gate → Coding (qwen-35b · devstral).
-
-priority: must · status: open · kinds: functional
-
-Verification ◀ `TEST-greenfield-systemtest` (acceptance) · satisfy ◀ — · allocate ▶ —
 
 ### `REQ-harness-schema-in-contracts` — Harness-Schemas in contracts (D1)
 
@@ -7818,85 +7954,91 @@ Kuzu Lock-Konflikt / abgestuerzter Owner / korrupter Store: Lock-Erkennung + sic
 
 verify ▶ `REQ-store-recovery`
 
-### 8.116  `TEST-target-profile` — Zielprofil als Steuer-Konfiguration
+### 8.116  `TEST-systemtest-evaluations` — Abnahme der Rig-Auswertungen
+
+Prueft die Auswertungen des Systemtests gegen echte Artefakte auf Platte: die Zusammenfassung je message.id (sonst zaehlt der Strom das Doppelte), den Abgleich Strom gegen Ergebniszeile, die Zuschreibung der Cache-Schreibung, die Dry-Run-Quote, die Ablehnungszaehlung ohne tier, die Bindungsquote ueber Blatt-FUNCs und das dreiwertige Code-Urteil samt Reichweite. Ohne sie ist der Messaufbau ungemessen — zwei seiner Zaehlfehler fielen bisher erst am lebenden Lauf auf. (CR-GC-574)
+
+verify ▶ `REQ-greenfield-systemtest-dod` · testRefs: `tests/systemtest-rig.test.ts`
+
+### 8.117  `TEST-target-profile` — Zielprofil als Steuer-Konfiguration
 
 Abnahme der Datei tests/target-profile.test.ts: Schema, Laden und Konfliktpruefung des Zielprofils, dazu der Konfigurations-Default des Vorschlags-Werkzeugs gegen einen echten Disk-Kuzu. Die Konfliktpruefung ist ein Pfad, kein zweiter neben der Steuerung.
 
 verify ▶ `REQ-target-shifts-ranking` · `REQ-thresholds-from-config` · testRefs: `tests/target-profile.test.ts`
 
-### 8.117  `TEST-target-shifts-ranking` — Ranking gegen zwei gegenlaeufige Zielvektoren
+### 8.118  `TEST-target-shifts-ranking` — Ranking gegen zwei gegenlaeufige Zielvektoren
 
 Zwei Laeufe auf identischem Graphen, verschieden nur im Vorzeichen des Ziels; assertiert Score-Negation, Spitzenwechsel und Magnituden-Invarianz.
 
 verify ▶ `REQ-target-shifts-ranking` · testRefs: `tests/mcp.suggest.test.ts`
 
-### 8.118  `TEST-target-state` — Abnahme Zielbild
+### 8.119  `TEST-target-state` — Abnahme Zielbild
 
 Konzept: moneyflow und sirail werden allein ueber Regeln und Steuerung strukturiert; der Autor nimmt FUNC- und MOD-View ab; die Vertraege je Modulrand sind ohne Aussageverlust nicht weiter reduzierbar.
 
 verify ▶ `REQ-target-state`
 
-### 8.119  `TEST-test-runnable-binding` — TestRef-Aufloesungs-Test
+### 8.120  `TEST-test-runnable-binding` — TestRef-Aufloesungs-Test
 
 Abnahme der Datei tests/mcp.tests-deduction.test.ts: ein impacted TEST-Knoten wird ueber testRefs eindeutig auf eine lauffaehige Datei aufgeloest, graph_tests erzeugt daraus ein selektives Run-Kommando ueber genau diese Dateien, und ein TEST ohne testRefs erscheint unter unresolved statt zu verschwinden. Synthetische Disk-Kuzu-Fixture.
 
 verify ▶ `REQ-test-runnable-binding` · testRefs: `tests/mcp.tests-deduction.test.ts`
 
-### 8.120  `TEST-testref-materialize` — Export stub-materialization test
+### 8.121  `TEST-testref-materialize` — Export stub-materialization test
 
 graph_export scaffoldt einen lauffaehigen it.todo-Stub fuer eine fehlende testRef-Datei, ueberschreibt nie eine existierende, ueberspringt concept-only; danach loest graph_tests auf die materialisierte Datei auf. (CR-GC-205 Item 4)
 
 verify ▶ `REQ-testref-materialized` · testRefs: `tests/export.testref-materialize.test.ts`
 
-### 8.121  `TEST-testreport` — Rueckweg des Testergebnisses
+### 8.122  `TEST-testreport` — Rueckweg des Testergebnisses
 
 Abnahme der Datei tests/testreport.test.ts: das Ergebnis eines Laufs kommt in den Graphen und der Pruefreport wieder heraus. Vorher meldete die Ergebnis-Regel jeden TEST-Knoten als ergebnislos, waehrend die Suite vollstaendig gruen lief.
 
 verify ▶ `REQ-audit-trail` · `REQ-test-runnable-binding` · testRefs: `tests/testreport.test.ts`
 
-### 8.122  `TEST-thresholds-from-config` — Schwelle als Knopf, nicht als Literal
+### 8.123  `TEST-thresholds-from-config` — Schwelle als Knopf, nicht als Literal
 
 Zwei Repos, identischer Graph, verschieden nur in graphcode.config.jsonc; assertiert das gekippte Urteil bei identischer Messung.
 
 verify ▶ `REQ-thresholds-from-config` · testRefs: `tests/config.test.ts`
 
-### 8.123  `TEST-token-efficiency` — Token-Budget-Test
+### 8.124  `TEST-token-efficiency` — Token-Budget-Test
 
 graph_impact-Kontext ist messbar kleiner als ein Volltext-/grep-Dump desselben Scopes (Token-Count-Assertion).
 
 verify ▶ `REQ-benchmark-harness` · `REQ-precise-context` · `REQ-token-efficiency`
 
-### 8.124  `TEST-tool-contract` — Werkzeug-Vertrags-Test
+### 8.125  `TEST-tool-contract` — Werkzeug-Vertrags-Test
 
 Parst die ECHTE Registry aus acht Fabriken an einem echten Harness gegen MCPToolRegistrySchema und den Kontext gegen ToolPortSchema; dazu drei Gegenproben (fehlender handler, inputSchema ohne safeParse, Port ohne serializeToolWrite).
 
 verify ▶ `SCHEMA-mcp-tool` · `SCHEMA-mcp-tool-registry` · `SCHEMA-tool-context` · testRefs: `tests/tool-contract.test.ts`
 
-### 8.125  `TEST-uc-authoring-style` — Stilregel fuer Use Cases als Linter
+### 8.126  `TEST-uc-authoring-style` — Stilregel fuer Use Cases als Linter
 
 Abnahme der Datei tests/se-author-uc.test.ts: die Stilregel ist ausfuehrbar statt Prosa. Hoechstens 25 Woerter, hoechstens zwei Fachbegriffe, jeder davon an einem Knoten geerdet, geprueft auch gegen den committeten Graphen.
 
 verify ▶ `REQ-interactive-capture-suggest` · testRefs: `tests/se-author-uc.test.ts`
 
-### 8.126  `TEST-upgrade` — Abnahme des upgrade-Verbs
+### 8.127  `TEST-upgrade` — Abnahme des upgrade-Verbs
 
 Abnahme der Datei tests/upgrade.test.ts: die Reihenfolge macht den Befehl aus. Erst installieren, dann die Artefakte vom NEU installierten Build schreiben lassen, dann den alten Host beenden. Bleibt ein Schritt aus, steht das im Bericht statt als stiller Erfolg. npm und Signale sind injiziert, kein Netz.
 
 verify ▶ `REQ-install-idempotent` · `REQ-repo-update` · testRefs: `tests/upgrade.test.ts`
 
-### 8.127  `TEST-views-auditor` — Sichten fuer den Auditor
+### 8.128  `TEST-views-auditor` — Sichten fuer den Auditor
 
 Abnahme der Datei tests/views.auditor.test.ts: die Nachweismatrix zeigt, auf welcher Ebene eine Anforderung sitzt, und die Verifikationsmatrix, welcher Test eine Schnittstelle zwischen zwei Funktionen abdeckt. Beides stand im Graphen und war ohne Lauf nicht lesbar.
 
 verify ▶ `REQ-doc-export` · `REQ-readiness-model` · testRefs: `tests/views.auditor.test.ts`
 
-### 8.128  `TEST-views-conformance` — Eine Sicht liest nur Deklariertes
+### 8.129  `TEST-views-conformance` — Eine Sicht liest nur Deklariertes
 
 Abnahme der Datei tests/views.conformance.test.ts: eine Sicht darf nur lesen, was Ontologie und Regeln deklarieren. Die Fehlerklasse dagegen ist die volle Konformitaet auf einer leeren Sicht, also ein gruener Bericht ueber nichts.
 
 verify ▶ `REQ-doc-export` · `REQ-shared-views-no-fork` · testRefs: `tests/views.conformance.test.ts`
 
-### 8.129  `TEST-violation-context` — Reparatur-Kontext am Verstoss
+### 8.130  `TEST-violation-context` — Reparatur-Kontext am Verstoss
 
 Abnahme der Datei tests/mcp.violation-context.test.ts: die Regel-Werkzeuge reichen den Reparatur-Kontext der Contracts durch, statt ihn flachzuklopfen. Wer einen Verstoss aufloest, bekommt Hinweis und Kandidaten aus derselben Antwort, ohne eine zweite Abfrage.
 

@@ -1863,6 +1863,13 @@
       "status": "reviewed"
     },
     {
+      "id": "FCHAIN-systemtest-run",
+      "type": "FCHAIN",
+      "name": "Systemtest: Lauf, Artefakte, Auswertung, Befund",
+      "description": "Die Kette, mit der das Produkt ueber sich selbst misst: der Mensch stellt den Auftrag, ein Durchlauf je Arm hinterlaesst Artefakte, Bewertung und Turn-Analyse lesen sie unabhaengig voneinander, der Bericht stellt beides nebeneinander. Einzelne Arme, Modelle und Laufnummern sind Konfiguration und bekommen bewusst keinen Knoten. (CR-GC-574)",
+      "status": "reviewed"
+    },
+    {
       "id": "FLOW-action",
       "type": "FLOW",
       "name": "Handlung",
@@ -2555,6 +2562,36 @@
       "type": "FLOW",
       "name": "Store-Besitzanspruch",
       "description": "Der Anspruch auf den Kuzu-Store eines Repos: gehalten, uebernommen oder verweigert."
+    },
+    {
+      "id": "FLOW-systemtest-artifacts",
+      "type": "FLOW",
+      "name": "Lauf-Artefakte",
+      "description": "Was ein einzelner Lauf hinterlaesst und die Auswertung wieder aufnimmt — der Uebergabepunkt zwischen Fahren und Bewerten."
+    },
+    {
+      "id": "FLOW-systemtest-order",
+      "type": "FLOW",
+      "name": "Systemtest-Auftrag",
+      "description": "Der Anstoss des Menschen an den Messaufbau: welche Arme, wie viele Laeufe, gegen welches Golden und welche Pruefliste."
+    },
+    {
+      "id": "FLOW-systemtest-row",
+      "type": "FLOW",
+      "name": "Bewertungszeile",
+      "description": "Das Ergebnis der Bewertung eines Laufs, wie es in results-*.json abgelegt und vom Bericht wieder gelesen wird."
+    },
+    {
+      "id": "FLOW-systemtest-turn-profile",
+      "type": "FLOW",
+      "name": "Turn-Profil",
+      "description": "Die aufgeschnittene Verbrauchsspur eines Laufs, die der Bericht neben die Bewertungszeilen stellt."
+    },
+    {
+      "id": "FLOW-systemtest-verdict",
+      "type": "FLOW",
+      "name": "Systemtest-Bericht",
+      "description": "Der Bericht an den Menschen: jeder Rohlauf, Spannweiten je Arm, Turn-Auswertung, Modul-Audit und die ausdruecklich benannten Grenzen der Aussage."
     },
     {
       "id": "FLOW-target-profile",
@@ -3771,6 +3808,48 @@
       }
     },
     {
+      "id": "FUNC-systemtest-metrics",
+      "type": "FUNC",
+      "name": "Lauf bewerten",
+      "description": "Reine Arithmetik ueber die Artefakte eines Laufs: Struktur, Readiness, Spezifikations- und Code-Urteil samt Reichweite, Ablehnungen aus dem Audit, Modul-Audit gegen das Golden und die Wortlaut-Pruefliste des Auftrags. Kein KI-Richter, kein Live-Store — jede Zahl ist aus den abgelegten Dateien reproduzierbar. (CR-GC-553, CR-GC-574)",
+      "status": "done",
+      "realRef": {
+        "file": "rig/greenfield-systemtest/metrics.mjs",
+        "symbol": "runMetrics"
+      }
+    },
+    {
+      "id": "FUNC-systemtest-report",
+      "type": "FUNC",
+      "name": "Laeufe nebeneinander stellen",
+      "description": "Stellt jeden Rohlauf einzeln dar statt eines Mittels, nennt je Arm Spannweiten statt Streuungsmasse, haengt die Turn-Auswertung an und benennt die Grenzen der Aussage. Ein Korpus je Bericht — zwei Fragen mit verschiedenen Goldens in einer Tabelle waeren keine Messung. (CR-GC-553, CR-GC-574)",
+      "status": "done",
+      "realRef": {
+        "file": "rig/greenfield-systemtest/report.mjs"
+      }
+    },
+    {
+      "id": "FUNC-systemtest-run",
+      "type": "FUNC",
+      "name": "Systemtest-Durchlauf fahren",
+      "description": "Je Arm und Lauf: frischer Workspace, Material hineinkopiert, SYS-Seed in einem eigenen Prozess, Store-Schloss freigegeben, Executor gestartet, Artefakte eingesammelt. Die Arme sind Konfiguration — Modellnamen und Laufnummern bekommen bewusst keinen Knoten. (CR-GC-574)",
+      "status": "done",
+      "realRef": {
+        "file": "rig/greenfield-systemtest/run.mjs"
+      }
+    },
+    {
+      "id": "FUNC-systemtest-turn-analyse",
+      "type": "FUNC",
+      "name": "Turn-Analyse",
+      "description": "Schneidet den stream-json-Strom eines Laufs je Turn auf: Verbrauch, welches Werkzeugergebnis dem teuersten Cache-Zuwachs voranging, und die Dry-Run-Wirkung aus dem Audit. Fasst je message.id zusammen, weil eine Assistant-Nachricht je Content-Block im Strom steht; ohne das zaehlte sie das Doppelte. Voraussetzung jeder Optimierungsschleife am Kontextverbrauch. (CR-GC-567, CR-GC-574)",
+      "status": "done",
+      "realRef": {
+        "file": "rig/greenfield-systemtest/turn-analyse.mjs",
+        "symbol": "leseTurns"
+      }
+    },
+    {
       "id": "FUNC-take-steering-snapshot",
       "type": "FUNC",
       "name": "takeSteeringSnapshot(graph, policy)",
@@ -3998,6 +4077,14 @@
       "description": "Adapter ohne eigene Logik: MCP-stdio-Registry, CLI-Verben und Distribution, Host-Socket zum Store-Besitzer, read-only SSE-Bruecke an den Live-Viewer. Uebersetzt Protokoll in kernel-Aufrufe, mehr nicht. (CR-GC-446)",
       "status": "done",
       "path": "src/surface"
+    },
+    {
+      "id": "MOD-systemtest",
+      "type": "MOD",
+      "name": "Systemtest-Rig",
+      "description": "Der Messaufbau, mit dem das Produkt ueber sich selbst lernt: ein Greenfield-Durchlauf je Arm, seine Artefakte, ihre Auswertung. Liegt ausserhalb des Abhaengigkeits-DAG von src, weil er gegen dist faehrt wie jeder Kunde — Verbraucher des Produkts, nicht eine seiner Schichten. (CR-GC-574)",
+      "path": "rig/greenfield-systemtest",
+      "status": "reviewed"
     },
     {
       "id": "MS-1-specification",
@@ -6109,6 +6196,46 @@
       }
     },
     {
+      "id": "SCHEMA-systemtest-artifacts",
+      "type": "SCHEMA",
+      "name": "Lauf-Artefakte",
+      "description": "Was ein Lauf auf Platte hinterlaesst und die Auswertung wieder aufnimmt: graph.json, readiness.json, audit.jsonl (der Gate-Log des Laufs), claude-stream.jsonl beziehungsweise run-raw.log (der Turn-Strom) und usage.json. Concept-only: Dateien, kein Wire-Format. (CR-GC-574)",
+      "concept": true,
+      "status": "reviewed"
+    },
+    {
+      "id": "SCHEMA-systemtest-order",
+      "type": "SCHEMA",
+      "name": "Systemtest-Auftrag",
+      "description": "Was ein Durchlauf braucht, bevor er faehrt: Arme, Laufzahl und Startindex, Auftragstext, Seed-System, Materialverzeichnis, Golden-Graph, Pruefliste, Zeitdeckel, Ergebnisdatei. Reist als Umgebung, nicht als Datei — deshalb concept-only: ein Zod-Symbol gibt es nicht und soll es nicht geben, solange der Aufbau ein Messwerkzeug ist. (CR-GC-574)",
+      "concept": true,
+      "status": "reviewed"
+    },
+    {
+      "id": "SCHEMA-systemtest-row",
+      "type": "SCHEMA",
+      "name": "Bewertungszeile eines Laufs",
+      "description": "Eine Zeile je Lauf in results-*.json: Arm, Modell, Executor, Laufnummer, Elementzahl, Struktur je Typ, Readiness, Spezifikations- und Code-Urteil samt Reichweite, Gate-Ablehnungen, Verbrauch und die beiden Audit-Listen. Concept-only. (CR-GC-574)",
+      "concept": true,
+      "status": "reviewed"
+    },
+    {
+      "id": "SCHEMA-systemtest-turn-profile",
+      "type": "SCHEMA",
+      "name": "Turn-Profil eines Laufs",
+      "description": "Je Turn Verbrauch und vorausgegangene Werkzeugergebnisse, dazu der Abgleich gegen die Ergebniszeile, die Zuschreibung der Cache-Schreibung je Werkzeug und die Dry-Run-Quote. Concept-only. (CR-GC-574)",
+      "concept": true,
+      "status": "reviewed"
+    },
+    {
+      "id": "SCHEMA-systemtest-verdict",
+      "type": "SCHEMA",
+      "name": "Systemtest-Bericht",
+      "description": "Der Bericht als Text: je Rohlauf eine Zeile, je Arm Spannweiten, die Turn-Auswertung, das Modul-Audit und ein ausdruecklicher Grenzen-Block. Concept-only — er wird gelesen, nicht geparst; ein Vertrag mit Zod-Symbol waere hier eine Behauptung. (CR-GC-574)",
+      "concept": true,
+      "status": "reviewed"
+    },
+    {
       "id": "SCHEMA-target-profile",
       "type": "SCHEMA",
       "name": "TargetProfile",
@@ -8024,6 +8151,23 @@
       "concept": true
     },
     {
+      "id": "TEST-systemtest-evaluations",
+      "type": "TEST",
+      "name": "Abnahme der Rig-Auswertungen",
+      "description": "Prueft die Auswertungen des Systemtests gegen echte Artefakte auf Platte: die Zusammenfassung je message.id (sonst zaehlt der Strom das Doppelte), den Abgleich Strom gegen Ergebniszeile, die Zuschreibung der Cache-Schreibung, die Dry-Run-Quote, die Ablehnungszaehlung ohne tier, die Bindungsquote ueber Blatt-FUNCs und das dreiwertige Code-Urteil samt Reichweite. Ohne sie ist der Messaufbau ungemessen — zwei seiner Zaehlfehler fielen bisher erst am lebenden Lauf auf. (CR-GC-574)",
+      "status": "done",
+      "method": "test",
+      "level": "integration",
+      "testRefs": [
+        {
+          "file": "tests/systemtest-rig.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed"
+        }
+      ]
+    },
+    {
       "id": "TEST-target-profile",
       "type": "TEST",
       "name": "Zielprofil als Steuer-Konfiguration",
@@ -8353,6 +8497,11 @@
     {
       "source": "ACTOR-owner",
       "target": "FLOW-query-request-owner",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-owner",
+      "target": "FLOW-systemtest-order",
       "type": "io"
     },
     {
@@ -11462,6 +11611,26 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-574",
+      "target": "FUNC-systemtest-turn-analyse",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-574",
+      "target": "MOD-systemtest",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-574",
+      "target": "REQ-greenfield-systemtest-dod",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-574",
+      "target": "UC-loop-closure",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -12449,6 +12618,31 @@
     {
       "source": "FCHAIN-steering-loop",
       "target": "REQ-steering-from-metrics",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-systemtest-run",
+      "target": "FUNC-systemtest-metrics",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-systemtest-run",
+      "target": "FUNC-systemtest-report",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-systemtest-run",
+      "target": "FUNC-systemtest-run",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-systemtest-run",
+      "target": "FUNC-systemtest-turn-analyse",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-systemtest-run",
+      "target": "REQ-greenfield-systemtest-dod",
       "type": "satisfy"
     },
     {
@@ -14083,6 +14277,61 @@
     {
       "source": "FLOW-store-ownership",
       "target": "SCHEMA-lock-owner",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-systemtest-artifacts",
+      "target": "FUNC-systemtest-metrics",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-systemtest-artifacts",
+      "target": "FUNC-systemtest-turn-analyse",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-systemtest-artifacts",
+      "target": "SCHEMA-systemtest-artifacts",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-systemtest-order",
+      "target": "FUNC-systemtest-run",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-systemtest-order",
+      "target": "SCHEMA-systemtest-order",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-systemtest-row",
+      "target": "FUNC-systemtest-report",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-systemtest-row",
+      "target": "SCHEMA-systemtest-row",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-systemtest-turn-profile",
+      "target": "FUNC-systemtest-report",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-systemtest-turn-profile",
+      "target": "SCHEMA-systemtest-turn-profile",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-systemtest-verdict",
+      "target": "ACTOR-owner",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-systemtest-verdict",
+      "target": "SCHEMA-systemtest-verdict",
       "type": "relation"
     },
     {
@@ -16351,6 +16600,66 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-systemtest-metrics",
+      "target": "MOD-systemtest",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-systemtest-metrics",
+      "target": "FLOW-systemtest-row",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-systemtest-metrics",
+      "target": "REQ-greenfield-systemtest-dod",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-systemtest-report",
+      "target": "MOD-systemtest",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-systemtest-report",
+      "target": "FLOW-systemtest-verdict",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-systemtest-report",
+      "target": "REQ-greenfield-systemtest-dod",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-systemtest-run",
+      "target": "MOD-systemtest",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-systemtest-run",
+      "target": "FLOW-systemtest-artifacts",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-systemtest-run",
+      "target": "REQ-greenfield-systemtest-dod",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-systemtest-turn-analyse",
+      "target": "MOD-systemtest",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-systemtest-turn-analyse",
+      "target": "FLOW-systemtest-turn-profile",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-systemtest-turn-analyse",
+      "target": "REQ-greenfield-systemtest-dod",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-take-steering-snapshot",
       "target": "MOD-kernel-measure",
       "type": "allocate"
@@ -17003,6 +17312,11 @@
     {
       "source": "SYS-graphcode",
       "target": "MOD-surface",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphcode",
+      "target": "MOD-systemtest",
       "type": "compose"
     },
     {
@@ -18568,6 +18882,11 @@
       "type": "verify"
     },
     {
+      "source": "TEST-systemtest-evaluations",
+      "target": "REQ-greenfield-systemtest-dod",
+      "type": "verify"
+    },
+    {
       "source": "TEST-target-profile",
       "target": "REQ-target-shifts-ranking",
       "type": "verify"
@@ -19145,6 +19464,11 @@
     },
     {
       "source": "UC-loop-closure",
+      "target": "FCHAIN-systemtest-run",
+      "type": "compose"
+    },
+    {
+      "source": "UC-loop-closure",
       "target": "REQ-prompt-provenance",
       "type": "compose"
     },
@@ -19322,5 +19646,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 330
+  "graphVersion": 332
 }
