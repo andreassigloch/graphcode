@@ -669,7 +669,7 @@ describe('Best-of-N executor (CR-GC-288, echter Gate-/Store-Pfad)', () => {
     expect(entries.filter((e) => e.operation !== 'validate' && e.result === 'applied').length).toBe(1);
   });
 
-  it('Regression: candidates=1 (Default) fährt den heutigen Pfad — host-Protokoll, keine Best-of-N-Stats', async () => {
+  it('Regression: candidates=1 (Default) fährt den Ein-Kandidaten-Pfad — driver-Protokoll, keine Best-of-N-Stats', async () => {
     const { callModel, calls } = scriptedModel([toolCallResponse('c1', UC_EXPORT_BATCH)]);
     const stats = await runExecutor({
       registry,
@@ -677,10 +677,14 @@ describe('Best-of-N executor (CR-GC-288, echter Gate-/Store-Pfad)', () => {
       config: config(), // candidates default 1
       callModel,
     });
-    // Host-Protokoll: der dryRun-Vergleichs-Auftrag steht WEITER im Prompt (MCP-Parität).
+    // CR-GC-568: der Step-Pfad bleibt der Ein-Kandidaten-Pfad, das PROTOKOLL nicht.
+    // Bis hierher rendert graph_generate 'host' und verlangte einen dryRun-Vergleich
+    // in einem Turn, dessen SYSTEM-Prompt Analyse verbietet — und bei candidates=1
+    // probt ohnehin niemand. Die MCP-Parität, die der frühere Test schützte, gehört
+    // dem MCP-Client (Default 'host' am Tool), nicht dem Executor.
     const instruction = JSON.stringify(calls[0].messages[0]);
-    expect(instruction).toContain('dryRun:true');
-    expect(instruction).not.toContain('Treiber');
+    expect(instruction).not.toContain('dryRun');
+    expect(instruction).toContain('Treiber');
     // Ein Apply, keine Proben, keine Picks — heutiges Verhalten.
     expect(stats.mutatesApplied).toBe(1);
     expect(stats.dryRunProbes).toBe(0);

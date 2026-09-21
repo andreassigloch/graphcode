@@ -520,6 +520,29 @@ describe('executor (CR-GC-278)', () => {
     registry['graph_generate'] = origGenerate;
   });
 
+  it("candidates=1: der generate-Call traegt selection:'driver' — kein dryRun-Auftrag in einem Turn, der ihn nicht ausfuehren darf (CR-GC-568)", async () => {
+    const genInputs: Record<string, unknown>[] = [];
+    const origGenerate = registry['graph_generate'];
+    registry['graph_generate'] = {
+      ...origGenerate,
+      handler: (input: unknown) => {
+        genInputs.push((input ?? {}) as Record<string, unknown>);
+        return origGenerate.handler(input);
+      },
+    };
+    const { callModel, calls } = scriptedModel([toolCallResponse('c1', VALID_SEED_BATCH)]);
+    await runExecutor({ registry, workspaceDir: repoRoot, config: CONFIG, callModel });
+    registry['graph_generate'] = origGenerate;
+
+    // Der Default des Schemas ist 'host' — der Executor darf ihn nie greifen lassen:
+    // sein SYSTEM-Prompt verbietet genau die Analyse-Turns, die 'host' verlangt.
+    expect(CONFIG.candidates).toBe(1);
+    expect(genInputs.length).toBeGreaterThan(0);
+    for (const input of genInputs) expect(input.selection).toBe('driver');
+    // Und die Wirkung dort, wo sie zaehlt: im Turn, den das Modell sieht.
+    expect(JSON.stringify(calls[0].messages)).not.toContain('dryRun');
+  });
+
   it('round prompt injection (seed): guide slice of the seed focus types, no index on an empty graph (CR-GC-285)', async () => {
     const { callModel, calls } = scriptedModel([toolCallResponse('c1', VALID_SEED_BATCH)]);
     await runExecutor({

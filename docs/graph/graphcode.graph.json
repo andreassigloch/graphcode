@@ -1666,6 +1666,12 @@
       "description": "docs/cr/open/CR-GC-567-rig-claude-arm-mit-stream-json-fahren-to.md"
     },
     {
+      "id": "CR-GC-568",
+      "type": "CR",
+      "name": "Executor: SYSTEM-Prompt verbietet den dryRun-Vergleich, den das Gate-Protokoll verlangt",
+      "description": "docs/cr/open/CR-GC-568-executor-system-prompt-verbietet-den-dry.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -19191,5 +19197,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 319
+  "graphVersion": 320
 }

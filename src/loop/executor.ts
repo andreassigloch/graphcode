@@ -208,8 +208,9 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
   // weitere generate-Call trägt sie als defer, graph_generate rotiert weiter.
   const deferred = new Set<string>();
   const STAGNATION_DEFER_THRESHOLD = 3;
-  // Best-of-N aktiv ⇒ der Treiber macht die Auswahl: graph_generate rendert das
-  // driver-Protokoll (kein dryRun-Vergleichs-Auftrag im Prompt, CR-GC-288).
+  // Best-of-N steuert den STEP-PFAD (sammeln/proben/wählen statt Ein-Kandidat) —
+  // nicht mehr, wer im Prompt die Auswahl macht: das ist im Executor immer der
+  // Treiber (CR-GC-568, s. genInput.selection unten).
   const bestOfN = config.candidates > 1;
   for (let round = 0; round < config.maxRounds; round++) {
     // Volles Frontier-Rendering auch lokal (CR-GC-282 negativ validiert: das
@@ -218,7 +219,14 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
     const genInput: Record<string, unknown> = {};
     if (opts.intent) genInput.intent = opts.intent;
     if (deferred.size > 0) genInput.defer = [...deferred];
-    if (bestOfN) genInput.selection = 'driver';
+    // IMMER 'driver', auch bei candidates=1 (CR-GC-568). Der Schema-Default ist
+    // 'host' — gedacht für einen MCP-Client, der selbst per dryRun probt. Der
+    // Executor ist keiner: sein SYSTEM-Prompt verbietet Analyse-Turns („dann
+    // STOPP", „Handeln vor Analysieren"). Ungesetzt lieferte graph_generate
+    // deshalb den Auftrag „Alternativen erst als dryRun einreichen und die
+    // Verdicts vergleichen" in einen Turn, der ihn nicht ausführen darf — zwei
+    // Imperative zur selben Sache, und bei candidates=1 probt ohnehin niemand.
+    genInput.selection = 'driver';
     // Die Tool-Registry liefert `unknown` — bis hierher stand hier ein blanker
     // `as GenerationStep`. Damit lief eine kaputte oder gewanderte Tool-Antwort
     // still weiter: `gen.phase`/`gen.focusKey` wären `undefined`, die

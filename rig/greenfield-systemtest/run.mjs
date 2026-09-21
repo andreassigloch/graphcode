@@ -74,7 +74,10 @@ const CFG = {
       baseUrl: process.env.GCRUN_BASE_URL ?? 'http://127.0.0.1:11434',
       apiKey: process.env.GCRUN_API_KEY ?? 'ollama',
       maxTokens: process.env.GCRUN_MAX_TOKENS ?? '4096',
-      maxRounds: process.env.GCRUN_MAX_ROUNDS ?? '8' },
+      maxRounds: process.env.GCRUN_MAX_ROUNDS ?? '8',
+      // Best-of-N: >1 schaltet den dryRun-Kanal ein (CR-GC-568). Default 1 = der
+      // Ein-Kandidaten-Pfad, der nicht probt — drei Laeufe lang gemessene Null.
+      candidates: process.env.GCRUN_CANDIDATES ?? '1' },
   ],
 };
 
@@ -275,6 +278,7 @@ function authorViaGraphcodeRun(dir, arm) {
     GRAPHCODE_LLM_API_KEY: arm.apiKey,
     GRAPHCODE_LLM_MAX_TOKENS: String(arm.maxTokens),
     GRAPHCODE_LLM_MAX_ROUNDS: String(arm.maxRounds),
+    GRAPHCODE_LLM_CANDIDATES: String(arm.candidates),
     GRAPHCODE_LLM_TIMEOUT_MS: String(CFG.timeoutMs),
   };
   const t0 = Date.now();
