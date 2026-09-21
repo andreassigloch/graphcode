@@ -1,6 +1,6 @@
 # CR-GC-577: Der Probelauf liefert sein Urteil zweimal — 19 % der Gate-Antwort
 
-**Status:** ✅ Abgeschlossen 2026-09-21 — Kriterium 3 gemessen
+**Status:** ✅ Done (2026-09-21)
 **Typ:** aus Item ITEM-2026-419 (finding)
 **Erstellt:** 2026-09-21
 **Item:** bok/items/ITEM-2026-419.json (Lane: graph)
