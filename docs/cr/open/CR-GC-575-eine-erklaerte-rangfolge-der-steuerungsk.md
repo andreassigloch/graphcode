@@ -1,6 +1,6 @@
 # CR-GC-575: Erst Bloat streichen, dann eine erklaerte Rangfolge der Kanaele
 
-**Status:** 🟠 Rangfolge steht, Streichen wartet auf die Messung
+**Status:** ✅ Abgeschlossen 2026-09-21 — Rangfolge steht, Ausbeute gemessen, Streichen bewusst ersetzt
 **Typ:** aus Item ITEM-2026-417 (idea)
 **Erstellt:** 2026-09-21
 **Item:** bok/items/ITEM-2026-417.json (Lane: graph)
@@ -95,3 +95,21 @@ ueberschreiben. Das ist pruefbar, sobald die Kanaele Knoten sind (CR-GC-573).
 1. Die Rangfolge steht an genau einer Stelle im Code, nicht in fuenf Bedingungen.
 2. Jeder gestrichene Kanal ist mit seiner Messung begruendet, nicht mit Geschmack.
 3. Ein Lauf nach dem Streichen liegt nicht unter dem Kontrollband der Ausbeute.
+
+---
+
+## 5 Kriterium 3 gemessen (Runde 7, 2026-09-21)
+
+`gcrun`, sigllm-Prosa-Korpus, dieselbe `lauf-gcrun.env` wie die Bezugslaeufe:
+
+| | Elemente | Median | Ablehnungen | Wall |
+|---|---|---|---|---|
+| vorher (Laeufe 3–5, CR-GC-568) | 94 / 59 / 45 | 59 | 8 / 9 / 20 | 41–55 min |
+| **nach dem Zug** | 91 / 47 / 88 | **88** | 4 / 9 / 4 | 15–19 min |
+
+Zwei von drei Laeufen im Band 68–122, der Median darin; der Ausreisser (47) hat seinen Vorgaenger
+in der alten Serie (45). **Erfuellt fuer „nicht schlechter"** — eine Verbesserung der Ausbeute
+tragen drei Laeufe nicht.
+
+Offen bleibt, wie in §1a benannt: Skill-Rumpf und `graph_suggest`-Block sind ungemessen
+(ITEM-2026-397 fuer die Vorlagen). Kongruenz: nicht aus dieser Session geprueft — benannte Ausnahme.

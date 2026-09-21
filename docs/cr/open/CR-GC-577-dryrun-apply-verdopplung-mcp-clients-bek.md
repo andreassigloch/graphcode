@@ -1,6 +1,6 @@
 # CR-GC-577: Der Probelauf liefert sein Urteil zweimal — 19 % der Gate-Antwort
 
-**Status:** 🟠 Entschieden und umgesetzt, der Bestaetigungslauf fehlt
+**Status:** ✅ Abgeschlossen 2026-09-21 — Kriterium 3 gemessen
 **Typ:** aus Item ITEM-2026-419 (finding)
 **Erstellt:** 2026-09-21
 **Item:** bok/items/ITEM-2026-419.json (Lane: graph)
@@ -139,3 +139,22 @@ unveraendert, und das ist der Grund, warum dieser Zug trotz der drei Vorgaenger 
 **Die CR bleibt offen, bis Kriterium 3 gefahren ist.** Der Zug aendert einen Rang-Kanal des
 Rundenprompts; ihn ohne Ausbeute-Messung zu schliessen waere genau das, was CR-GC-575
 verbietet.
+
+---
+
+## 10 Kriterium 3 gemessen (Runde 7, 2026-09-21)
+
+**Ohne Probe (Executor, `gcrun`):** 0 Proben in allen drei Laeufen, 91 / 47 / 88 Elemente —
+Median im Band 68–122 (Tabelle in CR-GC-575 §5).
+
+**MCP-Client (`opus5`), gegen den Bezugslauf `opus5-5`:**
+
+| | Bezug | Lauf 6 | Lauf 7 | Lauf 8 |
+|---|---|---|---|---|
+| Elemente | 150 | 280 | 321 | 278 |
+| Proben | 12 | 6 | 6 | 8 |
+| Probe → identische Anwendung | 6 Paare, 44.587 Z. | 2, 9.550 Z. | 1, 2.852 Z. | 2, 2.684 Z. |
+
+Die Verdopplung ist um **79–94 %** gefallen, nicht auf null: der Client probt weiter 6–8-mal,
+teils Alternativen hintereinander (das ist der erlaubte Fall), teils noch den einzelnen Batch.
+Die Ausbeute liegt klar ueber dem Bezug. **Erfuellt.** Kongruenz: benannte Ausnahme wie oben.

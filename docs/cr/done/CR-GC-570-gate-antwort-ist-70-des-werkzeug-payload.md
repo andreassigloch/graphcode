@@ -187,3 +187,17 @@ nachzuholen im naechsten Zug am graphcode-Graphen** (CR-GC-569).
 
 Die Aenderung beruehrt keine `allocate`-Kante und keinen `realRef`; betroffen ist eine
 Projektion auf der MCP-Flaeche, kein Modellzug.
+
+---
+
+## 8 Nachtrag: AK1 und AK3 am echten Lauf (Runde 7, 2026-09-21)
+
+`opus5`, sigllm-Prosa-Korpus, nach CR-GC-570/576/577/579, gegen den Bezugslauf `opus5-5`:
+
+| | Bezug | Lauf 6 | Lauf 7 | Lauf 8 |
+|---|---|---|---|---|
+| `cache_creation` je Element | 2.455 | 1.172 | 1.325 | 1.458 |
+| Anteil `graph_mutate` an allen Werkzeugantworten | 69,1 % | 42,5 % | 25,9 % | 25,8 % |
+
+**AK1 erfuellt:** 41–52 % weniger Cache-Aufbau je Element. **AK3 (<40 %) in zwei von drei Laeufen
+erfuellt.** Das ist die Summe der vier Kontext-Zuege, nicht CR-570 allein.
