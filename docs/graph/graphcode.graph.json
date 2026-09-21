@@ -1721,7 +1721,8 @@
       "type": "CR",
       "name": "Das Rig ist der Systemtest und fehlt im Modell: kein TEST-/FCHAIN-Knoten fuer Lauf, Metrik, Pruefliste und Turn-Analyse",
       "description": "docs/cr/open/CR-GC-574-das-rig-ist-der-systemtest-und-fehlt-im-.md",
-      "commitRef": "9ad4f8d"
+      "commitRef": "9ad4f8d",
+      "status": "done"
     },
     {
       "id": "CR-GC-575",
@@ -1734,7 +1735,8 @@
       "type": "CR",
       "name": "Advisory-Rauschen in der Gate-Antwort: steerAdvisory 21/21 null, workOrder 18/21 leer, fitAdvisory 12/21 Null-Delta — 16 Prozent der Antwort",
       "description": "docs/cr/open/CR-GC-576-advisory-rauschen-in-der-gate-antwort-st.md",
-      "commitRef": "280d414"
+      "commitRef": "280d414",
+      "status": "done"
     },
     {
       "id": "CR-GC-577",
@@ -20033,5 +20035,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 347
+  "graphVersion": 348
 }
