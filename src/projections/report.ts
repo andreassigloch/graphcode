@@ -48,7 +48,7 @@ import {
 import { groupViolations, type ViolationGroup } from '@sigloch/graphcode-client';
 import { loadTargetProfile, intentCoverage, type AnchorCoverage } from '../loop/target-profile.js';
 import { helpEntry, contextualHelp, type HelpEntry, type ContextualMeasure } from './help.js';
-import { formatEExampleFor } from './authoring-example.js';
+import { attributesFor, formatEExampleFor, type AttributeHint } from './authoring-example.js';
 import { TestSelectionSchema } from '../kernel/measure/test-selection.js';
 import type { MCPTool, MCPToolRegistry, ToolPort } from '../kernel/tool-contract.js';
 import { heldBackTraces, type RejectedTrace } from '../kernel/harness-import.js';
@@ -553,6 +553,7 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
       outgoing: Array<{ edgeType: string; targetType: string; cardinality?: string; description?: string }>;
       incoming: Array<{ edgeType: string; sourceType: string; cardinality?: string; description?: string }>;
       requiredAttrs: string[];
+      attributes: AttributeHint[];
       formatEExample: string;
     }
   > = {
@@ -568,7 +569,8 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
       'formatEExample (CR-GC-321) is a ready-to-paste Format-E block for this type: `+ uid|text` has only ' +
       'TWO positional fields (uid and DESCRIPTION) — the readable name travels as the `__name` attribute, ' +
       'inline `[__name:…]` or as an `@__name …` line when it contains a comma or a bracket. Without ' +
-      '`__name` the uid silently becomes the name.',
+      '`__name` the uid silently becomes the name. attributes (CR-GC-581) lists the attributes with their ' +
+      'allowed values and syntax — for REQ the `kinds` enum (`@kinds ["postcondition"]`).',
     inputSchema: GraphAuthoringGuideInputSchema,
     async handler(input) {
       const descriptor = SE_DESCRIPTOR.nodeTypes[input.type as keyof typeof SE_DESCRIPTOR.nodeTypes];
@@ -596,6 +598,7 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
         outgoing,
         incoming,
         requiredAttrs: [...(descriptor.requiredAttrs ?? [])],
+        attributes: attributesFor(input.type),
         formatEExample: formatEExampleFor(input.type),
       };
     },

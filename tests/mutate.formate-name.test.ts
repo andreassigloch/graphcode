@@ -25,7 +25,8 @@ import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { GraphCodeCodec } from '../src/projections/codec.js';
-import { formatEExampleFor } from '../src/projections/authoring-example.js';
+import { attributesFor, formatEExampleFor } from '../src/projections/authoring-example.js';
+import { ReqKind } from '@sigloch/contracts/se';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
@@ -220,6 +221,34 @@ describe('TEST-formate-name: der stille name=uid-Fallback wird laut (CR-GC-321)'
       expect(decoded.nodes[0].name).not.toBe(decoded.nodes[0].uid);
       expect(decoded.nodes[0].name.length).toBeGreaterThan(0);
     }
+  });
+});
+
+describe('CR-GC-581: kinds steht im Guide — Werte UND Schreibweise', () => {
+  it('der REQ-Guide nennt kinds mit allen ReqKind-Werten und der Folgezeilen-Syntax', () => {
+    const kinds = attributesFor('REQ').find((a) => a.key === 'kinds');
+    expect(kinds, 'ohne kinds im Guide sucht der Autor im Quellcode (Runde 7: bis 31-mal)').toBeDefined();
+    expect(kinds!.enumValues).toEqual(ReqKind.options);
+    expect(kinds!.enumValues).toEqual(expect.arrayContaining(['postcondition', 'precondition']));
+    expect(kinds!.syntax).toBe('@kinds ["postcondition"]');
+  });
+
+  it('das REQ-Beispiel traegt kinds, und der Codec liest es als Liste', () => {
+    const decoded = new GraphCodeCodec().decode(formatEExampleFor('REQ'));
+    expect(decoded.nodes[0].kinds ?? decoded.nodes[0].attributes?.kinds).toEqual(['functional']);
+  });
+
+  it('die dokumentierte Syntax selbst decodiert — sonst waere der Hinweis eine Falle', () => {
+    const decoded = new GraphCodeCodec().decode(
+      '## Nodes\n### REQ\n+ REQ-post|Nach dem Lauf liegt das Ergebnis vor. [__name:Ergebnis liegt vor]\n' +
+        attributesFor('REQ').find((a) => a.key === 'kinds')!.syntax + '\n',
+    );
+    expect(decoded.nodes[0].kinds ?? decoded.nodes[0].attributes?.kinds).toEqual(['postcondition']);
+  });
+
+  it('Typen ohne kinds bekommen keins angedichtet', () => {
+    expect(attributesFor('FUNC').some((a) => a.key === 'kinds')).toBe(false);
+    expect(formatEExampleFor('FUNC')).not.toContain('@kinds');
   });
 });
 
