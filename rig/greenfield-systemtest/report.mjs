@@ -6,6 +6,7 @@
 // Reads results.json + results-opus.json (arms may run separately). @author andreas@siglochconsulting
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { leseTurns, cacheVerursacher, dryRunWirkung } from './turn-analyse.mjs';
+import { ARM_ACHSEN, achsenUnterschied } from './run.mjs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -57,6 +58,39 @@ for (const a of arms) {
   console.log(`| ${a} | ${g.length} | ${col((r) => r.elements)} | ${col((r) => r.readiness.compliance)} `
     + `| ${col((r) => r.gate_rejections)} | ${col((r) => r.tokens?.tokens_out)} `
     + `| ${range(g.map((r)=>r.tokens?.cost_usd!=null?+r.tokens.cost_usd.toFixed(2):null))} | ${col((r) => r.tokens?.wall_s)} |`);
+}
+
+// CR-GC-572 — welche Achse unterscheidet zwei Arme? Ohne diese Tabelle liest sich jede
+// Gegenueberstellung, als waere der Unterschied die eine Sache, die gerade interessiert.
+// Gemessen war das falsch: `opus5` gegen `gcrun` variierte DREI Achsen zugleich, und
+// zwoelf Laeufe lang wurde an einem Proxy optimiert, ohne dass irgendwo stand, wovon er
+// ein Proxy ist.
+console.log('\n## Betriebsmodi — worin sich diese Arme unterscheiden\n');
+console.log('| arm | wer treibt die Schleife | Modell | Agent-Harness |');
+console.log('|---|---|---|---|');
+for (const a of arms) {
+  const ax = ARM_ACHSEN[a];
+  console.log(ax
+    ? `| ${a} | ${ax.treiber} | ${ax.modell} | ${ax.agent ?? 'entfaellt (der Treiber IST die Schleife)'} |`
+    : `| ${a} | (unbekannt — Arm nicht in ARM_ACHSEN eingetragen) | — | — |`);
+}
+const achsenNamen = { treiber: 'wer treibt', modell: 'Modell', agent: 'Agent-Harness' };
+const paare = [];
+for (let i = 0; i < arms.length; i++) {
+  for (let j = i + 1; j < arms.length; j++) {
+    const diff = achsenUnterschied(arms[i], arms[j]);
+    if (diff) paare.push({ a: arms[i], b: arms[j], diff });
+  }
+}
+if (paare.length) {
+  console.log('\nPaarweise (eine Achse, die bei einem Arm ENTFAELLT, zaehlt nicht — sie ist');
+  console.log('die Bedeutung der Treiber-Achse, keine zweite Variable daneben):');
+  for (const p of paare.sort((u, v) => u.diff.length - v.diff.length)) {
+    const wie = p.diff.length === 0 ? 'identische Modi (nur Wiederholung)'
+      : p.diff.length === 1 ? `**genau eine Achse: ${achsenNamen[p.diff[0]]}** — sauber vergleichbar`
+      : `${p.diff.length} Achsen zugleich (${p.diff.map((k) => achsenNamen[k]).join(', ')}) — konfundiert, keine Aussage ueber eine davon`;
+    console.log(`  ${p.a} vs ${p.b}: ${wie}`);
+  }
 }
 
 // CR-GC-553 — die Bewertung hat zwei Haelften, und beide gehoeren in den Bericht.

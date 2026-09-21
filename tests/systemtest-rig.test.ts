@@ -191,3 +191,41 @@ describe('metrics: Ablehnungen und Bindungsquote (CR-GC-574)', () => {
     expect(kongruent.why).toContain('90 % Reichweite');
   });
 });
+
+describe('Betriebsmodi der Arme: jeder Arm nennt seine Achsen (CR-GC-572)', () => {
+  it('ARM_ACHSEN deckt jeden konfigurierten Arm — sonst steht im Bericht "unbekannt"', async () => {
+    // @ts-expect-error — Rig-Orchestrator in .mjs, bewusst ohne Typdeklaration
+    const { CFG, ARM_ACHSEN } = await import('../rig/greenfield-systemtest/run.mjs');
+    const labels = CFG.arms.map((a: { label: string }) => a.label);
+    expect(labels.length).toBeGreaterThan(0);
+    for (const label of labels) {
+      expect(ARM_ACHSEN[label], `Arm ${label} fehlt in ARM_ACHSEN`).toBeTruthy();
+      expect(ARM_ACHSEN[label].treiber).toBeTruthy();
+      expect(ARM_ACHSEN[label].modell).toBeTruthy();
+      // `agent` darf null sein — das heisst ENTFAELLT (der Executor treibt selbst) und
+      // ist eine Aussage, kein fehlender Eintrag. Der Schluessel muss trotzdem da sein.
+      expect(Object.hasOwn(ARM_ACHSEN[label], 'agent'), `Arm ${label}: agent fehlt`).toBe(true);
+    }
+  });
+
+  it('das leere Feld ist besetzt: Executor-treibt gibt es jetzt lokal UND frontier', async () => {
+    // Der Grund fuer zwoelf Laeufe im Kreis: `opus5` gegen `gcrun` variierte drei Achsen
+    // zugleich. Mit diesem Arm unterscheidet sich `opus5` in GENAU EINER.
+    // @ts-expect-error — s.o.
+    const { CFG, ARM_ACHSEN, achsenUnterschied } = await import('../rig/greenfield-systemtest/run.mjs');
+    const frontier = CFG.arms.find((a: { label: string }) => a.label === 'gcrun-frontier');
+    expect(frontier).toBeTruthy();
+    expect(frontier.backend).toBe('anthropic');
+    expect(frontier.executor).toBe('gcrun');
+    // Kosten-Riegel: der Arm faehrt nur auf namentliche Nennung, nie bei `node run.mjs`.
+    expect(frontier.optIn).toBe(true);
+
+    expect(achsenUnterschied('opus5', 'gcrun-frontier')).toEqual(['treiber']);
+    // Gegenkontrollen, sonst waere die Aussage oben nur deshalb wahr, weil die Tabelle
+    // zu grob ist: der alte Vergleich bleibt konfundiert, und unter den agent-getriebenen
+    // Armen ist der Agent sehr wohl eine Achse.
+    expect(achsenUnterschied('opus5', 'gcrun')).toEqual(['treiber', 'modell']);
+    expect(achsenUnterschied('qwen-35b', 'qwen38-claude')).toEqual(['agent']);
+    expect(ARM_ACHSEN['gcrun-frontier'].agent).toBeNull();
+  });
+});

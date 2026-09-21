@@ -6307,7 +6307,7 @@
       "id": "SCHEMA-systemtest-order",
       "type": "SCHEMA",
       "name": "Systemtest-Auftrag",
-      "description": "Was ein Durchlauf braucht, bevor er faehrt: Arme, Laufzahl und Startindex, Auftragstext, Seed-System, Materialverzeichnis, Golden-Graph, Pruefliste, Zeitdeckel, Ergebnisdatei. Reist als Umgebung, nicht als Datei — deshalb concept-only: ein Zod-Symbol gibt es nicht und soll es nicht geben, solange der Aufbau ein Messwerkzeug ist. (CR-GC-574)",
+      "description": "Was ein Durchlauf braucht, bevor er faehrt: Arme, Laufzahl und Startindex, Auftragstext, Seed-System, Materialverzeichnis, Golden-Graph, Pruefliste, Zeitdeckel, Ergebnisdatei. Je Arm zusaetzlich die drei Betriebsmodus-Achsen — wer treibt, welches Modell, welcher Agent-Harness —, damit ein Bericht benennen kann, worin sich zwei Arme unterscheiden; ein Arm, der den Modell-Endpunkt bezahlt, faehrt nur auf namentliche Nennung. Reist als Umgebung, nicht als Datei — deshalb concept-only: ein Zod-Symbol gibt es nicht und soll es nicht geben, solange der Aufbau ein Messwerkzeug ist. (CR-GC-574, Achsen CR-GC-572)",
       "concept": true,
       "status": "reviewed"
     },
@@ -11780,6 +11780,26 @@
     {
       "source": "CR-GC-571",
       "target": "REQ-published-counts-match-code",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-572",
+      "target": "FUNC-call-model",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-572",
+      "target": "FUNC-systemtest-report",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-572",
+      "target": "FUNC-systemtest-run",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-572",
+      "target": "REQ-one-driver-local-and-frontier",
       "type": "relation"
     },
     {
@@ -19983,5 +20003,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 343
+  "graphVersion": 344
 }
