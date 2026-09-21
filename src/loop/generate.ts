@@ -83,15 +83,34 @@ export type GenerationSelection = 'host' | 'driver';
 /** Gate-Protokoll — identisch in jeder Phase; Kandidatenwahl ist Gate-Sache, nie
  * LLM-Bauchgefühl. EIN Template, zwei Selektions-Varianten (CR-GC-288) — Schritt 1
  * (Guide) und der Folgeschritt (graph_generate) sind geteilt, nur der mittlere
- * Auswahl-Auftrag wechselt. */
+ * Auswahl-Auftrag wechselt.
+ *
+ * CR-GC-577: die host-Variante verlangt die Probe nur noch bei MEHREREN Alternativen.
+ * Gemessen an `runs/opus5-5`: sechs Paare aus Probe und Anwendung DESSELBEN Batches, und
+ * das Gate lieferte seinen Befundsatz jedes Mal zweimal — 20 % des graph_mutate-Payloads,
+ * auch nach CR-GC-570/576/579 (der Posten schrumpfte um 76 %, sein ANTEIL nur von 24 auf
+ * 20 %, weil der Rest mitschrumpfte).
+ *
+ * Die Gegenrechnung ueber alle Rig-Laeufe entscheidet es: der `opus5`-Arm probte 30-mal,
+ * 4 Proben ergaben `block`, 3 davon wurden nicht angewandt. Diese 3 haben KEINEN Schaden
+ * verhindert — eine abgelehnte Anwendung persistiert nichts (Invariante in
+ * `mcp.mutate-violations.test.ts`). Damit ist die Arithmetik eindeutig: ohne Probe kostet
+ * ein sauberer Batch EINE Antwort und ein abgelehnter zwei; mit Probe kostet der saubere
+ * zwei und der abgelehnte mindestens zwei. Proben ist bei einem Kandidaten nie billiger
+ * und war es in 26 der 30 Faelle nachweislich nicht.
+ *
+ * Bei MEHREREN Alternativen bleibt die Probe richtig: sie ist die einzige Art, Verdicts zu
+ * vergleichen, ohne sie zu verursachen — die Grundlage von Best-of-N (CR-GC-288). */
 const PROTOCOL_GUIDE =
   'Gate-Protokoll: (1) vor dem Schreiben graph_authoring_guide für jeden Elementtyp aufrufen (legale Kanten). ';
 const PROTOCOL_NEXT = 'Danach graph_generate erneut aufrufen für den nächsten Schritt.';
 const GATE_PROTOCOL: Record<GenerationSelection, string> = {
   host:
     PROTOCOL_GUIDE +
-    '(2) Alternativen zuerst als graph_mutate mit dryRun:true einreichen und die Verdicts vergleichen — ' +
-    'tier (auto-apply > suggest > block) und fitAdvisory (Δm auf layer:arch, regressions). ' +
+    '(2) Hast du MEHRERE Alternativen, reiche sie zuerst mit dryRun:true ein und vergleiche die ' +
+    'Verdicts — tier (auto-apply > suggest > block) und fitAdvisory (Δm auf layer:arch, regressions). ' +
+    'Hast du nur EINEN Batch, reiche ihn direkt OHNE dryRun ein: eine Ablehnung persistiert nichts, ' +
+    'die Probe wuerde dir dieselbe Antwort nur ein zweites Mal liefern. ' +
     '(3) Nur den besten Batch OHNE dryRun anwenden; block-Verdicts verwerfen oder revidieren, nie erzwingen. ' +
     '(4) ' +
     PROTOCOL_NEXT,
