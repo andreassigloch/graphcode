@@ -1683,20 +1683,24 @@
       "type": "CR",
       "name": "Betriebsmodi sind nicht modelliert: ein ACTOR-agent fuer beide Treiber, UC-reduced-llm vermischt Modell und Treiber, kein SCHEMA fuer die Lauf-Konfiguration",
       "description": "docs/cr/open/CR-GC-569-betriebsmodi-sind-nicht-modelliert-ein-a.md",
-      "status": "done"
+      "status": "done",
+      "commitRef": "0aef8f2"
     },
     {
       "id": "CR-GC-570",
       "type": "CR",
       "name": "Gate-Antwort ist 70% des Werkzeug-Payloads: 487 Violations in 23 Antworten, 51% Wiederholung, 0 davon gating",
-      "description": "docs/cr/open/CR-GC-570-gate-antwort-ist-70-des-werkzeug-payload.md"
+      "description": "docs/cr/open/CR-GC-570-gate-antwort-ist-70-des-werkzeug-payload.md",
+      "status": "done",
+      "commitRef": "e32dfb1"
     },
     {
       "id": "CR-GC-571",
       "type": "CR",
       "name": "Smeagol-Check: jede in einem Skill genannte Regel-ID muss im Regelkatalog existieren (18 genannt, 1 erfunden)",
       "description": "docs/cr/open/CR-GC-571-smeagol-check-jede-in-einem-skill-genann.md",
-      "status": "done"
+      "status": "done",
+      "commitRef": "e1514d1"
     },
     {
       "id": "CR-GC-572",
@@ -1709,13 +1713,15 @@
       "type": "CR",
       "name": "Fuenf Prompt-Autoritaeten in EINEM FUNC-generation-step: SEED_STAGES, DIMENSION_FOCUS_TYPES, GENERATION_TEMPLATE, RULE_CLAUSE, GATE_PROTOCOL sind unmodelliert",
       "description": "docs/cr/open/CR-GC-573-fuenf-prompt-autoritaeten-in-einem-func-.md",
-      "status": "done"
+      "status": "done",
+      "commitRef": "ddab68b"
     },
     {
       "id": "CR-GC-574",
       "type": "CR",
       "name": "Das Rig ist der Systemtest und fehlt im Modell: kein TEST-/FCHAIN-Knoten fuer Lauf, Metrik, Pruefliste und Turn-Analyse",
-      "description": "docs/cr/open/CR-GC-574-das-rig-ist-der-systemtest-und-fehlt-im-.md"
+      "description": "docs/cr/open/CR-GC-574-das-rig-ist-der-systemtest-und-fehlt-im-.md",
+      "commitRef": "9ad4f8d"
     },
     {
       "id": "CR-GC-575",
@@ -1727,7 +1733,8 @@
       "id": "CR-GC-576",
       "type": "CR",
       "name": "Advisory-Rauschen in der Gate-Antwort: steerAdvisory 21/21 null, workOrder 18/21 leer, fitAdvisory 12/21 Null-Delta — 16 Prozent der Antwort",
-      "description": "docs/cr/open/CR-GC-576-advisory-rauschen-in-der-gate-antwort-st.md"
+      "description": "docs/cr/open/CR-GC-576-advisory-rauschen-in-der-gate-antwort-st.md",
+      "commitRef": "280d414"
     },
     {
       "id": "CR-GC-577",
@@ -1740,14 +1747,16 @@
       "type": "CR",
       "name": "audit.trail-projection: Test misst gegen den LEBENDEN .graphcode/audit.jsonl des Repos — Schwellwert 11 Prozent reisst bei 20,8 von 165,2 KB, ohne Codeaenderung. Flaky per Konstruktion",
       "description": "docs/cr/open/CR-GC-578-audit-trail-projection-test-misst-gegen-.md",
-      "status": "done"
+      "status": "done",
+      "commitRef": "3898017"
     },
     {
       "id": "CR-GC-579",
       "type": "CR",
       "name": "mcp-server.ts serialisiert JEDE Werkzeugantwort mit Einrueckung 2 — 18,3 Prozent des gesamten Werkzeug-Payloads, graph_readiness 38 Prozent. Ein Argument",
       "description": "docs/cr/open/CR-GC-579-mcp-server-ts-serialisiert-jede-werkzeug.md",
-      "status": "done"
+      "status": "done",
+      "commitRef": "a6e8aff"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -20024,5 +20033,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 346
+  "graphVersion": 347
 }

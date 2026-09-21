@@ -162,16 +162,46 @@ describe('graph_mutate: formatE + dryRun + Preview-Audit (CR-GC-276)', () => {
     expect(rejected[0].violations?.[0]?.ruleId).toBe('INPUT-SCHEMA');
   });
 
-  it('dryRun: volles Verdict + fitAdvisory, nichts persistiert, Version unbewegt', async () => {
+  it('dryRun: volles Verdict, nichts persistiert, Version unbewegt', async () => {
     const res = (await tools.graph_mutate.handler({ formatE: FE_BATCH, dryRun: true, consumerId: 'fe-preview' })) as {
       success: boolean;
+      tier: string;
       fitAdvisory?: unknown;
       graphVersion: number;
     };
     expect(res.success).toBe(true);
-    expect(res.fitAdvisory).toBeDefined();
+    expect(res.tier).toBeTruthy();
     expect(res.graphVersion).toBe(0); // nichts angewendet
     expect(harness.getGraph().nodes.length).toBe(0); // Working Copy restauriert
+    // CR-GC-576: KEIN fitAdvisory — REQ und TEST liegen ausserhalb des Architektur-
+    // Teilgraphen (FUNC/FLOW/MOD/SCHEMA/ACTOR), das Delta ist ueber alle sechs Dimensionen
+    // null. Ein Block mit lauter Nullen sagt dasselbe wie kein Block und kostete
+    // eingerueckt 515 Zeichen. Die Gegenprobe steht im Fall darunter.
+    expect(res.fitAdvisory).toBeUndefined();
+  });
+
+  it('dryRun: das fitAdvisory kommt, sobald der Zug die Architektur bewegt (CR-GC-576)', async () => {
+    // Die Gegenprobe zum Fall darueber — sonst waere „kein Block" nur deshalb wahr, weil
+    // der Block nie kommt. FUNC und MOD liegen IM Architektur-Teilgraphen.
+    const arch = [
+      '## Nodes',
+      '### MOD',
+      '+ MOD-fe-input|Modul des Format-E-Eingangs. [__name:FE modul]',
+      '### FUNC',
+      '+ FUNC-fe-input|Nimmt den Format-E-Eingang entgegen. [__name:FE func]',
+      '',
+      '## Edges',
+      '+ FUNC-fe-input -allocate-> MOD-fe-input',
+    ].join('\n');
+    const res = (await tools.graph_mutate.handler({ formatE: arch, dryRun: true, consumerId: 'fe-preview-arch' })) as {
+      success: boolean;
+      fitAdvisory?: { delta: number[] };
+      graphVersion: number;
+    };
+    expect(res.success).toBe(true);
+    expect(res.fitAdvisory).toBeDefined();
+    expect(res.fitAdvisory!.delta.some((d) => d !== 0)).toBe(true);
+    expect(res.graphVersion).toBe(0);
   });
 
   it('steeringDelta (CR-GC-289): im dryRun-Verdict, deterministisch, NICHT im Apply-Verdict', async () => {
