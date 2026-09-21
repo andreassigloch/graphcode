@@ -5914,7 +5914,7 @@ io ◀ `ACTOR-owner` · io ▶ `FUNC-generation-step` · schema ▶ `SCHEMA-stee
 
 ### 4.9  `FLOW-channel-gate-protocol` — Kanal: Gate-Protokoll
 
-Die Verfahrensanweisung der Runde: Grammatik holen, Alternativen proben oder EINEN Batch emittieren, den naechsten Schritt anfordern. Zwei Fassungen, je nachdem ob der Host oder der Treiber die Auswahl faehrt.
+Die Verfahrensanweisung der Runde: Grammatik holen, Alternativen proben oder EINEN Batch emittieren, den naechsten Schritt anfordern. Zwei Fassungen, je nachdem ob der Host oder der Treiber die Auswahl faehrt. Rang: Anleitung — sie sagt, wie man vorgeht, nicht was in dieser Runde zu tun ist.
 
 io ◀ `ACTOR-owner` · io ▶ `FUNC-generation-step` · schema ▶ `SCHEMA-steering-channel`
 
@@ -6876,7 +6876,7 @@ schema ◀ `FLOW-session-entry` · `FLOW-session-registry`
 
 ### 5.45  `SCHEMA-steering-channel` — Kanalbeitrag zum Rundenprompt
 
-Der Beitrag EINES Steuerungskanals zu einer Runde: der Kanal — und damit sein Rang aus der Ordnung in src/loop/channel-rank.ts — und sein Textblock. Ein Vertrag fuer alle Kanaele, weil sie sich genau darin gleichen und nur im Rang unterscheiden; ein Vertrag je Kanal waere neun Knoten fuer eine Unterscheidung, die kein Leser braucht. Bewusst ohne Zod-Symbol: informationeller Prompt-Kontext, kein Wire-Format. (CR-GC-573)
+Der Beitrag EINES Steuerungskanals zu einer Runde: der Kanal — und damit sein Rang aus der Ordnung in src/loop/channel-rank.ts, am FLOW als Attribut channelRank gespiegelt — und sein Textblock. Ein Vertrag fuer alle Kanaele, weil sie sich genau darin gleichen und nur im Rang unterscheiden; ein Vertrag je Kanal waere neun Knoten fuer eine Unterscheidung, die kein Leser braucht, und neun statt einem Vertrag an jeder Modulgrenze. Der Rang steht deshalb am Knoten: ohne ihn sind zwei Kanaele mit gleichem Produzenten und Konsumenten im Graphen ununterscheidbar, und der Optimizer schlaegt sie zum Merge vor. Bewusst ohne Zod-Symbol: informationeller Prompt-Kontext, kein Wire-Format. (CR-GC-573)
 
 schema ◀ `FLOW-channel-dimension-template` · `FLOW-channel-gate-protocol` · `FLOW-channel-grammar` · `FLOW-channel-guidance` · `FLOW-channel-idle-nudge` · `FLOW-channel-inventory` · `FLOW-channel-proposal-suggest` · `FLOW-channel-rule-clause` · `FLOW-channel-system-prompt`
 
