@@ -16,7 +16,7 @@ A use case is the ConOps entry point: the **plainest** statement of who does wha
 ## Write it through the gate
 Emit ONE `graph_mutate` batch:
 1. `add-node` for the `UC` — the terse description above; `name` is a short scenario label.
-2. `add-edge` `compose` from the `UC` to the `FCHAIN` or `FUNC`(s) that realize it (`{ "op":"add-edge", "edge":{ "sourceId":"UC-…", "targetId":"FCHAIN-…", "edgeType":"compose" } }`) — a UC with no `compose` raises R-14.
+2. `add-edge` `compose` from the `UC` to the `FCHAIN` or `FUNC`(s) that realize it (`{ "op":"add-edge", "edge":{ "sourceId":"UC-…", "targetId":"FCHAIN-…", "edgeType":"compose" } }`) — a UC with no `compose` to a `FCHAIN` raises **`UC-03`** ("no FCHAIN scenario", warning), and **`FC-02`** on top of it while the UC is a leaf. Both are warnings, so the batch still applies; what BLOCKS is `UC-01` (no `compose` to a REQ) and `UC-02` (no ACTOR path).
 
 Inspect the returned `violations`; never hand-edit the SSOT. To author the requirements the UC composes, use `se:author-req`.
 

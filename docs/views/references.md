@@ -567,6 +567,11 @@
 | `CR-GC-569` | relation | `FUNC-call-model` |
 | `CR-GC-569` | relation | `FUNC-run-executor` |
 | `CR-GC-569` | relation | `UC-reduced-llm` |
+| `CR-GC-571` | relation | `FUNC-author-uc` |
+| `CR-GC-571` | relation | `FUNC-generation-step` |
+| `CR-GC-571` | relation | `FUNC-se-fmea` |
+| `CR-GC-571` | relation | `FUNC-view-fmea` |
+| `CR-GC-571` | relation | `REQ-published-counts-match-code` |
 | `CR-GC-573` | relation | `FUNC-authoring-guide` |
 | `CR-GC-573` | relation | `FUNC-build-round-injection` |
 | `CR-GC-573` | relation | `FUNC-generation-step` |
@@ -1961,6 +1966,7 @@
 | `TEST-single-write-door` | verify | `REQ-single-write-door` |
 | `TEST-skill-authors-through-gate` | verify | `REQ-skill-authors-through-gate` |
 | `TEST-skill-reports-measured-values` | verify | `REQ-skill-reads-only` |
+| `TEST-skill-rule-ids` | verify | `REQ-published-counts-match-code` |
 | `TEST-skills-mcp` | verify | `REQ-doc-export` |
 | `TEST-status-verb` | verify | `REQ-single-kuzu-owner` |
 | `TEST-steering-snapshot` | verify | `REQ-single-measurement-path` |

@@ -273,8 +273,9 @@ export function scriptedActor(focus: ParsedFocus, seq: number): unknown[] | null
     // A UC without requirements: give each one a requirement AND the test that
     // verifies it, in the SAME batch — a REQ without a verify-TEST is R-01, and
     // the gate would block the whole batch (the invariant the template states).
+    // CR-GC-571: der Zweig 'R-14' stand hier fuer eine Regel, die der Katalog seit
+    // CR-SM-294/295 nicht mehr kennt — ein Fall, den der Scriptor nie erreicht.
     case 'UC-01':
-    case 'R-14':
       for (const uc of elementIds) {
         const req = `REQ-${uc}-${seq}`;
         const test = `TEST-${uc}-${seq}`;
