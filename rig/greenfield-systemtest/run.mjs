@@ -15,12 +15,27 @@
 import { execFileSync, spawnSync } from 'node:child_process';
 import { mkdirSync, rmSync, writeFileSync, readFileSync, existsSync, cpSync } from 'node:fs';
 import { join, dirname } from 'node:path';
+import { parseEnv } from 'node:util';
 import { fileURLToPath } from 'node:url';
 import { runMetrics } from './metrics.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const GC_ROOT = join(HERE, '..', '..');
 const MCP_ARGS = [join(GC_ROOT, 'dist', 'cli.js'), 'mcp']; // local dist, not npx-published
+
+/**
+ * Geheimnisse aus `graphcode/.env` — GELESEN, nicht in `process.env` geladen.
+ *
+ * Der Unterschied traegt: jeder Arm erbt `process.env`. Stuende `ANTHROPIC_API_KEY` dort,
+ * wechselte `claude -p` im `opus5`-Arm still vom Claude-Code-Login auf API-Abrechnung —
+ * ein anderer Auth-Pfad als in jedem frueheren Lauf, und eine Rechnung, die niemand
+ * bestellt hat. So bekommt den Wert nur der Arm, der ihn namentlich liest.
+ * Die Datei ist gitignored; `.env.example` nennt die Schluessel ohne Werte.
+ */
+export function readSecrets(path) {
+  return existsSync(path) ? parseEnv(readFileSync(path, 'utf8')) : {};
+}
+const SECRETS = readSecrets(join(GC_ROOT, '.env'));
 
 // --- CONFIG (edit before running; no silent fallbacks) --------------------------
 export const CFG = {
@@ -101,8 +116,8 @@ export const CFG = {
       model: process.env.GCRUN_FRONTIER_MODEL ?? 'claude-opus-5',
       backend: 'anthropic',
       baseUrl: process.env.GCRUN_FRONTIER_BASE_URL ?? 'https://api.anthropic.com',
-      // Nur aus der Umgebung, nie aus einer Repo-Datei.
-      apiKey: process.env.ANTHROPIC_API_KEY ?? '',
+      // Umgebung vor `.env` — dieselbe Rangfolge wie Nodes eigenes `--env-file`.
+      apiKey: process.env.ANTHROPIC_API_KEY ?? SECRETS.ANTHROPIC_API_KEY ?? '',
       maxTokens: process.env.GCRUN_FRONTIER_MAX_TOKENS ?? '4096',
       maxRounds: process.env.GCRUN_FRONTIER_MAX_ROUNDS ?? '8',
       candidates: process.env.GCRUN_FRONTIER_CANDIDATES ?? '1' },
@@ -202,14 +217,15 @@ function initWorkspace(dir) {
     { stdio: 'pipe' });
 }
 
-// Claude Code path (frontier): .mcp.json → repoint at local dist; claude -p JSON out.
-function authorViaClaude(dir, arm) {
-  const mcpPath = join(dir, '.mcp.json');
-  const mcp = JSON.parse(readFileSync(mcpPath, 'utf8'));
-  mcp.mcpServers.graphcode.command = 'node';
-  mcp.mcpServers.graphcode.args = MCP_ARGS;
-  writeFileSync(mcpPath, JSON.stringify(mcp, null, 2));
-  const baseEnv = { ...process.env };
+/**
+ * Die Umgebung fuer `claude -p`. Frontier faehrt nativ ueber den Claude-Code-Login, lokal
+ * ueber LM Studios Anthropic-Endpunkt. `ANTHROPIC_API_KEY` faellt in BEIDEN Faellen weg:
+ * exportiert in der Shell, schaltete er `opus5` sonst still auf API-Abrechnung um —
+ * ein anderer Auth-Pfad als in jedem frueheren Lauf dieses Arms.
+ */
+export function claudeEnv(arm, env = process.env) {
+  const baseEnv = { ...env };
+  delete baseEnv.ANTHROPIC_API_KEY;
   if (arm.local) {
     // Lokaler Arm im Claude-Code-Harness: LM Studio bedient ein Anthropic-kompatibles
     // /v1/messages inkl. tool_use (verifiziert), also treibt `claude -p` das lokale Modell.
@@ -218,6 +234,17 @@ function authorViaClaude(dir, arm) {
   } else {
     delete baseEnv.ANTHROPIC_BASE_URL; delete baseEnv.ANTHROPIC_AUTH_TOKEN; // frontier = native
   }
+  return baseEnv;
+}
+
+// Claude Code path (frontier): .mcp.json → repoint at local dist; claude -p JSON out.
+function authorViaClaude(dir, arm) {
+  const mcpPath = join(dir, '.mcp.json');
+  const mcp = JSON.parse(readFileSync(mcpPath, 'utf8'));
+  mcp.mcpServers.graphcode.command = 'node';
+  mcp.mcpServers.graphcode.args = MCP_ARGS;
+  writeFileSync(mcpPath, JSON.stringify(mcp, null, 2));
+  const baseEnv = claudeEnv(arm);
   const t0 = Date.now();
   const r = spawnSync(
     CFG.claudeBin,
@@ -428,7 +455,7 @@ async function main() {
   for (const arm of arms) {
     if (arm.optIn && !arm.apiKey) {
       throw new Error(
-        `Arm ${arm.label} braucht ANTHROPIC_API_KEY in der Umgebung — nie in einer Repo-Datei.`,
+        `Arm ${arm.label} braucht ANTHROPIC_API_KEY — in graphcode/.env (gitignored, s. .env.example) oder der Umgebung.`,
       );
     }
   }

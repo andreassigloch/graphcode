@@ -101,10 +101,14 @@ in **genau einer**: wer die Schleife treibt.
 ### Den Frontier-Executor fahren
 
 ```bash
-export ANTHROPIC_API_KEY=…            # nur Umgebung, nie eine Repo-Datei
+cp ../../.env.example ../../.env        # einmalig; Key eintragen — .env ist gitignored
 ARMS=gcrun-frontier,opus5 RUNS=3 node run.mjs
 node report.mjs
 ```
+
+**Der Key** liegt in `graphcode/.env` (Umgebung hat Vorrang). `run.mjs` liest die Datei,
+laedt sie aber nicht in `process.env`: nur `gcrun-frontier` bekommt den Wert, `claude -p`
+nie — sonst liefe `opus5` still ueber API-Abrechnung statt ueber den Claude-Code-Login.
 
 **Kosten:** ~9 $/Lauf (Erfahrungswert `opus5`). Deshalb faehrt der Arm **nur auf
 namentliche Nennung** in `ARMS` — ein blosses `node run.mjs` laesst ihn aus. Fehlt der

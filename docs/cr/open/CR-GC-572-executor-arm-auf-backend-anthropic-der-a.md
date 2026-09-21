@@ -38,7 +38,8 @@ MCP-Werkzeuge — andere Schleife. Der Key ist die Leitung, nicht der Unterschie
 ## 4 Kosten und Riegel
 
 ~9 $/Lauf (Erfahrungswert `opus5`). `maxRounds` und `maxStepTurns` begrenzen; ein Ausreisser
-kostet kein Vielfaches. Der Key gehoert in die Umgebung, nie in eine Repo-Datei.
+kostet kein Vielfaches. Der Key liegt in `graphcode/.env` (gitignored) oder der Umgebung,
+nie in einer getrackten Datei; `claude -p` erbt ihn nie (`claudeEnv` in `run.mjs`).
 
 ## 5 Akzeptanzkriterien
 
@@ -95,7 +96,7 @@ konfundiert, und `gcrun-frontier` loest es auf.
 Der Befehl:
 
 ```bash
-export ANTHROPIC_API_KEY=…
+# Key einmalig in graphcode/.env (Vorlage: .env.example)
 ARMS=gcrun-frontier,opus5 RUNS=3 node rig/greenfield-systemtest/run.mjs
 node rig/greenfield-systemtest/report.mjs
 ```
