@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 199 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 204 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 199 CR · 170 done · 1 open.
+Total: 204 CR · 170 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -261,3 +261,8 @@ Total: 199 CR · 170 done · 1 open.
 | `CR-GC-577` | n/a | dryRun-apply-Verdopplung: MCP-Clients bekommen dieselben Befunde zweimal — 5 Paare in opus5-5 (48/30/34/49/1). Protokollfrage, ob der Probelauf seinen Preis wert ist |
 | `CR-GC-578` | done | audit.trail-projection: Test misst gegen den LEBENDEN .graphcode/audit.jsonl des Repos — Schwellwert 11 Prozent reisst bei 20,8 von 165,2 KB, ohne Codeaenderung. Flaky per Konstruktion |
 | `CR-GC-579` | done | mcp-server.ts serialisiert JEDE Werkzeugantwort mit Einrueckung 2 — 18,3 Prozent des gesamten Werkzeug-Payloads, graph_readiness 38 Prozent. Ein Argument |
+| `CR-GC-580` | n/a | Rig-Workspace ist kein eigenes Git-Repo: claude -p (skip-permissions) committet per git add -A ins graphcode-Repo (runde7 opus5-6, selbst zurueckgesetzt) — initWorkspace braucht git init |
+| `CR-GC-581` | n/a | graph_authoring_guide REQ nennt 'behavioural/structural kinds' ohne Werte und Syntax, UC-05/06 verlangen kinds:[postcondition] — opus5 durchsucht dafuer den Quellcode (runde7: 6/12/31 Suchen, bis 59k Zeichen) |
+| `CR-GC-582` | n/a | graph_generate erreicht im Greenfield nie done=true: Endspiel haengt an AF-01/03 (Frischestempel), BQ-02, FM-01, CR-R03 — der Agent beendet nach eigenem Urteil, im Webapp-Korpus Schleife bis Timeout (runde7, 4/4 Laeufe) |
+| `CR-GC-583` | n/a | steerAdvisory und fitAdvisory widersprechen sich ohne Rang: RD-04-Fix (Zwischenebene) verschlechtert modifiability/coherence — opus5-6 zieht die Ebene ein, opus5-7 verwirft sie per Delta-m (runde7) |
+| `CR-GC-584` | n/a | workOrder bei Bindungsquote 0 % ist reines Rauschen: in allen Greenfield-Laeufen 100 % nur 'blind' (jede FUNC ohne realRef), 4-21 Bloecke je Lauf — CR-576 laesst ihn durch, weil blind nicht leer ist |
