@@ -1739,13 +1739,15 @@
       "id": "CR-GC-578",
       "type": "CR",
       "name": "audit.trail-projection: Test misst gegen den LEBENDEN .graphcode/audit.jsonl des Repos — Schwellwert 11 Prozent reisst bei 20,8 von 165,2 KB, ohne Codeaenderung. Flaky per Konstruktion",
-      "description": "docs/cr/open/CR-GC-578-audit-trail-projection-test-misst-gegen-.md"
+      "description": "docs/cr/open/CR-GC-578-audit-trail-projection-test-misst-gegen-.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-579",
       "type": "CR",
       "name": "mcp-server.ts serialisiert JEDE Werkzeugantwort mit Einrueckung 2 — 18,3 Prozent des gesamten Werkzeug-Payloads, graph_readiness 38 Prozent. Ein Argument",
-      "description": "docs/cr/open/CR-GC-579-mcp-server-ts-serialisiert-jede-werkzeug.md"
+      "description": "docs/cr/open/CR-GC-579-mcp-server-ts-serialisiert-jede-werkzeug.md",
+      "status": "done"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -11857,6 +11859,16 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-578",
+      "target": "FUNC-audit-trail",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-579",
+      "target": "FUNC-serve-stdio",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -20012,5 +20024,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 345
+  "graphVersion": 346
 }

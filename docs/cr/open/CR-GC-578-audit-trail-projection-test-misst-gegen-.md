@@ -1,6 +1,6 @@
 # CR-GC-578: Der Trail-Test behauptet eine Quote gegen eine Datei, die er nicht kontrolliert
 
-**Status:** 🟠 Open
+**Status:** 🟠 In Umsetzung
 **Typ:** aus Item ITEM-2026-420 (bug)
 **Erstellt:** 2026-09-21
 **Item:** bok/items/ITEM-2026-420.json (Lane: graph)
@@ -69,3 +69,40 @@ size promise"; nach diesem Zug traegt er sie ganz.
 Wenn ein Test gegen `.graphcode/` misst, misst er gegen einen Zustand, den eine andere Sitzung
 aendert. Ein Grep, ob es weitere solche Faelle gibt, gehoert in diesen Zug — sonst ist der
 naechste rote Lauf wieder eine halbe Stunde Diagnose.
+
+---
+
+## 6 Umsetzung (2026-09-21)
+
+Der Fall am echten Trail misst und berichtet; das Urteil traegt der synthetische Gegencheck.
+
+- **Berichtet** wird die Quote als Zeile in der Testausgabe, samt der Bandbreite frueherer
+  Fenster: `Repo-Trail, letzte 50 Saetze: 427,5 KB roh → 22,1 KB projiziert = 5,2 %
+  (Bandbreite: 4,2 % / 5,5 % / 8,2 % / 12,6 %)`. Die 12,6 % sind der rote Lauf, der diese
+  CR ausgeloest hat — er steht jetzt in der Bandbreite, statt eine Schwelle zu reissen.
+- **Geprueft** wird nur noch, was von der Form der letzten Operationen unabhaengig ist: die
+  Projektion ist kleiner als das Rohmaterial, und `fixHint`, `context` und
+  `candidate_targets` sind weg.
+- Die **11 % bleiben unveraendert** am synthetischen Fall. Rueckwaerts belegt: auf 0,1 %
+  gesetzt wird genau er rot, also urteilt er wirklich.
+
+### 6.1 Der allgemeine Fall (§5)
+
+`grep` ueber `tests/` nach Zugriffen auf die lebende `.graphcode/`:
+
+| Stelle | Art des Zugriffs | Urteil |
+|---|---|---|
+| `audit.trail-projection.test.ts:202` | absolute Schwelle gegen den Inhalt | **das war der Fall** — behoben |
+| `audit.stats.test.ts:219` | rechnet die jq-Zeile SELBST und vergleicht mit dem Werkzeug | unkritisch: eine Gleichheit zweier Rechnungen ueber dieselben Daten, inhaltsunabhaengig |
+| `arch.optimization-dry-run.spike.test.ts:82` | Zielprofil als Konstante im Test, NICHT aus `.graphcode/` gelesen | unkritisch, und im Kommentar schon so begruendet |
+
+Alle uebrigen Treffer liegen in Temp-Workspaces, die der Test selbst anlegt.
+
+### 6.2 Kriterien
+
+| # | Kriterium | Ergebnis |
+|---|---|---|
+| 1 | kein Testfall behauptet eine Schwelle gegen `.graphcode/audit.jsonl` | erfuellt |
+| 2 | die Quote auf echten Daten steht weiter in der Ausgabe | erfuellt — 5,2 % im Lauf von heute |
+| 3 | der synthetische Fall behaelt seine 11 % | erfuellt, rueckwaerts belegt |
+| 4 | gruen bei laufender Zweitsitzung, zweimal, mit Mutationen dazwischen | erfuellt — zwei Laeufe mit einer Gate-Mutation dazwischen (graphVersion 345 → 346), 427,5 → 427,6 KB Rohmaterial, beide gruen |

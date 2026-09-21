@@ -585,6 +585,8 @@
 | `CR-GC-574` | relation | `UC-loop-closure` |
 | `CR-GC-575` | relation | `FUNC-build-round-injection` |
 | `CR-GC-575` | relation | `FUNC-generation-step` |
+| `CR-GC-578` | relation | `FUNC-audit-trail` |
+| `CR-GC-579` | relation | `FUNC-serve-stdio` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-suggest` |

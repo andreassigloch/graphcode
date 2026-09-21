@@ -318,6 +318,8 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-573` | done | Fuenf Prompt-Autoritaeten in EINEM FUNC-generation-step: SEED_STAGES, DIMENSION_FOCUS_TYPES, GENERATION_TEMPLATE, RULE_CLAUSE, GATE_PROTOCOL sind unmodelliert | `FUNC-authoring-guide` · `FUNC-build-round-injection` · `FUNC-generation-step` |
 | `CR-GC-574` | n/a | Das Rig ist der Systemtest und fehlt im Modell: kein TEST-/FCHAIN-Knoten fuer Lauf, Metrik, Pruefliste und Turn-Analyse | `FUNC-systemtest-turn-analyse` · `MOD-systemtest` · `REQ-greenfield-systemtest-dod` · `UC-loop-closure` |
 | `CR-GC-575` | n/a | Eine erklaerte Rangfolge der Steuerungskanaele statt verstreuter if/else — heute muss jeder Konflikt gemessen werden | `FUNC-build-round-injection` · `FUNC-generation-step` |
+| `CR-GC-578` | done | audit.trail-projection: Test misst gegen den LEBENDEN .graphcode/audit.jsonl des Repos — Schwellwert 11 Prozent reisst bei 20,8 von 165,2 KB, ohne Codeaenderung. Flaky per Konstruktion | `FUNC-audit-trail` |
+| `CR-GC-579` | done | mcp-server.ts serialisiert JEDE Werkzeugantwort mit Einrueckung 2 — 18,3 Prozent des gesamten Werkzeug-Payloads, graph_readiness 38 Prozent. Ein Argument | `FUNC-serve-stdio` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

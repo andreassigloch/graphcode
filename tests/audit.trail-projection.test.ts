@@ -205,27 +205,36 @@ const REAL_TRAIL = 'TEST-audit-trail-projection: the size claim on real data (RE
 
 describe.skipIf(!existsSync(trail))(REAL_TRAIL, () => {
   /**
+   * MISST UND BERICHTET — urteilt nicht mehr (CR-GC-578).
+   *
    * MEASURED 2026-08-16 over THREE sliding 50-record windows of this repo's trail:
    *
    *   last 50            573.2 KB raw → 24.0 KB  =  4.2 %
    *   last 50 minus 50   158.4 KB raw → 13.0 KB  =  8.2 %
    *   last 50 minus 150  360.2 KB raw → 19.9 KB  =  5.5 %
    *
-   * The bandwidth is the point (CR-GC-346 F3b). This case slices the LAST 50 records and
-   * compares against an ABSOLUTE threshold, so its result depends on the shape of recent
-   * work, not on the trail as a whole — before CR-GC-346 the same threshold read 13.6 %
-   * here and 10.3 % one session earlier, i.e. it went red from batch width alone. Quoting
-   * one snapshot would hide that; quoting the range says how much headroom is real.
+   * Die Streuung war der Punkt (CR-GC-346 F3b) — und sie hat den Fall am 2026-09-21
+   * eingeholt: 20,8 KB gegen 165,2 KB = **12,6 %**, ohne jede Codeaenderung. Derselbe Lauf
+   * mit `src/` auf HEAD war identisch rot. Die Datei wird fortgeschrieben, waehrend die
+   * Suite laeuft — in jenem Fall von einer zweiten Claude-Code-Sitzung am selben Repo. Das
+   * Ergebnis haengt damit davon ab, was zufaellig in den letzten 50 Operationen stand.
    *
-   * Why 11 % stays: it was the CR-GC-319 budget and nothing about the promise changed. The
-   * measured value moved from 13.6 % to 4.2 % because violations stopped scaling with
-   * batch width, not because the threshold was loosened to fit — loosening a threshold
-   * until a test passes is how a suite learns a regression.
+   * Die Schwelle ANZUHEBEN war keine Option: „loosening a threshold until a test passes is
+   * how a suite learns a regression" — das stand schon hier und gilt weiter. Stattdessen
+   * wechselt der TRAEGER der Zusage. Dieser Fall rechnet die Quote weiter aus und schreibt
+   * sie in die Testausgabe (die Messung auf echten Daten ist wertvoll), prueft aber nur
+   * noch, was UNABHAENGIG vom Inhalt gilt: die Projektion ist kleiner als das Rohmaterial,
+   * und die schweren Felder sind weg.
    *
-   * This case alone cannot fail when the projection gets WORSE on a quiet trail, so the
-   * synthetic counter-check below carries that half of the promise.
+   * Das Urteil traegt der synthetische Gegencheck darunter. Er hat ein bekanntes
+   * Fettverhaeltnis, behaelt seine 11 % unveraendert und faellt, sobald die Projektion
+   * schlechter wird — egal wie der lokale Trail heute aussieht. Er hiess hier schon
+   * „the trail-independent half of the size promise"; jetzt traegt er sie ganz.
+   *
+   * NICHT gewaehlt: eine Stichprobe einchecken. Das „would freeze the very ratio being
+   * measured", und dieser Einwand bleibt richtig.
    */
-  it('a default answer over the repo trail is ~89 % smaller than the raw records', () => {
+  it('berichtet die Quote auf echten Daten und prueft, was inhaltsunabhaengig gilt', () => {
     const raw = readFileSync(trail, 'utf8')
       .trim()
       .split('\n')
@@ -241,13 +250,23 @@ describe.skipIf(!existsSync(trail))(REAL_TRAIL, () => {
 
     expect(raw.length, 'no audit records to measure against').toBeGreaterThan(0);
 
+    const projected = projectAuditEntries(raw);
     const before = bytes({ entries: raw });
-    const after = bytes({ entries: projectAuditEntries(raw) });
+    const after = bytes({ entries: projected });
 
-    expect(
-      after,
-      `${(after / 1024).toFixed(1)} KB projected vs ${(before / 1024).toFixed(1)} KB raw`,
-    ).toBeLessThan(before * 0.11);
+    // Die Messung bleibt sichtbar — sie ist der Grund, warum dieser Fall existiert.
+    console.log(
+      `   [REQ-T04] Repo-Trail, letzte ${raw.length} Saetze: ${(before / 1024).toFixed(1)} KB roh → `
+        + `${(after / 1024).toFixed(1)} KB projiziert = ${((100 * after) / before).toFixed(1)} % `
+        + `(Bandbreite frueherer Fenster: 4,2 % / 5,5 % / 8,2 % / 12,6 %)`,
+    );
+
+    // Geprueft wird nur, was von der Form der letzten Operationen UNABHAENGIG ist.
+    expect(after, 'die Projektion ist nicht kleiner als das Rohmaterial').toBeLessThan(before);
+    const text = JSON.stringify(projected);
+    expect(text).not.toContain('"fixHint"');
+    expect(text).not.toContain('"context"');
+    expect(text).not.toContain('"candidate_targets"');
   });
 
   /**
@@ -257,6 +276,10 @@ describe.skipIf(!existsSync(trail))(REAL_TRAIL, () => {
    * the last 50 operations happened to look like — it nods through what comes out. This one
    * has a KNOWN fat ratio, so it fails whenever the projection gets worse, no matter what
    * the local trail looks like today.
+   *
+   * Seit CR-GC-578 traegt er die Groessen-Zusage ALLEIN: der Fall darueber berichtet nur
+   * noch. Die 11 % hier sind deshalb unveraendert geblieben — die Zusage wurde nicht
+   * gelockert, sie wurde an die Stelle gehaengt, die sie halten kann.
    */
   it('collapses a wide batch on a synthetic record — the claim without the trail', () => {
     // One record shaped like the three that took the size claim red: a batch over 28 nodes
