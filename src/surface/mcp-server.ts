@@ -46,7 +46,34 @@ const SERVER_VERSION = readPackageVersion();
  * Turn a bound `MCPToolRegistry` into a live `McpServer`. Each registry tool's
  * Zod `inputSchema` (a `z.object`) contributes its raw shape so clients see a
  * proper JSON-schema; the handler output is wrapped as MCP text content.
+ *
+ * KOMPAKT serialisiert (CR-GC-579). Bis hierher stand hier `JSON.stringify(result, null, 2)`
+ * — Einrueckung fuer einen Leser, den es nicht gibt: ein Werkzeugergebnis liest ein Parser.
+ * Gemessen an `rig/greenfield-systemtest/runs/opus5-5` ueber ALLE Werkzeug-Ergebnisse im
+ * Kontextfenster: 266.188 gegen 217.442 Zeichen, **18,3 % des Gesamtpayloads** fuer
+ * Leerzeichen und Zeilenumbrueche. Am staerksten trifft es `graph_readiness` (38,2 %), weil
+ * seine Antwort fast nur aus Zahlenfeldern besteht und `null, 2` jedes Array-Element auf
+ * eine eigene Zeile schreibt — sechs Dimensionen werden achtzehn Zeilen.
+ *
+ * Der Posten ist teurer als er aussieht: er faellt nicht einmal an, sondern steht danach in
+ * jedem Cache-Read der Sitzung, und `cache_creation` kostet etwa das Zwoelffache des
+ * Lesepreises (CR-GC-567).
+ *
+ * NICHT betroffen: `graph_export` und die `docs/views/*.md`-Projektionen. Das sind Dateien
+ * im Repo, die ein Mensch liest und `git diff` zeilenweise vergleicht — dort ist die
+ * Einrueckung der Zweck, nicht der Abfall. `tests/mcp.compact-serialization.test.ts` haelt
+ * beide Seiten auseinander.
  */
+/**
+ * Die EINE Serialisierung eines Werkzeug-Ergebnisses (CR-GC-579).
+ *
+ * Exportiert, damit die Zusage pruefbar ist, ohne einen MCP-Server zu starten — und damit
+ * kein zweiter Serialisierungspfad danebensteht, an dem die Einrueckung zurueckkehrt.
+ */
+export function serializeToolResult(result: unknown): string {
+  return JSON.stringify(result);
+}
+
 export function bindRegistryToMcpServer(registry: MCPToolRegistry): McpServer {
   const server = new McpServer({ name: SERVER_NAME, version: SERVER_VERSION });
   for (const tool of Object.values(registry)) {
@@ -57,7 +84,7 @@ export function bindRegistryToMcpServer(registry: MCPToolRegistry): McpServer {
         // Re-validate against the tool's own schema (idempotent over the SDK's
         // raw-shape parse) so the handler always receives canonical, defaulted input.
         const result = await tool.handler(tool.inputSchema.parse(args));
-        return { content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }] };
+        return { content: [{ type: 'text' as const, text: serializeToolResult(result) }] };
       },
     );
   }
