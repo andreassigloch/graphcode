@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 52 SCHEMA · 110 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 57 SCHEMA · 115 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -56,6 +56,11 @@
 | `SCHEMA-session-registry` | src/surface/gve-session-contract.ts#SessionEntrySchema | n/a |
 | `SCHEMA-steering-delta` | src/kernel/measure/steering-snapshot.ts#SteeringDelta | reviewed |
 | `SCHEMA-steering-snapshot` | src/kernel/measure/steering-snapshot.ts#SteeringSnapshot | reviewed |
+| `SCHEMA-systemtest-artifacts` | Konzept (noch kein Zod-Export) | reviewed |
+| `SCHEMA-systemtest-order` | Konzept (noch kein Zod-Export) | reviewed |
+| `SCHEMA-systemtest-row` | Konzept (noch kein Zod-Export) | reviewed |
+| `SCHEMA-systemtest-turn-profile` | Konzept (noch kein Zod-Export) | reviewed |
+| `SCHEMA-systemtest-verdict` | Konzept (noch kein Zod-Export) | reviewed |
 | `SCHEMA-target-profile` | src/loop/target-profile-contract.ts#TargetProfileSchema | n/a |
 | `SCHEMA-test-selection` | src/kernel/measure/test-selection.ts#TestSelectionSchema | n/a |
 | `SCHEMA-tool-context` | src/surface/tool-context-contract.ts#ToolContext | n/a |
@@ -170,6 +175,11 @@
 | `FLOW-steering-snapshot` | `FUNC-take-steering-snapshot` | `FUNC-compute-steering-delta` · `FUNC-generation-step` |
 | `FLOW-steering-trigger-agent` | `ACTOR-agent` | `FUNC-take-steering-snapshot` |
 | `FLOW-store-ownership` | `FUNC-claim-store-lock` | `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` |
+| `FLOW-systemtest-artifacts` | `FUNC-systemtest-run` | `FUNC-systemtest-metrics` · `FUNC-systemtest-turn-analyse` |
+| `FLOW-systemtest-order` | `ACTOR-owner` | `FUNC-systemtest-run` |
+| `FLOW-systemtest-row` | `FUNC-systemtest-metrics` | `FUNC-systemtest-report` |
+| `FLOW-systemtest-turn-profile` | `FUNC-systemtest-turn-analyse` | `FUNC-systemtest-report` |
+| `FLOW-systemtest-verdict` | `FUNC-systemtest-report` | `ACTOR-owner` |
 | `FLOW-target-profile` | `FUNC-target-profile-load` | `FUNC-generation-step` · `FUNC-graph-suggest` |
 | `FLOW-target-profile-file` | `FUNC-target-profile` | `FUNC-target-profile-load` |
 | `FLOW-test-selection` | `FUNC-deduce-tests` | `ACTOR-agent` · `ACTOR-owner` |

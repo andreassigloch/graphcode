@@ -45,7 +45,7 @@
 | `REQ-graph-snapshot-per-commit` | ✓ | ✓ passed | `TEST-auto-export` · `TEST-graph-time-travel` |
 | `REQ-graph-state-recall` | ✓ | ✓ passed | `TEST-graph-time-travel` · `TEST-reseed` · `TEST-rewind` |
 | `REQ-graph-tests-operational` | ✓ | ✓ passed | `TEST-graph-tests-operational` · `TEST-selective-test-audit` |
-| `REQ-greenfield-systemtest-dod` | ✓ | ⚠ nie gelaufen | `TEST-greenfield-systemtest` |
+| `REQ-greenfield-systemtest-dod` | ✓ | ⚠ 1/2 passed | `TEST-greenfield-systemtest` · `TEST-systemtest-evaluations` |
 | `REQ-harness-schema-in-contracts` | ✓ | ✓ passed | `TEST-mcp-symmetry` · `TEST-mutate-schema-guard` |
 | `REQ-held-back-traces-named` | ✓ | ⚠ nie gelaufen | `TEST-import-rejected-traces` |
 | `REQ-hook-extension-points` | ✓ | ⚠ nie gelaufen | `TEST-hooks` |
@@ -254,6 +254,10 @@ Belegt: 105/142 REQ bestanden (74%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-se-trade` → `FUNC-mutate` | `FLOW-mutate-cmd-se-trade` | `FCHAIN-skill-authoring` | `TEST-skill-authors-through-gate` | conformance | passed |
 | `FUNC-seed-from-json` → `FUNC-held-back-traces` | `FLOW-ontology-json` | `FCHAIN-recall` | `TEST-graph-time-travel` · `TEST-reseed` · `TEST-rewind` | integration | passed |
 | `FUNC-seed-from-json` → `FUNC-import` | `FLOW-ontology-json` | `FCHAIN-recall` | `TEST-graph-time-travel` · `TEST-reseed` · `TEST-rewind` | integration | passed |
+| `FUNC-systemtest-metrics` → `FUNC-systemtest-report` | `FLOW-systemtest-row` | `FCHAIN-systemtest-run` | `TEST-greenfield-systemtest` · `TEST-systemtest-evaluations` | acceptance, integration | passed |
+| `FUNC-systemtest-run` → `FUNC-systemtest-metrics` | `FLOW-systemtest-artifacts` | `FCHAIN-systemtest-run` | `TEST-greenfield-systemtest` · `TEST-systemtest-evaluations` | acceptance, integration | passed |
+| `FUNC-systemtest-run` → `FUNC-systemtest-turn-analyse` | `FLOW-systemtest-artifacts` | `FCHAIN-systemtest-run` | `TEST-greenfield-systemtest` · `TEST-systemtest-evaluations` | acceptance, integration | passed |
+| `FUNC-systemtest-turn-analyse` → `FUNC-systemtest-report` | `FLOW-systemtest-turn-profile` | `FCHAIN-systemtest-run` | `TEST-greenfield-systemtest` · `TEST-systemtest-evaluations` | acceptance, integration | passed |
 | `FUNC-take-steering-snapshot` → `FUNC-compute-steering-delta` | `FLOW-steering-snapshot` | `FCHAIN-steering-loop` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` | integration | passed |
 | `FUNC-take-steering-snapshot` → `FUNC-generation-step` | `FLOW-measurement-vector` | `FCHAIN-steering-loop` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` | integration | passed |
 | `FUNC-take-steering-snapshot` → `FUNC-generation-step` | `FLOW-steering-snapshot` | `FCHAIN-steering-loop` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` | integration | passed |
@@ -268,4 +272,4 @@ Belegt: 105/142 REQ bestanden (74%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-view-intplan` → `FUNC-export-markdown` | `FLOW-query-request-view-intplan` | `FCHAIN-doc-export` | `TEST-auto-export` · `TEST-doc-export` · `TEST-mcp-export` · `TEST-member-name` · `TEST-skills-mcp` · `TEST-views-auditor` · `TEST-views-conformance` | conformance, integration, unit | passed |
 | `FUNC-view-rtm` → `FUNC-export-markdown` | `FLOW-query-request-view-rtm` | `FCHAIN-doc-export` | `TEST-auto-export` · `TEST-doc-export` · `TEST-mcp-export` · `TEST-member-name` · `TEST-skills-mcp` · `TEST-views-auditor` · `TEST-views-conformance` | conformance, integration, unit | passed |
 
-> 109/109 deklarierte FUNC↔FUNC-Verbindungen sind über die Kette TEST→REQ←FCHAIN→FUNC abgedeckt · 0 offen. Nur Paare mit gemeinsamer FCHAIN — Ko-Adjazenz an einer geteilten FLOW ist keine deklarierte Schnittstelle (CR-GC-315). Leeres level/Ergebnis = am TEST nicht gepflegt.
+> 113/113 deklarierte FUNC↔FUNC-Verbindungen sind über die Kette TEST→REQ←FCHAIN→FUNC abgedeckt · 0 offen. Nur Paare mit gemeinsamer FCHAIN — Ko-Adjazenz an einer geteilten FLOW ist keine deklarierte Schnittstelle (CR-GC-315). Leeres level/Ergebnis = am TEST nicht gepflegt.
