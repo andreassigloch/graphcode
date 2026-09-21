@@ -120,6 +120,11 @@ export const INCLUDED = [
  * Entscheidung bleibt und nicht zu einer stillen Lücke wird.
  */
 export const EXCLUDED = {
+  'tests/systemtest-rig.test.ts':
+    'Auswertungen des Systemtest-Rigs (CR-GC-574/585/586). Der Treffer ist das GOLDEN EINES\n' +
+    'RIG-KORPUS (`rig/sigllm-spezifikation/golden/sigllm-v98.graph.json`), nie graphcodes eigene\n' +
+    'SSOT: geprueft wird, dass der Hand-Trail dieses Golden nachspielt. Eine Aenderung an\n' +
+    'graphcodes Modell kann ihn nicht rot machen; eine an der Nachspiel-Rechnung sehr wohl.',
   'tests/flow-contracts.test.ts':
     'Fluss-Vertraege (CR-GC-426/535). Der Treffer ist ein FIXTURE-DATEINAME: der Hook-Teil\n' +
     'legt `docs/graph/x.graph.json` mit LEEREM Inhalt in einem Wegwerf-Repo an und prueft,\n' +
