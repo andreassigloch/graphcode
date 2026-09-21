@@ -1,6 +1,6 @@
 # CR-GC-579: Jede Werkzeugantwort reist mit Einrueckung — 18 % des Kontexts fuer Leerzeichen
 
-**Status:** 🟠 Open
+**Status:** 🟠 In Umsetzung
 **Typ:** aus Item ITEM-2026-421 (finding)
 **Erstellt:** 2026-09-21
 **Item:** bok/items/ITEM-2026-421.json (Lane: graph)
@@ -73,3 +73,26 @@ Die drei greifen an verschiedenen Stellen derselben Antwort an und addieren sich
 
 Reihenfolge: **579 zuerst.** Sie ist die billigste und beruehrt die anderen nicht — die
 Prozente der anderen sind danach gegen die kompakte Antwort neu zu messen, nicht zu addieren.
+
+---
+
+## 6 Umsetzung (2026-09-21)
+
+Das zweite Argument ist weg. Die Serialisierung steht jetzt als `serializeToolResult` an
+EINER Stelle in `mcp-server.ts` — exportiert, damit die Zusage pruefbar ist, ohne einen
+Server zu starten, und damit kein zweiter Pfad danebensteht, an dem die Einrueckung
+zurueckkehrt. Der Socket-Pfad (`host-shim.ts`) serialisierte ohnehin schon kompakt.
+
+`tests/mcp.compact-serialization.test.ts` haelt die zwei Seiten auseinander, die hier leicht
+verwechselt werden: ein Werkzeug-Ergebnis liest ein **Parser**, eine Repo-Datei liest ein
+**Mensch** samt `git diff`. Die Einrueckung ist dort der Zweck und hier der Abfall.
+
+| # | Kriterium | Ergebnis |
+|---|---|---|
+| 1 | kompakt, kein zweiter Serialisierungspfad | erfuellt — eine Funktion, `host-shim` war schon kompakt |
+| 2 | ein Test pinnt, dass keine `\n  `-Folge reist | erfuellt — rueckwaerts belegt: `null, 2` wieder eingesetzt, zwei Faelle rot |
+| 3 | Repo-Dateien bleiben eingerueckt | erfuellt — `exportGraphJson` gegen den echten Exporter geprueft |
+| 4 | kein Ergebnis aendert seinen INHALT | erfuellt — Gleichheit ueber `JSON.parse`, inkl. `null`/`[]`/`0`/`''`/`false` |
+
+**Nachtrag zum Betrieb:** ein laufender MCP-Host serialisiert weiter eingerueckt, bis er neu
+startet — er faehrt den Code, mit dem er gebootet hat.
