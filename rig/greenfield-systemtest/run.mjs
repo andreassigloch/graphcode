@@ -118,7 +118,12 @@ export const CFG = {
       baseUrl: process.env.GCRUN_FRONTIER_BASE_URL ?? 'https://api.anthropic.com',
       // Umgebung vor `.env` — dieselbe Rangfolge wie Nodes eigenes `--env-file`.
       apiKey: process.env.ANTHROPIC_API_KEY ?? SECRETS.ANTHROPIC_API_KEY ?? '',
-      maxTokens: process.env.GCRUN_FRONTIER_MAX_TOKENS ?? '4096',
+      // 32000, nicht die 4096 des lokalen Arms: Opus 5 denkt, und das Denken zaehlt gegen
+      // max_tokens. Mit 4096 gemessen (runde7, sigllm-Korpus): 38 von 45 Mutate-Turns am
+      // Budget abgeschnitten, alle 38 als INPUT-SCHEMA abgelehnt — die leere Eingabe eines
+      // gekappten Aufrufs. 32000 laesst Denken plus einen vollen Batch zu. Welches Budget
+      // Claude Code im `opus5`-Arm setzt, ist NICHT geprueft — eine offene Achse im Vergleich.
+      maxTokens: process.env.GCRUN_FRONTIER_MAX_TOKENS ?? '32000',
       maxRounds: process.env.GCRUN_FRONTIER_MAX_ROUNDS ?? '8',
       candidates: process.env.GCRUN_FRONTIER_CANDIDATES ?? '1' },
   ],
