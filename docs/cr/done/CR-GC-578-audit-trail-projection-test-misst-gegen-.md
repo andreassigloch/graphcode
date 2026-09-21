@@ -1,6 +1,6 @@
 # CR-GC-578: Der Trail-Test behauptet eine Quote gegen eine Datei, die er nicht kontrolliert
 
-**Status:** 🟠 In Umsetzung
+**Status:** ✅ Done (2026-09-21)
 **Typ:** aus Item ITEM-2026-420 (bug)
 **Erstellt:** 2026-09-21
 **Item:** bok/items/ITEM-2026-420.json (Lane: graph)
