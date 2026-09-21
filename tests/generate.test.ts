@@ -651,6 +651,20 @@ describe('GATE_PROTOCOL-Selektion (CR-GC-288)', () => {
     expect(generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT, 0.8, [], 'host')).toEqual(step);
   });
 
+  it("'host': die Probe gilt MEHREREN Alternativen, nicht einem einzelnen Batch (CR-GC-577)", () => {
+    // Gemessen an `runs/opus5-5`: sechs Paare aus Probe und Anwendung DESSELBEN Batches,
+    // 20 % des graph_mutate-Payloads. Die Gegenrechnung ueber alle Laeufe: der opus5-Arm
+    // probte 30-mal, 4-mal kam `block`, 3 davon wurden nicht angewandt — und diese 3 haben
+    // keinen Schaden verhindert, weil eine abgelehnte Anwendung nichts persistiert.
+    const klausel = generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT, FOCUS)
+      .prompt.split('Gate-Protokoll')[1];
+    expect(klausel).toContain('MEHRERE Alternativen');
+    // Der EINE Batch geht direkt ans Gate — und der Prompt sagt auch warum, sonst liest
+    // sich die Anweisung wie eine Nachlaessigkeit statt wie eine Rechnung.
+    expect(klausel).toContain('nur EINEN Batch');
+    expect(klausel).toContain('persistiert nichts');
+  });
+
   it("'driver' (seed): dryRun-Auftrag raus, Guide-Schritt und Folgeschritt bleiben", () => {
     const step = generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT, 0.8, [], 'driver');
     expect(step.phase).toBe('seed');
