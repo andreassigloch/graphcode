@@ -24,20 +24,32 @@ function* zeilen(pfad) {
   }
 }
 
-const LEER = { input: 0, cacheRead: 0, cacheCreate: 0, output: 0 };
+const LEER = { input: 0, cacheRead: 0, cacheCreate: 0 };
 const summe = (a, b) => ({
   input: a.input + b.input, cacheRead: a.cacheRead + b.cacheRead,
-  cacheCreate: a.cacheCreate + b.cacheCreate, output: a.output + b.output,
+  cacheCreate: a.cacheCreate + b.cacheCreate,
 });
 
 /**
- * Turns aus dem Strom. Ein Turn = eine Assistant-Nachricht mit Usage; die Werkzeuge,
- * deren ERGEBNIS ihm vorausging, sind die Verursacher seines Kontextzuwachses.
+ * Turns aus dem Strom. Ein Turn = EINE Assistant-Nachricht; die Werkzeuge, deren
+ * ERGEBNIS ihr vorausging, sind die Verursacher ihres Kontextzuwachses.
+ *
+ * Eine Nachricht kommt MEHRFACH im Strom vor — einmal je Content-Block, jedes Mal
+ * mit derselben `usage`. Gemessen an opus5-5: 126 Assistant-Ereignisse, 57 distinkte
+ * `message.id`; naiv summiert ergab das 746.749 statt 368.297 Cache-Schreibung, also
+ * das Doppelte. Deshalb wird je `message.id` zusammengefasst und feldweise das
+ * MAXIMUM genommen (spaetere Ereignisse derselben Nachricht sind vollstaendiger).
+ * `pruefeGegenResultzeile()` haelt genau diese Gleichheit fest.
+ *
+ * AUSNAHME `output`: der Strom meldet ihn zum Zeitpunkt des Ereignisses, also noch
+ * unfertig — 615 gegen 114.568 in der `result`-Zeile. Er ist je Turn NICHT messbar
+ * und wird darum nirgends summiert; die Ausgabemenge steht in der Ergebniszeile.
  */
 export function leseTurns(pfad) {
-  const turns = [];
-  let offen = [];           // Werkzeuge, deren Ergebnis seit dem letzten Turn eintraf
-  let letzteIds = new Map(); // tool_use_id → Name, um Ergebnisse zuzuordnen
+  const proNachricht = new Map(); // message.id → Turn (zusammengefasst)
+  const reihenfolge = [];
+  let offen = [];            // Werkzeuge, deren Ergebnis seit dem letzten Turn eintraf
+  const letzteIds = new Map(); // tool_use_id → Name, um Ergebnisse zuzuordnen
 
   for (const e of zeilen(pfad)) {
     if (e.type === 'assistant' && e.message) {
@@ -45,18 +57,28 @@ export function leseTurns(pfad) {
       const rufe = (e.message.content ?? [])
         .filter((c) => c.type === 'tool_use')
         .map((c) => { letzteIds.set(c.id, c.name); return c.name; });
-      turns.push({
-        nr: turns.length + 1,
-        verbrauch: {
-          input: u.input_tokens ?? 0,
-          cacheRead: u.cache_read_input_tokens ?? 0,
-          cacheCreate: u.cache_creation_input_tokens ?? 0,
-          output: u.output_tokens ?? 0,
-        },
-        ruft: rufe,
-        nachErgebnisVon: offen,
-      });
-      offen = [];
+      const id = e.message.id ?? `ohne-id-${reihenfolge.length}`;
+      const vorhanden = proNachricht.get(id);
+      if (!vorhanden) {
+        proNachricht.set(id, {
+          nr: reihenfolge.length + 1,
+          verbrauch: {
+            input: u.input_tokens ?? 0,
+            cacheRead: u.cache_read_input_tokens ?? 0,
+            cacheCreate: u.cache_creation_input_tokens ?? 0,
+          },
+          ruft: rufe,
+          nachErgebnisVon: offen,
+        });
+        reihenfolge.push(id);
+        offen = [];
+      } else {
+        // Dasselbe Ereignis, weiterer Content-Block: Verbrauch NICHT addieren.
+        vorhanden.verbrauch.input = Math.max(vorhanden.verbrauch.input, u.input_tokens ?? 0);
+        vorhanden.verbrauch.cacheRead = Math.max(vorhanden.verbrauch.cacheRead, u.cache_read_input_tokens ?? 0);
+        vorhanden.verbrauch.cacheCreate = Math.max(vorhanden.verbrauch.cacheCreate, u.cache_creation_input_tokens ?? 0);
+        for (const r of rufe) if (!vorhanden.ruft.includes(r)) vorhanden.ruft.push(r);
+      }
     }
     if (e.type === 'user' && e.message) {
       for (const c of e.message.content ?? []) {
@@ -64,7 +86,33 @@ export function leseTurns(pfad) {
       }
     }
   }
-  return turns;
+  return reihenfolge.map((id) => proNachricht.get(id));
+}
+
+/**
+ * Abnahme-Kriterium 2 als Code: stimmt die Summe aus dem Strom mit der `result`-Zeile
+ * ueberein? Wenn nicht, misst die Auswertung etwas anderes als der Lauf gekostet hat —
+ * und jede Zuschreibung darunter ist wertlos. `output` bleibt aussen vor (s.o.).
+ */
+export function pruefeGegenResultzeile(dir) {
+  const rohPfad = `${dir}/claude-raw.json`;
+  const stromPfad = `${dir}/claude-stream.jsonl`;
+  if (!existsSync(rohPfad) || !existsSync(stromPfad)) return null;
+  let roh;
+  try { roh = JSON.parse(readFileSync(rohPfad, 'utf8')); } catch { return null; }
+  const u = roh.usage ?? {};
+  const turns = leseTurns(stromPfad);
+  const strom = turns.reduce((a, t) => summe(a, t.verbrauch), LEER);
+  const felder = [
+    ['input', strom.input, u.input_tokens ?? 0],
+    ['cacheRead', strom.cacheRead, u.cache_read_input_tokens ?? 0],
+    ['cacheCreate', strom.cacheCreate, u.cache_creation_input_tokens ?? 0],
+  ];
+  return {
+    ok: felder.every(([, a, b]) => a === b),
+    felder: felder.map(([name, strom, resultZeile]) => ({ name, strom, resultZeile })),
+    turns: turns.length,
+  };
 }
 
 /** cache_creation, zugeschrieben dem Werkzeug, dessen Ergebnis dem Turn voranging. */
@@ -107,8 +155,17 @@ if (process.argv[1] && import.meta.url.endsWith(process.argv[1].split('/').pop()
 
   const turns = leseTurns(strom);
   const ges = turns.reduce((a, t) => summe(a, t.verbrauch), LEER);
+  const pruef = pruefeGegenResultzeile(dir);
+  if (pruef) {
+    console.log(pruef.ok
+      ? 'Abgleich mit der result-Zeile: OK — der Strom misst denselben Lauf.'
+      : 'Abgleich mit der result-Zeile: ABWEICHUNG — die Zuschreibung unten ist NICHT belastbar:');
+    if (!pruef.ok) for (const f of pruef.felder) {
+      if (f.strom !== f.resultZeile) console.log(`  ${f.name}: Strom ${fmt(f.strom)} vs. result ${fmt(f.resultZeile)}`);
+    }
+  }
   console.log(`Turns: ${turns.length}`);
-  console.log(`Eingabe ungecacht ${fmt(ges.input)} · Cache-Lesung ${fmt(ges.cacheRead)} · Cache-Schreibung ${fmt(ges.cacheCreate)} · Ausgabe ${fmt(ges.output)}`);
+  console.log(`Eingabe ungecacht ${fmt(ges.input)} · Cache-Lesung ${fmt(ges.cacheRead)} · Cache-Schreibung ${fmt(ges.cacheCreate)}`);
   console.log(`Cache-Schreibung je Turn im Mittel: ${fmt(Math.round(ges.cacheCreate / (turns.length || 1)))}\n`);
 
   console.log('Teuerste Turns (Cache-Schreibung):');
