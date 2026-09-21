@@ -14,7 +14,7 @@
  * @author andreas@siglochconsulting
  */
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { mkdtempSync, rmSync, writeFileSync, mkdirSync } from 'node:fs';
+import { mkdtempSync, rmSync, writeFileSync, mkdirSync, realpathSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
@@ -272,5 +272,31 @@ describe('Der Anthropic-Key kommt aus graphcode/.env — und nur zu dem Arm, der
     expect(ignored('.env')).toBe(true);
     expect(ignored('.env.local')).toBe(true);
     expect(ignored('.env.example')).toBe(false);
+  });
+});
+
+describe('Der Arbeitsbereich ist ein eigenes Repo (CR-GC-580)', () => {
+  it('ein git add -A im Arbeitsbereich landet nicht im umgebenden Repo', async () => {
+    // @ts-expect-error — s.o.
+    const { isolateGit } = await import('../rig/greenfield-systemtest/run.mjs');
+    const root = mkdtempSync(join(tmpdir(), 'gc-iso-'));
+    const git = (cwd: string, ...args: string[]) =>
+      spawnSync('git', ['-c', 'user.name=t', '-c', 'user.email=t@t', ...args], { cwd, encoding: 'utf8' });
+    try {
+      git(root, 'init', '-q');
+      const ws = join(root, 'runs', 'opus5-0');
+      mkdirSync(ws, { recursive: true });
+      writeFileSync(join(root, 'fremd.txt'), 'gehoert dem Produkt-Repo\n');
+      writeFileSync(join(ws, 'modell.txt'), 'gehoert dem Lauf\n');
+      isolateGit(ws);
+      expect(git(ws, 'rev-parse', '--show-toplevel').stdout.trim()).toBe(realpathSync(ws));
+      git(ws, 'add', '-A');
+      expect(git(ws, 'commit', '-q', '-m', 'lauf').status).toBe(0);
+      // Der Unfall aus Runde 7: das umgebende Repo bekam einen Commit mit fremden Dateien.
+      expect(git(root, 'rev-parse', '--verify', 'HEAD').status).not.toBe(0);
+      expect(git(ws, 'show', '--name-only', '--format=', 'HEAD').stdout.trim()).toBe('modell.txt');
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
   });
 });
