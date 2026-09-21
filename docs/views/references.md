@@ -565,6 +565,8 @@
 | `CR-GC-574` | relation | `MOD-systemtest` |
 | `CR-GC-574` | relation | `REQ-greenfield-systemtest-dod` |
 | `CR-GC-574` | relation | `UC-loop-closure` |
+| `CR-GC-575` | relation | `FUNC-build-round-injection` |
+| `CR-GC-575` | relation | `FUNC-generation-step` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-suggest` |

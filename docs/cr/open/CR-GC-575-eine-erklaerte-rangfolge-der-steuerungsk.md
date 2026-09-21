@@ -1,6 +1,6 @@
 # CR-GC-575: Erst Bloat streichen, dann eine erklaerte Rangfolge der Kanaele
 
-**Status:** 🟠 Open
+**Status:** 🟠 Rangfolge steht, Streichen wartet auf die Messung
 **Typ:** aus Item ITEM-2026-417 (idea)
 **Erstellt:** 2026-09-21
 **Item:** bok/items/ITEM-2026-417.json (Lane: graph)
@@ -17,6 +17,45 @@ bevor das Gate etwas sieht).
 
 **Es gibt keine erklaerte Rangfolge.** Jeder Konflikt musste bisher durch einen Lauf gefunden
 werden — viermal in dieser Serie.
+
+## 1a Stand nach der Umsetzung (2026-09-21)
+
+**Geliefert ist Prio 2, nicht Prio 1.** Die Rangfolge steht in `src/loop/channel-rank.ts`
+und wird von den beiden Stellen angewandt, die sie vorher je fuer sich entschieden haben:
+
+- `generate.ts` hatte **zwei** Ternaere vierzig Zeilen auseinander — CR-GC-564 fuer den
+  Imperativ, CR-GC-566 fuer die Fokus-Typen. Dass beide denselben Gewinner waehlen, sagte
+  nur ein Kommentar zu. Jetzt ist es EIN `winner(...)`-Aufruf, der beides traegt.
+- `executor-prompt.ts` haengte seine Bloecke in der Reihenfolge an, in der sie historisch
+  entstanden. Dadurch stand die **Anleitung (Rang 5) UNTER den Vorschlaegen (Rang 6)** —
+  CR-GC-556 kam vor CR-GC-557. Jetzt sortiert `byRank(blocks)`.
+
+`tests/channel-rank.test.ts` haelt die Ordnung, ihre Begruendungspflicht und beide
+Anwendungsstellen fest; die Rueckkehr des alten Ternaers bricht ihn.
+
+**Nicht geliefert: das Streichen.** Entscheidung 2026-09-21 (Auftraggeber): `GENERATION_TEMPLATE`
+wird **demoviert statt geloescht** — es faellt auf Rang 6 und verliert jeden Konflikt gegen
+eine Regel-Klausel, bleibt aber der Text fuer die fuenf Dimensionen, fuer die es **keine**
+`RULE_CLAUSE` gibt (`arch`, `alloc`, `ver`, `schema`, `cr`, `ms`). Der Grund ist Kriterium 2
+dieser CR selbst: CR-GC-564 hat gemessen, dass die Klausel die Vorlage **dort schlaegt, wo
+beide dieselbe Arbeit beschreiben** — nicht, dass die Vorlage ueberall nichts traegt. Ein
+Streichen, das die uebrigen Dimensionen auf „Behebe die Funde der Dimension." zuruecksetzt,
+waere genau die ungemessene Aenderung, die diese CR verbietet. Gegenmessung dazu:
+CR-GC-282, wo ein Minimal-Rendering 22 statt 82 Elemente lieferte.
+
+**Auch der Wortlaut bleibt unveraendert.** Die Vorlage als „Vorschlag, kein Auftrag" zu
+etikettieren waere eine zweite ungemessene Aenderung am Imperativ — dieselbe Klasse wie
+CR-GC-565. Demoviert ist die PRAEZEDENZ im Code, nicht die Schaerfe des Satzes.
+
+**Offen und namentlich benannt:**
+1. Kriterium 3 — ein Lauf nach dem Zug, gegen das Kontrollband der Ausbeute. Nicht gefahren.
+2. Prio 1 im Uebrigen: Skill-Rumpf und `graph_suggest`-Block sind weiter **ungemessen**;
+   `FIX_TEMPLATES` liegt in `@sigloch/se-engine` und ist kein Zug dieses Repos.
+3. Der Test „kein Kanal niedrigeren Ranges ueberschreibt einen hoeheren" ueber ALLE Kanaele
+   braucht die Kanal-Knoten aus CR-GC-573; heute prueft die Abnahme die zwei Stellen, die
+   die Ordnung anwenden.
+
+---
 
 ## 2 Prio 1 — streichen, was gemessen nichts traegt
 
