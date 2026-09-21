@@ -1,6 +1,6 @@
 # CR-GC-574: Das Rig modellieren — es ist der Systemtest, nicht ein Nebenwerkzeug
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-21)
 **Typ:** aus Item ITEM-2026-416 (finding)
 **Erstellt:** 2026-09-21
 **Item:** bok/items/ITEM-2026-416.json (Lane: graph)
