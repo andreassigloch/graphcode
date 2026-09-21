@@ -1,6 +1,6 @@
 # CR-GC-584: workOrder bei Bindungsquote 0 % ist reines Rauschen: in allen Greenfield-Laeufen 100 % nur 'blind' (jede FUNC ohne realRef), 4-21 Bloecke je Lauf — CR-576 laesst ihn durch, weil blind nicht leer ist
 
-**Status:** 🟠 Umgesetzt, Bestaetigungslauf offen
+**Status:** ✅ Umgesetzt und am Bestaetigungslauf gemessen
 **Typ:** aus Item ITEM-2026-432 (finding)
 **Erstellt:** 2026-09-21
 **Item:** bok/items/ITEM-2026-432.json (Lane: graph)
@@ -32,4 +32,10 @@ gebundenen FUNC — erst dort ist Schweigen eine Luege).
 | # | Kriterium | Ergebnis |
 |---|---|---|
 | 1 | Greenfield: kein workOrder; gemischt: blind vollstaendig | erfuellt |
-| 2 | Bestaetigungslauf: kein workOrder-Block in der Antwort | offen |
+| 2 | Bestaetigungslauf: kein workOrder-Block in der Antwort | erfuellt — 0 statt 4–21 |
+
+## 5 Bestaetigung
+
+Bestaetigungslauf `opus5-9` (2026-09-21, sigllm-Prosa, Claude Code, 1 Lauf): 265 Elemente, Konformitaet 1,0, 10,85 $, 22 min.
+
+**Kongruenz:** RC-* nicht aus dieser Session geprueft — benannte Ausnahme wie bei CR-GC-570.

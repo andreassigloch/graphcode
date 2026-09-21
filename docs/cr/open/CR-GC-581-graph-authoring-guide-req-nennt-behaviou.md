@@ -1,6 +1,6 @@
 # CR-GC-581: graph_authoring_guide REQ nennt 'behavioural/structural kinds' ohne Werte und Syntax, UC-05/06 verlangen kinds:[postcondition] — opus5 durchsucht dafuer den Quellcode (runde7: 6/12/31 Suchen, bis 59k Zeichen)
 
-**Status:** 🟠 Umgesetzt, Bestaetigungslauf offen
+**Status:** ✅ Umgesetzt und am Bestaetigungslauf gemessen
 **Typ:** aus Item ITEM-2026-429 (finding)
 **Erstellt:** 2026-09-21
 **Item:** bok/items/ITEM-2026-429.json (Lane: graph)
@@ -35,4 +35,13 @@ obwohl Regeln und where-Praedikate es lesen. Die Werte stehen als Enum `ReqKind`
 | # | Kriterium | Ergebnis |
 |---|---|---|
 | 1 | Guide nennt Werte und Syntax, gegen den Codec geprueft | erfuellt |
-| 2 | Bestaetigungslauf: Quelltextsuchen nach der Syntax gehen deutlich zurueck | offen |
+| 2 | Bestaetigungslauf: Quelltextsuchen nach der Syntax gehen deutlich zurueck | erfuellt — 0 statt 6 / 12 / 31 |
+
+## 4 Bestaetigung
+
+Bestaetigungslauf `opus5-9` (2026-09-21, sigllm-Prosa, Claude Code, 1 Lauf): 265 Elemente, Konformitaet 1,0, 10,85 $, 22 min.
+
+Keine einzige Suche im graphcode- oder contracts-Quelltext (Runde 7: 6 / 12 / 31, bis 59.218
+Zeichen). Bash-Aufrufe gesamt 5 statt 11 / 21 / 40.
+
+**Kongruenz:** RC-* nicht aus dieser Session geprueft — benannte Ausnahme wie bei CR-GC-570.

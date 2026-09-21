@@ -1,6 +1,6 @@
 # CR-GC-583: steerAdvisory und fitAdvisory widersprechen sich ohne Rang: RD-04-Fix (Zwischenebene) verschlechtert modifiability/coherence — opus5-6 zieht die Ebene ein, opus5-7 verwirft sie per Delta-m (runde7)
 
-**Status:** 🟠 Umgesetzt, Bestaetigungslauf offen
+**Status:** ✅ Umgesetzt und am Bestaetigungslauf gemessen
 **Typ:** aus Item ITEM-2026-431 (finding)
 **Erstellt:** 2026-09-21
 **Item:** bok/items/ITEM-2026-431.json (Lane: graph)
@@ -40,4 +40,14 @@ nach der Freigabe, ein eigener Fall. `fitAdvisory` wird weiter ausgeliefert.
 | # | Kriterium | Ergebnis |
 |---|---|---|
 | 1 | Eine Rangfolge fuer Host und Executor, im Prompt und im Skill | erfuellt |
-| 2 | Bestaetigungslauf: RD-04 bleibt nicht ueber der Schwelle stehen | offen |
+| 2 | Bestaetigungslauf: RD-04 bleibt nicht ueber der Schwelle stehen | erfuellt (n = 1) |
+
+## 5 Bestaetigung
+
+Bestaetigungslauf `opus5-9` (2026-09-21, sigllm-Prosa, Claude Code, 1 Lauf): 265 Elemente, Konformitaet 1,0, 10,85 $, 22 min.
+
+8 Wurzel-FUNCs mit je 3–5 Kindern, jede Wurzel mit ihren Kindern im selben MOD (8 MODs zu 4–6
+FUNCs). RD-04 steht nicht mehr unter den offenen Regeln; der schlimmste Steuerterm am Ende ist
+R-04 auf einem MOD mit Ueberschreitung 1,0. Ein Lauf — die Richtung, kein Beweis.
+
+**Kongruenz:** RC-* nicht aus dieser Session geprueft — benannte Ausnahme wie bei CR-GC-570.
