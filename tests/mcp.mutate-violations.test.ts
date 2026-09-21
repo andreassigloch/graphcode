@@ -82,7 +82,34 @@ type Violation = {
   elementId?: string;
   fixHint?: string;
   context?: unknown;
+  gating?: boolean;
 };
+
+/** Die gefaltete Form der Default-Antwort (CR-GC-570). */
+type Grouped = { ruleId: string; severity: string; message: string; fixHint?: string; elements: string[] };
+
+/**
+ * Die Faltung rueckgaengig machen — `{el}` je Element wieder einsetzen.
+ * Existiert nur im Test: dass der Aufrufer das kann, IST die Zusage von CR-GC-570.
+ */
+function expand(grouped: Grouped[]): Violation[] {
+  const out: Violation[] = [];
+  for (const g of grouped) {
+    const put = (elementId?: string) => {
+      const fill = (t?: string) => (t === undefined || !elementId ? t : t.split('{el}').join(elementId));
+      out.push({
+        ruleId: g.ruleId,
+        severity: g.severity,
+        message: fill(g.message)!,
+        ...(elementId ? { elementId } : {}),
+        ...(g.fixHint === undefined ? {} : { fixHint: fill(g.fixHint) }),
+      });
+    };
+    if (g.elements.length === 0) put();
+    else for (const e of g.elements) put(e);
+  }
+  return out;
+}
 
 describe('TEST-mutate-violations: summary is the default (CR-GC-309)', () => {
   let tmp: string;
@@ -123,12 +150,14 @@ describe('TEST-mutate-violations: summary is the default (CR-GC-309)', () => {
   });
 
   it('keeps ruleId, severity, message and the affected uid', async () => {
+    // CR-GC-570: die uid steht jetzt in `elements`, nicht mehr in `elementId` — ein
+    // Eintrag traegt die Regel EINMAL und dazu alle Elemente, auf die sie zutrifft.
     const res = await tools.graph_mutate.handler({ commands: ADD_MOD, consumerId: 't' });
-    const v = (res.violations as Violation[])[0];
+    const v = (res.violations as Grouped[])[0];
     expect(v.ruleId).toBeTruthy();
     expect(v.severity).toBeTruthy();
     expect(v.message).toBeTruthy();
-    expect(v.elementId).toBe('MOD-neu');
+    expect(v.elements).toEqual(['MOD-neu']);
   });
 
   it("violations: 'full' returns exactly today's payload, context included", async () => {
@@ -137,13 +166,16 @@ describe('TEST-mutate-violations: summary is the default (CR-GC-309)', () => {
     expect(withCtx.length).toBeGreaterThan(0);
   });
 
-  it('summary and full differ ONLY in context — same rules, same order, same hints', async () => {
-    // The projection must not quietly drop or reorder findings; that would be a
-    // different defect wearing the same fix.
+  it('die Faltung ist verlustfrei — entfaltet ist summary wieder full (CR-GC-570)', async () => {
+    // Der Kern der Zusage. Gefaltet wird der Befundkoerper, der sich je Element
+    // wortgleich wiederholt; die Faltung darf keinen Fund verlieren, keinen
+    // umsortieren und keine Meldung veraendern. Genau das prueft die Rueckrichtung:
+    // ein Aufrufer, der `{el}` einsetzt, haelt wieder die volle Liste in der Hand.
     const full = await tools.graph_mutate.handler({ commands: ADD_MOD, consumerId: 't', violations: 'full', dryRun: true });
     const summary = await tools.graph_mutate.handler({ commands: ADD_MOD, consumerId: 't', dryRun: true });
-    const strip = (vs: Violation[]) => vs.map(({ context: _c, ...rest }) => rest);
-    expect(strip(summary.violations as Violation[])).toEqual(strip(full.violations as Violation[]));
+    const strip = (vs: Violation[]) =>
+      vs.map(({ context: _c, gating: _g, ...rest }) => rest as Violation);
+    expect(expand(summary.violations as Grouped[])).toEqual(strip(full.violations as Violation[]));
   });
 
   it('dryRun is unchanged: steeringDelta present, nothing persisted', async () => {

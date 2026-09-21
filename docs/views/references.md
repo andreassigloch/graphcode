@@ -14,6 +14,7 @@
 | `ACTOR-agent` | io | `FLOW-skill-request` |
 | `ACTOR-agent` | io | `FLOW-steering-trigger-agent` |
 | `ACTOR-learning-engine` | io | `FLOW-learning-advice` |
+| `ACTOR-llm` | io | `FLOW-model-answer` |
 | `ACTOR-owner` | io | `FLOW-cli-invocation` |
 | `ACTOR-owner` | io | `FLOW-config-file` |
 | `ACTOR-owner` | io | `FLOW-mutate-cmd-owner` |
@@ -556,6 +557,9 @@
 | `CR-GC-550` | relation | `FUNC-se-plan` |
 | `CR-GC-552` | relation | `FUNC-call-model` |
 | `CR-GC-552` | relation | `FUNC-run-verb` |
+| `CR-GC-569` | relation | `FUNC-call-model` |
+| `CR-GC-569` | relation | `FUNC-run-executor` |
+| `CR-GC-569` | relation | `UC-reduced-llm` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-suggest` |
@@ -883,11 +887,14 @@
 | `FLOW-metric-policy` | io | `FUNC-evaluate-rules` |
 | `FLOW-metric-policy` | io | `FUNC-take-steering-snapshot` |
 | `FLOW-metric-policy` | relation | `SCHEMA-metric-policy` |
+| `FLOW-model-answer` | io | `FUNC-call-model` |
 | `FLOW-model-answer` | io | `FUNC-extract-mutate` |
 | `FLOW-model-answer` | io | `FUNC-run-executor` |
 | `FLOW-model-answer` | relation | `SCHEMA-model-answer` |
 | `FLOW-model-request` | io | `FUNC-call-model` |
 | `FLOW-model-request` | relation | `SCHEMA-model-request` |
+| `FLOW-model-wire-request` | io | `ACTOR-llm` |
+| `FLOW-model-wire-request` | relation | `SCHEMA-model-request` |
 | `FLOW-module-metrics` | io | `ACTOR-dashboard` |
 | `FLOW-module-metrics` | io | `FUNC-evaluate-rules` |
 | `FLOW-module-metrics` | relation | `SCHEMA-module-metrics` |
@@ -996,7 +1003,7 @@
 | `FLOW-rule-findings` | io | `FUNC-mutate` |
 | `FLOW-rule-findings` | relation | `SCHEMA-rule-violation` |
 | `FLOW-run-request` | io | `FUNC-run-executor` |
-| `FLOW-run-request` | relation | `SCHEMA-query-params` |
+| `FLOW-run-request` | relation | `SCHEMA-executor-config` |
 | `FLOW-schema-fingerprint` | io | `FUNC-graph-store` |
 | `FLOW-schema-fingerprint` | relation | `SCHEMA-schema-fingerprint` |
 | `FLOW-session-entry` | io | `FUNC-gve-sessions` |
@@ -1226,7 +1233,7 @@
 | `FUNC-build-round-injection` | io | `FLOW-round-injection` |
 | `FUNC-build-round-injection` | satisfy | `REQ-round-prompt-injection` |
 | `FUNC-call-model` | allocate | `MOD-loop` |
-| `FUNC-call-model` | io | `FLOW-model-answer` |
+| `FUNC-call-model` | io | `FLOW-model-wire-request` |
 | `FUNC-call-model` | satisfy | `REQ-one-driver-local-and-frontier` |
 | `FUNC-check-code-conformance` | allocate | `MOD-kernel` |
 | `FUNC-check-code-conformance` | io | `FLOW-conformance-findings` |
@@ -1716,6 +1723,7 @@
 | `TEST-edge-only-batch` | verify | `REQ-formatE-diff-dialect` |
 | `TEST-executor-bestofn` | verify | `REQ-one-driver-local-and-frontier` |
 | `TEST-executor-bestofn` | verify | `REQ-target-shifts-ranking` |
+| `TEST-executor-config-contract` | verify | `SCHEMA-executor-config` |
 | `TEST-executor-preflight` | verify | `REQ-small-model-viable` |
 | `TEST-export-graph-guard` | verify | `REQ-deterministic-serialization` |
 | `TEST-export-graph-guard` | verify | `REQ-export-no-clobber` |

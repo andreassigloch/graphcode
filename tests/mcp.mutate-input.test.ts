@@ -103,11 +103,18 @@ describe('graph_mutate: formatE + dryRun + Preview-Audit (CR-GC-276)', () => {
     const res = (await tools.graph_mutate.handler({ formatE: illegal })) as {
       success: boolean;
       tier: string;
-      violations: { ruleId: string; message: string }[];
+      violations: { ruleId: string; message: string; elements: string[] }[];
     };
     expect(res.success).toBe(false);
     expect(res.tier).toBe('block');
-    expect(res.violations.some((v) => v.ruleId === 'R-18' && v.message.includes('REQ-a -compose-> TEST-b'))).toBe(true);
+    // CR-GC-570: in der Default-Antwort steht `{el}` an der Stelle der uid und die uid
+    // in `elements` — die Meldung nennt das illegale Paar also als `{el} -compose-> TEST-b`.
+    // Geprueft wird weiterhin dasselbe: das Gate (nicht der Parser) beanstandet, und es
+    // benennt das Paar.
+    const r18 = res.violations.find((v) => v.ruleId === 'R-18');
+    expect(r18).toBeDefined();
+    expect(r18!.elements).toContain('REQ-a');
+    expect(r18!.message).toContain('-compose-> TEST-b');
   });
 
   it('ungültiger Format-E-Block (unauflösbarer Endpunkt) → Block-Verdict mit Codec-Meldung, kein Crash', async () => {

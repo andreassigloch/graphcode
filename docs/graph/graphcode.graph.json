@@ -24,6 +24,13 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "id": "ACTOR-llm",
+      "type": "ACTOR",
+      "name": "Modell-Endpunkt",
+      "description": "Der LLM-Dienst ausserhalb der Systemgrenze: graphcode schickt ihm die Anfrage und konsumiert seine Antwort, kontrolliert sie aber nicht. Agnostisch wie ACTOR-agent — Anbieter, Modellname und Transport sind Konfiguration in SCHEMA-executor-config, kein Knoten; heute belegt durch die OAuth-Sitzung von claude -p, einen Anthropic-Messages-Endpunkt, ein OpenAI-kompatibles lokales Gateway und sigllm. Der Knoten existiert, weil der Graph sonst behauptet, graphcode erzeuge die Modellantwort selbst. (CR-GC-569)",
+      "status": "reviewed"
+    },
+    {
       "id": "ACTOR-owner",
       "type": "ACTOR",
       "name": "Repo-Owner (Mensch am Repo)",
@@ -2143,13 +2150,20 @@
       "id": "FLOW-model-answer",
       "type": "FLOW",
       "name": "Modellantwort",
-      "description": "Die Roh-Antwort des Modells auf einen Runden-Prompt. Traegt Text, Werkzeugaufrufe und den Stop-Grund; fehlt der Werkzeugaufruf, ist der Text die einzige Spur, aus der die Prosa-Recovery ein Kommando holt."
+      "description": "Die Roh-Antwort des Modell-Endpunkts auf einen Runden-Prompt — sie betritt das System von aussen, produziert von ACTOR-llm. Traegt Text, Werkzeugaufrufe und den Stop-Grund; fehlt der Werkzeugaufruf, ist der Text die einzige Spur, aus der die Prosa-Recovery ein Kommando holt. (Produzent korrigiert CR-GC-569)"
     },
     {
       "id": "FLOW-model-request",
       "type": "FLOW",
       "name": "Modell-Anfrage",
       "description": "Was die Treiberschleife je Turn an den Modell-Draht uebergibt: System-Prompt, Message-History, Tool-Angebot und beim Best-of-N die Kandidaten-Temperatur (Signatur CallModel in executor.ts). (CR-GC-507)",
+      "status": "reviewed"
+    },
+    {
+      "id": "FLOW-model-wire-request",
+      "type": "FLOW",
+      "name": "Modell-Anfrage in Draht-Form",
+      "description": "Was die Systemgrenze tatsaechlich verlaesst: die vom Adapter je Backend gebaute HTTP-Anfrage an den Modell-Endpunkt. Vom Uebergabe-Fluss FLOW-model-request getrennt, weil IO-02 nach dem Produzenten fragt und die Antwort verschieden ist — die Uebergabe stellt die Treiberschleife, die Draht-Form baut buildCallModel. (CR-GC-569)",
       "status": "reviewed"
     },
     {
@@ -2835,7 +2849,7 @@
       "id": "FUNC-call-model",
       "type": "FUNC",
       "name": "buildCallModel(config)",
-      "description": "Der Modell-Draht: schickt die Anfrage einer Runde an das konfigurierte Backend und liefert die normalisierte ModelAnswer (executor-backend.ts, ModelAnswer.parse). Drei Backends: OpenAI-kompatibel, Anthropic und sigllm. Die ersten beiden waehlen ihr Modell selbst; sigllm nennt ein PROFIL und laesst Modell, Kontextlaenge und Ausgabebudget von der Plattform binden, weshalb dort weder model noch temperature noch max_tokens reisen. Jedes Backend prueft die Antwort in seiner Draht-Form am Empfang. Hier entsteht FLOW-model-answer; der Backend-Wechsel ist Konfiguration, keine zweite Codeverzweigung im Aufrufer. (CR-GC-507, CR-GC-552)",
+      "description": "Der Modell-Draht: baut aus der Uebergabe der Runde die Draht-Form des konfigurierten Backends, schickt sie an den Modell-Endpunkt und prueft dessen Antwort am Empfang zur normalisierten ModelAnswer (executor-backend.ts, ModelAnswer.parse). Drei Backends: OpenAI-kompatibel, Anthropic und sigllm. Die ersten beiden waehlen ihr Modell selbst; sigllm nennt ein PROFIL und laesst Modell, Kontextlaenge und Ausgabebudget von der Plattform binden, weshalb dort weder model noch temperature noch max_tokens reisen. Hier entsteht die Modellantwort NICHT — sie kommt von ACTOR-llm ausserhalb der Systemgrenze; dieser Adapter konsumiert sie. Der Backend-Wechsel ist Konfiguration, keine zweite Codeverzweigung im Aufrufer. (CR-GC-507, CR-GC-552, Grenze korrigiert CR-GC-569)",
       "status": "done",
       "realRef": {
         "file": "src/loop/executor-backend.ts",
@@ -5654,6 +5668,18 @@
       }
     },
     {
+      "id": "SCHEMA-executor-config",
+      "type": "SCHEMA",
+      "name": "ExecutorConfig",
+      "description": "Die Definition eines Laufs an EINER Stelle: backend, baseUrl, model, apiKey, maxRounds, maxStepTurns, callTimeoutMs, maxTokens, toolset, temperature, candidates, judge, injection, reasoningEffort. Die Selektionsvariante des Gate-Protokolls ist bewusst kein Feld — sie folgt aus candidates (CR-GC-568). Was hier ebenfalls NICHT steht, ist der Treiber: wer die Schleife treibt, ist eine Grenzfrage und steht an den Akteuren, nicht in der Konfiguration. (CR-GC-569)",
+      "status": "reviewed",
+      "realRef": {
+        "file": "src/loop/executor.ts",
+        "symbol": "ExecutorConfigSchema",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "SCHEMA-export-pending",
       "type": "SCHEMA",
       "name": "ExportPending",
@@ -6611,6 +6637,22 @@
           "level": "integration",
           "result": "passed",
           "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-executor-config-contract",
+      "type": "TEST",
+      "name": "Vertragstest der Lauf-Konfiguration",
+      "description": "Prueft die Parse-Kante von ExecutorConfigSchema: Pflichtfelder, Defaults des dokumentierten Laufs, die geschlossene Backend-Menge, die Grenzen von candidates/maxRounds/temperature — und dass der TREIBER kein Feld ist. Kein Mock, kein Netz: ein Zod-Schema ist an seiner Grenze vollstaendig pruefbar. (CR-GC-569)",
+      "status": "done",
+      "method": "test",
+      "testRefs": [
+        {
+          "file": "tests/executor-config-contract.test.ts",
+          "tool": "vitest",
+          "level": "unit",
+          "result": "passed"
         }
       ]
     },
@@ -8243,7 +8285,7 @@
       "id": "UC-reduced-llm",
       "type": "UC",
       "name": "Mit kleinem oder lokalem Modell arbeiten",
-      "description": "Als Entwickler will ich anspruchsvolle Aenderungen mit einem kleinen oder lokalen Modell fahren, weil Gate und praezise Graph-Abfragen die Arbeit tragen, die sonst das Modell leisten muesste.",
+      "description": "Als Entwickler will ich anspruchsvolle Aenderungen mit einem kleinen oder lokalen Modell fahren und dieselbe Strukturqualitaet erreichen wie mit einem Frontier-Modell. Die Achse dieses UC ist die MODELLGROESSE. Wer die Schleife treibt, ist keine Eigenschaft dieses UC, sondern eine Grenzfrage und steht an den Akteuren ACTOR-agent und ACTOR-llm. (geschaerft CR-GC-569)",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z"
@@ -8285,6 +8327,11 @@
     {
       "source": "ACTOR-learning-engine",
       "target": "FLOW-learning-advice",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-llm",
+      "target": "FLOW-model-answer",
       "type": "io"
     },
     {
@@ -11399,6 +11446,21 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-569",
+      "target": "FUNC-call-model",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-569",
+      "target": "FUNC-run-executor",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-569",
+      "target": "UC-reduced-llm",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -13165,6 +13227,11 @@
     },
     {
       "source": "FLOW-model-answer",
+      "target": "FUNC-call-model",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-model-answer",
       "target": "FUNC-extract-mutate",
       "type": "io"
     },
@@ -13185,6 +13252,16 @@
     },
     {
       "source": "FLOW-model-request",
+      "target": "SCHEMA-model-request",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-model-wire-request",
+      "target": "ACTOR-llm",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-model-wire-request",
       "target": "SCHEMA-model-request",
       "type": "relation"
     },
@@ -13734,7 +13811,7 @@
     },
     {
       "source": "FLOW-run-request",
-      "target": "SCHEMA-query-params",
+      "target": "SCHEMA-executor-config",
       "type": "relation"
     },
     {
@@ -14896,7 +14973,7 @@
     },
     {
       "source": "FUNC-call-model",
-      "target": "FLOW-model-answer",
+      "target": "FLOW-model-wire-request",
       "type": "io"
     },
     {
@@ -17562,6 +17639,11 @@
       "type": "verify"
     },
     {
+      "source": "TEST-executor-config-contract",
+      "target": "SCHEMA-executor-config",
+      "type": "verify"
+    },
+    {
       "source": "TEST-executor-preflight",
       "target": "REQ-small-model-viable",
       "type": "verify"
@@ -19239,5 +19321,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 327
+  "graphVersion": 329
 }

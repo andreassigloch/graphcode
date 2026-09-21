@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 51 SCHEMA · 109 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 52 SCHEMA · 110 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -17,6 +17,7 @@
 | `SCHEMA-cli-command` | src/surface/scaffold.ts#CliCommandSchema | reviewed |
 | `SCHEMA-code-lane-plan` | src/kernel/measure/test-selection.ts#CodeLanePlanSchema | n/a |
 | `SCHEMA-completeness` | packages/graphcode-client/src/readiness-completeness.ts#GateCompleteness | reviewed |
+| `SCHEMA-executor-config` | src/loop/executor.ts#ExecutorConfigSchema | reviewed |
 | `SCHEMA-export-pending` | src/kernel/export-pending-contract.ts#ExportPending | n/a |
 | `SCHEMA-fit-advisory` | src/kernel/measure/fit-advisory.ts#FitAdvisory | reviewed |
 | `SCHEMA-format-e` | packages/graph-api-core/src/types.ts#FormatEDiff | reviewed |
@@ -108,8 +109,9 @@
 | `FLOW-mcp-tool-registry` | `FUNC-bind-tools` | `FUNC-serve-stdio` |
 | `FLOW-measurement-vector` | `FUNC-take-steering-snapshot` | `FUNC-generation-step` |
 | `FLOW-metric-policy` | `FUNC-load-config` | `FUNC-evaluate-rules` · `FUNC-take-steering-snapshot` |
-| `FLOW-model-answer` | `FUNC-call-model` | `FUNC-extract-mutate` · `FUNC-run-executor` |
+| `FLOW-model-answer` | `ACTOR-llm` | `FUNC-call-model` · `FUNC-extract-mutate` · `FUNC-run-executor` |
 | `FLOW-model-request` | `FUNC-run-executor` | `FUNC-call-model` |
+| `FLOW-model-wire-request` | `FUNC-call-model` | `ACTOR-llm` |
 | `FLOW-module-metrics` | `FUNC-module-metrics` | `ACTOR-dashboard` · `FUNC-evaluate-rules` |
 | `FLOW-mutate-cmd-agent` | `ACTOR-agent` | `FUNC-host-socket` · `FUNC-mutate` |
 | `FLOW-mutate-cmd-author-req` | `FUNC-author-req` | `FUNC-mutate` |
