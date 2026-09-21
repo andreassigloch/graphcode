@@ -14,7 +14,7 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { GenerationStep } from './generate.js';
-import { byRank, type Channel } from './channel-rank.js';
+import { byRank, type ChannelBlock } from './channel-rank.js';
 
 // ---------------------------------------------------------------------------
 // System-Prompt — bewusst ~1 Seite; die Methode kommt aus graph_generate.
@@ -221,11 +221,26 @@ export async function buildRoundInjection(
   registry: MCPToolRegistry,
   step: Pick<GenerationStep, 'focusTypes' | 'focusDimension'>,
 ): Promise<string> {
+  return (await buildRoundChannels(registry, step)).map((b) => b.text).join('\n\n');
+}
+
+/**
+ * Dieselbe Injektion, aber je Kanal EINZELN (CR-GC-573).
+ *
+ * `buildRoundInjection` fuegt nur noch zusammen, was hier entsteht — kein zweiter Pfad.
+ * Getrennt braucht sie, wer die Kanaele gegeneinander halten will: `duplicateChannels`
+ * beantwortet daran die Frage „sagen zwei Kanaele dieser Runde dasselbe?", die bis hierher
+ * nur ein LAUF beantworten konnte.
+ */
+export async function buildRoundChannels(
+  registry: MCPToolRegistry,
+  step: Pick<GenerationStep, 'focusTypes' | 'focusDimension'>,
+): Promise<ChannelBlock[]> {
   // CR-GC-575: die Bloecke tragen ihren Kanal und werden am Ende nach Rang sortiert —
   // die Reihenfolge des Rundenprompts folgt der Verbindlichkeit, nicht der Reihenfolge,
   // in der die Bloecke historisch angebaut wurden. Bis hierher stand die Anleitung
   // (Rang 5) UNTER den Vorschlaegen (Rang 6), weil CR-GC-556 vor CR-GC-557 kam.
-  const blocks: { channel: Channel; text: string }[] = [];
+  const blocks: ChannelBlock[] = [];
   const focusTypes = step.focusTypes ?? [];
 
   if (focusTypes.length > 0 && registry['graph_authoring_guide']) {
@@ -417,5 +432,5 @@ export async function buildRoundInjection(
     }
   }
 
-  return byRank(blocks).map((b) => b.text).join('\n\n');
+  return byRank(blocks);
 }

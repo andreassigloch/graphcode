@@ -16,6 +16,7 @@
 | `FUNC-audit-trail` | FUNC | projectAuditEntries(entries, opts) |
 | `FUNC-author-req` | FUNC | Skill se:author-req |
 | `FUNC-author-uc` | FUNC | Skill se:author-uc |
+| `FUNC-authoring-guide` | FUNC | graph_authoring_guide(type) |
 | `FUNC-auto-export` | FUNC | registerAutoExport |
 | `FUNC-bind-tools` | FUNC | bindToolsToHarness |
 | `FUNC-block-abfrage` | FUNC | Abfrage |
@@ -154,6 +155,7 @@
 | `FUNC-audit-trail` | `MOD-surface` |
 | `FUNC-author-req` | `MOD-agent-surface` |
 | `FUNC-author-uc` | `MOD-agent-surface` |
+| `FUNC-authoring-guide` | `MOD-projections` |
 | `FUNC-auto-export` | `MOD-projections` |
 | `FUNC-bind-tools` | `MOD-surface` |
 | `FUNC-block-abfrage` | ⚠ nicht alloziert (R-22) |

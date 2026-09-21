@@ -132,7 +132,7 @@
 | `REQ-prose-recovery` | `TEST-one-driver-local-and-frontier` | `FUNC-extract-mutate` · `FUNC-gate-client` | `MOD-loop` |
 | `REQ-published-counts-match-code` | `TEST-published-counts-match-code` | — | — |
 | `REQ-quality-metric` | `TEST-code-quality` · `TEST-fit-advisory` · `TEST-graph-metrics` · `TEST-retro-kpi` | `MOD-kernel` | — |
-| `REQ-query-precision` | `TEST-impact-subgraph` · `TEST-read-format-param` | `FUNC-graph-impact` · `FUNC-list-elements` · `FUNC-read-tools` | `MOD-kernel` · `MOD-surface` |
+| `REQ-query-precision` | `TEST-impact-subgraph` · `TEST-read-format-param` | `FUNC-authoring-guide` · `FUNC-graph-impact` · `FUNC-list-elements` · `FUNC-read-tools` | `MOD-kernel` · `MOD-projections` · `MOD-surface` |
 | `REQ-readiness-completeness` | `TEST-readiness-completeness` | `FUNC-score-completeness` | `MOD-projections` |
 | `REQ-readiness-transparent` | `TEST-dashboard-readonly` · `TEST-help-content-coverage` · `TEST-help-projection` · `TEST-help-tool` · `TEST-mcp-readiness` | `MOD-dashboard` | — |
 | `REQ-readonly-bridge` | `TEST-bridge-follows-lock` · `TEST-readonly-bridge` | `MOD-surface` | — |
@@ -276,7 +276,7 @@
 | `REQ-prompt-provenance` | `TEST-prompt-provenance` | `FCHAIN-loop-closure` · `MOD-kernel` | — |
 | `REQ-prose-recovery` | `TEST-one-driver-local-and-frontier` | `FUNC-extract-mutate` · `FUNC-gate-client` | `MOD-loop` |
 | `REQ-quality-metric` | `TEST-code-quality` · `TEST-fit-advisory` · `TEST-graph-metrics` · `TEST-retro-kpi` | `MOD-kernel` | — |
-| `REQ-query-precision` | `TEST-impact-subgraph` · `TEST-read-format-param` | `FUNC-graph-impact` · `FUNC-list-elements` · `FUNC-read-tools` | `MOD-kernel` · `MOD-surface` |
+| `REQ-query-precision` | `TEST-impact-subgraph` · `TEST-read-format-param` | `FUNC-authoring-guide` · `FUNC-graph-impact` · `FUNC-list-elements` · `FUNC-read-tools` | `MOD-kernel` · `MOD-projections` · `MOD-surface` |
 | `REQ-readiness-completeness` | `TEST-readiness-completeness` | `FUNC-score-completeness` | `MOD-projections` |
 | `REQ-readiness-model` | `TEST-readiness-model` · `TEST-views-auditor` | `FUNC-compute-readiness` | `MOD-kernel-measure` |
 | `REQ-readiness-transparent` | `TEST-dashboard-readonly` · `TEST-help-content-coverage` · `TEST-help-projection` · `TEST-help-tool` · `TEST-mcp-readiness` | `MOD-dashboard` | — |

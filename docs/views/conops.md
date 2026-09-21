@@ -49,7 +49,7 @@
   - Ein Coding-Agent unter graphcode-Kontrolle: MCP-stdio-Client, nutzt den Graphen statt grep, jede Aenderung laeuft durch dasselbe Apply-Gate, der Autor wird nur protokolliert. Bewusst NICHT namentlich modelliert — agent-agnostisch ist eine verriegelte Zusage (CLAUDE.md), kein Ziel. Heute belegt durch Claude Code (interaktiv), OpenCode (headless BYOK-Runtime, treibt Spec/Impl autonom) und die Architektur-Rolle, die Interface-Aenderungen eskaliert: Impact-Analyse, Gate-Entscheidung, Dependents koordinieren. Diese Rollen unterscheiden sich in der Autoritaet, nicht in der Schnittstelle. (CR-GC-455)
 - **Browser-Dashboard** (`ACTOR-dashboard`) — triggert `UC-deterministic-steering` · `UC-live-graph-view`
   - SSE/WS read-only Viewer; Live-Q-Status-Visualisierung (Ziel b). (SPEC §5 Kanal 2)
-- **Learning-Engine** (`ACTOR-learning-engine`) — triggert `UC-code-quality` · `UC-reduced-llm`
+- **Learning-Engine** (`ACTOR-learning-engine`) — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-reduced-llm`
   - Bidirektionales Nachbarsystem, geplant: liest die post-apply/nightly Trajectory-/Outcome-Emissionen als Lerneingang, beantwortet eine Lern-Frage von graph_suggest und nextStep und liefert je Kandidat ein Urteil zurueck. Sie schreibt KEINE Konfiguration: die Urteilsschwellen bleiben der Vertrag des Menschen. Deshalb NICHT mit dem Viewer zusammenzulegen: der Viewer liest nur, die Learning-Engine schliesst eine Schleife. (SPEC 2.3, Abgrenzung CR-GC-455, Andockpunkt CR-GC-465)
 - **Modell-Endpunkt** (`ACTOR-llm`) — triggert `UC-deterministic-steering`
   - Der LLM-Dienst ausserhalb der Systemgrenze: graphcode schickt ihm die Anfrage und konsumiert seine Antwort, kontrolliert sie aber nicht. Agnostisch wie ACTOR-agent — Anbieter, Modellname und Transport sind Konfiguration in SCHEMA-executor-config, kein Knoten; heute belegt durch die OAuth-Sitzung von claude -p, einen Anthropic-Messages-Endpunkt, ein OpenAI-kompatibles lokales Gateway und sigllm. Der Knoten existiert, weil der Graph sonst behauptet, graphcode erzeuge die Modellantwort selbst. (CR-GC-569)
@@ -74,10 +74,10 @@ Ausgeloest von: `ACTOR-agent` · `ACTOR-learning-engine` · `ACTOR-owner`
 
 Als Entwickler will ich, dass der naechste Schritt aus deterministisch gemessenen Kenngroessen folgt und nicht aus einer Modell-Meinung, sodass jede Runde nachvollziehbar auf ein mehrdimensionales Ziel zulaeuft.
 
-Ausgeloest von: `ACTOR-agent` · `ACTOR-dashboard` · `ACTOR-llm` · `ACTOR-owner`
+Ausgeloest von: `ACTOR-agent` · `ACTOR-dashboard` · `ACTOR-learning-engine` · `ACTOR-llm` · `ACTOR-owner`
 
 - `FCHAIN-skill-report` — Skill berichtet gemessenen Stand: `FUNC-check-code-conformance` → `FUNC-compute-phase-readiness` → `FUNC-compute-readiness` → `FUNC-evaluate-rules` → `FUNC-function-criticality` → `FUNC-module-metrics` → `FUNC-score-completeness` → `FUNC-se-help` → `FUNC-se-retro` → `FUNC-se-review` → `FUNC-se-status` → `FUNC-test` → `FUNC-test-ui`
-- `FCHAIN-steering-loop` — Kenngroessen-Steuerungsschleife: `FUNC-arch-fitness` → `FUNC-build-round-injection` → `FUNC-call-model` → `FUNC-compute-phase-readiness` → `FUNC-compute-readiness` → `FUNC-compute-steering-delta` → `FUNC-extract-mutate` → `FUNC-fit-advisory` → `FUNC-gate-client` → `FUNC-generation-step` → `FUNC-graph-readiness` → `FUNC-held-back-traces` → `FUNC-list-elements` → `FUNC-load-config` → `FUNC-mutate` → `FUNC-nd-similarity` → `FUNC-preflight` → `FUNC-rank-candidates` → `FUNC-run-executor` → `FUNC-run-verb` → `FUNC-take-steering-snapshot` → `FUNC-target-profile` → `FUNC-target-profile-load`
+- `FCHAIN-steering-loop` — Kenngroessen-Steuerungsschleife: `FUNC-arch-fitness` → `FUNC-authoring-guide` → `FUNC-build-round-injection` → `FUNC-call-model` → `FUNC-compute-phase-readiness` → `FUNC-compute-readiness` → `FUNC-compute-steering-delta` → `FUNC-extract-mutate` → `FUNC-fit-advisory` → `FUNC-gate-client` → `FUNC-generation-step` → `FUNC-graph-readiness` → `FUNC-graph-suggest` → `FUNC-held-back-traces` → `FUNC-list-elements` → `FUNC-load-config` → `FUNC-mutate` → `FUNC-nd-similarity` → `FUNC-preflight` → `FUNC-rank-candidates` → `FUNC-run-executor` → `FUNC-run-verb` → `FUNC-take-steering-snapshot` → `FUNC-target-profile` → `FUNC-target-profile-load`
 
 ### `UC-efficient-testing` — Effizientes, impact-basiertes Testen
 
@@ -313,6 +313,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-550` | open | se-plan leitet ueber REQ ab, nicht ueber FUNC-Blaetter | `FUNC-se-plan` |
 | `CR-GC-552` | n/a | graphcode run gegen sigllm statt direkt gegen die Runtime — drittes Backend sigllm im Executor | `FUNC-call-model` · `FUNC-run-verb` |
 | `CR-GC-569` | done | Betriebsmodi sind nicht modelliert: ein ACTOR-agent fuer beide Treiber, UC-reduced-llm vermischt Modell und Treiber, kein SCHEMA fuer die Lauf-Konfiguration | `FUNC-call-model` · `FUNC-run-executor` · `UC-reduced-llm` |
+| `CR-GC-573` | done | Fuenf Prompt-Autoritaeten in EINEM FUNC-generation-step: SEED_STAGES, DIMENSION_FOCUS_TYPES, GENERATION_TEMPLATE, RULE_CLAUSE, GATE_PROTOCOL sind unmodelliert | `FUNC-authoring-guide` · `FUNC-build-round-injection` · `FUNC-generation-step` |
 | `CR-GC-574` | n/a | Das Rig ist der Systemtest und fehlt im Modell: kein TEST-/FCHAIN-Knoten fuer Lauf, Metrik, Pruefliste und Turn-Analyse | `FUNC-systemtest-turn-analyse` · `MOD-systemtest` · `REQ-greenfield-systemtest-dod` · `UC-loop-closure` |
 | `CR-GC-575` | n/a | Eine erklaerte Rangfolge der Steuerungskanaele statt verstreuter if/else — heute muss jeder Konflikt gemessen werden | `FUNC-build-round-injection` · `FUNC-generation-step` |
 
