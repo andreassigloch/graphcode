@@ -1707,7 +1707,8 @@
       "id": "CR-GC-573",
       "type": "CR",
       "name": "Fuenf Prompt-Autoritaeten in EINEM FUNC-generation-step: SEED_STAGES, DIMENSION_FOCUS_TYPES, GENERATION_TEMPLATE, RULE_CLAUSE, GATE_PROTOCOL sind unmodelliert",
-      "description": "docs/cr/open/CR-GC-573-fuenf-prompt-autoritaeten-in-einem-func-.md"
+      "description": "docs/cr/open/CR-GC-573-fuenf-prompt-autoritaeten-in-einem-func-.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-574",
@@ -1941,6 +1942,60 @@
       "name": "Kandidaten-Rangfolge",
       "description": "Rueckgabewert von rankCandidates an die Best-of-N-Runde (executor-bestofn.ts, runBestOfNStep): die Kandidaten mit ihren dryRun-Verdicts in Rangfolge; der erste tragfaehige ist der Algo-Pick. (CR-GC-506)",
       "status": "reviewed"
+    },
+    {
+      "id": "FLOW-channel-dimension-template",
+      "type": "FLOW",
+      "name": "Kanal: Dimensions-Vorlage",
+      "description": "Rang 6 — der Vorschlagstext je Readiness-Dimension, wenn keine Regel-Klausel das Fenster stellt. Verliert seit CR-GC-564 jeden Konflikt gegen die Klausel; demoviert, nicht gestrichen (CR-GC-575)."
+    },
+    {
+      "id": "FLOW-channel-gate-protocol",
+      "type": "FLOW",
+      "name": "Kanal: Gate-Protokoll",
+      "description": "Die Verfahrensanweisung der Runde: Grammatik holen, Alternativen proben oder EINEN Batch emittieren, den naechsten Schritt anfordern. Zwei Fassungen, je nachdem ob der Host oder der Treiber die Auswahl faehrt."
+    },
+    {
+      "id": "FLOW-channel-grammar",
+      "type": "FLOW",
+      "name": "Kanal: Kanten-Grammatik",
+      "description": "Rang 3 — was legal ist. Der Guide-Ausschnitt der Fokus-Typen dieser Runde, eingebettet statt erfragt."
+    },
+    {
+      "id": "FLOW-channel-guidance",
+      "type": "FLOW",
+      "name": "Kanal: Anleitung",
+      "description": "Rang 5 — wie man es gut macht. Der Rumpf des Autorier-Skills zur Fokus-Dimension, hoechstens einer je Runde. Der Skill bestimmt ueber seine Marker selbst, welcher Teil von ihm modelltauglich ist."
+    },
+    {
+      "id": "FLOW-channel-idle-nudge",
+      "type": "FLOW",
+      "name": "Kanal: Handlungs-Nachfassen",
+      "description": "Das eine Nachfassen pro Schritt, wenn ein Turn ohne Werkzeugaufruf endet. Coder-Modelle dithern gern in Prosa; ein Schritt wird dadurch nicht still aufgegeben."
+    },
+    {
+      "id": "FLOW-channel-inventory",
+      "type": "FLOW",
+      "name": "Kanal: Element-Index",
+      "description": "Rang 4 — was es schon gibt. Der auf die Fokus-Typen beschraenkte Bestand als uid-type-name-Zeilen, damit die Runde keine Duplikate anlegt. Produzent ist die Lese-Oberflaeche, nicht der Kern: die Injektion ruft graph_elements DURCH dessen Schema-Schicht, seit ein roher Handler-Aufruf ohne limit den ganzen Graphen herausgab (CR-GC-539)."
+    },
+    {
+      "id": "FLOW-channel-proposal-suggest",
+      "type": "FLOW",
+      "name": "Kanal: ausfuehrbarer Vorschlag",
+      "description": "Rang 6 — ein Kandidat, nie ein Auftrag. Die Zeilen aus graph_suggest, die eine konkrete Kante und ihr Metrik-Delta tragen; ein Vorschlag ohne Kante traegt nichts ueber den fixHint hinaus und bleibt draussen."
+    },
+    {
+      "id": "FLOW-channel-rule-clause",
+      "type": "FLOW",
+      "name": "Kanal: Regel-Klausel",
+      "description": "Rang 2 — der EINE Imperativ der Runde. Der vom Menschen gepflegte Zusatztext zu genau der Regel, die das Fund-Fenster stellt, gerendert mit den konkreten uids."
+    },
+    {
+      "id": "FLOW-channel-system-prompt",
+      "type": "FLOW",
+      "name": "Kanal: System-Prompt",
+      "description": "Die Konstante ueber allen Runden: legale Elementtypen, die exakte Aufrufform, das Emissions-Regime. Macht bewusst KEINE Aussage darueber, was die Runden-Instruktion enthaelt — sie kann es nicht wissen."
     },
     {
       "id": "FLOW-cli-command",
@@ -2731,6 +2786,18 @@
       }
     },
     {
+      "id": "FUNC-authoring-guide",
+      "type": "FUNC",
+      "name": "graph_authoring_guide(type)",
+      "description": "Die Kanten-Grammatik eines Elementtyps aus der SE-Ontologie: erlaubte ausgehende und eingehende Kanten samt Kardinalitaet, Pflicht-Attribute und ein Format-E-Beispiel. Abgeleitet aus TRACE_PATTERNS, nie eine zweite Liste daneben. Zwei Konsumenten: der Agent ruft sie, und die Runden-Injektion bettet den Ausschnitt der Fokus-Typen ein, damit das Modell nicht je Runde danach fragen muss. (Knoten nachgetragen CR-GC-573)",
+      "status": "done",
+      "realRef": {
+        "file": "src/projections/report.ts",
+        "symbol": "graph_authoring_guide",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "FUNC-auto-export",
       "type": "FUNC",
       "name": "registerAutoExport",
@@ -2899,11 +2966,11 @@
       "id": "FUNC-build-round-injection",
       "type": "FUNC",
       "name": "buildRoundInjection",
-      "description": "Baut die Rundeninjektion aus Guide-Slice und Element-Index fuer die im Generierungsschritt gesetzten Fokus-Typen. Per Konfiguration abschaltbar, damit sich ihr Beitrag isoliert messen laesst.",
+      "description": "Baut die Rundeninjektion aus vier benannten Kanaelen: Kanten-Grammatik der Fokus-Typen, Element-Index des Bestands, Anleitung der Fokus-Dimension und ausfuehrbare Vorschlaege. Liefert sie einzeln (buildRoundChannels) und verkettet sie nach Rang (buildRoundInjection) — EIN Erzeuger, zwei Sichten. Per Konfiguration abschaltbar, damit sich ihr Beitrag isoliert messen laesst. (Kanaele aufgetrennt CR-GC-573)",
       "status": "done",
       "realRef": {
         "file": "src/loop/executor-prompt.ts",
-        "symbol": "buildRoundInjection",
+        "symbol": "buildRoundChannels",
         "lang": "ts"
       }
     },
@@ -3195,7 +3262,7 @@
       "id": "FUNC-generation-step",
       "type": "FUNC",
       "name": "generationStep(graph, policy, intent)",
-      "description": "Waehlt aus den Dimensionsscores die schwaechste Dimension unter der Fokus-Schwelle und stellt daraus den Runden-Prompt zusammen: Fokus-Typen, Fund-Fenster, Gate-Protokoll, Handoff-Bedingung.",
+      "description": "Waehlt aus den Dimensionsscores die schwaechste Dimension unter der Fokus-Schwelle und stellt daraus den Runden-Prompt zusammen: Fokus-Typen, Fund-Fenster, Imperativ, Gate-Protokoll, Handoff-Bedingung. In sie schreiben drei benannte Kanaele — Regel-Klausel, Dimensions-Vorlage und Gate-Protokoll; welcher von ihnen einen Konflikt gewinnt, entscheidet nicht diese Funktion, sondern die Rangfolge in src/loop/channel-rank.ts. (Kanaele sichtbar gemacht CR-GC-573)",
       "status": "done",
       "realRef": {
         "file": "src/loop/generate.ts",
@@ -6158,7 +6225,7 @@
       "id": "SCHEMA-round-injection",
       "type": "SCHEMA",
       "name": "Runden-Injektions-Block",
-      "description": "Vertrag der Runden-Injektion: ein Markdown-Textblock als string, Rueckgabe von buildRoundInjection in src/loop/executor-prompt.ts — Guide-Slice plus Element-Index. Bewusst ohne Zod-Symbol: informationeller Prompt-Kontext, kein Wire-Format; deshalb concept-only. (Pfad korrigiert CR-GC-454)",
+      "description": "Vertrag der zusammengesetzten Runden-Injektion: die nach Rang sortierten Kanalbloecke, zu EINEM Markdown-Text verkettet — Rueckgabe von buildRoundInjection in src/loop/executor-prompt.ts. Die Bloecke selbst sind die Kanaele FLOW-channel-grammar, -inventory, -guidance und -proposal-suggest; bis CR-GC-573 waren sie in diesem einen Vertrag unsichtbar, und ihre Kosten liessen sich nur messen, indem der Turn-Strom aufgeschnitten wurde. Bewusst ohne Zod-Symbol: informationeller Prompt-Kontext, kein Wire-Format; deshalb concept-only. (Pfad korrigiert CR-GC-454, Kanaele aufgetrennt CR-GC-573)",
       "concept": true
     },
     {
@@ -6194,6 +6261,14 @@
         "symbol": "SessionEntrySchema",
         "lang": "ts"
       }
+    },
+    {
+      "id": "SCHEMA-steering-channel",
+      "type": "SCHEMA",
+      "name": "Kanalbeitrag zum Rundenprompt",
+      "description": "Der Beitrag EINES Steuerungskanals zu einer Runde: der Kanal — und damit sein Rang aus der Ordnung in src/loop/channel-rank.ts — und sein Textblock. Ein Vertrag fuer alle Kanaele, weil sie sich genau darin gleichen und nur im Rang unterscheiden; ein Vertrag je Kanal waere neun Knoten fuer eine Unterscheidung, die kein Leser braucht. Bewusst ohne Zod-Symbol: informationeller Prompt-Kontext, kein Wire-Format. (CR-GC-573)",
+      "concept": true,
+      "status": "reviewed"
     },
     {
       "id": "SCHEMA-steering-delta",
@@ -8501,6 +8576,36 @@
     {
       "source": "ACTOR-llm",
       "target": "FLOW-model-answer",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-owner",
+      "target": "FLOW-channel-dimension-template",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-owner",
+      "target": "FLOW-channel-gate-protocol",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-owner",
+      "target": "FLOW-channel-guidance",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-owner",
+      "target": "FLOW-channel-idle-nudge",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-owner",
+      "target": "FLOW-channel-rule-clause",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-owner",
+      "target": "FLOW-channel-system-prompt",
       "type": "io"
     },
     {
@@ -11635,6 +11740,21 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-573",
+      "target": "FUNC-authoring-guide",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-573",
+      "target": "FUNC-build-round-injection",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-573",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
       "source": "CR-GC-574",
       "target": "FUNC-systemtest-turn-analyse",
       "type": "relation"
@@ -12533,6 +12653,11 @@
     },
     {
       "source": "FCHAIN-steering-loop",
+      "target": "FUNC-authoring-guide",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
       "target": "FUNC-build-round-injection",
       "type": "compose",
       "weight": "1"
@@ -12583,6 +12708,11 @@
     {
       "source": "FCHAIN-steering-loop",
       "target": "FUNC-graph-readiness",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
+      "target": "FUNC-graph-suggest",
       "type": "compose"
     },
     {
@@ -12767,6 +12897,96 @@
     {
       "source": "FLOW-candidate-ranking",
       "target": "SCHEMA-candidate-probe",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-channel-dimension-template",
+      "target": "FUNC-generation-step",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-channel-dimension-template",
+      "target": "SCHEMA-steering-channel",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-channel-gate-protocol",
+      "target": "FUNC-generation-step",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-channel-gate-protocol",
+      "target": "SCHEMA-steering-channel",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-channel-grammar",
+      "target": "FUNC-build-round-injection",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-channel-grammar",
+      "target": "SCHEMA-steering-channel",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-channel-guidance",
+      "target": "FUNC-build-round-injection",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-channel-guidance",
+      "target": "SCHEMA-steering-channel",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-channel-idle-nudge",
+      "target": "FUNC-run-executor",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-channel-idle-nudge",
+      "target": "SCHEMA-steering-channel",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-channel-inventory",
+      "target": "FUNC-build-round-injection",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-channel-inventory",
+      "target": "SCHEMA-steering-channel",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-channel-proposal-suggest",
+      "target": "FUNC-build-round-injection",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-channel-proposal-suggest",
+      "target": "SCHEMA-steering-channel",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-channel-rule-clause",
+      "target": "FUNC-generation-step",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-channel-rule-clause",
+      "target": "SCHEMA-steering-channel",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-channel-system-prompt",
+      "target": "FUNC-run-executor",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-channel-system-prompt",
+      "target": "SCHEMA-steering-channel",
       "type": "relation"
     },
     {
@@ -13772,6 +13992,11 @@
     },
     {
       "source": "FLOW-query-request-agent",
+      "target": "FUNC-authoring-guide",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-query-request-agent",
       "target": "FUNC-deduce-tests",
       "type": "io"
     },
@@ -14537,6 +14762,21 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-authoring-guide",
+      "target": "MOD-projections",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-authoring-guide",
+      "target": "FLOW-channel-grammar",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-authoring-guide",
+      "target": "REQ-query-precision",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-auto-export",
       "target": "MOD-projections",
       "type": "allocate"
@@ -14579,6 +14819,11 @@
     {
       "source": "FUNC-block-abfrage",
       "target": "FUNC-audit-trail",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-abfrage",
+      "target": "FUNC-authoring-guide",
       "type": "compose"
     },
     {
@@ -15821,6 +16066,11 @@
     },
     {
       "source": "FUNC-graph-suggest",
+      "target": "FLOW-channel-proposal-suggest",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-graph-suggest",
       "target": "FLOW-learning-query",
       "type": "io"
     },
@@ -16258,6 +16508,11 @@
       "source": "FUNC-read-tools",
       "target": "MOD-surface",
       "type": "allocate"
+    },
+    {
+      "source": "FUNC-read-tools",
+      "target": "FLOW-channel-inventory",
+      "type": "io"
     },
     {
       "source": "FUNC-read-tools",
@@ -19680,5 +19935,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 337
+  "graphVersion": 341
 }

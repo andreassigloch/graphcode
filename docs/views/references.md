@@ -15,6 +15,12 @@
 | `ACTOR-agent` | io | `FLOW-steering-trigger-agent` |
 | `ACTOR-learning-engine` | io | `FLOW-learning-advice` |
 | `ACTOR-llm` | io | `FLOW-model-answer` |
+| `ACTOR-owner` | io | `FLOW-channel-dimension-template` |
+| `ACTOR-owner` | io | `FLOW-channel-gate-protocol` |
+| `ACTOR-owner` | io | `FLOW-channel-guidance` |
+| `ACTOR-owner` | io | `FLOW-channel-idle-nudge` |
+| `ACTOR-owner` | io | `FLOW-channel-rule-clause` |
+| `ACTOR-owner` | io | `FLOW-channel-system-prompt` |
 | `ACTOR-owner` | io | `FLOW-cli-invocation` |
 | `ACTOR-owner` | io | `FLOW-config-file` |
 | `ACTOR-owner` | io | `FLOW-mutate-cmd-owner` |
@@ -561,6 +567,9 @@
 | `CR-GC-569` | relation | `FUNC-call-model` |
 | `CR-GC-569` | relation | `FUNC-run-executor` |
 | `CR-GC-569` | relation | `UC-reduced-llm` |
+| `CR-GC-573` | relation | `FUNC-authoring-guide` |
+| `CR-GC-573` | relation | `FUNC-build-round-injection` |
+| `CR-GC-573` | relation | `FUNC-generation-step` |
 | `CR-GC-574` | relation | `FUNC-systemtest-turn-analyse` |
 | `CR-GC-574` | relation | `MOD-systemtest` |
 | `CR-GC-574` | relation | `REQ-greenfield-systemtest-dod` |
@@ -723,6 +732,7 @@
 | `FCHAIN-snapshot-freshness` | compose | `FUNC-mutate` |
 | `FCHAIN-snapshot-freshness` | satisfy | `REQ-graph-snapshot-per-commit` |
 | `FCHAIN-steering-loop` | compose | `FUNC-arch-fitness` |
+| `FCHAIN-steering-loop` | compose | `FUNC-authoring-guide` |
 | `FCHAIN-steering-loop` | compose | `FUNC-build-round-injection` |
 | `FCHAIN-steering-loop` | compose | `FUNC-call-model` |
 | `FCHAIN-steering-loop` | compose | `FUNC-compute-phase-readiness` |
@@ -733,6 +743,7 @@
 | `FCHAIN-steering-loop` | compose | `FUNC-gate-client` |
 | `FCHAIN-steering-loop` | compose | `FUNC-generation-step` |
 | `FCHAIN-steering-loop` | compose | `FUNC-graph-readiness` |
+| `FCHAIN-steering-loop` | compose | `FUNC-graph-suggest` |
 | `FCHAIN-steering-loop` | compose | `FUNC-held-back-traces` |
 | `FCHAIN-steering-loop` | compose | `FUNC-list-elements` |
 | `FCHAIN-steering-loop` | compose | `FUNC-load-config` |
@@ -769,6 +780,24 @@
 | `FLOW-candidate-batch` | relation | `SCHEMA-mutate-command` |
 | `FLOW-candidate-ranking` | io | `FUNC-run-executor` |
 | `FLOW-candidate-ranking` | relation | `SCHEMA-candidate-probe` |
+| `FLOW-channel-dimension-template` | io | `FUNC-generation-step` |
+| `FLOW-channel-dimension-template` | relation | `SCHEMA-steering-channel` |
+| `FLOW-channel-gate-protocol` | io | `FUNC-generation-step` |
+| `FLOW-channel-gate-protocol` | relation | `SCHEMA-steering-channel` |
+| `FLOW-channel-grammar` | io | `FUNC-build-round-injection` |
+| `FLOW-channel-grammar` | relation | `SCHEMA-steering-channel` |
+| `FLOW-channel-guidance` | io | `FUNC-build-round-injection` |
+| `FLOW-channel-guidance` | relation | `SCHEMA-steering-channel` |
+| `FLOW-channel-idle-nudge` | io | `FUNC-run-executor` |
+| `FLOW-channel-idle-nudge` | relation | `SCHEMA-steering-channel` |
+| `FLOW-channel-inventory` | io | `FUNC-build-round-injection` |
+| `FLOW-channel-inventory` | relation | `SCHEMA-steering-channel` |
+| `FLOW-channel-proposal-suggest` | io | `FUNC-build-round-injection` |
+| `FLOW-channel-proposal-suggest` | relation | `SCHEMA-steering-channel` |
+| `FLOW-channel-rule-clause` | io | `FUNC-generation-step` |
+| `FLOW-channel-rule-clause` | relation | `SCHEMA-steering-channel` |
+| `FLOW-channel-system-prompt` | io | `FUNC-run-executor` |
+| `FLOW-channel-system-prompt` | relation | `SCHEMA-steering-channel` |
 | `FLOW-cli-command` | io | `FUNC-bootstrap` |
 | `FLOW-cli-command` | io | `FUNC-claim-store-lock` |
 | `FLOW-cli-command` | io | `FUNC-collect-status` |
@@ -962,6 +991,7 @@
 | `FLOW-phase-readiness` | relation | `SCHEMA-phase-readiness` |
 | `FLOW-preflight-outcome` | io | `FUNC-gate-client` |
 | `FLOW-preflight-outcome` | relation | `SCHEMA-preflight-outcome` |
+| `FLOW-query-request-agent` | io | `FUNC-authoring-guide` |
 | `FLOW-query-request-agent` | io | `FUNC-deduce-tests` |
 | `FLOW-query-request-agent` | io | `FUNC-export-markdown` |
 | `FLOW-query-request-agent` | io | `FUNC-graph-expand` |
@@ -1113,6 +1143,9 @@
 | `FUNC-author-uc` | allocate | `MOD-agent-surface` |
 | `FUNC-author-uc` | io | `FLOW-mutate-cmd-author-uc` |
 | `FUNC-author-uc` | satisfy | `REQ-skill-authors-through-gate` |
+| `FUNC-authoring-guide` | allocate | `MOD-projections` |
+| `FUNC-authoring-guide` | io | `FLOW-channel-grammar` |
+| `FUNC-authoring-guide` | satisfy | `REQ-query-precision` |
 | `FUNC-auto-export` | allocate | `MOD-projections` |
 | `FUNC-auto-export` | io | `FLOW-query-request-auto-export` |
 | `FUNC-auto-export` | satisfy | `REQ-auto-persist-merge` |
@@ -1122,6 +1155,7 @@
 | `FUNC-bind-tools` | satisfy | `REQ-mcp-tool-registry` |
 | `FUNC-block-abfrage` | compose | `FUNC-audit-stats` |
 | `FUNC-block-abfrage` | compose | `FUNC-audit-trail` |
+| `FUNC-block-abfrage` | compose | `FUNC-authoring-guide` |
 | `FUNC-block-abfrage` | compose | `FUNC-deduce-tests` |
 | `FUNC-block-abfrage` | compose | `FUNC-graph-expand` |
 | `FUNC-block-abfrage` | compose | `FUNC-graph-impact` |
@@ -1361,6 +1395,7 @@
 | `FUNC-graph-store` | satisfy | `REQ-steering-pre` |
 | `FUNC-graph-store` | satisfy | `REQ-store-owner-lifecycle` |
 | `FUNC-graph-suggest` | allocate | `MOD-loop` |
+| `FUNC-graph-suggest` | io | `FLOW-channel-proposal-suggest` |
 | `FUNC-graph-suggest` | io | `FLOW-learning-query` |
 | `FUNC-graph-suggest` | io | `FLOW-mcp-tool` |
 | `FUNC-graph-suggest` | io | `FLOW-mutate-cmd-graph-suggest` |
@@ -1441,6 +1476,7 @@
 | `FUNC-rank-candidates` | io | `FLOW-candidate-ranking` |
 | `FUNC-rank-candidates` | satisfy | `REQ-steering-from-metrics` |
 | `FUNC-read-tools` | allocate | `MOD-surface` |
+| `FUNC-read-tools` | io | `FLOW-channel-inventory` |
 | `FUNC-read-tools` | io | `FLOW-formatE-artifact-read-tools` |
 | `FUNC-read-tools` | satisfy | `REQ-progressive-expansion` |
 | `FUNC-read-tools` | satisfy | `REQ-query-precision` |

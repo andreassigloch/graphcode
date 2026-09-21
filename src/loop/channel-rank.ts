@@ -90,3 +90,100 @@ export function winner<T>(slots: readonly ChannelSlot<T>[]): { channel: Channel;
 export function byRank<T extends { channel: Channel }>(blocks: readonly T[]): T[] {
   return [...blocks].sort((a, b) => rankOf(a.channel) - rankOf(b.channel));
 }
+
+/** Ein Beitrag EINES Kanals zum Rundenprompt (CR-GC-573). */
+export interface ChannelBlock {
+  readonly channel: Channel;
+  readonly text: string;
+}
+
+/**
+ * Ein Satz, auf seine bedeutungstragenden Woerter reduziert. Kein Stemming und keine
+ * Stoppwortliste je Sprache — beides waere eine zweite, ungeprueffte Annahme. Was bleibt,
+ * ist Kleinschreibung, Wortgrenzen und eine Mindestlaenge.
+ */
+function wortmenge(satz: string): Set<string> {
+  return new Set(
+    satz
+      .toLowerCase()
+      .replace(/[^a-zäöüß0-9\s_-]/g, ' ')
+      .split(/[\s_-]+/)
+      .filter((w) => w.length > 3),
+  );
+}
+
+/** Saetze eines Blocks — Zeilenumbrueche zaehlen wie Satzenden, Listen sind hier ueblich. */
+function saetze(text: string): string[] {
+  return text
+    .split(/[.;:\n]+/)
+    .map((s) => s.trim())
+    .filter((s) => s.length >= 25);
+}
+
+/** Wie stark ueberlappen zwei Wortmengen (Jaccard, 0..1). */
+function ueberlappung(a: Set<string>, b: Set<string>): number {
+  if (a.size === 0 || b.size === 0) return 0;
+  let schnitt = 0;
+  for (const w of a) if (b.has(w)) schnitt++;
+  return schnitt / (a.size + b.size - schnitt);
+}
+
+/** Zwei Kanaele, die in derselben Runde dasselbe sagen. */
+export interface ChannelEcho {
+  readonly a: Channel;
+  readonly b: Channel;
+  readonly satzA: string;
+  readonly satzB: string;
+  /** Jaccard-Ueberlappung der bedeutungstragenden Woerter, 0..1. */
+  readonly overlap: number;
+}
+
+/**
+ * **Sagen zwei Kanaele dieser Runde dasselbe?** (CR-GC-573, Kriterium 2)
+ *
+ * Bis hierher liess sich diese Frage nur durch einen LAUF beantworten: das Prinzip
+ * „ein Imperativ je Runde" musste viermal per Messung wiederentdeckt werden (CR-GC-560..568),
+ * weil beide Schreiber im selben Knoten verschwanden und ihre Texte nirgends
+ * nebeneinanderlagen.
+ *
+ * Bewusst **Ueberlappung statt Gleichheit**: der Fall, der die Serie ausgeloest hat, war
+ * keine Dublette, sondern ein Widerspruch in Paraphrase — R-15s Klausel sagte „haeng FUNCs
+ * an die bestehenden FCHAINs", das uc-Template drei Zeilen darueber „lege FCHAIN-Szenarien
+ * an". Wortgleich war daran nichts; dieselbe Arbeit gemeint war sehr wohl. Ein
+ * Exakt-Vergleich haette genau diesen Fall durchgelassen.
+ *
+ * Der Befund ist ein HINWEIS, kein Urteil: zwei Kanaele duerfen einander stuetzen. Er sagt
+ * nur, dass zwei Stellen dieselbe Arbeit beschreiben — und wer das darf, sagt die Rangfolge.
+ */
+export function duplicateChannels(
+  blocks: readonly ChannelBlock[],
+  threshold = 0.6,
+): ChannelEcho[] {
+  const zerlegt = blocks.map((b) => ({
+    channel: b.channel,
+    saetze: saetze(b.text).map((s) => ({ satz: s, woerter: wortmenge(s) })),
+  }));
+  const funde: ChannelEcho[] = [];
+  for (let i = 0; i < zerlegt.length; i++) {
+    for (let j = i + 1; j < zerlegt.length; j++) {
+      // Zwei Bloecke DESSELBEN Kanals sind kein zweiter Weg — sie sind derselbe.
+      if (zerlegt[i].channel === zerlegt[j].channel) continue;
+      for (const a of zerlegt[i].saetze) {
+        for (const b of zerlegt[j].saetze) {
+          const overlap = ueberlappung(a.woerter, b.woerter);
+          if (overlap >= threshold) {
+            funde.push({
+              a: zerlegt[i].channel,
+              b: zerlegt[j].channel,
+              satzA: a.satz,
+              satzB: b.satz,
+              overlap: +overlap.toFixed(2),
+            });
+          }
+        }
+      }
+    }
+  }
+  // Staerkste Ueberlappung zuerst; bei Gleichstand bleibt die Fundreihenfolge.
+  return funde.sort((x, y) => y.overlap - x.overlap);
+}

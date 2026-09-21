@@ -14,7 +14,10 @@
  */
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
-import { CHANNEL_ORDER, CHANNEL_REASON, rankOf, outranks, winner, byRank } from '../src/loop/channel-rank.js';
+import { z } from 'zod/v4';
+import { CHANNEL_ORDER, CHANNEL_REASON, rankOf, outranks, winner, byRank, duplicateChannels } from '../src/loop/channel-rank.js';
+import { buildRoundChannels } from '../src/loop/executor-prompt.js';
+import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
 import { generationStep, RULE_CLAUSE, GENERATION_TEMPLATE, DIMENSION_FOCUS_TYPES } from '../src/loop/generate.js';
 import { DEFAULT_METRIC_POLICY } from '@sigloch/contracts/se';
 import type { Graph } from '@sigloch/graph-api-core';
@@ -108,5 +111,83 @@ describe('die Ordnung wird angewandt, nicht ein zweites Mal entschieden (CR-GC-5
     // derselben Frage. Sie darf nicht zurueckkehren.
     expect(generate).not.toMatch(/klausel\s*\n?\s*\?\s*\[\.\.\.klausel\.types\]/);
     expect(prompt).toContain('byRank(blocks)');
+  });
+});
+
+describe('sagen zwei Kanaele dieser Runde dasselbe? (CR-GC-573, Kriterium 2)', () => {
+  it('findet den Fall, der die Serie CR-GC-560..568 ausgeloest hat — Paraphrase, nicht Dublette', () => {
+    // Wortlaut aus CR-GC-358: R-15s Klausel und das uc-Template beschrieben dieselbe
+    // Arbeit gegensaetzlich, drei Zeilen auseinander, in JEDER uc-Runde. qwen3.8 hat den
+    // Widerspruch im Reasoning auseinandergenommen und danach 4347 Denk-Token ohne
+    // Tool-Call verbraucht. Wortgleich war daran nichts.
+    const echos = duplicateChannels([
+      {
+        channel: 'rule-clause',
+        text: 'Diese Funde sind BESTEHENDE, leere FCHAINs: haeng an jede davon 3 FUNC-Elemente, '
+          + 'die den Ablauf in Schritte zerlegen',
+      },
+      {
+        channel: 'proposal',
+        text: 'Haeng an jede bestehende leere FCHAIN 3 FUNC-Elemente an, die den Ablauf in '
+          + 'Schritte zerlegen',
+      },
+    ]);
+    expect(echos).toHaveLength(1);
+    expect(echos[0].a).toBe('rule-clause');
+    expect(echos[0].b).toBe('proposal');
+    expect(echos[0].overlap).toBeGreaterThanOrEqual(0.6);
+  });
+
+  it('haelt zwei Kanaele auseinander, die verschiedene Arbeit beschreiben', () => {
+    expect(duplicateChannels([
+      { channel: 'rule-clause', text: 'Diese UCs haben keine Anforderungen: schlage je UC drei REQ-Kandidaten vor' },
+      { channel: 'grammar', text: 'ACTOR: ausgehend io nach FLOW; eingehend FLOW io nach ACTOR' },
+    ])).toEqual([]);
+  });
+
+  it('zwei Bloecke DESSELBEN Kanals sind kein zweiter Weg', () => {
+    const gleich = 'Schlage je UC drei REQ-Kandidaten vor, praezise und pruefbar formuliert';
+    expect(duplicateChannels([
+      { channel: 'proposal', text: gleich },
+      { channel: 'proposal', text: gleich },
+    ])).toEqual([]);
+  });
+
+  it('an einer ECHTEN Runde: der Imperativ steht genau einmal, nicht in zwei Kanaelen', async () => {
+    // Die Runde, wie der Executor sie baut — Fokus-Typen aus generationStep, Bloecke aus
+    // buildRoundChannels. Genau diese Paarung war bis CR-GC-564 die Doppelung.
+    const node = (uid: string, type: string, name: string, description = ''): unknown =>
+      ({ uid, type, name, description, attributes: {} });
+    const graph = {
+      nodes: [
+        node('SYS-shop', 'SYS', 'shop', 'Ein Bestellsystem fuer Ersatzteile.'),
+        node('ACTOR-kunde', 'ACTOR', 'Kunde'),
+        node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt ein Ersatzteil.'),
+      ],
+      edges: [{ sourceId: 'SYS-shop', targetId: 'UC-bestellen', edgeType: 'compose', attributes: {} }],
+    } as unknown as Graph;
+    const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8);
+
+    const tool = (schema: z.ZodType, handler: (i: unknown) => unknown): unknown =>
+      ({ name: 'x', description: '', inputSchema: schema, handler });
+    const registry = {
+      graph_authoring_guide: tool(z.object({ type: z.string() }), ({ type }: never) => ({
+        outgoing: [{ edgeType: 'compose', targetType: 'FUNC' }],
+        incoming: [{ edgeType: 'compose', sourceType: 'UC' }],
+        requiredAttrs: [],
+        type,
+      })),
+      graph_elements: tool(
+        z.object({ type: z.string().optional(), limit: z.number().default(100) }),
+        () => ({ nodes: [{ uid: 'UC-bestellen', type: 'UC', name: 'bestellen' }], total: 1 }),
+      ),
+    } as unknown as MCPToolRegistry;
+
+    const blocks = await buildRoundChannels(registry, step);
+    // Der Imperativ der Runde ist ein Kanal fuer sich — er steht NICHT in den Bloecken.
+    const alle = [{ channel: 'rule-clause' as const, text: step.prompt }, ...blocks];
+    expect(duplicateChannels(alle)).toEqual([]);
+    // Und die Bloecke kommen in Rangfolge: Grammatik vor Bestand vor Anleitung.
+    expect(blocks.map((b) => b.channel)).toEqual(byRank(blocks).map((b) => b.channel));
   });
 });
