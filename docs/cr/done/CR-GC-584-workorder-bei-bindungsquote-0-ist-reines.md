@@ -1,6 +1,6 @@
 # CR-GC-584: workOrder bei Bindungsquote 0 % ist reines Rauschen: in allen Greenfield-Laeufen 100 % nur 'blind' (jede FUNC ohne realRef), 4-21 Bloecke je Lauf — CR-576 laesst ihn durch, weil blind nicht leer ist
 
-**Status:** ✅ Umgesetzt und am Bestaetigungslauf gemessen
+**Status:** ✅ Done (2026-09-21)
 **Typ:** aus Item ITEM-2026-432 (finding)
 **Erstellt:** 2026-09-21
 **Item:** bok/items/ITEM-2026-432.json (Lane: graph)
