@@ -1,8 +1,9 @@
 # CR-GC-570: Die Gate-Antwort kuerzen — sie ist 70 % des Kontexts und zur Haelfte Wiederholung
 
-**Status:** 🟠 Umsetzung steht, zwei Kriterien offen
+**Status:** ✅ Done (2026-09-21)
 **Typ:** aus Item ITEM-2026-411 (finding)
 **Erstellt:** 2026-09-21
+**Abgeschlossen:** 2026-09-21
 **Item:** bok/items/ITEM-2026-411.json (Lane: graph)
 
 ---
@@ -154,8 +155,16 @@ anfasst, und beide sind gemessen:
   (`selection: 'driver'`); fuer MCP-Clients ist sie das vorgesehene Protokoll. Ob der
   Probelauf seinen Preis wert ist, ist eine Protokollfrage. → ITEM-2026-419.
 
-Beide zusammen liegen rechnerisch unter der 40 %-Marke; sie gehoeren aber in eigene Zuege, nicht
-nachtraeglich in diesen.
+Beide haben jetzt eigene Zuege: **CR-GC-576** (leere Advisories) und **CR-GC-577**
+(dryRun-Verdopplung). Dazu kam beim Nachmessen ein dritter, groesserer: **CR-GC-579** —
+`mcp-server.ts` serialisiert JEDE Werkzeugantwort mit Einrueckung 2, gemessen **18,3 % des
+gesamten Werkzeug-Payloads** fuer ein Argument.
+
+**Diese CR schliesst mit AK3 offen, nicht erfuellt.** Entscheidung des Auftraggebers vom
+2026-09-21: „jede reduzierung ist gut, auch wenn wir noch nicht am ziel sind." Der Grund, sie
+zu schliessen statt offen zu halten, ist nicht die Nachsicht, sondern dass die Restarbeit
+vollstaendig benannt ist und eigene Nummern hat — eine CR, die auf fremde Zuege wartet, ist
+kein Vorhaben mehr, sondern ein Merkzettel.
 
 ## 6 Testlage
 
