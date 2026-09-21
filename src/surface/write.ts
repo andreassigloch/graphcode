@@ -18,6 +18,8 @@ import { readBranchLog, replayBranchLog, type MergeReport } from '../kernel/merg
 import type { MCPTool, MCPToolRegistry } from '../kernel/tool-contract.js';
 import { computeSteeringDelta, takeSteeringSnapshot, type SteeringDelta } from '../kernel/measure/steering-snapshot.js';
 import { stripViolationContext, groupViolationsByRule, type GroupedViolation } from '../kernel/evaluation.js';
+import { fitAdvisoryIsSilent, steerAdvisoryIsSilent, type FitAdvisory, type SteerAdvisory } from '../kernel/measure/fit-advisory.js';
+import { workOrderIsSilent, type WorkOrder } from '../kernel/measure/work-order.js';
 import type { RespondsToViolation } from '../projections/trajectory.js';
 import type { ToolContext } from './tool-context.js';
 
@@ -148,6 +150,37 @@ function summarizeViolations<T extends { violations: MutateResult['violations'] 
     ...result,
     violations: groupViolationsByRule(stripViolationContext(result.violations)),
   };
+}
+
+/**
+ * Advisory-Bloecke, die nichts melden, weglassen (CR-GC-576).
+ *
+ * Gemessen an `runs/opus5-5`, 23 Gate-Antworten: `fitAdvisory` war 12-mal von 21 leer,
+ * `workOrder` 18-mal von 21, und `steerAdvisory` **21-mal von 21** — durchgehend. Zusammen
+ * 11.990 Zeichen, die sagen, dass nichts passiert ist.
+ *
+ * WEGLASSEN, nicht kuerzen: „kein Feld" und „Feld mit lauter Nullen" sagen dasselbe, und wer
+ * doch das Null-Delta braucht, liest es aus `graph_metrics` oder `graph_readiness`. Der
+ * Unterschied ist, dass die Aussage „hier hat sich nichts geruehrt" dann null Zeichen kostet.
+ *
+ * Nur auf der LEITUNG, nie im Audit: `recordAudit`/`recordPreview` bekommen die volle
+ * Fassung, denn der Trail ist Evidenz und kein Antwort-Budget — dieselbe Trennung, die
+ * CR-GC-309 fuer die Violations gezogen hat.
+ *
+ * Was „nichts melden" heisst, steht je Block bei seinem ERZEUGER (`fitAdvisoryIsSilent`,
+ * `steerAdvisoryIsSilent`, `workOrderIsSilent`) und nicht hier — hier wird nur angewandt.
+ */
+function dropSilentAdvisories<T extends object>(result: T): T {
+  const r = result as T & {
+    fitAdvisory?: FitAdvisory;
+    steerAdvisory?: SteerAdvisory;
+    workOrder?: WorkOrder;
+  };
+  const out = { ...r };
+  if (out.fitAdvisory && fitAdvisoryIsSilent(out.fitAdvisory)) delete out.fitAdvisory;
+  if (out.steerAdvisory && steerAdvisoryIsSilent(out.steerAdvisory)) delete out.steerAdvisory;
+  if (out.workOrder && workOrderIsSilent(out.workOrder)) delete out.workOrder;
+  return out as T;
 }
 
 /** Flat realize affordance (CR-GC-216) — the write-twin of graph_context, no nested union. */
@@ -383,7 +416,9 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
           // Auditiert wird die VOLLE Fassung: der Audit-Trail ist Evidenz, nicht
           // Antwort-Budget. Gekürzt wird erst, was über die Leitung geht.
           await recordPreview(input.consumerId, preview, commands);
-          const previewOut = input.violations === 'full' ? preview : summarizeViolations(preview);
+          const previewOut = dropSilentAdvisories(
+            input.violations === 'full' ? preview : summarizeViolations(preview),
+          );
           // CR-GC-321/REQ-N07: auch im Preview — sonst meldet der dryRun sauber
           // und der Apply verliert die Namen.
           return { ...previewOut, graphVersion: graphVersion(), ...(nameWarning ? { nameWarning } : {}) };
@@ -395,7 +430,9 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
           respondsTo: result.success ? resolvedViolations(respondsBaseline!, harness.evaluateRules()) : [],
           editSource: ctx.classifyEditSource(commands),
         });
-        const out = input.violations === 'full' ? result : summarizeViolations(result);
+        const out = dropSilentAdvisories(
+          input.violations === 'full' ? result : summarizeViolations(result),
+        );
         return {
           ...out,
           graphVersion: graphVersion(),
