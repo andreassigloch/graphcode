@@ -14,7 +14,7 @@
  * @author andreas@siglochconsulting
  */
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { mkdtempSync, rmSync, writeFileSync, mkdirSync, realpathSync, readFileSync } from 'node:fs';
+import { mkdtempSync, rmSync, writeFileSync, mkdirSync, realpathSync, readFileSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
@@ -573,4 +573,55 @@ describe('Code-Test: Kennzahlen am Quelltext, fuer beide Arme gleich (CR-GC-610)
     });
     expect(k.importzyklen).toBe(1);
   });
+});
+
+/**
+ * CR-GC-615 — ein bezahlter Lauf darf nicht an einem Schutzmechanismus verloren gehen.
+ *
+ * `graph_export` verweigert, wenn der Export Elemente fallen liesse, die in der committeten SSOT
+ * stehen (Schutz gegen einen veralteten Prozess). In opus5-16 hat der Agent selbst Git-Aktionen
+ * gefahren, die SSOT wanderte unter dem Store weg — und `captureArtifacts` riss die ganze
+ * Ergebniszeile mit. Hier wird genau dieser Zustand hergestellt: ein Arbeitsbereich, dessen
+ * committete SSOT ein Element traegt, das der Store nicht hat.
+ */
+describe('captureArtifacts ueberlebt die Export-Verweigerung (CR-GC-615)', () => {
+  it('liefert den Stand lesend und meldet den Exportfehler, statt den Lauf fallen zu lassen', async () => {
+    const { captureArtifacts } = await import('../rig/greenfield-systemtest/run.mjs');
+    const { createHarness } = await import('../src/index.js');
+    const ws = mkdtempSync(join(realpathSync(tmpdir()), 'gc-615-'));
+    try {
+      const label = ws.split('/').pop()!;
+      const h = await createHarness({ repoRoot: ws, scope: { workspaceId: label, systemId: label } });
+      await h.initialize();
+      const res = await h.mutate([
+        { op: 'add-node', node: { uid: 'SYS-scheduler', type: 'SYS', name: 'Scheduler', description: 'Der Lauf.', attributes: {} } },
+      ] as never);
+      expect(res.success, 'das Fixture muss im Store ankommen, sonst prueft der Test nichts').toBe(true);
+      await h.close();
+
+      // Die committete SSOT traegt ein Element, das im Store fehlt — genau der Drift-Fall.
+      mkdirSync(join(ws, 'docs', 'graph'), { recursive: true });
+      writeFileSync(
+        join(ws, 'docs', 'graph', `${label}.graph.json`),
+        JSON.stringify({
+          elements: [
+            { id: 'SYS-scheduler', type: 'SYS', name: 'Scheduler', description: 'Der Lauf.' },
+            { id: 'REQ-fremd', type: 'REQ', name: 'Fremd', description: 'Steht nur in der SSOT.' },
+          ],
+          traces: [],
+        }),
+      );
+
+      const exportError = await captureArtifacts(ws);
+
+      expect(exportError, 'der Export MUSS hier verweigern — sonst misst der Test den falschen Pfad').toBeTruthy();
+      expect(typeof exportError).toBe('string');
+      const erfasst = JSON.parse(readFileSync(join(ws, 'graph.json'), 'utf8'));
+      // Der Stand kommt aus dem STORE, nicht aus der gedrifteten SSOT: das fremde REQ ist nicht dabei.
+      expect(erfasst.elements.map((e: { id: string }) => e.id)).toEqual(['SYS-scheduler']);
+      expect(existsSync(join(ws, 'readiness.json'))).toBe(true);
+    } finally {
+      rmSync(ws, { recursive: true, force: true });
+    }
+  }, 60_000);
 });
