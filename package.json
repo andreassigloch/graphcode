@@ -45,13 +45,13 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
-    "@sigloch/contracts": ">=10.10 <11",
-    "@sigloch/graph-api-core": "^5.7.0",
+    "@sigloch/contracts": ">=10.11 <11",
+    "@sigloch/graph-api-core": "^5.7.1",
     "@sigloch/graph-view-edit": ">=0.9 <1",
     "@sigloch/graphcode-client": "^1.4.0",
     "@sigloch/graphify": ">=0.3 <1",
     "@sigloch/learning-core": "^0.2.0",
-    "@sigloch/se-engine": "^1.7.2",
+    "@sigloch/se-engine": "^1.8.0",
     "kuzu-wasm": "^0.11.3",
     "typescript": "^5.5.0",
     "zod": "^4.0.0"

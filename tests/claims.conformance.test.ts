@@ -185,7 +185,11 @@ describe('T-D1 (CR-GC-340): every published count matches the living source', ()
       // CR-SM-327 (contracts Regelkatalog 28.0.0, CR-GC-533): MT-04 kommt dazu, LCOM4 an der FUNC-Whitebox (PDR) — 66 -> 67.
       // CR-SM-355 (contracts Regelkatalog 31.0.0, CR-GC-607): TR-01 und IR-01 kommen dazu — die Task-Ausgaenge
       // von trade / irr (PDR) — 67 -> 69. Drei Artikel nannten 67, alle drei nachgezogen.
-      'engine rules=69',
+      // CR-SM-357 (contracts Regelkatalog 32.0.0, CR-GC-616): UC-05, UC-06 und RD-03 entfallen — 69 -> 66.
+      // Die beiden UC-Regeln sind zur SCHREIBREGEL in se:author-uc geworden (sie feuerten in 14 von
+      // 21 Graphen an fast jedem UC), RD-03 hatte keinen Leser und feuerte einmal in 21 Graphen.
+      // Wieder drei Artikel, wieder alle drei nachgezogen.
+      'engine rules=66',
       'readiness dimensions=8',
       // CR-GC-561: 25 -> 24. `graph_next_step` ist weg — zweites Steuerungswerkzeug auf
       // derselben Messung, ohne Konsument. Der Kanarienvogel hat die drei Textstellen gefunden.

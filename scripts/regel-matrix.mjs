@@ -8,7 +8,9 @@
  *   Bedarf (was die Regel zum Urteilen braucht: Gate | Aehnlichkeit (ND) | CodeFacts (RC) | nur Steuerung),
  *   Stufe (info / warning / error — error heisst blockt, CR-SM-353), Task (+ Eintritt fuer <task>),
  *   Phase, Dimension, Steuerregel, abnehmbar in, Hilfe-Prompt (RULE_HELP.prompt), Skill (TASK_SKILL bzw.
- *   SKILL_FOR_DIMENSION), Konflikt (beide gesetzt und verschieden), nennt (Prosa-Nennungen in Skills).
+ *   SKILL_FOR_DIMENSION), Konflikt (beide gesetzt und verschieden), nennt (Prosa-Nennungen in Skills),
+ *   Fix und Folge-Regeln (CR-GC-616, beide aus `FIX_ROUNDTRIP` in se-engine — dem gemessenen
+ *   Roundtrip je Fix-Vorlage, nicht aus einer gepflegten Liste).
  * Schreibt docs/research/regel-matrix.csv und docs/research/regel-matrix.md.
  *
  * Aufruf: node scripts/regel-matrix.mjs   (liest Pakete + dist — vorher npm run build)
@@ -20,7 +22,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as se from '@sigloch/contracts/se';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import { STEER_RULES } from '@sigloch/se-engine';
+import { STEER_RULES, FIX_ROUNDTRIP } from '@sigloch/se-engine';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const { ABNEHMBAR_JE_TASK } = await import(join(ROOT, 'dist', 'kernel', 'measure', 'focus-set.js'));
@@ -43,6 +45,18 @@ const nennt = (id) => skillTexte
 
 const bedarf = (id) => gate.has(id) ? 'Gate' : id.startsWith('ND-') ? 'Aehnlichkeit (ND)' : id.startsWith('RC-') ? 'CodeFacts (RC)' : 'nur Steuerung';
 // Wie generate.ts (CR-GC-604): im Task der Task-Skill, an einem Eintrittspunkt der Skill des Tasks, sonst der der Dimension.
+/**
+ * CR-GC-616 — was die Fix-Vorlage der Regel auf ihrem Ausloese-Fixture tatsaechlich tut. Gemessen
+ * von `tests/unit/fix-roundtrip.test.ts` in se-engine, hier nur gelesen. Leer = keine Vorlage
+ * (der Fund bleibt Fund-Ebene); `tot` = Vorlage da, leitet aber keinen Edit her — das ist der
+ * Befund, den der Roundtrip sichtbar machen soll, nicht ein Fehler der Matrix.
+ */
+const fixOf = (id) => {
+  const e = FIX_ROUNDTRIP[id];
+  if (!e) return '';
+  if (!e.applied) return 'tot';
+  return e.cleared ? 'schliesst' : 'Teil-Fix';
+};
 const skillOf = (id, task, dim) => task !== 'kern' ? TASK_SKILL[task] : entryFor.has(id) ? TASK_SKILL[entryFor.get(id)] : (SKILL_FOR_DIMENSION[dim]?.name ?? '');
 
 const rows = ids.map((id) => {
@@ -65,6 +79,8 @@ const rows = ids.map((id) => {
     Skill: skill,
     Konflikt: prompt && skill && prompt !== skill ? 'ja' : '',
     nennt: nennt(id).join(' '),
+    Fix: fixOf(id),
+    'Folge-Regeln': (FIX_ROUNDTRIP[id]?.sequels ?? []).join(' '),
   };
 });
 
@@ -78,6 +94,7 @@ const md = [
   '',
   '> GENERIERT von `scripts/regel-matrix.mjs` aus contracts, graph-api-core, se-engine und graphcode — nicht von Hand bearbeiten.',
   `> ${rows.length} Regeln · ${zaehl((r) => r.Bedarf === 'Gate')} im Gate-Katalog · ${zaehl((r) => r.Stufe === 'error')} blocken (Stufe error) · ${zaehl((r) => r.Konflikt)} Prompt/Skill-Konflikte (Ausnahmen in tests/skill-rule-ids.test.ts).`,
+  `> Fix-Vorlagen: ${zaehl((r) => r.Fix)} Regeln tragen eine · ${zaehl((r) => r.Fix === 'schliesst')} schliessen den Fund · ${zaehl((r) => r.Fix === 'Teil-Fix')} Teil-Fix · ${zaehl((r) => r.Fix === 'tot')} tot (CR-SM-357).`,
   '',
   '## Tasks',
   '',

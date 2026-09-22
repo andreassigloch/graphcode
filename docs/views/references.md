@@ -592,6 +592,8 @@
 | `CR-GC-607` | relation | `FUNC-generation-step` |
 | `CR-GC-607` | relation | `FUNC-se-irr` |
 | `CR-GC-607` | relation | `FUNC-se-trade` |
+| `CR-GC-616` | relation | `FUNC-author-uc` |
+| `CR-GC-616` | relation | `FUNC-generation-step` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-suggest` |

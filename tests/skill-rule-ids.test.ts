@@ -248,6 +248,19 @@ describe('TEST-skill-rule-ids (e): Empfehlungen passen zu Regeln und Skills (CR-
     expect(ALL_RULE_DEFS.filter((r) => taskOf(r.id) !== 'kern' && r.severity === 'error').map((r) => r.id)).toEqual(['R-29']);
   });
 
-  // MT-02 ist info UND Steuerregel — Widerspruch, Entscheidung im Zeilen-Item ITEM-2026-462.
-  it.todo('Steuerregel nie info (STEER_RULES ∩ info = ∅) — offen: MT-02, ITEM-2026-462');
+  /**
+   * CR-GC-616 (Entscheidung zu ITEM-2026-462, umgesetzt in CR-SM-357): scharf geschaltet.
+   *
+   * Eine Steuerregel bestimmt, wohin der naechste Zug geht — und `info` faellt aus dem
+   * Kern-Fokus heraus. Eine Regel, die lenkt, aber nicht gezeigt wird, lenkt niemanden: MT-02
+   * stand genau so da. Sie ist jetzt `warning` (Messung vor der Umstellung: 0-1 Fund je Graph,
+   * Spitze moneyflow 9 von 155 MOD — kein Fluten des Fokus).
+   *
+   * Der Test ist die Zusage nach vorn: eine NEUE Steuerregel darf nicht als `info` einziehen.
+   */
+  it('Steuerregel nie info (STEER_RULES ∩ info = ∅)', async () => {
+    const { STEER_RULES } = await import('@sigloch/se-engine');
+    const severity = new Map(ALL_RULE_DEFS.map((r) => [r.id, r.severity]));
+    expect(STEER_RULES.filter((id: string) => severity.get(id) === 'info')).toEqual([]);
+  });
 });
