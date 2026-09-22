@@ -1,6 +1,6 @@
 # CR-GC-598: Rewind opus5-12: (1) ausdrueckliches defer des Hosts geht nicht ins Sitzungsgedaechtnis — next bietet das zurueckgestellte Fenster wieder an; (2) blockingErrors zaehlt nicht-blockierende und abnehmbare Fehler (FM-03 gating:false) — die Probe meldete 0->8, der Agent liess FM-01 deshalb offen
 
-**Status:** ✅ Umgesetzt — zweiter Rewind folgt
+**Status:** ✅ Done (2026-09-22)
 **Typ:** aus Item ITEM-2026-450 (bug)
 **Erstellt:** 2026-09-22
 **Item:** bok/items/ITEM-2026-450.json (Lane: graph)
