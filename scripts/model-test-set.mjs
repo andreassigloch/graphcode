@@ -33,6 +33,9 @@ export function isModelRelevant(source) {
 
 /** Die Menge, die `verify:model` fährt. */
 export const INCLUDED = [
+  // CR-GC-591: liest die committete SSOT und verlangt Rang, Zeitpunkt und Treiber an jedem
+  // FLOW-channel-* — eine Modellaenderung an den Kanaelen macht ihn rot, also gehoert er in die Spur.
+  'tests/channel-model.test.ts',
   // CR-GC-490: haengt an der LEGALITAET von `FUNC -allocate-> MOD` und an `realRef` — faehrt
   // dafuer einen echten Gate-Zug. Eine Meta-Modell-Aenderung an diesem Pattern macht ihn rot,
   // also gehoert er in die Spur.
