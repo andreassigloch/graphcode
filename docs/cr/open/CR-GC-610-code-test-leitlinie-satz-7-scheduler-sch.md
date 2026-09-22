@@ -32,7 +32,39 @@ zusammen pruefbar (Abnahme braucht Referenz, Messung braucht Treiber).
 - Messkette am Stueck an einer Probe (Referenz im freien Arbeitsbereich): 15/15, Kennzahlen, Import, Steuerwert.
 - Kongruenz-Zweig am geführten Arbeitsbereich ohne Code: "nicht pruefbar", Bindung 0/20.
 
+## Gefahren 2026-09-22 — n = 1 je Arm
+
+Auftrag des Auftraggebers: „ein testlauf spezifikation und coding mit claude code". Beide Arme
+Opus 5 in Claude Code, dieselbe `dist`, derselbe Tag. Volle Auswertung:
+**`docs/research/testlauf-2026-09-22.md`**.
+
+| | `gefuehrt-0` | `frei-0` |
+|---|---:|---:|
+| Verdeckte Abnahme | **15/15** | **15/15** |
+| Dateien / Verzeichnisse | 6 / 1 | **10 / 4** |
+| `import-code`: MOD/FUNC/FLOW/SCHEMA | 9 / 20 / 18 / 11 | 16 / 19 / 6 / 5 |
+| Steuerwert des Codes | 1,722 | 1,111 |
+| Kongruenz (RC) | **kongruent** | kein Modell |
+| Bindung Scheibe / Modell | 80 % / 20 % | — |
+| Kosten / Turns / Sekunden | $10,44 / 107 / 1.293 | **$2,29 / 32 / 474** |
+
+**Das Ergebnis, unbeschönigt: die Funktion ist Gleichstand, der Schnitt geht an den freien Arm,
+die Rückverfolgbarkeit an den geführten — bei 4,6-fachen Kosten.**
+
+Der Steuerwert-Vergleich trägt dabei **nicht**: der freie Arm exprimiert 6 FLOW / 5 SCHEMA gegen
+18 / 11, und was nicht als Vertrag ausgedrückt ist, kann keine Vertragskonzentration auslösen. Wer
+weniger Vertrag sichtbar macht, gewinnt die Kennzahl (ITEM-2026-483). Ohne diese Reparatur kann der
+Code-Test seine Kernfrage nicht beantworten.
+
+Der Spezifikationslauf lief getrennt (157 Elemente, Compliance 1,0, 4/8 Gates, Steuerwert `worst` 0,
+0 Rückfälle, $9,04 / 74 Turns) — nach einem ersten Abbruch am Rig-Standardtimeout (ITEM-2026-479).
+
 ## Offen (Entscheidung Auftraggeber)
 
-Der bezahlte Lauf (~2 × 10–20 $), n je Arm (Vorschlag: 1, dann 3), ein dritter Arm mit Auto-Spezifikation.
+- **n = 3 je Arm** für eine Aussage statt einer Spanne. Zwei Vorläufe desselben Arms lagen bei
+  $8,31 und $14,47 — die Streuung ist größer als jeder heute gemessene Unterschied.
+- **Ein dritter Arm mit Auto-Spezifikation** (Phase 1 + 2 in einem Lauf). Der geführte Arm bekommt
+  heute ein von Hand verfeinertes Golden; gemessen wird „modellgeführt gegen frei", nicht
+  „Auto-Spezifikation plus Code gegen frei". Erst dort steht die Führung gegen die Alternative,
+  die sie ersetzen soll.
 
