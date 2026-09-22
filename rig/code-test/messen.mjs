@@ -12,7 +12,7 @@
  *   5. Kongruenz    — nur wo ein Modell gefuehrt wurde: RC-Urteil und Bindungsquote am Modell des Arms.
  * Dazu die Effizienz aus usage.json. Schreibt <arbeitsbereich>/messung.json und druckt die Vergleichstabelle.
  *
- * Aufruf (von graphcode/): node rig/code-test/messen.mjs rig/code-test/runs/gefuehrt-0 rig/code-test/runs/frei-0
+ * Aufruf (von graphcode/): node rig/code-test/messen.mjs ~/.graphcode-code-test/runs/gefuehrt-0 ~/.graphcode-code-test/runs/frei-0
  *
  * @author andreas@siglochconsulting
  */
@@ -28,6 +28,8 @@ const GC_ROOT = resolve(HERE, '..', '..');
 const CLI = join(GC_ROOT, 'dist', 'cli.js');
 
 const istTest = (p) => /(^|\/)(tests?|__tests__)\//.test(p) || /\.(test|spec)\.ts$/.test(p);
+/** Unveraenderte Stubs, die graphcode aus Bindungen erzeugt (TEST: CR-GC-205, SCHEMA: BOK-CR-026) — nicht die Arbeit des Arms. */
+const istStub = (inhalt) => /GENERATED STUB \((CR-GC-205|BOK-CR-026)\)/.test(inhalt);
 
 /** Alle .ts unter dir (ohne node_modules), relativ. */
 function tsDateien(dir, basis = dir) {
@@ -41,8 +43,7 @@ function tsDateien(dir, basis = dir) {
 
 /** Rein: Kennzahlen des Quelltexts aus {pfad: inhalt}. Importe relativ, Zyklen per Tiefensuche. */
 export function codeKennzahlen(dateien) {
-  // Unveraenderte Stubs, die graphcode aus TEST-Bindungen erzeugt (CR-GC-205), sind nicht die Arbeit des Arms.
-  const pfade = Object.keys(dateien).filter((p) => !istTest(p) && !dateien[p].includes('GENERATED STUB (CR-GC-205)'));
+  const pfade = Object.keys(dateien).filter((p) => !istTest(p) && !istStub(dateien[p]));
   const zeilen = (t) => t.split('\n').filter((z) => z.trim() && !z.trim().startsWith('//') && !z.trim().startsWith('*')).length;
   const kanten = new Map();
   let exporte = 0;
@@ -80,13 +81,14 @@ function vitestJson(cwd, args, env = {}) {
   spawnSync('npx', ['vitest', 'run', ...args, '--reporter=json', `--outputFile=${out}`], { cwd, env: { ...process.env, ...env }, encoding: 'utf8', timeout: 600_000 });
   if (!existsSync(out)) return null;
   const j = JSON.parse(readFileSync(out, 'utf8'));
-  return { dateien: j.numTotalTestSuites ?? j.testResults?.length ?? 0, tests: j.numTotalTests, gruen: j.numPassedTests };
+  return { dateien: j.numTotalTestSuites ?? j.testResults?.length ?? 0, tests: j.numTotalTests, gruen: j.numPassedTests, offen: (j.numPendingTests ?? 0) + (j.numTodoTests ?? 0) };
 }
 
 async function architektur(ws) {
   const kopie = mkdtempSync(join(tmpdir(), 'ct-import-'));
   for (const d of ['src', 'vertrag']) if (existsSync(join(ws, d))) cpSync(join(ws, d), join(kopie, d), { recursive: true });
   cpSync(join(ws, 'package.json'), join(kopie, 'package.json'));
+  for (const p of tsDateien(join(kopie, 'src'))) if (istStub(readFileSync(join(kopie, 'src', p), 'utf8'))) rmSync(join(kopie, 'src', p));
   execFileSync('git', ['init', '-q'], { cwd: kopie });
   execFileSync('node', [CLI, 'init'], { cwd: kopie, stdio: 'pipe' });
   execFileSync('node', [CLI, 'import-code', '.'], { cwd: kopie, stdio: 'pipe', timeout: 300_000 });
@@ -145,7 +147,7 @@ export function vergleich(ms) {
     `| | ${ms.map((m) => m.arm).join(' | ')} |`,
     `|---|${ms.map(() => '---:').join('|')}|`,
     zeile('Abnahme bestanden', (m) => (m.funktion?.tests ? `${m.funktion.gruen}/${m.funktion.tests}` : 'laedt nicht')),
-    zeile('eigene Tests gruen', (m) => `${m.eigeneTests.gruen}/${m.eigeneTests.tests}`),
+    zeile('eigene Tests gruen (todo)', (m) => `${m.eigeneTests.gruen}/${m.eigeneTests.tests}${m.eigeneTests.offen ? ` (${m.eigeneTests.offen} todo)` : ''}`),
     zeile('Dateien / Module (src)', (m) => `${m.code.dateien} / ${m.code.module}`),
     zeile('Zeilen / groesste Datei', (m) => `${m.code.zeilen} / ${m.code.groessteDatei}`),
     zeile('Exporte / relative Importe', (m) => `${m.code.exporte} / ${m.code.importe}`),

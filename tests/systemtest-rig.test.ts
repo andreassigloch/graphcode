@@ -530,6 +530,7 @@ describe('Code-Test: Kennzahlen am Quelltext, fuer beide Arme gleich (CR-GC-610)
       'zustand/speicher.ts': 'export function lade() { return 1; }',
       'kern/scheduler.test.ts': "import { createScheduler } from './scheduler.js';",
       'contracts/stub.ts': '/** GENERATED STUB (CR-GC-205) */\nexport const a = 1;',
+      'contracts/schema.ts': "/** GENERATED STUB (BOK-CR-026) */\nimport { z } from 'zod/v4';\nexport const S = z.unknown();",
     });
     expect(k).toMatchObject({ dateien: 3, module: 3, exporte: 3, importe: 2, importzyklen: 0 }); // Re-Export zaehlt als Abhaengigkeit
   });

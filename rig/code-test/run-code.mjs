@@ -12,12 +12,13 @@
  * Aufruf (von graphcode/):
  *   ARMS=gefuehrt,frei node rig/code-test/run-code.mjs            # voller Lauf (kostet)
  *   NUR_AUFBAU=1 ARMS=gefuehrt,frei node rig/code-test/run-code.mjs  # nur Arbeitsbereiche, kein Modell
- *   node rig/code-test/messen.mjs rig/code-test/runs/gefuehrt-0 rig/code-test/runs/frei-0
+ *   node rig/code-test/messen.mjs ~/.graphcode-code-test/runs/gefuehrt-0 ~/.graphcode-code-test/runs/frei-0
  *
  * @author andreas@siglochconsulting
  */
 import { mkdirSync, rmSync, writeFileSync, readFileSync, copyFileSync } from 'node:fs';
 import { join, dirname, resolve } from 'node:path';
+import { homedir } from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { isolateGit, claudeEnv } from '../greenfield-systemtest/run.mjs';
@@ -26,6 +27,8 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 const GC_ROOT = resolve(HERE, '..', '..');
 const GOLDEN = join(GC_ROOT, 'rig', 'sigllm-spezifikation', 'golden', 'sigllm-v98.graph.json');
 const AUFTRAG = join(GC_ROOT, 'rig', 'sigllm-spezifikation', 'material-prosa', 'auftrag.md');
+/** Ausserhalb des Repos: unter rig/code-test/ saehe der Agent die verdeckte Abnahme und die Referenz im Elternverzeichnis. */
+export const RUNS = process.env.RUNS_DIR ?? join(homedir(), '.graphcode-code-test', 'runs');
 const CFG = {
   arms: (process.env.ARMS ?? '').split(',').filter(Boolean),
   run: Number(process.env.RUN ?? 0),
@@ -124,7 +127,7 @@ async function main() {
     process.exit(2);
   }
   for (const arm of CFG.arms) {
-    const dir = join(HERE, 'runs', `${arm}-${CFG.run}`);
+    const dir = join(RUNS, `${arm}-${CFG.run}`);
     process.stderr.write(`[${arm}] Aufbau ${dir}\n`);
     aufbau(arm, dir);
     if (CFG.nurAufbau) continue;
@@ -132,7 +135,7 @@ async function main() {
     writeFileSync(join(dir, 'usage.json'), JSON.stringify(u, null, 2) + '\n');
     process.stderr.write(`[${arm}] fertig: exit=${u.exit} $${u.cost_usd} ${u.turns} Turns ${u.wall_s}s\n`);
   }
-  console.log(CFG.nurAufbau ? 'Aufbau fertig — kein Modell gefahren.' : 'Fertig. Messen: node rig/code-test/messen.mjs rig/code-test/runs/<arm>-<n> …');
+  console.log(CFG.nurAufbau ? 'Aufbau fertig — kein Modell gefahren.' : `Fertig. Messen: node rig/code-test/messen.mjs ${RUNS}/<arm>-<n> …`);
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) await main();
