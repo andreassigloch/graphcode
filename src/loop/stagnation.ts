@@ -22,8 +22,11 @@
  * @author andreas@siglochconsulting
  */
 import type { GenerationStep } from './generate.js';
+import type { RuleTask } from '@sigloch/contracts/se';
 
 export interface FocusMemory {
+  /** CR-GC-601: der Task, in dem die Sitzung gerade arbeitet — `next` bleibt darin, bis graph_generate ohne task. */
+  task: RuleTask;
   /** Der zuletzt ausgelieferte Fokus und die Graph-Version, bei der er ausgeliefert wurde. */
   last: { key: string; version: number } | null;
   /** Fund-Sets, die zweimal ohne Wirkung kamen — fuer diese Sitzung zurueckgestellt. */
@@ -36,7 +39,7 @@ const memories = new WeakMap<object, FocusMemory>();
 export function focusMemoryOf(owner: object): FocusMemory {
   let m = memories.get(owner);
   if (!m) {
-    m = { last: null, deferred: new Set() };
+    m = { task: 'kern', last: null, deferred: new Set() };
     memories.set(owner, m);
   }
   return m;
