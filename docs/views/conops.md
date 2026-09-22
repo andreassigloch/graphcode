@@ -312,6 +312,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-547` | n/a | Zod plus Test fuer die Grenzvertraege: MCPTool/MCPToolRegistry als Laufzeitvertrag, parse im einen Bauplatz der Registry, Vertrags-TEST gegen die echte Registry - R-32 und RC-04 erfuellen statt abschwaechen | `MOD-kernel` |
 | `CR-GC-549` | done | Zugverlauf aus dem Audit-Log rekonstruieren | `REQ-audit-trail` |
 | `CR-GC-550` | open | se-plan leitet ueber REQ ab, nicht ueber FUNC-Blaetter | `FUNC-se-plan` |
+| `CR-GC-551` | n/a | kinds als Zeichenkette ueber den commands-Pfad: 49 von 49 REQ eines Auto-Laufs tragen "non-functional" statt ["non-functional"] - die in CR-SM-320 par. 4 als offen benannte Haelfte ist die, die in der Praxis feuert | `FUNC-mutate` |
 | `CR-GC-552` | n/a | graphcode run gegen sigllm statt direkt gegen die Runtime — drittes Backend sigllm im Executor | `FUNC-call-model` · `FUNC-run-verb` |
 | `CR-GC-569` | done | Betriebsmodi sind nicht modelliert: ein ACTOR-agent fuer beide Treiber, UC-reduced-llm vermischt Modell und Treiber, kein SCHEMA fuer die Lauf-Konfiguration | `FUNC-call-model` · `FUNC-run-executor` · `UC-reduced-llm` |
 | `CR-GC-571` | done | Smeagol-Check: jede in einem Skill genannte Regel-ID muss im Regelkatalog existieren (18 genannt, 1 erfunden) | `FUNC-author-uc` · `FUNC-generation-step` · `FUNC-se-fmea` · `FUNC-view-fmea` · `REQ-published-counts-match-code` |
@@ -323,6 +324,12 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-579` | done | mcp-server.ts serialisiert JEDE Werkzeugantwort mit Einrueckung 2 — 18,3 Prozent des gesamten Werkzeug-Payloads, graph_readiness 38 Prozent. Ein Argument | `FUNC-serve-stdio` |
 | `CR-GC-605` | n/a | Schwere = Gate-Wirkung (gating entfaellt, 6 errors -> warning), Phase INCOSE-korrigiert (AF-01 SRR, AF-05 PDR, R-26 TRR), Smeagol Stufe (e) Empfehlungskonsistenz, Regel-Matrix ohne abgeleitete Spalten | `FUNC-generation-step` · `FUNC-mutate` |
 | `CR-GC-607` | n/a | Task-Regeln TR-01 (Trade-Entscheidung als CR) und IR-01 (Annahmen-Review promoviert zu CR) ueber crRefs im Frischestempel | `FUNC-generation-step` · `FUNC-se-irr` · `FUNC-se-trade` |
+| `CR-GC-608` | n/a | Fertig-Kriterium der Steuerregeln: lokales Optimum bei Kreis oder Plateau ueber 3 Steuerzuege (opus5-11/13/15) | `FUNC-generation-step` · `FUNC-take-steering-snapshot` |
+| `CR-GC-610` | n/a | Code-Test (Leitlinie Satz 7): Scheduler-Scheibe aus sigllm, gefuehrt (Modell + graphcode) gegen frei laufendes Claude Code — Aufgabe, Vertrag, verdeckte Abnahme, Messung | `REQ-greenfield-systemtest-dod` |
+| `CR-GC-612` | n/a | Fester Vorspann je Lauf entflechten: GRAPHCODE.md, Werkzeugbeschreibungen, Skills und Antworten haben doppelte Zustaendigkeit — jede Frage soll genau einen Ort haben | `FUNC-se-help` |
+| `CR-GC-613` | n/a | Lesewerkzeuge antworten ueber das ganze Modell statt ueber die Scheibe: rules_get_violations 32.630, graph_test_report 25.602, graph_context je 9.300 Zeichen — 62% der graphcode-Antworten eines Laufs | `FUNC-graph-readiness` · `FUNC-read-tools` |
+| `CR-GC-614` | n/a | Executor verwirft alte Denkbloecke nach jedem Zug — der Graph ist das Gedaechtnis, nicht der Gespraechsverlauf (gemessen: ~58% des Kontexts in Lauf 15) | `FUNC-run-executor` |
+| `CR-GC-615` | n/a | Rig captureArtifacts scheitert nach Git-Aktionen des Agenten an Export-Drift (opus5-16: graph_export refused, Ergebniszeile fehlt) | `FUNC-systemtest-report` · `REQ-greenfield-systemtest-dod` |
 | `CR-GC-616` | n/a | ITEM-462 umgesetzt: UC-05/06/RD-03 gestrichen (UC-Schreibregel), MT-02 warning, Fix-Roundtrip-Test, Folge-Regel-Spalte | `FUNC-author-uc` · `FUNC-generation-step` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,

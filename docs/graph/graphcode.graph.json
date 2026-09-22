@@ -12024,6 +12024,11 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-551",
+      "target": "FUNC-mutate",
+      "type": "relation"
+    },
+    {
       "source": "CR-GC-552",
       "target": "FUNC-call-model",
       "type": "relation"
@@ -12171,6 +12176,51 @@
     {
       "source": "CR-GC-607",
       "target": "FUNC-se-trade",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-608",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-608",
+      "target": "FUNC-take-steering-snapshot",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-610",
+      "target": "REQ-greenfield-systemtest-dod",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-612",
+      "target": "FUNC-se-help",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-613",
+      "target": "FUNC-graph-readiness",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-613",
+      "target": "FUNC-read-tools",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-614",
+      "target": "FUNC-run-executor",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-615",
+      "target": "FUNC-systemtest-report",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-615",
+      "target": "REQ-greenfield-systemtest-dod",
       "type": "relation"
     },
     {
@@ -20479,5 +20529,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 377
+  "graphVersion": 378
 }
