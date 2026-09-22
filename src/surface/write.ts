@@ -20,6 +20,7 @@ import { computeSteeringDelta, takeSteeringSnapshot, type SteeringDelta } from '
 import { stripViolationContext, groupViolationsByRule, type GroupedViolation } from '../kernel/evaluation.js';
 import { fitAdvisoryIsSilent, steerAdvisoryIsSilent, type FitAdvisory, type SteerAdvisory } from '../kernel/measure/fit-advisory.js';
 import { workOrderIsSilent, type WorkOrder } from '../kernel/measure/work-order.js';
+import { loadTargetProfile } from '../loop/target-profile.js';
 import type { RespondsToViolation } from '../projections/trajectory.js';
 import type { ToolContext } from './tool-context.js';
 
@@ -170,14 +171,21 @@ function summarizeViolations<T extends { violations: MutateResult['violations'] 
  * Was „nichts melden" heisst, steht je Block bei seinem ERZEUGER (`fitAdvisoryIsSilent`,
  * `steerAdvisoryIsSilent`, `workOrderIsSilent`) und nicht hier — hier wird nur angewandt.
  */
-function dropSilentAdvisories<T extends object>(result: T): T {
+function dropSilentAdvisories<T extends object>(result: T, hatZielprofil: boolean): T {
   const r = result as T & {
     fitAdvisory?: FitAdvisory;
     steerAdvisory?: SteerAdvisory;
     workOrder?: WorkOrder;
+    confidence?: number;
   };
   const out = { ...r };
-  if (out.fitAdvisory && fitAdvisoryIsSilent(out.fitAdvisory)) delete out.fitAdvisory;
+  // CR-GC-590: `confidence` ist eine Konstante (0 oder 1) ohne einen einzigen Leser — weg.
+  delete out.confidence;
+  // CR-GC-590: ohne Zielprofil ist der ℝ⁶ Richtung ohne Ziel. Er rankt seit CR-GC-483 nicht
+  // mehr, und seine `regressions`-Liste widersprach dem Satz "nur Bericht" (Runde 7: 8–15 Bloecke
+  // je Lauf, fast alle mit Regression, Modulschnitte danach entschieden). Mit Zielprofil bleibt
+  // er — dort ist Δm die Richtung (se:optimize, se:top-level).
+  if (out.fitAdvisory && (!hatZielprofil || fitAdvisoryIsSilent(out.fitAdvisory))) delete out.fitAdvisory;
   if (out.steerAdvisory && steerAdvisoryIsSilent(out.steerAdvisory)) delete out.steerAdvisory;
   if (out.workOrder && workOrderIsSilent(out.workOrder)) delete out.workOrder;
   return out as T;
@@ -318,7 +326,7 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
       'OCC (CR-GC-233): pass the graphVersion your last read returned as baseVersion — a stale ' +
       'base is rejected (tier block) with the delta of applied batches since; re-read + retry. ' +
       'Additive Batches bevorzugt als formatE-Block statt commands (~2–3× weniger Tokens); ' +
-      'dryRun:true liefert das volle Verdict inkl. fitAdvisory ohne anzuwenden (auditiert als Preview). ' +
+      'dryRun:true liefert das volle Verdict ohne anzuwenden (auditiert als Preview); fitAdvisory nur mit Zielprofil (CR-GC-590). ' +
       'commands-Minimalform (die vollständige Signaturliste aller sieben Operationen liefert ' +
       'der SCHEMA-01-Fehlertext): ' +
       '{"op":"add-node","node":{"uid":"REQ-x","type":"REQ","name":"…","description":"…"}} · ' +
@@ -418,6 +426,7 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
           await recordPreview(input.consumerId, preview, commands);
           const previewOut = dropSilentAdvisories(
             input.violations === 'full' ? preview : summarizeViolations(preview),
+            loadTargetProfile(harness.getRepoRoot()) !== null,
           );
           // CR-GC-321/REQ-N07: auch im Preview — sonst meldet der dryRun sauber
           // und der Apply verliert die Namen.
@@ -432,6 +441,7 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
         });
         const out = dropSilentAdvisories(
           input.violations === 'full' ? result : summarizeViolations(result),
+          loadTargetProfile(harness.getRepoRoot()) !== null,
         );
         return {
           ...out,

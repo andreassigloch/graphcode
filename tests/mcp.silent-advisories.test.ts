@@ -14,7 +14,7 @@
  * @author andreas@siglochconsulting
  */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { mkdtempSync, rmSync, mkdirSync } from 'node:fs';
+import { mkdtempSync, rmSync, mkdirSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createHarness, type GraphCodeHarness } from '../src/index.js';
@@ -84,9 +84,8 @@ describe('TEST-silent-advisories: was nichts sagt, steht nicht da (CR-GC-576)', 
     expect(workOrderIsSilent(wo as never)).toBe(false);
   });
 
-  it('ein Advisory MIT Regression erscheint unveraendert — erzwungene Architekturbewegung', async () => {
-    // Elemente in den Architektur-Teilgraphen legen, bis das Fit-Advisory ausschlaegt.
-    const antwort = await mutiere([
+  /** Elemente in den Architektur-Teilgraphen legen, bis das Fit-Advisory ausschlaegt. */
+  const architekturZug = () => [
       knoten('ACTOR-u', 'ACTOR', 'U', 'Ein Akteur am Systemrand.'),
       knoten('FUNC-a', 'FUNC', 'A', 'Erste Funktion der Kette.'),
       knoten('FUNC-b', 'FUNC', 'B', 'Zweite Funktion der Kette.'),
@@ -95,13 +94,36 @@ describe('TEST-silent-advisories: was nichts sagt, steht nicht da (CR-GC-576)', 
       kante('FUNC-a', 'FLOW-f', 'io'),
       kante('FLOW-f', 'FUNC-b', 'io'),
       kante('FLOW-f', 'SCHEMA-s', 'relation'),
-    ]);
+  ];
+
+  it('ein Advisory MIT Regression erscheint unveraendert — MIT Zielprofil (CR-GC-590)', async () => {
+    // Seit CR-GC-590 ist der ℝ⁶ ohne Ziel kein Verdict: erst das Profil macht ihn zur Richtung.
+    writeFileSync(join(repoRoot, '.graphcode', 'target-profile.json'), JSON.stringify({ weights: { coherence: 1 } }));
+    const antwort = await mutiere(architekturZug());
     expect(antwort.success).toBe(true);
     expect(antwort).toHaveProperty('fitAdvisory');
     const fit = antwort.fitAdvisory as { delta: number[] };
     expect(fit.delta.some((d) => d !== 0)).toBe(true);
     expect(fitAdvisoryIsSilent(fit as never)).toBe(false);
   });
+
+  it('OHNE Zielprofil kommt kein fitAdvisory ueber die Leitung — auch nicht mit Regression (CR-GC-590)', async () => {
+    // Runde 7: 8–15 fitAdvisory-Bloecke je Lauf, fast alle mit `regressions`, und der Agent
+    // entschied Modulschnitte danach — obwohl der Satz "nur Bericht" hiess. Ohne Ziel ist eine
+    // Regression keine Aussage; der Audit-Trail behaelt sie (Evidenz), die Antwort nicht.
+    const antwort = await mutiere(architekturZug());
+    expect(antwort.success).toBe(true);
+    expect(antwort).not.toHaveProperty('fitAdvisory');
+  });
+
+  it('confidence ist auf keiner Antwort — eine Konstante ohne Leser (CR-GC-590)', async () => {
+    const antwort = await mutiere([knoten('CR-Y', 'CR', 'Y', 'Ein Change Request ohne Umfang.')]);
+    expect(antwort).not.toHaveProperty('confidence');
+    const probe = (await tools.graph_mutate.handler({ commands: architekturZug(), consumerId: 'test', dryRun: true })) as Antwort;
+    expect(probe).not.toHaveProperty('confidence');
+    expect(probe).toHaveProperty('steeringDelta'); // die Probe behaelt ihr Vergleichsmass
+  });
+
 });
 
 describe('TEST-silent-advisories: die Definition von "ohne Aussage" (CR-GC-576)', () => {
