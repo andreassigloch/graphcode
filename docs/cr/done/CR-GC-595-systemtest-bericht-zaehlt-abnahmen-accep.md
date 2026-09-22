@@ -1,6 +1,6 @@
 # CR-GC-595: Systemtest-Bericht zaehlt Abnahmen (acceptedFindings) je Lauf und Regel — sonst faellt eine erschlichene Freigabe nicht auf
 
-**Status:** ✅ Umgesetzt — Bestaetigungslauf folgt
+**Status:** ✅ Done (2026-09-22)
 **Typ:** aus Item ITEM-2026-446 (idea)
 **Erstellt:** 2026-09-22
 **Item:** bok/items/ITEM-2026-446.json (Lane: graph)
