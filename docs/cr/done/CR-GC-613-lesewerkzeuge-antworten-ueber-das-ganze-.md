@@ -1,6 +1,6 @@
 # CR-GC-613: Lesewerkzeuge antworten ueber das ganze Modell statt ueber die Scheibe: rules_get_violations 32.630, graph_test_report 25.602, graph_context je 9.300 Zeichen — 62% der graphcode-Antworten eines Laufs
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-22)
 **Typ:** aus Item ITEM-2026-476 (finding)
 **Erstellt:** 2026-09-22
 **Item:** bok/items/ITEM-2026-476.json (Lane: code)
