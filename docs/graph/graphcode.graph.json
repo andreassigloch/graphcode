@@ -1883,6 +1883,30 @@
       "commitRef": "d455398"
     },
     {
+      "id": "CR-GC-612",
+      "type": "CR",
+      "name": "Fester Vorspann je Lauf entflechten: GRAPHCODE.md, Werkzeugbeschreibungen, Skills und Antworten haben doppelte Zustaendigkeit — jede Frage soll genau einen Ort haben",
+      "description": "docs/cr/open/CR-GC-612-fester-vorspann-je-lauf-entflechten-grap.md"
+    },
+    {
+      "id": "CR-GC-613",
+      "type": "CR",
+      "name": "Lesewerkzeuge antworten ueber das ganze Modell statt ueber die Scheibe: rules_get_violations 32.630, graph_test_report 25.602, graph_context je 9.300 Zeichen — 62% der graphcode-Antworten eines Laufs",
+      "description": "docs/cr/open/CR-GC-613-lesewerkzeuge-antworten-ueber-das-ganze-.md"
+    },
+    {
+      "id": "CR-GC-614",
+      "type": "CR",
+      "name": "Executor verwirft alte Denkbloecke nach jedem Zug — der Graph ist das Gedaechtnis, nicht der Gespraechsverlauf (gemessen: ~58% des Kontexts in Lauf 15)",
+      "description": "docs/cr/open/CR-GC-614-executor-verwirft-alte-denkbloecke-nach-.md"
+    },
+    {
+      "id": "CR-GC-615",
+      "type": "CR",
+      "name": "Rig captureArtifacts scheitert nach Git-Aktionen des Agenten an Export-Drift (opus5-16: graph_export refused, Ergebniszeile fehlt)",
+      "description": "docs/cr/open/CR-GC-615-rig-captureartifacts-scheitert-nach-git-.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -20439,5 +20463,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 371
+  "graphVersion": 375
 }
