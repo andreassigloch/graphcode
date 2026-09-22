@@ -1,6 +1,6 @@
 # CR-GC-605: Gate und Fokus ohne `gating`, Smeagol Stufe (e) Empfehlungskonsistenz, Regel-Matrix ohne abgeleitete Spalten
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-22)
 **Typ:** aus Item ITEM-2026-461 (idea)
 **Erstellt:** 2026-09-22
 **Item:** bok/items/ITEM-2026-461.json (Lane: graph)

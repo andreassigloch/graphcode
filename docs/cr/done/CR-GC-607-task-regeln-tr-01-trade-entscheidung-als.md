@@ -1,6 +1,6 @@
 # CR-GC-607: se-trade und se-irr setzen den Frischestempel mit `crRefs`; Task-Fokus zeigt TR-01 / IR-01
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-22)
 **Typ:** aus Item ITEM-2026-468 (idea)
 **Erstellt:** 2026-09-22
 **Item:** bok/items/ITEM-2026-468.json (Lane: graph)

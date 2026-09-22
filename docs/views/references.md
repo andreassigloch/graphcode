@@ -587,6 +587,11 @@
 | `CR-GC-575` | relation | `FUNC-generation-step` |
 | `CR-GC-578` | relation | `FUNC-audit-trail` |
 | `CR-GC-579` | relation | `FUNC-serve-stdio` |
+| `CR-GC-605` | relation | `FUNC-generation-step` |
+| `CR-GC-605` | relation | `FUNC-mutate` |
+| `CR-GC-607` | relation | `FUNC-generation-step` |
+| `CR-GC-607` | relation | `FUNC-se-irr` |
+| `CR-GC-607` | relation | `FUNC-se-trade` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-suggest` |
