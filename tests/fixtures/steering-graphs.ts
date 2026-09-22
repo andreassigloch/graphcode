@@ -449,27 +449,6 @@ export function scriptedActor(focus: ParsedFocus, seq: number): unknown[] | null
       }
       return cmds;
 
-    // A pre/postcondition requirement the use case never states.
-    case 'UC-05':
-    case 'UC-06': {
-      const kind = ruleId === 'UC-05' ? 'postcondition' : 'precondition';
-      for (const uc of elementIds) {
-        const req = `REQ-${uc}-${kind}-${seq}`;
-        const test = `TEST-${uc}-${kind}-${seq}`;
-        cmds.push(
-          node(req, 'REQ', `${kind} of ${uc}`, `On completing ${uc} the system shall hold the stated ${kind}.`, { kinds: [kind] }),
-        );
-        cmds.push(
-          node(test, 'TEST', `Test of the ${kind} of ${uc}`, `Asserts the ${kind} of ${uc} after the scenario runs.`, {
-            testRefs: testRefFor(test, `${uc}-${kind}`),
-          }),
-        );
-        cmds.push(edge(test, 'verify', req));
-        cmds.push(edge(uc, 'compose', req));
-      }
-      return cmds;
-    }
-
     // A scenario chain with no entry/exit flow to the outside world.
     case 'FC-01':
     case 'FC-04':

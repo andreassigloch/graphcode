@@ -300,8 +300,6 @@ const HINT_DEMANDS = {
   // "Add satisfy trace from FUNC, FCHAIN, MOD, or SYS"
   'RD-01': [{ edge: 'satisfy', dir: 'in', otherType: ['FUNC', 'FCHAIN', 'MOD', 'SYS'] }],
   // "Add a REQ with kinds=[...] via compose trace"
-  'UC-05': [{ edge: 'compose', dir: 'any', otherType: ['REQ'] }],
-  'UC-06': [{ edge: 'compose', dir: 'any', otherType: ['REQ'] }],
   // "Add a FCHAIN via compose trace ..."
   'UC-03': [{ edge: 'compose', dir: 'any', otherType: ['FCHAIN'] }],
   'FC-02': [{ edge: 'compose', dir: 'any', otherType: ['FCHAIN'] }],
