@@ -463,3 +463,27 @@ describe('Auto gegen Hand im Bericht (CR-GC-586)', () => {
     expect(t.zuege.at(-1).elemente).toBe(m.profil(JSON.parse(readFileSync(golden, 'utf8'))).elemente);
   });
 });
+
+describe('Rig-Rewind: Start aus einem Audit-Zwischenstand (CR-GC-597)', () => {
+  it('ersteZuege liest genau die ersten n angewandten Mutationen — abgelehnte und andere Saetze zaehlen nicht', async () => {
+    // @ts-expect-error — s.o.
+    const { ersteZuege } = await import('../rig/greenfield-systemtest/run.mjs');
+    const dir = mkdtempSync(join(tmpdir(), 'gc-rewind-'));
+    try {
+      const p = join(dir, 'audit.jsonl');
+      const z = (operation: string, result: string, commands: unknown[]) => JSON.stringify({ operation, result, commands });
+      writeFileSync(p, [
+        z('mutate', 'applied', [{ op: 'add-node', node: { uid: 'SYS-s' } }]),
+        z('validate', 'applied', []),
+        z('mutate', 'rejected', [{ op: 'add-node', node: { uid: 'X' } }]),
+        z('mutate', 'applied', [{ op: 'add-node', node: { uid: 'UC-a' } }]),
+        z('mutate', 'applied', [{ op: 'add-node', node: { uid: 'UC-b' } }]),
+      ].join('\n') + '\n');
+      const b = ersteZuege(p, 2);
+      expect(b.map((c: { node: { uid: string } }[]) => c[0].node.uid)).toEqual(['SYS-s', 'UC-a']);
+      expect(() => ersteZuege(p, 9)).toThrow(/nur 3 angewandte Zuege/);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+});
