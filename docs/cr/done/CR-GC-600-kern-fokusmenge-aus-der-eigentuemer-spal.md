@@ -1,6 +1,6 @@
 # CR-GC-600: Kern-Fokusmenge aus der Eigentuemer-Spalte statt aus vier Sonderlisten (ABNEHMBARE_REGELN, FOCUS_EXCLUDED_WHEN_UNBOUND, ARTEFAKT_EIGENE_REGELN, ND-Ausnahme): Kern = Kern-Regeln + Task-Eintrittspunkte; Abnahme im Kern nur an Eintrittspunkten
 
-**Status:** ✅ Umgesetzt
+**Status:** ✅ Done (2026-09-22)
 **Typ:** aus Item ITEM-2026-453 (idea)
 **Erstellt:** 2026-09-22
 **Item:** bok/items/ITEM-2026-453.json (Lane: graph)
