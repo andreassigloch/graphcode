@@ -27,7 +27,7 @@ import { acceptedRuleIds } from '@sigloch/contracts/se';
 import { isIntentTooThin, intentCoverage, type LoadedTargetProfile } from './target-profile.js';
 import { winner } from './channel-rank.js';
 import { decision } from './decisions.js';
-import { ABNEHMBARE_REGELN } from '../kernel/measure/focus-set.js';
+import { abnehmbar } from '../kernel/measure/focus-set.js';
 
 /**
  * Datenvertrag der Generierungs-Instruktion (SCHEMA-generation-step) — Zod, nicht
@@ -250,9 +250,8 @@ export const DIMENSION_FOCUS_TYPES: Record<string, string[]> = {
  * kein ACTOR), `generationStep` bleibt rein. `seed` steht bewusst NICHT mehr in
  * DIMENSION_FOCUS_TYPES — dort gehoeren Readiness-Dimensionen hin, und der Seed ist keine.
  */
-// Die Fokusmenge lebt seit CR-GC-598 in kernel/measure/focus-set.ts — eine Definition fuer
-// Schritt, Probe und Bericht. Re-Export fuer bestehende Leser.
-export { FOCUS_EXCLUDED_WHEN_UNBOUND } from '../kernel/measure/focus-set.js';
+// Die Fokusmenge lebt in kernel/measure/focus-set.ts (CR-GC-598/600) — eine Definition fuer
+// Schritt, Probe und Bericht, abgeleitet aus der Eigentuemer-Spalte der Regeln.
 const windowRuleOf = (vs: readonly { rule_id: string }[]): string | undefined => vs[0]?.rule_id;
 
 export const SEED_STAGES = {
@@ -600,12 +599,12 @@ function stepCore(
   // sagt der Prompt, warum der Fund trotzdem hier steht — sonst dreht der Agent eine Schleife.
   const ignorierteAbnahme =
     windowRuleOf(focusViolations) !== undefined &&
-    !ABNEHMBARE_REGELN.has(windowRuleOf(focusViolations)!) &&
+    !abnehmbar().has(windowRuleOf(focusViolations)!) &&
     focusViolations.some((v) => acceptedRuleIds(elementById.get(v.element_id) ?? sysEl ?? {}).has(v.rule_id));
   const fensterRegel = windowRuleOf(focusViolations);
   const abnahmeHinweis = ignorierteAbnahme
     ? `Die Abnahme von ${fensterRegel} zählt nicht — Architekturregeln sind nicht abnehmbar; löse den Fund im Modell. `
-    : fensterRegel !== undefined && ABNEHMBARE_REGELN.has(fensterRegel)
+    : fensterRegel !== undefined && abnehmbar().has(fensterRegel)
       ? `${fensterRegel} ist abnehmbar: ist der Fund im Modell nicht erfüllbar, lege ihn als acceptedFindings [{ruleId, reason}] mit Grund ab. `
       : '';
   const funde = focusViolations

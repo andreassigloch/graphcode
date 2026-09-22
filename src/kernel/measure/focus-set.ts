@@ -11,9 +11,9 @@
  *   2. keine info-Regeln;
  *   3. Praesenz von Code (R-19/20/26/27/32) nur, wenn ueberhaupt etwas gebunden ist;
  *   4. keine abgenommenen Funde der abnehmbaren Klasse (acceptedFindings, CR-SM-349/CR-GC-594);
- *   5. keine Detailregeln eines Analyse-Artefakts, das ein eigener Skill erstellt (CR-GC-599): die
- *      FMEA-Regeln FM-01/02/03 gehoeren `se-fmea` — S/O/D am REQ setzt ausschliesslich die FMEA
- *      (Entscheidung 2026-09-22). Die Schleife sieht davon nur den Eintrittspunkt AF-04 ("FMEA fehlt").
+ *   5. seit CR-GC-600 aus der Eigentuemer-Spalte (contracts `taskOf`, CR-SM-350) statt aus vier
+ *      Sonderlisten: der Kern sieht Kern-Regeln und die Eintrittspunkte der Tasks; ein Task sieht sein
+ *      detailliertes Regelset (FMEA: FM-01..03, Bauplan: MS- und CR-R-Regeln, Realisierung: Praesenzregeln).
  * Dazu ND-01/02: das Gate wertet Beinahe-Duplikate nie aus, CR-GC-287 hat sie aber ausdruecklich in den
  * Fokus gelegt (der Snapshot injiziert die Aehnlichkeit) — CR-GC-593 hatte das still zurueckgedreht.
  * `blockingErrors` = Fehler-Funde der Fokusmenge (ohne abgenommene). NICHT "blockt am Gate": das tun nur
@@ -22,47 +22,63 @@
  * @author andreas@siglochconsulting
  */
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import { acceptedRuleIds, type OntologyGraph, type RuleViolation } from '@sigloch/contracts/se';
+import {
+  acceptedRuleIds,
+  taskOf,
+  TASK_ENTRY,
+  type OntologyGraph,
+  type RuleViolation,
+  type RuleTask,
+} from '@sigloch/contracts/se';
 
 /**
- * Welche Funde abnehmbar sind (Entscheidung 2026-09-22, CR-GC-594) — genau die, deren Aufloesung im
- * Modell NICHT moeglich ist: Code und Bindung (R-19/R-20/R-26/R-32, CR-R01), im
- * schlanken Scope optionale Artefakte (AF-01..05), Auftraggeber-Entscheidung (MS-01, CL-01).
- * Architekturregeln stehen NICHT darin — heute darf sie niemand abnehmen.
+ * Was je Task abnehmbar ist (CR-GC-594/600) — nur, was IN DIESEM TASK im Modell nicht erfuellbar ist.
+ * Im Kern sind das die Eintrittspunkte der Tasks ("dieses Artefakt ist im schlanken Umfang nicht
+ * noetig"); innerhalb eines Tasks die Regeln, die Code, einen Testlauf oder eine Entscheidung des
+ * Auftraggebers brauchen. Architekturregeln stehen nirgends darin — heute darf sie niemand abnehmen.
  */
-export const ABNEHMBARE_REGELN: ReadonlySet<string> = new Set([
-  'AF-01', 'AF-02', 'AF-03', 'AF-04', 'AF-05', 'MS-01', 'CL-01',
-  'R-19', 'R-20', 'R-26', 'R-32', 'CR-R01',
-]);
+export const ABNEHMBAR_JE_TASK: Readonly<Record<RuleTask, readonly string[]>> = {
+  kern: Object.values(TASK_ENTRY).filter((e): e is string => e !== null),
+  conops: ['CL-01'],
+  trade: [],
+  irr: [],
+  fmea: ['FM-03'],
+  plan: ['MS-01', 'CR-R01'],
+  anforderungsqualitaet: [],
+  realisierung: ['R-19', 'R-20', 'R-26', 'R-32'],
+};
 
-/**
- * Detailregeln, die einem Artefakt-Skill gehoeren (CR-GC-599). Die Generierungsschleife zeigt sie
- * nicht; ihr Eintrittspunkt ist die AF-Regel des Artefakts, und der Skill arbeitet sie ab.
- */
-export const ARTEFAKT_EIGENE_REGELN: ReadonlySet<string> = new Set(['FM-01', 'FM-02', 'FM-03']);
-
-/** Praesenzregeln fuer Code — ohne eine einzige Bindung kein Fund, sondern der Zustand. */
-export const FOCUS_EXCLUDED_WHEN_UNBOUND: ReadonlySet<string> = new Set(['R-19', 'R-20', 'R-26', 'R-27', 'R-32']);
-
-const GATE_RULES = new Set((SE_DESCRIPTOR.rules ?? []).map((r) => r.id));
-/** CR-GC-287: vom Gate nie ausgewertet, von der Steuerung bewusst gezeigt. */
-const STEERING_ONLY_FOCUS: ReadonlySet<string> = new Set(['ND-01', 'ND-02']);
-
-/** Die Fokusmenge eines Graphen — Teilmenge des Steuerungsstroms, s. Kopf. */
-export function focusViolations(og: OntologyGraph, violations: readonly RuleViolation[]): RuleViolation[] {
-  const gebunden = og.elements.some((e) => e.type === 'FUNC' && e.attributes?.realRef !== undefined);
-  const byId = new Map(og.elements.map((e) => [e.id, e]));
-  const sys = og.elements.find((e) => e.type === 'SYS');
-  return violations.filter((v) => {
-    if ((!GATE_RULES.has(v.rule_id) && !STEERING_ONLY_FOCUS.has(v.rule_id)) || v.severity === 'info') return false;
-    if (!gebunden && FOCUS_EXCLUDED_WHEN_UNBOUND.has(v.rule_id)) return false;
-    if (ARTEFAKT_EIGENE_REGELN.has(v.rule_id)) return false;
-    const traeger = byId.get(v.element_id) ?? sys;
-    return !(traeger && ABNEHMBARE_REGELN.has(v.rule_id) && acceptedRuleIds(traeger).has(v.rule_id));
-  });
+/** Die abnehmbaren Regeln eines Tasks als Menge. */
+export function abnehmbar(task: RuleTask = 'kern'): ReadonlySet<string> {
+  return new Set(ABNEHMBAR_JE_TASK[task]);
 }
 
-/** Fehler-Funde der Fokusmenge — abgenommene zaehlen nicht mehr (Rewind opus5-12: 0 → 8 durch FM-03). */
+const GATE_RULES = new Set((SE_DESCRIPTOR.rules ?? []).map((r) => r.id));
+/** CR-GC-287: vom Gate nie ausgewertet, von der Steuerung bewusst im Kern gezeigt. */
+const STEERING_ONLY_KERN: ReadonlySet<string> = new Set(['ND-01', 'ND-02']);
+
+/**
+ * Die Fokusmenge eines Graphen fuer einen Task (CR-GC-600/601). Kern: Kern-Regeln des Gate-Katalogs
+ * (dazu ND) — Task-Regeln sieht er nicht, nur deren Eintrittspunkte (AF-*, selbst Kern-Regeln).
+ * Task: genau die Regeln des Tasks, als WARNUNG (Entscheidung 2026-09-22: detailliert, nicht
+ * blockierend). In beiden Faellen ohne info und ohne abgenommene Funde.
+ */
+export function focusViolations(og: OntologyGraph, violations: readonly RuleViolation[], task: RuleTask = 'kern'): RuleViolation[] {
+  const byId = new Map(og.elements.map((e) => [e.id, e]));
+  const sys = og.elements.find((e) => e.type === 'SYS');
+  const ab = abnehmbar(task);
+  const imTask = (id: string): boolean =>
+    task === 'kern' ? taskOf(id) === 'kern' && (GATE_RULES.has(id) || STEERING_ONLY_KERN.has(id)) : taskOf(id) === task;
+  return violations
+    .filter((v) => {
+      if (v.severity === 'info' || !imTask(v.rule_id)) return false;
+      const traeger = byId.get(v.element_id) ?? sys;
+      return !(traeger && ab.has(v.rule_id) && acceptedRuleIds(traeger).has(v.rule_id));
+    })
+    .map((v) => (task !== 'kern' && v.severity === 'error' ? { ...v, severity: 'warning' as const } : v));
+}
+
+/** Fehler-Funde der Fokusmenge — abgenommene zaehlen nicht (Rewind opus5-12: 0 → 8 durch FM-03). */
 export function blockingOf(focus: readonly RuleViolation[]): number {
   return focus.filter((v) => v.severity === 'error').length;
 }

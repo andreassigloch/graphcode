@@ -16,8 +16,8 @@ import { readFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { DEFAULT_METRIC_POLICY, evaluateAllRules } from '@sigloch/contracts/se';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import { generationStep, FOCUS_EXCLUDED_WHEN_UNBOUND } from '../src/loop/generate.js';
-import { ABNEHMBARE_REGELN } from '../src/loop/decisions.js';
+import { generationStep } from '../src/loop/generate.js';
+import { abnehmbar, focusViolations } from '../src/kernel/measure/focus-set.js';
 // @ts-expect-error — Rig-Auswertung in .mjs, bewusst ohne Typdeklaration
 import { spieleNach, referenzTrail } from '../rig/greenfield-systemtest/trajektorie.mjs';
 
@@ -96,14 +96,11 @@ describe('CR-GC-593/594: das Golden und die benannten Abnahmen', () => {
   it('ohne Abnahmen: nicht done, und der Rest ist eine kurze Liste menschlicher Entscheidungen', () => {
     const s = step(golden);
     expect(s.done).toBe(false);
-    const offen = new Set(
-      evaluateAllRules({ elements: golden.elements, traces: golden.traces } as never, DEFAULT_METRIC_POLICY)
-        .filter((v) => GATE.has(v.rule_id) && v.severity !== 'info' && !FOCUS_EXCLUDED_WHEN_UNBOUND.has(v.rule_id) && !v.rule_id.startsWith('FM-'))
-        .map((v) => v.rule_id),
-    );
+    const og = { elements: golden.elements, traces: golden.traces } as never;
+    const offen = new Set(focusViolations(og, evaluateAllRules(og, DEFAULT_METRIC_POLICY)).map((v) => v.rule_id));
     // Gemessen 2026-09-22: das ist, was der Handlauf am Ende der Spezifikation bewusst offen liess.
-    // CR-GC-599: FM-* gehoeren der FMEA und stehen nicht mehr in der Fokusmenge.
-    expect([...offen].sort()).toEqual(['AF-05', 'BW-02', 'MS-01', 'RD-05']);
+    // CR-GC-599/600: FM-* gehoeren der FMEA, MS-01 dem Bauplan — der Kern sieht nur noch diese drei.
+    expect([...offen].sort()).toEqual(['AF-05', 'BW-02', 'RD-05']);
   });
 
   /** Nimmt an jedem Fund der genannten Regeln ab — am betroffenen Element, graphweit am SYS. */
@@ -121,14 +118,14 @@ describe('CR-GC-593/594: das Golden und die benannten Abnahmen', () => {
     return kopie;
   };
 
-  it('CR-GC-594: die abnehmbaren (AF-05, MS-01) verschwinden aus dem Fokus, die Architektur bleibt', () => {
-    const s = step(mitAbnahmen(['AF-05', 'MS-01']));
+  it('CR-GC-594/600: der abnehmbare Eintrittspunkt (AF-05) verschwindet aus dem Fokus, die Architektur bleibt', () => {
+    const s = step(mitAbnahmen(['AF-05']));
     expect(s.done).toBe(false);
     expect(['BW-02', 'RD-05']).toContain(s.focusKey!.split(':')[1]);
   });
 
   it('CR-GC-594: eine Abnahme an einer Architekturregel zaehlt nicht — das Golden ist heute nicht done, und der Prompt sagt warum', () => {
-    const s = step(mitAbnahmen(['AF-05', 'BW-02', 'MS-01', 'RD-05']));
+    const s = step(mitAbnahmen(['AF-05', 'BW-02', 'RD-05']));
     expect(s.done).toBe(false);
     const regel = s.focusKey!.split(':')[1];
     expect(['BW-02', 'RD-05']).toContain(regel);
@@ -139,17 +136,17 @@ describe('CR-GC-593/594: das Golden und die benannten Abnahmen', () => {
     // Die Architektur-Fenster per defer zurueckstellen, bis eine abnehmbare Regel den Fokus stellt.
     let cur = step(golden);
     const defer: string[] = [];
-    while (cur.focusKey && ABNEHMBARE_REGELN.has(cur.focusKey.split(':')[1]) === false && defer.length < 50) {
+    while (cur.focusKey && abnehmbar().has(cur.focusKey.split(':')[1]) === false && defer.length < 50) {
       defer.push(cur.focusKey);
       cur = step(golden, defer);
     }
-    expect(ABNEHMBARE_REGELN.has(cur.focusKey!.split(':')[1])).toBe(true);
+    expect(abnehmbar().has(cur.focusKey!.split(':')[1])).toBe(true);
     expect(cur.prompt).toMatch(/ist abnehmbar: ist der Fund im Modell nicht erfüllbar/);
   });
 
   it('eine Abnahme ohne Grund zaehlt nicht', () => {
     const kopie: Flat = JSON.parse(JSON.stringify(golden));
-    for (const e of kopie.elements) (e.attributes ??= {}).acceptedFindings = [{ ruleId: 'RD-05' }, { ruleId: 'MS-01' }, { ruleId: 'BW-02' }, { ruleId: 'AF-05' }];
+    for (const e of kopie.elements) (e.attributes ??= {}).acceptedFindings = [{ ruleId: 'RD-05' }, { ruleId: 'BW-02' }, { ruleId: 'AF-05' }];
     expect(step(kopie).done).toBe(false);
   });
 });

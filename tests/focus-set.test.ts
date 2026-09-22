@@ -13,7 +13,7 @@ import { mkdtempSync, rmSync, mkdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import type { OntologyGraph, RuleViolation } from '@sigloch/contracts/se';
-import { focusViolations, blockingOf, ABNEHMBARE_REGELN } from '../src/kernel/measure/focus-set.js';
+import { focusViolations, blockingOf, abnehmbar } from '../src/kernel/measure/focus-set.js';
 import { createHarness, bindToolsToHarness, type GraphCodeHarness } from '../src/index.js';
 
 const v = (rule_id: string, severity: 'error' | 'warning' | 'info', element_id = 'REQ-r'): RuleViolation =>
@@ -29,9 +29,10 @@ describe('CR-GC-598: eine Fokusmenge, und blockingErrors kennt die Abnahme', () 
     expect(blockingOf(focusViolations(og(), [v('UC-01', 'error', 'SYS-s')]))).toBe(1);
   });
 
-  it('CR-GC-599: FM-01/02/03 sind nie im Fokus — S/O/D setzt nur die FMEA', () => {
+  it('CR-GC-599/600: FM-01/02/03 sind nie im KERN-Fokus — S/O/D setzt nur die FMEA', () => {
     expect(focusViolations(og(), [v('FM-01', 'warning'), v('FM-02', 'warning'), v('FM-03', 'error')])).toEqual([]);
-    expect(ABNEHMBARE_REGELN.has('FM-03')).toBe(false);
+    expect(abnehmbar('kern').has('FM-03')).toBe(false);
+    expect(abnehmbar('fmea').has('FM-03')).toBe(true); // im FMEA-Task abnehmbar (CR-GC-600)
   });
 
   it('ND-01/02 sind im Fokus, obwohl das Gate sie nie wertet (CR-GC-287)', () => {
@@ -47,7 +48,21 @@ describe('CR-GC-598: eine Fokusmenge, und blockingErrors kennt die Abnahme', () 
     const attrs = { acceptedFindings: [{ ruleId: 'R-02', reason: 'versucht' }] };
     const focus = focusViolations(og(attrs), [v('R-02', 'warning')]);
     expect(focus.map((x) => x.rule_id)).toEqual(['R-02']);
-    expect(ABNEHMBARE_REGELN.has('R-02')).toBe(false);
+    expect(abnehmbar('kern').has('R-02')).toBe(false);
+  });
+
+  it('CR-GC-600: der Task sieht sein Regelset — als Warnung, nie blockierend', () => {
+    const f = focusViolations(og(), [v('FM-03', 'error'), v('UC-01', 'error', 'SYS-s')], 'fmea');
+    expect(f.map((x) => x.rule_id)).toEqual(['FM-03']);
+    expect(f[0].severity).toBe('warning');
+    expect(blockingOf(f)).toBe(0);
+    const plan = focusViolations(og(), [v('CR-R03', 'warning'), v('MS-01', 'warning', 'SYS-s')], 'plan');
+    expect(plan.map((x) => x.rule_id).sort()).toEqual(['CR-R03', 'MS-01']);
+    expect(focusViolations(og(), [v('CR-R03', 'warning')]).length).toBe(0); // im Kern unsichtbar
+  });
+
+  it('CR-GC-600: im Kern sind nur die Eintrittspunkte abnehmbar', () => {
+    expect([...abnehmbar('kern')].sort()).toEqual(['AF-01', 'AF-02', 'AF-03', 'AF-04', 'AF-05']);
   });
 
   it('Regeln ausserhalb des Gate-Katalogs (BQ-02) und info-Regeln sind nicht im Fokus', () => {
