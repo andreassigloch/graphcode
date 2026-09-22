@@ -1,6 +1,6 @@
 # CR-GC-588: Naechster Fokus in der graph_mutate-Antwort: nach angewandtem Batch den kompakten naechsten GenerationStep mitliefern — 55 % der Mutationen kamen ohne frisches graph_generate, Turns sind der Kostentreiber
 
-**Status:** ✅ Umgesetzt, Kriterium 2 faellt mit dem Phase-1-Lauf
+**Status:** ✅ Done (2026-09-22)
 **Typ:** aus Item ITEM-2026-437 (idea)
 **Erstellt:** 2026-09-22
 **Item:** bok/items/ITEM-2026-437.json (Lane: graph)
