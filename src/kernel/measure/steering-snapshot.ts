@@ -76,7 +76,7 @@ export function takeSteeringSnapshot(
     og,
     violations,
     // CR-GC-598: Fehler der FOKUSMENGE, die am Gate wirklich blocken — nicht jeder Fehler des
-    // 74-Regel-Stroms (FM-03 ist `gating: false` und abnehmbar; die Probe meldete sonst 0 → 8).
+    // 74-Regel-Stroms (FM-03 war damals ein nicht-blockender error und abnehmbar; die Probe meldete sonst 0 → 8).
     focus,
     blockingErrors: blockingOf(focus),
     report: computeReadiness(og, policy),

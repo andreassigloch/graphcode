@@ -161,9 +161,11 @@ describe('T-B3 / T-B5 (CR-GC-341): the ratchet, and the control that makes it re
       expect(trace[i].blockingErrors, `blocking errors rose at round ${trace[i].round}`).toBeLessThanOrEqual(trace[i - 1].blockingErrors);
     }
 
-    // Net progress, not merely "did not get worse".
+    // Net progress, not merely "did not get worse" — measured on gate coverage. Blocking errors
+    // are Gate-Schuld only since CR-SM-353 (UC-01/UC-02 are warnings now); the scripted actor
+    // never touches the fixture's one pre-existing error, so the count holds instead of falling.
     expect(trace[trace.length - 1].coveredLegs).toBeGreaterThan(trace[0].coveredLegs);
-    expect(trace[trace.length - 1].blockingErrors).toBeLessThan(trace[0].blockingErrors);
+    expect(trace[trace.length - 1].blockingErrors).toBeLessThanOrEqual(trace[0].blockingErrors);
   });
 
   it('T-B3 — the driver does not circle: a focus set is revisited at most once, and never after it is deferred', async () => {

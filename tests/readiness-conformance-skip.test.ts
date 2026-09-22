@@ -74,11 +74,15 @@ describe('CR-GC-489: das Ausfall-Signal der Konformanz ist regelfein', () => {
     expect(evaluateAll(harness).skipped).not.toContain('conformance');
   });
 
-  it('die drei error-Regeln sind namentlich sichtbar, nicht hinter einer Quelle', () => {
+  it('die Aufloesungsregeln RC-01..03 sind namentlich sichtbar, nicht hinter einer Quelle', () => {
+    // CR-SM-353: RC traegt keinen error mehr (RC laeuft nie am Gate, `error` heisst blockt) — die
+    // Sichtbarkeit haengt an der Regel, nicht an der Schwere. Die drei Aufloesungsregeln bleiben
+    // die, deren Ausfall die Kongruenz-Aussage traegt (Praesenz/Aufloesungs-Split R-19/20/26 vs RC).
     const skipped = evaluateAll(harness).skipped;
-    const errors = getRuleDefsForProfile('conformance').filter((r) => r.severity === 'error').map((r) => r.id);
-    expect(errors).toEqual(['RC-01', 'RC-02', 'RC-03']);
-    for (const id of errors) expect(skipped).toContain(`${SKIPPED_RULE_PREFIX}${id}`);
+    const aufloesung = getRuleDefsForProfile('conformance').map((r) => r.id).filter((id) => ['RC-01', 'RC-02', 'RC-03'].includes(id));
+    expect(aufloesung).toEqual(['RC-01', 'RC-02', 'RC-03']);
+    expect(getRuleDefsForProfile('conformance').filter((r) => r.severity === 'error')).toEqual([]);
+    for (const id of aufloesung) expect(skipped).toContain(`${SKIPPED_RULE_PREFIX}${id}`);
   });
 
   it('die Liste ist ABGELEITET: sie deckt genau das conformance-Profil, keine gepinnte Menge', () => {

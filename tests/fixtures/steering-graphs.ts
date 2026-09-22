@@ -163,7 +163,7 @@ export const ARCH_FIXTURE: FixtureGraph = {
  *
  *   SRR · R-16  ACTOR-auditor has no io into a UC      → conops §3
  *   PDR · R-22  FUNC-audit is allocated to no module   → architecture
- *   CDR · R-26  SCHEMA-envelope carries no realRef     → icd
+ *   TRR · R-26  SCHEMA-envelope carries no realRef     → icd
  *   TRR · R-01  REQ-audit-trail is verified by nothing → rtm + testmatrix
  *
  * Built ON TOP of `ARCH_FIXTURE` rather than beside it: `scriptedActor` repairs
@@ -208,7 +208,7 @@ export const GATE_FIXTURE: FixtureGraph = {
 export const GATE_FINDINGS = [
   { gate: 'SRR', ruleId: 'R-16', elementId: 'ACTOR-auditor' },
   { gate: 'PDR', ruleId: 'R-22', elementId: 'FUNC-audit' },
-  { gate: 'CDR', ruleId: 'R-26', elementId: 'SCHEMA-envelope' },
+  { gate: 'TRR', ruleId: 'R-26', elementId: 'SCHEMA-envelope' },
   { gate: 'TRR', ruleId: 'R-01', elementId: 'REQ-audit-trail' },
 ] as const;
 

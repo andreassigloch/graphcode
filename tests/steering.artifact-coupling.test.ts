@@ -15,7 +15,7 @@
  *
  *   SRR · R-16 · ACTOR-auditor    · conops        "keine UC-Kopplung im Graph"
  *   PDR · R-22 · FUNC-audit       · architecture  "⚠ nicht alloziert (R-22)"
- *   CDR · R-26 · SCHEMA-envelope  · icd           "⚠ kein realRef (R-26)"
+ *   TRR · R-26 · SCHEMA-envelope  · icd           "⚠ kein realRef (R-26)"
  *   TRR · R-01 · REQ-audit-trail  · rtm           "⚠ R-01 no verify"
  *                                 + testmatrix    "✗" in the verify-Kante column
  *

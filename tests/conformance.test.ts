@@ -150,7 +150,7 @@ describe('TEST-code-conformance: realRef/testRefs resolve as RC readiness rules 
     ).toBe(true);
   });
 
-  it('broken binding surfaces in the readiness report: violationsByRule + CDR gate blocks', () => {
+  it('broken binding surfaces in the readiness report: violationsByRule + open at its owner gate', () => {
     const g = harness.getGraph();
     const broken: typeof g = {
       nodes: g.nodes.map((n) =>
@@ -177,13 +177,15 @@ describe('TEST-code-conformance: realRef/testRefs resolve as RC readiness rules 
     // CR-GC-312 it is derived (RC-01 inherits the gate of R-20, the presence rule it
     // resolves) instead of being written down. Naming a gate here is how the model
     // drifted from contracts on 21 rules while every test stayed green. What this test
-    // asserts is the conformance→readiness wiring: a broken binding blocks its owner.
+    // asserts is the conformance→readiness wiring: a broken binding is OPEN at its owner.
+    // CR-SM-353: RC-01 ist warning — blocken tut nur Gate-Schuld; die gebrochene Bindung steht
+    // als offener Fund am Gate ihres Praesenz-Partners (R-20 → TRR) und faerbt `passed` nicht.
     const ownerId = Object.keys(PHASE_GATE_RULES).find((id) =>
       PHASE_GATE_RULES[id]!.includes('RC-01'),
     )!;
     const owner = report.phaseGates.find((gate) => gate.id === ownerId);
-    expect(owner?.passed).toBe(false);
-    expect(owner?.blocking.some((b) => b.startsWith('RC-01:'))).toBe(true);
+    expect(owner?.open.some((o) => o.startsWith('RC-01:'))).toBe(true);
+    expect(owner?.blocking.some((b) => b.startsWith('RC-01:'))).toBe(false);
   });
 
   it('resolves .mjs and .jsx realRefs and vitest case names (gve reality)', () => {

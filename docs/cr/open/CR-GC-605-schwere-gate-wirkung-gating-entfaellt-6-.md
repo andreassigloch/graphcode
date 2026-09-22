@@ -95,3 +95,43 @@ der alten Schwere haengt — Kandidaten `tests/readiness.model.test.ts`, `tests/
 - [ ] Golden: Kern-Fokusmenge vor/nach CR-SM-353 verglichen, Reihenfolge-Differenz (UC-01/02) benannt.
 - [ ] `verify:code` fuer den Changeset, `npm test` vor Abschluss; Peer-Floor contracts/graph-api-core im selben Commit gehoben.
 - [ ] Kongruenz: CR-Knoten CR-GC-605 mit `relation`-Kanten auf FUNC gate / focus-set / regel-matrix / skill-rule-ids; RC-07 gruen.
+
+---
+
+## Umsetzung (2026-09-22)
+
+**Gate und Fokus.** `gate.ts`: `hasNewError` prueft nur noch `severity === 'error'`; `GatedViolation` und der
+`gating`-Stempel sind weg. `focus-set.ts`: das Task-Mapping error → warning entfaellt — die Schwere wird
+durchgereicht; die eine Task-Regel mit error ist R-29 (Gate-Blocker der Realisierung), Smeagol (e) haelt
+das fest. `evaluation.rule-catalog.test.ts`: die Ausnahmeliste `['ND-01','ND-02','RC-01','RC-02','RC-03']`
+der errors ausserhalb des Gates ist **leer**.
+
+**Gemessene Nebenwirkung, behoben:** die Schwere trug die Fokus-Reihenfolge mit (CR-GC-563: UC-01/UC-02
+als error vor FC-02). Mit UC-01/UC-02 als warning stand FC-02 wieder vorn — exakt der Rig-Lauf-4-Fall.
+Jetzt ordnet innerhalb einer Schwere die **Klausel** (`RULE_CLAUSE`: UC-01, UC-02, R-15 — eine Regel mit
+Bauanweisung vor einer, die nur meldet). Tests CR-GC-563/564/566 laufen unveraendert durch, die
+Begruendung im Kommentar ist die neue.
+
+**Smeagol Stufe (e)** (`tests/skill-rule-ids.test.ts`): (1) jeder `RULE_HELP.prompt` nennt einen
+ausgelieferten Skill; (2) `TASK_SKILL[t] === RULE_HELP[TASK_ENTRY[t]].prompt`; (3) Kern-Regel: Prompt gegen
+`SKILL_FOR_DIMENSION`, Abweichungen als Ratsche benannt — UC-01 (REQ-Autorieren), RD-01 (satisfy-Kante),
+R-04 (Sicht vor Schnitt); (4) jeder Werkzeugname in Hilfe und Skills steht in der MCP-Registry; (5) error nur
+im Gate-Katalog, ohne Ausnahmeliste; (6) Task-Regel mit error = genau R-29; (7) `it.todo` Steuerregel nie info
+(MT-02, ITEM-2026-462).
+
+**Regel-Matrix** (`scripts/regel-matrix.mjs`): Spalten `blockt am Gate`, `im Kern-Fokus`, `Eintritt fuer`
+entfallen (abgeleitet bzw. im Task gefaltet); `Katalog` → `Bedarf` (Gate / Aehnlichkeit / CodeFacts / nur
+Steuerung, kein toter Zweig); `Skills` → `Hilfe-Prompt`, `Skill` (TASK_SKILL / Eintritt / SKILL_FOR_DIMENSION
+wie generate.ts), `Konflikt`, `nennt`. Stand: 76 Regeln, 62 im Gate-Katalog, 5 blocken, 3 Konflikte = die
+drei benannten Ausnahmen.
+
+**Golden-Vergleich:** Kern-Fokus am sigllm-Golden und den Fixtures: gleiche erste Fenster (UC-01 → UC-02 →
+FC-02 …); `blockingErrors` sinkt ueberall, wo UC-01/UC-02/FM-03/ND als error zaehlten — das war die
+Klasse aus Rewind opus5-12. Golden rule-output in contracts: nur sha bewegt, keine Zahl.
+
+Weitere Tests nachgezogen (Schwere-Erwartungen): `nd-similarity`, `evaluation.near-duplicate`,
+`conformance` (RC-01 offen statt blockend am TRR-Gate), `readiness-conformance-skip`,
+`steering.process-ratchet` (Netto-Fortschritt an der Gate-Abdeckung), `steering.artifact-coupling`
+(R-26 TRR), `claims.conformance` + drei Artikel (67 → 69 engine rules). Dateien: 8 Kern + 10 Tests +
+Matrix + Artikel — die Reserve von einer Datei hat nicht gereicht, die Schwere-Erwartung stand in mehr
+Tests als gegrept (bewusst nicht gesplittet: alles dieselbe Ursache, im selben Zug).

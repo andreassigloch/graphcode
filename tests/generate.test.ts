@@ -84,7 +84,8 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
     expect(step.prompt).toContain(INTENT);
     // Konkreter Fund mit Element-UID + Regel, kein generischer Ratschlag.
     expect(step.prompt).toMatch(/UC-bestellen \([A-Z]+-?\d*/);
-    expect(step.blockingErrors).toBeGreaterThan(0);
+    // CR-SM-353: UC-01/UC-02 sind Warnungen — blockingErrors zaehlt nur noch Gate-Schuld.
+    expect(step.blockingErrors).toBe(0);
     // Deterministisch.
     expect(generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS)).toEqual(step);
   });
@@ -163,17 +164,24 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
       `Das System muss ${topic} innerhalb von 2 Sekunden bestätigen und protokollieren.`;
     const graph = g(
       [
-        // CR-GC-303: die drei PDR-Freshness-Stamps sind jetzt GESETZT. Vor dem Fix war
+        // CR-GC-303: die Freshness-Stamps sind jetzt GESETZT. Vor dem Fix war
         // das wirkungslos — der Steering-Pfad las den geflachten Export, in dem
         // `attributes` gar nicht existiert, also feuerten AF-01..03 unabhängig vom
         // Modellinhalt. Jetzt trägt der Stamp und PDR wird erreichbar.
+        // CR-SM-354: conops ist SRR, trade/assumption-review/implplan sind PDR — deshalb
+        // traegt das Fixture auch den implplan-Stempel; CDR/TRR bleiben ohne fmea / Bindung.
         node('SYS-shop', 'SYS', 'shop', INTENT, {
           analysisFreshness: {
             conops: { graphVersion: 1 },
-            trade: { graphVersion: 1 },
+            trade: { graphVersion: 1, crRefs: ['CR-trade'] },
             'assumption-review': { graphVersion: 1 },
+            implplan: { graphVersion: 1 },
           },
         }),
+        // CR-SM-355: TR-01 (PDR) verlangt die Entscheidung als CR mit decides-Kante; MS-03 (info)
+        // verlangt den Meilenstein dazu — sonst bliebe SRR an einem info-Fund haengen.
+        node('MS-1', 'MS', 'Spezifikation'),
+        node('CR-trade', 'CR', 'Runtime-Entscheidung festgeschrieben'),
         node('ACTOR-kunde', 'ACTOR', 'Kunde'),
         node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt Ersatzteil und erhält Bestätigung.'),
         node('REQ-bestellung', 'REQ', 'Bestellung wird bestätigt', measurable('die Bestellung'), { kinds: ['functional'] }),
@@ -223,6 +231,8 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
         edge('FUNC-pruefen', 'MOD-bestellung', 'allocate'),
         edge('FUNC-berechnen', 'REQ-bestellung', 'satisfy'),
         edge('FUNC-berechnen', 'MOD-bestellung', 'allocate'),
+        { sourceId: 'CR-trade', targetId: 'MOD-bestellung', edgeType: 'relation', attributes: { label: 'decides' } },
+        { sourceId: 'CR-trade', targetId: 'MS-1', edgeType: 'relation', attributes: {} },
         edge('FUNC-bestaetigen', 'REQ-bestellung', 'satisfy'),
         edge('FUNC-bestaetigen', 'MOD-bestellung', 'allocate'),
         edge('ACTOR-kunde', 'FLOW-in', 'io'),
@@ -859,10 +869,12 @@ describe('CR-GC-559: der Kaltstart in drei gegateten Stufen', () => {
   });
 });
 
-describe('CR-GC-563: Fehler vor Warnungen — die Fundreihenfolge ist kein Alphabet', () => {
-  // Der gemessene Fall aus Rig-Lauf 4: UCs ohne FCHAIN (FC-02, warning) und dieselben UCs
-  // von keinem ACTOR erreichbar (UC-02, error). Alphabetisch gewinnt FC-02 — zwoelf Runden
-  // lang, und kein FUNC entstand. Der Fund, der zuerst drankommt, bestimmt die Struktur.
+describe('CR-GC-563/605: Anweisung vor Fund — die Fundreihenfolge ist kein Alphabet', () => {
+  // Der gemessene Fall aus Rig-Lauf 4: UCs ohne FCHAIN (FC-02) und dieselben UCs von keinem
+  // ACTOR erreichbar (UC-02). Alphabetisch gewinnt FC-02 — zwoelf Runden lang, und kein FUNC
+  // entstand. CR-GC-563 loeste das ueber die Schwere (UC-02 war error); seit CR-SM-353 sind
+  // UC-01/UC-02 Warnungen, und die Ordnung haengt an der KLAUSEL (RULE_CLAUSE): eine Regel mit
+  // Bauanweisung kommt vor einer, die nur meldet. Der Fund, der zuerst drankommt, bestimmt die Struktur.
   const lauf4 = g(
     [
       node('SYS-sig', 'SYS', 'SIG Local', 'Lokale LLM-Kapazitaet im internen Netz.'),
@@ -881,17 +893,17 @@ describe('CR-GC-563: Fehler vor Warnungen — die Fundreihenfolge ist kein Alpha
   /** Die Regel des aktuellen Fund-Fensters. */
   const regelVon = (key: string | null): string => String(key).split(':')[1];
 
-  it('das erste Fenster traegt eine error-Regel, obwohl FC-02 alphabetisch vorne stuende', () => {
+  it('das erste Fenster traegt eine Klausel-Regel, obwohl FC-02 alphabetisch vorne stuende', () => {
     const step = generationStep(lauf4, DEFAULT_METRIC_POLICY, undefined, FOCUS);
     expect(step.phase).toBe('expand');
-    // error: UC-01, UC-02 · warning: FC-02, R-15, R-16, UC-03 · info: UC-05, UC-06.
+    // Klausel: UC-01, UC-02 · ohne: FC-02, R-15, R-16, UC-03 · info: UC-05, UC-06.
     // Alphabetisch gewaenne FC-02 — genau das ist in Rig-Lauf 4 passiert.
     expect(['UC-01', 'UC-02'], `erstes Fenster war ${regelVon(step.focusKey)}`).toContain(
       regelVon(step.focusKey),
     );
   });
 
-  it('erst wenn KEIN error-Fenster mehr offen ist, kommt die erste Warnung', () => {
+  it('erst wenn KEIN Klausel-Fenster mehr offen ist, kommt der erste blosse Fund', () => {
     const gesehen: string[] = [];
     const keys: string[] = [];
     let step = generationStep(lauf4, DEFAULT_METRIC_POLICY, undefined, FOCUS);
@@ -902,9 +914,9 @@ describe('CR-GC-563: Fehler vor Warnungen — die Fundreihenfolge ist kein Alpha
     }
     const ersteWarnung = gesehen.findIndex((r) => !['UC-01', 'UC-02'].includes(r));
     expect(ersteWarnung, `Reihenfolge war ${gesehen.join(' → ')}`).toBeGreaterThan(0);
-    // Vor der ersten Warnung stehen ausschliesslich Fehler.
+    // Vor dem ersten blossen Fund stehen ausschliesslich Klausel-Regeln.
     expect(gesehen.slice(0, ersteWarnung).every((r) => ['UC-01', 'UC-02'].includes(r))).toBe(true);
-    // Und innerhalb einer Severity bleibt es alphabetisch (Determinismus, CR-GC-290).
+    // Und innerhalb eines Rangs bleibt es alphabetisch (Determinismus, CR-GC-290).
     expect(gesehen[ersteWarnung]).toBe('FC-02');
   });
 

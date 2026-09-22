@@ -103,7 +103,7 @@ type RawAuditEntry = Record<string, unknown> & {
  *
  * `error` stays VERBATIM including `elementId` and `message`: it explains a rejection, and
  * a rejection that cannot be explained from the default answer defeats the point of the
- * tool. Non-gating `warning`/`info` collapse per (ruleId, severity) to a count.
+ * tool. `warning`/`info` (never gate-relevant, CR-SM-353) collapse per (ruleId, severity) to a count.
  *
  * NO SILENT CAP — the count is exact, only the repetition of identical prose is gone. The
  * elementIds stay in full in the record on disk, and for the LIVING graph they are what

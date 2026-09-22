@@ -183,7 +183,9 @@ describe('T-D1 (CR-GC-340): every published count matches the living source', ()
       // CR-SM-311 (contracts 21): RD-05 kommt dazu, die Untergrenze der Breite (PDR/arch) — 64 -> 65.
       // CR-SM-319 (contracts 26, CR-GC-522): R-32 kommt dazu, Vertragstest je SCHEMA (TRR/ver) — 65 -> 66.
       // CR-SM-327 (contracts Regelkatalog 28.0.0, CR-GC-533): MT-04 kommt dazu, LCOM4 an der FUNC-Whitebox (PDR) — 66 -> 67.
-      'engine rules=67',
+      // CR-SM-355 (contracts Regelkatalog 31.0.0, CR-GC-607): TR-01 und IR-01 kommen dazu — die Task-Ausgaenge
+      // von trade / irr (PDR) — 67 -> 69. Drei Artikel nannten 67, alle drei nachgezogen.
+      'engine rules=69',
       'readiness dimensions=8',
       // CR-GC-561: 25 -> 24. `graph_next_step` ist weg — zweites Steuerungswerkzeug auf
       // derselben Messung, ohne Konsument. Der Kanarienvogel hat die drei Textstellen gefunden.

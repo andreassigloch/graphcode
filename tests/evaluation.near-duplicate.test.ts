@@ -115,7 +115,7 @@ describe('TEST-nd-im-report: ND-Funde erscheinen im Report-Pfad (CR-GC-442)', ()
     expect(nd02[0].elementId).toBe('SCHEMA-report-request');
     expect(nd02[0].message).toContain('SCHEMA-report-req');
     // Severity kommt aus contracts, nicht von hier — kein lokaler Regel-Fork.
-    expect(nd02[0].severity).toBe('error');
+    expect(nd02[0].severity).toBe('warning') // CR-SM-353: ND blockt nie am Gate;
     expect(nd02[0].fixHint).toBeTruthy();
     // Und die Regel gilt damit nicht mehr als ausgelassen.
     expect(evaluated.skipped).not.toContain('rule:ND-02');
@@ -132,17 +132,19 @@ describe('TEST-nd-im-report: ND-Funde erscheinen im Report-Pfad (CR-GC-442)', ()
     expect(readiness.skipped).not.toContain('rule:ND-02');
   });
 
-  it('Compliance zählt den ND-Fund mit — das duplizierte Element gilt als fehlerbehaftet', () => {
+  it('Compliance zählt den ND-Fund NICHT mehr als Fehler — ND ist warning, die Zahl kennt nur Gate-Schuld (CR-SM-353)', () => {
     const ev = evaluateAll(harness);
     const nd02 = ndOf(ev.findings, 'ND-02');
 
     expect(nd02).toHaveLength(1);
-    // error-Severity AN einem Element: genau das, was `computeReadiness` in
-    // `elementsWithErrors` zählt — die Wirkung auf die Compliance-Zahl, ausgeschrieben.
-    expect(nd02[0].severity).toBe('error');
+    expect(nd02[0].severity).toBe('warning');
     expect(nd02[0].elementId).toBe('SCHEMA-report-request');
+    // `elementsWithErrors` zaehlt Elemente mit error-Funden — und ND-02 ist keiner mehr. Der Fund
+    // bleibt sichtbar (Verstossliste, Report, Fokus), er faerbt nur die Compliance nicht mehr.
     const report = readinessOf(ev, harness.getGraph());
-    expect(report.compliance.elementsWithErrors).toBeGreaterThan(0);
+    const fehlerElemente = new Set(ev.findings.filter((f) => f.severity === 'error').map((f) => f.elementId)).size;
+    expect(report.compliance.elementsWithErrors).toBe(fehlerElemente);
+    expect(ev.findings.filter((f) => f.severity === 'error').map((f) => f.ruleId)).not.toContain('ND-02');
   });
 });
 
