@@ -39,3 +39,17 @@ sie nennen; Stufe (e) prueft `RULE_HELP.prompt` gegen die ausgelieferten Skills.
 - [ ] `graph_generate {task:'irr'}`: mit Stempel und leeren `crRefs` → `done` (keine tragende Annahme ist ein legitimer Ausgang).
 - [ ] `verify:code` fuer den Changeset, `npm test` vor Abschluss; Peer-Floor contracts im selben Commit.
 - [ ] Kongruenz: CR-Knoten CR-GC-607 mit `relation`-Kanten auf die Skill-FUNCs und focus-set; RC-07 gruen.
+
+---
+
+## Umsetzung (2026-09-22)
+
+`se-trade.md` / `se-irr.md`: Schritt 4 „Stamp the task" — ein `graph_mutate`-Batch am SYS mit
+`graphVersion` und `crRefs`; TR-01 / IR-01 beim Namen genannt (Smeagol (a) prueft die Existenz).
+`generate.ts`: der Satz am Task-Ende nennt `crRefs` fuer trade / irr. `generate.task.test.ts`: trade mit
+Stempel ohne `crRefs` → Fokus TR-01, nicht fertig; mit `crRefs: ['CR-SL-001']` (die eine decides-Kante
+des Golden) → `done`; irr mit leeren `crRefs` → `done`, mit fehlendem CR → IR-01. Nebenbefund: der
+Golden-Lader des Tests warf das Kanten-`label` weg — kein Leser haette je eine decides- oder
+depends-on-Kante gesehen; jetzt traegt er es. Matrix: trade 1 Regel, irr 1 Regel, Skill-Spalte se-trade /
+se-irr. `generate.test.ts` (Phasen-Fixture): traegt jetzt implplan-Stempel, eine Entscheidungs-CR mit
+decides-Kante und einen Meilenstein — sonst haengt PDR an TR-01 und SRR an MS-03.

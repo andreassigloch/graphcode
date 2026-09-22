@@ -15,7 +15,7 @@ import { DEFAULT_METRIC_POLICY, taskOf } from '@sigloch/contracts/se';
 import { generationStep, TASK_SKILL } from '../src/loop/generate.js';
 import { createHarness, bindToolsToHarness, type GraphCodeHarness } from '../src/index.js';
 
-type Flat = { elements: { id: string; type: string; name?: string; description?: string; attributes?: Record<string, unknown>; [k: string]: unknown }[]; traces: { source: string; target: string; type: string }[] };
+type Flat = { elements: { id: string; type: string; name?: string; description?: string; attributes?: Record<string, unknown>; [k: string]: unknown }[]; traces: { source: string; target: string; type: string; label?: string }[] };
 const golden: Flat = JSON.parse(readFileSync(fileURLToPath(new URL('../rig/sigllm-spezifikation/golden/sigllm-v98.graph.json', import.meta.url)), 'utf8'));
 const alsGraph = (g: Flat) => {
   const KNOWN = new Set(['id', 'type', 'name', 'description', 'attributes']);
@@ -25,7 +25,8 @@ const alsGraph = (g: Flat) => {
       for (const [k, v] of Object.entries(e)) if (!KNOWN.has(k)) attrs[k] = v;
       return { uid: e.id, type: e.type, name: e.name ?? e.id, description: e.description ?? '', attributes: attrs };
     }),
-    edges: g.traces.map((t) => ({ sourceId: t.source, targetId: t.target, edgeType: t.type, attributes: {} })),
+    // CR-GC-607: das Label MUSS mit — sonst sieht kein Leser eine decides-/depends-on-Kante (TR-01, MS-02).
+    edges: g.traces.map((t) => ({ sourceId: t.source, targetId: t.target, edgeType: t.type, attributes: t.label ? { label: t.label } : {} })),
   } as never;
 };
 const step = (task: Parameters<typeof generationStep>[7] = 'kern', defer: string[] = []) =>
@@ -66,13 +67,35 @@ describe('CR-GC-601: graph_generate {task}', () => {
     expect(ab.done).toBe(true);
   });
 
-  it('ein Task ohne eigene Regeln (trade) mit Frischestempel ist durch — Ausgang: Artefakt mit dem Skill abschliessen', () => {
-    const s = step('trade');
+  it('CR-GC-607: trade mit Stempel ohne crRefs ist NICHT durch (TR-01) — mit Entscheidungs-CR im Stempel ist er es', () => {
+    const ohne = step('trade');
+    expect(ohne.done).toBe(false);
+    expect(ohne.focusKey).toMatch(/:TR-01:/);
+    expect(ohne.skill).toBe(TASK_SKILL.trade);
+    // Der Golden traegt genau eine Entscheidung: CR-SL-001 -relation[decides]-> MOD-llm-runtime.
+    const mit = structuredClone(golden);
+    const sys = mit.elements.find((e) => e.type === 'SYS')!;
+    const af = sys.attributes!.analysisFreshness as Record<string, { graphVersion: number }>;
+    sys.attributes = { ...sys.attributes, analysisFreshness: { ...af, trade: { ...af.trade, crRefs: ['CR-SL-001'] } } };
+    const s = generationStep(alsGraph(mit), DEFAULT_METRIC_POLICY, undefined, 0.8, [], 'host', null, 'trade');
     expect(s.phase).toBe('handoff');
     expect(s.done).toBe(true);
     expect(s.prompt).toMatch(/Task trade fertig/);
     expect(s.prompt).toMatch(/graph_generate ohne task/);
-    expect(s.skill).toBe(TASK_SKILL.trade);
+  });
+
+  it('CR-GC-607: irr — leere crRefs sind ein legitimer Ausgang, ein fehlender CR nicht (IR-01)', () => {
+    const g = structuredClone(golden);
+    const sys = g.elements.find((e) => e.type === 'SYS')!;
+    const af = sys.attributes!.analysisFreshness as Record<string, { graphVersion: number }>;
+    const mitRefs = (crRefs: string[]) => {
+      sys.attributes = { ...sys.attributes, analysisFreshness: { ...af, 'assumption-review': { ...af['assumption-review'], crRefs } } };
+      return generationStep(alsGraph(g), DEFAULT_METRIC_POLICY, undefined, 0.8, [], 'host', null, 'irr');
+    };
+    expect(mitRefs([]).done).toBe(true);
+    const kaputt = mitRefs(['CR-gibt-es-nicht']);
+    expect(kaputt.done).toBe(false);
+    expect(kaputt.focusKey).toMatch(/:IR-01:/);
   });
 
   it('im Kern: steht ein Eintrittspunkt im Fokus, nennt der Prompt den Task und seinen Skill', () => {

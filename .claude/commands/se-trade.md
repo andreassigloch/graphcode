@@ -20,3 +20,6 @@ Open a CR capturing the question, options, criteria, and choice. Apply the decis
 The key is **`label`**, not `role` (CR-GC-308). `label` is what `TRACE_PATTERNS` already declares on `MS -relation-> MS[depends-on]`, and it is what the Trade view reads. Until now this skill said `role` while the exporter filtered on `label` — a decision written exactly as instructed landed in the graph and stayed invisible in `trade.md`.
 
 Check the returned `violations` and re-apply if the gate blocks the batch. Never hand-edit the SSOT. The output is a CR plus the decision recorded as graph relations — a Spike that converges to one realizable option.
+
+## 4. Stamp the task — with the decision CRs
+Close the task with **one** `graph_mutate` batch that updates the SYS root: `attributes.analysisFreshness.trade = { graphVersion: <current graphVersion()>, crRefs: [<the decision CR ids>] }`. `crRefs` is the record of what this trade produced — **TR-01** (task rule of `trade`) fires when the stamp names no CR, names a CR that does not exist, or names a CR without a `decides` edge. A trade that ends without a decision CR is not stamped: leave AF-02 open instead of stamping an empty study.
