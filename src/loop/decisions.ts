@@ -37,6 +37,22 @@ export interface Decision {
   readonly source: string;
 }
 
+/**
+ * Welche Funde der Agent abnehmen darf (CR-GC-594, Entscheidung 2026-09-22) — genau die, deren
+ * Aufloesung im Modell NICHT moeglich ist: ein Testlauf (FM-03), Code und seine Bindung
+ * (R-19/R-20/R-26/R-32, CR-R01), ein Analyse-Artefakt, das im schlanken Scope optional ist
+ * (AF-01..05), oder eine Entscheidung des Auftraggebers (MS-01 Planung, CL-01 Nutzungsweisen).
+ *
+ * Architekturregeln (R-*, RD-*, BW-02, UC-*, FC-*, IO-*, MT-*, CR-01, …) stehen NICHT darin —
+ * heute darf sie niemand abnehmen, auch der Mensch nicht: das Attribut sollte keinen einfachen
+ * Ausweg aus der Architekturarbeit oeffnen. Eine Abnahme daran wird ignoriert, der Fund bleibt im
+ * Fokus, und der Prompt sagt es. Freischalten fuer den Menschen ist ein eigener, spaeterer Zug.
+ */
+export const ABNEHMBARE_REGELN: ReadonlySet<string> = new Set([
+  'FM-03', 'AF-01', 'AF-02', 'AF-03', 'AF-04', 'AF-05', 'MS-01', 'CL-01',
+  'R-19', 'R-20', 'R-26', 'R-32', 'CR-R01',
+]);
+
 export const DECISIONS = {
   /** CR-GC-577: die Probe gilt Alternativen, nie einem einzelnen Batch. */
   probe: {
@@ -78,6 +94,16 @@ export const DECISIONS = {
       'offenem Kanal — und in der Schlussmeldung genannt. Gefragt wird nur, wenn ein Mensch antworten kann.',
     forbidden: [/AskUserQuestion[^.]{0,60}(immer|always)/i],
     source: 'CR-GC-592',
+  },
+  /** CR-GC-594: die benannte Abweichung — nur fuer die Klasse, die im Modell nicht erfuellbar ist. */
+  acceptance: {
+    text:
+      'Einen Fund, der im Modell nicht erfuellbar ist, legst du als benannte Abweichung ab: ' +
+      '`acceptedFindings: [{ruleId, reason}]` am betroffenen Element (graphweite Regeln am SYS), der Grund ist Pflicht. ' +
+      'Abnehmbar sind nur ' + [...ABNEHMBARE_REGELN].join(', ') + ' (Testlauf, Code, optionale Artefakte, ' +
+      'Auftraggeber-Entscheidung). Architekturregeln sind nicht abnehmbar — eine Abnahme daran zaehlt nicht, der Fund bleibt: bauen.',
+    forbidden: [/acceptedFindings[^.]{0,80}(jede|alle|beliebige) Regel/i],
+    source: 'CR-GC-594',
   },
 } as const satisfies Record<string, Decision>;
 

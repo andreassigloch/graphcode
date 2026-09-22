@@ -90,6 +90,31 @@ describe('CR-GC-592: offene Punkte werden Annahmen, keine Rueckfragen ins Leere'
   });
 });
 
+describe('CR-GC-594: die Abnahme-Politik steht einmal und ueberall gleich', () => {
+  it('se:generate traegt den Registersatz woertlich', () => {
+    const md = readFileSync(join(ROOT, '.claude/commands/se/generate.md'), 'utf8');
+    expect(md).toContain(decision('acceptance'));
+  });
+
+  it('der Guide nennt acceptedFindings an jedem Typ, mit genau der abnehmbaren Klasse', async () => {
+    const { attributesFor } = await import('../src/projections/authoring-example.js');
+    const { ABNEHMBARE_REGELN } = await import('../src/loop/decisions.js');
+    for (const t of ['REQ', 'FUNC', 'MOD', 'SYS', 'UC']) {
+      const a = attributesFor(t).find((x: { key: string }) => x.key === 'acceptedFindings');
+      expect(a, t).toBeDefined();
+      expect(a!.enumValues).toEqual([...ABNEHMBARE_REGELN]);
+    }
+  });
+
+  it('keine Architekturregel ist abnehmbar', async () => {
+    const { ABNEHMBARE_REGELN } = await import('../src/loop/decisions.js');
+    const { STEER_RULES } = await import('@sigloch/se-engine');
+    for (const id of [...STEER_RULES, 'R-02', 'R-10', 'R-15', 'R-22', 'RD-01', 'RD-05', 'UC-01', 'UC-02', 'FC-02', 'FC-04', 'IO-01']) {
+      expect(ABNEHMBARE_REGELN.has(id), id).toBe(false);
+    }
+  });
+});
+
 describe('CR-GC-587: VERDICT_ORDER ist die Ordnung von rankCandidates, nicht eine zweite', () => {
   const steer = (improvement: number) => ({
     rules: ['RD-04'], before: 1, after: 1 - improvement, improvement, worstAt: null, removesElements: false,

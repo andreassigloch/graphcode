@@ -27,7 +27,7 @@ import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { acceptedRuleIds } from '@sigloch/contracts/se';
 import { isIntentTooThin, intentCoverage, type LoadedTargetProfile } from './target-profile.js';
 import { winner } from './channel-rank.js';
-import { decision } from './decisions.js';
+import { ABNEHMBARE_REGELN, decision } from './decisions.js';
 
 /**
  * Datenvertrag der Generierungs-Instruktion (SCHEMA-generation-step) — Zod, nicht
@@ -265,6 +265,8 @@ export const DIMENSION_FOCUS_TYPES: Record<string, string[]> = {
  * Gemessen am Golden (sigllm v98): danach bleiben RD-05, MS-01, BW-02, FM-03, AF-05 —
  * die Liste dessen, was der Handlauf am Ende der Spezifikation bewusst offen liess.
  */
+const windowRuleOf = (vs: readonly { rule_id: string }[]): string | undefined => vs[0]?.rule_id;
+
 export const FOCUS_EXCLUDED_WHEN_UNBOUND: ReadonlySet<string> = new Set(['R-19', 'R-20', 'R-26', 'R-27', 'R-32']);
 const GATE_RULE_IDS: ReadonlySet<string> = new Set((SE_DESCRIPTOR.rules ?? []).map((r) => r.id));
 
@@ -326,7 +328,8 @@ function stepCore(
     if (!GATE_RULE_IDS.has(v.rule_id) || v.severity === 'info') return false;
     if (!gebunden && FOCUS_EXCLUDED_WHEN_UNBOUND.has(v.rule_id)) return false;
     const traeger = elementById.get(v.element_id) ?? sysEl;
-    return !(traeger && acceptedRuleIds(traeger).has(v.rule_id));
+    // CR-GC-594: eine Abnahme zaehlt nur fuer die abnehmbare Klasse; an Architektur wird sie ignoriert.
+    return !(traeger && ABNEHMBARE_REGELN.has(v.rule_id) && acceptedRuleIds(traeger).has(v.rule_id));
   });
   const sys = og.elements.find((e) => e.type === 'SYS');
   const effectiveIntent = intent?.trim() || sys?.description?.trim() || '';
@@ -603,6 +606,18 @@ function stepCore(
 
   // fix_hint mitrendern (sonst bleibt z.B. R-15s "Add FUNC elements via compose
   // trace" für das Modell unsichtbar — es sieht nur die Symptom-Message).
+  // CR-GC-594: steht an einem Element des Fensters eine Abnahme dieser (nicht abnehmbaren) Regel,
+  // sagt der Prompt, warum der Fund trotzdem hier steht — sonst dreht der Agent eine Schleife.
+  const ignorierteAbnahme =
+    windowRuleOf(focusViolations) !== undefined &&
+    !ABNEHMBARE_REGELN.has(windowRuleOf(focusViolations)!) &&
+    focusViolations.some((v) => acceptedRuleIds(elementById.get(v.element_id) ?? sysEl ?? {}).has(v.rule_id));
+  const fensterRegel = windowRuleOf(focusViolations);
+  const abnahmeHinweis = ignorierteAbnahme
+    ? `Die Abnahme von ${fensterRegel} zählt nicht — Architekturregeln sind nicht abnehmbar; löse den Fund im Modell. `
+    : fensterRegel !== undefined && ABNEHMBARE_REGELN.has(fensterRegel)
+      ? `${fensterRegel} ist abnehmbar: ist der Fund im Modell nicht erfüllbar, lege ihn als acceptedFindings [{ruleId, reason}] mit Grund ab. `
+      : '';
   const funde = focusViolations
     .map((v) => `${v.element_id} (${v.rule_id}: ${v.message}${v.fix_hint ? ` — Fix: ${v.fix_hint}` : ''})`)
     .join('; ');
@@ -646,7 +661,7 @@ function stepCore(
     phase: 'expand',
     done: false,
     prompt:
-      `Intention: "${effectiveIntent}". ${coverageLine}${deferNote}Schwächste Dimension: ${focus!.dimension}. ` +
+      `Intention: "${effectiveIntent}". ${coverageLine}${deferNote}${abnahmeHinweis}Schwächste Dimension: ${focus!.dimension}. ` +
       `Funde: ${funde}. ${template} ${gateProtocol}`,
     readiness,
     threshold,
