@@ -76,6 +76,7 @@ Als Entwickler will ich, dass der naechste Schritt aus deterministisch gemessene
 
 Ausgeloest von: `ACTOR-agent` · `ACTOR-dashboard` · `ACTOR-learning-engine` · `ACTOR-llm` · `ACTOR-owner`
 
+- `FCHAIN-generation-states` — Generierung: von der Saat zur Freigabe: `FUNC-generation-step` → `FUNC-graph-suggest` → `FUNC-take-steering-snapshot`
 - `FCHAIN-skill-report` — Skill berichtet gemessenen Stand: `FUNC-check-code-conformance` → `FUNC-compute-phase-readiness` → `FUNC-compute-readiness` → `FUNC-evaluate-rules` → `FUNC-function-criticality` → `FUNC-module-metrics` → `FUNC-score-completeness` → `FUNC-se-help` → `FUNC-se-retro` → `FUNC-se-review` → `FUNC-se-status` → `FUNC-test` → `FUNC-test-ui`
 - `FCHAIN-steering-loop` — Kenngroessen-Steuerungsschleife: `FUNC-arch-fitness` → `FUNC-authoring-guide` → `FUNC-build-round-injection` → `FUNC-call-model` → `FUNC-compute-phase-readiness` → `FUNC-compute-readiness` → `FUNC-compute-steering-delta` → `FUNC-extract-mutate` → `FUNC-fit-advisory` → `FUNC-gate-client` → `FUNC-generation-step` → `FUNC-graph-readiness` → `FUNC-graph-suggest` → `FUNC-held-back-traces` → `FUNC-list-elements` → `FUNC-load-config` → `FUNC-mutate` → `FUNC-nd-similarity` → `FUNC-preflight` → `FUNC-rank-candidates` → `FUNC-run-executor` → `FUNC-run-verb` → `FUNC-take-steering-snapshot` → `FUNC-target-profile` → `FUNC-target-profile-load`
 

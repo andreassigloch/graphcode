@@ -172,6 +172,16 @@ function summarizeViolations<T extends { violations: MutateResult['violations'] 
  * Was „nichts melden" heisst, steht je Block bei seinem ERZEUGER (`fitAdvisoryIsSilent`,
  * `steerAdvisoryIsSilent`, `workOrderIsSilent`) und nicht hier — hier wird nur angewandt.
  */
+/**
+ * Zielprofil heisst GEWICHTE, nicht Datei (CR-GC-590, Befund aus dem Phase-1-Lauf): graph_generate
+ * legt die Intent-Anker in dieselbe Datei — danach "gab es ein Profil", und der R6 kam 9-mal
+ * ohne eine einzige Richtung. Dieselbe Frage wie `hasWeights` im Handoff-Prompt.
+ */
+function hatZielrichtung(repoRoot: string): boolean {
+  const weights = loadTargetProfile(repoRoot)?.profile.weights ?? {};
+  return Object.values(weights).some((w) => typeof w === 'number' && w !== 0);
+}
+
 function dropSilentAdvisories<T extends object>(result: T, hatZielprofil: boolean): T {
   const r = result as T & {
     fitAdvisory?: FitAdvisory;
@@ -427,7 +437,7 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
           await recordPreview(input.consumerId, preview, commands);
           const previewOut = dropSilentAdvisories(
             input.violations === 'full' ? preview : summarizeViolations(preview),
-            loadTargetProfile(harness.getRepoRoot()) !== null,
+            hatZielrichtung(harness.getRepoRoot()),
           );
           // CR-GC-321/REQ-N07: auch im Preview — sonst meldet der dryRun sauber
           // und der Apply verliert die Namen.
@@ -442,7 +452,7 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
         });
         const out = dropSilentAdvisories(
           input.violations === 'full' ? result : summarizeViolations(result),
-          loadTargetProfile(harness.getRepoRoot()) !== null,
+          hatZielrichtung(harness.getRepoRoot()),
         );
         // CR-GC-588: der naechste Schritt faehrt mit — derselbe, den graph_generate liefern
         // wuerde, ohne den Roundtrip. Nur nach Anwendung; bei Ablehnung ist das Urteil der Kanal.

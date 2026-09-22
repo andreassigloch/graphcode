@@ -123,6 +123,11 @@ export const INCLUDED = [
  * Entscheidung bleibt und nicht zu einer stillen Lücke wird.
  */
 export const EXCLUDED = {
+  'tests/generate.statemachine.test.ts':
+    'Eigenschaftstest der Zustandsmaschine (CR-GC-593). Der Treffer ist das GOLDEN EINES RIG-KORPUS\n' +
+    'und die Auto-Graphen unter rig/, nie graphcodes eigene SSOT: geprueft wird done ⇔ kein Fokus\n' +
+    'ueber fremde Graphen. Eine Aenderung an graphcodes Modell kann ihn nicht rot machen; eine an\n' +
+    'der Fokuswahl oder am Regelkatalog sehr wohl.',
   'tests/systemtest-rig.test.ts':
     'Auswertungen des Systemtest-Rigs (CR-GC-574/585/586). Der Treffer ist das GOLDEN EINES\n' +
     'RIG-KORPUS (`rig/sigllm-spezifikation/golden/sigllm-v98.graph.json`), nie graphcodes eigene\n' +

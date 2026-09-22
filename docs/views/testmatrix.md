@@ -4,7 +4,7 @@
 
 # graphcode — Verification Cross-Reference Matrix (VCRM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 142 REQ rows. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 143 REQ rows. Deterministisch generiert.
 
 | REQ | verify-Kante | Lauf-Ergebnis | verifying TEST(s) |
 |---|---|---|---|
@@ -32,6 +32,7 @@
 | `REQ-disk-persistence` | ✓ | ✓ passed | `TEST-mvp-e2e` |
 | `REQ-doc-export` | ✓ | ✓ passed | `TEST-auto-export` · `TEST-doc-export` · `TEST-mcp-export` · `TEST-member-name` · `TEST-skills-mcp` · `TEST-views-auditor` · `TEST-views-conformance` |
 | `REQ-docs-taxonomy` | ✓ | ⚠ nie gelaufen | `TEST-docs-taxonomy` |
+| `REQ-done-iff-no-focus` | ✓ | ⚠ nie gelaufen | `TEST-generation-statemachine` |
 | `REQ-export-no-clobber` | ✓ | ✓ passed | `TEST-export-graph-guard` · `TEST-mcp-export-guard` |
 | `REQ-formatE-diff-dialect` | ✓ | ✓ passed | `TEST-edge-only-batch` · `TEST-formate-name` · `TEST-roundtrip` |
 | `REQ-formatE-parity` | ✓ | ✓ passed | `TEST-formate-binding` · `TEST-mutate-input-formate` · `TEST-read-format-param` · `TEST-roundtrip` |
@@ -151,8 +152,8 @@
 | `REQ-versioned-cache` | ✓ | ⚠ nie gelaufen | `TEST-cache` |
 | `REQ-viewer-owned-by-repo` | ✓ | ✓ passed | `TEST-gve-autostart` · `TEST-gve-supervision` |
 
-Coverage: 142/142 REQ mit verify-Kante (100%) · 0 offen (R-01).
-Belegt: 105/142 REQ bestanden (74%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
+Coverage: 143/143 REQ mit verify-Kante (100%) · 0 offen (R-01).
+Belegt: 105/143 REQ bestanden (73%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
 
 ## Integrationsabdeckung (rolled-up)
 
@@ -261,8 +262,8 @@ Belegt: 105/142 REQ bestanden (74%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-systemtest-run` → `FUNC-systemtest-turn-analyse` | `FLOW-systemtest-artifacts` | `FCHAIN-systemtest-run` | `TEST-greenfield-systemtest` · `TEST-systemtest-evaluations` | acceptance, integration | passed |
 | `FUNC-systemtest-turn-analyse` → `FUNC-systemtest-report` | `FLOW-systemtest-turn-profile` | `FCHAIN-systemtest-run` | `TEST-greenfield-systemtest` · `TEST-systemtest-evaluations` | acceptance, integration | passed |
 | `FUNC-take-steering-snapshot` → `FUNC-compute-steering-delta` | `FLOW-steering-snapshot` | `FCHAIN-steering-loop` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` | integration | passed |
-| `FUNC-take-steering-snapshot` → `FUNC-generation-step` | `FLOW-measurement-vector` | `FCHAIN-steering-loop` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` | integration | passed |
-| `FUNC-take-steering-snapshot` → `FUNC-generation-step` | `FLOW-steering-snapshot` | `FCHAIN-steering-loop` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` | integration | passed |
+| `FUNC-take-steering-snapshot` → `FUNC-generation-step` | `FLOW-measurement-vector` | `FCHAIN-generation-states` · `FCHAIN-steering-loop` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` | integration | passed |
+| `FUNC-take-steering-snapshot` → `FUNC-generation-step` | `FLOW-steering-snapshot` | `FCHAIN-generation-states` · `FCHAIN-steering-loop` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` | integration | passed |
 | `FUNC-target-profile` → `FUNC-target-profile-load` | `FLOW-target-profile-file` | `FCHAIN-steering-loop` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` | integration | passed |
 | `FUNC-target-profile-load` → `FUNC-generation-step` | `FLOW-target-profile` | `FCHAIN-steering-loop` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` | integration | passed |
 | `FUNC-target-profile-load` → `FUNC-graph-suggest` | `FLOW-target-profile` | `FCHAIN-advisory-roundtrip` · `FCHAIN-steering-loop` | `TEST-advisory-roundtrip-latency` · `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` | integration, performance | passed |

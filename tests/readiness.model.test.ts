@@ -14,8 +14,6 @@
  * errors, so error states are injected directly). One integration case seeds
  * the real SSOT on disk Kuzu (no mocks, no :memory:).
  */
-import { STEER_RULES } from '@sigloch/se-engine';
-import { RULE_TO_PHASE } from '@sigloch/contracts/se';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -40,7 +38,6 @@ import {
   summarizeReadiness,
   computePhaseReadiness,
   currentPhaseGate,
-  handoffGate,
   PHASE_GATE_ORDER,
   type CreationCurrencyProvider,
 } from '../src/kernel/measure/readiness.js';
@@ -368,26 +365,5 @@ describe('TEST-readiness-model (C-int): scores the live SSOT, never BQ', () => {
     for (const item of notDone) {
       expect(/CR-GC-(200|201|202)/.test(item)).toBe(true);
     }
-  });
-});
-
-describe('handoffGate: Steuerregeln sperren die Freigabe nicht (CR-GC-582)', () => {
-  const pr = (gate: 'SRR' | 'PDR' | 'CDR' | 'TRR', total: number, missing: string[]) => ({
-    gate, total, covered: total - missing.length, missing,
-  });
-
-  it('der Endstand aus Runde 7 (opus5-7): nur RD-04/CR-01 offen am PDR → PDR sperrt nicht mehr', () => {
-    const stand = [pr('SRR', 25, []), pr('PDR', 26, ['CR-01', 'RD-04']), pr('CDR', 5, []), pr('TRR', 11, [])];
-    expect(currentPhaseGate(stand)).toBe('PDR'); // der alte Riegel
-    expect(handoffGate(stand)).toBeNull();
-  });
-
-  it('jede andere offene Regel sperrt weiter — FM-01 ist Vollstaendigkeit, kein Optimierungsziel', () => {
-    const stand = [pr('SRR', 25, ['FM-01']), pr('PDR', 26, ['RD-04']), pr('CDR', 5, []), pr('TRR', 11, [])];
-    expect(handoffGate(stand)).toBe('SRR');
-  });
-
-  it('die Steuerregeln sind wirklich Gate-Regeln — sonst waere der Filter eine leere Geste', () => {
-    for (const id of STEER_RULES) expect(RULE_TO_PHASE[id], `${id} ohne Gate`).toBeDefined();
   });
 });

@@ -640,6 +640,9 @@
 | `FCHAIN-doc-export` | compose | `FUNC-view-intplan` |
 | `FCHAIN-doc-export` | compose | `FUNC-view-rtm` |
 | `FCHAIN-doc-export` | satisfy | `REQ-doc-export` |
+| `FCHAIN-generation-states` | compose | `FUNC-generation-step` |
+| `FCHAIN-generation-states` | compose | `FUNC-graph-suggest` |
+| `FCHAIN-generation-states` | compose | `FUNC-take-steering-snapshot` |
 | `FCHAIN-impact-testing` | compose | `FUNC-deduce-tests` |
 | `FCHAIN-impact-testing` | compose | `FUNC-graph-impact` |
 | `FCHAIN-impact-testing` | compose | `FUNC-plan-code-lane` |
@@ -1395,6 +1398,7 @@
 | `FUNC-generation-step` | io | `FLOW-channel-skill-reference` |
 | `FUNC-generation-step` | io | `FLOW-next-step-advice` |
 | `FUNC-generation-step` | io | `FLOW-round-prompt` |
+| `FUNC-generation-step` | satisfy | `REQ-done-iff-no-focus` |
 | `FUNC-generation-step` | satisfy | `REQ-steering-from-metrics` |
 | `FUNC-goal-steerer` | allocate | `MOD-loop` |
 | `FUNC-goal-steerer` | compose | `FUNC-block-anleitung` |
@@ -1837,6 +1841,7 @@
 | `TEST-formate-binding` | verify | `REQ-formatE-parity` |
 | `TEST-formate-binding` | verify | `REQ-test-runnable-binding` |
 | `TEST-formate-name` | verify | `REQ-formatE-diff-dialect` |
+| `TEST-generation-statemachine` | verify | `REQ-done-iff-no-focus` |
 | `TEST-graph-authoring-guide` | verify | `REQ-import-se-ontology` |
 | `TEST-graph-authoring-guide` | verify | `REQ-structural-rule-shared` |
 | `TEST-graph-context-replaces-reading` | verify | `REQ-graph-context-replaces-reading` |
@@ -2064,9 +2069,11 @@
 | `UC-code-quality` | compose | `REQ-skill-authors-through-gate` |
 | `UC-code-quality` | compose | `REQ-structure-driven` |
 | `UC-code-quality` | compose | `REQ-trajectory-emit` |
+| `UC-deterministic-steering` | compose | `FCHAIN-generation-states` |
 | `UC-deterministic-steering` | compose | `FCHAIN-skill-report` |
 | `UC-deterministic-steering` | compose | `FCHAIN-steering-loop` |
 | `UC-deterministic-steering` | compose | `REQ-applied-suggestion-moves-target` |
+| `UC-deterministic-steering` | compose | `REQ-done-iff-no-focus` |
 | `UC-deterministic-steering` | compose | `REQ-monotone-convergence` |
 | `UC-deterministic-steering` | compose | `REQ-near-duplicate-detection` |
 | `UC-deterministic-steering` | compose | `REQ-phase-gate-not-skippable` |

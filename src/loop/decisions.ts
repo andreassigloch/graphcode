@@ -65,10 +65,10 @@ export const DECISIONS = {
   /** CR-GC-296/582: wann `done` — die Freigabe auf graph_suggest. */
   handoff: {
     text:
-      'done ist true genau in phase handoff: alle Readiness-Dimensionen ≥ Schwelle, keine error-Violations, ' +
-      'kein Phase-Gate mit offenen Regeln (Steuerregeln ausgenommen).',
-    forbidden: [/done[^.]{0,40}wenn keine Warnungen/i],
-    source: 'CR-GC-296, CR-GC-582',
+      'done ist true genau dann, wenn die Maschine keinen Fokus mehr hat: kein offener Fund einer Gate-Regel ' +
+      '(ohne info, abgenommene Funde ausgenommen). Schwelle und Phasen-Gates sind Bericht, keine Waechter.',
+    forbidden: [/alle Phase-Gates[^.]{0,40}regel-vollständig/, /Dimensionen ≥ \$\{threshold\}[^.]{0,80}Phase-Gate/],
+    source: 'CR-GC-593',
   },
   /** CR-GC-592: offene Punkte des Auftrags sind Annahmen im Modell, keine Rueckfragen ins Leere. */
   openQuestions: {

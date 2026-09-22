@@ -49,7 +49,6 @@ export {
 // ---------------------------------------------------------------------------
 import { z } from 'zod/v4';
 import { RULE_TO_PHASE, PhaseGate, type PhaseGateType } from '@sigloch/contracts/se';
-import { STEER_RULES } from '@sigloch/se-engine';
 
 /** INCOSE technical-review gates, in lifecycle order — the Handoff precondition
  * walks this order to find the "current" (first incomplete) gate. */
@@ -100,28 +99,6 @@ export function computePhaseReadiness(violations: readonly PhaseRuleHit[]): Phas
 /** First gate in SRR→PDR→CDR→TRR order that is not fully covered, or `null`
  * when all four are — the Handoff precondition (CR-GC-296): "welches Gate
  * 'aktuell' ist, folgt aus dem ersten unvollständigen in der Reihenfolge". */
-/**
- * Das Gate, das die FREIGABE (handoff) noch sperrt — ohne die Steuerregeln (CR-GC-582).
- *
- * `STEER_RULES` (RD-04, BW-02, R-04, CR-01, MT-02) sind die Terme des Steuerwerts: das Ziel
- * der Optimierung NACH der Freigabe, deren Prompt sie ausdruecklich dorthin schickt ("arbeite
- * die Funde ab, das fitAdvisory zeigt, ob Δm in Zielrichtung laeuft"). Als Vorbedingung der
- * Freigabe versperrten sie den Eintritt in die Phase, die sie abarbeitet. Gemessen in Runde 7:
- * ein Lauf mit 0 Fehlern und allen Dimensionen ≥ 0,99 blieb an RD-04 und CR-01 haengen — RD-04
- * hatte das Modell per Δm bewusst stehen lassen, weil die Zwischenebene modifiability und
- * coherence verschlechterte. `phaseReadiness` selbst bleibt unveraendert wahr: die Regeln stehen
- * weiter als offen im Bericht, sie sperren nur nicht mehr den Uebergang.
- */
-export function handoffGate(phaseReadiness: readonly PhaseGateReadiness[]): PhaseGateType | null {
-  const steer = new Set<string>(STEER_RULES);
-  return currentPhaseGate(
-    phaseReadiness.map((p) => {
-      const missing = p.missing.filter((id) => !steer.has(id));
-      return { ...p, missing, covered: p.total - missing.length };
-    }),
-  );
-}
-
 export function currentPhaseGate(phaseReadiness: readonly PhaseGateReadiness[]): PhaseGateType | null {
   for (const gate of PHASE_GATE_ORDER) {
     const found = phaseReadiness.find((p) => p.gate === gate);
