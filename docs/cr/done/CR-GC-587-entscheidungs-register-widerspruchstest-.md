@@ -1,6 +1,6 @@
 # CR-GC-587: Entscheidungs-Register + Widerspruchstest: jede Entscheidung, die als Text zum Agenten geht (Rangfolge, Probe-Regel, Freigabe-Bedingung), hat EINE Konstante; ein Test prueft Skills/GRAPHCODE.md/Vorlagen/Protokoll gegen sie (Serie 564-583: 7 Widersprueche, 4 davon Text gegen Code)
 
-**Status:** ✅ Umgesetzt
+**Status:** ✅ Done (2026-09-22)
 **Typ:** aus Item ITEM-2026-436 (idea)
 **Erstellt:** 2026-09-22
 **Item:** bok/items/ITEM-2026-436.json (Lane: graph)
