@@ -1,6 +1,6 @@
 # CR-GC-596: Abbruchregel in der Maschine: zweimal derselbe Fokus nach angewandter Mutation -> Fund-Set zurueckstellen (Sitzungsgedaechtnis im Server, nicht im Graphen); nur noch zurueckgestellte Funde -> Endzustand stalled (nicht done), Uebergabe an den Menschen
 
-**Status:** ✅ Umgesetzt — Rewind-Lauf folgt
+**Status:** ✅ Done (2026-09-22)
 **Typ:** aus Item ITEM-2026-447 (idea)
 **Erstellt:** 2026-09-22
 **Item:** bok/items/ITEM-2026-447.json (Lane: graph)
