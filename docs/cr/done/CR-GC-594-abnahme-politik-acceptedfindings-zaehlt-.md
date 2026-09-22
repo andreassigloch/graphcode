@@ -1,6 +1,6 @@
 # CR-GC-594: Abnahme-Politik: acceptedFindings zaehlt nur fuer Regeln, die im Modell nicht erfuellbar sind (Code, Testlauf, Auftraggeber-Entscheidung: FM-03, AF-*, MS-01/03, CL-01, Praesenz R-19/20/26/27/32); Architekturregeln sind heute von niemandem abnehmbar (Entscheidung 2026-09-22); Guide/Skill/Prompt nennen die Klasse
 
-**Status:** ✅ Umgesetzt — Bestaetigungslauf folgt
+**Status:** ✅ Done (2026-09-22)
 **Typ:** aus Item ITEM-2026-445 (idea)
 **Erstellt:** 2026-09-22
 **Item:** bok/items/ITEM-2026-445.json (Lane: graph)
