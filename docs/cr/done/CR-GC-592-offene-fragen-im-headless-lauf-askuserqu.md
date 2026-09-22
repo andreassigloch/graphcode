@@ -1,6 +1,6 @@
 # CR-GC-592: Offene Fragen im Headless-Lauf: AskUserQuestion laeuft in claude -p ins Leere (3 von 5 Laeufen) — GRAPHCODE.md/se:generate sollen offene Punkte als Annahme ins Modell legen statt zu fragen, wenn niemand antwortet
 
-**Status:** ✅ Umgesetzt
+**Status:** ✅ Done (2026-09-22)
 **Typ:** aus Item ITEM-2026-442 (idea)
 **Erstellt:** 2026-09-22
 **Item:** bok/items/ITEM-2026-442.json (Lane: graph)
