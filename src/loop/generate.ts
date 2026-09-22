@@ -25,6 +25,7 @@ import { takeSteeringSnapshot } from '../kernel/measure/steering-snapshot.js';
 import { handoffGate, PhaseGateReadiness } from '../kernel/measure/readiness.js';
 import { isIntentTooThin, intentCoverage, type LoadedTargetProfile } from './target-profile.js';
 import { winner } from './channel-rank.js';
+import { decision } from './decisions.js';
 
 /**
  * Datenvertrag der Generierungs-Instruktion (SCHEMA-generation-step) — Zod, nicht
@@ -107,18 +108,10 @@ const PROTOCOL_NEXT = 'Danach graph_generate erneut aufrufen für den nächsten 
 const GATE_PROTOCOL: Record<GenerationSelection, string> = {
   host:
     PROTOCOL_GUIDE +
-    // CR-GC-583: dieselbe Rangfolge wie `rankCandidates` im Executor. Hier stand bis dahin
-    // "vergleiche tier und fitAdvisory (Δm, regressions)" — der ℝ⁶, den CR-GC-483 fuer den
-    // Executor als Ranking abgesetzt hat, weil er echte Umstrukturierungen Regression nennt.
-    // Gemessen in Runde 7: opus5 verwarf per Δm die RD-04-Zwischenebene und liess 28 Bloecke
-    // auf einer Ebene stehen (Leitlinie Satz 3: Guete ist Verstaendlichkeit, wenige Bloecke je Ebene).
-    '(2) Hast du MEHRERE Alternativen, reiche sie zuerst mit dryRun:true ein und vergleiche die ' +
-    'Verdicts in dieser Rangfolge: block verwerfen; dann steeringDelta der Fokus-Dimension; dann ' +
-    'steerAdvisory.improvement (entschaerft der Zug die schlimmste Stelle, z.B. RD-04 zu viele Bloecke ' +
-    'je Ebene?); dann tier (auto-apply > suggest). fitAdvisory ist nur Bericht und entscheidet nicht — ' +
-    'es nennt echte Umstrukturierungen (eine eingezogene Ebene) Regression. ' +
-    'Hast du nur EINEN Batch, reiche ihn direkt OHNE dryRun ein: eine Ablehnung persistiert nichts, ' +
-    'die Probe wuerde dir dieselbe Antwort nur ein zweites Mal liefern. ' +
+    // CR-GC-587: Probe-Regel und Rangfolge kommen aus dem Register, nicht aus Prosa hier.
+    // (CR-GC-583 hatte hier den Steuerwert VOR dem tier genannt — `rankCandidates` sortiert
+    // tier vor Steuerwert. Genau die Klasse Fehler, gegen die das Register steht.)
+    '(2) ' + decision('probe') + ' ' + decision('verdictRank') + ' ' +
     '(3) Nur den besten Batch OHNE dryRun anwenden; block-Verdicts verwerfen oder revidieren, nie erzwingen. ' +
     '(4) ' +
     PROTOCOL_NEXT,

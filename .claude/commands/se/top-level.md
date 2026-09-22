@@ -142,4 +142,4 @@ What wasted rounds on the first run, measured:
 
 ## Boundaries
 
-`graph_authoring_guide {type}` for the legal edges before you write. Every batch through `graph_mutate` with `dryRun: true` first — read `fitAdvisory` against the targets from phase 2. This skill **creates** the cut; `se-view:arch` renders it, `se-plan` sequences it, `se:close-violations` cleans up after it. No parallel path.
+`graph_authoring_guide {type}` for the legal edges before you write. Several alternatives go through `graph_mutate` with `dryRun: true` and are compared; a single batch goes straight in — a rejection persists nothing. With targets from phase 2, read `fitAdvisory` against them; without targets it is a report, not a verdict. This skill **creates** the cut; `se-view:arch` renders it, `se-plan` sequences it, `se:close-violations` cleans up after it. No parallel path.
