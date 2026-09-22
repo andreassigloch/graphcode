@@ -1,6 +1,6 @@
 # CR-GC-590: Tote Kanaele streichen oder verlegen, je mit Messung: steeringDelta (6-8/Lauf, nie erwaehnt), tier/confidence, fitAdvisory.regressions ohne Zielprofil (widerspricht 'nur Bericht'), GRAPHCODE-STEERING.md (0 Zugriffe in 5 Laeufen) in GRAPHCODE.md
 
-**Status:** 🟠 Open — Body ausgearbeitet
+**Status:** ✅ Umgesetzt
 **Typ:** aus Item ITEM-2026-440 (idea)
 **Erstellt:** 2026-09-22
 **Item:** bok/items/ITEM-2026-440.json (Lane: graph)
@@ -33,3 +33,17 @@
 
 1. Gemessen wird mit dem Standardbericht (`report.mjs`, Abschnitte CR-GC-585 „Steuerung“ und CR-GC-586 „Auto gegen Hand“), Claude-Code-Arm, sigllm-Prosa-Korpus, n ≥ 2. Fokus-Befolgung und Ausbeute nicht schlechter; `graph_mutate`-Antwort kleiner.
 2. Kein Kanal verschwindet ohne Zeile in der Tabelle oben.
+
+## 5 Ergebnis (2026-09-22) — je Kanal eine Zeile
+
+| Kanal | Entscheidung | Grund |
+|---|---|---|
+| `confidence` | **weg** von der Leitung | Konstante 0/1 ohne einen Leser in src oder tests |
+| `fitAdvisory` | nur noch **mit Zielprofil** (`.graphcode/target-profile.json`) | ohne Ziel ist der ℝ⁶ Richtung ohne Ziel; seine `regressions` widersprachen "nur Bericht" und entschieden Modulschnitte (Runde 7). Audit-Trail behaelt die volle Fassung |
+| `steeringDelta` | **bleibt** (nur auf der Probe) | es IST das Vergleichsmass der Rangfolge (Register, CR-GC-587); die 6–8 "nie erwaehnt" waren die 6–8 Proben je Lauf — dort wird es gelesen, nicht zitiert |
+| `tier` | bleibt | traegt `block` (Gate-Wahrheit) |
+| `GRAPHCODE-STEERING.md` | **bleibt** — Befund zurueckgenommen | Adressat ist der Mensch (CR-GC-322); dass der Agent es 0-mal liest, ist richtig, nicht tot |
+
+Umsetzung in `write.ts` (`dropSilentAdvisories` bekommt das Profil), Abnahme in
+`tests/mcp.silent-advisories.test.ts` (mit/ohne Profil, `confidence` auf Anwendung und Probe).
+Kriterium 1 (Bestaetigungslauf) faellt mit dem Phase-1-Lauf. **Kongruenz:** benannte Ausnahme.
