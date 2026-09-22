@@ -103,19 +103,21 @@ describe('CR-GC-594: die Abnahme-Politik steht einmal und ueberall gleich', () =
 
   it('der Guide nennt acceptedFindings an jedem Typ, mit genau der abnehmbaren Klasse', async () => {
     const { attributesFor } = await import('../src/projections/authoring-example.js');
-    const { ABNEHMBARE_REGELN } = await import('../src/loop/decisions.js');
+    const { ABNEHMBAR_JE_TASK } = await import('../src/loop/decisions.js');
+    const alle = [...new Set(Object.values(ABNEHMBAR_JE_TASK).flat())];
     for (const t of ['REQ', 'FUNC', 'MOD', 'SYS', 'UC']) {
       const a = attributesFor(t).find((x: { key: string }) => x.key === 'acceptedFindings');
       expect(a, t).toBeDefined();
-      expect(a!.enumValues).toEqual([...ABNEHMBARE_REGELN]);
+      expect(a!.enumValues).toEqual(alle);
     }
   });
 
   it('keine Architekturregel ist abnehmbar', async () => {
-    const { ABNEHMBARE_REGELN } = await import('../src/loop/decisions.js');
+    const { ABNEHMBAR_JE_TASK } = await import('../src/loop/decisions.js');
     const { STEER_RULES } = await import('@sigloch/se-engine');
+    const alle = new Set(Object.values(ABNEHMBAR_JE_TASK).flat());
     for (const id of [...STEER_RULES, 'R-02', 'R-10', 'R-15', 'R-22', 'RD-01', 'RD-05', 'UC-01', 'UC-02', 'FC-02', 'FC-04', 'IO-01']) {
-      expect(ABNEHMBARE_REGELN.has(id), id).toBe(false);
+      expect(alle.has(id), id).toBe(false);
     }
   });
 });
