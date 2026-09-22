@@ -1,6 +1,6 @@
 # CR-GC-601: Task-Modus: graph_generate {task} faehrt dieselbe Maschine mit dem detaillierten Regelset des Tasks — Task-Regeln zunaechst als Warnung, nie blockierend; Abnahme je Task (fmea: FM-03, plan: CR-R01, realisierung: Praesenzregeln); Skill-Verweis des Tasks
 
-**Status:** ✅ Umgesetzt
+**Status:** ✅ Done (2026-09-22)
 **Typ:** aus Item ITEM-2026-454 (idea)
 **Erstellt:** 2026-09-22
 **Item:** bok/items/ITEM-2026-454.json (Lane: graph)
