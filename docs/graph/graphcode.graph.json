@@ -1839,6 +1839,12 @@
       "description": "docs/cr/open/CR-GC-592-offene-fragen-im-headless-lauf-askuserqu.md"
     },
     {
+      "id": "CR-GC-605",
+      "type": "CR",
+      "name": "Schwere = Gate-Wirkung (gating entfaellt, 6 errors -> warning), Phase INCOSE-korrigiert (AF-01 SRR, AF-05 PDR, R-26 TRR), Smeagol Stufe (e) Empfehlungskonsistenz, Regel-Matrix ohne abgeleitete Spalten",
+      "description": "docs/cr/open/CR-GC-605-schwere-gate-wirkung-gating-entfaellt-6-.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -20370,5 +20376,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 361
+  "graphVersion": 362
 }
