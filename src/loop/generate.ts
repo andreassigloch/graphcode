@@ -66,8 +66,31 @@ export const GenerationStep = z.object({
    * Dimension braucht, soll sie lesen, nicht aus einem Key herausschneiden. Der
    * Executor waehlt daran die Autorier-Anleitung. */
   focusDimension: z.string().nullable(),
+  /** CR-GC-589: die Anleitung zur Fokus-Dimension als VERWEIS (`se:author-req`) — der Host laedt
+   * den Skill ueber sein Skill-Werkzeug, der Executor spielt den Rumpf ein. Eine Zuordnung, zwei
+   * Transporte. null, wenn es fuer die Dimension keinen Autorier-Skill gibt. */
+  skill: z.string().nullable(),
 });
 export type GenerationStep = z.infer<typeof GenerationStep>;
+
+/**
+ * Welche Autorier-Anleitung zu welcher Fokus-Dimension gehoert (CR-GC-558; seit CR-GC-589 HIER,
+ * weil beide Treiber sie lesen: der Executor fuer den Rumpf je Runde, der Host als Verweis im
+ * Schritt). Vorher stand sie nur im Executor — Claude Code las `se:generate` einmal bei 2–5 % des
+ * Laufs und die Anlege-Skills erst am Ende, um Frischestempel zu erfuellen.
+ *
+ * `se-view:*` bleibt draussen: Darstellungen, keine Bauanleitungen. `ver`/`schema`/`cr`/`ms`
+ * fehlen, weil es fuer sie keinen Autorier-Skill GIBT — ein Eintrag waere eine Luege.
+ */
+export const SKILL_FOR_DIMENSION: Record<string, { name: string; file: string } | undefined> = {
+  'seed:sys': { name: 'se:top-level', file: 'top-level.md' },
+  'seed:uc': { name: 'se:author-uc', file: 'author-uc.md' },
+  'seed:actor': { name: 'se:author-actor', file: 'author-actor.md' },
+  uc: { name: 'se:author-uc', file: 'author-uc.md' },
+  req: { name: 'se:author-req', file: 'author-req.md' },
+  arch: { name: 'se:top-level', file: 'top-level.md' },
+  alloc: { name: 'se:top-level', file: 'top-level.md' },
+};
 
 /** Wer die Verdicts liest (CR-GC-288): 'host' = der MCP-Client probt selbst per
  * dryRun und vergleicht (Protokoll-Prosa im Prompt); 'driver' = der Treiber führt
@@ -250,13 +273,26 @@ export function generationStep(
   graph: Graph,
   policy: MetricPolicy,
   intent: string | undefined,
+  threshold: number,
+  defer: string[] = [],
+  selection: GenerationSelection = 'host',
+  profile: LoadedTargetProfile | null = null,
+): GenerationStep {
+  const core = stepCore(graph, policy, intent, threshold, defer, selection, profile);
+  return { ...core, skill: core.focusDimension ? (SKILL_FOR_DIMENSION[core.focusDimension]?.name ?? null) : null };
+}
+
+function stepCore(
+  graph: Graph,
+  policy: MetricPolicy,
+  intent: string | undefined,
   // CR-GC-336: kein `= 0.8` mehr. Dieselbe Frage („ist diese Dimension zu schwach?")
   // hatte drei Antworten — hier, im Tool-Schema und in se-steering. Jetzt eine: die Config.
   threshold: number,
   defer: string[] = [],
   selection: GenerationSelection = 'host',
   profile: LoadedTargetProfile | null = null,
-): GenerationStep {
+): Omit<GenerationStep, 'skill'> {
   const gateProtocol = GATE_PROTOCOL[selection];
   // Steering-Snapshot (CR-GC-289): og + ND-Injektion + Full-Katalog-Eval +
   // computeReadiness + Phasen-Gates — geteilt mit dem steeringDelta des dryRun-Verdicts.
@@ -351,7 +387,7 @@ export function generationStep(
   // UC-02/R-16/FC-04 dasselbe auf dem expand-Pfad, und der Regler misst.
   const strukturBegonnen = og.elements.some((e) => e.type === 'FUNC' || e.type === 'MOD');
   if (!strukturBegonnen) {
-    const seedRumpf = (prompt: string, stufe: keyof typeof SEED_STAGES): GenerationStep => ({
+    const seedRumpf = (prompt: string, stufe: keyof typeof SEED_STAGES): Omit<GenerationStep, 'skill'> => ({
       phase: 'seed',
       done: false,
       prompt: prompt + gateProtocol,

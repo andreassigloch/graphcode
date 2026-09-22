@@ -1,6 +1,6 @@
 # CR-GC-589: Anleitung zum Fokus reichen: graph_generate nennt je Fokus-Dimension den passenden se-Skill — heute liest Claude Code se:generate einmal bei 2-5 % und die Anlege-Skills erst am Ende, eine Skill-Korrektur erreicht keinen laufenden Agenten
 
-**Status:** 🟠 Open — Body ausgearbeitet
+**Status:** ✅ Umgesetzt, Kriterium 2 faellt mit dem Phase-1-Lauf
 **Typ:** aus Item ITEM-2026-438 (idea)
 **Erstellt:** 2026-09-22
 **Item:** bok/items/ITEM-2026-438.json (Lane: graph)
@@ -34,3 +34,12 @@ nicht kopieren), Test, `.claude/commands/se/generate.md` (Satz: „lade den gena
 
 1. Eine Zuordnung fuer beide Treiber (Grep: kein zweites Mapping).
 2. Gemessen wird mit dem Standardbericht (`report.mjs`, Abschnitte CR-GC-585 „Steuerung“ und CR-GC-586 „Auto gegen Hand“), Claude-Code-Arm, sigllm-Prosa-Korpus, n ≥ 2. Anlege-Skills werden im Lauf geladen, nicht erst in den letzten 10 %; „Doku als Datei“ sinkt.
+
+## 5 Ergebnis (2026-09-22)
+
+`SKILL_FOR_DIMENSION` lebt jetzt in `generate.ts` (verschoben, nicht kopiert — der Test verbietet
+eine zweite Tabelle im Executor). `GenerationStep.skill` traegt den Verweis (`se:author-req` …),
+`next` (CR-GC-588) auch; `se:generate` sagt "lade ihn ueber das Skill-Werkzeug, bevor du schreibst".
+Der Executor liest dieselbe Tabelle fuer seinen Rumpf. Abnahme in `tests/generate.test.ts`.
+Kriterium 2 misst der Phase-1-Lauf ("Doku als Datei", Zeitpunkt der Anlege-Skills).
+**Kongruenz:** benannte Ausnahme.

@@ -22,7 +22,7 @@ Der generative Treiber für Regime 1: **du schlägst vor, das Gate scort und wä
 ## Regeln
 
 - **Ein Schritt, ein Fokus:** nur die Funde bearbeiten, die der aktuelle `prompt` nennt — nicht vorgreifen.
-- UC-Stil aus `se:author-uc` (Actor–Verb–Objekt–Ergebnis, ≤25 Wörter), REQs aus `se:author-req`.
+- **Anleitung je Schritt:** der Schritt nennt in `skill` die Autorier-Anleitung (`se:author-uc`, `se:author-req`, `se:author-actor`, `se:top-level`) — lade sie über das Skill-Werkzeug, bevor du schreibst; nicht per `cat`, nicht erst am Ende.
 - Zerlegungsbreite 7±2 pro Ebene (RD-04); bei Architektur-Schritten 2 Alternativen anbieten, der Steuerwert entscheidet — eine Ebene, die RD-04 erfüllt, schlägt ein besseres Δm.
 - `blockingErrors > 0` hat immer Vorrang vor Neu-Generierung.
 - Am Ende `graph_export` + Commit — jeder Commit ein Graph-Stand, der zum Code passt.

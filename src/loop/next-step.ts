@@ -35,6 +35,7 @@ export const NextStep = z.object({
   focusKey: z.string().nullable(),
   focusTypes: z.array(z.string()),
   focusDimension: z.string().nullable(),
+  skill: z.string().nullable(),
 });
 export type NextStep = z.infer<typeof NextStep>;
 
@@ -48,6 +49,7 @@ export function compactStep(step: GenerationStep): NextStep {
     focusKey: step.focusKey,
     focusTypes: step.focusTypes,
     focusDimension: step.focusDimension,
+    skill: step.skill,
   };
 }
 

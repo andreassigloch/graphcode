@@ -13,7 +13,7 @@ import type { MCPToolRegistry } from '../kernel/tool-contract.js';
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import type { GenerationStep } from './generate.js';
+import { SKILL_FOR_DIMENSION, type GenerationStep } from './generate.js';
 import { byRank, type ChannelBlock } from './channel-rank.js';
 
 // ---------------------------------------------------------------------------
@@ -149,28 +149,7 @@ const SUGGEST_MAX_ROWS = 8;
 /** Schema-Obergrenze von `graph_suggest.k` — siehe Begruendung an der Aufrufstelle. */
 const SUGGEST_K = 20;
 
-/**
- * Welche Autorier-Anleitung zu welcher Fokus-Dimension gehoert (CR-GC-558, loest die
- * typ-gekeyte Fassung aus CR-GC-557 ab).
- *
- * Vorher entschied `focusTypes[0]` — also die Reihenfolge eines Arrays, das fuer den
- * Guide-Slice autoriert ist und nicht fuer diese Wahl. Die Runde kennt ihre Dimension;
- * daran haengt die Anleitung.
- *
- * `se-view:*` bleibt draussen: Darstellungen, keine Bauanleitungen. `ver`/`schema`/`cr`/`ms`
- * fehlen, weil es fuer sie keinen Autorier-Skill GIBT — ein Eintrag waere eine Luege ueber
- * vorhandene Anleitung.
- */
-const SKILL_FOR_DIMENSION: Record<string, { name: string; file: string } | undefined> = {
-  // Kaltstart-Stufen (CR-GC-559) — je Stufe die Anleitung ihrer EINEN Entscheidung.
-  'seed:sys': { name: 'se:top-level', file: 'top-level.md' },
-  'seed:uc': { name: 'se:author-uc', file: 'author-uc.md' },
-  'seed:actor': { name: 'se:author-actor', file: 'author-actor.md' },
-  uc: { name: 'se:author-uc', file: 'author-uc.md' },
-  req: { name: 'se:author-req', file: 'author-req.md' },
-  arch: { name: 'se:top-level', file: 'top-level.md' },
-  alloc: { name: 'se:top-level', file: 'top-level.md' },
-};
+// SKILL_FOR_DIMENSION lebt seit CR-GC-589 in generate.ts — eine Zuordnung fuer beide Treiber.
 
 /** Markerpaar, mit dem ein Skill selbst bestimmt, welcher Teil von ihm modelltauglich ist. */
 const INJECT_START = '<!-- inject:start -->';
