@@ -1,6 +1,6 @@
 # CR-GC-608: Fertig-Kriterium der Steuerregeln: lokales Optimum bei Kreis oder Plateau ueber 3 Steuerzuege (opus5-11/13/15)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-22)
 **Typ:** aus Item ITEM-2026-469 (idea)
 **Erstellt:** 2026-09-22
 **Item:** bok/items/ITEM-2026-469.json (Lane: graph)
