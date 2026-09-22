@@ -348,7 +348,9 @@ describe('generationStep — Fund-Rotation/defer (CR-GC-281)', () => {
     expect(step.done).toBe(false);
     expect(step.focusKey).toBeNull();
     for (const k of keys) expect(step.prompt).toContain(k);
-    expect(step.prompt).toContain('Nicht weiter mutieren');
+    // CR-GC-604: unter den zurueckgestellten sind Eintrittspunkte — die Ansage ist "Task starten", nicht "Mensch".
+    expect(step.prompt).toContain('Offen sind Eintrittspunkte');
+    expect(step.prompt).not.toContain('Menschen');
   });
 });
 

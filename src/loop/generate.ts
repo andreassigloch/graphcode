@@ -307,7 +307,17 @@ export function generationStep(
 ): GenerationStep {
   const core = stepCore(graph, policy, intent, threshold, defer, selection, profile, task);
   // CR-GC-601: im Task nennt der Schritt den Skill des Tasks, im Kern den der Fokus-Dimension.
-  const skill = task !== 'kern' ? TASK_SKILL[task] : core.focusDimension ? (SKILL_FOR_DIMENSION[core.focusDimension]?.name ?? null) : null;
+  // CR-GC-604: steht im Kern ein Eintrittspunkt im Fokus, ist der Skill der des Tasks — nicht der
+  // der Dimension (AF-04/AF-05 liegen in ver/ms, fuer die es keinen Autorier-Skill gibt: `next.skill` war null).
+  const eintrittsTask = task === 'kern' && core.focusKey ? TASK_OF_ENTRY.get(core.focusKey.split(':')[1] ?? '') : undefined;
+  const skill =
+    task !== 'kern'
+      ? TASK_SKILL[task]
+      : eintrittsTask
+        ? TASK_SKILL[eintrittsTask]
+        : core.focusDimension
+          ? (SKILL_FOR_DIMENSION[core.focusDimension]?.name ?? null)
+          : null;
   return { ...core, skill };
 }
 
@@ -568,13 +578,23 @@ function stepCore(
     // wiederholen" — genau dort entstand die Schleife (Lauf 11: R-04 sechsmal). `done` waere
     // derselbe Ausweg, den die Abnahme-Politik verschliesst. Also ein eigener Endzustand.
     const offen = kandidaten.flatMap((k) => k.windows.map((w) => keyOf(k.s.dimension as string, w)));
+    const liste = `(${offen.length}): ${offen.join('; ')}. `;
+    // CR-GC-604: wohin es weitergeht, haengt davon ab, WO die Maschine festsitzt. Im Task: zurueck in den
+    // Kern (Task-Regeln sind Warnungen, opus5-14: CR-R03 im Plan). Im Kern mit offenem Eintrittspunkt
+    // (nur nach ausdruecklichem defer moeglich): den Task starten. Erst sonst der Mensch.
+    const offeneTasks = [...new Set(offen.map((k) => TASK_OF_ENTRY.get(k.split(':')[1] ?? '')).filter((t) => t !== undefined))];
+    const weiter =
+      task !== 'kern'
+        ? `Task ${task} festgefahren. Nenne diese Funde mit Grund im Artefakt, dann zurück in den Kern: graph_generate ohne task.`
+        : offeneTasks.length > 0
+          ? `Offen sind Eintrittspunkte: starte ${offeneTasks.map((t) => `graph_generate {task:'${t}'} (Skill ${TASK_SKILL[t]})`).join(', ')} — ` +
+            'oder nimm den Eintritt als acceptedFindings mit Grund ab.'
+          : 'Nicht weiter mutieren. Übergib an den Menschen: nenne diese Funde, was du je Fund versucht hast und warum ' +
+            'es nicht griff, in der Schlussmeldung; exportiere den Stand (graph_export).';
     return {
       phase: 'stalled',
       done: false,
-      prompt:
-        `Festgefahren: jeder offene Fund kam zweimal ohne Wirkung und ist zurückgestellt (${offen.length}): ` +
-        `${offen.join('; ')}. Nicht weiter mutieren. Übergib an den Menschen: nenne diese Funde, was du je Fund ` +
-        'versucht hast und warum es nicht griff, in der Schlussmeldung; exportiere den Stand (graph_export).',
+      prompt: `Festgefahren: jeder offene Fund kam zweimal ohne Wirkung und ist zurückgestellt ${liste}${weiter}`,
       readiness,
       threshold,
       blockingErrors,

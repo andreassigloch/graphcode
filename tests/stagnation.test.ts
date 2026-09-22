@@ -76,7 +76,55 @@ describe('CR-GC-596: zweimal dasselbe Feedback → weiter', () => {
   });
 });
 
+/** Alle Eintrittspunkte abnehmen — sonst bleibt immer einer offen (CR-GC-604) und stalled ist unerreichbar. */
+const eintritteAbnehmen = async () => {
+  const acceptedFindings = ['AF-01', 'AF-02', 'AF-03', 'AF-04', 'AF-05'].map((ruleId) => ({ ruleId, reason: 'schlanker Umfang' }));
+  const r = (await tools.graph_mutate.handler({
+    commands: [{ op: 'update-node', node: { uid: 'SYS-s', attributes: { acceptedFindings } } }],
+    consumerId: 'test',
+  })) as Antwort;
+  expect(r.success).toBe(true);
+};
+
+describe('CR-GC-604: Eintrittspunkte stellt die Abbruchregel nie zurueck', () => {
+  it('bleibt ein Eintrittspunkt nach Zuegen ohne Wirkung stehen, nennt next weiter ihn — mit dem Skill des Tasks', async () => {
+    let r: Antwort | undefined;
+    for (let i = 0; i < 60; i++) {
+      r = await zugOhneWirkung();
+      if (/:AF-0\d:/.test(r.next!.focusKey ?? '')) break;
+    }
+    const eintritt = r!.next!.focusKey!;
+    expect(eintritt).toMatch(/:AF-0\d:/);
+    const danach = (await zugOhneWirkung()) as { next?: { focusKey: string | null; skill: string | null } };
+    expect(danach.next!.focusKey).toBe(eintritt);
+    expect(danach.next!.skill).toMatch(/^se-(conops|trade|irr|fmea|plan)$/);
+  });
+
+  it('festgefahren im Task heisst: zurueck in den Kern, nicht "uebergib an den Menschen"', async () => {
+    await tools.graph_mutate.handler({
+      commands: [
+        knoten('MS-1', 'MS', 'Fundament', 'Erster Meilenstein.'),
+        { op: 'update-node', node: { uid: 'SYS-s', attributes: { acceptedFindings: [{ ruleId: 'AF-05', reason: 'schlank' }] } } },
+      ],
+      consumerId: 'test',
+    });
+    const s = await tools.graph_generate.handler({ task: 'plan' });
+    expect(s.phase).toBe('expand');
+    let letzte: Antwort['next'];
+    for (let i = 0; i < 20; i++) {
+      letzte = (await zugOhneWirkung()).next;
+      if (letzte!.phase === 'stalled') break;
+    }
+    expect(letzte!.phase).toBe('stalled');
+    expect(letzte!.prompt).toMatch(/Task plan festgefahren/);
+    expect(letzte!.prompt).toMatch(/graph_generate ohne task/);
+    expect(letzte!.prompt).not.toMatch(/Menschen/);
+  });
+});
+
 describe('CR-GC-596: nur noch Zurueckgestelltes → stalled, nicht done', () => {
+  beforeEach(eintritteAbnehmen);
+
   it('nach genug Zuegen ohne Wirkung endet die Maschine stalled — mit Liste, ohne Fokus, nie done', async () => {
     let s = await tools.graph_generate.handler({});
     let letzte: Antwort['next'] = undefined;
