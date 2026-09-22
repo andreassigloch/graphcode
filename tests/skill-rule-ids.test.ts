@@ -103,3 +103,54 @@ describe('TEST-skill-rule-ids: keine erfundenen Regeln in Skills und Prompts (CR
     for (const schluessel of Object.keys(RULE_CLAUSE)) expect(KATALOG.has(schluessel)).toBe(true);
   });
 });
+
+/**
+ * Smeagol Stufe (d) — Task-Konsistenz (CR-GC-602). Seit die Regeln einen Eigentuemer haben
+ * (CR-SM-350), gibt es eine neue Klasse Widerspruch: ein Kanal des Kerns, der an einer Task-Regel
+ * zieht. Genau das war die FM-01-Klausel aus CR-GC-598 — sie forderte den Kern-Loop auf, S/O/D zu
+ * setzen, was nur die FMEA darf. Diese Stufe haette sie beim ersten Lauf gefangen.
+ */
+describe('TEST-skill-rule-ids (d): Kanaele, Tasks und Abnahmen passen zusammen (CR-GC-602)', () => {
+  it('RULE_CLAUSE nur an Kern-Regeln — eine Klausel steuert den Kern-Loop, nie einen Task', async () => {
+    const { taskOf } = await import('@sigloch/contracts/se');
+    for (const id of Object.keys(RULE_CLAUSE)) expect(taskOf(id), `${id} gehoert ${taskOf(id)}`).toBe('kern');
+  });
+
+  it('jeder Task hat einen Skill, und der Skill liegt ausgeliefert vor', async () => {
+    const { TASK_SKILL } = await import('../src/loop/generate.js');
+    const { RULE_TASKS } = await import('@sigloch/contracts/se');
+    const dateien = markdownDateien(join(__dirname, '..', '.claude', 'commands')).map((p) =>
+      p.split('/.claude/commands/')[1].replace(/\.md$/, '').replace('/', ':'),
+    );
+    for (const t of RULE_TASKS) {
+      if (t === 'kern') continue;
+      const skill = (TASK_SKILL as Record<string, string>)[t];
+      expect(skill, `${t} ohne Skill`).toBeTruthy();
+      expect(dateien, `${t}: ${skill} nicht ausgeliefert`).toContain(skill);
+    }
+  });
+
+  it('jeder Eintrittspunkt ist eine Kern-Regel im Gate-Katalog und keine info — sonst sieht der Kern ihn nie', async () => {
+    const { TASK_ENTRY, taskOf } = await import('@sigloch/contracts/se');
+    const { SE_DESCRIPTOR } = await import('@sigloch/graph-api-core');
+    const gate = new Map((SE_DESCRIPTOR.rules ?? []).map((r: { id: string; severity: string }) => [r.id, r]));
+    for (const [task, entry] of Object.entries(TASK_ENTRY)) {
+      if (entry === null) continue;
+      expect(taskOf(entry), `${task}: ${entry}`).toBe('kern');
+      expect(gate.has(entry), `${task}: ${entry} nicht im Gate-Katalog`).toBe(true);
+      expect(gate.get(entry)!.severity).not.toBe('info');
+    }
+  });
+
+  it('Abnahme je Task nur an eigenen Regeln — im Kern nur an Eintrittspunkten', async () => {
+    const { ABNEHMBAR_JE_TASK } = await import('../src/kernel/measure/focus-set.js');
+    const { TASK_ENTRY, taskOf } = await import('@sigloch/contracts/se');
+    const eintritte = new Set(Object.values(TASK_ENTRY).filter(Boolean));
+    for (const [task, ids] of Object.entries(ABNEHMBAR_JE_TASK) as [string, string[]][]) {
+      for (const id of ids) {
+        if (task === 'kern') expect(eintritte.has(id), `Kern: ${id} ist kein Eintrittspunkt`).toBe(true);
+        else expect(taskOf(id), `${task}: ${id} gehoert ${taskOf(id)}`).toBe(task);
+      }
+    }
+  });
+});
