@@ -1,0 +1,132 @@
+[
+  {
+    "arm": "opus5",
+    "model": "claude-opus-5",
+    "executor": "claude",
+    "run": 0,
+    "exportError": null,
+    "elements": 157,
+    "traces": 302,
+    "structure": {
+      "UC": 7,
+      "FUNC": 20,
+      "MOD": 5,
+      "REQ": 34,
+      "TEST": 34
+    },
+    "readiness": {
+      "compliance": 1,
+      "elementsWithErrors": 0,
+      "gatesPassed": "4/8"
+    },
+    "spec": {
+      "compliance": 1,
+      "elementsWithErrors": 0,
+      "dimensions": {
+        "req": 0.902,
+        "uc": 1,
+        "arch": 0.987,
+        "alloc": 1,
+        "ver": 1,
+        "schema": 1,
+        "cr": 1,
+        "ms": null
+      },
+      "steer": {
+        "worst": 0,
+        "anchor": null
+      },
+      "notEvaluated": [
+        "rule:BQ-01",
+        "rule:BQ-02",
+        "rule:BQ-04",
+        "rule:BQ-06",
+        "rule:BQ-07"
+      ],
+      "advisoryOnly": [
+        "BQ-01",
+        "BQ-02",
+        "BQ-04",
+        "BQ-06",
+        "BQ-07",
+        "ND-01",
+        "ND-02",
+        "RC-01",
+        "RC-02",
+        "RC-03",
+        "RC-04",
+        "RC-05",
+        "RC-06",
+        "RC-07"
+      ]
+    },
+    "code": {
+      "verdict": "nicht pruefbar",
+      "why": "keine Bindung und keine aufloesbare Quelldatei — es gibt nichts zu pruefen",
+      "reach": {
+        "endpoints": 0,
+        "assigned": 0,
+        "pct": 0
+      },
+      "binding": {
+        "leafFuncs": 16,
+        "bound": 0,
+        "pct": 0
+      },
+      "rcViolations": {}
+    },
+    "gate_rejections": 3,
+    "tokens": {
+      "wall_s": 1287.6,
+      "cost_usd": 9.035194000000002,
+      "tokens_in": 8942318,
+      "tokens_in_uncached": 8763,
+      "tokens_in_cache_read": 8685133,
+      "tokens_in_cache_creation": 248422,
+      "tokens_out": 116448,
+      "tokens_reasoning": null,
+      "turns": 74
+    },
+    "moduleAudit": {
+      "MOD": {
+        "authored": [
+          "Apply-Gate",
+          "Gedächtnis",
+          "Weboberfläche",
+          "Zugangskontrolle",
+          "Zugangswege"
+        ],
+        "golden": [
+          "contracts",
+          "graph-api-core",
+          "learning-core",
+          "learning-engine",
+          "se-optimizer",
+          "se-steering"
+        ]
+      },
+      "FUNC": {
+        "authored": 20,
+        "golden": 11
+      },
+      "UC": {
+        "authored": [
+          "Änderung einreichen",
+          "Änderungen nachvollziehen",
+          "Coding-Agent anbinden",
+          "Gleichzeitig ändern",
+          "Modell live einsehen",
+          "Projektstand sehen",
+          "Zugang verwalten"
+        ],
+        "golden": [
+          "Fit-Advisory am Gate",
+          "Aus Trajektorien lernen (F2)",
+          "Verbesserungen vorschlagen",
+          "Topologie-Scores anzeigen"
+        ]
+      }
+    },
+    "briefCoverage": null
+  }
+]

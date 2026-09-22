@@ -1877,7 +1877,9 @@
       "id": "CR-GC-610",
       "type": "CR",
       "name": "Code-Test (Leitlinie Satz 7): Scheduler-Scheibe aus sigllm, gefuehrt (Modell + graphcode) gegen frei laufendes Claude Code — Aufgabe, Vertrag, verdeckte Abnahme, Messung",
-      "description": "docs/cr/open/CR-GC-610-code-test-leitlinie-satz-7-scheduler-sch.md"
+      "description": "docs/cr/open/CR-GC-610-code-test-leitlinie-satz-7-scheduler-sch.md",
+      "status": "done",
+      "commitRef": "8ba06ed9f07241cc30d0e91e280956fc08fc7aa8"
     },
     {
       "id": "CR-GC-611",
@@ -20544,5 +20546,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 379
+  "graphVersion": 380
 }

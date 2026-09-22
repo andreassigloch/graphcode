@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 224 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 224 CR · 179 done · 0 open.
+Total: 224 CR · 180 done · 0 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -279,7 +279,7 @@ Total: 224 CR · 179 done · 0 open.
 | `CR-GC-607` | n/a | Task-Regeln TR-01 (Trade-Entscheidung als CR) und IR-01 (Annahmen-Review promoviert zu CR) ueber crRefs im Frischestempel |
 | `CR-GC-608` | done | Fertig-Kriterium der Steuerregeln: lokales Optimum bei Kreis oder Plateau ueber 3 Steuerzuege (opus5-11/13/15) |
 | `CR-GC-609` | n/a | Schatten-graph_suggest im Rig: je Zug nachgespielt, was der Optimierer vorgeschlagen haette — opus5-14/15: 0 anwendbare Vorschlaege, keine Vorlage fuer Steuerregeln |
-| `CR-GC-610` | n/a | Code-Test (Leitlinie Satz 7): Scheduler-Scheibe aus sigllm, gefuehrt (Modell + graphcode) gegen frei laufendes Claude Code — Aufgabe, Vertrag, verdeckte Abnahme, Messung |
+| `CR-GC-610` | done | Code-Test (Leitlinie Satz 7): Scheduler-Scheibe aus sigllm, gefuehrt (Modell + graphcode) gegen frei laufendes Claude Code — Aufgabe, Vertrag, verdeckte Abnahme, Messung |
 | `CR-GC-611` | done | Antwort-Diaet: graph_realize liefert 2x die volle missingRefs-Liste (87% seiner Antwort), graph_mutate next+violations je ~40k Zeichen, authoring_guide 11x wiederholt |
 | `CR-GC-612` | done | Fester Vorspann je Lauf entflechten: GRAPHCODE.md, Werkzeugbeschreibungen, Skills und Antworten haben doppelte Zustaendigkeit — jede Frage soll genau einen Ort haben |
 | `CR-GC-613` | done | Lesewerkzeuge antworten ueber das ganze Modell statt ueber die Scheibe: rules_get_violations 32.630, graph_test_report 25.602, graph_context je 9.300 Zeichen — 62% der graphcode-Antworten eines Laufs |
