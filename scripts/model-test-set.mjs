@@ -123,6 +123,11 @@ export const INCLUDED = [
  * Entscheidung bleibt und nicht zu einer stillen Lücke wird.
  */
 export const EXCLUDED = {
+  'tests/skill-rule-ids.test.ts':
+    'Smeagol (CR-GC-571/602): prueft Skill- und Prompt-TEXTE gegen den Regelkatalog und die\n' +
+    'Eigentuemer-Spalte (contracts). Liest weder graphcodes Modell noch dessen SSOT; der Treffer ist\n' +
+    'der Regelkatalog. Eine Modellaenderung kann ihn nicht rot machen; eine neue Regel-ID im Skill\n' +
+    'oder eine Klausel an einer Task-Regel sehr wohl.',
   'tests/generate.task.test.ts':
     'Task-Modus der Zustandsmaschine (CR-GC-601). Der Treffer ist das GOLDEN EINES RIG-KORPUS, nie\n' +
     'graphcodes eigene SSOT. Eine Aenderung an graphcodes Modell kann ihn nicht rot machen; eine an\n' +
