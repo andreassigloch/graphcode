@@ -23,11 +23,11 @@ import { RULE_TO_DIMENSION } from '@sigloch/contracts/se';
 import type { MetricPolicy } from '@sigloch/contracts/se';
 import { takeSteeringSnapshot } from '../kernel/measure/steering-snapshot.js';
 import { PhaseGateReadiness } from '../kernel/measure/readiness.js';
-import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { acceptedRuleIds } from '@sigloch/contracts/se';
 import { isIntentTooThin, intentCoverage, type LoadedTargetProfile } from './target-profile.js';
 import { winner } from './channel-rank.js';
-import { ABNEHMBARE_REGELN, decision } from './decisions.js';
+import { decision } from './decisions.js';
+import { ABNEHMBARE_REGELN } from '../kernel/measure/focus-set.js';
 
 /**
  * Datenvertrag der Generierungs-Instruktion (SCHEMA-generation-step) — Zod, nicht
@@ -171,6 +171,16 @@ const GATE_PROTOCOL: Record<GenerationSelection, string> = {
  * uids gerendert oder gar nicht.
  */
 export const RULE_CLAUSE: Record<string, { types: string[]; text: (uids: string[]) => string }> = {
+  // CR-GC-598: Rewind opus5-12 — der Agent liess S/O/D weg, weil die Probe danach 8 Fehler zeigte
+  // (FM-03: hohes Risiko ohne bestandenen Test). FM-03 ist abnehmbar; das muss er HIER erfahren,
+  // wo er entscheidet, nicht erst im Skill.
+  'FM-01': {
+    types: ['REQ'],
+    text: (uids) =>
+      `Setze an ${uids.join(', ')} die FMEA-Bewertung als Attribute severity, occurrence, detection (je 1–10). ` +
+      'Ergibt sich ein hohes Risiko, feuert danach FM-03 (kein bestandener Test) — ohne Code ist das erwartet: ' +
+      'nimm FM-03 im selben Batch als acceptedFindings [{ruleId:"FM-03", reason}] am REQ ab. Lass die Bewertung nicht weg.',
+  },
   'R-15': {
     types: ['FCHAIN', 'FUNC'],
     text: (uids) =>
@@ -250,26 +260,10 @@ export const DIMENSION_FOCUS_TYPES: Record<string, string[]> = {
  * kein ACTOR), `generationStep` bleibt rein. `seed` steht bewusst NICHT mehr in
  * DIMENSION_FOCUS_TYPES — dort gehoeren Readiness-Dimensionen hin, und der Seed ist keine.
  */
-/**
- * Die Fokusmenge (CR-GC-593): welche Funde die Maschine dem Agenten ueberhaupt zeigt — und
- * damit, weil `done ⇔ kein Fokus`, was zwischen Lauf und Freigabe steht.
- *
- *   1. nur Regeln, die das GATE auswertet (SE_DESCRIPTOR.rules). BQ/ND/RC laufen im
- *      Steuerungsstrom mit und stehen in graph_readiness — als Fokus konnte der Agent sie
- *      weder am Gate sehen noch reparieren (BQ-02 war `skipped`, `notInGate` und `missing`).
- *   2. keine info-Regeln: ein Hinweis ist kein Auftrag.
- *   3. Praesenz von Code (R-19/R-20/R-26/R-27/R-32) nur, wenn ueberhaupt etwas gebunden ist —
- *      ein Modell ohne eine einzige realRef hat keine Bindungsluecken, es hat keinen Code
- *      (dieselbe Grenze wie CR-GC-584). Je Element deckt `concept: true` denselben Fall.
- *   4. keine abgenommenen Funde (`acceptedFindings`, CR-SM-349) — die benannte Abweichung.
- *
- * Gemessen am Golden (sigllm v98): danach bleiben RD-05, MS-01, BW-02, FM-03, AF-05 —
- * die Liste dessen, was der Handlauf am Ende der Spezifikation bewusst offen liess.
- */
+// Die Fokusmenge lebt seit CR-GC-598 in kernel/measure/focus-set.ts — eine Definition fuer
+// Schritt, Probe und Bericht. Re-Export fuer bestehende Leser.
+export { FOCUS_EXCLUDED_WHEN_UNBOUND } from '../kernel/measure/focus-set.js';
 const windowRuleOf = (vs: readonly { rule_id: string }[]): string | undefined => vs[0]?.rule_id;
-
-export const FOCUS_EXCLUDED_WHEN_UNBOUND: ReadonlySet<string> = new Set(['R-19', 'R-20', 'R-26', 'R-27', 'R-32']);
-const GATE_RULE_IDS: ReadonlySet<string> = new Set((SE_DESCRIPTOR.rules ?? []).map((r) => r.id));
 
 export const SEED_STAGES = {
   sys: ['SYS'],
@@ -320,18 +314,10 @@ function stepCore(
   const gateProtocol = GATE_PROTOCOL[selection];
   // Steering-Snapshot (CR-GC-289): og + ND-Injektion + Full-Katalog-Eval +
   // computeReadiness + Phasen-Gates — geteilt mit dem steeringDelta des dryRun-Verdicts.
-  const { og, violations: alleFunde, blockingErrors, report, phaseReadiness } = takeSteeringSnapshot(graph, policy);
-  // CR-GC-593: die Fokusmenge (s. FOCUS_EXCLUDED_WHEN_UNBOUND) — alles Weitere unten rechnet nur damit.
-  const gebunden = og.elements.some((e) => e.type === 'FUNC' && e.attributes?.realRef !== undefined);
+  const { og, focus: violations, blockingErrors, report, phaseReadiness } = takeSteeringSnapshot(graph, policy);
+  // CR-GC-593/598: `violations` IST die Fokusmenge (focus-set.ts); fuer Hinweise am Element:
   const elementById = new Map(og.elements.map((e) => [e.id, e]));
   const sysEl = og.elements.find((e) => e.type === 'SYS');
-  const violations = alleFunde.filter((v) => {
-    if (!GATE_RULE_IDS.has(v.rule_id) || v.severity === 'info') return false;
-    if (!gebunden && FOCUS_EXCLUDED_WHEN_UNBOUND.has(v.rule_id)) return false;
-    const traeger = elementById.get(v.element_id) ?? sysEl;
-    // CR-GC-594: eine Abnahme zaehlt nur fuer die abnehmbare Klasse; an Architektur wird sie ignoriert.
-    return !(traeger && ABNEHMBARE_REGELN.has(v.rule_id) && acceptedRuleIds(traeger).has(v.rule_id));
-  });
   const sys = og.elements.find((e) => e.type === 'SYS');
   const effectiveIntent = intent?.trim() || sys?.description?.trim() || '';
   const readiness = report.scores
