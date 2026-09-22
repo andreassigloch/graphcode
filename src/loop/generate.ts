@@ -171,16 +171,6 @@ const GATE_PROTOCOL: Record<GenerationSelection, string> = {
  * uids gerendert oder gar nicht.
  */
 export const RULE_CLAUSE: Record<string, { types: string[]; text: (uids: string[]) => string }> = {
-  // CR-GC-598: Rewind opus5-12 — der Agent liess S/O/D weg, weil die Probe danach 8 Fehler zeigte
-  // (FM-03: hohes Risiko ohne bestandenen Test). FM-03 ist abnehmbar; das muss er HIER erfahren,
-  // wo er entscheidet, nicht erst im Skill.
-  'FM-01': {
-    types: ['REQ'],
-    text: (uids) =>
-      `Setze an ${uids.join(', ')} die FMEA-Bewertung als Attribute severity, occurrence, detection (je 1–10). ` +
-      'Ergibt sich ein hohes Risiko, feuert danach FM-03 (kein bestandener Test) — ohne Code ist das erwartet: ' +
-      'nimm FM-03 im selben Batch als acceptedFindings [{ruleId:"FM-03", reason}] am REQ ab. Lass die Bewertung nicht weg.',
-  },
   'R-15': {
     types: ['FCHAIN', 'FUNC'],
     text: (uids) =>

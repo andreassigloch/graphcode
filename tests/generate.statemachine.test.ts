@@ -98,11 +98,12 @@ describe('CR-GC-593/594: das Golden und die benannten Abnahmen', () => {
     expect(s.done).toBe(false);
     const offen = new Set(
       evaluateAllRules({ elements: golden.elements, traces: golden.traces } as never, DEFAULT_METRIC_POLICY)
-        .filter((v) => GATE.has(v.rule_id) && v.severity !== 'info' && !FOCUS_EXCLUDED_WHEN_UNBOUND.has(v.rule_id))
+        .filter((v) => GATE.has(v.rule_id) && v.severity !== 'info' && !FOCUS_EXCLUDED_WHEN_UNBOUND.has(v.rule_id) && !v.rule_id.startsWith('FM-'))
         .map((v) => v.rule_id),
     );
     // Gemessen 2026-09-22: das ist, was der Handlauf am Ende der Spezifikation bewusst offen liess.
-    expect([...offen].sort()).toEqual(['AF-05', 'BW-02', 'FM-03', 'MS-01', 'RD-05']);
+    // CR-GC-599: FM-* gehoeren der FMEA und stehen nicht mehr in der Fokusmenge.
+    expect([...offen].sort()).toEqual(['AF-05', 'BW-02', 'MS-01', 'RD-05']);
   });
 
   /** Nimmt an jedem Fund der genannten Regeln ab — am betroffenen Element, graphweit am SYS. */
@@ -120,14 +121,14 @@ describe('CR-GC-593/594: das Golden und die benannten Abnahmen', () => {
     return kopie;
   };
 
-  it('CR-GC-594: die abnehmbaren (AF-05, FM-03, MS-01) verschwinden aus dem Fokus, die Architektur bleibt', () => {
-    const s = step(mitAbnahmen(['AF-05', 'FM-03', 'MS-01']));
+  it('CR-GC-594: die abnehmbaren (AF-05, MS-01) verschwinden aus dem Fokus, die Architektur bleibt', () => {
+    const s = step(mitAbnahmen(['AF-05', 'MS-01']));
     expect(s.done).toBe(false);
     expect(['BW-02', 'RD-05']).toContain(s.focusKey!.split(':')[1]);
   });
 
   it('CR-GC-594: eine Abnahme an einer Architekturregel zaehlt nicht — das Golden ist heute nicht done, und der Prompt sagt warum', () => {
-    const s = step(mitAbnahmen(['AF-05', 'BW-02', 'FM-03', 'MS-01', 'RD-05']));
+    const s = step(mitAbnahmen(['AF-05', 'BW-02', 'MS-01', 'RD-05']));
     expect(s.done).toBe(false);
     const regel = s.focusKey!.split(':')[1];
     expect(['BW-02', 'RD-05']).toContain(regel);
@@ -148,7 +149,7 @@ describe('CR-GC-593/594: das Golden und die benannten Abnahmen', () => {
 
   it('eine Abnahme ohne Grund zaehlt nicht', () => {
     const kopie: Flat = JSON.parse(JSON.stringify(golden));
-    for (const e of kopie.elements) (e.attributes ??= {}).acceptedFindings = [{ ruleId: 'FM-03' }, { ruleId: 'RD-05' }, { ruleId: 'MS-01' }, { ruleId: 'BW-02' }, { ruleId: 'AF-05' }];
+    for (const e of kopie.elements) (e.attributes ??= {}).acceptedFindings = [{ ruleId: 'RD-05' }, { ruleId: 'MS-01' }, { ruleId: 'BW-02' }, { ruleId: 'AF-05' }];
     expect(step(kopie).done).toBe(false);
   });
 });
