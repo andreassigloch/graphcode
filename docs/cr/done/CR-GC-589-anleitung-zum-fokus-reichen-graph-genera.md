@@ -1,6 +1,6 @@
 # CR-GC-589: Anleitung zum Fokus reichen: graph_generate nennt je Fokus-Dimension den passenden se-Skill — heute liest Claude Code se:generate einmal bei 2-5 % und die Anlege-Skills erst am Ende, eine Skill-Korrektur erreicht keinen laufenden Agenten
 
-**Status:** ✅ Umgesetzt, Kriterium 2 faellt mit dem Phase-1-Lauf
+**Status:** ✅ Done (2026-09-22)
 **Typ:** aus Item ITEM-2026-438 (idea)
 **Erstellt:** 2026-09-22
 **Item:** bok/items/ITEM-2026-438.json (Lane: graph)
