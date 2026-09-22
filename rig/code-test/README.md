@@ -59,11 +59,15 @@ die Beurteilung des Schnitts bleibt eine menschliche Durchsicht (Code beider Arm
 ```bash
 cd graphcode
 npm run build                                               # dist ist die graphcode-Version des Arms
-NUR_AUFBAU=1 ARMS=gefuehrt,frei node rig/code-test/run-code.mjs   # Probe ohne Modell
+NUR_AUFBAU=1 ARMS=gefuehrt,frei node rig/code-test/run-code.mjs   # Probe ohne Modell (Arbeitsbereiche unter ~/.graphcode-code-test/runs, RUNS_DIR)
 ARMS=gefuehrt,frei node rig/code-test/run-code.mjs               # der Lauf (~2 × 10–20 $)
-node rig/code-test/messen.mjs rig/code-test/runs/gefuehrt-0 rig/code-test/runs/frei-0
+node rig/code-test/messen.mjs ~/.graphcode-code-test/runs/gefuehrt-0 ~/.graphcode-code-test/runs/frei-0
 IMPL=$PWD/rig/code-test/referenz npx vitest run --config rig/code-test/vitest.config.ts  # Abnahme selbst prüfen
 ```
+
+Die Arbeitsbereiche liegen bewusst **ausserhalb** des Repos: unter `rig/code-test/` saehe der Agent die
+verdeckte Abnahme und die Referenz im Elternverzeichnis (Lauf 0: der freie Arm hat das Verzeichnis gelistet,
+die Abnahme aber nach eigener Aussage und laut Stream nicht gelesen).
 
 ## Grenzen (mit den Zahlen nennen)
 
