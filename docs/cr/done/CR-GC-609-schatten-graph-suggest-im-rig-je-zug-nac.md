@@ -1,6 +1,6 @@
 # CR-GC-609: Schatten-graph_suggest im Rig: je Zug nachgespielt, was der Optimierer vorgeschlagen haette — opus5-14/15: 0 anwendbare Vorschlaege, keine Vorlage fuer Steuerregeln
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-22)
 **Typ:** aus Item ITEM-2026-470 (finding)
 **Erstellt:** 2026-09-22
 **Item:** bok/items/ITEM-2026-470.json (Lane: graph)
