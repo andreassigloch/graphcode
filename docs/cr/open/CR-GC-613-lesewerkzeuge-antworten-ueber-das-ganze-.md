@@ -27,12 +27,50 @@ Kipp-Kriterium und Nulllinie wie in ITEM-2026-369.
 
 ## Akzeptanzkriterien
 
-- [ ] Reine Funktion „Arbeitsmenge aus dem Audit seit Sitzungsstart", eigener Test.
-- [ ] `rules_get_violations`, `graph_test_report` und `graph_readiness` antworten vorgabeweise auf diese Menge und nennen
-      den genommenen Umfang sowie die Zahl der Befunde außerhalb.
-- [ ] `graph_context` liefert Nachbarn ohne volle Prosa (Kanten statt Beschreibungen): am Scheduler-Modell unter 3.000
-      statt 9.300 Zeichen.
-- [ ] Die drei Aufrufe zusammen am Scheduler-Modell unter 15.000 statt 90.000 Zeichen.
-- [ ] Erster Aufruf einer Sitzung ohne Schreibzüge: ganzes Modell, unverändertes Verhalten.
-- [ ] **Kipp-Kriterium** wie in CR-GC-612: 0 Rückfälle, nicht mehr Nachschlage-Aufrufe.
-- [ ] Testsuite grün.
+- [x] Reine Funktion `arbeitsmengeAusAudit` (`src/kernel/measure/working-set.ts`), eigener Test
+      (`tests/working-set.test.ts`, 9 Fälle). Liegt im **Kernel**, nicht in `projections`: sie ist
+      eine reine Messung, und `tool-contract.ts` braucht ihren Typ — ein Import nach oben hätte die
+      Schichtordnung gebrochen (`tests/import-boundaries.test.ts`).
+- [x] `rules_get_violations`, `graph_test_report` und `graph_readiness` tragen `umfang`
+      (`art` · `uids` · `ausserhalb`). **Gemessen am sigllm-Golden v98 (255 Knoten), echter
+      Kuzu-Store, nach EINEM Schreibzug am `MOD-scheduler`:**
+
+      | Aufruf | ganzes Modell | auf die Scheibe |
+      |---|---:|---:|
+      | `rules_get_violations {severity:'warning'}` | 51.748 | **304** |
+      | `graph_test_report {}` | 22.800 | **2.137** |
+      | `graph_context {depth:2}` | 9.036 | **6.696** |
+      | zusammen | 83.584 | **9.137** |
+
+- [x] Die drei Aufrufe zusammen unter 15.000: **9.137**.
+- [ ] **`graph_context` unter 3.000 bei `depth: 2` — NICHT erreicht, und zwar prinzipiell.**
+      Gemessen: die 30-Knoten-Scheibe kostet allein an Format-E-**Struktur** (uids, Namen, Typen,
+      35 Kanten) **4.080 Zeichen**, bevor ein Wort Prosa dazukommt; die Beschreibungen sind 4.956,
+      davon 1.959 REQ und 431 SCHEMA — genau das, was der Befund als GEBRAUCHT benennt. Unter 3.000
+      käme man dort nur, indem man Knoten weglässt, und die TESTs und das MOD sind die
+      Definition-of-Done, die dieses Werkzeug zusagt. Erreicht ist **9.036 → 6.696 (−26 %)**, und
+      bei `depth: 1` **2.926**. Der ehrliche Hebel liegt damit im Ablauf, nicht im Werkzeug: bei
+      `depth: 1` bleiben, wo `depth: 1` die Frage beantwortet. Die Zahl 3.000 war eine Schätzung
+      ohne den Strukturboden.
+- [x] Erster Aufruf einer Sitzung ohne Schreibzüge: ganzes Modell, unverändertes Verhalten
+      (eigener Testfall, und `tests/testreport.test.ts` prüft beide Lagen nebeneinander).
+- [ ] **Kipp-Kriterium** — offen bis zum Bestätigungslauf (CR-GC-610). Es ist eine Aussage über
+      einen LAUF, nicht über den Code, und wird dort gemessen, nicht hier behauptet.
+- [x] Testsuite grün (bis auf `distribution` und `lockfile-sync`, die erwarteten Link-Modus-Roten).
+
+## Entscheidungen, die beim Bauen fielen
+
+**Der Schnitt von `graph_context` geht nach TYP, nicht nach Ring.** Ein erster Anlauf kürzte ab
+Ring 2 und sparte gemessen 17 % — bei `depth: 2` ist der Innenring schon fast alles. Er sah nur
+deshalb grün aus, weil der Messtest sich mit `FUNC-scheduler-operation` (2.693 Zeichen) einen
+kleinen Anker ausgesucht hatte. Jetzt behalten Anker, REQ und SCHEMA ihre Prosa; alles andere steht
+als Knoten und Kante da, mit `…` und **einer** Legendenzeile. Der ausgeschriebene Hinweis je Knoten
+kostete auf derselben Scheibe 1.178 Zeichen und machte die Kürzung zur Hälfte zunichte.
+
+**`graph_readiness` weist den Umfang aus, schneidet aber die SCORES nicht.** Readiness ist eine
+Aussage über das Projekt. Eine auf die eigenen Schreibzüge geschnittene Compliance-Zahl wäre genau
+das, wovor dieser CR selbst warnt: ein Gate, das grün meldet, weil es weniger gesehen hat.
+
+**Die Erweiterung folgt `satisfy` UND `verify`.** Beide zeigen auf ein REQ. Ohne `verify` verlöre
+`graph_test_report` nach einem `graph_test_ingest` genau die REQ, über die er berichten soll — real
+aufgefallen an `tests/testreport.test.ts`, nicht am Reißbrett.

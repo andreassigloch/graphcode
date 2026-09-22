@@ -25,6 +25,7 @@ import { forwardIssues } from '../kernel/harness-handle-contract.js';
 import type { ToolPort } from '../kernel/tool-contract.js';
 import { GraphCodeCodec } from '../projections/codec.js';
 import type { EditSource, TrajectoryStamps } from '../projections/trajectory.js';
+import type { Arbeitsmenge } from '../kernel/measure/working-set.js';
 import type { AuditOrigin, TemplateEdit } from './tool-context.js';
 
 /** Ein aufrufbares Mitglied mit seiner Signatur — die Abweisung nennt es beim Namen. */
@@ -92,6 +93,12 @@ export const ToolContext = z
     ownerPid: member<() => string | null>('ownerPid'),
     /** Run a write body on the single tool-write chain (check+gate+record atomic). */
     serializeToolWrite: member<<T>(body: () => Promise<T>) => Promise<T>>('serializeToolWrite'),
+    /**
+     * CR-GC-613 — die eigene Arbeitsmenge der Sitzung: jede uid, die ein ANGEWANDTER Schreibzug
+     * seit dem Binden dieses Kontexts angefasst hat. Die Lesewerkzeuge schneiden ihre Antwort
+     * vorgabeweise darauf und nennen den genommenen Umfang. Leer = noch kein Zug ⇒ ganzes Modell.
+     */
+    arbeitsmenge: member<() => Promise<Arbeitsmenge>>('arbeitsmenge'),
     /** Stale-base rejection with staleDelta, or null when the base is fresh (CR-GC-233). */
     occReject:
       member<

@@ -52,6 +52,7 @@ import { attributesFor, formatEExampleFor, type AttributeHint } from './authorin
 import { TestSelectionSchema } from '../kernel/measure/test-selection.js';
 import type { MCPTool, MCPToolRegistry, ToolPort } from '../kernel/tool-contract.js';
 import { heldBackTraces, type RejectedTrace } from '../kernel/harness-import.js';
+import { schneide, type Umfang } from '../kernel/measure/working-set.js';
 
 // -------------------------------------------------------------------------
 // Input schemas
@@ -142,7 +143,7 @@ const GraphTestsInputSchema = z.object({
 // -------------------------------------------------------------------------
 
 export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
-  const { harness, graphVersion } = ctx;
+  const { harness, graphVersion, arbeitsmenge } = ctx;
 
   /**
    * Projektion der EINEN Ergebnisliste — nie eine zweite Erhebung (CR-GC-398).
@@ -211,7 +212,7 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
 
   const rules_get_violations: MCPTool<
     z.infer<typeof RulesGetViolationsInputSchema>,
-    { violations: Finding[] | ViolationGroup[]; total: number; skipped: string[]; notInGate: string[] }
+    { violations: Finding[] | ViolationGroup[]; total: number; skipped: string[]; notInGate: string[]; umfang: Umfang }
   > = {
     name: 'rules_get_violations',
     description:
@@ -223,19 +224,36 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
       'the source tree was not measurable); `notInGate` = rules the gate catalog does not carry, ' +
       'which may still fire here (ND-*, RC-*) but never block a mutation. A rule that fires is never ' +
       'in `skipped`. `total` counts the violations of the EVALUATED rules, so it is only ' +
-      'interpretable together with `skipped`.',
+      'interpretable together with `skipped`. SCOPE (CR-GC-613): answers over the uids this ' +
+      'session WROTE; `umfang` names the slice and how many findings lie outside it. No write ' +
+      'moves yet = whole model.',
     inputSchema: RulesGetViolationsInputSchema,
     async handler(input) {
       const ev = evaluateAll(harness);
       const matched = input.severity
         ? ev.findings.filter((v) => v.severity === input.severity)
         : ev.findings;
+      /*
+       * CR-GC-613 — die Antwort geht vorgabeweise ueber die ARBEITSMENGE der Sitzung.
+       *
+       * Gemessen im Code-Test (Lauf gefuehrt-1): ein `{severity:'warning'}` lieferte 32.630
+       * Zeichen — alle Warnungen des Systems, vor allem R-19/R-20 der SECHS nicht beauftragten
+       * Module. Die Antwort war sachlich richtig und beantwortete eine weitere Frage als die
+       * gestellte; der Beleg, dass sie nicht abgearbeitet wurde, steht im Lauf: danach schrieb
+       * der Agent EINEN Satz und exportierte.
+       *
+       * Der Rest faellt nicht weg, er wird zur ZAHL (`umfang.ausserhalb`). Ein Gate, das ohne
+       * Abdeckung gruen meldet, ist schlimmer als keins.
+       */
+      const { genommen, umfang } = schneide(matched, await arbeitsmenge(), (v) => v.elementId);
       // `total` ist die Zahl der VERSTÖSSE, nie der Gruppen — auch bei
       // detail:'grouped' (CR-GC-411): die gefilterte Grundgesamtheit ist die
-      // Aussage, die Projektion ändert nur ihre Darstellung.
+      // Aussage, die Projektion ändert nur ihre Darstellung. Seit CR-GC-613 zaehlt sie die
+      // GELIEFERTEN — was ausserhalb liegt, steht in `umfang.ausserhalb`, nie doppelt.
       return {
-        violations: project(matched, detailOf(input.detail)),
-        total: matched.length,
+        violations: project(genommen, detailOf(input.detail)),
+        total: genommen.length,
+        umfang,
         skipped: ev.skipped,
         notInGate: ev.notInGate,
       };
@@ -309,6 +327,9 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
        * Die DRITTE Projektion desselben Regelstroms: readiness misst Abdeckung, dieser
        * Block Ausprägung. Aus se-engines `steerTerms`/`steerScore`, nie hier gerechnet. */
       steer: SteerSpaceType;
+      /** CR-GC-613: was die Sitzung angefasst hat und wie viele Funde ausserhalb liegen. Die
+       * SCORES bleiben global — eine geschnittene Compliance-Zahl waere ein falsches Gruen. */
+      umfang: Umfang;
       graphVersion: number;
       /** Intent-Coverage-Read-out (CR-GC-295): je bestätigtem Anker, ob/wo er in
        * UC/REQ/FUNC adressiert ist. KPI, NIE ein Gate-Blocker — Abdeckung sagt
@@ -398,8 +419,20 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
               harness.getGraph().nodes.map((n) => ({ id: n.uid, type: n.type, name: n.name, description: n.description })),
             )
           : null;
+      /*
+       * CR-GC-613 — hier steht der Umfang als AUSWEIS, und die Zahlen bleiben global.
+       *
+       * Das ist kein halber Schnitt, sondern die Zusage dieses Werkzeugs: Readiness ist eine
+       * Aussage ueber das PROJEKT ("wie viele Stellen sind erledigt"). Eine auf die eigenen
+       * Schreibzuege geschnittene Compliance-Zahl waere genau das, wovor der CR selbst warnt —
+       * ein Gate, das gruen meldet, weil es weniger gesehen hat. `umfang` sagt deshalb, was die
+       * Sitzung angefasst hat und wie viele Funde AUSSERHALB davon liegen; geschnitten wird die
+       * Verstossliste der beiden Diagnose-Werkzeuge, nie der Score.
+       */
+      const umfang = schneide(report.violations, await arbeitsmenge(), (v) => v.elementId).umfang;
       return {
         ...(input.detail ? report : summarizeReadiness(report)),
+        umfang,
         [PHASE_READINESS_NAME]: phaseReadiness,
         [DIMENSION_READINESS_NAME]: dimensionReadiness(snapshot),
         steer: steerSpace(snapshot),

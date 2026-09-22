@@ -151,7 +151,55 @@ export function buildJobSlice(
   return { slice: { nodes, edges }, seeds, missingRefs: [...missingRefs] };
 }
 
-function buildContextSlice(
+/**
+ * CR-GC-613 — die Scheibe traegt die Prosa, die man zum BAUEN braucht; der Rest traegt Kanten.
+ *
+ * Gemessen im Code-Test (Lauf gefuehrt-1): drei `graph_context {depth:2}` zu je ~9.300 Zeichen,
+ * davon 96 % Format-E — 27 bis 30 Knoten mit voller Beschreibung, einschliesslich ACTOR, FCHAIN
+ * und Nachbar-FLOWs. Gebraucht wurden, woertlich aus dem Befund: **die FUNC, ihre SCHEMAs und
+ * REQs**. (Am sigllm-Golden nachgemessen: FUNC-register-and-manage-agents 9.136,
+ * FUNC-execute-agent-run-persist-state 9.036, FUNC-validate-result-retry-dead-letter 9.007 —
+ * dieselbe Groessenordnung, also dieselbe Sache.)
+ *
+ * Der Schnitt geht deshalb nach TYP, nicht nach Ring. Ein erster Anlauf schnitt ab Ring 2 und
+ * sparte gemessen 17 % — weil bei `depth: 2` der Innenring schon fast alles ist. Er sah nur
+ * deshalb gruen aus, weil der Test einen kleinen Anker gewaehlt hatte: genau die Sorte
+ * Falsch-Gruen, gegen die dieses Repo seine Messtests schreibt.
+ *
+ * PROSA behalten:
+ *   - der ANKER selbst — er ist der Auftrag,
+ *   - REQ — was eingeloest werden soll, ist ohne seinen Wortlaut nicht pruefbar,
+ *   - SCHEMA — der Datenvertrag IST Text; eine Kante zu ihm sagt nichts ueber seine Form.
+ * KANTEN, keine Prosa: MOD, FLOW, UC, ACTOR, FCHAIN, TEST, CR, MS — sie stehen als Knoten und
+ * Kante vollstaendig da, ihre Beschreibung ist fuer das Bauen dieses einen Knotens Beiwerk.
+ *
+ * Bewusst eine MARKE statt einer leeren Beschreibung: sonst koennte der Leser "gekuerzt" nicht
+ * von "hat keine Beschreibung" unterscheiden. Sie ist EIN Zeichen, und was es heisst, steht
+ * EINMAL als Legende oben — ein ausgeschriebener Hinweis je Knoten kostete auf einer
+ * 30-Knoten-Scheibe gemessen 1.178 Zeichen und machte die Kuerzung damit zur Haelfte zunichte.
+ * Keine Pfeile im Text (`-wort->` braeche den Format-E-Roundtrip).
+ */
+const AUSSENRING_MARKE = '…';
+
+/** Die Legende zur Marke — genau eine Zeile, als Format-E-Kommentar. */
+export const KUERZUNGS_LEGENDE =
+  '// … = Beschreibung gekuerzt (CR-GC-613); graph_get_node liefert den vollen Text';
+
+/** Die Typen, deren Wortlaut zum Bauen des Ankers gebraucht wird. */
+const PROSA_TYPEN = new Set(['REQ', 'SCHEMA']);
+
+export function kuerzeAussenring(slice: Graph, ankerId: string): Graph {
+  return {
+    ...slice,
+    nodes: slice.nodes.map((n) =>
+      n.uid === ankerId || PROSA_TYPEN.has(n.type) || !n.description
+        ? n
+        : { ...n, description: AUSSENRING_MARKE },
+    ),
+  };
+}
+
+export function buildContextSlice(
   graph: Graph,
   rootId: string,
   depth: number,
@@ -424,12 +472,17 @@ export function bindReadTools(ctx: ToolContext): MCPToolRegistry {
       'description prose and realRef/testRef attributes, as one Format-E slice. ' +
       'Use this to IMPLEMENT a node (one call instead of get_node+impact+expand+get_edges). ' +
       'Contrast: graph_impact = DOWNSTREAM blast-radius (who breaks if I change this); graph_expand = ' +
-      'manual branch deepening. Never a full dump. `missingRefs` flags FUNCs lacking a realRef.',
+      'manual branch deepening. Never a full dump. `missingRefs` flags FUNCs lacking a realRef. ' +
+      'Prose is carried by the anchor, its REQ and its SCHEMA — every other neighbour comes as node and edge ' +
+      'without prose (CR-GC-613); graph_get_node for the full text.',
     inputSchema: GraphContextInputSchema,
     async handler(input) {
-      const { slice, missingRefs } = buildContextSlice(harness.getGraph(), input.id, input.depth);
+      const graph = harness.getGraph();
+      const { slice, missingRefs } = buildContextSlice(graph, input.id, input.depth);
       // CR-GC-373: Agenten-Sicht; CR-GC-363: Freshness-Banner, wenn AF-Stamps veraltet sind.
-      const formatE = withFreshnessBanner(codec.serialize(slice, { omitProvenance: true }));
+      const gekuerzt = kuerzeAussenring(slice, input.id);
+      const legende = gekuerzt.nodes.some((n) => n.description === '…') ? `${KUERZUNGS_LEGENDE}\n` : '';
+      const formatE = legende + withFreshnessBanner(codec.serialize(gekuerzt, { omitProvenance: true }));
       return {
         rootId: input.id,
         nodeCount: slice.nodes.length,

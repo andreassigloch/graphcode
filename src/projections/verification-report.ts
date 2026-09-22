@@ -260,12 +260,23 @@ export function verificationReport(graph: Graph): VerificationReport {
 
   return {
     requirements,
-    summary: {
-      requirements: requirements.length,
-      withVerifyTrace: requirements.filter((r) => r.hasVerifyTrace).length,
-      passed: requirements.filter((r) => r.passed).length,
-      neverRun: requirements.filter((r) => r.hasVerifyTrace && r.tests.every((t) => t.result === 'not-run')).length,
-      failed: requirements.filter((r) => r.tests.some((t) => t.result === 'failed')).length,
-    },
+    summary: fasseZusammen(requirements),
+  };
+}
+
+/**
+ * Die Kopfzahlen ueber GENAU die Zeilen, die die Antwort traegt (CR-GC-613).
+ *
+ * Ausgelagert, weil `graph_test_report` seine Antwort auf die Arbeitsmenge der Sitzung schneidet
+ * und die Kopfzahlen dann ueber die geschnittene Menge gelten muessen. Eine Zusammenfassung ueber
+ * 81 REQ neben 10 gelieferten Zeilen waeren zwei Wahrheiten in einer Antwort.
+ */
+export function fasseZusammen(requirements: readonly RequirementVerification[]): VerificationReport['summary'] {
+  return {
+    requirements: requirements.length,
+    withVerifyTrace: requirements.filter((r) => r.hasVerifyTrace).length,
+    passed: requirements.filter((r) => r.passed).length,
+    neverRun: requirements.filter((r) => r.hasVerifyTrace && r.tests.every((t) => t.result === 'not-run')).length,
+    failed: requirements.filter((r) => r.tests.some((t) => t.result === 'failed')).length,
   };
 }
