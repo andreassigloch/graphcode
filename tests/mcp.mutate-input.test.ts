@@ -10,7 +10,7 @@
  * Real disk Kuzu (temp dir), no mocks.
  */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { mkdtempSync, rmSync, readFileSync, existsSync } from 'node:fs';
+import { mkdtempSync, rmSync, readFileSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
@@ -183,6 +183,9 @@ describe('graph_mutate: formatE + dryRun + Preview-Audit (CR-GC-276)', () => {
   it('dryRun: das fitAdvisory kommt, sobald der Zug die Architektur bewegt (CR-GC-576)', async () => {
     // Die Gegenprobe zum Fall darueber — sonst waere „kein Block" nur deshalb wahr, weil
     // der Block nie kommt. FUNC und MOD liegen IM Architektur-Teilgraphen.
+    // CR-GC-590: ohne Zielprofil kommt der R6 nicht mehr ueber die Leitung — hier ist eins.
+    mkdirSync(join(tmp, '.graphcode'), { recursive: true });
+    writeFileSync(join(tmp, '.graphcode', 'target-profile.json'), JSON.stringify({ weights: { coherence: 1 } }));
     const arch = [
       '## Nodes',
       '### MOD',
