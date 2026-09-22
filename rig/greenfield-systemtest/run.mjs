@@ -493,23 +493,48 @@ function seedSystem(dir) {
     dir, CFG.seed.uid, CFG.seed.name, CFG.seed.description], { stdio: 'pipe' });
 }
 
-async function captureArtifacts(dir) {
+/**
+ * CR-GC-615 — das Erfassen scheitert nicht mehr am Export.
+ *
+ * `graph_export` traegt einen Schutz gegen das Ueberschreiben durch einen veralteten Prozess
+ * (refuse-to-clobber). Der ist fuer SCHREIBZUEGE gedacht; hier wird nur GELESEN. In opus5-16 hat
+ * der Agent selbst Git-Aktionen gefahren, die committete SSOT wanderte unter dem Store weg, der
+ * Export verweigerte — und mit ihm fiel die ganze Ergebniszeile eines bezahlten Laufs aus.
+ *
+ * Deshalb: der Export bleibt der erste Weg (er materialisiert Stubs und schreibt die Sichten,
+ * beides gehoert zum Lauf), aber sein Scheitern ist ein BEFUND, kein Abbruch. Der Stand kommt
+ * dann lesend aus dem Store — `projectToOntologyGraph` ist dieselbe Projektion, die auch das
+ * Gate benutzt, also kein zweiter Codec. `force: true` waere hier falsch: es wuerde den fremden
+ * Stand ueberschreiben, statt ihn zu berichten.
+ *
+ * @returns `null`, oder die Fehlermeldung des Exports, wenn er verweigert hat.
+ */
+export async function captureArtifacts(dir) {
   const { createHarness } = await import(join(GC_ROOT, 'dist', 'index.js'));
   const { bindToolsToHarness } = await import(join(GC_ROOT, 'dist', 'index.js'));
+  const { projectToOntologyGraph } = await import('@sigloch/graph-api-core');
   const label = dir.split('/').pop();
   const h = await createHarness({ repoRoot: dir, scope: { workspaceId: label, systemId: label } });
   await h.initialize();
   const reg = bindToolsToHarness(h);
-  // graph_export writes the committable {elements,traces} to graphJson.path (relative
-  // to the workspace); it returns metadata, not the graph. Read the written file.
-  const exported = await reg['graph_export'].handler({});
-  const exportPath = join(dir, exported.graphJson?.path ?? `docs/graph/${label}.graph.json`);
-  cpSync(exportPath, join(dir, 'graph.json'));
+  let exportError = null;
+  try {
+    // graph_export writes the committable {elements,traces} to graphJson.path (relative
+    // to the workspace); it returns metadata, not the graph. Read the written file.
+    const exported = await reg['graph_export'].handler({});
+    const exportPath = join(dir, exported.graphJson?.path ?? `docs/graph/${label}.graph.json`);
+    cpSync(exportPath, join(dir, 'graph.json'));
+  } catch (err) {
+    exportError = String(err?.message ?? err).slice(0, 500);
+    const live = projectToOntologyGraph(h.getGraph());
+    writeFileSync(join(dir, 'graph.json'), JSON.stringify({ elements: live.elements, traces: live.traces }, null, 2));
+  }
   const rd = await reg['graph_readiness'].handler({});
   writeFileSync(join(dir, 'readiness.json'), JSON.stringify(rd, null, 2));
   await h.close();
   const audit = join(dir, '.graphcode', 'audit.jsonl');
   if (existsSync(audit)) cpSync(audit, join(dir, 'audit.jsonl'));
+  return exportError;
 }
 
 async function main() {
@@ -544,13 +569,15 @@ async function main() {
           : authorViaClaude(dir, arm);
         releaseStore(dir);     // executor's MCP may leave a lock (esp. on timeout kill)
         writeFileSync(join(dir, 'usage.json'), JSON.stringify(usage, null, 2));
-        await captureArtifacts(dir);
+        const exportError = await captureArtifacts(dir);
         const m = runMetrics({
           graphPath: join(dir, 'graph.json'), readinessPath: join(dir, 'readiness.json'),
           auditPath: join(dir, 'audit.jsonl'), goldenPath: CFG.golden,
           checklistPath: CFG.checklist, usage,
         });
-        results.push({ arm: arm.label, model: arm.model, executor: arm.executor, run: i, ...m });
+        // CR-GC-615: das Feld steht IMMER in der Zeile (null = sauber exportiert). Nur so ist
+        // "kein Exportfehler" eine Aussage und nicht die Abwesenheit einer Aussage.
+        results.push({ arm: arm.label, model: arm.model, executor: arm.executor, run: i, exportError, ...m });
         process.stderr.write(
           `  elements=${m.elements} compliance=${m.readiness.compliance ?? '?'} `
           + `gates=${m.readiness.gatesPassed ?? '?'} rejections=${m.gate_rejections} `
