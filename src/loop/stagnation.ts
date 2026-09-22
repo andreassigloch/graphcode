@@ -8,7 +8,7 @@
  * MCP-Host hatte nichts — `defer` haette er selbst fuehren muessen, und das tut kein Agent.
  *
  * Die Regel: kommt nach einer angewandten Mutation (Graph-Version gestiegen) DERSELBE Fokus wie
- * zuvor, hat der Zug ihn nicht geloest — beim zweiten gleichen Feedback stellt die Maschine das
+ * zuvor, hat der Zug ihn nicht geloest — beim dritten gleichen Feedback (CR-GC-606) stellt die Maschine das
  * Fund-Set zurueck und liefert den naechsten Kandidaten derselben Rangfolge. Bleiben nur
  * zurueckgestellte Funde, endet sie `stalled` (generate.ts), nie `done`.
  *
@@ -32,13 +32,15 @@ import { TASK_ENTRY, type RuleTask } from '@sigloch/contracts/se';
  */
 const EINTRITTE: ReadonlySet<string> = new Set(Object.values(TASK_ENTRY).filter((e): e is string => e !== null));
 const regelDes = (focusKey: string): string => focusKey.split(':')[1] ?? '';
+/** Wie oft derselbe Fokus nach einem Zug wiederkommen darf, bevor er zurueckgestellt wird (CR-GC-606). */
+export const WIEDERHOLUNGEN_BIS_ZURUECK = 2;
 
 export interface FocusMemory {
   /** CR-GC-601: der Task, in dem die Sitzung gerade arbeitet — `next` bleibt darin, bis graph_generate ohne task. */
   task: RuleTask;
-  /** Der zuletzt ausgelieferte Fokus und die Graph-Version, bei der er ausgeliefert wurde. */
-  last: { key: string; version: number } | null;
-  /** Fund-Sets, die zweimal ohne Wirkung kamen — fuer diese Sitzung zurueckgestellt. */
+  /** Der zuletzt ausgelieferte Fokus, die Graph-Version dazu und wie oft er nach einem Zug wiederkam. */
+  last: { key: string; version: number; repeats: number } | null;
+  /** Fund-Sets, die nach zwei Zuegen noch standen (CR-GC-606) — fuer diese Sitzung zurueckgestellt. */
   readonly deferred: Set<string>;
 }
 
@@ -69,16 +71,18 @@ export function stepWithMemory(
   for (const k of extraDefer) memory.deferred.add(k);
   const alle = () => [...memory.deferred];
   let step = compute(alle());
-  if (
-    step.focusKey &&
-    !EINTRITTE.has(regelDes(step.focusKey)) &&
-    memory.last &&
-    memory.last.key === step.focusKey &&
-    version > memory.last.version
-  ) {
-    memory.deferred.add(step.focusKey);
+  // CR-GC-606: zurueckgestellt wird beim DRITTEN gleichen Feedback (zwei Zuege nach der Auslieferung).
+  // opus5-15: der Zug nach der ersten Auslieferung war ein Nachtrag zum vorigen (Modulbeschreibungen),
+  // kein Versuch — beim zweiten Mal zurueckgestellt, sah der Agent CR-01 nie; Ende `stalled` statt `done`.
+  const gleich = !!step.focusKey && memory.last?.key === step.focusKey;
+  if (gleich && version <= memory.last!.version) return step; // kein Zug dazwischen: nichts zaehlen
+  const repeats = gleich ? memory.last!.repeats + 1 : 0;
+  if (repeats >= WIEDERHOLUNGEN_BIS_ZURUECK && !EINTRITTE.has(regelDes(step.focusKey!))) {
+    memory.deferred.add(step.focusKey!);
     step = compute(alle());
+    memory.last = step.focusKey ? { key: step.focusKey, version, repeats: 0 } : null;
+    return step;
   }
-  memory.last = step.focusKey ? { key: step.focusKey, version } : null;
+  memory.last = step.focusKey ? { key: step.focusKey, version, repeats } : null;
   return step;
 }

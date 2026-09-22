@@ -54,12 +54,22 @@ afterEach(async () => {
   rmSync(repoRoot, { recursive: true, force: true });
 });
 
-describe('CR-GC-596: zweimal dasselbe Feedback → weiter', () => {
-  it('derselbe Fokus nach einem Zug ohne Wirkung wird zurueckgestellt — next nennt einen anderen', async () => {
+describe('CR-GC-596/606: dreimal dasselbe Feedback → weiter', () => {
+  it('nach einem Zug ohne Wirkung bleibt der Fokus (Folgezug ist kein Versuch), nach dem zweiten kommt ein anderer', async () => {
     const erst = await tools.graph_generate.handler({});
     expect(erst.phase).toBe('expand');
-    const nach = await zugOhneWirkung();
-    expect(nach.next!.focusKey).not.toBe(erst.focusKey);
+    const eins = await zugOhneWirkung();
+    expect(eins.next!.focusKey).toBe(erst.focusKey);
+    const zwei = await zugOhneWirkung();
+    expect(zwei.next!.focusKey).not.toBe(erst.focusKey);
+  });
+
+  it('graph_generate ohne Zug dazwischen zaehlt nicht und setzt den Zaehler nicht zurueck', async () => {
+    const erst = await tools.graph_generate.handler({});
+    await zugOhneWirkung();
+    expect((await tools.graph_generate.handler({})).focusKey).toBe(erst.focusKey);
+    const zwei = await zugOhneWirkung();
+    expect(zwei.next!.focusKey).not.toBe(erst.focusKey);
   });
 
   it('zweimal graph_generate OHNE Zug: gleiche Antwort — kein Zug, kein Abbruch (Determinismus)', async () => {
