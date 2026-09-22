@@ -665,18 +665,16 @@ describe('GATE_PROTOCOL-Selektion (CR-GC-288)', () => {
     expect(klausel).toContain('persistiert nichts');
   });
 
-  it("'host': Steuerwert rankt vor fitAdvisory — dieselbe Ordnung wie rankCandidates (CR-GC-583)", () => {
-    // Runde 7: opus5 verwarf per Δm die RD-04-Zwischenebene (28 Bloecke auf einer Ebene blieben),
-    // weil der Host-Prompt nach fitAdvisory ranken liess — den der Executor seit CR-GC-483
-    // nur noch berichtet. Zwei Treiber, zwei Rangfolgen: das war der Widerspruch.
+  it("'host': die Rangfolge kommt aus dem Register — tier vor Steuerwert, wie rankCandidates (CR-GC-583/587)", () => {
+    // CR-GC-583 hatte hier "Steuerwert vor tier" gepinnt — und damit den Widerspruch zu
+    // `rankCandidates` zementiert. Seit CR-GC-587 ist der Satz aus VERDICT_ORDER abgeleitet;
+    // die Ordnung selbst prueft tests/decision-texts.test.ts gegen den Komparator.
     const klausel = generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT, FOCUS).prompt.split('Gate-Protokoll')[1];
+    const tier = klausel.indexOf('tier (auto-apply > suggest)');
     const steer = klausel.indexOf('steerAdvisory.improvement');
-    const tier = klausel.indexOf('dann tier');
-    expect(steer).toBeGreaterThan(-1);
-    expect(klausel.indexOf('steeringDelta der Fokus-Dimension')).toBeLessThan(steer);
-    expect(steer).toBeLessThan(tier);
-    expect(klausel).toContain('fitAdvisory ist nur Bericht und entscheidet nicht');
-    expect(klausel).not.toMatch(/vergleiche die Verdicts — tier \(auto-apply > suggest > block\) und fitAdvisory/);
+    expect(klausel.indexOf('block verwerfen')).toBeLessThan(tier);
+    expect(tier).toBeLessThan(steer);
+    expect(klausel).toContain('fitAdvisory ist nur Bericht');
   });
 
   it("'driver' (seed): dryRun-Auftrag raus, Guide-Schritt und Folgeschritt bleiben", () => {
