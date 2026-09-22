@@ -303,12 +303,13 @@ export function extractImportEdges(repoRoot: string): ImportEdge[] {
  * BOTH shapes must be served, because `OntologyElement` is not a flat bag NOR a
  * pure nested one: it declares TYPED TOP-LEVEL fields (`kinds`, `asil`, `method`)
  * next to the free-form `attributes` record, and the rules read whichever the
- * schema declares. `kinds` is read top-level (UC-05/UC-06: `e.kinds?.includes(…)`),
+ * schema declares. `kinds` is read top-level (the kinds-reading rules: `e.kinds?.includes(…)`),
  * `testRefs`/`realRef`/`analysisFreshness` are read out of `attributes`. graphcode
  * stores all of them in one `node.attributes` bag, so the mapper must LIFT the
  * typed ones out while keeping the bag intact. Mapping only one way blinds the
  * other half of the catalog — that was the actual defect behind CR-GC-299/303,
- * and it also silently disabled UC-05/UC-06 on the conformance path.
+ * and it also silently disabled the kinds-reading rules on the conformance path (then UC-05/06,
+ * gestrichen mit CR-SM-357).
  *
  * NOTE: `attributes` is passed by REFERENCE, not cloned — callers must treat the
  * result as read-only (both call sites only evaluate rules over it).
