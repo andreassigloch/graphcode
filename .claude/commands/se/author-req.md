@@ -6,6 +6,8 @@ description: Author a REQ together with its verifying TEST concept in one gated 
 
 A requirement you cannot state a verification for is not well-formed. Author every new REQ in the SAME gated batch as a concept-level TEST + `verify` trace — the test concept (target + tool + constraint, NOT code) is the intrinsic proof the REQ is meaningful and falsifiable (CR-GC-203 item 6). The gate enforces this: a lone REQ raises an R-01 error and is BLOCKED under delta-semantics, so this skill is about leaning INTO the gate, not working around it.
 
+**Write the requirement so it can be checked (BQ, CR-GC-602).** Use the agreed form — "The system shall …" / „Das System muss …" — and put the measurable part into the sentence: a number, a limit or an observable condition, never a vague word ("fast", "appropriate"). Name who acts, on what, under which condition. That is prevention; the task `anforderungsqualitaet` (`graph_generate {task:'anforderungsqualitaet'}`) cleans up what is left.
+
 For each new requirement, emit ONE `graph_mutate` batch:
 
 1. The REQ node: `{ "op": "add-node", "node": { "uid": "REQ-<slug>", "type": "REQ", "name": "<imperative requirement>", "description": "<what + why, falsifiable>" } }`.
