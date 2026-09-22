@@ -19,3 +19,6 @@ Write `docs/records/irr-<short-commit>.md` (use the current `git rev-parse --sho
 For each assumption that, if wrong, breaks the design, open a CR and record the decision in the graph via `graph_mutate` (every write goes through the Apply-Gate, L2). Add a `CR` node and `relation` edges to the elements it concerns; if the assumption becomes a requirement, author it with `se:author-req` so it carries a verifying TEST. Check `graph_mutate`'s returned `violations` and re-apply if the gate blocks the batch. Never hand-edit the graph SSOT.
 
 Low-risk assumptions stay in the record only. The output is the commit-pinned record plus the promoted CRs — not a transient summary.
+
+## 4. Stamp the task — with the promoted CRs
+Close the task with **one** `graph_mutate` batch that updates the SYS root: `attributes.analysisFreshness['assumption-review'] = { graphVersion: <current graphVersion()>, crRefs: [<the promoted CR ids>] }`. An empty `crRefs` is a legitimate outcome (no assumption was load-bearing; the rest lives in the record). **IR-01** (task rule of `irr`) fires only when a listed id names no existing CR.
