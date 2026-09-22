@@ -12,7 +12,8 @@
  *
  * @author andreas@siglochconsulting
  */
-import { ELEMENT_ATTRIBUTES, ReqKind } from '@sigloch/contracts/se';
+import { ELEMENT_ATTRIBUTES, ReqKind, ACCEPTED_FINDINGS_ATTRIBUTE } from '@sigloch/contracts/se';
+import { ABNEHMBARE_REGELN } from '../loop/decisions.js';
 
 /** Ein Attribut, wie ein Autor es schreiben muss — Schluessel, erlaubte Werte, Schreibform. */
 export interface AttributeHint {
@@ -40,7 +41,15 @@ export function attributesFor(type: string): AttributeHint[] {
     description: a.description,
     syntax: `@${a.key} <wert>`,
   }));
-  if (type !== 'REQ') return own;
+  // CR-GC-594: die benannte Abweichung gilt an jedem Typ — mit der abnehmbaren Klasse als Werte.
+  const abnahme: AttributeHint = {
+    key: ACCEPTED_FINDINGS_ATTRIBUTE.key,
+    type: ACCEPTED_FINDINGS_ATTRIBUTE.type,
+    enumValues: [...ABNEHMBARE_REGELN],
+    description: ACCEPTED_FINDINGS_ATTRIBUTE.description + ' Abnehmbar sind nur die Regeln in enumValues; Architekturregeln nicht.',
+    syntax: '@acceptedFindings [{"ruleId":"FM-03","reason":"Nachweis erst mit dem ersten Testlauf"}]',
+  };
+  if (type !== 'REQ') return [...own, abnahme];
   return [
     {
       key: 'kinds',
@@ -53,6 +62,7 @@ export function attributesFor(type: string): AttributeHint[] {
       syntax: '@kinds ["postcondition"]',
     },
     ...own,
+    abnahme,
   ];
 }
 

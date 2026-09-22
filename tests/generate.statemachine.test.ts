@@ -17,6 +17,7 @@ import { fileURLToPath } from 'node:url';
 import { DEFAULT_METRIC_POLICY, evaluateAllRules } from '@sigloch/contracts/se';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { generationStep, FOCUS_EXCLUDED_WHEN_UNBOUND } from '../src/loop/generate.js';
+import { ABNEHMBARE_REGELN } from '../src/loop/decisions.js';
 // @ts-expect-error — Rig-Auswertung in .mjs, bewusst ohne Typdeklaration
 import { spieleNach, referenzTrail } from '../rig/greenfield-systemtest/trajektorie.mjs';
 
@@ -87,7 +88,7 @@ describe('CR-GC-593: done ⇔ kein Fokus — an jedem Graphen des Korpus', () =>
   });
 });
 
-describe('CR-GC-593: das Golden ist done — mit genau den benannten Abnahmen', () => {
+describe('CR-GC-593/594: das Golden und die benannten Abnahmen', () => {
   const golden = lade(GOLDEN);
 
   it('ohne Abnahmen: nicht done, und der Rest ist eine kurze Liste menschlicher Entscheidungen', () => {
@@ -102,22 +103,45 @@ describe('CR-GC-593: das Golden ist done — mit genau den benannten Abnahmen', 
     expect([...offen].sort()).toEqual(['AF-05', 'BW-02', 'FM-03', 'MS-01', 'RD-05']);
   });
 
-  it('mit benannten Abnahmen an genau diesen Funden: done', () => {
+  /** Nimmt an jedem Fund der genannten Regeln ab — am betroffenen Element, graphweit am SYS. */
+  const mitAbnahmen = (regeln: string[]): Flat => {
     const vs = evaluateAllRules({ elements: golden.elements, traces: golden.traces } as never, DEFAULT_METRIC_POLICY);
     const kopie: Flat = JSON.parse(JSON.stringify(golden));
     const byId = new Map(kopie.elements.map((e) => [e.id, e]));
     const sys = kopie.elements.find((e) => e.type === 'SYS')!;
     for (const v of vs) {
-      if (!['AF-05', 'BW-02', 'FM-03', 'MS-01', 'RD-05'].includes(v.rule_id)) continue;
-      const el = byId.get(v.element_id) ?? sys;
-      const attrs = (el.attributes ??= {});
-      const list = (attrs.acceptedFindings as unknown[] | undefined) ?? (attrs.acceptedFindings = []);
-      (list as unknown[]).push({ ruleId: v.rule_id, reason: 'Spezifikationsphase: bewusst offen (Test)' });
+      if (!regeln.includes(v.rule_id)) continue;
+      const attrs = ((byId.get(v.element_id) ?? sys).attributes ??= {});
+      ((attrs.acceptedFindings as unknown[] | undefined) ?? (attrs.acceptedFindings = [])) as unknown[];
+      (attrs.acceptedFindings as unknown[]).push({ ruleId: v.rule_id, reason: 'Spezifikationsphase: bewusst offen (Test)' });
     }
-    const s = step(kopie);
-    expect(s.focusKey).toBeNull();
-    expect(s.done).toBe(true);
-    expect(s.phase).toBe('handoff');
+    return kopie;
+  };
+
+  it('CR-GC-594: die abnehmbaren (AF-05, FM-03, MS-01) verschwinden aus dem Fokus, die Architektur bleibt', () => {
+    const s = step(mitAbnahmen(['AF-05', 'FM-03', 'MS-01']));
+    expect(s.done).toBe(false);
+    expect(['BW-02', 'RD-05']).toContain(s.focusKey!.split(':')[1]);
+  });
+
+  it('CR-GC-594: eine Abnahme an einer Architekturregel zaehlt nicht — das Golden ist heute nicht done, und der Prompt sagt warum', () => {
+    const s = step(mitAbnahmen(['AF-05', 'BW-02', 'FM-03', 'MS-01', 'RD-05']));
+    expect(s.done).toBe(false);
+    const regel = s.focusKey!.split(':')[1];
+    expect(['BW-02', 'RD-05']).toContain(regel);
+    expect(s.prompt).toContain(`Die Abnahme von ${regel} zählt nicht`);
+  });
+
+  it('CR-GC-594: steht der Fokus auf einer abnehmbaren Regel, nennt der Prompt die Abnahme — zum Zeitpunkt der Entscheidung', () => {
+    // Die Architektur-Fenster per defer zurueckstellen, bis eine abnehmbare Regel den Fokus stellt.
+    let cur = step(golden);
+    const defer: string[] = [];
+    while (cur.focusKey && ABNEHMBARE_REGELN.has(cur.focusKey.split(':')[1]) === false && defer.length < 50) {
+      defer.push(cur.focusKey);
+      cur = step(golden, defer);
+    }
+    expect(ABNEHMBARE_REGELN.has(cur.focusKey!.split(':')[1])).toBe(true);
+    expect(cur.prompt).toMatch(/ist abnehmbar: ist der Fund im Modell nicht erfüllbar/);
   });
 
   it('eine Abnahme ohne Grund zaehlt nicht', () => {
