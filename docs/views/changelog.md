@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 212 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 213 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 212 CR · 170 done · 1 open.
+Total: 213 CR · 170 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -274,3 +274,4 @@ Total: 212 CR · 170 done · 1 open.
 | `CR-GC-590` | n/a | Tote Kanaele streichen oder verlegen, je mit Messung: steeringDelta (6-8/Lauf, nie erwaehnt), tier/confidence, fitAdvisory.regressions ohne Zielprofil (widerspricht 'nur Bericht'), GRAPHCODE-STEERING.md (0 Zugriffe in 5 Laeufen) in GRAPHCODE.md |
 | `CR-GC-591` | n/a | Claude-Code-Kanaele modellieren und in die Rangfolge aufnehmen: CR-573/575 kennen nur die Executor-Kanaele; Gate-Antwortfelder, Werkzeuge auf Abruf, Skills, Doku und Freigabe fehlen mit Rang und Zeitpunkt (vor/nach der Entscheidung) |
 | `CR-GC-592` | n/a | Offene Fragen im Headless-Lauf: AskUserQuestion laeuft in claude -p ins Leere (3 von 5 Laeufen) — GRAPHCODE.md/se:generate sollen offene Punkte als Annahme ins Modell legen statt zu fragen, wenn niemand antwortet |
+| `CR-GC-605` | n/a | Schwere = Gate-Wirkung (gating entfaellt, 6 errors -> warning), Phase INCOSE-korrigiert (AF-01 SRR, AF-05 PDR, R-26 TRR), Smeagol Stufe (e) Empfehlungskonsistenz, Regel-Matrix ohne abgeleitete Spalten |
