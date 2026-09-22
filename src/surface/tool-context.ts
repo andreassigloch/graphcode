@@ -38,6 +38,7 @@ import {
   type MutationTrigger,
   type TrajectoryStamps,
 } from '../projections/trajectory.js';
+import { arbeitsmengeAusAudit, type Arbeitsmenge } from '../kernel/measure/working-set.js';
 // The per-repo workspace dir is named ONCE (scaffold-templates); the feed lands in
 // graphcode's own workspace, not the predecessor's `.aimprove/` (CR-GC-330).
 import { GRAPHCODE_DIR } from '../kernel/workspace.js';
@@ -209,6 +210,12 @@ export function createToolContext(
   // that turns a flat record stream back into conversations, so it must be stable across
   // every record this process writes and distinct across processes.
   const _sessionId = `sess-${Date.now().toString(36)}-${randomUUID().slice(0, 8)}`;
+  /**
+   * CR-GC-613 — der Schnitt "seit Sitzungsstart". Einmal beim Binden genommen, nie neu: er ist
+   * die Grenze, ab der die eigenen Schreibzuege zaehlen. `auditLog.query({ since })` liest damit
+   * genau diese Sitzung, auch wenn der Log Eintraege frueherer traegt.
+   */
+  const _bootAt = new Date().toISOString();
   // The client process that owns this one (CR-GC-357) — resolved ONCE at bind: the ancestry
   // cannot change for a live process, and re-walking it per write would spawn `ps` per mutation.
   const _ownerPid = opts.ownerPid !== undefined ? opts.ownerPid : resolveOwnerPid();
@@ -532,6 +539,18 @@ export function createToolContext(
   }
 
   // SCHEMA-tool-context (CR-GC-523): das Objekt, das jede Tool-Gruppe bekommt, ist
+  /**
+   * CR-GC-613 — die eigene Arbeitsmenge dieser Sitzung, aus dem Audit abgeleitet.
+   *
+   * Bewusst bei JEDEM Aufruf frisch gelesen statt in einer Closure mitgefuehrt: der Log ist die
+   * eine Wahrheit ueber die Schreibzuege (`recordAudit` ist sein einziger Schreiber), und ein
+   * zweiter Zaehler daneben waere eine zweite Wahrheit, die beim ersten Pfad an ihm vorbei
+   * auseinanderlaeuft. Die Rechnung selbst ist rein und getestet (`arbeitsmengeAusAudit`).
+   */
+  async function arbeitsmenge(): Promise<Arbeitsmenge> {
+    return arbeitsmengeAusAudit(await auditLog.query({ since: _bootAt }));
+  }
+
   // das geparste — Form und Datenanteile geprueft, die Traeger dieselben Instanzen.
   return ToolContext.parse({
     harness,
@@ -550,5 +569,6 @@ export function createToolContext(
     ownerPid: () => _ownerPid,
     serializeToolWrite,
     occReject,
+    arbeitsmenge,
   });
 }

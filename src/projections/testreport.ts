@@ -27,8 +27,10 @@ import {
   samePath,
   verificationReport,
   type RunnerFileResult,
+  fasseZusammen,
   type VerificationReport,
 } from './verification-report.js';
+import { mitGetragenenReq, schneide, type Umfang } from '../kernel/measure/working-set.js';
 import type { MCPTool, MCPToolRegistry, ToolPort } from '../kernel/tool-contract.js';
 
 const GraphTestIngestInputSchema = z
@@ -60,7 +62,7 @@ const GraphTestIngestInputSchema = z
 const GraphTestReportInputSchema = z.looseObject({});
 
 export function bindTestReportTools(ctx: ToolPort): MCPToolRegistry {
-  const { harness, graphVersion, recordAudit, serializeToolWrite } = ctx;
+  const { harness, graphVersion, recordAudit, serializeToolWrite, arbeitsmenge } = ctx;
 
   const graph_test_ingest: MCPTool<
     z.infer<typeof GraphTestIngestInputSchema>,
@@ -157,7 +159,7 @@ export function bindTestReportTools(ctx: ToolPort): MCPToolRegistry {
 
   const graph_test_report: MCPTool<
     z.infer<typeof GraphTestReportInputSchema>,
-    VerificationReport & { graphVersion: number }
+    VerificationReport & { graphVersion: number; umfang: Umfang }
   > = {
     name: 'graph_test_report',
     description:
@@ -167,10 +169,22 @@ export function bindTestReportTools(ctx: ToolPort): MCPToolRegistry {
       'exists, `passed` says every verifying TEST actually passed — the VCRM used to show one ✓ for ' +
       'both, so a reviewer read "verified" where the graph only claimed "linked" (72 of 72 REQ on ' +
       'this repo). The summary carries withVerifyTrace / passed / neverRun / failed side by side so ' +
-      'the gap is a number, not a footnote. Read-only.',
+      'the gap is a number, not a footnote. Read-only. SCOPE (CR-GC-613): answers over the uids ' +
+      'this session WROTE (plus the REQ they satisfy); `umfang` names the slice taken and how many ' +
+      'rows lie outside it. No write moves yet = whole model.',
     inputSchema: GraphTestReportInputSchema,
     async handler(_input) {
-      return { ...verificationReport(harness.getGraph()), graphVersion: graphVersion() };
+      const graph = harness.getGraph();
+      const voll = verificationReport(graph);
+      // CR-GC-613: die Antwort geht vorgabeweise ueber die ARBEITSMENGE der Sitzung, nicht ueber
+      // das ganze Modell. Gemessen im Code-Test: 25.602 Zeichen fuer 81 REQ, von denen 70 nie
+      // gelaufen waren — die Scheibe hatte ~10, und der Bericht kam NACH dem Export und loeste
+      // gar nichts mehr aus. Ein Schritt ueber `satisfy`, weil ein Agent FUNCs realisiert, nicht REQ.
+      const menge = mitGetragenenReq(await arbeitsmenge(), graph.edges);
+      const { genommen, umfang } = schneide(voll.requirements, menge, (r) => r.reqUid);
+      // Die Kopfzahlen gelten ueber GENAU die gelieferten Zeilen — sonst stuenden zwei Wahrheiten
+      // in einer Antwort.
+      return { requirements: genommen, summary: fasseZusammen(genommen), umfang, graphVersion: graphVersion() };
     },
   };
 

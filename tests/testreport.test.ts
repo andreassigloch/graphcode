@@ -171,23 +171,32 @@ describe('TEST-testreport: Ergebnisse zurueck in den Graphen (CR-GC-327)', () =>
   });
 
   it('laesst einen TEST ohne Lauf als `not-run` stehen — nicht als bestanden, nicht weg', async () => {
-    await tools.graph_test_ingest.handler({ report: VITEST_JSON, consumerId: 'runner' });
-    const report = await tools.graph_test_report.handler({});
+    // CR-GC-613: der erste Aufruf einer Sitzung hat keinen Schreibzug hinter sich und antwortet
+    // deshalb ueber das GANZE Modell — hier steht die volle Luecke.
+    const voll = await tools.graph_test_report.handler({});
+    expect(voll.umfang.art).toBe('ganzes-modell');
 
-    const never = report.requirements.find((r) => r.reqUid === 'REQ-never')!;
+    const never = voll.requirements.find((r) => r.reqUid === 'REQ-never')!;
     expect(never.hasVerifyTrace, 'die verify-Kante existiert').toBe(true);
     expect(never.passed, 'ohne Lauf ist nichts belegt').toBe(false);
     expect(never.tests).toHaveLength(1);
     expect(never.tests[0].result).toBe('not-run');
     expect(never.tests[0].testRefs).toEqual(['tests/never.test.ts']);
+    expect(voll.summary.withVerifyTrace).toBe(2);
+    expect(voll.summary.neverRun).toBe(2);
 
-    const ran = report.requirements.find((r) => r.reqUid === 'REQ-ran')!;
-    expect(ran.passed).toBe(true);
+    await tools.graph_test_ingest.handler({ report: VITEST_JSON, consumerId: 'runner' });
+    const nachZug = await tools.graph_test_report.handler({});
 
-    // Die Luecke ist eine Zahl, keine Fussnote.
-    expect(report.summary.withVerifyTrace).toBe(2);
-    expect(report.summary.passed).toBe(1);
-    expect(report.summary.neverRun).toBe(1);
+    // Nach dem Ingest schneidet der Bericht auf die angefassten TESTs und deren REQ.
+    expect(nachZug.umfang.art).toBe('arbeitsmenge');
+    expect(nachZug.requirements.find((r) => r.reqUid === 'REQ-ran')!.passed).toBe(true);
+    // Die Kopfzahlen gelten ueber die GELIEFERTEN Zeilen …
+    expect(nachZug.summary.requirements).toBe(nachZug.requirements.length);
+    expect(nachZug.summary.passed).toBe(1);
+    // … und was ausserhalb liegt, ist eine ZAHL, keine Fussnote und kein Verschweigen:
+    // REQ-never faellt nicht unter den Tisch, es wird gezaehlt.
+    expect(nachZug.umfang.ausserhalb).toBeGreaterThan(0);
   });
 
   it('ueberschreibt bei einem zweiten Lauf statt zu stapeln', async () => {

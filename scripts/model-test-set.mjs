@@ -128,6 +128,11 @@ export const EXCLUDED = {
     'Eigentuemer-Spalte (contracts). Liest weder graphcodes Modell noch dessen SSOT; der Treffer ist\n' +
     'der Regelkatalog. Eine Modellaenderung kann ihn nicht rot machen; eine neue Regel-ID im Skill\n' +
     'oder eine Klausel an einer Task-Regel sehr wohl.',
+  'tests/read-tools.scope.test.ts':
+    'CR-GC-613: misst die ANTWORTGROESSEN der Lesewerkzeuge gegen das GOLDEN EINES RIG-KORPUS\n' +
+    '(`rig/sigllm-spezifikation/golden/sigllm-v98.graph.json`), nie graphcodes eigene SSOT. Eine\n' +
+    'Aenderung an graphcodes Modell kann ihn nicht rot machen; eine am Schnitt der Lesewerkzeuge\n' +
+    'oder am Format-E-Serialisierer sehr wohl.',
   'tests/steer-optimum.test.ts':
     'CR-GC-608: liest den sigllm-Golden als Eingabe fuer das Fertig-Kriterium der Steuerregeln — Maschinen-Test, kein Modell-TEST',
   'tests/generate.task.test.ts':

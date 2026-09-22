@@ -36,6 +36,7 @@ import { z, type ZodType } from 'zod/v4';
 import type { AuditLog } from '@sigloch/graph-api-core';
 import type { MutateCommand, MutateResult } from '@sigloch/contracts/harness';
 import type { GraphCodeHarness } from './harness.js';
+import type { Arbeitsmenge } from './measure/working-set.js';
 
 /** Der Laufzeit-Vertrag eines Werkzeugs (CR-GC-547). Die generische Sicht steht darunter. */
 export const MCPToolSchema = z.object({
@@ -73,4 +74,10 @@ export interface ToolPort {
   recordAudit(consumerId: string, result: MutateResult, commands?: MutateCommand[]): Promise<void>;
   /** Serialisiert Tool-Schreibpfade (OCC, CR-GC-3xx) — eine Schreibkette, nie zwei. */
   serializeToolWrite<T>(body: () => Promise<T>): Promise<T>;
+  /**
+   * CR-GC-613 — die eigene Arbeitsmenge der Sitzung (jede uid, die ein angewandter Schreibzug seit
+   * dem Binden angefasst hat). Die Lesewerkzeuge schneiden darauf und nennen den Umfang; leer
+   * heisst "noch kein Zug" und damit ganzes Modell.
+   */
+  arbeitsmenge(): Promise<Arbeitsmenge>;
 }
