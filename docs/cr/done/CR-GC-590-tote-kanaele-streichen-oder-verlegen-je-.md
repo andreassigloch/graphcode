@@ -1,6 +1,6 @@
 # CR-GC-590: Tote Kanaele streichen oder verlegen, je mit Messung: steeringDelta (6-8/Lauf, nie erwaehnt), tier/confidence, fitAdvisory.regressions ohne Zielprofil (widerspricht 'nur Bericht'), GRAPHCODE-STEERING.md (0 Zugriffe in 5 Laeufen) in GRAPHCODE.md
 
-**Status:** ✅ Umgesetzt
+**Status:** ✅ Done (2026-09-22)
 **Typ:** aus Item ITEM-2026-440 (idea)
 **Erstellt:** 2026-09-22
 **Item:** bok/items/ITEM-2026-440.json (Lane: graph)
