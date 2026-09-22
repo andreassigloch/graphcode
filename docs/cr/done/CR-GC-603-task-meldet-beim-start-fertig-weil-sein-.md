@@ -1,6 +1,6 @@
 # CR-GC-603: Task meldet beim Start fertig, weil sein Regelset ohne Artefakt leer ist (opus5-14)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-22)
 **Typ:** aus Item ITEM-2026-456 (bug)
 **Erstellt:** 2026-09-22
 **Item:** bok/items/ITEM-2026-456.json (Lane: graph)
