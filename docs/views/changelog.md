@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 219 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 223 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 219 CR · 171 done · 1 open.
+Total: 223 CR · 171 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -281,3 +281,7 @@ Total: 219 CR · 171 done · 1 open.
 | `CR-GC-609` | n/a | Schatten-graph_suggest im Rig: je Zug nachgespielt, was der Optimierer vorgeschlagen haette — opus5-14/15: 0 anwendbare Vorschlaege, keine Vorlage fuer Steuerregeln |
 | `CR-GC-610` | n/a | Code-Test (Leitlinie Satz 7): Scheduler-Scheibe aus sigllm, gefuehrt (Modell + graphcode) gegen frei laufendes Claude Code — Aufgabe, Vertrag, verdeckte Abnahme, Messung |
 | `CR-GC-611` | done | Antwort-Diaet: graph_realize liefert 2x die volle missingRefs-Liste (87% seiner Antwort), graph_mutate next+violations je ~40k Zeichen, authoring_guide 11x wiederholt |
+| `CR-GC-612` | n/a | Fester Vorspann je Lauf entflechten: GRAPHCODE.md, Werkzeugbeschreibungen, Skills und Antworten haben doppelte Zustaendigkeit — jede Frage soll genau einen Ort haben |
+| `CR-GC-613` | n/a | Lesewerkzeuge antworten ueber das ganze Modell statt ueber die Scheibe: rules_get_violations 32.630, graph_test_report 25.602, graph_context je 9.300 Zeichen — 62% der graphcode-Antworten eines Laufs |
+| `CR-GC-614` | n/a | Executor verwirft alte Denkbloecke nach jedem Zug — der Graph ist das Gedaechtnis, nicht der Gespraechsverlauf (gemessen: ~58% des Kontexts in Lauf 15) |
+| `CR-GC-615` | n/a | Rig captureArtifacts scheitert nach Git-Aktionen des Agenten an Export-Drift (opus5-16: graph_export refused, Ergebniszeile fehlt) |
