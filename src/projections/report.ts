@@ -168,36 +168,11 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
   > = {
     name: 'rules_evaluate',
     description:
-      'Evaluate the governed graph: V3_RULES (in-memory) PLUS the ND-* near-duplicate rules ' +
-      '(CR-GC-442) PLUS the RC code-conformance rules ' +
-      '(realRef/testRefs resolved against the real source tree). Read-only; does not mutate. ' +
-      'Every finding carries `source` ("rules" | "conformance"); `skipped` names EVERYTHING left ' +
-      'out, ONE level and one form — every contracts rule nothing evaluated, as "rule:BQ-01". ' +
-      'CR-GC-489 retired the coarse source token "conformance": the six RC rules now appear by ' +
-      'NAME when the conformance run did not happen (no readable repoRoot, or extraction threw), ' +
-      'and disappear from `skipped` when it did — so RC-01/RC-02/RC-03, which are severity ' +
-      'ERROR, can no longer hide behind one word. An ' +
-      'empty `skipped` is what makes the count interpretable (CR-GC-398/428), and it now means ' +
-      'nothing was left out at all. The `rule:*` entries are DERIVED (ALL_RULE_DEFS minus the ' +
-      'loaded catalog minus the locally evaluated ND rules), never a maintained list: they are ' +
-      'the BQ-* rules only the steering path evaluates, plus the RC rules when unmeasurable, so a ' +
-      'reader of "0 errors" knows it means "0 under the evaluated catalog". ND-01/ND-02 ARE evaluated here ' +
-      'but stay OUT of the gate catalog (`catalogs.notInGate`): a near-duplicate is visible ' +
-      'everywhere and blocks no mutation (CR-GC-287 — ND stays advisory, never a gate blocker). ' +
-      'Identical population to ' +
-      'rules_get_violations and graph_readiness.violationsByRule (they differ only in filter and ' +
-      `aggregation) — but NOT to graph_readiness.${DIMENSION_READINESS_NAME}, which is scored from ` +
-      'the full contracts catalog including those rules (see graph_readiness.catalogs). ' +
-      '`importCoverage` (CR-GC-429 §2 / CR-SM-268) is the SIBLING of `skipped`, never merged into ' +
-      'it: skipped means "this source was not evaluated at all", importCoverage means "evaluated, ' +
-      'and part of the import graph still fell through" — {endpoints, assigned, unassigned[]}, where ' +
-      'unassigned NAMES every import-endpoint file that resolves to no MOD (neither via a bound ' +
-      'FUNC realRef nor a MOD.path prefix), i.e. the files RC-05 could not judge. null exactly when ' +
-      '`skipped` still names the RC rules — a value that is not measurable is never a silent zero. ' +
-      '`notInGate` (CR-GC-519) is the SECOND layer next to `skipped`: the contracts rules the gate ' +
-      'catalog does not carry, so they can fire here (ND-*, RC-* when measurable) but never block a ' +
-      'mutation; `skipped` (not evaluated) is always a subset of it. A rule that fires is never in ' +
-      '`skipped` — the same set as graph_readiness.catalogs.notInGate.',
+      'The whole rule picture in three non-overlapping layers: what FIRED, what was NOT evaluated ' +
+      '(`skipped`), and what the gate catalog does not carry at all (`notInGate`). Take it when you ' +
+      'want to know what the judgement could and could not see; take rules_get_violations when you want ' +
+      'the work list. Reading the result without `skipped` treats a partial figure as a complete one. ' +
+      '`graph_help({id:"rules_evaluate"})` explains the layers. Read-only.',
     inputSchema: RulesEvaluateInputSchema,
     async handler(input) {
       const ev = evaluateAll(harness);
@@ -216,17 +191,11 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
   > = {
     name: 'rules_get_violations',
     description:
-      'Return current rule violations, optionally filtered by severity. Each violation carries ' +
-      'fixHint + context (candidate_targets, existing_traces) from the contracts rule (CR-GC-203 ' +
-      'item 1), so an agent can resolve R-01/RD-01 from the payload — no extra queries to find ' +
-      'a TEST/FUNC to link. `skipped` and `notInGate` are the same two layers as on rules_evaluate ' +
-      '(CR-GC-519): `skipped` = `rule:*` IDs NOT evaluated in this response (BQ-*, plus RC-* when ' +
-      'the source tree was not measurable); `notInGate` = rules the gate catalog does not carry, ' +
-      'which may still fire here (ND-*, RC-*) but never block a mutation. A rule that fires is never ' +
-      'in `skipped`. `total` counts the violations of the EVALUATED rules, so it is only ' +
-      'interpretable together with `skipped`. SCOPE (CR-GC-613): answers over the uids this ' +
-      'session WROTE; `umfang` names the slice and how many findings lie outside it. No write ' +
-      'moves yet = whole model.',
+      'The work list: what is broken and how to fix it. Every finding carries its `fixHint` and its ' +
+      'candidate targets, so the repair needs no follow-up query. Take it to REPAIR; take ' +
+      'rules_evaluate to see what the judgement could not evaluate. Scope (CR-GC-613): answers over ' +
+      'the uids this session WROTE — `umfang` names the slice and counts what lies outside; no write ' +
+      'moves yet = whole model. `total` counts only the evaluated rules, so read it with `skipped`.',
     inputSchema: RulesGetViolationsInputSchema,
     async handler(input) {
       const ev = evaluateAll(harness);
@@ -357,47 +326,12 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
   > = {
     name: 'graph_readiness',
     description:
-      // CR-GC-332: der frühere Verweis nannte `FUNC-score-readiness` — einen Knoten, den
-      // das Modell nie enthielt. Jetzt steht hier die Stelle, die es wirklich gibt.
-      'Score family readiness of the live governed graph (FUNC-compute-readiness / CR-GC-107 + CR-GC-125). ' +
-      'Returns the ReadinessReport: compliance dimension (fraction of elements with no error-severity ' +
-      'violation); incoseScope (graphcode = lean); phaseGates SRR/PDR/CDR/TRR (INCOSE technical reviews, ' +
-      'a disjoint partition of the element-level V3_RULES, with structural derivation-chain completeness); ' +
-      `implGates SAR/FCA/SVR/FRR (milestone tiers MS-1..4, ready iff assigned CRs are done + scope ` +
-      `error-clean); ${PHASE_READINESS_NAME} (CR-GC-296) — the SAME SRR/PDR/CDR/TRR gates from the OTHER ` +
-      'axis: per-gate rule coverage (covered/total distinct rule IDs from RULE_TO_PHASE with zero open ' +
-      'violations, any severity, + the missing rule IDs) — orthogonal to phaseGates\' element-completeness; ' +
-      `${DIMENSION_READINESS_NAME} (CR-GC-325) — the 8 RULE_TO_DIMENSION topic scores ` +
-      '(req/uc/arch/alloc/ver/schema/cr/ms), the OTHER projection of the rule stream — scored from ' +
-      'the FULL contracts catalog (evaluateAllRules incl. BQ-*/ND-*), i.e. a WIDER population than ' +
-      'violationsByRule; `steer` (CR-GC-537) — the STEERING SPACE from that same snapshot: worst / ' +
-      'worstAt / mean / score / measured plus one `terms` entry per measured blackbox (ruleId, ' +
-      'elementId, value, threshold, normalized overshoot) out of se-engine steerTerms/steerScore. ' +
-      'Readiness measures COVERAGE (how many places are done), steer measures SEVERITY (how bad is ' +
-      'the worst open one) — SMALLER IS BETTER, 0 means every blackbox is inside its budget. Read ' +
-      '`score` only together with `measured`: it is a COUNT, so score 0 at measured 0 means nothing ' +
-      'was measured, not that everything is fine. Do NOT recompute it — the normalization ' +
-      '(value − threshold)/threshold and the closed rule list STEER_RULES live in se-engine, and a ' +
-      'second computation is a second truth; `catalogs` (CR-GC-428) names per block which catalog it came from: each with ' +
-      'score, violations, applicable (the denominator — a score is not interpretable without it) and ' +
-      'coreApplicable (0 means the score is null: not measurable). A measurement WITHOUT a verdict — ' +
-      'there is no ready flag; the focus threshold is applied only where the focus is chosen, in ' +
-      'graph_generate (CR-GC-514). Steering values, NOT a gate: the gates stay ' +
-      'the pass/fail authority. Computed from the same steering snapshot graph_generate uses, so the ' +
-      'number a dashboard shows is the one the recommendation came from; ' +
-      'violationsByRule (keyed by contracts rule-ID — R-/RD-/MS- plus ND-01/ND-02 since CR-GC-442, ' +
-      'never BQ-*: those rules are not evaluated on this path at all, which is why they are named ' +
-      'in `skipped` instead of silently reading as zero. ND is evaluated but still absent from the ' +
-      'GATE catalog, so it appears in `catalogs.notInGate` and never blocks a mutation); intentCoverage ' +
-      '(CR-GC-295: per content theme from .graphcode/target-profile.json, whether/where it is ' +
-      'addressed in UC/REQ/FUNC — a KPI, never a gate blocker; null without config. CR-GC-307: the themes are ' +
-      'derived and persisted in the BACKGROUND, never confirmed by the human — this read-out is machine-facing, ' +
-      'so relay its content in plain language, never as "intent anchors"); and computedAt. By DEFAULT ' +
-      'returns a summary (no raw violations, no per-gate blocking/open lists) so it stays within the MCP ' +
-      `result limit even on a fully-red graph; pass detail:true for the full lists (${PHASE_READINESS_NAME} ` +
-      'stays in both — it is already a small aggregate). Read-only; derived from harness.evaluateRules() ' +
-      '(L2 gate) + RC code-conformance (CR-GC-253: realRef/testRefs resolved against the real source tree) ' +
-      '+ the MS nodes + element status.',
+      'Where does the project stand? Coverage (how many places are done) AND severity (how bad the ' +
+      'worst open one is), from ONE rule run: compliance, the SRR/PDR/CDR/TRR gates, the MS impl-gates, ' +
+      'the 8 topic scores and the steering space. Take it to decide WHAT NEXT, not to diagnose a single ' +
+      'finding — that is rules_get_violations. Read `score` only together with `measured`, and the ' +
+      'numbers only together with `skipped` and `importCoverage`: a figure without its reach is not a ' +
+      'statement. `graph_help({id:"graph_readiness"})` explains every block. Read-only.',
     inputSchema: GraphReadinessInputSchema,
     async handler(input) {
       // EINE Erhebung, drei Ableitungen (Report, Phase-Gates, skipped) — CR-GC-398.
@@ -545,19 +479,10 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
   > = {
     name: 'graph_help',
     description:
-      'Explain any dashboard item for both audiences (CR-GC-229): a systems engineer who does not know ' +
-      'this encoding, and a user with no SE background. Read-only. With `token` → the HelpEntry for that ' +
-      'ruleId / gate / panel / artifact / metric dimension / vocabulary token, carrying all three layers ' +
-      '(plain, SE-terms, and the exact copy-prompt). CR-GC-458: the six ℝ⁶ dimensions that steer ' +
-      'graph_suggest and stand in .graphcode/target-profile.json (coherence, modifiability, faultTolerance, ' +
-      'flowEfficiency, viability, scalability) answer here too, as `kind: "metric"` — and they carry three ' +
-      'extra fields, because a NUMBER raises other questions than a rule: `measure` (what is counted), ' +
-      '`purpose` (what it is for), `lever` (what moves it), plus the `scale` it lives on. Explain a ' +
-      'dimension from THIS answer; a consumer writing its own wording is a second source for the same ' +
-      'concept. Without an argument → the contextual, ranked, explained measures from ' +
-      'the live readiness + violations (the explained sibling of Recommendations), covering BOTH rule ' +
-      'violations and not-done-creation gate blockers (CR-GC-221). Authored Plain/SE layers come from ' +
-      'help-content.ts; titles/severity/owning-gate are derived from V3_RULES + readiness.',
+      'What does this rule / gate / panel / metric / tool mean, and what do I do about it? Plain ' +
+      'language and the SE term for any on-screen token, plus the exact fix where one applies. Take it ' +
+      'instead of guessing from a rule id — and instead of asking a tool description to carry the ' +
+      'semantics. Without an id it gives the contextual next steps for the current state.',
     inputSchema: GraphHelpInputSchema,
     async handler(input) {
       if (input.token !== undefined) {
@@ -592,18 +517,10 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
   > = {
     name: 'graph_authoring_guide',
     description:
-      'Surface the LEGAL incident edges for an ElementType (CR-GC-231) — the read-twin of graph_context for ' +
-      'the WRITE side of the spec. graph_context answers "what is a node\'s definition-of-done" (implement); ' +
-      'graph_authoring_guide answers "what structure is legal for this type" (author). Call it BEFORE writing ' +
-      'a node so you emit a correct add-node/add-edge via graph_mutate instead of guessing the ontology. ' +
-      'Returns outgoing [{edgeType,targetType,cardinality,description}], incoming [{edgeType,sourceType,…}], ' +
-      'and requiredAttrs — derived live from the imported @sigloch/contracts/se META_MODEL (TRACE_PATTERNS), ' +
-      'never a local fork. Read-only. Unknown type → a clear error. ' +
-      'formatEExample (CR-GC-321) is a ready-to-paste Format-E block for this type: `+ uid|text` has only ' +
-      'TWO positional fields (uid and DESCRIPTION) — the readable name travels as the `__name` attribute, ' +
-      'inline `[__name:…]` or as an `@__name …` line when it contains a comma or a bracket. Without ' +
-      '`__name` the uid silently becomes the name. attributes (CR-GC-581) lists the attributes with their ' +
-      'allowed values and syntax — for REQ the `kinds` enum (`@kinds ["postcondition"]`).',
+      'How do I write THIS element type through the gate: the legal trace patterns, the attributes it ' +
+      'carries, and one Format-E example. Take it ONCE before authoring a type you have not written in ' +
+      'this session — it is the same guide every time, so a second call in the same session buys ' +
+      'nothing.',
     inputSchema: GraphAuthoringGuideInputSchema,
     async handler(input) {
       const descriptor = SE_DESCRIPTOR.nodeTypes[input.type as keyof typeof SE_DESCRIPTOR.nodeTypes];

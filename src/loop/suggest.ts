@@ -179,29 +179,11 @@ export function bindSuggestTools(ctx: ToolPort): MCPToolRegistry {
   const graph_suggest: MCPTool<z.infer<typeof GraphSuggestInputSchema>, GraphSuggestResult> = {
     name: 'graph_suggest',
     description:
-      'Greedy-1-Schritt-Optimierungsvorschläge: ranke die feuernden Operator-Regeln danach, wie weit ' +
-      'ein Edit den SCHLIMMSTEN normierten Regel-Überschuss senkt (Chebyshev, CR-SM-292 — NICHT mehr ' +
-      'Δm·t̂ im 6-Metrik-Raum; der ℝ⁶-Vektor reist als `delta`/`verdict.fitDelta` mit und wird nur noch ' +
-      'berichtet). WAS score MISST (CR-GC-431 + CR-SM-292): bei `applicable:true` `verdict.steer.improvement` ' +
-      'GENAU DES beigelegten Template-Edits — dieselbe Zahl, die das Gate-Advisory für diesen Edit ' +
-      'gerechnet hat, kein zweiter Messpfad. Bei ' +
-      '`applicable:false` gibt es nichts anzuwenden (Fund ohne Template-Edit oder ein vom Gate ' +
-      'abgelehnter Edit); dann misst score die generische Operator-Sonde, also die Hebelwirkung des ' +
-      'FUNDES, keinen ausführbaren Zug. Anwendbares mit positivem Δm rankt immer über Nicht-Anwendbarem. ' +
-      'ZWEI MESSEBENEN: `layer` ist die Ebene des Fund-Rankings, `advisoryLayer` die des Gate-Advisorys ' +
-      "(fest 'arch') und damit der anwendbaren Scores. Laufen sie auseinander, sagt das Feld " +
-      '`layerMismatch` es im Ergebnis. Wendet NIE selbst an: Edits gehen über graph_mutate. ' +
-      'UMHÄNGEN (CR-GC-435): trägt ein Edit `retire`, ist das die Kante, die laut Kardinalitäts-' +
-      'Obergrenze weichen muss — anwenden als EIN graph_mutate-Batch [delete-edge(retire), ' +
-      'add-edge(edit)], nie als zwei Aufrufe; genau diesen Verbund hat der dryRun beurteilt. ' +
-      'Ein `codeImpact` benennt Datei+Zielmodul, wenn das Umhängen einer realisierten FUNC ' +
-      'Code-Arbeit nach sich zieht. ' +
-      'KONSOLIDIEREN (CR-GC-444): ein Edit mit `op:"merge-nodes"` legt zwei Knoten zusammen, die ' +
-      'denselben Datenvertrag tragen (`target` absorbiert `source`). Anwenden als EIN ' +
-      'graph_mutate-Batch [merge-nodes(source→target), ...merges] — die Liste `merges` sind die ' +
-      'GEKOPPELTEN Merges, ohne die das Gate den Zug über R-18 abweist (FLOW -relation-> SCHEMA ' +
-      'ist 1..1). Solche Suggestions tragen die Kennung OP-MERGE statt einer Regel-ID: ein Merge ' +
-      'repariert keine Regel, er bewegt die Metrik. Read-only; die Metrik rankt, das Gate urteilt.',
+      'Which restructuring actually pays off? Ranks candidate edits by how far each moves the model ' +
+      'toward the target profile, and hands back the ONE edit a rule template could DERIVE from the ' +
+      'element text (with its rationale) — never a generically synthesized one. It proposes; ' +
+      'graph_mutate applies. Take it when you want a move, not a diagnosis. ' +
+      '`graph_help({id:"graph_suggest"})` explains the ranking and why a suggestion may carry no edit.',
     inputSchema: GraphSuggestInputSchema,
     async handler(input) {
       // CR-GC-324: der EINE Mapper statt des flachen Export-Encodings.

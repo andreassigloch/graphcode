@@ -1,0 +1,9 @@
+[
+  {
+    "arm": "opus5",
+    "model": "claude-opus-5",
+    "executor": "claude",
+    "run": 16,
+    "error": "graph_export refused: would delete 0 element(s) + 1 trace(s) present in committed docs/graph/opus5-16.graph.json but missing from the live graph — likely a stale process or a parallel sync. Re-seed the live graph from the committed SSOT first, or pass force:true for an intentional deletion. Dropped elements: . Dropped traces: SYS-sig-local -compose-> MOD-zugangsweg."
+  }
+]

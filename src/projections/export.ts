@@ -160,20 +160,12 @@ export function bindExportTools(ctx: ToolPort): MCPToolRegistry {
   > = {
     name: 'graph_export',
     description:
-      'Re-export the live governed graph to commit-able docs — the single sync path (CR-GC-113). ' +
-      'Writes canonical docs/graph/<name>.graph.json plus deterministic docs/views/*.md (GENERATED header) ' +
-      'under the repo root, from the live in-memory graph (full fidelity). Closes the agent loop: ' +
-      'spec → impact → implement → export. REFUSES to clobber: aborts if the live graph is empty, or if ' +
-      'the write would drop elements/traces present in the committed SSOT (stale process / parallel ' +
-      'writer) — UNLESS the drop is export-after-own-mutate (CR-GC-296): every dropped identity traces ' +
-      'to this process\'s own audited, applied delete-node/delete-edge/merge-nodes batches since boot, in ' +
-      'which case the export proceeds without force:true; a genuinely foreign/stale drop still needs it. ' +
-      'Also MATERIALIZES the artifact behind an absent binding — a runnable ' +
-      '`it.todo` stub for a bound TEST testRef (CR-GC-205 Item 4) and a `z.unknown()` Zod stub for a bound ' +
-      'SCHEMA realRef (BOK-CR-026) — so no binding resolves to a phantom path; existing files are never ' +
-      'overwritten. Returns the written paths, byte sizes, and the scaffolded stub files — plus ' +
-      'unfedMutations (CR-GC-449) when applied gate mutations of this repo have NO entry in the ' +
-      "repo's learning feed (a writer bypassed the tool layer or ran on its own store).",
+      'Re-export the live graph to commit-able docs — the ONE sync path. Writes the canonical ' +
+      'docs/graph/<name>.graph.json plus the deterministic docs/views/*.md, and materializes a stub ' +
+      'behind any binding that would otherwise point at a phantom path. Take it after authoring, so ' +
+      'the next session has a readable SSOT. REFUSES to clobber a foreign or stale drop (its own ' +
+      'audited deletes pass without `force`). `unfedMutations` names gate writes that bypassed the ' +
+      'tool layer.',
     inputSchema: GraphExportInputSchema,
     async handler(input) {
       const graph = harness.getGraph();

@@ -128,6 +128,15 @@ export const EXCLUDED = {
     'Eigentuemer-Spalte (contracts). Liest weder graphcodes Modell noch dessen SSOT; der Treffer ist\n' +
     'der Regelkatalog. Eine Modellaenderung kann ihn nicht rot machen; eine neue Regel-ID im Skill\n' +
     'oder eine Klausel an einer Task-Regel sehr wohl.',
+  'tests/cli.scaffold.test.ts':
+    'Scaffold-Verben (init | update | remove) gegen ein TEMP-Repo. Seit CR-GC-612 prueft er, dass\n' +
+    'GRAPHCODE.md die Rohdateien als AUSGABEN benennt — daher der Treffer auf `docs/graph/`. Gelesen\n' +
+    'wird graphcodes eigene SSOT nicht: die Datei entsteht im Temp-Verzeichnis. Eine Modellaenderung\n' +
+    'kann ihn nicht rot machen; eine Aenderung am ausgelieferten Text sehr wohl.',
+  'tests/vorspann.test.ts':
+    'CR-GC-612: misst GRAPHCODE.md und die Laengen der Werkzeugbeschreibungen gegen den\n' +
+    'Regelkatalog. Der Treffer ist der KATALOG, nie graphcodes eigene SSOT — eine Modellaenderung\n' +
+    'kann ihn nicht rot machen; ein Werkzeug, das sich wieder selbst erklaert, sehr wohl.',
   'tests/read-tools.scope.test.ts':
     'CR-GC-613: misst die ANTWORTGROESSEN der Lesewerkzeuge gegen das GOLDEN EINES RIG-KORPUS\n' +
     '(`rig/sigllm-spezifikation/golden/sigllm-v98.graph.json`), nie graphcodes eigene SSOT. Eine\n' +
