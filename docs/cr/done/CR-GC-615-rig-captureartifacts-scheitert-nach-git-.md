@@ -1,6 +1,6 @@
 # CR-GC-615: Rig captureArtifacts scheitert nach Git-Aktionen des Agenten an Export-Drift (opus5-16: graph_export refused, Ergebniszeile fehlt)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-22)
 **Typ:** aus Item ITEM-2026-473 (bug)
 **Erstellt:** 2026-09-22
 **Item:** bok/items/ITEM-2026-473.json (Lane: code)
