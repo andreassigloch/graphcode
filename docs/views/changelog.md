@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 224 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 224 CR · 171 done · 1 open.
+Total: 224 CR · 179 done · 0 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -233,8 +233,8 @@ Total: 224 CR · 171 done · 1 open.
 | `CR-GC-547` | n/a | Zod plus Test fuer die Grenzvertraege: MCPTool/MCPToolRegistry als Laufzeitvertrag, parse im einen Bauplatz der Registry, Vertrags-TEST gegen die echte Registry - R-32 und RC-04 erfuellen statt abschwaechen |
 | `CR-GC-548` | n/a | Kennzahlen-Recorder fuer die Null-Zeile eines fremden Projekts: Repo als Argument, Greenfield-fest (kein Snapshot, kein src), JS/JSX statt nur TS, und er meldet seine eigene Reichweite |
 | `CR-GC-549` | done | Zugverlauf aus dem Audit-Log rekonstruieren |
-| `CR-GC-550` | open | se-plan leitet ueber REQ ab, nicht ueber FUNC-Blaetter |
-| `CR-GC-551` | n/a | kinds als Zeichenkette ueber den commands-Pfad: 49 von 49 REQ eines Auto-Laufs tragen "non-functional" statt ["non-functional"] - die in CR-SM-320 par. 4 als offen benannte Haelfte ist die, die in der Praxis feuert |
+| `CR-GC-550` | done | se-plan leitet ueber REQ ab, nicht ueber FUNC-Blaetter |
+| `CR-GC-551` | done | kinds als Zeichenkette ueber den commands-Pfad: 49 von 49 REQ eines Auto-Laufs tragen "non-functional" statt ["non-functional"] - die in CR-SM-320 par. 4 als offen benannte Haelfte ist die, die in der Praxis feuert |
 | `CR-GC-552` | n/a | graphcode run gegen sigllm statt direkt gegen die Runtime — drittes Backend sigllm im Executor |
 | `CR-GC-553` | n/a | Die Bewertungsmaschiene des Rigs (metrics/report/Pruefliste/Prosa-Auftrag, 11 Dateien) wurde unter der fremden Nummer CR-GC-552 committet — die Nummer existierte zur Commit-Zeit noch nicht und wurde spaeter fuer das sigllm-Backend gemintet |
 | `CR-GC-554` | n/a | openai-Backend verliert role und tool_calls[].type: OpenAiWireAnswer deklariert sie nicht, Zod entfernt sie, und die beschnittene Assistenten-Nachricht geht in die naechste Runde zurueck — jeder zweite Turn scheitert am Chat-Template |
@@ -277,12 +277,12 @@ Total: 224 CR · 171 done · 1 open.
 | `CR-GC-605` | n/a | Schwere = Gate-Wirkung (gating entfaellt, 6 errors -> warning), Phase INCOSE-korrigiert (AF-01 SRR, AF-05 PDR, R-26 TRR), Smeagol Stufe (e) Empfehlungskonsistenz, Regel-Matrix ohne abgeleitete Spalten |
 | `CR-GC-606` | n/a | Abbruchregel zaehlt zu frueh: zurueckstellen erst beim dritten gleichen Feedback (opus5-15, CR-01 nach Folgezug) |
 | `CR-GC-607` | n/a | Task-Regeln TR-01 (Trade-Entscheidung als CR) und IR-01 (Annahmen-Review promoviert zu CR) ueber crRefs im Frischestempel |
-| `CR-GC-608` | n/a | Fertig-Kriterium der Steuerregeln: lokales Optimum bei Kreis oder Plateau ueber 3 Steuerzuege (opus5-11/13/15) |
+| `CR-GC-608` | done | Fertig-Kriterium der Steuerregeln: lokales Optimum bei Kreis oder Plateau ueber 3 Steuerzuege (opus5-11/13/15) |
 | `CR-GC-609` | n/a | Schatten-graph_suggest im Rig: je Zug nachgespielt, was der Optimierer vorgeschlagen haette — opus5-14/15: 0 anwendbare Vorschlaege, keine Vorlage fuer Steuerregeln |
 | `CR-GC-610` | n/a | Code-Test (Leitlinie Satz 7): Scheduler-Scheibe aus sigllm, gefuehrt (Modell + graphcode) gegen frei laufendes Claude Code — Aufgabe, Vertrag, verdeckte Abnahme, Messung |
 | `CR-GC-611` | done | Antwort-Diaet: graph_realize liefert 2x die volle missingRefs-Liste (87% seiner Antwort), graph_mutate next+violations je ~40k Zeichen, authoring_guide 11x wiederholt |
-| `CR-GC-612` | n/a | Fester Vorspann je Lauf entflechten: GRAPHCODE.md, Werkzeugbeschreibungen, Skills und Antworten haben doppelte Zustaendigkeit — jede Frage soll genau einen Ort haben |
-| `CR-GC-613` | n/a | Lesewerkzeuge antworten ueber das ganze Modell statt ueber die Scheibe: rules_get_violations 32.630, graph_test_report 25.602, graph_context je 9.300 Zeichen — 62% der graphcode-Antworten eines Laufs |
-| `CR-GC-614` | n/a | Executor verwirft alte Denkbloecke nach jedem Zug — der Graph ist das Gedaechtnis, nicht der Gespraechsverlauf (gemessen: ~58% des Kontexts in Lauf 15) |
-| `CR-GC-615` | n/a | Rig captureArtifacts scheitert nach Git-Aktionen des Agenten an Export-Drift (opus5-16: graph_export refused, Ergebniszeile fehlt) |
-| `CR-GC-616` | n/a | ITEM-462 umgesetzt: UC-05/06/RD-03 gestrichen (UC-Schreibregel), MT-02 warning, Fix-Roundtrip-Test, Folge-Regel-Spalte |
+| `CR-GC-612` | done | Fester Vorspann je Lauf entflechten: GRAPHCODE.md, Werkzeugbeschreibungen, Skills und Antworten haben doppelte Zustaendigkeit — jede Frage soll genau einen Ort haben |
+| `CR-GC-613` | done | Lesewerkzeuge antworten ueber das ganze Modell statt ueber die Scheibe: rules_get_violations 32.630, graph_test_report 25.602, graph_context je 9.300 Zeichen — 62% der graphcode-Antworten eines Laufs |
+| `CR-GC-614` | done | Executor verwirft alte Denkbloecke nach jedem Zug — der Graph ist das Gedaechtnis, nicht der Gespraechsverlauf (gemessen: ~58% des Kontexts in Lauf 15) |
+| `CR-GC-615` | done | Rig captureArtifacts scheitert nach Git-Aktionen des Agenten an Export-Drift (opus5-16: graph_export refused, Ergebniszeile fehlt) |
+| `CR-GC-616` | done | ITEM-462 umgesetzt: UC-05/06/RD-03 gestrichen (UC-Schreibregel), MT-02 warning, Fix-Roundtrip-Test, Folge-Regel-Spalte |
