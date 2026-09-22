@@ -12119,6 +12119,31 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-605",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-605",
+      "target": "FUNC-mutate",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-607",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-607",
+      "target": "FUNC-se-irr",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-607",
+      "target": "FUNC-se-trade",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -20414,5 +20439,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 370
+  "graphVersion": 371
 }
