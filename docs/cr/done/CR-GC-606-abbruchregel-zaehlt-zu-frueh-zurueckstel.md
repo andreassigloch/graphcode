@@ -1,6 +1,6 @@
 # CR-GC-606: Abbruchregel zaehlt zu frueh: zurueckstellen erst beim dritten gleichen Feedback (opus5-15, CR-01 nach Folgezug)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-22)
 **Typ:** aus Item ITEM-2026-463 (bug)
 **Erstellt:** 2026-09-22
 **Item:** bok/items/ITEM-2026-463.json (Lane: graph)
