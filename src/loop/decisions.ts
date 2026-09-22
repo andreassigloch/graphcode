@@ -88,12 +88,21 @@ export const DECISIONS = {
   stalled: {
     text:
       'Steht derselbe Fokus nach zwei Zuegen noch, stellt die Maschine ihn zurueck und nennt den naechsten ' +
-      '(Eintrittspunkte nie — die loest nur ihr Task oder eine Abnahme). ' +
+      '(Eintrittspunkte und Steuerregeln nie — Eintrittspunkte loest nur ihr Task oder eine Abnahme). ' +
       'Meldet sie phase stalled, sind nur noch zurueckgestellte Funde offen: nicht weiter mutieren, sondern ' +
       'der Ansage folgen — im Task zurueck in den Kern, bei offenem Eintrittspunkt den Task starten, sonst ' +
       'die Funde und deine Versuche in der Schlussmeldung nennen. stalled ist nicht fertig.',
     forbidden: [/stalled[^.]{0,40}(ist|gilt als) (fertig|done)/i],
     source: 'CR-GC-596/604/606',
+  },
+  /** CR-GC-608: das Fertig-Kriterium der Steuerregeln — lokales Optimum ist ein Ergebnis. */
+  steerOptimum: {
+    text:
+      'Steuerregeln (RD-04, BW-02, R-04, CR-01, MT-02) sind fertig, wenn sich ihr Ueberschuss ueber drei ' +
+      'Steuerzuege im Kreis bewegt oder um weniger als 5 % sinkt: lokales Optimum. Die Maschine nimmt sie ' +
+      'dann aus dem Fokus und meldet done mit den verbliebenen Termen — weiter ueber graph_suggest oder den Menschen.',
+    forbidden: [/lokale[sn]? Optimum[^.]{0,40}(stalled|festgefahren)/i],
+    source: 'CR-GC-608',
   },
   /** CR-GC-594: die benannte Abweichung — nur fuer die Klasse, die im Modell nicht erfuellbar ist. */
   acceptance: {

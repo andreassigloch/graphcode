@@ -1851,6 +1851,18 @@
       "description": "docs/cr/open/CR-GC-606-abbruchregel-zaehlt-zu-frueh-zurueckstel.md"
     },
     {
+      "id": "CR-GC-607",
+      "type": "CR",
+      "name": "Task-Regeln TR-01 (Trade-Entscheidung als CR) und IR-01 (Annahmen-Review promoviert zu CR) ueber crRefs im Frischestempel",
+      "description": "docs/cr/open/CR-GC-607-task-regeln-tr-01-trade-entscheidung-als.md"
+    },
+    {
+      "id": "CR-GC-608",
+      "type": "CR",
+      "name": "Fertig-Kriterium der Steuerregeln: lokales Optimum bei Kreis oder Plateau ueber 3 Steuerzuege (opus5-11/13/15)",
+      "description": "docs/cr/open/CR-GC-608-fertig-kriterium-der-steuerregeln-lokale.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -20382,5 +20394,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 363
+  "graphVersion": 365
 }

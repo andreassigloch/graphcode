@@ -29,6 +29,8 @@ import { winner } from './channel-rank.js';
 import { decision } from './decisions.js';
 import { abnehmbar, focusViolations as fokusmenge, blockingOf } from '../kernel/measure/focus-set.js';
 import { TASK_ENTRY, type RuleTask } from '@sigloch/contracts/se';
+import { steerTerms, STEER_RULES } from '@sigloch/se-engine';
+import { STEUER_FENSTER, type SteerOptimum, type SteerState } from './stagnation.js';
 
 /**
  * Datenvertrag der Generierungs-Instruktion (SCHEMA-generation-step) — Zod, nicht
@@ -74,6 +76,9 @@ export const GenerationStep = z.object({
    * den Skill ueber sein Skill-Werkzeug, der Executor spielt den Rumpf ein. Eine Zuordnung, zwei
    * Transporte. null, wenn es fuer die Dimension keinen Autorier-Skill gibt. */
   skill: z.string().nullable(),
+  /** CR-GC-608: der Steuerzustand (Termvektor, Summe der Ueberschuesse) — das Fertig-Kriterium der
+   * Steuerregeln liest ihn im Sitzungsgedaechtnis; `next` traegt ihn nicht. */
+  steer: z.object({ key: z.string(), sum: z.number(), terms: z.array(z.string()) }).optional(),
 });
 export type GenerationStep = z.infer<typeof GenerationStep>;
 
@@ -304,8 +309,10 @@ export function generationStep(
   selection: GenerationSelection = 'host',
   profile: LoadedTargetProfile | null = null,
   task: RuleTask = 'kern',
+  steerOptimum: SteerOptimum | null = null,
 ): GenerationStep {
-  const core = stepCore(graph, policy, intent, threshold, defer, selection, profile, task);
+  const snap = takeSteeringSnapshot(graph, policy);
+  const core = stepCore(snap, policy, intent, threshold, defer, selection, profile, task, steerOptimum);
   // CR-GC-601: im Task nennt der Schritt den Skill des Tasks, im Kern den der Fokus-Dimension.
   // CR-GC-604: steht im Kern ein Eintrittspunkt im Fokus, ist der Skill der des Tasks — nicht der
   // der Dimension (AF-04/AF-05 liegen in ver/ms, fuer die es keinen Autorier-Skill gibt: `next.skill` war null).
@@ -318,11 +325,28 @@ export function generationStep(
         : core.focusDimension
           ? (SKILL_FOR_DIMENSION[core.focusDimension]?.name ?? null)
           : null;
-  return { ...core, skill };
+  return { ...core, skill, steer: steerState(snap.violations) };
+}
+
+/** CR-GC-608: der Vermerk im done-Prompt, wenn die Steuerregeln am lokalen Optimum stehen. */
+export function steuerVermerk(optimum: SteerOptimum | null): string {
+  if (!optimum) return '';
+  return `Steuerregeln am lokalen Optimum (${optimum.grund === 'kreis' ? 'Kreis' : 'Plateau'} über ` +
+    `${STEUER_FENSTER} Steuerzüge): ${optimum.terms.join(', ')} — weiter über graph_suggest oder den Menschen. `;
+}
+
+/** CR-GC-608: der kanonische Steuerzustand aus se-engines `steerTerms` — kein eigener Messpfad. */
+function steerState(violations: Parameters<typeof steerTerms>[0]): SteerState {
+  const terms = steerTerms(violations)
+    .filter((t) => t.overshoot > 0)
+    .map((t) => `${t.ruleId}@${t.elementId} (${t.overshoot.toFixed(2)})`)
+    .sort();
+  const sum = steerTerms(violations).reduce((a, t) => a + Math.max(0, t.overshoot), 0);
+  return { key: terms.join('|'), sum, terms };
 }
 
 function stepCore(
-  graph: Graph,
+  snap: ReturnType<typeof takeSteeringSnapshot>,
   policy: MetricPolicy,
   intent: string | undefined,
   // CR-GC-336: kein `= 0.8` mehr. Dieselbe Frage („ist diese Dimension zu schwach?")
@@ -332,14 +356,17 @@ function stepCore(
   selection: GenerationSelection = 'host',
   profile: LoadedTargetProfile | null = null,
   task: RuleTask = 'kern',
-): Omit<GenerationStep, 'skill'> {
+  steerOptimum: SteerOptimum | null = null,
+): Omit<GenerationStep, 'skill' | 'steer'> {
   const gateProtocol = GATE_PROTOCOL[selection];
   // Steering-Snapshot (CR-GC-289): og + ND-Injektion + Full-Katalog-Eval +
   // computeReadiness + Phasen-Gates — geteilt mit dem steeringDelta des dryRun-Verdicts.
-  const snap = takeSteeringSnapshot(graph, policy);
   const { og, report, phaseReadiness } = snap;
   // CR-GC-601: im Kern die Kern-Fokusmenge des Snapshots, im Task das detaillierte Regelset (Warnung).
-  const violations = task === 'kern' ? snap.focus : fokusmenge(og, snap.violations, task);
+  // CR-GC-608: am lokalen Optimum verlassen die Steuerregeln den Kern-Fokus.
+  const violations = task === 'kern'
+    ? steerOptimum ? snap.focus.filter((v) => !(STEER_RULES as readonly string[]).includes(v.rule_id)) : snap.focus
+    : fokusmenge(og, snap.violations, task);
   const blockingErrors = task === 'kern' ? snap.blockingErrors : blockingOf(violations);
   const taskVorsatz = task === 'kern' ? '' : `Task ${task} (Skill ${TASK_SKILL[task]}): `;
   // CR-GC-593/598: `violations` IST die Fokusmenge (focus-set.ts); fuer Hinweise am Element:
@@ -643,6 +670,7 @@ function stepCore(
       prompt:
         'Die Struktur trägt: kein offener Fund mehr in der Fokusmenge (Gate-Regeln ohne info, ' +
         'abgenommene Funde ausgenommen). ' +
+        steuerVermerk(steerOptimum) +
         'Handoff auf die ℝ⁶-Optimierung: ' +
         targetInstruction +
         coverageLine +
