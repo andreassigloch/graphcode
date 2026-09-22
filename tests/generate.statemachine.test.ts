@@ -141,7 +141,9 @@ describe('CR-GC-593/594: das Golden und die benannten Abnahmen', () => {
       cur = step(golden, defer);
     }
     expect(abnehmbar().has(cur.focusKey!.split(':')[1])).toBe(true);
-    expect(cur.prompt).toMatch(/ist abnehmbar: ist der Fund im Modell nicht erfüllbar/);
+    // CR-GC-601: im Kern sind nur Eintrittspunkte abnehmbar — der Prompt nennt den Task UND die Abnahme.
+    expect(cur.prompt).toMatch(/ist der Eintrittspunkt des Tasks/);
+    expect(cur.prompt).toMatch(/acceptedFindings mit Grund ab/);
   });
 
   it('eine Abnahme ohne Grund zaehlt nicht', () => {

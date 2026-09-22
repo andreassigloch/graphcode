@@ -38,6 +38,7 @@ import { suggestEdits, type Suggestion, type SuggestedEdit } from '@sigloch/se-e
 import { toOntologyGraph } from '../kernel/conformance.js';
 import { generationStep, type GenerationStep } from './generate.js';
 import { focusMemoryOf, stepWithMemory } from './stagnation.js';
+import { RULE_TASKS } from '@sigloch/contracts/se';
 import {
   loadTargetProfile,
   extractIntentAnchors,
@@ -324,6 +325,14 @@ export function bindSuggestTools(ctx: ToolPort): MCPToolRegistry {
         'die Schwelle des Hosts (graphcode.config.jsonc → focusThreshold) — CR-GC-336: ein ' +
         'Tool-Default wäre eine zweite Antwort auf dieselbe Frage.',
       ),
+    task: z
+      .enum(RULE_TASKS)
+      .optional()
+      .describe(
+        "CR-GC-601: den Task starten, dessen Eintrittspunkt der Kern nennt (fmea, plan, conops, trade, irr, " +
+          'anforderungsqualitaet, realisierung) — dieselbe Maschine mit seinem detaillierten Regelset als Warnung. ' +
+          'Ohne Angabe: der Kern. `next` an der Mutation bleibt im Task, bis graph_generate ohne task.',
+      ),
     defer: z
       .array(z.string())
       .optional()
@@ -365,12 +374,16 @@ export function bindSuggestTools(ctx: ToolPort): MCPToolRegistry {
       if (input.intent && !profile?.profile.intentAnchors?.length && !isIntentTooThin(input.intent)) {
         persistIntentAnchors(repoRoot, extractIntentAnchors(input.intent));
       }
+      // CR-GC-601: der Task der Sitzung — ohne `task` zurueck in den Kern.
+      const task = input.task ?? 'kern';
       const compute = (defer: string[]) =>
-        generationStep(harness.getGraph(), harness.getMetricPolicy(), input.intent, input.threshold ?? harness.getFocusThreshold(), defer, input.selection, profile);
+        generationStep(harness.getGraph(), harness.getMetricPolicy(), input.intent, input.threshold ?? harness.getFocusThreshold(), defer, input.selection, profile, task);
       // CR-GC-596: fuer den Host fuehrt die Maschine das Gedaechtnis (zweimal gleicher Fokus nach
       // einem Zug → zurueckstellen). Der Treiber (Executor) zaehlt vorerst selbst — ITEM-2026-449.
       if (input.selection === 'driver') return compute(input.defer ?? []);
-      return stepWithMemory(focusMemoryOf(harness), ctx.graphVersion(), compute, input.defer ?? []);
+      const memory = focusMemoryOf(harness);
+      memory.task = task;
+      return stepWithMemory(memory, ctx.graphVersion(), compute, input.defer ?? []);
     },
   };
 

@@ -27,7 +27,8 @@ import { acceptedRuleIds } from '@sigloch/contracts/se';
 import { isIntentTooThin, intentCoverage, type LoadedTargetProfile } from './target-profile.js';
 import { winner } from './channel-rank.js';
 import { decision } from './decisions.js';
-import { abnehmbar } from '../kernel/measure/focus-set.js';
+import { abnehmbar, focusViolations as fokusmenge, blockingOf } from '../kernel/measure/focus-set.js';
+import { TASK_ENTRY, type RuleTask } from '@sigloch/contracts/se';
 
 /**
  * Datenvertrag der Generierungs-Instruktion (SCHEMA-generation-step) — Zod, nicht
@@ -254,6 +255,24 @@ export const DIMENSION_FOCUS_TYPES: Record<string, string[]> = {
 // Schritt, Probe und Bericht, abgeleitet aus der Eigentuemer-Spalte der Regeln.
 const windowRuleOf = (vs: readonly { rule_id: string }[]): string | undefined => vs[0]?.rule_id;
 
+/**
+ * Der Skill je Task (CR-GC-601) — die Blackbox, die das detaillierte Regelset abarbeitet.
+ * Anforderungsqualitaet faehrt mit `se:author-req` (Entscheidung 2026-09-22: BQ ist Teil des
+ * REQ-Autorierens, kein eigener Skill).
+ */
+export const TASK_SKILL: Readonly<Record<Exclude<RuleTask, 'kern'>, string>> = {
+  conops: 'se-conops',
+  trade: 'se-trade',
+  irr: 'se-irr',
+  fmea: 'se-fmea',
+  plan: 'se-plan',
+  anforderungsqualitaet: 'se:author-req',
+  realisierung: 'se-test',
+};
+const TASK_OF_ENTRY = new Map(
+  (Object.entries(TASK_ENTRY) as [Exclude<RuleTask, 'kern'>, string | null][]).filter(([, e]) => e).map(([t, e]) => [e as string, t]),
+);
+
 export const SEED_STAGES = {
   sys: ['SYS'],
   uc: ['SYS', 'UC'],
@@ -284,9 +303,12 @@ export function generationStep(
   defer: string[] = [],
   selection: GenerationSelection = 'host',
   profile: LoadedTargetProfile | null = null,
+  task: RuleTask = 'kern',
 ): GenerationStep {
-  const core = stepCore(graph, policy, intent, threshold, defer, selection, profile);
-  return { ...core, skill: core.focusDimension ? (SKILL_FOR_DIMENSION[core.focusDimension]?.name ?? null) : null };
+  const core = stepCore(graph, policy, intent, threshold, defer, selection, profile, task);
+  // CR-GC-601: im Task nennt der Schritt den Skill des Tasks, im Kern den der Fokus-Dimension.
+  const skill = task !== 'kern' ? TASK_SKILL[task] : core.focusDimension ? (SKILL_FOR_DIMENSION[core.focusDimension]?.name ?? null) : null;
+  return { ...core, skill };
 }
 
 function stepCore(
@@ -299,11 +321,17 @@ function stepCore(
   defer: string[] = [],
   selection: GenerationSelection = 'host',
   profile: LoadedTargetProfile | null = null,
+  task: RuleTask = 'kern',
 ): Omit<GenerationStep, 'skill'> {
   const gateProtocol = GATE_PROTOCOL[selection];
   // Steering-Snapshot (CR-GC-289): og + ND-Injektion + Full-Katalog-Eval +
   // computeReadiness + Phasen-Gates — geteilt mit dem steeringDelta des dryRun-Verdicts.
-  const { og, focus: violations, blockingErrors, report, phaseReadiness } = takeSteeringSnapshot(graph, policy);
+  const snap = takeSteeringSnapshot(graph, policy);
+  const { og, report, phaseReadiness } = snap;
+  // CR-GC-601: im Kern die Kern-Fokusmenge des Snapshots, im Task das detaillierte Regelset (Warnung).
+  const violations = task === 'kern' ? snap.focus : fokusmenge(og, snap.violations, task);
+  const blockingErrors = task === 'kern' ? snap.blockingErrors : blockingOf(violations);
+  const taskVorsatz = task === 'kern' ? '' : `Task ${task} (Skill ${TASK_SKILL[task]}): `;
   // CR-GC-593/598: `violations` IST die Fokusmenge (focus-set.ts); fuer Hinweise am Element:
   const elementById = new Map(og.elements.map((e) => [e.id, e]));
   const sysEl = og.elements.find((e) => e.type === 'SYS');
@@ -394,7 +422,7 @@ function stepCore(
   // Graph ohne ACTOR darf nicht in den Kaltstart zurückfallen — dort melden
   // UC-02/R-16/FC-04 dasselbe auf dem expand-Pfad, und der Regler misst.
   const strukturBegonnen = og.elements.some((e) => e.type === 'FUNC' || e.type === 'MOD');
-  if (!strukturBegonnen) {
+  if (!strukturBegonnen && task === 'kern') {
     const seedRumpf = (prompt: string, stufe: keyof typeof SEED_STAGES): Omit<GenerationStep, 'skill'> => ({
       phase: 'seed',
       done: false,
@@ -561,6 +589,24 @@ function stepCore(
   // Kein Waechter aus einer anderen Quelle als der Fokuswahl. Schwelle und Phasen-Gate stehen
   // weiter im Bericht (readiness, phaseReadiness), sie entscheiden nur nicht mehr — gemessen
   // hatten sie in fuenf Laeufen nie einen Schritt gewaehlt, aber in allen die Freigabe gesperrt.
+  if (!focus && task !== 'kern') {
+    // CR-GC-601: der Task ist durch — sein Regelset hat keinen offenen Fund. Der Ausgang ist der
+    // Frischestempel des Artefakts (den der Skill setzt); dann zurueck in den Kern.
+    return {
+      phase: 'handoff',
+      done: true,
+      prompt:
+        `Task ${task} fertig: kein offener Fund mehr in seinem Regelset. Schliesse das Artefakt mit dem Skill ` +
+        `${TASK_SKILL[task]} ab (Frischestempel am SYS), dann zurück in den Kern: graph_generate ohne task.`,
+      readiness,
+      threshold,
+      blockingErrors,
+      phaseReadiness,
+      focusKey: null,
+      focusTypes: [],
+      focusDimension: null,
+    };
+  }
   if (!focus) {
     // CR-GC-295: das Zielprofil kommt aus der Config (Mensch entscheidet in
     // Runde 1), nicht mehr als Erfindungs-Auftrag ans Modell.
@@ -599,14 +645,19 @@ function stepCore(
   // sagt der Prompt, warum der Fund trotzdem hier steht — sonst dreht der Agent eine Schleife.
   const ignorierteAbnahme =
     windowRuleOf(focusViolations) !== undefined &&
-    !abnehmbar().has(windowRuleOf(focusViolations)!) &&
+    !abnehmbar(task).has(windowRuleOf(focusViolations)!) &&
     focusViolations.some((v) => acceptedRuleIds(elementById.get(v.element_id) ?? sysEl ?? {}).has(v.rule_id));
   const fensterRegel = windowRuleOf(focusViolations);
   const abnahmeHinweis = ignorierteAbnahme
     ? `Die Abnahme von ${fensterRegel} zählt nicht — Architekturregeln sind nicht abnehmbar; löse den Fund im Modell. `
-    : fensterRegel !== undefined && abnehmbar().has(fensterRegel)
-      ? `${fensterRegel} ist abnehmbar: ist der Fund im Modell nicht erfüllbar, lege ihn als acceptedFindings [{ruleId, reason}] mit Grund ab. `
-      : '';
+    : fensterRegel !== undefined && task === 'kern' && TASK_OF_ENTRY.has(fensterRegel)
+      ? // CR-GC-601: ein Eintrittspunkt — der Task ist eine Blackbox, der Kern loest ihn nicht selbst.
+        `${fensterRegel} ist der Eintrittspunkt des Tasks ${TASK_OF_ENTRY.get(fensterRegel)}: starte ihn mit ` +
+        `graph_generate {task:'${TASK_OF_ENTRY.get(fensterRegel)}'} (Skill ${TASK_SKILL[TASK_OF_ENTRY.get(fensterRegel)!]}) — ` +
+        'oder nimm ihn als acceptedFindings mit Grund ab, wenn das Artefakt im schlanken Umfang nicht nötig ist. '
+      : fensterRegel !== undefined && abnehmbar(task).has(fensterRegel)
+        ? `${fensterRegel} ist abnehmbar: ist der Fund im Modell nicht erfüllbar, lege ihn als acceptedFindings [{ruleId, reason}] mit Grund ab. `
+        : '';
   const funde = focusViolations
     .map((v) => `${v.element_id} (${v.rule_id}: ${v.message}${v.fix_hint ? ` — Fix: ${v.fix_hint}` : ''})`)
     .join('; ');
@@ -647,7 +698,7 @@ function stepCore(
     phase: 'expand',
     done: false,
     prompt:
-      `Intention: "${effectiveIntent}". ${coverageLine}${abnahmeHinweis}Schwächste Dimension: ${focus!.dimension}. ` +
+      `${taskVorsatz}Intention: "${effectiveIntent}". ${coverageLine}${abnahmeHinweis}Schwächste Dimension: ${focus!.dimension}. ` +
       `Funde: ${funde}. ${template} ${gateProtocol}`,
     readiness,
     threshold,

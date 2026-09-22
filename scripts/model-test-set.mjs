@@ -123,6 +123,10 @@ export const INCLUDED = [
  * Entscheidung bleibt und nicht zu einer stillen Lücke wird.
  */
 export const EXCLUDED = {
+  'tests/generate.task.test.ts':
+    'Task-Modus der Zustandsmaschine (CR-GC-601). Der Treffer ist das GOLDEN EINES RIG-KORPUS, nie\n' +
+    'graphcodes eigene SSOT. Eine Aenderung an graphcodes Modell kann ihn nicht rot machen; eine an\n' +
+    'der Eigentuemer-Spalte oder am Task-Fokus sehr wohl.',
   'tests/generate.statemachine.test.ts':
     'Eigenschaftstest der Zustandsmaschine (CR-GC-593). Der Treffer ist das GOLDEN EINES RIG-KORPUS\n' +
     'und die Auto-Graphen unter rig/, nie graphcodes eigene SSOT: geprueft wird done ⇔ kein Fokus\n' +
