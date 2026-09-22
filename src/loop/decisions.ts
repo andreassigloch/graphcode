@@ -84,16 +84,16 @@ export const DECISIONS = {
     forbidden: [/AskUserQuestion[^.]{0,60}(immer|always)/i],
     source: 'CR-GC-592',
   },
-  /** CR-GC-596: zweimal dasselbe Feedback → weiter; nur noch Zurueckgestelltes → stalled, nicht done. */
+  /** CR-GC-596/606: dreimal dasselbe Feedback → weiter; nur noch Zurueckgestelltes → stalled, nicht done. */
   stalled: {
     text:
-      'Kommt nach einem Zug derselbe Fokus wieder, stellt die Maschine ihn zurueck und nennt den naechsten ' +
+      'Steht derselbe Fokus nach zwei Zuegen noch, stellt die Maschine ihn zurueck und nennt den naechsten ' +
       '(Eintrittspunkte nie — die loest nur ihr Task oder eine Abnahme). ' +
       'Meldet sie phase stalled, sind nur noch zurueckgestellte Funde offen: nicht weiter mutieren, sondern ' +
       'der Ansage folgen — im Task zurueck in den Kern, bei offenem Eintrittspunkt den Task starten, sonst ' +
       'die Funde und deine Versuche in der Schlussmeldung nennen. stalled ist nicht fertig.',
     forbidden: [/stalled[^.]{0,40}(ist|gilt als) (fertig|done)/i],
-    source: 'CR-GC-596/604',
+    source: 'CR-GC-596/604/606',
   },
   /** CR-GC-594: die benannte Abweichung — nur fuer die Klasse, die im Modell nicht erfuellbar ist. */
   acceptance: {

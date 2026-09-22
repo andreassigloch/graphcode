@@ -594,7 +594,7 @@ function stepCore(
     return {
       phase: 'stalled',
       done: false,
-      prompt: `Festgefahren: jeder offene Fund kam zweimal ohne Wirkung und ist zurückgestellt ${liste}${weiter}`,
+      prompt: `Festgefahren: jeder offene Fund stand nach zwei Zügen noch und ist zurückgestellt ${liste}${weiter}`,
       readiness,
       threshold,
       blockingErrors,

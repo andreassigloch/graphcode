@@ -1845,6 +1845,12 @@
       "description": "docs/cr/open/CR-GC-605-schwere-gate-wirkung-gating-entfaellt-6-.md"
     },
     {
+      "id": "CR-GC-606",
+      "type": "CR",
+      "name": "Abbruchregel zaehlt zu frueh: zurueckstellen erst beim dritten gleichen Feedback (opus5-15, CR-01 nach Folgezug)",
+      "description": "docs/cr/open/CR-GC-606-abbruchregel-zaehlt-zu-frueh-zurueckstel.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -20376,5 +20382,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 362
+  "graphVersion": 363
 }
