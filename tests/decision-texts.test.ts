@@ -15,6 +15,7 @@ import { fileURLToPath } from 'node:url';
 import { DECISIONS, VERDICT_ORDER, decision } from '../src/loop/decisions.js';
 import { generationStep } from '../src/loop/generate.js';
 import { rankCandidates } from '../src/loop/executor-rank.js';
+import { guardrailsContent } from '../src/surface/scaffold-docs.js';
 import { DEFAULT_METRIC_POLICY } from '@sigloch/contracts/se';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
@@ -75,6 +76,17 @@ describe('CR-GC-587: kein ausgelieferter Text widerspricht dem Register', () => 
     const pos = ['`block` verwerfen', '`steeringDelta`', 'blockierender Fehler', '`tier`', '`steerAdvisory.improvement`'].map((s) => md.indexOf(s));
     expect(pos.every((p) => p >= 0), `fehlt: ${pos}`).toBe(true);
     expect([...pos].sort((a, b) => a - b)).toEqual(pos);
+  });
+});
+
+describe('CR-GC-592: offene Punkte werden Annahmen, keine Rueckfragen ins Leere', () => {
+  it('se:generate und GRAPHCODE.md tragen die Regel', () => {
+    const md = readFileSync(join(ROOT, '.claude/commands/se/generate.md'), 'utf8');
+    expect(md).toContain(decision('openQuestions'));
+    const guard = guardrailsContent();
+    expect(guard).toContain('## When the brief leaves something open');
+    expect(guard).toMatch(/as an assumption/);
+    expect(guard).toMatch(/headless run/);
   });
 });
 

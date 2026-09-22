@@ -70,6 +70,15 @@ export const DECISIONS = {
     forbidden: [/done[^.]{0,40}wenn keine Warnungen/i],
     source: 'CR-GC-296, CR-GC-582',
   },
+  /** CR-GC-592: offene Punkte des Auftrags sind Annahmen im Modell, keine Rueckfragen ins Leere. */
+  openQuestions: {
+    text:
+      'Eine offene Entscheidung des Auftraggebers (unbekannter Kanal, offener Zielwert, ungeklaerte Reihenfolge) ' +
+      'wird als Annahme ins Modell gelegt — Assumption Review (se-irr), REQ mit offenem Zielwert oder ACTOR mit ' +
+      'offenem Kanal — und in der Schlussmeldung genannt. Gefragt wird nur, wenn ein Mensch antworten kann.',
+    forbidden: [/AskUserQuestion[^.]{0,60}(immer|always)/i],
+    source: 'CR-GC-592',
+  },
 } as const satisfies Record<string, Decision>;
 
 /** Der Satz zu einer Entscheidung — die einzige Art, ihn in einen Prompt zu bekommen. */

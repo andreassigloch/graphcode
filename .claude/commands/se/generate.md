@@ -9,6 +9,7 @@ Der generative Treiber für Regime 1: **du schlägst vor, das Gate scort und wä
 ## Der Loop
 
 1. **Intention klären:** 1 Absatz Prosa vom Nutzer (was soll das System für wen leisten?). Nichts dazuerfinden.
+   Was der Auftrag ausdrücklich offen lässt, bleibt offen: Eine offene Entscheidung des Auftraggebers (unbekannter Kanal, offener Zielwert, ungeklaerte Reihenfolge) wird als Annahme ins Modell gelegt — Assumption Review (se-irr), REQ mit offenem Zielwert oder ACTOR mit offenem Kanal — und in der Schlussmeldung genannt. Gefragt wird nur, wenn ein Mensch antworten kann.
 2. `graph_generate {intent}` aufrufen → liefert `phase`, `prompt`, `readiness`, `blockingErrors`.
 3. **Der `prompt` ist deine Arbeitsanweisung.** Führe genau sie aus:
    - Elementtypen VOR dem Schreiben mit `graph_authoring_guide` prüfen (legale Kanten, Pflichtattribute).

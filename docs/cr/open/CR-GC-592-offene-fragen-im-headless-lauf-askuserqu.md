@@ -1,6 +1,6 @@
 # CR-GC-592: Offene Fragen im Headless-Lauf: AskUserQuestion laeuft in claude -p ins Leere (3 von 5 Laeufen) — GRAPHCODE.md/se:generate sollen offene Punkte als Annahme ins Modell legen statt zu fragen, wenn niemand antwortet
 
-**Status:** 🟠 Open — Body ausgearbeitet
+**Status:** ✅ Umgesetzt
 **Typ:** aus Item ITEM-2026-442 (idea)
 **Erstellt:** 2026-09-22
 **Item:** bok/items/ITEM-2026-442.json (Lane: graph)
@@ -29,3 +29,10 @@ Scaffold-`GRAPHCODE.md`-Template, `.claude/commands/se/generate.md`, ein Texttes
 ## 4 Kriterien
 
 1. Gemessen wird mit dem Standardbericht (`report.mjs`, Abschnitte CR-GC-585 „Steuerung“ und CR-GC-586 „Auto gegen Hand“), Claude-Code-Arm, sigllm-Prosa-Korpus, n ≥ 2. Spalte „Rueckfragen“ = 0; die offenen Punkte des Auftrags stehen als Annahmen im Graphen.
+
+## 5 Ergebnis (2026-09-22)
+
+Register-Eintrag `openQuestions` (CR-GC-587), eingesetzt in `se:generate` (Schritt 1) und als
+Abschnitt "When the brief leaves something open" in `GRAPHCODE.md` (`guardrailsContent`).
+Abnahme in `tests/decision-texts.test.ts`. Kriterium 1 (Rueckfragen = 0 im Lauf) faellt mit dem
+Phase-1-Lauf. **Kongruenz:** benannte Ausnahme.
