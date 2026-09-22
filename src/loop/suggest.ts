@@ -37,6 +37,7 @@ import type { MutateCommand } from '@sigloch/contracts/harness';
 import { suggestEdits, type Suggestion, type SuggestedEdit } from '@sigloch/se-engine';
 import { toOntologyGraph } from '../kernel/conformance.js';
 import { generationStep, type GenerationStep } from './generate.js';
+import { focusMemoryOf, stepWithMemory } from './stagnation.js';
 import {
   loadTargetProfile,
   extractIntentAnchors,
@@ -364,7 +365,12 @@ export function bindSuggestTools(ctx: ToolPort): MCPToolRegistry {
       if (input.intent && !profile?.profile.intentAnchors?.length && !isIntentTooThin(input.intent)) {
         persistIntentAnchors(repoRoot, extractIntentAnchors(input.intent));
       }
-      return generationStep(harness.getGraph(), harness.getMetricPolicy(), input.intent, input.threshold ?? harness.getFocusThreshold(), input.defer, input.selection, profile);
+      const compute = (defer: string[]) =>
+        generationStep(harness.getGraph(), harness.getMetricPolicy(), input.intent, input.threshold ?? harness.getFocusThreshold(), defer, input.selection, profile);
+      // CR-GC-596: fuer den Host fuehrt die Maschine das Gedaechtnis (zweimal gleicher Fokus nach
+      // einem Zug → zurueckstellen). Der Treiber (Executor) zaehlt vorerst selbst — ITEM-2026-449.
+      if (input.selection === 'driver') return compute(input.defer ?? []);
+      return stepWithMemory(focusMemoryOf(harness), ctx.graphVersion(), compute, input.defer ?? []);
     },
   };
 

@@ -239,6 +239,8 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
       stats.done = true;
       break;
     }
+    // CR-GC-596: nur noch zurueckgestellte Funde — die Maschine hat keinen weiteren Vorschlag.
+    if (gen.phase === 'stalled') break;
 
     // Stagnations-Detektor (v10-Befund: "applied ≠ Fortschritt" — devstral fügte
     // rundenlang denselben TEST-Knoten OHNE die verify-Kante hinzu; die Violation

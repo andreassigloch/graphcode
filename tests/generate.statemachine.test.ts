@@ -84,7 +84,9 @@ describe('CR-GC-593: done ⇔ kein Fokus — an jedem Graphen des Korpus', () =>
     const alle: string[] = [];
     let cur = step(g);
     while (cur.focusKey && !alle.includes(cur.focusKey) && alle.length < 200) { alle.push(cur.focusKey); cur = step(g, alle); }
-    expect(cur.done || /zurückgestellt/.test(cur.prompt)).toBe(true);
+    // CR-GC-596: alle zurueckgestellt → stalled (nicht done), nicht mehr "ignorieren und wiederholen".
+    expect(cur.done || cur.phase === 'stalled').toBe(true);
+    if (cur.phase === 'stalled') { expect(cur.done).toBe(false); expect(cur.focusKey).toBeNull(); }
   });
 });
 

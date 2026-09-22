@@ -38,7 +38,8 @@ import { ABNEHMBARE_REGELN, decision } from './decisions.js';
  */
 export const GenerationStep = z.object({
   /** seed = leerer Graph; expand = Deficit-getriebene Verdichtung; handoff = Schwelle erreicht. */
-  phase: z.enum(['seed', 'expand', 'handoff']),
+  /** CR-GC-596: stalled = nur noch zurueckgestellte Funde — nicht fertig, Uebergabe an den Menschen. */
+  phase: z.enum(['seed', 'expand', 'handoff', 'stalled']),
   /** true genau in phase 'handoff' — die Struktur trägt, weiter mit graph_suggest. */
   done: z.boolean(),
   /** Die konkrete generative Instruktion für den MCP-Host. */
@@ -548,7 +549,6 @@ function stepCore(
   let focus: (typeof dims)[number] | undefined;
   let focusViolations: typeof violations = [];
   let focusKey: string | null = null;
-  let deferExhausted = false;
   outer: for (const k of kandidaten) {
     for (const window of k.windows) {
       const key = keyOf(k.s.dimension as string, window);
@@ -561,11 +561,25 @@ function stepCore(
     }
   }
   if (!focus && kandidaten.length > 0) {
-    // Alle Kandidaten zurückgestellt — lieber wiederholen als stillstehen.
-    deferExhausted = true;
-    focus = kandidaten[0].s;
-    focusViolations = kandidaten[0].windows[0];
-    focusKey = keyOf(focus.dimension as string, focusViolations);
+    // CR-GC-596: alle offenen Funde sind zurueckgestellt. Frueher: "Zurueckstellung ignorieren,
+    // wiederholen" — genau dort entstand die Schleife (Lauf 11: R-04 sechsmal). `done` waere
+    // derselbe Ausweg, den die Abnahme-Politik verschliesst. Also ein eigener Endzustand.
+    const offen = kandidaten.flatMap((k) => k.windows.map((w) => keyOf(k.s.dimension as string, w)));
+    return {
+      phase: 'stalled',
+      done: false,
+      prompt:
+        `Festgefahren: jeder offene Fund kam zweimal ohne Wirkung und ist zurückgestellt (${offen.length}): ` +
+        `${offen.join('; ')}. Nicht weiter mutieren. Übergib an den Menschen: nenne diese Funde, was du je Fund ` +
+        'versucht hast und warum es nicht griff, in der Schlussmeldung; exportiere den Stand (graph_export).',
+      readiness,
+      threshold,
+      blockingErrors,
+      phaseReadiness,
+      focusKey: null,
+      focusTypes: [],
+      focusDimension: null,
+    };
   }
 
   // --- Freigabe (CR-GC-593): done ⇔ kein Fokus ----------------------------
@@ -653,15 +667,12 @@ function stepCore(
     },
   ]);
   const template = imperativ?.value.text ?? '';
-  const deferNote = deferExhausted
-    ? 'Hinweis: ALLE Fund-Sets waren zurückgestellt (defer) — Zurückstellung wird ignoriert. '
-    : '';
 
   return {
     phase: 'expand',
     done: false,
     prompt:
-      `Intention: "${effectiveIntent}". ${coverageLine}${deferNote}${abnahmeHinweis}Schwächste Dimension: ${focus!.dimension}. ` +
+      `Intention: "${effectiveIntent}". ${coverageLine}${abnahmeHinweis}Schwächste Dimension: ${focus!.dimension}. ` +
       `Funde: ${funde}. ${template} ${gateProtocol}`,
     readiness,
     threshold,
