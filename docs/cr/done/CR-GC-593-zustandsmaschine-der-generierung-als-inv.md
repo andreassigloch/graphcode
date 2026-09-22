@@ -1,6 +1,6 @@
 # CR-GC-593: Zustandsmaschine der Generierung als Invariante: done = kein Fokus; Fokusmenge = Gate-Katalog minus abgenommene Funde; Schwelle, Phasen-Gate und die zwei 'pruefe manuell'-Zweige fallen als Waechter; Eigenschaftstest ueber den Korpus (Golden ist done mit benannten Abnahmen); Maschine als FUNC + FCHAIN im Modell
 
-**Status:** ✅ Umgesetzt — Bestaetigungslauf offen
+**Status:** ✅ Done (2026-09-22)
 **Typ:** aus Item ITEM-2026-444 (idea)
 **Erstellt:** 2026-09-22
 **Item:** bok/items/ITEM-2026-444.json (Lane: graph)
