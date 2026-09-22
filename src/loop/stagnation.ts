@@ -52,7 +52,10 @@ export function stepWithMemory(
   compute: (defer: string[]) => GenerationStep,
   extraDefer: readonly string[] = [],
 ): GenerationStep {
-  const alle = () => [...new Set([...memory.deferred, ...extraDefer])];
+  // CR-GC-598: ein ausdrueckliches defer des Hosts gilt fuer die Sitzung — sonst bot `next` beim
+  // naechsten Zug das eben zurueckgestellte Fenster wieder an (Rewind opus5-12, Zug 23).
+  for (const k of extraDefer) memory.deferred.add(k);
+  const alle = () => [...memory.deferred];
   let step = compute(alle());
   if (step.focusKey && memory.last && memory.last.key === step.focusKey && version > memory.last.version) {
     memory.deferred.add(step.focusKey);

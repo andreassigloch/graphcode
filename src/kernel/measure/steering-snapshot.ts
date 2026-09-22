@@ -14,6 +14,8 @@
  *
  * @author andreas@siglochconsulting
  */
+import { focusViolations, blockingOf } from './focus-set.js';
+import type { RuleViolation } from '@sigloch/contracts/se';
 import { z } from 'zod/v4';
 import type { Graph } from '@sigloch/graph-api-core';
 import type { OntologyGraph, MetricPolicy } from '@sigloch/contracts/se';
@@ -35,6 +37,8 @@ export interface SteeringSnapshot {
    * nicht beim Leser: generationStep projizierte sie bis CR-GC-502 selbst aus `violations`.
    */
   phaseReadiness: PhaseGateReadiness[];
+  /** CR-GC-598: die Fokusmenge (focus-set.ts) — was die Steuerung zeigt. */
+  focus: RuleViolation[];
 }
 
 /**
@@ -67,10 +71,14 @@ export function takeSteeringSnapshot(
   // Matrix aus diesem Lauf würde den nächsten Gate-/Report-Lauf verändern.
   // CR-SM-286: die Klammer ist entfallen — kein contracts-Modulzustand mehr.
   const violations = evaluateAllRules(og, policy);
+  const focus = focusViolations(og, violations);
   return {
     og,
     violations,
-    blockingErrors: violations.filter((v) => v.severity === 'error').length,
+    // CR-GC-598: Fehler der FOKUSMENGE, die am Gate wirklich blocken — nicht jeder Fehler des
+    // 74-Regel-Stroms (FM-03 ist `gating: false` und abnehmbar; die Probe meldete sonst 0 → 8).
+    focus,
+    blockingErrors: blockingOf(focus),
     report: computeReadiness(og, policy),
     phaseReadiness: computePhaseReadiness(violations.map((v) => ({ ruleId: v.rule_id }))),
   };
