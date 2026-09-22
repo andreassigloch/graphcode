@@ -1,6 +1,6 @@
 # CR-GC-550: se-plan leitet über REQ ab, nicht über FUNC-Blätter
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-22)
 **Typ:** aus Item ITEM-2026-302 (finding)
 **Erstellt:** 2026-09-18
 **Item:** bok/items/ITEM-2026-302.json (Lane: code)
