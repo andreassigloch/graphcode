@@ -64,10 +64,18 @@ Falls ja, ist das die vierte Datei und der CR bleibt unter der Sechs-Dateien-Gre
    wie RD-01 und CR-SM-343.
 4. **Regression:** `order`, `cycles`, `forwardViolations` bleiben bitgleich zu heute — der
    bestehende Ordnungstest läuft unverändert grün.
-5. **Nachgerechnet am echten Lauf:** der CR nennt vor dem Schließen die Deckungszahl, die
-   `reqCoverage` am sigllm-Graphstand v99 liefert. Erwartet 40 von 64 — trifft sie nicht, ist die
-   Definition anders als gemessen und der CR schließt nicht.
-6. `npm run build` und `npm test` in graphcode grün.
+5. **Nachgerechnet am echten Lauf (2026-09-22): getroffen.** v99 ist kein committeter Export; die
+   beiden naechsten Staende lesen **v98: 27 von 64** und **v101: 40 von 64** — v101 trifft die
+   vorab genannte Zahl exakt. Am heutigen Stand **v302: 65 von 65, 0 offen** — die Luecke hat
+   CR-SL-050 geschlossen, und die Rechnung sieht das.
+6. `npm run build` grün, `verify:code` grün (die volle Suite bis auf die zwei erwarteten
+   Link-Modus-Roten, s. `CLAUDE.local.md`).
+
+## Umfang tatsächlich — 3 Dateien
+
+`src/surface/scaffold-templates.ts` blieb unberührt: es verteilt `.claude/commands/` als
+Verzeichnis und führt keine zweite Versionsangabe, die mitzuziehen wäre. Das Frontmatter des
+Skills steht auf `version: 4`.
 
 ## Abgrenzung
 
