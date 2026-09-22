@@ -61,14 +61,20 @@ const STEERING_ONLY_KERN: ReadonlySet<string> = new Set(['ND-01', 'ND-02']);
  * Die Fokusmenge eines Graphen fuer einen Task (CR-GC-600/601). Kern: Kern-Regeln des Gate-Katalogs
  * (dazu ND) — Task-Regeln sieht er nicht, nur deren Eintrittspunkte (AF-*, selbst Kern-Regeln).
  * Task: genau die Regeln des Tasks, als WARNUNG (Entscheidung 2026-09-22: detailliert, nicht
- * blockierend). In beiden Faellen ohne info und ohne abgenommene Funde.
+ * blockierend) — und sein eigener Eintrittspunkt (CR-GC-603): die Task-Regeln pruefen nur, was
+ * schon existiert, ohne Artefakt meldete jeder Task beim Start "fertig" (opus5-14, alle fuenf).
+ * Der Task ist erst durch, wenn auch der Frischestempel steht oder der Eintritt abgenommen ist.
+ * In beiden Faellen ohne info und ohne abgenommene Funde.
  */
 export function focusViolations(og: OntologyGraph, violations: readonly RuleViolation[], task: RuleTask = 'kern'): RuleViolation[] {
   const byId = new Map(og.elements.map((e) => [e.id, e]));
   const sys = og.elements.find((e) => e.type === 'SYS');
-  const ab = abnehmbar(task);
+  const eintritt = task === 'kern' ? null : TASK_ENTRY[task];
+  const ab = new Set([...abnehmbar(task), ...(eintritt ? [eintritt] : [])]);
   const imTask = (id: string): boolean =>
-    task === 'kern' ? taskOf(id) === 'kern' && (GATE_RULES.has(id) || STEERING_ONLY_KERN.has(id)) : taskOf(id) === task;
+    task === 'kern'
+      ? taskOf(id) === 'kern' && (GATE_RULES.has(id) || STEERING_ONLY_KERN.has(id))
+      : taskOf(id) === task || id === eintritt;
   return violations
     .filter((v) => {
       if (v.severity === 'info' || !imTask(v.rule_id)) return false;

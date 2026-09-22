@@ -41,14 +41,32 @@ describe('CR-GC-601: graph_generate {task}', () => {
     expect(s.blockingErrors).toBe(0); // Task-Regeln sind Warnungen
   });
 
-  it('plan am Golden: MS-01 steht im Plan-Task, im Kern nicht', () => {
+  it('plan am Golden: ohne implplan-Stempel steht zuerst der Eintritt, danach die Plan-Regeln — im Kern nicht', () => {
     const plan = step('plan');
-    expect(taskOf(plan.focusKey!.split(':')[1])).toBe('plan');
+    expect(plan.focusKey).toMatch(/:AF-05:/); // CR-GC-603: das Artefakt fehlt
+    const weiter = step('plan', [plan.focusKey!]);
+    expect(taskOf(weiter.focusKey!.split(':')[1])).toBe('plan');
     const kernRegel = step('kern').focusKey!.split(':')[1];
     expect(taskOf(kernRegel)).toBe('kern');
   });
 
-  it('ein Task ohne eigene Regeln (trade) ist sofort durch — Ausgang: Artefakt mit dem Skill abschliessen', () => {
+  it('CR-GC-603: ein Task ohne Artefakt ist nicht fertig — ohne trade-Stempel steht AF-02 im Task-Fokus', () => {
+    const ohne = structuredClone(golden);
+    const sys = ohne.elements.find((e) => e.type === 'SYS')!;
+    const stempel = { ...(sys.attributes!.analysisFreshness as Record<string, unknown>) };
+    delete stempel.trade;
+    sys.attributes = { ...sys.attributes, analysisFreshness: stempel };
+    const s = generationStep(alsGraph(ohne), DEFAULT_METRIC_POLICY, undefined, 0.8, [], 'host', null, 'trade');
+    expect(s.done).toBe(false);
+    expect(s.focusKey).toMatch(/:AF-02:/);
+    expect(s.prompt).toContain('Das Artefakt des Tasks trade fehlt noch');
+    // ein im Kern abgenommener Eintritt ("im schlanken Umfang nicht noetig") gilt auch im Task
+    sys.attributes = { ...sys.attributes, acceptedFindings: [{ ruleId: 'AF-02', reason: 'lean' }] };
+    const ab = generationStep(alsGraph(ohne), DEFAULT_METRIC_POLICY, undefined, 0.8, [], 'host', null, 'trade');
+    expect(ab.done).toBe(true);
+  });
+
+  it('ein Task ohne eigene Regeln (trade) mit Frischestempel ist durch — Ausgang: Artefakt mit dem Skill abschliessen', () => {
     const s = step('trade');
     expect(s.phase).toBe('handoff');
     expect(s.done).toBe(true);
