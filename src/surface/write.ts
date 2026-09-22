@@ -21,6 +21,7 @@ import { stripViolationContext, groupViolationsByRule, type GroupedViolation } f
 import { fitAdvisoryIsSilent, steerAdvisoryIsSilent, type FitAdvisory, type SteerAdvisory } from '../kernel/measure/fit-advisory.js';
 import { workOrderIsSilent, type WorkOrder } from '../kernel/measure/work-order.js';
 import { loadTargetProfile } from '../loop/target-profile.js';
+import { nextStepAfterApply, type NextStep } from '../loop/next-step.js';
 import type { RespondsToViolation } from '../projections/trajectory.js';
 import type { ToolContext } from './tool-context.js';
 
@@ -316,7 +317,7 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
 
   const graph_mutate: MCPTool<
     z.infer<typeof GraphMutateInputSchema>,
-    MutateResult & { graphVersion: number; occWarning?: string; nameWarning?: string; steeringDelta?: SteeringDelta }
+    MutateResult & { graphVersion: number; occWarning?: string; nameWarning?: string; steeringDelta?: SteeringDelta; next?: NextStep }
   > = {
     name: 'graph_mutate',
     description:
@@ -443,11 +444,17 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
           input.violations === 'full' ? result : summarizeViolations(result),
           loadTargetProfile(harness.getRepoRoot()) !== null,
         );
+        // CR-GC-588: der naechste Schritt faehrt mit — derselbe, den graph_generate liefern
+        // wuerde, ohne den Roundtrip. Nur nach Anwendung; bei Ablehnung ist das Urteil der Kanal.
+        const next = result.success
+          ? { next: nextStepAfterApply(harness.getGraph(), harness.getMetricPolicy(), harness.getFocusThreshold(), harness.getRepoRoot()) }
+          : {};
         return {
           ...out,
           graphVersion: graphVersion(),
           ...(input.baseVersion === undefined ? { occWarning: OCC_WARNING } : {}),
           ...(nameWarning ? { nameWarning } : {}),
+          ...next,
         };
       });
     },

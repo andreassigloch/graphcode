@@ -105,6 +105,11 @@ export type GenerationSelection = 'host' | 'driver';
 const PROTOCOL_GUIDE =
   'Gate-Protokoll: (1) vor dem Schreiben graph_authoring_guide für jeden Elementtyp aufrufen (legale Kanten). ';
 const PROTOCOL_NEXT = 'Danach graph_generate erneut aufrufen für den nächsten Schritt.';
+// CR-GC-588: der Host bekommt den naechsten Schritt als `next` an der angewandten Mutation —
+// derselbe Schritt, ein Roundtrip weniger. graph_generate bleibt fuer Einstieg und `defer`.
+const PROTOCOL_NEXT_HOST =
+  'Der nächste Schritt steht als `next` in der Antwort auf die angewandte Mutation — führe ihn direkt aus; ' +
+  'graph_generate nur zum Einstieg, wenn `next` fehlt oder du ein Fund-Set zurückstellen willst (defer).';
 const GATE_PROTOCOL: Record<GenerationSelection, string> = {
   host:
     PROTOCOL_GUIDE +
@@ -114,7 +119,7 @@ const GATE_PROTOCOL: Record<GenerationSelection, string> = {
     '(2) ' + decision('probe') + ' ' + decision('verdictRank') + ' ' +
     '(3) Nur den besten Batch OHNE dryRun anwenden; block-Verdicts verwerfen oder revidieren, nie erzwingen. ' +
     '(4) ' +
-    PROTOCOL_NEXT,
+    PROTOCOL_NEXT_HOST,
   driver:
     PROTOCOL_GUIDE +
     '(2) Emittiere EINEN vollständigen Batch — keine eigenen Gate-Proben: der Treiber führt ihn ' +
