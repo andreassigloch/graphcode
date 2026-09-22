@@ -49,6 +49,13 @@ export const CFG = {
     ?? '/Users/andreas/Developer/dev/sigloch-modules/docs/graph/sigloch-modules.graph.json',
   /** Prueflliste der Auftrags-Anforderungen (CR-GC-553). Optional: ohne sie entfaellt der Abgleich. */
   checklist: process.env.CHECKLIST ?? null,
+  /**
+   * Rewind (CR-GC-597): statt nur des SYS die ersten `rewindMoves` angewandten Zuege aus einem
+   * Audit-Trail durchs Gate nachspielen — gezielter Endspiel-Test fuer einen Bruchteil der Kosten.
+   * Beide gesetzt oder keins; ein halber Rewind waere ein stiller Volllauf.
+   */
+  rewindAudit: process.env.REWIND_AUDIT ?? null,
+  rewindMoves: process.env.REWIND_MOVES ? Number(process.env.REWIND_MOVES) : null,
   // The module repo the model may READ to DISCOVER capabilities itself. Not a
   // pre-digested brief — discovery is the challenge. node_modules excluded via prompt.
   material: process.env.MATERIAL ?? '/Users/andreas/Developer/dev/sigloch-modules',
@@ -441,6 +448,46 @@ await reg['graph_mutate'].handler({ commands: [{ op: 'add-node', node: {
 } }] });
 await h.close();
 `;
+/**
+ * Die ersten `n` angewandten Zuege eines Audit-Trails als Kommando-Batches (CR-GC-597). Rein —
+ * dieselbe Lesart wie `trajektorie.spieleNach` (nur `mutate` + `applied` + Kommandos zaehlt).
+ */
+export function ersteZuege(auditPfad, n) {
+  const batches = [];
+  for (const zeile of readFileSync(auditPfad, 'utf8').split('\n')) {
+    if (!zeile.trim() || batches.length >= n) continue;
+    const r = JSON.parse(zeile);
+    if (r.operation === 'mutate' && r.result === 'applied' && r.commands?.length) batches.push(r.commands);
+  }
+  if (batches.length < n) throw new Error(`Rewind: der Trail hat nur ${batches.length} angewandte Zuege, verlangt ${n}.`);
+  return batches;
+}
+
+const REWIND_SCRIPT = `
+const [dir, batchesPath] = process.argv.slice(1);
+const label = dir.split('/').pop();
+const { readFileSync } = await import('node:fs');
+const { createHarness, bindToolsToHarness } = await import(${JSON.stringify(join(GC_ROOT, 'dist', 'index.js'))});
+const h = await createHarness({ repoRoot: dir, scope: { workspaceId: label, systemId: label } });
+await h.initialize();
+const reg = bindToolsToHarness(h);
+let i = 0;
+for (const commands of JSON.parse(readFileSync(batchesPath, 'utf8'))) {
+  const r = await reg['graph_mutate'].handler({ commands, consumerId: 'rewind' });
+  i++;
+  if (!r.success) { process.stderr.write('Rewind-Zug ' + i + ' vom heutigen Gate abgelehnt: ' + JSON.stringify(r.violations).slice(0, 300) + '\\n'); process.exit(3); }
+}
+await reg['graph_export'].handler({});
+await h.close();
+`;
+/** Den Arbeitsbereich auf den Stand nach `n` Zuegen eines frueheren Laufs bringen — durchs Gate. */
+function seedFromAudit(dir) {
+  const batches = ersteZuege(CFG.rewindAudit, CFG.rewindMoves);
+  const pfad = join(dir, '.graphcode', 'rewind-batches.json');
+  writeFileSync(pfad, JSON.stringify(batches));
+  execFileSync('node', ['--input-type=module', '-e', REWIND_SCRIPT, dir, pfad], { stdio: 'pipe' });
+}
+
 function seedSystem(dir) {
   execFileSync('node', ['--input-type=module', '-e', SEED_SCRIPT,
     dir, CFG.seed.uid, CFG.seed.name, CFG.seed.description], { stdio: 'pipe' });
@@ -485,7 +532,11 @@ async function main() {
       process.stderr.write(`\n[${arm.label}/${arm.executor}] run ${i + 1}/${CFG.runs} — ${arm.model}\n`);
       try {
         initWorkspace(dir);
-        seedSystem(dir);       // seed SYS (subprocess) so next_step gives direction
+        if ((CFG.rewindAudit === null) !== (CFG.rewindMoves === null)) {
+          throw new Error('REWIND_AUDIT und REWIND_MOVES nur zusammen — ein halber Rewind waere ein stiller Volllauf.');
+        }
+        if (CFG.rewindAudit) seedFromAudit(dir); // CR-GC-597: Stand nach n Zuegen eines frueheren Laufs
+        else seedSystem(dir);  // seed SYS (subprocess) so next_step gives direction
         releaseStore(dir);     // free any lock so the executor's MCP can own the store
         const usage =
           arm.executor === 'opencode' ? authorViaOpencode(dir, arm)
