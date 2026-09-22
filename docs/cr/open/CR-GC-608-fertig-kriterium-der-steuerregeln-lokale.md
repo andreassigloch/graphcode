@@ -43,3 +43,22 @@ Kandidat.
 `tests/steer-optimum.test.ts` (Kreis, Plateau, Verbesserung, nur Steuerzuege zaehlen, keine Zurueckstellung
 von Steuerfokus, Golden ohne Steuerregel im Fokus am Optimum, Vermerk). Rewind ab opus5-15 vor dem R-04-Tausch.
 
+
+---
+
+## Abschluss 2026-09-22 — nachgeprueft, nicht nachgebaut
+
+Der Code lag bereits auf master (Commit `b3d58aa`, parallele Sitzung); offen war nur die Datei in
+`docs/cr/open/`. Gegen die CR-Liste nachgeprueft, alles vorhanden:
+
+| aus der CR | wo |
+|---|---|
+| `lokalesOptimum()` rein, Steuerverlauf im Sitzungsgedaechtnis, Steuerregeln von der Abbruchregel ausgenommen | `src/loop/stagnation.ts` (`STEUER_FENSTER = 3`, `STEUER_EPS = 0.05`) |
+| Schritt traegt `steer`, am Optimum keine Steuerregel im Kern-Fokus, `steuerVermerk()` im done-Prompt | `src/loop/generate.ts` |
+| Optimum an die Maschine durchgereicht | `src/loop/suggest.ts`, `src/loop/next-step.ts` (beide ueber `stepWithMemory`) |
+| Satz `steerOptimum` wortgleich | `src/loop/decisions.ts` + `.claude/commands/se/generate.md` §6 |
+| begruendeter Ausschluss des neuen Tests | `scripts/model-test-set.mjs` |
+
+`tests/steer-optimum.test.ts`: **10 von 10 gruen** und deckt jeden in der CR genannten Fall —
+Kreis, Plateau, echte Verbesserung, nur Steuerzuege zaehlen, keine Zurueckstellung eines
+Steuerfokus, am Golden kein Steuerfokus mehr am Optimum, und der Vermerk im done-Prompt.
