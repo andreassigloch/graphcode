@@ -1,6 +1,6 @@
 # CR-GC-610: Code-Test (Leitlinie Satz 7): Scheduler-Scheibe aus sigllm, gefuehrt (Modell + graphcode) gegen frei laufendes Claude Code — Aufgabe, Vertrag, verdeckte Abnahme, Messung
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-22)
 **Typ:** aus Item ITEM-2026-472 (idea)
 **Erstellt:** 2026-09-22
 **Item:** bok/items/ITEM-2026-472.json (Lane: graph)
