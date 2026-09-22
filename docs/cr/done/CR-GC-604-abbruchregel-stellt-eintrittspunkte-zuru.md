@@ -1,6 +1,6 @@
 # CR-GC-604: Abbruchregel stellt Eintrittspunkte zurueck; stalled nennt Mensch statt Task; next.skill null am Eintritt (opus5-14)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-22)
 **Typ:** aus Item ITEM-2026-457 (bug)
 **Erstellt:** 2026-09-22
 **Item:** bok/items/ITEM-2026-457.json (Lane: graph)
