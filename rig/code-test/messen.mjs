@@ -9,7 +9,9 @@
  *                     relative Importe, Importzyklen, Verzeichnisse als Module.
  *   4. Architektur  — `graphcode import-code` auf einer KOPIE des Codes (beide Arme gleich, deterministisch,
  *                     ohne LLM) → MOD/FUNC/FLOW/SCHEMA und der Steuerwert (RD-04, BW-02, R-04, CR-01, MT-02).
- *   5. Kongruenz    — nur wo ein Modell gefuehrt wurde: RC-Urteil und Bindungsquote am Modell des Arms.
+ *   5. Kongruenz    — nur wo ein Modell gefuehrt wurde: RC-Urteil, Bindungsquote am ganzen Modell UND
+ *                     an der beauftragten Scheibe (CR-GC-611: die Aufgabe ist ein Modul von sieben,
+ *                     die Quote ueber das ganze Modell beantwortet eine andere Frage).
  * Dazu die Effizienz aus usage.json. Schreibt <arbeitsbereich>/messung.json und druckt die Vergleichstabelle.
  *
  * Aufruf (von graphcode/): node rig/code-test/messen.mjs ~/.graphcode-code-test/runs/gefuehrt-0 ~/.graphcode-code-test/runs/frei-0
@@ -26,6 +28,9 @@ import { codeVerdict } from '../greenfield-systemtest/metrics.mjs';
 const HERE = dirname(fileURLToPath(import.meta.url));
 const GC_ROOT = resolve(HERE, '..', '..');
 const CLI = join(GC_ROOT, 'dist', 'cli.js');
+
+/** Das beauftragte Modul — die Scheibe, auf die sich Kongruenz und Bindung beziehen. */
+const SCHEIBE = process.env.SCHEIBE ?? 'MOD-scheduler';
 
 const istTest = (p) => /(^|\/)(tests?|__tests__)\//.test(p) || /\.(test|spec)\.ts$/.test(p);
 /** Unveraenderte Stubs, die graphcode aus Bindungen erzeugt (TEST: CR-GC-205, SCHEMA: BOK-CR-026) — nicht die Arbeit des Arms. */
@@ -107,6 +112,22 @@ async function architektur(ws) {
   }
 }
 
+/**
+ * Rein: die Bindungsquote der beauftragten Scheibe — FUNCs, die dem Modul zugeordnet sind, ohne die
+ * bewusst als `concept` markierten. Die Quote ueber das ganze Modell misst die sechs Module, die gar
+ * nicht beauftragt waren (Lauf 0: 19 % ueber alles, 5 von 5 in der Scheibe).
+ */
+export function scheibenBindung(elements, traces, modUid) {
+  const N = new Map(elements.map((e) => [e.id, e]));
+  const funcs = traces
+    .filter((t) => t.type === 'allocate' && t.target === modUid && N.get(t.source)?.type === 'FUNC')
+    .map((t) => N.get(t.source))
+    .filter((f) => !(f.concept || f.attributes?.concept));
+  const gebunden = funcs.filter((f) => f.realRef || f.attributes?.realRef);
+  return { funcs: funcs.length, gebunden: gebunden.length, pct: funcs.length ? Math.round((100 * gebunden.length) / funcs.length) : null,
+    offen: funcs.filter((f) => !(f.realRef || f.attributes?.realRef)).map((f) => f.id) };
+}
+
 async function kongruenz(ws) {
   if (!existsSync(join(ws, '.graphcode'))) return null;
   const { createHarness, bindToolsToHarness } = await import(join(GC_ROOT, 'dist', 'index.js'));
@@ -120,7 +141,13 @@ async function kongruenz(ws) {
     const graphPfad = join(ws, 'docs', 'graph', `${label}.graph.json`);
     const graph = JSON.parse(readFileSync(graphPfad, 'utf8'));
     const v = codeVerdict(r, graph);
-    return { urteil: v.verdict, bindung: v.binding ?? v.bind ?? null, rc: Object.fromEntries(Object.entries(r.violationsByRule ?? {}).filter(([k]) => k.startsWith('RC-'))), export: !!exp };
+    return {
+      urteil: v.verdict,
+      bindung: v.binding ?? v.bind ?? null,
+      scheibe: scheibenBindung(graph.elements ?? graph.nodes ?? [], graph.traces ?? graph.edges ?? [], SCHEIBE),
+      rc: Object.fromEntries(Object.entries(r.violationsByRule ?? {}).filter(([k]) => k.startsWith('RC-'))),
+      export: !!exp,
+    };
   } finally {
     await h.close();
   }
@@ -155,6 +182,7 @@ export function vergleich(ms) {
     zeile('import-code: MOD / FUNC / FLOW / SCHEMA', (m) => `${m.architektur.MOD} / ${m.architektur.FUNC} / ${m.architektur.FLOW} / ${m.architektur.SCHEMA}`),
     zeile('Steuerwert des Codes', (m) => m.architektur.steuerwert),
     zeile('Kongruenz (RC)', (m) => m.kongruenz?.urteil ?? 'kein Modell'),
+    zeile('Bindung Scheibe / ganzes Modell', (m) => m.kongruenz ? `${m.kongruenz.scheibe.gebunden}/${m.kongruenz.scheibe.funcs} (${m.kongruenz.scheibe.pct}%) / ${m.kongruenz.bindung?.pct ?? '—'}%` : 'kein Modell'),
     zeile('Kosten $ / Turns / Sekunden', (m) => m.effizienz ? `${m.effizienz.cost_usd} / ${m.effizienz.turns} / ${m.effizienz.wall_s}` : null),
   ].join('\n');
 }
