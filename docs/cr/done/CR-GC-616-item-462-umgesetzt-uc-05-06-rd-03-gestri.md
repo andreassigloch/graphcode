@@ -1,6 +1,6 @@
 # CR-GC-616: ITEM-462 umgesetzt: UC-05/06/RD-03 gestrichen (UC-Schreibregel), MT-02 warning, Fix-Roundtrip-Test, Folge-Regel-Spalte
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-22)
 **Typ:** aus Item ITEM-2026-477 (idea)
 **Erstellt:** 2026-09-22
 **Item:** bok/items/ITEM-2026-477.json (Lane: graph)
