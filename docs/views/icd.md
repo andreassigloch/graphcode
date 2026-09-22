@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 58 SCHEMA · 124 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 58 SCHEMA · 131 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -81,13 +81,20 @@
 | `FLOW-candidate-batch` | `FUNC-run-executor` | `FUNC-gate-client` · `FUNC-preflight` |
 | `FLOW-candidate-ranking` | `FUNC-rank-candidates` | `FUNC-run-executor` |
 | `FLOW-channel-dimension-template` | `ACTOR-owner` | `FUNC-generation-step` |
+| `FLOW-channel-fit-advisory` | `FUNC-fit-advisory` | `ACTOR-agent` |
 | `FLOW-channel-gate-protocol` | `ACTOR-owner` | `FUNC-generation-step` |
+| `FLOW-channel-gate-verdict` | `FUNC-block-gate` | `ACTOR-agent` |
 | `FLOW-channel-grammar` | `FUNC-authoring-guide` | `FUNC-build-round-injection` |
+| `FLOW-channel-guardrails` | `FUNC-harness-cli` | `ACTOR-agent` |
 | `FLOW-channel-guidance` | `ACTOR-owner` | `FUNC-build-round-injection` |
+| `FLOW-channel-handoff` | `FUNC-generation-step` | `ACTOR-agent` |
 | `FLOW-channel-idle-nudge` | `ACTOR-owner` | `FUNC-run-executor` |
 | `FLOW-channel-inventory` | `FUNC-read-tools` | `FUNC-build-round-injection` |
+| `FLOW-channel-next-step` | `FUNC-generation-step` | `ACTOR-agent` |
 | `FLOW-channel-proposal-suggest` | `FUNC-graph-suggest` | `FUNC-build-round-injection` |
 | `FLOW-channel-rule-clause` | `ACTOR-owner` | `FUNC-generation-step` |
+| `FLOW-channel-skill-reference` | `FUNC-generation-step` | `ACTOR-agent` |
+| `FLOW-channel-steer-advisory` | `FUNC-fit-advisory` | `ACTOR-agent` |
 | `FLOW-channel-system-prompt` | `ACTOR-owner` | `FUNC-run-executor` |
 | `FLOW-cli-command` | `FUNC-cli-dispatch` | `FUNC-bootstrap` · `FUNC-claim-store-lock` · `FUNC-collect-status` · `FUNC-create-harness` · `FUNC-gve-supervise` · `FUNC-harness-cli` · `FUNC-import-code-verb` · `FUNC-rewind` · `FUNC-run-verb` · `FUNC-upgrade` |
 | `FLOW-cli-invocation` | `ACTOR-owner` | `FUNC-cli-dispatch` · `FUNC-plan-code-lane` |
