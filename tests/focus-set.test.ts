@@ -22,27 +22,30 @@ const og = (attrs: Record<string, unknown> = {}): OntologyGraph =>
   ({ elements: [{ id: 'SYS-s', type: 'SYS', name: 'S' }, { id: 'REQ-r', type: 'REQ', name: 'R', attributes: attrs }], traces: [] }) as never;
 
 describe('CR-GC-598: eine Fokusmenge, und blockingErrors kennt die Abnahme', () => {
-  it('eine offene FM-03 zaehlt als Fehler-Fund — eine abgenommene nicht mehr', () => {
-    expect(blockingOf(focusViolations(og(), [v('FM-03', 'error'), v('UC-01', 'error', 'SYS-s')]))).toBe(2);
-    const ab = og({ acceptedFindings: [{ ruleId: 'FM-03', reason: 'Testlauf fehlt' }] });
-    expect(blockingOf(focusViolations(ab, [v('FM-03', 'error'), v('UC-01', 'error', 'SYS-s')]))).toBe(1);
+  it('eine offene abnehmbare Regel zaehlt als Fund — abgenommen nicht mehr (AF-05 am SYS)', () => {
+    const sysAb = { elements: [{ id: 'SYS-s', type: 'SYS', name: 'S', attributes: { acceptedFindings: [{ ruleId: 'AF-05', reason: 'lean' }] } }], traces: [] } as never;
+    expect(focusViolations(og(), [v('AF-05', 'warning', 'SYS-s')]).length).toBe(1);
+    expect(focusViolations(sysAb, [v('AF-05', 'warning', 'SYS-s')]).length).toBe(0);
+    expect(blockingOf(focusViolations(og(), [v('UC-01', 'error', 'SYS-s')]))).toBe(1);
+  });
+
+  it('CR-GC-599: FM-01/02/03 sind nie im Fokus — S/O/D setzt nur die FMEA', () => {
+    expect(focusViolations(og(), [v('FM-01', 'warning'), v('FM-02', 'warning'), v('FM-03', 'error')])).toEqual([]);
+    expect(ABNEHMBARE_REGELN.has('FM-03')).toBe(false);
   });
 
   it('ND-01/02 sind im Fokus, obwohl das Gate sie nie wertet (CR-GC-287)', () => {
     expect(focusViolations(og(), [v('ND-01', 'error', 'REQ-r')]).map((x) => x.rule_id)).toEqual(['ND-01']);
   });
 
-  it('FM-01 hat eine Regel-Klausel, die FM-03 als abnehmbar nennt — im Moment der Entscheidung', async () => {
+  it('CR-GC-599: keine Regel-Klausel fuer FM-01 — der Loop setzt keine Bewertungen', async () => {
     const { RULE_CLAUSE } = await import('../src/loop/generate.js');
-    const t = RULE_CLAUSE['FM-01'].text(['REQ-r']);
-    expect(t).toMatch(/severity, occurrence, detection/);
-    expect(t).toMatch(/FM-03/);
-    expect(t).toMatch(/acceptedFindings/);
+    expect(RULE_CLAUSE['FM-01']).toBeUndefined();
   });
 
-  it('eine abgenommene FM-03 verlaesst den Fokus; eine abgenommene Architekturregel nicht', () => {
-    const attrs = { acceptedFindings: [{ ruleId: 'FM-03', reason: 'Testlauf fehlt' }, { ruleId: 'R-02', reason: 'versucht' }] };
-    const focus = focusViolations(og(attrs), [v('FM-03', 'error'), v('R-02', 'warning')]);
+  it('eine abgenommene Architekturregel bleibt im Fokus', () => {
+    const attrs = { acceptedFindings: [{ ruleId: 'R-02', reason: 'versucht' }] };
+    const focus = focusViolations(og(attrs), [v('R-02', 'warning')]);
     expect(focus.map((x) => x.rule_id)).toEqual(['R-02']);
     expect(ABNEHMBARE_REGELN.has('R-02')).toBe(false);
   });

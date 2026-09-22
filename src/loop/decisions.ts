@@ -98,7 +98,7 @@ export const DECISIONS = {
     text:
       'Einen Fund, der im Modell nicht erfuellbar ist, legst du als benannte Abweichung ab: ' +
       '`acceptedFindings: [{ruleId, reason}]` am betroffenen Element (graphweite Regeln am SYS), der Grund ist Pflicht. ' +
-      'Abnehmbar sind nur ' + [...ABNEHMBARE_REGELN].join(', ') + ' (Testlauf, Code, optionale Artefakte, ' +
+      'Abnehmbar sind nur ' + [...ABNEHMBARE_REGELN].join(', ') + ' (Code, optionale Artefakte, ' +
       'Auftraggeber-Entscheidung). Architekturregeln sind nicht abnehmbar — eine Abnahme daran zaehlt nicht, der Fund bleibt: bauen.',
     forbidden: [/acceptedFindings[^.]{0,80}(jede|alle|beliebige) Regel/i],
     source: 'CR-GC-594',

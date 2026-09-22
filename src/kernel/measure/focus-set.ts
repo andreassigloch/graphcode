@@ -10,7 +10,10 @@
  *   1. nur Regeln, die das GATE auswertet (SE_DESCRIPTOR.rules);
  *   2. keine info-Regeln;
  *   3. Praesenz von Code (R-19/20/26/27/32) nur, wenn ueberhaupt etwas gebunden ist;
- *   4. keine abgenommenen Funde der abnehmbaren Klasse (acceptedFindings, CR-SM-349/CR-GC-594).
+ *   4. keine abgenommenen Funde der abnehmbaren Klasse (acceptedFindings, CR-SM-349/CR-GC-594);
+ *   5. keine Detailregeln eines Analyse-Artefakts, das ein eigener Skill erstellt (CR-GC-599): die
+ *      FMEA-Regeln FM-01/02/03 gehoeren `se-fmea` — S/O/D am REQ setzt ausschliesslich die FMEA
+ *      (Entscheidung 2026-09-22). Die Schleife sieht davon nur den Eintrittspunkt AF-04 ("FMEA fehlt").
  * Dazu ND-01/02: das Gate wertet Beinahe-Duplikate nie aus, CR-GC-287 hat sie aber ausdruecklich in den
  * Fokus gelegt (der Snapshot injiziert die Aehnlichkeit) — CR-GC-593 hatte das still zurueckgedreht.
  * `blockingErrors` = Fehler-Funde der Fokusmenge (ohne abgenommene). NICHT "blockt am Gate": das tun nur
@@ -23,14 +26,20 @@ import { acceptedRuleIds, type OntologyGraph, type RuleViolation } from '@sigloc
 
 /**
  * Welche Funde abnehmbar sind (Entscheidung 2026-09-22, CR-GC-594) — genau die, deren Aufloesung im
- * Modell NICHT moeglich ist: Testlauf (FM-03), Code und Bindung (R-19/R-20/R-26/R-32, CR-R01), im
+ * Modell NICHT moeglich ist: Code und Bindung (R-19/R-20/R-26/R-32, CR-R01), im
  * schlanken Scope optionale Artefakte (AF-01..05), Auftraggeber-Entscheidung (MS-01, CL-01).
  * Architekturregeln stehen NICHT darin — heute darf sie niemand abnehmen.
  */
 export const ABNEHMBARE_REGELN: ReadonlySet<string> = new Set([
-  'FM-03', 'AF-01', 'AF-02', 'AF-03', 'AF-04', 'AF-05', 'MS-01', 'CL-01',
+  'AF-01', 'AF-02', 'AF-03', 'AF-04', 'AF-05', 'MS-01', 'CL-01',
   'R-19', 'R-20', 'R-26', 'R-32', 'CR-R01',
 ]);
+
+/**
+ * Detailregeln, die einem Artefakt-Skill gehoeren (CR-GC-599). Die Generierungsschleife zeigt sie
+ * nicht; ihr Eintrittspunkt ist die AF-Regel des Artefakts, und der Skill arbeitet sie ab.
+ */
+export const ARTEFAKT_EIGENE_REGELN: ReadonlySet<string> = new Set(['FM-01', 'FM-02', 'FM-03']);
 
 /** Praesenzregeln fuer Code — ohne eine einzige Bindung kein Fund, sondern der Zustand. */
 export const FOCUS_EXCLUDED_WHEN_UNBOUND: ReadonlySet<string> = new Set(['R-19', 'R-20', 'R-26', 'R-27', 'R-32']);
@@ -47,6 +56,7 @@ export function focusViolations(og: OntologyGraph, violations: readonly RuleViol
   return violations.filter((v) => {
     if ((!GATE_RULES.has(v.rule_id) && !STEERING_ONLY_FOCUS.has(v.rule_id)) || v.severity === 'info') return false;
     if (!gebunden && FOCUS_EXCLUDED_WHEN_UNBOUND.has(v.rule_id)) return false;
+    if (ARTEFAKT_EIGENE_REGELN.has(v.rule_id)) return false;
     const traeger = byId.get(v.element_id) ?? sys;
     return !(traeger && ABNEHMBARE_REGELN.has(v.rule_id) && acceptedRuleIds(traeger).has(v.rule_id));
   });
