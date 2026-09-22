@@ -1,6 +1,6 @@
 # CR-GC-612: Fester Vorspann je Lauf entflechten: GRAPHCODE.md, Werkzeugbeschreibungen, Skills und Antworten haben doppelte Zustaendigkeit — jede Frage soll genau einen Ort haben
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-22)
 **Typ:** aus Item ITEM-2026-369 (finding)
 **Erstellt:** 2026-09-22
 **Item:** bok/items/ITEM-2026-369.json (Lane: code)
