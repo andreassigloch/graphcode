@@ -60,7 +60,7 @@ export const HELP_PANEL_IDS = ['readiness', 'recommendations', 'artifacts', 'imp
 export const HELP_CONTENT: Record<string, HelpContentEntry> = {
   // --- Rules -------------------------------------------------------------------------
   //
-  // CR-SM-300: die 69 regel-keyed Paare (63 Katalog- + 6 Conformance-Regeln) liegen seit
+  // CR-SM-300: die regel-keyed Paare (seit CR-SM-357: 73 = 67 Katalog- + 6 Conformance-Regeln) liegen seit
   // `@sigloch/contracts` 10.1 NEBEN dem Katalog, den sie erklaeren. Sie standen hier, weil
   // CR-GC-227 aus Tempo so entschieden hat — und driftete in beide Richtungen unbemerkt:
   // 11 Eintraege zu geloeschten Regel-IDs, 8 Katalogregeln ganz ohne Eintrag, ueber vier

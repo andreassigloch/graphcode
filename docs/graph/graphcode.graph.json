@@ -12174,6 +12174,16 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-616",
+      "target": "FUNC-author-uc",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-616",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -20469,5 +20479,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 376
+  "graphVersion": 377
 }

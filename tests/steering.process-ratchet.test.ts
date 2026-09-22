@@ -155,7 +155,23 @@ describe('T-B3 / T-B5 (CR-GC-341): the ratchet, and the control that makes it re
   it('T-B3 — repeated steering never falls back: gate coverage is monotone and blocking errors never rise', async () => {
     const trace = await runLoop();
 
-    expect(trace.length).toBeGreaterThan(3);
+    /*
+     * CR-GC-616: hier stand `toBeGreaterThan(3)` — eine EICHZAHL auf den Regelkatalog, nicht auf
+     * den Regler. Mit UC-05/UC-06 (seit CR-SM-357 Schreibregel in `se:author-uc` statt Regel)
+     * fielen dem Scriptor drei Runden Reparaturarbeit weg, und die Zahl wurde rot, ohne dass am
+     * Gegenstand des Tests irgendetwas passiert waere.
+     *
+     * Zugesichert wird stattdessen, was die Scope-Notiz oben verspricht: der Lauf faellt nie
+     * zurueck, er macht netto Fortschritt, und wo er endet, endet er NAMENTLICH — an R-21, fuer
+     * die der Scriptor bewusst keine kanonische Reparatur hat. Das ist kein Loch im Scriptor:
+     * CR-SM-334 fuehrt Zweig 3 (Befund am Sender-FUNC, keine gemeinsame Kette) ausdruecklich als
+     * NICHT-Operator — eine mechanische Kante waere dort ein Test, wo die Modellierung fehlt.
+     */
+    expect(trace.length).toBeGreaterThan(1);
+    const last = trace[trace.length - 1];
+    expect(last.applied, `Lauf endete an ${last.ruleId}, aber mit angewandtem Batch`).toBe(false);
+    expect(last.ruleId, 'der Scriptor lief an einer ANDEREN Regel aus — entscheiden, nicht uebernehmen').toBe('R-21');
+
     for (let i = 1; i < trace.length; i++) {
       expect(trace[i].coveredLegs, `gate coverage fell at round ${trace[i].round}`).toBeGreaterThanOrEqual(trace[i - 1].coveredLegs);
       expect(trace[i].blockingErrors, `blocking errors rose at round ${trace[i].round}`).toBeLessThanOrEqual(trace[i - 1].blockingErrors);
