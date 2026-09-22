@@ -41,11 +41,34 @@ Beide stehen ausgeschrieben im jeweiligen CR, nicht als Fußnote:
   Testdateien) und die npx-Startzeile in graph-view-edit. Die tote `dashboard.url` war ein
   transientes Falsch-Negativ (antwortet 200).
 
-## Offen — und was daran hängt
+## Der Publish — zwei Stufen, und warum es nicht eine ist
 
-1. **Publish.** Der Zug steht vorbereitet und unpubliziert: `@sigloch/contracts@10.11.0`,
-   `@sigloch/graph-api-core@5.7.1`, `@sigloch/se-engine@1.8.0`, Tags gesetzt. `npm publish` fährt der
-   Auftraggeber. Danach `@sigloch/graphcode@0.25.0` und `aise rollout`.
+Der Zug steht vorbereitet: `@sigloch/contracts@10.11.0`, `@sigloch/graph-api-core@5.7.1`,
+`@sigloch/se-engine@1.8.0`, Tags gesetzt, nichts publiziert.
+
+```bash
+cd ~/Developer/dev/sigloch-modules
+aise release publish          # Stufe 1 — die drei Peers
+```
+
+**graphcode 0.25.0 kann erst danach vorbereitet werden.** Ein Vier-Paket-Zug wurde versucht und
+bricht reproduzierbar ab: npm löst den Root-Range `@sigloch/contracts: >=10.11 <11` gegen die
+**Registry** auf, bevor die Zug-Tarballs greifen (`Found: @sigloch/contracts@undefined`), und
+`@sigloch/se-engine: ^1.8.0` ist ein echter Import-Floor — graphcode importiert `FIX_ROUNDTRIP`,
+das es erst in 1.8.0 gibt. Beide Floors zeigen auf Unpubliziertes, also ist das Repo bis Stufe 1
+nicht registry-fähig. Das ist die Regel aus `CLAUDE.local.md` wörtlich: *„Peers zuerst. Ein
+Consumer, dessen Peer noch nicht in der Registry steht, ist nicht installierbar."*
+
+```bash
+cd ~/Developer/dev/sigloch-modules
+aise release prepare @sigloch/graphcode=minor    # Stufe 2 — nach dem ersten Publish
+aise release publish
+aise rollout
+```
+
+**Nebenbefund:** `aise release prepare --dry-run` meldete den Vier-Paket-Zug als „bereit" — der
+Trockenlauf überspringt genau den `npm install`, an dem der echte Lauf scheitert. Ein Trockenlauf,
+der den blockierenden Schritt auslässt, ist ein falsches Grün.
    **Der Bump ist minor, nicht major:** entfallene Regeln sind im Urteil von `aise release prepare`
    ausdrücklich minor („weniger Forderungen, nie ein Bruch"); major gilt nur für entfallene
    ElementTypes/TraceTypes/TRACE_PATTERNs. Die CR-Notiz „RULES_VERSION MAJOR" meint den
@@ -53,5 +76,7 @@ Beide stehen ausgeschrieben im jeweiligen CR, nicht als Fußnote:
    kaskadieren lassen — genau das, was `judgeBump` als „zu-gross" abweist.
 2. **`npm update @sigloch/graphify` in sigloch-modules** (0.3.0 → 0.4.0) scheitert im Link-Modus an
    der unpublizierten contracts 10.11 — nach dem Publish nachziehen.
-3. **Die zwei Kipp-Kriterien** aus CR-GC-612/613 sind Aussagen über einen LAUF und werden im
-   Bestätigungslauf gemessen, nicht im Code behauptet.
+3. **Die Kipp-Kriterien sind gemessen** — siehe `docs/research/testlauf-2026-09-22.md`:
+   0 Rückfälle im Spezifikationslauf, 1 im Coding-Lauf (innerhalb der Nulllinie), aber die
+   Nachschlage-Aufrufe stiegen von 3 auf 11 — die Grauzone ist getroffen. Netto trotzdem
+   −54.568 Zeichen (−38 % aller graphcode-Antworten).
