@@ -5,6 +5,8 @@
  * die konkrete Generierungs-Instruktion (Funde + Kandidaten- + Gate-Protokoll).
  * Kern pur über Graph-Fixtures; Tool über echten disk-Kuzu-Harness.
  */
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { DEFAULT_METRIC_POLICY } from '@sigloch/contracts/se';
 import { mkdtempSync, rmSync } from 'node:fs';
@@ -16,7 +18,7 @@ import type { Graph } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
-import { generationStep, DIMENSION_FOCUS_TYPES, SEED_STAGES, GENERATION_TEMPLATE, RULE_CLAUSE } from '../src/loop/generate.js';
+import { generationStep, DIMENSION_FOCUS_TYPES, SEED_STAGES, GENERATION_TEMPLATE, RULE_CLAUSE, SKILL_FOR_DIMENSION } from '../src/loop/generate.js';
 import { ElementType } from '@sigloch/contracts/se';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 
@@ -630,6 +632,21 @@ describe('Zielprofil + Intentions-Anker im Prompt (CR-GC-295)', () => {
     const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
     expect(step.prompt).not.toContain('Intentions-Anker');
     expect(generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS)).toEqual(step);
+  });
+});
+
+describe('CR-GC-589: der Schritt nennt seine Anleitung — eine Zuordnung fuer beide Treiber', () => {
+  it('seed:uc → se:author-uc, ohne Skill → null', () => {
+    const seed = generationStep(g([node('SYS-shop', 'SYS', 'shop', INTENT)], []), DEFAULT_METRIC_POLICY, INTENT, 0.8);
+    expect(seed.focusDimension).toBe('seed:uc');
+    expect(seed.skill).toBe('se:author-uc');
+    expect(SKILL_FOR_DIMENSION['ver']).toBeUndefined(); // keine Anleitung, kein erfundener Eintrag
+  });
+
+  it('der Executor hat keine zweite Tabelle mehr', () => {
+    const src = readFileSync(fileURLToPath(new URL('../src/loop/executor-prompt.ts', import.meta.url)), 'utf8');
+    expect(src).not.toMatch(/const SKILL_FOR_DIMENSION\s*[:=]/);
+    expect(src).toContain("import { SKILL_FOR_DIMENSION");
   });
 });
 
