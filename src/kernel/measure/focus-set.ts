@@ -3,7 +3,7 @@
  *
  * Bis CR-GC-598 stand die Filterung in `generate.ts`, und `blockingErrors` kam ungefiltert aus dem
  * 74-Regel-Steuerungsstrom. Folge im Rewind-Lauf opus5-12: die Probe meldete "blockingErrors 0 → 8"
- * fuer S/O/D-Attribute — das waren FM-03-Fehler, die am Gate nicht blocken (`gating: false`) und
+ * fuer S/O/D-Attribute — das waren FM-03-Fehler, die am Gate nicht blockten (damals `gating: false`) und
  * abnehmbar sind. Der Agent liess FM-01 deshalb offen. Zwei Definitionen derselben Frage.
  *
  * Jetzt eine, im Kernel, damit Schritt (generate), Probe (steeringDelta) und Bericht sie teilen:
@@ -80,8 +80,10 @@ export function focusViolations(og: OntologyGraph, violations: readonly RuleViol
       if (v.severity === 'info' || !imTask(v.rule_id)) return false;
       const traeger = byId.get(v.element_id) ?? sys;
       return !(traeger && ab.has(v.rule_id) && acceptedRuleIds(traeger).has(v.rule_id));
-    })
-    .map((v) => (task !== 'kern' && v.severity === 'error' ? { ...v, severity: 'warning' as const } : v));
+    });
+  // CR-SM-353 / CR-GC-605: kein error → warning-Mapping mehr. Seit `error` die Gate-Wirkung IST,
+  // ist ein error einer Task-Regel Gate-Schuld (heute nur R-29; Smeagol Stufe (e) haelt die Liste fest)
+  // — die Schwere wird durchgereicht, nicht umgeschrieben.
 }
 
 /** Fehler-Funde der Fokusmenge — abgenommene zaehlen nicht (Rewind opus5-12: 0 → 8 durch FM-03). */

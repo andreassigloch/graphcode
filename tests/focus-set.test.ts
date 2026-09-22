@@ -26,17 +26,17 @@ describe('CR-GC-598: eine Fokusmenge, und blockingErrors kennt die Abnahme', () 
     const sysAb = { elements: [{ id: 'SYS-s', type: 'SYS', name: 'S', attributes: { acceptedFindings: [{ ruleId: 'AF-05', reason: 'lean' }] } }], traces: [] } as never;
     expect(focusViolations(og(), [v('AF-05', 'warning', 'SYS-s')]).length).toBe(1);
     expect(focusViolations(sysAb, [v('AF-05', 'warning', 'SYS-s')]).length).toBe(0);
-    expect(blockingOf(focusViolations(og(), [v('UC-01', 'error', 'SYS-s')]))).toBe(1);
+    expect(blockingOf(focusViolations(og(), [v('R-01', 'error')]))).toBe(1); // R-01 ist ein echter Gate-Fehler
   });
 
   it('CR-GC-599/600: FM-01/02/03 sind nie im KERN-Fokus — S/O/D setzt nur die FMEA', () => {
-    expect(focusViolations(og(), [v('FM-01', 'warning'), v('FM-02', 'warning'), v('FM-03', 'error')])).toEqual([]);
+    expect(focusViolations(og(), [v('FM-01', 'warning'), v('FM-02', 'warning'), v('FM-03', 'warning')])).toEqual([]);
     expect(abnehmbar('kern').has('FM-03')).toBe(false);
     expect(abnehmbar('fmea').has('FM-03')).toBe(true); // im FMEA-Task abnehmbar (CR-GC-600)
   });
 
   it('ND-01/02 sind im Fokus, obwohl das Gate sie nie wertet (CR-GC-287)', () => {
-    expect(focusViolations(og(), [v('ND-01', 'error', 'REQ-r')]).map((x) => x.rule_id)).toEqual(['ND-01']);
+    expect(focusViolations(og(), [v('ND-01', 'warning', 'REQ-r')]).map((x) => x.rule_id)).toEqual(['ND-01']);
   });
 
   it('CR-GC-599: keine Regel-Klausel fuer FM-01 — der Loop setzt keine Bewertungen', async () => {
@@ -51,11 +51,13 @@ describe('CR-GC-598: eine Fokusmenge, und blockingErrors kennt die Abnahme', () 
     expect(abnehmbar('kern').has('R-02')).toBe(false);
   });
 
-  it('CR-GC-600: der Task sieht sein Regelset — als Warnung, nie blockierend', () => {
-    const f = focusViolations(og(), [v('FM-03', 'error'), v('UC-01', 'error', 'SYS-s')], 'fmea');
+  it('CR-GC-600/605: der Task sieht sein Regelset — Warnungen, weil keine Task-Regel error ist (CR-SM-353)', () => {
+    const f = focusViolations(og(), [v('FM-03', 'warning'), v('UC-01', 'warning', 'SYS-s')], 'fmea');
     expect(f.map((x) => x.rule_id)).toEqual(['FM-03']);
     expect(f[0].severity).toBe('warning');
     expect(blockingOf(f)).toBe(0);
+    // Die Schwere wird durchgereicht, nicht umgeschrieben — kein zweites Urteil im Fokus.
+    expect(focusViolations(og(), [v('FM-03', 'error')], 'fmea')[0].severity).toBe('error');
     const plan = focusViolations(og(), [v('CR-R03', 'warning'), v('MS-01', 'warning', 'SYS-s')], 'plan');
     expect(plan.map((x) => x.rule_id).sort()).toEqual(['CR-R03', 'MS-01']);
     expect(focusViolations(og(), [v('CR-R03', 'warning')]).length).toBe(0); // im Kern unsichtbar

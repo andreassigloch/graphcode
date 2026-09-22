@@ -165,12 +165,12 @@ describe('TEST-rule-catalog-gap: die ungeladenen Regeln werden benannt (CR-GC-42
     // zu entscheiden, nicht zu übernehmen.
     expect(unevaluatedRuleIds(harness.getLoadedRuleIds())).toEqual(NOT_IN_GATE);
 
-    // Warum ND lokal nachgeholt wird (CR-GC-442): genau die zwei error-Regeln der
-    // Lücke sind ND. Wer `blocking.errors: 0` las, las ohne sie "keine Fehler" statt
-    // "keine Fehler unter den geladenen Regeln" — und ein Beinahe-Duplikat war in
-    // Verstoßliste, Report und Dashboard unsichtbar.
+    // CR-SM-353 / CR-GC-605: `error` heisst blockt — und blocken kann nur, was das Gate wertet.
+    // Die Lücke trägt deshalb KEINEN error mehr (bis dahin ND-01/02 und RC-01..03, jeder mit
+    // "genau einem von zwei erlaubten Gründen" — eine Ausnahmeliste als Definition). ND wird
+    // weiter lokal nachgeholt (CR-GC-442), jetzt als warning.
     const errors = ALL_RULE_DEFS.filter((r) => NOT_IN_GATE.includes(r.id) && r.severity === 'error');
-    expect(errors.map((r) => r.id)).toEqual(['ND-01', 'ND-02', 'RC-01', 'RC-02', 'RC-03']);
+    expect(errors.map((r) => r.id)).toEqual([]);
     expect([...LOCALLY_EVALUATED_RULE_IDS]).toEqual(['ND-01', 'ND-02']);
     // CR-SM-305: kein error verschwindet still — jeder in der Lücke hat GENAU EINEN der zwei
     // erlaubten Gründe. ND wird lokal nachgeholt; RC kann hier strukturell nicht laufen und

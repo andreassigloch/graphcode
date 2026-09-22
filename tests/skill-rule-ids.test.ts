@@ -154,3 +154,100 @@ describe('TEST-skill-rule-ids (d): Kanaele, Tasks und Abnahmen passen zusammen (
     }
   });
 });
+
+/**
+ * Smeagol Stufe (e) — Empfehlungskonsistenz (CR-GC-605). Eine Regel gibt ihre Empfehlung an drei
+ * Stellen: `fix_hint` (Regeldefinition), `RULE_HELP.prompt` (contracts, der Skill-Zeiger) und in
+ * graphcode `TASK_SKILL` / `SKILL_FOR_DIMENSION`. Bis hierher prueften contracts nur die FORM des
+ * Prompts; ob der Skill existiert, weiss nur das Repo, das die Skills ausliefert. Vorbild: rustc
+ * `lint-docs`, Clippy `cargo dev update_lints --check`, Roslyn `FixableDiagnosticIds`.
+ */
+describe('TEST-skill-rule-ids (e): Empfehlungen passen zu Regeln und Skills (CR-GC-605)', () => {
+  const ausgeliefert = new Set(
+    markdownDateien(join(__dirname, '..', '.claude', 'commands')).map((p) =>
+      p.split('/.claude/commands/')[1].replace(/\.md$/, '').replace('/', ':'),
+    ),
+  );
+
+  it('jeder RULE_HELP.prompt nennt einen ausgelieferten Skill', async () => {
+    const { RULE_HELP } = await import('@sigloch/contracts/se');
+    const fremd = Object.entries(RULE_HELP)
+      .filter(([, e]) => e.prompt !== undefined && !ausgeliefert.has(e.prompt))
+      .map(([id, e]) => `${id}: ${e.prompt}`);
+    expect(fremd).toEqual([]);
+  });
+
+  it('TASK_SKILL ist die Hilfe des Eintrittspunkts — eine Zuordnung, nicht zwei', async () => {
+    const { RULE_HELP, TASK_ENTRY } = await import('@sigloch/contracts/se');
+    const { TASK_SKILL } = await import('../src/loop/generate.js');
+    for (const [task, entry] of Object.entries(TASK_ENTRY)) {
+      if (entry === null) continue;
+      expect((TASK_SKILL as Record<string, string>)[task], `${task} ↔ ${entry}`).toBe(RULE_HELP[entry].prompt);
+    }
+  });
+
+  it('Kern-Regel: Hilfe-Prompt und Dimensions-Skill stimmen ueberein — oder die Abweichung steht hier mit Grund (Ratsche)', async () => {
+    const { RULE_HELP, RULE_TO_DIMENSION, TASK_ENTRY, taskOf } = await import('@sigloch/contracts/se');
+    const { SKILL_FOR_DIMENSION } = await import('../src/loop/generate.js');
+    // Benannte Abweichungen: der Fix liegt in einer anderen Dimension als der Fund. Eine Ausnahme,
+    // die nicht mehr abweicht, laesst den Test fallen — die Liste darf nur schrumpfen.
+    const AUSNAHMEN: Record<string, string> = {
+      'UC-01': 'UC ohne REQ — der Fix ist REQ-Autorieren (se:author-req), nicht UC-Autorieren',
+      'RD-01': 'unaufgeloeste REQ — der Fix ist eine satisfy-Kante (se:close-violations), kein neuer Text',
+      'R-04': 'Modul-Grenzbreite — der Fix beginnt mit der Sicht (se-view:arch), nicht mit dem Schnitt',
+    };
+    const eintritte = new Set(Object.values(TASK_ENTRY).filter(Boolean));
+    const abweichend = Object.entries(RULE_HELP)
+      .filter(([id, e]) => e.prompt && taskOf(id) === 'kern' && !eintritte.has(id))
+      .filter(([id, e]) => {
+        const dim = RULE_TO_DIMENSION[id];
+        const skill = dim ? SKILL_FOR_DIMENSION[dim]?.name : undefined;
+        return skill !== undefined && skill !== e.prompt;
+      })
+      .map(([id]) => id);
+    expect(abweichend.filter((id) => !(id in AUSNAHMEN)), 'unbenannte Abweichung').toEqual([]);
+    expect(Object.keys(AUSNAHMEN).filter((id) => !abweichend.includes(id)), 'Ausnahme ohne Abweichung — streichen').toEqual([]);
+  });
+
+  it('Werkzeugnamen in Hilfe und Skills existieren in der MCP-Registry', async () => {
+    const { RULE_HELP } = await import('@sigloch/contracts/se');
+    const { mkdtempSync, rmSync, mkdirSync } = await import('node:fs');
+    const { tmpdir } = await import('node:os');
+    const { createHarness, bindToolsToHarness } = await import('../src/index.js');
+    const repoRoot = mkdtempSync(join(tmpdir(), 'gc-smeagol-e-'));
+    mkdirSync(join(repoRoot, '.graphcode'), { recursive: true });
+    const harness = await createHarness({ repoRoot, scope: { workspaceId: 'w', systemId: 's' } });
+    await harness.initialize();
+    try {
+      const registry = new Set(Object.keys(bindToolsToHarness(harness)));
+      expect(registry.has('graph_mutate')).toBe(true);
+      const texte = [
+        ...Object.values(RULE_HELP).flatMap((e) => [e.plain, e.se, e.prompt ?? '']),
+        ...markdownDateien(join(__dirname, '..', '.claude', 'commands')).map((f) => readFileSync(f, 'utf8')),
+      ];
+      const genannt = new Set(texte.flatMap((t) => [...t.matchAll(/\b(graph|rules|audit)_[a-z_]+\b/g)].map((m) => m[0])));
+      expect([...genannt].filter((n) => !registry.has(n)).sort()).toEqual([]);
+    } finally {
+      await harness.close();
+      rmSync(repoRoot, { recursive: true, force: true });
+    }
+  });
+
+  it('error nur im Gate-Katalog — ohne Ausnahmeliste (CR-SM-353)', async () => {
+    const { SE_DESCRIPTOR } = await import('@sigloch/graph-api-core');
+    const gate = new Set((SE_DESCRIPTOR.rules ?? []).map((r: { id: string }) => r.id));
+    const errors = ALL_RULE_DEFS.filter((r) => r.severity === 'error').map((r) => r.id);
+    expect(errors.filter((id) => !gate.has(id))).toEqual([]);
+  });
+
+  it('eine Task-Regel mit error ist ein Gate-Blocker — genau R-29 — und der Task-Fokus reicht die Schwere durch', async () => {
+    const { taskOf } = await import('@sigloch/contracts/se');
+    // R-29 (Testdatei-Exklusivitaet) gehoert der Realisierung UND blockt am Gate: ein Altfund davon
+    // im Task ist Gate-Schuld, keine Warnung — deshalb schreibt der Fokus die Schwere nicht mehr um
+    // (CR-GC-605). Waechst diese Liste, hat eine Task-Regel Gate-Wirkung bekommen: entscheiden, nicht uebernehmen.
+    expect(ALL_RULE_DEFS.filter((r) => taskOf(r.id) !== 'kern' && r.severity === 'error').map((r) => r.id)).toEqual(['R-29']);
+  });
+
+  // MT-02 ist info UND Steuerregel — Widerspruch, Entscheidung im Zeilen-Item ITEM-2026-462.
+  it.todo('Steuerregel nie info (STEER_RULES ∩ info = ∅) — offen: MT-02, ITEM-2026-462');
+});

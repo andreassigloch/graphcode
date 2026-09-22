@@ -93,7 +93,7 @@ describe('ND-01 — FUNC-Near-Duplicates (konstruierte Duplikate)', () => {
     expect(nd).toHaveLength(1);
     expect(nd[0].element_id).toBe('FUNC-generate-report-2');
     expect(nd[0].message).toContain('FUNC-generate-report');
-    expect(nd[0].severity).toBe('error');
+    expect(nd[0].severity).toBe('warning') // CR-SM-353: ND blockt nie am Gate;
   });
 
   /**
@@ -163,10 +163,25 @@ describe('generate-Fokus sieht ND (AK 3)', () => {
       ],
     }) as unknown as Graph;
 
-  it('identische FUNC-Duplikate erhöhen blockingErrors um genau 1 vs. differenzierte', () => {
+  it('identische FUNC-Duplikate stehen als ND-01 im Fokus — als warning, blockingErrors bleibt gleich (CR-SM-353)', () => {
+    // Die Fenster der Reihe nach (zurueckstellen bis zur Wiederholung): ND-01 ist eines davon —
+    // beim differenzierten Paar nie. Ein Fund im Fokus, kein zweites Urteil ueber die Schwere.
+    const fenster = (graph: Graph): string[] => {
+      const gesehen: string[] = [];
+      const keys: string[] = [];
+      let s = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8, keys);
+      for (let i = 0; i < 12 && s.focusKey && !keys.includes(s.focusKey); i++) {
+        gesehen.push(s.focusKey.split(':')[1]);
+        keys.push(s.focusKey);
+        s = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8, keys);
+      }
+      return gesehen;
+    };
     const dup = generationStep(buildGraph('Assemble the selected metrics into a downloadable report document.'), DEFAULT_METRIC_POLICY);
     const distinct = generationStep(buildGraph('Stream raw audit events into the retention archive nightly.'), DEFAULT_METRIC_POLICY);
-    expect(dup.blockingErrors).toBe(distinct.blockingErrors + 1);
+    expect(dup.blockingErrors).toBe(distinct.blockingErrors);
+    expect(fenster(buildGraph('Assemble the selected metrics into a downloadable report document.'))).toContain('ND-01');
+    expect(fenster(buildGraph('Stream raw audit events into the retention archive nightly.'))).not.toContain('ND-01');
   });
 });
 

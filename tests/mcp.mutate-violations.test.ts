@@ -82,7 +82,6 @@ type Violation = {
   elementId?: string;
   fixHint?: string;
   context?: unknown;
-  gating?: boolean;
 };
 
 /** Die gefaltete Form der Default-Antwort (CR-GC-570). */
@@ -174,7 +173,7 @@ describe('TEST-mutate-violations: summary is the default (CR-GC-309)', () => {
     const full = await tools.graph_mutate.handler({ commands: ADD_MOD, consumerId: 't', violations: 'full', dryRun: true });
     const summary = await tools.graph_mutate.handler({ commands: ADD_MOD, consumerId: 't', dryRun: true });
     const strip = (vs: Violation[]) =>
-      vs.map(({ context: _c, gating: _g, ...rest }) => rest as Violation);
+      vs.map(({ context: _c, ...rest }) => rest as Violation);
     expect(expand(summary.violations as Grouped[])).toEqual(strip(full.violations as Violation[]));
   });
 
