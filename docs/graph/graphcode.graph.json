@@ -1869,6 +1869,12 @@
       "description": "docs/cr/open/CR-GC-609-schatten-graph-suggest-im-rig-je-zug-nac.md"
     },
     {
+      "id": "CR-GC-610",
+      "type": "CR",
+      "name": "Code-Test (Leitlinie Satz 7): Scheduler-Scheibe aus sigllm, gefuehrt (Modell + graphcode) gegen frei laufendes Claude Code — Aufgabe, Vertrag, verdeckte Abnahme, Messung",
+      "description": "docs/cr/open/CR-GC-610-code-test-leitlinie-satz-7-scheduler-sch.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -20400,5 +20406,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 366
+  "graphVersion": 367
 }
