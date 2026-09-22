@@ -1,6 +1,6 @@
 # CR-GC-599: FMEA-Regeln (FM-01/02/03) gehoeren der FMEA, nicht der Generierungsschleife: S/O/D am REQ setzt ausschliesslich se-fmea (Entscheidung 2026-09-22). Schleife sieht nur AF-04 (FMEA fehlt); FM-01-Klausel aus CR-598 zurueck, FM-03 aus der abnehmbaren Klasse
 
-**Status:** ✅ Umgesetzt — Rewind folgt
+**Status:** ✅ Done (2026-09-22)
 **Typ:** aus Item ITEM-2026-451 (idea)
 **Erstellt:** 2026-09-22
 **Item:** bok/items/ITEM-2026-451.json (Lane: graph)
