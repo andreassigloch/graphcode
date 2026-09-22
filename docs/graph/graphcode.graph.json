@@ -1803,6 +1803,42 @@
       "description": "docs/cr/open/CR-GC-586-systemtest-bericht-vergleicht-auto-nicht.md"
     },
     {
+      "id": "CR-GC-587",
+      "type": "CR",
+      "name": "Entscheidungs-Register + Widerspruchstest: jede Entscheidung, die als Text zum Agenten geht (Rangfolge, Probe-Regel, Freigabe-Bedingung), hat EINE Konstante; ein Test prueft Skills/GRAPHCODE.md/Vorlagen/Protokoll gegen sie (Serie 564-583: 7 Widersprueche, 4 davon Text gegen Code)",
+      "description": "docs/cr/open/CR-GC-587-entscheidungs-register-widerspruchstest-.md"
+    },
+    {
+      "id": "CR-GC-588",
+      "type": "CR",
+      "name": "Naechster Fokus in der graph_mutate-Antwort: nach angewandtem Batch den kompakten naechsten GenerationStep mitliefern — 55 % der Mutationen kamen ohne frisches graph_generate, Turns sind der Kostentreiber",
+      "description": "docs/cr/open/CR-GC-588-naechster-fokus-in-der-graph-mutate-antw.md"
+    },
+    {
+      "id": "CR-GC-589",
+      "type": "CR",
+      "name": "Anleitung zum Fokus reichen: graph_generate nennt je Fokus-Dimension den passenden se-Skill — heute liest Claude Code se:generate einmal bei 2-5 % und die Anlege-Skills erst am Ende, eine Skill-Korrektur erreicht keinen laufenden Agenten",
+      "description": "docs/cr/open/CR-GC-589-anleitung-zum-fokus-reichen-graph-genera.md"
+    },
+    {
+      "id": "CR-GC-590",
+      "type": "CR",
+      "name": "Tote Kanaele streichen oder verlegen, je mit Messung: steeringDelta (6-8/Lauf, nie erwaehnt), tier/confidence, fitAdvisory.regressions ohne Zielprofil (widerspricht 'nur Bericht'), GRAPHCODE-STEERING.md (0 Zugriffe in 5 Laeufen) in GRAPHCODE.md",
+      "description": "docs/cr/open/CR-GC-590-tote-kanaele-streichen-oder-verlegen-je-.md"
+    },
+    {
+      "id": "CR-GC-591",
+      "type": "CR",
+      "name": "Claude-Code-Kanaele modellieren und in die Rangfolge aufnehmen: CR-573/575 kennen nur die Executor-Kanaele; Gate-Antwortfelder, Werkzeuge auf Abruf, Skills, Doku und Freigabe fehlen mit Rang und Zeitpunkt (vor/nach der Entscheidung)",
+      "description": "docs/cr/open/CR-GC-591-claude-code-kanaele-modellieren-und-in-d.md"
+    },
+    {
+      "id": "CR-GC-592",
+      "type": "CR",
+      "name": "Offene Fragen im Headless-Lauf: AskUserQuestion laeuft in claude -p ins Leere (3 von 5 Laeufen) — GRAPHCODE.md/se:generate sollen offene Punkte als Annahme ins Modell legen statt zu fragen, wenn niemand antwortet",
+      "description": "docs/cr/open/CR-GC-592-offene-fragen-im-headless-lauf-askuserqu.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -20077,5 +20113,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 355
+  "graphVersion": 361
 }
