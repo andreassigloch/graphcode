@@ -1,6 +1,6 @@
 # CR-GC-611: graph_realize antwortet mit dem Delta, nicht mit der Weltlage — und bindet mehrere Knoten in einem Aufruf
 
-**Status:** 🟢 Done (2026-09-22)
+**Status:** ✅ Done (2026-09-22)
 **Typ:** aus Item ITEM-2026-475 (finding)
 **Erstellt:** 2026-09-22
 **Item:** bok/items/ITEM-2026-475.json (Lane: code)
