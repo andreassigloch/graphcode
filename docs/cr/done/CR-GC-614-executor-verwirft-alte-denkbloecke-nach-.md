@@ -1,6 +1,6 @@
 # CR-GC-614: Executor verwirft alte Denkbloecke nach jedem Zug — der Graph ist das Gedaechtnis, nicht der Gespraechsverlauf (gemessen: ~58% des Kontexts in Lauf 15)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-22)
 **Typ:** aus Item ITEM-2026-474 (idea)
 **Erstellt:** 2026-09-22
 **Item:** bok/items/ITEM-2026-474.json (Lane: code)
