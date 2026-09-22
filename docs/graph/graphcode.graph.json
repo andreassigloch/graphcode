@@ -1580,13 +1580,16 @@
       "type": "CR",
       "name": "se-plan leitet ueber REQ ab, nicht ueber FUNC-Blaetter",
       "description": "docs/cr/open/CR-GC-550-se-plan-leitet-bauauftraege-aus-func-bla.md",
-      "status": "open"
+      "status": "done",
+      "commitRef": "4187fe26309f738f3d97a48781cfb87db35b7745"
     },
     {
       "id": "CR-GC-551",
       "type": "CR",
       "name": "kinds als Zeichenkette ueber den commands-Pfad: 49 von 49 REQ eines Auto-Laufs tragen \"non-functional\" statt [\"non-functional\"] - die in CR-SM-320 par. 4 als offen benannte Haelfte ist die, die in der Praxis feuert",
-      "description": "docs/cr/open/CR-GC-551-kinds-als-zeichenkette-ueber-den-command.md"
+      "description": "docs/cr/open/CR-GC-551-kinds-als-zeichenkette-ueber-den-command.md",
+      "status": "done",
+      "commitRef": "94692ffbcd21289c824dbebeeebabade9e362c56"
     },
     {
       "id": "CR-GC-552",
@@ -1860,7 +1863,9 @@
       "id": "CR-GC-608",
       "type": "CR",
       "name": "Fertig-Kriterium der Steuerregeln: lokales Optimum bei Kreis oder Plateau ueber 3 Steuerzuege (opus5-11/13/15)",
-      "description": "docs/cr/open/CR-GC-608-fertig-kriterium-der-steuerregeln-lokale.md"
+      "description": "docs/cr/open/CR-GC-608-fertig-kriterium-der-steuerregeln-lokale.md",
+      "status": "done",
+      "commitRef": "a5c5215c5522d41ace969c66faeecb2fb981d480"
     },
     {
       "id": "CR-GC-609",
@@ -1886,31 +1891,41 @@
       "id": "CR-GC-612",
       "type": "CR",
       "name": "Fester Vorspann je Lauf entflechten: GRAPHCODE.md, Werkzeugbeschreibungen, Skills und Antworten haben doppelte Zustaendigkeit — jede Frage soll genau einen Ort haben",
-      "description": "docs/cr/open/CR-GC-612-fester-vorspann-je-lauf-entflechten-grap.md"
+      "description": "docs/cr/open/CR-GC-612-fester-vorspann-je-lauf-entflechten-grap.md",
+      "status": "done",
+      "commitRef": "ecd0c00cac5cbfe73dcf4b1ff1bce40d22267ac1"
     },
     {
       "id": "CR-GC-613",
       "type": "CR",
       "name": "Lesewerkzeuge antworten ueber das ganze Modell statt ueber die Scheibe: rules_get_violations 32.630, graph_test_report 25.602, graph_context je 9.300 Zeichen — 62% der graphcode-Antworten eines Laufs",
-      "description": "docs/cr/open/CR-GC-613-lesewerkzeuge-antworten-ueber-das-ganze-.md"
+      "description": "docs/cr/open/CR-GC-613-lesewerkzeuge-antworten-ueber-das-ganze-.md",
+      "status": "done",
+      "commitRef": "8a1de64f2ca7101a26633de270214bd8c7ef0bf1"
     },
     {
       "id": "CR-GC-614",
       "type": "CR",
       "name": "Executor verwirft alte Denkbloecke nach jedem Zug — der Graph ist das Gedaechtnis, nicht der Gespraechsverlauf (gemessen: ~58% des Kontexts in Lauf 15)",
-      "description": "docs/cr/open/CR-GC-614-executor-verwirft-alte-denkbloecke-nach-.md"
+      "description": "docs/cr/open/CR-GC-614-executor-verwirft-alte-denkbloecke-nach-.md",
+      "status": "done",
+      "commitRef": "dbd5778bced185f3c058f0439fa77c0fe81bfe02"
     },
     {
       "id": "CR-GC-615",
       "type": "CR",
       "name": "Rig captureArtifacts scheitert nach Git-Aktionen des Agenten an Export-Drift (opus5-16: graph_export refused, Ergebniszeile fehlt)",
-      "description": "docs/cr/open/CR-GC-615-rig-captureartifacts-scheitert-nach-git-.md"
+      "description": "docs/cr/open/CR-GC-615-rig-captureartifacts-scheitert-nach-git-.md",
+      "status": "done",
+      "commitRef": "9be739160f88ea0a641c365f45652f6e1a57edd2"
     },
     {
       "id": "CR-GC-616",
       "type": "CR",
       "name": "ITEM-462 umgesetzt: UC-05/06/RD-03 gestrichen (UC-Schreibregel), MT-02 warning, Fix-Roundtrip-Test, Folge-Regel-Spalte",
-      "description": "docs/cr/open/CR-GC-616-item-462-umgesetzt-uc-05-06-rd-03-gestri.md"
+      "description": "docs/cr/open/CR-GC-616-item-462-umgesetzt-uc-05-06-rd-03-gestri.md",
+      "status": "done",
+      "commitRef": "1a50060b4d6c120a4c68e86e1e1adb9c54a69605"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -20529,5 +20544,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 378
+  "graphVersion": 379
 }
