@@ -52,7 +52,8 @@ mit seinen FUNCs, Vertraegen und REQs. Arbeite modellgefuehrt: lies die Scheibe 
 den Code entlang der FUNCs und SCHEMAs, binde jede FUNC und jedes SCHEMA mit graph_realize an ihren Code und
 jeden TEST an seine Testdatei. Weicht die Aufgabe vom Modell ab (sie ist schmaler), passe das Modell durchs
 Gate an statt am Modell vorbei zu bauen. Am Ende sagt graph_readiness zu den RC-Regeln kongruent — oder du
-nennst, was bewusst offen bleibt. graph_export vor dem Commit.`,
+nennst, was bewusst offen bleibt. graph_export vor dem Commit — danach folgt nur noch der Commit; eine
+Leseabfrage nach dem Export loest nichts mehr aus (CR-GC-612).`,
 };
 
 function paket(dir) {

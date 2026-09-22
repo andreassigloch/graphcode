@@ -170,10 +170,10 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
     const md = readFileSync(join(repo, GUARDRAILS), 'utf8');
     // (1) graph is SSOT, not the docs; query-first, not doc-ingest.
     expect(md).toMatch(/graph is the SSOT, not the docs/i);
-    // (2) names the entry query path — all four precision tools.
-    for (const tool of ['graph_readiness', 'graph_elements', 'graph_impact', 'graph_expand']) {
-      expect(md).toContain(tool);
-    }
+    // (2) CR-GC-612: hier standen die vier Werkzeugnamen. Sie sind ABSICHTLICH weg — ein Werkzeug
+    // erklaert sich in seiner eigenen Beschreibung, und beide Orte drifteten getrennt. Was bleibt,
+    // ist die Regel, aus der sie folgen. Das Gegenstueck steht in tests/vorspann.test.ts.
+    expect(md).toMatch(/typed call answers the question exactly/i);
     // (3) canonical Format-E dialect is uid.TYPE; the SPEC.md Name.SY.001 spelling is dead.
     expect(md).toContain('uid.TYPE');
     expect(md).toMatch(/`Name\.SY\.001`[^\n]*dead/i);
@@ -190,6 +190,7 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
     // One command, not two. `graphcode host` must be marked as the fallback it is —
     // starting it next to a live host just hits the store lock.
     expect(md).toMatch(/fallback/i);
+    expect(md).toMatch(/starts everything/i);
     // No hard-coded port: the bound address is dynamic (Vite bumps on conflict) and
     // a number in the docs is how people end up inspecting the wrong instance.
     expect(md).not.toMatch(/\b4317\b/);
@@ -205,7 +206,7 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
     expect(md).not.toContain('stale guardrails');
   });
 
-  it('GRAPHCODE.md maps every structural question to a tool — the anti-grep table (CR-GC-450)', async () => {
+  it('GRAPHCODE.md traegt die Anti-Grep-REGEL, aber nicht mehr den Werkzeugkatalog (CR-GC-450, geschnitten CR-GC-612)', async () => {
     await scaffold('init', { repoRoot: repo });
     const md = readFileSync(join(repo, GUARDRAILS), 'utf8');
     // The section exists under a name the agent can be pointed at.
@@ -214,48 +215,42 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
     // unused while the same rebuild ran 174 searches over 810 moved elements.
     expect(md).toMatch(/174/);
     expect(md).toMatch(/810/);
-    // Every precision tool has its OWN table row — a list of names in prose is what
-    // the previous version had, and it did not get called.
-    const rows = md.split('\n').filter((l) => /^\| .+ \| .+ \|$/.test(l));
-    for (const tool of [
-      'graph_impact',
-      'graph_context',
-      'graph_expand',
-      'graph_elements',
-      'graph_tests',
-      'rules_get_violations',
-      'graph_readiness',
-      'graph_generate',
-      'graph_suggest',
-      'graph_metrics',
-      'graph_help',
-    ]) {
-      expect(rows.some((r) => r.includes(tool)), `${tool} has a question row`).toBe(true);
-    }
-    // Code location comes from the binding attribute, not from grepping the name.
-    expect(rows.some((r) => r.includes('realRef')), 'realRef row').toBe(true);
-    // And the honest limit: grep is not forbidden, it is scoped.
+    /*
+     * CR-GC-612: hier stand eine Tabelle mit einer Zeile je Werkzeug — 21 von 165 Zeilen der Datei,
+     * und alle 15 ihrer Marker standen auch in den Werkzeugbeschreibungen. Kein Copy-Paste, aber
+     * doppelte ZUSTAENDIGKEIT, und die driftet getrennt. Die Tabelle ist weg, die REGEL bleibt:
+     * erst fragen, ob ein typisierter Aufruf die Frage genau beantwortet.
+     *
+     * Dass die Tabelle nicht zurueckwaechst, haelt tests/vorspann.test.ts fest (0 Werkzeugnamen).
+     */
+    expect(md).toMatch(/typed call answers the question exactly/i);
+    // Und die Ausgaenge, die der Befund benannt hat: die Rohdateien sind Ausgaben, nicht das Modell.
+    expect(md).toContain('docs/graph/*.graph.json');
+    expect(md).toContain('.graphcode/audit.jsonl');
+    // Die ehrliche Grenze: grep ist nicht verboten, sondern eingegrenzt.
     expect(md).toMatch(/grep/i);
     expect(md).toMatch(/free-text|which file contains/i);
   });
 
-  it('GRAPHCODE.md makes graph_tests the inner loop and the full suite the close gate (CR-GC-450)', async () => {
+  it('GRAPHCODE.md macht die AUSGEWAEHLTE Menge zur inneren Schleife und die volle Suite zum Riegel (CR-GC-450)', async () => {
     await scaffold('init', { repoRoot: repo });
     const md = readFileSync(join(repo, GUARDRAILS), 'utf8');
-    expect(md).toContain('graph_tests');
-    expect(md).toContain('vitest run');
+    // CR-GC-612: ohne den Werkzeugnamen — das Werkzeug nennt sich selbst. Die HAUSREGEL bleibt.
+    expect(md).toMatch(/selected set/i);
     // The full suite is named as the gate before closing, not as the inner loop.
     expect(md).toMatch(/full suite/i);
-    // The unresolved list must be READ — a concept-only TEST is a gap, not noise.
-    expect(md).toContain('unresolved');
+    // Die nicht aufgeloesten Eintraege muessen GELESEN werden — ein Konzept-TEST ist eine Luecke.
+    expect(md).toMatch(/could NOT resolve/i);
     expect(md).toMatch(/concept-only/i);
   });
 
-  it('GRAPHCODE.md points at se:help / graph_help as the live help entry (CR-GC-230)', async () => {
+  it('GRAPHCODE.md verweist auf die lebende Hilfe, ohne sie nachzuerzaehlen (CR-GC-230, geschnitten CR-GC-612)', async () => {
     await scaffold('init', { repoRoot: repo });
     const md = readFileSync(join(repo, GUARDRAILS), 'utf8');
+    // Der Skill steht in der Liste — die kommt live aus dem Frontmatter.
     expect(md).toContain('se:help');
-    expect(md).toContain('graph_help');
+    // Der Verweis auf die Hilfe bleibt; ihr WERKZEUGNAME steht bewusst nicht da (CR-GC-612).
+    expect(md).toMatch(/one help call away/i);
   });
 
   it('GRAPHCODE.md lists the available se-* skills (CR-GC-208)', async () => {
@@ -265,7 +260,9 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
     expect(md).toMatch(/## Available se-\* skills/);
     expect(md).toMatch(/Skill tool/);
     expect(md).toContain('skills sync');
-    // Every shipped skill's `name:` appears in the table — derived, cannot drift.
+    // CR-GC-612: die Tabelle mit der vollen `description:` je Skill (33 Zeilen, ~6.500 Zeichen,
+    // wortgleich zu dem, was der Host ohnehin zeigt) ist eine NAMENSLISTE geworden. Sie bleibt
+    // live aus dem Frontmatter — jeder ausgelieferte Skill steht drin, driften kann sie nicht.
     const skillsDir = join(__dirname, '..', '.claude', 'commands');
     for (const f of SHIPPED_SKILLS) {
       const fm = readFileSync(join(skillsDir, f), 'utf8');

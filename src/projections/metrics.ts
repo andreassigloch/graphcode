@@ -106,45 +106,10 @@ export function bindMetricsTools(ctx: ToolPort): MCPToolRegistry {
   > = {
     name: 'graph_metrics',
     description:
-      'Architecture metrics per MOD (CR-GC-326) — one row for EVERY module, whether or not a rule ' +
-      'fires on it: {moduleId, moduleName, allocatedFuncs, fanIn, fanOut, instability, lcom4, ' +
-      'cohesion:{internal,external,ratio}, uphillDependencies}. CR-SM-301: `uphillDependencies` is ' +
-      'Martin\'s Stable Dependencies Principle as a MEASUREMENT, never a rule — the number of ' +
-      'contracts this module draws from a LESS stable supplier. No threshold exists and none is ' +
-      'implied: over 19 family graphs the median stability gap of such a dependency is 0.10, one ' +
-      'contract\'s worth, so a rule would have judged noise (CR-SM-298, rejected at gate 7). Read it ' +
-      'next to `instability`; `null` means the module has no coupling at all, not zero uphill. ' +
-      'This is the drill-down under the `alloc`/`arch` scores of ' +
-      'graph_readiness: the dimension score says "alloc is 87 %", this says WHICH module. ' +
-      'MT-01 only reports modules above 70 % instability and MT-02 only those with >= 4 components, ' +
-      'and both only inside a prose message — so below the threshold there was no value, there was ' +
-      'nothing, and a trend ("was 62 %, is 68 %") was unobtainable. Same computation as the rules ' +
-      '(contracts moduleMetrics, CR-SM-232), never a second one; parsing the MT-01 message string is ' +
-      'obsolete. `null` never means 0: instability is null without any coupling, lcom4 below 2 ' +
-      'allocated FUNCs, cohesion below 2 FUNCs or without an external connection — a value that is ' +
-      'not measurable is not zero percent. Cohesion is deliberately THRESHOLD-FREE (CR-SM-223: a ' +
-      'measurement must not masquerade as a defect); judge it, do not gate on it. Sorted worst ' +
-      'cohesion first — the ranking IS the signal. CR-GC-329: the answer also carries the ' +
-      'JUDGING THRESHOLDS it was measured against — `policy` {instability, lcom4:{info,warning}} ' +
-      'plus `policySource` ("config" = graphcode.config.jsonc, "default" = the named contracts ' +
-      'DEFAULT_METRIC_POLICY). Draw the traffic light from THIS answer; a consumer that keeps a ' +
-      'target value of its own is a second source for the same number. `policy.instability: null` ' +
-      'means measure, do not judge: MT-01 never fires, the instability value is still in every ' +
-      'module row. CR-GC-451: `fit` carries the ℝ⁶ CURRENT-STATE vector on the architecture layer ' +
-      '(`metrics`, the same measurement graph_suggest ranks its Δm against) TOGETHER WITH the target ' +
-      'it is judged against (from .graphcode/target-profile.json, `target.source: \'none\'` when no ' +
-      'profile exists — never an invented zero vector). Same rule as policy/policySource: value and ' +
-      'target leave the host in ONE answer, a consumer that keeps a target of its own is a second ' +
-      'source for the same number. CR-GC-457: the target has TWO fields, and they are not ' +
-      'interchangeable. `target.weights` (−1…1) is the STEERING DIRECTION — L2-normalized, only its ' +
-      'direction reaches graph_suggest\'s ranking (CR-GC-353); it is NOT a value on the metric scale, ' +
-      'and rendering it next to `metrics` invites reading "raise (1.0)" beside a current 3.71 as ' +
-      '"lower to 1.0". `target.values` (0…5) is the GOAL on the SAME scale as `metrics` — that is the ' +
-      'number to draw a gap against; a dimension missing there has no goal, never an invented 2.5 ' +
-      'midpoint. `target.inconsistent` lists dimensions where sign(weight) and sign(value − metrics) ' +
-      'disagree (raise, but the goal sits below where we are). It is a WARNING, never a block: a ' +
-      'deliberate trade-off is legitimate, an invisible one is not. `layer: \'arch\'` is part of the ' +
-      'answer — this is NOT the global metrics(G); whoever compares must know against what. Read-only.',
+      'Which module is the coupling problem? One row per MOD — fan-in/out, instability, LCOM4, ' +
+      'cohesion — each next to the threshold it was judged against. Take it when graph_readiness says ' +
+      'a dimension is weak and you need to know WHICH module; a value without its threshold is not a ' +
+      'statement. `graph_help({id:"graph_metrics"})` explains the figures. Read-only.',
     inputSchema: GraphMetricsInputSchema,
     async handler(_input) {
       // CR-GC-329: Wert UND Schwelle aus EINER Antwort. Ein Konsument, der „71 % /

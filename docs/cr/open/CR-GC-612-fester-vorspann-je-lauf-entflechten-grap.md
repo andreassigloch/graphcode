@@ -7,8 +7,9 @@
 
 ---
 
-REIHENFOLGE: setzt auf die Ueberarbeitung von Regeln, Phasen und Action-Matrix auf (2026-09-23, parallele Sitzung).
-Vorher nicht anfangen — die Matrix entscheidet, welcher Ablauf in den Skill gehoert und was das Werkzeug selbst sagt.
+~~REIHENFOLGE: setzt auf die Ueberarbeitung von Regeln, Phasen und Action-Matrix auf.~~ **Freigegeben
+2026-09-22** (Auftraggeber): die Regel-/Phasen-/Action-Matrix ist mit CR-GC-616 durch —
+`docs/research/regel-matrix.{csv,md}` traegt jetzt auch Fix und Folge-Regeln.
 
 BESTANDSAUFNAHME (gemessen 2026-09-22 an Lauf gefuehrt-1 des Code-Tests und an den Spec-Laeufen 14/15):
 | Quelle | Zeichen | wann im Kontext |

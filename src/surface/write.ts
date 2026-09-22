@@ -361,17 +361,11 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
   > = {
     name: 'graph_mutate',
     description:
-      'Apply a batch of graph mutations through the Apply-Gate (L2). ' +
-      'Every write goes through harness.mutate() — identical semantics to in-process calls. ' +
-      'No direct Kuzu access; blocked by rules identical to any in-process mutation. ' +
-      'OCC (CR-GC-233): pass the graphVersion your last read returned as baseVersion — a stale ' +
-      'base is rejected (tier block) with the delta of applied batches since; re-read + retry. ' +
-      'Additive Batches bevorzugt als formatE-Block statt commands (~2–3× weniger Tokens); ' +
-      'dryRun:true liefert das volle Verdict ohne anzuwenden (auditiert als Preview); fitAdvisory nur mit Zielprofil (CR-GC-590). ' +
-      'commands-Minimalform (die vollständige Signaturliste aller sieben Operationen liefert ' +
-      'der SCHEMA-01-Fehlertext): ' +
-      '{"op":"add-node","node":{"uid":"REQ-x","type":"REQ","name":"…","description":"…"}} · ' +
-      '{"op":"add-edge","edge":{"sourceId":"TEST-x","targetId":"REQ-x","edgeType":"verify"}}.',
+      'The ONE write path: apply a batch through the Apply-Gate. Prefer a `formatE` block over ' +
+      '`commands` for additive batches (~2–3× fewer tokens); `dryRun:true` returns the full verdict ' +
+      'without applying. Pass the `graphVersion` of your last read as `baseVersion` — a stale base is ' +
+      'rejected with the delta since. The full command signatures come back in the SCHEMA-01 error ' +
+      'text, so they need not be carried here.',
     inputSchema: GraphMutateInputSchema,
     async handler(raw) {
       return serializeToolWrite(async () => {
@@ -520,15 +514,10 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
   > = {
     name: 'graph_realize',
     description:
-      'Flat realize affordance (CR-GC-216) — the write-twin of graph_context. Binds a FUNC to its code ' +
-      '(realRef, R-20), a SCHEMA to its Zod export (realRef, R-26/RC-03 — CR-211/228), and/or a TEST to its ' +
-      'test file (testRefs entry, R-19) in ONE call, through the same Apply-Gate as graph_mutate (no parallel write ' +
-      "path — it composes harness.mutate). Use instead of hand-building graph_mutate's nested update-node union " +
-      "for the 90% case 'I just realized FUNC/SCHEMA X'. Supply at least one of funcUid/schemaUid — or " +
-      'bindings[] to bind several FUNCs/SCHEMAs/TESTs in ONE gated batch (CR-GC-611: all-or-nothing, one audit entry). ' +
-      'Returns the DELTA — resolved/introduced plus openRefs as a count, not the model-wide list (CR-GC-611: that ' +
-      "list was 87% of the response; ask rules_get_violations or graph_context when you need it). " +
-      'Unknown funcUid/schemaUid/testUid → a clear error. OCC (CR-GC-233): optional baseVersion as in graph_mutate.',
+      'Bind a node to the code that realizes it — realRef on a FUNC, testRefs on a TEST — through the ' +
+      'gate. Take it when a file on disk now implements the node; the binding is what makes RC-* and ' +
+      'graph_tests able to judge at all. Returns the delta, not the node: several bindings in one ' +
+      'batch cost a fraction of one call each.',
     inputSchema: GraphRealizeInputSchema,
     async handler(input) {
       const nodes = harness.getGraph().nodes;
@@ -652,18 +641,10 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
   > = {
     name: 'graph_merge',
     description:
-      'Replay-based branch reintegration (CR-GC-234) — the semantic rebase that ends the manual ' +
-      "graph.json text-merge. Reads the BRANCH's durable command log (its worktree's " +
-      '.graphcode/audit.jsonl), takes the applied batches AFTER the fork point (sinceVersion, the ' +
-      'shared base graphVersion) and re-applies them in log order through the EXISTING Apply-Gate ' +
-      'onto the current base — every batch rule-validated, O3-serialized, no parallel write path. ' +
-      'Conflicts are GATE violations, not text conflicts: a batch that is illegal on the new base ' +
-      '(R-08 dangling after a foreign delete, R-18 illegal pair, delta errors) or would resurrect a ' +
-      'deleted node (update-node on a missing uid) is skipped + reported under conflicted[] with ' +
-      'violations + fixHint — machine-resolvable. Batches already contained in the base are skipped ' +
-      "as idempotent. dryRun:true = merge preview (full report, graph + log byte-identical). " +
-      'Workflow: gcw <branch> → work → graph_export + commit → on the target base: ' +
-      'graph_merge {log, sinceVersion} → graph_export.',
+      'Fold one node into another: the target ABSORBS the source, the source disappears, and every ' +
+      'edge is re-pointed. Take it to consolidate duplicates — a merge is the one move that REMOVES ' +
+      'structure, so it runs through the same Apply-Gate and the same OCC check as any write. Coupled ' +
+      'merges that the cardinality bounds require must ride in ONE batch.',
     inputSchema: GraphMergeInputSchema,
     async handler(input) {
       const logPath = isAbsolute(input.log) ? input.log : join(harness.getRepoRoot(), input.log);

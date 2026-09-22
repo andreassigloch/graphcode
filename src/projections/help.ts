@@ -27,11 +27,12 @@ import {
 } from '../kernel/measure/readiness.js';
 import { ARTIFACT_CATALOG } from './panels.js';
 import { HELP_CONTENT, HELP_VOCAB, HELP_PANEL_IDS, METRIC_HELP } from './help-content.js';
+import { TOOL_HELP } from './tool-help.js';
 
 /** A fully-assembled help item — all three layers + the derived skeleton. */
 export interface HelpEntry {
   id: string;
-  kind: 'rule' | 'gate' | 'panel' | 'artifact' | 'token' | 'metric';
+  kind: 'rule' | 'gate' | 'panel' | 'artifact' | 'token' | 'metric' | 'tool';
   /** Plain-language title — derived (rule/gate/artifact name) or the token. */
   title: string;
   /** The raw on-screen token, if different from the title (e.g. `R-04`, `CDR`). */
@@ -112,6 +113,11 @@ const isReadinessNumber = (id: string) => id === 'compliance' || id === 'totalEl
  */
 export function helpEntry(id: string): HelpEntry | undefined {
   const content = HELP_CONTENT[id];
+
+  // Werkzeug (CR-GC-612) — was es im Einzelnen bedeutet, auf Abruf. Die Beschreibung im Katalog
+  // sagt nur noch, WANN man es nimmt; sie steht in jeder Executor-Runde im Kontext, das hier nicht.
+  const tool = TOOL_HELP[id];
+  if (tool) return { id, kind: 'tool', title: id, token: id, plain: tool.plain, se: tool.se, source: 'authored' };
 
   // Rule — derived title/severity/owning-gate from the live registries.
   const rule = RULE_BY_ID.get(id);

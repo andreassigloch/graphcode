@@ -242,19 +242,25 @@ describe('TEST-rule-catalog-gap: die ungeladenen Regeln werden benannt (CR-GC-42
     expect(notInGate).toEqual(ruleCatalogs(harness).notInGate);
   });
 
-  it('die Beschreibung von rules_evaluate behauptet keine identische Grundgesamtheit mehr, wo keine ist', () => {
+  it('die Beschreibungen behaupten keine Vollstaendigkeit, die sie nicht haben (CR-GC-428/519, gekuerzt CR-GC-612)', () => {
+    /*
+     * CR-GC-612: die alte Fassung pruefte die Beschreibung von `rules_evaluate` WORTGLEICH — sie
+     * trug 2.500 Zeichen Regelsemantik (welcher Block aus welchem Katalog, welche Praefixe in
+     * `skipped` stehen), und diese Semantik steht jetzt in `graph_help`, wo sie auf Abruf geholt
+     * wird statt in jeder Executor-Runde mitzureisen.
+     *
+     * Was eine Beschreibung weiterhin schuldet, ist die WARNUNG vor der Fehllesung, nicht deren
+     * Herleitung: dass das Ergebnis ohne `skipped` eine Teilzahl ist. Genau das wird hier geprueft;
+     * die Herleitung prueft `graph_help` (tests/vorspann.test.ts).
+     */
     const description = tools.rules_evaluate.description;
+    expect(description).toMatch(/skipped/);
+    expect(description).toMatch(/partial figure as a complete one/i);
+    expect(description).toMatch(/notInGate/);
 
-    expect(description).toMatch(new RegExp(`NOT to graph_readiness\\.${DIMENSION_READINESS_NAME}`));
-    // Und sie sagt, was `skipped` auf der Regel-Ebene enthält — seit CR-GC-442 eine
-    // BQ-Regel, nicht mehr ND: ND wird ausgewertet und darf nicht als "ausgelassen"
-    // beschrieben werden.
-    expect(description).toContain(`"${SKIPPED_RULE_PREFIX}BQ-01"`);
-    expect(description).not.toContain(`"${SKIPPED_RULE_PREFIX}ND-01"`);
-    // CR-GC-519: rules_get_violations behauptet keine „two-level" Quellen-Liste mehr
-    // (das Quellen-Token ist seit CR-GC-489 weg) und benennt beide Lagen.
+    // CR-GC-519: keine „two-level"-Quellenliste mehr, und beide Lagen sind benannt.
     const flat = tools.rules_get_violations.description;
     expect(flat).not.toContain('two-level');
-    expect(flat).toContain('notInGate');
+    expect(flat).toMatch(/skipped/);
   });
 });

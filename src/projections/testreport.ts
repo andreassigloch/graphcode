@@ -78,16 +78,10 @@ export function bindTestReportTools(ctx: ToolPort): MCPToolRegistry {
   > = {
     name: 'graph_test_ingest',
     description:
-      'Write the outcome of a test RUN back onto the TEST nodes (CR-GC-327) — the return leg of ' +
-      'graph_tests. Takes a vitest `--reporter=json` document (`report`) or pre-parsed [{file,result}] ' +
-      '(`results`) and maps each file onto the TEST nodes whose `testRef.file` points at it — mapping ' +
-      'by binding, never by name guessing. A runner file that matches no testRef comes back as ' +
-      '`unresolved`, never silently dropped (same rule as graph_tests). Writes `result`/`ranAt` onto the ' +
-      '(passed|failed|skipped|pending) through the SAME Apply-Gate as graph_mutate: gated, audited, ' +
-      'no side channel. OVERWRITES: a new run replaces the previous result — the earlier one stays ' +
-      'readable through the history (audit trail / graph_timetravel), so the node carries no run stamp. ' +
-      'graphcode never EXECUTES anything; starting the run stays the caller\'s job. dryRun:true returns ' +
-      'the plan without writing.',
+      'Feed a test run back into the model: vitest `--reporter=json` (or pre-parsed [{file,result}]) is ' +
+      'matched to TEST nodes via testRef.file — never by name guessing — and written through the gate. ' +
+      'Take it after running tests, so `passed` stops being an assumption. A runner file with no ' +
+      'matching testRef comes back as `unresolved`, never silently dropped. `dryRun` shows the plan.',
     inputSchema: GraphTestIngestInputSchema,
     async handler(input) {
       const files: RunnerFileResult[] =
