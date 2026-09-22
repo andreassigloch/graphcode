@@ -30,7 +30,7 @@
  *
  * SCOPE, STATED PLAINLY (T-B1 follow-up): closing these four findings does NOT
  * move the gate POINTER, and this file does not pretend otherwise. `GATE_FIXTURE`
- * carries further open SRR rules (UC-03/UC-05/UC-06/FC-02/MS-01/…), so `SRR`
+ * carries further open SRR rules (UC-03/FC-02/MS-01/…), so `SRR`
  * stays current by definition of `currentPhaseGate`. What IS asserted on the real
  * graph is the coupling one level down — each gate's `missing` rule list shrinks
  * by exactly the rule that was repaired, and by nothing else. The ordered-ladder
@@ -209,7 +209,7 @@ describe('T-B4 (CR-GC-353): a phase-gate finding and a document gap are the same
     let seq = 1;
     for (const { ruleId, elementId } of GATE_FINDINGS) await repair(ruleId, elementId, seq++);
     // Still SRR — and that is the honest result, not a weakness of the repair:
-    // UC-03/UC-05/UC-06/FC-02/MS-01/… remain open at SRR, so the pointer must not
+    // UC-03/FC-02/MS-01/… remain open at SRR, so the pointer must not
     // move. A test that made it move here would be measuring its own fixture.
     check('after');
   });

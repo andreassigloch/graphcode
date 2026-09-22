@@ -154,7 +154,7 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
   it('SRR/PDR regel-vollständig, aber CDR/TRR offen → kein done; die Phasen bleiben Bericht (CR-GC-296/593)', () => {
     // SRR+PDR sind mit einer angereicherten, aber realen Struktur regel-vollständig
     // erreichbar (26/26 je Gate, geprüft): REQ-Text mit Verifizierbarkeits-Pattern
-    // (BQ-02/06/07), Prä-/Postcondition-REQs (UC-05/06), eine FCHAIN mit FUNC (R-15)
+    // (BQ-02/06/07), Prä-/Postcondition-REQs (Schreibregel, seit CR-SM-357 keine Regel), eine FCHAIN mit FUNC (R-15)
     // inkl. Actor-Ein-/Ausgang über FLOW (FC-04/R-10) und FUNC→MOD-Allokation
     // (R-22/R-23). CDR/TRR bleiben in DIESEM Fixture absichtlich ausgeklammert
     // (s. Test unten) — computePhaseReadiness/currentPhaseGate selbst werden pur
@@ -896,7 +896,7 @@ describe('CR-GC-563/605: Anweisung vor Fund — die Fundreihenfolge ist kein Alp
   it('das erste Fenster traegt eine Klausel-Regel, obwohl FC-02 alphabetisch vorne stuende', () => {
     const step = generationStep(lauf4, DEFAULT_METRIC_POLICY, undefined, FOCUS);
     expect(step.phase).toBe('expand');
-    // Klausel: UC-01, UC-02 · ohne: FC-02, R-15, R-16, UC-03 · info: UC-05, UC-06.
+    // Klausel: UC-01, UC-02 · ohne: FC-02, R-15, R-16, UC-03.
     // Alphabetisch gewaenne FC-02 — genau das ist in Rig-Lauf 4 passiert.
     expect(['UC-01', 'UC-02'], `erstes Fenster war ${regelVon(step.focusKey)}`).toContain(
       regelVon(step.focusKey),
@@ -930,7 +930,7 @@ describe('CR-GC-563/605: Anweisung vor Fund — die Fundreihenfolge ist kein Alp
     const step = generationStep(lauf4, DEFAULT_METRIC_POLICY, undefined, FOCUS);
     const regel = regelVon(step.focusKey);
     // Die Fund-Liste im Prompt nennt nur Funde dieser einen Regel.
-    const andere = ['FC-02', 'UC-01', 'UC-02', 'UC-03', 'UC-05', 'UC-06', 'R-15', 'R-16'].filter((r) => r !== regel);
+    const andere = ['FC-02', 'UC-01', 'UC-02', 'UC-03', 'R-15', 'R-16'].filter((r) => r !== regel);
     const genannt = andere.filter((r) => step.prompt.includes(`(${r}:`));
     expect(genannt, `regelfremde Funde im Fenster: ${genannt.join(', ')}`).toEqual([]);
   });
