@@ -1,6 +1,6 @@
 # CR-GC-551: `kinds` als Zeichenkette über den commands-Pfad
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-22)
 **Typ:** aus Item ITEM-2026-342 (bug)
 **Erstellt:** 2026-09-19
 **Item:** bok/items/ITEM-2026-342.json (Lane: code)
