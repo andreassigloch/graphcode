@@ -1875,6 +1875,12 @@
       "description": "docs/cr/open/CR-GC-610-code-test-leitlinie-satz-7-scheduler-sch.md"
     },
     {
+      "id": "CR-GC-611",
+      "type": "CR",
+      "name": "Antwort-Diaet: graph_realize liefert 2x die volle missingRefs-Liste (87% seiner Antwort), graph_mutate next+violations je ~40k Zeichen, authoring_guide 11x wiederholt",
+      "description": "docs/cr/open/CR-GC-611-antwort-diaet-graph-realize-liefert-2x-d.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -20406,5 +20412,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 367
+  "graphVersion": 368
 }

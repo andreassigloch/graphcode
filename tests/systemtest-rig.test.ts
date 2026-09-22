@@ -26,7 +26,8 @@ import { legality, binding, codeVerdict } from '../rig/greenfield-systemtest/met
 // @ts-expect-error — .mjs ohne Typen, wie die Nachbarn
 import { schattenBilanz, beruehrt, angewandteZuege, schattenBericht } from '../rig/greenfield-systemtest/schatten-suggest.mjs';
 // @ts-expect-error — s.o.
-import { codeKennzahlen } from '../rig/code-test/messen.mjs';
+import { codeKennzahlen, scheibenBindung } from '../rig/code-test/messen.mjs';
+import { ohneCodeBindung } from '../rig/code-test/run-code.mjs';
 
 let dir: string;
 const schreibe = (name: string, zeilen: unknown[]): string => {
@@ -534,6 +535,37 @@ describe('Code-Test: Kennzahlen am Quelltext, fuer beide Arme gleich (CR-GC-610)
     });
     expect(k).toMatchObject({ dateien: 3, module: 3, exporte: 3, importe: 2, importzyklen: 0 }); // Re-Export zaehlt als Abhaengigkeit
   });
+  it('misst die Bindung der beauftragten Scheibe, nicht des ganzen Modells (CR-GC-611)', () => {
+    const elements = [
+      { id: 'MOD-s', type: 'MOD' },
+      { id: 'FUNC-a', type: 'FUNC', attributes: { realRef: { file: 'src/a.ts', symbol: 'a' } } },
+      { id: 'FUNC-b', type: 'FUNC', attributes: {} },
+      { id: 'FUNC-c', type: 'FUNC', attributes: { concept: true } }, // bewusst offen — zaehlt nicht mit
+      { id: 'FUNC-fremd', type: 'FUNC', attributes: {} }, // anderes Modul
+    ];
+    const traces = [
+      { source: 'FUNC-a', target: 'MOD-s', type: 'allocate' },
+      { source: 'FUNC-b', target: 'MOD-s', type: 'allocate' },
+      { source: 'FUNC-c', target: 'MOD-s', type: 'allocate' },
+      { source: 'FUNC-fremd', target: 'MOD-x', type: 'allocate' },
+    ];
+    expect(scheibenBindung(elements, traces, 'MOD-s')).toEqual({ funcs: 2, gebunden: 1, pct: 50, offen: ['FUNC-b'] });
+  });
+
+  it('seedet das Golden ohne Code-Bindungen — sonst startet der Arm mit fremden RC-Verstoessen (CR-GC-611)', () => {
+    const golden = {
+      graphVersion: 1,
+      elements: [
+        { id: 'FUNC-a', type: 'FUNC', attributes: { realRef: { file: 'sigllm/src/a.ts', symbol: 'a' }, status: 'stamped' } },
+        { id: 'TEST-a', type: 'TEST', attributes: { testRefs: [{ file: 'sigllm/tests/a.test.ts', tool: 'vitest' }] } },
+        { id: 'REQ-a', type: 'REQ', attributes: { status: 'stamped' } },
+      ],
+    };
+    const roh = ohneCodeBindung(golden);
+    expect(roh.elements.map((e) => e.attributes)).toEqual([{ status: 'stamped' }, {}, { status: 'stamped' }]);
+    expect(golden.elements[0].attributes.realRef).toBeDefined(); // rein: das Original bleibt
+  });
+
   it('findet einen Importzyklus', () => {
     const k = codeKennzahlen({
       'a.ts': "import { b } from './b.js';\nexport const a = b;",

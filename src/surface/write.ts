@@ -203,32 +203,61 @@ function dropSilentAdvisories<T extends object>(result: T, hatZielprofil: boolea
   return out as T;
 }
 
+/**
+ * Eine Bindung (CR-GC-216) — FUNC→Code, SCHEMA→Zod-Export, TEST→Testdatei.
+ * CR-GC-611: derselbe Satz Felder flach am Aufruf (Kurzform fuer eine Bindung) und in `bindings`
+ * (mehrere Bindungen, EIN Gate-Batch). Die Kurzform wird normalisiert, es gibt nur einen Pfad.
+ */
+const RealizeBindingSchema = z.object({
+  funcUid: z.string().optional().describe('The FUNC node to realize — sets its realRef (R-20).'),
+  file: z.string().optional().describe('Implementation file path, e.g. src/x.ts (required with funcUid).'),
+  symbol: z.string().optional().describe('The exported symbol (function/class) that realizes the FUNC (required with funcUid).'),
+  lang: z.string().optional().describe('Language id (default ts).'),
+  // CR-211/228: bind a SCHEMA to its Zod export (realRef, R-26/RC-03) in the same call.
+  schemaUid: z.string().optional().describe('Optional SCHEMA node to bind — sets its realRef (R-26/RC-03).'),
+  schemaFile: z.string().optional().describe('File declaring the Zod schema (required when schemaUid is given).'),
+  schemaSymbol: z.string().optional().describe('The exported Zod schema symbol (required when schemaUid is given).'),
+  testUid: z.string().optional().describe('Optional TEST node to bind — adds an entry to its testRefs (R-19, 1:n).'),
+  testFile: z.string().optional().describe('Test file path (required when testUid is given).'),
+  testCase: z.string().optional().describe('Optional test case name.'),
+  tool: z.string().optional().describe('Test tool for the entry (default vitest).'),
+});
+
+export type RealizeBinding = z.infer<typeof RealizeBindingSchema>;
+
+/** Die Prueffolge je Bindung — dieselbe fuer die Kurzform und jeden Eintrag in `bindings`. */
+function bindingFehler(b: RealizeBinding, wo: string): string | undefined {
+  if (b.funcUid === undefined && b.schemaUid === undefined)
+    return `graph_realize: ${wo} supply at least one of funcUid or schemaUid.`;
+  if (b.funcUid !== undefined && (b.file === undefined || b.symbol === undefined))
+    return `graph_realize: ${wo} file and symbol are required with funcUid.`;
+  if (b.schemaUid !== undefined && (b.schemaFile === undefined || b.schemaSymbol === undefined))
+    return `graph_realize: ${wo} schemaFile and schemaSymbol are required with schemaUid.`;
+  if (b.testUid !== undefined && b.testFile === undefined)
+    return `graph_realize: ${wo} testFile is required when testUid is given.`;
+  return undefined;
+}
+
 /** Flat realize affordance (CR-GC-216) — the write-twin of graph_context, no nested union. */
-const GraphRealizeInputSchema = z
-  .object({
-    funcUid: z.string().optional().describe('The FUNC node to realize — sets its realRef (R-20).'),
-    file: z.string().optional().describe('Implementation file path, e.g. src/x.ts (required with funcUid).'),
-    symbol: z.string().optional().describe('The exported symbol (function/class) that realizes the FUNC (required with funcUid).'),
-    lang: z.string().optional().describe('Language id (default ts).'),
-    // CR-211/228: bind a SCHEMA to its Zod export (realRef, R-26/RC-03) in the same call.
-    schemaUid: z.string().optional().describe('Optional SCHEMA node to bind — sets its realRef (R-26/RC-03).'),
-    schemaFile: z.string().optional().describe('File declaring the Zod schema (required when schemaUid is given).'),
-    schemaSymbol: z.string().optional().describe('The exported Zod schema symbol (required when schemaUid is given).'),
-    testUid: z.string().optional().describe('Optional TEST node to bind — adds an entry to its testRefs (R-19, 1:n).'),
-    testFile: z.string().optional().describe('Test file path (required when testUid is given).'),
-    testCase: z.string().optional().describe('Optional test case name.'),
-    tool: z.string().optional().describe('Test tool for the entry (default vitest).'),
-    consumerId: z.string().default('mcp-client'),
-    baseVersion: baseVersionField,
+const GraphRealizeInputSchema = RealizeBindingSchema.extend({
+  // CR-GC-611: mehrere Bindungen in EINEM Gate-Batch — 15 Aufrufe im Code-Test waren 15-mal
+  // dieselbe FUNC-Bindung mit je einer weiteren Testzeile.
+  bindings: z
+    .array(RealizeBindingSchema)
+    .optional()
+    .describe('Several bindings in ONE gated batch (CR-GC-611). Alternative to the flat fields; one audit entry, all-or-nothing.'),
+  consumerId: z.string().default('mcp-client'),
+  baseVersion: baseVersionField,
+})
+  .refine((i) => (i.bindings === undefined) !== (i.funcUid === undefined && i.schemaUid === undefined), {
+    message: 'graph_realize: either the flat fields (one binding) or bindings[] — not both, not neither.',
   })
-  .refine((i) => i.funcUid !== undefined || i.schemaUid !== undefined, {
-    message: 'graph_realize: supply at least one of funcUid or schemaUid.',
-  })
-  .refine((i) => i.funcUid === undefined || (i.file !== undefined && i.symbol !== undefined), {
-    message: 'graph_realize: file and symbol are required with funcUid.',
-  })
-  .refine((i) => i.schemaUid === undefined || (i.schemaFile !== undefined && i.schemaSymbol !== undefined), {
-    message: 'graph_realize: schemaFile and schemaSymbol are required with schemaUid.',
+  .refine((i) => i.bindings === undefined || i.bindings.length > 0, { message: 'graph_realize: bindings[] must not be empty.' })
+  .superRefine((i, ctx) => {
+    for (const [n, b] of (i.bindings ?? [i as RealizeBinding]).entries()) {
+      const fehler = bindingFehler(b, i.bindings ? `bindings[${n}]:` : '');
+      if (fehler) ctx.addIssue({ code: 'custom', message: fehler });
+    }
   });
 
 /** Replay-based branch reintegration (CR-GC-234) — the semantic rebase. */
@@ -477,9 +506,12 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
       success: boolean;
       tier: MutateResult['tier'];
       violations: RuleViolation[];
-      missingRefsBefore: string[];
-      missingRefsAfter: string[];
+      /** Welche fehlenden Code-Verweise diese Bindung geschlossen hat (CR-GC-611). */
       resolved: string[];
+      /** Welche sie aufgerissen hat — normalerweise leer. */
+      introduced: string[];
+      /** Wie viele Verweise im Modell noch offen sind — die Zahl, nicht die Liste. */
+      openRefs: number;
       graphVersion: number;
       occWarning?: string;
       stale?: boolean;
@@ -492,67 +524,81 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
       '(realRef, R-20), a SCHEMA to its Zod export (realRef, R-26/RC-03 — CR-211/228), and/or a TEST to its ' +
       'test file (testRefs entry, R-19) in ONE call, through the same Apply-Gate as graph_mutate (no parallel write ' +
       "path — it composes harness.mutate). Use instead of hand-building graph_mutate's nested update-node union " +
-      "for the 90% case 'I just realized FUNC/SCHEMA X'. Supply at least one of funcUid/schemaUid. " +
-      'Returns the missingRefs delta (before/after + resolved) so the realization is confirmed, not blind. ' +
+      "for the 90% case 'I just realized FUNC/SCHEMA X'. Supply at least one of funcUid/schemaUid — or " +
+      'bindings[] to bind several FUNCs/SCHEMAs/TESTs in ONE gated batch (CR-GC-611: all-or-nothing, one audit entry). ' +
+      'Returns the DELTA — resolved/introduced plus openRefs as a count, not the model-wide list (CR-GC-611: that ' +
+      "list was 87% of the response; ask rules_get_violations or graph_context when you need it). " +
       'Unknown funcUid/schemaUid/testUid → a clear error. OCC (CR-GC-233): optional baseVersion as in graph_mutate.',
     inputSchema: GraphRealizeInputSchema,
     async handler(input) {
       const nodes = harness.getGraph().nodes;
+      // CR-GC-611: Kurzform und bindings[] laufen durch denselben Kommandobau — ein Pfad.
+      // Beides zugleich waere zweideutig; das Schema lehnt es ab, der Handler ebenso (MCP-Clients
+      // parsen ueber das Schema, In-Process-Aufrufer wie der Executor rufen den Handler direkt).
+      if (input.bindings && (input.funcUid || input.schemaUid || input.testUid)) {
+        throw new Error('graph_realize: either the flat fields (one binding) or bindings[] — not both.');
+      }
+      const bindungen: RealizeBinding[] = input.bindings ?? [input];
       const commands: MutateCommand[] = [];
 
-      if (input.funcUid) {
-        const fn = nodes.find((n) => n.uid === input.funcUid);
-        if (!fn) throw new Error(`graph_realize: unknown funcUid '${input.funcUid}'.`);
-        commands.push({
-          op: 'update-node',
-          node: {
-            uid: input.funcUid,
-            type: fn.type,
-            attributes: { realRef: { file: input.file!, symbol: input.symbol!, ...(input.lang ? { lang: input.lang } : {}) } },
-          },
-        });
-      }
+      for (const [n, b] of bindungen.entries()) {
+        const wo = input.bindings ? `bindings[${n}]: ` : '';
+        const fehler = bindingFehler(b, wo.trim());
+        if (fehler) throw new Error(fehler);
 
-      // CR-211/228: SCHEMA realRef binding — same update-node/apply-gate path as FUNC realRef.
-      if (input.schemaUid) {
-        const sc = nodes.find((n) => n.uid === input.schemaUid);
-        if (!sc) throw new Error(`graph_realize: unknown schemaUid '${input.schemaUid}'.`);
-        commands.push({
-          op: 'update-node',
-          node: {
-            uid: input.schemaUid,
-            type: sc.type,
-            attributes: { realRef: { file: input.schemaFile!, symbol: input.schemaSymbol!, ...(input.lang ? { lang: input.lang } : {}) } },
-          },
-        });
-      }
+        if (b.funcUid) {
+          const fn = nodes.find((x) => x.uid === b.funcUid);
+          if (!fn) throw new Error(`graph_realize: ${wo}unknown funcUid '${b.funcUid}'.`);
+          commands.push({
+            op: 'update-node',
+            node: {
+              uid: b.funcUid,
+              type: fn.type,
+              attributes: { realRef: { file: b.file!, symbol: b.symbol!, ...(b.lang ? { lang: b.lang } : {}) } },
+            },
+          });
+        }
 
-      if (!input.funcUid && !input.schemaUid) {
-        throw new Error('graph_realize: supply at least one of funcUid or schemaUid.');
-      }
+        // CR-211/228: SCHEMA realRef binding — same update-node/apply-gate path as FUNC realRef.
+        if (b.schemaUid) {
+          const sc = nodes.find((x) => x.uid === b.schemaUid);
+          if (!sc) throw new Error(`graph_realize: ${wo}unknown schemaUid '${b.schemaUid}'.`);
+          commands.push({
+            op: 'update-node',
+            node: {
+              uid: b.schemaUid,
+              type: sc.type,
+              attributes: { realRef: { file: b.schemaFile!, symbol: b.schemaSymbol!, ...(b.lang ? { lang: b.lang } : {}) } },
+            },
+          });
+        }
 
-      if (input.testUid) {
-        if (!input.testFile) throw new Error('graph_realize: testFile is required when testUid is given.');
-        const test = nodes.find((n) => n.uid === input.testUid);
-        if (!test) throw new Error(`graph_realize: unknown testUid '${input.testUid}'.`);
-        // CR-GC-338: ERGAENZEN, nicht ersetzen. Seit CR-SM-231 ist die Bindung 1:n — eine
-        // Abnahme aus Unit- und Visual-Lauf verlaere sonst bei jedem Realize die andere
-        // Haelfte. Dieselbe Datei zweimal zu binden ist Redundanz, kein zweiter Eintrag.
-        const existing = TestRefsSchema.safeParse(test.attributes?.testRefs);
-        const kept = existing.success ? existing.data.filter((r) => r.file !== input.testFile) : [];
-        const added = {
-          file: input.testFile,
-          tool: input.tool ?? 'vitest',
-          ...(input.testCase ? { case: input.testCase } : {}),
-        };
-        commands.push({
-          op: 'update-node',
-          node: {
-            uid: input.testUid,
-            type: test.type,
-            attributes: { testRefs: [...kept, added] },
-          },
-        });
+        if (b.testUid) {
+          const test = nodes.find((x) => x.uid === b.testUid);
+          if (!test) throw new Error(`graph_realize: ${wo}unknown testUid '${b.testUid}'.`);
+          // CR-GC-338: ERGAENZEN, nicht ersetzen. Seit CR-SM-231 ist die Bindung 1:n — eine
+          // Abnahme aus Unit- und Visual-Lauf verlaere sonst bei jedem Realize die andere
+          // Haelfte. Dieselbe Datei zweimal zu binden ist Redundanz, kein zweiter Eintrag.
+          // CR-GC-611: im Batch zaehlt auch, was eine fruehere Bindung DESSELBEN Aufrufs
+          // schon anhaengte — sonst frisst die letzte Testzeile ihre Vorgaengerinnen.
+          const vorher = commands.find((c) => c.op === 'update-node' && c.node.uid === b.testUid);
+          const ausBatch = vorher && TestRefsSchema.safeParse((vorher as { node: { attributes?: { testRefs?: unknown } } }).node.attributes?.testRefs);
+          const existing = ausBatch && ausBatch.success ? ausBatch : TestRefsSchema.safeParse(test.attributes?.testRefs);
+          const kept = existing && existing.success ? existing.data.filter((r) => r.file !== b.testFile || r.case !== b.testCase) : [];
+          const added = {
+            file: b.testFile!,
+            tool: b.tool ?? 'vitest',
+            ...(b.testCase ? { case: b.testCase } : {}),
+          };
+          commands.push({
+            op: 'update-node',
+            node: {
+              uid: b.testUid,
+              type: test.type,
+              attributes: { testRefs: [...kept, added] },
+            },
+          });
+        }
       }
 
       return serializeToolWrite(async () => {
@@ -564,9 +610,9 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
             success: false,
             tier: stale.tier,
             violations: stale.violations,
-            missingRefsBefore: [...before],
-            missingRefsAfter: [...before],
             resolved: [],
+            introduced: [],
+            openRefs: before.size,
             graphVersion: stale.graphVersion,
             stale: true,
             staleDelta: stale.staleDelta,
@@ -582,13 +628,17 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
           editSource: 'authored',
         });
         const after = missingRefIds(afterAll);
+        // CR-GC-611: das Delta ist die Aussage. Die beiden vollen Listen waren 87 % der
+        // Antwort und sagten bei JEDER Bindung dasselbe ueber das ganze Modell; der Autor
+        // braucht sie nicht zum Weiterarbeiten, und wer sie doch will, fragt
+        // rules_get_violations. Der Audit-Trail oben traegt weiterhin die volle Fassung.
         return {
           success: result.success,
           tier: result.tier,
           violations: result.violations,
-          missingRefsBefore: [...before],
-          missingRefsAfter: [...after],
           resolved: [...before].filter((id) => !after.has(id)),
+          introduced: [...after].filter((id) => !before.has(id)),
+          openRefs: after.size,
           graphVersion: graphVersion(),
           ...(input.baseVersion === undefined ? { occWarning: OCC_WARNING } : {}),
         };

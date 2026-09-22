@@ -68,6 +68,24 @@ function paket(dir) {
   execFileSync('npm', ['install', '--no-audit', '--no-fund', '--loglevel=error'], { cwd: dir, stdio: 'pipe' });
 }
 
+/**
+ * Rein: das Golden OHNE Code-Bindungen (CR-GC-611/610). Das sigllm-Golden traegt realRef/testRefs auf
+ * sigllm-Dateien, die es hier nicht gibt. `graphcode init` materialisiert dafuer Platzhalter — und der
+ * Arm startet mit 43 RC-Verstoessen, die nicht seine sind, baut auf Platzhalter-Vertraege und laeuft
+ * ihretwegen Umwege (Lauf 0: zod nur wegen der Platzhalter). Die Scheibe soll vom Modell aus gebaut
+ * werden, nicht von fremdem Code aus: Vorwaertsrichtung, kein Import.
+ */
+export function ohneCodeBindung(golden) {
+  return {
+    ...golden,
+    elements: golden.elements.map((e) => {
+      if (!e.attributes?.realRef && !e.attributes?.testRefs) return e;
+      const { realRef, testRefs, ...rest } = e.attributes;
+      return { ...e, attributes: rest };
+    }),
+  };
+}
+
 /** Das Golden ist die SSOT des Arbeitsbereichs (docs/graph/<name>.graph.json) — in den Store per graph_reseed. */
 const SEED = `
 const [dir] = process.argv.slice(1);
@@ -97,7 +115,7 @@ export function aufbau(arm, dir) {
     mcp.mcpServers.graphcode.args = [join(GC_ROOT, 'dist', 'cli.js'), 'mcp'];
     writeFileSync(mcpPath, JSON.stringify(mcp, null, 2));
     mkdirSync(join(dir, 'docs', 'graph'), { recursive: true });
-    copyFileSync(GOLDEN, join(dir, 'docs', 'graph', `${dir.split('/').pop()}.graph.json`));
+    writeFileSync(join(dir, 'docs', 'graph', `${dir.split('/').pop()}.graph.json`), JSON.stringify(ohneCodeBindung(JSON.parse(readFileSync(GOLDEN, 'utf8'))), null, 2));
     const seeded = execFileSync('node', ['--input-type=module', '-e', SEED, dir], { encoding: 'utf8' });
     process.stderr.write(`  Golden im Store: ${seeded}\n`);
   }
