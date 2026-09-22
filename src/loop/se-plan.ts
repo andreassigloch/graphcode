@@ -19,6 +19,23 @@
  */
 import type { Graph, GraphEdge } from '@sigloch/graph-api-core';
 
+/**
+ * Die REQ-Deckung des Plans (CR-GC-550) — die Zahl, die der Plan ueber sich selbst schuldet.
+ *
+ * `leaf` ist die Grundgesamtheit: jedes REQ ohne `compose`→REQ-Kind, dieselbe wie bei RD-01 und
+ * CR-SM-343 (ein Elter wird ueber seine Kinder gedeckt). `covered` sind die, die einen Bauauftrag
+ * haben, `uncovered` der Rest — und `uncovered` ist die eigentliche Aussage: **ist sie nicht leer,
+ * ist der Plan nicht fertig.**
+ */
+export interface ReqCoverage {
+  /** Alle Blatt-REQ des Graphen, uid-sortiert. */
+  leaf: string[];
+  /** Die davon beauftragten. */
+  covered: string[];
+  /** Die ohne Bauauftrag — nicht leer heisst: der Plan ist nicht fertig. */
+  uncovered: string[];
+}
+
 export interface ImplPlanResult {
   /** Topo-sorted uids — every `depends-on` respected (prerequisite before dependent). */
   order: string[];
@@ -29,6 +46,8 @@ export interface ImplPlanResult {
    * (the forward-dependency anomaly: building in id-order would violate the dependency).
    */
   forwardViolations: Array<{ from: string; to: string }>;
+  /** Welche Blatt-REQ einen Bauauftrag haben — die Vollstaendigkeitsaussage des Plans (CR-GC-550). */
+  reqCoverage: ReqCoverage;
 }
 
 const DEPENDS_ON = 'depends-on';
@@ -45,6 +64,69 @@ function isDependsOn(e: GraphEdge): boolean {
 function idNum(uid: string): number | null {
   const m = uid.match(/(\d+)(?!.*\d)/);
   return m ? Number(m[1]) : null;
+}
+
+
+/**
+ * CR-GC-550 — die Deckung zaehlt ueber REQ, nicht ueber FUNC-Blaetter.
+ *
+ * Der Befund, aus dem dieser Code kommt (Fremdlauf sigllm, 17./18.09.): `se-plan` leitete 22
+ * Bauauftraege aus 20 FUNC-Blaettern ab und meldete "20 von 20 geordnet, keine Zyklen" — eine
+ * Vollstaendigkeitsaussage ueber die Menge, die er sich selbst gewaehlt hatte. Im selben
+ * Graphstand hatten 40 von 64 Blatt-REQ einen Bauauftrag; die uebrigen 24 milderten alle 16
+ * offenen FM-03-Risiken. Die Sortierung war korrekt. Falsch war die GRUNDMENGE.
+ *
+ * Die Deckungsdefinition ist woertlich die von CR-SM-343 — ein Blatt-REQ ist beauftragt, wenn
+ *   (a) ein CR eine `relation` DIREKT darauf traegt, oder
+ *   (b) ein CR eine `relation` auf ein FUNC oder FCHAIN traegt, das dieses REQ `satisfy`t.
+ *
+ * **MOD und SYS zaehlen nicht**, und das ist die tragende Entscheidung, nicht ein Detail: rechnet
+ * man sie mit, liest dieselbe Stelle am selben Graphstand 55 von 64 statt 40 von 64 und sieht
+ * gesund aus, waehrend 24 REQ keinen Auftrag haben. Ein Modul ist ein Behaelter; dass ein CR es
+ * beruehrt, sagt nichts ueber die Anforderung, die daran haengt. Die Konvention, die daraus folgt:
+ * ein Bauauftrag fuer ein REQ an einem MOD- oder SYS-Traeger traegt seine `relation` DIREKT auf
+ * das REQ.
+ *
+ * Weicht diese Rechnung von der Regel in contracts ab, ist die Zahl wieder zwei Wahrheiten.
+ */
+function computeReqCoverage(graph: Pick<Graph, 'nodes' | 'edges'>): ReqCoverage {
+  const typeOf = new Map(graph.nodes.map((n) => [n.uid, n.type]));
+
+  // Grundgesamtheit: Blatt-REQ. Ein REQ mit compose→REQ-Kindern wird ueber die Kinder gedeckt.
+  const hatReqKind = new Set<string>();
+  for (const e of graph.edges) {
+    if (e.edgeType === 'compose' && typeOf.get(e.sourceId) === 'REQ' && typeOf.get(e.targetId) === 'REQ') {
+      hatReqKind.add(e.sourceId);
+    }
+  }
+  const leaf = graph.nodes
+    .filter((n) => n.type === 'REQ' && !hatReqKind.has(n.uid))
+    .map((n) => n.uid)
+    .sort();
+
+  // Was ein CR beruehrt. `depends-on` ist eine REIHENFOLGE-Kante, kein Umfang — sonst zaehlte
+  // eine CR→CR-Abhaengigkeit als Bauauftrag fuer alles, was am anderen CR haengt.
+  const beauftragt = new Set<string>();
+  for (const e of graph.edges) {
+    if (e.edgeType !== 'relation' || isDependsOn(e)) continue;
+    if (typeOf.get(e.sourceId) === 'CR') beauftragt.add(e.targetId);
+  }
+
+  const gedeckt = new Set<string>(leaf.filter((uid) => beauftragt.has(uid))); // (a) direkt
+  for (const e of graph.edges) {
+    // (b) ueber den Traeger — und NUR ueber FUNC/FCHAIN.
+    if (e.edgeType !== 'satisfy') continue;
+    const traegerTyp = typeOf.get(e.sourceId);
+    if (traegerTyp !== 'FUNC' && traegerTyp !== 'FCHAIN') continue;
+    if (!beauftragt.has(e.sourceId)) continue;
+    if (typeOf.get(e.targetId) === 'REQ') gedeckt.add(e.targetId);
+  }
+
+  return {
+    leaf,
+    covered: leaf.filter((uid) => gedeckt.has(uid)),
+    uncovered: leaf.filter((uid) => !gedeckt.has(uid)),
+  };
 }
 
 /**
@@ -104,5 +186,5 @@ export function deriveImplPlan(graph: Pick<Graph, 'nodes' | 'edges'>): ImplPlanR
     .map((e) => ({ from: e.sourceId, to: e.targetId }))
     .sort((x, y) => x.from.localeCompare(y.from) || x.to.localeCompare(y.to));
 
-  return { order, cycles, forwardViolations };
+  return { order, cycles, forwardViolations, reqCoverage: computeReqCoverage(graph) };
 }
