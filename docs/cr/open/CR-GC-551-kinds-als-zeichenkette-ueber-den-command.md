@@ -61,13 +61,18 @@ Keine Leser-Toleranz anfassen: die bleibt für Bestandsgraphen.
 
 ## 4. Nachweis
 
-- [ ] **Rot zuerst:** die beiden Zeichenketten-Fälle müssen fehlschlagen, bevor der Fix greift —
-      die Reproduktion oben ist genau dieser Test.
-- [ ] Gegenprobe: `['functional']` bleibt unverändert, nicht doppelt normalisiert.
-- [ ] `npm test` grün.
-- [ ] Bestand messen: wie viele REQ tragen in den neun Familiengraphen heute den String? Die Zahl
-      gehört in den Abschluss, denn sie entscheidet, ob eine Migration nötig ist oder die
-      Leser-Toleranz reicht.
+- [x] **Rot zuerst:** 3 von 5 Faellen rot vor dem Fix — die einzelne Zeichenkette, die
+      kommagetrennte und `update-node`. Die beiden Gegenproben waren von Anfang an gruen, wie sie
+      sollen.
+- [x] Gegenprobe: `['functional']` bleibt unveraendert, `undefined` bleibt `undefined` (eine leere
+      Liste waere eine andere Aussage als "nicht gesetzt").
+- [x] Suite gruen (ausser den zwei erwarteten Link-Modus-Roten, s. CLAUDE.local.md).
+- [x] **Bestand gemessen 2026-09-22 ueber die committeten Exporte der Familie: 20 von 926 REQ
+      tragen den String** — 19 in graphify, 1 in graph-view-edit, 0 in den uebrigen zehn. Die 49
+      aus dem Lauf vom 2026-09-19 stehen NICHT mehr im sigllm-Export (81 REQ, alle mit `kinds`,
+      keiner als String) — dort hat ein spaeterer Schreibzug sie eingeebnet. **Keine Migration:**
+      20 Elemente deckt die Leser-Toleranz, und der naechste Schreibzug ueber den reparierten Pfad
+      normalisiert sie ohnehin. Ein Migrationslauf waere mehr Risiko als Nutzen.
 
 ## 5. Abgrenzung
 

@@ -11,6 +11,7 @@
  */
 import type { Graph, GraphNode, GraphEdge } from '@sigloch/graph-api-core';
 import { updateEdge, mergeNodes } from '@sigloch/graph-api-core';
+import { normalizeReqKinds } from '@sigloch/contracts/se';
 import type { MutateCommand } from '@sigloch/contracts/harness';
 import type { GraphDelta } from './graph-store.js';
 
@@ -46,6 +47,26 @@ function canonical(v: unknown): string {
   );
 }
 
+/**
+ * CR-GC-551 — `kinds` wird beim SCHREIBEN zur Liste, nicht erst beim Lesen.
+ *
+ * `normalizeReqKinds` lief auf dem Schreibpfad nur in `GraphService` (`graph-api-core`,
+ * CR-195d), und graphcodes Apply-Pfad geht dort nicht durch: hier wurde `attributes` roh
+ * gemischt und persistiert, was kam. Gemessen am Lauf vom 2026-09-19 trugen 49 von 49
+ * autorierten REQ ihre `kinds` als Zeichenkette — bei null Gate-Ablehnungen, weil die LESER
+ * normalisieren und das Urteil damit richtig blieb. Ein Persistenz-, kein Urteilsdefekt: still
+ * verloren gingen die Sichten, die auf Listen-Mitgliedschaft filtern (NFR-Register, ConOps),
+ * und die `kinds`-Kandidaten von R-02.
+ *
+ * Genau EINE Stelle, am Produzenten, fuer `add-node` UND `update-node` — beide laufen durch
+ * diesen Merge. Die Leser-Toleranz bleibt unangetastet: Bestandsgraphen tragen den String noch.
+ * `undefined` bleibt `undefined` — eine leere Liste ist eine andere Aussage als "nicht gesetzt".
+ */
+function normalisiereAttribute(attrs: Record<string, unknown>): Record<string, unknown> {
+  if (attrs.kinds === undefined) return attrs;
+  return { ...attrs, kinds: normalizeReqKinds(attrs.kinds) };
+}
+
 /** Apply commands to `candidate`; return the resulting graph and the persistence delta. */
 export function applyCommands(candidate: Graph, commands: MutateCommand[]): { graph: Graph; delta: GraphDelta } {
   let graph = candidate;
@@ -61,7 +82,7 @@ export function applyCommands(candidate: Graph, commands: MutateCommand[]): { gr
           type: cmd.node.type ?? base?.type ?? 'REQ',
           name: cmd.node.name ?? base?.name ?? cmd.node.uid,
           description: cmd.node.description ?? base?.description ?? '',
-          attributes: { ...(base?.attributes ?? {}), ...(cmd.node.attributes ?? {}) },
+          attributes: normalisiereAttribute({ ...(base?.attributes ?? {}), ...(cmd.node.attributes ?? {}) }),
         };
         // CR-GC-524: an upsert that leaves the node as it was is not a mutation —
         // it must not reach the delta, or the gate reports progress where none is.
