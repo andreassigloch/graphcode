@@ -71,6 +71,6 @@ export function nextStepAfterApply(
   // CR-GC-596: dieselbe Abbruchregel wie graph_generate — ein Gedaechtnis je Sitzung.
   const profile = loadTargetProfile(repoRoot);
   return compactStep(
-    stepWithMemory(memory, version, (defer) => generationStep(graph, policy, undefined, threshold, defer, 'host', profile, memory.task)),
+    stepWithMemory(memory, version, (defer, optimum) => generationStep(graph, policy, undefined, threshold, defer, 'host', profile, memory.task, optimum)),
   );
 }

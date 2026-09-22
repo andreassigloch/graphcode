@@ -37,7 +37,7 @@ import type { MutateCommand } from '@sigloch/contracts/harness';
 import { suggestEdits, type Suggestion, type SuggestedEdit } from '@sigloch/se-engine';
 import { toOntologyGraph } from '../kernel/conformance.js';
 import { generationStep, type GenerationStep } from './generate.js';
-import { focusMemoryOf, stepWithMemory } from './stagnation.js';
+import { focusMemoryOf, stepWithMemory, type SteerOptimum } from './stagnation.js';
 import { RULE_TASKS } from '@sigloch/contracts/se';
 import {
   loadTargetProfile,
@@ -376,8 +376,8 @@ export function bindSuggestTools(ctx: ToolPort): MCPToolRegistry {
       }
       // CR-GC-601: der Task der Sitzung — ohne `task` zurueck in den Kern.
       const task = input.task ?? 'kern';
-      const compute = (defer: string[]) =>
-        generationStep(harness.getGraph(), harness.getMetricPolicy(), input.intent, input.threshold ?? harness.getFocusThreshold(), defer, input.selection, profile, task);
+      const compute = (defer: string[], optimum: SteerOptimum | null = null) =>
+        generationStep(harness.getGraph(), harness.getMetricPolicy(), input.intent, input.threshold ?? harness.getFocusThreshold(), defer, input.selection, profile, task, optimum);
       // CR-GC-596: fuer den Host fuehrt die Maschine das Gedaechtnis (zweimal gleicher Fokus nach
       // einem Zug → zurueckstellen). Der Treiber (Executor) zaehlt vorerst selbst — ITEM-2026-449.
       if (input.selection === 'driver') return compute(input.defer ?? []);

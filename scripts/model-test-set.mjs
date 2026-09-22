@@ -128,6 +128,8 @@ export const EXCLUDED = {
     'Eigentuemer-Spalte (contracts). Liest weder graphcodes Modell noch dessen SSOT; der Treffer ist\n' +
     'der Regelkatalog. Eine Modellaenderung kann ihn nicht rot machen; eine neue Regel-ID im Skill\n' +
     'oder eine Klausel an einer Task-Regel sehr wohl.',
+  'tests/steer-optimum.test.ts':
+    'CR-GC-608: liest den sigllm-Golden als Eingabe fuer das Fertig-Kriterium der Steuerregeln — Maschinen-Test, kein Modell-TEST',
   'tests/generate.task.test.ts':
     'Task-Modus der Zustandsmaschine (CR-GC-601). Der Treffer ist das GOLDEN EINES RIG-KORPUS, nie\n' +
     'graphcodes eigene SSOT. Eine Aenderung an graphcodes Modell kann ihn nicht rot machen; eine an\n' +
