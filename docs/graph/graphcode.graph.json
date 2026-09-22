@@ -2040,63 +2040,151 @@
       "type": "FLOW",
       "name": "Kanal: Dimensions-Vorlage",
       "description": "Rang 6 — der Vorschlagstext je Readiness-Dimension, wenn keine Regel-Klausel das Fenster stellt. Verliert seit CR-GC-564 jeden Konflikt gegen die Klausel; demoviert, nicht gestrichen (CR-GC-575).",
-      "channelRank": "proposal"
+      "channelRank": "proposal",
+      "zeitpunkt": "prompt",
+      "treiber": "beide"
+    },
+    {
+      "id": "FLOW-channel-fit-advisory",
+      "type": "FLOW",
+      "name": "Kanal: Fit-Advisory (R6)",
+      "description": "Rang 6, probe — Richtung im Metrikraum, nur mit Zielprofil (CR-GC-590): ohne Ziel ist eine Regression keine Aussage. Rankt seit CR-GC-483 nicht mehr; der Bericht in Runde 7 zeigte, dass der Host trotzdem danach entschied.",
+      "channelRank": "proposal",
+      "zeitpunkt": "probe",
+      "treiber": "host",
+      "concept": true
     },
     {
       "id": "FLOW-channel-gate-protocol",
       "type": "FLOW",
       "name": "Kanal: Gate-Protokoll",
       "description": "Die Verfahrensanweisung der Runde: Grammatik holen, Alternativen proben oder EINEN Batch emittieren, den naechsten Schritt anfordern. Zwei Fassungen, je nachdem ob der Host oder der Treiber die Auswahl faehrt. Rang: Anleitung — sie sagt, wie man vorgeht, nicht was in dieser Runde zu tun ist.",
-      "channelRank": "guidance"
+      "channelRank": "guidance",
+      "zeitpunkt": "prompt",
+      "treiber": "beide"
+    },
+    {
+      "id": "FLOW-channel-gate-verdict",
+      "type": "FLOW",
+      "name": "Kanal: Gate-Verdict",
+      "description": "Rang 1, antwort — die gefaltete Befundliste des Gates (CR-GC-570) an den Host: was den Batch verhindert hat oder als Warnung mitgeht. Auf der Probe vor dem Anwenden, auf der Anwendung danach; der Knoten traegt den Fall, der die Reparatur ausloest.",
+      "channelRank": "gate-truth",
+      "zeitpunkt": "antwort",
+      "treiber": "host",
+      "concept": true
     },
     {
       "id": "FLOW-channel-grammar",
       "type": "FLOW",
       "name": "Kanal: Kanten-Grammatik",
       "description": "Rang 3 — was legal ist. Der Guide-Ausschnitt der Fokus-Typen dieser Runde, eingebettet statt erfragt.",
-      "channelRank": "grammar"
+      "channelRank": "grammar",
+      "zeitpunkt": "prompt",
+      "treiber": "executor"
+    },
+    {
+      "id": "FLOW-channel-guardrails",
+      "type": "FLOW",
+      "name": "Kanal: GRAPHCODE.md",
+      "description": "Rang 5, prompt — die vom Scaffold geschriebene Anleitung an den Agenten: Graph statt grep, Schreibregeln, Skills, offene Punkte als Annahme (CR-GC-592). Einmal am Laufanfang gelesen (5/5 Laeufe), danach nur noch im Kontext.",
+      "channelRank": "guidance",
+      "zeitpunkt": "prompt",
+      "treiber": "host",
+      "concept": true
     },
     {
       "id": "FLOW-channel-guidance",
       "type": "FLOW",
       "name": "Kanal: Anleitung",
       "description": "Rang 5 — wie man es gut macht. Der Rumpf des Autorier-Skills zur Fokus-Dimension, hoechstens einer je Runde. Der Skill bestimmt ueber seine Marker selbst, welcher Teil von ihm modelltauglich ist.",
-      "channelRank": "guidance"
+      "channelRank": "guidance",
+      "zeitpunkt": "prompt",
+      "treiber": "executor"
+    },
+    {
+      "id": "FLOW-channel-handoff",
+      "type": "FLOW",
+      "name": "Kanal: Freigabe",
+      "description": "Rang 2, prompt — done im GenerationStep: die Zustandsmaschine hat nichts mehr zu sagen, weiter mit graph_suggest. In 0 von 9 Claude-Code-Laeufen erreicht (ITEM-2026-433); die Bedingung wird in Phase 2 zur Invariante done = kein Fokus.",
+      "channelRank": "rule-clause",
+      "zeitpunkt": "prompt",
+      "treiber": "beide",
+      "concept": true
     },
     {
       "id": "FLOW-channel-idle-nudge",
       "type": "FLOW",
       "name": "Kanal: Handlungs-Nachfassen",
       "description": "Das eine Nachfassen pro Schritt, wenn ein Turn ohne Werkzeugaufruf endet. Coder-Modelle dithern gern in Prosa; ein Schritt wird dadurch nicht still aufgegeben.",
-      "channelRank": "guidance"
+      "channelRank": "guidance",
+      "zeitpunkt": "prompt",
+      "treiber": "executor"
     },
     {
       "id": "FLOW-channel-inventory",
       "type": "FLOW",
       "name": "Kanal: Element-Index",
       "description": "Rang 4 — was es schon gibt. Der auf die Fokus-Typen beschraenkte Bestand als uid-type-name-Zeilen, damit die Runde keine Duplikate anlegt. Produzent ist die Lese-Oberflaeche, nicht der Kern: die Injektion ruft graph_elements DURCH dessen Schema-Schicht, seit ein roher Handler-Aufruf ohne limit den ganzen Graphen herausgab (CR-GC-539).",
-      "channelRank": "inventory"
+      "channelRank": "inventory",
+      "zeitpunkt": "prompt",
+      "treiber": "executor"
+    },
+    {
+      "id": "FLOW-channel-next-step",
+      "type": "FLOW",
+      "name": "Kanal: naechster Schritt in der Antwort",
+      "description": "Rang 2, antwort — derselbe GenerationStep, den graph_generate liefern wuerde, kompakt an der angewandten Mutation (CR-GC-588). Kein zweiter Imperativ, sondern der Imperativ der naechsten Runde, einen Roundtrip frueher.",
+      "channelRank": "rule-clause",
+      "zeitpunkt": "antwort",
+      "treiber": "host",
+      "concept": true
     },
     {
       "id": "FLOW-channel-proposal-suggest",
       "type": "FLOW",
       "name": "Kanal: ausfuehrbarer Vorschlag",
       "description": "Rang 6 — ein Kandidat, nie ein Auftrag. Die Zeilen aus graph_suggest, die eine konkrete Kante und ihr Metrik-Delta tragen; ein Vorschlag ohne Kante traegt nichts ueber den fixHint hinaus und bleibt draussen.",
-      "channelRank": "proposal"
+      "channelRank": "proposal",
+      "zeitpunkt": "prompt",
+      "treiber": "executor"
     },
     {
       "id": "FLOW-channel-rule-clause",
       "type": "FLOW",
       "name": "Kanal: Regel-Klausel",
       "description": "Rang 2 — der EINE Imperativ der Runde. Der vom Menschen gepflegte Zusatztext zu genau der Regel, die das Fund-Fenster stellt, gerendert mit den konkreten uids.",
-      "channelRank": "rule-clause"
+      "channelRank": "rule-clause",
+      "zeitpunkt": "prompt",
+      "treiber": "beide"
+    },
+    {
+      "id": "FLOW-channel-skill-reference",
+      "type": "FLOW",
+      "name": "Kanal: Skill-Verweis",
+      "description": "Rang 5, prompt — der Name der Autorier-Anleitung zur Fokus-Dimension im Schritt (CR-GC-589); der Host laedt den Rumpf ueber sein Skill-Werkzeug, der Executor spielt ihn als Kanal Anleitung ein. Eine Zuordnung, zwei Transporte.",
+      "channelRank": "guidance",
+      "zeitpunkt": "prompt",
+      "treiber": "host",
+      "concept": true
+    },
+    {
+      "id": "FLOW-channel-steer-advisory",
+      "type": "FLOW",
+      "name": "Kanal: Steuerwert-Advisory",
+      "description": "Rang 6, probe — entschaerft der Zug die schlimmste Stelle (Chebyshev ueber STEER_RULES)? Vergleichsmass der Rangfolge auf der Probe (CR-GC-583/587); auf der Anwendung nur Bericht. Gemessen: 9-37 Bloecke je Lauf, 0-3 mal erwaehnt — gelesen wird die Zahl, zitiert der Satz.",
+      "channelRank": "proposal",
+      "zeitpunkt": "probe",
+      "treiber": "host",
+      "concept": true
     },
     {
       "id": "FLOW-channel-system-prompt",
       "type": "FLOW",
       "name": "Kanal: System-Prompt",
       "description": "Die Konstante ueber allen Runden: legale Elementtypen, die exakte Aufrufform, das Emissions-Regime. Macht bewusst KEINE Aussage darueber, was die Runden-Instruktion enthaelt — sie kann es nicht wissen.",
-      "channelRank": "guidance"
+      "channelRank": "guidance",
+      "zeitpunkt": "prompt",
+      "treiber": "executor"
     },
     {
       "id": "FLOW-cli-command",
@@ -13083,6 +13171,16 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-channel-fit-advisory",
+      "target": "ACTOR-agent",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-channel-fit-advisory",
+      "target": "SCHEMA-steering-channel",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-channel-gate-protocol",
       "target": "FUNC-generation-step",
       "type": "io"
@@ -13093,6 +13191,16 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-channel-gate-verdict",
+      "target": "ACTOR-agent",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-channel-gate-verdict",
+      "target": "SCHEMA-steering-channel",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-channel-grammar",
       "target": "FUNC-build-round-injection",
       "type": "io"
@@ -13103,12 +13211,32 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-channel-guardrails",
+      "target": "ACTOR-agent",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-channel-guardrails",
+      "target": "SCHEMA-steering-channel",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-channel-guidance",
       "target": "FUNC-build-round-injection",
       "type": "io"
     },
     {
       "source": "FLOW-channel-guidance",
+      "target": "SCHEMA-steering-channel",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-channel-handoff",
+      "target": "ACTOR-agent",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-channel-handoff",
       "target": "SCHEMA-steering-channel",
       "type": "relation"
     },
@@ -13133,6 +13261,16 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-channel-next-step",
+      "target": "ACTOR-agent",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-channel-next-step",
+      "target": "SCHEMA-steering-channel",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-channel-proposal-suggest",
       "target": "FUNC-build-round-injection",
       "type": "io"
@@ -13149,6 +13287,26 @@
     },
     {
       "source": "FLOW-channel-rule-clause",
+      "target": "SCHEMA-steering-channel",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-channel-skill-reference",
+      "target": "ACTOR-agent",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-channel-skill-reference",
+      "target": "SCHEMA-steering-channel",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-channel-steer-advisory",
+      "target": "ACTOR-agent",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-channel-steer-advisory",
       "target": "SCHEMA-steering-channel",
       "type": "relation"
     },
@@ -15280,6 +15438,11 @@
       "type": "compose"
     },
     {
+      "source": "FUNC-block-gate",
+      "target": "FLOW-channel-gate-verdict",
+      "type": "io"
+    },
+    {
       "source": "FUNC-block-gedaechtnis",
       "target": "MOD-projections",
       "type": "allocate"
@@ -16016,6 +16179,16 @@
     },
     {
       "source": "FUNC-fit-advisory",
+      "target": "FLOW-channel-fit-advisory",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-fit-advisory",
+      "target": "FLOW-channel-steer-advisory",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-fit-advisory",
       "target": "FLOW-fit-advisory",
       "type": "io"
     },
@@ -16063,6 +16236,21 @@
       "source": "FUNC-generation-step",
       "target": "MOD-loop",
       "type": "allocate"
+    },
+    {
+      "source": "FUNC-generation-step",
+      "target": "FLOW-channel-handoff",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-generation-step",
+      "target": "FLOW-channel-next-step",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-generation-step",
+      "target": "FLOW-channel-skill-reference",
+      "type": "io"
     },
     {
       "source": "FUNC-generation-step",
@@ -16303,6 +16491,11 @@
       "source": "FUNC-harness-cli",
       "target": "MOD-surface",
       "type": "allocate"
+    },
+    {
+      "source": "FUNC-harness-cli",
+      "target": "FLOW-channel-guardrails",
+      "type": "io"
     },
     {
       "source": "FUNC-harness-cli",

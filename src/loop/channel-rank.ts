@@ -45,6 +45,25 @@ export const CHANNEL_REASON: Record<Channel, string> = {
   proposal: 'Vorschlag aus Vorlage oder Optimizer: ein Kandidat, nie ein Auftrag.',
 };
 
+/**
+ * WANN ein Kanal den Agenten erreicht (CR-GC-591) — die zweite Achse neben dem Rang.
+ *
+ * Der Rang sagt, wer gewinnt, wenn zwei Kanaele dasselbe adressieren. Er sagt nicht, ob der
+ * Kanal ueberhaupt VOR der Entscheidung da ist. Gemessen (Bericht "Zeitlinie"): die Advisories
+ * haengen an der Antwort auf die angewandte Mutation — sie kommen, wenn entschieden ist. Der
+ * Guide kommt davor. Ein Kanal, der nach der Entscheidung kommt, kann nur die naechste steuern.
+ *
+ *   prompt  — im Rundenprompt bzw. vor dem Schreiben (Guide, Klausel, Skill, GRAPHCODE.md)
+ *   probe   — in der Antwort auf dryRun, also vor dem Anwenden (steeringDelta, Verdict der Probe)
+ *   antwort — in der Antwort auf die angewandte Mutation, also nach der Entscheidung
+ *             (Advisories, `next`, das Verdict der Anwendung)
+ *
+ * Am Kanal-Knoten im Modell als Attribut `zeitpunkt`; `tests/channel-model.test.ts` verlangt
+ * es fuer jeden FLOW-channel-* und prueft es gegen diese Liste.
+ */
+export const CHANNEL_TIMINGS = ['prompt', 'probe', 'antwort'] as const;
+export type ChannelTiming = (typeof CHANNEL_TIMINGS)[number];
+
 /** Rang eines Kanals — kleiner ist verbindlicher. Abgeleitet, nie gepflegt. */
 export function rankOf(channel: Channel): number {
   return CHANNEL_ORDER.indexOf(channel);
