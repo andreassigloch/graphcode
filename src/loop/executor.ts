@@ -36,6 +36,7 @@ import { EMIT_SUFFIX, IDLE_NUDGE, SYSTEM, buildRoundInjection, jsonCapped } from
 import { extractMutateFromText, extractToolCallFromText } from './executor-parse.js';
 import { READ_TOOLS, execReadOrGraphTool, pushToolResults } from './executor-tools.js';
 import { bindGateClient, formatGateFeedback, ruleIdsOf, type MutateOutcome } from './executor-gate.js';
+import { zugvermerk, type Zug } from './zugvermerk.js';
 import { runBestOfNStep } from './executor-bestofn.js';
 import { buildCallModel, buildToolSpecs, toBackendTools } from './executor-backend.js';
 
@@ -203,6 +204,8 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
   // headless kann niemand antworten. Nach dem Seed ist er redundant, nie falsch.
   let lastGenPrompt = '';
   let stagnation = 0;
+  /** CR-GC-614: der Weg, nicht der Verlauf — je Runde EIN Eintrag, begrenzt beim Rendern. */
+  const zuege: Zug[] = [];
   // Fund-Rotation (CR-GC-281): focusKeys, an denen sich das Modell festgefahren
   // hat — ab Stagnations-Schwelle 3 deterministisch zurückgestellt; jeder
   // weitere generate-Call trägt sie als defer, graph_generate rotiert weiter.
@@ -267,20 +270,38 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
           `Fund NICHT aufgelöst. Häufigste Ursache: die geforderte KANTE fehlt (z.B. TEST verify→REQ). ` +
           `Emittiere Knoten UND Kante zusammen in EINEM Batch; existierende Knoten nicht erneut anlegen.`
         : '';
+    // CR-GC-614: der Weg der bisherigen Zuege, benannt und begrenzt. Er ersetzt NICHT den
+    // Gesprächsverlauf — den baut die Runde ohnehin neu —, er ersetzt sein Fehlen: ohne ihn
+    // versucht die naechste Runde denselben Zug noch einmal, und der Stagnations-Hinweis sagte
+    // nur "schon wieder", nicht WAS war.
+    const vermerk = zugvermerk(zuege);
     // CR-GC-285: Guide-Slice + Element-Index deterministisch vorab injizieren —
     // ersetzt die redundanten Lese-Turns am Rundenstart, nicht die Lese-Tools.
     const injection = config.injection ? await buildRoundInjection(registry, gen) : '';
-    const baseContent = gen.prompt + (injection ? '\n\n' + injection : '') + EMIT_SUFFIX + stagnationHint;
+    const baseContent =
+      gen.prompt + (injection ? '\n\n' + injection : '') + (vermerk ? '\n\n' + vermerk : '') + EMIT_SUFFIX + stagnationHint;
     if (bestOfN) {
       // Best-of-N (CR-GC-288): Sammeln → Proben → Wählen → Gewinner anwenden.
       // Fokus-Dimension aus dem GenerationStep (CR-GC-289): focusKey hat die
       // Form `dimension:ids` — das Ranking bevorzugt Reparatur GENAU dort.
       // Der Turn-Loop darunter bleibt der unveränderte N=1-Pfad.
+      const vorher = stats.mutatesApplied;
       await runBestOfNStep(bestOfNContext, baseContent, gen.focusKey ? gen.focusKey.split(':')[0] : null);
+      // CR-GC-614: auch der Best-of-N-Pfad hinterlaesst seinen Vermerk. Ohne ihn haette genau der
+      // Arm kein Gedaechtnis, der am meisten probiert — und die Luecke waere unsichtbar, weil die
+      // Turn-Schleife darunter gar nicht laeuft.
+      zuege.push({
+        runde: round + 1,
+        fokus: gen.focusKey ?? null,
+        ergebnis: stats.mutatesApplied > vorher ? 'angewandt' : 'nichts',
+        regeln: '',
+      });
       continue;
     }
     const messages: unknown[] = [{ role: 'user', content: baseContent }];
     let rejectedInStep = false;
+    let angewandtImStep = false;
+    let letzteAbweisung: MutateOutcome | null = null;
     let nudgedInStep = false;
     let readTurns = 0; // Lese-Turns ohne Mutate-Versuch in diesem Step (CR-GC-280)
 
@@ -356,6 +377,7 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
         // Preflight-Blocks zählen NICHT als Gate-Rejection (es gab keinen Gate-Call).
         if (!outcome.preflightBlocked) stats.mutatesRejected += 1;
         rejectedInStep = true;
+        letzteAbweisung = outcome;
         messages.push({ role: 'assistant', content: resp.text });
         messages.push({ role: 'user', content: formatGateFeedback(outcome) });
         trace(`    recovered mutate REJECTED [${ruleIdsOf(outcome)}] — feeding gate violations back`);
@@ -411,14 +433,24 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
       pushToolResults(config.backend, messages, resp.toolCalls, results, feedback);
       if (appliedThisTurn) {
         if (rejectedInStep || rejectedThisTurn) stats.repairedAfterRejection += 1;
+        angewandtImStep = true;
         break; // Step autoriert → nächste generate-Runde
       }
       if (rejectedThisTurn) {
         rejectedInStep = true;
+        letzteAbweisung = lastRejection;
         trace(`    gate rejected [${ruleIdsOf(lastRejection)}] — feeding violations back (turn ${turn + 1}/${config.maxStepTurns})`);
       }
       // reine Read-/Explorations-Turns laufen einfach weiter
     }
+    // CR-GC-614: genau EIN Vermerk je Runde. `angewandt` steht am Schritt, nicht am Turn — ein
+    // Zug, der nach zwei Abweisungen durchkommt, ist ein angewandter Zug, kein abgewiesener.
+    zuege.push({
+      runde: round + 1,
+      fokus: gen.focusKey ?? null,
+      ergebnis: angewandtImStep ? 'angewandt' : rejectedInStep ? 'abgewiesen' : 'nichts',
+      regeln: angewandtImStep ? '' : ruleIdsOf(letzteAbweisung),
+    });
   }
   return stats;
 }
