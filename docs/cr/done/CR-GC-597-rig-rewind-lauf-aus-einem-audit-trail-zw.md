@@ -1,6 +1,6 @@
 # CR-GC-597: Rig-Rewind: Lauf aus einem Audit-Trail-Zwischenstand starten (erste n angewandte Zuege durchs Gate nachspielen) — gezielter Endspiel-Test fuer einen Bruchteil der Kosten eines Volllaufs
 
-**Status:** ✅ Umgesetzt
+**Status:** ✅ Done (2026-09-22)
 **Typ:** aus Item ITEM-2026-448 (idea)
 **Erstellt:** 2026-09-22
 **Item:** bok/items/ITEM-2026-448.json (Lane: graph)
