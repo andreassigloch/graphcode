@@ -562,6 +562,7 @@
 | `CR-GC-547` | relation | `MOD-kernel` |
 | `CR-GC-549` | relation | `REQ-audit-trail` |
 | `CR-GC-550` | relation | `FUNC-se-plan` |
+| `CR-GC-551` | relation | `FUNC-mutate` |
 | `CR-GC-552` | relation | `FUNC-call-model` |
 | `CR-GC-552` | relation | `FUNC-run-verb` |
 | `CR-GC-569` | relation | `FUNC-call-model` |
@@ -592,6 +593,15 @@
 | `CR-GC-607` | relation | `FUNC-generation-step` |
 | `CR-GC-607` | relation | `FUNC-se-irr` |
 | `CR-GC-607` | relation | `FUNC-se-trade` |
+| `CR-GC-608` | relation | `FUNC-generation-step` |
+| `CR-GC-608` | relation | `FUNC-take-steering-snapshot` |
+| `CR-GC-610` | relation | `REQ-greenfield-systemtest-dod` |
+| `CR-GC-612` | relation | `FUNC-se-help` |
+| `CR-GC-613` | relation | `FUNC-graph-readiness` |
+| `CR-GC-613` | relation | `FUNC-read-tools` |
+| `CR-GC-614` | relation | `FUNC-run-executor` |
+| `CR-GC-615` | relation | `FUNC-systemtest-report` |
+| `CR-GC-615` | relation | `REQ-greenfield-systemtest-dod` |
 | `CR-GC-616` | relation | `FUNC-author-uc` |
 | `CR-GC-616` | relation | `FUNC-generation-step` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
