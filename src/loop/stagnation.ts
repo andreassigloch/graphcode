@@ -22,7 +22,16 @@
  * @author andreas@siglochconsulting
  */
 import type { GenerationStep } from './generate.js';
-import type { RuleTask } from '@sigloch/contracts/se';
+import { TASK_ENTRY, type RuleTask } from '@sigloch/contracts/se';
+
+/**
+ * CR-GC-604: Eintrittspunkte (AF-01..05) sind von der Regel ausgenommen. Ein Zug im Kern kann sie gar
+ * nicht loesen — das tut nur der Task (oder eine Abnahme). opus5-14: AF-03 stand im Fokus, der Agent
+ * arbeitete anderes ab, beim zweiten Mal wurde AF-03 zurueckgestellt — und am Ende hiess es
+ * `stalled`, "uebergib an den Menschen", obwohl nur der IRR-Task fehlte.
+ */
+const EINTRITTE: ReadonlySet<string> = new Set(Object.values(TASK_ENTRY).filter((e): e is string => e !== null));
+const regelDes = (focusKey: string): string => focusKey.split(':')[1] ?? '';
 
 export interface FocusMemory {
   /** CR-GC-601: der Task, in dem die Sitzung gerade arbeitet — `next` bleibt darin, bis graph_generate ohne task. */
@@ -60,7 +69,13 @@ export function stepWithMemory(
   for (const k of extraDefer) memory.deferred.add(k);
   const alle = () => [...memory.deferred];
   let step = compute(alle());
-  if (step.focusKey && memory.last && memory.last.key === step.focusKey && version > memory.last.version) {
+  if (
+    step.focusKey &&
+    !EINTRITTE.has(regelDes(step.focusKey)) &&
+    memory.last &&
+    memory.last.key === step.focusKey &&
+    version > memory.last.version
+  ) {
     memory.deferred.add(step.focusKey);
     step = compute(alle());
   }
