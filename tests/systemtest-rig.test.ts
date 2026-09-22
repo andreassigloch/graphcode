@@ -25,6 +25,8 @@ import { leseTurns, pruefeGegenResultzeile, cacheVerursacher, dryRunWirkung } fr
 import { legality, binding, codeVerdict } from '../rig/greenfield-systemtest/metrics.mjs';
 // @ts-expect-error — .mjs ohne Typen, wie die Nachbarn
 import { schattenBilanz, beruehrt, angewandteZuege, schattenBericht } from '../rig/greenfield-systemtest/schatten-suggest.mjs';
+// @ts-expect-error — s.o.
+import { codeKennzahlen } from '../rig/code-test/messen.mjs';
 
 let dir: string;
 const schreibe = (name: string, zeilen: unknown[]): string => {
@@ -517,5 +519,25 @@ describe('Schatten-graph_suggest: was der Optimierer je Zug vorgeschlagen haette
     expect(b).toMatchObject({ zuege: 3, mitAnwendbaremVorschlag: 2, agentTrafVorschlag: 1, verpasst: 1, verpassteVerbesserung: 0.5, agentVerbesserung: 0.4 });
     expect(b.regeln).toEqual([['R-04', 2]]);
     expect(schattenBericht([{ label: 'opus5 #1', schatten: { bilanz: b } }])).toContain('| opus5 #1 | 3 | 2 | 1 | 1 | 0.5 | 0.4 | R-04×2 |');
+  });
+});
+
+describe('Code-Test: Kennzahlen am Quelltext, fuer beide Arme gleich (CR-GC-610)', () => {
+  it('zaehlt Dateien, Module, Exporte und relative Importe — Tests und generierte Stubs nicht', () => {
+    const k = codeKennzahlen({
+      'index.ts': "export { createScheduler } from './kern/scheduler.js';\nexport const x = 1;",
+      'kern/scheduler.ts': "import { lade } from '../zustand/speicher.js';\nexport function createScheduler() { return lade(); }",
+      'zustand/speicher.ts': 'export function lade() { return 1; }',
+      'kern/scheduler.test.ts': "import { createScheduler } from './scheduler.js';",
+      'contracts/stub.ts': '/** GENERATED STUB (CR-GC-205) */\nexport const a = 1;',
+    });
+    expect(k).toMatchObject({ dateien: 3, module: 3, exporte: 3, importe: 2, importzyklen: 0 }); // Re-Export zaehlt als Abhaengigkeit
+  });
+  it('findet einen Importzyklus', () => {
+    const k = codeKennzahlen({
+      'a.ts': "import { b } from './b.js';\nexport const a = b;",
+      'b.ts': "import { a } from './a.js';\nexport const b = a;",
+    });
+    expect(k.importzyklen).toBe(1);
   });
 });
