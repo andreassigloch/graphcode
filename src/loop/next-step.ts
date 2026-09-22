@@ -23,12 +23,13 @@ import type { MetricPolicy } from '@sigloch/contracts/se';
 import { z } from 'zod/v4';
 import { generationStep, type GenerationStep } from './generate.js';
 import { loadTargetProfile } from './target-profile.js';
+import { stepWithMemory, type FocusMemory } from './stagnation.js';
 
 /** Trennmarke des Gate-Protokolls im Prompt — dieselbe, an der die Tests den Prompt teilen. */
 const PROTOCOL_MARK = 'Gate-Protokoll';
 
 export const NextStep = z.object({
-  phase: z.enum(['seed', 'expand', 'handoff']),
+  phase: z.enum(['seed', 'expand', 'handoff', 'stalled']),
   done: z.boolean(),
   /** Der Imperativ der Runde ohne Gate-Protokoll. */
   prompt: z.string(),
@@ -64,6 +65,12 @@ export function nextStepAfterApply(
   policy: MetricPolicy,
   threshold: number,
   repoRoot: string,
+  memory: FocusMemory,
+  version: number,
 ): NextStep {
-  return compactStep(generationStep(graph, policy, undefined, threshold, [], 'host', loadTargetProfile(repoRoot)));
+  // CR-GC-596: dieselbe Abbruchregel wie graph_generate — ein Gedaechtnis je Sitzung.
+  const profile = loadTargetProfile(repoRoot);
+  return compactStep(
+    stepWithMemory(memory, version, (defer) => generationStep(graph, policy, undefined, threshold, defer, 'host', profile)),
+  );
 }

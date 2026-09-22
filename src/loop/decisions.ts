@@ -95,6 +95,15 @@ export const DECISIONS = {
     forbidden: [/AskUserQuestion[^.]{0,60}(immer|always)/i],
     source: 'CR-GC-592',
   },
+  /** CR-GC-596: zweimal dasselbe Feedback → weiter; nur noch Zurueckgestelltes → stalled, nicht done. */
+  stalled: {
+    text:
+      'Kommt nach einem Zug derselbe Fokus wieder, stellt die Maschine ihn zurueck und nennt den naechsten. ' +
+      'Meldet sie phase stalled, sind nur noch zurueckgestellte Funde offen: nicht weiter mutieren, sondern ' +
+      'die Funde und deine Versuche in der Schlussmeldung nennen — stalled ist nicht fertig.',
+    forbidden: [/stalled[^.]{0,40}(ist|gilt als) (fertig|done)/i],
+    source: 'CR-GC-596',
+  },
   /** CR-GC-594: die benannte Abweichung — nur fuer die Klasse, die im Modell nicht erfuellbar ist. */
   acceptance: {
     text:

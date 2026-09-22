@@ -335,19 +335,20 @@ describe('generationStep — Fund-Rotation/defer (CR-GC-281)', () => {
     expect(generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8, [first.focusKey as string])).toEqual(second);
   });
 
-  it('alles deferred → Fallback ohne Dead-End, Hinweis im Prompt', () => {
-    // Alle Kandidaten einsammeln, bis sich ein focusKey wiederholt.
+  it('alles deferred → stalled: kein Wiederholen, kein done, die Liste im Prompt (CR-GC-596)', () => {
+    // Bis CR-GC-596 hiess dieser Test "Fallback ohne Dead-End": defer wurde ignoriert, der erste
+    // Kandidat kam zurueck — genau dort entstand in Lauf 11 die Schleife (R-04 sechsmal).
     const keys: string[] = [];
     let step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8, keys);
     while (step.focusKey && !keys.includes(step.focusKey) && keys.length < 30) {
       keys.push(step.focusKey);
       step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8, keys);
     }
-    // Kein Dead-End: defer wird ignoriert, der erste Kandidat kommt zurück …
-    expect(step.phase).toBe('expand');
-    expect(step.focusKey).toBe(keys[0]);
-    // … und der Prompt macht die aufgehobene Zurückstellung kenntlich.
-    expect(step.prompt).toContain('Zurückstellung wird ignoriert');
+    expect(step.phase).toBe('stalled');
+    expect(step.done).toBe(false);
+    expect(step.focusKey).toBeNull();
+    for (const k of keys) expect(step.prompt).toContain(k);
+    expect(step.prompt).toContain('Nicht weiter mutieren');
   });
 });
 

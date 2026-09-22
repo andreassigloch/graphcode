@@ -17,7 +17,8 @@ Der generative Treiber für Regime 1: **du schlägst vor, das Gate scort und wä
    - Hast du MEHRERE Alternativen, reiche sie zuerst mit `graph_mutate {formatE, dryRun:true}` ein und vergleiche die Verdicts. Hast du nur EINEN Batch, reiche ihn direkt ohne dryRun ein: eine Ablehnung persistiert nichts. Rangfolge der Verdicts: `block` verwerfen; dann `steeringDelta` der Fokus-Dimension; dann kein Anstieg blockierender Fehler; dann `tier` (auto-apply > suggest); dann `steerAdvisory.improvement` — entschärft der Zug die schlimmste Stelle? `fitAdvisory` ist nur Bericht und entscheidet ohne Zielprofil nicht (CR-GC-483/587). Jeder Preview wird auditiert (Vorschlag→Verdict) — auch verworfene Kandidaten sind Evidenz.
    - Nur den besten Batch ohne dryRun anwenden. `block` heißt verwerfen oder revidieren — nie erzwingen, nie am Gate vorbei.
 4. Zurück zu 2 (ab jetzt ohne `intent` — steckt in der SYS-description), bis `done:true`.
-5. **Handoff:** bei `phase:'handoff'` Zielprofil mit dem Nutzer wählen (Gewichte je Metrik-Dimension) und auf `graph_suggest {target}` wechseln — ab hier wird optimiert, nicht mehr generiert.
+5. **Festgefahren:** Kommt nach einem Zug derselbe Fokus wieder, stellt die Maschine ihn zurueck und nennt den naechsten. Meldet sie phase stalled, sind nur noch zurueckgestellte Funde offen: nicht weiter mutieren, sondern die Funde und deine Versuche in der Schlussmeldung nennen — stalled ist nicht fertig.
+6. **Handoff:** bei `phase:'handoff'` Zielprofil mit dem Nutzer wählen (Gewichte je Metrik-Dimension) und auf `graph_suggest {target}` wechseln — ab hier wird optimiert, nicht mehr generiert.
 
 ## Regeln
 

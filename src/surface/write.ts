@@ -22,6 +22,7 @@ import { fitAdvisoryIsSilent, steerAdvisoryIsSilent, type FitAdvisory, type Stee
 import { workOrderIsSilent, type WorkOrder } from '../kernel/measure/work-order.js';
 import { loadTargetProfile } from '../loop/target-profile.js';
 import { nextStepAfterApply, type NextStep } from '../loop/next-step.js';
+import { focusMemoryOf } from '../loop/stagnation.js';
 import type { RespondsToViolation } from '../projections/trajectory.js';
 import type { ToolContext } from './tool-context.js';
 
@@ -457,7 +458,7 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
         // CR-GC-588: der naechste Schritt faehrt mit — derselbe, den graph_generate liefern
         // wuerde, ohne den Roundtrip. Nur nach Anwendung; bei Ablehnung ist das Urteil der Kanal.
         const next = result.success
-          ? { next: nextStepAfterApply(harness.getGraph(), harness.getMetricPolicy(), harness.getFocusThreshold(), harness.getRepoRoot()) }
+          ? { next: nextStepAfterApply(harness.getGraph(), harness.getMetricPolicy(), harness.getFocusThreshold(), harness.getRepoRoot(), focusMemoryOf(harness), graphVersion()) }
           : {};
         return {
           ...out,
