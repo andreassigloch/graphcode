@@ -139,7 +139,16 @@ export function profil(g) {
   const m = metrics(og, { layer: 'arch' });
   const typen = {};
   for (const e of og.elements) typen[e.type] = (typen[e.type] || 0) + 1;
+  // CR-GC-595: benannte Abweichungen zaehlen — sonst faellt eine erschlichene Freigabe nicht auf.
+  // Gezaehlt wird, was am Element steht; ob es die Fokuswahl gelten laesst, ist deren Sache.
+  const abnahmen = {};
+  for (const e of og.elements) {
+    const list = e.acceptedFindings ?? e.attributes?.acceptedFindings;
+    if (!Array.isArray(list)) continue;
+    for (const a of list) if (a && typeof a.ruleId === 'string') abnahmen[a.ruleId] = (abnahmen[a.ruleId] || 0) + 1;
+  }
   return {
+    abnahmen,
     elemente: og.elements.length,
     kanten: og.traces.length,
     typen,
@@ -186,12 +195,15 @@ export function vergleichBericht(laeufe, golden) {
   out.push('fehlt dem Auto-Modus ein Kanal, der sie adressiert.\n');
 
   out.push('### Endgraph gegen Golden (derselbe Regelkatalog)\n');
-  out.push(`| Lauf | Elemente | ${TYPEN.join(' | ')} | Fehler | Warnungen | Steuerwert @ Anker |`);
-  out.push(`|---|---:|${TYPEN.map(() => '---:').join('|')}|---:|---:|---|`);
+  out.push(`| Lauf | Elemente | ${TYPEN.join(' | ')} | Fehler | Warnungen | Steuerwert @ Anker | Abnahmen |`);
+  out.push(`|---|---:|${TYPEN.map(() => '---:').join('|')}|---:|---:|---|---|`);
   for (const { label, profil: p } of mit) {
-    if (!p) { out.push(`| ${label} | — |${TYPEN.map(() => ' — ').join('|')}| — | — | — |`); continue; }
+    if (!p) { out.push(`| ${label} | — |${TYPEN.map(() => ' — ').join('|')}| — | — | — | — |`); continue; }
+    const ab = Object.entries(p.abnahmen).sort((a, b) => b[1] - a[1]).map(([r, n]) => `${r}×${n}`).join(' ') || '—';
     out.push(`| ${label} | ${p.elemente} | ${TYPEN.map((t) => p.typen[t] ?? 0).join(' | ')} | ${p.fehler} | ${p.warnungen} `
-      + `| ${p.steuerwert} @ ${p.anker ?? '—'} |`);
+      + `| ${p.steuerwert} @ ${p.anker ?? '—'} | ${ab} |`);
   }
+  out.push('\nAbnahmen = benannte Abweichungen (`acceptedFindings`, CR-GC-594) am Endgraphen. Eine Abnahme an einer');
+  out.push('Architekturregel zaehlt fuer die Freigabe nicht; steht sie hier, hat der Agent es versucht.');
   return out.join('\n');
 }

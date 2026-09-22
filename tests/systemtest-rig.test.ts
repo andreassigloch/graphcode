@@ -445,6 +445,16 @@ describe('Auto gegen Hand im Bericht (CR-GC-586)', () => {
     expect(md).toContain('### Endgraph gegen Golden');
   });
 
+  it('CR-GC-595: der Endgraph-Abschnitt zaehlt Abnahmen je Regel', async () => {
+    // @ts-expect-error — s.o.
+    const m = await import('../rig/greenfield-systemtest/trajektorie.mjs');
+    const g = { elements: [
+      { id: 'SYS-s', type: 'SYS', name: 'S', acceptedFindings: [{ ruleId: 'AF-05', reason: 'optional' }] },
+      { id: 'REQ-r', type: 'REQ', name: 'R', attributes: { acceptedFindings: [{ ruleId: 'FM-03', reason: 'Testlauf' }, { ruleId: 'FM-03', reason: 'x' }] } },
+    ], traces: [] };
+    expect(m.profil(g).abnahmen).toEqual({ 'AF-05': 1, 'FM-03': 2 });
+  });
+
   it('echter Korpus: der Hand-Trail spielt genau das Golden nach (sigllm v98, 255 Elemente)', async () => {
     // @ts-expect-error — s.o.
     const m = await import('../rig/greenfield-systemtest/trajektorie.mjs');
