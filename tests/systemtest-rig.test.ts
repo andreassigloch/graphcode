@@ -23,6 +23,8 @@ import { fileURLToPath } from 'node:url';
 import { leseTurns, pruefeGegenResultzeile, cacheVerursacher, dryRunWirkung } from '../rig/greenfield-systemtest/turn-analyse.mjs';
 // @ts-expect-error — s.o.
 import { legality, binding, codeVerdict } from '../rig/greenfield-systemtest/metrics.mjs';
+// @ts-expect-error — .mjs ohne Typen, wie die Nachbarn
+import { schattenBilanz, beruehrt, angewandteZuege, schattenBericht } from '../rig/greenfield-systemtest/schatten-suggest.mjs';
 
 let dir: string;
 const schreibe = (name: string, zeilen: unknown[]): string => {
@@ -485,5 +487,35 @@ describe('Rig-Rewind: Start aus einem Audit-Zwischenstand (CR-GC-597)', () => {
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
+  });
+});
+
+describe('Schatten-graph_suggest: was der Optimierer je Zug vorgeschlagen haette (CR-GC-609)', () => {
+  it('nimmt dieselben Zuege wie der Rewind: nur angewandte Mutationen mit Befehlen', () => {
+    const audit = [
+      { operation: 'mutate', result: 'applied', commands: [{ op: 'add-node' }] },
+      { operation: 'mutate', result: 'rejected', commands: [{ op: 'add-node' }] },
+      { operation: 'validate', result: 'applied', commands: [{ op: 'add-node' }] },
+      { operation: 'mutate', result: 'applied', commands: [] },
+    ].map((r) => JSON.stringify(r)).join('\n');
+    expect(angewandteZuege(audit)).toHaveLength(1);
+  });
+
+  it('beruehrt: Knoten, Kantenenden und Merges zaehlen', () => {
+    expect(beruehrt([{ op: 'update-node', node: { uid: 'MOD-a' } }], 'MOD-a')).toBe(true);
+    expect(beruehrt([{ op: 'add-edge', edge: { sourceId: 'FUNC-x', targetId: 'MOD-a' } }], 'MOD-a')).toBe(true);
+    expect(beruehrt([{ op: 'merge-nodes', sourceUid: 'FLOW-a', targetUid: 'FLOW-b' }], 'FLOW-b')).toBe(true);
+    expect(beruehrt([{ op: 'add-node', node: { uid: 'REQ-z' } }], 'MOD-a')).toBe(false);
+  });
+
+  it('Bilanz: verpasst heisst, der beste anwendbare Vorschlag haette mehr gesenkt als der Zug', () => {
+    const b = schattenBilanz([
+      { zug: 1, agentVerbesserung: 0.5, bester: { ruleId: 'R-04', elementId: 'MOD-a', score: 0.2 }, agentTrifft: true },
+      { zug: 2, agentVerbesserung: 0, bester: { ruleId: 'R-04', elementId: 'MOD-a', score: 0.5 }, agentTrifft: false },
+      { zug: 3, agentVerbesserung: -0.1, bester: null, agentTrifft: false },
+    ]);
+    expect(b).toMatchObject({ zuege: 3, mitAnwendbaremVorschlag: 2, agentTrafVorschlag: 1, verpasst: 1, verpassteVerbesserung: 0.5, agentVerbesserung: 0.4 });
+    expect(b.regeln).toEqual([['R-04', 2]]);
+    expect(schattenBericht([{ label: 'opus5 #1', schatten: { bilanz: b } }])).toContain('| opus5 #1 | 3 | 2 | 1 | 1 | 0.5 | 0.4 | R-04×2 |');
   });
 });
