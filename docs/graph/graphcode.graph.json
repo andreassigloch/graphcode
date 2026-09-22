@@ -1863,6 +1863,12 @@
       "description": "docs/cr/open/CR-GC-608-fertig-kriterium-der-steuerregeln-lokale.md"
     },
     {
+      "id": "CR-GC-609",
+      "type": "CR",
+      "name": "Schatten-graph_suggest im Rig: je Zug nachgespielt, was der Optimierer vorgeschlagen haette — opus5-14/15: 0 anwendbare Vorschlaege, keine Vorlage fuer Steuerregeln",
+      "description": "docs/cr/open/CR-GC-609-schatten-graph-suggest-im-rig-je-zug-nac.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -20394,5 +20400,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 365
+  "graphVersion": 366
 }

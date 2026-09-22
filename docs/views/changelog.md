@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 216 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 217 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 216 CR · 170 done · 1 open.
+Total: 217 CR · 170 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -278,3 +278,4 @@ Total: 216 CR · 170 done · 1 open.
 | `CR-GC-606` | n/a | Abbruchregel zaehlt zu frueh: zurueckstellen erst beim dritten gleichen Feedback (opus5-15, CR-01 nach Folgezug) |
 | `CR-GC-607` | n/a | Task-Regeln TR-01 (Trade-Entscheidung als CR) und IR-01 (Annahmen-Review promoviert zu CR) ueber crRefs im Frischestempel |
 | `CR-GC-608` | n/a | Fertig-Kriterium der Steuerregeln: lokales Optimum bei Kreis oder Plateau ueber 3 Steuerzuege (opus5-11/13/15) |
+| `CR-GC-609` | n/a | Schatten-graph_suggest im Rig: je Zug nachgespielt, was der Optimierer vorgeschlagen haette — opus5-14/15: 0 anwendbare Vorschlaege, keine Vorlage fuer Steuerregeln |

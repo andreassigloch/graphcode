@@ -8,6 +8,7 @@ import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { leseTurns, cacheVerursacher, dryRunWirkung } from './turn-analyse.mjs';
 import { steuerungsBericht } from './steuerung.mjs';
 import { vergleichBericht } from './trajektorie.mjs';
+import { schattenBericht } from './schatten-suggest.mjs';
 import { ARM_ACHSEN, achsenUnterschied } from './run.mjs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -244,6 +245,17 @@ if (mitDeckung.length) {
     })
     .filter((l) => existsSync(l.audit));
   if (laeufe.length) console.log('\n' + vergleichBericht(laeufe, process.env.GOLDEN) + '\n');
+}
+
+// CR-GC-609 — Schatten-graph_suggest: nur Laeufe, fuer die schatten-suggest.mjs gelaufen ist (kostet Dry-Runs,
+// deshalb nicht Teil des Berichtslaufs selbst).
+{
+  const laeufe = rows
+    .filter((r) => !r.error)
+    .map((r) => ({ label: `${r.arm} #${r.run}`, pfad: join(HERE, 'runs', `${r.arm}-${r.run}`, 'schatten-suggest.json') }))
+    .filter((l) => existsSync(l.pfad))
+    .map((l) => ({ label: l.label, schatten: JSON.parse(readFileSync(l.pfad, 'utf8')) }));
+  if (laeufe.length) console.log('\n' + schattenBericht(laeufe) + '\n');
 }
 
 console.log('\n## Limits (quote these with the numbers)\n');
