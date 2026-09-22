@@ -31,3 +31,6 @@ CaptureInterestMain.FC.002 -compose-> CheckContactExists.FN.006
 The dependency is then verifiable (the REQ carries a TEST) instead of being an opaque UC→UC arrow. Do not reach for `depends` to order use cases.
 
 **Author in batches of 4–5, cross-cutting elements first.** Cut batches by deployment site × actor × functional coupling, max 4–5 UCs per batch — one chat context, so the whole batch stays reviewable. Per batch: propose → review → mutate → check violations. Settle the shared elements (shared FUNCs, their REQs) in the FIRST batch; discovering them in batch three means rewriting batches one and two.
+
+## Write the guard conditions as requirements — not as prose in the UC
+What must be true **before** the scenario can start (precondition) and what holds **after** it finished (postcondition) belongs in the requirements the UC composes, never in the UC text: `add-node` a `REQ` with `kinds: ["precondition"]` or `kinds: ["postcondition"]`, `compose` it from the UC, and give it its verifying `TEST` in the same batch (`se:author-req`). A guard that only lives in the description cannot be tested and is invisible to every view. This used to be a pair of info findings at every UC; since they fired everywhere and nobody acted on them, the check now lives here, in the writing.

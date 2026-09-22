@@ -68,7 +68,7 @@ describe('CR-GC-598: eine Fokusmenge, und blockingErrors kennt die Abnahme', () 
   });
 
   it('Regeln ausserhalb des Gate-Katalogs (BQ-02) und info-Regeln sind nicht im Fokus', () => {
-    expect(focusViolations(og(), [v('BQ-02', 'warning'), v('UC-05', 'info', 'SYS-s')])).toEqual([]);
+    expect(focusViolations(og(), [v('BQ-02', 'warning'), v('MT-04', 'info', 'SYS-s')])).toEqual([]);
   });
 });
 
