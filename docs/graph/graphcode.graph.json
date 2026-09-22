@@ -1878,7 +1878,9 @@
       "id": "CR-GC-611",
       "type": "CR",
       "name": "Antwort-Diaet: graph_realize liefert 2x die volle missingRefs-Liste (87% seiner Antwort), graph_mutate next+violations je ~40k Zeichen, authoring_guide 11x wiederholt",
-      "description": "docs/cr/open/CR-GC-611-antwort-diaet-graph-realize-liefert-2x-d.md"
+      "description": "docs/cr/done/CR-GC-611-antwort-diaet-graph-realize-liefert-2x-d.md",
+      "status": "done",
+      "commitRef": "d455398"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -20412,5 +20414,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 368
+  "graphVersion": 370
 }
