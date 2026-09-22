@@ -590,14 +590,14 @@ function stepCore(
   // weiter im Bericht (readiness, phaseReadiness), sie entscheiden nur nicht mehr — gemessen
   // hatten sie in fuenf Laeufen nie einen Schritt gewaehlt, aber in allen die Freigabe gesperrt.
   if (!focus && task !== 'kern') {
-    // CR-GC-601: der Task ist durch — sein Regelset hat keinen offenen Fund. Der Ausgang ist der
-    // Frischestempel des Artefakts (den der Skill setzt); dann zurueck in den Kern.
+    // CR-GC-601/603: der Task ist durch — Eintritt geschlossen (Frischestempel oder Abnahme) und sein
+    // Regelset ohne offenen Fund; der Eintritt steht in der Task-Fokusmenge. Dann zurueck in den Kern.
     return {
       phase: 'handoff',
       done: true,
       prompt:
-        `Task ${task} fertig: kein offener Fund mehr in seinem Regelset. Schliesse das Artefakt mit dem Skill ` +
-        `${TASK_SKILL[task]} ab (Frischestempel am SYS), dann zurück in den Kern: graph_generate ohne task.`,
+        `Task ${task} fertig: das Artefakt ist gestempelt (oder abgenommen), sein Regelset hat keinen offenen Fund. ` +
+        'Zurück in den Kern: graph_generate ohne task.',
       readiness,
       threshold,
       blockingErrors,
@@ -650,6 +650,10 @@ function stepCore(
   const fensterRegel = windowRuleOf(focusViolations);
   const abnahmeHinweis = ignorierteAbnahme
     ? `Die Abnahme von ${fensterRegel} zählt nicht — Architekturregeln sind nicht abnehmbar; löse den Fund im Modell. `
+    : fensterRegel !== undefined && task !== 'kern' && fensterRegel === TASK_ENTRY[task]
+      ? // CR-GC-603: das Artefakt fehlt noch — der Task ist nicht durch, nur weil sein Regelset nichts findet.
+        `Das Artefakt des Tasks ${task} fehlt noch: erarbeite es mit dem Skill ${TASK_SKILL[task]} und setze am Ende ` +
+        'seinen Frischestempel am SYS (analysisFreshness). '
     : fensterRegel !== undefined && task === 'kern' && TASK_OF_ENTRY.has(fensterRegel)
       ? // CR-GC-601: ein Eintrittspunkt — der Task ist eine Blackbox, der Kern loest ihn nicht selbst.
         `${fensterRegel} ist der Eintrittspunkt des Tasks ${TASK_OF_ENTRY.get(fensterRegel)}: starte ihn mit ` +
