@@ -1907,6 +1907,12 @@
       "description": "docs/cr/open/CR-GC-615-rig-captureartifacts-scheitert-nach-git-.md"
     },
     {
+      "id": "CR-GC-616",
+      "type": "CR",
+      "name": "ITEM-462 umgesetzt: UC-05/06/RD-03 gestrichen (UC-Schreibregel), MT-02 warning, Fix-Roundtrip-Test, Folge-Regel-Spalte",
+      "description": "docs/cr/open/CR-GC-616-item-462-umgesetzt-uc-05-06-rd-03-gestri.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -20463,5 +20469,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 375
+  "graphVersion": 376
 }
