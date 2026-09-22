@@ -116,6 +116,13 @@ describe('TEST-silent-advisories: was nichts sagt, steht nicht da (CR-GC-576)', 
     expect(antwort).not.toHaveProperty('fitAdvisory');
   });
 
+  it('eine Profildatei nur mit Intent-Ankern ist KEIN Zielprofil — kein fitAdvisory (Phase-1-Lauf: 9 Bloecke)', async () => {
+    writeFileSync(join(repoRoot, '.graphcode', 'target-profile.json'), JSON.stringify({ intentAnchors: ['lokal', 'nachts', 'unterwegs'] }));
+    const antwort = await mutiere(architekturZug());
+    expect(antwort.success).toBe(true);
+    expect(antwort).not.toHaveProperty('fitAdvisory');
+  });
+
   it('confidence ist auf keiner Antwort — eine Konstante ohne Leser (CR-GC-590)', async () => {
     const antwort = await mutiere([knoten('CR-Y', 'CR', 'Y', 'Ein Change Request ohne Umfang.')]);
     expect(antwort).not.toHaveProperty('confidence');

@@ -150,7 +150,7 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
     expect(step.prompt).toContain('im selben Batch');
   });
 
-  it('threshold 0 + keine Blocker + alle Phase-Gates regel-vollständig (SRR/PDR erreicht, real) → handoff auf graph_suggest', () => {
+  it('SRR/PDR regel-vollständig, aber CDR/TRR offen → kein done; die Phasen bleiben Bericht (CR-GC-296/593)', () => {
     // SRR+PDR sind mit einer angereicherten, aber realen Struktur regel-vollständig
     // erreichbar (26/26 je Gate, geprüft): REQ-Text mit Verifizierbarkeits-Pattern
     // (BQ-02/06/07), Prä-/Postcondition-REQs (UC-05/06), eine FCHAIN mit FUNC (R-15)

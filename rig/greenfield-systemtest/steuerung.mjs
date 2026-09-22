@@ -51,6 +51,12 @@ export function leseStrom(pfad) {
 }
 
 const istMutate = (a) => a.name === 'graph_mutate';
+/**
+ * Fokusquelle: graph_generate — oder seit CR-GC-588 die angewandte Mutation, die `next` traegt.
+ * Fuer die Zaehlung ist das derselbe Schritt; ein Lauf, der nur ueber `next` faehrt, hat sonst
+ * "0 graph_generate" und damit scheinbar nie einen Fokus.
+ */
+const fokusVon = (a) => (a.name === 'graph_generate' && a.antwort) ? a.antwort : (istMutate(a) && a.antwort?.next) ? a.antwort.next : null;
 const typenIm = (a) => [...new Set([...String(a.input.formatE ?? '').matchAll(/^### (\w+)/gm)].map((m) => m[1]))];
 
 /**
@@ -70,17 +76,18 @@ export function kanalWirkung({ aufrufe, texte }) {
   let vorher = null;
   for (let i = 0; i < aufrufe.length; i++) {
     const a = aufrufe[i];
-    if (a.name !== 'graph_generate' || !a.antwort) continue;
-    const fokus = a.antwort.focusKey ?? a.antwort.focusDimension ?? null;
+    const schritt = fokusVon(a);
+    if (!schritt) continue;
+    const fokus = schritt.focusKey ?? schritt.focusDimension ?? null;
     if (vorher !== null && fokus === vorher) wiederholt++;
     vorher = fokus;
-    const bis = aufrufe.findIndex((x, j) => j > i && x.name === 'graph_generate');
+    const bis = aufrufe.findIndex((x, j) => j > i && fokusVon(x));
     const batches = aufrufe.slice(i + 1, bis < 0 ? undefined : bis).filter((x) => istMutate(x) && !x.input.dryRun);
     if (!batches.length) continue;
     beurteilt++;
     const text = batches.map((x) => String(x.input.formatE ?? JSON.stringify(x.input))).join('\n');
-    const typen = a.antwort.focusTypes ?? [];
-    const uids = a.antwort.focusKey ? String(a.antwort.focusKey).split(':')[2]?.split(',').filter(Boolean) ?? [] : [];
+    const typen = schritt.focusTypes ?? [];
+    const uids = schritt.focusKey ? String(schritt.focusKey).split(':')[2]?.split(',').filter(Boolean) ?? [] : [];
     const typTreffer = typen.some((t) => text.includes(`### ${t}`) || text.includes(`${t}-`));
     const uidTreffer = uids.length === 0 || uids.some((u) => text.includes(u));
     if (typTreffer && uidTreffer) befolgt++;
@@ -88,7 +95,7 @@ export function kanalWirkung({ aufrufe, texte }) {
 
   return {
     gateBlock: mut.filter((a) => a.antwort?.tier === 'block' || a.antwort?.success === false).length,
-    generate: { aufrufe: zaehl('graph_generate'), beurteilt, befolgt, wiederholt },
+    generate: { aufrufe: aufrufe.filter((a) => fokusVon(a)).length, beurteilt, befolgt, wiederholt },
     guide: zaehl('graph_authoring_guide'),
     proben: mut.filter((a) => a.input.dryRun).length,
     skills: aufrufe.filter((a) => a.name === 'Skill').map((a) => a.input.skill ?? a.input.command ?? '?'),
@@ -119,9 +126,14 @@ export function zeitlinie({ aufrufe }) {
     }
   }
   const mi = aufrufe.map((a, i) => (istMutate(a) ? i : -1)).filter((i) => i >= 0);
+  // Frischer Fokus: ein graph_generate dazwischen — oder die vorige Mutation trug `next` (CR-GC-588).
   const gi = aufrufe.map((a, i) => (a.name === 'graph_generate' ? i : -1)).filter((i) => i >= 0);
   let ohneFokus = 0;
-  for (let k = 1; k < mi.length; k++) if (!gi.some((g) => g > mi[k - 1] && g < mi[k])) ohneFokus++;
+  for (let k = 1; k < mi.length; k++) {
+    const vorige = aufrufe[mi[k - 1]];
+    if (vorige.antwort?.next) continue;
+    if (!gi.some((g) => g > mi[k - 1] && g < mi[k])) ohneFokus++;
+  }
   return {
     ersterSkill: erst((a) => a.name === 'Skill'),
     ersterGuide: erst((a) => a.name === 'graph_authoring_guide'),
@@ -192,7 +204,10 @@ export function effizienz(schluss, elemente) {
 
 /** Was beim letzten graph_generate zur Freigabe fehlte — die Antwort auf "warum nie done?". */
 export function endstand({ aufrufe }) {
-  const g = [...aufrufe].reverse().find((a) => a.name === 'graph_generate' && a.antwort)?.antwort;
+  // Der letzte Schritt mit Fokus — graph_generate oder `next`; die Tabellen stehen nur am generate.
+  const letzterGen = [...aufrufe].reverse().find((a) => a.name === 'graph_generate' && a.antwort)?.antwort;
+  const letzterSchritt = [...aufrufe].reverse().map(fokusVon).find(Boolean);
+  const g = letzterGen ? { ...letzterGen, ...(letzterSchritt ?? {}) } : letzterSchritt;
   if (!g) return null;
   return {
     done: g.done === true,

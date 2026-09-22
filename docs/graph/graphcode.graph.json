@@ -1886,6 +1886,13 @@
       "status": "reviewed"
     },
     {
+      "id": "FCHAIN-generation-states",
+      "type": "FCHAIN",
+      "name": "Generierung: von der Saat zur Freigabe",
+      "description": "Die Wirkkette der Zustandsmaschine: Steuerungs-Snapshot -> Schritt (seed | expand) -> Freigabe an graph_suggest. Jeder Uebergang haengt am Fokus: solange die Maschine etwas zu sagen hat, bleibt sie in expand; hat sie nichts mehr, ist sie done (CR-GC-593).",
+      "concept": true
+    },
+    {
       "id": "FCHAIN-impact-testing",
       "type": "FCHAIN",
       "name": "Impact-basierte Testauswahl",
@@ -3451,7 +3458,7 @@
       "id": "FUNC-generation-step",
       "type": "FUNC",
       "name": "generationStep(graph, policy, intent)",
-      "description": "Waehlt aus den Dimensionsscores die schwaechste Dimension unter der Fokus-Schwelle und stellt daraus den Runden-Prompt zusammen: Fokus-Typen, Fund-Fenster, Imperativ, Gate-Protokoll, Handoff-Bedingung. In sie schreiben drei benannte Kanaele — Regel-Klausel, Dimensions-Vorlage und Gate-Protokoll; welcher von ihnen einen Konflikt gewinnt, entscheidet nicht diese Funktion, sondern die Rangfolge in src/loop/channel-rank.ts. (Kanaele sichtbar gemacht CR-GC-573)",
+      "description": "Die Zustandsmaschine der Generierung (CR-GC-593): seed:sys -> seed:uc -> seed:actor -> expand -> handoff. Waechter der Freigabe ist die Invariante done = kein Fokus; die Fokusmenge sind die Funde der Gate-Regeln ohne info, ohne Praesenzregeln bei Bindung 0 und ohne abgenommene Funde (acceptedFindings). Schwelle und Phasen-Gates sind Bericht. Vorher: drei Waechter aus drei Quellen, in 0 von 9 Laeufen erreicht.",
       "status": "done",
       "realRef": {
         "file": "src/loop/generate.ts",
@@ -4699,6 +4706,15 @@
       "created_at": "2026-06-17T00:00:00.000Z",
       "kinds": [
         "non-functional"
+      ]
+    },
+    {
+      "id": "REQ-done-iff-no-focus",
+      "type": "REQ",
+      "name": "Freigabe genau dann, wenn kein Fokus",
+      "description": "Die Generierung muss done genau dann melden, wenn kein offener Fund einer Gate-Regel (ohne info, ohne Praesenzregeln bei Bindung 0, ohne abgenommene Funde) mehr existiert — und muss in jedem anderen Zustand genau einen Fokus nennen. Kein Zustand darf \"nichts zu tun\" und \"nicht fertig\" zugleich sagen.",
+      "kinds": [
+        "functional"
       ]
     },
     {
@@ -7159,6 +7175,19 @@
           "level": "integration",
           "result": "passed",
           "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-generation-statemachine",
+      "type": "TEST",
+      "name": "Zustandsmaschine ueber den Korpus",
+      "description": "Eigenschaftstest: done = (focusKey == null) fuer fuenf Auto-Graphen, das sigllm-Golden und den Endstand seines Hand-Trails; jede Fokus-Regel ist im Gate-Katalog; nach defer aendert sich der Prompt; das Golden ist done mit genau den Abnahmen AF-05, BW-02, FM-03, MS-01, RD-05 und ohne sie nicht.",
+      "testRefs": [
+        {
+          "file": "tests/generate.statemachine.test.ts",
+          "tool": "vitest",
+          "level": "unit"
         }
       ]
     },
@@ -12358,6 +12387,21 @@
       "type": "satisfy"
     },
     {
+      "source": "FCHAIN-generation-states",
+      "target": "FUNC-generation-step",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-generation-states",
+      "target": "FUNC-graph-suggest",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-generation-states",
+      "target": "FUNC-take-steering-snapshot",
+      "type": "compose"
+    },
+    {
       "source": "FCHAIN-impact-testing",
       "target": "FUNC-deduce-tests",
       "type": "compose"
@@ -16264,6 +16308,11 @@
     },
     {
       "source": "FUNC-generation-step",
+      "target": "REQ-done-iff-no-focus",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-generation-step",
       "target": "REQ-steering-from-metrics",
       "type": "satisfy"
     },
@@ -18659,6 +18708,11 @@
       "type": "verify"
     },
     {
+      "source": "TEST-generation-statemachine",
+      "target": "REQ-done-iff-no-focus",
+      "type": "verify"
+    },
+    {
       "source": "TEST-graph-authoring-guide",
       "target": "REQ-import-se-ontology",
       "type": "verify"
@@ -19882,6 +19936,11 @@
     },
     {
       "source": "UC-deterministic-steering",
+      "target": "FCHAIN-generation-states",
+      "type": "compose"
+    },
+    {
+      "source": "UC-deterministic-steering",
       "target": "FCHAIN-skill-report",
       "type": "compose"
     },
@@ -19893,6 +19952,11 @@
     {
       "source": "UC-deterministic-steering",
       "target": "REQ-applied-suggestion-moves-target",
+      "type": "compose"
+    },
+    {
+      "source": "UC-deterministic-steering",
+      "target": "REQ-done-iff-no-focus",
       "type": "compose"
     },
     {

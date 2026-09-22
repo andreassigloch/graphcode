@@ -1,0 +1,437 @@
+[
+  {
+    "arm": "opus5",
+    "model": "claude-opus-5",
+    "executor": "claude",
+    "run": 10,
+    "elements": 303,
+    "traces": 554,
+    "structure": {
+      "UC": 8,
+      "FUNC": 30,
+      "MOD": 8,
+      "REQ": 68,
+      "TEST": 68
+    },
+    "readiness": {
+      "compliance": 0.9867986798679867,
+      "elementsWithErrors": 4,
+      "gatesPassed": "3/8"
+    },
+    "spec": {
+      "compliance": 0.9867986798679867,
+      "elementsWithErrors": 4,
+      "dimensions": {
+        "req": 0.81,
+        "uc": 0.957,
+        "arch": 0.988,
+        "alloc": 0.968,
+        "ver": 0.992,
+        "schema": 1,
+        "cr": 0.976,
+        "ms": 1
+      },
+      "steer": {
+        "worst": 0.5,
+        "anchor": "R-04@MOD-automation"
+      },
+      "notEvaluated": [
+        "rule:BQ-01",
+        "rule:BQ-02",
+        "rule:BQ-04",
+        "rule:BQ-06",
+        "rule:BQ-07"
+      ],
+      "advisoryOnly": [
+        "BQ-01",
+        "BQ-02",
+        "BQ-04",
+        "BQ-06",
+        "BQ-07",
+        "ND-01",
+        "ND-02",
+        "RC-01",
+        "RC-02",
+        "RC-03",
+        "RC-04",
+        "RC-05",
+        "RC-06",
+        "RC-07"
+      ]
+    },
+    "code": {
+      "verdict": "nicht pruefbar",
+      "why": "keine Bindung und keine aufloesbare Quelldatei — es gibt nichts zu pruefen",
+      "reach": {
+        "endpoints": 0,
+        "assigned": 0,
+        "pct": 0
+      },
+      "binding": {
+        "leafFuncs": 24,
+        "bound": 0,
+        "pct": 0
+      },
+      "rcViolations": {}
+    },
+    "gate_rejections": 4,
+    "tokens": {
+      "wall_s": 2049.7,
+      "cost_usd": 13.056425250000006,
+      "tokens_in": 12173158,
+      "tokens_in_uncached": 9181,
+      "tokens_in_cache_read": 11759498,
+      "tokens_in_cache_creation": 404479,
+      "tokens_out": 168587,
+      "tokens_reasoning": null,
+      "turns": 82
+    },
+    "moduleAudit": {
+      "MOD": {
+        "authored": [
+          "Auftragswerk",
+          "Inferenzkern",
+          "Auftragsregister",
+          "Ergebniswache",
+          "Laufwerk",
+          "Zeitwerk",
+          "Bedienrand",
+          "Bestandsfuehrung"
+        ],
+        "golden": [
+          "Agent-Anwendungen",
+          "Agentenverwaltung",
+          "Gateway",
+          "Ledger",
+          "LLM-Runtime",
+          "Plattformbetrieb",
+          "Scheduler"
+        ]
+      },
+      "FUNC": {
+        "authored": 30,
+        "golden": 24
+      },
+      "UC": {
+        "authored": [
+          "Zugang vergeben und entziehen",
+          "Auftrag deklarieren",
+          "Interaktive Anfrage beantworten",
+          "Ausgefallene Termine nachholen",
+          "Zweifelhaftes Ergebnis aussondern",
+          "Unterwegs lokal weiterarbeiten",
+          "Auftrag unbeaufsichtigt ausfuehren",
+          "Verbrauch und Wartezeit einsehen"
+        ],
+        "golden": [
+          "Plattform verwalten",
+          "Lokale Aufgabe ausführen",
+          "Inferenz anfragen"
+        ]
+      }
+    },
+    "briefCoverage": {
+      "hinweis": "Wortlaut-Ueberdeckung misst Abschreiben, nicht Deckung — Liste lesen, nicht Zahl zitieren.",
+      "gesamt": 42,
+      "schwach": 36,
+      "explizitVerworfen": [],
+      "verwerfenAusdrueckbar": false,
+      "zeilen": [
+        {
+          "id": "REQ-010",
+          "typ": "funktional",
+          "text": "OpenAI- und Anthropic-kompatible API über das Gateway, Profilwahl pro Request.",
+          "match": null,
+          "ueberdeckung": 0
+        },
+        {
+          "id": "REQ-015",
+          "typ": "funktional",
+          "text": "Priorisierung: tagsüber UC-01 vor UC-02, im Nachtfenster UC-02 vor UC-01; Zeitfenster konfigurierbar.",
+          "match": null,
+          "ueberdeckung": 0
+        },
+        {
+          "id": "REQ-024",
+          "typ": "funktional",
+          "text": "Der Runner berechnet fehlende Slots seit dem letzten Erfolg und plant sie ein.",
+          "match": null,
+          "ueberdeckung": 0
+        },
+        {
+          "id": "REQ-025",
+          "typ": "funktional",
+          "text": "Catch-up-Policy pro Task: `none`, `latest` oder `all`.",
+          "match": null,
+          "ueberdeckung": 0
+        },
+        {
+          "id": "REQ-027",
+          "typ": "funktional",
+          "text": "Idempotenz über Task-ID + Slot-Datum; kein Slot läuft doppelt.",
+          "match": null,
+          "ueberdeckung": 0
+        },
+        {
+          "id": "REQ-034",
+          "typ": "funktional",
+          "text": "Benachrichtigung bei Fehlern, Dead-Letter und markierten Ergebnissen.",
+          "match": null,
+          "ueberdeckung": 0
+        },
+        {
+          "id": "REQ-037",
+          "typ": "funktional",
+          "text": "UC-02 gibt an Schrittgrenzen nach: laufende Inferenz wird nicht abgebrochen, der nächste Schritt wartet bei interaktiver Last.",
+          "match": "REQ-access-admin-precondition",
+          "ueberdeckung": 0.1
+        },
+        {
+          "id": "REQ-031",
+          "typ": "funktional",
+          "text": "Output wird gegen ein Schema validiert; bei Fehler Retry, danach Dead-Letter.",
+          "match": "REQ-bounded-retry",
+          "ueberdeckung": 0.11
+        },
+        {
+          "id": "REQ-033",
+          "typ": "funktional",
+          "text": "Run-Log pro Lauf: Task, Slot, Modell, Prompt-Version, Dauer, Tokens, Status.",
+          "match": "REQ-api-drop-in",
+          "ueberdeckung": 0.11
+        },
+        {
+          "id": "REQ-038",
+          "typ": "funktional",
+          "text": "Agentenloop mehrstufig mit Tool-Aufrufen, Schrittlimit und Stoppbedingung; Zwischenzustand im Ledger, fortsetzbar.",
+          "match": "REQ-declare-postcondition",
+          "ueberdeckung": 0.11
+        },
+        {
+          "id": "REQ-041",
+          "typ": "funktional",
+          "text": "Laufbedingungen pro Task (z. B. Netzbetrieb); beim Eintreten werden fällige Tasks sofort gestartet.",
+          "match": "REQ-job-spec-validation",
+          "ueberdeckung": 0.11
+        },
+        {
+          "id": "REQ-026",
+          "typ": "funktional",
+          "text": "Maximales Slot-Alter pro Task; ältere Slots werden als verfallen protokolliert.",
+          "match": "REQ-mit-no-outbound-path",
+          "ueberdeckung": 0.13
+        },
+        {
+          "id": "REQ-002",
+          "typ": "nicht-funktional",
+          "text": "Runtime nur auf localhost; Zugriff ausschließlich über das Gateway mit Token-Authentifizierung.",
+          "match": "REQ-per-access-metering",
+          "ueberdeckung": 0.14
+        },
+        {
+          "id": "REQ-004",
+          "typ": "nicht-funktional",
+          "text": "Robust gegen Sleep, Ausschalten und Stromausfall; kein Datenverlust im Ledger.",
+          "match": "REQ-output-shape-check",
+          "ueberdeckung": 0.14
+        },
+        {
+          "id": "REQ-016",
+          "typ": "funktional",
+          "text": "Profil `reasoning` oder `fast`; Thinking wird pro Request explizit gesetzt.",
+          "match": "REQ-mit-thinking-strip",
+          "ueberdeckung": 0.14
+        },
+        {
+          "id": "REQ-035",
+          "typ": "funktional",
+          "text": "Catch-up-Läufe starten sofort oder im nächsten Nachtfenster (konfigurierbar).",
+          "match": "REQ-network-gated-trigger",
+          "ueberdeckung": 0.14
+        },
+        {
+          "id": "REQ-039",
+          "typ": "funktional",
+          "text": "Tasks können deterministische Vorstufen (Datenabruf, Checks) vor dem LLM-Schritt ausführen.",
+          "match": "REQ-bounded-retry",
+          "ueberdeckung": 0.14
+        },
+        {
+          "id": "REQ-040",
+          "typ": "funktional",
+          "text": "Secrets liegen im macOS-Schlüsselbund, nie in Task-Definitionen oder Logs.",
+          "match": "REQ-insight-without-web-ui",
+          "ueberdeckung": 0.14
+        },
+        {
+          "id": "REQ-005",
+          "typ": "nicht-funktional",
+          "text": "Modell-Speicherbedarf passt mit Reserve in 64 GB Unified Memory.",
+          "match": "REQ-api-drop-in",
+          "ueberdeckung": 0.17
+        },
+        {
+          "id": "REQ-006",
+          "typ": "nicht-funktional",
+          "text": "Jeder Output ist auf Task, Prompt-Version und Modell rückführbar.",
+          "match": "REQ-api-drop-in",
+          "ueberdeckung": 0.17
+        },
+        {
+          "id": "REQ-014",
+          "typ": "funktional",
+          "text": "Nutzungsmetriken pro Token: Requests, Tokens, Wartezeit in der Queue.",
+          "match": "REQ-insight-without-web-ui",
+          "ueberdeckung": 0.17
+        },
+        {
+          "id": "REQ-008",
+          "typ": "nicht-funktional",
+          "text": "Always-on: Runtime und benötigte Modelle sind ohne manuellen Eingriff verfügbar; kein Lauf scheitert an einem nicht geladenen Modell.",
+          "match": "REQ-bounded-retry",
+          "ueberdeckung": 0.18
+        },
+        {
+          "id": "REQ-009",
+          "typ": "nicht-funktional",
+          "text": "Gleiche Modell- und Profilkonfiguration auf Mac Mini und MacBook.",
+          "match": "REQ-api-drop-in",
+          "ueberdeckung": 0.2
+        },
+        {
+          "id": "REQ-013",
+          "typ": "funktional",
+          "text": "Tagesprofil-Modelle bleiben tagsüber geladen.",
+          "match": "REQ-interactive-admission",
+          "ueberdeckung": 0.2
+        },
+        {
+          "id": "REQ-018",
+          "typ": "funktional",
+          "text": "Sampling-Parameter und Kontextlänge pro Profil konfigurierbar.",
+          "match": "REQ-mit-thinking-strip",
+          "ueberdeckung": 0.2
+        },
+        {
+          "id": "REQ-022",
+          "typ": "funktional",
+          "text": "Jeder Task hat einen Zeitplan; Standard ist das Nachtfenster.",
+          "match": "REQ-declarative-job-spec",
+          "ueberdeckung": 0.2
+        },
+        {
+          "id": "REQ-023",
+          "typ": "funktional",
+          "text": "Der Runner wird bei Nachtfenster, Systemstart und Aufwachen ausgelöst.",
+          "match": "REQ-occurrence-exactly-once",
+          "ueberdeckung": 0.2
+        },
+        {
+          "id": "REQ-036",
+          "typ": "funktional",
+          "text": "Während laufender Jobs wird System-Sleep verhindert.",
+          "match": "REQ-interactive-yield",
+          "ueberdeckung": 0.2
+        },
+        {
+          "id": "REQ-019",
+          "typ": "nicht-funktional",
+          "text": "Time-to-First-Token tagsüber innerhalb eines Zielwerts (offen), auch während UC-02 läuft.",
+          "match": "REQ-interactive-first-token",
+          "ueberdeckung": 0.22
+        },
+        {
+          "id": "REQ-017",
+          "typ": "funktional",
+          "text": "Bei `fast` muss der Reasoning-Output leer sein, sonst gilt der Lauf als fehlgeschlagen.",
+          "match": "REQ-occurrence-lease",
+          "ueberdeckung": 0.25
+        },
+        {
+          "id": "REQ-020",
+          "typ": "nicht-funktional",
+          "text": "Im LAN ist nur der Gateway-Port offen, Verbindung per TLS.",
+          "match": "REQ-interactive-first-token",
+          "ueberdeckung": 0.25
+        },
+        {
+          "id": "REQ-028",
+          "typ": "funktional",
+          "text": "Nur eine Runner-Instanz gleichzeitig (Lock).",
+          "match": "REQ-api-drop-in",
+          "ueberdeckung": 0.25
+        },
+        {
+          "id": "REQ-029",
+          "typ": "funktional",
+          "text": "Queue mit Concurrency 1; Gruppierung nach Modell.",
+          "match": "REQ-api-drop-in",
+          "ueberdeckung": 0.25
+        },
+        {
+          "id": "REQ-030",
+          "typ": "funktional",
+          "text": "Preflight vor jedem Lauf: Runtime erreichbar, Modell ladbar; sonst Runtime starten und Modell laden, erst dann Fehler melden.",
+          "match": "REQ-run-precondition",
+          "ueberdeckung": 0.25
+        },
+        {
+          "id": "REQ-032",
+          "typ": "funktional",
+          "text": "Token-Budget und Timeout pro Task.",
+          "match": "REQ-per-access-metering",
+          "ueberdeckung": 0.25
+        },
+        {
+          "id": "REQ-021",
+          "typ": "funktional",
+          "text": "Tasks werden deklarativ definiert; kein Task-spezifischer Code im Runner.",
+          "match": "REQ-declarative-job-spec",
+          "ueberdeckung": 0.29
+        },
+        {
+          "id": "REQ-003",
+          "typ": "nicht-funktional",
+          "text": "Portabel zwischen MacBook und Mac Mini ohne Codeänderung; Umzug = Kopieren von Konfiguration, Katalog und Ledger.",
+          "match": "REQ-portable-state",
+          "ueberdeckung": 0.3
+        },
+        {
+          "id": "REQ-011",
+          "typ": "funktional",
+          "text": "Gateway ist im internen Netz unter dem festen Namen SIG Local erreichbar; Clients konfigurieren nur diesen Namen.",
+          "match": "REQ-no-external-exposure",
+          "ueberdeckung": 0.3
+        },
+        {
+          "id": "REQ-042",
+          "typ": "funktional",
+          "text": "Endpoint-Fallback auf dem MacBook: SIG Local, wenn erreichbar, sonst die lokale Instanz – ohne manuelles Umkonfigurieren.",
+          "match": "REQ-transparent-endpoint-switch",
+          "ueberdeckung": 0.3
+        },
+        {
+          "id": "REQ-001",
+          "typ": "nicht-funktional",
+          "text": "Vollständig lokal; keine Daten verlassen den Rechner.",
+          "match": "REQ-interactive-locality",
+          "ueberdeckung": 0.4
+        },
+        {
+          "id": "REQ-012",
+          "typ": "funktional",
+          "text": "Token pro Nutzer bzw. Gerät, einzeln widerrufbar.",
+          "match": "REQ-per-principal-credential",
+          "ueberdeckung": 0.4
+        },
+        {
+          "id": "REQ-007",
+          "typ": "nicht-funktional",
+          "text": "Betrieb nach Neustart ohne interaktiven Login.",
+          "match": "REQ-unattended-autostart",
+          "ueberdeckung": 0.5
+        }
+      ]
+    }
+  }
+]

@@ -22,7 +22,9 @@ import type { Graph } from '@sigloch/graph-api-core';
 import { RULE_TO_DIMENSION } from '@sigloch/contracts/se';
 import type { MetricPolicy } from '@sigloch/contracts/se';
 import { takeSteeringSnapshot } from '../kernel/measure/steering-snapshot.js';
-import { handoffGate, PhaseGateReadiness } from '../kernel/measure/readiness.js';
+import { PhaseGateReadiness } from '../kernel/measure/readiness.js';
+import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
+import { acceptedRuleIds } from '@sigloch/contracts/se';
 import { isIntentTooThin, intentCoverage, type LoadedTargetProfile } from './target-profile.js';
 import { winner } from './channel-rank.js';
 import { decision } from './decisions.js';
@@ -247,6 +249,25 @@ export const DIMENSION_FOCUS_TYPES: Record<string, string[]> = {
  * kein ACTOR), `generationStep` bleibt rein. `seed` steht bewusst NICHT mehr in
  * DIMENSION_FOCUS_TYPES — dort gehoeren Readiness-Dimensionen hin, und der Seed ist keine.
  */
+/**
+ * Die Fokusmenge (CR-GC-593): welche Funde die Maschine dem Agenten ueberhaupt zeigt — und
+ * damit, weil `done ⇔ kein Fokus`, was zwischen Lauf und Freigabe steht.
+ *
+ *   1. nur Regeln, die das GATE auswertet (SE_DESCRIPTOR.rules). BQ/ND/RC laufen im
+ *      Steuerungsstrom mit und stehen in graph_readiness — als Fokus konnte der Agent sie
+ *      weder am Gate sehen noch reparieren (BQ-02 war `skipped`, `notInGate` und `missing`).
+ *   2. keine info-Regeln: ein Hinweis ist kein Auftrag.
+ *   3. Praesenz von Code (R-19/R-20/R-26/R-27/R-32) nur, wenn ueberhaupt etwas gebunden ist —
+ *      ein Modell ohne eine einzige realRef hat keine Bindungsluecken, es hat keinen Code
+ *      (dieselbe Grenze wie CR-GC-584). Je Element deckt `concept: true` denselben Fall.
+ *   4. keine abgenommenen Funde (`acceptedFindings`, CR-SM-349) — die benannte Abweichung.
+ *
+ * Gemessen am Golden (sigllm v98): danach bleiben RD-05, MS-01, BW-02, FM-03, AF-05 —
+ * die Liste dessen, was der Handlauf am Ende der Spezifikation bewusst offen liess.
+ */
+export const FOCUS_EXCLUDED_WHEN_UNBOUND: ReadonlySet<string> = new Set(['R-19', 'R-20', 'R-26', 'R-27', 'R-32']);
+const GATE_RULE_IDS: ReadonlySet<string> = new Set((SE_DESCRIPTOR.rules ?? []).map((r) => r.id));
+
 export const SEED_STAGES = {
   sys: ['SYS'],
   uc: ['SYS', 'UC'],
@@ -296,7 +317,17 @@ function stepCore(
   const gateProtocol = GATE_PROTOCOL[selection];
   // Steering-Snapshot (CR-GC-289): og + ND-Injektion + Full-Katalog-Eval +
   // computeReadiness + Phasen-Gates — geteilt mit dem steeringDelta des dryRun-Verdicts.
-  const { og, violations, blockingErrors, report, phaseReadiness } = takeSteeringSnapshot(graph, policy);
+  const { og, violations: alleFunde, blockingErrors, report, phaseReadiness } = takeSteeringSnapshot(graph, policy);
+  // CR-GC-593: die Fokusmenge (s. FOCUS_EXCLUDED_WHEN_UNBOUND) — alles Weitere unten rechnet nur damit.
+  const gebunden = og.elements.some((e) => e.type === 'FUNC' && e.attributes?.realRef !== undefined);
+  const elementById = new Map(og.elements.map((e) => [e.id, e]));
+  const sysEl = og.elements.find((e) => e.type === 'SYS');
+  const violations = alleFunde.filter((v) => {
+    if (!GATE_RULE_IDS.has(v.rule_id) || v.severity === 'info') return false;
+    if (!gebunden && FOCUS_EXCLUDED_WHEN_UNBOUND.has(v.rule_id)) return false;
+    const traeger = elementById.get(v.element_id) ?? sysEl;
+    return !(traeger && acceptedRuleIds(traeger).has(v.rule_id));
+  });
   const sys = og.elements.find((e) => e.type === 'SYS');
   const effectiveIntent = intent?.trim() || sys?.description?.trim() || '';
   const readiness = report.scores
@@ -305,8 +336,6 @@ function stepCore(
   // CR-GC-296: RULE_TO_PHASE-Achse aus demselben Regelstrom — die zweite,
   // strengere Handoff-Bedingung neben Schwelle + blockingErrors (s.u.). Seit CR-GC-502
   // rechnet sie der Snapshot, generationStep liest sie nur.
-  // CR-GC-582: ohne die Steuerregeln — die gehoeren der Phase NACH der Freigabe.
-  const openGate = handoffGate(phaseReadiness);
 
   // --- Phase seed: noch kein System im Graphen -----------------------------
   if (!sys) {
@@ -436,54 +465,33 @@ function stepCore(
       ? `Noch nirgends beschrieben: ${unaddressed.join(', ')}. Fehlt dazu ein Use Case oder Requirement? `
       : '';
 
-  // --- Phase handoff: Schwelle erreicht, keine Gate-Blocker, aktuelles ------
-  // Phase-Gate vollständig (CR-GC-296) — sonst kann "Struktur trägt" melden,
-  // während PDR/SRR/... noch Regel-Funde offen hat, die die Dimension-Score-
-  // Ratio über viele Elemente verdünnt (real passiert: arch-Readiness 0.86 bei
-  // null FLOWs — R-10 blieb unter der Schwelle unsichtbar).
-  // null = nicht messbar → „existiert noch gar nicht" blockiert den Handoff wie ein
-  // Unterschreiten der Schwelle (CR-GC-429 §5 — nie als 0 % oder als bestanden werten).
-  const belowThreshold = readiness.filter((r) => r.score === null || r.score < threshold);
-  if (belowThreshold.length === 0 && blockingErrors === 0 && openGate === null) {
-    // CR-GC-295: das Zielprofil kommt aus der Config (Mensch entscheidet in
-    // Runde 1), nicht mehr als Erfindungs-Auftrag ans Modell.
-    const weights = profile?.profile.weights ?? {};
-    const hasWeights = Object.values(weights).some((w) => typeof w === 'number' && w !== 0);
-    const targetInstruction = hasWeights
-      ? `Zielprofil aus .graphcode/target-profile.json: rufe graph_suggest {target: ${JSON.stringify(weights)}} auf. ` +
-        (profile && profile.conflicts.length > 0 ? profile.conflicts.join(' ') + ' ' : '')
-      : 'Kein Zielprofil konfiguriert — erhebe es beim Menschen über den Skill se:target-profile ' +
-        '(.graphcode/target-profile.json) und rufe dann graph_suggest {target} auf. ';
-    return {
-      phase: 'handoff',
-      done: true,
-      prompt:
-        `Die Struktur trägt (alle Readiness-Dimensionen ≥ ${threshold}, keine error-Violations, ` +
-        'alle Phase-Gates SRR/PDR/CDR/TRR regel-vollständig). ' +
-        'Handoff auf die ℝ⁶-Optimierung: ' +
-        targetInstruction +
-        coverageLine +
-        'Arbeite die Funde ab (Fix-Template-Edits über graph_mutate, Fund-only-Suggestions manuell); ' +
-        'das fitAdvisory jeder Mutation zeigt, ob Δm in Zielrichtung läuft. Die Metrik rankt, das Gate urteilt.',
-      readiness,
-      threshold,
-      blockingErrors,
-      phaseReadiness,
-      focusKey: null,
-      focusTypes: [],
-      focusDimension: null,
-    };
-  }
-
   // --- Phase expand: niedrigste Dimension mit handlungsfähigen Funden ------
   // Fund-Rotation (CR-GC-281): Kandidaten = 3er-Fenster der deterministisch
   // sortierten Violations je Dimension (schwächste zuerst). Fenster, deren
   // focusKey in `defer` liegt, werden übersprungen — erst innerhalb der
   // Dimension, dann die nächstschwächere. Alles deferred ⇒ defer ignorieren.
   // Nicht messbar (null) rankt OBEN: ein naiver Komparator ergäbe NaN und sortierte gar nicht.
-  const dims = [...report.scores]
-    .filter((s) => s.applicable > 0 && s.violations > 0)
-    .sort((a, b) => (a.score ?? -1) - (b.score ?? -1) || b.violations - a.violations);
+  // CR-GC-593: die Dimensionen kommen aus der FOKUSMENGE, nicht aus `report.scores` — dort
+  // faellt eine Dimension mit `applicable = 0` weg, auch wenn eine graphweite Regel in ihr
+  // feuert (AF-05 → `ms` ohne MS-Element: unsichtbar, und die Maschine waere "done" mit
+  // einem offenen Fund). Score und Fundzahl der Dimension liefert der Bericht weiterhin.
+  // Score nur, wo die Dimension Elemente hat: bei `applicable = 0` liefert der Bericht 0, nicht
+  // null — und 0 rangierte VOR jeder echten schwachen Dimension.
+  const scoreOf = (d: string): number | null => {
+    const rep = report.scores.find((s) => s.dimension === d);
+    return rep && rep.applicable > 0 ? rep.score : null;
+  };
+  const dimOf = (id: string): string | undefined => RULE_TO_DIMENSION[id];
+  const dims = [...new Set(violations.map((v) => dimOf(v.rule_id)).filter((d): d is string => d !== undefined))]
+    .map((dimension) => ({
+      dimension,
+      score: scoreOf(dimension),
+      violations: violations.filter((v) => dimOf(v.rule_id) === dimension).length,
+    }))
+    // Messbare Dimensionen zuerst, schwaechste voran; "nicht messbar" (kein Element der
+    // Dimension, nur ein graphweiter Fund wie AF-05) zuletzt — vorher stand es wegen `null → -1`
+    // VOR jedem echten Fehler, und die Frischestempel waren ploetzlich der erste Fokus.
+    .sort((a, b) => (a.score ?? 2) - (b.score ?? 2) || b.violations - a.violations || a.dimension.localeCompare(b.dimension));
   // Rang der Severity (CR-GC-563): error vor warning vor allem anderen. Unbekanntes
   // rankt hinten statt NaN zu erzeugen.
   const severityRang = (v: (typeof violations)[number]): number =>
@@ -528,28 +536,70 @@ function stepCore(
     `${dimension}:${vs[0]?.rule_id ?? ''}:${vs.map((v) => v.element_id).sort().join(',')}`;
 
   const deferSet = new Set(defer);
+  // CR-GC-593: nur Dimensionen, die in der FOKUSMENGE Fenster haben — `report.scores` zaehlt
+  // alle Regeln, die Fokusmenge nicht. Ohne diese Trennung stuende eine Dimension "mit Funden"
+  // da, fuer die es nichts zu tun gibt: genau der Zustand, den die Invariante ausschliesst.
+  const kandidaten = dims
+    .map((s) => ({ s, windows: windowsOf(violationsOf(s.dimension as string)) }))
+    .filter((k) => k.windows.length > 0);
   let focus: (typeof dims)[number] | undefined;
   let focusViolations: typeof violations = [];
   let focusKey: string | null = null;
   let deferExhausted = false;
-  outer: for (const s of dims) {
-    for (const window of windowsOf(violationsOf(s.dimension as string))) {
-      const key = keyOf(s.dimension as string, window);
+  outer: for (const k of kandidaten) {
+    for (const window of k.windows) {
+      const key = keyOf(k.s.dimension as string, window);
       if (!deferSet.has(key)) {
-        focus = s;
+        focus = k.s;
         focusViolations = window;
         focusKey = key;
         break outer;
       }
     }
   }
-  if (!focus && dims.length > 0) {
+  if (!focus && kandidaten.length > 0) {
     // Alle Kandidaten zurückgestellt — lieber wiederholen als stillstehen.
     deferExhausted = true;
-    focus = dims[0];
-    focusViolations = windowsOf(violationsOf(focus.dimension as string))[0] ?? [];
+    focus = kandidaten[0].s;
+    focusViolations = kandidaten[0].windows[0];
     focusKey = keyOf(focus.dimension as string, focusViolations);
   }
+
+  // --- Freigabe (CR-GC-593): done ⇔ kein Fokus ----------------------------
+  // Kein Waechter aus einer anderen Quelle als der Fokuswahl. Schwelle und Phasen-Gate stehen
+  // weiter im Bericht (readiness, phaseReadiness), sie entscheiden nur nicht mehr — gemessen
+  // hatten sie in fuenf Laeufen nie einen Schritt gewaehlt, aber in allen die Freigabe gesperrt.
+  if (!focus) {
+    // CR-GC-295: das Zielprofil kommt aus der Config (Mensch entscheidet in
+    // Runde 1), nicht mehr als Erfindungs-Auftrag ans Modell.
+    const weights = profile?.profile.weights ?? {};
+    const hasWeights = Object.values(weights).some((w) => typeof w === 'number' && w !== 0);
+    const targetInstruction = hasWeights
+      ? `Zielprofil aus .graphcode/target-profile.json: rufe graph_suggest {target: ${JSON.stringify(weights)}} auf. ` +
+        (profile && profile.conflicts.length > 0 ? profile.conflicts.join(' ') + ' ' : '')
+      : 'Kein Zielprofil konfiguriert — erhebe es beim Menschen über den Skill se:target-profile ' +
+        '(.graphcode/target-profile.json) und rufe dann graph_suggest {target} auf. ';
+    return {
+      phase: 'handoff',
+      done: true,
+      prompt:
+        'Die Struktur trägt: kein offener Fund mehr in der Fokusmenge (Gate-Regeln ohne info, ' +
+        'abgenommene Funde ausgenommen). ' +
+        'Handoff auf die ℝ⁶-Optimierung: ' +
+        targetInstruction +
+        coverageLine +
+        'Arbeite die Funde ab (Fix-Template-Edits über graph_mutate, Fund-only-Suggestions manuell); ' +
+        'das fitAdvisory jeder Mutation zeigt, ob Δm in Zielrichtung läuft. Die Metrik rankt, das Gate urteilt.',
+      readiness,
+      threshold,
+      blockingErrors,
+      phaseReadiness,
+      focusKey: null,
+      focusTypes: [],
+      focusDimension: null,
+    };
+  }
+
 
   // fix_hint mitrendern (sonst bleibt z.B. R-15s "Add FUNC elements via compose
   // trace" für das Modell unsichtbar — es sieht nur die Symptom-Message).
@@ -595,15 +645,9 @@ function stepCore(
   return {
     phase: 'expand',
     done: false,
-    prompt: focus
-      ? `Intention: "${effectiveIntent}". ${coverageLine}${deferNote}Schwächste Dimension: ${focus.dimension}. ` +
-        `Funde: ${funde}. ${template} ${gateProtocol}`
-      : belowThreshold.length > 0
-        ? `Intention: "${effectiveIntent}". ${coverageLine}Unter Schwelle: ${belowThreshold.map((r) => r.dimension).join(', ')} — ` +
-          `aber keine regelbaren Funde; prüfe fehlende Elemente der Dimensionen manuell. ${gateProtocol}`
-        : `Intention: "${effectiveIntent}". ${coverageLine}Alle Dimensionen ≥ Schwelle, aber Phase-Gate ${openGate} ist noch ` +
-          'nicht regel-vollständig (RULE_TO_PHASE) — aber keine regelbaren Funde; prüfe fehlende Elemente ' +
-          `manuell. ${gateProtocol}`,
+    prompt:
+      `Intention: "${effectiveIntent}". ${coverageLine}${deferNote}Schwächste Dimension: ${focus!.dimension}. ` +
+      `Funde: ${funde}. ${template} ${gateProtocol}`,
     readiness,
     threshold,
     blockingErrors,
@@ -614,6 +658,6 @@ function stepCore(
     // einer Dimension, waehrend der Text nach anderen Typen verlangt. Seit CR-GC-575 ist das
     // keine zweite Bedingung mehr, sondern derselbe Gewinner.
     focusTypes: imperativ?.value.types ?? [],
-    focusDimension: focus ? (focus.dimension as string) : null,
+    focusDimension: focus!.dimension as string,
   };
 }
