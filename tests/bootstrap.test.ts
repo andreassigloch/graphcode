@@ -17,7 +17,7 @@ import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import { bootstrap, TEMPLATE_FORMAT_E } from '../src/surface/bootstrap.js';
-import { GraphCodeCodec } from '../src/projections/codec.js';
+import { formatEToCommands } from '../src/surface/format-e-commands.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 
 function makeConfig(repoRoot: string): HarnessConfig {
@@ -56,8 +56,11 @@ describe('TEST-bootstrap: new-member fill THROUGH the gate', () => {
   });
 
   it('fills the empty graph from the template Format-E THROUGH the gate', async () => {
-    // The template parses to exactly the SYS + REQ + verifying TEST it declares.
-    const expected = new GraphCodeCodec().decode(TEMPLATE_FORMAT_E);
+    // The template parses to exactly the SYS + REQ + verifying TEST it declares —
+    // gemessen ueber DENSELBEN Weg, den bootstrap faehrt (CR-GC-630).
+    const erwartet = formatEToCommands(harness, TEMPLATE_FORMAT_E).commands;
+    const erwarteteKnoten = erwartet.filter((c) => c.op === 'add-node').length;
+    const erwarteteKanten = erwartet.filter((c) => c.op === 'add-edge').length;
 
     const { result, nodes, edges } = await bootstrap(harness, TEMPLATE_FORMAT_E);
 
@@ -69,8 +72,8 @@ describe('TEST-bootstrap: new-member fill THROUGH the gate', () => {
     expect(result.tier).toBe('suggest');
     expect(result.violations.filter((v) => v.severity === 'error')).toHaveLength(0);
     expect(result.violations.some((v) => v.ruleId === 'R-19')).toBe(true);
-    expect(nodes).toBe(expected.nodes.length);
-    expect(edges).toBe(expected.edges.length);
+    expect(nodes).toBe(erwarteteKnoten);
+    expect(edges).toBe(erwarteteKanten);
     // appliedCommands == nodes + edges proves nodes-first then edges went in one batch.
     expect(result.appliedCommands).toBe(nodes + edges);
 
@@ -161,6 +164,43 @@ describe('TEST-bootstrap: new-member fill THROUGH the gate', () => {
     await harness2.initialize();
     expect(harness2.getGraph().nodes).toHaveLength(0);
     harness = harness2;
+  });
+
+  // --- CR-GC-630: der Kaltstart faehrt denselben Schreibweg wie graph_mutate ------------
+  //
+  // Bis CR-GC-630 ging `bootstrap` ueber `decode() → Graph → add-node/add-edge`. Ein Graph
+  // kann „diese Knoten existieren" ausdruecken, nicht „diesen aendern" — jedes Nicht-Add-Op
+  // endete im Wurf. Die Beschraenkung war graphcodes eigene, keine der Sprache.
+
+  it('nimmt ein `~` an: der Kaltstart kennt die Sprache ganz (CR-GC-630)', async () => {
+    await bootstrap(harness, TEMPLATE_FORMAT_E);
+
+    const korrektur = [
+      '## Nodes',
+      '### REQ',
+      '~ REQ-template-root|Geschaerfte Fassung der ersten Anforderung',
+    ].join('\n');
+
+    const { result, nodes } = await bootstrap(harness, korrektur, 'merge');
+
+    expect(result.success).toBe(true);
+    expect(nodes).toBe(1);
+    const req = harness.getGraph().nodes.find((n) => n.uid === 'REQ-template-root');
+    expect(req?.description).toBe('Geschaerfte Fassung der ersten Anforderung');
+    // Der Name stand NICHT in der Patch-Zeile — er darf nicht auf die uid zurueckfallen.
+    expect(req?.name).toBe('Template root requirement');
+  });
+
+  it('meldet Knoten ohne __name, statt still die uid zum Namen zu machen (CR-GC-630)', async () => {
+    const ohneNamen = [
+      '## Nodes',
+      '### MOD',
+      '+ MOD-namenlos|Ein Modul, dessen Zeile keinen __name traegt',
+    ].join('\n');
+
+    const { unnamed } = await bootstrap(harness, ohneNamen);
+
+    expect(unnamed).toEqual(['MOD-namenlos']);
   });
 
   it('surfaces Format-E parse errors (throws, no silent pass)', async () => {

@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 237 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 239 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 237 CR · 189 done · 0 open.
+Total: 239 CR · 189 done · 0 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -299,3 +299,5 @@ Total: 237 CR · 189 done · 0 open.
 | `CR-GC-627` | done | graph_mutate laesst nur das Plus-Viertel von Format-E durch: der Umweg ueber die Graph-Rekonstruktion wirft jedes Nicht-Add-Op, obwohl der Parser die vier Praefixe kennt und die Abbildung auf MutateCommand eins zu eins ist — Loeschen und Aendern kosten den dreifach teureren commands-Modus |
 | `CR-GC-628` | done | graph_get_edges ist der zweitgroesste Antwortgeber, und sein sparsamer Modus ist die teurere Falle: format formatE serialisiert die Endpunkt-Knoten mit voller Prosa und allen Attributen, am Golden 49.431 Zeichen gegen 18.001 als JSON |
 | `CR-GC-629` | done | Die Urteilsschwelle boundaryWidth steht zweimal (contracts-Startwert und graphcode.config.jsonc), ein Knopf treibt zwei Verteilungen (BW-02 am FUNC-Rand, R-04 am MOD-Rand), und niemand misst sie laufend |
+| `CR-GC-630` | n/a | CR-GC-627 hat den Umweg decode-zu-Graph nur aus graph_mutate entfernt — bootstrap() traegt ihn weiter: decode() dann Graph dann add-node/add-edge. Damit kennt der Kaltstart-Pfad weder die Praefixe minus und tilde noch die nameWarning, und jede kuenftige Aenderung an formatEToCommands laeuft an ihm vorbei |
+| `CR-GC-631` | n/a | GraphCodeCodec ist ein zweiter Codec neben ctx.codec: beide sind new FormatECodec(SE_DESCRIPTOR), encode() ist eine Delegationszeile mit genau einem Aufrufer (graph_elements format formatE), validate() und project() delegieren ebenfalls, und decode() - die einzige echte Eigenleistung - hat nach ITEM-2026-510 keinen Produktionsaufrufer mehr. Komplett entfernen, nicht kapseln |

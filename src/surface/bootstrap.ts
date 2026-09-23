@@ -5,8 +5,8 @@
  * `mutate()` Apply-Gate (L1) — the source is UNGOVERNED Format-E text
  * (e.g. graphify/slicer output, FLOW-bulk-formatE), NOT a direct write.
  *
- *   Format-E text → GraphCodeCodec.decode() → Graph
- *                 → MutateCommand[] (all add-node FIRST, then add-edge)
+ *   Format-E text → formatEToCommands()  ← DERSELBE Weg wie graph_mutate (CR-GC-630)
+ *                 → MutateCommand[] (Knoten → Kanten → Merges → Loeschen)
  *                 → harness.mutate()  ← the ONE gate (REQ-one-gate-per-repo, L1)
  *                 → BootstrapResult (filled graph + violations report)
  *
@@ -24,11 +24,10 @@
  * @author andreas@siglochconsulting
  */
 import { z } from 'zod/v4';
-import type { Graph } from '@sigloch/graph-api-core';
-import type { MutateCommand, MutateResult } from '@sigloch/contracts/harness';
+import type { MutateResult } from '@sigloch/contracts/harness';
 import { MutateResultSchema } from '@sigloch/contracts/harness';
 import { GraphCodeHarness } from '../kernel/harness.js';
-import { GraphCodeCodec } from '../projections/codec.js';
+import { formatEToCommands } from './format-e-commands.js';
 
 /**
  * BootstrapResult (FLOW-bootstrap-result → SCHEMA-mutate-result): the gate
@@ -43,6 +42,11 @@ export const BootstrapResultSchema = z.object({
   nodes: z.number().int().nonnegative(),
   /** Edges parsed from the Format-E input (volume in, before the gate verdict). */
   edges: z.number().int().nonnegative(),
+  /**
+   * CR-GC-630: uids, deren Knotenzeile kein `__name` trug — ihr Name ist die uid geworden.
+   * Derselbe Hinweis, den `graph_mutate` seit CR-GC-321 gibt; der Kaltstart schwieg bis hier.
+   */
+  unnamed: z.array(z.string()),
 });
 export type BootstrapResult = z.infer<typeof BootstrapResultSchema>;
 
@@ -60,7 +64,7 @@ export type BootstrapMode = 'replace' | 'merge';
  * With this, neither an error- nor a warning-rule fires: `harness.mutate()`
  * returns success=true with tier='auto-apply' on an empty disk Kuzu graph.
  *
- * Format-E matches the GraphCodeCodec encoding: v2 `### <TYPE>` sections, uids
+ * Format-E v2: `### <TYPE>` sections, uids
  * verbatim (CR-GC-269), `__name` attr.
  */
 export const TEMPLATE_FORMAT_E = [
@@ -94,7 +98,7 @@ export const TEMPLATE_FORMAT_E = [
  *                 graph is empty). Replace-on-nonempty (delete-then-add) is OUT
  *                 OF SCOPE for MVP-1 — cold-start is the only path here.
  *
- * Throws on Format-E parse errors (Codec.decode surfaces them). Rule violations
+ * Throws on Format-E parse errors (the parser surfaces them). Rule violations
  * are NOT thrown: they are the governed gate verdict in the result
  * (success=false, tier='block', e.g. R-01) — the graph then stays unchanged.
  */
@@ -105,38 +109,10 @@ export async function bootstrap(
 ): Promise<BootstrapResult> {
   void mode; // Cold-start: both modes = pure adds (see @param).
 
-  // 1. Parse: Format-E → Graph (authoritative parser; throws on parse errors).
-  const codec = new GraphCodeCodec();
-  const graph: Graph = codec.decode(formatE);
-
-  // 2. Convert to MutateCommand[]: FIRST all nodes, THEN all edges. Endpoints
-  //    created in the same batch are fine — the gate applies the commands in
-  //    order before it evaluates the rules.
-  const commands: MutateCommand[] = [
-    ...graph.nodes.map(
-      (n): MutateCommand => ({
-        op: 'add-node',
-        node: {
-          uid: n.uid,
-          type: n.type,
-          name: n.name,
-          description: n.description ?? '',
-          attributes: n.attributes ?? {},
-        },
-      }),
-    ),
-    ...graph.edges.map(
-      (e): MutateCommand => ({
-        op: 'add-edge',
-        edge: {
-          sourceId: e.sourceId,
-          targetId: e.targetId,
-          edgeType: e.edgeType,
-          attributes: e.attributes ?? {},
-        },
-      }),
-    ),
-  ];
+  // 1. Text → MutateCommand[] — DIESELBE Funktion, die `graph_mutate` fuehrt (CR-GC-630).
+  //    Sie ordnet selbst in vier Phasen (Knoten → Kanten → Merges → Loeschen) und wirft auf
+  //    Parse-Fehler, unbekannte Endpunkte und Typkonflikte.
+  const { commands, unnamed } = formatEToCommands(harness, formatE);
 
   // 3. Through the ONE gate (L1) — no direct write. On newly introduced
   //    error-violations the gate blocks and persists nothing.
@@ -144,7 +120,8 @@ export async function bootstrap(
 
   return {
     result,
-    nodes: graph.nodes.length,
-    edges: graph.edges.length,
+    nodes: commands.filter((c) => c.op === 'add-node' || c.op === 'update-node' || c.op === 'delete-node').length,
+    edges: commands.filter((c) => c.op === 'add-edge' || c.op === 'delete-edge' || c.op === 'update-edge').length,
+    unnamed,
   };
 }
