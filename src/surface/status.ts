@@ -31,12 +31,14 @@
  * @author andreas@siglochconsulting
  */
 import { existsSync, readFileSync, realpathSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, dirname } from 'node:path';
 import { hostname } from 'node:os';
 import { deriveMemberName } from './mcp-server.js';
 import { readPackageVersion } from '../kernel/package-version.js';
 import { PACKAGE_NAME, HOST_ENTRY } from './scaffold-templates.js';
 import { readLockOwner } from '../kernel/store-lock.js';
+import type { LockOwner } from '../kernel/lock-owner-contract.js';
+import { neuesteAenderung, installierteContracts } from '../kernel/build-stamp.js';
 // Das Probe-Budget gehoert dem Viewer-Modul: Bericht und Starter muessen sich ueber
 // „laeuft ein Viewer" einig sein, sonst startet der eine, was der andere schon sieht.
 import { PROBE_TIMEOUT_MS } from './gve.js';
@@ -52,6 +54,8 @@ export interface HostStatus {
   startedAt?: string;
   /** Der Build des Owners (Lock-Stempel, CR-GC-376) — fehlt bei Locks älterer Owner. */
   version?: string;
+  /** Womit der Owner gebootet hat (CR-GC-620) — fehlt bei Locks älterer Owner. */
+  boot?: LockOwner['boot'];
 }
 
 export interface DashboardStatus {
@@ -100,6 +104,11 @@ interface StatusDeps {
   hostnameImpl?: () => string;
   /** Die eigene Version; injizierbar, damit ein Test nicht gegen die echte package.json driftet. */
   cliVersion?: string;
+  /**
+   * Der JETZIGE Stand des Code-Verzeichnisses, aus dem der HOST gebootet hat (CR-GC-620).
+   * Injizierbar, weil ein Test keine Datei anfassen muss, um eine mtime zu setzen.
+   */
+  plattenStand?: (codeRoot: string) => { codeMtimeMs: number; contracts?: string };
 }
 
 /**
@@ -127,7 +136,7 @@ export function readHostStatus(repoRoot: string, deps: StatusDeps = {}): HostSta
   const owner = readLockOwner(lockPath);
   // Unlesbar oder nicht vertragskonform = kein Owner, den man benennen könnte.
   if (!owner) return { state: 'stale' };
-  const base = { pid: owner.pid, hostname: owner.hostname, startedAt: owner.startedAt, version: owner.version };
+  const base = { pid: owner.pid, hostname: owner.hostname, startedAt: owner.startedAt, version: owner.version, boot: owner.boot };
   // Fremder Host: Liveness ist von hier aus nicht prüfbar — als laufend melden statt
   // einen fremden Rechner für tot zu erklären (dieselbe Vorsicht wie StoreLock).
   const here = (deps.hostnameImpl ?? hostname)();
@@ -230,6 +239,43 @@ export function compareVersions(a: string, b: string): number {
  * schon liegt. Die Reihenfolge der Aktion ist nicht kosmetisch: der Repo-Install ist
  * zuerst dran, weil er das ist, was die nächste Agent-Session bootet.
  */
+/**
+ * CR-GC-620 — laeuft der Host noch mit dem, was auf der Platte liegt? Rein: zwei Staende rein,
+ * Grund raus.
+ *
+ * `judgeVersions` darunter vergleicht drei Versions-STRINGS. Die bewegen sich bei einem
+ * `npm run build` nicht (`rm -rf dist && tsc` laesst die Nummer stehen) und auch nicht bei einem
+ * contracts-Tausch unter derselben graphcode-Version. Gemessen 2026-09-23: Host pid 2422 vom
+ * Vortag 19:28, `dist` gebaut 07:04 — Bericht `Version OK`. Nach dem Reconnect (pid 67732, 07:32)
+ * stand dieselbe Zeile. Ob der Host 27 Minuten juenger als der Build ist oder elf Stunden aelter,
+ * war am Werkzeug nicht zu unterscheiden.
+ *
+ * Kein Urteil ohne Messwert: fehlt der Stempel (aelterer Build) oder ist eine der beiden
+ * mtime-Zahlen `0` (Verzeichnis nicht lesbar), gibt es `null` — „nicht beurteilbar", nie
+ * „unveraendert". Ein Vergleich gegen 0 meldete sonst jedem Host Drift.
+ */
+export function judgeBootDrift(
+  boot: LockOwner['boot'],
+  jetzt: { codeMtimeMs: number; contracts?: string },
+): string | null {
+  if (!boot) return null;
+  if (boot.codeMtimeMs > 0 && jetzt.codeMtimeMs > 0 && jetzt.codeMtimeMs > boot.codeMtimeMs) {
+    return `Code unter ${boot.codeRoot} wurde nach dem Boot des Hosts gebaut`;
+  }
+  if (boot.contracts && jetzt.contracts && boot.contracts !== jetzt.contracts) {
+    return `contracts ${boot.contracts} beim Boot, ${jetzt.contracts} installiert`;
+  }
+  return null;
+}
+
+/** Der jetzige Stand eines fremden Code-Verzeichnisses — die Paketwurzel liegt eine Ebene darüber. */
+function plattenStandVon(codeRoot: string): { codeMtimeMs: number; contracts?: string } {
+  return { codeMtimeMs: neuesteAenderung(codeRoot), contracts: installierteContracts(dirname(codeRoot)) };
+}
+
+/** Die EINE Aktion, wenn der Host mit altem Code laeuft. Der Reconnect ersetzt den Prozess. */
+const RECONNECT = 'MCP-Server neu verbinden (/mcp → reconnect), sonst Agent-Session neu starten';
+
 function judgeVersions(repoRoot: string, host: HostStatus, deps: StatusDeps): VersionStatus {
   const cli = deps.cliVersion ?? readPackageVersion();
   const repo = readRepoInstallVersion(repoRoot);
@@ -267,6 +313,14 @@ function judgeVersions(repoRoot: string, host: HostStatus, deps: StatusDeps): Ve
   if (behind(cli)) {
     return { ...base, state: 'drift', action: 'graphcode upgrade --global' };
   }
+  // CR-GC-620: die Zahlen stimmen überein — läuft der Host trotzdem mit altem Code? Gefragt
+  // wird der Stand DES HOSTS (`boot.codeRoot`), nicht der eigene: `status` kann aus einem
+  // anderen Install laufen als der Host, und dessen `dist` ist die Antwort.
+  if (host.state === 'running' && host.boot) {
+    const stand = (deps.plattenStand ?? plattenStandVon)(host.boot.codeRoot);
+    const grund = judgeBootDrift(host.boot, stand);
+    if (grund) return { ...base, state: 'drift', action: `${grund} → ${RECONNECT}` };
+  }
   // Der fehlende Stempel kommt ZULETZT: ein Host ohne Versionsangabe ist ein
   // Erkenntnis-, kein Handlungsproblem — solange eine BEKANNTE Zahl hinterherhinkt,
   // ist deren Fix die nuetzlichere Aktion.
@@ -275,6 +329,16 @@ function judgeVersions(repoRoot: string, host: HostStatus, deps: StatusDeps): Ve
       ...base,
       state: 'host-unknown',
       action: 'graphcode upgrade — sein Build stempelt seine Version nicht in den Lock',
+    };
+  }
+  // CR-GC-620: gleiche Nummer, aber kein Boot-Stempel — dann ist „aktuell" eine Behauptung,
+  // keine Messung. Das ist genau der Zustand, den dieser CR beseitigt, und er beseitigt sich
+  // selbst: ein Reconnect stempelt den neuen Host, danach ist die Zeile wieder eine Aussage.
+  if (host.state === 'running' && !host.boot) {
+    return {
+      ...base,
+      state: 'host-unknown',
+      action: `sein Lock sagt nicht, womit er gebootet hat → ${RECONNECT}`,
     };
   }
   return base;

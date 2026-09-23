@@ -11,7 +11,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { mkdtempSync, mkdirSync, writeFileSync, rmSync, symlinkSync, realpathSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { collectStatus, formatStatus, statusIsHealthy } from '../src/surface/status.js';
+import { collectStatus, formatStatus, statusIsHealthy, judgeBootDrift } from '../src/surface/status.js';
 import { HOST_ENTRY } from '../src/surface/scaffold-templates.js';
 
 describe('TEST-status', () => {
@@ -63,13 +63,18 @@ describe('TEST-status', () => {
   });
 
   it('meldet Host und Dashboard grün, wenn der Viewer DIESES Repo bedient', async () => {
-    writeLock({ pid: 4242, hostname: 'this-box', startedAt: '2026-08-19T09:12:03.000Z', version: '0.16.0' });
+    // CR-GC-620: „gesund" heisst seither auch „der Host ist beurteilbar" — ein Lock ohne
+    // Boot-Stempel ist nicht mehr gruen, sondern unbekannt. Der Stempel gehoert deshalb ins
+    // Fixture, nicht die Zusage aufgeweicht.
+    writeLock({ pid: 4242, hostname: 'this-box', startedAt: '2026-08-19T09:12:03.000Z', version: '0.16.0',
+      boot: { codeRoot: '/p/dist', codeMtimeMs: 1_000, contracts: '10.10.0' } });
     writeUrl('http://localhost:4318/');
     const s = await collectStatus(repo, {
       fetchImpl: probe({ repoRoot: repo }),
       pidAlive: () => true,
       hostnameImpl: () => 'this-box',
       cliVersion: '0.16.0',
+      plattenStand: () => ({ codeMtimeMs: 1_000, contracts: '10.10.0' }),
     });
     expect(s.host).toMatchObject({ state: 'running', pid: 4242 });
     expect(s.dashboard).toEqual({ state: 'running', url: 'http://localhost:4318/' });
@@ -188,13 +193,16 @@ describe('TEST-status', () => {
   });
 
   it('meldet Versionen grün, wenn CLI, Host und Repo-Install denselben Build nennen', async () => {
-    writeLock({ pid: 4242, hostname: 'this-box', startedAt: '2026-08-20T09:00:00.000Z', version: '0.16.0' });
+    writeLock({ pid: 4242, hostname: 'this-box', startedAt: '2026-08-20T09:00:00.000Z', version: '0.16.0',
+      boot: { codeRoot: '/p/dist', codeMtimeMs: 1_000, contracts: '10.10.0' } });
     writeRepoInstall('0.16.0');
     const s = await collectStatus(repo, {
       fetchImpl: unreachable,
       pidAlive: () => true,
       hostnameImpl: () => 'this-box',
       cliVersion: '0.16.0',
+      // CR-GC-620: gleiche Nummern REICHEN nicht mehr fuer gruen — der Stand muss dazupassen.
+      plattenStand: () => ({ codeMtimeMs: 1_000, contracts: '10.10.0' }),
     });
     expect(s.version).toEqual({ cli: '0.16.0', host: '0.16.0', repo: '0.16.0', state: 'ok' });
     expect(formatStatus(s)).toContain('CLI 0.16.0 · Host 0.16.0 · Repo 0.16.0');
@@ -295,5 +303,78 @@ describe('TEST-status', () => {
     writeRepoInstall('0.16.0');
     const s = await collectStatus(repo, { fetchImpl: unreachable, cliVersion: '0.15.0' });
     expect(s.version.action).toBe('graphcode upgrade --global');
+  });
+
+  /**
+   * CR-GC-620 — die Paketnummer identifiziert ein Release, keinen Build.
+   *
+   * Gemessen am 2026-09-23: Host pid 2422 vom Vortag 19:28, `dist` gebaut 07:04 (und
+   * `npm run build` macht `rm -rf dist`, der Host hielt also geloeschte Dateien) — Bericht
+   * `Version OK · CLI 0.24.0 · Host 0.24.0`. Nach dem Reconnect (pid 67732, 07:32) stand
+   * DIESELBE Zeile. Der Reconnect ersetzt den Prozess nachweislich; es fehlte der Anlass.
+   */
+  describe('Boot-Stempel (CR-GC-620)', () => {
+    const BOOT = { codeRoot: '/p/dist', codeMtimeMs: 1_000, contracts: '10.10.0' };
+
+    it('urteilt ueber Code- und contracts-Drift, und nur mit Messwerten', () => {
+      expect(judgeBootDrift(BOOT, { codeMtimeMs: 1_000, contracts: '10.10.0' })).toBeNull();
+      expect(judgeBootDrift(BOOT, { codeMtimeMs: 2_000, contracts: '10.10.0' }))
+        .toMatch(/\/p\/dist wurde nach dem Boot/);
+      expect(judgeBootDrift(BOOT, { codeMtimeMs: 1_000, contracts: '10.11.0' }))
+        .toMatch(/contracts 10\.10\.0 beim Boot, 10\.11\.0 installiert/);
+      // Aelterer Stand auf der Platte ist KEINE Drift: der Host ist dann der neuere.
+      expect(judgeBootDrift(BOOT, { codeMtimeMs: 500, contracts: '10.10.0' })).toBeNull();
+      // Kein Urteil ohne Messwert — sonst meldet jedes unlesbare Verzeichnis Drift.
+      expect(judgeBootDrift(BOOT, { codeMtimeMs: 0 })).toBeNull();
+      expect(judgeBootDrift(undefined, { codeMtimeMs: 9_999 })).toBeNull();
+    });
+
+    it('meldet Drift, wenn das dist des Hosts nach seinem Boot gebaut wurde', async () => {
+      writeLock({ pid: 4242, hostname: 'this-box', startedAt: '2026-09-22T19:28:35.000Z',
+        version: '0.24.0', boot: BOOT });
+      writeUrl('http://localhost:4318/');
+      writeRepoInstall('0.24.0');
+      writeMcpConfig('node', [HOST_ENTRY, 'mcp']);
+      const s = await collectStatus(repo, {
+        fetchImpl: probe({ repoRoot: repo }), pidAlive: () => true,
+        hostnameImpl: () => 'this-box', cliVersion: '0.24.0',
+        plattenStand: () => ({ codeMtimeMs: 2_000, contracts: '10.10.0' }),
+      });
+      // Alle drei Zahlen sind gleich — genau der Fall, den die alte Fassung gruen meldete.
+      expect(s.version.state).toBe('drift');
+      expect(s.version.action).toMatch(/reconnect/);
+      expect(statusIsHealthy(s)).toBe(false);
+    });
+
+    it('meldet OK, wenn der Host mit dem jetzigen Stand gebootet hat', async () => {
+      writeLock({ pid: 4242, hostname: 'this-box', startedAt: '2026-09-23T05:32:10.000Z',
+        version: '0.24.0', boot: BOOT });
+      writeUrl('http://localhost:4318/');
+      writeRepoInstall('0.24.0');
+      writeMcpConfig('node', [HOST_ENTRY, 'mcp']);
+      const s = await collectStatus(repo, {
+        fetchImpl: probe({ repoRoot: repo }), pidAlive: () => true,
+        hostnameImpl: () => 'this-box', cliVersion: '0.24.0',
+        plattenStand: () => ({ codeMtimeMs: 1_000, contracts: '10.10.0' }),
+      });
+      // Ohne diese Zusage waere die Erkennung nur lauter, nicht richtiger.
+      expect(s.version.state).toBe('ok');
+      expect(statusIsHealthy(s)).toBe(true);
+    });
+
+    it('nennt einen Lock ohne Boot-Stempel unbekannt, statt ihn gruen zu melden', async () => {
+      // Ein Host eines aelteren Builds. Er ist NICHT verwaist — nur nicht beurteilbar.
+      writeLock({ pid: 4242, hostname: 'this-box', startedAt: '2026-09-23T05:32:10.000Z', version: '0.24.0' });
+      writeUrl('http://localhost:4318/');
+      writeRepoInstall('0.24.0');
+      writeMcpConfig('node', [HOST_ENTRY, 'mcp']);
+      const s = await collectStatus(repo, {
+        fetchImpl: probe({ repoRoot: repo }), pidAlive: () => true,
+        hostnameImpl: () => 'this-box', cliVersion: '0.24.0',
+      });
+      expect(s.host.state).toBe('running');
+      expect(s.version.state).toBe('host-unknown');
+      expect(s.version.action).toMatch(/reconnect/);
+    });
   });
 });

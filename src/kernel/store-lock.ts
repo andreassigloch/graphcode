@@ -23,6 +23,7 @@ import { dirname } from 'node:path';
 import { hostname } from 'node:os';
 import { LockOwner } from './lock-owner-contract.js';
 import { readPackageVersion } from './package-version.js';
+import { buildStempel } from './build-stamp.js';
 
 /** Grace period after which an UNPARSEABLE lockfile is treated as stale (a mid-write window is sub-second). */
 const STALE_CORRUPT_MS = 5000;
@@ -93,6 +94,9 @@ export class StoreLock {
       hostname: hostname(),
       startedAt: new Date().toISOString(),
       version: readPackageVersion(),
+      // CR-GC-620: EINMAL beim Boot genommen. Spaeter waere es der Stand der Platte, nicht
+      // der des laufenden Prozesses — und damit genau die Zahl, gegen die verglichen wird.
+      boot: buildStempel(),
     };
   }
 
