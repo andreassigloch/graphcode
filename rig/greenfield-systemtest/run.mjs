@@ -654,7 +654,26 @@ export async function captureArtifacts(dir) {
   await h.close();
   const audit = join(dir, '.graphcode', 'audit.jsonl');
   if (existsSync(audit)) cpSync(audit, join(dir, 'audit.jsonl'));
+  entsorgeStore(dir);
   return exportError;
+}
+
+/**
+ * CR-GC-619 — der Store ist der ZWISCHENSTAND, nicht der Beleg.
+ *
+ * Gemessen: `runs/` stand auf 2,2 GB, davon 1,8 GB in `.graphcode/kuzu` — 109 MB je Lauf. Zu dem
+ * Zeitpunkt hat `captureArtifacts` aus ihm laengst `graph.json` und `readiness.json` gezogen und
+ * `audit.jsonl` herauskopiert; danach liest ihn keine Auswertung mehr (`report.mjs` und
+ * `code-test/messen.mjs` greifen auf `audit.jsonl`, nie auf `kuzu`). Und er ist aus `graph.json`
+ * per Reseed wieder herstellbar — es fehlt nichts, wenn er weg ist.
+ *
+ * Der REST von `.graphcode/` bleibt: `audit.jsonl`, `trajectory.jsonl`, `rewind-batches.json`,
+ * `prompts/`, `ontology.schema` — genau das, was spaetere Auswertungen und der Rewind lesen.
+ * Kein Schalter dafuer: eine Ausnahme, die man setzen muss, wird nie gesetzt und saet nur
+ * Zweifel, ob die Belege vollstaendig sind.
+ */
+export function entsorgeStore(dir) {
+  for (const f of ['kuzu', 'kuzu.wal']) rmSync(join(dir, '.graphcode', f), { recursive: true, force: true });
 }
 
 /** sha256 der ersten 1 MB einer Datei — genug, um zwei Korpora auseinanderzuhalten. */

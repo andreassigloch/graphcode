@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 226 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 227 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 226 CR · 180 done · 0 open.
+Total: 227 CR · 180 done · 0 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -288,3 +288,4 @@ Total: 226 CR · 180 done · 0 open.
 | `CR-GC-616` | done | ITEM-462 umgesetzt: UC-05/06/RD-03 gestrichen (UC-Schreibregel), MT-02 warning, Fix-Roundtrip-Test, Folge-Regel-Spalte |
 | `CR-GC-617` | n/a | Rig releaseStore loescht owner.lock statt den Eigentuemer zu beenden: der MCP-Host des Executors ueberlebt den Timeout-SIGTERM als Waise, haelt Kuzu-Handle und ~550 MB, und der geloeschte Lock nimmt der Heartbeat-Erkennung die Grundlage |
 | `CR-GC-618` | n/a | Rig-Ergebniszeile traegt keinen Korpus-Stempel: arm/model/executor/run, aber weder Golden noch Prompt noch Seed — zwei Laeufe auf verschiedenen Korpora sind in der JSON ununterscheidbar, und GOLDEN faellt still auf den lebenden sigloch-modules-Graphen zurueck |
+| `CR-GC-619` | n/a | Rig-Laufverzeichnisse behalten je 109 MB Kuzu-Store, obwohl captureArtifacts graph.json, readiness.json und audit.jsonl laengst herausgezogen hat: 1,8 von 2,2 GB unter runs/ sind rekonstruierbarer Zwischenstand |
