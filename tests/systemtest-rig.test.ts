@@ -624,6 +624,30 @@ describe('captureArtifacts ueberlebt die Export-Verweigerung (CR-GC-615)', () =>
       rmSync(ws, { recursive: true, force: true });
     }
   }, 60_000);
+
+  /**
+   * CR-GC-619 — nach dem Erfassen bleibt der Beleg, nicht der Zwischenstand. 109 MB je Lauf
+   * lagen in `.graphcode/kuzu`, 1,8 von 2,2 GB unter `runs/`; gelesen hat ihn danach niemand.
+   */
+  it('wirft den Kuzu-Store weg und behaelt alles, was eine Auswertung liest', async () => {
+    const { captureArtifacts } = await import('../rig/greenfield-systemtest/run.mjs');
+    const ws = mkdtempSync(join(realpathSync(tmpdir()), 'gc-entsorge-'));
+    try {
+      spawnSync('node', [join(__dirname, '..', 'dist', 'cli.js'), 'init'], { cwd: ws, stdio: 'ignore' });
+      await captureArtifacts(ws);
+
+      // Weg: der reproduzierbare Zwischenstand.
+      expect(existsSync(join(ws, '.graphcode', 'kuzu')), 'der Store muss weg sein').toBe(false);
+      expect(existsSync(join(ws, '.graphcode', 'kuzu.wal'))).toBe(false);
+      // Da: die Belege. `graph.json` ist die SSOT, aus der ein Reseed den Store wieder baut.
+      expect(existsSync(join(ws, 'graph.json'))).toBe(true);
+      expect(existsSync(join(ws, 'readiness.json'))).toBe(true);
+      // Und der Rest von .graphcode, den report.mjs und messen.mjs lesen.
+      expect(existsSync(join(ws, '.graphcode'))).toBe(true);
+    } finally {
+      rmSync(ws, { recursive: true, force: true });
+    }
+  }, 60_000);
 });
 
 /**

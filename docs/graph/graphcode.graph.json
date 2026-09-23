@@ -1942,6 +1942,12 @@
       "description": "docs/cr/open/CR-GC-618-rig-ergebniszeile-traegt-keinen-korpus-s.md"
     },
     {
+      "id": "CR-GC-619",
+      "type": "CR",
+      "name": "Rig-Laufverzeichnisse behalten je 109 MB Kuzu-Store, obwohl captureArtifacts graph.json, readiness.json und audit.jsonl laengst herausgezogen hat: 1,8 von 2,2 GB unter runs/ sind rekonstruierbarer Zwischenstand",
+      "description": "docs/cr/open/CR-GC-619-rig-laufverzeichnisse-behalten-je-109-mb.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -20558,5 +20564,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 382
+  "graphVersion": 383
 }
