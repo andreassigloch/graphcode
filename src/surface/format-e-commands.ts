@@ -11,8 +11,8 @@
  */
 
 import { FormatECodec, SE_DESCRIPTOR } from '@sigloch/graph-api-core';
+import type { Graph } from '@sigloch/graph-api-core';
 import type { MutateCommand } from '@sigloch/contracts/harness';
-import type { GraphCodeHarness } from '../kernel/harness.js';
 
 /**
  * Die EINE Format-E-Instanz des Prozesses. `FormatECodec` traegt keinen Zustand ueber den
@@ -47,13 +47,13 @@ export const FORMAT_E_CODEC = new FormatECodec(SE_DESCRIPTOR);
  * Patch-Normalfall.
  */
 export function formatEToCommands(
-  harness: GraphCodeHarness,
+  bestand: Graph,
   text: string,
 ): { commands: MutateCommand[]; unnamed: string[] } {
   // CR-GC-310: Typen bestehender Knoten kommen aus dem geladenen Graphen — dieselbe
   // Quelle, aus der das Gate ohnehin liest, kein zweiter Index. Damit braucht ein
   // reiner Kanten-Batch keine `### <TYPE>`-Sektionen mehr.
-  const typeIndex = new Map(harness.getGraph().nodes.map((n) => [n.uid, n.type]));
+  const typeIndex = new Map(bestand.nodes.map((n) => [n.uid, n.type]));
   const resolveType = (uid: string): string | undefined => typeIndex.get(uid);
   const diff = FORMAT_E_CODEC.parse(text, { resolveType });
   if (diff.errors.length > 0) {

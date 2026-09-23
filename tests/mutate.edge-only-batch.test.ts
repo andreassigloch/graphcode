@@ -148,14 +148,18 @@ describe('Format-E-Parser: ein reiner Kanten-Block braucht die Typaufloesung (CR
   });
 
   it('with a resolver the same block decodes to the edge alone', async () => {
-    const types = new Map([
-      ['TEST-recall', 'TEST'],
-      ['REQ-recall', 'REQ'],
-    ]);
-    const optionen = { resolveType: (uid: string) => types.get(uid) };
+    // Der Bestand typisiert die Endpunkte, die der Text nicht deklariert — dieselbe Quelle,
+    // aus der `graph_mutate` sie zieht (CR-GC-310/632).
+    const bestand = {
+      nodes: [
+        { uid: 'TEST-recall', type: 'TEST', name: 'Recall-Test', description: '', attributes: {} },
+        { uid: 'REQ-recall', type: 'REQ', name: 'Recall-REQ', description: '', attributes: {} },
+      ],
+      edges: [],
+    };
 
-    expect(knotenAus(EDGE_ONLY, optionen)).toHaveLength(0);
-    expect(kantenAus(EDGE_ONLY, optionen)).toEqual([
+    expect(knotenAus(EDGE_ONLY, bestand)).toHaveLength(0);
+    expect(kantenAus(EDGE_ONLY, bestand)).toEqual([
       expect.objectContaining({ sourceId: 'TEST-recall', targetId: 'REQ-recall', edgeType: 'verify' }),
     ]);
   });

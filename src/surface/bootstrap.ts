@@ -112,7 +112,7 @@ export async function bootstrap(
   // 1. Text → MutateCommand[] — DIESELBE Funktion, die `graph_mutate` fuehrt (CR-GC-630).
   //    Sie ordnet selbst in vier Phasen (Knoten → Kanten → Merges → Loeschen) und wirft auf
   //    Parse-Fehler, unbekannte Endpunkte und Typkonflikte.
-  const { commands, unnamed } = formatEToCommands(harness, formatE);
+  const { commands, unnamed } = formatEToCommands(harness.getGraph(), formatE);
 
   // 3. Through the ONE gate (L1) — no direct write. On newly introduced
   //    error-violations the gate blocks and persists nothing.

@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 239 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 241 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 239 CR · 189 done · 0 open.
+Total: 241 CR · 189 done · 0 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -301,3 +301,5 @@ Total: 239 CR · 189 done · 0 open.
 | `CR-GC-629` | done | Die Urteilsschwelle boundaryWidth steht zweimal (contracts-Startwert und graphcode.config.jsonc), ein Knopf treibt zwei Verteilungen (BW-02 am FUNC-Rand, R-04 am MOD-Rand), und niemand misst sie laufend |
 | `CR-GC-630` | n/a | CR-GC-627 hat den Umweg decode-zu-Graph nur aus graph_mutate entfernt — bootstrap() traegt ihn weiter: decode() dann Graph dann add-node/add-edge. Damit kennt der Kaltstart-Pfad weder die Praefixe minus und tilde noch die nameWarning, und jede kuenftige Aenderung an formatEToCommands laeuft an ihm vorbei |
 | `CR-GC-631` | n/a | GraphCodeCodec ist ein zweiter Codec neben ctx.codec: beide sind new FormatECodec(SE_DESCRIPTOR), encode() ist eine Delegationszeile mit genau einem Aufrufer (graph_elements format formatE), validate() und project() delegieren ebenfalls, und decode() - die einzige echte Eigenleistung - hat nach ITEM-2026-510 keinen Produktionsaufrufer mehr. Komplett entfernen, nicht kapseln |
+| `CR-GC-632` | n/a | tests/helpers/format-e.ts aus CR-GC-631 parst selbst: es projiziert die Parser-Operationen ein zweites Mal, parallel zur Abbildung in formatEToCommands. Der Helfer soll die Produktionsfunktion rufen statt sie nachzubauen - dafuer muss deren Parameter von GraphCodeHarness auf den Graphen verengt werden, den sie als einziges liest |
+| `CR-GC-633` | n/a | Referenz-Change als Rig konservieren: CR-GC-630/631/632 ist eine Aufgabe, an der sich messen laesst OB ein Agent den Graphen fragt statt zu greppen - der eigene Lauf schaffte 0 Graph-Leseaufrufe gegen 54 Suchoperationen und 7 Volllaeufe, waehrend graph_tests 4 statt 172 Dateien genannt und graph_impact die 20 Kanten der geloeschten Knoten vorab gezeigt haette |

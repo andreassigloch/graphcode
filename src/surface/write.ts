@@ -392,7 +392,7 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
         let nameWarning: string | undefined;
         try {
           if (input.formatE !== undefined) {
-            const decoded = formatEToCommands(harness, input.formatE);
+            const decoded = formatEToCommands(harness.getGraph(), input.formatE);
             commands = decoded.commands;
             nameWarning = nameWarningFor(decoded.unnamed);
           } else {
