@@ -1997,7 +1997,9 @@
       "id": "CR-GC-626",
       "type": "CR",
       "name": "Testhelfer erben GIT_INDEX_FILE/GIT_DIR des pre-commit-Hooks: rewind.test.ts (Modell-Spur) schreibt per 'git -C tmp add -A' den Pfad docs/graph/fremd-anlage.graph.json in den UMGEBENDEN Index, der Blob liegt im Temp-Repo — jeder docs-Commit bricht danach mit 'invalid object / Error building trees' ab",
-      "description": "docs/cr/open/CR-GC-626-testhelfer-erben-git-index-file-git-dir-.md"
+      "description": "docs/cr/open/CR-GC-626-testhelfer-erben-git-index-file-git-dir-.md",
+      "status": "done",
+      "commitRef": "ecdeeed"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -20631,5 +20633,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 392
+  "graphVersion": 393
 }

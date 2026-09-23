@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 234 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 234 CR · 185 done · 0 open.
+Total: 234 CR · 186 done · 0 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -295,4 +295,4 @@ Total: 234 CR · 185 done · 0 open.
 | `CR-GC-623` | done | Werkzeugbeschreibungen nennen einen Parameter, den es nicht gibt: vier Beschreibungen sagen graph_help({id:...}), der Parameter heisst token — zod non-strict schluckt den Fehlaufruf still und liefert die Massnahmenliste statt der Erklaerung (gemessen: sieben graph_help hintereinander in gefuehrt-0) |
 | `CR-GC-624` | done | Strukturboden von graph_context: depth 2 kostet im Mittel 9.876 Zeichen ueber alle 125 FUNC-Anker des eigenen Modells, davon 72 Prozent reine Struktur (Kanten 2.801, Attributzeilen 2.593, Identitaetszeilen 1.730) — 42 der 54 Knoten sind Ring-2-Fan-out ueber Hub-FLOWs |
 | `CR-GC-625` | done | Kanten-Fan-out A->B,C,D ist im Codec da, aber nirgends gezeigt — 43 Prozent der Kantenschreibungen im Rig-Lauf unnoetig einzeln |
-| `CR-GC-626` | n/a | Testhelfer erben GIT_INDEX_FILE/GIT_DIR des pre-commit-Hooks: rewind.test.ts (Modell-Spur) schreibt per 'git -C tmp add -A' den Pfad docs/graph/fremd-anlage.graph.json in den UMGEBENDEN Index, der Blob liegt im Temp-Repo — jeder docs-Commit bricht danach mit 'invalid object / Error building trees' ab |
+| `CR-GC-626` | done | Testhelfer erben GIT_INDEX_FILE/GIT_DIR des pre-commit-Hooks: rewind.test.ts (Modell-Spur) schreibt per 'git -C tmp add -A' den Pfad docs/graph/fremd-anlage.graph.json in den UMGEBENDEN Index, der Blob liegt im Temp-Repo — jeder docs-Commit bricht danach mit 'invalid object / Error building trees' ab |
