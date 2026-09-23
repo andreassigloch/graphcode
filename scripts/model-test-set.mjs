@@ -142,6 +142,11 @@ export const EXCLUDED = {
     'Der Treffer ist ein FIXTURE-DATEINAME (`scheduler.graph.json` in einem Wegwerf-Repo), nie\n' +
     'graphcodes eigene SSOT. Eine Modellaenderung kann ihn nicht rot machen; ein Schnitt an\n' +
     '`graph_elements` oder an der Aehnlichkeitsrechnung sehr wohl.',
+  'tests/git-env-isolation.test.ts':
+    'CR-GC-626: prueft, dass ein Testlauf die git-Umgebung seines Aufrufers nicht erbt. Der\n' +
+    'Treffer ist der DATEINAME im Befundtext (`docs/graph/fremd-anlage.graph.json`), nicht der\n' +
+    'Inhalt der SSOT — der Test liest keinen Graphen. Eine Modellaenderung kann ihn nicht rot\n' +
+    'machen; eine weggefallene setupFiles-Zeile sehr wohl.',
   'tests/read-tools.scope.test.ts':
     'CR-GC-613: misst die ANTWORTGROESSEN der Lesewerkzeuge gegen das GOLDEN EINES RIG-KORPUS\n' +
     '(`rig/sigllm-spezifikation/golden/sigllm-v98.graph.json`), nie graphcodes eigene SSOT. Eine\n' +
