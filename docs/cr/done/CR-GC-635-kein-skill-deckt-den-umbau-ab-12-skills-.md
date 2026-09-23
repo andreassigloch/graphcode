@@ -1,6 +1,6 @@
 # CR-GC-635: Skill `se-umbau` — die vier Fragen, bevor etwas geloescht wird
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-23)
 **Typ:** aus Item ITEM-2026-519 (finding)
 **Erstellt:** 2026-09-23
 **Item:** bok/items/ITEM-2026-519.json (Lane: code)
@@ -84,3 +84,40 @@ Messgeraet. Der Beleg ist ein zweiter Lauf des Referenz-Changes **mit** dem Skil
 
 Wird 1. oder 2. verfehlt, ist der Skill nicht der Fix, und der CR sagt das statt sich gruen zu
 schreiben. Der Lauf kostet echtes Geld — er gehoert beauftragt, nicht nebenbei gefahren.
+
+---
+
+## Umsetzung (2026-09-23)
+
+`.claude/commands/se-umbau.md` — die fuenf Schritte, die drei Stoppschild-Kanten (`satisfy`,
+`realRef`, `FCHAIN -compose->`), die zwei Fallen aus diesem Umbau und eine Abschluss-Pruefliste.
+
+**Der Ausloeser ist gebaut, nicht nur empfohlen.** Variante (a) ist umgesetzt: `aise dispatch
+prepare` nennt den Skill jetzt in seiner Ausgabe, und das CR-Geruest traegt den Abschnitt
+„Umfang laut `graph_impact`" — **BOK-CR-068**, siehe CR-GC-636. Smoke am echten Weg:
+`prepare ITEM-2026-521` gegen dieses Repo → `CR-GC-638` traegt den Abschnitt, die Ausgabe nennt
+`/se-umbau`. Variante (b), eine Lageerkennung am Gate, bleibt offen — sie braucht eine Messung,
+kein Raten.
+
+**MEHR ALS GEPLANT: eine Zeile in `scaffold-docs.ts`.** Die Skill-Tabelle in `GRAPHCODE.md`
+entsteht live aus den ausgelieferten Skills, und die Datei steht unter einem 6.000-Zeichen-Budget
+(CR-GC-612). Der neue Name kostet 14 Zeichen, die Datei stand 12 unter der Grenze — 6.002. Statt
+das Budget zu heben ist eine redundante Formulierung gekuerzt („starts everything: the MCP
+surface" → „starts the MCP surface"). Die Ratsche bleibt, wo sie ist.
+
+Nebenbefund: die Beschreibung im Frontmatter zaehlt fuer dieses Budget **nicht** — die Tabelle
+listet nur Namen. Ich hatte sie zuerst gekuerzt, und die Zahl bewegte sich um null.
+
+### Tests
+
+- `tests/skill-rule-ids.test.ts` gruen (15) — sie prueft mit, dass jede genannte Regel-ID im
+  Katalog steht und **jeder genannte Werkzeugname in der MCP-Registry existiert**.
+- `tests/vorspann.test.ts` gruen (6) — das Budget haelt.
+
+### Offen: die Abnahme steht aus
+
+Die Zusage dieses CR ist eine **Verhaltensaenderung**, und sie ist hier NICHT belegt. Der Beleg
+waere ein zweiter Lauf des Referenz-Changes mit dem Skill, gemessen an
+`rig/referenz-change/messen.mjs`: ≥ 1 Graph-Leseaufruf vor der ersten Loeschung (Grundlinie 0),
+≤ 1 Volllauf (Grundlinie 3). Der Lauf kostet echtes Geld und gehoert beauftragt. Bis dahin ist
+dieser CR **gebaut, nicht bewiesen** — und das steht hier, statt sich gruen zu schreiben.
