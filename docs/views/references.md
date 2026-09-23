@@ -64,7 +64,6 @@
 | `CR-GC-102` | relation | `REQ-trajectory-emit` |
 | `CR-GC-102` | relation | `REQ-versioned-cache` |
 | `CR-GC-103` | relation | `FUNC-decode` |
-| `CR-GC-103` | relation | `FUNC-encode` |
 | `CR-GC-103` | relation | `MOD-projections` |
 | `CR-GC-103` | relation | `MS-2-coding-vv` |
 | `CR-GC-103` | relation | `REQ-codec-validation` |
@@ -357,12 +356,10 @@
 | `CR-GC-267` | relation | `FUNC-export-markdown` |
 | `CR-GC-267` | relation | `MOD-surface` |
 | `CR-GC-267` | relation | `MS-8-hardening` |
-| `CR-GC-268` | relation | `FUNC-encode` |
 | `CR-GC-268` | relation | `MOD-projections` |
 | `CR-GC-268` | relation | `MS-8-hardening` |
 | `CR-GC-268` | relation | `REQ-deterministic-serialization` |
 | `CR-GC-269` | relation | `FUNC-decode` |
-| `CR-GC-269` | relation | `FUNC-encode` |
 | `CR-GC-269` | relation | `MOD-projections` |
 | `CR-GC-269` | relation | `MS-8-hardening` |
 | `CR-GC-269` | relation | `REQ-roundtrip-conformance` |
@@ -513,7 +510,6 @@
 | `CR-GC-320` | relation | `FUNC-rank-candidates` |
 | `CR-GC-320` | relation | `MS-10-steering-views` |
 | `CR-GC-321` | relation | `FUNC-decode` |
-| `CR-GC-321` | relation | `FUNC-encode` |
 | `CR-GC-321` | relation | `FUNC-mutate` |
 | `CR-GC-321` | relation | `MS-10-steering-views` |
 | `CR-GC-322` | relation | `FUNC-harness-cli` |
@@ -651,7 +647,6 @@
 | `FCHAIN-capture` | satisfy | `REQ-post-capture` |
 | `FCHAIN-capture` | satisfy | `REQ-pre-capture` |
 | `FCHAIN-codec-roundtrip` | compose | `FUNC-decode` |
-| `FCHAIN-codec-roundtrip` | compose | `FUNC-encode` |
 | `FCHAIN-codec-roundtrip` | satisfy | `REQ-post-codec-roundtrip` |
 | `FCHAIN-codec-roundtrip` | satisfy | `REQ-pre-codec-roundtrip` |
 | `FCHAIN-codec-roundtrip` | satisfy | `REQ-roundtrip-conformance` |
@@ -921,7 +916,6 @@
 | `FLOW-graph-state` | io | `FUNC-compute-readiness` |
 | `FLOW-graph-state` | io | `FUNC-emit-trajectory` |
 | `FLOW-graph-state` | io | `FUNC-emit-update-event` |
-| `FLOW-graph-state` | io | `FUNC-encode` |
 | `FLOW-graph-state` | io | `FUNC-evaluate-rules` |
 | `FLOW-graph-state` | io | `FUNC-export-marker` |
 | `FLOW-graph-state` | io | `FUNC-fit-advisory` |
@@ -934,6 +928,7 @@
 | `FLOW-graph-state` | io | `FUNC-module-metrics` |
 | `FLOW-graph-state` | io | `FUNC-mutate` |
 | `FLOW-graph-state` | io | `FUNC-nd-similarity` |
+| `FLOW-graph-state` | io | `FUNC-read-tools` |
 | `FLOW-graph-state` | io | `FUNC-score-completeness` |
 | `FLOW-graph-state` | io | `FUNC-seed-from-json` |
 | `FLOW-graph-state` | io | `FUNC-take-steering-snapshot` |
@@ -1271,7 +1266,6 @@
 | `FUNC-block-gedaechtnis` | allocate | `MOD-projections` |
 | `FUNC-block-gedaechtnis` | compose | `FUNC-decode` |
 | `FUNC-block-gedaechtnis` | compose | `FUNC-emit-trajectory` |
-| `FUNC-block-gedaechtnis` | compose | `FUNC-encode` |
 | `FUNC-block-gedaechtnis` | compose | `FUNC-graph-export-snapshot` |
 | `FUNC-block-gedaechtnis` | compose | `FUNC-import` |
 | `FUNC-block-gedaechtnis` | compose | `FUNC-merge-nodes` |
@@ -1376,8 +1370,9 @@
 | `FUNC-create-harness` | allocate | `MOD-surface` |
 | `FUNC-create-harness` | io | `FLOW-harness-handle` |
 | `FUNC-create-harness` | satisfy | `REQ-store-owner-lifecycle` |
-| `FUNC-decode` | allocate | `MOD-projections` |
+| `FUNC-decode` | allocate | `MOD-surface` |
 | `FUNC-decode` | satisfy | `REQ-codec-validation` |
+| `FUNC-decode` | satisfy | `REQ-formatE-diff-dialect` |
 | `FUNC-deduce-tests` | allocate | `MOD-projections` |
 | `FUNC-deduce-tests` | io | `FLOW-test-selection` |
 | `FUNC-deduce-tests` | satisfy | `REQ-test-runnable-binding` |
@@ -1391,8 +1386,6 @@
 | `FUNC-emit-update-event` | satisfy | `REQ-post-emit-update-event` |
 | `FUNC-emit-update-event` | satisfy | `REQ-pre-emit-update-event` |
 | `FUNC-emit-update-event` | satisfy | `REQ-versioned-broadcast` |
-| `FUNC-encode` | allocate | `MOD-projections` |
-| `FUNC-encode` | satisfy | `REQ-formatE-diff-dialect` |
 | `FUNC-evaluate-rules` | allocate | `MOD-kernel` |
 | `FUNC-evaluate-rules` | io | `FLOW-rule-findings` |
 | `FUNC-evaluate-rules` | satisfy | `REQ-rule-enforcement` |

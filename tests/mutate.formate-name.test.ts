@@ -24,7 +24,7 @@ import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
-import { GraphCodeCodec } from '../src/projections/codec.js';
+import { knotenAus, kantenAus } from './helpers/format-e.js';
 import { attributesFor, formatEExampleFor } from '../src/projections/authoring-example.js';
 import { ReqKind, TRACE_PATTERNS } from '@sigloch/contracts/se';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
@@ -215,15 +215,15 @@ describe('TEST-formate-name: der stille name=uid-Fallback wird laut (CR-GC-321)'
       expect(example, `formatEExample fehlt fuer ${type}`).toBeDefined();
       expect(example).toContain('__name');
 
-      const decoded = new GraphCodeCodec().decode(example);
+      const knoten = knotenAus(example);
       // CR-GC-625: der Block traegt jetzt auch die Ziele der Fan-out-Zeile. Der ANKER bleibt
       // genau einer — was hinzukam, sind seine Kantenziele, nicht ein zweites Beispiel.
-      const anker = decoded.nodes.filter((n) => n.uid === `${type}-example`);
+      const anker = knoten.filter((n) => n.uid === `${type}-example`);
       expect(anker).toHaveLength(1);
       expect(anker[0].type).toBe(type);
       expect(anker[0].name).not.toBe(anker[0].uid);
-      expect(anker[0].name.length).toBeGreaterThan(0);
-      expect(decoded.nodes.every((n) => n.name !== n.uid), 'auch die Ziele tragen __name').toBe(true);
+      expect(anker[0].name!.length).toBeGreaterThan(0);
+      expect(knoten.every((n) => n.name !== undefined && n.name !== n.uid), 'auch die Ziele tragen __name').toBe(true);
     }
   });
 
@@ -247,13 +247,12 @@ describe('TEST-formate-name: der stille name=uid-Fallback wird laut (CR-GC-321)'
       const fanoutZeilen = example.split('\n').filter((l) => /^\+ .+ -\w+-> .+,/.test(l));
       expect(fanoutZeilen, `${type}: keine Mehrziel-Zeile im Beispiel`).toHaveLength(1);
 
-      const decoded = new GraphCodeCodec().decode(example);
-      const ausAnker = decoded.edges.filter((e) => e.sourceId === `${type}-example`);
+      const ausAnker = kantenAus(example).filter((e) => e.sourceId === `${type}-example`);
       expect(ausAnker.length, `${type}: die eine Zeile muss mehrere Kanten ergeben`).toBeGreaterThan(1);
       expect(new Set(ausAnker.map((e) => e.edgeType)).size, 'alle Ziele derselben Kantenart').toBe(1);
 
       // Das Muster ist keines aus der Luft: Quelle, Kantenart und Zieltyp stehen in TRACE_PATTERNS.
-      const zielTyp = decoded.nodes.find((n) => n.uid === ausAnker[0].targetId)!.type;
+      const zielTyp = knotenAus(example).find((n) => n.uid === ausAnker[0].targetId)!.type;
       expect(
         muster.some((p) => p.source === type && p.type === ausAnker[0].edgeType && p.target === zielTyp),
         `${type} -${ausAnker[0].edgeType}-> ${zielTyp} ist kein TRACE_PATTERN`,
@@ -265,7 +264,7 @@ describe('TEST-formate-name: der stille name=uid-Fallback wird laut (CR-GC-321)'
     const guide = await tools.graph_authoring_guide.handler({ type: 'SCHEMA' });
     const example = (guide as { formatEExample: string }).formatEExample;
     expect(example).not.toContain('## Edges');
-    expect(new GraphCodeCodec().decode(example).edges).toHaveLength(0);
+    expect(kantenAus(example)).toHaveLength(0);
   });
 });
 
@@ -279,16 +278,15 @@ describe('CR-GC-581: kinds steht im Guide — Werte UND Schreibweise', () => {
   });
 
   it('das REQ-Beispiel traegt kinds, und der Codec liest es als Liste', () => {
-    const decoded = new GraphCodeCodec().decode(formatEExampleFor('REQ'));
-    expect(decoded.nodes[0].kinds ?? decoded.nodes[0].attributes?.kinds).toEqual(['functional']);
+    expect(knotenAus(formatEExampleFor('REQ'))[0].attributes.kinds).toEqual(['functional']);
   });
 
   it('die dokumentierte Syntax selbst decodiert — sonst waere der Hinweis eine Falle', () => {
-    const decoded = new GraphCodeCodec().decode(
+    const knoten = knotenAus(
       '## Nodes\n### REQ\n+ REQ-post|Nach dem Lauf liegt das Ergebnis vor. [__name:Ergebnis liegt vor]\n' +
         attributesFor('REQ').find((a) => a.key === 'kinds')!.syntax + '\n',
     );
-    expect(decoded.nodes[0].kinds ?? decoded.nodes[0].attributes?.kinds).toEqual(['postcondition']);
+    expect(knoten[0].attributes.kinds).toEqual(['postcondition']);
   });
 
   it('Typen ohne kinds bekommen keins angedichtet', () => {

@@ -55,7 +55,7 @@ const FAELLE = [
     b: { repo: SM, ref: '5b2e881^', file: 'packages/graph-api-core/src/format-e-codec.ts', symbol: 'serialize' },
   },
   {
-    id: 'F2', label: 'graphcode GraphCodeCodec.encode ↔ graph-api-core FormatECodec.serialize',
+    id: 'F2', label: 'graphcode Format-E-Ausgabe ↔ graph-api-core FormatECodec.serialize',
     cr: 'CR-GC-536', commit: 'c55f3f4', besonderheit: 'ueber REPO-Grenze, 51 Tage (CR-GC-103)',
     a: { repo: GC, ref: 'c55f3f4^', file: 'src/projections/codec.ts', symbol: 'encode' },
     b: { repo: SM, ref: 'HEAD', file: 'packages/graph-api-core/src/format-e-codec.ts', symbol: 'serialize' },

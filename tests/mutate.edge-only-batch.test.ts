@@ -29,7 +29,7 @@ import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
-import { GraphCodeCodec } from '../src/projections/codec.js';
+import { knotenAus, kantenAus } from './helpers/format-e.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
@@ -140,12 +140,11 @@ describe('TEST-edge-only-batch: edges between existing nodes need no type sectio
   });
 });
 
-describe('GraphCodeCodec.decode: resolveType is opt-in (CR-GC-310)', () => {
-  const codec = new GraphCodeCodec();
+describe('Format-E-Parser: ein reiner Kanten-Block braucht die Typaufloesung (CR-GC-310)', () => {
 
   it('without a resolver an edge-only block stays an error', async () => {
     // The default is unchanged — callers that hold no store keep the strict behaviour.
-    expect(() => codec.decode(EDGE_ONLY)).toThrow();
+    expect(() => kantenAus(EDGE_ONLY)).toThrow();
   });
 
   it('with a resolver the same block decodes to the edge alone', async () => {
@@ -153,10 +152,10 @@ describe('GraphCodeCodec.decode: resolveType is opt-in (CR-GC-310)', () => {
       ['TEST-recall', 'TEST'],
       ['REQ-recall', 'REQ'],
     ]);
-    const graph = codec.decode(EDGE_ONLY, { resolveType: (uid) => types.get(uid) });
+    const optionen = { resolveType: (uid: string) => types.get(uid) };
 
-    expect(graph.nodes).toHaveLength(0);
-    expect(graph.edges).toEqual([
+    expect(knotenAus(EDGE_ONLY, optionen)).toHaveLength(0);
+    expect(kantenAus(EDGE_ONLY, optionen)).toEqual([
       expect.objectContaining({ sourceId: 'TEST-recall', targetId: 'REQ-recall', edgeType: 'verify' }),
     ]);
   });
