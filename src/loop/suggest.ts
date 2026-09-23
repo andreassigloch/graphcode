@@ -183,7 +183,7 @@ export function bindSuggestTools(ctx: ToolPort): MCPToolRegistry {
       'toward the target profile, and hands back the ONE edit a rule template could DERIVE from the ' +
       'element text (with its rationale) — never a generically synthesized one. It proposes; ' +
       'graph_mutate applies. Take it when you want a move, not a diagnosis. ' +
-      '`graph_help({id:"graph_suggest"})` explains the ranking and why a suggestion may carry no edit.',
+      '`graph_help({token:"graph_suggest"})` explains the ranking and why a suggestion may carry no edit.',
     inputSchema: GraphSuggestInputSchema,
     async handler(input) {
       // CR-GC-324: der EINE Mapper statt des flachen Export-Encodings.

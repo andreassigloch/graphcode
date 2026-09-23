@@ -135,4 +135,24 @@ describe('TEST-mcp-stdio-server: registry served over the MCP protocol', () => {
     // Bounded: the root + its direct verify-neighbor, not an unbounded dump.
     expect(impact.nodeCount).toBeLessThanOrEqual(VALID_SET.length);
   });
+
+  /**
+   * CR-GC-623 — ueber DIE Grenze, nicht ueber die Hilfsfunktion: ein unbekannter Argumentname
+   * muss hier scheitern. Bis hierher fiel er still weg, und `graph_help` beantwortete die weite
+   * Frage (kontextuelle Massnahmenliste) statt der gestellten.
+   */
+  it('ein unbekannter Argumentname scheitert und nennt den richtigen (CR-GC-623)', async () => {
+    const falsch = await client.callTool({ name: 'graph_help', arguments: { id: 'graph_metrics' } });
+    const text = JSON.stringify(falsch);
+    expect(falsch.isError, `statt eines Fehlers kam: ${text.slice(0, 200)}`).toBe(true);
+    expect(text, 'der falsch getippte Name muss IM Fehler stehen').toContain('id');
+    expect(text.toLowerCase()).toContain('unrecognized key');
+
+    // Gegenprobe: mit dem richtigen Namen kommt die enge Antwort.
+    const richtig = payload<{ kind: string; id: string }>(
+      await client.callTool({ name: 'graph_help', arguments: { token: 'graph_metrics' } }),
+    );
+    expect(richtig.kind).toBe('tool');
+    expect(richtig.id).toBe('graph_metrics');
+  });
 });

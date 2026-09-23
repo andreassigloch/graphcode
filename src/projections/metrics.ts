@@ -109,7 +109,7 @@ export function bindMetricsTools(ctx: ToolPort): MCPToolRegistry {
       'Which module is the coupling problem? One row per MOD — fan-in/out, instability, LCOM4, ' +
       'cohesion — each next to the threshold it was judged against. Take it when graph_readiness says ' +
       'a dimension is weak and you need to know WHICH module; a value without its threshold is not a ' +
-      'statement. `graph_help({id:"graph_metrics"})` explains the figures. Read-only.',
+      'statement. `graph_help({token:"graph_metrics"})` explains the figures. Read-only.',
     inputSchema: GraphMetricsInputSchema,
     async handler(_input) {
       // CR-GC-329: Wert UND Schwelle aus EINER Antwort. Ein Konsument, der „71 % /
