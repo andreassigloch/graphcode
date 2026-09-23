@@ -2050,6 +2050,12 @@
       "description": "docs/cr/open/CR-GC-633-referenz-change-als-rig-konservieren-cr-.md"
     },
     {
+      "id": "CR-GC-634",
+      "type": "CR",
+      "name": "Parallele Pfade sind mit Aehnlichkeitsmassen nicht auffindbar: der Testhelfer aus CR-GC-631 und formatEToCommands kamen auf Name-Jaccard 0,000 und Rumpf-Jaccard 0,164 gegen ND-Schwelle 0,85 - 16 Zeilen gegen 183. Der zweite Pfad ist nie aehnlich, er ist kuerzer und anders benannt. Gemeinsam ist der EINGANG: beide riefen FORMAT_E_CODEC.parse. Die pruefbare Form ist die Zahl der Aufrufer an einem benannten Engpass, nicht ein Mass ueber die Rumpfe",
+      "description": "docs/cr/open/CR-GC-634-parallele-pfade-sind-mit-aehnlichkeitsma.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -20658,5 +20664,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 401
+  "graphVersion": 402
 }
