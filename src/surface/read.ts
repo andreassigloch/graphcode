@@ -210,6 +210,31 @@ export function nurIdentitaet(nodes: GraphNode[], anker?: string): GraphNode[] {
   return nodes.map((n) => (n.description && n.uid !== anker ? { ...n, description: AUSSENRING_MARKE } : n));
 }
 
+/**
+ * CR-GC-628 — der Endpunkt einer KANTENantwort ist ein Referent, kein Gegenstand.
+ *
+ * `graph_get_edges({format:'formatE'})` war der GRÖSSTE Modus statt des kleinsten: es
+ * serialisierte die Endpunkt-Knoten mit voller Prosa UND allen Attributen, wer also nach Kanten
+ * fragte, bekam Beschreibungen und `realRef`/`testRefs` beider Enden geschenkt. Gemessen am
+ * sigllm-Golden, `compose` (144 Kanten, 122 Knoten): JSON 18.001 Zeichen, formatE 49.431 — das
+ * 2,7-Fache des Modus, den es unterbieten sollte.
+ *
+ * Gekürzt wird in zwei Schritten, beide schon begründet, keiner neu:
+ *   1. die BESCHREIBUNG über `nurIdentitaet` — dieselbe Marke, dieselbe Legende wie CR-GC-613/621;
+ *   2. die ATTRIBUTE, weil sie eine ANDERE Frage beantworten als die gestellte. Dieselbe Linie wie
+ *      die Blackbox-Front von `graph_impact` (CR-GC-373: „Identitaet plus Vertragskante, keine
+ *      Beschreibung, keine Attribute"). `graph_get_node` hat beides.
+ *
+ * Schritt 1 allein reicht NICHT — am selben Golden bliebe `compose` bei 29.072 Zeichen und damit
+ * über dem JSON-Default. Mit beiden: 10.746, also 40 % unter JSON und ein Viertel von vorher.
+ * Der Umfang ändert sich nicht: `total` und die Kantenmenge bleiben, gekürzt wird Text.
+ */
+export function endpunktIdentitaet(nodes: GraphNode[]): GraphNode[] {
+  return nurIdentitaet(nodes).map((n) =>
+    Object.keys(n.attributes ?? {}).length > 0 ? { ...n, attributes: {} } : n,
+  );
+}
+
 export function kuerzeAussenring(slice: Graph, ankerId: string): Graph {
   return {
     ...slice,
@@ -425,9 +450,13 @@ export function bindReadTools(ctx: ToolContext): MCPToolRegistry {
     name: 'graph_get_edges',
     description:
       'Get edges, optionally filtered by incident node uid, edge type, or direction. ' +
-      "Output is JSON by default (agent logic); pass format:'formatE' for a human-readable, round-trip-stable " +
-      'slice (the filtered edges + their endpoint nodes) as Format-E v2 — type per `### <TYPE>` section, uids verbatim ' +
-      '(re-importable via the codec). The slice-tools (graph_impact / graph_expand) are ALWAYS Format-E (CR-GC-210).',
+      "Output is JSON by default (agent logic); pass format:'formatE' for the LEANEST form " +
+      '(CR-GC-628): the filtered edges as Format-E v2, grouped per source and edge type on one line ' +
+      '(`A -verify-> B, C`), with their endpoint nodes as IDENTITY only — type per `### <TYPE>` ' +
+      'section, uids verbatim, descriptions as the cut mark, no attributes and no name. Measured on ' +
+      'the sigllm golden it is 40% below the JSON default, where it used to be 2.7x above it. ' +
+      'graph_get_node has the wording and the attributes of an endpoint. ' +
+      'The slice-tools (graph_impact / graph_expand) are ALWAYS Format-E (CR-GC-210).',
     inputSchema: GraphGetEdgesInputSchema,
     async handler(input) {
       let edges = harness.getGraph().edges;
@@ -450,8 +479,19 @@ export function bindReadTools(ctx: ToolContext): MCPToolRegistry {
           ids.add(e.sourceId);
           ids.add(e.targetId);
         }
-        const nodes = harness.getGraph().nodes.filter((n) => ids.has(n.uid));
-        return { formatE: gcCodec.encode({ nodes, edges }), total: edges.length, graphVersion: graphVersion() };
+        // CR-GC-628: die Kantenantwort traegt KANTEN. Die Endpunkte kommen als Identitaet, und
+        // die Gruppierung des Codecs (`A -verify-> B, C`, CR-GC-268) wirkt endlich — vorher
+        // ertrank sie in der Prosa beider Enden.
+        const nodes = endpunktIdentitaet(harness.getGraph().nodes.filter((n) => ids.has(n.uid)));
+        const gekuerzt = nodes.some((n) => n.description === AUSSENRING_MARKE);
+        // CR-GC-373: Agenten-Sicht wie bei jeder anderen Leseschreibe — Provenienz ist keine
+        // Arbeitsanweisung. Damit faellt auch `__name`; wer den Namen braucht, fragt den Knoten.
+        const formatE = codec.serialize({ nodes, edges }, { omitProvenance: true });
+        return {
+          formatE: gekuerzt ? `${KUERZUNGS_LEGENDE}\n${formatE}` : formatE,
+          total: edges.length,
+          graphVersion: graphVersion(),
+        };
       }
       return { edges, total: edges.length, graphVersion: graphVersion() };
     },
