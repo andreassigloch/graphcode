@@ -19,9 +19,11 @@ const args = process.argv.slice(2);
 const datei = args.find((a) => !a.startsWith('--'));
 const abIdx = args.indexOf('--ab');
 const ab = abIdx >= 0 ? args[abIdx + 1] : null;
+const bisIdx = args.indexOf('--bis');
+const bis = bisIdx >= 0 ? args[bisIdx + 1] : null;
 
 if (!datei) {
-  console.error('Aufruf: node messen.mjs <sitzung.jsonl> [--ab "<Textstelle>"]');
+  console.error('Aufruf: node messen.mjs <sitzung.jsonl> [--ab "<Textstelle>"] [--bis "<Textstelle>"]');
   process.exit(2);
 }
 
@@ -40,22 +42,31 @@ for (const z of zeilen) {
   try { saetze.push(JSON.parse(z)); } catch { /* Teilzeile am Ende */ }
 }
 
-let start = 0;
-if (ab) {
-  const i = saetze.findIndex((d) => {
+/** Index der ersten NUTZERnachricht, die `text` enthaelt. */
+const nutzersatz = (text, von = 0) =>
+  saetze.findIndex((d, i) => {
+    if (i < von) return false;
     const m = d.message ?? {};
     if (m.role !== 'user') return false;
     const c = m.content;
     const t = typeof c === 'string' ? c : Array.isArray(c) ? c.map((b) => b?.text ?? '').join(' ') : '';
-    return t.toLowerCase().includes(ab.toLowerCase());
+    return t.toLowerCase().includes(text.toLowerCase());
   });
-  if (i < 0) { console.error(`--ab "${ab}" kommt in der Sitzung nicht vor.`); process.exit(2); }
-  start = i;
+
+let start = 0;
+if (ab) {
+  start = nutzersatz(ab);
+  if (start < 0) { console.error(`--ab "${ab}" kommt in der Sitzung nicht vor.`); process.exit(2); }
+}
+let ende = saetze.length;
+if (bis) {
+  ende = nutzersatz(bis, start + 1);
+  if (ende < 0) { console.error(`--bis "${bis}" kommt nach --ab nicht vor.`); process.exit(2); }
 }
 
 const werkzeuge = new Map();
 const befehle = [];
-for (const d of saetze.slice(start)) {
+for (const d of saetze.slice(start, ende)) {
   const c = d.message?.content;
   if (!Array.isArray(c)) continue;
   for (const b of c) {
@@ -78,7 +89,7 @@ const spuren = zaehle(/verify:(model|code)/);
 const gesamt = [...werkzeuge.values()].reduce((a, b) => a + b, 0);
 
 console.log(`Sitzung: ${datei}`);
-console.log(ab ? `Ausschnitt: ab "${ab}" (Satz ${start} von ${saetze.length})\n` : `Ganze Sitzung (${saetze.length} Saetze)\n`);
+console.log(ab ? `Ausschnitt: Satz ${start}–${ende} von ${saetze.length}${bis ? ` (ab "${ab}", bis "${bis}")` : ` (ab "${ab}")`}\n` : `Ganze Sitzung (${saetze.length} Saetze)\n`);
 
 console.log('WERKZEUGE');
 for (const [n, v] of [...werkzeuge].sort((a, b) => b[1] - a[1])) console.log(`  ${String(v).padStart(4)}  ${kurz(n)}`);
