@@ -55,6 +55,10 @@ export function readiness(readinessPath) {
 /** Module-reuse AUDIT (not a score): authored vs golden module names, side by side, for a
  *  human to judge overlap. Exact-name matching proved too brittle (paraphrases → false 0). */
 export function moduleAudit(runGraph, golden) {
+  // CR-GC-618: ohne Golden gibt es keinen Abgleich — und das ist die Aussage, nicht eine 0.
+  // Vorher fiel `GOLDEN` still auf einen LEBENDEN Fremdgraphen zurueck; ein Ergebnis daraus
+  // sah aus wie eine Messung und war keine.
+  if (!golden) return { grund: 'kein Golden gesetzt — kein Abgleich gefahren' };
   const names = (g, t) => g.elements.filter((e) => e.type === t).map((e) => e.name).filter(Boolean);
   return {
     MOD: { authored: names(runGraph, 'MOD'), golden: names(golden, 'MOD') },
@@ -198,7 +202,7 @@ export function briefCoverage(runGraph, checklistPath) {
  *  gate-rejections, cost); module reuse is a human-audit list, not a score (see README). */
 export function runMetrics({ graphPath, readinessPath, auditPath, goldenPath, checklistPath, usage }) {
   const run = loadGraph(graphPath);
-  const golden = loadGraph(goldenPath);
+  const golden = goldenPath ? loadGraph(goldenPath) : null; // CR-GC-618: kein Default-Golden
   const el = run.elements;
   const byType = (t) => el.filter((e) => e.type === t).length;
   // CR-GC-553: die volle Bewertung, Spezifikation UND Code. `readiness` bleibt als

@@ -691,3 +691,64 @@ describe('storeFreigeben beendet den Eigentuemer (CR-GC-617)', () => {
     }
   }, 30_000);
 });
+
+/**
+ * CR-GC-618 — der Korpus steht in der Zeile, und ein Abbruch wirft nichts weg.
+ *
+ * `rig/README.md`: „Ohne Stempel keine Zahl." Genau das Rig mit den teuersten Zahlen hielt die
+ * Regel nicht ein — die Ergebniszeile nannte Arm und Modell, nie den Korpus. Am 2026-09-22 wurde
+ * deshalb ein Webapp-Lauf gegen sigllm-Grundlinien gehalten, und niemand konnte es sehen.
+ */
+describe('korpusStempel und laufEnde (CR-GC-618)', () => {
+  const CFG_FIX = {
+    korpus: 'sigllm-prosa',
+    promptFile: '/rig/sigllm/prompt-prosa.txt',
+    golden: '/rig/sigllm/golden/sigllm-v98.graph.json',
+    seed: { uid: 'SYS-sig-local' },
+    material: '/rig/sigllm/material-prosa',
+    timeoutMs: 3_600_000,
+  };
+
+  it('stempelt Korpus, Prompt, Golden, Seed und Zeitgrenze', async () => {
+    const { korpusStempel } = await import('../rig/greenfield-systemtest/run.mjs');
+    const st = korpusStempel(CFG_FIX, (pfad: string) => `sha(${pfad.split('/').pop()})`);
+    expect(st.korpus).toBe('sigllm-prosa');
+    expect(st.prompt).toEqual({ pfad: CFG_FIX.promptFile, sha256: 'sha(prompt-prosa.txt)' });
+    expect(st.golden).toEqual({ pfad: CFG_FIX.golden, sha256: 'sha(sigllm-v98.graph.json)' });
+    expect(st.seed).toBe('SYS-sig-local');
+    expect(st.zeitgrenze_s).toBe(3600);
+  });
+
+  it('nennt das fehlende Golden beim Namen, statt es still zu ersetzen', async () => {
+    const { korpusStempel } = await import('../rig/greenfield-systemtest/run.mjs');
+    const st = korpusStempel({ ...CFG_FIX, golden: null }, () => 'x');
+    // Hier stand frueher ein Default auf den LEBENDEN sigloch-modules-Graphen.
+    expect(st.golden.pfad).toBeNull();
+    expect(st.golden.grund).toMatch(/GOLDEN nicht gesetzt/);
+  });
+
+  it('unterscheidet Zeitgrenze, Signal und Exit-Code — und sauber von allem', async () => {
+    const { laufEnde } = await import('../rig/greenfield-systemtest/run.mjs');
+    expect(laufEnde({ status: 0, signal: null }, 3_600_000)).toBeNull();
+    // Der Fall vom 2026-09-22: SIGTERM aus der Zeitgrenze, 182 Elemente standen schon.
+    expect(laufEnde({ status: null, signal: 'SIGTERM' }, 1_200_000))
+      .toEqual({ art: 'timeout', signal: 'SIGTERM', zeitgrenze_s: 1200 });
+    expect(laufEnde({ status: null, signal: 'SIGKILL' }, 3_600_000)).toEqual({ art: 'signal', signal: 'SIGKILL' });
+    expect(laufEnde({ status: 127, signal: null }, 3_600_000)).toEqual({ art: 'exit', status: 127 });
+  });
+
+  it('rechnet ohne Golden keinen Abgleich, statt eine Null zu erfinden', async () => {
+    const { moduleAudit } = await import('../rig/greenfield-systemtest/metrics.mjs');
+    const lauf = { elements: [{ id: 'MOD-a', type: 'MOD', name: 'a' }], traces: [] };
+    expect(moduleAudit(lauf, null)).toEqual({ grund: 'kein Golden gesetzt — kein Abgleich gefahren' });
+    expect(moduleAudit(lauf, { elements: [{ id: 'MOD-b', type: 'MOD', name: 'b' }] }).MOD)
+      .toEqual({ authored: ['a'], golden: ['b'] });
+  });
+
+  it('haelt die Zeitgrenze ueber der gemessenen Grundlinie', async () => {
+    const { CFG } = await import('../rig/greenfield-systemtest/run.mjs');
+    // Grundlinie eines Frontier-Spezifikationslaufs: 2235 s (opus5-15). 1200 s stand hier und
+    // killte den Lauf vom 2026-09-22 — die Zahl ist gemessen, nicht gerundet.
+    expect(CFG.timeoutMs / 1000).toBeGreaterThanOrEqual(2235);
+  });
+});

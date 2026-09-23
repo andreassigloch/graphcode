@@ -15,6 +15,7 @@
 import { execFileSync, spawnSync } from 'node:child_process';
 import { mkdirSync, rmSync, writeFileSync, readFileSync, existsSync, cpSync } from 'node:fs';
 import { join, dirname } from 'node:path';
+import { createHash } from 'node:crypto';
 import { hostname } from 'node:os';
 import { parseEnv } from 'node:util';
 import { fileURLToPath } from 'node:url';
@@ -47,9 +48,20 @@ export const CFG = {
   runs: Number(process.env.RUNS ?? 3),
   startRun: Number(process.env.START_RUN ?? 0), // first run index (parallelize by ranges)
   resultsFile: process.env.RESULTS_FILE ?? 'results.json',
-  timeoutMs: Number(process.env.RUN_TIMEOUT_S ?? 1200) * 1000, // per-run cap; stuck run fails clean
-  golden: process.env.GOLDEN
-    ?? '/Users/andreas/Developer/dev/sigloch-modules/docs/graph/sigloch-modules.graph.json',
+  /**
+   * CR-GC-618 — die Zeitgrenze folgt der Messung, nicht einer runden Zahl. 1200 s stand hier
+   * und die Grundlinie eines Frontier-Spezifikationslaufs liegt bei 2235 s: der Lauf vom
+   * 2026-09-22 starb an SIGTERM, nachdem er 182 Elemente autoriert hatte. Die Korpus-env-Dateien
+   * setzten laengst 3600 — der Default zog nur nicht mit, und das sah niemand.
+   */
+  timeoutMs: Number(process.env.RUN_TIMEOUT_S ?? 3600) * 1000,
+  /**
+   * KEIN Default (CR-GC-618). Hier stand `sigloch-modules.graph.json` — ein LEBENDER Repo-Graph,
+   * gegen die eigene Regel des Rigs („Ein Benchmark, dessen Eingabe weiterlaeuft, misst nichts")
+   * und fuer den Webapp-Korpus ausserdem kategoriefremd (ITEM-2026-485). Wer `source lauf.env`
+   * vergass, bekam ihn still untergeschoben. Ohne Golden entfaellt der Abgleich und sagt das.
+   */
+  golden: process.env.GOLDEN ?? null,
   /** Prueflliste der Auftrags-Anforderungen (CR-GC-553). Optional: ohne sie entfaellt der Abgleich. */
   checklist: process.env.CHECKLIST ?? null,
   /**
@@ -66,6 +78,8 @@ export const CFG = {
   // Korpus-Parameter. Defaults = der graphcode-Webapp-Korpus, mit dem dieses
   // Rig gebaut wurde — gesetzt liefern sie einen ZWEITEN Korpus durch DENSELBEN Treiber
   // (rig/sigllm-spezifikation). Kein zweiter Pfad: eine Frage je Rig, ein Runner.
+  /** Wie dieser Korpus heisst. Er steht in jeder Ergebniszeile — sonst ist er nicht da. */
+  korpus: process.env.KORPUS ?? 'graphcode-webapp (Default aus run.mjs)',
   promptFile: process.env.PROMPT_FILE ?? join(HERE, 'prompt.txt'),
   seed: {
     uid: process.env.SEED_UID ?? 'SYS-webapp',
@@ -211,6 +225,47 @@ function buildIntent() {
 // sees the store as "owned" and fast-exits. We drive the store strictly sequentially
 // (seed → executor → capture, never concurrent), so releasing the lock between steps
 // is safe and is exactly what the StoreOwnershipError message advises.
+/**
+ * CR-GC-618 — der Stempel des Korpus. `rig/README.md`: „Ohne Stempel keine Zahl."
+ *
+ * Das Rig, das die teuersten Zahlen produziert, hielt die Regel als einziges nicht ein: die
+ * Ergebniszeile nannte Arm, Modell und Executor — aber nicht, WELCHEN Korpus der Lauf gefahren
+ * hat. Der steckt in sieben Umgebungsvariablen, die `lauf*.env` per `source` setzt; wer das
+ * vergisst, faehrt klaglos den eingebauten Webapp-Korpus, und die Ergebnisdatei sieht danach
+ * aus wie jede andere. Genau so wurde am 2026-09-22 ein Webapp-Lauf gegen sigllm-Grundlinien
+ * gehalten.
+ *
+ * Rein: Konfiguration rein, Stempel raus. `dateiSha` wird hereingereicht, damit die Funktion
+ * ohne Dateisystem pruefbar ist.
+ */
+export function korpusStempel(cfg, dateiSha) {
+  const golden = cfg.golden ? { pfad: cfg.golden, sha256: dateiSha(cfg.golden) } : null;
+  return {
+    korpus: cfg.korpus,
+    prompt: { pfad: cfg.promptFile, sha256: dateiSha(cfg.promptFile) },
+    // `null` heisst hier NICHT „kein Befund", sondern „nicht gemessen" — und der Grund steht dabei.
+    golden: golden ?? { pfad: null, grund: 'GOLDEN nicht gesetzt — kein Abgleich gefahren' },
+    seed: cfg.seed.uid,
+    material: cfg.material,
+    zeitgrenze_s: cfg.timeoutMs / 1000,
+  };
+}
+
+/**
+ * CR-GC-618 — WIE ein Lauf geendet ist. `null` heisst sauber.
+ *
+ * Bis hierher warf `authorVia*` bei `status !== 0`, `main()` fing und schrieb eine Fehlerzeile —
+ * `captureArtifacts` lief nie. Der Exit-Code des Executors sagt aber nur, wie der Lauf geendet
+ * ist; ob etwas autoriert wurde, sagt der Store auf Platte. Am 2026-09-22 fielen so 182 Elemente
+ * und 327 Kanten eines bezahlten Laufs weg, weil SIGTERM kam.
+ */
+export function laufEnde({ status, signal }, timeoutMs) {
+  if (status === 0) return null;
+  if (signal === 'SIGTERM') return { art: 'timeout', signal, zeitgrenze_s: timeoutMs / 1000 };
+  if (signal) return { art: 'signal', signal };
+  return { art: 'exit', status };
+}
+
 /** Lebt diese PID noch? Signal 0 stellt die Frage, ohne etwas zu schicken. */
 export function pidLebt(pid) {
   try { process.kill(pid, 0); return true; } catch (e) { return e.code === 'EPERM'; }
@@ -356,8 +411,12 @@ function authorViaClaude(dir, arm) {
     .find((e) => e && e.type === 'result');
   writeFileSync(join(dir, 'claude-raw.json'), JSON.stringify(schluss ?? {}, null, 2));
   if (r.stderr) writeFileSync(join(dir, 'claude-stderr.log'), r.stderr);
-  if (r.status !== 0) throw new Error(`claude exit=${r.status} signal=${r.signal}; stderr: ${(r.stderr ?? '').slice(-600)}`);
-  let usage = { wall_s };
+  // CR-GC-618: KEIN throw mehr. Der opencode-Arm machte es seit je richtig („don't throw; let
+  // metrics read whatever landed in the store"), die beiden anderen warfen — und warfen damit
+  // die schon autorierte Arbeit weg. Ein Ende ist ein Messwert, kein Abbruchgrund.
+  const ende = laufEnde(r, CFG.timeoutMs);
+  if (ende) process.stderr.write(`  Lauf geendet als ${ende.art}${ende.signal ? ` (${ende.signal})` : ''} — Stand wird trotzdem erfasst\n`);
+  let usage = { wall_s, ende };
   try {
     const j = schluss ?? {};
     const u = j.usage ?? {};
@@ -369,7 +428,7 @@ function authorViaClaude(dir, arm) {
     const cacheRead = u.cache_read_input_tokens ?? 0;
     const cacheNeu = u.cache_creation_input_tokens ?? 0;
     usage = {
-      wall_s, cost_usd: j.total_cost_usd ?? 0,
+      wall_s, ende, cost_usd: j.total_cost_usd ?? 0,
       tokens_in: (u.input_tokens ?? 0) + cacheRead + cacheNeu,
       tokens_in_uncached: u.input_tokens ?? null,
       tokens_in_cache_read: cacheRead,
@@ -411,8 +470,9 @@ function authorViaOpencode(dir, arm) {
   writeFileSync(join(dir, 'opencode-raw.json'), out);
   if (r.stderr) writeFileSync(join(dir, 'opencode-stderr.log'), r.stderr);
   // opencode may exit non-zero yet still have authored through the gate — don't throw;
-  // record the exit and let metrics read whatever landed in the store.
-  if (r.status !== 0) writeFileSync(join(dir, 'opencode-exit.txt'), `status=${r.status} signal=${r.signal}`);
+  // record the exit and let metrics read whatever landed in the store. CR-GC-618: derselbe
+  // `ende`-Vermerk wie in den anderen Armen, statt einer eigenen Datei daneben.
+  const ende = laufEnde(r, CFG.timeoutMs);
   // opencode emits newline-delimited events; sum tokens across all `step-finish`
   // events ({part:{tokens:{input,output,reasoning}, cost}}).
   let tokens_in = 0, tokens_out = 0, tokens_reasoning = 0, cost_usd = 0, seen = false;
@@ -424,7 +484,7 @@ function authorViaOpencode(dir, arm) {
       if (ev.part?.cost != null) cost_usd += ev.part.cost;
     } catch { /* not a json line */ }
   }
-  return { wall_s, cost_usd, tokens_in: seen ? tokens_in : null,
+  return { wall_s, ende, cost_usd, tokens_in: seen ? tokens_in : null,
     tokens_out: seen ? tokens_out : null, tokens_reasoning: seen ? tokens_reasoning : null };
 }
 
@@ -465,9 +525,8 @@ function authorViaGraphcodeRun(dir, arm) {
   // stdout bleibt fuer MCP-Transporte reserviert — der Loop meldet ALLES auf stderr.
   const log = (r.stderr ?? '') + (r.stdout ?? '');
   writeFileSync(join(dir, 'run-raw.log'), log);
-  if (r.status !== 0) {
-    throw new Error(`graphcode run exit=${r.status} signal=${r.signal}; ${log.slice(-600)}`);
-  }
+  const ende = laufEnde(r, CFG.timeoutMs); // CR-GC-618: erfassen, nicht wegwerfen
+  if (ende) process.stderr.write(`  Lauf geendet als ${ende.art}${ende.signal ? ` (${ende.signal})` : ''} — Stand wird trotzdem erfasst\n`);
   let stats = {};
   const m = log.lastIndexOf('graphcode run: {');
   if (m >= 0) {
@@ -475,6 +534,7 @@ function authorViaGraphcodeRun(dir, arm) {
   }
   return {
     wall_s,
+    ende,
     cost_usd: 0,
     tokens_in: stats.tokensIn ?? null,
     tokens_out: stats.tokensOut ?? null,
@@ -597,9 +657,22 @@ export async function captureArtifacts(dir) {
   return exportError;
 }
 
+/** sha256 der ersten 1 MB einer Datei — genug, um zwei Korpora auseinanderzuhalten. */
+function dateiSha(pfad) {
+  if (!pfad || !existsSync(pfad)) return null;
+  return createHash('sha256').update(readFileSync(pfad)).digest('hex').slice(0, 12);
+}
+
 async function main() {
   const outDir = join(HERE, 'runs');
   mkdirSync(outDir, { recursive: true });
+  // CR-GC-618: EINMAL gebaut, in JEDE Zeile — auch in eine Abbruchzeile. Eine Ergebnisdatei
+  // ohne Korpus ist nicht vergleichbar, und das faellt sonst erst beim Vergleich auf.
+  const stempel = korpusStempel(CFG, dateiSha);
+  process.stderr.write(`\nKorpus: ${stempel.korpus}\n`
+    + `  prompt  ${stempel.prompt.pfad} (${stempel.prompt.sha256 ?? 'fehlt'})\n`
+    + `  golden  ${stempel.golden.pfad ?? stempel.golden.grund}${stempel.golden.sha256 ? ` (${stempel.golden.sha256})` : ''}\n`
+    + `  seed    ${stempel.seed} · Zeitgrenze ${stempel.zeitgrenze_s}s\n`);
   const only = process.env.ARMS ? new Set(process.env.ARMS.split(',')) : null;
   // optIn-Arme kosten Geld (CR-GC-572) und fahren nur auf namentliche Nennung.
   const arms = only ? CFG.arms.filter((a) => only.has(a.label)) : CFG.arms.filter((a) => !a.optIn);
@@ -641,21 +714,23 @@ async function main() {
         // CR-GC-617: ein beendeter Waise gehoert in die Zeile. Er hat Speicher und Zeit gekostet,
         // und er ist das Signal dafuer, dass der Executor unsauber geendet hat (meist Timeout).
         results.push({
-          arm: arm.label, model: arm.model, executor: arm.executor, run: i, exportError,
+          arm: arm.label, model: arm.model, executor: arm.executor, run: i, stempel,
+          exportError, ende: usage.ende ?? null,
           haengenderHost: waise.beendet ? waise.pid : null,
           ...m,
         });
         process.stderr.write(
           `  elements=${m.elements} compliance=${m.readiness.compliance ?? '?'} `
           + `gates=${m.readiness.gatesPassed ?? '?'} rejections=${m.gate_rejections} `
-          + `tok=${usage.tokens_in}/${usage.tokens_out} $${usage.cost_usd ?? 0} ${usage.wall_s}s\n`,
+          + `tok=${usage.tokens_in}/${usage.tokens_out} $${usage.cost_usd ?? 0} ${usage.wall_s}s`
+          + `${usage.ende ? ` ENDE=${usage.ende.art}` : ''}\n`,
         );
       } catch (err) {
         // Surface the executor's real stderr (execFileSync buries it on non-zero exit).
         const stderr = (err.stderr ?? '').toString().slice(-1500);
         if (stderr) writeFileSync(join(dir, 'error.log'), (err.stdout ?? '').toString() + '\n---STDERR---\n' + stderr);
         process.stderr.write(`  FAILED: ${err.message}\n${stderr ? '  stderr: ' + stderr.slice(-400) + '\n' : ''}`);
-        results.push({ arm: arm.label, model: arm.model, executor: arm.executor, run: i, error: (stderr || err.message).slice(-500) });
+        results.push({ arm: arm.label, model: arm.model, executor: arm.executor, run: i, stempel, error: (stderr || err.message).slice(-500) });
       }
       writeFileSync(join(HERE, CFG.resultsFile), JSON.stringify(results, null, 2));
     }
