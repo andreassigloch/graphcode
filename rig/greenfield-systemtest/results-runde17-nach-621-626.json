@@ -1,0 +1,112 @@
+[
+  {
+    "arm": "opus5",
+    "model": "claude-opus-5",
+    "executor": "claude",
+    "run": 0,
+    "stempel": {
+      "korpus": "graphcode-webapp (Default aus run.mjs)",
+      "prompt": {
+        "pfad": "/Users/andreas/Developer/dev/graphcode/rig/greenfield-systemtest/prompt.txt",
+        "sha256": "4db981982d98"
+      },
+      "golden": {
+        "pfad": null,
+        "grund": "GOLDEN nicht gesetzt — kein Abgleich gefahren"
+      },
+      "seed": "SYS-webapp",
+      "material": "/Users/andreas/Developer/dev/sigloch-modules",
+      "zeitgrenze_s": 3600
+    },
+    "exportError": null,
+    "ende": null,
+    "haengenderHost": null,
+    "elements": 287,
+    "traces": 577,
+    "structure": {
+      "UC": 8,
+      "FUNC": 42,
+      "MOD": 17,
+      "REQ": 52,
+      "TEST": 52
+    },
+    "readiness": {
+      "compliance": 1,
+      "elementsWithErrors": 0,
+      "gatesPassed": "4/8"
+    },
+    "spec": {
+      "compliance": 1,
+      "elementsWithErrors": 0,
+      "dimensions": {
+        "req": 0.921,
+        "uc": 1,
+        "arch": 0.979,
+        "alloc": 0.955,
+        "ver": 0.995,
+        "schema": 1,
+        "cr": 0.99,
+        "ms": null
+      },
+      "steer": {
+        "worst": 0.5,
+        "anchor": "R-04@MOD-rand"
+      },
+      "notEvaluated": [
+        "rule:BQ-01",
+        "rule:BQ-02",
+        "rule:BQ-04",
+        "rule:BQ-06",
+        "rule:BQ-07"
+      ],
+      "advisoryOnly": [
+        "BQ-01",
+        "BQ-02",
+        "BQ-04",
+        "BQ-06",
+        "BQ-07",
+        "ND-01",
+        "ND-02",
+        "RC-01",
+        "RC-02",
+        "RC-03",
+        "RC-04",
+        "RC-05",
+        "RC-06",
+        "RC-07"
+      ]
+    },
+    "code": {
+      "verdict": "nicht pruefbar",
+      "why": "keine Bindung und keine aufloesbare Quelldatei — es gibt nichts zu pruefen",
+      "reach": {
+        "endpoints": 0,
+        "assigned": 0,
+        "pct": 0
+      },
+      "binding": {
+        "leafFuncs": 35,
+        "bound": 0,
+        "pct": 0
+      },
+      "rcViolations": {}
+    },
+    "gate_rejections": 3,
+    "tokens": {
+      "wall_s": 1871.1,
+      "ende": null,
+      "cost_usd": 11.429025900000003,
+      "tokens_in": 9218317,
+      "tokens_in_uncached": 9180,
+      "tokens_in_cache_read": 8826082,
+      "tokens_in_cache_creation": 383055,
+      "tokens_out": 173677,
+      "tokens_reasoning": null,
+      "turns": 66
+    },
+    "moduleAudit": {
+      "grund": "kein Golden gesetzt — kein Abgleich gefahren"
+    },
+    "briefCoverage": null
+  }
+]
