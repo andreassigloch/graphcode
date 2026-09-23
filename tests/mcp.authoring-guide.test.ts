@@ -76,3 +76,69 @@ describe('TEST-graph-authoring-guide (CR-GC-231): legal edges from the meta-mode
     await expect(tools.graph_authoring_guide.handler({ type: 'WIDGET' })).rejects.toThrow(/unknown element type/i);
   });
 });
+
+/**
+ * CR-GC-622 — Idempotenz im Werkzeug, nicht ein Satz in der Beschreibung.
+ *
+ * Gemessen im Spezifikationslauf `opus5-0` (2026-09-22): 10 Aufrufe / 22.769 Zeichen, obwohl die
+ * Beschreibung seit CR-GC-612 „take it ONCE" sagt. Die Sitzung ist die Bindung der Registry —
+ * deshalb bindet jeder Fall hier EINMAL und ruft dann mehrfach.
+ */
+describe('CR-GC-622: der zweite Aufruf desselben Typs ist kurz, nicht anders', () => {
+  let repoRoot: string;
+  let harness: GraphCodeHarness;
+  let tools: ReturnType<typeof bindToolsToHarness>;
+
+  beforeEach(async () => {
+    repoRoot = mkdtempSync(join(tmpdir(), 'graphcode-622-'));
+    harness = makeHarness(repoRoot);
+    await harness.initialize();
+    tools = bindToolsToHarness(harness);
+  });
+
+  afterEach(async () => {
+    await harness.close();
+    rmSync(repoRoot, { recursive: true, force: true });
+  });
+
+  const groesse = (x: unknown) => JSON.stringify(x).length;
+
+  it('erster Aufruf voll, zweiter unter 800 Zeichen — mit vollstaendiger Kanten-Grammatik', async () => {
+    const erst = await tools.graph_authoring_guide.handler({ type: 'FUNC' });
+    const zweit = await tools.graph_authoring_guide.handler({ type: 'FUNC' });
+
+    expect(erst.attributes).toBeDefined();
+    expect(erst.formatEExample).toBeTruthy();
+    expect(erst.wiederholt).toBeUndefined();
+
+    // Was der Executor JEDE Runde braucht, steht auch im zweiten Aufruf vollstaendig da.
+    expect(zweit.outgoing.map((e) => `${e.edgeType}->${e.targetType}`)).toEqual(
+      erst.outgoing.map((e) => `${e.edgeType}->${e.targetType}`),
+    );
+    expect(zweit.incoming.map((e) => `${e.sourceType}-${e.edgeType}`)).toEqual(
+      erst.incoming.map((e) => `${e.sourceType}-${e.edgeType}`),
+    );
+    expect(zweit.requiredAttrs).toEqual(erst.requiredAttrs);
+    // Weg ist, was sich nie aendert und schon dastand.
+    expect(zweit.attributes).toBeUndefined();
+    expect(zweit.formatEExample).toBeUndefined();
+    expect(zweit.wiederholt).toMatch(/Aufruf 1 dieser Sitzung/);
+    expect(groesse(zweit), `wiederholt: ${groesse(zweit)} statt ${groesse(erst)} Zeichen`).toBeLessThan(800);
+  });
+
+  it('jeder Typ hat sein eigenes erstes Mal — auch nach neun anderen', async () => {
+    for (const t of ['SYS', 'UC', 'ACTOR', 'FCHAIN', 'FUNC', 'FLOW', 'REQ', 'TEST', 'MOD']) {
+      await tools.graph_authoring_guide.handler({ type: t });
+    }
+    const schema = await tools.graph_authoring_guide.handler({ type: 'SCHEMA' });
+    expect(schema.attributes, 'ein ungefragter Typ darf nie gekuerzt antworten').toBeDefined();
+    expect(schema.formatEExample).toBeTruthy();
+    const nochmal = await tools.graph_authoring_guide.handler({ type: 'SCHEMA' });
+    expect(nochmal.wiederholt).toMatch(/Aufruf 10 dieser Sitzung/);
+  });
+
+  it('unbekannter Typ wirft auch beim zweiten Mal', async () => {
+    await expect(tools.graph_authoring_guide.handler({ type: 'WIDGET' })).rejects.toThrow(/unknown element type/i);
+    await expect(tools.graph_authoring_guide.handler({ type: 'WIDGET' })).rejects.toThrow(/unknown element type/i);
+  });
+});

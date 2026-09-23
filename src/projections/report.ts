@@ -172,7 +172,7 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
       '(`skipped`), and what the gate catalog does not carry at all (`notInGate`). Take it when you ' +
       'want to know what the judgement could and could not see; take rules_get_violations when you want ' +
       'the work list. Reading the result without `skipped` treats a partial figure as a complete one. ' +
-      '`graph_help({id:"rules_evaluate"})` explains the layers. Read-only.',
+      '`graph_help({token:"rules_evaluate"})` explains the layers. Read-only.',
     inputSchema: RulesEvaluateInputSchema,
     async handler(input) {
       const ev = evaluateAll(harness);
@@ -331,7 +331,7 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
       'the 8 topic scores and the steering space. Take it to decide WHAT NEXT, not to diagnose a single ' +
       'finding — that is rules_get_violations. Read `score` only together with `measured`, and the ' +
       'numbers only together with `skipped` and `importCoverage`: a figure without its reach is not a ' +
-      'statement. `graph_help({id:"graph_readiness"})` explains every block. Read-only.',
+      'statement. `graph_help({token:"graph_readiness"})` explains every block. Read-only.',
     inputSchema: GraphReadinessInputSchema,
     async handler(input) {
       // EINE Erhebung, drei Ableitungen (Report, Phase-Gates, skipped) — CR-GC-398.
@@ -482,7 +482,8 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
       'What does this rule / gate / panel / metric / tool mean, and what do I do about it? Plain ' +
       'language and the SE term for any on-screen token, plus the exact fix where one applies. Take it ' +
       'instead of guessing from a rule id — and instead of asking a tool description to carry the ' +
-      'semantics. Without an id it gives the contextual next steps for the current state.',
+      'semantics. The argument is `token`; without it you get the contextual next steps for the ' +
+      'current state, so a wrong argument name silently asks the WIDER question (CR-GC-623).',
     inputSchema: GraphHelpInputSchema,
     async handler(input) {
       if (input.token !== undefined) {
@@ -504,6 +505,20 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
     },
   };
 
+  /**
+   * CR-GC-622 — die Sitzung merkt sich, welcher Typ schon einen vollen Leitfaden bekommen hat.
+   *
+   * Der Satz "take it ONCE" stand seit CR-GC-612 in der Beschreibung; im Spezifikationslauf
+   * `opus5-0` (2026-09-22) fielen trotzdem 10 Aufrufe / 22.769 Zeichen an. Ein Satz in der
+   * Beschreibung ersetzt keine Idempotenz im Werkzeug — die Antwort haengt an `SE_DESCRIPTOR` und
+   * `TRACE_PATTERNS`, nicht am Graphen, sie ist je Typ konstant.
+   *
+   * Die Closure IST die Sitzung: `bindReportTools` wird einmal je Host gebunden (derselbe
+   * Lebensdauer-Grund, aus dem `tool-context.ts` seinen Zustand hinter eine Fabrik legt).
+   */
+  const leitfadenAufruf = new Map<string, number>();
+  let leitfadenZaehler = 0;
+
   const graph_authoring_guide: MCPTool<
     z.infer<typeof GraphAuthoringGuideInputSchema>,
     {
@@ -511,16 +526,16 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
       outgoing: Array<{ edgeType: string; targetType: string; cardinality?: string; description?: string }>;
       incoming: Array<{ edgeType: string; sourceType: string; cardinality?: string; description?: string }>;
       requiredAttrs: string[];
-      attributes: AttributeHint[];
-      formatEExample: string;
+      attributes?: AttributeHint[];
+      formatEExample?: string;
+      wiederholt?: string;
     }
   > = {
     name: 'graph_authoring_guide',
     description:
       'How do I write THIS element type through the gate: the legal trace patterns, the attributes it ' +
-      'carries, and one Format-E example. Take it ONCE before authoring a type you have not written in ' +
-      'this session — it is the same guide every time, so a second call in the same session buys ' +
-      'nothing.',
+      'carries, and one Format-E example. Take it ONCE per type — a repeat call in the same session ' +
+      'returns the edge grammar only and says which call carried the rest (CR-GC-622).',
     inputSchema: GraphAuthoringGuideInputSchema,
     async handler(input) {
       const descriptor = SE_DESCRIPTOR.nodeTypes[input.type as keyof typeof SE_DESCRIPTOR.nodeTypes];
@@ -543,11 +558,36 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
       const incoming = patterns
         .filter((p) => p.target === input.type)
         .map((p) => ({ edgeType: p.type, sourceType: p.source, cardinality: p.cardinality, description: p.description }));
+      const requiredAttrs = [...(descriptor.requiredAttrs ?? [])];
+      const ersterAufruf = leitfadenAufruf.get(input.type);
+      leitfadenZaehler += 1;
+      if (ersterAufruf !== undefined) {
+        // GEKUERZT, nicht leer: die Kanten-Grammatik bleibt vollstaendig. Der Executor bettet sie
+        // JEDE Runde neu in den Rundenprompt ein (`buildRoundChannels`) und liest dafuer genau
+        // `outgoing`/`incoming`/`requiredAttrs` — ein Stub haette ab Runde 2 den Block geleert,
+        // dessen Vorhandensein derselbe Prompt zusichert. Weg fallen die Attribut-Hinweise, das
+        // Format-E-Beispiel und die Kanten-Beschreibungen: 1.823 → 402 Zeichen im Mittel ueber
+        // alle 12 Elementtypen.
+        const ohneText = <T extends { description?: string }>(e: T): Omit<T, 'description'> => {
+          const { description: _weg, ...rest } = e;
+          return rest;
+        };
+        return {
+          type: input.type,
+          outgoing: outgoing.map(ohneText),
+          incoming: incoming.map(ohneText),
+          requiredAttrs,
+          wiederholt:
+            `Attribut-Hinweise und Format-E-Beispiel fuer ${input.type} standen in Aufruf ` +
+            `${ersterAufruf} dieser Sitzung; die Kanten-Grammatik steht hier vollstaendig.`,
+        };
+      }
+      leitfadenAufruf.set(input.type, leitfadenZaehler);
       return {
         type: input.type,
         outgoing,
         incoming,
-        requiredAttrs: [...(descriptor.requiredAttrs ?? [])],
+        requiredAttrs,
         attributes: attributesFor(input.type),
         formatEExample: formatEExampleFor(input.type),
       };

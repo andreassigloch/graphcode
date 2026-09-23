@@ -693,6 +693,15 @@ describe('executor (CR-GC-278)', () => {
     // Deterministisch: gleicher Graph + gleiche Fokus-Typen ⇒ gleiche Injektion.
     expect(await buildRoundInjection(registry, { focusTypes: ['TEST', 'REQ'], focusDimension: 'ver' })).toBe(injection);
 
+    // CR-GC-622: der Rundenprompt entsteht JEDE Runde neu und holt die Kanten-Grammatik dabei
+    // erneut aus `graph_authoring_guide` — dessen zweiter Aufruf je Typ ist seither gekuerzt.
+    // Gekuerzt heisst NICHT leer: `outgoing`/`incoming`/`requiredAttrs` bleiben vollstaendig,
+    // sonst waere ab Runde 2 genau der Block leer, dessen Vorhandensein dieser Prompt zusichert.
+    const runde3 = await buildRoundInjection(registry, { focusTypes: ['TEST', 'REQ'], focusDimension: 'ver' });
+    expect(runde3).toContain('- REQ: ausgehend:');
+    expect(runde3).toContain('- TEST: ausgehend:');
+    expect(runde3).toBe(injection);
+
     // -----------------------------------------------------------------------
     // CR-GC-539 — DIE ZAHL. Derselbe 300+-Knoten-Graph, jetzt gemessen statt beschrieben.
     //
