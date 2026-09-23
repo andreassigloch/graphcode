@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 224 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 226 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 224 CR · 180 done · 0 open.
+Total: 226 CR · 180 done · 0 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -286,3 +286,5 @@ Total: 224 CR · 180 done · 0 open.
 | `CR-GC-614` | done | Executor verwirft alte Denkbloecke nach jedem Zug — der Graph ist das Gedaechtnis, nicht der Gespraechsverlauf (gemessen: ~58% des Kontexts in Lauf 15) |
 | `CR-GC-615` | done | Rig captureArtifacts scheitert nach Git-Aktionen des Agenten an Export-Drift (opus5-16: graph_export refused, Ergebniszeile fehlt) |
 | `CR-GC-616` | done | ITEM-462 umgesetzt: UC-05/06/RD-03 gestrichen (UC-Schreibregel), MT-02 warning, Fix-Roundtrip-Test, Folge-Regel-Spalte |
+| `CR-GC-617` | n/a | Rig releaseStore loescht owner.lock statt den Eigentuemer zu beenden: der MCP-Host des Executors ueberlebt den Timeout-SIGTERM als Waise, haelt Kuzu-Handle und ~550 MB, und der geloeschte Lock nimmt der Heartbeat-Erkennung die Grundlage |
+| `CR-GC-618` | n/a | Rig-Ergebniszeile traegt keinen Korpus-Stempel: arm/model/executor/run, aber weder Golden noch Prompt noch Seed — zwei Laeufe auf verschiedenen Korpora sind in der JSON ununterscheidbar, und GOLDEN faellt still auf den lebenden sigloch-modules-Graphen zurueck |

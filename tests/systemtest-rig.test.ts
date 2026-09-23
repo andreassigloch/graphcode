@@ -15,9 +15,9 @@
  */
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { mkdtempSync, rmSync, writeFileSync, mkdirSync, realpathSync, readFileSync, existsSync } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { tmpdir, hostname } from 'node:os';
 import { join } from 'node:path';
-import { spawnSync } from 'node:child_process';
+import { spawnSync, spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 // @ts-expect-error — Rig-Auswertung in .mjs, bewusst ohne Typdeklaration (Messwerkzeug, kein Produkt-API)
 import { leseTurns, pruefeGegenResultzeile, cacheVerursacher, dryRunWirkung } from '../rig/greenfield-systemtest/turn-analyse.mjs';
@@ -624,4 +624,70 @@ describe('captureArtifacts ueberlebt die Export-Verweigerung (CR-GC-615)', () =>
       rmSync(ws, { recursive: true, force: true });
     }
   }, 60_000);
+});
+
+/**
+ * CR-GC-617 — das Rig beendet den haengenden Host, statt seinen Ausweis zu loeschen.
+ *
+ * Die alte Fassung loeschte `owner.lock` und `host.sock`. Damit war der Waise nicht weg,
+ * sondern nur unsichtbar: `spawnSync(..., { timeout })` toetet nur das direkte Kind, der
+ * MCP-Host des Executors ist ein Enkel und ueberlebt — mit offenem Kuzu-Handle. Der Test
+ * fuehrt einen ECHTEN Kindprozess und den ECHTEN Lock-Vertrag, kein Mock.
+ */
+describe('storeFreigeben beendet den Eigentuemer (CR-GC-617)', () => {
+  it('urteilt ueber einen vorgefundenen Lock, ohne etwas anzufassen', async () => {
+    const { lockUrteil } = await import('../rig/greenfield-systemtest/run.mjs');
+    const lebend = { pid: 4242, hostname: 'Mac.local', startedAt: '2026-09-23T00:00:00.000Z', version: '0.24.0' };
+    expect(lockUrteil(null, 'Mac.local').tun).toBe('aufraeumen');
+    expect(lockUrteil(lebend, 'Mac.local', () => true)).toMatchObject({ tun: 'beenden', pid: 4242 });
+    expect(lockUrteil(lebend, 'Mac.local', () => false).tun).toBe('aufraeumen');
+    // Fremder Rechner: melden, nicht toeten — das Rig kann ihn nicht gestartet haben.
+    expect(lockUrteil(lebend, 'Anderer.local', () => true).tun).toBe('melden');
+  });
+
+  it('toetet einen echten lebenden Eigentuemer und raeumt erst danach den Lock weg', async () => {
+    const { storeFreigeben, pidLebt } = await import('../rig/greenfield-systemtest/run.mjs');
+    const ws = mkdtempSync(join(realpathSync(tmpdir()), 'gc-lock-'));
+    // Ein echtes Kind, das von sich aus nie endet — der Waise, um den es geht.
+    const kind = spawn('node', ['-e', 'setInterval(() => {}, 1000)'], { stdio: 'ignore' });
+    try {
+      mkdirSync(join(ws, '.graphcode'), { recursive: true });
+      const lockPath = join(ws, '.graphcode', 'owner.lock');
+      writeFileSync(lockPath, JSON.stringify({
+        pid: kind.pid, hostname: hostname(), startedAt: new Date().toISOString(), version: '0.24.0',
+      }));
+      writeFileSync(join(ws, '.graphcode', 'host.sock'), '');
+
+      expect(pidLebt(kind.pid!), 'Vorbedingung: das Kind lebt').toBe(true);
+      const bericht = await storeFreigeben(ws);
+
+      expect(bericht.tun).toBe('beenden');
+      expect(bericht.beendet, 'der Eigentuemer muss TOT sein, nicht nur ausgetragen').toBe(true);
+      expect(pidLebt(kind.pid!)).toBe(false);
+      expect(existsSync(lockPath)).toBe(false);
+      expect(existsSync(join(ws, '.graphcode', 'host.sock'))).toBe(false);
+    } finally {
+      try { kind.kill('SIGKILL'); } catch { /* schon tot */ }
+      rmSync(ws, { recursive: true, force: true });
+    }
+  }, 30_000);
+
+  it('raeumt einen Lock ohne lebenden Eigentuemer ohne Laerm weg', async () => {
+    const { storeFreigeben } = await import('../rig/greenfield-systemtest/run.mjs');
+    const ws = mkdtempSync(join(realpathSync(tmpdir()), 'gc-lock-tot-'));
+    try {
+      mkdirSync(join(ws, '.graphcode'), { recursive: true });
+      // Eine PID, die es sicher nicht gibt: das Kind ist gestartet und sofort geendet.
+      const tot = spawnSync('node', ['-e', 'process.exit(0)']);
+      writeFileSync(join(ws, '.graphcode', 'owner.lock'), JSON.stringify({
+        pid: tot.pid, hostname: hostname(), startedAt: new Date().toISOString(), version: '0.24.0',
+      }));
+      const bericht = await storeFreigeben(ws);
+      expect(bericht.tun).toBe('aufraeumen');
+      expect(bericht.beendet).toBe(false);
+      expect(existsSync(join(ws, '.graphcode', 'owner.lock'))).toBe(false);
+    } finally {
+      rmSync(ws, { recursive: true, force: true });
+    }
+  }, 30_000);
 });

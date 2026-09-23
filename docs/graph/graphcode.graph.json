@@ -1930,6 +1930,18 @@
       "commitRef": "1a50060b4d6c120a4c68e86e1e1adb9c54a69605"
     },
     {
+      "id": "CR-GC-617",
+      "type": "CR",
+      "name": "Rig releaseStore loescht owner.lock statt den Eigentuemer zu beenden: der MCP-Host des Executors ueberlebt den Timeout-SIGTERM als Waise, haelt Kuzu-Handle und ~550 MB, und der geloeschte Lock nimmt der Heartbeat-Erkennung die Grundlage",
+      "description": "docs/cr/open/CR-GC-617-rig-releasestore-loescht-owner-lock-stat.md"
+    },
+    {
+      "id": "CR-GC-618",
+      "type": "CR",
+      "name": "Rig-Ergebniszeile traegt keinen Korpus-Stempel: arm/model/executor/run, aber weder Golden noch Prompt noch Seed — zwei Laeufe auf verschiedenen Korpora sind in der JSON ununterscheidbar, und GOLDEN faellt still auf den lebenden sigloch-modules-Graphen zurueck",
+      "description": "docs/cr/open/CR-GC-618-rig-ergebniszeile-traegt-keinen-korpus-s.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -20546,5 +20558,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 380
+  "graphVersion": 382
 }

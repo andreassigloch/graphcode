@@ -15,9 +15,12 @@
 import { execFileSync, spawnSync } from 'node:child_process';
 import { mkdirSync, rmSync, writeFileSync, readFileSync, existsSync, cpSync } from 'node:fs';
 import { join, dirname } from 'node:path';
+import { hostname } from 'node:os';
 import { parseEnv } from 'node:util';
 import { fileURLToPath } from 'node:url';
 import { runMetrics } from './metrics.mjs';
+// CR-GC-617: DER eine Leser des Lockfiles (CR-GC-420) — kein zweites JSON.parse im Rig.
+import { readLockOwner } from '../../dist/index.js';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const GC_ROOT = join(HERE, '..', '..');
@@ -208,8 +211,65 @@ function buildIntent() {
 // sees the store as "owned" and fast-exits. We drive the store strictly sequentially
 // (seed → executor → capture, never concurrent), so releasing the lock between steps
 // is safe and is exactly what the StoreOwnershipError message advises.
-function releaseStore(dir) {
+/** Lebt diese PID noch? Signal 0 stellt die Frage, ohne etwas zu schicken. */
+export function pidLebt(pid) {
+  try { process.kill(pid, 0); return true; } catch (e) { return e.code === 'EPERM'; }
+}
+
+/**
+ * CR-GC-617 — was mit einem vorgefundenen Lock zu tun ist. Rein: Eigentuemer rein, Urteil raus.
+ *
+ * Die Vorgaenger-Fassung loeschte `owner.lock` und `host.sock` und war damit fertig. Sie
+ * entfernte den AUSWEIS, nicht den Eigentuemer: `spawnSync(..., { timeout })` schickt SIGTERM
+ * nur an das direkte Kind (`claude`/`opencode`), dessen MCP-Host ist ein Enkel und ueberlebt —
+ * mit offenem Kuzu-Handle und ~550 MB, auf einem Arbeitsbereich, den der naechste Lauf per
+ * `rmSync` wegzieht. Und weil der Lock weg war, nannte ihn danach nichts mehr: weder ein
+ * spaeterer `acquire()` (der ueber `STALE_HEARTBEAT_MS` genau dafuer gebaut ist) noch `aise doctor`.
+ *
+ * Ein Lock eines ANDEREN Rechners wird gemeldet, nie angefasst: das Rig darf nichts beenden,
+ * was es nicht gestartet haben kann.
+ */
+export function lockUrteil(owner, meinHost, lebt = pidLebt) {
+  if (!owner) return { tun: 'aufraeumen', grund: 'kein benennbarer Eigentuemer im Lock' };
+  if (owner.hostname !== meinHost) {
+    return { tun: 'melden', grund: `Lock gehoert ${owner.hostname} (pid ${owner.pid}), nicht ${meinHost}` };
+  }
+  if (!lebt(owner.pid)) return { tun: 'aufraeumen', grund: `pid ${owner.pid} ist tot` };
+  return { tun: 'beenden', pid: owner.pid, grund: `pid ${owner.pid} haelt den Store noch` };
+}
+
+const warteMs = (ms) => new Promise((r) => setTimeout(r, ms));
+
+/**
+ * Gibt den Store frei — indem sie den Eigentuemer BEENDET, nicht indem sie seinen Lock loescht.
+ *
+ * Gibt zurueck, was geschehen ist. Ein beendeter Waise ist eine Messgroesse (er hat Speicher und
+ * Zeit gekostet), keine Nebensache — deshalb landet er im Protokoll des Laufs.
+ */
+export async function storeFreigeben(dir, { frist = 3000, schritt = 200 } = {}) {
+  const lockPath = join(dir, '.graphcode', 'owner.lock');
+  const urteil = lockUrteil(readLockOwner(lockPath), hostname());
+  const bericht = { ...urteil, beendet: false };
+  if (urteil.tun === 'melden') {
+    process.stderr.write(`  Store NICHT freigegeben: ${urteil.grund}\n`);
+    return bericht; // fremder Rechner: weder toeten noch den Lock entfernen
+  }
+  if (urteil.tun === 'beenden') {
+    process.stderr.write(`  haengender Host: ${urteil.grund} — wird beendet\n`);
+    for (const sig of ['SIGTERM', 'SIGKILL']) {
+      try { process.kill(urteil.pid, sig); } catch { /* schon weg */ }
+      for (let t = 0; t < frist && pidLebt(urteil.pid); t += schritt) await warteMs(schritt);
+      if (!pidLebt(urteil.pid)) { bericht.beendet = true; break; }
+    }
+    // Ueberlebt er SIGKILL, ist das ein BEFUND. Den Lock jetzt zu loeschen hiesse, den
+    // zweiten Schreiber zuzulassen, gegen den er gebaut ist (REQ-single-kuzu-owner).
+    if (!bericht.beendet) {
+      process.stderr.write(`  pid ${urteil.pid} ueberlebt SIGKILL — Lock bleibt stehen\n`);
+      return bericht;
+    }
+  }
   for (const f of ['owner.lock', 'host.sock']) rmSync(join(dir, '.graphcode', f), { force: true });
+  return bericht;
 }
 
 function initWorkspace(dir) {
@@ -380,7 +440,7 @@ function authorViaOpencode(dir, arm) {
  * `graphcode run` als Executor (CR-GC-555) — der EINZIGE Arm, der den Loop faehrt.
  *
  * Der Loop waehlt die Store-Election selbst, genau wie `graphcode mcp`; deshalb gilt
- * dasselbe releaseStore davor wie bei den anderen Armen. Die Zahlen kommen aus dem
+ * dasselbe storeFreigeben davor wie bei den anderen Armen. Die Zahlen kommen aus dem
  * `graphcode run:`-Statistikblock am Ende von stderr — gemessen, nicht geschaetzt. Kosten
  * sind 0: lokale Modelle kosten Rechenzeit, kein Geld, und eine erfundene Zahl waere
  * schlimmer als keine.
@@ -562,12 +622,13 @@ async function main() {
         }
         if (CFG.rewindAudit) seedFromAudit(dir); // CR-GC-597: Stand nach n Zuegen eines frueheren Laufs
         else seedSystem(dir);  // seed SYS (subprocess) so next_step gives direction
-        releaseStore(dir);     // free any lock so the executor's MCP can own the store
+        await storeFreigeben(dir); // Eigentuemer beenden, damit der MCP des Executors den Store bekommt
         const usage =
           arm.executor === 'opencode' ? authorViaOpencode(dir, arm)
           : arm.executor === 'gcrun' ? authorViaGraphcodeRun(dir, arm)
           : authorViaClaude(dir, arm);
-        releaseStore(dir);     // executor's MCP may leave a lock (esp. on timeout kill)
+        // Der MCP des Executors ueberlebt den Timeout-Kill seines Elternteils — hier stirbt er.
+        const waise = await storeFreigeben(dir);
         writeFileSync(join(dir, 'usage.json'), JSON.stringify(usage, null, 2));
         const exportError = await captureArtifacts(dir);
         const m = runMetrics({
@@ -577,7 +638,13 @@ async function main() {
         });
         // CR-GC-615: das Feld steht IMMER in der Zeile (null = sauber exportiert). Nur so ist
         // "kein Exportfehler" eine Aussage und nicht die Abwesenheit einer Aussage.
-        results.push({ arm: arm.label, model: arm.model, executor: arm.executor, run: i, exportError, ...m });
+        // CR-GC-617: ein beendeter Waise gehoert in die Zeile. Er hat Speicher und Zeit gekostet,
+        // und er ist das Signal dafuer, dass der Executor unsauber geendet hat (meist Timeout).
+        results.push({
+          arm: arm.label, model: arm.model, executor: arm.executor, run: i, exportError,
+          haengenderHost: waise.beendet ? waise.pid : null,
+          ...m,
+        });
         process.stderr.write(
           `  elements=${m.elements} compliance=${m.readiness.compliance ?? '?'} `
           + `gates=${m.readiness.gatesPassed ?? '?'} rejections=${m.gate_rejections} `
