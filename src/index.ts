@@ -167,3 +167,8 @@ export { createHarness } from './surface/create-harness.js';
 // mitreisen; `new GraphCodeHarness(...)` faellt still auf DEFAULT_CONFIG zurueck.
 export { openMeasured, discriminate, stampLine } from './surface/measured.js';
 export type { Measured, Provenance, PolicyProvenance, Discrimination, OpenMeasuredOptions } from './surface/measured.js';
+// CR-GC-617: DER Leser des Lockfiles ist auch nach aussen der eine (CR-GC-420). Ein Rig, das
+// einen haengengebliebenen Host beenden will, muss dessen PID erfahren — tut es das mit einem
+// eigenen JSON.parse, gibt es zwei Auslegungen derselben Datei.
+export { readLockOwner, StoreOwnershipError } from './kernel/store-lock.js';
+export type { LockOwner } from './kernel/lock-owner-contract.js';

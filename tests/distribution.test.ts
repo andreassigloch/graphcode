@@ -141,6 +141,30 @@ export function auditSiglochTree(root: string, relativeTo: string): TreeVerdict 
 }
 const CLI_JS = join(REPO_ROOT, 'dist', 'cli.js');
 
+/**
+ * BOK-CR-066 — die Tarballs des laufenden Release-Zuges, aus `AISE_ZUG_TARBALLS`.
+ *
+ * Die Fremdinstallation unten zieht aus der REGISTRY. Waehrend eines Zuges steht die neue
+ * Peer-Version dort noch nicht: `aise release prepare` bumpt contracts auf 10.11.0, graphcodes
+ * Floor zieht mit — und dieser Test starb an `ETARGET: No matching version found for
+ * @sigloch/contracts@>=10.11 <11`. Der Test hatte recht (gegen die Registry von gestern ist das
+ * Paket nicht installierbar), aber er pruefte die falsche Frage: nicht „installierbar gegen
+ * gestern", sondern „installierbar als der Stand, den DIESER Zug veroeffentlicht".
+ *
+ * `aise` reicht die schon gepackten Peers deshalb als `PATH`-artige Liste herein. Ist sie leer
+ * — der Normalfall ausserhalb eines Zuges —, bleibt es exakt der bisherige Pfad. Kein zweiter
+ * Zweig: ein Aufruf, dem im Zug Argumente zuwachsen.
+ *
+ * Leere Eintraege fallen raus, nicht existierende NICHT: ein stillschweigend verworfenes
+ * Tarball waere ein gruener Test ueber einer Installation, die es nie gab.
+ */
+export function zugTarballs(env: NodeJS.ProcessEnv = process.env): string[] {
+  return (env.AISE_ZUG_TARBALLS ?? '')
+    .split(':')
+    .map((p) => p.trim())
+    .filter(Boolean);
+}
+
 /** The substrate packages graphcode consumes from the registry (CR-214, CR-SM-248). */
 const SUBSTRATE = [
   '@sigloch/contracts',
@@ -179,6 +203,17 @@ describe('TEST-distribution: npx distribution', () => {
     for (const range of Object.values({ ...pkg.dependencies, ...pkg.devDependencies })) {
       expect(range.startsWith('file:')).toBe(false);
     }
+  });
+
+  // BOK-CR-066 — die Zerlegung ist die Stelle, an der ein Tippfehler still zu „kein Zug"
+  // wuerde. Rein: Umgebung rein, Pfadliste raus; kein Netz, kein Dateisystem.
+  it('reads the running release train from AISE_ZUG_TARBALLS', () => {
+    expect(zugTarballs({})).toEqual([]);
+    expect(zugTarballs({ AISE_ZUG_TARBALLS: '' })).toEqual([]);
+    expect(zugTarballs({ AISE_ZUG_TARBALLS: '/t/a.tgz' })).toEqual(['/t/a.tgz']);
+    expect(zugTarballs({ AISE_ZUG_TARBALLS: '/t/a.tgz:/t/b.tgz' })).toEqual(['/t/a.tgz', '/t/b.tgz']);
+    // Leerstellen und ein Schlusstrenner sind Formatierung, kein Tarball.
+    expect(zugTarballs({ AISE_ZUG_TARBALLS: ' /t/a.tgz : /t/b.tgz :' })).toEqual(['/t/a.tgz', '/t/b.tgz']);
   });
 
   it('packs the tarball with both entrypoints and the shipped skills', () => {
@@ -244,8 +279,14 @@ describe('TEST-distribution: npx distribution', () => {
         }
 
         // Fresh foreign repo; install the tarball (fetches every dep from the registry).
+        // Im Release-Zug kommen dessen Peer-Tarballs mit — sonst sucht npm eine Version, die
+        // erst dieser Zug veroeffentlicht (BOK-CR-066).
+        const zug = zugTarballs();
+        if (zug.length) {
+          process.stderr.write(`  Zug-Peers im Fremdrepo: ${zug.map((z) => z.split('/').pop()).join(', ')}\n`);
+        }
         run('npm', ['init', '-y'], foreign);
-        run('npm', ['install', '--omit=dev', tarball], foreign);
+        run('npm', ['install', '--omit=dev', tarball, ...zug], foreign);
 
         // Run the installed bin: a real init scaffold, no sigloch source tree present.
         execFileSync('node', [join(foreign, 'node_modules', '.bin', 'graphcode'), 'init'], {
