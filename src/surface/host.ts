@@ -50,7 +50,7 @@ import {
   V3_RULES,
 } from '@sigloch/contracts/se';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
-import { FormatECodec, SE_DESCRIPTOR } from '@sigloch/graph-api-core';
+import { FORMAT_E_CODEC } from './format-e-commands.js';
 import { buildJobSlice } from './read.js';
 import type { GraphCodeHarness } from '../kernel/harness.js';
 import { ownKuzu } from '../kernel/own-kuzu.js';
@@ -241,7 +241,7 @@ export class HostBridge {
           edgeCount: slice.edges.length,
           // CR-GC-373: Agenten-Sicht — die Scheibe geht in den Agenten-Kontext,
           // Provenienz (created_at/updated_at/ranAt, weight:1) traegt dort nichts.
-          formatE: new FormatECodec(SE_DESCRIPTOR).serialize(slice, { omitProvenance: true }),
+          formatE: FORMAT_E_CODEC.serialize(slice, { omitProvenance: true }),
         });
       } catch {
         // Unbekannter Anker ist kein Fehler des Aufrufers, sondern ein Nicht-Treffer:
