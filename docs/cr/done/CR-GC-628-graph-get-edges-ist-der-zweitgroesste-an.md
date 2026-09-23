@@ -1,6 +1,7 @@
 # CR-GC-628: graph_get_edges ist der zweitgroesste Antwortgeber, und sein sparsamer Modus ist heute die teurere Falle
 
-**Status:** 🟠 Open
+**Status:** ✅ Done  
+**Abgeschlossen:** 2026-09-23
 **Typ:** aus Item ITEM-2026-502 (finding)
 **Erstellt:** 2026-09-23
 **Item:** bok/items/ITEM-2026-502.json (Lane: code)
@@ -48,15 +49,47 @@ denselben Prosa-Schnitt.
 
 ## Akzeptanzkriterien
 
-- [ ] `graph_get_edges({edgeType:'compose', format:'formatE'})` am Golden kleiner als dieselbe
+- [x] `graph_get_edges({edgeType:'compose', format:'formatE'})` am Golden kleiner als dieselbe
       Anfrage als JSON (heute 2,5× größer)
-- [ ] Die Gruppierung ist in der Antwort sichtbar: mindestens eine Mehrziel-Zeile, nachgewiesen
+- [x] Die Gruppierung ist in der Antwort sichtbar: mindestens eine Mehrziel-Zeile, nachgewiesen
       durch Decode zu mehreren Kanten gleicher Quelle und Kantenart
-- [ ] Eine Kante mit eigenen Attributen bleibt eine eigene Zeile
-- [ ] Die Legende steht einmal je Antwort (CR-GC-613-Marke, kein neues Zeichen)
-- [ ] `total` und die Kantenmenge bleiben unverändert — gekürzt wird Text, nicht Umfang
-- [ ] Testsuite grün
+- [x] Eine Kante mit eigenen Attributen bleibt eine eigene Zeile
+- [x] Die Legende steht einmal je Antwort (CR-GC-613-Marke, kein neues Zeichen)
+- [x] `total` und die Kantenmenge bleiben unverändert — gekürzt wird Text, nicht Umfang
+- [x] Testsuite grün
 
 ## Umfang
 
 `src/surface/read.ts`, `tests/read-tools.scope.test.ts`, `tests/mcp.read-format.test.ts` — 3 Dateien.
+
+---
+
+## Umsetzung (2026-09-23)
+
+Die Endpunkt-Knoten kommen als Identität (`endpunktIdentitaet` in `read.ts`), und die Antwort geht
+über die Agenten-Sicht (`omitProvenance`) statt über den Rundlauf.
+
+**Der Entwurf sagte „dieselbe `nurIdentitaet`-Kürzung" — das allein reicht nicht.** Am Golden
+nachgemessen, `compose` (144 Kanten / 122 Knoten):
+
+| | Zeichen |
+|---|---:|
+| JSON-Default | 18.001 |
+| formatE vorher | 49.431 |
+| nur `nurIdentitaet` (Beschreibungen) | 29.072 |
+| Identität (ohne Attribute, Agenten-Sicht) | **10.746** |
+
+Mit nur geschnittenen Beschreibungen läge `formatE` weiter ÜBER dem JSON-Default, und das
+Akzeptanzkriterium wäre verfehlt. Die Attribute mussten mit: auf eine Kantenfrage ist der
+Endpunkt ein Referent, kein Gegenstand — dieselbe Linie wie die Blackbox-Front von `graph_impact`
+(CR-GC-373: „Identitaet plus Vertragskante, keine Beschreibung, keine Attribute"). `nurIdentitaet`
+bleibt der eine Beschreibungs-Schnitt; `endpunktIdentitaet` setzt nur den Attribut-Schnitt darauf.
+
+**Folge für die Zusage:** der Modus ist nicht mehr rundlauf-stabil in den NAMEN (die Agenten-Sicht
+schreibt kein `__name`). Die Werkzeugbeschreibung sagt das jetzt und verweist für Wortlaut und
+Attribute auf `graph_get_node` — dieselbe Abwägung, die `graph_expand` seit CR-GC-621 trägt.
+
+Alle Konsumenten (`executor-gate.ts`, `se-conops`, `se-plan`, `se-fmea`, `se-view:fmea`) nehmen
+den JSON-Default; dort ändert sich nichts.
+
+**Positivkontrolle:** ohne `endpunktIdentitaet` sind 4 der 5 Fälle rot.

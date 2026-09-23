@@ -21,6 +21,7 @@ import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import { KUERZUNGS_LEGENDE } from '../src/surface/read.js';
+import { GraphCodeCodec } from '../src/projections/codec.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
 
 const GOLDEN = join(__dirname, '..', 'rig', 'sigllm-spezifikation', 'golden', 'sigllm-v98.graph.json');
@@ -233,5 +234,95 @@ describe('CR-GC-621: die Liste antwortet mit Identitaet, der Zweig kuerzt wie de
       /\+ REQ-[a-z-]+\|…/,
     );
     expect(e.formatE.length, `expand am Golden-Anker: ${e.formatE.length} statt 5.735 Zeichen`).toBeLessThan(3_200);
+  }, 120_000);
+});
+
+/**
+ * CR-GC-628 — der zweitgroesste Antwortgeber, und sein sparsamer Modus war die teurere Falle.
+ *
+ * Gemessen am Lauf `opus5-16`: `graph_get_edges` 9 Aufrufe / 40.599 Zeichen (4.511 je Aufruf),
+ * nach `graph_elements` der groesste Posten — und alle neun nahmen den JSON-Default, weil
+ * `format:'formatE'` der GROESSERE war: es serialisierte die Endpunkt-Knoten mit voller Prosa UND
+ * allen Attributen dazu. Wer nach Kanten fragte, bekam die Beschreibungen beider Enden geschenkt.
+ *
+ * Am Golden nachgerechnet (`compose`, 144 Kanten / 122 Knoten): JSON 18.001, formatE vorher
+ * 49.431 — das 2,7-Fache des Modus, den es unterbieten sollte. Nur die Beschreibungen zu schneiden
+ * haette 29.072 ergeben und damit den JSON-Default NICHT unterboten; erst Identitaet (ohne
+ * Attribute, Agenten-Sicht) bringt 10.746.
+ *
+ * POSITIVKONTROLLE: nimmt man in `read.ts` `endpunktIdentitaet` heraus und serialisiert die
+ * Endpunkte wieder voll, wird der erste Fall hier rot — geprueft am 2026-09-23.
+ */
+describe('CR-GC-628: die Kantenantwort traegt Kanten', () => {
+  it('format:formatE ist KLEINER als der JSON-Default — vorher war es das 2,5-Fache', async () => {
+    const json = await tools.graph_get_edges.handler({ edgeType: 'compose', format: 'json' });
+    const fe = await tools.graph_get_edges.handler({ edgeType: 'compose', format: 'formatE' });
+
+    // Sonst misst der Test seine Fixture: das Golden muss ueberhaupt compose-Kanten tragen.
+    expect(json.total).toBeGreaterThan(100);
+    expect(fe.total, 'gekuerzt wird Text, nicht Umfang').toBe(json.total);
+    expect(
+      fe.formatE.length,
+      `formatE ${fe.formatE.length} Zeichen gegen JSON ${groesse(json)} — der sparsame Modus muss der kleinere sein`,
+    ).toBeLessThan(groesse(json));
+  }, 120_000);
+
+  it('die Gruppierung ist sichtbar: EINE Zeile, MEHRERE Kanten — nachgewiesen durch Decode', async () => {
+    const fe = await tools.graph_get_edges.handler({ edgeType: 'compose', format: 'formatE' });
+
+    const mehrziel = fe.formatE.split('\n').filter((l) => /^\+ \S+ -\w+-> .+,/.test(l));
+    expect(mehrziel.length, 'keine Mehrziel-Zeile — dann wirkt die Gruppierung aus CR-GC-268 nicht').toBeGreaterThan(0);
+
+    // Der Beweis liegt im Decode, nicht im Text: die eine Zeile ergibt mehrere Kanten
+    // derselben Quelle und Kantenart.
+    const decoded = new GraphCodeCodec().decode(fe.formatE);
+    const quelle = /^\+ (\S+) /.exec(mehrziel[0])![1];
+    const ausQuelle = decoded.edges.filter((e) => e.sourceId === quelle && e.edgeType === 'compose');
+    expect(ausQuelle.length).toBeGreaterThan(1);
+
+    // Und die MENGE stimmt: was der Text traegt, ist was das Werkzeug zaehlt.
+    expect(decoded.edges.length).toBe(fe.total);
+  }, 120_000);
+
+  it('eine Kante mit eigenen Attributen bleibt eine eigene Zeile', async () => {
+    // Ein `cardinality` an EINER der Kanten einer Gruppe — ein Gruppenblock wuerde es
+    // entweder fallenlassen oder faelschlich den Geschwistern mitgeben.
+    const eine = (await tools.graph_get_edges.handler({ edgeType: 'compose', format: 'json' })).edges[0];
+    const zug = await tools.graph_mutate.handler({
+      commands: [
+        {
+          op: 'update-edge',
+          edge: { sourceId: eine.sourceId, targetId: eine.targetId, edgeType: 'compose' },
+          set: { attributes: { cardinality: '1..1' } },
+        },
+      ],
+      consumerId: 'test-628',
+    });
+    expect(zug.success, JSON.stringify(zug.violations)).toBe(true);
+
+    const fe = await tools.graph_get_edges.handler({ edgeType: 'compose', format: 'formatE' });
+    const zeile = fe.formatE
+      .split('\n')
+      .find((l) => l.startsWith(`+ ${eine.sourceId} -compose-> ${eine.targetId}`));
+    expect(zeile, 'die Kante mit Attribut muss eine eigene Zeile haben').toBeDefined();
+    expect(zeile).toContain('cardinality:1..1');
+    expect(zeile, 'und sie darf keine Geschwister mitnehmen').not.toMatch(/,/);
+  }, 120_000);
+
+  it('die Legende steht genau einmal je Antwort — dieselbe Marke wie CR-GC-613', async () => {
+    const fe = await tools.graph_get_edges.handler({ edgeType: 'relation', format: 'formatE' });
+    expect(fe.formatE.split('\n').filter((l) => l.includes('= Beschreibung gekuerzt'))).toHaveLength(1);
+    expect(fe.formatE.startsWith(KUERZUNGS_LEGENDE)).toBe(true);
+    // Identitaet heisst: kein Wortlaut und keine Attribute am Endpunkt.
+    expect(fe.formatE).toMatch(/^\+ \S+\|…$/m);
+    expect(fe.formatE, 'ein realRef am Endpunkt beantwortet eine andere Frage').not.toContain('@realRef');
+  }, 120_000);
+
+  it('der JSON-Default bleibt, was er ist — Objekte fuer programmatische Logik', async () => {
+    const json = await tools.graph_get_edges.handler({ edgeType: 'verify', format: 'json' });
+    expect(Array.isArray(json.edges)).toBe(true);
+    expect(json.edges[0]).toHaveProperty('sourceId');
+    expect(json.edges[0]).toHaveProperty('edgeType');
+    expect(json.total).toBe(json.edges.length);
   }, 120_000);
 });
