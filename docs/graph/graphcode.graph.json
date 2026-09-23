@@ -1948,6 +1948,12 @@
       "description": "docs/cr/open/CR-GC-619-rig-laufverzeichnisse-behalten-je-109-mb.md"
     },
     {
+      "id": "CR-GC-620",
+      "type": "CR",
+      "name": "status vergleicht nur die graphcode-Versionen, nicht den geladenen Regelkatalog: der Host urteilte heute mit 76 Regeln waehrend 73 installiert waren (UC-05/06 laengst gestrichen) und meldete ok",
+      "description": "docs/cr/open/CR-GC-620-status-vergleicht-nur-die-graphcode-vers.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -20564,5 +20570,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 383
+  "graphVersion": 384
 }

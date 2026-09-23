@@ -14,6 +14,7 @@ import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { StoreLock, StoreOwnershipError } from '../src/kernel/store-lock.js';
 import { readPackageVersion } from '../src/kernel/package-version.js';
+import { codeRootDir, neuesteAenderung, installierteContracts, buildStempel } from '../src/kernel/build-stamp.js';
 import { readHostStatus } from '../src/surface/status.js';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
@@ -265,5 +266,53 @@ describe('TEST-store-lock (CR-GC-420): der Lock ist ein Vertrag, kein Cast', () 
   it('status.ts liest denselben Vertrag: ein unvollständiger Lock ist kein laufender Host', () => {
     writeFileSync(lockPath, JSON.stringify({ pid: process.pid, hostname: hostname() })); // kein startedAt
     expect(readHostStatus(dir, { pidAlive: () => true, hostnameImpl: hostname }).state).toBe('stale');
+  });
+
+  /**
+   * CR-GC-620 — der Lock sagt, WOMIT der Owner gebootet hat, nicht nur unter welcher Nummer.
+   *
+   * Eine Paketnummer identifiziert ein Release, keinen Build: `npm run build` macht
+   * `rm -rf dist && tsc` und laesst sie stehen. Gemessen 2026-09-23: ein Host hielt elf Stunden
+   * lang den Modulgraphen geloeschter Dateien, und `status` meldete `Version OK`.
+   */
+  describe('Boot-Stempel im Lock (CR-GC-620)', () => {
+    it('schreibt codeRoot, Code-mtime und die contracts-Version in den Lock', () => {
+      const lockPath = join(dir, 'owner.lock');
+      const lock = new StoreLock(lockPath);
+      lock.acquire();
+      try {
+        const geschrieben = JSON.parse(readFileSync(lockPath, 'utf8')) as {
+          version?: string; boot?: { codeRoot: string; codeMtimeMs: number; contracts?: string };
+        };
+        expect(geschrieben.version).toBe(readPackageVersion());
+        expect(geschrieben.boot?.codeRoot).toBe(codeRootDir());
+        expect(geschrieben.boot?.codeMtimeMs).toBeGreaterThan(0);
+        expect(geschrieben.boot?.contracts).toBe(installierteContracts());
+      } finally {
+        lock.release();
+      }
+    });
+
+    it('misst die NEUESTE Aenderung unter dem Verzeichnis, auch in Unterordnern', () => {
+      const wurzel = join(dir, 'code');
+      mkdirSync(join(wurzel, 'tief'), { recursive: true });
+      writeFileSync(join(wurzel, 'a.js'), 'a');
+      writeFileSync(join(wurzel, 'tief', 'b.js'), 'b');
+      const alt = neuesteAenderung(wurzel);
+      expect(alt).toBeGreaterThan(0);
+      // Eine Datei im Unterordner anfassen — genau der Fall eines `tsc`-Laufs.
+      const spaeter = new Date(Date.now() + 60_000);
+      utimesSync(join(wurzel, 'tief', 'b.js'), spaeter, spaeter);
+      expect(neuesteAenderung(wurzel)).toBeGreaterThan(alt);
+      // Nicht lesbar heisst 0 — die Abwesenheit eines Messwerts, nicht „unveraendert".
+      expect(neuesteAenderung(join(dir, 'gibtsnicht'))).toBe(0);
+    });
+
+    it('nennt das Verzeichnis, aus dem der laufende Code geladen wurde', () => {
+      const root = codeRootDir();
+      // `src` im Dev-Baum, `dist` im veroeffentlichten Paket — nie die Paketwurzel selbst.
+      expect(['src', 'dist']).toContain(root.split('/').pop());
+      expect(buildStempel().codeRoot).toBe(root);
+    });
   });
 });

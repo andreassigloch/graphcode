@@ -40,6 +40,29 @@ export const LockOwner = z.object({
    * zu befragen (`status` ist read-only und darf nie an einem toten Port hängen).
    */
   version: z.string().optional(),
+  /**
+   * Womit der Owner gebootet hat (CR-GC-620) — und damit das, was die Nummer NICHT sagt.
+   *
+   * Eine Paketnummer identifiziert ein Release, keinen Build: `npm run build` macht
+   * `rm -rf dist && tsc` und laesst sie stehen, `npm install` tauscht contracts darunter aus.
+   * Beides ist fuer den laufenden Prozess unsichtbar, und `status` meldete deshalb
+   * `Version OK` ueber einem Host, dessen geladene Dateien seit elf Stunden geloescht waren.
+   *
+   * OPTIONAL, und das ist keine Bequemlichkeit: `readLockOwner` gibt bei Vertragsbruch `null`
+   * zurueck, und `null` heisst dort „kein benennbarer Eigentuemer". Ein Pflichtfeld haette
+   * jeden Lock eines aelteren Builds als verwaist gemeldet — die schlimmere Luege als die,
+   * die dieses Feld beseitigt.
+   */
+  boot: z
+    .object({
+      /** Das Verzeichnis, aus dem der Owner geladen hat (`…/dist`). */
+      codeRoot: z.string().min(1),
+      /** Neueste `mtimeMs` darunter, zum Zeitpunkt des Boots. */
+      codeMtimeMs: z.number(),
+      /** Die beim Boot installierte `@sigloch/contracts`-Version. */
+      contracts: z.string().optional(),
+    })
+    .optional(),
 });
 
 /** Ein Lock-Owner, aus seinem Vertrag abgeleitet. */
