@@ -102,8 +102,14 @@ kein Raten.
 **MEHR ALS GEPLANT: eine Zeile in `scaffold-docs.ts`.** Die Skill-Tabelle in `GRAPHCODE.md`
 entsteht live aus den ausgelieferten Skills, und die Datei steht unter einem 6.000-Zeichen-Budget
 (CR-GC-612). Der neue Name kostet 14 Zeichen, die Datei stand 12 unter der Grenze — 6.002. Statt
-das Budget zu heben ist eine redundante Formulierung gekuerzt („starts everything: the MCP
-surface" → „starts the MCP surface"). Die Ratsche bleibt, wo sie ist.
+das Budget zu heben ist die Aufzaehlung der Host-Zeile verdichtet („starts everything: the MCP
+surface, the read-only bridge and the dashboard" → „starts everything: MCP surface, read-only
+bridge, dashboard"). Die Ratsche bleibt, wo sie ist.
+
+**Korrektur im selben CR:** der erste Kuerzungsversuch strich „everything" — und die VOLL-Spur
+fing es: `cli.scaffold.test.ts` (CR-GC-306) prueft genau dieses Wort, weil es die Aussage
+traegt („EIN Befehl startet alles, nicht zwei"). Das Wort war nicht redundant, sondern der Kern.
+Gekuerzt ist jetzt die Aufzaehlung, nicht der Satz.
 
 Nebenbefund: die Beschreibung im Frontmatter zaehlt fuer dieses Budget **nicht** — die Tabelle
 listet nur Namen. Ich hatte sie zuerst gekuerzt, und die Zahl bewegte sich um null.
