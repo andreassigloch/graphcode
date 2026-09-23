@@ -1,6 +1,7 @@
 # CR-GC-629: Die Schwelle steht zweimal, ein Knopf treibt zwei Verteilungen, und niemand misst sie laufend
 
-**Status:** 🟠 Open
+**Status:** ✅ Done  
+**Abgeschlossen:** 2026-09-23
 **Typ:** aus Item ITEM-2026-505 (finding)
 **Erstellt:** 2026-09-23
 **Item:** bok/items/ITEM-2026-505.json (Lane: code)
@@ -83,21 +84,66 @@ Messung für BW-02 vertretbar und für R-04 schädlich. Erst getrennte Knöpfe, 
 
 ## Akzeptanzkriterien
 
-- [ ] Ein Test schlägt an, wenn `graphcode.config.jsonc` und `DEFAULT_METRIC_POLICY` auseinanderlaufen,
+- [x] Ein Test schlägt an, wenn `graphcode.config.jsonc` und `DEFAULT_METRIC_POLICY` auseinanderlaufen,
       ohne dass die Abweichung als bewusst markiert ist — heute stillschweigend gleich
-- [ ] Die beiden Messaufbauten ohne `opts.graphcodeConfig` fallen nicht mehr still auf Default-Budgets;
+- [x] Die beiden Messaufbauten ohne `opts.graphcodeConfig` fallen nicht mehr still auf Default-Budgets;
       sie nennen ihre Policy-Herkunft oder brechen ab
-- [ ] `scripts/randbreiten.mjs` erzeugt die Tabelle oben aus den erreichbaren Graphen, deterministisch
+- [x] `scripts/randbreiten.mjs` erzeugt die Tabelle oben aus den erreichbaren Graphen, deterministisch
       und über `moduleCrossings` — kein zweiter Rechenweg
-- [ ] Ein Test hält den gemessenen Stand fest und nennt im Fehlertext, welche Zahl gewandert ist
-- [ ] `se/top-level.md` nennt die Doktrin, nicht die Zahl — und der Smeagol-Test (CR-GC-571) hält,
+- [x] Ein Test hält den gemessenen Stand fest und nennt im Fehlertext, welche Zahl gewandert ist
+- [x] `se/top-level.md` nennt die Doktrin, nicht die Zahl — und der Smeagol-Test (CR-GC-571) hält,
       dass ein Skill keine Schwelle behauptet, die keine Policy trägt
-- [ ] Der Vorschlag „getrennte Knöpfe" liegt als Item für sigloch-modules vor (contracts-Änderung,
+- [x] Der Vorschlag „getrennte Knöpfe" liegt als Item für sigloch-modules vor (contracts-Änderung,
       Familie-Review) — nicht hier implementiert
-- [ ] Testsuite grün
+- [x] Testsuite grün
 
 ## Umfang
 
 `graphcode.config.jsonc`, `src/surface/measured.ts`, `.claude/commands/se/top-level.md`,
 `scripts/randbreiten.mjs` (neu), `tests/policy-herkunft.test.ts` (neu),
 `tests/randbreiten.test.ts` (neu) — 6 Dateien, die harte Grenze.
+
+---
+
+## Umsetzung (2026-09-23)
+
+Gedreht wurde nichts — `boundaryWidth` steht unverändert auf 5. Gebaut wurde die Beobachtbarkeit.
+
+**Der zweite Befund war schon geschlossen, die Prosa nicht.** `src/surface/measured.ts` beschrieb
+die zwei Messaufbauten ohne `opts.graphcodeConfig` im Präsens; beide gehen aber seit CR-GC-491
+über `openMeasured` (`rig/minimal-whitebox/measure.mjs`, `rig/moneyflow-struktur/driver.mjs`) und
+damit über `loadGraphcodeConfig`. Geändert wurde deshalb die Aussage — und die Zusage bekam einen
+Wächter statt einer Erinnerung (`tests/policy-herkunft.test.ts`: Herkunft `file` mit Pfad am
+echten Repo, `default` beim fremden Graphen ohne Config, geerbte Schwellen beim fremden Graphen
+mit Config).
+
+**Die Marke für eine bewusste Abweichung** ist eine Zeile `// ABWEICHUNG <feld>: <Grund>` über dem
+Wert in `graphcode.config.jsonc`. Der Test prüft beide Richtungen: Abweichung ohne Marke ist ein
+Befund, Marke ohne Abweichung ebenso (Karteileiche).
+
+**`scripts/randbreiten.mjs`** misst über alle erreichbaren Graphen (live SSOT, eingefrorener
+Korpus, Golden, Rig-Läufe) und reproduziert die Tabelle des Befunds zeilengleich, wo dieselbe
+Quelle vorliegt. `bok` weicht ab (12 FUNC / 3 WB statt 15 / 4), weil hier der eingefrorene
+Snapshot gelesen wird, nicht das lebende Repo — der Test hält bewusst nur die eingefrorenen
+Graphen: ihre Zahlen können sich nur bewegen, wenn Regel oder Zählung wandern.
+
+**Abweichungen vom Umfang** (die 6-Dateien-Grenze ist eingehalten, mit einer Ausnahme, die eine
+bestehende Ratsche erzwang):
+
+- Der Smeagol-Zusatz („ein Skill behauptet keine Schwelle, die keine Policy trägt") steht in
+  `tests/policy-herkunft.test.ts`, nicht in `tests/skill-rule-ids.test.ts` — sonst wären es sieben
+  Dateien, und die Frage ist dieselbe wie die der anderen beiden Wächter dort: *wo steht die Zahl?*
+- `scripts/model-test-set.mjs` bekam zwei Einträge (7. Datei, je zwei Zeilen):
+  `tests/randbreiten.test.ts` in die Modell-Spur, `tests/policy-herkunft.test.ts` in die
+  begründeten Ausschlüsse. Das erzwingt `tests/verify-model.completeness.test.ts` — ohne die
+  Einträge ist die Spur rot. Registratur, kein Inhalt.
+- Der Skill-Text musste ZWEIMAL gekürzt werden: der `inject`-Block hat ein 4.000-Zeichen-Budget
+  (CR-GC-558), und die erste Fassung sprengte es (4.346). Die Begründung steht jetzt hinter
+  `inject:end` — sie gehört dem Menschen, nicht jeder Runde. Block jetzt 3.958.
+
+**Der Vorschlag „getrennte Knöpfe"** liegt als **ITEM-2026-506** (idea → sigloch-modules) im
+Item-Store: `funcBoundaryWidth` (BW-02) und `modBoundaryWidth` (R-04), contracts-Änderung mit
+Familie-Review und Version-Bump.
+
+**Positivkontrolle:** ein gewandertes Budget ohne Marke und eine nackte Zahl im Skilltext machen
+beide zugehörigen Fälle rot (geprüft am 2026-09-23).

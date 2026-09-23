@@ -1,7 +1,7 @@
 ---
 name: se:top-level
 version: 1
-description: Cut the top level — SYS blackbox, use cases, architecture targets, then the triad (FUNC / FCHAIN + contracts / MOD + stack) at max 5 blocks per level, recursing by blackbox decomposition until a FUNC carries a realRef
+description: Cut the top level — SYS blackbox, use cases, architecture targets, then the triad (FUNC / FCHAIN + contracts / MOD + stack) at 7±2 blocks per level, recursing by blackbox decomposition until a FUNC carries a realRef
 ---
 
 The top level is the base everything else rests on, and it does not fall out of rules. `se:close-violations` makes R-22 green by proposing *some* allocation; this skill decides whether the cut is *right*. Judgment work — run it deliberately, not as a cleanup pass.
@@ -66,7 +66,7 @@ The top triad is anchored at the SYS node, but only two legs are edges: `SYS -co
 1. **FUNC** — which blackboxes explain the use cases?
 2. **FCHAIN** — the causal path per UC (`UC -compose-> FCHAIN -compose-> FUNC`).
 3. **FLOW + SCHEMA** — the contracts, and **consolidate them**. `ACTOR -io-> FLOW -io-> FUNC`, `FUNC -io-> FLOW -io-> FUNC`; every FLOW carries exactly one SCHEMA (`FLOW -relation-> SCHEMA`, cardinality 1). One shared contract across many flows is a feature, not duplication.
-4. **MOD + stack** — only now, and **max 5 per level**.
+4. **MOD + stack** — only now, and at **7±2 per level** (RD-04, `decompositionBreadth`).
 
 Step 4 after step 3 is empirical, not stylistic: CR-GC-436 tried allocation over unconsolidated edges and was a No-Go — optimizing a cut over unconsolidated contracts optimizes the wrong thing (ITEM-2026-170 §1).
 
@@ -81,13 +81,15 @@ Decomposing a function is one move, and getting it wrong is detectable:
 - R-30 already exempts decomposed parents — a blackbox with children needs no chain of its own, because its children carry it.
 - **IO-01 is the guard.** Leave the boundary flows on the parent and the chain splits into two components; IO-01 reports every member outside the largest one. Run it after every decomposition.
 
-## Size: the answer to "too big" is a level, not more modules
+## Size: the answer to "too big" is a level, not a module
 
-Max 5 modules per level. When five modules each hold 14–26 FUNCs, every size threshold breaks (R-04, RD-04, MT-02) — the fix is a level *inside* the modules, never a sixth module (ITEM-2026-170 §3.4).
+**7±2 modules per level — the number lives in `decompositionBreadth`, not here,** and RD-04 judges against it. When modules each hold 14–26 FUNCs, every size threshold breaks (R-04, RD-04, MT-02) — the fix is a level *inside* the modules, never one more module (ITEM-2026-170 §3.4).
 
 Coupling check after the cut: **CR-01** counts *distinct SCHEMA contracts per module pair* (threshold `crossingFlows.warning`, default 3) — not raw io edges. Two flows sharing one contract count once. Read the module rows from `graph_metrics`; it also returns the policy it judged against.
 
 <!-- inject:end -->
+
+_Warum hier keine feste Zahl mehr steht (CR-GC-629): diese Seite nannte an zwei Stellen eine Obergrenze je Ebene, während RD-04 gegen `decompositionBreadth: 9` urteilt. Kein Widerspruch — die genannte Zahl lag darunter —, aber eine Schwelle im Fließtext folgt keiner Policy: wandert die Policy, wandert der Text nicht mit. `tests/policy-herkunft.test.ts` hält das fest._
 
 ## The stack belongs in the model
 
