@@ -24,25 +24,26 @@ dass die Abkuerzung weh tut: wer nicht fragt, faehrt die volle Suite, und die da
 ## Aufruf
 
 ```bash
-node rig/referenz-change/messen.mjs ~/.claude/projects/<repo>/<sitzung>.jsonl --ab "<Startsatz>"
+node rig/referenz-change/messen.mjs <sitzung>.jsonl --ab "<Startsatz>" --bis "<Endsatz>"
 node rig/referenz-change/gegenprobe.mjs d1285ef src/projections/codec.ts
 ```
 
-`--ab` schneidet die Messung ab der ersten Nutzernachricht, die den Text enthaelt — eine Sitzung
-traegt meist mehr als einen Change.
+`--ab` / `--bis` schneiden die Messung auf die Nutzernachrichten zu, zwischen denen der Change
+lag — eine Sitzung traegt meist mehr als einen.
 
 ## Grundlinie: der Lauf, aus dem dieses Rig entstanden ist
 
-Gemessen am 2026-09-23, Claude Opus 5, Sitzung `82b7759d`, ab „keine parallel pfade":
+Claude Opus 5, 2026-09-23, Sitzung `82b7759d`, Fenster „keine parallel pfade" → „referenz change"
+(= CR-GC-630 + CR-GC-631, der Auftrag aus `aufgabe.md`):
 
 | Kennzahl | Wert |
 |---|---|
-| Werkzeugaufrufe | 151 — davon **146 Bash** |
+| Werkzeugaufrufe | 131 — davon **126 Bash** |
 | Graph-**Lese**aufrufe | **0** |
 | Graph-Schreibaufrufe | 3 (ein Modell-Batch, zweimal `dryRun`) |
-| Suchoperationen (grep/find) | **54** |
-| Volllaeufe `npm test` | **7** (~35 Minuten Wanduhr) |
-| selektive Laeufe | 17 |
+| Suchoperationen (grep/find) | **45** |
+| Volllaeufe `npm test` | **3** (~15 Minuten Wanduhr) |
+| selektive Laeufe | 10 |
 
 **Das ist kein guter Lauf, sondern der Anlass.** Er wiederholt exakt das Muster, das die
 `CLAUDE.md` seit dem 2026-08-27 als Fehlerbild fuehrt („0 Aufrufe `graph_impact`, 174
@@ -50,7 +51,7 @@ Suchoperationen") — diesmal 0 zu 54. Was das gekostet hat, sagt die Gegenprobe
 
 | Frage | gegriffen | was der Graph geantwortet haette |
 |---|---|---|
-| Welche Tests muss ich fahren? | 7× volle Suite | **4 Dateien** statt 172 (`selectForChange`, dieselbe Routine hinter `graph_tests`) |
+| Welche Tests muss ich fahren? | 3× volle Suite | **4 Dateien** statt 172 (`selectForChange`, dieselbe Routine hinter `graph_tests`) |
 | Was bricht, wenn `codec.ts` faellt? | zwei Volllaeufe, bis `RC-01` es meldete | **20 Kanten an zwei Knoten**, darunter die zwei `satisfy` und die zwei `realRef`, die genau den Fehlschlag ausgeloest haben |
 
 Die zweite Zeile ist die teure: dass `FUNC-encode` eine REQ erfuellt und `FUNC-decode` an der
