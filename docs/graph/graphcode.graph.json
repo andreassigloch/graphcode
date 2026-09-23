@@ -2038,6 +2038,18 @@
       "description": "docs/cr/open/CR-GC-631-graphcodecodec-ist-ein-zweiter-codec-neb.md"
     },
     {
+      "id": "CR-GC-632",
+      "type": "CR",
+      "name": "tests/helpers/format-e.ts aus CR-GC-631 parst selbst: es projiziert die Parser-Operationen ein zweites Mal, parallel zur Abbildung in formatEToCommands. Der Helfer soll die Produktionsfunktion rufen statt sie nachzubauen - dafuer muss deren Parameter von GraphCodeHarness auf den Graphen verengt werden, den sie als einziges liest",
+      "description": "docs/cr/open/CR-GC-632-tests-helpers-format-e-ts-aus-cr-gc-631-.md"
+    },
+    {
+      "id": "CR-GC-633",
+      "type": "CR",
+      "name": "Referenz-Change als Rig konservieren: CR-GC-630/631/632 ist eine Aufgabe, an der sich messen laesst OB ein Agent den Graphen fragt statt zu greppen - der eigene Lauf schaffte 0 Graph-Leseaufrufe gegen 54 Suchoperationen und 7 Volllaeufe, waehrend graph_tests 4 statt 172 Dateien genannt und graph_impact die 20 Kanten der geloeschten Knoten vorab gezeigt haette",
+      "description": "docs/cr/open/CR-GC-633-referenz-change-als-rig-konservieren-cr-.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -20646,5 +20658,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 399
+  "graphVersion": 401
 }

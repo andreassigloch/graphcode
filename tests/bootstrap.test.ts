@@ -58,7 +58,7 @@ describe('TEST-bootstrap: new-member fill THROUGH the gate', () => {
   it('fills the empty graph from the template Format-E THROUGH the gate', async () => {
     // The template parses to exactly the SYS + REQ + verifying TEST it declares —
     // gemessen ueber DENSELBEN Weg, den bootstrap faehrt (CR-GC-630).
-    const erwartet = formatEToCommands(harness, TEMPLATE_FORMAT_E).commands;
+    const erwartet = formatEToCommands(harness.getGraph(), TEMPLATE_FORMAT_E).commands;
     const erwarteteKnoten = erwartet.filter((c) => c.op === 'add-node').length;
     const erwarteteKanten = erwartet.filter((c) => c.op === 'add-edge').length;
 

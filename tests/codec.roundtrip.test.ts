@@ -204,12 +204,53 @@ describe('TEST-roundtrip: Format-E (SSOT fixture)', () => {
         attributes: Object.fromEntries(
           Object.entries(scalarsAsStrings(n.attributes)).sort(([a], [b]) => a.localeCompare(b)),
         ),
-        ...(n.roh['__createdAt'] !== undefined ? { createdAt: n.roh['__createdAt'] } : {}),
-        ...(n.roh['__updatedAt'] !== undefined ? { updatedAt: n.roh['__updatedAt'] } : {}),
       }))
       .sort((a, b) => a.uid.localeCompare(b.uid));
 
-    expect(gelesen).toEqual(normalize(fixture).nodes);
+    // Ohne Provenienz auf BEIDEN Seiten — siehe (c3): der Leseweg gibt sie nicht zurueck.
+    const erwartet = normalize(fixture).nodes.map(({ createdAt, updatedAt, ...rest }) => {
+      void createdAt;
+      void updatedAt;
+      return rest;
+    });
+
+    expect(gelesen).toEqual(erwartet);
+  });
+
+  /**
+   * CR-GC-632 — die Provenienz wird am TEXT geprueft, nicht am Rueckweg.
+   *
+   * `serialize(g, {roundTrip:true})` SCHREIBT `__createdAt`/`__updatedAt`; der eine Leser
+   * (`formatEToCommands`) verwirft sie, weil die Provenienz dem Speicher gehoert und nicht dem
+   * Text. Bis CR-GC-632 las dieser Test sie ueber einen zweiten, testeigenen Leser zurueck —
+   * er prueft damit eine Zusicherung, die das System nicht gibt.
+   */
+  it('(c3) serialize schreibt die Provenienzfelder in den Text', () => {
+    // BEFUND nebenbei (CR-GC-632): die SSOT-Fixture traegt KEINEN Zeitstempel — `elementToNode`
+    // setzt `createdAt` nicht. Der alte Rundlauf-Vergleich hatte fuer Provenienz bedingte
+    // Zweige, die nie feuerten; geprueft wurde sie damit nie. Hier steht sie zum ersten Mal.
+    expect(fixture.nodes.every((n) => n.createdAt === undefined)).toBe(true);
+
+    const mitStempel: Graph = {
+      nodes: [
+        {
+          uid: 'SYS-stempel',
+          type: 'SYS',
+          name: 'Stempel',
+          description: 'traegt Provenienz',
+          attributes: {},
+          createdAt: '2026-01-01T00:00:00.000Z',
+          updatedAt: '2026-02-02T00:00:00.000Z',
+        },
+      ],
+      edges: [],
+    };
+    const text = FORMAT_E_CODEC.serialize(mitStempel, { roundTrip: true });
+
+    expect(text).toContain('__createdAt:2026-01-01T00:00:00.000Z');
+    expect(text).toContain('__updatedAt:2026-02-02T00:00:00.000Z');
+    // Und der eine Leser gibt sie NICHT zurueck — Provenienz gehoert dem Speicher, nicht dem Text.
+    expect(knotenAus(text)[0].attributes).toEqual({});
   });
 
   it('(c2) parse(serialize(g)) nennt dieselben Kanten wie g', () => {
