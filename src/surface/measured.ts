@@ -4,12 +4,17 @@
  *
  * Bis hierher gab es vier: `greenfield` über `createHarness`, `minimal-whitebox` und
  * `moneyflow-struktur` über `new GraphCodeHarness(cfg, storage)`, und
- * `spike-lexikographisch` ganz ohne Harness. Die beiden mittleren fallen bei fehlendem
- * `opts.graphcodeConfig` STILL auf `DEFAULT_CONFIG` zurück (`harness.ts`) und übergeben dem
- * Store den unparametrisierten `SE_DESCRIPTOR` statt `createSeDescriptor(policy)` — sie messen
- * also auf Default-Budgets, egal was im Repo steht. Heute folgenlos, weil
- * `graphcode.config.jsonc` zeichengleich mit `DEFAULT_METRIC_POLICY` ist. Invertierend, sobald
- * ein Budget wandert — und genau das ist die Stellgröße (CR-GC-484 T-S3, CR-SM-303).
+ * `spike-lexikographisch` ganz ohne Harness. Die beiden mittleren fielen bei fehlendem
+ * `opts.graphcodeConfig` STILL auf `DEFAULT_CONFIG` zurück (`harness.ts`) und übergaben dem
+ * Store den unparametrisierten `SE_DESCRIPTOR` statt `createSeDescriptor(policy)` — sie maßen
+ * also auf Default-Budgets, egal was im Repo stand.
+ *
+ * BEIDE GEHEN SEIT CR-GC-491 DURCH `openMeasured` (`rig/minimal-whitebox/measure.mjs`,
+ * `rig/moneyflow-struktur/driver.mjs`), und damit über `createHarness` → `loadGraphcodeConfig`.
+ * Der stille Fall existiert hier nicht mehr: `provenance.policy.source` ist `file`, `inline`
+ * oder `default`, und `stampLine` schreibt ihn in jeden Bericht. Wer ihn wieder aufmacht, wird
+ * von `tests/policy-herkunft.test.ts` gemeldet — die Prosa allein hatte ihn vier Wochen lang
+ * beschrieben, ohne ihn zu schließen (CR-GC-629).
  *
  * Zwei Regeln tragen den Aufbau:
  *   1. Die Config REIST MIT DEM GRAPHEN. Wer einen fremden Graphen in ein Wegwerf-Repo kopiert,

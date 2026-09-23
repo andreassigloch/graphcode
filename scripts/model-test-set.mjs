@@ -77,6 +77,11 @@ export const INCLUDED = [
   'tests/mcp.tests-operational.test.ts',
   'tests/mvp-e2e.test.ts',
   'tests/nd-similarity.test.ts',
+  // CR-GC-629: haelt die Randbreiten-Verteilung ueber die erreichbaren Familiengraphen. Den
+  // eingefrorenen Korpus pinnt er, den LIVE-Graphen prueft er auf Grundgesamtheit (FUNC-Zahl,
+  // Whiteboxen) — eine Modellaenderung, die graphcodes compose-Baum abraeumt, macht ihn rot.
+  // Genau dafuer gehoert er in die Spur; er liest nur Dateien und braucht keine Sekunde.
+  'tests/randbreiten.test.ts',
   'tests/readiness.model.test.ts',
   // CR-GC-537: misst den Steuerungsraum an der echten SSOT. Die Terme haengen an den
   // Container-/Randbreiten des Modells (RD-04/BW-02/R-04/CR-01/MT-02) — eine Modelländerung
@@ -147,6 +152,12 @@ export const EXCLUDED = {
     'Treffer ist der DATEINAME im Befundtext (`docs/graph/fremd-anlage.graph.json`), nicht der\n' +
     'Inhalt der SSOT — der Test liest keinen Graphen. Eine Modellaenderung kann ihn nicht rot\n' +
     'machen; eine weggefallene setupFiles-Zeile sehr wohl.',
+  'tests/policy-herkunft.test.ts':
+    'CR-GC-629: prueft die HERKUNFT der Urteilsschwellen — Config gegen den contracts-Startwert,\n' +
+    'Policy-Stempel der Messaufbauten, Schwellenbehauptungen in Skilltexten. Der Treffer ist das\n' +
+    'GOLDEN EINES RIG-KORPUS als Fixture fuer `openMeasured`, nie graphcodes eigene SSOT. Eine\n' +
+    'Aenderung an graphcodes Modell kann ihn nicht rot machen; ein gewandertes Budget ohne Marke\n' +
+    'oder eine nackte Schwelle im Skilltext sehr wohl.',
   'tests/read-tools.scope.test.ts':
     'CR-GC-613: misst die ANTWORTGROESSEN der Lesewerkzeuge gegen das GOLDEN EINES RIG-KORPUS\n' +
     '(`rig/sigllm-spezifikation/golden/sigllm-v98.graph.json`), nie graphcodes eigene SSOT. Eine\n' +

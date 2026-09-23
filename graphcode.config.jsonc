@@ -10,6 +10,17 @@
 // Fehlt diese Datei, gilt DEFAULT_METRIC_POLICY aus @sigloch/contracts und die
 // Antwort sagt das (`policySource: "default"`). Ist sie da und schemawidrig, bricht
 // der Start ab — kein stiller Fallback.
+//
+// ABWEICHUNG VOM STARTWERT IST ERLAUBT, ABER NICHT STILL (CR-GC-629). Heute ist jeder
+// Wert hier zeichengleich mit `DEFAULT_METRIC_POLICY` — und genau das machte die
+// doppelte Haltung folgenlos und damit unsichtbar. Wer ein Budget wandern laesst,
+// schreibt ueber den Wert eine Zeile der Form
+//
+//     // ABWEICHUNG <feldname>: <Grund, gemessen>
+//
+// `tests/policy-herkunft.test.ts` vergleicht Feld fuer Feld gegen den Startwert und
+// schlaegt an, wenn eine Abweichung ohne diese Marke dasteht — oder eine Marke ohne
+// Abweichung (eine Karteileiche ist dieselbe Unwahrheit in der Gegenrichtung).
 {
   "metricPolicy": {
     // MT-01 (Instabilitaet, fanOut / (fanIn + fanOut)) ist unvalidiert: die 0.7 ist
@@ -46,6 +57,16 @@
     // compose-Teilbaums queren. Schwelle aus der Verteilung ABGELESEN, nicht gesetzt
     // (CR-SM-283): bok und graph-view-edit enden bei 3, dieses Repo geht bis 19.
     // Bewusst ohne `info`-Stufe — readiness zaehlt info ungefiltert in den Nenner.
+    //
+    // CR-GC-629: DIESE EINE ZAHL treibt ZWEI Verteilungen — BW-02 urteilt ueber den
+    // FUNC-Rand (`moduleCrossings.byFunc`), R-04 ueber den MOD-Rand (`byModule`).
+    // Gemessen am 2026-09-23 ueber die erreichbaren Familiengraphen
+    // (`node scripts/randbreiten.mjs`, gehalten von `tests/randbreiten.test.ts`):
+    // auf 7 angehoben faellt BW-02 im eingefrorenen Korpus auf null, waehrend R-04 bei
+    // moneyflow Befunde behaelt. Mit EINER Zahl sind beide nicht zu kalibrieren; der
+    // Wert bleibt deshalb auf 5, bis contracts `funcBoundaryWidth` und
+    // `modBoundaryWidth` trennt (Familie-Review, Drift-Lock L1/L2 — ITEM fuer
+    // sigloch-modules). Erst getrennte Knoepfe, dann die Zahl.
     "boundaryWidth": { "warning": 5 },
 
     // CR-SM-314: ab wie vielen Wirkketten eine FUNC als INFRASTRUKTUR gilt. Die Zahl selbst
