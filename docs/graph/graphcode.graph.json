@@ -2056,6 +2056,24 @@
       "description": "docs/cr/open/CR-GC-634-parallele-pfade-sind-mit-aehnlichkeitsma.md"
     },
     {
+      "id": "CR-GC-635",
+      "type": "CR",
+      "name": "Kein Skill deckt den Umbau ab: 12 Skills im Repo, genau einer nennt graph_impact (se-fmea), alle anderen legen an oder berichten. Der Umbau - aendern, ersetzen, loeschen - ist aber die einzige Lage, in der ein vergessener Impact teuer wird und in der die Hausregel keine parallelen Pfade ueberhaupt gilt. Gemessen am Referenz-Change: 0 Graph-Leseaufrufe, 3 Volllaeufe, RC-01 erst nach 300 Sekunden",
+      "description": "docs/cr/open/CR-GC-635-kein-skill-deckt-den-umbau-ab-12-skills-.md"
+    },
+    {
+      "id": "CR-GC-636",
+      "type": "CR",
+      "name": "aise dispatch prepare koennte im CR-Geruest einen Abschnitt Umfang laut graph_impact anlegen, der leer bleibt bis jemand ihn fuellt - der Zeitpunkt vor der Arbeit statt beim Commit, und ein CR ohne den Abschnitt ist einer der den Umfang geraten hat",
+      "description": "docs/cr/open/CR-GC-636-aise-dispatch-prepare-koennte-im-cr-geru.md"
+    },
+    {
+      "id": "CR-GC-637",
+      "type": "CR",
+      "name": "Spike-Ergebnis zur Auffindbarkeit paralleler Pfade: an sieben belegten Paaren aus vier CR-Jahrgaengen findet Rumpf-Aehnlichkeit 0 von 7 (Jaccard 2,6 bis 41,4 Prozent gegen Schwelle 0,85), gemeinsamer Engpass auf Dateiebene 6 von 7 - aber bei einer Alarmschwelle die auch 23 Prozent aller Dateipaare trifft. Als Detektor unbrauchbar, als Kandidatenliste brauchbar: 96 Engpaesse aus 5805 Bezeichnern, und die drei die im Change zaehlten sind darin",
+      "description": "docs/cr/open/CR-GC-637-spike-ergebnis-zur-auffindbarkeit-parall.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -20664,5 +20682,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 402
+  "graphVersion": 405
 }

@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 242 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 245 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 242 CR · 189 done · 0 open.
+Total: 245 CR · 189 done · 0 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -304,3 +304,6 @@ Total: 242 CR · 189 done · 0 open.
 | `CR-GC-632` | n/a | tests/helpers/format-e.ts aus CR-GC-631 parst selbst: es projiziert die Parser-Operationen ein zweites Mal, parallel zur Abbildung in formatEToCommands. Der Helfer soll die Produktionsfunktion rufen statt sie nachzubauen - dafuer muss deren Parameter von GraphCodeHarness auf den Graphen verengt werden, den sie als einziges liest |
 | `CR-GC-633` | n/a | Referenz-Change als Rig konservieren: CR-GC-630/631/632 ist eine Aufgabe, an der sich messen laesst OB ein Agent den Graphen fragt statt zu greppen - der eigene Lauf schaffte 0 Graph-Leseaufrufe gegen 54 Suchoperationen und 7 Volllaeufe, waehrend graph_tests 4 statt 172 Dateien genannt und graph_impact die 20 Kanten der geloeschten Knoten vorab gezeigt haette |
 | `CR-GC-634` | n/a | Parallele Pfade sind mit Aehnlichkeitsmassen nicht auffindbar: der Testhelfer aus CR-GC-631 und formatEToCommands kamen auf Name-Jaccard 0,000 und Rumpf-Jaccard 0,164 gegen ND-Schwelle 0,85 - 16 Zeilen gegen 183. Der zweite Pfad ist nie aehnlich, er ist kuerzer und anders benannt. Gemeinsam ist der EINGANG: beide riefen FORMAT_E_CODEC.parse. Die pruefbare Form ist die Zahl der Aufrufer an einem benannten Engpass, nicht ein Mass ueber die Rumpfe |
+| `CR-GC-635` | n/a | Kein Skill deckt den Umbau ab: 12 Skills im Repo, genau einer nennt graph_impact (se-fmea), alle anderen legen an oder berichten. Der Umbau - aendern, ersetzen, loeschen - ist aber die einzige Lage, in der ein vergessener Impact teuer wird und in der die Hausregel keine parallelen Pfade ueberhaupt gilt. Gemessen am Referenz-Change: 0 Graph-Leseaufrufe, 3 Volllaeufe, RC-01 erst nach 300 Sekunden |
+| `CR-GC-636` | n/a | aise dispatch prepare koennte im CR-Geruest einen Abschnitt Umfang laut graph_impact anlegen, der leer bleibt bis jemand ihn fuellt - der Zeitpunkt vor der Arbeit statt beim Commit, und ein CR ohne den Abschnitt ist einer der den Umfang geraten hat |
+| `CR-GC-637` | n/a | Spike-Ergebnis zur Auffindbarkeit paralleler Pfade: an sieben belegten Paaren aus vier CR-Jahrgaengen findet Rumpf-Aehnlichkeit 0 von 7 (Jaccard 2,6 bis 41,4 Prozent gegen Schwelle 0,85), gemeinsamer Engpass auf Dateiebene 6 von 7 - aber bei einer Alarmschwelle die auch 23 Prozent aller Dateipaare trifft. Als Detektor unbrauchbar, als Kandidatenliste brauchbar: 96 Engpaesse aus 5805 Bezeichnern, und die drei die im Change zaehlten sind darin |
