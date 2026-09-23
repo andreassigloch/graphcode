@@ -331,6 +331,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-614` | done | Executor verwirft alte Denkbloecke nach jedem Zug — der Graph ist das Gedaechtnis, nicht der Gespraechsverlauf (gemessen: ~58% des Kontexts in Lauf 15) | `FUNC-run-executor` |
 | `CR-GC-615` | done | Rig captureArtifacts scheitert nach Git-Aktionen des Agenten an Export-Drift (opus5-16: graph_export refused, Ergebniszeile fehlt) | `FUNC-systemtest-report` · `REQ-greenfield-systemtest-dod` |
 | `CR-GC-616` | done | ITEM-462 umgesetzt: UC-05/06/RD-03 gestrichen (UC-Schreibregel), MT-02 warning, Fix-Roundtrip-Test, Folge-Regel-Spalte | `FUNC-author-uc` · `FUNC-generation-step` |
+| `CR-GC-625` | n/a | Kanten-Fan-out A->B,C,D ist im Codec da, aber nirgends gezeigt — 43 Prozent der Kantenschreibungen im Rig-Lauf unnoetig einzeln | `FUNC-authoring-guide` · `FUNC-bootstrap` · `MOD-surface` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

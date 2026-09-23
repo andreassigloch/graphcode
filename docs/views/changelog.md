@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 228 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 233 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 228 CR · 180 done · 0 open.
+Total: 233 CR · 180 done · 0 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -290,3 +290,8 @@ Total: 228 CR · 180 done · 0 open.
 | `CR-GC-618` | n/a | Rig-Ergebniszeile traegt keinen Korpus-Stempel: arm/model/executor/run, aber weder Golden noch Prompt noch Seed — zwei Laeufe auf verschiedenen Korpora sind in der JSON ununterscheidbar, und GOLDEN faellt still auf den lebenden sigloch-modules-Graphen zurueck |
 | `CR-GC-619` | n/a | Rig-Laufverzeichnisse behalten je 109 MB Kuzu-Store, obwohl captureArtifacts graph.json, readiness.json und audit.jsonl laengst herausgezogen hat: 1,8 von 2,2 GB unter runs/ sind rekonstruierbarer Zwischenstand |
 | `CR-GC-620` | n/a | status vergleicht nur die graphcode-Versionen, nicht den geladenen Regelkatalog: der Host urteilte heute mit 76 Regeln waehrend 73 installiert waren (UC-05/06 laengst gestrichen) und meldete ok |
+| `CR-GC-621` | n/a | Neuer groesster Antwortgeber nach CR-GC-613: graph_elements 7.143 Zeichen je Aufruf und graph_expand 4.224 — beide ohne Scheibenschnitt, gemessen am Code-Test gefuehrt-0 |
+| `CR-GC-622` | n/a | graph_authoring_guide wird trotz 'einmal genuegt' 4x gerufen (7.711 Zeichen je Lauf) — derselbe Leitfaden braucht Idempotenz im Werkzeug, nicht einen Satz in der Beschreibung |
+| `CR-GC-623` | n/a | Werkzeugbeschreibungen nennen einen Parameter, den es nicht gibt: vier Beschreibungen sagen graph_help({id:...}), der Parameter heisst token — zod non-strict schluckt den Fehlaufruf still und liefert die Massnahmenliste statt der Erklaerung (gemessen: sieben graph_help hintereinander in gefuehrt-0) |
+| `CR-GC-624` | n/a | Strukturboden von graph_context: depth 2 kostet im Mittel 9.876 Zeichen ueber alle 125 FUNC-Anker des eigenen Modells, davon 72 Prozent reine Struktur (Kanten 2.801, Attributzeilen 2.593, Identitaetszeilen 1.730) — 42 der 54 Knoten sind Ring-2-Fan-out ueber Hub-FLOWs |
+| `CR-GC-625` | n/a | Kanten-Fan-out A->B,C,D ist im Codec da, aber nirgends gezeigt — 43 Prozent der Kantenschreibungen im Rig-Lauf unnoetig einzeln |

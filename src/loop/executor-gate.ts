@@ -99,7 +99,11 @@ export function bindGateClient(
   // CR-GC-287: derselbe Snapshot trägt den Element-Index (uid/type/name/descr)
   // für den REQ/UC-Duplikat-Hinweis — kein zweiter Tool-Call.
   const loadGraphSnapshot = async (): Promise<{ known: PreflightKnown; index: IndexedElement[] }> => {
-    const els = (await registry['graph_elements'].handler({ limit: 100_000 })) as {
+    // CR-GC-621: `prosa: true` ist hier PFLICHT, nicht Bequemlichkeit — `duplicateHits` vergleicht
+    // Beschreibungen. Mit der gekuerzten Liste saehen alle Knoten gleich aus und die Duplikat-
+    // Erkennung waere still blind; der Default der Liste ist Identitaet, dieser Verbraucher ist
+    // der eine, der den Text selbst auswertet.
+    const els = (await registry['graph_elements'].handler({ limit: 100_000, prosa: true })) as {
       nodes?: { uid: string; type: string; name: string; description?: string; attributes?: Record<string, unknown> }[];
     };
     const ver = (await registry['graph_get_edges'].handler({ edgeType: 'verify' })) as {
