@@ -2002,6 +2002,27 @@
       "commitRef": "ecdeeed"
     },
     {
+      "id": "CR-GC-627",
+      "type": "CR",
+      "name": "graph_mutate laesst nur das Plus-Viertel von Format-E durch: der Umweg ueber die Graph-Rekonstruktion wirft jedes Nicht-Add-Op, obwohl der Parser die vier Praefixe kennt und die Abbildung auf MutateCommand eins zu eins ist — Loeschen und Aendern kosten den dreifach teureren commands-Modus",
+      "description": "docs/cr/open/CR-GC-627-graph-mutate-laesst-nur-das-plus-viertel.md",
+      "status": "done"
+    },
+    {
+      "id": "CR-GC-628",
+      "type": "CR",
+      "name": "graph_get_edges ist der zweitgroesste Antwortgeber, und sein sparsamer Modus ist die teurere Falle: format formatE serialisiert die Endpunkt-Knoten mit voller Prosa und allen Attributen, am Golden 49.431 Zeichen gegen 18.001 als JSON",
+      "description": "docs/cr/open/CR-GC-628-graph-get-edges-ist-der-zweitgroesste-an.md",
+      "status": "done"
+    },
+    {
+      "id": "CR-GC-629",
+      "type": "CR",
+      "name": "Die Urteilsschwelle boundaryWidth steht zweimal (contracts-Startwert und graphcode.config.jsonc), ein Knopf treibt zwei Verteilungen (BW-02 am FUNC-Rand, R-04 am MOD-Rand), und niemand misst sie laufend",
+      "description": "docs/cr/open/CR-GC-629-urteilsschwellen-boundarywidth-steht-zwe.md",
+      "status": "done"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -12338,6 +12359,41 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-627",
+      "target": "FUNC-authoring-guide",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-627",
+      "target": "FUNC-mutate",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-627",
+      "target": "MOD-surface",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-628",
+      "target": "FUNC-read-tools",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-628",
+      "target": "MOD-surface",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-629",
+      "target": "FUNC-load-config",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-629",
+      "target": "MOD-kernel-measure",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -20633,5 +20689,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 393
+  "graphVersion": 395
 }
