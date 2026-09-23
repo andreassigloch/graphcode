@@ -32,6 +32,14 @@ const GraphElementsInputSchema = z.object({
   search: z.string().optional().describe('Substring search against uid, name, description'),
   limit: z.number().int().positive().default(100),
   format: ReadFormatSchema,
+  prosa: z
+    .boolean()
+    .default(false)
+    .describe(
+      'Carry every node description in full (CR-GC-621). Default false: a listing answers WHICH ' +
+        'elements exist, so descriptions come as the cut mark and `graph_get_node` has the wording. ' +
+        'Set it only when the TEXT itself is what you evaluate — the duplicate index does.',
+    ),
 });
 
 const GraphGetNodeInputSchema = z.object({
@@ -188,6 +196,20 @@ export const KUERZUNGS_LEGENDE =
 /** Die Typen, deren Wortlaut zum Bauen des Ankers gebraucht wird. */
 const PROSA_TYPEN = new Set(['REQ', 'SCHEMA']);
 
+/**
+ * CR-GC-621 — die LISTE kennt keinen Anker, also traegt sie keine Prosa.
+ *
+ * `kuerzeAussenring` nimmt REQ und SCHEMA aus, weil man aus ihrem Wortlaut den ANKER baut. Eine
+ * Liste hat keinen: sie beantwortet „welche Elemente vom Typ X gibt es". Gemessen am eigenen
+ * Modell (872 Knoten, `limit: 100` je Typ) kostet die Prosa dort 48 bis 78 Prozent der Antwort —
+ * bei REQ 21.012 von 39.740 Zeichen, also genau bei dem Typ, den eine Ausnahme verschont haette.
+ *
+ * Dieselbe Marke und dieselbe Legende wie CR-GC-613 — der Leser soll „gekuerzt" nicht neu lernen.
+ */
+export function nurIdentitaet(nodes: GraphNode[], anker?: string): GraphNode[] {
+  return nodes.map((n) => (n.description && n.uid !== anker ? { ...n, description: AUSSENRING_MARKE } : n));
+}
+
 export function kuerzeAussenring(slice: Graph, ankerId: string): Graph {
   return {
     ...slice,
@@ -197,6 +219,53 @@ export function kuerzeAussenring(slice: Graph, ankerId: string): Graph {
         : { ...n, description: AUSSENRING_MARKE },
     ),
   };
+}
+
+/**
+ * CR-GC-624 — der Strukturboden: Ring 2 ist eine SCHNITTSTELLE, kein geoeffneter Knoten.
+ *
+ * CR-GC-613 hatte die Prosa geschnitten und die Grenze benannt ("4.080 Zeichen Struktur, bevor ein
+ * Wort Prosa dazukommt"). Die Zahl war die Folge einer Darstellung, nicht ein Boden. Nachgemessen
+ * ueber alle 125 FUNC-Anker des eigenen Modells bei `depth: 2`, im Mittel je Scheibe: Kantenzeilen
+ * 2.801, Attributzeilen 2.593, Identitaetszeilen des Aussenrings 1.730 — 72 % Struktur gegen 27 %
+ * Prosa, bei 12 Knoten im Innenring und 42 im Ring 2. Der Fan-out entsteht an Hub-FLOWs und
+ * beantwortet "wer fasst diesen Fluss noch an" — die Frage von `graph_impact`.
+ *
+ * Also dieselbe Darstellung, die `graph_impact` seit CR-GC-373 fuer seine Blackbox-Front benutzt:
+ * Identitaet plus Vertragskante, keine Beschreibung, keine Attribute — hier zusaetzlich GRUPPIERT
+ * nach Innenknoten und Kantentyp, weil der Fan-out ueber wenige Hubs laeuft.
+ *
+ * Gemessen: eigenes Modell 9.876 → 3.471, Golden-Anker 6.615 → 3.513.
+ *
+ * Der Rand wird GEZEIGT, nicht weggelassen: `nodeCount`/`edgeCount` zaehlen weiter die ganze
+ * Scheibe, sonst waere die Kuerzung eine Luege ueber den Umfang.
+ */
+export const RAND_UEBERSCHRIFT = '## Rand (Ring 2 — Schnittstelle, nicht geoeffnet)';
+
+export function schneideRand(slice: Graph, innenIds: Set<string>): { innen: Graph; rand: string } {
+  const innen: Graph = {
+    nodes: slice.nodes.filter((n) => innenIds.has(n.uid)),
+    edges: slice.edges.filter((e) => innenIds.has(e.sourceId) && innenIds.has(e.targetId)),
+  };
+  // JEDE Kante mit mindestens einem Fuss ausserhalb, gruppiert nach Quelle und Kantentyp.
+  //
+  // Der erste Anlauf gruppierte nach dem INNENknoten und liess damit still sechs von dreissig
+  // Knoten fallen: die Spec-Closure zieht ueber `verify`- und `relation`-Rueckkanten auch Knoten
+  // herein, die NUR an Ring-2-Knoten haengen (ein TEST am REQ des zweiten Rings). Nach Quelle
+  // gruppiert kommt jede Kante genau einmal vor — und damit jeder Knoten der Scheibe.
+  const gruppen = new Map<string, Set<string>>();
+  for (const e of slice.edges) {
+    if (innenIds.has(e.sourceId) && innenIds.has(e.targetId)) continue;
+    const schluessel = `${e.sourceId} ${e.edgeType}>`;
+    if (!gruppen.has(schluessel)) gruppen.set(schluessel, new Set());
+    gruppen.get(schluessel)!.add(e.targetId);
+  }
+  // Deterministisch: gleicher Graph, gleiche Bytes (REQ-deterministic-serialization).
+  const rand = [...gruppen.keys()]
+    .sort()
+    .map((k) => `${k} ${[...gruppen.get(k)!].sort().join(' ')}`)
+    .join('\n');
+  return { innen, rand };
 }
 
 export function buildContextSlice(
@@ -296,7 +365,8 @@ export function bindReadTools(ctx: ToolContext): MCPToolRegistry {
 
   const graph_elements: MCPTool<
     z.infer<typeof GraphElementsInputSchema>,
-    { nodes: GraphNode[]; total: number; graphVersion: number } | { formatE: string; total: number; graphVersion: number }
+    | { nodes: GraphNode[]; total: number; graphVersion: number; legende?: string }
+    | { formatE: string; total: number; graphVersion: number }
   > = {
     name: 'graph_elements',
     description:
@@ -304,19 +374,34 @@ export function bindReadTools(ctx: ToolContext): MCPToolRegistry {
       "Output is JSON by default (agent logic); pass format:'formatE' for a human-readable, round-trip-stable " +
       'slice (the selected nodes + the edges induced between them) as Format-E v2 — type per `### <TYPE>` section, uids verbatim ' +
       '(re-importable via the codec, like the committed graph.json). The slice-tools (graph_impact / ' +
-      'graph_expand) are ALWAYS Format-E (CR-GC-210).',
+      'graph_expand) are ALWAYS Format-E (CR-GC-210). Identity + attributes, descriptions as the cut mark ' +
+      '(CR-GC-621); graph_get_node for the wording, prosa:true when the text itself is what you evaluate.',
     inputSchema: GraphElementsInputSchema,
     async handler(input) {
       // Cypher-backed listing via the Kuzu store (KNOW, not grep over the mirror).
       const nodes = await harness.listElements({ type: input.type, search: input.search });
       const total = nodes.length;
-      const sliced = nodes.slice(0, input.limit);
+      // CR-GC-621: der Schnitt sitzt VOR der Format-Weiche — sonst hinge die Antwortgroesse am
+      // Ausgabeformat statt an der Frage, und `formatE` waere der stille Umweg um die Kuerzung.
+      const voll = nodes.slice(0, input.limit);
+      const sliced = input.prosa ? voll : nurIdentitaet(voll);
+      const gekuerzt = sliced.some((n) => n.description === AUSSENRING_MARKE);
       if (input.format === 'formatE') {
         const ids = new Set(sliced.map((n) => n.uid));
         const edges = harness.getGraph().edges.filter((e) => ids.has(e.sourceId) && ids.has(e.targetId));
-        return { formatE: gcCodec.encode({ nodes: sliced, edges }), total, graphVersion: graphVersion() };
+        const formatE = gcCodec.encode({ nodes: sliced, edges });
+        return {
+          formatE: gekuerzt ? `${KUERZUNGS_LEGENDE}\n${formatE}` : formatE,
+          total,
+          graphVersion: graphVersion(),
+        };
       }
-      return { nodes: sliced, total, graphVersion: graphVersion() };
+      return {
+        nodes: sliced,
+        total,
+        graphVersion: graphVersion(),
+        ...(gekuerzt ? { legende: KUERZUNGS_LEGENDE } : {}),
+      };
     },
   };
 
@@ -441,7 +526,8 @@ export function bindReadTools(ctx: ToolContext): MCPToolRegistry {
     description:
       'Progressively deepen one branch on demand via Kuzu Cypher re-traversal (FUNC-graph-expand / R13). ' +
       'Pass the node uid as `handle`, the branch (callers=incoming dependents, traces, tests, all=both ' +
-      'directions), and the new depth. No originals store — recomputed from the live Kuzu store.',
+      'directions), and the new depth. No originals store — recomputed from the live Kuzu store. ' +
+      'Prose is carried by the handle, its REQ and its SCHEMA (CR-GC-613/621); graph_get_node for the rest.',
     inputSchema: GraphExpandInputSchema,
     async handler(input) {
       // callers = incoming dependents; all/traces/tests = full neighbourhood (both),
@@ -450,7 +536,17 @@ export function bindReadTools(ctx: ToolContext): MCPToolRegistry {
       let subgraph = await harness.subgraph(input.handle, input.depth, direction);
       if (input.branch === 'traces') subgraph = filterByEdgeTypes(subgraph, input.handle, TRACE_EDGE_TYPES);
       else if (input.branch === 'tests') subgraph = filterByEdgeTypes(subgraph, input.handle, TEST_EDGE_TYPES);
-      const formatE = codec.serialize(subgraph, { omitProvenance: true }); // CR-GC-373: Agenten-Sicht
+      // CR-GC-621: IDENTITAET, nicht die Kontext-Regel. `graph_context` nimmt REQ und SCHEMA aus,
+      // weil man aus ihrem Wortlaut den Anker BAUT; `graph_expand` vertieft einen Blast-Radius (R13)
+      // und beantwortet, WAS dranhaengt — geoeffnet wird danach, mit `graph_context`/`graph_get_node`.
+      // Gemessen am sigllm-Golden (Anker FUNC-execute-agent-run-persist-state, depth 2): die
+      // Kontext-Regel spart hier 12 % (5.735 → 5.038), die Identitaet 50 % (→ 2.852). Zwei Regeln,
+      // zwei Fragen — keine dritte. Die Knoten- und Kantenzahlen bleiben die der GANZEN Nachbarschaft.
+      const gekuerzt = { ...subgraph, nodes: nurIdentitaet(subgraph.nodes, input.handle) };
+      const legende = gekuerzt.nodes.some((n) => n.description === AUSSENRING_MARKE)
+        ? `${KUERZUNGS_LEGENDE}\n`
+        : '';
+      const formatE = legende + codec.serialize(gekuerzt, { omitProvenance: true }); // CR-GC-373: Agenten-Sicht
       return {
         handle: input.handle,
         nodeCount: subgraph.nodes.length,
@@ -468,21 +564,30 @@ export function bindReadTools(ctx: ToolContext): MCPToolRegistry {
     description:
       'Definition-of-Done context-pack for ONE realization node (CR-GC-213). Returns the node + its ' +
       'UPSTREAM spec-closure — the REQ/UC it `satisfy`s, the TEST that `verify` those REQ, the FLOW it ' +
-      'exchanges via `io`, the MOD it is `allocate`d to, and the SCHEMA of those FLOW — plus the node’s ' +
-      'description prose and realRef/testRef attributes, as one Format-E slice. ' +
-      'Use this to IMPLEMENT a node (one call instead of get_node+impact+expand+get_edges). ' +
+      'exchanges via `io`, the MOD it is `allocate`d to, and the SCHEMA of those FLOW — as one Format-E ' +
+      'slice. Use this to IMPLEMENT a node (one call instead of get_node+impact+expand+get_edges). ' +
       'Contrast: graph_impact = DOWNSTREAM blast-radius (who breaks if I change this); graph_expand = ' +
       'manual branch deepening. Never a full dump. `missingRefs` flags FUNCs lacking a realRef. ' +
-      'Prose is carried by the anchor, its REQ and its SCHEMA — every other neighbour comes as node and edge ' +
-      'without prose (CR-GC-613); graph_get_node for the full text.',
+      'Prose: the anchor, its REQ and its SCHEMA; every other neighbour comes as node and edge ' +
+      '(CR-GC-613), and past depth 1 the outer ring is a frontier listing under `## Rand` (CR-GC-624). ' +
+      'graph_get_node has the full text.',
     inputSchema: GraphContextInputSchema,
     async handler(input) {
       const graph = harness.getGraph();
       const { slice, missingRefs } = buildContextSlice(graph, input.id, input.depth);
+      // CR-GC-624: der Innenring ist die Scheibe EINE Stufe flacher — bei `depth: 1` ist das die
+      // ganze Scheibe, der Rand bleibt leer und die Antwort byte-gleich zu vorher.
+      const innenIds = new Set(
+        (input.depth > 1 ? buildContextSlice(graph, input.id, input.depth - 1).slice : slice).nodes.map((n) => n.uid),
+      );
+      const { innen, rand } = schneideRand(slice, innenIds);
       // CR-GC-373: Agenten-Sicht; CR-GC-363: Freshness-Banner, wenn AF-Stamps veraltet sind.
-      const gekuerzt = kuerzeAussenring(slice, input.id);
+      const gekuerzt = kuerzeAussenring(innen, input.id);
       const legende = gekuerzt.nodes.some((n) => n.description === '…') ? `${KUERZUNGS_LEGENDE}\n` : '';
-      const formatE = legende + withFreshnessBanner(codec.serialize(gekuerzt, { omitProvenance: true }));
+      const formatE =
+        legende +
+        withFreshnessBanner(codec.serialize(gekuerzt, { omitProvenance: true })) +
+        (rand ? `\n\n${RAND_UEBERSCHRIFT}\n${rand}` : '');
       return {
         rootId: input.id,
         nodeCount: slice.nodes.length,

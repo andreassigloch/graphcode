@@ -1954,6 +1954,36 @@
       "description": "docs/cr/open/CR-GC-620-status-vergleicht-nur-die-graphcode-vers.md"
     },
     {
+      "id": "CR-GC-621",
+      "type": "CR",
+      "name": "Neuer groesster Antwortgeber nach CR-GC-613: graph_elements 7.143 Zeichen je Aufruf und graph_expand 4.224 — beide ohne Scheibenschnitt, gemessen am Code-Test gefuehrt-0",
+      "description": "docs/cr/open/CR-GC-621-neuer-groesster-antwortgeber-nach-cr-gc-.md"
+    },
+    {
+      "id": "CR-GC-622",
+      "type": "CR",
+      "name": "graph_authoring_guide wird trotz 'einmal genuegt' 4x gerufen (7.711 Zeichen je Lauf) — derselbe Leitfaden braucht Idempotenz im Werkzeug, nicht einen Satz in der Beschreibung",
+      "description": "docs/cr/open/CR-GC-622-graph-authoring-guide-wird-trotz-einmal-.md"
+    },
+    {
+      "id": "CR-GC-623",
+      "type": "CR",
+      "name": "Werkzeugbeschreibungen nennen einen Parameter, den es nicht gibt: vier Beschreibungen sagen graph_help({id:...}), der Parameter heisst token — zod non-strict schluckt den Fehlaufruf still und liefert die Massnahmenliste statt der Erklaerung (gemessen: sieben graph_help hintereinander in gefuehrt-0)",
+      "description": "docs/cr/open/CR-GC-623-werkzeugbeschreibungen-nennen-einen-para.md"
+    },
+    {
+      "id": "CR-GC-624",
+      "type": "CR",
+      "name": "Strukturboden von graph_context: depth 2 kostet im Mittel 9.876 Zeichen ueber alle 125 FUNC-Anker des eigenen Modells, davon 72 Prozent reine Struktur (Kanten 2.801, Attributzeilen 2.593, Identitaetszeilen 1.730) — 42 der 54 Knoten sind Ring-2-Fan-out ueber Hub-FLOWs",
+      "description": "docs/cr/open/CR-GC-624-strukturboden-von-graph-context-depth-2-.md"
+    },
+    {
+      "id": "CR-GC-625",
+      "type": "CR",
+      "name": "Kanten-Fan-out A->B,C,D ist im Codec da, aber nirgends gezeigt — 43 Prozent der Kantenschreibungen im Rig-Lauf unnoetig einzeln",
+      "description": "docs/cr/open/CR-GC-625-kanten-fan-out-a-b-c-d-ist-im-codec-da-a.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -12275,6 +12305,21 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-625",
+      "target": "FUNC-authoring-guide",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-625",
+      "target": "FUNC-bootstrap",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-625",
+      "target": "MOD-surface",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -20570,5 +20615,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 384
+  "graphVersion": 390
 }

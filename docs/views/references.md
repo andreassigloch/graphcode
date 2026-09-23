@@ -604,6 +604,9 @@
 | `CR-GC-615` | relation | `REQ-greenfield-systemtest-dod` |
 | `CR-GC-616` | relation | `FUNC-author-uc` |
 | `CR-GC-616` | relation | `FUNC-generation-step` |
+| `CR-GC-625` | relation | `FUNC-authoring-guide` |
+| `CR-GC-625` | relation | `FUNC-bootstrap` |
+| `CR-GC-625` | relation | `MOD-surface` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-suggest` |

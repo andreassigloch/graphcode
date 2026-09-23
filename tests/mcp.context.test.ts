@@ -125,6 +125,18 @@ describe('TEST-graph-context: upstream spec-closure (CR-GC-213)', () => {
     const registry = bindToolsToHarness(harness);
     await expect(registry['graph_context'].handler({ id: 'NOPE', depth: 1 })).rejects.toThrow(/not found/);
   });
+
+  /**
+   * CR-GC-624: der Rand ist der ZWEITE Ring. Bei `depth: 1` gibt es keinen — die Antwort ist
+   * dieselbe wie vor dem CR, und jeder Knoten der Scheibe steht als Format-E-Knoten da.
+   */
+  it('depth 1 hat keinen Rand — jeder Knoten steht als Knoten da (CR-GC-624)', async () => {
+    const registry = bindToolsToHarness(harness);
+    const { formatE, nodeCount } = await registry['graph_context'].handler({ id: 'FN-1', depth: 1 });
+    expect(formatE).not.toContain('## Rand');
+    const knotenZeilen = [...formatE.matchAll(/^\+ ([\w-]+)\|/gm)].map((m) => m[1]);
+    expect(new Set(knotenZeilen).size).toBe(nodeCount);
+  });
 });
 
 describe('TEST-graph-context: missingRefs is empty when the FUNC carries a realRef', () => {

@@ -137,6 +137,11 @@ export const EXCLUDED = {
     'CR-GC-612: misst GRAPHCODE.md und die Laengen der Werkzeugbeschreibungen gegen den\n' +
     'Regelkatalog. Der Treffer ist der KATALOG, nie graphcodes eigene SSOT — eine Modellaenderung\n' +
     'kann ihn nicht rot machen; ein Werkzeug, das sich wieder selbst erklaert, sehr wohl.',
+  'tests/executor-gate.duplicate-index.test.ts':
+    'CR-GC-621: prueft, dass der ND-Index des Executor-Preflights weiter Beschreibungen traegt.\n' +
+    'Der Treffer ist ein FIXTURE-DATEINAME (`scheduler.graph.json` in einem Wegwerf-Repo), nie\n' +
+    'graphcodes eigene SSOT. Eine Modellaenderung kann ihn nicht rot machen; ein Schnitt an\n' +
+    '`graph_elements` oder an der Aehnlichkeitsrechnung sehr wohl.',
   'tests/read-tools.scope.test.ts':
     'CR-GC-613: misst die ANTWORTGROESSEN der Lesewerkzeuge gegen das GOLDEN EINES RIG-KORPUS\n' +
     '(`rig/sigllm-spezifikation/golden/sigllm-v98.graph.json`), nie graphcodes eigene SSOT. Eine\n' +
