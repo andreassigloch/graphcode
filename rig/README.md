@@ -66,6 +66,18 @@ Stempel: graph e1d8a6cf3944 (1229/966) · policy default · rules 19.2.0 · code
 `policy default` ist hier die ehrliche Aussage: moneyflow hat keine `graphcode.config.jsonc`,
 also gelten die Startwerte — vorher stand dieselbe Tatsache nirgends.
 
+**Ein Rig mit mehreren Korpora stempelt den Korpus in jede Ergebniszeile** (CR-GC-618). Das
+Greenfield-Rig hielt als einziges diese Regel nicht ein: seine Zeile nannte Arm, Modell und
+Executor, aber nicht, welche Frage gestellt wurde — die steckte in sieben Umgebungsvariablen,
+die `rig/sigllm-spezifikation/lauf*.env` per `source` setzt. Wer das vergass, fuhr klaglos den
+eingebauten Webapp-Korpus, und die Ergebnisdatei sah aus wie jede andere. Am 2026-09-22 wurde so
+ein Webapp-Lauf gegen sigllm-Grundlinien gehalten.
+
+Der Stempel traegt Korpusname, Prompt und Golden je mit sha256, Seed und Zeitgrenze. `GOLDEN` hat
+**keinen Default** mehr — ohne Golden entfaellt der Abgleich und sagt das (`grund`), statt gegen
+einen mitlaufenden Fremdgraphen zu rechnen. `report.mjs` weigert sich, Zeilen verschiedener
+Herkunft zu einer Spanne zu mitteln.
+
 ## Blindheitsausgang statt Rang
 
 `discriminate(kandidaten, größe, { name })` gibt **keinen Rang** zurück, wenn die unterscheidende

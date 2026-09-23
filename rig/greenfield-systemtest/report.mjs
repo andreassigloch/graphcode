@@ -23,13 +23,27 @@ const files = process.env.RESULTS_FILE
   ? [process.env.RESULTS_FILE]
   : readdirSync(HERE).filter((f) => /^results(-.*)?\.json$/.test(f));
 for (const f of files) {
-  try { rows.push(...JSON.parse(readFileSync(join(HERE, f), 'utf8'))); } catch { /* skip */ }
+  // Die Quelldatei mitfuehren: fuer Zeilen VOR dem Stempel ist sie das Einzige, was ueber
+  // ihre Herkunft bekannt ist. Sie zu raten waere schlimmer als sie offen zu lassen.
+  try { rows.push(...JSON.parse(readFileSync(join(HERE, f), 'utf8')).map((r) => ({ ...r, _quelle: f }))); }
+  catch { /* skip */ }
 }
-// de-dupe by arm+run (a range file may overlap); keep the last seen
+/**
+ * CR-GC-618 — welcher Korpus steht hinter dieser Zeile? Zeilen vor dem Stempel sagen es nicht,
+ * und das ist eine eigene Lage: nicht „derselbe Korpus", sondern „unbekannt".
+ */
+const korpusVon = (r) => r.stempel?.korpus ?? `ungestempelt: ${r._quelle ?? 'unbekannte Datei'}`;
+
+// de-dupe by KORPUS+arm+run (a range file may overlap); keep the last seen.
+// Ohne den Korpus im Schluessel ueberschrieb `opus5#0` aus dem Webapp-Korpus still
+// `opus5#0` aus sigllm — zwei Messungen verschiedener Fragen unter einem Namen.
 const seen = new Map();
-for (const r of rows) seen.set(`${r.arm}#${r.run}`, r);
+for (const r of rows) seen.set(`${korpusVon(r)}|${r.arm}#${r.run}`, r);
 rows.length = 0; rows.push(...seen.values());
 if (!rows.length) { console.error('no results*.json found'); process.exit(1); }
+
+const korpora = [...new Set(rows.map(korpusVon))];
+const gemischt = korpora.length > 1;
 
 const range = (xs) => {
   const v = xs.filter((x) => x != null && !Number.isNaN(x));
@@ -39,7 +53,27 @@ const arms = [...new Set(rows.map((r) => r.arm))];
 
 console.log('# Greenfield System Test — Phase 1 (graph authoring)\n');
 
-console.log('## Raw runs (all shown — no averaging)\n');
+// „Ohne Stempel keine Zahl" (rig/README.md) — hier steht er, vor jeder Zahl.
+console.log('## Stempel — welcher Korpus, welches Golden\n');
+console.log('| Korpus | Laeufe | Prompt | Golden | Zeitgrenze |');
+console.log('|---|---|---|---|---|');
+for (const k of korpora) {
+  const g = rows.filter((r) => korpusVon(r) === k);
+  const st = g.find((r) => r.stempel)?.stempel;
+  const golden = st?.golden?.pfad ? `${st.golden.pfad.split('/').pop()} (${st.golden.sha256})` : (st?.golden?.grund ?? '—');
+  console.log(`| ${k} | ${g.length} | ${st?.prompt?.pfad?.split('/').pop() ?? '—'} (${st?.prompt?.sha256 ?? '—'}) `
+    + `| ${golden} | ${st?.zeitgrenze_s ? `${st.zeitgrenze_s}s` : '—'} |`);
+}
+if (gemischt) {
+  const ohne = korpora.filter((k) => k.startsWith('ungestempelt')).length;
+  console.log(`\n**${korpora.length} Herkuenfte in einer Auswertung`
+    + `${ohne ? `, davon ${ohne} ohne Stempel` : ''}.** Ungestempelt heisst nicht „derselbe Korpus",`
+    + ` sondern „unbekannt" — deshalb steht je Datei eine Zeile. Die Arm-Tabelle unten wird NICHT`
+    + ` gebildet: eine Spanne ueber zwei Fragen ist keine Spanne, sondern zwei Zahlen mit einem`
+    + ` Namen. Eine Herkunft waehlen:  RESULTS_FILE=results-<lauf>.json node report.mjs`);
+}
+
+console.log('\n## Raw runs (all shown — no averaging)\n');
 for (const r of rows) {
   if (r.error) { console.log(`  ${r.arm} #${r.run}: ERROR ${r.error.slice(0, 120)}`); continue; }
   if (!r.structure) { console.log(`  ${r.arm} #${r.run}: (incomplete row — re-run)`); continue; }
@@ -52,6 +86,9 @@ for (const r of rows) {
 }
 
 console.log('\n## Per-arm ranges (range, not std-dev)\n');
+if (gemischt) {
+  console.log('_Entfaellt — gemischte Korpora (s. Stempel oben)._\n');
+} else {
 console.log('| arm | runs | elements | compliance | gate-rejections | tok out | cost $ | wall s |');
 console.log('|---|---|---|---|---|---|---|---|');
 for (const a of arms) {
@@ -61,6 +98,7 @@ for (const a of arms) {
   console.log(`| ${a} | ${g.length} | ${col((r) => r.elements)} | ${col((r) => r.readiness.compliance)} `
     + `| ${col((r) => r.gate_rejections)} | ${col((r) => r.tokens?.tokens_out)} `
     + `| ${range(g.map((r)=>r.tokens?.cost_usd!=null?+r.tokens.cost_usd.toFixed(2):null))} | ${col((r) => r.tokens?.wall_s)} |`);
+}
 }
 
 // CR-GC-572 — welche Achse unterscheidet zwei Arme? Ohne diese Tabelle liest sich jede

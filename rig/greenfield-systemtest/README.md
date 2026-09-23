@@ -128,3 +128,28 @@ Der Key ist die **Leitung, nicht der Unterschied**: `claude -p` ist ein Agent (e
 System-Prompt, Kontext-Management, Kompaktierung, Skills), `graphcode run` ist unsere
 Schleife (Rundenprompt aus `graph_generate`, kuratiertes Toolset, vorenthaltene Werkzeuge,
 Preflight, Gate-Reparatur). Gleiches Modell, gleiche MCP-Werkzeuge, andere Schleife.
+
+## Korpus waehlen — `KORPUS` ist Pflicht, `GOLDEN` hat keinen Default (CR-GC-618)
+
+Dieser Runner faehrt mehrere Korpora. Welcher gerade laeuft, steht in sieben
+Umgebungsvariablen; gesetzt werden sie durch `source` einer `lauf*.env`:
+
+```bash
+cd /Users/andreas/Developer/dev/graphcode
+set -a && source rig/sigllm-spezifikation/lauf-prosa.env && set +a
+node rig/greenfield-systemtest/run.mjs
+RESULTS_FILE=$RESULTS_FILE node rig/greenfield-systemtest/report.mjs
+```
+
+`KORPUS` traegt den Namen in **jede** Ergebniszeile, zusammen mit sha256 von Prompt und Golden,
+dem Seed und der Zeitgrenze. Ohne diesen Stempel sind zwei Ergebnisdateien aus verschiedenen
+Korpora nicht auseinanderzuhalten — genau so wurde am 2026-09-22 ein Webapp-Lauf gegen
+sigllm-Grundlinien gehalten.
+
+`GOLDEN` faellt **nicht** mehr auf `sigloch-modules.graph.json` zurueck. Ohne Golden laeuft das
+Rig, und `moduleAudit` sagt „kein Abgleich gefahren" — statt gegen einen lebenden Fremdgraphen zu
+rechnen. `report.mjs` bildet keine Spanne ueber Zeilen verschiedener Herkunft.
+
+Ein Abbruch verwirft nichts: `ende` in der Zeile nennt `timeout` / `signal` / `exit`, und die
+Kennzahlen kommen trotzdem aus dem Store. Die Zeitgrenze steht auf 3600 s — die gemessene
+Grundlinie eines Frontier-Laufs liegt bei 2235 s, der alte Default von 1200 s killte ihn.
