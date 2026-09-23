@@ -42,7 +42,7 @@
 | FC-04 | FCHAIN actor-bounded (trigger+consumer) | Gate | warning | kern | PDR | uc |  |  |  | se:author-uc |  | se:author-actor se-fmea |  |  |
 | FM-01 | RiskReqFmeaAttributes | Gate | warning | fmea | SRR | req |  |  | se-fmea | se-fmea |  | se-fmea |  |  |
 | FM-02 | RiskReqMitigation | Gate | warning | fmea | SRR | req |  |  | se-fmea | se-fmea |  | se-fmea |  |  |
-| FM-03 | HighRiskVerification | Gate | warning | fmea | TRR | ver |  | fmea | se-fmea | se-fmea |  | se-fmea se-view:fmea |  |  |
+| FM-03 | HighRiskVerification | Gate | warning | fmea | TRR | ver |  | fmea | se-fmea | se-fmea |  | se-fmea se-plan se-view:fmea |  |  |
 | IO-01 | FuncPairIOCompleteness | Gate | warning | kern | PDR | arch |  |  |  | se:top-level |  | se:top-level |  |  |
 | IO-02 | FLOW single producer | Gate | error | kern | PDR | arch |  |  |  | se:top-level |  |  |  |  |
 | IR-01 | Assumption review promoted to CR | Gate | warning | irr | PDR | req |  |  | se-irr | se-irr |  | se-irr |  |  |
@@ -83,7 +83,7 @@
 | RC-05 | cross-module import drift | CodeFacts (RC) | warning | realisierung |  |  |  |  |  | se-test |  |  |  |  |
 | RC-06 | external realRef names a declared dependency | CodeFacts (RC) | warning | realisierung |  |  |  |  |  | se-test |  |  |  |  |
 | RC-07 | CR node agrees with docs/cr | CodeFacts (RC) | warning | realisierung |  |  |  |  |  | se-test |  |  |  |  |
-| RD-01 | Unresolved requirement | Gate | warning | kern | SRR | req |  |  | se:close-violations | se:author-req | ja | se:author-req | schliesst |  |
+| RD-01 | Unresolved requirement | Gate | warning | kern | SRR | req |  |  | se:close-violations | se:author-req | ja | se:author-req se-plan | schliesst |  |
 | RD-02 | Decomposition consistency | Gate | warning | kern | SRR | req |  |  |  | se:author-req |  |  |  |  |
 | RD-04 | Decomposition breadth | Gate | warning | kern | PDR | arch | ja |  |  | se:top-level |  | se:top-level |  |  |
 | RD-05 | Decomposition too narrow | Gate | warning | kern | PDR | arch |  |  |  | se:top-level |  |  |  |  |
