@@ -1,6 +1,6 @@
 # CR-GC-620: Der Host stempelt, womit er gebootet hat — nicht nur seine Nummer
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-23)
 **Typ:** aus Item ITEM-2026-480 (finding)
 **Erstellt:** 2026-09-23
 **Item:** bok/items/ITEM-2026-480.json (Lane: code)
