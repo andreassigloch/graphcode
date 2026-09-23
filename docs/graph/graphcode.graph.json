@@ -2026,6 +2026,18 @@
       "commitRef": "ac5bab2"
     },
     {
+      "id": "CR-GC-630",
+      "type": "CR",
+      "name": "CR-GC-627 hat den Umweg decode-zu-Graph nur aus graph_mutate entfernt — bootstrap() traegt ihn weiter: decode() dann Graph dann add-node/add-edge. Damit kennt der Kaltstart-Pfad weder die Praefixe minus und tilde noch die nameWarning, und jede kuenftige Aenderung an formatEToCommands laeuft an ihm vorbei",
+      "description": "docs/cr/open/CR-GC-630-cr-gc-627-hat-den-umweg-decode-zu-graph-.md"
+    },
+    {
+      "id": "CR-GC-631",
+      "type": "CR",
+      "name": "GraphCodeCodec ist ein zweiter Codec neben ctx.codec: beide sind new FormatECodec(SE_DESCRIPTOR), encode() ist eine Delegationszeile mit genau einem Aufrufer (graph_elements format formatE), validate() und project() delegieren ebenfalls, und decode() - die einzige echte Eigenleistung - hat nach ITEM-2026-510 keinen Produktionsaufrufer mehr. Komplett entfernen, nicht kapseln",
+      "description": "docs/cr/open/CR-GC-631-graphcodecodec-ist-ein-zweiter-codec-neb.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -20692,5 +20704,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 396
+  "graphVersion": 398
 }
