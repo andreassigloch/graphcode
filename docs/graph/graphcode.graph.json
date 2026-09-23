@@ -2074,6 +2074,12 @@
       "description": "docs/cr/open/CR-GC-637-spike-ergebnis-zur-auffindbarkeit-parall.md"
     },
     {
+      "id": "CR-GC-638",
+      "type": "CR",
+      "name": "Die graph_*-Lesewerkzeuge sind in Claude-Code-Sitzungen deferred: ihr Schema ist nicht geladen, ein Aufruf verlangt vorher ToolSearch, waehrend Bash immer bereitliegt. Gemessen am Referenz-Change: 2 ToolSearch-Aufrufe insgesamt, beide fuer graph_mutate (Schreiben, wo es keinen Ersatz gibt) - fuers Lesen gewinnt grep, weil es keinen Vorlauf kostet. Die Werkzeugtabelle in CLAUDE.md koennte die ToolSearch-Abfrage mitliefern",
+      "description": "docs/cr/open/CR-GC-638-die-graph-lesewerkzeuge-sind-in-claude-c.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -20682,5 +20688,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 405
+  "graphVersion": 406
 }

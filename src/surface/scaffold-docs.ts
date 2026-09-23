@@ -137,7 +137,7 @@ export function guardrailsContent(): string {
     '',
     '## Live view and lifecycle',
     '',
-    `- \`${HOST_ENTRY}\` starts everything: the MCP surface, the read-only bridge and the dashboard.`,
+    `- \`${HOST_ENTRY}\` starts the MCP surface, the read-only bridge and the dashboard.`,
     '  It lives as long as the session and is restarted automatically; there is nothing to stop by',
     '  hand. Silence it with `GRAPHCODE_NO_GVE=1`.',
     '- **Ask where your dashboard is: `npx @sigloch/graphcode status`** — it reports the viewer that',

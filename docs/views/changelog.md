@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 245 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 246 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 245 CR · 189 done · 0 open.
+Total: 246 CR · 189 done · 0 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -307,3 +307,4 @@ Total: 245 CR · 189 done · 0 open.
 | `CR-GC-635` | n/a | Kein Skill deckt den Umbau ab: 12 Skills im Repo, genau einer nennt graph_impact (se-fmea), alle anderen legen an oder berichten. Der Umbau - aendern, ersetzen, loeschen - ist aber die einzige Lage, in der ein vergessener Impact teuer wird und in der die Hausregel keine parallelen Pfade ueberhaupt gilt. Gemessen am Referenz-Change: 0 Graph-Leseaufrufe, 3 Volllaeufe, RC-01 erst nach 300 Sekunden |
 | `CR-GC-636` | n/a | aise dispatch prepare koennte im CR-Geruest einen Abschnitt Umfang laut graph_impact anlegen, der leer bleibt bis jemand ihn fuellt - der Zeitpunkt vor der Arbeit statt beim Commit, und ein CR ohne den Abschnitt ist einer der den Umfang geraten hat |
 | `CR-GC-637` | n/a | Spike-Ergebnis zur Auffindbarkeit paralleler Pfade: an sieben belegten Paaren aus vier CR-Jahrgaengen findet Rumpf-Aehnlichkeit 0 von 7 (Jaccard 2,6 bis 41,4 Prozent gegen Schwelle 0,85), gemeinsamer Engpass auf Dateiebene 6 von 7 - aber bei einer Alarmschwelle die auch 23 Prozent aller Dateipaare trifft. Als Detektor unbrauchbar, als Kandidatenliste brauchbar: 96 Engpaesse aus 5805 Bezeichnern, und die drei die im Change zaehlten sind darin |
+| `CR-GC-638` | n/a | Die graph_*-Lesewerkzeuge sind in Claude-Code-Sitzungen deferred: ihr Schema ist nicht geladen, ein Aufruf verlangt vorher ToolSearch, waehrend Bash immer bereitliegt. Gemessen am Referenz-Change: 2 ToolSearch-Aufrufe insgesamt, beide fuer graph_mutate (Schreiben, wo es keinen Ersatz gibt) - fuers Lesen gewinnt grep, weil es keinen Vorlauf kostet. Die Werkzeugtabelle in CLAUDE.md koennte die ToolSearch-Abfrage mitliefern |

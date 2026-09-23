@@ -1,6 +1,6 @@
 # CR-GC-636: Das CR-Geruest verlangt den Umfang aus dem Graphen
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-23)
 **Typ:** aus Item ITEM-2026-520 (idea)
 **Erstellt:** 2026-09-23
 **Item:** bok/items/ITEM-2026-520.json (Lane: code)
@@ -49,3 +49,23 @@ in bok, nicht hier. Dieser CR ist der Antrag, nicht die Umsetzung.
 2. Die `prepare`-Ausgabe nennt `/se-umbau`.
 3. Eine Zaehlung ueber `docs/cr/open/`: wie viele CRs tragen den Abschnitt gefuellt? Die Zahl ist
    die ehrliche Wirkung, nicht die Existenz der Vorlage.
+
+---
+
+## Umsetzung (2026-09-23) — in bok, als BOK-CR-068
+
+Der Antrag ist angenommen und umgesetzt. `scripts/aise/lib/dispatch.mjs` und
+`scripts/aise/aise.mjs`:
+
+- `materializeCr(..., { crMode })` haengt im Modus `graph` den Abschnitt „Umfang laut
+  `graph_impact`" an — im Modus `docs` nicht, dort gaebe es kein `graph_impact`.
+- `prepare` nennt `/se-umbau` in der Ausgabe, ebenfalls nur im Graph-Modus.
+
+**Rot zuerst:** die zwei Zusicherungen fuer den Graph-Modus schlugen vor dem Zug fehl.
+`node scripts/aise/test.mjs`: 493 Pruefungen gruen in 12 Dateien.
+
+**Smoke am echten Weg:** `aise dispatch prepare ITEM-2026-521 --lane code` → `CR-GC-638` traegt
+den Abschnitt, die Ausgabe nennt den Skill. Der Beleg liegt als Datei im Repo, nicht als Zitat.
+
+Die Zaehlung aus Abnahme 3 (wie viele CRs tragen den Abschnitt gefuellt?) ist erst sinnvoll, wenn
+ein paar CRs durch den neuen Weg gegangen sind — heute ist es genau einer.
