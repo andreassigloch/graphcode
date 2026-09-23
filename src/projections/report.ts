@@ -589,7 +589,9 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
         incoming,
         requiredAttrs,
         attributes: attributesFor(input.type),
-        formatEExample: formatEExampleFor(input.type),
+        // CR-GC-625: das Beispiel zeigt den Kanten-Fan-out an einem ECHTEN Muster dieses Typs —
+        // `outgoing` liegt hier schon, es wird gereicht statt neu abgeleitet.
+        formatEExample: formatEExampleFor(input.type, outgoing),
       };
     },
   };

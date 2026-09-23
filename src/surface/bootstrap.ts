@@ -77,8 +77,11 @@ export const TEMPLATE_FORMAT_E = [
   '+ TEST-template-root|Verifies the template root requirement [__name:Template root test]',
   '',
   '## Edges',
+  // CR-GC-625: die Zielseite ist eine LISTE. Das Template ist fuer viele Mitglieder die erste
+  // Format-E-Zeile, die sie ueberhaupt sehen — es zeigt die Gruppierung an der einen Quelle, die
+  // hier zwei Ziele hat, statt sie auseinanderzuschreiben.
+  '+ SYS-template -compose-> REQ-template-root, MOD-template',
   '+ MOD-template -satisfy-> REQ-template-root',
-  '+ SYS-template -compose-> REQ-template-root',
   '+ TEST-template-root -verify-> REQ-template-root',
 ].join('\n');
 

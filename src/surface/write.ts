@@ -86,7 +86,10 @@ const GraphMutateInputSchema = z
           'Bevorzugt für LLM-Autoring (~2–3× weniger Tokens); upsert-Semantik. Deletes/updates/merges ' +
           'brauchen weiterhin commands. Kanten zwischen BESTEHENDEN Knoten brauchen keine ' +
           '`### <TYPE>`-Sektion (CR-GC-310) — der Typ kommt aus dem Store; ein reiner Kanten-Batch ist ' +
-          '"## Edges" + Zeilen der Form "+ A -verify-> B". Eine unbekannte uid bleibt ein Fehler. ' +
+          '"## Edges" + Zeilen der Form "+ A -verify-> B". Eine unbekannte uid bleibt ein Fehler. '
+          + 'FAN-OUT (CR-GC-625): die Zielseite ist eine LISTE — "+ A -verify-> B, C, D" schreibt drei '
+          + 'Kanten. Ein Inline-Attributblock der Zeile gilt fuer ALLE ihre Ziele; Kanten mit eigenem '
+          + 'cardinality/constraint/notes bleiben deshalb einzeln. ' +
           'NAME (CR-GC-321): `+ uid|text` hat nur ZWEI positionale Felder — uid und BESCHREIBUNG. ' +
           'Der Name reist als Attribut `__name`: inline `+ REQ-x|Beschreibung [__name:Lesbarer Name]`, ' +
           'oder als Folgezeile `@__name Lesbarer Name` wenn der Name Komma oder eckige Klammer enthält. ' +

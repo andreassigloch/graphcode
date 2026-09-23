@@ -66,22 +66,69 @@ export function attributesFor(type: string): AttributeHint[] {
   ];
 }
 
+/** Ein ausgehendes Kantenmuster des Typs — genau die Form, die `TRACE_PATTERNS` liefert. */
+export interface AusgehendesMuster {
+  edgeType: string;
+  targetType: string;
+}
+
 /**
- * Ein einzeiliger, decodierbarer Format-E-v2-Block für `type`.
+ * Ein kurzer, decodierbarer Format-E-v2-Block für `type`.
  *
- * Die Zeile zeigt genau die Stelle, an der Autoren den Namen verlieren:
- * `+ uid|text` hat ZWEI positionale Felder (uid, Beschreibung) — der Name reist
- * als `__name`-Attribut. Ohne ihn wird die uid zum Namen (stiller Fallback,
- * `src/codec.ts` decode).
+ * Er zeigt ZWEI Stellen, an denen Autoren etwas verlieren:
+ *
+ * 1. den NAMEN — `+ uid|text` hat zwei positionale Felder (uid, Beschreibung); der Name reist als
+ *    `__name`-Attribut, ohne ihn wird die uid zum Namen (stiller Fallback, `codec.ts` decode).
+ * 2. den FAN-OUT (CR-GC-625) — `+ A -kante-> B, C` schreibt ZWEI Kanten. Der Codec kann das seit
+ *    jeher in beide Richtungen (`parseEdgeLine` spaltet auf Kommas, `serializeEdges` gruppiert seit
+ *    CR-GC-268), gezeigt wurde es nie: im Rig-Lauf `opus5-16` gingen 343 Kantenschreibungen in 194
+ *    Gruppen — 149 Zeilen (43 %) unnötig einzeln, Fan-out 0-mal genutzt.
+ *
+ * Das Muster ist ein ECHTES `TRACE_PATTERN` des angefragten Typs, keines aus der Luft: der Aufrufer
+ * reicht `outgoing` herein (in `report.ts` liegt es ohnehin schon vor). Bevorzugt wird ein Muster
+ * auf einen ANDEREN Typ — `SYS -compose-> SYS` wäre legal, aber als Beispiel irreführend. Ein Typ
+ * ohne ausgehendes Muster (SCHEMA) behält den Block ohne Kanten.
+ *
+ * Die Zielknoten werden mitdeklariert, weil sie es müssen: ohne `### <TYPE>`-Sektion kann der Codec
+ * den Typ eines Kantenziels nicht auflösen und `decode` wirft. Ein Beispiel, das der Codec nicht
+ * frisst, ist schlimmer als keins.
  */
-export function formatEExampleFor(type: string): string {
+export function formatEExampleFor(type: string, outgoing: readonly AusgehendesMuster[] = []): string {
   const uid = `${type}-example`;
+  const muster = outgoing.find((m) => m.targetType !== type) ?? outgoing[0];
+  /**
+   * Am REQ die kinds — ohne sie ist keine Vor-/Nachbedingung lesbar. Und STRUKTURELL, wo ein
+   * MOD oder SYS erfuellt: contracts 9.x prueft das `where`-Praedikat am satisfy-Muster, ein
+   * Beispiel mit `functional` waere dort am Gate illegal (dieselbe Klausel, die das
+   * Bootstrap-Template seit CR-SM-266 traegt).
+   */
+  const kinds = (t: string, alsZiel = false): string[] => {
+    if (t !== 'REQ') return [];
+    const strukturell = alsZiel && muster?.edgeType === 'satisfy' && (type === 'MOD' || type === 'SYS');
+    return [`@kinds ["${strukturell ? 'non-functional' : 'functional'}"]`];
+  };
+
+  const knoten = ['## Nodes', `### ${type}`, `+ ${uid}|One sentence stating what this ${type} is; this field is the DESCRIPTION [__name:Readable ${type} name]`, ...kinds(type)];
+  const kanten: string[] = [];
+  if (muster) {
+    const ziele = [`${muster.targetType}-example-one`, `${muster.targetType}-example-two`];
+    const zielZeilen = ziele
+      .map((z, i) => [`+ ${z}|Target ${i + 1} of the fan-out line below [__name:Target ${i + 1}]`, ...kinds(muster.targetType, true)])
+      .flat();
+    if (muster.targetType === type) knoten.push(...zielZeilen);
+    else knoten.push(`### ${muster.targetType}`, ...zielZeilen);
+    kanten.push(
+      '',
+      '## Edges',
+      `# EINE Zeile, ZWEI Kanten — Ziele kommagetrennt. Ein Inline-Attributblock gilt fuer ALLE Ziele`,
+      `# der Zeile; Kanten mit eigenem cardinality/constraint/notes bleiben einzeln.`,
+      `+ ${uid} -${muster.edgeType}-> ${ziele.join(', ')}`,
+    );
+  }
+
   return [
-    '## Nodes',
-    `### ${type}`,
-    `+ ${uid}|One sentence stating what this ${type} is; this field is the DESCRIPTION [__name:Readable ${type} name]`,
-    // Attribute reisen als Folgezeile; am REQ die kinds, ohne die keine Vor-/Nachbedingung lesbar ist.
-    ...(type === 'REQ' ? ['@kinds ["functional"]'] : []),
+    ...knoten,
+    ...kanten,
     '',
     `# Name mit Komma oder eckiger Klammer -> Folgezeile statt inline:`,
     `# + ${uid}|One sentence stating what this ${type} is`,
