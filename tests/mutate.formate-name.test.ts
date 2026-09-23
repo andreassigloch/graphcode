@@ -26,7 +26,7 @@ import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { GraphCodeCodec } from '../src/projections/codec.js';
 import { attributesFor, formatEExampleFor } from '../src/projections/authoring-example.js';
-import { ReqKind } from '@sigloch/contracts/se';
+import { ReqKind, TRACE_PATTERNS } from '@sigloch/contracts/se';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
@@ -216,11 +216,56 @@ describe('TEST-formate-name: der stille name=uid-Fallback wird laut (CR-GC-321)'
       expect(example).toContain('__name');
 
       const decoded = new GraphCodeCodec().decode(example);
-      expect(decoded.nodes).toHaveLength(1);
-      expect(decoded.nodes[0].type).toBe(type);
-      expect(decoded.nodes[0].name).not.toBe(decoded.nodes[0].uid);
-      expect(decoded.nodes[0].name.length).toBeGreaterThan(0);
+      // CR-GC-625: der Block traegt jetzt auch die Ziele der Fan-out-Zeile. Der ANKER bleibt
+      // genau einer — was hinzukam, sind seine Kantenziele, nicht ein zweites Beispiel.
+      const anker = decoded.nodes.filter((n) => n.uid === `${type}-example`);
+      expect(anker).toHaveLength(1);
+      expect(anker[0].type).toBe(type);
+      expect(anker[0].name).not.toBe(anker[0].uid);
+      expect(anker[0].name.length).toBeGreaterThan(0);
+      expect(decoded.nodes.every((n) => n.name !== n.uid), 'auch die Ziele tragen __name').toBe(true);
     }
+  });
+
+  /**
+   * CR-GC-625 — der Fan-out ist im Codec da, seit CR-GC-268 auch im Emit-Zweig; gezeigt wurde er
+   * nie. Gemessen am Rig-Lauf `opus5-16`: 343 Kantenschreibungen in 194 Gruppen, 149 Zeilen
+   * (43 %) unnoetig einzeln, Fan-out 0-mal genutzt — und im ganzen Stream kam keine einzige
+   * Mehrziel-Zeile vor, er konnte sie also auch nicht abschauen.
+   *
+   * POSITIVKONTROLLE: schreibt man die Zeile in `formatEExampleFor` auf ein einzelnes Ziel
+   * zurueck, wird dieser Fall rot (geprueft am 2026-09-23) — der Test haengt an der GRUPPE,
+   * nicht an der Existenz irgendeiner Kante.
+   */
+  it('das Beispiel zeigt den Fan-out, und zwar an einem ECHTEN Muster des Typs', async () => {
+    const muster = TRACE_PATTERNS as ReadonlyArray<{ source: string; target: string; type: string }>;
+    for (const type of ['REQ', 'FUNC', 'TEST', 'MOD', 'UC']) {
+      const guide = await tools.graph_authoring_guide.handler({ type });
+      const example = (guide as { formatEExample: string }).formatEExample;
+
+      // EINE Zeile, MEHRERE Kanten — der Beweis liegt im Decode, nicht im Text.
+      const fanoutZeilen = example.split('\n').filter((l) => /^\+ .+ -\w+-> .+,/.test(l));
+      expect(fanoutZeilen, `${type}: keine Mehrziel-Zeile im Beispiel`).toHaveLength(1);
+
+      const decoded = new GraphCodeCodec().decode(example);
+      const ausAnker = decoded.edges.filter((e) => e.sourceId === `${type}-example`);
+      expect(ausAnker.length, `${type}: die eine Zeile muss mehrere Kanten ergeben`).toBeGreaterThan(1);
+      expect(new Set(ausAnker.map((e) => e.edgeType)).size, 'alle Ziele derselben Kantenart').toBe(1);
+
+      // Das Muster ist keines aus der Luft: Quelle, Kantenart und Zieltyp stehen in TRACE_PATTERNS.
+      const zielTyp = decoded.nodes.find((n) => n.uid === ausAnker[0].targetId)!.type;
+      expect(
+        muster.some((p) => p.source === type && p.type === ausAnker[0].edgeType && p.target === zielTyp),
+        `${type} -${ausAnker[0].edgeType}-> ${zielTyp} ist kein TRACE_PATTERN`,
+      ).toBe(true);
+    }
+  });
+
+  it('SCHEMA hat kein ausgehendes Muster — und bekommt deshalb keinen erfundenen Kantenblock', async () => {
+    const guide = await tools.graph_authoring_guide.handler({ type: 'SCHEMA' });
+    const example = (guide as { formatEExample: string }).formatEExample;
+    expect(example).not.toContain('## Edges');
+    expect(new GraphCodeCodec().decode(example).edges).toHaveLength(0);
   });
 });
 
