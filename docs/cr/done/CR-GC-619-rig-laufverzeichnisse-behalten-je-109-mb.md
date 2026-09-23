@@ -1,6 +1,6 @@
 # CR-GC-619: Ein Lauf behält seine Belege, nicht seinen Zwischenstand
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-23)
 **Typ:** aus Item ITEM-2026-491 (finding)
 **Erstellt:** 2026-09-23
 **Item:** bok/items/ITEM-2026-491.json (Lane: code)
