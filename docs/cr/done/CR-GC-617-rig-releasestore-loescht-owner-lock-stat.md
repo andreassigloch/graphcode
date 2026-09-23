@@ -1,6 +1,6 @@
 # CR-GC-617: Das Rig beendet den Eigentümer, statt seinen Ausweis zu löschen
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-23)
 **Typ:** aus Item ITEM-2026-489 (bug)
 **Erstellt:** 2026-09-23
 **Item:** bok/items/ITEM-2026-489.json (Lane: code)
