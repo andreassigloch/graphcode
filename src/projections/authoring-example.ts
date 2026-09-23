@@ -133,5 +133,14 @@ export function formatEExampleFor(type: string, outgoing: readonly AusgehendesMu
     `# Name mit Komma oder eckiger Klammer -> Folgezeile statt inline:`,
     `# + ${uid}|One sentence stating what this ${type} is`,
     `# @__name Readable ${type} name, with a comma`,
+    '',
+    // CR-GC-627: das Praefix entscheidet ueber die Operation — derselbe Block, dasselbe Gate.
+    // Kommentiert, weil dieser Beispielblock ADDITIV bleiben muss: `decode()` ist der Leseweg
+    // und wirft bei Nicht-Add-Ops (geprueft in tests/mutate.formate-ops.test.ts).
+    `# Nicht nur anlegen — das Praefix ist die Operation:`,
+    `# ~ ${uid}|New description; a PATCH, only what this line names  (update-node)`,
+    `# - ${uid}                                                       (delete-node)`,
+    `# - ${uid} -${muster?.edgeType ?? 'relation'}-> ${muster ? `${muster.targetType}-example-one` : 'OTHER-uid'}   (delete-edge)`,
+    `# M ${uid} + OTHER-uid   unter "## Merges": OTHER-uid nimmt ${uid} auf (merge-nodes)`,
   ].join('\n');
 }

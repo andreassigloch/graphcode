@@ -607,6 +607,13 @@
 | `CR-GC-625` | relation | `FUNC-authoring-guide` |
 | `CR-GC-625` | relation | `FUNC-bootstrap` |
 | `CR-GC-625` | relation | `MOD-surface` |
+| `CR-GC-627` | relation | `FUNC-authoring-guide` |
+| `CR-GC-627` | relation | `FUNC-mutate` |
+| `CR-GC-627` | relation | `MOD-surface` |
+| `CR-GC-628` | relation | `FUNC-read-tools` |
+| `CR-GC-628` | relation | `MOD-surface` |
+| `CR-GC-629` | relation | `FUNC-load-config` |
+| `CR-GC-629` | relation | `MOD-kernel-measure` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-suggest` |
