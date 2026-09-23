@@ -21,7 +21,7 @@ import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import { KUERZUNGS_LEGENDE } from '../src/surface/read.js';
-import { GraphCodeCodec } from '../src/projections/codec.js';
+import { kantenAus } from './helpers/format-e.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
 
 const GOLDEN = join(__dirname, '..', 'rig', 'sigllm-spezifikation', 'golden', 'sigllm-v98.graph.json');
@@ -275,13 +275,13 @@ describe('CR-GC-628: die Kantenantwort traegt Kanten', () => {
 
     // Der Beweis liegt im Decode, nicht im Text: die eine Zeile ergibt mehrere Kanten
     // derselben Quelle und Kantenart.
-    const decoded = new GraphCodeCodec().decode(fe.formatE);
+    const kanten = kantenAus(fe.formatE);
     const quelle = /^\+ (\S+) /.exec(mehrziel[0])![1];
-    const ausQuelle = decoded.edges.filter((e) => e.sourceId === quelle && e.edgeType === 'compose');
+    const ausQuelle = kanten.filter((e) => e.sourceId === quelle && e.edgeType === 'compose');
     expect(ausQuelle.length).toBeGreaterThan(1);
 
     // Und die MENGE stimmt: was der Text traegt, ist was das Werkzeug zaehlt.
-    expect(decoded.edges.length).toBe(fe.total);
+    expect(kanten.length).toBe(fe.total);
   }, 120_000);
 
   it('eine Kante mit eigenen Attributen bleibt eine eigene Zeile', async () => {

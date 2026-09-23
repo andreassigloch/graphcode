@@ -28,9 +28,6 @@ export { registerEmitters, computeDomains, makeUpdateEventHook, ResponseCache } 
 export { materializeTrajectory } from './projections/trajectory.js';
 export type { UpdateDomain, LiveUpdateEvent, RegisterEmittersOptions } from './surface/emit.js';
 
-// Format-E codec (CR-GC-103) — deterministic, commit-/merge-safe round-trip.
-export { GraphCodeCodec } from './projections/codec.js';
-
 // Graph→Markdown/JSON re-exporter (CR-GC-113, MOD-docs) — the single SSOT sync
 // path: render the live in-memory graph back into commit-able docs.
 export {

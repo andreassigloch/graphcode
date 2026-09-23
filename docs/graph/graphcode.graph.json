@@ -2072,8 +2072,8 @@
     {
       "id": "FCHAIN-codec-roundtrip",
       "type": "FCHAIN",
-      "name": "Format-E Round-Trip (encode∘decode)",
-      "description": "encode → decode → Vergleich; deterministisch, validiert; commit-/merge-arm. (SPEC §2.4, L3)",
+      "name": "Format-E Round-Trip (serialize∘parse)",
+      "description": "serialize → parse → Vergleich; deterministisch, validiert; commit-/merge-arm. (SPEC §2.4, L3) Die Schreibhaelfte ist seit CR-GC-631 keine eigene Funktion mehr: die Schnitt-Werkzeuge rufen FormatECodec.serialize aus @sigloch/graph-api-core direkt, graphcode fuehrt dafuer keinen zweiten Codec.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z"
     },
@@ -3490,15 +3490,15 @@
     {
       "id": "FUNC-decode",
       "type": "FUNC",
-      "name": "decode(json)",
-      "description": "Format-E → Graph. Das Parsen delegiert an FormatECodec.parse (der eine Parser); graphcode-eigen bleibt die Rekonstruktion aus dem Operations-Diff samt onUnnamed (CR-GC-321) und der Implicit-Add-Ablehnung (CR-GC-310). (CR-GC-103, CR-GC-536)",
+      "name": "formatEToCommands(harness, text)",
+      "description": "Format-E-Text → MutateCommands: der EINE Eingangsweg (graph_mutate UND bootstrap, CR-GC-630). Das Parsen delegiert an FormatECodec.parse; graphcode-eigen bleibt die Abbildung Praefix → Operation (+ - ~ M, CR-GC-627), die Vierphasen-Ordnung, die Typpruefung gegen den Speicher, die Implicit-Add-Ablehnung (CR-GC-310) und die unnamed-Meldung (CR-GC-321). Die frueher hier gefuehrte Graph-Rekonstruktion ist mit CR-GC-631 entfallen — Operationen sind die Wahrheit, ein Graph war das Zweitmodell daneben.",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "updated_at": "2026-06-17T00:00:00.000Z",
       "codeRef": null,
       "realRef": {
-        "file": "src/projections/codec.ts",
-        "symbol": "decode",
+        "file": "src/surface/format-e-commands.ts",
+        "symbol": "formatEToCommands",
         "lang": "ts"
       }
     },
@@ -3543,21 +3543,6 @@
       "realRef": {
         "file": "src/surface/emit.ts",
         "symbol": "makeUpdateEventHook",
-        "lang": "ts"
-      }
-    },
-    {
-      "id": "FUNC-encode",
-      "type": "FUNC",
-      "name": "encode(graph)",
-      "description": "Serialisiert einen Graph als Format-E. Seit CR-GC-536 eine DELEGATION an FormatECodec.serialize(g, {roundTrip:true}) in @sigloch/graph-api-core — graphcode erzeugt selbst keinen Format-E-Text mehr. Determinismus, Rundlauf und Pruefung liegen im einen Codec (REQ-formatE-parity: single codec, no fork).",
-      "status": "done",
-      "created_at": "2026-06-16T00:00:00.000Z",
-      "updated_at": "2026-06-17T00:00:00.000Z",
-      "codeRef": null,
-      "realRef": {
-        "file": "src/projections/codec.ts",
-        "symbol": "encode",
         "lang": "ts"
       }
     },
@@ -4791,7 +4776,7 @@
       "id": "REQ-codec-validation",
       "type": "REQ",
       "name": "Codec-Validierung gegen SE_DESCRIPTOR",
-      "description": "CR-GC-103: encode/decode validiert gegen SE_DESCRIPTOR; ungültige Typen → Validierungsfehler, kein silent pass.",
+      "description": "CR-GC-103: serialize/parse validiert gegen SE_DESCRIPTOR; ungültige Typen → Validierungsfehler, kein silent pass.",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
@@ -9329,13 +9314,6 @@
     },
     {
       "source": "CR-GC-103",
-      "target": "FUNC-encode",
-      "type": "relation",
-      "weight": 1,
-      "created_at": "2026-06-17T00:00:00.000Z"
-    },
-    {
-      "source": "CR-GC-103",
       "target": "MOD-projections",
       "type": "relation"
     },
@@ -11069,11 +11047,6 @@
     },
     {
       "source": "CR-GC-268",
-      "target": "FUNC-encode",
-      "type": "relation"
-    },
-    {
-      "source": "CR-GC-268",
       "target": "MOD-projections",
       "type": "relation"
     },
@@ -11091,11 +11064,6 @@
     {
       "source": "CR-GC-269",
       "target": "FUNC-decode",
-      "type": "relation"
-    },
-    {
-      "source": "CR-GC-269",
-      "target": "FUNC-encode",
       "type": "relation"
     },
     {
@@ -11902,11 +11870,6 @@
     },
     {
       "source": "CR-GC-321",
-      "target": "FUNC-encode",
-      "type": "relation"
-    },
-    {
-      "source": "CR-GC-321",
       "target": "FUNC-mutate",
       "type": "relation"
     },
@@ -12628,13 +12591,6 @@
     {
       "source": "FCHAIN-codec-roundtrip",
       "target": "FUNC-decode",
-      "type": "compose",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FCHAIN-codec-roundtrip",
-      "target": "FUNC-encode",
       "type": "compose",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
@@ -14055,13 +14011,6 @@
     },
     {
       "source": "FLOW-graph-state",
-      "target": "FUNC-encode",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FLOW-graph-state",
       "target": "FUNC-evaluate-rules",
       "type": "io",
       "weight": 1,
@@ -14128,6 +14077,11 @@
       "target": "FUNC-nd-similarity",
       "type": "io",
       "weight": "1"
+    },
+    {
+      "source": "FLOW-graph-state",
+      "target": "FUNC-read-tools",
+      "type": "io"
     },
     {
       "source": "FLOW-graph-state",
@@ -15837,11 +15791,6 @@
     },
     {
       "source": "FUNC-block-gedaechtnis",
-      "target": "FUNC-encode",
-      "type": "compose"
-    },
-    {
-      "source": "FUNC-block-gedaechtnis",
       "target": "FUNC-graph-export-snapshot",
       "type": "compose"
     },
@@ -16367,7 +16316,7 @@
     },
     {
       "source": "FUNC-decode",
-      "target": "MOD-projections",
+      "target": "MOD-surface",
       "type": "allocate"
     },
     {
@@ -16376,6 +16325,11 @@
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-decode",
+      "target": "REQ-formatE-diff-dialect",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-deduce-tests",
@@ -16454,18 +16408,6 @@
     {
       "source": "FUNC-emit-update-event",
       "target": "REQ-versioned-broadcast",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-encode",
-      "target": "MOD-projections",
-      "type": "allocate"
-    },
-    {
-      "source": "FUNC-encode",
-      "target": "REQ-formatE-diff-dialect",
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
@@ -20704,5 +20646,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 398
+  "graphVersion": 399
 }

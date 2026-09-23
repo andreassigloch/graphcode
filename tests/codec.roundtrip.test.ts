@@ -1,5 +1,5 @@
 /**
- * TEST-roundtrip — acceptance test for GraphCodeCodec (CR-GC-103).
+ * TEST-roundtrip — acceptance test fuer den Format-E-Rundlauf (CR-GC-103, CR-GC-631).
  *
  * Fixture: SSOT graph docs/graph/graphcode.graph.json (full SSOT graph).
  * This is a stronger fixture than rasentraktor because it exercises the full
@@ -18,7 +18,8 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { Graph, GraphNode, GraphEdge } from '@sigloch/graph-api-core';
-import { GraphCodeCodec } from '../src/projections/codec.js';
+import { FORMAT_E_CODEC } from '../src/surface/format-e-commands.js';
+import { knotenAus, kantenAus } from './helpers/format-e.js';
 import { elementToNode } from '../src/kernel/element-node.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -52,7 +53,7 @@ interface OntologyJson {
 
 /**
  * Convert the materialized OntologyJson (docs/graph/*.graph.json) to the
- * Graph shape used by GraphCodeCodec.
+ * Graph shape used by the codec.
  *
  * Mapping:
  *   node.uid         = element.id
@@ -159,22 +160,19 @@ function normalize(g: Graph): Graph {
 // Tests
 // ---------------------------------------------------------------------------
 
-describe('TEST-roundtrip: GraphCodeCodec (SSOT fixture)', () => {
-  let codec: GraphCodeCodec;
+describe('TEST-roundtrip: Format-E (SSOT fixture)', () => {
   let fixture: Graph;
   let encoded1: string;
   let encoded2: string;
 
   beforeAll(() => {
-    codec = new GraphCodeCodec();
-
     const raw: OntologyJson = JSON.parse(
       readFileSync(join(__dirname, '..', 'docs', 'graph', 'graphcode.graph.json'), 'utf8'),
     );
     fixture = ontologyJsonToGraph(raw);
 
-    encoded1 = codec.encode(fixture);
-    encoded2 = codec.encode(fixture);
+    encoded1 = FORMAT_E_CODEC.serialize(fixture, { roundTrip: true });
+    encoded2 = FORMAT_E_CODEC.serialize(fixture, { roundTrip: true });
   });
 
   it('(a) encode is deterministic: two calls are byte-identical', () => {
@@ -187,25 +185,57 @@ describe('TEST-roundtrip: GraphCodeCodec (SSOT fixture)', () => {
     expect(encoded1).toContain('## Edges');
   });
 
-  it('(c) decode(encode(g)) deep-equals g (round-trip L3)', () => {
-    const decoded = codec.decode(encoded1);
-    expect(normalize(decoded)).toEqual(normalize(fixture));
+  /**
+   * CR-GC-631 — der Rundlauf wird ueber die PARSER-OPERATIONEN geprueft, nicht ueber einen
+   * zweiten Graphen. Bis hierher lautete die Zusicherung `decode(encode(g)) deep-equals g`;
+   * sie brauchte eine Graph-Rekonstruktion, die nur diese Tests je gerufen haben. Die Aussage
+   * bleibt dieselbe: was `serialize` schreibt, nennt der Parser vollstaendig zurueck.
+   *
+   * Der frueher separate Fall `encode(decode(encode(g))) === encode(g)` ist damit entfallen —
+   * er sagte nichts, was (a) Determinismus und (c) Vollstaendigkeit nicht zusammen sagen.
+   */
+  it('(c) parse(serialize(g)) nennt dieselben Knoten wie g (Rundlauf L3)', () => {
+    const gelesen = knotenAus(encoded1)
+      .map((n) => ({
+        uid: n.uid,
+        type: n.type,
+        name: n.name,
+        ...(n.description !== undefined && n.description !== '' ? { description: n.description } : {}),
+        attributes: Object.fromEntries(
+          Object.entries(scalarsAsStrings(n.attributes)).sort(([a], [b]) => a.localeCompare(b)),
+        ),
+        ...(n.roh['__createdAt'] !== undefined ? { createdAt: n.roh['__createdAt'] } : {}),
+        ...(n.roh['__updatedAt'] !== undefined ? { updatedAt: n.roh['__updatedAt'] } : {}),
+      }))
+      .sort((a, b) => a.uid.localeCompare(b.uid));
+
+    expect(gelesen).toEqual(normalize(fixture).nodes);
   });
 
-  it('(d) encode(decode(encode(g))) === encode(g) (idempotent)', () => {
-    const decoded = codec.decode(encoded1);
-    const reEncoded = codec.encode(decoded);
-    expect(reEncoded).toBe(encoded1);
+  it('(c2) parse(serialize(g)) nennt dieselben Kanten wie g', () => {
+    const gelesen = kantenAus(encoded1)
+      .map((e) => ({
+        sourceId: e.sourceId,
+        targetId: e.targetId,
+        edgeType: e.edgeType,
+        attributes: Object.fromEntries(Object.entries(e.attributes).sort(([a], [b]) => a.localeCompare(b))),
+      }))
+      .sort(
+        (a, b) =>
+          a.sourceId.localeCompare(b.sourceId) ||
+          a.targetId.localeCompare(b.targetId) ||
+          a.edgeType.localeCompare(b.edgeType),
+      );
+
+    expect(gelesen).toEqual(normalize(fixture).edges);
   });
 
   it('(e) node count preserved', () => {
-    const decoded = codec.decode(encoded1);
-    expect(decoded.nodes.length).toBe(fixture.nodes.length);
+    expect(knotenAus(encoded1).length).toBe(fixture.nodes.length);
   });
 
   it('(f) edge count preserved', () => {
-    const decoded = codec.decode(encoded1);
-    expect(decoded.edges.length).toBe(fixture.edges.length);
+    expect(kantenAus(encoded1).length).toBe(fixture.edges.length);
   });
 
   // CR-GC-244 — object-valued attributes (realRef/testRef) must stay legible in
@@ -228,10 +258,10 @@ describe('TEST-roundtrip: GraphCodeCodec (SSOT fixture)', () => {
       ],
       edges: [],
     };
-    const enc = codec.encode(g);
+    const enc = FORMAT_E_CODEC.serialize(g, { roundTrip: true });
     expect(enc).not.toContain('[object Object]');
     expect(enc).toContain('"file":"src/x.ts"');
-    // idempotent after a Format-E round-trip (string-typed, no re-parse)
-    expect(codec.encode(codec.decode(enc))).toBe(enc);
+    // Und die Bindung kommt als OBJEKT zurueck, nicht als Text — genau der Defekt von CR-GC-244.
+    expect(knotenAus(enc)[0].attributes.realRef).toEqual({ file: 'src/x.ts', symbol: 'x', lang: 'ts' });
   });
 });

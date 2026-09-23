@@ -66,7 +66,7 @@ Ausgeloest von: `ACTOR-agent` · `ACTOR-learning-engine` · `ACTOR-owner`
 
 - `FCHAIN-apply-gate` — Apply-Gate-Ablauf (Governed Mutation): `FUNC-arch-fitness` → `FUNC-claim-store-lock` → `FUNC-create-harness` → `FUNC-emit-trajectory` → `FUNC-evaluate-rules` → `FUNC-fit-advisory` → `FUNC-graph-store` → `FUNC-host-socket` → `FUNC-mutate` → `FUNC-own-kuzu-host` → `FUNC-session-shutdown` → `FUNC-tool-context`
 - `FCHAIN-capture` — Interaktive Erfassung (Text → suggest-Tier): `FUNC-decode` → `FUNC-mutate`
-- `FCHAIN-codec-roundtrip` — Format-E Round-Trip (encode∘decode): `FUNC-decode` → `FUNC-encode`
+- `FCHAIN-codec-roundtrip` — Format-E Round-Trip (serialize∘parse): `FUNC-decode`
 - `FCHAIN-interface-escalation` — Interface-Änderungs-Eskalation: `FUNC-graph-impact` → `FUNC-mutate` → `FUNC-read-tools`
 - `FCHAIN-skill-authoring` — Skill legt Modellknoten an: `FUNC-author-req` → `FUNC-author-uc` → `FUNC-close-violations` → `FUNC-graph-realize` → `FUNC-mutate` → `FUNC-se-conops` → `FUNC-se-fmea` → `FUNC-se-generate` → `FUNC-se-irr` → `FUNC-se-optimize` → `FUNC-se-plan` → `FUNC-se-top-level` → `FUNC-se-trade` → `FUNC-target-profile`
 
@@ -158,7 +158,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-100` | done | Harness Core | `FUNC-evaluate-rules` · `FUNC-graph-store` · `FUNC-import` · `FUNC-mutate` · `MOD-kernel` · `REQ-buildable-standalone` · `REQ-confidence-tier` · `REQ-disk-persistence` · `REQ-harness-schema-in-contracts` · `REQ-import-se-ontology` · `REQ-one-gate-per-repo` · `REQ-rule-enforcement` · `REQ-single-kuzu-owner` |
 | `CR-GC-101` | done | MCP-Tools | `FUNC-graph-expand` · `FUNC-graph-impact` · `MOD-surface` · `REQ-audit-trail` · `REQ-cache-layering` · `REQ-mcp-gate-symmetry` · `REQ-mcp-tool-registry` · `REQ-progressive-expansion` · `REQ-query-precision` · `REQ-single-transport` · `REQ-subgraph-slicing` |
 | `CR-GC-102` | done | Hook-System | `FUNC-emit-trajectory` · `FUNC-emit-update-event` · `MOD-surface` · `REQ-auto-persist-merge` · `REQ-hook-extension-points` · `REQ-hook-order-deterministic` · `REQ-precommit-timeout` · `REQ-trajectory-emit` · `REQ-versioned-cache` |
-| `CR-GC-103` | done | Format-E Codec | `FUNC-decode` · `FUNC-encode` · `MOD-projections` · `REQ-codec-validation` · `REQ-deterministic-serialization` · `REQ-formatE-diff-dialect` · `REQ-formatE-parity` · `REQ-roundtrip-conformance` |
+| `CR-GC-103` | done | Format-E Codec | `FUNC-decode` · `MOD-projections` · `REQ-codec-validation` · `REQ-deterministic-serialization` · `REQ-formatE-diff-dialect` · `REQ-formatE-parity` · `REQ-roundtrip-conformance` |
 | `CR-GC-104` | done | Skills/Prompts-Modul | `MOD-agent-surface` · `REQ-doc-export` |
 | `CR-GC-105` | done | Architektur-Verfeinerung | `MOD-surface` · `REQ-impact-based-testing` · `REQ-interface-change-escalation` · `REQ-small-model-viable` |
 | `CR-GC-106` | done | Interface-Schemas | `MOD-projections` · `REQ-interface-schema` |
@@ -243,8 +243,8 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-265` | done | npm-Metadaten + Dependency-Range-Drift | `MOD-surface` |
 | `CR-GC-266` | done | REQ-MOD allocate migrieren (CR-228 Teil A, graphcode-Seite) | `FUNC-compute-readiness` |
 | `CR-GC-267` | done | graphcode-client extrahieren: Host-Socket + View-Katalog | `FUNC-check-code-conformance` · `FUNC-export-markdown` · `MOD-surface` |
-| `CR-GC-268` | done | Format-E-Codec: Fan-out erzeugen | `FUNC-encode` · `MOD-projections` · `REQ-deterministic-serialization` |
-| `CR-GC-269` | done | encodeUid/decodeUid entfernen (Format-E v2) | `FUNC-decode` · `FUNC-encode` · `MOD-projections` · `REQ-roundtrip-conformance` |
+| `CR-GC-268` | done | Format-E-Codec: Fan-out erzeugen | `MOD-projections` · `REQ-deterministic-serialization` |
+| `CR-GC-269` | done | encodeUid/decodeUid entfernen (Format-E v2) | `FUNC-decode` · `MOD-projections` · `REQ-roundtrip-conformance` |
 | `CR-GC-270` | done | SERVER_VERSION aus package.json lesen | `FUNC-serve-stdio` · `REQ-npx-distribution` |
 | `CR-GC-271` | done | SCHEMA-Bindung: zodDefinition raus, realRef-Stub materialisieren | `FUNC-export-markdown` · `MOD-projections` |
 | `CR-GC-272` | done | readiness + panels nach graphcode-client | `FUNC-score-completeness` · `REQ-self-contained-dist` |
@@ -295,7 +295,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-318` | done | reqLevels lief nur ueber compose — satisfy-Bein fehlte | `FUNC-view-rtm` |
 | `CR-GC-319` | done | audit_trail lieferte Rohdatensaetze statt einer Projektion | `MOD-surface` |
 | `CR-GC-320` | done | executor.ts schneiden — Schritt 1 (Prompt · Ranking · Prosa-Recovery) | `FUNC-rank-candidates` |
-| `CR-GC-321` | done | __name in Format-E entdeckbar machen, stillen Namens-Fallback laut machen | `FUNC-decode` · `FUNC-encode` · `FUNC-mutate` |
+| `CR-GC-321` | done | __name in Format-E entdeckbar machen, stillen Namens-Fallback laut machen | `FUNC-decode` · `FUNC-mutate` |
 | `CR-GC-322` | done | GRAPHCODE-STEERING.md — die Anleitung fuer den Menschen (Steuerung und docs/views/) | `FUNC-harness-cli` · `MOD-projections` |
 | `CR-GC-330` | done | Der Learning-Feed zieht in den eigenen Workspace | `FUNC-emit-trajectory` · `REQ-post-emit-trajectory` · `REQ-trajectory-emit` |
 | `CR-GC-331` | done | graphcode remove raeumt auch den Vorgaenger-Ordner weg | `FUNC-harness-cli` · `REQ-repo-uninstall` |

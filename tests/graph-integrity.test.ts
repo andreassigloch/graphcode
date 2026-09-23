@@ -1,7 +1,7 @@
 /**
  * Graph integrity — the parallel-work safety net (SSOT, read-only).
  *
- * Delegates to the CANONICAL validator (GraphCodeCodec.validate, CR-GC-103) —
+ * Delegates to the CANONICAL validator (FormatECodec.validate, CR-GC-103/631) —
  * which already covers node types, edge types, valid pairs, AND referential
  * integrity ("Edge references unknown source/target node" = the clobber guard).
  * NO validation logic is re-implemented here.
@@ -14,7 +14,7 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { GraphCodeCodec } from '../src/projections/codec.js';
+import { FORMAT_E_CODEC } from '../src/surface/format-e-commands.js';
 import type { Graph } from '@sigloch/graph-api-core';
 
 const GRAPH = join(__dirname, '..', 'docs/graph/graphcode.graph.json');
@@ -34,7 +34,7 @@ describe('graph integrity (SSOT safety net)', () => {
   };
 
   it('passes the canonical validator (types, edge pairs, referential integrity)', () => {
-    const { errors } = new GraphCodeCodec().validate(graph);
+    const { errors } = FORMAT_E_CODEC.validate(graph);
     if (errors.length) console.error('graph validation errors:\n  - ' + errors.join('\n  - '));
     expect(errors).toEqual([]);
   });

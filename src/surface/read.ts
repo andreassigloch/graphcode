@@ -374,7 +374,7 @@ export function buildContextSlice(
 // -------------------------------------------------------------------------
 
 export function bindReadTools(ctx: ToolContext): MCPToolRegistry {
-  const { harness, codec, gcCodec, graphVersion } = ctx;
+  const { harness, codec, graphVersion } = ctx;
 
   /**
    * CR-GC-363: Freshness-Banner inline — eine `//`-Kopfzeile vor dem Format-E-
@@ -414,7 +414,9 @@ export function bindReadTools(ctx: ToolContext): MCPToolRegistry {
       if (input.format === 'formatE') {
         const ids = new Set(sliced.map((n) => n.uid));
         const edges = harness.getGraph().edges.filter((e) => ids.has(e.sourceId) && ids.has(e.targetId));
-        const formatE = gcCodec.encode({ nodes: sliced, edges });
+        // CR-GC-631: `roundTrip` ist genau das, was der Wrapper hier tat — gemessen bytegleich
+        // ueber den eigenen Graphen (883 Knoten, 2.169 Kanten, 395.018 Zeichen).
+        const formatE = codec.serialize({ nodes: sliced, edges }, { roundTrip: true });
         return {
           formatE: gekuerzt ? `${KUERZUNGS_LEGENDE}\n${formatE}` : formatE,
           total,

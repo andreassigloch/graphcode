@@ -58,7 +58,6 @@ describe('TEST-tool-context-contract: SCHEMA-tool-context ist ein Zod-Vertrag', 
     const parsed = ToolContext.parse(ctx);
     expect(parsed.harness).toBe(harness);
     expect(parsed.codec).toBe(ctx.codec);
-    expect(parsed.gcCodec).toBe(ctx.gcCodec);
     expect(parsed.graphVersion()).toBe(0);
     expect(parsed.sessionId()).toMatch(/^sess-/);
     expect(parsed.ownerPid()).toBeNull();
@@ -79,7 +78,7 @@ describe('TEST-tool-context-contract: SCHEMA-tool-context ist ein Zod-Vertrag', 
   });
 
   it('weist ein fehlendes Mitglied ab und nennt es als Pfad', () => {
-    for (const key of ['harness', 'auditLog', 'codec', 'gcCodec', 'recordAudit', 'serializeToolWrite', 'occReject'] as const) {
+    for (const key of ['harness', 'auditLog', 'codec', 'recordAudit', 'serializeToolWrite', 'occReject'] as const) {
       const { [key]: _dropped, ...without } = ctx;
       expect(pathsOf(without)).toEqual([key]);
     }

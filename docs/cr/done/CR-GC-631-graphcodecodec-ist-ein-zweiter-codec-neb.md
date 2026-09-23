@@ -1,6 +1,6 @@
 # CR-GC-631: GraphCodeCodec faellt — ein Codec, kein Wrapper
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-23)
 **Typ:** aus Item ITEM-2026-511 (finding)
 **Erstellt:** 2026-09-23
 **Item:** bok/items/ITEM-2026-511.json (Lane: code)
@@ -74,6 +74,38 @@ Stellen. Ein Teilumbau liesse genau den parallelen Pfad stehen, den dieser CR sc
    Attribute wie `g`, und `serialize` ist zweimal byte-gleich.
 4. VOLL gruen.
 5. **Ausgeworfene Zeilen im Bericht** — `git diff --shortstat` fuer `src/`, getrennt von den Tests.
+
+## Ergebnis (2026-09-23)
+
+| Abnahme | Ergebnis |
+|---|---|
+| 1. `grep -rn "GraphCodeCodec\|gcCodec" src tests scripts` | leer |
+| 2. Ausgabe bytegleich | `gcCodec.encode(g)` vs. `codec.serialize(g, {roundTrip:true})` ueber den eigenen Graphen: 883 Knoten, 2.169 Kanten, **395.018 Zeichen identisch** |
+| 3. Rundlauf geprueft | `parse(serialize(g))` nennt Knoten, Kanten, Attribute und die Provenienzfelder von `g`; `serialize` zweimal bytegleich |
+| 4. VOLL | 1518/1520. Die zwei roten sind `distribution` und `lockfile-sync` — der haengende Release-Zug (ITEM-2026-490), vor und nach diesem CR dieselben |
+| 5. Zeilen | **`src/`: +14 / −290.** Tests: +121 / −106, plus 79 Zeilen Helfer gegen 140 Zeilen `decode()` |
+
+**Modell-Kongruenz (nicht im urspruenglichen Umfang, aber Pflicht).** RC-01 feuerte nach dem
+Loeschen dreimal statt einmal: `FUNC-decode` und `FUNC-encode` zeigten auf die geloeschte Datei.
+Ueber das Gate korrigiert (graphVersion 399, tier `suggest`, keine Fehler):
+
+- `FUNC-encode` **geloescht** — die Serialisierung ist keine graphcode-Funktion mehr, die
+  Schnitt-Werkzeuge rufen `FormatECodec.serialize` direkt. Mit ihm fallen seine
+  CR-`relation`-Kanten (CR-GC-103/268/269/321); der CR-Text in `docs/cr/` bleibt die Historie.
+- `FUNC-decode` **umgehaengt** auf `formatEToCommands` in `src/surface/format-e-commands.ts`,
+  `allocate` von `MOD-projections` nach `MOD-surface`, und er uebernimmt
+  `satisfy REQ-formatE-diff-dialect` von `FUNC-encode`. **Die uid bleibt `FUNC-decode`** — sie ist
+  historisch, die Funktion ist der echte Nachfolger (Text hinein, Operationen heraus), und ein
+  uid-Wechsel haette sechs CR-Kanten Historie gekostet.
+- `FLOW-graph-state -io-> FUNC-read-tools` statt auf `FUNC-encode`.
+- `FCHAIN-codec-roundtrip` umbenannt in „serialize∘parse"; die Schreibhaelfte steht als importiert
+  in der Beschreibung. **Bewusst offen gelassen:** die Kette nennt damit nur noch eine eigene
+  Funktion. `FUNC-read-tools` hineinzunehmen wollte eine io-Kante auf
+  `FLOW-formatE-artifact-agent`, und die hat mit `ACTOR-agent` bereits einen Produzenten —
+  IO-02 blockt (gemessen im dryRun). Der saubere Zug waere eine eigene FLOW; das ist kein
+  Nebenzug dieses CR.
+- `tests/test-selection.audit.test.ts` zeigte auf die geloeschte Datei. Der Handschnitt aus
+  CR-GC-536 ist derselbe geblieben — gemessen dieselben vier Testdateien fuer die neue.
 
 ## Abgrenzung
 

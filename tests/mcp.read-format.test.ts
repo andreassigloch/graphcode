@@ -12,7 +12,7 @@ import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
-import { GraphCodeCodec } from '../src/projections/codec.js';
+import { knotenAus, kantenAus } from './helpers/format-e.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
 
@@ -68,8 +68,7 @@ describe('TEST-read-format-param (CR-GC-210): JSON default, Format-E opt-in', ()
     expect(typeof fe.formatE).toBe('string');
     expect(fe.formatE).toContain('REQ-reset');
     // Round-trip: the same codec re-imports the slice; the seeded uids come back.
-    const decoded = new GraphCodeCodec().decode(fe.formatE);
-    expect(decoded.nodes.map((n) => n.uid)).toContain('REQ-reset');
+    expect(knotenAus(fe.formatE).map((n) => n.uid)).toContain('REQ-reset');
   });
 
   it('graph_get_edges: default = JSON; format:formatE = parseable Format-E (edges + endpoint nodes)', async () => {
@@ -82,8 +81,7 @@ describe('TEST-read-format-param (CR-GC-210): JSON default, Format-E opt-in', ()
     const fe = (await tools.graph_get_edges.handler({ format: 'formatE' })) as { formatE: string; total: number };
     expect(typeof fe.formatE).toBe('string');
     // Endpoint nodes are included → no dangling reference → the codec re-imports it cleanly.
-    const decoded = new GraphCodeCodec().decode(fe.formatE);
-    expect(decoded.edges.length).toBeGreaterThan(0);
+    expect(kantenAus(fe.formatE).length).toBeGreaterThan(0);
     expect(fe.formatE).toContain('REQ-reset');
   });
 });
@@ -152,8 +150,7 @@ describe('CR-GC-363: Freshness-Banner inline (graph_context + graph_impact)', ()
     expect(impRest.join('\n')).toBe(freshImp.formatE);
 
     // Format-E-parsebar trotz Banner: derselbe Codec liest die Scheibe fehlerfrei zurück.
-    const decoded = new GraphCodeCodec().decode(staleCtx.formatE);
-    expect(decoded.nodes.map((n) => n.uid)).toContain('REQ-reset');
+    expect(knotenAus(staleCtx.formatE).map((n) => n.uid)).toContain('REQ-reset');
   });
 
   it('ohne jeden Stamp: kein Banner (absent ist nicht "hinter dem Repo-State")', async () => {

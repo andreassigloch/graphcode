@@ -23,7 +23,6 @@ import type { MutateCommand, MutateResult } from '@sigloch/contracts/harness';
 import type { GraphCodeHarness } from '../kernel/harness.js';
 import { forwardIssues } from '../kernel/harness-handle-contract.js';
 import type { ToolPort } from '../kernel/tool-contract.js';
-import { GraphCodeCodec } from '../projections/codec.js';
 import type { EditSource, TrajectoryStamps } from '../projections/trajectory.js';
 import type { Arbeitsmenge } from '../kernel/measure/working-set.js';
 import type { AuditOrigin, TemplateEdit } from './tool-context.js';
@@ -52,10 +51,8 @@ export const ToolContext = z
       (v) => typeof (v as AuditLog | null)?.record === 'function' && typeof (v as AuditLog | null)?.query === 'function',
       { message: 'auditLog muss record() und query() tragen' },
     ),
-    /** Format-E serializer for the slice tools. */
+    /** Der EINE Format-E-Codec — Serialisieren fuer die Schnitt-Werkzeuge, Parsen fuers Gate. */
     codec: z.instanceof(FormatECodec),
-    /** Format-E v2 wrapper for the opt-in read-tool slices (CR-GC-210, CR-GC-269). */
-    gcCodec: z.instanceof(GraphCodeCodec),
     /** Read accessor for the applied-batch counter (never a settable field). */
     graphVersion: member<() => number>('graphVersion'),
     /**

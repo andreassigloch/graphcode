@@ -1,7 +1,7 @@
 /**
  * TEST-formate-ops (CR-GC-627) — Format-E ist eine OPERATIONSSPRACHE, und das Gate nimmt sie ganz.
  *
- * BEFUND: `formatEToCommands` schickte den Text durch `gcCodec.decode()`, und das rekonstruiert
+ * BEFUND: `formatEToCommands` schickte den Text durch eine Graph-Rekonstruktion, und die rekonstruiert
  * einen GRAPHEN — eine Menge `{nodes, edges}`. Ein Graph kann „diese Knoten existieren" sagen,
  * nicht „diesen löschen". Jedes Nicht-Add-Op endete deshalb im Wurf
  * `operation "update_node" is not supported for Graph reconstruction`, obwohl der Parser die vier
@@ -27,7 +27,7 @@ import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
-import { GraphCodeCodec } from '../src/projections/codec.js';
+import { knotenAus } from './helpers/format-e.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import { OP_RISK, type HarnessConfig, type MutateCommand } from '@sigloch/contracts/harness';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
@@ -251,17 +251,6 @@ describe('CR-GC-627: die Grenzen bleiben, wo sie waren', () => {
     expect(kante('TEST-seed', 'REQ-zweit', 'verify'), 'unveraendert').toBeDefined();
   });
 
-  it('`decode()` bleibt der LESEweg und wirft weiter bei Nicht-Add-Ops', () => {
-    // Der Umweg, der hier entfernt wurde, ist als Rekonstruktions-Codec weiterhin richtig:
-    // `graph_export` und der Rundlauf lesen Encode-Ausgabe, und die kennt nur `+`.
-    expect(() => new GraphCodeCodec().decode('## Nodes\n### REQ\n~ REQ-alt|Neuer Text\n')).toThrow(
-      /not supported for Graph reconstruction/,
-    );
-    expect(() => new GraphCodeCodec().decode('## Nodes\n### REQ\n- REQ-alt\n')).toThrow(
-      /not supported for Graph reconstruction/,
-    );
-  });
-
   it('eine unbekannte uid bleibt ein Fehler — auch auf der Löschseite', async () => {
     const res = (await tools.graph_mutate.handler({
       formatE: '## Edges\n- FUNC-gibtesnicht -satisfy-> REQ-alt\n',
@@ -314,7 +303,8 @@ describe('CR-GC-627: Beschreibung, Guide und Code sagen dasselbe', () => {
 
     expect(beispiel).toMatch(/^#.*~ /m);
     expect(beispiel).toMatch(/^#.*- /m);
-    // Der Block bleibt, was er war: ein ADDITIVES Beispiel, das der Rekonstruktions-Codec frisst.
-    expect(() => new GraphCodeCodec().decode(beispiel)).not.toThrow();
+    // Der Block bleibt, was er war: ein ADDITIVES Beispiel — die `~`/`-`-Zeilen stehen
+    // auskommentiert darin, sonst legte der Guide einen Loeschzug als Vorlage vor.
+    expect(() => knotenAus(beispiel)).not.toThrow();
   });
 });

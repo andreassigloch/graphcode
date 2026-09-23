@@ -50,11 +50,10 @@
 | `FUNC-compute-readiness` | FUNC | computeReadiness(graph) |
 | `FUNC-compute-steering-delta` | FUNC | computeSteeringDelta(before, after) |
 | `FUNC-create-harness` | FUNC | createHarness |
-| `FUNC-decode` | FUNC | decode(json) |
+| `FUNC-decode` | FUNC | formatEToCommands(harness, text) |
 | `FUNC-deduce-tests` | FUNC | graph_tests(changeSet) |
 | `FUNC-emit-trajectory` | FUNC | materializeTrajectory() |
 | `FUNC-emit-update-event` | FUNC | emitUpdateEvent(domains) |
-| `FUNC-encode` | FUNC | encode(graph) |
 | `FUNC-evaluate-rules` | FUNC | evaluateRules() |
 | `FUNC-export-markdown` | FUNC | exportMarkdown(graph, view) |
 | `FUNC-export-marker` | FUNC | setExportPending |
@@ -189,11 +188,10 @@
 | `FUNC-compute-readiness` | `MOD-kernel-measure` |
 | `FUNC-compute-steering-delta` | `MOD-kernel-measure` |
 | `FUNC-create-harness` | `MOD-surface` |
-| `FUNC-decode` | `MOD-projections` |
+| `FUNC-decode` | `MOD-surface` |
 | `FUNC-deduce-tests` | `MOD-projections` |
 | `FUNC-emit-trajectory` | `MOD-projections` |
 | `FUNC-emit-update-event` | `MOD-surface` |
-| `FUNC-encode` | `MOD-projections` |
 | `FUNC-evaluate-rules` | `MOD-kernel` |
 | `FUNC-export-markdown` | `MOD-projections` |
 | `FUNC-export-marker` | `MOD-kernel` |

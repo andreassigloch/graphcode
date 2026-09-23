@@ -6,7 +6,7 @@
  * Musterblock ist Format-E-Wissen, kein Reporting-Wissen.
  *
  * Der Block ist GEPRÜFT, nicht behauptet: `tests/mutate.formate-name.test.ts`
- * jagt ihn durch `GraphCodeCodec.decode()` und verlangt einen Knoten des
+ * jagt ihn durch den Format-E-Parser und verlangt einen Knoten des
  * angefragten Typs mit `name !== uid` (REQ-N03). Ein Beispiel, das der Codec
  * nicht frisst, ist schlimmer als keins.
  *

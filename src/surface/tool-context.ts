@@ -22,12 +22,12 @@ import { randomUUID } from 'node:crypto';
 import type { GraphCodeHarness } from '../kernel/harness.js';
 import { ToolContext } from './tool-context-contract.js';
 import type { AuditLog, AuditEntry, OperationsLog } from '@sigloch/graph-api-core';
-import { FormatECodec, SE_DESCRIPTOR, FileOperationsLog } from '@sigloch/graph-api-core';
+import { SE_DESCRIPTOR, FileOperationsLog } from '@sigloch/graph-api-core';
+import { FORMAT_E_CODEC } from './format-e-commands.js';
 // CR-GC-314 REQ-A02: the rule-set version comes from the LOADED package, never from
 // config — otherwise the trail records a claim instead of a fact.
 import { RULES_VERSION } from '@sigloch/contracts/se';
 import type { MutateCommand, MutateResult, StaleDelta, StaleDeltaEntry } from '@sigloch/contracts/harness';
-import { GraphCodeCodec } from '../projections/codec.js';
 // CR-GC-363: die EINE bestehende Freshness-Klassifikation (liest die AF-01..05-Stamps
 // SYS.attributes.analysisFreshness.<id>.graphVersion gegen den Live-Zähler) — das
 // Banner rechnet Freshness NICHT neu, es konsumiert genau diese Funktion.
@@ -197,10 +197,9 @@ export function createToolContext(
   auditLog: AuditLog = new FileOperationsLog(harness.getStoreDir()),
   opts: { ownerPid?: string | null } = {},
 ): ToolContext {
-  const codec = new FormatECodec(SE_DESCRIPTOR);
-  // Round-trip-stable Format-E for the opt-in read-tool slices (CR-GC-210): the wrapper
-  // adds/strips the .TYPE uid suffix so the slice re-imports via the same codec.
-  const gcCodec = new GraphCodeCodec();
+  // CR-GC-631: DIE Format-E-Instanz des Prozesses. Bis hierher standen zwei nebeneinander —
+  // diese und die `inner` eines Wrappers, die dasselbe `new FormatECodec(SE_DESCRIPTOR)` war.
+  const codec = FORMAT_E_CODEC;
   // Version continuity (CR-GC-232): resume from the durable log's highest version —
   // never reset to 0 per session (CR-233 builds its OCC on this monotonicity).
   const versioned = auditLog as Partial<Pick<OperationsLog, 'latestVersion'>>;
@@ -556,7 +555,6 @@ export function createToolContext(
     harness,
     auditLog,
     codec,
-    gcCodec,
     graphVersion: () => _graphVersion,
     staleAnalysisBanner,
     recordAudit,

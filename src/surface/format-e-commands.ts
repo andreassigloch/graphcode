@@ -25,14 +25,14 @@ export const FORMAT_E_CODEC = new FormatECodec(SE_DESCRIPTOR);
  * Format-E-Block → MutateCommands (CR-GC-276, CR-GC-627, CR-GC-630). Ein Input-Codec, KEIN zweiter Schreibweg.
  *
  * CR-GC-627 — die PARSER-OPS werden direkt abgebildet, statt den Umweg über die
- * Graph-Rekonstruktion zu nehmen. Der Umweg (`gcCodec.decode()`) baut aus dem Operations-Diff
+ * Graph-Rekonstruktion zu nehmen. Der Umweg ueber eine Graph-Rekonstruktion baute aus dem Operations-Diff
  * eine Menge `{nodes, edges}`, und ein Graph kann „diese Knoten existieren" ausdrücken, nicht
  * „diesen löschen" — jedes Nicht-Add-Op endete deshalb im Wurf. Die Beschränkung war
  * graphcodes eigene, keine Eigenschaft der Sprache: bis auf `update-edge` ist die Abbildung
  * Präfix → `MutateCommand` eins zu eins.
  *
- * CR-GC-630 — `bootstrap()` ruft dieselbe Funktion. Damit hat `GraphCodeCodec.decode()`
- * keinen Produktionsaufrufer mehr; die Klasse faellt in ITEM-2026-511.
+ * CR-GC-630 — `bootstrap()` ruft dieselbe Funktion. Damit hatte die Rekonstruktion keinen
+ * Aufrufer mehr, und CR-GC-631 hat sie samt ihrer Wrapper-Klasse geloescht.
  *
  * Was hier geprüft wird, weil `decode()` es prüfte:
  *   - Knotentyp vorhanden (`### <TYPE>`-Sektion) und NICHT im Widerspruch zum Speicher,
