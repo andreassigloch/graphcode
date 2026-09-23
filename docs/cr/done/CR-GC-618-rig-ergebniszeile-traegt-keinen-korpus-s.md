@@ -1,6 +1,6 @@
 # CR-GC-618: Das Greenfield-Rig stempelt seinen Korpus, und ein Timeout wirft die Arbeit nicht weg
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-23)
 **Typ:** aus Item ITEM-2026-488 (finding); schliesst ITEM-2026-479 und ITEM-2026-485
 **Erstellt:** 2026-09-23
 **Item:** bok/items/ITEM-2026-488.json (Lane: code)
