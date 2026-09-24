@@ -1,6 +1,6 @@
 # CR-GC-655: Skill der Runde folgt der Dimension statt der Regel-Klausel (UC-01 bekommt author-uc statt author-req)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-24)
 **Typ:** aus Item ITEM-2026-551 (bug)
 **Erstellt:** 2026-09-24
 **Item:** bok/items/ITEM-2026-551.json (Lane: code)
