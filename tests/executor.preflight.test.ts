@@ -176,11 +176,16 @@ describe('preflightBatch (CR-GC-284, pur)', () => {
     const k = known();
     k.types.set('REQ-alt', 'REQ');
     k.verifiedReqs.add('REQ-alt');
+    // CR-GC-660: die Neu-Deklaration der bestehenden REQ faellt weg; geprueft bleibt, worum es hier
+    // geht — kein TEST-Stub fuer eine REQ, die im Graphen schon verifiziert ist.
+    k.types.set('UC-x', 'UC');
     const out = preflightBatch(
-      { commands: [addNode('REQ-alt', 'REQ', 'Alt', 'Das System muss Alt messbar liefern.')] },
+      { commands: [addNode('REQ-alt', 'REQ', 'Alt', 'Das System muss Alt messbar liefern.'), addEdge('UC-x', 'REQ-alt', 'compose')] },
       k,
     );
-    expect(out.action).toBe('pass');
+    const cmds = (out.input as { commands: { op: string; node?: { uid: string } }[] }).commands;
+    expect(cmds.some((c) => c.node?.uid.startsWith('TEST-verify-')), 'kein Stub').toBe(false);
+    expect(out.fixes.some((f) => f.includes('R-01'))).toBe(false);
   });
 
   it('fuzzyCandidates: Substring und Tippfehler treffen, Fremdes nicht', () => {
@@ -227,6 +232,34 @@ describe('CR-GC-659: scheitert ein Paar nur an den kinds, sagt die Meldung das',
   it('ist schon das Typpaar illegal, bleibt die bisherige Meldung', () => {
     const pf = preflightBatch({ commands: [addEdge('ACTOR-a', 'UC-u', 'io')] }, known({}));
     expect(pf.violations[0].message).toContain('Illegales Trace-Paar: ACTOR io UC');
+  });
+});
+
+describe('CR-GC-660: ein bestehender Knoten wird nicht ueberschrieben', () => {
+  // Gemessen gcrun-100..102: 26 von 45 Neu-Deklarationen ueberschrieben Text oder Namen.
+  const known: PreflightKnown = { types: new Map([['UC-a', 'UC'], ['FCHAIN-a', 'FCHAIN']]), verifiedReqs: new Set(), kinds: new Map() };
+
+  it('+ auf bestehenden Knoten gleichen Typs faellt weg, die Kante bleibt', () => {
+    const pf = preflightBatch(
+      { commands: [addNode('UC-a', 'UC', 'Neuer Name', 'Neuer schlechterer Text'), addEdge('UC-a', 'FCHAIN-a', 'compose')] },
+      known,
+    );
+    expect(pf.action).toBe('fixed');
+    const cmds = (pf.input as { commands: { op: string }[] }).commands;
+    expect(cmds.map((c) => c.op)).toEqual(['add-edge']);
+    expect(pf.fixes.join(' ')).toContain('UC-a nicht ueberschrieben');
+  });
+
+  it('nur Neu-Deklarationen: blockiert mit Hinweis statt leerer Liste ans Gate', () => {
+    const pf = preflightBatch({ commands: [addNode('UC-a', 'UC', 'X', 'Y')] }, known);
+    expect(pf.action).toBe('blocked');
+    expect(pf.violations[0].fixHint).toContain('## Edges');
+  });
+
+  it('ein NEUER Knoten und ein Typwechsel bleiben unberuehrt (den Typwechsel lehnt das Gate ab)', () => {
+    const pf = preflightBatch({ commands: [addNode('UC-neu', 'UC', 'N', 'D'), addNode('UC-a', 'FUNC', 'X', 'Y')] }, known);
+    const cmds = (pf.input as { commands: { node?: { uid: string } }[] }).commands;
+    expect(cmds.map((c) => c.node?.uid)).toEqual(['UC-neu', 'UC-a']);
   });
 });
 
@@ -331,6 +364,21 @@ describe('executor preflight (CR-GC-284, real harness)', () => {
     const g = harness.getGraph();
     expect(g.nodes.find((n) => n.uid === 'REQ-login-2fa')?.name).toBe('Login mit 2FA');
     expect(g.nodes.some((n) => n.uid === 'TEST-verify-login-2fa')).toBe(true);
+  });
+
+  it('CR-GC-660: Format-E mit neu deklariertem UC — die Kante kommt an, der Text bleibt', async () => {
+    const vorher = harness.getGraph().nodes.find((n) => n.uid === 'UC-login')!.description;
+    const formatE =
+      '## Nodes\n### UC\n+ UC-login|Ein schlechterer Text aus einem Beispiel. [__name:Anders]\n### FCHAIN\n' +
+      '+ FCHAIN-login|Anmeldeablauf [__name:Anmeldeablauf]\n\n## Edges\n+ UC-login -compose-> FCHAIN-login\n';
+    const { callModel } = scriptedModel([toolCallResponse('c1', { formatE })]);
+    const stats = await runExecutor({ registry, workspaceDir: repoRoot, config: CONFIG, callModel });
+    expect(stats.mutatesApplied).toBe(1);
+    const g = harness.getGraph();
+    const uc = g.nodes.find((n) => n.uid === 'UC-login')!;
+    expect(uc.description).toBe(vorher);
+    expect(uc.name).toBe('Login');
+    expect(g.edges.some((e) => e.sourceId === 'UC-login' && e.targetId === 'FCHAIN-login')).toBe(true);
   });
 
   it('Format-E ohne Befund geht als TEXT ans Gate, nicht uebersetzt', async () => {
