@@ -73,7 +73,7 @@ async function ausFundKontext(
   const zeilen = [
     'Element-Liste aus dem Kontext des Funds (uid · type · name: der Fund, sein Besitzer UC/SYS und dessen ' +
       'Realisierung; bereits eingebettet — graph_elements dafür nicht aufrufen; existierende uids für Kanten ' +
-      'referenzieren, keine Duplikate anlegen):',
+      'referenzieren):',
     ...lines,
   ];
   if (rest > 0) zeilen.push(`… (+${rest} weitere — via graph_elements)`);
@@ -139,7 +139,7 @@ async function nachTyp(registry: MCPToolRegistry, focusTypes: string[]): Promise
     channel: 'inventory',
     text:
       'Element-Index des Graphen (uid · type · name; bereits eingebettet — graph_elements NICHT ' +
-      'erneut aufrufen; existierende uids für Kanten referenzieren, keine Duplikate anlegen):\n' +
+      'erneut aufrufen; existierende uids für Kanten referenzieren):\n' +
       lines.join('\n') +
       (notiz ? '\n' + notiz : ''),
   };

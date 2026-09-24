@@ -2181,6 +2181,12 @@
       "description": "docs/cr/open/CR-GC-652-element-liste-aus-dem-fund-kontext-statt.md"
     },
     {
+      "id": "CR-GC-653",
+      "type": "CR",
+      "name": "Executor: Nachfrage-Ausloeser im Prompt abstellen (Duplikat-Vorpruefung, SCHEMA-Abfrage im Skill, SYS-Wiederlesen)",
+      "description": "docs/cr/open/CR-GC-653-executor-nachfrage-ausloeser-im-prompt-a.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -21090,5 +21096,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 446
+  "graphVersion": 447
 }
