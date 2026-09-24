@@ -21,6 +21,7 @@ import {
 } from './model-answer-contract.js';
 import { AUTHORING_PARAMS, WITHHELD_TOOLS } from './executor-prompt.js';
 import { READ_TOOLS } from './executor-tools.js';
+import { leseOpenAiAntwort } from './openai-stream.js';
 import type { CallModel, ExecutorConfig } from './executor.js';
 
 // ---------------------------------------------------------------------------
@@ -321,10 +322,14 @@ export function buildCallModel(config: ExecutorConfig): CallModel {
         ...(config.reasoningEffort ? { reasoning_effort: config.reasoningEffort } : {}),
         messages: [{ role: 'system', content: system }, ...messages],
         tools,
+        // CR-GC-656: gestreamt, damit der Antwortkopf sofort kommt — undici bricht nach 300 s ohne
+        // Kopf ab, egal was `callTimeoutMs` sagt. `include_usage` liefert die Zaehlung im letzten Stueck.
+        stream: true,
+        stream_options: { include_usage: true },
       }),
       signal: AbortSignal.timeout(config.callTimeoutMs),
     });
-    const raw: unknown = await r.json();
+    const raw: unknown = await leseOpenAiAntwort(r);
     if (BackendFailure.safeParse(raw).success) {
       throw new Error('backend: ' + JSON.stringify(raw).slice(0, 300));
     }
